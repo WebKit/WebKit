@@ -50,6 +50,27 @@ extern NSString *_WebMainFrameURLKey;
 
 - (void)toggleSmartInsertDelete:(id)sender;
 
+/*!
+    @method editableDOMRangeForPoint:
+    @param point A point in the coordinates of the WebView
+    @result A range expressing an editable position. Nil is returned if an editable position can't be found.
+*/
+- (DOMRange *)editableDOMRangeForPoint:(NSPoint)point;
+
+/*!
+    @method moveDragCaretToPoint:
+    @param point A point in the coordinates of the WebView
+    @discussion This method moves the caret that shows where something being dragged will be dropped. It may cause the WebView to scroll
+    to make the new position of the drag caret visible.
+*/
+- (void)moveDragCaretToPoint:(NSPoint)point;
+
+/*!
+    @method removeDragCaret
+    @abstract Removes the drag caret from the WebView
+*/
+- (void)removeDragCaret;
+
 @end
 
 @interface WebView (WebPrivate)

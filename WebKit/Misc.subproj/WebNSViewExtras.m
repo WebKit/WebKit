@@ -13,6 +13,7 @@
 
 #import <Foundation/NSString_NSURLExtras.h>
 #import <Foundation/NSURL_NSURLExtras.h>
+#import <Foundation/NSURLFileTypeMappings.h>
 
 #define WebDragStartHysteresisX			5.0
 #define WebDragStartHysteresisY			5.0
@@ -28,11 +29,6 @@
 - (id)_webView;
 @end
 #endif
-
-@interface NSFilePromiseDragSource : NSObject
-- initWithSource:(id)draggingSource;
-- (void)setTypes:(NSArray *)types onPasteboard:(NSPasteboard *)pboard;
-@end
 
 @implementation NSView (WebExtras)
 
@@ -179,64 +175,40 @@
 #endif
 
 - (void)_web_dragImage:(WebImageRenderer *)image
-               archive:(WebArchive *)archive
                   rect:(NSRect)rect
-                   URL:(NSURL *)URL
-                 title:(NSString *)title
                  event:(NSEvent *)event
-             dragImage:(NSImage *)dragImageOverride
-          dragLocation:(NSPoint)dragLocOverride
-       writePasteboard:(BOOL)writePB
+            pasteboard:(NSPasteboard *)pasteboard 
+                source:(id)source
 {
     NSPoint mouseDownPoint = [self convertPoint:[event locationInWindow] fromView:nil];
     NSImage *dragImage;
     NSPoint origin;
-
-    NSString *filename = [URL _web_suggestedFilenameWithMIMEType:[image MIMEType]];
-    NSString *fileType = [filename pathExtension];
-    if (!fileType) {
-        fileType = @"";
-    }
     
-    if (dragImageOverride) {
-        dragImage = dragImageOverride;
-        origin = dragLocOverride;
+    if ([image size].height * [image size].width <= WebMaxOriginalImageArea) {
+        NSSize originalSize = rect.size;
+        origin = rect.origin;
+        
+        dragImage = [[image copy] autorelease];
+        [dragImage setScalesWhenResized:YES];
+        [dragImage setSize:originalSize];
+        
+        [dragImage _web_scaleToMaxSize:WebMaxDragImageSize];
+        NSSize newSize = [dragImage size];
+        
+        [dragImage _web_dissolveToFraction:WebDragImageAlpha];
+        
+        // Properly orient the drag image and orient it differently if it's smaller than the original
+        origin.x = mouseDownPoint.x - (((mouseDownPoint.x - origin.x) / originalSize.width) * newSize.width);
+        origin.y = origin.y + originalSize.height;
+        origin.y = mouseDownPoint.y - (((mouseDownPoint.y - origin.y) / originalSize.height) * newSize.height);
     } else {
-        if ([image size].height * [image size].width <= WebMaxOriginalImageArea) {
-            NSSize originalSize = rect.size;
-            origin = rect.origin;
-            
-            dragImage = [[image copy] autorelease];
-            [dragImage setScalesWhenResized:YES];
-            [dragImage setSize:originalSize];
-        
-            [dragImage _web_scaleToMaxSize:WebMaxDragImageSize];
-            NSSize newSize = [dragImage size];
-        
-            [dragImage _web_dissolveToFraction:WebDragImageAlpha];
-
-            // Properly orient the drag image and orient it differently if it's smaller than the original
-            origin.x = mouseDownPoint.x - (((mouseDownPoint.x - origin.x) / originalSize.width) * newSize.width);
-            origin.y = origin.y + originalSize.height;
-            origin.y = mouseDownPoint.y - (((mouseDownPoint.y - origin.y) / originalSize.height) * newSize.height);
-        } else {
-            dragImage = [[NSWorkspace sharedWorkspace] iconForFileType:fileType];
-            NSSize offset = NSMakeSize([dragImage size].width - WebDragIconRightInset, -WebDragIconBottomInset);
-            origin = NSMakePoint(mouseDownPoint.x - offset.width, mouseDownPoint.y - offset.height);
+        NSString *extension = [[NSURLFileTypeMappings sharedMappings] preferredExtensionForMIMEType:[image MIMEType]];
+        if (extension == nil) {
+            extension = @"";
         }
-    }
-
-    NSPasteboard *pasteboard = [NSPasteboard pasteboardWithName:NSDragPboard];
-    id source = nil;
-    if (writePB) {
-        NSMutableArray *types = [[NSMutableArray alloc] initWithObjects:NSFilesPromisePboardType, nil];
-        [types addObjectsFromArray:[NSPasteboard _web_writableTypesForImage]];
-        [pasteboard declareTypes:types owner:self];    
-        [pasteboard _web_writeImage:image URL:URL title:title archive:archive types:types];
-        [types release];
-
-        source = [[NSFilePromiseDragSource alloc] initWithSource:(id)self];
-        [source setTypes:[NSArray arrayWithObject:fileType] onPasteboard:pasteboard];
+        dragImage = [[NSWorkspace sharedWorkspace] iconForFileType:extension];
+        NSSize offset = NSMakeSize([dragImage size].width - WebDragIconRightInset, -WebDragIconBottomInset);
+        origin = NSMakePoint(mouseDownPoint.x - offset.width, mouseDownPoint.y - offset.height);
     }
 
     // Per kwebster, offset arg is ignored

@@ -145,6 +145,7 @@ NSString *_WebMainFrameURLKey =         @"mainFrameURL";
 {
     ASSERT(mainFrame == nil);
     ASSERT(draggingDocumentView == nil);
+    ASSERT(dragCaretBridge == nil);
     
     [backForwardList release];
     [applicationNameForUserAgent release];
@@ -266,6 +267,9 @@ NSString *_WebMainFrameURLKey =         @"mainFrameURL";
         _private->setName = nil;
     }
 
+    // To avoid leaks, call removeDragCaret in case it wasn't called after moveDragCaretToPoint.
+    [self removeDragCaret];
+    
     [_private->mainFrame _detachFromParent];
     [_private->mainFrame release];
     _private->mainFrame = nil;
@@ -1664,12 +1668,6 @@ NS_ENDHANDLER
     return _private->hostWindow;
 }
 
-- (WebFrameView *)_frameViewAtWindowPoint:(NSPoint)point
-{
-    NSView *view = [self hitTest:[[self superview] convertPoint:point toView:nil]];
-    return (WebFrameView *)[view _web_superviewOfClass:[WebFrameView class] stoppingAtClass:[self class]];
-}
-
 - (NSView <WebDocumentDragging> *)_draggingDocumentViewAtWindowPoint:(NSPoint)point
 {
     NSView <WebDocumentView> *documentView = [[self _frameViewAtWindowPoint:point] documentView];
@@ -2172,6 +2170,33 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     }
 }
 
+- (WebBridge *)_bridgeAtPoint:(NSPoint)point
+{
+    return [[[self _frameViewAtWindowPoint:[self convertPoint:point toView:nil]] webFrame] _bridge];
+}
+
+- (DOMRange *)editableDOMRangeForPoint:(NSPoint)point
+{
+    return [[self _bridgeAtPoint:point] editableDOMRangeForPoint:point];
+}
+
+- (void)moveDragCaretToPoint:(NSPoint)point
+{
+    WebBridge *bridge = [self _bridgeAtPoint:point];
+    if (bridge != _private->dragCaretBridge) {
+        [_private->dragCaretBridge removeDragCaret];
+        _private->dragCaretBridge = [bridge retain];
+    }
+    [_private->dragCaretBridge moveDragCaretToPoint:[self convertPoint:point toView:[[[_private->dragCaretBridge webFrame] frameView] documentView]]];
+}
+
+- (void)removeDragCaret
+{
+    [_private->dragCaretBridge removeDragCaret];
+    [_private->dragCaretBridge release];
+    _private->dragCaretBridge = nil;
+}
+
 @end
 
 @implementation WebView (WebViewPrintingPrivate)
@@ -2326,6 +2351,12 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     WebFrame *mainFrame = [self mainFrame];
     return [[mainFrame dataSource] isLoading]
         || [[mainFrame provisionalDataSource] isLoading];
+}
+
+- (WebFrameView *)_frameViewAtWindowPoint:(NSPoint)point
+{
+    NSView *view = [self hitTest:[[self superview] convertPoint:point toView:nil]];
+    return (WebFrameView *)[view _web_superviewOfClass:[WebFrameView class] stoppingAtClass:[self class]];
 }
 
 @end

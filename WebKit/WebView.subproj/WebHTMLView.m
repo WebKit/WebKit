@@ -816,60 +816,49 @@ static WebHTMLView *lastHitView = nil;
         } else {
             dragLoc = NSMakePoint(mouseDownPoint.x - wcDragLoc.x, mouseDownPoint.y + wcDragLoc.y);
         }
-    } else if (imageURL) {
-        // This image is only for the benefit of the delegate!?  _web_dragImage figures out its own version
-        dragImage = [[[element objectForKey:WebElementImageKey] copy] autorelease];
-        [dragImage _web_dissolveToFraction:WebDragImageAlpha];
-        dragLoc = NSZeroPoint;  // unused below, _web_dragImage figures out the location
-    } else if (linkURL) {
-        dragImage = [self _dragImageForLinkElement:element];
-        NSSize offset = NSMakeSize([dragImage size].width / 2, -DRAG_LABEL_BORDER_Y);
-        dragLoc = NSMakePoint(mouseDraggedPoint.x - offset.width, mouseDraggedPoint.y - offset.height);
-    } else if (isSelected) {
-        dragImage = [[self _bridge] selectionImage];
-        [dragImage _web_dissolveToFraction:WebDragImageAlpha];
-        NSRect visibleSelectionRect = [[self _bridge] visibleSelectionRect];
-        dragLoc = NSMakePoint(NSMinX(visibleSelectionRect), NSMaxY(visibleSelectionRect));
-    } else {
-        ASSERT(srcIsDHTML);
-        // WebCore should have given us an image, but we'll make one up
-        NSString *imagePath = [[NSBundle bundleForClass:[self class]] pathForResource:@"missing_image" ofType:@"tiff"];
-        dragImage = [[[NSImage alloc] initWithContentsOfFile:imagePath] autorelease];
-        NSSize imageSize = [dragImage size];
-        dragLoc = NSMakePoint(mouseDownPoint.x - imageSize.width/2, mouseDownPoint.y + imageSize.height/2);
     }
     
-    ASSERT(dragImage != nil);
     WebView *webView = [self _webView];
-    //??? use srcIsDHTML to determine DragDestAction
-    if (![[webView _UIDelegateForwarder] webView:webView
-                       shouldBeginDragForElement:element 
-                                       dragImage:dragImage 
-                                  mouseDownEvent:_private->mouseDownEvent 
-                               mouseDraggedEvent:mouseDraggedEvent]) {
-        return YES;   
-    }
-    
     NSPasteboard *pasteboard = [NSPasteboard pasteboardWithName:NSDragPboard];
+    
     // note per kwebster, the offset arg below is always ignored in positioning the image
-    if (imageURL) {
-        _private->draggingImageURL = [imageURL retain];
-        WebImageRenderer *image = [element objectForKey:WebElementImageKey];
-        ASSERT([image isKindOfClass:[WebImageRenderer class]]);
-        [self _web_dragImage:image
-                     archive:[[element objectForKey:WebElementDOMNodeKey] webArchive]
-                        rect:[[element objectForKey:WebElementImageRectKey] rectValue]
-                         URL:linkURL ? linkURL : imageURL
-                       title:[element objectForKey:WebElementImageAltStringKey]
-                       event:_private->mouseDownEvent
-                   dragImage:wcDragImage
-                dragLocation:wcDragLoc
-             writePasteboard:!dhtmlWroteData];
-    } else if (linkURL) {
+    if (imageURL && (_private->dragSourceActionMask & WebDragSourceActionImage)) {
+        id source = self;
+        if (!dhtmlWroteData) {
+            _private->draggingImageURL = [imageURL retain];
+            source = [pasteboard _web_declareAndWriteDragImage:[element objectForKey:WebElementImageKey]
+                                                           URL:linkURL ? linkURL : imageURL
+                                                         title:[element objectForKey:WebElementImageAltStringKey]
+                                                       archive:[[element objectForKey:WebElementDOMNodeKey] webArchive]
+                                                        source:self];
+        }
+        [[webView _UIDelegateForwarder] webView:webView willPerformDragSourceAction:WebDragSourceActionImage fromPoint:mouseDownPoint withPasteboard:pasteboard];
+        if (dragImage == nil) {
+            [self _web_dragImage:[element objectForKey:WebElementImageKey]
+                            rect:[[element objectForKey:WebElementImageRectKey] rectValue]
+                           event:_private->mouseDownEvent
+                      pasteboard:pasteboard
+                          source:source];
+        } else {
+            [self dragImage:dragImage
+                         at:dragLoc
+                     offset:NSZeroSize
+                      event:_private->mouseDownEvent
+                 pasteboard:pasteboard
+                     source:source
+                  slideBack:YES];
+        }
+    } else if (linkURL && (_private->dragSourceActionMask & WebDragSourceActionLink)) {
         if (!dhtmlWroteData) {
             NSArray *types = [NSPasteboard _web_writableTypesForURL];
             [pasteboard declareTypes:types owner:self];
             [pasteboard _web_writeURL:linkURL andTitle:[element objectForKey:WebElementLinkLabelKey] types:types];            
+        }
+        [[webView _UIDelegateForwarder] webView:webView willPerformDragSourceAction:WebDragSourceActionLink fromPoint:mouseDownPoint withPasteboard:pasteboard];
+        if (dragImage == nil) {
+            dragImage = [self _dragImageForLinkElement:element];
+            NSSize offset = NSMakeSize([dragImage size].width / 2, -DRAG_LABEL_BORDER_Y);
+            dragLoc = NSMakePoint(mouseDraggedPoint.x - offset.width, mouseDraggedPoint.y - offset.height);
         }
         // HACK:  We should pass the mouseDown event instead of the mouseDragged!  This hack gets rid of
         // a flash of the image at the mouseDown location when the drag starts.
@@ -880,9 +869,16 @@ static WebHTMLView *lastHitView = nil;
              pasteboard:pasteboard
                  source:self
               slideBack:NO];
-    } else if (isSelected) {
+    } else if (isSelected && (_private->dragSourceActionMask & WebDragSourceActionSelection)) {
         if (!dhtmlWroteData) {
             [self _writeSelectionToPasteboard:pasteboard];
+        }
+        [[webView _UIDelegateForwarder] webView:webView willPerformDragSourceAction:WebDragSourceActionSelection fromPoint:mouseDownPoint withPasteboard:pasteboard];
+        if (dragImage == nil) {
+            dragImage = [[self _bridge] selectionImage];
+            [dragImage _web_dissolveToFraction:WebDragImageAlpha];
+            NSRect visibleSelectionRect = [[self _bridge] visibleSelectionRect];
+            dragLoc = NSMakePoint(NSMinX(visibleSelectionRect), NSMaxY(visibleSelectionRect));
         }
         [self dragImage:dragImage
                      at:dragLoc
@@ -892,7 +888,16 @@ static WebHTMLView *lastHitView = nil;
                  source:self
               slideBack:YES];
     } else {
-        // FIXME - need slideback control for WC
+        ASSERT(srcIsDHTML);
+        ASSERT(_private->dragSourceActionMask & WebDragSourceActionDHTML);
+        [[webView _UIDelegateForwarder] webView:webView willPerformDragSourceAction:WebDragSourceActionDHTML fromPoint:mouseDownPoint withPasteboard:pasteboard];
+        if (dragImage == nil) {
+            // WebCore should have given us an image, but we'll make one up
+            NSString *imagePath = [[NSBundle bundleForClass:[self class]] pathForResource:@"missing_image" ofType:@"tiff"];
+            dragImage = [[[NSImage alloc] initWithContentsOfFile:imagePath] autorelease];
+            NSSize imageSize = [dragImage size];
+            dragLoc = NSMakePoint(mouseDownPoint.x - imageSize.width/2, mouseDownPoint.y + imageSize.height/2);
+        }
         [self dragImage:dragImage
                      at:dragLoc
                  offset:NSZeroSize
@@ -1006,10 +1011,10 @@ static void FlipImageSpec(CoreDragImageSpec* imageSpec) {
 
     NSURL *imageURL = [mouseDownElement objectForKey: WebElementImageURLKey];
 
-    if ((imageURL && [[WebPreferences standardPreferences] loadsImagesAutomatically]) ||
-        (!imageURL && [mouseDownElement objectForKey: WebElementLinkURLKey]) ||
-        ([[mouseDownElement objectForKey:WebElementIsSelectedKey] boolValue] &&
-         ([mouseDraggedEvent timestamp] - [_private->mouseDownEvent timestamp]) > TextDragDelay)) {
+    if (((imageURL && [[WebPreferences standardPreferences] loadsImagesAutomatically] && (_private->dragSourceActionMask & WebDragSourceActionImage)) ||
+         (!imageURL && [mouseDownElement objectForKey: WebElementLinkURLKey] && (_private->dragSourceActionMask & WebDragSourceActionLink)) ||
+         ([[mouseDownElement objectForKey:WebElementIsSelectedKey] boolValue] && (_private->dragSourceActionMask & WebDragSourceActionSelection))) &&
+        (([mouseDraggedEvent timestamp] - [_private->mouseDownEvent timestamp]) > TextDragDelay)) {
         return YES;
     }
 
@@ -1962,10 +1967,11 @@ static void FlipImageSpec(CoreDragImageSpec* imageSpec) {
         !_private->webCoreHandlingDrag
         && [self _canProcessDragWithDraggingInfo:draggingInfo])
     {
-        [[self _bridge] moveDragCaretToPoint:[self convertPoint:[draggingInfo draggingLocation] fromView:nil]];
+        WebView *webView = [self _webView];
+        [webView moveDragCaretToPoint:[webView convertPoint:[draggingInfo draggingLocation] fromView:nil]];
         operation = (_private->initiatedDrag && [[self _bridge] isSelectionEditable]) ? NSDragOperationMove : NSDragOperationCopy;
     } else {
-        [[self _bridge] removeDragCaret];
+        [[self _webView] removeDragCaret];
     }
     
     return operation;
@@ -1974,7 +1980,7 @@ static void FlipImageSpec(CoreDragImageSpec* imageSpec) {
 - (void)draggingCancelledWithDraggingInfo:(id <NSDraggingInfo>)draggingInfo
 {
     [[self _bridge] dragExitedWithDraggingInfo:draggingInfo];
-    [[self _bridge] removeDragCaret];
+    [[self _webView] removeDragCaret];
 }
 
 - (BOOL)concludeDragForDraggingInfo:(id <NSDraggingInfo>)draggingInfo actionMask:(unsigned int)actionMask
@@ -2001,7 +2007,7 @@ static void FlipImageSpec(CoreDragImageSpec* imageSpec) {
                 didInsert = YES;
             }
         }
-        [bridge removeDragCaret];
+        [webView removeDragCaret];
         return didInsert;
     }
     return NO;
@@ -3187,6 +3193,14 @@ static void FlipImageSpec(CoreDragImageSpec* imageSpec) {
     // FIXME: we don't keep track of selected attributes, or set them on the font panel. This
     // appears to have no effect on the UI. E.g., underlined text in Mail or TextEdit is
     // not reflected in the font panel. Maybe someday this will change.
+}
+
+- (unsigned int)_delegateDragSourceActionMask
+{
+    WebView *webView = [self _webView];
+    NSPoint point = [webView convertPoint:[_private->mouseDownEvent locationInWindow] fromView:nil];
+    _private->dragSourceActionMask = [[webView _UIDelegateForwarder] webView:webView dragSourceActionMaskForPoint:point];
+    return _private->dragSourceActionMask;
 }
 
 @end

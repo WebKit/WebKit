@@ -220,38 +220,41 @@
     ignoringMouseDraggedEvents = NO;
     [mouseDownEvent release];
     mouseDownEvent = [event retain];
+    
+    WebView *webView = [[self _web_parentWebFrameView] _webView];
+    NSPoint point = [webView convertPoint:[mouseDownEvent locationInWindow] fromView:nil];
+    dragSourceActionMask = [[webView _UIDelegateForwarder] webView:webView dragSourceActionMaskForPoint:point];
+    
     [super mouseDown:event];
 }
 
 - (void)mouseDragged:(NSEvent *)mouseDraggedEvent
 {
-    if (ignoringMouseDraggedEvents || ![self haveCompleteImage]) {
+    if (ignoringMouseDraggedEvents || ![self haveCompleteImage] || !(dragSourceActionMask & WebDragSourceActionImage)) {
         return;
     }
     
+    NSPasteboard *pasteboard = [NSPasteboard pasteboardWithName:NSDragPboard];
+    id source = [pasteboard _web_declareAndWriteDragImage:[rep image]
+                                                      URL:[rep URL]
+                                                    title:nil
+                                                  archive:[rep archive]
+                                                   source:self];
+    
     WebView *webView = [[self _web_parentWebFrameView] _webView];
-    if (![[webView _UIDelegateForwarder] webView:webView
-                       shouldBeginDragForElement:[self elementAtPoint:NSZeroPoint] 
-                                       dragImage:[rep image] 
-                                  mouseDownEvent:mouseDownEvent 
-                               mouseDraggedEvent:mouseDraggedEvent]) {
-        return;   
-    }
+    NSPoint point = [webView convertPoint:[mouseDownEvent locationInWindow] fromView:nil];
+    [[webView _UIDelegateForwarder] webView:webView willPerformDragSourceAction:WebDragSourceActionImage fromPoint:point withPasteboard:pasteboard];
     
     [[[self _web_parentWebFrameView] _webView] _setInitiatedDrag:YES];
-
+    
     // Retain this view during the drag because it may be released before the drag ends.
     [self retain];
-
+    
     [self _web_dragImage:[rep image]
-                 archive:[rep archive]
                     rect:[self drawingRect]
-                     URL:[rep URL]
-                   title:nil
                    event:mouseDraggedEvent
-               dragImage:nil
-            dragLocation:NSZeroPoint
-         writePasteboard:YES];
+              pasteboard:pasteboard
+                  source:source];
 }
 
 - (NSArray *)namesOfPromisedFilesDroppedAtDestination:(NSURL *)dropDestination

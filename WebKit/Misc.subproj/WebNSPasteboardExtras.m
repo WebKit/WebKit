@@ -19,11 +19,17 @@
 
 #import <Foundation/NSString_NSURLExtras.h>
 #import <Foundation/NSURL_NSURLExtras.h>
+#import <Foundation/NSURLFileTypeMappings.h>
 
 #import <HIServices/CoreTranslationFlavorTypeNames.h>
 
 NSString *WebURLPboardType = nil;
 NSString *WebURLNamePboardType = nil;
+
+@interface NSFilePromiseDragSource : NSObject
+- initWithSource:(id)draggingSource;
+- (void)setTypes:(NSArray *)types onPasteboard:(NSPasteboard *)pboard;
+@end
 
 @implementation NSPasteboard (WebExtras)
 
@@ -200,6 +206,29 @@ NSString *WebURLNamePboardType = nil;
             [self setData:[archive data] forType:WebArchivePboardType];
         }
     }
+}
+
+- (id)_web_declareAndWriteDragImage:(WebImageRenderer *)image 
+                                URL:(NSURL *)URL 
+                              title:(NSString *)title
+                            archive:(WebArchive *)archive
+                             source:(id)source
+{
+    ASSERT(self == [NSPasteboard pasteboardWithName:NSDragPboard]);
+    NSMutableArray *types = [[NSMutableArray alloc] initWithObjects:NSFilesPromisePboardType, nil];
+    [types addObjectsFromArray:[NSPasteboard _web_writableTypesForImage]];
+    [self declareTypes:types owner:source];    
+    [self _web_writeImage:image URL:URL title:title archive:archive types:types];
+    [types release];
+    
+    NSString *extension = [[NSURLFileTypeMappings sharedMappings] preferredExtensionForMIMEType:[image MIMEType]];
+    if (extension == nil) {
+        extension = @"";
+    }
+    id dragSource = [[NSFilePromiseDragSource alloc] initWithSource:source];
+    [dragSource setTypes:[NSArray arrayWithObject:extension] onPasteboard:self];
+    
+    return dragSource;
 }
 
 @end

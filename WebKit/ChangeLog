@@ -1,3 +1,40 @@
+2004-06-11  Chris Blumenberg  <cblu@apple.com>
+
+	Implemented the remainder of the drag & drop API.
+
+        Reviewed by trey.
+
+        * Misc.subproj/WebNSPasteboardExtras.h:
+        * Misc.subproj/WebNSPasteboardExtras.m:
+        (-[NSPasteboard _web_declareAndWriteDragImage:URL:title:archive:source:]): new
+        * Misc.subproj/WebNSViewExtras.h:
+        * Misc.subproj/WebNSViewExtras.m:
+        (-[NSView _web_dragImage:rect:event:pasteboard:source:]): simplified, this method now just creates a drag image and starts the drag
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge allowDHTMLDrag:UADrag:]): now calls _delegateDragSourceActionMask on WebHTMLView to interact with the delegate
+        * WebView.subproj/WebDefaultUIDelegate.m:
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _startDraggingImage:at:operation:event:sourceIsDHTML:DHTMLWroteData:]): call new delegate method, cleaned-up a little
+        (-[WebHTMLView draggingUpdatedWithDraggingInfo:actionMask:]): call drag caret methods on WebView instead of WebBridge so WebView can make sure only 1 HTML view has a drag cursor
+        (-[WebHTMLView draggingCancelledWithDraggingInfo:]): ditto
+        (-[WebHTMLView concludeDragForDraggingInfo:actionMask:]): ditto
+        (-[WebHTMLView _delegateDragSourceActionMask]): new, gets drag source action mask from delegate
+        * WebView.subproj/WebHTMLViewInternal.h:
+        * WebView.subproj/WebImageView.h:
+        * WebView.subproj/WebImageView.m:
+        (-[WebImageView mouseDown:]): get the drag source action mask from the delegate
+        (-[WebImageView mouseDragged:]): inform the delegate of the drag
+        * WebView.subproj/WebView.m:
+        (-[WebViewPrivate dealloc]): assert that dragCursorBridge is nil
+        (-[WebView _close]): release dragCursorBridge
+        (-[WebView _bridgeAtPoint:]): new
+        (-[WebView editableDOMRangeForPoint:]): new API
+        (-[WebView moveDragCaretToPoint:]): new API
+        (-[WebView removeDragCaret]): new API
+        (-[WebView _frameViewAtWindowPoint:]): moved so this can be called internally
+        * WebView.subproj/WebViewInternal.h:
+        * WebView.subproj/WebViewPrivate.h:
+
 2004-07-10  Trey Matteson  <trey@apple.com>
 
 	Prep work for latest delegate API for dragging.  In addition, I also straightened out all

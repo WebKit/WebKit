@@ -13,6 +13,7 @@
     BOOL needsLayout;
     BOOL ignoringMouseDraggedEvents;
     NSEvent *mouseDownEvent;
+    unsigned int dragSourceActionMask;
 }
 + (NSArray *)supportedImageMIMETypes;
 @end

@@ -40,14 +40,10 @@
 // Returns NSDragOperationNone otherwise.
 - (NSDragOperation)_web_dragOperationForDraggingInfo:(id <NSDraggingInfo>)sender;
 
-// Resizes and applies alpha to image, extends pboard and sets drag origins for dragging promised image files.
+// Resizes and applies alpha to image and drags it.
 - (void)_web_dragImage:(WebImageRenderer *)image
-               archive:(WebArchive *)archive
                   rect:(NSRect)rect
-                   URL:(NSURL *)URL
-                 title:(NSString *)title
                  event:(NSEvent *)event
-             dragImage:(NSImage *)dragImageOverride
-          dragLocation:(NSPoint)dragLocOverride
-       writePasteboard:(BOOL)writePB;
+            pasteboard:(NSPasteboard *)pasteboard 
+                source:(id)source;
 @end

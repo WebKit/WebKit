@@ -989,9 +989,11 @@ static BOOL loggedObjectCacheSize = NO;
 
 - (void)allowDHTMLDrag:(BOOL *)flagDHTML UADrag:(BOOL *)flagUA
 {
-    // FIXME: call up to the WebView, then out to the delegate for the drag action
-    *flagDHTML = YES;
-    *flagUA = YES;
+    WebHTMLView *docView = (WebHTMLView *)[[_frame frameView] documentView];
+    ASSERT([docView isKindOfClass:[WebHTMLView class]]);
+    unsigned int mask = [docView _delegateDragSourceActionMask];
+    *flagDHTML = (mask & WebDragSourceActionDHTML) != 0;
+    *flagUA = ((mask & WebDragSourceActionImage) || (mask & WebDragSourceActionLink) || (mask & WebDragSourceActionSelection));
 }
 
 - (BOOL)startDraggingImage:(NSImage *)dragImage at:(NSPoint)dragLoc operation:(NSDragOperation)op event:(NSEvent *)event sourceIsDHTML:(BOOL)flag DHTMLWroteData:(BOOL)dhtmlWroteData

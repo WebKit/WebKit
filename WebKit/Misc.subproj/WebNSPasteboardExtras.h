@@ -47,4 +47,10 @@ extern NSString *WebURLNamePboardType;
                 archive:(WebArchive *)archive
                   types:(NSArray *)types;
 
+- (id)_web_declareAndWriteDragImage:(WebImageRenderer *)image 
+                                URL:(NSURL *)URL 
+                              title:(NSString *)title
+                            archive:(WebArchive *)archive
+                             source:(id)source;
+
 @end

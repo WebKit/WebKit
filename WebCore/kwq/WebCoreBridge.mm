@@ -1462,18 +1462,22 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     cmd.apply();
 }
 
-- (void)moveDragCaretToPoint:(NSPoint)point
+- (Position)_positionForPoint:(NSPoint)point
 {
     RenderObject *renderer = _part->renderer();
     if (!renderer) {
-        return;
+        return Position();
     }
     
     RenderObject::NodeInfo nodeInfo(true, true);
     renderer->layer()->nodeAtPoint(nodeInfo, (int)point.x, (int)point.y);
     NodeImpl *node = nodeInfo.innerNode();
-    
-    Selection dragCaret(node->positionForCoordinates((int)point.x, (int)point.y));
+    return node->positionForCoordinates((int)point.x, (int)point.y);
+}
+
+- (void)moveDragCaretToPoint:(NSPoint)point
+{    
+    Selection dragCaret([self _positionForPoint:point]);
     _part->setDragCaret(dragCaret);
 }
 
@@ -1485,6 +1489,12 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 - (DOMRange *)dragCaretDOMRange
 {
     return [DOMRange _rangeWithImpl:_part->dragCaret().toRange().handle()];
+}
+
+- (DOMRange *)editableDOMRangeForPoint:(NSPoint)point
+{
+    Position position = [self _positionForPoint:point];
+    return position.isEmpty() ? nil : [DOMRange _rangeWithImpl:Selection(position).toRange().handle()];
 }
 
 - (void)deleteSelection

@@ -1,3 +1,15 @@
+2004-06-11  Chris Blumenberg  <cblu@apple.com>
+
+	Support for WebKit drag & drop API.
+
+        Reviewed by trey.
+
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge _positionForPoint:]): new
+        (-[WebCoreBridge moveDragCaretToPoint:]): call _positionForPoint
+        (-[WebCoreBridge editableDOMRangeForPoint:]): new
+
 2004-06-11  Darin Adler  <darin@apple.com>
 
         Reviewed by Dave.

@@ -182,4 +182,13 @@ static WebDefaultUIDelegate *sharedDelegate = nil;
 {
 }
 
+- (unsigned)webView:(WebView *)webView dragSourceActionMaskForPoint:(NSPoint)point;
+{
+    return WebDragSourceActionAny;
+}
+
+- (void)webView:(WebView *)webView willPerformDragSourceAction:(WebDragSourceAction)action fromPoint:(NSPoint)point withPasteboard:(NSPasteboard *)pasteboard;
+{
+}
+
 @end

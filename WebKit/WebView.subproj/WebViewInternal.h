@@ -72,6 +72,7 @@
     
     NSView <WebDocumentDragging> *draggingDocumentView;
     unsigned int dragDestinationActionMask;
+    WebBridge *dragCaretBridge;
     
     DOMCSSStyleDeclaration *typingStyle;
 
@@ -88,6 +89,8 @@
 - (WebFrame *)_frameForCurrentSelection;
 - (WebBridge *)_bridgeForCurrentSelection;
 - (BOOL)_isLoading;
+
+- (WebFrameView *)_frameViewAtWindowPoint:(NSPoint)point;
 @end;
 
 @interface WebView (WebViewEditingExtras)
