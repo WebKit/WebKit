@@ -34,7 +34,7 @@
     NSString *cursiveFontFamily;
     NSString *fantasyFontFamily;
     float minimumFontSize;
-    float mediumFontSize;
+    float defaultFontSize;
     BOOL JavaEnabled;
     BOOL pluginsEnabled;
     BOOL JavaScriptEnabled;
@@ -64,8 +64,8 @@
 - (void)setMinimumFontSize:(float)size;
 - (float)minimumFontSize;
 
-- (void)setMediumFontSize:(float)size;
-- (float)mediumFontSize;
+- (void)setDefaultFontSize:(float)size;
+- (float)defaultFontSize;
 
 - (void)setJavaEnabled:(BOOL)enabled;
 - (BOOL)JavaEnabled;

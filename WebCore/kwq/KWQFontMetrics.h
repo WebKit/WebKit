@@ -46,6 +46,7 @@ public:
     int descent() const;
     int height() const;
     int lineSpacing() const;
+    float xHeight() const;
     
     int width(QChar) const;
     int width(char) const;
@@ -56,7 +57,6 @@ public:
     float floatCharacterWidth(const QChar *, int slen, int pos) const;
 
     QRect boundingRect(const QString &, int len=-1) const;
-    QRect boundingRect(QChar) const;
     QRect boundingRect(int, int, int, int, int, const QString &) const;
 
     QSize size(int, const QString &) const;

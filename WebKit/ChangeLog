@@ -1,3 +1,16 @@
+2002-07-24  Darin Adler  <darin@apple.com>
+
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (-[WebTextRenderer xHeight]): Added. Calls [NSFont xHeight].
+
+        * WebView.subproj/WebPreferences.h:
+        * WebView.subproj/WebPreferences.m:
+        (+[WebPreferences load]):
+        (-[WebPreferences defaultFontSize]):
+        (-[WebPreferences setDefaultFontSize:]):
+	Renamed minimumFont to defaultFont, and changed it from 11 to 16.
+	Also changed default monospaced font to Courier instead of Monaco.
+
 2002-07-24  Richard Williamson (Local)  <rjw@apple.com>
 
         Support for find in HTML, find in text view coming soon.

@@ -104,6 +104,11 @@ int QFontMetrics::lineSpacing() const
     return [data->getRenderer() lineSpacing];
 }
 
+float QFontMetrics::xHeight() const
+{
+    return [data->getRenderer() xHeight];
+}
+
 int QFontMetrics::width(QChar qc) const
 {
     UniChar c = qc.unicode();
@@ -155,11 +160,6 @@ QRect QFontMetrics::boundingRect(int x, int y, int width, int height, int flags,
 {
     // FIXME: need to support word wrapping?
     return QRect(x, y, width, height).intersect(boundingRect(str));
-}
-
-QRect QFontMetrics::boundingRect(QChar qc) const
-{
-    return QRect(0, 0, width(qc), height());
 }
 
 QSize QFontMetrics::size(int, const QString &qstring) const

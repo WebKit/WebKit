@@ -29,8 +29,8 @@
 - (NSString *)fantasyFontFamily;
 - (void)setFantasyFontFamily:(NSString *)family;
 
-- (int)mediumFontSize;
-- (void)setMediumFontSize:(int)size;
+- (int)defaultFontSize;
+- (void)setDefaultFontSize:(int)size;
 
 - (int)minimumFontSize;
 - (void)setMinimumFontSize:(int)size;

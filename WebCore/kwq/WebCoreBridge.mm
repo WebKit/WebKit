@@ -169,9 +169,8 @@ using namespace khtml;
 {
     DOM::DocumentImpl *doc = part->xmlDocImpl();
     if (doc && doc->renderer()) {
-        return;
+        doc->updateStyleSelector();
     }
-    doc->updateStyleSelector();
 }
 
 - (void)forceLayout

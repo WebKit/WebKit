@@ -1,3 +1,52 @@
+2002-07-24  Darin Adler  <darin@apple.com>
+
+	- fixed 2906567 -- Font size calculations should use 96 dpi instead of 72 dpi
+	- fixed 3005932 -- fonts specified in 'ex' units rendered waaaaaaay too large
+	
+        * khtml/css/cssstyleselector.cpp: (CSSStyleSelector::computeFontSizes):
+	Use a default font size that's the same as small, rather than a "medium font
+	size". Don't multiply the values from settings by the scaling factor.
+	(CSSStyleSelector::applyRule): Make the default font size here for nodes with
+	no parents be small (m_fontSizes[2]) rather than medium (m_fontSizes[3]).
+
+        * khtml/html/html_inlineimpl.cpp: (parseFontSizeNumber): Added. Tolerant of
+	non-numeric characters after the numeric size. Also distinguishes a size like
+	"0" from something that's not a numeric size at all.
+        (HTMLFontElementImpl::parseAttribute): Use parseFontSizeNumber, but also make
+	size 3 be the same as CSS_VAL_SMALL, not CSS_VAL_MEDIUM. This mistake (using
+	CSS_VAL_MEDIUM) led to all kinds of strangeness in the KHTML code, including
+	mishandling of 0 and the need to create CSS_VAL__KONQ_XXX_LARGE. Also change
+	code so that 0 is treated as CSS_VAL_SMALL (same as 3) rather than CSS_VAL_XX_SMALL.
+	This makes 0 between -1 and +1.
+
+        * khtml/xml/dom_docimpl.cpp: (DocumentImpl::recalcStyle): Make default font
+	size be small (fontSizes()[2]) rather than medium (fontSizes()[3]).
+        * khtml/html/html_tableimpl.cpp: (HTMLTableElementImpl::HTMLTableElementImpl):
+	Make default font size be CSS_VAL_SMALL, not CSS_VAL_MEDIUM.
+
+        * kwq/qt/qfontmetrics.h:
+        * kwq/KWQFontMetrics.mm: (QFontMetrics::xHeight): Added.
+        * kwq/WebCoreTextRenderer.h: Added xHeight.
+
+        * khtml/css/css_valueimpl.cpp: (CSSPrimitiveValueImpl::computeLengthFloat):
+	Use xHeight rather than computing the height of an actual letter 'x'.
+        * khtml/rendering/render_object.cpp: (RenderObject::getVerticalPosition):
+	Use xHeight rather than computing the height of an actual letter 'x'.
+
+        * kwq/WebCoreBridge.mm: (-[WebCoreBridge reapplyStyles]): Fixed backwards
+	if that prevented font changes from being reflected in the browser window.
+
+        * kwq/khtml/khtml_settings.h:
+        * kwq/KWQKHTMLSettings.mm:
+	(KHTMLSettings::defaultFontSize):
+        * kwq/WebCoreSettings.h:
+        * kwq/WebCoreSettings.m:
+        (-[WebCoreSettings setDefaultFontSize:]):
+        (-[WebCoreSettings defaultFontSize]):
+	Replace mediumFontSize with defaultFontSize.
+
+        * WebCore.pbproj/project.pbxproj: Rearrange some of the files.
+
 2002-07-24  Richard Williamson (Local)  <rjw@apple.com>
 
         Support for find in HTML.

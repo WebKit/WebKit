@@ -379,6 +379,12 @@ static unsigned int findLengthOfCharacterCluster(const UniChar *characters, unsi
 }
 
 
+- (float)xHeight
+{
+    return [font xHeight];
+}
+
+
 - (void) slowPackGlyphsForCharacters:(const UniChar *)characters numCharacters: (unsigned int)numCharacters glyphBuffer:(CGGlyph **)glyphBuffer numGlyphs:(unsigned int *)numGlyphs
 {
     ATSGlyphVector glyphVector;

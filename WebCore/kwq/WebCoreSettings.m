@@ -130,14 +130,14 @@
     return minimumFontSize;
 }
 
-- (void)setMediumFontSize:(float)size
+- (void)setDefaultFontSize:(float)size
 {
-    mediumFontSize = size;
+    defaultFontSize = size;
 }
 
-- (float)mediumFontSize
+- (float)defaultFontSize
 {
-    return mediumFontSize;
+    return defaultFontSize;
 }
 
 - (void)setJavaEnabled:(BOOL)enabled

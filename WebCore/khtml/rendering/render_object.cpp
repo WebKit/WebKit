@@ -933,8 +933,12 @@ short RenderObject::getVerticalPosition( bool firstLine ) const
                 vpos += ( baselinePosition( firstLine ) - parent()->baselinePosition( firstLine ) +
                         halfleading );
 	    } else if ( va == MIDDLE ) {
+#ifdef APPLE_CHANGES
+		vpos += - (int)(QFontMetrics(f).xHeight()/2) - lineHeight( firstLine )/2 + baselinePosition( firstLine );
+#else
 		QRect b = QFontMetrics(f).boundingRect('x');
 		vpos += -b.height()/2 - lineHeight( firstLine )/2 + baselinePosition( firstLine );
+#endif
 	    } else if ( va == TEXT_BOTTOM ) {
 		vpos += QFontMetrics(f).descent();
 		if ( !isReplaced() )

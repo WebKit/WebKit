@@ -31,6 +31,7 @@
 - (int)ascent;
 - (int)descent;
 - (int)lineSpacing;
+- (float)xHeight;
 
 // horizontal metrics
 - (int)widthForString:(NSString *)string;

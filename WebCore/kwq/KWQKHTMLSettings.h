@@ -58,7 +58,7 @@ public:
     const QString &encoding() const;
 
     int minFontSize() const;
-    int mediumFontSize() const;
+    int defaultFontSize() const;
 
     bool changeCursor() const;
 

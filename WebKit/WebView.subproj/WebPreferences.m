@@ -15,7 +15,7 @@
 #define	WebKitCursiveFontPreferenceKey		@"WebKitCursiveFont"
 #define	WebKitFantasyFontPreferenceKey		@"WebKitFantasyFont"
 #define	WebKitMinimumFontSizePreferenceKey	@"WebKitMinimumFontSize"
-#define	WebKitMediumFontSizePreferenceKey	@"WebKitMediumFontSize"
+#define	WebKitDefaultFontSizePreferenceKey	@"WebKitDefaultFontSize"
 #define	WebKitJavaEnabledPreferenceKey		@"WebKitJavaEnabled"
 #define	WebKitJavaScriptEnabledPreferenceKey	@"WebKitJavaScriptEnabled"
 #define	WebKitJavaScriptCanOpenWindowsAutomaticallyPreferenceKey	@"WebKitJavaScriptCanOpenWindowsAutomatically"
@@ -58,13 +58,13 @@ static WebPreferences *_standardPreferences = nil;
     NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
         @"0x0", 			WebKitLogLevelPreferenceKey,
         @"Times New Roman", 		WebKitStandardFontPreferenceKey,
-        @"Monaco",	  		WebKitFixedFontPreferenceKey,
+        @"Courier",	  		WebKitFixedFontPreferenceKey,
         @"Times New Roman", 		WebKitSerifFontPreferenceKey,
         @"Arial", 			WebKitSansSerifFontPreferenceKey,
         @"Apple Chancery", 		WebKitCursiveFontPreferenceKey,
         @"Papyrus", 			WebKitFantasyFontPreferenceKey,
         @"6", 				WebKitMinimumFontSizePreferenceKey,
-        @"11", 				WebKitMediumFontSizePreferenceKey,
+        @"16", 				WebKitDefaultFontSizePreferenceKey,
         @"1.85",		 	WebKitInitialTimedLayoutDelayPreferenceKey,
         @"4096", 			WebKitInitialTimedLayoutSizePreferenceKey,
         @"1.85", 			WebKitResourceTimedLayoutDelayPreferenceKey,
@@ -143,14 +143,14 @@ static WebPreferences *_standardPreferences = nil;
     [[NSUserDefaults standardUserDefaults] setObject:family forKey:WebKitFantasyFontPreferenceKey];
 }
 
-- (int)mediumFontSize
+- (int)defaultFontSize
 {
-    return [[NSUserDefaults standardUserDefaults] integerForKey:WebKitMediumFontSizePreferenceKey];
+    return [[NSUserDefaults standardUserDefaults] integerForKey:WebKitDefaultFontSizePreferenceKey];
 }
 
-- (void)setMediumFontSize:(int)size
+- (void)setDefaultFontSize:(int)size
 {
-    [[NSUserDefaults standardUserDefaults] setInteger:size forKey:WebKitMediumFontSizePreferenceKey];
+    [[NSUserDefaults standardUserDefaults] setInteger:size forKey:WebKitDefaultFontSizePreferenceKey];
 }
 
 - (int)minimumFontSize

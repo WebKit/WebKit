@@ -235,35 +235,76 @@ NodeImpl::Id HTMLFontElementImpl::id() const
     return ID_FONT;
 }
 
+// Allows leading spaces.
+// Allows trailing nonnumeric characters.
+// Returns 10 for any size greater than 9.
+static bool parseFontSizeNumber(const DOMString &s, int &size)
+{
+    unsigned pos = 0;
+    
+    // Skip leading spaces.
+    while (pos < s.length() && s[pos].isSpace())
+        ++pos;
+    
+    // Skip a plus or minus.
+    bool sawPlus = false;
+    bool sawMinus = false;
+    if (pos < s.length() && s[pos] == '+') {
+        ++pos;
+        sawPlus = true;
+    } else if (pos < s.length() && s[pos] == '-') {
+        ++pos;
+        sawMinus = true;
+    }
+    
+    // Parse a single digit.
+    if (pos >= s.length() || !s[pos].isNumber())
+        return false;
+    int num = s[pos++].digitValue();
+    
+    // Check for an additional digit.
+    if (pos < s.length() && s[pos].isNumber())
+        num = 10;
+    
+    if (sawPlus) {
+        size = num + 3;
+        return true;
+    }
+    
+    // Don't return 0 (which means 3) or a negative number (which means the same as 1).
+    if (sawMinus) {
+        size = num == 1 ? 2 : 1;
+        return true;
+    }
+    
+    size = num;
+    return true;
+}
+
 void HTMLFontElementImpl::parseAttribute(AttributeImpl *attr)
 {
     switch(attr->id())
     {
     case ATTR_SIZE:
     {
-        DOMString s = attr->value();
-        if(!s.isNull()) {
-            int num = s.toInt();
-            if ( *s.unicode() == '+' || *s.unicode() == '-' ) {
-                num += 3;
-            }
-            int size = 0;
+        int num;
+        if (parseFontSizeNumber(attr->value(), num)) {
+            int size;
             switch (num)
             {
-            case 1: size = CSS_VAL_X_SMALL; break;
-            case 2: size = CSS_VAL_SMALL;   break;
-            case 3: size = CSS_VAL_MEDIUM;  break;
-            case 4: size = CSS_VAL_LARGE;   break;
-            case 5: size = CSS_VAL_X_LARGE; break;
-            case 6: size = CSS_VAL_XX_LARGE;break;
+            case 2: size = CSS_VAL_X_SMALL; break;
+            case 0: // treat 0 the same as 3, because people expect it to be between -1 and +1
+            case 3: size = CSS_VAL_SMALL; break;
+            case 4: size = CSS_VAL_MEDIUM; break;
+            case 5: size = CSS_VAL_LARGE; break;
+            case 6: size = CSS_VAL_X_LARGE; break;
             default:
-                if (num >= 6)
-                    size = CSS_VAL__KONQ_XXX_LARGE;
-                else if (num < 1)
+                if (num > 6)
+                    size = CSS_VAL_XX_LARGE;
+                else
                     size = CSS_VAL_XX_SMALL;
             }
-            if ( size )
-                addCSSProperty(CSS_PROP_FONT_SIZE, size);
+            addCSSProperty(CSS_PROP_FONT_SIZE, size);
         }
         break;
     }
