@@ -87,7 +87,7 @@ public:
     void move(int, int);
     void move(const QPoint &);
 
-    virtual void paint() {};
+    virtual void paint();
     
     virtual QRect frameGeometry() const;
     virtual void setFrameGeometry(const QRect &);
@@ -149,7 +149,6 @@ public:
     void unlockDrawingFocus();
     void enableFlushDrawing();
     void disableFlushDrawing();
-    void flushDrawing();
     void setDrawingAlpha(float alpha);
 
 private:

@@ -54,8 +54,6 @@ public:
     
     void setFont(const QFont &font);
     
-    virtual void paint();
-    
     QSize sizeForCharacterWidth(int numCharacters) const;
     QRect frameGeometry() const;
     void setFrameGeometry(const QRect &);

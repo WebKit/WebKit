@@ -24,6 +24,9 @@
     BOOL inWindow;
     BOOL inNextValidKeyView;
     NSURL *draggedURL;
+    
+    id savedSubviews;
+    BOOL subviewsSetAside;
 }
 @end
 
@@ -31,6 +34,7 @@
 - (void)_reset;
 - (WebController *)_controller;
 - (WebFrame *)_frame;
+- (BOOL)_isMainFrame;
 - (WebBridge *)_bridge;
 - (void)_adjustFrames;
 

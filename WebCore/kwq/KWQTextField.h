@@ -28,7 +28,7 @@
 class QLineEdit;
 @class KWQTextFieldFormatter;
 
-#define FOCUS_BORDER_SIZE 3
+#define FOCUS_BORDER_SIZE 4
 
 @interface KWQNSTextField : NSTextField
 {
@@ -41,9 +41,6 @@ class QLineEdit;
 }
 
 - initWithQLineEdit:(QLineEdit *)widget;
-
-- (void)drawRect:(NSRect)rect;
-- (void)paint;
 
 - (void)setPasswordMode:(BOOL)flag;
 - (BOOL)passwordMode;

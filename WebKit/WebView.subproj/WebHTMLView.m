@@ -309,7 +309,7 @@
 
 - (BOOL)isOpaque
 {
-    return YES;
+    return [self _isMainFrame];
 }
 
 
@@ -338,6 +338,12 @@
 {
     LOG(View, "%@ drawing", self);
 
+    if (_private->savedSubviews) {
+        ASSERT(_subviews == nil);
+        _subviews = _private->savedSubviews;
+        _private->savedSubviews = nil;
+    }
+    
     if ([self inLiveResize]){
         if (!NSEqualRects(rect, [self visibleRect])){
             rect = [self visibleRect];
@@ -386,6 +392,12 @@
     double thisTime = CFAbsoluteTimeGetCurrent() - start;
     LOG(Timing, "%s draw seconds = %f", widget->part()->baseURL().URL().latin1(), thisTime);
 #endif
+
+    if (_private->subviewsSetAside) {
+        ASSERT(_private->savedSubviews == nil);
+        _private->savedSubviews = _subviews;
+        _subviews = nil;
+    }
 }
 
 - (BOOL)isFlipped 
@@ -705,8 +717,5 @@
 - (void)dataSourceUpdated:(WebDataSource *)dataSource
 {
 }
-
-
-
 
 @end

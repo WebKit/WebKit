@@ -95,7 +95,7 @@ void KWQFileButton::clicked()
         didEndSelector:@selector(openPanelDidEnd:returnCode:contextInfo:)
         contextInfo:nil];
 
-    QPushButton::paint();
+    QPushButton::clicked();
 }
 
 QSize KWQFileButton::sizeHint() const 

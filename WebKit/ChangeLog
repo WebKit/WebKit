@@ -1,3 +1,22 @@
+2002-09-21  Darin Adler  <darin@apple.com>
+
+	WebKit part of the new approach to AppKit drawing control.
+	Works better than the previous try. Once we fix anomalies with focus rectangles
+	and a some remaining problems with subframes this should work perfectly.
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView isOpaque]): Return NO for frames other than the main frame.
+        (-[WebHTMLView drawRect:]): Restore the subviews that were set aside.
+        * WebView.subproj/WebHTMLViewPrivate.h: Add _isMainFrame. Add savedSubviews and subviewsSetAside.
+        * WebView.subproj/WebHTMLViewPrivate.m:
+        (-[WebHTMLView _isMainFrame]): Added.
+        (-[WebHTMLView _recursiveDisplayRectIfNeededIgnoringOpacity:isVisibleRect:rectIsVisibleRectForView:topView:]):
+	Added. If this is the main frame, get all the dirty rects from the subviews and then set
+	them aside so the AppKit machinery won't draw them.
+        (-[WebHTMLView _recursiveDisplayAllDirtyWithLockFocus:visRect:]): Ditto.
+        (-[NSView _web_propagateDirtyRectToAncestor]): Added. Propagates dirty rects the same
+	way that AppKit does, but always does it, ignoring the value of isOpaque.
+
 2002-09-20  Darin Adler  <darin@apple.com>
 
         * History.subproj/WebHistory.m: (-[WebHistory addEntryForURLString:]):

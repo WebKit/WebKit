@@ -47,12 +47,6 @@ void QLineEdit::setEchoMode(EchoMode mode)
     [textField setPasswordMode:mode == Password];
 }
 
-void QLineEdit::paint()
-{
-    KWQNSTextField *textField = (KWQNSTextField *)getView();
-    [textField paint];
-}
-
 void QLineEdit::setCursorPosition(int)
 {
     // Don't do anything here.

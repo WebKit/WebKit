@@ -123,17 +123,6 @@
     [secureField setFrame:NSInsetRect([self bounds], FOCUS_BORDER_SIZE, FOCUS_BORDER_SIZE)];
 }
 
-- (void)drawRect:(NSRect)rect;
-{
-}
-
--(void)paint
-{
-    [self lockFocus];
-    [super drawRect: [self bounds]];
-    [self unlockFocus];
-}
-
 - (void)setFrameSize:(NSSize)size
 {
     [super setFrameSize:size];
@@ -296,6 +285,10 @@
     }
     
     [super textDidEndEditing:notification];
+}
+
+- (void)display
+{
 }
 
 @end
@@ -469,6 +462,10 @@
     }
     
     [super textDidEndEditing:notification];
+}
+
+- (void)display
+{
 }
 
 @end

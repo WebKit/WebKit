@@ -37,20 +37,11 @@
 
 @end
 
-@interface KWQNSButton : NSButton
-{
-}
-
-- (void)paint;
-- (void)drawRect: (NSRect)rect;
-
-@end
-
 QButton::QButton()
     : m_clicked(this, SIGNAL(clicked()))
     , m_adapter([[KWQButtonAdapter alloc] initWithQButton:this])
 {
-    KWQNSButton *button = [[KWQNSButton alloc] init];
+    NSButton *button = [[NSButton alloc] init];
     
     [button setTarget:m_adapter];
     [button setAction:@selector(action:)];
@@ -69,12 +60,6 @@ QButton::~QButton()
     NSButton *button = (NSButton *)getView();
     [button setTarget:nil];
     [m_adapter release];
-}
-
-void QButton::paint()
-{
-    KWQNSButton* button = (KWQNSButton*)getView();
-    [button paint];
 }
 
 void QButton::setText(const QString &s)
@@ -108,19 +93,3 @@ void QButton::clicked()
 }
 
 @end
-
-@implementation KWQNSButton
-
-- (void)drawRect: (NSRect)rect
-{
-}
-
-- (void)paint
-{
-    [self lockFocus];
-    [super drawRect: [self bounds]];
-    [self unlockFocus];
-}
-
-@end
-

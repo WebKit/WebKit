@@ -1,3 +1,36 @@
+2002-09-21  Darin Adler  <darin@apple.com>
+
+	WebCore part of the new approach to AppKit drawing control.
+	Works better than the previous try. Once we fix anomalies with focus rectangles
+	and a minor problems with subframes this should work perfectly.
+
+        * kwq/qt/qwidget.h: The paint() method isn't virtual any more. Also remove flushDrawing().
+        * kwq/KWQWidget.mm: (QWidget::enableFlushDrawing): Do a flushWindowIfNeeded instead
+	of requiring a separate flushDrawing() call to do a flushWindow.
+        (QWidget::paint): Added. Calls displayRectIgnoringOpacity.
+
+        * kwq/qt/qbutton.h: Remove paint() override.
+        * kwq/KWQButton.mm: (QButton::QButton): No need for a subclass any more, so
+	drop KWQNSButton. Also remove paint().
+
+        * kwq/qt/qcombobox.h: Remove paint() override.
+        * kwq/KWQComboBox.mm: (QComboBox::QComboBox): No need for a subclass any more, so
+	drop KWQNSPopUpButton. Also remove paint() method.
+
+        * kwq/qt/qlineedit.h: Remove paint() override.
+        * kwq/KWQLineEdit.mm: Remove paint().
+
+        * kwq/KWQFileButton.mm: (KWQFileButton::clicked): Fix typo. Was calling paint
+	instead of clicked on the base class.
+
+        * kwq/KWQNSTextField.h: Remove paint method.
+        * kwq/KWQNSTextField.mm:
+        (-[KWQNSTextField display]): Add a display method that does nothing to work around
+	bug 2753974.
+        (-[KWQSecureTextField display]): Ditto.
+
+	* khtml/rendering/render_frames.cpp: (RenderFrameSet::userResize): Remove call to flushDrawing.
+
 2002-09-20  Richard Williamson   <rjw@apple.com>
 
         Don't modify selection if no appropriate DOM::Node under

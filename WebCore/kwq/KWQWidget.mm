@@ -372,30 +372,24 @@ void QWidget::unlockDrawingFocus()
     [getView() unlockFocus];
 }
 
-void QWidget::flushDrawing()
-{
-    [[getView() window] flushWindow];
-}
-
-void QWidget::enableFlushDrawing()
-{
-    [[getView() window] enableFlushWindow];
-}
-
-
 void QWidget::disableFlushDrawing()
 {
     [[getView() window] disableFlushWindow];
 }
 
-void QWidget::setDrawingAlpha(float alpha)
+void QWidget::enableFlushDrawing()
 {
-    CGContextRef cgContext;
-    cgContext = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
-    CGContextSetAlpha(cgContext, alpha);
+    [[getView() window] enableFlushWindow];
+    [[getView() window] flushWindowIfNeeded];
 }
 
-void QWidget::displayRect(int x, int y, int w, int h)
+void QWidget::setDrawingAlpha(float alpha)
 {
-    [getView() displayRect: NSMakeRect (x,y,w,h)];
+    CGContextSetAlpha((CGContextRef)[[NSGraphicsContext currentContext] graphicsPort], alpha);
+}
+
+void QWidget::paint()
+{
+    // FIXME: Should pass in a rectangle and display less.
+    [getView() displayRectIgnoringOpacity:[getView() bounds]];
 }
