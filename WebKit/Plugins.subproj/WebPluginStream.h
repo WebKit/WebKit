@@ -4,11 +4,12 @@
 */
 
 #import <Foundation/Foundation.h>
-#import <WebFoundation/WebFoundation.h>
 
-#import <WebKit/WebKit.h>
-#import <WebKit/WebPluginView.h>
 #import <WebKit/npapi.h>
+
+@class WebDataSource;
+@class WebResourceHandle;
+@class WebNetscapePluginView;
 
 @protocol WebDocumentRepresentation;
 
@@ -42,4 +43,5 @@
 
 - (void)startLoad;
 - (void)stop;
+
 @end

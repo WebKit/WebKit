@@ -577,7 +577,6 @@
     WebView *webView = (WebView *)[self _web_superviewOfClass:[WebView class]];
     webController = [[webView controller] retain];
     webFrame = 	    [[webController frameForView:webView] retain];
-    webDataSource = [[webFrame dataSource] retain];
     
     if(srcURL){
         stream = [[WebNetscapePluginStream alloc] initWithURL:srcURL pluginPointer:instance];
@@ -656,6 +655,9 @@
 - (void)setDataSource:(WebDataSource *)dataSource
 {
     WebNetscapePlugin *plugin;
+    
+    [webDataSource release];
+    webDataSource = [dataSource retain];
     
     mime = [[dataSource contentType] retain];
     plugin = [[WebNetscapePluginDatabase installedPlugins] pluginForMimeType:mime];

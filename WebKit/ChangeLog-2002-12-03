@@ -1,3 +1,16 @@
+2002-09-13  Darin Adler  <darin@apple.com>
+
+	Fix dataSource-related plugin crash.
+
+        * Plugins.subproj/WebPluginView.m:
+        (-[WebNetscapePluginView start]): Don't grab dataSource here.
+	It's too early.
+        (-[WebNetscapePluginView setDataSource:]): Grab it here.
+
+        * Plugins.subproj/WebPluginStream.h:
+        * Plugins.subproj/WebPluginStream.m:
+	Simplified includes and added asserts while debugging.
+
 2002-09-13  Richard Williamson (Home)  <rjw@apple.com>
 
         Changed drag hysteresis to 5 and disallow selection initiation within

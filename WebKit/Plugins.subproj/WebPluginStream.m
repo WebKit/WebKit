@@ -3,9 +3,10 @@
 	Copyright (c) 2002, Apple, Inc. All rights reserved.
 */
 
-#import <WebKit/npapi.h>
-#import <WebKit/WebLoadProgress.h>
 #import <WebKit/WebPluginStream.h>
+
+#import <WebKit/WebPluginView.h>
+#import <WebKit/WebLoadProgress.h>
 #import <WebKit/WebView.h>
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebDataSourcePrivate.h>
@@ -13,7 +14,9 @@
 #import <WebKit/WebKitLogging.h>
 
 #import <WebFoundation/WebAssertions.h>
+#import <WebFoundation/WebError.h>
 #import <WebFoundation/WebNSFileManagerExtras.h>
+#import <WebFoundation/WebResourceHandle.h>
 #import <WebFoundation/WebResourceRequest.h>
 #import <WebFoundation/WebResourceResponse.h>
 
@@ -93,6 +96,7 @@
 
 - (void)startLoad
 {
+    ASSERT([view webDataSource]);
     WebResourceRequest *request = [[WebResourceRequest alloc] initWithURL:URL];
     resource = [[WebResourceHandle alloc] initWithRequest:request client:self];
     [resource loadInBackground];
