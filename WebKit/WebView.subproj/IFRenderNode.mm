@@ -62,7 +62,6 @@
 {
     [name release];
     [children release];
-    
     [super dealloc];
 }
 

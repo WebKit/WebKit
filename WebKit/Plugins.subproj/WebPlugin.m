@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,7 +36,7 @@ TransitionVector tVectorForFunctionPointer(FunctionPointer);
 - (void)_getPluginInfoForResourceFile:(SInt16)resRef
 {
     Str255 theString;
-    char temp[255], description[255];
+    char temp[256], description[256];
     NSMutableArray *mime; // mime is an array containing the mime type, extension(s) and descriptions for that mime type.
     NSString *tempString;
     uint n, i;
@@ -45,8 +45,9 @@ TransitionVector tVectorForFunctionPointer(FunctionPointer);
     UseResFile(resRef);
     for(n=1, i=0; 1; n+=2, i++){
         GetIndString(theString, 128, n);
+        if (theString[0] == 0)
+            break;
         CopyPascalStringToC(theString, temp);
-        if(!strcmp(temp, "")) break;
         mime = [NSMutableArray arrayWithCapacity:3];
         [mimeTypes insertObject:mime atIndex:i];
         
@@ -105,7 +106,7 @@ TransitionVector tVectorForFunctionPointer(FunctionPointer);
             }
             
             resRef = FSOpenResFile(&fref, fsRdPerm);
-            if(resRef <= noErr){
+            if(resRef == -1) {
                 WEBKITDEBUG("IFPlugin: FSOpenResFile failed. Can't open resource file: %s, Error=%d\n", [pluginPath lossyCString], err);
                 return nil;
             }

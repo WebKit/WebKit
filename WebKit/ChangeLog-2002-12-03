@@ -1,3 +1,14 @@
+2002-07-01  Darin Adler  <darin@apple.com>
+
+        * Plugins.subproj/IFPlugin.m:
+        (-[IFPlugin _getPluginInfoForResourceFile:]): Fix off-by one error
+	that would cause a memory trasher if we had a 255-character string.
+
+        * WebView.subproj/IFHTMLView.mm:
+        * WebView.subproj/IFRenderNode.mm:
+	Touch these files so we don't have to do a full build of WebKit
+	for my WebCore changes.
+
 2002-07-01  Maciej Stachowiak  <mjs@apple.com>
 
         Build fixes (don't know why a plain build didn't catch these):

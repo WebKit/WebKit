@@ -1,3 +1,15 @@
+2002-07-01  Darin Adler  <darin@apple.com>
+
+        * khtml/css/cssparser.cpp:
+        * khtml/misc/htmlhashes.cpp:
+	Remove workaround for a PFE bug that no longer affects us.
+
+        * khtml/xml/dom_nodeimpl.h:
+        * khtml/xml/dom_nodeimpl.cpp:
+	Remove some unneeded APPLE_CHANGES.
+
+        * WebCore.exp: One less symbol to export.
+
 2002-06-29  Maciej Stachowiak  <mjs@apple.com>
 
         WebCore part of fix for:

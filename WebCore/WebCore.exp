@@ -21,7 +21,6 @@ __ZN8QPainterD1Ev
 __ZN9KHTMLView6layoutEv
 __ZN9QKeyEventC1EN6QEvent4TypeEiiiRK7QStringbt
 __ZNK3DOM8NodeImpl16recursive_toHTMLEb
-__ZNK3DOM8NodeImpl8rendererEv
 __ZNK3DOM9DOMString6stringEv
 __ZNK7QWidget7getViewEv
 __ZNK9KHTMLPart10xmlDocImplEv

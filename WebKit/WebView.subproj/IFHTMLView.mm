@@ -158,7 +158,7 @@
     KHTMLView *widget = _private->widget;
 
     if (widget && widget->part()->xmlDocImpl() && 
-        widget->part()->xmlDocImpl()->renderer()){
+        widget->part()->xmlDocImpl()->renderer()) {
         if (_private->needsToApplyStyles){
 #ifdef _KWQ_TIMING        
     double start = CFAbsoluteTimeGetCurrent();
@@ -186,7 +186,7 @@
     [[self window] _setShouldPostEventNotifications: YES];
 
     if (widget && widget->part()->xmlDocImpl() && 
-        widget->part()->xmlDocImpl()->renderer()){
+        widget->part()->xmlDocImpl()->renderer()) {
         if (_private->needsLayout){
  #ifdef _KWQ_TIMING        
     double start = CFAbsoluteTimeGetCurrent();
