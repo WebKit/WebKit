@@ -1786,11 +1786,15 @@ void DeleteSelectionCommand::moveNodesAfterNode()
         return;
 
     // Do the move.
+    NodeImpl *rootNode = refNode->rootEditableElement();
     while (node && node->isAncestor(startBlock)) {
         NodeImpl *moveNode = node;
         node = node->nextSibling();
         removeNode(moveNode);
-        insertNodeAfter(moveNode, refNode);
+        if (refNode == rootNode)
+            insertNodeAt(moveNode, refNode, 0);
+        else
+            insertNodeAfter(moveNode, refNode);
         refNode = moveNode;
     }
 

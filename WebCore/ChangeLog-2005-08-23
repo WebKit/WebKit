@@ -1,5 +1,17 @@
 2004-12-17  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by Hyatt
+
+        Fix for this bug:
+        
+        <rdar://problem/3890973> REGRESSION (Mail): Deleting reorders remaining text
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::DeleteSelectionCommand::moveNodesAfterNode): Added check to ensure that moving content will not
+        move it after the <body> element.
+
+2004-12-17  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by me
         
         Added new layout tests covering cases from recent bug fixes.
