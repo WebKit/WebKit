@@ -147,7 +147,7 @@ static NSNumber *IFURLFilePosixPermissions;
 
     filePath = [NSString stringWithFormat:@"%@/%@", path, [IFURLFileDatabase uniqueFilePathForKey:key]];
     
-    data = [[NSFileManager defaultManager] contentsAtPath:filePath];
+    data = [[NSData alloc] initWithContentsOfMappedFile:filePath];
 
     if (data) {
         unarchiver = [[NSUnarchiver alloc] initForReadingWithData:data];
@@ -159,6 +159,7 @@ static NSNumber *IFURLFilePosixPermissions;
             [result autorelease];
         }
         [unarchiver release];
+        [data release];
     }
 
     return result;
