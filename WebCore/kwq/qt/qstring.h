@@ -148,7 +148,7 @@ public:
 
     // static member functions -------------------------------------------------
 
-    static QString number(long, int base=10);
+    static QString number(int /* NOTE: base NOT used */ );
     static QString fromLatin1(const char *, int len=-1);
 #ifdef USING_BORROWED_KURL
     static QString fromLocal8Bit(const char *, int len=-1);
@@ -176,28 +176,23 @@ public:
 
     // member functions --------------------------------------------------------
 
+    uint length() const;
 
-#ifdef USING_BORROWED_KURL
-    QString copy() const;
-    ushort toUShort() const;
-    QChar at(uint) const;
-#endif
+    const QChar *unicode() const;
+    const char *latin1() const;
+    const char *ascii() const;
+    QCString utf8() const;
+    QCString local8Bit() const;
 
     bool isNull() const;
     bool isEmpty() const;
-    uint length() const;
+
+#ifdef USING_BORROWED_KURL
+    QChar at(uint) const;
+#endif
+
     bool startsWith(const QString &) const;
-
-    int toInt() const;
-    int toInt(bool *, int base=10) const;
-    uint toUInt(bool *ok=0, int base=10) const;
-    long toLong(bool *ok=0, int base=10) const;
-    float toFloat(bool *b=0) const;
-
-    QString &prepend(const QString &);
-    QString &append(const char *);
-    QString &append(const QString &);
-
+    int compare(const QString &) const;
     int contains(const char *, bool cs=TRUE) const;
     int contains(char) const;
     
@@ -208,41 +203,53 @@ public:
     int findRev(char, int index=0, bool cs=TRUE) const;
     int findRev(const char *, int index=0, bool cs=TRUE) const;
 
-    QString &remove(uint, uint);
-    QString &replace(const QRegExp &, const QString &);
-    QString &insert(uint, const QString &);
-    QString &insert(uint, QChar);
-    QString &insert(uint, char);
-    void truncate(uint pos);
-    void fill(QChar, int len=-1);
+#ifdef USING_BORROWED_KURL
+    ushort toUShort() const;
+#endif
+    int toInt(bool *ok=NULL, int base=10) const;
+    uint toUInt(bool *ok=NULL /* NOTE: base NOT used */ ) const;
+    long toLong(bool *ok=NULL, int base=10) const;
+    float toFloat(bool *ok=NULL) const;
 
-    QString arg(int a, int fieldwidth=0, int base=10) const;
-    QString arg(const QString &, int fieldwidth=0) const;
+    QString arg(const QString &, int padding=0) const;
+    QString arg(int, int padding=0 /* NOTE: base NOT used */ ) const;
 
     QString left(uint) const;
     QString right(uint) const;
     QString mid(int, int len=0xffffffff) const;
 
-    int compare(const QString &) const;
+#ifdef USING_BORROWED_KURL
+    QString copy() const;
+#endif
 
-    const char *latin1() const;
-    const char *ascii() const;
-    const QChar *unicode() const;
-    QCString utf8() const;
-    QCString local8Bit() const;
-    QString &setUnicode(const QChar *, uint);
-
-    QString &setNum(int, int base=10);
-    QString &sprintf(const char *, ...);
     QString lower() const;
     QString stripWhiteSpace() const;
     QString simplifyWhiteSpace() const;
+
+    QString &setUnicode(const QChar *, uint);
+    QString &setNum(int /* NOTE: base NOT used */ );
+    QString &sprintf(const char *, ...);
+
+    QString &prepend(const QString &);
+    QString &append(const char *);
+    QString &append(const QString &);
+
+    QString &remove(uint, uint);
+    QString &replace(const QRegExp &, const QString &);
+    QString &insert(uint, const QString &);
+    QString &insert(uint, QChar);
+    QString &insert(uint, char);
+
+    void truncate(uint pos);
+    void fill(QChar, int len=-1);
+
     void compose();
     QString visual(int index=0, int len=-1);
 
     // operators ---------------------------------------------------------------
 
     bool operator!() const;
+    operator QChar () const;
     operator const char *() const;
     QChar operator[](int) const;
     QString &operator+(char);
@@ -251,7 +258,6 @@ public:
     QString &operator+=(char);
     QString &operator+=(QChar);
     QString &operator+=(const QString &);
-    operator QChar () const;
 
     // data members ------------------------------------------------------------
 
@@ -271,8 +277,6 @@ public:
 
 // operators associated with QChar and QString =================================
 
-QString &operator+(const char *, const QString &);
-QString &operator+(QChar, const QString &);
 bool operator==(const QString &, QChar);
 bool operator==(const QString &, const QString &);
 bool operator==(const QString &, const char *);
@@ -282,6 +286,8 @@ bool operator!=(const QString &, const QString &);
 bool operator!=(const QString &, const char *);
 bool operator!=(const char *, const QString &);
 QString operator+(char, const QString &);
+QString operator+(const char *, const QString &);
+QString operator+(QChar, const QString &);
 
 
 // class QConstString ==========================================================

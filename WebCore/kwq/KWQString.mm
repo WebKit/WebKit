@@ -27,6 +27,7 @@
 
 // #include <Foundation/Foundation.h>
 #include <qstring.h>
+#include <stdio.h>
 
 #ifndef USING_BORROWED_QSTRING
 
@@ -34,8 +35,30 @@
 
 // constants -------------------------------------------------------------------
 
-const QChar QChar::null;
 const QString QString::null;
+
+// static member functions -----------------------------------------------------
+
+QString QString::number(int n)
+{
+    QString qs;
+    qs.setNum(n);
+    return qs;
+}
+
+QString QString::fromLatin1(const char *, int)
+{
+    // FIXME: not yet implemented
+    return QString();
+}
+
+#ifdef USING_BORROWED_KURL
+QString QString::fromLocal8Bit(const char *, int)
+{
+    // FIXME: not yet implemented
+    return QString();
+}
+#endif // USING_BORROWED_KURL
 
 // constructors, copy constructors, and destructors ----------------------------
 
@@ -48,7 +71,7 @@ QString::QString()
 
 QString::QString(QChar qc)
 {
-    s = CFStringCreateMutable(NULL, 0);
+    s = CFStringCreateMutable(kCFAllocatorDefault, 0);
     if (s) {
         CFStringAppendCharacters(s, &qc.c, 1);
     }
@@ -59,7 +82,7 @@ QString::QString(QChar qc)
 QString::QString(const QByteArray &qba)
 {
     if (qba.size() && *qba.data()) {
-        s = CFStringCreateMutable(NULL, 0);
+        s = CFStringCreateMutable(kCFAllocatorDefault, 0);
         if (s) {
             const int capacity = 64;
             UniChar buf[capacity];
@@ -86,7 +109,7 @@ QString::QString(const QByteArray &qba)
 QString::QString(const QChar *qcs, uint len)
 {
     if (qcs || len) {
-        s = CFStringCreateMutable(NULL, 0);
+        s = CFStringCreateMutable(kCFAllocatorDefault, 0);
         if (s) {
             CFStringAppendCharacters(s, &qcs->c, len);
         }
@@ -100,7 +123,7 @@ QString::QString(const QChar *qcs, uint len)
 QString::QString(const char *chs)
 {
     if (chs && *chs) {
-        s = CFStringCreateMutable(NULL, 0);
+        s = CFStringCreateMutable(kCFAllocatorDefault, 0);
         if (s) {
             // FIXME: is ISO Latin-1 the correct encoding?
             CFStringAppendCString(s, chs, kCFStringEncodingISOLatin1);
@@ -112,13 +135,13 @@ QString::QString(const char *chs)
     cacheType = CacheInvalid;
 }
 
-QString::QString(const QString &other)
+QString::QString(const QString &qs)
 {
     // shared copy
-    if (other.s) {
-        CFRetain(other.s);
+    if (qs.s) {
+        CFRetain(qs.s);
     }
-    s = other.s;
+    s = qs.s;
     cache = NULL;
     cacheType = CacheInvalid;
 }
@@ -129,7 +152,7 @@ QString::~QString()
         CFRelease(s);
     }
     if (cache) {
-        CFAllocatorDeallocate(CFAllocatorGetDefault(), cache);
+        CFAllocatorDeallocate(kCFAllocatorDefault, cache);
     }
 }
 
@@ -171,29 +194,6 @@ QString &QString::operator=(char ch)
 
 // member functions ------------------------------------------------------------
 
-#ifdef USING_BORROWED_KURL
-QString QString::copy() const
-{
-    // FIXME: not yet implemented
-    return *this;
-}
-ushort QString::toUShort() const
-{
-    // FIXME: not yet implemented
-    return 0;
-}
-QChar QString::at(uint) const
-{
-    // FIXME: not yet implemented
-    return QChar(0);
-}
-QString QString::fromLocal8Bit(const char *, int)
-{
-    // FIXME: not yet implemented
-    return QString();
-}
-#endif // USING_BORROWED_KURL
-
 uint QString::length() const
 {
     return s ? CFStringGetLength(s) : 0;
@@ -209,12 +209,12 @@ const QChar *QString::unicode() const
             // NSLog(@"CFStringGetCharactersPtr returned NULL!!!");
             if (cacheType != CacheUnicode) {
                 if (cache) {
-                    CFAllocatorDeallocate(CFAllocatorGetDefault(), cache);
+                    CFAllocatorDeallocate(kCFAllocatorDefault, cache);
                     cache = NULL;
                     cacheType = CacheInvalid;
                 }
                 if (!cache) {
-                    cache = CFAllocatorAllocate(CFAllocatorGetDefault(),
+                    cache = CFAllocatorAllocate(kCFAllocatorDefault,
                             len * sizeof (UniChar), 0);
                 }
                 if (cache) {
@@ -242,13 +242,13 @@ const char *QString::latin1() const
             // NSLog(@"CFStringGetCStringPtr returned NULL!!!");
             if (cacheType != CacheLatin1) {
                 if (cache) {
-                    CFAllocatorDeallocate(CFAllocatorGetDefault(), cache);
+                    CFAllocatorDeallocate(kCFAllocatorDefault, cache);
                     cache = NULL;
                     cacheType = CacheInvalid;
                 }
                 if (!cache) {
-                    cache = CFAllocatorAllocate(CFAllocatorGetDefault(),
-                            len + 1, 0);
+                    cache = CFAllocatorAllocate(kCFAllocatorDefault, len + 1,
+                            0);
                 }
                 if (cache) {
                     // FIXME: is ISO Latin-1 the correct encoding?
@@ -275,6 +275,18 @@ const char *QString::ascii() const
     return latin1(); 
 }
 
+QCString QString::utf8() const
+{
+    // FIXME: not yet implemented
+    return QCString();
+}
+
+QCString QString::local8Bit() const
+{
+    // FIXME: not yet implemented
+    return QCString();
+}
+
 bool QString::isNull() const
 {
     // NOTE: do NOT use "unicode() == NULL"
@@ -286,58 +298,24 @@ bool QString::isEmpty() const
     return length() == 0;
 }
 
+#ifdef USING_BORROWED_KURL
+QChar QString::at(uint) const
+{
+    // FIXME: not yet implemented
+    return QChar(0);
+}
+#endif // USING_BORROWED_KURL
+
 bool QString::startsWith(const QString &) const
 {
     // FIXME: not yet implemented
     return FALSE;
 }
 
-int QString::toInt() const
+int QString::compare(const QString &) const
 {
     // FIXME: not yet implemented
     return 0;
-}
-
-int QString::toInt(bool *, int) const
-{
-    // FIXME: not yet implemented
-    return 0;
-}
-
-uint QString::toUInt(bool *, int) const
-{
-    // FIXME: not yet implemented
-    return 0;
-}
-
-long QString::toLong(bool *, int) const
-{
-    // FIXME: not yet implemented
-    return 0;
-}
-
-float QString::toFloat(bool *) const
-{
-    // FIXME: not yet implemented
-    return 0.0f;
-}
-
-QString &QString::prepend(const QString &)
-{
-    // FIXME: not yet implemented
-    return *this;
-}
-
-QString &QString::append(const char *)
-{
-    // FIXME: not yet implemented
-    return *this;
-}
-
-QString &QString::append(const QString &)
-{
-    // FIXME: not yet implemented
-    return *this;
 }
 
 int QString::contains(const char *, bool) const
@@ -388,6 +366,307 @@ int QString::findRev(const char *, int, bool) const
     return 0;
 }
 
+#ifdef USING_BORROWED_KURL
+ushort QString::toUShort() const
+{
+    return toUInt();
+}
+#endif // USING_BORROWED_KURL
+
+int QString::toInt(bool *ok, int base) const
+{
+    return toLong(ok, base);
+}
+
+uint QString::toUInt(bool *ok) const
+{
+    uint n = 0;
+    bool valid = FALSE;
+    if (s) {
+        CFIndex len = CFStringGetLength(s);
+        if (len) {
+            CFStringInlineBuffer buf;
+            UniChar uc;
+            CFCharacterSetRef wscs =
+                CFCharacterSetGetPredefined(
+                        kCFCharacterSetWhitespaceAndNewline);
+            CFStringInitInlineBuffer(s, &buf, CFRangeMake(0, len));
+            CFIndex i;
+            for (i = 0; i < len; i++) {
+                uc = CFStringGetCharacterFromInlineBuffer(&buf, i);
+                if (!CFCharacterSetIsCharacterMember(wscs, uc)) {
+                    break;
+                }
+            }
+            while (i < len) {
+                uc = CFStringGetCharacterFromInlineBuffer(&buf, i);
+                if ((uc >= '0') && (uc <= '9')) {
+                    n += uc - '0';
+                } else {
+                    break;
+                }
+                valid = TRUE;
+                i++;
+            }
+            while (i < len) {
+                uc = CFStringGetCharacterFromInlineBuffer(&buf, i);
+                if (!CFCharacterSetIsCharacterMember(wscs, uc)) {
+                    valid = FALSE;
+                    break;
+                }
+                i++;
+            }
+        }
+    }
+    if (ok) {
+        *ok = valid;
+    }
+    return valid ? n : 0;
+}
+
+long QString::toLong(bool *ok, int base) const
+{
+    long n = 0;
+    bool valid = FALSE;
+    if (s) {
+        CFIndex len = CFStringGetLength(s);
+        if (len) {
+            CFStringInlineBuffer buf;
+            UniChar uc;
+            CFCharacterSetRef wscs =
+                CFCharacterSetGetPredefined(
+                        kCFCharacterSetWhitespaceAndNewline);
+            CFStringInitInlineBuffer(s, &buf, CFRangeMake(0, len));
+            CFIndex i;
+            for (i = 0; i < len; i++) {
+                uc = CFStringGetCharacterFromInlineBuffer(&buf, i);
+                if (!CFCharacterSetIsCharacterMember(wscs, uc)) {
+                    break;
+                }
+            }
+            bool neg = FALSE;
+            if (i < len) {
+                uc = CFStringGetCharacterFromInlineBuffer(&buf, i);
+                if (uc == '-') {
+                    i++;
+                    neg = TRUE;
+                } else if (uc == '+') {
+                    i++;
+                }
+            }
+            while (i < len) {
+                uc = CFStringGetCharacterFromInlineBuffer(&buf, i);
+                // NOTE: ignore anything other than base 10 and base 16
+                if ((uc >= '0') && (uc <= '9')) {
+                    n += uc - '0';
+                } else if (base == 16) {
+                    if ((uc >= 'A') && (uc <= 'F')) {
+                        n += 10 + (uc - 'A');
+                    } else if ((uc >= 'a') && (uc <= 'f')) {
+                        n += 10 + (uc - 'a');
+                    } else {
+                        break;
+                    }
+                } else {
+                    break;
+                }
+                valid = TRUE;
+                i++;
+            }
+            if (neg) {
+                n = -n;
+            }
+            while (i < len) {
+                uc = CFStringGetCharacterFromInlineBuffer(&buf, i);
+                if (!CFCharacterSetIsCharacterMember(wscs, uc)) {
+                    valid = FALSE;
+                    break;
+                }
+                i++;
+            }
+        }
+    }
+    if (ok) {
+        *ok = valid;
+    }
+    return valid ? n : 0;
+}
+
+float QString::toFloat(bool *ok) const
+{
+    float n;
+    if (s) {
+        n = CFStringGetDoubleValue(s);
+    } else {
+        n = 0.0;
+    }
+    if (ok) {
+        // NOTE: since CFStringGetDoubleValue returns 0.0 on error there is no
+        // way to know if "n" is valid in that case
+        if (n == 0.0) {
+            *ok = FALSE;
+        } else {
+            *ok = TRUE;
+        }
+    }
+    return n;
+}
+
+QString QString::arg(const QString &replacement, int padding) const
+{
+    QString modified(*this);
+    if (!modified.s) {
+        modified.s = CFStringCreateMutable(kCFAllocatorDefault, 0);
+    }
+    if (modified.s) {
+        CFIndex pos = 0;
+        CFIndex len = CFStringGetLength(modified.s);
+        if (len) {
+            UniChar found = 0;
+            CFStringInlineBuffer buf;
+            CFStringInitInlineBuffer(modified.s, &buf, CFRangeMake(0, len));
+            for (CFIndex i = 0; i < len; i++) {
+                UniChar uc = CFStringGetCharacterFromInlineBuffer(&buf, i);
+                if ((uc == '%') && ((i + 1) < len)) {
+                    UniChar uc2 = CFStringGetCharacterFromInlineBuffer(&buf,
+                            i + 1);
+                    if ((uc2 >= '0') && (uc2 <= '9')) {
+                        if (!found || (uc2 < found)) {
+                            found = uc2;
+                            pos = i;
+                        }
+                    }
+                }
+            }
+        }
+        CFIndex rlen;
+        if (pos) {
+            rlen = 2;
+        } else {
+            CFStringAppend(modified.s, CFSTR(" "));
+            pos = len + 1;
+            rlen = 0;
+        }
+        if (replacement.s) {
+            CFStringReplace(modified.s, CFRangeMake(pos, rlen), replacement.s);
+            if (padding) {
+                CFMutableStringRef p =
+                    CFStringCreateMutable(kCFAllocatorDefault, 0);
+                if (p) {
+                    CFIndex plen;
+                    if (padding < 0) {
+                        plen = -padding;
+                        pos += CFStringGetLength(replacement.s);
+                    } else {
+                        plen = padding;
+                    }
+                    CFStringPad(p, CFSTR(" "), plen, 0);
+                    CFStringInsert(modified.s, pos, p);
+                    CFRelease(p);
+                }
+            }
+        }
+    }
+    return modified;
+}
+
+QString QString::arg(int replacement, int padding) const
+{
+    return arg(number(replacement), padding);
+}
+
+QString QString::left(uint) const
+{
+    // FIXME: not yet implemented
+    return QString(*this);
+}
+
+QString QString::right(uint) const
+{
+    // FIXME: not yet implemented
+    return QString(*this);
+}
+
+QString QString::mid(int, int) const
+{
+    // FIXME: not yet implemented
+    return QString(*this);
+}
+
+#ifdef USING_BORROWED_KURL
+QString QString::copy() const
+{
+    // FIXME: not yet implemented
+    return QString(*this);
+}
+#endif // USING_BORROWED_KURL
+
+QString QString::lower() const
+{
+    // FIXME: not yet implemented
+    return QString(*this);
+}
+
+QString QString::stripWhiteSpace() const
+{
+    // FIXME: not yet implemented
+    return QString(*this);
+}
+
+QString QString::simplifyWhiteSpace() const
+{
+    // FIXME: not yet implemented
+    return QString(*this);
+}
+
+QString &QString::setUnicode(const QChar *, uint)
+{
+    // FIXME: not yet implemented
+    return *this;
+}
+
+QString &QString::setNum(int n)
+{
+    cacheType = CacheInvalid;
+    if (!s) {
+        s = CFStringCreateMutable(kCFAllocatorDefault, 0);
+    }
+    if (s) {
+        const int capacity = 64;
+        char buf[capacity];
+        buf[snprintf(buf, capacity - 1, "%d", n)] = '\0';
+        // NOTE: using private __CFStringMakeConstantString function instead of
+        // creating a temporary string with CFStringCreateWithCString
+        CFStringReplace(s, CFRangeMake(0, CFStringGetLength(s)),
+                __CFStringMakeConstantString(buf));
+    }
+    return *this;
+}
+
+QString &QString::sprintf(const char *, ...)
+{
+    // FIXME: not yet implemented
+    return *this;
+}
+
+QString &QString::prepend(const QString &)
+{
+    // FIXME: not yet implemented
+    return *this;
+}
+
+QString &QString::append(const char *)
+{
+    // FIXME: not yet implemented
+    return *this;
+}
+
+QString &QString::append(const QString &)
+{
+    // FIXME: not yet implemented
+    return *this;
+}
+
 QString &QString::remove(uint, uint)
 {
     // FIXME: not yet implemented
@@ -428,102 +707,12 @@ void QString::fill(QChar, int)
     // FIXME: not yet implemented
 }
 
-QString QString::arg(int, int, int) const
-{
-    // FIXME: not yet implemented
-    return QString(*this);
-}
-
-QString QString::arg(const QString &, int) const
-{
-    // FIXME: not yet implemented
-    return QString(*this);
-}
-
-QString QString::left(uint) const
-{
-    // FIXME: not yet implemented
-    return QString(*this);
-}
-
-QString QString::right(uint) const
-{
-    // FIXME: not yet implemented
-    return QString(*this);
-}
-
-QString QString::mid(int, int) const
-{
-    // FIXME: not yet implemented
-    return QString(*this);
-}
-
-int QString::compare(const QString &) const
-{
-    // FIXME: not yet implemented
-    return 0;
-}
-
-QString QString::fromLatin1(const char *, int)
-{
-    // FIXME: not yet implemented
-    return QString();
-}
-
-QCString QString::utf8() const
-{
-    // FIXME: not yet implemented
-    return QCString();
-}
-
-QCString QString::local8Bit() const
-{
-    // FIXME: not yet implemented
-    return QCString();
-}
-
-QString &QString::setUnicode(const QChar *, uint)
-{
-    // FIXME: not yet implemented
-    return *this;
-}
-
-QString &QString::setNum(int, int)
-{
-    // FIXME: not yet implemented
-    return *this;
-}
-
-QString &QString::sprintf(const char *, ...)
-{
-    // FIXME: not yet implemented
-    return *this;
-}
-
-QString QString::lower() const
-{
-    // FIXME: not yet implemented
-    return QString(*this);
-}
-
-QString QString::stripWhiteSpace() const
-{
-    // FIXME: not yet implemented
-    return QString(*this);
-}
-
-QString QString::simplifyWhiteSpace() const
-{
-    // FIXME: not yet implemented
-    return QString(*this);
-}
-
 void QString::compose()
 {
     // FIXME: not yet implemented
 }
 
-QString QString::visual(int index=0, int len=-1)
+QString QString::visual(int, int)
 {
     // FIXME: not yet implemented
     return *this;
@@ -534,6 +723,12 @@ QString QString::visual(int index=0, int len=-1)
 bool QString::operator!() const
 { 
     return isNull(); 
+}
+
+QString::operator QChar() const
+{
+    // FIXME: not yet implemented
+    return QChar();
 }
 
 QString::operator const char *() const
@@ -583,26 +778,8 @@ QString &QString::operator+=(const QString &)
     return *this;
 }
 
-QString::operator QChar() const
-{
-    // FIXME: not yet implemented
-    return QChar();
-}
-
 
 // operators associated with QChar and QString =================================
-
-/*
-QString &operator+(const char *, const QString &)
-{
-    // FIXME: not yet implemented
-}
-
-QString &operator+(QChar, const QString &)
-{
-    // FIXME: not yet implemented
-}
-*/
 
 bool operator==(const QString &, QChar)
 {
@@ -679,6 +856,18 @@ QString operator+(char, const QString &)
     return QString();
 }
 
+QString operator+(const char *, const QString &)
+{
+    // FIXME: not yet implemented
+    return QString();
+}
+
+QString operator+(QChar, const QString &)
+{
+    // FIXME: not yet implemented
+    return QString();
+}
+
 
 // class QConstString ==========================================================
 
@@ -689,8 +878,8 @@ QConstString::QConstString(QChar *qcs, uint len)
     if (qcs || len) {
         // NOTE: use instead of CFStringCreateWithCharactersNoCopy function to
         // guarantee backing store is not copied even though string is mutable
-        s = CFStringCreateMutableWithExternalCharactersNoCopy(NULL, &qcs->c,
-                len, len, kCFAllocatorNull);
+        s = CFStringCreateMutableWithExternalCharactersNoCopy(
+                kCFAllocatorDefault, &qcs->c, len, len, kCFAllocatorNull);
     } else {
         s = NULL;
     }
