@@ -189,6 +189,10 @@
     [[_private->controller locationChangeHandler] locationChangeStartedForDataSource:self];
 
     // Fire this guy up.
+    if (!_private->mainHandle) {
+        _private->mainHandleClient = [[WebMainResourceClient alloc] initWithDataSource: self];
+        _private->mainHandle = [[WebResourceHandle alloc] initWithClient:_private->mainHandleClient URL:_private->inputURL attributes:_private->attributes flags:_private->flags];
+    }
     [_private->mainHandle loadInBackground];
 }
 

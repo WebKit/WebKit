@@ -323,4 +323,14 @@
     return [[[[frame controller] mainFrame] webView] previousKeyView];
 }
 
+- (BOOL)defersLoading
+{
+    return [[frame controller] _defersCallbacks];
+}
+
+- (void)setDefersLoading:(BOOL)defers
+{
+    [[frame controller] _setDefersCallbacks:defers];
+}
+
 @end

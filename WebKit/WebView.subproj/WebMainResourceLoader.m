@@ -103,6 +103,7 @@
 
 - (NSString *)handleWillUseUserAgent:(WebResourceHandle *)handle forURL:(NSURL *)URL
 {
+    WEBKIT_ASSERT([dataSource controller]);
     return [[dataSource controller] userAgentForURL:URL];
 }
 
