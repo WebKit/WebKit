@@ -145,12 +145,14 @@ static void recursive(const DOM::Node &pNode, const DOM::Node &node)
 - (void)WCURLHandleResourceDidCancelLoading:(id)sender userData:(void *)userData
 {
     KWQDEBUGLEVEL1 (0x2000, "userData = 0x%08x\n", userData);
+    [sender autorelease];
 }
 
 - (void)WCURLHandleResourceDidFinishLoading:(id)sender userData:(void *)userData
 {
     KWQDEBUGLEVEL1 (0x2000, "userData = 0x%08x\n", userData);
     m_part->closeURL();
+    [sender autorelease];
 }
 
 - (void)WCURLHandle:(id)sender resourceDataDidBecomeAvailable:(NSData *)data userData:(void *)userData
@@ -165,6 +167,7 @@ static void recursive(const DOM::Node &pNode, const DOM::Node &node)
 - (void)WCURLHandle:(id)sender resourceDidFailLoadingWithResult:(int)result userData:(void *)userData
 {
     KWQDEBUGLEVEL2 (0x2000, "result = %d, userData = 0x%08x\n", result, userData);
+    [sender autorelease];
 }
 
 

@@ -971,6 +971,7 @@ typedef enum {
     KWQDEBUGLEVEL2 (0x2000, "dataSource = 0x%08x for URL %s\n", m_dataSource, job->url().url().latin1());
 
     [m_dataSource _removeURLHandle: job->handle()];
+    [sender autorelease];
 }
 
 - (void)WCURLHandleResourceDidFinishLoading:(id)sender userData:(void *)userData
@@ -990,6 +991,8 @@ typedef enum {
     loadProgress->totalToLoad = 0;
     loadProgress->bytesSoFar = 0;
     [controller receivedProgress: (IFLoadProgress *)loadProgress forResource: QSTRING_TO_NSSTRING(urlString) fromDataSource: m_dataSource];
+
+    [sender autorelease];
 }
 
 - (void)WCURLHandle:(id)sender resourceDataDidBecomeAvailable:(NSData *)data userData:(void *)userData
@@ -1016,6 +1019,7 @@ typedef enum {
     KWQDEBUGLEVEL2 (0x2000, "dataSource = 0x%08x for URL %s\n", m_dataSource, job->url().url().latin1());
 
     [m_dataSource _removeURLHandle: job->handle()];
+    [sender autorelease];
 }
 
 

@@ -1,3 +1,16 @@
+2002-02-22  Kenneth Kocienda  <kocienda@apple.com>
+
+	Sent handle an autorelease message.
+
+	* src/kwq/KWQKHTMLPart.mm: (-[KHTMLPartLoadClient
+	WCURLHandleResourceDidCancelLoading:userData:]), (-[KHTMLPartLoadClient
+	WCURLHandleResourceDidFinishLoading:userData:]), (-[KHTMLPartLoadClient
+	WCURLHandle:resourceDidFailLoadingWithResult:userData:]):
+	* src/kwq/KWQKloader.mm: (-[URLLoadClient
+	WCURLHandleResourceDidCancelLoading:userData:]), (-[URLLoadClient
+	WCURLHandleResourceDidFinishLoading:userData:]), (-[URLLoadClient
+	WCURLHandle:resourceDidFailLoadingWithResult:userData:]):
+
 2002-02-21  Maciej Stachowiak  <mjs@apple.com>
 
 	* src/kwq/KWQString.mm: (QString::fill): Fix a bug that was
