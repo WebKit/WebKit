@@ -1,5 +1,3 @@
 Makefile.in
 Makefile
-.DS_Store
-.deps
-Icon
+previous-clean-timestamp

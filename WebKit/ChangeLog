@@ -1,5 +1,13 @@
 2002-06-10  Darin Adler  <darin@apple.com>
 
+	* Makefile.am: Do a clean before building if the force-clean-timestamp file is
+	newer than the previous-clean-timestamp. Edit force-clean-timestamp (doesn't
+	matter what you change as long as you change it) to force a clean build in WebKit.
+	* force-clean-timestamp: Added.
+	* .cvsignore: Ignore previous-clean-timestamp.
+
+2002-06-10  Darin Adler  <darin@apple.com>
+
 	* WebCoreSupport.subproj/IFTextRenderer.h: Remove the flavor of
 	floatWidthForCharacters without the applyRounding boolean.
 
