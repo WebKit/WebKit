@@ -1,3 +1,59 @@
+2003-10-23  John Sullivan  <sullivan@apple.com>
+
+	- fixed 3459272 -- Can't set up keyboard loop inside a 
+	WebDocumentView without subclassing views
+	- fixed 3179062 -- can't tab back to address bar from image-only 
+	page
+	- fixed 3252009 -- tabbing from address bar to content area does 
+	not work with WebTextView
+	- fixed 3461398 -- Can't click on a standalone image to focus it 
+	(for later keyboard scrolling)
+
+	I redid the way WebView and WebFrameView splice themselves into
+	the keyview loop in a way very similar to what NSScrollView and
+	NSClipView do. This means that contained and sibling views won't 
+	need to do anything special to put themselves into the key loop.
+
+        Reviewed by Chris.
+
+        * WebView.subproj/WebFrameView.m:
+        (-[WebFrameView _scrollView]):
+	check for nil pointer before dereferencing; this can happen
+	during [super dealloc]'s keyview-loop-fixup code
+	(-[WebFrameView initWithFrame:]):
+	wire our nextKeyView link to the contained scrollview (so
+	previousKeyView will work correctly from scrollview)
+        (-[WebFrameView acceptsFirstResponder]):
+	return what the contained scrollview says
+        (-[WebFrameView becomeFirstResponder]):
+	in previous direction, use previousValidKeyView (follows normal
+	NSView keyview links); in forward direction, hand first
+	responder-ness to contained scrollview (which will in turn hand
+	it down to clipview, which will in turn hand it down to document)
+        (-[WebFrameView setNextKeyView:]):
+	wire up scrollview instead of self, if it exists
+
+        * WebView.subproj/WebImageView.m:
+        (-[WebImageView acceptsFirstResponder]):
+	overridden to return YES; this fixes 3461398 and puts the finishing
+	touches on 3179062
+
+        * WebView.subproj/WebView.m:
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+	wire our nextKeyView link to the contained webframeview (so
+	previousKeyView will work correctly from webframeview). Also,
+	if there's a nextKeyView already set (in a nib, e.g.), wire
+	it to our contained webframeview.
+        (-[WebView acceptsFirstResponder]):
+	return what the contained webframeview says
+        (-[WebView becomeFirstResponder]):
+	in previous direction, use previousValidKeyView (follows normal
+	NSView keyview links); in forward direction, hand first
+	responder-ness to contained webframeview (which will in turn hand
+	it down to scrollview, etc.)
+        (-[WebView setNextKeyView:]):
+	wire up webframeview instead of self, if it exists
+
 2003-10-22  Richard Williamson   <rjw@apple.com>
 
 	Match WebCore's notion of distributing linegap between top and bottom of 

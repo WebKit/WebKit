@@ -57,6 +57,12 @@
     return YES;
 }
 
+- (BOOL)acceptsFirstResponder
+{
+    // Being first responder is useful for scrolling from the keyboard at least.
+    return YES;
+}
+
 - (NSRect)drawingRect
 {
     NSSize imageSize = [[rep image] size];

@@ -1075,6 +1075,16 @@ NSMutableDictionary *countInvocations;
 
     _private->mainFrame = [[WebFrame alloc] initWithName: frameName webFrameView: wv  webView: self];
     [self setGroupName:groupName];
+    
+    // If there's already a next key view (e.g., from a nib), wire it up to our
+    // contained frame view. In any case, wire our next key view up to the our
+    // contained frame view. This works together with our becomeFirstResponder 
+    // and setNextKeyView overrides.
+    NSView *nextKeyView = [self nextKeyView];
+    if (nextKeyView != nil && nextKeyView != wv) {
+        [wv setNextKeyView:nextKeyView];
+    }
+    [super setNextKeyView:wv];
 
     ++WebViewCount;
 
@@ -1551,15 +1561,46 @@ NS_ENDHANDLER
 
 - (BOOL)acceptsFirstResponder
 {
-    return YES;
+    return [[[self mainFrame] frameView] acceptsFirstResponder];
 }
 
 - (BOOL)becomeFirstResponder
 {
-    if ([[self mainFrame] frameView]) {
-        [[self window] makeFirstResponder:[[self mainFrame] frameView]];
+    // This works together with setNextKeyView to splice the WebView into
+    // the key loop similar to the way NSScrollView does this. Note that
+    // WebFrameView has very similar code.
+    NSWindow *window = [self window];
+    WebFrameView *mainFrameView = [[self mainFrame] frameView];
+    
+    if ([window keyViewSelectionDirection] == NSSelectingPrevious) {
+        NSView *previousValidKeyView = [self previousValidKeyView];
+        if ((previousValidKeyView != self) && (previousValidKeyView != mainFrameView)) {
+            [window makeFirstResponder:previousValidKeyView];
+            return YES;
+        } else {
+            return NO;
+        }
     }
-    return YES;
+    
+    if ([mainFrameView acceptsFirstResponder]) {
+        [window makeFirstResponder:mainFrameView];
+        return YES;
+    } 
+    
+    return NO;
+}
+
+- (void)setNextKeyView:(NSView *)aView
+{
+    // This works together with becomeFirstResponder to splice the WebView into
+    // the key loop similar to the way NSScrollView does this. Note that
+    // WebFrameView has very similar code.
+    WebFrameView *mainFrameView = [[self mainFrame] frameView];
+    if (mainFrameView != nil) {
+        [mainFrameView setNextKeyView:aView];
+    } else {
+        [super setNextKeyView:aView];
+    }
 }
 
 // Return the frame holding first responder

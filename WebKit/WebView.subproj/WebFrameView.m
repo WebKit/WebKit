@@ -118,6 +118,11 @@ enum {
 
 - (NSScrollView *)_scrollView
 {
+    // this can be called by [super dealloc] when cleaning up the keyview loop,
+    // after _private has been nilled out.
+    if (_private == nil) {
+        return nil;
+    }
     return _private->frameScrollView;
 }
 
@@ -424,6 +429,10 @@ static NSMutableDictionary *viewTypes;
     [scrollView setHasHorizontalScroller: NO];
     [scrollView setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
     [self addSubview: scrollView];
+    // don't call our overridden version here; we need to make the standard NSView link between us
+    // and our subview so that previousKeyView and previousValidKeyView work as expected. This works
+    // together with our becomeFirstResponder and setNextKeyView overrides.
+    [super setNextKeyView:scrollView];
     
     ++WebFrameViewCount;
     
@@ -461,17 +470,45 @@ static NSMutableDictionary *viewTypes;
     return [[self _scrollView] documentView];
 }
 
--(BOOL)acceptsFirstResponder
+- (BOOL)acceptsFirstResponder
 {
-    return YES;
+    return [[self _scrollView] acceptsFirstResponder];
 }
 
 - (BOOL)becomeFirstResponder
 {
-    if ([self documentView]) {
-        [[self window] makeFirstResponder:[self documentView]];
+    // This works together with setNextKeyView to splice the WebFrameView into
+    // the key loop similar to the way NSScrollView does this. Note that
+    // WebView has very similar code.
+    NSWindow *window = [self window];    
+    if ([window keyViewSelectionDirection] == NSSelectingPrevious) {
+        NSView *previousValidKeyView = [self previousValidKeyView];
+        if ((previousValidKeyView != self) && (previousValidKeyView != [self _scrollView])) {
+            [window makeFirstResponder:previousValidKeyView];
+            return YES;
+        } else {
+            return NO;
+        }
     }
-    return YES;
+    
+    if ([[self _scrollView] acceptsFirstResponder]) {
+        [window makeFirstResponder:[self _scrollView]];
+        return YES;
+    } else {
+        return NO;
+    }
+}
+
+- (void)setNextKeyView:(NSView *)aView
+{
+    // This works together with becomeFirstResponder to splice the WebFrameView into
+    // the key loop similar to the way NSScrollView does this. Note that
+    // WebView has very similar code.
+    if ([self _scrollView] != nil) {
+        [[self _scrollView] setNextKeyView:aView];
+    } else {
+        [super setNextKeyView:aView];
+    }
 }
 
 - (BOOL)isOpaque
