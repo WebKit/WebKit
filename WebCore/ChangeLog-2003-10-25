@@ -1,3 +1,17 @@
+2002-10-10  Darin Adler  <darin@apple.com>
+
+	- fixed 3047782 -- Alexander rejects some color strings that other browsers accept
+
+        * khtml/misc/helper.cpp: (khtml::setNamedColor): Put some of the code from this
+	level that tries to accomodate bad colors in #if !APPLE_CHANGES, since we do most
+	of the smarts in KWQ.
+
+        * kwq/KWQColor.mm:
+        (hex2int): Tolerate non-hex digits, treating them as 0.
+        (decodeColorFromHexColorString): Trim any number of leading # characters, and trailing
+	" and ' characters. Handle strings of 4, 5, 7, 8, 10, and 11 hex digits, along with
+	the existing 3, 6, 9, and 12.
+
 2002-10-10  David Hyatt  <hyatt@apple.com>
 
 	Fix a subtle bug with layers.  When a parent is sorted with its

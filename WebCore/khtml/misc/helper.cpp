@@ -206,21 +206,11 @@ void khtml::setNamedColor(QColor &color, const QString &_name)
         return;
     }
 
+#if !APPLE_CHANGES
+
     // also recognize "color=ffffff"
     if (len == 6)
     {
-#ifdef APPLE_CHANGES
-        // recognize #12345 (duplicate the last character)
-        if(name[0] == '#') {
-            name += name.right(1);
-        }
-        else if ((!name[0].isLetter() && !name[0].isDigit())) {
-	    color = QColor();
-	    return;
-	}
-        color.setNamedColor(name);
-        return;
-#else /* APPLE_CHANGES not defined */
         bool ok;
         int val = name.toInt(&ok, 16);
         if(ok)
@@ -241,7 +231,6 @@ void khtml::setNamedColor(QColor &color, const QString &_name)
 	    color = QColor();
 	    return;
 	}
-#endif /* APPLE_CHANGES not defined */
     }
 
     // #fffffff as found on msdn.microsoft.com
@@ -249,6 +238,8 @@ void khtml::setNamedColor(QColor &color, const QString &_name)
     {
         name = name.left(7);
     }
+
+#endif
 
     if ( len > 4 && name[0].lower() == 'r' && name[1].lower() == 'g' &&
          name[2].lower() == 'b' && name[3] == '(' &&
