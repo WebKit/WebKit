@@ -69,8 +69,8 @@ NSSize WebIconLargeSize = {128, 128};
 #endif
         database = [[WebIconDatabase alloc] init];
 #if !LOG_DISABLED
-        Log(Timing, "initializing icon database with %d sites and %d icons took %f", 
-              [database->_private->URLToIconURL count], [database->_private->iconURLToURLs count], (CFAbsoluteTimeGetCurrent() - start));
+        LOG(Timing, "initializing icon database with %d sites and %d icons took %f", 
+            [database->_private->URLToIconURL count], [database->_private->iconURLToURLs count], (CFAbsoluteTimeGetCurrent() - start));
 #endif
     }
     return database;

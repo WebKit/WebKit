@@ -1,5 +1,12 @@
 2004-11-18  Chris Blumenberg  <cblu@apple.com>
 
+	Fixed development build failure.
+
+        * Misc.subproj/WebIconDatabase.m:
+        (+[WebIconDatabase sharedIconDatabase]): call LOG not Log
+
+2004-11-18  Chris Blumenberg  <cblu@apple.com>
+
 	<rdar://problem/3885708> save memory in icon DB by not using NSSets when holding 1 object
 	
         Reviewed by sullivan.
