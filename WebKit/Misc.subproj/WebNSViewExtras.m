@@ -5,7 +5,7 @@
 
 #import <WebKit/WebNSViewExtras.h>
 
-#import <WebKit/WebFrameViewInternal.h>
+#import <WebKit/WebFrameViewPrivate.h>
 #import <WebKit/WebImageRenderer.h>
 #import <WebKit/WebNSImageExtras.h>
 #import <WebKit/WebNSPasteboardExtras.h>
