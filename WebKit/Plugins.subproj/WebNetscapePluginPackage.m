@@ -339,7 +339,7 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
         bzero(&URLSpec, sizeof(URLSpec));
         URLSpec.launchFlags = kLSLaunchDefaults | kLSLaunchDontSwitch;
         URLSpec.appURL = appURL;
-        error = LSOpenFromURLSpec(&URLSpec, NULL);
+        LSOpenFromURLSpec(&URLSpec, NULL);
     }
 
     CFRelease(appURL);

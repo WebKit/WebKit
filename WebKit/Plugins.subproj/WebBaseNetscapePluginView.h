@@ -26,11 +26,16 @@
         
     NPP instance;
     NPWindow window;
+    NPWindow lastSetWindow;
     NP_Port nPort;
+    NP_Port lastSetPort;
     NPP_t instanceStruct;
 
     BOOL isStarted;
     BOOL inSetWindow;
+
+    int32 specifiedHeight;
+    int32 specifiedWidth;
             
     NSString *MIMEType;
     NSURL *baseURL;

@@ -188,8 +188,8 @@ typedef struct {
     
     window.x = (int32)boundsInWindow.origin.x; 
     window.y = (int32)boundsInWindow.origin.y;
-    window.width = (uint32)boundsInWindow.size.width;
-    window.height = (uint32)boundsInWindow.size.height;
+    window.width = NSWidth(boundsInWindow) > 0 ? NSWidth(boundsInWindow) : specifiedWidth;
+    window.height = NSHeight(boundsInWindow) > 0 ? NSHeight(boundsInWindow) : specifiedHeight;
 
     window.clipRect.top = (uint16)visibleRectInWindow.origin.y;
     window.clipRect.left = (uint16)visibleRectInWindow.origin.x;
@@ -617,6 +617,48 @@ typedef struct {
 
 #pragma mark WEB_NETSCAPE_PLUGIN
 
+- (BOOL)isNewWindowEqualToOldWindow
+{
+    if (window.x != lastSetWindow.x) {
+        return NO;
+    }
+    if (window.y != lastSetWindow.y) {
+        return NO;
+    }
+    if (window.width != lastSetWindow.width) {
+        return NO;
+    }
+    if (window.height != lastSetWindow.height) {
+        return NO;
+    }
+    if (window.clipRect.top != lastSetWindow.clipRect.top) {
+        return NO;
+    }
+    if (window.clipRect.left != lastSetWindow.clipRect.left) {
+        return NO;
+    }
+    if (window.clipRect.bottom  != lastSetWindow.clipRect.bottom ) {
+        return NO;
+    }
+    if (window.clipRect.right != lastSetWindow.clipRect.right) {
+        return NO;
+    }
+    if (window.type != lastSetWindow.type) {
+        return NO;
+    }
+    if (nPort.portx != lastSetPort.portx) {
+        return NO;
+    }
+    if (nPort.porty != lastSetPort.porty) {
+        return NO;
+    }
+    if (nPort.port != lastSetPort.port) {
+        return NO;
+    }
+    
+    return YES;
+}
+
 - (void)setWindow
 {
     if (!isStarted) {
@@ -624,18 +666,25 @@ typedef struct {
     }
     
     PortState portState = [self saveAndSetPortState];
-    
-    // Make sure we don't call NPP_HandleEvent while we're inside NPP_SetWindow.
-    // We probably don't want more general reentrancy protection; we are really
-    // protecting only against this one case, which actually comes up when
-    // you first install the SVG viewer plug-in.
-    NPError npErr;
-    ASSERT(!inSetWindow);
-    inSetWindow = YES;
-    npErr = NPP_SetWindow(instance, &window);
-    inSetWindow = NO;
-    LOG(Plugins, "NPP_SetWindow: %d, port=0x%08x, window.x:%d window.y:%d",
-        npErr, (int)nPort.port, (int)window.x, (int)window.y);
+
+    if (![self isNewWindowEqualToOldWindow]) {        
+        // Make sure we don't call NPP_HandleEvent while we're inside NPP_SetWindow.
+        // We probably don't want more general reentrancy protection; we are really
+        // protecting only against this one case, which actually comes up when
+        // you first install the SVG viewer plug-in.
+        NPError npErr;
+        ASSERT(!inSetWindow);
+        
+        inSetWindow = YES;
+        npErr = NPP_SetWindow(instance, &window);
+        inSetWindow = NO;
+
+        LOG(Plugins, "NPP_SetWindow: %d, port=0x%08x, window.x:%d window.y:%d",
+            npErr, (int)nPort.port, (int)window.x, (int)window.y);
+
+        lastSetWindow = window;
+        lastSetPort = nPort;
+    }
 
     [self restorePortState:portState];
 }
@@ -886,9 +935,16 @@ typedef struct {
     unsigned i;
     unsigned count = [keys count];
     for (i = 0; i < count; i++) {
-        cAttributes[argsCount] = strdup([[keys objectAtIndex:i] UTF8String]);
-        cValues[argsCount] = strdup([[values objectAtIndex:i] UTF8String]);
-        LOG(Plugins, "%@ = %@", [keys objectAtIndex:i], [values objectAtIndex:i]);
+        NSString *key = [keys objectAtIndex:i];
+        NSString *value = [values objectAtIndex:i];
+        if ([key _web_isCaseInsensitiveEqualToString:@"height"]) {
+            specifiedHeight = [value intValue];
+        } else if ([key _web_isCaseInsensitiveEqualToString:@"width"]) {
+            specifiedWidth = [value intValue];
+        }
+        cAttributes[argsCount] = strdup([key UTF8String]);
+        cValues[argsCount] = strdup([value UTF8String]);
+        LOG(Plugins, "%@ = %@", key, value);
         argsCount++;
     }
 }
