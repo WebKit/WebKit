@@ -23,15 +23,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <KWQPlugin.h>
+#include <WKPluginWidget.h>
+#include <WKPluginDatabase.h>
 #include <KWQView.h>
 #include <kwqdebug.h>
 
-KWQPlugin::KWQPlugin(QWidget *parent, WKPlugin *plugin, const QString &url, const QString &serviceType, const QStringList &args)
+WKPluginWidget::WKPluginWidget(QWidget *parent, const QString &url, const QString &serviceType, const QStringList &args)
 {
     NSMutableDictionary *arguments;
     NSString *arg;
     NSRange r1, r2, r3;
+    WKPlugin *plugin;
     uint i;
     
     arguments = [NSMutableDictionary dictionaryWithCapacity:10];
@@ -43,11 +45,14 @@ KWQPlugin::KWQPlugin(QWidget *parent, WKPlugin *plugin, const QString &url, cons
         r3.length = [arg length] - r2.location - 2; // don't include quotes
         [arguments setObject:[arg substringWithRange:r3] forKey:[arg substringToIndex:r1.location]];
     }
-    
-    setView([[[WKPluginView alloc] initWithFrame: NSMakeRect (0,0,0,0) widget: this plugin: plugin url:QSTRING_TO_NSSTRING(url) mime:QSTRING_TO_NSSTRING(serviceType) arguments:arguments] autorelease]);
+    plugin = [[WKPluginDatabase installedPlugins] getPluginForMimeType:QSTRING_TO_NSSTRING(serviceType)];
+    if(plugin == nil)
+        return;
+    [plugin load];
+    setView([[[WKPluginView alloc] initWithFrame:NSMakeRect(0,0,0,0) widget:this plugin:plugin url:QSTRING_TO_NSSTRING(url) mime:QSTRING_TO_NSSTRING(serviceType) arguments:arguments] autorelease]);
 }
 
-KWQPlugin::~KWQPlugin()
+WKPluginWidget::~WKPluginWidget()
 {
 
 }

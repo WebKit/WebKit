@@ -123,7 +123,7 @@ libkwq_o_SOURCES = \
 	WKPlugin.mm \
 	WKPluginView.mm \
 	WKPluginDatabase.mm \
-	KWQPlugin.mm \
+	WKPluginWidget.mm \
 	npapi.mm \
 	$(NULL)
 

@@ -52,9 +52,7 @@
 #import <WCURICache.h>
 #import <WCURICacheData.h>
 
-#import <WKPluginDatabase.h>
-#include <npapi.h>
-#include <KWQPlugin.h>
+#include <WKPluginWidget.h>
 #include <rendering/render_frames.h>
 
 #import <KWQView.h>
@@ -1396,18 +1394,12 @@ void KHTMLPart::urlSelected( const QString &url, int button, int state, const QS
 bool KHTMLPart::requestObject( khtml::RenderPart *frame, const QString &url, const QString &serviceType,
                     const QStringList &args)
 {
-    WKPlugin *plugin;
-    KWQPlugin *pluginWidget;
+    WKPluginWidget *pluginWidget;
     
     if(url.isEmpty() || serviceType.isEmpty()){
         return FALSE;
     }
-    plugin = [[WKPluginDatabase installedPlugins] getPluginForMimeType:QSTRING_TO_NSSTRING(serviceType)];
-    if(plugin == nil){
-        return FALSE;
-    }
-    [plugin load];
-    pluginWidget = new KWQPlugin(0, plugin, url, serviceType, args);
+    pluginWidget = new WKPluginWidget(0, url, serviceType, args);
     frame->setWidget(pluginWidget);
     return TRUE;
 }
