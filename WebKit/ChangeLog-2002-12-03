@@ -1,5 +1,14 @@
 2002-05-22  Chris Blumenberg  <cblu@apple.com>
 
+	Removed activate events as this was causing problems
+	for the QT plug-in.
+	
+	* Plugins.subproj/IFPluginView.mm:
+	(-[IFPluginView windowBecameKey:]):
+	(-[IFPluginView windowResignedKey:]):
+
+2002-05-22  Chris Blumenberg  <cblu@apple.com>
+
 	Fixed crasher caused by not retaining.
 	Fixed targeting bug.
 

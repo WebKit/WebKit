@@ -524,12 +524,12 @@ static char *newCString(NSString *string)
 
 -(void) windowBecameKey:(NSNotification *)notification
 {
-    [self sendActivateEvent:YES];
+    [self performSelector:@selector(sendUpdateEvent) withObject:nil afterDelay:.001];
 }
 
 -(void) windowResignedKey:(NSNotification *)notification
 {
-    [self sendActivateEvent:NO];
+    [self performSelector:@selector(sendUpdateEvent) withObject:nil afterDelay:.001];
 }
 
 - (void) windowWillClose:(NSNotification *)notification
