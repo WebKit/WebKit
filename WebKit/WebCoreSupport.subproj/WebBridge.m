@@ -55,6 +55,10 @@
 - (void)_cycleWindowsReversed:(BOOL)reversed;
 @end
 
+@interface NSView (AppKitSecretsWebBridgeKnowsAbout)
+- (NSView *)_findLastViewInKeyViewLoop;
+@end
+
 @implementation WebBridge
 
 - (id)initWithWebFrame:(WebFrame *)webFrame
@@ -515,26 +519,29 @@
     return [[_frame webView] userAgentForURL:URL];
 }
 
+- (BOOL)inNextKeyViewOutsideWebFrameViews
+{
+    return _inNextKeyViewOutsideWebFrameViews;
+}
+
 - (NSView *)nextKeyViewOutsideWebFrameViews
 {
+    _inNextKeyViewOutsideWebFrameViews = YES;
     WebView *webView = [_frame webView];
-    NSView *nextKeyView = [webView nextKeyView];
-    if (nextKeyView) {
-        return nextKeyView;
-    }
-    // Old way, here so we don't break early WebKit adopters, but could be removed later.
-    return [[[webView mainFrame] frameView] nextKeyView];
+    // Do not ask webView for its next key view, but rather, ask it for 
+    // the next key view of the last view in its key view loop.
+    // Doing so gives us the correct answer as calculated by AppKit, 
+    // and makes HTML views behave like other views.
+    NSView *nextKeyView = [[webView _findLastViewInKeyViewLoop] nextKeyView];
+    _inNextKeyViewOutsideWebFrameViews = NO;
+    return nextKeyView;
 }
 
 - (NSView *)previousKeyViewOutsideWebFrameViews
 {
     WebView *webView = [_frame webView];
     NSView *previousKeyView = [webView previousKeyView];
-    if (previousKeyView) {
-        return previousKeyView;
-    }
-    // Old way, here so we don't break early WebKit adopters, but could be removed later.
-    return [[[webView mainFrame] frameView] previousKeyView];
+    return previousKeyView;
 }
 
 - (BOOL)defersLoading

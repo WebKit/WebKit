@@ -1,3 +1,29 @@
+2003-09-25  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin
+
+        Fix for this bug:
+        
+        <rdar://problem/3341222>: WebView doesn't follow AppKit default nextKeyView pattern
+        
+        * WebCoreSupport.subproj/WebBridge.h: Added a variable to guard against recursion
+        in -[WebBridge inNextKeyViewOutsideWebFrameViews].
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge inNextKeyViewOutsideWebFrameViews]): Accessor for recursion guard.
+        (-[WebBridge nextKeyViewOutsideWebFrameViews]): Do not ask webView for its
+        next key view, but rather, ask it for the next key view of the last view in
+        its key view loop. This is what will get us to the next view outside of the
+        webView.
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView nextKeyView]): Ask AppKit, rather than khtml, for the next key
+        key view if -[WebBridge inNextKeyViewOutsideWebFrameViews] returns YES. Doing
+        so gives us the correct answer as calculated by AppKit, and makes HTML views
+        behave like other views. This check also heads off an infinite recursion 
+        through -[WebBridge nextKeyViewOutsideWebFrameViews].
+
+	Also did some cleanup of some code that was marked for removal "some day".
+	That "some day" is today.
+        
 2003-09-25  Darin Adler  <darin@apple.com>
 
         Reviewed by John.

@@ -741,7 +741,7 @@
 
 - (NSView *)nextKeyView
 {
-    return (_private && _private->inNextValidKeyView)
+    return (_private && _private->inNextValidKeyView && ![[self _bridge] inNextKeyViewOutsideWebFrameViews])
         ? [[self _bridge] nextKeyView]
         : [super nextKeyView];
 }
