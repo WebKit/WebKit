@@ -1,5 +1,10 @@
 2002-03-15  Darin Adler  <darin@apple.com>
 
+	* src/kwq/KWQFontMetrics.mm: (QFontMetrics::descent): Oops, removed a - sign
+	that I should have left in there.
+
+2002-03-15  Darin Adler  <darin@apple.com>
+
 	Some more optimizations. Carves another 6% or so off of NSView.html.
 
 	* src/kwq/KWQChar.mm: (QChar::QChar): Handle characters > 0x7F correctly.
@@ -24,10 +29,10 @@
 
 	* src/kwq/KWQFont.mm: (loadDefaultFont): New, used to load the default
 	font used for default-initialized QFont objects.
-	(QFont::_initializeWithFont): Don't recompute theh family name, point size, or
+	(QFont::_initializeWithFont): Don't recompute the family name, point size, or
 	traits.
 	(QFont::setFamily), (QFont::setPixelSizeFloat), (QFont::setWeight),
-	(QFont::setItalic),: autorelease the font, as we do in the destructor, since
+	(QFont::setItalic): autorelease the font, as we do in the destructor, since
 	someone could still be using the result of getFont.
 	(QFont::operator==): Add a comment about a problem with this function.
 
