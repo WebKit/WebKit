@@ -1,3 +1,10 @@
+2002-10-30  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: 3088122 - Assertion failure/crash closing window with QuickTime streaming in
+
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _setMainDocumentError:]): call receivedError on the representation.
+
 2002-10-30  Darin Adler  <darin@apple.com>
 
 	- fixed memory leaks in plugin package creation code

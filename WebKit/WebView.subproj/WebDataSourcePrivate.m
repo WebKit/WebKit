@@ -353,6 +353,8 @@
     [error retain];
     [_private->mainDocumentError release];
     _private->mainDocumentError = error;
+
+    [[self representation] receivedError:error withDataSource:self];
 }
 
 - (void)_clearErrors
