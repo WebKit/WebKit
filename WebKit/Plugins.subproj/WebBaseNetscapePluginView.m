@@ -143,7 +143,7 @@
     BOOL acceptedEvent;
     acceptedEvent = [self sendEvent:&event]; 
     
-    LOG(Plugins, "NPP_HandleEvent(activateEvent): %d  isActive: %d", acceptedEvent, (event.modifiers & activeFlag));
+    LOG(Plugins, "NPP_HandleEvent(activateEvent): %d  isActive: %d", acceptedEvent, activate);
 }
 
 - (BOOL)sendUpdateEvent
@@ -156,7 +156,7 @@
     event.message = (UInt32)windowRef;
 
     BOOL acceptedEvent = [self sendEvent:&event]; 
-    
+
     LOG(Plugins, "NPP_HandleEvent(updateEvt): %d", acceptedEvent);
     
     return acceptedEvent;
@@ -800,6 +800,7 @@
             [dataSource release];
         }
     }
+    
     return NPERR_NO_ERROR;
 }
 

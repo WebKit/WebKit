@@ -1,5 +1,16 @@
 2002-10-08  Chris Blumenberg  <cblu@apple.com>
 
+	Minor plug-in code clean-up.
+
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView sendActivateEvent:]):
+        (-[WebBaseNetscapePluginView sendUpdateEvent]):
+        (-[WebBaseNetscapePluginView loadRequest:inTarget:withNotifyData:]):
+        * Plugins.subproj/WebPluginStream.m:
+        (-[WebNetscapePluginStream receivedData:]):
+
+2002-10-08  Chris Blumenberg  <cblu@apple.com>
+
 	Partial fix for 2967073 - should open all TEXT type files, at least
 
         * WebView.subproj/WebControllerPrivate.m:

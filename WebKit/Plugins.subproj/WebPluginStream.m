@@ -125,21 +125,17 @@
         [URLString getCString:cURL];
 
         NSNumber *timeInterval = nil;
-        uint32 lastModified;
+        uint32 lastModified = 0;
         
         if ([response isKindOfClass:[WebHTTPResourceResponse class]]) {
             timeInterval = [[(WebHTTPResourceResponse *)response headers] objectForKey:@"Last-Modified"];
-        }
-
-        if(timeInterval){
-            NSTimeInterval lastModifiedInterval = [[NSDate dateWithTimeIntervalSinceReferenceDate:[timeInterval doubleValue]] timeIntervalSince1970];
-            if(lastModifiedInterval < 0){
-                lastModified = 0;
-            }else{
-                lastModified = (uint32)lastModifiedInterval;
+            if(timeInterval){
+                NSTimeInterval lastModifiedInterval;
+                lastModifiedInterval = [[NSDate dateWithTimeIntervalSinceReferenceDate:[timeInterval doubleValue]] timeIntervalSince1970];
+                if(lastModifiedInterval > 0){
+                    lastModified = (uint32)lastModifiedInterval;
+                }
             }
-        }else{
-            lastModified = 0;
         }
         
         npStream.ndata = self;
