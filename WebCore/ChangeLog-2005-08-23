@@ -1,3 +1,45 @@
+2005-03-15  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by John.
+
+	<rdar://problem/4053266> Pressing return a few times right after a link makes the new blank lines part of the link
+	
+        * khtml/editing/htmlediting.cpp:
+	(khtml::InsertLineBreakCommand::doApply): Use
+	positionOutsideContainingSpecialElement in the right two places.
+        (khtml::InsertParagraphSeparatorCommand::doApply): Ditto.
+
+	- move all these helper functions higher in the file
+	
+        * khtml/editing/htmlediting.cpp:
+        (khtml::isSpecialElement):
+        (khtml::isFirstVisiblePositionInSpecialElement):
+        (khtml::positionBeforeNode):
+        (khtml::positionBeforeContainingSpecialElement):
+        (khtml::maxRangeOffset):
+        (khtml::isLastVisiblePositionInSpecialElement):
+        (khtml::positionAfterNode):
+        (khtml::positionAfterContainingSpecialElement):
+        (khtml::positionOutsideContainingSpecialElement):
+
+2005-03-14  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Ken.
+
+	<rdar://problem/4049925> Pasting right after a link makes pasted content part of the link (without visible style change)
+        
+        * khtml/editing/htmlediting.cpp:
+        (khtml::positionOutsideContainingSpecialElement): made a helper
+	function that computes a position outside the outermost containing
+	special element if the passed in position is right at the start or
+	end of it
+        (khtml::InsertTextCommand::prepareForTextInsertion): use new helper here
+        (khtml::ReplaceSelectionCommand::doApply): use it here too: this is the fix
+        (khtml::positionBeforeNode): made static
+        (khtml::positionBeforeContainingSpecialElement): made static
+        (khtml::positionAfterNode): made static
+        (khtml::positionAfterContainingSpecialElement): made static
+
 2005-03-15  Richard Williamson   <rjw@apple.com>
 
 	Fixed <rdar://problem/4053658> Crash getting direction at maps.google.com
@@ -26,6 +68,7 @@
         * khtml/xml/dom_docimpl.cpp:
         (DocumentImpl::detach): Took out the call to removeAllEventListenersFromAllNodes(). If we remove all event listeners here then when KHTMLPart::closeURL() checks for even listeners, it will never have any because they'll already be gone. 
 
+>>>>>>> 1.4064
 2005-03-15  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Vicki
