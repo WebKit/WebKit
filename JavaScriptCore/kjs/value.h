@@ -25,6 +25,8 @@
 #ifndef _KJS_VALUE_H_
 #define _KJS_VALUE_H_
 
+#define TEST_CONSERVATIVE_GC 0
+
 #ifndef NDEBUG // protection against problems if committing with KJS_VERBOSE on
 
 // Uncomment this to enable very verbose output from KJS
@@ -148,11 +150,18 @@ namespace KJS {
       VI_MARKED = 1,
       VI_GCALLOWED = 2,
       VI_CREATED = 4
+#if TEST_CONSERVATIVE_GC
+      , VI_CONSERVATIVE_MARKED = 8
+#endif
     }; // VI means VALUEIMPL
 
     // Give a compile time error if we try to copy one of these.
     ValueImp(const ValueImp&);
     ValueImp& operator=(const ValueImp&);
+
+#if TEST_CONSERVATIVE_GC
+    static void useConservativeMark(bool);
+#endif
   };
 
   /**

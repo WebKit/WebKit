@@ -56,16 +56,44 @@ ValueImp::~ValueImp()
   //fprintf(stderr,"ValueImp::~ValueImp %p\n",(void*)this);
 }
 
+#if TEST_CONSERVATIVE_GC
+static bool conservativeMark = false;
+
+void ValueImp::useConservativeMark(bool use)
+{
+  conservativeMark = use;
+}
+#endif
+
 void ValueImp::mark()
 {
   //fprintf(stderr,"ValueImp::mark %p\n",(void*)this);
+#if TEST_CONSERVATIVE_GC
+  if (conservativeMark) {
+    _flags |= VI_CONSERVATIVE_MARKED;
+  } else {
+    if (!(_flags | VI_CONSERVATIVE_MARKED)) {
+      printf("Conservative collector missed ValueImp 0x%x.\n", (int)this);
+    }
+    _flags |= VI_MARKED;
+  }
+#else
   _flags |= VI_MARKED;
+#endif
 }
 
 bool ValueImp::marked() const
 {
   // Simple numbers are always considered marked.
+#if TEST_CONSERVATIVE_GC
+  if (conservativeMark) {
+    return SimpleNumber::is(this) || (_flags & VI_CONSERVATIVE_MARKED);
+  } else {
+    return SimpleNumber::is(this) || (_flags & VI_MARKED);
+  }
+#else
   return SimpleNumber::is(this) || (_flags & VI_MARKED);
+#endif
 }
 
 void ValueImp::setGcAllowed()

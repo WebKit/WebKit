@@ -1,3 +1,37 @@
+2004-04-23  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	Implementation of conservative GC, based partly on code from
+	Darin. It's turned off for now, so it shouldn't have any effect on
+	the normal build.
+	
+        * JavaScriptCore.pbproj/project.pbxproj:
+        * kjs/collector.cpp:
+        (KJS::Collector::markStackObjectsConservatively):
+        (KJS::Collector::markProtectedObjects):
+        (KJS::Collector::collect):
+        * kjs/collector.h:
+        * kjs/protect.h:
+        (KJS::gcProtect):
+        (KJS::gcUnprotect):
+        * kjs/protected_values.cpp: Added.
+        (KJS::ProtectedValues::getProtectCount):
+        (KJS::ProtectedValues::increaseProtectCount):
+        (KJS::ProtectedValues::insert):
+        (KJS::ProtectedValues::decreaseProtectCount):
+        (KJS::ProtectedValues::expand):
+        (KJS::ProtectedValues::shrink):
+        (KJS::ProtectedValues::rehash):
+        (KJS::ProtectedValues::computeHash):
+        * kjs/protected_values.h: Added.
+        * kjs/value.cpp:
+        (ValueImp::useConservativeMark):
+        (ValueImp::mark):
+        (ValueImp::marked):
+        * kjs/value.h:
+        (KJS::ValueImp::):
+
 === Safari-138 ===
 
 2004-04-22  Richard Williamson   <rjw@apple.com>

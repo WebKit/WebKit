@@ -162,11 +162,100 @@ void* Collector::allocate(size_t s)
   return (void *)(newCell);
 }
 
+#if TEST_CONSERVATIVE_GC
+ 
+#define IS_POINTER_ALIGNED(p) (((int)(p) & (sizeof(char *) - 1)) == 0)
+
+void Collector::markStackObjectsConservatively(void *start, void *end)
+{
+  assert(((char *)end - (char *)start) < 0x1000000);
+  assert(IS_POINTER_ALIGNED(start));
+  assert(IS_POINTER_ALIGNED(end));
+  
+  char **p = (char **)start;
+  char **e = (char **)end;
+  
+  while (p != e) {
+    char *x = *p++;
+    if (IS_POINTER_ALIGNED(x)) {
+      bool good = false;
+      for (int block = 0; block < heap.usedBlocks; block++) {
+	size_t offset = x - (char *)heap.blocks[block];
+	const size_t lastCellOffset = sizeof(CollectorCell) * (CELLS_PER_BLOCK - 1);
+	if (offset <= lastCellOffset && offset % sizeof(CollectorCell) == 0) {
+	  good = true;
+	  break;
+	}
+      }
+      
+      if (!good) {
+	int n = heap.usedOversizeCells;
+	for (int i = 0; i != n; i++) {
+	  if (x == (char *)heap.oversizeCells[i]) {
+	    good = true;
+	    break;
+	  }
+	}
+      }
+      
+      if (good && ((CollectorCell *)x)->u.freeCell.zeroIfFree != 0) {
+	ValueImp *imp = (ValueImp *)x;
+	if (!imp->marked())
+	  imp->mark();
+      }
+    }
+  }
+}
+
+void Collector::markStackObjectsConservatively()
+{
+  jmp_buf registers;
+  setjmp(registers);
+
+  pthread_t thread = pthread_self();
+  void *stackBase = pthread_get_stackaddr_np(thread);
+  void *stackPointer;
+  asm("mr %0,r1" : "=r" (stackPointer));
+  markStackObjectsConservatively(stackPointer, stackBase);
+}
+
+void Collector::markProtectedObjects()
+{
+  for (int i = 0; i < ProtectedValues::_tableSize; i++) {
+    ValueImp *val = ProtectedValues::_table[i].key;
+    if (val && !val->marked()) {
+      val->mark();
+    }
+  }
+}
+
+#endif
+
 bool Collector::collect()
 {
   assert(Interpreter::lockCount() > 0);
 
   bool deleted = false;
+
+#if TEST_CONSERVATIVE_GC
+  // CONSERVATIVE MARK: mark the root set using conservative GC bit (will compare later)
+  ValueImp::useConservativeMark(true);
+
+  if (InterpreterImp::s_hook) {
+    InterpreterImp *scr = InterpreterImp::s_hook;
+    do {
+      //fprintf( stderr, "Collector marking interpreter %p\n",(void*)scr);
+      scr->mark();
+      scr = scr->next;
+    } while (scr != InterpreterImp::s_hook);
+  }
+
+  markStackObjectsConservatively();
+  markProtectedObjects();
+
+
+  ValueImp::useConservativeMark(false);
+#endif
 
   // MARK: first mark all referenced objects recursively
   // starting out from the set of root objects
@@ -244,7 +333,11 @@ bool Collector::collect()
 	  curBlock->freeList = (CollectorCell *)imp;
 
 	} else {
+#if TEST_CONSERVATIVE_GC
+	  imp->_flags &= ~(ValueImp::VI_MARKED | ValueImp::VI_CONSERVATIVE_MARKED);
+#else
 	  imp->_flags &= ~ValueImp::VI_MARKED;
+#endif
 	}
       } else {
 	minimumCellsToProcess++;

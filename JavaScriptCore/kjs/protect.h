@@ -27,11 +27,22 @@
 #include "object.h"
 #include "reference.h"
 #include "value.h"
+#include "protected_values.h"
 
 namespace KJS {
 
-    inline void gcProtect(ValueImp *) {}
-    inline void gcUnprotect(ValueImp *) {}
+    inline void gcProtect(ValueImp *val) 
+      { 
+#if TEST_CONSERVATIVE_GC
+	ProtectedValues::increaseProtectCount(val);
+#endif
+      }
+    inline void gcUnprotect(ValueImp *val)
+      { 
+#if TEST_CONSERVATIVE_GC
+	ProtectedValues::decreaseProtectCount(val);
+#endif
+      }
     
     class ProtectedValue : public Value {
     public:

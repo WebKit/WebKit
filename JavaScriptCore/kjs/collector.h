@@ -24,6 +24,8 @@
 #ifndef _KJSCOLLECTOR_H_
 #define _KJSCOLLECTOR_H_
 
+#include "value.h"
+
 #define KJS_MEM_LIMIT 500000
 
 namespace KJS {
@@ -68,6 +70,13 @@ namespace KJS {
     static const void *rootObjectClasses(); // actually returns CFSetRef
 #endif
   private:
+
+#if TEST_CONSERVATIVE_GC
+    static void markProtectedObjects();
+    static void markStackObjectsConservatively();
+    static void markStackObjectsConservatively(void *start, void *end);
+#endif
+
     static bool memoryFull;
   };
 
