@@ -487,11 +487,13 @@ void QPainter::drawPixmap( int x, int y, const QPixmap &pixmap,
     if (data->state.paintingDisabled)
         return;
         
+#if 0
     NSGraphicsContext *oldContext = 0;
     if (context) {
         oldContext = [NSGraphicsContext currentContext];
         // Somehow set up a NSGraphicsContext using the context parameter.
     }
+#endif
     
     if (sw == -1)
         sw = pixmap.width();
@@ -506,7 +508,11 @@ void QPainter::drawPixmap( int x, int y, const QPixmap &pixmap,
                                       fromRect:fromRect compositeOperator:(NSCompositingOperation)compositeOperator];
     KWQ_UNBLOCK_EXCEPTIONS;
 
-    [NSGraphicsContext setCurrentContext:oldContext];
+#if 0
+    if (context) {
+        [NSGraphicsContext setCurrentContext:oldContext];
+    }
+#endif
 }
 
 void QPainter::drawTiledPixmap( int x, int y, int w, int h,
