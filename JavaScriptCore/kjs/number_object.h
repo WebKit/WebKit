@@ -29,7 +29,7 @@ namespace KJS {
 
   class NumberInstanceImp : public ObjectImp {
   public:
-    NumberInstanceImp(const Object &proto);
+    NumberInstanceImp(ObjectImp *proto);
 
     virtual const ClassInfo *classInfo() const { return &info; }
     static const ClassInfo info;

@@ -1,3 +1,15 @@
+2003-01-16  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+	- rolled in a change from the KJS folks
+
+        * kjs/number_object.h: Use ObjectImp *, not Object, for the proto.
+        * kjs/number_object.cpp:
+        (NumberInstanceImp::NumberInstanceImp): Use ObjectImp *, not Object, for the proto.
+        (NumberPrototypeImp::NumberPrototypeImp): Pass ObjectImp.
+        (NumberObjectImp::construct): Use ObjectImp.
+
 === Safari-52 ===
 
 2003-01-14  Darin Adler  <darin@apple.com>
