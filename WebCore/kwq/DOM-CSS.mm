@@ -838,9 +838,7 @@ static inline int getPropertyID(NSString *string)
     bool important = strcasecmp(DOMString(priority), "important") == 0;
     int exceptionCode;
     [self _styleDeclarationImpl]->setProperty(propid, value, important, exceptionCode);
-    // Can't raise an exception here until we fix the code in Mail that is
-    // trying to set a property on a computed style.  See <rdar://problem/3886832>.
-    //raiseOnDOMError(exceptionCode);
+    raiseOnDOMError(exceptionCode);
 }
 
 - (unsigned long)length

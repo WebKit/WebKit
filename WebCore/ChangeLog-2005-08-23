@@ -1,3 +1,33 @@
+2005-01-20  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed <rdar://problem/3922980> Mail not crashing, just quitting itself suddenly in -[WebHTMLView(MailExtras) findString:options:]
+
+        * khtml/dom/dom2_range.cpp: (DOM::operator==): Handle null and detached ranges without raising exceptions.
+        The uncaught exception would make the entire program terminate.
+
+        - fixed <rdar://problem/3885729> attempting to modify a computed style does nothing, but should raise a DOM exception
+
+        * kwq/DOM-CSS.mm: (-[DOMCSSStyleDeclaration setProperty:::]): Uncommented this code which I had to disable
+        back in November because Mail was stumbling over it.
+
+        - fixed <rdar://problem/3943049> focus() called during onload handler results in square text field on <input type=search>        
+
+        * kwq/KWQLineEdit.mm: (QLineEdit::baselinePosition): Change computation so it will work even for fields
+        that position their text in a way that depends on vertical size. In the case of a search field, the text
+        is centered, so the old logic was broken.
+        * kwq/KWQTextField.mm: (-[KWQTextFieldController initWithTextField:QLineEdit:]): Set the frame size to
+        something large enough to accomodate the field editor. If we start the frame at size 0,0 we run into
+        AppKit trouble when it insets the frame to figure out the frame for the field editor. In the case of this
+        bug this happens because we become first responder before being sized and positioned by the HTML layout code.
+
+        - improved debugging output when using "po" from gdb with Objective-C DOM
+
+        * kwq/DOM.mm:
+        (-[DOMNode description]): Added. Includes node name ("<tr>") and node value (e.g., string for text node).
+        (-[DOMRange description]): Tweaked format.
+
 2005-01-19  Richard Williamson   <rjw@apple.com>
 
 	After further discussion with Real we have decided to NOT include the

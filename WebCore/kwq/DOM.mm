@@ -203,6 +203,21 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
     [super finalize];
 }
 
+- (NSString *)description
+{
+    if (!_internal) {
+        return [NSString stringWithFormat:@"<%@: null>",
+            [[self class] description], self];
+    }
+    NSString *value = [self nodeValue];
+    if (value) {
+        return [NSString stringWithFormat:@"<%@ [%@]: %p '%@'>",
+            [[self class] description], [self nodeName], _internal, value];
+    }
+    return [NSString stringWithFormat:@"<%@ [%@]: %p>",
+        [[self class] description], [self nodeName], _internal];
+}
+
 - (NSString *)nodeName
 {
     return [self _nodeImpl]->nodeName();
@@ -1747,8 +1762,8 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 - (NSString *)description
 {
     if (!_internal)
-        return @"DOMRange: null";
-    return [NSString stringWithFormat:@"DOMRange: %@ %ld %@ %ld",
+        return @"<DOMRange: null>";
+    return [NSString stringWithFormat:@"<DOMRange: %@ %ld %@ %ld>",
         [self startContainer], [self startOffset],
         [self endContainer], [self endOffset]];
 }

@@ -79,7 +79,7 @@
 - (id)initWithTextField:(NSTextField *)f QLineEdit:(QLineEdit *)w
 {
     [self init];
-    
+
     // This is initialization that's shared by all types of text fields.
     widget = w;
     field = f;
@@ -94,6 +94,11 @@
         [field setAction:@selector(action:)];
     }
     
+    // Set a non-empty size in case the field is made first responder before it
+    // is positioned and sized by KHTML code. This dodges bad behavior in AppKit
+    // if you try to create an editor for a 0-sized text field.
+    [field setFrameSize:NSMakeSize(100, 100)];
+
     return self;
 }
 

@@ -201,6 +201,8 @@ void QLineEdit::setEdited(bool flag)
     [m_controller setEdited:flag];
 }
 
+static const NSSize textFieldMargins = { 8, 6 };
+
 QSize QLineEdit::sizeForCharacterWidth(int numCharacters) const
 {
     // Figure out how big a text field needs to be for a given number of characters
@@ -212,7 +214,8 @@ QSize QLineEdit::sizeForCharacterWidth(int numCharacters) const
 
     // We empirically determined these dimensions.
     // It would be better to get this info from AppKit somehow, but bug 3711080 shows we can't yet.
-    NSSize size = { 8, 6 };
+    // Note: baselinePosition below also has the height computation.
+    NSSize size = textFieldMargins;
 
     KWQ_BLOCK_EXCEPTIONS;
 
@@ -244,10 +247,11 @@ int QLineEdit::baselinePosition(int height) const
     NSTextField *textField = (NSTextField *)getView();
 
     KWQ_BLOCK_EXCEPTIONS;
-    NSRect bounds = [textField bounds];
     NSFont *font = [textField font];
-    return static_cast<int>(ceilf([[textField cell] drawingRectForBounds:bounds].origin.y - bounds.origin.y
-        + [font defaultLineHeightForFont] + [font descender]));
+    float lineHeight = [font defaultLineHeightForFont];
+    NSRect bounds = NSMakeRect(0, 0, 100, textFieldMargins.height + lineHeight); // bounds width is arbitrary, height same as what sizeForCharacterWidth returns
+    NSRect drawingRect = [[textField cell] drawingRectForBounds:bounds];
+    return static_cast<int>(ceilf(drawingRect.origin.y - bounds.origin.y + lineHeight + [font descender]));
     KWQ_UNBLOCK_EXCEPTIONS;
 
     return 0;
