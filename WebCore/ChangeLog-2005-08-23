@@ -1,3 +1,13 @@
+2003-03-20  David Hyatt  <hyatt@apple.com>
+
+	Always do residual style fixups in all three Safari rendering
+	modes.
+	
+        Reviewed by darin
+
+        * khtml/html/htmlparser.cpp:
+        (KHTMLParser::popBlock):
+
 === Safari-68 ===
 
 2003-03-19  David Hyatt  <hyatt@apple.com>
