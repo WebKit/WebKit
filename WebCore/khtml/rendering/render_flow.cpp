@@ -2088,7 +2088,7 @@ void RenderFlow::addChildToFlow(RenderObject* newChild, RenderObject* beforeChil
             }
         }
     }
-    else if (!m_childrenInline)
+    else if (!m_childrenInline && !newChild->isSpecial())
     {
         // If we're inserting an inline child but all of our children are blocks, then we have to make sure
         // it is put into an anomyous block box. We try to use an existing anonymous box if possible, otherwise

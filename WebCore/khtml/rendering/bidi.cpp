@@ -264,7 +264,7 @@ inline QChar::Direction BidiIterator::direction() const
 
 static void appendRunsForObject(int start, int end, RenderObject* obj)
 {
-    if (start > end)
+    if (start > end || obj->isSpecial())
         return;
         
     BidiIterator* nextMidpoint = (smidpoints && smidpoints->count()) ? smidpoints->at(0) : 0;

@@ -1,3 +1,16 @@
+2003-01-20  David Hyatt  <hyatt@apple.com>
+
+	Gah. Fix positioned objects and floating objects so that they
+	don't append themselves to the list of runs in normal flow.
+	An astoundingly basic bug. :(
+	
+        Reviewed by john
+
+        * khtml/rendering/bidi.cpp:
+        (appendRunsForObject):
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::addChildToFlow):
+
 2003-01-19  David Hyatt  <hyatt@apple.com>
 
 	Fixes for 3150561 (blog articles vanish on stylesheet switch) and
