@@ -1,5 +1,15 @@
 2003-04-02  Richard Williamson  <rjw@apple.com>
 
+        Fix for 3200447.  Use class_pose to pose so as to avoid
+        indirect invocation of appkit class initializers.
+        
+        Reviewed by darin.
+
+        * WebView.subproj/WebHTMLViewPrivate.m:
+        (+[WebHTMLView load]):
+
+2003-04-02  Richard Williamson  <rjw@apple.com>
+
         Removed private headers.
         
         Reviewed by john.

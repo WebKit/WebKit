@@ -31,6 +31,9 @@
 #import <WebKit/WebViewPrivate.h>
 #import <WebKit/WebWindowOperationsDelegate.h>
 
+// Imported for direct call to class_poseAs.  Should be removed
+// if we ever drop posing hacks.
+#import <objc/objc-class.h>
 
 // These are a little larger than typical because dragging links is a fairly
 // advanced feature that can confuse non-power-users
@@ -107,9 +110,14 @@ static BOOL forceRealHitTest = NO;
 + (void)load
 {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-    [[WebNSView class] poseAsClass:[NSView class]];
-    [[WebNSTextView class] poseAsClass:[NSTextView class]];
-    [[WebNSWindow class] poseAsClass:[NSWindow class]];
+    
+    // Avoid indirect invocation of any class initializers.  This is a work-around to prevent
+    // the +initializers being called before the REQUIRED AppKit initialization
+    // that's done in +[NSApplication load].
+    class_poseAs(NSClassFromString(@"WebNSView"), NSClassFromString(@"NSView"));
+    class_poseAs(NSClassFromString(@"WebNSTextView"), NSClassFromString(@"NSTextView"));
+    class_poseAs(NSClassFromString(@"WebNSWindow"), NSClassFromString(@"NSWindow"));
+
     [pool release];
 }
 
