@@ -61,6 +61,7 @@ public:
 
     virtual DOMString namespaceURI() const;
     
+    virtual bool isFocusable() const;
     virtual bool isContentEditable() const;
     virtual DOMString contentEditable() const;
     virtual void setContentEditable(const DOMString &enabled);
@@ -76,11 +77,6 @@ public:
 protected:
     // for IMG, OBJECT and APPLET
     void addHTMLAlignment( DOMString alignment );
-
-private:
-    // FIXME: When the property for editing has been determined in CSS3, use that 
-    // instead of this member variable.
-    TristateFlag m_contentEditable;
 };
 
 class HTMLGenericElementImpl : public HTMLElementImpl

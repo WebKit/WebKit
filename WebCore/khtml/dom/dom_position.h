@@ -23,16 +23,41 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import "KWQAssertions.h"
+namespace DOM {
 
-#ifndef LOG_CHANNEL_PREFIX
-#define LOG_CHANNEL_PREFIX KWQLog
-#endif
+class NodeImpl;
 
-extern KWQLogChannel KWQLogNotYetImplemented;
+class DOMPosition
+{
+public:
+    DOMPosition() : m_node(0), m_offset(0) {};
+    DOMPosition(NodeImpl *node, long offset);
+    DOMPosition(const DOMPosition &);
+    ~DOMPosition();
 
-extern KWQLogChannel KWQLogFrames;
-extern KWQLogChannel KWQLogLoading;
-extern KWQLogChannel KWQLogPopupBlocking;
-extern KWQLogChannel KWQLogEvents;
-extern KWQLogChannel KWQLogEditing;
+    NodeImpl *node() const { return m_node; }
+    long offset() const { return m_offset; }
+
+    bool isEmpty() const { return m_node == 0; }
+
+    DOMPosition &operator=(const DOMPosition &o);
+    
+    friend bool operator==(const DOMPosition &a, const DOMPosition &b);
+    friend bool operator!=(const DOMPosition &a, const DOMPosition &b);
+    
+private:
+    NodeImpl *m_node;
+    long m_offset;
+};
+
+inline bool operator==(const DOMPosition &a, const DOMPosition &b)
+{
+    return a.node() == b.node() && a.offset() == b.offset();
+}
+
+inline bool operator!=(const DOMPosition &a, const DOMPosition &b)
+{
+    return !(a == b);
+}
+
+}; // namespace DOM

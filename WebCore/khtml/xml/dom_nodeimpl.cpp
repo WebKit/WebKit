@@ -171,6 +171,17 @@ NodeImpl *NodeImpl::appendChild( NodeImpl *, int &exceptioncode )
   return 0;
 }
 
+void NodeImpl::remove(int &exceptioncode)
+{
+    exceptioncode = 0;
+    if (!parentNode()) {
+        exceptioncode = DOMException::HIERARCHY_REQUEST_ERR;
+        return;
+    }
+    
+    parentNode()->removeChild(this, exceptioncode);
+}
+
 bool NodeImpl::hasChildNodes(  ) const
 {
   return false;
@@ -451,10 +462,9 @@ QString NodeImpl::recursive_toHTML(bool start) const
     return me;
 }
 
-void NodeImpl::getCursor(int offset, int &_x, int &_y, int &height)
+bool NodeImpl::isContentEditable() const
 {
-    if(m_render) m_render->cursorPos(offset, _x, _y, height);
-    else _x = _y = height = -1;
+    return m_parent ? m_parent->isContentEditable() : false;
 }
 
 QRect NodeImpl::getRect() const
@@ -1231,6 +1241,82 @@ RenderObject * NodeImpl::nextRenderer()
     return 0;
 }
 
+NodeImpl *NodeImpl::previousLeafNode() const
+{
+    const NodeImpl *r = this;
+    const NodeImpl *n = lastChild();
+    if (n) {
+        while (n) { 
+            r = n; 
+            n = n->lastChild(); 
+        }
+        return const_cast<NodeImpl *>(r);
+    }
+    n = r->previousSibling();
+    if (n) {
+        r = n;
+        while (n) { 
+            r = n; 
+            n = n->lastChild(); 
+        }
+        return const_cast<NodeImpl *>(r);
+    }    
+    n = r->parentNode();
+    while (n) {
+        r = n;
+        n = r->previousSibling();
+        if (n) {
+            r = n;
+            n = r->lastChild();
+            while (n) { 
+                r = n; 
+                n = n->lastChild(); 
+            }
+            return const_cast<NodeImpl *>(r);
+        }
+        n = r->parentNode();
+    }
+    return 0;
+}
+
+NodeImpl *NodeImpl::nextLeafNode() const
+{
+    const NodeImpl *r = this;
+    const NodeImpl *n = firstChild();
+    if (n) {
+        while (n) { 
+            r = n; 
+            n = n->firstChild(); 
+        }
+        return const_cast<NodeImpl *>(r);
+    }
+    n = r->nextSibling();
+    if (n) {
+        r = n;
+        while (n) { 
+            r = n; 
+            n = n->firstChild(); 
+        }
+        return const_cast<NodeImpl *>(r);
+    }
+    n = r->parentNode();
+    while (n) {
+        r = n;
+        n = r->nextSibling();
+        if (n) {
+            r = n;
+            n = r->firstChild();
+            while (n) { 
+                r = n; 
+                n = n->firstChild(); 
+            }
+            return const_cast<NodeImpl *>(r);
+        }
+        n = r->parentNode();
+    }
+    return 0;
+}
+
 void NodeImpl::createRendererIfNeeded()
 {
 #if APPLE_CHANGES
@@ -1281,6 +1367,16 @@ RenderObject *NodeImpl::createRenderer(RenderArena *arena, RenderStyle *style)
 {
     assert(false);
     return 0;
+}
+
+long NodeImpl::caretMinOffset() const
+{
+    return renderer() ? renderer()->caretMinOffset() : 0;
+}
+
+long NodeImpl::caretMaxOffset() const
+{
+    return renderer() ? renderer()->caretMaxOffset() : 1;
 }
 
 //-------------------------------------------------------------------------

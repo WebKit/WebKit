@@ -342,3 +342,50 @@ int RenderFlow::leftmostPosition(bool includeOverflowInterior, bool includeSelf)
     return left;
 }
 
+void RenderFlow::caretPos(int offset, bool override, int &_x, int &_y, int &width, int &height)
+{
+    if (firstChild() || style()->display() == INLINE) { 
+        // Do the normal calculation
+        RenderBox::caretPos(offset, override, _x, _y, width, height);
+        return;
+    }
+
+    // This is a special case:
+    // The element is not an inline element, and it's empty. So we have to
+    // calculate a fake position to indicate where objects are to be inserted.
+    
+    // EDIT FIXME: this does neither take into regard :first-line nor :first-letter
+    // However, as soon as some content is entered, the line boxes will be
+    // constructed properly and this kludge is not called any more. So only
+    // the caret size of an empty :first-line'd block is wrong, but I think we
+    // can live with that.
+    RenderStyle *currentStyle = style(true);
+    height = currentStyle->fontMetrics().height();
+    width = 1;
+
+    // EDIT FIXME: This needs to account for text direction
+    int w = this->width();
+    switch (currentStyle->textAlign()) {
+        case LEFT:
+        case KHTML_LEFT:
+        case TAAUTO:
+        case JUSTIFY:
+            _x = 0;
+            break;
+        case CENTER:
+        case KHTML_CENTER:
+            _x = w / 2;
+        break;
+        case RIGHT:
+        case KHTML_RIGHT:
+            _x = w;
+        break;
+    }
+    
+    _y = 0;
+    
+    int absx, absy;
+    absolutePosition(absx, absy, false);
+    _x += absx;
+    _y += absy;
+}

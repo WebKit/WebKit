@@ -94,6 +94,7 @@ public:
     virtual NodeImpl *replaceChild ( NodeImpl *newChild, NodeImpl *oldChild, int &exceptioncode );
     virtual NodeImpl *removeChild ( NodeImpl *oldChild, int &exceptioncode );
     virtual NodeImpl *appendChild ( NodeImpl *newChild, int &exceptioncode );
+    virtual void remove(int &exceptioncode);
     virtual bool hasChildNodes (  ) const;
     virtual NodeImpl *cloneNode ( bool deep ) = 0;
     virtual DOMString localName() const;
@@ -123,6 +124,24 @@ public:
 
     virtual void setFirstChild(NodeImpl *child);
     virtual void setLastChild(NodeImpl *child);
+
+    /** (Not part of the official DOM)
+     * Returns the next leaf node.
+     *
+     * Using this function delivers leaf nodes as if the whole DOM tree
+     * were a linear chain of its leaf nodes.
+     * @return next leaf node or 0 if there are no more.
+     */
+    NodeImpl *nextLeafNode() const;
+
+    /** (Not part of the official DOM)
+     * Returns the previous leaf node.
+     *
+     * Using this function delivers leaf nodes as if the whole DOM tree
+     * were a linear chain of its leaf nodes.
+     * @return previous leaf node or 0 if there are no more.
+     */
+    NodeImpl *previousLeafNode() const;
 
     // used by the parser. Doesn't do as many error checkings as
     // appendChild(), and returns the node into which will be parsed next.
@@ -212,7 +231,7 @@ public:
     QString recursive_toHTML(bool start = false) const;
 	QString recursive_toHTMLWithRange(bool start, const DOM::Range &range) const;
 
-    virtual void getCursor(int offset, int &_x, int &_y, int &height);
+    virtual bool isContentEditable() const;
     virtual QRect getRect() const;
 
     enum StyleChange { NoChange, NoInherit, Inherit, Detach, Force };
@@ -290,6 +309,10 @@ public:
     void checkAddChild(NodeImpl *newChild, int &exceptioncode);
     bool isAncestor( NodeImpl *other );
     virtual bool childAllowed( NodeImpl *newChild );
+
+    virtual long caretMinOffset() const;
+    virtual long caretMaxOffset() const;
+
 #ifndef NDEBUG
     virtual void dump(QTextStream *stream, QString ind = "") const;
 #endif

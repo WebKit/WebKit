@@ -37,6 +37,8 @@
 #include "render_block.h"
 
 #include "khtmlview.h"
+#include "khtml_part.h"
+#include "khtml_selection.h"
 #include "htmltags.h"
 
 using namespace DOM;
@@ -1242,6 +1244,22 @@ void RenderBlock::paintObject(QPainter *p, int _x, int _y,
     if (!inlineFlow && paintAction == PaintActionOutline && 
         style()->outlineWidth() && style()->visibility() == VISIBLE)
         paintOutline(p, _tx, _ty, width(), height(), style());
+
+    // 5. paint caret.
+    /*
+        If the caret's node's render object's containing block is this block,
+        and the paint action is PaintActionForeground,
+        then paint the caret.
+    */
+    if (paintAction == PaintActionForeground) {
+        const KHTMLSelection &s = document()->part()->getKHTMLSelection();
+        NodeImpl *baseNode = s.baseNode();
+        RenderObject *renderer = baseNode ? baseNode->renderer() : 0;
+        if (renderer && renderer->containingBlock() == this && baseNode->isContentEditable()) {
+            s.paint(p, QRect(_x, _y, _w, _h));
+        }
+    }
+    
 
 #ifdef BOX_DEBUG
     if ( style() && style()->visibility() == VISIBLE ) {

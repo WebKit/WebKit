@@ -123,6 +123,12 @@ public:
     virtual RenderObject *firstChild() const { return 0; }
     virtual RenderObject *lastChild() const { return 0; }
 
+    RenderObject *nextRenderer() const; 
+    RenderObject *previousRenderer() const; 
+
+    RenderObject *nextEditable() const; 
+    RenderObject *previousEditable() const; 
+    
     virtual RenderLayer* layer() const { return 0; }
     RenderLayer* enclosingLayer();
     void addLayers(RenderLayer* parentLayer, RenderObject* newObject);
@@ -236,6 +242,8 @@ public:
     virtual bool isTextArea() const { return false; }
     virtual bool isFrameSet() const { return false; }
     virtual bool isApplet() const { return false; }
+    
+    virtual bool isEditable() const;
 
     bool isHTMLMarquee() const;
     
@@ -655,7 +663,17 @@ public:
     virtual SelectionState selectionState() const { return SelectionNone;}
     virtual void setSelectionState(SelectionState) {}
 
-    virtual void cursorPos(int /*offset*/, int &/*_x*/, int &/*_y*/, int &/*height*/);
+    /**
+     * Returns the content coordinates of the caret within this render object.
+     * @param offset zero-based offset determining position within the render object.
+     * @param override @p true if input overrides existing characters,
+     * @p false if it inserts them. The width of the caret depends on this one.
+     * @param _x returns the left coordinate
+     * @param _y returns the top coordinate
+     * @param width returns the caret's width
+     * @param height returns the caret's height
+     */
+    virtual void caretPos(int offset, bool override, int &_x, int &_y, int &width, int &height);
 
     virtual int lowestPosition(bool includeOverflowInterior=true, bool includeSelf=true) const { return 0; }
     virtual int rightmostPosition(bool includeOverflowInterior=true, bool includeSelf=true) const { return 0; }
@@ -681,6 +699,9 @@ public:
 
     // Convenience, to avoid repeating the code to dig down to get this.
     QChar backslashAsCurrencySymbol() const;
+
+    virtual long caretMinOffset() const { return 0; }
+    virtual long caretMaxOffset() const { return 0; }
 
     virtual void setPixmap(const QPixmap&, const QRect&, CachedImage *);
 

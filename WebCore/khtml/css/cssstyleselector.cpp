@@ -3489,11 +3489,17 @@ void CSSStyleSelector::applyRule( int id, DOM::CSSValueImpl *value )
         }
         break;
     }
+    case CSS_PROP__KHTML_USER_MODIFY: {
+        HANDLE_INHERIT_AND_INITIAL(userModify, UserModify)      
+        if (!primitiveValue || !primitiveValue->getIdent())
+            return;
+        style->setUserModify(EUserModify(primitiveValue->getIdent() - CSS_VAL_READ_ONLY));
+        break;
+    }
     default:
         return;
     }
 }
-
 
 void CSSStyleSelector::checkForGenericFamilyChange(RenderStyle* aStyle, RenderStyle* aParentStyle)
 {

@@ -517,6 +517,13 @@ struct BindingURI {
 };
 #endif
 
+//------------------------------------------------
+// CSS3 User Modify Properties
+
+enum EUserModify {
+    READ_ONLY, READ_WRITE
+};
+
 // This struct is for rarely used non-inherited CSS3 properties.  By grouping them together,
 // we save space, and only allocate this object when someone actually uses
 // a non-inherited CSS3 property.
@@ -546,7 +553,7 @@ public:
 
 // This struct is for rarely used inherited CSS3 properties.  By grouping them together,
 // we save space, and only allocate this object when someone actually uses
-// a non-inherited CSS3 property.
+// an inherited CSS3 property.
 class StyleCSS3InheritedData : public Shared<StyleCSS3InheritedData>
 {
 public:
@@ -561,6 +568,7 @@ public:
     bool shadowDataEquivalent(const StyleCSS3InheritedData& o) const;
 
     ShadowData* textShadow;  // Our text shadow information for shadowed text drawing.
+    EUserModify userModify : 2; // Flag used for editing state
 
 private:
     StyleCSS3InheritedData &operator=(const StyleCSS3InheritedData &);
@@ -1048,6 +1056,7 @@ public:
     int marqueeLoopCount() { return css3NonInheritedData->marquee->loops; }
     EMarqueeBehavior marqueeBehavior() { return css3NonInheritedData->marquee->behavior; }
     EMarqueeDirection marqueeDirection() { return css3NonInheritedData->marquee->direction; }
+    EUserModify userModify() const { return css3InheritedData->userModify; }
     // End CSS3 Getters
 
 // attribute setter methods
@@ -1219,6 +1228,7 @@ public:
     void setMarqueeDirection(EMarqueeDirection d) { SET_VAR(css3NonInheritedData.access()->marquee, direction, d); }
     void setMarqueeBehavior(EMarqueeBehavior b) { SET_VAR(css3NonInheritedData.access()->marquee, behavior, b); }
     void setMarqueeLoopCount(int i) { SET_VAR(css3NonInheritedData.access()->marquee, loops, i); }
+    void setUserModify(EUserModify u) { SET_VAR(css3InheritedData, userModify, u); }
     // End CSS3 Setters
     
     QPalette palette() const { return visual->palette; }
@@ -1306,6 +1316,7 @@ public:
     static Length initialMarqueeIncrement() { return Length(6, Fixed); }
     static EMarqueeBehavior initialMarqueeBehavior() { return MSCROLL; }
     static EMarqueeDirection initialMarqueeDirection() { return MAUTO; }
+    static EUserModify initialUserModify() { return READ_ONLY; }
 };
 
 

@@ -36,6 +36,7 @@
 #include "misc/htmlhashes.h"
 #include "xml/dom_nodeimpl.h"
 #include "xml/dom_docimpl.h"
+#include "render_line.h"
 
 #include <khtmlview.h>
 #include <kdebug.h>
@@ -1371,6 +1372,42 @@ void RenderBox::calcAbsoluteVertical()
 
 }
 
+void RenderBox::caretPos(int offset, bool override, int &_x, int &_y, int &width, int &height)
+{
+    _x = -1;
+    
+    // propagate it downwards to its children, someone will feel responsible
+    RenderObject *child = firstChild();
+    if (child) 
+        child->caretPos(offset, override, _x, _y, width, height);
+    
+    // if not, use the extents of this box 
+    // offset 0 means left, offset 1 means right
+    if (_x == -1) {
+        _x = xPos() + (offset == 0 ? 0 : m_width);
+        _y = yPos();
+        height = m_height;
+        width = override && offset == 0 ? m_width : 1;
+        // If height of box is smaller than font height, use the latter one,
+        // otherwise the caret might become invisible.
+        // FIXME: ignoring :first-line, missing good reason to take care of
+        int fontHeight = style()->fontMetrics().height();
+        if (fontHeight > height)
+            height = fontHeight;
+        
+        int absx, absy;
+        RenderObject *cb = containingBlock();
+        if (cb && cb != this && cb->absolutePosition(absx,absy)) {
+            _x += absx;
+            _y += absy;
+        } 
+        else {
+            // we don't know our absolute position, and there is no point returning
+            // just a relative one
+            _x = _y = -1;
+        }
+    }
+}
 
 int RenderBox::lowestPosition(bool includeOverflowInterior, bool includeSelf) const
 {

@@ -518,6 +518,9 @@
 				BC745A1D05955F390058C893,
 				BCBDB03A0597B36E00B83B92,
 				BCBDB096059A28B100B83B92,
+				BEB1DD2805C197F800DD1F43,
+				BEB1DD3205C1980700DD1F43,
+				BEB1DD3E05C1982000DD1F43,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -788,6 +791,9 @@
 				BC745A1C05955F390058C893,
 				BCBDB0390597B36E00B83B92,
 				BCBDB095059A28B100B83B92,
+				BEB1DD2705C197F800DD1F43,
+				BEB1DD3105C1980700DD1F43,
+				BEB1DD3D05C1982000DD1F43,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2450,6 +2456,102 @@
 				);
 			};
 		};
+		BEB1DD0805C197DF00DD1F43 = {
+			children = (
+				BEB1DD2605C197F800DD1F43,
+				BEB1DD2505C197F800DD1F43,
+			);
+			isa = PBXGroup;
+			name = editing;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		BEB1DD2505C197F800DD1F43 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = htmlediting.cpp;
+			path = editing/htmlediting.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		BEB1DD2605C197F800DD1F43 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = htmlediting.h;
+			path = editing/htmlediting.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		BEB1DD2705C197F800DD1F43 = {
+			fileRef = BEB1DD2505C197F800DD1F43;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		BEB1DD2805C197F800DD1F43 = {
+			fileRef = BEB1DD2605C197F800DD1F43;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		BEB1DD2F05C1980700DD1F43 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = khtml_selection.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		BEB1DD3005C1980700DD1F43 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = khtml_selection.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		BEB1DD3105C1980700DD1F43 = {
+			fileRef = BEB1DD2F05C1980700DD1F43;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		BEB1DD3205C1980700DD1F43 = {
+			fileRef = BEB1DD3005C1980700DD1F43;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		BEB1DD3B05C1982000DD1F43 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = dom_position.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		BEB1DD3C05C1982000DD1F43 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = dom_position.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		BEB1DD3D05C1982000DD1F43 = {
+			fileRef = BEB1DD3B05C1982000DD1F43;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		BEB1DD3E05C1982000DD1F43 = {
+			fileRef = BEB1DD3C05C1982000DD1F43;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 //BE0
 //BE1
 //BE2
@@ -2683,6 +2785,7 @@
 				F523D18402DE42E8018635CA,
 				F523D1F302DE4324018635CA,
 				F523D23402DE436B018635CA,
+				BEB1DD0805C197DF00DD1F43,
 				F523D27702DE4398018635CA,
 				F523D29C02DE43D9018635CA,
 				F523D2F302DE443B018635CA,
@@ -2693,6 +2796,8 @@
 				F523D15402DE42AD018635CA,
 				F523D15602DE42AD018635CA,
 				F523D15302DE42AD018635CA,
+				BEB1DD2F05C1980700DD1F43,
+				BEB1DD3005C1980700DD1F43,
 				F523D15702DE42AD018635CA,
 				F523D15802DE42AD018635CA,
 			);
@@ -3714,6 +3819,8 @@
 				F523D19302DE4322018635CA,
 				F523D19402DE4322018635CA,
 				F523D19502DE4322018635CA,
+				BEB1DD3B05C1982000DD1F43,
+				BEB1DD3C05C1982000DD1F43,
 				F523D19602DE4322018635CA,
 				F523D19702DE4322018635CA,
 				F523D19802DE4322018635CA,

@@ -368,3 +368,8 @@ slide
 alternate
 unfurl
 
+#
+# CSS_PROP__KHTML_USER_MODIFY
+#
+read-only
+read-write

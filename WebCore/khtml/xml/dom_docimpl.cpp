@@ -51,6 +51,7 @@
 
 #include "khtmlview.h"
 #include "khtml_part.h"
+#include "khtml_selection.h"
 
 #include <kglobalsettings.h>
 #include <kstringhandler.h>
@@ -79,6 +80,7 @@ using XBL::XBLBindingManager;
 
 #if APPLE_CHANGES
 #include "KWQAccObjectCache.h"
+#include "KWQLogging.h"
 #endif
 
 using namespace DOM;
@@ -953,10 +955,9 @@ NodeIteratorImpl *DocumentImpl::createNodeIterator(NodeImpl *root, unsigned long
     return new NodeIteratorImpl(root,whatToShow,filter,entityReferenceExpansion);
 }
 
-TreeWalkerImpl *DocumentImpl::createTreeWalker(Node /*root*/, unsigned long /*whatToShow*/, NodeFilter &/*filter*/,
-                                bool /*entityReferenceExpansion*/)
+TreeWalkerImpl *DocumentImpl::createTreeWalker(const Node &root, unsigned long whatToShow, const NodeFilter &filter,
+                                bool entityReferenceExpansion)
 {
-    // ###
     return new TreeWalkerImpl;
 }
 
@@ -1188,6 +1189,15 @@ void DocumentImpl::setSelection(NodeImpl* s, int sp, NodeImpl* e, int ep)
 {
     if ( m_render )
         static_cast<RenderCanvas*>(m_render)->setSelection(s->renderer(),sp,e->renderer(),ep);
+}
+
+void DocumentImpl::setSelection(KHTMLSelection &s)
+{
+    if (m_render) {
+        RenderObject *startRenderer = s.startNode() ? s.startNode()->renderer() : 0;
+        RenderObject *endRenderer = s.endNode() ? s.endNode()->renderer() : 0;
+        static_cast<RenderCanvas*>(m_render)->setSelection(startRenderer, s.startOffset(), endRenderer, s.endOffset());
+    }
 }
 
 void DocumentImpl::clearSelection()

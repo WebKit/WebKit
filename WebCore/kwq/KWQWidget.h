@@ -134,6 +134,7 @@ public:
     void wheelEvent(QWheelEvent *) { }
     void keyPressEvent(QKeyEvent *) { }
     void keyReleaseEvent(QKeyEvent *) { }
+    void focusInEvent(QFocusEvent *) { }
     void focusOutEvent(QFocusEvent *) { }
 
     enum BackgroundMode { NoBackground };    

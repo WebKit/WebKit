@@ -74,6 +74,16 @@ void InlineBox::operator delete(void* ptr, size_t sz)
     *(size_t *)ptr = sz;
 }
 
+long InlineBox::caretMinOffset() const 
+{ 
+    return 0; 
+}
+
+long InlineBox::caretMaxOffset() const 
+{ 
+    return 1; 
+}
+
 int InlineFlowBox::marginLeft()
 {
     if (!includeLeftEdge())

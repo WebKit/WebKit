@@ -43,10 +43,13 @@
 #include "decoder.h"
 #endif
 
+#include "htmlediting.h"
+
 class QPaintDevice;
 class QPaintDeviceMetrics;
 class KHTMLView;
 class KHTMLPart;
+class KHTMLSelection;
 class Tokenizer;
 class XMLHandler;
 class RenderArena;
@@ -60,6 +63,7 @@ namespace khtml {
     class DocLoader;
     class CSSStyleSelectorList;
     class RenderImage;
+    class EditCommand;
 }
 
 #ifndef KHTML_NO_XBL
@@ -237,7 +241,7 @@ public:
     NodeIteratorImpl *createNodeIterator(NodeImpl *root, unsigned long whatToShow,
                                     NodeFilter &filter, bool entityReferenceExpansion, int &exceptioncode);
 
-    TreeWalkerImpl *createTreeWalker(Node root, unsigned long whatToShow, NodeFilter &filter,
+    TreeWalkerImpl *createTreeWalker(const Node &root, unsigned long whatToShow, const NodeFilter &filter,
                             bool entityReferenceExpansion);
 
     virtual void recalcStyle( StyleChange = NoChange );
@@ -261,6 +265,7 @@ public:
     void setVisuallyOrdered();
 
     void setSelection(NodeImpl* s, int sp, NodeImpl* e, int ep);
+    void setSelection(KHTMLSelection &);
     void clearSelection();
 
     void open();
@@ -414,7 +419,7 @@ public:
     bool hasWindowEventListener(int id);
 
     EventListener *createHTMLEventListener(QString code);
-
+    
     /**
      * Searches through the document, starting from fromNode, for the next selectable element that comes after fromNode.
      * The order followed is as specified in section 17.11.1 of the HTML4 spec, which is elements with tab indexes

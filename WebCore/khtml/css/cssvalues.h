@@ -261,7 +261,9 @@ DOM::DOMString getValueName(unsigned short id);
 #define CSS_VAL_SLIDE 250
 #define CSS_VAL_ALTERNATE 251
 #define CSS_VAL_UNFURL 252
+#define CSS_VAL_READ_ONLY 253
+#define CSS_VAL_READ_WRITE 254
 
-#define CSS_VAL_TOTAL 253
+#define CSS_VAL_TOTAL 255
 #endif
 

@@ -75,6 +75,9 @@ public:
     void paintDecoration( QPainter *pt, int _tx, int _ty, int decoration);
     void paintSelection(const Font *f, RenderText *text, QPainter *p, RenderStyle* style, int tx, int ty, int startPos, int endPos);
 
+    virtual long caretMinOffset() const;
+    virtual long caretMaxOffset() const;
+    
     // Return before, after (offset set to max), or inside the text, at @p offset
     FindSelectionResult checkSelectionPoint(int _x, int _y, int _tx, int _ty, const Font *f, RenderText *text, int & offset, short lineheight);
 
@@ -195,7 +198,7 @@ public:
 
     virtual SelectionState selectionState() const {return m_selectionState;}
     virtual void setSelectionState(SelectionState s) {m_selectionState = s; }
-    virtual void cursorPos(int offset, int &_x, int &_y, int &height);
+    virtual void caretPos(int offset, bool override, int &_x, int &_y, int &width, int &height);
     void posOfChar(int ch, int &x, int &y);
 
     virtual short marginLeft() const { return style()->marginLeft().minWidth(0); }
@@ -219,6 +222,12 @@ public:
     bool allAscii() const;
 #endif
 
+    virtual long caretMinOffset() const;
+    virtual long caretMaxOffset() const;
+    
+    bool precedesLineBreak() const;
+    bool followsLineBreak() const;
+            
 #if APPLE_CHANGES
 public:
 #endif

@@ -407,12 +407,6 @@ void Node::applyChanges()
     impl->recalcStyle( NodeImpl::Inherit );
 }
 
-void Node::getCursor(int offset, int &_x, int &_y, int &height)
-{
-    if (!impl) throw DOMException(DOMException::NOT_FOUND_ERR);
-    impl->getCursor(offset, _x, _y, height);
-}
-
 QRect Node::getRect()
 {
     if (!impl) throw DOMException(DOMException::NOT_FOUND_ERR);

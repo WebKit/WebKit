@@ -115,6 +115,8 @@ public:
     void relativePositionOffset(int &tx, int &ty);
 
     virtual RenderLayer* layer() const { return m_layer; }
+    
+    virtual void caretPos(int offset, bool override, int &_x, int &_y, int &width, int &height);
 
     virtual void paintBackgroundExtended(QPainter *p, const QColor &c, CachedImage *bg, int clipy, int cliph,
                                          int _tx, int _ty, int w, int height,

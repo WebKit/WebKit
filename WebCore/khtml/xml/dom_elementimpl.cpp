@@ -30,6 +30,9 @@
 #include "xml/dom2_eventsimpl.h"
 #include "xml/dom_elementimpl.h"
 
+#include "khtml_part.h"
+#include "khtml_selection.h"
+
 #include "html/dtd.h"
 #include "html/htmlparser.h"
 
@@ -352,6 +355,46 @@ void ElementImpl::createAttributeMap() const
 {
     namedAttrMap = new NamedAttrMapImpl(const_cast<ElementImpl*>(this));
     namedAttrMap->ref();
+}
+
+void ElementImpl::defaultEventHandler(EventImpl *evt)
+{
+    if (evt->id() == EventImpl::KEYPRESS_EVENT && isContentEditable()) {
+        KeyboardEventImpl *k = static_cast<KeyboardEventImpl *>(evt);
+        EditCommand *cmd = 0;
+        if (k->keyIdentifier() == "U+00007F" || 
+            k->keyIdentifier() == "U+000008" || 
+            k->keyIdentifier() == "ForwardDelete") {
+            cmd = new DeleteTextCommand(getDocument());
+        }
+        else if (k->keyIdentifier() == "Right") {
+            KHTMLPart *part = getDocument()->part();
+            if (part) {
+                part->getKHTMLSelection().alterSelection(KHTMLSelection::MOVE, KHTMLSelection::FORWARD, KHTMLSelection::CHARACTER);
+                evt->setDefaultHandled();
+            }
+        }
+        else if (k->keyIdentifier() == "Left") {
+            // EDIT FIXME: unimplemented
+        }
+        else if (k->keyIdentifier() == "Up") {
+            // EDIT FIXME: unimplemented
+        }
+        else if (k->keyIdentifier() == "Down") {
+            // EDIT FIXME: unimplemented
+        }
+        else {
+            QString text(k->qKeyEvent()->text());
+            cmd = new InputTextCommand(getDocument(), text);
+        }
+        if (cmd && cmd->apply()) {
+            evt->setDefaultHandled();
+            // EDIT FIXME: until undo is hooked up, the command has no place to go
+            // just delete
+            delete cmd;
+        }
+    }
+    NodeBaseImpl::defaultEventHandler(evt);
 }
 
 NamedAttrMapImpl* ElementImpl::defaultMap() const

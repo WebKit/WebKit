@@ -39,6 +39,7 @@ public:
     
     kdbgstream &operator<<(int) { return *this; }
     kdbgstream &operator<<(unsigned int) { return *this; }
+    kdbgstream &operator<<(long) { return *this; }
     kdbgstream &operator<<(double) { return *this; }
     kdbgstream &operator<<(const char *) { return *this; }
     kdbgstream &operator<<(const void *) { return *this; }

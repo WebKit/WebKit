@@ -25,6 +25,7 @@
 
 #include "rendering/render_object.h"
 #include "rendering/render_table.h"
+#include "rendering/render_text.h"
 #include "rendering/render_list.h"
 #include "rendering/render_canvas.h"
 #include "xml/dom_elementimpl.h"
@@ -220,6 +221,144 @@ void RenderObject::insertChildNode(RenderObject*, RenderObject*)
 {
     KHTMLAssert(0);
 }
+
+RenderObject *RenderObject::nextRenderer() const
+{
+    if (firstChild())
+        return firstChild();
+    else if (nextSibling())
+        return nextSibling();
+    else {
+        const RenderObject *r = this;
+        while (r && !r->nextSibling())
+            r = r->parent();
+        if (r)
+            return r->nextSibling();
+    }
+    return 0;
+}
+
+RenderObject *RenderObject::previousRenderer() const
+{
+    if (previousSibling()) {
+        RenderObject *r = previousSibling();
+        while (r->lastChild())
+            r = r->lastChild();
+        return r;
+    }
+    else if (parent()) {
+        return parent();
+    }
+    else {
+        return 0;
+    }
+}
+
+bool RenderObject::isEditable() const
+{
+    RenderText *textRenderer = 0;
+    if (isText()) {
+        textRenderer = static_cast<RenderText *>(const_cast<RenderObject *>(this));
+    }
+
+    return style()->visibility() == VISIBLE && 
+        element() && element()->isContentEditable() &&
+        (isReplaced() || (textRenderer && textRenderer->inlineTextBoxes().count() > 0));
+}
+
+RenderObject *RenderObject::nextEditable() const
+{
+    RenderObject *r = const_cast<RenderObject *>(this);
+    RenderObject *n = firstChild();
+    if (n) {
+        while (n) { 
+            r = n; 
+            n = n->firstChild(); 
+        }
+        if (r->isEditable())
+            return r;
+        else 
+            return r->nextEditable();
+    }
+    n = r->nextSibling();
+    if (n) {
+        r = n;
+        while (n) { 
+            r = n; 
+            n = n->firstChild(); 
+        }
+        if (r->isEditable())
+            return r;
+        else 
+            return r->nextEditable();
+    }
+    n = r->parent();
+    while (n) {
+        r = n;
+        n = r->nextSibling();
+        if (n) {
+            r = n;
+            n = r->firstChild();
+            while (n) { 
+                r = n; 
+                n = n->firstChild(); 
+            }
+            if (r->isEditable())
+                return r;
+            else 
+                return r->nextEditable();
+        }
+        n = r->parent();
+    }
+    return 0;
+}
+
+RenderObject *RenderObject::previousEditable() const
+{
+    RenderObject *r = const_cast<RenderObject *>(this);
+    RenderObject *n = firstChild();
+    if (n) {
+        while (n) { 
+            r = n; 
+            n = n->lastChild(); 
+        }
+        if (r->isEditable())
+            return r;
+        else 
+            return r->previousEditable();
+    }
+    n = r->previousSibling();
+    if (n) {
+        r = n;
+        while (n) { 
+            r = n; 
+            n = n->lastChild(); 
+        }
+        if (r->isEditable())
+            return r;
+        else 
+            return r->previousEditable();
+    }    
+    n = r->parent();
+    while (n) {
+        r = n;
+        n = r->previousSibling();
+        if (n) {
+            r = n;
+            n = r->lastChild();
+            while (n) { 
+                r = n; 
+                n = n->lastChild(); 
+            }
+            if (r->isEditable())
+                return r;
+            else 
+                return r->previousEditable();
+        }
+        n = r->parent();
+    }
+    return 0;
+} 
 
 static void addLayers(RenderObject* obj, RenderLayer* parentLayer, RenderObject*& newObject,
                       RenderLayer*& beforeChild)
@@ -1384,9 +1523,11 @@ bool RenderObject::absolutePosition(int &xPos, int &yPos, bool f)
     }
 }
 
-void RenderObject::cursorPos(int /*offset*/, int &_x, int &_y, int &height)
+void RenderObject::caretPos(int /*offset*/, bool /*override*/, int &_x, int &_y, int &width, int &height)
 {
     _x = _y = height = -1;
+    width = 1;	// the caret has a default width of one pixel. If you want
+    		// to check for validity, only test the x-coordinate for >= 0.
 }
 
 int RenderObject::paddingTop() const

@@ -64,6 +64,10 @@ public:
 
     DOMStringImpl *string() { return str; }
     virtual void checkCharDataOperation( const unsigned long offset, int &exceptioncode );
+
+    virtual long caretMinOffset() const;
+    virtual long caretMaxOffset() const;
+
 #ifndef NDEBUG
     virtual void dump(QTextStream *stream, QString ind = "") const;
 #endif

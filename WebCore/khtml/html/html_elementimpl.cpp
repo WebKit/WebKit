@@ -37,6 +37,7 @@
 
 #include "khtmlview.h"
 #include "khtml_part.h"
+#include "khtml_selection.h"
 
 #include "rendering/render_object.h"
 #include "rendering/render_replaced.h"
@@ -53,8 +54,7 @@ using namespace DOM;
 using namespace khtml;
 
 HTMLElementImpl::HTMLElementImpl(DocumentPtr *doc)
-    : ElementImpl(doc),
-      m_contentEditable(FlagNone)
+    : ElementImpl(doc)
 {
 }
 
@@ -131,11 +131,12 @@ void HTMLElementImpl::parseAttribute(AttributeImpl *attr)
         setChanged();
         break;
     case ATTR_CONTENTEDITABLE:
-    {
-        setContentEditable(attr->value());
-        setChanged();
+        if (attr->val()) {
+            setContentEditable(attr->value());
+        }
+        else
+            removeCSSProperty(CSS_PROP__KHTML_USER_MODIFY);
         break;
-    }
     case ATTR_STYLE:
         // ### we need to remove old style info in case there was any!
         // ### the inline sheet ay contain more than 1 property!
@@ -571,42 +572,40 @@ void HTMLElementImpl::addHTMLAlignment( DOMString alignment )
 	addCSSProperty( CSS_PROP_VERTICAL_ALIGN, propvalign );
 }
 
-bool HTMLElementImpl::isContentEditable() const {
-    if (m_contentEditable == FlagEnabled)
-        return true;
-    if (m_contentEditable == FlagDisabled)
-        return false;
+bool HTMLElementImpl::isFocusable() const
+{
+    return isContentEditable();
+}
 
-    NodeImpl *node = parentNode();
-    while (node && node->isHTMLElement()) {
-        HTMLElementImpl *element = static_cast<HTMLElementImpl *>(node);
-        if (element->m_contentEditable == FlagEnabled)
-            return true;
-        if (element->m_contentEditable == FlagDisabled)
-            return false;
-        node = node->parentNode();
-    }
-    return false;
+bool HTMLElementImpl::isContentEditable() const {
+    return contentEditable() == "true";
 }
 
 DOMString HTMLElementImpl::contentEditable() const {
-    if (m_contentEditable == FlagEnabled)
-        return "true";
-    if (m_contentEditable == FlagDisabled)
+    if (!renderer())
         return "false";
+    
+    switch (renderer()->style()->userModify()) {
+        case READ_WRITE:
+            return "true";
+        case READ_ONLY:
+            return "false";
+        default:
+            return "inherit";
+    }
     return "inherit";
 }
 
-void HTMLElementImpl::setContentEditable(const DOMString &enabled) {
-    if ( strcasecmp ( enabled, "true" ) == 0 )
-        m_contentEditable = FlagEnabled;
-    else if ( enabled.isEmpty() ) // we want the "true" attribute
-        setAttribute(ATTR_CONTENTEDITABLE, "true");
-    else if ( strcasecmp ( enabled, "false" ) == 0 )
-        m_contentEditable = FlagDisabled;
-    else if ( strcasecmp ( enabled, "inherit" ) == 0 ) {
-        m_contentEditable = FlagNone;
-    }
+void HTMLElementImpl::setContentEditable(const DOMString &enabled) 
+{
+    if (strcasecmp(enabled, "true") == 0 || enabled.isEmpty())
+        addCSSProperty(CSS_PROP__KHTML_USER_MODIFY, CSS_VAL_READ_WRITE);
+    else if (strcasecmp(enabled, "false") == 0)
+        addCSSProperty(CSS_PROP__KHTML_USER_MODIFY, CSS_VAL_READ_ONLY);
+    else if (strcasecmp(enabled, "inherit") == 0)
+        addCSSProperty(CSS_PROP__KHTML_USER_MODIFY, CSS_VAL_INHERIT);
+    else
+        removeCSSProperty(CSS_PROP__KHTML_USER_MODIFY);
 }
 
 void HTMLElementImpl::click()
@@ -640,8 +639,6 @@ DOMString HTMLElementImpl::toString() const
 
     return ElementImpl::toString();
 }
-
-
 
 // -------------------------------------------------------------------------
 HTMLGenericElementImpl::HTMLGenericElementImpl(DocumentPtr *doc, ushort i)

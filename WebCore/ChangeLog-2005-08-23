@@ -1,3 +1,17 @@
+2004-01-23  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+
+	Merged HTML editing progress to TOT from the branch
+	I have been maintaining.
+
+        * khtml/dom/dom_position.cpp: Added.
+        * khtml/dom/dom_position.h: Added.
+        * khtml/editing/htmlediting.cpp: Added.
+        * khtml/editing/htmlediting.h: Added.
+        * khtml/khtml_selection.cpp: Added.
+        * khtml/khtml_selection.h: Added.
+
 2004-01-22  David Hyatt  <hyatt@apple.com>
 
 	Fix a bug I accidentally introduced in static positioned elements.  Add more margin collapsing tests.

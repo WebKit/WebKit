@@ -113,6 +113,18 @@ bool RenderReplaced::canHaveChildren() const
     return false;
 }
 
+long RenderReplaced::caretMinOffset() const 
+{ 
+    return 0; 
+}
+
+// Returns 1 since a replaced element can have the caret positioned 
+// at its beginning (0), or at its end (1).
+long RenderReplaced::caretMaxOffset() const 
+{ 
+    return 1; 
+}
+
 // -----------------------------------------------------------------------------
 
 RenderWidget::RenderWidget(DOM::NodeImpl* node)

@@ -1052,7 +1052,6 @@ bool CSSParser::parseValue( int propId, bool important )
     case CSS_PROP__KHTML_BOX_ORDINAL_GROUP:
         valid_primitive = validUnit(value, FInteger|FNonNeg, true);
         break;
-    
     case CSS_PROP__KHTML_MARQUEE: {
         const int properties[5] = { CSS_PROP__KHTML_MARQUEE_DIRECTION, CSS_PROP__KHTML_MARQUEE_INCREMENT,
                                     CSS_PROP__KHTML_MARQUEE_REPETITION,
@@ -1088,6 +1087,10 @@ bool CSSParser::parseValue( int propId, bool important )
         else
             valid_primitive = validUnit(value, FTime|FInteger|FNonNeg, strict&(!nonCSSHint));
         break;
+    case CSS_PROP__KHTML_USER_MODIFY:	// read-only | read-write
+        if (id == CSS_VAL_READ_ONLY || id == CSS_VAL_READ_WRITE)
+            valid_primitive = true;
+            break;
     // End of CSS3 properties
         
 	/* shorthand properties */

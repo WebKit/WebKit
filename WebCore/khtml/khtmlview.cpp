@@ -26,21 +26,26 @@
 #include "khtmlview.h"
 
 #include "khtml_part.h"
+#include "khtml_selection.h"
 #include "khtml_events.h"
 
 #include "html/html_documentimpl.h"
 #include "html/html_inlineimpl.h"
 #include "html/html_formimpl.h"
+#include "rendering/render_arena.h"
 #include "rendering/render_object.h"
 #include "rendering/render_canvas.h"
 #include "rendering/render_style.h"
 #include "rendering/render_replaced.h"
+#include "rendering/render_line.h"
+#include "rendering/render_text.h"
 #include "xml/dom2_eventsimpl.h"
 #include "css/cssstyleselector.h"
 #include "misc/htmlhashes.h"
 #include "misc/helper.h"
 #include "khtml_settings.h"
 #include "khtml_printsettings.h"
+#include "khtmlpart_p.h"
 
 #include <kcursor.h>
 #include <ksimpleconfig.h>
@@ -79,6 +84,7 @@ protected:
     virtual void maybeTip(const QPoint &);
 
 private:
+
     KHTMLView *m_view;
     KHTMLViewPrivate* m_viewprivate;
 };
@@ -98,7 +104,7 @@ public:
         layoutTimerId = 0;
         complete = false;
         mousePressed = false;
-	tooltip = 0;
+        tooltip = 0;
 #ifdef INCREMENTAL_REPAINTING
         doFullRepaint = true;
 #endif
@@ -332,11 +338,10 @@ void KHTMLView::init()
 
 void KHTMLView::clear()
 {
-
-
 //    viewport()->erase();
 
     setStaticBackground(false);
+    m_part->getKHTMLSelection().clearSelection();
 
     d->reset();
     killTimers();
@@ -383,6 +388,7 @@ void KHTMLView::resizeEvent (QResizeEvent* e)
 #endif
     if ( m_part && m_part->xmlDocImpl() )
         m_part->xmlDocImpl()->dispatchWindowEvent( EventImpl::RESIZE_EVENT, false, false );
+
     KApplication::sendPostedEvents(viewport(), QEvent::Paint);
 }
 
@@ -432,6 +438,8 @@ void KHTMLView::drawContents( QPainter *p, int ex, int ey, int ew, int eh )
         p->drawPixmap(ex, ey+py, *d->paintBuffer, 0, 0, ew, ph);
         py += PAINT_BUFFER_HEIGHT;
     }
+
+    // EDIT FIXME: KDE needs to draw the caret here.
 
     khtml::DrawContentsEvent event( p, ex, ey, ew, eh );
     QApplication::sendEvent( m_part, &event );
@@ -609,6 +617,8 @@ void KHTMLView::layout()
 
     root->layout();
 
+    m_part->getKHTMLSelection().invalidate();
+        
     //kdDebug( 6000 ) << "TIME: layout() dt=" << qt.elapsed() << endl;
    
     d->layoutSchedulingEnabled=true;
@@ -955,7 +965,6 @@ void KHTMLView::viewportMouseReleaseEvent( QMouseEvent * _mouse )
 
 void KHTMLView::keyPressEvent( QKeyEvent *_ke )
 {
-
     if (m_part->xmlDocImpl() && m_part->xmlDocImpl()->focusNode()) {
         if (m_part->xmlDocImpl()->focusNode()->dispatchKeyEvent(_ke))
         {
@@ -1267,19 +1276,24 @@ void KHTMLView::focusNextPrevNode(bool next)
         else
             scrollTo(QRect(contentsX()+visibleWidth()/2,0,0,0));
     }
-    else
-    // Scroll the view as necessary to ensure that the new focus node is visible
-    {
-      if (oldFocusNode)
-	{
-	  if (!scrollTo(newFocusNode->getRect()))
-	    return;
-	}
-      else
-	{
-	  ensureVisible(contentsX(), next?0:contentsHeight());
-	  //return;
-	}
+    else {
+        // EDIT FIXME: if it's an editable element, activate the caret
+        // otherwise, hide it
+        if (!m_part->inEditMode() && newFocusNode->renderer()->isEditable()) {
+            // make caret visible
+        } 
+        else {
+            // hide caret
+        }
+
+        // Scroll the view as necessary to ensure that the new focus node is visible
+        if (oldFocusNode) {
+            if (!scrollTo(newFocusNode->getRect()))
+                return;
+        }
+        else {
+            ensureVisible(contentsX(), next ? 0: contentsHeight());
+        }
     }
     // Set focus node on the document
     m_part->xmlDocImpl()->setFocusNode(newFocusNode);
@@ -1765,9 +1779,16 @@ void KHTMLView::dropEvent( QDropEvent *ev )
 }
 #endif // !APPLE_CHANGES
 
+void KHTMLView::focusInEvent( QFocusEvent *e )
+{
+    m_part->getKHTMLSelection().setVisible();
+    QScrollView::focusInEvent( e );
+}
+
 void KHTMLView::focusOutEvent( QFocusEvent *e )
 {
     m_part->stopAutoScroll();
+    m_part->getKHTMLSelection().setVisible(false);
     QScrollView::focusOutEvent( e );
 }
 
@@ -1789,7 +1810,6 @@ void KHTMLView::repaintRectangle(const QRect& r, bool immediate)
 
 void KHTMLView::timerEvent ( QTimerEvent *e )
 {
-//    kdDebug() << "timer event " << e->timerId() << endl;
     if (e->timerId()==d->layoutTimerId)
         layout();
 }
@@ -1851,3 +1871,4 @@ void KHTMLView::complete()
         d->layoutTimerId = startTimer( 0 );
     }
 }
+

@@ -23,16 +23,46 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import "KWQAssertions.h"
+#include "dom_position.h"
+#include "xml/dom_nodeimpl.h"
 
-#ifndef LOG_CHANNEL_PREFIX
-#define LOG_CHANNEL_PREFIX KWQLog
-#endif
+using DOM::DOMPosition;
 
-extern KWQLogChannel KWQLogNotYetImplemented;
+DOMPosition::DOMPosition(NodeImpl *node, long offset) 
+    : m_node(0), m_offset(offset) 
+{ 
+    if (node) {
+        m_node = node;
+        m_node->ref();
+    }
+};
 
-extern KWQLogChannel KWQLogFrames;
-extern KWQLogChannel KWQLogLoading;
-extern KWQLogChannel KWQLogPopupBlocking;
-extern KWQLogChannel KWQLogEvents;
-extern KWQLogChannel KWQLogEditing;
+DOMPosition::DOMPosition(const DOMPosition &o)
+    : m_node(0), m_offset(o.offset()) 
+{
+    if (o.node()) {
+        m_node = o.node();
+        m_node->ref();
+    }
+}
+
+DOMPosition::~DOMPosition() {
+    if (m_node) {
+        m_node->deref();
+    }
+}
+
+DOMPosition &DOMPosition::operator=(const DOMPosition &o)
+{
+    if (m_node) {
+        m_node->deref();
+    }
+    m_node = o.node();
+    if (m_node) {
+        m_node->ref();
+    }
+
+    m_offset = o.offset();
+    
+    return *this;
+}

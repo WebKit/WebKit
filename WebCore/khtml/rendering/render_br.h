@@ -53,8 +53,10 @@ public:
     virtual short maxWidth() const { return 0; }
 
     virtual bool isBR() const { return true; }
-    virtual void cursorPos(int offset, int &_x, int &_y, int &height);
 
+    virtual long caretMinOffset() const;
+    virtual long caretMaxOffset() const;
+    
     virtual FindSelectionResult checkSelectionPointIgnoringContinuations(int _x, int _y, int _tx, int _ty, DOM::NodeImpl*& node, int &offset);
 };
 

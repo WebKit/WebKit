@@ -59,6 +59,7 @@ namespace khtml {
     class RenderPartObject;
     class RenderWidget;
     class CSSStyleSelector;
+    class InlineBox;
     void applyRule(DOM::CSSProperty *prop);
 };
 
@@ -167,14 +168,14 @@ public:
 #endif
 
 signals:
-    void cleared();
-
+        void cleared();
+    
 protected:
-    void clear();
-
+        void clear();
+    
 #if APPLE_CHANGES
 public:
-    void clearPart();
+        void clearPart();
 #endif
     virtual void resizeEvent ( QResizeEvent * event );
     virtual void showEvent ( QShowEvent * );
@@ -184,8 +185,9 @@ public:
     virtual void drawContents ( QPainter * p, int clipx, int clipy, int clipw, int cliph );
     virtual void drawContents( QPainter* );
 #endif
-
+    
     virtual void viewportMousePressEvent( QMouseEvent * );
+    virtual void focusInEvent( QFocusEvent * );
     virtual void focusOutEvent( QFocusEvent * );
     virtual void viewportMouseDoubleClickEvent( QMouseEvent * );
     virtual void viewportMouseMoveEvent(QMouseEvent *);

@@ -33,31 +33,6 @@ RenderBR::~RenderBR()
 {
 }
 
-void RenderBR::cursorPos(int /*offset*/, int &_x, int &_y, int &height)
-{
-    if (previousSibling() && !previousSibling()->isBR() && !previousSibling()->isFloating()) {
-        int offset = 0;
-        if (previousSibling()->isText())
-            offset = static_cast<RenderText*>(previousSibling())->length();
-
-        previousSibling()->cursorPos(offset,_x,_y,height);
-        return;
-    }
-
-    int absx, absy;
-    absolutePosition(absx,absy);
-    if (absx == -1) {
-        // we don't know our absolute position, and there is no point returning just a relative one
-        _x = _y = -1;
-    }
-    else {
-        _x += absx;
-        _y += absy;
-    }
-    height = RenderText::verticalPositionHint( false );
-
-}
-
 FindSelectionResult RenderBR::checkSelectionPointIgnoringContinuations(int _x, int _y, int _tx, int _ty, DOM::NodeImpl*& node, int &offset)
 {
     FindSelectionResult result = RenderText::checkSelectionPointIgnoringContinuations(_x, _y, _tx, _ty, node, offset);
@@ -73,3 +48,12 @@ FindSelectionResult RenderBR::checkSelectionPointIgnoringContinuations(int _x, i
     return result;
 }
 
+long RenderBR::caretMinOffset() const 
+{ 
+    return 0; 
+}
+
+long RenderBR::caretMaxOffset() const 
+{ 
+    return 0; 
+}
