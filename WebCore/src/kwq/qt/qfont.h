@@ -33,7 +33,13 @@
 class QString;
 
 #if (defined(__APPLE__) && defined(__OBJC__) && defined(__cplusplus))
+#define Fixed MacFixed
+#define Rect MacRect
+#define Boolean MacBoolean
 #import <Cocoa/Cocoa.h>
+#undef Fixed
+#undef Rect
+#undef Boolean
 #endif
 
 // class QFont =================================================================
