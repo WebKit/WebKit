@@ -2154,6 +2154,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     [path insertString:@"<!--framePath " atIndex:0];
     [self _addFramePathToString:path];
     // The new child's path component is all but the 1st char and the last 3 chars
+    // FIXME: Shouldn't this number be the index of this frame in its parent rather than the child count?
     [path appendFormat:@"/<!--frame%d-->-->", _private->children ? [_private->children count] : 0];
     return path;
 }

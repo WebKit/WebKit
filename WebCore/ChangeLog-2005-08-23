@@ -1,3 +1,69 @@
+2004-12-23  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - re-fixed <rdar://problem/3760910> Request to include support for custom tag names in HTML (they already work in XML)
+
+        * khtml/css/cssstyleselector.cpp: (khtml::CSSStyleSelector::checkOneSelector): Changed
+        some code that used ID_LAST_TAG in a slightly wrong, but harmless, way.
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::debugPosition): Use nodeName rather than getTagName, since the latter works for
+        per-document tags and is just better all around for things like the document.
+        (khtml::debugNode): Ditto.
+        * khtml/editing/selection.cpp: (khtml::Selection::debugPosition): Ditto.
+        * khtml/editing/visible_position.cpp: (khtml::VisiblePosition::debugPosition): Ditto.
+        * khtml/xml/dom_nodeimpl.cpp: (NodeImpl::displayNode): Ditto.
+        * khtml/xml/dom_position.cpp: (DOM::Position::debugPosition): Ditto.
+
+        * khtml/html/dtd.cpp: (DOM::checkChild): Use ID_LAST_TAG rather than 1000 for the check that allows
+        non-HTML elements to be nested as desired.
+
+        * khtml/html/htmlparser.h: Change forbidden tag array to be allocated in the object rather than on
+        the heap. Also use ID_LAST_TAG for the array size; the old code used ID_CLOSE_TAG which is now a
+        much larger number.
+        * khtml/html/htmlparser.cpp:
+        (KHTMLParser::KHTMLParser): Remove code that creates the forbidden tag array on the heap; makes more
+        sense to just have the array be a member so we don't have to use new and delete on it. Also needed
+        to eliminate code that used ID_CLOSE_TAG for an array size.
+        (KHTMLParser::~KHTMLParser): Remove code that deletes the forbidden tag array. Also changed the code
+        that manages isindex to use deref instead of delete.
+        (KHTMLParser::reset): Use safer sizeof for clearing the forbidden tag array. Old code had the
+        mistake of using ID_CLOSE_TAG for the array size too.
+        (KHTMLParser::parseToken): Removed code that checks for bogus tags; it's not clear why it was ever
+        there and it would prevent custom tags from working. Added range check before using the forbidden
+        tag array with the token ID since custom tags will use index values past the end of the array.
+        (KHTMLParser::getElement): Removed most of the code that makes an element by ID; now the work is done
+        inside the DocumentImpl createHTMLElement. Any code that needs to be different than a dynamic
+        createElement call is still here. Last time I left out a few form element types from this switch;
+        fixed now.
+        * khtml/html/htmltokenizer.cpp: (khtml::HTMLTokenizer::parseTag): Call the tagId function in the
+        document if getTagID fails; this creates a unique per-document ID.
+
+        * khtml/misc/htmlhashes.h: Changed return types to unsigned short.
+        * khtml/misc/htmlhashes.cpp:
+        (khtml::getTagID): Changed return type to unsigned short.
+        (khtml::getAttrID): Ditto.
+
+        * khtml/misc/htmltags.c: Regenerated.
+        * khtml/misc/htmltags.h: Regenerated.
+
+        * khtml/misc/maketags: Changed the generated constants to use "const unsigned short" instead of "#define".
+        Changed ID_CLOSE_TAG to be a fixed value of 32000 rather than being just past the IDs of the HTML tags.
+        Also rewrote getTagName to work with the new scheme.
+
+        * khtml/xml/dom_docimpl.h: Added overload of createHTMLElement, made it non-virtual since it's not overriden.
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::createHTMLElement): Refactored into two separate functions, one that takes the tag ID.
+        Also updated for a few tags that the parser handled but this did not.
+
+        * kwq/KWQRenderTreeDebug.cpp:
+        (getTagName): Added. Works for custom nodes, because it calls nodeName rather than using getTagName on
+        the tag ID directly, which only works for standard nodes.
+        (operator<<): Update to call getTagName.
+        (nodePositionRelativeToRoot): Ditto.
+        (writeSelection): Ditto.
+
 === Safari-177 ===
 
 2004-12-22  Darin Adler  <darin@apple.com>
