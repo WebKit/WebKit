@@ -32,14 +32,34 @@
 - (void)receivedData:(NSData *)data
 {
     NSString *path = [dataSource downloadPath];
+    NSString *pathWithoutExtension, *newPathWithoutExtension, *extension;
     NSFileManager *fileManager;
     NSWorkspace *workspace;
+    unsigned i;
     
     if(!fileHandle){
-        // FIXME: Should not replace existing file
-        // FIXME: Handle errors
         fileManager = [NSFileManager defaultManager];
-        [fileManager createFileAtPath:path contents:nil attributes:nil];
+        
+        if([fileManager fileExistsAtPath:path]){
+            pathWithoutExtension = [path stringByDeletingPathExtension];
+            extension = [path pathExtension];
+            
+            for(i=1; 1; i++){
+                newPathWithoutExtension = [NSString stringWithFormat:@"%@-%d", pathWithoutExtension, i];
+                path = [newPathWithoutExtension stringByAppendingPathExtension:extension];
+                if(![fileManager fileExistsAtPath:path]){
+                    [dataSource _setDownloadPath:path];
+                    break;
+                }
+            }
+        }
+        
+        if(![fileManager createFileAtPath:path contents:nil attributes:nil]){
+            [dataSource stopLoading];
+            // FIXME: send error
+            return;
+        }
+        
         fileHandle = [[NSFileHandle fileHandleForWritingAtPath:path] retain];
         
         workspace = [NSWorkspace sharedWorkspace];
@@ -56,9 +76,6 @@
     
     [fileHandle closeFile];
     WEBKITDEBUGLEVEL(WEBKIT_LOG_DOWNLOAD, "Download complete. Saved to: %s", [path cString]);
-    
-    workspace = [NSWorkspace sharedWorkspace];
-    [workspace noteFileSystemChanged:path];
     
     if([dataSource contentPolicy] == IFContentPolicyOpenExternally){
         [workspace openFile:path];
