@@ -2489,6 +2489,13 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     return [super undoManager];
 }
 
+- (void)registerForEditingDelegateNotification:(NSString *)name selector:(SEL)selector
+{
+    NSNotificationCenter *defaultCenter = [NSNotificationCenter defaultCenter];
+    if ([_private->editingDelegate respondsToSelector:selector])
+        [defaultCenter addObserver:_private->editingDelegate selector:selector name:name object:self];
+}
+
 - (void)setEditingDelegate:(id)delegate
 {
     if (_private->editingDelegate == delegate)
@@ -2508,11 +2515,11 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     _private->editingDelegateForwarder = nil;
     
     // add notifications for new delegate
-    [defaultCenter addObserver:_private->editingDelegate selector:@selector(webViewDidBeginEditing:) name:WebViewDidBeginEditingNotification object:self];
-    [defaultCenter addObserver:_private->editingDelegate selector:@selector(webViewDidChange:) name:WebViewDidChangeNotification object:self];
-    [defaultCenter addObserver:_private->editingDelegate selector:@selector(webViewDidEndEditing:) name:WebViewDidEndEditingNotification object:self];
-    [defaultCenter addObserver:_private->editingDelegate selector:@selector(webViewDidChangeTypingStyle:) name:WebViewDidChangeTypingStyleNotification object:self];
-    [defaultCenter addObserver:_private->editingDelegate selector:@selector(webViewDidChangeSelection:) name:WebViewDidChangeSelectionNotification object:self];    
+    [self registerForEditingDelegateNotification:WebViewDidBeginEditingNotification selector:@selector(webViewDidBeginEditing:)];
+    [self registerForEditingDelegateNotification:WebViewDidChangeNotification selector:@selector(webViewDidChange:)];
+    [self registerForEditingDelegateNotification:WebViewDidEndEditingNotification selector:@selector(webViewDidEndEditing:)];
+    [self registerForEditingDelegateNotification:WebViewDidChangeTypingStyleNotification selector:@selector(webViewDidChangeTypingStyle:)];
+    [self registerForEditingDelegateNotification:WebViewDidChangeSelectionNotification selector:@selector(webViewDidChangeSelection:)];
 }
 
 - (id)editingDelegate

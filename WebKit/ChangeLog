@@ -1,3 +1,13 @@
+2004-07-06  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Trey
+        
+        Only register the editing delegate for those notifications for which it implements the callbacks.
+
+        * WebView.subproj/WebView.m:
+        (-[WebView registerForEditingDelegateNotification:selector:]):
+        (-[WebView setEditingDelegate:]):
+
 2004-07-06  Trey Matteson  <trey@apple.com>
 
 	3294652 - Failed drag of links doesn't slide back
