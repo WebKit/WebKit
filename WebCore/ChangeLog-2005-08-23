@@ -1,3 +1,10 @@
+2003-11-12  David Hyatt  <hyatt@apple.com>
+
+	Fix build bustage in deployment builds.
+
+        * kwq/KWQLineEdit.mm:
+        (QLineEdit::hasMarkedText):
+
 2003-11-11  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3481134, shorthand parsing in CSS does not fill in omitted values.  The fix is to implement

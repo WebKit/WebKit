@@ -220,11 +220,10 @@ void QLineEdit::clicked()
 
 bool QLineEdit::hasMarkedText()
 {
-    bool result = false;
     KWQ_BLOCK_EXCEPTIONS;
-    result = [[NSInputManager currentInputManager] hasMarkedText];
+    return [[NSInputManager currentInputManager] hasMarkedText];
     KWQ_UNBLOCK_EXCEPTIONS;
-    return result;
+    return false;
 }
 
 void QLineEdit::setAlignment(AlignmentFlags alignment)
