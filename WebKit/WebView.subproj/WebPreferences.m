@@ -6,6 +6,7 @@
 #import <WebKit/WebPreferencesPrivate.h>
 
 #import <WebKit/WebKitNSStringExtras.h>
+#import <WebKit/WebNSURLExtras.h>
 
 #import <Foundation/NSDictionary_NSURLExtras.h>
 #import <Foundation/NSString_NSURLExtras.h>
@@ -411,7 +412,7 @@ NS_ENDHANDLER
     NSString *locationString = [self _stringValueForKey: WebKitUserStyleSheetLocationPreferenceKey];
     
     if ([locationString _web_looksLikeAbsoluteURL]) {
-        return [NSURL URLWithString:locationString];
+        return [NSURL _web_URLWithDataAsString:locationString];
     } else {
         locationString = [locationString stringByExpandingTildeInPath];
         return [NSURL fileURLWithPath:locationString];

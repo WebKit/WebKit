@@ -1144,7 +1144,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 - (void)_loadItem:(WebHistoryItem *)item withLoadType:(WebFrameLoadType)loadType
 {
     NSURL *itemURL = [item URL];
-    NSURL *itemOriginalURL = [NSURL URLWithString:[item originalURLString]];
+    NSURL *itemOriginalURL = [NSURL _web_URLWithDataAsString:[item originalURLString]];
     NSURL *currentURL = [[[self dataSource] request] URL];
     NSData *formData = [item formData];
 
@@ -1771,7 +1771,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 	    // Use the original URL to ensure we get all the side-effects, such as
 	    // onLoad handlers, of any redirects that happened. An example of where
 	    // this is needed is Radar 3213556.
-            URL = [NSURL URLWithString:[childItem originalURLString]];
+            URL = [NSURL _web_URLWithDataAsString:[childItem originalURLString]];
             // These behaviors implied by these loadTypes should apply to the child frames
             childLoadType = loadType;
 

@@ -1,3 +1,24 @@
+2003-08-07  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin
+	
+	Fix for this bug:
+
+	<rdar://problem/3368552>: Fix inappropriate use of NSURL creation methods in WebKit
+
+	Change calls to URLWithString: or URLWithString:relativeToURL to
+	_web_URLWithDataAsString: and _web_URLWithDataAsString:relativeToURL,
+	respectively.
+
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _loadItem:withLoadType:]):
+        (-[WebFrame _loadURL:intoChild:]):
+        * WebView.subproj/WebPreferences.m:
+        (-[WebPreferences userStyleSheetLocation]):
+        * WebView.subproj/WebView.m:
+        (-[WebView takeStringURLFrom:]):
+        (-[WebView setMainFrameURL:]):
+
 2003-08-06  Darin Adler  <darin@apple.com>
 
         Reviewed by Richard.

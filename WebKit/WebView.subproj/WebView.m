@@ -20,6 +20,7 @@
 #import <WebKit/WebKitErrors.h>
 #import <WebKit/WebKitStatisticsPrivate.h>
 #import <WebKit/WebNSPasteboardExtras.h>
+#import <WebKit/WebNSURLExtras.h>
 #import <WebKit/WebNSViewExtras.h>
 #import <WebKit/WebPluginDatabase.h>
 #import <WebKit/WebPolicyDelegate.h>
@@ -679,7 +680,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 {
     NSString *URLString = [sender stringValue];
     
-    [[self mainFrame] loadRequest: [NSURLRequest requestWithURL: [NSURL URLWithString: URLString]]];
+    [[self mainFrame] loadRequest: [NSURLRequest requestWithURL: [NSURL _web_URLWithDataAsString: URLString]]];
 }
 
 - (BOOL)canGoBack
@@ -790,7 +791,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 
 - (void)setMainFrameURL:(NSString *)URLString
 {
-    [[self mainFrame] loadRequest: [NSURLRequest requestWithURL: [NSURL URLWithString: URLString]]];
+    [[self mainFrame] loadRequest: [NSURLRequest requestWithURL: [NSURL _web_URLWithDataAsString: URLString]]];
 }
 
 - (NSString *)mainFrameURL
