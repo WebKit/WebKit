@@ -2932,12 +2932,11 @@ NSImage *KWQKHTMLPart::imageFromRect(NSRect rect) const
         return nil;
     }
     
-    NSImage *resultImage = nil;
+    NSRect bounds = [view bounds];
+    NSImage *resultImage = [[[NSImage alloc] initWithSize:rect.size] autorelease];
     
     KWQ_BLOCK_EXCEPTIONS;
     
-    NSRect bounds = [view bounds];
-    resultImage = [[[NSImage alloc] initWithSize:rect.size] autorelease];
     [resultImage setFlipped:YES];
     [resultImage lockFocus];
     
