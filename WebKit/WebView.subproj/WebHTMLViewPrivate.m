@@ -60,7 +60,7 @@
 - (void)dealloc
 {
     [mouseDownEvent release];
-    [draggingImageElement release];
+    [draggingImageURL release];
     [super dealloc];
 }
 

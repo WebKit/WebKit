@@ -1,3 +1,20 @@
+2002-12-03  Darin Adler  <darin@apple.com>
+
+	- fixed 3117135 -- world leak: drag any image, get a leak of 1 WebFrame
+
+        Reviewed by John.
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView mouseDragged:]): Retain the URL of the dragged image, not the entire
+	element dictionary. The element dictionary creates a reference cycle since it includes
+	a reference to the WebFrame.
+        (-[WebHTMLView namesOfPromisedFilesDroppedAtDestination:]): Use the URL rather than
+	extracting it from the dictionary with a WebElementImageURLKey.
+
+        * WebView.subproj/WebHTMLViewPrivate.h: URL, not element dictionary.
+        * WebView.subproj/WebHTMLViewPrivate.m: (-[WebHTMLViewPrivate dealloc]): Release the
+	URL, not the element dictionary.
+
 2002-12-03  Richard Williamson   <rjw@apple.com>
 
         Added a preference to change the page cache size, i.e.:

@@ -28,7 +28,7 @@
 
     NSEvent *mouseDownEvent;
 
-    NSDictionary *draggingImageElement;
+    NSURL *draggingImageURL;
     
     NSSize lastLayoutSize;
 }

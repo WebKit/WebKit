@@ -641,14 +641,14 @@
     NSURL *linkURL = [element objectForKey: WebElementLinkURLKey];
     NSURL *imageURL = [element objectForKey: WebElementImageURLKey];
 
-    [_private->draggingImageElement release];
-    _private->draggingImageElement = nil;
+    [_private->draggingImageURL release];
+    _private->draggingImageURL = nil;
     
     if ((deltaX >= DragStartXHysteresis || deltaY >= DragStartYHysteresis) && !didScroll){
         if((imageURL && [[WebPreferences standardPreferences] willLoadImagesAutomatically]) || (!imageURL && linkURL)){
             
             if (imageURL){
-                _private->draggingImageElement = [element retain];
+                _private->draggingImageURL = [imageURL retain];
                 
                 [self _web_dragPromisedImage:[element objectForKey:WebElementImageKey]
                                       origin:[[element objectForKey:WebElementImageLocationKey] pointValue]
@@ -780,16 +780,14 @@
 
 - (NSArray *)namesOfPromisedFilesDroppedAtDestination:(NSURL *)dropDestination
 {
-    NSURL *imageURL = [_private->draggingImageElement objectForKey: WebElementImageURLKey];
-    
-    if(!imageURL){
+    if (!_private->draggingImageURL) {
         return nil;
     }
     
-    NSString *filename = [[imageURL path] lastPathComponent];
+    NSString *filename = [[_private->draggingImageURL path] lastPathComponent];
     NSString *path = [[dropDestination path] stringByAppendingPathComponent:filename];
 
-    [[self _controller] _downloadURL:imageURL toPath:path];
+    [[self _controller] _downloadURL:_private->draggingImageURL toPath:path];
     
     return [NSArray arrayWithObject:filename];
 }
