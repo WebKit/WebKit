@@ -1,3 +1,14 @@
+2004-04-27  David Hyatt  <hyatt@apple.com>
+
+	Cut the time spent on an operation inside widthForNextCharacter from 17% of the function time down to less than 
+	5% merely by adding a check for non-zero letter-spacing (thus avoiding double precision math in the 
+	common case where we just add 0 between letters).
+	
+        Reviewed by rjw
+
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (widthForNextCharacter):
+
 2004-04-28  John Sullivan  <sullivan@apple.com>
 
         Initial plumbing to get the font panel to be updated from an editable

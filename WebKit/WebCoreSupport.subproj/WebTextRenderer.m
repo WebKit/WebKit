@@ -1919,7 +1919,7 @@ static float widthForNextCharacter(CharacterWidthIterator *iterator, ATSGlyphRef
     }
     
     // Account for letter-spacing
-    if (width > 0)
+    if (iterator->style->letterSpacing && width > 0)
         width += iterator->style->letterSpacing;
 
     // Account for padding.  khtml uses space padding to justify text.  We
