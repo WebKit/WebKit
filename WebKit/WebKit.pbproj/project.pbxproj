@@ -1837,12 +1837,14 @@
 		};
 		F5F7174C02885C5B018635CA = {
 			isa = PBXFileReference;
-			path = IFWebCoreViewFactory.h;
+			name = IFWebCoreViewFactory.h;
+			path = WebCoreSupport.subproj/IFWebCoreViewFactory.h;
 			refType = 4;
 		};
 		F5F7174D02885C5B018635CA = {
 			isa = PBXFileReference;
-			path = IFWebCoreViewFactory.m;
+			name = IFWebCoreViewFactory.m;
+			path = WebCoreSupport.subproj/IFWebCoreViewFactory.m;
 			refType = 4;
 		};
 		F5F7174E02885C5B018635CA = {

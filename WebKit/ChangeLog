@@ -1,5 +1,15 @@
 2002-05-07  Darin Adler  <darin@apple.com>
 
+	Oops. These files don't belong at the top level.
+
+	* IFWebCoreViewFactory.h: Removed.
+	* IFWebCoreViewFactory.m: Removed.
+	* WebCoreSupport.subproj/IFWebCoreViewFactory.h: Added.
+	* WebCoreSupport.subproj/IFWebCoreViewFactory.m: Added.
+	* WebKit.pbproj/project.pbxproj:
+
+2002-05-07  Darin Adler  <darin@apple.com>
+
 	Move more plugin code here from WebCore.
 
 	* IFWebCoreViewFactory.h: Added.
