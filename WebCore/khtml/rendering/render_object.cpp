@@ -899,6 +899,7 @@ short RenderObject::getVerticalPosition( bool firstLine ) const
     // vertical align for table cells has a different meaning
     int vpos = 0;
     if ( !isTableCell() ) {
+      if (parent() && parent()->childrenInline()) { // Vertical-align only has meaning for inline elements and table cells. -dwh
 	EVerticalAlign va = style()->verticalAlign();
 	if ( va == TOP ) {
 	    vpos = PositionTop;
@@ -906,7 +907,7 @@ short RenderObject::getVerticalPosition( bool firstLine ) const
 	    vpos = PositionBottom;
 	} else if ( va == LENGTH ) {
 	    vpos = -style()->verticalAlignLength().width( lineHeight( firstLine ) );
-	} else if ( parent() && parent()->childrenInline() ) {
+	} else  {
 	    vpos = parent()->verticalPositionHint( firstLine );
 	    // don't allow elements nested inside text-top to have a different valignment.
 	    if ( va == BASELINE )
@@ -946,6 +947,7 @@ short RenderObject::getVerticalPosition( bool firstLine ) const
 	    } else if ( va == BASELINE_MIDDLE )
 		vpos += - lineHeight( firstLine )/2 + baselinePosition( firstLine );
 	}
+      }
     }
     return vpos;
 }

@@ -1,3 +1,13 @@
+2002-07-25  David Hyatt  <hyatt@apple.com>
+
+	Fix for huge white space problem on appleturns.com, bug 2947818.  Vertical-align
+	was being applied to block-level elts in violation of the CSS2 spec.  Vertical-align
+	is only supposed to apply to inline-level elts and table cells.  getVerticalPosition
+	will now bail if the element is block-level.
+	
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::getVerticalPosition):
+
 2002-07-25  Chris Blumenberg  <cblu@apple.com>
 
         * kwq/WebCoreBridge.h:
