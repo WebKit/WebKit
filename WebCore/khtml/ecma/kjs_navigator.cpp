@@ -192,21 +192,20 @@ Value Navigator::getValueProperty(ExecState *exec, int token) const
     return String(userAgent.mid(userAgent.find('/') + 1));
   case Product:
 #if APPLE_CHANGES
-    // If we find "Mozilla/5.0" but not "(compatible, ...)" we are a modern Netscape
+    // When acting normal, we pretend to be "Gecko".
     if (userAgent.find("Mozilla/5.0") >= 0 && userAgent.find("compatible") == -1) {
         return String("Gecko");
     }
-    // FIXME: Should we define a fallback result here besides "Konqueror/khtml"?
+    // When spoofing as IE, we use Undefined().
     return Undefined();
 #else
     return String("Konqueror/khtml");
 #endif
   case ProductSub:
-    return String("20021225");
+    return String("20030107");
   case Vendor:
 #if APPLE_CHANGES
-    // FIXME: Should we define a fallback result here besides "KDE"?  Perhaps "Apple"?
-    return Undefined();
+    return String("Apple Computer, Inc.");
 #else
     return String("KDE");
 #endif

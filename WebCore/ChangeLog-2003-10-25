@@ -1,3 +1,19 @@
+2003-04-03  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - fixed bug 3216832 -- REGRESSION: scroll bar doesn't appear soon enough when shrinking excite.com horizontally
+
+        * khtml/rendering/table_layout.cpp: (AutoTableLayout::calcEffectiveWidth):
+        Fixed mistake where using the wrong variable led to the colspan distribution
+        loop terminating early, and not giving any additional width to the second column.
+
+        - fixed some navigator properties as discussed in the meeting yesterday (with Don, Dave, Mike Malone)
+
+        * khtml/ecma/kjs_navigator.cpp: (Navigator::getValueProperty):
+        Use the date 20030107 instead of 20021225 because people think it's less arbitrary.
+        Use "Apple Computer, Inc." as the vendor string.
+
 2003-04-02  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3216650.  Needed an additional check when the disabled
