@@ -1,3 +1,22 @@
+2003-10-07  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave.
+
+        - removed code that mutates \n into a space so we can pass more W3C DOM Level 1 Core tests
+
+        * khtml/rendering/bidi.cpp:
+        (khtml::addRun): Treat \n as a space.
+        (khtml::RenderBlock::computeHorizontalPositionsForLine): Treat \n as a space.
+        (khtml::RenderBlock::findNextLineBreak): Treat \n outside <pre> as a space.
+        Removed code that mutates the \n into a space.
+
+        * khtml/rendering/render_text.cpp:
+        (RenderText::trimmedMinMaxWidth): Treat \n outside <pre> as a space.
+        (RenderText::calcMinMaxWidth): Treat \n outside <pre> as a space.
+        Removed code that mutates the \n into a space.
+        (RenderText::position): Detect a <br> with isBR instead of assuming a 1-character
+        string with a \n in it is a <br>.
+
 2003-10-06  David Hyatt  <hyatt@apple.com>
 
 	Several fixes preparing for the incremental repainting patch to be enabled.

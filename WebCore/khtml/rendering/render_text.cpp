@@ -945,7 +945,7 @@ void RenderText::trimmedMinMaxWidth(short& beginMinW, bool& beginWS,
     hasBreakableChar = m_hasBreakableChar;
     hasBreak = m_hasBreak;
 
-    if (stripFrontSpaces && str->s[0].unicode() == ' ') {
+    if (stripFrontSpaces && (str->s[0] == ' ' || (!isPre && str->s[0] == '\n'))) {
         const Font *f = htmlFont( false );
         QChar space[1]; space[0] = ' ';
         int spaceWidth = f->width(space, 1, 0);
@@ -1021,20 +1021,22 @@ void RenderText::calcMinMaxWidth()
     bool firstWord = true;
     for(int i = 0; i < len; i++)
     {
+        const QChar c = str->s[i];
+        
+        bool previousCharacterIsSpace = isSpace;
+        
         bool isNewline = false;
-        // XXXdwh Wrong in the first stage.  Will stop mutating newlines
-        // in a second stage.
-        if (str->s[i] == '\n') {
+        if (c == '\n') {
             if (isPre) {
                 m_hasBreak = true;
                 isNewline = true;
+                isSpace = false;
             }
             else
-                str->s[i] = ' ';
+                isSpace = true;
+        } else {
+            isSpace = c == ' ';
         }
-        
-        bool previousCharacterIsSpace = isSpace;
-        isSpace = str->s[i].unicode() == ' ';
         
         if ((isSpace || isNewline) && i == 0)
             m_hasBeginWS = true;
@@ -1230,7 +1232,7 @@ void RenderText::position(InlineBox* box, int from, int len, bool reverse)
     InlineTextBox *s = static_cast<InlineTextBox*>(box);
     
     // ### should not be needed!!!
-    if (len == 0 || (str->l && len == 1 && *(str->s+from) == '\n')) {
+    if (len == 0 || isBR()) {
         // We want the box to be destroyed.  This is a <br>, and we don't
         // need <br>s to be included.
         s->detach(renderArena());
