@@ -490,6 +490,8 @@ CSSValueImpl *CSSComputedStyleDeclarationImpl::getPropertyCSSValue(int propertyI
         return new CSSPrimitiveValueImpl(style->letterSpacing(), CSSPrimitiveValue::CSS_PX);
     case CSS_PROP_LINE_HEIGHT: {
         Length length(style->lineHeight());
+	if (length.value < 0)
+            return new CSSPrimitiveValueImpl(CSS_VAL_NORMAL);
         if (length.isPercent()) {
             float computedSize = style->htmlFont().getFontDef().computedSize;
             return new CSSPrimitiveValueImpl((int)(length.length() * computedSize) / 100, CSSPrimitiveValue::CSS_PX);
