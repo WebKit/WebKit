@@ -69,6 +69,12 @@ extern void WebCoreInitializeEmptyTextStyle(WebCoreTextStyle *style);
 
 @protocol WebCoreTextRenderer <NSObject>
 
+// WebCoreTestRenderer must guarantee that no calls to any of these
+// methods will raise any ObjC exceptions. It's too expensive to do
+// blocking for all of them at the WebCore level, and some
+// implementations may be able to guarantee no exceptions without the
+// use of NS_DURING.
+
 // vertical metrics
 - (int)ascent;
 - (int)descent;

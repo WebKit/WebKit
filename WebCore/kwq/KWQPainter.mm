@@ -24,19 +24,23 @@
  */
 
 #import "KWQPainter.h"
-#import "KWQWidget.h"
-#import "KWQFontMetrics.h"
-#import "KWQPixmap.h"
-#import "KWQPtrStack.h"
-#import "KWQPointArray.h"
-#import "KWQPaintDevice.h"
-#import "KWQPrinter.h"
 
 #import "KWQAssertions.h"
-
+#import "KWQExceptions.h"
+#import "KWQFontMetrics.h"
+#import "KWQPaintDevice.h"
+#import "KWQPixmap.h"
+#import "KWQPointArray.h"
+#import "KWQPrinter.h"
+#import "KWQPtrStack.h"
+#import "KWQWidget.h"
 #import "WebCoreImageRenderer.h"
 #import "WebCoreTextRenderer.h"
 #import "WebCoreTextRendererFactory.h"
+
+// NSColor, NSBezierPath, NSGraphicsContext and WebCoreTextRenderer
+// calls in this file are all exception-safe, so we don't block
+// exceptions for those.
 
 struct QPState {
     QPState() : paintingDisabled(false) { }
@@ -428,16 +432,21 @@ void QPainter::drawPixmap(const QPoint &p, const QPixmap &pix, const QRect &r)
 void QPainter::drawPixmap( int x, int y, const QPixmap &pixmap,
                            int sx, int sy, int sw, int sh )
 {
+    volatile int _sw = sw;
+    volatile int _sh = sh;
+
     if (data->state.paintingDisabled)
         return;
         
-    if (sw == -1)
-        sw = pixmap.width();
-    if (sh == -1)
-        sh = pixmap.height();
+    if (_sw == -1)
+        _sw = pixmap.width();
+    if (_sh == -1)
+        _sh = pixmap.height();
     
-    [pixmap.imageRenderer beginAnimationInRect:NSMakeRect(x, y, sw, sh)
-                                      fromRect:NSMakeRect(sx, sy, sw, sh)];
+    KWQ_BLOCK_NS_EXCEPTIONS;
+    [pixmap.imageRenderer beginAnimationInRect:NSMakeRect(x, y, _sw, _sh)
+                                      fromRect:NSMakeRect(sx, sy, _sw, _sh)];
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
 }
 
 void QPainter::drawTiledPixmap( int x, int y, int w, int h,
@@ -446,7 +455,9 @@ void QPainter::drawTiledPixmap( int x, int y, int w, int h,
     if (data->state.paintingDisabled)
         return;
     
+    KWQ_BLOCK_NS_EXCEPTIONS;
     [pixmap.imageRenderer tileInRect:NSMakeRect(x, y, w, h) fromPoint:NSMakePoint(sx, sy)];
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
 }
 
 void QPainter::_updateRenderer(NSString **families)
@@ -454,10 +465,12 @@ void QPainter::_updateRenderer(NSString **families)
     if (data->textRenderer == 0 || data->state.font != data->textRendererFont) {
         data->textRendererFont = data->state.font;
         id <WebCoreTextRenderer> oldRenderer = data->textRenderer;
+	KWQ_BLOCK_NS_EXCEPTIONS;
         data->textRenderer = [[[WebCoreTextRendererFactory sharedFactory]
             rendererWithFont:data->textRendererFont.getNSFont()
             usingPrinterFont:data->textRendererFont.isPrinterFont()] retain];
         [oldRenderer release];
+	KWQ_UNBLOCK_NS_EXCEPTIONS;
     }
 }
     

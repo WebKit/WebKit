@@ -33,6 +33,10 @@
 #import "WebCoreTextRenderer.h"
 #import "WebCoreTextRendererFactory.h"
 
+// We know that none of the ObjC calls here will raise exceptions
+// because they are all calls to WebCoreTextRenderer, which has a
+// contract of not raising.
+
 struct QFontMetricsPrivate
 {
     QFontMetricsPrivate(const QFont &font)

@@ -463,21 +463,27 @@ static BOOL alwaysUseATSU = NO;
 
 - (int)ascent
 {
+    // This simple return obviously can't throw an exception.
     return ascent;
 }
 
 - (int)descent
 {
+    // This simple return obviously can't throw an exception.
     return descent;
 }
 
 - (int)lineSpacing
 {
+    // This simple return obviously can't throw an exception.
     return lineSpacing;
 }
 
 - (float)xHeight
 {
+    // The concrete implementation of xHeight in NSCGSFont will definitely not
+    // throw an exception, it's all just math.
+
     return [font xHeight];
 }
 
@@ -504,6 +510,8 @@ static BOOL alwaysUseATSU = NO;
 
 - (void)drawLineForCharacters:(NSPoint)point yOffset:(float)yOffset withWidth: (int)width withColor:(NSColor *)color
 {
+    // XXX MJS
+
     NSGraphicsContext *graphicsContext = [NSGraphicsContext currentContext];
     CGContextRef cgContext;
     float lineWidth;
@@ -585,7 +593,16 @@ static BOOL alwaysUseATSU = NO;
 - (WebTextRenderer *)_smallCapsRenderer
 {
     if (!smallCapsRenderer) {
-        smallCapsRenderer = [[WebTextRenderer alloc] initWithFont:font usingPrinterFont:usingPrinterFont];
+	NS_DURING
+	    smallCapsRenderer = [[WebTextRenderer alloc] initWithFont:font usingPrinterFont:usingPrinterFont];
+	NS_HANDLER
+	    if (ASSERT_DISABLED) {
+		NSLog(@"Uncaught exception - %@\n", localException);
+	    } else {
+		ASSERT_WITH_MESSAGE(0, "Uncaught exception - %@", localException);
+	    } 
+	NS_ENDHANDLER
+
         [smallCapsRenderer _setIsSmallCapsRenderer:YES];
     }
     return smallCapsRenderer;
@@ -1330,6 +1347,9 @@ static const char *joiningNames[] = {
 
 - (void)_initializeATSUStyle
 {
+    // The two NSFont calls in this method (pointSize and _atsFontID)
+    // are both exception-safe.
+
     if (!ATSUStyleInitialized){
         OSStatus status;
         
@@ -1358,6 +1378,9 @@ static const char *joiningNames[] = {
 
 - (ATSUTextLayout)_createATSUTextLayoutForRun:(const WebCoreTextRun *)run
 {
+    // The only Cocoa calls here are to NSGraphicsContext and the self
+    // call to _initializeATSUStyle, which are all exception-safe.
+
     ATSUTextLayout layout;
     UniCharCount runLength;
     OSStatus status;
@@ -1397,6 +1420,9 @@ static const char *joiningNames[] = {
 
 - (ATSTrapezoid)_trapezoidForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style atPoint:(NSPoint )p
 {
+    // The only Cocoa call here is the self call to
+    // _createATSUTextLayoutForRun:, which is exception-safe.
+
     ATSUTextLayout layout;
     OSStatus status;
     
@@ -1438,6 +1464,10 @@ static const char *joiningNames[] = {
 
 - (void)_ATSU_drawHighlightForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style atPoint:(NSPoint)point
 {
+    // The only Cocoa calls made here are to NSColor and NSBezierPath,
+    // plus the self calls to _createATSUTextLayoutForRun: and
+    // _trapezoidForRun:. These are all exception-safe.
+
     ATSUTextLayout layout;
     int from = run->from;
     int to = run->to;
@@ -1497,6 +1527,10 @@ static const char *joiningNames[] = {
 
 - (void)_ATSU_drawRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style atPoint:(NSPoint)point
 {
+    // The only Cocoa calls made here are to NSColor, plus the self
+    // calls to _createATSUTextLayoutForRun: and
+    // _ATSU_drawHighlightForRun:. These are all exception-safe.
+
     ATSUTextLayout layout;
     OSStatus status;
     int from = run->from;
@@ -1533,6 +1567,9 @@ static const char *joiningNames[] = {
 
 - (int)_ATSU_pointToOffset:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style position:(int)x reversed:(BOOL)reversed
 {
+    // The only Cocoa calls made here is to the self call to
+    // _createATSUTextLayoutForRun:. This is exception-safe.
+
     unsigned offset = 0;
     ATSUTextLayout layout;
     UniCharArrayOffset primaryOffset = 0;

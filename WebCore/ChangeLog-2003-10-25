@@ -1,3 +1,30 @@
+2003-10-21  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Dave.
+
+	Finished exception blocking changes, so now I can finally say:
+
+	- fixed 3137084 - Many non-reproducible crashers in ContextImp::mark / ScopeChain::mark
+	- fixed 3308848 - nil-deref in KHTMLView::topLevelWidget
+	- fixed 3311511 - nil deref inside KJS::Screen
+	- fixed 3397422 - 7B51: Safari crashed in KJS::ObjectImp::mark()
+	- fixed 3408373 - Panther7B58 : Safari Crashed in KJS::ObjectImp::mark
+	- fixed 3409307 - 7B55: safari crashed in KJS::Interpreter::globalExec() (idle, nothing particular going on)
+	- fixed 3410160 - 7B60 Safari crashed in KHTMLPart::parentPart called from JS while in the background
+	- fixed 3413224 - unrepro crash in KJS::Window::mark
+	- fixed 3419940 - unrepro crash in KJS::Collector::allocate trying to access http://www.lindyinthepalms.com
+	- fixed 3420123 - Panther7B66: Safari crashed while going to http://www.tangents.co.uk/index2.html
+	- fixed 3423225 - Safari crash in vtable for KWQMapImpl (vtable for KWQMapImpl + 8).
+	- fixed 3437190 - nil-deref on quit in calling marked() from ScopeChain::mark()
+
+        * WebCore.pbproj/project.pbxproj:
+        * kwq/KWQFontMetrics.mm:
+        * kwq/KWQPainter.mm:
+        (QPainter::drawPixmap):
+        (QPainter::drawTiledPixmap):
+        (QPainter::_updateRenderer):
+        * kwq/WebCoreTextRenderer.h:
+
 2003-10-21  David Hyatt  <hyatt@apple.com>
 
 	http://placenamehere.com/safari/fixedbgtest.html is now fixed with a patch from the KHTML trunk.
