@@ -42,6 +42,7 @@ extern "C" AXUIElementRef NSAccessibilityCreateAXUIElementRef(id element);
 #import "KWQAssertions.h"
 #import "KWQFoundationExtras.h"
 #import "KWQWidget.h"
+#import "WebCoreBridge.h"
 
 #import "dom_docimpl.h"
 #import "dom_elementimpl.h"
@@ -67,6 +68,7 @@ extern "C" AXUIElementRef NSAccessibilityCreateAXUIElementRef(id element);
 #import "visible_units.h"
 #import "html_miscimpl.h"
 #import "qptrstack.h"
+#import "DOMInternal.h"
 
 using DOM::DocumentImpl;
 using DOM::ElementImpl;
@@ -1826,6 +1828,33 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
     if (!obj)
         return self;
     return obj->document()->getAccObjectCache()->accObject(obj);
+}
+
+// _accessibilityParentForSubview is called by AppKit when moving up the tree
+// we override it so that we can return our KWQAccObject parent of an AppKit AX object
+- (id)_accessibilityParentForSubview:(NSView *)subview
+{   
+    ASSERT(m_renderer && m_renderer->document());
+    
+    KHTMLPart* docPart = m_renderer->document()->part();
+    if (!docPart)
+        return nil;
+    
+    // check for nested WebArea (WebFrameView does not support elementForView)
+    if (m_renderer->isCanvas() && ([subview superview] == docPart->view()->getDocumentView()))
+        return [self accessibilityIsIgnored] == false ? self : [self parentObjectUnignored];
+       
+    // check for view that supports elementForView
+    DOMElement *domElement = [KWQ(docPart)->bridge() elementForView:subview];
+    if (!domElement)
+        return nil;
+        
+    RenderObject *renderer = [domElement _elementImpl]->renderer();
+    if (!renderer)
+        return nil;
+        
+    KWQAccObject* obj = renderer->document()->getAccObjectCache()->accObject(renderer);
+    return [obj parentObjectUnignored];
 }
 
 - (id)accessibilityFocusedUIElement

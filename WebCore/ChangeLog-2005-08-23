@@ -1,3 +1,15 @@
+2005-01-28  David Harrison  <harrison@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/3584942> AX: Safari Accessibility parent-child mismatch
+
+        Use AppKit SPI _accessibilityParentForSubview to return KWQAccObject parent of AppKit AX object.
+        
+        * kwq/KWQAccObject.mm:
+        (-[KWQAccObject _accessibilityParentForSubview:]):
+        New.
+
 2005-01-27  Adele Amchan  <adele@apple.com>
 
         fixed by Darin, reviewed by me.
