@@ -1,3 +1,21 @@
+2002-10-22  Darin Adler  <darin@apple.com>
+
+	Make the panel position itself above the main window.
+	Too bad we can't use a sheet, but this is better than a random position.
+
+        * WebCoreSupport.subproj/WebJavaScriptTextInputPanel.m:
+        (-[WebJavaScriptTextInputPanel initWithPrompt:text:]):
+	Use the new [NSWindow sizeToFitAndAdjustWindowHeight]
+	and [NSControl sizeToFitAndAdjustWindowHeight].
+
+        * Misc.subproj/WebNSControlExtras.h: Added.
+        * Misc.subproj/WebNSControlExtras.m: Added.
+        * Misc.subproj/WebNSWindowExtras.h: Added.
+        * Misc.subproj/WebNSWindowExtras.m: Added.
+        * WebKit.pbproj/project.pbxproj: Added above files.
+
+        * English.lproj/StringsNotToBeLocalized.txt: Update.
+
 2002-10-22  Ken Kocienda  <kocienda@apple.com>
 
         * Misc.subproj/WebKitErrors.h: Add new error code to signify that a location
