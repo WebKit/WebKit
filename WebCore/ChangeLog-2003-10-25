@@ -1,5 +1,12 @@
 2003-09-22  Darin Adler  <darin@apple.com>
 
+        - fixed 3391837 -- we list ISO-8859-8-E as visual ordering for Hebrew; it's "explicit ordering", not supported
+
+        * kwq/mac-encodings.txt: Removed ISO-8859-8-E.
+        * kwq/KWQCharsetData.c: Regenerated.
+
+2003-09-22  Darin Adler  <darin@apple.com>
+
         * kwq/KWQTextEdit.mm: (QTextEdit::sizeWithColumnsAndRows): Made it compile.
 
 2003-09-22  Darin Adler  <darin@apple.com>

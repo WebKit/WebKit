@@ -68,7 +68,7 @@ ISOLatinCyrillic: ISO-8859-5
 ISOLatinArabic: ISO-8859-6
 ISOLatinGreek: ISO-8859-7
 ISOLatinHebrew: ISO-8859-8-I, logical
-ISOLatinHebrew, VisualOrdering: ISO-8859-8-E, dos862, iso88598, visual
+ISOLatinHebrew, VisualOrdering: ISO-8859-8, dos862, visual
 ISOLatin5: ISO-8859-9
 ISOLatin6: ISO-8859-10
 ISOLatinThai: ISO-8859-11
