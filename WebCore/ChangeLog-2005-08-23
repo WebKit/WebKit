@@ -1,3 +1,15 @@
+2005-01-21  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3966349, hang loading page.  Make sure that loops using popOneBlock properly check for a null
+	blockStack to avoid an infinite loop.
+	
+        Reviewed by kocienda
+
+        * khtml/html/htmlparser.cpp:
+        (KHTMLParser::parseToken):
+        (KHTMLParser::insertNode):
+        (KHTMLParser::popInlineBlocks):
+
 2005-01-21  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by John

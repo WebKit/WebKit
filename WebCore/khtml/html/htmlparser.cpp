@@ -257,7 +257,7 @@ void KHTMLParser::parseToken(Token *t)
 
     // if this tag is forbidden inside the current context, pop
     // blocks until we are allowed to add it...
-    while (t->id <= ID_LAST_TAG && forbiddenTag[t->id]) {
+    while (blockStack && t->id <= ID_LAST_TAG && forbiddenTag[t->id]) {
 #ifdef PARSER_DEBUG
         kdDebug( 6035 ) << "t->id: " << t->id << " is forbidden :-( " << endl;
 #endif
@@ -359,7 +359,7 @@ bool KHTMLParser::insertNode(NodeImpl *n, bool flat)
         case ID_TD:
             if (inStrayTableContent && !isTableRelatedTag(current->id())) {
                 // pop out to the nearest enclosing table-related tag.
-                while (!isTableRelatedTag(current->id()))
+                while (blockStack && !isTableRelatedTag(current->id()))
                     popOneBlock();
                 return insertNode(n);
             }
@@ -539,7 +539,7 @@ bool KHTMLParser::insertNode(NodeImpl *n, bool flat)
         case ID_TFOOT:
         case ID_COLGROUP: {
             if (isTableRelatedTag(current->id())) {
-                while (current->id() != ID_TABLE && isTableRelatedTag(current->id()))
+                while (blockStack && current->id() != ID_TABLE && isTableRelatedTag(current->id()))
                     popOneBlock();
                 return insertNode(n);
             }
@@ -1436,7 +1436,7 @@ void KHTMLParser::popOneBlock(bool delBlock)
 
 void KHTMLParser::popInlineBlocks()
 {
-    while(current->isInline())
+    while (blockStack && current->isInline())
         popOneBlock();
 }
 
