@@ -121,13 +121,12 @@ void HTMLElementImpl::parseAttribute(AttributeImpl *attr)
 // the core attributes...
     case ATTR_ID:
         // unique id
-        setHasID();
+        setHasID(attr->val());
+        setChanged();
         break;
     case ATTR_CLASS:
         // class
-        if (attr->val())
-            setHasClass();
-        else m_hasClass = false;
+        setHasClass(attr->val());
         setChanged();
         break;
     case ATTR_STYLE:
