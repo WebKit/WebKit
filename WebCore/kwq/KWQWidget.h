@@ -109,7 +109,6 @@ public:
 
     const QPalette& palette() const;
     virtual void setPalette(const QPalette &);
-    void unsetPalette();
     
     QStyle &style() const;
     void setStyle(QStyle *);

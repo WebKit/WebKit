@@ -26,16 +26,12 @@
 #ifndef QAPPLICATION_H_
 #define QAPPLICATION_H_
 
-#include "KWQObject.h"
 #include "KWQWidget.h"
-#include "KWQPalette.h"
-#include "KWQSize.h"
 
 class QDesktopWidget;
 
 class QApplication : public QObject {
 public:
-    static QPalette palette(const QWidget *p = 0);
     static QDesktopWidget *desktop() { return 0; }
     static void setOverrideCursor(const QCursor &);
     static void restoreOverrideCursor();

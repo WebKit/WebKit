@@ -1,3 +1,44 @@
+2004-10-20  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed <rdar://problem/3317107> text input fields and text areas don't respect background color and text color CSS properties
+
+        * khtml/rendering/render_form.cpp: (RenderFormElement::updateFromElement):
+        Create a palette with the background and foreground colors in it and set it on the widget.
+
+        * khtml/rendering/render_style.h: (khtml::StyleVisualData::operator==): No palette to compare
+        with APPLE_CHANGES. Removed palette and palette-related function members.
+        * khtml/rendering/render_style.cpp:
+        (StyleVisualData::StyleVisualData): No palette to initialize with APPLE_CHANGES.
+        (RenderStyle::diff): No palette to compare.
+
+        * kwq/KWQLineEdit.h: Added setPalette override. Made text function const.
+        * kwq/KWQLineEdit.mm:
+        (QLineEdit::setPalette): Added. Sets foreground and background color based on palette.
+        (QLineEdit::text): Made const.
+
+        * kwq/KWQTextEdit.h: Added setPalette override.
+        * kwq/KWQTextEdit.mm: (QTextEdit::setPalette): Added. Sets foreground and background color
+        based on palette.
+
+        * kwq/KWQPalette.h: Removed most things, leaving only background and foreground colors
+        per color group, and only a single color group per palette.
+        * kwq/KWQColorGroup.mm: Removed.
+        * kwq/KWQPalette.mm: Removed.
+        * WebCore.pbproj/project.pbxproj: Removed KWQColorGroup.mm and KWQPalette.mm.
+
+        * kwq/KWQApplication.h: Removed unused palette function.
+        * kwq/KWQApplication.mm: Ditto.
+
+        * kwq/KWQWidget.h: Removed unsetPalette.
+        * kwq/KWQWidget.mm: Ditto.
+
+        - fixed storage leak
+
+        * khtml/html/html_formimpl.cpp: (DOM::HTMLGenericFormElementImpl::~HTMLGenericFormElementImpl):
+        Roll in storage leak fix from KDE guys.
+
 2004-10-19  David Hyatt  <hyatt@apple.com>
 
         Reviewed by kocienda

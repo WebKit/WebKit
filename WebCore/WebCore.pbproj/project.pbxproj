@@ -577,7 +577,6 @@
 				F587856002DE375901EA4122,
 				F587856102DE375901EA4122,
 				F587856202DE375901EA4122,
-				F587856302DE375901EA4122,
 				F587856402DE375901EA4122,
 				F587856702DE375901EA4122,
 				F587856802DE375901EA4122,
@@ -624,7 +623,6 @@
 				F58785AF02DE375901EA4122,
 				F58785B002DE375901EA4122,
 				F58785B102DE375901EA4122,
-				F58785B202DE375901EA4122,
 				F58785B302DE375901EA4122,
 				F58785B402DE375901EA4122,
 				F58785B502DE375901EA4122,
@@ -7194,14 +7192,6 @@
 			refType = 4;
 			sourceTree = "<group>";
 		};
-		F58784D102DE375901EA4122 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.objcpp;
-			path = KWQColorGroup.mm;
-			refType = 4;
-			sourceTree = "<group>";
-		};
 		F58784D202DE375901EA4122 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
@@ -7650,14 +7640,6 @@
 			refType = 4;
 			sourceTree = "<group>";
 		};
-		F587852002DE375901EA4122 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.objcpp;
-			path = KWQPalette.mm;
-			refType = 4;
-			sourceTree = "<group>";
-		};
 		F587852102DE375901EA4122 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
@@ -8090,12 +8072,6 @@
 			settings = {
 			};
 		};
-		F587856302DE375901EA4122 = {
-			fileRef = F58784D102DE375901EA4122;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		F587856402DE375901EA4122 = {
 			fileRef = F58784D202DE375901EA4122;
 			isa = PBXBuildFile;
@@ -8428,12 +8404,6 @@
 		};
 		F58785B102DE375901EA4122 = {
 			fileRef = F587851F02DE375901EA4122;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F58785B202DE375901EA4122 = {
-			fileRef = F587852002DE375901EA4122;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -10491,8 +10461,6 @@
 				F58786A302DE3B8601EA4122,
 				F587851F02DE375901EA4122,
 				F58786A402DE3B8601EA4122,
-				F58784D102DE375901EA4122,
-				F587852002DE375901EA4122,
 				F58786A502DE3B8601EA4122,
 				F587852102DE375901EA4122,
 				F58786A602DE3B8601EA4122,

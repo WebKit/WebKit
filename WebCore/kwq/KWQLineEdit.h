@@ -41,6 +41,9 @@ public:
 
     QLineEdit(Type);
     ~QLineEdit();
+
+    virtual void setPalette(const QPalette &);
+
     void setAlignment(AlignmentFlags);
 
     void setCursorPosition(int);
@@ -49,7 +52,7 @@ public:
     void setEdited(bool);
     bool edited() const;
 
-    void setFont(const QFont &font);
+    void setFont(const QFont &);
     
     void setMaxLength(int);
     int maxLength() const;
@@ -58,7 +61,7 @@ public:
     bool isReadOnly() const;
 
     void setText(const QString &);
-    QString text();
+    QString text() const;
 
     void setWritingDirection(QPainter::TextDirection);
     

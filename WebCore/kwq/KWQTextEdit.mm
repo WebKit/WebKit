@@ -218,3 +218,21 @@ bool QTextEdit::checksDescendantsForFocus() const
 {
     return true;
 }
+
+void QTextEdit::setPalette(const QPalette &palette)
+{
+    QWidget::setPalette(palette);
+
+    KWQTextArea *textArea = getView();
+
+    KWQ_BLOCK_EXCEPTIONS;
+
+    [textArea setTextColor:palette.foreground().getNSColor()];
+
+    QColor background = palette.background();
+    if (!background.isValid())
+        background = Qt::white;
+    [textArea setBackgroundColor:background.getNSColor()];
+
+    KWQ_UNBLOCK_EXCEPTIONS;
+}

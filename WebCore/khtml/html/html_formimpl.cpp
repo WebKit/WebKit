@@ -741,6 +741,7 @@ HTMLGenericFormElementImpl::~HTMLGenericFormElementImpl()
 {
     if (m_form)
         m_form->removeFormElement(this);
+    if (m_name) m_name->deref();
 }
 
 void HTMLGenericFormElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)

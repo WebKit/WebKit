@@ -44,6 +44,8 @@ class QTextEdit : public QScrollView
 
     QTextEdit(QWidget *parent);
 
+    virtual void setPalette(const QPalette &);
+
     void setAlignment(AlignmentFlags);
 
     void setCursorPosition(int, int);

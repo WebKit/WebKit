@@ -281,12 +281,6 @@ void QWidget::setPalette(const QPalette &palette)
     data->pal = palette;
 }
 
-void QWidget::unsetPalette()
-{
-    // Only called by RenderFormElement::layout, which I suspect will
-    // have to be rewritten.  Do nothing.
-}
-
 QStyle &QWidget::style() const
 {
     return *data->style;

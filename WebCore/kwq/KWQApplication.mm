@@ -24,16 +24,9 @@
  */
 
 #import "KWQApplication.h"
-#import "KWQLogging.h"
 
 // The NSScreen Cocoa calls in this file should never throw, so
 // there's no need to block exceptions.
-
-QPalette QApplication::palette(const QWidget *p)
-{
-    static QPalette pal;
-    return pal;
-}
 
 int QDesktopWidget::width()
 {

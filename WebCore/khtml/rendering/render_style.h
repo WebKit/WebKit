@@ -401,7 +401,10 @@ public:
 		 colspan == o.colspan &&
 		 counter_increment == o.counter_increment &&
 		 counter_reset == o.counter_reset &&
-		 palette == o.palette && textDecoration == o.textDecoration);
+#if !APPLE_CHANGES
+		 palette == o.palette &&
+#endif
+                 textDecoration == o.textDecoration);
     }
     bool operator!=( const StyleVisualData &o ) const {
         return !(*this == o);
@@ -416,7 +419,9 @@ public:
     short counter_increment; //ok, so these are not visual mode spesific
     short counter_reset;     //can't go to inherited, since these are not inherited
 
+#if !APPLE_CHANGES
     QPalette palette;      //widget styling with IE attributes
+#endif
 };
 
 //------------------------------------------------
@@ -1370,12 +1375,14 @@ public:
     void setTextSizeAdjust(bool b) { SET_VAR(css3InheritedData, textSizeAdjust, b); }
 #endif
 
+#if !APPLE_CHANGES
     QPalette palette() const { return visual->palette; }
     void setPaletteColor(QPalette::ColorGroup g, QColorGroup::ColorRole r, const QColor& c);
     void resetPalette() // Called when the desktop color scheme changes.
     {
         const_cast<StyleVisualData *>(visual.get())->palette = QApplication::palette();
     }
+#endif
 
     ContentData* contentData() { return content; }
     bool contentDataEquivalent(RenderStyle* otherStyle);

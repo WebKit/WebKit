@@ -100,7 +100,7 @@ void RenderFormElement::updateFromElement()
     m_widget->setEnabled(!element()->disabled());
 
 #if APPLE_CHANGES
-    //m_widget->setPalette(QPalette(style()->backgroundColor(), style()->color()));
+    m_widget->setPalette(QPalette(style()->backgroundColor(), style()->color()));
 #else
     QColor color = style()->color();
     QColor backgroundColor = style()->backgroundColor();

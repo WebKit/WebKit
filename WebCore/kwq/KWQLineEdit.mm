@@ -103,6 +103,24 @@ void QLineEdit::setFont(const QFont &font)
     }
 }
 
+void QLineEdit::setPalette(const QPalette &palette)
+{
+    QWidget::setPalette(palette);
+
+    NSTextField *textField = (NSTextField *)getView();
+
+    KWQ_BLOCK_EXCEPTIONS;
+
+    [textField setTextColor:palette.foreground().getNSColor()];
+
+    QColor background = palette.background();
+    if (!background.isValid())
+        background = Qt::white;
+    [textField setBackgroundColor:background.getNSColor()];
+
+    KWQ_UNBLOCK_EXCEPTIONS;
+}
+
 void QLineEdit::setText(const QString &s)
 {
     NSTextField *textField = (NSTextField *)getView();
@@ -111,7 +129,7 @@ void QLineEdit::setText(const QString &s)
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 
-QString QLineEdit::text()
+QString QLineEdit::text() const
 {
     NSTextField *textField = (NSTextField *)getView();
 
