@@ -1,3 +1,38 @@
+2002-08-24  Darin Adler  <darin@apple.com>
+
+	- fixed 3032072 -- Crash on reload in DOM::DocumentImpl::~DocumentImpl [unified]()
+
+	This was a tough one to debug.
+	Turned out to be a subtle bug in our new QConstString implementation.
+
+        * kwq/KWQString.mm:
+        (QStringData::makeAscii): Don't invalidate the Unicode buffer unless the ASCII
+	buffer is taking over the internal buffer from the Unicode. In other cases, it's
+	important not to invalidate the Unicode because it can result in the Unicode being
+	freed and re-created when unicode() is called, which is disastrous in the QConstString
+	case because we can't free the Unicode.
+        (QStringData::makeUnicode): Make the corresponding change for ASCII too. In this
+	case, it's just an optimization, not a bug fix.
+        (QString::insert), (QString::remove), (QString::fill), (QString::operator+=):
+	Mark the other string invalid whenever we modify either the ASCII or the Unicode
+	string. This was handled correctly for some operations before, but not all, and it
+	now matters because makeAscii and makeUnicode will now allow this state.
+
+	Fixed a separate QString problem; I think I may have introduced this one.
+
+        * kwq/KWQString.mm:
+        (QString::getNSString): Since by ASCII, we actually mean ISO Latin 1, we can't use
+	[NSString stringWithCString:]. Use CFStringCreateWithCString instead, pass
+	CFStringCreateWithCString as the encoding, and use autorelease. We shouldn't really
+	use the term ASCII in this class for the 8-bit-per-character buffer. Something more
+	like Latin1 would be a more accurate way to refer to it. Maybe I'll do that renaming
+	after talking to Richard about it on Monday.
+
+	Fixed a small storage leak.
+
+        * khtml/css/css_valueimpl.cpp: (CSSPrimitiveValueImpl::cleanup): Added braces to
+	fix obviously-incorrect if/else grouping.
+
 2002-08-23  Darin Adler  <darin@apple.com>
 
 	Got the kurl-test in the Tests directory working again.

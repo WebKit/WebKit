@@ -371,7 +371,7 @@ void CSSPrimitiveValueImpl::cleanup()
     else if(m_type < CSSPrimitiveValue::CSS_STRING || m_type == CSSPrimitiveValue::CSS_IDENT)
     { }
     else if(m_type < CSSPrimitiveValue::CSS_COUNTER)
-	if(m_value.string) m_value.string->deref();
+	{ if(m_value.string) m_value.string->deref(); }
     else if(m_type == CSSPrimitiveValue::CSS_COUNTER)
 	m_value.counter->deref();
     else if(m_type == CSSPrimitiveValue::CSS_RECT)

@@ -595,6 +595,7 @@ char *QStringData::makeAscii()
                 while (i--)
                     *tp++ = *fp++;
                 str = &copyBuf[0];
+                _isUnicodeValid = 0;
             }
             else
                 str = _unicode;
@@ -615,7 +616,6 @@ char *QStringData::makeAscii()
             *cp++ = *str++;
         *cp = 0;
         
-        _isUnicodeValid = 0;
         _isAsciiValid = 1;
     }
     else if (!_isAsciiValid)
@@ -643,6 +643,7 @@ QChar *QStringData::makeUnicode()
                 while (i--)
                     *tp++ = *fp++;
                 str = &copyBuf[0];
+                _isAsciiValid = 0;
             }
             else
                 str = _ascii;
@@ -662,7 +663,6 @@ QChar *QStringData::makeUnicode()
             *cp++ = *str++;
         
         _isUnicodeValid = 1;
-        _isAsciiValid = 0;
     }
     else if (!_isUnicodeValid)
         QSTRING_FAILURE("invalid character cache");
@@ -777,7 +777,7 @@ NSString *QString::getNSString() const
     }
     
     if (dataHandle[0]->_isAsciiValid) {
-        return [NSString stringWithCString:(const char *)ascii()];
+        return [(NSString *)CFStringCreateWithCString(kCFAllocatorDefault, ascii(), kCFStringEncodingISOLatin1) autorelease];
     }
     
     QSTRING_FAILURE("invalid character cache");
@@ -2061,6 +2061,8 @@ QString &QString::insert(uint index, const char *insertChars, uint insertLength)
         
         // Insert characters.
         memcpy (targetChars+index, insertChars, insertLength);
+        
+        dataHandle[0]->_isUnicodeValid = 0;
     }
     else if (dataHandle[0]->_isUnicodeValid){
         uint originalLength = dataHandle[0]->_length;
@@ -2127,6 +2129,7 @@ QString &QString::insert(uint index, const QString &qs)
             memcpy (targetChars+index, insertChars, insertLength*sizeof(QChar));
         }
         
+        dataHandle[0]->_isAsciiValid = 0;
     }
     
     return *this;
@@ -2152,6 +2155,8 @@ QString &QString::insert(uint index, QChar qc)
         // Insert character.
         targetChars[index] = insertChar;
         targetChars[dataHandle[0]->_length] = 0;
+
+        dataHandle[0]->_isUnicodeValid = 0;
     }
     else {
         uint originalLength = dataHandle[0]->_length;
@@ -2190,6 +2195,8 @@ QString &QString::insert(uint index, char ch)
         // Insert character.
         targetChars[index] = ch;
         targetChars[dataHandle[0]->_length] = 0;
+
+        dataHandle[0]->_isUnicodeValid = 0;
     }
     else if (dataHandle[0]->_isUnicodeValid){
         uint originalLength = dataHandle[0]->_length;
@@ -2291,6 +2298,7 @@ QString &QString::remove(uint index, uint len)
             memmove( dataHandle[0]->ascii()+index, dataHandle[0]->ascii()+index+len,
                     sizeof(char)*(olen-index-len) );
             setLength( olen-len );
+            dataHandle[0]->_isUnicodeValid = 0;
         }
         else if (dataHandle[0]->_isUnicodeValid){
             memmove( dataHandle[0]->unicode()+index, dataHandle[0]->unicode()+index+len,
@@ -2416,6 +2424,7 @@ void QString::fill(QChar qc, int len)
             char *nd = (char *)ascii();
             while (len--) 
                 *nd++ = (char)qc;
+            dataHandle[0]->_isUnicodeValid = 0;
         }
         else {
             forceUnicode();
@@ -2460,6 +2469,7 @@ QString &QString::operator+=(const QString &qs)
         else 
             QSTRING_FAILURE("invalid character cache");
         dataHandle[0]->_length += qs.data()->_length;
+        dataHandle[0]->_isAsciiValid = 0;
         return *this;
     }
     else if (dataHandle[0]->_isAsciiValid && qs.data()->_isAsciiValid && dataHandle[0]->_length + qs.data()->_length < dataHandle[0]->_maxAscii){
@@ -2470,6 +2480,7 @@ QString &QString::operator+=(const QString &qs)
             *tp++ = *fp++;
         *tp = 0;
         dataHandle[0]->_length += qs.data()->_length;
+        dataHandle[0]->_isUnicodeValid = 0;
         return *this;
     }
     return insert(dataHandle[0]->_length, qs);
