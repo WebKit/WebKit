@@ -1263,6 +1263,9 @@ void DeleteSelectionCommand::doApply()
     if (!m_selectionToDelete.isRange())
         return;
 
+    ASSERT(m_selectionToDelete.start().node()->inDocument());
+    ASSERT(m_selectionToDelete.end().node()->inDocument());
+
     if (m_smartDelete) {
         if (!m_selectionToDelete.start().leadingWhitespacePosition().isNull()) {
             m_selectionToDelete.modify(Selection::EXTEND, Selection::LEFT, CHARACTER);
@@ -1299,6 +1302,15 @@ void DeleteSelectionCommand::doApply()
         // be nice to be able to deal with this, but for now, bail.
         return;
 
+    // Figure out the typing style in effect before the delete is done.
+    // FIXME: Improve typing style.
+    // See this bug: <rdar://problem/3769899> Implementation of typing style needs improvement
+    CSSComputedStyleDeclarationImpl *computedStyle = downstreamStart.computedStyle();
+    computedStyle->ref();
+    CSSStyleDeclarationImpl *style = computedStyle->copyInheritableProperties();
+    style->ref();
+    computedStyle->deref();
+    
     if (startBlock != endBlock) {
         // Delete some unrendered whitespace. This prepares the startBlock to
         // receive content that will be merged from endBlock. Do this before 
@@ -1313,15 +1325,6 @@ void DeleteSelectionCommand::doApply()
             deleteUnrenderedText(upstreamInPreviousBlock);
     }
 
-    // Figure out the typing style in effect before the delete is done.
-    // FIXME: Improve typing style.
-    // See this bug: <rdar://problem/3769899> Implementation of typing style needs improvement
-    CSSComputedStyleDeclarationImpl *computedStyle = downstreamStart.computedStyle();
-    computedStyle->ref();
-    CSSStyleDeclarationImpl *style = computedStyle->copyInheritableProperties();
-    style->ref();
-    computedStyle->deref();
-    
     NodeImpl *startNode = upstreamStart.node();
     int startOffset = upstreamStart.offset();
     if (startOffset >= startNode->caretMaxOffset()) {

@@ -1,5 +1,17 @@
 2004-10-14  Adele Amchan  <adele@apple.com>
 
+        Reviewed by Darin and Ken.
+
+	fix for <rdar://problem/3821070> null de-ref in DelectSelectionCommand::doApply()
+
+        This change shifts some code around so that the code that determines what typing style
+        is in effect is called before deleteUnrenderedText is called.  Two asserts are also added
+        to ensure that start and end nodes of the selection are in the document.
+
+        * khtml/editing/htmlediting.cpp: (khtml::DeleteSelectionCommand::doApply):
+
+2004-10-14  Adele Amchan  <adele@apple.com>
+
         Reviewed by Ken
 	
 	This change makes these three functions virtual so that the work is being done in KWQHTMLPart 
