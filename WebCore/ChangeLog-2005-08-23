@@ -1,3 +1,21 @@
+2003-11-14  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Ken and Dave.
+
+	- fixed 3471925 - getting and setting cssText not implemented
+
+        * khtml/css/css_valueimpl.cpp:
+        (CSSStyleDeclarationImpl::cssText): Implemented by gathering text of all
+	properties (that are not non-CSS hints), separated with semicolons.
+        (CSSStyleDeclarationImpl::setCssText): Implemented by clearing all existing
+	properties (that are not non-CSS hints) and invoking css parser.
+        (CSSValueListImpl::cssText): Implemented.
+        (FontValueImpl::cssText): Implemented.
+        (ShadowValueImpl::cssText): Implemented.
+        (CSSProperty::cssText): Implemented.
+        * khtml/css/css_valueimpl.h: Declared new methods; made
+	CSSValueImpl::cssText() pure virtual; removed CSSValueImpl::setCssText().
+
 2003-11-16  David Hyatt  <hyatt@apple.com>
 
 	3485717, Cleanup of the float code.  Eliminated the -khtml-flow-mode style property in favor of two simple methods,
