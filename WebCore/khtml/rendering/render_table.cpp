@@ -315,19 +315,16 @@ void RenderTable::addColumns( int num )
 
     int newCols = totalCols + num;
     // resize the col structs to the number of columns
+    // The memsets that used to be here are unnecessary, since entries
+    // are nulled out when a vector is grown (according to the Qt docs)
+    // -dwh
     columnPos.resize(newCols+1);
-    memset( columnPos.data() + totalCols + 1, 0, num*sizeof(int));
     colMaxWidth.resize(newCols);
-    memset( colMaxWidth.data() + totalCols , 0, num*sizeof(int));
     colMinWidth.resize(newCols);
-    memset( colMinWidth.data() + totalCols , 0, num*sizeof(int));
     colValue.resize(newCols);
-    memset( colValue.data() + totalCols , 0, num*sizeof(int));
     colType.resize(newCols);
-    memset( colType.data() + totalCols , 0, num*sizeof(LengthType));
     actColWidth.resize(newCols);
-    memset( actColWidth.data() + totalCols , 0, num*sizeof(LengthType));
-
+    
     for ( unsigned int r = 0; r < allocRows; r++ )
     {
         newCells = new RenderTableCell * [newCols];
@@ -377,21 +374,11 @@ void RenderTable::recalcColInfo( ColInfo *col )
 {
     //qDebug("------------- recalcColinfo: line=%d, span=%d", col->start, col->span-1);
 
-    KHTMLAssert( colInfos[col->span-1]->data()[col->start] == col );
-    ColInfoLine *line = (colInfos[col->span-1]);
-#ifdef APPLE_CHANGES
-    // We can't mutate the buffer in place, so we use remove to clear out the item. 
-    // We unset auto-delete so that the |col| is not deleted.  That happens at the
-    // end of the function below. -dwh
-    line->setAutoDelete(false);
-    line->remove(col->start);
-    line->setAutoDelete(true);
-#else
-    ColInfo **data = line->data() + col->start;
-    *data = 0;
-    KHTMLAssert( colInfos[col->span-1]->data()[col->start] == 0 );
-#endif
-    
+    KHTMLAssert( colInfos[col->span-1]->at(col->start) == col );
+
+    // We need to recalc all the members of the column. -dwh
+    bool needRecalc = true;
+
     // add table-column if exists
     RenderObject *child = firstChild();
     while( child ) {
@@ -399,6 +386,10 @@ void RenderTable::recalcColInfo( ColInfo *col )
 	     child->style()->display() == TABLE_COLUMN_GROUP ) {
 	    RenderTableCol *tc = static_cast<RenderTableCol *>(child);
 	    if ( tc->span() == col->span && tc->col() == col->start ) {
+	        if (needRecalc) {
+		    needRecalc = false;
+                    col->needsRecalc();
+	        }
 		addColInfo( tc );
 		break;
 	    }
@@ -411,10 +402,15 @@ void RenderTable::recalcColInfo( ColInfo *col )
     // now the cells
     for ( unsigned int r = 0; r < totalRows; r++ ) {
 	RenderTableCell *cell = cells[r][col->start];
-	if ( cell && cell->colSpan() == col->span )
+	if ( cell && cell->colSpan() == col->span ) {
+	    if (needRecalc) {
+	        needRecalc = false;
+                col->needsRecalc();
+	    }
 	    addColInfo(cell, false);
+        }
     }
-    delete col;
+    
     setMinMaxKnown( false );
 
     //qDebug("------------- end recalcColinfo");
@@ -482,16 +478,20 @@ void RenderTable::addColInfo(int _startCol, int _colSpan,
 
     if (!col) {
         col = new ColInfo;
+        colInfos[_colSpan-1]->insert(_startCol,col);
+    }
+    
+    if (col->needRecalc) {
+        col->needRecalc = false;
         col->span = _colSpan;
         col->start = _startCol;
         col->minCell = _cell;
         col->maxCell = _cell;
 	col->min = _minSize;
-	col->max = _maxSize;
+        col->max = _maxSize;
         if (_colSpan>maxColSpan)
             maxColSpan=_colSpan;
-        colInfos[_colSpan-1]->insert(_startCol,col);
-	col->type = _width.type;
+        col->type = _width.type;
 	col->value = _width.value;
 	col->widthCell = _cell;
 
@@ -541,12 +541,8 @@ void RenderTable::addColInfo(int _startCol, int _colSpan,
 	}
     }
     
-#ifndef APPLE_CHANGES
-    // I've uncovered a second bug.  Until I can figure this out,
-    // I have to keep this commented out.  -dwh
     if ( recalc )
         recalcColInfo( col );
-#endif
 
     if ( changed )
 	setMinMaxKnown(false);
@@ -1649,7 +1645,7 @@ void RenderTable::calcMinMaxWidth()
     KHTMLAssert( !minMaxKnown() );
 
     if ( needsCellsRecalc )
-	recalcCells();
+        recalcCells();
 #ifdef DEBUG_LAYOUT
     kdDebug( 6040 ) << renderName() << "(Table " << this << ")::calcMinMaxWidth()" <<  endl;
 #endif
@@ -1659,8 +1655,8 @@ void RenderTable::calcMinMaxWidth()
      * Max width for percent cols are still not accurate, but as they don't
      * influence the total max width of the table we don't care.
      */
-     calcColMinMax();
-
+    calcColMinMax();
+ 
     setMinMaxKnown();
 #ifdef DEBUG_LAYOUT
     kdDebug( 6040 ) << renderName() << "END: (Table " << this << ")::calcMinMaxWidth() min = " << m_minWidth << " max = " << m_maxWidth <<  endl;

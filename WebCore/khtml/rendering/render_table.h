@@ -155,17 +155,16 @@ public:
     {
         ColInfo()
         {
-	    span = 0;
-	    start = 0;
-            min=0;
-            max=0;
-            type=khtml::Variable;
-            value=0;
-            minCell=0;
-            maxCell=0;
-	    widthCell=0;
+	    needsRecalc();
         }
 
+        void needsRecalc() {
+            span = start = min = max = value = 0;
+            minCell = maxCell = widthCell = 0;
+            type=khtml::Variable;
+            needRecalc = true;
+        }
+            
         int     span;
         int     start;
         int     min;
@@ -175,6 +174,7 @@ public:
         khtml::LengthType       type;
         int     value;
 	RenderTableCell* widthCell;
+        bool    needRecalc;
     };
 
 protected:
