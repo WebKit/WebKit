@@ -1,3 +1,11 @@
+2002-11-26  Darin Adler  <darin@apple.com>
+
+        * kjs/property_map.cpp:
+	(PropertyMap::save): Look at the attributes the same way in the single hash entry
+	case as in the actual hash table case. Change the rule for which attributes to save
+	to "attributes that don't have the ReadOnly, DontEnum, or Function bit set".
+        Also fix bug where saving an empty property map would leave the count set to the old value.
+
 2002-11-26  Richard Williamson   <rjw@apple.com>
 
         Remove debugging code.  Could be cause of performance regresssion.
