@@ -1,3 +1,12 @@
+2005-03-06  Christy Warren  <set EMAIL_ADDRESS environment variable>
+
+        Reviewed by Darin.
+
+        * khtml/editing/visible_position.cpp: Eliminated code that cuts off searching through the text boxes based on an assumption that breaks under bidi
+        (khtml::VisiblePosition::isCandidate):
+        * kwq/KWQFontMetrics.mm:
+        (QFontMetrics::checkSelectionPoint): Made the initialization of the WebCoreStyle honor the reversed flag
+
 2005-03-05  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Maciej.

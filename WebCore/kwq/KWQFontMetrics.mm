@@ -299,7 +299,6 @@ int QFontMetrics::checkSelectionPoint (QChar *s, int slen, int pos, int len, int
     }
     
     CREATE_FAMILY_ARRAY(data->font(), families);
-
     WebCoreTextRun run;
     WebCoreInitializeTextRun(&run, (const UniChar *)s, slen, pos, pos+len);
     
@@ -310,6 +309,7 @@ int QFontMetrics::checkSelectionPoint (QChar *s, int slen, int pos, int len, int
     style.smallCaps = smallCaps;
     style.families = families;
     style.padding = toAdd;
+    style.rtl = reversed;
 
     return [data->getRenderer() pointToOffset:&run style:&style position:x reversed:reversed includePartialGlyphs:includePartialGlyphs];
 }
