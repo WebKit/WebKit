@@ -75,7 +75,7 @@
 
         Reviewed by Ken.
         
-        - error messages (eg, from JavaScriptCore) sent to the bridge are 
+        - error messages (eg. from JavaScriptCore) sent to the bridge now 
           get delievered to a new delegate method.  
     
         * WebCoreSupport.subproj/WebBridge.m:
