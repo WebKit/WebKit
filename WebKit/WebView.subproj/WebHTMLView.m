@@ -750,7 +750,7 @@
     }
 
     // Give khtml a crack at the event only if we haven't started,
-    // or potentially starated, a drag
+    // or potentially started, a drag
     if (!linkURL && !imageURL){
         [[self _bridge] mouseDragged:event];
     }
@@ -922,25 +922,6 @@
 
 - (void)dataSourceUpdated:(WebDataSource *)dataSource
 {
-}
-
-- (NSView *)hitTest:(NSPoint)point
-{
-    // WebHTMLView objects handle all clicks for objects inside them.
-    // They are passed along to subviews by WebCore.
-    // But this doesn't apply to anything inside nested WebViews.
-    NSView *hitView = [super hitTest:point];
-    NSView *superview = hitView;
-    while (superview) {
-        if (superview == self) {
-            return self;
-        }
-        if ([superview isKindOfClass:[WebView class]]) {
-            return hitView;
-        }
-        superview = [superview superview];
-    }
-    return nil;
 }
 
 @end

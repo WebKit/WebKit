@@ -360,7 +360,6 @@ NSView *QWidget::getOuterView() const
     // If this widget's view is a WebCoreFrameView the we resize its containing view, a WebView.
     // The scroll view contained by the WebView will be autosized.
     NSView *view = data->view;
-    ASSERT(view);
     if ([view conformsToProtocol:@protocol(WebCoreFrameView)]) {
         view = [view superview];
         ASSERT(view);

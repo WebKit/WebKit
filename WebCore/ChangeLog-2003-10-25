@@ -1,5 +1,67 @@
 2002-12-11  Darin Adler  <darin@apple.com>
 
+        Reviewed by John.
+
+	- fixed handling of mouse events so I could turn the mechanism on all the way
+	- fixed anomalies in the red-painting-for-null-view-detection
+	- fixed 3123105 -- REGRESSION: Crash in KHTMLView::unscheduleRelayout on exit
+	- fixed 3124047 -- REGRESSION: crash in KWQKHTMLPart::handleMouseDownEventForWidget at nwa.com
+
+        * kwq/KWQKHTMLPart.h: Add setCurrentEvent()/currentEvent()/_currentEvent back, because we can
+	end up doing a lot of work and processing a lot of events before we get around to handling the
+	current event, so [NSApp currentEvent] won't cut it. Also add clearTimers, passSubframeEventToSubframe,
+	an overload for handleMouseDownEventForWidget, and _mouseDownWasInSubframe boolean.
+
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::submitForm): Use _currentEvent.
+        (KWQKHTMLPart::urlSelected): Use _currentEvent.
+        (KWQKHTMLPart::paint): Fixed red-drawing-for-debug code by using KWQPainter instead of going
+	directly to the AppKit level.
+        (KWQKHTMLPart::keyEvent): Moved the check for null node up a bit, and set _currentEvent.
+        (KWQKHTMLPart::handleMouseDownEventForWidget): Break into two pieces, so we can share the
+	code with the new passSubframeEventToSubframe. Set _mouseDownWasInSubframe to false
+	when setting _mouseDownView. Use getView() instead of getOuterView() since we really don't
+	care about the WebView after all. Use _currentEvent. Add a check for nodes that lack a renderer
+	to fix the crash at nwa.com above.
+        (KWQKHTMLPart::khtmlMouseReleaseEvent): Use _currentEvent.
+        (KWQKHTMLPart::clearTimers): Added. Checks for null view, which fixes the crash on exit above.
+        (KWQKHTMLPart::passSubframeEventToSubframe): Added. Checks for the categories of events that we
+	can pass to subframes, which are mouse down, up, and dragged events, and passes them along.
+	This is the main fix that makes subframes work properly.
+
+        * khtml/khtmlview.cpp:
+        (KHTMLView::viewportMousePressEvent): Add call to the new passSubframeEventToSubframe.
+        (KHTMLView::viewportMouseDoubleClickEvent): Ditto.
+        (KHTMLView::viewportMouseMoveEvent): Ditto.
+        (KHTMLView::viewportMouseReleaseEvent): Ditto.
+
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge saveDocumentToPageCache]): Call clearTimers on the part now, instead of the document.
+        (-[WebCoreBridge mouseUp:]): Call setCurrentEvent.
+        (-[WebCoreBridge mouseDown:]): Ditto.
+        (-[WebCoreBridge mouseMoved:]): Ditto.
+        (-[WebCoreBridge mouseDragged:]): Ditto.
+        (-[KWQPageState initWithDocument:URL:windowProperties:locationProperties:]): Call clearTimers on the
+	part now, instead of the document.
+
+	- other changes
+
+        * khtml/ecma/kjs_window.lut.h: Let this be regenerated. I think I accidentally checked
+	in an obsolete version of this earlier.
+
+        * khtml/html/html_documentimpl.h: Remove clearTimers(). We don't need it here in APPLE_CHANGES.
+        * khtml/html/html_documentimpl.cpp: Ditto.
+
+        * khtml/khtmlpart_p.h: Removed unneeded APPLE_CHANGES. We don't use m_frameNameId any more, nor
+	do we need m_savingPageState or m_restoringPageState.
+        * khtml/khtml_part.cpp: (KHTMLPart::clear): Removed unneeded APPLE_CHANGES, now that we don't
+	use m_frameNameId any more.
+        
+        * kwq/KWQWidget.mm: (KWQWidget::getOuterView): Tolerate nil for view here, so we can use this from
+        the QWidget destructor.
+
+2002-12-11  Darin Adler  <darin@apple.com>
+
         Rolled out changes I accidentally checked in last night.
 
 2002-12-10  John Sullivan  <sullivan@apple.com>

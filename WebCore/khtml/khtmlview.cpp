@@ -448,6 +448,9 @@ void KHTMLView::viewportMousePressEvent( QMouseEvent *_mouse )
 	d->clickY = ym;
     }
 #else
+    if (KWQ(m_part)->passSubframeEventToSubframe(mev))
+        return;
+
     d->clickX = xm;
     d->clickY = ym;
     d->clickCount = _mouse->clickCount();
@@ -481,6 +484,9 @@ void KHTMLView::viewportMouseDoubleClickEvent( QMouseEvent *_mouse )
     m_part->xmlDocImpl()->prepareMouseEvent( false, xm, ym, &mev );
 
 #if APPLE_CHANGES
+    if (KWQ(m_part)->passSubframeEventToSubframe(mev))
+        return;
+
     d->clickCount = _mouse->clickCount();
     bool swallowEvent = dispatchMouseEvent(EventImpl::MOUSEUP_EVENT,mev.innerNode.handle(),true,
                                            d->clickCount,_mouse,false,DOM::NodeImpl::MouseRelease);
@@ -531,6 +537,11 @@ void KHTMLView::viewportMouseMoveEvent( QMouseEvent * _mouse )
 
     DOM::NodeImpl::MouseEvent mev( _mouse->stateAfter(), DOM::NodeImpl::MouseMove );
     m_part->xmlDocImpl()->prepareMouseEvent( false, xm, ym, &mev );
+#if APPLE_CHANGES
+    if (KWQ(m_part)->passSubframeEventToSubframe(mev))
+        return;
+#endif
+
     bool swallowEvent = dispatchMouseEvent(EventImpl::MOUSEMOVE_EVENT,mev.innerNode.handle(),false,
                                            0,_mouse,true,DOM::NodeImpl::MouseMove);
 
@@ -632,6 +643,10 @@ void KHTMLView::viewportMouseReleaseEvent( QMouseEvent * _mouse )
 
     DOM::NodeImpl::MouseEvent mev( _mouse->stateAfter(), DOM::NodeImpl::MouseRelease );
     m_part->xmlDocImpl()->prepareMouseEvent( false, xm, ym, &mev );
+#if APPLE_CHANGES
+    if (KWQ(m_part)->passSubframeEventToSubframe(mev))
+        return;
+#endif
 
     bool swallowEvent = dispatchMouseEvent(EventImpl::MOUSEUP_EVENT,mev.innerNode.handle(),true,
                                            d->clickCount,_mouse,false,DOM::NodeImpl::MouseRelease);

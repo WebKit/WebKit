@@ -24,6 +24,8 @@
 #import <WebKit/WebViewPrivate.h>
 #import <WebKit/WebWindowOperationsDelegate.h>
 
+static BOOL doRealHitTest = NO;
+
 @interface NSView (AppKitSecretsIKnowAbout)
 - (void)_recursiveDisplayRectIfNeededIgnoringOpacity:(NSRect)rect isVisibleRect:(BOOL)isVisibleRect rectIsVisibleRectForView:(NSView *)visibleView topView:(BOOL)topView;
 - (void)_recursiveDisplayAllDirtyWithLockFocus:(BOOL)needsLockFocus visRect:(NSRect)visRect;
@@ -261,11 +263,23 @@
     [super scrollPoint:point];
 }
 
+- (NSView *)hitTest:(NSPoint)point
+{
+    // Keep real hitTest: available for use below.
+    if (doRealHitTest) {
+        return [super hitTest:point];
+    }
+    // WebHTMLView objects handle all clicks for objects inside them.
+    return [[self superview] mouse:point inRect:[self frame]] ? self : nil;
+}
+
 - (void)_updateMouseoverWithEvent:(NSEvent *)event
 {
     WebHTMLView *view = nil;
     if ([event window] == [self window]) {
+        doRealHitTest = YES;
         NSView *hitView = [[[self window] contentView] hitTest:[event locationInWindow]];
+        doRealHitTest = NO;
         while (hitView) {
             if ([hitView isKindOfClass:[WebHTMLView class]]) {
                 view = (WebHTMLView *)hitView;

@@ -52,16 +52,19 @@
 
 #import "WebCoreDOMPrivate.h"
 
-#import <kjs/property_map.h>
+#import <JavaScriptCore/property_map.h>
 
 using KParts::URLArgs;
 
 using DOM::DocumentImpl;
+using DOM::Node;
+using DOM::NodeImpl;
 
 using khtml::parseURL;
 using khtml::RenderImage;
 using khtml::RenderObject;
 using khtml::RenderPart;
+using khtml::RenderStyle;
 
 using KJS::SavedProperties;
 
@@ -79,18 +82,18 @@ NSString *WebCoreElementStringKey = 		@"WebElementString";
 
 @interface KWQPageState : NSObject
 {
-    DOM::DocumentImpl *document;
+    DocumentImpl *document;
     KURL *URL;
-    KJS::SavedProperties *windowProperties;
-    KJS::SavedProperties *locationProperties;
-    khtml::RenderObject *docRenderer; 
+    SavedProperties *windowProperties;
+    SavedProperties *locationProperties;
+    RenderObject *docRenderer; 
 }
-- initWithDocument: (DOM::DocumentImpl *)doc URL: (KURL)u windowProperties: (KJS::SavedProperties *)wp locationProperties: (KJS::SavedProperties *)lp;
-- (DOM::DocumentImpl *)document;
+- initWithDocument: (DocumentImpl *)doc URL: (KURL)u windowProperties: (SavedProperties *)wp locationProperties: (SavedProperties *)lp;
+- (DocumentImpl *)document;
 - (KURL *)URL;
-- (KJS::SavedProperties *)windowProperties;
-- (KJS::SavedProperties *)locationProperties;
-- (khtml::RenderObject *)renderer;
+- (SavedProperties *)windowProperties;
+- (SavedProperties *)locationProperties;
+- (RenderObject *)renderer;
 @end
 
 @implementation WebCoreBridge
@@ -228,20 +231,23 @@ NSString *WebCoreElementStringKey = 		@"WebElementString";
 - (BOOL)saveDocumentToPageCache
 {
     DocumentImpl *doc = _part->xmlDocImpl();
-    if (doc != 0){
-        KJS::SavedProperties *windowProperties = new KJS::SavedProperties();
-        KJS::SavedProperties *locationProperties = new KJS::SavedProperties();
-
-        _part->saveWindowProperties(windowProperties);
-        _part->saveLocationProperties(locationProperties);
-        if (doc->isHTMLDocument()) {
-            DOM::HTMLDocumentImpl* hdoc = static_cast<HTMLDocumentImpl*>(doc);
-            hdoc->clearTimers();
-        }
-        KWQPageState *pageState = [[[KWQPageState alloc] initWithDocument: doc URL:_part->m_url windowProperties:windowProperties locationProperties:locationProperties] autorelease];
-        return [self saveDocumentToPageCache: pageState];
+    if (!doc) {
+        return NO;
     }
-    return false;
+    
+    _part->clearTimers();
+
+    SavedProperties *windowProperties = new SavedProperties;
+    _part->saveWindowProperties(windowProperties);
+
+    SavedProperties *locationProperties = new SavedProperties;
+    _part->saveLocationProperties(locationProperties);
+    
+    KWQPageState *pageState = [[[KWQPageState alloc] initWithDocument:doc
+                                                                  URL:_part->m_url
+                                                     windowProperties:windowProperties
+                                                   locationProperties:locationProperties] autorelease];
+    return [self saveDocumentToPageCache:pageState];
 }
 
 - (BOOL)canCachePage
@@ -430,6 +436,8 @@ NSString *WebCoreElementStringKey = 		@"WebElementString";
         return;
     }
     
+    KWQKHTMLPart::setCurrentEvent(event);
+
     NSPoint p = [event locationInWindow];
 
     int button, state;
@@ -459,11 +467,12 @@ NSString *WebCoreElementStringKey = 		@"WebElementString";
     if (clickCount > 0 && clickCount % 2 == 0) {
         QMouseEvent doubleClickEvent(QEvent::MouseButtonDblClick, QPoint(p), button, state, clickCount);
         _part->view()->viewportMouseDoubleClickEvent(&doubleClickEvent);
-    }
-    else {
+    } else {
         QMouseEvent releaseEvent(QEvent::MouseButtonRelease, QPoint(p), button, state, clickCount);
         _part->view()->viewportMouseReleaseEvent(&releaseEvent);
     }
+    
+    KWQKHTMLPart::setCurrentEvent(nil);
 }
 
 - (void)mouseDown:(NSEvent *)event
@@ -472,6 +481,8 @@ NSString *WebCoreElementStringKey = 		@"WebElementString";
         return;
     }
     
+    KWQKHTMLPart::setCurrentEvent(event);
+
     NSPoint p = [event locationInWindow];
     
     int button, state;     
@@ -493,6 +504,8 @@ NSString *WebCoreElementStringKey = 		@"WebElementString";
     
     QMouseEvent kEvent(QEvent::MouseButtonPress, QPoint(p), button, state, [event clickCount]);
     _part->view()->viewportMousePressEvent(&kEvent);
+    
+    KWQKHTMLPart::setCurrentEvent(nil);
 }
 
 - (void)mouseMoved:(NSEvent *)event
@@ -501,10 +514,14 @@ NSString *WebCoreElementStringKey = 		@"WebElementString";
         return;
     }
     
+    KWQKHTMLPart::setCurrentEvent(event);
+    
     NSPoint p = [event locationInWindow];
     
     QMouseEvent kEvent(QEvent::MouseMove, QPoint(p), 0, [self stateForEvent:event]);
     _part->view()->viewportMouseMoveEvent(&kEvent);
+    
+    KWQKHTMLPart::setCurrentEvent(nil);
 }
 
 - (void)mouseDragged:(NSEvent *)event
@@ -513,10 +530,14 @@ NSString *WebCoreElementStringKey = 		@"WebElementString";
         return;
     }
     
+    KWQKHTMLPart::setCurrentEvent(event);
+
     NSPoint p = [event locationInWindow];
     
     QMouseEvent kEvent(QEvent::MouseMove, QPoint(p), Qt::LeftButton, Qt::LeftButton);
     _part->view()->viewportMouseMoveEvent(&kEvent);
+    
+    KWQKHTMLPart::setCurrentEvent(nil);
 }
 
 - (NSDictionary *)elementAtPoint:(NSPoint)point
@@ -669,22 +690,22 @@ NSString *WebCoreElementStringKey = 		@"WebElementString";
     _part->xmlDocImpl()->setSelection([(WebCoreDOMNode *)start impl], startOffset, [(WebCoreDOMNode *)end impl], endOffset);
 }
 
-static NSAttributedString *attributedString(DOM::NodeImpl *_startNode, int startOffset, DOM::NodeImpl *endNode, int endOffset)
+static NSAttributedString *attributedString(NodeImpl *_startNode, int startOffset, NodeImpl *endNode, int endOffset)
 {
     bool hasNewLine = true;
     bool hasParagraphBreak = true;
-    DOM::Node n = _startNode;
-    khtml::RenderObject *renderer;
+    Node n = _startNode;
+    RenderObject *renderer;
     NSFont *font;
     NSMutableAttributedString *result = [[[NSMutableAttributedString alloc] init] autorelease];
     NSAttributedString *partialString;
 
     while(!n.isNull()) {
         renderer = n.handle()->renderer();
-        if (n.nodeType() == DOM::Node::TEXT_NODE && renderer) {
+        if (n.nodeType() == Node::TEXT_NODE && renderer) {
             QString text;
             QString str = n.nodeValue().string();
-khtml::RenderStyle *style = 0;
+            RenderStyle *style = 0;
 
             font = nil;
             style = renderer->style();
@@ -772,7 +793,7 @@ khtml::RenderStyle *style = 0;
         if(n == endNode)
             break;
 
-DOM::Node next = n.firstChild();
+        Node next = n.firstChild();
         if(next.isNull())
             next = n.nextSibling();
 
@@ -916,7 +937,7 @@ DOM::Node next = n.firstChild();
 @end
 
 @implementation KWQPageState
-- initWithDocument: (DOM::DocumentImpl *)doc URL: (KURL)u windowProperties: (KJS::SavedProperties *)wp locationProperties: (KJS::SavedProperties *)lp
+- initWithDocument:(DocumentImpl *)doc URL:(KURL)u windowProperties:(SavedProperties *)wp locationProperties:(SavedProperties *)lp
 {
     [super init];
     doc->ref();
@@ -933,10 +954,8 @@ DOM::Node next = n.firstChild();
 {
     KHTMLView *view = document->view();
 
-    if (document->isHTMLDocument()) {
-        DOM::HTMLDocumentImpl* hdoc = static_cast<HTMLDocumentImpl*>(document);
-        hdoc->clearTimers();
-    }
+    KWQ(view->part())->clearTimers();
+
     document->setInPageCache(NO);
     document->detach();
     document->deref();
@@ -952,7 +971,7 @@ DOM::Node next = n.firstChild();
     [super dealloc];
 }
 
-- (DOM::DocumentImpl *)document
+- (DocumentImpl *)document
 {
     return document;
 }
@@ -962,21 +981,19 @@ DOM::Node next = n.firstChild();
     return URL;
 }
 
-- (KJS::SavedProperties *)windowProperties
+- (SavedProperties *)windowProperties
 {
     return windowProperties;
 }
 
-- (KJS::SavedProperties *)locationProperties
+- (SavedProperties *)locationProperties
 {
     return locationProperties;
 }
 
-- (khtml::RenderObject *)renderer
+- (RenderObject *)renderer
 {
     return docRenderer;
 }
 
-
 @end
-

@@ -1,3 +1,19 @@
+2002-12-11  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+	- turned on the mechanism that passes events through WebCore, now that it's working better
+
+        * WebView.subproj/WebHTMLViewPrivate.m:
+        (-[WebHTMLView hitTest:]): Moved this function in here. Rewrote it. It has a new feature where
+	you can set a global and do a normal hit test, needed for the mouse-moved handling below. Also,
+	for efficiency, it does the actual hit testing of itself, rather than calling super, which recurses,
+	and ignoring the result. The sum total is that it always returns self for mouse-moved events, so
+	we pass them all over the bridge at the topmost frame.
+
+        (-[WebHTMLView _updateMouseoverWithEvent:]):
+        * WebView.subproj/WebHTMLView.m: Moved hitTest: out of here.
+
 2002-12-11  John Sullivan  <sullivan@apple.com>
 
 	- fixed 3124640 -- Crash importing IE Favorites if there 
