@@ -456,7 +456,8 @@ KURL::KURL(const KURL &base, const QString &relative, const QTextCodec *codec)
 		char staticBuffer[2048];
 		char *buffer;
 		
-		size_t bufferLength = base.pathEndPos + strlen(str) + 1;
+                // Base part plus relative part plus one possible slash added in between plus terminating \0 byte.
+		size_t bufferLength = base.pathEndPos + 1 + strlen(str) + 1;
 
 		if (bufferLength > sizeof(staticBuffer)) {
 		    buffer = (char *)malloc(bufferLength);
@@ -483,7 +484,14 @@ KURL::KURL(const KURL &base, const QString &relative, const QTextCodec *codec)
 		    baseStringEnd--;
 		}
 		
-                bufferPos += copyPathRemovingDots(bufferPos, baseStringStart, 0, baseStringEnd - baseStringStart);
+		if (baseStringEnd == baseStringStart) {
+                    // no path in base, add a path separator if necessary
+                    if (base.schemeEndPos + 1 != base.pathEndPos && *str != '\0' && *str != '?' && *str != '#') {
+                        *bufferPos++ = '/';
+                    }
+                } else {
+                    bufferPos += copyPathRemovingDots(bufferPos, baseStringStart, 0, baseStringEnd - baseStringStart);
+                }
 
 		const char *relStringStart = str;
 		const char *relStringPos = relStringStart;

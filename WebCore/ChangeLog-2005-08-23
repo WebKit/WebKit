@@ -1,3 +1,13 @@
+2005-03-05  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed <rdar://problem/4025918> images copied from Safari with relative src URLs aren't pasted into Mail messages (KURL resolves base URLs incorrectly)
+
+        * kwq/KWQKURL.mm: (KURL::KURL): Add a slash at the start of the path if a relative part is adding
+        a path onto a URL that has "pre-path" bits like host name, but no path yet. This doesn't come up
+        for http because in that case we add a trailing "/" as part of canonicalization.
+
 2005-03-04  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Kevin.
