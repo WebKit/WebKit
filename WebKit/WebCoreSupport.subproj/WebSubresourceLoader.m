@@ -153,7 +153,7 @@
 {
     ASSERT(handle == h);
     ASSERT([currentURL isEqual:[[handle _request] canonicalURL]]);
-    ASSERT([response statusCode] == WebResourceHandleStatusLoadComplete);
+    ASSERT([h _statusCode] == WebResourceHandleStatusLoadComplete);
 
     // Calling _removeSubresourceClient will likely result in a call to release, so we must retain.
     [self retain];

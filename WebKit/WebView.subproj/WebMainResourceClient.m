@@ -160,7 +160,7 @@
     LOG(Loading, "URL = %@", [[handle _request] URL]);
     
     ASSERT([currentURL isEqual:[[handle _request] URL]]);
-    ASSERT([response statusCode] == WebResourceHandleStatusLoadComplete);
+    ASSERT([handle _statusCode] == WebResourceHandleStatusLoadComplete);
 
     // Calling receivedError will likely result in a call to release, so we must retain.
     [self retain];
@@ -241,7 +241,7 @@
             contentType = @"text/html";
         
         [dataSource _setContentType:contentType];
-        [dataSource _setEncoding:[response characterSet]];
+        [dataSource _setEncoding:[response textEncodingName]];
         
         // retain the downloadProgressDelegate just in case this is a download.
         // Alexander releases the WebController if no window is created for it.

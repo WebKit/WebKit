@@ -1,5 +1,14 @@
 2002-10-01  Ken Kocienda  <kocienda@apple.com>
 
+        * WebCoreSupport.subproj/WebSubresourceClient.m:
+        (-[WebSubresourceClient handleDidFinishLoading:]): Fixed Development build breakage. Call to [response statusCode] 
+	now calls the handle's private method to get the status code.
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient handleDidFinishLoading:]): Ditto.
+        (-[WebMainResourceClient handle:didReceiveData:]): Calls new textEncodingName method, replacing call to characterSet.
+
+2002-10-01  Ken Kocienda  <kocienda@apple.com>
+
         * WebView.subproj/WebLoadProgress.m:
         (-[WebLoadProgress initWithResourceHandle:]): Status code moved from WebResourceResponse
 	to WebResourceHandle private API.
