@@ -1,3 +1,28 @@
+2003-01-21  David Hyatt  <hyatt@apple.com>
+
+	Fix for the 2.5% perf regression from the descendant rules
+	changes.  This patch does 3 things:
+	(1) Fix the descendant rule check in the CSS parser. It
+	was incorrect.
+	(2) Fix DOM insertion/removal from setting the parent as needing
+	a style re-resolve.
+	(3) Fix whitespace inside <html> so that it doesn't make a premature
+	<body>.
+	
+        Reviewed by mjs
+
+        * khtml/css/cssparser.cpp:
+        (StyleBaseImpl::parseSelector):
+        * khtml/html/htmlparser.cpp:
+        (KHTMLParser::insertNode):
+        * khtml/xml/dom_elementimpl.cpp:
+        (ElementImpl::recalcStyle):
+        * khtml/xml/dom_nodeimpl.cpp:
+        (NodeBaseImpl::insertBefore):
+        (NodeBaseImpl::replaceChild):
+        (NodeBaseImpl::removeChild):
+        (NodeBaseImpl::appendChild):
+
 2003-01-21  Darin Adler  <darin@apple.com>
 
         Reviewed by Richard.

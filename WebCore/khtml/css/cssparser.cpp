@@ -689,25 +689,33 @@ StyleBaseImpl::parseSelector(const QChar *curP, const QChar *endP)
                 slist->setAutoDelete(true);
             }
             slist->append(selector);
-            if (!sawDescendantRule && 
-                (selector->relation == CSSSelector::Descendant || 
-                 selector->relation == CSSSelector::Child)) {
-                // We encountered a descendant rule.  Get our document and set its
-                // descendant rule flag to true.
-                sawDescendantRule = true;
-                StyleBaseImpl *b = this;
-                StyleBaseImpl *root = this;
-                while (b) {
-                    root = b;
-                    b = b->m_parent;
-                }
-            
-                if (root && root->isStyleSheet()) {
-                    StyleSheetImpl *sheet = static_cast<StyleSheetImpl *>(root);
-                    if (sheet->ownerNode()) {
-                        DocumentImpl *doc = sheet->ownerNode()->getDocument();
-                        doc->setUsesDescendantRules(true);
+            if (!sawDescendantRule) {
+                CSSSelector* sel = selector;
+                CSSSelector::Relation relation = sel->relation;
+                while ((sel = sel->tagHistory)) {
+                    if (relation == CSSSelector::Descendant || 
+                        relation == CSSSelector::Child) {
+                        // We encountered a descendant rule.  Get our document and set its
+                        // descendant rule flag to true.
+                        sawDescendantRule = true;
+                        StyleBaseImpl *b = this;
+                        StyleBaseImpl *root = this;
+                        while (b) {
+                            root = b;
+                            b = b->m_parent;
+                        }
+                    
+                        if (root && root->isStyleSheet()) {
+                            StyleSheetImpl *sheet = static_cast<StyleSheetImpl *>(root);
+                            if (sheet->ownerNode()) {
+                                DocumentImpl *doc = sheet->ownerNode()->getDocument();
+                                if (!doc->usesDescendantRules())
+                                    doc->setUsesDescendantRules(true);
+                            }
+                        }
+                        break;
                     }
+                    relation = sel->relation;
                 }
             }
         }

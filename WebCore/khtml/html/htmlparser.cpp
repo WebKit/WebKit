@@ -566,6 +566,12 @@ bool KHTMLParser::insertNode(NodeImpl *n, bool flat)
                     handled = true;
                 }
                 break;
+            case ID_TEXT: {
+                TextImpl *t = static_cast<TextImpl *>(n);
+                if (t->containsOnlyWhitespace())
+                    return false;
+                /* Fall through to default */
+            }
             default:
                 if ( haveFrameSet ) break;
                 e = new HTMLBodyElementImpl(document);
