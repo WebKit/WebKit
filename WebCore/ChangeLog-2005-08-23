@@ -1,3 +1,19 @@
+2004-05-19  Darin Adler  <darin@apple.com>
+
+        - fixed headers with licenses mangled by Xcode auto-indenting
+
+        * kwq/DOMExtensions.h:
+        * kwq/KWQAccObject.h:
+        * kwq/KWQAccObject.mm:
+        * kwq/KWQAccObjectCache.h:
+        * kwq/KWQKSSLKeyGen.mm:
+        * kwq/KWQScrollBar.mm:
+        * kwq/KWQSlider.mm:
+        * kwq/WebCoreGraphicsBridge.h:
+        * kwq/WebCoreGraphicsBridge.m:
+        * kwq/WebCoreKeyGenerator.h:
+        * kwq/WebCoreKeyGenerator.m:
+
 2004-05-18  David Hyatt  <hyatt@apple.com>
 
 	Add two new attributes for accessibility that can be polled by the screen reader.  AXLayoutCount indicates
