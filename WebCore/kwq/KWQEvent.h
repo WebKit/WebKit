@@ -26,10 +26,30 @@
 #ifndef QEVENT_H_
 #define QEVENT_H_
 
+#include "qnamespace.h"
 #include "qregion.h"
 
-// all the following events added to support khtmlview.h 
-class QEvent {};
+class QEvent : public Qt {
+public:
+	enum Type {
+		MouseButtonPress,
+		MouseButtonRelease,
+		MouseButtonDblClick,
+		MouseMove,
+	};
+	Type type() const;
+};
+
+class QMouseEvent : public QEvent {
+public:
+	int x();
+	int y();
+	int globalX();
+	int globalY();
+	ButtonState button();
+	ButtonState state();
+};
+
 class QFocusEvent : public QEvent {};
 class QHideEvent : public QEvent {};
 class QKeyEvent : public QEvent {};

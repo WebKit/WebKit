@@ -26,4 +26,7 @@
 #ifndef QVARIANT_H_
 #define QVARIANT_H_
 
+class QVariant {
+};
+
 #endif

@@ -26,4 +26,13 @@
 #ifndef QTEXTSTREAM_H_
 #define QTEXTSTREAM_H_
 
+class QTextStream {
+};
+
+class QTextIStream : public QTextStream {
+public:
+    QTextIStream(QString *);
+    QString readLine();
+};
+
 #endif

@@ -27,6 +27,9 @@
 #define QRECT_H_
 
 class QRect {
+public:
+	QRect();
+	QRect(int l, int t, int w, int h);
 };
 
 #endif

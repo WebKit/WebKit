@@ -38,4 +38,8 @@ typedef unsigned int Q_UINT32;
 // "dom/css_extensions.h"
 class CSS2AzimuthImpl;
 
+#define QMAX(a,b) ((a) > (b) ? (a) : (b))
+#define TRUE (1)
+#define FALSE (0)
+
 #endif

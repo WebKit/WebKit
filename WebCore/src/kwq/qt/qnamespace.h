@@ -26,4 +26,16 @@
 #ifndef QNAMESPACE_H_
 #define QNAMESPACE_H_
 
+class Qt {
+public:
+	enum ButtonState {
+		LeftButton,
+		MidButton,
+		RightButton,
+		ControlButton,
+		AltButton,
+		ShiftButton,
+	};
+};
+
 #endif

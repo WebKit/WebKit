@@ -32,6 +32,7 @@
 #include "qcstring.h"
 
 class QRegExp;
+class QString;
 
 class QChar {
 public:
@@ -39,13 +40,19 @@ public:
     QChar(char);
     QChar(const QChar &);
     QChar lower() const;
+    QChar upper() const;
     char latin1() const;
     bool isNull() const;
     bool isDigit() const;
     bool isSpace() const;
-    friend int operator==(QChar, QChar);
-    friend int operator!=(QChar, QChar);
+    bool isLetterOrNumber() const;
+    friend inline int operator==(QChar, QChar);
+    friend inline int operator!=(QChar, QChar);
+    friend inline int operator!=(char, QChar);
+    friend inline int operator!=(QChar, char);
     operator char() const;
+
+	static const QChar null;
 
     enum Direction {
         // NOTE: alphabetical order
@@ -63,22 +70,34 @@ public:
     int toInt(bool *) const;
     bool isNull() const;
     const QChar *unicode() const;
+	bool contains(const char *s, bool b) const;
     uint length() const;
     QString &sprintf(const char *format, ...);
     QString lower() const;
     QString stripWhiteSpace() const;
+    QString simplifyWhiteSpace() const;
     bool isEmpty() const;
     int contains(const char *) const;
     int find(char c, int index) const;
     int find(const char *s, int index, bool b=0) const;
     int find(const QRegExp &regexp, int index, bool b=0) const;
+    int findRev(char c) const;
+
+    QString arg(const QString& a, int fieldwidth=0) const;
+
     QString mid(int index, int len=0xffffffff) const;
+    void fill(QChar c, int len = -1);
+
+    float toFloat(bool *b=0) const;
 
     const char* latin1() const;
     const char *ascii() const;
     // FIXME: is there a standard parameter type for overloaded operators?
     QChar operator[](int) const;
+    QString &operator+(QChar c);
+    QString &operator+(const QString &s);
     QString &operator+=(QChar c);
+    QString &operator+=(const QString &s);
 
     QString &append(const char *);
     QString &append(const QString &);
@@ -93,6 +112,13 @@ public:
     // type" error in "Node::toHTML()" function in "dom/dom_node.cpp"
     QString(int);
 };
+
+QString &operator+(const char *s1, const QString &s2);
+QString &operator+(QChar c1, const QString &s2);
+bool operator!=(const QString &s1, QChar c2);
+bool operator!=(const QString &s1, const QString &s2);
+bool operator!=(const QString &s1, const char *s2);
+bool operator!=(const char *s1, const QString &s2);
 
 class QConstString {
 public:

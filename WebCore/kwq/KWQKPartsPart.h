@@ -27,6 +27,7 @@
 #define PART_H_
 
 #include <kurl.h>
+#include <qvariant.h>
 
 // added to help in compilation of khtml/khtml_part.h:867
 namespace KIO {
@@ -35,9 +36,6 @@ class Job;
  
 // forward declaration hack to help in compilation of khtml/khtml_part.h:166
 class QWidget;
-
-// forward declaration hack to help in compilation of khtml/khtml_part.h:249
-class QVariant;
 
 // forward declaration hack to help in compilation of khtml/khtml_part.h:552
 class QCursor;

@@ -26,14 +26,53 @@
 #ifndef QXML_H_
 #define QXML_H_
 
-class QXmlDefaultHandler {
-};
+class QString;
 
 class QXmlAttributes {
+public:
+	QString value(const QString& qName) const;
+	int length() const;
+	QString localName(int index) const;
+};
+
+class QXmlInputSource {
+public:
+	virtual void setData(const QString& data);
+};
+
+class QXmlDTDHandler {
+};
+
+class QXmlDeclHandler {
+};
+
+class QXmlErrorHandler {
+};
+
+class QXmlLexicalHandler {
+};
+
+class QXmlContentHandler {
+};
+
+class QXmlDefaultHandler : public QXmlContentHandler, public QXmlLexicalHandler, public QXmlErrorHandler, public QXmlDeclHandler, public QXmlDTDHandler {
+};
+
+class QXmlSimpleReader {
+public:
+	void setContentHandler(QXmlContentHandler* handler);
+	bool parse(const QXmlInputSource& input);
+    void setLexicalHandler(QXmlLexicalHandler* handler);
+    void setDTDHandler(QXmlDTDHandler* handler);
+    void setDeclHandler(QXmlDeclHandler* handler);
+    void setErrorHandler(QXmlErrorHandler* handler);
 };
 
 class QXmlParseException {
+public:
+	QString message() const;
+	int columnNumber() const;
+	int lineNumber() const;
 };
-
 
 #endif

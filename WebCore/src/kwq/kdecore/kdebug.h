@@ -34,6 +34,7 @@ typedef kdbgstream & (*KDBGFUNC)(kdbgstream &);
 class kdbgstream {
 public:
 	kdbgstream &operator<<(const char *string);
+	kdbgstream &operator<<(const void *p);
 	kdbgstream &operator<<(const QString& string);
 	kdbgstream &operator<<(const QCString& string);
 	kdbgstream &operator<<(KDBGFUNC f);

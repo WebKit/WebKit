@@ -1,3 +1,4 @@
+# Generated automatically from Makefile.in by configure.
 #======================================================================
 #
 # Makefile
@@ -38,6 +39,7 @@ LIBRARY = libkhtmlxml.a
 
 CLEAN_FILES = $(OBJECTS) \
 	$(LIBRARY) \
+	*.moc \
 	$(NULL)
 
 #----------------------------------------------------------------------
@@ -45,6 +47,11 @@ CLEAN_FILES = $(OBJECTS) \
 
 CXXFLAGS = -I$(TOPSRCDIR)/src/kwq \
         -I$(TOPSRCDIR)/src/kwq/qt \
+        -I$(TOPSRCDIR)/src/kwq/kdecore \
+        -I../css \
+        -I../dom \
+        -I../html \
+        -I../misc \
         -I.. \
         -I. \
         $(NULL)
@@ -54,6 +61,13 @@ CXXFLAGS = -I$(TOPSRCDIR)/src/kwq \
 # Set targets for this directory
 
 all: $(OBJECTS) $(LIBRARY)
+
+dom_docimpl.cpp: dom_docimpl.moc
+dom_docimpl.moc:
+	touch $@
+xml_tokenizer.cpp: xml_tokenizer.moc
+xml_tokenizer.moc:
+	touch $@
 
 $(LIBRARY): $(CXXOBJECTS)
 	$(AR) $(ARFLAGS) $(LIBRARY) $(CXXOBJECTS)

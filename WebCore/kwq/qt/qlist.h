@@ -39,6 +39,8 @@ public:
     void setAutoDelete(bool);
     bool remove(const T *d);
     bool removeLast();
+    void prepend(const T *d);
+    T *take(uint i);
     T *first();
     T *next();
     T *last();
@@ -50,6 +52,7 @@ public:
 template <class T> class QListIterator {
 public:
     QListIterator(const QList<T> &);
+    T *toFirst();
     T *toLast();
     T *current() const;
     T *operator--();

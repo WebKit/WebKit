@@ -35,7 +35,7 @@ typedef QArray<char> QByteArray;
 class QCString {
 };
 
-inline bool operator!=( const char *s1, const QCString &s2 ) { return 0; } // FIXME
-inline bool operator!=( const QCString &s1, const char *s2 ) { return 0; } // FIXME
+bool operator!=(const char *s1, const QCString &s2);
+bool operator!=(const QCString &s1, const char *s2);
 
 #endif

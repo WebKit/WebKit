@@ -41,6 +41,7 @@ dnl
 SUBDIRS='
 	src/kdelibs/kjs
 	src/kdelibs/khtml/dom
+	src/kdelibs/khtml/xml
 '
 for subdir in $SUBDIRS; do
 	if (test -f "./$subdir/MakeSystemChanges.sh"); then
@@ -181,6 +182,7 @@ AC_OUTPUT(
 	Makefile.vars
 	Makefile.rules
 	src/kdelibs/kjs/Makefile 
+	src/kdelibs/khtml/dom/Makefile
 	src/kdelibs/khtml/xml/Makefile
 )
 
