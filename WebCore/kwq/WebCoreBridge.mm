@@ -1518,6 +1518,11 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     _part->setDragCaret(Selection());
 }
 
+- (DOMRange *)dragCaretDOMRange
+{
+    return [DOMRange _rangeWithImpl:_part->dragCaret().toRange().handle()];
+}
+
 - (void)deleteSelection
 {
     if (!_part || !_part->xmlDocImpl())

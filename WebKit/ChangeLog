@@ -1,3 +1,16 @@
+2004-06-01  Chris Blumenberg  <cblu@apple.com>
+
+	Made paste and drop ask the delegate before making any replacements.
+
+        Reviewed by kocienda.
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _pasteWithPasteboard:allowPlainText:]): renamed, now calls _shouldInsertFragment:replacingDOMRange:givenAction:
+        (-[WebHTMLView _shouldInsertFragment:replacingDOMRange:givenAction:]): new, asks delegate
+        (-[WebHTMLView concludeDragForDraggingInfo:]): now calls _shouldInsertFragment:replacingDOMRange:givenAction:
+        (-[WebHTMLView paste:]): call renamed _pasteWithPasteboard:allowPlainText:
+        (-[WebHTMLView pasteAsRichText:]): ditto
+
 2004-05-28  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

@@ -87,7 +87,8 @@ static BOOL forceRealHitTest = NO;
 
 @interface WebHTMLView (WebFileInternal)
 - (DOMDocumentFragment *)_documentFragmentFromPasteboard:(NSPasteboard *)pasteboard allowPlainText:(BOOL)allowPlainText;
-- (void)_replaceSelectionWithPasteboard:(NSPasteboard *)pasteboard selectReplacement:(BOOL)selectReplacement allowPlainText:(BOOL)allowPlainText;
+- (void)_pasteWithPasteboard:(NSPasteboard *)pasteboard allowPlainText:(BOOL)allowPlainText;
+- (BOOL)_shouldInsertFragment:(DOMDocumentFragment *)fragment replacingDOMRange:(DOMRange *)range givenAction:(WebViewInsertAction)action;
 @end
 
 @interface WebHTMLView (WebHTMLViewPrivate)
@@ -212,11 +213,23 @@ static WebElementOrTextFilter *elementOrTextFilterInstance = nil;
     return nil;
 }
 
-- (void)_replaceSelectionWithPasteboard:(NSPasteboard *)pasteboard selectReplacement:(BOOL)selectReplacement allowPlainText:(BOOL)allowPlainText
+- (void)_pasteWithPasteboard:(NSPasteboard *)pasteboard allowPlainText:(BOOL)allowPlainText
 {
     DOMDocumentFragment *fragment = [self _documentFragmentFromPasteboard:pasteboard allowPlainText:allowPlainText];
-    if (fragment) {
-        [[self _bridge] replaceSelectionWithFragment:fragment selectReplacement:selectReplacement];
+    WebBridge *bridge = [self _bridge];
+    if (fragment && [self _shouldInsertFragment:fragment replacingDOMRange:[bridge selectedDOMRange] givenAction:WebViewInsertActionPasted]) {
+        [bridge replaceSelectionWithFragment:fragment selectReplacement:NO];
+    }
+}
+
+- (BOOL)_shouldInsertFragment:(DOMDocumentFragment *)fragment replacingDOMRange:(DOMRange *)range givenAction:(WebViewInsertAction)action
+{
+    WebView *webView = [self _webView];
+    DOMNode *child = [fragment firstChild];
+    if ([fragment lastChild] == child && [child isKindOfClass:[DOMCharacterData class]]) {
+        return [[webView _editingDelegateForwarder] webView:webView shouldInsertText:[(DOMCharacterData *)child data] replacingDOMRange:range givenAction:action];
+    } else {
+        return [[webView _editingDelegateForwarder] webView:webView shouldInsertNode:fragment replacingDOMRange:range givenAction:action];
     }
 }
 
@@ -889,7 +902,6 @@ static WebHTMLView *lastHitView = nil;
     [timer invalidate];
     [timer release];
 }
-
 
 - (void)_autoscroll
 {
@@ -1751,14 +1763,16 @@ static WebHTMLView *lastHitView = nil;
     } else {
         BOOL didInsert = NO;
         if ([self _canProcessDragWithDraggingInfo:draggingInfo] && [[self _webView] _webKitDragRespondsToDragging]) {
-            if (_private->initiatedDrag && [[self _bridge] isSelectionEditable]) {
-                DOMDocumentFragment *fragment = [self _documentFragmentFromPasteboard:[draggingInfo draggingPasteboard] allowPlainText:YES];
-                [bridge moveSelectionToDragCaret:fragment];
-            } else {
-                [bridge setSelectionToDragCaret];
-                [self _replaceSelectionWithPasteboard:[draggingInfo draggingPasteboard] selectReplacement:YES allowPlainText:YES];
+            DOMDocumentFragment *fragment = [self _documentFragmentFromPasteboard:[draggingInfo draggingPasteboard] allowPlainText:YES];
+            if (fragment && [self _shouldInsertFragment:fragment replacingDOMRange:[bridge dragCaretDOMRange] givenAction:WebViewInsertActionDropped]) {
+                if (_private->initiatedDrag && [bridge isSelectionEditable]) {
+                    [bridge moveSelectionToDragCaret:fragment];
+                } else {
+                    [bridge setSelectionToDragCaret];
+                    [bridge replaceSelectionWithFragment:fragment selectReplacement:YES];
+                }
+                didInsert = YES;
             }
-            didInsert = YES;
         }
         [bridge removeDragCaret];
         return didInsert;
@@ -2318,7 +2332,7 @@ static WebHTMLView *lastHitView = nil;
 
 - (void)paste:(id)sender
 {
-    [self _replaceSelectionWithPasteboard:[NSPasteboard generalPasteboard] selectReplacement:NO allowPlainText:YES];
+    [self _pasteWithPasteboard:[NSPasteboard generalPasteboard] allowPlainText:YES];
 }
 
 - (void)copyFont:(id)sender
@@ -2343,7 +2357,7 @@ static WebHTMLView *lastHitView = nil;
 
 - (void)pasteAsRichText:(id)sender
 {
-    [self _replaceSelectionWithPasteboard:[NSPasteboard generalPasteboard] selectReplacement:NO allowPlainText:NO];
+    [self _pasteWithPasteboard:[NSPasteboard generalPasteboard] allowPlainText:NO];
 }
 
 - (DOMCSSStyleDeclaration *)_fontManagerOperationAsStyle

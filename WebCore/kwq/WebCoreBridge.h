@@ -307,6 +307,7 @@ typedef enum {
 - (void)moveSelectionToDragCaret:(DOMDocumentFragment *)selectionFragment;
 - (void)moveDragCaretToPoint:(NSPoint)point;
 - (void)removeDragCaret;
+- (DOMRange *)dragCaretDOMRange;
 
 - (void)deleteSelection;
 - (void)deleteKeyPressed;

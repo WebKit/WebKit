@@ -1,3 +1,11 @@
+2004-06-01  Chris Blumenberg  <cblu@apple.com>
+
+        Reviewed by kocienda.
+
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge dragCaretDOMRange]): new, lets WebKit pass the drag caret DOM range to the editing delegate
+
 2004-05-28  John Louch  <ouch@apple.com>
 
         Reviewed by gramps.
