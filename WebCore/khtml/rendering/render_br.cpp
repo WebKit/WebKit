@@ -108,7 +108,7 @@ Position RenderBR::positionForCoordinates(int _x, int _y, EAffinity *affinity)
     return Position(element(), 0);
 }
 
-QRect RenderBR::caretRect(int offset, EAffinity affinity)
+QRect RenderBR::caretRect(int offset, EAffinity affinity, int *extraWidthToEndOfLine)
 {
     // EDIT FIXME: This does not work yet. Some other changes are need before
     // an accurate position can be determined.
@@ -116,6 +116,9 @@ QRect RenderBR::caretRect(int offset, EAffinity affinity)
     int absx, absy;
     absolutePosition(absx,absy);
 
+   if (extraWidthToEndOfLine)
+        *extraWidthToEndOfLine = containingBlockWidth() - xPos();
+ 
     // FIXME: an older version of this code wasn't setting width at
     // all, using the default of 1...
     return QRect(xPos() + absx, yPos() + absy, 1, lineHeight(false));

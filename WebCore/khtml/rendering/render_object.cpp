@@ -1651,8 +1651,11 @@ bool RenderObject::absolutePosition(int &xPos, int &yPos, bool f)
     }
 }
 
-QRect RenderObject::caretRect(int, EAffinity)
+QRect RenderObject::caretRect(int, EAffinity, int *extraWidthToEndOfLine)
 {
+   if (extraWidthToEndOfLine)
+       *extraWidthToEndOfLine = 0;
+
     return QRect();
 }
 

@@ -1479,7 +1479,7 @@ void RenderBox::calcAbsoluteVertical()
 
 }
 
-QRect RenderBox::caretRect(int offset, EAffinity affinity)
+QRect RenderBox::caretRect(int offset, EAffinity affinity, int *extraWidthToEndOfLine)
 {
     // FIXME: Is it OK to check only first child instead of picking
     // right child based on offset? Is it OK to pass the same offset
@@ -1488,7 +1488,7 @@ QRect RenderBox::caretRect(int offset, EAffinity affinity)
     // propagate it downwards to its children, someone will feel responsible
     RenderObject *child = firstChild();
     if (child) {
-        QRect result = child->caretRect(offset, affinity);
+        QRect result = child->caretRect(offset, affinity, extraWidthToEndOfLine);
         // FIXME: in-band signalling!
         if (result.isEmpty())
             return result;
@@ -1531,6 +1531,9 @@ QRect RenderBox::caretRect(int offset, EAffinity affinity)
         // just a relative one
         return QRect();
     }
+
+    if (extraWidthToEndOfLine)
+        *extraWidthToEndOfLine = m_width - _x;
 
     return QRect(_x, _y, 1, height);
 }

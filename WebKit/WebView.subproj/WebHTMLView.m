@@ -4148,8 +4148,25 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 
 - (NSRect)firstRectForCharacterRange:(NSRange)theRange
 {
-    ERROR("TEXTINPUT: firstRectForCharacterRange: not yet implemented");
-    return NSMakeRect(0,0,0,0);
+    NSLog(@"location: %d  length: %d\n", theRange.location, theRange.length);
+
+    if (![self hasMarkedText]) {
+        return NSMakeRect(0,0,0,0);
+    }
+
+    WebBridge *bridge = [self _bridge];
+
+    DOMRange *rectRange = [[bridge DOMDocument] createRange];
+    DOMRange *markedRange = [bridge markedTextDOMRange];
+    [rectRange setStart:[markedRange startContainer] :theRange.location];
+    [rectRange setEnd:[markedRange startContainer] :(theRange.location + theRange.length)];
+
+    NSRect resultRect = [self convertRect:[bridge firstRectForDOMRange:rectRange] toView:nil];
+    resultRect.origin = [[self window] convertBaseToScreen:resultRect.origin];
+
+    NSLog(@"(%d,%d) %dx%d\n", (int)resultRect.origin.x, (int)resultRect.origin.y, (int)resultRect.size.width, (int)resultRect.size.height);
+
+    return resultRect;
 }
 
 - (NSRange)selectedRange

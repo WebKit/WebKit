@@ -1208,6 +1208,26 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 {
     return [node _nodeImpl]->renderer()->caretRect(offset, static_cast<EAffinity>(affinity));
 }
+- (NSRect)firstRectForDOMRange:(DOMRange *)range
+{
+    int extraWidthToEndOfLine = 0;
+    QRect startCaretRect = [[range startContainer] _nodeImpl]->renderer()->caretRect([range startOffset], UPSTREAM, &extraWidthToEndOfLine);
+    QRect endCaretRect = [[range startContainer] _nodeImpl]->renderer()->caretRect([range endOffset], UPSTREAM);
+
+    if (startCaretRect.y() == endCaretRect.y()) {
+        // start and end are on the same line
+        return QRect(MIN(startCaretRect.x(), endCaretRect.x()), 
+                     startCaretRect.y(), 
+                     abs(endCaretRect.x() - startCaretRect.x()),
+                     MAX(startCaretRect.height(), endCaretRect.height()));
+    }
+
+    // start and end aren't on the same line, so go from start to the end of its line
+    return QRect(startCaretRect.x(), 
+                 startCaretRect.y(),
+                 startCaretRect.width() + extraWidthToEndOfLine,
+                 startCaretRect.height());
+}
 
 - (NSImage *)selectionImage
 {

@@ -703,7 +703,7 @@ static RenderObject *firstRendererOnNextLine(InlineBox *box)
     return firstChild->object();
 }
 
-QRect RenderText::caretRect(int offset, EAffinity affinity)
+QRect RenderText::caretRect(int offset, EAffinity affinity, int *extraWidthToEndOfLine)
 {
     if (!firstTextBox() || stringLength() == 0) {
         return QRect();
@@ -748,6 +748,11 @@ QRect RenderText::caretRect(int offset, EAffinity affinity)
     if (pos)
         left += fm.rightBearing(*(str->s + box->m_start + offset));
 #endif
+
+    // FIXME: should we use the width of the root inline box or the
+    // width of the containing block for this?
+    if (extraWidthToEndOfLine)
+        *extraWidthToEndOfLine = (box->root()->width() + box->root()->xPos()) - (left + 1);
 
     int absx, absy;
     absolutePosition(absx,absy);

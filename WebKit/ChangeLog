@@ -1,3 +1,15 @@
+2004-11-02  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Dave Hyatt (when I originally coded it).
+
+        Redid WebKit part of fix for:
+
+        <rdar://problem/3759187> REGRESSION (Mail): implement firstRectForCharacterRange:
+       
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView firstRectForCharacterRange:]): Call the appropriate new bridge method,
+        and translate to screen coordinates.
+
 2004-11-02  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Hyatt.

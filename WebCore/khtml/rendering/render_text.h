@@ -225,7 +225,7 @@ public:
     virtual SelectionState selectionState() const {return m_selectionState;}
     virtual void setSelectionState(SelectionState s);
     virtual QRect selectionRect();
-    virtual QRect caretRect(int offset, EAffinity affinity);
+    virtual QRect caretRect(int offset, EAffinity affinity, int *extraWidthToEndOfLine = 0);
     void posOfChar(int ch, int &x, int &y);
 
     virtual int marginLeft() const { return style()->marginLeft().minWidth(0); }

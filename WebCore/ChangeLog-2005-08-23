@@ -1,3 +1,33 @@
+2004-11-02  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Dave Hyatt (when I originally coded it).
+
+	WebCore part of fix for:
+
+	<rdar://problem/3759187> REGRESSION (Mail): implement firstRectForCharacterRange:
+	
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge firstRectForDOMRange:]): New method to compute the rect for a
+	DOMRange, or if the range is split into multiple lines, the rect for the part on
+	the first line only.
+	
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::caretRect): Added extraWidthToEndOfLine parameter and ditto
+	for the overrides below.
+        * khtml/rendering/render_object.h:
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::caretRect):
+        * khtml/rendering/render_box.h:
+        * khtml/rendering/render_br.cpp:
+        (RenderBR::caretRect):
+        * khtml/rendering/render_br.h:
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::caretRect):
+        * khtml/rendering/render_flow.h:
+        * khtml/rendering/render_text.cpp:
+        (RenderText::caretRect):
+
 2004-11-02  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Hyatt
