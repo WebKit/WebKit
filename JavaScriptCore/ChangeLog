@@ -1,5 +1,10 @@
 2004-09-12  Darin Adler  <darin@apple.com>
 
+        * tests/mozilla/expected.html: Updated test results for 3 more tests that pass with the new version
+        of escape and unescape.
+
+2004-09-12  Darin Adler  <darin@apple.com>
+
         Reviewed by Maciej.
 
         - fixed <rdar://problem/3798209> any non-ASCII characters are garbled in the result of toLocaleString
