@@ -63,6 +63,9 @@
 
 - (void)addItem:(WebHistoryItem *)entry;
 {
+    if (_private->maximumSize == 0)
+        return;
+    
     // Toss anything in the forward list
     int currSize = [_private->entries count];
     if (_private->current != currSize-1 && _private->current != -1) {
@@ -181,6 +184,19 @@
 
 - (void)setCapacity:(int)size
 {
+    if (size < _private->maximumSize){
+        int currSize = [_private->entries count];
+        NSRange forwardRange = NSMakeRange(size, currSize-size);
+        NSArray *subarray;
+        subarray = [_private->entries subarrayWithRange:forwardRange];
+        unsigned i;
+        for (i = 0; i < [subarray count]; i++){
+            WebHistoryItem *item = [subarray objectAtIndex: i];
+            [item setHasPageCache: NO];
+        }
+        [_private->entries removeObjectsInRange: forwardRange];
+        currSize -= forwardRange.length;
+    }
     _private->maximumSize = size;
 }
 
