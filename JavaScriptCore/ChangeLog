@@ -2,6 +2,18 @@
 
         Reviewed by Maciej.
 
+        - a couple improvements that give a 6.6% speedup on iBench JavaScript
+
+        * kjs/nodes.cpp: (ResolveNode::evaluate): Don't use evaluateReference.
+        
+        * kjs/object.cpp: (ObjectImp::get): Do the prototype work with the ValueImp, not a wrapper.
+        Contributes a tiny bit to the speedup, but cleaner anyway.
+        (ObjectImp::hasProperty): Same thing here.
+
+2003-04-25  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
         - move from linear probing to double hashing, gives an 0.7% speedup in iBench JavaScript
 
         * kjs/property_map.h: Remove the hash function.

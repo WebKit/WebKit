@@ -139,18 +139,17 @@ UString ObjectImp::className() const
 Value ObjectImp::get(ExecState *exec, const Identifier &propertyName) const
 {
   ValueImp *imp = getDirect(propertyName);
-  if ( imp )
+  if (imp)
     return Value(imp);
-
-  Object proto = Object::dynamicCast(prototype());
-  if (proto.isNull())
-    return Undefined();
 
   // non-standard netscape extension
   if (propertyName == specialPrototypePropertyName)
-    return proto;
+    return Value(_proto);
 
-  return proto.get(exec,propertyName);
+  if (_proto->dispatchType() != ObjectType)
+    return Undefined();
+
+  return static_cast<ObjectImp *>(_proto)->get(exec, propertyName);
 }
 
 Value ObjectImp::get(ExecState *exec, unsigned propertyName) const
@@ -223,9 +222,11 @@ bool ObjectImp::hasProperty(ExecState *exec, const Identifier &propertyName) con
   if (propertyName == specialPrototypePropertyName)
     return true;
 
+  if (_proto->dispatchType() != ObjectType)
+    return false;
+
   // Look in the prototype
-  Object proto = Object::dynamicCast(prototype());
-  return !proto.isNull() && proto.hasProperty(exec,propertyName);
+  return static_cast<ObjectImp *>(_proto)->hasProperty(exec, propertyName);
 }
 
 bool ObjectImp::hasProperty(ExecState *exec, unsigned propertyName) const

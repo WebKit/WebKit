@@ -221,7 +221,20 @@ Value ThisNode::evaluate(ExecState *exec)
 // ECMA 11.1.2 & 10.1.4
 Value ResolveNode::evaluate(ExecState *exec)
 {
-  return evaluateReference(exec).getValue(exec);
+  // This is the same as calling evaluateReference(exec).getValue(exec),
+  // only considerably faster.
+  
+  ScopeChain chain = exec->context().imp()->scopeChain();
+
+  while (!chain.isEmpty()) {
+    ObjectImp *o = chain.top();
+    Value result = o->get(exec, ident);
+    if (result.type() != UndefinedType)
+      return result;
+    chain.pop();
+  }
+
+  return Reference(Null(), ident).getValue(exec);
 }
 
 Reference ResolveNode::evaluateReference(ExecState *exec)
