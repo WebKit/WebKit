@@ -2,6 +2,19 @@
 
         Reviewed by Darin.
 
+        <rdar://problem/3991532> REGRESSION (Mail): Triple-click on trailing blank line should select previous line but doesn't
+
+        * khtml/css/cssvalues.c:
+        (hash_val):
+        (findValue):
+        * khtml/editing/selection.cpp:
+        (khtml::Selection::validate):
+        Do moral equiavalent of LeftWordIfOnBoundary for PARAGRAPH.
+
+2005-02-10  David Harrison  <harrison@apple.com>
+
+        Reviewed by Darin.
+
         <rdar://problem/3991848> Double-click on first character selects wrong item
 
         * khtml/editing/selection.cpp:

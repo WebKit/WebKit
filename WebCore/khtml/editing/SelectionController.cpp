@@ -901,7 +901,10 @@ void Selection::validate(ETextGranularity granularity)
             break;
         case PARAGRAPH:
             if (m_baseIsStart) {
-                m_start = startOfParagraph(VisiblePosition(m_base, m_affinity)).deepEquivalent();
+                VisiblePosition pos(m_base, m_affinity);
+                if (isStartOfLine(pos, m_affinity) && isEndOfDocument(pos))
+                    pos = pos.previous();
+                m_start = startOfParagraph(pos).deepEquivalent();
                 m_end = endOfParagraph(VisiblePosition(m_extent, m_affinity), IncludeLineBreak).deepEquivalent();
             } else {
                 m_start = startOfParagraph(VisiblePosition(m_extent, m_affinity)).deepEquivalent();
