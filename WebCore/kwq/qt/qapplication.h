@@ -36,25 +36,24 @@ class QDesktopWidget;
 class QApplication : public QObject {
 public:
     static QPalette palette(const QWidget *p=0);
-    static QDesktopWidget *desktop();
-    static int startDragDistance();
+    static QDesktopWidget *desktop() { return 0; }
+    static int startDragDistance() { return 2; }
     static QSize globalStrut();
     static void	setOverrideCursor(const QCursor &);
     static void restoreOverrideCursor();
-    static bool sendEvent(QObject *, QEvent *);
-    static void sendPostedEvents(QObject *receiver, int event_type);
-
-    QStyle &style() const;
+    static bool sendEvent(QObject *o, QEvent *e) { return o->event(e); }
+    static void sendPostedEvents(QObject *receiver, int event_type) { }
+    static QStyle &style();
 };
 
-extern QApplication *qApp;
+QApplication * const qApp = 0;
 
 class QDesktopWidget : public QWidget {
 public:
-    int screenNumber(QWidget *) const;
-    QRect screenGeometry(int screenNumber);
-    int width() const;
-    int height() const;
+    static int screenNumber(QWidget *);
+    static QRect screenGeometry(int screenNumber);
+    static int width();
+    static int height();
 };
 
 #endif

@@ -1,5 +1,19 @@
 2002-06-03  Darin Adler  <darin@apple.com>
 
+	* LICENSE: Add 2002.
+        
+	* kwq/KWQApplication.mm:
+	* kwq/kdecore/kapplication.h:
+	* kwq/qt/qapplication.h:
+        Found a way to simplify the application objects by making more of
+        the functions static so we don't need to actually allocate an object.
+
+	* kwq/Makefile.am:
+	* kwq/KWQKApplication.mm: Removed.
+	* kwq/kdecore/kapp.h: Removed.
+
+2002-06-03  Darin Adler  <darin@apple.com>
+
 	A few more unused things.
 
 	* kwq/Makefile.am: Removed KWQKProcess.mm

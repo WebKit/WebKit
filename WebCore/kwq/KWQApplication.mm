@@ -32,19 +32,19 @@ QPalette QApplication::palette(const QWidget *p)
     return pal;
 }
 
-// FIXME: Do we need to handle multiple screens?
-
-int QDesktopWidget::width() const
+int QDesktopWidget::width()
 {
     return (int)[[NSScreen mainScreen] frame].size.width;
 }
     
-int QDesktopWidget::height() const
+int QDesktopWidget::height()
 {
     return (int)[[NSScreen mainScreen] frame].size.height;
 }
 
-int QDesktopWidget::screenNumber(QWidget *) const
+// FIXME: Do we need to handle multiple screens?
+
+int QDesktopWidget::screenNumber(QWidget *)
 {
     return 0;
 }
@@ -53,17 +53,6 @@ QRect QDesktopWidget::screenGeometry(int screenNumber)
 {
     NSRect rect = [[NSScreen mainScreen] frame];
     return QRect((int)rect.origin.x, (int)rect.origin.y, (int)rect.size.width, (int)rect.size.height);
-}
-
-QDesktopWidget *QApplication::desktop()
-{
-    static QDesktopWidget desktopWidget;
-    return &desktopWidget;
-}
-
-int QApplication::startDragDistance()
-{
-     return 2;
 }
 
 QSize QApplication::globalStrut()
@@ -82,19 +71,7 @@ void QApplication::restoreOverrideCursor()
     _logNotYetImplemented();
 }
 
-bool QApplication::sendEvent(QObject *o, QEvent *e)
-{
-    return o ? o->event(e) : false;
-}
-
-void QApplication::sendPostedEvents(QObject *receiver, int event_type)
-{
-    _logNotYetImplemented();
-}
-
-QApplication *qApp = NULL;
-
-QStyle &QApplication::style() const
+QStyle &QApplication::style()
 {
     static QStyle style;
     return style;

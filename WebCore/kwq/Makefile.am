@@ -37,7 +37,6 @@ libkwq_o_SOURCES = \
 	KWQSize.mm \
 	KWQHBox.mm \
 	KWQInputDialog.mm \
-	KWQKApplication.mm \
 	KWQKCharsets.mm \
 	KWQKComboBox.mm \
 	KWQKConfigBase.mm \
