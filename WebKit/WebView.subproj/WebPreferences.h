@@ -27,11 +27,12 @@ extern NSString *WebPreferencesChangedNotification;
 
 /*!
     @method initWithIdentifier:
-    @param anIdentifier The prefix to add to the user defaults keys for the WebPreferences.
+    @param anIdentifier A string used to identify the WebPreferences.
     @discussion WebViews can share instances of WebPreferences by using an instance of WebPreferences with
     the same identifier.  Typically, instance are not created directly.  Instead you set the preferences
-    identifier on a WebView.
-    @result Returns a new instance of WebPreferences of a previously allocated instance with the same identifier.
+    identifier on a WebView.  The identifier is used as a prefix that is added to the user defaults keys
+    for the WebPreferences.
+    @result Returns a new instance of WebPreferences or a previously allocated instance with the same identifier.
 */
 - (id)initWithIdentifier:(NSString *)anIdentifier;
 

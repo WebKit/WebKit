@@ -52,6 +52,12 @@
     [imageRenderer addRepresentation:rep];
     [rep release];
     [imageRenderer setFlipped:YES];
+    
+    // Turn the default caching mode back on when the image has completed load.
+    // Caching intermediate progressive representations causes problems for
+    // progressive loads.  We also rely on the NSBitmapImageRep surviving during
+    // incremental loads.  See 3165631 and 3262592.
+    [imageRenderer setCacheMode: NSImageCacheNever];
 
     [imageRenderer setScalesWhenResized:NO];
     return [imageRenderer autorelease];

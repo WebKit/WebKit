@@ -1,3 +1,27 @@
+2003-05-28  Richard Williamson   <rjw@apple.com>
+
+	Fixed 3165631 (and other similar).
+	Fixed 3262592.
+
+	We now set NSImage's cache mode to NSImageCacheNever during
+	progressive loads.  It gets reset to NSImageCacheDefault when
+	loads complete.
+
+	If an image is scaled, NSImage appears to create a NSCacheImageRep
+	with the wrong size during progessive image loading.  Specifically
+	it appears to create a cached rep with the original size.
+
+        Reviewed by Chris.
+
+        * WebCoreSupport.subproj/WebImageRenderer.m:
+        (-[WebImageRenderer incrementalLoadWithBytes:length:complete:]):
+        (-[WebImageRenderer drawClippedToValidInRect:fromRect:]):
+        * WebCoreSupport.subproj/WebImageRendererFactory.m:
+        (-[WebImageRendererFactory imageRendererWithMIMEType:]):
+
+        * WebView.subproj/WebPreferences.h:
+	Updated headerdoc comments.
+
 2003-05-27  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: 3233442 - Crash in -[WebNetscapePluginPackage load] at http://www.adultswim.com/

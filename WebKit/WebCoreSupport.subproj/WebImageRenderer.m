@@ -180,8 +180,8 @@ static NSMutableArray *activeImageRenderers;
         //printf ("NSImageRepLoadStatusUnexpectedEOF size %d, isComplete %d\n", length, isComplete);
         // Force the image to use the pixel size and ignore the dpi.
         size = NSMakeSize([imageRep pixelsWide], [imageRep pixelsHigh]);
+        [self setCacheMode: NSImageCacheDefault];
         [imageRep setSize:size];
-        [self setSize:size];
         isNull = NO;
         return YES;
     default:
@@ -278,7 +278,7 @@ static NSMutableArray *activeImageRenderers;
 
 - (void)drawClippedToValidInRect:(NSRect)ir fromRect:(NSRect)fr
 {
-    if (loadStatus > 0) {
+    if (loadStatus >= 0) {
         int pixelsHigh = [[[self representations] objectAtIndex:0] pixelsHigh];
         if (pixelsHigh > loadStatus) {
             // Figure out how much of the image is OK to draw.  We can't simply
