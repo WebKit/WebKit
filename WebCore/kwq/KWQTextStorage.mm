@@ -155,7 +155,9 @@ static int trailingSpace = 0;
 - (id)initWithFontAttribute:(NSDictionary *)attrs 
 {
     attributes = [attrs retain];
+#ifdef SPACE_OPTIMIZATION
     expandedFragment = [[KWQLargeLayoutFragment alloc] init];
+#endif
     return self;
 }
 
