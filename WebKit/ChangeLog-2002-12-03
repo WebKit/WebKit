@@ -1,3 +1,16 @@
+2002-11-07  Richard Williamson  <rjw@apple.com>
+
+        * ChangeLog:
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (-[WebTextRenderer convertCharacters:length:toGlyphs:skipControlCharacters:]):
+        (-[WebTextRenderer _floatWidthForCharacters:stringLength:fromCharacterPosition:numberOfCharacters:withPadding:applyRounding:attemptFontSubstitution:widths:fonts:glyphs:numGlyphs:]):
+
+2002-11-07  Richard Williamson  <rjw@apple.com>
+
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (-[WebTextRenderer convertCharacters:length:toGlyphs:skipControlCharacters:]):
+        (-[WebTextRenderer _floatWidthForCharacters:stringLength:fromCharacterPosition:numberOfCharacters:withPadding:applyRounding:attemptFontSubstitution:widths:fonts:glyphs:numGlyphs:]):
+
 === Alexander-31 ===
 
 2002-11-07  Maciej Stachowiak  <mjs@apple.com>

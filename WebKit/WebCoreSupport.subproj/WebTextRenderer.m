@@ -19,6 +19,8 @@
 
 #import <QD/ATSUnicodePriv.h>
 
+#import <AppKit/NSFont_Private.h>
+
 #import <float.h>
 
 #define NON_BREAKING_SPACE 0x00A0
@@ -294,7 +296,20 @@ static BOOL bufferTextDrawing = NO;
     }
     
     status = ATSUConvertCharToGlyphs(styleGroup, characters, 0, numCharacters, 0, glyphs);
-    
+
+#ifdef DEBUG_GLYPHS
+    int foundGlyphs = 0;
+    ATSLayoutRecord *glyphRecord;
+    for (i = 0; i < numCharacters; i++) {
+        glyphRecord = (ATSLayoutRecord *)glyphs->firstRecord;
+        for (i = 0; i < numCharacters; i++) {
+            if (glyphRecord->glyphID != 0)
+                foundGlyphs++;
+            glyphRecord = (ATSLayoutRecord *)((char *)glyphRecord + glyphs->recordSize);
+        }
+    }
+    printf ("For %s found %d glyphs in range 0x%04x to 0x%04x\n", [[font displayName] cString], foundGlyphs, characters[0], characters[numCharacters-1]);
+#endif
     if (buffer != localBuffer) {
         free(buffer);
     }
@@ -734,6 +749,8 @@ static const char *joiningNames[] = {
             glyphID = [self extendCharacterToGlyphMapToInclude: c];
         }
 
+        // FIXME:  look at next character to determine if it is non-base, then
+        // determine the characters cluster from this base character.
 #ifdef DEBUG_DIACRITICAL
         if (IsNonBaseChar(c)){
             printf ("NonBaseCharacter 0x%04x, joining attribute %d(%s), combining class %d, direction %d, glyph %d, width %f\n", c, WebCoreUnicodeJoiningFunction(c), joiningNames(WebCoreUnicodeJoiningFunction(c)), WebCoreUnicodeCombiningClassFunction(c), WebCoreUnicodeDirectionFunction(c), glyphID, widthForGlyph(self, glyphToWidthMap, glyphID));
@@ -763,6 +780,13 @@ static const char *joiningNames[] = {
                 }
                 numGlyphs += cNumGlyphs;
             }
+#ifdef DEBUG_MISSING_GLYPH
+            else {
+                BOOL hasFont1 = [[NSFont coveredCharacterCache] characterIsMember:c];
+                BOOL hasFont2 = [[NSFont coveredCharacterCache] characterIsMember:originalCharacters[i]];
+                printf ("Unable to find glyph for base character 0x%04x (0x%04x) in font %s(%s) hasFont1 = %d, hasFont2 = %d\n", c, originalCharacters[i], [[font displayName] cString], [[substituteFont displayName] cString], (int)hasFont1, (int)hasFont2);
+            }
+#endif
         }
         
         // If we have a valid glyph OR if we couldn't find a substitute font
