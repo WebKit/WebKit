@@ -1,3 +1,12 @@
+2003-07-21  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave.
+
+        - fixed 3316867 -- tabbing to textarea below visible part of page doesn't scroll down
+
+        * kwq/KWQTextArea.mm: (-[KWQTextAreaTextView becomeFirstResponder]): Added call to
+        _KWQ_scrollFrameToVisible to match the one in KWQTextField.
+
 2003-07-21  Dave Hyatt  <hyatt@apple.com>
 
 	Fix removeAttributeNode.  This is David Faure's patch.

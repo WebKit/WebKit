@@ -25,8 +25,9 @@
 
 #import "KWQTextArea.h"
 
-#import "KWQTextEdit.h"
 #import "KWQKHTMLPart.h"
+#import "KWQNSViewExtras.h"
+#import "KWQTextEdit.h"
 #import "WebCoreBridge.h"
 
 /*
@@ -493,6 +494,7 @@ static NSString *WebContinuousSpellCheckingEnabled = @"WebContinuousSpellCheckin
         if ([[self window] keyViewSelectionDirection] != NSDirectSelection) {
             [self selectAll:nil];
         }
+        [self _KWQ_scrollFrameToVisible];
 	[self _KWQ_setKeyboardFocusRingNeedsDisplay];
 	QFocusEvent event(QEvent::FocusIn);
 	const_cast<QObject *>(widget->eventFilterObject())->eventFilter(widget, &event);
