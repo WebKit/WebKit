@@ -1,3 +1,10 @@
+2002-10-02  Ken Kocienda  <kocienda@apple.com>
+
+	Implemented HTTP-specific subclass for WebResourceResponse.
+
+        * Plugins.subproj/WebPluginStream.m:
+        (-[WebNetscapePluginStream receivedData:]): Add import for WebHTTPResourceResponse.
+
 2002-10-02  Darin Adler  <darin@apple.com>
 
 	Add return value to willSendRequest callback.

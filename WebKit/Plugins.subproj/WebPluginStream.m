@@ -19,6 +19,7 @@
 #import <WebFoundation/WebResourceHandle.h>
 #import <WebFoundation/WebResourceRequest.h>
 #import <WebFoundation/WebResourceResponse.h>
+#import <WebFoundation/WebHTTPResourceResponse.h>
 
 @interface WebNetscapePluginStream (ClassInternal)
 - (void)receivedData:(NSData *)data;
@@ -124,9 +125,13 @@
         char *cURL = (char *)malloc([URLString cStringLength]+1);
         [URLString getCString:cURL];
 
-        NSNumber *timeInterval = [[response headers] objectForKey:@"Last-Modified"];
+        NSNumber *timeInterval = nil;
         uint32 lastModified;
         
+        if ([response isKindOfClass:[WebHTTPResourceResponse class]]) {
+            timeInterval = [[(WebHTTPResourceResponse *)response headers] objectForKey:@"Last-Modified"];
+        }
+
         if(timeInterval){
             NSTimeInterval lastModifiedInterval = [[NSDate dateWithTimeIntervalSinceReferenceDate:[timeInterval doubleValue]] timeIntervalSince1970];
             if(lastModifiedInterval < 0){
