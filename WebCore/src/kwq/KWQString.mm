@@ -942,12 +942,33 @@ QString &QString::setNum(int n)
     return *this;
 }
 
-QString &QString::sprintf(const char *, ...)
+QString &QString::sprintf(const char *format, ...)
 {
+    va_list args;
+    va_start(args, format);
     flushCache();
-    // FIXME: not yet implemented
-    NSLog(@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__,
-            __LINE__);
+    if (format && *format) {
+        if (!s) {
+            s = CFStringCreateMutable(kCFAllocatorDefault, 0);
+        }
+        if (s) {
+            CFStringRef f = CFStringCreateWithCStringNoCopy(kCFAllocatorDefault,
+                    format, kCFStringEncodingISOLatin1, kCFAllocatorDefault);
+            if (f) {
+                CFStringRef tmp = CFStringCreateWithFormatAndArguments(
+                        kCFAllocatorDefault, NULL, f, args);
+                if (tmp) {
+                    CFStringReplaceAll(s, tmp);
+                    CFRelease(tmp);
+                }
+                CFRelease(f);
+            }
+        }
+    } else if (s) {
+        CFRelease(s);
+        s = NULL;
+    }
+    va_end(args);
     return *this;
 }
 
