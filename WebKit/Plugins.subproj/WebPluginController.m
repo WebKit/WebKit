@@ -8,10 +8,9 @@
 
 #import <WebKit/WebPluginController.h>
 
-#import <WebKit/WebFrame.h>
+#import <WebKit/WebBridge.h>
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebFrameView.h>
-#import <WebKit/WebHTMLView.h>
 #import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebPlugin.h>
@@ -19,6 +18,7 @@
 #import <WebKit/WebViewPrivate.h>
 #import <WebKit/WebUIDelegate.h>
 
+#import <Foundation/NSURL_NSURLExtras.h>
 #import <Foundation/NSURLRequest.h>
 
 @implementation WebPluginController
@@ -110,15 +110,24 @@
         ERROR("could not load URL %@ because plug-in has already been stopped", URL);
         return;
     }
-    NSURLRequest *request = [NSURLRequest requestWithURL:URL];
-    if (!request) {
-        ERROR("could not load URL %@", URL);
-        return;
-    }
     if (!target) {
         target = @"_top";
     }
-    [frame _loadRequest:request inFrameNamed:target];
+    NSString *JSString = [URL _web_scriptIfJavaScriptURL];
+    if (JSString) {
+        if ([frame findFrameNamed:target] != frame) {
+            ERROR("JavaScript requests can only be made on the frame that contains the plug-in");
+            return;
+        }
+        [[frame _bridge] stringByEvaluatingJavaScriptFromString:JSString];
+    } else {
+        NSURLRequest *request = [NSURLRequest requestWithURL:URL];
+        if (!request) {
+            ERROR("could not load URL %@", URL);
+            return;
+        }
+        [frame _loadRequest:request inFrameNamed:target];
+    }
 }
 
 - (void)showStatus:(NSString *)message
