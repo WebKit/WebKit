@@ -1,3 +1,15 @@
+2004-08-27  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Ken.
+        
+        Tweaked option-tab handling to match good suggestion from Tim Omernick of OmniWeb
+
+        * kwq/KWQTextArea.mm:
+        removed override of textDidChange:
+        (-[KWQTextAreaTextView keyDown:]):
+        moved option-tab handling that was in textDidChange to here. Rearranged existing code
+        a little for clarity.
+
 2004-08-27  Adele Amchan  <adele@apple.com>
 
         Reviewed by Darin.

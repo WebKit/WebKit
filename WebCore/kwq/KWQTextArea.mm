@@ -166,13 +166,6 @@ const float LargeNumberForText = 1.0e7;
     [super dealloc];
 }
 
-- (void)textDidChange:(NSNotification *)aNotification
-{
-    if (!KWQKHTMLPart::handleKeyboardOptionTabInView(self)) {
-        widget->textChanged();
-    }
-}
-
 - (void)setWordWrap:(BOOL)f
 {
     if (f != wrap) {
@@ -666,13 +659,28 @@ static NSString *WebContinuousSpellCheckingEnabled = @"WebContinuousSpellCheckin
 
 - (void)keyDown:(NSEvent *)event
 {
-    if (disabled)
+    if (disabled) {
         return;
-    WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(widget);
-    if ([[NSInputManager currentInputManager] hasMarkedText] || 
-	![bridge interceptKeyEvent:event toView:self]) {
-	[super keyDown:event];
     }
+    
+    // Don't mess with text marked by an input method
+    if ([[NSInputManager currentInputManager] hasMarkedText]) {
+        [super keyDown:event];
+        return;
+    }
+
+    WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(widget);
+    if ([bridge interceptKeyEvent:event toView:self]) {
+        return;
+    }
+    
+    // Don't let option-tab insert a character since we use it for
+    // tabbing between links
+    if (KWQKHTMLPart::handleKeyboardOptionTabInView(self)) {
+        return;
+    }
+    
+    [super keyDown:event];
 }
 
 - (void)keyUp:(NSEvent *)event
