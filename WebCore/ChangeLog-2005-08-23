@@ -1,3 +1,21 @@
+2003-11-03  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Maciej
+
+	Fix for this bug:
+
+	<rdar://problem/3470338>: onclick is not executing when you hit enter on focused links
+
+	Now when we trap return or enter when a link is focused, we send
+	a click event to the node.
+
+        * khtml/html/html_inlineimpl.cpp:
+        (HTMLAnchorElementImpl::defaultEventHandler): Swallow key event when 
+	return or enter and send a mouse event.
+        (HTMLAnchorElementImpl::performClick): New function to send simulated
+	click.
+        * khtml/html/html_inlineimpl.h: Declare performClick function.
+
 2003-11-03  Darin Adler  <darin@apple.com>
 
         Reviewed by John.

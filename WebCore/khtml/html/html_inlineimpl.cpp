@@ -93,7 +93,12 @@ void HTMLAnchorElementImpl::defaultEventHandler(EventImpl *evt)
                 HTMLElementImpl::defaultEventHandler(evt);
                 return;
             }
-            if (k->qKeyEvent()) k->qKeyEvent()->accept();
+            if (k->qKeyEvent()) {
+                k->qKeyEvent()->accept();
+                evt->setDefaultHandled();
+                performClick();
+                return;
+            }
         }
 
         url = khtml::parseURL(getAttribute(ATTR_HREF)).string();
@@ -182,6 +187,19 @@ void HTMLAnchorElementImpl::parseAttribute(AttributeImpl *attr)
     default:
         HTMLElementImpl::parseAttribute(attr);
     }
+}
+
+void HTMLAnchorElementImpl::performClick()
+{
+    int x = 0;
+    int y = 0;
+    if (renderer()) {
+        renderer()->absolutePosition(x,y);
+        x += renderer()->width() / 2;
+        y += renderer()->height() / 2;
+    }
+    QMouseEvent event(QEvent::MouseButtonRelease, QPoint(x,y), Qt::LeftButton, 0);
+    dispatchMouseEvent(&event, EventImpl::KHTML_CLICK_EVENT);
 }
 
 // -------------------------------------------------------------------------
