@@ -1,5 +1,13 @@
 2004-05-13  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by me
+
+        * khtml/editing/htmlediting_impl.cpp:
+        (khtml::ApplyStyleCommandImpl::applyStyleIfNeeded): Fix deployment
+        build bustage. Uninitialized variable.
+
+2004-05-13  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by Hyatt
 
         Implemented first cut at text style change code.

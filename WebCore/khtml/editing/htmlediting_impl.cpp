@@ -875,12 +875,10 @@ void ApplyStyleCommandImpl::applyStyleIfNeeded(const Position &insertionPoint)
     if (mustExlicitlyApplyStyle(insertionPoint)) {
         NodeImpl *styleNode = createExplicitApplyStyleNode();
         ASSERT(styleNode);
-        int exceptionCode = 0;
         NodeImpl *contentNode = insertionPoint.node();
         insertNodeBefore(styleNode, contentNode);
         removeNode(contentNode);
         appendNode(styleNode, contentNode);
-        ASSERT(exceptionCode == 0);
     }
 }
 
