@@ -6,6 +6,7 @@
 #import <WebKit/WebHistoryItemPrivate.h>
 
 #import <WebKit/WebFramePrivate.h>
+#import <WebKit/WebFrameView.h>
 #import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebIconDatabase.h>
 #import <WebKit/WebIconLoader.h>
@@ -623,7 +624,10 @@ static NSTimer *_pageCacheReleaseTimer = nil;
     while ((pageCache = [pageCaches nextObject]) != nil) {
         WebHTMLView *HTMLView = [pageCache objectForKey:WebPageCacheDocumentViewKey];
         if ([HTMLView isKindOfClass:[WebHTMLView class]]) {
-            [[HTMLView _pluginController] destroyAllPlugins];
+            // Don't destroy plug-ins that are currently being viewed.
+            if ([[[HTMLView _frame] frameView] documentView] != HTMLView) {
+                [[HTMLView _pluginController] destroyAllPlugins];
+            }
         }
     }
 }
