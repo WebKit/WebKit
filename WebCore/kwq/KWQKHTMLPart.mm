@@ -609,6 +609,12 @@ void KHTMLPart::write( const char *str, int len )
 
 void KHTMLPart::write( const QString &str )
 {
+    // FIXME [rjw]:  Remove this log eventually.  Should never happen.  For debugging
+    // purposes only.
+    if (d->m_doc == 0){
+        fprintf (stderr, "WARNING:  m_doc == 0\n");
+    }
+
   if ( str.isNull() )
     return;
 

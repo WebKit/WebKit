@@ -1,5 +1,14 @@
 2002-04-02  Richard Williamson  <rjw@apple.com>
 
+        Added ref() of part from KHTMView.
+        Added log to catch m_doc == 0 case.  Should never happen.
+        
+	* src/kdelibs/khtml/khtmlview.cpp: (KHTMLView::KHTMLView),
+	(KHTMLView::~KHTMLView):
+	* src/kwq/KWQKHTMLPart.mm: (KHTMLPart::write):
+
+2002-04-02  Richard Williamson  <rjw@apple.com>
+
         Removed unnecessary and erroneous call to CGContextSetCharacterSpacing.
         
 	* src/kwq/KWQFontMetrics.mm: (-[KWQLayoutInfo _initializeCaches]):

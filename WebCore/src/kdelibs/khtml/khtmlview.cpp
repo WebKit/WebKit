@@ -205,6 +205,7 @@ KHTMLView::KHTMLView( KHTMLPart *part, QWidget *parent, const char *name)
     m_medium = "screen";
 
     m_part = part;
+    m_part->ref();
     d = new KHTMLViewPrivate;
     QScrollView::setVScrollBarMode(d->vmode);
     QScrollView::setHScrollBarMode(d->hmode);
@@ -231,6 +232,8 @@ KHTMLView::~KHTMLView()
 {
     if (m_part)
     {
+        m_part->deref();
+        
         //WABA: Is this Ok? Do I need to deref it as well?
         //Does this need to be done somewhere else?
         DOM::DocumentImpl *doc = m_part->xmlDocImpl();
