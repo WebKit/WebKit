@@ -116,10 +116,12 @@ Repeat load of the same URL (by any other means of navigation other than the rel
 {
     NSObject <WebDOMElement> *_form;
     NSDictionary *_values;
+    WebFrame *_sourceFrame;
 }
-- (id)initWithForm:(NSObject <WebDOMElement> *)form values:(NSDictionary *)values;
+- (id)initWithForm:(NSObject <WebDOMElement> *)form values:(NSDictionary *)values sourceFrame:(WebFrame *)sourceFrame;
 - (id <WebDOMElement>)form;
 - (NSDictionary *)values;
+- (WebFrame *)sourceFrame;
 @end
 
 @interface WebFrame (ForwardDecls)
@@ -1594,7 +1596,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     NSDictionary *action = [self _actionInformationForLoadType:loadType isFormSubmission:isFormSubmission event:event originalURL:URL];
     WebFormState *formState = nil;
     if (form && values) {
-        formState = [[WebFormState alloc] initWithForm:form values:values];
+        formState = [[WebFormState alloc] initWithForm:form values:values sourceFrame:self];
     }
 
     if (target != nil) {
@@ -1719,18 +1721,17 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     NSDictionary *action = [self _actionInformationForLoadType:WebFrameLoadTypeStandard isFormSubmission:YES event:event originalURL:URL];
     WebFormState *formState = nil;
     if (form && values) {
-        formState = [[WebFormState alloc] initWithForm:form values:values];
+        formState = [[WebFormState alloc] initWithForm:form values:values sourceFrame:self];
     }
 
     if (target != nil) {
 	WebFrame *targetFrame = [self findFrameNamed:target];
 
 	if (targetFrame != nil) {
-	    [targetFrame _postWithURL:URL referrer:referrer target:nil data:data contentType:contentType triggeringEvent:event form:form formValues:values];
-	    return;
+	    [targetFrame _loadRequest:request triggeringAction:action loadType:WebFrameLoadTypeStandard formState:formState];
+	} else {
+	    [self _checkNewWindowPolicyForRequest:request action:action frameName:target formState:formState andCall:self withSelector:@selector(_continueLoadRequestAfterNewWindowPolicy:frameName:formState:)];
 	}
-
-	[self _checkNewWindowPolicyForRequest:request action:action frameName:target formState:formState andCall:self withSelector:@selector(_continueLoadRequestAfterNewWindowPolicy:frameName:formState:)];
 	[request release];
 	[formState release];
 	return;
@@ -1993,7 +1994,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
             // It's a bit of a hack to reuse the WebPolicyDecisionListener for the continuation
             // mechanism across the willSubmitForm callout.
             _private->listener = [[WebPolicyDecisionListener alloc] _initWithTarget:self action:@selector(_continueAfterWillSubmitForm:)];
-            [[[self webView] _formDelegate] frame:self willSubmitForm:[formState form] withValues:[formState values] submissionListener:_private->listener];
+            [[[self webView] _formDelegate] frame:self sourceFrame:[formState sourceFrame] willSubmitForm:[formState form] withValues:[formState values] submissionListener:_private->listener];
         } else {
             [self _continueAfterWillSubmitForm:WebPolicyUse];
         }
@@ -2163,11 +2164,12 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 @implementation WebFormState : NSObject
 
-- (id)initWithForm:(NSObject <WebDOMElement> *)form values:(NSDictionary *)values
+- (id)initWithForm:(NSObject <WebDOMElement> *)form values:(NSDictionary *)values sourceFrame:(WebFrame *)sourceFrame
 {
     [super init];
     _form = [form retain];
     _values = [values copy];
+    _sourceFrame = [sourceFrame retain];
     return self;
 }
 
@@ -2175,6 +2177,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 {
     [_form release];
     [_values release];
+    [_sourceFrame release];
     [super dealloc];
 }
 
@@ -2186,6 +2189,11 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 - (NSDictionary *)values
 {
     return _values;
+}
+
+- (WebFrame *)sourceFrame
+{
+    return _sourceFrame;
 }
 
 @end

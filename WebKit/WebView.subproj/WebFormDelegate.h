@@ -43,7 +43,7 @@
 
 // Sent when a form is just about to be submitted (before the load is started)
 // listener must be sent continue when the delegate is done.
-- (void)frame:(WebFrame *)frame willSubmitForm:(id <WebDOMElement>)form withValues:(NSDictionary *)values submissionListener:(id <WebFormSubmissionListener>)listener;
+- (void)frame:(WebFrame *)frame sourceFrame:(WebFrame *)sourceFrame willSubmitForm:(id <WebDOMElement>)form withValues:(NSDictionary *)values submissionListener:(id <WebFormSubmissionListener>)listener;
 @end
 
 /*!

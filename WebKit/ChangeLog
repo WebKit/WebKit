@@ -1,3 +1,26 @@
+2003-05-16  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by John.
+
+	- fixed 3255088 - repro crash in WebCredentialStorage remembering password from onlinetrafficsafety.com
+
+        * WebView.subproj/WebFormDelegate.h:
+        * WebView.subproj/WebFormDelegate.m:
+        (-[WebFormDelegate frame:sourceFrame:willSubmitForm:withValues:submissionListener:]): Expect sourceFrame
+	argument.
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _loadURL:referrer:loadType:target:triggeringEvent:form:formValues:]): Include
+	source frame in form state.
+        (-[WebFrame _postWithURL:referrer:target:data:contentType:triggeringEvent:form:formValues:]):
+	Include source frame in form state. Post directly to the target
+	frame if it exists, since we want the form state to contain the
+	right source frame.
+        (-[WebFrame _continueLoadRequestAfterNavigationPolicy:formState:]): Pass source frame to form
+	delegate.
+	(-[WebFormState initWithForm:values:sourceFrame:]): New sourceFrame argument.
+        (-[WebFormState dealloc]): release sourceFrame.
+        (-[WebFormState sourceFrame]): New method.
+
 2003-05-16  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Gramps
