@@ -1314,11 +1314,11 @@ void RenderBlock::positionNewFloats()
                 y = QMAX( leftBottom(), y );
             int heightRemainingLeft = 1;
             int heightRemainingRight = 1;
-            int fx = leftRelOffset(y,lo, &heightRemainingLeft);
-            while (rightRelOffset(y,ro, &heightRemainingRight)-fx < fwidth)
+            int fx = leftRelOffset(y,lo, false, &heightRemainingLeft);
+            while (rightRelOffset(y,ro, false, &heightRemainingRight)-fx < fwidth)
             {
                 y += QMIN( heightRemainingLeft, heightRemainingRight );
-                fx = leftRelOffset(y,lo, &heightRemainingLeft);
+                fx = leftRelOffset(y,lo, false, &heightRemainingLeft);
             }
             if (fx<0) fx=0;
             f->left = fx;
@@ -1331,11 +1331,11 @@ void RenderBlock::positionNewFloats()
                 y = QMAX( rightBottom(), y );
             int heightRemainingLeft = 1;
             int heightRemainingRight = 1;
-            int fx = rightRelOffset(y,ro, &heightRemainingRight);
-            while (fx - leftRelOffset(y,lo, &heightRemainingLeft) < fwidth)
+            int fx = rightRelOffset(y,ro, false, &heightRemainingRight);
+            while (fx - leftRelOffset(y,lo, false, &heightRemainingLeft) < fwidth)
             {
                 y += QMIN(heightRemainingLeft, heightRemainingRight);
-                fx = rightRelOffset(y,ro, &heightRemainingRight);
+                fx = rightRelOffset(y,ro, false, &heightRemainingRight);
             }
             if (fx<f->width) fx=f->width;
             f->left = fx - f->width;
@@ -1385,7 +1385,8 @@ RenderBlock::leftOffset() const
 }
 
 int
-RenderBlock::leftRelOffset(int y, int fixedOffset, int *heightRemaining ) const
+RenderBlock::leftRelOffset(int y, int fixedOffset, bool applyTextIndent,
+                           int *heightRemaining ) const
 {
     int left = fixedOffset;
     if (m_floatingObjects) {
@@ -1404,7 +1405,7 @@ RenderBlock::leftRelOffset(int y, int fixedOffset, int *heightRemaining ) const
         }
     }
 
-    if ( m_firstLine && style()->direction() == LTR ) {
+    if (applyTextIndent && m_firstLine && style()->direction() == LTR) {
         int cw=0;
         if (style()->textIndent().isPercent())
             cw = containingBlock()->contentWidth();
@@ -1425,7 +1426,8 @@ RenderBlock::rightOffset() const
 }
 
 int
-RenderBlock::rightRelOffset(int y, int fixedOffset, int *heightRemaining ) const
+RenderBlock::rightRelOffset(int y, int fixedOffset, bool applyTextIndent,
+                            int *heightRemaining ) const
 {
     int right = fixedOffset;
 
@@ -1445,7 +1447,7 @@ RenderBlock::rightRelOffset(int y, int fixedOffset, int *heightRemaining ) const
         }
     }
     
-    if ( m_firstLine && style()->direction() == RTL ) {
+    if (applyTextIndent && m_firstLine && style()->direction() == RTL) {
         int cw=0;
         if (style()->textIndent().isPercent())
             cw = containingBlock()->contentWidth();
@@ -1973,6 +1975,8 @@ void RenderBlock::calcInlineMinMaxWidth()
     normal = oldnormal = style()->whiteSpace() == NORMAL;
 
     InlineMinMaxIterator childIterator(this, this);
+    RenderObject* prev = 0;
+    bool addedTextIndent = false; // Only gets added in once.
     while (RenderObject* child = childIterator.next())
     {
         normal = child->style()->whiteSpace() == NORMAL;
@@ -1984,6 +1988,19 @@ void RenderBlock::calcInlineMinMaxWidth()
             // the new min-width, if it is the widest chunk seen so far, and
             // it can also become the max-width.
 
+            // For floats, unless the previous element was floating,
+            // we terminate the current line as far as maxwidth
+            // is concerned.
+            // FIXME: This is insanely hard to get right.  Floats can have 'clear' set
+            // on them, which would force them to dodge one another.  Floats can have left
+            // or right alignment as well, and technically a right-aligned float could
+            // sit on the same line even if the previous element is text.
+            // At some point think about clear and float alignment here.
+            if (child->isFloating() && (!prev || !prev->isFloating())) {
+                if (m_maxWidth < inlineMax) m_maxWidth = inlineMax;
+                inlineMax = 0;
+            }
+            
             // Children fall into three categories:
             // (1) An inline flow object.  These objects always have a min/max of 0,
             // and are included in the iteration solely so that their margins can
@@ -2056,6 +2073,15 @@ void RenderBlock::calcInlineMinMaxWidth()
                     inlineMin = 0;
                 }
 
+                // Add in text-indent.  This is added in only once.
+                int ti = 0;
+                if (!addedTextIndent) {
+                    addedTextIndent = true;
+                    ti = style()->textIndent().minWidth(cw);
+                    childMin+=ti;
+                    childMax+=ti;
+                }
+                
                 // Add our width to the max.
                 inlineMax += childMax;
 
@@ -2098,11 +2124,15 @@ void RenderBlock::calcInlineMinMaxWidth()
                 else
                     trailingSpaceChild = 0;
 
-                // Add in text-indent.
-                int ti = cstyle->textIndent().minWidth(cw);
-                childMin+=ti; beginMin += ti;
-                childMax+=ti; beginMax += ti;
-
+                // Add in text-indent.  This is added in only once.
+                int ti = 0;
+                if (!addedTextIndent) {
+                    addedTextIndent = true;
+                    ti = style()->textIndent().minWidth(cw);
+                    childMin+=ti; beginMin += ti;
+                    childMax+=ti; beginMax += ti;
+                }
+                
                 // If we have no breakable characters at all,
                 // then this is the easy case. We add ourselves to the current
                 // min and max and continue.
@@ -2156,6 +2186,7 @@ void RenderBlock::calcInlineMinMaxWidth()
         }
 
         oldnormal = normal;
+        prev = child;
     }
 
     if (trailingSpaceChild && trailingSpaceChild->isText() && !m_pre) {

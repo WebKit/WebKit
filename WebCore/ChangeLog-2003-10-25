@@ -1,3 +1,22 @@
+2003-07-31  Dave Hyatt  <hyatt@apple.com>
+
+	Fix for 3347286, hang on pepboys.com.  Text-indent had numerous bugs that
+	resulted in an infinite loop because some incorrect values were being compared.
+	This patch changes floats to ignore text-indent when positioning themselves
+	(as they should).
+
+	The maxwidth computation also didn't deal properly with text-indent, applying it
+	multiple times instead of once, and also only applying it for text and not for
+	inline replaced elements (images, form controls, etc.).
+
+	With these changes pepboys.com renders correctly.  This patch also conveniently fixes
+	the last rendering error on meyerweb's Matrix stylesheet.
+	
+        Reviewed by darin
+
+        * khtml/rendering/render_block.cpp:
+        * khtml/rendering/render_block.h:
+
 2003-07-31  Richard Williamson   <rjw@apple.com>
 
 	Fixed 3359152.  SPI to get the background color for a frame.

@@ -149,12 +149,14 @@ public:
     virtual int rightmostPosition(bool includeOverflowInterior=true) const;
 
     int rightOffset() const;
-    int rightRelOffset(int y, int fixedOffset, int *heightRemaining = 0) const;
-    int rightOffset(int y) const { return rightRelOffset(y, rightOffset()); }
+    int rightRelOffset(int y, int fixedOffset, bool applyTextIndent = true,
+                       int *heightRemaining = 0) const;
+    int rightOffset(int y) const { return rightRelOffset(y, rightOffset(), true); }
 
     int leftOffset() const;
-    int leftRelOffset(int y, int fixedOffset, int *heightRemaining = 0) const;
-    int leftOffset(int y) const { return leftRelOffset(y, leftOffset()); }
+    int leftRelOffset(int y, int fixedOffset, bool applyTextIndent = true,
+                      int *heightRemaining = 0) const;
+    int leftOffset(int y) const { return leftRelOffset(y, leftOffset(), true); }
 
     virtual bool nodeAtPoint(NodeInfo& info, int x, int y, int tx, int ty, bool inside=false);
 
