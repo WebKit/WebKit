@@ -1,0 +1,12 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x33
+  RenderBlock {HTML} at (0,0) size 800x33
+    RenderBody {BODY} at (8,8) size 784x17
+      RenderText {TEXT} at (0,0) size 591x17
+        text run at (0,0) width 147: "You should see a 100"
+        text run at (147,0) width 183: "x100 green square below. "
+        text run at (330,0) width 261: "If you see any red, the test has failed. "
+layer at (8,25) size 200x200 backgroundClip at (108,125) size 100x100 clip at (108,125) size 100x100
+  RenderBlock (positioned) {DIV} at (8,25) size 200x200 [bgcolor=#008000]
+    RenderBlock {DIV} at (0,0) size 100x100 [bgcolor=#FF0000]
