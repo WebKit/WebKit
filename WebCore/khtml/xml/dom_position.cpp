@@ -33,7 +33,7 @@
 #include "rendering/render_object.h"
 #include "rendering/render_style.h"
 #include "rendering/render_text.h"
-#include "xml/dom_edititerator.h"
+#include "xml/dom_positioniterator.h"
 #include "xml/dom_elementimpl.h"
 #include "xml/dom_nodeimpl.h"
 

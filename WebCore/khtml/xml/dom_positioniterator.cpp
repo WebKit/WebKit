@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "dom_edititerator.h"
+#include "dom_positioniterator.h"
 
 #include "dom_nodeimpl.h"
 

@@ -41,7 +41,7 @@
 #include "rendering/render_text.h"
 #include "xml/dom_docimpl.h"
 #include "xml/dom_elementimpl.h"
-#include "xml/dom_edititerator.h"
+#include "xml/dom_positioniterator.h"
 #include "xml/dom_nodeimpl.h"
 #include "xml/dom_selection.h"
 #include "xml/dom_stringimpl.h"

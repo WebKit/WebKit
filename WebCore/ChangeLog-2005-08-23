@@ -1,5 +1,34 @@
 2004-06-02  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by me
+
+        Finish off name change from previous check-in by changing dom_edititerator
+        file names to dom_positioniterator. Files copied and renamed in repository.
+        Includes updated as needed.
+
+        * ForwardingHeaders/xml/dom_edititerator.h: Removed.
+        * ForwardingHeaders/xml/dom_positioniterator.h: Added.
+        * WebCore.pbproj/project.pbxproj:
+        * khtml/editing/htmlediting_impl.cpp:
+        * khtml/xml/dom_edititerator.cpp: Removed.
+        * khtml/xml/dom_edititerator.h: Removed.
+        * khtml/xml/dom_position.cpp:
+        * khtml/xml/dom_positioniterator.cpp: Added.
+        (DOM::PositionIterator::peekPrevious):
+        (DOM::PositionIterator::peekNext):
+        (DOM::PositionIterator::atStart):
+        (DOM::PositionIterator::atEnd):
+        * khtml/xml/dom_positioniterator.h: Added.
+        (DOM::PositionIterator::PositionIterator):
+        (DOM::PositionIterator::current):
+        (DOM::PositionIterator::previous):
+        (DOM::PositionIterator::next):
+        (DOM::PositionIterator::setPosition):
+        (DOM::PositionIterator::isEmpty):
+        * khtml/xml/dom_selection.cpp:
+
+2004-06-02  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by Darin
 
         Probable fix for this bug:

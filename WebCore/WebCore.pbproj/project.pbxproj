@@ -521,7 +521,6 @@
 				9321275C0606724900B62302,
 				9321275D0606724900B62302,
 				BE91FC8D06133666005E3790,
-				BE91FC9206133697005E3790,
 				832556E5061DF155007B8054,
 				BC86FB8F061F5C23006BB822,
 				BE8BD8F506359F6000D3F20B,
@@ -533,6 +532,7 @@
 				51F6A3D80663BF04004D2919,
 				51F6A3E00663C2EC004D2919,
 				2D90660D0665D937006B6F1A,
+				BE02F484066E1C550013A9F6,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -805,7 +805,6 @@
 				BE9CB65A05F9546800514D9C,
 				BEF7EEA305FF8F0D009717EE,
 				BE91FC8E06133666005E3790,
-				BE91FC9106133697005E3790,
 				832556E7061DF161007B8054,
 				BC86FB90061F5C23006BB822,
 				BE8BD8F406359F6000D3F20B,
@@ -816,6 +815,7 @@
 				51F6A3D70663BF04004D2919,
 				51F6A3DF0663C2EC004D2919,
 				2D90660E0665D937006B6F1A,
+				BE02F485066E1C550013A9F6,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2847,6 +2847,34 @@
 //BE2
 //BE3
 //BE4
+		BE02F482066E1C550013A9F6 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = dom_positioniterator.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		BE02F483066E1C550013A9F6 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = dom_positioniterator.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		BE02F484066E1C550013A9F6 = {
+			fileRef = BE02F482066E1C550013A9F6;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		BE02F485066E1C550013A9F6 = {
+			fileRef = BE02F483066E1C550013A9F6;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		BE16801805EDB91A00B87935 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
@@ -3032,34 +3060,6 @@
 		};
 		BE91FC8E06133666005E3790 = {
 			fileRef = BE91FC8C06133666005E3790;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		BE91FC8F06133697005E3790 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.cpp;
-			path = dom_edititerator.cpp;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		BE91FC9006133697005E3790 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			path = dom_edititerator.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		BE91FC9106133697005E3790 = {
-			fileRef = BE91FC8F06133697005E3790;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		BE91FC9206133697005E3790 = {
-			fileRef = BE91FC9006133697005E3790;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -6562,8 +6562,6 @@
 				BC3B364705C9D5E200E42902,
 				F523D2F402DE4476018635CA,
 				F523D2F502DE4476018635CA,
-				BE91FC8F06133697005E3790,
-				BE91FC9006133697005E3790,
 				F523D2F702DE4476018635CA,
 				F523D2F802DE4476018635CA,
 				BC7E782005C5EB700088A50F,
@@ -6571,6 +6569,8 @@
 				F523D2FA02DE4476018635CA,
 				BE91FC8B06133666005E3790,
 				BE91FC8C06133666005E3790,
+				BE02F482066E1C550013A9F6,
+				BE02F483066E1C550013A9F6,
 				BE8BD9080635CC2F00D3F20B,
 				BE8BD9090635CC2F00D3F20B,
 				F523D2FB02DE4476018635CA,
