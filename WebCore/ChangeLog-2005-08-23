@@ -1,3 +1,15 @@
+2003-05-29  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Maciej
+
+	Fix for this bug:
+
+	<rdar://problem/3271697>: Search fails at travel site
+
+        * khtml/html/html_formimpl.cpp:
+        (HTMLFormElementImpl::parseAttribute): Allow form method to be set
+	to GET from javascript.
+
 2003-05-29  John Sullivan  <sullivan@apple.com>
 
 	- fixed MIME type leaks that were most of 3272566 

@@ -586,6 +586,8 @@ void HTMLFormElementImpl::parseAttribute(AttributeImpl *attr)
     case ATTR_METHOD:
         if ( strcasecmp( attr->value(), "post" ) == 0 )
             m_post = true;
+        else if ( strcasecmp( attr->value(), "get" ) == 0 )
+            m_post = false;
         break;
     case ATTR_ENCTYPE:
         setEnctype( attr->value() );
