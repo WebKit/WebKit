@@ -1,5 +1,11 @@
 2002-09-19  Maciej Stachowiak  <mjs@apple.com>
 
+        * Makefile.am: Make `doc' target depend on `all'.
+        * WebView.subproj/WebContextMenuHandler.h: Fix typo found by `make doc'.
+        * WebView.subproj/WebLocationChangeHandler.h: Likewise.
+
+2002-09-19  Maciej Stachowiak  <mjs@apple.com>
+
         * Makefile.am: Added `make doc' target.
 
 2002-09-19  John Sullivan  <sullivan@apple.com>

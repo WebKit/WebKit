@@ -17,5 +17,5 @@ all: previous-clean-timestamp
 previous-clean-timestamp: force-clean-timestamp
 	make clean && touch $@
 
-doc:
+doc: all
 	../Tools/Scripts/make-docs $(SYMROOTS)/Documentation/WebKit $(SYMROOTS)/WebKit.framework/Headers

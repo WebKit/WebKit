@@ -12,7 +12,7 @@
 @class WebFrame;
 
 /*!
-    @protcol WebLocationChangeHandler
+    @protocol WebLocationChangeHandler
     @abstract A controller's WebLocationChangeHandler track changes it's frame's location. 
 */
 @protocol WebLocationChangeHandler <NSObject>
