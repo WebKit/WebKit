@@ -2187,6 +2187,57 @@ void RenderFlow::makeChildrenNonInline(RenderObject *box2Start)
     setLayouted(false);
 }
 
+void RenderFlow::removeChild(RenderObject *oldChild)
+{
+    // If this child is a block, and if our previous and next siblings are
+    // both anonymous blocks with inline content, then we can go ahead and
+    // fold the inline content back together.
+    RenderObject* prev = oldChild->previousSibling();
+    RenderObject* next = oldChild->nextSibling();
+    bool mergedBlocks = false;
+    if (!isInline() && !oldChild->isInline() && !oldChild->continuation() &&
+        prev && prev->isAnonymousBox() && prev->childrenInline() &&
+        next && next->isAnonymousBox() && next->childrenInline()) {
+        // Take all the children out of the |next| block and put them in
+        // the |prev| block.
+        RenderObject* o = next->firstChild(); 
+        while (o) {
+            RenderObject* no = o;
+            o = no->nextSibling();
+            prev->appendChildNode(next->removeChildNode(no));
+            no->setLayouted(false);
+            no->setMinMaxKnown(false);
+        }
+        prev->setLayouted(false);
+        prev->setMinMaxKnown(false);
+        
+        // Nuke the now-empty block.
+        removeChild(next);
+        
+        mergedBlocks = true;
+    }
+    
+    RenderBox::removeChild(oldChild);
+    
+    if (mergedBlocks && prev && !prev->previousSibling() && !prev->nextSibling()) {
+        // The remerge has knocked us down to containing only a single anonymous
+        // box.  We can go ahead and pull the content right back up into our
+        // box.
+        RenderObject* anonBlock = removeChildNode(prev);
+        m_childrenInline = true;
+        RenderObject* o = anonBlock->firstChild(); 
+        while (o) {
+            RenderObject* no = o;
+            o = no->nextSibling();
+            appendChildNode(anonBlock->removeChildNode(no));
+            no->setLayouted(false);
+            no->setMinMaxKnown(false);
+        }
+        setLayouted(false);
+        setMinMaxKnown(false);
+    }
+}
+
 bool RenderFlow::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty)
 {
     bool inBox = false;

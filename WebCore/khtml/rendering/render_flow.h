@@ -74,6 +74,7 @@ public:
     void splitFlow(RenderObject* beforeChild, RenderFlow* newBlockBox, RenderFlow* oldCont);
     void addChildWithContinuation(RenderObject* newChild, RenderObject* beforeChild);
     void addChildToFlow(RenderObject* newChild, RenderObject* beforeChild);
+    void removeChild(RenderObject *oldChild);
     
     void makeChildrenNonInline(RenderObject *box2Start = 0);
 
