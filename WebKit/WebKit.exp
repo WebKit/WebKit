@@ -64,3 +64,14 @@ _WebIconSmallSize
 _WebModifiedBookmarkKey
 _WebURLNamePboardType
 _WebURLPboardType
+
+##
+## Carbon Support
+##
+
+_WebControllerCreateWithHIView
+_HIWebViewGetController
+_HIWebViewCreate
+_ConvertNSImageToCGImageRef
+_InitWebKitForCarbon
+

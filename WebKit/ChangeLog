@@ -1,3 +1,105 @@
+2003-03-06  Ed Voas  voas@apple.com
+
+        Reviewed by Richard.
+
+		First cut of Carbon view support. It will need tweaking as we go,
+		but I think I finally have all the assertions taken care of, and
+		I also believe that I have the drawing glitches all sorted out now.
+
+        * Carbon.subproj/CarbonUtils.h: Added.
+        * Carbon.subproj/CarbonUtils.m: Added.
+        (InitWebKitForCarbon):
+        (PoolCleaner):
+        (ConvertNSImageToCGImageRef):
+        * Carbon.subproj/CarbonWindowAdapter.h: Added.
+        * Carbon.subproj/CarbonWindowAdapter.m: Added.
+        (+[CarbonWindowAdapter frameViewClassForStyleMask:]):
+        (-[CarbonWindowAdapter initWithContentRect:styleMask:backing:defer:]):
+        (-[CarbonWindowAdapter initWithCarbonWindowRef:takingOwnership:disableOrdering:carbon:]):
+        (-[CarbonWindowAdapter setViewsNeedDisplay:]):
+        (-[CarbonWindowAdapter initWithCarbonWindowRef:takingOwnership:]):
+        (-[CarbonWindowAdapter dealloc]):
+        (-[CarbonWindowAdapter windowRef]):
+        (-[CarbonWindowAdapter _hasWindowRef]):
+        (-[CarbonWindowAdapter _managesWindowRef]):
+        (-[CarbonWindowAdapter _removeWindowRef]):
+        (-[CarbonWindowAdapter _carbonWindowClass]):
+        (-[CarbonWindowAdapter reconcileToCarbonWindowBounds]):
+        (-[CarbonWindowAdapter sendSuperEvent:]):
+        (-[CarbonWindowAdapter _cancelKey:]):
+        (-[CarbonWindowAdapter _commonAwake]):
+        (-[CarbonWindowAdapter _destroyRealWindow:]):
+        (-[CarbonWindowAdapter _oldPlaceWindow:]):
+        (-[CarbonWindowAdapter _termWindowIfOwner]):
+        (-[CarbonWindowAdapter _windowMovedToRect:]):
+        (-[CarbonWindowAdapter constrainFrameRect:toScreen:]):
+        (-[CarbonWindowAdapter selectKeyViewFollowingView:]):
+        (-[CarbonWindowAdapter selectKeyViewPrecedingView:]):
+        (-[CarbonWindowAdapter makeKeyWindow]):
+        (-[CarbonWindowAdapter canBecomeKeyWindow]):
+        (-[CarbonWindowAdapter canBecomeMainWindow]):
+        (-[CarbonWindowAdapter encodeWithCoder:]):
+        (-[CarbonWindowAdapter initWithCoder:]):
+        (-[CarbonWindowAdapter setContentView:]):
+        (-[CarbonWindowAdapter worksWhenModal]):
+        (-[CarbonWindowAdapter _setModalWindowLevel]):
+        (-[CarbonWindowAdapter _clearModalWindowLevel]):
+        (-[CarbonWindowAdapter carbonHICommandIDFromActionSelector:]):
+        (-[CarbonWindowAdapter sendCarbonProcessHICommandEvent:]):
+        (-[CarbonWindowAdapter sendCarbonUpdateHICommandStatusEvent:withMenuRef:andMenuItemIndex:]):
+        (-[CarbonWindowAdapter _handleRootBoundsChanged]):
+        (-[CarbonWindowAdapter _handleContentBoundsChanged]):
+        (-[CarbonWindowAdapter _handleCarbonEvent:callRef:]):
+        (NSCarbonWindowHandleEvent):
+        * Carbon.subproj/CarbonWindowContentView.h: Added.
+        * Carbon.subproj/CarbonWindowContentView.m: Added.
+        * Carbon.subproj/CarbonWindowFrame.h: Added.
+        * Carbon.subproj/CarbonWindowFrame.m: Added.
+        (+[CarbonWindowFrame frameRectForContentRect:styleMask:]):
+        (+[CarbonWindowFrame contentRectForFrameRect:styleMask:]):
+        (+[CarbonWindowFrame minFrameSizeForMinContentSize:styleMask:]):
+        (-[CarbonWindowFrame frameRectForContentRect:styleMask:]):
+        (-[CarbonWindowFrame contentRectForFrameRect:styleMask:]):
+        (-[CarbonWindowFrame minFrameSizeForMinContentSize:styleMask:]):
+        (-[CarbonWindowFrame initWithFrame:styleMask:owner:]):
+        (-[CarbonWindowFrame dealloc]):
+        (-[CarbonWindowFrame _setFrameNeedsDisplay:]):
+        (-[CarbonWindowFrame _setSheet:]):
+        (-[CarbonWindowFrame _updateButtonState]):
+        (-[CarbonWindowFrame _windowChangedKeyState]):
+        (-[CarbonWindowFrame _showToolbarWithAnimation:]):
+        (-[CarbonWindowFrame _hideToolbarWithAnimation:]):
+        (-[CarbonWindowFrame closeButton]):
+        (-[CarbonWindowFrame styleMask]):
+        (-[CarbonWindowFrame dragRectForFrameRect:]):
+        (-[CarbonWindowFrame isOpaque]):
+        (-[CarbonWindowFrame minimizeButton]):
+        (-[CarbonWindowFrame setTitle:]):
+        (-[CarbonWindowFrame title]):
+        (-[CarbonWindowFrame _sheetHeightAdjustment]):
+        (-[CarbonWindowFrame _maxTitlebarTitleRect]):
+        (-[CarbonWindowFrame _clearDragMargins]):
+        (-[CarbonWindowFrame _resetDragMargins]):
+        * Carbon.subproj/HIViewAdapter.h: Added.
+        * Carbon.subproj/HIViewAdapter.m: Added.
+        (+[HIViewAdapter bindHIViewToNSView:nsView:]):
+        (+[HIViewAdapter getHIViewForNSView:]):
+        (+[HIViewAdapter unbindNSView:]):
+        (-[HIViewAdapter initWithFrame:view:]):
+        (-[HIViewAdapter hiView]):
+        (-[HIViewAdapter nextValidKeyView]):
+        (-[HIViewAdapter setNeedsDisplay:]):
+        (-[HIViewAdapter setNeedsDisplayInRect:]):
+        (-[CarbonSheetInterceptor _orderFrontRelativeToWindow:]):
+        (-[CarbonSheetInterceptor _orderOutRelativeToWindow:]):
+        * Carbon.subproj/HIWebView.h: Added.
+        * Carbon.subproj/HIWebView.m: Added.
+        (if):
+        (switch):
+        * Carbon.subproj/HIWebViewPriv.h: Added.
+        * WebKit.exp:
+        * WebKit.pbproj/project.pbxproj:
+
 === Safari-65 ===
 
 2003-03-05  Richard Williamson   <rjw@apple.com>
