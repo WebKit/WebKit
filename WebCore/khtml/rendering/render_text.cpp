@@ -574,6 +574,9 @@ bool RenderText::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty,
 {
     assert(parent());
 
+    if (style()->visibility() == HIDDEN)
+        return inside;
+
     for (InlineTextBox *s = m_firstTextBox; s; s = s->nextTextBox()) {
         if((_y >=_ty + s->m_y) && (_y < _ty + s->m_y + s->height()) &&
            (_x >= _tx + s->m_x) && (_x <_tx + s->m_x + s->m_width) ) {

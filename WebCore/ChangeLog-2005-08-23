@@ -1,3 +1,11 @@
+2004-09-01  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3784686, hidden links still active.  Make sure text nodes exclude themselves from nodeAtPoint checks
+	when hidden.
+	
+        * khtml/rendering/render_text.cpp:
+        (RenderText::nodeAtPoint):
+
 2004-08-31  David Hyatt  <hyatt@apple.com>
 
 	Fixes for 3761411 and 3782201.  This patch makes two changes to percentage heights.  First it makes sure that
