@@ -169,15 +169,6 @@ static id IFLoadProgressMake()
 }
 
 
-// ---------------------------------------------------------------------
-// IFAuthenticationHandler
-// ---------------------------------------------------------------------
-- (IFSimpleAuthenticationResult *) authenticate: (IFSimpleAuthenticationRequest *)request
-{
-    [NSException raise:IFMethodNotYetImplemented format:@"IFBaseWebController::authenticate: is not implemented"];
-    return nil;
-}
-
 
 // ---------------------------------------------------------------------
 // IFLoadHandler

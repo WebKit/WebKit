@@ -168,48 +168,6 @@ typedef enum {
    ============================================================================= 
 
 */
-
-@interface IFSimpleAuthenticationResult 
-{
-    NSString *username;
-    NSString *password;
-    // May need an extra rememberThisPassword flag if the loader mechanism is
-    // going to provide a persistent credentials cache (for starters we can have
-    // just a session cache)
-}
-@end
-
-@interface IFSimpleAuthenticationRequest 
-{
-    NSURL *url;         // nil if for something non-URI based
-    NSString *domain;   // http authentication domain or some representation of 
-                        // auth domain for non-URI-based locations; otherwise nil.
-    NSString *username; // username, if already provided, otherwise nil
-    BOOL plaintextPassword; // password will be sent in the clear
-                            // TRUE for http basic auth or ftp
-                            // FALSE for http digest auth
-    unsigned previousFailures; // number of times in a row authenticating to this 
-                               // location has failed; useful to be able to show a 
-                               // different dialog based on count
-}
-@end
-
-
-@protocol IFAuthenticationHandler
-// Can we make this work without blocking the UI, or do we need to make it explicitly async
-// somehow?
-- (IFSimpleAuthenticationResult *) authenticate: (IFSimpleAuthenticationRequest *)request;
-
-// do we need anything for fancier authentication schemes like kerberos or GSSAPI?
-
-// Do we provide a default dialog?
-@end
-
-
-/*
-   ============================================================================= 
-
-*/
 @protocol IFWebDataSourceErrorHandler
 - receivedError: (IFError *)error forDataSource: (IFWebDataSource *)dataSource;
 @end
@@ -249,7 +207,7 @@ typedef enum {
      describe snippets of behavior, but do we explicity reference them anywhere,
      or do we just use the umbrella protocol?]
 */
-@protocol IFWebController <IFLoadHandler, IFScriptContextHandler, IFAuthenticationHandler, IFLocationChangeHandler>
+@protocol IFWebController <IFLoadHandler, IFScriptContextHandler, IFLocationChangeHandler>
 
 
 // Called when a data source needs to create a frame.  This method encapsulates the
