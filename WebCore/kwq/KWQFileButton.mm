@@ -145,7 +145,7 @@ void KWQFileButton::paint(QPainter *p, const QRect &r)
     QPushButton::paint(p, r);
     
     [NSGraphicsContext saveGraphicsState];
-    NSRectClip(NSIntersectRect(frameGeometry(), r));
+    NSRectClip(NSIntersectionRect(frameGeometry(), r));
 
     int left = x() + width() - ADDITIONAL_WIDTH + AFTER_BUTTON_SPACING;
 
