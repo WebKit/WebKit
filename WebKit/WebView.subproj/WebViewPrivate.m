@@ -187,10 +187,16 @@
 
 - (void)_downloadURL:(NSURL *)URL
 {
+    [self _downloadURL:URL toPath:nil];
+}
+
+- (void)_downloadURL:(NSURL *)URL toPath:(NSString *)path
+{
     WebDataSource *dataSource = [[WebDataSource alloc] initWithURL:URL];
     WebFrame *webFrame = [self mainFrame];
         
     [dataSource _setIsDownloading:YES];
+    [dataSource _setDownloadPath:path];
     if([webFrame setProvisionalDataSource:dataSource]){
         [webFrame startLoading];
     }

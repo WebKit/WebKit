@@ -157,8 +157,11 @@
     case WebContentPolicySave:
         {
 	    [dataSource _setIsDownloading:YES];
-	    NSString *saveFilename = [[[dataSource controller] policyDelegate] saveFilenameForResponse:r andRequest:[dataSource request]];
-	    [dataSource _setDownloadPath:saveFilename];
+
+	    if ([dataSource downloadPath] == nil) {
+		NSString *saveFilename = [[[dataSource controller] policyDelegate] saveFilenameForResponse:r andRequest:[dataSource request]];
+		[dataSource _setDownloadPath:saveFilename];
+	    }
 
             [[dataSource webFrame] _setProvisionalDataSource:nil];
             

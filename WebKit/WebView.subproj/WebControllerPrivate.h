@@ -52,6 +52,7 @@
 - (void)_mainReceivedError:(WebError *)error fromDataSource:(WebDataSource *)dataSource;
 + (NSString *)_MIMETypeForFile:(NSString *)path;
 - (void)_downloadURL:(NSURL *)URL;
+- (void)_downloadURL:(NSURL *)URL toPath:(NSString *)path;
 
 - (BOOL)_defersCallbacks;
 - (void)_setDefersCallbacks:(BOOL)defers;

@@ -789,13 +789,9 @@
     }
     
     NSString *filename = [[imageURL path] lastPathComponent];
-
-
-    // FIXME: need to respect the chosen path here
-    [[self _controller] _downloadURL:imageURL];
-#if 0
     NSString *path = [[dropDestination path] stringByAppendingPathComponent:filename];
-#endif
+
+    [[self _controller] _downloadURL:imageURL toPath:path];
     
     return [NSArray arrayWithObject:filename];
 }

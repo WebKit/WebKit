@@ -199,12 +199,9 @@
 {
     NSURL *URL = [representation URL];
     NSString *filename = [[URL path] lastPathComponent];
-
-    // FIXME: need to respect chosen path here
-#if 0
     NSString *path = [[dropDestination path] stringByAppendingPathComponent:filename];
-#endif
-    [[self controller] _downloadURL:URL];
+
+    [[self controller] _downloadURL:URL toPath:path];
 
     return [NSArray arrayWithObject:filename];
 }

@@ -1,3 +1,23 @@
+2002-11-12  Maciej Stachowiak  <mjs@apple.com>
+
+	- fixed 3099487 - REGRESSION: dragging an image always puts it in
+	the download directory
+	
+        * WebView.subproj/WebControllerPrivate.h:
+        * WebView.subproj/WebControllerPrivate.m:
+        (-[WebController _downloadURL:]): Call _downloadURL:toPath: with nil path.
+	(-[WebController _downloadURL:toPath:]): New method that
+	predetermines the path to download to (needed for DnD).
+        * WebView.subproj/WebHTMLView.m:
+	(-[WebHTMLView namesOfPromisedFilesDroppedAtDestination:]): Use
+	_downloadURL:toPath:
+        * WebView.subproj/WebImageView.m:
+	(-[WebImageView namesOfPromisedFilesDroppedAtDestination:]): Use
+	_downloadURL:toPath:
+        * WebView.subproj/WebMainResourceClient.m:
+	(-[WebMainResourceClient handle:didReceiveResponse:]): Don't ask
+	delegate for download path if we already have one.
+
 2002-11-12  Richard Williamson  <rjw@apple.com>
 
         Fixed likely cause of 3099047 (and others).  Width buffer could underrun in
