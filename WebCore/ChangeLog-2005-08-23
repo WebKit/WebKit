@@ -1,5 +1,14 @@
 2003-02-17  David Hyatt  <hyatt@apple.com>
 
+	Missed another "Almost Strict" spot.
+	
+        Reviewed by kocienda
+
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::recalcStyle):
+
+2003-02-17  David Hyatt  <hyatt@apple.com>
+
 	Fix for 3% improvement on cached cvs-base.  Make cells share the
 	declarations set up by the table (add these decls to the table
 	once instead of to every cell).

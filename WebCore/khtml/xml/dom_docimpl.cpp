@@ -925,7 +925,7 @@ void DocumentImpl::recalcStyle( StyleChange change )
         //kdDebug() << "DocumentImpl::attach: setting to charset " << settings->charset() << endl;
         _style->setFontDef(fontDef);
 	_style->htmlFont().update( paintDeviceMetrics() );
-        if ( parseMode() != Strict )
+        if ( inQuirksMode() )
             _style->setHtmlHacks(true); // enable html specific rendering tricks
 
         StyleChange ch = diff( _style, oldStyle );
