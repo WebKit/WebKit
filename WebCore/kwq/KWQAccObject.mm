@@ -1546,7 +1546,13 @@ static QRect boundingBoxRect(RenderObject* obj)
     if (!focusNode || !focusNode->renderer())
         return nil;
 
-    return focusNode->renderer()->document()->getAccObjectCache()->accObject(focusNode->renderer());
+    KWQAccObject* obj = focusNode->renderer()->document()->getAccObjectCache()->accObject(focusNode->renderer());
+    
+    // the HTML element, for example, is focusable but has an AX object that is ignored
+    if ([obj accessibilityIsIgnored])
+        obj = [obj parentObjectUnignored];
+    
+    return obj;
 }
 
 - (BOOL)accessibilityIsAttributeSettable:(NSString*)attributeName
