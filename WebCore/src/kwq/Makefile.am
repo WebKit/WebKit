@@ -6,8 +6,8 @@ SUBDIRS = \
 	$(NULL)
 
 noinst_LIBRARIES = libkwq.o
-libkwq_LDFLAGS = -Wl,-r -nostdlib
-libkwq_o_AR = $(OBJCXXLD) $(AM_OBJCXXFLAGS) $(OBJCXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) $(libkwq_LDFLAGS) -o
+libkwq_o_ldflags = -Wl,-r -nostdlib
+libkwq_o_AR = $(OBJCXXLD) $(AM_OBJCXXFLAGS) $(OBJCXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) $(libkwq_o_ldflags) -o
 
 libkwq_o_SOURCES = \
 	KWQApplication.mm \

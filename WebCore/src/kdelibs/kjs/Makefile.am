@@ -1,8 +1,8 @@
 NULL =
 
 noinst_LIBRARIES = libkjs.o
-libkjs_o_LDFLAGS = -Wl,-r -nostdlib
-libkjs_o_AR = $(OBJCXXLD) $(AM_OBJCXXFLAGS) $(OBJCXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) $(libkjs_o_LDFLAGS) -o
+libkjs_o_ldflags = -Wl,-r -nostdlib
+libkjs_o_AR = $(OBJCXXLD) $(AM_OBJCXXFLAGS) $(OBJCXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) $(libkjs_o_ldflags) -o
 
 INCLUDES = $(KWQ_INCLUDES)
 
