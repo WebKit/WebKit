@@ -18,6 +18,12 @@
 
 #ifdef USE_CGIMAGEREF
 
+// The following prototype is declared here temporarily.  It has been deprecated (even though it's new!).
+// Once the new API makes it into a stable build, and the group have upgraded, I will remove and
+// convert to the new API.  The new API is:
+// CG_EXTERN CFDictionaryRef CGImageSourceCopyPropertiesAtIndex(CGImageSourceRef isrc, size_t index, CFDictionaryRef options);
+CG_EXTERN CFDictionaryRef CGImageSourceGetPropertiesAtIndex(CGImageSourceRef isrc, size_t index, CFDictionaryRef options);
+
 static CFDictionaryRef imageSourceOptions;
 
 // Forward declarations of internal methods.

@@ -1,3 +1,11 @@
+2004-12-20  Richard Williamson   <rjw@apple.com>
+
+	Fixed build problem caused by change to ImageIO API.
+
+        Reviewed by Adele.
+
+        * WebCoreSupport.subproj/WebImageData.m:
+
 2004-12-19  Darin Adler  <darin@apple.com>
 
         Reviewed by Kevin.
