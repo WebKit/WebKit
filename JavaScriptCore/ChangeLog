@@ -1,3 +1,23 @@
+2004-06-14  Darin Adler  <darin@apple.com>
+
+        Reviewed by me, code changes by Patrick Beard.
+
+        - fixed <rdar://problem/3671507>: (WebKit should adopt GC changes and compile with GC enabled)
+
+        * bindings/objc/objc_instance.mm:
+        (ObjcInstance::ObjcInstance): Use CFRetain instead of retain.
+        (ObjcInstance::~ObjcInstance): Use CFRelease instead of release.
+        (ObjcInstance::operator=): More of the same.
+        (ObjcInstance::end): Use [pool drain] if compiling on Tiger.
+
+        * bindings/objc/objc_runtime.mm:
+        (ObjcArray::ObjcArray): Use CFRetain instead of retain.
+        (ObjcArray::~ObjcArray): Use CFRelease instead of release.
+        (ObjcArray::operator=): More of the same.
+
+        * bindings/testbindings.mm: Fixed incorrect license.
+        (main): Use [pool drain] if compiling on Tiger.
+
 === Safari-144 ===
 
 2004-06-10  Kevin Decker  <kdecker@apple.com>

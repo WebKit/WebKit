@@ -137,34 +137,29 @@ void ObjcField::setValueToInstance(KJS::ExecState *exec, const Instance *instanc
 
 ObjcArray::ObjcArray (ObjectStructPtr a) 
 {
-    _array = [a retain];
-};
+    _array = (id)CFRetain(a);
+}
 
 ObjcArray::~ObjcArray () 
 {
-    [_array release];
+    CFRelease(_array);
 }
 
 
 ObjcArray::ObjcArray (const ObjcArray &other) : Array() 
 {
-    if (other._array != _array) {
-        [_array release];
-        _array = [other._array retain];
-    }
-};
+    _array = other._array;
+    CFRetain(_array);
+}
 
-ObjcArray &ObjcArray::operator=(const ObjcArray &other) {
-    if (this == &other)
-        return *this;
-    
+ObjcArray &ObjcArray::operator=(const ObjcArray &other)
+{
     ObjectStructPtr _oldArray = _array;
     _array = other._array;
-    [_array retain];
-    [_oldArray release];
-    
+    CFRetain(_array);
+    CFRelease(_oldArray);
     return *this;
-};
+}
 
 void ObjcArray::setValueAt(KJS::ExecState *exec, unsigned int index, const KJS::Value &aValue) const
 {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,41 +41,38 @@ using namespace KJS;
 
 ObjcInstance::ObjcInstance (ObjectStructPtr instance) 
 {
-    _instance = [instance retain];
+    _instance = (id)CFRetain(instance);
     _class = 0;
     _pool = 0;
     _beginCount = 0;
-};
+}
 
 ObjcInstance::~ObjcInstance () 
 {
     if ([_instance respondsToSelector:@selector(finalizeForWebScript)])
         [_instance finalizeForWebScript];
-    [_instance release];
+    CFRelease(_instance);
 }
-
 
 ObjcInstance::ObjcInstance (const ObjcInstance &other) : Instance() 
 {
-    _instance = [other._instance retain];
+    _instance = (id) CFRetain(other._instance);
     _class = other._class;
     _pool = 0;
     _beginCount = 0;
-};
+}
 
-ObjcInstance &ObjcInstance::operator=(const ObjcInstance &other){
-    if (this == &other)
-        return *this;
-    
+ObjcInstance &ObjcInstance::operator=(const ObjcInstance &other)
+{
     ObjectStructPtr _oldInstance = _instance;
-    _instance = [(id)other._instance retain];
-    [(id)_oldInstance release];
+    _instance = (id) CFRetain(other._instance);
+    CFRelease(_oldInstance);
     
     // Classes are kept around forever.
     _class = other._class;
     
     return *this;
-};
+}
 
 void ObjcInstance::begin()
 {
@@ -90,7 +87,11 @@ void ObjcInstance::end()
     _beginCount--;
     assert (_beginCount >= 0);
     if (_beginCount == 0) {
+#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_3
         [_pool release];
+#else
+        [_pool drain];
+#endif
     }
     _pool = 0;
 }
@@ -256,4 +257,4 @@ KJS::Value ObjcInstance::booleanValue() const
 KJS::Value ObjcInstance::valueOf() const 
 {
     return stringValue();
-};
+}
