@@ -167,7 +167,7 @@
     ASSERT(frame != nil);
 
     WebResourceRequest *request = [[WebResourceRequest alloc] initWithURL:URL];
-    WebResourceHandle *handle = [[WebResourceHandle alloc] initWithRequest:request client:nil];
+    WebResourceHandle *handle = [[WebResourceHandle alloc] initWithRequest:request delegate:nil];
     WebLoadProgress *loadProgress = [[WebLoadProgress alloc] initWithBytesSoFar:bytes totalToLoad:bytes];
     [[frame controller] _receivedProgress:loadProgress forResourceHandle:handle fromDataSource:[self dataSource] complete:YES];
     [loadProgress release];

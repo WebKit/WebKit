@@ -27,7 +27,7 @@
 - (void)cancel;
 @end
 
-@interface WebNetscapePluginStream (WebResourceClient) <WebResourceClient>
+@interface WebNetscapePluginStream (WebResourceHandleDelegate) <WebResourceHandleDelegate>
 @end
 
 @implementation WebNetscapePluginStream
@@ -100,7 +100,7 @@
 - (void)startLoad
 {
     WebResourceRequest *request = [[WebResourceRequest alloc] initWithURL:URL];
-    resource = [[WebResourceHandle alloc] initWithRequest:request client:self];
+    resource = [[WebResourceHandle alloc] initWithRequest:request delegate:self];
     [resource loadInBackground];
     [request release];
     [[view webController] _didStartLoading:[resource URL]];
@@ -273,7 +273,7 @@
 
 #pragma mark WebResourceHandle
 
-@implementation WebNetscapePluginStream (WebResourceClient)
+@implementation WebNetscapePluginStream (WebResourceHandleDelegate)
 
 - (NSString *)handleWillUseUserAgent:(WebResourceHandle *)handle forURL:(NSURL *)theURL
 {

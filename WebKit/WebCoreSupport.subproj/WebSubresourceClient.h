@@ -6,13 +6,13 @@
 //  Copyright (c) 2002 Apple Computer, Inc. All rights reserved.
 //
 
-#import <WebFoundation/WebResourceClient.h>
+#import <WebFoundation/WebResourceHandleDelegate.h>
 
 @class WebDataSource;
 @protocol WebCoreResourceHandle;
 @protocol WebCoreResourceLoader;
 
-@interface WebSubresourceClient : NSObject <WebResourceClient, WebCoreResourceHandle>
+@interface WebSubresourceClient : NSObject <WebResourceHandleDelegate, WebCoreResourceHandle>
 {
     id <WebCoreResourceLoader> loader;
     WebDataSource *dataSource;

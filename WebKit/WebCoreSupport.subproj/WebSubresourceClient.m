@@ -75,7 +75,7 @@
     [request setResponseCachePolicy:[[source request] responseCachePolicy]];
     [request setReferrer:referrer];
     [request setCookiePolicyBaseURL:[[[[source controller] mainFrame] dataSource] URL]];
-    WebResourceHandle *h = [[WebResourceHandle alloc] initWithRequest:request client:client];
+    WebResourceHandle *h = [[WebResourceHandle alloc] initWithRequest:request delegate:client];
     [request release];
     
     if (h == nil) {

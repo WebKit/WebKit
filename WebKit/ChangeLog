@@ -1,3 +1,25 @@
+2002-09-25  Ken Kocienda  <kocienda@apple.com>
+
+        Begin change from WebResourceClient to WebResourceHandleDelegate.
+        In this step, I have just changed the name of the protocol; the
+        protocol interface is the same. 
+
+	I made other cosmetic changes to variable names and such.
+
+        * Misc.subproj/WebIconLoader.h:
+        * Misc.subproj/WebIconLoader.m:
+        (-[WebIconLoader startLoading])
+        * Plugins.subproj/WebPluginStream.m:
+        (-[WebNetscapePluginStream startLoad])
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge objectLoadedFromCache:size:])
+        * WebCoreSupport.subproj/WebSubresourceClient.h:
+        * WebCoreSupport.subproj/WebSubresourceClient.m:
+        (+[WebSubresourceClient startLoadingResource:withURL:referrer:forDataSource:])
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _startLoading])
+        * WebView.subproj/WebMainResourceClient.h:
+
 2002-09-25  Maciej Stachowiak  <mjs@apple.com>
 
 	- fixed 2854536 - New cookie policy: "accept cookies only from the

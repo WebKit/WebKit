@@ -13,10 +13,10 @@
 @class WebDownloadHandler;
 @class WebDataSource;
 @class WebResourceHandle;
-@protocol WebResourceClient;
+@protocol WebResourceHandleDelegate;
 @protocol WebResourceProgressDelegate;
 
-@interface WebMainResourceClient : NSObject <WebResourceClient>
+@interface WebMainResourceClient : NSObject <WebResourceHandleDelegate>
 {
     NSURL *currentURL;
     WebDataSource *dataSource;
