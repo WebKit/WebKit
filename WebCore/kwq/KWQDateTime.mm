@@ -199,8 +199,7 @@ void QDate::setCurrentDate()
     
     time(&currentDate);
     localDate = localtime(&currentDate);
-    dateDays = greg2jul(localDate->tm_year, localDate->tm_mon, localDate->tm_mday);
-    
+    dateDays = greg2jul(localDate->tm_year + 1900, localDate->tm_mon + 1, localDate->tm_mday);
 }
 
 // greg2jul and jul2greg algorithms are copied from Communications of the ACM, Vol 6, No 8
