@@ -30,7 +30,7 @@
     loader = [l retain];
     dataSource = [s retain];
 
-    resourceProgressDelegate = [[[dataSource controller] resourceProgressDelegate] retain];
+    resourceProgressDelegate = [[[dataSource controller] resourceLoadDelegate] retain];
     
     return self;
 }
@@ -153,14 +153,14 @@
     [r retain];
     [response release];
     response = r;
-    [[[dataSource controller] resourceProgressDelegate] resourceRequest: request didReceiveResponse: r fromDataSource: dataSource];
+    [resourceProgressDelegate resourceRequest: request didReceiveResponse: r fromDataSource: dataSource];
 }
 
 - (void)handle:(WebResourceHandle *)h didReceiveData:(NSData *)data
 {
     ASSERT(handle == h);
 
-    [[[dataSource controller] resourceProgressDelegate] resourceRequest: request didReceiveContentLength: [data length] 
+    [resourceProgressDelegate resourceRequest: request didReceiveContentLength: [data length] 
         fromDataSource: dataSource];
 
     [self receivedProgressWithComplete:NO];
@@ -190,7 +190,7 @@
     [handle release];
     handle = nil;
 
-    [[[dataSource controller] resourceProgressDelegate] resourceRequest:request didFinishLoadingFromDataSource:dataSource];
+    [resourceProgressDelegate resourceRequest:request didFinishLoadingFromDataSource:dataSource];
     
     [self release];
 }
@@ -206,7 +206,7 @@
     
     [dataSource _removeSubresourceClient:self];
 
-    [[[dataSource controller] resourceProgressDelegate] resourceRequest: request didFailLoadingWithError: error fromDataSource: dataSource];
+    [resourceProgressDelegate resourceRequest: request didFailLoadingWithError: error fromDataSource: dataSource];
     
     [self receivedError:error];
 

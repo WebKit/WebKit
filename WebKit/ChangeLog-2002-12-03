@@ -1,5 +1,25 @@
 2002-10-03  Richard Williamson   <rjw@apple.com>
 
+        Changed name of controller's resourceProgressDelegate methods to resourceLoadDelegate.
+
+        * WebCoreSupport.subproj/WebSubresourceClient.m:
+        (-[WebSubresourceClient initWithLoader:dataSource:]):
+        (-[WebSubresourceClient handle:didReceiveResponse:]):
+        (-[WebSubresourceClient handle:didReceiveData:]):
+        (-[WebSubresourceClient handleDidFinishLoading:]):
+        (-[WebSubresourceClient handle:didFailLoadingWithError:]):
+        * WebView.subproj/WebController.h:
+        * WebView.subproj/WebController.m:
+        (-[WebController setResourceLoadDelegate:]):
+        (-[WebController resourceLoadDelegate]):
+        (-[WebController setDownloadDelegate:]):
+        (-[WebController downloadDelegate]):
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient initWithDataSource:]):
+        (-[WebMainResourceClient handle:didReceiveResponse:]):
+
+2002-10-03  Richard Williamson   <rjw@apple.com>
+
         Always call resourceRequest:willSendRequest: on resourceProgressDelegate.
          
         * WebView.subproj/WebMainResourceClient.m:

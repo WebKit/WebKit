@@ -42,7 +42,7 @@
         // set the user agent for the request
         // consult the data source's controller
         WebController *controller = [dataSource controller];
-        resourceProgressDelegate = [[controller resourceProgressDelegate] retain];
+        resourceProgressDelegate = [[controller resourceLoadDelegate] retain];
     }
 
     return self;
@@ -246,7 +246,7 @@
     // Retain the downloadProgressDelegate just in case this is a download.
     // Alexander releases the WebController if no window is created for it.
     // This happens in the cases mentioned in 2981866 and 2965312.
-    downloadProgressDelegate = [[[dataSource controller] downloadProgressDelegate] retain];
+    downloadProgressDelegate = [[[dataSource controller] downloadDelegate] retain];
 
     // Figure out the content policy.
     WebContentPolicy *contentPolicy = [dataSource contentPolicy];

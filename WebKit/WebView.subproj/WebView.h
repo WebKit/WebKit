@@ -14,7 +14,6 @@
 @class WebDownloadHandler;
 @class WebError;
 @class WebFrame;
-@class WebLoadProgress;
 @class WebResourceHandle;
 @class WebView;
 
@@ -127,30 +126,30 @@ extern NSString *WebElementFrameKey;
 - (id<WebWindowOperationsDelegate>)windowOperationsDelegate;
 
 /*!
-    @method setResourceProgressDelegate:
+    @method setResourceLoadDelegate:
     @abstract Set the controller's WebResourceLoadDelegate.
     @param delegate The WebResourceLoadDelegate to set as the delegate.
 */
-- (void)setResourceProgressDelegate: (id<WebResourceLoadDelegate>)delegate;
+- (void)setResourceLoadDelegate: (id<WebResourceLoadDelegate>)delegate;
 
 /*!
-    @method resourceProgressDelegate
+    @method resourceLoadDelegate
     @result Return the controller's WebResourceLoadDelegate.
 */    
-- (id<WebResourceLoadDelegate>)resourceProgressDelegate;
+- (id<WebResourceLoadDelegate>)resourceLoadDelegate;
 
 /*!
-    @method setDownloadProgressDelegate:
+    @method setDownloadDelegate:
     @abstract Set the controller's WebResourceLoadDelegate download delegate.
     @param delegate The WebResourceLoadDelegate to set as the download delegate.
 */    
-- (void)setDownloadProgressDelegate: (id<WebResourceLoadDelegate>)delegate;
+- (void)setDownloadDelegate: (id<WebResourceLoadDelegate>)delegate;
 
 /*!
-    @method downloadProgressDelegate
+    @method downloadDelegate
     @result Return the controller's WebResourceLoadDelegate download delegate.
 */    
-- (id<WebResourceLoadDelegate>)downloadProgressDelegate;
+- (id<WebResourceLoadDelegate>)downloadDelegate;
 
 /*!
     @method setContextMenuDelegate:

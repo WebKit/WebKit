@@ -86,25 +86,25 @@ NSString *WebElementFrameKey = @"WebElementFrame";
     return _private->windowContext;
 }
 
-- (void)setResourceProgressDelegate: (id <WebResourceLoadDelegate>)delegate
+- (void)setResourceLoadDelegate: (id <WebResourceLoadDelegate>)delegate
 {
     _private->resourceProgressDelegate = delegate;
 }
 
 
-- (id<WebResourceLoadDelegate>)resourceProgressDelegate
+- (id<WebResourceLoadDelegate>)resourceLoadDelegate
 {
     return _private->resourceProgressDelegate;
 }
 
 
-- (void)setDownloadProgressDelegate: (id<WebResourceLoadDelegate>)delegate
+- (void)setDownloadDelegate: (id<WebResourceLoadDelegate>)delegate
 {
     _private->downloadProgressDelegate = delegate;
 }
 
 
-- (id<WebResourceLoadDelegate>)downloadProgressDelegate
+- (id<WebResourceLoadDelegate>)downloadDelegate
 {
     return _private->downloadProgressDelegate;
 }
