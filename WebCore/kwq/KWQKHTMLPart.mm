@@ -1122,12 +1122,12 @@ bool KWQKHTMLPart::canCachePage()
     // 1.  We're not a frame or frameset.
     // 2.  The page has no unload handler.
     // 3.  The page has no password fields.
-    // 4.  The URL for the page is https.
+    // 4.  The URL for the page is not https.
+    // 5.  The page has no applets.
     if (d->m_frames.count() ||
         parentPart() ||
         m_url.protocol().startsWith("https") || 
-	(d->m_doc && (
-//	(d->m_doc && (htmlDocument().applets().length() != 0 ||
+	(d->m_doc && (htmlDocument().applets().length() != 0 ||
                       d->m_doc->hasWindowEventListener(EventImpl::UNLOAD_EVENT) ||
 		      d->m_doc->hasPasswordField()))) {
         return false;
