@@ -1,6 +1,6 @@
 2003-03-28  Maciej Stachowiak  <mjs@apple.com>
 
-        Reviewed by Richard.
+        Reviewed by Ken.
 
 	- improved on Darin's fix for 3211289 - REGRESSION: nil-deref in bridgeForWidget 
 	
