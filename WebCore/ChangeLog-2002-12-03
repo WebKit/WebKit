@@ -1,3 +1,10 @@
+2002-03-29  Richard Williamson  <rjw@apple.com>
+
+        Hooked up redirect.
+        
+	* src/kwq/KWQKloader.mm: (-[URLLoadClient IFURLHandle:didRedirectToURL:]):
+	* src/kwq/external.h:
+
 2002-03-29  Kenneth Kocienda  <kocienda@apple.com>
 
         Workaround for Radar 2890624 (Double free of image data in QPixmap)

@@ -1125,6 +1125,10 @@ void DocLoader::removeCachedObject( CachedObject* o ) const
 
 - (void)IFURLHandle:(IFURLHandle *)sender didRedirectToURL:(NSURL *)url
 {
+    KWQDEBUGLEVEL1 (KWQ_LOG_LOADING, "url = %s\n", [[url absoluteString] cString]);
+    [m_dataSource _part]->setBaseURL([[url absoluteString] cString]);
+    
+    [[m_dataSource controller] serverRedirectTo: url forDataSource: m_dataSource];
 }
 
 @end

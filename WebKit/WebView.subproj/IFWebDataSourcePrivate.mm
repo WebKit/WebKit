@@ -38,6 +38,7 @@
     [frames release];
     [inputURL release];
     [urlHandles release];
+    [mainHandle release];
     [mainURLHandleClient release];
     
     delete part;
@@ -83,8 +84,10 @@
     NSString *urlString = [[self inputURL] absoluteString];
     NSURL *theURL;
     KURL url = [[[self inputURL] absoluteString] cString];
-    IFURLHandle *handle;
 
+    // Stop loading any previous loads that may be currently active.
+    [self stopLoading];
+    
     [self _setPrimaryLoadComplete: NO];
     
     WEBKIT_ASSERT ([self frame] != nil);
@@ -102,18 +105,16 @@
 
     data->mainURLHandleClient = [[IFMainURLHandleClient alloc] initWithDataSource: self part: [self _part]];
     
-    // The handle will be released by the client upon receipt of a 
-    // terminal callback.
-    handle = [[IFURLHandle alloc] initWithURL:theURL];
-    [handle addClient: data->mainURLHandleClient];
+    data->mainHandle = [[IFURLHandle alloc] initWithURL:theURL];
+    [data->mainHandle addClient: data->mainURLHandleClient];
     
     // Mark the start loading time.
     data->loadingStartedTime = CFAbsoluteTimeGetCurrent();
     
     // Fire this guy up.
-    [handle loadInBackground];
+    [data->mainHandle loadInBackground];
 
-    // FIXME:  Do any work need in the kde engine.  This should be removed.
+    // FIXME [rjw]:  Do any work need in the kde engine.  This should be removed.
     // We should move any code needed out of KWQ.
     [self _part]->openURL (url);
     
@@ -142,7 +143,9 @@
     IFWebDataSourcePrivate *data = (IFWebDataSourcePrivate *)_dataSourcePrivate;
     int i, count;
     IFURLHandle *handle;
-        
+
+    [data->mainHandle cancelLoadInBackground];
+    
     // Tell all handles to stop loading.
     count = [data->urlHandles count];
     for (i = 0; i < count; i++) {

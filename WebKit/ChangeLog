@@ -1,5 +1,24 @@
 2002-03-29  Richard Williamson  <rjw@apple.com>
 
+        Hooked up redirect.  Now we see many more ads.  :(
+        Fixed cancel of main handle for document.
+        Moved stop before start from frame to data source.
+
+	* WebView.subproj/IFBaseWebController.mm: (-[IFBaseWebController
+	locationChangeDone:forFrame:]), (-[IFBaseWebController
+	serverRedirectTo:forDataSource:]):
+	* WebView.subproj/IFMainURLHandleClient.mm: (-[IFMainURLHandleClient
+	IFURLHandleResourceDidCancelLoading:]), (-[IFMainURLHandleClient
+	IFURLHandleResourceDidFinishLoading:data:]), (-[IFMainURLHandleClient
+	IFURLHandle:resourceDidFailLoadingWithResult:]), (-[IFMainURLHandleClient
+	IFURLHandle:didRedirectToURL:]):
+	* WebView.subproj/IFWebDataSourcePrivate.h:
+	* WebView.subproj/IFWebDataSourcePrivate.mm: (-[IFWebDataSourcePrivate dealloc]),
+	(-[IFWebDataSource _startLoading:]), (-[IFWebDataSource _stopLoading]):
+	* WebView.subproj/IFWebFrame.mm: (-[IFWebFrame startLoading]):
+
+2002-03-29  Richard Williamson  <rjw@apple.com>
+
         Added stopLoading to startLoading to cancel any pending loads before
         new loads start.  This doesn't work yet because of loader bugs, but will
         once those are fixed.

@@ -38,8 +38,6 @@
     loadProgress->bytesSoFar = -1;
     [[dataSource controller] _mainReceivedProgress: (IFLoadProgress *)loadProgress forResource: [[sender url] absoluteString] fromDataSource: dataSource];
     [loadProgress release];
-
-    [sender autorelease];
 }
 
 - (void)IFURLHandleResourceDidFinishLoading:(IFURLHandle *)sender data: (NSData *)data
@@ -51,8 +49,6 @@
     loadProgress->bytesSoFar = [data length];
     [[dataSource controller] _mainReceivedProgress: (IFLoadProgress *)loadProgress forResource: [[sender url] absoluteString] fromDataSource: dataSource];
     [loadProgress release];
-
-    [sender autorelease];
 }
 
 - (void)IFURLHandle:(IFURLHandle *)sender resourceDataDidBecomeAvailable:(NSData *)data
@@ -78,13 +74,14 @@
     IFError *error = [[IFError alloc] initWithErrorCode: result];
     [[dataSource controller] _mainReceivedError: error forResource: [[sender url] absoluteString] partialProgress: loadProgress fromDataSource: dataSource];
     [error release];
-    
-    [sender autorelease];
 }
 
 - (void)IFURLHandle:(IFURLHandle *)sender didRedirectToURL:(NSURL *)url
 {
     WEBKITDEBUGLEVEL1 (WEBKIT_LOG_REDIRECT, "url = %s\n", [[url absoluteString] cString]);
+    part->setBaseURL([[url absoluteString] cString]);
+    
+    [[dataSource controller] serverRedirectTo: url forDataSource: dataSource];
 }
 
 @end

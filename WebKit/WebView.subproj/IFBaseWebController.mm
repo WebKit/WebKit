@@ -188,6 +188,7 @@
 
 - (void)locationChangeDone: (IFError *)error forFrame: (IFWebFrame *)frame
 {    
+    // Do nothing.  Subclasses typically override this method.
 }
 
 - (void)receivedPageTitle: (NSString *)title forDataSource: (IFWebDataSource *)dataSource
@@ -198,7 +199,7 @@
 
 - (void)serverRedirectTo: (NSURL *)url forDataSource: (IFWebDataSource *)dataSource
 {
-    [NSException raise:IFMethodNotYetImplemented format:@"IFBaseWebController::serverRedirectTo:forDataSource: is not implemented"];
+    // Do nothing.  Subclasses typically override this method.
 }
 
 - (IFWebFrame *)_frameForDataSource: (IFWebDataSource *)dataSource fromFrame: (IFWebFrame *)frame
