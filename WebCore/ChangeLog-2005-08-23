@@ -1,3 +1,13 @@
+2004-03-05  David Hyatt  <hyatt@apple.com>
+
+	Fix for first-line inheritance problem caused by incorrectly inheriting first-line into floating
+	blocks.
+	
+        Reviewed by kocienda
+
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::firstLineBlock):
+
 2004-03-05  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by me.

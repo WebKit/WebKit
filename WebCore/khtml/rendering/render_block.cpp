@@ -2545,8 +2545,8 @@ RenderBlock* RenderBlock::firstLineBlock() const
         if (hasPseudo)
             break;
         RenderObject* parentBlock = firstLineBlock->parent();
-        if (firstLineBlock->isReplaced() || !parentBlock || parentBlock->firstChild() != firstLineBlock || 
-            !parentBlock->isBlockFlow())
+        if (firstLineBlock->isReplaced() || firstLineBlock->isFloating() || 
+            !parentBlock || parentBlock->firstChild() != firstLineBlock || !parentBlock->isBlockFlow())
             break;
         firstLineBlock = parentBlock;
     } 
