@@ -1,3 +1,12 @@
+2001-12-07  Richard Williamson  <richwill@richwill.com>
+
+        First pass at API for WKWebPageView and WKWebPageDataSource.  Note
+        that we have to change names from NS to WK!  The new API is conditionally
+        excluded #ifdef READY_FOR_PRIMETIME
+	* WebView.subproj/NSWebPageDataSource.h:
+	* WebView.subproj/NSWebPageDataSourcePrivate.h:
+	* WebView.subproj/NSWebPageView.h:
+
 2001-12-06  Maciej Stachowiak  <mjs@apple.com>
 
 	* Cache.subproj/NSURICacheData.m: (+[NSURICacheData

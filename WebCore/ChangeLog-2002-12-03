@@ -1,3 +1,10 @@
+2001-12-07  Richard Williamson  <richwill@richwill.com>
+
+        Fixed bug that was highlighted when we turned on warnings.
+        
+	* src/kwq/KWQFontMetrics.mm:
+	* src/kwq/KWQMetrics.h:
+
 2001-12-07  Kenneth Kocienda  <kocienda@apple.com>
 
         Fixed small bug in a comparison that was making -Wall complain
