@@ -1,3 +1,27 @@
+2002-12-13  John Sullivan  <sullivan@apple.com>
+
+	- WebKit part of fix for 3028061 -- visiting a bookmarked site
+	that now has a site icon will not update bookmark's icon
+
+	No longer store the icon in the WebHistoryItem, since there's no
+	mechanism for keeping it fresh and telling interested clients
+	when it changes. Instead, the latest icon is always returned from
+	the icon database, and it's up to clients to get a fresh one when
+	they notice that the icon for a URL has been updated.
+
+        Reviewed by Darin
+
+        * History.subproj/WebHistoryItem.h:
+	remove _icon and _loadedIcon ivars
+
+        * History.subproj/WebHistoryItem.m:
+        (-[WebHistoryItem dealloc]):
+	don't release _icon
+        (-[WebHistoryItem icon]):
+	just return fresh icon from database, don't store
+        (-[WebHistoryItem setURL:]):
+	don't set _loadedIcon to NO
+
 === Alexander-37u1 ===
 
 2002-12-13  Darin Adler  <darin@apple.com>

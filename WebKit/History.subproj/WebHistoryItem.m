@@ -74,7 +74,6 @@
     [_parent release];
     [_title release];
     [_displayTitle release];
-    [_icon release];
     [_lastVisitedDate release];
     [anchor release];
     [_documentState release];
@@ -125,22 +124,11 @@
     return _displayTitle;
 }
 
-- (void)_setIcon:(NSImage *)newIcon
-{
-    [newIcon retain];
-    [_icon release];
-    _icon = newIcon;
-}
-
 - (NSImage *)icon
 {
-    if (!_loadedIcon) {
-        NSImage *newIcon = [[WebIconDatabase sharedIconDatabase] iconForSiteURL:[self URL] withSize:WebIconSmallSize];
-        [self _setIcon:newIcon];
-        _loadedIcon = YES;
-    }
-
-    return _icon;
+    // Always get fresh icon from database. It's a client's responsibility to watch
+    // for updates to the database if desired.
+    return [[WebIconDatabase sharedIconDatabase] iconForSiteURL:[self URL] withSize:WebIconSmallSize];
 }
 
 
@@ -156,7 +144,6 @@
         [self _retainIconInDatabase:NO];
         [_URLString release];
         _URLString = [string copy];
-        _loadedIcon = NO;
         [self _retainIconInDatabase:YES];
     }
 }

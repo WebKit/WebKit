@@ -18,14 +18,12 @@
     NSString *_parent;
     NSString *_title;
     NSString *_displayTitle;
-    NSImage *_icon;
     NSCalendarDate *_lastVisitedDate;
     NSPoint _scrollPoint;
     NSString *anchor;
     NSArray *_documentState;
     NSMutableArray *_subItems;
     NSMutableDictionary *pageCache;
-    BOOL _loadedIcon;
     BOOL _isTargetItem;
     BOOL _alwaysAttemptToUsePageCache;
     // info used to repost form data
