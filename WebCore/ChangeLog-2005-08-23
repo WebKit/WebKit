@@ -1,3 +1,23 @@
+2003-03-02  Trey Matteson  <trey@apple.com>
+
+	Use a KWQPopUpButton in place of NSPopUpButton.  The only addition is that
+	it implements the KWQWidgetHolder protocol.  This is needed in order to
+	auto set PopUps during autofill. 
+
+        Reviewed by Maciej.
+
+        * kwq/KWQComboBox.mm:
+        (QComboBox::QComboBox):  Make a KWQPopUpButton instead of NSPopUpButton.
+        (QComboBox::~QComboBox):  trivial s/KWQPopUpButton/NSPopUpButton/
+        (QComboBox::insertItem): ditto
+        (QComboBox::sizeHint): ditto
+        (QComboBox::baselinePosition): ditto
+        (QComboBox::clear): ditto
+        (QComboBox::setCurrentItem): ditto
+        (QComboBox::currentItem): ditto
+        (-[KWQPopUpButtonCell widget]):  Also implement KWQWidgetHolder
+        (-[KWQPopUpButton widget]):  Implement KWQWidgetHolder by calling our cell.
+
 2003-02-28  Darin Adler  <darin@apple.com>
 
         * khtml/css/parser.y: Fixed bad check-in that broke the build in a subtle way.

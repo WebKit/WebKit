@@ -25,6 +25,7 @@
 
 #import "KWQComboBox.h"
 
+#import "KWQView.h"
 #import "KWQKHTMLPart.h"
 #import "WebCoreBridge.h"
 
@@ -58,11 +59,14 @@ using khtml::RenderWidget;
 - (void)action:(id)sender;
 @end
 
-@interface KWQPopUpButtonCell : NSPopUpButtonCell
+@interface KWQPopUpButtonCell : NSPopUpButtonCell <KWQWidgetHolder>
 {
     QWidget *widget;
 }
 - initWithWidget:(QWidget *)widget;
+@end
+
+@interface KWQPopUpButton : NSPopUpButton <KWQWidgetHolder>
 @end
 
 QComboBox::QComboBox()
@@ -70,7 +74,7 @@ QComboBox::QComboBox()
     , _widthGood(false)
     , _activated(this, SIGNAL(activated(int)))
 {
-    NSPopUpButton *button = [[NSPopUpButton alloc] init];
+    KWQPopUpButton *button = [[KWQPopUpButton alloc] init];
     
     KWQPopUpButtonCell *cell = [[KWQPopUpButtonCell alloc] initWithWidget:this];
     [button setCell:cell];
@@ -89,14 +93,14 @@ QComboBox::QComboBox()
 
 QComboBox::~QComboBox()
 {
-    NSPopUpButton *button = (NSPopUpButton *)getView();
+    KWQPopUpButton *button = (KWQPopUpButton *)getView();
     [button setTarget:nil];
     [_adapter release];
 }
 
 void QComboBox::insertItem(const QString &text, int index)
 {
-    NSPopUpButton *button = (NSPopUpButton *)getView();
+    KWQPopUpButton *button = (KWQPopUpButton *)getView();
     int numItems = [button numberOfItems];
     if (index < 0) {
         index = numItems;
@@ -114,7 +118,7 @@ void QComboBox::insertItem(const QString &text, int index)
 
 QSize QComboBox::sizeHint() const 
 {
-    NSPopUpButton *button = (NSPopUpButton *)getView();
+    KWQPopUpButton *button = (KWQPopUpButton *)getView();
     
     float width;
     if (_widthGood) {
@@ -157,27 +161,27 @@ void QComboBox::setFrameGeometry(const QRect &r)
 int QComboBox::baselinePosition() const
 {
     // Menu text is at the top.
-    NSPopUpButton *button = (NSButton *)getView();
+    KWQPopUpButton *button = (KWQPopUpButton *)getView();
     return (int)ceil(-TOP_MARGIN + VERTICAL_FUDGE_FACTOR
         + TEXT_VERTICAL_NUDGE + [[button font] ascender]);
 }
 
 void QComboBox::clear()
 {
-    NSPopUpButton *button = (NSPopUpButton *)getView();
+    KWQPopUpButton *button = (KWQPopUpButton *)getView();
     [button removeAllItems];
     _widthGood = false;
 }
 
 void QComboBox::setCurrentItem(int index)
 {
-    NSPopUpButton *button = (NSPopUpButton *)getView();
+    KWQPopUpButton *button = (KWQPopUpButton *)getView();
     [button selectItemAtIndex:index];
 }
 
 int QComboBox::currentItem() const
 {
-    NSPopUpButton *button = (NSPopUpButton *)getView();
+    KWQPopUpButton *button = (KWQPopUpButton *)getView();
     return [button indexOfSelectedItem];
 }
 
@@ -237,6 +241,20 @@ int QComboBox::currentItem() const
     cellFrame.origin.y += TEXT_VERTICAL_NUDGE;
     cellFrame.size.height -= TEXT_VERTICAL_NUDGE;
     [super drawInteriorWithFrame:cellFrame inView:controlView];
+}
+
+- (QWidget *)widget
+{
+    return widget;
+}
+
+@end
+
+@implementation KWQPopUpButton
+
+- (QWidget *)widget
+{
+    return [(KWQPopUpButtonCell *)[self cell] widget];
 }
 
 @end
