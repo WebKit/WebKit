@@ -788,6 +788,11 @@ bool KWQKHTMLPart::keyEvent(NSEvent *event)
     return result;
 }
 
+void KWQKHTMLPart::resetCursor()
+{
+    d->m_view->resetCursor();
+}
+
 // This does the same kind of work that KHTMLPart::openURL does, except it relies on the fact
 // that a higher level already checked that the URLs match and the scrolling is the right thing to do.
 void KWQKHTMLPart::scrollToAnchor(const KURL &URL)

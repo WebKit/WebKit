@@ -427,6 +427,11 @@ static bool initializedObjectCacheSize = FALSE;
     _part->mouseMoved(event);
 }
 
+- (void)resetCursor
+{
+    _part->resetCursor();
+}
+
 - (NSDictionary *)elementAtPoint:(NSPoint)point
 {
     RenderObject *renderer = _part->renderer();

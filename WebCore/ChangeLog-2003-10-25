@@ -1,3 +1,20 @@
+2003-01-24  Trey Matteson  <trey@apple.com>
+
+	3155162 - cursor changes to I-beam after dragging image	
+	3154468 - no mouseup event comes through after text snippet drag
+
+	Export a means to reset the cursor to WebKit, which is used to fix these bugs.
+
+        Reviewed by Darin.
+
+        * kwq/KWQKHTMLPart.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::resetCursor):  New method that just calls through to khtmlview's
+	private resetCursor method.
+        * kwq/WebCoreBridge.h:  Add new method.
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge resetCursor]):  Call view's reset cursor.
+
 2003-01-23  Trey Matteson  <trey@apple.com>
 
 	I ran our KURL tests and found that my previous fix for "localhost" urls, fixed too much.

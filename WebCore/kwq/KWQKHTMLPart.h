@@ -158,6 +158,8 @@ public:
     void mouseMoved(NSEvent *);
     bool keyEvent(NSEvent *);
     
+    void resetCursor();
+    
     void clearTimers();
     static void clearTimers(KHTMLView *);
     

@@ -1,3 +1,21 @@
+2003-01-23  Trey Matteson  <trey@apple.com>
+
+	3155162 - cursor changes to I-beam after dragging image	
+	3154468 - no mouseup event comes through after text snippet drag
+
+	During AK dragging the system takes over the event stream and we never get any mouse
+	move or up events.  It also changes the cursor behind out back.  When done
+	cached state that thinks it knows the current cursor is wrong.
+
+	The fix is that after the drag we reset the cursor and synthesize a mouseup event,
+	which then sets the cursor based on what we're really over.
+
+        Reviewed by Darin.
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView draggedImage:endedAt:operation:]):  After the drag,
+	reset the cursor, fake up a mouseup event.
+
 2003-01-24  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Trey

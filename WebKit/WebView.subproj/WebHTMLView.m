@@ -634,9 +634,19 @@
 
 - (void)draggedImage:(NSImage *)anImage endedAt:(NSPoint)aPoint operation:(NSDragOperation)operation
 {
-    // During a drag, we don't get any mouseMoved or flagsChanged events.
-    // So after the drag we need to explicitly update the mouseover state.
-    [self _updateMouseoverWithFakeEvent];
+    // Once the dragging machinery kicks in, we no longer get mouse drags or the up event.
+    // khtml expects to get balanced down/up's, so we must fake up a mouseup.
+    NSEvent *fakeEvent = [NSEvent mouseEventWithType:NSLeftMouseUp
+                                            location:[[self window] convertScreenToBase:aPoint]
+                                       modifierFlags:[[NSApp currentEvent] modifierFlags]
+                                           timestamp:[NSDate timeIntervalSinceReferenceDate]
+                                        windowNumber:[[self window] windowNumber]
+                                             context:[[NSApp currentEvent] context]
+                                         eventNumber:0 clickCount:0 pressure:0];
+    // must reset since AK dragging changed the cursor behind out backs.  Otherwise various
+    // layers optimize out changing the cursor because the think they know what it is currently.
+    [[self _bridge] resetCursor];
+    [self mouseUp:fakeEvent];	    // This will also update the mouseover state.
 
     // Reregister for drag types because they were unregistered before the drag.
     [[self _web_parentWebView] _reregisterDraggedTypes];
