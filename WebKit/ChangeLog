@@ -1,3 +1,15 @@
+2004-06-24  Richard Williamson   <rjw@apple.com>
+
+		Fixed <rdar://problem/3710313>: CGContext not zeroed when WebImageRenderer is copied
+		The context ivar of WebImageRenderer wasn't being nil when the object was copied.
+
+        Reviewed by Darin.
+
+        * WebCoreSupport.subproj/WebImageRenderer.m:
+        (-[WebImageRenderer copyWithZone:]):
+        (-[WebImageRenderer dealloc]):
+        (-[WebImageRenderer drawImageInRect:fromRect:compositeOperator:context:]):
+
 2004-06-24  Trey Matteson  <trey@apple.com>
 
 	3672725 - Assertion failure in URLCompletion code with particular set of bookmarks
