@@ -321,6 +321,15 @@ static BOOL forceRealHitTest = NO;
     return nil;
 }
 
+static WebHTMLView *lastHitView = nil;
+
+- (void)_clearLastHitViewIfSelf
+{
+    if (lastHitView == self) {
+	lastHitView = nil;
+    }
+}
+
 - (void)_updateMouseoverWithEvent:(NSEvent *)event
 {
     WebHTMLView *view = nil;
@@ -336,6 +345,26 @@ static BOOL forceRealHitTest = NO;
             hitView = [hitView superview];
         }
     }
+
+    if (lastHitView != view && lastHitView != nil) {
+	// If we are moving out of a view (or frame), let's pretend the mouse moved
+	// all the way out of that view. But we have to account for scrolling, because
+	// khtml doesn't understand our clipping.
+	NSRect visibleRect = [[[[lastHitView _frame] frameView] scrollView] documentVisibleRect];
+	float yScroll = visibleRect.origin.y;
+	float xScroll = visibleRect.origin.x;
+
+	event = [NSEvent mouseEventWithType:NSMouseMoved
+			 location:NSMakePoint(-1 - xScroll, -1 - yScroll )
+			 modifierFlags:[[NSApp currentEvent] modifierFlags]
+			 timestamp:[NSDate timeIntervalSinceReferenceDate]
+			 windowNumber:[[self window] windowNumber]
+			 context:[[NSApp currentEvent] context]
+			 eventNumber:0 clickCount:0 pressure:0];
+	[[lastHitView _bridge] mouseMoved:event];
+    }
+
+    lastHitView = view;
     
     if (view == nil) {
         [[self _controller] _mouseDidMoveOverElement:nil modifierFlags:0];

@@ -55,6 +55,7 @@
 - (void)_restoreSubviews;
 
 - (BOOL)_insideAnotherHTMLView;
+- (void)_clearLastHitViewIfSelf;
 - (void)_updateMouseoverWithEvent:(NSEvent *)event;
 - (BOOL)_interceptKeyEvent:(NSEvent *)event toView:(NSView *)view;
 

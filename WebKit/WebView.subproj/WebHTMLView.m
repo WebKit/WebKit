@@ -54,6 +54,7 @@
 
 - (void)dealloc
 {
+    [self _clearLastHitViewIfSelf];
     [self _reset];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [_private release];

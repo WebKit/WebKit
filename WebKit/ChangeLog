@@ -1,3 +1,20 @@
+2003-03-30  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	- fixed 3204257 - CNN's 'war on iraq' ticker stops on mouseover
+
+        * WebView.subproj/WebHTMLViewPrivate.h:
+        * WebView.subproj/WebHTMLViewPrivate.m:
+        (-[WebHTMLView _updateMouseoverWithEvent:]): When leaving an HTML
+	view, tell it that the mouse moved outside everything in the view,
+	even accounting for scrolled off portions (otherwise khtml gets
+	confused). This makes cross-frame mouse enter/leave work properly.
+        (-[WebHTMLView _clearLastHitViewIfSelf]): Method to clear last hit view,
+	so we don't need to retain it.
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView dealloc]): Call _clearLastHitViewIfSelf.
+
 2003-03-28  Richard Williamson  <rjw@apple.com>
 
         Fix typo in comments that broke headerdoc.
