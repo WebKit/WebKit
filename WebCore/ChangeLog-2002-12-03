@@ -1,5 +1,13 @@
 2002-09-11  David Hyatt  <hyatt@apple.com>
 
+	Fix horizontal scrolling.  The HTML render object lies.  It lies, 
+	I tell you.
+	
+        * khtml/rendering/render_layer.cpp:
+        (RenderLayer::constructZTree):
+
+2002-09-11  David Hyatt  <hyatt@apple.com>
+
 	Fix clipping to work with layers.  This fixes the marquee
 	(once again) on livepage.apple.com.
 	
