@@ -254,15 +254,19 @@ NSControlSize KWQNSControlSizeForFont(const QFont &f)
 
 QWidget::FocusPolicy QButton::focusPolicy() const
 {
+    volatile bool fullKeyboardMode = false;
+    
     KWQ_BLOCK_NS_EXCEPTIONS;
 
     // Add an additional check here.
     // For now, buttons are only focused when full
     // keyboard access is turned on.
-    if ([KWQKHTMLPart::bridgeForWidget(this) keyboardUIMode] != WebCoreFullKeyboardAccess)
-        return NoFocus;
+    fullKeyboardMode = [KWQKHTMLPart::bridgeForWidget(this) keyboardUIMode] == WebCoreFullKeyboardAccess;
 
     KWQ_UNBLOCK_NS_EXCEPTIONS;
+
+    if (!fullKeyboardMode)
+        return NoFocus;
 
     return QWidget::focusPolicy();
 }

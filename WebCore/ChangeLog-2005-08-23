@@ -1,3 +1,13 @@
+2003-10-10  Maciej Stachowiak  <mjs@apple.com>
+
+	- fixed 3449405 - REGRESSION: reproducible crash changing focus w/ button on page, e.g. on www.aa.com
+	
+	More fallout from the exception blocking.
+
+        * kwq/KWQButton.mm:
+        (QButton::focusPolicy): Don't return from exception block (caught
+	by Darin).
+
 2003-10-09  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
