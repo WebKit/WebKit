@@ -812,13 +812,12 @@ static const char * const stateNames[] = {
             }
         }
 
-        WebDataSource *newDataSource = [[WebDataSource alloc] initWithRequest:request];
-        [request release];
-        [self _setProvisionalDataSource:newDataSource];
         // Remember this item so we can traverse any child items as child frames load
         [_private setProvisionalItem:item];
-        [self _setLoadType:type];
-        [self _startLoading];
+
+        WebDataSource *newDataSource = [[WebDataSource alloc] initWithRequest:request];
+        [request release];
+	[self _loadDataSource:newDataSource withLoadType:type];
         [newDataSource release];
     }
 }
@@ -889,14 +888,11 @@ static const char * const stateNames[] = {
     [self _recursiveGoToItem:item fromItem:currItem withLoadType:type];
 }
 
-- (void)_loadRequest:(WebResourceRequest *)request triggeringAction:(NSDictionary *)action
+- (void)_loadRequest:(WebResourceRequest *)request triggeringAction:(NSDictionary *)action loadType:(WebFrameLoadType)loadType
 {
     WebDataSource *newDataSource = [[WebDataSource alloc] initWithRequest:request];
     [newDataSource _setTriggeringAction:action];
-
-    if ([self _setProvisionalDataSource:newDataSource]) {
-        [self _startLoading];
-    }
+    [self _loadDataSource:newDataSource withLoadType:loadType];
     [newDataSource release];
 }
 
@@ -1041,10 +1037,7 @@ static const char * const stateNames[] = {
         WebFrameLoadType previousLoadType = [self _loadType];
         WebDataSource *oldDataSource = [[self dataSource] retain];
 
-        [self _loadRequest:request triggeringAction:action];
-        // NB: must be done after loadRequest:, which sets the provDataSource, which
-        //     inits the load type to Standard
-        [self _setLoadType:loadType];
+        [self _loadRequest:request triggeringAction:action loadType:loadType];
         if (_private->instantRedirectComing) {
             _private->instantRedirectComing = NO;
             
@@ -1115,7 +1108,7 @@ static const char * const stateNames[] = {
 
     NSDictionary *action = [self _actionInformationForNavigationType:WebNavigationTypeFormSubmitted event:event];
 
-    [self _loadRequest:request triggeringAction:action];
+    [self _loadRequest:request triggeringAction:action loadType:WebFrameLoadTypeStandard];
 
     [request release];
 }
@@ -1187,10 +1180,8 @@ static const char * const stateNames[] = {
     
     [newDataSource _setOverrideEncoding:encoding];
     
-    if ([self _setProvisionalDataSource:newDataSource]) {
-	[self _setLoadType:WebFrameLoadTypeReloadAllowingStaleData];
-        [self _startLoading];
-    }
+    [self _loadDataSource:newDataSource 
+	  withLoadType:WebFrameLoadTypeReloadAllowingStaleData];
     
     [newDataSource release];
 }
@@ -1268,10 +1259,7 @@ static const char * const stateNames[] = {
     return [_private currentItem];
 }
 
-
-//    Will return NO and not set the provisional data source if the controller
-//    disallows by returning a WebURLPolicyIgnore.
-- (BOOL)_setProvisionalDataSource: (WebDataSource *)newDataSource
+- (void)_loadDataSource:(WebDataSource *)newDataSource withLoadType: (WebFrameLoadType)loadType
 {
     ASSERT([self controller] != nil);
 
@@ -1291,7 +1279,7 @@ static const char * const stateNames[] = {
     // returns YES if we should show the data source
 
     if (![self _continueAfterNavigationPolicyForRequest:[newDataSource request] dataSource:newDataSource]) {
-        return NO;
+        return;
     }
     
     if ([self parent]) {
@@ -1307,12 +1295,8 @@ static const char * const stateNames[] = {
     
     [self _setState: WebFrameStateProvisional];
     
-    return YES;
-}
+    [self _setLoadType:loadType];
 
-
-- (void)_startLoading
-{
     if (self == [[self controller] mainFrame])
         LOG(DocumentLoad, "loading %@", [[[self provisionalDataSource] request] URL]);
 
@@ -1322,12 +1306,11 @@ static const char * const stateNames[] = {
 - (void)_downloadRequest:(WebResourceRequest *)request toPath:(NSString *)path
 {
     WebDataSource *dataSource = [[WebDataSource alloc] initWithRequest:request];
-
     [dataSource _setIsDownloading:YES];
     [dataSource _setDownloadPath:path];
-    if([self _setProvisionalDataSource:dataSource]){
-        [self _startLoading];
-    }
+
+    [self _loadDataSource:dataSource withLoadType:WebFrameLoadTypeStandard];
+
     [dataSource release];
 }
 

@@ -106,9 +106,7 @@
 - (void)loadRequest:(WebResourceRequest *)request
 {
     WebDataSource *newDataSource = [[WebDataSource alloc] initWithRequest:request];
-    if ([self _setProvisionalDataSource:newDataSource]) {
-	[self _startLoading];
-    }
+    [self _loadDataSource:newDataSource withLoadType:WebFrameLoadTypeStandard];
     [newDataSource release];
 }
 
@@ -137,11 +135,8 @@
     
     [newDataSource _setOverrideEncoding:[dataSource _overrideEncoding]];
     
-    if ([self _setProvisionalDataSource:newDataSource]) {
-	[self _setLoadType:WebFrameLoadTypeReload];
-        [self _startLoading];
-    }
-    
+    [self _loadDataSource:newDataSource withLoadType:WebFrameLoadTypeReload];
+
     [newDataSource release];
 }
 

@@ -139,8 +139,9 @@ typedef enum {
 - (WebHistoryItem *)_itemForRestoringDocState;
 - (void)_handleUnimplementablePolicy:(WebPolicyAction)policy errorCode:(int)code forURL:(NSURL *)URL;
 
-- (BOOL)_setProvisionalDataSource: (WebDataSource *)dataSource;
-- (void)_startLoading;
+- (void)_loadDataSource:(WebDataSource *)dataSource withLoadType:(WebFrameLoadType)type;
+
 - (void)_downloadRequest:(WebResourceRequest *)request toPath:(NSString *)path;
+
 
 @end

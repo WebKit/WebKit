@@ -1,5 +1,23 @@
 2002-11-14  Maciej Stachowiak  <mjs@apple.com>
 
+	Refactor things a bit so all loads bottleneck through a single
+	method (_loadDataSource:withLoadType:).
+	
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame loadRequest:]):
+        (-[WebFrame reload]):
+        * WebView.subproj/WebFramePrivate.h:
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _loadItem:fromItem:withLoadType:]):
+        (-[WebFrame _loadRequest:triggeringAction:loadType:]):
+        (-[WebFrame _loadURL:loadType:triggeringEvent:isFormSubmission:]):
+        (-[WebFrame _postWithURL:data:contentType:triggeringEvent:]):
+        (-[WebFrame _reloadAllowingStaleDataWithOverrideEncoding:]):
+        (-[WebFrame _loadDataSource:withLoadType:]):
+        (-[WebFrame _downloadRequest:toPath:]):
+
+2002-11-14  Maciej Stachowiak  <mjs@apple.com>
+
 	Change things so the public interface to loading is loadRequest:
 	and everything else is private.
 	
