@@ -1,3 +1,17 @@
+2002-07-30  John Sullivan  <sullivan@apple.com>
+
+	- fixed 3012083 "Looked for URLs on the pasteboard, but found
+	none" spam dragging nil-target bookmark
+
+        * Misc.subproj/WebNSViewExtras.m:
+        (-[NSView _web_bestURLForDraggingInfo:]):
+	This method was getting data for types on the pasteboard without
+	first checking whether the types were on the pasteboard, a no-no.
+	Restructured this method and tweaked it here and there also.
+
+        (-[NSView _web_dragOperationForDraggingInfo:]): moved a fast
+	test in front of a slow test
+
 2002-07-29  Richard Williamson  <rjw@apple.com>
 
         Removed setDirectsAllLinksToSystemBrowser: method, not needed

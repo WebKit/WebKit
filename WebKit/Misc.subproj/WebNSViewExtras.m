@@ -112,34 +112,52 @@
 
 - (NSURL *)_web_bestURLForDraggingInfo:(id <NSDraggingInfo>)sender
 {
-    NSPasteboard *draggingPasteboard = [sender draggingPasteboard];        
-    NSURL *bestURL = [NSURL URLFromPasteboard:draggingPasteboard];
-    NSString *scheme = [bestURL scheme];
-    
-    if(!bestURL || ![scheme isEqualToString:@"http"] || ![scheme isEqualToString:@"https"]){
+    NSPasteboard *draggingPasteboard;
+    NSArray *types;
 
-        NSString *URLString = [[draggingPasteboard stringForType:NSStringPboardType] _web_stringByTrimmingWhitespace];
-        if(URLString && [URLString _web_looksLikeAbsoluteURL]){
-            bestURL = [NSURL _web_URLWithString:URLString];
-        }
+    draggingPasteboard = [sender draggingPasteboard];
+    types = [draggingPasteboard types];
 
-        if(!bestURL){
-            NSArray *files = [draggingPasteboard propertyListForType:NSFilenamesPboardType];
-            if(files && [files count] == 1){
-                NSString *file = [files objectAtIndex:0];
-                if([WebController canShowFile:file]){
-                    bestURL = [NSURL fileURLWithPath:file];
-                }
-            }
+    if ([types containsObject:NSURLPboardType]) {
+        NSURL *URLFromPasteboard;
+        NSString *scheme;
+
+        URLFromPasteboard = [NSURL URLFromPasteboard:draggingPasteboard];
+        scheme = [URLFromPasteboard scheme];
+        if ([scheme isEqualToString:@"http"] || [scheme isEqualToString:@"https"]) {
+            return URLFromPasteboard;
         }
     }
 
-    return bestURL;
+    if ([types containsObject:NSStringPboardType]) {
+        NSString *URLString;
+
+        URLString = [[draggingPasteboard stringForType:NSStringPboardType] _web_stringByTrimmingWhitespace];
+        if ([URLString _web_looksLikeAbsoluteURL]) {
+            return [NSURL _web_URLWithString:URLString];
+        }        
+    }
+
+    if ([types containsObject:NSFilenamesPboardType]) {
+        NSArray *files;
+
+        files = [draggingPasteboard propertyListForType:NSFilenamesPboardType];
+        if ([files count] == 1) {
+            NSString *file;
+
+            file = [files objectAtIndex:0];
+            if ([WebController canShowFile:file]) {
+                return [NSURL fileURLWithPath:file];
+            }
+        }
+    }
+    
+    return nil;
 }
 
 - (NSDragOperation)_web_dragOperationForDraggingInfo:(id <NSDraggingInfo>)sender
 {
-    if([self _web_bestURLForDraggingInfo:sender] && [sender draggingSource] != self){
+    if([sender draggingSource] != self && [self _web_bestURLForDraggingInfo:sender]) {
         return NSDragOperationCopy;
     } else {
         return NSDragOperationNone;
