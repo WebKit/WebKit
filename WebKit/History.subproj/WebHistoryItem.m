@@ -6,11 +6,9 @@
 #import <WebKit/WebHistoryItemPrivate.h>
 
 #import <WebKit/WebFramePrivate.h>
-#import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebIconDatabase.h>
 #import <WebKit/WebIconLoader.h>
 #import <WebKit/WebKitLogging.h>
-#import <WebKit/WebPluginController.h>
 
 #import <WebFoundation/WebAssertions.h>
 #import <WebFoundation/WebNSDictionaryExtras.h>
@@ -506,20 +504,6 @@ static NSTimer *_pageCacheReleaseTimer = nil;
 {
     LOG (PageCache, "releasing %d items\n", [_pendingPageCacheToRelease count]);
     [WebHistoryItem _invalidateReleaseTimer];
-
-    NSEnumerator *enumerator = [_pendingPageCacheToRelease objectEnumerator];
-    NSDictionary *cache;
-
-    // Plug-ins could retain anything including the WebHTMLView or the window.
-    // To avoid any possible retain cycle, call destroyPlugin on all the plug-ins
-    // instead of completely relying on dealloc.
-    while ((cache = [enumerator nextObject]) != nil) {
-        WebHTMLView *view = [cache objectForKey:@"WebKitDocumentView"];
-        if ([view isKindOfClass:[WebHTMLView class]]) {
-            [[view _pluginController] destroyAllPlugins];
-        }
-    }
-    
     [_pendingPageCacheToRelease removeAllObjects];
 }
 

@@ -5,7 +5,6 @@
 
 #import <WebKit/WebHTMLView.h>
 
-#import <WebKit/WebBackForwardList.h>
 #import <WebKit/WebBridge.h>
 #import <WebKit/WebClipView.h>
 #import <WebKit/WebContextMenuDelegate.h>
@@ -599,10 +598,6 @@
 
 - (void)windowWillClose:(NSNotification *)notification
 {
-    // Plug-ins could retain anything including the WebHTMLView or the window.
-    // To avoid any possible retain cycle, call destroyPlugin on all the plug-ins
-    // including the ones in the page cache instead of completely relying on dealloc.
-    [[[self _controller] backForwardList] clearPageCache];
     [[self _pluginController] destroyAllPlugins];
 }
 

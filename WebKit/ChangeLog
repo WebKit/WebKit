@@ -1,5 +1,16 @@
 2003-01-30  Chris Blumenberg  <cblu@apple.com>
 
+	Backed out my fix for 3161102. Richard and I found problems the fix. 3161102 turns out to not be an issue.
+
+        Reviewed by rjw.
+
+        * History.subproj/WebHistoryItem.m:
+        (+[WebHistoryItem _releaseAllPendingPageCaches]):
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView windowWillClose:]):
+
+2003-01-30  Chris Blumenberg  <cblu@apple.com>
+
 	Fixed: 3161102 - Avoid retain cycles by destroying plug-ins in the page cache before dealloc
 
         Reviewed by rjw.
