@@ -746,6 +746,7 @@ Value FunctionCallNode::evaluate(ExecState *exec)
 #if KJS_MAX_STACK > 0
   static int depth = 0; // sum of all concurrent interpreters
   if (++depth > KJS_MAX_STACK) {
+    --depth;
     return throwError(exec, RangeError, "Exceeded maximum function call depth calling %s (result of expression %s).", v, expr);
   }
 #endif

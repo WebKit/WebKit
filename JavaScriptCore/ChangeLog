@@ -1,3 +1,14 @@
+2003-10-28  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Ken.
+
+	- fixed 3413962 -  malicious web pages can kill all future JavaScript execution by breaking recursion limit check
+	
+        * kjs/nodes.cpp:
+        (FunctionCallNode::evaluate): If we're going to return early due
+	to breaking the recursion limit, make sure to lower it again, or
+	it will creep up by one each time it's exceeded.
+
 2003-10-26  Darin Adler  <darin@apple.com>
 
         * JavaScriptCorePrefix.h: Added a C case to the NULL definition since we use C as well
