@@ -1,5 +1,15 @@
 2002-09-20  Richard Williamson   <rjw@apple.com>
 
+        Fixed crasher in findTextSlave.
+        * khtml/rendering/render_text.cpp:
+        (RenderText::findTextSlave):
+
+        Added error checks.
+        * khtml/khtml_part.cpp:
+        (startAndEndLineNodesIncludingNode):
+
+2002-09-20  Richard Williamson   <rjw@apple.com>
+
         Made double and triple click selection behave like
         like other selection in OS X.  That is, selection happens
         on mouse down, not mouse up, and can be extended by

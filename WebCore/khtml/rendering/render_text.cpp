@@ -343,11 +343,11 @@ TextSlave * RenderText::findTextSlave( int offset, int &pos )
         return 0L;
 
     TextSlave* s = m_lines[0];
-    uint si = 0;
+    uint si = 1;
     int off = s->m_len;
     while(offset > off && si < m_lines.count())
     {
-        s = m_lines[++si];
+        s = m_lines[si++];
         off = s->m_start + s->m_len;
     }
     // we are now in the correct text slave

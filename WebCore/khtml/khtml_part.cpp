@@ -4009,11 +4009,13 @@ static bool startAndEndLineNodesIncludingNode (DOM::NodeImpl *node, int offset, 
         
         // Look for all the first child in the block that is on the same line
         // as the selection point.
-        firstSlaveAt (renderNode, selectionPointY, startNode, startOffset);
+        if (!firstSlaveAt (renderNode, selectionPointY, startNode, startOffset))
+            return false;
     
         // Look for all the last child in the block that is on the same line
         // as the selection point.
-        lastSlaveAt (renderNode, selectionPointY, endNode, endOffset);
+        if (!lastSlaveAt (renderNode, selectionPointY, endNode, endOffset))
+            return false;
         
         _startNode = startNode;
         _endNode = endNode;
