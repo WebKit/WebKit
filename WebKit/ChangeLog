@@ -1,3 +1,15 @@
+2005-02-24  Richard Williamson   <rjw@apple.com>
+
+	Fixed <rdar://problem/3382926> Bidi neutrals at RTL/LTR boundaries not handled correctly.
+
+	If directionality is specified use that as initial directionality,
+	rather than neutral directionality.	
+
+        Reviewed by Hyatt.
+
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (widthForNextCharacter):
+
 2005-02-24  Adele Amchan  <adele@apple.com>
 
         Reviewed by Chris.

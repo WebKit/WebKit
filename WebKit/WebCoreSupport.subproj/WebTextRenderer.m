@@ -1957,6 +1957,7 @@ static float widthForNextCharacter(CharacterWidthIterator *iterator, ATSGlyphRef
 {
     WebTextRenderer *renderer = iterator->renderer;
     const WebCoreTextRun *run = iterator->run;
+    const WebCoreTextStyle *style = iterator->style;
     unsigned currentCharacter = iterator->currentCharacter;
 
     NSFont *_fontUsed = nil;
@@ -2007,6 +2008,9 @@ static float widthForNextCharacter(CharacterWidthIterator *iterator, ATSGlyphRef
         }
     }
 
+    if (style->rtl) {
+        c = u_charMirror(c);
+    }
     if (c <= 0xFFFF) {
         *glyphUsed = glyphForCharacter(renderer->characterToGlyphMap, c, fontUsed);
         if (*glyphUsed == nonGlyphID) {

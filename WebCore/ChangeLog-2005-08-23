@@ -1,5 +1,16 @@
 2005-02-24  Richard Williamson   <rjw@apple.com>
 
+	Fixed <rdar://problem/3382926> Bidi neutrals at RTL/LTR boundaries not handled correctly.
+
+	Use mirror characters correctly when rendering with RTL directionality.
+
+        Reviewed by Hyatt.
+
+        * khtml/rendering/bidi.cpp:
+        (khtml::BidiIterator::direction):
+
+2005-02-24  Richard Williamson   <rjw@apple.com>
+
 	Fixed <rdar://problem/3985889> REGRESSION (125-180): setting <img> src to GIF that already animated does not animate; just shows final frame
 	
         Reviewed by Hyatt.
