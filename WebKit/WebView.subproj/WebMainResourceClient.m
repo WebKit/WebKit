@@ -196,7 +196,7 @@
             contentType = @"text/html";
         
         [dataSource _setContentType:contentType];
-        [dataSource _setEncoding:[handle characterSet]];
+        [dataSource _setEncoding:[[handle response] characterSet]];
         
         // retain the downloadProgressHandler just in case this is a download.
         // Alexander releases the WebController if no window is created for it.
