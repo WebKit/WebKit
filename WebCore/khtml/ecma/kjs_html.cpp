@@ -3437,6 +3437,7 @@ Value KJS::Context2DFunction::tryCall(ExecState *exec, Object &thisObj, const Li
                     float a = (float)args[4].toNumber(exec);
                     CGContextSetCMYKStrokeColor(drawingContext, c, m, y, k, a);
                 }
+                break;
                 default: {
                     Object err = Error::create(exec,SyntaxError);
                     exec->setException(err);
@@ -3497,6 +3498,7 @@ Value KJS::Context2DFunction::tryCall(ExecState *exec, Object &thisObj, const Li
                     float a = (float)args[4].toNumber(exec);
                     CGContextSetCMYKStrokeColor(drawingContext, c, m, y, k, a);
                 }
+                break;
                 default: {
                     Object err = Error::create(exec,SyntaxError);
                     exec->setException(err);
@@ -3761,21 +3763,9 @@ Value KJS::Context2DFunction::tryCall(ExecState *exec, Object &thisObj, const Li
             break;
         }
         case Context2D::SetShadow: {
-            if (args.size() != 3) {
-                Object err = Error::create(exec,SyntaxError);
-                exec->setException(err);
-                return err;
-            }
-            CGSize offset;
+            int numArgs = args.size();
             
-            offset.width = (float)args[0].toNumber(exec);
-            offset.height = (float)args[1].toNumber(exec);
-            float blur = (float)args[2].toNumber(exec);
-            CGContextSetShadow (drawingContext, offset, blur);
-            break;
-        }
-        case Context2D::SetShadowWithColor: {
-            if (args.size() < 4) {
+            if (numArgs < 3) {
                 Object err = Error::create(exec,SyntaxError);
                 exec->setException(err);
                 return err;
@@ -3786,22 +3776,82 @@ Value KJS::Context2DFunction::tryCall(ExecState *exec, Object &thisObj, const Li
             offset.height = (float)args[1].toNumber(exec);
             float blur = (float)args[2].toNumber(exec);
             
-            QColor color = QColor(args[3].toString(exec).ascii());
-            float alpha;
-            if (args.size() > 4)
-                alpha = (float)args[4].toNumber(exec);
-            else
-                alpha = 1.;
-            
-            CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-            float components[4] = {color.red(), color.green(), color.blue(), alpha};
-            CGColorRef colorRef = CGColorCreate (colorSpace, components);
-            CGContextSetShadowWithColor (drawingContext, offset, blur, colorRef);
-            CFRelease (colorSpace);
-            CFRelease (colorRef);
-            break;
-        }
+            if (numArgs == 3) {
+                CGContextSetShadow (drawingContext, offset, blur);
+            } else {
+                CGColorSpaceRef colorSpace;
+                float components[5];
+                
+                switch (numArgs - 3) {
+                    case 1: {
+                        if (args[3].type() == StringType) {
+                            QRgb rgb = 0;
+                            DOM::CSSParser::parseColor(args[3].toString(exec).qstring(), rgb);
+                            QColor color(rgb);
+                            components[0] = color.red();
+                            components[1] = color.green();
+                            components[2] = color.blue();
+                            components[3] = 1.0f;
+                            colorSpace = CGColorSpaceCreateDeviceRGB();
+                        }
+                        else {
+                            components[0] = (float)args[3].toNumber(exec);
+                            components[1] = 1.0f;
+                            colorSpace = CGColorSpaceCreateDeviceGray();
+                        }
+                    }
+                    break;
+                    case 2: {
+                        float a = args[4].toNumber(exec);
+                        if (args[3].type() == StringType) {
+                            QRgb rgb = 0;
+                            DOM::CSSParser::parseColor(args[3].toString(exec).qstring(), rgb);
+                            QColor color(rgb);
+                            components[0] = color.red();
+                            components[1] = color.green();
+                            components[2] = color.blue();
+                            components[3] = a;
+                            colorSpace = CGColorSpaceCreateDeviceRGB();
+                        }
+                        else {
+                            components[0] = (float)args[3].toNumber(exec);
+                            components[1] = a;
+                            colorSpace = CGColorSpaceCreateDeviceGray();
+                        }
+                    }
+                    break;
+                    case 4: {
+                        components[0] = (float)args[3].toNumber(exec); // r
+                        components[1] = (float)args[4].toNumber(exec); // g
+                        components[2] = (float)args[5].toNumber(exec); // b
+                        components[3] = (float)args[6].toNumber(exec); // a
+                        colorSpace = CGColorSpaceCreateDeviceRGB();
+                    }
+                    break;
+                    case 5: {
+                        components[0] = (float)args[3].toNumber(exec); // c
+                        components[1] = (float)args[4].toNumber(exec); // m
+                        components[2] = (float)args[5].toNumber(exec); // y
+                        components[3] = (float)args[6].toNumber(exec); // k
+                        components[4] = (float)args[7].toNumber(exec); // a
 
+                        colorSpace = CGColorSpaceCreateDeviceCMYK();
+                    }
+                    break;
+                    default: {
+                        Object err = Error::create(exec,SyntaxError);
+                        exec->setException(err);
+                        return err;
+                    }
+                }
+                
+                CGColorRef colorRef = CGColorCreate (colorSpace, components);
+                CGContextSetShadowWithColor (drawingContext, offset, blur, colorRef);
+                CFRelease (colorRef);
+                CFRelease (colorSpace);
+            }
+            break;
+        }
         case Context2D::ClearShadow: {
             if (args.size() != 0) {
                 Object err = Error::create(exec,SyntaxError);
@@ -3862,7 +3912,7 @@ Value KJS::Context2DFunction::tryCall(ExecState *exec, Object &thisObj, const Li
 const ClassInfo KJS::Context2D::info = { "Context2D", 0, &Context2DTable, 0 };
 
 /* Source for Context2DTable. Use "make hashtables" to regenerate.
-@begin Context2DTable 32
+@begin Context2DTable 31
   save                     Context2D::Save                        DontDelete|Function 0
   restore                  Context2D::Restore                     DontDelete|Function 0
   scale                    Context2D::Scale                       DontDelete|Function 2
@@ -3892,7 +3942,6 @@ const ClassInfo KJS::Context2D::info = { "Context2D", 0, &Context2DTable, 0 };
   drawImage                Context2D::DrawImage                   DontDelete|Function 6
   drawImageFromRect        Context2D::DrawImageFromRect           DontDelete|Function 10
   setShadow                Context2D::SetShadow                   DontDelete|Function 3
-  setShadowWithColor       Context2D::SetShadowWithColor          DontDelete|Function 4
   clearShadow              Context2D::ClearShadow                 DontDelete|Function 0
   setAlpha                 Context2D::SetAlpha                    DontDelete|Function 1
 @end

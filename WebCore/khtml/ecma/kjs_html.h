@@ -260,7 +260,7 @@ namespace KJS {
         MoveToPoint, AddLineToPoint, AddQuadraticCurveToPoint, AddBezierCurveToPoint, AddArcToPoint, AddArc, AddRect, Clip,
         ClearRect, FillRect, StrokeRect,
         DrawImage, DrawImageFromRect,
-        SetShadow, SetShadowWithColor, ClearShadow,
+        SetShadow, ClearShadow,
         SetAlpha};
 
     DOM::HTMLElementImpl *_element;

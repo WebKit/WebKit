@@ -1,3 +1,19 @@
+2004-05-28  John Louch  <ouch@apple.com>
+
+        Reviewed by gramps.
+	
+	- removed setShadowWithColor and change setShadow to work with optional attributes
+		it follows the same rules as setFill/StrokeColor
+	- Fixed bug in setFillColor and setStrokeColor for CMYK colors (missing break in case).
+	
+
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::Context2DFunction::tryCall):
+        * khtml/ecma/kjs_html.h:
+        (KJS::Context2D::):
+        * khtml/ecma/kjs_html.lut.h:
+        (KJS::):
+
 2004-05-28  Darin Adler  <darin@apple.com>
 
         Reviewed by Ken.
