@@ -1188,8 +1188,10 @@ CSSStyleSheetImpl* DocumentImpl::elementSheet()
 
 void DocumentImpl::determineParseMode( const QString &/*str*/ )
 {
-    // For xML documents, use string parse mode
+    // For XML documents use strict parse mode.  HTML docs will override this method to
+    // determine their parse mode.
     pMode = Strict;
+    hMode = XHtml;
     kdDebug(6020) << " using strict parseMode" << endl;
 }
 

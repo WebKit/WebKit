@@ -978,6 +978,28 @@ int QString::compare( const QString& s ) const
     return ucstrcmp(*this,s);
 }
 
+int QString::compare(const char *chs) const
+{
+    if (!chs)
+        return isEmpty() ? 0 : 1;
+    KWQStringData *d = dataHandle[0];
+    if (d->_isAsciiValid)
+        return strcmp(ascii(), chs);
+    const QChar *s = unicode();
+    uint len = d->_length;
+    for (uint i = 0; i != len; ++i) {
+        char c2 = chs[i];
+        if (!c2)
+            return 1;
+        QChar c1 = s[i];
+        if (c1 < c2)
+            return -1;
+        if (c1 > c2)
+            return 1;
+    }
+    return chs[len] ? -1 : 0;
+}
+
 bool QString::startsWith( const QString& s ) const
 {
     if (dataHandle[0]->_isAsciiValid){

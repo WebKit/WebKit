@@ -1859,7 +1859,7 @@ bool KHTMLPart::gotoAnchor( const QString &name )
   HTMLCollectionImpl *anchors =
       new HTMLCollectionImpl( d->m_doc, HTMLCollectionImpl::DOC_ANCHORS);
   anchors->ref();
-  NodeImpl *n = anchors->namedItem(name, d->m_doc->parseMode() == DocumentImpl::Strict);
+  NodeImpl *n = anchors->namedItem(name, !d->m_doc->inQuirksMode());
   anchors->deref();
 
   if(!n) {

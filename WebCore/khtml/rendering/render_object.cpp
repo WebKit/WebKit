@@ -71,11 +71,11 @@ RenderObject *RenderObject::createObject(DOM::NodeImpl* node,  RenderStyle* styl
         // CSS2 anonymous table render object construction, but until then, this will have
         // to suffice. -dwh
         if (style->display() == BLOCK && node->id() == ID_TD &&
-            node->getDocument()->parseMode() != DocumentImpl::Strict)
+            node->getDocument()->inQuirksMode())
             o = new (arena) RenderTableCell(node);
         // In quirks mode if <table> has a display of block, make a table. If it has 
         // a display of inline, make an inline-table.
-        else if (node->id() == ID_TABLE && node->getDocument()->parseMode() != DocumentImpl::Strict)
+        else if (node->id() == ID_TABLE && node->getDocument()->inQuirksMode())
             o = new (arena) RenderTable(node);
         else
             o = new (arena) RenderFlow(node);

@@ -873,7 +873,7 @@ void HTMLTokenizer::parseTag(DOMStringIt &src)
                         // Fix bug 34302 at kde.bugs.org.  Go ahead and treat
                         // <!--> as a valid comment, since both mozilla and IE on windows
                         // can handle this case.  Only do this in quirks mode. -dwh
-                        if (*src == '>' && parser->doc()->parseMode() != DocumentImpl::Strict) {
+                        if (*src == '>' && parser->doc()->inQuirksMode()) {
                           comment = false;
                           ++src;
                           cBuffer[cBufferPos++] = src->cell();

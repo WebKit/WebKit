@@ -276,21 +276,23 @@ public:
     void setPaintDevice( QPaintDevice *dev );
 
     enum HTMLMode {
-        Html3 = 0,
-        Html4 = 1,
-        XHtml = 2
+        Html3,
+        Html4,
+        XHtml
     };
 
     enum ParseMode {
-        Unknown,
         Compat,
-        Transitional,
+        AlmostStrict,
         Strict
     };
+    
     virtual void determineParseMode( const QString &str );
     void setParseMode( ParseMode m ) { pMode = m; }
     ParseMode parseMode() const { return pMode; }
 
+    bool inQuirksMode() { return pMode == Compat; }
+    
     void setHTMLMode( HTMLMode m ) { hMode = m; }
     HTMLMode htmlMode() const { return hMode; }
 

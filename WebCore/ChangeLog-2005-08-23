@@ -1,3 +1,46 @@
+2003-01-27  David Hyatt  <hyatt@apple.com>
+
+	New implementation of determineParseMode that is much better
+	about getting the quirks vs. strict decision right (as compared
+	to Mozilla and WinIE).
+
+	Also made a new inQuirksMode function and converted callers of
+	parseMode to use it, so that AlmostStrict and Strict modes will
+	both be treated as non-quirks mode by those who check for this
+	sort of thing.
+	
+        Reviewed by darin, mjs
+
+        * khtml/html/html_documentimpl.cpp:
+        (parsePS):
+        (containsString):
+        (parseDocTypeDeclaration):
+        (HTMLDocumentImpl::determineParseMode):
+        * khtml/html/html_headimpl.cpp:
+        (HTMLLinkElementImpl::setStyleSheet):
+        (HTMLStyleElementImpl::childrenChanged):
+        * khtml/html/html_tableimpl.cpp:
+        (HTMLTableElementImpl::attach):
+        * khtml/html/htmlparser.cpp:
+        (KHTMLParser::parseToken):
+        * khtml/html/htmltokenizer.cpp:
+        (HTMLTokenizer::parseTag):
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::gotoAnchor):
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::layoutBlockChildren):
+        * khtml/rendering/render_list.cpp:
+        (getParentOfFirstLineBox):
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::createObject):
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::determineParseMode):
+        * khtml/xml/dom_docimpl.h:
+        * khtml/xml/dom_elementimpl.cpp:
+        (ElementImpl::createDecl):
+        * kwq/KWQString.mm:
+        (QString::compare):
+
 2003-01-28  Darin Adler  <darin@apple.com>
 
         Reviewed by Ken and Maciej.
@@ -82,6 +125,7 @@
         (KWQKHTMLPart::doFakeMouseUpAfterWidgetTracking):  New routine to allow widgets
 	to get out event state fixed up after a modal tracking loop.
 
+>>>>>>> 1.1331
 2003-01-27  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: 3152053 - Safari: Java 141: Only visible applets are instantiated on web page

@@ -216,7 +216,7 @@ void KHTMLParser::parseToken(Token *t)
 
     // holy shit. apparently some sites use </br> instead of <br>
     // be compatible with IE and NS
-    if(t->id == ID_BR+ID_CLOSE_TAG && document->document()->parseMode() != DocumentImpl::Strict)
+    if(t->id == ID_BR+ID_CLOSE_TAG && document->document()->inQuirksMode())
         t->id -= ID_CLOSE_TAG;
 
     if(t->id > ID_CLOSE_TAG)
