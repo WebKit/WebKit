@@ -469,7 +469,7 @@
     } else {
         extension = [[URL path] pathExtension];
         pluginPackage = [[WebPluginDatabase installedPlugins] pluginForExtension:extension];
-        mimeType = [[pluginPackage extensionToMIMEDictionary] objectForKey:extension];
+        mimeType = [pluginPackage MIMETypeForExtension:extension];
     }
 
     if (pluginPackage) {
@@ -524,6 +524,12 @@
                     format:@"Plugin package class not recognized"];
         return nil;
     }
+}
+
+
+- (void)didAddSubview:(NSView *)view
+{
+    [frame _didAddSubview:view];
 }
 
 @end

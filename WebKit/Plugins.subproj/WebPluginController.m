@@ -42,6 +42,11 @@
     [view pluginInitialize];
 }
 
+- (void)didAddSubview:(NSView <WebPlugin> *)view
+{
+    [view pluginStart];
+}
+
 - (void)showURL:(NSURL *)URL inFrame:(NSString *)target
 {
     if(!URL || !target){

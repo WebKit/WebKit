@@ -1,3 +1,48 @@
+2002-10-23  Chris Blumenberg  <cblu@apple.com>
+
+	Changed the plug-in package API to return key enumerators instead dictionaries.
+
+        * Plugins.subproj/WebBasePluginPackage.h:
+        * Plugins.subproj/WebBasePluginPackage.m:
+        (-[WebBasePluginPackage initWithPath:]):
+        (-[WebBasePluginPackage load]):
+        (-[WebBasePluginPackage unload]):
+        (-[WebBasePluginPackage dealloc]):
+        (-[WebBasePluginPackage extensionEnumerator]):
+        (-[WebBasePluginPackage MIMETypeEnumerator]):
+        (-[WebBasePluginPackage descriptionForMIMEType:]):
+        (-[WebBasePluginPackage MIMETypeForExtension:]):
+        (-[WebBasePluginPackage extensionsForMIMEType:]):
+        (-[WebBasePluginPackage setName:]):
+        (-[WebBasePluginPackage setPath:]):
+        (-[WebBasePluginPackage setFilename:]):
+        (-[WebBasePluginPackage setPluginDescription:]):
+        (-[WebBasePluginPackage setMIMEToDescriptionDictionary:]):
+        (-[WebBasePluginPackage setMIMEToExtensionsDictionary:]):
+        * Plugins.subproj/WebNetscapePluginPackage.h:
+        * Plugins.subproj/WebNetscapePluginPackage.m:
+        (-[WebNetscapePluginPackage getPluginInfo]):
+        (-[WebNetscapePluginPackage pathByResolvingSymlinksAndAliasesInPath:]):
+        (-[WebNetscapePluginPackage initWithPath:]):
+        (-[WebNetscapePluginPackage executableType]):
+        * Plugins.subproj/WebPluginController.h:
+        * Plugins.subproj/WebPluginController.m:
+        (-[WebPluginController didAddSubview:]):
+        * Plugins.subproj/WebPluginDatabase.h:
+        * Plugins.subproj/WebPluginDatabase.m:
+        (-[WebPluginDatabase pluginForKey:withEnumeratorSelector:]):
+        (-[WebPluginDatabase pluginForMIMEType:]):
+        (-[WebPluginDatabase pluginForExtension:]):
+        (-[WebPluginDatabase MIMETypes]):
+        (-[WebPluginDatabase init]):
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge viewForPluginWithURL:attributes:baseURL:serviceType:]):
+        (-[WebBridge viewForJavaAppletWithFrame:attributes:baseURL:]):
+        (-[WebBridge didAddSubview:]): new
+        * WebView.subproj/WebFramePrivate.h:
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _didAddSubview:]): new 
+
 2002-10-23  Darin Adler  <darin@apple.com>
 
 	- finished up the job of moving the file button here from WebCore.

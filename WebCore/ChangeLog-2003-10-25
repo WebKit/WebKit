@@ -1,3 +1,12 @@
+2002-10-23  Chris Blumenberg  <cblu@apple.com>
+
+	Change for plug-in package API changes.
+
+        * kwq/KWQKConfigBase.mm:
+        (KConfig::readEntry):
+        * kwq/WebCoreBridge.h: added didAddSubview, called when a render_frame's view is added as a subview of the main view.
+        * kwq/WebCoreViewFactory.h: added didAddSubview
+
 2002-10-23  Darin Adler  <darin@apple.com>
 
 	- finished up the job of moving the file button to WebKit

@@ -76,27 +76,26 @@ QString KConfig::readEntry(const char *pKey, const QString& aDefault) const
         } else if (strcmp(pKey, "description") == 0) {
             return QString::fromNSString([plugin pluginDescription]);
         } else if (strcmp(pKey, "mime") == 0) {
-            NSDictionary *MIMEToExtensions =  [plugin MIMEToExtensionsDictionary];
-            NSDictionary *MIMEToDescription = [plugin MIMEToDescriptionDictionary];
-            NSArray *MIMETypes = [MIMEToExtensions allKeys], *extensions;
+            NSEnumerator *MIMETypeEnumerator = [plugin MIMETypeEnumerator], *extensionEnumerator;
+            NSMutableString *MIMEString = [NSMutableString string];
             NSString *MIME, *extension;
-            NSMutableString *bigMimeString = [NSMutableString string];
+            NSArray *extensions;
             
-            for (uint i = 0; i < [MIMETypes count]; i++) {
-                MIME = [MIMETypes objectAtIndex:i];
-                [bigMimeString appendFormat:@"%@:", MIME]; // mime type
+            while ((MIME = [MIMETypeEnumerator nextObject]) != nil) {
+                [MIMEString appendFormat:@"%@:", MIME];
 
-                extensions = [MIMEToExtensions objectForKey:MIME];
-                for (uint n = 0; n < [extensions count]; n++) {
-                    extension = [extensions objectAtIndex:n];
-                    [bigMimeString appendString:extension]; // mime's extension
-                    if(n < [extensions count] - 1){
-                        [bigMimeString appendString:@","];
-                    }
+                extensions = [plugin extensionsForMIMEType:MIME];
+                extensionEnumerator = [extensions objectEnumerator];
+                
+                while ((extension = [extensionEnumerator nextObject]) != nil) {
+                    [MIMEString appendFormat:@"%@,", extension];
                 }
-                [bigMimeString appendFormat:@":%@;", [MIMEToDescription objectForKey:MIME]]; // mime's description
+                // Delete the last ",".
+                [MIMEString deleteCharactersInRange:NSMakeRange([MIMEString length]-1, 1)];
+                [MIMEString appendFormat:@":%@;", [plugin descriptionForMIMEType:MIME]];
             }
-            return QString::fromNSString(bigMimeString);
+
+            return QString::fromNSString(MIMEString);
         }
     }
     

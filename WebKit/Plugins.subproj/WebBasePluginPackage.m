@@ -26,8 +26,32 @@
 - initWithPath:(NSString *)pluginPath
 {
     [super init];
+    extensionToMIME = [[NSMutableDictionary dictionary] retain];
     return self;
 }
+
+- (BOOL)load
+{
+    return YES;
+}
+
+- (void)unload
+{
+}
+
+- (void)dealloc
+{
+    [name release];
+    [path release];
+    [filename release];
+    [pluginDescription release];
+
+    [MIMEToDescription release];
+    [MIMEToExtensions release];
+    [extensionToMIME removeAllObjects];
+    [extensionToMIME release];
+}
+
 
 - (NSString *)name{
     return name;
@@ -46,19 +70,83 @@
     return pluginDescription;
 }
 
-- (NSDictionary *)extensionToMIMEDictionary
+- (NSEnumerator *)extensionEnumerator
 {
-    return extensionToMIME;
+    return [extensionToMIME keyEnumerator];
 }
 
-- (NSDictionary *)MIMEToExtensionsDictionary
+- (NSEnumerator *)MIMETypeEnumerator
 {
-    return MIMEToExtensions;
+    return [MIMEToExtensions keyEnumerator];
 }
 
-- (NSDictionary *)MIMEToDescriptionDictionary
+- (NSString *)descriptionForMIMEType:(NSString *)MIMEType
 {
-    return MIMEToDescription;
+    return [MIMEToDescription objectForKey:MIMEType];
+}
+
+- (NSString *)MIMETypeForExtension:(NSString *)extension
+{
+    return [extensionToMIME objectForKey:extension];
+}
+
+- (NSArray *)extensionsForMIMEType:(NSString *)MIMEType
+{
+    return [MIMEToExtensions objectForKey:MIMEType];
+}
+
+- (void)setName:(NSString *)theName
+{
+    [name release];
+    name = [theName retain];
+}
+
+- (void)setPath:(NSString *)thePath
+{
+    [path release];
+    path = [thePath retain];
+}
+
+- (void)setFilename:(NSString *)theFilename
+{
+    [filename release];
+    filename = [theFilename retain];
+}
+
+- (void)setPluginDescription:(NSString *)description
+{
+    [pluginDescription release];
+    pluginDescription = [description retain];
+}
+
+- (void)setMIMEToDescriptionDictionary:(NSDictionary *)MIMEToDescriptionDictionary
+{
+    [MIMEToDescription release];
+    MIMEToDescription = [MIMEToDescriptionDictionary retain];
+}
+
+- (void)setMIMEToExtensionsDictionary:(NSDictionary *)MIMEToExtensionsDictionary
+{
+    [MIMEToExtensions release];
+    MIMEToExtensions = [MIMEToExtensionsDictionary retain];
+
+    // Reverse the mapping
+    [extensionToMIME removeAllObjects];
+
+    NSEnumerator *MIMEEnumerator = [MIMEToExtensions keyEnumerator], *extensionEnumerator;
+    NSString *MIME, *extension;
+    NSArray *extensions;
+    
+    while ((MIME = [MIMEEnumerator nextObject]) != nil) {
+        extensions = [MIMEToExtensions objectForKey:MIME];
+        extensionEnumerator = [extensions objectEnumerator];
+
+        while ((extension = [extensionEnumerator nextObject]) != nil) {
+            if(![extension isEqualToString:@""]){
+                [extensionToMIME setObject:MIME forKey:extension];
+            }
+        }
+    }
 }
 
 - (NSString *)description

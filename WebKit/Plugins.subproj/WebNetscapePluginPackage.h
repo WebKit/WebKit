@@ -10,6 +10,10 @@
 #import <WebKit/npapi.h>
 #import <WebKit/WebBasePluginPackage.h>
 
+typedef enum {
+    WebCFMExecutableType,
+    WebMachOExecutableType
+}WebExecutableType;
 
 @interface WebNetscapePluginPackage : WebBasePluginPackage
 {
@@ -45,8 +49,7 @@
     NPP_ShutdownProcPtr NPP_Shutdown;
 }
 
-- (BOOL)load;
-- (void)unload;
+- (WebExecutableType)executableType;
 
 - (NPP_NewProcPtr)NPP_New;
 - (NPP_DestroyProcPtr)NPP_Destroy;

@@ -3,12 +3,15 @@
 	Copyright (c) 2002, Apple, Inc. All rights reserved.
 */
 
+
 #import <WebKit/WebBasePluginPackage.h>
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebNetscapePluginDocumentView.h>
-#import <WebKit/WebPluginDatabase.h>
+#import <WebKit/WebNetscapePluginPackage.h>
 #import <WebKit/WebNetscapePluginRepresentation.h>
+#import <WebKit/WebPluginDatabase.h>
+#import <WebKit/WebPluginPackage.h>
 #import <WebKit/WebView.h>
 #import <WebKit/WebViewPrivate.h>
 
@@ -25,33 +28,50 @@ static WebPluginDatabase *database = nil;
     return database;
 }
 
-// The first plugin with the specified mime type is returned.
-- (WebBasePluginPackage *)pluginForMIMEType:(NSString *)MIME
+- (WebBasePluginPackage *)pluginForKey:(NSString *)key withEnumeratorSelector:(SEL)enumeratorSelector
 {
-    WebBasePluginPackage *plugin;
-    uint i;
-    
-    for(i=0; i<[plugins count]; i++){      
-        plugin = [plugins objectAtIndex:i];
-        if([[plugin MIMEToExtensionsDictionary] objectForKey:MIME]){
-            return plugin;
-        }
-    }
-    return nil;
-}
-
-- (WebBasePluginPackage *)pluginForExtension:(NSString *)extension
-{
-    WebBasePluginPackage *plugin;
+    WebBasePluginPackage *plugin, *CFMPlugin=nil, *machoPlugin=nil;
     uint i;
 
     for(i=0; i<[plugins count]; i++){
         plugin = [plugins objectAtIndex:i];
-        if([[plugin extensionToMIMEDictionary] objectForKey:extension]){
-            return plugin;
+        if([[[plugin performSelector:enumeratorSelector] allObjects] containsObject:key]){
+            if([plugin isKindOfClass:[WebPluginPackage class]]){
+                // It's the new kind of plug-in. Return it immediately.
+                return plugin;
+            }else if([plugin isKindOfClass:[WebNetscapePluginPackage class]]){
+                WebExecutableType executableType = [(WebNetscapePluginPackage *)plugin executableType];
+
+                if(executableType == WebCFMExecutableType){
+                    CFMPlugin = plugin;
+                }else if(executableType == WebMachOExecutableType){
+                    machoPlugin = plugin;
+                }else{
+                    [NSException raise:NSInternalInconsistencyException
+                                format:@"Unknown executable type for plugin"];
+                }
+            }else{
+                [NSException raise:NSInternalInconsistencyException
+                            format:@"Unknown plugin class: %@", [plugin className]];
+            }
         }
     }
-    return nil;
+
+    if(machoPlugin){
+        return machoPlugin;
+    }else{
+        return CFMPlugin;
+    }
+}
+
+- (WebBasePluginPackage *)pluginForMIMEType:(NSString *)MIMEType
+{
+    return [self pluginForKey:MIMEType withEnumeratorSelector:@selector(MIMETypeEnumerator)];
+}
+
+- (WebBasePluginPackage *)pluginForExtension:(NSString *)extension
+{
+    return [self pluginForKey:extension withEnumeratorSelector:@selector(extensionEnumerator)];
 }
 
 - (WebBasePluginPackage *)pluginForFilename:(NSString *)filename
@@ -82,7 +102,7 @@ static WebPluginDatabase *database = nil;
     MIMETypes = [NSMutableSet set];
     for(i=0; i<[plugins count]; i++){
         plugin = [plugins objectAtIndex:i];
-        [MIMETypes addObjectsFromArray:[[plugin MIMEToDescriptionDictionary] allKeys]];
+        [MIMETypes addObjectsFromArray:[[plugin MIMETypeEnumerator] allObjects]];
     }
     return [MIMETypes allObjects];
 }
@@ -157,6 +177,7 @@ static NSArray *pluginLocations(void)
         
         // Don't override previously registered types.
         if(![viewTypes containsObject:mime]){
+            // FIXME: This won't work for the new plug-ins.
             [WebView registerViewClass:[WebNetscapePluginDocumentView class] forMIMEType:mime];
             [WebDataSource registerRepresentationClass:[WebNetscapePluginRepresentation class] forMIMEType:mime];
         }

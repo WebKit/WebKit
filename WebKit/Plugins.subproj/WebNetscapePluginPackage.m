@@ -66,14 +66,13 @@ TransitionVector tVectorForFunctionPointer(FunctionPointer);
         return NO;
     }
 
-    NSString *MIME, *extension, *extensionsList, *description;
+    NSString *MIME, *extensionsList, *description;
     NSArray *extensions;
     NSRange r;
     uint i;
     
-    MIMEToExtensions = [[NSMutableDictionary dictionary] retain];
-    MIMEToDescription = [[NSMutableDictionary dictionary] retain];
-    extensionToMIME = [[NSMutableDictionary dictionary] retain];
+    NSMutableDictionary *MIMEToExtensionsDictionary = [NSMutableDictionary dictionary];
+    NSMutableDictionary *MIMEToDescriptionDictionary = [NSMutableDictionary dictionary];
 
     for(i=1; 1; i+=2){
         MIME = [self stringForStringListID:128 andIndex:i];
@@ -90,46 +89,42 @@ TransitionVector tVectorForFunctionPointer(FunctionPointer);
         extensionsList = [self stringForStringListID:128 andIndex:i+1];
         if(extensionsList){
             extensions = [extensionsList componentsSeparatedByString:@","];
-            
-            [MIMEToExtensions setObject:extensions forKey:MIME];
-            
-            // Reverse the mapping
-            NSEnumerator *enumerator = [extensions objectEnumerator];
-            while ((extension = [enumerator nextObject]) != nil) {
-                [extensionToMIME setObject:MIME forKey:extension];
-            }
+            [MIMEToExtensionsDictionary setObject:extensions forKey:MIME];
         }else{
             // DRM and WMP claim MIMEs without extensions. Use a @"" extension in this case.
-            [MIMEToExtensions setObject:[NSArray arrayWithObject:@""] forKey:MIME];
+            [MIMEToExtensionsDictionary setObject:[NSArray arrayWithObject:@""] forKey:MIME];
         }
         
-        description = [self stringForStringListID:127 andIndex:[MIMEToExtensions count]];
+        description = [self stringForStringListID:127 andIndex:[MIMEToExtensionsDictionary count]];
         if(description){
-            [MIMEToDescription setObject:description forKey:MIME];
+            [MIMEToDescriptionDictionary setObject:description forKey:MIME];
         }else{
-            [MIMEToDescription setObject:@"" forKey:MIME];
+            [MIMEToDescriptionDictionary setObject:@"" forKey:MIME];
         }
     }
-    
-    pluginDescription = [self stringForStringListID:126 andIndex:1];
-    if(!pluginDescription){
-        pluginDescription = filename;
-    }
-    
-    name = [self stringForStringListID:126 andIndex:2];
-    if(!name){
-        name = filename;
-    }
 
-    [pluginDescription retain];
-    [name retain];
+    [self setMIMEToDescriptionDictionary:MIMEToDescriptionDictionary];
+    [self setMIMEToExtensionsDictionary:MIMEToExtensionsDictionary];
+    
+    description = [self stringForStringListID:126 andIndex:1];
+    if(!description){
+        description = filename;
+    }
+    [self setPluginDescription:description];
+    
+    
+    NSString *theName = [self stringForStringListID:126 andIndex:2];
+    if(!theName){
+        theName = filename;
+    }
+    [self setName:theName];
     
     [self closeResourceFile:resRef];
     
     return YES;
 }
 
-- (NSString *)stringByResolvingSymlinksAndAliasesInPath:(NSString *)thePath
+- (NSString *)pathByResolvingSymlinksAndAliasesInPath:(NSString *)thePath
 {
     NSString *newPath = [thePath stringByResolvingSymlinksInPath];
 
@@ -161,11 +156,13 @@ TransitionVector tVectorForFunctionPointer(FunctionPointer);
 {
     [super initWithPath:pluginPath];
     
-    path = [self stringByResolvingSymlinksAndAliasesInPath:pluginPath];
-    filename = [path lastPathComponent];
+    NSString *thePath = [self pathByResolvingSymlinksAndAliasesInPath:pluginPath];
     
-    NSFileManager *fileManager = [NSFileManager defaultManager];;
-    NSDictionary *fileInfo = [fileManager fileAttributesAtPath:path traverseLink:YES];
+    [self setPath:thePath];
+    [self setFilename:[thePath lastPathComponent]];
+    
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    NSDictionary *fileInfo = [fileManager fileAttributesAtPath:thePath traverseLink:YES];
     UInt32 type;
 
     // single-file plug-in with resource fork
@@ -177,10 +174,7 @@ TransitionVector tVectorForFunctionPointer(FunctionPointer);
 #endif
     // bundle
     }else if([[fileInfo objectForKey:@"NSFileType"] isEqualToString:@"NSFileTypeDirectory"]){
-        CFURLRef pluginURL = CFURLCreateWithFileSystemPath(NULL, (CFStringRef)path, kCFURLPOSIXPathStyle, TRUE);
-        bundle = CFBundleCreate(NULL, pluginURL);
-        CFRelease(pluginURL);
-        
+        bundle = CFBundleCreate(NULL, (CFURLRef)[NSURL fileURLWithPath:thePath]);        
         CFBundleGetPackageInfo(bundle, &type, NULL);
 
         // Check if the executable is mach-o or CFM
@@ -189,6 +183,7 @@ TransitionVector tVectorForFunctionPointer(FunctionPointer);
         [executableURL release];
         
         NSData *data = [executableFile readDataOfLength:8];
+        [executableFile closeFile];
         if(!memcmp([data bytes], "Joy!peff", 8)){
             isCFM = TRUE;
 #ifndef __ppc__
@@ -197,7 +192,6 @@ TransitionVector tVectorForFunctionPointer(FunctionPointer);
         }else{
             isCFM = FALSE;
         }
-        [executableFile closeFile];
         
         isBundle = YES;
     }else{
@@ -211,11 +205,17 @@ TransitionVector tVectorForFunctionPointer(FunctionPointer);
     }else{
         return nil;
     }
-    
-    [filename retain];
-    [path retain];
 
     return self;
+}
+
+- (WebExecutableType)executableType
+{
+    if(isCFM){
+        return WebCFMExecutableType;
+    }else{
+        return WebMachOExecutableType;
+    }
 }
 
 - (BOOL)load

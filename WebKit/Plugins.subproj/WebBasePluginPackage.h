@@ -12,26 +12,39 @@
 
 @interface WebBasePluginPackage : NSObject <WebCorePluginInfo>
 {
-    NSMutableDictionary *MIMEToExtensions;
-    NSMutableDictionary *extensionToMIME;
-    NSMutableDictionary *MIMEToDescription;
-
     NSString *name;
     NSString *path;
     NSString *filename;
     NSString *pluginDescription;
+
+    NSDictionary *MIMEToDescription;
+    NSDictionary *MIMEToExtensions;
+    NSMutableDictionary *extensionToMIME;
 }
 
 + (WebBasePluginPackage *)pluginWithPath:(NSString *)pluginPath;
 
 - initWithPath:(NSString *)pluginPath;
 
+- (BOOL)load;
+- (void)unload;
+
 - (NSString *)name;
 - (NSString *)path;
 - (NSString *)filename;
 - (NSString *)pluginDescription;
-- (NSDictionary *)extensionToMIMEDictionary;
-- (NSDictionary *)MIMEToExtensionsDictionary;
-- (NSDictionary *)MIMEToDescriptionDictionary;
+
+- (NSEnumerator *)extensionEnumerator;
+- (NSEnumerator *)MIMETypeEnumerator;
+- (NSString *)descriptionForMIMEType:(NSString *)MIMEType;
+- (NSString *)MIMETypeForExtension:(NSString *)extension;
+- (NSArray *)extensionsForMIMEType:(NSString *)MIMEType;
+
+- (void)setName:(NSString *)theName;
+- (void)setPath:(NSString *)thePath;
+- (void)setFilename:(NSString *)theFilename;
+- (void)setPluginDescription:(NSString *)description;
+- (void)setMIMEToDescriptionDictionary:(NSDictionary *)MIMEToDescriptionDictionary;
+- (void)setMIMEToExtensionsDictionary:(NSDictionary *)MIMEToExtensionsDictionary;
 
 @end
