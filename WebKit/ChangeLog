@@ -1,3 +1,57 @@
+2003-04-25  Richard Williamson   <rjw@apple.com>
+
+        API changes from final review meeting.
+        
+        WebView:
+        Added canShowMIMETypeAsHTML:
+
+        WebFrameView:
+        Removed scrollView
+        Removed isDocumentHTML
+        
+        WebDataSource:
+        Removed isDocumentHTML
+        
+        Reviewed by Chris.
+
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (-[WebTextRenderer initWithFont:usingPrinterFont:]):
+        * WebView.subproj/WebDataSource.h:
+        * WebView.subproj/WebDataSource.m:
+        * WebView.subproj/WebDataSourcePrivate.h:
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _layoutChildren]):
+        (-[WebDataSource _mainDocumentError]):
+        (-[WebDataSource _isDocumentHTML]):
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _makeDocumentView]):
+        (-[WebFrame _setState:]):
+        (-[WebFrame _isLoadComplete]):
+        * WebView.subproj/WebFrameView.h:
+        * WebView.subproj/WebFrameView.m:
+        (-[WebFrameView setAllowsScrolling:]):
+        (-[WebFrameView allowsScrolling]):
+        (-[WebFrameView documentView]):
+        (-[WebFrameView drawRect:]):
+        (-[WebFrameView setFrameSize:]):
+        * WebView.subproj/WebFrameViewPrivate.h:
+        * WebView.subproj/WebFrameViewPrivate.m:
+        (-[WebFrameView _setDocumentView:]):
+        (-[WebFrameView _scrollView]):
+        (-[WebFrameView _contentView]):
+        (-[WebFrameView _verticalKeyboardScrollAmount]):
+        (-[WebFrameView _horizontalKeyboardScrollAmount]):
+        (-[WebFrameView _scrollToBottomLeft]):
+        (+[WebFrameView _viewTypesAllowImageTypeOmission:]):
+        (+[WebFrameView _canShowMIMETypeAsHTML:]):
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _setPrinting:pageWidth:]):
+        * WebView.subproj/WebHTMLViewPrivate.m:
+        (-[WebHTMLView _updateMouseoverWithEvent:]):
+        * WebView.subproj/WebView.h:
+        * WebView.subproj/WebView.m:
+        (+[WebView canShowMIMETypeAsHTML:]):
+
 2003-04-25  Chris Blumenberg  <cblu@apple.com>
 
         Renamed WebDownload to NSURLDownload and moved it to WebFoundation.

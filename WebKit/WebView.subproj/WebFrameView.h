@@ -30,25 +30,11 @@
 - (WebFrame *)webFrame;
 
 /*!
-    @method frameScrollView
-    @abstract Returns the WebFrameView's scroll view
-    @result The scrolling view used by the WebFrameView to display its document view
-*/
-- (NSScrollView *)scrollView;
-
-/*!
     @method documentView
     @abstract Returns the WebFrameView's document subview
     @result The subview that renders the WebFrameView's contents
 */
 - (NSView <WebDocumentView> *)documentView;
-
-/*!
-    @method isDocumentHTML
-    @abstract Returns whether the WebFrameView's document view is rendering HTML content
-    @result YES if the document represented in the view is HTML, otherwise NO.
-*/
-- (BOOL)isDocumentHTML;
 
 /*!
     @method setAllowsScrolling:

@@ -433,7 +433,7 @@
         for (i = 0; i < [subFrames count]; i++){
             subFrame = [subFrames objectAtIndex: i];
             dview = [[subFrame frameView] documentView];
-            if ([[subFrame frameView] isDocumentHTML])
+            if ([[subFrame dataSource] _isDocumentHTML])
                 [dview _adjustFrames];
             [dview setNeedsDisplay: YES];
             [[subFrame dataSource] _layoutChildren];
@@ -777,6 +777,12 @@
 - (NSError *)_mainDocumentError
 {
     return _private->mainDocumentError;
+}
+
+- (BOOL)_isDocumentHTML
+{
+    NSString *MIMEType = [[self response] MIMEType];
+    return [WebView canShowMIMETypeAsHTML:MIMEType];
 }
 
 

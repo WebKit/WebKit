@@ -182,4 +182,6 @@
 
 - (void)_setWebFrame:(WebFrame *)frame;
 
+- (BOOL)_isDocumentHTML;
+
 @end

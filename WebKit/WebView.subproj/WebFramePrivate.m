@@ -579,7 +579,7 @@ Repeat load of the same URL (by any other means of navigation other than the rel
     // FIXME: We could save work and not do this for a top-level view that is not a WebHTMLView.
     WebFrameView *v = _private->webFrameView;
     [_private->bridge createKHTMLViewWithNSView:documentView marginWidth:[v _marginWidth] marginHeight:[v _marginHeight]];
-    [_private->bridge installInFrame:[v scrollView]];
+    [_private->bridge installInFrame:[v _scrollView]];
 
     // Call setDataSource on the document view after it has been placed in the view hierarchy.
     // This what we for the top-level view, so should do this for views in subframes as well.
@@ -800,7 +800,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         // FIXME: This is OK as long as no one resizes the window,
         // but in the case where someone does, it means garbage outside
         // the occupied part of the scroll view.
-        [[[self frameView] scrollView] setDrawsBackground:NO];
+        [[[self frameView] _scrollView] setDrawsBackground:NO];
 
         // Cache the page, if possible.
         // Don't write to the cache if in the middle of a redirect, since we will want to
@@ -833,7 +833,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     }
     
     if (_private->state == WebFrameStateComplete) {
-        NSScrollView *sv = [[self frameView] scrollView];
+        NSScrollView *sv = [[self frameView] _scrollView];
         [sv setDrawsBackground:YES];
         // FIXME: This overrides the setCopiesOnScroll setting done by
         // WebCore based on whether the page's contents are dynamic or not.
@@ -925,7 +925,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
                 // non-HTML content, or make a call to the document and let it deal with the bridge.
 
                 [self _setState:WebFrameStateComplete];
-                if ([ds isDocumentHTML]) {
+                if ([ds _isDocumentHTML]) {
                     [_private->bridge end];
                 }
 
@@ -939,13 +939,13 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
                 WebDataSource *parentDS = [[self parentFrame] dataSource];
                 if ([[parentDS _bridge] isFrameSet]){
                     WebFrameView *parentWebFrameView = [[self parentFrame] frameView];
-                    if ([parentWebFrameView isDocumentHTML])
+                    if ([parentDS _isDocumentHTML])
                         [(WebHTMLView *)[parentWebFrameView documentView] _adjustFrames];
                 }
 
                 // Tell the just loaded document to layout.  This may be necessary
                 // for non-html content that needs a layout message.
-                if (!([[self frameView] isDocumentHTML])) {
+                if (!([[self dataSource] _isDocumentHTML])) {
                     [thisDocumentView setNeedsLayout:YES];
                     [thisDocumentView layout];
                     [thisDocumentView setNeedsDisplay:YES];
@@ -985,8 +985,6 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
                                                     didFinishLoadForFrame:self];
                 }
  
-                //if ([ds isDocumentHTML])
-                //    [[ds representation] part]->closeURL();        
                 return;
             }
             // A resource was loaded, but the entire frame isn't complete.  Schedule a

@@ -88,12 +88,6 @@
 - (BOOL)isLoading;
 
 /*!
-    @method isDocumentHTML
-    @result Returns YES if the representation of the datasource is a WebHTMLRepresentation.
-*/
-- (BOOL)isDocumentHTML;
-
-/*!
     @method pageTitle
     @result Returns nil or the page title.
     // FIXME move to WebHTMLRepresentation

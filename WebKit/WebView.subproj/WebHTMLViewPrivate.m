@@ -353,7 +353,7 @@ static WebHTMLView *lastHitView = nil;
 	// If we are moving out of a view (or frame), let's pretend the mouse moved
 	// all the way out of that view. But we have to account for scrolling, because
 	// khtml doesn't understand our clipping.
-	NSRect visibleRect = [[[[lastHitView _frame] frameView] scrollView] documentVisibleRect];
+	NSRect visibleRect = [[[[lastHitView _frame] frameView] _scrollView] documentVisibleRect];
 	float yScroll = visibleRect.origin.y;
 	float xScroll = visibleRect.origin.x;
 

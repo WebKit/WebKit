@@ -115,11 +115,6 @@
 }
 
 
-- (BOOL)isDocumentHTML
-{
-    return [[self representation] isKindOfClass: [WebHTMLRepresentation class]];
-}
-
 // Returns nil or the page title.
 - (NSString *)pageTitle
 {

@@ -48,5 +48,8 @@
 - (void)_goForward;
 + (NSMutableDictionary *)_viewTypes;
 + (Class)_viewClassForMIMEType:(NSString *)MIMEType;
++ (BOOL)_canShowMIMETypeAsHTML:(NSString *)MIMEType;
 - (BOOL)_isMainFrame;
+- (NSScrollView *)_scrollView;
+
 @end

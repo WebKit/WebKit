@@ -81,6 +81,11 @@ NSString *WebElementLinkTitleKey = 		@"WebElementLinkTitle";
     return NO;
 }
 
++ (BOOL)canShowMIMETypeAsHTML:(NSString *)MIMEType
+{
+    return [WebFrameView _canShowMIMETypeAsHTML:MIMEType];
+}
+
 - (void)_commonInitialization: (WebFrameView *)wv frameName:(NSString *)frameName groupName:(NSString *)groupName
 {
     _private = [[WebViewPrivate alloc] init];

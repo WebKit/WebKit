@@ -493,7 +493,7 @@ static inline BOOL _fontContainsString (NSFont *font, NSString *string)
     float asc = (ScaleEmToUnits(metrics->ascent, unitsPerEm)*pointSize);
     float dsc = (-ScaleEmToUnits(metrics->descent, unitsPerEm)*pointSize);
     float lineGap = ScaleEmToUnits(metrics->lineGap, unitsPerEm)*pointSize;
-    float akiAdjustment;
+    float akiAdjustment = 0;
 
     ascent = ROUND_TO_INT(asc);
     descent = ROUND_TO_INT(dsc);
@@ -502,8 +502,8 @@ static inline BOOL _fontContainsString (NSFont *font, NSString *string)
     // ascender and descender).  The check is performed by _forceAscenderDelta, but that
     // method caches the result for the entire font family.  Here we reset the cache bit
     // before calling the check method.
-    [((NSCGSFont *)f) _resetLineHeightAdjustmentCache];
-    akiAdjustment = ([font _forceAscenderDelta] ? floor(((asc + dsc) * 0.20) + 0.5) : 0.0);
+    //[((NSCGSFont *)f) _resetLineHeightAdjustmentCache];
+    //akiAdjustment = ([font _forceAscenderDelta] ? floor(((asc + dsc) * 0.20) + 0.5) : 0.0);
 
     lineSpacing =  ascent + descent + (int)(lineGap > 0.0 ? floor(lineGap + 0.5) : 0.0) + akiAdjustment;
 

@@ -807,7 +807,7 @@
     for (i = 0; i != n; ++i) {
         WebFrame *subframe = [subframes objectAtIndex:i];
         WebFrameView *frameView = [subframe frameView];
-        if ([frameView isDocumentHTML]) {
+        if ([[subframe dataSource] _isDocumentHTML]) {
             [(WebHTMLView *)[frameView documentView] _setPrinting:printing pageWidth:0];
         }
     }

@@ -67,7 +67,7 @@
 
 - (void)_setDocumentView:(NSView *)view
 {
-    WebDynamicScrollBarsView *sv = (WebDynamicScrollBarsView *)[self scrollView];
+    WebDynamicScrollBarsView *sv = (WebDynamicScrollBarsView *)[self _scrollView];
     
     [sv setSuppressLayout: YES];
     
@@ -98,9 +98,15 @@
     _private->controller = controller;    
 }
 
+- (NSScrollView *)_scrollView
+{
+    return _private->frameScrollView;
+}
+
+
 - (NSClipView *)_contentView
 {
-    return [[self scrollView] contentView];
+    return [[self _scrollView] contentView];
 }
 
 - (void)_scrollVerticallyBy: (float)delta
@@ -122,7 +128,7 @@
     // verticalLineScroll is quite small, to make scrolling from the scroll bar
     // arrows relatively smooth. But this seemed too small for scrolling with
     // the arrow keys, so we bump up the number here. Cheating? Perhaps.
-    return [[self scrollView] verticalLineScroll] * 4;
+    return [[self _scrollView] verticalLineScroll] * 4;
 }
 
 - (float)_horizontalKeyboardScrollAmount
@@ -130,7 +136,7 @@
     // verticalLineScroll is quite small, to make scrolling from the scroll bar
     // arrows relatively smooth. But this seemed too small for scrolling with
     // the arrow keys, so we bump up the number here. Cheating? Perhaps.
-    return [[self scrollView] horizontalLineScroll] * 4;
+    return [[self _scrollView] horizontalLineScroll] * 4;
 }
 
 - (void)_pageVertically:(BOOL)up
@@ -220,7 +226,7 @@
 
 - (void)_scrollToBottomLeft
 {
-    [[self _contentView] scrollPoint: NSMakePoint(0, [[[self scrollView] documentView] bounds].size.height)];
+    [[self _contentView] scrollPoint: NSMakePoint(0, [[[self _scrollView] documentView] bounds].size.height)];
 }
 
 - (void)scrollLineUp:(id)sender
@@ -243,9 +249,10 @@
     [self _scrollLineHorizontally: NO];
 }
 
+static NSMutableDictionary *viewTypes;
+
 + (NSMutableDictionary *)_viewTypesAllowImageTypeOmission:(BOOL)allowImageTypeOmission
 {
-    static NSMutableDictionary *viewTypes;
     static BOOL addedImageTypes;
 
     if (!viewTypes) {
@@ -270,6 +277,12 @@
     
     return viewTypes;
 }
+
++ (BOOL)_canShowMIMETypeAsHTML:(NSString *)MIMEType
+{
+    return ([viewTypes objectForKey:MIMEType] == [WebHTMLView class]);
+}
+
 
 + (NSMutableDictionary *)_viewTypes
 {
