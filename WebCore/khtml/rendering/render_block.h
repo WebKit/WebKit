@@ -163,8 +163,8 @@ public:
     virtual InlineFlowBox* getFirstLineBox();
     
     // overrides RenderObject
-    virtual bool requiresLayer() { return !isTableCell() &&
-        (isPositioned() || isRelPositioned() || style()->hidesOverflow()); }
+    virtual bool requiresLayer() { return isRoot() || (!isTableCell() &&
+        (isPositioned() || isRelPositioned() || style()->hidesOverflow())); }
     
 #ifndef NDEBUG
     virtual void printTree(int indent=0) const;

@@ -22,7 +22,7 @@
  *
  */
 #include "render_replaced.h"
-#include "render_root.h"
+#include "render_canvas.h"
 
 #include "render_arena.h"
 

@@ -27,7 +27,7 @@
 
 #import "htmltokenizer.h"
 #import "html_documentimpl.h"
-#import "render_root.h"
+#import "render_canvas.h"
 #import "render_frames.h"
 #import "render_table.h"
 #import "render_text.h"
@@ -69,7 +69,7 @@ using khtml::MousePressEvent;
 using khtml::MouseReleaseEvent;
 using khtml::RenderObject;
 using khtml::RenderPart;
-using khtml::RenderRoot;
+using khtml::RenderCanvas;
 using khtml::RenderStyle;
 using khtml::RenderText;
 using khtml::RenderWidget;
@@ -742,7 +742,7 @@ void KWQKHTMLPart::paintSelectionOnly(QPainter *p, const QRect &rect)
 
 void KWQKHTMLPart::adjustPageHeight(float *newBottom, float oldTop, float oldBottom, float bottomLimit)
 {
-    RenderRoot *root = static_cast<khtml::RenderRoot *>(xmlDocImpl()->renderer());
+    RenderCanvas *root = static_cast<khtml::RenderCanvas *>(xmlDocImpl()->renderer());
     if (root) {
         // Use a printer device, with painting disabled for the pagination phase
         QPainter painter(true);
@@ -1145,7 +1145,7 @@ void KWQKHTMLPart::forceLayoutForPageWidth(float pageWidth)
 {
     // Dumping externalRepresentation(_part->renderer()).ascii() is a good trick to see
     // the state of things before and after the layout
-    RenderRoot *root = static_cast<khtml::RenderRoot *>(xmlDocImpl()->renderer());
+    RenderCanvas *root = static_cast<khtml::RenderCanvas *>(xmlDocImpl()->renderer());
     if (root) {
         // This magic is basically copied from khtmlview::print
         root->setWidth((int)ceil(pageWidth));
@@ -1881,7 +1881,7 @@ QRect KWQKHTMLPart::selectionRect() const
         return QRect();
     }
 
-    RenderRoot *root = static_cast<RenderRoot *>(xmlDocImpl()->renderer());
+    RenderCanvas *root = static_cast<RenderCanvas *>(xmlDocImpl()->renderer());
     if (!root) {
         return QRect();
 

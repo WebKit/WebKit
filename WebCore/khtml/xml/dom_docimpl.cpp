@@ -43,7 +43,7 @@
 #include <kdebug.h>
 #include <kstaticdeleter.h>
 
-#include "rendering/render_root.h"
+#include "rendering/render_canvas.h"
 #include "rendering/render_replaced.h"
 #include "rendering/render_image.h"
 #include "render_arena.h"
@@ -1012,7 +1012,7 @@ void DocumentImpl::attach()
         m_renderArena = new RenderArena();
     
     // Create the rendering tree
-    m_render = new (m_renderArena) RenderRoot(this, m_view);
+    m_render = new (m_renderArena) RenderCanvas(this, m_view);
     m_styleSelector->computeFontSizes(paintDeviceMetrics(), m_view ? m_view->part()->zoomFactor() : 100);
     recalcStyle( Force );
 
@@ -1076,13 +1076,13 @@ void DocumentImpl::setSelection(NodeImpl* s, int sp, NodeImpl* e, int ep)
     setFocusNode(0);
 #endif
     if ( m_render )
-        static_cast<RenderRoot*>(m_render)->setSelection(s->renderer(),sp,e->renderer(),ep);
+        static_cast<RenderCanvas*>(m_render)->setSelection(s->renderer(),sp,e->renderer(),ep);
 }
 
 void DocumentImpl::clearSelection()
 {
     if ( m_render )
-        static_cast<RenderRoot*>(m_render)->clearSelection();
+        static_cast<RenderCanvas*>(m_render)->clearSelection();
 }
 
 Tokenizer *DocumentImpl::createTokenizer()
@@ -1545,7 +1545,7 @@ void DocumentImpl::processHttpEquiv(const DOMString &equiv, const DOMString &con
 bool DocumentImpl::prepareMouseEvent( bool readonly, int _x, int _y, MouseEvent *ev )
 {
     if ( m_render ) {
-        assert(m_render->isRoot());
+        assert(m_render->isCanvas());
         RenderObject::NodeInfo renderInfo(readonly, ev->type == MousePress);
         bool isInside = m_render->layer()->nodeAtPoint(renderInfo, _x, _y);
         ev->innerNode = renderInfo.innerNode();

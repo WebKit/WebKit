@@ -26,7 +26,7 @@
 #include <kdebug.h>
 
 #include "rendering/render_applet.h"
-#include "rendering/render_root.h"
+#include "rendering/render_canvas.h"
 #include "xml/dom_docimpl.h"
 #include "khtmlview.h"
 #include "khtml_part.h"

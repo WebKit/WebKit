@@ -24,9 +24,8 @@
 //#define DEBUG_LAYOUT
 //#define BIDI_DEBUG
 
-#include "rendering/render_root.h"
+#include "rendering/render_canvas.h"
 #include "rendering/render_text.h"
-#include "rendering/render_root.h"
 #include "rendering/break_lines.h"
 #include "xml/dom_nodeimpl.h"
 #include "xml/dom_docimpl.h"
@@ -651,12 +650,12 @@ void RenderText::paintObject(QPainter *p, int /*x*/, int y, int /*w*/, int h,
 
                 if (ty+lh+s->m_y > y+h)
                 {
-                   RenderRoot *rootObj = root();
-                   if (ty+s->m_y < rootObj->truncatedAt())
+                   RenderCanvas* canvasObj = canvas();
+                   if (ty+s->m_y < canvasObj->truncatedAt())
 #if APPLE_CHANGES
-                       rootObj->setBestTruncatedAt(ty+s->m_y, this);
+                       canvasObj->setBestTruncatedAt(ty+s->m_y, this);
 #else
-                       rootObj->setTruncatedAt(ty+s->m_y);
+                       canvasObj->setTruncatedAt(ty+s->m_y);
 #endif
                    // Let's stop here.
                    break;

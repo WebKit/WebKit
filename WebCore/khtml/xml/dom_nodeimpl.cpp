@@ -1043,7 +1043,7 @@ RenderStyle *NodeImpl::styleForRenderer(RenderObject *parent)
 
 bool NodeImpl::rendererIsNeeded(RenderStyle *style)
 {
-    return style->display() != NONE;
+    return (getDocument()->documentElement() == this) || (style->display() != NONE);
 }
 
 RenderObject *NodeImpl::createRenderer(RenderArena *arena, RenderStyle *style)

@@ -33,7 +33,7 @@
 #include "html/dtd.h"
 #include "html/htmlparser.h"
 
-#include "rendering/render_root.h"
+#include "rendering/render_canvas.h"
 #include "misc/htmlhashes.h"
 #include "css/css_valueimpl.h"
 #include "css/css_stylesheetimpl.h"
@@ -314,6 +314,14 @@ RenderStyle *ElementImpl::styleForRenderer(RenderObject *parentRenderer)
 
 RenderObject *ElementImpl::createRenderer(RenderArena *arena, RenderStyle *style)
 {
+    if (getDocument()->documentElement() == this) {
+        // FIXME: We're a root object. For now, force a display of block.
+        if (style->display() != NONE)
+            style->setDisplay(BLOCK);
+        RenderBlock* result = new (arena) RenderBlock(this);
+        if (result) result->setStyle(style);
+        return result;
+    }
     return RenderObject::createObject(this, style);
 }
 

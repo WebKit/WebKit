@@ -84,7 +84,7 @@ namespace khtml {
     class RenderStyle;
     class RenderTable;
     class CachedObject;
-    class RenderRoot;
+    class RenderCanvas;
     class RenderText;
     class RenderFrameSet;
     class RenderLayer;
@@ -183,9 +183,9 @@ public:
     
     virtual bool isListItem() const { return false; }
     virtual bool isListMarker() const { return false; }
-    virtual bool isRoot() const { return false; }
+    virtual bool isCanvas() const { return false; }
+    bool isRoot() const { return parent() && parent()->isCanvas(); }
     virtual bool isBR() const { return false; }
-    virtual bool isHtml() const { return false; }
     virtual bool isTableCell() const { return false; }
     virtual bool isTableRow() const { return false; }
     virtual bool isTableSection() const { return false; }
@@ -219,7 +219,7 @@ public:
     bool isSelectionBorder() const { return m_isSelectionBorder; }
     bool recalcMinMax() const { return m_recalcMinMax; }
 
-    RenderRoot* root() const;
+    RenderCanvas* canvas() const;
     // don't even think about making this method virtual!
     DOM::NodeImpl* element() const { return m_node; }
 
@@ -632,7 +632,7 @@ private:
     // note: do not add unnecessary bitflags, we have 32 bit already!
     friend class RenderListItem;
     friend class RenderContainer;
-    friend class RenderRoot;
+    friend class RenderCanvas;
 };
 
 

@@ -21,7 +21,7 @@
  *
  */
 #include "render_body.h"
-#include "render_root.h"
+#include "render_canvas.h"
 #include "html/html_baseimpl.h"
 #include "xml/dom_docimpl.h"
 #include "khtmlview.h"

@@ -26,7 +26,7 @@
 #include "rendering/render_object.h"
 #include "rendering/render_table.h"
 #include "rendering/render_list.h"
-#include "rendering/render_root.h"
+#include "rendering/render_canvas.h"
 #include "xml/dom_elementimpl.h"
 #include "xml/dom_docimpl.h"
 #include "misc/htmlhashes.h"
@@ -424,17 +424,17 @@ RenderBlock* RenderObject::containingBlock() const
 {
     if(isTableCell())
         return static_cast<const RenderTableCell *>(this)->table();
-    if (isRoot())
+    if (isCanvas())
         return (RenderBlock*)this;
     
     RenderObject *o = parent();
     if (m_style->position() == FIXED) {
-        while ( o && !o->isRoot() )
+        while ( o && !o->isCanvas() )
             o = o->parent();
     }
     else if (m_style->position() == ABSOLUTE) {
         while (o && (o->style()->position() == STATIC || (o->isInline() && !o->isReplaced()))
-               && !o->isHtml() && !o->isRoot())
+               && !o->isRoot() && !o->isCanvas())
             o = o->parent();
     } else {
         while (o && ((o->isInline() && !o->isReplaced()) || o->isTableRow() || o->isTableSection()
@@ -1090,13 +1090,13 @@ int RenderObject::paddingRight() const
     return w;
 }
 
-RenderRoot* RenderObject::root() const
+RenderCanvas* RenderObject::canvas() const
 {
     RenderObject* o = const_cast<RenderObject*>( this );
     while ( o->parent() ) o = o->parent();
 
-    KHTMLAssert( o->isRoot() );
-    return static_cast<RenderRoot*>( o );
+    KHTMLAssert( o->isCanvas() );
+    return static_cast<RenderCanvas*>( o );
 }
 
 RenderObject *RenderObject::container() const
@@ -1105,8 +1105,8 @@ RenderObject *RenderObject::container() const
     RenderObject *o = 0;
     if( pos == FIXED ) {
         // container() can be called on an object that is not in the
-        // tree yet.  We don't call root() since it will assert if it
-        // can't get back to the root.  Instead we just walk as high up
+        // tree yet.  We don't call canvas() since it will assert if it
+        // can't get back to the canvas.  Instead we just walk as high up
         // as we can.  If we're in the tree, we'll get the root.  If we
         // aren't we'll get the root of our little subtree (most likely
         // we'll just return 0).
@@ -1118,7 +1118,7 @@ RenderObject *RenderObject::container() const
         // we may not have one if we're part of an uninstalled subtree.  We'll
         // climb as high as we can though.
         o = parent();
-        while (o && o->style()->position() == STATIC && !o->isHtml() && !o->isRoot())
+        while (o && o->style()->position() == STATIC && !o->isRoot() && !o->isCanvas())
             o = o->parent();
     }
     else
@@ -1141,7 +1141,7 @@ void RenderObject::removeFromObjectLists()
     if (isFloating()) {
         RenderBlock* outermostBlock = containingBlock();
         for (RenderBlock* p = outermostBlock;
-             p && !p->isRoot() && p->containsFloat(this) && !p->isFloatingOrPositioned();
+             p && !p->isCanvas() && p->containsFloat(this) && !p->isFloatingOrPositioned();
              outermostBlock = p, p = p->containingBlock());
         if (outermostBlock)
             outermostBlock->markAllDescendantsWithFloatsForLayout(this);
@@ -1175,7 +1175,7 @@ void RenderObject::detach(RenderArena* renderArena)
     // If we're an overflow:hidden object that currently needs layout, we need
     // to make sure the view isn't holding on to us.
     if (needsLayout() && style()->hidesOverflow()) {
-        RenderRoot* r = root();
+        RenderCanvas* r = canvas();
         if (r && r->view()->layoutObject() == this)
             r->view()->unscheduleRelayout();
     }
@@ -1291,7 +1291,7 @@ bool RenderObject::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty,
     int ty = _ty + yPos();
 
     QRect boundsRect(tx, ty, width(), height());
-    inside |= (style()->visibility() != HIDDEN && boundsRect.contains(_x, _y)) || isBody() || isHtml();
+    inside |= (style()->visibility() != HIDDEN && boundsRect.contains(_x, _y)) || isBody() || isRoot();
     bool inOverflowRect = inside;
     if (!inOverflowRect) {
         QRect overflowRect(tx, ty, overflowWidth(false), overflowHeight(false));
@@ -1301,7 +1301,7 @@ bool RenderObject::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty,
     // ### table should have its own, more performant method
     if ((!isRenderBlock() ||
          !static_cast<RenderBlock*>(this)->isPointInScrollbar(_x, _y, _tx, _ty)) &&
-        (overhangingContents() || inOverflowRect || isInline() || isRoot() ||
+        (overhangingContents() || inOverflowRect || isInline() || isCanvas() ||
          isTableRow() || isTableSection() || inside || mouseInside() ||
          (childrenInline() && firstChild() && firstChild()->isCompact()))) {
         int stx = _tx + xPos();
@@ -1498,8 +1498,8 @@ void RenderObject::recalcMinMaxWidths()
 
 void RenderObject::scheduleRelayout(RenderObject* clippedObj)
 {
-    if (!isRoot()) return;
-    KHTMLView *view = static_cast<RenderRoot *>(this)->view();
+    if (!isCanvas()) return;
+    KHTMLView *view = static_cast<RenderCanvas *>(this)->view();
     if ( view )
         view->scheduleRelayout(clippedObj);
 }

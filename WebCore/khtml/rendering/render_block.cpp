@@ -30,7 +30,7 @@
 #include <kdebug.h>
 #include "rendering/render_text.h"
 #include "rendering/render_table.h"
-#include "rendering/render_root.h"
+#include "rendering/render_canvas.h"
 #include "xml/dom_nodeimpl.h"
 #include "xml/dom_docimpl.h"
 #include "html/html_formimpl.h"
@@ -242,6 +242,16 @@ void RenderBlock::addChildToFlow(RenderObject* newChild, RenderObject* beforeChi
     
     if ( madeBoxesNonInline )
         removeLeftoverAnonymousBoxes();
+
+    if (newChild->isRoot()) {
+        // Create a layer if we need one.
+        RenderBlock* rootBlock = static_cast<RenderBlock*>(newChild);
+        if (!rootBlock->m_layer) {
+            rootBlock->m_layer = new (renderArena()) RenderLayer(rootBlock);
+            rootBlock->m_layer->insertOnlyThisLayer();
+        }
+        rootBlock->setShouldPaintBackgroundOrBorder(true);
+    }
 }
 
 static void getInlineRun(RenderObject* start, RenderObject* stop,
@@ -530,6 +540,24 @@ void RenderBlock::layoutBlock(bool relayoutChildren)
         m_layer->checkScrollbarsAfterLayout();
     
     setNeedsLayout(false);
+
+    if (isRoot()) {
+        //kdDebug(0) << renderName() << " height = " << m_height << endl;
+        RenderObject *r = canvas();
+        int lp = r ? r->lowestPosition() : lowestPosition();
+
+        // margins of Html element can only be fixed, right?
+        int margins  = style()->marginTop().isFixed() ? style()->marginTop().value : 0;
+        margins += style()->marginBottom().isFixed() ? style()->marginBottom().value : 0;
+
+        if( m_height + margins < lp )
+            m_height = lp - margins;
+
+        m_layer->setHeight(m_height);
+        m_layer->setWidth(m_width);
+
+        //kdDebug(0) << "docHeight = " << m_height << endl;
+    }
 }
 
 void RenderBlock::layoutBlockChildren( bool relayoutChildren )
@@ -566,7 +594,7 @@ void RenderBlock::layoutBlockChildren( bool relayoutChildren )
     // we're positioned, floating, a table cell.
     // For now we only worry about the top border/padding.  We will update the variable's
     // value when it comes time to check against the bottom border/padding.
-    bool canCollapseWithChildren = !isRoot() && !isHtml() && !isPositioned() &&
+    bool canCollapseWithChildren = !isCanvas() && !isRoot() && !isPositioned() &&
         !isFloating() && !isTableCell() && !style()->hidesOverflow();
     bool canCollapseTopWithChildren = canCollapseWithChildren && (m_height == 0);
     
@@ -1041,7 +1069,7 @@ void RenderBlock::paint(QPainter* p, int _x, int _y, int _w, int _h, int _tx, in
     _ty += m_y;
 
     // check if we need to do anything at all...
-    if (!isInlineFlow() && !overhangingContents() && !isRelPositioned() && !isPositioned() )
+    if (!isRoot() && !isInlineFlow() && !overhangingContents() && !isRelPositioned() && !isPositioned() )
     {
         int h = m_overflowHeight;
         int yPos = _ty;
@@ -1637,8 +1665,8 @@ void RenderBlock::addOverHangingFloats( RenderBlock *flow, int xoff, int offset,
     kdDebug( 6040 ) << (void *)this << ": adding overhanging floats xoff=" << xoff << "  offset=" << offset << " child=" << child << endl;
 #endif
 
-    // Prevent floats from being added to the root by <html>.
-    if ( !flow->m_floatingObjects || (child && flow->isHtml()) )
+    // Prevent floats from being added to the canvas by the root element, e.g., <html>.
+    if ( !flow->m_floatingObjects || (child && flow->isRoot()) )
         return;
 
     // we have overhanging floats
@@ -1792,9 +1820,9 @@ bool RenderBlock::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty, 
         int sty = _ty + yPos();
         if (style()->hidesOverflow() && m_layer)
             m_layer->subtractScrollOffset(stx, sty);
-        if (isRoot()) {
-            stx += static_cast<RenderRoot*>(this)->view()->contentsX();
-            sty += static_cast<RenderRoot*>(this)->view()->contentsY();
+        if (isCanvas()) {
+            stx += static_cast<RenderCanvas*>(this)->view()->contentsX();
+            sty += static_cast<RenderCanvas*>(this)->view()->contentsY();
         }
         FloatingObject* o;
         QPtrListIterator<FloatingObject> it(*m_floatingObjects);

@@ -284,7 +284,7 @@ void RenderTable::layout()
     {
         RenderObject* c = containingBlock();
         for ( ; 
-	     !c->isRoot() && !c->isBody() && !c->isTableCell() && !c->isPositioned() && !c->isFloating(); 
+	     !c->isCanvas() && !c->isBody() && !c->isTableCell() && !c->isPositioned() && !c->isFloating(); 
              c = c->containingBlock()) {
             Length ch = c->style()->height();
             if (ch.isFixed()) {

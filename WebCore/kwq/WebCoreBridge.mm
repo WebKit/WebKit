@@ -39,7 +39,7 @@
 #import "render_frames.h"
 #import "render_image.h"
 #import "render_object.h"
-#import "render_root.h"
+#import "render_canvas.h"
 #import "render_style.h"
 #import "render_replaced.h"
 using khtml::RenderWidget;
@@ -73,7 +73,7 @@ using khtml::RenderImage;
 using khtml::RenderObject;
 using khtml::RenderPart;
 using khtml::RenderStyle;
-using khtml::RenderRoot;
+using khtml::RenderCanvas;
 
 using KJS::SavedProperties;
 
@@ -338,7 +338,7 @@ static BOOL nowPrinting(WebCoreBridge *self)
 - (void)_setupRootForPrinting:(BOOL)onOrOff
 {
     if (nowPrinting(self)) {
-        RenderRoot *root = static_cast<khtml::RenderRoot *>(_part->xmlDocImpl()->renderer());
+        RenderCanvas *root = static_cast<khtml::RenderCanvas *>(_part->xmlDocImpl()->renderer());
         if (root) {
             root->setPrintingMode(onOrOff);
         }

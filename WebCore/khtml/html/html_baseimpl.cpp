@@ -31,7 +31,6 @@
 #include "khtml_part.h"
 
 #include "rendering/render_frames.h"
-#include "rendering/render_html.h"
 #include "rendering/render_body.h"
 #include "css/cssstyleselector.h"
 #include "css/css_stylesheetimpl.h"
@@ -636,23 +635,6 @@ HTMLHtmlElementImpl::~HTMLHtmlElementImpl()
 NodeImpl::Id HTMLHtmlElementImpl::id() const
 {
     return ID_HTML;
-}
-
-bool HTMLHtmlElementImpl::rendererIsNeeded(RenderStyle *style)
-{
-    // Ignore display: none.
-    return true;
-}
-
-RenderObject *HTMLHtmlElementImpl::createRenderer(RenderArena *arena, RenderStyle *style)
-{
-    return new (arena) RenderHtml(this);
-}
-
-void HTMLHtmlElementImpl::attach()
-{
-    createRendererIfNeeded();
-    NodeBaseImpl::attach();
 }
 
 // -------------------------------------------------------------------------

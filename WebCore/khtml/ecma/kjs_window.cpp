@@ -33,7 +33,7 @@
 #include <kconfig.h>
 #include <assert.h>
 #include <qstyle.h>
-#include "rendering/render_root.h"
+#include "rendering/render_canvas.h"
 
 #if APPLE_CHANGES
 #include "KWQLogging.h"

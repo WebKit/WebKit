@@ -1,3 +1,113 @@
+2003-05-06  David Hyatt  <hyatt@apple.com>
+
+	The purpose of this patch is to unify XML and HTML documents' root
+	element handling.  Instead of having a special RenderHTML object
+	for dealing with <html>, root element handling is now done in
+	base classes so that it works with XML documents as well.
+
+	The changes include:
+	  * Rename RenderRoot to RenderCanvas to more accurately
+	    reflect what this RenderObject represents in CSS2.
+	  * Rename root() to canvas()
+	  * Rename isHtml() to isRoot()
+	  * Rename isRoot() to isCanvas().
+	  * Eliminate RenderHTML and fold its functionality into base
+	    classes (RenderBlock and RenderBox).
+	  * isRoot() now means "are you the RenderObject for the root
+	    element".  All isHtml() callers now say isRoot() instead.
+	  
+        Reviewed by gramps
+
+        * ForwardingHeaders/rendering/render_canvas.h: Added.
+        * ForwardingHeaders/rendering/render_html.h: Removed.
+        * ForwardingHeaders/rendering/render_root.h: Removed.
+        * WebCore.pbproj/project.pbxproj:
+        * khtml/ecma/kjs_dom.cpp:
+        * khtml/ecma/kjs_window.cpp:
+        * khtml/html/html_baseimpl.cpp:
+        (HTMLHtmlElementImpl::id):
+        * khtml/html/html_baseimpl.h:
+        * khtml/khtmlview.cpp:
+        (KHTMLView::layout):
+        (KHTMLView::print):
+        (KHTMLView::slotPaletteChanged):
+        (KHTMLView::paint):
+        (KHTMLView::timerEvent):
+        * khtml/khtmlview.h:
+        * khtml/rendering/render_applet.cpp:
+        * khtml/rendering/render_block.cpp:
+        * khtml/rendering/render_block.h:
+        * khtml/rendering/render_body.cpp:
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::setStyle):
+        (RenderBox::paintRootBoxDecorations):
+        (RenderBox::paintBoxDecorations):
+        (RenderBox::paintBackgroundExtended):
+        (RenderBox::containingBlockWidth):
+        (RenderBox::repaint):
+        (RenderBox::calcHeight):
+        (RenderBox::availableHeight):
+        (RenderBox::calcAbsoluteVertical):
+        * khtml/rendering/render_box.h:
+        * khtml/rendering/render_canvas.cpp: Added.
+        (RenderCanvas::RenderCanvas):
+        (RenderCanvas::~RenderCanvas):
+        (RenderCanvas::calcHeight):
+        (RenderCanvas::calcWidth):
+        (RenderCanvas::calcMinMaxWidth):
+        * khtml/rendering/render_canvas.h: Added.
+        * khtml/rendering/render_container.cpp:
+        (RenderContainer::removeChildNode):
+        * khtml/rendering/render_flow.cpp:
+        * khtml/rendering/render_frames.cpp:
+        (RenderFrameSet::layout):
+        (RenderFrameSet::userResize):
+        * khtml/rendering/render_html.cpp: Removed.
+        * khtml/rendering/render_html.h: Removed.
+        * khtml/rendering/render_image.cpp:
+        (RenderImage::paintObject):
+        * khtml/rendering/render_layer.cpp:
+        (RenderLayer::enclosingPositionedAncestor):
+        (RenderLayer::convertToLayerCoords):
+        (RenderLayer::constructZTree):
+        * khtml/rendering/render_layer.h:
+        * khtml/rendering/render_line.cpp:
+        * khtml/rendering/render_list.cpp:
+        (RenderListMarker::paintObject):
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::containingBlock):
+        (RenderObject::canvas):
+        (RenderObject::container):
+        (RenderObject::removeFromObjectLists):
+        (RenderObject::detach):
+        (RenderObject::nodeAtPoint):
+        (RenderObject::scheduleRelayout):
+        * khtml/rendering/render_object.h:
+        * khtml/rendering/render_replaced.cpp:
+        * khtml/rendering/render_root.cpp: Removed.
+        * khtml/rendering/render_root.h: Removed.
+        * khtml/rendering/render_table.cpp:
+        (RenderTable::layout):
+        * khtml/rendering/render_text.cpp:
+        (RenderText::paintObject):
+        * khtml/rendering/table_layout.cpp:
+        (shouldScaleColumns):
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::attach):
+        (DocumentImpl::setSelection):
+        (DocumentImpl::clearSelection):
+        (DocumentImpl::prepareMouseEvent):
+        * khtml/xml/dom_elementimpl.cpp:
+        (ElementImpl::createRenderer):
+        * khtml/xml/dom_nodeimpl.cpp:
+        (NodeImpl::rendererIsNeeded):
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::adjustPageHeight):
+        (KWQKHTMLPart::forceLayoutForPageWidth):
+        (KWQKHTMLPart::selectionRect):
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge _setupRootForPrinting:]):
+
 2003-05-07  Darin Adler  <darin@apple.com>
 
         Reviewed by John.

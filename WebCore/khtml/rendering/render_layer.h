@@ -56,7 +56,7 @@ namespace khtml {
     class RenderStyle;
     class RenderTable;
     class CachedObject;
-    class RenderRoot;
+    class RenderCanvas;
     class RenderText;
     class RenderFrameSet;
     class RenderObject;

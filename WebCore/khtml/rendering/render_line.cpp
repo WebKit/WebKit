@@ -28,7 +28,6 @@
 #include "rendering/render_flow.h"
 #include "rendering/render_text.h"
 #include "rendering/render_table.h"
-#include "rendering/render_root.h"
 #include "xml/dom_nodeimpl.h"
 #include "xml/dom_docimpl.h"
 #include "html/html_formimpl.h"

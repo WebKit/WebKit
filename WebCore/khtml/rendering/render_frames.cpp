@@ -25,7 +25,7 @@
 //#define DEBUG_LAYOUT
 
 #include "rendering/render_frames.h"
-#include "rendering/render_root.h"
+#include "rendering/render_canvas.h"
 #include "html/html_baseimpl.h"
 #include "html/html_objectimpl.h"
 #include "html/htmltokenizer.h"
@@ -102,7 +102,7 @@ void RenderFrameSet::layout( )
     KHTMLAssert( minMaxKnown() );
 
     if ( !parent()->isFrameSet() ) {
-        KHTMLView* view = root()->view();
+        KHTMLView* view = canvas()->view();
         m_width = view->visibleWidth();
         m_height = view->visibleHeight();
     }
@@ -403,7 +403,7 @@ bool RenderFrameSet::userResize( MouseEventImpl *evt )
             m_oldpos = -1;
         }
         else
-            root()->view()->viewport()->setCursor(cursor);
+            canvas()->view()->viewport()->setCursor(cursor);
         
     }
     
@@ -439,13 +439,13 @@ bool RenderFrameSet::userResize( MouseEventImpl *evt )
     
     else if (m_resizing || evt->id() == EventImpl::MOUSEUP_EVENT) {
 #if APPLE_CHANGES
-        KHTMLView *v = root()->view();
+        KHTMLView *v = canvas()->view();
         QPainter paint;
         
         v->disableFlushDrawing();
         v->lockDrawingFocus();
 #else
-        QPainter paint( root()->view() );
+        QPainter paint( canvas()->view() );
 #endif
         paint.setPen( Qt::gray );
         paint.setBrush( Qt::gray );

@@ -119,6 +119,9 @@ public:
 protected:
     virtual void paintBoxDecorations(QPainter *p,int _x, int _y,
                                      int _w, int _h, int _tx, int _ty);
+    void paintRootBoxDecorations(QPainter *p,int, int _y,
+                                 int, int _h, int _tx, int _ty);
+
     void paintBackground(QPainter *p, const QColor &c, CachedImage *bg, int clipy, int cliph, int _tx, int _ty, int w, int h);
     void outlineBox(QPainter *p, int _tx, int _ty, const char *color = "red");
 

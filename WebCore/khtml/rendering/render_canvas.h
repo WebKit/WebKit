@@ -19,8 +19,8 @@
  * Boston, MA 02111-1307, USA.
  *
  */
-#ifndef render_root_h
-#define render_root_h
+#ifndef render_canvas_h
+#define render_canvas_h
 
 #include "render_block.h"
 
@@ -29,15 +29,15 @@ class QScrollView;
 
 namespace khtml {
 
-class RenderRoot : public RenderBlock
+class RenderCanvas : public RenderBlock
 {
 public:
-    RenderRoot(DOM::NodeImpl* node, KHTMLView *view);
-    virtual ~RenderRoot();
+    RenderCanvas(DOM::NodeImpl* node, KHTMLView *view);
+    virtual ~RenderCanvas();
 
-    virtual const char *renderName() const { return "RenderRoot"; }
+    virtual const char *renderName() const { return "RenderCanvas"; }
 
-    virtual bool isRoot() const { return true; }
+    virtual bool isCanvas() const { return true; }
 
     virtual void layout();
     virtual void calcWidth();
@@ -57,8 +57,7 @@ public:
                        PaintAction paintAction);
     void paintObject(QPainter *p, int _x, int _y,
                      int _w, int _h, int _tx, int _ty, PaintAction paintAction);
-    virtual void paintBoxDecorations(QPainter *, int x, int y, int w, int h, int tx, int ty);
-
+    
     virtual void setSelection(RenderObject *s, int sp, RenderObject *e, int ep);
     virtual void clearSelection(bool doRepaint=true);
     virtual RenderObject *selectionStart() const { return m_selectionStart; }

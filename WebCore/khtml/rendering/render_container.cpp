@@ -29,7 +29,7 @@
 #include "render_table.h"
 #include "render_text.h"
 #include "render_image.h"
-#include "render_root.h"
+#include "render_canvas.h"
 
 #include <kdebug.h>
 #include <assert.h>
@@ -170,8 +170,8 @@ RenderObject* RenderContainer::removeChildNode(RenderObject* oldChild)
         RenderObject *root = oldChild;
         while (root && root->parent())
             root = root->parent();
-        if (root->isRoot()) {
-            static_cast<RenderRoot*>(root)->clearSelection();
+        if (root->isCanvas()) {
+            static_cast<RenderCanvas*>(root)->clearSelection();
         }
     }
 
