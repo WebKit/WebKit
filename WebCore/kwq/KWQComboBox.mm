@@ -115,6 +115,12 @@ void QComboBox::clear()
     [comboBox removeAllItems];
 }
 
+int QComboBox::indexOfCurrentItem()
+{
+    KWQNSComboBox *comboBox = (KWQNSComboBox *)getView();
+    return [comboBox indexOfSelectedItem];
+}
+
 void QComboBox::setCurrentItem(int index)
 {
     KWQNSComboBox *comboBox = (KWQNSComboBox *)getView();

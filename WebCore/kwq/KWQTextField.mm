@@ -46,12 +46,14 @@
 
 - (void)action: sender
 {
-    widget->emitAction(QObject::ACTION_TEXT_FIELD);
+    if (widget)
+        widget->emitAction(QObject::ACTION_TEXT_FIELD);
 }
 
 - (void)controlTextDidEndEditing:(NSNotification *)aNotification
 {
-    widget->emitAction(QObject::ACTION_TEXT_FIELD_END_EDITING);
+    if (widget)
+        widget->emitAction(QObject::ACTION_TEXT_FIELD_END_EDITING);
 }
 
 - (void)dealloc

@@ -137,14 +137,14 @@ void QMultiLineEdit::setReadOnly(bool flag)
 void QMultiLineEdit::setCursorPosition(int line, int col, bool mark = FALSE)
 {
     // We can safely ignore this method.
-    _logNeverImplemented();
 }
 
 
 void QMultiLineEdit::getCursorPosition(int *line, int *col) const
 {
     // We can safely ignore this method.
-    _logNeverImplemented();
+    *line = 0;
+    *col = 0;
 }
 
 

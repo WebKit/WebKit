@@ -502,7 +502,17 @@ void QWidget::setView(NSView *view)
 
 void QWidget::endEditing()
 {
-    [[getView() window] endEditingFor: nil];
+    id window, firstResponder;
+    
+    // Catch the field editor case.
+    window = [getView() window];
+    [window endEditingFor: nil];
+    
+    // The previous case is probably not necessary, given that we whack
+    // any NSText first repsonders.
+    firstResponder = [window firstResponder];
+    if ([firstResponder isKindOfClass: NSClassFromString(@"NSText")])
+        [window makeFirstResponder: nil];
 }
 
 #endif _KWQ_

@@ -147,9 +147,10 @@ void QScrollView::setHScrollBarMode(ScrollBarMode)
 void QScrollView::addChild(QWidget* child, int x, int y)
 {
     NSView *thisView, *subView;
-    
-    child->move (x, y);
-    
+
+    if (child->x() != x || child->y() != y)
+        child->move (x, y);
+        
     if ([getView() isKindOfClass: NSClassFromString(@"NSScrollView")]){
         thisView = [(NSScrollView *)getView() documentView];
     }

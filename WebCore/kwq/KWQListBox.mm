@@ -28,56 +28,125 @@
 #include <KWQListBox.h>
 
 
-// Emulated with a NSScrollView that contains a NSMatrix.  Use a prototype cell.
+@interface KWQBrowserDelegate : NSObject
+{
+    QListBox *box;
+}
+
+@end
+
+@implementation KWQBrowserDelegate
+
+- initWithListBox: (QListBox *)b
+{
+    [super init];
+    box = b;
+    return self;
+}
+
+// ==========================================================
+// Browser Delegate Methods.
+// ==========================================================
+
+// Use lazy initialization, since we don't want to touch the file system too much.
+- (int)browser:(NSBrowser *)sender numberOfRowsInColumn:(int)column {
+    return box->count();
+}
+
+- (void)browser:(NSBrowser *)sender willDisplayCell:(id)cell atRow:(int)row column:(int)column
+{
+    QListBoxItem *item = box->firstItem();
+    int count = 0;
+    
+    while (item != 0){
+        if (count == row){
+            if (item->text.isEmpty())
+                [cell setEnabled: NO];
+            else
+                [cell setEnabled: YES];
+            [cell setLeaf: YES];
+            [cell setStringValue: QSTRING_TO_NSSTRING(item->text)];
+            return;
+        }
+        item = item->nextItem;
+        count++;
+    }
+}
+
+// ==========================================================
+// Browser Target / Action Methods.
+// ==========================================================
+
+- (IBAction)browserSingleClick:(id)browser {
+    box->emitAction(QObject::ACTION_LISTBOX_CLICKED);
+}
+
+- (IBAction)browserDoubleClick:(id)browser {
+}
+@end
+
+
 QListBox::QListBox()
 {
-    KWQNSScrollView *scrollview = [[NSScrollView alloc] initWithFrame: NSMakeRect (0,0,0,0) widget: this];
-    NSButtonCell *cell = [[[NSButtonCell alloc] init] autorelease];
-    
-    [cell setBordered: NO];
-    [cell setAlignment: NSLeftTextAlignment];
-       
-    matrix  = [[NSMatrix alloc] initWithFrame: NSMakeRect (0,0,0,0) mode:NSHighlightModeMatrix prototype:cell numberOfRows:0 numberOfColumns:0];
-    
-    [scrollview setHasVerticalScroller: NO];
-    [scrollview setHasHorizontalScroller: YES];
-    [scrollview setDocumentView: matrix];
+    NSBrowser *browser =  [[[NSBrowser alloc] initWithFrame: NSMakeRect (0,0,1,1)] autorelease];
+    KWQBrowserDelegate *delegate = [[KWQBrowserDelegate alloc] initWithListBox: this];
 
     head = 0L;
+
+    [browser setTitled: NO];
+    [browser setDelegate: delegate];
+    [browser setTarget: delegate];
+    [browser setAction: @selector(browserSingleClick:)];
+    [browser addColumn];
     
-    setView (scrollview);
+    setView (browser);
 }
 
 
 QListBox::~QListBox()
 {
-    KWQNSScrollView *scrollview = (KWQNSScrollView *)getView();
-
-    [scrollview setDocumentView: nil];
-    [matrix release];
+    KWQBrowserDelegate *delegate = [(NSBrowser *)getView() delegate];
+    
+    [(NSBrowser *)getView() setDelegate: nil];
+    [delegate release];
 }
 
 
 uint QListBox::count() const
 {
-    return (uint)[matrix numberOfRows];
+    QListBoxItem *item = (QListBoxItem *)head;
+    int count = 0;
+    
+    while (item != 0){
+        item = item->nextItem;
+        count++;
+    }
+    return count;
+}
+
+
+int QListBox::scrollBarWidth() const
+{
+    return (int)[NSScroller scrollerWidth];
 }
 
 
 void QListBox::clear()
 {
-    [matrix renewRows: 0 columns: 0];
-    [matrix sizeToCells];
+    // Do we need to delete previous head?
+    head = 0;
+    
+    [(NSBrowser *)getView() loadColumnZero];
 }
 
 
 void QListBox::setSelectionMode(SelectionMode mode)
 {
     if (mode == QListBox::Extended){
-        [matrix setMode: NSListModeMatrix];
+        [(NSBrowser *)getView() setAllowsMultipleSelection: YES];
     }
     else {
-        [matrix setMode: NSHighlightModeMatrix];
+        [(NSBrowser *)getView() setAllowsMultipleSelection: NO];
     }
 }
 
@@ -90,7 +159,7 @@ QListBoxItem *QListBox::firstItem() const
 
 int QListBox::currentItem() const
 {
-    return [matrix selectedRow];
+    return [(NSBrowser *)getView() selectedRowInColumn:0];
 }
 
 
@@ -100,60 +169,56 @@ void QListBox::insertItem(const QString &t, int index)
 }
 
 
-void QListBox::insertItem(const QListBoxItem *newItem, int index)
+void QListBox::insertItem(const QListBoxItem *newItem, int _index)
 {
     if ( !newItem )
-	return;
+	    return;
 
-    if ( index < 0 || index >= (int)count())
-	index = count();
+    if ( _index < 0 || _index >= (int)count())
+	    _index = count();
 
+    int index = _index;
     QListBoxItem *item = (QListBoxItem *)newItem;
 
     item->box = this;
     if ( !head || index == 0 ) {
-	item->nextItem = head;
-	item->previousItem = 0;
-	head = item;
-	if ( item->nextItem )
-	    item->nextItem->previousItem = item;
+        item->nextItem = head;
+        item->previousItem = 0;
+        head = item;
+        if ( item->nextItem )
+            item->nextItem->previousItem = item;
     } else {
-	QListBoxItem * i = head;
-	while ( i->nextItem && index > 1 ) {
-	    i = i->nextItem;
-	    index--;
-	}
-	if ( i->nextItem ) {
-	    item->nextItem = i->nextItem;
-	    item->previousItem = i;
-	    item->nextItem->previousItem = item;
-	    item->previousItem->nextItem = item;
-	} else {
-	    i->nextItem = item;
-	    item->previousItem = i;
-	    item->nextItem = 0;
-	}
+        QListBoxItem * i = head;
+        while ( i->nextItem && index > 1 ) {
+            i = i->nextItem;
+            index--;
+        }
+        if ( i->nextItem ) {
+            item->nextItem = i->nextItem;
+            item->previousItem = i;
+            item->nextItem->previousItem = item;
+            item->previousItem->nextItem = item;
+        } else {
+            i->nextItem = item;
+            item->previousItem = i;
+            item->nextItem = 0;
+        }
     }
-    [matrix insertRow: index];
-    
-    NSButtonCell *cell = [matrix cellAtRow: index column: 0];
-    [cell setTitle:  QSTRING_TO_NSSTRING(item->text)];
-    
-    item->cell = [cell retain];
+
+    [(NSBrowser *)getView() loadColumnZero];
+    [(NSBrowser *)getView() tile];
 }
 
 void QListBox::setSelected(int index, bool selectIt)
 {
     if (selectIt)
-        [matrix selectCellAtRow: index column: 0];
-    else
-        [matrix deselectSelectedCell];
+        [(NSBrowser *)getView() selectRow: index inColumn: 0];
 }
 
 
 bool QListBox::isSelected(int index)
 {
-    return [matrix selectedRow] == index;
+    return [[(NSBrowser *)getView() loadedCellAtRow: index column:0] state] == NSOnState; 
 }
 
 
@@ -161,18 +226,17 @@ bool QListBox::isSelected(int index)
 
 QListBoxItem::QListBoxItem()
 {
-    cell = 0L;
 }
 
 QListBoxItem::~QListBoxItem()
 {
-    [cell release];
 }
 
 
 void QListBoxItem::setSelectable(bool flag)
 {
-    [cell setSelectable: flag];
+    // Not implemented, RenderSelect calls this when an item element is ""
+    // We handle that case directly in our browser delegate.
 }
 
 
@@ -185,15 +249,16 @@ QListBox *QListBoxItem::listBox() const
 int QListBoxItem::width(const QListBox *) const
 {
     // Is this right?
-    NSSize size = [cell cellSizeForBounds: NSMakeRect (0,0,10000,10000)];
-    return (int)size.width;
+    NSSize cellSize = [[(NSBrowser *)box->getView() loadedCellAtRow: 0 column: 0] cellSizeForBounds: NSMakeRect (0,0,10000,10000)];
+    NSSize frameSize = [NSScrollView frameSizeForContentSize:cellSize hasHorizontalScroller:NO hasVerticalScroller:YES borderType:NSLineBorder];
+    return (int)frameSize.width;
 }
 
 
 int QListBoxItem::height(const QListBox *) const
 {
     // Is this right?
-    NSSize size = [cell cellSizeForBounds: NSMakeRect (0,0,10000,10000)];
+    NSSize size = [[(NSBrowser *)box->getView() loadedCellAtRow: 0 column: 0] cellSizeForBounds: NSMakeRect (0,0,10000,10000)];
     return (int)size.height;
 }
 
@@ -209,7 +274,7 @@ QListBoxItem *QListBoxItem::prev() const
     return previousItem;
 }
 
-
+    
 
 // class QListBoxText ==========================================================
 

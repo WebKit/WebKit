@@ -74,9 +74,22 @@ public:
 
 #ifdef _KWQ_
     enum Actions {
+        // Standard button action, maps to RenderFormElement::slotClicked
         ACTION_BUTTON_CLICKED = 1,
-        ACTION_TEXT_FIELD = 2,  // corresponds to [NSTextField action]
-        ACTION_TEXT_FIELD_END_EDITING = 3 // corresponds to NSTextField's delegate textDidEndEditing:
+        
+        // Checkbox button action, maps to RenderCheckBox::slotStateChanged
+        ACTION_CHECKBOX_CLICKED = 2,
+        
+        // Text field actions, map to RenderLineEdit::slotReturnPressed and
+        // RenderLineEdit::slotTextChanged
+        ACTION_TEXT_FIELD = 3,  // corresponds to [NSTextField action]
+        ACTION_TEXT_FIELD_END_EDITING = 4, // corresponds to NSTextField's delegate textDidEndEditing:
+
+        ACTION_TEXT_AREA_END_EDITING = 5,
+        
+        ACTION_LISTBOX_CLICKED = 6,
+        
+        ACTION_COMBOBOX_CLICKED = 7
     };
 #endif
 

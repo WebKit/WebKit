@@ -1,3 +1,42 @@
+2002-02-15  Richard Williamson  <rjw@apple.com>
+    
+    Lots of changes to support forms.
+
+	* src/kdelibs/khtml/rendering/render_form.cpp: (RenderFormElement::slotClicked),
+	(RenderCheckBox::performAction), (RenderRadioButton::slotClicked),
+	(RenderSelect::RenderSelect), (RenderSelect::layout),
+	(RenderSelect::performAction), (RenderTextArea::layout), (RenderTextArea::text),
+	(RenderTextArea::performAction):
+	* src/kdelibs/khtml/rendering/render_form.h:
+	* src/kwq/KWQCheckBox.mm: (QCheckBox::QCheckBox), (QCheckBox::isChecked):
+	* src/kwq/KWQComboBox.mm: (QComboBox::indexOfCurrentItem):
+	* src/kwq/KWQKHTMLPart.mm: (KHTMLPart::requestFrame):
+	* src/kwq/KWQListBox.h:
+	* src/kwq/KWQListBox.mm: (-[KWQBrowserDelegate initWithListBox:]),
+	(-[KWQBrowserDelegate browser:numberOfRowsInColumn:]), (-[KWQBrowserDelegate
+	browser:willDisplayCell:atRow:column:]), (-[KWQBrowserDelegate
+	browserSingleClick:]), (-[KWQBrowserDelegate browserDoubleClick:]),
+	(QListBox::QListBox), (QListBox::~QListBox), (QListBox::count),
+	(QListBox::scrollBarWidth), (QListBox::clear), (QListBox::setSelectionMode),
+	(QListBox::currentItem), (QListBox::insertItem), (QListBox::setSelected),
+	(QListBox::isSelected), (QListBoxItem::QListBoxItem),
+	(QListBoxItem::~QListBoxItem), (QListBoxItem::setSelectable),
+	(QListBoxItem::width), (QListBoxItem::height):
+	* src/kwq/KWQNSTextField.mm: (-[KWQNSTextField action:]), (-[KWQNSTextField
+	controlTextDidEndEditing:]):
+	* src/kwq/KWQScrollView.mm: (QScrollView::addChild):
+	* src/kwq/KWQTextArea.mm: (-[KWQTextArea initWithFrame:]), (-[KWQTextArea
+	_createTextView]), (-[KWQTextArea initWithFrame:widget:]), (-[KWQTextArea
+	textDidEndEditing:]), (-[KWQTextArea setFrame:]):
+	* src/kwq/KWQTextEdit.mm: (QMultiLineEdit::setCursorPosition),
+	(QMultiLineEdit::getCursorPosition):
+	* src/kwq/KWQView.mm: (-[KWQNSButton stateChanged:]), (-[KWQNSComboBox
+	initWithFrame:widget:]), (-[KWQNSComboBox action:]):
+	* src/kwq/KWQWidget.mm: (QWidget::endEditing):
+	* src/kwq/qt/qcheckbox.h:
+	* src/kwq/qt/qcombobox.h:
+	* src/kwq/qt/qobject.h:
+
 2002-02-13  Richard Williamson  <rjw@apple.com>
     
     Use NSSwitchButtons for check boxes.

@@ -83,10 +83,34 @@
     widget->emitAction(QObject::ACTION_BUTTON_CLICKED);
 }
 
+- (void)stateChanged: sender
+{
+    widget->emitAction(QObject::ACTION_CHECKBOX_CLICKED);
+}
+
 @end
 
 
 @implementation KWQNSComboBox
+
+- initWithFrame: (NSRect) r widget: (QWidget *)w 
+{
+    [super initWithFrame: r];
+    widget = w;
+    [self setTarget: self];
+    [self setAction: @selector(action:)];
+    return self;
+}
+
+- (void)action: sender
+{
+    widget->emitAction(QObject::ACTION_COMBOBOX_CLICKED);
+}
+
+@end
+
+
+@implementation KWQNSScrollView
 
 - initWithFrame: (NSRect) r widget: (QWidget *)w 
 {

@@ -133,6 +133,10 @@ public:
     virtual const char *renderName() const { return "RenderCheckBox"; }
     virtual void calcMinMaxWidth();
     virtual void layout( );
+
+#ifdef _KWQ_
+    void performAction(QObject::Actions action);
+#endif
     
 public slots:
     virtual void slotStateChanged(int state);
@@ -338,6 +342,11 @@ public:
 
     void updateSelection();
 
+#ifdef _KWQ_
+    void performAction(QObject::Actions action);
+#endif
+
+
 protected:
     KListBox *createListBox();
     ComboBoxWidget *createComboBox();
@@ -385,6 +394,10 @@ public:
     virtual void close ( );
 
     QString text(); // ### remove
+
+#ifdef _KWQ_
+    void performAction(QObject::Actions action);
+#endif
 
     void select();
 

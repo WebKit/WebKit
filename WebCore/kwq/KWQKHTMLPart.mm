@@ -1656,12 +1656,12 @@ bool KHTMLPart::requestFrame( khtml::RenderPart *frame, const QString &url, cons
     IFWebFrame *aFrame;
     IFWebDataSource *dataSource;
     
-    fprintf (stdout, "0x%08x requestFrame():  part = 0x%08x, name = %s, url = %s\n", (unsigned int)this, (unsigned int)frame, frameName.latin1(), url.latin1());    
+    //fprintf (stdout, "0x%08x requestFrame():  part = 0x%08x, name = %s, url = %s\n", (unsigned int)this, (unsigned int)frame, frameName.latin1(), url.latin1());    
     dataSource = getDataSource();
 
     aFrame =[dataSource frameNamed: nsframeName];
     if (aFrame){
-        fprintf (stdout, "0x%08x requestFrame():  part = 0x%08x frame found\n", (unsigned int)this, (unsigned int)frame);    
+        //fprintf (stdout, "0x%08x requestFrame():  part = 0x%08x frame found\n", (unsigned int)this, (unsigned int)frame);    
         // ?
         frame->setWidget ([[aFrame view] _widget]);
     }
@@ -1671,7 +1671,7 @@ bool KHTMLPart::requestFrame( khtml::RenderPart *frame, const QString &url, cons
         IFWebFrame *newFrame;
         id <IFWebController> controller;
 
-        fprintf (stdout, "0x%08x requestFrame():  part = 0x%08x creating frame\n", (unsigned int)this, (unsigned int)frame);    
+        //fprintf (stdout, "0x%08x requestFrame():  part = 0x%08x creating frame\n", (unsigned int)this, (unsigned int)frame);    
         childURL = [NSURL URLWithString: QSTRING_TO_NSSTRING (completeURL( url ).url() )];
         
         dataSource = getDataSource();

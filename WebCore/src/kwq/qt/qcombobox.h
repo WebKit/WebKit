@@ -57,6 +57,9 @@ public:
     bool eventFilter(QObject *object, QEvent *event);
     void insertItem(const QString &text, int index=-1);
     void clear();
+#ifdef _KWQ_
+    int indexOfCurrentItem();
+#endif
     virtual void setCurrentItem(int);
     QSize sizeHint() const;
 

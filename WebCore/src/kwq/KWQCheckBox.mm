@@ -35,6 +35,7 @@ QCheckBox::QCheckBox(QWidget *w) : QButton (w)
     
     button = (KWQNSButton *)getView();
     [button setButtonType: NSSwitchButton];
+    [button setAction: @selector(stateChanged:)];
     setView (button);
 }
 
@@ -49,3 +50,17 @@ void QCheckBox::setChecked(bool isChecked)
     else
         [button setState: NSOffState];
 }
+
+
+bool QCheckBox::isChecked()
+{
+    KWQNSButton *button;
+    int state;
+    
+    button = (KWQNSButton *)getView();
+    state = [button state];
+    if (state == NSOffState)
+        return 0;
+    return 1;
+}
+

@@ -52,22 +52,29 @@
 
 const float LargeNumberForText = 1.0e7;
 
-- initWithFrame: (NSRect) r widget: (QWidget *)w 
+- initWithFrame: (NSRect)r
+{
+    return [self initWithFrame: r widget: 0];
+}
+
+- (void)_createTextView
 {
     NSDictionary *attr;
     NSMutableParagraphStyle *style = [[[NSMutableParagraphStyle alloc] init] autorelease];
-    NSRect textFrame;
+    NSRect frame, textFrame;
 
-    [super initWithFrame: r];
-
-    [self setHasVerticalScroller: YES];
-    [self setHasHorizontalScroller: NO];
-
+    frame = [self frame];
+    
     textFrame.origin.x = textFrame.origin.y = 0;
-    textFrame.size = [NSScrollView contentSizeForFrameSize:r.size hasHorizontalScroller:NO hasVerticalScroller:YES borderType: [self borderType]];
-
+    if (frame.size.width > 0 && frame.size.height > 0)
+        textFrame.size = [NSScrollView contentSizeForFrameSize:frame.size hasHorizontalScroller:NO hasVerticalScroller:YES borderType: [self borderType]];
+    else {
+        textFrame.size.width = 0;
+        textFrame.size.height = 0;
+    }
+        
     textView = [[NSTextView alloc] initWithFrame: textFrame];
-    [[textView textContainer] setWidthTracksTextView: NO];
+    [[textView textContainer] setWidthTracksTextView: YES];
     
     // Setup attributes for default cases WRAP=SOFT|VIRTUAL and WRAP=HARD|PHYSICAL.
     // If WRAP=OFF we reset many of these attributes.
@@ -75,12 +82,33 @@ const float LargeNumberForText = 1.0e7;
     [style setAlignment: NSLeftTextAlignment];
     attr = [NSDictionary dictionaryWithObjectsAndKeys: style, NSParagraphStyleAttributeName, nil];
     [textView setTypingAttributes: attr];
+    [textView setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
 
+    [textView setDelegate: self];
+    
     [self setDocumentView: textView];
+}
+
+- initWithFrame: (NSRect) r widget: (QWidget *)w 
+{
+    [super initWithFrame: r];
+
+    [self setHasVerticalScroller: YES];
+    [self setHasHorizontalScroller: NO];
+    [self setBorderType: NSLineBorder];
+
+    if (r.size.width > 0 && r.size.height > 0)
+        [self _createTextView];
     
     widget = w;
     
     return self;
+}
+
+- (void)textDidEndEditing:(NSNotification *)aNotification
+{
+    if (widget)
+        widget->emitAction(QObject::ACTION_TEXT_AREA_END_EDITING);
 }
 
 
@@ -209,6 +237,13 @@ const float LargeNumberForText = 1.0e7;
     return [textView isEditable];
 }
 
+- (void)setFrame:(NSRect)frameRect
+{    
+    [super setFrame:frameRect];
+
+    if (frameRect.size.width > 0 && frameRect.size.height > 0 && textView == nil)
+        [self _createTextView];
+}
 
 
 @end
