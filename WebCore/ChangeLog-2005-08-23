@@ -1,3 +1,9 @@
+2003-06-02  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by NOBODY (OOPS!).
+
+        * config.h:
+
 2003-06-02  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3275136.  Make sure that when the checked attribute
