@@ -1,7 +1,4 @@
-
-
 #include <CoreFoundation/CoreFoundation.h>
-
 
 static void
 usage(const char *program)
@@ -26,19 +23,21 @@ main (int argc, char **argv)
   output = fopen (argv[1], "w");
 
   if (output == NULL) {
-    printf ("Cannot open file `%s'\n", argv[1]);
+    printf ("Cannot open file \"%s\"\n", argv[1]);
+    exit(1);
   }
 
   all_encodings = CFStringGetListOfAvailableEncodings();
 
-  for (p = all_encodings; *p != kCFStringEncodingInvalidId; p++) {
+  // FIXME: This cast to CFStringEncoding is a workaround for Radar 2912404.
+  for (p = all_encodings; *p != (CFStringEncoding) kCFStringEncodingInvalidId; p++) {
     name = CFStringConvertEncodingToIANACharSetName(*p);
     /* All IANA encoding names must be US-ASCII */
     if (name != NULL) {
       CFStringGetCString(name, cname, 2048, kCFStringEncodingASCII);
-      fprintf(output,"%ld:%s\n", *p, cname);
+      fprintf(output, "%ld:%s\n", *p, cname);
     } else {
-      printf("Warning: nameless encoding %ld\n", *p);
+      printf("Warning: encoding %ld does not have an IANA chararacter set name\n", *p);
     }
   }
   return 0;

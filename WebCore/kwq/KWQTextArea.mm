@@ -25,7 +25,6 @@
 #import <qwidget.h>
 
 #import <KWQTextArea.h>
-#import <IFNSStringExtensions.h>
 
 /*
     This widget is used to implement the <TEXTAREA> element.
@@ -259,7 +258,27 @@ const float LargeNumberForText = 1.0e7;
 
 - (int)paragraphs
 {
-    return [[textView string] _IF_countOfString:@"\n"] + 1;
+    NSString *text = [textView string];
+    int paragraphSoFar = 0;
+    NSRange searchRange = NSMakeRange(0, [text length]);
+    NSRange newlineRange;
+    int advance;
+
+    while (true) {
+	newlineRange = [text rangeOfString:@"\n" options:NSLiteralSearch range:searchRange];
+	if (newlineRange.location == NSNotFound) {
+	    break;
+	}
+
+	paragraphSoFar++;
+
+        advance = newlineRange.location + 1 - searchRange.location;
+        
+	searchRange.length -= advance;
+	searchRange.location += advance;
+    }
+    
+    return paragraphSoFar;
 }
 
 static NSRange RangeOfParagraph(NSString *text, int paragraph)

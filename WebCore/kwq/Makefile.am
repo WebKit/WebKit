@@ -141,28 +141,21 @@ INCLUDES = \
 	$(KWQ_INCLUDES) \
 	$(KDELIBS_INCLUDES) \
 	$(WEBCORE_INCLUDES) \
-	-I$(top_srcdir)/WebFoundation/Misc.subproj \
 	-I/System/Library/Frameworks/ApplicationServices.framework/Frameworks/ \
 	-F/System/Library/Frameworks/ApplicationServices.framework/Frameworks \
 	-I/System/Library/Frameworks/ApplicationServices.framework/Frameworks/QD.framework/PrivateHeaders \
 	-F$(SYMROOTS) \
 	$(NULL)
 
-noinst_PROGRAMS = \
-	make-mac-encodings \
-	$(NULL)
-
+noinst_PROGRAMS = make-mac-encodings
 make_mac_encodings_SOURCES = make-mac-encodings.c
-
-make_mac_encodings_LDFLAGS = \
-	-framework CoreFoundation \
-	$(NULL)
+make_mac_encodings_LDFLAGS = -framework CoreFoundation
 
 mac-encodings.txt: make-mac-encodings
-	./make-mac-encodings $@
+	$(<D)/$(<F) $@
 
 KWQCharsetData.c: make-charset-table.pl character-sets.txt mac-encodings.txt
-	./make-charset-table.pl character-sets.txt mac-encodings.txt KWQCharsetData.c 
+	perl $^ $@
 
 BUILT_SOURCES = \
 	make-mac-encodings \

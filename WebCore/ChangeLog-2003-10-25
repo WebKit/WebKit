@@ -1,5 +1,15 @@
 2002-04-26  Darin Adler  <darin@apple.com>
 
+	* kwq/make-mac-encodings.c: (main): One more place that needed a workaround
+	for Radar 2912404 (kCFStringEncodingInvalidId is negative even though
+	CFStringEncoding is unsigned).
+
+	* kwq/KWQTextArea.mm: (-[KWQTextArea paragraphs]): Do this
+	ourselves so we don't rely on WebFoundation.
+	* kwq/Makefile.am: Don't do a -I for WebFoundation.
+
+2002-04-26  Darin Adler  <darin@apple.com>
+
 	Pay no attention to the man who is not supposed to be working.
 
 	* khtml/Makefile.am:
