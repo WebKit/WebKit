@@ -1,3 +1,20 @@
+2004-07-21  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+        * khtml/xml/dom_selection.cpp:
+        (DOM::Selection::modifyExtendingRightForward): Add LINE_BOUNDARY case to the switch statement in this
+        function. Use the startAndEndLineNodesIncludingNode helper which already existed to get the right
+        position.
+        (DOM::Selection::modifyMovingRightForward): Ditto
+        (DOM::Selection::modifyExtendingLeftBackward): Ditto
+        (DOM::Selection::modifyMovingLeftBackward): Ditto
+        * khtml/xml/dom_selection.h: 
+        (DOM::Selection::): Add LINE_BOUNDARY constant to ETextGranularity enum. This
+        specifies a new kind of movement that we need to implement the "move-to beggining/end of line"
+        behavior which AppKit binds to cmd+left/right arrow keys.
+        * kwq/WebCoreBridge.h: Add WebSelectToLineBoundary constant. This matches
+
 2004-07-20  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3714434, user stylesheet is always parsed in strict mode, when it should honor the document's setting.

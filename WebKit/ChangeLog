@@ -2,6 +2,18 @@
 
         Reviewed by John
 
+        Add implementations for these methods. Formerly, they logged an error.
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView moveToBeginningOfLine:]):
+        (-[WebHTMLView moveToBeginningOfLineAndModifySelection:]):
+        (-[WebHTMLView moveToEndOfLine:]):
+        (-[WebHTMLView moveToEndOfLineAndModifySelection:]):
+
+2004-07-21  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
         Added some more handlers for standard Cocoa key bindings. 
         These are "secrets" of NSText, meaning they are not public API, but we choose to mimic.
 

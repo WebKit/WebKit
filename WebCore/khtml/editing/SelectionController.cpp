@@ -211,6 +211,12 @@ Position Selection::modifyExtendingRightForward(ETextGranularity granularity)
         case LINE:
             pos = pos.nextLinePosition(xPosForVerticalArrowNavigation(EXTENT));
             break;
+        case LINE_BOUNDARY: {
+            Selection selection;
+            startAndEndLineNodesIncludingNode(end().node(), end().offset(), selection);
+            pos = selection.end();
+            break;
+        }
         case PARAGRAPH:
             // not implemented
             break;
@@ -235,6 +241,12 @@ Position Selection::modifyMovingRightForward(ETextGranularity granularity)
         case LINE:
             pos = end().nextLinePosition(xPosForVerticalArrowNavigation(END, state() == RANGE));
             break;
+        case LINE_BOUNDARY: {
+            Selection selection;
+            startAndEndLineNodesIncludingNode(end().node(), end().offset(), selection);
+            pos = selection.end();
+            break;
+        }
         case PARAGRAPH:
             // not implemented
             break;
@@ -259,6 +271,12 @@ Position Selection::modifyExtendingLeftBackward(ETextGranularity granularity)
         case LINE:
             pos = pos.previousLinePosition(xPosForVerticalArrowNavigation(EXTENT));
             break;
+        case LINE_BOUNDARY: {
+            Selection selection;
+            startAndEndLineNodesIncludingNode(start().node(), start().offset(), selection);
+            pos = selection.start();
+            break;
+        }
         case PARAGRAPH:
             // not implemented
             break;
@@ -283,6 +301,12 @@ Position Selection::modifyMovingLeftBackward(ETextGranularity granularity)
         case LINE:
             pos = start().previousLinePosition(xPosForVerticalArrowNavigation(START, state() == RANGE));
             break;
+        case LINE_BOUNDARY: {
+            Selection selection;
+            startAndEndLineNodesIncludingNode(start().node(), start().offset(), selection);
+            pos = selection.start();
+            break;
+        }
         case PARAGRAPH:
             // not implemented
             break;

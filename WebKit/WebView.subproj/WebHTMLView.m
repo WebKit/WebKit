@@ -2395,12 +2395,12 @@ static WebHTMLView *lastHitView = nil;
 
 - (void)moveToBeginningOfLine:(id)sender
 {
-    ERROR("unimplemented");
+    [self _alterCurrentSelection:WebSelectByMoving direction:WebSelectLeft granularity:WebSelectToLineBoundary];
 }
 
 - (void)moveToBeginningOfLineAndModifySelection:(id)sender
 {
-    ERROR("unimplemented");
+    [self _alterCurrentSelection:WebSelectByExtending direction:WebSelectLeft granularity:WebSelectToLineBoundary];
 }
 
 - (void)moveToBeginningOfParagraph:(id)sender
@@ -2425,12 +2425,12 @@ static WebHTMLView *lastHitView = nil;
 
 - (void)moveToEndOfLine:(id)sender
 {
-    ERROR("unimplemented");
+    [self _alterCurrentSelection:WebSelectByMoving direction:WebSelectRight granularity:WebSelectToLineBoundary];
 }
 
 - (void)moveToEndOfLineAndModifySelection:(id)sender
 {
-    ERROR("unimplemented");
+    [self _alterCurrentSelection:WebSelectByExtending direction:WebSelectRight granularity:WebSelectToLineBoundary];
 }
 
 - (void)moveToEndOfParagraph:(id)sender

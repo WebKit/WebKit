@@ -48,7 +48,7 @@ public:
     enum EState { NONE, CARET, RANGE };
     enum EAlter { MOVE, EXTEND };
     enum EDirection { FORWARD, BACKWARD, RIGHT, LEFT };
-    enum ETextGranularity { CHARACTER, WORD, LINE, PARAGRAPH };
+    enum ETextGranularity { CHARACTER, WORD, LINE, PARAGRAPH, LINE_BOUNDARY };
 
     Selection();
     Selection(const Range &);
