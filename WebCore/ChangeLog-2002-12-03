@@ -1,5 +1,21 @@
 2002-04-22  Darin Adler  <darin@apple.com>
 
+	Fix width of non-breaking spaces. There's code to hack this
+	at the KDE level for fonts that don't have non-breaking space
+	characters, but we need it even for fonts that do.
+
+	Not sure why this worked better on Puma, but now it's fine on
+	both Puma and Jaguar.
+
+	* kwq/KWQFontMetrics.mm:
+	(ConvertCharactersToGlyphs): New. Turns non-breaking spaces into
+	normal spaces if needed.
+	(-[KWQLayoutInfo drawString:atPoint:withFont:color:]),
+	(-[KWQLayoutInfo _initializeCaches]), (_rectForString): Change to
+	call ConvertCharactersToGlyphs instead of ATSUConvertCharToGlyphs.
+
+2002-04-22  Darin Adler  <darin@apple.com>
+
 	* kwq/qt/qpixmap.h:
 	* kwq/KWQPixmap.mm:
 	(QPixmap::QPixmap): Clear needsCopyOnWrite flag in all the

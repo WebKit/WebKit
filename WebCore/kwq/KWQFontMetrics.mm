@@ -22,11 +22,11 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-#include <math.h>
 
-#include <kwqdebug.h>
-#include <qfontmetrics.h>
+#import <qfontmetrics.h>
 
+#import <math.h>
+#import <kwqdebug.h>
 #import <Cocoa/Cocoa.h>
 
 #define DIRECT_TO_CG
@@ -34,6 +34,9 @@
 #import <KWQMetrics.h>
 #import <KWQTextStorage.h>
 #import <KWQTextContainer.h>
+
+#define NON_BREAKING_SPACE 0xA0
+#define SPACE 0x20
 
 #define FLOOR_TO_INT(x) (int)(floor(x))
 //#define ROUND_TO_INT(x) (int)(((x) > (floor(x) + .5)) ? ceil(x) : floor(x))
@@ -211,6 +214,43 @@ static void __IFFillStyleWithAttributes(ATSUStyle style, NSFont *theFont) {
         }
     }
 }
+
+/* Convert non-breaking spaces into spaces. */
+static void ConvertCharactersToGlyphs(ATSStyleGroupPtr styleGroup, const UniChar *characters, int numCharacters, ATSGlyphVector *glyphs)
+{
+    int i;
+    UniChar localBuffer[LOCAL_GLYPH_BUFFER_SIZE];
+    UniChar *buffer = localBuffer;
+    
+    for (i = 0; i < numCharacters; i++) {
+        if (characters[i] == NON_BREAKING_SPACE) {
+            break;
+        }
+    }
+    
+    if (i < numCharacters) {
+        if (numCharacters > LOCAL_GLYPH_BUFFER_SIZE) {
+            buffer = (UniChar *)malloc(sizeof(UniChar) * numCharacters);
+        }
+        
+        for (i = 0; i < numCharacters; i++) {
+            if (characters[i] == NON_BREAKING_SPACE) {
+                buffer[i] = SPACE;
+            } else {
+                buffer[i] = characters[i];
+            }
+        }
+        
+        characters = buffer;
+    }
+    
+    ATSUConvertCharToGlyphs(styleGroup, characters, 0, numCharacters, 0, glyphs);
+    
+    if (buffer != localBuffer) {
+        free(buffer);
+    }
+}
+
 #endif
 
 - (void)drawString: (NSString *)string atPoint: (NSPoint)p withFont: (NSFont *)aFont color: (NSColor *)color
@@ -221,6 +261,7 @@ static void __IFFillStyleWithAttributes(ATSUStyle style, NSFont *theFont) {
     const UniChar *internalBuffer;
 
     if (!_internalBuffer){
+        // FIXME: Handle case where length > LOCAL_GLYPH_BUFFER_SIZE
         CFStringGetCharacters((CFStringRef)string, CFRangeMake(0, CFStringGetLength((CFStringRef)string)), &localBuffer[0]);
         internalBuffer = &localBuffer[0];
     }
@@ -231,7 +272,7 @@ static void __IFFillStyleWithAttributes(ATSUStyle style, NSFont *theFont) {
 
     __IFInitATSGlyphVector(&_glyphVector, [string length]);
 
-    (void)ATSUConvertCharToGlyphs(_styleGroup, internalBuffer, 0, [string length], 0, &_glyphVector);
+    ConvertCharactersToGlyphs(_styleGroup, internalBuffer, [string length], &_glyphVector);
 
     [color set];
     [aFont set];
@@ -503,7 +544,7 @@ static void __IFFillStyleWithAttributes(ATSUStyle style, NSFont *theFont) {
 
     ATSGlyphVector latinGlyphVector;
     ATSInitializeGlyphVector(latinCount, 0, &latinGlyphVector);
-    (void)ATSUConvertCharToGlyphs(_styleGroup, &latinBuffer[FIRST_CACHE_CHARACTER], 0, latinCount, 0, &latinGlyphVector);
+    ConvertCharactersToGlyphs(_styleGroup, &latinBuffer[FIRST_CACHE_CHARACTER], latinCount, &latinGlyphVector);
     if (latinGlyphVector.numGlyphs != latinCount)
         [NSException raise:NSInternalInconsistencyException format:@"Optimization assumption violation:  ascii and glyphID count not equal - for %@ %f", self, [font displayName], [font pointSize]];
         
@@ -579,7 +620,7 @@ static NSRect _rectForString (KWQLayoutInfo *self, const UniChar *internalBuffer
         
         KWQDEBUGLEVEL(KWQ_LOG_FONTCACHECHARMISS, "character-to-glyph cache miss for character 0x%04x in %s, %.0f\n", internalBuffer[i], [[font displayName] lossyCString], [font pointSize]);
         __IFInitATSGlyphVector(&self->_glyphVector, stringLength);
-        (void)ATSUConvertCharToGlyphs(self->_styleGroup, internalBuffer, 0, stringLength, 0, &self->_glyphVector);
+        ConvertCharactersToGlyphs(self->_styleGroup, internalBuffer, stringLength, &self->_glyphVector);
         glyphRecords = (ATSLayoutRecord *)self->_glyphVector.firstRecord;
         numGlyphs = self->_glyphVector.numGlyphs;
 
