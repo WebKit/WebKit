@@ -1,3 +1,17 @@
+2003-05-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+	- fixed 3131534 -- "javascript:window.open()" leads to page not found error
+
+        * khtml/ecma/kjs_window.cpp: (WindowFunc::tryCall): For open() calls, if the
+        first parameter is not present, use "" instead of "undefined" as the URL.
+
+	- fixed 3244766 -- window.open() doesn't position window correctly along the y axis
+
+        * kwq/KWQKHTMLPartBrowserExtension.mm: (KHTMLPartBrowserExtension::createNewWindow):
+        Fixed the code that flips the y coordinate to take the window height into account.
+
 2003-05-03  David Hyatt  <hyatt@apple.com>
 
 	Add smallCaps boolean to the string drawing and measuring

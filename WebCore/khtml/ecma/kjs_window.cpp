@@ -1128,6 +1128,9 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
     if ( policy != 0 && !(part->findFrame(frameName) || frameName == "_top" || frameName == "_parent" || frameName == "_self")) {
       return Undefined();
     } else {
+      if (v.type() == UndefinedType)
+        str = QString();
+
       KParts::WindowArgs winargs;
 
       // scan feature argument

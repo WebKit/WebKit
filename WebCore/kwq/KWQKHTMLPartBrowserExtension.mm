@@ -122,7 +122,7 @@ void KHTMLPartBrowserExtension::createNewWindow(const KURL &url,
 	
 	if (winArgs.ySet) {
 	    float heightForFlip = NSMaxY([[[NSScreen screens] objectAtIndex:0] frame]);
-	    frame.origin.y = heightForFlip - winArgs.y;
+	    frame.origin.y = heightForFlip - (winArgs.y + frame.size.height);
 	}
 	
 	if (winArgs.widthSet) {
