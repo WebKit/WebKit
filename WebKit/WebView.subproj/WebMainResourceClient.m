@@ -106,6 +106,8 @@
 {
     WebResourceRequest *result;
 
+    BOOL firstRequest = request == nil;
+
     newRequest = [super handle: h willSendRequest: newRequest];
     
     ASSERT(newRequest != nil);
@@ -126,6 +128,12 @@
         if ([dataSource webFrame] == [[dataSource controller] mainFrame]) {
             [newRequest setCookiePolicyBaseURL:URL];
         }
+        
+	// Don't set this on the first request.  It is set
+	// when the main load was started.
+	if (!firstRequest)
+            [dataSource _setRequest:request];
+        
         result = newRequest;
     }
         

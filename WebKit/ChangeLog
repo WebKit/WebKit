@@ -1,3 +1,15 @@
+2002-10-23  Darin Adler  <darin@apple.com>
+
+	- fixed 3083013 -- REGRESSION: Cookie refused at http://directory/ even on reload
+
+	Restore a bit of the cruft.
+
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient handle:willSendRequest:]):
+	We need to change the request on the data source when a redirect happens,
+	because the data source goes on to ultimately communicate this to WebCore.
+	Restored the code that did that, with some changes to fit into the new regime.
+
 2002-10-23  Richard Williamson  <rjw@apple.com>
 
         Cleaned up months of accumulated cruft.
