@@ -338,9 +338,16 @@ KURL::KURL(const KURL &base, const QString &relative, const QTextCodec *codec)
         QString s = relative;
 #endif
 
-        // Always use UTF-8 if the protocol is file, mailto, or help because that's
-        // what these protocols expect.
-        if (codec) {
+        static const QTextCodec UTF8Codec(kCFStringEncodingUTF8);
+
+        const QTextCodec *pathCodec = codec ? codec : &UTF8Codec;
+        const QTextCodec *otherCodec = pathCodec;
+
+        // Always use UTF-8 for mailto URLs because that's what mail applications expect.
+        // Always use UTF-8 for paths in file and help URLs, since they are local filesystem paths,
+        // and help content is often defined with this in mind, but use native encoding for the
+        // non-path parts of the URL.
+        if (*pathCodec != UTF8Codec) {
             QString protocol;
             if (relative.length() > 0 && isSchemeFirstChar(relative.at(0).latin1())) {
                 for (uint i = 1; i < relative.length(); i++) {
@@ -358,15 +365,31 @@ KURL::KURL(const KURL &base, const QString &relative, const QTextCodec *codec)
                 protocol = base.protocol();
             }
             protocol = protocol.lower();
-            if (protocol == "file" || protocol == "mailto" || protocol == "help") {
-                codec = NULL;
+            if (protocol == "file" || protocol == "help") {
+                pathCodec = &UTF8Codec;
+            } else if (protocol == "mailto") {
+                pathCodec = &UTF8Codec;
+                otherCodec = &UTF8Codec;
             }
         }
 
-        static QTextCodec UTF8Codec(kCFStringEncodingUTF8);
-
-        QCString decoded = (codec ? codec : &UTF8Codec)->fromUnicode(s);
-        strBuffer = strdup(decoded);
+        int pathEnd = -1;
+        if (*pathCodec != *otherCodec) {
+            pathEnd = s.find(QRegExp("[?#]"));
+        }
+        if (pathEnd == -1) {
+            QCString decoded = pathCodec->fromUnicode(s);
+            strBuffer = strdup(decoded);
+        } else {
+            QCString pathDecoded = pathCodec->fromUnicode(s.left(pathEnd));
+            QCString otherDecoded = otherCodec->fromUnicode(s.mid(pathEnd));
+            int pathDecodedLength = pathDecoded.length();
+            int otherDecodedLength = otherDecoded.length();
+            strBuffer = static_cast<char *>(malloc(pathDecodedLength + otherDecodedLength + 1));
+            memcpy(strBuffer, pathDecoded, pathDecodedLength);
+            memcpy(strBuffer + pathDecodedLength, otherDecoded, otherDecodedLength);
+            strBuffer[pathDecodedLength + otherDecodedLength] = 0;
+        }
         str = strBuffer;
     }
     
@@ -893,7 +916,7 @@ QString KURL::prettyURL() const
 
 QString KURL::decode_string(const QString &urlString, const QTextCodec *codec)
 {
-    static QTextCodec UTF8Codec(kCFStringEncodingUTF8);
+    static const QTextCodec UTF8Codec(kCFStringEncodingUTF8);
 
     QString result("");
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,7 +38,7 @@ public:
     static QTextCodec *codecForNameEightBitOnly(const char *);
     static QTextCodec *codecForLocale();
 
-    QTextCodec(CFStringEncoding e, KWQEncodingFlags f = NoEncodingFlags) : _encoding(e), _flags(f) { }
+    explicit QTextCodec(CFStringEncoding e, KWQEncodingFlags f = NoEncodingFlags) : _encoding(e), _flags(f) { }
 
     const char *name() const;
     bool usesVisualOrdering() const { return _flags & VisualOrdering; }
@@ -60,6 +60,8 @@ private:
     CFStringEncoding _encoding;
     KWQEncodingFlags _flags;
 };
+
+inline bool operator!=(const QTextCodec &a, const QTextCodec &b) { return !(a == b); }
 
 class QTextDecoder {
 public:

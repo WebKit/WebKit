@@ -1,3 +1,14 @@
+2004-04-26  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - follow-on to fix for <rdar://problem/3488892>: "anchor names with non-ASCII characters in them do not work"
+        This part fixes anchor names with non-ASCII characters in local files.
+
+        * kwq/KWQKURL.mm: (KURL::KURL): For file and help URLs, force UTF-8 only for the path part of the URL.
+        Use the document encoding for the rest of the URL.
+        * kwq/KWQTextCodec.h: (operator!=): Added.
+
 2004-04-26  David Hyatt  <hyatt@apple.com>
 
 	Fix for Emerson truncation problem using apple-line-clamp.  Always dirty positioned objects so that they
