@@ -1,3 +1,25 @@
+2002-07-22  Maciej Stachowiak  <mjs@apple.com>
+
+        Merged WebCoreBridge and WebCoreFrameBridge.
+
+        * kwq/KWQKHTMLPartImpl.mm:
+        (KWQKHTMLPartImpl::openURLInFrame): Use bridge, not frameBridge.
+        (KWQKHTMLPartImpl::urlSelected): Use bridge, not frameBridge.
+        (KWQKHTMLPartImpl::submitForm): Use bridge, not frameBridge.
+        (KWQKHTMLPartImpl::findFrame): Use bridge, not frameBridge.
+        (KWQKHTMLPartImpl::frames): Use bridge, not frameBridge.
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge dealloc]): Free RenderPart if set.
+        (-[WebCoreBridge renderPart]): Moved here from WebFrameBridge.
+        (-[WebCoreBridge setRenderPart:]): Moved here from WebFrameBridge.
+        (-[WebCoreBridge copyRenderNode:khtml::copier:]): No more need to get render part from frame bridge.
+        (-[WebCoreBridge installInFrame:]): No more need to get render part from frame bridge.
+        * kwq/WebCoreFrameBridge.h: Removed.
+        * kwq/WebCoreFrameBridge.mm: Removed.
+	* WebCore.exp: Removed WebCoreFrameBridge.
+        * WebCore.pbproj/project.pbxproj: Removed WebCoreFrameBridge.
+
 2002-07-21  Maciej Stachowiak  <mjs@apple.com>
 
         Removed provisional/committed distinction from WebCore and the

@@ -1,5 +1,31 @@
 2002-07-22  Maciej Stachowiak  <mjs@apple.com>
 
+        Merged WebBridge and WebFrameBridge.
+
+        * WebCoreSupport.subproj/WebBridge.h:
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge childFrames]): Return bridges, not frameBridges.
+        (-[WebBridge descendantFrameNamed:]): Return bridge, not frameBridge.
+        (-[WebBridge createChildFrameNamed:withURL:renderPart:allowsScrolling:marginWidth:marginHeight:]): Return a bridge, not a frameBridge.
+        (-[WebBridge mainFrame]): Return a bridge, not a frameBridge.
+        (-[WebBridge frameNamed:]):Return a bridge, not a frameBridge.
+        (-[WebBridge loadURL:attributes:flags:withParent:]): Moved from WebFrameBridge.
+        (-[WebBridge loadURL:]): Moved from WebFrameBridge.
+        (-[WebBridge postWithURL:data:]): Moved from WebFrameBridge.
+        * WebCoreSupport.subproj/WebFrameBridge.h: Removed.
+        * WebCoreSupport.subproj/WebFrameBridge.m: Removed.
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame initWithName:webView:provisionalDataSource:controller:]): Don't create
+	a WebFrameBridge.
+        * WebView.subproj/WebFramePrivate.h:
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFramePrivate dealloc]): No longer dealloc frameBridge, since we don't have one.
+        (-[WebFrame _transitionToCommitted]): Pass along the frame's render part, if any. 
+        (-[WebFrame _frameBridge]): Removed.
+        * WebKit.pbproj/project.pbxproj: Removed deleted files.
+
+2002-07-22  Maciej Stachowiak  <mjs@apple.com>
+
 	Change WebBridge to hold on to a WebFrame instead of a
 	WebDataSource. Since we will no longer ever have a bridge for a
 	provisional data source, we'll just bind the bridge to a

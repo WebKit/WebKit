@@ -9,7 +9,6 @@
 #import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebSubresourceClient.h>
 #import <WebKit/WebControllerPrivate.h>
-#import <WebKit/WebFrameBridge.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebViewPrivate.h>
@@ -39,12 +38,6 @@
     [super dealloc];
 }
 
-- (WebCoreFrameBridge *)frame
-{
-    WEBKIT_ASSERT(frame != nil);
-    return [frame _frameBridge];
-}
-
 - (WebCoreBridge *)parent
 {
     return [[[self dataSource] parent] _bridge];
@@ -57,21 +50,21 @@
     NSMutableArray *frameBridges = [NSMutableArray arrayWithCapacity:[frames count]];
     WebFrame *childFrame;
     while ((childFrame = [e nextObject])) {
-        id frameBridge = [childFrame _frameBridge];
+        id frameBridge = [childFrame _bridge];
         if (frameBridge)
             [frameBridges addObject:frameBridge];
     }
     return frameBridges;
 }
 
-- (WebCoreFrameBridge *)descendantFrameNamed:(NSString *)name
+- (WebCoreBridge *)descendantFrameNamed:(NSString *)name
 {
     WEBKIT_ASSERT(frame != nil);
-    return [[frame frameNamed:name] _frameBridge];
+    return [[frame frameNamed:name] _bridge];
 }
 
 - (BOOL)createChildFrameNamed:(NSString *)frameName
-    withURL:(NSURL *)URL renderPart:(KHTMLRenderPart *)renderPart
+    withURL:(NSURL *)URL renderPart:(KHTMLRenderPart *)childRenderPart
     allowsScrolling:(BOOL)allowsScrolling marginWidth:(int)width marginHeight:(int)height
 {
     WEBKIT_ASSERT(frame != nil);
@@ -80,12 +73,12 @@
         return NO;
     }
     
-    [[newFrame _frameBridge] setRenderPart:renderPart];
+    [[newFrame _bridge] setRenderPart:childRenderPart];
     
     [[newFrame webView] _setMarginWidth:width];
     [[newFrame webView] _setMarginHeight:height];
 
-    [[newFrame _frameBridge] loadURL:URL attributes:nil flags:0 withParent:[self dataSource]];
+    [[newFrame _bridge] loadURL:URL attributes:nil flags:0 withParent:[self dataSource]];
     
     return YES;
 }
@@ -159,16 +152,16 @@
     [[[frame controller] windowContext] setStatusText:status];
 }
 
-- (WebCoreFrameBridge *)mainFrame
+- (WebCoreBridge *)mainFrame
 {
     WEBKIT_ASSERT(frame != nil);
-    return [[[frame controller] mainFrame] _frameBridge];
+    return [[[frame controller] mainFrame] _bridge];
 }
 
-- (WebCoreFrameBridge *)frameNamed:(NSString *)name
+- (WebCoreBridge *)frameNamed:(NSString *)name
 {
     WEBKIT_ASSERT(frame != nil);
-    return [[[frame controller] frameNamed:name] _frameBridge];
+    return [[[frame controller] frameNamed:name] _bridge];
 }
 
 - (void)receivedData:(NSData *)data withDataSource:(WebDataSource *)withDataSource
@@ -271,6 +264,35 @@
 - (void)setIconURL:(NSURL *)url withType:(NSString *)type
 {
     [[self dataSource] _setIconURL:url withType:type];
+}
+
+- (void)loadURL:(NSURL *)URL attributes:(NSDictionary *)attributes flags:(unsigned)flags withParent:(WebDataSource *)parent
+{
+    WebDataSource *newDataSource = [[WebDataSource alloc] initWithURL:URL attributes:attributes flags:flags];
+    [newDataSource _setParent:parent];
+    if ([frame setProvisionalDataSource:newDataSource]) {
+        [frame startLoading];
+    }
+    [newDataSource release];
+}
+
+- (void)loadURL:(NSURL *)URL
+{
+    [self loadURL:URL attributes:nil flags:0 withParent:[[frame dataSource] parent]];
+}
+
+- (void)postWithURL:(NSURL *)URL data:(NSData *)data
+{
+    // When posting, use the WebResourceHandleFlagLoadFromOrigin load flag. 
+    // This prevents a potential bug which may cause a page
+    // with a form that uses itself as an action to be returned 
+    // from the cache without submitting.
+    NSDictionary *attributes = [[NSDictionary alloc] initWithObjectsAndKeys:
+        data, WebHTTPResourceHandleRequestData,
+        @"POST", WebHTTPResourceHandleRequestMethod,
+        nil];
+    [self loadURL:URL attributes:attributes flags:WebResourceHandleFlagLoadFromOrigin withParent:[[frame dataSource] parent]];
+    [attributes release];
 }
 
 @end

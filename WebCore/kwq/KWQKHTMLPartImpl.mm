@@ -33,7 +33,6 @@
 #import <khtmlview.h>
 
 #import <WebCoreBridge.h>
-#import <WebCoreFrameBridge.h>
 #import <WebCoreViewFactory.h>
 
 #import <kwqdebug.h>
@@ -81,7 +80,7 @@ KWQKHTMLPartImpl::~KWQKHTMLPartImpl()
 
 bool KWQKHTMLPartImpl::openURLInFrame( const KURL &url, const KParts::URLArgs &urlArgs )
 {
-    WebCoreFrameBridge *frame;
+    WebCoreBridge *frame;
 
     if (!urlArgs.frameName.isEmpty()) {
         frame = [bridge frameNamed:urlArgs.frameName.getNSString()];
@@ -89,7 +88,7 @@ bool KWQKHTMLPartImpl::openURLInFrame( const KURL &url, const KParts::URLArgs &u
             frame = [bridge mainFrame];
         }
     } else {
-        frame = [bridge frame];
+        frame = bridge;
     }
 
     [frame loadURL:url.getNSURL()];
@@ -382,7 +381,7 @@ void KWQKHTMLPartImpl::urlSelected( const QString &url, int button, int state, c
 {
     KURL clickedURL(part->completeURL( url));
     KURL refLess(clickedURL);
-    WebCoreFrameBridge *frame;
+    WebCoreBridge *frame;
 	
     if ( url.find( QString::fromLatin1( "javascript:" ), 0, false ) == 0 )
     {
@@ -407,12 +406,11 @@ void KWQKHTMLPartImpl::urlSelected( const QString &url, int button, int state, c
     if (_target.isEmpty()) {
         // If we're the only frame in a frameset then pop the frame.
         if ([[[bridge parent] childFrames] count] == 1) {
-            frame = [[bridge parent] frame];
+            frame = [bridge parent];
         } else {
-            frame = [bridge frame];
+            frame = bridge;
         }
-    }
-    else {
+    } else {
         frame = [bridge descendantFrameNamed:_target.getNSString()];
         if (frame == nil) {
             NSLog (@"WARNING: unable to find frame named %@, creating new window with \"_blank\" name.  New window will not be named until 2959902 is fixed.\n", _target.getNSString());
@@ -533,7 +531,7 @@ void KWQKHTMLPartImpl::submitForm( const char *action, const QString &url, const
   if ( strcmp( action, "get" ) == 0 )
   {
     u.setQuery( QString( formData.data(), formData.size() ) );
-    [[bridge frame] loadURL:u.getNSURL()];
+    [bridge loadURL:u.getNSURL()];
 
 #ifdef NEED_THIS
     args.frameName = target;
@@ -554,7 +552,7 @@ void KWQKHTMLPartImpl::submitForm( const char *action, const QString &url, const
       args.setContentType( "Content-Type: " + contentType + "; boundary=" + boundary );
 #endif
     NSData *postData = [NSData dataWithBytes:formData.data() length:formData.size()];
-    [[bridge frame] postWithURL:u.getNSURL() data:postData];
+    [bridge postWithURL:u.getNSURL() data:postData];
   }
 
 #ifdef NEED_THIS
@@ -583,16 +581,16 @@ bool KWQKHTMLPartImpl::frameExists( const QString &frameName )
 
 KHTMLPart *KWQKHTMLPartImpl::findFrame(const QString &frameName)
 {
-    return [[[bridge frameNamed:frameName.getNSString()] bridge] part];
+    return [[bridge frameNamed:frameName.getNSString()] part];
 }
 
 QPtrList<KParts::ReadOnlyPart> KWQKHTMLPartImpl::frames() const
 {
     QPtrList<KParts::ReadOnlyPart> parts;
     NSEnumerator *e = [[bridge childFrames] objectEnumerator];
-    WebCoreFrameBridge *childFrame;
+    WebCoreBridge *childFrame;
     while ((childFrame = [e nextObject])) {
-        KHTMLPart *childPart = [[childFrame bridge] part];
+        KHTMLPart *childPart = [childFrame part];
         if (childPart)
             parts.append(childPart);
     }

@@ -15,7 +15,6 @@
 #import <WebKit/WebController.h>
 #import <WebKit/WebControllerPrivate.h>
 #import <WebKit/WebBridge.h>
-#import <WebKit/WebFrameBridge.h>
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebKitErrors.h>
@@ -50,7 +49,6 @@ static const char * const stateNames[6] = {
     [webView release];
     [dataSource release];
     [provisionalDataSource release];
-    [frameBridge release];
     
     [super dealloc];
 }
@@ -230,6 +228,10 @@ static const char * const stateNames[6] = {
 	    // frame. This is temporary, eventually the frame will hang on to
 	    // a bridge without the need for a dummy data source
             WEBKIT_ASSERT (documentView != nil || [self webView] == nil);
+
+	    if ([[_private->dataSource _bridge] renderPart] != nil) {
+		[[_private->provisionalDataSource _bridge] setRenderPart:[[_private->dataSource _bridge] renderPart]]; 
+	    }
 
             // Set the committed data source on the frame.
             [self _setDataSource: _private->provisionalDataSource];
@@ -446,11 +448,6 @@ static const char * const stateNames[6] = {
 - (WebBridge *)_bridge
 {
     return [[self dataSource] _bridge];
-}
-
-- (WebFrameBridge *)_frameBridge
-{
-    return _private->frameBridge;
 }
 
 - (BOOL)_shouldShowDataSource:(WebDataSource *)dataSource

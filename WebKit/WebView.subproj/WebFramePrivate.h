@@ -44,7 +44,6 @@ typedef enum {
     WebController *controller;
     WebFrameState state;
     NSTimer *scheduledLayoutTimer;
-    WebFrameBridge *frameBridge;
 }
 
 - (void)setName: (NSString *)n;
@@ -73,7 +72,6 @@ typedef enum {
 - (void)_checkLoadComplete;
 - (void)_timedLayout: userInfo;
 - (WebBridge *)_bridge;
-- (WebFrameBridge *)_frameBridge;
 - (BOOL)_shouldShowDataSource:(WebDataSource *)dataSource;
 - (void)_setProvisionalDataSource:(WebDataSource *)d;
 @end

@@ -11,7 +11,6 @@
 #import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebController.h>
 #import <WebKit/WebBridge.h>
-#import <WebKit/WebFrameBridge.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebViewPrivate.h>
@@ -31,7 +30,6 @@
     [super init];
 
     _private = [[WebFramePrivate alloc] init];
-    _private->frameBridge = [[WebFrameBridge alloc] initWithWebFrame:self];
 
     [self _setState: WebFrameStateUninitialized];    
 

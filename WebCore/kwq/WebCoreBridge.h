@@ -47,8 +47,6 @@ typedef khtml::RenderPart KHTMLRenderPart;
 @class WebError;
 @class WebResourceHandle;
 
-@class WebCoreFrameBridge;
-
 @protocol WebCoreDOMTreeCopier;
 @protocol WebCoreRenderTreeCopier;
 @protocol WebCoreResourceLoader;
@@ -65,8 +63,12 @@ typedef khtml::RenderPart KHTMLRenderPart;
 @interface WebCoreBridge : NSObject
 {
     KHTMLPart *part;
+    KHTMLRenderPart *renderPart;
     BOOL bridgeOwnsKHTMLView;
 }
+
+- (void)setRenderPart:(KHTMLRenderPart *)renderPart;
+- (KHTMLRenderPart *)renderPart;
 
 - (KHTMLPart *)part;
 
@@ -114,12 +116,14 @@ typedef khtml::RenderPart KHTMLRenderPart;
 
 - (WebCoreBridge *)parent;
 
-- (WebCoreFrameBridge *)frame;
-- (NSArray *)childFrames; // WebCoreFrameBridge objects
-- (WebCoreFrameBridge *)descendantFrameNamed:(NSString *)name;
+- (NSArray *)childFrames; // WebCoreBridge objects
+- (WebCoreBridge *)descendantFrameNamed:(NSString *)name;
 
-- (WebCoreFrameBridge *)mainFrame;
-- (WebCoreFrameBridge *)frameNamed:(NSString *)name; // searches entire hierarchy starting with mainFrame
+- (WebCoreBridge *)mainFrame;
+- (WebCoreBridge *)frameNamed:(NSString *)name; // searches entire hierarchy starting with mainFrame
+
+- (void)loadURL:(NSURL *)URL;
+- (void)postWithURL:(NSURL *)URL data:(NSData *)data;
 
 - (void)setTitle:(NSString *)title;
 - (void)setStatusText:(NSString *)status;

@@ -25,8 +25,6 @@
 
 #import <WebCoreBridge.h>
 
-#import <WebCoreFrameBridge.h>
-
 #import <khtml_part.h>
 #import <khtmlview.h>
 #import <dom_docimpl.h>
@@ -52,6 +50,9 @@
 {
     [self removeFromFrame];
     
+    if (renderPart) {
+        renderPart->deref();
+    }
     part->deref();
     
     [super dealloc];
@@ -61,6 +62,21 @@
 {
     return part;
 }
+
+- (void)setRenderPart:(KHTMLRenderPart *)newPart;
+{
+    newPart->ref();
+    if (renderPart) {
+        renderPart->deref();
+    }
+    renderPart = newPart;
+}
+
+- (KHTMLRenderPart *)renderPart
+{
+    return renderPart;
+}
+
 
 - (void)openURL:(NSURL *)URL
 {
@@ -222,8 +238,8 @@
     
     NSString *name = [[NSString alloc] initWithUTF8String:node->renderName()];
     
-    khtml::RenderPart *renderPart = dynamic_cast<khtml::RenderPart *>(node);
-    QWidget *widget = renderPart ? renderPart->widget() : 0;
+    khtml::RenderPart *nodeRenderPart = dynamic_cast<khtml::RenderPart *>(node);
+    QWidget *widget = nodeRenderPart ? nodeRenderPart->widget() : 0;
     NSView *view = widget ? widget->getView() : nil;
     
     NSObject *copiedNode = [copier nodeWithName:name
@@ -262,11 +278,9 @@
 {
     part->impl->getView()->setView(view);
 
-    KHTMLRenderPart *renderPart = [[self frame] renderPart];
-
     // If this isn't the main frame, it must have a render part set, or it
     // won't ever get installed in the view hierarchy.
-    KWQ_ASSERT([self frame] == [self mainFrame] || renderPart != nil);
+    KWQ_ASSERT(self == [self mainFrame] || renderPart != nil);
 
     if (renderPart) {
         renderPart->setWidget(part->impl->getView());
