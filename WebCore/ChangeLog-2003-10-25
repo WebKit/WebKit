@@ -1,3 +1,23 @@
+2003-10-06  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+        
+        - preparation for the upcoming whitespace patch; refactored some of the code that extracts text
+
+        * khtml/khtml_part.h: Added text() member function.
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::text): Added. Refactored from selectedText; takes a DOM::Range as a parameter.
+        Also added code to change newlines to spaces when extracting text from the DOM.
+        (KHTMLPart::selectedText): Now calls text().
+        (KHTMLPart::selection): Removed stray declaration.
+
+        * kwq/KWQAccObject.mm: (-[KWQAccObject value]): Changed to call KHTMLPart::text.
+        * kwq/WebCoreBridge.mm: (-[WebCoreBridge elementAtPoint:]): Changed to call KHTMLPart::text
+        instead of doing it ourselves.
+        
+        * kwq/KWQKHTMLPart.mm: (KWQKHTMLPart::attributedString): Added code to change change '\n'
+        newlines to spaces when extracting text from the DOM.
+
 2003-10-05  Maciej Stachowiak  <mjs@apple.com>
 
 	Reviewed by Ken.

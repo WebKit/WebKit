@@ -2010,7 +2010,9 @@ NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_startNode, int sta
                                 bool spaceBetweenRuns = false;
                                 if (runStart >= runs[i]->m_start &&
                                     runStart < runs[i]->m_start + runs[i]->m_len) {
-                                    text += str.mid(runStart, runEnd - runStart);
+                                    QString runText = str.mid(runStart, runEnd - runStart);
+                                    runText.replace('\n', ' ');
+                                    text += runText;
                                     start = -1;
                                     spaceBetweenRuns = i+1 < runs.count() && runs[i+1]->m_start > runEnd;
                                     addedSpace = str[runEnd-1].direction() == QChar::DirWS;

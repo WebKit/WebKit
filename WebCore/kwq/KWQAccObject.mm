@@ -24,26 +24,25 @@
  */
 
 #import "KWQAccObject.h"
+
 #import "KWQAccObjectCache.h"
 #import "KWQWidget.h"
 
 #import "dom_docimpl.h"
 #import "dom_elementimpl.h"
 #import "dom_string.h"
+#import "dom2_range.h"
 #import "htmlattrs.h"
 #import "khtmlview.h"
+#import "khtml_part.h"
 #import "render_canvas.h"
 #import "render_object.h"
 #import "render_replaced.h"
 #import "render_style.h"
 #import "render_text.h"
 
-using DOM::DOMString;
 using DOM::ElementImpl;
-using khtml::InlineTextBoxArray;
-using khtml::RenderCanvas;
 using khtml::RenderObject;
-using khtml::RenderText;
 using khtml::RenderWidget;
 
 // FIXME: This will eventually need to really localize.
@@ -224,25 +223,22 @@ using khtml::RenderWidget;
 {
     if (!m_renderer)
         return nil;
+
     if (m_renderer->isText()) {
-        RenderText* textObj = static_cast<RenderText*>(m_renderer);
-        QString text;
-        QString str = textObj->data().string();
-        InlineTextBoxArray runs = textObj->inlineTextBoxes();
-        bool addedSpace = true;
-        for (unsigned i = 0; i < runs.count(); i++) {
-            int runStart = runs[i]->m_start;
-            int runEnd =  runs[i]->m_start + runs[i]->m_len;
-            bool spaceBetweenRuns = false;
-            text += str.mid(runStart, runEnd - runStart);
-            spaceBetweenRuns = i+1 < runs.count() && runs[i+1]->m_start > runEnd;
-            addedSpace = str[runEnd-1].direction() == QChar::DirWS;
-            if (spaceBetweenRuns && !addedSpace) {
-                text += " ";
-                addedSpace = true;
+        NodeImpl *e = m_renderer->element();
+        DocumentImpl *d = m_renderer->document();
+        if (e && d) {
+            KHTMLView *v = d->view();
+            if (v) {
+                KHTMLPart *p = v->part();
+                if (p) {
+                    Range r(p->document());
+                    r.setStartBefore(e);
+                    r.setEndAfter(e);
+                    return p->text(r).getNSString();
+                }
             }
         }
-        return text.getNSString();
     }
     
     return UI_STRING("Value not implemented yet.", "not real yet");

@@ -722,20 +722,12 @@ static HTMLFormElementImpl *formElementFromDOMElement(id <WebDOMElement>element)
         
         DOMString link = e->getAttribute(ATTR_HREF);
         if (!link.isNull()) {
-            // Look for the first #text node to use as a label.
-            NodeImpl *labelParent = e;
-            while (labelParent->hasChildNodes()){
-                NodeImpl *childNode = labelParent->firstChild();
-                unsigned short type = childNode->nodeType();
-                if (type == Node::TEXT_NODE){
-                    DOMStringImpl *dv = childNode->nodeValue().implementation();
-                    if (dv){
-                        NSString *value = [NSString stringWithCharacters: (const unichar *)dv->s length: dv->l];
-                        [element setObject:value forKey:WebCoreElementLinkLabelKey];
-                        break;
-                    }
-                }
-                labelParent = childNode;
+            Range r(_part->document());
+            r.setStartBefore(e->firstChild());
+            r.setEndAfter(e->lastChild());
+            QString t = _part->text(r);
+            if (!t.isEmpty()) {
+                [element setObject:t.getNSString() forKey:WebCoreElementLinkLabelKey];
             }
             [element setObject:_part->xmlDocImpl()->completeURL(link.string()).getNSString() forKey:WebCoreElementLinkURLKey];
         }
