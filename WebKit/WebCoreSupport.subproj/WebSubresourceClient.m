@@ -120,8 +120,9 @@
     ASSERT([currentURL isEqual:[handle URL]]);
     ASSERT([[handle response] statusCode] == WebResourceHandleStatusLoadComplete);
 
+    // Calling _removeSubresourceClient will likely result in a call to release, so we must retain.
     [self retain];
-
+    
     [loader finish];
     
     [dataSource _removeSubresourceClient:self];
@@ -146,8 +147,9 @@
     ASSERT(handle == h);
     ASSERT([currentURL isEqual:[handle URL]]);
     
+    // Calling _removeSubresourceClient will likely result in a call to release, so we must retain.
     [self retain];
-
+    
     [loader cancel];
     
     [dataSource _removeSubresourceClient:self];
@@ -177,11 +179,11 @@
     
     [self didStopLoading];
     [self didStartLoadingWithURL:URL];
-
 }
 
 - (void)cancel
 {
+    // Calling _removeSubresourceClient will likely result in a call to release, so we must retain.
     [self retain];
     
     [handle cancelLoadInBackground];

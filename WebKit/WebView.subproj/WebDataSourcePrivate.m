@@ -236,8 +236,10 @@
 
 - (void)_recursiveStopLoading
 {
+    [self retain];
     [self _stopLoading];
     [[self children] makeObjectsPerformSelector:@selector(stopLoading)];
+    [self release];
 }
 
 - (double)_loadingStartedTime
@@ -440,7 +442,7 @@
 - (void)iconLoader:(WebIconLoader *)iconLoader receivedPageIcon:(NSImage *)icon;
 {
     [[WebIconDatabase sharedIconDatabase] _setIconURL:[iconLoader URL] forSiteURL:[self URL]];
-    [[_private->controller locationChangeHandler] receivedPageIcon:icon forDataSource:self];
+    [[_private->controller locationChangeHandler] receivedPageIcon:nil forDataSource:self];
 }
 
 - (void)_loadIcon
@@ -453,9 +455,8 @@
         WebIconDatabase *iconDB = [WebIconDatabase sharedIconDatabase];
         
         if([iconDB _hasIconForSiteURL:dataSourceURL]){
-            // Return the icon immediately if the db already has it
-            NSImage *icon = [iconDB iconForSiteURL:dataSourceURL withSize:NSMakeSize(0,0)];
-            [[_private->controller locationChangeHandler] receivedPageIcon:icon forDataSource:self];
+            // Tell about the icon immediately if the db already has it
+            [[_private->controller locationChangeHandler] receivedPageIcon:nil forDataSource:self];
         }else{
             
             if(!_private->iconURL){

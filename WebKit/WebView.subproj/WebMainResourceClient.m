@@ -122,6 +122,9 @@
     
     LOG(Loading, "URL = %@", [handle URL]);
     
+    // Calling receivedError will likely result in a call to release, so we must retain.
+    [self retain];
+    
     // FIXME: Maybe we should be passing the URL from the handle here, not from the dataSource.
     WebError *error = [[WebError alloc] initWithErrorCode:WebResultCancelled 
         inDomain:WebErrorDomainWebFoundation failingURL:[[dataSource originalURL] absoluteString]];
@@ -133,6 +136,8 @@
     downloadHandler = nil;
 
     [self didStopLoading];
+    
+    [self release];
 }
 
 - (void)handleDidFinishLoading:(WebResourceHandle *)handle
@@ -141,6 +146,9 @@
     
     ASSERT([currentURL isEqual:[handle URL]]);
     ASSERT([[handle response] statusCode] == WebResourceHandleStatusLoadComplete);
+
+    // Calling receivedError will likely result in a call to release, so we must retain.
+    [self retain];
 
     WebContentAction contentAction = [[dataSource contentPolicy] policyAction];
     
@@ -166,6 +174,8 @@
     downloadHandler = nil;
     
     [self didStopLoading];
+    
+    [self release];
 }
 
 - (void)handleDidReceiveData:(WebResourceHandle *)handle data:(NSData *)data
@@ -240,6 +250,9 @@
 
     ASSERT([currentURL isEqual:[handle URL]]);
 
+    // Calling receivedError will likely result in a call to release, so we must retain.
+    [self retain];
+
     [self receivedError:result forHandle:handle];
     
     [downloadHandler cancel];
@@ -247,6 +260,8 @@
     downloadHandler = nil;
 
     [self didStopLoading];
+    
+    [self release];
 }
 
 - (void)handleDidRedirect:(WebResourceHandle *)handle toURL:(NSURL *)URL

@@ -97,6 +97,9 @@ NSSize WebIconMediumSize = {32, 32};
 
 - (NSImage *)iconForSiteURL:(NSURL *)siteURL withSize:(NSSize)size
 {
+    ASSERT(size.width);
+    ASSERT(size.height);
+    
     if(!siteURL){
         return [self defaultIconWithSize:size];
     }
@@ -109,7 +112,6 @@ NSSize WebIconMediumSize = {32, 32};
     
     if(!icons){
         NSURL *iconURL = [_private->siteURLToIconURL objectForKey:siteURL];
-        
         if(!iconURL){
             // Don't have it
             //NSLog(@"iconForSiteURL no iconURL for siteURL: %@", siteURL);
@@ -124,16 +126,14 @@ NSSize WebIconMediumSize = {32, 32};
         }        
     }
 
-    if(size.width == 0 && size.height == 0){
-        // Don't cause a resize, just send the original in this case
-        return [icons objectAtIndex:0];
-    }else{
-        return [self _cachedIconFromArray:icons withSize:size];
-    }
+    return [self _cachedIconFromArray:icons withSize:size];
 }
 
 - (NSImage *)defaultIconWithSize:(NSSize)size
 {
+    ASSERT(size.width);
+    ASSERT(size.height);
+    
     if (!_private->defaultIcons) {
         NSString *pathForDefaultImage = [[NSBundle bundleForClass:[self class]] pathForResource:@"url_icon" ofType:@"tiff"];
         if (pathForDefaultImage != nil) {
@@ -383,6 +383,9 @@ NSSize WebIconMediumSize = {32, 32};
 
 - (NSImage *)_iconForFileURL:(NSURL *)fileURL withSize:(NSSize)size
 {
+    ASSERT(size.width);
+    ASSERT(size.height);
+    
     NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
     NSImage *icon;
     
@@ -683,6 +686,9 @@ NSSize WebIconMediumSize = {32, 32};
 
 - (NSImage *)_cachedIconFromArray:(NSMutableArray *)icons withSize:(NSSize)size
 {
+    ASSERT(size.width);
+    ASSERT(size.height);
+    
     NSEnumerator *enumerator = [icons objectEnumerator];
     NSImage *icon;
     
@@ -706,6 +712,9 @@ NSSize WebIconMediumSize = {32, 32};
 
 - (NSImage *)_iconByScalingIcon:(NSImage *)icon toSize:(NSSize)size
 {
+    ASSERT(size.width);
+    ASSERT(size.height);
+    
     double start, duration;
     NSImage *scaledIcon;
         

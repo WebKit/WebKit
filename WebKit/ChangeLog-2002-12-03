@@ -1,3 +1,29 @@
+2002-09-09  Darin Adler  <darin@apple.com>
+
+	Fixed lifetime problems happening due to new cancel mechanism.
+
+        * WebCoreSupport.subproj/WebSubresourceClient.m: Add comments explaining why
+	retain/release is needed.
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _recursiveStopLoading]): Add a retain/release so that we don't
+	run into problems if _stopLoading causes the data source to go away.
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient didCancelWithHandle:]): Add retain/release for similar reasons,
+	with comment explaining why.
+        (-[WebMainResourceClient handleDidFinishLoading:]): Ditto.
+        (-[WebMainResourceClient handleDidFailLoading:withError:]): Ditto.
+
+	Fixed the problem that was leading to the NSImage exception, but didn't turn on
+	the whizzy scaling -- leaving that to Chris.
+
+        * Misc.subproj/WebIconDatabase.m: (-[WebIconDatabase iconForSiteURL:withSize:]):
+	Eliminate the "size 0x0" feature. It was only implemented in one place, and tons
+	of other places would actually make a size 0x0 icon. But also, we don't need it any more.
+        * WebView.subproj/WebDataSourcePrivate.m: (-[WebDataSource iconLoader: receivedPageIcon:),
+	(-[WebDataSource _loadIcon]): Don't bother actually passing the icon to
+	[WebLocationChangeHandler receivedPageIcon:forDataSource:]. We should probably eventually
+	either just get rid of this method, or remove the icon parameter.
+
 2002-09-09  Chris Blumenberg  <cblu@apple.com>
 
 
