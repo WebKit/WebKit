@@ -14,7 +14,7 @@ The class of objects that are meant to be used as _borderViews of NSCarbonWindow
 #import "CarbonWindowAdapter.h"
 #import "CarbonWindowContentView.h"
 #import <Foundation/NSGeometry.h>
-#import <Foundation/NSUtilities.h>
+#import <Foundation/NSString.h>
 #import <HIToolbox/MacWindows.h>
 #import <assert.h>
 
