@@ -431,10 +431,13 @@ void KURL::setRef(const QString &s)
     d->compose();
 }
 
-void KURL::setQuery(const QString &s, int encoding_hint=0)
+void KURL::setQuery(const QString &_txt, int encoding_hint=0)
 {
     copyOnWrite();
-    d->sQuery = s;
+   if (_txt.length() && (_txt[0] !='?'))
+      d->sQuery = "?" + _txt;
+   else
+      d->sQuery = _txt;
     d->compose();
 }
 
