@@ -700,17 +700,21 @@ void KWQKHTMLPart::addData(const char *bytes, int length)
 
 void KHTMLPart::frameDetached()
 {
+    // FIXME: This should be a virtual function, with the first part in KWQKHTMLPart, and the second
+    // part in KHTMLPart, so it works for KHTML too.
+
     KWQ_BLOCK_EXCEPTIONS;
     [KWQ(this)->bridge() frameDetached];
     KWQ_UNBLOCK_EXCEPTIONS;
 
-    // FIXME: There may be a better place to do this that works for KHTML too.
     KHTMLPart *parent = parentPart();
     if (parent) {
         FrameList& parentFrames = parent->d->m_frames;
         FrameIt end = parentFrames.end();
         for (FrameIt it = parentFrames.begin(); it != end; ++it) {
-            if ((*it).m_part == this) {
+            ChildFrame &child = *it;
+            if (child.m_part == this) {
+                parent->disconnectChild(&child);
                 parentFrames.remove(it);
                 deref();
                 break;

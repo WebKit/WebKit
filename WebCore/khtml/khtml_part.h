@@ -1244,6 +1244,9 @@ private:
 
   khtml::ChildFrame *recursiveFrameRequest( const KURL &url, const KParts::URLArgs &args, bool callParent = true );
 
+  void connectChild(const khtml::ChildFrame *) const;
+  void disconnectChild(const khtml::ChildFrame *) const;
+
   bool checkLinkSecurity(const KURL &linkURL,const QString &message = QString::null, const QString &button = QString::null);
   QVariant executeScript(QString filename, int baseLine, const DOM::Node &n, const QString &script);
   

@@ -1,3 +1,36 @@
+2004-08-10  Darin Adler  <darin@apple.com>
+
+        Reviewed by Trey.
+
+        - fixed <rdar://problem/3710123> Loading iframe that replaces content in the parent document crashes Safari
+
+        I fixed three problems:
+
+            1) script interpreter destroyed while it was interpreting scripts, caused random havoc
+            2) code trying to get to view after view was detached from part, caused nil-deref
+            3) signals sent to parent after child was no longer in the parent's frames list, caused nil-deref
+
+        Now the test page works fine. Hope the real sites do too.
+
+        * khtml/khtml_part.h: Add connectChild and disconnectChild helper functions (private).
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::clear): Call disconnectChild on each frame as we detach it (see below).
+        (KHTMLPart::end): Ref the part at the start, and deref the part at the end, of this function.
+        Otherwise, we can end up destroying the part, and hence the interpreter, inside a script that
+        the interpreter itself is running.
+        (KHTMLPart::slotFinishedParsing): Add another check for a nil m_view, after the call to
+        checkCompleted.
+        (KHTMLPart::checkCompleted): Remove bogus if statement with empty body.
+        (KHTMLPart::processObjectRequest): Call disconnectChild to disconnect the child <-> parent signals of the
+        old child that the new one is replacing, and connectChild to connect the signals (nicer factoring).
+        (KHTMLPart::slotChildCompleted): Fixed up a confusing boolean if/expression to be simpler. Not related to
+        the bug fix, but an earlier version of the fix had changes in this function.
+        (KHTMLPart::connectChild): Added. Connects the appropriate signals for a child frame.
+        (KHTMLPart::disconnectChild): Added. Disconnects the same signals that connectChild connects.
+
+        * kwq/KWQKHTMLPart.mm: (KHTMLPart::frameDetached): Added a call to disconnectChild before removing the
+        child from the frames list.
+
 2004-08-09  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Trey.
