@@ -732,8 +732,8 @@ void RenderBlock::computeHorizontalPositionsForLine(RootInlineBox* lineBox, Bidi
                     // shrink the box as needed to keep the line from overflowing the available width
                     textWidth = kMin(textWidth, availableWidth - totWidth + style->borderLeftWidth());
                 }
-                r->box->setWidth(textWidth);
             }
+            r->box->setWidth(textWidth);
         }
         else if (!r->obj->isInlineFlow()) {
             r->obj->calcWidth();

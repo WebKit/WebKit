@@ -1,3 +1,72 @@
+2004-10-05  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+
+        * khtml/rendering/bidi.cpp:
+        (khtml::RenderBlock::computeHorizontalPositionsForLine): Fix coding mistake that
+        broke layout tests involving compacts.
+
+2004-10-05  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin
+
+        Finish selection affinity implementation. This includes code to set the
+        affinity correctly when clicking with the mouse, and clearing the
+        affinity when altering the selection using any of the Selection object
+        mutation functions.
+
+        Each instance of the positionForCoordinates function in the render tree
+        has been changed to include an EAffinity argument. It is now the job of this
+        function to set the selection affinity.
+
+        * khtml/editing/selection.cpp:
+        (khtml::Selection::moveTo): Set affinity to DOWNSTREAM.
+        (khtml::Selection::modify): Ditto.
+        (khtml::Selection::clear): Ditto.
+        (khtml::Selection::setBase): Ditto.
+        (khtml::Selection::setExtent): Ditto.
+        (khtml::Selection::setBaseAndExtent): Ditto.
+        * khtml/editing/selection.h:
+        (khtml::operator==): Consider affinity in equality check.
+        * khtml/khtml_events.cpp:
+        (khtml::MouseEvent::offset): Rework code to remove dependence on NodeImpl::positionForCoordinates,
+        as this function is being removed.
+        * khtml/khtml_part.cpp: 
+        (KHTMLPart::isPointInsideSelection): Ditto.
+        (KHTMLPart::selectClosestWordFromMouseEvent): Ditto.
+        (KHTMLPart::handleMousePressEventTripleClick): Ditto.
+        (KHTMLPart::handleMousePressEventSingleClick): Ditto. Plus, pass affinity argument in
+        call to positionForCoordinates, and set resulting affinity on the selection.
+        (KHTMLPart::handleMouseMoveEventSelection): Rework code to remove dependence on 
+        NodeImpl::positionForCoordinates, as this function is being removed.
+        (KHTMLPart::khtmlMouseReleaseEvent):
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::positionForCoordinates): Changed, as described above.
+        * khtml/rendering/render_block.h:
+        * khtml/rendering/render_br.cpp:
+        (RenderBR::positionForCoordinates): Ditto.
+        * khtml/rendering/render_br.h:
+        * khtml/rendering/render_container.cpp:
+        (RenderContainer::positionForCoordinates): Ditto.
+        * khtml/rendering/render_container.h:
+        * khtml/rendering/render_inline.cpp:
+        (RenderInline::positionForCoordinates): Ditto.
+        * khtml/rendering/render_inline.h:
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::positionForCoordinates): Ditto.
+        * khtml/rendering/render_object.h:
+        * khtml/rendering/render_replaced.cpp:
+        (RenderReplaced::positionForCoordinates): Ditto.
+        * khtml/rendering/render_replaced.h:
+        * khtml/rendering/render_text.cpp:
+        (RenderText::positionForCoordinates): Ditto.
+        * khtml/rendering/render_text.h:
+        * khtml/xml/dom_nodeimpl.cpp: Removed positionForCoordinates convenience.
+        * khtml/xml/dom_nodeimpl.h: Ditto.
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge _positionForPoint:]): Rework code to remove dependence on 
+        NodeImpl::positionForCoordinates, as this function is being removed.
+
 2004-10-05  David Hyatt  <hyatt@apple.com>
 
 	Fix style sharing optimization to be fast again.  Go back to using pointer comparisons when looking for
