@@ -479,7 +479,7 @@ QString Decoder::decode(const char *data, int len)
 
  found:
 #if APPLE_CHANGES
-    if (!haveEncoding)
+    if (0) // not ready to turn this on yet; seems to cause problems
 #else
     if (!haveEncoding && KGlobal::locale()->languageList()[0] == "ja")
 #endif
