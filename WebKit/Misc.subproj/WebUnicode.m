@@ -510,6 +510,16 @@ UniChar *shapedString(UniChar *uc, int stringLength, int from, int len, int dir,
 	return 0;
     }
 
+    // Early out.
+    int i;
+    for (i = from; i < from+len; i++){
+        if (uc[i] < 0x7f)
+            return 0;
+        if (IsHighSurrogatePair(uc[i]))
+            return 0;
+    }
+    
+    
     // we have to ignore NSMs at the beginning and add at the end.
     int num = stringLength - from - len;
     UniChar *ch = uc + from + len;
@@ -540,7 +550,6 @@ UniChar *shapedString(UniChar *uc, int stringLength, int from, int len, int dir,
     if ( dir == RTL )
 	ch += len - 1;
 
-    int i;
     for (i = 0; i < len; i++ ) {
 	UniChar r = WK_ROW(*ch);
 	UniChar c = WK_CELL(*ch);

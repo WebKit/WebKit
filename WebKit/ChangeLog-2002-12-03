@@ -1,3 +1,26 @@
+2002-11-22  Richard Williamson   <rjw@apple.com>
+
+        Fixed rendering issues associated with 3100120.
+        We now correctly map surrogate pairs in UTF-16.  khtml still has
+        issues dealing with characters outside BMP.  These are tracked
+        with 3109251 and 3109258.
+        
+        Surrogate pairs are treated as exceptions and have their own character
+        to glyph map.
+        
+        * Misc.subproj/WebUnicode.h:
+        * Misc.subproj/WebUnicode.m:
+        (shapedString):
+        * WebCoreSupport.subproj/WebTextRenderer.h:
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (glyphForUnicodeCharacter):
+        (findLengthOfCharacterCluster):
+        (-[WebTextRenderer substituteFontForString:]):
+        (-[WebTextRenderer convertUnicodeCharacters:length:toGlyphs:]):
+        (-[WebTextRenderer _floatWidthForCharacters:stringLength:fromCharacterPosition:numberOfCharacters:withPadding:applyRounding:attemptFontSubstitution:widths:fonts:glyphs:numGlyphs:letterSpacing:wordSpacing:]):
+        (-[WebTextRenderer extendUnicodeCharacterToGlyphMapToInclude:]):
+        (-[WebTextRenderer extendCharacterToGlyphMapToInclude:]):
+
 2002-11-22  John Sullivan  <sullivan@apple.com>
 
         * Resources/url_icon.tiff:

@@ -28,3 +28,17 @@ extern UniChar *shapedString(UniChar *uc, int stringLength, int from, int len, i
 #define WK_CELL(ucs) ((unsigned char) ucs & 0xff)
 #define WK_ROW(ucs) ((unsigned char) (ucs>>8)&0xff)
 
+// surrogate ranges
+enum {
+    HighSurrogateRangeStart  = 0xD800,
+    HighSurrogateRangeEnd    = 0xDBFF,
+    LowSurrogateRangeStart   = 0xDC00,
+    LowSurrogateRangeEnd     = 0xDFFF
+};
+
+#define UnicodeValueForSurrogatePair(h,l) (( ( h - HighSurrogateRangeStart ) << 10 ) + ( l - LowSurrogateRangeStart ) + 0x0010000)
+#define HighSurrogatePair(c) (((c - 0x10000)>>10) + 0xd800)
+#define LowSurrogatePair(c) (((c - 0x10000)&0x3ff) + 0xdc00)
+#define IsHighSurrogatePair(c)  (( c & 0xFC00 ) == HighSurrogateRangeStart )
+#define IsLowSurrogatePair(c)  (( c & 0xFC00 ) == LowSurrogateRangeStart )
+

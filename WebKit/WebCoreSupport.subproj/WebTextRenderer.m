@@ -51,8 +51,8 @@
 #define IsHangulConjoiningJamo(X) (X >= JunseongStart && X <= JonseongEnd)
 #define IsNonBaseChar(X) ((CFCharacterSetIsCharacterMember(nonBaseChars, X) || IsHangulConjoiningJamo(X) || (((X) & 0x1FFFF0) == 0xF870)))
 
-
 typedef float WebGlyphWidth;
+typedef UInt32 UnicodeChar;
 
 struct WidthMap {
     ATSGlyphRef startRange;
@@ -65,6 +65,13 @@ struct GlyphMap {
     UniChar startRange;
     UniChar endRange;
     GlyphMap *next;
+    ATSGlyphRef *glyphs;
+};
+
+struct UnicodeGlyphMap {
+    UnicodeChar startRange;
+    UnicodeChar endRange;
+    UnicodeGlyphMap *next;
     ATSGlyphRef *glyphs;
 };
 
@@ -93,6 +100,7 @@ static CFCharacterSetRef nonBaseChars = NULL;
 @interface WebTextRenderer (WebPrivate)
 - (WidthMap *)extendGlyphToWidthMapToInclude:(ATSGlyphRef)glyphID;
 - (ATSGlyphRef)extendCharacterToGlyphMapToInclude:(UniChar) c;
+- (ATSGlyphRef)extendUnicodeCharacterToGlyphMapToInclude: (UnicodeChar)c;
 @end
 
 
@@ -128,17 +136,17 @@ static inline ATSGlyphRef glyphForCharacter (GlyphMap *map, UniChar c)
 }
  
  
-static void setGlyphForCharacter (GlyphMap *map, ATSGlyphRef glyph, UniChar c)
+static inline ATSGlyphRef glyphForUnicodeCharacter (UnicodeGlyphMap *map, UnicodeChar c)
 {
     if (map == 0)
-        return;
+        return nonGlyphID;
         
     if (c >= map->startRange && c <= map->endRange)
-        ((ATSGlyphRef *)map->glyphs)[c-map->startRange] = glyph;
-    else    
-        setGlyphForCharacter (map->next, glyph, c);
+        return ((ATSGlyphRef *)map->glyphs)[c-map->startRange];
+        
+    return glyphForUnicodeCharacter (map->next, c);
 }
-
+ 
 
 #ifdef _TIMING        
 static double totalCGGetAdvancesTime = 0;
@@ -220,9 +228,12 @@ static unsigned int findLengthOfCharacterCluster(const UniChar *characters, unsi
     if (length <= 1)
         return length;
     
+    if (IsHighSurrogatePair(characters[0]))
+        return 2;
+        
     if (IsNonBaseChar(characters[0]))
         return 1;
-                
+    
     // Find all the non base characters after the current character.
     for (k = 1; k < length; k++)
         if (!IsNonBaseChar(characters[k]))
@@ -260,10 +271,10 @@ static BOOL bufferTextDrawing = NO;
     // The character substitute font lookup is currently disabled.  I need to extend
     // the character to glyph map to include a font, so we'll only pay the price for
     // this lookup once, at the expense of replicating information in each WebTextRenderer. 
-#ifdef COMPLETE_SUBSTITUTE_CHECK       
+//#ifdef COMPLETE_SUBSTITUTE_CHECK       
     if (substituteFont == nil && [string length] == 1)
         substituteFont = [NSFont findFontLike:font forCharacter: [string characterAtIndex: 0] inLanguage:[NSLanguage defaultLanguage]];
-#endif
+//#endif
         
     return substituteFont;
 }
@@ -331,6 +342,35 @@ static BOOL bufferTextDrawing = NO;
     }
     printf ("For %s found %d glyphs in range 0x%04x to 0x%04x\n", [[font displayName] cString], foundGlyphs, characters[0], characters[numCharacters-1]);
 #endif
+    if (buffer != localBuffer) {
+        free(buffer);
+    }
+}
+
+
+- (void)convertUnicodeCharacters: (const UnicodeChar *)characters length: (unsigned)numCharacters toGlyphs: (ATSGlyphVector *)glyphs
+{
+    unsigned numCharactersInBuffer;
+    UniChar localBuffer[LOCAL_BUFFER_SIZE];
+    UniChar *buffer = localBuffer;
+    OSStatus status;
+    unsigned i, bufPos = 0;
+    
+    if (numCharacters*2 > LOCAL_BUFFER_SIZE) {
+        buffer = (UniChar *)malloc(sizeof(UniChar) * numCharacters * 2);
+    }
+    
+    numCharactersInBuffer = 0;
+    for (i = 0; i < numCharacters; i++) {
+        UnicodeChar c = characters[i];
+        UniChar h = HighSurrogatePair(c);
+        UniChar l = LowSurrogatePair(c);
+        buffer[bufPos++] = h;
+        buffer[bufPos++] = l;
+    }
+        
+    status = ATSUConvertCharToGlyphs(styleGroup, buffer, 0, numCharacters*2, 0, glyphs);
+    
     if (buffer != localBuffer) {
         free(buffer);
     }
@@ -698,6 +738,7 @@ static const char *joiningNames[] = {
     uint numSpaces = 0;
     int padPerSpace = 0;
     int numGlyphs = 0;
+    UniChar high = 0, low = 0;
 
     if (len <= 0){
         if (_numGlyphs)
@@ -770,9 +811,29 @@ static const char *joiningNames[] = {
             break;
         }
 
-        glyphID = glyphForCharacter(characterToGlyphMap, c);
-        if (glyphID == nonGlyphID) {
-            glyphID = [self extendCharacterToGlyphMapToInclude: c];
+        // Deal with surrogate pairs
+        if (c >= HighSurrogateRangeStart && c <= HighSurrogateRangeEnd){
+            high = c;
+
+            // Make sure we have another character and it's a low surrogate.
+            if (i+1 >= stringLength || !IsLowSurrogatePair((low = characters[++i]))){
+                // Error!  Use 0 glyph.
+                glyphID = 0;
+            }
+            else {
+                UnicodeChar uc = UnicodeValueForSurrogatePair(high, low);
+                glyphID = glyphForUnicodeCharacter(unicodeCharacterToGlyphMap, uc);
+                if (glyphID == nonGlyphID) {
+                    glyphID = [self extendUnicodeCharacterToGlyphMapToInclude: uc];
+                }
+            }
+        }
+        // Otherwise we have a valid 16bit unicode character.
+        else {
+            glyphID = glyphForCharacter(characterToGlyphMap, c);
+            if (glyphID == nonGlyphID) {
+                glyphID = [self extendCharacterToGlyphMapToInclude: c];
+            }
         }
 
         // FIXME:  look at next character to determine if it is non-base, then
@@ -786,12 +847,24 @@ static const char *joiningNames[] = {
         // Try to find a substitute font if this font didn't have a glyph for a character in the
         // string.  If one isn't found we end up drawing and measuring the 0 glyph, usually a box.
         if (glyphID == 0 && attemptSubstitution) {
-            clusterLength = findLengthOfCharacterCluster (&characters[i], stringLength - i);
-            substituteFont = [self substituteFontForCharacters: &characters[i] length: clusterLength];
+            const UniChar *_characters;
+            UniChar surrogates[2];
+            
+            if (high && low){
+                clusterLength = 2;
+                surrogates[0] = high;
+                surrogates[1] = low;
+                _characters = &surrogates[0];
+            }
+            else {
+                clusterLength = findLengthOfCharacterCluster (&characters[i], stringLength - i);
+                _characters = &characters[i];
+            }
+            substituteFont = [self substituteFontForCharacters: _characters length: clusterLength];
             if (substituteFont) {
                 int cNumGlyphs;
                 lastWidth = [[[WebTextRendererFactory sharedFactory] rendererWithFont: substituteFont] 
-                                _floatWidthForCharacters: &characters[i] 
+                                _floatWidthForCharacters: _characters 
                                 stringLength: clusterLength 
                                 fromCharacterPosition: 0 numberOfCharacters: clusterLength 
                                 withPadding: 0 applyRounding: NO attemptFontSubstitution: NO 
@@ -899,6 +972,61 @@ static const char *joiningNames[] = {
     return totalWidth;
 }
 
+- (ATSGlyphRef)extendUnicodeCharacterToGlyphMapToInclude: (UnicodeChar)c
+{
+    UnicodeGlyphMap *map = (UnicodeGlyphMap *)calloc (1, sizeof(UnicodeGlyphMap));
+    ATSLayoutRecord *glyphRecord;
+    ATSGlyphVector glyphVector;
+    UnicodeChar end, start;
+    unsigned int blockSize;
+    ATSGlyphRef glyphID;
+    
+    if (unicodeCharacterToGlyphMap == 0)
+        blockSize = INITIAL_BLOCK_SIZE;
+    else
+        blockSize = INCREMENTAL_BLOCK_SIZE;
+    start = (c / blockSize) * blockSize;
+    end = start + (blockSize - 1);
+        
+    LOG(FontCache, "%@ (0x%04x) adding glyphs for 0x%04x to 0x%04x", font, c, start, end);
+
+    map->startRange = start;
+    map->endRange = end;
+    
+    unsigned int i, count = end - start + 1;
+    UnicodeChar buffer[INCREMENTAL_BLOCK_SIZE+2];
+    
+    for (i = 0; i < count; i++){
+        buffer[i] = i+start;
+    }
+
+    ATSInitializeGlyphVector(count*2, 0, &glyphVector);
+    [self convertUnicodeCharacters: &buffer[0] length: count toGlyphs: &glyphVector];
+    if (glyphVector.numGlyphs != count)
+        [NSException raise:NSInternalInconsistencyException format:@"surrogate matching violation:  count and glyphID count not equal - for %@ %f", self, [font displayName], [font pointSize]];
+            
+    map->glyphs = (ATSGlyphRef *)malloc (count * sizeof(ATSGlyphRef));
+    glyphRecord = (ATSLayoutRecord *)glyphVector.firstRecord;
+    for (i = 0; i < count; i++) {
+        map->glyphs[i] = glyphRecord->glyphID;
+        glyphRecord = (ATSLayoutRecord *)((char *)glyphRecord + glyphVector.recordSize);
+    }
+    ATSClearGlyphVector(&glyphVector);
+    
+    if (unicodeCharacterToGlyphMap == 0)
+        unicodeCharacterToGlyphMap = map;
+    else {
+        UnicodeGlyphMap *lastMap = unicodeCharacterToGlyphMap;
+        while (lastMap->next != 0)
+            lastMap = lastMap->next;
+        lastMap->next = map;
+    }
+
+    glyphID = map->glyphs[c - start];
+    
+    return glyphID;
+}
+
 - (ATSGlyphRef)extendCharacterToGlyphMapToInclude:(UniChar) c
 {
     GlyphMap *map = (GlyphMap *)calloc (1, sizeof(GlyphMap));
@@ -951,9 +1079,6 @@ static const char *joiningNames[] = {
             lastMap = lastMap->next;
         lastMap->next = map;
     }
-
-    if (spaceGlyph == nonGlyphID)
-        spaceGlyph = glyphForCharacter (characterToGlyphMap, SPACE);
 
     glyphID = map->glyphs[c - start];
     

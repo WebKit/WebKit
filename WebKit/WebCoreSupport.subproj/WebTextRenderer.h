@@ -7,6 +7,7 @@
 
 typedef struct WidthMap WidthMap;
 typedef struct GlyphMap GlyphMap;
+typedef struct UnicodeGlyphMap UnicodeGlyphMap;
 
 @interface WebTextRenderer : NSObject <WebCoreTextRenderer>
 {
@@ -19,7 +20,8 @@ typedef struct GlyphMap GlyphMap;
     
 @public
     NSFont *font;
-    GlyphMap *characterToGlyphMap;
+    GlyphMap *characterToGlyphMap;			// Used for 16bit clean unicode characters.
+    UnicodeGlyphMap *unicodeCharacterToGlyphMap; 	// Used for surrogates.
     WidthMap *glyphToWidthMap;
     float spaceWidth;
     float adjustedSpaceWidth;
