@@ -119,6 +119,32 @@
 */
 }
 
+- (void)reapplyStyles
+{
+    KHTMLView *widget = ((IFWebViewPrivate *)_viewPrivate)->widget;
+
+#define _KWQ_TIMING        
+#ifdef _KWQ_TIMING        
+    double start = CFAbsoluteTimeGetCurrent();
+#endif
+
+    if (widget->part()->xmlDocImpl() && 
+        widget->part()->xmlDocImpl()->renderer()){
+        if (((IFWebViewPrivate *)_viewPrivate)->needsToApplyStyles){
+            WEBKITDEBUGLEVEL (WEBKIT_LOG_VIEW, "doing layout\n");
+            //double start = CFAbsoluteTimeGetCurrent();
+            widget->part()->xmlDocImpl()->applyChanges(TRUE, TRUE);
+            //WebKitDebugAtLevel (WEBKIT_LOG_TIMING, "apply style time %e\n", CFAbsoluteTimeGetCurrent() - start);
+            ((IFWebViewPrivate *)_viewPrivate)->needsToApplyStyles = NO;
+        }
+    }
+
+#ifdef _KWQ_TIMING        
+    double thisTime = CFAbsoluteTimeGetCurrent() - start;
+    WEBKITDEBUGLEVEL2 (WEBKIT_LOG_TIMING, "%s apply style seconds = %f\n", widget->part()->baseURL().url().latin1(), thisTime);
+#endif
+}
+
 
 
 // This method should not be public until we have more completely
@@ -127,7 +153,6 @@
 {
     KHTMLView *widget = ((IFWebViewPrivate *)_viewPrivate)->widget;
 
-#define _KWQ_TIMING        
 #ifdef _KWQ_TIMING        
     double start = CFAbsoluteTimeGetCurrent();
 #endif
@@ -154,53 +179,6 @@
 - (void)stopAnimations
 {
     [NSException raise:IFMethodNotYetImplemented format:@"IFWebView::stopAnimations is not implemented"];
-}
-
-
-// Font API
-- (void)setFontSizes: (NSArray *)sizes
-{
-    [NSException raise:IFMethodNotYetImplemented format:@"IFWebView::setFontSizes: is not implemented"];
-}
-
-
-- (NSArray *)fontSizes
-{
-    [NSException raise:IFMethodNotYetImplemented format:@"IFWebView::fontSizes is not implemented"];
-    return nil;
-}
-
-
-
-- (void)resetFontSizes
-{
-    [NSException raise:IFMethodNotYetImplemented format:@"IFWebView::resetFontSizes is not implemented"];
-}
-
-
-- (void)setStandardFont: (NSFont *)font
-{
-    [NSException raise:IFMethodNotYetImplemented format:@"IFWebView::setStandardFont: is not implemented"];
-}
-
-
-- (NSFont *)standardFont
-{
-    [NSException raise:IFMethodNotYetImplemented format:@"IFWebView::standardFont is not implemented"];
-    return nil;
-}
-
-
-- (void)setFixedFont: (NSFont *)font
-{
-    [NSException raise:IFMethodNotYetImplemented format:@"IFWebView::setFixedFont: is not implemented"];
-}
-
-
-- (NSFont *)fixedFont
-{
-    [NSException raise:IFMethodNotYetImplemented format:@"IFWebView::fixedFont is not implemented"];
-    return nil;
 }
 
 
@@ -318,6 +296,13 @@
 }
 
 
+- (void)setNeedsToApplyStyles: (bool)flag
+{
+    WEBKITDEBUGLEVEL1 (WEBKIT_LOG_VIEW, "flag = %d\n", (int)flag);
+    ((IFWebViewPrivate *)_viewPrivate)->needsToApplyStyles = flag;
+}
+
+
 // This should eventually be removed.
 - (void)drawRect:(NSRect)rect {
     KHTMLView *widget = ((IFWebViewPrivate *)_viewPrivate)->widget;
@@ -330,6 +315,9 @@
     
     if (widget != 0l){        
         WEBKITDEBUGLEVEL (WEBKIT_LOG_VIEW, "drawing\n");
+        
+        [self reapplyStyles];
+        
         [self layout];
 
 #ifdef _KWQ_TIMING        

@@ -23,6 +23,7 @@ class KHTMLView;
     NSScrollView *frameScrollView;
     bool isFlipped;
     bool needsLayout;
+    bool needsToApplyStyles;
 }
 
 @end

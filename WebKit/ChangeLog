@@ -1,3 +1,13 @@
+2002-03-21  Richard Williamson  <rjw@apple.com>
+
+        Added setNeedsToApplyStyles: and reapplyStyles.  This is for dynamic preferences
+        refresh support.
+        
+	* WebView.subproj/IFWebView.h:
+	* WebView.subproj/IFWebView.mm: (-[IFWebView reapplyStyles]), (-[IFWebView
+	layout]), (-[IFWebView setNeedsToApplyStyles:]), (-[IFWebView drawRect:]):
+	* WebView.subproj/IFWebViewPrivate.h:
+
 2002-03-21  John Sullivan  <sullivan@apple.com>
 
 	Cleaned up defaults registration and use. The class

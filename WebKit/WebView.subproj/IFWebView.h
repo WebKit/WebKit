@@ -114,16 +114,6 @@
 - (void)stopAnimations;
 
 
-// Font API
-- (void)setFontSizes: (NSArray *)sizes;
-- (NSArray *)fontSizes;
-- (void)resetFontSizes;
-- (void)setStandardFont: (NSFont *)font;
-- (NSFont *)standardFont;
-- (void)setFixedFont: (NSFont *)font;
-- (NSFont *)fixedFont;
-
-
 // Drag and drop links and images.  Others?
 - (void)setCanDragFrom: (BOOL)flag;
 - (BOOL)canDragFrom;
