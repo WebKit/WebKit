@@ -23,11 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef QPTRQUEUE_H_
-#define QPTRQUEUE_H_
+#ifndef KWQPTRQUEUE_H_
+#define KWQPTRQUEUE_H_
 
 #include "KWQPtrList.h"
-
 
 template<class T> class QPtrQueue
 {
@@ -43,4 +42,4 @@ public:
     QPtrList<T> list;
 };
 
-#endif /* QPTRQUEUE_H_ */
+#endif /* KWQPTRQUEUE_H_ */

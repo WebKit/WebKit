@@ -1,3 +1,13 @@
+2002-12-16  Darin Adler  <darin@apple.com>
+
+        Reviewed by Don and Maciej.
+
+        * WebView.subproj/WebUserAgentSpoofTable.gperf: Added a couple of new domains to the list we
+	spoof as Mac IE, and added comments.
+        * WebView.subproj/WebUserAgentSpoofTable.c: Regenerated.
+
+        * WebKit.pbproj/project.pbxproj: Set MACOSX_DEPLOYMENT_TARGET to 10.2
+
 2002-12-16  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: 3129503 - Crash cancelling download after closing browser window that started download

@@ -1,3 +1,30 @@
+2002-12-16  Darin Adler  <darin@apple.com>
+
+        Reviewed by Don and Maciej.
+
+	- fixed 3129115 -- need Apple copyright added to open source documents
+
+	* tons of files: Added copyright message to files we modified and
+	standardized format of copyrights too.
+
+	- fixed 3129235 -- assert in LRUList visiting apple.com if "Display images" preference is off
+
+        * khtml/misc/loader.cpp:
+        (Cache::getLRUListFor): Use the first list for 0-sized objects.
+        (Cache::removeFromLRUList): Allow 0-sized objects.
+
+	- other changes
+
+        * khtml/rendering/render_style.h: Remove bogus unused private constructor.
+
+        * kwq/KWQFont.h: Added copy constructor and assignment operator.
+        * kwq/KWQFont.mm:
+        (QFont::QFont): Copy constructor now retains the NSFont. The old version didn't which could
+	cause retain/release problems.
+        (QFont::operator=): Retain the new NSFont and release the old one.
+
+        * WebCore.pbproj/project.pbxproj: Set MACOSX_DEPLOYMENT_TARGET to 10.2.
+
 2002-12-16  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

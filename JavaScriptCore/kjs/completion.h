@@ -48,7 +48,8 @@ namespace KJS {
   class Completion : private Value {
   public:
     Completion(ComplType c = Normal, const Value& v = Value(),
-               const Identifier &t = Identifier::null);
+               const Identifier &t = Identifier::null)
+        : comp(c), val(v), tar(t) { }
 
     ComplType complType() const { return comp; }
     Value value() const { return val; }

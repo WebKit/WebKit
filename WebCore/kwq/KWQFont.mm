@@ -31,13 +31,32 @@
 QFont::QFont()
     : _trait(0)
     , _size(12.0)
-    , _nsfont(0)
+    , _NSFont(0)
 {
 }
 
 QFont::~QFont()
-{ 
-    [_nsfont release];
+{
+    [_NSFont release];
+}
+
+QFont::QFont(const QFont &other)
+    : _family(other._family)
+    , _trait(other._trait)
+    , _size(other._size)
+    , _NSFont([other._NSFont retain])
+{
+}
+
+QFont &QFont::operator=(const QFont &other)
+{
+    _family = other._family;
+    _trait = other._trait;
+    _size = other._size;
+    [other._NSFont retain];
+    [_NSFont release];
+    _NSFont = other._NSFont;
+    return *this;
 }
 
 QString QFont::family() const
@@ -48,22 +67,22 @@ QString QFont::family() const
 void QFont::setFamily(const QString &qfamilyName)
 {
     _family.setFamily(qfamilyName);
-    [_nsfont release];
-    _nsfont = 0;
+    [_NSFont release];
+    _NSFont = 0;
 }
 
 void QFont::setFirstFamily(const KWQFontFamily& family) 
 {
     _family = family;
-    [_nsfont release];
-    _nsfont = 0;
+    [_NSFont release];
+    _NSFont = 0;
 }
 
 void QFont::setPixelSize(float s)
 {
     if (_size != s) {
-        [_nsfont release]; 
-        _nsfont = 0;
+        [_NSFont release]; 
+        _NSFont = 0;
     }
     _size = s;
 }
@@ -72,14 +91,14 @@ void QFont::setWeight(int weight)
 {
     if (weight == Bold) {
         if (!(_trait & NSBoldFontMask)){
-            [_nsfont release];
-            _nsfont = 0;
+            [_NSFont release];
+            _NSFont = 0;
         }
         _trait |= NSBoldFontMask;
     } else if (weight == Normal) {
         if ((_trait & NSBoldFontMask)){
-            [_nsfont release];
-            _nsfont = 0;
+            [_NSFont release];
+            _NSFont = 0;
         }
         _trait &= ~NSBoldFontMask;
     }
@@ -94,14 +113,14 @@ void QFont::setItalic(bool flag)
 {
     if (flag) {
         if (!(_trait & NSItalicFontMask)){
-            [_nsfont release];
-            _nsfont = 0;
+            [_NSFont release];
+            _NSFont = 0;
         }
         _trait |= NSItalicFontMask;
     } else {
         if ((_trait & NSItalicFontMask)){
-            [_nsfont release];
-            _nsfont = 0;
+            [_NSFont release];
+            _NSFont = 0;
         }
         _trait &= ~NSItalicFontMask;
     }
@@ -126,12 +145,12 @@ bool QFont::operator==(const QFont &compareFont) const
 
 NSFont *QFont::getNSFont() const
 {
-    if (!_nsfont) {
+    if (!_NSFont) {
         CREATE_FAMILY_ARRAY(*this, families);
-        _nsfont = [[[WebCoreTextRendererFactory sharedFactory] 
+        _NSFont = [[[WebCoreTextRendererFactory sharedFactory] 
             fontWithFamilies:families
                       traits:getNSTraits() 
                         size:getNSSize()] retain];
     }
-    return _nsfont;
+    return _NSFont;
 }

@@ -1,3 +1,20 @@
+2002-12-16  Darin Adler  <darin@apple.com>
+
+        Reviewed by Don and Maciej.
+
+	- fixed 3129115 -- need Apple copyright added to open source documents
+
+	* tons of files: Added our copyright to files we modified, and updated all to standard format.
+
+	- other changes
+
+        * JavaScriptCore.pbproj/project.pbxproj: Set MACOSX_DEPLOYMENT_TARGET to 10.2.
+	Also removed completion.cpp.
+        * kjs/completion.cpp: Removed.
+        * kjs/completion.h: Made the Completion constructor inline.
+
+        * kjs/grammar.y: Removed an obsolete "pretend ifdef". No need to put these in APPLE_CHANGES now.
+
 === Alexander-37 ===
 
 === JavaScriptCore-37u2 ===

@@ -4,7 +4,7 @@
  * of render objects.  It is a direct port of Gecko's 
  * FrameArena code (frame = render_object in Gecko).
  *
- * Copyright (C) 2002 (hyatt@apple.com)
+ * Copyright (C) 2002 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public

@@ -3,6 +3,7 @@
  *
  * (C) 2001 Peter Kelly (pmk@post.com)
  * (C) 2001 Tobias Anton (anton@stud.fbi.fh-darmstadt.de)
+ * Copyright (C) 2002 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public

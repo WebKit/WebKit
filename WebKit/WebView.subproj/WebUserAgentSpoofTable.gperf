@@ -1,10 +1,30 @@
 struct UserAgentSpoofTableEntry { const char *name; };
 %%
-firstusa.com
-jaguar.com
-watch.com
-hondaredriders.com
+# At the moment, any entry in this table means "pretend to be Mac IE"
+# for all URLs within this domain, where domain is defined as URLs with
+# host strings of "xxx.com" or "<anything>.xxx.com".
+#
+# pretend to be Mac IE because these sites forbid unknown browsers
+bang-olufsen.com
 hondacars.com
+hondaredriders.com
+jaguar.com
+porsche.com
+#
+# pretend to be Mac IE because otherwise the site tries to use layers
+watch.com
+#
+# pretend to be Mac IE to make the return key work to log in
+firstusa.com
+#
+# pretend to be Mac IE to avoid bad-quality CSS the site gives us otherwise
 microsoft.com
+#
+# pretend to be Mac IE to get the cool animation on the battle.net/war3 page that Darin likes
 battle.net
+#
+# pretend to be Mac IE to avoid gzipped HTML which we don't support yet
 freebsd.org
+#
+# pretend to be Mac IE to work around bug and avoid "spewage" at the bottom of some pages
+oregonlive.com

@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef QPRINTER_H_
-#define QPRINTER_H_
+#ifndef KWQPRINTER_H_
+#define KWQPRINTER_H_
 
 class QPrinter {
  public:
@@ -34,5 +34,5 @@ class QPrinter {
     } PrinterMode;
 };
 
-#endif /* QPRINTER_H_ */
+#endif /* KWQPRINTER_H_ */
 

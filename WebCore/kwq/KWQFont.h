@@ -41,6 +41,9 @@ public:
     QFont();
     ~QFont();
     
+    QFont(const QFont &);
+    QFont &operator=(const QFont &);
+    
     void setFamily(const QString &);
     QString family() const;
 
@@ -71,7 +74,7 @@ private:
     KWQFontFamily _family;
     int _trait;
     float _size;
-    mutable NSFont *_nsfont;
+    mutable NSFont *_NSFont;
 };
 
 #endif

@@ -2,6 +2,7 @@
 /*
  *  This file is part of the KDE libraries
  *  Copyright (C) 1999 Harri Porten (porten@kde.org)
+ *  Copyright (C) 2002 Apple Computer, Inc.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public

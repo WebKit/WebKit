@@ -4,6 +4,7 @@
     Copyright (C) 1998 Lars Knoll (knoll@mpi-hd.mpg.de)
     Copyright (C) 2001 Dirk Mueller (mueller@kde.org)
     Copyright (C) 2002 Waldo Bastian (bastian@kde.org)
+    Copyright (C) 2002 Apple Computer, Inc.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -1850,22 +1851,23 @@ int FastLog2(unsigned int i) {
 
 LRUList* Cache::getLRUListFor(CachedObject* o)
 {
-    ASSERT(o->accessCount());
-    int sizeLog = FastLog2(o->size());
-    int queueIndex = sizeLog/o->accessCount();
-    queueIndex--;
-    if (queueIndex < 0)
+    int accessCount = o->accessCount();
+    int queueIndex;
+    if (accessCount == 0) {
         queueIndex = 0;
-    if (queueIndex >= MAX_LRU_LISTS)
-        queueIndex = MAX_LRU_LISTS-1;
-    return &(m_LRULists[queueIndex]);
+    } else {
+        int sizeLog = FastLog2(o->size());
+        queueIndex = sizeLog/o->accessCount() - 1;
+        if (queueIndex < 0)
+            queueIndex = 0;
+        if (queueIndex >= MAX_LRU_LISTS)
+            queueIndex = MAX_LRU_LISTS-1;
+    }
+    return &m_LRULists[queueIndex];
 }
 
 void Cache::removeFromLRUList(CachedObject *object)
 {
-    if (!object->accessCount())
-        return; // No way we can be in a queue yet.
-        
     CachedObject *next = object->m_nextInLRUList;
     CachedObject *prev = object->m_prevInLRUList;
     bool uncacheable = object->status() == CachedObject::Uncacheable;

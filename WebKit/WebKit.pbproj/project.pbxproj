@@ -139,6 +139,7 @@
 				HEADER_SEARCH_PATHS = "";
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = "";
+				MACOSX_DEPLOYMENT_TARGET = 10.2;
 				OPTIMIZATION_CFLAGS = "-Os";
 				OTHER_CFLAGS = "$(DEBUG_CFLAGS) -DFRAMEWORK_NAME=WebKit";
 				OTHER_LDFLAGS = "-seg1addr 0x7000000 -no-c++filt";

@@ -130,6 +130,7 @@
 				HEADER_SEARCH_PATHS = ForwardingHeaders;
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = "";
+				MACOSX_DEPLOYMENT_TARGET = 10.2;
 				OPTIMIZATION_CFLAGS = "-Os";
 				OTHER_CFLAGS = "$(DEBUG_CFLAGS) -DAPPLE_CHANGES -DHAVE_CONFIG_H";
 				OTHER_LDFLAGS = "-seg1addr 0x02200000 -no-c++filt";

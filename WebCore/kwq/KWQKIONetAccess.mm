@@ -33,19 +33,16 @@ bool NetAccess::stat(const KURL &, KIO::UDSEntry &)
     return true;
 }
 
-
 QString NetAccess::lastErrorString()
 {
     return QString::null;
 }
-
 
 bool NetAccess::download(const KURL &url, QString &filename)
 {
     filename = url.path();
     return true;
 }
-
 
 void NetAccess::removeTempFile(const QString &)
 {
