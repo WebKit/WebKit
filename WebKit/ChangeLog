@@ -1,3 +1,13 @@
+2003-08-19  Richard Williamson   <rjw@apple.com>
+
+	Fixed 3383623 (and 3384896).  Remove our unbeknownst work-around for an NSImage bug that incorrectly flipped y coordinate when drawing a partial rect within the image.  This has been fixed in Panther, making our work-around no longer necessary.
+
+        Reviewed by Darin.
+
+        * WebCoreSupport.subproj/WebImageRenderer.m:
+        (-[WebImageRenderer tileInRect:fromPoint:]):
+        * WebKit.pbproj/project.pbxproj:
+
 2003-08-18  Richard Williamson  <rjw@apple.com>
 
 	Fixed 3140065.  Bidi neutrals in RTL runs are now handled correctly.  Still have

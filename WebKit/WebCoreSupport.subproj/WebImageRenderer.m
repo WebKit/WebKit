@@ -412,7 +412,7 @@ static NSMutableSet *activeImageRenderers;
         NSRect fromRect;
 
         fromRect.origin.x = rect.origin.x - oneTileRect.origin.x;
-        fromRect.origin.y = (oneTileRect.origin.y + oneTileRect.size.height) - (rect.origin.y + rect.size.height);
+        fromRect.origin.y = rect.origin.y - oneTileRect.origin.y;
         fromRect.size = rect.size;
         
         [self drawClippedToValidInRect:rect fromRect:fromRect];
