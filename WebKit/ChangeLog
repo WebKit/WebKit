@@ -1,3 +1,9 @@
+2002-12-13  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        * English.lproj/StringsNotToBeLocalized.txt: Update for recent changes.
+
 2002-12-13  Trey Matteson  <trey@apple.com>
 
 	3108976 - assert _private provisionalItem in -[WebFrame(WebPrivate) _transitionToCommitted
