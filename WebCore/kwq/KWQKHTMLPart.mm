@@ -3507,20 +3507,22 @@ NSFont *KWQKHTMLPart::fontForSelection(bool *hasMultipleFonts) const
     Range r = d->m_selection.toRange();
     RangeImpl *range = r.handle();
     NodeImpl *startNode = range->editingStartPosition().node();
-    NodeImpl *pastEnd = range->pastEndNode();
-    for (NodeImpl *n = startNode; n != pastEnd; n = n->traverseNextNode()) {
-        RenderObject *renderer = n->renderer();
-        if (!renderer)
-            continue;
-        // FIXME: Are there any node types that have renderers, but that we should be skipping?
-        NSFont *f = renderer->style()->font().getNSFont();
-        if (font == nil) {
-            font = f;
-            if (!hasMultipleFonts)
+    if (startNode != nil) {
+        NodeImpl *pastEnd = range->pastEndNode();
+        for (NodeImpl *n = startNode; n != pastEnd; n = n->traverseNextNode()) {
+            RenderObject *renderer = n->renderer();
+            if (!renderer)
+                continue;
+            // FIXME: Are there any node types that have renderers, but that we should be skipping?
+            NSFont *f = renderer->style()->font().getNSFont();
+            if (font == nil) {
+                font = f;
+                if (!hasMultipleFonts)
+                    break;
+            } else if (font != f) {
+                *hasMultipleFonts = true;
                 break;
-        } else if (font != f) {
-            *hasMultipleFonts = true;
-            break;
+            }
         }
     }
 

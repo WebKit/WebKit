@@ -1268,7 +1268,10 @@ void AppendNodeCommand::doApply()
 
     int exceptionCode = 0;
     m_parentNode->appendChild(m_appendChild, exceptionCode);
-    ASSERT(exceptionCode == 0);
+    if (exceptionCode != 0) {
+        ERROR("exceptionCode in AppendNodeCommand::doApply() was %d", exceptionCode);
+    }
+//    ASSERT(exceptionCode == 0);
 }
 
 void AppendNodeCommand::doUnapply()
@@ -1869,7 +1872,8 @@ void ApplyStyleCommand::removeInlineStyle(CSSMutableStyleDeclarationImpl *style,
     ASSERT(end.isNotNull());
     ASSERT(start.node()->inDocument());
     ASSERT(end.node()->inDocument());
-    ASSERT(RangeImpl::compareBoundaryPoints(start, end) < 0);
+//    ASSERT(RangeImpl::compareBoundaryPoints(start, end) < 0);
+    ASSERT(RangeImpl::compareBoundaryPoints(start, end) <= 0);
     
     CSSValueImpl *textDecorationSpecialProperty = style->getPropertyCSSValue(CSS_PROP__KHTML_TEXT_DECORATIONS_IN_EFFECT);
 

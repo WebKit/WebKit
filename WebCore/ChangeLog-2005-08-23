@@ -1,3 +1,14 @@
+2005-03-04  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Kevin.
+        
+        - fixed <rdar://problem/4033705> REGRESSION (Mail): Copy/Paste from Excel 
+        crashes Mail in KWQKHTMLPart::fontForSelection(bool*) const + 232
+
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::fontForSelection):
+        Check for nil startNode, not just nil renderer.
+
 2005-03-04  David Harrison  <harrison@apple.com>
 
         Reviewed by Ken, Richard.
