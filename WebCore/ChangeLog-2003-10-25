@@ -1,3 +1,18 @@
+2002-03-22  Richard Williamson  <rjw@apple.com>
+
+        Fixed subtle measurement problems.  These were most evident of pages
+        that had lots of rounding deviation.  My assumptions about being able to
+        round glyph advances was incorrect.  We must pay the expense of a float addition,
+        instead of integer addition.  This slows down our inner loop.  Oh well,
+        we're still very fast.
+        
+	* src/kwq/KWQFontMetrics.mm: (-[KWQLayoutInfo
+	drawString:atPoint:withFont:color:]), (-[KWQLayoutInfo
+	drawUnderlineForString:atPoint:withFont:color:]), (-[KWQLayoutInfo
+	_initializeCaches]), (_rectForString), (QFontMetrics::width),
+	(QFontMetrics::size):
+	* src/kwq/KWQMetrics.h:
+
 2002-03-22  Maciej Stachowiak  <mjs@apple.com>
 
 	Fixed the following post-merge crashers:

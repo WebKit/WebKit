@@ -259,7 +259,7 @@ static void __IFFillStyleWithAttributes(ATSUStyle style, NSFont *theFont) {
         cgContext = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
         CGContextSetCharacterSpacing(cgContext, 0.0);
         //CGContextShowGlyphsAtPoint (cgContext, p.x, p.y + [frag boundingRect].size.height + (int)[font descender] - 1, (const short unsigned int *)usedGlyphBuf, numGlyphs);
-        CGContextShowGlyphsAtPoint (cgContext, p.x, p.y + lineHeight - 1, (const short unsigned int *)usedGlyphBuf, numGlyphs);
+        CGContextShowGlyphsAtPoint (cgContext, p.x, p.y + lineHeight - 1 - (int)[font descender], (const short unsigned int *)usedGlyphBuf, numGlyphs);
         
         if (glyphBuf)
             free (glyphBuf);
@@ -306,8 +306,8 @@ static void __IFFillStyleWithAttributes(ATSUStyle style, NSFont *theFont) {
         lineWidth = size.width;
     }
     CGContextSetLineWidth(cgContext, lineWidth);
-    CGContextMoveToPoint(cgContext, p.x, p.y + lineHeight + 0.5);
-    CGContextAddLineToPoint(cgContext, p.x + rect.size.width, p.y + lineHeight + 0.5);
+    CGContextMoveToPoint(cgContext, p.x, p.y + lineHeight + 0.5 - (int)[font descender]);
+    CGContextAddLineToPoint(cgContext, p.x + rect.size.width, p.y + lineHeight + 0.5 - (int)[font descender]);
     CGContextStrokePath(cgContext);
 
     [graphicsContext setShouldAntialias: flag];
@@ -486,13 +486,13 @@ static void __IFFillStyleWithAttributes(ATSUStyle style, NSFont *theFont) {
         widthCache[i] = UNITIALIZED_GLYPH_WIDTH;
     }
     
-    float *tempWidthCache = malloc (glyphsToCache * sizeof(float));
-    errorResult = CGFontGetGlyphScaledAdvances ([font _backingCGSFont], &sequentialGlyphs[0], glyphsToCache, tempWidthCache, [font pointSize]);
+    CGContextRef cgContext;
+
+    cgContext = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
+    CGContextSetCharacterSpacing(cgContext, 0.0);
+    errorResult = CGFontGetGlyphScaledAdvances ([font _backingCGSFont], &sequentialGlyphs[0], glyphsToCache, widthCache, [font pointSize]);
     if (errorResult == 0)
         [NSException raise:NSInternalInconsistencyException format:@"Optimization assumption violation:  unable to cache glyph advances - for %@ %f", self, [font displayName], [font pointSize]];
-    for (i = 0; i < glyphsToCache; i++)
-        widthCache[i] = (_IFGlyphWidth)(ROUND_TO_UINT(tempWidthCache[i]));
-    free (tempWidthCache);
 
     unsigned int latinCount = LAST_CACHE_CHARACTER - FIRST_CACHE_CHARACTER + 1;
     short unsigned int latinBuffer[LAST_CACHE_CHARACTER+1];
@@ -526,7 +526,7 @@ static void __IFFillStyleWithAttributes(ATSUStyle style, NSFont *theFont) {
 
 static NSRect _rectForString (KWQLayoutInfo *self, const UniChar *internalBuffer, unsigned int stringLength)
 {
-    int totalWidth = 0;
+    float totalWidth = 0;
     unsigned int i, index;
     int glyphID;
     ATSLayoutRecord *glyphRecords;
@@ -597,7 +597,6 @@ static NSRect _rectForString (KWQLayoutInfo *self, const UniChar *internalBuffer
                 short unsigned int sequentialGlyphs[INCREMENTAL_GLYPH_CACHE_BLOCK];
                 unsigned int blockStart, blockEnd, blockID;
                 int errorResult;
-                float tempWidthCache[INCREMENTAL_GLYPH_CACHE_BLOCK];
                 
                 blockStart = (glyphID / INCREMENTAL_GLYPH_CACHE_BLOCK) * INCREMENTAL_GLYPH_CACHE_BLOCK;
                 blockEnd = blockStart + INCREMENTAL_GLYPH_CACHE_BLOCK;
@@ -607,11 +606,9 @@ static NSRect _rectForString (KWQLayoutInfo *self, const UniChar *internalBuffer
                 for (blockID = blockStart; blockID < blockEnd; blockID++)
                     sequentialGlyphs[blockID-blockStart] = blockID;
 
-                errorResult = CGFontGetGlyphScaledAdvances ([font _backingCGSFont], &sequentialGlyphs[0], blockEnd-blockStart, &tempWidthCache[0], [font pointSize]);
+                errorResult = CGFontGetGlyphScaledAdvances ([font _backingCGSFont], &sequentialGlyphs[0], blockEnd-blockStart, &widthCache[blockID], [font pointSize]);
                 if (errorResult == 0)
                     [NSException raise:NSInternalInconsistencyException format:@"Optimization assumption violation:  unable to cache glyph widths - for %@ %f", self, [font displayName], [font pointSize]];
-                for (blockID = blockStart; blockID < blockEnd; blockID++)
-                	widthCache[blockID] = (_IFGlyphWidth)(ROUND_TO_UINT(tempWidthCache[blockID-blockStart]));
             }
         }
 
@@ -642,7 +639,7 @@ static NSRect _rectForString (KWQLayoutInfo *self, const UniChar *internalBuffer
         }
     }
     
-    return NSMakeRect (0,0,(float)totalWidth, (float)self->lineHeight);
+    return NSMakeRect (0,0,totalWidth, (float)self->lineHeight);
 }
 #endif
 
@@ -797,6 +794,7 @@ int QFontMetrics::height() const
 int QFontMetrics::width(QChar qc) const
 {
     unichar c = qc.unicode();
+#ifdef NOT_THERE
     switch (c) {
         // cheesy, we use the char version of width to do the work here,
         // and since it doesn't have the optimization, we don't get an
@@ -810,6 +808,7 @@ int QFontMetrics::width(QChar qc) const
                 data->xWidth = width('x');
             return data->xWidth;
     }
+#endif
     return ROUND_TO_INT(_rectForString(data->getInfo(), &c, 1).size.width);
 }
 
@@ -881,7 +880,6 @@ QSize QFontMetrics::size(int, const QString &qstring, int len, int tabstops,
         KWQDEBUGLEVEL(KWQ_LOG_ERROR, "ERROR:  QFontMetrics::size() tabs not supported.\n");
     }
     
-    KWQDEBUG1("string = %s\n", DEBUG_OBJECT(QSTRING_TO_NSSTRING(qstring)));
     NSString *string;
 
     if (len != -1)
