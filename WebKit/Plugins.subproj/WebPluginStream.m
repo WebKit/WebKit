@@ -17,7 +17,6 @@
 #import <WebFoundation/WebError.h>
 #import <WebFoundation/WebNSFileManagerExtras.h>
 #import <WebFoundation/WebResourceHandle.h>
-#import <WebFoundation/WebResourceHandlePrivate.h>
 #import <WebFoundation/WebResourceRequest.h>
 #import <WebFoundation/WebResourceResponse.h>
 
@@ -103,7 +102,7 @@
 {
     resource = [[WebResourceHandle alloc] initWithRequest:request];
     [resource loadWithDelegate:self];
-    [[view controller] _didStartLoading:[[resource _request] URL]];
+    [[view controller] _didStartLoading:[request URL]];
 }
 
 - (void)stop

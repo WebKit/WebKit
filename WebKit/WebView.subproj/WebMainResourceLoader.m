@@ -22,7 +22,6 @@
 #import <WebFoundation/WebError.h>
 #import <WebFoundation/WebFileTypeMappings.h>
 #import <WebFoundation/WebResourceHandle.h>
-#import <WebFoundation/WebResourceHandlePrivate.h>
 #import <WebFoundation/WebResourceRequest.h>
 #import <WebFoundation/WebHTTPResourceRequest.h>
 #import <WebFoundation/WebResourceResponse.h>
@@ -130,7 +129,7 @@
         return;
     }
     
-    LOG(Loading, "URL = %@", [[handle _request] URL]);
+    LOG(Loading, "URL = %@", currentURL);
     
     // Calling receivedError will likely result in a call to release, so we must retain.
     [self retain];
@@ -158,11 +157,8 @@
 
 - (void)handleDidFinishLoading:(WebResourceHandle *)handle
 {
-    LOG(Loading, "URL = %@", [[handle _request] URL]);
+    LOG(Loading, "URL = %@", currentURL);
     
-    ASSERT([currentURL isEqual:[[handle _request] URL]]);
-    ASSERT([handle _statusCode] == WebResourceHandleStatusLoadComplete);
-
     // Calling receivedError will likely result in a call to release, so we must retain.
     [self retain];
 
@@ -230,9 +226,7 @@
     WebFrame *frame = [dataSource webFrame];
     WebError *downloadError = nil;
     
-    LOG(Loading, "URL = %@, data = %p, length %d", [[handle _request] URL], data, [data length]);
-    
-    ASSERT([currentURL isEqual:[[handle _request] URL]]);
+    LOG(Loading, "URL = %@, data = %p, length %d", currentURL, data, [data length]);
     
     // Check the mime type and ask the client for the content policy.
     if(isFirstChunk){

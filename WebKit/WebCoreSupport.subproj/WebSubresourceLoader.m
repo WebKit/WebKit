@@ -10,7 +10,6 @@
 
 #import <WebFoundation/WebError.h>
 #import <WebFoundation/WebResourceHandle.h>
-#import <WebFoundation/WebResourceHandlePrivate.h>
 #import <WebFoundation/WebResourceRequest.h>
 #import <WebFoundation/WebHTTPResourceRequest.h>
 #import <WebFoundation/WebResourceResponse.h>
@@ -152,7 +151,6 @@
 - (void)handleDidFinishLoading:(WebResourceHandle *)h
 {
     ASSERT(handle == h);
-    ASSERT([h _statusCode] == WebResourceHandleStatusLoadComplete);
 
     // Calling _removeSubresourceClient will likely result in a call to release, so we must retain.
     [self retain];

@@ -1,5 +1,20 @@
 2002-10-02  Darin Adler  <darin@apple.com>
 
+	Cut down on unnecessary use of WebFoundation private stuff.
+
+        * Plugins.subproj/WebPluginStream.m:
+        (-[WebNetscapePluginStream startLoad]): Remove unnecessary use of
+	[WebResourceHandle _request].
+        * WebCoreSupport.subproj/WebSubresourceClient.m:
+        (-[WebSubresourceClient handleDidFinishLoading:]): Remove assert about
+	status code, since status codes are going away.
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient didCancelWithHandle:]): Use currentURL for logging.
+        (-[WebMainResourceClient handleDidFinishLoading:]): Ditto.
+        (-[WebMainResourceClient handle:didReceiveData:]): Ditto.
+
+2002-10-02  Darin Adler  <darin@apple.com>
+
         * WebView.subproj/WebControllerPolicyDelegate.h: Change modifierMask to
 	modifierFlags to match NSEvent.
         * WebView.subproj/WebDefaultPolicyDelegate.m:
