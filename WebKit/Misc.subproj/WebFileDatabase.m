@@ -270,7 +270,6 @@ static void URLFileReaderInit(void)
         return self;
     }
   
-    [self release];
     return nil;
 }
 
@@ -301,7 +300,7 @@ static void URLFileReaderInit(void)
             [target performRemoveObjectForKey:key];
             break;
         default:
-            ASSERT(nil);
+            ASSERT_NOT_REACHED();
             break;
     }
 }
@@ -570,18 +569,7 @@ static void databaseInit()
 -(id)objectForKey:(id)key
 {
     volatile id result;
-    id fileKey;
-    id object;
-    NSString *filePath;
-    WebFileReader * volatile fileReader;
-    NSData *data;
-    NSUnarchiver * volatile unarchiver;
-        
-    fileKey = nil;
-    fileReader = nil;
-    data = nil;
-    unarchiver = nil;
-
+    
     ASSERT(key);
 
     touch = CFAbsoluteTimeGetCurrent();
@@ -599,20 +587,25 @@ static void databaseInit()
     [mutex unlock];
 
     // go to disk
-    filePath = [[NSString alloc] initWithFormat:@"%@/%@", path, [WebFileDatabase uniqueFilePathForKey:key]];
-    fileReader = [[WebFileReader alloc] initWithPath:filePath];
+    NSString *filePath = [[NSString alloc] initWithFormat:@"%@/%@", path, [WebFileDatabase uniqueFilePathForKey:key]];
+    WebFileReader *fileReader = [[WebFileReader alloc] initWithPath:filePath];
     
+    NSData *data;
+    NSUnarchiver * volatile unarchiver = nil;
+
     NS_DURING
         if (fileReader && (data = [fileReader data])) {
             unarchiver = [[NSUnarchiver alloc] initForReadingWithData:data];
-        }
-        if (unarchiver) {
-            fileKey = [unarchiver decodeObject];
-            object = [unarchiver decodeObject];
-            if (object && [fileKey isEqual:key]) {
-                // make sure this object stays around until client has had a chance at it
-                result = [object retain];
-                [result autorelease];
+            if (unarchiver) {
+                id fileKey = [unarchiver decodeObject];
+                if ([fileKey isEqual:key]) {
+                    id object = [unarchiver decodeObject];
+                    if (object) {
+                        // Decoded objects go away when the unarchiver does, so we need to
+                        // retain this so we can return it to our caller.
+                        result = [[object retain] autorelease];
+                    }
+                }
             }
         }
     NS_HANDLER
