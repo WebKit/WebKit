@@ -700,6 +700,7 @@ static UBreakIterator *getCharacterBreakIterator(const DOMStringImpl *i)
     if (!createdIterator) {
         status = U_ZERO_ERROR;
         iterator = ubrk_open(UBRK_CHARACTER, "en_us", NULL, 0, &status);
+        createdIterator = true;
     }
     if (!iterator) {
         return NULL;
