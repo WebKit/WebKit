@@ -17,8 +17,8 @@
 
 typedef void (* StringRangeApplierFunction)(NSString *string, NSRange range, void *context);
 
-// Needs to be big enough to hold an IDNA-encoded name.
-// This is way bigger than needed, since I think there's a 63-character limit.
+// Needs to be big enough to hold an IDN-encoded name.
+// For host names bigger than this, we won't do IDN encoding, which is almost certainly OK.
 #define HOST_NAME_BUFFER_LENGTH 2048
 
 #define URL_BYTES_BUFFER_LENGTH 2048
@@ -99,14 +99,22 @@ static void applyHostNameFunctionToMailToURLString(NSString *string, StringRange
             // Find end of host name.
             unsigned hostNameStart = remaining.location;
             NSRange hostNameEnd = [string rangeOfCharacterFromSet:hostNameEndCharacters options:0 range:remaining];
+            BOOL done;
             if (hostNameEnd.location == NSNotFound) {
-                return;
+                hostNameEnd.location = stringLength;
+                done = YES;
+            } else {
+                remaining.location = NSMaxRange(hostNameEnd);
+                remaining.length = stringLength - remaining.location;
+                done = NO;
             }
-            remaining.location = NSMaxRange(hostNameEnd);
-            remaining.length = stringLength - remaining.location;
 
             // Process host name range.
             f(string, NSMakeRange(hostNameStart, hostNameEnd.location - hostNameStart), context);
+
+            if (done) {
+                return;
+            }
         } else {
             // Skip quoted string.
             ASSERT(c == '"');
@@ -171,7 +179,7 @@ static void applyHostNameFunctionToURLString(NSString *string, StringRangeApplie
 
     static NSCharacterSet *hostTerminators;
     if (hostTerminators == nil) {
-        hostTerminators = [[NSCharacterSet characterSetWithCharactersInString:@":/?"] retain];
+        hostTerminators = [[NSCharacterSet characterSetWithCharactersInString:@":/?#"] retain];
     }
 
     // Start after the separator.

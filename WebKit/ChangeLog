@@ -1,3 +1,14 @@
+2003-11-05  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fixed 3473913 -- host names in simple mailto URLs are not getting encoded/decoded correctly yet
+
+        * Misc.subproj/WebNSURLExtras.m:
+        (applyHostNameFunctionToMailToURLString): Handle case where host name is at the end of the string.
+        (applyHostNameFunctionToURLString): Add the # character to the set of characters that can end
+        a domain name.
+
 2003-11-05  Richard Williamson   <rjw@apple.com>
 
 	Fixed 3413067, 3405797, 3456877
