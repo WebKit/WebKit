@@ -1,3 +1,17 @@
+2003-08-25  Richard Williamson   <rjw@apple.com>
+
+	Fix for 3391609.  Our rounding hack wasn't correctly reflected in the selection point
+	code.  Piggy-backed on this fix are fixes for selection of letter-spacing, word-spacing
+	and justified text.
+
+        Reviewed by Hyatt.
+
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (initializeCharacterWidthIterator):
+        (widthAndGlyphForSurrogate):
+        (widthForNextCharacter):
+        (-[WebTextRenderer _CG_floatWidthForRun:style:widths:fonts:glyphs:startGlyph:endGlyph:numGlyphs:]):
+
 2003-08-25  John Sullivan  <sullivan@apple.com>
 
 	- fixed 3391264 -- REGRESSION (Panther): Back/Forward buttons not

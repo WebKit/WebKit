@@ -101,6 +101,9 @@ struct CharacterWidthIterator
     unsigned currentCharacter;
     CharacterShapeIterator shapeIterator;
     unsigned int needsShaping;
+    float runWidthSoFar;
+    int padding;
+    int padPerSpace;
 };
 
 static void initializeCharacterWidthIterator (CharacterWidthIterator *iterator, WebTextRenderer *renderer, const WebCoreTextRun *run , const WebCoreTextStyle *style);
@@ -354,12 +357,32 @@ void initializeCharacterWidthIterator (CharacterWidthIterator *iterator, WebText
     iterator->run = run;
     iterator->style = style;
     iterator->currentCharacter = run->from;
+    iterator->runWidthSoFar = 0;
+
+    // If the padding is non-zero, count the number of spaces in the run
+    // and divide that by the padding for per space addition.
+    iterator->padding = style->padding;
+    if (iterator->padding > 0){
+        uint numSpaces = 0;
+        int from = run->from;
+        int len = run->to - from;
+        int k;
+        for (k = from; k < from + len; k++){
+            if (run->characters[k] == NON_BREAKING_SPACE || run->characters[k] == SPACE)
+                numSpaces++;
+        }
+        iterator->padPerSpace = CEIL_TO_INT ((((float)style->padding) / ((float)numSpaces)));
+    }
+    else {
+        iterator->padPerSpace = 0;
+    }
 }
 
 static float widthAndGlyphForSurrogate (WebTextRenderer *renderer, UniChar high, UniChar low, ATSGlyphRef *glyphID, NSString **families)
 {
     UnicodeChar uc = UnicodeValueForSurrogatePair(high, low);
     NSFont *font = renderer->font;
+    float width;
 
     *glyphID = glyphForUnicodeCharacter(renderer->unicodeCharacterToGlyphMap, uc, &font);
     if (*glyphID == nonGlyphID) {
@@ -382,7 +405,10 @@ static float widthAndGlyphForSurrogate (WebTextRenderer *renderer, UniChar high,
             return widthForGlyph (substituteRenderer, *glyphID, substituteFont);
        }
     }
-    return widthForGlyph (renderer, *glyphID, font);
+    
+    width = widthForGlyph (renderer, *glyphID, font);
+    
+    return width;
 }
 
 static float widthForNextCharacter (CharacterWidthIterator *iterator)
@@ -392,6 +418,7 @@ static float widthForNextCharacter (CharacterWidthIterator *iterator)
     NSFont *font = renderer->font;
     UniChar c;
     unsigned int offset = iterator->currentCharacter;
+    WebGlyphWidth width;
 
     if (offset >= run->length)
         // Error!  Offset specified beyond end of run.
@@ -425,17 +452,60 @@ static float widthForNextCharacter (CharacterWidthIterator *iterator)
             return 0;
         }
 
-        return widthAndGlyphForSurrogate (renderer, high, low, &glyphID, iterator->style->families);
+        width = widthAndGlyphForSurrogate (renderer, high, low, &glyphID, iterator->style->families);
     }
     else if (c >= LowSurrogateRangeStart && c <= LowSurrogateRangeEnd) {
         // Return 0 width for second component of the surrogate pair.
         return 0;
     }
-    else
+    else {
         glyphID = glyphForCharacter(renderer->characterToGlyphMap, c, &font);
+
+        // Now that we have glyph get it's width.
+        width = widthForGlyph (renderer, glyphID, font);
+    }
+
+    // Account for letter-spacing
+    if (width > 0)
+        width += iterator->style->letterSpacing;
+
+
+    // Account for padding.  khtml uses space padding to justify text.  We
+    // distribute the specified padding over the available spaces in the run.
+    if (c == SPACE){
+        if (iterator->padding > 0){
+            // Only use left over padding if note evenly divisible by 
+            // number of spaces.
+            if (iterator->padding < iterator->padPerSpace){
+                width += iterator->padding;
+                iterator->padding = 0;
+            }
+            else {
+                width += iterator->padPerSpace;
+                iterator->padding -= iterator->padPerSpace;
+            }
+        }
+        
+        // Account for word-spacing.  We apply additional space between "words" by
+        // adding width to the space character.
+        width += iterator->style->wordSpacing;
+    }
     
-    // Now that we have glyph get it's width.
-    return widthForGlyph (renderer, glyphID, font);
+    iterator->runWidthSoFar += width;
+
+    // Account for float/integer impedance mismatch between CG and khtml.  "Words" (characters 
+    // followed by a 0x32) are always an integer width.  We adjust the width of the last character of a
+    // "word" to ensure an integer width.  When we move khtml to floats we can remove this (and 
+    // related) hacks.
+
+    // Check to see if the next character is a space, if so, adjust.
+    if (offset+1 < run->length && run->characters[offset+1] == SPACE) {
+        float delta = CEIL_TO_INT(iterator->runWidthSoFar) - iterator->runWidthSoFar;
+        iterator->runWidthSoFar += delta;
+        width += delta;
+    }
+    
+    return width;
 }
 
 
@@ -1255,7 +1325,7 @@ static const char *joiningNames[] = {
 
 - (float)_CG_floatWidthForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style widths: (float *)widthBuffer fonts: (NSFont **)fontBuffer glyphs: (CGGlyph *)glyphBuffer  startGlyph:(int *)startGlyph endGlyph:(int *)endGlyph numGlyphs: (int *)_numGlyphs
 {
-    float totalWidth = 0;
+    float totalWidth = 0, widthFromStart = 0;
     unsigned int i, clusterLength;
     NSFont *substituteFont = nil;
     ATSGlyphRef glyphID;
@@ -1319,7 +1389,8 @@ static const char *joiningNames[] = {
     // and divide that by the padding for per space addition.
     if (style->padding > 0){
         int k;
-        for (k = from; k < from + len; k++){
+        // Distribute the padding over the spaces in the entire run.
+        for (k = 0; k < (int)run->length; k++){
             if (characters[k] == NON_BREAKING_SPACE || characters[k] == SPACE)
                 numSpaces++;
         }
@@ -1347,8 +1418,10 @@ static const char *joiningNames[] = {
         if ((int)i - pos >= len) {
             // Check if next character is a space. If so, we have to apply rounding.
             if (c == SPACE && style->applyRounding) {
-                float delta = CEIL_TO_INT(totalWidth) - totalWidth;
-                totalWidth += delta;
+                float delta = CEIL_TO_INT(widthFromStart) - widthFromStart;
+                if (i >= (unsigned int)pos)
+                    totalWidth += delta;
+                widthFromStart += delta;
                 if (widthBuffer && numGlyphs > 0)
                     widthBuffer[numGlyphs - 1] += delta;
             }
@@ -1466,8 +1539,10 @@ static const char *joiningNames[] = {
         if ((glyphID > 0 || ((glyphID == 0) && substituteFont == nil)) && !foundMetrics) {
             if (glyphID == spaceGlyph && style->applyRounding) {
                 if (lastWidth > 0){
-                    float delta = CEIL_TO_INT(totalWidth) - totalWidth;
-                    totalWidth += delta;
+                    float delta = CEIL_TO_INT(widthFromStart) - widthFromStart;
+                    if (i >= (unsigned int)pos)
+                        totalWidth += delta;
+                    widthFromStart += delta;
                     if (widthBuffer)
                         widthBuffer[numGlyphs - 1] += delta;
                 } 
@@ -1515,7 +1590,9 @@ static const char *joiningNames[] = {
                         widthBuffer[ng] += style->wordSpacing;
                     }
                 }
-                totalWidth += style->wordSpacing;
+                if (i >= (unsigned int)pos)
+                    totalWidth += style->wordSpacing;
+                widthFromStart += style->wordSpacing;
             }
             
             if (widthBuffer){
@@ -1531,15 +1608,18 @@ static const char *joiningNames[] = {
 #endif
         
         if (i >= (unsigned int)pos)
-            totalWidth += lastWidth;       
+            totalWidth += lastWidth;
+        widthFromStart += lastWidth;
     }
 
     // Ceil the last glyph, but only if
     // 1) The string is longer than one character
     // 2) or the entire stringLength is one character
     if ((len > 1 || run->length == 1) && style->applyRounding){
-        float delta = CEIL_TO_INT(totalWidth) - totalWidth;
-        totalWidth += delta;
+        float delta = CEIL_TO_INT(widthFromStart) - widthFromStart;
+        if (i >= (unsigned int)pos)
+            totalWidth += delta;
+        widthFromStart += delta;
         if (widthBuffer && numGlyphs > 0)
             widthBuffer[numGlyphs-1] += delta;
     }
