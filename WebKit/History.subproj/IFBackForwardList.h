@@ -3,11 +3,10 @@
 */
 
 #import <Foundation/Foundation.h>
-#import "WKURIList.h"
-#import "WKURIEntry.h"
-#import <WCBackForwardList.h>
+#import <WebKit/WKURIList.h>
+#import <WebKit/WKURIEntry.h>
 
-@interface WKBackForwardList : NSObject <WCBackForwardList> {
+@interface WKBackForwardList : NSObject {
     WKURIList *uriList;
     int index;
     NSLock *mutex;

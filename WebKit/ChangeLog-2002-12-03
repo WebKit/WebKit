@@ -1,3 +1,13 @@
+2002-01-31  Kenneth Kocienda  <kocienda@apple.com>
+
+        Removed dependency on WC versions of these files
+        
+	* History.subproj/WKBackForwardList.h:
+	* History.subproj/WKBackForwardList.m:
+	* History.subproj/WKURIEntry.h:
+	* History.subproj/WKURIEntry.m:
+	* WebKit.pbproj/project.pbxproj:
+
 2002-01-31  John Sullivan  <sullivan@apple.com>
 
 	* WebKit.pbproj:
