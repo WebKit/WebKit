@@ -20,6 +20,9 @@
 #import <WebFoundation/IFNSURLExtensions.h>
 #import <WebFoundation/WebFoundation.h>
 
+#define SpaceKey 0x0020
+#define DeleteKey 0x007F
+
 @implementation IFWebView
 
 + (void)initialize
@@ -229,42 +232,80 @@
     return window;
 }
 
-- (void)keyDown: (NSEvent *)event
+- (void)keyDown:(NSEvent *)event
 {
-    if ([event type] == NSKeyDown) {
-        NSString *characters = [event characters];
-        int index, count;
+    NSString *characters = [event characters];
+    int index, count;
+    BOOL callSuper = YES;
 
-        count = [characters length];
-        for (index = 0; index < count; ++index) {
-            switch ([characters characterAtIndex:index]) {
-                case NSPageUpFunctionKey:
+    count = [characters length];
+    for (index = 0; index < count; ++index) {
+        switch ([characters characterAtIndex:index]) {
+            case DeleteKey:
+                [self _goBack];
+                callSuper = NO;
+                break;
+            case SpaceKey:
+                if ([event modifierFlags] & NSShiftKeyMask) {
                     [self _pageUp];
-                    break;
-                case NSPageDownFunctionKey:
+                } else {
                     [self _pageDown];
-                    break;
-                case NSHomeFunctionKey:
-                    [self _scrollToTopLeft];
-                    break;
-                case NSEndFunctionKey:
-                    [self _scrollToBottomLeft];
-                    break;
-                case NSUpArrowFunctionKey:
+                }
+                callSuper = NO;
+                break;
+            case NSPageUpFunctionKey:
+                [self _pageUp];
+                callSuper = NO;
+                break;
+            case NSPageDownFunctionKey:
+                [self _pageDown];
+                callSuper = NO;
+                break;
+            case NSHomeFunctionKey:
+                [self _scrollToTopLeft];
+                callSuper = NO;
+                break;
+            case NSEndFunctionKey:
+                [self _scrollToBottomLeft];
+                callSuper = NO;
+                break;
+            case NSUpArrowFunctionKey:
+                if ([event modifierFlags] & NSAlternateKeyMask) {
+                    [self _pageUp];
+                } else {
                     [self _lineUp];
-                    break;
-                case NSDownArrowFunctionKey:
+                }
+                callSuper = NO;
+                break;
+            case NSDownArrowFunctionKey:
+                if ([event modifierFlags] & NSAlternateKeyMask) {
+                    [self _pageDown];
+                } else {
                     [self _lineDown];
-                    break;
-                case NSLeftArrowFunctionKey:
+                }
+                callSuper = NO;
+                break;
+            case NSLeftArrowFunctionKey:
+                if ([event modifierFlags] & NSAlternateKeyMask) {
+                    [self _pageLeft];
+                } else {
                     [self _lineLeft];
-                    break;
-                case NSRightArrowFunctionKey:
+                }
+                callSuper = NO;
+                break;
+            case NSRightArrowFunctionKey:
+                if ([event modifierFlags] & NSAlternateKeyMask) {
+                    [self _pageRight];
+                } else {
                     [self _lineRight];
-                    break;
-                default: break;
-            }
+                }
+                callSuper = NO;
+                break;
         }
+    }
+    
+    if (callSuper) {
+        [super keyDown:event];
     }
 }
 

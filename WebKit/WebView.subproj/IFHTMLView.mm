@@ -517,6 +517,19 @@
     }
 }
 
+#if 0
+
+// Why don't we call KHTMLView's keyPressEvent/keyReleaseEvent?
+// Because we currently don't benefit from any of the code in there.
+
+// It implements its own version of keyboard scrolling, but we have our
+// version in IFWebView. It implements some keyboard access to individual
+// nodes, but we are probably going to handle that on the NSView side.
+// We already handle normal typing through the responder chain.
+
+// One of the benefits of not calling through to KHTMLView is that we don't
+// have to have the _IF_isScrollEvent function at all.
+
 - (void)keyDown: (NSEvent *)event
 {
     WEBKITDEBUGLEVEL(WEBKIT_LOG_EVENTS, "keyDown: %s\n", DEBUG_OBJECT(event));
@@ -535,7 +548,6 @@
     if (widget)
         widget->keyPressEvent(&kEvent);
 }
-
 
 - (void)keyUp: (NSEvent *)event
 {
@@ -556,5 +568,6 @@
         widget->keyReleaseEvent(&kEvent);
 }
 
+#endif
 
 @end

@@ -78,7 +78,7 @@
 */
 @protocol IFWindowContext <NSObject>
 
-- (IFWebController *)openNewWindowWithURL:(NSURL *)url;
+- (IFWebController *)openNewWindowWithURL:(NSURL *)URL;
 
 - (void)setStatusText: (NSString *)text;
 - (NSString *)statusText;
@@ -95,6 +95,11 @@
 - (void)setFrame:(NSRect)frame;
    
 - (NSWindow *)window;
+
+// FIXME: This is temporary. It's used to tell the client to "go back"
+// when the delete key is pressed. But we are going to move back/forward
+// handling into WebKit, and then this can be removed.
+- (void)goBack;
 
 @end
 

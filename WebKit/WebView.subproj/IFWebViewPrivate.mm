@@ -13,8 +13,6 @@
 #import <WebKit/IFImageView.h>
 #import <WebKit/IFTextView.h>
 
-static NSMutableDictionary *_viewTypes=nil;
-
 @implementation IFWebViewPrivate
 
 - init
@@ -112,6 +110,20 @@ static NSMutableDictionary *_viewTypes=nil;
     [self _scrollVerticallyBy: delta];
 }
 
+- (void)_pageHorizontally: (BOOL)left
+{
+    float pageOverlap = [[self frameScrollView] horizontalPageScroll];
+    float delta = [[self _contentView] bounds].size.width;
+    
+    delta = (delta < pageOverlap) ? delta / 2.0 : delta - pageOverlap;
+
+    if (left) {
+        delta = -delta;
+    }
+
+    [self _scrollHorizontallyBy: delta];
+}
+
 - (void)_scrollLineVertically: (BOOL)up
 {
     // verticalLineScroll is quite small, to make scrolling from the scroll bar
@@ -147,6 +159,16 @@ static NSMutableDictionary *_viewTypes=nil;
     [self _pageVertically: YES];
 }
 
+- (void)_pageLeft
+{
+    [self _pageHorizontally: YES];
+}
+
+- (void)_pageRight
+{
+    [self _pageHorizontally: NO];
+}
+
 - (void)_scrollToTopLeft
 {
     [[self _contentView] scrollPoint: NSMakePoint(0, 0)];
@@ -177,17 +199,21 @@ static NSMutableDictionary *_viewTypes=nil;
     [self _scrollLineHorizontally: NO];
 }
 
-+ (NSMutableDictionary *)_viewTypes
++ (NSDictionary *)_viewTypes
 {
-    if(!_viewTypes){
-        _viewTypes = [[NSMutableDictionary dictionary] retain];
-        [_viewTypes setObject:[IFHTMLView class]  forKey:@"text/html"];
-        [_viewTypes setObject:[IFTextView class]  forKey:@"text/"];
-        [_viewTypes setObject:[IFImageView class] forKey:@"image/jpeg"];
-        [_viewTypes setObject:[IFImageView class] forKey:@"image/gif"];
-        [_viewTypes setObject:[IFImageView class] forKey:@"image/png"];
+    static NSDictionary *viewTypes;
+
+    if (!viewTypes) {
+        viewTypes = [[NSDictionary alloc] initWithObjectsAndKeys:
+            [IFHTMLView class], @"text/html",
+            [IFTextView class], @"text/",
+            [IFImageView class], @"image/jpeg",
+            [IFImageView class], @"image/gif",
+            [IFImageView class], @"image/png",
+            nil];
     }
-    return _viewTypes;
+    
+    return viewTypes;
 }
 
 
@@ -210,6 +236,11 @@ static NSMutableDictionary *_viewTypes=nil;
         }
     }
     return NO;
+}
+
+- (void)_goBack
+{
+    [[[self _controller] windowContext] goBack];
 }
 
 @end

@@ -1,3 +1,29 @@
+2002-07-11  Darin Adler  <darin@apple.com>
+
+	- fixed 2930872 -- option-arrow keys should page up and down
+	- fixed 2924727 -- Delete does not go to previous page
+
+        * WebView.subproj/IFHTMLView.mm: Disable the keyDown and keyUp
+	methods here. We don't really need to pass these events to KHTMLView
+	at the moment. See the comment in this file for further explanation.
+	This paves the way to handle keys other than arrow keys in IFWebView.
+
+        * WebView.subproj/IFWebController.h: Add temporary goBack method to
+	IFWindowContext. See comment for more.
+
+        * WebView.subproj/IFWebView.mm: (-[IFWebView keyDown:]): Add handling
+	for option arrow keys, space (page down), shift-space (page up), and
+	delete (go back). Also make this call super if the key is not handled
+	so keys make their way back to the superview in the application.
+
+        * WebView.subproj/IFWebViewPrivate.h: Add _pageLeft, _pageRight, _goBack.
+        * WebView.subproj/IFWebViewPrivate.mm:
+        (-[IFWebView _pageHorizontally:]): Added.
+        (-[IFWebView _pageLeft]): Added.
+        (-[IFWebView _pageRight]): Added.
+        (+[IFWebView _viewTypes]): Simplify.
+        (-[IFWebView _goBack]): Added. Calls [IFWindowContext goBack].
+
 2002-07-10  Darin Adler  <darin@apple.com>
 
 	- fixed 2973738 -- box characters
