@@ -30,7 +30,15 @@ QRect::QRect(int left, int top, int width, int height)
     x1 = (QCOORD)left;
     y1 = (QCOORD)top;
     x2 = (QCOORD)(left + width - 1);
-    y2 = (QCOORD)(top+height - 1);
+    y2 = (QCOORD)(top + height - 1);
+}
+
+QRect::QRect(const QRect &other)
+{
+    x1 = other.x1;
+    y1 = other.y1;
+    x2 = other.x2;
+    y2 = other.y2;
 }
 
 bool QRect::isNull() const
@@ -108,6 +116,23 @@ bool QRect::intersects(const QRect &r) const
     return (QMAX(x1, r.x1) <= QMIN(x2, r.x2) &&
             QMAX(y1, r.y1) <= QMIN(y2, r.y2));
 }
+
+#ifdef _KWQ_IOSTREAM_
+ostream &operator<<(ostream &o, const QRect &r)
+{
+    return o <<
+        "QRect: [left: " <<
+        (Q_INT32)r.left() <<
+        "; top: " <<
+        (Q_INT32)r.top() <<
+        "; right: " <<
+        (Q_INT32)r.right() <<
+        "; bottom: " <<
+        (Q_INT32)r.bottom() <<
+        ']';
+}
+#endif
+
 
 // KWQ_COMPLETE implementations ------------------------------------------
 

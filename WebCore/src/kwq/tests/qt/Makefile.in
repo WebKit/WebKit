@@ -22,6 +22,8 @@ OBJECTS = $(CXXOBJECTS)
 PROGRAMS = \
     qpoint-test \
     qsize-test \
+    qrect-test \
+    qmap-test \
     $(NULL)
 
 CLEAN_FILES = *.o \
@@ -58,7 +60,13 @@ all: $(OBJECTS) $(PROGRAMS)
 qpoint-test: qpoint-test.o
 	$(CXX) -o $@ $< $(LDFLAGS)
 
+qrect-test: qrect-test.o
+	$(CXX) -o $@ $< $(LDFLAGS)
+
 qsize-test: qsize-test.o
+	$(CXX) -o $@ $< $(LDFLAGS)
+
+qmap-test: qmap-test.o
 	$(CXX) -o $@ $< $(LDFLAGS)
 
 depend: 
