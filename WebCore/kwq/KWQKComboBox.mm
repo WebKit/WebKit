@@ -69,15 +69,10 @@ void KComboBox::doneLoading()
     [numberedItems release];
 }
 
+
 void KComboBox::setSize(int size)
 {
-    int i; 
     NSMutableArray *newItems = [[NSMutableArray alloc] initWithCapacity: size];
-    
-    for (i = 0; i < size; i++){
-        [newItems addObject: @""];
-    }
-    
     [items release];
     items = newItems;
 }

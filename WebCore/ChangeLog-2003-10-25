@@ -1,3 +1,13 @@
+2002-03-23  Darin Adler  <darin@apple.com>
+
+        Fixed problem with extra empty items in menus.
+
+	* src/kwq/KWQComboBox.mm: (QComboBox::insertItem): Add back logic that puts
+        an item in a certain position. Even though this is called insertItem, the
+        behavior is to replace an item at a certain position.
+	* src/kwq/KWQKComboBox.mm: (KComboBox::setSize): No need to fill the
+        array with empty strings; just a waste of time based on how we do things.
+
 2002-03-22  Darin Adler  <darin@apple.com>
 
 	* src/kdelibs/khtml/java/Makefile.am:

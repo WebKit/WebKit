@@ -90,36 +90,16 @@ bool QComboBox::eventFilter(QObject *object, QEvent *event)
 
 void QComboBox::insertItem(const QString &text, int index)
 {
-#ifdef SLOW_AS_POOP
-    KWQNSComboBox *comboBox = (KWQNSComboBox *)getView();
-    
-    if (index < 0)
-        index = count();
-
-    NSMutableArray *newItems;
-    unsigned int i, _count;
-    
-    newItems = [[NSMutableArray alloc] init];
-    _count = (index+1 > count()) ? index+1 : count();
-    [comboBox removeAllItems];
-    for (i = 0; i < _count; i++){
-        if (i == (unsigned int)index)
-            [newItems addObject: QSTRING_TO_NSSTRING (text)];
-        else if (i < [items count])
-            [newItems addObject: [items objectAtIndex: i]];
-        else
-            [newItems addObject: @""];
-        [comboBox addItemWithTitle: [NSString stringWithFormat: @"%d", i]]; 
+    int numItems = [items count];
+    if (index < 0 || index == numItems)
+        [items addObject:QSTRING_TO_NSSTRING(text)];
+    else {
+        while (index >= numItems) {
+            [items addObject: @""];
+            ++numItems;
+        }
+        [items replaceObjectAtIndex:index withObject:QSTRING_TO_NSSTRING(text)];
     }
-    // Hack to allow multiple items with same name.   Ugh.
-    for (i = 0; i < _count; i++){
-        [[comboBox itemAtIndex: i] setTitle: [newItems objectAtIndex: i]];
-    }
-    [items release];
-    items = newItems;
-#else
-    [items insertObject: QSTRING_TO_NSSTRING (text) atIndex: index];
-#endif
 }
 
 
