@@ -1,3 +1,15 @@
+2003-04-03  Trey Matteson  <trey@apple.com>
+
+	3218212 REGRESSION: page on screen draws ugly while printing is happening
+
+	Turn autodisplay of the window off while we print.
+
+        Reviewed by Darin.
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView beginDocument]):  Turn it off.
+        (-[WebHTMLView endDocument]):  and back on.
+
 2003-04-03  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Trey.

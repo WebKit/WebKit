@@ -800,6 +800,7 @@
     // Must do this explicit display here, because otherwise the view might redisplay while the print
     // sheet was up, using printer fonts (and looking different).
     [self displayIfNeeded];
+    [[self window] setAutodisplay:NO];
     [self _setPrinting:YES];
     [super beginDocument];
     // There is a theoretical chance that someone could do some drawing between here and endDocument,
@@ -811,6 +812,7 @@
 {
     [super endDocument];
     [self _setPrinting:NO];
+    [[self window] setAutodisplay:YES];
 }
 
 @end
