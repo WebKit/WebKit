@@ -24,6 +24,7 @@
 #import <WebKit/WebKitStatisticsPrivate.h>
 #import <WebKit/WebNetscapePluginDocumentView.h>
 #import <WebKit/WebNetscapePluginEmbeddedView.h>
+#import <WebKit/WebNSObjectExtras.h>
 #import <WebKit/WebNSURLExtras.h>
 #import <WebKit/WebNullPluginView.h>
 #import <WebKit/WebPreferencesPrivate.h>
@@ -176,10 +177,6 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
 
 - (void)dealloc
 {
-    [webFrameView _setWebView:nil];
-    [dataSource _setWebView:nil];
-    [provisionalDataSource _setWebView:nil];
-
     [name release];
     [webFrameView release];
     [dataSource release];
@@ -2481,11 +2478,29 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (void)dealloc
 {
+    [self _detachFromParent];
+    [_private->webFrameView _setWebView:nil];
+    [_private->dataSource _setWebView:nil];
+    [_private->provisionalDataSource _setWebView:nil];
+
+    [_private release];
+
     --WebFrameCount;
 
-    [self _detachFromParent];
-    [_private release];
     [super dealloc];
+}
+
+- (void)finalize
+{
+    // FIXME: Should not do this work at finalize time. Need to do it at a predictable time instead.
+    [self _detachFromParent];
+    [_private->webFrameView _setWebView:nil];
+    [_private->dataSource _setWebView:nil];
+    [_private->provisionalDataSource _setWebView:nil];
+
+    --WebFrameCount;
+
+    [super finalize];
 }
 
 - (NSString *)name

@@ -16,6 +16,7 @@
 #import <WebKit/WebKitNSStringExtras.h>
 #import <WebKit/WebNetscapePluginStream.h>
 #import <WebKit/WebNullPluginView.h>
+#import <WebKit/WebNSObjectExtras.h>
 #import <WebKit/WebNSURLExtras.h>
 #import <WebKit/WebNSViewExtras.h>
 #import <WebKit/WebNetscapePluginPackage.h>
@@ -1051,26 +1052,45 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     return self;
 }
 
--(void)dealloc
+- (void)freeAttributeKeysAndValues
 {
     unsigned i;
-
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
-    
-    [self stop];
-
     for (i = 0; i < argsCount; i++) {
         free(cAttributes[i]);
         free(cValues[i]);
     }
+    free(cAttributes);
+    free(cValues);
+}
+
+- (void)dealloc
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    
+    [self stop];
+
     [plugin release];
     [streams release];
     [MIMEType release];
     [baseURL release];
     [streamNotifications release];
-    free(cAttributes);
-    free(cValues);
+
+    [self freeAttributeKeysAndValues];
+
     [super dealloc];
+}
+
+- (void)finalize
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+
+    // FIXME: Bad to stop at finalize time. Need to restructure code
+    // so that we're already stopped before we get to this point.
+    [self stop];
+
+    [self freeAttributeKeysAndValues];
+
+    [super finalize];
 }
 
 - (void)drawRect:(NSRect)rect
@@ -1254,13 +1274,10 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
         return nil;
     }
     
-    NSString *string = (NSString *)CFStringCreateWithCString(kCFAllocatorDefault, URLCString, kCFStringEncodingWindowsLatin1);
-    NSString *URLString = [string _web_stringByStrippingReturnCharacters];
-    [string release];
-    
+    CFStringRef string = CFStringCreateWithCString(kCFAllocatorDefault, URLCString, kCFStringEncodingWindowsLatin1);
+    NSString *URLString = [(NSString *)string _web_stringByStrippingReturnCharacters];
     NSURL *URL = [NSURL _web_URLWithDataAsString:URLString relativeToURL:baseURL];
-    
-
+    CFRelease(string);
     if (!URL) {
         return nil;
     }
@@ -1399,6 +1416,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
         WebFrame *frame = [self webFrame];
         if (JSString != nil && target != nil && [frame findFrameNamed:target] != frame) {
             // For security reasons, only allow JS requests to be made on the frame that contains the plug-in.
+            CFRelease(target);
             return NPERR_INVALID_PARAM;
         }
         
@@ -1406,7 +1424,9 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
         WebPluginRequest *pluginRequest = [[WebPluginRequest alloc] initWithRequest:request frameName:target notifyData:notifyData];
         [self performSelector:@selector(loadPluginRequest:) withObject:pluginRequest afterDelay:0];
         [pluginRequest release];
-        [target release];
+        if (target) {
+            CFRelease(target);
+        }
     } else {
         WebNetscapePluginStream *stream = [[WebNetscapePluginStream alloc]
             initWithRequest:request pluginPointer:instance notifyData:notifyData];
@@ -1465,7 +1485,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
             path = bufString;
         }
         postData = [NSData dataWithContentsOfFile:[path _web_fixedCarbonPOSIXPath]];
-        [bufString release];
+        CFRelease(bufString);
         if (!postData) {
             return NPERR_FILE_NOT_FOUND;
         }
@@ -1577,11 +1597,11 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
         return;
     }
 
-    NSString *status = (NSString *)CFStringCreateWithCString(NULL, message, kCFStringEncodingWindowsLatin1);
+    CFStringRef status = CFStringCreateWithCString(NULL, message, kCFStringEncodingWindowsLatin1);
     LOG(Plugins, "NPN_Status: %@", status);
     WebView *wv = [self webView];
-    [[wv _UIDelegateForwarder] webView:wv setStatusText:status];
-    [status release];
+    [[wv _UIDelegateForwarder] webView:wv setStatusText:(NSString *)status];
+    CFRelease(status);
 }
 
 -(void)invalidateRect:(NPRect *)invalidRect

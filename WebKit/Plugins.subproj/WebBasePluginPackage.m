@@ -9,8 +9,8 @@
 #import <WebKit/WebBasePluginPackage.h>
 
 #import <WebKit/WebNetscapePluginPackage.h>
+#import <WebKit/WebNSObjectExtras.h>
 #import <WebKit/WebPluginPackage.h>
-
 
 @interface NSArray (WebPluginExtensions)
 - (NSArray *)_web_lowercaseStrings;
@@ -49,9 +49,9 @@
     }
 
     if (wasAliased) {
-        NSURL *URL = (NSURL *)CFURLCreateFromFSRef(kCFAllocatorDefault, &fref);
-        newPath = [URL path];
-        [URL release];
+        CFURLRef URL = CFURLCreateFromFSRef(kCFAllocatorDefault, &fref);
+        newPath = [(NSURL *)URL path];
+        CFRelease(URL);
     }
 
     return newPath;
@@ -164,6 +164,14 @@
     [lastModifiedDate release];
     
     [super dealloc];
+}
+
+- (void)finalize
+{
+    // FIXME: Bad design to unload at dealloc/finalize time.
+    // Must be fixed for GC.
+    [self unload];
+    [super finalize];
 }
 
 - (NSString *)name

@@ -12,6 +12,7 @@
 #import <WebKit/WebDocument.h>
 #import <WebKit/WebDocumentInternal.h>
 #import <WebKit/WebFrameViewPrivate.h>
+#import <WebKit/WebNSObjectExtras.h>
 #import <WebKit/WebNSViewExtras.h>
 #import <WebKit/WebPreferences.h>
 #import <WebKit/WebTextRendererFactory.h>
@@ -58,6 +59,12 @@
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [super dealloc];
+}
+
+- (void)finalize
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [super finalize];
 }
 
 - (float)_textSizeMultiplierFromWebView

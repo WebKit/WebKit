@@ -3,7 +3,7 @@
 //  Synergy
 //
 //  Created by Ed Voas on Fri Jan 17 2003.
-//  Copyright (c) 2003 __MyCompanyName__. All rights reserved.
+//  Copyright (c) 2004 Apple Computer, Inc. All rights reserved.
 //
 
 /*
@@ -54,6 +54,7 @@ The subclass of NSWindow that encapsulates a Carbon window, in such a manner tha
 #import "HIViewAdapter.h"
 
 #import <AppKit/AppKit.h>
+#import <AppKit/NSWindow_Private.h>
 #import <CoreGraphics/CGSWindow.h>
 #import <HIToolbox/CarbonEvents.h>
 #import <HIToolbox/CarbonEventsPriv.h>
@@ -63,15 +64,7 @@ The subclass of NSWindow that encapsulates a Carbon window, in such a manner tha
 #import <HIToolbox/HIView.h>
 #import <assert.h>
 
-// Turn off the assertions in this file.
-// If this is commented out, uncomment it before committing to CVS.  M.P. Warning - 10/18/01
-#undef assert
-#define assert(X)
-
-enum
-{
-	_NSCarbonWindowMask               = 1 << 25
-};
+#import "WebNSObjectExtras.h"
 
 // Carbon SPI functions.
 // The fact that these are declared here instead of in an HIToolbox header is a bad thing.  2776459.  M.P. To Do - 9/18/01
@@ -83,14 +76,8 @@ OSStatus SyncWindowToCGSWindow(WindowRef inWindow, CGSWindowID inWindowID);
 #define WINDOWSMENUWINDOW(w)   (!_wFlags.excludedFromWindowsMenu && \
                                 [w _miniaturizedOrCanBecomeMain] && [w _isDocWindow])
 extern float _NXScreenMaxYForRect(NSRect *rect);
-extern MenuRef _NSGetCarbonMenu(NSMenu* menu);
-extern int _NSMenuToCarbonIndex(NSMenu* menu, int index);
 extern void _NXOrderKeyAndMain( void );
 extern void _NXShowKeyAndMain( void );
-
-// Forward declarations.
-static OSStatus NSCarbonWindowHandleEvent(EventHandlerCallRef inEventHandlerCallRef, EventRef inEventRef, void *inUserData);
-
 
 // Constants that we use to fiddle with NSViewCarbonControls.
 extern const ControlFocusPart NSViewCarbonControlMagicPartCode;
@@ -118,6 +105,9 @@ extern const OSType NSCarbonWindowPropertyTag;
 @interface NSInputContext
 - (BOOL)processInputKeyBindings:(NSEvent *)event;
 @end
+
+// Forward declarations.
+static OSStatus NSCarbonWindowHandleEvent(EventHandlerCallRef inEventHandlerCallRef, EventRef inEventRef, void *inUserData);
 
 @implementation CarbonWindowAdapter
 
@@ -300,6 +290,11 @@ extern const OSType NSCarbonWindowPropertyTag;
     // Do the standard Cocoa thing.
     [super dealloc];
 
+}
+
+- (void)finalize {
+    if (_eventHandler) RemoveEventHandler(_eventHandler);
+    [super finalize];
 }
 
 - (WindowRef)windowRef {

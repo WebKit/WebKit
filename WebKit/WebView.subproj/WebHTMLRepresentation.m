@@ -13,6 +13,7 @@
 #import <WebKit/WebDocumentPrivate.h>
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebKitStatisticsPrivate.h>
+#import <WebKit/WebNSObjectExtras.h>
 #import <WebKit/WebResourcePrivate.h>
 
 #import <Foundation/NSString_NSURLExtras.h>
@@ -57,6 +58,13 @@
     [_private release];
 
     [super dealloc];
+}
+
+- (void)finalize
+{
+    --WebHTMLRepresentationCount;
+
+    [super finalize];
 }
 
 - (WebBridge *)_bridge

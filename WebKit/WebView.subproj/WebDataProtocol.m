@@ -65,7 +65,7 @@ static NSString *WebDataRequestPropertyKey = @"WebDataRequest";
     NSString *UUIDString = (NSString *)CFUUIDCreateString(kCFAllocatorDefault, UUIDRef);
     CFRelease(UUIDRef);
     NSURL *URL = [NSURL URLWithString:[NSString stringWithFormat:@"%@://%@", WebDataProtocolScheme, UUIDString]];
-    [UUIDString release];
+    CFRelease(UUIDString);
     return URL;
 }
 

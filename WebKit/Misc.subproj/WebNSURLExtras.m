@@ -8,6 +8,7 @@
 
 #import <WebKit/WebAssertions.h>
 #import <WebKit/WebNSDataExtras.h>
+#import <WebKit/WebNSObjectExtras.h>
 
 #import <Foundation/NSString_NSURLExtras.h>
 #import <Foundation/NSURLProtocolPrivate.h>
@@ -332,9 +333,9 @@ static NSString *mapHostNames(NSString *string, BOOL encode)
         // (e.g calls to NSURL -path). However, this function is not tolerant of illegal UTF-8 sequences, which
         // could either be a malformed string or bytes in a different encoding, like shift-jis, so we fall back
         // onto using ISO Latin 1 in those cases.
-        result = (NSURL *)CFURLCreateAbsoluteURLWithBytes(NULL, bytes, length, kCFStringEncodingUTF8, (CFURLRef)baseURL, YES);
+        result = WebMakeCollectable(CFURLCreateAbsoluteURLWithBytes(NULL, bytes, length, kCFStringEncodingUTF8, (CFURLRef)baseURL, YES));
         if (!result) {
-            result = (NSURL *)CFURLCreateAbsoluteURLWithBytes(NULL, bytes, length, kCFStringEncodingISOLatin1, (CFURLRef)baseURL, YES);
+            result = WebMakeCollectable(CFURLCreateAbsoluteURLWithBytes(NULL, bytes, length, kCFStringEncodingISOLatin1, (CFURLRef)baseURL, YES));
         }
         [result autorelease];
     }
@@ -560,7 +561,7 @@ static NSString *mapHostNames(NSString *string, BOOL encode)
     }
     
     NSURL *result = changed
-        ? [(NSURL *)CFURLCreateAbsoluteURLWithBytes(NULL, buffer, bytesFilled, kCFStringEncodingUTF8, nil, YES) autorelease]
+        ? [WebMakeCollectable(CFURLCreateAbsoluteURLWithBytes(NULL, buffer, bytesFilled, kCFStringEncodingUTF8, nil, YES)) autorelease]
         : self;
 
     if (buffer != static_buffer) {
@@ -735,7 +736,8 @@ static NSString *mapHostNames(NSString *string, BOOL encode)
         NSString *substring = [self substringWithRange:range];
         substring = (NSString *)CFURLCreateStringByReplacingPercentEscapes(NULL, (CFStringRef)substring, CFSTR(""));
         if (substring != nil) {
-            string = [substring autorelease];
+            string = [[substring retain] autorelease];
+            CFRelease(substring);
             range = NSMakeRange(0, [string length]);
         }
     }

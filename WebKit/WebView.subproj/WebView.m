@@ -37,8 +37,9 @@
 #import <WebKit/WebKitErrors.h>
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebKitStatisticsPrivate.h>
+#import <WebKit/WebNSObjectExtras.h>
 #import <WebKit/WebNSPasteboardExtras.h>
-#import "WebNSPrintOperationExtras.h"
+#import <WebKit/WebNSPrintOperationExtras.h>
 #import <WebKit/WebNSEventExtras.h>
 #import <WebKit/WebNSURLExtras.h>
 #import <WebKit/WebNSViewExtras.h>
@@ -1382,6 +1383,19 @@ NS_ENDHANDLER
     _private = nil;
 
     [super dealloc];
+}
+
+- (void)finalize
+{
+    [self _close];
+
+    --WebViewCount;
+
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+
+    [WebPreferences _removeReferenceForIdentifier: [self preferencesIdentifier]];
+
+    [super finalize];
 }
 
 - (void)setPreferences: (WebPreferences *)prefs

@@ -29,6 +29,7 @@
 #import <WebKit/WebKitSystemBits.h>
 #import <WebKit/WebNetscapePluginEmbeddedView.h>
 #import <WebKit/WebNetscapePluginPackage.h>
+#import <WebKit/WebNSObjectExtras.h>
 #import <WebKit/WebNSURLExtras.h>
 #import <WebKit/WebNullPluginView.h>
 #import <WebKit/WebPlugin.h>
@@ -113,7 +114,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     return self;
 }
 
-- (void)dealloc
+- (void)fini
 {
     ASSERT(_frame == nil);
 
@@ -123,10 +124,20 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
         [[NSNotificationCenter defaultCenter] 
             removeObserver:self name:WebPreferencesChangedNotification object:nil];
     }
-    
+
     --WebBridgeCount;
-    
+}
+
+- (void)dealloc
+{
+    [self fini];
     [super dealloc];
+}
+
+- (void)finalize
+{
+    [self fini];
+    [super finalize];
 }
 
 - (WebFrame *)webFrame

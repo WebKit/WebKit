@@ -208,7 +208,11 @@ static void UniqueFilePathForKey(id key, char *buffer)
 
     LOG(FileDatabaseActivity, "lru list created");
 
+#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_3
     [pool release];
+#else
+    [pool drain];
+#endif
 }
 
 -(void)_truncateToSizeLimit:(unsigned)size
@@ -272,7 +276,11 @@ static void UniqueFilePathForKey(id key, char *buffer)
 
     END_EXCEPTION_HANDLER
 
+#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_3
     [pool release];
+#else
+    [pool drain];
+#endif
 }
 
 static void databaseInit()
@@ -306,21 +314,7 @@ static void databaseInit()
     return self;
 }
 
--(void)dealloc
-{
-    [mutex lock];
-    // this locking gives time for writes that are happening now to finish
-    [mutex unlock];
-    [self close];
-    [timer invalidate];
-    [timer release];
-    [ops release];
-    [setCache release];
-    [removeCache release];
-    [mutex release];
-
-    [super dealloc];
-}
+// WebFileDatabase objects are never released, so we need no dealloc implementation.
 
 -(void)setTimer
 {

@@ -20,6 +20,7 @@
 #import <WebKit/WebKeyGenerator.h>
 #import <WebKit/WebKitErrorsPrivate.h>
 #import <WebKit/WebKitStatisticsPrivate.h>
+#import <WebKit/WebNSObjectExtras.h>
 #import <WebKit/WebNSPasteboardExtras.h>
 #import <WebKit/WebNSViewExtras.h>
 #import <WebKit/WebTextRendererFactory.h>
@@ -452,6 +453,15 @@ static NSMutableDictionary *viewTypes;
     _private = nil;
     
     [super dealloc];
+}
+
+- (void)finalize 
+{
+    --WebFrameViewCount;
+
+    _private = nil;
+
+    [super finalize];
 }
 
 - (WebFrame *)webFrame

@@ -30,6 +30,7 @@
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebKitStatisticsPrivate.h>
 #import <WebKit/WebMainResourceClient.h>
+#import <WebKit/WebNSObjectExtras.h>
 #import <WebKit/WebNSURLExtras.h>
 #import <WebKit/WebResourceLoadDelegate.h>
 #import <WebKit/WebResourcePrivate.h>
@@ -61,7 +62,6 @@
     [pageTitle release];
     [response release];
     [mainDocumentError release];
-    [iconLoader setDelegate:nil];
     [iconLoader release];
     [iconURL release];
     [ourBackForwardItems release];
@@ -1049,9 +1049,19 @@
 {
     --WebDataSourceCount;
     
+    [_private->iconLoader setDelegate:nil];
     [_private release];
     
     [super dealloc];
+}
+
+- (void)finalize
+{
+    --WebDataSourceCount;
+
+    [_private->iconLoader setDelegate:nil];
+
+    [super finalize];
 }
 
 - (NSData *)data
@@ -1128,7 +1138,12 @@
             break;
         }
     }
+
+#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_3
     [pool release];
+#else
+    [pool drain];
+#endif
     
     return childFrame != nil;
 }

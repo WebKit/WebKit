@@ -3,10 +3,11 @@
     Copyright 2002, Apple, Inc. All rights reserved.
 */
 
-#import <CoreGraphics/CoreGraphicsPrivate.h>
-
 #import "WebGlyphBuffer.h"
 
+#import "WebNSObjectExtras.h"
+
+#import <CoreGraphics/CoreGraphicsPrivate.h>
 
 @implementation WebGlyphBuffer
 
@@ -42,7 +43,6 @@
     bufferedCount = 0;
 }
 
-
 - (void)dealloc
 {
     [font release];
@@ -51,6 +51,11 @@
     [super dealloc];
 }
 
+- (void)finalize
+{
+    [self reset];
+    [super finalize];
+}
 
 - (void)drawInView: (NSView *)targetView
 {

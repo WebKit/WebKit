@@ -5,16 +5,17 @@
 
 #import <WebKit/WebHistoryItemPrivate.h>
 
+#import <WebKit/WebAssertions.h>
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebFrameView.h>
 #import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebIconDatabase.h>
 #import <WebKit/WebIconLoader.h>
 #import <WebKit/WebKitLogging.h>
+#import <WebKit/WebNSObjectExtras.h>
 #import <WebKit/WebNSURLExtras.h>
 #import <WebKit/WebPluginController.h>
 
-#import <WebKit/WebAssertions.h>
 #import <Foundation/NSDictionary_NSURLExtras.h>
 
 #import <CoreGraphics/CoreGraphicsPrivate.h>
@@ -106,6 +107,15 @@ NSString *WebHistoryItemChangedNotification = @"WebHistoryItemChangedNotificatio
     [_private release];
     
     [super dealloc];
+}
+
+- (void)finalize
+{
+    // FIXME: Probably not good to release icons from the database only
+    // when the object is garbage-collected. Need to change design so
+    // this happens at a predictable time.
+    [self _retainIconInDatabase:NO];
+    [super finalize];
 }
 
 - (id)copyWithZone:(NSZone *)zone

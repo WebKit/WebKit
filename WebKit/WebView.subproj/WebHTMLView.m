@@ -27,6 +27,7 @@
 #import <WebKit/WebNetscapePluginEmbeddedView.h>
 #import <WebKit/WebNSEventExtras.h>
 #import <WebKit/WebNSImageExtras.h>
+#import <WebKit/WebNSObjectExtras.h>
 #import <WebKit/WebNSPasteboardExtras.h>
 #import <WebKit/WebNSPrintOperationExtras.h>
 #import <WebKit/WebNSURLExtras.h>
@@ -138,8 +139,6 @@ static WebElementOrTextFilter *elementOrTextFilterInstance = nil;
 {
     ASSERT(autoscrollTimer == nil);
     ASSERT(autoscrollTriggerEvent == nil);
-    
-    [pluginController destroyAllPlugins];
     
     [mouseDownEvent release];
     [draggingImageURL release];
@@ -1120,9 +1119,20 @@ static WebHTMLView *lastHitView = nil;
     [self _clearLastHitViewIfSelf];
     [self _reset];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [_private->pluginController destroyAllPlugins];
     [_private release];
     _private = nil;
     [super dealloc];
+}
+
+- (void)finalize
+{
+    [self _clearLastHitViewIfSelf];
+    [self _reset];
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [_private->pluginController destroyAllPlugins];
+    _private = nil;
+    [super finalize];
 }
 
 - (IBAction)takeFindStringFromSelection:(id)sender

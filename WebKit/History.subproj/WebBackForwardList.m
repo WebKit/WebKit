@@ -6,6 +6,7 @@
 #import <WebKit/WebBackForwardList.h>
 #import <WebKit/WebHistoryItemPrivate.h>
 #import <WebKit/WebKitLogging.h>
+#import <WebKit/WebNSObjectExtras.h>
 #import <WebKit/WebPreferencesPrivate.h>
 #import <WebKit/WebKitSystemBits.h>
 
@@ -52,13 +53,28 @@
 
 - (void)dealloc
 {
+    unsigned count = [_private->entries count];
     unsigned i;
-    for (i = 0; i < [_private->entries count]; i++){
+    for (i = 0; i < count; i++){
         WebHistoryItem *item = [_private->entries objectAtIndex: i];
         [item setHasPageCache: NO]; 
     }
     [_private release];
     [super dealloc];
+}
+
+- (void)finalize
+{
+    // FIXME: This code is incorrect.
+    // Instead, change the design so that the list is already empty when released,
+    // remove the setHasPageCache: code from dealloc, and remove this finalize method.
+    unsigned count = [_private->entries count];
+    unsigned i;
+    for (i = 0; i < count; i++){
+        WebHistoryItem *item = [_private->entries objectAtIndex: i];
+        [item setHasPageCache: NO]; 
+    }
+    [super finalize];
 }
 
 - (void)addItem:(WebHistoryItem *)entry;

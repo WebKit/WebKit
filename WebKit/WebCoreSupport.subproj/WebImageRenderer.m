@@ -3,12 +3,13 @@
 	Copyright (c) 2002, 2003, Apple, Inc. All rights reserved.
 */
 
-#import <WebKit/WebAssertions.h>
 #import <WebKit/WebImageRenderer.h>
+
+#import <WebKit/WebAssertions.h>
 #import <WebKit/WebImageRendererFactory.h>
+#import <WebKit/WebNSObjectExtras.h>
 
 #import <WebCore/WebCoreImageRenderer.h>
-#import <WebKit/WebAssertions.h>
 
 #import <CoreGraphics/CGContextGState.h>
 
@@ -66,57 +67,68 @@ extern NSString *NSImageLoopCount;
 	_bounds     = b;
 	_isFlipped  = YES;
         if (context)
-            _cgsContext = (CGContextRef)CFRetain(context);
+            _cgsContext = CGContextRetain(context);
     }
     
     return self;
 }
 
-- (void)dealloc {
-    
-    // done with focus stack
-    //
-    [_focusStack release]; _focusStack = nil;
-    
-    // done with context we own
-    //
-    CGContextRelease(_cgsContext); _cgsContext = NULL;
-    
+- (void)dealloc
+{
+    [_focusStack release];
+    if (_cgsContext) {
+        CGContextRelease(_cgsContext);
+    }
     [super dealloc];
 }
 
-- (void)saveGraphicsState {
+- (void)finalize
+{
+    if (_cgsContext) {
+        CGContextRelease(_cgsContext);
+    }
+    [super dealloc];
+}
+
+- (void)saveGraphicsState
+{
     if (_cgsContext) {
         CGContextSaveGState(_cgsContext);
     }
 }
 
-- (void)restoreGraphicsState {
+- (void)restoreGraphicsState
+{
     if (_cgsContext) {
         CGContextRestoreGState(_cgsContext);
     }
 }
 
-- (BOOL)isDrawingToScreen {
+- (BOOL)isDrawingToScreen
+{
     return NO;
 }
 
-- (void *)focusStack {
+- (void *)focusStack
+{
     if (!_focusStack) _focusStack = [[NSFocusStack allocWithZone:NULL] init];
     return _focusStack;
 }
 
-- (void)setFocusStack:(void *)stack {
+- (void)setFocusStack:(void *)stack
+{
     id oldstack = _focusStack;
     _focusStack = [(id)stack retain];
     [oldstack release];
 }
 
-- (NSRect)bounds {
+- (NSRect)bounds
+{
     return _bounds;
 }
 
-- (BOOL)isFlipped {
+- (BOOL)isFlipped
+{
     return _isFlipped;
 }
 
@@ -369,13 +381,24 @@ static NSMutableSet *activeImageRenderers;
     [originalData release];
     
     if (context) {
-        CFRelease (context);
-        context = 0;
+        CFRelease(context);
     }
-    
+
     [_PDFDoc release];
-    
+
     [super dealloc];
+}
+
+- (void)finalize
+{
+    ASSERT(frameTimer == nil);
+    ASSERT(frameView == nil);
+
+    if (context) {
+        CFRelease(context);
+    }
+
+    [super finalize];
 }
 
 - (id)firstRepProperty:(NSString *)propertyName
@@ -651,11 +674,11 @@ static NSMutableSet *activeImageRenderers;
 {
     compositeOperator = operator;
     
-    if (context != aContext) {
-        if (context)
-            CFRelease (context);
+    if (aContext != context) {
         if (aContext)
-            CFRetain (aContext);
+            CFRetain(aContext);
+        if (context)
+            CFRelease(context);
         context = aContext;
     }
         
@@ -806,6 +829,12 @@ static void ReleasePDFDocumentData(void *info, const void *data, size_t size) {
 {
     if (_document != NULL) CGPDFDocumentRelease(_document);
     [super dealloc];
+}
+
+- (void)finalize
+{
+    if (_document != NULL) CGPDFDocumentRelease(_document);
+    [super finalize];
 }
 
 - (CGPDFDocumentRef) documentRef

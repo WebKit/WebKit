@@ -122,5 +122,9 @@ static void registerErrors()
 
     [NSError _web_addErrorsWithCodesAndDescriptions:dict inDomain:WebKitErrorDomain];
 
+#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_3
     [pool release];
+#else
+    [pool drain];
+#endif
 }

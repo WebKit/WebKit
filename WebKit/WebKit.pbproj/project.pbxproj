@@ -355,6 +355,7 @@
 				51863EDA065417DA00E9E8DD,
 				51863EFD065419EB00E9E8DD,
 				93185DB606679F42005D5E7E,
+				93D1FE14067EB10B009CE68A,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -552,6 +553,7 @@
 				BE887C00056D3A6E009BB3E7,
 				8398847A03426FB000BC5F5E,
 				8398847B03426FB000BC5F5E,
+				93D1FE13067EB10B009CE68A,
 				ED2B2474033A2DA800C1A526,
 				ED2B2475033A2DA800C1A526,
 				EDD1A5C605C83987008E3150,
@@ -2992,6 +2994,20 @@
 		};
 		93AEB180032C1735008635CE = {
 			fileRef = 93AEB17E032C1735008635CE;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		93D1FE13067EB10B009CE68A = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = WebNSObjectExtras.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		93D1FE14067EB10B009CE68A = {
+			fileRef = 93D1FE13067EB10B009CE68A;
 			isa = PBXBuildFile;
 			settings = {
 			};

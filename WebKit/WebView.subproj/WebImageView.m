@@ -12,6 +12,7 @@
 #import <WebKit/WebImageRenderer.h>
 #import <WebKit/WebImageRendererFactory.h>
 #import <WebKit/WebImageRepresentation.h>
+#import <WebKit/WebNSObjectExtras.h>
 #import <WebKit/WebNSPasteboardExtras.h>
 #import <WebKit/WebNSViewExtras.h>
 #import <WebKit/WebViewPrivate.h>
@@ -47,6 +48,12 @@
     [mouseDownEvent release];
     
     [super dealloc];
+}
+
+- (void)finalize
+{
+    [[rep image] stopAnimation];
+    [super finalize];
 }
 
 - (BOOL)haveCompleteImage

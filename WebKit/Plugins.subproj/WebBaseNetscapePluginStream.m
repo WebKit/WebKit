@@ -4,9 +4,11 @@
 */
 
 #import <WebKit/WebBaseNetscapePluginStream.h>
+
 #import <WebKit/WebBaseNetscapePluginView.h>
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebNetscapePluginPackage.h>
+#import <WebKit/WebNSObjectExtras.h>
 #import <WebKit/WebNSURLExtras.h>
 
 #import <Foundation/NSURLResponse.h>
@@ -30,12 +32,28 @@
     }
 
     [URL release];
-    free((void *)stream.url);
-    free(path);
     [plugin release];
     [deliveryData release];
     
+    free((void *)stream.url);
+    free(path);
+
     [super dealloc];
+}
+
+- (void)finalize
+{
+    ASSERT(stream.ndata == nil);
+
+    // FIXME: Bad for all the reasons mentioned above, but even worse for GC.
+    if (path) {
+        unlink(path);
+    }
+
+    free((void *)stream.url);
+    free(path);
+
+    [super finalize];
 }
 
 - (uint16)transferMode

@@ -1,3 +1,92 @@
+2004-06-14  Darin Adler  <darin@apple.com>
+
+        Reviewed by me, code changes by Patrick Beard.
+
+        - fixed <rdar://problem/3671507>: (WebKit should adopt GC changes and compile with GC enabled)
+
+        * WebKit.pbproj/project.pbxproj: Added WebNSObjectExtras.h.
+        * Misc.subproj/WebNSObjectExtras.h: Added. Includes WebMakeCollectable, a cover for
+        CFMakeCollectable that returns type id, for less casting, and works on Panther as well
+        as Tiger. Also declares finalize in NSObject so we can call super without warnings on Panther.
+
+        * Carbon.subproj/CarbonWindowAdapter.m: Fixed header and includes a bit.
+        (-[CarbonWindowAdapter finalize]): Added.
+        * History.subproj/WebBackForwardList.m:
+        (-[WebBackForwardList dealloc]): Got count outside loop.
+        (-[WebBackForwardList finalize]): Added.
+        * History.subproj/WebHistoryItem.m:
+        (-[WebHistoryItem finalize]): Added.
+        * Misc.subproj/WebFileDatabase.m:
+        (-[WebFileDatabase _createLRUList:]): Use release on Panther, drain on Tiger.
+        (+[WebFileDatabase _syncLoop:]): Ditto.
+        (-[WebFileDatabase dealloc]): Removed, since we never deallocate objects of this class, and
+        the method was untested.
+        * Misc.subproj/WebKitErrors.m: (registerErrors): Use release on Panther, drain on Tiger.
+        * Misc.subproj/WebKitNSStringExtras.m: (+[NSString _web_encodingForResource:]): Use
+        WebMakeCollectable. Also fixed indenting.
+        * Misc.subproj/WebNSURLExtras.m:
+        (+[NSURL _web_URLWithData:relativeToURL:]): Use WebMakeCollectable.
+        (-[NSURL _web_URLWithLowercasedScheme]): Use WebMakeCollectable.
+        (-[NSString _web_mapHostNameWithRange:encode:makeString:]): Change code to use CFRelease
+        to balance CFURLCreateStringByReplacingPercentEscapes CFString creation, not release.
+        * Plugins.subproj/WebBaseNetscapePluginStream.m:
+        (-[WebBaseNetscapePluginStream finalize]): Added.
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView freeAttributeKeysAndValues]): Added. Shared code for dealloc and finalize.
+        (-[WebBaseNetscapePluginView dealloc]): Call freeAttributeKeysAndValues.
+        (-[WebBaseNetscapePluginView finalize]): Added.
+        (-[WebBaseNetscapePluginView requestWithURLCString:]): Changed so that CFString objects are
+        released with CFRelease, not release.
+        (-[WebBaseNetscapePluginView loadRequest:inTarget:withNotifyData:]): Fixed storage leak in
+        error case. Made sure CFString object is released with CFRelease, not release.
+        (-[WebBaseNetscapePluginView _postURLNotify:target:len:buf:file:notifyData:allowHeaders:]):
+        Another CFString that needed to a CFRelease, not a release.
+        (-[WebBaseNetscapePluginView status:]): Ditto.
+        * Plugins.subproj/WebBasePluginPackage.m:
+        (-[WebBasePluginPackage pathByResolvingSymlinksAndAliasesInPath:]): Changed code to
+        CFRelease a CFURLRef, instead of release.
+        (-[WebBasePluginPackage finalize]): Added.
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge fini]): Added. Shared code for dealloc and finalize.
+        (-[WebBridge dealloc]): Call fini.
+        (-[WebBridge finalize]): Added.
+        * WebCoreSupport.subproj/WebGlyphBuffer.m:
+        (-[WebGlyphBuffer finalize]): Added.
+        * WebCoreSupport.subproj/WebImageRenderer.m:
+        (-[WebImageContext initWithBounds:context:]): Use CGContextRetain to avoid cast.
+        (-[WebImageContext dealloc]): Tweaked.
+        (-[WebImageContext finalize]): Added.
+        (-[WebImageRenderer finalize]): Added.
+        (-[WebPDFDocument finalize]): Added.
+        * WebView.subproj/WebDataProtocol.m:
+        (+[NSURL _web_uniqueWebDataURL]): Changed so that CFString object is released with
+        CFRelease, not release.
+        * WebView.subproj/WebDataSource.m:
+        (-[WebDataSourcePrivate dealloc]): Took non-release work out of here.
+        (-[WebDataSource dealloc]): Moved it here.
+        (-[WebDataSource finalize]): Added.
+        (-[WebDataSource isLoading]): Use release on Panther, drain on Tiger.
+        * WebView.subproj/WebFrame.m:
+        (-[WebFramePrivate dealloc]): Took non-release work out of here.
+        (-[WebFrame dealloc]): Moved it here.
+        (-[WebFrame finalize]): Added.
+        * WebView.subproj/WebFrameView.m:
+        (-[WebFrameView finalize]): Added.
+        * WebView.subproj/WebHTMLRepresentation.m:
+        (-[WebHTMLRepresentation finalize]): Added.
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLViewPrivate dealloc]): Moved non-release work out of here.
+        (-[WebHTMLView dealloc]): Moved it here.
+        (-[WebHTMLView finalize]): Added.
+        * WebView.subproj/WebImageView.m:
+        (-[WebImageView finalize]): Added.
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient finalize]): Added.
+        * WebView.subproj/WebTextView.m:
+        (-[WebTextView finalize]): Added.
+        * WebView.subproj/WebView.m:
+        (-[WebView finalize]): Added.
+
 2004-06-14  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Darin

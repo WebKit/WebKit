@@ -27,6 +27,7 @@
 #import <WebKit/WebKitErrors.h>
 #import <WebKit/WebKitErrorsPrivate.h>
 #import <WebKit/WebKitLogging.h>
+#import <WebKit/WebNSObjectExtras.h>
 #import <WebKit/WebNSURLExtras.h>
 #import <WebKit/WebPolicyDelegatePrivate.h>
 #import <WebKit/WebViewPrivate.h>
@@ -56,6 +57,12 @@
     [proxy release];
     
     [super dealloc];
+}
+
+- (void)finalize
+{
+    [proxy setDelegate:nil];
+    [super finalize];
 }
 
 - (void)receivedError:(NSError *)error
