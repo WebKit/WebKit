@@ -14,6 +14,7 @@
 #import <WebKit/WebHistoryItem.h>
 #import <WebKit/WebHTMLRepresentationPrivate.h>
 #import <WebKit/WebHTMLViewPrivate.h>
+#import <WebKit/WebKitLogging.h>
 #import <WebKit/WebKitStatisticsPrivate.h>
 #import <WebKit/WebLocationChangeDelegate.h>
 #import <WebKit/WebNetscapePluginEmbeddedView.h>
@@ -429,12 +430,14 @@
                                       baseURL:(NSURL *)baseURL
 {
     WebPluginController *pluginController = [frame pluginController];
-
+    
     NSDictionary *arguments = [NSDictionary dictionaryWithObjectsAndKeys:
         baseURL, WebPluginBaseURLKey,
         attributes, WebPluginAttributesKey,
         pluginController, WebPluginContainerKey, nil];
 
+    LOG(Plugins, "arguments:\n%s", [[arguments description] lossyCString]);
+    
     NSView<WebPlugin> *view = [[pluginPackage viewFactory] pluginViewWithArguments:arguments];
     [pluginController addPluginView:view];
 
@@ -483,7 +486,7 @@
                                                                      URL:URL
                                                                  baseURL:baseURL
                                                                 MIMEType:MIMEType
-                                                               attributes:attributes] autorelease];
+                                                              attributes:attributes] autorelease];
         }else{
             [NSException raise:NSInternalInconsistencyException
                         format:@"Plugin package class not recognized"];
@@ -507,8 +510,13 @@
     }
 
     if([pluginPackage isKindOfClass:[WebPluginPackage class]]){
+        NSMutableDictionary *theAttributes = [NSMutableDictionary dictionary];
+        [theAttributes addEntriesFromDictionary:attributes];
+        [theAttributes setObject:[NSString stringWithFormat:@"%d", (int)theFrame.size.width] forKey:@"width"];
+        [theAttributes setObject:[NSString stringWithFormat:@"%d", (int)theFrame.size.height] forKey:@"height"];
+        
         return [self pluginViewWithPackage:(WebPluginPackage *)pluginPackage
-                                attributes:attributes
+                                attributes:theAttributes
                                    baseURL:baseURL];
     }
     else if([pluginPackage isKindOfClass:[WebNetscapePluginPackage class]]){

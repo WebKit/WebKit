@@ -1,5 +1,18 @@
 2002-10-24  Chris Blumenberg  <cblu@apple.com>
 
+	New Java plug-in works! Much faster to load and no spinny cursor! Unfortunately, it very unstable.
+
+        * Plugins.subproj/WebPluginController.m: cleaned-up the logging messages.
+        (-[WebPluginController addPluginView:]):
+        (-[WebPluginController didAddPluginView:]):
+        (-[WebPluginController startAllPlugins]):
+        (-[WebPluginController stopAllPlugins]):
+        (-[WebPluginController destroyAllPlugins]):
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge viewForJavaAppletWithFrame:attributes:baseURL:]): make height and width an attribute.
+
+2002-10-24  Chris Blumenberg  <cblu@apple.com>
+
 	Some clean-up and bug fixes for new plug-in support.
 
         * Plugins.subproj/WebPluginController.m:

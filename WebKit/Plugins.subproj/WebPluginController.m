@@ -48,7 +48,7 @@
 
 - (void)addPluginView:(NSView <WebPlugin> *)view
 {
-    LOG(Plugins, "addPluginView: %s: pluginInitialize", [[view className] lossyCString]);
+    LOG(Plugins, "pluginInitialize: %s", [[view className] lossyCString]);
     
     [views addObject:view];
     [view pluginInitialize];
@@ -56,28 +56,28 @@
 
 - (void)didAddPluginView:(NSView <WebPlugin> *)view
 {
-    LOG(Plugins, "didAddPluginView: %s: pluginStart", [[view className] lossyCString]);
+    LOG(Plugins, "pluginStart: %s", [[view className] lossyCString]);
     
     [view pluginStart];
 }
 
 - (void)startAllPlugins
 {
-    LOG(Plugins, "startAllPlugins: pluginStart");
+    LOG(Plugins, "pluginStart");
     
     [views makeObjectsPerformSelector:@selector(pluginStart)];
 }
 
 - (void)stopAllPlugins
 {
-    LOG(Plugins, "stopAllPlugins: pluginStop");
+    LOG(Plugins, "pluginStop");
     
     [views makeObjectsPerformSelector:@selector(pluginStop)];
 }
 
 - (void)destroyAllPlugins
 {
-    LOG(Plugins, "destroyAllPlugins: pluginDestroy");
+    LOG(Plugins, "pluginDestroy");
     
     [self stopAllPlugins];
     [views makeObjectsPerformSelector:@selector(pluginDestroy)];
