@@ -1,3 +1,21 @@
+2005-03-13  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken and Maciej.
+
+        - fixed <rdar://problem/4049040> REGRESSION (403-405): security check prevents user stylesheet from loading (Dictionary.app doesn't work at all!)
+
+        * Plugins.subproj/WebNetscapePluginStream.m: (-[WebNetscapePluginStream initWithRequest:pluginPointer:notifyData:sendNotification:]):
+        Allow plug-in subresource streams to load with any URL, ignoring the "canLoadURL" method's restriction (only
+        file URLs can load other file URLs), which now applies only to main resources, like web pages in frames or
+        object tags and plug-in main resources.
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge startLoadingResource:withURL:customHeaders:]): Allow subresources to load with any URL, as above.
+        This allows things like images, stylesheets, and JavaScript to be loaded without the "canLoadURL" method's
+        restriction.
+        (-[WebBridge startLoadingResource:withURL:customHeaders:postData:]): Ditto.
+        (-[WebBridge syncLoadResourceWithURL:customHeaders:postData:finalURL:responseHeaders:statusCode:]): Ditto.
+
 2005-03-10  Richard Williamson   <rjw@apple.com>
 
 	Fixed <rdar://problem/4040321> Exception: Someone's trying to encode a WebDataRequestParameters instance 

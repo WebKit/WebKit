@@ -422,9 +422,10 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 	return nil;
     }
 
+    // Since this is a subresource, we can load any URL (we ignore the return value).
+    // But we still want to know whether we should hide the referrer or not, so we call the canLoadURL method.
     BOOL hideReferrer;
-    if (![self canLoadURL:URL fromReferrer:[self referrer] hideReferrer:&hideReferrer])
-        return nil;
+    [self canLoadURL:URL fromReferrer:[self referrer] hideReferrer:&hideReferrer];
 
     return [WebSubresourceClient startLoadingResource:resourceLoader
                                               withURL:URL
@@ -441,9 +442,10 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 	return nil;
     }
 
+    // Since this is a subresource, we can load any URL (we ignore the return value).
+    // But we still want to know whether we should hide the referrer or not, so we call the canLoadURL method.
     BOOL hideReferrer;
-    if (![self canLoadURL:URL fromReferrer:[self referrer] hideReferrer:&hideReferrer])
-        return nil;
+    [self canLoadURL:URL fromReferrer:[self referrer] hideReferrer:&hideReferrer];
 
     return [WebSubresourceClient startLoadingResource:resourceLoader
                                               withURL:URL
@@ -472,9 +474,10 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 
 - (NSData *)syncLoadResourceWithURL:(NSURL *)URL customHeaders:(NSDictionary *)requestHeaders postData:(NSArray *)postData finalURL:(NSURL **)finalURL responseHeaders:(NSDictionary **)responseHeaderDict statusCode:(int *)statusCode
 {
+    // Since this is a subresource, we can load any URL (we ignore the return value).
+    // But we still want to know whether we should hide the referrer or not, so we call the canLoadURL method.
     BOOL hideReferrer;
-    if (![self canLoadURL:URL fromReferrer:[self referrer] hideReferrer:&hideReferrer])
-        return nil;
+    [self canLoadURL:URL fromReferrer:[self referrer] hideReferrer:&hideReferrer];
 
     NSMutableURLRequest *newRequest = [[NSMutableURLRequest alloc] initWithURL:URL];
 
