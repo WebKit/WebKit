@@ -1,3 +1,13 @@
+2003-10-01  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	- fixed 3441466 - REGRESSION: http://www.meyerweb.com/eric/css/edge/complexspiral/glassy.html broken on scroll
+	
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _setState:]): Don't turn on scroll-blitting here when the page is done...
+        (-[WebFrame _transitionToCommitted:]): Instead do it here, when the page is committed.
+
 2003-10-02  Darin Adler  <darin@apple.com>
 
         Reviewed by Ken.

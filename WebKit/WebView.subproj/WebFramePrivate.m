@@ -608,6 +608,8 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
     switch ([self _state]) {
         case WebFrameStateProvisional:
         {
+	    [[[[self frameView] _scrollView] contentView] setCopiesOnScroll:YES];
+
             WebFrameLoadType loadType = [self _loadType];
             if (loadType == WebFrameLoadTypeForward ||
                 loadType == WebFrameLoadTypeBack ||
@@ -871,9 +873,6 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     if (_private->state == WebFrameStateComplete) {
         NSScrollView *sv = [[self frameView] _scrollView];
         [sv setDrawsBackground:YES];
-        // FIXME: This overrides the setCopiesOnScroll setting done by
-        // WebCore based on whether the page's contents are dynamic or not.
-        [[sv contentView] setCopiesOnScroll:YES];
         NSTimer *timer = _private->scheduledLayoutTimer;
         _private->scheduledLayoutTimer = nil;
         [_private setPreviousItem:nil];
