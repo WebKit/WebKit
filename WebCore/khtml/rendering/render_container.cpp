@@ -96,6 +96,14 @@ void RenderContainer::addChild(RenderObject *newChild, RenderObject *beforeChild
             //kdDebug( 6040 ) << "adding cell" << endl;
             if ( !isTableRow() )
                 needsTable = true;
+#ifdef APPLE_CHANGES
+            // I'm not 100% sure this is the best way to fix this, but without this
+            // change we recurse infinitely when trying to render the CSS2 test page:
+            // http://www.bath.ac.uk/%7Epy8ieh/internet/eviltests/htmlbodyheadrendering2.html.
+            // See Radar 2925291.
+            if ( isTableCell() && !firstChild() && !newChild->isTableCell() )
+                needsTable = false;
+#endif
             break;
         case NONE:
             kdDebug( 6000 ) << "error in RenderObject::addChild()!!!!" << endl;
