@@ -1053,7 +1053,7 @@ void HTMLButtonElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
         break;
     case ATTR_VALUE:
         m_value = attr->value();
-        m_currValue = m_value.string();
+        m_currValue = m_value;
         break;
     case ATTR_ACCESSKEY:
         break;
@@ -1976,9 +1976,29 @@ void HTMLLabelElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
 ElementImpl *HTMLLabelElementImpl::formElement()
 {
     DOMString formElementId = getAttribute(ATTR_FOR);
-    if (formElementId.isNull() || formElementId.isEmpty())
+    if (formElementId.isNull()) {
+        // Search children of the label element for a form element.
+        NodeImpl *node = this;
+        while ((node = node->traverseNextNode(this))) {
+            if (node->isHTMLElement()) {
+                HTMLElementImpl *element = static_cast<HTMLElementImpl *>(node);
+                if (element->isGenericFormElement()) {
+                    return element;
+                }
+            }
+        }
+        return 0;
+    }
+    if (formElementId.isEmpty())
         return 0;
     return getDocument()->getElementById(formElementId);
+}
+
+void HTMLLabelElementImpl::accessKeyAction()
+{
+    ElementImpl *element = formElement();
+    if (element)
+        element->accessKeyAction();
 }
 
 // -------------------------------------------------------------------------

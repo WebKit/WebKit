@@ -231,7 +231,7 @@ public:
     
 protected:
     DOMString m_value;
-    QString   m_currValue;
+    DOMString m_currValue;
     typeEnum  m_type : 2;
     bool      m_dirty : 1;
     bool      m_activeSubmit : 1;
@@ -386,10 +386,13 @@ public:
 
     virtual void parseHTMLAttribute(HTMLAttributeImpl *attr);
 
+    virtual void accessKeyAction();
+
     /**
      * the form element this label is associated to.
      */
     ElementImpl *formElement();
+
  private:
     DOMString m_formElementID;
 };

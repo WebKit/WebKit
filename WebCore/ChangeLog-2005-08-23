@@ -1,5 +1,21 @@
 2004-08-30  Darin Adler  <darin@apple.com>
 
+        Reviewed by Ken.
+
+        - fixed <rdar://problem/3779122> No accesskey support on LABEL element
+
+        * khtml/html/html_formimpl.h: Change type of m_currValue to DOMString. Should have been done
+        as part of my form data check-in, but harmless to do now. Add accessKeyAction function for
+        HTMLLabelElementImpl.
+        * khtml/html/html_formimpl.cpp:
+        (DOM::HTMLButtonElementImpl::parseHTMLAttribute): Remove conversion of DOMString to QString
+        for m_currValue.
+        (DOM::HTMLLabelElementImpl::formElement): If there's no "for" attribute, search children for
+        the first control.
+        (DOM::HTMLLabelElementImpl::accessKeyAction): Forward the accesskey action to the formElement.
+
+2004-08-30  Darin Adler  <darin@apple.com>
+
         Reviewed by Dave.
 
         - fixed <rdar://problem/3303968> final newline character omitted from <textarea> when parsing a new page
