@@ -175,7 +175,7 @@ static NSString *_linkTextFromSpec(NSString *spec)
 
 @implementation WebBookmarkImporter
 
--(id)initWithPath:(NSString *)path
+- (id)initWithPath:(NSString *)path
 {
     self = [super init];
     if (!self) {
@@ -185,6 +185,7 @@ static NSString *_linkTextFromSpec(NSString *spec)
     NSData *data = [[NSData alloc] initWithContentsOfFile:path];
     if (!data) {
         error = [[WebError alloc] initWithErrorCode:WebKitErrorCannotOpenFile inDomain:WebErrorDomainWebKit failingURL:path];
+        return self;
     }
 
     NSString *string = [[NSString alloc] initWithData:data encoding:NSISOLatin1StringEncoding];
