@@ -10,6 +10,7 @@
 
 #import <WebFoundation/WebError.h>
 #import <WebFoundation/WebResourceHandle.h>
+#import <WebFoundation/WebResourceHandlePrivate.h>
 #import <WebFoundation/WebResourceRequest.h>
 #import <WebFoundation/WebResourceResponse.h>
 
@@ -41,6 +42,7 @@
     [loader release];
     [dataSource release];
     [handle release];
+    [response release];
     
     [super dealloc];
 }
@@ -75,6 +77,7 @@
     [request setResponseCachePolicy:[[source request] responseCachePolicy]];
     [request setReferrer:referrer];
     [request setCookiePolicyBaseURL:[[[[source controller] mainFrame] dataSource] URL]];
+    [request setUserAgent:[[source controller] userAgentForURL:URL]];
     
     if (![WebResourceHandle canInitWithRequest:request]) {
         [request release];
@@ -105,15 +108,41 @@
         partialProgress:[WebLoadProgress progressWithResourceHandle:handle] fromDataSource:dataSource];
 }
 
-- (NSString *)handleWillUseUserAgent:(WebResourceHandle *)h forURL:(NSURL *)URL
+-(void)handle:(WebResourceHandle *)h willSendRequest:(WebResourceRequest *)request
 {
-    return [[dataSource controller] userAgentForURL:URL];
+    ASSERT(handle == h);
+
+    // FIXME: We do want to tell the client about redirects.
+    // But the current API doesn't give any way to tell redirects on
+    // the main page from redirects on subresources, so for now we are
+    // just disabling this. Before, we had code that tried to send the
+    // redirect, but sent it to the wrong object.
+    //[[dataSource _locationChangeHandler] serverRedirectTo:toURL forDataSource:dataSource];
+
+    // FIXME: Need to make sure client sets cookie policy base URL
+    // properly on redirect when we have the new redirect
+    // request-adjusting API
+
+    WebController *controller = [dataSource controller];
+    NSURL *URL = [request URL];
+
+    [request setUserAgent:[controller userAgentForURL:URL]];
+
+    [self didStopLoading];
+    [self didStartLoadingWithURL:URL];
+}
+
+-(void)handle:(WebResourceHandle *)handle didReceiveResponse:(WebResourceResponse *)theResponse
+{
+    [theResponse retain];
+    [response release];
+    response = theResponse;
 }
 
 - (void)handle:(WebResourceHandle *)h didReceiveData:(NSData *)data
 {
     ASSERT(handle == h);
-    ASSERT([currentURL isEqual:[handle URL]]);
+    ASSERT([currentURL isEqual:[[handle _request] canonicalURL]]);
 
     [self receivedProgressWithComplete:NO];
     [loader addData:data];
@@ -122,8 +151,8 @@
 - (void)handleDidFinishLoading:(WebResourceHandle *)h
 {
     ASSERT(handle == h);
-    ASSERT([currentURL isEqual:[handle URL]]);
-    ASSERT([[handle response] statusCode] == WebResourceHandleStatusLoadComplete);
+    ASSERT([currentURL isEqual:[[handle _request] canonicalURL]]);
+    ASSERT([response statusCode] == WebResourceHandleStatusLoadComplete);
 
     // Calling _removeSubresourceClient will likely result in a call to release, so we must retain.
     [self retain];
@@ -132,7 +161,7 @@
     
     [dataSource _removeSubresourceClient:self];
     
-    WebError *nonTerminalError = [[handle response] error];
+    WebError *nonTerminalError = [response error];
     if (nonTerminalError) {
         [self receivedError:nonTerminalError];
     }
@@ -150,7 +179,6 @@
 - (void)handle:(WebResourceHandle *)h didFailLoadingWithError:(WebError *)error
 {
     ASSERT(handle == h);
-    ASSERT([currentURL isEqual:[handle URL]]);
     
     // Calling _removeSubresourceClient will likely result in a call to release, so we must retain.
     [self retain];
@@ -167,27 +195,6 @@
     handle = nil;
     
     [self release];
-}
-
-- (void)handleDidRedirect:(WebResourceHandle *)h toURL:(NSURL *)URL
-{
-    ASSERT(handle == h);
-    ASSERT(currentURL != nil);
-    ASSERT([URL isEqual:[handle URL]]);
-
-    // FIXME: We do want to tell the client about redirects.
-    // But the current API doesn't give any way to tell redirects on
-    // the main page from redirects on subresources, so for now we are
-    // just disabling this. Before, we had code that tried to send the
-    // redirect, but sent it to the wrong object.
-    //[[dataSource _locationChangeHandler] serverRedirectTo:toURL forDataSource:dataSource];
-
-    // FIXME: Need to make sure client sets cookie policy base URL
-    // properly on redirect when we have the new redirect
-    // request-adjusting API
-
-    [self didStopLoading];
-    [self didStartLoadingWithURL:URL];
 }
 
 - (void)cancel

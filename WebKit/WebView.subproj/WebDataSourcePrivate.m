@@ -195,7 +195,7 @@
     }
     
     if (_private->mainHandle) {
-        [_private->mainClient didStartLoadingWithURL:[_private->mainHandle URL]];
+        [_private->mainClient didStartLoadingWithURL:[_private->request URL]];
     }
 }
 
@@ -299,6 +299,16 @@
     _private->finalURL = URL;
 
     [[_private->controller locationChangeDelegate] serverRedirectTo:URL forDataSource:self];
+}
+
+- (void)_setRequest:(WebResourceRequest *)request
+{
+    if (_private->request != request) {
+        [request retain];
+        [_private->request release];
+        _private->request = request;
+        [self _setURL:[request URL]];
+    }
 }
 
 - (void) _setContentPolicy:(WebContentPolicy *)policy

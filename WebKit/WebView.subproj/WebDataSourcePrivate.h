@@ -31,6 +31,7 @@
     
     // The original URL as requested during initialization.
     NSURL *inputURL;
+    WebResourceRequest *originalRequest;
     WebResourceRequest *request;
 
     // The original URL we may have been redirected to.
@@ -98,6 +99,7 @@
 - (double)_loadingStartedTime;
 - (void)_setTitle:(NSString *)title;
 - (void)_setURL:(NSURL *)URL;
+- (void)_setRequest:(WebResourceRequest *)request;
 - (void)_setContentPolicy:(WebContentPolicy *)policy;
 - (void)_setContentType:(NSString *)type;
 - (void)_setEncoding:(NSString *)encoding;

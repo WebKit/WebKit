@@ -1,3 +1,48 @@
+2002-10-01  Ken Kocienda  <kocienda@apple.com>
+
+	Many changes to coincide with API work in WebFoundation. Most of the modifications
+	here have to do with changes for the new callback scheme.
+
+        * Misc.subproj/WebIconLoader.m:
+        (-[WebIconLoader handleDidFinishLoading:])
+        (-[WebIconLoader handle:willSendRequest:]): New method. A no-op here.
+        (-[WebIconLoader handle:didReceiveResponse:]): Ditto.
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView stop]): Fix for Deployment build breakage. 
+        * Plugins.subproj/WebPluginStream.h: Add response ivar.
+        * Plugins.subproj/WebPluginStream.m:
+        (-[WebNetscapePluginStream startLoad]): Tweak method name for new API.
+        (-[WebNetscapePluginStream receivedData:withHandle:]):
+        (-[WebNetscapePluginStream handle:willSendRequest:]): New method. Replaces old redirect callback.
+        (-[WebNetscapePluginStream handle:didReceiveResponse:]): New method. Set the response ivar.
+        * WebCoreSupport.subproj/WebSubresourceClient.h: Add response ivar.
+        * WebCoreSupport.subproj/WebSubresourceClient.m:
+        (-[WebSubresourceClient dealloc]): Release response ivar.
+        (+[WebSubresourceClient startLoadingResource:withURL:referrer:forDataSource:]): Set the request user agent here.
+        (-[WebSubresourceClient handle:willSendRequest:]): New method. Handle like a redirect.
+        (-[WebSubresourceClient handle:didReceiveResponse:]): New method. Set the response ivar.
+        (-[WebSubresourceClient handle:didReceiveData:]): Tweaks for new WebFoundation API and method names.
+        (-[WebSubresourceClient handleDidFinishLoading:]): Ditto.
+        (-[WebSubresourceClient handle:didFailLoadingWithError:]): Ditto.
+        * WebView.subproj/WebControllerPrivate.m: 
+        (-[WebController _receivedError:forResourceHandle:partialProgress:fromDataSource:]): Ditto.
+        * WebView.subproj/WebDataSourcePrivate.h: Add _setRequest method.
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _startLoading]): Call didStartLoadingWithURL with request URL instead of handle URL.
+        (-[WebDataSource _setRequest:]): Add implementation.
+        * WebView.subproj/WebLoadProgress.m:
+        (-[WebLoadProgress initWithResourceHandle:]): Tweaks for new WebFoundation API and method names.
+        * WebView.subproj/WebMainResourceClient.h: Add response ivar.
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient initWithDataSource:]): Set user agent on request here.
+        (-[WebMainResourceClient dealloc]): Release response ivar.
+        (-[WebMainResourceClient didCancelWithHandle:]): Tweaks for new WebFoundation API and method names.
+        (-[WebMainResourceClient handleDidFinishLoading:]): Tweaks for new WebFoundation API and method names.
+        (-[WebMainResourceClient handle:willSendRequest:]): New method. Handle like a redirect.
+        (-[WebMainResourceClient handle:didReceiveResponse:]): New method. Set the response ivar.
+        (-[WebMainResourceClient handle:didReceiveData:]): Tweaks for new WebFoundation API and method names.
+        (-[WebMainResourceClient handle:didFailLoadingWithError:]): Ditto.
+
 
 2002-09-30  Chris Blumenberg  <cblu@apple.com>
 

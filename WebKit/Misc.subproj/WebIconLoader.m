@@ -94,11 +94,6 @@
     _private->handle = nil;
 }
 
-- (NSString *)handleWillUseUserAgent:(WebResourceHandle *)handle forURL:(NSURL *)URL
-{
-    return nil;
-}
-
 - (void)handleDidFinishLoading:(WebResourceHandle *)sender
 {
     NSImage *icon = [[NSImage alloc] initWithData:_private->resourceData];
@@ -107,6 +102,16 @@
         [_private->delegate iconLoader:self receivedPageIcon:icon];
         [icon release];
     }
+}
+
+-(void)handle:(WebResourceHandle *)handle willSendRequest:(WebResourceRequest *)request
+{
+    // no-op
+}
+
+-(void)handle:(WebResourceHandle *)handle didReceiveResponse:(WebResourceResponse *)theResponse
+{
+    // no-op
 }
 
 - (void)handle:(WebResourceHandle *)sender didReceiveData:(NSData *)data

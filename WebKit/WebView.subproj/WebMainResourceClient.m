@@ -22,6 +22,7 @@
 #import <WebFoundation/WebError.h>
 #import <WebFoundation/WebFileTypeMappings.h>
 #import <WebFoundation/WebResourceHandle.h>
+#import <WebFoundation/WebResourceHandlePrivate.h>
 #import <WebFoundation/WebResourceRequest.h>
 #import <WebFoundation/WebResourceResponse.h>
 #import <WebFoundation/WebCookieConstants.h>
@@ -38,6 +39,12 @@
         dataSource = [ds retain];
         resourceData = [[NSMutableData alloc] init];
         isFirstChunk = YES;
+        
+        // set the user agent for the request
+        // consult the data source's controller
+        WebController *controller = [dataSource controller];
+        WebResourceRequest *request = [dataSource request];
+        [request setUserAgent:[controller userAgentForURL:[request URL]]];
     }
 
     return self;
@@ -66,6 +73,7 @@
     [downloadProgressDelegate release];
     [resourceData release];
     [dataSource release];
+    [response release];
     
     [super dealloc];
 }
@@ -115,19 +123,13 @@
     }
 }
 
-- (NSString *)handleWillUseUserAgent:(WebResourceHandle *)handle forURL:(NSURL *)URL
-{
-    ASSERT([dataSource controller]);
-    return [[dataSource controller] userAgentForURL:URL];
-}
-
 - (void)didCancelWithHandle:(WebResourceHandle *)handle
 {
     if (currentURL == nil) {
         return;
     }
     
-    LOG(Loading, "URL = %@", [handle URL]);
+    LOG(Loading, "URL = %@", [[handle _request] URL]);
     
     // Calling receivedError will likely result in a call to release, so we must retain.
     [self retain];
@@ -155,10 +157,10 @@
 
 - (void)handleDidFinishLoading:(WebResourceHandle *)handle
 {
-    LOG(Loading, "URL = %@", [handle URL]);
+    LOG(Loading, "URL = %@", [[handle _request] URL]);
     
-    ASSERT([currentURL isEqual:[handle URL]]);
-    ASSERT([[handle response] statusCode] == WebResourceHandleStatusLoadComplete);
+    ASSERT([currentURL isEqual:[[handle _request] URL]]);
+    ASSERT([response statusCode] == WebResourceHandleStatusLoadComplete);
 
     // Calling receivedError will likely result in a call to release, so we must retain.
     [self retain];
@@ -175,7 +177,7 @@
     }
     
     // Either send a final error message or a final progress message.
-    WebError *nonTerminalError = [[handle response] error];
+    WebError *nonTerminalError = [response error];
     if (nonTerminalError) {
         [self receivedError:nonTerminalError forHandle:handle];
     } else {
@@ -196,16 +198,40 @@
     [self release];
 }
 
+-(void)handle:(WebResourceHandle *)handle willSendRequest:(WebResourceRequest *)request
+{
+    WebController *controller = [dataSource controller];
+    NSURL *URL = [request URL];
+
+    LOG(Redirect, "URL = %@", URL);
+
+    // FIXME: need to update main document URL here, or cookies set
+    // via redirects might not work in main document mode
+
+    [request setUserAgent:[controller userAgentForURL:URL]];
+    [dataSource _setRequest:request];
+
+    [self didStopLoading];
+    [self didStartLoadingWithURL:URL];
+}
+
+-(void)handle:(WebResourceHandle *)handle didReceiveResponse:(WebResourceResponse *)theResponse
+{
+    [theResponse retain];
+    [response release];
+    response = theResponse;
+}
+
 - (void)handle:(WebResourceHandle *)handle didReceiveData:(NSData *)data
 {
     WebController *controller = [dataSource controller];
-    NSString *contentType = [[handle response] contentType];
+    NSString *contentType = [response contentType];
     WebFrame *frame = [dataSource webFrame];
     WebError *downloadError = nil;
     
-    LOG(Loading, "URL = %@, data = %p, length %d", [handle URL], data, [data length]);
+    LOG(Loading, "URL = %@, data = %p, length %d", [[handle _request] URL], data, [data length]);
     
-    ASSERT([currentURL isEqual:[handle URL]]);
+    ASSERT([currentURL isEqual:[[handle _request] URL]]);
     
     // Check the mime type and ask the client for the content policy.
     if(isFirstChunk){
@@ -215,7 +241,7 @@
             contentType = @"text/html";
         
         [dataSource _setContentType:contentType];
-        [dataSource _setEncoding:[[handle response] characterSet]];
+        [dataSource _setEncoding:[response characterSet]];
         
         // retain the downloadProgressDelegate just in case this is a download.
         // Alexander releases the WebController if no window is created for it.
@@ -268,15 +294,13 @@
         [handle cancel];
     }
     
-    LOG(Download, "%d of %d", [[handle response] contentLengthReceived], [[handle response] contentLength]);
+    LOG(Download, "%d of %d", [response contentLengthReceived], [response contentLength]);
     isFirstChunk = NO;
 }
 
 - (void)handle:(WebResourceHandle *)handle didFailLoadingWithError:(WebError *)result
 {
-    LOG(Loading, "URL = %@, result = %@", [handle URL], [result errorDescription]);
-
-    ASSERT([currentURL isEqual:[handle URL]]);
+    LOG(Loading, "URL = %@, result = %@", [result failingURL], [result errorDescription]);
 
     // Calling receivedError will likely result in a call to release, so we must retain.
     [self retain];
@@ -295,22 +319,6 @@
     [self didStopLoading];
     
     [self release];
-}
-
-- (void)handleDidRedirect:(WebResourceHandle *)handle toURL:(NSURL *)URL
-{
-    LOG(Redirect, "URL = %@", URL);
-
-    // FIXME: need to update main document URL here, or cookies set
-    // via redirects might not work in main document mode
-
-    ASSERT(currentURL != nil);
-    ASSERT([URL isEqual:[handle URL]]);
-    
-    [dataSource _setURL:URL];
-
-    [self didStopLoading];
-    [self didStartLoadingWithURL:URL];
 }
 
 @end

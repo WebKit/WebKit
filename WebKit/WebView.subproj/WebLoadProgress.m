@@ -6,6 +6,7 @@
 #import <WebKit/WebLoadProgress.h>
 
 #import <WebFoundation/WebResourceHandle.h>
+#import <WebFoundation/WebResourceHandlePrivate.h>
 #import <WebFoundation/WebResourceResponse.h>
 
 @implementation WebLoadProgress
@@ -29,7 +30,7 @@
 
 - (id)initWithResourceHandle:(WebResourceHandle *)handle
 {
-    WebResourceResponse *theResponse = [handle response];
+    WebResourceResponse *theResponse = [handle _response];
     if (theResponse == nil) {
         return [self init];
     }

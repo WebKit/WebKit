@@ -19,6 +19,7 @@
 #import <WebFoundation/WebError.h>
 #import <WebFoundation/WebNSFileManagerExtras.h>
 #import <WebFoundation/WebResourceHandle.h>
+#import <WebFoundation/WebResourceHandlePrivate.h>
 #import <WebFoundation/WebResourceRequest.h>
 #import <WebFoundation/WebResourceResponse.h>
 
@@ -103,7 +104,7 @@
 - (void)startLoad
 {
     resource = [[WebResourceHandle alloc] initWithRequest:request delegate:self];
-    [[view controller] _didStartLoading:[resource URL]];
+    [[view controller] _didStartLoading:[[resource _request] URL]];
 }
 
 - (void)stop
@@ -119,12 +120,12 @@
 {    
     if(isFirstChunk){
 
-        NSString *mimeType = [[handle response] contentType];
-        NSString *URLString = [[handle URL] absoluteString];
+        NSString *mimeType = [response contentType];
+        NSString *URLString = [[response URL] absoluteString];
         char *cURL = (char *)malloc([URLString cStringLength]+1);
         [URLString getCString:cURL];
 
-        NSNumber *timeInterval = [[[handle response] headers] objectForKey:@"Last-Modified"];
+        NSNumber *timeInterval = [[response headers] objectForKey:@"Last-Modified"];
         uint32 lastModified;
         
         if(timeInterval){
@@ -140,7 +141,7 @@
         
         npStream.ndata = self;
         npStream.URL = cURL;
-        npStream.end = [[handle response] contentLength];
+        npStream.end = [response contentLength];
         npStream.lastmodified = lastModified;
         npStream.notifyData = notifyData;
         
@@ -275,9 +276,20 @@
 
 @implementation WebNetscapePluginStream (WebResourceHandleDelegate)
 
-- (NSString *)handleWillUseUserAgent:(WebResourceHandle *)handle forURL:(NSURL *)theURL
+-(void)handle:(WebResourceHandle *)handle willSendRequest:(WebResourceRequest *)theRequest
 {
-    return [[view controller] userAgentForURL:theURL];
+    WebController *webController = [view controller];
+    
+    [webController _didStopLoading:URL];
+    // FIXME: This next line is not sufficient. We don't do anything to remember the new URL.
+    [webController _didStartLoading:[theRequest URL]];
+}
+
+- (void)handle:(WebResourceHandle *)handle didReceiveResponse:(WebResourceResponse *)theResponse
+{
+    [theResponse retain];
+    [response release];
+    response = theResponse;
 }
 
 - (void)handle:(WebResourceHandle *)handle didReceiveData:(NSData *)data
@@ -358,7 +370,6 @@
 - (void)handleDidRedirect:(WebResourceHandle *)handle toURL:(NSURL *)toURL
 {
     WebController *controller = [view controller];
-    
     [controller _didStopLoading:URL];
     // FIXME: This next line is not sufficient. We don't do anything to remember the new URL.
     [controller _didStartLoading:toURL];

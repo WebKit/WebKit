@@ -514,7 +514,8 @@
     // Stop notifications
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     
-    NPError npErr = NPP_Destroy(instance, NULL);
+    NPError npErr;
+    npErr = NPP_Destroy(instance, NULL);
     LOG(Plugins, "NPP_Destroy: %d", npErr);
 }
 

@@ -9,12 +9,14 @@
 #import <WebFoundation/WebResourceHandleDelegate.h>
 
 @class WebDataSource;
+@class WebResourceResponse;
 @protocol WebCoreResourceHandle;
 @protocol WebCoreResourceLoader;
 
 @interface WebSubresourceClient : NSObject <WebResourceHandleDelegate, WebCoreResourceHandle>
 {
     id <WebCoreResourceLoader> loader;
+    WebResourceResponse *response;
     WebDataSource *dataSource;
     NSURL *currentURL;
     WebResourceHandle *handle;

@@ -10,6 +10,7 @@
 @class WebBaseNetscapePluginView;
 @class WebDataSource;
 @class WebResourceHandle;
+@class WebResourceResponse;
 @class WebResourceRequest;
 
 @protocol WebDocumentRepresentation;
@@ -30,6 +31,7 @@
 
     WebResourceRequest *request;
     WebResourceHandle *resource;
+    WebResourceResponse *response;
     NSMutableData *resourceData;
     
     NPP_NewStreamProcPtr NPP_NewStream;
