@@ -1,3 +1,15 @@
+2005-01-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by Kevin.
+
+        - fixed <rdar://problem/3969884> REGRESSION (179-180): Typing password not echoed as "bullets" at paypal.com when field is first focused
+
+        * kwq/KWQTextField.mm: (-[KWQTextFieldController initWithTextField:QLineEdit:]):
+        Sizing up the form editor, which fixes things for normal fields and search fields,
+        screws things up for password fields. Eventually, I'll need to figure out why this is
+        and file a bug so that the AppKit team fixes it. In the mean time, just check for the
+        case of the secure text field, and don't size up in that case.
+
 2005-01-24  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Hyatt
