@@ -1290,14 +1290,21 @@ bool RenderObject::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty,
 {
     int tx = _tx + xPos();
     int ty = _ty + yPos();
-    
-    inside |= (style()->visibility() != HIDDEN && ((_y >= ty) && (_y < ty + effectiveHeight()) &&
-                  (_x >= tx) && (_x < tx + effectiveWidth()))) || isBody() || isHtml();
+
+    QRect boundsRect(tx, ty, width(), height());
+    inside |= (style()->visibility() != HIDDEN && boundsRect.contains(_x, _y)) || isBody() || isHtml();
+    bool inOverflowRect = inside;
+    if (!inOverflowRect) {
+        QRect overflowRect(tx, ty, overflowWidth(false), overflowHeight(false));
+        inOverflowRect = overflowRect.contains(_x, _y);
+    }
     
     // ### table should have its own, more performant method
     if ((!isRenderBlock() ||
          !static_cast<RenderBlock*>(this)->isPointInScrollbar(_x, _y, _tx, _ty)) &&
-        (overhangingContents() || isInline() || isRoot() || isTableRow() || isTableSection() || inside || mouseInside() || (childrenInline() && firstChild() && firstChild()->isCompact()))) {
+        (overhangingContents() || inOverflowRect || isInline() || isRoot() ||
+         isTableRow() || isTableSection() || inside || mouseInside() ||
+         (childrenInline() && firstChild() && firstChild()->isCompact()))) {
         int stx = _tx + xPos();
         int sty = _ty + yPos();
         if (style()->hidesOverflow() && layer())

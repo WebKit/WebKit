@@ -1,3 +1,28 @@
+2003-05-01  David Hyatt  <hyatt@apple.com>
+
+	Replace effectiveWidth and effectiveHeight with a 
+	parameterized overflowWidth/Height, since this is much better
+	terminology.
+
+	Also fix event handling so that it no longer assumes (incorrectly)
+	that being inside the overflow rect of an object means you are
+	inside the object.  Now there are two separate checks, with the
+	overflow check being used only to figure out if you should check
+	inside your kids.
+	
+        Reviewed by darin
+
+        * khtml/rendering/render_block.cpp:
+        * khtml/rendering/render_block.h:
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::repaint):
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::repaint):
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::nodeAtPoint):
+        * khtml/rendering/render_object.h:
+        * khtml/rendering/render_table.h:
+
 === Safari-77 ===
 
 2003-04-30  David Hyatt  <hyatt@apple.com>

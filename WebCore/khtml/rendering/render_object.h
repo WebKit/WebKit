@@ -410,14 +410,10 @@ public:
     // The height of a block when you include normal flow overflow spillage out of the bottom
     // of the block (e.g., a <div style="height:25px"> that has a 100px tall image inside
     // it would have an overflow height of borderTop() + paddingTop() + 100px.
-    virtual int overflowHeight() const { return height(); }
-    virtual int overflowWidth() const { return width(); }
+    virtual int overflowHeight(bool includeInterior=true) const { return height(); }
+    virtual int overflowWidth(bool includeInterior=true) const { return width(); }
     virtual void setOverflowHeight(int) {}
     virtual void setOverflowWidth(int) {}
-
-    // Gives the effective overflow width/height once you factor in the object's overflow style.
-    int effectiveHeight() const { return style()->hidesOverflow() ? height() : overflowHeight(); }
-    int effectiveWidth() const { return style()->hidesOverflow() ? width() : overflowWidth(); }
 
     // IE extensions. Used to calculate offsetWidth/Height.  Overridden by inlines (render_flow) 
     // to return the remaining width on a given line (and the height of a single line). -dwh

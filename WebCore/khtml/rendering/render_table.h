@@ -94,8 +94,8 @@ public:
     void setCellPadding( uint p ) { padding = p; }
 
     // overrides
-    virtual int overflowHeight() const { return height(); }
-    virtual int overflowWidth() const { return width(); }
+    virtual int overflowHeight(bool includeInterior=true) const { return height(); }
+    virtual int overflowWidth(bool includeInterior=true) const { return width(); }
     virtual void addChild(RenderObject *child, RenderObject *beforeChild = 0);
     virtual void paint( QPainter *, int x, int y, int w, int h,
                         int tx, int ty, PaintAction paintAction);

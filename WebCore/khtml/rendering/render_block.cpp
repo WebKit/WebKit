@@ -945,7 +945,7 @@ void RenderBlock::layoutBlockChildren( bool relayoutChildren )
         child->setPos(chPos, child->yPos());
 
         m_height += child->height();
-        int overflowDelta = child->effectiveHeight() - child->height();
+        int overflowDelta = child->overflowHeight(false) - child->height();
         if (m_height + overflowDelta > m_overflowHeight)
             m_overflowHeight = m_height + overflowDelta;
 
