@@ -33,6 +33,7 @@
 #import <WebFoundation/WebResourceHandle.h>
 #import <WebFoundation/WebResourceRequest.h>
 #import <WebFoundation/WebHTTPResourceRequest.h>
+#import <WebFoundation/WebSynchronousResult.h>
 
 #ifndef NDEBUG
 static const char * const stateNames[] = {
@@ -86,6 +87,20 @@ Repeat load of the same URL (by any other means of navigation other than the rel
  WF Cache policy: WebRequestCachePolicyLoadFromOrigin
  Add to back/forward list: NO
 */
+
+@interface WebFrame (ForwardDecls)
+- (void)_loadRequest:(WebResourceRequest *)request triggeringAction:(NSDictionary *)action loadType:(WebFrameLoadType)loadType;
+
+- (NSDictionary *)_actionInformationForLoadType:(WebFrameLoadType)loadType isFormSubmission:(BOOL)isFormSubmission event:(NSEvent *)event originalURL:(NSURL *)URL;
+
+- (void)_saveScrollPositionToItem:(WebHistoryItem *)item;
+- (void)_restoreScrollPosition;
+- (void)_scrollToTop;
+
+- (WebHistoryItem *)_createItemTreeWithTargetFrame:(WebFrame *)targetFrame clippedAtTarget:(BOOL)doClip;
+
+- (void)_resetBackForwardListToCurrent;
+@end
 
 @implementation WebFramePrivate
 
@@ -211,13 +226,21 @@ Repeat load of the same URL (by any other means of navigation other than the rel
 - (WebHistoryItem *)_createItem
 {
     WebDataSource *dataSrc = [self dataSource];
-    NSURL *url = [[dataSrc request] URL];
+    WebResourceRequest *request = [dataSrc request];
+    NSURL *URL = [request URL];
     WebHistoryItem *bfItem;
 
-    bfItem = [[[WebHistoryItem alloc] initWithURL:url target:[self name] parent:[[self parent] name] title:[dataSrc pageTitle]] autorelease];
-    [bfItem setAnchor:[url fragment]];
+    bfItem = [[[WebHistoryItem alloc] initWithURL:URL target:[self name] parent:[[self parent] name] title:[dataSrc pageTitle]] autorelease];
+    [bfItem setAnchor:[URL fragment]];
     [dataSrc _addBackForwardItem:bfItem];
     [bfItem setOriginalURLString:[[[dataSrc _originalRequest] URL] absoluteString]];
+
+    // save form state if this is a POST
+    if ([[request method] _web_isCaseInsensitiveEqualToString:@"POST"]) {
+        [bfItem setFormData:[request data]];
+        [bfItem setFormContentType:[request contentType]];
+        [bfItem setFormReferrer:[request referrer]];
+    }
 
     // Set the item for which we will save document state
     [_private setPreviousItem:[_private currentItem]];
@@ -731,6 +754,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
             if ([pd mainDocumentError]) {
                 // Check all children first.
                 LOG(Loading, "%@:  checking complete, current state WebFrameStateProvisional", [self name]);
+                [self _resetBackForwardListToCurrent];
                 if (![pd isLoading]) {
                     LOG(Loading, "%@:  checking complete in WebFrameStateProvisional, load done", [self name]);
 
@@ -929,22 +953,25 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 }
 
 // loads content into this frame, as specified by item
-- (void)_loadItem:(WebHistoryItem *)item fromItem:(WebHistoryItem *)fromItem withLoadType:(WebFrameLoadType)type
+- (void)_loadItem:(WebHistoryItem *)item fromItem:(WebHistoryItem *)fromItem withLoadType:(WebFrameLoadType)loadType
 {
     NSURL *itemURL = [item URL];
     NSURL *currentURL = [[[self dataSource] request] URL];
+    NSData *formData = [item formData];
 
     // Are we navigating to an anchor within the page?
     // Note if we have child frames we do a real reload, since the child frames might not
     // match our current frame structure, or they might not have the right content.  We could
     // check for all that as an additional optimization.
+    // We also do not do anchor-style navigation if we're posting a form.
     
     // FIXME: These checks don't match the ones in _loadURL:loadType:triggeringEvent:isFormSubmission:
     // Perhaps they should.
     
-    if ([item anchor] &&
-        [[itemURL _web_URLByRemovingFragment] isEqual: [currentURL _web_URLByRemovingFragment]] &&
-        (!_private->children || ![_private->children count]))
+    if (!formData
+        && [item anchor]
+        && [[itemURL _web_URLByRemovingFragment] isEqual: [currentURL _web_URLByRemovingFragment]]
+        && (!_private->children || ![_private->children count]))
     {
         // must do this maintenance here, since we don't go through a real page reload
         [self _saveScrollPositionToItem:[_private currentItem]];
@@ -965,23 +992,39 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         WebDataSource *newDataSource;
         if ([item hasPageCache]){
             newDataSource = [[item pageCache] objectForKey: @"WebKitDataSource"];
-            [self _loadDataSource:newDataSource withLoadType:type];            
+            [self _loadDataSource:newDataSource withLoadType:loadType];            
         }
         else {
             WebResourceRequest *request = [[WebResourceRequest alloc] initWithURL:itemURL];
-        
-            // set the request cache policy based on the type of request we have
-            // however, allow any previously set value to take precendence
-            if ([request requestCachePolicy] == WebRequestCachePolicyUseProtocolDefault) {
-                switch (type) {
-                    case WebFrameLoadTypeStandard:
-                        // if it's not a GET, reload from origin
-                        // unsure whether this is the best policy
-                        // other methods might be OK to get from the cache
-                        if (![[request method] _web_isCaseInsensitiveEqualToString:@"GET"]) {
-                            [request setRequestCachePolicy:WebRequestCachePolicyLoadFromOrigin];
-                        }
-                        break;
+            [self _addExtraFieldsToRequest:request];
+
+            // If this was a repost that failed the page cache, we might try to repost the form.
+            NSDictionary *action;
+            if (formData) {
+                [request setMethod:@"POST"];
+                [request setData:formData];
+                [request setContentType:[item formContentType]];
+                [request setReferrer:[item formReferrer]];
+
+                // Slight hack to test if the WF cache contains the page we're going to.  We want
+                // to know this before talking to the policy delegate, since it affects whether we
+                // show the DoYouReallyWantToRepost nag.
+                //
+                // This trick has a small bug (3123893) where we might find a cache hit, but then
+                // have the item vanish when we try to use it in the ensuing nav.  This should be
+                // extremely rare, but in that case the user will get an error on the navigation.
+                [request setRequestCachePolicy:WebRequestCachePolicyReturnCacheObjectDontLoadFromOriginIfNoCacheObject];
+                WebSynchronousResult *result = [WebResourceHandle sendSynchronousRequest:request];
+                if ([result error]) {
+                    // Not in WF cache
+                    [request setRequestCachePolicy:WebRequestCachePolicyLoadFromOrigin];
+                    action = [self _actionInformationForNavigationType:WebNavigationTypeFormResubmitted event:nil originalURL:itemURL];
+                } else {
+                    // We can use the cache, don't use navType=resubmit
+                    action = [self _actionInformationForLoadType:loadType isFormSubmission:NO event:nil originalURL:itemURL];
+                }
+            } else {
+                switch (loadType) {
                     case WebFrameLoadTypeReload:
                         [request setRequestCachePolicy:WebRequestCachePolicyLoadFromOrigin];
                         break;
@@ -990,20 +1033,22 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
                     case WebFrameLoadTypeIndexedBackForward:
                         [request setRequestCachePolicy:WebRequestCachePolicyReturnCacheObjectLoadFromOriginIfNoCacheObject];
                         break;
+                    case WebFrameLoadTypeStandard:
                     case WebFrameLoadTypeInternal:
-                    case WebFrameLoadTypeReloadAllowingStaleData:
                         // no-op: leave as protocol default
+                        // FIXME:  I wonder if we ever hit this case
                         break;
                     case WebFrameLoadTypeSame:
+                    case WebFrameLoadTypeReloadAllowingStaleData:
                     default:
                         ASSERT_NOT_REACHED();
                 }
+
+                action = [self _actionInformationForLoadType:loadType isFormSubmission:NO event:nil originalURL:itemURL];
             }
-    
-            newDataSource = [[WebDataSource alloc] initWithRequest:request];
+
+            [self _loadRequest:request triggeringAction:action loadType:loadType];
             [request release];
-            [self _loadDataSource:newDataSource withLoadType:type];            
-            [newDataSource release];
         }
     }
 }
@@ -1118,6 +1163,27 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     }
 }
 
+-(NSDictionary *)_actionInformationForLoadType:(WebFrameLoadType)loadType isFormSubmission:(BOOL)isFormSubmission event:(NSEvent *)event originalURL:(NSURL *)URL
+{
+    WebNavigationType navType;
+    if (isFormSubmission) {
+        navType = WebNavigationTypeFormSubmitted;
+    } else if (event == nil) {
+        if (loadType == WebFrameLoadTypeReload) {
+            navType = WebNavigationTypeReload;
+        } else if (loadType == WebFrameLoadTypeForward
+                   || loadType == WebFrameLoadTypeBack
+                   || loadType == WebFrameLoadTypeIndexedBackForward) {
+            navType = WebNavigationTypeBackForward;
+        } else {
+            navType = WebNavigationTypeOther;
+        }
+    } else {
+        navType = WebNavigationTypeLinkClicked;
+    }
+    return [self _actionInformationForNavigationType:navType event:event originalURL:URL];
+}
+
 - (void) _invalidatePendingPolicyDecisionCallingDefaultAction:(BOOL)call
 {
     [_private->listener _invalidate];
@@ -1182,6 +1248,8 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
     BOOL shouldContinue = NO;
 
+    // If we've just opened a new window as part of finding the right frame to load, no point
+    // in immediately opening another window.
     if ([[self provisionalDataSource] _justOpenedForTargetedLink] && 
 	(policy == WebPolicyOpenNewWindow || policy == WebPolicyOpenNewWindowBehind)) {
 	policy = WebPolicyUse;
@@ -1289,15 +1357,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     // policy of LoadFromOrigin, but I didn't test that.
     ASSERT(loadType != WebFrameLoadTypeSame);
 
-    NSDictionary *action = nil;
-
-    if (isFormSubmission) {
-        action = [self _actionInformationForNavigationType:WebNavigationTypeFormSubmitted event:event originalURL:URL];
-    } else if (event == nil) {
-        action = [self _actionInformationForNavigationType:WebNavigationTypeOther event:event originalURL:URL];
-    } else {
-        action = [self _actionInformationForNavigationType:WebNavigationTypeLinkClicked event:event originalURL:URL];
-    }
+    NSDictionary *action = [self _actionInformationForLoadType:loadType isFormSubmission:isFormSubmission event:event originalURL:URL];
 
     WebDataSource *oldDataSource = [[self dataSource] retain];
 
@@ -1412,13 +1472,14 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     // This prevents a potential bug which may cause a page with a form that uses itself
     // as an action to be returned from the cache without submitting.
     WebResourceRequest *request = [[WebResourceRequest alloc] initWithURL:URL];
+    [self _addExtraFieldsToRequest:request];
     [request setRequestCachePolicy:WebRequestCachePolicyLoadFromOrigin];
     [request setMethod:@"POST"];
     [request setData:data];
     [request setContentType:contentType];
     [request setReferrer:[_private->bridge referrer]];
 
-    NSDictionary *action = [self _actionInformationForNavigationType:WebNavigationTypeFormSubmitted event:event originalURL:URL];
+    NSDictionary *action = [self _actionInformationForLoadType:WebFrameLoadTypeStandard isFormSubmission:YES event:event originalURL:URL];
 
     [self _loadRequest:request triggeringAction:action loadType:WebFrameLoadTypeStandard];
 
@@ -1495,8 +1556,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     
     [newDataSource _setOverrideEncoding:encoding];
     
-    [self _loadDataSource:newDataSource 
-        withLoadType:WebFrameLoadTypeReloadAllowingStaleData];
+    [self _loadDataSource:newDataSource withLoadType:WebFrameLoadTypeReloadAllowingStaleData];
     
     [newDataSource release];
 }
@@ -1552,6 +1612,20 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     return path;
 }
 
+// If we bailed out of a b/f navigation, we need to set the b/f cursor back to the current
+// item, because we optimistically move it right away at the start of the operation
+- (void)_resetBackForwardListToCurrent {
+    WebFrameLoadType loadType = [self _loadType];
+    if ((loadType == WebFrameLoadTypeForward
+        || loadType == WebFrameLoadTypeBack
+        || loadType == WebFrameLoadTypeIndexedBackForward)
+        && [_private currentItem]
+        && self == [[self controller] mainFrame])
+    {
+        [[[self controller] backForwardList] goToEntry:[_private currentItem]];
+    }
+}
+
 - (WebHistoryItem *)_itemForSavingDocState
 {
     // For a standard page load, we will have a previous item set, which will be used to
@@ -1583,6 +1657,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 -(void)_continueLoadRequestAfterNavigationPolicy:(BOOL)shouldContinue request:(WebResourceRequest *)request
 {
     if (!shouldContinue) {
+        [self _resetBackForwardListToCurrent];
         [self _setLoadType: WebFrameLoadTypeStandard];
         [_private setProvisionalDataSource:nil];
         return;

@@ -17,14 +17,20 @@
 /*!
   @enum WebNavigationType
   @abstract The type of action that triggered a possible navigation.
-  @constant WebActionTypeLinkClicked A link with an href was clicked.
-  @constant WebActionTypeFormSubmitted A form was submitted.
+  @constant WebNavigationTypeLinkClicked A link with an href was clicked.
+  @constant WebNavigationTypeFormSubmitted A form was submitted.
+  @constant WebNavigationTypeBackForward The user chose back or forward.
+  @constant WebNavigationTypeReload The User hit the reload button.
+  @constant WebNavigationTypeFormResubmitted A form was resubmitted (by virtue of doing back, forward or reload).
   @constant WebNavigationTypeOther Navigation is taking place for some other reason.
 */
 
 typedef enum {
     WebNavigationTypeLinkClicked,
     WebNavigationTypeFormSubmitted,
+    WebNavigationTypeBackForward,
+    WebNavigationTypeReload,
+    WebNavigationTypeFormResubmitted,
     WebNavigationTypeOther
 } WebNavigationType;
 

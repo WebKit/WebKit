@@ -255,7 +255,8 @@ NSString *WebElementStringKey = 		@"WebElementString";
     // abort any current load if we're going back/forward
     [[self mainFrame] stopLoading];
     targetFrame = [self _findFrameNamed: [item target]];
-    ASSERT(targetFrame != nil);
+    // We never go back/forward on a per-frame basis, so the target must be the main frame
+    ASSERT(targetFrame != nil && targetFrame == [self mainFrame]);
     [targetFrame _goToItem: item withLoadType: type];
 }
 

@@ -80,7 +80,10 @@
     [_documentState release];
     [_subItems release];
     [pageCache release];
-    
+    [_formData release];
+    [_formContentType release];
+    [_formReferrer release];
+
     [super dealloc];
 }
 
@@ -290,6 +293,42 @@
     }
 }
 
+- (NSData *)formData
+{
+    return _formData;
+}
+
+- (void)setFormData:(NSData *)data
+{
+    NSData *copy = [data copy];
+    [_formData release];
+    _formData = copy;
+}
+
+- (NSString *)formContentType
+{
+    return _formContentType;
+}
+
+- (void)setFormContentType:(NSString *)type
+{
+    NSString *copy = [type copy];
+    [_formContentType release];
+    _formContentType = copy;
+}
+
+- (NSString *)formReferrer
+{
+    return _formReferrer;
+}
+
+- (void)setFormReferrer:(NSString *)referrer
+{
+    NSString *copy = [referrer copy];
+    [_formReferrer release];
+    _formReferrer = copy;
+}
+
 - (BOOL)isEqual:(id)anObject
 {
     if (![anObject isMemberOfClass:[WebHistoryItem class]]) {
@@ -334,6 +373,9 @@
     }
     if (_isTargetItem) {
         [result appendString:@" *target*"];
+    }
+    if (_formData) {
+        [result appendString:@" *POST*"];
     }
     if (_subItems) {
         int currPos = [result length];

@@ -28,6 +28,10 @@
     BOOL _loadedIcon;
     BOOL _isTargetItem;
     BOOL _alwaysAttemptToUsePageCache;
+    // info used to repost form data
+    NSData *_formData;
+    NSString *_formContentType;
+    NSString *_formReferrer;    
 }
 
 + (WebHistoryItem *)entryWithURL:(NSURL *)URL;
@@ -51,6 +55,9 @@
 - (NSArray *)documentState;
 - (BOOL)isTargetItem;
 - (NSString *)anchor;
+- (NSData *)formData;
+- (NSString *)formContentType;
+- (NSString *)formReferrer;    
 
 - (void)setURL:(NSURL *)URL;
 - (void)setOriginalURLString:(NSString *)URL;
@@ -61,8 +68,11 @@
 - (void)setLastVisitedDate:(NSCalendarDate *)date;
 - (void)setScrollPoint:(NSPoint)p;
 - (void)setDocumentState:(NSArray *)state;
-- (void)setAnchor:(NSString *)anchor;
 - (void)setIsTargetItem:(BOOL)flag;
+- (void)setAnchor:(NSString *)anchor;
+- (void)setFormData:(NSData *)data;
+- (void)setFormContentType:(NSString *)type;
+- (void)setFormReferrer:(NSString *)referrer;    
 
 - (NSArray *)children;
 - (void)addChildItem:(WebHistoryItem *)item;

@@ -1,3 +1,52 @@
+2002-12-10  Trey Matteson  <trey@apple.com>
+
+	3092966 - going back goes to different page (can't go back to a POST page)
+
+	We will rePOST data upon back/forward/refresh if our caches fail us.  The policy delegate
+	gets a crack at confirming this operation.  Latent bugs where the policy delegate was double
+	queried are fixed.  A bug in the b/f cursor when a page failed to load is fixed.
+
+        Reviewed by Maciej.
+
+        * English.lproj/StringsNotToBeLocalized.txt:  Usual suspects.
+        * History.subproj/WebHistoryItem.h:  Add state for reposting forms.
+        * History.subproj/WebHistoryItem.m:  Boilerplate changes for new state.
+        (-[WebHistoryItem dealloc]):
+        (-[WebHistoryItem setFormData:]):
+        (-[WebHistoryItem setFormContentType:]):
+        (-[WebHistoryItem formData]):
+        (-[WebHistoryItem formContentType]):
+        (-[WebHistoryItem description]):
+        * WebView.subproj/WebController.m:
+        (-[WebController _goToItem:withLoadType:]):  Tighten up an assert as I clarified an
+	assumption as I worked through this task.
+        * WebView.subproj/WebControllerPolicyDelegate.h:  New WebNavigationType's for back/forward,
+	refresh, and repost.
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame loadRequest:]):  Eliminate extra copy of a request.
+        (-[WebFrame reload]):  Eliminate extra copy of a request.  Setup triggeringAction properly
+	if we're about to rePOST.
+        * WebView.subproj/WebFramePrivate.h:  Started moving some private methods into the .m file.
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _createItem]):  Save form state with history items.
+        (-[WebFrame _isLoadComplete]):  Fix up b/f cursor on page error before commit succeeds.
+        (-[WebFrame _loadItem:fromItem:withLoadType:]):  Set up request to rePOST if that's what the
+	HistoryItem demands.  Add call to _addExtraFieldsToRequest so we don't do a double
+	query of the policy delegate.  Pre-flight the form post vs. WF cache to setup triggering
+	action properly.
+        (-[WebFrame _actionInformationForLoadType:isFormSubmission:event:originalURL:]):
+	New utility method to help build action dict.
+        (-[WebFrame _continueAfterNavigationPolicy:]):  Comment only.
+        (-[WebFrame _loadURL:loadType:triggeringEvent:isFormSubmission:]):  Call new utility method
+	instead (just code factoring).
+        (-[WebFrame _postWithURL:data:contentType:triggeringEvent:]):  Call new utility method
+	instead (just code factoring).  Add call to _addExtraFieldsToRequest so we don't do a double
+	query of the policy delegate.
+        (-[WebFrame _reloadAllowingStaleDataWithOverrideEncoding:]):  Whitespace only.
+        (-[WebFrame _resetBackForwardListToCurrent]):  Utility routine to fix up b/f cursor on page error.
+        (-[WebFrame _continueLoadRequestAfterNavigationPolicy:request:]):  Fix up b/f cursor on page
+	error before commit succeeds.
+
 2002-12-10  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
