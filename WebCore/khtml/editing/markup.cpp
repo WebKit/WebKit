@@ -27,6 +27,8 @@
 
 #include "htmlediting.h"
 
+#include "css/css_computedstyle.h"
+#include "css/css_valueimpl.h"
 #include "html/html_elementimpl.h"
 #include "xml/dom_position.h"
 #include "xml/dom2_rangeimpl.h"
@@ -37,6 +39,8 @@
 
 using DOM::AttributeImpl;
 using DOM::CommentImpl;
+using DOM::CSSComputedStyleDeclarationImpl;
+using DOM::CSSMutableStyleDeclarationImpl;
 using DOM::DocumentFragmentImpl;
 using DOM::DocumentImpl;
 using DOM::DOMString;
@@ -351,6 +355,15 @@ QString createMarkup(const RangeImpl *range, QPtrList<NodeImpl> *nodes, EAnnotat
             markups.append(interchangeNewlineString);
         }
     }
+
+    // add in the "default style" for this markup
+    Position pos(commonAncestor->getDocument()->documentElement(), 0);
+    CSSMutableStyleDeclarationImpl *style = pos.computedStyle()->copyInheritableProperties();
+    style->ref();
+    QString openTag = QString("<span class=\"") + AppleStyleSpanClass + "\" style=\"" + style->cssText().string() + "\">";
+    markups.prepend(openTag);
+    markups.append("</span>");
+    style->deref();
 
     return markups.join("");
 }

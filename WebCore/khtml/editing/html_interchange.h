@@ -30,6 +30,7 @@ class QString;
 
 #define AppleInterchangeNewline   "Apple-interchange-newline"
 #define AppleConvertedSpace       "Apple-converted-space"
+#define AppleStyleSpanClass       "Apple-style-span"
 
 enum EAnnotateForInterchange { DoNotAnnotateForInterchange, AnnotateForInterchange };
 

@@ -1,3 +1,59 @@
+2005-02-01  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+        Fix for this bug:
+        
+        <rdar://problem/3985160> Deficiencies in pasting architecture blocking progress on other bugs
+
+        * khtml/editing/html_interchange.h: Move style span text used to mark element added to 
+        add style to this header.
+        * khtml/editing/htmlediting.cpp:
+        (khtml::styleSpanClassString): Change to use constant moved to html_interchange.h.
+        (khtml::isStyleSpan): New helper function. Checks if this is a span we added to apply style.
+        (khtml::CompositeEditCommand::insertNodeBefore): Added an assert to check that the node
+        we are inserting before is not the body.
+        (khtml::CompositeEditCommand::insertNodeAfter): Ditto, but check is for after.
+        (khtml::ReplacementFragment::ReplacementFragment): Added code to process the "default style"
+        that is added by the copy code.
+        (khtml::ReplaceSelectionCommand::ReplaceSelectionCommand): first and last nodes inserted are
+        now member variables instead of function locals. Initialize them here.
+        (khtml::ReplaceSelectionCommand::~ReplaceSelectionCommand): Deref first and last nodes inserted
+        if necessary.
+        (khtml::ReplaceSelectionCommand::doApply): Change design to fix the bug. Major change is to
+        separate out the code that inserts nodes into the tree so additional styling checks can
+        be done in a centralized way. Also got rid of the notion of "merging into the end block." That
+        concept was just wrong.
+        (khtml::ReplaceSelectionCommand::completeHTMLReplacement): Tweak interface now that first and 
+        last nodes inserted are member variables.
+        (khtml::ReplaceSelectionCommand::insertNodeAfterAndUpdateNodesInserted): New helper used
+        by replace code to do the stated DOM operation and update state internal to the command.
+        This will also be a catch point to handle the kinds of additional style checks needed to
+        make paste work right.
+        (khtml::ReplaceSelectionCommand::insertNodeAtAndUpdateNodesInserted): Ditto.
+        (khtml::ReplaceSelectionCommand::insertNodeBeforeAndUpdateNodesInserted): Ditto.
+        (khtml::ReplaceSelectionCommand::updateNodesInserted): Ditto.
+        * khtml/editing/htmlediting.h: Update declarations as needed.
+        * khtml/editing/markup.cpp:
+        (khtml::createMarkup): Adds a "default style" span to the content written to the pasteboard.
+        This will help us to fix some of the bugs blocked by the bug above.
+        * khtml/xml/dom_nodeimpl.cpp:
+        (NodeImpl::lastDescendent): New helper.
+        * khtml/xml/dom_nodeimpl.h: Ditto.
+        * khtml/xml/dom_position.cpp:
+        (DOM::Position::upstream): Fixed a bug which would allow the upstream position returned to be
+        in unrendered content.
+        (DOM::Position::downstream): Ditto.
+
+        * layout-tests/editing/deleting/delete-3775172-fix-expected.txt: Ending positions tweaked due to 
+        changes in upstream() and downstream() functions.
+        * layout-tests/editing/inserting/insert-3851164-fix-expected.txt: Ditto
+        * layout-tests/editing/inserting/insert-3907422-fix-expected.txt: Ditto
+        * layout-tests/editing/selection/extend-by-character-006-expected.txt: Ditto
+
+        * layout-tests/editing/pasteboard/paste-text-003-expected.txt: Changed what we expect, given
+        new behavior of paste code.
+
 2005-01-31  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Dave Hyatt.

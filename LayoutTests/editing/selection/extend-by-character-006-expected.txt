@@ -16,4 +16,4 @@ upstream:   position 0 of  of root {DIV}
 downstream: position 1 of child 1 {TEXT} of child 1 {SPAN} of root {DIV}
 end:        position 4 of child 1 {TEXT} of child 1 {SPAN} of root {DIV}
 upstream:   position 4 of child 1 {TEXT} of child 1 {SPAN} of root {DIV}
-downstream: position 1 of child 5 {TEXT} of root {DIV}
+downstream: position 0 of child 5 {TEXT} of root {DIV}

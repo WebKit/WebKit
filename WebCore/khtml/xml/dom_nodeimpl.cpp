@@ -161,6 +161,14 @@ NodeImpl *NodeImpl::lastChild() const
   return 0;
 }
 
+NodeImpl *NodeImpl::lastDescendent() const
+{
+    NodeImpl *n = const_cast<NodeImpl *>(this);
+    while (n && n->lastChild())
+        n = n->lastChild();
+    return n;
+}
+
 NodeImpl *NodeImpl::insertBefore( NodeImpl *newChild, NodeImpl *, int &exceptioncode )
 {
     newChild->ref();

@@ -28,6 +28,7 @@
 #include "css_computedstyle.h"
 #include "css_value.h"
 #include "css_valueimpl.h"
+#include "cssparser.h"
 #include "cssproperties.h"
 #include "dom_doc.h"
 #include "dom_docimpl.h"
@@ -57,6 +58,7 @@
 using DOM::AttrImpl;
 using DOM::CSSComputedStyleDeclarationImpl;
 using DOM::CSSMutableStyleDeclarationImpl;
+using DOM::CSSParser;
 using DOM::CSSPrimitiveValue;
 using DOM::CSSPrimitiveValueImpl;
 using DOM::CSSProperty;
@@ -170,7 +172,7 @@ static DOMString &nonBreakingSpaceString()
 
 static DOMString &styleSpanClassString()
 {
-    static DOMString styleSpanClassString = "khtml-style-span";
+    static DOMString styleSpanClassString = AppleStyleSpanClass;
     return styleSpanClassString;
 }
 
@@ -188,6 +190,15 @@ static bool isEmptyStyleSpan(const NodeImpl *node)
     }
     
     return false;
+}
+
+static bool isStyleSpan(const NodeImpl *node)
+{
+    if (!node || !node->isHTMLElement())
+        return false;
+
+    const HTMLElementImpl *elem = static_cast<const HTMLElementImpl *>(node);
+    return elem->getAttribute(ATTR_CLASS) == styleSpanClassString();
 }
 
 static DOMString &blockPlaceholderClassString()
@@ -656,12 +667,14 @@ void CompositeEditCommand::insertParagraphSeparator()
 
 void CompositeEditCommand::insertNodeBefore(NodeImpl *insertChild, NodeImpl *refChild)
 {
+    ASSERT(refChild->id() != ID_BODY);
     EditCommandPtr cmd(new InsertNodeBeforeCommand(document(), insertChild, refChild));
     applyCommandToComposite(cmd);
 }
 
 void CompositeEditCommand::insertNodeAfter(NodeImpl *insertChild, NodeImpl *refChild)
 {
+    ASSERT(refChild->id() != ID_BODY);
     if (refChild->parentNode()->lastChild() == refChild) {
         appendNode(insertChild, refChild->parentNode());
     }
@@ -3893,7 +3906,31 @@ ReplacementFragment::ReplacementFragment(DocumentFragmentImpl *fragment)
     
     m_type = TreeFragment;
 
-    NodeImpl *node = firstChild;
+    // look for default style
+    if (firstChild == lastChild && isStyleSpan(firstChild)) {
+        NodeImpl *styleSpan = firstChild;
+        DOMString styleString = static_cast<ElementImpl *>(styleSpan)->getAttribute(ATTR_STYLE);
+        if (styleString.length() > 0) {
+            CSSParser parser(true);
+            m_defaultStyle = new CSSMutableStyleDeclarationImpl;
+            if (!parser.parseDeclaration(m_defaultStyle, styleString)) {
+                m_defaultStyle->deref();
+                m_defaultStyle = 0;
+            }
+        }
+        NodeImpl *n = styleSpan->firstChild();
+        while (n) {
+            NodeImpl *next = n->traverseNextSibling();
+            n->ref();
+            removeNode(n);
+            insertNodeBefore(n, styleSpan);
+            n->deref();
+            n = next;
+        }
+        removeNode(styleSpan);
+    }
+
+    NodeImpl *node = m_fragment->firstChild();
     int realBlockCount = 0;
     NodeImpl *nodeToDelete = 0;
     while (node) {
@@ -3958,27 +3995,6 @@ NodeImpl *ReplacementFragment::mergeStartNode() const
     if (!isProbablyBlock(node))
         return node;
     return node->firstChild();
-}
-
-NodeImpl *ReplacementFragment::mergeEndNode() const
-{
-    NodeImpl *node = m_fragment->lastChild();
-    while (node && node->lastChild())
-        node = node->lastChild();
-    
-    if (isProbablyBlock(node))
-        return 0;
-        
-    NodeImpl *startingBlock = enclosingBlock(node);
-    ASSERT(startingBlock != node);
-    while (node) {
-        NodeImpl *prev = node->traversePreviousNode();
-        if (prev == m_fragment || prev == startingBlock || enclosingBlock(prev) != startingBlock)
-            return node;
-        node = prev;
-    }
-    
-    return 0;
 }
 
 void ReplacementFragment::pruneEmptyNodes()
@@ -4084,6 +4100,8 @@ bool isProbablyBlock(const NodeImpl *node)
 ReplaceSelectionCommand::ReplaceSelectionCommand(DocumentImpl *document, DocumentFragmentImpl *fragment, bool selectReplacement, bool smartReplace) 
     : CompositeEditCommand(document), 
       m_fragment(fragment),
+      m_firstNodeInserted(0),
+      m_lastNodeInserted(0),
       m_selectReplacement(selectReplacement), 
       m_smartReplace(smartReplace)
 {
@@ -4091,6 +4109,10 @@ ReplaceSelectionCommand::ReplaceSelectionCommand(DocumentImpl *document, Documen
 
 ReplaceSelectionCommand::~ReplaceSelectionCommand()
 {
+    if (m_firstNodeInserted)
+        m_firstNodeInserted->deref();
+    if (m_lastNodeInserted)
+        m_lastNodeInserted->deref();
 }
 
 void ReplaceSelectionCommand::doApply()
@@ -4105,15 +4127,15 @@ void ReplaceSelectionCommand::doApply()
     NodeImpl *startBlock = selection.start().node()->enclosingBlockFlowElement();
     NodeImpl *endBlock = selection.end().node()->enclosingBlockFlowElement();
     bool mergeStart = false;
-    bool mergeEnd = false;
     if (startBlock == startBlock->rootEditableElement() && startAtStartOfBlock && startAtEndOfBlock) {
         // Empty document. Merge neither start nor end.
-        mergeStart = mergeEnd = false;
+        mergeStart = false;
     }
     else {
         mergeStart = !isStartOfParagraph(visibleStart) || (!m_fragment.hasInterchangeNewline() && !m_fragment.hasMoreThanOneBlock());
-        mergeEnd = !m_fragment.hasInterchangeNewline() && m_fragment.hasMoreThanOneBlock() && !isEndOfParagraph(visibleEnd);
     }
+    
+    bool moveNodesAfterEnd = !m_fragment.hasInterchangeNewline() && (startBlock != endBlock || m_fragment.hasMoreThanOneBlock());
     
     Position startPos = Position(selection.start().node()->enclosingBlockFlowElement(), 0);
     Position endPos; 
@@ -4123,7 +4145,8 @@ void ReplaceSelectionCommand::doApply()
     if (selection.isRange()) {
         deleteSelection(false, !(m_fragment.hasInterchangeNewline() || m_fragment.hasMoreThanOneBlock()));
     }
-    else if (selection.isCaret() && mergeEnd && !startAtBlockBoundary) {
+    else if (selection.isCaret() && !startAtBlockBoundary &&
+             !m_fragment.hasInterchangeNewline() && m_fragment.hasMoreThanOneBlock() && !isEndOfParagraph(visibleEnd)) {
         // The start and the end need to wind up in separate blocks.
         // Insert a paragraph separator to make that happen.
         insertParagraphSeparator();
@@ -4181,68 +4204,25 @@ void ReplaceSelectionCommand::doApply()
         }
     }
 
-    document()->updateLayout();
-
-    Position insertionPos = startPos;
-    NodeImpl *firstNodeInserted = 0;
-    NodeImpl *lastNodeInserted = 0;
-    bool lastNodeInsertedInMergeEnd = false;
-
-    // prune empty nodes from fragment
-    m_fragment.pruneEmptyNodes();
-
-    // Merge content into the end block, if necessary.
-    if (mergeEnd) {
-        NodeImpl *node = m_fragment.mergeEndNode();
-        if (node) {
-            NodeImpl *refNode = node;
-            NodeImpl *node = refNode ? refNode->nextSibling() : 0;
-            insertNodeAt(refNode, endPos.node(), endPos.offset());
-            firstNodeInserted = refNode;
-            lastNodeInserted = refNode;
-            while (node && !isProbablyBlock(node)) {
-                NodeImpl *next = node->nextSibling();
-                insertNodeAfter(node, refNode);
-                lastNodeInserted = node;
-                refNode = node;
-                node = next;
-            }
-            lastNodeInsertedInMergeEnd = true;
-        }
-    }
-    
-    // prune empty nodes from fragment
-    m_fragment.pruneEmptyNodes();
-
     // Merge content into the start block, if necessary.
+    document()->updateLayout();
+    Position insertionPos = startPos;
     if (mergeStart) {
         NodeImpl *node = m_fragment.mergeStartNode();
-        NodeImpl *insertionNode = 0;
         if (node) {
             NodeImpl *refNode = node;
             NodeImpl *node = refNode ? refNode->nextSibling() : 0;
-            insertNodeAt(refNode, startPos.node(), startPos.offset());
-            firstNodeInserted = refNode;
-            if (!lastNodeInsertedInMergeEnd)
-                lastNodeInserted = refNode;
-            insertionNode = refNode;
+            insertNodeAtAndUpdateNodesInserted(refNode, startPos.node(), startPos.offset());
             while (node && !isProbablyBlock(node)) {
                 NodeImpl *next = node->nextSibling();
-                insertNodeAfter(node, refNode);
-                if (!lastNodeInsertedInMergeEnd)
-                    lastNodeInserted = node;
-                insertionNode = node;
+                insertNodeAfterAndUpdateNodesInserted(node, refNode);
                 refNode = node;
                 node = next;
             }
         }
-        if (insertionNode) {
-            if (insertionNode->isTextNode())
-                insertionPos = Position(insertionNode, insertionNode->caretMaxOffset());
-            else if (insertionNode->childNodeCount() > 0)
-                insertionPos = Position(insertionNode, insertionNode->childNodeCount());
-            else
-                insertionPos = Position(insertionNode->parentNode(), insertionNode->nodeIndex() + 1);
+        if (m_lastNodeInserted) {
+            document()->updateLayout();
+            insertionPos = Position(m_lastNodeInserted, m_lastNodeInserted->caretMaxOffset());
         }
     }
 
@@ -4254,70 +4234,56 @@ void ReplaceSelectionCommand::doApply()
     if (node) {
         NodeImpl *refNode = node;
         NodeImpl *node = refNode ? refNode->nextSibling() : 0;
+        NodeImpl *insertionBlock = insertionPos.node()->enclosingBlockFlowElement();
+        bool insertionBlockIsBody = insertionBlock->id() == ID_BODY;
         VisiblePosition visiblePos(insertionPos);
-        bool insertionNodeIsBody = insertionPos.node()->id() == ID_BODY;
-        if (!mergeStart && !insertionNodeIsBody && isProbablyBlock(refNode) && isStartOfParagraph(visiblePos)) {
-            Position pos = insertionPos;
-            if (!insertionPos.node()->isTextNode() && !insertionPos.node()->isBlockFlow() && insertionPos.offset() > 0)
-                pos = insertionPos.downstream(StayInBlock);
-            insertNodeBefore(refNode, pos.node());
+        if (!insertionBlockIsBody && isProbablyBlock(refNode) && isFirstVisiblePositionInBlock(visiblePos))
+            insertNodeBeforeAndUpdateNodesInserted(refNode, insertionBlock);
+        else if (!insertionBlockIsBody && isProbablyBlock(refNode) && isLastVisiblePositionInBlock(visiblePos)) {
+            insertNodeAfterAndUpdateNodesInserted(refNode, insertionBlock);
         }
-        else if (!mergeEnd && !insertionNodeIsBody && isProbablyBlock(refNode) && isEndOfParagraph(visiblePos))
-            insertNodeAfter(refNode, insertionPos.node());
+        else if (mergeStart && !isProbablyBlock(refNode)){
+            Position pos = insertionPos.downstream();
+            insertNodeAtAndUpdateNodesInserted(refNode, pos.node(), pos.offset());
+        }
         else {
-            insertNodeAt(refNode, insertionPos.node(), insertionPos.offset());
-            if (insertionPos.node() == endPos.node() && insertionPos.offset() <= endPos.offset())
-                endPos = Position(endPos.node(), endPos.offset() + 1);
+            insertNodeAtAndUpdateNodesInserted(refNode, insertionPos.node(), insertionPos.offset());
         }
-        if (!firstNodeInserted)
-            firstNodeInserted = refNode;
-        if (!lastNodeInsertedInMergeEnd)
-            lastNodeInserted = refNode;
         while (node) {
             NodeImpl *next = node->nextSibling();
-            insertNodeAfter(node, refNode);
-            if (!lastNodeInsertedInMergeEnd)
-                lastNodeInserted = node;
+            insertNodeAfterAndUpdateNodesInserted(node, refNode);
             refNode = node;
             node = next;
         }
         document()->updateLayout();
-        if (lastNodeInserted->isTextNode())
-            insertionPos = Position(lastNodeInserted, lastNodeInserted->caretMaxOffset());
-        else if (lastNodeInserted->childNodeCount() > 0)
-            insertionPos = Position(lastNodeInserted, lastNodeInserted->childNodeCount());
-        else
-            insertionPos = Position(lastNodeInserted->parentNode(), lastNodeInserted->nodeIndex() + 1);
+        insertionPos = Position(m_lastNodeInserted, m_lastNodeInserted->caretMaxOffset());
     }
 
     // Handle "smart replace" whitespace
-    if (addTrailingSpace && lastNodeInserted) {
-        if (lastNodeInserted->isTextNode()) {
-            TextImpl *text = static_cast<TextImpl *>(lastNodeInserted);
+    if (addTrailingSpace && m_lastNodeInserted) {
+        if (m_lastNodeInserted->isTextNode()) {
+            TextImpl *text = static_cast<TextImpl *>(m_lastNodeInserted);
             insertTextIntoNode(text, text->length(), nonBreakingSpaceString());
             insertionPos = Position(text, text->length());
         }
         else {
             NodeImpl *node = document()->createEditingTextNode(nonBreakingSpaceString());
-            insertNodeAfter(node, lastNodeInserted);
-            if (!firstNodeInserted)
-                firstNodeInserted = node;
-            lastNodeInserted = node;
+            insertNodeAfter(node, m_lastNodeInserted);
+            if (!m_firstNodeInserted)
+                m_firstNodeInserted = node;
+            m_lastNodeInserted = node;
             insertionPos = Position(node, 1);
         }
     }
 
-    if (addLeadingSpace && firstNodeInserted) {
-        if (firstNodeInserted->isTextNode()) {
-            TextImpl *text = static_cast<TextImpl *>(firstNodeInserted);
+    if (addLeadingSpace && m_firstNodeInserted) {
+        if (m_firstNodeInserted->isTextNode()) {
+            TextImpl *text = static_cast<TextImpl *>(m_firstNodeInserted);
             insertTextIntoNode(text, 0, nonBreakingSpaceString());
         }
         else {
             NodeImpl *node = document()->createEditingTextNode(nonBreakingSpaceString());
-            insertNodeBefore(node, firstNodeInserted);
-            firstNodeInserted = node;
-            if (!lastNodeInsertedInMergeEnd)
-                lastNodeInserted = node;
+            insertNodeBefore(node, m_firstNodeInserted);
         }
     }
 
@@ -4331,19 +4297,50 @@ void ReplaceSelectionCommand::doApply()
         completeHTMLReplacement(startPos, endPos);
     }
     else {
-        if (lastNodeInserted && lastNodeInserted->id() == ID_BR && !document()->inStrictMode()) {
+        if (m_lastNodeInserted && m_lastNodeInserted->id() == ID_BR && !document()->inStrictMode()) {
             document()->updateLayout();
-            VisiblePosition pos(Position(lastNodeInserted, 0));
+            VisiblePosition pos(Position(m_lastNodeInserted, 0));
             if (isLastVisiblePositionInBlock(pos)) {
-                NodeImpl *next = lastNodeInserted->traverseNextNode();
-                bool hasTrailingBR = next && next->id() == ID_BR && lastNodeInserted->enclosingBlockFlowElement() == next->enclosingBlockFlowElement();
+                NodeImpl *next = m_lastNodeInserted->traverseNextNode();
+                bool hasTrailingBR = next && next->id() == ID_BR && m_lastNodeInserted->enclosingBlockFlowElement() == next->enclosingBlockFlowElement();
                 if (!hasTrailingBR) {
                     // Insert an "extra" BR at the end of the block. 
-                    insertNodeBefore(createBreakElement(document()), lastNodeInserted);
+                    insertNodeBefore(createBreakElement(document()), m_lastNodeInserted);
                 }
             }
         }
-        completeHTMLReplacement(firstNodeInserted, lastNodeInserted);
+
+        if (moveNodesAfterEnd) {
+            QPtrList<NodeImpl> blocks;
+            NodeImpl *node = Position(m_lastNodeInserted, m_lastNodeInserted->caretMaxOffset()).downstream().node();
+            if (node != m_lastNodeInserted) {
+                NodeImpl *refNode = m_lastNodeInserted;
+                while (node) {
+                    NodeImpl *next = node->nextSibling();
+                    blocks.append(node->enclosingBlockFlowElement());
+                    removeNode(node);
+                    // Call the base class insert after code here.
+                    // No need to update inserted node variables.
+                    insertNodeAfter(node, refNode);
+                    refNode = node;
+                    node = next;
+                }
+            }
+            document()->updateLayout();
+            for (QPtrListIterator<NodeImpl> it(blocks); it.current(); ++it) {
+                NodeImpl *blockToRemove = it.current();
+                if (!blockToRemove->inDocument())
+                    continue;
+                if (!blockToRemove->renderer() || !blockToRemove->renderer()->firstChild()) {
+                    if (blockToRemove->parentNode())
+                        blocks.append(blockToRemove->parentNode()->enclosingBlockFlowElement());
+                    removeNode(blockToRemove);
+                    document()->updateLayout();
+                }
+            }
+        }
+    
+        completeHTMLReplacement();
     }
     
     if (placeholderBlock) {
@@ -4361,14 +4358,14 @@ void ReplaceSelectionCommand::completeHTMLReplacement(const Position &start, con
     rebalanceWhitespace();
 }
 
-void ReplaceSelectionCommand::completeHTMLReplacement(NodeImpl *firstNodeInserted, NodeImpl *lastNodeInserted)
+void ReplaceSelectionCommand::completeHTMLReplacement()
 {
-    if (!firstNodeInserted || !firstNodeInserted->inDocument() ||
-        !lastNodeInserted || !lastNodeInserted->inDocument())
+    if (!m_firstNodeInserted || !m_firstNodeInserted->inDocument() ||
+        !m_lastNodeInserted || !m_lastNodeInserted->inDocument())
         return;
 
     // Find the last leaf.
-    NodeImpl *lastLeaf = lastNodeInserted;
+    NodeImpl *lastLeaf = m_lastNodeInserted;
     while (1) {
         NodeImpl *nextChild = lastLeaf->lastChild();
         if (!nextChild)
@@ -4377,7 +4374,7 @@ void ReplaceSelectionCommand::completeHTMLReplacement(NodeImpl *firstNodeInserte
     }
 
     // Find the first leaf.
-    NodeImpl *firstLeaf = firstNodeInserted;
+    NodeImpl *firstLeaf = m_firstNodeInserted;
     while (1) {
         NodeImpl *nextChild = firstLeaf->firstChild();
         if (!nextChild)
@@ -4402,6 +4399,44 @@ void ReplaceSelectionCommand::completeHTMLReplacement(NodeImpl *firstNodeInserte
 EditAction ReplaceSelectionCommand::editingAction() const
 {
     return EditActionPaste;
+}
+
+void ReplaceSelectionCommand::insertNodeAfterAndUpdateNodesInserted(NodeImpl *insertChild, NodeImpl *refChild)
+{
+    insertNodeAfter(insertChild, refChild);
+    updateNodesInserted(insertChild);
+}
+
+void ReplaceSelectionCommand::insertNodeAtAndUpdateNodesInserted(NodeImpl *insertChild, NodeImpl *refChild, long offset)
+{
+    insertNodeAt(insertChild, refChild, offset);
+    updateNodesInserted(insertChild);
+}
+
+void ReplaceSelectionCommand::insertNodeBeforeAndUpdateNodesInserted(NodeImpl *insertChild, NodeImpl *refChild)
+{
+    insertNodeBefore(insertChild, refChild);
+    updateNodesInserted(insertChild);
+}
+
+void ReplaceSelectionCommand::updateNodesInserted(NodeImpl *node)
+{
+    if (!node)
+        return;
+
+    if (!m_firstNodeInserted) {
+        m_firstNodeInserted = node;
+        m_firstNodeInserted->ref();
+    }
+    
+    if (node == m_lastNodeInserted)
+        return;
+        
+    NodeImpl *old = m_lastNodeInserted;
+    m_lastNodeInserted = node->lastDescendent();
+    m_lastNodeInserted->ref();
+    if (old)
+        old->deref();
 }
 
 //------------------------------------------------------------------------------------------

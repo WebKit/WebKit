@@ -25,4 +25,4 @@ layer at (0,0) size 800x600
 selection is CARET:
 start:      position 3 of child 6 {TEXT} of root {BODY}
 upstream:   position 3 of child 6 {TEXT} of root {BODY}
-downstream: position 1 of child 8 {TEXT} of root {BODY}
+downstream: position 0 of child 8 {TEXT} of root {BODY}
