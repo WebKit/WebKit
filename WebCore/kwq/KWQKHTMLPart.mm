@@ -379,10 +379,7 @@ HTMLFormElementImpl *KWQKHTMLPart::currentForm() const
     }
 
     // try walking forward in the node tree to find a form element
-    if (!start) {
-        start = xmlDocImpl();
-    }
-    return scanForForm(start);
+    return start ? scanForForm(start) : 0;
 }
 
 // Either get cached regexp or build one that matches any of the labels.

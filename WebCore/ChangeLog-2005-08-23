@@ -1,3 +1,12 @@
+2004-11-18  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3587481> Bug Reporter Login Page: Password AutoFill does not work reliably
+
+        Reviewed by john.
+
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::currentForm): just return the current form, don't scan the entire document looking for a form if there is no current form
+
 2004-11-18  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Chris.
