@@ -1,3 +1,18 @@
+2004-06-08  Trey Matteson  <trey@apple.com>
+
+	A DHTML drag source can now change the dragging image during the drag.  Currently
+	it may only be set to a static image.
+
+        Reviewed by John
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge setDraggingImage:at:]):  Typical bridge glue.
+        * WebView.subproj/WebHTMLView.m:
+        (FlipImageSpec):  New utility, copied from AppKit.
+        (-[WebHTMLView _setDraggingImage:at:]):  Mostly copied from AppKit.  Sets the drag
+	image using CG API.
+        * WebView.subproj/WebHTMLViewPrivate.h:
+
 2004-06-08  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3640423>: (REGRESSION: can't paste text copied from web page into Excel (due to HTML on the pasteboard?))

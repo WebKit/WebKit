@@ -2033,8 +2033,13 @@ void KWQKHTMLPart::khtmlMouseMoveEvent(MouseMoveEvent *event)
 void KWQKHTMLPart::dragSourceMovedTo(const QPoint &loc)
 {
     if (!_dragSrc.isNull()) {
+        NSImage *dragImage = nil;
+        NSPoint dragLoc = NSZeroPoint;
         // for now we don't care if event handler cancels default behavior, since there is none
-        dispatchDragSrcEvent(EventImpl::DRAG_EVENT, loc, false, NULL, NULL, NULL);
+        dispatchDragSrcEvent(EventImpl::DRAG_EVENT, loc, false, &dragImage, &dragLoc, NULL);
+        if (dragImage) {
+            [_bridge setDraggingImage:dragImage at:dragLoc];
+        }
     }
 }
 

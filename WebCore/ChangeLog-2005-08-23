@@ -1,3 +1,15 @@
+2004-06-08  Trey Matteson  <trey@apple.com>
+
+	A DHTML drag source can now change the dragging image during the drag.  Currently
+	it may only be set to a static image.
+
+        Reviewed by John
+
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::dragSourceMovedTo):  If the ondrag event handler set an image,
+	pass it to WebKit.
+        * kwq/WebCoreBridge.h:
+
 2004-06-08  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Hyatt
