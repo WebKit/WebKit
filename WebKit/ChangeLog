@@ -1,3 +1,21 @@
+2004-07-19  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Richard
+
+        Fix for this bug:
+        
+        <rdar://problem/3707504> HTMLCompose: key events are stolen by Web(HTML)View
+
+        * Misc.subproj/WebNSViewExtras.h:
+        * Misc.subproj/WebNSViewExtras.m:
+        (-[NSView firstResponderIsSelfOrDescendantView]): New helper to 
+        (-[WebHTMLView performKeyEquivalent:]): Do not pass key events through to the editing
+        key handler unless the WebHTMLView is first responder or contains the first responder.
+        This prevents the "stealing" of key events mentioned in the bug.
+        * WebView.subproj/WebView.m:
+        (-[WebView _performResponderOperation:with:]): Uses the new firstResponderIsSelfOrDescendantView
+        helper. The code I replaced used the same logic as the new helper.
+
 === Safari-152 ===
 
 2004-07-12  Maciej Stachowiak  <mjs@apple.com>

@@ -223,4 +223,12 @@
     [self dragImage:dragImage at:origin offset:NSZeroSize event:event pasteboard:pasteboard source:source slideBack:YES];
 }
 
+- (BOOL)firstResponderIsSelfOrDescendantView
+{
+    NSResponder *responder = [[self window] firstResponder];
+    return (responder && 
+           (responder == self || 
+           ([responder isKindOfClass:[NSView class]] && [(NSView *)responder isDescendantOf:self])));
+}
+
 @end

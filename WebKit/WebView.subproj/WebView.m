@@ -2594,7 +2594,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 
     // Pass this selector down to the first responder.
     NSResponder *responder = [[self window] firstResponder];
-    if (!responder || ![responder isKindOfClass:[NSView class]] || ![(NSView *)responder isDescendantOf:self]) {
+    if (![self firstResponderIsSelfOrDescendantView]) {
         responder = [[[self mainFrame] frameView] documentView];
         if (!responder) {
             responder = [[self mainFrame] frameView];

@@ -48,4 +48,6 @@
                 source:(id)source
                 offset:(NSPoint *)dragImageOffset;
 
+- (BOOL)firstResponderIsSelfOrDescendantView;
+
 @end

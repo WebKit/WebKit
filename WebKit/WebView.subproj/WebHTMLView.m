@@ -2259,7 +2259,7 @@ static WebHTMLView *lastHitView = nil;
     // at intercepting command-modified keypresses now. If this turns out to cause havoc we
     // can restrict this to only send the event through WebCore if it contains the Return or
     // Enter key.
-    if ([[self _bridge] interceptKeyEvent:event toView:self]) {
+    if ([self firstResponderIsSelfOrDescendantView] && [[self _bridge] interceptKeyEvent:event toView:self]) {
         return YES;
     }
 
