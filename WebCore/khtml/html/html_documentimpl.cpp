@@ -73,7 +73,6 @@
 
 #include "khtml_factory.h"
 #include "rendering/render_object.h"
-#include "doctypes.cpp"
 
 #include <dcopclient.h>
 #include <kapplication.h>
@@ -92,6 +91,14 @@
 #if APPLE_CHANGES
 #include "KWQKCookieJar.h"
 #endif
+
+
+// Turn off inlining to avoid warning with newer gcc.
+#undef __inline
+#define __inline
+#include "doctypes.cpp"
+#undef __inline
+
 
 template class QPtrStack<DOM::NodeImpl>;
 
@@ -586,7 +593,7 @@ void HTMLDocumentImpl::determineParseMode( const QString &str )
             const char* pubIDStr = lowerPubID.latin1();
            
             // Look up the entry in our gperf-generated table.
-            const PubIDInfo* doctypeEntry = Perfect_Hash::findDoctypeEntry(pubIDStr, publicID.length());
+            const PubIDInfo* doctypeEntry = findDoctypeEntry(pubIDStr, publicID.length());
             if (!doctypeEntry) {
                 // The DOCTYPE is not in the list.  Assume strict mode.
                 pMode = Strict;

@@ -927,9 +927,11 @@ bool KWQKHTMLPart::passWidgetMouseDownEventToWidget(RenderWidget *renderWidget)
     // the khtml state with this mouseUp, which khtml never saw.
     // If this event isn't a mouseUp, we assume that the mouseUp will be coming later.  There
     // is a hole here if the widget consumes the mouseUp and subsequent events.
-    NSEvent *lastEvent = [NSApp currentEvent];
-    if ([lastEvent type] == NSLeftMouseUp) {
-        mouseUp(lastEvent);
+    NSEvent *currentEventAfterHandlingMouseDown = [NSApp currentEvent];
+    if (_currentEvent != currentEventAfterHandlingMouseDown) {
+        if ([currentEventAfterHandlingMouseDown type] == NSLeftMouseUp) {
+            mouseUp(currentEventAfterHandlingMouseDown);
+        }
     }
     
     return true;

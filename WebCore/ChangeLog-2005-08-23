@@ -1,5 +1,23 @@
 === Safari-55 ===
 
+2003-01-30  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken, Maciej, and Trey.
+
+	- fixed 3161486 -- REGRESSION: double click on a widget causes crash
+
+        * kwq/KWQKHTMLPart.mm: (KWQKHTMLPart::passWidgetMouseDownEventToWidget):
+        Only pass the mouseUp event if it's not the same as the current event.
+        Through a strange set of circumstances, sometimes the "mouse down" event is a mouse up
+        event (due to KHTML vs. AppKit differences for double-click handling).
+
+        - fixed build with newer compiler
+
+        * khtml/html/Makefile.am: Use ANSI-C style, not C++ style, gperf.
+        * khtml/html/doctypes.cpp: Regenerated.
+        * khtml/html/html_documentimpl.cpp: Do __inline workaround to make newer compiler happy.
+        (HTMLDocumentImpl::determineParseMode): Change to use ANSI-C style.
+
 2003-01-30  Richard Williamson   <rjw@apple.com>
 
         Fix for 3156831 (and dupe 3160816).  Don't access userInfo on an invalid NSTimer.
