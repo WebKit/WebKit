@@ -1,3 +1,10 @@
+2005-03-22  Vicki Murley  <vicki@apple.com>
+
+	- roll out the fix for <rdar://problem/4060266> since it was denied by CCC
+
+        * khtml/editing/visible_text.cpp:
+        (khtml::TextIterator::handleTextBox):
+
 2005-03-22  David Harrison  <harrison@apple.com>
 
         Reviewed by Darin.

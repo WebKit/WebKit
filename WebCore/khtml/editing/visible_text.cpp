@@ -264,10 +264,11 @@ void TextIterator::handleTextBox()
         // Check for collapsed space at the start of this run.
         bool needSpace = m_lastTextNodeEndedWithCollapsedSpace
             || (m_textBox == renderer->firstTextBox() && textBoxStart == runStart && runStart > 0);
-        if (needSpace && !isCollapsibleWhitespace(m_lastCharacter) && !m_lastCharacter.isNull()) {
+        if (needSpace && !m_lastCharacter.isSpace()) {
             emitCharacter(' ', m_node, 0, runStart, runStart);
             return;
         }
+
         long textBoxEnd = textBoxStart + m_textBox->m_len;
         long runEnd = kMin(textBoxEnd, end);
 
