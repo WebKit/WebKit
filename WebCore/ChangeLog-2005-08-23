@@ -1,3 +1,18 @@
+2004-09-14  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+
+        Fix for this bug:
+        
+        <rdar://problem/3794376> vertical formatting lines that show quote level are missing
+
+        Rolling out change Dave made to fix 3787686. It turns out that we do not want this
+        change, as it does not appear to have any effect on the bug. In addition, it caused
+        the regression in quote bar behavior.
+
+        * khtml/css/parser.cp
+        * khtml/css/parser.y
+
 2004-09-14  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: Control-click shouldn't cause deselect when clicking selection.
