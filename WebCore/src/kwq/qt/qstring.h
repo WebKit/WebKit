@@ -280,9 +280,9 @@ private:
 
     // private member functions ------------------------------------------------
 
-    QCString convertToQCString(CFStringEncoding) const;
-
     void flushCache() const;
+    QCString convertToQCString(CFStringEncoding) const;
+    QString leftRight(uint width, bool left) const;
 
     // data members ------------------------------------------------------------
 
