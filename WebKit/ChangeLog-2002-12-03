@@ -1,3 +1,11 @@
+2002-07-01  Chris Blumenberg  <cblu@apple.com>
+
+	Minor cleanup
+	
+        * Plugins.subproj/IFNullPluginView.mm:
+        (-[IFNullPluginView initWithFrame:mimeType:arguments:]):
+        (-[IFNullPluginView dealloc]):
+
 2002-07-01  Darin Adler  <darin@apple.com>
 
         * Plugins.subproj/IFPlugin.m:

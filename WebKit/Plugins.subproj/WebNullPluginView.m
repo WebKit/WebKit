@@ -30,29 +30,20 @@ static NSImage *image = nil;
         }
         [self setImage:image];
         
+        mimeType = [mime retain];
         pluginPageString = [arguments objectForKey:@"pluginspage"];
         if(pluginPageString)
             pluginPage = [[NSURL _IF_URLWithString:pluginPageString] retain];
-        if(mime)
-            mimeType = [mime retain];
         
         errorSent = NO;
     }
     return self;
 }
 
-- (NSView *) findSuperview:(NSString *) viewName
+- (void)dealloc
 {
-    NSView *view;
-    
-    view = self;
-    while(view){
-        view = [view superview];
-        if([[view className] isEqualToString:viewName]){
-            return view;
-        }
-    }
-    return nil;
+    [pluginPage release];
+    [mimeType release];
 }
 
 - (void)drawRect:(NSRect)rect {
