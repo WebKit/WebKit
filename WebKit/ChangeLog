@@ -1,3 +1,18 @@
+2002-12-30  Trey Matteson  <trey@apple.com>
+
+	3135779 - REGRESSION: reproducible assertion failure, going back from ~orubin to the main spies.com page	
+	3136218 - REGRESSION: Assertion failure in _restoreScrollPosition running browser buster	
+
+	Both were caused by subtle interactions between new code for short-circuiting loading of
+	blank pages, and the WebHistoryItem manipulations we do for b/f and reload of child frames.
+
+        Reviewed by Maciej
+
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _loadURL:intoChild:]):  Setup provisional or current item before jumping into
+	the real work of loading the URL.
+        (-[WebFrame _restoreScrollPosition]):  Tweaked to make the assertion message clearer.
+
 2002-12-30  Darin Adler  <darin@apple.com>
 
         Reviewed by Don and Ken.

@@ -1476,25 +1476,21 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
             URL = [childItem URL];
             // These behaviors implied by these loadTypes should apply to the child frames
             childLoadType = loadType;
-        }
-    }
-            
-    [childFrame _loadURL:URL loadType:childLoadType triggeringEvent:nil isFormSubmission:NO];
 
-    if (childItem) {
-        // We only enter this second if block when the first one succeeded to find a
-        // matching child frame
-        if (loadType == WebFrameLoadTypeForward
-            || loadType == WebFrameLoadTypeBack
-            || loadType == WebFrameLoadTypeIndexedBackForward)
-        {
-            // For back/forward, remember this item so we can traverse any child items as child frames load
-            [childFrame->_private setProvisionalItem:childItem];
-        } else {
-            // For reload, just reinstall the current item, since a new child frame was created but we won't be creating a new BF item
-            [childFrame->_private setCurrentItem:childItem];
+            if (loadType == WebFrameLoadTypeForward
+                || loadType == WebFrameLoadTypeBack
+                || loadType == WebFrameLoadTypeIndexedBackForward)
+            {
+                // For back/forward, remember this item so we can traverse any child items as child frames load
+                [childFrame->_private setProvisionalItem:childItem];
+            } else {
+                // For reload, just reinstall the current item, since a new child frame was created but we won't be creating a new BF item
+                [childFrame->_private setCurrentItem:childItem];
+            }
         }
     }
+
+    [childFrame _loadURL:URL loadType:childLoadType triggeringEvent:nil isFormSubmission:NO];
 }
 
 - (void)_postWithURL:(NSURL *)URL data:(NSData *)data contentType:(NSString *)contentType triggeringEvent:(NSEvent *)event
@@ -1565,9 +1561,8 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (void)_restoreScrollPosition
 {
-    WebHistoryItem *entry = [_private currentItem];
-    ASSERT(entry);
-    [[[self webView] documentView] scrollPoint:[entry scrollPoint]];
+    ASSERT([_private currentItem]);
+    [[[self webView] documentView] scrollPoint:[[_private currentItem] scrollPoint]];
 }
 
 - (void)_scrollToTop
