@@ -245,16 +245,28 @@ void QPainter::drawLine(int x1, int y1, int x2, int y2)
 {
     NSBezierPath *path;
 
-    [NSBezierPath setDefaultLineWidth:0];
-
     _lockFocus();
     _setColorFromPen();
-    path = [NSBezierPath bezierPath];
-    [path setLineWidth:0];
+
+    NSGraphicsContext *graphicsContext = [NSGraphicsContext currentContext];
+    BOOL flag = [graphicsContext shouldAntialias];
+
+    [graphicsContext setShouldAntialias: NO];
+
+#if 0
+    NSBezierPath *path = [NSBezierPath bezierPath];
+    [path setLineWidth:(float)0.1];
     [path moveToPoint:NSMakePoint(x1, y1)];
     [path lineToPoint:NSMakePoint(x2, y2)];
     [path closePath];
     [path stroke];
+#endif        
+
+    [NSBezierPath setDefaultLineWidth:1.0f];
+    [NSBezierPath strokeLineFromPoint: NSMakePoint (x1,y1-0.5f) toPoint: NSMakePoint (x2,y2-0.5f)];
+
+    [graphicsContext setShouldAntialias: flag];
+    
     _unlockFocus();
 }
 
@@ -616,7 +628,9 @@ QPaintDevice *QPainter::device() const
     return (QPaintDevice *)data->bufferDevice;
 }
 
-void QPainter::_lockFocus(){
+void QPainter::_lockFocus()
+{
+#if 0
     if (data->isFocusLocked == 0){
         if (data->bufferDevice != 0L){
             const QPixmap *pixmap = (QPixmap *)(data->bufferDevice);
@@ -627,9 +641,12 @@ void QPainter::_lockFocus(){
         }
         data->isFocusLocked = 1;
     }	
+#endif
 }
 
-void QPainter::_unlockFocus(){
+void QPainter::_unlockFocus()
+{
+#if 0
     if (data->isFocusLocked == 1){
         if (data->bufferDevice != 0L){
             const QPixmap *pixmap = (QPixmap *)(data->bufferDevice);
@@ -640,6 +657,7 @@ void QPainter::_unlockFocus(){
         }
         data->isFocusLocked = 0;
     }	
+#endif
 }
 
 

@@ -136,11 +136,14 @@
         
         [self layout];
 
-        QPainter p(widget);         
+        QPainter p(widget);    
+        
+        [self lockFocus];
         ((KHTMLView *)widget)->drawContents( &p, (int)rect.origin.x, 
                     (int)rect.origin.y, 
                     (int)rect.size.width, 
                     (int)rect.size.height );
+        [self unlockFocus];
     }
 }
 

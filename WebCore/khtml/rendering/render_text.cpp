@@ -120,8 +120,10 @@ void TextSlave::printDecoration( QPainter *pt, RenderText* p, int _tx, int _ty, 
     // doing something better.
     underlineOffset+=2;
 
-    if(deco & UNDERLINE)
+    if(deco & UNDERLINE){
+        //fprintf (stderr, "UNDERLINE (%d, %d) to (%d, %d)\n", _tx, _ty + underlineOffset, _tx + width, _ty + underlineOffset );
         pt->drawLine(_tx, _ty + underlineOffset, _tx + width, _ty + underlineOffset );
+    }
     if(deco & OVERLINE)
         pt->drawLine(_tx, _ty, _tx + width, _ty );
     if(deco & LINE_THROUGH)

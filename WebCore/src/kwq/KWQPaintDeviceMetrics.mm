@@ -35,7 +35,7 @@ QPaintDeviceMetrics::QPaintDeviceMetrics(const QPaintDevice *)
 int QPaintDeviceMetrics::logicalDpiY() const 
 {
     //_logPartiallyImplemented();
-    return 72;
+    return 96;
 }
 
 

@@ -39,6 +39,9 @@
 #import <Cocoa/Cocoa.h>
 #endif
 
+class QFontMetricsPrivate;
+
+
 // class QFontMetrics ==========================================================
 
 class QFontMetrics {
@@ -80,19 +83,15 @@ public:
 #ifdef _KWQ_
     void _initialize();
 #if (defined(__APPLE__) && defined(__OBJC__) && defined(__cplusplus))
-    void _initializeWithFont(NSFont *);
+    void _initializeWithData(QFontMetricsPrivate *);
+    NSRect _rectOfString(NSString *) const;
 #else
-    void _initializeWithFont(void *);
+    void _initializeWithData(void *);
+//    int _rectOfString(void *) const;
 #endif
     void _free();
     
-    struct KWQFontMetricsData {
-#if (defined(__APPLE__) && defined(__OBJC__) && defined(__cplusplus))
-        NSFont *font;
-#else
-        void *font;
-#endif
-    } *data;
+    QFontMetricsPrivate *data;
 #endif
 
     void _freeWithData(struct KWQFontMetricsData *);

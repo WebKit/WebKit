@@ -29,6 +29,53 @@
 
 #define ROUND_TO_INT(f) ((int)rint((f)))
 
+struct QFontMetricsPrivate {
+friend class QFontMetrics;
+public:
+    QFontMetricsPrivate() : 
+        font(0), 
+        textContainer(0), 
+        layoutManager(0),
+        attributes(0),
+        boundingRectCache(0),
+        lastLength(0)
+    {
+    }
+    
+    ~QFontMetricsPrivate()
+    {
+        if (font){
+            [font release];
+            font = 0;
+        }
+        if (textContainer){
+            [textContainer release];
+            textContainer = 0;
+        }
+        if (layoutManager){
+            [layoutManager release];
+            layoutManager = 0;
+        }
+        if (attributes){
+            [attributes release];
+            attributes = 0;
+        }
+        if (boundingRectCache){
+            [boundingRectCache release];
+            boundingRectCache = 0;
+        }
+    }
+    
+private:
+    NSFont *font;
+    NSTextContainer *textContainer;
+    NSLayoutManager *layoutManager;
+    NSDictionary *attributes;
+    NSMutableDictionary *boundingRectCache;
+    int lastLength;
+};
+
+
 QFontMetrics::QFontMetrics()
 {
     _initialize();
@@ -37,42 +84,45 @@ QFontMetrics::QFontMetrics()
 
 QFontMetrics::QFontMetrics(const QFont &withFont)
 {
-    _initializeWithFont (withFont.font);
+    _initializeWithData (0);
+    data->font = [withFont.font retain];
 }
 
 
 QFontMetrics::QFontMetrics(const QFontMetrics &copyFrom)
 {
-    struct KWQFontMetricsData *oldData = data;
-    _initializeWithFont(copyFrom.data->font);
-    _freeWithData (oldData);
+    _initializeWithData(copyFrom.data);
 }
 
 void QFontMetrics::_initialize()
 {
-    _initializeWithFont (0);
+    _initializeWithData (0);
 }
 
-void QFontMetrics::_initializeWithFont (NSFont *withFont)
+void QFontMetrics::_initializeWithData (QFontMetricsPrivate *withData)
 {
-    data = (struct KWQFontMetricsData *)calloc (1, sizeof (struct KWQFontMetricsData));
-    if (withFont == 0)
+    data = new QFontMetricsPrivate();
+
+    if (withData == 0){
         data->font = [QFont::defaultNSFont() retain];
-    else
-        data->font = [withFont retain];
+        data->textContainer = 0;
+        data->layoutManager = 0;
+        data->attributes = 0;
+        data->boundingRectCache = 0;
+    }
+    else {
+        data->font = [withData->font retain];
+        data->textContainer = [withData->textContainer retain];
+        data->layoutManager = [withData->layoutManager retain];
+        data->attributes = [withData->attributes retain];
+        data->boundingRectCache = [withData->boundingRectCache retain];
+    }
 }
 
 void QFontMetrics::_free(){
-    _freeWithData (data);
+    delete data;
 }
 
-
-void QFontMetrics::_freeWithData(struct KWQFontMetricsData *freeData){
-    if (freeData != 0){
-        //[freeData->font release];
-        //free (freeData);
-    }
-}
 
 QFontMetrics::~QFontMetrics()
 {
@@ -97,19 +147,73 @@ int QFontMetrics::height() const
     return ROUND_TO_INT([data->font defaultLineHeightForFont]);
 }
 
+const float LargeNumberForText = 1.0e7;
+
+NSRect QFontMetrics::_rectOfString(NSString *string) const
+ {
+    NSValue *cachedValue;
+    NSTextStorage *textStorage;
+
+    if (data->boundingRectCache == nil){
+        data->boundingRectCache = [[NSMutableDictionary alloc] init];
+    }
+
+    cachedValue = [data->boundingRectCache objectForKey: string];
+    if (cachedValue != nil){
+        return [cachedValue rectValue];
+    }
+    
+    if (data->textContainer == nil){
+        data->textContainer = [[NSTextContainer alloc] initWithContainerSize:NSMakeSize(LargeNumberForText, LargeNumberForText)];
+        data->layoutManager = [[NSLayoutManager alloc] init];
+ //       data->textStorage = [[NSTextStorage alloc] initWithString:string attributes:[NSDictionary dictionaryWithObjectsAndKeys:data->font, NSFontAttributeName, nil]];
+        [data->layoutManager addTextContainer: data->textContainer];
+//      [data->textStorage addLayoutManager: data->layoutManager];
+        data->attributes = [[NSDictionary dictionaryWithObjectsAndKeys:data->font, NSFontAttributeName, nil] retain];
+    }
+//    else {
+//        [data->textStorage beginEditing];
+//        [data->textStorage replaceCharactersInRange: NSMakeRange (0,[data->textStorage length]) withString: string];
+//        [data->textStorage endEditing];
+//    }
+
+    textStorage = [[NSTextStorage alloc] initWithString:string attributes: data->attributes];
+    [textStorage addLayoutManager: data->layoutManager];
+    
+    //[data->layoutManager addTextContainer: data->textContainer];
+    //[data->textStorage addLayoutManager: data->layoutManager];
+
+    unsigned numberOfGlyphs = [data->layoutManager numberOfGlyphs];
+    NSRect glyphRect = [data->layoutManager boundingRectForGlyphRange: NSMakeRange (0, numberOfGlyphs) inTextContainer: data->textContainer];
+
+    [textStorage removeLayoutManager: data->layoutManager];
+    [textStorage release];
+    
+    //[data->layoutManager removeTextContainerAtIndex: 0];
+
+    [data->boundingRectCache setObject: [NSValue valueWithRect: glyphRect] forKey: string];
+        
+    return glyphRect;
+}
+
+
+
 
 int QFontMetrics::width(QChar qc) const
 {
     ushort c = qc.unicode();
     NSString *string = [NSString stringWithCharacters: (const unichar *)&c length: 1];
-    return ROUND_TO_INT([data->font widthOfString: string]);
+    int stringWidth = ROUND_TO_INT(_rectOfString(string).size.width);
+    return stringWidth;
 }
+
 
 
 int QFontMetrics::width(char c) const
 {
     NSString *string = [NSString stringWithCString: &c length: 1];
-    return ROUND_TO_INT([data->font widthOfString: string]);
+    int stringWidth = ROUND_TO_INT(_rectOfString(string).size.width);
+    return stringWidth;
 }
 
 
@@ -121,7 +225,8 @@ int QFontMetrics::width(const QString &qstring, int len) const
         string = QSTRING_TO_NSSTRING_LENGTH (qstring, len);
     else
         string = QSTRING_TO_NSSTRING (qstring);
-    return ROUND_TO_INT([data->font widthOfString: string]);
+    int stringWidth = ROUND_TO_INT(_rectOfString(string).size.width);
+    return stringWidth;
 }
 
 
@@ -131,17 +236,33 @@ int QFontMetrics::descent() const
 }
 
 
-QRect QFontMetrics::boundingRect(const QString &, int len=-1) const
+QRect QFontMetrics::boundingRect(const QString &qstring, int len) const
 {
-    _logNotYetImplemented();
-    return QRect();
+    NSString *string;
+
+    if (len != -1)
+        string = QSTRING_TO_NSSTRING_LENGTH (qstring, len);
+    else
+        string = QSTRING_TO_NSSTRING (qstring);
+    NSRect rect = _rectOfString(string);
+
+    return QRect(ROUND_TO_INT(rect.origin.x),
+            ROUND_TO_INT(rect.origin.y),
+            ROUND_TO_INT(rect.size.width),
+            ROUND_TO_INT(rect.size.height));
 }
 
 
-QRect QFontMetrics::boundingRect(QChar) const
+QRect QFontMetrics::boundingRect(QChar qc) const
 {
-    _logNotYetImplemented();
-    return QRect();
+    ushort c = qc.unicode();
+    NSString *string = [NSString stringWithCharacters: (const unichar *)&c length: 1];
+    NSRect rect = _rectOfString(string);
+
+    return QRect(ROUND_TO_INT(rect.origin.x),
+            ROUND_TO_INT(rect.origin.y),
+            ROUND_TO_INT(rect.size.width),
+            ROUND_TO_INT(rect.size.height));
 }
 
 
@@ -184,7 +305,7 @@ int QFontMetrics::leftBearing(QChar) const
 QFontMetrics &QFontMetrics::operator=(const QFontMetrics &assignFrom)
 {
     _free();
-    _initializeWithFont(assignFrom.data->font);
+    _initializeWithData(assignFrom.data);
     return *this;    
 }
 
