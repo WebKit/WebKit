@@ -7,8 +7,8 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <WebKit/IFURIEntry.h>
 
+@class IFURIEntry;
 @class IFWebHistoryPrivate;
 
 // notification sent when history is modified

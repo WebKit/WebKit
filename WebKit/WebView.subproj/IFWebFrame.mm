@@ -10,6 +10,8 @@
 #import <WebKit/IFWebViewPrivate.h>
 #import <WebKit/IFWebDataSourcePrivate.h>
 #import <WebKit/IFBaseWebControllerPrivate.h>
+#import <WebKit/IFWebController.h>
+#import <WebKit/IFLocationChangeHandler.h>
 
 #import <WebKit/WebKitDebug.h>
 

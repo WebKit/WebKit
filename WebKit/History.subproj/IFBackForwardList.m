@@ -8,6 +8,9 @@
 
 #import "IFBackForwardList.h"
 
+#import "IFURIEntry.h"
+#import "IFURIList.h"
+
 @implementation IFBackForwardList
 
 -(id)init

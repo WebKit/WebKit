@@ -4,10 +4,8 @@
         
         Public header file.
 */
-#import <Cocoa/Cocoa.h>
 
-#import <WebKit/IFWebDataSource.h>
-#import <WebKit/IFWebController.h>
+#import <Cocoa/Cocoa.h>
 
 /*
    ============================================================================= 
@@ -40,7 +38,7 @@
             Controllers should initiate progress indicators upon receipt of loadingStarted,
             and terminate when either a loadingCancelled or loadingStopped is received.
         
-        2.  After the controller receives it's first receivedDataForLocation: the contents of
+        2.  After the controller receives its first receivedDataForLocation: the contents of
             the view will be cleared and layout may begin.
             
         3.  Upon subsequent receipt of receivedDataForLocation: messages the controller
@@ -73,14 +71,19 @@
         the selected text.
         
 */
+
+@class IFWebDataSource;
+@protocol IFWebController;
+
+@class IFWebViewPrivate;
+
 @interface IFWebView : NSView
 {
 @private
-    id _viewPrivate;
+    IFWebViewPrivate *_viewPrivate;
 }
 
 - initWithFrame: (NSRect)frame;
-
 
 #ifdef TENTATIVE_API
 // Set and get the delegate.
@@ -88,27 +91,19 @@
 - (id <IFWebViewDelegate>)delegate;
 #endif
 
- 
-// Set and get the controller.  Note that the controller is not retained.
-// Perhaps setController: should be private?
+// Note that the controller is not retained.
 - (id <IFWebController>)controller;
 
-
-// This method is typically called by the view's controller when
+// These methods is typically called by the view's controller when
 // the data source is changed.
 - (void)dataSourceChanged: (IFWebDataSource *)dataSource;
-
-
 - (void)provisionalDataSourceChanged: (IFWebDataSource *)dataSource;
 
-
 - (void)setNeedsLayout: (bool)flag;
-
 
 // This method should not be public until we have a more completely
 // understood way to subclass IFWebView.
 - (void)layout;
-
 
 // Set needsToApplyStyles if you change anything that might impact styles, like
 // font preferences.
@@ -118,17 +113,14 @@
 // instead call setNeedsToApplyStyles:.
 - (void)reapplyStyles;
 
-
 // Stop animating animated GIFs, etc.
 - (void)stopAnimations;
-
 
 // Drag and drop links and images.  Others?
 - (void)setCanDragFrom: (BOOL)flag;
 - (BOOL)canDragFrom;
 - (void)setCanDragTo: (BOOL)flag;
 - (BOOL)canDragTo;
-
 
 // Returns an array of built-in context menu items for this node.
 // Generally called by IFContextMenuHandlers from contextMenuItemsForNode:
@@ -138,22 +130,17 @@
 - (void)setContextMenusEnabled: (BOOL)flag;
 - (BOOL)contextMenusEnabled;
 
-
 // Remove the selection.
 - (void)deselectText;
-
 
 // Search from the end of the currently selected location, or from the beginning of the document if nothing
 // is selected.
 - (void)searchFor: (NSString *)string direction: (BOOL)forward caseSensitive: (BOOL)caseFlag;
 
-
 // Get an attributed string that represents the current selection.
 - (NSAttributedString *)selectedText;
 
 @end
-
-
 
 /*
     Areas still to consider:
@@ -171,5 +158,3 @@
             
         subclassing of IFWebView
 */
-
-

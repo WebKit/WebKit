@@ -1,3 +1,52 @@
+2002-04-16  Darin Adler  <darin@apple.com>
+
+	Change headers so they don't include so much.
+	Also change IF_LOAD_TYPE to IFLoadType.
+
+	* History.subproj/IFBackForwardList.h:
+	* History.subproj/IFBackForwardList.m:
+	* History.subproj/IFURIEntry.h:
+	* History.subproj/IFURIList.h:
+	* History.subproj/IFURIList.m:
+	* History.subproj/IFWebHistory.h:
+	* History.subproj/IFWebHistoryPrivate.h:
+	* History.subproj/IFWebHistoryPrivate.m:
+	* MIME.subproj/IFContentHandler.h:
+	* MIME.subproj/IFDownloadHandler.h:
+	* MIME.subproj/IFDownloadHandlerPrivate.h:
+	* MIME.subproj/IFDownloadHandlerPrivate.m:
+	* MIME.subproj/IFMIMEDatabase.h:
+	* MIME.subproj/IFMIMEDatabase.m:
+	* Misc.subproj/IFException.h:
+	* Plugins.subproj/IFNullPluginView.mm:
+	* Plugins.subproj/IFPluginView.h:
+	* Plugins.subproj/IFPluginView.mm:
+	* WebKit.pbproj/project.pbxproj:
+	* WebView.subproj/IFBaseWebController.h:
+	* WebView.subproj/IFBaseWebController.mm:
+	* WebView.subproj/IFBaseWebControllerPrivate.h:
+	* WebView.subproj/IFBaseWebControllerPrivate.mm:
+	* WebView.subproj/IFLoadProgress.h:
+	* WebView.subproj/IFLoadProgress.mm:
+	* WebView.subproj/IFLocationChangeHandler.h:
+	* WebView.subproj/IFMainURLHandleClient.h:
+	* WebView.subproj/IFMainURLHandleClient.mm:
+	* WebView.subproj/IFPreferences.h:
+	* WebView.subproj/IFPreferencesPrivate.h:
+	* WebView.subproj/IFWebController.h:
+	* WebView.subproj/IFWebDataSource.h:
+	* WebView.subproj/IFWebDataSource.mm:
+	* WebView.subproj/IFWebDataSourcePrivate.h:
+	* WebView.subproj/IFWebDataSourcePrivate.mm:
+	* WebView.subproj/IFWebFrame.h:
+	* WebView.subproj/IFWebFrame.mm:
+	* WebView.subproj/IFWebFramePrivate.h:
+	* WebView.subproj/IFWebFramePrivate.mm:
+	* WebView.subproj/IFWebView.h:
+	* WebView.subproj/IFWebView.mm:
+	* WebView.subproj/IFWebViewPrivate.h:
+	* WebView.subproj/IFWebViewPrivate.mm:
+
 2002-04-16  Kenneth Kocienda  <kocienda@apple.com>
 
         Moved IFError class from WebKit to WebFoundation.

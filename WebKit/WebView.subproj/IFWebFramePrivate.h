@@ -5,10 +5,14 @@
 
         Private header file.
 */
-#import <Cocoa/Cocoa.h>
 
 #import <WebKit/IFWebFrame.h>
-#import <WebKit/IFWebDataSource.h>
+
+@class IFWebView;
+
+namespace khtml {
+    class RenderPart;
+}
 
 typedef enum {
     IFWEBFRAMESTATE_UNINITIALIZED = 1,
@@ -29,10 +33,10 @@ typedef enum {
 @interface IFWebFramePrivate : NSObject
 {
     NSString *name;
-    id view;
+    IFWebView *view;
     IFWebDataSource *dataSource;
     IFWebDataSource *provisionalDataSource;
-    void *renderFramePart;
+    khtml::RenderPart *renderFramePart;
     id <IFWebController>controller;
     IFWebFrameState state;
     NSMutableDictionary *errors;
@@ -44,21 +48,21 @@ typedef enum {
 - (NSString *)name;
 - (void)setController: (id <IFWebController>)c;
 - (id <IFWebController>)controller;
-- (void)setView: v;
-- view;
+- (void)setView: (IFWebView *)v;
+- (IFWebView *)view;
 - (void)setDataSource: (IFWebDataSource *)d;
 - (IFWebDataSource *)dataSource;
 - (void)setProvisionalDataSource: (IFWebDataSource *)d;
 - (IFWebDataSource *)provisionalDataSource;
-- (void)setRenderFramePart: (void *)p;
-- (void *)renderFramePart;
+- (void)setRenderFramePart: (khtml::RenderPart *)p;
+- (khtml::RenderPart *)renderFramePart;
 
 @end
 
 @interface IFWebFrame (IFPrivate)
 - (void)_setController: (id <IFWebController>)controller;
-- (void)_setRenderFramePart: (void *)p;
-- (void *)_renderFramePart;
+- (void)_setRenderFramePart: (khtml::RenderPart *)p;
+- (khtml::RenderPart *)_renderFramePart;
 - (void)_setDataSource: (IFWebDataSource *)d;
 - (void)_transitionProvisionalToCommitted;
 - (void)_transitionProvisionalToLayoutAcceptable;

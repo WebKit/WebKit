@@ -3,7 +3,8 @@
 */
 
 #import "IFURIList.h"
-#import "WebKitReallyPrivate.h"
+#import "IFURIEntry.h"
+#import "WebKitDebug.h"
 
 struct IFURIListNode
 {

@@ -7,6 +7,10 @@
 
 #import "IFPluginView.h"
 
+#import <WebKit/IFLoadProgress.h>
+#import <WebKit/IFWebController.h>
+#import <WebKit/IFWebFrame.h>
+
 #import <AppKit/NSWindow_Private.h>
 #import <Carbon/Carbon.h>
 
@@ -16,6 +20,12 @@
 #import <IFWebDataSource.h>
 #import <WebFoundation/IFError.h>
 #import <WebKitDebug.h>
+
+#import <WCPlugin.h>
+#import <qwidget.h>
+#import <IFWebView.h>
+#import <IFBaseWebController.h>
+#import <IFPluginNullEventSender.h>
 
 extern "C" {
 #import <CoreGraphics/CoreGraphics.h>
@@ -224,12 +234,9 @@ extern "C" {
 - (void)stop
 {
     NPError npErr;
-    unsigned i;
     
     if (!stopped){
-        for(i=0; i<[activeURLHandles count]; i++){
-            [[activeURLHandles objectAtIndex:i] cancelLoadInBackground];
-        }
+        [activeURLHandles makeObjectsPerformSelector:@selector(cancelLoadInBackground)];
         [eventSender stop];
         [eventSender release];
         [[NSNotificationCenter defaultCenter] removeObserver:self];
@@ -310,10 +317,9 @@ extern "C" {
         transferred = TRUE;
         trackingTag = [self addTrackingRect:[self bounds] owner:self userData:nil assumeInside:NO];
         
-        webView = [self findSuperview:@"IFWebView"];
+        id webView = [self findSuperview:@"IFWebView"];
         webController = [webView controller];
-        webFrame = [webController frameForView:webView];
-        webDataSource = [webFrame dataSource];
+        webDataSource = [[webController frameForView:webView] dataSource];
     }
     [self sendUpdateEvent];
 }

@@ -7,6 +7,8 @@
 //
 
 #import "IFMIMEDatabase.h"
+
+#import "IFMIMEHandler.h"
 #import <WCPluginDatabase.h>
 #import <WCPlugin.h>
 

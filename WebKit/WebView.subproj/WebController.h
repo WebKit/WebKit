@@ -4,11 +4,8 @@
 
         Public header file.
 */
-#import <Cocoa/Cocoa.h>
 
-#import <WebKit/IFLoadProgress.h>
-#import <WebKit/IFLocationChangeHandler.h>
-#import <WebKit/IFDownloadHandler.h>
+#import <Cocoa/Cocoa.h>
 
 /*
    ============================================================================= 
@@ -28,11 +25,13 @@
    ============================================================================= 
 */
 
-
-@class IFWebDataSource;
+@class IFDownloadHandler;
 @class IFError;
+@class IFLoadProgress;
+@class IFWebDataSource;
 @class IFWebFrame;
 
+@protocol IFLocationChangeHandler;
 
 /*
    ============================================================================= 
@@ -45,6 +44,7 @@
 
    ============================================================================= 
 */
+
 @protocol  IFResourceProgressHandler
 
 /*
@@ -59,8 +59,8 @@
 
 @end
 
-
 @protocol IFDownloadProgressHandler
+
 // Called when progress of a download has been made
 - (void) receivedProgress:(IFLoadProgress *)progress forDownloadHandler:(IFDownloadHandler *)downloadHandler;
 
@@ -68,7 +68,6 @@
 - (void) receivedError:(IFError *)error forDownloadHandler:(IFDownloadHandler *)downloadHandler partialProgress: (IFLoadProgress *)progress;
 
 @end
-
 
 /*
    ============================================================================= 
@@ -90,10 +89,6 @@
 
 @end
 
-
-
-
-
 /*
    ============================================================================= 
 
@@ -103,43 +98,33 @@
     
    ============================================================================= 
 */
-@protocol IFWebController <IFResourceProgressHandler, IFDownloadProgressHandler, IFScriptContextHandler>
 
+@protocol IFWebController <IFResourceProgressHandler, IFDownloadProgressHandler, IFScriptContextHandler>
 
 // Called when a data source needs to create a frame.  This method encapsulates the
 // specifics of creating and initializaing a view of the appropriate class.
 - (IFWebFrame *)createFrameNamed: (NSString *)fname for: (IFWebDataSource *)child inParent: (IFWebDataSource *)parent inScrollView: (BOOL)inScrollView;
 
-
 // Look for a frame named name, recursively.
 - (IFWebFrame *)frameNamed: (NSString *)name;
-
 
 // Return the top level frame.  Note that even document that are not framesets will have a
 // mainFrame.
 - (IFWebFrame *)mainFrame;
 
-
 // Return the frame associated with the data source.  Traverses the
 // frame tree to find the data source.
 - (IFWebFrame *)frameForDataSource: (IFWebDataSource *)dataSource;
-
 
 // Return the frame associated with the view.  Traverses the
 // frame tree to find the data source.  Typically aView is
 // an IFWebView.
 - (IFWebFrame *)frameForView: (NSView *)aView;
 
-
 - (id <IFLocationChangeHandler>)provideLocationChangeHandlerForFrame: (IFWebFrame *)frame;
-
 
 // FIXME:  this method should be moved to a protocol
 // Called when a plug-in for a certain mime type is not installed
 - (void)pluginNotFoundForMIMEType:(NSString *)mime pluginPageURL:(NSURL *)url;
 
-
 @end
-
-
-

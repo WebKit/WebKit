@@ -7,12 +7,14 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <WebKit/IFMIMEHandler.h>
-#import <WebFoundation/WebFoundation.h>
+
+@class IFMIMEHandler;
+
+@class IFDownloadHandlerPrivate;
 
 @interface IFDownloadHandler : NSObject {
 @private
-    id _downloadHandlerPrivate;
+    IFDownloadHandlerPrivate *_downloadHandlerPrivate;
 }
 
 - (NSURL *) url;

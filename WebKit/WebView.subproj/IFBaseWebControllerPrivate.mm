@@ -7,10 +7,13 @@
 #import <WebKit/IFWebViewPrivate.h>
 #import <WebKit/IFWebFramePrivate.h>
 #import <WebKit/IFPreferencesPrivate.h>
+#import <WebKit/IFLoadProgress.h>
+#import <WebKit/IFWebController.h>
 
 #import <WebFoundation/IFError.h>
-#include <KWQKHTMLPart.h>
-#include <rendering/render_frames.h>
+#import <WebFoundation/IFURLCacheLoaderConstants.h>
+#import <KWQKHTMLPart.h>
+#import <rendering/render_frames.h>
 
 #import <WebKit/WebKitDebug.h>
 

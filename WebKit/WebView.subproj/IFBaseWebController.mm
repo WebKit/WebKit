@@ -10,6 +10,7 @@
 #import <WebKit/IFWebFramePrivate.h>
 #import <WebKit/IFDynamicScrollBarsView.h>
 #import <WebKit/IFException.h>
+#import <WebKit/IFWebController.h>
 
 #import <WebKit/WebKitDebug.h>
 

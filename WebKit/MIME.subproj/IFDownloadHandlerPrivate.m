@@ -10,6 +10,9 @@
 #import <ApplicationServices/ApplicationServices.h>
 #import <Carbon/Carbon.h>
 
+#import "IFMIMEHandler.h"
+#import <WebFoundation/IFURLHandle.h>
+
 @implementation IFDownloadHandlerPrivate
 
 

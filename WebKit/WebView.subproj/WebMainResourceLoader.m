@@ -3,18 +3,26 @@
 	    
     Copyright 2001, Apple, Inc. All rights reserved.
 */
-#include <pthread.h>
 
-#import <WebKit/IFBaseWebControllerPrivate.h>
 #import <WebKit/IFMainURLHandleClient.h>
+
+#import <pthread.h>
+
+#import <WebKit/IFLoadProgress.h>
+#import <WebKit/IFBaseWebControllerPrivate.h>
 #import <WebKit/IFMIMEDatabase.h>
 #import <WebKit/WebKitDebug.h>
 #import <WebKit/IFContentHandler.h>
 #import <WebKit/IFDownloadHandlerPrivate.h>
+#import <WebKit/IFWebDataSourcePrivate.h>
+#import <WebKit/IFWebController.h>
+#import <WebKit/IFLocationChangeHandler.h>
 
 #import <WebFoundation/IFError.h>
+#import <WebFoundation/IFURLHandle.h>
 
-#include <khtmlview.h>
+#import <khtmlview.h>
+#import <khtml_part.h>
 
 @implementation IFMainURLHandleClient
 

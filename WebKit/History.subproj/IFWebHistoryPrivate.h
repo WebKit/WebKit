@@ -7,7 +7,8 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <WebKit/IFURIEntry.h>
+
+@class IFURIEntry;
 
 @interface IFWebHistoryPrivate : NSObject {
 @private

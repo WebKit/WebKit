@@ -6,12 +6,13 @@
     Copyright 2001, Apple, Inc. All rights reserved.
 */
 
-#import <Cocoa/Cocoa.h>
-
-#import <WebFoundation/WebFoundation.h>
-
-#import <WebKit/IFWebDataSourcePrivate.h>
 #import <WebKit/IFMIMEHandler.h>
+
+@class IFDownloadHandler;
+@class IFWebDataSource;
+@protocol IFURLHandleClient;
+
+class KHTMLPart;
 
 @interface IFMainURLHandleClient : NSObject <IFURLHandleClient>
 {

@@ -5,10 +5,7 @@
         in WebCore.  Instances of this class are referenced by _viewPrivate in 
         NSWebPageView.
 */
-#import <Cocoa/Cocoa.h>
 
-#import <WebKit/IFWebController.h>
-#import <WebKit/IFDynamicScrollBarsView.h>
 #import <WebKit/IFWebView.h>
 
 class QWidget;

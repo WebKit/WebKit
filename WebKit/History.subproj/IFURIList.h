@@ -4,7 +4,7 @@
 
 #import <Foundation/Foundation.h>
 
-#import "IFURIEntry.h"
+@class IFURIEntry;
 
 typedef struct IFURIListNode IFURIListNode;
 

@@ -10,7 +10,9 @@
 #import <WebKit/IFWebFramePrivate.h>
 #import <WebKit/IFException.h>
 #import <WebKit/WebKitDebug.h>
-
+#import <WebFoundation/IFURLHandle.h>
+#import <WebKit/IFLocationChangeHandler.h>
+#import <khtml_part.h>
 
 
 @implementation IFWebDataSourcePrivate 

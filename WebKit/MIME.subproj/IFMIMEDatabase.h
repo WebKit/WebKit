@@ -7,7 +7,8 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <IFMIMEHandler.h>
+
+@class IFMIMEHandler;
 
 @interface IFMIMEDatabase : NSObject {
     NSMutableDictionary *mimeHandlers;

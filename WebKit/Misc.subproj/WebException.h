@@ -22,8 +22,9 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-#ifndef _IFEXCEPTION_H
-#define _IFEXCEPTION_H
+
+#ifndef IFEXCEPTION_H
+#define IFEXCEPTION_H
 
 extern NSString * const IFMethodNotYetImplemented;
 extern NSString * const IFRuntimeError;

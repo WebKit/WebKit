@@ -10,6 +10,7 @@
 
 #import <WebFoundation/IFNSCalendarDateExtensions.h>
 #import <WebKit/WebKitDebug.h>
+#import "IFURIEntry.h"
 
 @interface IFWebHistoryPrivate (Private)
 -(IFURIEntry *)_entryForURLString:(NSString *)urlString;

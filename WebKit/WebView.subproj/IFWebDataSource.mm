@@ -6,10 +6,13 @@
 #import <WebKit/IFWebDataSourcePrivate.h>
 #import <WebKit/IFException.h>
 #import <WebKit/WebKitDebug.h>
+#import <WebKit/IFWebController.h>
+#import <WebKit/IFWebFrame.h>
 
-#include <xml/dom_docimpl.h>
+#import <xml/dom_docimpl.h>
+#import <khtml_part.h>
 
-#include <WCWebDataSource.h>
+#import <WCWebDataSource.h>
 
 @interface _IFDataSourceHolder : NSObject
 {
@@ -49,7 +52,7 @@ static id IFWebDataSourceMake(void *url)
 
 - (void)_commonInitialization
 {
-    ((IFWebDataSourcePrivate *)_dataSourcePrivate) = [[IFWebDataSourcePrivate alloc] init];
+    _dataSourcePrivate = [[IFWebDataSourcePrivate alloc] init];
 }
 
 // Returns nil if object cannot be initialized due to a malformed URL (RFC 1808).
@@ -57,7 +60,7 @@ static id IFWebDataSourceMake(void *url)
 {
     [super init];
     [self _commonInitialization];
-    ((IFWebDataSourcePrivate *)_dataSourcePrivate)->inputURL = [inputURL retain];
+    _dataSourcePrivate->inputURL = [inputURL retain];
     return self;
 }
 
@@ -85,10 +88,8 @@ static id IFWebDataSourceMake(void *url)
 
 - (IFWebFrame *)frame
 {
-    IFWebDataSourcePrivate *data = (IFWebDataSourcePrivate *)_dataSourcePrivate;
-    return [data->controller frameForDataSource: self];
+    return [_dataSourcePrivate->controller frameForDataSource: self];
 }
-
 
 // Returns the name of the frame containing this data source, or nil
 // if the data source is not in a frame set.
@@ -97,22 +98,20 @@ static id IFWebDataSourceMake(void *url)
     return [[self frame] name];    
 }
 
-
 // Returns YES if this is the main document.  The main document is the 'top'
 // document, typically either a frameset or a normal HTML document.
 - (BOOL)isMainDocument
 {
-    if (((IFWebDataSourcePrivate *)_dataSourcePrivate)->parent == nil)
+    if (_dataSourcePrivate->parent == nil)
         return YES;
     return NO;
 }
-
 
 // Returns nil if this data source represents the main document.  Otherwise
 // returns the parent data source.
 - (IFWebDataSource *)parent 
 {
-    return ((IFWebDataSourcePrivate *)_dataSourcePrivate)->parent;
+    return _dataSourcePrivate->parent;
 }
 
 
@@ -120,7 +119,7 @@ static id IFWebDataSourceMake(void *url)
 // associated with a frame set or iframe.
 - (NSArray *)children
 {
-    return [((IFWebDataSourcePrivate *)_dataSourcePrivate)->frames allValues];
+    return [_dataSourcePrivate->frames allValues];
 }
 
 - (void)addFrame: (IFWebFrame *)frame
@@ -148,7 +147,7 @@ static id IFWebDataSourceMake(void *url)
 // frames then frameNames will return nil.
 - (NSArray *)frameNames
 {
-    return [((IFWebDataSourcePrivate *)_dataSourcePrivate)->frames allKeys];
+    return [_dataSourcePrivate->frames allKeys];
 }
 
 
@@ -177,16 +176,16 @@ static id IFWebDataSourceMake(void *url)
     // All data sources used in a document share the same
     // controller.  A single document may have many datasource corresponding to
     // frame or iframes.
-    if (((IFWebDataSourcePrivate *)_dataSourcePrivate)->parent != nil)
-        return [((IFWebDataSourcePrivate *)_dataSourcePrivate)->parent controller];
-    return ((IFWebDataSourcePrivate *)_dataSourcePrivate)->controller;
+    if (_dataSourcePrivate->parent != nil)
+        return [_dataSourcePrivate->parent controller];
+    return _dataSourcePrivate->controller;
 }
 
 
 // May return nil if not initialized with a URL.
 - (NSURL *)inputURL
 {
-    return ((IFWebDataSourcePrivate *)_dataSourcePrivate)->inputURL;
+    return _dataSourcePrivate->inputURL;
 }
 
 
@@ -196,7 +195,7 @@ static id IFWebDataSourceMake(void *url)
 // a redirect is processed
 - (NSURL *)redirectedURL
 {
-    return ((IFWebDataSourcePrivate *)_dataSourcePrivate)->finalURL;
+    return _dataSourcePrivate->finalURL;
 }
 
 
@@ -204,7 +203,7 @@ static id IFWebDataSourceMake(void *url)
 // i.e. inputURL != redirectedURL.
 - (BOOL)wasRedirected
 {
-    return [((IFWebDataSourcePrivate *)_dataSourcePrivate)->inputURL isEqual: [self redirectedURL]];
+    return [_dataSourcePrivate->inputURL isEqual: [self redirectedURL]];
 }
 
 
@@ -312,19 +311,16 @@ static id IFWebDataSourceMake(void *url)
     return nil;
 }
 
-
 // Style sheet
 - (void)setUserStyleSheetFromURL: (NSURL *)url
 {
     [NSException raise:IFMethodNotYetImplemented format:@"IFWebDataSource::setUserStyleSheetFromURL: is not implemented"];
 }
 
-
 - (void)setUserStyleSheetFromString: (NSString *)sheet
 {
     [NSException raise:IFMethodNotYetImplemented format:@"IFWebDataSource::setUserStyleSheetFromString: is not implemented"];
 }
-
 
 // a.k.a shortcut icons, http://msdn.microsoft.com/workshop/Author/dhtml/howto/ShortcutIcon.asp.
 // This method may be moved to a category to prevent unnecessary linkage to the AppKit.  Note, however
@@ -335,7 +331,6 @@ static id IFWebDataSourceMake(void *url)
     return nil;
 }
 
-
 // Is page secure, e.g. https, ftps
 - (BOOL)isPageSecure
 {
@@ -343,12 +338,10 @@ static id IFWebDataSourceMake(void *url)
     return NO;
 }
 
-
 // Returns nil or the page title.
 - (NSString *)pageTitle
 {
-    return ((IFWebDataSourcePrivate *)_dataSourcePrivate)->pageTitle;
+    return _dataSourcePrivate->pageTitle;
 }
-
 
 @end

@@ -4,7 +4,8 @@
 
         Public header file.
 */
-#import <Cocoa/Cocoa.h>
+
+#import <Foundation/Foundation.h>
 
 @interface IFPreferences: NSObject
 
@@ -78,4 +79,3 @@
 - (BOOL)onlyLocalReferences;
 
 #endif
-

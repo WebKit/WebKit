@@ -3,8 +3,9 @@
 */
 
 #import <Foundation/Foundation.h>
-#import <WebKit/IFURIList.h>
-#import <WebKit/IFURIEntry.h>
+
+@class IFURIList;
+@class IFURIEntry;
 
 @interface IFBackForwardList : NSObject {
     IFURIList *uriList;

@@ -7,7 +7,7 @@
 #import "WCPluginWidget.h"
 #import "IFWebView.h"
 #import "IFBaseWebController.h"
-
+#import "IFWebController.h"
 
 static BOOL imageLoaded = NO;
 static NSImage *image = nil;

@@ -9,7 +9,7 @@
 
 @implementation IFLoadProgress
 
-static id IFLoadProgressMake()
+static id IFLoadProgressMake(void)
 {
     return [[[IFLoadProgress alloc] init] autorelease];
 }
@@ -19,7 +19,7 @@ static id IFLoadProgressMake()
     WCSetIFLoadProgressMakeFunc(IFLoadProgressMake);
 }
 
-- (id)initWithBytesSoFar:(int)bytes totalToLoad:(int)total type:(IF_LOAD_TYPE)loadType
+- (id)initWithBytesSoFar:(int)bytes totalToLoad:(int)total type:(IFLoadType)loadType
 {
     if (![super init]) {
         return nil;
@@ -42,7 +42,7 @@ static id IFLoadProgressMake()
     return totalToLoad;
 }
 
-- (IF_LOAD_TYPE)type
+- (IFLoadType)type
 {
     return type;
 }

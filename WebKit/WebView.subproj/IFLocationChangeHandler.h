@@ -4,7 +4,8 @@
 
         Public header file.
 */
-#import <Cocoa/Cocoa.h>
+
+#import <Foundation/Foundation.h>
 
 @class IFError;
 @class IFWebDataSource;
@@ -57,5 +58,3 @@
 - (void) downloadingWithHandler:(IFDownloadHandler *)downloadHandler;
 
 @end
-
-

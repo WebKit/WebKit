@@ -7,9 +7,9 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <WebFoundation/WebFoundation.h>
 #import <WebKit/IFDownloadHandler.h>
-#import <WebKit/IFMIMEHandler.h>
+
+@class IFURLHandle;
 
 @interface IFDownloadHandlerPrivate : NSObject {
     IFMIMEHandler *mimeHandler;
@@ -36,5 +36,4 @@
 - _initWithURLHandle:(IFURLHandle *)uHandle mimeHandler:(IFMIMEHandler *)mHandler;
 - (void) _receivedData:(NSData *)data;
 - (void) _finishedDownload;
-
 @end
