@@ -99,6 +99,8 @@ namespace KJS {
 #endif
   protected:
     Value throwError(ExecState *exec, ErrorType e, const char *msg);
+    Value throwError(ExecState *exec, ErrorType e, const char *msg, Value v, Node *expr);
+    Value throwError(ExecState *exec, ErrorType e, const char *msg, Identifier label);
     int line;
     unsigned int refcount;
     virtual int sourceId() const { return -1; }

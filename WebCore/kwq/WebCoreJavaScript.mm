@@ -26,8 +26,10 @@
 #import "WebCoreJavaScript.h"
 
 #import <JavaScriptCore/collector.h>
+#import <JavaScriptCore/interpreter.h>
 
 using KJS::Collector;
+using KJS::Interpreter;
 
 @implementation WebCoreJavaScript
 
@@ -59,6 +61,16 @@ using KJS::Collector;
 + (void)garbageCollect
 {
     while (Collector::collect()) { }
+}
+
++ (BOOL)shouldPrintExceptions
+{
+    return Interpreter::shouldPrintExceptions();
+}
+
++ (void)setShouldPrintExceptions:(BOOL)print
+{
+    Interpreter::setShouldPrintExceptions(print);
 }
 
 @end

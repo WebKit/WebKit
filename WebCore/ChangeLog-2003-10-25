@@ -1,3 +1,20 @@
+2003-05-12  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	- fixed 3254484 - Add a way to print JavaScript exceptions to the console via the debug menu
+
+        * khtml/ecma/kjs_proxy.cpp:
+        (KJSProxyImpl::evaluate): Pass the filename.
+        * kwq/WebCoreJavaScript.h:
+        * kwq/WebCoreJavaScript.mm:
+        (+[WebCoreJavaScript shouldPrintExceptions]): Call through to JavaScriptCore.
+        (+[WebCoreJavaScript setShouldPrintExceptions:]): Call through to JavaScriptCore.
+        * khtml/ecma/kjs_events.cpp:
+        (JSEventListener::handleEvent): Print exception if there is one.
+        * khtml/ecma/kjs_window.cpp:
+        (ScheduledAction::execute): Print exception in the function case.
+
 2003-05-13  Darin Adler  <darin@apple.com>
 
         Reviewed by Ken.

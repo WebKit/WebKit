@@ -114,7 +114,7 @@ QVariant KJSProxyImpl::evaluate(QString filename, int baseLine,
   KJS::Value thisNode = n.isNull() ? Window::retrieve( m_part ) : getDOMNode(m_script->globalExec(),n);
 
   UString code( str );
-  Completion comp = m_script->evaluate(code, thisNode);
+  Completion comp = m_script->evaluate(code, thisNode, filename);
   bool success = ( comp.complType() == Normal ) || ( comp.complType() == ReturnValue );
 
 #ifdef KJS_DEBUGGER

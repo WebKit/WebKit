@@ -1,3 +1,14 @@
+2003-05-12  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	- fixed 3254484 - Add a way to print JavaScript exceptions to the console via the debug menu
+
+        * Misc.subproj/WebCoreStatistics.h:
+        * Misc.subproj/WebCoreStatistics.m:
+        (+[WebCoreStatistics shouldPrintExceptions]): Call through to WebCore.
+        (+[WebCoreStatistics setShouldPrintExceptions:]): Call through to WebCore.
+
 2003-05-13  Darin Adler  <darin@apple.com>
 
         Reviewed by Ken.

@@ -25,6 +25,9 @@
 + (NSSet *)javaScriptRootObjectClasses;
 + (void)garbageCollectJavaScriptObjects;
 
++ (BOOL)shouldPrintExceptions;
++ (void)setShouldPrintExceptions:(BOOL)print;
+
 @end
 
 @interface WebFrame (WebKitDebug)

@@ -1555,6 +1555,15 @@ void ScheduledAction::execute(Window *window)
         Q_ASSERT( window == interpreter->globalObject().imp() );
         Object obj( window );
         func.call(exec,obj,args); // note that call() creates its own execution state for the func call
+	if ( exec->hadException() ) {
+#if APPLE_CHANGES
+	  if (Interpreter::shouldPrintExceptions()) {
+	    char *message = exec->exception().toObject(exec).get(exec, messagePropertyName).toString(exec).ascii();
+	    printf("(timer):%s\n", message);
+	  }
+#endif
+	  exec->clearException();
+	}
       }
     }
   }

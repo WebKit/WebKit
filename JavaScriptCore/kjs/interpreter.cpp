@@ -115,17 +115,22 @@ bool Interpreter::checkSyntax(const UString &code)
   return rep->checkSyntax(code);
 }
 
-Completion Interpreter::evaluate(const UString &code, const Value &thisV)
+Completion Interpreter::evaluate(const UString &code, const Value &thisV, const UString &filename)
 {
   Completion comp = rep->evaluate(code,thisV);
-#ifndef NDEBUG
-  if (comp.complType() == Throw) {
+
+#if APPLE_CHANGES
+  if (shouldPrintExceptions() && comp.complType() == Throw) {
     lock();
     ExecState *exec = rep->globalExec();
-    printf("Uncaught exception: %s\n", comp.value().toObject(exec).toString(exec).ascii());
+    char *f = strdup(filename.ascii());
+    const char *message = comp.value().toObject(exec).toString(exec).ascii();
+    printf("%s:%s\n", f, message);
+    free(f);
     unlock();
   }
 #endif
+
   return comp;
 }
 
@@ -309,6 +314,20 @@ void Interpreter::finalCheck()
   Collector::finalCheck();
   Lexer::globalClear();
   UString::globalClear();
+}
+#endif
+
+#if APPLE_CHANGES
+static bool printExceptions = false;
+
+bool Interpreter::shouldPrintExceptions()
+{
+  return printExceptions;
+}
+
+void Interpreter::setShouldPrintExceptions(bool print)
+{
+  printExceptions = print;
 }
 #endif
 

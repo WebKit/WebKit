@@ -97,8 +97,19 @@ void JSEventListener::handleEvent(DOM::Event &evt, bool isWindowEvent)
 
     window->setCurrentEvent( 0 );
     interpreter->setCurrentEvent( 0 );
+#if APPLE_CHANGES
+    if ( exec->hadException() ) {
+        if (Interpreter::shouldPrintExceptions()) {
+	    char *message = exec->exception().toObject(exec).get(exec, messagePropertyName).toString(exec).ascii();
+	    printf("(event handler):%s\n", message);
+	}
+        exec->clearException();
+    }
+#else
     if ( exec->hadException() )
         exec->clearException();
+#endif
+
     else if (html)
     {
         QVariant ret = ValueToVariant(exec, retval);

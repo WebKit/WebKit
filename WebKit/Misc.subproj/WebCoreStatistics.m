@@ -61,6 +61,16 @@
     [WebCoreJavaScript garbageCollect];
 }
 
++ (BOOL)shouldPrintExceptions
+{
+    return [WebCoreJavaScript shouldPrintExceptions];
+}
+
++ (void)setShouldPrintExceptions:(BOOL)print
+{
+    [WebCoreJavaScript setShouldPrintExceptions:print];
+}
+
 @end
 
 @implementation WebFrame (WebKitDebug)

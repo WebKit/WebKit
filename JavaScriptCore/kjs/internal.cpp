@@ -455,9 +455,6 @@ ProgramNode *Parser::parse(const UChar *code, unsigned int length, int *sourceId
       *errLine = eline;
     if (errMsg)
       *errMsg = "Parse error at line " + UString::from(eline);
-#ifndef NDEBUG
-    fprintf(stderr, "KJS: JavaScript parse error at line %d.\n", eline);
-#endif
     delete prog;
     return 0;
   }

@@ -1,3 +1,29 @@
+2003-05-12  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	- fixed 3254484 - Add a way to print JavaScript exceptions to the console via the debug menu
+	- improved JavaScript error message format
+	
+        * kjs/error_object.cpp:
+        (ErrorProtoFuncImp::call): Include line number in toString output.
+        * kjs/internal.cpp:
+        (Parser::parse): Remove redundant fprintf.
+        * kjs/interpreter.cpp:
+        (Interpreter::evaluate): Log if the flag is on. Include filename in log output.
+        (Interpreter::shouldPrintExceptions): Check the global flag.
+        (Interpreter::setShouldPrintExceptions): Set the global flag.
+        * kjs/interpreter.h:
+        * kjs/nodes.cpp:
+        (Node::throwError): Add variants that include value and expression or label in format.
+        (NewExprNode::evaluate): Improve error message.
+        (FunctionCallNode::evaluate): Improve error message.
+        (RelationalNode::evaluate): Improve error message.
+        (ContinueNode::execute): Improve error message.
+        (BreakNode::execute): Improve error message.
+        (LabelNode::execute): Improve error message.
+        * kjs/nodes.h:
+
 === Safari-78 ===
 
 2003-05-07  Vicki Murley  <vicki@apple.com>

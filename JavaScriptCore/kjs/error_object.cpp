@@ -64,16 +64,22 @@ bool ErrorProtoFuncImp::implementsCall() const
 Value ErrorProtoFuncImp::call(ExecState *exec, Object &thisObj, const List &/*args*/)
 {
   // toString()
-  UString s = "Error";
+  UString s;
 
-  Value v = thisObj.get(exec, namePropertyName);
+  Value v = thisObj.get(exec, "line");
   if (v.type() != UndefinedType) {
-    s = v.toString(exec);
+    s += v.toString(exec) += ": ";
+  }
+
+
+  v = thisObj.get(exec, namePropertyName);
+  if (v.type() != UndefinedType) {
+    s += v.toString(exec);
   }
 
   v = thisObj.get(exec, messagePropertyName);
   if (v.type() != UndefinedType) {
-    s += ": "+v.toString(exec);
+    s += " - " + v.toString(exec);
   }
 
   return String(s);
