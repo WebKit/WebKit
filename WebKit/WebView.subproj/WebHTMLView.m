@@ -137,6 +137,10 @@ void _NSResetKillRingOperationFlag(void);
 // FIXME: This constant is copied from AppKit's _NXSmartPaste constant.
 #define WebSmartPastePboardType @"NeXT smart paste pasteboard type"
 
+#define STANDARD_WEIGHT 5
+#define MIN_BOLD_WEIGHT 9
+#define STANDARD_BOLD_WEIGHT 10
+
 typedef enum {
     deleteSelectionAction,
     deleteKeyAction,
@@ -3651,7 +3655,7 @@ static WebHTMLView *lastHitView = nil;
         // with characters like single quote or backslash in their names.
         [style setFontFamily:[NSString stringWithFormat:@"'%@'", [font familyName]]];
         [style setFontSize:[NSString stringWithFormat:@"%0.fpx", [font pointSize]]];
-        if ([fm weightOfFont:font] >= 9) {
+        if ([fm weightOfFont:font] >= MIN_BOLD_WEIGHT) {
             [style setFontWeight:@"bold"];
         } else {
             [style setFontWeight:@"normal"];
@@ -3808,16 +3812,21 @@ static WebHTMLView *lastHitView = nil;
 
 - (NSFont *)_originalFontA
 {
-    return [[NSFontManager sharedFontManager] fontWithFamily:@"Helvetica" traits:0 weight:5 size:10];
+    return [[NSFontManager sharedFontManager] fontWithFamily:@"Helvetica" traits:0 weight:STANDARD_WEIGHT size:10];
 }
 
 - (NSFont *)_originalFontB
 {
-    return [[NSFontManager sharedFontManager] fontWithFamily:@"Times" traits:(NSBoldFontMask | NSItalicFontMask) weight:10 size:12];
+    return [[NSFontManager sharedFontManager] fontWithFamily:@"Times" traits:(NSBoldFontMask | NSItalicFontMask) weight:STANDARD_BOLD_WEIGHT size:12];
 }
 
 - (void)_addToStyle:(DOMCSSStyleDeclaration *)style fontA:(NSFont *)a fontB:(NSFont *)b
 {
+    // Since there's no way to directly ask NSFontManager what style change it's going to do
+    // we instead pass two "specimen" fonts to it and let it change them. We then deduce what
+    // style change it was doing by looking at what happened to each of the two fonts.
+    // So if it was making the text bold, both fonts will be bold after the fact.
+
     if (a == nil || b == nil)
         return;
 
@@ -3825,39 +3834,66 @@ static WebHTMLView *lastHitView = nil;
 
     NSFont *oa = [self _originalFontA];
 
-    NSString *fa = [a familyName];
-    NSString *fb = [b familyName];
-    if ([fa isEqualToString:fb]) {
+    NSString *aFamilyName = [a familyName];
+    NSString *bFamilyName = [b familyName];
+
+    int aPointSize = [a pointSize];
+    int bPointSize = [b pointSize];
+
+    int aWeight = [fm weightOfFont:a];
+    int bWeight = [fm weightOfFont:b];
+
+    BOOL aIsBold = aWeight >= MIN_BOLD_WEIGHT;
+
+    BOOL aIsItalic = ([fm traitsOfFont:a] & NSItalicFontMask) != 0;
+    BOOL bIsItalic = ([fm traitsOfFont:b] & NSItalicFontMask) != 0;
+
+    if ([aFamilyName isEqualToString:bFamilyName]) {
+        NSString *familyNameForCSS = aFamilyName;
+
+        // The family name may not be specific enough to get us the font specified.
+        // In some cases, the only way to get exactly what we are looking for is to use
+        // the Postscript name.
+        
+        // Find the font the same way the rendering code would later if it encountered this CSS.
+        WebTextRendererFactory *factory = [WebTextRendererFactory sharedFactory];
+        NSFontTraitMask traits = 0;
+        if (aIsBold)
+            traits |= NSBoldFontMask;
+        if (aIsItalic)
+            traits |= NSItalicFontMask;
+        NSFont *foundFont = [factory cachedFontFromFamily:aFamilyName traits:traits size:aPointSize];
+
+        // If we don't find a font with the same Postscript name, then we'll have to use the
+        // Postscript name to make the CSS specific enough.
+        if (![[foundFont fontName] isEqualToString:[a fontName]]) {
+            familyNameForCSS = [a fontName];
+        }
+
         // FIXME: Need more sophisticated escaping code if we want to handle family names
         // with characters like single quote or backslash in their names.
-        [style setFontFamily:[NSString stringWithFormat:@"'%@'", fa]];
+        [style setFontFamily:[NSString stringWithFormat:@"'%@'", familyNameForCSS]];
     }
 
-    int sa = [a pointSize];
-    int sb = [b pointSize];
     int soa = [oa pointSize];
-    if (sa == sb) {
-        [style setFontSize:[NSString stringWithFormat:@"%dpx", sa]];
-    } else if (sa < soa) {
+    if (aPointSize == bPointSize) {
+        [style setFontSize:[NSString stringWithFormat:@"%dpx", aPointSize]];
+    } else if (aPointSize < soa) {
         [style _setFontSizeDelta:@"-1px"];
-    } else if (sa > soa) {
+    } else if (aPointSize > soa) {
         [style _setFontSizeDelta:@"1px"];
     }
 
-    int wa = [fm weightOfFont:a];
-    int wb = [fm weightOfFont:b];
-    if (wa == wb) {
-        if (wa >= 9) {
+    if (aWeight == bWeight) {
+        if (aIsBold) {
             [style setFontWeight:@"bold"];
         } else {
             [style setFontWeight:@"normal"];
         }
     }
 
-    BOOL ia = ([fm traitsOfFont:a] & NSItalicFontMask) != 0;
-    BOOL ib = ([fm traitsOfFont:b] & NSItalicFontMask) != 0;
-    if (ia == ib) {
-        if (ia) {
+    if (aIsItalic == bIsItalic) {
+        if (aIsItalic) {
             [style setFontStyle:@"italic"];
         } else {
             [style setFontStyle:@"normal"];

@@ -1,3 +1,17 @@
+2005-03-09  Darin Adler  <darin@apple.com>
+
+        Reviewed by Richard.
+
+        - fixed <rdar://problem/4034175> REGRESSION (Mail): Can't use any font with style Light/Condensed/Semibold/Extrabold, etc
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _styleFromFontAttributes:]): Use a constant instead of hard-coded weight for clarity.
+        (-[WebHTMLView _originalFontA]): Ditto.
+        (-[WebHTMLView _originalFontB]): Ditto.
+        (-[WebHTMLView _addToStyle:fontA:fontB:]): Add code to detect the case where the family name is not good enough
+        to specify the font precisely. In that case, use the Postscript font name instead. Also change variable names
+        so it's easier to understand the method.
+
 2005-03-06  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
