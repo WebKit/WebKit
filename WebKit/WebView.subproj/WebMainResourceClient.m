@@ -170,11 +170,11 @@
 
     case WebPolicyDownload:
         [proxy setDelegate:nil];
-        [NSURLDownload _downloadWithLoadingResource:connection
-                                            request:request
-                                           response:r
-                                           delegate:[self downloadDelegate]
-                                              proxy:proxy];
+        [NSURLDownload _downloadWithLoadingConnection:connection
+                                              request:request
+                                             response:r
+                                             delegate:[self downloadDelegate]
+                                                proxy:proxy];
         [proxy release];
         proxy = nil;
         [self receivedError:[self interruptForPolicyChangeError]];

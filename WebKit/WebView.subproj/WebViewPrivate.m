@@ -227,18 +227,12 @@
 - (void)_downloadURL:(NSURL *)URL toDirectory:(NSString *)directory
 {
     ASSERT(URL);
-
-    NSURLRequest *request = [[NSURLRequest alloc] initWithURL:URL];
-    NSURLDownload *download = [[NSURLDownload alloc] initWithRequest:request];
-    [request release];
     
-    if (directory != nil && [directory isAbsolutePath]) {
-        [download _setDirectoryPath:directory];
-    }
-
-    // The download retains itself in loadWithDelegate.
-    [download loadWithDelegate:_private->downloadDelegate];
-    [download release];
+    NSURLRequest *request = [[NSURLRequest alloc] initWithURL:URL];
+    [NSURLDownload _downloadWithSource:request
+                              delegate:_private->downloadDelegate
+                             directory:[directory isAbsolutePath] ? directory : nil];
+    [request release];
 }
 
 - (BOOL)defersCallbacks

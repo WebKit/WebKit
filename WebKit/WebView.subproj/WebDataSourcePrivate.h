@@ -98,10 +98,6 @@
     // WebResourceLoadDelegate messages if the item is loaded from the
     // page cache.
     NSMutableArray *responses;
-    
-    BOOL isDownloading;
-    NSString *downloadPath;
-    NSString *downloadDirectory;
 
     BOOL justOpenedForTargetedLink;
 

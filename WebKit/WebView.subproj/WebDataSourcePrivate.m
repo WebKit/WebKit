@@ -66,8 +66,6 @@
     [ourBackForwardItems release];
     [triggeringAction release];
     [lastCheckedRequest release];
-    [downloadPath release];
-    [downloadDirectory release];
     [responses release];
     [webFrame release];
 
