@@ -1,3 +1,11 @@
+2004-05-24  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+
+        * khtml/css/css_computedstyle.cpp:
+        (DOM::CSSComputedStyleDeclarationImpl::getPropertyValue): Fixed to return the property value, 
+        as it should, instead of the whole property, as it was doing before.
+
 2004-05-23  Darin Adler  <darin@apple.com>
 
         Reviewed by Ken.

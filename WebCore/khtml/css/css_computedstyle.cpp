@@ -692,9 +692,10 @@ CSSValueImpl *CSSComputedStyleDeclarationImpl::getPropertyCSSValue(int propertyI
 
 DOMString CSSComputedStyleDeclarationImpl::getPropertyValue(int propertyID) const
 {
-    CSSProperty var = property(propertyID);
-    DOMString str = var.cssText();
-    return str;
+    CSSValueImpl* value = getPropertyCSSValue(propertyID);
+    if (value)
+        return value->cssText();
+    return "";
 }
 
 bool CSSComputedStyleDeclarationImpl::getPropertyPriority(int) const
