@@ -354,8 +354,13 @@ const QChar &BidiIterator::current() const
 
 inline QChar::Direction BidiIterator::direction() const
 {
-    if(!obj || !obj->isText() ) return QChar::DirON;
-    
+    if (!obj)
+        return QChar::DirON;
+    if (obj->isListMarker())
+        return obj->style()->direction() == LTR ? QChar::DirL : QChar::DirR;
+    if (!obj->isText())
+        return QChar::DirON;
+
     RenderText *renderTxt = static_cast<RenderText *>( obj );
     if ( pos >= renderTxt->stringLength() )
         return QChar::DirON;

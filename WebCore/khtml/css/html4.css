@@ -219,14 +219,14 @@ ul, menu, dir {
     display: block;
     list-style-type: disc;
     margin: 1__qem 0 1em 0;
-    padding-left: 40px /* FIXME: For RTL, we need to implement padding-start */
+    -khtml-padding-start: 40px
 }
 
 ol {
     display: block;
     list-style-type: decimal;
     margin: 1__qem 0 1em 0;
-    padding-left: 40px /* FIXME: For RTL, we need to implement padding-start */
+    -khtml-padding-start: 40px
 }
 
 li {
@@ -243,7 +243,7 @@ ol ol ul, ol ul ul, ul ol ul, ul ul ul {
 
 dd {
     display: block;
-    margin-left: 40px /* FIXME: For RTL, we need to implement margin-start */
+    -khtml-margin-start: 40px
 }
 
 dl {

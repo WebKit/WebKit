@@ -1,3 +1,35 @@
+2004-09-27  David Hyatt  <hyatt@apple.com>
+
+	Reworked lists to work well with RTL text.  Specifically the following bugs have been fixed:
+
+	(1) All bullets use the same offset constant now (a padding of 7 pixels).  Before, images used 5 and others used 7.
+	(2) Line height now works properly, so that list items with no content aren't squished (and missing the line descent).
+	(3) Punctuation now works correctly with inside and outside style ordered lists in RTL.
+	(4) RTL lists now properly apply padding and margin to the right side rather than the left.  This was done by adding
+	-khtml-margin-start and -khtml-padding-start properties that are just mapped to left/right based off the direction.
+	
+        Reviewed by darin
+
+        * khtml/css/cssparser.cpp:
+        (CSSParser::parseValue):
+        * khtml/css/cssproperties.c:
+        (hash_prop):
+        (findProp):
+        * khtml/css/cssproperties.h:
+        * khtml/css/cssproperties.in:
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::applyDeclarations):
+        (khtml::CSSStyleSelector::applyProperty):
+        * khtml/css/html4.css:
+        * khtml/rendering/bidi.cpp:
+        (khtml::BidiIterator::direction):
+        * khtml/rendering/render_list.cpp:
+        (RenderListItem::getAbsoluteRepaintRect):
+        (RenderListMarker::paint):
+        (RenderListMarker::calcMinMaxWidth):
+        (RenderListMarker::lineHeight):
+        (RenderListMarker::baselinePosition):
+
 2004-09-28  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Darin

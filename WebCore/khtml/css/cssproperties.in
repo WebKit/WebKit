@@ -79,6 +79,7 @@ margin-left
 -khtml-margin-collapse
 -khtml-margin-top-collapse
 -khtml-margin-bottom-collapse
+-khtml-margin-start
 -khtml-marquee
 -khtml-marquee-direction
 -khtml-marquee-increment
@@ -100,6 +101,7 @@ padding-top
 padding-right
 padding-bottom
 padding-left
+-khtml-padding-start
 page
 page-break-after
 page-break-before

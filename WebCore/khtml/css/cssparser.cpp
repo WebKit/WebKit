@@ -856,6 +856,7 @@ bool CSSParser::parseValue( int propId, bool important )
     case CSS_PROP_PADDING_RIGHT:        //   Which is defined as
     case CSS_PROP_PADDING_BOTTOM:       //   <length> | <percentage>
     case CSS_PROP_PADDING_LEFT:         ////
+    case CSS_PROP__KHTML_PADDING_START:
 	valid_primitive = ( !id && validUnit( value, FLength|FPercent, strict ) );
 	break;
 
@@ -919,6 +920,7 @@ bool CSSParser::parseValue( int propId, bool important )
     case CSS_PROP_MARGIN_RIGHT:         //   Which is defined as
     case CSS_PROP_MARGIN_BOTTOM:        //   <length> | <percentage> | auto | inherit
     case CSS_PROP_MARGIN_LEFT:          ////
+    case CSS_PROP__KHTML_MARGIN_START:
 	if ( id == CSS_VAL_AUTO )
 	    valid_primitive = true;
 	else

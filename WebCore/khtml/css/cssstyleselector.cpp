@@ -1662,6 +1662,7 @@ void CSSStyleSelector::applyDeclarations(bool applyFirst, bool isImportant,
                         case CSS_PROP_BACKGROUND:
                         case CSS_PROP_BACKGROUND_IMAGE:
                         case CSS_PROP_COLOR:
+                        case CSS_PROP_DIRECTION:
                         case CSS_PROP_DISPLAY:
                         case CSS_PROP_FONT:
                         case CSS_PROP_FONT_SIZE:
@@ -1701,6 +1702,12 @@ void CSSStyleSelector::applyProperty( int id, DOM::CSSValueImpl *value )
     bool isInherit = (parentNode && value->cssValueType() == CSSValue::CSS_INHERIT);
     bool isInitial = (value->cssValueType() == CSSValue::CSS_INITIAL) ||
                      (!parentNode && value->cssValueType() == CSSValue::CSS_INHERIT);
+
+    // These properties are used to set the correct margins/padding on RTL lists.
+    if (id == CSS_PROP__KHTML_MARGIN_START)
+        id = style->direction() == LTR ? CSS_PROP_MARGIN_LEFT : CSS_PROP_MARGIN_RIGHT;
+    else if (id == CSS_PROP__KHTML_PADDING_START)
+        id = style->direction() == LTR ? CSS_PROP_PADDING_LEFT : CSS_PROP_PADDING_RIGHT;
 
     // What follows is a list that maps the CSS properties into their corresponding front-end
     // RenderStyle values.  Shorthands (e.g. border, background) occur in this list as well and
