@@ -1,3 +1,11 @@
+2002-12-12  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+        * force-js-clean-timestamp: Update for JavaScriptCore changes.
+
+2002-12-12  Darin Adler  <darin@apple.com>
+
 2002-12-12  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

@@ -1,3 +1,16 @@
+2002-12-12  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	- fixed 3056449 - can't select state at tucows.com
+
+        * kjs/array_instance.h:
+        * kjs/array_object.cpp:
+	(ArrayInstanceImp::propList): Add numeric proprties that are in
+	special storage.
+        * kjs/array_object.h:
+        * kjs/object.h: Make propList a virtual method.
+
 2002-12-11  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Don.
