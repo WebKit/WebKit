@@ -34,7 +34,9 @@ CLEAN_FILES = $(OBJECTS) \
 #----------------------------------------------------------------------
 # Set flags for this directory
 
-CXXFLAGS = -DNEED_BOGUS_X_DEFINES -I$(TOPSRCDIR)/src/kwq \
+CXXFLAGS = $(BASECXXFLAGS) \
+	-DNEED_BOGUS_X_DEFINES \
+	-I$(TOPSRCDIR)/src/kwq \
         -I$(TOPSRCDIR)/src/kwq/qt \
         -I$(TOPSRCDIR)/src/kwq/kdecore \
         -I.. \

@@ -45,17 +45,17 @@ CLEAN_FILES = $(OBJECTS) \
 #----------------------------------------------------------------------
 # Set flags for this directory
 
-CXXFLAGS = -I$(TOPSRCDIR)/src/kwq \
-        -I$(TOPSRCDIR)/src/kwq/qt \
-        -I$(TOPSRCDIR)/src/kwq/kdecore \
-        -I../css \
-        -I../dom \
-        -I../html \
-        -I../misc \
-        -I.. \
-        -I. \
-        $(NULL)
-
+CXXFLAGS = $(BASECXXFLAGS) \
+    -I$(TOPSRCDIR)/src/kwq \
+    -I$(TOPSRCDIR)/src/kwq/qt \
+    -I$(TOPSRCDIR)/src/kwq/kdecore \
+    -I../css \
+    -I../dom \
+    -I../html \
+    -I../misc \
+    -I.. \
+    -I. \
+    $(NULL)
 
 #----------------------------------------------------------------------
 # Set targets for this directory
