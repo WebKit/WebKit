@@ -148,7 +148,7 @@
 				PRECOMPILE_PREFIX_HEADER = YES;
 				PREFIX_HEADER = WebKitPrefix.h;
 				PRODUCT_NAME = WebKit;
-				SECTORDER_FLAGS = "-sectorder __TEXT __text WebKit.order";
+				SECTORDER_FLAGS = "";
 				USE_GCC3_PFE_SUPPORT = YES;
 				WARNING_CFLAGS = "-Werror -Wall -W -Wbad-function-cast -Wcast-align -Wchar-subscripts -Wformat-security -Wmissing-declarations -Wmissing-format-attribute -Wmissing-prototypes -Wnested-externs -Wpointer-arith -Wwrite-strings -Wno-format-y2k -Wno-unused-parameter";
 				WRAPPER_EXTENSION = framework;

@@ -1,3 +1,9 @@
+2003-06-15  Vicki Murley  <vicki@apple.com>
+
+        Reviewed by darin.
+
+        * WebKit.pbproj/project.pbxproj: remove SECTORDER_FLAGS variable, so that we don't use order file for our Panther submission
+
 === Safari-85 ===
 
 2003-06-13  Darin Adler  <darin@apple.com>
