@@ -1,3 +1,20 @@
+2003-03-05  Trey Matteson  <trey@apple.com>
+
+	Autofill tweak.  In field names, replace all digits with spaces before matching
+	labels against them.  This turns the digits to word boundaries, so field names like
+	"address2" are matched by "address".
+
+	As part of this, I abandoned an earlier attempt to map Qt regexp syntax to Darwin's.
+	Now clients just have to use Darwin's.
+
+        Reviewed by Maciej.
+
+        * kwq/KWQKHTMLPart.mm:
+        (regExpForLabels):
+        (KWQKHTMLPart::matchLabelsAgainstElement):  Replace digits with space.
+        * kwq/KWQRegExp.mm:
+        (QRegExp::KWQRegExpPrivate::compile):  Don't try to support Qt syntax.
+
 2003-03-05  Darin Adler  <darin@apple.com>
 
         Reviewed by John.

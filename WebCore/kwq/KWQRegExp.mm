@@ -82,31 +82,6 @@ static QString RegExpFromGlob(QString glob)
     return result;
 }
 
-static QString RegExpFromPattern(QString pattern)
-{
-    // map word boundary QRegExp assertion to RegEx beginning and end of word boundaries
-    // FIXME:  Not sure how we would deal with \b appearing within a string.
-    int length = pattern.length();
-    if (length < 2) {
-        return pattern;
-    }
-    
-    bool fixStart = (pattern[0] == '\\' && pattern[1] == 'b');
-    bool fixEnd = (pattern[length-2] == '\\' && pattern[length-1] == 'b');
-    if (fixStart || fixEnd) {
-        QString result = pattern;
-        if (fixStart) {
-            result.replace(0, 2, "[[:<:]]");
-        }
-        if (fixEnd) {
-            result.replace(result.length()-2, 2, "[[:>:]]");
-        }
-        return result;
-    } else {
-        return pattern;
-    }
-}
-
 void QRegExp::KWQRegExpPrivate::compile(bool caseSensitive, bool glob)
 {
     QString p;
@@ -114,12 +89,18 @@ void QRegExp::KWQRegExpPrivate::compile(bool caseSensitive, bool glob)
     if (glob) {
 	p = RegExpFromGlob(pattern);
     } else {
-	p = RegExpFromPattern(pattern);
+	p = pattern;
     }
+    // Note we don't honor the Qt syntax for various character classes.  If we convert
+    // to a different underlying engine, we may need to change client code that relies
+    // on the regex syntax (see KWQKHTMLPart.mm for a couple examples).
 
     const char *cpattern = p.latin1();
 
-    regcomp(&regex, cpattern, REG_EXTENDED | (caseSensitive ? 0 : REG_ICASE));
+    int err = regcomp(&regex, cpattern, REG_EXTENDED | (caseSensitive ? 0 : REG_ICASE));
+    if (err) {
+        ERROR("regcomp failed with error=%d", err);
+    }
 }
 
 QRegExp::KWQRegExpPrivate::~KWQRegExpPrivate()

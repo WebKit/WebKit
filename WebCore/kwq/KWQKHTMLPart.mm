@@ -250,7 +250,7 @@ HTMLFormElementImpl *KWQKHTMLPart::currentForm() const
 }
 
 // Either get cached regexp or build one that matches any of the labels.
-// The regexp we build is of the form:   \b(STR1|STR2|STRN)\b
+// The regexp we build is of the form:   [[:<:]](STR1|STR2|STRN)[[:>:]]
 QRegExp *regExpForLabels(NSArray *labels)
 {
     // Parallel arrays that we use to cache regExps.  In practice the number of expressions
@@ -267,7 +267,7 @@ QRegExp *regExpForLabels(NSArray *labels)
     if (cacheHit != NSNotFound) {
         result = regExps.at(cacheHit);
     } else {
-        QString pattern("\\b(");
+        QString pattern("[[:<:]](");
         unsigned int numLabels = [labels count];
         unsigned int i;
         for (i = 0; i < numLabels; i++) {
@@ -277,7 +277,7 @@ QRegExp *regExpForLabels(NSArray *labels)
             }
             pattern.append(label);
         }
-        pattern.append(")\\b");
+        pattern.append(")[[:>:]]");
         result = new QRegExp(pattern, false);
     }
 
@@ -349,6 +349,9 @@ NSString *KWQKHTMLPart::searchForLabelsBeforeElement(NSArray *labels, DOM::Eleme
 NSString *KWQKHTMLPart::matchLabelsAgainstElement(NSArray *labels, DOM::ElementImpl *element)
 {
     QString name = element->getAttribute(ATTR_NAME).string();
+    // Make numbers in field names behave like word boundaries, e.g., "address2"
+    name.replace(QRegExp("[[:digit:]]"), " ");
+    
     QRegExp *regExp = regExpForLabels(labels);
     // Use the largest match we can find in the whole name string
     int pos;
