@@ -1,3 +1,12 @@
+2003-02-10  Chris Blumenberg  <cblu@apple.com>
+
+	Added HeaderDoc comments for WebDownload and WebPluginError.
+
+        Reviewed by rjw.
+
+        * Downloads.subproj/WebDownload.h:
+        * Plugins.subproj/WebPluginError.h:
+
 2003-02-10  Trey Matteson  <trey@apple.com>
 
 	Following the recent fix for ensuring that we always have a FormDelegate,
