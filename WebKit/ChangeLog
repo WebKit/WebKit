@@ -1,3 +1,8 @@
+2003-10-10  Maciej Stachowiak  <mjs@apple.com>
+
+        * English.lproj/StringsNotToBeLocalized.txt: Fixed for Private
+	change from a while back.
+
 2003-10-10  David Hyatt  <hyatt@apple.com>
 
 	Patch to move widgets during layout instead of waiting until paint time.
