@@ -1,5 +1,21 @@
 2005-03-14  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by John
+
+        Fix for this bug:
+        
+        <rdar://problem/4050403> Mail crashes after pasting and deleting the content of one Excel cell
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::DeleteSelectionCommand::handleGeneralDelete): Add some null checks to the code. This fixes the crash, although
+        following the steps described in the bug by John Sullivan on 3/14/05 at 10:49 AM will leave us with a "blank line" in 
+        the document that cannot be removed (this is actually an empty table). This is undesirable, however, work Maciej is
+        doing to fix the general-case problem of trying to edit constructs we do not handle well in editing should fix this
+        particular case, making the deletion of this "blank line" possible. Maciej is doing this work as part of this bug:
+        <rdar://problem/4036051> Hard to select (and thus delete) an IFRAME in an editable WebView
+
+2005-03-14  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by Darin
 
         Fix for this bug:
