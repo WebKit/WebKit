@@ -1378,6 +1378,12 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     [self ensureCaretVisible];
 }
 
+- (WebSelectionGranularity)selectionGranularity
+{
+    // NOTE: The enums *must* match the very similar ones declared in dom_selection.h
+    return (WebSelectionGranularity)_part->selectionGranularity();
+}
+
 - (void)setSelectedDOMRange:(DOMRange *)range affinity:(NSSelectionAffinity)selectionAffinity
 {
     NodeImpl *startContainer = [[range startContainer] _nodeImpl];
@@ -1453,7 +1459,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     return [DOMDocumentFragment _documentFragmentWithImpl:_part->documentFragmentWithText(text)];
 }
 
-- (void)replaceSelectionWithFragment:(DOMDocumentFragment *)fragment selectReplacement:(BOOL)selectReplacement
+- (void)replaceSelectionWithFragment:(DOMDocumentFragment *)fragment selectReplacement:(BOOL)selectReplacement smartReplace:(BOOL)smartReplace
 {
     if (!_part || !_part->xmlDocImpl() || !fragment)
         return;
@@ -1463,22 +1469,22 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     [self ensureCaretVisible];
 }
 
-- (void)replaceSelectionWithNode:(DOMNode *)node selectReplacement:(BOOL)selectReplacement
+- (void)replaceSelectionWithNode:(DOMNode *)node selectReplacement:(BOOL)selectReplacement smartReplace:(BOOL)smartReplace
 {
     DOMDocumentFragment *fragment = [[self DOMDocument] createDocumentFragment];
     [fragment appendChild:node];
-    [self replaceSelectionWithFragment:fragment selectReplacement:selectReplacement];
+    [self replaceSelectionWithFragment:fragment selectReplacement:selectReplacement smartReplace:smartReplace];
 }
 
-- (void)replaceSelectionWithMarkupString:(NSString *)markupString baseURLString:(NSString *)baseURLString selectReplacement:(BOOL)selectReplacement
+- (void)replaceSelectionWithMarkupString:(NSString *)markupString baseURLString:(NSString *)baseURLString selectReplacement:(BOOL)selectReplacement smartReplace:(BOOL)smartReplace
 {
     DOMDocumentFragment *fragment = [self documentFragmentWithMarkupString:markupString baseURLString:baseURLString];
-    [self replaceSelectionWithFragment:fragment selectReplacement:selectReplacement];
+    [self replaceSelectionWithFragment:fragment selectReplacement:selectReplacement smartReplace:smartReplace];
 }
 
-- (void)replaceSelectionWithText:(NSString *)text selectReplacement:(BOOL)selectReplacement
+- (void)replaceSelectionWithText:(NSString *)text selectReplacement:(BOOL)selectReplacement smartReplace:(BOOL)smartReplace
 {
-    [self replaceSelectionWithFragment:[self documentFragmentWithText:text] selectReplacement:selectReplacement];
+    [self replaceSelectionWithFragment:[self documentFragmentWithText:text] selectReplacement:selectReplacement smartReplace:smartReplace];
 }
 
 - (void)insertNewline

@@ -1,3 +1,13 @@
+2004-09-14  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3778680> REGRESSION: plug-in content sometimes doesn't show up
+
+        Reviewed by dave.
+
+        * khtml/html/html_objectimpl.cpp:
+        (HTMLObjectElementImpl::parseHTMLAttribute): set needWidgetUpdate to true only if there is a renderer
+        (HTMLObjectElementImpl::attach): if needWidgetUpdate is true, call updateWidget
+
 2004-09-14  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

@@ -407,7 +407,8 @@ void HTMLObjectElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
       pos = serviceType.find( ";" );
       if ( pos!=-1 )
           serviceType = serviceType.left( pos );
-      needWidgetUpdate = true;
+      if (m_render)
+          needWidgetUpdate = true;
       if (!canRenderImageType(serviceType) && m_imageLoader) {
           delete m_imageLoader;
           m_imageLoader = 0;
@@ -415,7 +416,8 @@ void HTMLObjectElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
       break;
     case ATTR_DATA:
       url = khtml::parseURL(  val ).string();
-      needWidgetUpdate = true;
+      if (m_render)
+          needWidgetUpdate = true;
       if (m_render && canRenderImageType(serviceType)) {
           if (!m_imageLoader)
               m_imageLoader = new HTMLImageLoader(this);
@@ -430,7 +432,8 @@ void HTMLObjectElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
       break;
     case ATTR_CLASSID:
       classId = val;
-      needWidgetUpdate = true;
+      if (m_render)
+          needWidgetUpdate = true;
       break;
     case ATTR_ONLOAD: // ### support load/unload on object elements
         setHTMLEventListener(EventImpl::LOAD_EVENT,
@@ -496,8 +499,13 @@ void HTMLObjectElementImpl::attach()
                 imageObj->setImage(m_imageLoader->image());
             }
         } else {
-            needWidgetUpdate = true;
-            setChanged();
+            if (needWidgetUpdate) {
+                static_cast<RenderPartObject*>(m_render)->updateWidget();
+                needWidgetUpdate = false;
+            } else {
+                needWidgetUpdate = true;
+                setChanged();
+            }
         }
     }
 
