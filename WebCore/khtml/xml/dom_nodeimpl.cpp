@@ -1505,7 +1505,7 @@ void NodeImpl::displayNode(const char *prefix)
 
 void NodeImpl::displayTree()
 {
-    NodeImpl    *rootNode = rootEditableElement();
+    NodeImpl    *rootNode = rootEditableElement() ? : this;
     NodeImpl    *node;
     
     for (node = rootNode; node; node = node->traverseNextNode()) {

@@ -2,6 +2,16 @@
 
         Reviewed by Harrison
 
+        Small improvements to the node-display debugging helpers.
+
+        * khtml/xml/dom_nodeimpl.cpp:
+        (NodeImpl::displayTree): Make the rootNode be this if there is no rootEditableElement.
+        * khtml/xml/dom_nodeimpl.h: Make displayNode take a default argument of "" for its string.
+
+2004-11-29  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Harrison
+
         * khtml/editing/htmlediting.cpp:
         (khtml::DeleteSelectionCommand::handleGeneralDelete): The downstream position in this function 
         may need to be adjusted when deleting text off the front part of a text node. This fixes a problem 
