@@ -150,7 +150,6 @@
         (-[WebCoreBridge rangeByExpandingSelectionWithGranularity:]):
 	Fixed former misleading method name.
 
->>>>>>> 1.3116
 2004-08-20  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Trey
@@ -288,7 +287,6 @@
         (DOM::XSLTProcessorImpl::transformDocument):
         * khtml/xsl/xslt_processorimpl.h:
 
->>>>>>> 1.3109
 === Safari-158 ===
 
 2004-08-18  Trey Matteson  <trey@apple.com>
