@@ -1,5 +1,128 @@
 2003-10-29  David Hyatt  <hyatt@apple.com>
 
+	Implement support for <marquee>.  This includes support for the CSS3 specification (although modified a fair
+	bit to actually be compatible with WinIE's version and to correct obvious errors in the draft).  All of the
+	marquee behaviors (slide, scroll, and alternate) are supported.
+
+	This patch also fixes the following bugs that were discovered while testing marquee:
+	(1) An error in the computation of scrollWidth and scrollHeight.  
+	(2) The ability to ask for the leftmostPosition as well as the rightmostPosition of content and to
+	be able to ask for the positions of children (via left/right/lowest) without including the parent in the
+	computation.
+	(3) An optimization to RenderFlow's rightmost/lowestPosition functions to avoid examining text elements since
+	they are always fully accounted for by either overflow or by inline flow boxes.
+	(4) A fix for RTL rendering.  A block with direction:RTL was being placed on the right, when in reality only
+	its children should be placed on the right.
+	(5) A fix to prevent inline blocks and tables from computing auto margins (making them just like floats in this
+	regard).
+	
+        Reviewed by darin
+
+        * khtml/css/cssparser.cpp:
+        (validUnit):
+        (CSSParser::parseValue):
+        * khtml/css/cssproperties.c:
+        (hash_prop):
+        (findProp):
+        * khtml/css/cssproperties.h:
+        * khtml/css/cssproperties.in:
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::convertToLength):
+        (khtml::CSSStyleSelector::applyRule):
+        * khtml/css/cssvalues.c:
+        (hash_val):
+        (findValue):
+        * khtml/css/cssvalues.h:
+        * khtml/css/cssvalues.in:
+        * khtml/css/html4.css:
+        * khtml/html/html_blockimpl.cpp:
+        (HTMLMarqueeElementImpl::HTMLMarqueeElementImpl):
+        (HTMLMarqueeElementImpl::id):
+        (HTMLMarqueeElementImpl::parseAttribute):
+        * khtml/html/html_blockimpl.h:
+        (DOM::HTMLMarqueeElementImpl::minimumDelay):
+        * khtml/html/htmlparser.cpp:
+        (KHTMLParser::getElement):
+        * khtml/misc/htmlattrs.c:
+        (hash_attr):
+        (findAttr):
+        * khtml/misc/htmlattrs.h:
+        * khtml/misc/htmlattrs.in:
+        * khtml/rendering/bidi.cpp:
+        (khtml::RenderBlock::findNextLineBreak):
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::lowestPosition):
+        (khtml::RenderBlock::rightmostPosition):
+        (khtml::RenderBlock::leftmostPosition):
+        * khtml/rendering/render_block.h:
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::setStyle):
+        (RenderBox::calcWidth):
+        (RenderBox::calcHorizontalMargins):
+        (RenderBox::lowestPosition):
+        (RenderBox::rightmostPosition):
+        (RenderBox::leftmostPosition):
+        * khtml/rendering/render_box.h:
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::lowestPosition):
+        (RenderFlow::rightmostPosition):
+        (RenderFlow::leftmostPosition):
+        * khtml/rendering/render_flow.h:
+        * khtml/rendering/render_layer.cpp:
+        (RenderLayer::RenderLayer):
+        (RenderLayer::~RenderLayer):
+        (RenderLayer::updateLayerPositions):
+        (RenderLayer::scrollToOffset):
+        (RenderLayer::computeScrollDimensions):
+        (RenderLayer::styleChanged):
+        (RenderLayer::stopMarquees):
+        (m_whiteSpace):
+        (Marquee::marqueeSpeed):
+        (Marquee::direction):
+        (Marquee::isHorizontal):
+        (Marquee::computePosition):
+        (Marquee::start):
+        (Marquee::stop):
+        (Marquee::updateMarqueePosition):
+        (Marquee::updateMarqueeStyle):
+        (Marquee::timerEvent):
+        * khtml/rendering/render_layer.h:
+        (khtml::):
+        (khtml::RenderLayer::marquee):
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::isHTMLMarquee):
+        (RenderObject::sizesToMaxWidth):
+        * khtml/rendering/render_object.h:
+        (khtml::RenderObject::lowestPosition):
+        (khtml::RenderObject::rightmostPosition):
+        (khtml::RenderObject::leftmostPosition):
+        * khtml/rendering/render_style.cpp:
+        (StyleMarqueeData::StyleMarqueeData):
+        (StyleMarqueeData::operator==):
+        (opacity):
+        (marquee):
+        (StyleCSS3NonInheritedData::operator==):
+        (RenderStyle::RenderStyle):
+        * khtml/rendering/render_style.h:
+        (khtml::):
+        (khtml::StyleMarqueeData::operator!=):
+        (khtml::RenderStyle::marqueeIncrement):
+        (khtml::RenderStyle::marqueeSpeed):
+        (khtml::RenderStyle::marqueeLoopCount):
+        (khtml::RenderStyle::marqueeBehavior):
+        (khtml::RenderStyle::marqueeDirection):
+        (khtml::RenderStyle::setMarqueeIncrement):
+        (khtml::RenderStyle::setMarqueeSpeed):
+        (khtml::RenderStyle::setMarqueeDirection):
+        (khtml::RenderStyle::setMarqueeBehavior):
+        (khtml::RenderStyle::setMarqueeLoopCount):
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::createHTMLElement):
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::clearTimers):
+
+2003-10-29  David Hyatt  <hyatt@apple.com>
+
 	Make <button> be an inline-block.
 	
         * khtml/css/html4.css:

@@ -10,6 +10,7 @@ archive
 autocomplete
 axis
 background
+behavior
 bgcolor
 bgproperties
 border
@@ -40,6 +41,7 @@ datetime
 declare
 defer
 dir
+direction
 disabled
 enctype
 face
@@ -63,6 +65,7 @@ left
 leftmargin
 link
 longdesc
+loop
 marginheight
 marginwidth
 maxlength
@@ -115,6 +118,8 @@ rowspan
 rules
 scheme
 scope
+scrollamount
+scrolldelay
 scrolling
 selected
 shape
@@ -131,6 +136,7 @@ text
 title
 top
 topmargin
+truespeed
 type
 unknown
 usemap

@@ -48,6 +48,8 @@
 #include "render_canvas.h"
 #include "render_arena.h"
 #include "xml/dom_docimpl.h"
+#include "misc/htmltags.h"
+#include "html/html_blockimpl.h"
 
 #include <qscrollbar.h>
 #include <qptrvector.h>
@@ -94,7 +96,8 @@ m_vBar( 0 ),
 m_scrollMediator( 0 ),
 m_posZOrderList( 0 ),
 m_negZOrderList( 0 ),
-m_zOrderListsDirty( true )
+m_zOrderListsDirty( true ),
+m_marquee( 0 )
 {
 }
 
@@ -102,12 +105,12 @@ RenderLayer::~RenderLayer()
 {
     // Child layers will be deleted by their corresponding render objects, so
     // our destructor doesn't have to do anything.
-    m_parent = m_previous = m_next = m_first = m_last = 0;
     delete m_hBar;
     delete m_vBar;
     delete m_scrollMediator;
     delete m_posZOrderList;
     delete m_negZOrderList;
+    delete m_marquee;
 }
 
 #ifdef INCREMENTAL_REPAINTING
@@ -147,7 +150,7 @@ void RenderLayer::updateLayerPositions()
         QRect layerBounds = QRect(x,y,width(),height());
         positionScrollbars(layerBounds);
     }
-    
+
     // FIXME: Child object could override visibility.
     if (checkForRepaint && (m_object->style()->visibility() == VISIBLE))
         m_object->repaintAfterLayoutIfNeeded(m_repaintRect, m_fullRepaintRect);
@@ -159,6 +162,10 @@ void RenderLayer::updateLayerPositions()
 #else
         child->updateLayerPositions();
 #endif
+        
+    // With all our children positioned, now update our marquee if we need to.
+    if (m_marquee)
+        m_marquee->updateMarqueePosition();
 }
 
 void RenderLayer::updateLayerPosition()
@@ -421,19 +428,21 @@ RenderLayer::subtractScrollOffset(int& x, int& y)
 }
 
 void
-RenderLayer::scrollToOffset(int x, int y, bool updateScrollbars)
+RenderLayer::scrollToOffset(int x, int y, bool updateScrollbars, bool repaint)
 {
-    if (x < 0) x = 0;
-    if (y < 0) y = 0;
-
-    // Call the scrollWidth/Height functions so that the dimensions will be computed if they need
-    // to be (for overflow:hidden blocks).
-    int maxX = scrollWidth() - m_object->clientWidth();
-    int maxY = scrollHeight() - m_object->clientHeight();
+    if (renderer()->style()->overflow() != OMARQUEE) {
+        if (x < 0) x = 0;
+        if (y < 0) y = 0;
     
-    if (x > maxX) x = maxX;
-    if (y > maxY) y = maxY;
-
+        // Call the scrollWidth/Height functions so that the dimensions will be computed if they need
+        // to be (for overflow:hidden blocks).
+        int maxX = scrollWidth() - m_object->clientWidth();
+        int maxY = scrollHeight() - m_object->clientHeight();
+        
+        if (x > maxX) x = maxX;
+        if (y > maxY) y = maxY;
+    }
+    
     // FIXME: Eventually, we will want to perform a blit.  For now never
     // blit, since the check for blitting is going to be very
     // complicated (since it will involve testing whether our layer
@@ -445,7 +454,8 @@ RenderLayer::scrollToOffset(int x, int y, bool updateScrollbars)
     // FIXME: Fire the onscroll DOM event.
     
     // Just schedule a full repaint of our object.
-    m_object->repaint(true);
+    if (repaint)
+        m_object->repaint(true);
     
     if (updateScrollbars) {
         if (m_hBar)
@@ -583,23 +593,20 @@ int RenderLayer::scrollHeight()
 void RenderLayer::computeScrollDimensions(bool* needHBar, bool* needVBar)
 {
     m_scrollDimensionsDirty = false;
-    int rightPos = m_object->rightmostPosition();
-    int bottomPos = m_object->lowestPosition();
+
+    int rightPos = m_object->rightmostPosition(true, false) - m_object->borderLeft();
+    int bottomPos = m_object->lowestPosition(true, false) - m_object->borderTop();
 
     int clientWidth = m_object->clientWidth();
     int clientHeight = m_object->clientHeight();
-    m_scrollWidth = clientWidth;
-    m_scrollHeight = clientHeight;
 
-    if (rightPos - m_object->borderLeft() > m_scrollWidth)
-        m_scrollWidth = rightPos - m_object->borderLeft();
-    if (bottomPos - m_object->borderTop() > m_scrollHeight)
-        m_scrollHeight = bottomPos - m_object->borderTop();
+    m_scrollWidth = kMax(rightPos, clientWidth);
+    m_scrollHeight = kMax(bottomPos, clientHeight);
 
     if (needHBar)
-        *needHBar = rightPos > m_object->overflowWidth(false);
+        *needHBar = rightPos > clientWidth;
     if (needVBar)
-        *needVBar = bottomPos > m_object->overflowHeight(false);
+        *needVBar = bottomPos > clientHeight;
 }
 
 void
@@ -1179,3 +1186,254 @@ void RenderLayer::collectLayers(QPtrVector<RenderLayer>*& posBuffer, QPtrVector<
             child->collectLayers(posBuffer, negBuffer);
     }
 }
+
+void RenderLayer::styleChanged()
+{
+    if (m_object->style()->overflow() == OMARQUEE && m_object->style()->marqueeBehavior() != MNONE) {
+        if (!m_marquee)
+            m_marquee = new Marquee(this);
+        m_marquee->updateMarqueeStyle();
+    }
+    else if (m_marquee) {
+        delete m_marquee;
+        m_marquee = 0;
+    }
+}
+
+void RenderLayer::stopMarquees()
+{
+    if (m_marquee)
+        m_marquee->stop();
+    
+    for (RenderLayer* curr = firstChild(); curr; curr = curr->nextSibling())
+        curr->stopMarquees();
+}
+
+// --------------------------------------------------------------------------
+// Marquee implementation
+
+Marquee::Marquee(RenderLayer* l)
+:m_layer(l), m_currentLoop(0), m_timerId(0), m_start(0), m_end(0), m_speed(0), m_reset(false),
+ m_whiteSpace(NORMAL)
+{
+}
+
+int Marquee::marqueeSpeed() const
+{
+    int result = m_layer->renderer()->style()->marqueeSpeed();
+    DOM::NodeImpl* elt = m_layer->renderer()->element();
+    if (elt && elt->id() == ID_MARQUEE) {
+        HTMLMarqueeElementImpl* marqueeElt = static_cast<HTMLMarqueeElementImpl*>(elt);
+        result = kMax(result, marqueeElt->minimumDelay());
+    }
+    return result;
+}
+
+EMarqueeDirection Marquee::direction() const
+{
+    // FIXME: Support the CSS3 "auto" value for determining the direction of the marquee.
+    // For now just map MAUTO to MBACKWARD
+    EMarqueeDirection result = m_layer->renderer()->style()->marqueeDirection();
+    EDirection dir =  m_layer->renderer()->style()->direction();
+    if (result == MAUTO)
+        result = MBACKWARD;
+    if (result == MFORWARD)
+        result = (dir == LTR) ? MRIGHT : MLEFT;
+    if (result == MBACKWARD)
+        result = (dir == LTR) ? MLEFT : MRIGHT;
+    
+    // Now we have the real direction.  Next we check to see if the increment is negative.
+    // If so, then we reverse the direction.
+    Length increment = m_layer->renderer()->style()->marqueeIncrement();
+    if (increment.value < 0)
+        result = static_cast<EMarqueeDirection>(-result);
+    
+    return result;
+}
+
+bool Marquee::isHorizontal() const
+{
+    return direction() == MLEFT || direction() == MRIGHT;
+}
+
+int Marquee::computePosition(EMarqueeDirection dir, bool stopAtContentEdge)
+{
+    RenderObject* o = m_layer->renderer();
+    RenderStyle* s = o->style();
+    if (isHorizontal()) {
+        bool ltr = s->direction() == LTR;
+        int clientWidth = o->clientWidth();
+        int contentWidth = ltr ? o->rightmostPosition(true, false) : o->leftmostPosition(true, false);
+        if (ltr)
+            contentWidth += (o->paddingRight() - o->borderLeft());
+        else {
+            contentWidth = o->width() - contentWidth;
+            contentWidth += (o->paddingLeft() - o->borderRight());
+        }
+        if (dir == MRIGHT) {
+            if (stopAtContentEdge)
+                return kMax(0, ltr ? (contentWidth - clientWidth) : (clientWidth - contentWidth));
+            else
+                return ltr ? contentWidth : clientWidth;
+        }
+        else {
+            if (stopAtContentEdge)
+                return kMin(0, ltr ? (contentWidth - clientWidth) : (clientWidth - contentWidth));
+            else
+                return ltr ? -clientWidth : -contentWidth;
+        }
+    }
+    else {
+        int contentHeight = m_layer->renderer()->lowestPosition(true, false) - 
+                            m_layer->renderer()->borderTop() + m_layer->renderer()->paddingBottom();
+        int clientHeight = m_layer->renderer()->clientHeight();
+        if (dir == MUP) {
+            if (stopAtContentEdge)
+                 return kMin(contentHeight - clientHeight, 0);
+            else
+                return -clientHeight;
+        }
+        else {
+            if (stopAtContentEdge)
+                return kMax(contentHeight - clientHeight, 0);
+            else 
+                return contentHeight;
+        }
+    }    
+}
+
+void Marquee::start()
+{
+    if (m_timerId)
+        return;
+    
+    if (isHorizontal())
+        m_layer->scrollToOffset(m_start, 0, false, false);
+    else
+        m_layer->scrollToOffset(0, m_start, false, false);
+
+    m_timerId = startTimer(speed());
+}
+
+void Marquee::stop()
+{
+    m_currentLoop = 0;
+    m_reset = false;
+    
+    if (m_timerId) {
+        killTimer(m_timerId);
+        m_timerId = 0;
+    }
+}
+
+void Marquee::updateMarqueePosition()
+{
+    bool activate = (m_totalLoops <= 0 || m_currentLoop < m_totalLoops);
+    if (activate) {
+        EMarqueeBehavior behavior = m_layer->renderer()->style()->marqueeBehavior();
+        m_start = computePosition(direction(), behavior == MALTERNATE);
+        m_end = computePosition(reverseDirection(), behavior == MALTERNATE || behavior == MSLIDE);
+        start();
+    }
+}
+
+void Marquee::updateMarqueeStyle()
+{
+    RenderStyle* s = m_layer->renderer()->style();
+    
+    m_totalLoops = s->marqueeLoopCount();
+    m_whiteSpace = s->whiteSpace();
+    
+    if (m_layer->renderer()->isHTMLMarquee()) {
+        // Hack for WinIE.  In WinIE, a value of 0 or lower for the loop count for SLIDE means to only do
+        // one loop.
+        if (m_totalLoops <= 0 && s->marqueeBehavior() == MSLIDE)
+            m_totalLoops = 1;
+        
+        // Hack alert: Set the white-space value to nowrap for horizontal marquees with inline children, thus ensuring
+        // all the text ends up on one line by default.  Limit this hack to the <marquee> element to emulate
+        // WinIE's behavior.  Someone using CSS3 can use white-space: nowrap on their own to get this effect.
+        // Second hack alert: Set the text-align back to auto.  WinIE completely ignores text-align on the
+        // marquee element.
+        // FIXME: Bring these up with the CSS WG.
+        if (isHorizontal() && m_layer->renderer()->childrenInline()) {
+            s->setWhiteSpace(NOWRAP);
+            s->setTextAlign(TAAUTO);
+        }
+    }
+    
+    if (speed() != marqueeSpeed()) {
+        m_speed = marqueeSpeed();
+        if (m_timerId) {
+            killTimer(m_timerId);
+            m_timerId = startTimer(speed());
+        }
+    }
+    
+    // Check the loop count to see if we should now stop.
+    bool activate = (m_totalLoops <= 0 || m_currentLoop < m_totalLoops);
+    if (activate && !m_timerId)
+        m_layer->renderer()->setNeedsLayout(true);
+    else if (!activate && m_timerId) {
+        // Destroy the timer.
+        killTimer(m_timerId);
+        m_timerId = 0;
+    }
+}
+
+void Marquee::timerEvent(QTimerEvent* evt)
+{
+    if (m_layer->renderer()->needsLayout())
+        return;
+    
+    if (m_reset) {
+        m_reset = false;
+        if (isHorizontal())
+            m_layer->scrollToXOffset(m_start);
+        else
+            m_layer->scrollToYOffset(m_start);
+        return;
+    }
+    
+    RenderStyle* s = m_layer->renderer()->style();
+    
+    int endPoint = m_end;
+    int range = m_end - m_start;
+    int newPos;
+    if (range == 0)
+        newPos = m_end;
+    else {  
+        bool addIncrement = direction() == MUP || direction() == MLEFT;
+        if (s->marqueeBehavior() == MALTERNATE && m_currentLoop % 2) {
+            // We're going in the reverse direction.
+            endPoint = m_start;
+            range = -range;
+            addIncrement = !addIncrement;
+        }
+        bool positive = range > 0;
+        int clientSize = (isHorizontal() ? m_layer->renderer()->clientWidth() : m_layer->renderer()->clientHeight());
+        int increment = abs(m_layer->renderer()->style()->marqueeIncrement().width(clientSize));
+        newPos = (isHorizontal() ? m_layer->scrollXOffset() : m_layer->scrollYOffset()) + 
+            (addIncrement ? increment : -increment);
+        if (positive)
+            newPos = kMin(newPos, endPoint);
+        else
+            newPos = kMax(newPos, endPoint);
+    }
+        
+    if (newPos == endPoint) {
+        m_currentLoop++;
+        if (m_totalLoops > 0 && m_currentLoop >= m_totalLoops) {
+            killTimer(m_timerId);
+            m_timerId = 0;
+        }
+        else if (s->marqueeBehavior() != MALTERNATE)
+            m_reset = true;
+    }
+    
+    if (isHorizontal())
+        m_layer->scrollToXOffset(newPos);
+    else
+        m_layer->scrollToYOffset(newPos);
+}
+

@@ -298,6 +298,7 @@ level
 line-through
 loud
 lower
+marquee
 mix
 no-close-quote
 no-open-quote
@@ -412,4 +413,29 @@ block-axis
 # CSS_PROP_BOX_LINES
 single
 multiple
+
+# CSS_PROP_MARQUEE_DIRECTION
+forwards
+backwards
+ahead
+# reverse
+# left
+# right
+up
+down
+# auto
+
+# CSS_PROP_MARQUEE_SPEED
+slow
+# normal
+fast
+
+# CSS_PROP_MARQUEE_REPETITION
+infinite
+
+# CSS_PROP_MARQUEE_STYLE
+# none
+slide
+# scroll
+alternate
 

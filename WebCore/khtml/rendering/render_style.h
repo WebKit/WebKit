@@ -323,7 +323,7 @@ public:
 // Random visual rendering model attributes. Not inherited.
 
 enum EOverflow {
-    OVISIBLE, OHIDDEN, OSCROLL, OAUTO
+    OVISIBLE, OHIDDEN, OSCROLL, OAUTO, OMARQUEE
 };
 
 enum EVerticalAlign {
@@ -404,6 +404,31 @@ public:
 };
 
 //------------------------------------------------
+// CSS3 Marquee Properties
+
+enum EMarqueeBehavior { MNONE, MSCROLL, MSLIDE, MALTERNATE };
+enum EMarqueeDirection { MAUTO = 0, MLEFT = 1, MRIGHT = -1, MUP = 2, MDOWN = -2, MFORWARD = 3, MBACKWARD = -3 };
+
+class StyleMarqueeData : public Shared<StyleMarqueeData>
+{
+public:
+    StyleMarqueeData();
+    
+    bool operator==(const StyleMarqueeData& o) const;
+    bool operator!=(const StyleMarqueeData& o) const {
+        return !(*this == o);
+    }
+    
+    Length increment;
+    int speed;
+    
+    int loops; // -1 means infinite.
+    
+    EMarqueeBehavior behavior : 2;
+    EMarqueeDirection direction : 3;
+};
+    
+//------------------------------------------------
 // CSS3 Flexible Box Properties
 
 enum EBoxAlignment { BSTRETCH, BSTART, BCENTER, BEND, BJUSTIFY, BBASELINE };
@@ -471,6 +496,7 @@ public:
     
     float opacity;         // Whether or not we're transparent.
     DataRef<StyleFlexibleBoxData> flexibleBox; // Flexible box properties 
+    DataRef<StyleMarqueeData> marquee; // Marquee properties
 };
 
 // This struct is for rarely used inherited CSS3 properties.  By grouping them together,
@@ -949,6 +975,11 @@ public:
     EBoxOrient boxOrient() { return css3NonInheritedData->flexibleBox->orient; }
     EBoxAlignment boxPack() { return css3NonInheritedData->flexibleBox->pack; }
     int boxFlexedHeight() { return css3NonInheritedData->flexibleBox->flexed_height; }
+    Length marqueeIncrement() { return css3NonInheritedData->marquee->increment; }
+    int marqueeSpeed() { return css3NonInheritedData->marquee->speed; }
+    int marqueeLoopCount() { return css3NonInheritedData->marquee->loops; }
+    EMarqueeBehavior marqueeBehavior() { return css3NonInheritedData->marquee->behavior; }
+    EMarqueeDirection marqueeDirection() { return css3NonInheritedData->marquee->direction; }
     // End CSS3 Getters
 
 // attribute setter methods
@@ -1106,6 +1137,11 @@ public:
     void setBoxOrient(EBoxOrient o) { SET_VAR(css3NonInheritedData.access()->flexibleBox, orient, o); }
     void setBoxPack(EBoxAlignment p) { SET_VAR(css3NonInheritedData.access()->flexibleBox, pack, p); }
     void setBoxFlexedHeight(int h) { SET_VAR(css3NonInheritedData.access()->flexibleBox, flexed_height, h); }
+    void setMarqueeIncrement(const Length& f) { SET_VAR(css3NonInheritedData.access()->marquee, increment, f); }
+    void setMarqueeSpeed(int f) { SET_VAR(css3NonInheritedData.access()->marquee, speed, f); }
+    void setMarqueeDirection(EMarqueeDirection d) { SET_VAR(css3NonInheritedData.access()->marquee, direction, d); }
+    void setMarqueeBehavior(EMarqueeBehavior b) { SET_VAR(css3NonInheritedData.access()->marquee, behavior, b); }
+    void setMarqueeLoopCount(int i) { SET_VAR(css3NonInheritedData.access()->marquee, loops, i); }
     // End CSS3 Setters
     
     QPalette palette() const { return visual->palette; }

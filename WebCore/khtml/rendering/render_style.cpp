@@ -129,6 +129,22 @@ bool StyleBackgroundData::operator==(const StyleBackgroundData& o) const
 	outline == o.outline;
 }
 
+StyleMarqueeData::StyleMarqueeData()
+{
+    increment.type = Fixed;
+    increment.value = 6; // 6 pixels is the WinIE default.
+    speed = 85; // 85msec is the WinIE default.
+    direction = MAUTO; // Direction is auto-determined by overflow by default.
+    behavior = MSCROLL; // Scrolling marquee is the default.
+    loops = -1; // Loop forever by default. Matches WinIE.
+}
+
+bool StyleMarqueeData::operator==(const StyleMarqueeData& o) const
+{
+    return (increment == o.increment && speed == o.speed && direction == o.direction &&
+            behavior == o.behavior && loops == o.loops);
+}
+
 StyleFlexibleBoxData::StyleFlexibleBoxData()
 : Shared<StyleFlexibleBoxData>()
 {
@@ -166,17 +182,16 @@ bool StyleFlexibleBoxData::operator==(const StyleFlexibleBoxData& o) const
 StyleCSS3NonInheritedData::StyleCSS3NonInheritedData()
 :Shared<StyleCSS3NonInheritedData>(), opacity(1.0f)
 {
-    
 }
 
 StyleCSS3NonInheritedData::StyleCSS3NonInheritedData(const StyleCSS3NonInheritedData& o)
-:Shared<StyleCSS3NonInheritedData>(), opacity(o.opacity), flexibleBox(o.flexibleBox)
+:Shared<StyleCSS3NonInheritedData>(), opacity(o.opacity), flexibleBox(o.flexibleBox), marquee(o.marquee)
 {
 }
 
 bool StyleCSS3NonInheritedData::operator==(const StyleCSS3NonInheritedData& o) const
 {
-    return opacity == o.opacity && flexibleBox == o.flexibleBox;
+    return opacity == o.opacity && flexibleBox == o.flexibleBox && marquee == o.marquee;
 }
 
 StyleCSS3InheritedData::StyleCSS3InheritedData()
@@ -273,6 +288,7 @@ RenderStyle::RenderStyle(bool)
     surround.init();
     css3NonInheritedData.init();
     css3NonInheritedData.access()->flexibleBox.init();
+    css3NonInheritedData.access()->marquee.init();
     css3InheritedData.init();
     inherited.init();
 

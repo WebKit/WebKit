@@ -77,7 +77,44 @@ public:
 private:
     RenderLayer* m_layer;
 };
+
+// This class handles the auto-scrolling of layers with overflow: marquee.
+class Marquee: public QObject
+{
+    Q_OBJECT
     
+public:
+    Marquee(RenderLayer* l);
+
+    void timerEvent(QTimerEvent*);
+
+    int speed() const { return m_speed; }
+    int marqueeSpeed() const;
+    EMarqueeDirection direction() const;
+    EMarqueeDirection reverseDirection() const { return static_cast<EMarqueeDirection>(-direction()); }
+    bool isHorizontal() const;
+    EWhiteSpace whiteSpace() { return m_whiteSpace; }
+    
+    int computePosition(EMarqueeDirection dir, bool stopAtClientEdge);
+    
+    void start();
+    void stop();
+    
+    void updateMarqueeStyle();
+    void updateMarqueePosition();
+    
+private:
+    RenderLayer* m_layer;
+    int m_currentLoop;
+    int m_totalLoops;
+    int m_timerId;
+    int m_start;
+    int m_end;
+    int m_speed;
+    bool m_reset;
+    EWhiteSpace m_whiteSpace : 2;
+};
+
 class RenderLayer
 {
 public:
@@ -102,6 +139,11 @@ public:
     void removeOnlyThisLayer();
     void insertOnlyThisLayer();
 
+    void styleChanged();
+    
+    Marquee* marquee() const { return m_marquee; }
+    void stopMarquees();
+    
 #if APPLE_CHANGES
     bool isTransparent();
     RenderLayer* transparentAncestor();
@@ -134,7 +176,7 @@ public:
     void subtractScrollOffset(int& x, int& y);
     short scrollXOffset() { return m_scrollX; }
     int scrollYOffset() { return m_scrollY; }
-    void scrollToOffset(int x, int y, bool updateScrollbars = true);
+    void scrollToOffset(int x, int y, bool updateScrollbars = true, bool repaint = true);
     void scrollToXOffset(int x) { scrollToOffset(x, m_scrollY); }
     void scrollToYOffset(int y) { scrollToOffset(m_scrollX, y); }
     void setHasHorizontalScrollbar(bool hasScrollbar);
@@ -278,6 +320,8 @@ protected:
     QPtrVector<RenderLayer>* m_posZOrderList;
     QPtrVector<RenderLayer>* m_negZOrderList;
     bool m_zOrderListsDirty;
+    
+    Marquee* m_marquee; // Used by layers with overflow:marquee
 };
 
 }; // namespace

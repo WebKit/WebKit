@@ -71,8 +71,9 @@ public:
 
     virtual QRect getAbsoluteRepaintRect();
     
-    virtual int lowestPosition(bool includeOverflowInterior=true) const;
-    virtual int rightmostPosition(bool includeOverflowInterior=true) const;
+    virtual int lowestPosition(bool includeOverflowInterior=true, bool includeSelf=true) const;
+    virtual int rightmostPosition(bool includeOverflowInterior=true, bool includeSelf=true) const;
+    virtual int leftmostPosition(bool includeOverflowInterior=true, bool includeSelf=true) const;
     
 protected:
     // An inline can be split with blocks occurring in between the inline content.

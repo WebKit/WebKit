@@ -1577,7 +1577,23 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
             tmpW += o->marginLeft()+o->borderLeft()+o->paddingLeft()+
                     o->marginRight()+o->borderRight()+o->paddingRight();
         } else if ( o->isReplaced() ) {
-            if (o->style()->whiteSpace() == NORMAL || last->style()->whiteSpace() == NORMAL) {
+            EWhiteSpace currWS = o->style()->whiteSpace();
+            EWhiteSpace lastWS = last->style()->whiteSpace();
+            
+            // WinIE marquees have different whitespace characteristics by default when viewed from
+            // the outside vs. the inside.  Text inside is NOWRAP, and so we altered the marquee's
+            // style to reflect this, but we now have to get back to the original whitespace value
+            // for the marquee when checking for line breaking.
+            if (o->isHTMLMarquee() && o->layer() && o->layer()->marquee())
+                currWS = o->layer()->marquee()->whiteSpace();
+            if (last->isHTMLMarquee() && last->layer() && last->layer()->marquee())
+                lastWS = last->layer()->marquee()->whiteSpace();
+            
+            // Break on replaced elements if either has normal white-space.
+            // FIXME: This does not match WinIE, Opera, and Mozilla.  They treat replaced elements
+            // like characters in a word, and require spaces between the replaced elements in order
+            // to break.
+            if (currWS == NORMAL || lastWS == NORMAL) {
                 w += tmpW;
                 tmpW = 0;
                 lBreak.obj = o;

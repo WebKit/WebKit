@@ -235,6 +235,8 @@ public:
     virtual bool isFrameSet() const { return false; }
     virtual bool isApplet() const { return false; }
 
+    bool isHTMLMarquee() const;
+    
     bool isAnonymous() const { return m_isAnonymous; }
     void setIsAnonymous(bool b) { m_isAnonymous = b; }
     
@@ -639,13 +641,10 @@ public:
 
     virtual void cursorPos(int /*offset*/, int &/*_x*/, int &/*_y*/, int &/*height*/);
 
-    virtual int lowestPosition(bool includeOverflowInterior=true) const {return 0;}
-
-    virtual int rightmostPosition(bool includeOverflowInterior=true) const {return 0;}
-
-    // recursively invalidate current layout
-    // unused: void invalidateLayout();
-
+    virtual int lowestPosition(bool includeOverflowInterior=true, bool includeSelf=true) const { return 0; }
+    virtual int rightmostPosition(bool includeOverflowInterior=true, bool includeSelf=true) const { return 0; }
+    virtual int leftmostPosition(bool includeOverflowInterior=true, bool includeSelf=true) const { return 0; }
+    
     virtual void calcVerticalMargins() {}
     void removeFromObjectLists();
 

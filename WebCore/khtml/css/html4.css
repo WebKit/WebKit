@@ -61,6 +61,11 @@ layer {
 	display: block;
 }
 
+marquee {
+    display: inline-block;
+    overflow: marquee;
+}
+
 address {
 	display: block;
 }
@@ -489,10 +494,6 @@ nobr {
 
 wbr {
         white-space: normal;
-}
-
-marquee {
-        display: none;
 }
 
 /* noscript is handled internally, as it depends on the html settings */

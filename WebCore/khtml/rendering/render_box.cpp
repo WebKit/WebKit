@@ -108,6 +108,9 @@ void RenderBox::setStyle(RenderStyle *_style)
         m_layer = 0;
     }
 
+    if (m_layer)
+        m_layer->styleChanged();
+    
     // Set the text color if we're the body.
     if (isBody())
         element()->getDocument()->setTextColor(_style->color());
@@ -753,7 +756,7 @@ void RenderBox::calcWidth()
         if (cw && cw != m_width + m_marginLeft + m_marginRight && !isFloating() && !isInline() &&
             !cb->isFlexibleBox())
         {
-            if (style()->direction()==LTR)
+            if (cb->style()->direction()==LTR)
                 m_marginRight = cw - m_width - m_marginLeft;
             else
                 m_marginLeft = cw - m_width - m_marginRight;
@@ -802,7 +805,7 @@ int RenderBox::calcWidthUsing(WidthType widthType, int cw, LengthType& lengthTyp
 
 void RenderBox::calcHorizontalMargins(const Length& ml, const Length& mr, int cw)
 {
-    if (isFloating())
+    if (isFloating() || isInline()) // Inline blocks/tables and floats don't have their margins increased.
     {
         m_marginLeft = ml.minWidth(cw);
         m_marginRight = mr.minWidth(cw);
@@ -1364,14 +1367,19 @@ void RenderBox::calcAbsoluteVertical()
 }
 
 
-int RenderBox::lowestPosition(bool includeOverflowInterior) const
+int RenderBox::lowestPosition(bool includeOverflowInterior, bool includeSelf) const
 {
-    return m_height;
+    return includeSelf ? m_height : 0;
 }
 
-int RenderBox::rightmostPosition(bool includeOverflowInterior) const
+int RenderBox::rightmostPosition(bool includeOverflowInterior, bool includeSelf) const
 {
-    return m_width;
+    return includeSelf ? m_width : 0;
+}
+
+int RenderBox::leftmostPosition(bool includeOverflowInterior, bool includeSelf) const
+{
+    return includeSelf ? 0 : m_width;
 }
 
 #undef DEBUG_LAYOUT

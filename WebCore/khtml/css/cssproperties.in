@@ -81,6 +81,12 @@ margin-right
 margin-bottom
 margin-left
 marker-offset
+-khtml-marquee
+-khtml-marquee-direction
+-khtml-marquee-increment
+-khtml-marquee-repetition
+-khtml-marquee-speed
+-khtml-marquee-style
 max-height
 max-width
 min-height

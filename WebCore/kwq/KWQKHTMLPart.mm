@@ -1726,8 +1726,14 @@ void KWQKHTMLPart::khtmlMouseReleaseEvent(MouseReleaseEvent *event)
 
 void KWQKHTMLPart::clearTimers(KHTMLView *view)
 {
-    if (view)
+    if (view) {
         view->unscheduleRelayout();
+        if (view->part()) {
+            DocumentImpl* document = view->part()->xmlDocImpl();
+            if (document && document->renderer() && document->renderer()->layer())
+                document->renderer()->layer()->stopMarquees();
+        }
+    }
 }
 
 void KWQKHTMLPart::clearTimers()

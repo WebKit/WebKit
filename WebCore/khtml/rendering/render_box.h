@@ -84,8 +84,9 @@ public:
 
     virtual void position(InlineBox* box, int from, int len, bool reverse);
     
-    virtual int lowestPosition(bool includeOverflowInterior=true) const;
-    virtual int rightmostPosition(bool includeOverflowInterior=true) const;
+    virtual int lowestPosition(bool includeOverflowInterior=true, bool includeSelf=true) const;
+    virtual int rightmostPosition(bool includeOverflowInterior=true, bool includeSelf=true) const;
+    virtual int leftmostPosition(bool includeOverflowInterior=true, bool includeSelf=true) const;
 
     virtual QRect getAbsoluteRepaintRect();
     virtual void computeAbsoluteRepaintRect(QRect& r, bool f=false);
