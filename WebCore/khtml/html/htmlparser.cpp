@@ -1493,12 +1493,9 @@ void KHTMLParser::popBlock( int _id )
                 // Elem->id rather than the node that you should pop to when the element gets pulled off
                 // the stack.
                 popOneBlock(false);
-                Elem->next = 0;
+                Elem->next = residualStyleStack;
                 Elem->node = currNode;
-                if (!residualStyleStack)
-                    residualStyleStack = Elem;
-                else
-                    residualStyleStack->next = Elem;
+                residualStyleStack = Elem;
             }
             else
                 popOneBlock();
