@@ -683,7 +683,7 @@ static const char * const stateNames[6] = {
             [backForwardList goBack];
         else 
             [NSException raise:NSInvalidArgumentException format:@"WebFrameLoadType incorrect"];
-        [[_private->dataSource _bridge] gotoAnchor: [item anchor]];
+        [[_private->dataSource _bridge] scrollToAnchor: [item anchor]];
     }
     else {
         dataSource = [[WebDataSource alloc] initWithURL:itemURL];

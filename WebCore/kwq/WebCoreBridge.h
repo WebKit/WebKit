@@ -88,7 +88,7 @@ typedef khtml::RenderPart KHTMLRenderPart;
 - (void)removeFromFrame;
 
 - (void)scrollToBaseAnchor;
-- (void)gotoAnchor: (NSString *)anchor;
+- (void)scrollToAnchor:(NSString *)anchor;
 
 - (void)createKHTMLViewWithNSView:(NSView *)view
     width:(int)width height:(int)height
@@ -114,7 +114,7 @@ typedef khtml::RenderPart KHTMLRenderPart;
 
 - (NSDictionary *)elementAtPoint:(NSPoint)point;
 
-- (BOOL)searchFor: (NSString *)string direction: (BOOL)forward caseSensitive: (BOOL)caseFlag;
+- (BOOL)searchFor:(NSString *)string direction:(BOOL)forward caseSensitive:(BOOL)caseFlag;
 - (void)jumpToSelection;
 
 @end
@@ -133,18 +133,18 @@ typedef khtml::RenderPart KHTMLRenderPart;
 
 - (void)loadURL:(NSURL *)URL;
 - (void)postWithURL:(NSURL *)URL data:(NSData *)data;
+- (WebCoreBridge *)openNewWindowWithURL:(NSURL *)URL;
 
 - (void)setTitle:(NSString *)title;
 - (void)setStatusText:(NSString *)status;
 
-- (void)setIconURL:(NSURL *)url;
-- (void)setIconURL:(NSURL *)url withType:(NSString *)string;
+- (void)setIconURL:(NSURL *)URL;
+- (void)setIconURL:(NSURL *)URL withType:(NSString *)string;
 
 - (BOOL)createChildFrameNamed:(NSString *)frameName
     withURL:(NSURL *)URL renderPart:(KHTMLRenderPart *)renderPart
     allowsScrolling:(BOOL)allowsScrolling marginWidth:(int)width marginHeight:(int)height;
 
-- (WebCoreBridge *)openNewWindowWithURL:(NSURL *)URL;
 - (BOOL)areToolbarsVisible;
 - (void)setToolbarsVisible:(BOOL)visible;
 - (BOOL)isStatusBarVisible;
@@ -158,6 +158,9 @@ typedef khtml::RenderPart KHTMLRenderPart;
 - (void)reportError:(WebError *)error;
 - (void)objectLoadedFromCache:(NSURL *)URL size:(unsigned)bytes;
 
+- (void)reportClientRedirectTo:(NSURL *)URL delay:(NSTimeInterval)seconds fireDate:(NSDate *)date;
+- (void)reportClientRedirectCancelled;
+
 - (BOOL)openedByScript;
 - (void)setOpenedByScript:(BOOL)openedByScript;
 
@@ -165,7 +168,7 @@ typedef khtml::RenderPart KHTMLRenderPart;
 
 - (BOOL)modifierTrackingEnabled;
 
-- (void)addBackForwardItemWithURL: (NSURL *)url anchor: (NSString *)anchor;
+- (void)addBackForwardItemWithURL:(NSURL *)URL anchor:(NSString *)anchor;
 
 @end
 

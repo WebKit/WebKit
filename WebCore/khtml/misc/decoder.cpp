@@ -296,15 +296,19 @@ void Decoder::setEncoding(const char *_encoding, bool force)
 #endif
     if(enc.isNull() || enc.isEmpty())
         return;
+#ifndef APPLE_CHANGES
     if(enc == "visual") // hebrew visually ordered
         enc = "iso8859-8";
+#endif
     bool b;
     m_codec = KGlobal::charsets()->codecForName(enc, b);
+#ifndef APPLE_CHANGES
     if(m_codec->mibEnum() == 11)  {
         // iso8859-8 (visually ordered)
         m_codec = QTextCodec::codecForName("iso8859-8-i");
         visualRTL = true;
     }
+#endif
     if( !b ) // in case the codec didn't exist, we keep the old one (fixes some sites specifying invalid codecs)
 	m_codec = old;
     else

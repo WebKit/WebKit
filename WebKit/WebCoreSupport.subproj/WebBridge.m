@@ -189,19 +189,25 @@
     WebResourceHandle *handle = [[WebResourceHandle alloc] initWithURL:URL];
 
     WebLoadProgress *loadProgress = [[WebLoadProgress alloc] initWithBytesSoFar:bytes totalToLoad:bytes];
-    [[frame controller] _receivedProgress:loadProgress forResourceHandle:handle fromDataSource: [self dataSource] complete:YES];
+    [[frame controller] _receivedProgress:loadProgress forResourceHandle:handle fromDataSource:[self dataSource] complete:YES];
     [loadProgress release];
     [handle release];
 }
 
+- (void)reportClientRedirectTo:(NSURL *)URL delay:(NSTimeInterval)seconds fireDate:(NSDate *)date
+{
+    [[[frame controller] locationChangeHandler]
+        clientRedirectTo:URL delay:seconds fireDate:date forDataSource:[self dataSource]];
+}
+
+- (void)reportClientRedirectCancelled
+{
+    [[[frame controller] locationChangeHandler]
+        clientRedirectCancelledForDataSource:[self dataSource]];
+}
+
 - (void)setFrame: (WebFrame *)webFrame
 {
-    // FIXME: needed temporarily while we still use the dummy data
-    // source hack
-    if (webFrame == nil) {
-	return;
-    }
-
     WEBKIT_ASSERT(webFrame != nil);
 
     if (frame == nil) {
@@ -214,15 +220,9 @@
 
 - (void)dataSourceChanged
 {
-    // FIXME: needed temporarily while we still use the dummy data
-    // source hack
-    if ([frame dataSource] == nil) {
-	[self openURL:nil];
-    } else {
-	[self openURL:[[self dataSource] redirectedURL] == nil ?
-	              [[self dataSource] inputURL] : 
-		      [[self dataSource] redirectedURL]];
-    }
+    [self openURL:[[self dataSource] redirectedURL] == nil ?
+                    [[self dataSource] inputURL] : 
+                    [[self dataSource] redirectedURL]];
 }
 
 - (WebDataSource *)dataSource
@@ -235,7 +235,6 @@
 
     return dataSource;
 }
-
 
 - (BOOL)openedByScript
 {

@@ -1,6 +1,6 @@
 /*	
         WebLocationChangeHandler.h
-	Copyright 2001, Apple, Inc. All rights reserved.
+	Copyright 2001, 2002, Apple, Inc. All rights reserved.
 
         Public header file.
 */
@@ -23,9 +23,10 @@
     A location change that results in changing a frame's document will trigger the
     following messages, sent in order:
    
-        - (void)locationChangeStarted;
-        - (void)locationChangeCommitted;  // Only sent for the WebContentPolicyShow policy.
-        - (void)locationChangeDone: (WebError *)error;
+        - (void)locationChangeStartedForDataSource:(WebDataSource *)dataSource;
+        - (void)locationChangeCommittedForDataSource:(WebDataSource *)dataSource;
+            // Only sent for the WebContentPolicyShow policy.
+        - (void)locationChangeDone:(WebError *)error forDataSource:(WebDataSource *)dataSource;
    
    None of the WebLocationChangeHandler methods should block for any extended period
    of time.
@@ -35,16 +36,25 @@
 
 @protocol WebLocationChangeHandler <NSObject>
 
-- (void)locationChangeStartedForDataSource: (WebDataSource *)dataSource;
+- (void)locationChangeStartedForDataSource:(WebDataSource *)dataSource;
+- (void)locationChangeCommittedForDataSource:(WebDataSource *)dataSource;
+- (void)locationChangeDone:(WebError *)error forDataSource:(WebDataSource *)dataSource;
 
-- (void)locationChangeCommittedForDataSource: (WebDataSource *)dataSource;
+- (void)receivedPageTitle:(NSString *)title forDataSource:(WebDataSource *)dataSource;
+- (void)receivedPageIcon:(NSImage *)image forDataSource:(WebDataSource *)dataSource;
 
-- (void)locationChangeDone: (WebError *)error forDataSource: (WebDataSource *)dataSource;
+- (void)serverRedirectTo:(NSURL *)URL forDataSource:(WebDataSource *)dataSource;
 
-- (void)receivedPageTitle: (NSString *)title forDataSource: (WebDataSource *)dataSource;
+- (void)clientRedirectTo:(NSURL *)URL delay:(NSTimeInterval)seconds fireDate:(NSDate *)date forDataSource:(WebDataSource *)dataSource;
+- (void)clientRedirectCancelledForDataSource:(WebDataSource *)dataSource;
 
-- (void)receivedPageIcon: (NSImage *)image forDataSource: (WebDataSource *)dataSource;
+@end
 
-- (void)serverRedirectTo: (NSURL *)url forDataSource: (WebDataSource *)dataSource;
+// The WebLocationChangeHandler class responds to all WebLocationChangeHandler protocol
+// methods by doing nothing. It's provided for the convenience of clients who only want
+// to implement some of the above methods and ignore others.
 
+@interface WebLocationChangeHandler : NSObject <WebLocationChangeHandler>
+{
+}
 @end

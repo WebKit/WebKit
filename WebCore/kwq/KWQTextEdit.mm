@@ -28,6 +28,7 @@
 #import <KWQTextArea.h>
 
 QTextEdit::QTextEdit(QWidget *parent)
+    : m_textChanged(this, SIGNAL(textChanged()))
 {
     KWQTextArea *textView = [[KWQTextArea alloc] initWithFrame:NSMakeRect(0,0,0,0) widget:this];
     setView(textView);

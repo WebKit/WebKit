@@ -320,7 +320,7 @@ RenderSubmitButton::RenderSubmitButton(HTMLInputElementImpl *element)
     // Need to store a reference to this object and then invoke slotClicked on it.
     //p->setAction(&RenderFormElement::slotClicked);
     //p->setRenderObject(this);
-    p->setTarget(this);
+    //p->setTarget(this);
 #endif
 }
 
@@ -496,9 +496,6 @@ RenderLineEdit::RenderLineEdit(HTMLInputElementImpl *element)
     }
 
     setQWidget(edit);
-#ifdef APPLE_CHANGES
-    edit->setTarget (this);
-#endif
 }
 
 #ifdef APPLE_CHANGES
@@ -1274,14 +1271,6 @@ QString RenderTextArea::text()
 
     return txt;
 }
-
-#ifdef APPLE_CHANGES
-void RenderTextArea::performAction(Actions action)
-{
-    if (action == ACTION_TEXT_AREA_END_EDITING)
-        slotTextChanged();
-}
-#endif /* APPLE_CHANGES */
 
 void RenderTextArea::slotTextChanged()
 {

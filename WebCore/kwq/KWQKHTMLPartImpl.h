@@ -74,9 +74,6 @@ public:
     
     void slotData(NSString *, const char *bytes, int length, bool complete = false);
 
-    void scheduleRedirection(int delay, const QString &url);
-    virtual void timerEvent(QTimerEvent *);
-
     bool gotoBaseAnchor();
 
     void setTitle(const DOM::DOMString &);
@@ -106,6 +103,10 @@ public:
     void jumpToSelection();
 
     void overURL(const QString &url, const QString &target, int modifierState);
+    
+    void redirectionTimerStartedOrStopped();
+    
+    void layout();
 
 private:
     KHTMLPart *part;
@@ -113,8 +114,6 @@ private:
     
     WebCoreBridge *bridge;
 
-    int m_redirectionTimer;
-    
     friend class KHTMLPart;
 };
 

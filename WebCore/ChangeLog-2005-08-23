@@ -1,3 +1,124 @@
+2002-08-02  Darin Adler  <darin@apple.com>
+
+	- fixed 3015522 -- crash decoding http://www.haaretz.co.il/
+
+        * khtml/misc/decoder.cpp: (Decoder::setEncoding): Put some hacks for
+	handling Hebrew text encoding inside ifndef APPLE_CHANGES. It's not clear
+	that these or the equivalent are needed for WebCore (they are related to
+	the as-yet unimplemented bidirectional text support) and they were making
+	us crash.
+
+	- fixed 2949235 -- checkboxes in wrong place until you scroll away and back
+
+	I fixed this once before, then removed that fix in favor of a simpler one.
+	But the simpler one didn't work, and I didn't test it properly. Now I have
+	a fix that works without the drawbacks of the original.
+
+        * khtml/rendering/render_replaced.cpp: (RenderWidget::layout): Remove the
+	call to move the widget aside. This does no good because it's only called
+	if the widget is told it needs to layout, which only happens if it's resized.
+
+        * khtml/rendering/render_root.cpp: (RenderRoot::layout): Call a KWQ function
+	so we can do some work at layout time.
+
+        * kwq/KWQKHTMLPartImpl.mm:
+        (moveWidgetsAside): Added. Function used recursively to move all widgets aside.
+        (KWQKHTMLPartImpl::layout): Added. Called at layout time; moves all the widgets
+	aside. They are moved back when print functions are called.
+
+	WebCore support for feature where client redirects are treated as if the
+	page was continuing to load. A big part of this was changing redirection
+	so that it uses QTimer, allowing us to use more of the original KHTMLPart
+	code. I added a feature to QTimer that KWQKHTMLPartImpl uses to monitor
+	what KHTMLPart does with the timer.
+
+        * kwq/qt/qobject.h: Changed "slots" definition so that all slots are public (to help
+	KWQSlot get at them). Added a prefix for the slot and signal strings, so that we can detect
+	the case where it's trying to connect a slot to another slot. Implement the convenience
+	version of connect here in the header. Implement blockSignals. Remove setTarget.
+	Make target mutable. Add new m_signalListHead and m_signalsBlocked.
+        * kwq/KWQObject.mm:
+        (QObject::findSignal): Added. Helper function that locates a signal by name.
+        (QObject::connect): Connects a signal to a slot using the new KWQSignal and KWQSlot.
+        (QObject::disconnect): Disconnects, similar to the above.
+        (QObject::QObject): Initialize target, m_signalListHead, and m_signalsBlocked.
+        (QObject::~QObject): Assert that m_signalListHead is 0.
+
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::init): Move the code that connects the redirection timer out
+	of APPLE_CHANGES.
+        (KHTMLPart::~KHTMLPart): Remove the APPLE_CHANGES around the code that
+	stops the redirection timer.
+        (KHTMLPart::restoreURL): Remove the APPLE_CHANGES around the code that
+	stops the redirection timer.
+        (KHTMLPart::openURL): Move the APPLE_CHANGES so the code that stops the
+	redirection timer will run.
+        (KHTMLPart::closeURL): Remove the APPLE_CHANGES around the code that
+	stops the redirection timer.
+        (KHTMLPart::scheduleRedirection): Remove most of this function from the
+	APPLE_CHANGES. We still probably need to revisit the handling of m_bComplete.
+
+        * kwq/KWQSignal.h: Added.
+        * kwq/KWQSignal.mm: Added.
+        * kwq/KWQSlot.h: Added.
+        * kwq/KWQSlot.mm: Added.
+        * WebCore.pbproj/project.pbxproj: Added KWQSignal.h/mm, KWQSlot.h/mm.
+
+        * khtml/misc/loader.h: Simplify APPLE_CHANGES ifdefs since all slots are now public.
+
+       * force-clean-timestamp: Touch this since header files were changed.
+
+        * khtml/ecma/kjs_window.cpp:
+        (Window::get): Disable the "name" part of this. We can re-enable it if we
+	need it, but every QObject had a name because of this one piece of code,
+	and I don't think it was effectively setting the frame name.
+        (Window::put): Disable the "name" part of this for the same reason.
+        (History::getValueProperty): Disable the "length" part of this. It was
+	calling some unimplemented stuff. We can re-enable this and implement
+	what we need in KWQ then.
+
+        * khtml/rendering/render_form.h: Remove RenderTextArea::performAction, because I
+	changed this one case to use the new connect machinery. We can convert all the other
+	form items to use the new machinery, and then eliminate performAction altogether.
+        * khtml/rendering/render_form.cpp:
+        (RenderSubmitButton::RenderSubmitButton): Remove unneeded setTarget. For the moment,
+	connect takes care of this, and in the long run we won't need to set the target at all.
+        (RenderLineEdit::RenderLineEdit): Ditto.
+
+        * khtml/rendering/render_frames.h:
+        * khtml/rendering/render_frames.cpp: Put partLoadingErrorNotify inside ifndef APPLE_CHANGES
+	because it uses a bunch of Qt stuff that's not used anywhere else, and we never call it.
+
+        * kwq/KWQKHTMLPartImpl.h: Remove scheduleRedirection, timerEvent, and m_redirectionTimer,
+	add redirectionTimerStartedOrStopped and layout.
+        * kwq/KWQKHTMLPartImpl.mm:
+        (redirectionTimerMonitor): Added. Small stub that calls redirectionTimerStartedOrStopped.
+        (KWQKHTMLPartImpl::KWQKHTMLPartImpl): Set up a monitor on the redirection timer.
+        (KWQKHTMLPartImpl::~KWQKHTMLPartImpl): Remove now-unneeded killTimer call.
+        (KWQKHTMLPartImpl::jumpToSelection): Simplify by using dynamic_cast instead of render_name().
+        (KWQKHTMLPartImpl::redirectionTimerStartedOrStopped): Added. Calls bridge to report client
+	redirect events whenever the redirection timer is started or stopped.
+
+        * kwq/qt/qtextedit.h: Define a KWQSignal for textChanged, and a function that calls it.
+        * kwq/KWQTextEdit.mm: (QTextEdit::QTextEdit): Set up a KWQSignal for textChanged.
+        * kwq/KWQTextArea.mm: (-[KWQTextArea textDidEndEditing:]): Instead of calling emitAction,
+	call textChanged, which will emit the signal using the new signal machinery.
+
+        * kwq/qt/qtimer.h:
+        * kwq/KWQTimer.mm:
+        (+[KWQTimerTarget targetWithQTimer:]): Added. Used to implement QTimer in terms of NSTimer.
+        (-[KWQTimerTarget timerFired:]): Added. Used to implement QTimer in terms of NSTimer.
+        (QTimer::QTimer): Added.
+        (QTimer::isActive): Implemented.
+        (QTimer::start): Implemented.
+        (QTimer::stop): Implemented.
+        (QTimer::setMonitor): Implemented.
+        (QTimer::fire): Implemented.
+
+        * kwq/WebCoreBridge.h: Changed name of gotoAnchor to scrollToAnchor. Added client redirect
+	methods.
+        * kwq/WebCoreBridge.mm: (-[WebCoreBridge scrollToAnchor:]): Changed name.
+
 2002-08-02  David Hyatt  <hyatt@apple.com>
 
 	Lots of form control changes.

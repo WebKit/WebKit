@@ -247,10 +247,10 @@ void KHTMLPart::init( KHTMLView *view, GUIProfile prof )
 
   findTextBegin(); //reset find variables
 
-#ifndef APPLE_CHANGES
   connect( &d->m_redirectionTimer, SIGNAL( timeout() ),
            this, SLOT( slotRedirect() ) );
 
+#ifndef APPLE_CHANGES
   d->m_dcopobject = new KHTMLPartIface(this);
 #endif
 
@@ -277,9 +277,7 @@ KHTMLPart::~KHTMLPart()
 #endif
 
   stopAutoScroll();
-#ifndef APPLE_CHANGES
   d->m_redirectionTimer.stop();
-#endif
 
   if (!d->m_bComplete)
     closeURL();
@@ -314,9 +312,7 @@ bool KHTMLPart::restoreURL( const KURL &url )
 {
   kdDebug( 6050 ) << "KHTMLPart::restoreURL " << url.url() << endl;
 
-#ifndef APPLE_CHANGES
   d->m_redirectionTimer.stop();
-#endif
 
   /*
    * That's not a good idea as it will call closeURL() on all
@@ -352,14 +348,14 @@ bool KHTMLPart::restoreURL( const KURL &url )
 
 bool KHTMLPart::openURL( const KURL &url )
 {
-#ifdef APPLE_CHANGES
-  impl->openURL(url);
-  return true;
-#else
   kdDebug( 6050 ) << "KHTMLPart(" << this << ")::openURL " << url.url() << endl;
 
   d->m_redirectionTimer.stop();
 
+#ifdef APPLE_CHANGES
+  impl->openURL(url);
+  return true;
+#else
   // check to see if this is an "error://" URL. This is caused when an error
   // occurs before this part was loaded (e.g. KonqRun), and is passed to
   // khtmlpart so that it can display the error.
@@ -555,11 +551,9 @@ bool KHTMLPart::closeURL()
 
   d->m_bPendingChildRedirection = false;
 
-#ifndef APPLE_CHANGES
   // Stop any started redirections as well!! (DA)
   if ( d && d->m_redirectionTimer.isActive() )
     d->m_redirectionTimer.stop();
-#endif
 
   // null node activated.
   emit nodeActivated(Node());
@@ -1503,6 +1497,8 @@ void KHTMLPart::slotFinishedParsing()
   checkCompleted();
 }
 
+#ifndef APPLE_CHANGES
+
 void KHTMLPart::slotLoaderRequestStarted( khtml::DocLoader* dl, khtml::CachedObject *obj )
 {
   if ( obj && obj->type() == khtml::CachedObject::Image && d->m_doc && d->m_doc->docLoader() == dl ) {
@@ -1532,8 +1528,6 @@ void KHTMLPart::slotLoaderRequestDone( khtml::DocLoader* dl, khtml::CachedObject
 
   checkCompleted();
 }
-
-#ifndef APPLE_CHANGES
 
 void KHTMLPart::slotProgressUpdate()
 {
@@ -1728,21 +1722,21 @@ KURL KHTMLPart::completeURL( const QString &url )
 
 void KHTMLPart::scheduleRedirection( int delay, const QString &url, bool doLockHistory )
 {
-#ifdef APPLE_CHANGES
-  impl->scheduleRedirection(delay, url);
-#else
     kdDebug(6050) << "KHTMLPart::scheduleRedirection delay=" << delay << " url=" << url << endl;
     if( d->m_redirectURL.isEmpty() || delay < d->m_delayRedirect )
     {
        d->m_delayRedirect = delay;
        d->m_redirectURL = url;
        d->m_redirectLockHistory = doLockHistory;
+#ifndef APPLE_CHANGES
        if ( d->m_bComplete ) {
+#endif
          d->m_redirectionTimer.stop();
          d->m_redirectionTimer.start( 1000 * d->m_delayRedirect, true );
+#ifndef APPLE_CHANGES
        }
+#endif
     }
-#endif // APPLE_CHANGES
 }
 
 void KHTMLPart::slotRedirect()

@@ -2,8 +2,8 @@
  *  WebControllerPolicyHandlerPrivate.h
  *  WebKit
  *
- *  Created by Christopher Blumenberg on Thu Jul 25 2002.
- *  Copyright (c) 2002 __MyCompanyName__. All rights reserved.
+ *  Created by Chris Blumenberg on Thu Jul 25 2002.
+ *  Copyright (c) 2002 Apple Computer, Inc. All rights reserved.
  *
  */
 

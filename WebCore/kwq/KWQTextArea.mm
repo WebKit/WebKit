@@ -25,7 +25,7 @@
 
 #import <KWQTextArea.h>
 
-#import <qwidget.h>
+#import <qtextedit.h>
 
 /*
     This widget is used to implement the <TEXTAREA> element.
@@ -107,8 +107,13 @@ const float LargeNumberForText = 1.0e7;
 
 - (void)textDidEndEditing:(NSNotification *)aNotification
 {
-    if (widget)
+    if (widget) {
         widget->emitAction(QObject::ACTION_TEXT_AREA_END_EDITING);
+        QTextEdit *textEdit = dynamic_cast<QTextEdit *>(widget);
+        if (textEdit) {
+            textEdit->textChanged();
+        }
+    }
 }
 
 

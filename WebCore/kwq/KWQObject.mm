@@ -24,72 +24,72 @@
  */
 
 #import <qobject.h>
+
 #import <qvariant.h>
 #import <qguardedptr.h>
-
 #import <kwqdebug.h>
+#import <KWQSignal.h>
 
-bool QObject::connect(const QObject *sender, const char *signal, const QObject *dest, const char *slot)
+KWQSignal *QObject::findSignal(const char *signalName) const
 {
-    if (sender)
-        ((QObject *)sender)->setTarget((QObject *)dest);
-    KWQDEBUG ("src = %p, signal = %s, dest = %p, slot = %s\n", sender, signal, dest, slot);
-    return FALSE;
+    for (KWQSignal *signal = m_signalListHead; signal; signal = signal->m_next) {
+        if (KWQNamesMatch(signalName, signal->m_name)) {
+            return signal;
+        }
+    }
+    return 0;
 }
 
-bool QObject::connect(const QObject *sender, const char *signal, const char *slot) const
+void QObject::connect(const QObject *sender, const char *signalName, const QObject *receiver, const char *member)
 {
-    if (sender)
-        ((QObject *)sender)->setTarget((QObject *)sender);
-    KWQDEBUG ("src = %p, signal = %s, slot = %s\n", sender, signal, slot);
-    return false;    
+    // FIXME: Assert that sender is not NULL rather than doing the if statement.
+    if (!sender)
+        return;
+    
+    // FIXME: Do away with this after we change clients to use the KWQSignal scheme.
+    sender->target = const_cast<QObject *>(receiver);
+
+    KWQSignal *signal = sender->findSignal(signalName);
+    if (!signal) {
+        // FIXME: ERROR
+        return;
+    }
+    signal->connect(KWQSlot(const_cast<QObject *>(receiver), member));
 }
 
+void QObject::disconnect(const QObject *sender, const char *signalName, const QObject *receiver, const char *member)
+{
+    // FIXME: Assert that sender is not NULL rather than doing the if statement.
+    if (!sender)
+        return;
+    
+    KWQSignal *signal = sender->findSignal(signalName);
+    if (!signal) {
+        // FIXME: ERROR
+        return;
+    }
+    signal->disconnect(KWQSlot(const_cast<QObject *>(receiver), member));
+}
 
 void QObject::emitAction(QObject::Actions action)
 {
-    if (target != nil)
+    if (target)
         target->performAction (action);
 }
 
-
 void QObject::performAction(QObject::Actions action)
 {
-    KWQDEBUG ("action = %d\n", action);
-}
-
-bool QObject::disconnect( const QObject *, const char *, const QObject *, const char *)
-{
-    return false;
-}
-
-void QObject::setTarget (QObject *t)
-{
-    target = t;
 }
 
 QObject::QObject(QObject *parent, const char *name)
+    : target(0), m_signalListHead(0), m_signalsBlocked(false)
 {
     guardedPtrDummyList.append(this);
 }
 
 QObject::~QObject()
 {
-}
-
-const char *QObject::name() const
-{
-    return "";
-}
-
-
-void QObject::setName(const char *)
-{
-}
-
-QVariant QObject::property(const char *name) const
-{
-    return QVariant();
+    KWQ_ASSERT(m_signalListHead == 0);
 }
 
 @interface KWQTimerCallback : NSObject
@@ -187,11 +187,6 @@ bool QObject::eventFilter(QObject *o, QEvent *e)
     return false;
 }
 
-void QObject::blockSignals(bool)
-{
-    _logNeverImplemented();
-}
-
 bool QObject::event(QEvent *)
 {
     return false;
@@ -222,5 +217,6 @@ bool QObject::inherits(const char *className) const
     if (strcmp(className, "QScrollView") == 0) {
         return dynamic_cast<const QScrollView *>(this);
     }
+    // FIXME: ERROR here because we don't know the class name.
     return false;
 }

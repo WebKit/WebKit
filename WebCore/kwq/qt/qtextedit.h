@@ -28,6 +28,8 @@
 
 #include <qscrollview.h>
 
+#include <KWQSignal.h>
+
 class QTextEdit : public QScrollView
 {
  public:
@@ -63,6 +65,11 @@ class QTextEdit : public QScrollView
 
     int verticalScrollBarWidth() const;
     int horizontalScrollBarHeight() const;
+
+    void textChanged() { m_textChanged.call(); }
+
+  private:
+    KWQSignal m_textChanged;
 };
 
 #endif /* QTEXTEDIT_H_ */

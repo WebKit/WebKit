@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,53 +23,31 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef QTEXTEDIT_H_
-#define QTEXTEDIT_H_
+#ifndef KWQSLOT_H
+#define KWQSLOT_H
 
-#include <qscrollview.h>
+#import <qguardedptr.h>
 
-#include <KWQSignal.h>
+// Like strcmp, but ignores spaces.
+bool KWQNamesMatch(const char *a, const char *b);
 
-class QTextEdit : public QScrollView
-{
- public:
-    typedef enum { 
-	NoWrap,
-	WidgetWidth
-    } WrapStyle;
+class KWQSlot {
+public:
+    KWQSlot() : m_object(0) { }
+    KWQSlot(QObject *, const char *member);
+    
+    bool isEmpty() const { return !m_object; }
+    void clear() { m_object = 0; }
+    
+    void call() const;
+    
+    friend bool operator==(const KWQSlot &, const KWQSlot &);
 
-    typedef enum {
-	PlainText,
-    } TextFormat;
-
-    QTextEdit(QWidget *parent);
-
-    void setText(const QString &);
-    QString text(int);
-    QString text();
-
-    int paragraphs() const;
-    int paragraphLength(int) const;
-    int lineOfChar(int, int);
-
-    WrapStyle wordWrap() const;
-    void setWordWrap(WrapStyle);
-    void setTextFormat(TextFormat);
-    void setTabStopWidth(int);
-    bool isReadOnly () const;
-    void setReadOnly (bool);
-    void getCursorPosition(int *, int *) const;
-    void setCursorPosition(int, int);
-
-    void selectAll();
-
-    int verticalScrollBarWidth() const;
-    int horizontalScrollBarHeight() const;
-
-    void textChanged() { m_textChanged.call(); }
-
-  private:
-    KWQSignal m_textChanged;
+private:
+    QGuardedPtr<QObject> m_object;
+    int m_function;
 };
 
-#endif /* QTEXTEDIT_H_ */
+inline bool operator!=(const KWQSlot &a, const KWQSlot &b) { return !(a == b); }
+
+#endif

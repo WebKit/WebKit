@@ -132,9 +132,9 @@ using namespace khtml;
     part->impl->gotoBaseAnchor();
 }
 
-- (void)gotoAnchor: (NSString *)a
+- (void)scrollToAnchor:(NSString *)a
 {
-    part->gotoAnchor(QString::fromCFString((CFStringRef)a));
+    part->gotoAnchor(QString::fromNSString(a));
 }
 
 - (NSString *)selectedText

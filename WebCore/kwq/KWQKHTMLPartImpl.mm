@@ -36,6 +36,8 @@
 #import <WebCoreBridge.h>
 #import <WebCoreViewFactory.h>
 
+#import <WebFoundation/WebNSURLExtras.h>
+
 #import <kwqdebug.h>
 
 #undef _KWQ_TIMING
@@ -43,6 +45,7 @@
 using khtml::Decoder;
 using khtml::RenderObject;
 using khtml::RenderPart;
+using khtml::RenderText;
 using khtml::RenderWidget;
 
 void KHTMLPart::onURL(const QString &)
@@ -58,16 +61,20 @@ void KHTMLPart::setStatusBarText(const QString &status)
     impl->setStatusBarText(status);
 }
 
-KWQKHTMLPartImpl::KWQKHTMLPartImpl(KHTMLPart *p)
-    : part(p)
-    , d(part->d)
-    , m_redirectionTimer(0)
+static void redirectionTimerMonitor(void *context)
 {
+    KWQKHTMLPartImpl *impl = static_cast<KWQKHTMLPartImpl *>(context);
+    impl->redirectionTimerStartedOrStopped();
+}
+
+KWQKHTMLPartImpl::KWQKHTMLPartImpl(KHTMLPart *p)
+    : part(p), d(part->d)
+{
+    d->m_redirectionTimer.setMonitor(redirectionTimerMonitor, this);
 }
 
 KWQKHTMLPartImpl::~KWQKHTMLPartImpl()
 {
-    killTimer(m_redirectionTimer);
 }
 
 bool KWQKHTMLPartImpl::openURLInFrame( const KURL &url, const KParts::URLArgs &urlArgs )
@@ -211,26 +218,6 @@ bool KWQKHTMLPartImpl::gotoBaseAnchor()
     if ( !part->m_url.ref().isEmpty() )
         return part->gotoAnchor( part->m_url.ref() );
     return false;
-}
-
-// FIXME: Need to remerge this with code in khtml_part.cpp?
-// Specifically, it seems that if we implement QTimer, including
-// some sort of special case to make connect work, we could use
-// KHTMLPart::scheduleRedirection as-is.
-void KWQKHTMLPartImpl::scheduleRedirection(int delay, const QString &url)
-{
-    if( d->m_redirectURL.isEmpty() || delay < d->m_delayRedirect )
-    {
-        d->m_delayRedirect = delay;
-        d->m_redirectURL = url;
-        killTimer(m_redirectionTimer);
-        m_redirectionTimer = startTimer(1000 * d->m_delayRedirect);
-    }
-}
-
-void KWQKHTMLPartImpl::timerEvent(QTimerEvent *e)
-{
-    part->slotRedirect();
 }
 
 void KWQKHTMLPartImpl::urlSelected( const QString &url, int button, int state, const QString &_target, KParts::URLArgs )
@@ -568,22 +555,54 @@ void KWQKHTMLPartImpl::overURL( const QString &url, const QString &target, int m
     setStatusBarText(QString::fromNSString([NSString stringWithFormat:format, url.getNSString()]));
 }
 
-
 void KWQKHTMLPartImpl::jumpToSelection()
 {
-    // Assumes that selection will only ever be text nodes.  This is currently
+    // Assumes that selection will only ever be text nodes. This is currently
     // true, but will it always be so?
-    if (d->m_selectionStart != 0){
-        khtml::RenderObject *ro = static_cast<khtml::RenderObject *>(d->m_selectionStart.handle()->renderer());
-
-        if (strcmp(ro->renderName(), "RenderText") == 0){
+    if (!d->m_selectionStart.isNull()) {
+        RenderText *rt = dynamic_cast<RenderText *>(d->m_selectionStart.handle()->renderer());
+        if (rt) {
             int x = 0, y = 0;
-            khtml::RenderText *rt = static_cast<khtml::RenderText *>(d->m_selectionStart.handle()->renderer());
             rt->posOfChar(d->m_startOffset, x, y);
             // The -50 offset is copied from KHTMLPart::findTextNext, which sets the contents position
             // after finding a matched text string.
-            d->m_view->setContentsPos(x-50, y-50);
+            d->m_view->setContentsPos(x - 50, y - 50);
         }
     }
 }
 
+void KWQKHTMLPartImpl::redirectionTimerStartedOrStopped()
+{
+    if (d->m_redirectionTimer.isActive()) {
+        [bridge reportClientRedirectTo:[NSURL _web_URLWithString:d->m_redirectURL.getNSString()]
+                                 delay:d->m_delayRedirect
+                              fireDate:[d->m_redirectionTimer.getNSTimer() fireDate]];
+    } else {
+        [bridge reportClientRedirectCancelled];
+    }
+}
+
+static void moveWidgetsAside(RenderObject *object)
+{
+    RenderWidget *renderWidget = dynamic_cast<RenderWidget *>(object);
+    if (renderWidget) {
+        QWidget *widget = renderWidget->widget();
+        if (widget) {
+            widget->move(999999, 0);
+        }
+    }
+    
+    for (RenderObject *child = object->firstChild(); child; child = child->nextSibling()) {
+        moveWidgetsAside(child);
+    }
+}
+
+void KWQKHTMLPartImpl::layout()
+{
+    // Since not all widgets will get a print call, it's important to move them away
+    // so that they won't linger in an old position left over from a previous print.
+    DOM::DocumentImpl *doc = part->xmlDocImpl();
+    if (doc && doc->renderer()) {
+        moveWidgetsAside(doc->renderer());
+    }
+}

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,14 +27,35 @@
 #define QTIMER_H_
 
 #include <qobject.h>
+#include <KWQSignal.h>
+
+#ifdef __OBJC__
+@class NSTimer;
+#else
+class NSTimer;
+#endif
 
 class QTimer : public QObject {
 public:
-    static void singleShot(int, QObject *, const char *);
+    QTimer();
+    ~QTimer() { stop(); }
     
     bool isActive() const;
     void start(int msec, bool singleShot = false);
     void stop();
+    void fire();
+
+    // This is just a hack used by KWQKHTMLPartImpl. The monitor function
+    // gets called when the timer starts and when it is stopped before firing,
+    // but not when the timer fires.
+    void setMonitor(void (*monitorFunction)(void *context), void *context);
+    NSTimer *getNSTimer() { return m_timer; }
+
+private:    
+    NSTimer *m_timer;
+    void (*m_monitorFunction)(void *context);
+    void *m_monitorFunctionContext;
+    KWQSignal m_timeoutSignal;
 };
 
 #endif

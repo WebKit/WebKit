@@ -535,10 +535,14 @@ void RenderPart::setWidget( QWidget *widget )
     slotViewCleared();
 }
 
+#ifndef APPLE_CHANGES
+
 bool RenderPart::partLoadingErrorNotify(khtml::ChildFrame *, const KURL& , const QString& )
 {
     return false;
 }
+
+#endif // APPLE_CHANGES
 
 short RenderPart::intrinsicWidth() const
 {
@@ -757,6 +761,7 @@ void RenderPartObject::close()
     RenderPart::close();
 }
 
+#ifndef APPLE_CHANGES
 
 bool RenderPartObject::partLoadingErrorNotify( khtml::ChildFrame *childFrame, const KURL& url, const QString& serviceType )
 {
@@ -841,6 +846,8 @@ void RenderPartObject::slotPartLoadingErrorNotify()
 	}
     }
 }
+
+#endif // APPLE_CHANGES
 
 // duplication of RenderFormElement... FIX THIS!
 short RenderPartObject::calcReplacedWidth(bool* ieHack) const

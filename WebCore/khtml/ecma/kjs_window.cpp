@@ -435,8 +435,10 @@ Value Window::get(ExecState *exec, const UString &p) const
         return Value(location());
       else
         return Undefined();
+#ifndef APPLE_CHANGES
     case Name:
       return String(m_part->name());
+#endif
     case _Navigator:
     case ClientInformation:
       return Value(new Navigator(exec, m_part));
@@ -807,10 +809,12 @@ void Window::put(ExecState* exec, const UString &propertyName, const Value &valu
       if (isSafeScript(exec))
         setListener(exec,DOM::EventImpl::UNLOAD_EVENT,value);
       return;
+#ifndef APPLE_CHANGES
     case Name:
       if (isSafeScript(exec))
         m_part->setName( value.toString(exec).qstring().local8Bit().data() );
       return;
+#endif
     default:
       break;
     }
@@ -1722,6 +1726,7 @@ Value History::get(ExecState *exec, const UString &p) const
 Value History::getValueProperty(ExecState *, int token) const
 {
   switch (token) {
+#ifndef APPLE_CHANGES
   case Length:
   {
     KParts::BrowserExtension *ext = part->browserExtension();
@@ -1739,6 +1744,7 @@ Value History::getValueProperty(ExecState *, int token) const
 
     return Number( length.toUInt() );
   }
+#endif
   default:
     kdWarning() << "Unhandled token in History::getValueProperty : " << token << endl;
     return Value();

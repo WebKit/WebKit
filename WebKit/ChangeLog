@@ -1,3 +1,32 @@
+2002-08-02  Darin Adler  <darin@apple.com>
+
+	WebKit support for feature where client redirects are treated as if the
+	page was continuing to load.
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge reportClientRedirectTo:delay:fireDate:]): Added. Passes the client
+	redirect along to the location change handler.
+        (-[WebBridge reportClientRedirectCancelled]): Passes client redirect cancel along
+	to the location change handler.
+        (-[WebBridge dataSourceChanged]): Remove hack related to dummy data source.
+        (-[WebBridge dataSource]): Remove hack related to dummy data source.
+
+        * WebView.subproj/WebLocationChangeHandler.h: Added client redirect methods.
+	Added class for base implementation of protocol. Updated stale comment.
+        * WebView.subproj/WebLocationChangeHandler.m: Added. Provides base implementation
+	of the WebLocationChangeHandler protocol so that clients don't need to implement
+	all the methods if they are only interested in some of them.
+        * WebKit.pbproj/project.pbxproj: Added WebLocationChangeHandler.m.
+
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _goToItem:withFrameLoadType:]): Call scrollToAnchor under its new name.
+
+        * Misc.subproj/WebIconLoader.h:
+        * Misc.subproj/WebIconLoader.m:
+        * WebView.subproj/WebControllerPolicyHandler.m:
+        * WebView.subproj/WebControllerPolicyHandlerPrivate.h:
+	Replaced __MyCompanyName__ with the actual name of our company.
+
 2002-08-02  John Sullivan  <sullivan@apple.com>
 
 	- fixed 3015705 -- Command-up-arrow and -down-arrow should go to

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,53 +23,32 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef QTEXTEDIT_H_
-#define QTEXTEDIT_H_
+#ifndef KWQSIGNAL_H
+#define KWQSIGNAL_H
 
-#include <qscrollview.h>
+#include "KWQSlot.h"
 
-#include <KWQSignal.h>
+class KWQSignal {
+public:
+    KWQSignal(QObject *, const char *name);
+    ~KWQSignal();
+    
+    void connect(const KWQSlot &);
+    void disconnect(const KWQSlot &);
+    
+    void call() const; // should be "emit"; can't be due to define in qobject.h
 
-class QTextEdit : public QScrollView
-{
- public:
-    typedef enum { 
-	NoWrap,
-	WidgetWidth
-    } WrapStyle;
-
-    typedef enum {
-	PlainText,
-    } TextFormat;
-
-    QTextEdit(QWidget *parent);
-
-    void setText(const QString &);
-    QString text(int);
-    QString text();
-
-    int paragraphs() const;
-    int paragraphLength(int) const;
-    int lineOfChar(int, int);
-
-    WrapStyle wordWrap() const;
-    void setWordWrap(WrapStyle);
-    void setTextFormat(TextFormat);
-    void setTabStopWidth(int);
-    bool isReadOnly () const;
-    void setReadOnly (bool);
-    void getCursorPosition(int *, int *) const;
-    void setCursorPosition(int, int);
-
-    void selectAll();
-
-    int verticalScrollBarWidth() const;
-    int horizontalScrollBarHeight() const;
-
-    void textChanged() { m_textChanged.call(); }
-
-  private:
-    KWQSignal m_textChanged;
+private:
+    // forbid copying and assignment
+    KWQSignal(const KWQSignal &);
+    KWQSignal &operator=(const KWQSignal &);
+    
+    QObject *m_object;
+    KWQSignal *m_next;
+    const char *m_name;
+    KWQSlot m_slot;
+    
+    friend class QObject;
 };
 
-#endif /* QTEXTEDIT_H_ */
+#endif

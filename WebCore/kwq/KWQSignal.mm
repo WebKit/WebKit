@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,53 +23,50 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef QTEXTEDIT_H_
-#define QTEXTEDIT_H_
+#import "KWQSignal.h"
 
-#include <qscrollview.h>
+#import "qobject.h"
 
-#include <KWQSignal.h>
-
-class QTextEdit : public QScrollView
+KWQSignal::KWQSignal(QObject *object, const char *name)
+    : m_object(object), m_next(object->m_signalListHead), m_name(name)
 {
- public:
-    typedef enum { 
-	NoWrap,
-	WidgetWidth
-    } WrapStyle;
+    object->m_signalListHead = this;
+}
 
-    typedef enum {
-	PlainText,
-    } TextFormat;
+KWQSignal::~KWQSignal()
+{
+    KWQSignal **prev = &m_object->m_signalListHead;
+    KWQSignal *signal;
+    while ((signal = *prev)) {
+        if (signal == this) {
+            *prev = m_next;
+            break;
+        }
+        prev = &signal->m_next;
+    }
+}
 
-    QTextEdit(QWidget *parent);
+void KWQSignal::connect(const KWQSlot &slot)
+{
+    if (!m_slot.isEmpty()) {
+        // ERROR
+        return;
+    }
+    m_slot = slot;
+}
 
-    void setText(const QString &);
-    QString text(int);
-    QString text();
+void KWQSignal::disconnect(const KWQSlot &slot)
+{
+    if (m_slot != slot) {
+        // ERROR
+        return;
+    }
+    m_slot.clear();
+}
 
-    int paragraphs() const;
-    int paragraphLength(int) const;
-    int lineOfChar(int, int);
-
-    WrapStyle wordWrap() const;
-    void setWordWrap(WrapStyle);
-    void setTextFormat(TextFormat);
-    void setTabStopWidth(int);
-    bool isReadOnly () const;
-    void setReadOnly (bool);
-    void getCursorPosition(int *, int *) const;
-    void setCursorPosition(int, int);
-
-    void selectAll();
-
-    int verticalScrollBarWidth() const;
-    int horizontalScrollBarHeight() const;
-
-    void textChanged() { m_textChanged.call(); }
-
-  private:
-    KWQSignal m_textChanged;
-};
-
-#endif /* QTEXTEDIT_H_ */
+void KWQSignal::call() const
+{
+    if (!m_object->m_signalsBlocked) {
+        m_slot.call();
+    }
+}

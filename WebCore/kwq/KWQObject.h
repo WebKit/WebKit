@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,11 +34,10 @@
 #include "qstringlist.h"
 #include "qptrlist.h"
 
-// FIXME: should these macros be in "kwq.h" or other header file?
-#define slots
-#define SLOT(x) #x
+#define slots : public
+#define SLOT(x) "SLOT:" #x
 #define signals protected
-#define SIGNAL(x) #x
+#define SIGNAL(x) "SIGNAL:" #x
 #define emit
 #define Q_OBJECT
 #define Q_PROPERTY(text)
@@ -65,8 +64,7 @@ class QImage;
 class QVariant;
 
 class KWQGuardedPtrBase;
-
-// class QObject ===============================================================
+class KWQSignal;
 
 class QObject : public Qt {
 public:
@@ -90,45 +88,46 @@ public:
         ACTION_COMBOBOX_CLICKED = 7
     };
 
-    static bool connect(const QObject *, const char *, const QObject *, const char *);
-    static bool disconnect( const QObject *, const char *, const QObject *, const char *);
-
-    QObject(QObject *parent=0, const char *name=0);
+    QObject(QObject *parent = 0, const char *name = 0);
     virtual ~QObject();
 
-    const char *name() const;
-    virtual void setName(const char *);
+    static void connect(const QObject *sender, const char *signal, const QObject *receiver, const char *member);
+    static void disconnect(const QObject *sender, const char *signal, const QObject *receiver, const char *member);
+    void connect(const QObject *sender, const char *signal, const char *member) const
+        { connect(sender, signal, this, member); }
 
-    QVariant property(const char *name) const;
-    bool inherits(const char *) const;
-    bool connect(const QObject *src, const char *signal, const char *slot) const;
+    bool inherits(const char *className) const;
 
     int startTimer(int);
     void killTimer(int);
     void killTimers();
-    virtual void timerEvent( QTimerEvent * );
-    
+    virtual void timerEvent(QTimerEvent *);
+
     void installEventFilter(const QObject *);
     void removeEventFilter(const QObject *);
     bool eventFilter(QObject *o, QEvent *e);
 
-    void blockSignals(bool);
+    void blockSignals(bool b) { m_signalsBlocked = b; }
 
-    virtual void performAction(QObject::Actions action);
-    void emitAction(QObject::Actions action);
-    void setTarget(QObject *obj);
-    
     virtual bool event(QEvent *);
-    
+
+    void emitAction(Actions action);
+    virtual void performAction(Actions action);
+
 private:
     // no copying or assignment
     QObject(const QObject &);
     QObject &operator=(const QObject &);
-
-    QObject *target;
-    QPtrList<QObject> guardedPtrDummyList;
     
+    KWQSignal *findSignal(const char *signalName) const;
+    
+    mutable QObject *target;
+    QPtrList<QObject> guardedPtrDummyList;
+    mutable KWQSignal *m_signalListHead;
+    bool m_signalsBlocked;
+
     friend class KWQGuardedPtrBase;
+    friend class KWQSignal;
 };
 
 #endif

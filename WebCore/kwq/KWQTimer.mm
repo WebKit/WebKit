@@ -27,23 +27,82 @@
 
 #import <kwqdebug.h>
 
-void QTimer::singleShot(int, QObject *, const char *)
+@interface KWQTimerTarget : NSObject
 {
-    _logNotYetImplemented();
+    QTimer *timer;
+}
++ (KWQTimerTarget *)targetWithQTimer:(QTimer *)timer;
+- (void)timerFired:(id)userInfo;
+@end
+
+@implementation KWQTimerTarget
+
++ (KWQTimerTarget *)targetWithQTimer:(QTimer *)t
+{
+    KWQTimerTarget *target = [[[self alloc] init] autorelease];
+    target->timer = t;
+    return target;
+}
+
+- (void)timerFired:(id)userInfo
+{
+    timer->fire();
+}
+
+@end
+
+QTimer::QTimer()
+    : m_timer(0), m_monitorFunction(0), m_timeoutSignal(this, SIGNAL(timeout()))
+{
 }
 
 bool QTimer::isActive() const
 {
-    _logNotYetImplemented();
-    return false;
+    return m_timer;
 }
 
 void QTimer::start(int msec, bool singleShot)
 {
-    _logNotYetImplemented();
+    stop();
+    m_timer = [[NSTimer scheduledTimerWithTimeInterval:(msec / 1000.0)
+                                                target:[KWQTimerTarget targetWithQTimer:this]
+                                              selector:@selector(timerFired:)
+                                              userInfo:nil
+                                               repeats:!singleShot] retain];
+
+    if (m_monitorFunction) {
+        m_monitorFunction(m_monitorFunctionContext);
+    }
 }
 
 void QTimer::stop()
 {
-    _logNotYetImplemented();
+    if (m_timer == nil) {
+        return;
+    }
+    
+    [m_timer invalidate];
+    [m_timer release];
+    m_timer = 0;
+
+    if (m_monitorFunction) {
+        m_monitorFunction(m_monitorFunctionContext);
+    }
+}
+
+void QTimer::setMonitor(void (*monitorFunction)(void *context), void *context)
+{
+    KWQ_ASSERT(!m_monitorFunction);
+    m_monitorFunction = monitorFunction;
+    m_monitorFunctionContext = context;
+}
+
+void QTimer::fire()
+{
+    m_timeoutSignal.call();
+
+    if (![m_timer isValid]) {
+        [m_timer release];
+        m_timer = 0;
+    }
 }

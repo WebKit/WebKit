@@ -24,6 +24,10 @@
 #include "khtmlview.h"
 #include <kdebug.h>
 
+#ifdef APPLE_CHANGES
+#include "khtml_part.h"
+#endif
+
 using namespace khtml;
 
 //#define BOX_DEBUG
@@ -101,6 +105,12 @@ void RenderRoot::calcMinMaxWidth()
 
 void RenderRoot::layout()
 {
+#ifdef APPLE_CHANGES
+    // Let the KWQKHTMLPartImpl know we are doing a layout.
+    if (m_view && m_view->part())
+        m_view->part()->impl->layout();
+#endif
+    
     //kdDebug(6040) << "RenderRoot::layout()" << endl;
     if (m_printingMode)
        m_minWidth = m_width;

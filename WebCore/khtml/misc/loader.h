@@ -397,13 +397,11 @@ namespace khtml
 	void requestDone( khtml::DocLoader* dl, khtml::CachedObject *obj );
 	void requestFailed( khtml::DocLoader* dl, khtml::CachedObject *obj );
 
-#ifdef APPLE_CHANGES
-    public:
-	void slotFinished( KIO::Job * );
-	void slotData( KIO::Job *, const char *data, int size );
-#else
     protected slots:
 	void slotFinished( KIO::Job * );
+#ifdef APPLE_CHANGES
+	void slotData( KIO::Job *, const char *data, int size );
+#else
 	void slotData( KIO::Job *, const QByteArray & );
 #endif
 
