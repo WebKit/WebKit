@@ -1,3 +1,10 @@
+2002-06-24  Darin Adler  <darin@apple.com>
+
+        * Panels.subproj/IFStandardPanels.m:
+        (-[IFStandardPanels didStopLoadingURL:inWindow:]): Fix a leak caused
+	by calling the wrong method. This was calling objectForKey: instead of
+	removeObjectForKey:.
+
 2002-06-24  Richard Williamson  <rjw@apple.com>
 
         Changed our usage of +[NSFont findFontLike:forString:withRange:inLanguage:]

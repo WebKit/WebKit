@@ -134,7 +134,7 @@ static void initSharedStandardPanels(void)
     [set removeObject:window];
     
     if ([set count] == 0) {
-	[_privatePanels->urlContainers objectForKey:url];
+	[_privatePanels->urlContainers removeObjectForKey:url];
     }
 }
 
