@@ -48,6 +48,7 @@
 #import <WebCoreImageRenderer.h>
 #import <WebCoreTextRendererFactory.h>
 #import <KWQCharsets.h>
+#import <qframe.h>
 
 #import <WebCoreDOMPrivate.h>
 
@@ -775,6 +776,15 @@ static NSAttributedString *attributedString(DOM::NodeImpl *_startNode, int start
 - (NSString *)referrer
 {
     return part->impl->referrer().getNSString();
+}
+
+- (int)frameBorderStyle
+{
+    if (part->impl->view()->frameStyle() & QFrame::Sunken)
+        return SunkenFrameBorder;
+    if (part->impl->view()->frameStyle() & QFrame::Plain)
+        return PlainFrameBorder;
+    return NoFrameBorder;
 }
 
 @end

@@ -72,6 +72,12 @@ typedef khtml::RenderPart KHTMLRenderPart;
 
 // The WebCoreBridge interface contains methods for use by the non-WebCore side of the bridge.
 
+enum FrameBorderStyle {
+    NoFrameBorder = 1,
+    SunkenFrameBorder = 2,
+    PlainFrameBorder = 4
+};
+
 @interface WebCoreBridge : NSObject
 {
     KHTMLPart *part;
@@ -152,6 +158,8 @@ typedef khtml::RenderPart KHTMLRenderPart;
 - (int)selectionEndOffset;
 
 - (NSAttributedString *)attributedStringFrom:(id <WebDOMNode>)startNode startOffset:(int)startOffset to:(id <WebDOMNode>)endNode endOffset:(int)endOffset;
+
+- (int)frameBorderStyle;
 
 @end
 

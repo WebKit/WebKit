@@ -459,12 +459,7 @@ bool RenderFrameSet::userResize( MouseEventImpl *evt )
         if (m_vSplit > -1) {
             if ( m_oldpos >= 0 )
 #ifdef APPLE_CHANGES
-                // FIXME: Should only have to redraw the damage rect, but
-                // the damage rect alone isn't sufficient. areas outside
-                // the specified rect are getting partially drawn.
-                v->updateContents(v->contentsX(), v->contentsY(),
-                                v->visibleWidth(), v->visibleHeight(), true);
-                //root()->view()->displayRect( m_oldpos + sw/2 - rBord , r.y(), 2*rBord, r.height() );
+                v->updateContents( m_oldpos + sw/2 - rBord , r.y(), 2*rBord, r.height(), true );
 #else
                 paint.drawRect( m_oldpos + sw/2 - rBord , r.y(),
                                 2*rBord, r.height() );
@@ -483,12 +478,7 @@ bool RenderFrameSet::userResize( MouseEventImpl *evt )
         } else {
             if ( m_oldpos >= 0 )
 #ifdef APPLE_CHANGES
-                // FIXME: Should only have to redraw the damage rect, but
-                // the damage rect alone isn't sufficient. areas outside
-                // the specified rect are getting partially drawn.
-                v->updateContents(v->contentsX(), v->contentsY(),
-                                v->visibleWidth(), v->visibleHeight(), true);
-                //root()->view()->displayRect( r.x(), m_oldpos + sw/2 - rBord, r.width(), 2*rBord );
+                v->updateContents( r.x(), m_oldpos + sw/2 - rBord, r.width(), 2*rBord, true );
 #else
                 paint.drawRect( r.x(), m_oldpos + sw/2 - rBord,
                                 r.width(), 2*rBord );

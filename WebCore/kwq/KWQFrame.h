@@ -30,10 +30,10 @@
 
 class QFrame : public QWidget {
 public:
-    enum Shape { NoFrame, Box, StyledPanel };
-    enum Shadow { Sunken };
+    enum Shape { NoFrame = 1, Box = 2, StyledPanel = 4 };
+    enum Shadow { Sunken = 8, Plain = 16 };
 
-    QFrame() { }
+    QFrame() : _frameStyle(QFrame::NoFrame) { }
 
     virtual void setFrameStyle(int);
     int frameStyle();

@@ -1,3 +1,11 @@
+2002-10-17  Richard Williamson  <rjw@apple.com>
+
+        Support for drawing frame borders (fixes 2982466).
+        
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _drawBorder:]):
+        (-[WebHTMLView drawRect:]):
+
 2002-10-17  John Sullivan  <sullivan@apple.com>
 
 	- added support for bookmark identifiers, to be used for marking
