@@ -31,9 +31,9 @@
 #include <qrect.h>
 
 #ifdef __OBJC__
-@class NSBezierPath;
+@class NSArray;
 #else
-class NSBezierPath;
+class NSArray;
 #endif
 
 class QRegion {
@@ -44,21 +44,24 @@ public:
     QRegion(const QRect &);
     QRegion(int, int, int, int, RegionType=Rectangle);
     QRegion(const QPointArray &);
-    QRegion(const QRegion &);
     ~QRegion();
 
-    QRegion intersect(const QRegion &) const;
-    bool contains(const QPoint &) const;
-    bool isNull() const;
-    void translate(int deltaX, int deltaY);
-    QRect boundingRect() const;
-
+    QRegion(const QRegion &);
     QRegion &operator=(const QRegion &);
 
-    NSBezierPath* getNSBezierPath() const { return path; }
+    bool isNull() const;
+    bool contains(const QPoint &) const;
+    QRect boundingRect() const;
+
+    void translate(int deltaX, int deltaY);
+    QRegion intersect(const QRegion &) const;
+
+    void setClip() const;
 
 private:
-    NSBezierPath *path;    
+    QRegion(NSArray *);
+    
+    NSArray *paths;    
 };
 
 #endif

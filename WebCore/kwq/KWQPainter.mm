@@ -402,7 +402,7 @@ void QPainter::fillRect(int x, int y, int w, int h, const QBrush &brush)
 void QPainter::setClipRegion(const QRegion &region)
 {
     data->state.clip = region;
-    [(region.getNSBezierPath()) setClip];
+    region.setClip();
 }
 
 const QRegion &QPainter::clipRegion() const

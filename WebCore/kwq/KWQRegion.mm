@@ -27,93 +27,160 @@
 
 #import <kwqdebug.h>
 
+// FIXME: Find some header to put these inline functions in, because they are widely useful.
+
+inline NSPoint NSMakePoint(const QPoint &qp)
+{
+    NSPoint p;
+    p.x = qp.x();
+    p.y = qp.y();
+    return p;
+}
+
+inline NSRect NSMakeRect(const QRect &qr)
+{
+    NSRect r;
+    r.origin.x = qr.x();
+    r.origin.y = qr.y();
+    r.size.width = qr.width();
+    r.size.height = qr.height();
+    return r;
+}
+
+inline QRect MakeQRect(const NSRect &r)
+{
+    return QRect((int)r.origin.x, (int)r.origin.y, (int)r.size.width, (int)r.size.height);
+}
+
 QRegion::QRegion()
-    : path(nil)
+    : paths([[NSArray alloc] init])
 {
 }
 
 QRegion::QRegion(const QRect &rect)
-    : path([[NSBezierPath bezierPathWithRect:NSMakeRect(rect.x(), rect.y(), rect.width(), rect.height())] retain])
+    : paths([[NSArray arrayWithObject:[NSBezierPath bezierPathWithRect:NSMakeRect(rect)]] retain])
 {
 }
 
 QRegion::QRegion(int x, int y, int w, int h, RegionType t)
 {
-    NSRect rect;
-    
-    rect = NSMakeRect(x,y,w,h);
-
     if (t == Rectangle) {
-        path = [[NSBezierPath bezierPathWithRect:rect] retain];
-    }
-    else { // Ellipse
-        path = [[NSBezierPath bezierPathWithOvalInRect:rect] retain];
+        paths = [[NSArray arrayWithObject:[NSBezierPath bezierPathWithRect:NSMakeRect(x, y, w, h)]] retain];
+    } else { // Ellipse
+        paths = [[NSArray arrayWithObject:[NSBezierPath bezierPathWithOvalInRect:NSMakeRect(x, y, w, h)]] retain];
     }
 }
 
 QRegion::QRegion(const QPointArray &arr)
-    : path([[NSBezierPath alloc] init])
 {
-    [path moveToPoint:NSMakePoint(arr[0].x(), arr[0].y())];
+    NSBezierPath *path = [[NSBezierPath alloc] init];
+    [path moveToPoint:NSMakePoint(arr[0])];
     for (uint i = 1; i < arr.count(); ++i) {
-        [path lineToPoint:NSMakePoint(arr[i].x(), arr[i].y())];
+        [path lineToPoint:NSMakePoint(arr[i])];
     }
+    paths = [[NSArray arrayWithObject:path] retain];
+    [path release];
 }
 
-QRegion::QRegion(const QRegion &other)
-    : path([other.path copy])
+QRegion::QRegion(NSArray *array)
+    : paths([[NSArray alloc] initWithArray:array copyItems:true])
 {
 }
 
 QRegion::~QRegion()
 {
-    [path release];
+    [paths release];
 }
 
-QRegion QRegion::intersect(const QRegion &region) const
+QRegion::QRegion(const QRegion &other)
+    : paths([[NSArray alloc] initWithArray:other.paths copyItems:true])
 {
-    _logNotYetImplemented();
-    return region;
-}
-
-bool QRegion::contains(const QPoint &point) const
-{
-    return path && [path containsPoint:NSMakePoint(point.x(), point.y())];
-}
-
-bool QRegion::isNull() const
-{
-    return path == nil || [path isEmpty];
 }
 
 QRegion &QRegion::operator=(const QRegion &other)
 {
-    NSBezierPath *newPath;
-    
-    newPath = [other.path copy];
-    [path release];
-    path = newPath;
+    if (this == &other)
+        return *this;
+    [paths release];
+    paths = [[NSArray alloc] initWithArray:other.paths copyItems:true];
     return *this;
+}
+
+QRegion QRegion::intersect(const QRegion &other) const
+{
+    return [paths arrayByAddingObjectsFromArray:other.paths];
+}
+
+bool QRegion::contains(const QPoint &point) const
+{
+    if ([paths count] == 0) {
+        return false;
+    }
+    NSEnumerator *e = [paths objectEnumerator];
+    NSBezierPath *path;
+    while ((path = [e nextObject])) {
+        if (![path containsPoint:NSMakePoint(point.x(), point.y())]) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool QRegion::isNull() const
+{
+    // FIXME: Note that intersection can lead to an empty QRegion that
+    // still won't return true for isNull. But this doesn't matter since
+    // intersection is hardly used in KHTML, and never with isNull.
+    if ([paths count] == 0) {
+        return true;
+    }
+    NSEnumerator *e = [paths objectEnumerator];
+    NSBezierPath *path;
+    while ((path = [e nextObject])) {
+        if ([path isEmpty]) {
+            return true;
+        }
+    }
+    return false;
 }
 
 void QRegion::translate(int deltaX, int deltaY)
 {
-    if (!path) {
-        return;
-    }
-    
     NSAffineTransform *translation = [[NSAffineTransform alloc] init];
     [translation translateXBy:deltaX yBy:deltaY];
-    [path transformUsingAffineTransform:translation];
+    [paths makeObjectsPerformSelector:@selector(transformUsingAffineTransform:) withObject:translation];    
     [translation release];
 }
 
 QRect QRegion::boundingRect() const
 {
-    if (!path) {
+    // Note that this returns the intersection of the bounds of all the paths.
+    // That's not quite the same as the bounds of the intersection of all the
+    // paths, but that doesn't matter because intersection is hardly used at all.
+    
+    NSEnumerator *e = [paths objectEnumerator];
+    NSBezierPath *path = [e nextObject];
+    if (path == nil) {
 	return QRect();
     }
-
     NSRect bounds = [path bounds];
-    return QRect((int)bounds.origin.x, (int)bounds.origin.y, (int)bounds.size.width, (int)bounds.size.height);
+    while ((path = [e nextObject])) {
+        bounds = NSIntersectionRect(bounds, [path bounds]);
+    }
+    return MakeQRect(bounds);
+}
+
+void QRegion::setClip() const
+{
+    NSEnumerator *e = [paths objectEnumerator];
+    NSBezierPath *path = [e nextObject];
+    if (path == nil) {
+        [[NSBezierPath bezierPath] setClip];
+        return;
+    }
+    [path setClip];
+    NSRect bounds = [path bounds];
+    while ((path = [e nextObject])) {
+        [path addClip];
+    }
 }

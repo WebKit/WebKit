@@ -1,3 +1,25 @@
+2002-08-13  Darin Adler  <darin@apple.com>
+
+	Some QRegion fixes inspired by Dave's clipping work.
+
+        * kwq/qt/qregion.h: Add setClip, remove getNSBezierPath.
+        * kwq/KWQRegion.mm:
+        (NSMakePoint): Added. Helper function; could go in a header some day.
+        (NSMakeRect): Added. Helper function; could go in a header some day.
+        (MakeQRect): Added. Helper function; could go in a header some day.
+        (QRegion::QRegion): Make a paths array instead of a single path. Also, change things
+	so we actually copy the paths. The old code might translate a path that was shared
+	by two QRegion objects.
+        (QRegion::intersect): Merge the paths arrays of the two passed-in paths.
+        (QRegion::contains): Return true only if all paths in the array contain the point.
+        (QRegion::isNull): Return true if any of the paths in the array are empty.
+        (QRegion::translate): Translate all the paths in the array.
+        (QRegion::boundingRect): Return the intersection of the bounding rects of all the
+	paths in the array.
+        (QRegion::setClip): Call setClip on the first path, and addClip on the others.
+
+        * kwq/KWQPainter.mm: (QPainter::setClipRegion): Use QRegion::setClip().
+
 2002-08-12  David Hyatt  <hyatt@apple.com>
 
 	Reverting a change that I unintentionally checked in last
