@@ -296,7 +296,7 @@ static WebHTMLView *lastHitView = nil;
     }
 }
 
-- (NSTrackingRectTag)addTrackingRect:(NSRect)rect owner:(id)owner userData:(void *)data assumeInside:(BOOL)flag
+- (NSTrackingRectTag)addTrackingRect:(NSRect)rect owner:(id)owner userData:(void *)data assumeInside:(BOOL)assumeInside
 {
     ASSERT(_private->trackingRectOwner == nil);
     _private->trackingRectOwner = owner;
@@ -304,9 +304,17 @@ static WebHTMLView *lastHitView = nil;
     return TRACKING_RECT_TAG;
 }
 
+- (NSTrackingRectTag)_addTrackingRect:(NSRect)rect owner:(id)owner userData:(void *)data assumeInside:(BOOL)assumeInside useTrackingNum:(int)tag
+{
+    ASSERT(tag == TRACKING_RECT_TAG);
+    return [self addTrackingRect:rect owner:owner userData:data assumeInside:assumeInside];
+}
+
 - (void)removeTrackingRect:(NSTrackingRectTag)tag
 {
+    ASSERT(tag == TRACKING_RECT_TAG);
     if (_private != nil) {
+        ASSERT(_private->trackingRectOwner != nil);
         _private->trackingRectOwner = nil;
     }
 }
@@ -666,6 +674,27 @@ static WebHTMLView *lastHitView = nil;
     } else {
         [self setObject:object forKey:key];
     }
+}
+
+@end
+
+// The following is a workaround for
+// <rdar://problem/3429631> window stops getting mouse moved events after first tooltip appears
+// The trick is to define a category on NSToolTipPanel that implements setAcceptsMouseMovedEvents:.
+// Since the category will be searched before the real class, we'll prevent the flag from being
+// set on the tool tip panel.
+
+@interface NSToolTipPanel : NSPanel
+@end
+
+@interface NSToolTipPanel (WebHTMLViewPrivate)
+@end
+
+@implementation NSToolTipPanel (WebHTMLViewPrivate)
+
+- (void)setAcceptsMouseMovedEvents:(BOOL)flag
+{
+    // Do nothing, preventing the tool tip panel from trying to accept mouse-moved events.
 }
 
 @end

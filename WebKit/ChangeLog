@@ -1,5 +1,26 @@
 2003-09-22  Darin Adler  <darin@apple.com>
 
+        Reviewed by Dave.
+
+        - worked around 3429631 -- window stops getting mouse moved events after first tooltip appears
+
+        * WebView.subproj/WebHTMLViewPrivate.m: (-[NSToolTipPanel setAcceptsMouseMovedEvents:]):
+        Do nothing, preventing the real setAcceptsMouseMovedEvents: (in class NSWindow) from being called.
+
+2003-09-22  Darin Adler  <darin@apple.com>
+
+        Reviewed by NOBODY (OOPS!).
+
+        - fixed 3431033 -- crash in -[NSToolTipManager _shouldInstallToolTip:]
+
+        * WebView.subproj/WebHTMLViewPrivate.m:
+        (-[WebHTMLView _addTrackingRect:owner:userData:assumeInside:useTrackingNum:]):
+        Override this alternate version of addTrackingRect. If I don't do this, we might
+        create a real tracking rect, which we would then never remove.
+        (-[WebHTMLView removeTrackingRect:]): Added assertions.
+
+2003-09-22  Darin Adler  <darin@apple.com>
+
         * WebKit.pbproj/project.pbxproj: Rename Mixed build style to OptimizedWithSymbols.
 
 2003-09-21  Darin Adler  <darin@apple.com>
