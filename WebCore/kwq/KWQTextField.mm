@@ -269,6 +269,7 @@
 
 - (BOOL)becomeFirstResponder
 {
+    KWQKHTMLPartImpl::setDocumentFocus(widget);
     [self _KWQ_scrollFrameToVisible];
     return [super becomeFirstResponder];
 }
@@ -441,6 +442,7 @@
 
 - (BOOL)becomeFirstResponder
 {
+    KWQKHTMLPartImpl::setDocumentFocus(widget);
     [self _KWQ_scrollFrameToVisible];
     return [super becomeFirstResponder];
 }

@@ -504,6 +504,17 @@ NodeImpl *KWQKHTMLPartImpl::nodeForWidget(QWidget *widget)
     return static_cast<const RenderWidget *>(widget->eventFilterObject())->element();
 }
 
+void KWQKHTMLPartImpl::setDocumentFocus(QWidget *widget)
+{
+    NodeImpl *node = nodeForWidget(widget);
+    node->getDocument()->setFocusNode(node);
+}
+
+void KWQKHTMLPartImpl::clearDocumentFocus(QWidget *widget)
+{
+    nodeForWidget(widget)->getDocument()->setFocusNode(0);
+}
+
 void KWQKHTMLPartImpl::saveDocumentState()
 {
     [_bridge saveDocumentState];

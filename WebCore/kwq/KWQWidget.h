@@ -151,8 +151,6 @@ public:
     void disableFlushDrawing();
     void flushDrawing();
     void setDrawingAlpha(float alpha);
-    
-    virtual void endEditing();
 
 private:
     QWidgetPrivate *data;

@@ -109,6 +109,9 @@ public:
     NSView *nextKeyViewInFrameHierarchy(DOM::NodeImpl *startingPoint, KWQSelectionDirection);
     static NSView *nextKeyViewForWidget(QWidget *startingPoint, KWQSelectionDirection);
     
+    static void setDocumentFocus(QWidget *);
+    static void clearDocumentFocus(QWidget *);
+    
     static WebCoreBridge *bridgeForWidget(QWidget *);
     
     // Incoming calls, used by the bridge.

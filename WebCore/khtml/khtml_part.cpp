@@ -1560,6 +1560,7 @@ void KHTMLPart::checkCompleted()
 //   kdDebug( 6050 ) << "KHTMLPart::checkCompleted() parsing: " << d->m_doc->parsing() << endl;
 //   kdDebug( 6050 ) << "                           complete: " << d->m_bComplete << endl;
 
+#if !APPLE_CHANGES
   // restore the cursor position
   if (d->m_doc && !d->m_doc->parsing() && !d->m_focusNodeRestored)
   {
@@ -1569,6 +1570,7 @@ void KHTMLPart::checkCompleted()
           d->m_doc->setFocusNode(0);
       d->m_focusNodeRestored = true;
   }
+#endif
 
   // Any frame that hasn't completed yet ?
   ConstFrameIt it = d->m_frames.begin();
@@ -3518,9 +3520,7 @@ void KHTMLPart::restoreState( QDataStream &stream )
          >> d->m_ssl_cipher_bits
          >> d->m_ssl_cert_state;
 
-#ifndef APPLE_CHANGES
   d->m_paSecurity->setIcon( d->m_ssl_in_use ? "encrypted" : "decrypted" );
-#endif
 
   stream >> frameCount >> frameNames >> frameServiceTypes >> frameServiceNames
          >> frameURLs >> frameStateBuffers;

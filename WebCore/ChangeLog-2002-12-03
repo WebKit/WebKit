@@ -1,5 +1,43 @@
 2002-09-18  Darin Adler  <darin@apple.com>
 
+	- fixed 3037974 -- successful Find does not deselect text field
+
+        * khtml/khtml_part.cpp: (KHTMLPart::checkCompleted):
+	Turn off the code that restores the cursor position because we don't
+	use the KHTML saveState/restoreState. But we should.
+
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::setSelection): Call setFocusNode(0), because on the
+	Macintosh, selection and focus are mutually exclusive.
+        (DocumentImpl::close): Remove no-longer-needed APPLE_CHANGES.
+        (DocumentImpl::setFocusNode): Set focus to the KHTMLView when focus
+	is being removed from a particular node. Clear the selection when
+	focus is set on a particular node because on the Macintosh, selection
+	and focus are mutually exclusive.
+
+        * kwq/KWQKHTMLPartImpl.h: Add set/clearDocumentFocus functions that we can use
+	to keep document's idea of focused node in sync. with AppKit's.
+        * kwq/KWQKHTMLPartImpl.mm: (KWQKHTMLPartImpl::setDocumentFocus): Added.
+	(KWQKHTMLPartImpl::clearDocumentFocus): Added.
+
+        * kwq/KWQNSTextField.mm:
+        (-[KWQNSTextField becomeFirstResponder]): Call setDocumentFocus.
+        (-[KWQSecureTextField becomeFirstResponder]): Call setDocumentFocus.
+
+        * kwq/qt/qwidget.h: Removed endEditing().
+        * kwq/KWQWidget.mm: (QWidget::clearFocus): Call clearDocumentFocus.
+	(QWidget::endEditing): Removed.
+
+        * khtml/rendering/render_form.h:
+        * khtml/rendering/render_form.cpp:
+        (RenderImageButton::RenderImageButton): Remove the KWQInvisibleButton
+	hack, which is no longer needed.
+        * kwq/KWQInvisibleButton.h: Removed.
+        * kwq/KWQInvisibleButton.mm: Removed.
+        * WebCore.pbproj/project.pbxproj: Removed KWQInvisibleButton.
+
+2002-09-18  Darin Adler  <darin@apple.com>
+
 	- fixed 3027470 -- hitting tab when the google.com text field is selected
 	(all bars hidden) makes border flash
 

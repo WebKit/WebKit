@@ -44,11 +44,6 @@
 
 #include <kdebug.h>
 
-#ifdef APPLE_CHANGES
-#include "render_root.h"
-#include <KWQInvisibleButton.h>
-#endif
-
 using namespace khtml;
 
 RenderFormElement::RenderFormElement(HTMLGenericFormElementImpl *element)
@@ -381,25 +376,7 @@ RenderImageButton::RenderImageButton(HTMLInputElementImpl *element)
     : RenderImage(element)
 {
     // ### support DOMActivate event when clicked
-#ifdef APPLE_CHANGES
-    button = new KWQInvisibleButton(this);
-#endif
 }
-
-#ifdef APPLE_CHANGES
-RenderImageButton::~RenderImageButton()
-{
-    delete button;
-}
-    
-void RenderImageButton::printObject(QPainter *p, int x, int y, int w, int h, int tx, int ty)
-{
-    RenderImage::printObject(p, x, y, w, h, tx, ty);
-    if (!pixmap().isNull()) {
-        button->setFrameInView(tx, ty, contentWidth(), contentHeight(), root()->view());
-    }
-}
-#endif /* APPLE_CHANGES */
 
 // -------------------------------------------------------------------------------
 

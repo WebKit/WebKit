@@ -32,6 +32,7 @@
 
 #import <khtmlview.h>
 #import <render_replaced.h>
+#import <KWQKHTMLPartImpl.h>
 
 using khtml::RenderWidget;
 
@@ -206,7 +207,7 @@ void QWidget::setFocus()
 
 void QWidget::clearFocus()
 {
-    ERROR("not yet implemented");
+    KWQKHTMLPartImpl::clearDocumentFocus(this);
 }
 
 QWidget::FocusPolicy QWidget::focusPolicy() const
@@ -359,22 +360,6 @@ void QWidget::setView(NSView *view)
     [view retain];
     [data->view release];
     data->view = view;
-}
-
-void QWidget::endEditing()
-{
-    // FIXME: This seems to end editing of any widget in the same window, not just this one.
-    
-    // Handle the field editor case.
-    // This is probably not necessary, given the next bit of code.
-    NSWindow *window = [getView() window];
-    [window endEditingFor:nil];
-    
-    // Whack any NSText first responders.
-    NSResponder *firstResponder = [window firstResponder];
-    if ([firstResponder isKindOfClass:[NSText class]]) {
-        [window makeFirstResponder:nil];
-    }
 }
 
 void QWidget::lockDrawingFocus()
