@@ -50,6 +50,13 @@ public:
         releaseCharactersForJStringInEnv (e, s, c);
     }
     
+    JavaString (jstring s) {
+        JNIEnv *e = getJNIEnv();
+        const char *c = getCharactersFromJStringInEnv (e, s);
+        _characters = strdup(c);
+        releaseCharactersForJStringInEnv (e, s, c);
+    }
+    
     ~JavaString () {
         free ((void *)_characters);
     }

@@ -1,3 +1,22 @@
+2003-12-11  Richard Williamson   <rjw@apple.com>
+
+	Cleaned up and verified reference counting scheme, and
+	dereferencing of vended JavaScript objects when applet is
+	destroyed (actually when part is destroyed).
+
+        Reviewed by Ken.
+
+        * kwq/KWQKHTMLPart.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::~KWQKHTMLPart):
+        (KWQKHTMLPart::getAppletInstanceForView):
+        (KWQKHTMLPart::addPluginRootObject):
+        (KWQKHTMLPart::cleanupPluginRootObjects):
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (rootForView):
+        (-[WebCoreBridge init]):
+
 2003-12-11  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by John.

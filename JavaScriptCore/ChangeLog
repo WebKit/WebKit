@@ -1,3 +1,46 @@
+2003-12-11  Richard Williamson   <rjw@apple.com>
+
+	Added support for calling a JavaScript function from
+	Java.  Right now this only works for void func(void)
+	functions, but the conversion of args and return values
+	will come shortly.
+
+	Cleaned up and verified reference counting scheme, and
+	dereferencing of vended JavaScript objects when applet is
+	destroyed (actually when part is destroyed).
+	
+	Removed link hack for testkjs now that the Java folks think
+	they have a solution for the 1.4.2 JavaVM link problem.  Although
+	Greg B. thinks his solution may cause problems for the 1.3.1
+	version of the VM!?!
+
+        Reviewed by Ken.
+
+        * Makefile.am:
+        * bindings/jni/jni_runtime.h:
+        (Bindings::JavaString::JavaString):
+        * bindings/jni/jni_utility.cpp:
+        (convertValueToJValue):
+        (convertValueToJObject):
+        (listFromJArray):
+        * bindings/jni/jni_utility.h:
+        * bindings/jni_jsobject.cpp:
+        (KJS_setFindRootObjectForNativeHandleFunction):
+        (KJS_findRootObjectForNativeHandleFunction):
+        (getReferencesByRootDictionary):
+        (getReferencesDictionary):
+        (findReferenceDictionary):
+        (rootForImp):
+        (addJavaReference):
+        (removeJavaReference):
+        * bindings/jni_jsobject.h:
+        (Bindings::RootObject::RootObject):
+        (Bindings::RootObject::~RootObject):
+        (Bindings::RootObject::setRootObjectImp):
+        (Bindings::RootObject::rootObjectImp):
+        (Bindings::RootObject::setInterpreter):
+        (Bindings::RootObject::interpreter):
+
 === Safari-117 ===
 
 2003-12-10  Darin Adler  <darin@apple.com>

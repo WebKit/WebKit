@@ -36,6 +36,7 @@
 #import "htmltags.h"
 #import "khtml_part.h"
 #import "khtmlview.h"
+#import "kjs_proxy.h"
 #import "kjs_window.h"
 #import "loader.h"
 #import "render_frames.h"
@@ -87,6 +88,8 @@ using KJS::SavedBuiltins;
 
 using KParts::URLArgs;
 
+using Bindings::RootObject;
+
 NSString *WebCoreElementFrameKey = 		@"WebElementFrame";
 NSString *WebCoreElementImageAltStringKey = 	@"WebElementImageAltString";
 NSString *WebCoreElementImageKey = 		@"WebElementImage";
@@ -102,13 +105,18 @@ NSString *WebCoreElementTitleKey = 		@"WebCoreElementTitle"; // not in WebKit AP
 
 NSString *WebCorePageCacheStateKey =            @"WebCorePageCacheState";
 
-static KJS::ObjectImp *rootForView(void *v)
+static RootObject *rootForView(void *v)
 {
     NSView *aView = (NSView *)v;
-    
     WebCoreBridge *aBridge = [[WebCoreViewFactory sharedFactory] bridgeForView:aView];
-
-    return static_cast<KJS::ObjectImp *>(KJS::Window::retrieveWindow([aBridge part]));
+    KWQKHTMLPart *part = [aBridge part];
+    RootObject *root = new RootObject(v);
+    
+    root->setRootObjectImp (static_cast<KJS::ObjectImp *>(KJS::Window::retrieveWindow(part)));
+    root->setInterpreter (KJSProxy::proxy(part)->interpreter());
+    part->addPluginRootObject (root);
+    
+    return root;
 }
 
 @implementation WebCoreBridge
@@ -129,7 +137,7 @@ static bool initializedKJS = FALSE;
     }
     
     if (!initializedKJS) {
-        KJS_setFindObjectForNativeHandleFunction (rootForView);
+        KJS_setFindRootObjectForNativeHandleFunction (rootForView);
         initializedKJS = TRUE;
     }
     
@@ -1102,5 +1110,6 @@ static HTMLFormElementImpl *formElementFromDOMElement(id <WebDOMElement>element)
     if (!root) return nil;
     return _part->xmlDocImpl()->getOrCreateAccObjectCache()->accObject(root);
 }
+
 
 @end

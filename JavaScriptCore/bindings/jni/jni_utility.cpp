@@ -22,7 +22,8 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-#include "interpreter.h"
+#include <interpreter.h>
+#include <list.h>
 
 #include "jni_runtime.h"
 #include "jni_utility.h"
@@ -598,4 +599,16 @@ jvalue convertValueToJValue (KJS::ExecState *exec, KJS::Value value, JNIType _JN
         break;
     }
     return result;
+}
+
+jobject convertValueToJObject (KJS::ExecState *exec, KJS::Value value)
+{
+    // FIXME:  Implement!
+    return 0;
+}
+
+KJS::List listFromJArray(jobjectArray jArray)
+{
+    // FIXME:  Implement!
+    return KJS::List::empty();
 }

@@ -37,6 +37,7 @@
 #include <CoreFoundation/CoreFoundation.h>
 
 #include <JavaVM/jni.h>
+#include <JavaScriptCore/jni_jsobject.h>
 #include <JavaScriptCore/runtime.h>
 
 #include "KWQDict.h"
@@ -253,6 +254,8 @@ public:
     void print();
 
     Bindings::Instance *getAppletInstanceForView (NSView *aView);
+    void addPluginRootObject(const Bindings::RootObject *root);
+    void cleanupPluginRootObjects();
     
 private:
     virtual void khtmlMousePressEvent(khtml::MousePressEvent *);
@@ -305,6 +308,8 @@ private:
     QDict<char> urlsBridgeKnowsAbout;
 
     friend class KHTMLPart;
+
+    QPtrList<Bindings::RootObject> rootObjects;
 };
 
 inline KWQKHTMLPart *KWQ(KHTMLPart *part) { return static_cast<KWQKHTMLPart *>(part); }

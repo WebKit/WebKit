@@ -166,6 +166,8 @@ KWQKHTMLPart::KWQKHTMLPart()
 
 KWQKHTMLPart::~KWQKHTMLPart()
 {
+    cleanupPluginRootObjects();
+    
     mutableInstances().remove(this);
     if (d->m_view) {
 	d->m_view->deref();
@@ -2774,5 +2776,19 @@ Bindings::Instance *KWQKHTMLPart::getAppletInstanceForView (NSView *aView)
         return Bindings::Instance::createBindingForLanguageInstance (Bindings::Instance::JavaLanguage, applet);
     
     return 0;
+}
+
+void KWQKHTMLPart::addPluginRootObject(const Bindings::RootObject *root)
+{
+    rootObjects.append (root);
+}
+
+void KWQKHTMLPart::cleanupPluginRootObjects()
+{
+    Bindings::RootObject *root;
+    while ((root = rootObjects.getLast())) {
+        KJS_removeAllJavaReferencesForRoot (root);
+        rootObjects.removeLast();
+    }
 }
 
