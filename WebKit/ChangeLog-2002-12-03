@@ -1,3 +1,35 @@
+2002-05-30  Maciej Stachowiak  <mjs@apple.com>
+
+	WebKit parts of fixes for:
+
+	Radar 2926169 - no support for window.open
+	Radar 2890469 - Preference to prevent JavaScript from automatically
+	opening new windows doesn't work
+	Radar 2938569 - link cursor does not appear on some pages
+	
+	* WebView.subproj/IFWebController.h:
+	Added openNewWindowWithURL: method for the benefit of JavaScript.
+	* WebView.subproj/IFBaseWebController.mm:
+	(-[IFBaseWebController openNewWindowWithURL:]): No-op default
+	implementation.
+	* WebView.subproj/IFDynamicScrollBarsView.h:
+	* WebView.subproj/IFDynamicScrollBarsView.m:
+	(-[IFDynamicScrollBarsView setCursor:]): Fix cursor handling.
+	(-[IFDynamicScrollBarsView resetCursorRects]): Likewise.
+	* WebView.subproj/IFWebView.mm:
+	(-[IFWebView mouseMovedNotification:]): Likewise.
+	(-[IFWebView setCursor:]): Likewise.
+	* WebView.subproj/IFPreferences.h:
+	* WebView.subproj/IFPreferences.mm:
+	(-[IFPreferences javaScriptEnabled]): Renamed from jScriptEnabled.
+	(-[IFPreferences setJavaScriptEnabled:]): Renamed from setJScriptEnabled.
+	(-[IFPreferences javaScriptCanOpenWindowsAutomatically]): New method.
+	(-[IFPreferences setJavaScriptCanOpenWindowsAutomatically:]): Likewise.
+	* WebView.subproj/IFWebFrame.mm:
+	(-[IFWebFrame initWithName:view:provisionalDataSource:controller:]): Create
+	a dummy provisional data source if none is provided, so we always have a part
+	for the frame.
+	
 2002-05-30  Darin Adler  <darin@apple.com>
 
 	Use methods in KWQKHTMLPartImpl that were moved there from KHTMLPart.

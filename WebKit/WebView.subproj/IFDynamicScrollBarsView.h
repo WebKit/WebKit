@@ -11,6 +11,7 @@
 @interface IFDynamicScrollBarsView : NSScrollView 
 {
     bool breakRecursionCycle;
+    NSCursor *cursor;
 }
 
 @end

@@ -1,3 +1,35 @@
+2002-05-30  Maciej Stachowiak  <mjs@apple.com>
+
+	WebCore part of fixes for:
+
+	Radar 2926169 - no support for window.open
+	Radar 2890469 - Preference to prevent JavaScript from automatically
+	opening new windows doesn't work
+	Radar 2938569 - link cursor does not appear on some pages
+	
+	* khtml/ecma/kjs_window.cpp:
+	(WindowFunc::tryCall): #ifdef'd out some parts of this code that are
+	broken (but fortunately also unnecessary) in our project.
+	* kwq/KWQKConfigBase.mm:
+	(KConfig::KConfig): Changes to support JavaScript window opening pref.
+	(KConfig::readUnsignedNumEntry): Likewise.
+	* kwq/KWQKHTMLPart.mm:
+	(KHTMLPart::openURLInFrame): Implemented.
+	* kwq/KWQKHTMLPartBrowserExtension.mm:
+	(KHTMLPartBrowserExtension::KHTMLPartBrowserExtension): Implemented.
+	(KHTMLPartBrowserExtension::openURLRequest): Implemented by
+	calling openURLInFrame on the part.
+	(KHTMLPartBrowserExtension::createNewWindow): Implemented by
+	calling new WebController openNewWindowWIthURL method.
+	* kwq/KWQKHTMLSettings.mm:
+	(KHTMLSettings::isJavaScriptEnabled): Handle renaming of pref.
+	* kwq/KWQView.mm:
+	(-[KWQHTMLView setCursor:]): Fixes to set cursor properly even if
+	none was set.	
+	* kwq/external.h: Declare some new WebKit methods.
+	* kwq/kparts/browserextension.h: Make formerly empty methods pure virtual.
+	* kwq/khtml/khtml_ext.h: Declare some virtual methods.
+
 2002-05-30  Darin Adler  <darin@apple.com>
 
 	Cut down our copied and pasted code even more.

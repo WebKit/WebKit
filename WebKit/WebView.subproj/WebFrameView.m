@@ -544,9 +544,10 @@
 {
     NSEvent *event = [(NSDictionary *)[notification userInfo] objectForKey: @"NSEvent"];
     NSPoint p = [event locationInWindow];
-    NSRect frame = [self frame];
 
-    if (p.x >= frame.origin.x && frame.origin.y >= 0 && p.x <= frame.size.width && p.y <= frame.size.height ) {
+    // Only act on the mouse move event if it's inside this view (and
+    // not inside a subview)
+    if ([[[self window] contentView] hitTest:p] == self) {
 	QMouseEvent kEvent(QEvent::MouseButtonPress, QPoint((int)p.x, (int)p.y), 0, 0);
 	KHTMLView *widget = _private->widget;
 	if (widget != 0l) {
@@ -594,6 +595,17 @@
 {
     [_private->cursor release];
     _private->cursor = [cursor retain];
+
+    // We have to make both of these calls, because:
+    // - Just setting a cursor rect will have no effect, if the mouse cursor is already
+    //   inside the area of the rect.
+    // - Just calling invalidateCursorRectsForView will not call resetCursorRects if
+    //   there is no cursor rect set currently and the view has no subviews.
+    // Therefore we have to call resetCursorRects to ensure that a cursor rect is set
+    // at all, if we are going to want one, and then invalidateCursorRectsForView: to
+    // call resetCursorRects from the proper context that will
+    // actually result in updating the cursor.
+    [self resetCursorRects];
     [[self window] invalidateCursorRectsForView:self];
 }
 

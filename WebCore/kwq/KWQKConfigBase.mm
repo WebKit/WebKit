@@ -34,6 +34,7 @@ class KWQKConfigImpl
 {
 public:
     bool isPluginInfo;
+    bool isKonquerorRC;
     int pluginIndex;
 };
 
@@ -41,6 +42,7 @@ KConfig::KConfig(const QString &n, bool bReadOnly, bool bUseKDEGlobals)
 {
     impl = new KWQKConfigImpl;
     impl->isPluginInfo = n.contains("pluginsinfo");
+    impl->isKonquerorRC = (n == "konquerorrc");
     impl->pluginIndex = 0;
 }
 
@@ -108,6 +110,13 @@ int KConfig::readNumEntry(const char *pKey, int nDefault) const
 
 unsigned int KConfig::readUnsignedNumEntry(const char *pKey, unsigned int nDefault) const
 {
+    if (impl->isKonquerorRC && QString(pKey) == "WindowOpenPolicy") {
+	if ([[NSUserDefaults standardUserDefaults] boolForKey:@"WebKitJavaScriptCanOpenWindowsAutomatically"]) {
+	    return 0;
+	} else {
+	    return 3;
+	}
+    }
     _logNotYetImplemented();
     return nDefault;
 }

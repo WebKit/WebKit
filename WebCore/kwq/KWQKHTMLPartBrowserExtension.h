@@ -26,13 +26,32 @@
 #include <kparts/browserextension.h>
 
 class QWidget;
+class KHTMLPart;
 
 class KHTMLPartBrowserExtension : public KParts::BrowserExtension {
 public:
-    KHTMLPartBrowserExtension(KHTMLPart *) { }
+    KHTMLPartBrowserExtension(KHTMLPart *);
     void editableWidgetFocused(QWidget *) { }
     void editableWidgetBlurred(QWidget *) { }
     void setLocationBarURL(const QString &) { }
+    
+    virtual void openURLRequest(const KURL &, 
+				const KParts::URLArgs &args = KParts::URLArgs());
+     
+    virtual void createNewWindow(const KURL &url, 
+				 const KParts::URLArgs &urlArgs = KParts::URLArgs());
+    virtual void createNewWindow(const KURL &url,
+				 const KParts::URLArgs &urlArgs, 
+				 const KParts::WindowArgs &winArgs, 
+				 KParts::ReadOnlyPart *&part);
+    
+private:
+     void createNewWindow(const KURL &url, 
+			  const KParts::URLArgs &urlArgs, 
+			  const KParts::WindowArgs &winArgs, 
+			  KParts::ReadOnlyPart **part);
+
+     KHTMLPart *m_part;
 };
 
 class KHTMLPartBrowserHostExtension {

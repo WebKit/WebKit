@@ -153,7 +153,7 @@ bool KHTMLSettings::isJavaScriptEnabled(QString const&) const
 
 bool KHTMLSettings::isJavaScriptEnabled() const
 {
-    return [[[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitJScriptEnabled"] boolValue];
+    return [[[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitJavaScriptEnabled"] boolValue];
 }
 
 bool KHTMLSettings::isJavaScriptDebugEnabled() const

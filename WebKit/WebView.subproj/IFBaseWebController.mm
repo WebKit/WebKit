@@ -92,9 +92,9 @@
 }
 
 
-- (void)openNewWindowWithURL:(NSURL *)url
+- (id<IFWebController>)openNewWindowWithURL:(NSURL *)url
 {
-    // Default implementation does nothing
+    return nil;
 }
 
 

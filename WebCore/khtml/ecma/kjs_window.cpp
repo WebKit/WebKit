@@ -1098,12 +1098,21 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
       // request window (new or existing if framename is set)
       KParts::ReadOnlyPart *newPart = 0L;
       emit part->browserExtension()->createNewWindow("", uargs,winargs,newPart);
+
+#ifdef APPLE_CHANGES
+      // We don't implement QObject::inherits, but we can assume this
+      // part will be an html part.
+      if (newPart) {
+#else
       if (newPart && newPart->inherits("KHTMLPart")) {
+#endif
         KHTMLPart *khtmlpart = static_cast<KHTMLPart*>(newPart);
         //qDebug("opener set to %p (this Window's part) in new Window %p  (this Window=%p)",part,win,window);
         khtmlpart->setOpener(part);
         khtmlpart->setOpenedByJS(true);
         if (khtmlpart->document().isNull()) {
+#ifndef APPLE_CHANGES
+	  // FIXME: need to figure out and emulate point of this code.
           khtmlpart->begin();
           khtmlpart->write("<HTML><BODY>");
           khtmlpart->end();
@@ -1112,6 +1121,7 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
             khtmlpart->docImpl()->setDomain( part->docImpl()->domain(), true );
             khtmlpart->docImpl()->setBaseURL( part->docImpl()->baseURL() );
           }
+#endif
         }
         uargs.serviceType = QString::null;
         if (uargs.frameName == "_blank")
@@ -1119,7 +1129,12 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
         if (!url.isEmpty())
           emit khtmlpart->browserExtension()->openURLRequest(url,uargs);
         return Window::retrieve(khtmlpart); // global object
+#ifdef APPLE_CHANGES
+	// Make braces match for the benefit of prepare-ChangeLog
       } else
+#else
+      } else
+#endif
         return Undefined();
     }
   }

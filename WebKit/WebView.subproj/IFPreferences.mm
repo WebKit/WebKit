@@ -17,7 +17,8 @@
 #define	WebKitMinimumFontSizePreferenceKey	@"WebKitMinimumFontSize"
 #define	WebKitMediumFontSizePreferenceKey	@"WebKitMediumFontSize"
 #define	WebKitJavaEnabledPreferenceKey		@"WebKitJavaEnabled"
-#define	WebKitJScriptEnabledPreferenceKey	@"WebKitJScriptEnabled"
+#define	WebKitJavaScriptEnabledPreferenceKey	@"WebKitJavaScriptEnabled"
+#define	WebKitJavaScriptCanOpenWindowsAutomaticallyPreferenceKey	@"WebKitJavaScriptCanOpenWindowsAutomatically"
 #define	WebKitPluginsEnabledPreferenceKey	@"WebKitPluginsEnabled"
 #define	WebKitInitialTimedLayoutDelayPreferenceKey	@"WebKitInitialTimedLayoutDelay"
 #define	WebKitInitialTimedLayoutSizePreferenceKey	@"WebKitInitialTimedLayoutSize"
@@ -47,7 +48,8 @@ static IFPreferences *_standardPreferences = nil;
 
     NSNumber *pluginsEnabled = [NSNumber numberWithBool:TRUE];
     NSNumber *javaEnabled = [NSNumber numberWithBool:FALSE];
-    NSNumber *jScriptEnabled = [NSNumber numberWithBool:TRUE];
+    NSNumber *javaScriptEnabled = [NSNumber numberWithBool:TRUE];
+    NSNumber *javaScriptCanOpenWindows = [NSNumber numberWithBool:TRUE];
     NSNumber *timedLayoutEnabled = [NSNumber numberWithBool:TRUE];
     NSNumber *resourceTimedLayoutEnabled = [NSNumber numberWithBool:TRUE];
     NSNumber *allowAnimatedImages = [NSNumber numberWithBool:TRUE];
@@ -69,7 +71,8 @@ static IFPreferences *_standardPreferences = nil;
         timedLayoutEnabled,		WebKitInitialTimedLayoutEnabledPreferenceKey,
         resourceTimedLayoutEnabled,	WebKitResourceTimedLayoutEnabledPreferenceKey,
         javaEnabled,			WebKitJavaEnabledPreferenceKey,
-        jScriptEnabled,			WebKitJScriptEnabledPreferenceKey,
+        javaScriptEnabled,		WebKitJavaScriptEnabledPreferenceKey,
+        javaScriptCanOpenWindows,	WebKitJavaScriptCanOpenWindowsAutomaticallyPreferenceKey,
         pluginsEnabled,			WebKitPluginsEnabledPreferenceKey,
         allowAnimatedImages,    WebKitAllowAnimatedImagesPreferenceKey,
         allowAnimatedImageLooping,    WebKitAllowAnimatedImageLoopingPreferenceKey,
@@ -171,14 +174,24 @@ static IFPreferences *_standardPreferences = nil;
     [[NSUserDefaults standardUserDefaults] setBool:flag forKey:WebKitJavaEnabledPreferenceKey];
 }
 
-- (BOOL)jScriptEnabled
+- (BOOL)javaScriptEnabled
 {
-    return [[NSUserDefaults standardUserDefaults] boolForKey:WebKitJScriptEnabledPreferenceKey];
+    return [[NSUserDefaults standardUserDefaults] boolForKey:WebKitJavaScriptEnabledPreferenceKey];
 }
 
-- (void)setJScriptEnabled:(BOOL)flag
+- (void)setJavaScriptEnabled:(BOOL)flag
 {
-    [[NSUserDefaults standardUserDefaults] setBool:flag forKey:WebKitJScriptEnabledPreferenceKey];
+    [[NSUserDefaults standardUserDefaults] setBool:flag forKey:WebKitJavaScriptEnabledPreferenceKey];
+}
+
+- (BOOL)javaScriptCanOpenWindowsAutomatically
+{
+    return [[NSUserDefaults standardUserDefaults] boolForKey:WebKitJavaScriptCanOpenWindowsAutomaticallyPreferenceKey];
+}
+
+- (void)setJavaScriptCanOpenWindowsAutomatically:(BOOL)flag
+{
+    [[NSUserDefaults standardUserDefaults] setBool:flag forKey:WebKitJavaScriptCanOpenWindowsAutomaticallyPreferenceKey];
 }
 
 - (BOOL)pluginsEnabled

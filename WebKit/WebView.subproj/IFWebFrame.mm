@@ -37,8 +37,21 @@
 
     [self setController: c];
 
+    if (d == nil) {
+	// set a dummy data source so that the main from for a
+	// newly-created empty window has a KHTMLPart. JavaScript
+	// always creates new windows initially empty, and then wants
+	// to use the main frame's part to make the new window load
+	// it's URL, so we need to make sure empty frames have a part.
+	// However, we don't want to do the spinner, so we do this
+	// weird thing:
+
+	IFWebDataSource *dummyDataSource = [[IFWebDataSource alloc] initWithURL:nil];
+        [dummyDataSource _setController: [self controller]];
+        [_private setProvisionalDataSource: dummyDataSource];
+
     // Allow controller to override?
-    if (d && [self setProvisionalDataSource: d] == NO){
+    } else if ([self setProvisionalDataSource: d] == NO){
         [self autorelease];
         return nil;
     }

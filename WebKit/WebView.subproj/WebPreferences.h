@@ -38,8 +38,11 @@
 - (BOOL)javaEnabled;
 - (void)setJavaEnabled:(BOOL)flag;
 
-- (BOOL)jScriptEnabled;
-- (void)setJScriptEnabled:(BOOL)flag;
+- (BOOL)javaScriptEnabled;
+- (void)setJavaScriptEnabled:(BOOL)flag;
+
+- (BOOL)javaScriptCanOpenWindowsAutomatically;
+- (void)setJavaScriptCanOpenWindowsAutomatically:(BOOL)flag;
 
 - (BOOL)pluginsEnabled;
 - (void)setPluginsEnabled:(BOOL)flag;

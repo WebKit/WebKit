@@ -3713,10 +3713,11 @@ QPtrList<KParts::ReadOnlyPart> KHTMLPart::frames() const
 #endif
 }
 
-#ifndef APPLE_CHANGES
-
 bool KHTMLPart::openURLInFrame( const KURL &url, const KParts::URLArgs &urlArgs )
 {
+#ifdef APPLE_CHANGES
+  return impl->openURLInFrame(url, urlArgs);
+#else
   FrameIt it = d->m_frames.find( urlArgs.frameName );
 
   if ( it == d->m_frames.end() )
@@ -3729,9 +3730,9 @@ bool KHTMLPart::openURLInFrame( const KURL &url, const KParts::URLArgs &urlArgs 
   requestObject( &(*it), url, urlArgs );
 
   return true;
+#endif
 }
 
-#endif
 
 void KHTMLPart::setDNDEnabled( bool b )
 {

@@ -61,22 +61,29 @@ struct WindowArgs {
     bool toolBarsVisible;
     bool resizable;
     bool fullscreen;
+    bool xSet;
+    bool ySet;
+    bool widthSet;
+    bool heightSet;
 
-    WindowArgs() : x(0), y(0), width(0), height(0), menuBarVisible(false), statusBarVisible(false), toolBarsVisible(false), resizable(false), fullscreen(false) { }
+    WindowArgs() : x(0), y(0), width(0), height(0), menuBarVisible(false), statusBarVisible(true), toolBarsVisible(true), resizable(true), fullscreen(true), xSet(false), ySet(false), widthSet(false), heightSet(false) { }
 
 };
 
 class BrowserExtension : public QObject {
 public:
+     BrowserExtension() {}
      BrowserInterface *browserInterface() const { return 0; }
      
-     void openURLRequest(const KURL &) { }
-     void openURLRequest(const KURL &, const KParts::URLArgs &args) { }
+     virtual void openURLRequest(const KURL &, const KParts::URLArgs &args = KParts::URLArgs()) = 0;
      
-     void createNewWindow(const KURL &) { }
-     void createNewWindow(const KURL &, const KParts::URLArgs &) { }
-     void createNewWindow(const KURL &, const KParts::URLArgs &, 
-        const KParts::WindowArgs &, KParts::ReadOnlyPart *&) { }
+     virtual void createNewWindow(const KURL &url, 
+				  const KParts::URLArgs &urlArgs = KParts::URLArgs()) = 0;
+
+     virtual void createNewWindow(const KURL &url, 
+				  const KParts::URLArgs &urlArgs, 
+				  const KParts::WindowArgs &winArgs, 
+				  KParts::ReadOnlyPart *&part) = 0;
 
      void setIconURL(const KURL &) { }
      

@@ -105,6 +105,33 @@ KWQKHTMLPartImpl::~KWQKHTMLPartImpl()
     killTimer(m_redirectionTimer);
 }
 
+bool KWQKHTMLPartImpl::openURLInFrame( const KURL &url, const KParts::URLArgs &urlArgs )
+{
+  IFWebDataSource *oldDataSource, *newDataSource;
+  IFWebFrame *frame;
+
+
+  if (!urlArgs.frameName.isEmpty()) {
+    frame = [[getDataSource() controller] frameNamed: QSTRING_TO_NSSTRING(urlArgs.frameName)];
+    oldDataSource = [frame dataSource];
+  } else {
+      oldDataSource = getDataSource();
+      frame = [oldDataSource webFrame];
+  }
+
+  if (frame == nil) {
+    frame = [[getDataSource() controller] mainFrame];
+  }
+
+  newDataSource = WCIFWebDataSourceMake(url.getNSURL(), nil, 0);
+  [newDataSource _setParent: [oldDataSource parent]];
+
+  [frame setProvisionalDataSource: newDataSource];
+  [frame startLoading];
+
+  return true;
+}
+
 void KWQKHTMLPartImpl::openURL(const KURL &url)
 {
     d->m_workingURL = url;
