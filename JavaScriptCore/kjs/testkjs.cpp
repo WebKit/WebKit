@@ -103,7 +103,7 @@ int main(int argc, char **argv)
         fprintf(stderr, "Warning: File may have been too long.\n");
 
       // run
-      Completion comp(interp.evaluate(code));
+      Completion comp(interp.evaluate(file, 1, code));
 
       fclose(f);
 
