@@ -1,5 +1,17 @@
 2004-07-28  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by Trey
+
+        Only apply the typing style if it is non-null and has a length.
+        This fixes a problem Trey noticed with my last checkin, where
+        typed characters were placed in empty "typing style" spans.
+
+        * khtml/editing/htmlediting_impl.cpp:
+        (khtml::InputNewlineCommandImpl::doApply)
+        (khtml::InputTextCommandImpl::prepareForTextInsertion)
+
+2004-07-28  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by Maciej
         
         Fixed this bug:

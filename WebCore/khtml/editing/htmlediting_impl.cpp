@@ -1538,7 +1538,8 @@ void InputNewlineCommandImpl::doApply()
     NodeImpl *nodeToInsert = breakNode;
     
     // Handle the case where there is a typing style.
-    if (document()->part()->typingStyle()) {
+    CSSStyleDeclarationImpl *typingStyle = document()->part()->typingStyle();
+    if (typingStyle && typingStyle->length() > 0) {
         ElementImpl *styleElement = createTypingStyleElement();
         styleElement->appendChild(breakNode, exceptionCode);
         ASSERT(exceptionCode == 0);
@@ -1647,7 +1648,8 @@ Position InputTextCommandImpl::prepareForTextInsertion(bool adjustDownstream)
         NodeImpl *nodeToInsert = textNode;
 
         // Handle the case where there is a typing style.
-        if (document()->part()->typingStyle()) {
+        CSSStyleDeclarationImpl *typingStyle = document()->part()->typingStyle();
+        if (typingStyle && typingStyle->length() > 0) {
             int exceptionCode = 0;
             ElementImpl *styleElement = createTypingStyleElement();
             styleElement->appendChild(textNode, exceptionCode);
@@ -1679,7 +1681,8 @@ Position InputTextCommandImpl::prepareForTextInsertion(bool adjustDownstream)
     }
     else {
         // Handle the case where there is a typing style.
-        if (document()->part()->typingStyle()) {
+        CSSStyleDeclarationImpl *typingStyle = document()->part()->typingStyle();
+        if (typingStyle && typingStyle->length() > 0) {
             if (pos.node()->isTextNode() && pos.offset() > pos.node()->caretMinOffset() && pos.offset() < pos.node()->caretMaxOffset()) {
                 // Need to split current text node in order to insert a span.
                 TextImpl *text = static_cast<TextImpl *>(pos.node());
