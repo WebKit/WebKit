@@ -5,77 +5,139 @@ use strict;
 
 my $MAC_SUPPORTED_ONLY = 1;
 
-my $canonical_name;
-my $mib_enum;
-my @aliases;
-my %name_to_mac_encoding;
-my %used_mac_encodings;
-
-my $already_wrote_one = 0;
+my %MIBNumberFromCharsetsFile;
+my %aliasesFromCharsetsFile;
+my %namesWritten;
 
 my $invalid_encoding = "kCFStringEncodingInvalidId";
 
-sub emit_prefix
-{
-    print TABLE "static const CharsetEntry table[] = {\n";
-}
+my $output = "";
 
-sub emit_suffix
+my $error = 0;
+
+sub error ($)
 {
-    print TABLE ",\n    {NULL,\n     -1,\n     $invalid_encoding}\n};\n";
+    print STDERR @_, "\n";
+    $error = 1;
 }
 
 sub emit_line
 {
     my ($name, $mibNum, $encodingNum) = @_;
-    print TABLE ",\n" if ($already_wrote_one);
-    print TABLE '    {"' . $name . '",' . "\n";
-    print TABLE "     " . $mibNum . ",\n";
-    print TABLE "     " . $encodingNum . "}";
-    $already_wrote_one = 1;
+ 
+    error "$name shows up twice in output" if $namesWritten{$name};
+    $namesWritten{$name} = 1;
+        
+    $encodingNum = "kCFStringEncoding" . $encodingNum if $encodingNum !~ /^[0-9]/;
+    $mibNum = -1 if !$mibNum;
+    $output .= "    { \"$name\", $mibNum, $encodingNum },\n";
 }
 
-sub emit_output 
+sub process_mac_encodings
 {
-    my ($canonical_name, $mib_enum, @aliases) = @_;
+    my ($filename) = @_;
     
-    my $mac_string_encoding = $invalid_encoding;
-
-    foreach my $name ($canonical_name, @aliases) {
-	$name = lc $name;
-	if ($name_to_mac_encoding{$name}) {
-	    $mac_string_encoding = $name_to_mac_encoding{$name};
-	    $used_mac_encodings{$name} = $name;
-	}
-    }
-
-    unless ($MAC_SUPPORTED_ONLY && $mac_string_encoding eq $invalid_encoding) {
-	foreach my $name ($canonical_name, @aliases) {
-	    emit_line($name, $mib_enum, $mac_string_encoding);
-        }
-    }
-}
-
-
-sub process_mac_encodings {
+    my %seenMacNames;
+    my %seenIANANames;
+    
+    open MAC_ENCODINGS, $filename or die;
+    
     while (<MAC_ENCODINGS>) {
-	chomp;
-	if (my ($id, $name) = /([0-9]*):(.*)/) {
-	    $name_to_mac_encoding{lc $name} = $id;
-	}
+        chomp;
+	if (my ($MacName, $IANANames) = /(.*): (.*)/) {
+            my %aliases;
+            
+            error "CFString encoding name $MacName is mentioned twice in mac-encodings.txt" if $seenMacNames{$MacName};
+            $seenMacNames{$MacName} = 1;
+
+            # Build the aliases list.
+            # Also check that no two names are part of the same entry in the charsets file.
+	    my @IANANames = sort split ", ", lc $IANANames;
+            for my $name (@IANANames) {
+                if ($name !~ /^[-a-z0-9_]+$/) {
+                    error "$name, in mac-encodings.txt, has illegal characters in it";
+                    next;
+                }
+                
+                error "$name is mentioned twice in mac-encodings.txt" if $seenIANANames{$name};
+                $seenIANANames{$name} = 1;
+                
+                $aliases{$name} = 1;
+                next if !$aliasesFromCharsetsFile{$name};
+                for my $alias (@{$aliasesFromCharsetsFile{$name}}) {
+                    $aliases{$alias} = 1;
+                }
+                for my $otherName (@IANANames) {
+                    next if $name eq $otherName;
+                    if ($aliasesFromCharsetsFile{$otherName}
+                        && $aliasesFromCharsetsFile{$name} eq $aliasesFromCharsetsFile{$otherName}
+                        && $name le $otherName) {
+                        error "mac-encodings.txt lists both $name and $otherName under $MacName, but that aliasing is already specified in character-sets.txt";
+                    }
+                }
+            }
+            
+            # write out
+            my $MIBNumber;
+            my @aliases = sort keys %aliases;
+            for my $alias (@aliases) {
+                $MIBNumber = $MIBNumberFromCharsetsFile{$alias} if $MIBNumberFromCharsetsFile{$alias};
+            }
+            
+            for my $alias (@aliases) {
+                emit_line($alias, $MIBNumber, $MacName);
+            }
+	} elsif (/./) {
+            my $MacName = $_;
+            
+            error "CFString encoding name $MacName is mentioned twice in mac-encodings.txt" if $seenMacNames{$MacName};
+            $seenMacNames{$MacName} = 1;
+        }
     }
     
     # Hack, treat -E and -I same as non-suffix case.
     # Not sure if this does the right thing or not.
-    $name_to_mac_encoding{"iso-8859-8-e"} = $name_to_mac_encoding{"iso-8859-8"};
-    $name_to_mac_encoding{"iso-8859-8-i"} = $name_to_mac_encoding{"iso-8859-8"};
+    #$name_to_mac_encoding{"iso-8859-8-e"} = $name_to_mac_encoding{"iso-8859-8"};
+    #$name_to_mac_encoding{"iso-8859-8-i"} = $name_to_mac_encoding{"iso-8859-8"};
+    
+    close MAC_ENCODINGS;
 }
 
-sub process_iana_charsets {
+sub process_iana_charset 
+{
+    my ($canonical_name, $mib_enum, @aliases) = @_;
+    
+    return if !$canonical_name;
+    
+    my @names = sort $canonical_name, @aliases;
+    
+    for my $name (@names) {
+        $MIBNumberFromCharsetsFile{$name} = $mib_enum if $mib_enum;
+        $aliasesFromCharsetsFile{$name} = \@names;
+    }
+}
+
+sub process_iana_charsets
+{
+    my ($filename) = @_;
+    
+    open CHARSETS, $filename or die;
+    
+    my %seen;
+    
+    my $canonical_name;
+    my $mib_enum;
+    my @aliases;
+    
     while (<CHARSETS>) {
-	chomp;
+        chomp;
 	if ((my $new_canonical_name) = /Name: ([^ \t]*).*/) {
-	    emit_output $canonical_name, $mib_enum, @aliases if ($canonical_name);
+            $new_canonical_name = lc $new_canonical_name;
+            
+            error "saw $new_canonical_name twice in character-sets.txt", if $seen{$new_canonical_name};
+            $seen{$new_canonical_name} = 1;
+            
+	    process_iana_charset $canonical_name, $mib_enum, @aliases;
 	    
 	    $canonical_name = $new_canonical_name;
 	    $mib_enum = "";
@@ -83,30 +145,29 @@ sub process_iana_charsets {
 	} elsif ((my $new_mib_enum) = /MIBenum: ([^ \t]*).*/) {
 	    $mib_enum = $new_mib_enum;
 	} elsif ((my $new_alias) = /Alias: ([^ \t]*).*/) {
-	    push @aliases, $new_alias unless ($new_alias eq "None");
+            next if $new_alias eq "None";
+            
+            $new_alias = lc $new_alias;
+            
+            error "saw $new_alias twice in character-sets.txt", if $seen{$new_alias};
+            $seen{$new_alias} = 1;
+            
+            push @aliases, $new_alias;
 	}
     }
-}
-
-sub emit_unused_mac_encodings {
-    foreach my $name (keys %name_to_mac_encoding) {
-	if (! $used_mac_encodings{$name}) {
-	    emit_line($name, -1, $name_to_mac_encoding{$name});
-	}
-    }
+    
+    process_iana_charset $canonical_name, $mib_enum, @aliases;
+    
+    close CHARSETS;
 }
 
 # Program body
 
-open CHARSETS, "<" . $ARGV[0];
-open MAC_ENCODINGS, "<" . $ARGV[1];
-open TABLE, ">" . $ARGV[2];
+process_iana_charsets($ARGV[0]);
+process_mac_encodings($ARGV[1]);
 
-emit_prefix;
-process_mac_encodings;
-process_iana_charsets;
-emit_unused_mac_encodings;
-emit_line("japanese-autodetect", -1, "0xAFE"); # hard-code japanese autodetect
-emit_suffix;
+exit 1 if $error;
 
-close TABLE;
+print "static const CharsetEntry table[] = {\n";
+print $output;
+print "    { NULL, -1, $invalid_encoding }\n};\n";

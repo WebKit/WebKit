@@ -1,5 +1,25 @@
 2002-08-13  Darin Adler  <darin@apple.com>
 
+	Character set handling improvements. In total, this adds 92 new character encoding
+	names to the list we know how to handle (299, up from 207), so it probably makes
+	some pages work that didn't work before. It probably also adds character encoding
+	names that are never used in practice.
+
+        * kwq/character-sets.txt: Took out all but one of our changes. We now handle aliases
+	that are not in this file by adding them to mac-encodings.txt.
+        * kwq/mac-encodings.txt: Added. Lists CFStringEncoding values and IANA names for them.
+	We keep this file small by using the aliasing in character-sets.txt, and we also continue
+	to get MIB numbers from character-sets.txt.
+        * kwq/make-charset-table.pl: Rewrote to read from new format mac-encodings.txt file, and
+	check for new kinds of errors.
+
+        * kwq/.cvsignore: Don't ignore the make-mac-encodings files any more, since we
+	don't compile that any more.
+        * kwq/Makefile.am: Remove rules for compiling and running make-mac-encodings.
+	* kwq/make-mac-encodings.c: Removed.
+
+2002-08-13  Darin Adler  <darin@apple.com>
+
 	- fixed 3023439 -- support for windows-874 charset for thai
 
         * kwq/character-sets.txt: Added cp874 and windows-874.

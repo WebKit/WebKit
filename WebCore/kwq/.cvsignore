@@ -1,6 +1,4 @@
 Makefile.in
 Makefile
 KWQCharsetData.c
-mac-encodings.txt
-make-mac-encodings
 .deps
