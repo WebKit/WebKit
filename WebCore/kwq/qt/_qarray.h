@@ -40,18 +40,14 @@
 
 // KWQ hacks ---------------------------------------------------------------
 
-#ifndef USING_BORROWED_QARRAY
-#define USING_BORROWED_QARRAY
-#endif
+#ifdef USING_BORROWED_QARRAY
 
 #include <KWQDef.h>
 #include <iostream>
 
 // -------------------------------------------------------------------------
 
-#ifndef QT_H
 #include "_qgarray.h"
-#endif // QT_H
 
 template<class type> class QArray : public QGArray
 {
@@ -135,6 +131,8 @@ inline ostream &operator<<(ostream &o, const QArray<T>&p)
 
     return o;
 }
+#endif
+
 #endif
 
 #endif // QARRAY_H

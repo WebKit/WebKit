@@ -169,7 +169,11 @@ int QFile::readLine( QString& s, uint maxlen )
     QByteArray ba(maxlen);
     int l = readLine(ba.data(),maxlen);
     if ( l >= 0 ) {
+#ifdef USING_BORROWED_QARRAY
 	ba.truncate(l);
+#else
+	ba.resize(l);
+#endif
 	s = QString(ba);
     }
     return l;

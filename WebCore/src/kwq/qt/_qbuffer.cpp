@@ -345,13 +345,27 @@ int QBuffer::writeBlock( const char *p, uint len )
 	    return -1;
 	}
 	a_inc *= 2;				// double increment
+#ifdef USING_BORROWED_QARRAY
 	a_len = new_len;
+#else
+	a_len = (uint)ioIndex + len;
+#endif
+
+#ifdef USING_BORROWED_QARRAY
 	a.shd->len = (uint)ioIndex + len;
+#else
+	a.resize((uint)ioIndex + len);
+#endif
     }
     memcpy( a.data()+ioIndex, p, len );
     ioIndex += len;
+#ifdef USING_BORROWED_QARRAY
     if ( a.shd->len < (uint)ioIndex )
 	a.shd->len = (uint)ioIndex;		// fake (not alloc'd) length
+#else
+    if ( a.size() < (uint)ioIndex )
+        a.resize(ioIndex);
+#endif
     return len;
 }
 
@@ -443,8 +457,13 @@ int QBuffer::putch( int ch )
 	    return -1;				// write error
     } else {
 	*(a.data() + ioIndex++) = (char)ch;
+#ifdef USING_BORROWED_QARRAY
 	if ( a.shd->len < (uint)ioIndex )
 	    a.shd->len = (uint)ioIndex;
+#else
+	if ( a.size () < (uint)ioIndex )
+	    a.resize ((uint)ioIndex);
+#endif 
     }
     return ch;
 }

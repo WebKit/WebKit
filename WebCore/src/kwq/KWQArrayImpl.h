@@ -23,46 +23,41 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef WKPluginWidget_H_
-#define WKPluginWidget_H_
+#ifndef KWQ_ARRAY_IMPL_H
+#define KWQ_ARRAY_IMPL_H
 
-#ifdef HAVE_CONFIG_H
 #include <config.h>
+#include <KWQRefPtr.h>
+#include <KWQDef.h>
+#include <stddef.h>
+
+#ifndef USING_BORROWED_QARRAY
+
+class KWQArrayImpl
+{
+ public:
+    KWQArrayImpl(size_t itemSize);
+    KWQArrayImpl(size_t itemSize, size_t numItems);
+    KWQArrayImpl(const KWQArrayImpl &);
+    ~KWQArrayImpl();
+    
+    KWQArrayImpl &operator=(const KWQArrayImpl &);
+    
+    void *at(size_t pos) const;
+    void *data() const;
+    uint size() const;
+    bool resize(size_t size);
+    void duplicate(const void *data, size_t size);
+    bool fill(const void *item, int size = -1);
+    
+    bool operator==(const KWQArrayImpl &) const;
+ private:
+    class KWQArrayPrivate;
+
+    KWQRefPtr<KWQArrayPrivate> d;
+};
+
 #endif
 
-#include "qwidget.h"
-#include "qstring.h"
-
-#import <WKPluginView.h>
-#import <WKPlugin.h>
-    
-// class WKPluginWidget ===============================================================
-
-class WKPluginWidget : public QWidget {
-public:
-
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-    // static member functions -------------------------------------------------
-    
-    // constructors, copy constructors, and destructors ------------------------
-
-    WKPluginWidget(QWidget *parent=0, const QString &url=0, const QString &serviceType=0, const QStringList &args=QStringList());
-    ~WKPluginWidget();
-
-    // member functions --------------------------------------------------------
-    
-    // operators ---------------------------------------------------------------
-
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
-
-private:
-    WKPluginWidget(const WKPluginWidget &);
-    WKPluginWidget &operator=(const WKPluginWidget &);
-    
-
-}; // class WKPluginWidget ============================================================
-
 #endif
+

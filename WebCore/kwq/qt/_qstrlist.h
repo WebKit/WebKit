@@ -44,9 +44,7 @@
 #include <config.h>
 #endif
 
-#ifndef USING_BORROWED_QSTRINGLIST
-#define USING_BORROWED_QSTRINGLIST
-#endif
+#ifdef USING_BORROWED_QSTRLIST
 
 #include <KWQDef.h>
 
@@ -129,6 +127,8 @@ inline QStrList::QStrList( const QStrList &strList )
     dc = FALSE;
     operator=(strList);
 }
+
+#endif
 
 
 #endif // QSTRLIST_H

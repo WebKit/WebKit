@@ -466,8 +466,9 @@ int QString::find(const QString &qs, int index) const
             index += len;
         }
         if (len && (index >= 0) && (index < len)) {
-            CFRange r = CFStringFind(s, qs.s, 0);
-            if (r.location != kCFNotFound) {
+            CFRange r;
+	    CFRange start = CFRangeMake(index, len - index); 
+	    if (CFStringFindWithOptions(s, qs.s, start, 0, &r)) {
                 return r.location;
             }
         }

@@ -1,3 +1,56 @@
+2002-01-21  Maciej Stachowiak  <mjs@apple.com>
+
+	Reimplemented QArray, QBuffer, QStack and QStringList; also fixed
+	some files for borrowed switchability, and fixed some bugs found
+	by my new test cases.
+
+	# Reimplement QArray:
+
+	* src/kwq/qt/qarray.h:
+	* src/kwq/KWQArrayImpl.h:
+	* src/kwq/KWQArrayImpl.mm: (KWQArrayImpl::KWQArrayPrivate::KWQArrayPrivate),
+	(KWQArrayImpl::KWQArrayPrivate::~KWQArrayPrivate), (KWQArrayImpl::KWQArrayImpl),
+	(KWQArrayImpl::~KWQArrayImpl), (KWQArrayImpl::operator=), (KWQArrayImpl::at),
+	(KWQArrayImpl::data), (KWQArrayImpl::size), (KWQArrayImpl::resize),
+	(KWQArrayImpl::duplicate), (KWQArrayImpl::fill), (KWQArrayImpl::operator==):
+
+	# Reimplement QBuffer:
+
+	* src/kwq/qt/qbuffer.h:
+	* src/kwq/KWQBuffer.mm: (QBuffer::QBuffer), (QBuffer::~QBuffer),
+	(QBuffer::buffer), (QBuffer::size), (QBuffer::isOpen), (QBuffer::open),
+	(QBuffer::close), (QBuffer::writeBlock):
+	* src/kwq/qt/qiodevice.h:
+
+	# Reimplement QStringList:
+
+	* src/kwq/KWQStringList.mm: (QStringToCFString), (QStringList::split),
+	(QStringList::QStringList), (QStringList::~QStringList), (QStringList::join),
+	(QStringList::operator=):
+
+	# Reimplement QStack:
+	* src/kwq/qt/qstack.h:
+
+	* src/kwq/Makefile.am: Add new files to build.
+
+	* src/kwq/KWQString.mm: (QString::find): Fix bug which returned
+	the very first occurence in the string even when the optional
+	starting point was passed in. Some of my new regression tests
+	picked this up.
+
+	# Temporarily work around uses of non-kwq APIs:
+	
+	* src/kwq/WKPluginWidget.h:
+	* src/kwq/qt/_qfile.cpp
+	* src/kwq/qt/_qbuffer.cpp
+	
+	# Guard contents of all these with the appropriate USING ifdef:
+	
+	* src/kwq/KWQStrList.h:
+	* src/kwq/qt/_qarray.h:
+	* src/kwq/qt/_qgarray.h:
+	* src/kwq/qt/_qstrlist.h:
+	
 2002-01-19  Maciej Stachowiak  <mjs@apple.com>
 
 	* src/kdelibs/kjs/Makefile.am: Fix testkjs build.

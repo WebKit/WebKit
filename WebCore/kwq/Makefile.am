@@ -6,13 +6,15 @@ SUBDIRS = \
 	$(NULL)
 
 noinst_LIBRARIES = libkwq.o
-libkwq_o_LDFLAGS = -Wl,-r -nostdlib
-libkwq_o_AR = $(OBJCXXLD) $(AM_OBJCXXFLAGS) $(OBJCXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) $(libkwq_o_LDFLAGS) -o
+libkwq_LDFLAGS = -Wl,-r -nostdlib
+libkwq_o_AR = $(OBJCXXLD) $(AM_OBJCXXFLAGS) $(OBJCXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) $(libkwq_LDFLAGS) -o
 
 libkwq_o_SOURCES = \
 	KWQApplication.mm \
+	KWQArrayImpl.mm \
 	KWQBitmap.mm \
 	KWQBrush.mm \
+	KWQBuffer.mm \
 	KWQButton.mm \
 	KWQCString.mm \
 	KWQChar.mm \
@@ -99,6 +101,7 @@ libkwq_o_SOURCES = \
 	KWQRegion.mm \
 	KWQScrollView.mm \
 	KWQString.mm \
+	KWQStringList.mm \
 	KWQStyle.mm \
 	KWQTextArea.mm \
 	KWQTextContainer.mm \

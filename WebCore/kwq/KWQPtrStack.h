@@ -36,6 +36,8 @@
 #include <_qstack.h>
 #else
 
+#include <qlist.h>
+
 // class QStack ================================================================
 
 template<class T> class QStack {
@@ -47,24 +49,50 @@ public:
     // static member functions -------------------------------------------------
     // constructors, copy constructors, and destructors ------------------------
 
-    QStack();
-    QStack(const QStack<T> &);
-    ~QStack();
+    QStack() : list() {}
+    QStack(const QStack<T> &s) : list(s.list) {}
+    ~QStack() {}
 
     // member functions --------------------------------------------------------
 
-    bool isEmpty() const;
-    void push(const T *);
-    T *pop();
+    bool isEmpty() const { return list.isEmpty(); }
+    void push(const T *item) { list.append (item); }
+    T *pop() { T *tmp = list.getLast(); list.removeLast(); return tmp; }
+    uint count() const { return list.count(); }
 
     // operators ---------------------------------------------------------------
 
-    QStack<T> &operator=(const QStack<T> &);
+    QStack<T> &operator=(const QStack<T> &s) { list = s.list; return *this; }
 
 // protected -------------------------------------------------------------------
 // private ---------------------------------------------------------------------
+ private:
+    QList<T> list;
 
 }; // class QStack =============================================================
+
+#ifdef _KWQ_IOSTREAM_
+template<class T>
+inline ostream &operator<<(ostream &stream, const QStack<T>&s)
+{
+    stream << "QStack: [size: " << s.count() << "; items: ";
+
+    QStack<T> tmp(s);
+
+    while (!tmp.isEmpty()) {
+        stream << *tmp.pop();
+	if (tmp.count() > 0) {
+	    stream << ", ";
+	}
+    }
+
+    stream << "]";
+
+    return stream;
+}
+
+
+#endif
 
 #endif // USING_BORROWED_QSTACK
 
