@@ -55,13 +55,16 @@ typedef khtml::RenderPart KHTMLRenderPart;
 @protocol WebDOMDocument;
 @protocol WebDOMNode;
 
-#define WebCoreElementLinkURL  		@"WebCoreElementLinkURL"
-#define WebCoreElementLinkTarget  	@"WebCoreElementLinkTarget"
-#define WebCoreElementLinkLabel  	@"WebCoreElementLinkLabel"
-#define WebCoreElementImageURL 		@"WebCoreElementImageURL"
-#define WebCoreElementString   		@"WebCoreElementString"
-#define WebCoreElementImage    		@"WebCoreElementImage"
-#define WebCoreElementImageLocation	@"WebCoreElementImageLocation"
+extern NSString *WebCoreElementFrameKey;
+extern NSString *WebCoreElementImageAltStringKey;
+extern NSString *WebCoreElementImageKey;
+extern NSString *WebCoreElementImageLocationKey;
+extern NSString *WebCoreElementImageURLKey;
+extern NSString *WebCoreElementLinkURLKey;
+extern NSString *WebCoreElementLinkTargetFrameKey;
+extern NSString *WebCoreElementLinkLabelKey;
+extern NSString *WebCoreElementLinkTitleKey;
+extern NSString *WebCoreElementStringKey;
 
 // WebCoreBridge objects are used by WebCore to abstract away operations that need
 // to be implemented by library clients, for example WebKit. The objects are also

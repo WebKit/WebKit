@@ -1,3 +1,11 @@
+2002-11-24  Chris Blumenberg  <cblu@apple.com>
+
+	Added element keys for the image ALT and link TITLE attributes. This will eventually be used to fix other bugs. Also made WebKit and WebCore use the same element keys to simplify the conversion of the element dictionary.
+
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge elementAtPoint:]):
+
 2002-11-24  Darin Adler  <darin@apple.com>
 
         * force-js-clean-timestamp: Touch for ScopeChain change.

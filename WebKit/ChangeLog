@@ -1,5 +1,14 @@
 2002-11-24  Chris Blumenberg  <cblu@apple.com>
 
+	Added element keys for the image ALT and link TITLE attributes. This will eventually be used to fix other bugs. Also made WebKit and WebCore use the same element keys to simplify the conversion of the element dictionary.
+
+        * WebView.subproj/WebController.h:
+        * WebView.subproj/WebController.m:
+        * WebView.subproj/WebHTMLViewPrivate.m:
+        (-[WebHTMLView _elementAtPoint:]):
+
+2002-11-24  Chris Blumenberg  <cblu@apple.com>
+
 	Fixed: 3109945 - Assertion failure in -[WebIconDatabase_largestIconFromDictionary:]
 	Added error strings for download decoding errors.
 

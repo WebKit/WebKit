@@ -61,6 +61,18 @@ using khtml::RenderImage;
 using khtml::RenderObject;
 using khtml::RenderPart;
 
+NSString *WebCoreElementFrameKey = 		@"WebElementFrame";
+NSString *WebCoreElementImageAltStringKey = 	@"WebElementImageAltString";
+NSString *WebCoreElementImageKey = 		@"WebElementImage";
+NSString *WebCoreElementImageLocationKey = 	@"WebElementImageLocation";
+NSString *WebCoreElementImageURLKey = 		@"WebElementImageURL";
+NSString *WebCoreElementLinkURLKey = 		@"WebElementLinkURL";
+NSString *WebCoreElementLinkTargetFrameKey =	@"WebElementTargetFrame";
+NSString *WebCoreElementLinkLabelKey = 		@"WebElementLinkLabel";
+NSString *WebCoreElementLinkTitleKey = 		@"WebElementLinkTitle";
+NSString *WebCoreElementNameKey = 		@"WebElementName";
+NSString *WebCoreElementStringKey = 		@"WebElementString";
+
 @implementation WebCoreBridge
 
 - init
@@ -448,11 +460,6 @@ using khtml::RenderPart;
     }
 }
 
-- (NSString *)completeURLForDOMString:(const DOMString &)s
-{
-    return _part->kwq->document()->completeURL(s.string()).getNSString();
-}
-
 - (NSDictionary *)elementAtPoint:(NSPoint)point
 {
     RenderObject *renderer = _part->kwq->renderer();
@@ -462,14 +469,19 @@ using khtml::RenderPart;
     RenderObject::NodeInfo nodeInfo(true, true);
     renderer->layer()->nodeAtPoint(nodeInfo, (int)point.x, (int)point.y);
     
-    NSMutableDictionary *elementInfo = [NSMutableDictionary dictionary];
-
+    NSMutableDictionary *element = [NSMutableDictionary dictionary];
+    
     NodeImpl *URLNode = nodeInfo.URLElement();
     if (URLNode) {
         ElementImpl* e = static_cast<ElementImpl*>(URLNode);
+        NSString *title = e->getAttribute(ATTR_TITLE).string().getNSString();
+        if(title){
+            [element setObject:title forKey:WebCoreElementLinkTitleKey];
+        }
         
-        NSString *URL = [self completeURLForDOMString:parseURL(e->getAttribute(ATTR_HREF))];
-        if (URL) {
+        NSString *URLString = _part->kwq->document()->completeURL(e->getAttribute(ATTR_HREF).string()).getNSString();
+        
+        if (URLString) {
             // Look for the first #text node to use as a label.
             NodeImpl *labelParent = e;
             while (labelParent->hasChildNodes()){
@@ -479,13 +491,13 @@ using khtml::RenderPart;
                     DOMStringImpl *dv = childNode->nodeValue().implementation();
                     if (dv){
                         NSString *value = [NSString stringWithCharacters: (const unichar *)dv->s length: dv->l];
-                        [elementInfo setObject:value forKey:WebCoreElementLinkLabel];
+                        [element setObject:value forKey:WebCoreElementLinkLabelKey];
                         break;
                     }
                 }
                 labelParent = childNode;
             }
-            [elementInfo setObject:URL forKey:WebCoreElementLinkURL];
+            [element setObject:URLString forKey:WebCoreElementLinkURLKey];
         }
         
         DOMString target = e->getAttribute(ATTR_TARGET);
@@ -493,33 +505,39 @@ using khtml::RenderPart;
             target = _part->kwq->document()->baseTarget();
         }
         if (!target.isEmpty()) {
-            [elementInfo setObject:target.string().getNSString() forKey:WebCoreElementLinkTarget];
+            [element setObject:target.string().getNSString() forKey:WebCoreElementLinkTargetFrameKey];
         }
     }
 
-    NodeImpl *node = nodeInfo.innerNonSharedNode();
-    if (node && isImage(node)) {
-        ElementImpl* i =  static_cast<ElementImpl*>(node);
-        NSString *URL = [self completeURLForDOMString:parseURL(i->getAttribute(ATTR_SRC))];
-        if (URL) {
-            [elementInfo setObject:URL forKey:WebCoreElementImageURL];
-            RenderImage *r = (RenderImage *)node->renderer();
+    NodeImpl *imageNode = nodeInfo.innerNonSharedNode();
+    if (imageNode && isImage(imageNode)) {
+        ElementImpl* i =  static_cast<ElementImpl*>(imageNode);
+        NSString *altString = i->getAttribute(ATTR_ALT).string().getNSString();
+        if(altString){
+            [element setObject:altString forKey:WebCoreElementImageAltStringKey];
+        }
+        
+        NSString *URLString = _part->kwq->document()->completeURL(i->getAttribute(ATTR_SRC).string()).getNSString();
+        
+        if (URLString) {
+            [element setObject:URLString forKey:WebCoreElementImageURLKey];
+            RenderImage *r = (RenderImage *)imageNode->renderer();
             id <WebCoreImageRenderer> image = r->pixmap().image();
             if (image) {
-                [elementInfo setObject:image forKey:WebCoreElementImage];
+                [element setObject:image forKey:WebCoreElementImageKey];
                 int x, y;
                 if(r->absolutePosition(x, y)){
-                    [elementInfo setObject:[NSValue valueWithPoint:NSMakePoint(x,y)] forKey:WebCoreElementImageLocation];
+                    [element setObject:[NSValue valueWithPoint:NSMakePoint(x,y)] forKey:WebCoreElementImageLocationKey];
                 }
             }
         }
     }
 
     if (_part->hasSelection()) {
-        [elementInfo setObject:[self selectedText] forKey:WebCoreElementString];
+        [element setObject:[self selectedText] forKey:WebCoreElementStringKey];
     }
     
-    return elementInfo;
+    return element;
 }
 
 - (BOOL)searchFor:(NSString *)string direction:(BOOL)forward caseSensitive:(BOOL)caseFlag

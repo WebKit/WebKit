@@ -29,14 +29,17 @@
 #import <WebFoundation/WebAssertions.h>
 #import <WebFoundation/WebResourceHandle.h>
 
-NSString *WebElementLinkURLKey = @"WebElementLinkURL";
-NSString *WebElementLinkTargetFrameKey = @"WebElementTargetFrame";
-NSString *WebElementLinkLabelKey = @"WebElementLinkLabel";
-NSString *WebElementImageURLKey = @"WebElementImageURL";
-NSString *WebElementStringKey = @"WebElementString";
-NSString *WebElementImageKey = @"WebElementImage";
-NSString *WebElementImageLocationKey = @"WebElementImageLocation";
-NSString *WebElementFrameKey = @"WebElementFrame";
+NSString *WebElementFrameKey = 			@"WebElementFrame";
+NSString *WebElementImageKey = 			@"WebElementImage";
+NSString *WebElementImageAltStringKey = 	@"WebElementImageAltString";
+NSString *WebElementImageLocationKey = 		@"WebElementImageLocation";
+NSString *WebElementImageURLKey = 		@"WebElementImageURL";
+NSString *WebElementLinkURLKey = 		@"WebElementLinkURL";
+NSString *WebElementLinkTargetFrameKey =	@"WebElementTargetFrame";
+NSString *WebElementLinkLabelKey = 		@"WebElementLinkLabel";
+NSString *WebElementLinkTitleKey = 		@"WebElementLinkTitle";
+NSString *WebElementStringKey = 		@"WebElementString";
+
 
 @implementation WebController
 

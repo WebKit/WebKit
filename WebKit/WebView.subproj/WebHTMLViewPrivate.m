@@ -154,21 +154,18 @@
 - (NSDictionary *)_elementAtPoint:(NSPoint)point
 {
     NSDictionary *elementInfoWC = [[self _bridge] elementAtPoint:point];
-    NSMutableDictionary *elementInfo = [NSMutableDictionary dictionary];
+    NSMutableDictionary *elementInfo = [elementInfoWC mutableCopy];
 
-    [elementInfo _web_setObjectIfNotNil:[NSURL _web_URLWithString:[elementInfoWC objectForKey:WebCoreElementLinkURL]] forKey:WebElementLinkURLKey];
-    [elementInfo _web_setObjectIfNotNil:[elementInfoWC objectForKey:WebCoreElementLinkLabel] forKey:WebElementLinkLabelKey];
-    [elementInfo _web_setObjectIfNotNil:[NSURL _web_URLWithString:[elementInfoWC objectForKey:WebCoreElementImageURL]] forKey:WebElementImageURLKey];
-    [elementInfo _web_setObjectIfNotNil:[elementInfoWC objectForKey:WebCoreElementString] forKey:WebElementStringKey];
-    [elementInfo _web_setObjectIfNotNil:[elementInfoWC objectForKey:WebCoreElementImage] forKey:WebElementImageKey];
-    [elementInfo _web_setObjectIfNotNil:[elementInfoWC objectForKey:WebCoreElementImageLocation] forKey:WebElementImageLocationKey];
+    // Convert URL strings to NSURLs
+    [elementInfo _web_setObjectIfNotNil:[NSURL _web_URLWithString:[elementInfoWC objectForKey:WebElementLinkURLKey]] forKey:WebElementLinkURLKey];
+    [elementInfo _web_setObjectIfNotNil:[NSURL _web_URLWithString:[elementInfoWC objectForKey:WebElementImageURLKey]] forKey:WebElementImageURLKey];
     
     WebView *webView = [self _web_parentWebView];
     ASSERT(webView);
     WebFrame *webFrame = [[webView controller] frameForView:webView];
     ASSERT(webFrame);
 
-    NSString *frameName = [elementInfoWC objectForKey:WebCoreElementLinkTarget];
+    NSString *frameName = [elementInfoWC objectForKey:WebElementLinkTargetFrameKey];
     if ([frameName length] == 0) {
         [elementInfo setObject:webFrame forKey:WebElementLinkTargetFrameKey];
     } else {

@@ -26,14 +26,17 @@
 
 // These strings are keys into the element dictionary provided in
 // the WebContextMenuDelegate's contextMenuItemsForElement and the WebControllerPolicyDelegate's clickPolicyForElement.
-extern NSString *WebElementLinkURLKey;
-extern NSString *WebElementLinkTargetFrameKey;
-extern NSString *WebElementLinkLabelKey;
-extern NSString *WebElementImageURLKey;
-extern NSString *WebElementStringKey;
-extern NSString *WebElementImageKey;
-extern NSString *WebElementImageLocationKey;
-extern NSString *WebElementFrameKey;
+
+extern NSString *WebElementFrameKey;		// WebFrame of the element
+extern NSString *WebElementImageAltStringKey;	// NSString of the ALT attribute of the image element
+extern NSString *WebElementImageKey;		// NSImage of the image element
+extern NSString *WebElementImageLocationKey;	// NSValue of an NSPoint representing the origin of the image element
+extern NSString *WebElementImageURLKey;		// NSURL of the image element
+extern NSString *WebElementLinkURLKey;		// NSURL if the element is within an anchor
+extern NSString *WebElementLinkTargetFrameKey;	// NSString of the target of the anchor
+extern NSString *WebElementLinkTitleKey;	// NSString of the title of the anchor
+extern NSString *WebElementLinkLabelKey;	// NSString of the text within the anchor
+extern NSString *WebElementStringKey;		// NSString of the selected text
 
 /*!
     @class WebController
