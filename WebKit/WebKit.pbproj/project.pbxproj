@@ -110,7 +110,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_SEARCH_PATHS = "";
 				FRAMEWORK_VERSION = A;
-				HEADER_SEARCH_PATHS = "";
+				HEADER_SEARCH_PATHS = ../WebCore/include;
 				INSTALL_PATH = "$(HOME)/Library/Frameworks";
 				LIBRARY_SEARCH_PATHS = "";
 				OTHER_CFLAGS = "";
