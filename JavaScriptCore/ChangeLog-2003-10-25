@@ -1,5 +1,34 @@
 2002-11-18  Darin Adler  <darin@apple.com>
 
+	- another string constant discovered that can be optimized
+
+        * kjs/object.h: Add a property name constant for "__proto__".
+        * kjs/object.cpp: Define it.
+	(ObjectImp::get): Use it.
+	(ObjectImp::hasProperty): Use it.
+
+	- prepare to turn PropertyMap into a hash table
+
+        * kjs/object.cpp:
+	(ObjectImp::mark): Use the new PropertyMap::mark().
+	(ObjectImp::put): Use the new overload of PropertyMap::get().
+	(ObjectImp::deleteProperty): Use the new overload of PropertyMap::get().
+	(ObjectImp::propList): Use PropertyMap::addEnumerablesToReferenceList().
+
+        * kjs/property_map.h: Remove PropertyMapNode and make all node-related methods private.
+	Add mark(), a new overload of get() that returns attributes, a clear() that takes no attributes,
+	and addEnumerablesToReferenceList().
+        * kjs/property_map.cpp:
+	(PropertyMap::get): Added new overload.
+	(PropertyMap::clear): Added new overload.
+	(PropertyMap::mark): Added.
+	(PropertyMap::addEnumerablesToReferenceList): Added.
+
+        * kjs/ustring.h: Added a hash function.
+        * kjs/ustring.cpp: (KJS::hash): Added.
+
+2002-11-18  Darin Adler  <darin@apple.com>
+
 	- simplified the ExecState class, which was showing up in profiles
         
         Sped up JavaScript iBench by 6%.

@@ -29,30 +29,8 @@
 
 namespace KJS {
 
-  class PropertyMapNode {
-  public:
-    PropertyMapNode(const UString &n, ValueImp *v, int att, PropertyMapNode *p)
-      : name(n), value(v), attr(att), left(0), right(0), parent(p), height(1) {}
-
-    UString name;
-    ValueImp *value;
-    int attr;
-
-    void setLeft(PropertyMapNode *newLeft);
-    void setRight(PropertyMapNode *newRight);
-    PropertyMapNode *findMax();
-    PropertyMapNode *findMin();
-
-    PropertyMapNode *next();
-
-    PropertyMapNode *left;
-    PropertyMapNode *right;
-    PropertyMapNode *parent;
-    int height;
-
-  private:
-    void setParent(PropertyMapNode *newParent);
-  };
+  class PropertyMapNode;
+  class ReferenceList;
 
   /**
    * @internal
@@ -73,15 +51,21 @@ namespace KJS {
     void put(const UString &name, ValueImp *value, int attr);
     void remove(const UString &name);
     ValueImp *get(const UString &name) const;
+    ValueImp *get(const UString &name, int &attributes) const;
+    
+    void clear();
+    void mark();
+    
+    void addEnumerablesToReferenceList(ReferenceList &, const Object &) const;
 
-    void clear(PropertyMapNode *node = 0);
+  private:
+
+    void clear(PropertyMapNode *node);
     void dump(const PropertyMapNode *node = 0, int indent = 0) const;
     void checkTree(const PropertyMapNode *node = 0) const;
 
     PropertyMapNode *getNode(const UString &name) const;
     PropertyMapNode *first() const;
-
-  private:
 
     PropertyMapNode *remove(PropertyMapNode *node);
     void balance(PropertyMapNode* node);

@@ -23,13 +23,41 @@
 
 #include "property_map.h"
 
+#include "object.h"
+#include "reference_list.h"
+
 #include <string.h>
 #include <assert.h>
 #include <stdio.h>
 
-using namespace KJS;
+namespace KJS {
 
 // ------------------------------ PropertyMapNode ------------------------------
+
+  class PropertyMapNode {
+  public:
+    PropertyMapNode(const UString &n, ValueImp *v, int att, PropertyMapNode *p)
+      : name(n), value(v), attr(att), left(0), right(0), parent(p), height(1) {}
+
+    UString name;
+    ValueImp *value;
+    int attr;
+
+    void setLeft(PropertyMapNode *newLeft);
+    void setRight(PropertyMapNode *newRight);
+    PropertyMapNode *findMax();
+    PropertyMapNode *findMin();
+
+    PropertyMapNode *next();
+
+    PropertyMapNode *left;
+    PropertyMapNode *right;
+    PropertyMapNode *parent;
+    int height;
+
+  private:
+    void setParent(PropertyMapNode *newParent);
+  };
 
 void PropertyMapNode::setLeft(PropertyMapNode *newLeft)
 {
@@ -201,6 +229,38 @@ ValueImp *PropertyMap::get(const UString &name) const
 {
   const PropertyMapNode *n = getNode(name);
   return n ? n->value : 0;
+}
+
+ValueImp *PropertyMap::get(const UString &name, int &attributes) const
+{
+  const PropertyMapNode *n = getNode(name);
+  attributes = n ? n->attr : 0;
+  return n ? n->value : 0;
+}
+
+void PropertyMap::clear()
+{
+  clear(0);
+}
+
+void PropertyMap::mark()
+{
+  PropertyMapNode *node = first();
+  while (node) {
+    if (!node->value->marked())
+      node->value->mark();
+    node = node->next();
+  }
+}
+
+void PropertyMap::addEnumerablesToReferenceList(ReferenceList &list, const Object &base) const
+{
+  PropertyMapNode *node = first();
+  while (node) {
+    if (!(node->attr & DontEnum))
+      list.append(Reference(base, node->name));
+    node = node->next();
+  }
 }
 
 void PropertyMap::clear(PropertyMapNode *node)
@@ -548,3 +608,5 @@ void PropertyMap::rotateLR(PropertyMapNode* &node)
   updateHeight(a);
   updateHeight(b);
 }
+
+} // namespace KJS

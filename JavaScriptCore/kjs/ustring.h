@@ -432,6 +432,7 @@ namespace KJS {
   }
   
   int compare(const UString &, const UString &);
+  int hash(const UString &, int hashTableSize);
 
 }; // namespace
 

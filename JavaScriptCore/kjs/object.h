@@ -708,6 +708,7 @@ namespace KJS {
   extern const UString argumentsPropertyName;
   extern const UString lengthPropertyName;
   extern const UString prototypePropertyName;
+  extern const UString specialPrototypePropertyName;
   extern const UString toStringPropertyName;
   extern const UString valueOfPropertyName;
 

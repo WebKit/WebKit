@@ -44,6 +44,7 @@ namespace KJS {
 extern const UString argumentsPropertyName("arguments");
 extern const UString lengthPropertyName("length");
 extern const UString prototypePropertyName("prototype");
+extern const UString specialPrototypePropertyName("__proto__");
 extern const UString toStringPropertyName("toString");
 extern const UString valueOfPropertyName("valueOf");
 
@@ -93,12 +94,7 @@ void ObjectImp::mark()
   if (_proto && !_proto->marked())
     _proto->mark();
 
-  PropertyMapNode *node = _prop->first();
-  while (node) {
-    if (!node->value->marked())
-      node->value->mark();
-    node = node->next();
-  }
+  _prop->mark();
 
   if (_internalValue && !_internalValue->marked())
     _internalValue->mark();
@@ -151,15 +147,6 @@ UString ObjectImp::className() const
 
 Value ObjectImp::get(ExecState *exec, const UString &propertyName) const
 {
-  if (propertyName == "__proto__") {
-    Object proto = Object::dynamicCast(prototype());
-    // non-standard netscape extension
-    if (proto.isNull())
-      return Null();
-    else
-      return proto;
-  }
-
   ValueImp *imp = getDirect(propertyName);
   if ( imp )
     return Value(imp);
@@ -167,6 +154,10 @@ Value ObjectImp::get(ExecState *exec, const UString &propertyName) const
   Object proto = Object::dynamicCast(prototype());
   if (proto.isNull())
     return Undefined();
+
+  // non-standard netscape extension
+  if (propertyName == specialPrototypePropertyName)
+    return proto;
 
   return proto.get(exec,propertyName);
 }
@@ -204,8 +195,8 @@ void ObjectImp::put(ExecState *exec, const UString &propertyName,
     return;
   }
 
-  if (propertyName == "__proto__") {
-    // non-standard netscape extension
+  // non-standard netscape extension
+  if (propertyName == specialPrototypePropertyName) {
     setPrototype(value);
     return;
   }
@@ -222,9 +213,10 @@ void ObjectImp::put(ExecState *exec, unsigned propertyName,
 // ECMA 8.6.2.3
 bool ObjectImp::canPut(ExecState *, const UString &propertyName) const
 {
-  PropertyMapNode *node = _prop->getNode(propertyName);
-  if (node)
-    return!(node->attr & ReadOnly);
+  int attributes;
+  ValueImp *v = _prop->get(propertyName, attributes);
+  if (v)
+    return!(attributes & ReadOnly);
 
   // Look in the static hashtable of properties
   const HashEntry* e = findPropertyHashEntry(propertyName);
@@ -239,14 +231,16 @@ bool ObjectImp::canPut(ExecState *, const UString &propertyName) const
 // ECMA 8.6.2.4
 bool ObjectImp::hasProperty(ExecState *exec, const UString &propertyName) const
 {
-  if (propertyName == "__proto__")
-    return true;
   if (_prop->get(propertyName))
     return true;
 
   // Look in the static hashtable of properties
   if (findPropertyHashEntry(propertyName))
       return true;
+
+  // non-standard netscape extension
+  if (propertyName == specialPrototypePropertyName)
+    return true;
 
   // Look in the prototype
   Object proto = Object::dynamicCast(prototype());
@@ -261,9 +255,10 @@ bool ObjectImp::hasProperty(ExecState *exec, unsigned propertyName) const
 // ECMA 8.6.2.5
 bool ObjectImp::deleteProperty(ExecState */*exec*/, const UString &propertyName)
 {
-  PropertyMapNode *node = _prop->getNode(propertyName);
-  if (node) {
-    if ((node->attr & DontDelete))
+  int attributes;
+  ValueImp *v = _prop->get(propertyName, attributes);
+  if (v) {
+    if ((attributes & DontDelete))
       return false;
     _prop->remove(propertyName);
     return true;
@@ -405,13 +400,7 @@ ReferenceList ObjectImp::propList(ExecState *exec, bool recursive)
   if (_proto && _proto->dispatchType() == ObjectType && recursive)
     list = static_cast<ObjectImp*>(_proto)->propList(exec,recursive);
 
-
-  PropertyMapNode *node = _prop->first();
-  while (node) {
-    if (!(node->attr & DontEnum))
-      list.append(Reference(Object(this), node->name));
-    node = node->next();
-  }
+  _prop->addEnumerablesToReferenceList(list, Object(this));
 
   // Add properties from the static hashtable of properties
   const ClassInfo *info = classInfo();
