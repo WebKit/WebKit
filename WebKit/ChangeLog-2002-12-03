@@ -1,5 +1,10 @@
 2002-10-04  Darin Adler  <darin@apple.com>
 
+        * English.lproj/StringsNotToBeLocalized.txt: Add a localization
+	exception for the WebKit bundle identifier.
+
+2002-10-04  Darin Adler  <darin@apple.com>
+
         * Misc.subproj/WebKitLocalizableStrings.m: Added.
 	Contains the definition of the WebKitLocalizableStringsBundle.
         * WebKit.pbproj/project.pbxproj: Add -DFRAMEWORK_NAME=WebKit.
