@@ -1,3 +1,103 @@
+2004-03-11  Richard Williamson   <rjw@apple.com>
+
+	Stitched together the NP stuff to our language independent
+	JavaScript binding stuff.  Very close to being done.
+	
+	Added program to test C bindings (and NP stuff).  Just tests
+	properties.  Will add methods and JavaScript access, etc.
+
+	Updated Makefile.am to account for new bindings/c directory.
+
+	Change NP_UTF8 from "const char *" to "char" to allow for
+	declarations like "const NP_UTF8 *" and "NP_UTF8 *".  Ditto
+	for NP_UTF16.
+
+	Added NP_IsValidIdentifier().
+
+        Reviewed by Chris.
+
+        * JavaScriptCore.pbproj/project.pbxproj:
+        * Makefile.am:
+        * bindings/NP_jsobject.cpp:
+        (identiferFromNPIdentifier):
+        (NP_Evaluate):
+        * bindings/NP_runtime.cpp:
+        (NP_IdentifierFromUTF8):
+        (NP_IsValidIdentifier):
+        (NP_GetIdentifiers):
+        (NP_UTF8FromIdentifier):
+        (NP_SetExceptionWithUTF8):
+        (NP_SetException):
+        (NP_CreateStringWithUTF8):
+        (NP_CreateStringWithUTF16):
+        (NP_UTF8FromString):
+        (NP_UTF16FromString):
+        * bindings/NP_runtime.h:
+        * bindings/c/c_class.cpp: Added.
+        (CClass::_commonDelete):
+        (CClass::_commonCopy):
+        (CClass::_commonInit):
+        (_createClassesByIsAIfNecessary):
+        (CClass::classForIsA):
+        (CClass::CClass):
+        (CClass::name):
+        (CClass::methodsNamed):
+        (CClass::fieldNamed):
+        * bindings/c/c_class.h: Added.
+        (KJS::Bindings::CClass::~CClass):
+        (KJS::Bindings::CClass::CClass):
+        (KJS::Bindings::CClass::operator=):
+        (KJS::Bindings::CClass::constructorAt):
+        (KJS::Bindings::CClass::numConstructors):
+        * bindings/c/c_instance.cpp: Added.
+        (CInstance::CInstance):
+        (CInstance::~CInstance):
+        (CInstance::operator=):
+        (CInstance::getClass):
+        (CInstance::begin):
+        (CInstance::end):
+        (CInstance::invokeMethod):
+        (CInstance::defaultValue):
+        (CInstance::stringValue):
+        (CInstance::numberValue):
+        (CInstance::booleanValue):
+        (CInstance::valueOf):
+        * bindings/c/c_instance.h: Added.
+        (KJS::Bindings::CInstance::getObject):
+        * bindings/c/c_runtime.cpp: Added.
+        (CField::valueFromInstance):
+        (CField::setValueToInstance):
+        * bindings/c/c_runtime.h: Added.
+        (KJS::Bindings::CField::CField):
+        (KJS::Bindings::CField::name):
+        (KJS::Bindings::CField::type):
+        (KJS::Bindings::CMethod::CMethod):
+        (KJS::Bindings::CMethod::name):
+        (KJS::Bindings::CMethod::numParameters):
+        * bindings/c/c_utility.cpp: Added.
+        (coerceValueToNPValueType):
+        (convertValueToNPValueType):
+        (convertNPValueTypeToValue):
+        * bindings/c/c_utility.h: Added.
+        * bindings/make_testbindings:
+        * bindings/runtime.cpp:
+        (Instance::createBindingForLanguageInstance):
+        * bindings/runtime.h:
+        (KJS::Bindings::Instance::):
+        * bindings/testbindings.cpp: Added.
+        (initializeIdentifiers):
+        (myInterfaceHasProperty):
+        (myInterfaceHasMethod):
+        (myInterfaceGetProperty):
+        (myInterfaceSetProperty):
+        (myInterfaceInvoke):
+        (myInterfaceAllocate):
+        (myInterfaceInvalidate):
+        (myInterfaceDeallocate):
+        (GlobalImp::className):
+        (readJavaScriptFromFile):
+        (main):
+
 2004-03-10  Richard Williamson   <rjw@apple.com>
 
 	Made changes to support new asychronous approach to calls from

@@ -124,7 +124,8 @@ class Instance
 public:
     typedef enum {
         JavaLanguage,
-        ObjectiveCLanguage
+        ObjectiveCLanguage,
+        CLanguage
     } BindingLanguage;
 
     static Instance *createBindingForLanguageInstance (BindingLanguage language, void *instance);

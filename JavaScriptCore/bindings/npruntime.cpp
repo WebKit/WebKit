@@ -76,7 +76,7 @@ static const char **identifierNames = 0;
 static unsigned int maxIdentifierNames;
 static NP_Identifier identifierCount = 1;
 
-NP_Identifier NP_IdentifierFromUTF8 (NP_UTF8 name)
+NP_Identifier NP_IdentifierFromUTF8 (const NP_UTF8 *name)
 {
     NP_Identifier identifier = 0;
     
@@ -105,16 +105,26 @@ NP_Identifier NP_IdentifierFromUTF8 (NP_UTF8 name)
     return identifier;
 }
 
-void NP_GetIdentifiers (NP_UTF8 *names, int nameCount, NP_Identifier *identifiers)
+bool NP_IsValidIdentifier (const NP_UTF8 *name)
 {
+    return CFDictionaryGetValue (getIdentifierDictionary(), (const void *)name) == 0 ? false : true;
 }
 
-NP_UTF8 NP_UTF8FromIdentifier (NP_Identifier identifier)
+void NP_GetIdentifiers (const NP_UTF8 **names, int nameCount, NP_Identifier *identifiers)
+{
+    int i;
+    
+    for (i = 0; i < nameCount; i++) {
+        identifiers[i] = NP_IdentifierFromUTF8 (names[i]);
+    }
+}
+
+const NP_UTF8 *NP_UTF8FromIdentifier (NP_Identifier identifier)
 {
     if (identifier == 0 || identifier >= identifierCount)
         return NULL;
         
-    return (NP_UTF8)identifierNames[identifier];
+    return (const NP_UTF8 *)identifierNames[identifier];
 }
 
 NP_Object *NP_CreateObject (NP_Class *aClass)
@@ -163,7 +173,15 @@ bool NP_IsKindOfClass (NP_Object *obj, NP_Class *aClass)
     return false;
 }
 
-void NP_SetException (NP_Object *obj,  NP_String *message)
+void NP_SetExceptionWithUTF8 (NP_Object *obj, const NP_UTF8 *message)
+{
+    NP_String *m = NP_CreateStringWithUTF8(message);
+    NP_SetException (obj, m);
+    NP_ReleaseObject (m);
+}
+
+
+void NP_SetException (NP_Object *obj, NP_String *message)
 {
 }
 
@@ -245,7 +263,7 @@ double NP_DoubleFromNumber (NP_Number *obj)
 typedef struct
 {
     NP_Object object;
-    NP_UTF16 string;
+    NP_UTF16 *string;
     int32_t length;
 } StringObject;
 
@@ -277,14 +295,14 @@ NP_Class *NP_StringClass = stringClass;
 
 #define LOCAL_CONVERSION_BUFFER_SIZE    4096
 
-NP_String *NP_CreateStringWithUTF8 (NP_UTF8 utf8String)
+NP_String *NP_CreateStringWithUTF8 (const NP_UTF8 *utf8String)
 {
     StringObject *string = (StringObject *)NP_CreateObject (stringClass);
 
     CFStringRef stringRef = CFStringCreateWithCString (NULL, utf8String, kCFStringEncodingUTF8);
 
     string->length = CFStringGetLength (stringRef);
-    string->string = (NP_UTF16)malloc(sizeof(int16_t)*string->length);
+    string->string = (NP_UTF16 *)malloc(sizeof(NP_UTF16)*string->length);
 
     // Convert the string to UTF16.
     CFRange range = { 0, string->length };
@@ -295,18 +313,18 @@ NP_String *NP_CreateStringWithUTF8 (NP_UTF8 utf8String)
 }
 
 
-NP_String *NP_CreateStringWithUTF16 (NP_UTF16 utf16String, int32_t len)
+NP_String *NP_CreateStringWithUTF16 (const NP_UTF16 *utf16String, int32_t len)
 {
     StringObject *string = (StringObject *)NP_CreateObject (stringClass);
 
     string->length = len;
-    string->string = (NP_UTF16)malloc(sizeof(int16_t)*string->length);
-    memcpy (string->string, utf16String, sizeof(int16_t)*string->length);
+    string->string = (NP_UTF16 *)malloc(sizeof(NP_UTF16)*string->length);
+    memcpy ((void *)string->string, utf16String, sizeof(NP_UTF16)*string->length);
     
     return (NP_String *)string;
 }
 
-NP_UTF8 NP_UTF8FromString (NP_String *obj)
+NP_UTF8 *NP_UTF8FromString (NP_String *obj)
 {
     assert (NP_IsKindOfClass (obj, stringClass));
 
@@ -332,9 +350,10 @@ NP_UTF8 NP_UTF8FromString (NP_String *obj)
     CFRange range = { 0, string->length };
     CFStringGetBytes (stringRef, range, kCFStringEncodingUTF8, 0, false, buffer, maxBufferLength, &usedBufferLength);
     
-    NP_UTF8 resultString = (NP_UTF8)malloc (usedBufferLength+1);
-    strncpy (resultString, (const char *)buffer, usedBufferLength);
-    resultString[usedBufferLength] = 0;
+    NP_UTF8 *resultString = (NP_UTF8 *)malloc (usedBufferLength+1);
+    strncpy ((char *)resultString, (const char *)buffer, usedBufferLength);
+    char *cp = (char *)resultString;
+    cp[usedBufferLength] = 0;
     
     CFRelease (stringRef);
     if (buffer != _localBuffer)
@@ -343,14 +362,14 @@ NP_UTF8 NP_UTF8FromString (NP_String *obj)
     return resultString;
 }
 
-NP_UTF16 NP_UTF16FromString (NP_String *obj)
+NP_UTF16 *NP_UTF16FromString (NP_String *obj)
 {
     assert (NP_IsKindOfClass (obj, stringClass));
 
     StringObject *string = (StringObject *)obj;
     
-    NP_UTF16 resultString = (NP_UTF16)malloc(sizeof(int16_t)*string->length);
-    memcpy (resultString, string->string, sizeof(int16_t)*string->length);
+    NP_UTF16 *resultString = (NP_UTF16*)malloc(sizeof(int16_t)*string->length);
+    memcpy ((void *)resultString, string->string, sizeof(int16_t)*string->length);
 
     return resultString;
 }

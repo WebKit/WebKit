@@ -29,6 +29,15 @@
  * All calls into JavaScript were made asynchronous.  Results are
  * provided via the NP_JavaScriptResultInterface callback.
  *
+ * Revision 3 (March 10, 2004):
+ * Corrected comments to not refer to class retain/release interfaces.
+ *
+ * Revision 4 (March 11, 2004):
+ * Added additional convenience NP_SetExceptionWithUTF8().
+ * Changed NP_HasPropertyInterface and NP_HasMethodInterface to take NP_Class
+ * pointers instead of objects.
+ * Added NP_IsValidIdentifier().
+ *
  */
 #ifndef _NP_RUNTIME_H_
 #define _NP_RUNTIME_H_
@@ -56,8 +65,10 @@ extern "C" {
 
 /*
     Data passed between 'C' and JavaScript is always wrapped in an NP_Object.
+    The interface on an NP_Object is described by an NP_Class.
 */
 typedef struct NP_Object NP_Object;
+typedef struct NP_Class NP_Class;
 
 /*
     A NP_JavaScriptObject wraps a JavaScript Object in an NP_Object.
@@ -90,20 +101,24 @@ typedef NP_Object NP_JavaScriptObject;
 */
 
 typedef uint32_t NP_Identifier;
-typedef char *NP_UTF8;
-typedef int16_t *NP_UTF16;
+typedef char NP_UTF8;
+typedef uint16_t NP_UTF16;
 
 /*
     NP_Objects have methods and properties.  Methods and properties are named with NP_Identifiers.
     These identifiers may be reflected in JavaScript.  NP_Identifiers can be compared using ==.
+    
+    NP_IsValidIdentifier will return true if an identifier for the name has already been
+    assigned with either NP_IdentifierFromUTF8() or NP_GetIdentifiers();
 */
-NP_Identifier NP_IdentifierFromUTF8 (NP_UTF8 name);
-void NP_GetIdentifiers (NP_UTF8 *names, int nameCount, NP_Identifier *identifiers);
+NP_Identifier NP_IdentifierFromUTF8 (const NP_UTF8 *name);
+bool NP_IsValidIdentifier (const NP_UTF8 *name);
+void NP_GetIdentifiers (const NP_UTF8 **names, int nameCount, NP_Identifier *identifiers);
 
 /*
-    The returned NP_UTF8 should be freed.
+    The returned NP_UTF8 should NOT be freed.
 */
-NP_UTF8 NP_UTF8FromIdentifier (NP_Identifier identifier);
+const NP_UTF8 *NP_UTF8FromIdentifier (NP_Identifier identifier);
 
 /*
     NP_Object behavior is implemented using the following set of callback interfaces.
@@ -111,10 +126,10 @@ NP_UTF8 NP_UTF8FromIdentifier (NP_Identifier identifier);
 typedef NP_Object *(*NP_AllocateInterface)();
 typedef void (*NP_DeallocateInterface)(NP_Object *obj);
 typedef void (*NP_InvalidateInterface)();
-typedef bool (*NP_HasMethodInterface)(NP_Object *obj, NP_Identifier name);
+typedef bool (*NP_HasMethodInterface)(NP_Class *theClass, NP_Identifier name);
 typedef NP_Object *(*NP_InvokeInterface)(NP_Object *obj, NP_Identifier name, NP_Object **args, unsigned argCount);
-typedef bool (*NP_HasPropertyInterface)(NP_Object *obj, NP_Identifier name);
-typedef NP_Object (*NP_GetPropertyInterface)(NP_Object *obj, NP_Identifier name);
+typedef bool (*NP_HasPropertyInterface)(NP_Class *theClass, NP_Identifier name);
+typedef NP_Object *(*NP_GetPropertyInterface)(NP_Object *obj, NP_Identifier name);
 typedef void (*NP_SetPropertyInterface)(NP_Object *obj, NP_Identifier name, NP_Object *value);
 
 /*
@@ -141,13 +156,13 @@ struct NP_Class
     NP_HasMethodInterface hasMethod;
     NP_InvokeInterface invoke;
     NP_HasPropertyInterface hasProperty;
-    NP_SetPropertyInterface setProperty;
     NP_GetPropertyInterface getProperty;
+    NP_SetPropertyInterface setProperty;
 };
 typedef struct NP_Class NP_Class;
 
-#define kNP_ClassStructVersion1             1
-#define kNP_ClassStructVersionCurrent       kNP_ClassStructVersionCurrent
+#define kNP_ClassStructVersion1 1
+#define kNP_ClassStructVersionCurrent kNP_ClassStructVersion1
 
 struct NP_Object {
     NP_Class *_class;
@@ -162,17 +177,14 @@ struct NP_Object {
 NP_Object *NP_CreateObject (NP_Class *aClass);
 
 /*
-    If the class has a retain interface this function invokes that interface,
-    otherwise the NP_Object's reference count is incremented.
+    Increment the NP_Object's reference count.
 */
 NP_Object *NP_RetainObject (NP_Object *obj);
 
 /*
-    If the class has a release interface this function invokes that interface,
-    otherwise the NP_Object's reference count is decremented and if the reference
-    count goes to zero, the class's destroy interface is invoke.  Note,
-    that if a class implements it's own retain/release interfaces it must also
-    call the destroy interface.
+    Decremented the NP_Object's reference count.  If the reference
+    count goes to zero, the class's destroy interface is invoke if
+    specified, otherwise the object is free()ed directly.
 */
 void NP_ReleaseObject (NP_Object *obj);
 
@@ -226,14 +238,14 @@ int NP_IntFromNumber (NP_Number *obj);
 float NP_FloatFromNumber (NP_Number *obj);
 double NP_DoubleFromNumber (NP_Number *obj);
 
-NP_String *NP_CreateStringWithUTF8 (NP_UTF8 utf8String);
-NP_String *NP_CreateStringWithUTF16 (NP_UTF16 utf16String, unsigned int len);
+NP_String *NP_CreateStringWithUTF8 (const NP_UTF8 *utf8String);
+NP_String *NP_CreateStringWithUTF16 (const NP_UTF16 *utf16String, unsigned int len);
 
 /*
     Memory returned from NP_UTF8FromString and NP_UTF16FromString must be freed by the caller.
 */
-NP_UTF8 NP_UTF8FromString (NP_String *obj);
-NP_UTF16 NP_UTF16FromString (NP_String *obj);
+NP_UTF8 *NP_UTF8FromString (NP_String *obj);
+NP_UTF16 *NP_UTF16FromString (NP_String *obj);
 int32_t NP_StringLength (NP_String *obj);
 
 NP_Boolean *NP_CreateBoolean (bool f);
@@ -278,9 +290,12 @@ bool NP_IsKindOfClass (NP_Object *obj, NP_Class *aClass);
     from entry points into NP_Objects.  A reference count of the message passes
     to the callee.  Typical usage:
 
-    NP_SetException (obj, NP_CreateStringWithUTF8("invalid type"));
+    NP_String *message = NP_CreateStringWithUTF8("invalid type");
+    NP_SetException (obj, mesage);
+    NP_ReleaseObject (message);
 */
-void NP_SetException (NP_Object *obj,  NP_String *message);
+void NP_SetExceptionWithUTF8 (NP_Object *obj, const NP_UTF8 *message);
+void NP_SetException (NP_Object *obj, NP_String *message);
 
 /*
     Example usage:
@@ -321,7 +336,7 @@ void NP_SetException (NP_Object *obj,  NP_String *message);
     static NP_Identifier getChapterIdentifier;
     static NP_Identifier numChaptersIdentifier;
 
-    static initializeIdentifiers()
+    static void initializeIdentifiers()
     {
         stopIdentifier = NP_IdentifierFromUTF8 ("stop");
         startIdentifier = NP_IdentifierFromUTF8 ("start");
@@ -357,12 +372,11 @@ void NP_SetException (NP_Object *obj,  NP_String *message);
         return 0;
     }
 
-    void myInterfaceSetProperty (MyInterfaceObject *obj, NP_Identifier name, NP_Object *obj)
+    void myInterfaceSetProperty (MyInterfaceObject *obj, NP_Identifier name, NP_Object *value)
     {
         if (name == numChaptersIdentifier){
             obj->numChapters = NP_IntFromNumber(obj)
         }
-        return 0;
     }
 
     NP_Object *myInterfaceInvoke (MyInterfaceObject *obj, NP_Identifier name, NP_Object **args, unsigned argCount)
@@ -394,6 +408,8 @@ void NP_SetException (NP_Object *obj,  NP_String *message);
         
         if (stopIdentifier == 0)
             initializeIdentifiers();
+            
+        return (NP_Object *)newInstance;
     }
 
     void myInterfaceInvalidate ()

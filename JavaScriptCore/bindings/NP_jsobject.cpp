@@ -24,38 +24,14 @@
  */
 #include <NP_runtime.h>
 
+#include <c_utility.h>
+
 #include <runtime.h>
 #include <runtime_object.h>
 #include <runtime_root.h>
 
 using namespace KJS;
 using namespace KJS::Bindings;
-
-typedef enum 
-{
-    NP_NumberValueType,
-    NP_StringValueType,
-    NP_BooleanValueType,
-    NP_NullValueType,
-    NP_UndefinedValueType,
-    NP_ObjectValueType,
-    NP_InvalidValueType
-} NP_ValueType;
-
-NP_Object *coerceValueToNPValueType (KJS::ExecState *exec, const KJS::Value &value, NP_ValueType type)
-{
-    return 0;
-}
-
-NP_Object *convertValueToNPValueType (KJS::ExecState *exec, const KJS::Value &value)
-{
-    return 0;
-}
-
-Value convertNPValueTypeToValue (KJS::ExecState *exec, const NP_Object *obj)
-{
-    return Undefined();
-}
 
 static KJS::List listFromNPArray(KJS::ExecState *exec, NP_Object **args, unsigned argCount)
 {
@@ -98,11 +74,11 @@ NP_Class *NP_JavaScriptObjectClass = javascriptClass;
 Identifier identiferFromNPIdentifier(NP_Identifier ident)
 {
     NP_String *string = NP_CreateStringWithUTF8 (NP_UTF8FromIdentifier (ident));
-    NP_UTF16 methodName = NP_UTF16FromString (string);
+    NP_UTF16 *methodName = NP_UTF16FromString (string);
     int32_t length = NP_StringLength (string);
     NP_ReleaseObject (string);
     Identifier identifier ((const KJS::UChar*)methodName, length);
-    free (methodName);
+    free ((void *)methodName);
     return identifier;
 }
 
@@ -146,11 +122,11 @@ void NP_Evaluate (NP_JavaScriptObject *o, NP_String *s, NP_JavaScriptResultInter
     ExecState *exec = obj->root->interpreter()->globalExec();
     Object thisObj = Object(const_cast<ObjectImp*>(obj->imp));
     Interpreter::lock();
-    NP_UTF16 script = NP_UTF16FromString (s);
+    NP_UTF16 *script = NP_UTF16FromString (s);
     int32_t length = NP_StringLength (s);
     KJS::Value result = obj->root->interpreter()->evaluate(UString((const UChar *)script,length)).value();
     Interpreter::unlock();
-    free (script);
+    free ((void *)script);
     
     NP_Object *npresult = convertValueToNPValueType(exec, result);
 
