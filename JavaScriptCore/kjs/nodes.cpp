@@ -2073,6 +2073,15 @@ Completion ForInNode::execute(ExecState *exec)
   }
 
   e = expr->evaluate(exec);
+
+  // for Null and Undefined, we want to make sure not to go through
+  // the loop at all, because their object wrappers will have a
+  // property list but will throw an exception if you attempt to
+  // access any property.
+  if (e.type() == UndefinedType || e.type() == NullType) {
+    return Completion(Normal, retval);
+  }
+
   KJS_CHECKEXCEPTION
   v = e.toObject(exec);
   propList = v.propList(exec);

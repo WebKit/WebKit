@@ -1,3 +1,14 @@
+2003-11-13  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by John.
+
+	- fixed 3472562 - Null or Undefined variables passed to IN operator cause javascript exceptions
+	
+        * kjs/nodes.cpp:
+        (ForInNode::execute): If the in value is null or undefined, bail
+	out early, since attempting to iterate its properties will throw
+	an exception.
+
 2003-11-12  Darin Adler  <darin@apple.com>
 
         - fixed the build
