@@ -60,7 +60,7 @@ typedef khtml::RenderPart KHTMLRenderPart;
 extern NSString *WebCoreElementFrameKey;
 extern NSString *WebCoreElementImageAltStringKey;
 extern NSString *WebCoreElementImageKey;
-extern NSString *WebCoreElementImageLocationKey;
+extern NSString *WebCoreElementImageRectKey;
 extern NSString *WebCoreElementImageURLKey;
 extern NSString *WebCoreElementIsSelectedTextKey;
 extern NSString *WebCoreElementLinkURLKey;

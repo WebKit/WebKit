@@ -30,7 +30,7 @@
 extern NSString *WebElementFrameKey;		// WebFrame of the element
 extern NSString *WebElementImageAltStringKey;	// NSString of the ALT attribute of the image element
 extern NSString *WebElementImageKey;		// NSImage of the image element
-extern NSString *WebElementImageLocationKey;	// NSValue of an NSPoint representing the origin of the image element
+extern NSString *WebElementImageRectKey;	// NSValue of an NSRect, the rect of the image element
 extern NSString *WebElementImageURLKey;		// NSURL of the image element
 extern NSString *WebElementIsSelectedTextKey; 	// NSNumber of BOOL indicating whether the element is selected text or not 
 extern NSString *WebElementLinkURLKey;		// NSURL if the element is within an anchor

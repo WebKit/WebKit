@@ -496,7 +496,7 @@ static BOOL forceRealHitTest = NO;
     if (imageURL) {
 	_private->draggingImageURL = [imageURL retain];
         [self _web_dragPromisedImage:[element objectForKey:WebElementImageKey]
-                              origin:[[element objectForKey:WebElementImageLocationKey] pointValue]
+                                rect:[[element objectForKey:WebElementImageRectKey] rectValue]
                                  URL:linkURL ? linkURL : imageURL
                             fileType:[[imageURL path] pathExtension]
                                title:[element objectForKey:WebElementImageAltStringKey]

@@ -158,10 +158,11 @@
     ASSERT(controller);
     
     NSDictionary *element = [NSDictionary dictionaryWithObjectsAndKeys:
-        [representation image], WebElementImageKey,
-        [representation URL], WebElementImageURLKey,
-        [NSNumber numberWithBool:NO], WebElementIsSelectedTextKey,
-        frame, WebElementFrameKey, nil];
+        [representation image], 		WebElementImageKey,
+        [NSValue valueWithRect:[self bounds]], 	WebElementImageRectKey,
+        [representation URL], 			WebElementImageURLKey,
+        [NSNumber numberWithBool:NO], 		WebElementIsSelectedTextKey,
+        frame, 					WebElementFrameKey, nil];
         
     return [controller _menuForElement:element];
 }
@@ -176,7 +177,7 @@
         [self retain];
         
         [self _web_dragPromisedImage:[representation image]
-                              origin:NSZeroPoint
+                                rect:[self bounds]
                                  URL:[representation URL]
                             fileType:[[[representation URL] path] pathExtension]
                                title:nil

@@ -1,3 +1,21 @@
+2003-01-31  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed : 3155148 - image shown when dragging gets size from image file, not size as used on page
+
+        Reviewed by darin.
+
+        * Misc.subproj/WebNSViewExtras.h:
+        * Misc.subproj/WebNSViewExtras.m:
+        (-[NSView _web_dragPromisedImage:rect:URL:fileType:title:event:]): take a rect so we know the original size and origin
+        * WebKit.exp: added WebElementImageRectKey
+        * WebView.subproj/WebController.h: WebElementImageRectKey
+        * WebView.subproj/WebController.m: WebElementImageRectKey
+        * WebView.subproj/WebHTMLViewPrivate.m:
+        (-[WebHTMLView _handleMouseDragged:]): call _web_dragPromisedImage with WebElementImageRect
+        * WebView.subproj/WebImageView.m: 
+        (-[WebImageView menuForEvent:]): provide the WebElementImageRect since we do this for other image elements
+        (-[WebImageView mouseDragged:]): call _web_dragPromisedImage with [self bounds]
+
 === Safari-55 ===
 
 2003-01-30  Chris Blumenberg  <cblu@apple.com>

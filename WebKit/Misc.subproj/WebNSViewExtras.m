@@ -165,15 +165,19 @@
 #endif
 
 - (void)_web_dragPromisedImage:(NSImage *)image
-                        origin:(NSPoint)origin
+                          rect:(NSRect)rect
                            URL:(NSURL *)URL
                       fileType:(NSString *)fileType
                          title:(NSString *)title
                          event:(NSEvent *)event
-{
-    NSImage *dragImage = [[image copy] autorelease];
+{    
+    NSSize originalSize = rect.size;
+    NSPoint origin = rect.origin;
     
-    NSSize originalSize = [dragImage size];
+    NSImage *dragImage = [[image copy] autorelease];
+    [dragImage setScalesWhenResized:YES];
+    [dragImage setSize:originalSize];
+
     [dragImage _web_scaleToMaxSize:WebMaxDragImageSize];
     NSSize newSize = [dragImage size];
 

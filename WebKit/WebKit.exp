@@ -40,6 +40,7 @@ _WebBookmarksWereAddedNotification
 _WebBookmarksWereRemovedNotification
 _WebElementFrameKey
 _WebElementImageKey
+_WebElementImageRectKey
 _WebElementImageURLKey
 _WebElementIsSelectedTextKey
 _WebElementLinkLabelKey

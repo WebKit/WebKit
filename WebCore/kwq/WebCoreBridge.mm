@@ -72,7 +72,7 @@ using KParts::URLArgs;
 NSString *WebCoreElementFrameKey = 		@"WebElementFrame";
 NSString *WebCoreElementImageAltStringKey = 	@"WebElementImageAltString";
 NSString *WebCoreElementImageKey = 		@"WebElementImage";
-NSString *WebCoreElementImageLocationKey = 	@"WebElementImageLocation";
+NSString *WebCoreElementImageRectKey = 		@"WebElementImageRect";
 NSString *WebCoreElementImageURLKey = 		@"WebElementImageURL";
 NSString *WebCoreElementIsSelectedTextKey = 	@"WebElementIsSelectedTextKey";
 NSString *WebCoreElementLinkURLKey = 		@"WebElementLinkURL";
@@ -501,13 +501,17 @@ static bool initializedObjectCacheSize = FALSE;
         }
         
         RenderImage *r = (RenderImage *)node->renderer();
-        id <WebCoreImageRenderer> image = r->pixmap().image();
-        if (image) {
-            [element setObject:image forKey:WebCoreElementImageKey];
-        }
-        int x, y;
-        if (r->absolutePosition(x, y)) {
-            [element setObject:[NSValue valueWithPoint:NSMakePoint(x,y)] forKey:WebCoreElementImageLocationKey];
+        if (r) {
+            int x, y;
+            if (r->absolutePosition(x, y)) {
+                NSValue *rect = [NSValue valueWithRect:NSMakeRect(x, y, r->contentWidth(), r->contentHeight())];
+                [element setObject:rect forKey:WebCoreElementImageRectKey];
+            }
+            
+            NSImage *image = r->pixmap().image();
+            if (image) {
+                [element setObject:image forKey:WebCoreElementImageKey];
+            }
         }
     }
     

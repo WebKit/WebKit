@@ -42,7 +42,7 @@ static const struct UserAgentSpoofTableEntry *_web_findSpoofTableEntry(const cha
 NSString *WebElementFrameKey = 			@"WebElementFrame";
 NSString *WebElementImageKey = 			@"WebElementImage";
 NSString *WebElementImageAltStringKey = 	@"WebElementImageAltString";
-NSString *WebElementImageLocationKey = 		@"WebElementImageLocation";
+NSString *WebElementImageRectKey = 		@"WebElementImageRect";
 NSString *WebElementImageURLKey = 		@"WebElementImageURL";
 NSString *WebElementIsSelectedTextKey = 	@"WebElementIsSelectedTextKey";
 NSString *WebElementLinkURLKey = 		@"WebElementLinkURL";
