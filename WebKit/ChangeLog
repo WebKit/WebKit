@@ -1,3 +1,14 @@
+2003-04-10  Darin Adler (Maciej committing for Darin)  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+	- fixed 3225042 - MallocDebug shows "access after deallocated" problem in WebFrameView
+
+        * WebView.subproj/WebFrameView.m:
+        (-[WebFrameView dealloc]): Nil out _private.
+        (-[WebFrameView nextKeyView]): Check _private for nil.
+        (-[WebFrameView previousKeyView]): Check _private for nil.
+ 
 2003-04-10  Richard Williamson   <rjw@apple.com>
 
         Fix performance regression with iBench (post 71).  The iBench cheat was being defeated.

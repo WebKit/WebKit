@@ -68,6 +68,7 @@ enum {
     --WebFrameViewCount;
     
     [_private release];
+    _private = nil;
     
     [super dealloc];
 }
@@ -271,7 +272,7 @@ enum {
 
 - (NSView *)nextKeyView
 {
-    if (_private->inNextValidKeyView) {
+    if (_private != nil && _private->inNextValidKeyView) {
         WebFrame *webFrame = [self webFrame];
         WebView *webView = [[self webFrame] webView];
         if (webFrame == [webView mainFrame]) {
@@ -283,7 +284,7 @@ enum {
 
 - (NSView *)previousKeyView
 {
-    if (_private->inNextValidKeyView) {
+    if (_private != nil && _private->inNextValidKeyView) {
         WebFrame *webFrame = [self webFrame];
         WebView *webView = [[self webFrame] webView];
         if (webFrame == [webView mainFrame]) {
