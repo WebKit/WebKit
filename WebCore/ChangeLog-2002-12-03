@@ -1,3 +1,7 @@
+2002-11-21  Maciej Stachowiak  <mjs@apple.com>
+
+        * Makefile.am: Pass symroots for this tree to pbxbuild.
+
 2002-11-21  David Hyatt  <hyatt@apple.com>
 
 	Fixed for tables.  Make the percentage height calculation

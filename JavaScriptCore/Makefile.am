@@ -10,9 +10,9 @@ kjs_testkjs_LDFLAGS = -F$(SYMROOTS) -framework JavaScriptCore
 
 all-am: JavaScriptCore-stamp
 JavaScriptCore-stamp: kjs/*.cpp kjs/*.h
-	pbxbuild -buildstyle $(BUILDSTYLE) && touch $@
+	pbxbuild -buildstyle $(BUILDSTYLE) OBJROOT=$(SYMROOTS) SYMROOT=$(SYMROOTS) DSTROOT=$(SYMROOTS) && touch $@
 clean-am:
-	pbxbuild clean
+	pbxbuild clean OBJROOT=$(SYMROOTS) SYMROOT=$(SYMROOTS) DSTROOT=$(SYMROOTS)
 	rm -rf $(SYMROOTS)/JavaScriptCore.build
 	rm -rf $(SYMROOTS)/JavaScriptCore.framework
 	rm -rf $(SYMROOTS)/Alexander.app/Frameworks/JavaScriptCore.framework

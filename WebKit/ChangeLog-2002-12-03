@@ -1,3 +1,7 @@
+2002-11-21  Maciej Stachowiak  <mjs@apple.com>
+
+        * Makefile.am: Pass symroots for this tree to pbxbuild.
+
 2002-11-21  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: 3009881 - plugins get mouse-overs even when mouse is in menus

@@ -1,7 +1,7 @@
 all-am: previous-clean-timestamp
-	pbxbuild -buildstyle $(BUILDSTYLE)
+	pbxbuild -buildstyle $(BUILDSTYLE) OBJROOT=$(SYMROOTS) SYMROOT=$(SYMROOTS) DSTROOT=$(SYMROOTS) 
 clean-am:
-	pbxbuild clean
+	pbxbuild clean OBJROOT=$(SYMROOTS) SYMROOT=$(SYMROOTS) DSTROOT=$(SYMROOTS) 
 	rm -rf $(SYMROOTS)/WebKit.build
 	rm -rf $(SYMROOTS)/WebKit.framework
 	rm -rf $(SYMROOTS)/Alexander.app/Frameworks/WebKit.framework
