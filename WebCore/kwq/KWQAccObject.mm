@@ -56,8 +56,8 @@ extern "C" AXUIElementRef NSAccessibilityCreateAXUIElementRef(id element);
 #import "khtml_part.h"
 #import "render_canvas.h"
 #import "render_image.h"
-#import "render_object.h"
 #import "render_list.h"
+#import "render_object.h"
 #import "render_style.h"
 #import "render_text.h"
 #import "selection.h"
@@ -930,6 +930,7 @@ static QRect boundingBoxRect(RenderObject* obj)
         // get the selection from the document part
         // NOTE: BUG support nested WebAreas, like in <http://webcourses.niu.edu/>
         // (there is a web archive of this page attached to <rdar://problem/3888973>)
+        // Trouble is we need to know which document view to ask.
         Selection   sel = [self topView]->part()->selection();
         if (sel.isNone()) {
             sel = m_renderer->document()->renderer()->canvas()->view()->part()->selection();
@@ -1090,14 +1091,46 @@ static QRect boundingBoxRect(RenderObject* obj)
     return (id)qString.getCFString();
 }
 
-- (id)doAXTextMarkerForPosition: (CGPoint) point
+- (id)doAXTextMarkerForPosition: (NSPoint) point
 {
-    NSPoint screenpoint = NSMakePoint(point.x, point.y);
-    NSView * view = [self topView]->getView();
-    NSPoint windowpoint = [[view window] convertScreenToBase: screenpoint];
-    NSPoint ourpoint = [view convertPoint:windowpoint fromView:nil];
+    // convert absolute point to view coordinates
+    NSView *view = [self topView]->getView();
+    RenderObject *renderer = [self topRenderer];
+    NodeImpl *innerNode = NULL;
+    NSPoint ourpoint;
+    
+    // locate the node containing the point
+    while (1) {
+        // ask the document layer to hitTest
+        NSPoint windowCoord = [[view window] convertScreenToBase: point];
+        ourpoint = [view convertPoint:windowCoord fromView:nil];
+        RenderObject::NodeInfo nodeInfo(true, true);
+        renderer->layer()->hitTest(nodeInfo, (int)ourpoint.x, (int)ourpoint.y);
+        innerNode = nodeInfo.innerNode();
+        if (!innerNode || !innerNode->renderer())
+            return nil;
 
-    VisiblePosition pos = [self topRenderer]->positionForCoordinates ((int)ourpoint.x, (int)ourpoint.y);
+        // done if hit something other than a widget
+        renderer = innerNode->renderer();
+        if (!renderer->isWidget())
+            break;
+
+        // descend into widget (FRAME, IFRAME, OBJECT...)
+        QWidget *widget = static_cast<RenderWidget *>(renderer)->widget();
+        if (!widget || !widget->inherits("KHTMLView"))
+            break;
+        KHTMLPart *part = static_cast<KHTMLView *>(widget)->part();
+        if (!part)
+            break;
+        DocumentImpl *document = part->xmlDocImpl();
+        if (!document)
+            break;
+        renderer = document->renderer();
+        view = static_cast<KHTMLView *>(widget)->getDocumentView();
+    }
+    
+    // get position within the node
+    VisiblePosition pos = innerNode->renderer()->positionForCoordinates ((int)ourpoint.x, (int)ourpoint.y);
     return (id) [self textMarkerForVisiblePosition:pos];
 }
 
@@ -1114,12 +1147,25 @@ static QRect boundingBoxRect(RenderObject* obj)
         return nil;
     
     // use the Selection class to help calculate the corresponding rectangle
-    // NOTE: If the selection spans lines, the rectangle is to extend across
-    // the width of the view
-    NSView * view = [self topView]->getView();
     QRect rect1 = Selection(startVisiblePosition, startVisiblePosition).caretRect();
     QRect rect2 = Selection(endVisiblePosition, endVisiblePosition).caretRect();
     QRect ourrect = rect1.unite(rect2);
+
+    // try to use the document view from the selection, so that nested WebAreas work,
+    // but fall back to the top level doc if we do not find it easily
+    KHTMLView *docView = NULL;
+    RenderObject * renderer = startVisiblePosition.deepEquivalent().node()->renderer();
+    if (renderer) {
+        DocumentImpl* doc = renderer->document();
+        if (doc)
+            docView = doc->view();
+    }
+    if (!docView)
+        docView = [self topView];
+    NSView * view = docView->getView();
+
+    // if the selection spans lines, the rectangle is to extend
+    // across the width of the view
     if (rect1.bottom() != rect2.bottom()) {
         ourrect.setX((int)[view frame].origin.x);
         ourrect.setWidth((int)[view frame].size.width);
@@ -1127,10 +1173,10 @@ static QRect boundingBoxRect(RenderObject* obj)
  
     // convert our rectangle to screen coordinates
     NSRect rect = NSMakeRect(ourrect.left(), ourrect.top(), ourrect.width(), ourrect.height());
-    rect = NSOffsetRect(rect, -[self topView]->contentsX(), -[self topView]->contentsY());
+    rect = NSOffsetRect(rect, -docView->contentsX(), -docView->contentsY());
     rect = [view convertRect:rect toView:nil];
     rect.origin = [[view window] convertBaseToScreen:rect.origin];
-    
+   
     // return the converted rect
     return [NSValue valueWithRect:rect];
 }
@@ -1668,15 +1714,12 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
 {
     AXTextMarkerRef         textMarker = nil;
     AXTextMarkerRangeRef    textMarkerRange = nil;
-    AXValueRef              value = nil;
     NSNumber *              number = nil;
     NSArray *               array = nil;
     KWQAccObject *          uiElement = nil;
-    CGPoint                 point;
-    CGSize                  size;
-    CGRect                  rect;
-    CFRange                 range;
-    AXError                 error;
+    NSPoint                 point = {0.0, 0.0};
+    bool                    pointSet = false;
+    CFTypeID                paramType;
     
     // basic parameter validation
     if (!m_renderer || !attribute || !parameter)
@@ -1685,10 +1728,11 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
     // common parameter type check/casting.  Nil checks in handlers catch wrong type case.
     // NOTE: This assumes nil is not a valid parameter, because it is indistinguishable from
     // a parameter of the wrong type.
-    if (CFGetTypeID(parameter) == AXTextMarkerGetTypeID())
+    paramType = CFGetTypeID(parameter);
+    if (paramType == AXTextMarkerGetTypeID())
         textMarker = (AXTextMarkerRef) parameter;
 
-    else if (CFGetTypeID(parameter) == AXTextMarkerRangeGetTypeID())
+    else if (paramType == AXTextMarkerRangeGetTypeID())
         textMarkerRange = (AXTextMarkerRangeRef) parameter;
 
     else if ([parameter isKindOfClass:[KWQAccObject self]])
@@ -1699,28 +1743,16 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
 
     else if ([parameter isKindOfClass:[NSArray self]])
         array = parameter;
+    
+    else if ([parameter isKindOfClass:[NSValue self]] && strcmp([(NSValue *)parameter objCType], @encode(NSPoint)) == 0) {
+        pointSet = true;
+        point = [(NSValue *)parameter pointValue];
 
-    else if (CFGetTypeID(parameter) == AXValueGetTypeID()) {
-        value = (AXValueRef) parameter;
-        switch (AXValueGetType(value)) {
-            case kAXValueCGPointType:
-                AXValueGetValue(value, kAXValueCGPointType, &point);
-                break;
-            case kAXValueCGSizeType:
-                AXValueGetValue(value, kAXValueCGSizeType, &size);
-                break;
-            case kAXValueCGRectType:
-                AXValueGetValue(value, kAXValueCGRectType, &rect);
-                break;
-            case kAXValueCFRangeType:
-                AXValueGetValue(value, kAXValueCFRangeType, &range);
-                break;
-            case kAXValueAXErrorType:
-                AXValueGetValue(value, kAXValueAXErrorType, &error);
-                break;
-            default:
-                break;
-        }
+    } else {
+        // got a parameter of a type we never use
+        // NOTE: No ASSERT_NOT_REACHED because this can happen accidentally 
+        // while using accesstool (e.g.), forcing you to start over
+        return nil;
     }
   
     // dispatch
@@ -1740,7 +1772,7 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
         return [self doAXStringForTextMarkerRange: textMarkerRange];
 
     if ([attribute isEqualToString: (NSString *) kAXTextMarkerForPositionParameterizedAttribute])
-        return [self doAXTextMarkerForPosition: point];
+        return pointSet ? [self doAXTextMarkerForPosition: point] : nil;
 
     if ([attribute isEqualToString: (NSString *) kAXBoundsForTextMarkerRangeParameterizedAttribute])
         return [self doAXBoundsForTextMarkerRange: textMarkerRange];

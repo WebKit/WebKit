@@ -1,3 +1,22 @@
+2005-03-11  David Harrison  <harrison@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/4009446> AX: kAXTextMarkerForPositionParameterizedAttribute not working correctly (required for Dictionary pop-up)
+
+        * kwq/KWQAccObject.mm:
+        (-[KWQAccObject accessibilityAttributeValue:]):
+        Comment changes.
+        
+        (-[KWQAccObject doAXTextMarkerForPosition:]):
+        Dig into widgets.
+        
+        (-[KWQAccObject doAXBoundsForTextMarkerRange:]):
+        Use the selection's document instead of the top document, to accommodate frames, etc.
+        
+        (-[KWQAccObject accessibilityAttributeValue:forParameter:]):
+        Fixed parameter processing to look for NSValue instead of AXValue.
+
 2005-03-11  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Harrison
