@@ -1,3 +1,21 @@
+2002-11-12  Richard Williamson  <rjw@apple.com>
+
+        Implemented letter-spacing and word-spacing CSS properties.
+        
+        * khtml/rendering/font.cpp:
+        (Font::drawText):
+        (Font::floatWidth):
+        (Font::floatCharacterWidths):
+        * kwq/KWQFontMetrics.h:
+        * kwq/KWQFontMetrics.mm:
+        (QFontMetrics::width):
+        (QFontMetrics::floatWidth):
+        (QFontMetrics::floatCharacterWidths):
+        * kwq/KWQPainter.h:
+        * kwq/KWQPainter.mm:
+        (QPainter::drawText):
+        * kwq/WebCoreTextRenderer.h:
+
 2002-11-12  David Hyatt  <hyatt@apple.com>
 
 	Revert floats so that they don't use layers any more.

@@ -38,10 +38,10 @@
 - (float)xHeight;
 
 // horizontal metrics
-- (float)floatWidthForCharacters:(const unichar *)characters stringLength:(unsigned)length fromCharacterPosition: (int)pos numberOfCharacters: (int)len withPadding: (int)padding applyRounding: (BOOL)applyRounding attemptFontSubstitution: (BOOL)attemptFontSubstitution widths: (float *)buffer;
+- (float)floatWidthForCharacters:(const unichar *)characters stringLength:(unsigned)length fromCharacterPosition: (int)pos numberOfCharacters: (int)len withPadding: (int)padding applyRounding: (BOOL)applyRounding attemptFontSubstitution: (BOOL)attemptFontSubstitution widths: (float *)buffer letterSpacing: (int)letterSpacing wordSpacing: (int)wordSpacing;
 
 // drawing
-- (void)drawCharacters:(const UniChar *)characters stringLength:(unsigned)length fromCharacterPosition:(int)from toCharacterPosition:(int)to atPoint:(NSPoint)point withPadding: (int)padding withTextColor:(NSColor *)textColor backgroundColor:(NSColor *)backgroundColor rightToLeft: (BOOL)rtl;
+- (void)drawCharacters:(const UniChar *)characters stringLength:(unsigned)length fromCharacterPosition:(int)from toCharacterPosition:(int)to atPoint:(NSPoint)point withPadding: (int)padding withTextColor:(NSColor *)textColor backgroundColor:(NSColor *)backgroundColor rightToLeft: (BOOL)rtl letterSpacing: (int)letterSpacing wordSpacing: (int)wordSpacing;
 - (void)drawUnderlineForCharacters:(const UniChar *)characters stringLength:(unsigned)length atPoint:(NSPoint)point withColor:(NSColor *)color;
 
 @end

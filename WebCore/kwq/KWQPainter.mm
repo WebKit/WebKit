@@ -360,7 +360,7 @@ void QPainter::drawText(int x, int y, int, int, int alignmentFlags, const QStrin
 
     const UniChar* str = (const UniChar*)qstring.unicode();
     if (alignmentFlags & Qt::AlignRight)
-    	x -= ROUND_TO_INT([renderer floatWidthForCharacters:(const UniChar *)str stringLength:qstring.length() fromCharacterPosition:0 numberOfCharacters:qstring.length() withPadding: 0 applyRounding:YES attemptFontSubstitution: YES widths: 0]);
+        x -= ROUND_TO_INT([renderer floatWidthForCharacters:(const UniChar *)str stringLength:qstring.length() fromCharacterPosition:0 numberOfCharacters:qstring.length() withPadding: 0 applyRounding:YES attemptFontSubstitution: YES widths: 0 letterSpacing: 0 wordSpacing: 0]);
      
     [renderer drawCharacters:str stringLength:qstring.length()
         fromCharacterPosition:0 
@@ -369,10 +369,12 @@ void QPainter::drawText(int x, int y, int, int, int alignmentFlags, const QStrin
         withPadding: 0
         withTextColor:data->state.pen.color().getNSColor() 
         backgroundColor:nil
-        rightToLeft: false];
+        rightToLeft: false
+        letterSpacing: 0
+        wordSpacing: 0];
 }
 
-void QPainter::drawText(int x, int y, const QChar *str, int len, int from, int to, int toAdd, const QColor &backgroundColor, QPainter::TextDirection d)
+void QPainter::drawText(int x, int y, const QChar *str, int len, int from, int to, int toAdd, const QColor &backgroundColor, QPainter::TextDirection d, int letterSpacing, int wordSpacing)
 {
     if (data->state.paintingDisabled || len <= 0)
         return;
@@ -386,7 +388,9 @@ void QPainter::drawText(int x, int y, const QChar *str, int len, int from, int t
         withPadding: toAdd
         withTextColor:data->state.pen.color().getNSColor() 
         backgroundColor:backgroundColor.isValid() ? backgroundColor.getNSColor() : nil
-        rightToLeft: d == RTL ? true : false];
+        rightToLeft: d == RTL ? true : false
+        letterSpacing: letterSpacing
+        wordSpacing: wordSpacing];
 }
 
 void QPainter::drawUnderlineForText(int x, int y, const QChar *str, int len)

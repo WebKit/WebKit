@@ -1,3 +1,19 @@
+2002-11-12  Richard Williamson  <rjw@apple.com>
+
+        Implemented letter-spacing and word-spacing CSS properties.
+
+        * Misc.subproj/WebStringTruncator.m:
+        (+[WebStringTruncator rightTruncateString:toWidth:withFont:]):
+        (+[WebStringTruncator centerTruncateString:toWidth:withFont:]):
+        * WebCoreSupport.subproj/WebTextRenderer.h:
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (-[WebTextRenderer widthForCharacters:length:]):
+        (-[WebTextRenderer drawCharacters:stringLength:fromCharacterPosition:toCharacterPosition:atPoint:withPadding:withTextColor:backgroundColor:rightToLeft:letterSpacing:wordSpacing:]):
+        (-[WebTextRenderer floatWidthForCharacters:stringLength:characterPosition:]):
+        (-[WebTextRenderer floatWidthForCharacters:stringLength:fromCharacterPosition:numberOfCharacters:]):
+        (-[WebTextRenderer floatWidthForCharacters:stringLength:fromCharacterPosition:numberOfCharacters:withPadding:applyRounding:attemptFontSubstitution:widths:letterSpacing:wordSpacing:]):
+        (-[WebTextRenderer _floatWidthForCharacters:stringLength:fromCharacterPosition:numberOfCharacters:withPadding:applyRounding:attemptFontSubstitution:widths:fonts:glyphs:numGlyphs:letterSpacing:wordSpacing:]):
+
 2002-11-12  Maciej Stachowiak  <mjs@apple.com>
 
 	Removed policy classes and instead use the policy enums directly,

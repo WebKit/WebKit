@@ -53,8 +53,8 @@ public:
     int width(const QString &, int len=-1) const;
     int charWidth(const QString &, int pos) const;
     int width(const QChar *, int len) const;
-    float floatWidth(const QChar *, int slen, int pos, int len) const;
-    float floatCharacterWidths(const QChar *, int slen, int pos, int len, int toAdd, float *buffer) const;
+    float floatWidth(const QChar *, int slen, int pos, int len, int letterSpacing, int wordSpacing) const;
+    float floatCharacterWidths(const QChar *, int slen, int pos, int len, int toAdd, float *buffer, int letterSpacing, int wordSpacing) const;
 
     QRect boundingRect(const QString &, int len=-1) const;
     QRect boundingRect(int, int, int, int, int, const QString &) const;
