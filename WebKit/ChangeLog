@@ -1,3 +1,15 @@
+2003-11-19  Richard Williamson   <rjw@apple.com>
+
+	More LiveConnect stuff.  Horrible polling hack that
+	blocks main thread waiting for applet to fully initialize.
+
+        Reviewed by Ken.
+
+        * Plugins.subproj/WebPluginController.m:
+        (-[WebPluginController addPlugin:]):
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge pollForAppletInView:]):
+
 2003-11-19  David Hyatt  <hyatt@apple.com>
 
 	Make updateScrollers guard non-static, so that it applies only to the view whose scrollers are being

@@ -50,6 +50,8 @@
 #import <Foundation/NSURLFileTypeMappings.h>
 #import <WebKit/WebLocalizableStrings.h>
 
+#import <JavaVM/jni.h>
+
 #define KeyboardUIModeDidChangeNotification @"com.apple.KeyboardUIModeDidChange"
 #define AppleKeyboardUIMode CFSTR("AppleKeyboardUIMode")
 #define UniversalAccessDomain CFSTR("com.apple.universalaccess")
@@ -61,6 +63,13 @@
 @interface NSView (AppKitSecretsWebBridgeKnowsAbout)
 - (NSView *)_findLastViewInKeyViewLoop;
 @end
+
+@interface NSView (JavaPluginSecrets)
+- (void *)getApplet;
+- (BOOL)mayActivate;
+- (void)activateApplet:(id)unused;
+@end
+
 
 @implementation WebBridge
 
@@ -1045,5 +1054,32 @@ static id <WebFormDelegate> formDelegate(WebBridge *self)
         [[WebDefaultUIDelegate sharedUIDelegate] webViewPrint:[_frame webView]];
     }
 }
+
+#define MAX_GET_APPLET_POLL_TIME 10
+#define GET_APPLET_POLL_INTERVAL    1
+
+// pollGetApplet: will poll until getApplet on the plugin view returns non-nil,
+// or MAX_GET_APPLET_POLL_TIME is exceeded.
+- (jobject)pollForAppletInView: (NSView *)view
+{
+    jobject applet = 0;
+    
+    if ([view respondsToSelector: @selector(getApplet)]) {
+        NSTimeInterval timeUsed = 0;
+
+        while (!applet && timeUsed  < MAX_GET_APPLET_POLL_TIME) {
+            applet = [view getApplet];
+            [NSThread sleepUntilDate:[NSDate dateWithTimeIntervalSinceNow:GET_APPLET_POLL_INTERVAL]];
+            timeUsed += GET_APPLET_POLL_INTERVAL;
+            NSLog (@"%s:  applet = %p", __PRETTY_FUNCTION__, applet);
+            
+            if ([view mayActivate]){
+                [view activateApplet:nil];
+            }
+        }
+    }
+    return applet;
+}
+
 
 @end
