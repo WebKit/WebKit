@@ -38,7 +38,14 @@
 }
 @end
 
-@interface WebController (WebPrivate);
+@interface WebController (WebPrivate)
+
+/*
+        Called when a data source needs to create a frame.  This method encapsulates the
+        specifics of creating and initializing a view of the appropriate class.
+*/    
+- (WebFrame *)createFrameNamed: (NSString *)fname for: (WebDataSource *)child inParent: (WebDataSource *)parent allowsScrolling: (BOOL)allowsScrolling;
+
 
 - (id<WebContextMenuHandler>)_defaultContextMenuHandler;
 - (void)_receivedProgress: (WebLoadProgress *)progress forResourceHandle: (WebResourceHandle *)resourceHandle fromDataSource: (WebDataSource *)dataSource complete:(BOOL)isComplete;

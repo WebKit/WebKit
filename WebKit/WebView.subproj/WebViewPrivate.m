@@ -4,6 +4,7 @@
 */
 
 #import <WebKit/WebBackForwardList.h>
+#import <WebKit/WebContextMenuHandler.h>
 #import <WebKit/WebControllerPrivate.h>
 #import <WebKit/WebControllerPolicyHandlerPrivate.h>
 #import <WebKit/WebDataSourcePrivate.h>
@@ -11,8 +12,10 @@
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebLoadProgress.h>
 #import <WebKit/WebPreferencesPrivate.h>
+#import <WebKit/WebResourceProgressHandler.h>
 #import <WebKit/WebStandardPanelsPrivate.h>
 #import <WebKit/WebViewPrivate.h>
+#import <WebKit/WebWindowContext.h>
 
 #import <WebFoundation/WebAssertions.h>
 
@@ -81,6 +84,30 @@
 
 
 @implementation WebController (WebPrivate)
+
+- (WebFrame *)createFrameNamed: (NSString *)fname for: (WebDataSource *)childDataSource inParent: (WebDataSource *)parentDataSource allowsScrolling: (BOOL)allowsScrolling
+{
+    WebView *childView;
+    WebFrame *newFrame;
+
+    childView = [[WebView alloc] initWithFrame: NSMakeRect(0,0,0,0)];
+
+    newFrame = [[WebFrame alloc] initWithName: fname webView: childView provisionalDataSource: childDataSource controller: self];
+
+    [parentDataSource addFrame: newFrame];
+    
+    [newFrame release];
+
+    [childView _setController: self];
+    [childDataSource _setController: self];
+
+    [childView setAllowsScrolling: allowsScrolling];
+    
+    [childView release];
+        
+    return newFrame;
+}
+
 
 - (id<WebContextMenuHandler>)_defaultContextMenuHandler
 {

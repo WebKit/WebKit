@@ -16,6 +16,7 @@
 #import <WebKit/WebLoadProgress.h>
 #import <WebKit/WebSubresourceClient.h>
 #import <WebKit/WebViewPrivate.h>
+#import <WebKit/WebWindowContext.h>
 
 #import <WebFoundation/WebAssertions.h>
 #import <WebFoundation/WebError.h>

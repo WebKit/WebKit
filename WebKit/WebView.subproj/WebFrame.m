@@ -1,15 +1,15 @@
 /*	
         WebFrame.m
-	    Copyright (c) 2001, Apple, Inc. All rights reserved.
+        Copyright (c) 2001, Apple, Inc. All rights reserved.
 */
 
 #import <WebKit/WebFrame.h>
 
 #import <Cocoa/Cocoa.h>
 
-#import <WebKit/WebController.h>
 #import <WebKit/WebBackForwardList.h>
 #import <WebKit/WebBridge.h>
+#import <WebKit/WebController.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebHistoryItem.h>
@@ -19,6 +19,7 @@
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebLocationChangeHandler.h>
 #import <WebKit/WebViewPrivate.h>
+#import <WebKit/WebWindowContext.h>
 
 #import <WebFoundation/WebFoundation.h>
 #import <WebFoundation/WebNSURLExtras.h>

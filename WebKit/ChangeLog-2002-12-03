@@ -1,3 +1,28 @@
+2002-09-18  Richard Williamson   <rjw@apple.com>
+
+        Added documentation keywords to header.
+        Create seperate files for the protocols
+        that were defined in WebController.h.
+        Made -[WebController createFrameNamed:for:inParent:allowsScrolling:]):
+        private.
+        
+        * Plugins.subproj/WebPluginView.m:
+        * WebCoreSupport.subproj/WebBridge.m:
+        * WebKit.pbproj/project.pbxproj:
+        * WebView.subproj/WebContextMenuHandler.h: Added.
+        * WebView.subproj/WebController.h:
+        * WebView.subproj/WebController.m:
+        * WebView.subproj/WebControllerPrivate.h:
+        * WebView.subproj/WebControllerPrivate.m:
+        * WebView.subproj/WebDefaultContextMenuHandler.m:
+        * WebView.subproj/WebFrame.m:
+        * WebView.subproj/WebHTMLView.m:
+        * WebView.subproj/WebHTMLViewPrivate.m:
+        * WebView.subproj/WebMainResourceClient.m:
+        * WebView.subproj/WebResourceProgressHandler.h: Added.
+        * WebView.subproj/WebView.m:
+        * WebView.subproj/WebWindowContext.h: Added.
+
 2002-09-18  Richard Williamson  <rjw@apple.com>
 
         Added documentation keywords to header.

@@ -6,6 +6,7 @@
 #import <WebKit/WebController.h>
 
 #import <WebKit/WebBackForwardList.h>
+#import <WebKit/WebContextMenuHandler.h>
 #import <WebKit/WebController.h>
 #import <WebKit/WebControllerSets.h>
 #import <WebKit/WebControllerPolicyHandler.h>
@@ -21,7 +22,9 @@
 #import <WebKit/WebKitErrors.h>
 #import <WebKit/WebKitStatisticsPrivate.h>
 #import <WebKit/WebPluginDatabase.h>
+#import <WebKit/WebResourceProgressHandler.h>
 #import <WebKit/WebViewPrivate.h>
+#import <WebKit/WebWindowContext.h>
 
 #import <WebFoundation/WebAssertions.h>
 #import <WebFoundation/WebResourceHandle.h>
@@ -68,30 +71,6 @@ NSString * WebContextMenuElementFrameKey = @"WebContextFrame";
     
     [_private release];
     [super dealloc];
-}
-
-
-- (WebFrame *)createFrameNamed: (NSString *)fname for: (WebDataSource *)childDataSource inParent: (WebDataSource *)parentDataSource allowsScrolling: (BOOL)allowsScrolling
-{
-    WebView *childView;
-    WebFrame *newFrame;
-
-    childView = [[WebView alloc] initWithFrame: NSMakeRect(0,0,0,0)];
-
-    newFrame = [[WebFrame alloc] initWithName: fname webView: childView provisionalDataSource: childDataSource controller: self];
-
-    [parentDataSource addFrame: newFrame];
-    
-    [newFrame release];
-
-    [childView _setController: self];
-    [childDataSource _setController: self];
-
-    [childView setAllowsScrolling: allowsScrolling];
-    
-    [childView release];
-        
-    return newFrame;
 }
 
 

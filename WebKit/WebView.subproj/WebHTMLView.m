@@ -6,6 +6,7 @@
 #import <WebKit/WebHTMLView.h>
 
 #import <WebKit/WebBridge.h>
+#import <WebKit/WebContextMenuHandler.h>
 #import <WebKit/WebController.h>
 #import <WebKit/WebControllerPrivate.h>
 #import <WebKit/WebDataSourcePrivate.h>

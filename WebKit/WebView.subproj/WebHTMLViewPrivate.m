@@ -9,15 +9,18 @@
 #import <WebKit/WebHTMLViewPrivate.h>
 
 #import <AppKit/NSResponder_Private.h>
+
+#import <WebKit/WebBridge.h>
+#import <WebKit/WebContextMenuHandler.h>
+#import <WebKit/WebController.h>
+#import <WebKit/WebControllerPrivate.h>
+#import <WebKit/WebDataSourcePrivate.h>
+#import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebImageRenderer.h>
 #import <WebKit/WebNSViewExtras.h>
 #import <WebKit/WebPluginView.h>
-#import <WebKit/WebController.h>
-#import <WebKit/WebControllerPrivate.h>
-#import <WebKit/WebBridge.h>
-#import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebViewPrivate.h>
-#import <WebKit/WebDataSourcePrivate.h>
+#import <WebKit/WebWindowContext.h>
 
 @interface NSView (WebHTMLViewPrivate)
 - (void)_web_stopIfPluginView;
