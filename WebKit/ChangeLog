@@ -1,3 +1,12 @@
+2002-11-12  John Sullivan  <sullivan@apple.com>
+
+        * Misc.subproj/WebNSViewExtras.h:
+        * Misc.subproj/WebNSViewExtras.m:
+        (-[NSView _web_dragShouldBeginFromMouseDown:withExpiration:xHysteresis:yHysteresis:]):
+	new method
+        (-[NSView _web_dragShouldBeginFromMouseDown:withExpiration:]):
+	now calls the new method, passing the default hysteresis values
+
 2002-11-12  Richard Williamson  <rjw@apple.com>
 
         Implemented letter-spacing and word-spacing CSS properties.

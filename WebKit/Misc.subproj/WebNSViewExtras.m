@@ -11,7 +11,8 @@
 #import <WebFoundation/WebNSStringExtras.h>
 #import <WebFoundation/WebNSURLExtras.h>
 
-#define DragStartHysteresis  		5.0
+#define WebDragImageAlpha    			0.75
+#define WebMaxDragImageSize 			NSMakeSize(400, 400)
 
 #ifdef DEBUG_VIEWS
 @interface NSObject (Foo)
@@ -47,7 +48,10 @@
 }
 
 /* Determine whether a mouse down should turn into a drag; started as copy of NSTableView code */
-- (BOOL)_web_dragShouldBeginFromMouseDown: (NSEvent *)mouseDownEvent withExpiration:(NSDate *)expiration
+- (BOOL)_web_dragShouldBeginFromMouseDown:(NSEvent *)mouseDownEvent
+                           withExpiration:(NSDate *)expiration
+                              xHysteresis:(unsigned)xHysteresis
+                              yHysteresis:(unsigned)yHysteresis
 {
     NSEvent *nextEvent, *firstEvent, *dragEvent, *mouseUp;
     BOOL dragIt;
@@ -75,16 +79,16 @@
             float deltay = ABS([nextEvent locationInWindow].y - [mouseDownEvent locationInWindow].y);
             dragEvent = nextEvent;
 
-            if (deltax >= DragStartHysteresis) {
+            if (deltax >= xHysteresis) {
                 dragIt = YES;
                 break;
             }
 
-            if (deltay >= DragStartHysteresis) {
+            if (deltay >= yHysteresis) {
                 dragIt = YES;
                 break;
             }
-        } else if ([nextEvent type] == NSLeftMouseUp) {
+        } else if ([nextEvent type] == xHysteresis) {
             mouseUp = nextEvent;
             break;
         }
@@ -105,6 +109,16 @@
 
     return dragIt;
 }
+
+- (BOOL)_web_dragShouldBeginFromMouseDown:(NSEvent *)mouseDownEvent
+                           withExpiration:(NSDate *)expiration
+{
+    return [self _web_dragShouldBeginFromMouseDown:mouseDownEvent
+                                    withExpiration:expiration
+                                       xHysteresis:WebDragStartHysteresisX
+                                       yHysteresis:WebDragStartHysteresisY];
+}
+
 
 - (NSDragOperation)_web_dragOperationForDraggingInfo:(id <NSDraggingInfo>)sender
 {
@@ -154,10 +168,10 @@
     *dragImage = [[image copy] autorelease];
     
     NSSize originalSize = [*dragImage size];
-    [*dragImage _web_scaleToMaxSize:MaxDragImageSize];
+    [*dragImage _web_scaleToMaxSize:WebMaxDragImageSize];
     NSSize newSize = [*dragImage size];
 
-    [*dragImage _web_dissolveToFraction:DragImageAlpha];
+    [*dragImage _web_dissolveToFraction:WebDragImageAlpha];
 
     NSPoint mouseDownPoint = [self convertPoint:[theEvent locationInWindow] fromView:nil];
     NSPoint currentPoint = [self convertPoint:[[_window currentEvent] locationInWindow] fromView:nil];
