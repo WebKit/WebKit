@@ -1,3 +1,19 @@
+2003-03-03  Darin Adler  <darin@apple.com>
+
+        Reviewed by Richard.
+
+        - simplified the custom user agent and text encoding methods as per request from documentation group
+
+        * WebView.subproj/WebController.h: Removed hasCustomUserAgent, resetUserAgent, hasCustomTextEncoding,
+        and resetTextEncoding. Updated comments to indicate what nil means.
+        
+        * WebView.subproj/WebController.m:
+        (-[WebController setCustomUserAgent:]): Remove assertion, allow nil.
+        (-[WebController customUserAgent]): Remove nil check.
+        (-[WebController setCustomTextEncodingName:]): Remove assertion, allow nil, and do an == check along
+        with the isEqualToString: check to handle the nil case.
+        (-[WebController customTextEncodingName]): Remove nil check.
+
 2003-03-01  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

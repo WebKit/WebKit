@@ -351,30 +351,13 @@ NSString *WebElementLinkTitleKey = 		@"WebElementLinkTitle";
 
 - (void)setCustomUserAgent:(NSString *)userAgentString
 {
-    ASSERT_ARG(userAgentString, userAgentString);
-    
     NSString *override = [userAgentString copy];
     [_private->userAgentOverride release];
     _private->userAgentOverride = override;
 }
 
-- (void)resetUserAgent
-{
-    [_private->userAgentOverride release];
-    _private->userAgentOverride = nil;
-}
-
-- (BOOL)hasCustomUserAgent
-{
-    return _private->userAgentOverride != nil;
-}
-
 - (NSString *)customUserAgent
 {
-    if (_private->userAgentOverride == nil) {
-        ERROR("must not ask for customUserAgent is hasCustomUserAgent is NO");
-    }
-
     return [[_private->userAgentOverride retain] autorelease];
 }
 
@@ -483,22 +466,11 @@ NSString *WebElementLinkTitleKey = 		@"WebElementLinkTitle";
 
 - (void)setCustomTextEncodingName:(NSString *)encoding
 {
-    ASSERT_ARG(encoding, encoding);
-    
-    if ([self hasCustomTextEncoding] && [encoding isEqualToString:[self customTextEncodingName]]) {
+    NSString *oldEncoding = [self customTextEncodingName];
+    if (encoding == oldEncoding || [encoding isEqualToString:oldEncoding]) {
         return;
     }
-
     [[self mainFrame] _reloadAllowingStaleDataWithOverrideEncoding:encoding];
-}
-
-- (void)resetTextEncoding
-{
-    if (![self hasCustomTextEncoding]) {
-        return;
-    }
-    
-    [[self mainFrame] _reloadAllowingStaleDataWithOverrideEncoding:nil];
 }
 
 - (NSString *)_mainFrameOverrideEncoding
@@ -513,20 +485,9 @@ NSString *WebElementLinkTitleKey = 		@"WebElementLinkTitle";
     return [dataSource _overrideEncoding];
 }
 
-- (BOOL)hasCustomTextEncoding
-{
-    return [self _mainFrameOverrideEncoding] != nil;
-}
-
 - (NSString *)customTextEncodingName
 {
-    NSString *result = [self _mainFrameOverrideEncoding];
-    
-    if (result == nil) {
-        ERROR("must not ask for customTextEncoding is hasCustomTextEncoding is NO");
-    }
-
-    return result;
+    return [self _mainFrameOverrideEncoding];
 }
 
 - (NSString *)stringByEvaluatingJavaScriptFromString:(NSString *)script

@@ -294,31 +294,16 @@ extern NSString *WebElementLinkLabelKey;	// NSString of the text within the anch
     @method setCustomUserAgent:
     @abstract Set the user agent. 
     @discussion Setting this means that the controller should use this user-agent string
-    instead of constructing a user-agent string for each URL.
+    instead of constructing a user-agent string for each URL. Setting it to nil
+    causes the controller to construct the user-agent string for each URL
+    for best results rendering web pages.
     @param userAgentString The user agent description
 */
 - (void)setCustomUserAgent:(NSString *)userAgentString;
 
 /*!
-    @method resetUserAgent
-    @abstract Reset the user agent. 
-    @discussion Causes the controller to construct the user-agent string for each URL
-    for best results rendering web pages.
-*/
-- (void)resetUserAgent;
-
-/*!
-    @method hasCustomUserAgent
-    @abstract Determine whether or not a custom user-agent string is in use.
-    @discussion It's an error to call customUserAgent if hasCustomUserAgent is NO.
-    @result YES if a custom user agent has been set, NO otherwise.
-*/
-- (BOOL)hasCustomUserAgent;
-
-/*!
     @method customUserAgent
-    @result The custom user-agent string. Should only be called
-    if hasCustomUserAgent returns YES.
+    @result The custom user-agent string or nil if no custom user-agent string has been set.
 */
 - (NSString *)customUserAgent;
 
@@ -345,27 +330,14 @@ extern NSString *WebElementLinkLabelKey;	// NSString of the text within the anch
     what's specified in a web page's header or HTTP response.
     The text encoding automatically goes back to the default when the top level frame
     changes to a new location.
-    @param encoding The text encoding to use to display a page.
+    Setting the text encoding name to nil makes the controller use default encoding rules.
+    @param encoding The text encoding name to use to display a page or nil.
 */
-- (void)setCustomTextEncodingName:(NSString *)encoding;
+- (void)setCustomTextEncodingName:(NSString *)encodingName;
 
 /*!
-    @method resetTextEncoding
-    @abstract Remove any custom encodings that have been applied and use the default encoding.
-*/
-- (void)resetTextEncoding;
-
-/*!
-    @method hasCustomTextEncoding
-    @abstract Determine whether or not a custom text encoding is in use.
-    @discussion It's an error to call customTextEncoding if hasCustomTextEncoding is NO.
-    @result YES if a custom encoding has been set, NO otherwise.
-*/
-- (BOOL)hasCustomTextEncoding;
-
-/*!
-    @method customTextEncoding
-    @result The custom text encoding.
+    @method customTextEncodingName
+    @result The custom text encoding name or nil if no custom text encoding name has been set.
 */
 - (NSString *)customTextEncodingName;
 
