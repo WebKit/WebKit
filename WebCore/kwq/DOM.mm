@@ -1706,6 +1706,15 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
     [super finalize];
 }
 
+- (NSString *)description
+{
+    if (!_internal)
+        return @"DOMRange: null";
+    return [NSString stringWithFormat:@"DOMRange: %@ %ld %@ %ld",
+        [self startContainer], [self startOffset],
+        [self endContainer], [self endOffset]];
+}
+
 - (DOMNode *)startContainer
 {
     int exceptionCode = 0;

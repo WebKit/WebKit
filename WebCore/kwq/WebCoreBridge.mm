@@ -26,31 +26,32 @@
 #import "WebCoreBridge.h"
 
 #import "csshelper.h"
-#import "dom_node.h"
-#import "dom_docimpl.h"
-#import "dom_nodeimpl.h"
-#import "dom_position.h"
-#import "dom_selection.h"
 #import "dom2_eventsimpl.h"
 #import "dom2_rangeimpl.h"
 #import "dom2_viewsimpl.h"
-#import "htmlediting.h"
+#import "dom_caretposition.h"
+#import "dom_docimpl.h"
+#import "dom_node.h"
+#import "dom_nodeimpl.h"
+#import "dom_position.h"
+#import "dom_selection.h"
 #import "html_documentimpl.h"
 #import "html_formimpl.h"
 #import "html_imageimpl.h"
 #import "htmlattrs.h"
+#import "htmlediting.h"
 #import "htmltags.h"
 #import "khtml_part.h"
 #import "khtmlview.h"
 #import "kjs_proxy.h"
 #import "kjs_window.h"
 #import "loader.h"
+#import "render_canvas.h"
 #import "render_frames.h"
 #import "render_image.h"
 #import "render_object.h"
-#import "render_canvas.h"
-#import "render_style.h"
 #import "render_replaced.h"
+#import "render_style.h"
 
 #import <JavaScriptCore/npruntime.h>
 #import <JavaScriptCore/jni_jsobject.h>
@@ -80,9 +81,10 @@
 #import "WebCoreViewFactory.h"
 #import "WebCoreSettings.h"
 
-#import <AppKit/NSView.h>
+@class NSView;
 
 using DOM::AtomicString;
+using DOM::CaretPosition;
 using DOM::DocumentFragmentImpl;
 using DOM::DocumentImpl;
 using DOM::DocumentTypeImpl;
@@ -117,8 +119,11 @@ using khtml::RenderWidget;
 using khtml::ReplaceSelectionCommand;
 using khtml::TypingCommand;
 
+using KJS::ExecState;
+using KJS::ObjectImp;
 using KJS::SavedProperties;
 using KJS::SavedBuiltins;
+using KJS::Window;
 
 using KParts::URLArgs;
 
@@ -157,7 +162,7 @@ static RootObject *rootForView(void *v)
 
 static pthread_t mainThread = 0;
 
-static void updateRenderingForBindings (KJS::ExecState *exec, KJS::ObjectImp *rootObject)
+static void updateRenderingForBindings (ExecState *exec, ObjectImp *rootObject)
 {
     if (pthread_self() != mainThread)
         return;
@@ -165,7 +170,7 @@ static void updateRenderingForBindings (KJS::ExecState *exec, KJS::ObjectImp *ro
     if (!rootObject)
         return;
         
-    KJS::Window *window = static_cast<KJS::Window*>(rootObject);
+    Window *window = static_cast<Window*>(rootObject);
     if (!window)
         return;
         
@@ -200,7 +205,7 @@ static bool initializedKJS = FALSE;
     if (!initializedKJS) {
         mainThread = pthread_self();
         
-        KJS::Bindings::RootObject::setFindRootObjectForNativeHandleFunction (rootForView);
+        RootObject::setFindRootObjectForNativeHandleFunction (rootForView);
         
         KJS::Bindings::Instance::setDidExecuteFunction(updateRenderingForBindings);
         
@@ -1755,21 +1760,35 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     return _part->tryPaste();
 }
 
-@end
+- (DOMRange *)rangeOfCharactersAroundCaret
+{
+    if (!_part)
+        return nil;
+        
+    Selection selection(_part->selection());
+    if (selection.state() != Selection::CARET)
+        return nil;
 
+    CaretPosition caret(selection.start());
+    CaretPosition next = caret.next();
+    CaretPosition previous = caret.previous();
+    if (caret == next || caret == previous)
+        return nil;
+
+    return [DOMRange _rangeWithImpl:makeRange(previous, next).handle()];
+}
+
+@end
 
 @implementation WebCoreBridge (WebCoreBridgePrivate)
 
 - (RootObject *)executionContextForView:(NSView *)aView
 {
-    RootObject *root;
-    
     KWQKHTMLPart *part = [self part];
-    root = new RootObject(aView);    // The root gets deleted by JavaScriptCore.
-    root->setRootObjectImp (static_cast<KJS::ObjectImp *>(KJS::Window::retrieveWindow(part)));
-    root->setInterpreter (KJSProxy::proxy(part)->interpreter());
-    part->addPluginRootObject (root);
-        
+    RootObject *root = new RootObject(aView);    // The root gets deleted by JavaScriptCore.
+    root->setRootObjectImp(static_cast<ObjectImp *>(Window::retrieveWindow(part)));
+    root->setInterpreter(KJSProxy::proxy(part)->interpreter());
+    part->addPluginRootObject(root);
     return root;
 }
 @end

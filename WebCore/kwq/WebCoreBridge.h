@@ -297,6 +297,7 @@ typedef enum {
 - (void)redoEditing:(id)arg;
 
 - (DOMRange *)rangeByExpandingSelectionWithGranularity:(WebSelectionGranularity)granularity;
+- (DOMRange *)rangeOfCharactersAroundCaret;
 - (DOMRange *)rangeByAlteringCurrentSelection:(WebSelectionAlteration)alteration direction:(WebSelectionDirection)direction granularity:(WebSelectionGranularity)granularity;
 - (void)alterCurrentSelection:(WebSelectionAlteration)alteration direction:(WebSelectionDirection)direction granularity:(WebSelectionGranularity)granularity;
 - (WebSelectionGranularity)selectionGranularity;

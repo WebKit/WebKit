@@ -27,6 +27,7 @@
 #define __dom_caretposition_h__
 
 #include "dom_position.h"
+#include "dom/dom2_range.h"
 
 namespace DOM {
 
@@ -93,6 +94,8 @@ private:
     NodeImpl *m_node;
     long m_offset;
 };
+
+Range makeRange(const CaretPosition &start, const CaretPosition &end);
 
 inline bool operator==(const CaretPosition &a, const CaretPosition &b)
 {

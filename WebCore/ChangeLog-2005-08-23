@@ -1,5 +1,22 @@
 2004-09-14  Darin Adler  <darin@apple.com>
 
+        Reviewed by Maciej.
+
+        - added method for fix to <rdar://problem/3788894> REGRESSION (Mail): ctrl-t emacs key binding does not work (transpose)
+
+        * kwq/WebCoreBridge.h: Added rangeOfCharactersAroundCaret.
+        * kwq/WebCoreBridge.mm: (-[WebCoreBridge rangeOfCharactersAroundCaret]): Added.
+
+        * khtml/xml/dom_caretposition.h: Added range function to make a Range from two CaretPosition objects.
+        * khtml/xml/dom_caretposition.cpp:
+        (DOM::CaretPosition::rangeCompliantEquivalent): Fixed a bug in this that caused it to screw up
+        ranges in text nodes. Also changed it to use offset 0 as Ken and I discussed.
+        (DOM::range): Added.
+
+        * kwq/DOM.mm: (-[DOMRange description]): Added.
+
+2004-09-14  Darin Adler  <darin@apple.com>
+
         Reviewed by John.
 
         - fixed <rdar://problem/3786986> REGRESSION: TEXTAREAs have extra wide right margins where the scrollbars used to be

@@ -302,13 +302,18 @@ Position CaretPosition::deepEquivalent(const Position &pos)
 
 Position CaretPosition::rangeCompliantEquivalent(const Position &pos)
 {
-    if (pos.isEmpty())
+    NodeImpl *node = pos.node();
+    if (!node)
         return Position();
     
-    if (isAtomicNode(pos.node()))
-        return Position(pos.node()->parentNode(), pos.offset() > 0 ? pos.node()->nodeIndex() + 1 : pos.node()->nodeIndex());
-    else
-        return Position(pos.node(), kMin(pos.offset(), maxOffset(pos.node())));
+    // FIXME: This clamps out-of-range values.
+    // Instead we should probably assert, and not use such values.
+
+    long offset = pos.offset();
+    if (!offsetInCharacters(node->nodeType()) && isAtomicNode(node) && offset > 0)
+        return Position(node->parentNode(), node->nodeIndex() + 1);
+
+    return Position(node, kMax(0L, kMin(offset, maxOffset(node))));
 }
 
 long CaretPosition::maxOffset(const NodeImpl *node)
@@ -365,5 +370,12 @@ void CaretPosition::formatForDebugger(char *buffer, unsigned length) const
 }
 #undef FormatBufferSize
 #endif
+
+Range makeRange(const CaretPosition &start, const CaretPosition &end)
+{
+    Position s = start.position();
+    Position e = end.position();
+    return Range(s.node(), s.offset(), e.node(), e.offset());
+}
 
 }  // namespace DOM
