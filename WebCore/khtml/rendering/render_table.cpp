@@ -1424,7 +1424,6 @@ void RenderTable::layoutRows(int yoff)
         calcRowHeight(r);
     }
 
-
     // html tables with percent height are relative to view
     Length h = style()->height();
     int th=0;
@@ -1432,25 +1431,25 @@ void RenderTable::layoutRows(int yoff)
         th = h.value;
     else if (h.isPercent())
     {
-        Length ch = containingBlock()->style()->height();
-        if (ch.isFixed())
-            th = h.width(ch.value);
-        else
-        {
-            // check we or not inside a table
-            RenderObject* ro = parent();
-            for (; ro && !ro->isTableCell(); ro=ro->parent());
-            if (!ro)
-            {
-		// we need to substract the bodys margins
-		// The cb is the <body>. Subtract out its margins. -dwh
-                th = h.width(viewRect().height() 
-			     - containingBlock()->marginBottom()
-			     - containingBlock()->marginTop());
-                // not really, but this way the view height change
-                // gets propagated correctly
-                setOverhangingContents();
+        RenderObject* c = containingBlock();
+        for ( ; 
+             !c->isBody() && !c->isTableCell() && !c->isPositioned() && !c->isFloating(); 
+             c = c->containingBlock()) {
+            Length ch = c->style()->height();
+            if (ch.isFixed()) {
+                th = h.width(ch.value);
+                break;
             }
+        }
+        
+        if (!c->isTableCell()) {
+            // we need to substract out the margins of this block. -dwh
+            th = h.width(viewRect().height() 
+                - c->marginBottom()
+                - c->marginTop());
+            // not really, but this way the view height change
+            // gets propagated correctly
+            setOverhangingContents();
         }
     }
     
@@ -1462,11 +1461,11 @@ void RenderTable::layoutRows(int yoff)
         if (dh>0)
         {
             // There is room to grow.  Distribute the space among the rows
-	    // by weighting according to their calculated heights,
-	    // unless there are rows that have percentage
+            // by weighting according to their calculated heights,
+            // unless there are rows that have percentage
             // heights.  In that case, only the rows with percentage heights
             // get the space, and the weight is distributed after computing
-	    // a normalized flex. -dwh
+            // a normalized flex. -dwh
             tableGrew = true;
             int totalPercentage = 0;
             for ( unsigned int r = 0; r < totalRows; r++ )
@@ -1533,11 +1532,11 @@ void RenderTable::layoutRows(int yoff)
                     cell->layout();
                 }
             }
-
+    
             if (cellChildrenFlex) {
-	        // Alignment within a cell is based off the calculated
-	        // height, which becomes irrelevant once the cell has
-	        // been resized based off its percentage. -dwh
+                // Alignment within a cell is based off the calculated
+                // height, which becomes irrelevant once the cell has
+                // been resized based off its percentage. -dwh
                 cell->setCellTopExtra(0);
                 cell->setCellBottomExtra(0);
             }

@@ -1,3 +1,17 @@
+2002-11-21  David Hyatt  <hyatt@apple.com>
+
+	Fixed for tables.  Make the percentage height calculation
+	more robust.  Also add a hack for replaced elements to
+	subtract out their margins when computing percentage widths.
+	This keeps them from spilling out of table cells.
+	
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::calcReplacedWidth):
+        (RenderBox::calcReplacedHeight):
+        * khtml/rendering/render_table.cpp:
+        (RenderTable::layoutRows):
+        * khtml/xml/dom_nodeimpl.h:
+
 === Alexander-33 ===
 
 2002-11-21  Richard Williamson   <rjw@apple.com>
