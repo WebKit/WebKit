@@ -1,5 +1,14 @@
 2003-07-21  Dave Hyatt  <hyatt@apple.com>
 
+	Fix removeAttributeNode.  This is David Faure's patch.
+	
+        Reviewed by me
+
+        * khtml/xml/dom_elementimpl.cpp:
+        (NamedAttrMapImpl::removeAttribute):
+
+2003-07-21  Dave Hyatt  <hyatt@apple.com>
+
 	Checking in David Faure's patch that fixes getElementsByTagName(*).
 	
         Reviewed by me

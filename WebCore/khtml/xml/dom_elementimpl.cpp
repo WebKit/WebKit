@@ -773,11 +773,11 @@ void NamedAttrMapImpl::removeAttribute(NodeImpl::Id id)
 
     // Notify the element that the attribute has been removed
     // dispatch appropriate mutation events
-    if (attr->_value) {
-        attr->_value->deref();
+    if (element && attr->_value) {
+        DOMStringImpl* value = attr->_value;
         attr->_value = 0;
-        if (element)
-            element->parseAttribute(attr);
+        element->parseAttribute(attr);
+        attr->_value = value;
     }
     if (element) {
         element->dispatchAttrRemovalEvent(attr);
