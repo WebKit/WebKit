@@ -1,3 +1,29 @@
+2002-07-21  David Hyatt  <hyatt@apple.com>
+
+	Fixing bug 3003837, list boxes are extremely slow.  The
+	buildup of a list box was order n squared, since on every
+	insert of an item the list box was rebuilding its entire
+	contents.  This patch adds smarts to the list buildup, so that
+	the underlying NSBrowser only rebuilds itself one time, after
+	all the items have been inserted.
+
+	This speeds up the Bugzilla forms page on cvs-base by 60%.
+	
+        * khtml/rendering/render_form.cpp:
+        (RenderSelect::updateFromElement):
+	Patched to make calls to beginBatchInsert and endBatchInsert
+	on KListBox.
+	
+        * kwq/KWQListBox.h:
+        * kwq/KWQListBox.mm:
+        (QListBox::QListBox):
+        (QListBox::insertItem):
+        (QListBox::beginBatchInsert):
+        (QListBox::endBatchInsert):
+	If in the middle of a batch insert, the insertitem function will
+	not rebuild the NSBrowser's list.  endBatchInsert will actually
+	do this now.
+	
 2002-07-20  David Hyatt  <hyatt@apple.com>
 
 	This patch fixes the FOUC (flash of unstyled content) problem.

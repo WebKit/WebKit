@@ -49,11 +49,14 @@ public:
     int currentItem() const;
     void insertItem(const QString &, int index=-1);
     void insertItem(const QListBoxItem *, int index=-1);
+    void beginBatchInsert();
+    void endBatchInsert();
     void setSelected(int, bool);
     bool isSelected(int);
 
 private:
     QListBoxItem *head;
+    bool m_insertingItems;
 };
 
 class QListBoxItem {

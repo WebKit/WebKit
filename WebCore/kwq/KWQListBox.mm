@@ -91,7 +91,7 @@
 
 
 QListBox::QListBox(QWidget *parent)
-    : QScrollView(parent)
+    : QScrollView(parent), m_insertingItems(false)
 {
     NSBrowser *browser =  [[[NSBrowser alloc] initWithFrame: NSMakeRect (0,0,1,1)] autorelease];
     KWQBrowserDelegate *delegate = [[KWQBrowserDelegate alloc] initWithListBox: this];
@@ -218,6 +218,21 @@ void QListBox::insertItem(const QListBoxItem *newItem, int _index)
         }
     }
 
+    if (!m_insertingItems) {
+        NSBrowser *browser = (NSBrowser *)getView();
+        [browser loadColumnZero];
+        [browser tile];
+    }
+}
+
+void QListBox::beginBatchInsert()
+{
+    m_insertingItems = true;
+}
+
+void QListBox::endBatchInsert()
+{
+    m_insertingItems = false;
     NSBrowser *browser = (NSBrowser *)getView();
     [browser loadColumnZero];
     [browser tile];

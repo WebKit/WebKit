@@ -837,6 +837,8 @@ void RenderSelect::updateFromElement()
 #ifdef APPLE_CHANGES
         if(!m_useListBox)
             static_cast<KComboBox*>(m_widget)->setSize(listItems.size());
+	else
+            static_cast<KListBox*>(m_widget)->beginBatchInsert();
 #endif
         for (listIndex = 0; listIndex < int(listItems.size()); listIndex++) {
             if (listItems[listIndex]->id() == ID_OPTGROUP) {
@@ -875,6 +877,8 @@ void RenderSelect::updateFromElement()
 #ifdef APPLE_CHANGES
         if(!m_useListBox)
             static_cast<KComboBox*>(m_widget)->doneLoading();
+	else
+	    static_cast<KListBox*>(m_widget)->endBatchInsert();
 #endif
         setMinMaxKnown(false);
         setLayouted(false);
