@@ -1,3 +1,10 @@
+2004-02-15  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave.
+
+        * JavaScriptCore.pbproj/project.pbxproj: Tweak build styles a bit, fixing OptimizedWithSymbols,
+        and removing redundant settings of things that match defaults in other build styles.
+
 2004-02-13  Richard Williamson   <rjw@apple.com>
 
 	Work towards the JavaScript ObjC bindings.  The bindings now work for 
