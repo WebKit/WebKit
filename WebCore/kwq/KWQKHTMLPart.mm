@@ -113,6 +113,7 @@ using khtml::RenderStyle;
 using khtml::RenderTableCell;
 using khtml::RenderText;
 using khtml::RenderWidget;
+using khtml::TextIterator;
 using khtml::VISIBLE;
 using khtml::WordAwareIterator;
 
@@ -937,19 +938,11 @@ QString KWQKHTMLPart::advanceToNextMisspelling()
     WordAwareIterator it(searchRange);
     bool wrapped = false;
     
-    Node searchEndAfterWrapNode;
-    long searchEndAfterWrapOffset;
-    if (it.atEnd()) {
-        // it.range() is not valid if we're already at the end
-        searchEndAfterWrapNode = searchRange.startContainer();
-        searchEndAfterWrapOffset = searchRange.startOffset();
-    } else {
-        // We go to the end of our first range insted of the start of it, just to be sure
-        // we don't get foiled by any word boundary problems at the start.  It means we might
-        // do a tiny bit more searching.
-        searchEndAfterWrapNode = it.range().endContainer();
-        searchEndAfterWrapOffset = it.range().endOffset();
-    }
+    // We go to the end of our first range insted of the start of it, just to be sure
+    // we don't get foiled by any word boundary problems at the start.  It means we might
+    // do a tiny bit more searching.
+    Node searchEndAfterWrapNode = it.range().endContainer();
+    long searchEndAfterWrapOffset = it.range().endOffset();
 
     while (1) {
         if (!it.atEnd()) {      // we may be starting at the end of the doc, and already by atEnd
@@ -960,23 +953,21 @@ QString KWQKHTMLPart::advanceToNextMisspelling()
                 NSRange misspelling = [checker checkSpellingOfString:chunk startingAt:0 language:nil wrap:NO inSpellDocumentWithTag:[_bridge spellCheckerDocumentTag] wordCount:NULL];
                 [chunk release];
                 if (misspelling.length > 0) {
-                    // build up result range and string, possibly reiterating over text nodes
+                    // Build up result range and string.  Note the misspelling may span many text nodes,
+                    // but the CharIterator insulates us from this complexity
                     Range misspellingRange(xmlDocImpl());
                     CharacterIterator chars(it.range());
                     chars.advance(misspelling.location);
                     misspellingRange.setStart(chars.range().startContainer(), chars.range().startOffset());
                     QString result = chars.string(misspelling.length);
-                    if (chars.atEnd()) {
-                        misspellingRange.setEnd(it.range().endContainer(), it.range().endOffset());
-                    } else {
-                        misspellingRange.setEnd(chars.range().startContainer(), chars.range().startOffset());
-                    }
+                    misspellingRange.setEnd(chars.range().startContainer(), chars.range().startOffset());
                 
                     setSelection(misspellingRange);
                     jumpToSelection();
                     
-                    // TODO: mark misspelling in document
-
+                    // Mark misspelling in document.  Use a TextIterator to visit the potentially
+                    // multiple nodes the misspelling covers.
+                    
                     return result;
                 }
             }

@@ -120,7 +120,7 @@ TextIterator::TextIterator(const Range &r)
     if (!offsetInCharacters(endNode->nodeType())) {
         if (endOffset > 0 && endOffset <= static_cast<long>(endNode->childNodeCount())) {
             endNode = endNode->childNode(endOffset - 1);
-            endOffset = LONG_MAX;
+            endOffset = endNode->maxOffset();
         }
     }
 
@@ -444,8 +444,11 @@ void TextIterator::emitCharacter(QChar c, NodeImpl *textNode, long textStartOffs
 
 Range TextIterator::range() const
 {
-    assert(m_positionNode);
-    return Range(m_positionNode, m_positionStartOffset, m_positionNode, m_positionEndOffset);
+    if (m_positionNode) {
+        return Range(m_positionNode, m_positionStartOffset, m_positionNode, m_positionEndOffset);
+    } else {
+        return Range(m_endNode, m_endOffset, m_endNode, m_endOffset);
+    }
 }
 
 CharacterIterator::CharacterIterator()
@@ -464,14 +467,16 @@ CharacterIterator::CharacterIterator(const Range &r)
 Range CharacterIterator::range() const
 {
     Range r = m_textIterator.range();
-    if (m_textIterator.length() <= 1) {
-        assert(m_runOffset == 0);
-    } else {
-        Node n = r.startContainer();
-        assert(n == r.endContainer());
-        long offset = r.startOffset() + m_runOffset;
-        r.setStart(n, offset);
-        r.setEnd(n, offset + 1);
+    if (!m_textIterator.atEnd()) {
+        if (m_textIterator.length() <= 1) {
+            assert(m_runOffset == 0);
+        } else {
+            Node n = r.startContainer();
+            assert(n == r.endContainer());
+            long offset = r.startOffset() + m_runOffset;
+            r.setStart(n, offset);
+            r.setEnd(n, offset + 1);
+        }
     }
     return r;
 }
@@ -531,10 +536,8 @@ WordAwareIterator::WordAwareIterator()
 WordAwareIterator::WordAwareIterator(const Range &r)
 : m_previousText(0), m_didLookAhead(false), m_textIterator(r)
 {
-    if (!m_textIterator.atEnd()) {
-        m_didLookAhead = true;  // so we consider the first chunk from the text iterator
-        advance();              // get in position over the first chunk of text
-    }
+    m_didLookAhead = true;  // so we consider the first chunk from the text iterator
+    advance();              // get in position over the first chunk of text
 }
 
 // We're always in one of these modes:
@@ -562,11 +565,11 @@ void WordAwareIterator::advance()
     while (!m_textIterator.atEnd() && m_textIterator.length() == 0) {
         m_textIterator.advance();
     }
+    m_range = m_textIterator.range();
 
     if (m_textIterator.atEnd()) {
         return;
     }
-    m_range = m_textIterator.range();
     
     while (1) {
         // If this chunk ends in whitespace we can just use it as our chunk.

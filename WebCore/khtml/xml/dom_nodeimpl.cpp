@@ -898,7 +898,7 @@ void NodeImpl::defaultEventHandler(EventImpl *evt)
 {
 }
 
-unsigned long NodeImpl::childNodeCount()
+unsigned long NodeImpl::childNodeCount() const
 {
     return 0;
 }
@@ -1876,6 +1876,11 @@ void NodeBaseImpl::detach()
     NodeImpl::detach();
 }
 
+long NodeBaseImpl::maxOffset() const
+{
+    return childNodeCount();
+}
+
 void NodeBaseImpl::insertedIntoDocument()
 {
     NodeImpl::insertedIntoDocument();
@@ -2060,7 +2065,7 @@ void NodeBaseImpl::setActive(bool down)
         setChanged();
 }
 
-unsigned long NodeBaseImpl::childNodeCount()
+unsigned long NodeBaseImpl::childNodeCount() const
 {
     unsigned long count = 0;
     NodeImpl *n;

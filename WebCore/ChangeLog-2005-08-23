@@ -1,3 +1,27 @@
+2004-07-28  Trey Matteson  <trey@apple.com>
+
+	Small refinement of last checkin.  The text iterators now return reasonable values
+	for range() when atEnd, which gets rid of special cases and pitfalls in the client.
+
+        Reviewed by Ken.
+
+        * khtml/misc/khtml_text_operations.cpp:
+        (khtml::TextIterator::TextIterator):  Set endOffset to a valid value instead of
+	using LONG_MAX.
+        (khtml::TextIterator::range):  Implement when atEnd.
+        (khtml::CharacterIterator::range):  Don't massage result when atEnd.
+        (khtml::WordAwareIterator::WordAwareIterator):  Now that this is fixed, we no
+	longer need this special case.
+        (khtml::WordAwareIterator::advance):  Always set range, even when atEnd, now that
+	TextIterator::range() always works.
+        * khtml/xml/dom_nodeimpl.cpp:
+        (NodeImpl::childNodeCount):  Made const
+        (NodeBaseImpl::maxOffset):  Add missing implementation
+        * khtml/xml/dom_nodeimpl.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::advanceToNextMisspelling):  Get rid of special cases, always call
+	range on our iterator even when it is atEnd.
+
 2004-07-28  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Trey.
