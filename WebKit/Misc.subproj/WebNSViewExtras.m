@@ -18,7 +18,7 @@
 #ifdef DEBUG_VIEWS
 @interface NSObject (Foo)
 - (void*)_renderFramePart;
-- (id)frameForView: (id)aView;
+- (id)_frameForView: (id)aView;
 - (id)_controller;
 @end
 #endif
@@ -157,7 +157,7 @@
     
     if ([self respondsToSelector: @selector(_controller)]){
         id aController = [self _controller];
-        id aFrame = [aController frameForView: self];
+        id aFrame = [aController _frameForView: self];
         rfp = [aFrame _renderFramePart];
     }
     

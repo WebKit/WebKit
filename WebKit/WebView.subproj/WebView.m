@@ -54,6 +54,29 @@ NSString *WebElementLinkTitleKey = 		@"WebElementLinkTitle";
 
 
 
+@implementation WebCapabilities
++ (BOOL)canShowMIMEType:(NSString *)MIMEType
+{
+    if([WebView _canShowMIMEType:MIMEType] && [WebDataSource _canShowMIMEType:MIMEType]){
+        return YES;
+    }else{
+        // Have the plug-ins register views and representations
+        [WebPluginDatabase installedPlugins];
+        if([WebView _canShowMIMEType:MIMEType] && [WebDataSource _canShowMIMEType:MIMEType])
+            return YES;
+    }
+    return NO;
+}
+
++ (BOOL)canShowFile:(NSString *)path
+{
+    NSString *MIMEType;
+
+    MIMEType = [WebController _MIMETypeForFile:path];
+    return [[self class] canShowMIMEType:MIMEType];
+}
+
+@end
 
 @implementation WebController
 
@@ -183,91 +206,9 @@ NSString *WebElementLinkTitleKey = 		@"WebElementLinkTitle";
     return _private->locationChangeDelegate;
 }
 
-- (WebFrame *)_frameForDataSource: (WebDataSource *)dataSource fromFrame: (WebFrame *)frame
-{
-    NSArray *frames;
-    int i, count;
-    WebFrame *result, *aFrame;
-    
-    if ([frame dataSource] == dataSource)
-        return frame;
-        
-    if ([frame provisionalDataSource] == dataSource)
-        return frame;
-        
-    frames = [frame children];
-    count = [frames count];
-    for (i = 0; i < count; i++){
-        aFrame = [frames objectAtIndex: i];
-        result = [self _frameForDataSource: dataSource fromFrame: aFrame];
-        if (result)
-            return result;
-    }
-
-    return nil;       
-}
-
-
-- (WebFrame *)frameForDataSource: (WebDataSource *)dataSource
-{
-    WebFrame *frame = [self mainFrame];
-    
-    return [self _frameForDataSource: dataSource fromFrame: frame];
-}
-
-
-- (WebFrame *)_frameForView: (WebView *)aView fromFrame: (WebFrame *)frame
-{
-    NSArray *frames;
-    int i, count;
-    WebFrame *result, *aFrame;
-    
-    if ([frame webView] == aView)
-        return frame;
-        
-    frames = [frame children];
-    count = [frames count];
-    for (i = 0; i < count; i++){
-        aFrame = [frames objectAtIndex: i];
-        result = [self _frameForView: aView fromFrame: aFrame];
-        if (result)
-            return result;
-    }
-
-    return nil;       
-}
-
-- (WebFrame *)frameForView: (WebView *)aView
-{
-    WebFrame *frame = [self mainFrame];
-    
-    return [self _frameForView: aView fromFrame: frame];
-}
-
 - (WebFrame *)mainFrame
 {
     return _private->mainFrame;
-}
-
-+ (BOOL)canShowMIMEType:(NSString *)MIMEType
-{
-    if([WebView _canShowMIMEType:MIMEType] && [WebDataSource _canShowMIMEType:MIMEType]){
-        return YES;
-    }else{
-        // Have the plug-ins register views and representations
-        [WebPluginDatabase installedPlugins];
-        if([WebView _canShowMIMEType:MIMEType] && [WebDataSource _canShowMIMEType:MIMEType])
-            return YES;
-    }
-    return NO;
-}
-
-+ (BOOL)canShowFile:(NSString *)path
-{    
-    NSString *MIMEType;
-    
-    MIMEType = [[self class] _MIMETypeForFile:path];   
-    return [[self class] canShowMIMEType:MIMEType];
 }
 
 - (WebBackForwardList *)backForwardList

@@ -52,7 +52,7 @@
     [newRequest setReferrer:referrer];
     
     WebController *_controller = [source _controller];
-    [newRequest setCookiePolicyBaseURL:[[[_controller mainFrame] dataSource] URL]];
+    [newRequest setCookiePolicyBaseURL:[[[[_controller mainFrame] dataSource]  request] URL]];
     [newRequest setUserAgent:[_controller userAgentForURL:URL]];
     
     BOOL succeeded = [client loadWithRequest:newRequest];

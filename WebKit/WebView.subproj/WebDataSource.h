@@ -84,30 +84,6 @@
 - (WebResponse *)response;
 
 /*!
-    @method URL
-    @discussion The value of URL will change if a redirect occurs.
-    To monitor change in the URL, override the WebLocationChangeDelegate 
-    serverRedirectedForDataSource: method.
-    @result Returns the current URL associated with the datasource.
-*/
-- (NSURL *)URL;
-
-/*!
-    @method startLoading
-    @discussion Start actually getting and parsing data. If the data source
-    is still performing a previous load it will be stopped.
-*/
-- (void)startLoading;
-
-/*!
-    @method stopLoading
-    @discussion Cancels any pending loads.  A data source is conceptually only ever loading
-    one document at a time, although one document may have many related
-    resources.  stopLoading will stop all loads related to the data source.
-*/
-- (void)stopLoading;
-
-/*!
     @method isLoading
     @discussion Returns YES if there are any pending loads.
 */

@@ -763,7 +763,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
             && [[[self dataSource] representation] isKindOfClass: [WebHTMLRepresentation class]])
         {
             if (![item pageCache]){
-                LOG(PageCache, "Saving page to back/forward cache, %s\n", [[[[self dataSource] URL] absoluteString] cString]);
+                LOG(PageCache, "Saving page to back/forward cache, %s\n", [[[[self dataSource] _URL] absoluteString] cString]);
                 [item setHasPageCache: YES];
                 [[self dataSource] _setStoredInPageCache: YES];
                 [[item pageCache] setObject: [self dataSource] forKey: @"WebKitDataSource"];
@@ -1428,7 +1428,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         if (self == [[self controller] mainFrame] || f) {
             [request setCookiePolicyBaseURL:[request URL]];
         } else {
-            [request setCookiePolicyBaseURL:[[[[self controller] mainFrame] dataSource] URL]];
+            [request setCookiePolicyBaseURL:[[[[self controller] mainFrame] dataSource] _URL]];
         }
     }
 }
@@ -1767,7 +1767,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         if (formState) {
             [[[self controller] _formDelegate] frame:self willSubmitForm:[formState form] withValues:[formState values]];
         }
-        [_private->provisionalDataSource startLoading];
+        [_private->provisionalDataSource _startLoading];
     }
 }
 

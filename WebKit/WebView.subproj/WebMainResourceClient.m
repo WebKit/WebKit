@@ -87,7 +87,7 @@
 
 - (void)cancel
 {
-    LOG(Loading, "URL = %@", [dataSource URL]);
+    LOG(Loading, "URL = %@", [dataSource _URL]);
     
     // Calling receivedError will likely result in a call to release, so we must retain.
     [self retain];
@@ -172,7 +172,7 @@
 
     switch (contentPolicy) {
     case WebPolicyShow:
-	if (![WebController canShowMIMEType:[r contentType]]) {
+	if (![WebCapabilities canShowMIMEType:[r contentType]]) {
 	    [[dataSource webFrame] _handleUnimplementablePolicyWithErrorCode:WebKitErrorCannotShowMIMEType forURL:[req URL]];
 	    [self stopLoadingForPolicyChange];
 	    return;
@@ -299,7 +299,7 @@
     ASSERT(![self defersCallbacks]);
     ASSERT([self isDownload] || ![[dataSource _controller] defersCallbacks]);
  
-    LOG(Loading, "URL = %@, data = %p, length %d", [dataSource URL], data, [data length]);
+    LOG(Loading, "URL = %@, data = %p, length %d", [dataSource _URL], data, [data length]);
 
     WebError *downloadError= nil;
     
@@ -329,7 +329,7 @@
     ASSERT(![h defersCallbacks]);
     ASSERT(![self defersCallbacks]);
     ASSERT([self isDownload] || ![[dataSource _controller] defersCallbacks]);
-    LOG(Loading, "URL = %@", [dataSource URL]);
+    LOG(Loading, "URL = %@", [dataSource _URL]);
         
     // Calls in this method will most likely result in a call to release, so we must retain.
     [self retain];

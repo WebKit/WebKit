@@ -64,7 +64,7 @@
     NSString *MIME = [[dataSource response] contentType];
     
     [self setMIMEType:MIME];
-    [self setBaseURL:[dataSource URL]];
+    [self setBaseURL:[[dataSource request] URL]];
 
     WebNetscapePluginPackage *thePlugin;
     thePlugin = (WebNetscapePluginPackage *)[[WebPluginDatabase installedPlugins] pluginForMIMEType:MIME];
@@ -73,7 +73,7 @@
         // FIXME: It would be nice to stop the load here.
         
         WebPluginError *error = [WebPluginError pluginErrorWithCode:WebKitErrorCannotLoadPlugin
-                                                         contentURL:[[theDataSource URL] absoluteString]
+                                                         contentURL:[[[theDataSource request] URL] absoluteString]
                                                       pluginPageURL:nil
                                                          pluginName:[thePlugin name]
                                                            MIMEType:MIME];

@@ -466,7 +466,7 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
 {
     return [WebError errorWithCode:code
                           inDomain:WebErrorDomainWebKit
-                        failingURL:[[_private->dataSource URL] absoluteString]];
+                        failingURL:[[_private->dataSource _URL] absoluteString]];
 }
 
 - (void)cancelWithError:(WebError *)error

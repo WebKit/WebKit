@@ -128,7 +128,7 @@
 {
     WebView *webView = [self _web_parentWebView];
     WebController *controller = [webView _controller];
-    WebFrame *frame = [controller frameForView:webView];
+    WebFrame *frame = [webView webFrame];
 
     ASSERT(frame);
     ASSERT(controller);

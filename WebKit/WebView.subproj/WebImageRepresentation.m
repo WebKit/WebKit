@@ -10,6 +10,8 @@
 #import <WebKit/WebImageRenderer.h>
 #import <WebKit/WebImageRendererFactory.h>
 
+#import <WebFoundation/WebRequest.h>
+
 @implementation WebImageRepresentation
 
 - init
@@ -41,7 +43,7 @@
 
 - (void)setDataSource:(WebDataSource *)dataSource
 {
-    URL = [[dataSource URL] retain];
+    URL = [[[dataSource request] URL] retain];
 }
 
 - (void)receivedData:(NSData *)data withDataSource:(WebDataSource *)dataSource

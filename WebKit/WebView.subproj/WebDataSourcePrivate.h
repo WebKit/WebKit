@@ -113,13 +113,16 @@
 
 @interface WebDataSource (WebPrivate)
 
+- (void)_startLoading;
+- (void)_stopLoading;
+- (NSURL *)_URL;
 - (WebController *)_controller;
 - (void)_setResourceData:(NSData *)data;
 - (Class)_representationClass;
 - (void)_setRepresentation:(id<WebDocumentRepresentation>)representation;
 - (void)_setController:(WebController *)controller;
 - (void)_startLoading: (NSDictionary *)pageCache;
-- (void)_stopLoading;
+- (void)_stopLoadingInternal;
 - (BOOL)_isStopping;
 - (void)_recursiveStopLoading;
 - (void)_addSubresourceClient:(WebSubresourceClient *)client;

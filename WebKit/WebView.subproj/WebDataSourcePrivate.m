@@ -154,6 +154,21 @@
     }
 }
 
+- (void)_startLoading
+{
+    [self _startLoading: nil];
+}
+
+
+// Cancels any pending loads.  A data source is conceptually only ever loading
+// one document at a time, although one document may have many related
+// resources.  stopLoading will stop all loads related to the data source.  This
+// method will also stop loads that may be loading in child frames.
+- (void)_stopLoading
+{
+    [self _recursiveStopLoading];
+}
+
 
 - (void)_startLoading: (NSDictionary *)pageCache
 {
@@ -192,11 +207,6 @@
     }
 }
 
-- (void)_startLoading
-{
-    [self _startLoading: nil];
-}
-
 - (void)_addSubresourceClient:(WebSubresourceClient *)client
 {
     if (_private->subresourceClients == nil) {
@@ -220,7 +230,7 @@
     return _private->stopping;
 }
 
-- (void)_stopLoading
+- (void)_stopLoadingInternal
 {
     if (!_private->loading) {
 	return;
@@ -235,7 +245,7 @@
         // Main handle is already done. Set the cancelled error.
         WebError *cancelledError = [WebError errorWithCode:WebFoundationErrorCancelled
                                                   inDomain:WebErrorDomainWebFoundation
-                                                failingURL:[[self URL] absoluteString]];
+                                                failingURL:[[self _URL] absoluteString]];
         [self _setMainDocumentError:cancelledError];
     }
     
@@ -256,8 +266,8 @@
     
     // We depend on the controller in webFrame and we release it in _stopLoading,
     // so call webFrame first so we don't send a message the released controller (3129503).
-    [[[self webFrame] children] makeObjectsPerformSelector:@selector(stopLoading)];
-    [self _stopLoading];
+    [[[self webFrame] children] makeObjectsPerformSelector:@selector(_stopLoading)];
+    [self _stopLoadingInternal];
     
     [self release];
 }
@@ -554,10 +564,10 @@
     WebIconDatabase *iconDB = [WebIconDatabase sharedIconDatabase];
 
     // Bind the URL of the original request and the final URL to the icon URL.
-    [iconDB _setIconURL:[iconURL absoluteString] forURL:[[self URL] absoluteString]];
+    [iconDB _setIconURL:[iconURL absoluteString] forURL:[[self _URL] absoluteString]];
     [iconDB _setIconURL:[iconURL absoluteString] forURL:[[[self _originalRequest] URL] absoluteString]];
 
-    NSImage *icon = [iconDB iconForURL:[[self URL] absoluteString] withSize:WebIconSmallSize];
+    NSImage *icon = [iconDB iconForURL:[[self _URL] absoluteString] withSize:WebIconSmallSize];
     [[_private->controller _locationChangeDelegateForwarder] receivedPageIcon:icon forDataSource:self];
 }
 
@@ -575,10 +585,10 @@
     if(!_private->iconURL){
         // No icon URL from the LINK tag so try the server's root.
         // This is only really a feature of http or https, so don't try this with other protocols.
-        NSString *scheme = [[self URL] scheme];
+        NSString *scheme = [[self _URL] scheme];
         if([scheme isEqualToString:@"http"] || [scheme isEqualToString:@"https"]){
             _private->iconURL = [[[NSURL _web_URLWithString:@"/favicon.ico"
-                                              relativeToURL:[self URL]] absoluteURL] retain];
+                                              relativeToURL:[self _URL]] absoluteURL] retain];
         }
     }
 
@@ -749,5 +759,13 @@
     [_private->webFrame release];
     _private->webFrame = frame;
 }
+
+// May return nil if not initialized with a URL.
+- (NSURL *)_URL
+{
+    return [[self request] URL];
+}
+
+
 
 @end

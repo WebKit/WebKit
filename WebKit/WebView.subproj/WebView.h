@@ -19,6 +19,25 @@
 @class WebPreferences;
 @class WebView;
 
+@interface WebCapabilities : NSObject
+/*!
+    @method canShowMIMEType:
+    @abstract Checks if the WebKit can show content of a certain MIME type.
+    @param MIMEType The MIME type to check.
+    @result YES if the WebKit can show content with MIMEtype.
+*/
++ (BOOL)canShowMIMEType:(NSString *)MIMEType;
+
+/*!
+    @method canShowFile:
+    @abstract Checks if the WebKit can show the content of the file at the specified path.
+    @param path The path of the file to check
+    @result YES if the WebKit can show the content of the file at the specified path.
+*/
++ (BOOL)canShowFile:(NSString *)path;
+
+@end
+
 // These strings are keys into the element dictionary provided in
 // the WebContextMenuDelegate's contextMenuItemsForElement and the WebControllerPolicyDelegate's clickPolicyForElement.
 
@@ -76,22 +95,6 @@ extern NSString *WebElementLinkLabelKey;	// NSString of the text within the anch
 @private
     WebControllerPrivate *_private;
 }
-
-/*!
-    @method canShowMIMEType:
-    @abstract Checks if the WebKit can show content of a certain MIME type.
-    @param MIMEType The MIME type to check.
-    @result YES if the WebKit can show content with MIMEtype.
-*/    
-+ (BOOL)canShowMIMEType:(NSString *)MIMEType;
-
-/*!
-    @method canShowFile:
-    @abstract Checks if the WebKit can show the content of the file at the specified path.
-    @param path The path of the file to check
-    @result YES if the WebKit can show the content of the file at the specified path.
-*/    
-+ (BOOL)canShowFile:(NSString *)path;
 
 /*!
     @method initWithView:
@@ -205,25 +208,6 @@ extern NSString *WebElementLinkLabelKey;	// NSString of the text within the anch
     @result The main frame.
 */    
 - (WebFrame *)mainFrame;
-
-/*!
-    @method frameForDataSource:
-    @abstract Return the frame associated with the data source.  
-    @discussion Traverses the frame tree to find the frame associated
-    with a datasource.
-    @param datasource The datasource to  match against each frame.
-    @result The frame that has the associated datasource.
-*/    
-- (WebFrame *)frameForDataSource: (WebDataSource *)dataSource;
-
-/*!
-    @method frameForView:
-    @abstract Return the frame associated with the view.  
-    @discussion Traverses the frame tree to find the view. 
-    @param aView The view to match against each frame.
-    @result The frame that has the associated view.
-*/    
-- (WebFrame *)frameForView: (WebView *)aView;
 
 /*!
     @method backForwardList

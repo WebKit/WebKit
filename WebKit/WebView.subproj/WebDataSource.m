@@ -84,29 +84,6 @@
     return _private->response;
 }
 
-// May return nil if not initialized with a URL.
-- (NSURL *)URL
-{
-    return [[self request] URL];
-}
-
-
-- (void)startLoading
-{
-    [self _startLoading: nil];
-}
-
-
-// Cancels any pending loads.  A data source is conceptually only ever loading
-// one document at a time, although one document may have many related
-// resources.  stopLoading will stop all loads related to the data source.  This
-// method will also stop loads that may be loading in child frames.
-- (void)stopLoading
-{
-    [self _recursiveStopLoading];
-}
-
-
 // Returns YES if there are any pending loads.
 - (BOOL)isLoading
 {

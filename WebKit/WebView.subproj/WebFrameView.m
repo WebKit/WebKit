@@ -6,7 +6,7 @@
 
 #import <WebKit/WebClipView.h>
 #import <WebKit/WebCookieAdapter.h>
-#import <WebKit/WebController.h>
+#import <WebKit/WebControllerPrivate.h>
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebDocument.h>
 #import <WebKit/WebDynamicScrollBarsView.h>
@@ -74,7 +74,7 @@ enum {
 
 - (WebFrame *)webFrame
 {
-    return [[self _controller] frameForView: self]; 
+    return [[self _controller] _frameForView: self]; 
 }
 
 

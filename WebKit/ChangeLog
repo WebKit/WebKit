@@ -1,3 +1,74 @@
+2003-03-06  Richard Williamson   <rjw@apple.com>
+
+        Tweaks to WebKit API.
+        Dropped URL on WebDataSource.
+        Dropped start/stop loading on WebDataSource.
+        Drop frameForView and frameForDataSource from WebController.
+        Moved canShowXX to WebCapabilities.
+        
+        Reviewed by hyatt.
+
+        * Downloads.subproj/WebDownload.m:
+        (-[WebDownload errorWithCode:]):
+        * Misc.subproj/WebNSPasteboardExtras.m:
+        (-[NSPasteboard _web_bestURL]):
+        * Misc.subproj/WebNSViewExtras.m:
+        (-[NSView _web_printViewHierarchy:]):
+        * Plugins.subproj/WebNetscapePluginDocumentView.m:
+        (-[WebNetscapePluginDocumentView setDataSource:]):
+        * Plugins.subproj/WebNetscapePluginEmbeddedView.m:
+        (-[WebNetscapePluginEmbeddedView dataSource]):
+        * WebCoreSupport.subproj/WebSubresourceClient.m:
+        (+[WebSubresourceClient startLoadingResource:withURL:referrer:forDataSource:]):
+        * WebKit.exp:
+        * WebView.subproj/WebController.h:
+        * WebView.subproj/WebController.m:
+        (+[WebCapabilities canShowMIMEType:]):
+        (+[WebCapabilities canShowFile:]):
+        (-[WebController mainFrame]):
+        * WebView.subproj/WebControllerPrivate.h:
+        * WebView.subproj/WebControllerPrivate.m:
+        (-[WebController _frameForDataSource:fromFrame:]):
+        (-[WebController _frameForDataSource:]):
+        (-[WebController _frameForView:fromFrame:]):
+        (-[WebController _frameForView:]):
+        * WebView.subproj/WebDataSource.h:
+        * WebView.subproj/WebDataSource.m:
+        * WebView.subproj/WebDataSourcePrivate.h:
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _startLoading]):
+        (-[WebDataSource _stopLoading]):
+        (-[WebDataSource _stopLoadingInternal]):
+        (-[WebDataSource _recursiveStopLoading]):
+        (-[WebDataSource _updateIconDatabaseWithURL:]):
+        (-[WebDataSource _loadIcon]):
+        (-[WebDataSource _URL]):
+        * WebView.subproj/WebDefaultContextMenuDelegate.m:
+        (-[WebDefaultContextMenuDelegate openFrameInNewWindow:]):
+        * WebView.subproj/WebDefaultPolicyDelegate.m:
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame stopLoading]):
+        * WebView.subproj/WebFramePrivate.m:
+        (if):
+        * WebView.subproj/WebHTMLViewPrivate.m:
+        (-[WebHTMLView _frame]):
+        (-[WebHTMLView _elementAtPoint:]):
+        * WebView.subproj/WebImageRepresentation.m:
+        (-[WebImageRepresentation setDataSource:]):
+        * WebView.subproj/WebImageView.m:
+        (-[WebImageView menuForEvent:]):
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient cancel]):
+        (-[WebMainResourceClient continueAfterContentPolicy:response:]):
+        (-[WebMainResourceClient resource:didReceiveData:]):
+        (-[WebMainResourceClient resourceDidFinishLoading:]):
+        * WebView.subproj/WebTextView.m:
+        (-[WebTextView menuForEvent:]):
+        * WebView.subproj/WebView.m:
+        (-[WebView webFrame]):
+        * WebView.subproj/WebViewPrivate.m:
+        (-[WebView _isMainFrame]):
+
 2003-03-06  Ed Voas  voas@apple.com
 
         Reviewed by Richard.

@@ -199,7 +199,7 @@ static WebDefaultContextMenuDelegate *sharedDelegate = nil;
 {
     WebFrame *webFrame = [element objectForKey:WebElementFrameKey];
     WebDataSource *dataSource = [webFrame dataSource];
-    NSURL *URL = [dataSource URL];
+    NSURL *URL = [dataSource _URL];
     [self openNewWindowWithURL:URL];
 }
 

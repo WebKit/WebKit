@@ -288,7 +288,7 @@
 
 - (BOOL)_isMainFrame
 {
-    return [_private->controller mainFrame] == [_private->controller frameForView:self];
+    return [_private->controller mainFrame] == [self webFrame];
 }
 
 - (void)_reregisterDraggedTypes

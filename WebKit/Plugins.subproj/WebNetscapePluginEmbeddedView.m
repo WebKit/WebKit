@@ -61,7 +61,7 @@
 - (WebDataSource *)dataSource
 {
     WebView *webView = (WebView *)[self _web_superviewOfClass:[WebView class]];
-    WebFrame *webFrame = [[[webView webFrame] controller] frameForView:webView];
+    WebFrame *webFrame = [webView webFrame];
 
     return [webFrame dataSource];
 }
