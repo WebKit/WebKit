@@ -214,6 +214,7 @@ void QScrollView::resizeContents(int w, int h)
             w = 0;
         if (h < 0)
             h = 0;
+
         [view setFrameSize: NSMakeSize (w,h)];
     } else {
         resize (w, h);

@@ -396,6 +396,24 @@ void KHTMLView::setMarginHeight(int h)
     _marginHeight = h;
 }
 
+
+void KHTMLView::adjustViewSize()
+{
+    if( m_part->xmlDocImpl() ) {
+        DOM::DocumentImpl *document = m_part->xmlDocImpl();
+
+        khtml::RenderCanvas* root = static_cast<khtml::RenderCanvas *>(document->renderer());
+        if ( !root )
+            return;
+        
+        int docw = root->docWidth();
+        int doch = root->docHeight();
+    
+        resizeContents(docw, doch);
+    }
+}
+
+
 void KHTMLView::layout()
 {
     if( m_part->xmlDocImpl() ) {

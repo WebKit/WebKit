@@ -1,3 +1,20 @@
+2003-08-21  Richard Williamson   <rjw@apple.com>
+	
+	Fixed 3378810.  Avoid resizing frame from drawRect: when printing.  This will corrupt the graphics context.
+
+        Reviewed by Hyatt.
+
+        * khtml/khtmlview.cpp:
+        (KHTMLView::adjustViewSize):
+        * khtml/khtmlview.h:
+        * khtml/rendering/render_canvas.cpp:
+        (RenderCanvas::layout):
+        * kwq/KWQScrollView.mm:
+        (QScrollView::resizeContents):
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge adjustViewSize]):
+
 === Safari-94 ===
 
 2003-08-21  David Hyatt  <hyatt@apple.com>

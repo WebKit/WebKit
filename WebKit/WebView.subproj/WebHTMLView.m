@@ -25,10 +25,11 @@
 #import <WebKit/WebViewPrivate.h>
 
 #import <AppKit/NSResponder_Private.h>
+#import <CoreGraphics/CGContextPrivate.h>
 #import <CoreGraphics/CGContextGState.h>
 
 @interface WebHTMLView (WebHTMLViewPrivate)
-- (void)_setPrinting:(BOOL)printing pageWidth:(float)pageWidth;
+- (void)_setPrinting:(BOOL)printing pageWidth:(float)pageWidth adjustViewSize:(BOOL)adjustViewSize;
 @end
 
 @interface NSArray (WebHTMLView)
@@ -347,6 +348,7 @@
 #endif
 
     LOG(View, "%@ doing layout", self);
+
     if (pageWidth > 0.0) {
         [[self _bridge] forceLayoutForPageWidth:pageWidth];
     } else {
@@ -528,13 +530,13 @@
     if (subviewsWereSetAside) {
         [self _restoreSubviews];
     }
-    
+
     // This helps when we print as part of a larger print process.
     // If the WebHTMLView itself is what we're printing, then we will never have to do this.
     BOOL wasInPrintingMode = _private->printing;
     BOOL isPrinting = ![NSGraphicsContext currentContextDrawingToScreen];
     if (wasInPrintingMode != isPrinting) {
-        [self _setPrinting:isPrinting pageWidth:0];
+        [self _setPrinting:isPrinting pageWidth:0 adjustViewSize:NO];
     }
     
     if ([[self _bridge] needsLayout]) {
@@ -568,8 +570,9 @@
 
     [NSGraphicsContext saveGraphicsState];
     NSRectClip(rect);
-    
+        
     ASSERT([[self superview] isKindOfClass:[WebClipView class]]);
+
     [(WebClipView *)[self superview] setAdditionalClip:rect];
 
     NS_DURING {
@@ -623,7 +626,7 @@
 #endif
 
     if (wasInPrintingMode != isPrinting) {
-        [self _setPrinting:wasInPrintingMode pageWidth:0];
+        [self _setPrinting:wasInPrintingMode pageWidth:0 adjustViewSize:NO];
     }
 
     if (subviewsWereSetAside) {
@@ -873,7 +876,7 @@
 
 // Does setNeedsDisplay:NO as a side effect. Useful for begin/endDocument.
 // pageWidth != 0 implies we will relayout to a new width
-- (void)_setPrinting:(BOOL)printing pageWidth:(float)pageWidth
+- (void)_setPrinting:(BOOL)printing pageWidth:(float)pageWidth adjustViewSize:(BOOL)adjustViewSize
 {
     WebFrame *frame = [self _frame];
     NSArray *subframes = [frame childFrames];
@@ -883,10 +886,14 @@
         WebFrame *subframe = [subframes objectAtIndex:i];
         WebFrameView *frameView = [subframe frameView];
         if ([[subframe dataSource] _isDocumentHTML]) {
-            [(WebHTMLView *)[frameView documentView] _setPrinting:printing pageWidth:0];
+            [(WebHTMLView *)[frameView documentView] _setPrinting:printing pageWidth:0 adjustViewSize:adjustViewSize];
         }
     }
 
+    if (adjustViewSize){
+        [[self _bridge] adjustViewSize];
+    }
+    
     if (printing != _private->printing) {
         _private->printing = printing;
         [self setNeedsToApplyStyles:YES];
@@ -915,7 +922,7 @@
         NSPrintInfo *printInfo = [[NSPrintOperation currentOperation] printInfo];
         pageWidth = [printInfo paperSize].width - [printInfo leftMargin] - [printInfo rightMargin];
     }
-    [self _setPrinting:YES pageWidth:pageWidth];	// will relayout
+    [self _setPrinting:YES pageWidth:pageWidth adjustViewSize:YES];	// will relayout
 
     [super beginDocument];
     // There is a theoretical chance that someone could do some drawing between here and endDocument,
@@ -927,7 +934,7 @@
 {
     [super endDocument];
     // Note sadly at this point [NSGraphicsContext currentContextDrawingToScreen] is still NO 
-    [self _setPrinting:NO pageWidth:0.0];
+    [self _setPrinting:NO pageWidth:0.0 adjustViewSize:YES];
     [[self window] setAutodisplay:YES];
 }
 

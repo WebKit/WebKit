@@ -1,3 +1,16 @@
+2003-08-21  Richard Williamson   <rjw@apple.com>
+
+	Fixed 3378810.  Avoid resizing frame from drawRect: when printing.  This will corrupt the graphics context.
+
+        Reviewed by Hyatt.
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView layoutToPageWidth:]):
+        (-[WebHTMLView drawRect:]):
+        (-[WebHTMLView _setPrinting:pageWidth:adjustViewSize:]):
+        (-[WebHTMLView beginDocument]):
+        (-[WebHTMLView endDocument]):
+
 === Safari-94 ===
 
 2003-08-21  John Sullivan  <sullivan@apple.com>

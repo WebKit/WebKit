@@ -993,5 +993,12 @@ static HTMLFormElementImpl *formElementFromDOMElement(id <WebDOMElement>element)
     return _part->bodyBackgroundColor();
 }
 
+- (void)adjustViewSize
+{
+    KHTMLView *view = _part->view();
+    if (view)
+        view->adjustViewSize();
+}
+
 
 @end
