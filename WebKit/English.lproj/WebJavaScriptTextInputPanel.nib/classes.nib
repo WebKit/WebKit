@@ -1,0 +1,14 @@
+{
+    IBClasses = (
+        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {
+            ACTIONS = {pressedCancel = id; pressedOK = id; }; 
+            CLASS = WebJavaScriptTextInputPanel; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {prompt = NSTextField; textInput = NSTextField; }; 
+            SUPERCLASS = NSWindowController; 
+        }, 
+        {CLASS = "java.lang.Object"; LANGUAGE = Java; }
+    ); 
+    IBVersion = 1; 
+}

@@ -284,6 +284,7 @@
 				EDD9133E03576ADA00C1A526,
 				83402EF8035A588900BE770A,
 				83402EFC035A58D100BE770A,
+				9345D4EC0365C5B2008635CE,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -295,7 +296,8 @@
 				35F357800198AAB80ACA1520,
 				F5B67131023EDF8901C1A525,
 				F5883BDF025E5C6A01000102,
-				F8CA15C0029A39FC01000122,
+				9345D17D0365BF35008635CE,
+				9345D4E90365C58D008635CE,
 			);
 			isa = PBXResourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -381,6 +383,7 @@
 				EDD9134003576AFF00C1A526,
 				83402EF9035A588900BE770A,
 				83402EFD035A58D100BE770A,
+				9345D4ED0365C5B2008635CE,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -406,6 +409,7 @@
 				F5B67130023EDF8901C1A525,
 				F5883BDE025E5C6A01000102,
 				F5F732D202FF4D4F01A80180,
+				9345D4E70365C58D008635CE,
 			);
 			isa = PBXGroup;
 			name = Resources;
@@ -1495,6 +1499,72 @@
 		};
 		933D659C03413FF2008635CE = {
 			fileRef = 933D659A03413FF2008635CE;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		9345D17B0365BF35008635CE = {
+			children = (
+				9345D17C0365BF35008635CE,
+			);
+			isa = PBXVariantGroup;
+			name = WebAuthenticationPanel.nib;
+			path = ..;
+			refType = 4;
+		};
+		9345D17C0365BF35008635CE = {
+			isa = PBXFileReference;
+			name = English;
+			path = Panels.subproj/English.lproj/WebAuthenticationPanel.nib;
+			refType = 4;
+		};
+		9345D17D0365BF35008635CE = {
+			fileRef = 9345D17B0365BF35008635CE;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		9345D4E70365C58D008635CE = {
+			children = (
+				9345D4E80365C58D008635CE,
+			);
+			isa = PBXVariantGroup;
+			name = WebJavaScriptTextInputPanel.nib;
+			path = "";
+			refType = 4;
+		};
+		9345D4E80365C58D008635CE = {
+			isa = PBXFileReference;
+			name = English;
+			path = English.lproj/WebJavaScriptTextInputPanel.nib;
+			refType = 4;
+		};
+		9345D4E90365C58D008635CE = {
+			fileRef = 9345D4E70365C58D008635CE;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		9345D4EA0365C5B2008635CE = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			path = WebJavaScriptTextInputPanel.h;
+			refType = 4;
+		};
+		9345D4EB0365C5B2008635CE = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			path = WebJavaScriptTextInputPanel.m;
+			refType = 4;
+		};
+		9345D4EC0365C5B2008635CE = {
+			fileRef = 9345D4EA0365C5B2008635CE;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		9345D4ED0365C5B2008635CE = {
+			fileRef = 9345D4EB0365C5B2008635CE;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -2596,6 +2666,8 @@
 				F5488CF502CB04EE01FF6274,
 				F5E7B24503025CE801A80180,
 				F5E7B24603025CE801A80180,
+				9345D4EA0365C5B2008635CE,
+				9345D4EB0365C5B2008635CE,
 			);
 			isa = PBXGroup;
 			name = "WebCore Support";
@@ -3129,7 +3201,7 @@
 				F8CA15C1029A3E0D01000122,
 				F83DCC71029D09F301000131,
 				F83DCC72029D09F301000131,
-				F8CA15BE029A39FC01000122,
+				9345D17B0365BF35008635CE,
 			);
 			isa = PBXGroup;
 			name = Panels;
@@ -3183,27 +3255,6 @@
 		};
 		F8CA15BC029A39D901000122 = {
 			fileRef = F8CA15B8029A39D901000122;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F8CA15BE029A39FC01000122 = {
-			children = (
-				F8CA15BF029A39FC01000122,
-			);
-			isa = PBXVariantGroup;
-			name = Panels.subproj;
-			path = "";
-			refType = 4;
-		};
-		F8CA15BF029A39FC01000122 = {
-			isa = PBXFileReference;
-			name = WebAuthenticationPanel.nib;
-			path = English.lproj/WebAuthenticationPanel.nib;
-			refType = 4;
-		};
-		F8CA15C0029A39FC01000122 = {
-			fileRef = F8CA15BE029A39FC01000122;
 			isa = PBXBuildFile;
 			settings = {
 			};

@@ -1,3 +1,16 @@
+2002-10-22  Darin Adler  <darin@apple.com>
+
+	- fixed 3077305 -- js dialog not yet implemented - crash (fatal error)
+
+        * WebCoreSupport.subproj/WebViewFactory.m:
+        (-[WebViewFactory runJavaScriptTextInputPanelWithPrompt:defaultText:returningText:]):
+	Create a WebJavaScriptTextInputPanel and run it.
+
+        * English.lproj/WebJavaScriptTextInputPanel.nib: Added.
+        * WebCoreSupport.subproj/WebJavaScriptTextInputPanel.h: Added.
+        * WebCoreSupport.subproj/WebJavaScriptTextInputPanel.m: Added.
+        * WebKit.pbproj/project.pbxproj: Added 
+
 2002-10-22  Chris Blumenberg  <cblu@apple.com>
 
 	Use the mouseDown point instead of the mouseDragged point to determine the mouseOffset when dragging images. When you drag an image now, the point where you clicked is the point where the cursor is in relation to the drag image.

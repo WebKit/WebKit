@@ -7,13 +7,15 @@
 //
 
 #import <WebKit/WebBaseNetscapePluginView.h>
+
+#import <WebKit/WebJavaScriptTextInputPanel.h>
 #import <WebKit/WebNetscapePluginEmbeddedView.h>
 #import <WebKit/WebNullPluginView.h>
 #import <WebKit/WebPlugin.h>
 #import <WebKit/WebPluginDatabase.h>
 #import <WebKit/WebViewFactory.h>
-#import <WebFoundation/WebAssertions.h>
 
+#import <WebFoundation/WebAssertions.h>
 #import <WebFoundation/WebNSURLExtras.h>
 
 @implementation WebViewFactory
@@ -90,7 +92,14 @@
 
 - (BOOL)runJavaScriptTextInputPanelWithPrompt:(NSString *)prompt defaultText:(NSString *)defaultText returningText:(NSString **)result
 {
-    return NO;
+    WebJavaScriptTextInputPanel *panel = [[WebJavaScriptTextInputPanel alloc] initWithPrompt:prompt text:defaultText];
+    [panel showWindow:nil];
+    BOOL OK = [NSApp runModalForWindow:[panel window]];
+    if (OK) {
+        *result = [panel text];
+    }
+    [panel release];
+    return OK;
 }
 
 @end
