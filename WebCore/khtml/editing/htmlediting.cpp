@@ -2445,7 +2445,8 @@ void DeleteSelectionCommand::insertPlaceholderForAncestorBlockContent()
         NodeImpl *downstreamBlock = m_downstreamEnd.node()->enclosingBlockFlowElement();
         NodeImpl *afterDownstreamBlock = m_downstreamEnd.downstream().node()->enclosingBlockFlowElement();
         
-        if (afterDownstreamBlock != downstreamBlock && afterDownstreamBlock != upstreamBlock) {
+        if ((afterDownstreamBlock != downstreamBlock && afterDownstreamBlock != upstreamBlock) ||
+            (m_downstreamEnd == m_selectionToDelete.end() && isEndOfParagraph(VisiblePosition(m_downstreamEnd, VP_DEFAULT_AFFINITY)))) {
             NodeImpl *block = createDefaultParagraphElement(document());
             insertNodeBefore(block, m_upstreamStart.node());
             addBlockPlaceholderIfNeeded(block);

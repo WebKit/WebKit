@@ -1,3 +1,13 @@
+2005-03-09  David Harrison  <harrison@apple.com>
+
+        Reviewed by Maciej.
+
+        <rdar://problem/4037141> REGRESSION (Mail): Pasting deletes preceding blank lines with certain steps
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::DeleteSelectionCommand::insertPlaceholderForAncestorBlockContent):
+        Add check for anonymous text after blocks.
+
 2005-03-08  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by John
