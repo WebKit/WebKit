@@ -101,25 +101,14 @@ namespace KJS {
    * intermediate results of expression evaluation and cannot be stored
    * as properties of objects.
    *
-   * The list is explicitly shared. Note that while copy() returns a deep
+   * The list is explicitly shared. Note that while copy() returns a
    * copy of the list the referenced objects are still shared.
    */
   class List : private Value {
     friend class ListIterator;
   public:
     List();
-    List(ListImp *);
 
-    /**
-     * Converts a Value into an List. If the value's type is not
-     * ListType, a null object will be returned (i.e. one with it's
-     * internal pointer set to 0). If you do not know for sure whether the
-     * value is of type List, you should check the @ref isNull()
-     * methods afterwards before calling any methods on the returned value.
-     *
-     * @return The value converted to an List
-     */
-    static List dynamicCast(const Value &v);
     /**
      * Append an object to the end of the list.
      *
@@ -158,7 +147,7 @@ namespace KJS {
      */
     void clear();
     /**
-     * Returns a deep copy of the list. Ownership is passed to the user
+     * Returns a shallow copy of the list. Ownership is passed to the user
      * who is responsible for deleting the list then.
      */
     List copy() const;
@@ -192,8 +181,6 @@ namespace KJS {
      */
     Value operator[](int i) const;
 
-    ListImp *imp() const { return (ListImp *)Value::imp(); }
-
     /**
      * Returns a pointer to a static instance of an empty list. Useful if a
      * function has a @ref KJS::List parameter.
@@ -202,6 +189,11 @@ namespace KJS {
 #ifdef KJS_DEBUG_MEM
     static void globalClear();
 #endif
+
+  private:
+    List(ListImp *);
+    ListImp *imp() const { return (ListImp *)Value::imp(); }
+    friend class ObjectImp;
   };
 
 }; // namespace

@@ -107,14 +107,6 @@ List::List()
   //fprintf(stderr,"List::List() this=%p imp=%p refcount=%d\n",this,rep,rep->refcount);
 }
 
-List List::dynamicCast(const Value &v)
-{
-  if (v.isNull() || v.type() != ListType)
-    return 0;
-
-  return static_cast<ListImp*>(v.imp());
-}
-
 void List::append(const Value& val)
 {
   static_cast<ListImp*>(rep)->append(val);

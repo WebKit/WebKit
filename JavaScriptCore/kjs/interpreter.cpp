@@ -309,7 +309,6 @@ void Interpreter::finalCheck()
   while( Collector::collect() )
     ;
 
-  fprintf(stderr,"ListImp::count = %d\n", KJS::ListImp::count);
   Node::finalCheck();
   Collector::finalCheck();
   Lexer::globalClear();

@@ -80,7 +80,7 @@ void KWQFileButton::setFilename(const QString &f)
     if (_filename.isEmpty()) {
         _label = [NO_FILE_SELECTED retain];
     } else {
-        _label = [[[[NSFileManager defaultManager] componentsToDisplayForPath:_filename.getNSString()] lastObject] copy];
+        _label = [[[NSFileManager defaultManager] displayNameAtPath:_filename.getNSString()] copy];
     }
     
     // Get the icon.

@@ -159,7 +159,8 @@ namespace KJS {
     friend class ListIterator;
     friend class List;
     friend class InterpreterImp;
-  public:
+    friend class ObjectImp;
+  private:
     ListImp();
     ~ListImp();
 
