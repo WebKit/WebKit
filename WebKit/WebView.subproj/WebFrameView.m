@@ -68,12 +68,6 @@
 }
 
 
-- (BOOL)acceptsFirstMouse:(NSEvent *)theEvent
-{
-    return YES;
-}
-
-
 // Note that the controller is not retained.
 - (id <IFWebController>)controller
 {

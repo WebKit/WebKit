@@ -1,3 +1,15 @@
+2002-05-29  John Sullivan  <sullivan@apple.com>
+
+	Removed acceptsFirstMouse override, this fixes at least:
+
+	2930713 -- clicking on an empty part of window to bring it to front
+	takes focus away from page address field
+
+	2938028 -- Link cursor doesn't appear when browser window not
+	frontmost, but clicks activate links
+
+	* WebView.subproj/IFWebView.mm:
+
 2002-05-28  John Sullivan  <sullivan@apple.com>
 
 	Made -[IFBookmark group] and -[IFBookmark parent] public
