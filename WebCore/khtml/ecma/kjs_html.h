@@ -33,6 +33,8 @@
 
 #include <qguardedptr.h>
 
+#include <ApplicationServices/ApplicationServices.h>
+
 class HTMLElement;
 
 namespace KJS {
@@ -253,19 +255,60 @@ namespace KJS {
     static const ClassInfo info;
 
     enum { 
+        StrokeStyle,
+        FillStyle,
+        LineWidth,
+        LineCap,
+        LineJoin,
+        MiterLimit,
+        ShadowOffsetX,
+        ShadowOffsetY,
+        ShadowBlur,
+        ShadowColor,
+        GlobalAlpha,
+        GlobalCompositeOperation,
         Save, Restore,
         Scale, Rotate, Translate,
         BeginPath, ClosePath, 
         SetStrokeColor, SetFillColor, SetLineWidth, SetLineCap, SetLineJoin, SetMiterLimit, 
-        FillPath, StrokePath, 
-        MoveToPoint, AddLineToPoint, AddQuadraticCurveToPoint, AddBezierCurveToPoint, AddArcToPoint, AddArc, AddRect, Clip,
+        Fill, Stroke, 
+        MoveTo, LineTo, QuadraticCurveTo, BezierCurveTo, ArcTo, Arc, Rect, Clip,
         ClearRect, FillRect, StrokeRect,
         DrawImage, DrawImageFromRect,
         SetShadow, ClearShadow,
-        SetAlpha, SetCompositeOperation};
+        SetAlpha, SetCompositeOperation,
+        CreateLinearGradient,
+        CreateRadialGradient,
+        CreatePattern
+    };
+
+private:
+    static CGColorRef Context2D::colorRefFromValue(ExecState *exec, const Value &value);
+    static QColor Context2D::colorFromValue(ExecState *exec, const Value &value);
+    
+    void save();
+    void restore();
+    
+    CGContextRef drawingContext();
+    void setShadow(ExecState *exec);
 
     DOM::HTMLElementImpl *_element;
     unsigned int _needsFlushRasterCache;
+    
+    QPtrList<List> stateStack;
+    
+    Value _strokeStyle;
+    Value _fillStyle;
+    Value _lineWidth;
+    Value _lineCap;
+    Value _lineJoin;
+    Value _miterLimit;
+    Value _shadowOffsetX;
+    Value _shadowOffsetY;
+    Value _shadowBlur;
+    Value _shadowColor;
+    Value _globalAlpha;
+    Value _globalComposite;
   };
 
   Value getHTMLCollection(ExecState *exec, const DOM::HTMLCollection &c);

@@ -1,3 +1,26 @@
+2004-08-25  Richard Williamson   <rjw@apple.com>
+
+	Updated to <canvas> API to match the spec.  (Still need
+	to implement gradients and patterns.)
+
+        Reviewed by Ken.
+
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::Context2DFunction::tryCall):
+        (Context2D::getValueProperty):
+        (Context2D::drawingContext):
+        (Context2D::colorRefFromValue):
+        (Context2D::colorFromValue):
+        (Context2D::setShadow):
+        (Context2D::putValue):
+        (Context2D::save):
+        (Context2D::restore):
+        (Context2D::Context2D):
+        * khtml/ecma/kjs_html.h:
+        (KJS::Context2D::):
+        * khtml/ecma/kjs_html.lut.h:
+        (KJS::):
+
 2004-08-25  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by me

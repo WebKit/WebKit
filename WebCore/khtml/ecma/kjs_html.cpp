@@ -3373,6 +3373,9 @@ Value KJS::Context2DFunction::tryCall(ExecState *exec, Object &thisObj, const Li
                 return err;
             }
             CGContextSaveGState(drawingContext);
+            
+            contextObject->save();
+            
             break;
         }
         case Context2D::Restore: {
@@ -3382,6 +3385,9 @@ Value KJS::Context2DFunction::tryCall(ExecState *exec, Object &thisObj, const Li
                 return err;
             }
             CGContextRestoreGState(drawingContext);
+            
+            contextObject->restore();
+            
             break;
         }
         case Context2D::BeginPath: {
@@ -3571,7 +3577,7 @@ Value KJS::Context2DFunction::tryCall(ExecState *exec, Object &thisObj, const Li
             CGContextSetMiterLimit (drawingContext, l);
             break;
         }
-        case Context2D::FillPath: {
+        case Context2D::Fill: {
             if (args.size() != 0) {
                 Object err = Error::create(exec,SyntaxError);
                 exec->setException(err);
@@ -3581,7 +3587,7 @@ Value KJS::Context2DFunction::tryCall(ExecState *exec, Object &thisObj, const Li
             renderer->setNeedsImageUpdate();
             break;
         }
-        case Context2D::StrokePath: {
+        case Context2D::Stroke: {
             if (args.size() != 0) {
                 Object err = Error::create(exec,SyntaxError);
                 exec->setException(err);
@@ -3625,7 +3631,7 @@ Value KJS::Context2DFunction::tryCall(ExecState *exec, Object &thisObj, const Li
             CGContextTranslateCTM (drawingContext, tx, ty);
             break;
         }
-        case Context2D::MoveToPoint: {
+        case Context2D::MoveTo: {
             if (args.size() != 2) {
                 Object err = Error::create(exec,SyntaxError);
                 exec->setException(err);
@@ -3637,7 +3643,7 @@ Value KJS::Context2DFunction::tryCall(ExecState *exec, Object &thisObj, const Li
             renderer->setNeedsImageUpdate();
             break;
         }
-        case Context2D::AddLineToPoint: {
+        case Context2D::LineTo: {
             if (args.size() != 2) {
                 Object err = Error::create(exec,SyntaxError);
                 exec->setException(err);
@@ -3649,7 +3655,7 @@ Value KJS::Context2DFunction::tryCall(ExecState *exec, Object &thisObj, const Li
             renderer->setNeedsImageUpdate();
             break;
         }
-        case Context2D::AddQuadraticCurveToPoint: {
+        case Context2D::QuadraticCurveTo: {
             if (args.size() != 4) {
                 Object err = Error::create(exec,SyntaxError);
                 exec->setException(err);
@@ -3663,7 +3669,7 @@ Value KJS::Context2DFunction::tryCall(ExecState *exec, Object &thisObj, const Li
             renderer->setNeedsImageUpdate();
             break;
         }
-        case Context2D::AddBezierCurveToPoint: {
+        case Context2D::BezierCurveTo: {
             if (args.size() != 6) {
                 Object err = Error::create(exec,SyntaxError);
                 exec->setException(err);
@@ -3679,7 +3685,7 @@ Value KJS::Context2DFunction::tryCall(ExecState *exec, Object &thisObj, const Li
             renderer->setNeedsImageUpdate();
             break;
         }
-        case Context2D::AddArcToPoint: {
+        case Context2D::ArcTo: {
             if (args.size() != 5) {
                 Object err = Error::create(exec,SyntaxError);
                 exec->setException(err);
@@ -3693,7 +3699,7 @@ Value KJS::Context2DFunction::tryCall(ExecState *exec, Object &thisObj, const Li
             CGContextAddArcToPoint (drawingContext, x1, y1, x2, y2, r);
             break;
         }
-        case Context2D::AddArc: {
+        case Context2D::Arc: {
             if (args.size() != 6) {
                 Object err = Error::create(exec,SyntaxError);
                 exec->setException(err);
@@ -3708,7 +3714,7 @@ Value KJS::Context2DFunction::tryCall(ExecState *exec, Object &thisObj, const Li
             CGContextAddArc (drawingContext, x, y, r, sa, ea, clockwise);
             break;
         }
-        case Context2D::AddRect: {
+        case Context2D::Rect: {
             if (args.size() != 4) {
                 Object err = Error::create(exec,SyntaxError);
                 exec->setException(err);
@@ -3964,6 +3970,18 @@ Value KJS::Context2DFunction::tryCall(ExecState *exec, Object &thisObj, const Li
             QPainter::setCompositeOperation (drawingContext,compositeOperator);
             break;
         }
+        
+        case Context2D::CreateLinearGradient: {
+        	// FIXME:  Implement gradients.
+        }
+        
+        case Context2D::CreateRadialGradient: {
+        	// FIXME:  Implement gradients.
+        }
+        
+        case Context2D::CreatePattern: {
+        	// FIXME:  Implement patterns.
+        }
     }
 
     return Undefined();
@@ -3972,7 +3990,19 @@ Value KJS::Context2DFunction::tryCall(ExecState *exec, Object &thisObj, const Li
 const ClassInfo KJS::Context2D::info = { "Context2D", 0, &Context2DTable, 0 };
 
 /* Source for Context2DTable. Use "make hashtables" to regenerate.
-@begin Context2DTable 31
+@begin Context2DTable 48
+  strokeStyle              Context2D::StrokeStyle                 DontDelete
+  fillStyle                Context2D::FillStyle                   DontDelete
+  lineWidth                Context2D::LineWidth                   DontDelete
+  lineCap                  Context2D::LineCap                     DontDelete
+  lineJoin                 Context2D::LineJoin                    DontDelete
+  miterLimit               Context2D::MiterLimit                  DontDelete
+  shadowOffsetX            Context2D::ShadowOffsetX               DontDelete
+  shadowOffsetY            Context2D::ShadowOffsetY               DontDelete
+  shadowBlur               Context2D::ShadowBlur                  DontDelete
+  shadowColor              Context2D::ShadowColor                 DontDelete
+  globalAlpha              Context2D::GlobalAlpha                 DontDelete
+  globalCompositeOperation Context2D::GlobalCompositeOperation    DontDelete
   save                     Context2D::Save                        DontDelete|Function 0
   restore                  Context2D::Restore                     DontDelete|Function 0
   scale                    Context2D::Scale                       DontDelete|Function 2
@@ -3986,15 +4016,15 @@ const ClassInfo KJS::Context2D::info = { "Context2D", 0, &Context2DTable, 0 };
   setLineCap               Context2D::SetLineCap                  DontDelete|Function 1
   setLineJoin              Context2D::SetLineJoin                 DontDelete|Function 1
   setMiterLimit            Context2D::SetMiterLimit               DontDelete|Function 1
-  fillPath                 Context2D::FillPath                    DontDelete|Function 0
-  strokePath               Context2D::StrokePath                  DontDelete|Function 0
-  moveToPoint              Context2D::MoveToPoint                 DontDelete|Function 2
-  addLineToPoint           Context2D::AddLineToPoint              DontDelete|Function 2
-  addQuadraticCurveToPoint Context2D::AddQuadraticCurveToPoint    DontDelete|Function 4
-  addBezierCurveToPoint    Context2D::AddBezierCurveToPoint       DontDelete|Function 6
-  addArcToPoint            Context2D::AddArcToPoint               DontDelete|Function 5
-  addArc                   Context2D::AddArc                      DontDelete|Function 6
-  addRect                  Context2D::AddRect                     DontDelete|Function 4
+  fill                     Context2D::Fill                        DontDelete|Function 0
+  stroke                   Context2D::Stroke                      DontDelete|Function 0
+  moveTo                   Context2D::MoveTo                      DontDelete|Function 2
+  lineTo                   Context2D::LineTo                      DontDelete|Function 2
+  quadraticCurveToPoint    Context2D::QuadraticCurveTo            DontDelete|Function 4
+  bezierCurveTo            Context2D::BezierCurveTo               DontDelete|Function 6
+  arcTo                    Context2D::ArcTo                       DontDelete|Function 5
+  arc                      Context2D::Arc                         DontDelete|Function 6
+  addRect                  Context2D::Rect                        DontDelete|Function 4
   clip                     Context2D::Clip                        DontDelete|Function 0
   clearRect                Context2D::ClearRect                   DontDelete|Function 4
   fillRect                 Context2D::FillRect                    DontDelete|Function 4
@@ -4005,6 +4035,9 @@ const ClassInfo KJS::Context2D::info = { "Context2D", 0, &Context2DTable, 0 };
   clearShadow              Context2D::ClearShadow                 DontDelete|Function 0
   setAlpha                 Context2D::SetAlpha                    DontDelete|Function 1
   setCompositeOperation    Context2D::SetCompositeOperation       DontDelete|Function 1
+  createLinearGradient     Context2D::CreateLinearGradient        DontDelete|Function 4
+  createRadialGradient     Context2D::CreateRadialGradient        DontDelete|Function 6
+  createPattern            Context2D::CreatePattern               DontDelete|Function 2
 @end
 */
 
@@ -4023,6 +4056,59 @@ Value Context2D::tryGet(ExecState *exec, const Identifier &propertyName) const
 
 Value Context2D::getValueProperty(ExecState *, int token) const
 {
+    switch(token) {
+        case StrokeStyle: {
+            return _strokeStyle;
+        }
+        
+        case FillStyle: {
+            return _fillStyle;
+        }
+        
+        case LineWidth: {
+            return _lineWidth;
+        }
+        
+        case LineCap: {
+            return _lineCap;
+        }
+        
+        case LineJoin: {
+            return _lineJoin;
+        }
+        
+        case MiterLimit: {
+            return _miterLimit;
+        }
+        
+        case ShadowOffsetX: {
+            return _shadowOffsetX;
+        }
+        
+        case ShadowOffsetY: {
+            return _shadowOffsetY;
+        }
+        
+        case ShadowBlur: {
+            return _shadowBlur;
+        }
+        
+        case ShadowColor: {
+            return _shadowColor;
+        }
+        
+        case GlobalAlpha: {
+            return _globalAlpha;
+        }
+        
+        case GlobalCompositeOperation: {
+            return _globalComposite;
+        }
+        
+        default: {
+        }
+    }
+    
     return Undefined();
 }
 
@@ -4031,13 +4117,229 @@ void Context2D::tryPut(ExecState *exec, const Identifier &propertyName, const Va
     DOMObjectLookupPut<Context2D,DOMObject>(exec, propertyName, value, attr, &ImageTable, this );
 }
 
+CGContextRef Context2D::drawingContext()
+{
+    khtml::RenderCanvasImage *renderer = static_cast<khtml::RenderCanvasImage*>(_element->renderer());
+    if (!renderer)
+        return 0;
+    
+    CGContextRef context = renderer->drawingContext();
+    if (!context)
+        return 0;
+        
+    return context;
+}
+
+
+CGColorRef Context2D::colorRefFromValue(ExecState *exec, const Value &value)
+{
+    CGColorSpaceRef colorSpace;
+    float components[4];
+    
+    if (value.type() == StringType) {
+        QRgb color = DOM::CSSParser::parseColor(value.toString(exec).string());
+        QColor qc(color);
+        components[0] = qc.red()/255.;
+        components[1] = qc.green()/255.;
+        components[2] = qc.blue()/255.;
+        components[3] = qc.alpha();
+        colorSpace = CGColorSpaceCreateDeviceRGB();
+    }
+    else
+        return 0;
+    
+    CGColorRef colorRef = CGColorCreate (colorSpace, components);
+    CFRelease (colorSpace);
+    
+    return colorRef;
+}
+
+QColor Context2D::colorFromValue(ExecState *exec, const Value &value)
+{
+    QRgb color = DOM::CSSParser::parseColor(value.toString(exec).string());
+    return QColor(color);
+}
+
+void Context2D::setShadow(ExecState *exec)
+{
+    CGContextRef context = drawingContext();
+    if (!context)
+        return;
+    
+    CGSize offset;
+    offset.width = (float)_shadowOffsetX.toNumber(exec);
+    offset.height = (float)_shadowOffsetY.toNumber(exec);
+    float blur = (float)_shadowBlur.toNumber(exec);
+    CGColorRef colorRef = colorRefFromValue(exec, _shadowColor);
+    CGContextSetShadowWithColor (context, offset, blur, colorRef);
+    CFRelease (colorRef);
+}
+
 void Context2D::putValue(ExecState *exec, int token, const Value& value, int /*attr*/)
 {
+    CGContextRef context = drawingContext();
+    if (!context)
+        return;
+    
+    switch(token) {
+        case StrokeStyle: {
+            _strokeStyle = value;
+            if (value.type() == StringType) {
+                QColor qc = Context2D::colorFromValue(exec, value);
+                CGContextSetRGBStrokeColor(context, qc.red()/255., qc.green()/255., qc.blue()/255., qc.alpha());
+            }
+            else {
+                // FIXME Add support for gradients and patterns.
+            }
+        }
+        
+        case FillStyle: {
+            _fillStyle = value;
+            if (value.type() == StringType) {
+                QColor qc = colorFromValue(exec, value);
+                CGContextSetRGBStrokeColor(context, qc.red()/255., qc.green()/255., qc.blue()/255., qc.alpha());
+            }
+            else {
+                // FIXME Add support for gradients and patterns.
+            }
+        }
+        
+        case LineWidth: {
+            _lineWidth = value;
+            float w = (float)value.toNumber(exec);
+            CGContextSetLineWidth (context, w);
+        }
+        
+        case LineCap: {
+            _lineCap = value;
+        
+            CGLineCap cap = kCGLineCapButt;
+            QString capString = value.toString(exec).qstring().lower();
+            if (capString == "round")
+                cap = kCGLineCapRound;
+            else if (capString == "square")
+                cap = kCGLineCapSquare;
+            CGContextSetLineCap (context, cap);
+        }
+        
+        case LineJoin: {
+            _lineJoin = value;
+            
+            CGLineJoin join = kCGLineJoinMiter;
+            QString joinString = value.toString(exec).qstring().lower();
+            if (joinString == "round")
+                join = kCGLineJoinRound;
+            else if (joinString == "bevel")
+                join = kCGLineJoinBevel;
+            CGContextSetLineJoin (context, join);
+        }
+        
+        case MiterLimit: {
+            _miterLimit = value;
+            
+            float l = (float)value.toNumber(exec);
+            CGContextSetMiterLimit (context, l);
+        }
+        
+        case ShadowOffsetX: {
+            _shadowOffsetX = value;
+            setShadow(exec);
+        }
+        
+        case ShadowOffsetY: {
+            _shadowOffsetY = value;
+            setShadow(exec);
+        }
+        
+        case ShadowBlur: {
+            _shadowBlur = value;
+            setShadow(exec);
+        }
+        
+        case ShadowColor: {
+            _shadowColor = value;
+            setShadow(exec);
+        }
+        
+        case GlobalAlpha: {
+            _globalAlpha = value;
+            float a =  (float)value.toNumber(exec);
+            CGContextSetAlpha (context, a);
+        }
+        
+        case GlobalCompositeOperation: {
+            _globalComposite = value;
+            QString compositeOperator = value.toString(exec).qstring().lower();
+            QPainter::setCompositeOperation (context, compositeOperator);
+        }
+        
+        default: {
+        }
+    }
+}
+
+void Context2D::save()
+{
+    List *list = new List();
+    
+    list->append(_strokeStyle);
+    list->append(_fillStyle);
+    list->append(_lineWidth);
+    list->append(_lineCap);
+    list->append(_lineJoin);
+    list->append(_miterLimit);
+    list->append(_shadowOffsetX);
+    list->append(_shadowOffsetY);
+    list->append(_shadowBlur);
+    list->append(_shadowColor);
+    list->append(_globalAlpha);
+    list->append(_globalComposite);
+    
+    stateStack.append(list);
+}
+
+void Context2D::restore()
+{
+    if (stateStack.count() < 1) {
+        return;
+    }
+    
+    List *list = stateStack.last();
+    
+    int pos = 0;
+    _strokeStyle = list->at(pos++);
+    _fillStyle = list->at(pos++);
+    _lineWidth = list->at(pos++);
+    _lineCap = list->at(pos++);
+    _lineJoin = list->at(pos++);
+    _miterLimit = list->at(pos++);
+    _shadowOffsetX = list->at(pos++);
+    _shadowOffsetY = list->at(pos++);
+    _shadowBlur = list->at(pos++);
+    _shadowColor = list->at(pos++);
+    _globalAlpha = list->at(pos++);
+    _globalComposite = list->at(pos++);
+
+    // This will delete list.
+    stateStack.removeLast();
 }
 
 Context2D::Context2D(const DOM::HTMLElement &e)
   : _element(static_cast<DOM::HTMLElementImpl*>(e.handle())), _needsFlushRasterCache(0)
 {
+    _lineCap = String("butt");
+    _lineJoin = String("miter");
+    _miterLimit = Number(10.0);
+    
+    _shadowOffsetX = Number(0.);
+    _shadowOffsetY = Number(0.);
+    _shadowBlur = Number(0.);
+    _shadowColor = String("black");
+        
+    _globalAlpha = Number(1.);
+    _globalComposite = String("source-over");
+    
+    stateStack.setAutoDelete(true);
 }
 
 Context2D::~Context2D()
