@@ -1,3 +1,28 @@
+2002-02-20  Richard Williamson  <rjw@apple.com>
+
+    Some groundwork to bring WebFoundation callbacks up to 
+    WebKit.
+    
+	* src/kdelibs/khtml/misc/loader.h:
+	* src/kwq/KWQKHTMLPart.mm: (-[KHTMLPartLoadClient
+	WCURLHandleResourceDidBeginLoading:userData:]), (-[KHTMLPartLoadClient
+	WCURLHandleResourceDidCancelLoading:userData:]), (-[KHTMLPartLoadClient
+	WCURLHandleResourceDidFinishLoading:userData:]), (-[KHTMLPartLoadClient
+	WCURLHandle:resourceDataDidBecomeAvailable:userData:]), (-[KHTMLPartLoadClient
+	WCURLHandle:resourceDidFailLoadingWithResult:userData:]), (KHTMLPart::openURL),
+	(KHTMLPart::closeURL), (KHTMLPart::write), (KHTMLPart::checkCompleted):
+	* src/kwq/KWQKloader.mm: (CachedCSSStyleSheet::CachedCSSStyleSheet),
+	(CachedScript::CachedScript), (CachedImage::CachedImage), (-[URLLoadClient
+	initWithLoader:dataSource:]), (-[URLLoadClient
+	WCURLHandleResourceDidBeginLoading:userData:]), (-[URLLoadClient
+	WCURLHandleResourceDidCancelLoading:userData:]), (-[URLLoadClient
+	WCURLHandleResourceDidFinishLoading:userData:]), (-[URLLoadClient
+	WCURLHandle:resourceDataDidBecomeAvailable:userData:]), (-[URLLoadClient
+	WCURLHandle:resourceDidFailLoadingWithResult:userData:]), (Loader::load),
+	(Loader::servePendingRequests), (Cache::requestImage),
+	(Cache::requestStyleSheet), (Cache::requestScript):
+	* src/kwq/kio/jobclasses.h:
+
 2002-02-20  Maciej Stachowiak  <mjs@apple.com>
 
 	* src/kdelibs/kjs/kjs-test:

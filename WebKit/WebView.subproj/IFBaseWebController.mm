@@ -68,6 +68,14 @@
 
 @end
 
+@implementation IFLoadProgress
+- init
+{
+    return [super init];
+}
+
+@end
+
 
 @implementation IFBaseWebController
 
@@ -227,13 +235,14 @@
 // ---------------------------------------------------------------------
 - (void)receivedProgress: (IFLoadProgress *)progress forResource: (NSString *)resourceDescription fromDataSource: (IFWebDataSource *)dataSource
 {
-    [NSException raise:IFMethodNotYetImplemented format:@"IFBaseWebController::receivedProgress:forResource:fromDataSource: is not implemented"];
+    // Do nothing.
 }
+
 
 
 - (void)receivedError: (IFError *)error forResource: (NSString *)resourceDescription partialProgress: (IFLoadProgress *)progress fromDataSource: (IFWebDataSource *)dataSource
 {
-    [NSException raise:IFMethodNotYetImplemented format:@"IFBaseWebController::receivedError:forResource:partialProgress:fromDataSource: is not implemented"];
+    // FIXME?
 }
 
 
@@ -272,6 +281,8 @@
     [newDataSource _setController: self];
     [frame setDataSource: newDataSource];
     
+    // dataSourceChanged: will reset the view and begin trying to
+    // display the new new datasource.
     [[frame view] dataSourceChanged: newDataSource];
 
     // This introduces a nasty dependency on the view.

@@ -139,19 +139,23 @@ static void recursive(const DOM::Node &pNode, const DOM::Node &node)
 
 - (void)WCURLHandleResourceDidBeginLoading:(id)sender userData:(void *)userData
 {
+    KWQDEBUGLEVEL1 (0x2000, "userData = 0x%08x\n", userData);
 }
 
 - (void)WCURLHandleResourceDidCancelLoading:(id)sender userData:(void *)userData
 {
+    KWQDEBUGLEVEL1 (0x2000, "userData = 0x%08x\n", userData);
 }
 
 - (void)WCURLHandleResourceDidFinishLoading:(id)sender userData:(void *)userData
 {
+    KWQDEBUGLEVEL1 (0x2000, "userData = 0x%08x\n", userData);
     m_part->closeURL();
 }
 
 - (void)WCURLHandle:(id)sender resourceDataDidBecomeAvailable:(NSData *)data userData:(void *)userData
 {
+    KWQDEBUGLEVEL3 (0x2000, "userData = 0x%08x, data = 0x%08x, length %d\n", userData, data, [data length]);
     if (!m_data) {
         m_data = [data retain];
     }
@@ -160,6 +164,7 @@ static void recursive(const DOM::Node &pNode, const DOM::Node &node)
 
 - (void)WCURLHandle:(id)sender resourceDidFailLoadingWithResult:(int)result userData:(void *)userData
 {
+    KWQDEBUGLEVEL2 (0x2000, "result = %d, userData = 0x%08x\n", result, userData);
 }
 
 
@@ -395,7 +400,7 @@ bool KHTMLPart::openURL( const KURL &url )
     urlString = [NSString stringWithCString:d->m_workingURL.url().latin1()];
     // FIXME: temporary hack to make file: URLs work right
     if ([urlString hasPrefix:@"file:/"] && [urlString characterAtIndex:6] != '/') {
-	urlString = [@"file:///" stringByAppendingString:[urlString substringFromIndex:6]];
+	    urlString = [@"file:///" stringByAppendingString:[urlString substringFromIndex:6]];
     }
 
     if ([urlString hasSuffix:@"/"]) {
@@ -426,7 +431,7 @@ bool KHTMLPart::closeURL()
     
     urlString = [NSString stringWithCString:d->m_url.url().latin1()];
     if ([urlString hasPrefix:@"file:/"] && [urlString characterAtIndex:6] != '/') {
-	urlString = [@"file:///" stringByAppendingString:[urlString substringFromIndex:6]];
+	    urlString = [@"file:///" stringByAppendingString:[urlString substringFromIndex:6]];
     }
 
     if ([urlString hasSuffix:@"/"]) {
@@ -581,8 +586,6 @@ bool KHTMLPart::onlyLocalReferences() const
 }
 
 
-
-
 void KHTMLPart::begin( const KURL &url, int xOffset, int yOffset)
 {
     //d->m_referrer = url.url();
@@ -683,7 +686,9 @@ void KHTMLPart::write(const char *str, int len)
     double start = CFAbsoluteTimeGetCurrent();
 #endif
     
-    // FIX ME:  This is very expensive.
+    // FIX ME:  This is very expensive.  We should using the IFMutableData
+    // that represents the document, and only constructing the complete
+    // string when requested.
     d->m_documentSource += QString(str, len);
 
     QString decoded;
@@ -699,6 +704,8 @@ void KHTMLPart::write(const char *str, int len)
 
     d->m_decodingStarted = 1;
         
+    // Transition from provisional to committed data source at this point.
+    
     d->m_doc->applyChanges(true, true);
     
     // end lines added in lieu of big fixme
@@ -1782,11 +1789,11 @@ void KHTMLPart::checkCompleted()
     NSString *urlString;
     urlString = [NSString stringWithCString:d->m_url.url().latin1()];
     if ([urlString hasPrefix:@"file:/"] && [urlString characterAtIndex:6] != '/') {
-	urlString = [@"file:///" stringByAppendingString:[urlString substringFromIndex:6]];
+	    urlString = [@"file:///" stringByAppendingString:[urlString substringFromIndex:6]];
     }
     
     if ([urlString hasSuffix:@"/"]) {
-	urlString = [urlString substringToIndex:([urlString length] - 1)];
+	    urlString = [urlString substringToIndex:([urlString length] - 1)];
     }
     
     // Still waiting for images/scripts from the loader ?

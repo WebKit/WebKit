@@ -172,8 +172,10 @@ public:
 #else
     void begin(void *requestor, void *userData);
 #endif
+    KURL url() { return _url; }
 #endif
 
+    
     // operators ---------------------------------------------------------------
 
 // protected -------------------------------------------------------------------

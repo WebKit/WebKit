@@ -1,3 +1,20 @@
+2002-02-20  Richard Williamson  <rjw@apple.com>
+
+    Some groundwork to bring WebFoundation callbacks up to 
+    WebKit.
+    
+	* WebView.subproj/IFBaseWebController.mm: (-[IFLoadProgress init]),
+	(-[IFBaseWebController receivedProgress:forResource:fromDataSource:]),
+	(-[IFBaseWebController
+	receivedError:forResource:partialProgress:fromDataSource:]),
+	(-[IFBaseWebController _changeFrame:dataSource:]):
+	* WebView.subproj/IFWebController.h:
+	* WebView.subproj/IFWebDataSource.mm: (-[IFWebDataSource stopLoading]):
+	* WebView.subproj/IFWebFrame.h:
+	* WebView.subproj/IFWebFramePrivate.h:
+	* WebView.subproj/IFWebFramePrivate.mm: (-[IFWebFramePrivate
+	setProvisionalDataSource:]):
+
 2002-02-20  Maciej Stachowiak  <mjs@apple.com>
 
 	* WebView.subproj/IFWebController.h: Fix my WebController screw-up.

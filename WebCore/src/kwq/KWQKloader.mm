@@ -101,8 +101,8 @@ void CachedObject::setRequest(Request *_request)
 
 // -------------------------------------------------------------------------------------------
 
-CachedCSSStyleSheet::CachedCSSStyleSheet(const DOMString &url, const DOMString &baseURL, bool reload, int _expireDate, const QString& charset)
-    : CachedObject(url, CSSStyleSheet, reload, _expireDate)
+CachedCSSStyleSheet::CachedCSSStyleSheet(const DocLoader *loader, const DOMString &url, const DOMString &baseURL, bool reload, int _expireDate, const QString& charset)
+    : CachedObject(loader, url, CSSStyleSheet, reload, _expireDate)
 {
     // It's css we want.
     setAccept( QString::fromLatin1("text/css") );
@@ -167,8 +167,8 @@ void CachedCSSStyleSheet::error( int /*err*/, const char */*text*/ )
 
 // -------------------------------------------------------------------------------------------
 
-CachedScript::CachedScript(const DOMString &url, const DOMString &baseURL, bool reload, int _expireDate, const QString& charset)
-    : CachedObject(url, Script, reload, _expireDate)
+CachedScript::CachedScript(const DocLoader *loader, const DOMString &url, const DOMString &baseURL, bool reload, int _expireDate, const QString& charset)
+    : CachedObject(loader, url, Script, reload, _expireDate)
 {
     // It's javascript we want.
     setAccept( QString::fromLatin1("application/x-javascript") );
@@ -381,8 +381,8 @@ static QString buildAcceptHeader()
 
 // -------------------------------------------------------------------------------------
 
-CachedImage::CachedImage(const DOMString &url, const DOMString &baseURL, bool reload, int _expireDate)
-    : QObject(), CachedObject(url, Image, reload, _expireDate)
+CachedImage::CachedImage(const DocLoader *loader, const DOMString &url, const DOMString &baseURL, bool reload, int _expireDate)
+    : QObject(), CachedObject(loader, url, Image, reload, _expireDate)
 {
     static const QString &acceptHeader = KGlobal::staticQString( buildAcceptHeader() );
 
@@ -906,21 +906,50 @@ void DocLoader::removeCachedObject( CachedObject* o ) const
 {
     @public
     Loader *m_loader;
-    NSData *m_data;
+    id m_dataSource;
 }
 
--(id)initWithLoader:(Loader *)loader;
+-(id)initWithLoader:(Loader *)loader dataSource: dataSource;
 
+@end
+
+typedef enum {
+    IF_LOAD_TYPE_CSS    = 1,
+    IF_LOAD_TYPE_IMAGE  = 2,
+    IF_LOAD_TYPE_SCRIPT = 3
+} IF_LOAD_TYPE;
+
+
+@interface IFLoadProgress : NSObject
+{
+    int bytesSoFar;	// 0 if this is the start of load
+    int totalToLoad;	// -1 if this is not known.
+                        // bytesSoFar == totalLoaded when complete
+    IF_LOAD_TYPE type;	// load types, either image, css, or jscript
+}
+- init;
+@end
+
+@class IFError;
+
+@protocol  IFLoadHandler
+- (void)receivedProgress: (IFLoadProgress *)progress forResource: (NSString *)resourceDescription fromDataSource: (IFWebDataSource *)dataSource;
+
+- (void)receivedError: (IFError *)error forResource: (NSString *)resourceDescription partialProgress: (IFLoadProgress *)progress fromDataSource: (IFWebDataSource *)dataSource;
+
+@end
+
+@interface IFWebDataSource
+- controller;
 @end
 
 @implementation URLLoadClient
 
--(id)initWithLoader:(Loader *)loader
+-(id)initWithLoader:(Loader *)loader dataSource: dataSource
 {
     if ((self = [super init])) {
         m_loader = loader;
-        m_data = nil;
-    
+        m_dataSource = dataSource;
         return self;
     }
     
@@ -929,38 +958,57 @@ void DocLoader::removeCachedObject( CachedObject* o ) const
 
 - (void)WCURLHandleResourceDidBeginLoading:(id)sender userData:(void *)userData
 {
+    KIO::TransferJob *job = static_cast<KIO::TransferJob *>(userData);
+    KWQDEBUGLEVEL2 (0x2000, "dataSource = 0x%08x for URL %s\n", m_dataSource, job->url().url().latin1());
 }
 
 - (void)WCURLHandleResourceDidCancelLoading:(id)sender userData:(void *)userData
 {
+    KIO::TransferJob *job = static_cast<KIO::TransferJob *>(userData);
+    KWQDEBUGLEVEL2 (0x2000, "dataSource = 0x%08x for URL %s\n", m_dataSource, job->url().url().latin1());
 }
 
 - (void)WCURLHandleResourceDidFinishLoading:(id)sender userData:(void *)userData
 {
-    KIO::Job *job = static_cast<KIO::Job *>(userData);
+    KIO::TransferJob *job = static_cast<KIO::TransferJob *>(userData);
+    QString urlString = job->url().url();
+
+    KWQDEBUGLEVEL2 (0x2000, "dataSource = 0x%08x for URL %s\n", m_dataSource, urlString.latin1());
     m_loader->slotFinished(job);
+    
+    id <IFLoadHandler> controller;
+    
+    controller = [m_dataSource controller];
+    IFLoadProgress *loadProgress = [[[IFLoadProgress alloc] init] autorelease];
+    loadProgress->totalToLoad = 0;
+    loadProgress->bytesSoFar = 0;
+    [controller receivedProgress: (IFLoadProgress *)loadProgress forResource: QSTRING_TO_NSSTRING(urlString) fromDataSource: m_dataSource];
 }
 
 - (void)WCURLHandle:(id)sender resourceDataDidBecomeAvailable:(NSData *)data userData:(void *)userData
 {
-    if (!m_data) {
-        m_data = [data retain];
-    }
+    KIO::TransferJob *job = static_cast<KIO::TransferJob *>(userData);
+    QString urlString = job->url().url();
+    
+    KWQDEBUGLEVEL4 (0x2000, "dataSource = 0x%08x for URL %s data at 0x%08x, length %d\n", m_dataSource, urlString.latin1(), data, [data length]);
 
-    KIO::Job *job = static_cast<KIO::Job *>(userData);
     m_loader->slotData(job, (const char *)[data bytes], [data length]);    
+
+    id <IFLoadHandler> controller;
+    
+    controller = [m_dataSource controller];
+    IFLoadProgress *loadProgress = [[[IFLoadProgress alloc] init] autorelease];
+    loadProgress->totalToLoad = -1;
+    loadProgress->bytesSoFar = [data length];
+    [controller receivedProgress: (IFLoadProgress *)loadProgress forResource: QSTRING_TO_NSSTRING(urlString) fromDataSource: m_dataSource];
 }
 
 - (void)WCURLHandle:(id)sender resourceDidFailLoadingWithResult:(int)result userData:(void *)userData
 {
+    KIO::TransferJob *job = static_cast<KIO::TransferJob *>(userData);
+    KWQDEBUGLEVEL2 (0x2000, "dataSource = 0x%08x for URL %s\n", m_dataSource, job->url().url().latin1());
 }
 
--(void)dealloc
-{
-    [m_data release];
-    
-    [super dealloc];
-}
 
 @end
 
@@ -973,17 +1021,17 @@ public:
     LoaderPrivate(Loader *parent)
     {
         _parent = parent;
-        m_recv = [[URLLoadClient alloc] initWithLoader:parent];
+        //m_recv = [[URLLoadClient alloc] initWithLoader:parent dataSource: nil];
     } 
     
     ~LoaderPrivate()
     {
-        [m_recv autorelease];
+        //[m_recv autorelease];
     }       
 
 private:
     Loader *_parent;
-    URLLoadClient *m_recv;
+    //URLLoadClient *m_recv;
 };
 
 } // namespace khtml
@@ -1000,9 +1048,30 @@ Loader::~Loader()
     delete d;
 }
 
+// FIXME!  Clients need to be released when document is completely loaded.
+static NSMutableDictionary *clientForDocument = 0;
+
 void Loader::load(CachedObject *object, const DOMString &baseURL, bool incremental)
 {
+    // All loads associated with a particular baseURL should share the same
+    // URLHandleClient.
+    id client;
+    
+    if (clientForDocument == 0)
+        clientForDocument = [[NSMutableDictionary alloc] init];
+    
+    // FIXME!  We need to remove cached clients when data source goes away.
+    id dataSource = ((KHTMLPart *)(((DocLoader *)(object->loader()))->part()))->getDataSource();
+    NSNumber *key = [NSNumber numberWithUnsignedInt: (unsigned int)dataSource];
+    client = [clientForDocument objectForKey: key];
+    if (client == nil){
+        KWQDEBUGLEVEL2 (0x2000, "Creating client for dataSource 0x%08x, url %s\n", dataSource, baseURL.string().latin1());
+        client = [[[URLLoadClient alloc] initWithLoader:this dataSource: dataSource] autorelease];
+        [clientForDocument setObject: client forKey: key];
+    }
+    
     Request *req = new Request(object, baseURL, incremental);
+    req->client = client;
     m_requestsPending.append(req);
 
     servePendingRequests();
@@ -1021,9 +1090,15 @@ void Loader::servePendingRequests()
 #endif
 
 #ifdef _KWQ_
+    KWQDEBUGLEVEL2 (0x2000, "Serving request for base %s, url %s\n", 
+                req->m_baseURL.string().latin1(), req->object->url().string().latin1());
+
     KIO::TransferJob* job = KIO::get( req->object->url().string(), req->object->reload(), false /*no GUI*/);
     m_requestsLoading.insert(job, req);
-    job->begin(d->m_recv, job);
+
+    //job->begin(d->m_recv, job);
+    job->begin((URLLoadClient *)req->client, job);
+
 #else
   KIO::TransferJob* job = KIO::get( req->object->url().string(), req->object->reload(), false /*no GUI*/);
 
@@ -1275,7 +1350,7 @@ CachedImage *Cache::requestImage( const DocLoader* dl, const DOMString & url, co
 #ifdef CACHE_DEBUG
         kdDebug( 6060 ) << "Cache: new: " << kurl.url() << endl;
 #endif
-        CachedImage *im = new CachedImage(kurl.url(), baseUrl, reload, _expireDate);
+        CachedImage *im = new CachedImage(dl, kurl.url(), baseUrl, reload, _expireDate);
         if ( dl && dl->autoloadImages() ) Cache::loader()->load(im, im->baseURL(), true);
         cache->insert( kurl.url(), im );
         lru->append( kurl.url() );
@@ -1324,7 +1399,7 @@ CachedCSSStyleSheet *Cache::requestStyleSheet( const DocLoader* dl, const DOMStr
 #ifdef CACHE_DEBUG
         kdDebug( 6060 ) << "Cache: new: " << kurl.url() << endl;
 #endif
-        CachedCSSStyleSheet *sheet = new CachedCSSStyleSheet(kurl.url(), baseUrl, reload, _expireDate, charset);
+        CachedCSSStyleSheet *sheet = new CachedCSSStyleSheet(dl, kurl.url(), baseUrl, reload, _expireDate, charset);
         cache->insert( kurl.url(), sheet );
         lru->append( kurl.url() );
         flush();
@@ -1372,7 +1447,7 @@ CachedScript *Cache::requestScript( const DocLoader* dl, const DOM::DOMString &u
 #ifdef CACHE_DEBUG
         kdDebug( 6060 ) << "Cache: new: " << kurl.url() << endl;
 #endif
-        CachedScript *script = new CachedScript(kurl.url(), baseUrl, reload, _expireDate, charset);
+        CachedScript *script = new CachedScript(dl, kurl.url(), baseUrl, reload, _expireDate, charset);
         cache->insert( kurl.url(), script );
         lru->append( kurl.url() );
         flush();

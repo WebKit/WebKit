@@ -121,14 +121,19 @@
     A IFLoadProgress capture the state associated with a load progress
     indication.  Should we use a struct?
 */
-@interface IFLoadProgress 
+typedef enum {
+    IF_LOAD_TYPE_CSS    = 1,
+    IF_LOAD_TYPE_IMAGE  = 2,
+    IF_LOAD_TYPE_SCRIPT = 3
+} IF_LOAD_TYPE;
+
+
+@interface IFLoadProgress : NSObject
 {
     int bytesSoFar;	// 0 if this is the start of load
     int totalToLoad;	// -1 if this is not known.
                         // bytesSoFar == totalLoaded when complete
-#ifdef TENTATIVE_API
-    IF_LOAD_TYPES type;	// load types, either image, css, jscript, or html
-#endif
+    IF_LOAD_TYPE type;	// load types, either image, css, or jscript
 }
 @end
 

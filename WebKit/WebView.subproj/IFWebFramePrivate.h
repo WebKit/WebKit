@@ -15,6 +15,7 @@
     NSString *name;
     id view;
     IFWebDataSource *dataSource;
+    IFWebDataSource *provisionalDataSource;
     void *renderFramePart;
 }
 

@@ -39,6 +39,14 @@
 }
 
 
+- (IFWebDataSource *)provisionalDataSource { return provisionalDataSource; }
+- (void)setProvisionalDataSource: (IFWebDataSource *)d
+{ 
+    [provisionalDataSource autorelease];
+    provisionalDataSource = [d retain];
+}
+
+
 - (void *)renderFramePart { return renderFramePart; }
 - (void)setRenderFramePart: (void *)p 
 {

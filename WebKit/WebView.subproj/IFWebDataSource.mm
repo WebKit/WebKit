@@ -231,7 +231,7 @@
 // Returns NO if the data source is not currently loading.
 - (void)stopLoading
 {
-    [NSException raise:IFMethodNotYetImplemented format:@"IFWebDataSource::stopLoading is not implemented"];
+    [self _part]->closeURL ();
 }
 
 
