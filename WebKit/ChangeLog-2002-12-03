@@ -1,3 +1,20 @@
+2002-11-15  Maciej Stachowiak  <mjs@apple.com>
+
+	- fixed 3102016 - REGRESSION: Command-clicking on a link can open _two_ windows.
+	
+        * WebView.subproj/WebDataSourcePrivate.h:
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _setJustOpenedForTargetedLink:]):
+        (-[WebDataSource _justOpenedForTargetedLink]):
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame findOrCreateFramedNamed:]):
+        * WebView.subproj/WebFramePrivate.h:
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _continueAfterNavigationPolicy:]):
+        (-[WebFrame _loadDataSource:withLoadType:]):
+        (-[WebFrame _downloadRequest:toPath:]):
+        (-[WebFrame _setJustOpenedForTargetedLink:]):
+
 2002-11-15  Darin Adler  <darin@apple.com>
 
         * WebView.subproj/WebFramePrivate.m:

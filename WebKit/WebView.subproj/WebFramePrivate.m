@@ -984,6 +984,11 @@ static const char * const stateNames[] = {
 
     BOOL shouldContinue = NO;
 
+    if ([[self provisionalDataSource] _justOpenedForTargetedLink] && 
+	(policy == WebPolicyOpenNewWindow || policy == WebPolicyOpenNewWindowBehind)) {
+	policy = WebPolicyUse;
+    }
+
     switch (policy) {
     case WebPolicyIgnore:
 	break;
@@ -1352,6 +1357,9 @@ static const char * const stateNames[] = {
         [newDataSource _setOverrideEncoding:[[[self parent] dataSource] _overrideEncoding]];
     }
     [newDataSource _setController:[self controller]];
+    [newDataSource _setJustOpenedForTargetedLink:_private->justOpenedForTargetedLink];
+    _private->justOpenedForTargetedLink = NO;
+
     [_private setProvisionalDataSource:newDataSource];
     
     ASSERT([newDataSource webFrame] == self);
@@ -1368,6 +1376,11 @@ static const char * const stateNames[] = {
     [self _loadDataSource:dataSource withLoadType:WebFrameLoadTypeStandard];
 
     [dataSource release];
+}
+
+- (void)_setJustOpenedForTargetedLink:(BOOL)justOpened
+{
+    _private->justOpenedForTargetedLink = justOpened;
 }
 
 @end

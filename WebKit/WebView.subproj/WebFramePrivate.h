@@ -69,6 +69,7 @@ typedef enum {
     WebResourceRequest *policyRequest;
     id policyTarget;
     SEL policySelector;
+    BOOL justOpenedForTargetedLink;
 }
 
 - (void)setName:(NSString *)name;
@@ -150,5 +151,6 @@ typedef enum {
 
 - (void)_downloadRequest:(WebResourceRequest *)request toPath:(NSString *)path;
 
+- (void)_setJustOpenedForTargetedLink:(BOOL)justOpened;
 
 @end

@@ -583,6 +583,15 @@
     [downloadPath release];
 }
 
+- (void)_setJustOpenedForTargetedLink:(BOOL)justOpened
+{
+    _private->justOpenedForTargetedLink = justOpened;
+}
+
+- (BOOL)_justOpenedForTargetedLink
+{
+    return _private->justOpenedForTargetedLink;
+}
 
 @end
 

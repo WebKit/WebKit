@@ -184,6 +184,7 @@
         [controller _setTopLevelFrameName:name];
         [[controller windowOperationsDelegate] showWindow];
         frame = [controller mainFrame];
+	[frame _setJustOpenedForTargetedLink:YES];
     }
 
     ASSERT(frame);
