@@ -1,3 +1,12 @@
+2003-07-16  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - cure problem where we keep competing to check in config.h with/without HAVE_FOUNDATION_SOURCSE
+
+        * Makefile.am: Remove the HAVE_FOUNDATION_SOURCES line.
+        * config.h: Check in without that line.
+
 2003-07-16  Vicki Murley  <vicki@apple.com>
 
         Reviewed by kocienda. 

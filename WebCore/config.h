@@ -18,7 +18,6 @@
 #define HAVE_FORK 1
 
 /* Define if Foundation source tree exists */
-/* #undef HAVE_FOUNDATION_SOURCES */
 
 /* Define if you have finite */
 #define HAVE_FUNC_FINITE 1
