@@ -27,7 +27,7 @@
 #include <jni_utility.h>
 #include <jni_runtime.h>
 
-using namespace Bindings;
+using namespace KJS::Bindings;
 
 void JavaClass::_commonInit (jobject aClass)
 {

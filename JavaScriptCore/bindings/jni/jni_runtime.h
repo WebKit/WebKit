@@ -35,7 +35,6 @@
 namespace KJS
 {
 class Value;
-}
 
 namespace Bindings
 {
@@ -48,7 +47,8 @@ public:
     void _commonInit (JNIEnv *e, jstring s)
     {
         // We could be more efficient:  only create
-        // _characters from _uchars on demand.
+        // _characters from _uchars on demand.  Maybe just
+        // use a UString?
         _size = e->GetStringLength (s);
         const char *c = getCharactersFromJStringInEnv (e, s);
         _characters = strdup(c);
@@ -101,7 +101,7 @@ public:
         return *this;
     }
 
-    const char *characters() const { return _characters; }
+    const char *UTF8String() const { return _characters; }
     const jchar *uchars() const { return _uchars; }
     int length() const { return _size; }
     KJS::UString ustring() const { return KJS::UString ((const KJS::UChar *)uchars(),length()); }
@@ -139,7 +139,7 @@ public:
         return *this;
     }
     
-    virtual RuntimeType type() const { return _type.characters(); }
+    virtual RuntimeType type() const { return _type.UTF8String(); }
 
     JNIType getJNIType() const { return _JNIType; }
     
@@ -224,8 +224,8 @@ public:
     virtual KJS::Value valueFromInstance(const Instance *instance) const;
     virtual void setValueToInstance(KJS::ExecState *exec, const Instance *instance, const KJS::Value &aValue) const;
     
-    virtual const char *name() const { return _name.characters(); }
-    virtual RuntimeType type() const { return _type.characters(); }
+    virtual const char *name() const { return _name.UTF8String(); }
+    virtual RuntimeType type() const { return _type.UTF8String(); }
 
     JNIType getJNIType() const { return _JNIType; }
     
@@ -282,8 +282,8 @@ public:
     };
 
     virtual KJS::Value value() const { return KJS::Value(0); }
-    virtual const char *name() const { return _name.characters(); };
-    virtual RuntimeType returnType() const { return _returnType.characters(); };
+    virtual const char *name() const { return _name.UTF8String(); };
+    virtual RuntimeType returnType() const { return _returnType.UTF8String(); };
     virtual Parameter *parameterAt(long i) const { return &_parameters[i]; };
     virtual long numParameters() const { return _numParameters; };
     
@@ -335,6 +335,8 @@ private:
     const char *_type;
 };
 
-}
+} // namespace Bindings
+
+} // namespace KJS
 
 #endif

@@ -28,7 +28,16 @@
 #include <jni_utility.h>
 #include <runtime_object.h>
 
-using namespace Bindings;
+#ifdef NDEBUG
+#define JS_LOG(formatAndArgs...) ((void)0)
+#else
+#define JS_LOG(formatAndArgs...) { \
+    fprintf (stderr, "%s:  ", __PRETTY_FUNCTION__); \
+    fprintf(stderr, formatAndArgs); \
+}
+#endif
+
+using namespace KJS::Bindings;
 using namespace KJS;
 
 JavaInstance::JavaInstance (jobject instance) 
@@ -84,6 +93,8 @@ Value JavaInstance::invokeMethod (KJS::ExecState *exec, const Method *method, co
     jvalue *jArgs;
     Value resultValue;
     
+    JS_LOG ("%s\n", method->name());
+    
     if (count > 0) {
         jArgs = (jvalue *)malloc (count * sizeof(jvalue));
     }
@@ -105,7 +116,12 @@ Value JavaInstance::invokeMethod (KJS::ExecState *exec, const Method *method, co
         
         case object_type: {
             result.l = callJNIObjectMethodA (_instance->_instance, method->name(), jMethod->signature(), jArgs);
-            resultValue = Object(new RuntimeObjectImp(new JavaInstance (result.l)));
+            if (result.l != 0) {
+                resultValue = Object(new RuntimeObjectImp(new JavaInstance (result.l)));
+            }
+            else {
+                resultValue = Undefined();
+            }
         }
         break;
         
@@ -204,11 +220,13 @@ KJS::Value JavaInstance::valueOf() const
 
 JObjectWrapper::JObjectWrapper(jobject instance)
 {
+    assert (instance != 0);
+
     _ref = 1;
     // Cache the JNIEnv used to get the global ref for this java instanace.
     // It'll be used to delete the reference.
     _env = getJNIEnv();
-    
+        
     _instance = _env->NewGlobalRef (instance);
     _env->DeleteLocalRef (instance);
     

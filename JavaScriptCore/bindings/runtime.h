@@ -28,6 +28,9 @@
 #include "list.h"
 #include "value.h"
 
+namespace KJS 
+{
+
 namespace Bindings
 {
 
@@ -129,6 +132,8 @@ public:
 
 const char *signatureForParameters(const KJS::List &aList);
 
-};
+} // namespace Bindings
+
+} // namespace KJS
 
 #endif

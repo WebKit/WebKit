@@ -30,9 +30,11 @@
 #include "runtime_array.h"
 #include "runtime_object.h"
 
+using namespace KJS::Bindings;
+
 static JavaVM *jvm;
 
-JavaVM *getJavaVM()
+JavaVM *KJS::Bindings::getJavaVM()
 {
     if (jvm)
         return jvm;
@@ -53,7 +55,7 @@ JavaVM *getJavaVM()
     return jvm;
 }
 
-JNIEnv *getJNIEnv()
+JNIEnv *KJS::Bindings::getJNIEnv()
 {
     JNIEnv *env;
     jint jniError = 0;
@@ -202,135 +204,135 @@ static jvalue callJNIMethodA( JNIType type, jobject obj, const char *name, const
     \
     va_end (args);
 
-void callJNIVoidMethod (jobject obj, const char *name, const char *sig, ... )
+void KJS::Bindings::callJNIVoidMethod (jobject obj, const char *name, const char *sig, ... )
 {
     CALL_JNI_METHOD (void_type, obj, name, sig);
 }
 
-jobject callJNIObjectMethod (jobject obj, const char *name, const char *sig, ... )
+jobject KJS::Bindings::callJNIObjectMethod (jobject obj, const char *name, const char *sig, ... )
 {
     CALL_JNI_METHOD (object_type, obj, name, sig);
     return result.l;
 }
 
-jboolean callJNIBooleanMethod( jobject obj, const char *name, const char *sig, ... )
+jboolean KJS::Bindings::callJNIBooleanMethod( jobject obj, const char *name, const char *sig, ... )
 {
     CALL_JNI_METHOD (boolean_type, obj, name, sig);
     return result.z;
 }
 
-jbyte callJNIByteMethod( jobject obj, const char *name, const char *sig, ... )
+jbyte KJS::Bindings::callJNIByteMethod( jobject obj, const char *name, const char *sig, ... )
 {
     CALL_JNI_METHOD (byte_type, obj, name, sig);
     return result.b;
 }
 
-jchar callJNICharMethod (jobject obj, const char *name, const char *sig, ... )
+jchar KJS::Bindings::callJNICharMethod (jobject obj, const char *name, const char *sig, ... )
 {
     CALL_JNI_METHOD (char_type, obj, name, sig);
     return result.c;
 }
 
-jshort callJNIShortMethod (jobject obj, const char *name, const char *sig, ... )
+jshort KJS::Bindings::callJNIShortMethod (jobject obj, const char *name, const char *sig, ... )
 {
     CALL_JNI_METHOD (short_type, obj, name, sig);
     return result.s;
 }
 
-jint callJNIIntMethod (jobject obj, const char *name, const char *sig, ... )
+jint KJS::Bindings::callJNIIntMethod (jobject obj, const char *name, const char *sig, ... )
 {
     CALL_JNI_METHOD (int_type, obj, name, sig);
     return result.i;
 }
 
-jlong callJNILongMethod (jobject obj, const char *name, const char *sig, ... )
+jlong KJS::Bindings::callJNILongMethod (jobject obj, const char *name, const char *sig, ... )
 {
     CALL_JNI_METHOD (long_type, obj, name, sig);
     return result.j;
 }
 
-jfloat callJNIFloatMethod (jobject obj, const char *name, const char *sig, ... )
+jfloat KJS::Bindings::callJNIFloatMethod (jobject obj, const char *name, const char *sig, ... )
 {
     CALL_JNI_METHOD (float_type, obj, name, sig);
     return result.f;
 }
 
-jdouble callJNIDoubleMethod (jobject obj, const char *name, const char *sig, ... )
+jdouble KJS::Bindings::callJNIDoubleMethod (jobject obj, const char *name, const char *sig, ... )
 {
     CALL_JNI_METHOD (double_type, obj, name, sig);
     return result.d;
 }
 
-void callJNIVoidMethodA (jobject obj, const char *name, const char *sig, jvalue *args)
+void KJS::Bindings::callJNIVoidMethodA (jobject obj, const char *name, const char *sig, jvalue *args)
 {
     jvalue result = callJNIMethodA (void_type, obj, name, sig, args);
 }
 
-jobject callJNIObjectMethodA (jobject obj, const char *name, const char *sig, jvalue *args)
+jobject KJS::Bindings::callJNIObjectMethodA (jobject obj, const char *name, const char *sig, jvalue *args)
 {
     jvalue result = callJNIMethodA (object_type, obj, name, sig, args);
     return result.l;
 }
 
-jbyte callJNIByteMethodA ( jobject obj, const char *name, const char *sig, jvalue *args)
+jbyte KJS::Bindings::callJNIByteMethodA ( jobject obj, const char *name, const char *sig, jvalue *args)
 {
     jvalue result = callJNIMethodA (byte_type, obj, name, sig, args);
     return result.b;
 }
 
-jchar callJNICharMethodA (jobject obj, const char *name, const char *sig, jvalue *args)
+jchar KJS::Bindings::callJNICharMethodA (jobject obj, const char *name, const char *sig, jvalue *args)
 {
     jvalue result = callJNIMethodA (char_type, obj, name, sig, args);
     return result.c;
 }
 
-jshort callJNIShortMethodA (jobject obj, const char *name, const char *sig, jvalue *args)
+jshort KJS::Bindings::callJNIShortMethodA (jobject obj, const char *name, const char *sig, jvalue *args)
 {
     jvalue result = callJNIMethodA (short_type, obj, name, sig, args);
     return result.s;
 }
 
-jint callJNIIntMethodA (jobject obj, const char *name, const char *sig, jvalue *args)
+jint KJS::Bindings::callJNIIntMethodA (jobject obj, const char *name, const char *sig, jvalue *args)
 {
     jvalue result = callJNIMethodA (int_type, obj, name, sig, args);
     return result.i;
 }
 
-jlong callJNILongMethodA (jobject obj, const char *name, const char *sig, jvalue *args)
+jlong KJS::Bindings::callJNILongMethodA (jobject obj, const char *name, const char *sig, jvalue *args)
 {
     jvalue result = callJNIMethodA (long_type, obj, name, sig, args);
     return result.j;
 }
 
-jfloat callJNIFloatMethodA (jobject obj, const char *name, const char *sig, jvalue *args)
+jfloat KJS::Bindings::callJNIFloatMethodA (jobject obj, const char *name, const char *sig, jvalue *args)
 {
     jvalue result = callJNIMethodA  (float_type, obj, name, sig, args);
     return result.f;
 }
 
-jdouble callJNIDoubleMethodA (jobject obj, const char *name, const char *sig, jvalue *args)
+jdouble KJS::Bindings::callJNIDoubleMethodA (jobject obj, const char *name, const char *sig, jvalue *args)
 {
     jvalue result = callJNIMethodA (double_type, obj, name, sig, args);
     return result.d;
 }
 
-jboolean callJNIBooleanMethodA (jobject obj, const char *name, const char *sig, jvalue *args)
+jboolean KJS::Bindings::callJNIBooleanMethodA (jobject obj, const char *name, const char *sig, jvalue *args)
 {
     jvalue result = callJNIMethodA (boolean_type, obj, name, sig, args);
     return result.z;
 }
 
-const char *getCharactersFromJString (jstring aJString)
+const char *KJS::Bindings::getCharactersFromJString (jstring aJString)
 {
     return getCharactersFromJStringInEnv (getJNIEnv(), aJString);
 }
 
-void releaseCharactersForJString (jstring aJString, const char *s)
+void KJS::Bindings::releaseCharactersForJString (jstring aJString, const char *s)
 {
     releaseCharactersForJStringInEnv (getJNIEnv(), aJString, s);
 }
 
-const char *getCharactersFromJStringInEnv (JNIEnv *env, jstring aJString)
+const char *KJS::Bindings::getCharactersFromJStringInEnv (JNIEnv *env, jstring aJString)
 {
     jboolean isCopy;
     const char *s = env->GetStringUTFChars((jstring)aJString, &isCopy);
@@ -341,12 +343,12 @@ const char *getCharactersFromJStringInEnv (JNIEnv *env, jstring aJString)
     return s;
 }
 
-void releaseCharactersForJStringInEnv (JNIEnv *env, jstring aJString, const char *s)
+void KJS::Bindings::releaseCharactersForJStringInEnv (JNIEnv *env, jstring aJString, const char *s)
 {
     env->ReleaseStringUTFChars (aJString, s);
 }
 
-const jchar *getUCharactersFromJStringInEnv (JNIEnv *env, jstring aJString)
+const jchar *KJS::Bindings::getUCharactersFromJStringInEnv (JNIEnv *env, jstring aJString)
 {
     jboolean isCopy;
     const jchar *s = env->GetStringChars((jstring)aJString, &isCopy);
@@ -357,12 +359,12 @@ const jchar *getUCharactersFromJStringInEnv (JNIEnv *env, jstring aJString)
     return s;
 }
 
-void releaseUCharactersForJStringInEnv (JNIEnv *env, jstring aJString, const jchar *s)
+void KJS::Bindings::releaseUCharactersForJStringInEnv (JNIEnv *env, jstring aJString, const jchar *s)
 {
     env->ReleaseStringChars (aJString, s);
 }
 
-JNIType JNITypeFromClassName(const char *name)
+JNIType KJS::Bindings::JNITypeFromClassName(const char *name)
 {
     JNIType type;
     
@@ -390,7 +392,7 @@ JNIType JNITypeFromClassName(const char *name)
     return type;
 }
 
-const char *signatureFromPrimitiveType(JNIType type)
+const char *KJS::Bindings::signatureFromPrimitiveType(JNIType type)
 {
     switch (type){
         case void_type: 
@@ -430,7 +432,7 @@ const char *signatureFromPrimitiveType(JNIType type)
     return "";
 }
 
-JNIType JNITypeFromPrimitiveType(char type)
+JNIType KJS::Bindings::JNITypeFromPrimitiveType(char type)
 {
     switch (type){
         case 'V': 
@@ -470,7 +472,7 @@ JNIType JNITypeFromPrimitiveType(char type)
     return invalid_type;
 }
 
-jvalue getJNIField( jobject obj, JNIType type, const char *name, const char *signature)
+jvalue KJS::Bindings::getJNIField( jobject obj, JNIType type, const char *name, const char *signature)
 {
     JavaVM *jvm = getJavaVM();
     JNIEnv *env = getJNIEnv();
@@ -530,7 +532,7 @@ jvalue getJNIField( jobject obj, JNIType type, const char *name, const char *sig
     return result;
 }
 
-jvalue convertValueToJValue (KJS::ExecState *exec, KJS::Value value, JNIType _JNIType, const char *javaClassName)
+jvalue KJS::Bindings::convertValueToJValue (KJS::ExecState *exec, KJS::Value value, JNIType _JNIType, const char *javaClassName)
 {
     jvalue result;
     double d = 0;
@@ -545,12 +547,12 @@ jvalue convertValueToJValue (KJS::ExecState *exec, KJS::Value value, JNIType _JN
                 KJS::ObjectImp *objectImp = static_cast<KJS::ObjectImp*>(value.imp());
                 if (strcmp(objectImp->classInfo()->className, "RuntimeObject") == 0) {
                     KJS::RuntimeObjectImp *imp = static_cast<KJS::RuntimeObjectImp *>(value.imp());
-                    Bindings::JavaInstance *instance = static_cast<Bindings::JavaInstance*>(imp->getInternalInstance());
+                    JavaInstance *instance = static_cast<JavaInstance*>(imp->getInternalInstance());
                     result.l = instance->javaInstance();
                 }
                 else if (strcmp(objectImp->classInfo()->className, "RuntimeArray") == 0) {
                     KJS::RuntimeArrayImp *imp = static_cast<KJS::RuntimeArrayImp *>(value.imp());
-                    Bindings::JavaArray *array = static_cast<Bindings::JavaArray*>(imp->getConcreteArray());
+                    JavaArray *array = static_cast<JavaArray*>(imp->getConcreteArray());
                     result.l = array->javaArray();
                 }
             }

@@ -28,7 +28,7 @@
 #include <jni_instance.h>
 
 using namespace KJS;
-using namespace Bindings;
+using namespace KJS::Bindings;
 
 Instance *Instance::createBindingForLanguageInstance (BindingLanguage language, void *instance)
 {

@@ -28,7 +28,7 @@
 #include "runtime_method.h"
 #include "runtime_object.h"
 
-using namespace Bindings;
+using namespace KJS::Bindings;
 using namespace KJS;
 
 RuntimeMethodImp::RuntimeMethodImp(ExecState *exec, const Identifier &ident, Bindings::Method *m) : FunctionImp (exec, ident)

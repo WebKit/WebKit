@@ -31,6 +31,8 @@
 
 #include <JavaScriptCore/runtime.h>
 
+namespace KJS {
+
 namespace Bindings {
 
 class JavaClass;
@@ -99,6 +101,8 @@ private:
     JObjectWrapper *_instance;
 };
 
-}
+} // namespace Bindings
+
+} // namespace KJS
 
 #endif

@@ -35,7 +35,7 @@
 #include <jni_utility.h>
 #include <runtime_object.h>
 
-using namespace Bindings;
+using namespace KJS::Bindings;
 using namespace KJS;
 
 #ifdef NDEBUG
@@ -179,9 +179,6 @@ static void removeJavaReference (ObjectImp *imp)
     }
 }
 
-namespace Bindings
-{
-
 // May only be set by dispatchToJavaScriptThread().
 static CFRunLoopSourceRef completionSource;
 
@@ -246,7 +243,6 @@ static inline void unlockJavaScriptAccess()
     pthread_mutex_unlock(&javaScriptAccessLock);
 }
 
-typedef struct JSObjectCallContext JSObjectCallContext;
 
 static void dispatchToJavaScriptThread(JSObjectCallContext *context)
 {
@@ -422,7 +418,7 @@ JSObject::JSObject(jlong nativeJSObject)
 
 jobject JSObject::call(jstring methodName, jobjectArray args) const
 {
-    JS_LOG ("methodName = %s\n", JavaString(methodName).characters());
+    JS_LOG ("methodName = %s\n", JavaString(methodName).UTF8String());
 
     // Lookup the function object.
     ExecState *exec = _root->interpreter()->globalExec();
@@ -448,7 +444,7 @@ jobject JSObject::call(jstring methodName, jobjectArray args) const
 
 jobject JSObject::eval(jstring script) const
 {
-    JS_LOG ("script = %s\n", JavaString(script).characters());
+    JS_LOG ("script = %s\n", JavaString(script).UTF8String());
 
     Object thisObj = Object(const_cast<ObjectImp*>(_imp));
     Interpreter::lock();
@@ -459,7 +455,7 @@ jobject JSObject::eval(jstring script) const
 
 jobject JSObject::getMember(jstring memberName) const
 {
-    JS_LOG ("(%p) memberName = %s\n", _imp, JavaString(memberName).characters());
+    JS_LOG ("(%p) memberName = %s\n", _imp, JavaString(memberName).UTF8String());
 
     ExecState *exec = _root->interpreter()->globalExec();
 
@@ -472,7 +468,7 @@ jobject JSObject::getMember(jstring memberName) const
 
 void JSObject::setMember(jstring memberName, jobject value) const
 {
-    JS_LOG ("memberName = %s, value = %p\n", JavaString(memberName).characters(), value);
+    JS_LOG ("memberName = %s, value = %p\n", JavaString(memberName).UTF8String(), value);
     ExecState *exec = _root->interpreter()->globalExec();
     Interpreter::lock();
     _imp->put (exec, Identifier (JavaString(memberName).ustring()), convertJObjectToValue(value));
@@ -482,7 +478,7 @@ void JSObject::setMember(jstring memberName, jobject value) const
 
 void JSObject::removeMember(jstring memberName) const
 {
-    JS_LOG ("memberName = %s\n", JavaString(memberName).characters());
+    JS_LOG ("memberName = %s\n", JavaString(memberName).UTF8String());
 
     ExecState *exec = _root->interpreter()->globalExec();
     Interpreter::lock();
@@ -645,7 +641,7 @@ KJS::Value JSObject::convertJObjectToValue (jobject theObject) const
     // figure 22-4.
     jobject classOfInstance = callJNIObjectMethod(theObject, "getClass", "()Ljava/lang/Class;");
     jstring className = (jstring)callJNIObjectMethod(classOfInstance, "getName", "()Ljava/lang/String;");
-    if (strcmp(Bindings::JavaString(className).characters(), "netscape.javascript.JSObject") == 0) {
+    if (strcmp(Bindings::JavaString(className).UTF8String(), "netscape.javascript.JSObject") == 0) {
         // Pull the nativeJSObject value from the Java instance.  This is a
         // pointer to the ObjectImp.
         JNIEnv *env = getJNIEnv();
@@ -679,8 +675,6 @@ KJS::List JSObject::listFromJArray(jobjectArray jArray) const
         aList.append (convertJObjectToValue(anObject));
     }
     return aList;
-}
-
 }
 
 extern "C" {

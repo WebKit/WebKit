@@ -51,6 +51,6 @@ private:
     Bindings::Method *method;
 };
 
-};
+} // namespace KJS
 
 #endif

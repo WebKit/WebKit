@@ -1,3 +1,97 @@
+2003-12-17  Richard Williamson   <rjw@apple.com>
+
+	Ensure that all the symbols we export are in the KJS
+	namespace (3512245).
+
+	Also renamed JavaString.characters() to JavaString.UTF8String()
+	for enhanced clarity.
+
+	Added some sanity checking to constructor of JObjectWrapper.
+
+        Reviewed by Dave.
+
+        * ChangeLog:
+        * bindings/jni/jni_class.cpp:
+        * bindings/jni/jni_class.h:
+        * bindings/jni/jni_instance.cpp:
+        (JavaInstance::invokeMethod):
+        (JObjectWrapper::JObjectWrapper):
+        * bindings/jni/jni_instance.h:
+        * bindings/jni/jni_runtime.cpp:
+        (JavaParameter::JavaParameter):
+        (JavaField::JavaField):
+        (JavaMethod::JavaMethod):
+        (JavaMethod::signature):
+        * bindings/jni/jni_runtime.h:
+        (KJS::Bindings::JavaString::ascii):
+        (KJS::Bindings::JavaString::UTF8String):
+        (KJS::Bindings::JavaString::JavaString):
+        (KJS::Bindings::JavaString::_commonInit):
+        (KJS::Bindings::JavaString::uchars):
+        (KJS::Bindings::JavaString::length):
+        (KJS::Bindings::JavaString::ustring):
+        (KJS::Bindings::JavaParameter::type):
+        (KJS::Bindings::JavaField::name):
+        (KJS::Bindings::JavaField::type):
+        (KJS::Bindings::JavaMethod::name):
+        (KJS::Bindings::JavaMethod::returnType):
+        * bindings/jni/jni_utility.cpp:
+        (KJS::Bindings::getJavaVM):
+        (KJS::Bindings::getJNIEnv):
+        (KJS::Bindings::callJNIVoidMethod):
+        (KJS::Bindings::callJNIObjectMethod):
+        (KJS::Bindings::callJNIBooleanMethod):
+        (KJS::Bindings::callJNIByteMethod):
+        (KJS::Bindings::callJNICharMethod):
+        (KJS::Bindings::callJNIShortMethod):
+        (KJS::Bindings::callJNIIntMethod):
+        (KJS::Bindings::callJNILongMethod):
+        (KJS::Bindings::callJNIFloatMethod):
+        (KJS::Bindings::callJNIDoubleMethod):
+        (KJS::Bindings::callJNIVoidMethodA):
+        (KJS::Bindings::callJNIObjectMethodA):
+        (KJS::Bindings::callJNIByteMethodA):
+        (KJS::Bindings::callJNICharMethodA):
+        (KJS::Bindings::callJNIShortMethodA):
+        (KJS::Bindings::callJNIIntMethodA):
+        (KJS::Bindings::callJNILongMethodA):
+        (KJS::Bindings::callJNIFloatMethodA):
+        (KJS::Bindings::callJNIDoubleMethodA):
+        (KJS::Bindings::callJNIBooleanMethodA):
+        (KJS::Bindings::getCharactersFromJString):
+        (KJS::Bindings::releaseCharactersForJString):
+        (KJS::Bindings::getCharactersFromJStringInEnv):
+        (KJS::Bindings::releaseCharactersForJStringInEnv):
+        (KJS::Bindings::getUCharactersFromJStringInEnv):
+        (KJS::Bindings::releaseUCharactersForJStringInEnv):
+        (KJS::Bindings::JNITypeFromClassName):
+        (KJS::Bindings::signatureFromPrimitiveType):
+        (KJS::Bindings::JNITypeFromPrimitiveType):
+        (KJS::Bindings::getJNIField):
+        (KJS::Bindings::convertValueToJValue):
+        * bindings/jni/jni_utility.h:
+        * bindings/jni_jsobject.cpp:
+        (KJS::Bindings::JSObject::invoke):
+        (KJS::Bindings::JSObject::JSObject):
+        (KJS::Bindings::JSObject::call):
+        (KJS::Bindings::JSObject::eval):
+        (KJS::Bindings::JSObject::getMember):
+        (KJS::Bindings::JSObject::setMember):
+        (KJS::Bindings::JSObject::removeMember):
+        (KJS::Bindings::JSObject::getSlot):
+        (KJS::Bindings::JSObject::setSlot):
+        (KJS::Bindings::JSObject::toString):
+        (KJS::Bindings::JSObject::finalize):
+        (KJS::Bindings::JSObject::createNative):
+        (KJS::Bindings::JSObject::convertValueToJObject):
+        (KJS::Bindings::JSObject::convertJObjectToValue):
+        (KJS::Bindings::JSObject::listFromJArray):
+        * bindings/jni_jsobject.h:
+        * bindings/runtime.cpp:
+        * bindings/runtime.h:
+        * bindings/runtime_method.cpp:
+        * bindings/runtime_method.h:
+
 === Safari-118 ===
 
 2003-12-16  Richard Williamson   <rjw@apple.com>

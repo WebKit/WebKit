@@ -36,6 +36,8 @@
 #define jlong_to_impptr(a) (static_cast<KJS::ObjectImp*>(((void*)(uintptr_t)(a))))
 #define ptr_to_jlong(a) ((jlong)(uintptr_t)(a))
 
+namespace KJS {
+
 namespace Bindings {
 
 class RootObject;
@@ -106,6 +108,8 @@ struct JSObjectCallContext
     jvalue result;
 };
 
+typedef struct JSObjectCallContext JSObjectCallContext;
+
 class JSObject
 {
 public:
@@ -134,7 +138,9 @@ private:
 };
 
 
-}
+} // namespace Bindings
+
+} // namespace KJS
 
 extern "C" {
 
@@ -150,6 +156,6 @@ jobject KJS_JSObject_JSObjectGetSlot (JNIEnv *env, jclass jsClass, jlong nativeJ
 void KJS_JSObject_JSObjectSetSlot (JNIEnv *env, jclass jsClass, jlong nativeJSObject, jstring jurl, jint jindex, jobject value, jboolean ctx);
 jstring KJS_JSObject_JSObjectToString (JNIEnv *env, jclass clazz, jlong nativeJSObject);
 
-}
+} // namespace Bindings
 
 #endif
