@@ -343,7 +343,7 @@ void HTMLObjectElementImpl::attach()
     
     if(serviceType.startsWith("image/") && parentNode()->renderer() && _style->display() != NONE){
         m_render = new (getDocument()->renderArena()) RenderImage(this);
-        m_render->setStyle(getDocument()->styleSelector()->styleForElement(this));
+        m_render->setStyle(_style);
         parentNode()->renderer()->addChild(m_render, nextRenderer());
         m_render->updateFromElement();
         loadplugin = false;

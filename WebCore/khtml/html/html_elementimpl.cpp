@@ -316,11 +316,12 @@ DocumentFragmentImpl *HTMLElementImpl::createContextualFragment( const DOMString
         return NULL;
 
     DocumentFragmentImpl *fragment = new DocumentFragmentImpl( docPtr() );
-    HTMLTokenizer *tok = new HTMLTokenizer( docPtr(), fragment );
-    tok->begin();
-    tok->write( html.string(), true );
-    tok->end();
-    delete tok;
+    {
+        HTMLTokenizer tok( docPtr(), fragment );
+        tok.begin();
+        tok.write( html.string(), true );
+        tok.end();
+    }
 
     // Exceptions are ignored because none ought to happen here.
     int ignoredExceptionCode;
@@ -336,20 +337,24 @@ DocumentFragmentImpl *HTMLElementImpl::createContextualFragment( const DOMString
 	    NodeImpl *child = firstChild; 
 	    while (child != NULL) {
 		NodeImpl *nextChild = child->nextSibling();
-		fragment->insertBefore (child, node, ignoredExceptionCode);
+		fragment->insertBefore(child, node, ignoredExceptionCode);
+                // FIXME: Does node leak here?
 		child = nextChild;
 	    }
 	    if (firstChild == NULL) {
 		NodeImpl *nextNode = node->nextSibling();
 		fragment->removeChild(node, ignoredExceptionCode);
-		node = nextNode;
+                // FIXME: Does node leak here?
+                node = nextNode;
 	    } else {
 		fragment->removeChild(node, ignoredExceptionCode);
+                // FIXME: Does node leak here?
 		node = firstChild;
 	    }
 	} else if (node->id() == ID_HEAD) {
 	    NodeImpl *nextNode = node->nextSibling();
 	    fragment->removeChild(node, ignoredExceptionCode);
+            // FIXME: Does node leak here?
 	    node = nextNode;
 	} else {
 	    node = node->nextSibling();

@@ -135,10 +135,7 @@ void RenderListItem::setStyle(RenderStyle *_style)
     RenderFlow::setStyle(_style);
 
     RenderStyle *newStyle = new RenderStyle();
-    
-#if APPLE_CHANGES
     newStyle->ref();
-#endif
     
     newStyle->inheritFrom(style());
    
@@ -154,9 +151,7 @@ void RenderListItem::setStyle(RenderStyle *_style)
         m_marker->setStyle(newStyle);
     }
 
-#if APPLE_CHANGES
     newStyle->deref();
-#endif
 }
 
 RenderListItem::~RenderListItem()

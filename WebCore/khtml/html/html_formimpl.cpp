@@ -92,15 +92,13 @@ NodeImpl::Id HTMLFormElementImpl::id() const
 
 void HTMLFormElementImpl::attach()
 {
-    RenderStyle* style = getDocument()->styleSelector()->styleForElement(this);
+    HTMLElementImpl::attach();
 
-    if (style->display() != NONE && getDocument()->isHTMLDocument()) {
+    if (m_render && getDocument()->isHTMLDocument()) {
 	HTMLDocumentImpl *document = static_cast<HTMLDocumentImpl *>(getDocument());
 	document->addNamedImageOrForm(oldNameAttr);
 	document->addNamedImageOrForm(oldIdAttr);
     }
-
-    HTMLElementImpl::attach();
 }
 
 void HTMLFormElementImpl::detach()
@@ -533,11 +531,7 @@ void HTMLFormElementImpl::parseAttribute(AttributeImpl *attr)
     case ATTR_NAME:
 	{
 	    QString newNameAttr = attr->value().string();
-	    
-	    if (attached() && 
-		getDocument()->isHTMLDocument() &&
-		getDocument()->styleSelector()->styleForElement(this)->display() != NONE) {
-		
+	    if (m_render && getDocument()->isHTMLDocument()) {
 		HTMLDocumentImpl *document = static_cast<HTMLDocumentImpl *>(getDocument());
 		document->removeNamedImageOrForm(oldNameAttr);
 		document->addNamedImageOrForm(newNameAttr);
@@ -548,11 +542,7 @@ void HTMLFormElementImpl::parseAttribute(AttributeImpl *attr)
     case ATTR_ID:
 	{
 	    QString newIdAttr = attr->value().string();
-	    
-	    if (attached() && 
-		getDocument()->isHTMLDocument() &&
-		getDocument()->styleSelector()->styleForElement(this)->display() != NONE) {
-		
+	    if (m_render && getDocument()->isHTMLDocument()) {
 		HTMLDocumentImpl *document = static_cast<HTMLDocumentImpl *>(getDocument());
 		document->removeNamedImageOrForm(oldIdAttr);
 		document->addNamedImageOrForm(newIdAttr);
@@ -1243,26 +1233,26 @@ void HTMLInputElementImpl::attach()
         {
         case TEXT:
         case PASSWORD:
-        case ISINDEX:      m_render = new (arena) RenderLineEdit(this);   break;
-        case CHECKBOX:  m_render = new (arena) RenderCheckBox(this); break;
-        case RADIO:        m_render = new (arena) RenderRadioButton(this); break;
-        case SUBMIT:      m_render = new (arena) RenderSubmitButton(this); break;
+        case ISINDEX:  m_render = new (arena) RenderLineEdit(this);     break;
+        case CHECKBOX: m_render = new (arena) RenderCheckBox(this);     break;
+        case RADIO:    m_render = new (arena) RenderRadioButton(this);  break;
+        case SUBMIT:   m_render = new (arena) RenderSubmitButton(this); break;
         case IMAGE: {
              DOMString width = getAttribute( ATTR_WIDTH );
              if (!width.isEmpty()) {
                 addCSSLength(CSS_PROP_WIDTH, width);
              }
              m_render =  new (arena) RenderImageButton(this);
-             m_render->setStyle(getDocument()->styleSelector()->styleForElement(this));
+             m_render->setStyle(_style);
              parentNode()->renderer()->addChild(m_render, nextRenderer());
              m_render->updateFromElement();
              NodeBaseImpl::attach();
              _style->deref();
              return;
         }
-        case RESET:      m_render = new (arena) RenderResetButton(this);   break;
-        case FILE:         m_render =  new (arena) RenderFileButton(this);    break;
-        case BUTTON:  m_render = new (arena) RenderPushButton(this);
+        case RESET:    m_render = new (arena) RenderResetButton(this);  break;
+        case FILE:     m_render = new (arena) RenderFileButton(this);   break;
+        case BUTTON:   m_render = new (arena) RenderPushButton(this);   break;
         case HIDDEN:   break;
         }
     }

@@ -1,3 +1,107 @@
+2002-12-20  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave.
+
+	- fixed 3129129 -- leak of 820 RenderStyle objects each time we run cvs-base
+
+	The RenderStyle objects were the tip of an iceberg.
+        
+        I fixed a lot of leaks, but there are still some remaining.
+
+	Note that these changes will make Development builds slower because they disable
+	the arena allocator in favor of assertions that check we are using it correctly.
+	But the changes make Deployment builds slightly faster.
+
+        * khtml/html/html_baseimpl.cpp: (HTMLFrameSetElementImpl::attach):
+	Fix a leak in the !isStyleAvailable() case by ref'ing and deref'ing the style.
+
+        * khtml/html/html_formimpl.cpp:
+        (HTMLFormElementImpl::attach): Fix a leak by getting the style from the render
+	object instead of calling styleForElement again, which makes a new one.
+        (HTMLFormElementImpl::parseAttribute): Ditto.
+        (HTMLInputElementImpl::attach): Fix a leak by using the style in the local
+	variable rather than calling styleForElement again.
+
+        * khtml/html/html_imageimpl.cpp:
+        (HTMLImageElementImpl::parseAttribute): Fix a leak by getting the style from the render
+	object instead of calling styleForElement again, which makes a new one.
+        (HTMLImageElementImpl::attach): Fix a leak by using the style in the local
+	variable rather than calling styleForElement again.
+
+        * khtml/html/html_inlineimpl.cpp: (HTMLBRElementImpl::attach):
+	Fix a leak in the display() == NONE case by ref'ing and deref'ing the style.
+
+        * khtml/html/html_objectimpl.cpp: (HTMLObjectElementImpl::attach): Fix a leak by using
+	the style in the local variable rather than calling styleForElement again.
+
+        * khtml/rendering/bidi.cpp:
+        (BidiIterator::detach): Added debugging code to detect if someone does a delete directly,
+	which will not deallocate the object because it won't run the correct arena code.
+        (BidiIterator::operator delete): Ditto.
+        (appendRunsForObject): Fix a leak by detaching bidi iterators when they are removed from
+	the list. The list can't delete them because it doesn't have the arena pointer.
+        (deleteMidpoints): Fix a leak by not removing the items from the list until done iterating.
+	The old code would fail to delete half the items.
+
+        * khtml/rendering/render_container.cpp:
+        (RenderContainer::detach): Detach the continuation here. Before we removed it but did not
+	detach it, which led to a leak.
+        (RenderContainer::removeChild): Do not remove the continuation here. If we do, then we can't
+	detach successfully. No one depends on this removing the continuation.
+        (RenderContainer::removeLeftoverAnonymousBoxes): Detach the child, don't just delete it.
+	This fixes a leak.
+
+        * khtml/rendering/render_flow.cpp: (RenderFlow::removeChild): Detach the child, don't just
+	delete it. This fixes a leak.
+
+        * khtml/rendering/render_object.h: Added arenaDelete.
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::operator delete): Added debugging code to detect if someone does a delete directly,
+	which will not deallocate the object because it won't run the correct arena code.
+        (RenderObject::detach): Ditto.
+        (RenderObject::arenaDelete): Put the low-level delete here, so that subclasses (RenderWidget)
+	can call it.
+
+        * khtml/rendering/render_replaced.h: Add arenaDeref and make deref private so derived classes
+	won't use it by accident.
+        * khtml/rendering/render_replaced.cpp:
+        (RenderWidget::detach): Use the new arenaDeref instead of deref, since we need to pass the
+	arena pointer in to delete.
+        (RenderWidget::resizeWidget): Ditto. Store the arena before calling back, since we can't get it
+	once it's detached from its parent.
+        (RenderWidget::eventFilter): Ditto.
+        (RenderWidget::arenaDeref): Added. Calls RenderObject's arenaDelete.
+
+	- other changes
+
+        * khtml/rendering/render_arena.cpp:
+        (RenderArena::allocate): Added debugging code that stores a signature, arena pointer, and size,
+	and uses malloc rather than the arena.
+        (RenderArena::free): Check the signature, arena pointer, and size, and use free.
+
+        * khtml/rendering/render_layer.cpp:
+        (RenderLayer::operator delete): Added debugging code to detect if someone does a delete directly,
+	which will not deallocate the object because it won't run the correct arena code.
+        (RenderLayer::detach): Ditto.
+        (RenderLayer::RenderLayerElement::operator delete): Ditto.
+        (RenderLayer::RenderLayerElement::detach): Ditto.
+        (RenderLayer::RenderZTreeNode::operator delete): Ditto.
+        (RenderLayer::RenderZTreeNode::detach): Ditto.
+
+        * khtml/rendering/render_text.cpp:
+        (TextSlave::detach): Added debugging code to detect if someone does a delete directly,
+	which will not deallocate the object because it won't run the correct arena code.
+        (TextSlave::operator delete): Ditto.
+
+        * khtml/html/html_elementimpl.cpp: (HTMLElementImpl::createContextualFragment):
+	Save one new/delete by using a stack-based HTMLTokenizer and add FIXMEs about
+	some possible leaks I spotted here.
+
+        * khtml/rendering/render_list.cpp: (RenderListItem::setStyle): Took out APPLE_CHANGES from around
+	a generally useful bug fix.
+
+        * WebCore.pbproj/project.pbxproj: Let Electron be Electron. 
+
 === Alexander-42 ===
 
 2002-12-19  David Hyatt  <hyatt@apple.com>

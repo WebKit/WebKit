@@ -34,6 +34,18 @@
 
 #include "render_arena.h"
 
+#ifndef NDEBUG
+
+const int signature = 0xDBA00AEA;
+
+typedef struct {
+    RenderArena *arena;
+    size_t size;
+    int signature;
+} RenderArenaDebugHeader;
+
+#endif
+
 RenderArena::RenderArena(unsigned int arenaSize)
 {
     // Initialize the arena pool
@@ -51,6 +63,15 @@ RenderArena::~RenderArena()
 
 void* RenderArena::allocate(size_t size)
 {
+#ifndef NDEBUG
+    // Use standard malloc so that memory debugging tools work.
+    void *block = ::malloc(sizeof(RenderArenaDebugHeader) + size);
+    RenderArenaDebugHeader *header = (RenderArenaDebugHeader *)block;
+    header->arena = this;
+    header->size = size;
+    header->signature = signature;
+    return header + 1;
+#else
     void* result = 0;
 
     // Ensure we have correct alignment for pointers.  Important for Tru64
@@ -74,18 +95,19 @@ void* RenderArena::allocate(size_t size)
     }
 
     return result;
+#endif
 }
 
 void RenderArena::free(size_t size, void* ptr)
 {
-#if APPLE_CHANGES
 #ifndef NDEBUG
-    // Mark the memory with 0xdd in DEBUG builds so that there will be
-    // problems if someone tries to access memory that they've freed.
-    memset(ptr, 0xdd, size);
-#endif
-#endif
-
+    // Use standard free so that memory debugging tools work.
+    RenderArenaDebugHeader *header = (RenderArenaDebugHeader *)ptr - 1;
+    assert(header->signature == signature);
+    assert(header->size == size);
+    assert(header->arena == this);
+    ::free(header);
+#else
     // Ensure we have correct alignment for pointers.  Important for Tru64
     size = ROUNDUP(size, sizeof(void*));
 
@@ -96,4 +118,5 @@ void RenderArena::free(size_t size, void* ptr)
         m_recyclers[index] = ptr;
         *((void**)ptr) = currentTop;
     }
+#endif
 }

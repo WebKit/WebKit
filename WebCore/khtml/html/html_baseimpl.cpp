@@ -504,11 +504,13 @@ void HTMLFrameSetElementImpl::attach()
     // ignore display: none but do pay attention if a stylesheet has caused us to delay
     // our loading.
     RenderStyle* style = getDocument()->styleSelector()->styleForElement(this);
+    style->ref();
     if (style->isStyleAvailable()) {
         m_render = new (getDocument()->renderArena()) RenderFrameSet(this);
         m_render->setStyle(style);
         parentNode()->renderer()->addChild(m_render, nextRenderer());
     }
+    style->deref();
     
     NodeBaseImpl::attach();
 }

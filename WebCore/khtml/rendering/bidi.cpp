@@ -55,13 +55,22 @@ static int numSpaces;
 static void embed( QChar::Direction d );
 static void appendRun();
 
+#ifndef NDEBUG
+static bool inBidiIteratorDetach;
+#endif
+
 void BidiIterator::detach(RenderArena* renderArena)
 {
+#ifndef NDEBUG
+    inBidiIteratorDetach = true;
+#endif
     delete this;
+#ifndef NDEBUG
+    inBidiIteratorDetach = false;
+#endif
     
-    // Now perform the destroy.
-    size_t* sz = (size_t*)this;
-    renderArena->free(*sz, (void*)this);
+    // Recover the size left there for us by operator delete and free the memory.
+    renderArena->free(*(size_t *)this, this);
 }
 
 void* BidiIterator::operator new(size_t sz, RenderArena* renderArena) throw()
@@ -69,9 +78,12 @@ void* BidiIterator::operator new(size_t sz, RenderArena* renderArena) throw()
     return renderArena->allocate(sz);
 }
 
-void BidiIterator::operator delete(void* ptr, size_t sz) {
-    size_t* szPtr = (size_t*)ptr;
-    *szPtr = sz;
+void BidiIterator::operator delete(void* ptr, size_t sz)
+{
+    assert(inBidiIteratorDetach);
+
+    // Stash size where detach can find it.
+    *(size_t*)ptr = sz;
 }
 
 // ---------------------------------------------------------------------
@@ -264,6 +276,7 @@ static void appendRunsForObject(int start, int end, RenderObject* obj)
         betweenMidpoints = false;
         start = nextMidpoint->pos;
         smidpoints->removeFirst(); // Delete the midpoint.
+        nextMidpoint->detach(obj->renderArena());
         if (start < end)
             return appendRunsForObject(start, end, obj);
     }
@@ -280,6 +293,7 @@ static void appendRunsForObject(int start, int end, RenderObject* obj)
             betweenMidpoints = true;
             int nextPos = nextMidpoint->pos+1;
             smidpoints->removeFirst();
+            nextMidpoint->detach(obj->renderArena());
             return appendRunsForObject(nextPos, end, obj);
         }
         else
@@ -985,8 +999,8 @@ static void deleteMidpoints(RenderArena* arena, QPtrList<BidiIterator>* midpoint
         BidiIterator* s = midpoints->at(i);
         if (s)
             s->detach(arena);
-        midpoints->remove(i);
     }
+    midpoints->clear();
 }
 
 void RenderFlow::layoutInlineChildren(bool relayoutChildren)

@@ -2238,7 +2238,7 @@ void RenderFlow::removeChild(RenderObject *oldChild)
         prev->setMinMaxKnown(false);
         
         // Nuke the now-empty block.
-        removeChild(next);
+        next->detach(renderArena());
         
         mergedBlocks = true;
     }

@@ -82,6 +82,7 @@ public:
     QWidget *widget() const { return m_widget; }
     KHTMLView* view() const { return m_view; }
 
+    void arenaDeref(RenderArena *arena);
 
 public slots:
     void slotWidgetDestructed();
@@ -93,6 +94,9 @@ protected:
 
     QWidget *m_widget;
     KHTMLView* m_view;
+
+private:
+    using khtml::Shared<RenderWidget>::deref;
 };
 
 };
