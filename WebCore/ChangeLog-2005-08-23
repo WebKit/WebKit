@@ -24,21 +24,6 @@
         * kwq/KWQWidget.mm: (QWidget::internalSetGeometry): Left in a couple of asserts that
 	were useful in narrowing this one down.
 
-2002-07-25  Darin Adler  <darin@apple.com>
-
-	Once I realized that, Richard and I talked it over and found an even better fix
-	that sidesteps the problem. Removing the widgets from the superview was not necessary.
-
-        * kwq/KWQKHTMLPartImpl.h: Removed buildViewsNotYetAddedSet, viewsNotYetAdded, and
-	addedWidget. Added moveWidgetsAside.
-        * kwq/KWQKHTMLPartImpl.mm:
-        (KWQKHTMLPartImpl::paint):
-        (KWQKHTMLPartImpl::moveWidgetsAside):
-        * kwq/KWQScrollView.mm:
-        (QScrollView::addChild):
-        * kwq/KWQWidget.mm:
-        (QWidget::internalSetGeometry):
-
 2002-07-25  David Hyatt  <hyatt@apple.com>
 
 	Floated images using "align" should have margins to prevent the text from running right
