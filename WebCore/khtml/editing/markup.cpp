@@ -367,8 +367,6 @@ QString createMarkup(const RangeImpl *range, QPtrList<NodeImpl> *nodes, EAnnotat
     markups.append("</span>");
     style->deref();
 
-    fprintf(stderr, "markup:\n%s\n---------------------------------\n", markups.join("").ascii());
-
     return markups.join("");
 }
 

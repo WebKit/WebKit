@@ -1,5 +1,12 @@
 2005-02-02  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by me
+
+        * khtml/editing/markup.cpp:
+        (khtml::createMarkup): Removed debug spam I committed earlier in error.
+
+2005-02-02  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by Darin
 
         Fix for this bug:
