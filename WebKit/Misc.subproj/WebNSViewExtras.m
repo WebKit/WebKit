@@ -228,7 +228,7 @@
     
     NSPasteboard *pboard = [NSPasteboard pasteboardWithName:NSDragPboard];
     NSMutableArray *types = [NSMutableArray arrayWithObjects:NSFilesPromisePboardType, NSTIFFPboardType, nil];
-    [types addObjectsFromArray:[NSPasteboard _web_dragTypesForURL]];
+    [types addObjectsFromArray:[NSPasteboard _web_writableDragTypesForURL]];
     [pboard _web_writeURL:URL andTitle:title withOwner:self types:types];
     [pboard setPropertyList:filesTypes forType:NSFilesPromisePboardType];
     [pboard setData:[image TIFFRepresentation] forType:NSTIFFPboardType];

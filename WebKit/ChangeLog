@@ -1,3 +1,33 @@
+2003-08-22  John Sullivan  <sullivan@apple.com>
+	
+	- fixed 3385837 -- REGRESSION: can't paste link from Safari into 
+	Keynote (paste at top level, not into text)
+
+        Reviewed by Darin
+
+	The problem was that we were using a single list of pasteboard
+	types for both "types we can read" and "types we can write", but
+	NSFilenamesPBoardType wasn't being written to, creating a bad
+	pasteboard. The fix is to split this list in two. We could do
+	this a little more elegantly if we weren't paranoid about 
+	last-minute SPI changes breaking compatibility with Sherlock or
+	some other internal client.
+
+        * Misc.subproj/WebNSPasteboardExtras.h:
+	add new _web_writableDragTypesForURL, commented various methods
+	better.
+
+        * Misc.subproj/WebNSPasteboardExtras.m:
+        (+[NSPasteboard _web_writableDragTypesForURL]):
+	implement _web_writableDragTypesForURL; it's just like
+	_web_dragTypesForURL but without the NSFilenamesPBoardType
+        (-[NSPasteboard _web_writeURL:andTitle:withOwner:]):
+	use _web_writableDragTypesForURL
+
+        * Misc.subproj/WebNSViewExtras.m:
+        (-[NSView _web_dragPromisedImage:rect:URL:title:event:]):
+	use _web_writableDragTypesForURL
+
 2003-08-22  Darin Adler  <darin@apple.com>
 
         Reviewed by Dave.

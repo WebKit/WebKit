@@ -27,6 +27,17 @@ NSString *WebURLNamePboardType = nil;
     CreatePasteboardFlavorTypeName('urln', (CFStringRef*)&WebURLNamePboardType);
 }
 
++ (NSArray *)_web_writableDragTypesForURL
+{
+    return [NSArray arrayWithObjects:
+        WebURLsWithTitlesPboardType,
+        NSURLPboardType,
+        WebURLPboardType,
+        WebURLNamePboardType,
+        NSStringPboardType,
+        nil];
+}
+
 + (NSArray *)_web_dragTypesForURL
 {
     return [NSArray arrayWithObjects:
@@ -100,7 +111,7 @@ NSString *WebURLNamePboardType = nil;
 
 - (void)_web_writeURL:(NSURL *)URL andTitle:(NSString *)title withOwner:(id)owner
 {
-    [self _web_writeURL:URL andTitle:title withOwner:owner types:[NSPasteboard _web_dragTypesForURL]];
+    [self _web_writeURL:URL andTitle:title withOwner:owner types:[NSPasteboard _web_writableDragTypesForURL]];
 }
 
 + (int)_web_setFindPasteboardString:(NSString *)string withOwner:(id)owner
