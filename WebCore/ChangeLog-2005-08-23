@@ -1,3 +1,8 @@
+2002-05-15  Darin Adler  <darin@apple.com>
+
+	* kwq/qt/qguardedptr.h: Fix reversed sense of check in isNull. Fixes
+	a bug that was causing a lot of DHTML not to work.
+
 2002-05-15  Kenneth Kocienda  <kocienda@apple.com>
 
 	* kwq/KWQInvisibleButton.h: Changed an #include of Cocoa.h to an #import

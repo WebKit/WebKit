@@ -262,6 +262,8 @@ Window::Window(KHTMLPart *p)
 {
   winq = new WindowQObject(this);
   //kdDebug(6070) << "Window::Window this=" << this << " part=" << m_part << " " << m_part->name() << endl;
+  fprintf(stderr, "pointer was %p\n", p);
+  fprintf(stderr, "m_part is %p\n", (KHTMLPart *)m_part);
 }
 
 Window::~Window()
@@ -350,6 +352,9 @@ UString Window::toString(ExecState *) const
 
 Value Window::get(ExecState *exec, const UString &p) const
 {
+  fprintf(stderr, "Window::get: m_part is %p\n", (KHTMLPart *)m_part);
+  fprintf(stderr, "Window::get: m_part is null? %s\n", m_part.isNull() ? "yes" : "no");
+
 #ifdef KJS_VERBOSE
   kdDebug(6070) << "Window("<<this<<")::get " << p.qstring() << endl;
 #endif

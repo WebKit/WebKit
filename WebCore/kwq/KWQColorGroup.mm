@@ -35,21 +35,19 @@ friend class QColorGroup;
 public:
     QColorGroupPrivate() {
         brushes = new QBrush[QCOLOR_GROUP_SIZE];    
-        //brushes[QColorGroup::Foreground] = QColor(0,0,0);    
-        //brushes[QColorGroup::Shadow] = QColor(0,0,0);    
-        brushes[QColorGroup::Foreground] = QColor(255,255,255);    
-        brushes[QColorGroup::Shadow] = QColor(255,255,255);    
-        brushes[QColorGroup::Light] = QColor(224,224,224);    
-        brushes[QColorGroup::Midlight] = QColor(192,192,192);    
-        brushes[QColorGroup::Mid] = QColor(128,128,128);    
-        brushes[QColorGroup::Dark] = QColor(64,64,64);    
-        brushes[QColorGroup::Base] = QColor(255,255,255);    
-        brushes[QColorGroup::ButtonText] = QColor(0,0,0);    
-        brushes[QColorGroup::Button] = QColor(192,192,192);    
-        brushes[QColorGroup::Background] = QColor(255,255,255);    
-        brushes[QColorGroup::Text] = QColor(0,0,0);    
-        brushes[QColorGroup::Highlight] = QColor(64,64,64);    
-        brushes[QColorGroup::HighlightedText] = QColor(0,0,0);    
+        brushes[QColorGroup::Foreground] = QColor(255,255,255);
+        brushes[QColorGroup::Shadow] = QColor(255,255,255);
+        brushes[QColorGroup::Light] = QColor(224,224,224);
+        brushes[QColorGroup::Midlight] = QColor(192,192,192);
+        brushes[QColorGroup::Mid] = QColor(128,128,128);
+        brushes[QColorGroup::Dark] = QColor(64,64,64);
+        brushes[QColorGroup::Base] = QColor(255,255,255);
+        brushes[QColorGroup::ButtonText] = QColor(0,0,0);
+        brushes[QColorGroup::Button] = QColor(192,192,192);
+        brushes[QColorGroup::Background] = QColor(255,255,255);
+        brushes[QColorGroup::Text] = QColor(0,0,0);
+        brushes[QColorGroup::Highlight] = QColor(64,64,64);
+        brushes[QColorGroup::HighlightedText] = QColor(0,0,0);
     }
 
     QColorGroupPrivate(const QColorGroupPrivate *other) {
