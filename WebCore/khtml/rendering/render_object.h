@@ -197,6 +197,8 @@ public:
     bool isRelPositioned() const { return m_relPositioned; } // relative positioning
     bool isText() const  { return m_isText; }
     bool isInline() const { return m_inline; }  // inline object
+    bool isCompact() const { return style()->display() == COMPACT; } // compact object
+    bool isRunIn() const { return style()->display() == RUN_IN; } // run-in object
     bool mouseInside() const;
     bool isReplaced() const { return m_replaced; } // a "replaced" element (see CSS)
     bool shouldPaintBackgroundOrBorder() const { return m_paintBackground; }
@@ -464,7 +466,9 @@ public:
 
     virtual short minWidth() const { return 0; }
     virtual short maxWidth() const { return 0; }
-        
+    virtual void setMaxWidth(short s) { }
+    virtual void setMinWidth(short s) { }
+
     RenderStyle* style() const { return m_style; }
     RenderStyle* style( bool firstLine ) const {
 	RenderStyle *s = m_style;
@@ -579,7 +583,6 @@ private:
     bool m_recalcMinMax 	     : 1;
     bool m_isText                    : 1;
     bool m_inline                    : 1;
-
     bool m_replaced                  : 1;
     bool m_mouseInside : 1;
     bool m_hasFirstLine              : 1;

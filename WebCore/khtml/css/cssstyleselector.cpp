@@ -451,9 +451,9 @@ RenderStyle *CSSStyleSelector::styleForElement(ElementImpl *e)
     }
 
     // Mutate the display to BLOCK for certain cases, e.g., if someone attempts to
-    // position or float an inline.
-    if (style->display() == INLINE &&
-           (style->position() == ABSOLUTE || style->position() == FIXED || style->floating() != FNONE))
+    // position or float an inline, compact, or run-in.
+    if ((style->display() == INLINE || style->display() == COMPACT || style->display() == RUN_IN) &&
+        (style->position() == ABSOLUTE || style->position() == FIXED || style->floating() != FNONE))
         style->setDisplay(BLOCK);
     
     return style;
@@ -1441,9 +1441,8 @@ void CSSStyleSelector::applyRule( DOM::CSSProperty *prop )
 	EDisplay d;
 	if ( id == CSS_VAL_NONE) {
 	    d = NONE;
-	} else if ( id == CSS_VAL_RUN_IN || id == CSS_VAL_COMPACT ||
-		    id == CSS_VAL_MARKER ) {
-	    // these are not supported at the moment, so we just ignore them.
+	} else if ( id == CSS_VAL_MARKER ) {
+	    // marker is not supported at the moment, so we just ignore it.
 	    return;
 	} else {
 	    d = EDisplay(primitiveValue->getIdent() - CSS_VAL_INLINE);

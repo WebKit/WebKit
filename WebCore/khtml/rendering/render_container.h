@@ -62,7 +62,7 @@ private:
 
 protected:
 
-    void insertPseudoChild(RenderStyle::PseudoId type, RenderObject* child, RenderObject* before);
+    void insertPseudoChild(RenderStyle::PseudoId type, RenderObject* child);
 
     RenderObject *m_first;
     RenderObject *m_last;

@@ -203,17 +203,20 @@ void RenderContainer::removeChild(RenderObject *oldChild)
     setLayouted(false);
 }
 
-
-void RenderContainer::insertPseudoChild(RenderStyle::PseudoId type, RenderObject* child, RenderObject* beforeChild)
+void RenderContainer::insertPseudoChild(RenderStyle::PseudoId type, RenderObject* child)
 {
-
-    if (child->isText())
-        return;
-
-    RenderStyle* pseudo = child->style()->getPseudoStyle(type);
+    // FIXME: This method should really be renamed to "updatePseudoChild" and be capable of
+    // detecting that before/after children need to be deleted as well.
+    
+    if (child && child->style()->styleType() == type)
+        return; // Generated content is already added.  No need to add more.
+    
+    RenderStyle* pseudo = style()->getPseudoStyle(type);
 
     if (pseudo && pseudo->display() != NONE)
     {
+        RenderObject* insertBefore = (type == RenderStyle::BEFORE) ? child : 0;
+        
         // From the CSS2 specification:
         // User agents must ignore the following properties with :before and :after
         // pseudo-elements: 'position', 'float', list properties, and table properties.
@@ -228,11 +231,14 @@ void RenderContainer::insertPseudoChild(RenderStyle::PseudoId type, RenderObject
         if (pseudo->contentType()==CONTENT_TEXT)
         {
             RenderObject* po = RenderFlow::createFlow(0, pseudo, renderArena()); /* anonymous box */
-            addChild(po, beforeChild);
             
             RenderText* t = new (renderArena()) RenderText(0 /*anonymous object */, pseudo->contentText());
             t->setStyle(pseudo);
             po->addChild(t);
+
+            // Add this after we've installed our text, so that addChild will be able to find the text
+            // inside the inline for e.g., first-letter styling.
+            addChild(po, insertBefore);
             
 //            kdDebug() << DOM::DOMString(pseudo->contentText()).string() << endl;
 
@@ -243,7 +249,7 @@ void RenderContainer::insertPseudoChild(RenderStyle::PseudoId type, RenderObject
         {
             RenderObject* po = new (renderArena()) RenderImage(0);
             po->setStyle(pseudo);
-            addChild(po, beforeChild);
+            addChild(po, insertBefore);
             po->close();
         }
 

@@ -266,7 +266,7 @@ RenderStyle* RenderStyle::addPseudoStyle(PseudoId pid)
 
     if (!ps)
     {
-            ps = new RenderStyle(*this); // use the real copy constructor to get an identical copy
+        ps = new RenderStyle(); // So that noninherited flags are reset.
         ps->ref();
         ps->noninherited_flags._styleType = pid;
         ps->pseudoStyle = pseudoStyle;

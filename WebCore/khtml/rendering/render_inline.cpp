@@ -35,8 +35,9 @@ RenderInline::~RenderInline()
 
 void RenderInline::setStyle(RenderStyle* _style)
 {
-    setInline(true);
     RenderFlow::setStyle(_style);
+    setInline(true);
+
     // Ensure that all of the split inlines pick up the new style. We
     // only do this if we're an inline, since we don't want to propagate
     // a block's style to the other inlines.
@@ -53,14 +54,16 @@ void RenderInline::setStyle(RenderStyle* _style)
         }
         currCont = currCont->continuation();
     }
+
+    // Update pseudos for :before and :after now.
+    insertPseudoChild(RenderStyle::BEFORE, firstChild());
+    insertPseudoChild(RenderStyle::AFTER, lastChild());
 }
 
 void RenderInline::addChildToFlow(RenderObject* newChild, RenderObject* beforeChild)
 {
     setLayouted( false );
     
-    insertPseudoChild(RenderStyle::BEFORE, newChild, beforeChild);
-
     if (!newChild->isText() && newChild->style()->position() != STATIC)
         setOverhangingContents();
     
@@ -87,7 +90,6 @@ void RenderInline::addChildToFlow(RenderObject* newChild, RenderObject* beforeCh
     
     newChild->setLayouted( false );
     newChild->setMinMaxKnown( false );
-    insertPseudoChild(RenderStyle::AFTER, newChild, beforeChild);
 }
 
 static RenderInline* cloneInline(RenderFlow* src)

@@ -118,6 +118,10 @@ void RenderFlow::addChild(RenderObject *newChild, RenderObject *beforeChild)
     kdDebug( 6040 ) << "current height = " << m_height << endl;
 #endif
 
+    // Make sure we don't append things after :after-generated content if we have it.
+    if (!beforeChild && lastChild() && lastChild()->style()->styleType() == RenderStyle::AFTER)
+        beforeChild = lastChild();
+    
     if (continuation())
         return addChildWithContinuation(newChild, beforeChild);
     return addChildToFlow(newChild, beforeChild);

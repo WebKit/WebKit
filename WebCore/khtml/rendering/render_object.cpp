@@ -89,6 +89,8 @@ RenderObject *RenderObject::createObject(DOM::NodeImpl* node,  RenderStyle* styl
         break;
     case RUN_IN:
     case COMPACT:
+        o = new (arena) RenderBlock(node);
+        break;
     case MARKER:
         break;
     case TABLE:

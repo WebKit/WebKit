@@ -1,3 +1,54 @@
+2003-02-02  David Hyatt  <hyatt@apple.com>
+
+	Enable support for the "run-in" and "compact" display types.
+
+	Also implementing support for :before and :after (they were not even
+	remotely working before these fixes).
+
+	Made sure :first-letter drills into inline children to find the
+	first letter in a block, e.g., so :before content can be used in
+	conjunction with :first-letter.
+
+	Fixed a regression in addOverhangingFloats that broke meyerweb.com's
+	front page.
+
+	Patched findNextLineBreak to correctly handle words that cross
+	inline boundaries and white-space mixtures.  We now pass Hixie's
+	insanely evil mixed white-space test (we are the only browser
+	to do so).
+	
+        Reviewed by kocienda
+
+        * ChangeLog:
+        * khtml/css/cssstyleselector.cpp:
+        * khtml/rendering/bidi.cpp:
+        (RenderBlock::findNextLineBreak):
+        * khtml/rendering/render_block.cpp:
+        (RenderBlock::setStyle):
+        (RenderBlock::addChildToFlow):
+        (getInlineRun):
+        (RenderBlock::layoutBlockChildren):
+        (RenderBlock::paintObject):
+        (RenderBlock::clearFloats):
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::calcWidthUsing):
+        * khtml/rendering/render_box.h:
+        * khtml/rendering/render_container.cpp:
+        (RenderContainer::insertPseudoChild):
+        * khtml/rendering/render_container.h:
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::addChild):
+        * khtml/rendering/render_image.cpp:
+        (RenderImage::setStyle):
+        * khtml/rendering/render_inline.cpp:
+        (RenderInline::setStyle):
+        (RenderInline::addChildToFlow):
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::createObject):
+        * khtml/rendering/render_object.h:
+        * khtml/rendering/render_style.cpp:
+        (RenderStyle::addPseudoStyle):
+
 2003-02-03  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
