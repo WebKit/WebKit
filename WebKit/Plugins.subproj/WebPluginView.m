@@ -95,8 +95,9 @@
         hidden = FALSE;
     }
     transferred = FALSE;
+    stopped = FALSE;
     trackingTag = [self addTrackingRect:r owner:self userData:nil assumeInside:NO];
-    eventSender = [[[IFPluginViewNullEventSender alloc] initializeWithNPP:instance functionPointer:NPP_HandleEvent] autorelease];
+    eventSender = [[IFPluginViewNullEventSender alloc] initializeWithNPP:instance functionPointer:NPP_HandleEvent];
     [eventSender sendNullEvents];
     return self;
 }
@@ -471,6 +472,24 @@
     KWQDebug("invalidateRegion\n");
 }
 
+- (void)stop
+{
+    NPError npErr;
+    NSFileManager *fileManager;
+    
+    if (!stopped){
+        [eventSender stop];
+        [eventSender release];
+        npErr = NPP_Destroy(instance, NULL);
+        KWQDebug("NPP_Destroy: %d\n", npErr);
+        if(transferMode == NP_ASFILE || transferMode == NP_ASFILEONLY){
+            fileManager = [NSFileManager defaultManager];
+            [fileManager removeFileAtPath:filename handler:nil];
+        }
+        stopped = TRUE;
+    }
+}
+
 -(void)forceRedraw
 {
     KWQDebug("forceRedraw\n");
@@ -478,14 +497,7 @@
 
 -(void)dealloc
 {
-    NPError npErr;
-    NSFileManager *fileManager;
-    
-    [eventSender stop]; 
-    npErr = NPP_Destroy(instance, NULL);
-    KWQDebug("NPP_Destroy: %d\n", npErr);
-    fileManager = [NSFileManager defaultManager];
-    [fileManager removeFileAtPath:filename handler:nil];
+    [self stop];
     [super dealloc];
 }
 

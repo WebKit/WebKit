@@ -38,7 +38,7 @@ typedef NPStream* NPS;
     int32 streamOffset;
     uint16 transferMode;
     char **cAttributes, **cValues;
-    bool isFlipped, transferred, hidden;
+    bool isFlipped, transferred, hidden, stopped;
             
     NSString *url, *mime, *filename;
     NSTrackingRectTag trackingTag;
@@ -75,6 +75,7 @@ typedef NPStream* NPS;
 -(void)mouseExited:(NSEvent *)theEvent;
 -(void)keyDown:(NSEvent *)theEvent;
 -(void)keyUp:(NSEvent *)theEvent;
+-(void)stop;
 -(void)dealloc;
 
 // plug-in to browser calls

@@ -123,7 +123,7 @@
 				HEADER_SEARCH_PATHS = ../WebCore/include;
 				INSTALL_PATH = "";
 				LIBRARY_SEARCH_PATHS = "";
-				OTHER_CFLAGS = "-Wall -Wchar-subscripts -Wmissing-declarations -Wmissing-prototypes -Wnested-externs -Wpointer-arith -Wcast-align -Wsign-compare -DHAVE_CONFIG_H -DQT_NO_DATASTREAM -D_KWQ_  -I.. -I../WebCore/src/kdelibs/khtml -I../WebCore/src/kwq -I../WebCore/src/kwq/kparts -I../WebCore/include -I../WebCore/include/private -F/System/Library/Frameworks/ApplicationServices.framework/Frameworks/ -F/System/Library/Frameworks/CoreServices.framework/Frameworks/";
+				OTHER_CFLAGS = "-Wall -Wchar-subscripts -Wmissing-declarations -Wmissing-prototypes -Wnested-externs -Wpointer-arith -Wcast-align -Wsign-compare -DHAVE_CONFIG_H -DQT_NO_DATASTREAM -D_KWQ_  -I.. -I../WebCore/src/kdelibs/khtml -I../WebCore/src/kwq -I../WebCore/src/kwq/kparts -I../WebCore/include -I../WebCore/include/private -F/System/Library/Frameworks/ApplicationServices.framework/Frameworks/ -F/System/Library/Frameworks/CoreServices.framework/Frameworks/ -F/System/Library/Frameworks/Carbon.framework/Frameworks/";
 				OTHER_LDFLAGS = "-lwebcore -framework WebFoundation";
 				PRODUCT_NAME = WebKit;
 				SECTORDER_FLAGS = "";

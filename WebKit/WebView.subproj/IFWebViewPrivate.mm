@@ -6,6 +6,7 @@
         NSWebPageView.
 */
 #import <IFWebViewPrivate.h>
+#import <IFPluginView.h>
 
 // Includes from KDE
 #include <khtmlview.h>
@@ -49,7 +50,12 @@
     count = [views count];
     while (count--){
         //WebKitDebugAtLevel(0x200, "Removing %p %s\n", [views objectAtIndex: 0], DEBUG_OBJECT([[[views objectAtIndex: 0] class] className]));
-        [[views objectAtIndex: count] removeFromSuperviewWithoutNeedingDisplay]; 
+        id view;
+        
+        view = [views objectAtIndex: count];
+        if ([view isKindOfClass: NSClassFromString (@"IFPluginView")])
+            [(IFPluginView *)view stop];
+        [view removeFromSuperviewWithoutNeedingDisplay]; 
     }
     [self setFrameSize: NSMakeSize (0,0)];
 }
