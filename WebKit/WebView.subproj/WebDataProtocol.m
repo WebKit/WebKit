@@ -44,6 +44,13 @@ NSString *WebDataProtocolScheme = @"applewebdata";
 
 + (NSURL *)_webDataRequestURLForData: (NSData *)data
 {
+    static BOOL registered;
+    
+    if (!registered) {
+        [NSURLProtocol registerClass:[WebDataProtocol class]];
+        registered = YES;
+    }
+
     static unsigned int counter = 1;
     
     // The URL we generate is meaningless.  The only interesting properties of the URL
@@ -125,11 +132,6 @@ NSString *WebDataProtocolScheme = @"applewebdata";
 // Implement the required methods for the concrete subclass of WebProtocolHandler
 // that will handle our custom protocol.
 @implementation WebDataProtocol
-
-+ (void)load
-{
-    [NSURLProtocol registerClass: [self class]];
-}
 
 + (BOOL)canHandleURL:(NSURL *)theURL
 {

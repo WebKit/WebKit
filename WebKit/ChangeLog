@@ -1,3 +1,13 @@
+2003-04-17  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        * WebView.subproj/WebDataProtocol.m: (+[NSURLRequest _webDataRequestURLForData:]):
+        Register the WebDataProtocol here instead of doing it with a load method, since this
+        is the bottleneck that must be used before that protocol is needed. It's good to have
+        one less load method, and this may fix a problem reported by a Panther WebKit client
+        on intrigue-dev too.
+
 2003-04-16  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Darin
