@@ -1,3 +1,21 @@
+2002-12-09  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Dave.
+
+	- fixed 3117734 - fail at document.releaseEvents in js at rollingstone.com
+	
+        * khtml/ecma/kjs_html.cpp:
+	(KJS::HTMLDocFunction::tryCall): Added no-op implementations of
+	captureEvents and releaseEvents.
+        (KJS::HTMLDocument::tryGet):
+        * khtml/ecma/kjs_html.h:
+        * khtml/ecma/kjs_window.cpp:
+        (Window::get, WindowFunc::tryCall): Added no-op implementation of
+	releaseEvents.
+	* khtml/ecma/kjs_window.h:
+        * khtml/ecma/kjs_html.lut.h: Regenerated.
+        * khtml/ecma/kjs_window.lut.h: Regenerated.
+
 2002-12-09  David Hyatt  <hyatt@apple.com>
 
 	Fix for the CSS test suite link.  Need to make sure inlines

@@ -170,7 +170,7 @@ Value Screen::getValueProperty(ExecState *exec, int token) const
 const ClassInfo Window::info = { "Window", 0, &WindowTable, 0 };
 
 /*
-@begin WindowTable 79
+@begin WindowTable 89
   closed	Window::Closed		DontDelete|ReadOnly
   crypto	Window::Crypto		DontDelete|ReadOnly
   defaultStatus	Window::DefaultStatus	DontDelete
@@ -234,6 +234,7 @@ const ClassInfo Window::info = { "Window", 0, &WindowTable, 0 };
   setInterval	Window::SetInterval	DontDelete|Function 2
   clearInterval	Window::ClearInterval	DontDelete|Function 1
   captureEvents	Window::CaptureEvents	DontDelete|Function 0
+  releaseEvents	Window::ReleaseEvents	DontDelete|Function 0
 # Warning, when adding a function to this object you need to add a case in Window::get
   addEventListener	Window::AddEventListener	DontDelete|Function 3
   removeEventListener	Window::RemoveEventListener	DontDelete|Function 3
@@ -525,6 +526,7 @@ Value Window::get(ExecState *exec, const Identifier &p) const
     case ResizeBy:
     case ResizeTo:
     case CaptureEvents:
+    case ReleaseEvents:
     case AddEventListener:
     case RemoveEventListener:
       return lookupOrCreateFunction<WindowFunc>(exec,p,this,entry->value,entry->params,entry->attr);
@@ -1372,7 +1374,8 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
     }
     return Undefined();
   case Window::CaptureEvents:
-    // Do nothing. This is a NS-specific call that isn't needed in Konqueror.
+  case Window::ReleaseEvents:
+    // Do nothing for now. These are NS-specific legacy calls.
     break;
   case Window::AddEventListener: {
         JSEventListener *listener = Window::retrieveActive(exec)->getJSEventListener(args[1]);

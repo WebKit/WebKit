@@ -5,7 +5,7 @@ namespace KJS {
 const struct HashEntry HTMLDocumentTableEntries[] = {
    { "open", HTMLDocument::Open, DontDelete|Function, 0, 0 },
    { "scripts", HTMLDocument::Scripts, DontDelete|ReadOnly, 0, 0 },
-   { 0, 0, 0, 0, 0 },
+   { "releaseEvents", HTMLDocument::ReleaseEvents, DontDelete|Function, 0, 0 },
    { "all", HTMLDocument::All, DontDelete|ReadOnly, 0, &HTMLDocumentTableEntries[32] },
    { 0, 0, 0, 0, 0 },
    { "vlinkColor", HTMLDocument::VlinkColor, DontDelete, 0, 0 },
@@ -24,7 +24,7 @@ const struct HashEntry HTMLDocumentTableEntries[] = {
    { "links", HTMLDocument::Links, DontDelete|ReadOnly, 0, 0 },
    { "title", HTMLDocument::Title, DontDelete, 0, 0 },
    { "location", HTMLDocument::Location, DontDelete, 0, 0 },
-   { 0, 0, 0, 0, 0 },
+   { "captureEvents", HTMLDocument::CaptureEvents, DontDelete|Function, 0, 0 },
    { 0, 0, 0, 0, 0 },
    { "clear", HTMLDocument::Clear, DontDelete|Function, 0, 0 },
    { "referrer", HTMLDocument::Referrer, DontDelete|ReadOnly, 0, &HTMLDocumentTableEntries[31] },
