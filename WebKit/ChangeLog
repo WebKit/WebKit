@@ -1,5 +1,18 @@
 2004-12-20  Richard Williamson   <rjw@apple.com>
 
+	Add call to new API.  ImageIO deprecated some older (although
+	quite new!) API.   This caused us to fail to build on 337 or later.
+
+	Developers wanting to build on older versions of Tiger must define
+	USE_DEPRECATED_IMAGESOURCE_API in WebImageData.m.
+
+        Reviewed by Vicki.
+
+        * WebCoreSupport.subproj/WebImageData.m:
+        (-[WebImageData propertiesAtIndex:]):
+
+2004-12-20  Richard Williamson   <rjw@apple.com>
+
 	Don't call Tiger SPI on Panther.
 
         Reviewed by Vicki.

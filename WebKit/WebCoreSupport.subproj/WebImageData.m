@@ -18,12 +18,6 @@
 
 #ifdef USE_CGIMAGEREF
 
-// The following prototype is declared here temporarily.  It has been deprecated (even though it's new!).
-// Once the new API makes it into a stable build, and the group have upgraded, I will remove and
-// convert to the new API.  The new API is:
-// CG_EXTERN CFDictionaryRef CGImageSourceCopyPropertiesAtIndex(CGImageSourceRef isrc, size_t index, CFDictionaryRef options);
-CG_EXTERN CFDictionaryRef CGImageSourceGetPropertiesAtIndex(CGImageSourceRef isrc, size_t index, CFDictionaryRef options);
-
 static CFDictionaryRef imageSourceOptions;
 
 // Forward declarations of internal methods.
@@ -217,9 +211,13 @@ static CFDictionaryRef imageSourceOptions;
         imageProperties = (CFDictionaryRef *)malloc (num * sizeof(CFDictionaryRef));
         size_t i;
         for (i = 0; i < num; i++) {
+#if USE_DEPRECATED_IMAGESOURCE_API	
             imageProperties[i] = CGImageSourceGetPropertiesAtIndex (imageSource, i, 0);
             if (imageProperties[i])
                 CFRetain (imageProperties[i]);
+#else
+            imageProperties[i] = CGImageSourceCopyPropertiesAtIndex (imageSource, i, 0);
+#endif
         }
         imagePropertiesSize = num;
     }
@@ -228,9 +226,13 @@ static CFDictionaryRef imageSourceOptions;
         // If image properties are nil, try to get them again.  May have attempted to
         // get them before enough data was available in the header.
         if (imageProperties[index] == 0) {
+#if USE_DEPRECATED_IMAGESOURCE_API	
             imageProperties[index] = CGImageSourceGetPropertiesAtIndex (imageSource, index, 0);
             if (imageProperties[index])
                 CFRetain (imageProperties[index]);
+#else
+            imageProperties[index] = CGImageSourceCopyPropertiesAtIndex (imageSource, index, 0);
+#endif
         }
         
         return imageProperties[index];
