@@ -1,3 +1,5 @@
+=== 30 ===
+
 2002-10-30  Darin Adler  <darin@apple.com>
 
 	- fixed 3073230 -- Alex is doing file I/O when executing JavaScript by asking for localtime
