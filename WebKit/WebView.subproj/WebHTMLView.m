@@ -69,7 +69,7 @@ static BOOL forceRealHitTest = NO;
 
 
 @interface NSView (AppKitSecretsIKnowAbout)
-- (void)_recursiveDisplayRectIfNeededIgnoringOpacity:(NSRect)rect isVisibleRect:(BOOL)isVisibleRect rectIsVisibleRectForView:(NSView *)visibleView testDirtyRect:(BOOL)testDirtyRect;
+- (void)_recursiveDisplayRectIfNeededIgnoringOpacity:(NSRect)rect isVisibleRect:(BOOL)isVisibleRect rectIsVisibleRectForView:(NSView *)visibleView topView:(BOOL)topView;
 - (void)_recursiveDisplayAllDirtyWithLockFocus:(BOOL)needsLockFocus visRect:(NSRect)visRect;
 - (NSRect)_dirtyRect;
 - (void)_setDrawsOwnDescendants:(BOOL)drawsOwnDescendants;
@@ -230,7 +230,7 @@ static BOOL forceRealHitTest = NO;
 }
 
 // Don't let AppKit even draw subviews. We take care of that.
-- (void)_recursiveDisplayRectIfNeededIgnoringOpacity:(NSRect)rect isVisibleRect:(BOOL)isVisibleRect rectIsVisibleRectForView:(NSView *)visibleView testDirtyRect:(BOOL)testDirtyRect
+- (void)_recursiveDisplayRectIfNeededIgnoringOpacity:(NSRect)rect isVisibleRect:(BOOL)isVisibleRect rectIsVisibleRectForView:(NSView *)visibleView topView:(BOOL)topView
 {
     // This helps when we print as part of a larger print process.
     // If the WebHTMLView itself is what we're printing, then we will never have to do this.
@@ -248,7 +248,7 @@ static BOOL forceRealHitTest = NO;
 
     [self _setAsideSubviews];
     [super _recursiveDisplayRectIfNeededIgnoringOpacity:rect isVisibleRect:isVisibleRect
-        rectIsVisibleRectForView:visibleView testDirtyRect:testDirtyRect];
+        rectIsVisibleRectForView:visibleView topView:topView];
     [self _restoreSubviews];
 
     if (wasInPrintingMode != isPrinting) {

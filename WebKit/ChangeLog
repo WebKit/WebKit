@@ -1,3 +1,13 @@
+2003-10-03  David Hyatt  <hyatt@apple.com>
+
+	Fix for numerous regressions caused by an inadvertent renaming of the recursiveDisplay
+	override method.
+	
+        Reviewed by darin
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _recursiveDisplayRectIfNeededIgnoringOpacity:isVisibleRect:rectIsVisibleRectForView:topView:]):
+
 2003-10-03  Richard Williamson (Home0  <rjw@apple.com>
 
 	Fixed some edge case issue (control characters after end of word) with our rounding hack.
