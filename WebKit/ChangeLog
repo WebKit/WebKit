@@ -1,3 +1,16 @@
+2002-12-04  Richard Williamson   <rjw@apple.com>
+
+        Fixed massive performance regression.
+        We were leaking WebFontCacheKey.
+        Added a cache of missing fonts to avoid
+        expensive appkit lookup.
+        
+        Reviewed by: Maciej
+
+        * WebCoreSupport.subproj/WebTextRendererFactory.m:
+        (-[WebTextRendererFactory cachedFontFromFamily:traits:size:]):
+        (-[WebTextRendererFactory cachedFontFromFamilies:traits:size:]):
+
 2002-12-03  Darin Adler  <darin@apple.com>
 
 	- fixed 3117193 -- REGRESSION: Hang on Hixie's weblog

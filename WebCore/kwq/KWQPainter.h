@@ -97,7 +97,7 @@ public:
     
     bool paintingDisabled() const;
     void setPaintingDisabled(bool);
-    
+        
 private:
     // no copying or assignment
     QPainter(const QPainter &);
@@ -107,6 +107,8 @@ private:
     void _setColorFromPen();
 
     void _drawPoints(const QPointArray &_points, bool winding, int index, int _npoints, bool fill);
+
+    void _updateRenderer(NSString **families);
 
     QPainterPrivate *data;
 };

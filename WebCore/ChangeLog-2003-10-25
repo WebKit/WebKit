@@ -1,1 +1,16 @@
+2002-12-04  Richard Williamson   <rjw@apple.com>
+
+        Cache the last used text renderer to avoid expensive lookup
+        when font hasn't changed.
+
+        Reviewed by: maciej
+
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::layout):
+        * kwq/KWQPainter.h:
+        * kwq/KWQPainter.mm:
+        (QPainter::_updateRenderer):
+        (QPainter::drawText):
+        (QPainter::drawUnderlineForText):
+
 == Rolled over to ChangeLog-2002-12-03 ==

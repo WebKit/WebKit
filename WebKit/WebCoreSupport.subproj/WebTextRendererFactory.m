@@ -255,23 +255,35 @@
 - (NSFont *)cachedFontFromFamily:(NSString *)family traits:(NSFontTraitMask)traits size:(float)size
 {
     static NSMutableDictionary *fontCache = nil;
-    NSString *fontKey = [[WebFontCacheKey alloc] initWithFamily:family traits:traits size:size];
+    static NSMutableSet *missingFonts = nil;
+    WebFontCacheKey *fontKey;
     NSFont *font = nil;
+    
+    if ([family length] == 0)
+        return nil;
     
     if (!fontCache) {
         fontCache = [[NSMutableDictionary alloc] init];
     }
 
+    fontKey = [[WebFontCacheKey alloc] initWithFamily:family traits:traits size:size];
     font = [fontCache objectForKey:fontKey];
     if (!font){
-        font = [self fontWithFamily:family traits:traits size:size];
-        if (font)
-            [fontCache setObject:font forKey:fontKey];
+        if (![missingFonts containsObject:fontKey]){
+            font = [self fontWithFamily:family traits:traits size:size];
+            if (font)
+                [fontCache setObject:font forKey:fontKey];
+            else{
+                if (!missingFonts)
+                    missingFonts = [[NSMutableSet alloc] init];
+                [missingFonts addObject:fontKey];
+            }
+        }
     }
+    [fontKey release];
     
     return font;
 }
-
 
 - (NSFont *)cachedFontFromFamilies:(NSString **)families traits:(NSFontTraitMask)traits size:(float)size
 {
@@ -288,7 +300,8 @@
     
     while (families && families[i] != 0 && font == nil){
         family = families[i++];
-        font = [self cachedFontFromFamily: family traits:traits size:size];
+        if ([family length] != 0)
+            font = [self cachedFontFromFamily: family traits:traits size:size];
     }
     if (font == nil)
         font = [WebTextRendererFactory fallbackFontWithTraits:traits size:size];

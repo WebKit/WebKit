@@ -46,8 +46,12 @@ struct QPState {
 };
 
 struct QPainterPrivate {
+    QPainterPrivate() : lastTextRenderer(0) { }
+    ~QPainterPrivate() { [lastTextRenderer release]; }
     QPState state;
     QPtrStack<QPState> stack;
+    id<WebCoreTextRenderer>lastTextRenderer;
+    QFont lastFont;
 };
 
 QPainter::QPainter() : data(new QPainterPrivate)
@@ -349,6 +353,17 @@ void QPainter::drawTiledPixmap( int x, int y, int w, int h,
     [pixmap.imageRenderer tileInRect:NSMakeRect(x, y, w, h) fromPoint:NSMakePoint(sx, sy)];
 }
 
+void QPainter::_updateRenderer(NSString **families)
+{
+    if (data->state.font != data->lastFont || data->lastTextRenderer == 0){
+        data->lastFont = data->state.font;
+        [data->lastTextRenderer release];
+        data->lastTextRenderer = 
+            [[[WebCoreTextRendererFactory sharedFactory]
+                rendererWithFamilies:families traits:data->state.font.getNSTraits() size:data->state.font.getNSSize()] retain];
+    }
+}
+    
 void QPainter::drawText(int x, int y, int, int, int alignmentFlags, const QString &qstring)
 {
     if (data->state.paintingDisabled)
@@ -358,15 +373,13 @@ void QPainter::drawText(int x, int y, int, int, int alignmentFlags, const QStrin
     // css fallback lists are small <= 3.
     CREATE_FAMILY_ARRAY(data->state.font, families);
 
-    id<WebCoreTextRenderer> renderer = 
-      [[WebCoreTextRendererFactory sharedFactory]
-          rendererWithFamilies:families traits:data->state.font.getNSTraits() size:data->state.font.getNSSize()];
-
+    _updateRenderer(families);
+    
     const UniChar* str = (const UniChar*)qstring.unicode();
     if (alignmentFlags & Qt::AlignRight)
-        x -= ROUND_TO_INT([renderer floatWidthForCharacters:(const UniChar *)str stringLength:qstring.length() fromCharacterPosition:0 numberOfCharacters:qstring.length() withPadding: 0 applyRounding:YES attemptFontSubstitution: YES widths: 0 letterSpacing: 0 wordSpacing: 0 fontFamilies: families]);
+        x -= ROUND_TO_INT([data->lastTextRenderer floatWidthForCharacters:(const UniChar *)str stringLength:qstring.length() fromCharacterPosition:0 numberOfCharacters:qstring.length() withPadding: 0 applyRounding:YES attemptFontSubstitution: YES widths: 0 letterSpacing: 0 wordSpacing: 0 fontFamilies: families]);
      
-    [renderer drawCharacters:str stringLength:qstring.length()
+    [data->lastTextRenderer drawCharacters:str stringLength:qstring.length()
         fromCharacterPosition:0 
         toCharacterPosition:qstring.length() 
         atPoint:NSMakePoint(x, y)
@@ -388,8 +401,9 @@ void QPainter::drawText(int x, int y, const QChar *str, int len, int from, int t
     // css fallback lists are small <= 3.
     CREATE_FAMILY_ARRAY(data->state.font, families);
     
-    [[[WebCoreTextRendererFactory sharedFactory]
-        rendererWithFamilies:families traits:data->state.font.getNSTraits() size:data->state.font.getNSSize()]
+    _updateRenderer(families);
+
+    [data->lastTextRenderer
     	drawCharacters:(const UniChar *)str stringLength:len
         fromCharacterPosition:from 
         toCharacterPosition:to 
@@ -410,9 +424,9 @@ void QPainter::drawUnderlineForText(int x, int y, const QChar *str, int len)
 
     CREATE_FAMILY_ARRAY(data->state.font, families);
         
-    [[[WebCoreTextRendererFactory sharedFactory]
-        rendererWithFamilies:families traits:data->state.font.getNSTraits() size:data->state.font.getNSSize()]
-        drawUnderlineForCharacters:(const UniChar *)str stringLength:len
+    _updateRenderer(families);
+
+    [data->lastTextRenderer drawUnderlineForCharacters:(const UniChar *)str stringLength:len
         atPoint:NSMakePoint(x,y) withColor:data->state.pen.color().getNSColor()];
 }
 

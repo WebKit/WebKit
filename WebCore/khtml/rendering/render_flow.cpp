@@ -226,7 +226,7 @@ void RenderFlow::layout()
 
     KHTMLAssert( !layouted() );
     KHTMLAssert( minMaxKnown() );
-    KHTMLAssert(!isInline());
+    //KHTMLAssert(!isInline());
 
     int oldWidth = m_width;
 
