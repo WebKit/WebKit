@@ -2015,16 +2015,18 @@ DocumentImpl::preferredStylesheetSet()
 DOMString 
 DocumentImpl::selectedStylesheetSet()
 {
-  return view()->part()->d->m_sheetUsed;
+  return view() ? view()->part()->d->m_sheetUsed : DOMString();
 }
 
 void 
 DocumentImpl::setSelectedStylesheetSet(const DOMString& aString)
 {
-  view()->part()->d->m_sheetUsed = aString.string();
-  updateStyleSelector();
-  if (renderer())
-    renderer()->repaint();
+  if (view()) {
+    view()->part()->d->m_sheetUsed = aString.string();
+    updateStyleSelector();
+    if (renderer())
+      renderer()->repaint();
+  }
 }
 
 // This method is called whenever a top-level stylesheet has finished loading.

@@ -1,3 +1,13 @@
+2004-04-28  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - fixed <rdar://problem/3636261>: "nil-deref in selectedStylesheetSet iterating through properties in a non-view document"
+
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::selectedStylesheetSet): Add nil check.
+        (DocumentImpl::setSelectedStylesheetSet): Ditto.
+
 2004-04-27  Richard Williamson   <rjw@apple.com>
 
 	<rdar://problem/3564519>: API: please add a way to set the media type for a WebView
