@@ -53,6 +53,13 @@
     return result;
 }
 
+- (void)mouseDown:(NSEvent *)event
+{
+    [super mouseDown:event];
+    slider->sendConsumedMouseUp();
+    slider->clicked();
+}
+
 -(IBAction)slide:(NSSlider*)sender
 {
     slider->sliderValueChanged();
@@ -65,7 +72,9 @@ enum {
 };
 
 QSlider::QSlider()
-:m_sliderValueChanged(this, SIGNAL(sliderValueChanged())), m_minVal(0.0), m_maxVal(100.0), m_val(50.0)
+: m_sliderValueChanged(this, SIGNAL(sliderValueChanged())), 
+  m_clicked(this, SIGNAL(clicked())),
+  m_minVal(0.0), m_maxVal(100.0), m_val(50.0)
 {
     KWQ_BLOCK_EXCEPTIONS;
     KWQSlider* slider = [[KWQSlider alloc] initWithQSlider:this];
@@ -161,4 +170,9 @@ const int* QSlider::dimensions() const
     KWQ_UNBLOCK_EXCEPTIONS;
     
     return w[NSSmallControlSize];
+}
+
+void QSlider::clicked()
+{
+    m_clicked.call();
 }

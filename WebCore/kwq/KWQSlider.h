@@ -48,8 +48,11 @@ public:
 
     const int* dimensions() const;
 
+    void clicked();
+
 private:
     KWQSignal m_sliderValueChanged;
+    KWQSignal m_clicked;
     double m_minVal;
     double m_maxVal;
     double m_val;

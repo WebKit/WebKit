@@ -507,6 +507,7 @@ public:
 
 protected slots:
     void slotSliderValueChanged();
+    void slotClicked();
 };
 #endif
 

@@ -1,3 +1,20 @@
+2004-08-13  Trey Matteson  <trey@apple.com>
+
+	3761794 Slider doesn't call onmouseup handler
+
+        Reviewed by Hyatt
+
+        * khtml/rendering/render_form.cpp:
+        (RenderSlider::RenderSlider):  Listen for signal.
+        (RenderSlider::slotClicked):  Pass to superclass.
+        * khtml/rendering/render_form.h:
+        * kwq/KWQSlider.h:
+        * kwq/KWQSlider.mm:
+        (-[KWQSlider mouseDown:]):  Generate mouseUp and clicked events,
+	since AK consumes the mouseUp event in a modal tracking loop.
+        (QSlider::QSlider):  Make signal.
+        (QSlider::clicked):  Send signal.
+
 2004-08-12  Trey Matteson  <trey@apple.com>
 
 	3761329 - query result links all dead in ingrammicro.com (sometimes)
