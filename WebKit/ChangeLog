@@ -1,3 +1,14 @@
+2003-10-30  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3458368>: drawing to the screen while window hidden: http://www.bhphotovideo.com/
+
+        Reviewed by john.
+
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView saveAndSetPortStateForUpdate:]): clip out the plug-in when the window is miniaturized or hidden
+        (-[WebBaseNetscapePluginView restartNullEvents]): don't restart null events if the window is miniaturized, this allows restartNullEvents to be called in start and viewDidMoveToWindow without needing to make the check
+        (-[WebBaseNetscapePluginView start]): just call restartNullEvents instead of checking if the window is miniaturized
+
 2003-10-30  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Hyatt

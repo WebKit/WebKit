@@ -188,7 +188,8 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
 
     // Clip out the plug-in when it's not really in a window or off screen or has no height or width.
     // The "big negative number" technique is how WebCore expresses off-screen widgets.
-    if (window.width <= 0 || window.height <= 0 || window.x < -100000 || [self window] == nil) {
+    NSWindow *realWindow = [self window];
+    if (window.width <= 0 || window.height <= 0 || window.x < -100000 || realWindow == nil || [realWindow isMiniaturized] || [NSApp isHidden]) {
         // The following code tries to give plug-ins the same size they will eventually have.
         // The specifiedWidth and specifiedHeight variables are used to predict the size that
         // WebCore will eventually resize us to.
@@ -407,8 +408,14 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
 
 - (void)restartNullEvents
 {
+    ASSERT([self window]);
+    
     if (nullEventTimer) {
         [self stopNullEvents];
+    }
+    
+    if ([[self window] isMiniaturized]) {
+        return;
     }
 
     NSTimeInterval interval;
@@ -814,9 +821,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
         if ([[self window] isKeyWindow]) {
             [self sendActivateEvent:YES];
         }
-        if (![[self window] isMiniaturized]) {
-            [self restartNullEvents];
-        }
+        [self restartNullEvents];
     }
 
     [self resetTrackingRect];
