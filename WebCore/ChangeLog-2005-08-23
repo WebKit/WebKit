@@ -1,3 +1,34 @@
+2005-03-16  David Harrison  <harrison@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/4044336> REGRESSION (8A398-8A409): Option-Delete also deletes space to left of deleted word
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::DeleteSelectionCommand::initializePositionData):
+        - skip smart delete if the selection to delete already starts or ends with whitespace
+        
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::handleMousePressEventDoubleClick):
+        - preserve selection on double-click when range is already selected
+        
+        * khtml/xml/dom_position.cpp:
+        (DOM::Position::leadingWhitespacePosition):
+        (DOM::Position::trailingWhitespacePosition):
+        - fix considerNonCollapsibleWhitespace action (logic was reversed)
+        - add non-breaking space to the non-collapsable ones
+        
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge rangeByExpandingSelectionWithGranularity:]):
+        (-[WebCoreBridge rangeByAlteringCurrentSelection:direction:granularity:]):
+        - these methods do not set the selection, so remove calls to setSelectionGranularity
+          
+        (-[WebCoreBridge alterCurrentSelection:direction:granularity:]):
+        (-[WebCoreBridge alterCurrentSelection:verticalDistance:]):
+        - set the granularity back to character
+        - the one exception is that we need to keep word granularity
+          to preserve smart delete behavior when extending by word
+
 2005-03-15  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by John.

@@ -4524,8 +4524,17 @@ void KHTMLPart::selectClosestWordFromMouseEvent(QMouseEvent *mouse, DOM::Node &i
 void KHTMLPart::handleMousePressEventDoubleClick(khtml::MousePressEvent *event)
 {
     if (event->qmouseEvent()->button() == LeftButton) {
-        DOM::Node node = event->innerNode();
-        selectClosestWordFromMouseEvent(event->qmouseEvent(), node, event->x(), event->y());
+        if (selection().isRange()) {
+            // A double-click when range is already selected
+            // should not change the selection.  So, do not call
+            // selectClosestWordFromMouseEvent, but do set
+            // m_beganSelectingText to prevent khtmlMouseReleaseEvent
+            // from setting caret selection.
+            d->m_beganSelectingText = true;
+        } else {
+            DOM::Node node = event->innerNode();
+            selectClosestWordFromMouseEvent(event->qmouseEvent(), node, event->x(), event->y());
+        }
     }
 }
 

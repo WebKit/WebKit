@@ -1495,7 +1495,6 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
         
     // NOTE: The enums *must* match the very similar ones declared in ktml_selection.h
     Selection selection(_part->selection());
-    _part->setSelectionGranularity(static_cast<ETextGranularity>(granularity));
     selection.expandUsingGranularity(static_cast<ETextGranularity>(granularity));
     return [DOMRange _rangeWithImpl:selection.toRange().handle()];
 }
@@ -1507,7 +1506,6 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
         
     // NOTE: The enums *must* match the very similar ones declared in ktml_selection.h
     Selection selection(_part->selection());
-    _part->setSelectionGranularity(static_cast<ETextGranularity>(granularity));
     selection.modify(static_cast<Selection::EAlter>(alteration), 
                      static_cast<Selection::EDirection>(direction), 
                      static_cast<ETextGranularity>(granularity));
@@ -1521,7 +1519,6 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
         
     // NOTE: The enums *must* match the very similar ones declared in dom_selection.h
     Selection selection(_part->selection());
-    _part->setSelectionGranularity(static_cast<ETextGranularity>(granularity));
     selection.modify(static_cast<Selection::EAlter>(alteration), 
                      static_cast<Selection::EDirection>(direction), 
                      static_cast<ETextGranularity>(granularity));
@@ -1544,6 +1541,14 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     
     // setting the selection always clears saved vertical navigation x position
     _part->setSelection(selection);
+    
+    // altering the selection also sets the granularity back to character
+    // NOTE: The one exception is that we need to keep word granularity
+    // to preserve smart delete behavior when extending by word.  e.g. double-click,
+    // then shift-option-rightarrow, then delete needs to smart delete, per TextEdit.
+    if (!((alteration == WebSelectByExtending) &&
+          (granularity == WebSelectByWord) && (_part->selectionGranularity() == khtml::WORD)))
+        _part->setSelectionGranularity(static_cast<ETextGranularity>(WebSelectByCharacter));
     
     // restore vertical navigation x position if necessary
     if (xPos != KHTMLPart::NoXPosForVerticalArrowNavigation)
@@ -1573,6 +1578,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     // setting the selection always clears saved vertical navigation x position, so preserve it
     int xPos = _part->xPosForVerticalArrowNavigation();
     _part->setSelection(selection);
+    _part->setSelectionGranularity(static_cast<ETextGranularity>(WebSelectByCharacter));
     _part->setXPosForVerticalArrowNavigation(xPos);
 
     [self ensureSelectionVisible];
