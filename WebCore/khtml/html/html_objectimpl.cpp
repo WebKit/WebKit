@@ -534,8 +534,8 @@ void HTMLObjectElementImpl::attach()
         } else {
             if (needWidgetUpdate) {
                 static_cast<RenderPartObject*>(m_render)->updateWidget();
-                dispatchHTMLEvent(EventImpl::LOAD_EVENT,false,false);
                 needWidgetUpdate = false;
+                dispatchHTMLEvent(EventImpl::LOAD_EVENT,false,false);
             } else {
                 needWidgetUpdate = true;
                 setChanged();
@@ -558,8 +558,8 @@ void HTMLObjectElementImpl::recalcStyle(StyleChange ch)
 {
     if (needWidgetUpdate && m_render && !canRenderImageType(serviceType)) {
         static_cast<RenderPartObject*>(m_render)->updateWidget();
-        dispatchHTMLEvent(EventImpl::LOAD_EVENT,false,false);
         needWidgetUpdate = false;
+        dispatchHTMLEvent(EventImpl::LOAD_EVENT,false,false);
     }
     HTMLElementImpl::recalcStyle(ch);
 }

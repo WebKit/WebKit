@@ -1,3 +1,13 @@
+2005-02-03  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3938763> Cannot view Windows Media Player videos (soundtrack is played twice with delay)
+
+        Reviewed by hyatt.
+
+        * khtml/html/html_objectimpl.cpp:
+        (HTMLObjectElementImpl::attach): set needWidgetUpdate to false right after calling updateWidget because dispatchHTMLEvent can end up calling this method again
+        (HTMLObjectElementImpl::recalcStyle): ditto
+
 2005-02-02  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Chris.
