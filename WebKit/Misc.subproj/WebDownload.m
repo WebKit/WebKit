@@ -9,6 +9,20 @@
 #import <Foundation/NSURLDownloadPrivate.h>
 #import <WebKit/WebPanelAuthenticationHandler.h>
 
+// FIXME: Remove these declarations because _initWithLoadingConnection is declared in NSURLDownloadPrivate.h
+@interface NSURLDownload (WebDownloadCapability)
+- (id)_initWithLoadingConnection:(NSURLConnection *)connection
+                         request:(NSURLRequest *)request
+                        response:(NSURLResponse *)response
+                        delegate:(id)delegate
+                           proxy:(NSURLConnectionDelegateProxy *)proxy;
+- (id)_initWithLoadingResource:(NSURLConnection *)connection
+                       request:(NSURLRequest *)request
+                      response:(NSURLResponse *)response
+                      delegate:(id)delegate
+                         proxy:(NSURLConnectionDelegateProxy *)proxy;
+@end
+
 @interface WebDownloadInternal : NSObject
 {
 @public
@@ -164,6 +178,19 @@
     return self;
 }
 
+- (id)_initWithLoadingConnection:(NSURLConnection *)connection
+                         request:(NSURLRequest *)request
+                        response:(NSURLResponse *)response
+                        delegate:(id)delegate
+                           proxy:(NSURLConnectionDelegateProxy *)proxy;
+{
+    self = [self init];
+    [_webInternal setRealDelegate:delegate];
+    [super _initWithLoadingConnection:connection request:request response:response delegate:_webInternal proxy:proxy];
+    return self;
+}
+
+// FIXME: Remove this override because it no longer exists in newer Foundations.
 - (id)_initWithLoadingResource:(NSURLConnection *)connection
                        request:(NSURLRequest *)request
                       response:(NSURLResponse *)response

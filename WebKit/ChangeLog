@@ -1,3 +1,13 @@
+2003-10-16  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3455176>: Assertion failure when loading non-existant plug-in content
+
+        Reviewed by rjw.
+
+        * Misc.subproj/WebDownload.m: fixed build failure when using new Foundation. We are overriding and calling a renamed method. Continue to override the old method, override the new method and declare their interfaces to avoid build failures. 
+        * Plugins.subproj/WebNetscapePluginStream.m:
+        (-[WebNetscapePluginConnectionDelegate connection:didReceiveResponse:]): cancel the load before telling the plug-in about the error so plug-in code doesn't attempt to cancel the load twice
+
 2003-10-16  Richard Williamson   <rjw@apple.com>
 
 	Fixed 3453991.  We weren't setting the array cursor correctly after changing

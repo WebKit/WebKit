@@ -109,11 +109,11 @@
     [super connection:con didReceiveResponse:theResponse];
     if ([theResponse isKindOfClass:[NSHTTPURLResponse class]] &&
         [NSHTTPURLResponse isErrorStatusCode:[(NSHTTPURLResponse *)theResponse statusCode]]) {
-        [stream cancelWithReason:NPRES_NETWORK_ERR];
         NSError *error = [NSError _webKitErrorWithDomain:NSURLErrorDomain
                                                     code:NSURLErrorFileDoesNotExist
                                                      URL:[theResponse URL]];
         [self cancelWithError:error];
+        [stream cancelWithReason:NPRES_NETWORK_ERR];
     }
     [self release];
 }
