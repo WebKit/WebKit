@@ -196,6 +196,7 @@ public:
         }
     }
 
+    m_isFocused = false;
     m_focusNodeNumber = -1;
     m_focusNodeRestored = false;
     m_opener = 0;
@@ -372,6 +373,7 @@ public:
   bool m_bCleared:1;
   bool m_bSecurityInQuestion:1;
   bool m_focusNodeRestored:1;
+  bool m_isFocused:1;
 
   khtml::EditCommand m_lastEditCommand;
   int m_xPosForVerticalArrowNavigation;
@@ -419,6 +421,7 @@ public:
   bool m_cancelWithLoadInProgress;
 
   QTimer m_lifeSupportTimer;
+  
 };
 
 #endif

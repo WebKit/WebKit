@@ -1,3 +1,27 @@
+2004-09-20  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3781290> REGRESSION (Mail): Crash in ReplaceSelectionCommandImpl attaching file to new message
+
+        Reviewed by kocienda.
+
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::setSelection): setFocusNodeIfNeeded now works on the current selection so call setFocusNodeIfNeeded after setting the selection
+        (KHTMLPart::clearSelection): don't call setFocusNodeIfNeeded with the current selection
+        (KHTMLPart::setCaretVisible): ditto
+        (KHTMLPart::setFocusNodeIfNeeded): do nothing if the part isn't focused, work with the current selection
+        * khtml/khtml_part.h:
+        * khtml/khtmlpart_p.h:
+        (KHTMLPartPrivate::KHTMLPartPrivate): added m_isFocused
+        * kwq/KWQKHTMLPart.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::KWQKHTMLPart): removed _displaysWithFocusAttributes this is replaced by m_isFocused
+        (KWQKHTMLPart::setSelectionFromNone): new, code factored out from setDisplaysWithFocusAttributes
+        (KWQKHTMLPart::setDisplaysWithFocusAttributes): call setSelectionFromNone
+        (KWQKHTMLPart::displaysWithFocusAttributes): now returns m_isFocused
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge setSelectionFromNone]): new
+
 2004-09-20  Darin Adler  <darin@apple.com>
 
         Reviewed by Dave.

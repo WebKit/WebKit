@@ -2437,7 +2437,13 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 
 - (void)setEditable:(BOOL)flag
 {
-    _private->editable = flag;
+    if (_private->editable != flag) {
+        _private->editable = flag;
+        if (flag && [self selectedDOMRange] == nil) {
+            // If the WebView is made editable and the selection is empty, set it to something.
+            [[[self mainFrame] _bridge] setSelectionFromNone];
+        }
+    }
 }
 
 - (BOOL)isEditable

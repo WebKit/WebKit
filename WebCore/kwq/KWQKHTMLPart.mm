@@ -191,7 +191,6 @@ KWQKHTMLPart::KWQKHTMLPart()
     , _formValuesAboutToBeSubmitted(nil)
     , _formAboutToBeSubmitted(nil)
     , _windowWidget(NULL)
-    , _displaysWithFocusAttributes(false)
     , _drawSelectionOnly(false)
     , _bindingRoot(0)
     , _windowScriptObject(0)
@@ -3420,25 +3419,13 @@ void KWQKHTMLPart::setMediaType(const QString &type)
     }
 }
 
-void KWQKHTMLPart::setDisplaysWithFocusAttributes(bool flag)
+void KWQKHTMLPart::setSelectionFromNone()
 {
-    if (_displaysWithFocusAttributes == flag)
-        return;
-    _displaysWithFocusAttributes = flag;
-        
-    // This method does the job of updating the view based on whether the view is "active".
-    // This involves three kinds of drawing updates:
-
-    // 1. The background color used to draw behind selected content (active | inactive color)
-    if (d->m_view)
-        d->m_view->updateContents(QRect(visibleSelectionRect()));
-
-    // 2. Caret blinking (blinks | does not blink)
-    //    Also, put the caret someplace if the selection is empty and the part is editable.
+    //    Put the caret someplace if the selection is empty and the part is editable.
     //    This has the effect of flashing the caret in a contentEditable view automatically 
     //    without requiring the programmer to set a selection explicitly.
     DocumentImpl *doc = xmlDocImpl();
-    if (doc && flag && selection().state() == Selection::NONE && isContentEditable()) {
+    if (doc && selection().state() == Selection::NONE && isContentEditable()) {
         NodeImpl *node = doc->documentElement();
         while (node) {
             // Look for a block flow, but skip over the HTML element, since we really
@@ -3450,14 +3437,38 @@ void KWQKHTMLPart::setDisplaysWithFocusAttributes(bool flag)
         if (node)
             setSelection(Position(node, 0));
     }
-    setCaretVisible(flag);
+}
 
+void KWQKHTMLPart::setDisplaysWithFocusAttributes(bool flag)
+{
+    if (d->m_isFocused == flag)
+        return;
+    d->m_isFocused = flag;
+        
+    // This method does the job of updating the view based on whether the view is "active".
+    // This involves three kinds of drawing updates:
+
+    // 1. The background color used to draw behind selected content (active | inactive color)
+    if (d->m_view)
+        d->m_view->updateContents(QRect(visibleSelectionRect()));
+
+    // 2. Caret blinking (blinks | does not blink)
+    if (flag)
+        setSelectionFromNone();
+    setCaretVisible(d->m_isFocused);
+    
     // 3. The drawing of a focus ring around links in web pages.
+    DocumentImpl *doc = xmlDocImpl();
     if (doc) {
         NodeImpl *node = doc->focusNode();
         if (node && node->renderer())
             node->renderer()->repaint();
     }
+}
+
+bool KWQKHTMLPart::displaysWithFocusAttributes() const
+{
+    return d->m_isFocused;
 }
 
 QChar KWQKHTMLPart::backslashAsCurrencySymbol() const

@@ -2341,7 +2341,6 @@ void KHTMLPart::setSelection(const Selection &s, bool closeTyping)
 {
     if (d->m_selection != s) {
         clearCaretRectIfNeeded(); 
-        setFocusNodeIfNeeded(s);
 #if APPLE_CHANGES
         // Mark misspellings in the soon-to-be previous selection.  When typing we check spelling
         // elsewhere, so don't redo it here
@@ -2350,6 +2349,7 @@ void KHTMLPart::setSelection(const Selection &s, bool closeTyping)
         }
 #endif
         d->m_selection = s;
+        setFocusNodeIfNeeded();
         notifySelectionChanged(closeTyping);
     }
 }
@@ -2366,7 +2366,7 @@ void KHTMLPart::setDragCaret(const DOM::Selection &dragCaret)
 void KHTMLPart::clearSelection()
 {
     clearCaretRectIfNeeded();
-    setFocusNodeIfNeeded(d->m_selection);
+    setFocusNodeIfNeeded();
     d->m_selection = Selection();
     notifySelectionChanged();
 }
@@ -2384,7 +2384,7 @@ void KHTMLPart::setCaretVisible(bool flag)
         return;
 
     clearCaretRectIfNeeded();
-    setFocusNodeIfNeeded(d->m_selection);
+    setFocusNodeIfNeeded();
     d->m_caretVisible = flag;
     selectionLayoutChanged();
 }
@@ -2406,15 +2406,15 @@ void KHTMLPart::clearCaretRectIfNeeded()
     }        
 }
 
-void KHTMLPart::setFocusNodeIfNeeded(const Selection &s)
+void KHTMLPart::setFocusNodeIfNeeded()
 {
-    if (!xmlDocImpl() || s.state() == Selection::NONE)
+    if (!xmlDocImpl() || d->m_selection.state() == Selection::NONE || !d->m_isFocused)
         return;
 
-    NodeImpl *n = s.start().node();
+    NodeImpl *n = d->m_selection.start().node();
     NodeImpl *target = (n && n->isContentEditable()) ? n : 0;
     if (!target) {
-        while (n && n != s.end().node()) {
+        while (n && n != d->m_selection.end().node()) {
             if (n->isContentEditable()) {
                 target = n;
                 break;

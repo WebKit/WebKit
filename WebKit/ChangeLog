@@ -1,5 +1,14 @@
 2004-09-20  Chris Blumenberg  <cblu@apple.com>
 
+	Fixed: <rdar://problem/3781290> REGRESSION (Mail): Crash in ReplaceSelectionCommandImpl attaching file to new message
+
+        Reviewed by kocienda.
+
+        * WebView.subproj/WebView.m:
+        (-[WebView setEditable:]): call updateSelectionFromEmpty on the bridge if there is no selection
+
+2004-09-20  Chris Blumenberg  <cblu@apple.com>
+
 	Changes to implement renamed bridge methods.
 
         Reviewed by darin.

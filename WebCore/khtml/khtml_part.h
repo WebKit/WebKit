@@ -1185,7 +1185,7 @@ private:
   /**
    * @internal
    */
-  void setFocusNodeIfNeeded(const DOM::Selection &);
+  void setFocusNodeIfNeeded();
 
   /**
    * @internal

@@ -1259,6 +1259,11 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     return externalRepresentation(_part->renderer()).getNSString();
 }
 
+- (void)setSelectionFromNone
+{
+    _part->setSelectionFromNone();
+}
+
 - (void)setDisplaysWithFocusAttributes:(BOOL)flag
 {
     _part->setDisplaysWithFocusAttributes(flag);
