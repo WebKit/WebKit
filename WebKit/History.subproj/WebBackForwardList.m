@@ -185,6 +185,14 @@
     return result;
 }
 
+- (void)clearPageCache
+{
+    int i;
+    for (i = 0; i < (int)[_entries count]; i++) {
+        [[_entries objectAtIndex:i] setHasPageCache:NO];
+    }
+}
+
 static BOOL pageCacheSizeModified = NO;
 static unsigned pageCacheSize = 4;
 

@@ -1,3 +1,35 @@
+2002-12-12  Richard Williamson   <rjw@apple.com>
+
+        Changes to fix 3116584.
+        Reviewed by hyatt.
+        
+        Changes to support emptying the page cache from the
+        "Empty Cache" menu.
+        Reviewed by trey.
+
+        * ChangeLog:
+        * History.subproj/WebBackForwardList.h:
+        * History.subproj/WebBackForwardList.m:
+        (-[WebBackForwardList clearPageCache]):
+        * History.subproj/WebHistoryItem.m:
+        (+[WebHistoryItem _scheduleReleaseTimer]):
+        (-[WebHistoryItem _scheduleRelease]):
+        (+[WebHistoryItem _releasePageCache:]):
+        (-[WebHistoryItem setHasPageCache:]):
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _opened]):
+
+2002-12-12  Richard Williamson   <rjw@apple.com>
+
+        Fixed 3119693.  Restore scroll position when going back
+        to item in b/f cache.
+        
+        Reviewed by trey.
+
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _opened]):
+
 === Alexander-36 ===
 
 2002-12-12  Richard Williamson   <rjw@apple.com>

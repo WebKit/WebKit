@@ -94,6 +94,7 @@ NSString *WebCoreElementStringKey = 		@"WebElementString";
 - (SavedProperties *)windowProperties;
 - (SavedProperties *)locationProperties;
 - (RenderObject *)renderer;
+- (void)invalidate;
 @end
 
 @implementation WebCoreBridge
@@ -117,9 +118,7 @@ NSString *WebCoreElementStringKey = 		@"WebElementString";
     }
     _part->setBridge(nil);
     _part->deref();
-    
-    [_currentPageCache release];
-    
+        
     [super dealloc];
 }
 
@@ -151,13 +150,9 @@ NSString *WebCoreElementStringKey = 		@"WebElementString";
 {
     if (pageCache) {
         KWQPageState *state = [pageCache objectForKey:@"WebCorePageState"];
-        _currentPageCache = [pageCache retain];
         _part->openURLFromPageCache([state document], [state renderer], [state URL], [state windowProperties], [state locationProperties]);
+        [state invalidate];
         return;
-    }
-    else if (_currentPageCache){
-        [_currentPageCache release];
-        _currentPageCache = 0;
     }
         
 
@@ -848,24 +843,55 @@ static NSAttributedString *attributedString(NodeImpl *_startNode, int startOffse
     return self;
 }
 
-- (void)dealloc
+// Called when the KWQPageState is restored.  It should relinquish ownership
+// of objects to core.
+- (void)invalidate
 {
-    KHTMLView *view = document->view();
-
-    KWQ(view->part())->clearTimers();
-
+    // Should only ever invalidate once.
+    ASSERT (document);
+    
     document->setInPageCache(NO);
-    document->detach();
     document->deref();
     document = 0;
-    
-    view->clearPart();
-    delete view;
-    
+
     delete URL;
     URL = 0;
+    
     delete windowProperties;
+    windowProperties = 0;
     delete locationProperties;
+    locationProperties = 0;
+}
+
+- (void)dealloc
+{
+    if (document){
+        KHTMLView *view = document->view();
+        KWQ(view->part())->clearTimers();
+        document->setInPageCache(NO);
+        document->detach();
+        document->deref();
+        document = 0;
+        
+        view->clearPart();
+        delete view;
+    }
+    
+    if (URL){
+        delete URL;
+        URL = 0;
+    }
+
+    if (windowProperties){
+        delete windowProperties;
+        windowProperties = 0;
+    }
+    
+    if (locationProperties){
+        delete locationProperties;
+        locationProperties = 0;
+    }
+    
     [super dealloc];
 }
 

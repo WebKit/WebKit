@@ -1,3 +1,32 @@
+2002-12-12  Richard Williamson   <rjw@apple.com>
+
+        Fixed 3116584.  Made letter-spacing, word-spacing, and text-decoration play
+        well together.
+        Reviewed by hyatt.
+
+        Changes made with trey to enable to release of page cache from the
+        "Empty Cache" menu item in Alex.
+        Reviewed by trey.
+        
+        * khtml/rendering/font.cpp:
+        (Font::drawLineForText):
+        (Font::drawText):
+        * khtml/rendering/font.h:
+        * khtml/rendering/render_text.cpp:
+        (TextSlave::paintDecoration):
+        (RenderText::paintObject):
+        * khtml/rendering/render_text.h:
+        * kwq/KWQPainter.h:
+        * kwq/KWQPainter.mm:
+        (QPainter::drawLineForText):
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge dealloc]):
+        (-[WebCoreBridge openURL:reload:headers:lastModified:pageCache:]):
+        (-[KWQPageState invalidate]):
+        (-[KWQPageState dealloc]):
+        * kwq/WebCoreTextRenderer.h:
+
 2002-12-12  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Maciej and Darin

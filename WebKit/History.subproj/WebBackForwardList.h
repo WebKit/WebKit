@@ -50,6 +50,12 @@
 + (unsigned)pageCacheSize;
 
 /*!
+    @method clearPageCache
+    @discussion Clears all items in the page cache. 
+*/
+- (void)clearPageCache;
+
+/*!
     @method addEntry:
     @abstract Adds an entry to the list.
     @discussion Add an entry to the back-forward list, immediately after the current entry.

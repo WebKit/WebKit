@@ -92,7 +92,7 @@ public:
 
     void drawText(int x, int y, int, int, int alignmentFlags, const QString &);
     void drawText(int x, int y, const QChar *, int length, int from, int to, int toAdd, const QColor& backgroundColor, QPainter::TextDirection d, int letterSpacing, int wordSpacing);
-    void drawUnderlineForText(int x, int y, const QChar *, int length);
+    void drawLineForText(int x, int y, const QChar *, int length, int toAdd, int yOffset, QPainter::TextDirection d, int letterSpacing, int wordSpacing);
     static QColor selectedTextBackgroundColor();
     
     bool paintingDisabled() const;

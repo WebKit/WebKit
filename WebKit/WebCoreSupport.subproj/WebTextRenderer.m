@@ -707,13 +707,29 @@ static void _drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *a
 }
 
 
-- (void)drawUnderlineForCharacters:(const UniChar *)characters stringLength:(unsigned)length atPoint:(NSPoint)point withColor:(NSColor *)color
+- (void)drawLineForCharacters:(const UniChar *)characters stringLength:(unsigned)length fromCharacterPosition:(int)from toCharacterPosition:(int)to atPoint:(NSPoint)point yOffset:(float)yOffset withPadding: (int)padding withColor:(NSColor *)color rightToLeft: (BOOL)rtl letterSpacing: (int)letterSpacing wordSpacing: (int)wordSpacing fontFamilies: (NSString **)families;
 {
     NSGraphicsContext *graphicsContext = [NSGraphicsContext currentContext];
-    int width = [self widthForCharacters:characters length:length];
+    int width;
     CGContextRef cgContext;
     float lineWidth;
     
+
+    width = ROUND_TO_INT([self _floatWidthForCharacters:characters
+                      stringLength:length
+             fromCharacterPosition: 0
+                numberOfCharacters: length
+                       withPadding: padding
+                     applyRounding: YES
+           attemptFontSubstitution: YES
+                            widths: 0
+                             fonts: 0
+                            glyphs: 0
+                         numGlyphs: 0
+                     letterSpacing: letterSpacing
+                       wordSpacing: wordSpacing
+                      fontFamilies: families]);
+
     // This will draw the text from the top of the bounding box down.
     // Qt expects to draw from the baseline.
     // Remember that descender is negative.
@@ -732,8 +748,8 @@ static void _drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *a
         lineWidth = size.width;
     }
     CGContextSetLineWidth(cgContext, lineWidth);
-    CGContextMoveToPoint(cgContext, point.x, point.y + [font defaultLineHeightForFont] + 1.5 - [self descent]);
-    CGContextAddLineToPoint(cgContext, point.x + width, point.y + [font defaultLineHeightForFont] + 1.5 - [self descent]);
+    CGContextMoveToPoint(cgContext, point.x, point.y + [font defaultLineHeightForFont] + 1.5 - [self descent] + yOffset);
+    CGContextAddLineToPoint(cgContext, point.x + width, point.y + [font defaultLineHeightForFont] + 1.5 - [self descent] + yOffset);
     CGContextStrokePath(cgContext);
 
     [graphicsContext setShouldAntialias: flag];

@@ -486,21 +486,25 @@ static NSTimer *_pageCacheReleaseTimer = nil;
     }
 }
 
-- (void)_scheduleRelease
++ (void)_scheduleReleaseTimer
 {
-    LOG (PageCache, "Scheduling release of %@", [self URLString]);
     if (!_pageCacheReleaseTimer){
         _pageCacheReleaseTimer = [[NSTimer scheduledTimerWithTimeInterval: 2.5 target:self selector:@selector(_releasePageCache:) userInfo:nil repeats:NO] retain];
         if (_pendingPageCacheToRelease == nil){
             _pendingPageCacheToRelease = [[NSMutableSet alloc] init];
         }
     }
-    
-    // Only add the pageCache on first scheduled attempt.
+}
+
+- (void)_scheduleRelease
+{
+    LOG (PageCache, "Scheduling release of %@", [self URLString]);
+    [WebHistoryItem _scheduleReleaseTimer];
+
     if (pageCache){
         [_pendingPageCacheToRelease addObject: pageCache];
         [pageCache release]; // Last reference held by _pendingPageCacheToRelease.
-        pageCache = 0;
+        pageCache = nil;
     }
     
     if (!_windowWatcher){
@@ -517,7 +521,7 @@ static NSTimer *_pageCacheReleaseTimer = nil;
     [_pendingPageCacheToRelease removeAllObjects];
 }
 
-- (void)_releasePageCache: (NSTimer *)timer
++ (void)_releasePageCache: (NSTimer *)timer
 {
     CGSRealTimeDelta userDelta;
     CFAbsoluteTime loadDelta;
@@ -530,15 +534,13 @@ static NSTimer *_pageCacheReleaseTimer = nil;
 
     if ((userDelta < 0.5 || loadDelta < 1.25) && [_pendingPageCacheToRelease count] < 42){
         LOG (PageCache, "postponing again because not quiescent for more than a second (%f since last input, %f since last load).", userDelta, loadDelta);
-        [self _scheduleRelease];
+        [self _scheduleReleaseTimer];
         return;
     }
     else
         LOG (PageCache, "releasing, quiescent for more than a second (%f since last input, %f since last load).", userDelta, loadDelta);
 
     [WebHistoryItem _releaseAllPendingPageCaches];
-    
-    LOG (PageCache, "Done releasing %p %@", self, [self URLString]);
 }
 
 - (void)setHasPageCache: (BOOL)f
@@ -547,7 +549,6 @@ static NSTimer *_pageCacheReleaseTimer = nil;
         pageCache = [[NSMutableDictionary alloc] init];
     if (!f && pageCache){
         [self _scheduleRelease];
-        pageCache = 0;
     }
 }
 

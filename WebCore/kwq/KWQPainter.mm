@@ -417,7 +417,7 @@ void QPainter::drawText(int x, int y, const QChar *str, int len, int from, int t
         fontFamilies: families];
 }
 
-void QPainter::drawUnderlineForText(int x, int y, const QChar *str, int len)
+void QPainter::drawLineForText(int x, int y, const QChar *str, int length, int toAdd, int yOffset, QPainter::TextDirection d, int letterSpacing, int wordSpacing)
 {
     if (data->state.paintingDisabled)
         return;
@@ -426,8 +426,18 @@ void QPainter::drawUnderlineForText(int x, int y, const QChar *str, int len)
         
     _updateRenderer(families);
 
-    [data->lastTextRenderer drawUnderlineForCharacters:(const UniChar *)str stringLength:len
-        atPoint:NSMakePoint(x,y) withColor:data->state.pen.color().getNSColor()];
+    [data->lastTextRenderer
+        drawLineForCharacters:(const UniChar *)str stringLength:length
+ fromCharacterPosition:0
+   toCharacterPosition:length
+               atPoint:NSMakePoint(x, y)
+               yOffset:(float)yOffset
+           withPadding: toAdd
+         withColor:data->state.pen.color().getNSColor()
+           rightToLeft: d == RTL ? true : false
+         letterSpacing: letterSpacing
+           wordSpacing: wordSpacing
+          fontFamilies: families];
 }
 
 QColor QPainter::selectedTextBackgroundColor()

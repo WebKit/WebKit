@@ -738,6 +738,13 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         [_private->bridge reapplyStyles];
         [[[self webView] documentView] setNeedsLayout: YES];
         [[[self webView] documentView] layout];
+        [self _restoreScrollPosition];
+        
+        // Release the resources kept in the page cache.  They will be
+        // reset when we leave this page.  The core side of the page cache
+        // will have already been invalidated by the bridge to prevent
+        // premature release.
+        [[_private currentItem] setHasPageCache: NO];
     }
 }
 
