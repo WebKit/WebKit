@@ -143,13 +143,27 @@ typedef struct {
     WindowRef windowRef = [[self window] windowRef];
     CGrafPtr port = GetWindowPort(windowRef);
 
+    Rect portBounds;
+    GetPortBounds(port, &portBounds);
+
+    // Use AppKit to convert view coordinates to NSWindow coordinates.
+
     NSRect boundsInWindow = [self convertRect:[self bounds] toView:nil];
     NSRect visibleRectInWindow = [self convertRect:[self visibleRect] toView:nil];
     
-    // flip Y coordinates to convert NSWindow coordinates to Carbon window coordinates
-    float contentViewHeight = [[[self window] contentView] frame].size.height;
-    boundsInWindow.origin.y = contentViewHeight - boundsInWindow.origin.y - boundsInWindow.size.height; 
-    visibleRectInWindow.origin.y = contentViewHeight - visibleRectInWindow.origin.y - visibleRectInWindow.size.height;
+    // Flip Y to convert NSWindow coordinates to top-left-based window coordinates.
+
+    float borderViewHeight = [[self window] frame].size.height;
+    boundsInWindow.origin.y = borderViewHeight - NSMaxY(boundsInWindow);
+    visibleRectInWindow.origin.y = borderViewHeight - NSMaxY(visibleRectInWindow);
+    
+    // Look at the Carbon port to convert top-left-based window coordinates into top-left-based content coordinates.
+
+    PixMap *pix = *GetPortPixMap(port);
+    boundsInWindow.origin.x += pix->bounds.left - portBounds.left;
+    boundsInWindow.origin.y += pix->bounds.top - portBounds.top;
+    visibleRectInWindow.origin.x += pix->bounds.left - portBounds.left;
+    visibleRectInWindow.origin.y += pix->bounds.top - portBounds.top;
     
     // Set up NS_Port.
     
@@ -179,8 +193,6 @@ typedef struct {
     
     GetPort(&portState.oldPort);    
 
-    Rect portBounds;
-    GetPortBounds(port, &portBounds);
     portState.oldOrigin.h = portBounds.left;
     portState.oldOrigin.v = portBounds.top;
 

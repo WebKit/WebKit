@@ -1,3 +1,18 @@
+2003-02-11  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ed.
+
+        - applied a fixed version of Ed Voas's change to make plug-ins position correctly
+          inside Carbon metal windows; should have no effect on Safari
+
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView saveAndSetPortStateForUpdate:]):
+	Don't assume that the Cocoa concept of the content view matches up with the Carbon
+        concept of where the port is positioned. Instead, convert coordinates to border
+        view coordinates, then back to Carbon content coordinates by using the delta between
+        the port bounds and the port's pixmap bounds. Bug 3160710 was caused by an older version
+        of this patch implicitly assuming the port bounds always had (0,0) for top left.
+
 2003-02-11  Trey Matteson  <trey@apple.com>
 
 	Set -seg1addr in our build styles, but not for the B&I build.
