@@ -1,3 +1,42 @@
+2002-11-14  Maciej Stachowiak  <mjs@apple.com>
+
+	Change things so the public interface to loading is loadRequest:
+	and everything else is private.
+	
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView loadRequest:inTarget:withNotifyData:]):
+        * Plugins.subproj/WebPluginController.m:
+        (-[WebPluginController showURL:inFrame:]):
+        * WebView.subproj/WebController.h:
+        * WebView.subproj/WebController.m:
+        (-[WebController init]):
+        * WebView.subproj/WebControllerPrivate.m:
+        (-[WebController _createFrameNamed:inParent:allowsScrolling:]):
+        (-[WebController _downloadURL:toPath:]):
+        * WebView.subproj/WebFrame.h:
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame init]):
+        (-[WebFrame initWithName:webView:controller:]):
+        (-[WebFrame loadRequest:]):
+        (-[WebFrame reload]):
+        * WebView.subproj/WebFramePrivate.h:
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _timedLayout:]):
+        (-[WebFrame _clearProvisionalDataSource]):
+        (-[WebFrame _loadItem:fromItem:withLoadType:]):
+        (-[WebFrame _loadRequest:triggeringAction:]):
+        (-[WebFrame _reloadAllowingStaleDataWithOverrideEncoding:]):
+        (-[WebFrame _itemForRestoringDocState]):
+        (-[WebFrame _setProvisionalDataSource:]):
+        (-[WebFrame _startLoading]):
+        (-[WebFrame _downloadRequest:toPath:]):
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient handle:willSendRequest:]):
+        (-[WebMainResourceClient stopLoadingAfterContentPolicy]):
+        (-[WebMainResourceClient handle:didReceiveResponse:]):
+        * WebView.subproj/WebView.m:
+        (-[WebView concludeDragOperation:]):
+
 2002-11-14  David Hyatt  <hyatt@apple.com>
 
 	Move text measurement and layout beyond onload.  This

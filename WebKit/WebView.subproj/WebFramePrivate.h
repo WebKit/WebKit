@@ -104,7 +104,7 @@ typedef enum {
 - (void)_timedLayout: userInfo;
 - (WebBridge *)_bridge;
 - (BOOL)_shouldShowRequest:(WebResourceRequest *)request;
-- (void)_setProvisionalDataSource:(WebDataSource *)d;
+- (void)_clearProvisionalDataSource;
 - (void)_setLoadType: (WebFrameLoadType)loadType;
 - (WebFrameLoadType)_loadType;
 
@@ -138,5 +138,9 @@ typedef enum {
 - (WebHistoryItem *)_itemForSavingDocState;
 - (WebHistoryItem *)_itemForRestoringDocState;
 - (void)_handleUnimplementablePolicy:(WebPolicyAction)policy errorCode:(int)code forURL:(NSURL *)URL;
+
+- (BOOL)_setProvisionalDataSource: (WebDataSource *)dataSource;
+- (void)_startLoading;
+- (void)_downloadRequest:(WebResourceRequest *)request toPath:(NSString *)path;
 
 @end

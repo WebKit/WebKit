@@ -98,16 +98,9 @@
         return;
     }
 
-    WebDataSource *dataSource = [[WebDataSource alloc] initWithRequest:[WebResourceRequest requestWithURL:URL]];
-    if(!dataSource){
-        return;
-    }
-
     WebFrame *otherFrame = [frame findOrCreateFramedNamed:target];
 
-    if([otherFrame setProvisionalDataSource:dataSource]){
-        [otherFrame startLoading];
-    }
+    [otherFrame loadRequest:[WebResourceRequest requestWithURL:URL]];
 }
 
 - (void)showStatus:(NSString *)message

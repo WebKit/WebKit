@@ -42,15 +42,15 @@ NSString *WebElementFrameKey = @"WebElementFrame";
 
 - init
 {
-    return [self initWithView: nil provisionalDataSource: nil controllerSetName: nil];
+    return [self initWithView: nil  controllerSetName: nil];
 }
 
-- initWithView: (WebView *)view provisionalDataSource: (WebDataSource *)dataSource controllerSetName: (NSString *)name;
+- initWithView: (WebView *)view controllerSetName: (NSString *)name;
 {
     [super init];
     
     _private = [[WebControllerPrivate alloc] init];
-    _private->mainFrame = [[WebFrame alloc] initWithName: @"_top" webView: view provisionalDataSource: dataSource controller: self];
+    _private->mainFrame = [[WebFrame alloc] initWithName: @"_top" webView: view  controller: self];
     _private->controllerSetName = [name retain];
     if (_private->controllerSetName != nil) {
 	[WebControllerSets addController:self toSetNamed:_private->controllerSetName];

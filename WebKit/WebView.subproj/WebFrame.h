@@ -13,6 +13,7 @@
 @class WebError;
 @class WebFramePrivate;
 @class WebView;
+@class WebResourceRequest;
 
 /*!
     @class WebFrame
@@ -26,15 +27,14 @@
 }
 
 /*!
-    @method initWithName:webView:provisionalDataSource:controller:
+    @method initWithName:webView:controller:
     @abstract The designated initializer of WebFrame.
     @param name The name of the frame.
     @param view The view for the frame.
-    @param dataSource The dataSource for the frame.
     @param controller The controller that manages the frame.
     @result Returns an initialized WebFrame.
 */
-- initWithName: (NSString *)name webView: (WebView *)view provisionalDataSource: (WebDataSource *)dataSource controller: (WebController *)controller;
+- initWithName: (NSString *)name webView: (WebView *)view controller: (WebController *)controller;
 
 /*!
     @method name
@@ -67,16 +67,9 @@
 - (WebView *)webView;
 
 /*!
-    @method setProvisionalDataSource:
-    @discussion Sets the frame's data source.  Note that the data source will be
-    considered 'provisional' until it has been loaded, and at least
-    ~some~ data has been received.
-    
-    @param dataSource
-    @result Returns NO and will not set the provisional data source if the controller
-    disallows by returning a WebURLPolicyIgnore.
+    @method loadRequest:
 */
-- (BOOL)setProvisionalDataSource: (WebDataSource *)dataSource;
+-(void)loadRequest:(WebResourceRequest *)request;
 
 /*!
     @method dataSource
@@ -96,22 +89,11 @@
 - (WebDataSource *)provisionalDataSource;
 
 /*!
-    @method startLoading
-    @discussion If a frame has a provisional data source this method will begin
-    loading data for that provisional data source.  If the frame
-    has no provisional data source this method will do nothing.
-
-    To reload an existing data source call reload.
-*/
-- (void)startLoading;
-
-/*!
     @method stopLoading
     @discussion Stop any pending loads on the frame's data source,
     and its children.
 */
 - (void)stopLoading;
-
 
 /*!
     @method reload

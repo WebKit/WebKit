@@ -85,7 +85,7 @@
     [childView _setController:self];
     [childView setAllowsScrolling:allowsScrolling];
     
-    WebFrame *newFrame = [[WebFrame alloc] initWithName:fname webView:childView provisionalDataSource:nil controller:self];
+    WebFrame *newFrame = [[WebFrame alloc] initWithName:fname webView:childView controller:self];
 
     [childView release];
 
@@ -192,15 +192,11 @@
 
 - (void)_downloadURL:(NSURL *)URL toPath:(NSString *)path
 {
-    WebDataSource *dataSource = [[WebDataSource alloc] initWithURL:URL];
+    WebResourceRequest *request = [[WebResourceRequest alloc] initWithURL:URL];
     WebFrame *webFrame = [self mainFrame];
-        
-    [dataSource _setIsDownloading:YES];
-    [dataSource _setDownloadPath:path];
-    if([webFrame setProvisionalDataSource:dataSource]){
-        [webFrame startLoading];
-    }
-    [dataSource release];
+
+    [webFrame _downloadRequest:request toPath:path];
+    [request release];
 }
 
 - (BOOL)_defersCallbacks

@@ -102,7 +102,7 @@
     if (![[dataSource webFrame] _shouldShowRequest:newRequest]) {
         [self cancelQuietly];
 
-        [[dataSource webFrame] _setProvisionalDataSource:nil];
+        [[dataSource webFrame] _clearProvisionalDataSource];
 	[[[dataSource controller] locationChangeDelegate] locationChangeDone:
             [WebError errorWithCode:WebErrorLocationChangeInterruptedByPolicyChange inDomain:WebErrorDomainWebKit failingURL:nil]
             forDataSource:dataSource];
@@ -136,7 +136,7 @@
 
 -(void)stopLoadingAfterContentPolicy
 {
-    [[dataSource webFrame] _setProvisionalDataSource:nil];
+    [[dataSource webFrame] _clearProvisionalDataSource];
     [self notifyDelegatesOfInterruptionByPolicyChange];
     [self cancelQuietly];
 }
@@ -178,8 +178,7 @@
 	    [dataSource _setDownloadPath:saveFilename];
 	}
 	
-	[[dataSource webFrame] _setProvisionalDataSource:nil];
-	
+	[[dataSource webFrame] _clearProvisionalDataSource];
 	[self notifyDelegatesOfInterruptionByPolicyChange];
 	
 	// Hand off the dataSource to the download handler.  This will cause the remaining

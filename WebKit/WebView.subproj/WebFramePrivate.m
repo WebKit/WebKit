@@ -323,7 +323,8 @@ static const char * const stateNames[] = {
 
         if ([documentView isKindOfClass: [NSView class]]) {
             NSView *dview = (NSView *)documentView;
-            NSRect frame = [dview frame];  
+            
+            NSRect frame = [dview frame];
             
             if (frame.size.width == 0 || frame.size.height == 0){
                 // We must do the layout now, rather than depend on
@@ -735,9 +736,9 @@ static const char * const stateNames[] = {
     return [self _continueAfterNavigationPolicyForRequest:request dataSource:[self provisionalDataSource]];
 }
 
-- (void)_setProvisionalDataSource:(WebDataSource *)d
+- (void)_clearProvisionalDataSource
 {
-    [_private setProvisionalDataSource:d];
+    [_private setProvisionalDataSource:nil];
 }
 
 // helper method that determines whether the subframes described by the item's subitems
@@ -813,11 +814,11 @@ static const char * const stateNames[] = {
 
         WebDataSource *newDataSource = [[WebDataSource alloc] initWithRequest:request];
         [request release];
-        [self setProvisionalDataSource:newDataSource];
+        [self _setProvisionalDataSource:newDataSource];
         // Remember this item so we can traverse any child items as child frames load
         [_private setProvisionalItem:item];
         [self _setLoadType:type];
-        [self startLoading];
+        [self _startLoading];
         [newDataSource release];
     }
 }
@@ -893,8 +894,8 @@ static const char * const stateNames[] = {
     WebDataSource *newDataSource = [[WebDataSource alloc] initWithRequest:request];
     [newDataSource _setTriggeringAction:action];
 
-    if ([self setProvisionalDataSource:newDataSource]) {
-        [self startLoading];
+    if ([self _setProvisionalDataSource:newDataSource]) {
+        [self _startLoading];
     }
     [newDataSource release];
 }
@@ -1186,9 +1187,9 @@ static const char * const stateNames[] = {
     
     [newDataSource _setOverrideEncoding:encoding];
     
-    if ([self setProvisionalDataSource:newDataSource]) {
+    if ([self _setProvisionalDataSource:newDataSource]) {
 	[self _setLoadType:WebFrameLoadTypeReloadAllowingStaleData];
-        [self startLoading];
+        [self _startLoading];
     }
     
     [newDataSource release];
@@ -1265,6 +1266,69 @@ static const char * const stateNames[] = {
 - (WebHistoryItem *)_itemForRestoringDocState
 {
     return [_private currentItem];
+}
+
+
+//    Will return NO and not set the provisional data source if the controller
+//    disallows by returning a WebURLPolicyIgnore.
+- (BOOL)_setProvisionalDataSource: (WebDataSource *)newDataSource
+{
+    ASSERT([self controller] != nil);
+
+    // Unfortunately the view must be non-nil, this is ultimately due
+    // to KDE parser requiring a KHTMLView.  Once we settle on a final
+    // KDE drop we should fix this dependency.
+    ASSERT([self webView] != nil);
+
+    if ([self _state] != WebFrameStateComplete) {
+        [self stopLoading];
+    }
+
+    [self _setLoadType: WebFrameLoadTypeStandard];
+
+    // _continueAfterNavigationPolicyForRequest:dataSource: asks the
+    // client for the URL policies and reports errors if there are any
+    // returns YES if we should show the data source
+
+    if (![self _continueAfterNavigationPolicyForRequest:[newDataSource request] dataSource:newDataSource]) {
+        return NO;
+    }
+    
+    if ([self parent]) {
+        [newDataSource _setOverrideEncoding:[[[self parent] dataSource] _overrideEncoding]];
+    }
+    [newDataSource _setController:[self controller]];
+    [_private setProvisionalDataSource:newDataSource];
+    
+    ASSERT([newDataSource webFrame] == self);
+    
+    // We tell the documentView provisionalDataSourceChanged:
+    // once it has been created by the controller.
+    
+    [self _setState: WebFrameStateProvisional];
+    
+    return YES;
+}
+
+
+- (void)_startLoading
+{
+    if (self == [[self controller] mainFrame])
+        LOG(DocumentLoad, "loading %@", [[[self provisionalDataSource] request] URL]);
+
+    [_private->provisionalDataSource startLoading];
+}
+
+- (void)_downloadRequest:(WebResourceRequest *)request toPath:(NSString *)path
+{
+    WebDataSource *dataSource = [[WebDataSource alloc] initWithRequest:request];
+
+    [dataSource _setIsDownloading:YES];
+    [dataSource _setDownloadPath:path];
+    if([self _setProvisionalDataSource:dataSource]){
+        [self _startLoading];
+    }
+    [dataSource release];
 }
 
 @end

@@ -28,10 +28,10 @@
 
 - init
 {
-    return [self initWithName: nil webView: nil provisionalDataSource: nil controller: nil];
+    return [self initWithName: nil webView: nil controller: nil];
 }
 
-- initWithName: (NSString *)n webView: (WebView *)v provisionalDataSource: (WebDataSource *)d controller: (WebController *)c
+- initWithName: (NSString *)n webView: (WebView *)v controller: (WebController *)c
 {
     [super init];
 
@@ -44,11 +44,6 @@
     [_private->bridge setName:n];
 
     [_private setName:n];
-    
-    if (d && ![self setProvisionalDataSource:d]) {
-        [self release];
-        return nil;
-    }
     
     if (v)
         [self setWebView:v];
@@ -108,57 +103,14 @@
     return [_private dataSource];
 }
 
-
-//    Will return NO and not set the provisional data source if the controller
-//    disallows by returning a WebURLPolicyIgnore.
-- (BOOL)setProvisionalDataSource: (WebDataSource *)newDataSource
+- (void)loadRequest:(WebResourceRequest *)request
 {
-    ASSERT([self controller] != nil);
-
-    // Unfortunately the view must be non-nil, this is ultimately due
-    // to KDE parser requiring a KHTMLView.  Once we settle on a final
-    // KDE drop we should fix this dependency.
-    ASSERT([self webView] != nil);
-
-    if ([self _state] != WebFrameStateComplete) {
-        [self stopLoading];
+    WebDataSource *newDataSource = [[WebDataSource alloc] initWithRequest:request];
+    if ([self _setProvisionalDataSource:newDataSource]) {
+	[self _startLoading];
     }
-
-    [self _setLoadType: WebFrameLoadTypeStandard];
-
-    // _continueAfterNavigationPolicyForRequest:dataSource: asks the
-    // client for the URL policies and reports errors if there are any
-    // returns YES if we should show the data source
-
-    if (![self _continueAfterNavigationPolicyForRequest:[newDataSource request] dataSource:newDataSource]) {
-        return NO;
-    }
-    
-    if ([self parent]) {
-        [newDataSource _setOverrideEncoding:[[[self parent] dataSource] _overrideEncoding]];
-    }
-    [newDataSource _setController:[self controller]];
-    [_private setProvisionalDataSource:newDataSource];
-    
-    ASSERT([newDataSource webFrame] == self);
-    
-    // We tell the documentView provisionalDataSourceChanged:
-    // once it has been created by the controller.
-    
-    [self _setState: WebFrameStateProvisional];
-    
-    return YES;
+    [newDataSource release];
 }
-
-
-- (void)startLoading
-{
-    if (self == [[self controller] mainFrame])
-        LOG(DocumentLoad, "loading %@", [[[self provisionalDataSource] request] URL]);
-
-    [_private->provisionalDataSource startLoading];
-}
-
 
 - (void)stopLoading
 {
@@ -185,9 +137,9 @@
     
     [newDataSource _setOverrideEncoding:[dataSource _overrideEncoding]];
     
-    if ([self setProvisionalDataSource:newDataSource]) {
+    if ([self _setProvisionalDataSource:newDataSource]) {
 	[self _setLoadType:WebFrameLoadTypeReload];
-        [self startLoading];
+        [self _startLoading];
     }
     
     [newDataSource release];

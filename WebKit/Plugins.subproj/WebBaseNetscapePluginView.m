@@ -774,41 +774,34 @@
 {
     NSURL *URL = [request URL];
 
-    if(!URL){
+    if (!URL) {
         return NPERR_INVALID_URL;
     }
     
-    if(!target){
+    if (!target) {
         WebNetscapePluginStream *stream = [[WebNetscapePluginStream alloc] initWithRequest:request
                                                                              pluginPointer:instance
                                                                                 notifyData:notifyData];
-        if(stream){
+        if (stream) {
             [streams addObject:stream];
             [stream start];
             [stream release];
-        }else{
+        } else {
             return NPERR_INVALID_URL;
         }
-    }else{
-        WebDataSource *dataSource = [[WebDataSource alloc] initWithRequest:request];
+    } else {
+	WebFrame *frame = [[self webFrame] findOrCreateFramedNamed:target];
+	[frame loadRequest:request];
 
-        if(dataSource){
-            WebFrame *frame = [[self webFrame] findOrCreateFramedNamed:target];
-            if ([frame setProvisionalDataSource:dataSource]) {
-                if(notifyData){
-                    if(![target isEqualToString:@"_self"] && ![target isEqualToString:@"_current"] &&
-                       ![target isEqualToString:@"_parent"] && ![target isEqualToString:@"_top"]){
-
-                        [streamNotifications setObject:[NSValue valueWithPointer:notifyData] forKey:URL];
-                        [[NSNotificationCenter defaultCenter] addObserver:self
-                            selector:@selector(frameStateChanged:) name:WebFrameStateChangedNotification object:frame];
-                    }
-                }
-                
-                [frame startLoading];
-            }
-            [dataSource release];
-        }
+	if (notifyData) {
+	    if (![target isEqualToString:@"_self"] && ![target isEqualToString:@"_current"] &&
+		![target isEqualToString:@"_parent"] && ![target isEqualToString:@"_top"]) {
+		
+		[streamNotifications setObject:[NSValue valueWithPointer:notifyData] forKey:URL];
+		[[NSNotificationCenter defaultCenter] addObserver:self
+		selector:@selector(frameStateChanged:) name:WebFrameStateChangedNotification object:frame];
+	    }
+	}
     }
     
     return NPERR_NO_ERROR;

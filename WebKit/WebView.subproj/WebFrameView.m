@@ -29,6 +29,7 @@
 #import <WebFoundation/WebLocalizableStrings.h>
 #import <WebFoundation/WebNSDictionaryExtras.h>
 #import <WebFoundation/WebNSURLExtras.h>
+#import <WebFoundation/WebResourceRequest.h>
 
 enum {
     SpaceKey = 0x0020
@@ -166,13 +167,10 @@ NSString *WebErrorDomainWebKit = @"WebErrorDomainWebKit";
 {
     NSURL *URL = [[sender draggingPasteboard] _web_bestURL];
 
-    if(URL){
-        WebDataSource *dataSource = [[WebDataSource alloc] initWithURL:URL];
-        WebFrame *frame = [[self controller] mainFrame];
-        if ([frame setProvisionalDataSource:dataSource]){
-            [frame startLoading];
-        }
-        [dataSource release];
+    if (URL) {
+	WebResourceRequest *request = [[WebResourceRequest alloc] initWithURL:URL];
+	[[[self controller] mainFrame] loadRequest:request];
+	[request release];
     }
 }
 
