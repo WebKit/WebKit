@@ -639,6 +639,7 @@ namespace KJS {
     virtual void processVarDecls(ExecState *exec);
     virtual void streamTo(SourceStream &s) const;
   private:
+    friend class ForNode;
     friend class VarStatementNode;
     VarDeclListNode *list;
     VarDeclNode *var;
@@ -732,12 +733,15 @@ namespace KJS {
   public:
     ForNode(Node *e1, Node *e2, Node *e3, StatementNode *s) :
       expr1(e1), expr2(e2), expr3(e3), statement(s) {}
+    ForNode(VarDeclListNode *e1, Node *e2, Node *e3, StatementNode *s) :
+      expr1(reverseList(e1)), expr2(e2), expr3(e3), statement(s) {}
     virtual void ref();
     virtual bool deref();
     virtual Completion execute(ExecState *exec);
     virtual void processVarDecls(ExecState *exec);
     virtual void streamTo(SourceStream &s) const;
   private:
+    static VarDeclListNode *reverseList(VarDeclListNode *);
     Node *expr1, *expr2, *expr3;
     StatementNode *statement;
   };

@@ -1,3 +1,14 @@
+2003-10-18  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave.
+
+        - fixed 3367015 -- interdependent variable declarations in for loop don't work (they go backwards)
+
+        * kjs/nodes.h: (KJS::ForNode::ForNode): Add a new overload of the constructor for when the
+        first parameter is a variable declaration list. Call reverseList as we do in other constructors
+        that take lists that are built backwards.
+        * kjs/nodes.cpp: (ForNode::reverseList): Added. New helper function.
+
 === Safari-110 ===
 
 === Safari-109 ===

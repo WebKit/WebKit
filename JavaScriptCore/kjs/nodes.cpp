@@ -1987,6 +1987,18 @@ void WhileNode::processVarDecls(ExecState *exec)
 
 // ------------------------------ ForNode --------------------------------------
 
+VarDeclListNode *ForNode::reverseList(VarDeclListNode *list)
+{
+  VarDeclListNode *head = 0;
+  VarDeclListNode *next;
+  for (VarDeclListNode *n = list; n; n = next) {
+    next = n->list;
+    n->list = head;
+    head = n;
+  }
+  return head;
+}
+
 void ForNode::ref()
 {
   Node::ref();
