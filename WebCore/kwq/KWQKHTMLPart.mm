@@ -173,6 +173,10 @@ static void recursive(const DOM::Node &pNode, const DOM::Node &node)
     [sender autorelease];
 }
 
+- (void)IFURLHandle:(IFURLHandle *)sender didRedirectToURL:(NSURL *)url
+{
+}
+
 // Non-retained
 - (void)setDataSource: d
 {

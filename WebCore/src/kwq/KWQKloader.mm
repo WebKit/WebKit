@@ -1025,6 +1025,9 @@ void DocLoader::removeCachedObject( CachedObject* o ) const
     [sender autorelease];
 }
 
+- (void)IFURLHandle:(IFURLHandle *)sender didRedirectToURL:(NSURL *)url
+{
+}
 
 @end
 

@@ -1,3 +1,12 @@
+2002-03-13  Kenneth Kocienda  <kocienda@apple.com>
+
+	Updated for new didRedirectToURL callback. This is a partial fix for this bug:
+	Radar 2879234 (Redirected URLs not used for subsequent GETs)
+
+	* src/kwq/KWQKHTMLPart.mm: (-[KHTMLPartLoadClient
+	IFURLHandle:didRedirectToURL:]):
+	* src/kwq/KWQKloader.mm: (-[URLLoadClient IFURLHandle:didRedirectToURL:]):
+
 2002-03-12  Richard Williamson  <rjw@apple.com>
 
 	* src/kwq/KWQString.mm: (QString::find), (QString::contains),
