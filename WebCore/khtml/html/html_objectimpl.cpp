@@ -59,6 +59,7 @@ HTMLAppletElementImpl::HTMLAppletElementImpl(DocumentPtr *doc)
   : HTMLElementImpl(doc)
 {
     appletInstance = 0;
+    m_allParamsAvailable = false;
 }
 
 HTMLAppletElementImpl::~HTMLAppletElementImpl()
@@ -209,6 +210,19 @@ KJS::Bindings::Instance *HTMLAppletElementImpl::getAppletInstance() const
         }
     }
     return appletInstance;
+}
+
+void HTMLAppletElementImpl::setAllParamsAvailable()
+{
+    // The parser just reached </applet>, so all the params are available now.
+    m_allParamsAvailable = true;
+    if( m_render )
+        m_render->setNeedsLayout(); // This will cause it to create its widget & the Java applet
+}
+
+bool HTMLAppletElementImpl::allParamsAvailable()
+{
+    return m_allParamsAvailable;
 }
 #endif
 

@@ -93,23 +93,25 @@ int RenderApplet::intrinsicHeight() const
 void RenderApplet::createWidgetIfNecessary()
 {
     if (!m_widget) {
-        // FIXME: Java applets can't be resized (this is a bug in Apple's Java implementation).  In order to work around
-        // this problem, we will simply use fixed widths/heights from the style system when we can, since the widget might
-        // not have an accurate m_width/m_height.
-        int width = style()->width().isFixed() ? style()->width().value : 
-                    m_width - borderLeft() - borderRight() - paddingLeft() - paddingRight();
-        int height = style()->height().isFixed() ? style()->height().value :
-                     m_height - borderTop() - borderBottom() - paddingTop() - paddingBottom();
-        NodeImpl *child = element()->firstChild();
-        while (child) {
-            if (child->id() == ID_PARAM) {
-                HTMLParamElementImpl *p = static_cast<HTMLParamElementImpl *>(child);
-                m_args.insert(p->name(), p->value());
+        if (static_cast<HTMLAppletElementImpl*>(element())->allParamsAvailable()) {
+            // FIXME: Java applets can't be resized (this is a bug in Apple's Java implementation).  In order to work around
+            // this problem, we will simply use fixed widths/heights from the style system when we can, since the widget might
+            // not have an accurate m_width/m_height.
+            int width = style()->width().isFixed() ? style()->width().value : 
+                        m_width - borderLeft() - borderRight() - paddingLeft() - paddingRight();
+            int height = style()->height().isFixed() ? style()->height().value :
+                         m_height - borderTop() - borderBottom() - paddingTop() - paddingBottom();
+            NodeImpl *child = element()->firstChild();
+            while (child) {
+                if (child->id() == ID_PARAM) {
+                    HTMLParamElementImpl *p = static_cast<HTMLParamElementImpl *>(child);
+                    m_args.insert(p->name(), p->value());
+                }
+                child = child->nextSibling();
             }
-            child = child->nextSibling();
+        
+            setQWidget(new KJavaAppletWidget(QSize(width, height), m_context, m_args));
         }
-    
-        setQWidget(new KJavaAppletWidget(QSize(width, height), m_context, m_args));
     }
 }
 

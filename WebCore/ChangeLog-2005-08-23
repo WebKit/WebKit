@@ -1,3 +1,21 @@
+2005-02-18  Jens Alfke  <jens@apple.com>
+
+        Reviewed by cblu, hyatt.
+
+	Fixes <rdar://problem/3603191> "REGRESSION: Applets not receiving all of the Applet Parameters in Java 1.4.1/1.4.2"
+	Defer instantiation of Java applet plugin until after all of the <applet> tag's nested <param> tags have been parsed, otherwise the list of parameters passed to the applet is incomplete. The regression was introduced (says Dave) when the parser's close-tag notifications were removed in the name of performance.
+
+        * khtml/html/html_objectimpl.cpp:
+        (HTMLAppletElementImpl::HTMLAppletElementImpl):
+        (HTMLAppletElementImpl::getAppletInstance):
+        (HTMLAppletElementImpl::setAllParamsAvailable):
+        (HTMLAppletElementImpl::allParamsAvailable):
+        * khtml/html/html_objectimpl.h:
+        * khtml/html/htmlparser.cpp:
+        (KHTMLParser::processCloseTag):
+        * khtml/rendering/render_applet.cpp:
+        (RenderApplet::createWidgetIfNecessary):
+
 2005-02-18  Richard Williamson   <rjw@apple.com>
 
 	Fixed <rdar://problem/4006161> Tiger8A380: Widgets leak dashboard regions

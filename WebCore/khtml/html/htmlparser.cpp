@@ -981,6 +981,11 @@ void KHTMLParser::processCloseTag(Token *t)
     case ID_SELECT+ID_CLOSE_TAG:
         inSelect = false;
         break;
+    case ID_APPLET+ID_CLOSE_TAG:
+        // Applets can't be laid out till the entire tag is parsed, because the contents of all of
+        // the embedded <param> tags have to be passed to Java at once. [3603191]
+        static_cast<HTMLAppletElementImpl*>(current)->setAllParamsAvailable();
+        break;
     default:
         break;
     }
