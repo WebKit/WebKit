@@ -1,3 +1,10 @@
+2002-10-01  Darin Adler  <darin@apple.com>
+
+	- fixed 3055076 -- window.scroll does a window.scrollby, not a window.scrollto
+
+        * khtml/ecma/kjs_window.cpp: (WindowFunc::tryCall): Moved a case so that the
+	scroll code would scroll to, not by.
+
 2002-10-01  David Hyatt  <hyatt@apple.com>
 
 	Fix the case sensitivity problem with attribute names 
