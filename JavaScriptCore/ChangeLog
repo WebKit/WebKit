@@ -1,3 +1,18 @@
+2004-06-04  Richard Williamson   <rjw@apple.com>
+
+        Fixed crash when attempting to access properties on nil
+        object.
+        
+        Reviewed by John.
+
+        * bindings/objc/objc_instance.mm:
+        (ObjcInstance::getClass):
+        * bindings/runtime_object.cpp:
+        (RuntimeObjectImp::get):
+        * bindings/testM.js:
+        * bindings/testbindings.mm:
+        (-[MyFirstInterface getString]):
+
 2004-05-27  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by Ken.

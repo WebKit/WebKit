@@ -64,6 +64,7 @@
 	int myInt;
 	MySecondInterface *mySecondInterface;
 	id jsobject;
+	NSString *string;
 }
 
 - (int)getInt;
@@ -114,7 +115,7 @@
 
 - (NSString *)getString
 {
-	return @"This is a string from ObjC";
+	return string;
 }
 
 - (MySecondInterface *)getMySecondInterface 

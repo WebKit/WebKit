@@ -97,6 +97,9 @@ void ObjcInstance::end()
 
 Bindings::Class *ObjcInstance::getClass() const 
 {
+    if (_instance == 0)
+        return 0;
+        
     if (_class == 0) {
         _class = ObjcClass::classForIsA(_instance->isa);
     }
