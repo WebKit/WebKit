@@ -54,9 +54,14 @@
 // thin pages will be scaled down a little, matching the way they
 // print in IE and Camino. This lets them use fewer sheets than they
 // would otherwise, which is presumably why other browsers do this.
-// Wide pages will be scaled down as necessary to fit their content, 
-// so this factor only affects thin pages.
-#define PrintingExtraWidthFactor        1.25
+// Wide pages will be scaled down more than this.
+#define PrintingMinimumShrinkFactor     1.25
+
+// This number determines how small we are willing to reduce the page content
+// in order to accommodate the widest line. If the page would have to be
+// reduced smaller to make the widest line fit, we just clip instead (this
+// behavior matches MacIE and Mozilla, at least)
+#define PrintingMaximumShrinkFactor     2.0
 
 #define AUTOSCROLL_INTERVAL             0.1
 
@@ -74,7 +79,7 @@
 static BOOL forceRealHitTest = NO;
 
 @interface WebHTMLView (WebHTMLViewPrivate)
-- (void)_setPrinting:(BOOL)printing pageWidth:(float)pageWidth adjustViewSize:(BOOL)adjustViewSize;
+- (void)_setPrinting:(BOOL)printing minimumPageWidth:(float)minPageWidth maximumPageWidth:(float)maxPageWidth adjustViewSize:(BOOL)adjustViewSize;
 - (void)_updateTextSizeMultiplier;
 - (float)_calculatePrintHeight;
 @end
@@ -718,13 +723,13 @@ static WebHTMLView *lastHitView = nil;
 
 - (void)_web_setPrintingModeRecursive
 {
-    [self _setPrinting:YES pageWidth:0 adjustViewSize:NO];
+    [self _setPrinting:YES minimumPageWidth:0.0 maximumPageWidth:0.0 adjustViewSize:NO];
     [super _web_setPrintingModeRecursive];
 }
 
 - (void)_web_clearPrintingModeRecursive
 {
-    [self _setPrinting:NO pageWidth:0 adjustViewSize:NO];
+    [self _setPrinting:NO minimumPageWidth:0.0 maximumPageWidth:0.0 adjustViewSize:NO];
     [super _web_clearPrintingModeRecursive];
 }
 
@@ -1166,8 +1171,8 @@ static WebHTMLView *lastHitView = nil;
 }
 
 // Do a layout, but set up a new fixed width for the purposes of doing printing layout.
-// pageWidth==0 implies a non-printing layout
-- (void)layoutToPageWidth:(float)pageWidth adjustingViewSize:(BOOL)adjustViewSize
+// minPageWidth==0 implies a non-printing layout
+- (void)layoutToMinimumPageWidth:(float)minPageWidth maximumPageWidth:(float)maxPageWidth adjustingViewSize:(BOOL)adjustViewSize
 {
     [self reapplyStyles];
     
@@ -1185,8 +1190,8 @@ static WebHTMLView *lastHitView = nil;
 
     LOG(View, "%@ doing layout", self);
 
-    if (pageWidth > 0.0) {
-        [[self _bridge] forceLayoutForPageWidth:pageWidth adjustingViewSize:adjustViewSize];
+    if (minPageWidth > 0.0) {
+        [[self _bridge] forceLayoutWithMinimumPageWidth:minPageWidth maximumPageWidth:maxPageWidth adjustingViewSize:adjustViewSize];
     } else {
         [[self _bridge] forceLayoutAdjustingViewSize:adjustViewSize];
     }
@@ -1213,7 +1218,7 @@ static WebHTMLView *lastHitView = nil;
 
 - (void)layout
 {
-    [self layoutToPageWidth:0.0 adjustingViewSize:NO];
+    [self layoutToMinimumPageWidth:0.0 maximumPageWidth:0.0 adjustingViewSize:NO];
 }
 
 - (NSMenu *)menuForEvent:(NSEvent *)event
@@ -1634,7 +1639,7 @@ static WebHTMLView *lastHitView = nil;
 
 // Does setNeedsDisplay:NO as a side effect. Useful for begin/endDocument.
 // pageWidth != 0 implies we will relayout to a new width
-- (void)_setPrinting:(BOOL)printing pageWidth:(float)pageWidth adjustViewSize:(BOOL)adjustViewSize
+- (void)_setPrinting:(BOOL)printing minimumPageWidth:(float)minPageWidth maximumPageWidth:(float)maxPageWidth adjustViewSize:(BOOL)adjustViewSize
 {
     WebFrame *frame = [self _frame];
     NSArray *subframes = [frame childFrames];
@@ -1644,7 +1649,7 @@ static WebHTMLView *lastHitView = nil;
         WebFrame *subframe = [subframes objectAtIndex:i];
         WebFrameView *frameView = [subframe frameView];
         if ([[subframe dataSource] _isDocumentHTML]) {
-            [(WebHTMLView *)[frameView documentView] _setPrinting:printing pageWidth:0 adjustViewSize:adjustViewSize];
+            [(WebHTMLView *)[frameView documentView] _setPrinting:printing minimumPageWidth:0.0 maximumPageWidth:0.0 adjustViewSize:adjustViewSize];
         }
     }
 
@@ -1654,7 +1659,7 @@ static WebHTMLView *lastHitView = nil;
         _private->printing = printing;
         [self setNeedsToApplyStyles:YES];
         [self setNeedsLayout:YES];
-        [self layoutToPageWidth:pageWidth adjustingViewSize:adjustViewSize];
+        [self layoutToMinimumPageWidth:minPageWidth maximumPageWidth:maxPageWidth adjustingViewSize:adjustViewSize];
         [self setNeedsDisplay:NO];
     }
 }
@@ -1667,13 +1672,13 @@ static WebHTMLView *lastHitView = nil;
     // If the WebHTMLView itself is what we're printing, then we will never have to do this.
     BOOL wasInPrintingMode = _private->printing;
     if (!wasInPrintingMode) {
-        [self _setPrinting:YES pageWidth:0 adjustViewSize:NO];
+        [self _setPrinting:YES minimumPageWidth:0.0 maximumPageWidth:0.0 adjustViewSize:NO];
     }
     
     [[self _bridge] adjustPageHeightNew:newBottom top:oldTop bottom:oldBottom limit:bottomLimit];
     
     if (!wasInPrintingMode) {
-        [self _setPrinting:NO pageWidth:0 adjustViewSize:NO];
+        [self _setPrinting:NO minimumPageWidth:0.0 maximumPageWidth:0.0 adjustViewSize:NO];
     }
 }
 
@@ -1685,7 +1690,12 @@ static WebHTMLView *lastHitView = nil;
 
 - (float)_scaleFactorForPrintOperation:(NSPrintOperation *)printOperation
 {
-    return [self _availablePaperWidthForPrintOperation:printOperation]/NSWidth([self bounds]);
+    float viewWidth = NSWidth([self bounds]);
+    if (viewWidth < 1) {
+        ERROR("%@ has no width when printing", self);
+        return 1.0;
+    }
+    return MAX(1/PrintingMaximumShrinkFactor, [self _availablePaperWidthForPrintOperation:printOperation]/viewWidth);
 }
 
 // FIXME 3491344: This is a secret AppKit-internal method that we need to override in order
@@ -1705,11 +1715,14 @@ static WebHTMLView *lastHitView = nil;
     
     // If we are a frameset just print with the layout we have onscreen, otherwise relayout
     // according to the paper size
-    float layoutWidth = 0.0;
+    float minLayoutWidth = 0.0;
+    float maxLayoutWidth = 0.0;
     if (![[self _bridge] isFrameSet]) {
-        layoutWidth = [self _availablePaperWidthForPrintOperation:[NSPrintOperation currentOperation]]*PrintingExtraWidthFactor;
+        float paperWidth = [self _availablePaperWidthForPrintOperation:[NSPrintOperation currentOperation]];
+        minLayoutWidth = paperWidth*PrintingMinimumShrinkFactor;
+        maxLayoutWidth = paperWidth*PrintingMaximumShrinkFactor;
     }
-    [self _setPrinting:YES pageWidth:layoutWidth adjustViewSize:YES];	// will relayout
+    [self _setPrinting:YES minimumPageWidth:minLayoutWidth maximumPageWidth:maxLayoutWidth adjustViewSize:YES];	// will relayout
     
     // There is a theoretical chance that someone could do some drawing between here and endDocument,
     // if something caused setNeedsDisplay after this point. If so, it's not a big tragedy, because
@@ -1742,7 +1755,7 @@ static WebHTMLView *lastHitView = nil;
 {
     [super endDocument];
     // Note sadly at this point [NSGraphicsContext currentContextDrawingToScreen] is still NO 
-    [self _setPrinting:NO pageWidth:0.0 adjustViewSize:YES];
+    [self _setPrinting:NO minimumPageWidth:0.0 maximumPageWidth:0.0 adjustViewSize:YES];
     [[self window] setAutodisplay:YES];
 }
 

@@ -1,3 +1,22 @@
+2003-11-21  John Sullivan  <sullivan@apple.com>
+
+        - WebCore part of fix for <rdar://problem/3333744>: Safari prints page with 
+        very, very long line very, very small
+
+        Reviewed by Ken.
+
+        * kwq/KWQKHTMLPart.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::forceLayoutWithPageWidthRange):
+        Changed method name from forceLayoutForPageWidth; now takes min and max
+        page width values. Use max page width value to limit how wide page will
+        get when there's a very long line.
+        
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge forceLayoutWithMinimumPageWidth:maximumPageWidth:adjustingViewSize:]):
+        changed pageWidth parameter into min and max parameters; pass them along to KWQKHTMLPart.
+
 2003-11-21  Darin Adler  <darin@apple.com>
 
         Reviewed by Ken.

@@ -1392,24 +1392,26 @@ void KWQKHTMLPart::forceLayout()
     }
 }
 
-void KWQKHTMLPart::forceLayoutForPageWidth(float pageWidth)
+void KWQKHTMLPart::forceLayoutWithPageWidthRange(float minPageWidth, float maxPageWidth)
 {
     // Dumping externalRepresentation(_part->renderer()).ascii() is a good trick to see
     // the state of things before and after the layout
     RenderCanvas *root = static_cast<RenderCanvas *>(xmlDocImpl()->renderer());
     if (root) {
         // This magic is basically copied from khtmlview::print
-        int pageW = (int)ceil(pageWidth);
+        int pageW = (int)ceil(minPageWidth);
         root->setWidth(pageW);
         root->setNeedsLayoutAndMinMaxRecalc();
         forceLayout();
         
-        // See if we spilled outside our page width.  If we did, then we'll do one more layout in an
-        // attempt to fit.  FIXME: We are assuming a shrink-to-fit printing implementation.  A cropping
+        // If we don't fit in the minimum page width, we'll lay out again. If we don't fit in the
+        // maximum page width, we will lay out to the maximum page width and clip extra content.
+        // FIXME: We are assuming a shrink-to-fit printing implementation.  A cropping
         // implementation should not do this!
         int rightmostPos = root->rightmostPosition();
-        if (rightmostPos > pageWidth) {
-            root->setWidth(rightmostPos);
+        if (rightmostPos > minPageWidth) {
+            pageW = kMin(rightmostPos, (int)ceil(maxPageWidth));
+            root->setWidth(pageW);
             root->setNeedsLayoutAndMinMaxRecalc();
             forceLayout();
         }

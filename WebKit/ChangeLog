@@ -1,3 +1,33 @@
+2003-11-21  John Sullivan  <sullivan@apple.com>
+
+        - WebKit part of fix for <rdar://problem/3333744>: Safari prints page with 
+        very, very long line very, very small
+
+        Reviewed by Ken.
+
+        * WebView.subproj/WebHTMLView.m:
+        renamed PrintingExtraWidthFactor to PrintingMinimumShrinkFactor, added
+        PrintingMaximumShrinkFactor of 2.0, which matches IE
+        (-[WebHTMLView layoutToMinimumPageWidth:maximumPageWidth:adjustingViewSize:]):
+        now takes a min and max page width; passes them along to bridge
+        (-[WebHTMLView _setPrinting:minimumPageWidth:maximumPageWidth:adjustViewSize:]):
+        now takes a min and max page width; passes them along to layoutTo...
+        (-[WebHTMLView _scaleFactorForPrintOperation:]):
+        now takes PrintingMaximumScaleFactor into account
+        (-[WebHTMLView knowsPageRange:]):
+        now takes PrintingMaximumScaleFactor into account
+
+        (-[WebHTMLView layout]):
+        pass 0 for maximumPageWidth when passing 0 for minimumPageWidth
+        (-[WebHTMLView adjustPageHeightNew:top:bottom:limit:]):
+        ditto
+        (-[WebHTMLView _web_setPrintingModeRecursive]):
+        ditto
+        (-[WebHTMLView _web_clearPrintingModeRecursive]):
+        ditto
+        (-[WebHTMLView endDocument]):
+        ditto
+
 2003-11-20  John Sullivan  <sullivan@apple.com>
 
         - WebKit part of <rdar://problem/3183124>: Support page-break-before/after with a value of "always"

@@ -146,7 +146,7 @@ typedef enum {
 
 - (void)reapplyStylesForDeviceType:(WebCoreDeviceType)deviceType;
 - (void)forceLayoutAdjustingViewSize:(BOOL)adjustSizeFlag;
-- (void)forceLayoutForPageWidth:(float)pageWidth adjustingViewSize:(BOOL)adjustSizeFlag;
+- (void)forceLayoutWithMinimumPageWidth:(float)minPageWidth maximumPageWidth:(float)maxPageWidth adjustingViewSize:(BOOL)adjustSizeFlag;
 - (void)sendResizeEvent;
 - (BOOL)needsLayout;
 - (void)drawRect:(NSRect)rect;

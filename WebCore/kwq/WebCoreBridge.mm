@@ -407,10 +407,10 @@ static BOOL nowPrinting(WebCoreBridge *self)
     [self _setupRootForPrinting:NO];
 }
 
-- (void)forceLayoutForPageWidth:(float)pageWidth adjustingViewSize:(BOOL)flag
+- (void)forceLayoutWithMinimumPageWidth:(float)minPageWidth maximumPageWidth:(float)maxPageWidth adjustingViewSize:(BOOL)flag
 {
     [self _setupRootForPrinting:YES];
-    _part->forceLayoutForPageWidth(pageWidth);
+    _part->forceLayoutWithPageWidthRange(minPageWidth, maxPageWidth);
     if (flag) {
         [self adjustViewSize];
     }
