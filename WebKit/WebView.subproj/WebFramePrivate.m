@@ -1353,10 +1353,16 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
     [dataSrc _setURL:URL];
     if (!isRedirect && ![self _shouldTreatURLAsSameAsCurrent:URL]) {
-        ASSERT(![_private previousItem]);
         // NB: must happen after _setURL, since we add based on the current request.
         // Must also happen before we openURL and displace the scroll position, since
         // adding the BF item will save away scroll state.
+
+        // NB2:  If we were loading a long, slow doc, and the user anchor nav'ed before
+        // it was done, currItem is now set the that slow doc, and prevItem is whatever was
+        // before it.  Adding the b/f item will bump the slow doc down to prevItem, even
+        // though its load is not yet done.  I think this all works out OK, for one because
+        // we have already saved away the scroll and doc state for the long slow load,
+        // but it's not an obvious case.
         [self _addBackForwardItemClippedAtTarget:NO];
     }
     
