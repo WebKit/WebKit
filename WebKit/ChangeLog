@@ -1,3 +1,8 @@
+2002-04-17  Darin Adler  <darin@apple.com>
+
+	* WebKit.pbproj/project.pbxproj: Update header search paths to find
+	WebCore in the new location and eliminate WebCore/include.
+
 2002-04-17  Chris Blumenberg  <cblu@apple.com>
 
 	Added a debug bit mask for plugins and downloads.

@@ -25,7 +25,7 @@ to work better with java applets.
 
 
 #include <kwqdebug.h>
-#include <javaembed.h>
+#include <java/javaembed.h>
 
 //FIX ME:
 static QSize *tempQSize = NULL;

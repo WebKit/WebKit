@@ -28,7 +28,7 @@
 //#define CACHE_DEBUG
 #include <assert.h>
 
-#include "loader.h"
+#include "misc/loader.h"
 #ifdef APPLE_CHANGES
 #include <kwqdebug.h>
 #import <WebFoundation/WebFoundation.h>

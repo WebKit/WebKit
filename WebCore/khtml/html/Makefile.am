@@ -38,7 +38,7 @@ libkhtmlhtml_o_SOURCES = \
 	$(NULL)
 
 INCLUDES = \
-	-I$(top_srcdir) \
+	-I$(top_srcdir)/WebCore \
 	$(KWQ_INCLUDES) \
 	$(KDELIBS_INCLUDES) \
 	-I. \

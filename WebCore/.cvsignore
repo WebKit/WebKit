@@ -1,8 +1,8 @@
-Makefile.in
 Makefile
-config.status
-config.log
-config.h
-config.cache
-lib
-Icon
+Makefile.in
+kentities.c
+libwebcore.dylib
+libwebcorecombined.exp
+libwebcorenmedited.dylib
+libwebcoreunstripped.dylib
+webcore-install-stamp

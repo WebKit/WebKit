@@ -133,7 +133,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
-				HEADER_SEARCH_PATHS = "../WebCore/include ../JavaScriptCore .. ../WebCore/src/kdelibs/khtml ../WebCore/src/kwq ../WebCore/src/kwq/kparts ../WebCore/include ../WebCore/include/private";
+				HEADER_SEARCH_PATHS = ".. ../JavaScriptCore ../WebCore/khtml ../WebCore/kwq ../WebCore/kwq/kdecore ../WebCore/kwq/khtml ../WebCore/kwq/kparts ../WebCore/kwq/qt";
 				INSTALL_PATH = "";
 				LIBRARY_SEARCH_PATHS = "";
 				OPTIMIZATION_CFLAGS = "-Os";
@@ -538,8 +538,8 @@
 		35F3577401986B740ACA1520 = {
 			isa = PBXFileReference;
 			name = html4.css;
-			path = ../WebCore/src/kdelibs/khtml/css/html4.css;
-			refType = 4;
+			path = ../WebCore/khtml/css/html4.css;
+			refType = 2;
 		};
 		35F3577501986B740ACA1520 = {
 			fileRef = 35F3577401986B740ACA1520;

@@ -50,7 +50,7 @@
 
 #include <kwqdebug.h>
 
-#include <decoder.h>
+#include <misc/decoder.h>
 #include <qfont.h>
 #include <qtextcodec.h>
 
@@ -69,12 +69,12 @@
 #include <html/html_miscimpl.h>
 #include <html/html_documentimpl.h>
 #include <rendering/render_image.h>
-#include <loader.h>
+#include <misc/loader.h>
 #include <kjs/interpreter.h>
 #include <kjs/collector.h>
 #include <ecma/kjs_proxy.h>
-#include <kjs_dom.h>
-#include <dom_doc.h>
+#include <ecma/kjs_dom.h>
+#include <dom/dom_doc.h>
 #include <qcursor.h>
 #include <kurl.h>
 #include <khtmlview.h>
@@ -89,8 +89,6 @@
 #import <KWQView.h>
 
 #include <WCWebDataSource.h>
-
-#include <loader.h>
 
 #include <external.h>
 

@@ -1,3 +1,34 @@
+2002-04-17  Darin Adler  <darin@apple.com>
+
+	* .cvsignore: Ignore new generated files at this level.
+
+	* include/*: Removed. We don't need this hack any more.
+	* src/*: Removed. Sources are now in their new locations.
+	* src/libwebcore.exp: Removed. This is now in its new location.
+	* src/libwebcoretests.exp: Removed. This is now in its new location.
+
+	* Makefile.am: Build khtml and kwq subdirs, don't build src and include.
+	Also add the rules that used to be in src about linking the library and
+	the rules that used to be in src/kdelibs/kdecore about building the
+	kentitices.c file.
+
+	* dummy.mm: Moved here from src by hand.
+	* kentities.gperf: Moved here from src/kdelibs/kdecore by hand.
+
+	* khtml/html/Makefile.am: Add WebCore directory to includes so the
+	include of "kentities.c" will work.
+
+	* kwq/KWQKHTMLPart.mm:
+	* kwq/KWQKJavaEmbed.mm:
+	* kwq/KWQKloader.mm:
+	Correct includes so we don't need a -I for each of the subdirectories.
+
+	* kwq/khtml/java/javaembed.h: Removed. We use the one in the real
+	khtml directory.
+
+	* kwq/kwqdebug.h: Rolled over Chris's changes, which were done after
+	the cvs surgery was done.
+
 2002-04-17  Chris Blumenberg  <cblu@apple.com>
 
 	Added a debug bit mask for plugins and downloads.
