@@ -260,6 +260,7 @@ void PropertyMap::remove(const Identifier &name)
     // Remove the one key.
     key->deref();
     _table[i].key = 0;
+    assert(_keyCount >= 1);
     --_keyCount;
     
     // Reinsert all the items to the right in the same cluster.
@@ -372,7 +373,7 @@ void PropertyMap::checkConsistency()
 #endif
     assert(count == _keyCount);
     if (_table) {
-        assert(_tableSize);
+        assert(_tableSize >= 16);
         assert(_tableSizeMask);
         assert(_tableSize == _tableSizeMask + 1);
     }

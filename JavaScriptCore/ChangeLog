@@ -1,5 +1,9 @@
 2002-11-21  Darin Adler  <darin@apple.com>
 
+        * kjs/property_map.cpp: More assertions.
+
+2002-11-21  Darin Adler  <darin@apple.com>
+
         * kjs/property_map.cpp: Turn that consistency check back off.
 
 2002-11-21  Darin Adler  <darin@apple.com>
