@@ -1739,6 +1739,59 @@ UString KJS::HTMLElement::toString(ExecState *exec) const
     return DOMElement::toString(exec);
 }
 
+static void getForm(DOM::HTMLFormElement* form, const DOM::HTMLElement& element)
+{
+    switch (element.elementId()) {
+        case ID_ISINDEX: {
+            DOM::HTMLIsIndexElement isindex = element;
+            *form = isindex.form();
+            break;
+        }
+        case ID_SELECT: {
+            DOM::HTMLSelectElement select = element;
+            *form = select.form();
+            break;
+        }
+        case ID_OPTION: {
+            DOM::HTMLOptionElement option = element;
+            *form = option.form();
+            break;
+        }
+        case ID_INPUT: {
+            DOM::HTMLInputElement input = element;
+            *form = input.form();
+            break;
+        }
+        case ID_TEXTAREA: {
+            DOM::HTMLTextAreaElement textarea = element;
+            *form = textarea.form();
+            break;
+        }
+        case ID_LABEL: {
+            DOM::HTMLLabelElement label = element;
+            *form = label.form();
+            break;
+        }
+        case ID_FIELDSET: {
+            DOM::HTMLFieldSetElement fieldset = element;
+            *form = fieldset.form();
+            break;
+        }
+        case ID_LEGEND: {
+            DOM::HTMLLegendElement legend = element;
+            *form = legend.form();
+            break;
+        }
+        case ID_OBJECT: {
+            DOM::HTMLObjectElement object = element;
+            *form = object.form();
+            break;
+        }
+        default:
+            break;
+    }
+}
+
 void KJS::HTMLElement::pushEventHandlerScope(ExecState *exec, ScopeChain &scope) const
 {
   DOM::HTMLElement element = static_cast<DOM::HTMLElement>(node);
@@ -1747,12 +1800,23 @@ void KJS::HTMLElement::pushEventHandlerScope(ExecState *exec, ScopeChain &scope)
   scope.push(static_cast<ObjectImp *>(getDOMNode(exec, element.ownerDocument()).imp()));
 
   // The form is next, searched before the document, but after the element itself.
-  DOM::Node form = element.parentNode();
-  while (!form.isNull() && form.elementId() != ID_FORM)
-    form = form.parentNode();
-  if (!form.isNull())
-    scope.push(static_cast<ObjectImp *>(getDOMNode(exec, form).imp()));
-
+  DOM::HTMLFormElement formElt;
+  
+  // First try to obtain the form from the element itself.  We do this to deal with
+  // the malformed case where <form>s aren't in our parent chain (e.g., when they were inside 
+  // <table> or <tbody>.
+  getForm(&formElt, element);
+  if (!formElt.isNull())
+    scope.push(static_cast<ObjectImp *>(getDOMNode(exec, formElt).imp()));
+  else {
+    DOM::Node form = element.parentNode();
+    while (!form.isNull() && form.elementId() != ID_FORM)
+        form = form.parentNode();
+    
+    if (!form.isNull())
+        scope.push(static_cast<ObjectImp *>(getDOMNode(exec, form).imp()));
+  }
+  
   // The element is on top, searched first.
   scope.push(static_cast<ObjectImp *>(getDOMNode(exec, element).imp()));
 }
