@@ -24,18 +24,17 @@
  */
 
 #import "WebCoreEncodings.h"
-#import "KWQCharsets.h"
+
+#import "decoder.h"
 
 @implementation WebCoreEncodings
 
-+ (NSString *)charsetNameForEncoding:(CFStringEncoding)encoding
++ (NSString *)decodeData:(NSData *)data
 {
-    return [NSString stringWithCString:KWQCFStringEncodingToIANACharsetName(encoding)];
-}
-
-+ (CFStringEncoding)encodingForCharsetName:(NSString *)charsetName
-{
-    return KWQCFStringEncodingFromIANACharsetName([charsetName lossyCString]);
+    khtml::Decoder decoder;
+    QString result = decoder.decode(static_cast<const char *>([data bytes]), [data length]);
+    result += decoder.flush();
+    return result.getNSString();
 }
 
 @end

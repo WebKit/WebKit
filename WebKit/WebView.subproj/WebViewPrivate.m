@@ -3,6 +3,8 @@
     Copyright (c) 2001, 2002, Apple, Inc. All rights reserved.
 */
 
+#import <WebKit/WebViewPrivate.h>
+
 #import <WebKit/WebBackForwardList.h>
 #import <WebKit/WebControllerSets.h>
 #import <WebKit/WebDataSourcePrivate.h>
@@ -19,7 +21,6 @@
 #import <WebKit/WebNSPasteboardExtras.h>
 #import <WebKit/WebPreferencesPrivate.h>
 #import <WebKit/WebResourceLoadDelegate.h>
-#import <WebKit/WebViewPrivate.h>
 #import <WebKit/WebUIDelegate.h>
 
 #import <WebFoundation/WebAssertions.h>
@@ -31,6 +32,7 @@
 #import <WebFoundation/NSURLDownloadPrivate.h>
 #import <WebFoundation/NSURLRequest.h>
 
+#import <WebCore/WebCoreEncodings.h>
 #import <WebCore/WebCoreSettings.h>
 
 static NSMutableSet *schemesWithRepresentationsSet;
@@ -595,6 +597,11 @@ static NSMutableSet *schemesWithRepresentationsSet;
     }
 
     return [self _representationExistsForURLScheme:[[request URL] scheme]];
+}
+
++ (NSString *)_decodeData:(NSData *)data
+{
+    return [WebCoreEncodings decodeData:data];
 }
 
 @end

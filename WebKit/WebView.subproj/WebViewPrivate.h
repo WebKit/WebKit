@@ -193,6 +193,8 @@ Could be worth adding to the API.
 */
 + (BOOL)_canHandleRequest:(NSURLRequest *)request;
 
++ (NSString *)_decodeData:(NSData *)data;
+
 @end
 
 @interface _WebSafeForwarder : NSObject

@@ -1,3 +1,12 @@
+2003-05-13  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+	- fixed 3120355 -- importing IE favorites garbles non-ASCII characters (esp. bad for non-Roman languages)
+
+        * WebView.subproj/WebViewPrivate.h: Added _decodeData:.
+        * WebView.subproj/WebViewPrivate.m: (+[WebView _decodeData:]): Added. Calls through to WebCore.
+
 2003-05-13  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

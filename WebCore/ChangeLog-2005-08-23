@@ -1,5 +1,15 @@
 2003-05-13  Darin Adler  <darin@apple.com>
 
+        Reviewed by Ken.
+
+	- fixed 3120355 -- importing IE favorites garbles non-ASCII characters (esp. bad for non-Roman languages)
+
+        * kwq/WebCoreEncodings.h: Added decodeData:, removed all other (unused) methods.
+        * kwq/WebCoreEncodings.mm: (+[WebCoreEncodings decodeData:]): Added. Calls the same
+        decoder used to decode web pages.
+
+2003-05-13  Darin Adler  <darin@apple.com>
+
         Reviewed by John.
 
 	- fixed 3228186 -- REGRESSION: crash walking parent tree at housingscc.org in DOM::StyleBaseImpl::stylesheet()
