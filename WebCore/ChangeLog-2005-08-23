@@ -1,5 +1,16 @@
 2003-07-30  Dave Hyatt  <hyatt@apple.com>
 
+	Fix for 3274144, floats in Help Viewer overlapped when they shouldn't have.
+	lineWidth was overflowing (and positionNewFloats was also sometimes not called
+	when it should have been).
+	
+        Reviewed by darin
+
+        * khtml/rendering/bidi.cpp:
+        * khtml/rendering/render_block.cpp:
+
+2003-07-30  Dave Hyatt  <hyatt@apple.com>
+
 	Add support for setting the text-shadow's color.  This uses a new CG API,
 	so updating to a fairly recent Panther is required.
 	
