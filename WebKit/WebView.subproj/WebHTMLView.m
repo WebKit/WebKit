@@ -114,8 +114,12 @@
     [super dealloc];
 }
 
-
 - (BOOL)acceptsFirstResponder
+{
+    return YES;
+}
+
+- (BOOL)needsPanelToBecomeKey
 {
     return YES;
 }
