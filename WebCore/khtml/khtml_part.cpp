@@ -5338,7 +5338,9 @@ void KHTMLPart::computeAndSetTypingStyle(CSSStyleDeclarationImpl *style)
         mutableStyle = typingStyle();
         mutableStyle->ref();
     }
-    CSSComputedStyleDeclarationImpl computedStyle(selection().start().upstream(StayInBlock).node());
+
+    NodeImpl *node = VisiblePosition(selection().start()).deepEquivalent().node();
+    CSSComputedStyleDeclarationImpl computedStyle(node);
     computedStyle.diff(mutableStyle);
     
     // Handle block styles, substracting these from the typing style.

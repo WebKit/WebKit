@@ -1,3 +1,17 @@
+2004-11-19  David Harrison  <harrison@apple.com>
+
+        Reviewed by Ken and Darin.
+
+        <rdar://problem/3856215> Cannot remove bold from the beginning of a message
+
+        Problem is that KHTMLPart::computeAndSetTypingStyle always looked upstream
+        for the existing style, but in this case (hitting cmd-B with caret at top of
+        file) there is nothing upstream.  Changed this to use the VisiblePosition
+        deepEquivalent instead.
+        
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::computeAndSetTypingStyle):
+
 === Safari-172 ===
 
 2004-11-19  Maciej Stachowiak  <mjs@apple.com>
