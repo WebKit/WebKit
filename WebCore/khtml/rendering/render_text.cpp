@@ -42,6 +42,16 @@
 #include <kdebug.h>
 #include <assert.h>
 
+// You may have to turn this to 0 to compile without the headers for ICU installed.
+#define HAVE_ICU_LIBRARY 1
+
+#if HAVE_ICU_LIBRARY
+#include <unicode/ubrk.h>
+#include <unicode/uloc.h>
+#include <unicode/utypes.h>
+#include <unicode/parseerr.h>
+#endif
+
 using namespace khtml;
 using namespace DOM;
 
@@ -666,6 +676,67 @@ unsigned long InlineTextBox::caretMaxRenderedOffset() const
     return m_start + m_len;
 }
 
+long RenderText::previousOffset (long current) const
+{
+#if !HAVE_ICU_LIBRARY
+    long previousOffset = current - 1;
+    return previousOffset;
+#else
+    UErrorCode status = U_ZERO_ERROR;
+    
+    // The locale is currently ignored when determining character cluster breaks.  This may change
+    // in the future (according to Deborah Goldsmith).
+    UBreakIterator* iterator = ubrk_open (UBRK_CHARACTER, "en_us", (const UChar*)str->s, str->l, &status);
+    if (iterator) {
+        // ICU gives us the leading and trailing edges of ligature graphemes, so we determine if
+        // the size of the previous grapheme is larger than 1 (i.e. we have a ligature or some sort),
+        // and if so, move back to the leading edge of the the grapheme, which is the same
+        // as the start of the previous character.
+        long off1 = ubrk_preceding (iterator, current);
+        long off2 = ubrk_preceding (iterator, off1);
+        ubrk_close (iterator);
+        
+        if (off2 >= 0 && off1 - off2 > 1)
+            return off2;
+            
+        return off1;
+    }
+    
+    return current - 1;
+#endif
+}
+
+long RenderText::nextOffset (long current) const
+{
+#if !HAVE_ICU_LIBRARY
+    long nextOffset = current + 1;
+    return nextOffset;
+#else
+    UErrorCode status = U_ZERO_ERROR;
+
+    // The locale is currently ignored when determining character cluster breaks.  This may change
+    // in the future (according to Deborah Goldsmith).
+    UBreakIterator* iterator = ubrk_open (UBRK_CHARACTER, "en_us", (const UChar*)str->s, str->l, &status);
+    if (iterator) {
+        // ICU gives us the leading and trailing edges of ligature graphemes, so we determine if
+        // the size of the next grapheme is larger than 1 (i.e. we have a ligature or some sort),
+        // and if so, move forward to the trailing edge of the the grapheme, which is the same
+        // as the start of the next character.
+        long off1 = ubrk_following (iterator, current);
+        long off2 = ubrk_following (iterator, off1);
+        ubrk_close (iterator);
+        
+        if (off2 >= 0 && off1 - current > 1)
+            return off2;
+
+        return off1;
+    }
+    
+    return current + 1;
+#endif
+}
+
+
 #define LOCAL_WIDTH_BUF_SIZE	1024
 
 int InlineTextBox::offsetForPosition(int _x, bool includePartialGlyphs)
@@ -827,7 +898,7 @@ void RenderText::absoluteRects(QValueList<QRect>& rects, int _tx, int _ty)
                            box->height()));
 }
 
-InlineTextBox* RenderText::findNextInlineTextBox(int offset, int &pos)
+InlineTextBox* RenderText::findNextInlineTextBox(int offset, int &pos) const
 {
     // The text runs point to parts of the rendertext's str string
     // (they don't include '\n')

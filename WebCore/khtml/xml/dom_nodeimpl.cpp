@@ -1288,6 +1288,16 @@ unsigned long NodeImpl::caretMaxRenderedOffset() const
     return renderer() ? renderer()->caretMaxRenderedOffset() : 1;
 }
 
+long NodeImpl::previousOffset (long current) const
+{
+    return renderer() ? renderer()->previousOffset(current) : current - 1;
+}
+
+long NodeImpl::nextOffset (long current) const
+{
+    return renderer() ? renderer()->nextOffset(current) : current + 1;
+}
+
 bool NodeImpl::isBlockFlow() const
 {
     return renderer() && renderer()->isBlockFlow();

@@ -61,6 +61,7 @@ public:
 
     friend bool operator==(const VisiblePosition &a, const VisiblePosition &b);
 
+    // next() and previous() will increment/decrement by a character cluster.
     VisiblePosition next() const;
     VisiblePosition previous() const;
 

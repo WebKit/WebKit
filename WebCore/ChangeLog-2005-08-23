@@ -1,3 +1,37 @@
+2005-01-25  Richard Williamson   <rjw@apple.com>
+
+	Part one of fix for <rdar://problem/3757712> REGRESSION (Mail): WebCore does not allow Devanagari ligature input
+
+	This patch changes the semantics of next() and previous() on
+	VisiblePosition to move a grapheme (character cluster) at a
+	time.  This means that cursor navigation with correctly move
+	over an entire cluster.
+
+	However, the expected behavior for deleting a grapheme is to
+	delete individual code points, thus decomposing the grapheme
+	into it constituent parts.  That will be addressed in the next
+	part of the fix.
+
+        Reviewed by Ken.
+
+        * khtml/editing/visible_position.cpp:
+        (khtml::VisiblePosition::previousPosition):
+        (khtml::VisiblePosition::nextPosition):
+        * khtml/editing/visible_position.h:
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::previousOffset):
+        (RenderObject::nextOffset):
+        * khtml/rendering/render_object.h:
+        * khtml/rendering/render_text.cpp:
+        (RenderText::previousOffset):
+        (RenderText::nextOffset):
+        (RenderText::findNextInlineTextBox):
+        * khtml/rendering/render_text.h:
+        * khtml/xml/dom_nodeimpl.cpp:
+        (NodeImpl::previousOffset):
+        (NodeImpl::nextOffset):
+        * khtml/xml/dom_nodeimpl.h:
+
 2005-01-25  David Harrison  <harrison@apple.com>
 
         Reviewed by Maciej.

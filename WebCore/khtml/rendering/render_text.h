@@ -256,11 +256,14 @@ public:
     virtual long caretMinOffset() const;
     virtual long caretMaxOffset() const;
     virtual unsigned long caretMaxRenderedOffset() const;
+
+    virtual long previousOffset (long current) const;
+    virtual long nextOffset (long current) const;
     
 #if APPLE_CHANGES
 public:
 #endif
-    InlineTextBox * findNextInlineTextBox( int offset, int &pos );
+    InlineTextBox * findNextInlineTextBox( int offset, int &pos ) const;
 
 protected: // members
     DOM::DOMStringImpl *str;

@@ -213,7 +213,8 @@ Position VisiblePosition::previousPosition(const Position &pos)
             result = Position(prevNode, prevNode->maxOffset());
     }
     else {
-        result = Position(pos.node(), pos.offset() - 1);
+        NodeImpl *node = pos.node();
+        result = Position(node, node->previousOffset(pos.offset()));
     }
     
     return result;
@@ -232,7 +233,8 @@ Position VisiblePosition::nextPosition(const Position &pos)
             result = Position(nextNode, 0);
     }
     else {
-        result = Position(pos.node(), pos.offset() + 1);
+        NodeImpl *node = pos.node();
+        result = Position(node, node->nextOffset(pos.offset()));
     }
     
     return result;

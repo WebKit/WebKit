@@ -2334,6 +2334,18 @@ unsigned long RenderObject::caretMaxRenderedOffset() const
     return 0;
 }
 
+long RenderObject::previousOffset (long current) const
+{
+    long previousOffset = current - 1;
+    return previousOffset;
+}
+
+long RenderObject::nextOffset (long current) const
+{
+    long nextOffset = current + 1;
+    return nextOffset;
+}
+
 InlineBox *RenderObject::inlineBox(long offset, EAffinity affinity)
 {
     return inlineBoxWrapper();

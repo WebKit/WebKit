@@ -350,6 +350,9 @@ public:
     virtual long caretMaxOffset() const;
     virtual unsigned long caretMaxRenderedOffset() const;
 
+    virtual long previousOffset (long current) const;
+    virtual long nextOffset (long current) const;
+    
 #ifndef NDEBUG
     virtual void dump(QTextStream *stream, QString ind = "") const;
 #endif
