@@ -1169,6 +1169,9 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
         return Undefined();
     }
   }
+#ifdef APPLE_CHANGES
+  case Window::Scroll:
+#endif
   case Window::ScrollBy:
     if(args.size() == 2 && widget)
       widget->scrollBy(args[0].toInt32(exec), args[1].toInt32(exec));

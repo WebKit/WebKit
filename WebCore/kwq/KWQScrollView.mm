@@ -163,7 +163,7 @@ int QScrollView::childY(QWidget *)
 
 void QScrollView::scrollBy(int dx, int dy)
 {
-    _logNeverImplemented();
+    setContentsPos(contentsX() + dx, contentsY() + dy);
 }
 
 void QScrollView::setContentsPos(int x, int y)
