@@ -113,10 +113,8 @@ MethodList ObjcClass::methodsNamed(const char *_name) const
                 NSString *mappedName = 0;
             
                 // See if the class wants to exclude the selector from visibility in JavaScript.
-                if ([(id)thisClass respondsToSelector:@selector(isSelectorExcludedFromWebScript:)]) {
-                    if ([(id)thisClass isSelectorExcludedFromWebScript:objcMethod->method_name]) {
-                        continue;
-                    }
+                if ([(id)thisClass isSelectorExcludedFromWebScript:objcMethod->method_name]) {
+                    continue;
                 }
                 
                 // See if the class want to provide a different name for the selector in JavaScript.
@@ -164,10 +162,8 @@ Field *ObjcClass::fieldNamed(const char *name) const
                 NSString *mappedName = 0;
 
                 // See if the class wants to exclude the selector from visibility in JavaScript.
-                if ([(id)thisClass respondsToSelector:@selector(isKeyExcludedFromWebScript:)]) {
-                    if ([(id)thisClass isKeyExcludedFromWebScript:objcIVar->ivar_name]) {
-                        continue;
-                    }
+                if ([(id)thisClass isKeyExcludedFromWebScript:objcIVar->ivar_name]) {
+                    continue;
                 }
                 
                 // See if the class want to provide a different name for the selector in JavaScript.

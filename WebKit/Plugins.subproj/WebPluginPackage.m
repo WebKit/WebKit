@@ -83,3 +83,18 @@ extern NSString *WebPlugInContainingElementKey;
 }
 
 @end
+
+@implementation NSObject (WebScripting)
+
++ (BOOL)isSelectorExcludedFromWebScript:(SEL)aSelector
+{
+    return YES;
+}
+
++ (BOOL)isKeyExcludedFromWebScript:(const char *)name
+{
+    return YES;
+}
+
+@end
+

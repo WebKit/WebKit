@@ -1,3 +1,15 @@
+2004-06-15  Richard Williamson   <rjw@apple.com>
+
+		Fixed <rdar://problem/3695875>: Objective-C instances that are exported to JavaScript are too promiscuous
+
+		Flip the policy for exposing Objective-C methods and properties.
+		
+        Reviewed by Trey.
+
+        * Plugins.subproj/WebPluginPackage.m:
+        (+[NSObject isSelectorExcludedFromWebScript:]):  Just return YES.
+        (+[NSObject isKeyExcludedFromWebScript:]):  Just return YES.
+
 2004-06-15  Trey Matteson  <trey@apple.com>
 
 	3639321 - Harvard PIN authentication ends up sending PIN as clear text with POST action

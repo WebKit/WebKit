@@ -1,3 +1,17 @@
+2004-06-15  Richard Williamson   <rjw@apple.com>
+
+	Fixed <rdar://problem/3695875>: Objective-C instances that are exported to JavaScript are too promiscuous
+
+	No longer need to check respondsToSelector: for
+	isSelectorExcludedFromWebScript: and isKeyExcludedFromWebScript:
+	because these now have a default implementation on NSObject.
+
+        Reviewed by Trey.
+
+        * bindings/objc/objc_class.mm:
+        (ObjcClass::methodsNamed):
+        (ObjcClass::fieldNamed):
+
 2004-06-14  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
