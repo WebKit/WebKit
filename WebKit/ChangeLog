@@ -1,3 +1,12 @@
+2003-08-12  Ed Voas  <voas@apple.com>
+
+        Reviewed by Richard.
+
+		Make sure to override the standard behavior for ordering windows to do nothing for Carbon stuff.
+
+        * Carbon.subproj/CarbonWindowAdapter.m:
+        (-[CarbonWindowAdapter _reallyDoOrderWindow:relativeTo:findKey:forCounter:force:isModal:]):
+
 2003-08-11  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3163589>: Macromedia Flash 6 cannot take Asian text entry in Safari

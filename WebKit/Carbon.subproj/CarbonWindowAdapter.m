@@ -983,6 +983,10 @@ static OSStatus NSCarbonWindowHandleEvent(EventHandlerCallRef inEventHandlerCall
     
 }
 
+// [3364117] We need to make sure this does not fall through to the AppKit implementation! bad things happen.
+- (void)_reallyDoOrderWindow:(NSWindowOrderingMode)place relativeTo:(int)otherWin findKey:(BOOL)doKeyCalc forCounter:(BOOL)isACounter force:(BOOL)doForce isModal:(BOOL)isModal {
+}
+
 /*
 void _NSSetModalWindowClassLevel(int level) {
     WindowGroupRef groupRef;
