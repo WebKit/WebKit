@@ -1,3 +1,14 @@
+2002-09-12  Richard Williamson (Local)  <rjw@apple.com>
+
+        Added absolute position column to render node for 
+        render tree view.
+        
+        * WebView.subproj/WebRenderNode.h:
+        * WebView.subproj/WebRenderNode.m:
+        (-[WebRenderNode initWithName:position:rect:view:children:]):
+        (-[WebRenderNode absolutePositionString]):
+        (-[WebKitRenderTreeCopier nodeWithName:position:rect:view:children:]):
+
 2002-09-12  David Hyatt  <hyatt@apple.com>
 
 	Add text/xml to our list of MIME types that should use the

@@ -266,6 +266,28 @@ void RenderRoot::close()
     //printTree();
 }
 
+#ifdef APPLE_CHANGES
+static QRect enclosingPositionedRect (RenderObject *n)
+{
+    RenderObject *enclosingParent = (RenderObject*)n;
+    QRect rect;
+    
+    while (enclosingParent && (enclosingParent->isText() || (enclosingParent->width() == 0 && enclosingParent->height() == 0))){
+        enclosingParent = enclosingParent->parent();
+    }
+    if (enclosingParent){
+        int ox, oy;
+        
+        enclosingParent->absolutePosition(ox, oy);
+        rect.setX(ox);
+        rect.setY(oy);
+        rect.setWidth (enclosingParent->width());
+        rect.setHeight (enclosingParent->height());
+    }
+    return rect;
+}
+#endif
+
 void RenderRoot::setSelection(RenderObject *s, int sp, RenderObject *e, int ep)
 {
     // Check we got valid renderobjects. www.msnbc.com and clicking around, to find the case where this happened.
@@ -276,7 +298,46 @@ void RenderRoot::setSelection(RenderObject *s, int sp, RenderObject *e, int ep)
     }
     //kdDebug( 6040 ) << "RenderRoot::setSelection(" << s << "," << sp << "," << e << "," << ep << ")" << endl;
 
+#ifdef APPLE_CHANGES
+    // Cut out early if the selection hasn't changed.
+    if (m_selectionStart == s && m_selectionStartPos == sp &&
+        m_selectionEnd == e && m_selectionEndPos == ep){
+        return;
+    }
+
+    // Record the old selected objects.  Will be used later
+    // to delta again the selected objects.
+    
+    RenderObject *oldStart = m_selectionStart;
+    int oldStartPos = m_selectionStartPos;
+    RenderObject *oldEnd = m_selectionEnd;
+    int oldEndPos = m_selectionEndPos;
+    QPtrList<RenderObject> oldSelectedInside;
+    QPtrList<RenderObject> newSelectedInside;
+    RenderObject *os = oldStart;
+
+    while (os && os != oldEnd)
+    {
+        RenderObject* no;
+        if ( !(no = os->firstChild()) ){
+            if ( !(no = os->nextSibling()) )
+            {
+                no = os->parent();
+                while (no && !no->nextSibling())
+                    no = no->parent();
+                if (no)
+                    no = no->nextSibling();
+            }
+        }
+        if (os->selectionState() == SelectionInside && !oldSelectedInside.containsRef(os))
+            oldSelectedInside.append(os);
+            
+        os = no;
+    }
+    clearSelection(false);
+#else
     clearSelection();
+#endif
 
     while (s->firstChild())
         s = s->firstChild();
@@ -301,6 +362,7 @@ void RenderRoot::setSelection(RenderObject *s, int sp, RenderObject *e, int ep)
 
     // update selection status of all objects between m_selectionStart and m_selectionEnd
     RenderObject* o = s;
+    
     while (o && o!=e)
     {
         o->setSelectionState(SelectionInside);
@@ -315,23 +377,119 @@ void RenderRoot::setSelection(RenderObject *s, int sp, RenderObject *e, int ep)
                 if (no)
                     no = no->nextSibling();
             }
+#ifdef APPLE_CHANGES
+        if (o->selectionState() == SelectionInside && !newSelectedInside.containsRef(o))
+            newSelectedInside.append(o);
+#endif
+            
         o=no;
     }
     s->setSelectionState(SelectionStart);
     e->setSelectionState(SelectionEnd);
     if(s == e) s->setSelectionState(SelectionBoth);
+
+#ifdef APPLE_CHANGES
+    if (!m_view)
+        return;
+
+    newSelectedInside.remove (s);
+    newSelectedInside.remove (e);
+    
+    QRect updateRect;
+
+    // Don't use repaint() because it will cause all rects to
+    // be united (see khtmlview::scheduleRepaint()).  Instead
+    // just draw damage rects for objects that have a change
+    // in selection state.
+    
+    // Are any of the old fully selected objects not in the new selection?
+    // If so we have to draw them.
+    // Could be faster by building list of non-intersecting rectangles rather
+    // than unioning rectangles.
+    QPtrListIterator<RenderObject> oldIterator(oldSelectedInside);
+    bool firstRect = true;
+    for (; oldIterator.current(); ++oldIterator){
+        if (!newSelectedInside.containsRef(oldIterator.current())){
+            if (firstRect){
+                updateRect = enclosingPositionedRect(oldIterator.current());
+                firstRect = false;
+            }
+            else
+                updateRect = updateRect.unite(enclosingPositionedRect(oldIterator.current()));
+        }
+    }
+    if (!firstRect){
+        m_view->updateContents( updateRect );
+    }
+
+    // Are any of the new fully selected objects not in the previous selection?
+    // If so we have to draw them.
+    // Could be faster by building list of non-intersecting rectangles rather
+    // than unioning rectangles.
+    QPtrListIterator<RenderObject> newIterator(newSelectedInside);
+    firstRect = true;
+    for (; newIterator.current(); ++newIterator){
+        if (!oldSelectedInside.containsRef(newIterator.current())){
+            if (firstRect){
+                updateRect = enclosingPositionedRect(newIterator.current());
+                firstRect = false;
+            }
+            else
+                updateRect = updateRect.unite(enclosingPositionedRect(newIterator.current()));
+        }
+    }
+    if (!firstRect) {
+        m_view->updateContents( updateRect );
+    }
+    
+    // Is the new starting object different, or did the position in the starting
+    // element change?  If so we have to draw it.
+    if (oldStart != m_selectionStart || 
+        (oldStart == oldEnd && (oldStartPos != m_selectionStartPos || oldEndPos != m_selectionEndPos)) ||
+        (oldStart == m_selectionStart && oldStartPos != m_selectionStartPos)){
+        m_view->updateContents( enclosingPositionedRect(m_selectionStart) );
+    }
+
+    // Draw the old selection start object if it's different than the new selection
+    // start object.
+    if (oldStart && oldStart != m_selectionStart){
+        m_view->updateContents( enclosingPositionedRect(oldStart) );
+    }
+    
+    // Does the selection span objects and is the new end object different, or did the position
+    // in the end element change?  If so we have to draw it.
+    if (oldStart != oldEnd && 
+        (oldEnd != m_selectionEnd ||
+        (oldEnd == m_selectionEnd && oldEndPos != m_selectionEndPos))){
+        m_view->updateContents( enclosingPositionedRect(m_selectionEnd) );
+    }
+    
+    // Draw the old selection end object if it's different than the new selection
+    // end object.
+    if (oldEnd && oldEnd != m_selectionEnd){
+        m_view->updateContents( enclosingPositionedRect(oldEnd) );
+    }
+#else
     repaint();
+#endif
 }
 
 
+#ifdef APPLE_CHANGES
+void RenderRoot::clearSelection(bool doRepaint)
+#else
 void RenderRoot::clearSelection()
+#endif
 {
     // update selection status of all objects between m_selectionStart and m_selectionEnd
     RenderObject* o = m_selectionStart;
     while (o && o!=m_selectionEnd)
     {
         if (o->selectionState()!=SelectionNone)
-            o->repaint();
+#ifdef APPLE_CHANGES
+            if (doRepaint)
+#endif
+                o->repaint();
         o->setSelectionState(SelectionNone);
         RenderObject* no;
         if ( !(no = o->firstChild()) )
@@ -348,7 +506,10 @@ void RenderRoot::clearSelection()
     if (m_selectionEnd)
     {
         m_selectionEnd->setSelectionState(SelectionNone);
-        m_selectionEnd->repaint();
+#ifdef APPLE_CHANGES
+        if (doRepaint)
+#endif
+            m_selectionEnd->repaint();
     }
 
     // set selection start & end to 0

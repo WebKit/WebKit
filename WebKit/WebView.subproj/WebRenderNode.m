@@ -17,7 +17,7 @@
 
 @implementation WebRenderNode
 
-- initWithName:(NSString *)n rect:(NSRect)r view:(NSView *)view children:(NSArray *)c
+- initWithName:(NSString *)n position: (NSPoint)p rect:(NSRect)r view:(NSView *)view children:(NSArray *)c
 {
     NSMutableArray *collectChildren;
     
@@ -27,6 +27,7 @@
 
     name = [n retain];
     rect = r;
+    absolutePosition = p;
 
     if ([view isKindOfClass:[NSScrollView class]]) {
         NSScrollView *scrollView = (NSScrollView *)view;
@@ -80,6 +81,11 @@
     return name;
 }
 
+- (NSString *)absolutePositionString
+{
+    return [NSString stringWithFormat:@"(%.0f, %.0f)", absolutePosition.x, absolutePosition.y];
+}
+
 - (NSString *)positionString
 {
     return [NSString stringWithFormat:@"(%.0f, %.0f)", rect.origin.x, rect.origin.y];
@@ -99,9 +105,9 @@
 
 @implementation WebKitRenderTreeCopier
 
-- (NSObject *)nodeWithName:(NSString *)name rect:(NSRect)rect view:(NSView *)view children:(NSArray *)children
+- (NSObject *)nodeWithName:(NSString *)name position: (NSPoint)p rect:(NSRect)rect view:(NSView *)view children:(NSArray *)children
 {
-    return [[[WebRenderNode alloc] initWithName:name rect:rect view:view children:children] autorelease];
+    return [[[WebRenderNode alloc] initWithName:name position: p rect:rect view:view children:children] autorelease];
 }
 
 @end

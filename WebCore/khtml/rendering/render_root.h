@@ -59,7 +59,7 @@ public:
                      int _w, int _h, int _tx, int _ty);
 
     virtual void setSelection(RenderObject *s, int sp, RenderObject *e, int ep);
-    virtual void clearSelection();
+    virtual void clearSelection(bool doRepaint=true);
     virtual RenderObject *selectionStart() const { return m_selectionStart; }
     virtual RenderObject *selectionEnd() const { return m_selectionEnd; }
 

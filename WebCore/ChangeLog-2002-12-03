@@ -1,3 +1,23 @@
+2002-09-12  Richard Williamson (Local)  <rjw@apple.com>
+
+        Rewrite of khtml selection drawing code.  Now does
+        a delta between old and new selection and only
+        draw those objects that have changed.  Selection
+        drawing is now MUCH faster.
+        
+        * khtml/rendering/render_root.cpp:
+        (enclosingPositionedRect):
+        (RenderRoot::setSelection):
+        (RenderRoot::clearSelection):
+        * khtml/rendering/render_root.h:
+        
+        Added additional absolute position property to render node
+        stuff for debug render tree view.
+        
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge copyRenderNode:copier:]):
+
 2002-09-12  David Hyatt  <hyatt@apple.com>
 
 	KHTML was butchering the laws of background propagation from

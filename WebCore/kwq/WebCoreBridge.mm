@@ -279,7 +279,10 @@ using khtml::RenderPart;
     QWidget *widget = nodeRenderPart ? nodeRenderPart->widget() : 0;
     NSView *view = widget ? widget->getView() : nil;
     
+    int nx, ny;
+    node->absolutePosition(nx,ny);
     NSObject *copiedNode = [copier nodeWithName:name
+                                           position:NSMakePoint(nx,ny)
                                            rect:NSMakeRect(node->xPos(), node->yPos(), node->width(), node->height())
                                            view:view
                                        children:children];
