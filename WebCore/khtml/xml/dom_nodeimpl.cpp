@@ -283,23 +283,25 @@ static QString escapeHTML( const QString& in )
     return s;
 }
 
-QString NodeImpl::recursive_toHTMLWithOptions(bool start, const DOM::RangeImpl *range, QPtrList<NodeImpl> *nodes) const
+QString NodeImpl::recursive_toHTML(bool onlyIncludeChildren, const DOM::RangeImpl *range, QPtrList<NodeImpl> *nodes) const
 {	
-    bool isNodeIncluded = range ? false : true;
-    Id ident = id();
+    bool include = true;
     
-    // Determine if the HTML string of this node should be part of the end result.
-    if (range && (!start || (start && (ident == ID_TABLE || ident == ID_OL || ident == ID_UL)))) {	
-        // Check if this node is in the range or is an ancestor of a node in the range.
+    if (onlyIncludeChildren) {
+        // Don't include the HTML of this node, but include the children in the next recursion.
+        include = false;
+    } else if (range) {
+        // If a range is passed, only include the node and its children's HTML if they are in the range or parents on nodes in the range.
+        include = false;
         NodeImpl *pastEnd = range->pastEndNode();
         for (NodeImpl *n = range->startNode(); n != pastEnd; n = n->traverseNextNode()) {
             for (NodeImpl *ancestor = n; ancestor; ancestor = ancestor->parentNode()) {
                 if (this == ancestor) {
-                    isNodeIncluded = true;
+                    include = true;
                     break;
                 }
             }
-            if (isNodeIncluded) {
+            if (include) {
                 break;
             }
         }
@@ -307,7 +309,7 @@ QString NodeImpl::recursive_toHTMLWithOptions(bool start, const DOM::RangeImpl *
     
     QString me = "";
     
-    if (isNodeIncluded) {
+    if (include) {
         if (nodes) {
             nodes->append(this);
         }
@@ -342,27 +344,22 @@ QString NodeImpl::recursive_toHTMLWithOptions(bool start, const DOM::RangeImpl *
         }
     }
     
-    if (!isHTMLElement() || endTag[ident] != FORBIDDEN) {
+    if (!isHTMLElement() || endTag[id()] != FORBIDDEN) {
         // print firstChild
         if (NodeImpl *n = firstChild()) {
-            me += n->recursive_toHTMLWithOptions(false, range, nodes);
+            me += n->recursive_toHTML(false, range, nodes);
         }
         // Print my ending tag
-        if (isNodeIncluded && nodeType() != Node::TEXT_NODE && nodeType() != Node::DOCUMENT_NODE) {
+        if (include && nodeType() != Node::TEXT_NODE && nodeType() != Node::DOCUMENT_NODE) {
             me += "</" + nodeName().string() + ">";
         }
     }
     // print next sibling
     if (NodeImpl *n = nextSibling()) {
-        me += n->recursive_toHTMLWithOptions(false, range, nodes);
+        me += n->recursive_toHTML(false, range, nodes);
     }
     
     return me;
-}
-
-QString NodeImpl::recursive_toHTML(bool start) const
-{
-    return recursive_toHTMLWithOptions(start);
 }
 
 void NodeImpl::recursive_completeURLs(QString baseURL)

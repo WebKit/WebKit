@@ -1,3 +1,19 @@
+2004-08-18  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3692199> 8A146: Safari crashes in toHTMLWithOptions, selection with no renderer (various sites)
+
+        Reviewed by trey.
+
+        * khtml/xml/dom2_rangeimpl.cpp:
+        (DOM::RangeImpl::toHTML): renamed, don't assume that nodes of the range had renderers, use the common ancestor of the range as the root
+        * khtml/xml/dom2_rangeimpl.h:
+        * khtml/xml/dom_nodeimpl.cpp:
+        (NodeImpl::recursive_toHTML): renamed, removed code that determines whether to include the root in the HTML, leave this up to the caller
+        * khtml/xml/dom_nodeimpl.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge markupStringFromNode:nodes:]): call renamed methods
+        (-[WebCoreBridge markupStringFromRange:nodes:]): ditto
+
 2004-08-18  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by me

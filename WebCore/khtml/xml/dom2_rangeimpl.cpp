@@ -29,11 +29,13 @@
 #include "dom_textimpl.h"
 #include "dom_xmlimpl.h"
 #include "html/html_elementimpl.h"
+#include "misc/htmltags.h"
 #include "misc/khtml_text_operations.h"
 
 #include "render_block.h"
 
 using khtml::RenderBlock;
+using khtml::RenderObject;
 
 namespace DOM {
 
@@ -829,41 +831,26 @@ DOMString RangeImpl::toString( int &exceptioncode )
     return text;
 }
 
-DOMString RangeImpl::toHTMLWithOptions(QPtrList<NodeImpl> *nodes)
+DOMString RangeImpl::toHTML(QPtrList<NodeImpl> *nodes)
 {
-    // Find the common containing block node of the start and end nodes.
-    RenderBlock *startBlock = m_startContainer->renderer()->containingBlock();
-    RenderBlock *endBlock = m_endContainer->renderer()->containingBlock();
-    NodeImpl *commonBlockNode = 0;
-    while (1) {
-        RenderBlock *newEndBlock = endBlock;
-        while (1) {
-            if (startBlock == newEndBlock) {
-                commonBlockNode = startBlock->element();
-                break;
-            }
-            if (newEndBlock->isRoot()) {
-                break;
-            }
-            newEndBlock = newEndBlock->containingBlock();
-        }
-        if (commonBlockNode) {
-            break;
-        }
-        RenderBlock *newStartBlock = startBlock->containingBlock();
-        if (!newStartBlock || newStartBlock == startBlock) {
-            commonBlockNode = startBlock->element();
-            break;
-        }
-        startBlock = newStartBlock;
+    int exceptionCode;
+    NodeImpl *commonAncestor = commonAncestorContainer(exceptionCode);
+    if (commonAncestor == 0) {
+        return "";
     }
-    
-    return commonBlockNode->recursive_toHTMLWithOptions(true, this, nodes);
-}
-
-DOMString RangeImpl::toHTML(  )
-{
-    return toHTMLWithOptions();
+    RenderObject *renderer = commonAncestor->renderer();
+    if (renderer && !renderer->isRenderBlock()) {
+        RenderBlock *block = renderer->containingBlock();
+        if (block) {
+            NodeImpl *blockElement = block->element();
+            if (blockElement) {
+                commonAncestor = blockElement;
+            }
+        }
+    }
+    NodeImpl::Id id = commonAncestor->id();
+    bool onlyIncludeChildren = (id != ID_TABLE && id != ID_OL && id != ID_UL);
+    return commonAncestor->recursive_toHTML(onlyIncludeChildren, this, nodes);
 }
 
 DOMString RangeImpl::text() const

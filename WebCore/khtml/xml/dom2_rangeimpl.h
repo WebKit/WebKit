@@ -67,8 +67,7 @@ public:
     DocumentFragmentImpl *cloneContents ( int &exceptioncode );
     void insertNode( NodeImpl *newNode, int &exceptioncode );
     DOMString toString ( int &exceptioncode );
-    DOMString toHTML (  );
-    DOMString toHTMLWithOptions(QPtrList<NodeImpl> *nodes=NULL);
+    DOMString toHTML(QPtrList<NodeImpl> *nodes=NULL);
     DOMString text() const;
 
     DocumentFragmentImpl *createContextualFragment ( DOMString &html, int &exceptioncode );
