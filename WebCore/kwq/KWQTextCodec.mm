@@ -372,6 +372,14 @@ QString KWQTextDecoder::convertUsingTEC(const UInt8 *chs, int len, bool flush)
         }
     }
     
+    // Workaround for a bug in the Text Encoding Converter (see bug 3225472).
+    // Simplified Chinese pages use the code U+A3A0 to mean "full-width space".
+    // But GB18030 decodes it to U+E5E5, which is correct in theory but not in practice.
+    // To work around, just change all occurences of U+E5E5 to U+3000 (ideographic space).
+    if (_encoding == kCFStringEncodingGB_18030_2000) {
+        result.replace(0xE5E5, 0x3000);
+    }
+    
     return result;
 }
 

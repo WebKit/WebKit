@@ -1,3 +1,19 @@
+2003-04-11  Darin Adler  <darin@apple.com>
+
+        Reviewed by Richard.
+
+	- fixed 3225472 -- www.sina.com.cn uses A3A0 for full-width space; used to work in Simplified Chinese (Mac OS)
+
+        * kwq/KWQTextCodec.mm: (KWQTextDecoder::convertUsingTEC): Work around the problem
+        in the Text Encoding Converter by changing all U+E5E5 to U+3000.
+
+        * kwq/KWQString.h: Added replace(QChar, QChar), since Qt has it and I need it.
+        * kwq/KWQString.mm:
+        (QString::find): Fixed a bug where we'd yield a FATAL and return -1 on deployment
+        if you searched for a non-ASCII character in a string that had ASCII valid and
+        not Unicode valid.
+        (QString::replace): Added replace(QChar, QChar).
+        
 === Safari-73 ===
 
 2003-04-10  Trey Matteson  <trey@apple.com>

@@ -984,15 +984,13 @@ bool QString::isNull() const
 
 int QString::find(QChar qc, int index) const
 {
-    if (IS_ASCII_QCHAR(qc) && dataHandle[0]->_isAsciiValid)
+    if (dataHandle[0]->_isAsciiValid) {
+        if (!IS_ASCII_QCHAR(qc)) {
+            return -1;
+        }
         return find((char)qc, index);
-    else if (dataHandle[0]->_isUnicodeValid)
-        return find(QString(qc), index, TRUE);
-    else
-        FATAL("invalid character cache");
-
-    // Should never get here.  Needed for compiler.
-    return -1;
+    }
+    return find(QString(qc), index, true);
 }
 
 int QString::find(char ch, int index) const
@@ -2319,6 +2317,37 @@ QString &QString::replace(const QRegExp &qre, const QString &str)
 	else
 	    break;
     }
+    return *this;
+}
+
+
+QString &QString::replace(QChar oldChar, QChar newChar)
+{
+    if (find(oldChar) != -1) {
+        unsigned length = dataHandle[0]->_length;
+        
+        detach();
+        if (dataHandle[0]->_isAsciiValid && IS_ASCII_QCHAR(newChar)) {
+            char *p = const_cast<char *>(ascii());
+            dataHandle[0]->_isUnicodeValid = 0;
+            char oldC = oldChar;
+            char newC = newChar;
+            for (unsigned i = 0; i != length; ++i) {
+                if (p[i] == oldC) {
+                    p[i] = newC;
+                }
+            }
+        } else {
+            QChar *p = const_cast<QChar *>(unicode());
+            dataHandle[0]->_isAsciiValid = 0;
+            for (unsigned i = 0; i != length; ++i) {
+                if (p[i] == oldChar) {
+                    p[i] = newChar;
+                }
+            }
+        }
+    }
+    
     return *this;
 }
 
