@@ -259,7 +259,7 @@ const float LargeNumberForText = 1.0e7;
 
 - (int)paragraphs
 {
-    return [[textView string] countOfString:@"\n"] + 1;
+    return [[textView string] _IF_countOfString:@"\n"] + 1;
 }
 
 static NSRange RangeOfParagraph(NSString *text, int paragraph)

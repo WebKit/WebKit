@@ -1,3 +1,21 @@
+2002-04-23  Kenneth Kocienda  <kocienda@apple.com>
+
+        Reviewed by: Darin Adler
+
+        Fix for Radar 2908403 (Fix names in WebFoundation extensions code)
+
+        Extensions code in WebFoundation now is in its own namespace.
+        Where we have added categories to existing Foundation and AppKit
+        classes, the categories begin with the IF prefix. All method names
+        begin with the _IF_ prefix.
+
+        This file here was changed to use the new names.
+
+	* History.subproj/IFWebHistoryPrivate.m:
+	(-[IFWebHistoryPrivate findIndex:forDay:]):
+	(-[IFWebHistoryPrivate arrayRepresentation]):
+	(-[IFWebHistoryPrivate _loadHistoryGuts:]):
+
 2002-04-22  Chris Blumenberg  <cblu@apple.com>
 
 	* WebView.subproj/IFMainURLHandleClient.mm:

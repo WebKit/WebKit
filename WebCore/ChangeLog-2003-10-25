@@ -1,5 +1,21 @@
 2002-04-23  Kenneth Kocienda  <kocienda@apple.com>
 
+        Reviewed by: Darin Adler
+
+        Fix for Radar 2908403 (Fix names in WebFoundation extensions code)
+
+        Extensions code in WebFoundation now is in its own namespace.
+        Where we have added categories to existing Foundation and AppKit
+        classes, the categories begin with the IF prefix. All method names
+        begin with the _IF_ prefix.
+
+        The file here was changed to use the new names.
+
+	* kwq/KWQTextArea.mm:
+	(-[KWQTextArea paragraphs])
+
+2002-04-23  Kenneth Kocienda  <kocienda@apple.com>
+
 	* kwq/KWQPixmap.mm:
 	(QPixmap::QPixmap): Fixed unneeded leak of an NSImage in
         the case where we are still covering for a double-release

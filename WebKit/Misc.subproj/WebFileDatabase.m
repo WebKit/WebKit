@@ -365,7 +365,7 @@ static void URLFileReaderInit(void)
     [setCache removeAllObjects];
     [removeCache removeAllObjects];
     [self close];
-    [[NSFileManager defaultManager] backgroundRemoveFileAtPath:path];
+    [[NSFileManager defaultManager] _IF_backgroundRemoveFileAtPath:path];
     [self open];
     [mutex unlock];
 
@@ -477,7 +477,7 @@ static void URLFileReaderInit(void)
 
     result = [defaultManager createFileAtPath:filePath contents:data attributes:attributes];
     if (!result) {
-        result = [defaultManager createFileAtPathWithIntermediateDirectories:filePath contents:data attributes:attributes directoryAttributes:directoryAttributes];
+        result = [defaultManager _IF_createFileAtPathWithIntermediateDirectories:filePath contents:data attributes:attributes directoryAttributes:directoryAttributes];
     }
 
     [archiver release];
@@ -524,7 +524,7 @@ static void URLFileReaderInit(void)
             if (!isOpen) {
                 // perhaps the optimism did not pay off ...
                 // try again, this time creating full subpath leading to directory
-                isOpen = [manager createDirectoryAtPathWithIntermediateDirectories:path attributes:attributes];
+                isOpen = [manager _IF_createDirectoryAtPathWithIntermediateDirectories:path attributes:attributes];
             }
         }
     }

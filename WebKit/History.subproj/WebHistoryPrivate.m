@@ -69,7 +69,7 @@
     //FIXME: just does linear search through days; inefficient if many days
     count = [_datesWithEntries count];
     for (*index = 0; *index < count; ++*index) {
-        NSComparisonResult result = [date compareDay: [_datesWithEntries objectAtIndex: *index]];
+        NSComparisonResult result = [date _IF_compareDay: [_datesWithEntries objectAtIndex: *index]];
         if (result == NSOrderedSame) {
             return YES;
         }
@@ -319,7 +319,7 @@
         NSArray *entries;
 
         // skip remaining days if they are older than the age limit
-        if ([[_datesWithEntries objectAtIndex:dateIndex] compareDay:ageLimitDate] != NSOrderedDescending) {
+        if ([[_datesWithEntries objectAtIndex:dateIndex] _IF_compareDay:ageLimitDate] != NSOrderedDescending) {
             break;
         }
 
@@ -391,7 +391,7 @@
 
         // test against date limit
         if (!ageLimitPassed) {
-            if ([[entry lastVisitedDate] compareDay:ageLimitDate] != NSOrderedDescending) {
+            if ([[entry lastVisitedDate] _IF_compareDay:ageLimitDate] != NSOrderedDescending) {
                 continue;
             } else {
                 ageLimitPassed = YES;
