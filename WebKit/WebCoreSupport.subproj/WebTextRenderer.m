@@ -424,39 +424,34 @@ static bool hasMissingGlyphs(ATSGlyphVector *glyphs)
 
 - (void)drawCharacters:(const UniChar *)characters length: (unsigned int)length atPoint:(NSPoint)point withColor:(NSColor *)color
 {
-    unsigned int i;
-    CGGlyph localGlyphBuf[LOCAL_GLYPH_BUFFER_SIZE];
+    uint i, numGlyphs;
+    CGGlyph *glyphs, localGlyphBuffer[LOCAL_GLYPH_BUFFER_SIZE];
 #ifndef DRAW_WITHOUT_ADVANCES
-    CGSize *advancePtr, advances[LOCAL_GLYPH_BUFFER_SIZE];
+    CGSize *advances, localAdvanceBuffer[LOCAL_GLYPH_BUFFER_SIZE];
 #endif
-    CGGlyph *usedGlyphBuffer, *glyphBufPtr, *glyphBuffer = 0, *slowGlyphBuffer = 0;
     ATSGlyphRef glyphID;
     CGContextRef cgContext;
-    int numGlyphs;
     NSFont *substituteFont;
     
-    // FIXME:  Deal with other font encodings.
+    // FIXME: Deal with other styles of glyph packing.
     if ([font glyphPacking] != NSNativeShortGlyphPacking &&
         [font glyphPacking] != NSTwoByteGlyphPacking)
         [NSException raise:NSInternalInconsistencyException format:@"%@: Don't know how to deal with font %@", self, [font displayName]];
     
     // Determine if we can use the local stack buffer, otherwise allocate.
-    if (length > LOCAL_GLYPH_BUFFER_SIZE)
-        usedGlyphBuffer = glyphBufPtr = glyphBuffer = (CGGlyph *)malloc (length * sizeof(CGGlyph));
-    else
-        usedGlyphBuffer = glyphBufPtr = &localGlyphBuf[0];
-
-#ifndef DRAW_WITHOUT_ADVANCES
-    advancePtr = &advances[0];
-#endif
+    if (length > LOCAL_GLYPH_BUFFER_SIZE) {
+        glyphs = (CGGlyph *)malloc(length * sizeof(CGGlyph));
+    } else {
+        glyphs = localGlyphBuffer;
+    }
     
-    // Set the number of glyphs to the character length.  This may during the character
+    // Set the number of glyphs to the character length. This may change during the character
     // scan if we find any non base characters.
     numGlyphs = length;
     
     // Pack the glyph buffer and ensure that we have glyphs for all the
     // characters.  If we're missing a glyph look for an alternate font.
-    for (i = 0; i < length; i++){
+    for (i = 0; i < length; i++) {
         UniChar c = characters[i];
 
         // Icky.  Deal w/ non breaking spaces.
@@ -465,17 +460,21 @@ static bool hasMissingGlyphs(ATSGlyphVector *glyphs)
 
         // Is the a combining character?  If so we have to do expensive
         // glyph lookup.
-        if (IsNonBaseChar (c)){
-            bool hasGlyphs;
-            hasGlyphs = [self slowPackGlyphsForCharacters: characters numCharacters: length glyphBuffer: &slowGlyphBuffer numGlyphs: &numGlyphs];
-            if (!hasGlyphs){
+        if (IsNonBaseChar(c)) {
+            CGGlyph *slowGlyphBuffer;
+            bool hasGlyphs = [self slowPackGlyphsForCharacters: characters numCharacters: length glyphBuffer: &slowGlyphBuffer numGlyphs: &numGlyphs];
+            if (hasGlyphs) {
+                if (glyphs != localGlyphBuffer) {
+                    free(glyphs);
+                }
+                glyphs = slowGlyphBuffer;
+            } else {
                 substituteFont = [self substituteFontForCharacters: characters length: length];
-                if (substituteFont){
+                if (substituteFont) {
                     [[[IFTextRendererFactory sharedFactory] rendererWithFont: substituteFont] drawCharacters: characters length: length atPoint: point withColor: color];
                     goto cleanup;
                 }
             }
-            usedGlyphBuffer = slowGlyphBuffer;
             break;
         }
     
@@ -487,23 +486,30 @@ static bool hasMissingGlyphs(ATSGlyphVector *glyphs)
         }
         
         // glyphID == 0 means that the font doesn't contain a glyph for the character.
-        if (glyphID == 0){
+        if (glyphID == 0) {
             substituteFont = [self substituteFontForCharacters: characters length: length];
-            if (substituteFont){
+            if (substituteFont) {
                 [[[IFTextRendererFactory sharedFactory] rendererWithFont: substituteFont] drawCharacters: characters length: length atPoint: point withColor: color];
                 goto cleanup;
             }
         }
 
-        *glyphBufPtr++ = glyphID;
-        
-#ifdef DRAW_WITHOUT_ADVANCES
-#else
-        advancePtr->width = widthForGlyph(self, glyphToWidthMap, glyphID);
-        advancePtr->height = 0;
-        advancePtr++;
-#endif
+        glyphs[i] = glyphID;
     }
+
+#ifndef DRAW_WITHOUT_ADVANCES
+    // Determine if we can use the local stack buffer, otherwise allocate.
+    if (numGlyphs > LOCAL_GLYPH_BUFFER_SIZE) {
+        advances = (CGSize *)malloc(numGlyphs * sizeof(CGSize));
+    } else {
+        advances = localAdvanceBuffer;
+    }
+
+    for (i = 0; i < numGlyphs; i++) {
+        advances[i].width = widthForGlyph(self, glyphToWidthMap, glyphs[i]);
+        advances[i].height = 0;
+    }
+#endif
 
     // This will draw the text from the top of the bounding box down.
     // Qt expects to draw from the baseline.
@@ -523,16 +529,22 @@ static bool hasMissingGlyphs(ATSGlyphVector *glyphs)
 
 #ifdef DRAW_WITHOUT_ADVANCES
     CGContextSetCharacterSpacing(cgContext, 0.0);
-    CGContextShowGlyphsAtPoint (cgContext, point.x, point.y + [font defaultLineHeightForFont] - [self descent] + 1, (CGGlyph *)usedGlyphBuffer, numGlyphs);
+    CGContextShowGlyphsAtPoint (cgContext, point.x, point.y + [font defaultLineHeightForFont] - [self descent] + 1, glyphs, numGlyphs);
 #else      
     CGContextSetTextPosition (cgContext, point.x, point.y - [self descent] + 1);
-    //CGContextShowGlyphsWithAdvances (cgContext, (CGGlyph *)usedGlyphBuffer, advances, numGlyphs);
-    CGContextShowGlyphsWithDeviceAdvances (cgContext, (CGGlyph *)usedGlyphBuffer, advances, numGlyphs);
+    //CGContextShowGlyphsWithAdvances (cgContext, glyphs, advances, numGlyphs);
+    CGContextShowGlyphsWithDeviceAdvances (cgContext, glyphs, advances, numGlyphs);
 #endif
     
 cleanup:
-    free (glyphBuffer);
-    free (slowGlyphBuffer);
+    if (glyphs != localGlyphBuffer) {
+        free(glyphs);
+    }
+#ifndef DRAW_WITHOUT_ADVANCE
+    if (advances != localAdvanceBuffer) {
+        free(advances);
+    }
+#endif
 }
 
 
@@ -760,6 +772,4 @@ cleanup:
     return map;
 }
 
-
 @end
-
