@@ -2645,7 +2645,7 @@ void InsertParagraphSeparatorInQuotedContentCommand::doApply()
         bool startIsBR = false;
         if (startNode != topBlockquote) {
             NodeImpl *n = startNode;
-            bool startIsBR = n->id() == ID_BR;
+            startIsBR = n->id() == ID_BR;
             if (startIsBR)
                 n = n->nextSibling();
             while (n) {

@@ -1,5 +1,18 @@
 2005-01-10  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by Hyatt
+
+        Fix for this bug:
+        
+        <rdar://problem/3943648> extra line is inserted after pressing return within quoted text of reply
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::InsertParagraphSeparatorInQuotedContentCommand::doApply): This bug was the result of a 
+        simple coding mistake. A local variable was erroneously redefined in a deeper scope, and so the 
+        result calculated in that deeper scope was not available when tested.
+
+2005-01-10  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by John
 
         Fix for this bug:
