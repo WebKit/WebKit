@@ -1,5 +1,14 @@
 2004-08-31  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by NOBODY (OOPS!).
+
+        * khtml/editing/htmlediting_impl.cpp:
+        (khtml::InputNewlineCommandImpl::doApply):
+        * layout-tests/editing/deleting/collapse-whitespace-3587601-fix-expected.txt:
+        * layout-tests/editing/selection/move-by-line-001-expected.txt:
+
+2004-08-31  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by me
         
         Added more editing layout tests.

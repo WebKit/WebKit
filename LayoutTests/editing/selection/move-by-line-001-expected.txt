@@ -18,6 +18,6 @@ layer at (0,0) size 800x600
                   RenderText {TEXT} at (13,13) size 31x28
                     text run at (13,13) width 31: "bar"
 selection is CARET:
-start:      position 0 of child 1 {TEXT} of child 1 {TD} of child 1 {TR} of child 2 {TBODY} of child 1 {TABLE} of child 2 {DIV} of root {DIV}
-upstream:   position 0 of child 1 {TD} of child 1 {TR} of child 2 {TBODY} of child 1 {TABLE} of child 2 {DIV} of root {DIV}
-downstream: position 0 of child 1 {TEXT} of child 1 {TD} of child 1 {TR} of child 2 {TBODY} of child 1 {TABLE} of child 2 {DIV} of root {DIV}
+start:      position 3 of child 1 {TEXT} of child 1 {TD} of child 3 {TR} of child 2 {TBODY} of child 1 {TABLE} of child 2 {DIV} of root {DIV}
+upstream:   position 3 of child 1 {TEXT} of child 1 {TD} of child 3 {TR} of child 2 {TBODY} of child 1 {TABLE} of child 2 {DIV} of root {DIV}
+downstream: position 3 of child 1 {TEXT} of child 1 {TD} of child 3 {TR} of child 2 {TBODY} of child 1 {TABLE} of child 2 {DIV} of root {DIV}
