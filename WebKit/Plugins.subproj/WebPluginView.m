@@ -26,6 +26,7 @@
 #import <IFPluginNullEventSender.h>
 #import "IFNullPluginView.h"
 
+#import <WebFoundation/IFNSStringExtensions.h>
 
 @implementation IFPluginView
 
@@ -47,14 +48,15 @@
     [[self class] getCarbonEvent:carbonEvent];
 }
 
-- (EventModifiers)modifiersForEvent:(NSEvent *)event isMouseDown:(BOOL)isMouseDown
+- (EventModifiers)modifiersForEvent:(NSEvent *)event
 {
     EventModifiers modifiers;
     unsigned int modifierFlags = [event modifierFlags];
+    NSEventType eventType = [event type];
     
     modifiers = 0;
     
-    if (!isMouseDown)
+    if (eventType != NSLeftMouseDown && eventType != NSRightMouseDown)
         modifiers |= btnState;
     
     if (modifierFlags & NSCommandKeyMask)
@@ -69,13 +71,13 @@
     if (modifierFlags & NSAlternateKeyMask)
         modifiers |= optionKey;
 
-    if (modifierFlags & NSControlKeyMask)
+    if (modifierFlags & NSControlKeyMask || eventType == NSRightMouseDown)
         modifiers |= controlKey;
 
     return modifiers;
 }
 
-- (void)getCarbonEvent:(EventRecord *)carbonEvent withEvent:(NSEvent *)cocoaEvent isMouseDown:(BOOL)isMouseDown
+- (void)getCarbonEvent:(EventRecord *)carbonEvent withEvent:(NSEvent *)cocoaEvent
 {
     NSPoint where;
     
@@ -86,12 +88,7 @@
     carbonEvent->when = (UInt32)([cocoaEvent timestamp] * 60); // seconds to ticks
     carbonEvent->where.h = (short)where.x;
     carbonEvent->where.v = (short)(NSMaxY([[[NSScreen screens] objectAtIndex:0] frame]) - where.y);
-    carbonEvent->modifiers = [self modifiersForEvent:cocoaEvent isMouseDown:isMouseDown];    
-}
-
-- (void)getCarbonEvent:(EventRecord *)carbonEvent withEvent:(NSEvent *)cocoaEvent
-{
-    [self getCarbonEvent:carbonEvent withEvent:cocoaEvent isMouseDown:Button()];
+    carbonEvent->modifiers = [self modifiersForEvent:cocoaEvent];    
 }
 
 -(void)sendActivateEvent:(BOOL)activate
@@ -121,7 +118,7 @@
 
     acceptedEvent = NPP_HandleEvent(instance, &event); 
     
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(updateEvt): %d  when: %lu\n", acceptedEvent, event.when);
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(updateEvt): %d\n", acceptedEvent);
 }
 
 -(BOOL)acceptsFirstResponder
@@ -139,7 +136,7 @@
     
     acceptedEvent = NPP_HandleEvent(instance, &event); 
     
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(getFocusEvent): %d  when: %lu\n", acceptedEvent, event.when);
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(getFocusEvent): %d\n", acceptedEvent);
     return YES;
 }
 
@@ -153,7 +150,7 @@
     
     acceptedEvent = NPP_HandleEvent(instance, &event);
     
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(loseFocusEvent): %d  when: %lu\n", acceptedEvent, event.when);
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(loseFocusEvent): %d\n", acceptedEvent);
     return YES;
 }
 
@@ -163,12 +160,12 @@
     EventRecord event;
     bool acceptedEvent;
     
-    [self getCarbonEvent:&event withEvent:theEvent isMouseDown:YES];
+    [self getCarbonEvent:&event withEvent:theEvent];
     event.what = mouseDown;
     
     acceptedEvent = NPP_HandleEvent(instance, &event);
     
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(mouseDown): %d pt.v=%d, pt.h=%d ticks=%lu\n", acceptedEvent, event.where.v, event.where.h, event.when);
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(mouseDown): %d pt.v=%d, pt.h=%d\n", acceptedEvent, event.where.v, event.where.h);
 }
 
 -(void)mouseUp:(NSEvent *)theEvent
@@ -176,12 +173,12 @@
     EventRecord event;
     bool acceptedEvent;
     
-    [self getCarbonEvent:&event withEvent:theEvent isMouseDown:NO];
+    [self getCarbonEvent:&event withEvent:theEvent];
     event.what = mouseUp;
 
     acceptedEvent = NPP_HandleEvent(instance, &event);
     
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(mouseUp): %d pt.v=%d, pt.h=%d ticks=%lu\n", acceptedEvent, event.where.v, event.where.h, event.when);
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(mouseUp): %d pt.v=%d, pt.h=%d\n", acceptedEvent, event.where.v, event.where.h);
 }
 
 - (void)mouseEntered:(NSEvent *)theEvent
@@ -201,13 +198,16 @@
 {
     EventRecord event;
     bool acceptedEvent;
-    
+        
     [self getCarbonEvent:&event withEvent:theEvent];
     event.what = adjustCursorEvent;
 
     acceptedEvent = NPP_HandleEvent(instance, &event);
     
     WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(mouseExited): %d\n", acceptedEvent);
+    
+    // Set cursor back to arrow cursor.
+    [[NSCursor arrowCursor] set];
 }
 
 - (void)keyUp:(NSEvent *)theEvent
@@ -381,7 +381,7 @@ static char *newCString(NSString *string)
     window.type = NPWindowTypeWindow;
     
     npErr = NPP_SetWindow(instance, &window);
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_SetWindow: %d, port=%d\n", npErr, (int)nPort.port);
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_SetWindow: %d, port=0x%08lx\n", npErr, (int)nPort.port);
 }
 
 
@@ -440,7 +440,7 @@ static char *newCString(NSString *string)
         }
     }
     
-    eventSender = [[IFPluginNullEventSender alloc] initializeWithNPP:instance functionPointer:NPP_HandleEvent];
+    eventSender = [[IFPluginNullEventSender alloc] initializeWithNPP:instance functionPointer:NPP_HandleEvent window:theWindow];
     [eventSender sendNullEvents];
     trackingTag = [self addTrackingRect:[self bounds] owner:self userData:nil assumeInside:NO];
     
@@ -458,14 +458,26 @@ static char *newCString(NSString *string)
         return;
     isStarted = NO;
 
-    [self removeTrackingRect:trackingTag];        
+    [self removeTrackingRect:trackingTag];
+            
+    // Stop any active streams
     [streams makeObjectsPerformSelector:@selector(stop)];
+    
+    // Stop the null events
     [eventSender stop];
     [eventSender release];
+
+    // Set cursor back to arrow cursor
+    [[NSCursor arrowCursor] set];
+    
+    // Stop notifications
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    
+    // Release web objects here to avoid circular retain
     [webController release];
     [webFrame release];
     [webDataSource release];    
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    
     npErr = NPP_Destroy(instance, NULL);
     WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_Destroy: %d\n", npErr);
 }
@@ -536,8 +548,7 @@ static char *newCString(NSString *string)
 
 - (NSURL *)URLForString:(NSString *)URLString
 {
-    //FIXME: Do plug-ins only request http?
-    if([URLString hasPrefix:@"http://"])
+    if([URLString _IF_looksLikeAbsoluteURL])
         return [NSURL URLWithString:URLString];
     else
         return [NSURL URLWithString:URLString relativeToURL:baseURL];
@@ -667,30 +678,21 @@ static char *newCString(NSString *string)
     }
 }
 
--(NPError)getValue:(NPNVariable)variable value:(void *)value
-{
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPN_GetValue\n");
-    return NPERR_GENERIC_ERROR;
-}
-
--(NPError)setValue:(NPPVariable)variable value:(void *)value
-{
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPN_SetValue\n");
-    return NPERR_GENERIC_ERROR;
-}
-
 -(void)invalidateRect:(NPRect *)invalidRect
 {
+    [self sendUpdateEvent];
     WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPN_InvalidateRect\n");
 }
 
 -(void)invalidateRegion:(NPRegion)invalidateRegion
 {
+    [self sendUpdateEvent];
     WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPN_InvalidateRegion\n");
 }
 
 -(void)forceRedraw
 {
+    [self sendUpdateEvent];
     WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "forceRedraw\n");
 }
 

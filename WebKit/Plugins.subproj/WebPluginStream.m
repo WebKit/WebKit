@@ -79,9 +79,10 @@ static NSString *getCarbonPath(NSString *posixPath);
     [self stop];
     
     NSFileManager *fileManager = [NSFileManager defaultManager];
-    if(path)
+    if(path){
         [fileManager removeFileAtPath:path handler:nil];
-    [path release];
+        [path release];
+    }
     free((void *)npStream.url);
     [URL release];
     [super dealloc];
@@ -150,7 +151,6 @@ static NSString *getCarbonPath(NSString *posixPath);
     
     // FIXME: Need a better way to get a file name from a URL
     filename = [[URL absoluteString] lastPathComponent];
-
     if(transferMode == NP_ASFILE || transferMode == NP_ASFILEONLY) {
         // FIXME: Need to use something like mkstemp?
         path = [[NSString stringWithFormat:@"/tmp/%@", filename] retain];        
@@ -183,7 +183,6 @@ static NSString *getCarbonPath(NSString *posixPath);
 
 - (void)IFURLHandleResourceDidCancelLoading:(IFURLHandle *)sender
 {
-    // Need webController and data source
     IFLoadProgress *loadProgress = [[IFLoadProgress alloc] init];
     loadProgress->totalToLoad = -1;
     loadProgress->bytesSoFar = -1;
@@ -197,7 +196,6 @@ static NSString *getCarbonPath(NSString *posixPath);
 
 - (void)IFURLHandle:(IFURLHandle *)sender resourceDidFailLoadingWithResult:(IFError *)result
 {
-    
     IFLoadProgress *loadProgress = [[IFLoadProgress alloc] init];
     loadProgress->totalToLoad = [sender contentLength];
     loadProgress->bytesSoFar = [sender contentLengthReceived];

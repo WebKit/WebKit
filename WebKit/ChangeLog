@@ -1,3 +1,86 @@
+2002-05-20  Chris Blumenberg  <cblu@apple.com>
+
+	A whole lot of plug-in clean-up.
+
+	Moved the following functions from npapi to IFPlugin.
+
+	* Plugins.subproj/IFPlugin.m:
+	(functionPointerForTVector):
+	(tVectorForFunctionPointer):
+
+
+	Only supply mouse coords when active.
+
+	* Plugins.subproj/IFPluginNullEventSender.h:
+	* Plugins.subproj/IFPluginNullEventSender.m:
+	(-[IFPluginNullEventSender initializeWithNPP:functionPointer:window:]):
+	(-[IFPluginNullEventSender dealloc]):
+	(-[IFPluginNullEventSender sendNullEvents]):
+
+	
+	Minor clean-ups
+
+	* Plugins.subproj/IFPluginStream.mm:
+	(-[IFPluginStream dealloc]):
+	(-[IFPluginStream IFURLHandleResourceDidFinishLoading:data:]):
+	(-[IFPluginStream IFURLHandleResourceDidCancelLoading:]):
+	(-[IFPluginStream IFURLHandle:resourceDidFailLoadingWithResult:]):
+	
+	
+	Removed the isMouseDown flag from the following functions
+	as it was unnecessary.
+
+	Cleaned up logging.
+
+	* Plugins.subproj/IFPluginView.mm:
+	(-[IFPluginView modifiersForEvent:]):
+	(-[IFPluginView getCarbonEvent:withEvent:]):
+	(-[IFPluginView sendUpdateEvent]):
+	(-[IFPluginView becomeFirstResponder]):
+	(-[IFPluginView resignFirstResponder]):
+	(-[IFPluginView mouseDown:]):
+	(-[IFPluginView mouseUp:]):
+	(-[IFPluginView mouseExited:]):
+	(-[IFPluginView setWindow]):
+	(-[IFPluginView start]):
+	(-[IFPluginView stop]):
+
+
+	URLForString now uses _IF_looksLikeAbsoluteURL.
+
+	(-[IFPluginView URLForString:]):
+
+	
+	Implemented the following:
+
+	(-[IFPluginView invalidateRect:]):
+	(-[IFPluginView invalidateRegion:]):
+	(-[IFPluginView forceRedraw]):
+
+	
+	Put implementation of GetValue SetValue in npapi. 
+
+	* Plugins.subproj/npapi.h:
+	* Plugins.subproj/npapi.m:
+	(NPN_GetValue):
+	(NPN_SetValue):
+
+
+	Added drag & drop support.
+
+	* WebView.subproj/IFWebView.mm:
+	(-[IFWebView initWithFrame:]):
+	(-[IFWebView setCanDragFrom:]):
+	(-[IFWebView canDragFrom]):
+	(-[IFWebView setCanDragTo:]):
+	(-[IFWebView canDragTo]):
+	(-[IFWebView draggingEntered:]):
+	(-[IFWebView prepareForDragOperation:]):
+	(-[IFWebView performDragOperation:]):
+	* WebView.subproj/IFWebViewPrivate.h:
+	* WebView.subproj/IFWebViewPrivate.mm:
+	(-[IFWebViewPrivate dealloc]):
+
 2002-05-20  John Sullivan  <sullivan@apple.com>
 
 	Support for bookmark separators

@@ -132,16 +132,17 @@ void NPN_Status(NPP instance, const char* message)
     [plugin status:message];
 }
 
+// According to the plug-in API documentation, 
+// NPN_GetValue and NPN_SetValue are not used in Mac OS.
+
 NPError NPN_GetValue(NPP instance, NPNVariable variable, void *value)
 {
-    IFPluginView *plugin = (IFPluginView *)instance->ndata;
-    return [plugin getValue:variable value:value];
+    return NPERR_GENERIC_ERROR;
 }
 
 NPError NPN_SetValue(NPP instance, NPPVariable variable, void *value)
 {
-    IFPluginView *plugin = (IFPluginView *)instance->ndata;
-    return [plugin setValue:variable value:value];
+    return NPERR_GENERIC_ERROR;
 }	
 
 void NPN_InvalidateRect(NPP instance, NPRect *invalidRect)
@@ -172,36 +173,3 @@ void* NPN_GetJavaPeer(NPP instance)
     return NULL;
 }
 
-// function pointer converters
-
-FunctionPointer functionPointerForTVector(TransitionVector tvp)
-{
-    uint32 temp[6] = {0x3D800000, 0x618C0000, 0x800C0000, 0x804C0004, 0x7C0903A6, 0x4E800420};
-    uint32 *newGlue = NULL;
-
-    if (tvp != NULL) {
-        newGlue = (uint32 *)malloc(sizeof(temp));
-        if (newGlue != NULL) {
-            unsigned i;
-            for (i = 0; i < 6; i++) newGlue[i] = temp[i];
-            newGlue[0] |= ((UInt32)tvp >> 16);
-            newGlue[1] |= ((UInt32)tvp & 0xFFFF);
-            MakeDataExecutable(newGlue, sizeof(temp));
-        }
-    }
-    
-    return (FunctionPointer)newGlue;
-}
-
-TransitionVector tVectorForFunctionPointer(FunctionPointer fp)
-{
-    FunctionPointer *newGlue = NULL;
-    if (fp != NULL) {
-        newGlue = (FunctionPointer *)malloc(2 * sizeof(FunctionPointer));
-        if (newGlue != NULL) {
-            newGlue[0] = fp;
-            newGlue[1] = NULL;
-        }
-    }
-    return (TransitionVector)newGlue;
-}

@@ -21,7 +21,8 @@
 {
     [controller release];
     [frameScrollView release];
-
+    [draggingTypes release];
+    
     //if (widget)
     //    delete widget;
 

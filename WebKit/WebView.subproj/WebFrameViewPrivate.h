@@ -21,6 +21,9 @@ class KHTMLView;
     bool isFlipped;
     bool needsLayout;
     bool needsToApplyStyles;
+    bool canDragTo;
+    bool canDragFrom;
+    NSArray *draggingTypes;
 }
 
 @end
