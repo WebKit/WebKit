@@ -31,6 +31,7 @@
 class QFrame : public QWidget {
 public:
     enum Shape {
+        NoFrame,
         StyledPanel,
     };
     enum Shadow {
