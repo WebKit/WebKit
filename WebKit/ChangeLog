@@ -1,3 +1,11 @@
+y2002-10-21  Darin Adler  <darin@apple.com>
+
+	- fixed 3080246 -- REGRESSION: Animated GIFs sometimes disappear after drag or scroll
+
+        * WebView.subproj/WebImageView.m: (-[WebImageView layout]):
+	My change to this caused the regression. Not sure why, but I'll just back out
+	because the change wasn't important.
+
 2002-10-20  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: 3025847 - Can't use any menu command keys after clicking on a plugin
