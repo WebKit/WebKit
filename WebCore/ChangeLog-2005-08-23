@@ -1,3 +1,10 @@
+2002-10-16  Darin Adler  <darin@apple.com>
+
+	- fixed 3072542 -- double "&" in submit button
+
+        * khtml/rendering/render_form.cpp: (RenderSubmitButton::rawText):
+	Don't double the "&" character, not needed for KWQ.
+
 2002-10-16  David Hyatt  <hyatt@apple.com>
 
 	When render objects were being dynamically wrapped in anonymous
