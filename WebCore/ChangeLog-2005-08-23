@@ -1,3 +1,12 @@
+2005-03-16  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by mjs.
+
+	Fixed <rdar://problem/4046665> REGRESSION (403-405): mypage.apple.com login does not work (hits assertion in Development build)
+
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge canLoadURL:fromReferrer:hideReferrer:]): Check always came back false when callers would send a nil NSURL to this method. Now we allow the empty url cases, eg., <frame src="">
+
 2005-03-16  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
