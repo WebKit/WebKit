@@ -6,13 +6,10 @@
 #import <WebKit/WebBackForwardList.h>
 #import <WebKit/WebContextMenuDelegate.h>
 #import <WebKit/WebDataSource.h>
-#import <WebKit/WebDefaultPolicyDelegate.h>
 #import <WebKit/WebDocument.h>
 #import <WebKit/WebDownload.h>
 #import <WebKit/WebFrame.h>
 #import <WebKit/WebFrameView.h>
-#import <WebKit/WebHTMLRepresentation.h>
-#import <WebKit/WebHTMLView.h>
 #import <WebKit/WebHistory.h>
 #import <WebKit/WebHistoryItem.h>
 #import <WebKit/WebKitErrors.h>

@@ -1,3 +1,11 @@
+2003-04-02  Richard Williamson  <rjw@apple.com>
+
+        Removed private headers.
+        
+        Reviewed by john.
+
+        * Misc.subproj/WebKit.h:
+
 2003-04-01  Trey Matteson  <trey@apple.com>
 
 	3174227 - aggressive caching of generated pages causes problems with WIKI
