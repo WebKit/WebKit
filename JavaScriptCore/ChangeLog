@@ -1,5 +1,27 @@
 2004-01-22  Richard Williamson   <rjw@apple.com>
 
+	Added stubs for ObjC language binding to JavaScript.
+
+        * JavaScriptCore.pbproj/project.pbxproj:
+        * bindings/jni/jni_runtime.h:
+        * bindings/objc/objc_runtime.h: Added.
+        (KJS::Bindings::ObjcParameter::ObjcParameter):
+        (KJS::Bindings::ObjcParameter::~ObjcParameter):
+        (KJS::Bindings::ObjcParameter::operator=):
+        (KJS::Bindings::ObjcParameter::type):
+        (KJS::Bindings::ObjcConstructor::ObjcConstructor):
+        (KJS::Bindings::ObjcConstructor::~ObjcConstructor):
+        (KJS::Bindings::ObjcConstructor::_commonCopy):
+        (KJS::Bindings::ObjcConstructor::operator=):
+        (KJS::Bindings::ObjcConstructor::value):
+        (KJS::Bindings::ObjcConstructor::parameterAt):
+        (KJS::Bindings::ObjcConstructor::numParameters):
+        (KJS::Bindings::ObjcField::ObjcField):
+        (KJS::Bindings::ObjcField::~ObjcField):
+        * bindings/runtime.h:
+
+2004-01-22  Richard Williamson   <rjw@apple.com>
+
 	Simplified JavaString by using UString as backing store.  This
 	revealed a bug in CString's assignment operator which I fixed.
 
