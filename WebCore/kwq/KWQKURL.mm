@@ -997,12 +997,13 @@ void KURL::parse(const char *url, const QString *originalString)
         && tolower(url[userStart+8]) == 't';
     
     bool haveNonHostAuthorityPart = userStart != userEnd || passwordStart != passwordEnd || portStart != portEnd;
-    
-    // add ";"
+
+    // add ":" after scheme
     *p++ = ':';
 
     // if we have at least one authority part or a file URL - add "//"
-    if (isFILENeedsHostPart || ((haveNonHostAuthorityPart || hostStart != hostEnd) && !hostIsLocalHost)) {
+    if (isFILENeedsHostPart || haveNonHostAuthorityPart || hostStart != hostEnd)
+    {
 	*p++ = '/';
 	*p++ = '/';
 
@@ -1032,8 +1033,8 @@ void KURL::parse(const char *url, const QString *originalString)
 	    *p++ = '@';
 	}
 	
-	// copy in the host
-	if (!isFILENeedsHostPart || !hostIsLocalHost || haveNonHostAuthorityPart) {
+	// copy in the host, except in the case of a file URL with authority="localhost"
+	if (!(isFILENeedsHostPart && hostIsLocalHost && !haveNonHostAuthorityPart)) {
             strPtr = url + hostStart;
             const char *hostEndPtr = url + hostEnd;
             while (strPtr < hostEndPtr) {

@@ -1,3 +1,17 @@
+2003-01-21  Trey Matteson  <trey@apple.com>
+
+	3121681 - "localhost" part of link is lost with relative links
+
+	Was broken for abs links with localhost too.  Solution is to tighten up the test
+	for "localhost" removal to only apply to file urls.
+	canonical result.
+
+        Reviewed by Maciej.
+
+        * kwq/KWQKURL.mm:
+        (KURL::parse):  Allow the authority processing even for links with
+	localhost.  Only cut out the addition of host for locahost file links.
+
 2003-01-21  David Hyatt  <hyatt@apple.com>
 
 	Fix nodeAtPoint to return text nodes if the mouse is over them.
