@@ -3,8 +3,11 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x28 [border: (2px solid #FF0000)]
+      RenderBlock {DIV} at (0,0) size 784x104 [border: (2px solid #FF0000)]
+        RenderBlock {UL} at (14,38) size 756x28
+          RenderListItem {LI} at (40,0) size 716x28
+            RenderListMarker at (0,0) size 0x22
 selection is CARET:
-start:      position 0 of  of root {DIV}
-upstream:   position 0 of  of root {DIV}
-downstream: position 1 of  of root {DIV}
+start:      position 0 of child 1 {LI} of child 2 {UL} of root {DIV}
+upstream:   position 0 of child 1 {LI} of child 2 {UL} of root {DIV}
+downstream: position 1 of child 1 {LI} of child 2 {UL} of root {DIV}

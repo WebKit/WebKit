@@ -4,13 +4,15 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x84 [border: (2px solid #FF0000)]
-        RenderText {TEXT} at (14,14) size 12x28
-          text run at (14,14) width 12: "x"
-        RenderBR {BR} at (0,0) size 0x0
-        RenderText {TEXT} at (14,42) size 12x28
-          text run at (14,42) width 12: "x"
-        RenderBR {BR} at (0,0) size 0x0
+        RenderInline {SPAN} at (0,0) size 12x56
+          RenderText {TEXT} at (14,14) size 12x28
+            text run at (14,14) width 12: "x"
+          RenderBR {BR} at (0,0) size 0x0
+          RenderText {TEXT} at (14,42) size 12x28
+            text run at (14,42) width 12: "x"
+          RenderBR {BR} at (0,0) size 0x0
+        RenderText {TEXT} at (0,0) size 0x0
 selection is CARET:
-start:      position 1 of child 3 {TEXT} of root {DIV}
-upstream:   position 1 of child 3 {TEXT} of root {DIV}
-downstream: position 0 of child 4 {BR} of root {DIV}
+start:      position 1 of child 3 {TEXT} of child 1 {SPAN} of root {DIV}
+upstream:   position 1 of child 3 {TEXT} of child 1 {SPAN} of root {DIV}
+downstream: position 0 of child 4 {BR} of child 1 {SPAN} of root {DIV}

@@ -1,3 +1,28 @@
+2005-02-07  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin
+
+        Fix for this bug:
+        
+        <rdar://problem/3953302> Replacing quoted text ends up with blue-colored text that is not quoted
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::DeleteSelectionCommand::doApply): Removed special case delete code for select all. It was
+        causing as many bugs as it fixed. What's more, the design concept is a bit shaky. By removing
+        this special case, the bug goes away.
+        * khtml/editing/htmlediting.h: Remove declaration.
+        
+        Test results using selectAll() updated to reflect changed behavior.
+        
+        * layout-tests/editing/deleting/delete-3775172-fix-expected.txt:
+        * layout-tests/editing/deleting/delete-select-all-001-expected.txt:
+        * layout-tests/editing/deleting/delete-select-all-003-expected.txt:
+        * layout-tests/editing/inserting/insert-3654864-fix-expected.txt:
+        * layout-tests/editing/inserting/insert-3775316-fix-expected.txt:
+        * layout-tests/editing/inserting/insert-3851164-fix-expected.txt:
+        * layout-tests/editing/inserting/insert-3907422-fix-expected.txt:
+        * layout-tests/editing/pasteboard/paste-text-015-expected.txt:
+
 2005-02-06  Darin Adler  <darin@apple.com>
 
         Reviewed by Ken.

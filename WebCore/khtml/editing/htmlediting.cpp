@@ -2283,27 +2283,6 @@ void DeleteSelectionCommand::saveTypingStyleState()
     computedStyle->deref();
 }
 
-bool DeleteSelectionCommand::handleSpecialCaseAllContentDelete()
-{
-    Position start = m_downstreamStart;
-    Position end = m_upstreamEnd;
-
-    ElementImpl *rootElement = start.node()->rootEditableElement();
-    Position rootStart = Position(rootElement, 0);
-    Position rootEnd = Position(rootElement, rootElement ? rootElement->childNodeCount() : 0).equivalentDeepPosition();
-    if (start == VisiblePosition(rootStart).downstreamDeepEquivalent() && end == VisiblePosition(rootEnd).deepEquivalent()) {
-        // Delete every child of the root editable element
-        NodeImpl *node = rootElement->firstChild();
-        while (node) {
-            NodeImpl *next = node->traverseNextSibling();
-            removeNode(node);
-            node = next;
-        }
-        return true;
-    }
-    return false;
-}
-
 bool DeleteSelectionCommand::handleSpecialCaseBRDelete()
 {
     // Check for special-case where the selection contains only a BR on a line by itself after another BR.
@@ -2699,9 +2678,8 @@ void DeleteSelectionCommand::doApply()
     saveTypingStyleState();
     insertPlaceholderForAncestorBlockContent();
     
-    if (!handleSpecialCaseAllContentDelete())
-        if (!handleSpecialCaseBRDelete())
-            handleGeneralDelete();
+    if (!handleSpecialCaseBRDelete())
+        handleGeneralDelete();
     
     // Do block merge if start and end of selection are in different blocks.
     moveNodesAfterNode();
