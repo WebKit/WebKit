@@ -35,11 +35,16 @@
 
 #define DRAG_LABEL_BORDER_X		4.0
 #define DRAG_LABEL_BORDER_Y		2.0
+#define DRAG_LABEL_RADIUS	5
 
 #define MIN_DRAG_LABEL_WIDTH_BEFORE_CLIP	120.0
 
 #define DragImageAlpha    		0.75
 #define MaxDragSize 			NSMakeSize(400, 400)
+
+#import <CoreGraphics/CGStyle.h>
+#import <CoreGraphics/CGSTypes.h>
+#import <CoreGraphics/CGContextGState.h>
 
 @implementation WebHTMLView
 
@@ -561,8 +566,36 @@
                 }
                 NSImage *dragImage = [[[NSImage alloc] initWithSize: imageSize] autorelease];
                 [dragImage lockFocus];
+
                 [[NSColor colorWithCalibratedRed: 0.75 green: 0.75 blue: 1.0 alpha: 0.75] set];
-                [NSBezierPath fillRect:NSMakeRect(0, 0, imageSize.width, imageSize.height)];
+
+                // Drag a rectangle with rounded corners/
+                NSBezierPath *path = [NSBezierPath bezierPath];
+                [path appendBezierPathWithOvalInRect: NSMakeRect(0,0, DRAG_LABEL_RADIUS * 2, DRAG_LABEL_RADIUS * 2)];
+                [path appendBezierPathWithOvalInRect: NSMakeRect(0,imageSize.height - DRAG_LABEL_RADIUS * 2, DRAG_LABEL_RADIUS * 2, DRAG_LABEL_RADIUS * 2)];
+                [path appendBezierPathWithOvalInRect: NSMakeRect(imageSize.width - DRAG_LABEL_RADIUS * 2, imageSize.height - DRAG_LABEL_RADIUS * 2, DRAG_LABEL_RADIUS * 2, DRAG_LABEL_RADIUS * 2)];
+                [path appendBezierPathWithOvalInRect: NSMakeRect(imageSize.width - DRAG_LABEL_RADIUS * 2,0, DRAG_LABEL_RADIUS * 2, DRAG_LABEL_RADIUS * 2)];
+            
+                [path appendBezierPathWithRect: NSMakeRect(DRAG_LABEL_RADIUS, 0, imageSize.width - DRAG_LABEL_RADIUS * 2, imageSize.height)];
+                [path appendBezierPathWithRect: NSMakeRect(0, DRAG_LABEL_RADIUS, DRAG_LABEL_RADIUS + 10, imageSize.height - 2 * DRAG_LABEL_RADIUS)];
+                [path appendBezierPathWithRect: NSMakeRect(imageSize.width - DRAG_LABEL_RADIUS - 20,DRAG_LABEL_RADIUS, DRAG_LABEL_RADIUS + 20, imageSize.height - 2 * DRAG_LABEL_RADIUS)];
+                [path fill];
+            
+                // Draw the label with a slight shadow.
+                CGShadowStyle shadow;
+                CGSGenericObj style;
+                
+                shadow.version    = 0;
+                shadow.elevation  = kCGShadowElevationDefault;
+                shadow.azimuth    = 136.869995;
+                shadow.ambient    = 0.317708;
+                shadow.height     = 2.187500;
+                shadow.radius     = 1.875000;
+                shadow.saturation = kCGShadowSaturationDefault;
+                style = CGStyleCreateShadow(&shadow);
+                [NSGraphicsContext saveGraphicsState];
+                CGContextSetStyle([[NSGraphicsContext currentContext] graphicsPort], style);
+
                 if (drawURLString){
                     if (clipURLString) {
                         urlString = [WebStringTruncator rightTruncateString: urlString toWidth:imageSize.width - (DRAG_LABEL_BORDER_X * 2) withFont:urlFont];
@@ -570,6 +603,10 @@
                     [urlString drawAtPoint: NSMakePoint(DRAG_LABEL_BORDER_X, DRAG_LABEL_BORDER_Y) withAttributes: urlAttributes];
                 }
                 [label drawAtPoint: NSMakePoint (DRAG_LABEL_BORDER_X, DRAG_LABEL_BORDER_Y + urlStringSize.height) withAttributes: labelAttributes];
+
+                [NSGraphicsContext restoreGraphicsState];
+                CGStyleRelease(style);
+
                 [dragImage unlockFocus];
 
                 NSPasteboard *pasteboard = [NSPasteboard pasteboardWithName:NSDragPboard];
