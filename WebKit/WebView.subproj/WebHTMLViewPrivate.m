@@ -735,32 +735,6 @@ static BOOL inNSTextViewDrawRect;
     [super sendEvent:event];
 }
 
-#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_2
-
-// Workaround for bug 3245425 - nextEventMatchingMask:NSScrollWheelMask allows any kind of event.
-- (NSEvent *)nextEventMatchingMask:(unsigned int)mask untilDate:(NSDate *)expiration inMode:(NSString *)mode dequeue:(BOOL)deqFlag
-{
-    if (mask == NSScrollWheelMask) {
-        NSEvent *event = [super nextEventMatchingMask:mask untilDate:expiration inMode:mode dequeue:NO];
-        if (event == nil || [event type] != NSScrollWheel) {
-            return nil;
-        }
-        if (!deqFlag) {
-            return event;
-        }
-    }
-
-    NSEvent *event = [super nextEventMatchingMask:mask untilDate:expiration inMode:mode dequeue:deqFlag];
-
-    // This assertion double-checks that we only get the right types of events from the superclass.
-    // This is part of how I caught bug 3245425 in the act.
-    ASSERT(event == nil || ((1 << [event type]) & mask));
-
-    return event;
-}
-
-#endif // version <= 10.2
-
 @end
 
 @implementation NSMutableDictionary (WebHTMLViewExtras)

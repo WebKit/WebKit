@@ -17,10 +17,6 @@
 #import <WebKit/WebAssertions.h>
 #import <Foundation/NSError_NSURLExtras.h>
 
-#if !defined(MAC_OS_X_VERSION_10_3) || (MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_3)
-#import <Foundation/NSError.h>
-#endif
-
 #import <WebCore/WebCoreResourceLoader.h>
 
 @implementation WebSubresourceClient

@@ -30,17 +30,6 @@
 
 const UniChar BOM = 0xFEFF;
 
-#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_2
-
-struct TECObjectPeek {
-    UInt32 skip1;
-    UInt32 skip2;
-    UInt32 skip3;
-    OptionBits optionsControlFlags;
-};
-
-#endif
-
 class KWQTextDecoder : public QTextDecoder {
 public:
     KWQTextDecoder(CFStringEncoding, KWQEncodingFlags);
@@ -323,12 +312,7 @@ QString KWQTextDecoder::convertUsingTEC(const UInt8 *chs, int len, bool flush)
                 return QString();
             }
 
-#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_2
-            // Workaround for missing TECSetBasicOptions call.
-            reinterpret_cast<TECObjectPeek **>(_converter)[0]->optionsControlFlags = kUnicodeForceASCIIRangeMask;
-#else
             TECSetBasicOptions(_converter, kUnicodeForceASCIIRangeMask);
-#endif
         }
     }
     

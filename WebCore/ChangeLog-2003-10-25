@@ -1,3 +1,18 @@
+2003-07-08  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - removed Jaguar-specific code
+
+        * kwq/KWQComboBox.mm: Remove fudge factor used to move text down and work
+        around problem where pop-up menu text draws too high, bug 3030474.
+
+        * kwq/KWQTextCodec.mm: (KWQTextDecoder::convertUsingTEC): Remove hack used
+        to work around the lack of TECSetBasicOptions in Jaguar, bug 3201405.
+
+        * config.h: The people with Foundation source trees slug it out with the people
+        without Foundation trees, as one line of this file changes back and forth.
+
 2003-07-08  Dave Hyatt  <hyatt@apple.com>
 
 	Make sure that the contents width and height of the view are

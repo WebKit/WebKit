@@ -29,68 +29,6 @@ static NSMutableArray *activeImageRenderers;
     }
 }
 
-#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_2
-
-// Part of the workaround for bug 3090341.
-- (BOOL)blockHasGIFExtensionSignature:(const char *)block length:(int)length
-{
-    int i;
-    for (i = 0; i < length - 10; i++) {
-        if (block[i + 9] == '.' && block[i + 10] == '0') {
-            if (memcmp(block + i, "NETSCAPE2", 9) == 0 || memcmp(block + i, "ANIMEXTS1", 9) == 0) {
-                return YES;
-            }
-        }
-    }
-    return NO;
-}
-
-// Part of the workaround for bug 3090341.
-- (void)checkDataForGIFExtensionSignature:(NSData *)data
-{
-    if (sawGIFExtensionSignature) {
-        return;
-    }
-    
-    const char *dataBytes = [data bytes];
-    int dataLength = [data length];
-    
-    if (GIFExtensionBufferLength) {
-        char leadingEdgeBuffer[20];
-        memcpy(leadingEdgeBuffer, GIFExtensionBuffer, GIFExtensionBufferLength);
-        int dataForLeadingEdgeBufferLength = dataLength;
-        if (dataForLeadingEdgeBufferLength > 10) {
-            dataForLeadingEdgeBufferLength = 10;
-        }
-        memcpy(leadingEdgeBuffer + GIFExtensionBufferLength, dataBytes, dataForLeadingEdgeBufferLength);
-        if ([self blockHasGIFExtensionSignature:leadingEdgeBuffer
-                length:GIFExtensionBufferLength + dataForLeadingEdgeBufferLength]) {
-            sawGIFExtensionSignature = YES;
-            return;
-        }
-    }
-    
-    if ([self blockHasGIFExtensionSignature:dataBytes length:dataLength]) {
-        sawGIFExtensionSignature = YES;
-        return;
-    }
-    
-    if (dataLength < 10) {
-        int keepLength = 10 - dataLength;
-        if (keepLength > GIFExtensionBufferLength) {
-            keepLength = GIFExtensionBufferLength;
-        }
-        memmove(GIFExtensionBuffer + GIFExtensionBufferLength - keepLength, GIFExtensionBuffer, keepLength);
-        memcpy(GIFExtensionBuffer + keepLength, dataBytes, dataLength);
-        GIFExtensionBufferLength = keepLength + dataLength;
-    } else {
-        memcpy(GIFExtensionBuffer, dataBytes + dataLength - 10, 10);
-        GIFExtensionBufferLength = 10;
-    }
-}
-
-#endif
-
 - (id)initWithMIMEType:(NSString *)MIME
 {
     self = [super init];
@@ -106,9 +44,6 @@ static NSMutableArray *activeImageRenderers;
 {
     self = [super initWithData:data];
     if (self != nil) {
-#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_2
-        [self checkDataForGIFExtensionSignature:data];
-#endif
         MIMEType = [MIME copy];
         if ([data length] > 0)
             isNull = NO;
@@ -165,11 +100,6 @@ static NSMutableArray *activeImageRenderers;
     NSBitmapImageRep *imageRep = [[self representations] objectAtIndex:0];
     NSData *data = [[NSData alloc] initWithBytes:bytes length:length];
 
-#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_2
-    // Part of the workaround for bug 3090341.
-    [self checkDataForGIFExtensionSignature:data];
-#endif
-    
     loadStatus = [imageRep incrementalLoadFromData:data complete:isComplete];
     [data release];
     switch (loadStatus) {

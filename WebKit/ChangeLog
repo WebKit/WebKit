@@ -1,3 +1,35 @@
+2003-07-08  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed 3125264 -- nuke NSImage workaround when we drop Jaguar support
+
+        * Misc.subproj/WebNSImageExtras.m: Removed the workaround.
+
+        - removed other Jaguar-specific code
+
+        * WebCoreSupport.subproj/WebImageRenderer.m: Remove workaround for improper
+        handling of GIF animation loops with no loop counting, bug 3090341.
+
+        * WebView.subproj/WebHTMLViewPrivate.m: Remove workaround for problem extracting
+        scroll wheel events without also getting all others, which caused jumping around
+        if you used the scroll wheel while moving the mouse, bug 3245425.
+
+        * Misc.subproj/WebKitErrorsPrivate.h: Remove Jaguar-only import of <NSError.h>.
+        * Plugins.subproj/WebNetscapePluginPackage.m: Remove Jaguar-only side of #if.
+        * Plugins.subproj/WebNetscapePluginRepresentation.m: Remove Jaguar-only import
+        of <NSError.h>.
+        * WebKit/Plugins.subproj/WebPluginPackage.m: Remove unnecessary import of <NSError.h>.
+        * Plugins.subproj/WebPluginPackage.m: Remove Jaguar-only side of #if.
+        * WebCoreSupport.subproj/WebSubresourceClient.m: Remove Jaguar-only import
+        of <NSError.h>.
+        * WebView.subproj/WebDefaultFrameLoadDelegate.m: Remove Jaguar-only import
+        of <NSError.h>.
+        * WebView.subproj/WebImageRepresentation.m: Remove Jaguar-only import
+        of <NSError.h>.
+
+        * WebKit/English.lproj/StringsNotToBeLocalized.txt: Updated for this and other recent changes.
+
 2003-07-08  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3134494>: no progressive loading for standalone images

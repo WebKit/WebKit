@@ -10,13 +10,7 @@
 
 #import <WebKit/WebKitLogging.h>
 
-#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_2
-// header containing private NSBundle declarations on Jaguar
-#import <Foundation/NSBundle_Private.h>
-#else
-// header containing private NSBundle declarations on Panther
 #import <Foundation/NSPrivateDecls.h>
-#endif
 
 @implementation WebPluginPackage
 
