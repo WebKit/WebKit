@@ -1,3 +1,10 @@
+2002-09-27  Darin Adler  <darin@apple.com>
+
+	- fixed 3033969 -- repro crash (infinite recursion in JavaScript)
+	clicking on "screens" option at fsv.sf.net
+
+        * kjs/object.h: Change recursion limit to 100 levels rather than 1000.
+
 === Alexander-25 ===
 
 2002-09-26  Darin Adler  <darin@apple.com>
