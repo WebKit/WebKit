@@ -470,6 +470,13 @@ static void checkPseudoState( DOM::ElementImpl *e )
     pseudoState = KHTMLFactory::vLinks()->contains( u ) ? PseudoVisited : PseudoLink;
 }
 
+#ifdef APPLE_CHANGES
+#define OPTIMIZE_STRING_USAGE
+#ifdef OPTIMIZE_STRING_USAGE
+static CFMutableStringRef reuseableString = 0;
+#endif
+#endif
+
 bool CSSStyleSelector::checkOneSelector(DOM::CSSSelector *sel, DOM::ElementImpl *e)
 {
 
@@ -523,9 +530,13 @@ bool CSSStyleSelector::checkOneSelector(DOM::CSSSelector *sel, DOM::ElementImpl 
     }
     if(sel->match == CSSSelector::Pseudo)
     {
+#if (defined(APPLE_CHANGES) && defined(OPTIMIZE_STRING_USAGE))
+	const QString value = QString::gstring_toQString(&reuseableString, (UniChar *)(sel->value.unicode()), sel->value.length());
+#else
         // Pseudo elements. We need to check first child here. No dynamic pseudo
         // elements for the moment
 	const QString& value = sel->value.string();
+#endif
 	//kdDebug() << "CSSOrderedRule::pseudo " << value << endl;
 	if(value == "first-child") {
 	    // first-child matches the first child that is an element!

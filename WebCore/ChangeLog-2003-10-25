@@ -1,3 +1,18 @@
+2002-03-15  Richard Williamson  <rjw@apple.com>
+
+        Optimizations that remove unnecessary cfstring allocations of local scope
+        strings.  QString::gstring_toQString and QString::gstring_toCFString were
+        added to simplify the reuse of a static CFString as the backing store for
+        local QStrings.  Hit the top two problem areas.  Many more gains to be had
+        by using this technique.
+        
+	* src/kdelibs/khtml/css/cssstyleselector.cpp:
+	(CSSStyleSelector::checkOneSelector):
+	* src/kdelibs/khtml/rendering/render_text.cpp: (RenderText::calcMinMaxWidth):
+	* src/kwq/KWQString.mm: (QString::gstring_toQString),
+	(QString::gstring_toCFString):
+	* src/kwq/qt/qstring.h:
+
 2002-03-14  Richard Williamson  <rjw@apple.com>
 
         Fixed another problem in QString::find().

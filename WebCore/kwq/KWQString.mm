@@ -171,6 +171,24 @@ QString QString::fromCFString(CFStringRef cfs)
     return qs;
 }
 
+QString QString::gstring_toQString(CFMutableStringRef *ref, UniChar *uchars, int len){
+    if (*ref == 0)
+        *ref = CFStringCreateMutableWithExternalCharactersNoCopy (kCFAllocatorDefault, uchars, len, len, kCFAllocatorDefault);
+    else
+        CFStringSetExternalCharactersNoCopy (*ref, uchars, len, len);
+    return QString::fromCFMutableString(*ref);
+}
+
+CFMutableStringRef QString::gstring_toCFString(CFMutableStringRef *ref, UniChar *uchars, int len)
+{
+    if (*ref == 0)
+        *ref = CFStringCreateMutableWithExternalCharactersNoCopy (kCFAllocatorDefault, uchars, len, len, kCFAllocatorDefault);
+    else
+        CFStringSetExternalCharactersNoCopy (*ref, uchars, len, len);
+    return *ref;
+}
+
+
 
 // constructors, copy constructors, and destructors ----------------------------
 

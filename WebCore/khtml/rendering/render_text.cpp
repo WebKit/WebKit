@@ -694,11 +694,7 @@ void RenderText::calcMinMaxWidth()
         if (wordlen)
         {
 #if (defined(APPLE_CHANGES) && defined(OPTIMIZE_STRING_USAGE))
-            if (reuseableString == 0)
-                reuseableString = CFStringCreateMutableWithExternalCharactersNoCopy (kCFAllocatorDefault, (UniChar *)(str->s+i), wordlen, wordlen, kCFAllocatorDefault);
-            else
-                CFStringSetExternalCharactersNoCopy (reuseableString, (UniChar *)(str->s+i), wordlen, wordlen);
-            int w = _fm._width(reuseableString);
+            int w = _fm._width(QString::gstring_toCFString(&reuseableString, (UniChar *)(str->s+i), wordlen));
 #else
             int w = _fm.width(QConstString(str->s+i, wordlen).string());
 #endif
