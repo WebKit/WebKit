@@ -1,3 +1,19 @@
+2002-12-08  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: 3121627 - REGRESSION: partial progress is left in address field after download
+
+        Reviewed by: darin
+
+	In WebMainResourceClient, make sure to always call receivedError before _clearProvisionalDataSource so that
+	receivedError works. This is done in multiple places, so I factored this out into one method interuptForPolicyChange.
+
+        * WebView.subproj/WebControllerPrivate.m:
+        (-[WebController _mainReceivedError:fromDataSource:]): added asserts for nil error, dataSource and frame
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient interruptForPolicyChange]): renamed from notifyDelegatesOfInterruptionByPolicyChange because it now also sets the provisionalDataSource on the frame to nil. 
+        (-[WebMainResourceClient stopLoadingForPolicyChange]): call interruptForPolicyChange, stop load
+        (-[WebMainResourceClient continueAfterContentPolicy:response:]): call interruptForPolicyChange
+
 2002-12-06  Trey Matteson  <trey@apple.com>
 
 	Clean up some printfs.  Use WebKitLogPageCache for page cache info.

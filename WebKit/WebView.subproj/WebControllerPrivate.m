@@ -152,7 +152,11 @@
 
 - (void)_mainReceivedError: (WebError *)error fromDataSource: (WebDataSource *)dataSource
 {
+    ASSERT(error);
+    ASSERT(dataSource);
+    
     WebFrame *frame = [dataSource webFrame];
+    ASSERT(frame);
     
     [dataSource _setMainDocumentError: error];
     [dataSource _setPrimaryLoadComplete: YES];

@@ -90,11 +90,22 @@
     [self release];
 }
 
+- (void)interruptForPolicyChange
+{
+    // Terminate the locationChangeDelegate correctly.
+    WebError *interruptError = [WebError errorWithCode:WebErrorLocationChangeInterruptedByPolicyChange inDomain:WebErrorDomainWebKit failingURL:nil];
+
+    // Must call receivedError before _clearProvisionalDataSource because
+    // if we remove the data source from the frame, we can't get back to the frame any more.
+    [self receivedError:interruptError];
+    [[dataSource webFrame] _clearProvisionalDataSource];
+    
+    [self notifyDelegatesOfInterruptionByPolicyChange];
+}
 
 -(void)stopLoadingForPolicyChange
 {
-    [[dataSource webFrame] _clearProvisionalDataSource];
-    [self notifyDelegatesOfInterruptionByPolicyChange];
+    [self interruptForPolicyChange];
     [self cancelQuietly];
 }
 
@@ -140,16 +151,6 @@
     return newRequest;
 }
 
-- (void)notifyDelegatesOfInterruptionByPolicyChange
-{
-    // Terminate the locationChangeDelegate correctly.
-    WebError *interruptError = [WebError errorWithCode:WebErrorLocationChangeInterruptedByPolicyChange inDomain:WebErrorDomainWebKit failingURL:nil];
-    
-    [self receivedError:interruptError];
-
-    [super notifyDelegatesOfInterruptionByPolicyChange];
-}
-
 -(void)continueAfterContentPolicy:(WebPolicyAction)contentPolicy response:(WebResourceResponse *)r
 {
     if (!defersBeforeCheckingPolicy) {
@@ -180,9 +181,8 @@
             }
 	    [dataSource _setDownloadPath:saveFilename];
 	}
-	
-	[[dataSource webFrame] _clearProvisionalDataSource];
-	[self notifyDelegatesOfInterruptionByPolicyChange];
+
+        [self interruptForPolicyChange];
 	
 	// Hand off the dataSource to the download handler.  This will cause the remaining
 	// handle delegate callbacks to go to the controller's download delegate.
