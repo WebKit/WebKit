@@ -64,6 +64,9 @@
 
 - (int)_web_URLStringLength
 {
+    return [[self _web_absoluteString] length];
+#if 0
+    // URL API FIXME: Convert to new URL API when available
     int length = 0;
     if (!CFURLGetBaseURL((CFURLRef)self)) {
         length = CFURLGetBytes((CFURLRef)self, NULL, 0);
@@ -72,6 +75,7 @@
         length = [[self absoluteString] length];
     }
     return length;
+#endif
 }
 
 @end

@@ -1,5 +1,13 @@
 2003-07-17  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by me
+
+        * Misc.subproj/WebNSURLExtras.m:
+        (-[NSURL _web_URLStringLength]): Fix premature use of new CFURL API.
+	New code is ifdef'ed out for now until everyone has revved.
+
+2003-07-17  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by Darin
 
         * WebCoreSupport.subproj/WebBridge.m:
