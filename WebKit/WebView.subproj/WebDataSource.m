@@ -82,17 +82,6 @@
 // Returns YES if there are any pending loads.
 - (BOOL)isLoading
 {
-    // FIXME: This comment says that the state check is just an optimization, but that's
-    // not true. There's a window where the state is complete, but primaryLoadComplete
-    // is still NO and loading is still YES, because _setPrimaryLoadComplete has not yet
-    // been called. We should fix that and simplify this code here.
-    
-    // As an optimization, check to see if the frame is in the complete state.
-    // If it is, we aren't loading, so we don't have to check all the child frames.    
-    if ([[self webFrame] _state] == WebFrameStateComplete) {
-        return NO;
-    }
-    
     if (!_private->primaryLoadComplete && _private->loading) {
         return YES;
     }

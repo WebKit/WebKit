@@ -6,6 +6,7 @@
 "%@ %@"
 "%@-%d"
 "%@/%@"
+"%@:%u"
 "%d"
 "%lf"
 "(This file must be converted with BinHex 4.0)"

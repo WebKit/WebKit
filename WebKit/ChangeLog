@@ -1,3 +1,17 @@
+2003-03-17  Darin Adler  <darin@apple.com>
+
+        Reviewed by Chris and Richard.
+
+        - fixed 3200611 -- Progress indicator in tabs not shown for subframe loads
+
+        * WebView.subproj/WebDataSource.m: (-[WebDataSource isLoading]):
+        Remove the early out for when we're in the WebFrameStateComplete state.
+        The top frame being complete does not really tell us anything about whether subframes
+        are complete, especially since they can have their locations changed without affecting
+        the top level frame at all.
+
+        * English.lproj/StringsNotToBeLocalized.txt: Updated for recent changes.
+
 2003-03-17  Chris Blumenberg  <cblu@apple.com>
 
 	Made data categories use the "_web_" prefix.
