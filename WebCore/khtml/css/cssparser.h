@@ -97,7 +97,7 @@ namespace DOM {
 	~CSSParser();
 
 	void parseSheet( DOM::CSSStyleSheetImpl *sheet, const DOM::DOMString &string );
-	DOM::CSSRuleImpl *parseRule( const DOM::DOMString &string );
+	DOM::CSSRuleImpl *parseRule( DOM::CSSStyleSheetImpl *sheet, const DOM::DOMString &string );
 	bool parseValue( DOM::CSSStyleDeclarationImpl *decls, int id, const DOM::DOMString &string,
 			 bool _important, bool _nonCSSHint );
 	bool parseDeclaration( DOM::CSSStyleDeclarationImpl *decls, const DOM::DOMString &string,

@@ -155,8 +155,10 @@ void CSSParser::parseSheet( CSSStyleSheetImpl *sheet, const DOMString &string )
     rule = 0;
 }
 
-CSSRuleImpl *CSSParser::parseRule( const DOM::DOMString &string )
+CSSRuleImpl *CSSParser::parseRule( DOM::CSSStyleSheetImpl *sheet, const DOM::DOMString &string )
 {
+    styleElement = sheet;
+    
     const char konq_rule[] = "@-konq-rule{";
     int length = string.length() + 4 + strlen(konq_rule);
     data = (unsigned short *)malloc( length *sizeof( unsigned short ) );

@@ -1,5 +1,20 @@
 2003-03-03  David Hyatt  <hyatt@apple.com>
 
+	Fix for 3185852, crash when dynamically inserting rules because
+	of an unitialized parser variable.
+	
+        Reviewed by darin
+
+        * khtml/css/css_ruleimpl.cpp:
+        (CSSMediaRuleImpl::insertRule):
+        * khtml/css/css_stylesheetimpl.cpp:
+        (CSSStyleSheetImpl::insertRule):
+        * khtml/css/cssparser.cpp:
+        (CSSParser::parseRule):
+        * khtml/css/cssparser.h:
+
+2003-03-03  David Hyatt  <hyatt@apple.com>
+
 	Clean up dynamic ID/CLASS setting/removal.  Make ID actually
 	work when set dynamically.  Fixes bug 3173050.
 	

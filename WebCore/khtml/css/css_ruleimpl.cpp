@@ -238,7 +238,7 @@ unsigned long CSSMediaRuleImpl::insertRule( const DOMString &rule,
                                             unsigned long index )
 {
     CSSParser p( strictParsing );
-    CSSRuleImpl *newRule = p.parseRule( rule );
+    CSSRuleImpl *newRule = p.parseRule( parentStyleSheet(), rule );
 
     return newRule ? m_lstCSSRules->insertRule( newRule, index ) : 0;
 }

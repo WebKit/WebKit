@@ -166,7 +166,7 @@ unsigned long CSSStyleSheetImpl::insertRule( const DOMString &rule, unsigned lon
         return 0;
     }
     CSSParser p( strictParsing );
-    CSSRuleImpl *r = p.parseRule( rule );
+    CSSRuleImpl *r = p.parseRule( this, rule );
 
     if(!r) {
         exceptioncode = CSSException::SYNTAX_ERR + CSSException::_EXCEPTION_OFFSET;
