@@ -1,5 +1,17 @@
 2005-03-08  John Sullivan  <sullivan@apple.com>
 
+        A couple of tweaks to the previous patch, from Darin's review.
+
+        * Misc.subproj/WebNSPasteboardExtras.m:
+        (_writableTypesForImageWithoutArchive):
+        remove unnecessary _web prefix
+        (_writableTypesForImageWithArchive):
+        ditto
+        (+[NSPasteboard _web_writableTypesForImageIncludingArchive:]):
+        use mutableCopy rather than initWithArray:, and adjust for name changes
+
+2005-03-08  John Sullivan  <sullivan@apple.com>
+
         Reviewed by Ken.
         
         - fixed <rdar://problem/4031826> REGRESSION (Mail): standalone images from 

@@ -65,7 +65,7 @@ NSString *WebURLNamePboardType = nil;
     return types;
 }
 
-static NSArray *_web_writableTypesForImageWithoutArchive ()
+static NSArray *_writableTypesForImageWithoutArchive (void)
 {
     static NSMutableArray *types = nil;
     if (types == nil) {
@@ -75,11 +75,11 @@ static NSArray *_web_writableTypesForImageWithoutArchive ()
     return types;
 }
 
-static NSArray *_web_writableTypesForImageWithArchive ()
+static NSArray *_writableTypesForImageWithArchive (void)
 {
     static NSMutableArray *types = nil;
     if (types == nil) {
-        types = [[NSMutableArray alloc] initWithArray:_web_writableTypesForImageWithoutArchive()];
+        types = [_writableTypesForImageWithoutArchive() mutableCopy];
         [types addObject:NSRTFDPboardType];
         [types addObject:WebArchivePboardType];
     }
@@ -89,8 +89,8 @@ static NSArray *_web_writableTypesForImageWithArchive ()
 + (NSArray *)_web_writableTypesForImageIncludingArchive:(BOOL)hasArchive
 {
     return hasArchive 
-        ? _web_writableTypesForImageWithArchive()
-        : _web_writableTypesForImageWithoutArchive();
+        ? _writableTypesForImageWithArchive()
+        : _writableTypesForImageWithoutArchive();
 }
 
 + (NSArray *)_web_dragTypesForURL
