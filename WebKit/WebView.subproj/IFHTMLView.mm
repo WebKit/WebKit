@@ -318,13 +318,9 @@
     //    return;
     //}
     
-    // Draw plain white bg in empty case, to avoid redraw weirdness when
-    // no page is yet loaded (2890818). We may need to modify this to always
-    // draw the background color, in which case we'll have to make sure the
-    // no-widget case is still handled correctly.
     if (widget == 0) {
-        [[NSColor whiteColor] set];
-        NSRectFill(rect);
+        // This used to fill with white, but the window-with-no-content case is now handled
+        // by IFHTMLView.
         return;
     }
 

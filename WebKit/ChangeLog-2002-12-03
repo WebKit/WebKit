@@ -1,5 +1,14 @@
 2002-07-02  John Sullivan  <sullivan@apple.com>
 
+	Remove unnecessary code to fill with white from here; this code
+	path has changed. Now it just bails out early in the case where
+	there's no widget.
+
+        * WebView.subproj/IFHTMLView.mm:
+        (-[IFHTMLView drawRect:]):
+
+2002-07-02  John Sullivan  <sullivan@apple.com>
+
 	Made IFWebView fill with white when there's no document view. This fixes:
 	
 	- 2978210 -- problems with "hide status bar"
