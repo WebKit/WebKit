@@ -1,3 +1,14 @@
+2002-04-19  Darin Adler  <darin@apple.com>
+
+	* Plugins.subproj/IFPluginView.h: Re-add the attributes and values arrays,
+	since they need to live the life of the plugin.
+	* Plugins.subproj/IFPluginView.mm: (newCString): New function to make a C++
+	new-allocated C string from an NSString.
+	(-[IFPluginView initWithFrame:plugin:url:mime:arguments:mode:]): Move code
+	to allocate the arrays back here.
+	(-[IFPluginView dealloc]): Deallocate the arrays and their contents.
+	(-[IFPluginView start]): Simplify now that it does no work.
+
 2002-04-18  Chris Blumenberg  <cblu@apple.com>
 
 	Made stop and start to work better. Fixed a bug darin made.

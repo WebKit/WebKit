@@ -36,7 +36,16 @@ extern "C" {
 
 #pragma mark IFPLUGINVIEW
 
-- initWithFrame:(NSRect)r plugin:(WCPlugin *)plug url:(NSString *)location mime:(NSString *)mimeType arguments:(NSDictionary *)args mode:(uint16)mode
+// Could do this as a category on NSString if we wanted.
+static char *
+newCString(NSString *string)
+{
+    char *cString = new char[[string cStringLength] + 1];
+    [string getCString:cString];
+    return cString;
+}
+
+- initWithFrame:(NSRect)r plugin:(WCPlugin *)plug url:(NSString *)location mime:(NSString *)mimeType arguments:(NSDictionary *)arguments mode:(uint16)mode
 {
     NSString *baseURLString;
     
@@ -50,7 +59,6 @@ extern "C" {
     mime = [mimeType retain];
     URL = [location retain];
     plugin = [plug retain];
-    arguments = [args copy];
     
     // load the plug-in if it is not already loaded
     [plugin load];
@@ -70,13 +78,38 @@ extern "C" {
     NPP_SetValue = 	[plugin NPP_SetValue];
     NPP_Print = 	[plugin NPP_Print]; 
 
-
     // get base URL which was added in the args in the part
     baseURLString = [arguments objectForKey:@"WebKitBaseURL"];
     if (baseURLString)
         baseURL = [[NSURL URLWithString:baseURLString] retain];
             
     isHidden = [arguments objectForKey:@"hidden"] != nil;
+    fullMode = [arguments objectForKey:@"wkfullmode"] != nil;
+    
+    argsCount = 0;
+    if (fullMode) {
+        cAttributes = 0;
+        cValues = 0;
+    } else {
+        // Convert arguments dictionary to 2 string arrays.
+        // These arrays are passed to NPP_New, but the strings need to be
+        // modifiable and live the entire life of the plugin.
+        
+        argsCount = [arguments count];
+        
+        cAttributes = new char * [argsCount];
+        cValues = new char * [argsCount];
+        
+        NSEnumerator *e = [arguments keyEnumerator];
+        NSString *key;
+        while ((key = [e nextObject])) {
+            if (![key isEqualToString:@"wkfullmode"]) {
+                cAttributes[argsCount] = newCString(key);
+                cValues[argsCount] = newCString([arguments objectForKey:key]);
+                argsCount++;
+            }
+        }
+    }
     
     // Initialize globals
     transferred = NO;
@@ -96,8 +129,13 @@ extern "C" {
     
     // remove downloaded files
     fileManager = [NSFileManager defaultManager];
-    for(i=0; i<[filesToErase count]; i++){  
+    for (i=0; i<[filesToErase count]; i++){  
         [fileManager removeFileAtPath:[filesToErase objectAtIndex:i] handler:nil]; 
+    }
+    
+    for (i = 0; i < argsCount; i++) {
+        delete [] cAttributes[i];
+        delete [] cValues[i];
     }
     
     [filesToErase release];
@@ -105,7 +143,8 @@ extern "C" {
     [mime release];
     [URL release];
     [plugin release];
-    [arguments release];
+    delete [] cAttributes;
+    delete [] cValues;
     [super dealloc];
 }
 
@@ -196,30 +235,7 @@ extern "C" {
     
     isStarted = YES;
     
-    if (![arguments objectForKey:@"wkfullmode"]) {
-        // convert arguments dictionary to 2 string arrays
-        
-        int argsCount = [arguments count];
-        
-        char **cAttributes = new char * [argsCount];
-        char **cValues = new char * [argsCount];
-        
-        NSEnumerator *e = [arguments keyEnumerator];
-        NSString *key;
-        int i = 0;
-        while ((key = [e nextObject])) {
-            cAttributes[i] = (char *)[key cString];
-            cValues[i] = (char *)[[arguments objectForKey:key] cString];
-            i++;
-        }
-        
-        npErr = NPP_New((char *)[mime cString], instance, NP_EMBED, argsCount, cAttributes, cValues, &saved);
-        
-        delete [] cAttributes;
-        delete [] cValues;
-    } else {
-        npErr = NPP_New((char *)[mime cString], instance, NP_FULL, 0, NULL, NULL, &saved);
-    }
+    npErr = NPP_New((char *)[mime cString], instance, fullMode ? NP_FULL : NP_EMBED, argsCount, cAttributes, cValues, &saved);
 
     WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_New: %d\n", npErr);
     
