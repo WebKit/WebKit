@@ -376,6 +376,8 @@ void RenderBlock::layoutBlock(bool relayoutChildren)
     if (!relayoutChildren && posChildNeedsLayout() && !normalChildNeedsLayout() && !selfNeedsLayout()) {
         // All we have to is lay out our positioned objects.
         layoutPositionedObjects(relayoutChildren);
+        if (hasOverflowClip())
+            m_layer->updateScrollInfoAfterLayout();
         setNeedsLayout(false);
         return;
     }

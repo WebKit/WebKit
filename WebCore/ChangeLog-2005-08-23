@@ -1,3 +1,17 @@
+2004-04-15  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3624335, bugs with overflow and positioned objects.  The scrollbar didn't properly update
+	as you changed the sizes of positioned objects inside an overflow block.
+	
+        Reviewed by rjw
+
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::layoutBlock):
+        * khtml/rendering/render_flexbox.cpp:
+        (khtml::RenderFlexibleBox::layoutBlock):
+        * khtml/rendering/render_layer.cpp:
+        (RenderLayer::updateScrollInfoAfterLayout):
+
 2004-04-15  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Dave

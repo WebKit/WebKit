@@ -668,6 +668,9 @@ RenderLayer::updateScrollInfoAfterLayout()
         m_hBar->setKnobProportion(clientWidth, m_scrollWidth);
 #else
         m_hBar->setRange(0, m_scrollWidth-clientWidth);
+        m_object->repaintRectangle(QRect(m_object->borderLeft(), m_object->borderTop() + clientHeight(),
+                                   horizontalScrollbarHeight(),
+                                   m_object->width() - m_object->borderLeft() - m_object->borderRight()));
 #endif
     }
     if (m_vBar) {
@@ -680,7 +683,12 @@ RenderLayer::updateScrollInfoAfterLayout()
 #else
         m_vBar->setRange(0, m_scrollHeight-clientHeight);
 #endif
+        m_object->repaintRectangle(QRect(m_object->borderLeft() + m_object->clientWidth(),
+                                   m_object->borderTop(), verticalScrollbarWidth(), 
+                                   m_object->height() - m_object->borderTop() - m_object->borderBottom()));
     }
+    
+    m_object->repaint();
 }
 
 #if APPLE_CHANGES
