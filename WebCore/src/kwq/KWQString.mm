@@ -1073,7 +1073,7 @@ QString &QString::append(const QString &qs)
 
 void QString::_copyInternalString()
 {
-    if (s) {
+    if (s && CFGetRetainCount(s) > 1) {
         CFMutableStringRef tmp;
         tmp = CFStringCreateMutableCopy(kCFAllocatorDefault, 0, s);
         CFRelease (s);
