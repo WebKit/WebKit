@@ -1,3 +1,19 @@
+2002-12-15  David Hyatt  <hyatt@apple.com>
+
+	Make sure framesets don't get built twice when FOUC delays
+	their loading.
+	
+        Reviewed by gramps
+
+        * khtml/css/cssstyleselector.cpp:
+        * khtml/css/cssstyleselector.h:
+        * khtml/html/html_baseimpl.cpp:
+        (HTMLFrameSetElementImpl::attach):
+        * khtml/rendering/render_style.cpp:
+        (RenderStyle::operator==):
+        (RenderStyle::isStyleAvailable):
+        * khtml/rendering/render_style.h:
+
 2002-12-15  Darin Adler  <darin@apple.com>
 
         Reviewed by Dave.

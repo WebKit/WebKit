@@ -650,6 +650,8 @@ public:
     bool visuallyOrdered() const { return inherited_flags._visuallyOrdered; }
     void setVisuallyOrdered(bool b) {  inherited_flags._visuallyOrdered = b; }
 
+    bool isStyleAvailable() const;
+    
 // attribute getter methods
 
     EDisplay 	display() const { return noninherited_flags._display; }
