@@ -1,5 +1,24 @@
 2002-12-04  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by: Richard Williamson
+
+	Added explicit lock/unlock methods so Sherlock can grab the
+	interpreter lock as needed.
+	
+	- partially addressed 3084320 - JavaScriptCore crash
+	
+        * kjs/internal.cpp:
+        (InterpreterImp::InterpreterImp):
+        (InterpreterImp::lock):
+        (InterpreterImp::unlock):
+        * kjs/internal.h:
+        * kjs/interpreter.cpp:
+        (Interpreter::lock):
+        (Interpreter::unlock):
+        * kjs/interpreter.h:
+
+2002-12-04  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by: Darin Adler
 
 	Set things up so JavaScriptCore builds in PCRE and uses it for

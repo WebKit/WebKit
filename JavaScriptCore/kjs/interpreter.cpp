@@ -89,6 +89,16 @@ void Interpreter::initGlobalObject()
   rep->initGlobalObject();
 }
 
+void Interpreter::lock()
+{
+  InterpreterImp::lock();
+}
+
+void Interpreter::unlock()
+{
+  InterpreterImp::unlock();
+}
+
 ExecState *Interpreter::globalExec()
 {
   return rep->globalExec();
