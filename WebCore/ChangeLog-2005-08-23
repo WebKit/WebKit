@@ -1,3 +1,17 @@
+2004-08-18  Trey Matteson  <trey@apple.com>
+
+	3765958	- downstreamPosition() can hit infinite loop when at end of doc
+	
+	The problem was that I had a position that was after the maximum position in the text
+	node, because it was the old caret position before a backspace was processed.  Later
+	I happened to call downstream() on that position, and hit the bug.  Fix is to consider
+	a position past the end point of its node if it is *greater than* or equal to its max offset.
+		 	
+        Reviewed by Ken.
+
+        * khtml/xml/dom_positioniterator.cpp:
+        (DOM::PositionIterator::atEnd):
+
 2004-08-18  David Hyatt  <hyatt@apple.com>
 
 	Make the header overlap the footer in the zero-line case.  Changes to Emerson's template will ensure the

@@ -81,7 +81,7 @@ bool PositionIterator::atEnd() const
     if (m_current.isEmpty())
         return true;
 
-    return m_current.offset() == m_current.node()->maxOffset() && 
+    return m_current.offset() >= m_current.node()->maxOffset() && 
         m_current.node()->nextLeafNode() == 0;
 }
 
