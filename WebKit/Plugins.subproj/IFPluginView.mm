@@ -695,7 +695,7 @@ static char *newCString(NSString *string)
     }else{
         frame = [webFrame frameNamed:target];
         if(!frame){
-            [webController openNewWindowWithURL:url];
+            [[webController windowContext] openNewWindowWithURL:url];
             // FIXME: Need to send NPP_URLNotify at the right time.
             // FIXME: Need to name new frame
             if(notifyData)
@@ -827,7 +827,7 @@ static char *newCString(NSString *string)
 {
     WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPN_Status: %s\n", message);
     if(webController){
-        [webController setStatusText:[NSString stringWithCString:message] forDataSource:webDataSource];
+        [[webController windowContext] setStatusText:[NSString stringWithCString:message] forDataSource:webDataSource];
     }
 }
 

@@ -1,5 +1,13 @@
 2002-07-01  Maciej Stachowiak  <mjs@apple.com>
 
+        Build fixes (don't know why a plain build didn't catch these):
+
+	* Plugins.subproj/IFPluginView.mm: openNewWindowWithURL: is not a
+	method of the controller any more, nor are the status-related calls.
+        * WebView.subproj/IFWebController.h: Un-ifdef the status calls.
+
+2002-07-01  Maciej Stachowiak  <mjs@apple.com>
+
         Part of fix for Radar 2976618 - links targeting _blank hit
 	assertion trying to set provisional data source
 

@@ -111,10 +111,8 @@ typedef enum {
 
 - (IFWebController *)openNewWindowWithURL:(NSURL *)url;
 
-#if 0
 - (void)setStatusText: (NSString *)text forDataSource: (IFWebDataSource *)dataSource;
 - (NSString *)statusTextForDataSource: (IFWebDataSource *)dataSource;
-#endif
 
 - (BOOL)areToolbarsVisible;
 - (void)setToolbarsVisible:(BOOL)visible;
