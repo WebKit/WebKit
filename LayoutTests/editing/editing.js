@@ -69,6 +69,36 @@ function extendSelectionBackwardByCharacterCommand() {
 
 //-------------------------------------------------------------------------------------------------------
 
+function execBoldCommand() {
+    document.execCommand("Bold");
+}
+function boldCommand() {
+    if (commandDelay > 0) {
+        window.setTimeout(execBoldCommand, commandCount * commandDelay);
+        commandCount++;
+    }
+    else {
+        execBoldCommand();
+    }
+}
+
+//-------------------------------------------------------------------------------------------------------
+
+function execInsertNewlineCommand() {
+    document.execCommand("InsertNewline");
+}
+function insertNewlineCommand() {
+    if (commandDelay > 0) {
+        window.setTimeout(execInsertNewlineCommand, commandCount * commandDelay);
+        commandCount++;
+    }
+    else {
+        execInsertNewlineCommand();
+    }
+}
+
+//-------------------------------------------------------------------------------------------------------
+
 function execTypeCharacterCommand() {
     document.execCommand("InsertText", false, "x");
 }

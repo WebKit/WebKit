@@ -1,5 +1,17 @@
 2004-06-11  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by Trey
+
+        Lay some groundwork for better testing of inserting newlines. Layout
+        tests that use this new code will be coming soon.
+
+        * khtml/editing/jsediting.cpp: Add commands for bold and inserting newlines.
+        * layout-tests/editing/editing.js: Added new insertNewline command.
+        which calls through to TypingCommand::insertNewline. There was no way to get
+        to this command from JS before this addition.
+
+2004-06-11  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by Darin
 
         Javascript execCommand system wants to use case-insensitive QDict.
