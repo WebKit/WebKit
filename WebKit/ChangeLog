@@ -1,3 +1,16 @@
+2002-10-09  John Sullivan  <sullivan@apple.com>
+
+	- removed unnecessary concept of unique identifiers for bookmarks
+
+        * Bookmarks.subproj/WebBookmark.h:
+        * Bookmarks.subproj/WebBookmark.m:
+        (-[WebBookmark dealloc]):
+        (-[WebBookmark _setGroup:]):
+        * Bookmarks.subproj/WebBookmarkGroup.h:
+        * Bookmarks.subproj/WebBookmarkGroup.m:
+        * Bookmarks.subproj/WebBookmarkGroupPrivate.h:
+	removed all references to unique identifiers
+
 2002-10-09  Darin Adler  <darin@apple.com>
 
 	WebKit support for creating windows and then showing them later

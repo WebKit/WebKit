@@ -34,7 +34,6 @@
 
 // examining contents
 - (WebBookmark *)topBookmark;
-- (WebBookmark *)bookmarkForIdentifier:(NSString *)identifier;
 
 // modifying contents
 - (void)removeBookmark:(WebBookmark *)bookmark;

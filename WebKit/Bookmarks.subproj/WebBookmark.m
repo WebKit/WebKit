@@ -19,32 +19,11 @@
 
 @implementation WebBookmark
 
-static unsigned _highestUsedID = 0;
-
-+ (NSString *)_generateUniqueIdentifier
-{
-    return [[NSNumber numberWithInt:++_highestUsedID] stringValue];
-}
-
-- (id)init
-{
-    [super init];
-    _identifier = [[WebBookmark _generateUniqueIdentifier] copy];
-    return self;
-}
-
 - (void)dealloc
 {
     ASSERT(_group == nil);
 
-    [_identifier release];    
     [super dealloc];
-}
-
-- (NSString *)identifier
-{
-    ASSERT(_identifier != nil);
-    return [[_identifier copy] autorelease];
 }
 
 - (id)copyWithZone:(NSZone *)zone
@@ -134,11 +113,9 @@ static unsigned _highestUsedID = 0;
         return;
     }
 
-    [_group _removedBookmark:self];
     [_group release];
 
     _group = [group retain];
-    [group _addedBookmark:self];
 }
 
 + (WebBookmark *)bookmarkOfType:(WebBookmarkType)type

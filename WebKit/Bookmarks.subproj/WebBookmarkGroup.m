@@ -107,23 +107,6 @@
     [self _sendChangeNotificationForBookmark:bookmark childrenChanged:YES];
 }
 
-- (void)_removedBookmark:(WebBookmark *)bookmark
-{
-    ASSERT([_bookmarksByID objectForKey:[bookmark identifier]] == bookmark);
-    [_bookmarksByID removeObjectForKey:[bookmark identifier]];
-}
-
-- (void)_addedBookmark:(WebBookmark *)bookmark
-{
-    ASSERT([_bookmarksByID objectForKey:[bookmark identifier]] == nil);
-    [_bookmarksByID setObject:bookmark forKey:[bookmark identifier]];
-}
-
-- (WebBookmark *)bookmarkForIdentifier:(NSString *)identifier
-{
-    return [_bookmarksByID objectForKey:identifier];
-}
-
 - (void)removeBookmark:(WebBookmark *)bookmark
 {
     ASSERT_ARG(bookmark, [bookmark group] == self);

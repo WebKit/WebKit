@@ -18,7 +18,6 @@ typedef enum {
 @interface WebBookmark : NSObject <NSCopying> {
     WebBookmark *_parent;
     WebBookmarkGroup *_group;
-    NSString *_identifier;
 }
 
 + (WebBookmark *)bookmarkFromDictionaryRepresentation:(NSDictionary *)dict withGroup:(WebBookmarkGroup *)group;
@@ -60,9 +59,6 @@ typedef enum {
 
 // The group that this bookmark belongs to.
 - (WebBookmarkGroup *)group;
-
-// An NSString that can be used to uniquely identify this bookmark; use with +[WebBookmarkGroup bookmarkForIdentifier];
-- (NSString *)identifier;
 
 
 @end
