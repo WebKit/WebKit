@@ -174,9 +174,6 @@
     
     [self _clearErrors];
     
-    _private->mainResourceHandleClient = [[WebMainResourceClient alloc] initWithDataSource: self];
-    [_private->mainHandle addClient: _private->mainResourceHandleClient];
-    
     // Mark the start loading time.
     _private->loadingStartedTime = CFAbsoluteTimeGetCurrent();
     

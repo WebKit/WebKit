@@ -15,7 +15,7 @@
 @interface WebIconLoaderPrivate : NSObject
 {
 @public
-    WebResourceHandle *resourceHandle;
+    WebResourceHandle *handle;
     id delegate;
     NSURL *URL;
 }
@@ -27,7 +27,7 @@
 - (void)dealloc
 {
     [URL release];
-    [resourceHandle release];
+    [handle release];
     [super dealloc];
 }
 
@@ -126,27 +126,26 @@
 
 - (NSImage *)iconFromCache
 {
-    NSImage *icon=nil;
-
-    icon = [[self _icons] objectForKey:_private->URL];
-
-    if(icon){
+    NSImage *icon = [[self _icons] objectForKey:_private->URL];
+    if (icon) {
         return icon;
     }
     
     NSDictionary *attributes = [NSDictionary dictionaryWithObject:@"" forKey:@"only-if-cached"];
-    _private->resourceHandle = [[WebResourceHandle alloc] initWithURL:_private->URL
-                                                           attributes:attributes
-                                                                flags:WebResourceHandleFlagNone];
-    if(_private->resourceHandle){        
-        NSData *data = [_private->resourceHandle loadInForeground];
-        if(data){
+    WebResourceHandle *handle = [[WebResourceHandle alloc] initWithClient:self
+                                                                      URL:_private->URL
+                                                               attributes:attributes
+                                                                    flags:WebResourceHandleFlagNone];
+    if (handle) {        
+        NSData *data = [handle loadInForeground];
+        if (data) {
             icon = [[[NSImage alloc] initWithData:data] autorelease];
-            if(icon){
+            if (icon) {
                 [[self class] _resizeImage:icon];
                 [[self _icons] setObject:icon forKey:_private->URL];
             }
         }
+        [handle release];
     }
     
     return icon;
@@ -154,35 +153,35 @@
 
 - (void)startLoading
 {
-    NSImage *icon=nil;
-
-    icon = [[self _icons] objectForKey:_private->URL];
-
-    if(icon){
+    if (_private->handle != nil) {
+        return;
+    }
+    
+    NSImage *icon = [[self _icons] objectForKey:_private->URL];
+    if (icon) {
         [_private->delegate iconLoader:self receivedPageIcon:icon];
         return;
     }
     
-    _private->resourceHandle = [[WebResourceHandle alloc] initWithURL:_private->URL];
-    if(_private->resourceHandle){
-        [_private->resourceHandle addClient:self];
-        [_private->resourceHandle loadInBackground];
+    _private->handle = [[WebResourceHandle alloc] initWithClient:self URL:_private->URL];
+    if (_private->handle) {
+        [_private->handle loadInBackground];
     }
 }
 
 - (void)stopLoading
 {
-    [_private->resourceHandle cancelLoadInBackground];
+    [_private->handle cancelLoadInBackground];
+    [_private->handle release];
+    _private->handle = nil;
 }
 
 - (void)WebResourceHandleDidBeginLoading:(WebResourceHandle *)sender
 {
-
 }
 
 - (void)WebResourceHandleDidCancelLoading:(WebResourceHandle *)sender
 {
-
 }
 
 - (void)WebResourceHandleDidFinishLoading:(WebResourceHandle *)sender data:(NSData *)data

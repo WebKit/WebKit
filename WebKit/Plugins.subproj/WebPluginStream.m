@@ -34,7 +34,6 @@
     [super init];
 
     isFirstChunk = YES;
-    stopped = YES;
     
     return self;
 }
@@ -68,7 +67,6 @@
     [self getFunctionPointersFromPluginView:view];
     
     isFirstChunk = YES;
-    stopped = YES;
     
     return self;
 }
@@ -90,26 +88,15 @@
 
 - (void)startLoad
 {
-    if(stopped){
-        stopped = NO;
-        resource = [[WebResourceHandle alloc] initWithURL:URL attributes:attributes flags:0];
-        if(resource){
-            [resource addClient:self];
-            [resource loadInBackground];
-        }
-    }
+    resource = [[WebResourceHandle alloc] initWithClient:self URL:URL attributes:attributes flags:0];
+    [resource loadInBackground];
 }
 
 - (void)stop
 {
-    if(!stopped){
-        stopped = YES;
-        if([resource statusCode] == WebResourceHandleStatusLoading){
-            [resource cancelLoadInBackground];
-        }
-        [resource removeClient:self];
-        [resource release];
-    }
+    [resource cancelLoadInBackground];
+    [resource release];
+    resource = nil;
     [view release];
     view = nil;
 }
@@ -245,7 +232,11 @@
     [self finishedLoadingWithData:[dataSource data]];
 }
 
+@end
+
 #pragma mark WebResourceHandle
+
+@implementation WebPluginStream (WebResourceClient)
 
 - (void)WebResourceHandleDidBeginLoading:(WebResourceHandle *)handle
 {

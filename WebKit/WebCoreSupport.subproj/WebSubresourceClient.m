@@ -59,10 +59,10 @@
 + (WebResourceHandle *)startLoadingResource:(id <WebCoreResourceLoader>)rLoader
     withURL:(NSURL *)URL dataSource:(WebDataSource *)source
 {
-    WebResourceHandle *handle;
-    WebSubresourceClient *client;
-    
-    handle = [[[WebResourceHandle alloc] initWithURL:URL attributes:[source attributes] flags:[source flags]] autorelease];
+    WebSubresourceClient *client = [[self alloc] initWithLoader:rLoader dataSource:source];
+    WebResourceHandle *handle = [[[WebResourceHandle alloc] initWithClient:client URL:URL attributes:[source attributes] flags:[source flags]] autorelease];
+    [client release];
+
     if (handle == nil) {
         [rLoader cancel];
 
@@ -74,11 +74,6 @@
         [badURLError release];
     } else {
         [source _addResourceHandle:handle];
-        
-        client = [[self alloc] initWithLoader:rLoader dataSource:source];
-        [handle addClient:client];
-        [client release];
-        
         [handle loadInBackground];
     }
         

@@ -27,7 +27,6 @@
     void *notifyData;
     
     BOOL isFirstChunk;
-    BOOL stopped;
     
     WebResourceHandle *resource;
     
