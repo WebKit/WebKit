@@ -238,8 +238,6 @@ protected: // members
     short m_maxWidth;
     short m_beginMinWidth;
     short m_endMinWidth;
-    short m_beginMaxWidth;
-    short m_endMaxWidth;
     
     SelectionState m_selectionState : 3 ;
     bool m_hasBreakableChar : 1; // Whether or not we can be broken into multiple lines.
