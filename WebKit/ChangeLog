@@ -1,3 +1,11 @@
+2004-04-19  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+
+        * WebView.subproj/WebView.m:
+        (-[WebView moveDown:]): Added implementation.
+        (-[WebView moveUp:]): Added implementation.
+
 2004-04-19  Chris Blumenberg  <cblu@apple.com>
 
 	Added support for pasting frames via WebArchives.

@@ -181,6 +181,7 @@ class KHTMLPart : public KParts::ReadOnlyPart
 
 public:
   enum GUIProfile { DefaultGUI, BrowserViewGUI /* ... */ };
+  enum { NoXPosForVerticalArrowNavigation = INT_MIN };
 
   /**
    * Constructs a new KHTMLPart.
@@ -602,6 +603,16 @@ public:
    * Paints the caret.
    */
   void paintCaret(QPainter *p, const QRect &rect) const;
+
+  /**
+   * Set info for vertical arrow navigation.
+   */
+  void setXPosForVerticalArrowNavigation(int x);
+
+  /**
+   * Get info for vertical arrow navigation.
+   */
+  int xPosForVerticalArrowNavigation() const;
 
   /**
    * Returns the text for a part of the document.

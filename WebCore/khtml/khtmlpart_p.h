@@ -366,6 +366,7 @@ public:
 
   TristateFlag m_inEditMode;
   khtml::EditCommand m_lastEditCommand;
+  int m_xPosForVerticalArrowNavigation;
 
   int m_focusNodeNumber;
 

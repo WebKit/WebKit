@@ -53,7 +53,7 @@ public:
 
 	enum EState { NONE, CARET, RANGE };
 	enum EAlter { MOVE, EXTEND };
-	enum EDirection { FORWARD, BACKWARD, RIGHT, LEFT };
+	enum EDirection { FORWARD, BACKWARD, RIGHT, LEFT, UP, DOWN };
 	enum ETextGranularity { CHARACTER, WORD, LINE };
 
 	EState state() const { return m_state; }
@@ -129,6 +129,7 @@ private:
     bool nodeIsBeforeNode(DOM::NodeImpl *n1, DOM::NodeImpl *n2);
 
     void calculateStartAndEnd(ETextGranularity select=CHARACTER);
+    int xPosForVerticalArrowNavigation() const;
     
     DOM::NodeImpl *m_baseNode;    // base node for the selection
     long m_baseOffset;            // offset into base node where selection is

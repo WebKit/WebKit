@@ -25,6 +25,7 @@
 
 #include "render_arena.h"
 #include "render_canvas.h"
+#include "render_line.h"
 
 #include <assert.h>
 #include <qwidget.h>
@@ -129,18 +130,30 @@ unsigned long RenderReplaced::caretMaxRenderedOffset() const
 
 DOMPosition RenderReplaced::positionForCoordinates(int _x, int _y)
 {
+    InlineBox *box = inlineBoxWrapper();
+    if (!box)
+        return DOMPosition(element(), 0);
+
+    RootInlineBox *root = box->root();
+
     int absx, absy;
     absolutePosition(absx, absy);
+
+    int top = absy + root->topOverflow();
+    int bottom = absy + root->bottomOverflow();
+
+    if (_y < top)
+        return DOMPosition(element(), caretMinOffset()); // coordinates are above
     
-    bool pointIsInside = (_x >= absx && _x < absx + width() && 
-                          _y >= absy && _y < absx + height());
+    if (_y >= bottom)
+        return DOMPosition(element(), caretMaxOffset()); // coordinates are below
     
-    if (pointIsInside && element()) {
+    if (element()) {
         if (_x <= absx + (width() / 2))
             return DOMPosition(element(), 0);
         return DOMPosition(element(), 1);
     }
-    
+
     return RenderBox::positionForCoordinates(_x, _y);
 }
 

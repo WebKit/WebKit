@@ -26,6 +26,7 @@
 #include "dom_position.h"
 
 #include "htmltags.h"
+#include "rendering/render_block.h"
 #include "rendering/render_line.h"
 #include "rendering/render_object.h"
 #include "rendering/render_style.h"
@@ -46,6 +47,7 @@ using khtml::InlineFlowBox;
 using khtml::InlineTextBox;
 using khtml::RenderObject;
 using khtml::RenderText;
+using khtml::RootInlineBox;
 
 #if !APPLE_CHANGES
 #define ASSERT(assertion) ((void)0)
@@ -54,6 +56,70 @@ using khtml::RenderText;
 #define LOG(channel, formatAndArgs...) ((void)0)
 #define ERROR(formatAndArgs...) ((void)0)
 #endif
+
+static InlineBox *inlineBoxForRenderer(RenderObject *renderer, long offset)
+{
+    if (!renderer)
+        return 0;
+
+    if (renderer->isBR() && static_cast<RenderText *>(renderer)->firstTextBox())
+        return static_cast<RenderText *>(renderer)->firstTextBox();
+    
+    if (renderer->isText()) {
+        RenderText *textRenderer = static_cast<khtml::RenderText *>(renderer); 
+        if (textRenderer->isBR() && textRenderer->firstTextBox())
+            return textRenderer->firstTextBox();
+        
+        for (InlineTextBox *box = textRenderer->firstTextBox(); box; box = box->nextTextBox()) {
+            if (offset >= box->m_start && offset <= box->m_start + box->m_len) {
+                return box;
+            }
+            else if (offset < box->m_start) {
+                // The offset we're looking for is before this node
+                // this means the offset must be in content that is
+                // not rendered.
+                return box->prevTextBox() ? box->prevTextBox() : textRenderer->firstTextBox();
+            }
+        }
+    }
+    else {
+        return renderer->inlineBoxWrapper();
+    } 
+    
+    return 0;
+}
+
+static bool renderersOnDifferentLine(RenderObject *r1, long o1, RenderObject *r2, long o2)
+{
+    InlineBox *b1 = inlineBoxForRenderer(r1, o1);
+    InlineBox *b2 = inlineBoxForRenderer(r2, o2);
+    return (b1 && b2 && b1->root() != b2->root());
+}
+
+static NodeImpl *nextRenderedEditable(NodeImpl *node)
+{
+    while (1) {
+        node = node->nextEditable();
+        if (!node)
+            return 0;
+        if (inlineBoxForRenderer(node->renderer(), 0))
+            return node;
+    }
+    return 0;
+}
+
+static NodeImpl *previousRenderedEditable(NodeImpl *node)
+{
+    while (1) {
+        node = node->previousEditable();
+        if (!node)
+            return 0;
+        if (inlineBoxForRenderer(node->renderer(), 0))
+            return node;
+    }
+    return 0;
+}
+
 
 DOMPosition::DOMPosition(NodeImpl *node, long offset) 
     : m_node(0), m_offset(offset) 
@@ -232,6 +298,115 @@ DOMPosition DOMPosition::nextCharacterPosition() const
     return *this;
 }
 
+DOMPosition DOMPosition::previousLinePosition(int x) const
+{
+    if (!node())
+        return DOMPosition();
+
+    if (!node()->renderer())
+        return *this;
+
+    InlineBox *box = inlineBoxForRenderer(node()->renderer(), offset());
+    if (!box)
+        return *this;
+
+    NodeImpl *previousLineNode = 0;
+    RootInlineBox *root = box->root()->prevRootBox();
+    if (root) {
+        previousLineNode = node();
+    }
+    else {
+        // This containing editable block does not have a previous line.
+        // Need to move back to previous containing editable block in this root editable
+        // block and find the last root line box in that block.
+        NodeImpl *startBlock = node()->containingEditableBlock();
+        NodeImpl *n = node()->previousEditable();
+        while (n && startBlock == n->containingEditableBlock())
+            n = n->previousEditable();
+        if (n) {
+            while (n && !DOMPosition(n, n->caretMaxOffset()).inRenderedContent())
+                n = n->previousEditable();
+            if (n && n->inSameRootEditableBlock(node())) {
+                box = inlineBoxForRenderer(n->renderer(), n->caretMaxOffset());
+                ASSERT(box);
+                // previous root line box found
+                root = box->root();
+                previousLineNode = n;
+            }
+        }
+    }
+    
+    if (!root)
+        return *this;
+    ASSERT(previousLineNode);
+    
+    int absx, absy;
+    previousLineNode->renderer()->containingBlock()->absolutePosition(absx, absy);
+    int y = absy + root->topOverflow() + ((root->bottomOverflow() - root->topOverflow()) / 2);
+
+    RenderObject::NodeInfo nodeInfo(true, true);
+    previousLineNode->getDocument()->renderer()->layer()->nodeAtPoint(nodeInfo, x, y);
+
+    if (!nodeInfo.innerNode() || !nodeInfo.innerNode()->renderer())
+        return *this;
+    
+    return nodeInfo.innerNode()->renderer()->positionForCoordinates(x, y);
+}
+
+DOMPosition DOMPosition::nextLinePosition(int x) const
+{
+    if (!node())
+        return DOMPosition();
+
+    if (!node()->renderer())
+        return *this;
+
+    InlineBox *box = inlineBoxForRenderer(node()->renderer(), offset());
+    if (!box)
+        return *this;
+
+    NodeImpl *nextLineNode = 0;
+    RootInlineBox *root = box->root()->nextRootBox();
+    if (root) {
+        nextLineNode = node();
+    }
+    else {
+        // This containing editable block does not have a next line.
+        // Need to move forward to next containing editable block in this root editable
+        // block and find the first root line box in that block.
+        NodeImpl *startBlock = node()->containingEditableBlock();
+        NodeImpl *n = node()->nextEditable();
+        while (n && startBlock == n->containingEditableBlock())
+            n = n->nextEditable();
+        if (n) {
+            while (n && !DOMPosition(n, n->caretMinOffset()).inRenderedContent())
+                n = n->nextEditable();
+            if (n && n->inSameRootEditableBlock(node())) {
+                box = inlineBoxForRenderer(n->renderer(), n->caretMinOffset());
+                ASSERT(box);
+                // previous root line box found
+                root = box->root();
+                nextLineNode = n;
+            }
+        }
+    }
+    
+    if (!root)
+        return *this;
+    ASSERT(nextLineNode);
+    
+    int absx, absy;
+    nextLineNode->renderer()->containingBlock()->absolutePosition(absx, absy);
+    int y = absy + root->topOverflow() + ((root->bottomOverflow() - root->topOverflow()) / 2);
+    
+    RenderObject::NodeInfo nodeInfo(true, true);
+    nextLineNode->getDocument()->renderer()->layer()->nodeAtPoint(nodeInfo, x, y);
+    if (!nodeInfo.innerNode() || !nodeInfo.innerNode()->renderer())
+        return *this;
+    
+    return nodeInfo.innerNode()->renderer()->positionForCoordinates(x, y);
+}
+
 DOMPosition DOMPosition::equivalentUpstreamPosition() const
 {
     if (!node())
@@ -375,74 +550,6 @@ bool DOMPosition::inRenderedContent() const
     }
     
     return false;
-}
-
-
-static InlineBox *inlineBoxForRenderer(RenderObject *renderer, long offset)
-{
-    if (!renderer)
-        return 0;
-
-    if (renderer->isBR() && static_cast<RenderText *>(renderer)->firstTextBox())
-        return static_cast<RenderText *>(renderer)->firstTextBox();
-    
-    if (renderer->isText()) {
-        RenderText *textRenderer = static_cast<khtml::RenderText *>(renderer); 
-        if (textRenderer->isBR() && textRenderer->firstTextBox())
-            return textRenderer->firstTextBox();
-        
-        for (InlineTextBox *box = textRenderer->firstTextBox(); box; box = box->nextTextBox()) {
-            if (offset >= box->m_start && offset <= box->m_start + box->m_len) {
-                return box;
-            }
-            else if (offset < box->m_start) {
-                // The offset we're looking for is before this node
-                // this means the offset must be in content that is
-                // not rendered.
-                return box->prevTextBox() ? box->prevTextBox() : textRenderer->firstTextBox();
-            }
-        }
-    }
-    else {
-        return renderer->inlineBoxWrapper();
-    } 
-    
-    return 0;
-}
-
-static bool renderersOnDifferentLine(RenderObject *r1, long o1, RenderObject *r2, long o2)
-{
-    InlineBox *b1 = inlineBoxForRenderer(r1, o1);
-    InlineBox *b2 = inlineBoxForRenderer(r2, o2);
-
-    if (b1 && b2 && b1->root() != b2->root())
-        return true;
-    
-    return false;
-}
-
-static NodeImpl *nextRenderedEditable(NodeImpl *node)
-{
-    while (1) {
-        node = node->nextEditable();
-        if (!node)
-            return 0;
-        if (inlineBoxForRenderer(node->renderer(), 0))
-            return node;
-    }
-    return 0;
-}
-
-static NodeImpl *previousRenderedEditable(NodeImpl *node)
-{
-    while (1) {
-        node = node->previousEditable();
-        if (!node)
-            return 0;
-        if (inlineBoxForRenderer(node->renderer(), 0))
-            return node;
-    }
-    return 0;
 }
 
 bool DOMPosition::inRenderedText() const

@@ -24,6 +24,10 @@
 
 #include "render_text.h"
 
+namespace DOM {
+    class DOMPosition;
+};
+
 /*
  * The whole class here is a hack to get <br> working, as long as we don't have support for
  * CSS2 :before and :after pseudo elements
@@ -63,6 +67,7 @@ public:
     virtual long caretMaxOffset() const;
     virtual unsigned long caretMaxRenderedOffset() const;
     
+    virtual DOM::DOMPosition positionForCoordinates(int _x, int _y);
     virtual void caretPos(int offset, bool override, int &_x, int &_y, int &_w, int &_h);
 
 private:

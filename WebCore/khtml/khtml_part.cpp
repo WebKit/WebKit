@@ -2585,8 +2585,22 @@ void KHTMLPart::notifySelectionChanged(bool endTyping)
     
     if (endTyping)
         TypingCommand::closeTyping(lastEditCommand());
-                
+    
+    // Always clear the x position used for vertical arrow navigation.
+    // It will be restored by the vertical arrow navigation code if necessary.
+    d->m_xPosForVerticalArrowNavigation = NoXPosForVerticalArrowNavigation;
+    
     emitSelectionChanged();
+}
+
+void KHTMLPart::setXPosForVerticalArrowNavigation(int x)
+{
+    d->m_xPosForVerticalArrowNavigation = x;
+}
+
+int KHTMLPart::xPosForVerticalArrowNavigation() const
+{
+    return d->m_xPosForVerticalArrowNavigation;
 }
 
 void KHTMLPart::timerEvent(QTimerEvent *e)

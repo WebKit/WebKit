@@ -205,14 +205,6 @@ unsigned long InlineTextBox::caretMaxRenderedOffset() const
 
 int InlineTextBox::offsetForPosition(int _x, int _tx, const Font *f, const RenderText *text)
 {
-    if (_x < _tx + m_x)
-        // we're to the left
-        return -1;
-
-    if (_x >= _tx + m_x + m_width)
-        // we're to the right
-        return -1;
-
 #if APPLE_CHANGES
     return f->checkSelectionPoint(text->str->s, text->str->l, m_start, m_len, m_toAdd, _x - (_tx + m_x), m_reversed);
 #else
@@ -455,21 +447,37 @@ DOMPosition RenderText::positionForCoordinates(int _x, int _y)
     int absx, absy;
     absolutePosition(absx, absy);
 
-    int top = absy + firstTextBox()->root()->topOverflow();
-    int bottom = absy + lastTextBox()->root()->bottomOverflow();
+    if (firstTextBox() && _y < absy + firstTextBox()->root()->bottomOverflow() && _x < absx + firstTextBox()->m_x) {
+        // at the y coordinate of the first line or above
+        // and the x coordinate is to the left than the first text box left edge
+        return DOMPosition(element(), lastTextBox()->m_start);
+    }
 
-    if (_y < top)
-        return DOMPosition(element(), caretMinOffset()); // coordinates are above
-    
-    if (_y >= bottom)
-        return DOMPosition(element(), caretMaxOffset()); // coordinates are below
-    
+    if (lastTextBox() && _y >= absy + lastTextBox()->root()->topOverflow() && _x >= absx + lastTextBox()->m_x + lastTextBox()->m_width) {
+        // at the y coordinate of the last line or below
+        // and the x coordinate is to the right than the last text box right edge
+        return DOMPosition(element(), lastTextBox()->m_start + lastTextBox()->m_len);
+    }
+
     for (InlineTextBox *box = firstTextBox(); box; box = box->nextTextBox()) {
         if (_y >= absy + box->root()->topOverflow() && _y < absy + box->root()->bottomOverflow()) {
-            const Font *f = htmlFont(box == firstTextBox());
-            int offset = box->offsetForPosition(_x, absx, f, this);
-            if (offset != -1)
-                return DOMPosition(element(), offset + box->m_start);
+            if (_x < absx + box->m_x + box->m_width) {
+                // and the x coordinate is to the left of the right edge of this box
+                // check to see if position goes in this box
+                const Font *f = htmlFont(box == firstTextBox());
+                int offset = box->offsetForPosition(_x, absx, f, this);
+                if (offset != -1) {
+                    return DOMPosition(element(), offset + box->m_start);
+                }
+            }
+            else if (!box->prevOnLine() && _x < absx + box->m_x)
+                // box is first on line
+                // and the x coordinate is to the left than the first text box left edge
+                return DOMPosition(element(), box->m_start);
+            else if (!box->nextOnLine() && _x >= absx + box->m_x + box->m_width)
+                // box is last on line
+                // and the x coordinate is to the right than the last text box right edge
+                return DOMPosition(element(), box->m_start + box->m_len);
         }
     }
     

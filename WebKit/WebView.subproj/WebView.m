@@ -2264,7 +2264,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 - (void)moveDown:(id)sender
 {
     if ([self _currentSelectionIsEditable]) {
-        ERROR("unimplemented");
+        [self _alterCurrentSelection:WebSelectByMoving direction:WebSelectDown granularity:WebSelectByCharacter];
         return;
     }
     [[self nextResponder] tryToPerform:@selector(moveDown:) with:sender];
@@ -2273,7 +2273,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 - (void)moveDownAndModifySelection:(id)sender
 {
     if ([self _currentSelectionIsEditable]) {
-        ERROR("unimplemented");
+        [self _alterCurrentSelection:WebSelectByExtending direction:WebSelectDown granularity:WebSelectByCharacter];
         return;
     }
     [[self nextResponder] tryToPerform:@selector(moveDownAndModifySelection:) with:sender];
@@ -2390,7 +2390,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 - (void)moveUp:(id)sender
 {
     if ([self _currentSelectionIsEditable]) {
-        ERROR("unimplemented");
+        [self _alterCurrentSelection:WebSelectByMoving direction:WebSelectUp granularity:WebSelectByCharacter];
         return;
     }
     [[self nextResponder] tryToPerform:@selector(moveUp:) with:sender];

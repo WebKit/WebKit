@@ -317,6 +317,18 @@ bool KHTMLSelection::modify(EAlter alter, EDirection dir, ETextGranularity elem)
                     break;
             }
             break;
+        case UP:
+            if (alter == EXTEND)
+                ERROR("unimplemented");
+            else
+                pos = startPosition().previousLinePosition(xPosForVerticalArrowNavigation());
+            break;
+        case DOWN:
+            if (alter == EXTEND)
+                ERROR("unimplemented");
+            else
+                pos = startPosition().nextLinePosition(xPosForVerticalArrowNavigation());
+            break;
     }
     
     if (pos.isEmpty())
@@ -333,6 +345,29 @@ bool KHTMLSelection::modify(EAlter alter, EDirection dir, ETextGranularity elem)
 void KHTMLSelection::expandToElement(ETextGranularity select)
 {
     validate(select);
+}
+
+int KHTMLSelection::xPosForVerticalArrowNavigation() const
+{
+    int x = 0;
+
+    if (state() == NONE)
+        return x;
+
+    KHTMLPart *part = startPosition().node()->getDocument()->part();
+    if (!part)
+        return x;
+        
+    if (part->xPosForVerticalArrowNavigation() == KHTMLPart::NoXPosForVerticalArrowNavigation) {
+        int y, w, h;
+        startPosition().node()->renderer()->caretPos(startPosition().offset(), true, x, y, w, h);
+        part->setXPosForVerticalArrowNavigation(x);
+    }
+    else {
+        x = part->xPosForVerticalArrowNavigation();
+    }
+
+    return x;
 }
 
 void KHTMLSelection::clear()

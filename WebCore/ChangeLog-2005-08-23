@@ -1,3 +1,49 @@
+2004-04-19  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::notifySelectionChanged): Clear the value
+        used for maintaining x position when doing vertical arrow
+        navigation. WebCoreBridge restores this value when needed. 
+        (KHTMLPart::setXPosForVerticalArrowNavigation): New accessor.
+        (KHTMLPart::xPosForVerticalArrowNavigation): New accessor.
+        * khtml/khtml_part.h:
+        (KHTMLPart::): Add NoXPosForVerticalArrowNavigation constant.
+        * khtml/khtml_selection.cpp:
+        (KHTMLSelection::modify): Add cases for UP and DOWN navigation
+        (KHTMLSelection::xPosForVerticalArrowNavigation): New helper.
+        * khtml/khtml_selection.h: Add UP and DOWN constants to EDirection enum.
+        (KHTMLSelection::):
+        * khtml/khtmlpart_p.h: Declare storage for m_xPosForVerticalArrowNavigation, 
+        the value used for maintaining x position when doing vertical arrow
+        navigation. 
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::positionForCoordinates): Improved this function to
+        handle deficiencies exposed when trying to implement new behavior.
+        * khtml/rendering/render_br.cpp:
+        (RenderBR::positionForCoordinates): Added implementation of this virtual function.
+        * khtml/rendering/render_br.h: Declare implementation for positionForCoordinates virtual function.
+        * khtml/rendering/render_replaced.cpp:
+        (RenderReplaced::positionForCoordinates): Improved this function to
+        handle deficiencies exposed when trying to implement new behavior.
+        * khtml/rendering/render_text.cpp:
+        (InlineTextBox::offsetForPosition): Remove left/right "bounds" check here.
+        (RenderText::positionForCoordinates): Improved this function to
+        handle deficiencies exposed when trying to implement new behavior.
+        * khtml/xml/dom_position.cpp:
+        (inlineBoxForRenderer): Moved to top of file so all code in the file can see this static function.
+        (renderersOnDifferentLine): Ditto.
+        (nextRenderedEditable): Ditto.
+        (previousRenderedEditable): Ditto.
+        (DOMPosition::previousLinePosition): New function. Implements the guts of up/down navigation.
+        (DOMPosition::nextLinePosition): Ditto.
+        * khtml/xml/dom_position.h: Added declarations for nextLinePosition and previousLinePosition.
+        * kwq/WebCoreBridge.h: Add WebSelectUp and WebSelectDown constants.
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge alterCurrentSelection:direction:granularity:]): Handles saving and restoring the 
+        x position used for doing vertical arrow navigation.
+
 2004-04-16  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Hyatt

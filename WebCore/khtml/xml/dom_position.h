@@ -51,6 +51,8 @@ public:
     DOMPosition nextRenderedEditablePosition() const;
     DOMPosition previousCharacterPosition() const;
     DOMPosition nextCharacterPosition() const;
+    DOMPosition previousLinePosition(int x) const;
+    DOMPosition nextLinePosition(int x) const;
     DOMPosition equivalentUpstreamPosition() const;
     DOMPosition equivalentDownstreamPosition() const;
     bool atStartOfContainingEditableBlock() const;

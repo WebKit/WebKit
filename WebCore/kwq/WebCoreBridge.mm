@@ -1339,7 +1339,18 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     selection.modify(static_cast<KHTMLSelection::EAlter>(alteration), 
                      static_cast<KHTMLSelection::EDirection>(direction), 
                      static_cast<KHTMLSelection::ETextGranularity>(granularity));
+
+    // save vertical navigation x position if necessary
+    int xPos = _part->xPosForVerticalArrowNavigation();
+    if (direction != WebSelectUp && direction != WebSelectDown)
+        xPos = KHTMLPart::NoXPosForVerticalArrowNavigation;
+    
+    // setting the selection always clears saved vertical navigation x position
     _part->setSelection(selection);
+    
+    // restore vertical navigation x position if necessary
+    if (xPos != KHTMLPart::NoXPosForVerticalArrowNavigation)
+        _part->setXPosForVerticalArrowNavigation(xPos);
 }
 
 - (void)setSelectedDOMRange:(DOMRange *)range
