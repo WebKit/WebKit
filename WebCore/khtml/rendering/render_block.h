@@ -199,9 +199,6 @@ public:
     virtual void updateFirstLetter();
     
     bool inRootBlockContext() const;
-    
-    void setLinesAppended(bool b=true) { m_linesAppended = b; }
-    bool linesAppended() const { return m_linesAppended; }
 
     void setHasMarkupTruncation(bool b=true) { m_hasMarkupTruncation = b; }
     bool hasMarkupTruncation() const { return m_hasMarkupTruncation; }
@@ -403,7 +400,6 @@ protected:
     EClear m_clearStatus  : 2;
     bool m_topMarginQuirk : 1;
     bool m_bottomMarginQuirk : 1;
-    bool m_linesAppended : 1; // Whether or not a block with inline children has had lines appended.
     bool m_hasMarkupTruncation : 1;
     SelectionState m_selectionState : 3;
 

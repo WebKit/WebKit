@@ -90,7 +90,6 @@ RenderBlock::RenderBlock(DOM::NodeImpl* node)
     m_positionedObjects = 0;
     m_pre = false;
     m_firstLine = false;
-    m_linesAppended = false;
     m_hasMarkupTruncation = false;
     m_selectionState = SelectionNone;
     m_clearStatus = CNONE;

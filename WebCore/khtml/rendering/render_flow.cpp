@@ -223,14 +223,7 @@ void RenderFlow::dirtyLinesFromChangedChild(RenderObject* child, bool adding)
 {
     if (!parent() || selfNeedsLayout() || isTable())
         return;
-    
-    if (adding && !isInline() && (!child->nextSibling() || !firstLineBox())) {
-        // An append onto the end of a block or we don't have any lines anyway.  
-        // In this case we don't have to dirty any specific lines.
-        static_cast<RenderBlock*>(this)->setLinesAppended();
-        return;
-    }
-    
+
     // For an empty inline, go ahead and propagate the check up to our parent.
     if (isInline() && !firstLineBox())
         return parent()->dirtyLinesFromChangedChild(this);

@@ -1,5 +1,20 @@
 2004-12-06  David Hyatt  <hyatt@apple.com>
 
+	Fix for 3615411, the linesAppended optimization was old and broken, and it's easier with the new code fixes
+	made by me, kocienda and harrison to just remove it.
+	
+        Reviewed by mjs
+
+        * khtml/rendering/bidi.cpp:
+        (khtml::RenderBlock::layoutInlineChildren):
+        * khtml/rendering/render_block.cpp:
+        (khtml:::RenderFlow):
+        * khtml/rendering/render_block.h:
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::dirtyLinesFromChangedChild):
+
+2004-12-06  David Hyatt  <hyatt@apple.com>
+
 	Fix for 3787133, some web pages print with many blank pages.  Make sure to use the real page print rect and
 	not a damage rect that can be changed when intersected with the clip regions of the web page.
 	
