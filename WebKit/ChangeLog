@@ -1,3 +1,29 @@
+2003-10-02  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - in preparation for a WebCore whitespace-handling change, made WebTextRenderer draw and measure
+          newline characters as if they are spaces (just as we already do with non-breaking spaces)
+        - removed some unused stuff from WebTextRenderer
+        - other unimportant tweaks (e.g. unsigned int -> unsigned)
+
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (kFixedOne), (fixed1), (FixToFloat), (FloatToFixed): Removed these. We can use the standard ones
+        from <FixMath.h> instead of defining our own.
+        (isControlCharacter): Added. Inline function that we can use instead of the macro we had before.
+        (isAlternateSpace): Added. Returns YES for newlines and non-breaking spaces.
+        (isSpace): Added. Returns YES for real spaces and the two alternate spaces as well.
+        (initializeCharacterWidthIterator): Use isSpace.
+        (-[WebTextRenderer convertCharacters:length:toGlyphs:skipControlCharacters:]): Use isAlternateSpace
+        and isControlCharacter.
+        (-[WebTextRenderer _CG_floatWidthForRun:style:widths:fonts:glyphs:startGlyph:endGlyph:numGlyphs:]):
+        Use isControlCharacter, isAlternateSpace, and isSpace. Also fix a small bug where numGlyphs would
+        not get set up properly when the run length is 0, and used local variables when possible instead
+        of going back at the run structure.
+        (-[WebTextRenderer _ATSU_floatWidthForRun:style:]): Use the standard FixedToFloat instead of our
+        own FixToFloat.
+        (-[WebTextRenderer _ATSU_drawHighlightForRun:style:atPoint:]): Ditto.
+
 2003-10-02  David Hyatt  <hyatt@apple.com>
 
 	Work on exposing elements to the Acc API.  This patch gets us to the point where text
