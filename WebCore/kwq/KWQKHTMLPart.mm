@@ -328,8 +328,16 @@ void KWQKHTMLPart::openURLRequest(const KURL &url, const URLArgs &args)
 {
     KWQ_BLOCK_EXCEPTIONS;
 
+    NSString *referrer;
+    QString argsReferrer = args.metaData()["referrer"];
+    if (!argsReferrer.isEmpty()) {
+        referrer = argsReferrer.getNSString();
+    } else {
+        referrer = [_bridge referrer];
+    }
+
     [_bridge loadURL:url.getNSURL()
-            referrer:[_bridge referrer]
+            referrer:referrer
               reload:args.reload
          userGesture:true
               target:args.frameName.getNSString()
@@ -758,14 +766,24 @@ void KHTMLPart::frameDetached()
 void KWQKHTMLPart::urlSelected(const KURL &url, int button, int state, const URLArgs &args)
 {
     KWQ_BLOCK_EXCEPTIONS;
+
+    NSString *referrer;
+    QString argsReferrer = args.metaData()["referrer"];
+    if (!argsReferrer.isEmpty()) {
+        referrer = argsReferrer.getNSString();
+    } else {
+        referrer = [_bridge referrer];
+    }
+
     [_bridge loadURL:url.getNSURL()
-            referrer:[_bridge referrer]
+            referrer:referrer
               reload:args.reload
          userGesture:true
               target:args.frameName.getNSString()
      triggeringEvent:_currentEvent
                 form:nil
           formValues:nil];
+
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 
@@ -801,6 +819,7 @@ ReadOnlyPart *KWQKHTMLPart::createPart(const ChildFrame &child, const KURL &url,
         }
         WebCoreBridge *childBridge = [_bridge createChildFrameNamed:child.m_name.getNSString()
                                                             withURL:url.getNSURL()
+                                                           referrer:child.m_args.metaData()["referrer"].getNSString()
                                                          renderPart:child.m_frame
                                                     allowsScrolling:allowsScrolling
                                                         marginWidth:marginWidth

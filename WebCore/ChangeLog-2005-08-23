@@ -1,3 +1,35 @@
+2005-03-06  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	<rdar://problem/4005575> Arbitrary file disclosure vulnerability due to ability to load local html from remote content
+        
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::HTMLDocument::putValue):
+        * khtml/ecma/kjs_window.cpp:
+        (Window::put):
+        (WindowFunc::tryCall):
+        (Location::put):
+        (LocationFunc::tryCall):
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::begin):
+        (KHTMLPart::scheduleLocationChange):
+        (KHTMLPart::slotRedirect):
+        (KHTMLPart::processObjectRequest):
+        * khtml/khtml_part.h:
+        * khtml/khtmlpart_p.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::openURLRequest):
+        (KWQKHTMLPart::urlSelected):
+        (KWQKHTMLPart::createPart):
+        * kwq/KWQKHTMLPartBrowserExtension.mm:
+        (KHTMLPartBrowserExtension::createNewWindow):
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (hasCaseInsensitivePrefix):
+        (-[WebCoreBridge didNotOpenURL:pageCache:]):
+        (-[WebCoreBridge canLoadURL:fromReferrer:hideReferrer:]):
+
 2005-03-09  Richard Williamson   <rjw@apple.com>
 
 	Fixed <rdar://problem/4032938> Safari: text layout for MS P Gothic font is corrupted

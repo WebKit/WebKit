@@ -422,10 +422,14 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 	return nil;
     }
 
+    BOOL hideReferrer;
+    if (![self canLoadURL:URL fromReferrer:[self referrer] hideReferrer:&hideReferrer])
+        return nil;
+
     return [WebSubresourceClient startLoadingResource:resourceLoader
                                               withURL:URL
- 				        customHeaders:customHeaders
-                                             referrer:[self referrer]
+                                        customHeaders:customHeaders
+                                             referrer:(hideReferrer ? nil : [self referrer])
                                         forDataSource:[self dataSource]];
 }
 
@@ -437,11 +441,15 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 	return nil;
     }
 
+    BOOL hideReferrer;
+    if (![self canLoadURL:URL fromReferrer:[self referrer] hideReferrer:&hideReferrer])
+        return nil;
+
     return [WebSubresourceClient startLoadingResource:resourceLoader
                                               withURL:URL
  				        customHeaders:customHeaders
 				             postData:postData
-                                             referrer:[self referrer]
+                                             referrer:(hideReferrer ? nil : [self referrer])
                                         forDataSource:[self dataSource]];
 }
 
@@ -464,6 +472,10 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 
 - (NSData *)syncLoadResourceWithURL:(NSURL *)URL customHeaders:(NSDictionary *)requestHeaders postData:(NSArray *)postData finalURL:(NSURL **)finalURL responseHeaders:(NSDictionary **)responseHeaderDict statusCode:(int *)statusCode
 {
+    BOOL hideReferrer;
+    if (![self canLoadURL:URL fromReferrer:[self referrer] hideReferrer:&hideReferrer])
+        return nil;
+
     NSMutableURLRequest *newRequest = [[NSMutableURLRequest alloc] initWithURL:URL];
 
     if (postData) {
@@ -479,7 +491,8 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     
     // Never use cached data for these requests (xmlhttprequests).
     [newRequest setCachePolicy:[[[self dataSource] request] cachePolicy]];
-    [newRequest setHTTPReferrer:[self referrer]];
+    if (!hideReferrer)
+        [newRequest setHTTPReferrer:[self referrer]];
     
     WebView *webView = [_frame webView];
     [newRequest setMainDocumentURL:[[[[webView mainFrame] dataSource] request] URL]];
@@ -616,6 +629,10 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 
 - (void)loadURL:(NSURL *)URL referrer:(NSString *)referrer reload:(BOOL)reload userGesture:(BOOL)forUser target:(NSString *)target triggeringEvent:(NSEvent *)event form:(DOMElement *)form formValues:(NSDictionary *)values
 {
+    BOOL hideReferrer;
+    if (![self canLoadURL:URL fromReferrer:[self referrer] hideReferrer:&hideReferrer])
+        return;
+
     if ([target length] == 0) {
 	target = nil;
     }
@@ -633,7 +650,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
         loadType = WebFrameLoadTypeInternal;
     else
         loadType = WebFrameLoadTypeStandard;
-    [_frame _loadURL:URL referrer:referrer loadType:loadType target:target triggeringEvent:event form:form formValues:values];
+    [_frame _loadURL:URL referrer:(hideReferrer ? nil : referrer) loadType:loadType target:target triggeringEvent:event form:form formValues:values];
 
     if (targetFrame != nil && _frame != targetFrame) {
 	[[targetFrame _bridge] focusWindow];
@@ -642,6 +659,10 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 
 - (void)postWithURL:(NSURL *)URL referrer:(NSString *)referrer target:(NSString *)target data:(NSArray *)postData contentType:(NSString *)contentType triggeringEvent:(NSEvent *)event form:(DOMElement *)form formValues:(NSDictionary *)values
 {
+    BOOL hideReferrer;
+    if (![self canLoadURL:URL fromReferrer:[self referrer] hideReferrer:&hideReferrer])
+        return;
+
     if ([target length] == 0) {
 	target = nil;
     }
@@ -651,7 +672,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
         return;
     }
 
-    [_frame _postWithURL:URL referrer:referrer target:target data:postData contentType:contentType triggeringEvent:event form:form formValues:values];
+    [_frame _postWithURL:URL referrer:(hideReferrer ? nil : referrer) target:target data:postData contentType:contentType triggeringEvent:event form:form formValues:values];
 
     if (targetFrame != nil && _frame != targetFrame) {
 	[[targetFrame _bridge] focusWindow];
@@ -663,10 +684,18 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     return [_frame _generateFrameName];
 }
 
-- (WebCoreBridge *)createChildFrameNamed:(NSString *)frameName withURL:(NSURL *)URL
-    renderPart:(KHTMLRenderPart *)childRenderPart
-    allowsScrolling:(BOOL)allowsScrolling marginWidth:(int)width marginHeight:(int)height
+- (WebCoreBridge *)createChildFrameNamed:(NSString *)frameName 
+                                 withURL:(NSURL *)URL
+                                referrer:(NSString *)referrer
+                              renderPart:(KHTMLRenderPart *)childRenderPart
+                         allowsScrolling:(BOOL)allowsScrolling 
+                             marginWidth:(int)width
+                            marginHeight:(int)height
 {
+    BOOL hideReferrer;
+    if (![self canLoadURL:URL fromReferrer:referrer hideReferrer:&hideReferrer])
+        return nil;
+
     ASSERT(_frame != nil);
     WebFrame *newFrame = [[_frame webView] _createFrameNamed:frameName inParent:_frame allowsScrolling:allowsScrolling];
     if (newFrame == nil) {
@@ -678,7 +707,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     [[newFrame frameView] _setMarginWidth:width];
     [[newFrame frameView] _setMarginHeight:height];
 
-    [_frame _loadURL:URL intoChild:newFrame];
+    [_frame _loadURL:URL referrer:(hideReferrer ? nil : referrer) intoChild:newFrame];
 
     return [newFrame _bridge];
 }
@@ -861,6 +890,10 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
                  attributeValues:(NSArray *)attributeValues
                         MIMEType:(NSString *)MIMEType
 {
+    BOOL hideReferrer;
+    if (![self canLoadURL:URL fromReferrer:[self referrer] hideReferrer:&hideReferrer])
+        return nil;
+
     ASSERT([attributeNames count] == [attributeValues count]);
 
     WebBasePluginPackage *pluginPackage = nil;

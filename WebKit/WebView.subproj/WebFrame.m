@@ -1931,7 +1931,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     [formState release];
 }
 
-- (void)_loadURL:(NSURL *)URL intoChild:(WebFrame *)childFrame
+- (void)_loadURL:(NSURL *)URL referrer:(NSString *)referrer intoChild:(WebFrame *)childFrame
 {
     WebHistoryItem *parentItem = [_private currentItem];
     NSArray *childItems = [parentItem children];
@@ -1975,8 +1975,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     if (archive) {
         [childFrame loadArchive:archive];
     } else {
-        // FIXME: is this the right referrer?
-        [childFrame _loadURL:URL referrer:[[self _bridge] referrer] loadType:childLoadType target:nil triggeringEvent:nil form:nil formValues:nil];
+        [childFrame _loadURL:URL referrer:referrer loadType:childLoadType target:nil triggeringEvent:nil form:nil formValues:nil];
     }
 }
 

@@ -6,8 +6,10 @@
 #import <WebKit/WebNetscapePluginEmbeddedView.h>
 
 #import <WebKit/WebBaseNetscapePluginViewPrivate.h>
+#import <WebKit/WebBridge.h>
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebFrame.h>
+#import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebFrameView.h>
 #import <WebKit/WebNetscapePluginPackage.h>
 #import <WebKit/WebNSViewExtras.h>
@@ -57,7 +59,7 @@
     // Check for this and don't start a load in this case.
     if (URL != nil && ![URL _web_isEmpty]) {
         NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:URL];
-        [request setHTTPReferrer:[[[[self dataSource] request] URL] _web_originalDataAsString]];
+        [request setHTTPReferrer:[[[self webFrame] _bridge] referrer]];
         [self loadRequest:request inTarget:nil withNotifyData:nil sendNotification:NO];
     }
 }

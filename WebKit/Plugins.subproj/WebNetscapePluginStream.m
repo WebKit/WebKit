@@ -6,6 +6,7 @@
 #import <WebKit/WebNetscapePluginStream.h>
 
 #import <WebKit/WebBaseResourceHandleDelegate.h>
+#import <WebKit/WebBridge.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebKitErrorsPrivate.h>
 #import <WebKit/WebKitLogging.h>
@@ -16,7 +17,7 @@
 #import <Foundation/NSError_NSURLExtras.h>
 #import <Foundation/NSURLConnection.h>
 #import <Foundation/NSURLResponsePrivate.h>
-#import <Foundation/NSURLRequest.h>
+#import <Foundation/NSURLRequestPrivate.h>
 
 @interface WebNetscapePluginConnectionDelegate : WebBaseResourceHandleDelegate
 {
@@ -34,6 +35,13 @@
        notifyData:(void *)theNotifyData 
  sendNotification:(BOOL)flag
 {   
+    WebBaseNetscapePluginView *view = (WebBaseNetscapePluginView *)thePluginPointer->ndata;
+
+    WebBridge *bridge = [[view webFrame] _bridge];
+    BOOL hideReferrer;
+    if (![bridge canLoadURL:[request URL] fromReferrer:[bridge referrer] hideReferrer:&hideReferrer])
+        return nil;
+
     if ([self initWithRequestURL:[theRequest URL]
                     pluginPointer:thePluginPointer
                        notifyData:theNotifyData
@@ -49,9 +57,11 @@
         return nil;
     }
         
-    request = [theRequest copy];
+    request = [theRequest mutableCopy];
+    if (hideReferrer) {
+        [(NSMutableURLRequest *)request setHTTPReferrer:nil];
+    }
 
-    WebBaseNetscapePluginView *view = (WebBaseNetscapePluginView *)instance->ndata;
     _loader = [[WebNetscapePluginConnectionDelegate alloc] initWithStream:self view:view]; 
     [_loader setDataSource:[view dataSource]];
     

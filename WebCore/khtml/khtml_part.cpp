@@ -1075,6 +1075,7 @@ void KHTMLPart::clear()
   d->m_scheduledRedirection = noRedirectionScheduled;
   d->m_delayRedirect = 0;
   d->m_redirectURL = QString::null;
+  d->m_redirectReferrer = QString::null;
   d->m_redirectLockHistory = true;
   d->m_redirectUserGesture = false;
   d->m_bHTTPRefresh = false;
@@ -1506,7 +1507,7 @@ void KHTMLPart::begin( const KURL &url, int xOffset, int yOffset )
   ref.setUser(QSTRING_NULL);
   ref.setPass(QSTRING_NULL);
   ref.setRef(QSTRING_NULL);
-  d->m_referrer = ref.protocol().startsWith("http") ? ref.url() : "";
+  d->m_referrer = ref.url();
   m_url = url;
   KURL baseurl;
 
@@ -2003,6 +2004,7 @@ void KHTMLPart::scheduleRedirection( double delay, const QString &url, bool doLo
        d->m_scheduledRedirection = redirectionScheduled;
        d->m_delayRedirect = delay;
        d->m_redirectURL = url;
+       d->m_redirectReferrer = QString::null;
        d->m_redirectLockHistory = doLockHistory;
        d->m_redirectUserGesture = false;
 
@@ -2012,13 +2014,14 @@ void KHTMLPart::scheduleRedirection( double delay, const QString &url, bool doLo
     }
 }
 
-void KHTMLPart::scheduleLocationChange(const QString &url, bool lockHistory, bool userGesture)
+void KHTMLPart::scheduleLocationChange(const QString &url, const QString &referrer, bool lockHistory, bool userGesture)
 {
     // Handle a location change of a page with no document as a special case.
     // This may happen when a frame changes the location of another frame.
     d->m_scheduledRedirection = d->m_doc ? locationChangeScheduled : locationChangeScheduledDuringLoad;
     d->m_delayRedirect = 0;
     d->m_redirectURL = url;
+    d->m_redirectReferrer = referrer;
     d->m_redirectLockHistory = lockHistory;
     d->m_redirectUserGesture = userGesture;
     d->m_redirectionTimer.stop();
@@ -2054,6 +2057,7 @@ void KHTMLPart::scheduleHistoryNavigation( int steps )
     d->m_scheduledRedirection = historyNavigationScheduled;
     d->m_delayRedirect = 0;
     d->m_redirectURL = QString::null;
+    d->m_redirectReferrer = QString::null;
     d->m_scheduledHistoryNavigationSteps = steps;
     d->m_redirectionTimer.stop();
     if (d->m_bComplete)
@@ -2091,6 +2095,7 @@ void KHTMLPart::slotRedirect()
     }
   
   QString u = d->m_redirectURL;
+
   d->m_scheduledRedirection = noRedirectionScheduled;
   d->m_delayRedirect = 0;
   d->m_redirectURL = QString::null;
@@ -2111,6 +2116,10 @@ void KHTMLPart::slotRedirect()
     args.reload = true;
 
   args.setLockHistory( d->m_redirectLockHistory );
+  if (!d->m_redirectReferrer.isEmpty())
+    args.metaData()["referrer"] = d->m_redirectReferrer;
+  d->m_redirectReferrer = QString::null;
+
   urlSelected( u, 0, 0, "_self", args );
 }
 
@@ -3205,8 +3214,12 @@ bool KHTMLPart::processObjectRequest( khtml::ChildFrame *child, const KURL &_url
   if ( child->m_part )
   {
     KHTMLPart *part = static_cast<KHTMLPart *>(&*child->m_part);
-    if (part && part->inherits("KHTMLPart"))
-      part->openURL(url);
+    if (part && part->inherits("KHTMLPart")) {
+      KParts::URLArgs args;
+      if (!d->m_referrer.isEmpty())
+        args.metaData()["referrer"] = d->m_referrer;
+      KWQ(part)->openURLRequest(url, args);
+    }
   }
   else
   {

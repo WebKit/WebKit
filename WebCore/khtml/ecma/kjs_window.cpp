@@ -928,9 +928,9 @@ void Window::put(ExecState* exec, const Identifier &propertyName, const Value &v
           bool userGesture = static_cast<ScriptInterpreter *>(exec->dynamicInterpreter())->wasRunByUserGesture();
 #if APPLE_CHANGES
           // We want a new history item if this JS was called via a user gesture
-          m_part->scheduleLocationChange(dstUrl, !userGesture, userGesture);
+          m_part->scheduleLocationChange(dstUrl, p->referrer(), !userGesture, userGesture);
 #else
-          m_part->scheduleLocationChange(dstUrl, false /*don't lock history*/, userGesture);
+          m_part->scheduleLocationChange(dstUrl, p->referrer(), false /*don't lock history*/, userGesture);
 #endif
         }
       }
@@ -1526,38 +1526,36 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
 
       // prepare arguments
       KURL url;
+      KHTMLPart* activePart = Window::retrieveActive(exec)->m_part;
       if (!str.isEmpty())
       {
-        KHTMLPart* p = Window::retrieveActive(exec)->m_part;
-        if ( p )
-          url = p->htmlDocument().completeURL(str).string();
+        if (activePart)
+          url = activePart->htmlDocument().completeURL(str).string();
       }
 
       KParts::URLArgs uargs;
       uargs.frameName = frameName;
       if ( uargs.frameName == "_top" )
       {
-	  // FIXME: referrer?
           while ( part->parentPart() )
               part = part->parentPart();
 
           const Window* window = Window::retrieveWindow(part);
           if (!url.url().startsWith("javascript:", false) || (window && window->isSafeScript(exec))) {
             bool userGesture = static_cast<ScriptInterpreter *>(exec->dynamicInterpreter())->wasRunByUserGesture();
-            part->scheduleLocationChange(url.url(), false/*don't lock history*/, userGesture);
+            part->scheduleLocationChange(url.url(), activePart->referrer(), false/*don't lock history*/, userGesture);
           }
           return Window::retrieve(part);
       }
       if ( uargs.frameName == "_parent" )
       {
-	  // FIXME: referrer?
           if ( part->parentPart() )
               part = part->parentPart();
 
           const Window* window = Window::retrieveWindow(part);
           if (!url.url().startsWith("javascript:", false) || (window && window->isSafeScript(exec))) {
             bool userGesture = static_cast<ScriptInterpreter *>(exec->dynamicInterpreter())->wasRunByUserGesture();
-            part->scheduleLocationChange(url.url(), false/*don't lock history*/, userGesture);
+            part->scheduleLocationChange(url.url(), activePart->referrer(), false/*don't lock history*/, userGesture);
           }
           return Window::retrieve(part);
       }
@@ -1565,6 +1563,7 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
 
       // request window (new or existing if framename is set)
       KParts::ReadOnlyPart *newPart = 0L;
+      uargs.metaData()["referrer"] = activePart->referrer();
       emit part->browserExtension()->createNewWindow("", uargs,winargs,newPart);
       if (newPart && newPart->inherits("KHTMLPart")) {
         KHTMLPart *khtmlpart = static_cast<KHTMLPart*>(newPart);
@@ -1593,17 +1592,17 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
           const Window* window = Window::retrieveWindow(khtmlpart);
           if (!url.url().startsWith("javascript:", false) || (window && window->isSafeScript(exec))) {
             bool userGesture = static_cast<ScriptInterpreter *>(exec->dynamicInterpreter())->wasRunByUserGesture();
-            // FIXME: Need to pass referrer here.
-            khtmlpart->scheduleLocationChange(url.url(), false, userGesture);
+            khtmlpart->scheduleLocationChange(url.url(), activePart->referrer(), false, userGesture);
           } 
 	}
 #else
         uargs.serviceType = QString::null;
         if (uargs.frameName == "_blank")
           uargs.frameName = QString::null;
-        if (!url.isEmpty())
-	  // FIXME: need to pass referrer here
+        if (!url.isEmpty()) {
+          uargs.metaData()["referrer"] = activePart->referrer();
           emit khtmlpart->browserExtension()->openURLRequest(url,uargs);
+        }
 #endif
         return Window::retrieve(khtmlpart); // global object
       } else
@@ -2222,13 +2221,14 @@ void Location::put(ExecState *exec, const Identifier &p, const Value &v, int att
   }
 
   const Window* window = Window::retrieveWindow(m_part);
+  KHTMLPart* activePart = Window::retrieveActive(exec)->part();
   if (!url.url().startsWith("javascript:", false) || (window && window->isSafeScript(exec))) {
     bool userGesture = static_cast<ScriptInterpreter *>(exec->dynamicInterpreter())->wasRunByUserGesture();
 #if APPLE_CHANGES
     // We want a new history item if this JS was called via a user gesture
-    m_part->scheduleLocationChange(url.url(), !userGesture, userGesture);
+    m_part->scheduleLocationChange(url.url(), activePart->referrer(), !userGesture, userGesture);
 #else
-    m_part->scheduleLocationChange(url.url(), false /*don't lock history*/, userGesture);
+    m_part->scheduleLocationChange(url.url(), activePart->referrer(), false /*don't lock history*/, userGesture);
 #endif
   }
 }
@@ -2270,7 +2270,7 @@ Value LocationFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
         const Window* window = Window::retrieveWindow(part);
         if (!str.startsWith("javascript:", false) || (window && window->isSafeScript(exec))) {
           bool userGesture = static_cast<ScriptInterpreter *>(exec->dynamicInterpreter())->wasRunByUserGesture();
-          part->scheduleLocationChange(p->htmlDocument().completeURL(str).string(), true /*lock history*/, userGesture);
+          part->scheduleLocationChange(p->htmlDocument().completeURL(str).string(), p->referrer(), true /*lock history*/, userGesture);
         }
       }
       break;
@@ -2278,9 +2278,10 @@ Value LocationFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
     case Location::Reload:
     {
       const Window* window = Window::retrieveWindow(part);
-     if (!part->url().url().startsWith("javascript:", false) || (window && window->isSafeScript(exec))) {
+      KHTMLPart* activePart = Window::retrieveActive(exec)->part();
+      if (!part->url().url().startsWith("javascript:", false) || (window && window->isSafeScript(exec))) {
         bool userGesture = static_cast<ScriptInterpreter *>(exec->dynamicInterpreter())->wasRunByUserGesture();
-        part->scheduleLocationChange(part->url().url(), true/*lock history*/, userGesture);
+        part->scheduleLocationChange(part->url().url(), activePart->referrer(), true/*lock history*/, userGesture);
       }
       break;
     }

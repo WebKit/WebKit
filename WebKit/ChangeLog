@@ -1,3 +1,28 @@
+2005-03-06  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	<rdar://problem/4005575> Arbitrary file disclosure vulnerability due to ability to load local html from remote content
+        
+	* Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView requestWithURLCString:]):
+        * Plugins.subproj/WebNetscapePluginEmbeddedView.m:
+        (-[WebNetscapePluginEmbeddedView didStart]):
+        * Plugins.subproj/WebNetscapePluginStream.m:
+        (-[WebNetscapePluginStream initWithRequest:pluginPointer:notifyData:sendNotification:]):
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge createWindowWithURL:frameName:]):
+        (-[WebBridge startLoadingResource:withURL:customHeaders:]):
+        (-[WebBridge startLoadingResource:withURL:customHeaders:postData:]):
+        (-[WebBridge syncLoadResourceWithURL:customHeaders:postData:finalURL:responseHeaders:statusCode:]):
+        (-[WebBridge loadURL:referrer:reload:userGesture:target:triggeringEvent:form:formValues:]):
+        (-[WebBridge postWithURL:referrer:target:data:contentType:triggeringEvent:form:formValues:]):
+        (-[WebBridge createChildFrameNamed:withURL:referrer:renderPart:allowsScrolling:marginWidth:marginHeight:]):
+        (-[WebBridge viewForPluginWithURL:attributeNames:attributeValues:MIMEType:]):
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame _loadURL:referrer:intoChild:]):
+        * WebView.subproj/WebFramePrivate.h:
+
 2005-03-09  Richard Williamson   <rjw@apple.com>
 	
 	Fixed <rdar://problem/4032938> Safari: text layout for MS P Gothic font is corrupted

@@ -152,7 +152,7 @@ extern NSString *WebPageCacheDocumentViewKey;
 
 - (void)_goToItem:(WebHistoryItem *)item withLoadType:(WebFrameLoadType)type;
 - (void)_loadURL:(NSURL *)URL referrer:(NSString *)referrer loadType:(WebFrameLoadType)loadType target:(NSString *)target triggeringEvent:(NSEvent *)event form:(DOMElement *)form formValues:(NSDictionary *)values;
-- (void)_loadURL:(NSURL *)URL intoChild:(WebFrame *)childFrame;
+- (void)_loadURL:(NSURL *)URL referrer:(NSString *)referrer intoChild:(WebFrame *)childFrame;
 - (void)_postWithURL:(NSURL *)URL referrer:(NSString *)referrer target:(NSString *)target data:(NSArray *)postData contentType:(NSString *)contentType triggeringEvent:(NSEvent *)event form:(DOMElement *)form formValues:(NSDictionary *)values;
 
 - (void)_loadRequest:(NSURLRequest *)request inFrameNamed:(NSString *)frameName;

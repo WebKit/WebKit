@@ -210,6 +210,12 @@ static BOOL partHasSelection(WebCoreBridge *bridge)
     return YES;
 }
 
+static BOOL hasCaseInsensitivePrefix(NSString *string, NSString *prefix)
+{
+    return [string rangeOfString:prefix options:(NSCaseInsensitiveSearch | NSAnchoredSearch)].location !=
+        NSNotFound;
+}
+
 @implementation WebCoreBridge
 
 static bool initializedObjectCacheSize = FALSE;
@@ -378,6 +384,15 @@ static bool initializedKJS = FALSE;
     }
     KWQPageState *state = [pageCache objectForKey:WebCorePageCacheStateKey];
     [state invalidate];
+}
+
+- (BOOL)canLoadURL:(NSURL *)URL fromReferrer:(NSString *)referrer hideReferrer:(BOOL *)hideReferrer
+{
+    *hideReferrer = !hasCaseInsensitivePrefix(referrer,@"http:") && !hasCaseInsensitivePrefix(referrer, @"https:");
+    BOOL referrerIsFileURL = hasCaseInsensitivePrefix(referrer, @"file:");
+    BOOL URLIsFileURL = [[URL scheme] compare:@"file" options:(NSCaseInsensitiveSearch|NSLiteralSearch)] == NSOrderedSame;
+
+    return referrerIsFileURL || !URLIsFileURL;
 }
 
 - (void)saveDocumentState
