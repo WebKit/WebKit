@@ -735,7 +735,7 @@ bool RenderObject::sizesToMaxWidth() const
 {
     // Marquees in WinIE are like a mixture of blocks and inline-blocks.  They size as though they're blocks,
     // but they allow text to sit on the same line as the marquee.
-    if (isFloating() || isCompact() || 
+    if (isFloating() || (isCompact() && isInline()) || 
         (isInlineBlockOrInlineTable() && !isHTMLMarquee()) ||
         (element() && (element()->id() == ID_BUTTON || element()->id() == ID_LEGEND)))
         return true;

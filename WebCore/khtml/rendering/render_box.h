@@ -72,10 +72,10 @@ public:
     virtual int width() const;
     virtual int height() const;
 
-    virtual short marginTop() const { return m_marginTop; }
-    virtual short marginBottom() const { return m_marginBottom; }
-    virtual short marginLeft() const { return m_marginLeft; }
-    virtual short marginRight() const { return m_marginRight; }
+    virtual int marginTop() const { return m_marginTop; }
+    virtual int marginBottom() const { return m_marginBottom; }
+    virtual int marginLeft() const { return m_marginLeft; }
+    virtual int marginRight() const { return m_marginRight; }
 
     virtual void setWidth( int width ) { m_width = width; }
     virtual void setHeight( int height ) { m_height = height; }
@@ -163,11 +163,11 @@ protected:
     int m_x;
     int m_width;
 
-    short m_marginTop;
-    short m_marginBottom;
+    int m_marginTop;
+    int m_marginBottom;
 
-    short m_marginLeft;
-    short m_marginRight;
+    int m_marginLeft;
+    int m_marginRight;
 
     /*
      * the minimum width the element needs, to be able to render

@@ -462,14 +462,13 @@ void ElementImpl::recalcStyle( StyleChange change )
                 m_render->setStyle(newStyle);
             }
         }
-        /* FIXME: Back this out for now.
-        else if (m_render && newStyle && (getDocument()->usesSiblingRules() || getDocument()->usesDescendantRules())) {
+        else if (changed() && m_render && newStyle && (getDocument()->usesSiblingRules() || getDocument()->usesDescendantRules())) {
             // Although no change occurred, we use the new style so that the cousin style sharing code won't get
             // fooled into believing this style is the same.  This is only necessary if the document actually uses
             // sibling/descendant rules, since otherwise it isn't possible for ancestor styles to affect sharing of
             // descendants.
             m_render->setStyleInternal(newStyle);
-        }*/
+        }
 
         newStyle->deref(getDocument()->renderArena());
 

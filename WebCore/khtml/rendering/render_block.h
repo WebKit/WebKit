@@ -70,13 +70,13 @@ public:
     virtual bool isTopMarginQuirk() const { return m_topMarginQuirk; }
     virtual bool isBottomMarginQuirk() const { return m_bottomMarginQuirk; }
 
-    virtual short maxTopMargin(bool positive) const {
+    virtual int maxTopMargin(bool positive) const {
         if (positive)
             return m_maxTopPosMargin;
         else
             return m_maxTopNegMargin;
     }
-    virtual short maxBottomMargin(bool positive) const {
+    virtual int maxBottomMargin(bool positive) const {
         if (positive)
             return m_maxBottomPosMargin;
         else
@@ -287,24 +287,125 @@ protected:
         bool noPaint : 1;
     };
     
+    // The following helper functions and structs are used by layoutBlockChildren.
+    class CompactInfo {
+        // A compact child that needs to be collapsed into the margin of the following block.
+        RenderObject* m_compact;
+        
+        // The block with the open margin that the compact child is going to place itself within.
+        RenderObject* m_block;
+
+    public:
+        RenderObject* compact() const { return m_compact; }
+        RenderObject* block() const { return m_block; }
+        bool matches(RenderObject* child) const { return m_compact && m_block == child; }
+        
+        void clear() { set(0, 0);  }
+        void set(RenderObject* c, RenderObject* b) { m_compact = c; m_block = b; }
+        
+        CompactInfo() { clear(); }
+    };
+
+    class MarginInfo {
+        // Collapsing flags for whether we can collapse our margins with our children's margins.
+        bool m_canCollapseWithChildren : 1;
+        bool m_canCollapseTopWithChildren : 1;
+        bool m_canCollapseBottomWithChildren : 1;
+        
+        // Whether or not we are a quirky container, i.e., do we collapse away top and bottom
+        // margins in our container.  Table cells and the body are the common examples. We
+        // also have a custom style property for Safari RSS to deal with TypePad blog articles.
+        bool m_quirkContainer : 1;
+
+        // This flag tracks whether we are still looking at child margins that can all collapse together at the beginning of a block.  
+        // They may or may not collapse with the top margin of the block (|m_canCollapseTopWithChildren| tells us that), but they will
+        // always be collapsing with one another.  This variable can remain set to true through multiple iterations 
+        // as long as we keep encountering self-collapsing blocks.
+        bool m_atTopOfBlock : 1;
+
+        // This flag is set when we know we're examining bottom margins and we know we're at the bottom of the block.
+        bool m_atBottomOfBlock : 1;
+
+        // If our last normal flow child was a self-collapsing block that cleared a float,
+        // we track it in this variable.
+        bool m_selfCollapsingBlockClearedFloat : 1;
+    
+        // These variables are used to detect quirky margins that we need to collapse away (in table cells
+        // and in the body element).
+        bool m_topQuirk : 1;
+        bool m_bottomQuirk : 1;
+        bool m_determinedTopQuirk : 1;
+
+        // These flags track the previous maximal positive and negative margins.
+        int m_posMargin;
+        int m_negMargin;
+
+    public:
+        MarginInfo(RenderBlock* b, int top, int bottom);
+        
+        void setAtTopOfBlock(bool b) { m_atTopOfBlock = b; }
+        void setAtBottomOfBlock(bool b) { m_atBottomOfBlock = b; }
+        void clearMargin() { m_posMargin = m_negMargin = 0; }
+        void setSelfCollapsingBlockClearedFloat(bool b) { m_selfCollapsingBlockClearedFloat = false; }
+        void setTopQuirk(bool b) { m_topQuirk = b; }
+        void setBottomQuirk(bool b) { m_bottomQuirk = b; }
+        void setDeterminedTopQuirk(bool b) { m_determinedTopQuirk = b; }
+        void setPosMargin(int p) { m_posMargin = p; }
+        void setNegMargin(int n) { m_negMargin = n; }
+        void setPosMarginIfLarger(int p) { if (p > m_posMargin) m_posMargin = p; }
+        void setNegMarginIfLarger(int n) { if (n > m_negMargin) m_negMargin = n; }
+
+        void setMargin(int p, int n) { m_posMargin = p; m_negMargin = n; }
+
+        bool atTopOfBlock() const { return m_atTopOfBlock; }
+        bool canCollapseWithTop() const { return m_atTopOfBlock && m_canCollapseTopWithChildren; }
+        bool canCollapseWithBottom() const { return m_atBottomOfBlock && m_canCollapseBottomWithChildren; }
+        bool canCollapseTopWithChildren() const { return m_canCollapseTopWithChildren; }
+        bool canCollapseBottomWithChildren() const { return m_canCollapseBottomWithChildren; }
+        bool selfCollapsingBlockClearedFloat() const { return m_selfCollapsingBlockClearedFloat; }
+        bool quirkContainer() const { return m_quirkContainer; }
+        bool determinedTopQuirk() const { return m_determinedTopQuirk; }
+        bool topQuirk() const { return m_topQuirk; }
+        bool bottomQuirk() const { return m_bottomQuirk; }
+        int posMargin() const { return m_posMargin; }
+        int negMargin() const { return m_negMargin; }
+        int margin() const { return m_posMargin - m_negMargin; }
+    };
+    
+    void adjustPositionedBlock(RenderObject* child, const MarginInfo& marginInfo);
+    void adjustFloatingBlock(const MarginInfo& marginInfo);
+    RenderObject* handleSpecialChild(RenderObject* child, const MarginInfo& marginInfo, CompactInfo& compactInfo, bool& handled);
+    RenderObject* handleFloatingOrPositionedChild(RenderObject* child, const MarginInfo& marginInfo, bool& handled);
+    RenderObject* handleCompactChild(RenderObject* child, CompactInfo& compactInfo, bool& handled);
+    RenderObject* handleRunInChild(RenderObject* child, bool& handled);
+    void collapseMargins(RenderObject* child, MarginInfo& marginInfo, int yPosEstimate);
+    void clearFloatsIfNeeded(RenderObject* child, MarginInfo& marginInfo, int oldTopPosMargin, int oldTopNegMargin);
+    void insertCompactIfNeeded(RenderObject* child, CompactInfo& compactInfo);
+    int estimateVerticalPosition(RenderObject* child, const MarginInfo& info, RenderObject* prevBlock);
+    void determineHorizontalPosition(RenderObject* child);
+    void handleBottomOfBlock(int top, int bottom, MarginInfo& marginInfo);
+    void setCollapsedBottomMargin(const MarginInfo& marginInfo);
+    bool adjustChildIfOverhangingFloatsExist(RenderObject* child, MarginInfo& marginInfo, int& yPosEstimate);
+    // End helper functions and structs used by layoutBlockChildren.
+
 protected:
     QPtrList<FloatingObject>* m_floatingObjects;
     QPtrList<RenderObject>* m_positionedObjects;
     
     bool m_childrenInline : 1;
     bool m_pre            : 1;
-    bool m_firstLine      : 1; // used in inline layouting
-    EClear m_clearStatus  : 2; // used during layuting of paragraphs
+    bool m_firstLine      : 1;
+    EClear m_clearStatus  : 2;
     bool m_topMarginQuirk : 1;
     bool m_bottomMarginQuirk : 1;
     bool m_linesAppended : 1; // Whether or not a block with inline children has had lines appended.
     bool m_hasMarkupTruncation : 1;
     SelectionState m_selectionState : 3;
 
-    short m_maxTopPosMargin;
-    short m_maxTopNegMargin;
-    short m_maxBottomPosMargin;
-    short m_maxBottomNegMargin;
+    int m_maxTopPosMargin;
+    int m_maxTopNegMargin;
+    int m_maxBottomPosMargin;
+    int m_maxBottomNegMargin;
 
     // How much content overflows out of our block vertically or horizontally (all we support
     // for now is spillage out of the bottom and the right, which are the common cases).

@@ -86,11 +86,15 @@ void RenderImage::setContentObject(CachedObject* co)
 
 void RenderImage::setImage(CachedImage* newImage)
 {
-    if (image)
-        image->deref(this);
-    image = newImage;
-    if (image)
-        image->ref(this);
+    if (image != newImage) {
+        if (image)
+            image->deref(this);
+        image = newImage;
+        if (image)
+            image->ref(this);
+        if (image->isErrorImage())
+            setPixmap(image->pixmap(), QRect(0,0,16,16), image);
+    }
 }
 
 void RenderImage::setPixmap( const QPixmap &p, const QRect& r, CachedImage *o)

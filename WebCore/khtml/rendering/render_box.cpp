@@ -1346,10 +1346,8 @@ void RenderBox::calcAbsoluteVertical()
 
     // We don't use containingBlock(), since we may be positioned by an enclosing relpositioned inline.
     RenderObject* cb = container();
-    Length hl = cb->style()->height();
-    if (hl.isFixed())
-        ch = hl.value + cb->paddingTop() + cb->paddingBottom();
-    else if (cb->isRoot())
+    if (cb->isRoot()) // Even in strict mode (where we don't grow the root to fill the viewport) other browsers
+                      // position as though the root fills the viewport.
         ch = cb->availableHeight();
     else
         ch = cb->height() - cb->borderTop() - cb->borderBottom();

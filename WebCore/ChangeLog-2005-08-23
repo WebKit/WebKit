@@ -1,3 +1,89 @@
+2004-10-13  David Hyatt  <hyatt@apple.com>
+
+	Rework block layout to clean it up and simplify it (r=kocienda).  
+
+	Also fixing the style sharing bug (r=mjs).
+	
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::MarginInfo::MarginInfo):
+        (khtml::RenderBlock::layoutBlock):
+        (khtml::RenderBlock::adjustPositionedBlock):
+        (khtml::RenderBlock::adjustFloatingBlock):
+        (khtml::RenderBlock::handleSpecialChild):
+        (khtml::RenderBlock::handleFloatingOrPositionedChild):
+        (khtml::RenderBlock::handleCompactChild):
+        (khtml::RenderBlock::insertCompactIfNeeded):
+        (khtml::RenderBlock::handleRunInChild):
+        (khtml::RenderBlock::collapseMargins):
+        (khtml::RenderBlock::clearFloatsIfNeeded):
+        (khtml::RenderBlock::estimateVerticalPosition):
+        (khtml::RenderBlock::determineHorizontalPosition):
+        (khtml::RenderBlock::setCollapsedBottomMargin):
+        (khtml::RenderBlock::adjustChildIfOverhangingFloatsExist):
+        (khtml::RenderBlock::handleBottomOfBlock):
+        (khtml::RenderBlock::layoutBlockChildren):
+        (khtml::RenderBlock::getAbsoluteRepaintRectIncludingFloats):
+        (khtml::RenderBlock::addOverHangingFloats):
+        * khtml/rendering/render_block.h:
+        (khtml::RenderBlock::maxTopMargin):
+        (khtml::RenderBlock::maxBottomMargin):
+        (khtml::RenderBlock::CompactInfo::compact):
+        (khtml::RenderBlock::CompactInfo::block):
+        (khtml::RenderBlock::CompactInfo::matches):
+        (khtml::RenderBlock::CompactInfo::clear):
+        (khtml::RenderBlock::CompactInfo::set):
+        (khtml::RenderBlock::CompactInfo::CompactInfo):
+        (khtml::RenderBlock::MarginInfo::setAtTopOfBlock):
+        (khtml::RenderBlock::MarginInfo::setAtBottomOfBlock):
+        (khtml::RenderBlock::MarginInfo::clearMargin):
+        (khtml::RenderBlock::MarginInfo::setSelfCollapsingBlockClearedFloat):
+        (khtml::RenderBlock::MarginInfo::setTopQuirk):
+        (khtml::RenderBlock::MarginInfo::setBottomQuirk):
+        (khtml::RenderBlock::MarginInfo::setDeterminedTopQuirk):
+        (khtml::RenderBlock::MarginInfo::setPosMargin):
+        (khtml::RenderBlock::MarginInfo::setNegMargin):
+        (khtml::RenderBlock::MarginInfo::setPosMarginIfLarger):
+        (khtml::RenderBlock::MarginInfo::setNegMarginIfLarger):
+        (khtml::RenderBlock::MarginInfo::setMargin):
+        (khtml::RenderBlock::MarginInfo::atTopOfBlock):
+        (khtml::RenderBlock::MarginInfo::canCollapseWithTop):
+        (khtml::RenderBlock::MarginInfo::canCollapseWithBottom):
+        (khtml::RenderBlock::MarginInfo::canCollapseTopWithChildren):
+        (khtml::RenderBlock::MarginInfo::canCollapseBottomWithChildren):
+        (khtml::RenderBlock::MarginInfo::selfCollapsingBlockClearedFloat):
+        (khtml::RenderBlock::MarginInfo::quirkContainer):
+        (khtml::RenderBlock::MarginInfo::determinedTopQuirk):
+        (khtml::RenderBlock::MarginInfo::topQuirk):
+        (khtml::RenderBlock::MarginInfo::bottomQuirk):
+        (khtml::RenderBlock::MarginInfo::posMargin):
+        (khtml::RenderBlock::MarginInfo::negMargin):
+        (khtml::RenderBlock::MarginInfo::margin):
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::calcAbsoluteVertical):
+        * khtml/rendering/render_box.h:
+        (khtml::RenderBox::marginTop):
+        (khtml::RenderBox::marginBottom):
+        (khtml::RenderBox::marginLeft):
+        (khtml::RenderBox::marginRight):
+        * khtml/rendering/render_image.cpp:
+        (RenderImage::setImage):
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::sizesToMaxWidth):
+        * khtml/rendering/render_object.h:
+        (khtml::RenderObject::collapsedMarginTop):
+        (khtml::RenderObject::collapsedMarginBottom):
+        (khtml::RenderObject::maxTopMargin):
+        (khtml::RenderObject::maxBottomMargin):
+        (khtml::RenderObject::marginTop):
+        (khtml::RenderObject::marginBottom):
+        (khtml::RenderObject::marginLeft):
+        (khtml::RenderObject::marginRight):
+        * khtml/rendering/render_text.h:
+        (khtml::RenderText::marginLeft):
+        (khtml::RenderText::marginRight):
+        * khtml/xml/dom_elementimpl.cpp:
+        (ElementImpl::recalcStyle):
+
 2004-10-12  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by John
