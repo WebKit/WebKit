@@ -1,5 +1,15 @@
 2004-06-21  Chris Blumenberg  <cblu@apple.com>
 
+	Made WebKitErrorDescriptionPlugInCancelledConnection have its own description string
+	(Not for software update branch)
+
+        Reviewed by john.
+
+        * English.lproj/Localizable.strings:
+        * Misc.subproj/WebKitErrors.m:
+
+2004-06-21  Chris Blumenberg  <cblu@apple.com>
+
 	Made WebKitErrorDescriptionPlugInCancelledConnection properly reuse an already localized string to avoid loc changes.
 
         Reviewed by john.
