@@ -295,7 +295,7 @@ KHTMLPart::~KHTMLPart()
             d->m_doc->detach();
 
     if (d->m_doc->refCount() != 1)
-        fprintf (stdout, "Warning:  document reference count not 1 as expect,  ref = %d\n", d->m_doc->refCount());
+        fprintf (stdout, "Warning:  document reference count not 1 as expected,  ref = %d\n", d->m_doc->refCount());
     if ( d->m_doc )
         d->m_doc->deref();
     
