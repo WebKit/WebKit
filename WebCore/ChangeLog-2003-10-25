@@ -1,5 +1,16 @@
 2003-03-22  David Hyatt  <hyatt@apple.com>
 
+	Loosen up the DTD for <dl>, <dt>, and <dd> so that they can
+	occur anywhere in a document and be independent of one 
+	another.
+	
+        Reviewed by darin/gramps
+
+        * khtml/html/dtd.cpp:
+        (DOM::checkChild):
+
+2003-03-22  David Hyatt  <hyatt@apple.com>
+
 	Bottom border/padding was incorrectly being used in float
         computations.  The fix is trivial... positioning of floats
 	occurs before you add in the bottom border/padding rather

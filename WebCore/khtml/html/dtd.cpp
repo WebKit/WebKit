@@ -376,6 +376,8 @@ static const ushort tag_list_1[] = {
     ID_BUTTON,
     ID_COMMENT,
     ID_LI,
+    ID_DT,
+    ID_DD,
     ID_XMP,
     ID_INS,
     ID_DEL,
@@ -498,14 +500,6 @@ static const ushort tag_list_4[] = {
     ID_LI,
     ID_XMP,
     ID_MARQUEE,
-    0
-};
-
-static const ushort tag_list_6[] = {
-    ID_TEXT,
-    ID_DT,
-    ID_DD,
-    ID_COMMENT,
     0
 };
 
@@ -665,7 +659,7 @@ bool DOM::checkChild(ushort tagID, ushort childID)
         return check_array(childID, tag_list_1);
     case ID_DL:
         // DL: _6 +
-        return check_array(childID, tag_list_6);
+        return check_array(childID, tag_list_1);
     case ID_DIR:
     case ID_MENU:
         // (DIR|MENU): LI + - _3
