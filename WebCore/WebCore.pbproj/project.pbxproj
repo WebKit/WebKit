@@ -13,7 +13,7 @@
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				INSTALL_PATH_MODIFIED_BY_SCRIPT_DO_NOT_COMMIT = "@executable_path/../Frameworks";
+				INSTALL_PATH = "@executable_path/../Frameworks";
 				OPTIMIZATION_CFLAGS = "-O0";
 				OTHER_LDFLAGS = "-seg1addr $(LOCAL_SEG1_ADDR)";
 				SECTORDER_FLAGS = "";
@@ -25,7 +25,7 @@
 		014CEA450018CDF011CA2923 = {
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
-				INSTALL_PATH_MODIFIED_BY_SCRIPT_DO_NOT_COMMIT = "@executable_path/../Frameworks";
+				INSTALL_PATH = "@executable_path/../Frameworks";
 				OTHER_LDFLAGS = "-seg1addr $(LOCAL_SEG1_ADDR)";
 				SECTORDER_FLAGS = "";
 			};
@@ -142,7 +142,7 @@
 				FRAMEWORK_VERSION = A;
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				HEADER_SEARCH_PATHS = "ForwardingHeaders /usr/include/libxml2";
-				INSTALL_PATH_MODIFIED_BY_SCRIPT_DO_NOT_COMMIT = /System/Library/Frameworks/WebKit.framework/Versions/A/Frameworks;
+				INSTALL_PATH = /System/Library/Frameworks/WebKit.framework/Versions/A/Frameworks;
 				LIBRARY_SEARCH_PATHS = "";
 				LOCAL_SEG1_ADDR = 0x9000000;
 				MACOSX_DEPLOYMENT_TARGET = 10.2;
@@ -187,7 +187,7 @@
 	<key>CFBundleShortVersionString</key>
 	<string>2.0</string>
 	<key>CFBundleVersion</key>
-	<string>155u</string>
+	<string>154</string>
 </dict>
 </plist>
 ";
@@ -10231,7 +10231,7 @@
 		F58C8A07025BD3BC018635CA = {
 			buildSettings = {
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				INSTALL_PATH_MODIFIED_BY_SCRIPT_DO_NOT_COMMIT = "@executable_path/../Frameworks";
+				INSTALL_PATH = "@executable_path/../Frameworks";
 				OTHER_LDFLAGS = "-seg1addr $(LOCAL_SEG1_ADDR)";
 				SECTORDER_FLAGS = "";
 			};
