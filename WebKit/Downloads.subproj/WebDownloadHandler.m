@@ -17,6 +17,7 @@
 #import <WebKit/WebMacBinaryDecoder.h>
 
 #import <WebFoundation/WebError.h>
+#import <WebFoundation/WebNSFileManagerExtras.h>
 #import <WebFoundation/WebResourceRequest.h>
 #import <WebFoundation/WebResourceResponse.h>
 
@@ -183,8 +184,8 @@
             [response lastModifiedDate], NSFileModificationDate, nil];
     }
     
-    if (![fileManager createFileAtPath:path contents:nil attributes:fileAttributes]) {
-        ERROR("-[NSFileManager createFileAtPath:contents:attributes:] failed.");
+    if (![fileManager _web_createFileAtPath:path contents:nil attributes:fileAttributes]) {
+        ERROR("-[NSFileManager _web_createFileAtPath:contents:attributes:] failed.");
         return [self errorWithCode:WebErrorCannotCreateFile];
     }
 

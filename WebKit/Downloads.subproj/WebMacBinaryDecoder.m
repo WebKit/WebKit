@@ -7,11 +7,13 @@
 // This decoder decodes MacBinary II and might also work for MacBinary III.
 // There's also MacBinary I, which we do not attempt to support.
 
+#import <WebKit/WebDownloadDecoder.h>
 #import <WebKit/WebMacBinaryDecoder.h>
 
-#import "crc16.h"
 #import <WebFoundation/WebAssertions.h>
-#import <WebKit/WebDownloadDecoder.h>
+#import <WebFoundation/WebNSFileManagerExtras.h>
+
+#import "crc16.h"
 
 #define HEADER_SIZE 128
 
@@ -95,6 +97,12 @@
         _resourceForkLength = (((((header[87] << 8) | header[88]) << 8) | header[89]) << 8) | header[90];
         _creationDate = (((((header[91] << 8) | header[92]) << 8) | header[93]) << 8) | header[94];
         _modificationDate = (((((header[95] << 8) | header[96]) << 8) | header[97]) << 8) | header[98];
+        _finderInfo = ((header[73] << 8) | header[101]);
+        _extendedFinderInfo = header[107];
+
+        // Clear reserved bits or bits not applicable after transfer as defined in Finder.h.
+        _finderInfo &= kColor | kIsShared | kHasCustomIcon | kIsStationery | kHasBundle | kIsAlias;
+        _extendedFinderInfo &= kExtendedFlagHasCustomBadge | kExtendedFlagHasRoutingInfo;
         
         // MacBinary III.
         if (header[102] == 'm' && header[103] == 'B' && header[104] == 'I' && header[105] == 'N') {
@@ -151,6 +159,8 @@
         [NSDate dateWithTimeIntervalSinceReferenceDate:kCFAbsoluteTimeIntervalSince1904 + _modificationDate], NSFileModificationDate,
         [NSNumber numberWithUnsignedLong:_fileType], NSFileHFSTypeCode,
         [NSNumber numberWithUnsignedLong:_fileCreator], NSFileHFSCreatorCode,
+        [NSNumber numberWithUnsignedShort:_finderInfo], WebFinderInfo,
+        [NSNumber numberWithUnsignedShort:_extendedFinderInfo], WebExtendedFinderInfo,
         nil];
 }
 

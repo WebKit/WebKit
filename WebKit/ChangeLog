@@ -1,4 +1,15 @@
-=== WebKit-37u2 ===
+2002-12-15  Chris Blumenberg  <cblu@apple.com>
+	
+	Fixed: 3094928 - Apply Finder bits to decoded downloads
+
+        Reviewed by darin.
+
+        * Downloads.subproj/WebDownloadHandler.m:
+        (-[WebDownloadHandler createFileIfNecessary]): call _web_createFileAtPath:contents:attributes: so we set Finder bits
+        * Downloads.subproj/WebMacBinaryDecoder.h:
+        * Downloads.subproj/WebMacBinaryDecoder.m:
+        (-[WebMacBinaryDecoder decodeData:dataForkData:resourceForkData:]): save Finder bits
+        (-[WebMacBinaryDecoder fileAttributes]): return Finder bits
 
 2002-12-15  Maciej Stachowiak  <mjs@apple.com>
 
