@@ -1,3 +1,15 @@
+2003-05-30  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Ken.
+
+	- fixed 3273544 - REGRESSION: Page disappears at http://www.urban-advantage.com/
+	
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::getElementById): Return null when the ID is the
+	empty string. Otherwise we'll return the first element in the
+	document, usually the top-level HTML element, which is wrong and
+	does not match other browsers.
+
 2003-05-30  Richard Williamson  <rjw@apple.com>
 
 	As part of some cleanup when fixing 3272516 changed use of
