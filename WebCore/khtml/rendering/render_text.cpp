@@ -815,11 +815,28 @@ void RenderText::cacheWidths()
 inline int RenderText::widthFromCache(const Font *f, int start, int len) const
 {
     if (m_monospaceCharacterWidth != 0){
-        return len * m_monospaceCharacterWidth;
+        int i, w = 0;
+        for (i = start; i < start+len; i++){
+            int dir = str->s[i].direction();
+            if (dir != QChar::DirNSM && dir != QChar::DirBN)
+                w += m_monospaceCharacterWidth;
+        }
+        return w;
     }
     
     return f->width(str->s, str->l, start, len);
 }
+#ifdef XXX
+inline int RenderText::widthFromCache(const Font *f, int start, int len) const
+{
+    if (m_monospaceCharacterWidth != 0){
+        return len * m_monospaceCharacterWidth;
+    }
+
+    return f->width(str->s, str->l, start, len);
+}
+#endif
+
 #endif
 
 void RenderText::trimmedMinMaxWidth(short& beginMinW, bool& beginWS, 

@@ -1,3 +1,21 @@
+2003-01-16  Richard Williamson   <rjw@apple.com>
+
+        Fixed 3148932.  Account for zero width characters
+        in <pre> fixed-width optimization.
+        
+        Reviewed by hyatt.
+
+        * khtml/rendering/render_text.cpp:
+        (RenderText::widthFromCache):
+        
+        Reviewed by Richard (written by Mike S.)  'Clean' implementations of these
+        functions that were too similar to the Qt implementations.
+        
+        * kwq/KWQString.mm:
+        (QString::left):
+        (QString::right):
+        (QString::mid):
+
 2003-01-16  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

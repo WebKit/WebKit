@@ -1699,65 +1699,44 @@ QString QString::arg(double replacement, int width) const
 }
 
 QString QString::left(uint len) const
-{
-    if ( isEmpty() ) {
-	return QString();
-    } else if ( len == 0 ) {			// ## just for 1.x compat:
-	return fromLatin1("");
-    } else if ( len > dataHandle[0]->_length ) {
-	return *this;
-    } else {
-	QString s( unicode(), len );
-	return s;
-    }
-}
+{ return mid(0, len); }
+
 
 QString QString::right(uint len) const
+{ return mid(length() - len, len); }
+
+
+QString QString::mid(uint start, uint len) const
 {
-    if ( isEmpty() ) {
-	return QString();
-    } else if ( len == 0 ) {			// ## just for 1.x compat:
-	return fromLatin1("");
-    } else {
-	uint l = dataHandle[0]->_length;
-	if ( len > l )
-	    len = l;
-	QString s( unicode()+(l-len), len );
-	return s;
+    if( dataHandle && *dataHandle)
+    {
+        KWQStringData &data = **dataHandle;
+        
+        if (data._length == 0)
+            return QString();
+            
+        // clip length
+        if( len > data._length - start )
+            len = data._length - start;
+
+        if ( index == 0 && len == data._length )
+            return *this;
+
+        ASSERT( start+len<=data._length );	// range check
+        
+        // ascii case
+        if( data._isAsciiValid && data._ascii )
+            return QString( &(data._ascii[start]) , len);
+        
+        // unicode case
+        else if( data._isUnicodeValid && data._unicode )
+            return QString( &(data._unicode[start]), len );
     }
+    
+    // degenerate case
+    return null;
 }
 
-QString QString::mid(uint index, uint len) const
-{
-    uint slen = dataHandle[0]->_length;
-    if ( isEmpty() || index >= slen ) {
-	return QString();
-    } else if ( len == 0 ) {			// ## just for 1.x compat:
-	return fromLatin1("");
-    } else {
-        if (dataHandle[0]->_isAsciiValid){
-            if ( len > slen-index )
-                len = slen - index;
-            if ( index == 0 && len == dataHandle[0]->_length )
-                return *this;
-            register const char *p = ascii()+index;
-            QString s( p, len );
-            return s;
-        }
-        else if (dataHandle[0]->_isUnicodeValid){
-            if ( len > slen-index )
-                len = slen - index;
-            if ( index == 0 && len == dataHandle[0]->_length )
-                return *this;
-            register const QChar *p = unicode()+index;
-            QString s( p, len );
-            return s;
-        }
-        else
-            FATAL("invalid character cache");
-    }
-    return QString(); // Never reached, shut the compiler up.
-}
 
 QString QString::copy() const
 {
