@@ -40,7 +40,7 @@ static IFPluginDatabase *__IFPluginDatabase = nil;
 }
 
 // The first plugin with the specified mime type is returned. We may want to tie this to the defaults so that this is configurable.
-- (IFPlugin *)getPluginForMimeType:(NSString *)mimeType
+- (IFPlugin *)pluginForMimeType:(NSString *)mimeType
 {
     uint i, n;
     IFPlugin *plugin;
@@ -58,7 +58,7 @@ static IFPluginDatabase *__IFPluginDatabase = nil;
     return nil;
 }
 
-- (IFPlugin *)getPluginForExtension:(NSString *)extension
+- (IFPlugin *)pluginForExtension:(NSString *)extension
 {
     uint i, n;
     IFPlugin *plugin;
@@ -78,7 +78,7 @@ static IFPluginDatabase *__IFPluginDatabase = nil;
     return nil;
 }
 
-- (IFPlugin *)getPluginForFilename:(NSString *)filename
+- (IFPlugin *)pluginForFilename:(NSString *)filename
 {
     uint i;
     IFPlugin *plugin;
@@ -170,8 +170,8 @@ NSArray *findPlugins(void)
         if([plugin initWithPath:[pluginPaths objectAtIndex:i]]){
             [plugin retain];
             [pluginArray addObject:plugin];
-            WEBKITDEBUG("Found plugin: %s\n", [[plugin name] lossyCString]);
-            WEBKITDEBUG("%s", [[plugin description] lossyCString]);
+            WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "Found plugin: %s\n", [[plugin name] lossyCString]);
+            WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "%s", [[plugin description] lossyCString]);
         }
     }
     return [pluginArray retain];

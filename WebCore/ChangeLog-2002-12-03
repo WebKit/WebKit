@@ -1,3 +1,9 @@
+2002-05-28  Chris Blumenberg  <cblu@apple.com>
+
+	Added framework-header-stamp
+
+	* .cvsignore:
+
 2002-05-27  John Sullivan  <sullivan@apple.com>
 
 	* Resources/linkCursor.tiff: Added. Maciej forgot to cvs add

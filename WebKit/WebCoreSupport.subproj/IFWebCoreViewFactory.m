@@ -48,9 +48,9 @@
         
     if ([serviceType length]) {
         mimeType = serviceType;
-        plugin = [[IFPluginDatabase installedPlugins] getPluginForMimeType:mimeType];
+        plugin = [[IFPluginDatabase installedPlugins] pluginForMimeType:mimeType];
     } else {
-        plugin = [[IFPluginDatabase installedPlugins] getPluginForExtension:[pluginURL pathExtension]];
+        plugin = [[IFPluginDatabase installedPlugins] pluginForExtension:[pluginURL pathExtension]];
         mimeType = [plugin mimeTypeForURL:pluginURL];
     }
     
@@ -70,7 +70,7 @@
     IFPlugin *plugin;
     NSMutableDictionary *argsCopy;
     
-    plugin = [[IFPluginDatabase installedPlugins] getPluginForFilename:@"Java.plugin"];
+    plugin = [[IFPluginDatabase installedPlugins] pluginForFilename:@"Java.plugin"];
     if (plugin == nil) {
         return nil;
     }

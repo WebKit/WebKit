@@ -31,9 +31,9 @@
 }
 
 + (IFPluginDatabase *)installedPlugins;
-- (IFPlugin *)getPluginForMimeType:(NSString *)mimeType;
-- (IFPlugin *)getPluginForExtension:(NSString *)extension;
-- (IFPlugin *)getPluginForFilename:(NSString *)filename;
+- (IFPlugin *)pluginForMimeType:(NSString *)mimeType;
+- (IFPlugin *)pluginForExtension:(NSString *)extension;
+- (IFPlugin *)pluginForFilename:(NSString *)filename;
 - (NSArray *) allHandledMIMETypes;
 - (NSArray *) plugins;
 

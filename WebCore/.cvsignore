@@ -4,5 +4,6 @@ WebCore-combined.exp
 framework-stamp
 framework-dylib-stamp
 framework-resource-stamp
+framework-header-stamp
 libwebcore.dylib
 *.pfe
