@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,10 +28,8 @@
 #import "KWQExceptions.h"
 #import "KWQLogging.h"
 #import "KWQTextField.h"
+#import "WebCoreTextRenderer.h"
 #import "WebCoreTextRendererFactory.h"
-
-// This replicates constants from [NSTextFieldCell drawingRectForBounds].
-#define VERTICAL_FUDGE_FACTOR 3
 
 QLineEdit::QLineEdit()
     : m_returnPressed(this, SIGNAL(returnPressed()))
@@ -172,28 +170,33 @@ void QLineEdit::setEdited(bool flag)
 QSize QLineEdit::sizeForCharacterWidth(int numCharacters) const
 {
     // Figure out how big a text field needs to be for a given number of characters
-    // by installing a string with that number of characters (using "0" as the nominal
-    // character) and then asking the field's cell what the size should be.
+    // (using "0" as the nominal character).
 
     KWQTextField *textField = (KWQTextField *)getView();
 
     ASSERT(numCharacters > 0);
 
-    NSSize size = {0,0};
+    NSSize size = { 0, 0 };
 
     KWQ_BLOCK_EXCEPTIONS;
-    NSMutableString *nominalWidthString = [NSMutableString stringWithCapacity:numCharacters];
-    for (int i = 0; i < numCharacters; ++i) {
-        [nominalWidthString appendString:@"0"];
-    }
 
     NSString *value = [textField stringValue];
-    int maximumLength = [textField maximumLength];
-    [textField setMaximumLength:numCharacters];
-    [textField setStringValue:nominalWidthString];
+    [textField setStringValue:@""];
     size = [[textField cell] cellSize];
-    [textField setMaximumLength:maximumLength];
     [textField setStringValue:value];
+
+    id <WebCoreTextRenderer> renderer = [[WebCoreTextRendererFactory sharedFactory]
+        rendererWithFont:[textField font] usingPrinterFont:![NSGraphicsContext currentContextDrawingToScreen]];
+
+    WebCoreTextStyle style;
+    WebCoreInitializeEmptyTextStyle(&style);
+
+    const UniChar zero = '0';
+    WebCoreTextRun run;
+    WebCoreInitializeTextRun(&run, &zero, 1, 0, 1);
+
+    size.width += ceilf([renderer floatWidthForRun:&run style:&style widths:0] * numCharacters);
+
     KWQ_UNBLOCK_EXCEPTIONS;
 
     return QSize(size);
@@ -206,8 +209,8 @@ int QLineEdit::baselinePosition(int height) const
     KWQ_BLOCK_EXCEPTIONS;
     NSRect bounds = [textField bounds];
     NSFont *font = [textField font];
-    return (int)ceil([[textField cell] drawingRectForBounds:bounds].origin.y - bounds.origin.y
-        + [font defaultLineHeightForFont] + [font descender]);
+    return static_cast<int>(ceilf([[textField cell] drawingRectForBounds:bounds].origin.y - bounds.origin.y
+        + [font defaultLineHeightForFont] + [font descender]));
     KWQ_UNBLOCK_EXCEPTIONS;
 
     return 0;

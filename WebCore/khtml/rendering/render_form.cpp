@@ -4,7 +4,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003 Apple Computer, Inc.
+ * Copyright (C) 2004 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -1095,13 +1095,8 @@ void RenderSelect::updateFromElement()
         QMemArray<HTMLGenericFormElementImpl*> listItems = element()->listItems();
         int listIndex;
 
-        if(m_useListBox) {
-#if APPLE_CHANGES
-            static_cast<KListBox*>(m_widget)->beginBatchInsert();
-#endif
+        if (m_useListBox)
             static_cast<KListBox*>(m_widget)->clear();
-        }
-
         else
             static_cast<KComboBox*>(m_widget)->clear();
 
@@ -1114,33 +1109,43 @@ void RenderSelect::updateFromElement()
                 // we give it).  We match this behavior.
                 label = label.stripWhiteSpace();
                 
-                if(m_useListBox) {
 #if APPLE_CHANGES
-                    static_cast<KListBox*>(m_widget)->insertGroupLabel(label, listIndex);
+                if (m_useListBox)
+                    static_cast<KListBox*>(m_widget)->appendGroupLabel(label);
+                else
+                    static_cast<KComboBox*>(m_widget)->appendItem(label);
 #else
+                if(m_useListBox) {
                     QListBoxText *item = new QListBoxText(label);
                     static_cast<KListBox*>(m_widget)
                         ->insertItem(item, listIndex);
                     item->setSelectable(false);
-#endif
                 }
                 else
                     static_cast<KComboBox*>(m_widget)->insertItem(label, listIndex);
+#endif
             }
             else if (listItems[listIndex]->id() == ID_OPTION) {
                 QString itemText = static_cast<HTMLOptionElementImpl*>(listItems[listIndex])->text().string();
                 itemText.replace('\\', backslashAsCurrencySymbol());
 
-                // In WinIE, an option can't start or end with whitespace.  We match this behavior.
+                // In WinIE, leading and trailing whitespace is ignored in options. We match this behavior.
                 itemText = itemText.stripWhiteSpace();
                 
                 if (listItems[listIndex]->parentNode()->id() == ID_OPTGROUP)
                     itemText.prepend("    ");
 
+#if APPLE_CHANGES
+                if (m_useListBox)
+                    static_cast<KListBox*>(m_widget)->appendItem(itemText);
+                else
+                    static_cast<KComboBox*>(m_widget)->appendItem(itemText);
+#else
                 if(m_useListBox)
                     static_cast<KListBox*>(m_widget)->insertItem(itemText, listIndex);
                 else
                     static_cast<KComboBox*>(m_widget)->insertItem(itemText, listIndex);
+#endif
             }
             else
                 KHTMLAssert(false);
@@ -1148,7 +1153,7 @@ void RenderSelect::updateFromElement()
         }
 #if APPLE_CHANGES
         if (m_useListBox)
-	    static_cast<KListBox*>(m_widget)->endBatchInsert();
+	    static_cast<KListBox*>(m_widget)->doneAppendingItems();
 #endif
         setNeedsLayoutAndMinMaxRecalc();
         m_optionsChanged = false;

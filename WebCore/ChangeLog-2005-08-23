@@ -1,5 +1,78 @@
 2004-02-07  Darin Adler  <darin@apple.com>
 
+        Reviewed by Dave.
+
+        - switched KWQComboBox, KWQListBox, and KWQLineEdit to use WebKit text measuring/rendering instead of AppKit
+        - fixed width calculation for KWQListBox that made them too wide (the computation used the width of standard scroll
+          bars rather than the small scroll bars they actually use)
+
+        Speeds up cvs-base by 5%!
+
+        * khtml/rendering/render_form.cpp: (RenderSelect::updateFromElement):
+        Get rid of beginBatchInsert, and rename endBatchInsert. Use our own "append" calls instead of "insert" calls.
+
+        * kwq/KWQComboBox.h: Replace insertItem with appendItem. Add a new populateMenu call (for internal use,
+        but public). Change width member to be int instead of float. Remove updateCurrentItem(), and add a
+        menuPopulated boolean and a QStringList containing the items.
+        * kwq/KWQComboBox.mm:
+        (QComboBox::QComboBox): Initialize currentItem directly instead of calling updateCurrentItem. Also initialize
+        menuPopulated to true.
+        (QComboBox::appendItem): Replaces insertItem. Put items in a string list. Don't keep the menu populated unless
+        the button is highlighted (which indicates the menu is showing).
+        (QComboBox::sizeHint): Compute widths using WebCoreTextRenderer, and the string list.
+        (QComboBox::baselinePosition): Change ceil to ceilf, since we are dealing with floats, not doubles.
+        (QComboBox::clear): Clear the items list. Also reset the currentItem field directly instead of using updateCurrentItem().
+        (QComboBox::setCurrentItem): If the menu is not populated, then keep a single item with the appropriate title.
+        If the menu is populated, then select the appropriate item.
+        (QComboBox::itemSelected): Moved the logic from updateCurrentItem in here for simplicity.
+        (QComboBox::focusPolicy): Tweaked the comment.
+        (QComboBox::populateMenu): Added.
+        (-[KWQPopUpButtonCell setHighlighted:]): Populate the menu when the cell is highlighted.
+
+        * kwq/KWQLineEdit.mm:
+        (QLineEdit::sizeForCharacterWidth): Put an empty string in the cell, and add in a separately-computed width
+        for the string.
+        (QLineEdit::baselinePosition): Use ceilf instead of ceil since we are doing floats, not doubles.
+
+        * kwq/KWQListBox.h: Changed the items list from an NSArray to a QValueList.
+        (KWQListBoxItem::KWQListBoxItem): Added a new class to keep the string and the "is label" boolean.
+        (QListBox::count): Now inline.
+        (QListBox::appendItem): Replaced insertItem with this.
+        (QListBox::appendGroupLabel): Replaced insertGroupLabel with this.
+        (QListBox::itemAtIndex): Replaced itemIsGroupLabel with this.
+        * kwq/KWQListBox.mm:
+        (itemTextRenderer): Replaced itemFont with this, which returns a WebCoreTextRenderer.
+        (groupLabelTextRenderer): Ditto.
+        (QListBox::QListBox): Removed the _insertingItems boolean, and handling of the _items list.
+        (QListBox::~QListBox): Ditto.
+        (QListBox::clear): Now clears the items list. Doesn't both with reloadData, since doneAppendingItems
+        handles that.
+        (QListBox::appendItem): Replaced insertItem. Just adds to the list. No need to construct attributed
+        strings any more.
+        (QListBox::doneAppendingItems): Replaced endBatchInsert. No need to clear the obsolete _insertingItems
+        boolean.
+        (QListBox::setEnabled): Added a call to reloadData.
+        (QListBox::sizeForNumberOfLines): Compute widths using WebCoreTextRenderer, and the string list.
+        Also adjust for the difference in widths between small and default scrollers and add in margins.
+        (QListBox::setWritingDirection): Remove code that updates the direction in attributed strings.
+        (-[KWQTableView initWithListBox:]): Compute height from font, not cell.
+        (-[KWQTableView numberOfRowsInTableView:]): Get count from QListBox instead of items array.
+        (-[KWQTableView tableView:objectValueForTableColumn:row:]): Return nil becase we don't want to
+        create an NSString for each cell. We'll draw the appropriate thing.
+        (-[KWQTableView tableView:shouldSelectRow:]): Update for change to QComboBox function.
+        (-[KWQTableView drawRow:clipRect:]): Added. Draws the text in the cell, with the appropriate color
+        and position, using WebCoreTextRenderer for speed.
+        (-[KWQTableView _accessibilityTableCell:tableColumn:]): Set up cell with a string in this case,
+        because we need the string to be seen by the accessibilty framework.
+
+        * kwq/WebCoreTextRenderer.h: Fixed typo in comment.
+        * kwq/WebCoreTextRendererFactory.m: Removed bogus inline specifiers.
+
+        * khtml/rendering/render_layer.cpp: Fixed a couple of cases of RenderLayer::RenderLayer that just
+        should have said RenderLayer.
+
+2004-02-07  Darin Adler  <darin@apple.com>
+
         * WebCore.pbproj/project.pbxproj: Get rid of the DEPLOYMENT_LOCATION and DEPLOYMENT_POSTPROCESSING
         flags that were in the Deployment build style. These were causing the need to chmod all the time
         after building WebCore successfully, and were doing us no good.

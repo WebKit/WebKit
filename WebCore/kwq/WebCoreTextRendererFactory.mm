@@ -28,7 +28,7 @@
 
 #import "KWQAssertions.h"
 
-inline void WebCoreInitializeTextRun(WebCoreTextRun *run, const UniChar *characters, unsigned int length, int from, int to)
+void WebCoreInitializeTextRun(WebCoreTextRun *run, const UniChar *characters, unsigned int length, int from, int to)
 {
     run->characters = characters;
     run->length = length;
@@ -36,7 +36,7 @@ inline void WebCoreInitializeTextRun(WebCoreTextRun *run, const UniChar *charact
     run->to = to;
 }
 
-inline void WebCoreInitializeEmptyTextStyle(WebCoreTextStyle *style)
+void WebCoreInitializeEmptyTextStyle(WebCoreTextStyle *style)
 {
     style->padding = 0;
     style->textColor = nil;

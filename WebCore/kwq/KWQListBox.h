@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,21 +27,19 @@
 #define KWQLISTBOX_H_
 
 #include "KWQScrollView.h"
-#include "KWQString.h"
 #include "KWQSignal.h"
+#include "KWQString.h"
+#include "KWQValueList.h"
 
-class QListBoxItem;
+struct KWQListBoxItem
+{
+    QString string;
+    bool isGroupLabel;
 
-#ifdef __OBJC__
-@class NSMutableArray;
-@class NSObject;
-#else
-class NSMutableArray;
-class NSObject;
-#endif
+    KWQListBoxItem(const QString &s, bool isLabel) : string(s), isGroupLabel(isLabel) { }
+};
 
 class QListBox : public QScrollView {
-friend class QListBoxItem;
 public:
     enum SelectionMode { Single, Extended };
 
@@ -50,14 +48,14 @@ public:
 
     QSize sizeForNumberOfLines(int numLines) const;
     
-    uint count() const;
-    void clear();
+    uint count() const { return _items.count(); }
+
     void setSelectionMode(SelectionMode);
 
-    void beginBatchInsert();
-    void insertItem(const QString &s, int i) { insertItem(s, i, false); }
-    void insertGroupLabel(const QString &s, int i) { insertItem(s, i, true); }
-    void endBatchInsert();
+    void clear();
+    void appendItem(const QString &s) { appendItem(s, false); }
+    void appendGroupLabel(const QString &s) { appendItem(s, true); }
+    void doneAppendingItems();
 
     void setSelected(int, bool);
     bool isSelected(int) const;
@@ -65,7 +63,7 @@ public:
     void setEnabled(bool enabled);
     bool isEnabled();
     
-    bool itemIsGroupLabel(int index) const;
+    const KWQListBoxItem &itemAtIndex(int index) const { return _items[index]; }
     
     void setWritingDirection(QPainter::TextDirection);
     
@@ -77,12 +75,14 @@ public:
     virtual bool checksDescendantsForFocus() const;
     
 private:
-    void insertItem(const QString &, int index, bool isLabel);
+    void appendItem(const QString &, bool isLabel);
 
-    NSMutableArray *_items;
-    bool _insertingItems;
+    // A vector<QString> or QValueVector<QString> might be more efficient for large lists.
+    QValueList<KWQListBoxItem> _items;
+
     bool _changingSelection;
     bool _enabled;
+
     mutable float _width;
     mutable bool _widthGood;
     

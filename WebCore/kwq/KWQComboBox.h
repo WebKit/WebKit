@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
 #define QCOMBOBOX_H_
 
 #include "KWQWidget.h"
+#include "KWQStringList.h"
 
 class QListBox;
 
@@ -42,7 +43,7 @@ public:
     ~QComboBox();
     
     void clear();
-    void insertItem(const QString &text, int index=-1);
+    void appendItem(const QString &text);
 
     int currentItem() const { return _currentItem; }
     void setCurrentItem(int);
@@ -61,15 +62,22 @@ public:
     virtual FocusPolicy focusPolicy() const;
 
     void setWritingDirection(QPainter::TextDirection);
+
+    void populateMenu();
     
 private:
-    bool updateCurrentItem() const;
     const int *dimensions() const;
     
     KWQComboBoxAdapter *_adapter;
-    mutable float _width;
+
+    mutable int _width;
     mutable bool _widthGood;
+
     mutable int _currentItem;
+
+    // A vector<QString> or QValueVector<QString> may be more efficient for large menus.
+    QStringList _items;
+    mutable bool _menuPopulated;
 
     KWQSignal _activated;
 };

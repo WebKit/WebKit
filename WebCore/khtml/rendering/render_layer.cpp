@@ -1078,8 +1078,8 @@ void RenderLayer::updateHoverActiveState(RenderObject::NodeInfo& info)
 // Sort the buffer from lowest z-index to highest.  The common scenario will have
 // most z-indices equal, so we optimize for that case (i.e., the list will be mostly
 // sorted already).
-static void sortByZOrder(QPtrVector<RenderLayer::RenderLayer>* buffer,
-                         QPtrVector<RenderLayer::RenderLayer>* mergeBuffer,
+static void sortByZOrder(QPtrVector<RenderLayer>* buffer,
+                         QPtrVector<RenderLayer>* mergeBuffer,
                          uint start, uint end)
 {
     if (start >= end)
