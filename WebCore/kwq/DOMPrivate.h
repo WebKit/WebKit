@@ -37,6 +37,7 @@
 
 @interface DOMElement (WebPrivate)
 - (NSFont *)_font;
+- (NSURL *)_getURLAttribute:(NSString *)name;
 @end
 
 @interface DOMCSSStyleDeclaration (WebPrivate)

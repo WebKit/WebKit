@@ -29,6 +29,7 @@
 
 #import <JavaScriptCore/WebScriptObjectPrivate.h>
 
+#import "csshelper.h"
 #import "dom2_range.h"
 #import "dom2_rangeimpl.h"
 #import "dom2_traversal.h"
@@ -1572,8 +1573,15 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
     return nil;
 }
 
-@end
+- (NSURL *)_getURLAttribute:(NSString *)name
+{
+    ASSERT(name);
+    ElementImpl *e = [self _elementImpl];
+    ASSERT(e);
+    return KURL(e->getDocument()->completeURL(khtml::parseURL(e->getAttribute(name)).string())).getNSURL();
+}
 
+@end
 
 //------------------------------------------------------------------------------------------
 // DOMText

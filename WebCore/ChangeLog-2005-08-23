@@ -1,3 +1,17 @@
+2005-02-16  John Sullivan  <sullivan@apple.com>
+
+        Written by Darin, reviewed by me.
+        
+        - WebCore part of fix for <rdar://problem/4007384> 
+        FILTER: Bookmark of RSS with Japanese search word & multiple RSS pages loses filter
+
+        * kwq/DOM.mm:
+        (-[DOMElement _getURLAttribute:]):
+        new SPI method, uses parseURL and completeURL to get valid URL from attribute value
+
+        * kwq/DOMPrivate.h:
+        declare new SPI method
+
 2005-02-15  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
