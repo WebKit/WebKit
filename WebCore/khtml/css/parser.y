@@ -372,7 +372,8 @@ media_list:
     }
     | media_list ',' maybe_space medium {
 	$$ = $1;
-	$$->appendMedium( domString($4) );
+        if ($$)
+	    $$->appendMedium( domString($4) );
     }
     | media_list error {
         delete $1;
