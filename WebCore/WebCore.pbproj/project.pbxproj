@@ -772,6 +772,7 @@
 				55998A5F052B59CC0017A6C1,
 				55998A61052B59CC0017A6C1,
 				65F80698054D9F86008BF776,
+				65732B69054EF483007B42F8,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1010,6 +1011,20 @@
 //652
 //653
 //654
+		65732B68054EF483007B42F8 = {
+			expectedFileType = sourcecode.cpp.objcpp;
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = KWQKPartsPart.mm;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		65732B69054EF483007B42F8 = {
+			fileRef = 65732B68054EF483007B42F8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		65A640F00533BB1F0085E777 = {
 			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
@@ -8420,6 +8435,7 @@
 				F587866B02DE3B3201EA4122,
 				F58784F602DE375901EA4122,
 				F587866C02DE3B3201EA4122,
+				65732B68054EF483007B42F8,
 				F587866D02DE3B3201EA4122,
 			);
 			isa = PBXGroup;

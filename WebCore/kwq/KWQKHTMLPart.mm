@@ -2635,3 +2635,20 @@ WebCoreKeyboardUIMode KWQKHTMLPart::keyboardUIMode() const
 
     return WebCoreDefaultKeyboardAccess;
 }
+
+void KWQKHTMLPart::setName(const QString &name)
+{
+    QString n = name;
+
+    KWQKHTMLPart *parent = KWQ(parentPart());
+
+    if (parent && (name.isEmpty() || parent->frameExists(name))) {
+	n = parent->requestFrameName();
+    }
+
+    KHTMLPart::setName(n);
+
+    KWQ_BLOCK_EXCEPTIONS;
+    [_bridge didSetName:n.getNSString()];
+    KWQ_UNBLOCK_EXCEPTIONS;
+}

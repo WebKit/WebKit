@@ -923,7 +923,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(id <WebDOMElement>element)
 
 - (void)setName:(NSString *)name
 {
-    _part->setName(QString::fromNSString(name));
+    _part->KHTMLPart::setName(QString::fromNSString(name));
 }
 
 - (NSString *)name

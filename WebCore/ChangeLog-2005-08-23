@@ -1,3 +1,21 @@
+2003-10-27  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	- fixed 3083264 - frame names changed by JavaScript are not reflected in WebFrame at the WebKit level
+	
+        * kwq/KWQKHTMLPart.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::setName): Make sure the name is unique. Then tell
+	the bridge and the superclass about it.
+        * kwq/KWQKPartsPart.h:
+        (KParts::ReadOnlyPart::setName): Made this method virtual.
+        * kwq/KWQKPartsPart.m: Added. Moved implementations of virtual methods here.
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge setName:]): Call the superclass method to avid
+	sending the name pointlessly back across the bridge.
+
 2003-10-28  Darin Adler  <darin@apple.com>
 
         Reviewed by John.

@@ -351,6 +351,8 @@ typedef enum {
 
 - (WebCoreKeyboardUIMode)keyboardUIMode;
 
+- (void)didSetName:(NSString *)name;
+
 @end
 
 // This interface definition allows those who hold a WebCoreBridge * to call all the methods
