@@ -22,6 +22,7 @@
 #import <qpainter.h>
 #import <qevent.h>
 #import <html/html_documentimpl.h>
+#import <rendering/render_object.h>
 
 #import <KWQKHTMLPartImpl.h>
 
@@ -192,6 +193,7 @@
     double start = CFAbsoluteTimeGetCurrent();
  #endif
 
+        widget->part()->xmlDocImpl()->renderer()->setLayouted(false);
         WEBKITDEBUGLEVEL (WEBKIT_LOG_VIEW, "%s doing layout\n", DEBUG_OBJECT(self));
         widget->layout();
         _private->needsLayout = NO;

@@ -368,41 +368,55 @@ static const char * const stateNames[6] = {
             if (![ds isLoading]) {
                 id mainView = [[[self controller] mainFrame] webView];
                 id mainDocumentView = [mainView documentView];
+#if 0
                 id thisView = [self webView];
                 id thisDocumentView = [thisView documentView];
-
+#endif
                 [self _setState: IFWEBFRAMESTATE_COMPLETE];
                 
                 [[ds _bridge] end];
-                
+
                 // We have to layout the main document as
                 // it may change the size of frames.
-                if ([mainView isDocumentHTML]){
-                    [mainDocumentView setNeedsLayout: YES];
+                // FIXME:  Why is this necessary? and recurse.
+                {
+                    if ([mainView isDocumentHTML]){
+                        [mainDocumentView setNeedsLayout: YES];
+                    }
+                    [mainDocumentView layout];
+                    
+                    NSArray *subFrames = [[[[self controller] mainFrame] dataSource] children];
+                    unsigned int i;
+                    id dview;
+                    for (i = 0; i < [subFrames count]; i++){
+                        dview = [[[subFrames objectAtIndex: i] webView] documentView];
+                        if ([[[subFrames objectAtIndex: i] webView] isDocumentHTML])
+                            [dview setNeedsLayout: YES];
+                        [dview layout];
+                    }
                 }
-                [mainDocumentView layout];
 
+#if 0
                 // Tell the just loaded document to layout.  This may be necessary
                 // for non-html content that needs a layout message.
                 if ([thisView isDocumentHTML]){
                     [thisDocumentView setNeedsLayout: YES];
                 }
-                [[thisView documentView] layout];
+                [thisDocumentView layout];
+
+                [thisDocumentView setNeedsDisplay: YES];
+                [thisDocumentView display];
+#endif
 
                 // Jump to anchor point, if necessary.
                 [[ds _bridge] scrollToBaseAnchor];
-                                   
+
                 // FIXME:  We have to draw the whole document hierarchy.  We should be 
                 // able to just draw the document associated with this
                 // frame, but that doesn't work.  Not sure why.
                 [mainDocumentView setNeedsDisplay: YES];
                 [mainDocumentView display];
- 
-                // This should be redundant, given the setNeedsDisplay: on the
-                // main view above.
-                [thisDocumentView setNeedsDisplay: YES];
-                [thisDocumentView display];
-                
+
                 [[ds _locationChangeHandler] locationChangeDone: [ds mainDocumentError] forDataSource:ds];
  
                 //if ([ds isDocumentHTML])

@@ -1,3 +1,15 @@
+2002-07-03  Richard Williamson  <rjw@apple.com>
+
+        * kwq/KWQScrollView.mm:
+        (QScrollView::addChild):
+        Fixed regression that caused IFWebView frame origin to sometimes
+        never be set correctly.  (khtml sets the x origin to -500000
+        during initialization, and it was never getting set correctly).
+        This problem manifested itself as blank white frames.
+        
+        * kwq/KWQWidget.mm:
+        (QWidget::internalSetGeometry):
+
 2002-07-03  Maciej Stachowiak  <mjs@apple.com>
 
 	WebKit part of fix for:

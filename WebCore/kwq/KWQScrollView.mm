@@ -196,7 +196,7 @@ void QScrollView::addChild(QWidget* child, int x, int y)
 
     KWQ_ASSERT(child != this);
 
-    if (child->x() != x || child->y() != y)
+    //if (child->x() != x || child->y() != y)
         child->move(x, y);
     
     thisView = getView();
@@ -211,6 +211,7 @@ void QScrollView::addChild(QWidget* child, int x, int y)
     // code in QWidget::internalSetGeometry.
     if ([subview conformsToProtocol:@protocol(WebCoreFrameView)]) {
         subview = [subview superview];
+        //[subview setFrameOrigin: NSMakePoint (x, y)];
     }
     
     KWQ_ASSERT(subview != thisView);

@@ -1,3 +1,17 @@
+2002-07-03  Richard Williamson  <rjw@apple.com>
+
+        * Misc.subproj/IFNSViewExtras.m:
+        (-[NSView _IF_printViewHierarchy:]):
+        Debugging help.
+        
+        * WebView.subproj/IFHTMLView.mm:
+        (-[IFHTMLView layout]):
+        Added setLayouted(false).
+        
+        * WebView.subproj/IFWebFramePrivate.mm:
+        (-[IFWebFrame _isLoadComplete]):
+        Tweaks attempting to fix frame drawing problems.
+
 2002-07-03  Maciej Stachowiak  <mjs@apple.com>
 
         WebCore part of fix for:
