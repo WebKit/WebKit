@@ -1,3 +1,27 @@
+2003-09-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - fixed ownerElement for documents in HTML objects (helpful for some work Dave is doing)
+
+        * khtml/khtml_part.h: Change name of frame function to childFrame for clarity.
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::slotChildStarted): Call the frame function by its new name, childFrame.
+        (KHTMLPart::slotChildCompleted): Ditto.
+        (KHTMLPart::slotChildURLRequest): Ditto.
+        (KHTMLPart::childFrame): Change name from frame to childFrame for clarity, and make it work
+        for parts inside HTML objects, not just normal frames and iframes. The change in behavior is
+        the actual fix. Note that for the three callers above, it's an error to call this when the
+        result would be 0, so there's no harm in doing the extra search of HTML objects in those cases.
+
+        * khtml/xml/dom_docimpl.cpp: (DocumentImpl::ownerElement): Call the frame function by its new
+        name, childFrame. This is the caller that will benefit most from the change in behavior.
+
+        * kwq/KWQKHTMLPart.h: Remove childFrameForPart function, which is superseded by the
+        childFrame function now.
+        * kwq/KWQKHTMLPart.mm: (KWQKHTMLPart::nextKeyViewInFrameHierarchy): Use childFrame instead
+        of childFrameForPart.
+
 2003-09-23  Darin Adler  <darin@apple.com>
 
         Reviewed by Ken.

@@ -1069,7 +1069,7 @@ private:
 
   DOM::HTMLDocumentImpl *docImpl() const;
   DOM::DocumentImpl *xmlDocImpl() const;
-  khtml::ChildFrame *frame( const QObject *obj );
+  khtml::ChildFrame *childFrame( const QObject *obj );
 
   khtml::ChildFrame *recursiveFrameRequest( const KURL &url, const KParts::URLArgs &args, bool callParent = true );
 

@@ -3492,7 +3492,7 @@ void KHTMLPart::slotParentCompleted()
 
 void KHTMLPart::slotChildStarted( KIO::Job *job )
 {
-  khtml::ChildFrame *child = frame( sender() );
+  khtml::ChildFrame *child = childFrame( sender() );
 
   assert( child );
 
@@ -3519,7 +3519,7 @@ void KHTMLPart::slotChildCompleted()
 
 void KHTMLPart::slotChildCompleted( bool complete )
 {
-  khtml::ChildFrame *child = frame( sender() );
+  khtml::ChildFrame *child = childFrame( sender() );
 
   assert( child );
 
@@ -3536,7 +3536,7 @@ void KHTMLPart::slotChildCompleted( bool complete )
 
 void KHTMLPart::slotChildURLRequest( const KURL &url, const KParts::URLArgs &args )
 {
-  khtml::ChildFrame *child = frame( sender()->parent() );
+  khtml::ChildFrame *child = childFrame( sender()->parent() );
 
   QString frameName = args.frameName.lower();
   if ( !frameName.isEmpty() )
@@ -3594,7 +3594,7 @@ void KHTMLPart::slotChildURLRequest( const KURL &url, const KParts::URLArgs &arg
 
 #endif // APPLE_CHANGES
 
-khtml::ChildFrame *KHTMLPart::frame( const QObject *obj )
+khtml::ChildFrame *KHTMLPart::childFrame( const QObject *obj )
 {
     assert( obj->inherits( "KParts::ReadOnlyPart" ) );
     const KParts::ReadOnlyPart *part = static_cast<const KParts::ReadOnlyPart *>( obj );
@@ -3602,7 +3602,13 @@ khtml::ChildFrame *KHTMLPart::frame( const QObject *obj )
     FrameIt it = d->m_frames.begin();
     FrameIt end = d->m_frames.end();
     for (; it != end; ++it )
-      if ( (KParts::ReadOnlyPart *)(*it).m_part == part )
+      if ( (*it).m_part == part )
+        return &(*it);
+
+    it = d->m_objects.begin();
+    end = d->m_objects.end();
+    for (; it != end; ++it )
+      if ( (*it).m_part == part )
         return &(*it);
 
     return 0L;

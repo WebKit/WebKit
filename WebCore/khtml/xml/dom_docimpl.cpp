@@ -2298,7 +2298,7 @@ ElementImpl *DocumentImpl::ownerElement()
     KHTMLPart *parent = childPart->parentPart();
     if (!parent)
         return 0;
-    ChildFrame *childFrame = parent->frame(childPart);
+    ChildFrame *childFrame = parent->childFrame(childPart);
     if (!childFrame)
         return 0;
     RenderPart *renderPart = childFrame->m_frame;
