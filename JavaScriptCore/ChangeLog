@@ -1,3 +1,15 @@
+2002-12-14  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Dave.
+
+	- fix toString() conversion for numbers less than 1. Negative
+	exponents are still wrong though (things like 1E-34).
+ 
+        * kjs/ustring.cpp:
+	(UString::from): Don't print empty string for numbers less than 1,
+	and remember to add extra 0s after the decimal for negative
+	decimal positions.
+	
 === Alexander-37u1 ===
 
 === Alexander-36 ===

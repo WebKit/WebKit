@@ -346,8 +346,11 @@ UString UString::from(double d)
   }
   
   if (decimalPoint <= 0) {
-    buf[i++] = 0;
+    buf[i++] = '0';
     buf[i++] = '.';
+    for (int j = decimalPoint; j < 0; j++) {
+      buf[i++] = '0';
+    }
     strcpy(buf + i, result);
   } else if (decimalPoint >= length) {
     strcpy(buf + i, result);
