@@ -104,7 +104,7 @@ Value CInstance::invokeMethod (KJS::ExecState *exec, const MethodList &methodLis
     method = static_cast<CMethod*>(methodList.methodAt(0));
 
     NPIdentifier ident = _NPN_GetStringIdentifier (method->name());
-    if (!_object->_class->hasMethod (_object->_class, ident)) {
+    if (!_object->_class->hasMethod (_object, ident)) {
         return Undefined();
     }
 

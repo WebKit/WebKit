@@ -1,3 +1,17 @@
+2004-09-30  Richard Williamson   <rjw@apple.com>
+
+	Fixed <rdar://problem/3821215> NPN hasMethod and hasProperty functions should take NPObjects, not NPClass
+
+	Also changed dashboard regions dictionary to use "control"
+	for scroller region label, instead of "scroller, per
+	request from ouch. 
+		
+        Reviewed by Chris.
+
+        * Plugins.subproj/npruntime.h:
+        * WebView.subproj/WebView.m:
+        (-[WebView _addScrollerDashboardRegions:from:]):
+
 2004-09-30  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3498680> switching back and forth between tabs stops calling anything in a plug-in

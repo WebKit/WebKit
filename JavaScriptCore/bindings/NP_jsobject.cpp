@@ -240,7 +240,7 @@ bool _NPN_GetProperty (NPP npp, NPObject *o, NPIdentifier propertyName, NPVarian
         return true;
     }
     else if (o->_class->hasProperty && o->_class->getProperty) {
-        if (o->_class->hasProperty (o->_class, propertyName)) {
+        if (o->_class->hasProperty (o, propertyName)) {
             return o->_class->getProperty (o, propertyName, variant);
         }
         else {
@@ -330,7 +330,7 @@ bool _NPN_HasProperty(NPP npp, NPObject *o, NPIdentifier propertyName)
         return result;
     }
     else if (o->_class->hasProperty) {
-        return o->_class->hasProperty (o->_class, propertyName);
+        return o->_class->hasProperty (o, propertyName);
     }
     
     return false;
@@ -359,7 +359,7 @@ bool _NPN_HasMethod(NPP npp, NPObject *o, NPIdentifier methodName)
     }
     
     else if (o->_class->hasMethod) {
-        return o->_class->hasMethod (o->_class, methodName);
+        return o->_class->hasMethod (o, methodName);
     }
     
     return false;

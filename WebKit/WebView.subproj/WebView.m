@@ -1128,6 +1128,7 @@ NSString *_WebMainFrameURLKey =         @"mainFrameURL";
     _private->initiatedDrag = initiatedDrag;
 }
 
+#define DASHBOARD_CONTROL_LABEL @"control"
 
 - (void)_addScrollerDashboardRegions:(NSMutableDictionary *)regions from:(NSArray *)views
 {
@@ -1157,10 +1158,10 @@ NSString *_WebMainFrameURLKey =         @"mainFrameURL";
                         [[[WebDashboardRegion alloc] initWithRect:adjustedBounds 
                                     clip:adjustedClip type:WebDashboardRegionTypeScrollerRectangle] autorelease];
             NSMutableArray *scrollerRegions;
-            scrollerRegions = [regions objectForKey:@"scroller"];
+            scrollerRegions = [regions objectForKey:DASHBOARD_CONTROL_LABEL];
             if (!scrollerRegions) {
                 scrollerRegions = [NSMutableArray array];
-                [regions setObject:scrollerRegions forKey:@"scroller"];
+                [regions setObject:scrollerRegions forKey:DASHBOARD_CONTROL_LABEL];
             }
             [scrollerRegions addObject:aRegion];
         }

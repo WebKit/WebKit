@@ -1,3 +1,31 @@
+2004-09-30  Richard Williamson   <rjw@apple.com>
+
+	Fixed <rdar://problem/3821215> NPN hasMethod and hasProperty functions should take NPObjects, not NPClass
+
+        Reviewed by Chris.
+
+        * bindings/NP_jsobject.cpp:
+        (_NPN_GetProperty):
+        (_NPN_HasProperty):
+        (_NPN_HasMethod):
+        * bindings/c/c_class.cpp:
+        (CClass::methodsNamed):
+        (CClass::fieldNamed):
+        * bindings/c/c_class.h:
+        * bindings/c/c_instance.cpp:
+        (CInstance::invokeMethod):
+        * bindings/jni/jni_class.cpp:
+        (JavaClass::methodsNamed):
+        * bindings/jni/jni_class.h:
+        * bindings/npruntime.h:
+        * bindings/objc/objc_class.h:
+        * bindings/objc/objc_class.mm:
+        (ObjcClass::methodsNamed):
+        * bindings/runtime.h:
+        * bindings/runtime_object.cpp:
+        (RuntimeObjectImp::get):
+        (RuntimeObjectImp::hasProperty):
+
 2004-09-29  Chris Blumenberg  <cblu@apple.com>
 
 	Prepended underscores to NPN methods so that when the QT plug-in loads these symbols, it uses the non-underscore versions in WebKit. Without this, the QT plug-in was failing to load when launching Safari from the command-line.

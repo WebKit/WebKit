@@ -159,7 +159,7 @@ JavaClass *JavaClass::classForInstance (jobject instance)
     return aClass;
 }
 
-MethodList JavaClass::methodsNamed(const char *name) const
+MethodList JavaClass::methodsNamed(const char *name, Instance *instance) const
 {
     CFStringRef methodName = CFStringCreateWithCString(NULL, name, kCFStringEncodingASCII);
     MethodList *methodList = (MethodList *)CFDictionaryGetValue(_methods, methodName);

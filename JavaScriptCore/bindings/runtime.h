@@ -110,7 +110,7 @@ class Class
 public:
     virtual const char *name() const = 0;
     
-    virtual MethodList methodsNamed(const char *name) const = 0;
+    virtual MethodList methodsNamed(const char *name, Instance *instance) const = 0;
     
     virtual Constructor *constructorAt(long i) const = 0;
     virtual long numConstructors() const = 0;

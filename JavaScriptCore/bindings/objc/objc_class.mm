@@ -85,7 +85,7 @@ const char *ObjcClass::name() const
     return _isa->name;
 }
 
-MethodList ObjcClass::methodsNamed(const char *_name) const
+MethodList ObjcClass::methodsNamed(const char *_name, Instance *instance) const
 {
     MethodList methodList;
     char name[4096];

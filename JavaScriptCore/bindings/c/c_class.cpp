@@ -83,7 +83,7 @@ const char *CClass::name() const
     return "";
 }
 
-MethodList CClass::methodsNamed(const char *_name) const
+MethodList CClass::methodsNamed(const char *_name, Instance *instance) const
 {
     MethodList methodList;
 
@@ -96,7 +96,9 @@ MethodList CClass::methodsNamed(const char *_name) const
     }
     
     NPIdentifier ident = _NPN_GetStringIdentifier (_name);
-    if (_isa->hasMethod && _isa->hasMethod (_isa, ident)){
+    const CInstance *inst = static_cast<const CInstance*>(instance);
+    NPObject *obj = inst->getObject();
+    if (_isa->hasMethod && _isa->hasMethod (obj, ident)){
         Method *aMethod = new CMethod (ident);
         CFDictionaryAddValue ((CFMutableDictionaryRef)_methods, methodName, aMethod);
         methodList.addMethod (aMethod);
@@ -118,7 +120,9 @@ Field *CClass::fieldNamed(const char *name, Instance *instance) const
     }
 
     NPIdentifier ident = _NPN_GetStringIdentifier (name);
-    if (_isa->hasProperty && _isa->hasProperty (_isa, ident)){
+    const CInstance *inst = static_cast<const CInstance*>(instance);
+    NPObject *obj = inst->getObject();
+    if (_isa->hasProperty && _isa->hasProperty (obj, ident)){
         aField = new CField (ident);
         CFDictionaryAddValue ((CFMutableDictionaryRef)_fields, fieldName, aField);
     }
