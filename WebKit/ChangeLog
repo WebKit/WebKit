@@ -1,3 +1,18 @@
+2004-05-26  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Dave.
+
+	- fix further problems with Emerson feed: redirection for RSS feeds
+
+	This is done by removing removing the calls to defer callbacks
+	while waiting for
+
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient continueAfterNavigationPolicy:formState:]):
+        (-[WebMainResourceClient connection:willSendRequest:redirectResponse:]):
+        (-[WebMainResourceClient continueAfterContentPolicy:response:]):
+        (-[WebMainResourceClient checkContentPolicyForResponse:]):
+
 2004-05-26  Chris Blumenberg  <cblu@apple.com>
 
 	Added and implemented proposed dragging API changes. These changes are necessary to make JS dragging work properly.

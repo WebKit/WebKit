@@ -100,7 +100,6 @@
 
 -(void)continueAfterNavigationPolicy:(NSURLRequest *)_request formState:(WebFormState *)state
 {
-    [[dataSource _webView] setDefersCallbacks:NO];
     if (!_request) {
 	[self stopLoadingForPolicyChange];
     }
@@ -188,7 +187,6 @@
     // when the main load was started.
     [dataSource _setRequest:newRequest];
     
-    [[dataSource _webView] setDefersCallbacks:YES];
     [[dataSource webFrame] _checkNavigationPolicyForRequest:newRequest
                                                  dataSource:dataSource
                                                   formState:nil
@@ -201,8 +199,6 @@
 
 -(void)continueAfterContentPolicy:(WebPolicyAction)contentPolicy response:(NSURLResponse *)r
 {
-    [[dataSource _webView] setDefersCallbacks:NO];
-
     switch (contentPolicy) {
     case WebPolicyUse:
 	if (![WebView canShowMIMEType:[r MIMEType]]) {
@@ -265,7 +261,6 @@
     policyResponse = [r retain];
 
     WebView *wv = [dataSource _webView];
-    [wv setDefersCallbacks:YES];
     [l retain];
     [[wv _policyDelegateForwarder] webView:wv decidePolicyForMIMEType:[r MIMEType]
                                                             request:[dataSource request]
