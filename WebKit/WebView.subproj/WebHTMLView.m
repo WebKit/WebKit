@@ -186,22 +186,22 @@
     [[self window] _setShouldPostEventNotifications: YES];
 
     if (widget && widget->part()->xmlDocImpl() && 
-        widget->part()->xmlDocImpl()->renderer()) {
-        if (_private->needsLayout){
+        widget->part()->xmlDocImpl()->renderer() &&
+        _private->needsLayout){
  #ifdef _KWQ_TIMING        
     double start = CFAbsoluteTimeGetCurrent();
  #endif
 
-            WEBKITDEBUGLEVEL (WEBKIT_LOG_VIEW, "doing layout\n");
-            //double start = CFAbsoluteTimeGetCurrent();
-            widget->layout();
-            //WebKitDebugAtLevel (WEBKIT_LOG_TIMING, "layout time %e\n", CFAbsoluteTimeGetCurrent() - start);
-            _private->needsLayout = NO;
+        WEBKITDEBUGLEVEL (WEBKIT_LOG_VIEW, "%s doing layout\n", DEBUG_OBJECT(self));
+        widget->layout();
+        _private->needsLayout = NO;
  #ifdef _KWQ_TIMING        
     double thisTime = CFAbsoluteTimeGetCurrent() - start;
     WEBKITDEBUGLEVEL (WEBKIT_LOG_TIMING, "%s layout seconds = %f\n", widget->part()->baseURL().url().latin1(), thisTime);
  #endif
-        }
+    }
+    else {
+        WEBKITDEBUGLEVEL (WEBKIT_LOG_VIEW, "%s NOT doing layout\n", DEBUG_OBJECT(self));
     }
 
 }
@@ -289,23 +289,21 @@
 
 - (void)setNeedsDisplay:(BOOL)flag
 {
-    WEBKITDEBUGLEVEL (WEBKIT_LOG_VIEW, "flag = %d\n", (int)flag);
+    WEBKITDEBUGLEVEL (WEBKIT_LOG_VIEW, "%s flag = %d\n", DEBUG_OBJECT(self), (int)flag);
     [super setNeedsDisplay: flag];
 }
 
 
 - (void)setNeedsLayout: (bool)flag
 {
-    WEBKITDEBUGLEVEL (WEBKIT_LOG_VIEW, "flag = %d\n", (int)flag);
+    WEBKITDEBUGLEVEL (WEBKIT_LOG_VIEW, "%s flag = %d\n", DEBUG_OBJECT(self), (int)flag);
     _private->needsLayout = flag;
-    if (flag)
-        [self setNeedsDisplay:YES];
 }
 
 
 - (void)setNeedsToApplyStyles: (bool)flag
 {
-    WEBKITDEBUGLEVEL (WEBKIT_LOG_VIEW, "flag = %d\n", (int)flag);
+    WEBKITDEBUGLEVEL (WEBKIT_LOG_VIEW, "%s flag = %d\n", DEBUG_OBJECT(self), (int)flag);
     _private->needsToApplyStyles = flag;
 }
 
@@ -330,7 +328,7 @@
         return;
     }
 
-    WEBKITDEBUGLEVEL (WEBKIT_LOG_VIEW, "drawing\n");
+    WEBKITDEBUGLEVEL (WEBKIT_LOG_VIEW, "%s drawing\n", DEBUG_OBJECT(self));
 
     [self reapplyStyles];
 

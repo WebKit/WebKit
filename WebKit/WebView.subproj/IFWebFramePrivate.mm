@@ -154,8 +154,26 @@ static const char * const stateNames[6] = {
         if ([self controller])
             WEBKITDEBUGLEVEL (WEBKIT_LOG_TIMING, "%s:  performing timed layout, %f seconds since start of document load\n", [[self name] cString], CFAbsoluteTimeGetCurrent() - [[[[self controller] mainFrame] dataSource] _loadingStartedTime]);
             
-        if([[self webView] isDocumentHTML])
+        if([[self webView] isDocumentHTML]){
+            NSView *view = (NSView *)documentView;
+            
             [documentView setNeedsLayout: YES];
+            
+            NSRect frame = [view frame];
+            
+            if (frame.size.width == 0 || frame.size.height == 0){
+                // We must do the layout now, rather than depend on
+                // display to do a lazy layout because the view
+                // may be recently initialized with a zero size
+                // and the AppKit will optimize out any drawing.
+                
+                // Force a layout now.  At this point we could
+                // check to see if any CSS is pending and delay
+                // the layout further to avoid the flash of unstyled
+                // content.                    
+                [documentView layout];
+            }
+        }
             
         [documentView setNeedsDisplay: YES];
     }
