@@ -488,7 +488,7 @@ public:
     
     virtual DOM::Position positionForCoordinates(int x, int y);
     
-    virtual void dirtyLinesFromChangedChild(RenderObject* child);
+    virtual void dirtyLinesFromChangedChild(RenderObject* child, bool adding = true);
     
     // set the style of the object.
     virtual void setStyle(RenderStyle *style);

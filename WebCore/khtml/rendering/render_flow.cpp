@@ -182,21 +182,27 @@ void RenderFlow::deleteLineBoxes()
 
 void RenderFlow::detach()
 {
-    if (!documentBeingDestroyed() && m_firstLineBox && m_firstLineBox->parent()) {
-        for (InlineRunBox* box = m_firstLineBox; box; box = box->nextLineBox())
-            box->parent()->removeChild(box);
+    if (!documentBeingDestroyed()) {
+        if (m_firstLineBox) {
+            if (m_firstLineBox->parent()) {
+                for (InlineRunBox* box = m_firstLineBox; box; box = box->nextLineBox())
+                    box->parent()->removeChild(box);
+            }
+        }
+        else if (isInline() && parent())
+            parent()->dirtyLinesFromChangedChild(this, false);
     }
 
     deleteLineBoxes();
     RenderBox::detach();
 }
 
-void RenderFlow::dirtyLinesFromChangedChild(RenderObject* child)
+void RenderFlow::dirtyLinesFromChangedChild(RenderObject* child, bool adding)
 {
     if (!parent() || selfNeedsLayout() || isTable())
         return;
     
-    if (!isInline() && (!child->nextSibling() || !firstLineBox())) {
+    if (adding && !isInline() && (!child->nextSibling() || !firstLineBox())) {
         // An append onto the end of a block or we don't have any lines anyway.  
         // In this case we don't have to dirty any specific lines.
         static_cast<RenderBlock*>(this)->setLinesAppended();

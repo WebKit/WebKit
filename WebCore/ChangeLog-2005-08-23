@@ -1,3 +1,17 @@
+2004-07-19  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3718697, crash clicking on JS tab at alaskaair.com.
+	
+        Reviewed by kocienda
+
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::detach):
+        (RenderFlow::dirtyLinesFromChangedChild):
+        * khtml/rendering/render_flow.h:
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::dirtyLinesFromChangedChild):
+        * khtml/rendering/render_object.h:
+
 2004-07-16  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3726471, need to ensure that it's safe to do updateRendering from within layout, since isContentEditable
