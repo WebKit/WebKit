@@ -1,3 +1,9 @@
+2004-08-05  Chris Blumenberg  <cblu@apple.com>
+
+        Fixed unnecessary import of NSURLFileTypeMappings.
+
+        * WebView.subproj/WebMainResourceClient.m:
+
 2004-08-05  Richard Williamson   <rjw@apple.com>
 
         Make builds conditionally include -framework Quartz.

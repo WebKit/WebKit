@@ -8,7 +8,6 @@
 #import <Foundation/NSHTTPCookie.h>
 #import <Foundation/NSError_NSURLExtras.h>
 #import <Foundation/NSString_NSURLExtras.h>
-#import <Foundation/NSURLFileTypeMappings.h>
 #import <Foundation/NSURLConnection.h>
 #import <Foundation/NSURLConnectionPrivate.h>
 #import <Foundation/NSURLDownloadPrivate.h>
