@@ -1,3 +1,12 @@
+2003-03-07  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed regression caused when we made the stopLoading method on WebDataSource private
+
+        * WebView.subproj/WebDataSourcePrivate.m: (-[WebDataSource _recursiveStopLoading]):
+        The children are frames, so we need to do stopLoading, not _stopLoading.
+
 2003-03-07  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: 3191052 - Predetermined downloads should not be started from the browser window

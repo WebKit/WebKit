@@ -266,7 +266,7 @@
     
     // We depend on the controller in webFrame and we release it in _stopLoading,
     // so call webFrame first so we don't send a message the released controller (3129503).
-    [[[self webFrame] children] makeObjectsPerformSelector:@selector(_stopLoading)];
+    [[[self webFrame] children] makeObjectsPerformSelector:@selector(stopLoading)];
     [self _stopLoadingInternal];
     
     [self release];
