@@ -1,3 +1,14 @@
+2004-08-11  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+        Fix for this bug:
+        
+        <rdar://problem/3732702> crash in CSSComputedStyleDeclarationImpl running devtools.com editing sample code
+
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::selectionComputedStyle): Added a null check.
+
 2004-08-10  Darin Adler  <darin@apple.com>
 
         Reviewed by Trey.

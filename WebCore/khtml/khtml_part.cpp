@@ -5407,6 +5407,9 @@ CSSStyleDeclarationImpl *KHTMLPart::selectionComputedStyle(NodeImpl *&nodeToRemo
     Position pos(range.startContainer().handle(), range.startOffset());
     assert(pos.notEmpty());
     ElementImpl *elem = pos.element();
+    if (!elem)
+        return 0;
+    
     ElementImpl *styleElement = elem;
     int exceptionCode = 0;
 
