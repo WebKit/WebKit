@@ -1,3 +1,10 @@
+2004-11-22  David Hyatt  <hyatt@apple.com>
+
+	Make sure you can use document.createElement to make a <canvas> element.
+
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::createHTMLElement):
+
 2004-11-22  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Dave.

@@ -63,6 +63,7 @@
 
 #include "html/html_baseimpl.h"
 #include "html/html_blockimpl.h"
+#include "html/html_canvasimpl.h"
 #include "html/html_documentimpl.h"
 #include "html/html_formimpl.h"
 #include "html/html_headimpl.h"
@@ -883,6 +884,9 @@ ElementImpl *DocumentImpl::createHTMLElement( const DOMString &name, int &except
         break;
     case ID_AREA:
         n = new HTMLAreaElementImpl(docPtr());
+        break;
+    case ID_CANVAS:
+        n = new HTMLCanvasElementImpl(docPtr());
         break;
 
 // objects, applets and scripts
