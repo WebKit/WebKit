@@ -1,3 +1,20 @@
+2002-10-24  Richard Williamson   <rjw@apple.com>
+
+        Fixed many font substitution related bugs, at least including:
+        3006966, 3026675, 3071106, and more... 
+        
+        * WebCoreSupport.subproj/WebTextRenderer.h:
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (-[WebTextRenderer drawCharacters:stringLength:fromCharacterPosition:toCharacterPosition:atPoint:withPadding:withTextColor:backgroundColor:]):
+        (-[WebTextRenderer floatWidthForCharacters:stringLength:fromCharacterPosition:numberOfCharacters:withPadding:applyRounding:attemptFontSubstitution:widths:]):
+        (-[WebTextRenderer _floatWidthForCharacters:stringLength:fromCharacterPosition:numberOfCharacters:withPadding:applyRounding:attemptFontSubstitution:widths:fonts:glyphs:numGlyphs:]):
+        
+        Against Darin's better judgement prevent extra layout when not in live resize.  If
+        this introduces any regressions I owe darin a good bottle of wine.
+        
+        * WebView.subproj/WebDynamicScrollBarsView.m:
+        (-[WebDynamicScrollBarsView updateScrollers]):
+
 2002-10-24  Chris Blumenberg  <cblu@apple.com>
 
 	New Java plug-in works! Much faster to load and no spinny cursor! Unfortunately, it very unstable.

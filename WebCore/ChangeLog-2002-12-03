@@ -1,3 +1,11 @@
+2002-10-24  Richard Williamson   <rjw@apple.com>
+
+        Updated to reflect new calling parameter semantic of floatCharacterWidths(),
+        which now returns the entire array of widths up the last character requested.
+        
+        * khtml/rendering/render_text.cpp:
+        (TextSlave::checkSelectionPoint):
+
 2002-10-24  David Hyatt  <hyatt@apple.com>
 
 	<pre>, <xmp> and <plaintext> should all have a top margin of 1em.

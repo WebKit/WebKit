@@ -33,7 +33,7 @@
             // Do a layout if pending, before checking if scrollbars are needed.
             // This fixes 2969367, although may introduce a slowdown in live resize performance.
             NSView *documentView = [self documentView];
-            if ([documentView conformsToProtocol:@protocol(WebDocumentView)]) {
+            if ([documentView inLiveResize] && [documentView conformsToProtocol:@protocol(WebDocumentView)]) {
                 [(id <WebDocumentView>)documentView layout];
             }
             

@@ -1,10 +1,7 @@
-//
-//  WebTextRenderer.h
-//  WebKit
-//
-//  Created by Darin Adler on Thu May 02 2002.
-//  Copyright (c) 2002 Apple Computer, Inc. All rights reserved.
-//
+/*	
+    WebTextRenderer.h  
+    Copyright 2002, Apple, Inc. All rights reserved.
+*/
 
 #import <WebCore/WebCoreTextRenderer.h>
 
@@ -29,5 +26,7 @@ typedef struct GlyphMap GlyphMap;
 + (BOOL)shouldBufferTextDrawing;
 
 - initWithFont:(NSFont *)font;
+
+- (float)_floatWidthForCharacters:(const UniChar *)characters stringLength:(unsigned)stringLength fromCharacterPosition: (int)pos numberOfCharacters: (int)len withPadding: (int)padding applyRounding: (BOOL)applyRounding attemptFontSubstitution: (BOOL)attemptSubstitution widths: (float *)widthBuffer fonts: (NSFont **)fontBuffer glyphs: (CGGlyph *)glyphBuffer numGlyphs: (int *)_numGlyphs;
 
 @end

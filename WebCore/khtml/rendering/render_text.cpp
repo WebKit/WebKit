@@ -161,7 +161,7 @@ FindSelectionResult TextSlave::checkSelectionPoint(int _x, int _y, int _tx, int 
 #if APPLE_CHANGES
     // Floating point version needed for best results with Mac OS X text.
     float delta = _x - (_tx + m_x);
-    float widths[m_len]; 
+    float widths[text->str->l]; 
     
     // Do width calculations for whole run once.
     f->floatCharacterWidths( text->str->s, text->str->l, m_start, m_len, m_toAdd, &widths[0]);
@@ -169,7 +169,7 @@ FindSelectionResult TextSlave::checkSelectionPoint(int _x, int _y, int _tx, int 
     if ( m_reversed ) {
 	delta -= m_width;
 	while(pos < m_len) {
-	    float w = widths[pos];
+	    float w = widths[pos+m_start];
 	    float w2 = w/2;
 	    w -= w2;
 	    delta += w2;
@@ -180,7 +180,7 @@ FindSelectionResult TextSlave::checkSelectionPoint(int _x, int _y, int _tx, int 
 	}
     } else {
 	while(pos < m_len) {
-	    float w = widths[pos];
+	    float w = widths[pos+m_start];
 	    float w2 = w/2;
 	    w -= w2;
 	    delta -= w2;

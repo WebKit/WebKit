@@ -405,99 +405,65 @@ static BOOL bufferTextDrawing = NO;
 }
 
 
-- (void) slowPackGlyphsForCharacters:(const UniChar *)characters numCharacters: (unsigned int)numCharacters glyphBuffer:(CGGlyph **)glyphBuffer numGlyphs:(unsigned int *)numGlyphs
+// Useful page for testing http://home.att.net/~jameskass
+
+- (void)drawCharacters:(const UniChar *)characters stringLength: (unsigned int)length fromCharacterPosition: (int)from toCharacterPosition: (int)to atPoint:(NSPoint)point withPadding: (int)padding withTextColor:(NSColor *)textColor backgroundColor: (NSColor *)backgroundColor
 {
-    ATSGlyphVector glyphVector;
-    unsigned int j;
-    CGGlyph *glyphBufPtr;
-    ATSLayoutRecord *glyphRecord;
-
-    ATSInitializeGlyphVector(numCharacters, 0, &glyphVector);
-    [self convertCharacters: characters length: numCharacters toGlyphs: &glyphVector skipControlCharacters: YES];
-
-    *numGlyphs = glyphVector.numGlyphs;
-    *glyphBuffer = glyphBufPtr = (CGGlyph *)malloc (*numGlyphs * sizeof(CGGlyph));
-    glyphRecord = (ATSLayoutRecord *)glyphVector.firstRecord;
-    for (j = 0; j < *numGlyphs; j++){
-        *glyphBufPtr++ = glyphRecord->glyphID;
-        glyphRecord = (ATSLayoutRecord *)((char *)glyphRecord + glyphVector.recordSize);
-    }
-    
-    ATSClearGlyphVector(&glyphVector);
-}
-
-
-- (NSPoint)drawGlyphs: (CGGlyph *)glyphs numGlyphs: (unsigned int)numGlyphs fromGlyphPosition: (int)from toGlyphPosition: (int)to atPoint: (NSPoint)point withPadding: (int)padding withTextColor: (NSColor *)textColor backgroundColor: (NSColor *)backgroundColor
-{
-    unsigned int i;
+    float *widthBuffer, localWidthBuffer[LOCAL_BUFFER_SIZE];
+    CGGlyph *glyphBuffer, localGlyphBuffer[LOCAL_BUFFER_SIZE];
+    NSFont **fontBuffer, *localFontBuffer[LOCAL_BUFFER_SIZE];
     CGSize *advances, localAdvanceBuffer[LOCAL_BUFFER_SIZE];
+    int numGlyphs, i;
+    float startX, nextX, backgroundWidth = 0.0;
+    NSFont *currentFont;
     CGContextRef cgContext;
-    NSPoint advancePoint = point;
-    float startX, backgroundWidth = 0.0;
-    float wordWidth = 0.0;
-    uint numSpaces = 0;
-    int padPerSpace = 0;
-
-    if (numGlyphs == 0)
-        return point;
-        
-    // If the padding is non-zero, count the number of spaces in the string
-    // and divide that by the padding for per space addition.
-    if (padding > 0){
-        for (i = 0; i < (uint)numGlyphs; i++){
-            if (glyphs[i] == spaceGlyph)
-                numSpaces++;
-        }
-        padPerSpace = CEIL_TO_INT ((((float)padding) / ((float)numSpaces)));
-    }
     
-    // Determine if we can use the local stack buffer, otherwise allocate.
-    if (numGlyphs > LOCAL_BUFFER_SIZE) {
-        advances = (CGSize *)malloc(numGlyphs * sizeof(CGSize));
+    if (length == 0)
+        return;
+        
+    // FIXME:  the character to glyph translation must result in less than
+    // length glyphs.  This isn't always true.
+    if (length > LOCAL_BUFFER_SIZE) {
+        advances = (CGSize *)calloc(length, sizeof(CGSize));
+        widthBuffer = (float *)calloc(length, sizeof(float));
+        glyphBuffer = (CGGlyph *)calloc(length, sizeof(ATSGlyphRef));
+        fontBuffer = (NSFont **)calloc(length, sizeof(NSFont *));
     } else {
         advances = localAdvanceBuffer;
+        widthBuffer = localWidthBuffer;
+        glyphBuffer = localGlyphBuffer;
+        fontBuffer = localFontBuffer;
     }
 
-    // Calculate advances for the entire string taking into account.
-    // 1.  Rounding of spaces.
-    // 2.  Ceil word widths to guarantee integer word widths.
-    // 3.  Any justification padding.
-    for (i = 0; i < numGlyphs; i++) {
-        advances[i].width = widthForGlyph(self, glyphToWidthMap, glyphs[i]);
-        if (glyphs[i] == spaceGlyph){
-            if (i > 0){
-                //advances[i-1].width = ROUND_TO_INT (advances[i-1].width);
-                advances[i-1].width += CEIL_TO_INT (wordWidth) - wordWidth;
-            }
-            if (padding > 0){
-                // Only use left over padding if note evenly divisible by 
-                // number of spaces.
-                if (padding < padPerSpace){
-                    advances[i].width = ROUND_TO_INT(advances[i].width) + padding;
-                    padding = 0;
-                }
-                else {
-                    advances[i].width = ROUND_TO_INT(advances[i].width) + padPerSpace;
-                    padding -= padPerSpace;
-                }
-            }
-            else
-                advances[i].width = ROUND_TO_INT(advances[i].width);
-            wordWidth = 0;
-        }
-        else
-            wordWidth += advances[i].width;
+    [self _floatWidthForCharacters:characters 
+        stringLength:length 
+        fromCharacterPosition: 0 
+        numberOfCharacters: length
+        withPadding: padding
+        applyRounding: YES
+        attemptFontSubstitution: YES 
+        widths: widthBuffer 
+        fonts: fontBuffer
+        glyphs: glyphBuffer
+        numGlyphs: &numGlyphs];
+    
+    if (from == -1)
+        from = 0;
+    if (to == -1)
+        to = numGlyphs;
+
+    for (i = 0; (int)i < MIN(to,(int)numGlyphs); i++){
+        advances[i].width = widthBuffer[i];
         advances[i].height = 0;
-        advancePoint.x += advances[i].width;
     }
 
     startX = point.x;
     for (i = 0; (int)i < MIN(from,(int)numGlyphs); i++)
         startX += advances[i].width;
- 
-     for (i = from; (int)i < MIN(to,(int)numGlyphs); i++)
+
+    for (i = from; (int)i < MIN(to,(int)numGlyphs); i++)
         backgroundWidth += advances[i].width;
-    
+
     if (backgroundColor != nil){
         [backgroundColor set];
         [NSBezierPath fillRect:NSMakeRect(startX, point.y - [self ascent], backgroundWidth, [self lineSpacing])];
@@ -505,201 +471,55 @@ static BOOL bufferTextDrawing = NO;
     
     // Finally, draw the glyphs.
     if (from < (int)numGlyphs){
+        int lastFrom = from;
+        int pos = from;
+        
+        currentFont = fontBuffer[pos];
+        nextX = startX;
+        while (pos < to){
+            if ((fontBuffer[pos] != 0 && fontBuffer[pos] != currentFont)){
+                if ([WebTextRenderer shouldBufferTextDrawing] && [[WebTextRendererFactory sharedFactory] coalesceTextDrawing]){
+                    // Add buffered glyphs and advances
+                    WebGlyphBuffer *gBuffer = [[WebTextRendererFactory sharedFactory] glyphBufferForFont: currentFont andColor: textColor];
+                    [gBuffer addGlyphs: &glyphBuffer[lastFrom] advances: &advances[lastFrom] count: pos - lastFrom at: startX : point.y];
+                }
+                else {
+                    cgContext = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
+                    // Setup the color and font.
+                    [textColor set];
+                    [currentFont set];
+            
+                    CGContextSetTextPosition (cgContext, startX, point.y);
+                    CGContextShowGlyphsWithAdvances (cgContext, &glyphBuffer[lastFrom], &advances[lastFrom], pos - lastFrom);
+                }
+                lastFrom = pos;
+                currentFont = fontBuffer[pos];
+                startX = nextX;
+            }
+            nextX += advances[pos].width;
+            pos++;
+        }
         if ([WebTextRenderer shouldBufferTextDrawing] && [[WebTextRendererFactory sharedFactory] coalesceTextDrawing]){
             // Add buffered glyphs and advances
-            WebGlyphBuffer *glyphBuffer = [[WebTextRendererFactory sharedFactory] glyphBufferForFont: font andColor: textColor];
-            [glyphBuffer addGlyphs: &glyphs[from] advances: &advances[from] count: to - from at: startX : point.y];
+            WebGlyphBuffer *gBuffer = [[WebTextRendererFactory sharedFactory] glyphBufferForFont: currentFont andColor: textColor];
+            [gBuffer addGlyphs: &glyphBuffer[lastFrom] advances: &advances[lastFrom] count: pos - lastFrom at: startX : point.y];
         }
         else {
             cgContext = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
             // Setup the color and font.
             [textColor set];
-            [font set];
+            [currentFont set];
     
             CGContextSetTextPosition (cgContext, startX, point.y);
-            CGContextShowGlyphsWithAdvances (cgContext, &glyphs[from], &advances[from], to - from);
+            CGContextShowGlyphsWithAdvances (cgContext, &glyphBuffer[lastFrom], &advances[lastFrom], pos - lastFrom);
         }
     }
 
     if (advances != localAdvanceBuffer) {
         free(advances);
-    }
-    return advancePoint;
-}
-
-// Useful page for testing http://home.att.net/~jameskass
-
-- (NSPoint)slowDrawCharacters:(const UniChar *)characters length: (unsigned int)length fromCharacterPosition:(int)from toCharacterPosition:(int)to atPoint:(NSPoint)point withPadding: (int)padding withTextColor:(NSColor *)textColor backgroundColor: (NSColor *)backgroundColor attemptFontSubstitution: (BOOL)attemptFontSubstitution
-{
-    unsigned int charPos = 0, lastDrawnGlyph = 0;
-    unsigned int clusterLength, i, numGlyphs, fragmentLength;
-    NSFont *substituteFont;
-    CGGlyph *glyphs;
-    ATSGlyphRef glyphID;
-    int fromGlyph = INT32_MAX, toGlyph = INT32_MAX;
-    
-    if (from == -1)
-        from = 0;
-    if (to == -1)
-        to = length;
-        
-    [self slowPackGlyphsForCharacters: characters numCharacters: length glyphBuffer: &glyphs numGlyphs: &numGlyphs];
-
-    // FIXME:  This assumes that we'll always get one glyph per character cluster.
-    for (i = 0; i < numGlyphs; i++){
-        glyphID = glyphs[i];
-
-        clusterLength = findLengthOfCharacterCluster (&characters[charPos], length - charPos);
-
-        if ((int)charPos >= from && fromGlyph == INT32_MAX)
-            fromGlyph = i;
-        
-        if ((int)charPos >= to && toGlyph == INT32_MAX)
-            toGlyph = i-1;
-                
-        if (glyphID == 0 && attemptFontSubstitution){
-            
-            // Draw everthing up to this point.
-            fragmentLength = i - lastDrawnGlyph;
-            if (fragmentLength > 0){
-                int _fromGlyph = fromGlyph-lastDrawnGlyph;
-                
-                if (_fromGlyph < 0)
-                    _fromGlyph = 0;
-                point = [self drawGlyphs: &glyphs[lastDrawnGlyph] numGlyphs: fragmentLength fromGlyphPosition: _fromGlyph toGlyphPosition:MIN(toGlyph-lastDrawnGlyph,fragmentLength) atPoint: point withPadding: padding withTextColor: textColor backgroundColor: backgroundColor];
-            }
-            
-            // Draw the character in the alternate font.
-            substituteFont = [self substituteFontForCharacters: &characters[charPos] length: clusterLength];
-            if (substituteFont){
-                point = [[[WebTextRendererFactory sharedFactory] rendererWithFont: substituteFont] slowDrawCharacters: &characters[charPos] length: clusterLength fromCharacterPosition: from - charPos toCharacterPosition:to - charPos atPoint: point withPadding: 0 withTextColor: textColor backgroundColor: backgroundColor attemptFontSubstitution: NO];
-            }
-            // No substitute font, draw null glyph
-            else
-                point = [self drawGlyphs: &glyphs[i] numGlyphs: 1 fromGlyphPosition: fromGlyph-i toGlyphPosition:MIN((toGlyph-(int)i), 1) atPoint: point withPadding: 0 withTextColor: textColor backgroundColor: backgroundColor];
-                
-            lastDrawnGlyph = i+1;
-        }
-
-        charPos += clusterLength;
-    }
-
-    fragmentLength = numGlyphs - lastDrawnGlyph;
-    if (fragmentLength > 0){
-        int _fromGlyph = fromGlyph-lastDrawnGlyph;
-        
-        if (_fromGlyph < 0)
-            _fromGlyph = 0;
-        point = [self drawGlyphs: &glyphs[lastDrawnGlyph] numGlyphs: fragmentLength fromGlyphPosition: _fromGlyph toGlyphPosition:MIN(toGlyph-lastDrawnGlyph,fragmentLength) atPoint: point withPadding: 0 withTextColor: textColor backgroundColor: backgroundColor];
-    }
-    if (glyphs)
-        free(glyphs);
-    
-    return point;
-}
-
-
-typedef enum {
-    _IFNonBaseCharacter,
-    _IFMissingGlyph,
-    _IFDrawSucceeded,
-} _IFFailedDrawReason;
-
-- (_IFFailedDrawReason)_drawCharacters:(const UniChar *)characters length: (unsigned int)length fromCharacterPosition: (int)from toCharacterPosition:(int)to atPoint:(NSPoint)point  withPadding: (int)padding withTextColor:(NSColor *)textColor backgroundColor: (NSColor *)backgroundColor
-{
-    uint i, numGlyphs;
-    CGGlyph *glyphs, localGlyphBuffer[LOCAL_BUFFER_SIZE];
-    ATSGlyphRef glyphID;
-    _IFFailedDrawReason result = _IFDrawSucceeded;
-    
-    // FIXME: Deal with other styles of glyph packing.
-    if ([font glyphPacking] != NSNativeShortGlyphPacking &&
-        [font glyphPacking] != NSTwoByteGlyphPacking)
-        [NSException raise:NSInternalInconsistencyException format:@"%@: Don't know how to deal with font %@", self, [font displayName]];
-    
-    // Determine if we can use the local stack buffer, otherwise allocate.
-    if (length > LOCAL_BUFFER_SIZE) {
-        glyphs = (CGGlyph *)malloc(length * sizeof(CGGlyph));
-    } else {
-        glyphs = localGlyphBuffer;
-    }
-    
-    // Pack the glyph buffer and ensure that we have glyphs for all the
-    // characters.  If we're missing a glyph or have a non-base character
-    // stop drawing and return a failure code.
-    numGlyphs = 0;
-    for (i = 0; i < length; i++) {
-        UniChar c = characters[i];
-        
-        // Skip control characters.
-        if (IS_CONTROL_CHARACTER(c)) {
-            continue;
-        }
-
-        // Icky.  Deal w/ non breaking spaces.
-        if (c == NON_BREAKING_SPACE)
-            c = SPACE;
-
-        // Is the a non-base character?
-        if (IsNonBaseChar(c)) {
-            result = _IFNonBaseCharacter;
-            goto cleanup;
-        }
-        
-        glyphID = glyphForCharacter (characterToGlyphMap, c);
-        if (glyphID == nonGlyphID) {
-            glyphID = [self extendCharacterToGlyphMapToInclude: c];
-        }
-
-        // Does this font not contain a glyph for the character?
-        if (glyphID == 0){
-            result = _IFMissingGlyph;
-            goto cleanup;
-        }
-            
-        glyphs[numGlyphs++] = glyphID;
-    }
-
-    if (from == -1)
-        from = 0;
-    if (to == -1)
-        to = numGlyphs;
-    
-    [self drawGlyphs:glyphs numGlyphs:numGlyphs fromGlyphPosition:from toGlyphPosition:to atPoint:point withPadding: padding withTextColor:textColor backgroundColor:backgroundColor];
-
-cleanup:
-    if (glyphs != localGlyphBuffer) {
-        free(glyphs);
-    }
-    return result;
-}
-
-
-- (void)drawCharacters:(const UniChar *)characters stringLength: (unsigned int)length fromCharacterPosition: (int)from toCharacterPosition: (int)to atPoint:(NSPoint)point withPadding: (int)padding withTextColor:(NSColor *)textColor backgroundColor: (NSColor *)backgroundColor
-{
-    //printf("draw: font %s, size %.1f, text \"%s\"\n", [[font fontName] cString], [font pointSize], [[NSString stringWithCharacters:characters length:length] UTF8String]);
-
-    NSFont *substituteFont;
-    _IFFailedDrawReason reason = [self _drawCharacters: characters length: length fromCharacterPosition: from toCharacterPosition: to atPoint: point withPadding: padding withTextColor: textColor backgroundColor: backgroundColor];
-    
-    // ASSUMPTION:  We normally fail because we're trying to render characters
-    // that don't have glyphs in the specified fonts.  If we failed in this way
-    // look for a font corresponding to the first character cluster in the string
-    // and try rendering the entire string with that font.  If that fails we fall back 
-    // to the safe slow drawing.
-    if (reason == _IFMissingGlyph) {
-        unsigned int clusterLength;
-        
-        clusterLength = findLengthOfCharacterCluster(characters, length);
-        substituteFont = [self substituteFontForCharacters: characters length: clusterLength];
-        if (substituteFont)
-            reason = [[[WebTextRendererFactory sharedFactory] rendererWithFont: substituteFont] _drawCharacters: characters length: length fromCharacterPosition: from toCharacterPosition: to atPoint: point withPadding: padding withTextColor: textColor backgroundColor: backgroundColor];
-         
-         if (!substituteFont || reason != _IFDrawSucceeded)
-            [self slowDrawCharacters: characters length: length fromCharacterPosition: from toCharacterPosition:to atPoint: point withPadding: padding withTextColor: textColor backgroundColor: backgroundColor attemptFontSubstitution: YES];
-    }
-    else if (reason == _IFNonBaseCharacter) {
-        [self slowDrawCharacters: characters length: length fromCharacterPosition: from toCharacterPosition:to atPoint: point withPadding: padding withTextColor: textColor backgroundColor: backgroundColor attemptFontSubstitution: YES];
+        free(widthBuffer);
+        free(glyphBuffer);
+        free(fontBuffer);
     }
 }
 
@@ -812,7 +632,12 @@ cleanup:
 }
 
 
-- (float)floatWidthForCharacters:(const UniChar *)characters stringLength:(unsigned)stringLength fromCharacterPosition: (int)pos numberOfCharacters: (int)len withPadding: (int)padding applyRounding: (BOOL)applyRounding attemptFontSubstitution: (BOOL)attemptSubstitution widths: (float *)widthBuffer;
+- (float)floatWidthForCharacters:(const UniChar *)characters stringLength:(unsigned)stringLength fromCharacterPosition: (int)pos numberOfCharacters: (int)len withPadding: (int)padding applyRounding: (BOOL)applyRounding attemptFontSubstitution: (BOOL)attemptSubstitution widths: (float *)widthBuffer
+{
+    return [self _floatWidthForCharacters:characters stringLength:stringLength fromCharacterPosition:pos numberOfCharacters:len withPadding: 0 applyRounding: YES attemptFontSubstitution: YES widths: widthBuffer fonts: nil  glyphs: nil numGlyphs: nil];
+}
+
+- (float)_floatWidthForCharacters:(const UniChar *)characters stringLength:(unsigned)stringLength fromCharacterPosition: (int)pos numberOfCharacters: (int)len withPadding: (int)padding applyRounding: (BOOL)applyRounding attemptFontSubstitution: (BOOL)attemptSubstitution widths: (float *)widthBuffer fonts: (NSFont **)fontBuffer glyphs: (CGGlyph *)glyphBuffer numGlyphs: (int *)_numGlyphs
 {
     float totalWidth = 0;
     unsigned int i, clusterLength;
@@ -821,6 +646,7 @@ cleanup:
     float lastWidth = 0;
     uint numSpaces = 0;
     int padPerSpace = 0;
+    int numGlyphs = 0;
 
     if (len <= 0)
         return 0;
@@ -836,7 +662,7 @@ cleanup:
     }
 
     //printf("width: font %s, size %.1f, text \"%s\"\n", [[font fontName] cString], [font pointSize], [[NSString stringWithCharacters:characters length:length] UTF8String]);
-    for (i = pos; i < stringLength; i++) {
+    for (i = 0; i < stringLength; i++) {
         UniChar c = characters[i];
         
         // Skip control characters.
@@ -856,7 +682,7 @@ cleanup:
                 float delta = CEIL_TO_INT(totalWidth) - totalWidth;
                 totalWidth += delta;
                 if (widthBuffer)
-                    widthBuffer[i - pos - 1] += delta;
+                    widthBuffer[numGlyphs - 1] += delta;
             }
             break;
         }
@@ -873,23 +699,37 @@ cleanup:
         // Try to find a substitute font if this font didn't have a glyph for a character in the
         // string.  If one isn't found we end up drawing and measuring the 0 glyph, usually a box.
         if (glyphID == 0 && attemptSubstitution) {
-            // FIXME:  It may better to attempt to measure the entire string in the
-            // alternate font rather than character by character, as we often do
-            // substitution for the entire fragment (as we do in the drawing case.)
             clusterLength = findLengthOfCharacterCluster (&characters[i], stringLength - i);
             substituteFont = [self substituteFontForCharacters: &characters[i] length: clusterLength];
             if (substituteFont) {
-                lastWidth = [[[WebTextRendererFactory sharedFactory] rendererWithFont: substituteFont] floatWidthForCharacters: &characters[i] stringLength: clusterLength fromCharacterPosition: pos numberOfCharacters: len withPadding: 0 applyRounding: YES attemptFontSubstitution: NO widths: 0];
+                int cNumGlyphs;
+                lastWidth = [[[WebTextRendererFactory sharedFactory] rendererWithFont: substituteFont] 
+                                _floatWidthForCharacters: &characters[i] 
+                                stringLength: clusterLength 
+                                fromCharacterPosition: 0 numberOfCharacters: clusterLength 
+                                withPadding: 0 applyRounding: NO attemptFontSubstitution: NO 
+                                widths: ((widthBuffer != 0 ) ? (&widthBuffer[numGlyphs]) : nil)
+                                fonts: nil
+                                glyphs: ((glyphBuffer != 0 ) ? (&glyphBuffer[numGlyphs]) : nil)
+                                numGlyphs: &cNumGlyphs];
+                if (fontBuffer){
+                    int j;
+                    for (j = 0; j < cNumGlyphs; j++)
+                        fontBuffer[numGlyphs+j] = substituteFont;
+                }
+                numGlyphs += cNumGlyphs;
             }
         }
-
+        
+        // If we have a valid glyph OR if we couldn't find a substitute font
+        // measure the glyph.
         if (glyphID > 0 || ((glyphID == 0) && substituteFont == nil)) {
             if (glyphID == spaceGlyph && applyRounding) {
                 if (lastWidth > 0){
                     float delta = CEIL_TO_INT(totalWidth) - totalWidth;
                     totalWidth += delta;
                     if (widthBuffer)
-                        widthBuffer[i - pos - 1] += delta;
+                        widthBuffer[numGlyphs - 1] += delta;
                 }   
                 lastWidth = ROUND_TO_INT(widthForGlyph(self, glyphToWidthMap, glyphID));
                 if (padding > 0){
@@ -907,9 +747,16 @@ cleanup:
             }
             else
                 lastWidth = widthForGlyph(self, glyphToWidthMap, glyphID);
+            
+            if (fontBuffer)
+                fontBuffer[numGlyphs] = font;
+            if (glyphBuffer)
+                glyphBuffer[numGlyphs] = glyphID;
+            if (widthBuffer)
+                widthBuffer[numGlyphs] = lastWidth;
+            numGlyphs++;
         }
-        if (widthBuffer)
-            widthBuffer[i - pos] = lastWidth;
+        
         totalWidth += lastWidth;       
     }
 
@@ -919,9 +766,12 @@ cleanup:
         float delta = CEIL_TO_INT(totalWidth) - totalWidth;
         totalWidth += delta;
         if (widthBuffer)
-            widthBuffer[len-1] += delta;
+            widthBuffer[numGlyphs-1] += delta;
     }
 
+    if (_numGlyphs)
+        *_numGlyphs = numGlyphs;
+    
     return totalWidth;
 }
 
