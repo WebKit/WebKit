@@ -1,3 +1,13 @@
+2004-01-15  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3530734, many java applets don't show up.  Go ahead and just use the width/height from the style
+	system as the initial size when the width/height are fixed.
+	
+        Reviewed by rjw
+
+        * khtml/rendering/render_applet.cpp:
+        (RenderApplet::createWidgetIfNecessary):
+
 2004-01-15  Richard Williamson   <rjw@apple.com>
 
 	Fixed 3529426.  Exclude pages that contain Java applets from 
