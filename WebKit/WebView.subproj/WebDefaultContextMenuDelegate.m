@@ -29,6 +29,7 @@
 
 @implementation WebDefaultUIDelegate (WebContextMenu)
 
+#ifndef OMIT_TIGER_FEATURES
 static NSString *localizedMenuTitleFromAppKit(NSString *key, NSString *comment)
 {
     NSBundle *appKitBundle = [NSBundle bundleWithIdentifier:@"com.apple.AppKit"];
@@ -37,6 +38,7 @@ static NSString *localizedMenuTitleFromAppKit(NSString *key, NSString *comment)
     }
     return NSLocalizedStringFromTableInBundle(key, @"MenuCommands", appKitBundle, comment);
 }
+#endif
 
 - (NSMenuItem *)menuItemWithTag:(int)tag
 {
