@@ -82,7 +82,7 @@
 
 - (WebController *)controller
 {
-    return [[self _web_parentWebView] controller];
+    return [[self _web_parentWebView] _controller];
 }
 
 - (BOOL)validateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)item
@@ -127,7 +127,7 @@
 - (NSMenu *)menuForEvent:(NSEvent *)theEvent
 {
     WebView *webView = [self _web_parentWebView];
-    WebController *controller = [webView controller];
+    WebController *controller = [webView _controller];
     WebFrame *frame = [controller frameForView:webView];
 
     ASSERT(frame);

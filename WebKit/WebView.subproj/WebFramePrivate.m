@@ -575,7 +575,7 @@ Repeat load of the same URL (by any other means of navigation other than the rel
             case WebFrameLoadTypeForward:
             case WebFrameLoadTypeBack:
             case WebFrameLoadTypeIndexedBackForward:
-                if ([[self controller] usesBackForwardList]) {
+                if ([[self controller] backForwardList]) {
                     // Must grab the current scroll position before disturbing it
                     [self _saveScrollPositionToItem:[_private previousItem]];
                     
@@ -892,7 +892,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
                 // If the user had a scroll point scroll to it.  This will override
                 // the anchor point.  After much discussion it was decided by folks
                 // that the user scroll point should override the anchor point.
-                if ([[self controller] usesBackForwardList]) {
+                if ([[self controller] backForwardList]) {
                     switch ([self _loadType]) {
                     case WebFrameLoadTypeForward:
                     case WebFrameLoadTypeBack:

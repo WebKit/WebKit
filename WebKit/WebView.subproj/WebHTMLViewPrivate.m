@@ -136,13 +136,13 @@ static BOOL forceRealHitTest = NO;
 
 - (WebController *)_controller
 {
-    return [[self _web_parentWebView] controller];
+    return [[self _web_parentWebView] _controller];
 }
 
 - (WebFrame *)_frame
 {
     WebView *webView = [self _web_parentWebView];
-    return [[webView controller] frameForView:webView];
+    return [[webView _controller] frameForView:webView];
 }
 
 // Required so view can access the part's selection.
@@ -203,7 +203,7 @@ static BOOL forceRealHitTest = NO;
     
     WebView *webView = [self _web_parentWebView];
     ASSERT(webView);
-    WebFrame *webFrame = [[webView controller] frameForView:webView];
+    WebFrame *webFrame = [[webView _controller] frameForView:webView];
     
     if (webFrame) {
         NSString *frameName = [elementInfoWC objectForKey:WebElementLinkTargetFrameKey];

@@ -72,6 +72,12 @@ enum {
     [super dealloc];
 }
 
+- (WebFrame *)webFrame
+{
+    return [[self _controller] frameForView: self]; 
+}
+
+
 - (void)setAllowsScrolling: (BOOL)flag
 {
     [(WebDynamicScrollBarsView *)[self frameScrollView] setAllowsScrolling: flag];
@@ -90,12 +96,6 @@ enum {
 - documentView
 {
     return [[self frameScrollView] documentView];
-}
-
-// Note that the controller is not retained.
-- (WebController *)controller
-{
-    return _private->controller;
 }
 
 - (BOOL)isDocumentHTML
@@ -128,7 +128,7 @@ enum {
 
     if (URL) {
 	WebRequest *request = [[WebRequest alloc] initWithURL:URL];
-	[[[self controller] mainFrame] loadRequest:request];
+	[[[self _controller] mainFrame] loadRequest:request];
 	[request release];
     }
 }

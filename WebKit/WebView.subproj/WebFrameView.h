@@ -8,7 +8,7 @@
 #import <Cocoa/Cocoa.h>
 
 @class WebDataSource;
-@class WebController;
+@class WebFrame;
 @class WebViewPrivate;
 
 @protocol WebDocumentView;
@@ -27,14 +27,14 @@
     @param frame The frame rectangle for the view
     @result An initialized WebView
 */
-- initWithFrame: (NSRect) frame;
+- (id)initWithFrame: (NSRect) frame;
 
 /*!
     @method controller
     @abstract Returns the WebController associated with this WebView
     @result The WebView's controller
 */
-- (WebController *)controller;
+- (WebFrame *)webFrame;
 
 /*!
     @method frameScrollView

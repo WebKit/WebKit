@@ -239,13 +239,6 @@ extern NSString *WebElementLinkLabelKey;	// NSString of the text within the anch
 - (void)setUsesBackForwardList: (BOOL)flag;
 
 /*!
-    @method useBackForwardList
-    @result Returns whether a backforward list is being used by this controller.
-    @result YES if a backforward list is being used by this controller, NO otherwise.
-*/    
-- (BOOL)usesBackForwardList;
-
-/*!
     @method goBack
     @abstract Go back to the previous URL in the backforward list.
     @result YES if able to go back in the backforward list, NO otherwise.

@@ -50,8 +50,10 @@
     [newRequest setRequestCachePolicy:[[source request] requestCachePolicy]];
     [newRequest setResponseCachePolicy:[[source request] responseCachePolicy]];
     [newRequest setReferrer:referrer];
-    [newRequest setCookiePolicyBaseURL:[[[[source controller] mainFrame] dataSource] URL]];
-    [newRequest setUserAgent:[[source controller] userAgentForURL:URL]];
+    
+    WebController *_controller = [source _controller];
+    [newRequest setCookiePolicyBaseURL:[[[_controller mainFrame] dataSource] URL]];
+    [newRequest setUserAgent:[_controller userAgentForURL:URL]];
     
     BOOL succeeded = [client loadWithRequest:newRequest];
     [newRequest release];
@@ -64,7 +66,7 @@
         WebError *badURLError = [[WebError alloc] initWithErrorCode:WebFoundationErrorBadURL
                                                            inDomain:WebErrorDomainWebFoundation
                                                          failingURL:[URL absoluteString]];
-        [[source controller] _receivedError:badURLError fromDataSource:source];
+        [_controller _receivedError:badURLError fromDataSource:source];
         [badURLError release];
         client = nil;
     }
@@ -74,7 +76,7 @@
 
 - (void)receivedError:(WebError *)error
 {
-    [[dataSource controller] _receivedError:error fromDataSource:dataSource];
+    [[dataSource _controller] _receivedError:error fromDataSource:dataSource];
 }
 
 -(WebRequest *)resource:(WebResource *)h willSendRequest:(WebRequest *)newRequest
@@ -112,7 +114,7 @@
     
     [dataSource _removeSubresourceClient:self];
     
-    [[dataSource controller] _finishedLoadingResourceFromDataSource:dataSource];
+    [[dataSource _controller] _finishedLoadingResourceFromDataSource:dataSource];
     
     [self release];
     

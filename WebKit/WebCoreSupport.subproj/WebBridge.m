@@ -251,7 +251,7 @@
 {
     // If we are no longer attached to a controller, this must be an attempted load from an
     // onUnload handler, so let's just block it.
-    if ([[self dataSource] controller] == nil) {
+    if ([[self dataSource] _controller] == nil) {
 	return nil;
     }
 

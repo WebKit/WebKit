@@ -36,7 +36,7 @@
     @param request The request to use in creating a datasource.
     @result Returns an initialized WebDataSource.
 */
-- initWithRequest:(WebRequest *)request;
+- (id)initWithRequest:(WebRequest *)request;
 
 /*!
     @method data
@@ -64,12 +64,6 @@
 */
 - (WebFrame *)webFrame;
 
-/*!
-    @method controller
-    @result Returns the controller associated with this datasource.
-*/
-- (WebController *)controller;
-    
 /*!
     @method initialRequest
     @result Returns a reference to the original request that created the

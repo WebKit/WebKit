@@ -98,14 +98,14 @@
 - (void)setDataSource:(WebDataSource *)d
 {
     ASSERT(d);
-    ASSERT([d controller]);
+    ASSERT([d _controller]);
     
     [d retain];
     [dataSource release];
     dataSource = d;
 
     [controller release];
-    controller = [[dataSource controller] retain];
+    controller = [[dataSource _controller] retain];
     
     [resourceLoadDelegate release];
     resourceLoadDelegate = [[controller resourceLoadDelegate] retain];

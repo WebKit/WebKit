@@ -13,7 +13,7 @@
 #import <WebKit/WebDocument.h>
 #import <WebKit/WebNSViewExtras.h>
 #import <WebKit/WebPreferences.h>
-#import <WebKit/WebView.h>
+#import <WebKit/WebViewPrivate.h>
 
 @implementation WebTextView
 
@@ -158,7 +158,7 @@
     [super menuForEvent:theEvent];
     
     WebView *webView = [self _web_parentWebView];
-    WebController *controller = [webView controller];
+    WebController *controller = [webView _controller];
     WebFrame *frame = [controller frameForView:webView];
 
     ASSERT(frame);

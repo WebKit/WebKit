@@ -78,6 +78,11 @@
 
 @implementation WebDataSource (WebPrivate)
 
+- (WebController *)_controller
+{
+    return _private->controller;
+}
+
 - (void)_setResourceData:(NSData *)data
 {
     [_private->resourceData release];
@@ -539,7 +544,7 @@
     if (!_private->committed) {
         [[[self webFrame] _bridge] didNotOpenURL:[[_private->originalRequestCopy URL] absoluteString]];
     }
-    [[self controller] _mainReceivedError:error
+    [[self _controller] _mainReceivedError:error
                            fromDataSource:self
                                  complete:isComplete];
 }
@@ -563,7 +568,7 @@
 
 - (void)_loadIcon
 {
-    if([self webFrame] != [[self controller] mainFrame] || _private->mainDocumentError || _private->iconLoader){
+    if([self webFrame] != [[self _controller] mainFrame] || _private->mainDocumentError || _private->iconLoader){
         return;
     }
                 

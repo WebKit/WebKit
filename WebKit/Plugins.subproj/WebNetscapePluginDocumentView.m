@@ -78,7 +78,7 @@
                                                          pluginName:[thePlugin name]
                                                            MIMEType:MIME];
         
-        [[[theDataSource controller] _resourceLoadDelegateForwarder] pluginFailedWithError:error dataSource:theDataSource];
+        [[[[theDataSource webFrame] controller] _resourceLoadDelegateForwarder] pluginFailedWithError:error dataSource:theDataSource];
         
         return;
     }

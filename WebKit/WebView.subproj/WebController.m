@@ -272,17 +272,14 @@ NSString *WebElementLinkTitleKey = 		@"WebElementLinkTitle";
 
 - (WebBackForwardList *)backForwardList
 {
-    return _private->backForwardList;
+    if (_private->useBackForwardList)
+        return _private->backForwardList;
+    return nil;
 }
 
 - (void)setUsesBackForwardList: (BOOL)flag
 {
     _private->useBackForwardList = flag;
-}
-
-- (BOOL)usesBackForwardList
-{
-    return _private->useBackForwardList;
 }
 
 - (void)_goToItem: (WebHistoryItem *)item withLoadType: (WebFrameLoadType)type

@@ -115,7 +115,7 @@
     // is cleared so the delegate will get false if they ask the frame if it's loading.
     // There's probably a better way to do this, but this should do for now.
     if (keepLoading) {
-        [[[dataSource controller] _locationChangeDelegateForwarder]
+        [[[dataSource _controller] _locationChangeDelegateForwarder]
             locationChangeDone:interruptError forDataSource:dataSource];
     }
 	
@@ -130,7 +130,7 @@
 
 -(void)continueAfterNavigationPolicy:(WebRequest *)_request formState:(WebFormState *)state
 {
-    [[dataSource controller] setDefersCallbacks:NO];
+    [[dataSource _controller] setDefersCallbacks:NO];
     if (!_request) {
 	[self stopLoadingForPolicyChange];
     }
@@ -150,7 +150,7 @@
     
     // Update cookie policy base URL as URL changes, except for subframes, which use the
     // URL of the main frame which doesn't change when we redirect.
-    if ([dataSource webFrame] == [[dataSource controller] mainFrame]) {
+    if ([dataSource webFrame] == [[dataSource _controller] mainFrame]) {
         [newRequest setCookiePolicyBaseURL:URL];
     }
 
@@ -167,7 +167,7 @@
 
 -(void)continueAfterContentPolicy:(WebPolicyAction)contentPolicy response:(WebResponse *)r
 {
-    [[dataSource controller] setDefersCallbacks:NO];
+    [[dataSource _controller] setDefersCallbacks:NO];
     WebRequest *req = [dataSource request];
 
     switch (contentPolicy) {
@@ -188,7 +188,7 @@
             if (directory != nil && [directory isAbsolutePath]) {
                 path = [directory stringByAppendingPathComponent:[r suggestedFilenameForSaving]];
             } else {
-                id pd = [[dataSource controller] policyDelegate];
+                id pd = [[dataSource _controller] policyDelegate];
                 
                 if ([pd respondsToSelector: @selector(savePathForResponse:andRequest:)])
                     path = [pd savePathForResponse:r andRequest:req];
@@ -255,7 +255,7 @@
 
 -(void)checkContentPolicyForResponse:(WebResponse *)r andCallSelector:(SEL)selector
 {
-    id pd = [[dataSource controller] policyDelegate];
+    id pd = [[dataSource _controller] policyDelegate];
     WebPolicyAction contentPolicy;
     
     if ([pd respondsToSelector:@selector(contentPolicyForMIMEType:andRequest:inFrame:)])
@@ -274,12 +274,12 @@
 {
     ASSERT(![h defersCallbacks]);
     ASSERT(![self defersCallbacks]);
-    ASSERT([dataSource isDownloading] || ![[dataSource controller] defersCallbacks]);
+    ASSERT([dataSource isDownloading] || ![[dataSource _controller] defersCallbacks]);
     [dataSource _setResponse:r];
 
     LOG(Download, "main content type: %@", [r contentType]);
 
-    [[dataSource controller] setDefersCallbacks:YES];
+    [[dataSource _controller] setDefersCallbacks:YES];
 
     // Figure out the content policy.
     if (![dataSource isDownloading]) {
@@ -297,7 +297,7 @@
     ASSERT([data length] != 0);
     ASSERT(![h defersCallbacks]);
     ASSERT(![self defersCallbacks]);
-    ASSERT([self isDownload] || ![[dataSource controller] defersCallbacks]);
+    ASSERT([self isDownload] || ![[dataSource _controller] defersCallbacks]);
  
     LOG(Loading, "URL = %@, data = %p, length %d", [dataSource URL], data, [data length]);
 
@@ -308,7 +308,7 @@
     } else {
         [resourceData appendData:data];
         [dataSource _receivedData:data];
-        [[dataSource controller] _mainReceivedBytesSoFar:[resourceData length]
+        [[dataSource _controller] _mainReceivedBytesSoFar:[resourceData length]
                                           fromDataSource:dataSource
                                                 complete:NO];
     }
@@ -328,7 +328,7 @@
 {
     ASSERT(![h defersCallbacks]);
     ASSERT(![self defersCallbacks]);
-    ASSERT([self isDownload] || ![[dataSource controller] defersCallbacks]);
+    ASSERT([self isDownload] || ![[dataSource _controller] defersCallbacks]);
     LOG(Loading, "URL = %@", [dataSource URL]);
         
     // Calls in this method will most likely result in a call to release, so we must retain.
@@ -342,7 +342,7 @@
     } else {
         [dataSource _setResourceData:resourceData];
         [dataSource _finishedLoading];
-        [[dataSource controller] _mainReceivedBytesSoFar:[resourceData length]
+        [[dataSource _controller] _mainReceivedBytesSoFar:[resourceData length]
                                           fromDataSource:dataSource
                                                 complete:YES];
     }
@@ -363,7 +363,7 @@
 {
     ASSERT(![h defersCallbacks]);
     ASSERT(![self defersCallbacks]);
-    ASSERT([self isDownload] || ![[dataSource controller] defersCallbacks]);
+    ASSERT([self isDownload] || ![[dataSource _controller] defersCallbacks]);
     LOG(Loading, "URL = %@, error = %@", [error failingURL], [error errorDescription]);
 
     // Calling receivedError will likely result in a call to release, so we must retain.

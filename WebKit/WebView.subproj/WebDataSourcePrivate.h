@@ -113,6 +113,7 @@
 
 @interface WebDataSource (WebPrivate)
 
+- (WebController *)_controller;
 - (void)_setResourceData:(NSData *)data;
 - (Class)_representationClass;
 - (void)_setRepresentation:(id<WebDocumentRepresentation>)representation;

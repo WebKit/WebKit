@@ -69,14 +69,6 @@
     return _private->webFrame;
 }
 
-- (WebController *)controller
-{
-    // All data sources used in a document share the same controller.
-    // A single document may have many data sources corresponding to
-    // frames or iframes.
-    return _private->controller;
-}
-
 -(WebRequest *)initialRequest
 {
     return _private->originalRequest;

@@ -44,6 +44,13 @@
 
 @implementation WebView (WebPrivate)
 
+// Note that the controller is not retained.
+- (WebController *)_controller
+{
+    return _private->controller;
+}
+
+
 - (void)_setMarginWidth: (int)w
 {
     _private->marginWidth = w;

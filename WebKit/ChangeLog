@@ -1,3 +1,67 @@
+2003-03-05  Richard Williamson   <rjw@apple.com>
+
+        API changes
+        WebView and WebDataSource give up -(WebController *)controller.
+        WebView gets -(WebFrame *)webFrame.
+        
+        Reviewed by cblu.
+
+        * Plugins.subproj/WebNetscapePluginDocumentView.m:
+        (-[WebNetscapePluginDocumentView setDataSource:]):
+        * Plugins.subproj/WebNetscapePluginEmbeddedView.m:
+        (-[WebNetscapePluginEmbeddedView dataSource]):
+        * Plugins.subproj/WebNullPluginView.m:
+        (-[WebNullPluginView viewDidMoveToWindow]):
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge startLoadingResource:withURL:]):
+        * WebCoreSupport.subproj/WebSubresourceClient.m:
+        (+[WebSubresourceClient startLoadingResource:withURL:referrer:forDataSource:]):
+        (-[WebSubresourceClient receivedError:]):
+        (-[WebSubresourceClient resourceDidFinishLoading:]):
+        * WebKit.pbproj/project.pbxproj:
+        * WebView.subproj/WebBaseResourceHandleDelegate.m:
+        (-[WebBaseResourceHandleDelegate setDataSource:]):
+        * WebView.subproj/WebController.h:
+        * WebView.subproj/WebController.m:
+        (-[WebController backForwardList]):
+        (-[WebController setUsesBackForwardList:]):
+        * WebView.subproj/WebDataSource.h:
+        * WebView.subproj/WebDataSource.m:
+        * WebView.subproj/WebDataSourcePrivate.h:
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _controller]):
+        (-[WebDataSource _receivedError:complete:]):
+        (-[WebDataSource _loadIcon]):
+        * WebView.subproj/WebFrame.h:
+        * WebView.subproj/WebFramePrivate.m:
+        (switch):
+        * WebView.subproj/WebHTMLViewPrivate.m:
+        (-[WebHTMLView _controller]):
+        (-[WebHTMLView _frame]):
+        (-[WebHTMLView _elementAtPoint:]):
+        * WebView.subproj/WebImageView.m:
+        (-[WebImageView controller]):
+        (-[WebImageView menuForEvent:]):
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient interruptForPolicyChangeAndKeepLoading:]):
+        (-[WebMainResourceClient continueAfterNavigationPolicy:formState:]):
+        (-[WebMainResourceClient resource:willSendRequest:]):
+        (-[WebMainResourceClient continueAfterContentPolicy:response:]):
+        (-[WebMainResourceClient checkContentPolicyForResponse:andCallSelector:]):
+        (-[WebMainResourceClient resource:didReceiveResponse:]):
+        (-[WebMainResourceClient resource:didReceiveData:]):
+        (-[WebMainResourceClient resourceDidFinishLoading:]):
+        (-[WebMainResourceClient resource:didFailLoadingWithError:]):
+        * WebView.subproj/WebTextView.m:
+        (-[WebTextView menuForEvent:]):
+        * WebView.subproj/WebView.h:
+        * WebView.subproj/WebView.m:
+        (-[WebView webFrame]):
+        (-[WebView concludeDragOperation:]):
+        * WebView.subproj/WebViewPrivate.h:
+        * WebView.subproj/WebViewPrivate.m:
+        (-[WebView _controller]):
+
 2003-03-05  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Ken.
