@@ -1,3 +1,8 @@
+2003-04-01  Darin Adler  <darin@apple.com>
+
+        * English.lproj/StringsNotToBeLocalized.txt: Allowed update-alex-localizable-strings
+        to sort this file.
+
 2003-03-31  Trey Matteson  <trey@apple.com>
 
 	3212724 - bookmarks and history items have screwed up designated inits
