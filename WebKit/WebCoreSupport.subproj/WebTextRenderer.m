@@ -980,10 +980,25 @@ static void _drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *a
         [gBuffer addGlyphs: glyphs advances: advances count: numGlyphs at: x : y];
     }
     else {
-        cgContext = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
+        NSGraphicsContext *gContext = [NSGraphicsContext currentContext];
+        cgContext = (CGContextRef)[gContext graphicsPort];
         // Setup the color and font.
+        
+        if ([gContext isDrawingToScreen]){
+            NSFont *screenFont = [font screenFont];
+            if (screenFont != font){
+                NSLog (@"Attempting to set non-screen font (%@) when drawing to screen.  Using screen font anyway, may result in incorrect metrics.", [[[font fontDescriptor] fontAttributes] objectForKey: NSFontNameAttribute]);
+            }
+            [[font screenFont] set];
+        }
+        else {
+            NSFont *printerFont = [font printerFont];
+            if (printerFont != font){
+                NSLog (@"Attempting to set non-printer font (%@) when printing.  Using printer font anyway, may result in incorrect metrics.", [[[font fontDescriptor] fontAttributes] objectForKey: NSFontNameAttribute]);
+            }
+            [printerFont set];
+        }
         [color set];
-        [font set];
 
         CGContextSetTextPosition (cgContext, x, y);
         CGContextShowGlyphsWithAdvances (cgContext, glyphs, advances, numGlyphs);

@@ -93,7 +93,7 @@ enum { WebViewVersion = 2 };
     return [WebFrameView _canShowMIMETypeAsHTML:MIMEType];
 }
 
-- (void)_commonInitializationFrameName:(NSString *)frameName groupName:(NSString *)groupName
+- (void)_commonInitializationWithFrameName:(NSString *)frameName groupName:(NSString *)groupName
 {
     NSRect f = [self frame];
     WebFrameView *wv = [[WebFrameView alloc] initWithFrame: NSMakeRect(0,0,f.size.width,f.size.height)];
@@ -101,20 +101,21 @@ enum { WebViewVersion = 2 };
     [self addSubview: wv];
     [wv release];
 
-    _private = [[WebViewPrivate alloc] init];
     _private->mainFrame = [[WebFrame alloc] initWithName: frameName webFrameView: wv  webView: self];
     [self setGroupName:groupName];
 
-    [self setMaintainsBackForwardList: YES];
-
     ++WebViewCount;
 
-    [self _updateWebCoreSettingsFromPreferences: [WebPreferences standardPreferences]];
+    [self _registerDraggedTypes];
 
+    // Update WebCore with preferences.  These values will either come from an archived WebPreferences,
+    // or from the standard preferences, depending on whether this method was called from initWithCoder:
+    // or initWithFrame, respectively.
+    [self _updateWebCoreSettingsFromPreferences: [self preferences]];
+    
+    // Register to receive notifications whenever preference values change.
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_preferencesChangedNotification:)
                                                  name:WebPreferencesChangedNotification object:[self preferences]];
-
-    [self _registerDraggedTypes];
 }
 
 - init
@@ -131,38 +132,48 @@ enum { WebViewVersion = 2 };
 - initWithFrame: (NSRect)f frameName: (NSString *)frameName groupName: (NSString *)groupName;
 {
     [super initWithFrame: f];
-    [self _commonInitializationFrameName:frameName groupName:groupName];
+    _private = [[WebViewPrivate alloc] init];
+    [self _commonInitializationWithFrameName:frameName groupName:groupName];
+    [self setMaintainsBackForwardList: YES];
     return self;
 }
 
 - (id)initWithCoder:(NSCoder *)decoder
 {
-    volatile id result = nil;
+    WebView *result = nil;
 
 NS_DURING
 
+    NSString *frameName;
+    NSString *groupName;
+    
     result = [super initWithCoder:decoder];
-    // We don't want any of the archived subviews.
+    result->_private = [[WebViewPrivate alloc] init];
+    
+    // We don't want any of the archived subviews.  The subviews will always
+    // be created in _commonInitializationFrameName:groupName:.
     [[result subviews] makeObjectsPerformSelector:@selector(removeFromSuperview)];
     
     if ([decoder allowsKeyedCoding]){
-        NSString *frameName = [decoder decodeObjectForKey:@"FrameName"];
-        NSString *groupName = [decoder decodeObjectForKey:@"GroupName"];
-        [result _commonInitializationFrameName:frameName groupName:groupName];
+        frameName = [decoder decodeObjectForKey:@"FrameName"];
+        groupName = [decoder decodeObjectForKey:@"GroupName"];
+                
         [result setPreferences: [decoder decodeObjectForKey:@"Preferences"]];
-	_private->useBackForwardList = [decoder decodeBoolForKey:@"UseBackForwardList"];
+	result->_private->useBackForwardList = [decoder decodeBoolForKey:@"UseBackForwardList"];
+
+        LOG (Encoding, "FrameName = %@, GroupName = %@, useBackForwardList = %d\n", frameName, groupName, (int)_private->useBackForwardList);
     }
     else {
         int version;
     
         [decoder decodeValueOfObjCType:@encode(int) at:&version];
-        NSString *frameName = [decoder decodeObject];
-        NSString *groupName = [decoder decodeObject];
-        [result _commonInitializationFrameName:frameName groupName:groupName];
+        frameName = [decoder decodeObject];
+        groupName = [decoder decodeObject];
         [result setPreferences: [decoder decodeObject]];
         if (version > 1)
-            [decoder decodeValuesOfObjCTypes:"c",&_private->useBackForwardList];
+            [decoder decodeValuesOfObjCTypes:"c",&result->_private->useBackForwardList];
     }
+    [result _commonInitializationWithFrameName:frameName groupName:groupName];
     
 NS_HANDLER
 
@@ -183,6 +194,8 @@ NS_ENDHANDLER
         [encoder encodeObject:[self groupName] forKey:@"GroupName"];
         [encoder encodeObject:[self preferences] forKey:@"Preferences"];
 	[encoder encodeBool:_private->useBackForwardList forKey:@"UseBackForwardList"];
+
+        LOG (Encoding, "FrameName = %@, GroupName = %@, useBackForwardList = %d\n", [[self mainFrame] name], [self groupName], (int)_private->useBackForwardList);
     }
     else {
         int version = WebViewVersion;

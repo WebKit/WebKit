@@ -33,3 +33,5 @@ WebLogChannel WebKitLogHistory =                { 0x00800000, "WebKitLogLevel", 
 
 WebLogChannel WebKitLogBindings =               { 0x01000000, "WebKitLogLevel", WebLogChannelUninitialized };
 
+WebLogChannel WebKitLogEncoding =               { 0x04000000, "WebKitLogLevel", WebLogChannelUninitialized };
+

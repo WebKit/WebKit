@@ -1,3 +1,30 @@
+2003-08-28  Richard Williamson   <rjw@apple.com>
+
+	Fixed 3399736.  Fixed several problems with WebView/WebPreferences
+	interaction.
+
+        Reviewed by Eric Seymour.
+
+        * Misc.subproj/WebKitLogging.h:
+        * Misc.subproj/WebKitLogging.m:
+	Added debug logging.
+
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (_drawGlyphs): Checkin for 3398229 below.
+
+        * WebView.subproj/WebPreferences.m:
+        (-[WebPreferences initWithIdentifier:]):
+        (-[WebPreferences initWithCoder:]):
+        (-[WebPreferences encodeWithCoder:]):
+        (+[WebPreferences standardPreferences]):
+        (+[WebPreferences _getInstanceForIdentifier:]):
+        (+[WebPreferences _setInstance:forIdentifier:]):
+        (+[WebPreferences _concatenateKeyWithIBCreatorID:]):
+        * WebView.subproj/WebView.m:
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+        (-[WebView initWithCoder:]):
+        (-[WebView encodeWithCoder:]):
+
 2003-08-27  Richard Williamson   <rjw@apple.com>
 
 	Fixed 3398229.  When we request a font from NSFont by name we should use a case specific name.  We do case insensitve comparsion, but once a match is found we should use the actual font name, not the requested name.  Two layout tests are still failing, but I don't think the failures are font related.

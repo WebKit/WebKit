@@ -36,3 +36,5 @@ extern WebLogChannel WebKitLogFileDatabaseActivity;
 extern WebLogChannel WebKitLogHistory;
 
 extern WebLogChannel WebKitLogBindings;
+
+extern WebLogChannel WebKitLogEncoding;

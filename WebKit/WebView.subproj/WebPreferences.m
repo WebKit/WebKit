@@ -5,6 +5,7 @@
 
 #import <WebKit/WebPreferencesPrivate.h>
 
+#import <WebKit/WebKitLogging.h>
 #import <WebKit/WebKitNSStringExtras.h>
 #import <WebKit/WebNSURLExtras.h>
 
@@ -45,7 +46,7 @@
 
 NSString *WebPreferencesChangedNotification = @"WebPreferencesChangedNotification";
 
-#define KEY(x) [self _concatenateKeyWithIBCreatorID:[(_private->identifier?_private->identifier:@"") stringByAppendingString:x]]
+#define KEY(x) [(_private->identifier?_private->identifier:@"") stringByAppendingString:x]
 
 enum { WebPreferencesVersion = 1 };
 
@@ -70,7 +71,7 @@ enum { WebPreferencesVersion = 1 };
 @end
 
 @interface WebPreferences (WebInternal)
-- (NSString *)_concatenateKeyWithIBCreatorID:(NSString *)key;
++ (NSString *)_concatenateKeyWithIBCreatorID:(NSString *)key;
 + (NSString *)_IBCreatorID;
 @end
 
@@ -81,16 +82,15 @@ enum { WebPreferencesVersion = 1 };
     return [self initWithIdentifier:nil];
 }
 
+static WebPreferences *_standardPreferences = nil;
+
 - (id)initWithIdentifier:(NSString *)anIdentifier
 {
     [super init];
-    
-    if (anIdentifier == nil)
-        anIdentifier = @"";
-        
+
     _private = [[WebPreferencesPrivate alloc] init];
     _private->IBCreatorID = [[WebPreferences _IBCreatorID] retain];
-    
+
     WebPreferences *instance = [[self class] _getInstanceForIdentifier:anIdentifier];
     if (instance){
         [self release];
@@ -122,6 +122,7 @@ NS_DURING
     if ([decoder allowsKeyedCoding]){
         _private->identifier = [[decoder decodeObjectForKey:@"Identifier"] retain];
         _private->values = [[decoder decodeObjectForKey:@"Values"] retain];
+        LOG (Encoding, "Identifier = %@, Values = %@\n", _private->identifier, _private->values);
     }
     else {
         [decoder decodeValueOfObjCType:@encode(int) at:&version];
@@ -158,6 +159,7 @@ NS_ENDHANDLER
     if ([encoder allowsKeyedCoding]){
         [encoder encodeObject:_private->identifier forKey:@"Identifier"];
         [encoder encodeObject:_private->values forKey:@"Values"];
+        LOG (Encoding, "Identifier = %@, Values = %@\n", _private->identifier, _private->values);
     }
     else {
         int version = WebPreferencesVersion;
@@ -169,8 +171,6 @@ NS_ENDHANDLER
 
 + (WebPreferences *)standardPreferences
 {
-    static WebPreferences *_standardPreferences = nil;
-
     if (_standardPreferences == nil) {
         _standardPreferences = [[WebPreferences alloc] init];
         [_standardPreferences setAutosaves:YES];
@@ -560,7 +560,16 @@ static NSMutableDictionary *webPreferencesInstances = nil;
 
 + (WebPreferences *)_getInstanceForIdentifier:(NSString *)ident
 {
-    WebPreferences *instance = [webPreferencesInstances objectForKey:ident];
+        LOG (Encoding, "requesting for %@\n", ident);
+
+    if (!ident){
+        if(_standardPreferences)
+            return _standardPreferences;
+        return nil;
+    }    
+    
+    WebPreferences *instance = [webPreferencesInstances objectForKey:[self _concatenateKeyWithIBCreatorID:ident]];
+
     return instance;
 }
 
@@ -568,7 +577,10 @@ static NSMutableDictionary *webPreferencesInstances = nil;
 {
     if (!webPreferencesInstances)
         webPreferencesInstances = [[NSMutableDictionary alloc] init];
-    [webPreferencesInstances setObject:instance forKey:ident];
+    if (ident) {
+        [webPreferencesInstances setObject:instance forKey:[self _concatenateKeyWithIBCreatorID:ident]];
+        LOG (Encoding, "recording %p for %@\n", instance, [self _concatenateKeyWithIBCreatorID:ident]);
+    }
 }
 
 + (void)_removeReferenceForIdentifier:(NSString *)ident
@@ -583,6 +595,7 @@ static NSMutableDictionary *webPreferencesInstances = nil;
                     userInfo:nil];
 }
 
+// This may NOT be used by IB anymore.  Check we Eric S. to see if we can remove.
 + (NSArray *)_userDefaultsKeysForIB
 {
     return [NSArray arrayWithObjects:
@@ -623,7 +636,7 @@ static NSString *classIBCreatorID = 0;
     return classIBCreatorID;
 }
 
-- (NSString *)_concatenateKeyWithIBCreatorID:(NSString *)key
++ (NSString *)_concatenateKeyWithIBCreatorID:(NSString *)key
 {
     NSString *IBCreatorID = [WebPreferences _IBCreatorID];
     if (!IBCreatorID)
