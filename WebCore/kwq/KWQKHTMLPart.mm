@@ -3043,7 +3043,7 @@ NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_start, int startOf
                             listItemLocations.append (info);
                             
                             listText += '\t';
-                            if (itemParent){
+                            if (itemParent && renderer->isListItem()) {
                                 RenderListItem *listRenderer = static_cast<RenderListItem*>(renderer);
 
                                 maxMarkerWidth = MAX([font pointSize], maxMarkerWidth);

@@ -1,3 +1,12 @@
+2004-10-28  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3856913> Panther-only crash in QString code copying front page of store.apple.com
+
+        Reviewed by darin.
+
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::attributedString): check that the renderer is a list item before making list item calls on it
+
 2004-10-28  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Harrison
