@@ -1,3 +1,12 @@
+2003-01-02  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+	- fixed 3131190 -- <textarea wrap="hard"> eats text on blur
+
+        * kwq/KWQTextArea.mm: (-[KWQTextArea paragraphs]): Add missing parentheses so we don't
+	always return 0 or 1 for the number of paragraphs.
+
 2002-12-31  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
