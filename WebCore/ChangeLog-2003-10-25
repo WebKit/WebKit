@@ -1,3 +1,10 @@
+2003-09-25  Darin Adler  <darin@apple.com>
+
+        Added a new layout test.
+
+        * layout-tests/fast/forms/form-element-geometry-expected.txt: Added.
+        * layout-tests/fast/forms/form-element-geometry.html: Added.
+
 2003-09-24  Darin Adler  <darin@apple.com>
 
         * layout-tests/fast/table/003-expected.txt: Updated for textarea width change.
