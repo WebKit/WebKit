@@ -1,3 +1,27 @@
+2003-06-10  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3156169>: cmd-click opens new win but stops loading in prev win
+
+        Reviewed by rjw.
+
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame stopLoading]): set the provisional data source to nil to avoid a newly added assert in [WebFramePrivate setProvisionalDataSource:] 
+        and since it is wasteful to retain it in this case
+        * WebView.subproj/WebFramePrivate.h: added policyDataSource and policyLoadType ivars
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFramePrivate dealloc]): added an assert
+        (-[WebFramePrivate setProvisionalDataSource:]): added an assert
+        (-[WebFrame _isLoadComplete]): formatting tweak
+        (-[WebFrame _invalidatePendingPolicyDecisionCallingDefaultAction:]): reset policyDataSource
+        (-[WebFrame _checkNewWindowPolicyForRequest:action:frameName:formState:andCall:withSelector:]): formatting tweak
+        (-[WebFrame _prepareForProvisionalLoadWithDataSource:loadType:]): new, calls stopLoading, _setLoadType and _setProvisionalDataSource
+        (-[WebFrame _checkNavigationPolicyForRequest:dataSource:formState:andCall:withSelector:]): call _prepareForProvisionalLoadWithDataSource:loadType: only in the "use" policy case
+        (-[WebFrame _continueAfterNavigationPolicy:]): call _setProvisionalDataSource:andLoadType:
+        (-[WebFrame _continueFragmentScrollAfterNavigationPolicy:formState:]): formatting tweak
+        (-[WebFrame _loadURL:referrer:loadType:target:triggeringEvent:form:formValues:]): formatting tweak
+        (-[WebFrame _continueLoadRequestAfterNavigationPolicy:formState:]): if there is no request to continue with, don't reset things like the provisional data source since it was never unset in this case
+        (-[WebFrame _loadDataSource:withLoadType:formState:]): don't call stopLoading, _setLoadType and _setProvisionalDataSource, since that stops the frame even for command-click and option-click. Do this work in _prepareForProvisionalLoadWithDataSource:loadType: instead.
+
 2003-06-10  Richard Williams   <rjw@apple.com>
 
 	Fixed 3287862.  Don't override resize flags

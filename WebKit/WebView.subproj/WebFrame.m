@@ -146,6 +146,9 @@
     [_private->dataSource _stopLoading];
     [_private->scheduledLayoutTimer invalidate];
     _private->scheduledLayoutTimer = nil;
+
+    // Release the provisional data source because there's no point in keeping it around since it is unused in this case.
+    [self _setProvisionalDataSource:nil];
 }
 
 
