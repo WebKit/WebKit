@@ -1,3 +1,11 @@
+2002-08-20  David Hyatt  <hyatt@apple.com>
+
+	Lower the paint/layout delay from 1.85 to 0.75, since we've
+	gotten a lot faster.
+	
+        * WebView.subproj/WebPreferences.m:
+        (+[WebPreferences load]):
+
 2002-08-20  John Sullivan  <sullivan@apple.com>
 
         * WebView.subproj/WebMainResourceClient.m:
