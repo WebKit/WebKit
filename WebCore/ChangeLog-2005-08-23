@@ -1,3 +1,13 @@
+2004-11-18  David Harrison  <harrison@apple.com>
+
+        Reviewed by Darin.
+        
+        Back out Darin's fix for <rdar://problem/3885729>, because the new exception gets triggered by Mail.app.
+        Filed <rdar://problem/3886832> against Mail.app.
+
+        * kwq/DOM-CSS.mm:
+        (-[DOMCSSStyleDeclaration setProperty:::]):
+
 2004-11-18  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3587481> Bug Reporter Login Page: Password AutoFill does not work reliably
