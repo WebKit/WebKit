@@ -549,3 +549,13 @@ void QWidget::sendConsumedMouseUp()
 			      0, 0);
     KWQ_UNBLOCK_EXCEPTIONS;
 }
+
+void QWidget::setIsSelected(bool isSelected)
+{
+    [KWQKHTMLPart::bridgeForWidget(this) setIsSelected:isSelected forView:getView()];
+}
+
+bool QWidget::isSelected()
+{
+    return [KWQKHTMLPart::bridgeForWidget(this) isViewSelected:getView()];
+}

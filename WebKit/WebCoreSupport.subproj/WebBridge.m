@@ -1183,4 +1183,16 @@ static id <WebFormDelegate> formDelegate(WebBridge *self)
     [[_frame webView] editingKeyDown:event];
 }
 
+- (void)setIsSelected:(BOOL)isSelected forView:(NSView *)view
+{
+    if ([view conformsToProtocol:@protocol(WebPluginSelection)]) {
+        [(id <WebPluginSelection>)view setIsSelected:isSelected];
+    }
+}
+
+- (BOOL)isViewSelected:(NSView *)view
+{
+    return [view conformsToProtocol:@protocol(WebPluginSelection)] ? [(id <WebPluginSelection>)view isSelected] : NO;
+}
+
 @end

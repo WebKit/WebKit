@@ -55,3 +55,10 @@
 - (void)pluginDestroy;
                 
 @end
+
+@protocol WebPluginSelection <NSObject>
+
+- (void)setIsSelected:(BOOL)isSelected;
+- (BOOL)isSelected;
+
+@end

@@ -18,6 +18,8 @@
 #import <WebKit/WebViewPrivate.h>
 #import <WebKit/WebUIDelegate.h>
 
+#import <WebCore/WebCoreBridge.h>
+
 #import <Foundation/NSURL_NSURLExtras.h>
 #import <Foundation/NSURLRequest.h>
 
@@ -148,6 +150,11 @@
     }
     WebView *v = [_HTMLView _webView];
     [[v _UIDelegateForwarder] webView:v setStatusText:message];
+}
+
+- (NSColor *)selectionColor
+{
+    return [[_HTMLView _bridge] selectionColor];
 }
 
 @end

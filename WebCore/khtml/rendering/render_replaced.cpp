@@ -22,9 +22,9 @@
  *
  */
 #include "render_replaced.h"
-#include "render_canvas.h"
 
 #include "render_arena.h"
+#include "render_canvas.h"
 
 #include <assert.h>
 #include <qwidget.h>
@@ -493,5 +493,13 @@ void RenderWidget::updateWidgetPositions()
     }
 }
 #endif
+
+void RenderWidget::setSelectionState(SelectionState s) 
+{
+    if (m_selectionState != s) {
+        m_selectionState = s;
+        m_widget->setIsSelected(m_selectionState != SelectionNone);
+    }
+}
 
 #include "render_replaced.moc"

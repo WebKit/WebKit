@@ -266,6 +266,7 @@ typedef enum {
 - (int)numPendingOrLoadingRequests;
 
 - (NSColor *)bodyBackgroundColor;
+- (NSColor *)selectionColor;
 
 - (void)adjustViewSize;
 
@@ -422,6 +423,9 @@ typedef enum {
 - (void)clearUndoRedoOperations;
 
 - (void)editingKeyDown:(NSEvent *)event;
+
+- (void)setIsSelected:(BOOL)isSelected forView:(NSView *)view;
+- (BOOL)isViewSelected:(NSView *)view;
 
 @end
 

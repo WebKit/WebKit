@@ -31,4 +31,6 @@
 */
 - (void)showStatus:(NSString *)message;
         
+- (NSColor *)selectionColor;
+
 @end

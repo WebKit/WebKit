@@ -83,6 +83,9 @@ public:
 
     RenderArena *ref() { _ref++; return renderArena(); }
     void deref(RenderArena *arena);
+    
+    virtual SelectionState selectionState() const {return m_selectionState;}
+    virtual void setSelectionState(SelectionState s);
 
 #if APPLE_CHANGES 
     void sendConsumedMouseUp(const QPoint &mousePos, int button, int state);
@@ -101,6 +104,8 @@ protected:
     bool m_deleteWidget;
     QWidget *m_widget;
     KHTMLView* m_view;
+    
+    SelectionState m_selectionState : 3 ;
 };
 
 };

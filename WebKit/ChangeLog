@@ -1,3 +1,17 @@
+2004-04-05  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3612580>: SPI: WebPlugin selection
+
+        Reviewed by kocienda.
+
+        * Plugins.subproj/WebPlugin.h: extended SPI for selection
+        * Plugins.subproj/WebPluginContainer.h: ditto
+        * Plugins.subproj/WebPluginController.m:
+        (-[WebPluginController selectionColor]): new, calls [WebCoreBridge selectionColor]
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge setIsSelected:forView:]): new, calls [WebPlugin setIsSelected:]
+        (-[WebBridge isViewSelected:]): new, calls [WebPlugin isSelected]
+
 2004-04-02  Chris Blumenberg  <cblu@apple.com>
 
 	Forgot to add the WebKit copy of DOMExtensions.h.

@@ -1,3 +1,22 @@
+2004-04-05  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3612580>: SPI: WebPlugin selection
+
+        Reviewed by kocienda.
+
+        * WebCore.pbproj/project.pbxproj:
+        * khtml/rendering/render_replaced.cpp:
+        (RenderWidget::setSelectionState): new override, calls QWidget::setIsSelected
+        * khtml/rendering/render_replaced.h:
+        (khtml::RenderWidget::selectionState): new override
+        * kwq/KWQWidget.h:
+        * kwq/KWQWidget.mm:
+        (QWidget::setIsSelected): new, calls [WebCoreBridge setIsSelected:forView:]
+        (QWidget::isSelected): new, calls [WebCoreBridge isViewSelected:]
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge selectionColor]): new
+
 2004-04-03  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3601728, text overlaps borders at ejai.org.  Remove all the code in addForbidden for

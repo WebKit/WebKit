@@ -1254,6 +1254,18 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     return _part->bodyBackgroundColor();
 }
 
+- (NSColor *)selectionColor
+{
+    RenderCanvas* root = static_cast<khtml::RenderCanvas *>(_part->xmlDocImpl()->renderer());
+    if (root) {
+        RenderStyle *pseudoStyle = root->getPseudoStyle(RenderStyle::SELECTION);
+        if (pseudoStyle && pseudoStyle->backgroundColor().isValid()) {
+            return pseudoStyle->backgroundColor().getNSColor();
+        }
+    }
+    return _part->usesInactiveTextBackgroundColor() ? [NSColor secondarySelectedControlColor] : [NSColor selectedTextBackgroundColor];
+}
+
 - (void)adjustViewSize
 {
     KHTMLView *view = _part->view();
