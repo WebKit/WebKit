@@ -17,6 +17,7 @@
 
     CFMutableDictionaryRef animatingRenderers;
     NSTimer *frameTimer;
+    float *frameDurations;
     size_t currentFrame;
     int repetitionsComplete;
     BOOL animationFinished;

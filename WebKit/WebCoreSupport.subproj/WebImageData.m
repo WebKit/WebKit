@@ -293,36 +293,51 @@ CGPatternCallbacks patternCallbacks = { 0, drawPattern, NULL };
 
 - (float)_frameDuration
 {
-    CFDictionaryRef properties = CGImageSourceGetPropertiesAtIndex (imageSource, currentFrame, 0);
-    if (!properties)
-        return 0.f;
-        
-    // FIXME:  Use constant instead of {GIF}
-    CFDictionaryRef GIFProperties = CFDictionaryGetValue (properties, @"{GIF}");
-    if (!GIFProperties)
-        return 0.f;
-    
-    // FIXME:  Use constant instead of DelayTime
-    CFNumberRef num = CFDictionaryGetValue (GIFProperties, @"DelayTime");
-    if (!num)
-        return 0.f;
-    
-    float duration = 0.f;
-    CFNumberGetValue (num, kCFNumberFloat32Type, &duration);
-    if (duration < MINIMUM_DURATION) {
-        /*
-            Many annoying ads specify a 0 duration to make an image flash
-            as quickly as possible.  However a zero duration is faster than
-            the refresh rate.  We need to pick a minimum duration.
-            
-            Browsers handle the minimum time case differently.  IE seems to use something
-            close to 1/30th of a second.  Konqueror uses 0.  The ImageMagick library
-            uses 1/100th.  The units in the GIF specification are 1/100th of second.
-            We will use 1/30th of second as the minimum time.
-        */
-        duration = MINIMUM_DURATION;
+    if (!frameDurations) {
+	frameDurations = (float *)malloc (sizeof(float) * [self numberOfImages]);
+	
+	size_t i;
+	for (i = 0; i < [self numberOfImages]; i++) {
+	    CFDictionaryRef properties = CGImageSourceGetPropertiesAtIndex (imageSource, i, 0);
+	    if (!properties) {
+		frameDurations[i] = 0.f;
+		continue;
+	    }
+		
+	    // FIXME:  Use constant instead of {GIF}
+	    CFDictionaryRef GIFProperties = CFDictionaryGetValue (properties, @"{GIF}");
+	    if (!GIFProperties) {
+		frameDurations[i] = 0.f;
+		continue;
+	    }
+	    
+	    // FIXME:  Use constant instead of DelayTime
+	    CFNumberRef num = CFDictionaryGetValue (GIFProperties, @"DelayTime");
+	    if (!num) {
+		frameDurations[i] = 0.f;
+		continue;
+	    }
+	    
+	    float duration = 0.f;
+	    CFNumberGetValue (num, kCFNumberFloat32Type, &duration);
+	    if (duration < MINIMUM_DURATION) {
+		/*
+		    Many annoying ads specify a 0 duration to make an image flash
+		    as quickly as possible.  However a zero duration is faster than
+		    the refresh rate.  We need to pick a minimum duration.
+		    
+		    Browsers handle the minimum time case differently.  IE seems to use something
+		    close to 1/30th of a second.  Konqueror uses 0.  The ImageMagick library
+		    uses 1/100th.  The units in the GIF specification are 1/100th of second.
+		    We will use 1/30th of second as the minimum time.
+		*/
+		duration = MINIMUM_DURATION;
+	    }
+	    frameDurations[i] = duration;
+	}
     }
-    return duration;
+    
+    return frameDurations[currentFrame];
 }
 
 - (int)_repetitionCount
@@ -342,22 +357,32 @@ static NSMutableSet *activeAnimations;
 {
     NSEnumerator *objectEnumerator = [activeAnimations objectEnumerator];
     WebImageData *animation;
-    NSMutableSet *animationsToStop = [[NSMutableSet alloc] init];
+    NSMutableSet *renderersToStop = nil;
 
+    // Determine all the renderers that are drawing animations in the view.
+    // A set of sets, one set of renderers for each image being animated
+    // in the view.  It is necessary to gather the all renderers to stop
+    // before actually stopping them because the process of stopping them
+    // will modify the active animations and animating renderer collections.
+    NSSet *renderersInView;
     while ((animation = [objectEnumerator nextObject])) {
-        if (CFDictionaryGetValue (animation->animatingRenderers, aView)) {
-            [animationsToStop addObject: animation];
+	renderersInView = (NSSet *)CFDictionaryGetValue (animation->animatingRenderers, aView);
+        if (renderersInView) {
+	    if (!renderersToStop)
+		renderersToStop = [[NSMutableSet alloc] init];
+            [renderersToStop addObject: renderersInView];
         }
     }
 
-    objectEnumerator = [animationsToStop objectEnumerator];
-    while ((animation = [objectEnumerator nextObject])) {
-        CFDictionaryRemoveValue (animation->animatingRenderers, aView);
-        if (CFDictionaryGetCount(animation->animatingRenderers) == 0) {
-            [animation _stopAnimation];
-        }
+    // Now tell them all to stop drawing.
+    if (renderersToStop) {
+	objectEnumerator = [renderersToStop objectEnumerator];
+	while ((renderersInView = [objectEnumerator nextObject])) {
+	    [renderersInView makeObjectsPerformSelector:@selector(stopAnimation)];
+	}
+	
+	[renderersToStop release];
     }
-    [animationsToStop release];
 }
 
 - (void)addAnimatingRenderer:(WebImageRenderer *)r inView:(NSView *)view
@@ -375,6 +400,7 @@ static NSMutableSet *activeAnimations;
 
     if (!activeAnimations)
         activeAnimations = [[NSMutableSet alloc] init];
+    
     [activeAnimations addObject:self];
 }
 
@@ -386,17 +412,20 @@ static NSMutableSet *activeAnimations;
         NSMutableSet *renderers = (NSMutableSet *)CFDictionaryGetValue (animatingRenderers, view);
         [renderers removeObject:r];
         if ([renderers count] == 0) {
-            CFDictionaryRemoveValue (animatingRenderers, renderers);
+            CFDictionaryRemoveValue (animatingRenderers, view);
         }
     }
     
     if (animatingRenderers && CFDictionaryGetCount(animatingRenderers) == 0) {
         [activeAnimations removeObject:self];
+	[self _stopAnimation];
     }
 }
 
 - (void)_stopAnimation
 {
+    // This timer is used to animate all occurences of this image.  Don't invalidate
+    // the timer unless all renderers have stopped drawing.
     [frameTimer invalidate];
     [frameTimer release];
     frameTimer = nil;

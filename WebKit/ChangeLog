@@ -1,3 +1,22 @@
+2004-11-11  Richard Williamson   <rjw@apple.com>
+
+        Reviewed by Chris.
+
+	Work-around to minimize impact of 3876764.  Cache frame durations
+	after first call.  So we'll still leak 1K for each animated
+	image, but that's better than 1K each time the frame is drawn!
+        * WebCoreSupport.subproj/WebImageData.h:
+        * WebCoreSupport.subproj/WebImageData.m:
+        (-[WebImageData _frameDuration]):
+
+	Simplified animation cleanup code.  Fixed leak due to 
+	incorrect key passed to CFDictionaryRemoveValue.
+	
+        (+[WebImageData stopAnimationsInView:]):
+        (-[WebImageData addAnimatingRenderer:inView:]):
+        (-[WebImageData removeAnimatingRenderer:]):
+        (-[WebImageData _stopAnimation]):
+
 2004-11-11  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
