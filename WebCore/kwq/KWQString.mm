@@ -720,16 +720,21 @@ QString QString::number(double n)
 void QString::setBufferFromCFString(CFStringRef cfs)
 {
     CFIndex size = CFStringGetLength(cfs);
+    UniChar fixedSizeBuffer[1024];
     UniChar *buffer;
-    
-    buffer = (UniChar *)malloc (size * sizeof(UniChar));
-    CFStringGetCharacters (cfs, CFRangeMake (0, size), buffer);
-    setUnicode ((const QChar *)buffer, (uint)size);
-    free (buffer);
+    if (size > (CFIndex)(sizeof(fixedSizeBuffer) / sizeof(UniChar))) {
+        buffer = (UniChar *)malloc(size * sizeof(UniChar));
+    } else {
+        buffer = fixedSizeBuffer;
+    }
+    CFStringGetCharacters(cfs, CFRangeMake (0, size), buffer);
+    setUnicode((const QChar *)buffer, (uint)size);
+    if (buffer != fixedSizeBuffer) {
+        free(buffer);
+    }
 }
 
-QString QString::fromStringWithEncoding(const char *chs, int len,
-                                        CFStringEncoding encoding)
+QString QString::fromStringWithEncoding(const char *chs, int len, CFStringEncoding encoding)
 {
     QString qs;
     if (chs && *chs) {
@@ -753,17 +758,10 @@ QString QString::fromStringWithEncoding(const char *chs, int len,
     return qs;
 }
 
-QString QString::fromCFMutableString(CFMutableStringRef cfs)
-{
-    QString qs;
-    qs.setBufferFromCFString(cfs);
-    return qs;
-}
-
 QString QString::fromCFString(CFStringRef cfs)
 {
     QString qs;
-    qs.setBufferFromCFString((CFStringRef)cfs);
+    qs.setBufferFromCFString(cfs);
     return qs;
 }
 
@@ -774,21 +772,23 @@ QString QString::fromNSString(NSString *nss)
     return qs;
 }
 
-CFMutableStringRef QString::getCFMutableString() const
+CFStringRef QString::getCFString() const
 {
-    CFMutableStringRef s = CFStringCreateMutable(kCFAllocatorDefault, 0);
-    if ((*dataHandle)->_isUnicodeValid)
-        CFStringAppendCharacters (s, (UniChar *)unicode(), (*dataHandle)->_length);
-    else if ((*dataHandle)->_isAsciiValid)
-        CFStringAppendCString (s, (const char *)ascii(), kCFStringEncodingISOLatin1);
-    else
-        QSTRING_FAILURE ("invalid character cache\n");
-    return (CFMutableStringRef)[(NSString *)s autorelease];
+    return (CFStringRef)getNSString();
 }
 
 NSString *QString::getNSString() const
 {
-    return (NSString *)getCFMutableString();
+    if (dataHandle[0]->_isUnicodeValid) {
+        return [NSString stringWithCharacters:(const unichar *)unicode() length:dataHandle[0]->_length];
+    }
+    
+    if (dataHandle[0]->_isAsciiValid) {
+        return [NSString stringWithCString:(const char *)ascii()];
+    }
+    
+    QSTRING_FAILURE("invalid character cache\n");
+    return nil;
 }
 
 const QString QString::null;
@@ -835,7 +835,7 @@ QString::QString()
 #endif
     internalData.deref();
     dataHandle = makeSharedNullHandle();
-    (*dataHandle)->ref();
+    dataHandle[0]->ref();
 }
 
 
@@ -890,7 +890,7 @@ QString::QString(const QChar *unicode, uint length)
     if ( !unicode && !length ) {
         internalData.deref();
         dataHandle = makeSharedNullHandle();
-	(*dataHandle)->ref();
+	dataHandle[0]->ref();
     } else {
         dataHandle = (struct QStringData **)allocateHandle();
 
@@ -930,7 +930,7 @@ QString::QString(const QString &qs) : dataHandle(qs.dataHandle)
     countInstance (&dataHandle);
 #endif
     internalData.deref();
-    (*dataHandle)->ref();
+    dataHandle[0]->ref();
 }
 
 QString &QString::operator=(const QString &qs)
@@ -943,7 +943,7 @@ QString &QString::operator=(const QString &qs)
     // free our handle if it isn't the shared
     // null handle, and if no-one else is using
     // it.
-    if (dataHandle != makeSharedNullHandle() && (*dataHandle)->refCount == 1)
+    if (dataHandle != makeSharedNullHandle() && dataHandle[0]->refCount == 1)
         needToFreeHandle = true;
     
     qs.data()->ref();
@@ -1004,7 +1004,7 @@ inline QChar QString::at(uint i) const
 
 const QChar *QString::unicode() const
 {
-    return (*dataHandle)->unicode();
+    return dataHandle[0]->unicode();
 }
 
 int QString::compare( const QString& s ) const
@@ -1014,19 +1014,19 @@ int QString::compare( const QString& s ) const
 
 bool QString::startsWith( const QString& s ) const
 {
-    if ((*dataHandle)->_isAsciiValid){
+    if (dataHandle[0]->_isAsciiValid){
         const char *asc = ascii();
         
         for ( int i =0; i < (int) s.data()->_length; i++ ) {
-            if ( i >= (int) (*dataHandle)->_length || asc[i] != s[i] )
+            if ( i >= (int) dataHandle[0]->_length || asc[i] != s[i] )
                 return FALSE;
         }
     }
-    else if ((*dataHandle)->_isUnicodeValid){
+    else if (dataHandle[0]->_isUnicodeValid){
         const QChar *uni = unicode();
         
         for ( int i =0; i < (int) s.data()->_length; i++ ) {
-            if ( i >= (int) (*dataHandle)->_length || uni[i] != s[i] )
+            if ( i >= (int) dataHandle[0]->_length || uni[i] != s[i] )
                 return FALSE;
         }
     }
@@ -1040,10 +1040,10 @@ bool QString::endsWith( const QString& s ) const
 {
     const QChar *uni = unicode();
 
-    if ((*dataHandle)->_length < s.data()->_length)
+    if (dataHandle[0]->_length < s.data()->_length)
         return FALSE;
         
-    for ( int i = (*dataHandle)->_length - s.data()->_length; i < (int) s.data()->_length; i++ ) {
+    for ( int i = dataHandle[0]->_length - s.data()->_length; i < (int) s.data()->_length; i++ ) {
 	if ( uni[i] != s[i] )
 	    return FALSE;
     }
@@ -1052,7 +1052,7 @@ bool QString::endsWith( const QString& s ) const
 
 const char *QString::latin1() const
 {
-    return (*dataHandle)->ascii();
+    return dataHandle[0]->ascii();
 }
 
 QCString QString::utf8() const
@@ -1067,14 +1067,14 @@ QCString QString::local8Bit() const
 
 bool QString::isNull() const
 {
-    return (*dataHandle)->_length == 0;
+    return dataHandle[0]->_length == 0;
 }
 
 int QString::find(QChar qc, int index) const
 {
-    if (IS_ASCII_QCHAR(qc) && (*dataHandle)->_isAsciiValid)
+    if (IS_ASCII_QCHAR(qc) && dataHandle[0]->_isAsciiValid)
         return find((char)qc, index);
-    else if ((*dataHandle)->_isUnicodeValid)
+    else if (dataHandle[0]->_isUnicodeValid)
         return find(QString(qc), index, TRUE);
     else
         QSTRING_FAILURE ("invalid character cache\n");
@@ -1085,20 +1085,20 @@ int QString::find(QChar qc, int index) const
 
 int QString::find(char ch, int index) const
 {
-    if ((*dataHandle)->_isAsciiValid){
+    if (dataHandle[0]->_isAsciiValid){
         const char *cp = ascii();
         
         if ( index < 0 )
-            index += (*dataHandle)->_length;
+            index += dataHandle[0]->_length;
         
-        if (index >= (int)(*dataHandle)->_length)
+        if (index >= (int)dataHandle[0]->_length)
             return -1;
             
-        for (int i = index; i < (int)(*dataHandle)->_length; i++)
+        for (int i = index; i < (int)dataHandle[0]->_length; i++)
             if (cp[i] == ch)
                 return i;
     }
-    else if ((*dataHandle)->_isUnicodeValid)
+    else if (dataHandle[0]->_isUnicodeValid)
         return find(QChar(ch), index, TRUE);
     else
         QSTRING_FAILURE ("invalid character cache\n");
@@ -1119,10 +1119,10 @@ int QString::find(const QString &str, int index, bool caseSensitive) const
       QChars.
     */
     if ( index < 0 )
-	index += (*dataHandle)->_length;
+	index += dataHandle[0]->_length;
     int lstr = str.data()->_length;
-    int lthis = (*dataHandle)->_length - index;
-    if ( (uint)lthis > (*dataHandle)->_length )
+    int lthis = dataHandle[0]->_length - index;
+    if ( (uint)lthis > dataHandle[0]->_length )
 	return -1;
     int delta = lthis - lstr;
     if ( delta < 0 )
@@ -1196,11 +1196,11 @@ static inline bool compareToLatinCharacter (UniChar c1, UniChar c2, bool caseSen
 // based alrogithms.
 int QString::find(const char *chs, int index, bool caseSensitive) const
 {
-    if ((*dataHandle)->_isAsciiValid){
-        char *ptr = (*dataHandle)->ascii();
+    if (dataHandle[0]->_isAsciiValid){
+        char *ptr = dataHandle[0]->ascii();
         
         if (chs) {
-            int len = (*dataHandle)->_length;
+            int len = dataHandle[0]->_length;
             
             ptr += index;
             
@@ -1232,11 +1232,11 @@ int QString::find(const char *chs, int index, bool caseSensitive) const
             }
         }
     }
-    else if ((*dataHandle)->_isUnicodeValid){
-        QChar *ptr = (QChar *)(*dataHandle)->unicode();
+    else if (dataHandle[0]->_isUnicodeValid){
+        QChar *ptr = (QChar *)dataHandle[0]->unicode();
 
         if (chs) {
-            int len = (*dataHandle)->_length;
+            int len = dataHandle[0]->_length;
 
             ptr += index;
             if (len && (index >= 0) && (index < len)) {
@@ -1273,18 +1273,18 @@ int QString::find(const char *chs, int index, bool caseSensitive) const
 int QString::find(const QRegExp &qre, int index) const
 {
     if ( index < 0 )
-	index += (*dataHandle)->_length;
+	index += dataHandle[0]->_length;
     return qre.match( *this, index );
 }
 
 int QString::findRev(char ch, int index) const
 {
-    if ((*dataHandle)->_isAsciiValid){
+    if (dataHandle[0]->_isAsciiValid){
         const char *cp = ascii();
         
         if (index < 0)
-            index += (*dataHandle)->_length;
-        if (index > (int)(*dataHandle)->_length)
+            index += dataHandle[0]->_length;
+        if (index > (int)dataHandle[0]->_length)
             return -1;
             
         for (int i = index; i >= 0; i--) {
@@ -1292,7 +1292,7 @@ int QString::findRev(char ch, int index) const
                 return i;
         }
     }
-    else if ((*dataHandle)->_isUnicodeValid)
+    else if (dataHandle[0]->_isUnicodeValid)
         return findRev(QString(QChar(ch)), index);
     else
         QSTRING_FAILURE ("invalid character cache\n");
@@ -1311,7 +1311,7 @@ int QString::findRev( const QString& str, int index, bool cs ) const
     /*
       See QString::find() for explanations.
     */
-    int lthis = (*dataHandle)->_length;
+    int lthis = dataHandle[0]->_length;
     if ( index < 0 )
 	index += lthis;
 
@@ -1372,7 +1372,7 @@ int QString::contains( QChar c, bool cs ) const
 {
     int count = 0;
     
-    if ((*dataHandle)->_isAsciiValid){
+    if (dataHandle[0]->_isAsciiValid){
         if (!IS_ASCII_QCHAR(c))
             return 0;
             
@@ -1380,7 +1380,7 @@ int QString::contains( QChar c, bool cs ) const
         const char *cPtr = ascii();
         if ( !cPtr )
             return 0;
-        int n = (*dataHandle)->_length;
+        int n = dataHandle[0]->_length;
         if ( cs ) {					// case sensitive
             while ( n-- )
                 if ( *cPtr++ == ac )
@@ -1395,11 +1395,11 @@ int QString::contains( QChar c, bool cs ) const
             }
         }
     }
-    else if ((*dataHandle)->_isUnicodeValid){
+    else if (dataHandle[0]->_isUnicodeValid){
         const QChar *uc = unicode();
         if ( !uc )
             return 0;
-        int n = (*dataHandle)->_length;
+        int n = dataHandle[0]->_length;
         if ( cs ) {					// case sensitive
             while ( n-- )
                 if ( *uc++ == c )
@@ -1428,10 +1428,10 @@ int QString::contains(const char *str, bool caseSensitive) const
     if ( !str )
         return 0;
 
-    if ((*dataHandle)->_isAsciiValid){
+    if (dataHandle[0]->_isAsciiValid){
         int count = 0;
         const char *uc = ascii();
-        int n = (*dataHandle)->_length;
+        int n = dataHandle[0]->_length;
         int toLen = strlen(str);
         
         while ( n-- ) {
@@ -1446,7 +1446,7 @@ int QString::contains(const char *str, bool caseSensitive) const
         }
         return count;
     }
-    else if ((*dataHandle)->_isUnicodeValid)
+    else if (dataHandle[0]->_isUnicodeValid)
         return contains(QString(str),caseSensitive);
     else
         QSTRING_FAILURE ("invalid character cache\n");
@@ -1461,7 +1461,7 @@ int QString::contains(const QString &str, bool caseSensitive) const
     if ( !str )
 	return 0;
     int len = str.data()->_length;
-    int n = (*dataHandle)->_length;
+    int n = dataHandle[0]->_length;
     while ( n-- ) {				// counts overlapping strings
 	// ### Doesn't account for length of this - searches over "end"
 	if ( caseSensitive ) {
@@ -1510,7 +1510,7 @@ long QString::toLong(bool *ok, int base) const
 {
     const QChar *p = unicode();
     long val=0;
-    int l = (*dataHandle)->_length;
+    int l = dataHandle[0]->_length;
     const long max_mult = INT_MAX / base;
     bool is_ok = FALSE;
     int neg = 0;
@@ -1562,7 +1562,7 @@ ulong QString::toULong(bool *ok, int base) const
 {
     const QChar *p = unicode();
     ulong val=0;
-    int l = (*dataHandle)->_length;
+    int l = dataHandle[0]->_length;
     const ulong max_mult = UINT_MAX / base;
     bool is_ok = FALSE;
     if ( !p )
@@ -1618,8 +1618,8 @@ double QString::toDouble(bool *ok) const
 bool QString::findArg(int& pos, int& len) const
 {
     char lowest=0;
-    for (uint i = 0; i< (*dataHandle)->_length; i++) {
-	if ( at(i) == '%' && i + 1 < (*dataHandle)->_length ) {
+    for (uint i = 0; i< dataHandle[0]->_length; i++) {
+	if ( at(i) == '%' && i + 1 < dataHandle[0]->_length ) {
 	    char dig = at(i+1);
 	    if ( dig >= '0' && dig <= '9' ) {
 		if ( !lowest || dig < lowest ) {
@@ -1708,7 +1708,7 @@ QString QString::left(uint len) const
 	return QString();
     } else if ( len == 0 ) {			// ## just for 1.x compat:
 	return QString::fromLatin1("");
-    } else if ( len > (*dataHandle)->_length ) {
+    } else if ( len > dataHandle[0]->_length ) {
 	return *this;
     } else {
 	QString s( unicode(), len );
@@ -1723,7 +1723,7 @@ QString QString::right(uint len) const
     } else if ( len == 0 ) {			// ## just for 1.x compat:
 	return QString::fromLatin1("");
     } else {
-	uint l = (*dataHandle)->_length;
+	uint l = dataHandle[0]->_length;
 	if ( len > l )
 	    len = l;
 	QString s( unicode()+(l-len), len );
@@ -1733,7 +1733,7 @@ QString QString::right(uint len) const
 
 QString QString::mid(uint index, uint len) const
 {
-    uint slen = (*dataHandle)->_length;
+    uint slen = dataHandle[0]->_length;
     if ( isEmpty() || index >= slen ) {
 	return QString();
     } else if ( len == 0 ) {			// ## just for 1.x compat:
@@ -1741,7 +1741,7 @@ QString QString::mid(uint index, uint len) const
     } else {
 	if ( len > slen-index )
 	    len = slen - index;
-	if ( index == 0 && len == (*dataHandle)->_length )
+	if ( index == 0 && len == dataHandle[0]->_length )
 	    return *this;
 	register const QChar *p = unicode()+index;
 	QString s( p, len );
@@ -1758,7 +1758,7 @@ QString QString::copy() const
 QString QString::lower() const
 {
     QString s(*this);
-    int l = (*dataHandle)->_length;
+    int l = dataHandle[0]->_length;
     if ( l ) {
 	s.detach();
         if (s.data()->_isAsciiValid){
@@ -1793,11 +1793,11 @@ QString QString::stripWhiteSpace() const
 {
     if ( isEmpty() )				// nothing to do
 	return *this;
-    if ( !at(0).isSpace() && !at((*dataHandle)->_length-1).isSpace() )
+    if ( !at(0).isSpace() && !at(dataHandle[0]->_length-1).isSpace() )
 	return *this;
 
     int start = 0;
-    int end = (*dataHandle)->_length - 1;
+    int end = dataHandle[0]->_length - 1;
 
     QString result = fromLatin1("");
     while ( start<=end && at(start).isSpace() )	// skip white space from start
@@ -1809,12 +1809,12 @@ QString QString::stripWhiteSpace() const
         end--;
     int l = end - start + 1;
     
-    if ((*dataHandle)->_isAsciiValid){
+    if (dataHandle[0]->_isAsciiValid){
         result.setLength( l );
         if ( l )
             memcpy( (char *)result.data()->ascii(), &ascii()[start], l );
     }
-    else if ((*dataHandle)->_isUnicodeValid){
+    else if (dataHandle[0]->_isUnicodeValid){
         result.forceUnicode();
         result.setLength( l );
         if ( l )
@@ -1832,10 +1832,10 @@ QString QString::simplifyWhiteSpace() const
     
     QString result;
 
-    if ((*dataHandle)->_isAsciiValid){
-        result.setLength( (*dataHandle)->_length );
+    if (dataHandle[0]->_isAsciiValid){
+        result.setLength( dataHandle[0]->_length );
         const char *from = ascii();
-        const char *fromend = from + (*dataHandle)->_length;
+        const char *fromend = from + dataHandle[0]->_length;
         int outc=0;
         
         char *to = (char *)result.ascii();
@@ -1853,11 +1853,11 @@ QString QString::simplifyWhiteSpace() const
             outc--;
         result.truncate( outc );
     }
-    else if ((*dataHandle)->_isUnicodeValid){
+    else if (dataHandle[0]->_isUnicodeValid){
         result.forceUnicode();
-        result.setLength( (*dataHandle)->_length );
+        result.setLength( dataHandle[0]->_length );
         const QChar *from = unicode();
-        const QChar *fromend = from + (*dataHandle)->_length;
+        const QChar *fromend = from + dataHandle[0]->_length;
         int outc=0;
         
         QChar *to = (QChar *)result.unicode();
@@ -1883,7 +1883,7 @@ QString QString::simplifyWhiteSpace() const
 
 void QString::deref()
 {
-    (*dataHandle)->deref();
+    dataHandle[0]->deref();
 }
 
 
@@ -1896,7 +1896,7 @@ QString &QString::setUnicode(const QChar *uni, uint len)
     // free our handle if it isn't the shared
     // null handle, and if no-one else is using
     // it.
-    if (dataHandle != makeSharedNullHandle() && (*dataHandle)->refCount == 1)
+    if (dataHandle != makeSharedNullHandle() && dataHandle[0]->refCount == 1)
         needToFreeHandle = true;
         
     if ( len == 0 ) {
@@ -1904,19 +1904,19 @@ QString &QString::setUnicode(const QChar *uni, uint len)
         if (needToFreeHandle)
             freeHandle (dataHandle);
         dataHandle = makeSharedNullHandle();
-        (*dataHandle)->ref();
-    } else if (len > (*dataHandle)->_maxUnicode || (*dataHandle)->refCount != 1 || !(*dataHandle)->_isUnicodeValid) {
+        dataHandle[0]->ref();
+    } else if (len > dataHandle[0]->_maxUnicode || dataHandle[0]->refCount != 1 || !dataHandle[0]->_isUnicodeValid) {
         deref();
         if (needToFreeHandle)
             freeHandle (dataHandle);
         dataHandle = (struct QStringData **)allocateHandle();
 	*dataHandle = new QStringData( uni, len );
-        (*dataHandle)->_isHeapAllocated = 1;
+        dataHandle[0]->_isHeapAllocated = 1;
     } else {
 	if ( uni )
 	    memcpy( (void *)unicode(), uni, sizeof(QChar)*len );
-        (*dataHandle)->_length = len;
-        (*dataHandle)->_isAsciiValid = 0;
+        dataHandle[0]->_length = len;
+        dataHandle[0]->_isAsciiValid = 0;
     }
     
     return *this;
@@ -1937,7 +1937,7 @@ QString &QString::setLatin1(const char *str, int len)
     // free our handle if it isn't the shared
     // null handle, and if no-one else is using
     // it.
-    if (dataHandle != makeSharedNullHandle() && (*dataHandle)->refCount == 1)
+    if (dataHandle != makeSharedNullHandle() && dataHandle[0]->refCount == 1)
         needToFreeHandle = true;
         
     if ( len == 0 ) {
@@ -1945,18 +1945,18 @@ QString &QString::setLatin1(const char *str, int len)
         if (needToFreeHandle)
             freeHandle (dataHandle);
         dataHandle = makeSharedNullHandle();
-        (*dataHandle)->ref();
-    } else if (len+1 > (int)(*dataHandle)->_maxAscii || (*dataHandle)->refCount != 1 || !(*dataHandle)->_isAsciiValid) {
+        dataHandle[0]->ref();
+    } else if (len+1 > (int)dataHandle[0]->_maxAscii || dataHandle[0]->refCount != 1 || !dataHandle[0]->_isAsciiValid) {
         deref();
         if (needToFreeHandle)
             freeHandle (dataHandle);
         dataHandle = (struct QStringData **)allocateHandle();
         *dataHandle = new QStringData(str,len);
-        (*dataHandle)->_isHeapAllocated = 1;
+        dataHandle[0]->_isHeapAllocated = 1;
     } else {
         strcpy( (char *)ascii(), str );
-        (*dataHandle)->_length = len;
-        (*dataHandle)->_isUnicodeValid = 0;
+        dataHandle[0]->_length = len;
+        dataHandle[0]->_isUnicodeValid = 0;
     }
     return *this;
 }
@@ -2039,7 +2039,7 @@ QString &QString::prepend(const QString &qs)
 
 QString &QString::append(const QString &qs)
 {
-    return insert((*dataHandle)->_length, qs);
+    return insert(dataHandle[0]->_length, qs);
 }
 
 
@@ -2053,9 +2053,9 @@ QString &QString::insert(uint index, const QString &qs)
 #ifdef QSTRING_DEBUG_UNICODE
     forceUnicode();
 #endif
-    if ((*dataHandle)->_isAsciiValid && qs.data()->_isAsciiValid){
+    if (dataHandle[0]->_isAsciiValid && qs.data()->_isAsciiValid){
         uint insertLength = qs.data()->_length;
-        uint originalLength = (*dataHandle)->_length;
+        uint originalLength = dataHandle[0]->_length;
         char *insertChars = (char *)qs.ascii();
         char *targetChars;
         
@@ -2071,7 +2071,7 @@ QString &QString::insert(uint index, const QString &qs)
     }
     else {
         uint insertLength = qs.data()->_length;
-        uint originalLength = (*dataHandle)->_length;
+        uint originalLength = dataHandle[0]->_length;
         QChar *targetChars;
         
         // Ensure that we have enough space.
@@ -2106,8 +2106,8 @@ QString &QString::insert(uint index, QChar qc)
 {
     detach();
     
-    if ((*dataHandle)->_isAsciiValid && IS_ASCII_QCHAR(qc)){
-        uint originalLength = (*dataHandle)->_length;
+    if (dataHandle[0]->_isAsciiValid && IS_ASCII_QCHAR(qc)){
+        uint originalLength = dataHandle[0]->_length;
         char insertChar = (char)qc;
         char *targetChars;
         
@@ -2120,10 +2120,10 @@ QString &QString::insert(uint index, QChar qc)
         
         // Insert character.
         targetChars[index] = insertChar;
-        targetChars[(*dataHandle)->_length] = 0;
+        targetChars[dataHandle[0]->_length] = 0;
     }
     else {
-        uint originalLength = (*dataHandle)->_length;
+        uint originalLength = dataHandle[0]->_length;
         QChar *targetChars;
         
         // Ensure that we have enough space.
@@ -2145,8 +2145,8 @@ QString &QString::insert(uint index, char ch)
 {
     detach();
     
-    if ((*dataHandle)->_isAsciiValid){
-        uint originalLength = (*dataHandle)->_length;
+    if (dataHandle[0]->_isAsciiValid){
+        uint originalLength = dataHandle[0]->_length;
         char *targetChars;
         
         // Ensure that we have enough space.
@@ -2158,10 +2158,10 @@ QString &QString::insert(uint index, char ch)
         
         // Insert character.
         targetChars[index] = ch;
-        targetChars[(*dataHandle)->_length] = 0;
+        targetChars[dataHandle[0]->_length] = 0;
     }
-    else if ((*dataHandle)->_isUnicodeValid){
-        uint originalLength = (*dataHandle)->_length;
+    else if (dataHandle[0]->_isUnicodeValid){
+        uint originalLength = dataHandle[0]->_length;
         QChar *targetChars;
         
         // Ensure that we have enough space.
@@ -2211,7 +2211,7 @@ void QString::detachInternal()
 // the string data is mutated.
 void QString::detach()
 {
-    if ((*dataHandle)->refCount == 1 && dataHandle != shared_null_handle)
+    if (dataHandle[0]->refCount == 1 && dataHandle != shared_null_handle)
         return;
 
 #ifdef QSTRING_DEBUG_ALLOCATIONS
@@ -2245,7 +2245,7 @@ void QString::detach()
 
 QString &QString::remove(uint index, uint len)
 {
-    uint olen = (*dataHandle)->_length;
+    uint olen = dataHandle[0]->_length;
     if ( index >= olen  ) {
         // range problems
     } else if ( index + len >= olen ) {  // index ok
@@ -2256,13 +2256,13 @@ QString &QString::remove(uint index, uint len)
 #ifdef QSTRING_DEBUG_UNICODE
     forceUnicode();
 #endif
-        if ((*dataHandle)->_isAsciiValid){
-            memmove( (*dataHandle)->ascii()+index, (*dataHandle)->ascii()+index+len,
+        if (dataHandle[0]->_isAsciiValid){
+            memmove( dataHandle[0]->ascii()+index, dataHandle[0]->ascii()+index+len,
                     sizeof(char)*(olen-index-len) );
             setLength( olen-len );
         }
-        else if ((*dataHandle)->_isUnicodeValid){
-            memmove( (*dataHandle)->unicode()+index, (*dataHandle)->unicode()+index+len,
+        else if (dataHandle[0]->_isUnicodeValid){
+            memmove( dataHandle[0]->unicode()+index, dataHandle[0]->unicode()+index+len,
                     sizeof(QChar)*(olen-index-len) );
             setLength( olen-len );
         }
@@ -2293,7 +2293,7 @@ QString &QString::replace(const QRegExp &qre, const QString &str)
     int index = 0;
     int slen  = str.data()->_length;
     int len;
-    while ( index < (int)(*dataHandle)->_length ) {
+    while ( index < (int)dataHandle[0]->_length ) {
 	index = qre.match( *this, index, &len, FALSE );
 	if ( index >= 0 ) {
 	    replace( index, len, str );
@@ -2315,7 +2315,7 @@ void QString::forceUnicode()
     
     unicode();
 
-    (*dataHandle)->_isAsciiValid = 0;
+    dataHandle[0]->_isAsciiValid = 0;
 }
 
 
@@ -2331,36 +2331,36 @@ void QString::setLength( uint newLen )
         deref();
         dataHandle = (struct QStringData **)allocateHandle();
         *dataHandle = new QStringData();
-        (*dataHandle)->_isHeapAllocated = 1;
+        dataHandle[0]->_isHeapAllocated = 1;
     }
     
 #ifdef QSTRING_DEBUG_UNICODE
     forceUnicode();
 #endif
-    if ((*dataHandle)->_isAsciiValid){
-        if (newLen+1 > (*dataHandle)->_maxAscii) {
-            (*dataHandle)->increaseAsciiSize(newLen+1);
+    if (dataHandle[0]->_isAsciiValid){
+        if (newLen+1 > dataHandle[0]->_maxAscii) {
+            dataHandle[0]->increaseAsciiSize(newLen+1);
         }
         
         // Ensure null termination, although newly allocated
         // bytes contain garbage.
-        (*dataHandle)->_ascii[newLen] = 0;
+        dataHandle[0]->_ascii[newLen] = 0;
     }
-    else if ((*dataHandle)->_isUnicodeValid){
-        if (newLen > (*dataHandle)->_maxUnicode) {
-            (*dataHandle)->increaseUnicodeSize(newLen);
+    else if (dataHandle[0]->_isUnicodeValid){
+        if (newLen > dataHandle[0]->_maxUnicode) {
+            dataHandle[0]->increaseUnicodeSize(newLen);
         }
     }
     else
         QSTRING_FAILURE ("invalid character cache\n");
 
-    (*dataHandle)->_length = newLen;
+    dataHandle[0]->_length = newLen;
 }
 
 
 void QString::truncate(uint newLen)
 {
-    if ( newLen < (*dataHandle)->_length )
+    if ( newLen < dataHandle[0]->_length )
 	setLength( newLen );
 }
 
@@ -2373,14 +2373,14 @@ void QString::fill(QChar qc, int len)
 #endif
     // len == -1 means fill to string length.
     if ( len < 0 )
-	len = (*dataHandle)->_length;
+	len = dataHandle[0]->_length;
         
     if ( len == 0 ) {
         deref();
         dataHandle = makeSharedNullHandle();
-        (*dataHandle)->ref();
+        dataHandle[0]->ref();
     } else {
-        if ((*dataHandle)->_isAsciiValid && IS_ASCII_QCHAR(qc)){
+        if (dataHandle[0]->_isAsciiValid && IS_ASCII_QCHAR(qc)){
             setLength(len);
             char *nd = (char *)ascii();
             while (len--) 
@@ -2413,9 +2413,9 @@ QString &QString::operator+=(const QString &qs)
 {
     detach();
 
-    if ((*dataHandle)->_isUnicodeValid && (*dataHandle)->_length + qs.data()->_length < (*dataHandle)->_maxUnicode){
+    if (dataHandle[0]->_isUnicodeValid && dataHandle[0]->_length + qs.data()->_length < dataHandle[0]->_maxUnicode){
         uint i = qs.data()->_length;
-        QChar *tp = &(*dataHandle)->_unicode[(*dataHandle)->_length];
+        QChar *tp = &dataHandle[0]->_unicode[dataHandle[0]->_length];
         if (qs.data()->_isAsciiValid){
             char *fp = (char *)qs.ascii();
             while (i--)
@@ -2428,20 +2428,20 @@ QString &QString::operator+=(const QString &qs)
         }
         else 
             QSTRING_FAILURE ("invalid character cache\n");
-        (*dataHandle)->_length += qs.data()->_length;
+        dataHandle[0]->_length += qs.data()->_length;
         return *this;
     }
-    else if ((*dataHandle)->_isAsciiValid && qs.data()->_isAsciiValid && (*dataHandle)->_length + qs.data()->_length < (*dataHandle)->_maxAscii){
+    else if (dataHandle[0]->_isAsciiValid && qs.data()->_isAsciiValid && dataHandle[0]->_length + qs.data()->_length < dataHandle[0]->_maxAscii){
         uint i = qs.data()->_length;
-        char *tp = &(*dataHandle)->_ascii[(*dataHandle)->_length];
+        char *tp = &dataHandle[0]->_ascii[dataHandle[0]->_length];
         char *fp = (char *)qs.ascii();
         while (i--)
             *tp++ = *fp++;
         *tp = 0;
-        (*dataHandle)->_length += qs.data()->_length;
+        dataHandle[0]->_length += qs.data()->_length;
         return *this;
     }
-    return insert((*dataHandle)->_length, qs);
+    return insert(dataHandle[0]->_length, qs);
 }
 
 QString &QString::operator+=(QChar qc)
@@ -2488,11 +2488,11 @@ QString &QString::operator+=(char ch)
 
 QCString QString::convertToQCString(CFStringEncoding enc) const
 {
-    uint len = (*dataHandle)->_length;
+    uint len = dataHandle[0]->_length;
     if (len) {
         char *chs = (char *)CFAllocatorAllocate(kCFAllocatorDefault, len + 1, 0);
         if (chs) {
-            CFStringRef s = getCFMutableString(); // autoreleased
+            CFStringRef s = getCFString();
             if (!CFStringGetCString(s, chs, len + 1, enc)) {
                 *reinterpret_cast<char *>(chs) = '\0';
             }
@@ -2579,24 +2579,24 @@ QConstString::QConstString(const QChar* unicode, uint length ) :
 
 QConstString::~QConstString()
 {
-    if ( (*dataHandle)->refCount > 1 ) {
+    if ( dataHandle[0]->refCount > 1 ) {
         QChar *tp, *fp = (QChar *)unicode();
-        if ((*dataHandle)->_length <= QS_INTERNAL_BUFFER_UCHARS){
-            (*dataHandle)->_maxUnicode = QS_INTERNAL_BUFFER_UCHARS;
-            tp = (QChar *)&(*dataHandle)->_internalBuffer[0];
-            (*dataHandle)->_isUnicodeInternal = 1;
+        if (dataHandle[0]->_length <= QS_INTERNAL_BUFFER_UCHARS){
+            dataHandle[0]->_maxUnicode = QS_INTERNAL_BUFFER_UCHARS;
+            tp = (QChar *)&dataHandle[0]->_internalBuffer[0];
+            dataHandle[0]->_isUnicodeInternal = 1;
         }
         else {
-            (*dataHandle)->_maxUnicode = ALLOC_QCHAR_GOOD_SIZE((*dataHandle)->_length);
-            tp = ALLOC_QCHAR( (*dataHandle)->_maxUnicode );
-            (*dataHandle)->_isUnicodeInternal = 0;
+            dataHandle[0]->_maxUnicode = ALLOC_QCHAR_GOOD_SIZE(dataHandle[0]->_length);
+            tp = ALLOC_QCHAR( dataHandle[0]->_maxUnicode );
+            dataHandle[0]->_isUnicodeInternal = 0;
         }
-        memcpy( tp, fp, (*dataHandle)->_length*sizeof(QChar) );
-        (*dataHandle)->_unicode = tp;
-	(*dataHandle)->_isUnicodeValid = 1;
-        (*dataHandle)->_isAsciiValid = 0;
+        memcpy( tp, fp, dataHandle[0]->_length*sizeof(QChar) );
+        dataHandle[0]->_unicode = tp;
+	dataHandle[0]->_isUnicodeValid = 1;
+        dataHandle[0]->_isAsciiValid = 0;
     } else {
-	(*dataHandle)->_unicode = 0;
+	dataHandle[0]->_unicode = 0;
     }
 }
 

@@ -33,17 +33,17 @@ KWQDictImpl::KWQDictImpl(int size, bool caseSensitive, void (*deleteFunc)(void *
 
 void KWQDictImpl::insert(const QString &key, const void *value)
 {
-    KWQPtrDictImpl::insert(key.getCFMutableString(), value);
+    KWQPtrDictImpl::insert((void *)key.getCFString(), value);
 }
 
 bool KWQDictImpl::remove(const QString &key, bool deleteItem)
 {
-    return KWQPtrDictImpl::remove(key.getCFMutableString(), deleteItem);
+    return KWQPtrDictImpl::remove((void *)key.getCFString(), deleteItem);
 }
 
 void *KWQDictImpl::find(const QString &key) const
 {
-    return KWQPtrDictImpl::find(key.getCFMutableString());
+    return KWQPtrDictImpl::find((void *)key.getCFString());
 }
 
 QString KWQDictIteratorImpl::currentStringKey() const

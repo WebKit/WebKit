@@ -313,4 +313,14 @@
     return [[frame controller] userAgentForURL:URL];
 }
 
+- (NSView *)nextKeyViewOutsideWebViews
+{
+    return [[[[frame controller] mainFrame] webView] nextKeyView];
+}
+
+- (NSView *)previousKeyViewOutsideWebViews
+{
+    return [[[[frame controller] mainFrame] webView] previousKeyView];
+}
+
 @end

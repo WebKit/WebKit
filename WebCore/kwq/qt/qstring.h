@@ -265,7 +265,7 @@ inline bool operator<(char ch, QChar qc)
 }
 
 // Keep this struct to <= 46 bytes, that's what the system will allocate.
-// Will be rounded up even multiple of for, so we're stuck at 44.
+// Will be rounded up to a multiple of 4, so we're stuck at 44.
 
 #define QS_INTERNAL_BUFFER_SIZE 20
 #define QS_INTERNAL_BUFFER_CHARS QS_INTERNAL_BUFFER_SIZE-1
@@ -294,7 +294,6 @@ struct QStringData {
     void* operator new(size_t s);
     void operator delete(void*p);
 #endif
-
 
     inline void ref() { refCount++; }
     inline void deref() { if (--refCount == 0 && _isHeapAllocated) delete this; }
@@ -334,23 +333,19 @@ public:
     QString(const char *, int len);
     
     QString(const QString &);
+    QString &operator=(const QString &);
 
     ~QString();
 
-    static QString fromLatin1(const char * /* NOTE: len NOT used */ );
+    static QString fromLatin1(const char *);
     static QString fromStringWithEncoding(const char *, int, CFStringEncoding);
-    static QString fromCFMutableString(CFMutableStringRef);
     static QString fromCFString(CFStringRef);
     static QString fromNSString(NSString *);
     
-    static QString gstring_toQString(CFMutableStringRef *ref, UniChar *uchars, int len);
-    static CFMutableStringRef gstring_toCFString(CFMutableStringRef *ref, UniChar *uchars, int len);
-
-    QString &operator=(const QString &);
-    QString &operator=(const QCString &);
-    QString &operator=(const char *);
-    QString &operator=(QChar);
     QString &operator=(char);
+    QString &operator=(QChar);
+    QString &operator=(const char *);
+    QString &operator=(const QCString &);
 
     uint length() const;
 
@@ -366,23 +361,24 @@ public:
     QChar at(uint) const;
 
     int compare(const QString &) const;
+    int compare(const char *) const;
 
     bool startsWith(const QString &) const;
 
-    int find(char, int index=0) const;
-    int find(QChar, int index=0) const;
-    int find(const char *, int index=0, bool cs=true) const;
-    int find(const QString &, int index=0, bool cs=true) const;
-    int find(const QRegExp &, int index=0) const;
+    int find(char, int index = 0) const;
+    int find(QChar, int index = 0) const;
+    int find(const char *, int index = 0, bool cs = true) const;
+    int find(const QString &, int index = 0, bool cs = true) const;
+    int find(const QRegExp &, int index = 0) const;
 
-    int findRev(char, int index=-1) const;
-    int findRev(const QString& str, int index, bool cs=true ) const;
-    int findRev(const char *, int index=-1) const;
+    int findRev(char, int index = -1) const;
+    int findRev(const QString& str, int index, bool cs = true) const;
+    int findRev(const char *, int index = -1) const;
 
     int contains(char) const;
-    int contains(const char *, bool cs=true) const;
-    int contains(const QString &, bool cs=true) const;
-    int contains( QChar c, bool cs=true ) const;
+    int contains(const char *, bool cs = true) const;
+    int contains(const QString &, bool cs = true) const;
+    int contains(QChar c, bool cs = true) const;
 
     bool endsWith(const QString &) const;
 
@@ -456,7 +452,7 @@ public:
     void compose();
     QString visual();
 
-    CFMutableStringRef getCFMutableString() const;
+    CFStringRef getCFString() const;
     NSString *getNSString() const;
 
     bool operator!() const;
@@ -467,7 +463,7 @@ public:
     QString &operator+=(QChar);
     QString &operator+=(char);
 
-    void setBufferFromCFString(CFStringRef cfs);
+    void setBufferFromCFString(CFStringRef);
     
 private:
     // Used by QConstString.
@@ -476,14 +472,11 @@ private:
     void detachInternal();
     void deref();
     void forceUnicode();
-    void setLength( uint pos );
+    void setLength(uint);
 
     struct QStringData *data() const;
     
-    enum CacheType { CacheInvalid, CacheUnicode, CacheLatin1 };
-
     QCString convertToQCString(CFStringEncoding) const;
-    int compareToLatin1(const char *chs) const;
 
     struct QStringData **dataHandle;
     struct QStringData internalData;
@@ -495,27 +488,6 @@ private:
 
     friend bool operator==(const QString &, const QString &);
     friend bool operator==(const QString &, const char *);
-    friend bool operator==(const char *, const QString &);
-
-    friend bool operator!=(const QString &, const QString &);
-    friend bool operator!=(const QString &, const char *);
-    friend bool operator!=(const char *, const QString &);
-
-    friend bool operator>(const QString &, const QString &);
-    friend bool operator>(const QString &, const char *);
-    friend bool operator>(const char *, const QString &);
-
-    friend bool operator>=(const QString &, const QString &);
-    friend bool operator>=(const QString &, const char *);
-    friend bool operator>=(const char *, const QString &);
-
-    friend bool operator<=(const QString &, const QString &);
-    friend bool operator<=(const QString &, const char *);
-    friend bool operator<=(const char *, const QString &);
-
-    friend bool operator<(const QString &, const QString &);
-    friend bool operator<(const QString &, const char *);
-    friend bool operator<(const char *, const QString &);
 
     friend class QConstString;
     friend class QGDict;
@@ -594,12 +566,12 @@ inline bool operator<(const QString &qs1, const QString &qs2)
 
 inline bool operator<(const QString &qs, const char *chs)
 {
-    return qs.compareToLatin1(chs) < 0;
+    return qs.compare(chs) < 0;
 }
 
 inline bool operator<(const char *chs, const QString &qs)
 {
-    return qs.compareToLatin1(chs) > 0;
+    return qs.compare(chs) > 0;
 }
 
 inline bool operator<=(const QString &qs1, const QString &qs2)
@@ -609,12 +581,12 @@ inline bool operator<=(const QString &qs1, const QString &qs2)
 
 inline bool operator<=(const QString &qs, const char *chs)
 {
-    return qs.compareToLatin1(chs) <= 0;
+    return qs.compare(chs) <= 0;
 }
 
 inline bool operator<=(const char *chs, const QString &qs)
 {
-    return qs.compareToLatin1(chs) >= 0;
+    return qs.compare(chs) >= 0;
 }
 
 inline bool operator>(const QString &qs1, const QString &qs2)
@@ -624,12 +596,12 @@ inline bool operator>(const QString &qs1, const QString &qs2)
 
 inline bool operator>(const QString &qs, const char *chs)
 {
-    return qs.compareToLatin1(chs) > 0;
+    return qs.compare(chs) > 0;
 }
 
 inline bool operator>(const char *chs, const QString &qs)
 {
-    return qs.compareToLatin1(chs) < 0;
+    return qs.compare(chs) < 0;
 }
 
 inline bool operator>=(const QString &qs1, const QString &qs2)
@@ -639,12 +611,12 @@ inline bool operator>=(const QString &qs1, const QString &qs2)
 
 inline bool operator>=(const QString &qs, const char *chs)
 {
-    return qs.compareToLatin1(chs) >= 0;
+    return qs.compare(chs) >= 0;
 }
 
 inline bool operator>=(const char *chs, const QString &qs)
 {
-    return qs.compareToLatin1(chs) <= 0;
+    return qs.compare(chs) <= 0;
 }
 
 class QConstString : private QString {

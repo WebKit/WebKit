@@ -179,6 +179,14 @@ enum {
     return YES;
 }
 
+- (BOOL)becomeFirstResponder
+{
+    if ([self documentView]) {
+        [[self window] makeFirstResponder:[self documentView]];
+    }
+    return YES;
+}
+
 - (BOOL)isOpaque
 {
     return YES;

@@ -1,8 +1,46 @@
+2002-08-20  Darin Adler  <darin@apple.com>
+
+	WebCore part of support for tabbing into and out of the toolbar.
+
+        * kwq/KWQKHTMLPartImpl.h: Renamed static nextKeyView to nextKeyViewForWidget.
+	Added nextKeyViewInFrameHierarchy.
+        * kwq/KWQKHTMLPartImpl.mm:
+        (KWQKHTMLPartImpl::nextKeyViewInFrameHierarchy): New name for the old nextKeyView.
+        (KWQKHTMLPartImpl::nextKeyView): Added. Does all the logic for handling views outside
+	the frame hierarchy that used to be only in the static nextKeyView.
+        (KWQKHTMLPartImpl::nextKeyViewForWidget): New name for the static nextKeyView, which
+	now just does the widget-specific bits. Removed null check in here that's no longer needed.
+
+        * kwq/KWQNSTextField.mm: Update to call nextKeyViewForWidget.
+
+        * kwq/WebCoreBridge.h: Added nextKeyViewInsideWebViews, previousKeyViewInsideWebViews,
+	nextKeyViewOutsideWebViews, and previousKeyViewOutsideWebViews.
+
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge nextKeyViewInsideWebViews]): Call nextKeyViewInFrameHierarchy.
+        (-[WebCoreBridge previousKeyViewInsideWebViews]): Call nextKeyViewInFrameHierarchy.
+
+	Introduced QString to sprong. See <http://www.goat.demon.co.uk/sprong.html>.
+	A few other tweaks to QString API; wean it from mutable strings.
+
+        * kwq/qt/qstring.h:
+        * kwq/KWQString.mm: Sprongify it.
+        (QString::setBufferFromCFString): Add a fixed-size buffer to avoid malloc.
+        (QString::getCFString): Replace getCFMutableString with this.
+        (QString::getNSString): Use NSString directly.
+
+        * kwq/KWQDictImpl.mm:
+        * kwq/KWQKURL.mm:
+        * kwq/KWQStringList.mm:
+        * kwq/KWQtextcodec.mm:
+        * kwq/WebCoreBridge.mm:
+	Use getCFString, not getCFMutableString.
+
 2002-08-19  Darin Adler  <darin@apple.com>
 
         * force-clean-timestamp: Richard's changes require a clean build.
 
-2002-08-19  Richard Williamson (Local)  <rjw@apple.com>
+2002-08-19  Richard Williamson  <rjw@apple.com>
 
         QString rewrite.  Much faster now.
         QString has an inline rep, QStringData, which

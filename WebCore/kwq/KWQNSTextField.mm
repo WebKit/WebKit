@@ -227,14 +227,14 @@
 - (NSView *)nextKeyView
 {
     return inNextValidKeyView
-        ? KWQKHTMLPartImpl::nextKeyView(widget, KWQSelectingNext)
+        ? KWQKHTMLPartImpl::nextKeyViewForWidget(widget, KWQSelectingNext)
         : [super nextKeyView];
 }
 
 - (NSView *)previousKeyView
 {
    return inNextValidKeyView
-        ? KWQKHTMLPartImpl::nextKeyView(widget, KWQSelectingPrevious)
+        ? KWQKHTMLPartImpl::nextKeyViewForWidget(widget, KWQSelectingPrevious)
         : [super previousKeyView];
 }
 
@@ -350,14 +350,14 @@
 - (NSView *)nextKeyView
 {
     return inNextValidKeyView
-        ? KWQKHTMLPartImpl::nextKeyView(widget, KWQSelectingNext)
+        ? KWQKHTMLPartImpl::nextKeyViewForWidget(widget, KWQSelectingNext)
         : [super nextKeyView];
 }
 
 - (NSView *)previousKeyView
 {
    return inNextValidKeyView
-        ? KWQKHTMLPartImpl::nextKeyView(widget, KWQSelectingPrevious)
+        ? KWQKHTMLPartImpl::nextKeyViewForWidget(widget, KWQSelectingPrevious)
         : [super previousKeyView];
 }
 

@@ -119,7 +119,7 @@ void KURL::KWQKURLPrivate::makeRef()
 
     // Escape illegal but unambiguous characters that are actually
     // found on the web in URLs, like ' ' or '|'
-    CFStringRef escaped = CFURLCreateStringByAddingPercentEscapes(NULL, sURLMaybeAddSlash.getCFMutableString(),
+    CFStringRef escaped = CFURLCreateStringByAddingPercentEscapes(NULL, sURLMaybeAddSlash.getCFString(),
     								  CFSTR("%#"), NULL, kCFStringEncodingUTF8);
 
     urlRef = CFURLCreateWithString(NULL, escaped, NULL);
@@ -143,7 +143,7 @@ static inline QString CFStringToQString(CFStringRef cfs)
 
 static inline QString escapeQString(const QString &str)
 {
-    return CFStringToQString(CFURLCreateStringByAddingPercentEscapes(NULL, str.getCFMutableString(), NULL, NULL, kCFStringEncodingUTF8));
+    return CFStringToQString(CFURLCreateStringByAddingPercentEscapes(NULL, str.getCFString(), NULL, NULL, kCFStringEncodingUTF8));
 }
 
 static bool pathEndsWithSlash(const QString &sURL)
@@ -359,9 +359,9 @@ QString KURL::normalizeURLString(const QString &s)
 	NormalizedURLCache = CFDictionaryCreateMutable(NULL, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks); 
     }
 
-    CFMutableStringRef result = (CFMutableStringRef)CFDictionaryGetValue(NormalizedURLCache, s.getCFMutableString());
+    CFStringRef result = (CFStringRef)CFDictionaryGetValue(NormalizedURLCache, s.getCFString());
     if (result != NULL) {
-	return QString::fromCFMutableString(result);
+	return QString::fromCFString(result);
     }
     
     // normalize the URL string as KURL would:
@@ -388,7 +388,7 @@ QString KURL::normalizeURLString(const QString &s)
         qurl = "file:/" + qurl.mid(17);
     }
 
-    CFDictionarySetValue(NormalizedURLCache, s.getCFMutableString(), qurl.getCFMutableString());
+    CFDictionarySetValue(NormalizedURLCache, s.getCFString(), qurl.getCFString());
 
     return qurl;
 }
@@ -399,10 +399,10 @@ QString KURL::normalizeRelativeURLString(const KURL &base, const QString &relati
 	NormalizedRelativeURLCache = CFDictionaryCreateMutable(NULL, 0, &RelativeURLKeyCallBacks, &kCFTypeDictionaryValueCallBacks); 
     }
 
-    RelativeURLKey key = { base.urlString.getCFMutableString(), relative.getCFMutableString(), 0 };
-    CFMutableStringRef cachedResult = (CFMutableStringRef)CFDictionaryGetValue(NormalizedRelativeURLCache, &key);
+    RelativeURLKey key = { base.urlString.getCFString(), relative.getCFString(), 0 };
+    CFStringRef cachedResult = (CFMutableStringRef)CFDictionaryGetValue(NormalizedRelativeURLCache, &key);
     if (cachedResult != NULL) {
-	return QString::fromCFMutableString(cachedResult);
+	return QString::fromCFString(cachedResult);
     }
     
     QString stripped = relative.stripWhiteSpace();
@@ -413,7 +413,7 @@ QString KURL::normalizeRelativeURLString(const KURL &base, const QString &relati
         base.parse();
 
         CFStringRef relativeURLString = CFURLCreateStringByAddingPercentEscapes
-            (NULL, stripped.getCFMutableString(), CFSTR("%#"), NULL, kCFStringEncodingUTF8);
+            (NULL, stripped.getCFString(), CFSTR("%#"), NULL, kCFStringEncodingUTF8);
 
         CFURLRef relativeURL = CFURLCreateWithString(NULL, relativeURLString, base.d->urlRef);
 
@@ -431,7 +431,7 @@ QString KURL::normalizeRelativeURLString(const KURL &base, const QString &relati
         }
     }
             
-    CFDictionarySetValue(NormalizedRelativeURLCache, new RelativeURLKey(key), result.getCFMutableString());
+    CFDictionarySetValue(NormalizedRelativeURLCache, new RelativeURLKey(key), result.getCFString());
     return result;
 }
 
@@ -652,7 +652,7 @@ KURL &KURL::operator=(const KURL &other)
 
 QString KURL::decode_string(const QString &urlString)
 {
-    CFStringRef unescaped = CFURLCreateStringByReplacingPercentEscapes(NULL, urlString.getCFMutableString(), CFSTR(""));
+    CFStringRef unescaped = CFURLCreateStringByReplacingPercentEscapes(NULL, urlString.getCFString(), CFSTR(""));
     QString qUnescaped = QString::fromCFString(unescaped);
     CFRelease(unescaped);
 

@@ -1,3 +1,21 @@
+2002-08-20  Darin Adler  <darin@apple.com>
+
+	WebKit part of support for tabbing into and out of the toolbar.
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge nextKeyViewOutsideWebViews]): Ask the main WebView for its
+	nextKeyView on behalf of WebCore.
+        (-[WebBridge previousKeyViewOutsideWebViews]): Ask the main WebView for its
+	previousKeyView on behalf of WebCore.
+
+        * WebView.subproj/WebHTMLView.m: (-[WebHTMLView becomeFirstResponder]):
+	When we are being tabbed-into, make the first or last view in the bridge
+	first responder, instead of taking it ourselves.
+
+        * WebView.subproj/WebView.m: (-[WebView becomeFirstResponder]):
+	Always make the document view the first responder instead of taking it
+	ourselves.
+
 2002-08-19  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed 3025019: "only-if-cached" attribute fetches data from network if cached but expired

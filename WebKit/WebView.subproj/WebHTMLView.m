@@ -557,12 +557,16 @@
 
 - (NSView *)nextKeyView
 {
-    return (_private && _private->inNextValidKeyView) ? [[self _bridge] nextKeyView] : [super nextKeyView];
+    return (_private && _private->inNextValidKeyView)
+        ? [[self _bridge] nextKeyView]
+        : [super nextKeyView];
 }
 
 - (NSView *)previousKeyView
 {
-    return (_private && _private->inNextValidKeyView) ? [[self _bridge] previousKeyView] : [super previousKeyView];
+    return (_private && _private->inNextValidKeyView)
+        ? [[self _bridge] previousKeyView]
+        : [super previousKeyView];
 }
 
 - (NSView *)nextValidKeyView
@@ -579,6 +583,25 @@
     NSView *view = [super previousValidKeyView];
     _private->inNextValidKeyView = NO;
     return view;
+}
+
+- (BOOL)becomeFirstResponder
+{
+    NSView *view = nil;
+    switch ([[self window] keyViewSelectionDirection]) {
+    case NSDirectSelection:
+        break;
+    case NSSelectingNext:
+        view = [[self _bridge] nextKeyViewInsideWebViews];
+        break;
+    case NSSelectingPrevious:
+        view = [[self _bridge] previousKeyViewInsideWebViews];
+        break;
+    }
+    if (view) {
+        [[self window] makeFirstResponder:view];
+    } 
+    return YES;
 }
 
 @end

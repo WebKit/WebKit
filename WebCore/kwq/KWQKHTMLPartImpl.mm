@@ -555,8 +555,7 @@ NSView *KWQKHTMLPartImpl::nextKeyViewInFrame(NodeImpl *node, KWQSelectionDirecti
             KHTMLView *childFrameWidget = dynamic_cast<KHTMLView *>(widget);
             NSView *view;
             if (childFrameWidget) {
-                NodeImpl *nullNode = 0;
-                view = childFrameWidget->part()->impl->nextKeyViewInFrame(nullNode, direction);
+                view = childFrameWidget->part()->impl->nextKeyViewInFrame(0, direction);
             } else {
                 view = widget->getView();
             }
@@ -567,7 +566,7 @@ NSView *KWQKHTMLPartImpl::nextKeyViewInFrame(NodeImpl *node, KWQSelectionDirecti
     }
 }
 
-NSView *KWQKHTMLPartImpl::nextKeyView(NodeImpl *node, KWQSelectionDirection direction)
+NSView *KWQKHTMLPartImpl::nextKeyViewInFrameHierarchy(NodeImpl *node, KWQSelectionDirection direction)
 {
     NSView *next = nextKeyViewInFrame(node, direction);
     if (next) {
@@ -585,40 +584,30 @@ NSView *KWQKHTMLPartImpl::nextKeyView(NodeImpl *node, KWQSelectionDirection dire
     return nil;
 }
 
-NSView *KWQKHTMLPartImpl::nextKeyView(QWidget *startingWidget, KWQSelectionDirection direction)
+NSView *KWQKHTMLPartImpl::nextKeyView(NodeImpl *node, KWQSelectionDirection direction)
 {
-    // The only time the starting widget should be 0 is when we are deallocating a view.
-    // In that case, we return nil to prevent AppKit from going astray trying to remove us from a key view loop.
-    if (!startingWidget) {
-        return nil;
-    }
-    
-    // Use the event filter object to figure out which RenderWidget owns this QWidget and get to the DOM.
-    // Then get the next key view in the order determined by the DOM.
-    NodeImpl *node = static_cast<const RenderWidget *>(startingWidget->eventFilterObject())->element();
-    KHTMLPart *part = node->getDocument()->view()->part();
-    NSView *next = part->impl->nextKeyView(node, direction);
+    NSView *next = nextKeyViewInFrameHierarchy(node, direction);
     if (next) {
         return next;
     }
 
-    // If we are the last key view, then go up to the top level part.
-    KHTMLPart *parentPart;
-    while ((parentPart = part->parentPart())) {
-        part = parentPart;
-    }
-    
-#if 0
     // Look at views from the top level part up, looking for a next key view that we can use.
-    for (NSView *view = part->widget()->getView(); view; view = [view superview]) {
-        next = direction == KWQSelectingNext ? [view nextKeyView] : [view previousKeyView];
-        if (next) {
-            return next;
-        }
+    next = direction == KWQSelectingNext
+        ? [_bridge nextKeyViewOutsideWebViews]
+        : [_bridge previousKeyViewOutsideWebViews];
+    if (next) {
+        return next;
     }
-#endif
     
     // If all else fails, make a loop by starting from 0.
-    NodeImpl *nullNode = 0;
-    return part->impl->nextKeyView(nullNode, direction);
+    printf("got all the way down to nextKeyViewInFrameHierarchy\n");
+    return nextKeyViewInFrameHierarchy(0, direction);
+}
+
+NSView *KWQKHTMLPartImpl::nextKeyViewForWidget(QWidget *startingWidget, KWQSelectionDirection direction)
+{
+    // Use the event filter object to figure out which RenderWidget owns this QWidget and get to the DOM.
+    // Then get the next key view in the order determined by the DOM.
+    NodeImpl *node = static_cast<const RenderWidget *>(startingWidget->eventFilterObject())->element();
+    return node->getDocument()->view()->part()->impl->nextKeyView(node, direction);
 }

@@ -100,7 +100,7 @@ QTextDecoder *QTextCodec::makeDecoder() const
 
 QCString QTextCodec::fromUnicode(const QString &qcs) const
 {
-    CFStringRef cfs = qcs.getCFMutableString();
+    CFStringRef cfs = qcs.getCFString();
     CFRange range = CFRangeMake(0, CFStringGetLength(cfs));
     CFIndex bufferLength;
     CFStringGetBytes(cfs, range, encoding, '?', false, NULL, 0x7FFFFFFF, &bufferLength);

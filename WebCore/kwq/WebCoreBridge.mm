@@ -445,19 +445,27 @@ using khtml::RenderPart;
 
 - (CFStringEncoding)textEncoding
 {
-    return KWQCFStringEncodingFromIANACharsetName(part->encoding().getCFMutableString());
+    return KWQCFStringEncodingFromIANACharsetName(part->encoding().getCFString());
 }
 
 - (NSView *)nextKeyView
 {
-    NodeImpl *nullNode = 0;
-    return part->impl->nextKeyView(nullNode, KWQSelectingNext);
+    return part->impl->nextKeyView(0, KWQSelectingNext);
 }
 
 - (NSView *)previousKeyView
 {
-    NodeImpl *nullNode = 0;
-    return part->impl->nextKeyView(nullNode, KWQSelectingPrevious);
+    return part->impl->nextKeyView(0, KWQSelectingPrevious);
+}
+
+- (NSView *)nextKeyViewInsideWebViews
+{
+    return part->impl->nextKeyViewInFrameHierarchy(0, KWQSelectingNext);
+}
+
+- (NSView *)previousKeyViewInsideWebViews
+{
+    return part->impl->nextKeyViewInFrameHierarchy(0, KWQSelectingPrevious);
 }
 
 @end

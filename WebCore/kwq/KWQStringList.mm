@@ -30,7 +30,7 @@
 // No need to CFRelease return value
 static CFStringRef GetCFString(const QString &s)
 {
-    CFStringRef cfs = s.getCFMutableString();
+    CFStringRef cfs = s.getCFString();
     if (cfs == NULL) {
         cfs = CFSTR("");
     }
