@@ -1,3 +1,11 @@
+2003-10-03  Darin Adler  <darin@apple.com>
+
+        - updated layout tests for recent WebTextRenderer changes
+
+        * layout-tests/apple-only/base/www.cnn.com/index-expected.txt:
+        * layout-tests/apple-only/base/www.sun.com/index-expected.txt:
+        * layout-tests/css1/font_properties/font_weight-expected.txt:
+
 2003-10-03  Chris Blumenberg  <cblu@apple.com>
 
         Removed eastCursor.tiff because it was added by mistake.
