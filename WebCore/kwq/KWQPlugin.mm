@@ -27,15 +27,24 @@
 #include <KWQView.h>
 #include <kwqdebug.h>
 
-KWQPlugin::KWQPlugin(QWidget *parent, WKPlugin *plugin, const QString &url, const QString &serviceType,
-                    const QStringList &args)
+KWQPlugin::KWQPlugin(QWidget *parent, WKPlugin *plugin, const QString &url, const QString &serviceType, const QStringList &args)
 {
-    setView ([[[WKPluginView alloc] initWithFrame: NSMakeRect (0,0,0,0) widget: this plugin: plugin url:QSTRING_TO_NSSTRING(url) mime:QSTRING_TO_NSSTRING(serviceType) ] autorelease]);
-}
-
-void * KWQPlugin::getPort()
-{
-    return [(WKPluginView *)getView() qdPort];
+    NSMutableDictionary *arguments;
+    NSString *arg;
+    NSRange r1, r2, r3;
+    uint i;
+    
+    arguments = [NSMutableDictionary dictionaryWithCapacity:10];
+    for(i=0; i<args.count(); i++){
+    arg = QSTRING_TO_NSSTRING(args[i]);
+        r1 = [arg rangeOfString:@"="]; // parse out attributes and values
+        r2 = [arg rangeOfString:@"\""];
+        r3.location = r2.location + 1;
+        r3.length = [arg length] - r2.location - 2; // don't include quotes
+        [arguments setObject:[arg substringWithRange:r3] forKey:[arg substringToIndex:r1.location]];
+    }
+    
+    setView([[[WKPluginView alloc] initWithFrame: NSMakeRect (0,0,0,0) widget: this plugin: plugin url:QSTRING_TO_NSSTRING(url) mime:QSTRING_TO_NSSTRING(serviceType) arguments:arguments] autorelease]);
 }
 
 KWQPlugin::~KWQPlugin()

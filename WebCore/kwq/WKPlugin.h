@@ -46,6 +46,7 @@
 - (NPP_NewStreamProcPtr)NPP_NewStream;
 - (NPP_WriteReadyProcPtr)NPP_WriteReady;
 - (NPP_WriteProcPtr)NPP_Write;
+- (NPP_StreamAsFileProcPtr)NPP_StreamAsFile;
 - (NPP_DestroyStreamProcPtr)NPP_DestroyStream;
 - (NPP_HandleEventProcPtr)NPP_HandleEvent;
 - (NSDictionary *)mimeTypes;

@@ -164,6 +164,9 @@
     return NPP_NewStream;
 }
 
+- (NPP_StreamAsFileProcPtr)NPP_StreamAsFile{
+    return NPP_StreamAsFile;
+}
 - (NPP_DestroyStreamProcPtr)NPP_DestroyStream{
     return NPP_DestroyStream;
 }
@@ -237,8 +240,6 @@ NSMutableDictionary *getMimeTypesForResourceFile(SInt16 resRef){
     }
     return mimeDict;
 }
-
-
 
 
 

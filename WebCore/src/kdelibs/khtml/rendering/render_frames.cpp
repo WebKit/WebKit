@@ -804,10 +804,11 @@ void RenderPartObject::updateWidget()
      }
 
      KHTMLPart *part = static_cast<KHTMLView *>(m_view)->part();
-
+     #ifdef _KWQ_
+     #else
      o->param.append( QString::fromLatin1("__KHTML__PLUGINEMBED=\"YES\"") );
      o->param.append( QString::fromLatin1("__KHTML__PLUGINBASEURL=\"%1\"").arg( part->url().url() ) );
-
+     #endif
      part->requestObject( this, url, serviceType, o->param );
 
   } else {
