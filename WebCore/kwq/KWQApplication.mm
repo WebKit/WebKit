@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,10 +22,9 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-#include <kwqdebug.h>
 
 #include <qapplication.h>
-#include <qpalette.h>
+#include <kwqdebug.h>
 
 QPalette QApplication::palette(const QWidget *p)
 {
@@ -33,7 +32,7 @@ QPalette QApplication::palette(const QWidget *p)
     return pal;
 }
 
-// Do we need to worry about multiple screens?
+// FIXME: Do we need to handle multiple screens?
 
 int QDesktopWidget::width() const
 {
@@ -58,20 +57,14 @@ QRect QDesktopWidget::screenGeometry(int screenNumber)
 
 QDesktopWidget *QApplication::desktop()
 {
-    static QDesktopWidget *desktopWidget;
-    if (desktopWidget == 0) {
-        desktopWidget = new QDesktopWidget();
-    }
-    return desktopWidget;
+    static QDesktopWidget desktopWidget;
+    return &desktopWidget;
 }
-
 
 int QApplication::startDragDistance()
 {
-    _logNotYetImplemented();
      return 2;
 }
-
 
 QSize QApplication::globalStrut()
 {
@@ -79,23 +72,20 @@ QSize QApplication::globalStrut()
     return QSize(0,0);
 }
 
-
 void QApplication::setOverrideCursor(const QCursor &c)
 {
     _logNotYetImplemented();
 }
-
 
 void QApplication::restoreOverrideCursor()
 {
     _logNotYetImplemented();
 }
 
-
 bool QApplication::sendEvent(QObject *o, QEvent *e)
 {
-    KWQDEBUG ("received %d\n", e->type());
-    return FALSE;
+    _logNotYetImplemented();
+    return false;
 }
 
 void QApplication::sendPostedEvents(QObject *receiver, int event_type)
@@ -103,108 +93,7 @@ void QApplication::sendPostedEvents(QObject *receiver, int event_type)
     _logNotYetImplemented();
 }
 
-
-QApplication::QApplication( int &argc, char **argv)
-{
-#ifdef TRANSITIONAL_CODE
-    _initialize();
-#endif    
-}
-
 QApplication *qApp = NULL;
-
-#ifdef TRANSITIONAL_CODE
-void QApplication::_initialize()
-{
-    NSDictionary *info;
-    NSString *principalClassName;
-    NSString *mainNibFile;
-
-    globalPool = [[NSAutoreleasePool allocWithZone:NULL] init];
-    info = [[NSBundle mainBundle] infoDictionary];
-    principalClassName = [info objectForKey:@"NSPrincipalClass"];
-    mainNibFile = [info objectForKey:@"NSMainNibFile"];
-
-    if (principalClassName) {
-        Class principalClass = NSClassFromString(principalClassName);
-	if (principalClass) {
-            application = [principalClass sharedApplication];
-	    if (![NSBundle loadNibNamed: mainNibFile owner: application]) {
-                KWQDEBUGLEVEL(KWQ_LOG_ERROR, "ERROR:  QApplication::_initialize() unable to load %s\n", DEBUG_OBJECT(mainNibFile));
-            }
-        }
-    }	
-    
-    //  Force linkage
-    [_KWQOwner class];
-
-    if (qApp == NULL) {
-	qApp = this;
-    }
-}
-#endif
-
-
-QApplication::~QApplication()
-{
-    [globalPool release];
-}
-
-
-void QApplication::setMainWidget(QWidget *w)
-{
-#ifdef TRANSITIONAL_CODE
-    NSRect b = [((_KWQOwner *)application)->containerView bounds];
-    
-    if (application == nil){
-        KWQDEBUGLEVEL(KWQ_LOG_ERROR, "ERROR: QApplication::setMainWidget() application not set.\n");
-        return;
-    }
-    if (w == 0){
-        KWQDEBUGLEVEL(KWQ_LOG_ERROR, "ERROR: QApplication::setMainWidget() widget not valid.\n");
-        return;
-    }
-    
-    mainWidget = w;
-    
-    NSScrollView *sv = [[NSScrollView alloc] initWithFrame: NSMakeRect (0,0,b.size.width,b.size.height)];
-    [sv setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
-    [sv setHasVerticalScroller: YES];
-    [sv setHasHorizontalScroller: YES];
-    [w->getView() setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
-    [sv setDocumentView: w->getView()];
-    [((_KWQOwner *)application)->window setOpaque: FALSE];
-    //[((_KWQOwner *)application)->window setAlphaValue: (float)0.8];
-    
-     
-    [((_KWQOwner *)application)->containerView addSubview: sv];
-#else
-    [NSException raise:@"Not implemented" format:@"QApplication::setMainWidget(QWidget *) is not implemented"];
-#endif
-}
-
-
-int QApplication::exec()
-{
-#ifdef TRANSITIONAL_CODE
-    if (application == nil){
-        KWQDEBUGLEVEL(KWQ_LOG_ERROR, "ERROR: QApplication::exec() application not set.\n");
-        return 0;
-    }
-    [application run];
-    return 1;
-#else
-    [NSException raise:@"Not implemented" format:@"QApplication::exec() is not implemented"];
-    return 0;
-#endif
-}
-
-
-QWidget *QApplication::focusWidget() const
-{
-    _logNeverImplemented();
-    return NULL;
-}
 
 QStyle &QApplication::style() const
 {

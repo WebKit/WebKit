@@ -46,14 +46,12 @@ ATTRSFILES = \
 $(TAGFILES): tag-stamp
 
 tag-stamp: maketags htmltags.in
-	perl $<
-	touch $@
+	perl $< && touch $@
 
 $(ATTRSFILES): attr-stamp
 
 attr-stamp: makeattrs htmlattrs.in
-	perl $<
-	touch $@
+	perl $< && touch $@
 
 BUILT_SOURCES = $(TAGFILES) $(ATTRSFILES) tag-stamp attr-stamp
 

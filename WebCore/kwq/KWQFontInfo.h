@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,39 +26,15 @@
 #ifndef QFONTINFO_H_
 #define QFONTINFO_H_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
-#include "qfont.h"
-
-// class QFontInfo =============================================================
+#include <qfont.h>
 
 class QFontInfo {
 public:
-
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-    // static member functions -------------------------------------------------
-
-    // constructors, copy constructors, and destructors ------------------------
-
     QFontInfo(const QFont &);
-    QFontInfo(const QFontInfo &);
-    ~QFontInfo();
-
-    // member functions --------------------------------------------------------
-
     bool fixedPitch() const;
 
-    // operators ---------------------------------------------------------------
-
-    QFontInfo &operator=(const QFontInfo &);
-
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
-
-}; // class QFontInfo ==========================================================
+private:
+    QFont font;
+};
 
 #endif

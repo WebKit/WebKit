@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,39 +23,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <kwqdebug.h>
 #include <qfontinfo.h>
+#include <kwqdebug.h>
 
-QFontInfo::QFontInfo(const QFont &)
+QFontInfo::QFontInfo(const QFont &f)
+    : font(f)
 {
-    _logNotYetImplemented();
 }
-
-
-QFontInfo::QFontInfo(const QFontInfo &)
-{
-    _logNotYetImplemented();
-}
-
-
-QFontInfo::~QFontInfo()
-{
-    _logNotYetImplemented();
-}
-
 
 bool QFontInfo::fixedPitch() const
 {
     _logNotYetImplemented();
     return FALSE;
 }
-
-
-// operators ---------------------------------------------------------------
-
-QFontInfo &QFontInfo::operator=(const QFontInfo &)
-{
-    _logNotYetImplemented();
-    return *this;
-}
-

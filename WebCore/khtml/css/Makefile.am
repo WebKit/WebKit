@@ -46,14 +46,12 @@ INCLUDES = \
 $(VALUEFILES): value-stamp
 
 value-stamp: makevalues cssvalues.in
-	sh $<
-	touch $@
+	sh $< && touch $@
 
 $(PROPFILES): prop-stamp
 
 prop-stamp: makeprop cssproperties.in
-	sh $<
-	touch $@
+	sh $< && touch $@
 
 BUILT_SOURCES = $(VALUEFILES) $(PROPFILES) value-stamp prop-stamp
 

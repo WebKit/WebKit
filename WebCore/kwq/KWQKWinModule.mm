@@ -23,39 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <kwqdebug.h>
 #include <kwinmodule.h>
+#include <kwqdebug.h>
 
-//FIX ME:
-static QRect *tempQRect = NULL;
-
-KWinModule::KWinModule(QObject* parent=0)
+QRect KWinModule::workArea() const
 {
     _logNotYetImplemented();
+    return QRect();
 }
-
-
-KWinModule::~KWinModule()
-{
-    _logNotYetImplemented();
-}
-
-
-QRect KWinModule::workArea(int desktop=-1) const
-{
-    _logNotYetImplemented();
-
-    if (tempQRect == NULL) {
-        tempQRect = new QRect(0,0,0,0);
-    }
-
-    return *tempQRect;
-}
-
-
-void KWinModule::doNotManage(const QString &)
-{
-    _logNotYetImplemented();
-}
-
-

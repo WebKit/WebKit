@@ -25,11 +25,11 @@
 
 #import <Cocoa/Cocoa.h>
 
-@protocol WebCoreImageRenderer
+@protocol WebCoreImageRenderer <NSObject, NSCopying>
 
 - (NSSize)size;
 - (void)resize: (NSSize)s;
-- (void)beginAnimationInView: (NSView *)view inRect: (NSRect)ir fromRect: (NSRect)fr;
+- (void)beginAnimationInView:(NSView *)view inRect:(NSRect)ir fromRect:(NSRect)fr;
 - (void)stopAnimation;
 - (void)drawInRect:(NSRect)dstRect fromRect:(NSRect)srcRect operation:(NSCompositingOperation)op fraction:(float)delta;
 

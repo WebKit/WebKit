@@ -26,47 +26,14 @@
 #ifndef QCHECKBOX_H_
 #define QCHECKBOX_H_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
 #include <qbutton.h>
-
-// class QCheckBox =============================================================
 
 class QCheckBox : public QButton {
 public:
-
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-    // static member functions -------------------------------------------------
-
-    // constructors, copy constructors, and destructors ------------------------
     QCheckBox(QWidget *);
-
-// add no-op destructor
-#ifdef _KWQ_PEDANTIC_
-    ~QCheckBox() {}
-#endif
-
-    // member functions --------------------------------------------------------
 
     void setChecked(bool);
     bool isChecked();
-
-    // operators ---------------------------------------------------------------
-
-// protected -------------------------------------------------------------------
-
-// private ---------------------------------------------------------------------
-
-private:
-    // no copying or assignment
-    // note that these are "standard" (no pendantic stuff needed)
-    QCheckBox(const QCheckBox &);
-    QCheckBox &operator=(const QCheckBox &);
-     
-}; // class QCheckBox ==========================================================
+};
 
 #endif

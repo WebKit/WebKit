@@ -26,35 +26,21 @@
 #ifndef QCOMBOBOX_H_
 #define QCOMBOBOX_H_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
 #include <KWQListBox.h>
-#include "qwidget.h"
+#include <qwidget.h>
 
 #ifdef __OBJC__
-#import <Cocoa/Cocoa.h>
+@class NSMutableArray;
+#else
+class NSMutableArray;
 #endif
-
-// class QComboBox =============================================================
 
 class QComboBox : public QWidget {
 public:
-
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-    // static member functions -------------------------------------------------
-
-    // constructors, copy constructors, and destructors ------------------------
-
     QComboBox(QWidget *parent=0, const char *name=0);
     QComboBox(bool rw, QWidget *parent=0, const char *name=0);
     ~QComboBox();
      
-    // member functions --------------------------------------------------------
-
     int count() const;
     QListBox *listBox() const;
     void popup();
@@ -63,34 +49,14 @@ public:
     void clear();
     int currentItem() const;
 
-#ifdef _KWQ_
     int indexOfCurrentItem();
-#endif
     virtual void setCurrentItem(int);
     QSize sizeHint() const;
 
-#if (defined(__APPLE__) && defined(__OBJC__) && defined(__cplusplus))
     NSMutableArray *items;
-#else
-    void *items;
-#endif
-    // operators ---------------------------------------------------------------
-
-// protected -------------------------------------------------------------------
-
-// private ---------------------------------------------------------------------
 
 private:
-    // no copying or assignment
-    // note that these are "standard" (no pendantic stuff needed)
-    QComboBox(const QComboBox &);
-    QComboBox &operator=(const QComboBox &);
-
-#ifdef _KWQ_
     void init(bool isEditable);
-
-#endif
-
-}; // class QComboBox ==========================================================
+};
 
 #endif

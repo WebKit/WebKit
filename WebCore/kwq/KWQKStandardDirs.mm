@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,30 +23,24 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <kwqdebug.h>
 #include <kstandarddirs.h>
 
 QString locate(const char *type, const QString& filename, const KInstance* instance)
 {
-    NSBundle *wkBundle = [NSBundle bundleWithIdentifier:@"com.apple.webkit"];
-    NSString *subpath = QSTRING_TO_NSSTRING(filename);
-    NSString *file = [subpath lastPathComponent];
+    NSString *file = [filename.getNSString() lastPathComponent];
     
-    if([file isEqualToString:@"html4.css"]){
+    if ([file isEqualToString:@"html4.css"]) {
+        // FIXME: This logic needs to be in WebKit, not here.
+        NSBundle *wkBundle = [NSBundle bundleWithIdentifier:@"com.apple.webkit"];
         return NSSTRING_TO_QSTRING([wkBundle pathForResource:@"html4" ofType:@"css"]);
-    }else{
-        return  "/symroots/appdata/" + filename;
+    } else {
+        // FIXME: This does no good.
+        return "/symroots/appdata/" + filename;
     }
 }
 
 QString locateLocal(const char *type, const QString &filename, const KInstance *instance)
 {
+    // FIXME: This does no good.
     return "/symroots/appdata/"+filename;
-}
-
-QString KStandardDirs::saveLocation(const char *, const QString &suffix = QString::null, 
-    bool create = true) const
-{
-    _logNotYetImplemented();
-    return QString();
 }

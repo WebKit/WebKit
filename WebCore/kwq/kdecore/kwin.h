@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,67 +26,19 @@
 #ifndef KWIN_H_
 #define KWIN_H_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
 #include <qobject.h>
 #include <qrect.h>
 #include <qstring.h>
 
-// class KWin ==================================================================
-
 class KWin {
 public:
-
-    // structs -----------------------------------------------------------------
-
     struct Info {
         QRect geometry;
         QString name;
         QString visibleName;
     };
 
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-
-    // static member functions -------------------------------------------------
-
     static Info info(int win);
-
-    // constructors, copy constructors, and destructors ------------------------
-
-// add no-arg constructor
-#ifdef _KWQ_PEDANTIC_
-    KWin() {}
-#endif
-
-// add no-op destructor
-#ifdef _KWQ_PEDANTIC_
-    ~KWin() {}
-#endif
-
-    // member functions --------------------------------------------------------
-    // operators ---------------------------------------------------------------
-
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
-
-private:
-
-// add copy constructor
-// this private declaration prevents copying
-#ifdef _KWQ_PEDANTIC_
-    KWin(const KWin &);
-#endif
-
-// add assignment operator 
-// this private declaration prevents assignment
-#ifdef _KWQ_PEDANTIC_
-    KWin &operator=(const KWin &);
-#endif
-
-}; // class KWin ===============================================================
+};
 
 #endif

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,32 +26,15 @@
 #ifndef QAPPLICATION_H_
 #define QAPPLICATION_H_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
 #include <qobject.h>
 #include <qwidget.h>
 #include <qpalette.h>
 #include <qsize.h>
 
-#if (defined(__APPLE__) && defined(__OBJC__) && defined(__cplusplus))
-#import <Cocoa/Cocoa.h>
-#endif
-
 class QDesktopWidget;
-
-// class QApplication ==========================================================
 
 class QApplication : public QObject {
 public:
-
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-    
-    // static member functions -------------------------------------------------
-
     static QPalette palette(const QWidget *p=0);
     static QDesktopWidget *desktop();
     static int startDragDistance();
@@ -61,49 +44,8 @@ public:
     static bool sendEvent(QObject *, QEvent *);
     static void sendPostedEvents(QObject *receiver, int event_type);
 
-    // constructors, copy constructors, and destructors ------------------------
-
-// add no-arg constructor
-#ifdef _KWQ_PEDANTIC_
-    QApplication() {}
-#endif
-
-    QApplication( int &argc, char **argv);
-    virtual ~QApplication();
-
-    // These two functions (exec and setMainWidget) are only used by our
-    // test apps.
-    int		     exec();
-    virtual void     setMainWidget( QWidget * );
-
-    // member functions --------------------------------------------------------
-
-    QWidget *focusWidget() const;
     QStyle &style() const;
-
-    // operators ---------------------------------------------------------------
-
-// protected -------------------------------------------------------------------
-
-// private ---------------------------------------------------------------------
-
-private:
-    // no copying or assignment
-    // note that these are "standard" (no pendantic stuff needed)
-    QApplication(const QApplication &);
-    QApplication &operator=(const QApplication &);
-
-    void _initialize();
-    
-#if (defined(__APPLE__) && defined(__OBJC__) && defined(__cplusplus))
-    NSApplication *application;
-    NSAutoreleasePool *globalPool;
-#else
-    void *application;
-    void *globalPool;
-#endif
-
-}; // class QApplication =======================================================
+};
 
 extern QApplication *qApp;
 
@@ -114,6 +56,5 @@ public:
     int width() const;
     int height() const;
 };
-
 
 #endif

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,11 +23,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef QLAYOUT_H_
-#define QLAYOUT_H_
+#include <qwidget.h>
+#include <qmap.h>
+#include <qstring.h>
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
-#endif
+class KJavaAppletWidget : public QWidget
+{
+public:
+    KJavaAppletWidget(const QMap<QString, QString> &args);
+    void showApplet() { }
+};

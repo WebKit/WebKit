@@ -26,44 +26,17 @@
 #ifndef QBUTTON_H_
 #define QBUTTON_H_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
-#include "qwidget.h"
-#include "qstring.h"
+#include <qwidget.h>
+#include <qstring.h>
     
-// class QButton ===============================================================
-
 class QButton : public QWidget {
 public:
-
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-    // static member functions -------------------------------------------------
-    
-    // constructors, copy constructors, and destructors ------------------------
-
-    QButton(QWidget *parent=0);
+    QButton(QWidget *parent = 0);
     ~QButton();
-
-    // member functions --------------------------------------------------------
 
     virtual void setText(const QString &);
     QString text() const;
-    
-    // operators ---------------------------------------------------------------
 
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
-
-private:
-    // no copying or assignment
-    // note that these are "standard" (no pendantic stuff needed)
-    QButton(const QButton &);
-    QButton &operator=(const QButton &);
-
-}; // class QButton ============================================================
+};
 
 #endif

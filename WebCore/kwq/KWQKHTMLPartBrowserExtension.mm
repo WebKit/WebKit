@@ -1,4 +1,3 @@
-// -*- c-basic-offset: 2 -*-
 /*
  * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
@@ -40,7 +39,6 @@ void KHTMLPartBrowserExtension::openURLRequest(const KURL &url,
     m_part->openURLInFrame(url, args);
 }
 
-
 void KHTMLPartBrowserExtension::createNewWindow(const KURL &url, 
 						const KParts::URLArgs &urlArgs) 
 {
@@ -65,4 +63,3 @@ void KHTMLPartBrowserExtension::createNewWindow(const KURL &url,
 	*part = [[[newController mainFrame] provisionalDataSource] _part];
     }
 }
-

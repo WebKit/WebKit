@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,42 +26,8 @@
 #ifndef QPAINTDEVICE_H_
 #define QPAINTDEVICE_H_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
+class QPaintDeviceMetrics;
 
-// class QPaintDevice ==========================================================
-
-class QPaintDevice {
-friend class QPaintDeviceMetrics;
-public:
-
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-    // static member functions -------------------------------------------------
-    
-    // constructors, copy constructors, and destructors ------------------------
-
-// add no-arg constructor
-#ifdef _KWQ_PEDANTIC_
-    QPaintDevice() {}    
-#endif
-    
-    virtual ~QPaintDevice();
-    
-    // member functions --------------------------------------------------------
-    // operators ---------------------------------------------------------------
-
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
-
-private:
-    // no copying or assignment
-    // note that these are "standard" (no pendantic stuff needed)
-    QPaintDevice(const QPaintDevice &);
-    QPaintDevice &operator=(const QPaintDevice &);
-
-}; // class QPaintDevice =======================================================
+class QPaintDevice { };
 
 #endif

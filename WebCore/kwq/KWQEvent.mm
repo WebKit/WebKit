@@ -44,12 +44,12 @@ QEvent::Type QEvent::type() const
 // class QMouseEvent ===========================================================
 
 QMouseEvent::QMouseEvent( Type t, const QPoint &pos, int b, int s )
-    : QEvent(t), _position(pos), _button(b), _state((ushort)s)
+    : QEvent(t), _position(pos), _button((ButtonState)b), _state((ButtonState)s)
 {
 }
 
 QMouseEvent::QMouseEvent(Type t, const QPoint &pos, const QPoint &, int b, int s)
-    : QEvent(t), _position(pos), _button(b), _state((ushort)s)
+    : QEvent(t), _position(pos), _button((ButtonState)b), _state((ButtonState)s)
 {
 }
 
@@ -87,27 +87,28 @@ const QPoint &QMouseEvent::pos() const
 
 Qt::ButtonState QMouseEvent::button()
 {
-    return Qt::ButtonState(_button);
+    return _button;
 }
 
 
 Qt::ButtonState QMouseEvent::state()
 {
-    return Qt::ButtonState(_state);
+    return _state;
 }
 
 
 Qt::ButtonState QMouseEvent::stateAfter()
 {
-    return Qt::ButtonState(_state);
+    return _state;
 }
 
 
 // class QTimerEvent ===========================================================
 
 QTimerEvent::QTimerEvent(int t)
+    : QEvent(Timer)
 {
-	_timerId = t;
+    _timerId = t;
 }
 
 
@@ -116,15 +117,10 @@ QTimerEvent::~QTimerEvent()
 }
 
 
-int QTimerEvent::timerId() const
-{
-    return _timerId;
-}
-
-
 // class QKeyEvent =============================================================
 
-QKeyEvent::QKeyEvent(Type, int, int, int, const QString &, bool, ushort)
+QKeyEvent::QKeyEvent(Type t, int, int, int, const QString &, bool, ushort)
+    : QEvent(t)
 {
     _logNotYetImplemented();
 }
@@ -190,7 +186,8 @@ bool QKeyEvent::isAccepted(void) const
 
 // class QFocusEvent ===========================================================
 
-QFocusEvent::QFocusEvent(Type)
+QFocusEvent::QFocusEvent(Type t)
+    : QEvent(t)
 {
     _logNotYetImplemented();
 }
@@ -203,7 +200,8 @@ QFocusEvent::Reason QFocusEvent::reason()
 
 // class QHideEvent ============================================================
 
-QHideEvent::QHideEvent(Type)
+QHideEvent::QHideEvent(Type t)
+    : QEvent(t)
 {
     _logNotYetImplemented();
 }
@@ -211,7 +209,8 @@ QHideEvent::QHideEvent(Type)
 
 // class QResizeEvent ==========================================================
 
-QResizeEvent::QResizeEvent(Type)
+QResizeEvent::QResizeEvent(Type t)
+    : QEvent(t)
 {
     _logNotYetImplemented();
 }
@@ -219,7 +218,8 @@ QResizeEvent::QResizeEvent(Type)
 
 // class QShowEvent ============================================================
 
-QShowEvent::QShowEvent(Type)
+QShowEvent::QShowEvent(Type t)
+    : QEvent(t)
 {
     _logNotYetImplemented();
 }
@@ -227,7 +227,8 @@ QShowEvent::QShowEvent(Type)
 
 // class QWheelEvent ===========================================================
 
-QWheelEvent::QWheelEvent(Type)
+QWheelEvent::QWheelEvent(Type t)
+    : QEvent(t)
 {
     _logNotYetImplemented();
 }
@@ -255,6 +256,7 @@ QCustomEvent::QCustomEvent( int type )
 // class QContextMenuEvent ======================================================
 
 QContextMenuEvent::QContextMenuEvent(int r, const QPoint &p, const QPoint &gp, Qt::ButtonState s) :
+    QEvent(MouseButtonPress),
     m_reason(r),
     m_pos(p),
     m_globalPos(gp),

@@ -1,3 +1,109 @@
+2002-05-31  Darin Adler  <darin@apple.com>
+
+	Remove some unused stuff; total of 1000s of lines.
+
+	* Makefile.am: Removed some strange uses of "./" and
+	improved stamp-related rules.
+
+	* WebCore-tests.exp: Removed QDir functions.
+
+	* khtml/Makefile.am: Removed java subdirectory.
+	* khtml/java/*: Removed.
+	* khtml/rendering/render_applet.cpp: Rearrange APPLE_CHANGES so
+	that we use our own KJavaAppletWidget rather than a QWidget.
+	* kwq/khtml/java/kjavaappletcontext.h: Added.
+	* kwq/khtml/java/kjavaappletwidget.h: Added.
+	* kwq/KWQKJavaAppletWidget.mm: Added. Replaces WCJavaAppletWidget.mm.
+	* kwq/KWQsignals.mm: Removed java-related signals.
+
+	* khtml/css/Makefile.am:
+	* khtml/misc/Makefile.am:
+	Improve stamp-related rules.
+
+	* khtml/misc/loader.cpp: Move around and add ifdefs so we don't
+	need as much KWQ code. Maybe revisit this later -- related to the
+	KDE implementation of animated and progressive loading images,
+	which we probably don't need, but it may integrate slightly better than
+	doing our hacks inside QPixmap.
+
+	* kwq/KWQApplication.mm:
+	* kwq/KWQFontInfo.mm:
+	* kwq/KWQInputDialog.mm:
+	* kwq/KWQKFileDialog.mm:
+	* kwq/KWQKHTMLPartBrowserExtension.mm:
+	* kwq/KWQKWin.mm:
+	* kwq/KWQKWinModule.mm:
+	* kwq/KWQKstddirs.mm:
+	* kwq/KWQPixmap.mm:
+	Simplified, removed unused code, minor tweaks.
+
+	* kwq/Makefile.am: Removed all the old files, added some new ones.
+	* kwq/KWQBitmap.mm: Removed.
+	* kwq/KWQBrush.mm: Removed.
+	* kwq/KWQDCOPClient.mm: Removed.
+	* kwq/KWQDataStream.h: Removed.
+	* kwq/KWQDir.mm: Removed.
+	* kwq/KWQFontDatabase.mm: Removed.
+	* kwq/KWQImage.mm: Removed.
+	* kwq/KWQKInstance.mm: Removed.
+	* kwq/KWQPaintDevice.mm: Removed.
+	* kwq/KWQPart.mm: Removed.
+	* kwq/KWQasyncimageio.mm: Removed.
+	* kwq/KWQasyncio.mm: Removed.
+	* kwq/KWQbrowserextension.mm: Removed.
+	* kwq/WCJavaAppletWidget.h: Removed.
+	* kwq/WCJavaAppletWidget.mm: Removed.
+	* kwq/qt/qdatastream.h: Removed.
+	* kwq/qt/qdir.h: Removed.
+	* kwq/qt/qlayout.h: Removed.
+
+	* kwq/KWQCursor.mm:
+	(QCursor::handle): Return the cursor object as an integer rather than
+	just returning 0; makes the code that uses handle() more likely to work
+	although it introduces a 64-bit cleanliness problem.
+
+	* kwq/KWQEvent.mm: Initialize event type in QEvent subclasses.
+
+	* kwq/WebCoreImageRenderer.h: Added NSObject and NSCopying protocols to
+	the WebCoreImageRenderer protocol.
+
+	* kwq/kwqdebug.h: Use displayableString in DEBUG_OBJECT for better logging.
+
+	* kwq/dcop/dcopclient.h:
+	* kwq/kdecore/kstddirs.h:
+	* kwq/kdecore/kwin.h:
+	* kwq/kdecore/kwinmodule.h:
+	* kwq/kfile/kfiledialog.h:
+	* kwq/kparts/browserextension.h:
+	* kwq/kparts/event.h:
+	* kwq/qt/qapplication.h:
+	* kwq/qt/qasyncimageio.h:
+	* kwq/qt/qasyncio.h:
+	* kwq/qt/qbitmap.h:
+	* kwq/qt/qbrush.h:
+	* kwq/qt/qbutton.h:
+	* kwq/qt/qcheckbox.h:
+	* kwq/qt/qcollection.h:
+	* kwq/qt/qcolor.h:
+	* kwq/qt/qcombobox.h:
+	* kwq/qt/qcursor.h:
+	* kwq/qt/qdrawutil.h:
+	* kwq/qt/qevent.h:
+	* kwq/qt/qfont.h:
+	* kwq/qt/qfontdatabase.h:
+	* kwq/qt/qfontinfo.h:
+	* kwq/qt/qimage.h:
+	* kwq/qt/qinputdialog.h:
+	* kwq/qt/qintcache.h:
+	* kwq/qt/qintdict.h:
+	* kwq/qt/qpaintdevice.h:
+	* kwq/qt/qpixmap.h:
+	* kwq/qt/qstring.h:
+	Removed lots of unused stuff, including old conditionals and the like.
+
+	* khtml/khtml_part.cpp:
+	(KHTMLPart::khtmlMouseMoveEvent): Add missing parenthesis.
+
 2002-05-30  Maciej Stachowiak  <mjs@apple.com>
 
 	WebCore part of fixes for:

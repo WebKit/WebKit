@@ -4003,6 +4003,7 @@ void KHTMLPart::khtmlMouseMoveEvent( khtml::MouseMoveEvent *event )
           d->m_view->scrollBy( -diff.x(), -diff.y() );
           d->m_dragLastPos = _mouse->globalPos();
         }
+      }   
 #endif
     }
   }

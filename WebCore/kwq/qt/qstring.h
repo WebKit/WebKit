@@ -44,7 +44,7 @@ class QRegExp;
 #ifdef __OBJC__
 @class NSString;
 #else
-typedef void NSString;
+class NSString;
 #endif
 
 // QChar class =================================================================

@@ -7,8 +7,6 @@ libkwq_o_AR = $(OBJCXXLD) $(AM_OBJCXXFLAGS) $(OBJCXXFLAGS) $(AM_LDFLAGS) $(LDFLA
 libkwq_o_SOURCES = \
 	KWQApplication.mm \
 	KWQArrayImpl.mm \
-	KWQBitmap.mm \
-	KWQBrush.mm \
 	KWQBuffer.mm \
 	KWQButton.mm \
 	KWQCString.mm \
@@ -21,15 +19,12 @@ libkwq_o_SOURCES = \
 	KWQComboBox.mm \
 	KWQCompletion.mm \
 	KWQCursor.mm \
-	KWQDCOPClient.mm \
 	KWQDateTime.mm \
 	KWQDictImpl.mm \
-	KWQDir.mm \
 	KWQDrawUtil.mm \
 	KWQEvent.mm \
 	KWQFile.mm \
 	KWQFont.mm \
-	KWQFontDatabase.mm \
 	KWQFontInfo.mm \
 	KWQFontMetrics.mm \
 	KWQFrame.mm \
@@ -41,7 +36,6 @@ libkwq_o_SOURCES = \
 	KWQRect.mm \
 	KWQSize.mm \
 	KWQHBox.mm \
-	KWQImage.mm \
 	KWQInputDialog.mm \
 	KWQKApplication.mm \
 	KWQKCharsets.mm \
@@ -63,7 +57,7 @@ libkwq_o_SOURCES = \
 	KWQKHistoryProvider.mm \
 	KWQKIconLoader.mm \
 	KWQKImageIO.mm \
-	KWQKInstance.mm \
+	KWQKJavaAppletWidget.mm \
 	KWQKJob.mm \
 	KWQKLineEdit.mm \
 	KWQKListBox.mm \
@@ -92,11 +86,9 @@ libkwq_o_SOURCES = \
 	KWQMovie.mm \
 	KWQNSTextField.mm \
 	KWQObject.mm \
-	KWQPaintDevice.mm \
 	KWQPaintDeviceMetrics.mm \
 	KWQPainter.mm \
 	KWQPalette.mm \
-	KWQPart.mm \
 	KWQPen.mm \
 	KWQPixmap.mm \
 	KWQPointArray.mm \
@@ -119,9 +111,6 @@ libkwq_o_SOURCES = \
 	KWQView.mm \
 	KWQWMatrix.mm \
 	KWQWidget.mm \
-	KWQasyncimageio.mm \
-	KWQasyncio.mm \
-	KWQbrowserextension.mm \
 	KWQbrowserinterface.mm \
 	KWQsignals.mm \
 	KWQtextcodec.mm \
@@ -129,7 +118,6 @@ libkwq_o_SOURCES = \
 	KWQxml.mm \
 	kwqdebug.mm \
 	WCPluginWidget.mm \
-	WCJavaAppletWidget.mm \
 	WebCoreImageRendererFactory.m \
 	WebCoreTextRendererFactory.m \
 	WebCoreViewFactory.m \

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,16 +23,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <kwqdebug.h>
-#include <qbitmap.h>
+#import <java/kjavaappletwidget.h>
+#import <WebCoreViewFactory.h>
 
-QBitmap::QBitmap()
+KJavaAppletWidget::KJavaAppletWidget(const QMap<QString, QString> &args)
 {
-    _logNotYetImplemented();
-}
-
-
-QBitmap::QBitmap(int,int)
-{
-    _logNotYetImplemented();
+    NSMutableDictionary *argsDictionary = [NSMutableDictionary dictionaryWithCapacity:args.count()];
+    for (QMap<QString, QString>::ConstIterator it = args.begin(); it != args.end(); ++it) {
+        [argsDictionary setObject:it.data().getNSString() forKey:it.key().getNSString()];
+    }
+    setView([[WebCoreViewFactory sharedFactory] viewForJavaAppletWithArguments:argsDictionary]);
 }

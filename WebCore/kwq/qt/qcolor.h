@@ -31,7 +31,7 @@
 #ifdef __OBJC__
 @class NSColor;
 #else
-typedef void NSColor;
+class NSColor;
 #endif
 
 typedef unsigned int QRgb;			// RGB triplet

@@ -26,52 +26,25 @@
 #ifndef QBRUSH_H_
 #define QBRUSH_H_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
-#include "qcolor.h"
-#include "qnamespace.h"
-
-class QBrushPrivate;
-
-// class QBrush ================================================================
+#include <qcolor.h>
+#include <qnamespace.h>
 
 class QBrush : public Qt {
-friend class QPainter;
 public: 
+    QBrush::QBrush(const QColor &c = black, BrushStyle style = SolidPattern)
+        : brushColor(c), brushStyle(style) { }
 
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-    // static member functions -------------------------------------------------
+    const QColor &color() const { return brushColor; }
+    void setColor(const QColor &c) { brushColor = c; }
+    BrushStyle style() const { return brushStyle; }
+    void setStyle(BrushStyle s) { brushStyle = s; }
     
-    // constructors, copy constructors, and destructors ------------------------
+    bool operator==(const QBrush &b) const { return brushColor == b.brushColor && brushStyle == b.brushStyle; }
+    bool operator!=(const QBrush &b) const { return !(*this == b); }
 
-    QBrush::QBrush(const QColor &c = Qt::black, BrushStyle style = SolidPattern);
-
-    // Defaults are fine
-    // QBrush(const QBrush &);
-    // QBrush &operator=(const QBrush &);
-    // ~QBrush();
- 
-    // member functions --------------------------------------------------------
-    
-    const QColor &color() const;
-    void setColor(const QColor &);
-    BrushStyle style() const;
-    void setStyle(BrushStyle);
-    
-    // operators ---------------------------------------------------------------
-    
-    bool operator==(const QBrush &) const;
-    bool operator!=(const QBrush &) const;
-
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
 private:
     QColor brushColor;
     BrushStyle brushStyle;
-}; // class QBrush =============================================================
+};
 
 #endif

@@ -38,43 +38,38 @@ QPixmap::QPixmap()
 
 QPixmap::QPixmap(const QSize &sz)
 {
-    imageRenderer = [(id)[[WebCoreImageRendererFactory sharedFactory] imageRendererWithSize: NSMakeSize((float)sz.width(), (float)sz.height())] retain];
+    imageRenderer = [[[WebCoreImageRendererFactory sharedFactory] imageRendererWithSize: NSMakeSize((float)sz.width(), (float)sz.height())] retain];
     needCopyOnWrite = false;
 }
 
 QPixmap::QPixmap(const QByteArray &bytes)
 {
-    imageRenderer = [(id)[[WebCoreImageRendererFactory sharedFactory] imageRendererWithBytes: bytes.data() length: bytes.size()] retain];
+    imageRenderer = [[[WebCoreImageRendererFactory sharedFactory] imageRendererWithBytes: bytes.data() length: bytes.size()] retain];
     needCopyOnWrite = false;
 }
 
 QPixmap::QPixmap(int w, int h)
 {
-    imageRenderer = [(id)[[WebCoreImageRendererFactory sharedFactory] imageRendererWithSize: NSMakeSize(w, h)] retain];
+    imageRenderer = [[[WebCoreImageRendererFactory sharedFactory] imageRendererWithSize: NSMakeSize(w, h)] retain];
     needCopyOnWrite = false;
 }
 
 QPixmap::QPixmap(const QPixmap &copyFrom)
-    : QPaintDevice()
+    : QPaintDevice(copyFrom)
 {
-    imageRenderer = [(id)copyFrom.imageRenderer retain];
+    imageRenderer = [copyFrom.imageRenderer retain];
     needCopyOnWrite = true;
 }
 
 QPixmap::~QPixmap()
 {
-    [(id)imageRenderer stopAnimation];
-    [(id)imageRenderer release];
+    [imageRenderer stopAnimation];
+    [imageRenderer release];
 }
 
-void QPixmap::setMask(const QBitmap &)
+bool QPixmap::mask() const
 {
-    _logNotYetImplemented();
-}
-
-const QBitmap *QPixmap::mask() const
-{
-    return 0;
+    return false;
 }
 
 bool QPixmap::isNull() const
@@ -112,8 +107,8 @@ void QPixmap::resize(const QSize &sz)
 void QPixmap::resize(int w, int h)
 {
     if (needCopyOnWrite) {
-        id <WebCoreImageRenderer>newImageRenderer = [(id)imageRenderer copy];
-        [(id)imageRenderer release];
+        id <WebCoreImageRenderer> newImageRenderer = [imageRenderer copyWithZone:NULL];
+        [imageRenderer release];
         imageRenderer = newImageRenderer;
         needCopyOnWrite = false;
     }
@@ -139,8 +134,8 @@ QImage QPixmap::convertToImage() const
 
 QPixmap &QPixmap::operator=(const QPixmap &assignFrom)
 {
-    [(id)assignFrom.imageRenderer retain];
-    [(id)imageRenderer release];
+    [assignFrom.imageRenderer retain];
+    [imageRenderer release];
     imageRenderer = assignFrom.imageRenderer;
     needCopyOnWrite = true;
     return *this;

@@ -6,7 +6,6 @@ SUBDIRS = \
 	dom \
 	ecma \
 	xml \
-	java \
 	html \
 	rendering \
 	$(NULL)
@@ -27,7 +26,6 @@ libkhtml_o_LIBADD = \
 	./dom/libkhtmldom.o \
 	./ecma/libkhtmlecma.o \
 	./xml/libkhtmlxml.o \
-	./java/libkhtmljava.o \
 	./html/libkhtmlhtml.o \
 	./rendering/libkhtmlrendering.o \
 	$(NULL)

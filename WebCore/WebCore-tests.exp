@@ -121,13 +121,6 @@ __ZN4KURLC1ERK7QStringi
 __ZN4KURLC1ERKS_
 __ZN4KURLC1ERKS_RK7QString
 __ZN4KURLC1Ev
-__ZN4QDir4cdUpEv
-__ZN4QDir9entryListERK7QString
-__ZN4QDirC1ERK7QString
-__ZN4QDirC1ERKS_
-__ZN4QDirC1Ev
-__ZN4QDirD1Ev
-__ZN4QDiraSERKS_
 __ZN5QDateC1Eiii
 __ZN5QDateC1Ev
 __ZN5QFile4openEi
@@ -242,9 +235,6 @@ __ZNK4KURL7hasPathEv
 __ZNK4KURL7isEmptyEv
 __ZNK4KURL8protocolEv
 __ZNK4KURL9prettyURLEi
-__ZNK4QDir11absFilePathERK7QString
-__ZNK4QDir6existsERK7QString
-__ZNK4QDir7absPathEv
 __ZNK5QChar16isLetterOrNumberEv
 __ZNK5QChar5lowerEv
 __ZNK5QChar5upperEv

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,13 +26,8 @@
 #ifndef KSTDDIRS_H_
 #define KSTDDIRS_H_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
 #include <qstring.h>
 #include <kglobal.h>
-
 
 QString locate(const char *type, const QString& filename, 
     const KInstance* instance=KGlobal::instance());
@@ -40,37 +35,9 @@ QString locate(const char *type, const QString& filename,
 QString locateLocal(const char *type, const QString &filename, 
     const KInstance *instance=KGlobal::instance());
 
-// class KStandardDirs =========================================================
-
 class KStandardDirs {
 public:
-
-    // structs -----------------------------------------------------------------
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-    // static member functions -------------------------------------------------
-    // constructors, copy constructors, and destructors ------------------------
-
-    KStandardDirs();
-    virtual ~KStandardDirs();
-
-    // member functions --------------------------------------------------------
-
-    QString saveLocation(const char *, const QString &suffix = QString::null, 
-        bool create = true) const;
-
-    // operators ---------------------------------------------------------------
-
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
-
-private:
-    // no copying or assignment
-    // note that these are "standard" (no pendantic stuff needed)
-    KStandardDirs(const KStandardDirs &);
-    KStandardDirs &operator=(const KStandardDirs &);
-
-}; // class KStandardDirs ======================================================
+    static QString saveLocation(const char *, const QString &) { return 0; }
+};
 
 #endif

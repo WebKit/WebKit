@@ -11,8 +11,8 @@ libwebcore_dylib_SOURCES = \
 	$(NULL)
 
 libwebcore_dylib_LIBADD = \
-	./khtml/libkhtml.o \
-	./kwq/libkwq.o \
+	khtml/libkhtml.o \
+	kwq/libkwq.o \
 	$(NULL)
 
 WEBCORE_INSTALL_PATH = $(SYMROOTS)
@@ -53,8 +53,7 @@ FRAMEWORK_RESOURCE_DIR = $(FRAMEWORK_DIR)/Versions/$(FRAMEWORK_VERSION)/Resource
 FRAMEWORK_LOCALIZED_RESOURCE_DIR = $(FRAMEWORK_RESOURCE_DIR)/English.lproj
 
 framework-stamp: framework-dylib-stamp framework-resource-stamp framework-header-stamp
-	$(MAKE) embed && \
-	touch ./framework-stamp
+	$(MAKE) embed && touch $@
 
 framework-resource-stamp: $(FRAMEWORK_RESOURCES) $(FRAMEWORK_LOCALIZED_RESOURCES)
 	rm -rf $(FRAMEWORK_RESOURCE_DIR)
@@ -70,14 +69,14 @@ framework-resource-stamp: $(FRAMEWORK_RESOURCES) $(FRAMEWORK_LOCALIZED_RESOURCES
 		echo " $(INSTALL_DATA) $$p $(FRAMEWORK_LOCALIZED_RESOURCE_DIR)/$$p"; \
 		$(INSTALL_DATA) $$p $(FRAMEWORK_LOCALIZED_RESOURCE_DIR); \
 	done
-	touch ./framework-resource-stamp
+	touch $@
 
 framework-header-stamp:
 	mkdir -p $(FRAMEWORK_DIR)/Versions/$(FRAMEWORK_VERSION)/Headers
 	mkdir -p $(FRAMEWORK_DIR)/Versions/$(FRAMEWORK_VERSION)/PrivateHeaders
 	ln -sf Versions/Current/Headers $(FRAMEWORK_DIR)/Headers
 	ln -sf Versions/Current/PrivateHeaders $(FRAMEWORK_DIR)/PrivateHeaders
-	touch ./framework-header-stamp
+	touch $@
 
 framework-dylib-stamp: $(libwebcore_dylib_OBJECTS) $(libwebcore_dylib_DEPENDENCIES) WebCore-combined.exp
 	mkdir -p $(FRAMEWORK_DIR)/Versions/$(FRAMEWORK_VERSION)
@@ -86,7 +85,7 @@ framework-dylib-stamp: $(libwebcore_dylib_OBJECTS) $(libwebcore_dylib_DEPENDENCI
 	$(OBJCXXLD) $(AM_OBJCXXFLAGS) $(OBJCXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) $(FRAMEWORK_LINKFLAGS) $(libwebcore_dylib_OBJECTS) -o $(FRAMEWORK_DYLIB)
 	nmedit -s WebCore-combined.exp - $(FRAMEWORK_DYLIB)
 	ln -sf Versions/Current/$(FRAMEWORK_NAME) $(FRAMEWORK_DIR)/$(FRAMEWORK_NAME)
-	touch ./framework-dylib-stamp
+	touch $@
 
 
 CLEANFILES = $(noinst_DATA)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,24 +37,16 @@
 
 #ifdef __OBJC__
 @protocol WebCoreImageRenderer;
+typedef id <WebCoreImageRenderer> WebCoreImageRendererPtr;
+#else
+class WebCoreImageRenderer;
+typedef WebCoreImageRenderer *WebCoreImageRendererPtr;
 #endif
 
-class QBitmap;
 class QWMatrix;
 
-// class QPixmap ===============================================================
-
 class QPixmap : public QPaintDevice, public Qt {
-friend class QPainter;
 public:
-
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-    // static member functions -------------------------------------------------
-
-    // constructors, copy constructors, and destructors ------------------------
-
     QPixmap();
     QPixmap(const QSize&);
     QPixmap(const QByteArray&);
@@ -62,11 +54,6 @@ public:
     QPixmap(const QPixmap &);
     ~QPixmap();
 
-    // member functions --------------------------------------------------------
-
-    void setMask(const QBitmap &);
-    const QBitmap *mask() const;
-    
     bool isNull() const;
 
     QSize size() const;
@@ -78,23 +65,19 @@ public:
 
     QPixmap xForm(const QWMatrix &) const;
     QImage convertToImage() const;
-
-    // operators ---------------------------------------------------------------
+    
+    bool mask() const;
 
     QPixmap &operator=(const QPixmap &);
 
-#ifdef __OBJC__
-    const id <WebCoreImageRenderer>getImageRenderer() const { return imageRenderer; }
-#endif
+    WebCoreImageRendererPtr getImageRenderer() const { return imageRenderer; }
 
 private:
-#ifdef __OBJC__
-    id <WebCoreImageRenderer>imageRenderer;
-#else
-    void *imageRenderer;
-#endif
+    WebCoreImageRendererPtr imageRenderer;
     bool needCopyOnWrite;
 
-}; // class QPixmap ============================================================
+    friend class QPainter;
+
+};
 
 #endif

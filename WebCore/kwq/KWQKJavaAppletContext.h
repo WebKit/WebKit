@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,54 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <kwqdebug.h> 
-#include <qasyncimageio.h> 
+#include <qobject.h>
 
-// FIXME
-static const char *BOGUS_FORMAT_NAME = "";
-
-// class QImageConsumer ========================================================
-
-const char *QImageConsumer::formatName(const uchar* buffer, int length)
+class KJavaAppletContext : public QObject
 {
-    _logNotYetImplemented();
-    return BOGUS_FORMAT_NAME;
-}
-
-
-// class QImageDecoder =========================================================
-
-const char *QImageDecoder::formatName(const uchar* buffer, int length)
-{
-    _logNotYetImplemented();
-    return BOGUS_FORMAT_NAME;
-}
-
-
-QImageDecoder::QImageDecoder(QImageConsumer *)
-{
-    _logNotYetImplemented();
-}
-
-
-QImageDecoder::~QImageDecoder()
-{
-    _logNotYetImplemented();
-}
-
-
-// class QImageFormat ==========================================================
-
-QImageFormat::~QImageFormat()
-{
-    _logNotYetImplemented();
-}
-
-
-// class QImageFormatType ======================================================
-
-QImageFormatType::~QImageFormatType()
-{
-    _logNotYetImplemented();
-}
-
+};

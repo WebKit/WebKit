@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,54 +26,11 @@
 #ifndef KWINMODULE_H_
 #define KWINMODULE_H_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
 #include <qobject.h>
-
-class QRect;
-
-// class KWinModule ============================================================
 
 class KWinModule : public QObject {
 public:
-
-    // structs -----------------------------------------------------------------
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-    // static member functions -------------------------------------------------
-
-    // constructors, copy constructors, and destructors ------------------------
-
-    KWinModule(QObject* parent=0);
-    ~KWinModule();
-
-    // member functions --------------------------------------------------------
-
-    QRect workArea(int desktop=-1) const;
-    void doNotManage(const QString &);
-
-    // operators ---------------------------------------------------------------
-
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
-
-private:
-
-// add copy constructor 
-// this private declaration prevents copying
-#ifdef _KWQ_PEDANTIC_
-    KWinModule(const KWinModule &);
-#endif
-
-// add assignment operator 
-// this private declaration prevents assignment
-#ifdef _KWQ_PEDANTIC_
-    KWinModule &operator=(const KWinModule &);
-#endif
-
-}; // class KWinModule =========================================================
+    QRect workArea() const;
+};
 
 #endif

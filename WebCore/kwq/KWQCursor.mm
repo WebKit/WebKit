@@ -42,8 +42,8 @@ QCursor::QCursor(NSCursor *cur)
 {
 }
 
-QCursor::QCursor(const QPixmap &pixmap, int hotX, int hotY)
-    : cursor(nil)
+QCursor::QCursor(const QPixmap &pixmap)
+    : cursor([[NSCursor arrowCursor] retain])
 {
     _logNotYetImplemented();
 }
@@ -51,7 +51,6 @@ QCursor::QCursor(const QPixmap &pixmap, int hotX, int hotY)
 QCursor::QCursor(const QCursor &other)
     : cursor([other.cursor retain])
 {
-    
 }
 
 QCursor::~QCursor()
@@ -73,8 +72,7 @@ QCursor &QCursor::operator=(const QCursor &other)
     return *this;
 }
 
-int QCursor::handle()
+int QCursor::handle() const
 {
     return (int)cursor;
-    return 0;
 }

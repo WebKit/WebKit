@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,53 +26,15 @@
 #ifndef QINPUTDIALOG_H_
 #define QINPUTDIALOG_H_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
-#include "qstring.h"
-#include "qlabel.h"
-#include "qwidget.h"
-#include "qlineedit.h"
-
-// class QInputDialog ==========================================================
+#include <qstring.h>
+#include <qlabel.h>
+#include <qwidget.h>
+#include <qlineedit.h>
 
 class QInputDialog {
 public:
-
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-
-    // static member functions -------------------------------------------------
-
     static QString getText(const QString &, const QString &, QLineEdit::EchoMode,
-        const QString &text=QString::null, bool *ok=0, QWidget *parent=0,
-        const char *name=0);
-
-    // constructors, copy constructors, and destructors ------------------------
-
-// add no-arg constructor
-#ifdef _KWQ_PEDANTIC_
-    QInputDialog() {}
-#endif
-
-    QInputDialog(const QString &label);
-    ~QInputDialog() {}
-    
-    // member functions --------------------------------------------------------
-    // operators ---------------------------------------------------------------
-
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
-
-private:
-    // no copying or assignment
-    // note that these are "standard" (no pendantic stuff needed)
-    QInputDialog(const QInputDialog &);
-    QInputDialog &operator=(const QInputDialog &);
-
-}; // class QInputDialog =======================================================
+        const QString &text=QString::null, bool *ok=0);
+};
 
 #endif
-

@@ -26,53 +26,31 @@
 #ifndef QCURSOR_H
 #define QCURSOR_H
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
 #include <qpixmap.h>
 #include <qpoint.h>
 
 #ifdef __OBJC__
-#import <AppKit/AppKit.h>
+@class NSCursor;
+#else
+class NSCursor;
 #endif
-
-// class QCursor ===============================================================
 
 class QCursor {
 public:
-
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-    // static member functions -------------------------------------------------
-
     static QPoint pos();
     
-    // constructors, copy constructors, and destructors ------------------------
-    
-     QCursor();
-     QCursor(const QPixmap &pixmap, int hotX=1, int hotY=1);
-     QCursor(const QCursor &);
-#ifdef __OBJC__
-     QCursor(NSCursor *);
-#endif
-     ~QCursor();
-      
-    // member functions --------------------------------------------------------
-
-    int handle();
-    
-    // operators ---------------------------------------------------------------
+    QCursor();
+    QCursor(const QPixmap &);
+    QCursor(NSCursor *);
+    QCursor(const QCursor &);
+    ~QCursor();
 
     QCursor &operator=(const QCursor &);
+    
+    int handle() const;
 
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
  private:
-#ifdef __OBJC__
     NSCursor *cursor;
-#endif
-}; // class QCursor ============================================================
+};
 
 #endif

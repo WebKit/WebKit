@@ -26,10 +26,6 @@
 #ifndef QDRAWUTIL_H_
 #define QDRAWUTIL_H_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
 #include "qpainter.h"
 #include "qpalette.h"
 #include "qbrush.h"

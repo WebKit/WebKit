@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,64 +26,9 @@
 #ifndef DCOPCLIENT_H_
 #define DCOPCLIENT_H_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
 #include <qobject.h>
 #include <qcstring.h>
 
-// class DCOPClient ============================================================
-
-class DCOPClient : public QObject {
-public:
-
-    // structs -----------------------------------------------------------------
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-    // static member functions -------------------------------------------------
-    
-    // constructors, copy constructors, and destructors ------------------------
-    
-    DCOPClient();
-    virtual ~DCOPClient();
-    
-    // member functions --------------------------------------------------------
-
-	bool call(const char *remApp, const char *remObj, const char *remFun, 
-	    const QByteArray &data, QCString& replyType, QByteArray &replyData, 
-	    bool useEventLoop=false, bool fast=false);
-	
-	bool call(const QCString &remApp, const QCString &remObj, 
-	    const QCString &remFun, const QByteArray &data, QCString& replyType, 
-	    QByteArray &replyData, bool useEventLoop=false, bool fast=false);
-
-	bool send(const char *remApp, const char *remObj, const char *remFun, 
-	    const QByteArray &data, bool fast=false);
-		
-	bool send(const QCString &remApp, const QCString &remObj, 
-	    const QCString &remFun, const QByteArray &data, bool fast=false);
-
-    // operators ---------------------------------------------------------------
-
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
-
-private:
-
-// add copy constructor
-// this private declaration prevents copying
-#ifdef _KWQ_PEDANTIC_
-    DCOPClient(const DCOPClient &);
-#endif
-
-// add assignment operator 
-// this private declaration prevents assignment
-#ifdef _KWQ_PEDANTIC_
-    DCOPClient &operator=(const DCOPClient &);
-#endif
-
-}; // class DCOPClient =========================================================
+class DCOPClient { };
 
 #endif

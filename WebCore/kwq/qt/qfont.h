@@ -32,7 +32,7 @@ class QPainter;
 #ifdef __OBJC__
 @class NSString;
 #else
-typedef void NSString;
+class NSString;
 #endif
 
 class QFont {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,43 +23,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
  
-#include <kwqdebug.h>
 #include <khtmlview.h>
 #include <misc/loader.h>
-#include <java/kjavaappletcontext.h>
-#include <java/kjavaprocess.h>
 
 void KHTMLView::cleared()
 {
-    _logNotYetImplemented();
 }
-
-void KJavaAppletContext::showStatus  ( const QString& txt )
-{
-    _logNotYetImplemented();
-}
-
-
-void KJavaAppletContext::showDocument( const QString& url, const QString& target )
-{
-    _logNotYetImplemented();
-}
-
-
-void KJavaProcess::received( const QByteArray& )
-{
-    _logNotYetImplemented();
-}
-
 
 void khtml::Loader::requestDone( khtml::DocLoader *, khtml::CachedObject *obj )
 {
-    _logNotYetImplemented();
 }
-
 
 void khtml::Loader::requestFailed( khtml::DocLoader *, khtml::CachedObject *obj )
 {
-    _logNotYetImplemented();
 }
-

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,56 +26,6 @@
 #ifndef QIMAGE_H_
 #define QIMAGE_H_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
-#include "qnamespace.h"
-#include "qcolor.h"
-
-// class QImage ================================================================
-
-class QImage {
-public:
-
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-    // static member functions -------------------------------------------------
-    
-    // constructors, copy constructors, and destructors ------------------------
-
-    QImage();
-    QImage(const QImage &);
-    ~QImage();
-
-    // member functions --------------------------------------------------------
-
-    bool isNull();
-
-    QRgb color(int) const;
-    void setColor(int, QRgb);
-
-    int width() const;
-    int height() const;
-    int depth() const;
-    int pixelIndex(int,int) const;
-
-    bool create(int,int,int,int numColors=0);
-    
-    QImage createAlphaMask(int conversion_flags=0) const;
-    bool hasAlphaBuffer() const;
-
-    uchar **jumpTable() const;
-    uchar *scanLine(int) const;
-
-    // operators ---------------------------------------------------------------
-
-    QImage &operator=(const QImage &);
-
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
-
-}; // class QImage =============================================================
+class QImage { };
 
 #endif
