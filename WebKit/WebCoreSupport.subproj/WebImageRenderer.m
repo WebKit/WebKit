@@ -25,19 +25,11 @@ static NSMutableArray *activeImageRenderers;
     
 }
 
-- initWithSize:(NSSize)size
-{
-    self = [super initWithSize:size];
-    
-    statusOfCache = NSImageRepLoadStatusUnknownType;
-    
-    return self;
-}
-
-
 - copyWithZone:(NSZone *)zone
 {
     IFImageRenderer *copy = [super copyWithZone:zone];
+    
+    // FIXME: If we copy while doing an incremental load, it won't work.
     
     copy->frameTimer = nil;
     copy->frameView = nil;
@@ -81,12 +73,6 @@ static NSMutableArray *activeImageRenderers;
     }
     
     return NO;
-}
-
-
-- (int)loadStatus
-{
-    return loadStatus;
 }
 
 
@@ -206,7 +192,7 @@ static NSMutableArray *activeImageRenderers;
         [activeImageRenderers addObject: self];
     }
 
-    [self drawInRect: ir 
+    [self drawInRect: ir
             fromRect: fr
            operation: NSCompositeSourceOver	// Renders transparency correctly
             fraction: 1.0];
@@ -232,33 +218,61 @@ static NSMutableArray *activeImageRenderers;
 
 - (void)tileInRect:(NSRect)rect fromPoint:(NSPoint)point
 {
-    int currentStatus = [self loadStatus];
-    
-    if (currentStatus > 0 || currentStatus == NSImageRepLoadStatusCompleted){
-        if (statusOfCache != currentStatus){
-            [patternColor release];
-            patternColor = [[NSColor colorWithPatternImage:self] retain];
-            statusOfCache = currentStatus;
-        }
-        
-        // FIXME: This doesn't use the passed in point to determine the pattern phase.
-        // It might be OK to do what we're doing, but I'm not 100% sure.
-        // This code uses the coordinate system of whatever converting toView:nil
-        // does, which may be OK.
-        NSPoint p = [[NSView focusView] convertPoint:rect.origin toView:nil];
-        NSSize size = [self size];
-        CGSize phase = { (int)p.x % (int)size.width, (int)p.y % (int)size.height };
-        
-        [NSGraphicsContext saveGraphicsState];
-        
-        CGContextRef cgContext = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
-        CGContextSetPatternPhase(cgContext, phase);
-        [patternColor set];
-        
-        [NSBezierPath fillRect:rect];
-        
-        [NSGraphicsContext restoreGraphicsState];
+    // If it's too early to draw, just do nothing.
+    if (loadStatus <= 0 && loadStatus != NSImageRepLoadStatusCompleted) {
+        return;
     }
+    
+    NSSize size = [self size];
+
+    // Check and see if a single draw of the image can convert the entire area we are supposed to tile.
+    WEBKIT_ASSERT([[NSView focusView] isFlipped]);
+    NSRect oneTileRect;
+    oneTileRect.origin.x = fmodf(rect.origin.x - point.x, size.width);
+    if (oneTileRect.origin.x > 0)
+        oneTileRect.origin.x -= size.width;
+    oneTileRect.origin.y = fmodf(rect.origin.y - point.y, size.height);
+    if (oneTileRect.origin.y > 0)
+        oneTileRect.origin.y -= size.height;
+    oneTileRect.size = size;
+    
+    // If the single image draw covers the whole area, then just draw once.
+    if (NSContainsRect(oneTileRect, rect)) {
+        NSRect fromRect;
+        fromRect.origin.x = rect.origin.x - oneTileRect.origin.x;
+        fromRect.origin.y = (oneTileRect.origin.y + oneTileRect.size.height) - (rect.origin.y + rect.size.height);
+        fromRect.size = rect.size;
+        
+        [self drawInRect:rect
+                fromRect:fromRect
+               operation:NSCompositeSourceOver
+                fraction:1.0];
+        
+        return;
+    }
+    
+    // Since we need to tile, construct an NSColor so we can get CoreGraphics to do it for us.
+    if (patternColorLoadStatus != loadStatus) {
+        [patternColor release];
+        patternColor = nil;
+    }
+    if (patternColor == nil) {
+        patternColor = [[NSColor colorWithPatternImage:self] retain];
+        patternColorLoadStatus = loadStatus;
+    }
+    
+    // Compute the appropriate phase relative to the top level view in the window.
+    // Conveniently, the oneTileRect we computed above has the appropriate origin.
+    NSPoint originInWindow = [[NSView focusView] convertPoint:oneTileRect.origin toView:nil];
+    CGSize phase = CGSizeMake(fmodf(originInWindow.x, size.width), fmodf(originInWindow.y, size.height));
+    
+    [NSGraphicsContext saveGraphicsState];
+    
+    CGContextSetPatternPhase((CGContextRef)[[NSGraphicsContext currentContext] graphicsPort], phase);    
+    [patternColor set];
+    [NSBezierPath fillRect:rect];
+    
+    [NSGraphicsContext restoreGraphicsState];
 }
 
 // required by protocol -- apparently inherited methods don't count

@@ -11,9 +11,9 @@
     NSView *frameView;
     NSRect imageRect;
     NSRect targetRect;
-    NSColor *patternColor;
     int loadStatus;
-    int statusOfCache;
+    NSColor *patternColor;
+    int patternColorLoadStatus;
 }
 
 + (void)stopAnimationsInView: (NSView *)aView;

@@ -1,3 +1,13 @@
+2002-06-28  Darin Adler  <darin@apple.com>
+
+        * WebCoreSupport.subproj/IFImageRenderer.h: Renamed statusOfCache to
+	patternColorLoadStatus for clarity.
+        * WebCoreSupport.subproj/IFImageRenderer.m:
+        (-[IFImageRenderer copyWithZone:]): Add FIXME.
+        (-[IFImageRenderer tileInRect:fromPoint:]): Add optimization for the
+	case where a single draw of the image will cover the entire area to be
+	tiled. Also add comments and make other small improvements.
+
 2002-06-28  Richard Williamson  <rjw@apple.com>
 
         Use float character measurement to determine selection
