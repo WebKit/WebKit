@@ -9,6 +9,8 @@
 #ifdef READY_FOR_PRIMETIME
 
 /*
+   ============================================================================= 
+
     WKWebController manages the interaction between WKWebView and WKWebDataSource.
     Intances of WKWebController retain their view and data source.
     
@@ -42,6 +44,43 @@
     
     WKConcreteWebController may be subclassed to modify the behavior of the standard
     WKWebView and WKWebDataSource.
+
+   ============================================================================= 
+    
+    Changes: 
+    
+    2001-12-12
+        Changed WKConcreteWebController to WKDefaultWebController.
+        
+        Changed WKLocationChangedHandler naming, replace "loadingXXX" with
+        "locationChangeXXX".
+
+        Changed loadingStopped in WKLocationChangedHandler to locationChangeStopped:(WKError *).
+
+        Changed loadingCancelled in WKLocationChangedHandler to locationChangeCancelled:(WKError *).
+        
+        Changed loadedPageTitle in WKLocationChangedHandler to receivedPageTitle:.
+
+        Added inputURL:(NSURL *) resolvedTo: (NSURL *) to WKLocationChangedHandler.
+        
+        Added the following two methods to WKLocationChangedHandler:
+        
+            - (void)inputURL: (NSURL *)inputURL resolvedTo: (NSURL *)resolvedURL;
+            - (void)serverRedirectTo: (NSURL *)url;
+       
+        Put locationWillChangeTo: back on WKLocationChangedHandler.
+        
+        Changed XXXforLocation in WKLoadHandler to XXXforResource.
+        
+        Changed timeoutForLocation: in WKLoadHandler to receivedError:forResource:partialProgress:
+        
+        Added the following two methods to WKDefaultWebController:
+        
+            - setDirectsAllLinksToSystemBrowser: (BOOL)flag
+            - (BOOL)directsAllLinksToSystemBrowser;
+            
+        Removed WKError.  This will be described in WKError.h.
+        
 */
 
 
@@ -66,6 +105,8 @@
 
 
 /*
+   ============================================================================= 
+
     WKWebViewDelegates implement protocols that modify the behavior of
     WKWebViews.  A WKWebView does not require a delegate.
 */
@@ -74,6 +115,8 @@
 
 
 /*
+   ============================================================================= 
+
     WKWebDataSourceDelegate implement protocols that modify the behavior of
     WKWebDataSources.  A WKWebDataSources does not require a delegate.
 */
@@ -81,71 +124,47 @@
 @end
 
 
-// Is WKConcreteWebController the right name?  The name fits with the
-// scheme used by Foundation, although Foundation's concrete classes
-// typically aren't public.
-@interface WKConcreteWebController : NSObject <WKWebController>
+/*
+   ============================================================================= 
+
+    Is WKConcreteWebController the right name?  The name fits with the
+    scheme used by Foundation, although Foundation's concrete classes
+    typically aren't public.
+*/
+@interface WKDefaultWebController : NSObject <WKWebController>
+
 - initWithView: (WKWebView *) dataSource: (WKWebDataSource *)dataSource;
+
+- setDirectsAllLinksToSystemBrowser: (BOOL)flag
+- (BOOL)directsAllLinksToSystemBrowser;
+
 @end
 
+/*
+   ============================================================================= 
 
-// See the comments in WKWebPageView above for more description about this protocol.
+    See the comments in WKWebPageView above for more description about this protocol.
+*/
 @protocol WKLocationChangeHandler
 
-- (void)loadingStarted;
-- (void)loadingCancelled;
-- (void)loadingStopped;
-- (void)loadingFinished;
+- (BOOL)locationWillChangeTo: (NSURL *)url;
 
-- (void)loadedPageTitle: (NSString *)title;
+- (void)locationChangeStarted;
+- (void)locationChangeCancelledL: (WKError *)error;
+- (void)locationChangeStopped: (WKError *)error;
+- (void)locationChangeFinished;
 
-@end
+- (void)receivedPageTitle: (NSString *)title;
 
-
-
-@protocol WKContextMenuHandler
-// Returns the array of menu items for this node that will be displayed in the context menu.
-// Typically this would be implemented by returning the results of WKWebView defaultContextMenuItemsForNode:
-// after making any desired changes or additions.
-- (NSArray *)contextMenuItemsForNode: (WKDOMNode *);
-@end
-
-/*
-*/
-@protocol WKCredentialsHandler
-// Ken will come up with a proposal for this.  We decided not to have a generic API,
-// rather we'll have an API that explicitly knows about the authentication
-// attributes needed.
-// Client should use this API to collect information necessary to authenticate,
-// usually by putting up a dialog.
-// Do we provide a default dialog?
-@end
-
-
-/*
-    Implementors of this protocol will receive messages indicating
-    data as it arrives.
-    
-    This method will be called even if the data source
-    is initialized with something other than a URL.
-*/
-@protocol  WKLoadHandler
-
-/*
-    A new chunk of data has been received.  This could be a partial load
-    of a url.  It may be useful to do incremental layout, although
-    typically for non-base URLs this should be done after a URL (i.e. image)
-    has been completely downloaded.
-*/
-- (void)receivedProgress: (WKLoadProgress *)progress forLocation: (NSString *)lcoation;
-
-- (void)timeoutForLocation: (NSString *)location partialProgress: (WKLoadProgress *)progress;
+- (void)inputURL: (NSURL *)inputURL resolvedTo: (NSURL *)resolvedURL;
+- (void)serverRedirectTo: (NSURL *)url;
 
 @end
 
 
-
 /*
+   ============================================================================= 
+
     A WKLoadProgress capture the state associated with a load progress
     indication.  Should we use a struct?
 */
@@ -158,29 +177,67 @@
 }
 @end
 
+
 /*
-   Error handling:
-        error conditions:
-            timeout
-            unrecognized/handled mime-type
-            javascript errors
-            invalid url
-            parsing errors
-            
+   ============================================================================= 
+
+    Implementors of this protocol will receive messages indicating
+    data has been received.
+    
+    The methods in this protocol will be called even if the data source
+    is initialized with something other than a URL.
 */
-@interface WKError
-{
-    NSString *description;
-    int code;
-}
+@protocol  WKLoadHandler
+
+/*
+    A new chunk of data has been received.  This could be a partial load
+    of a url.  It may be useful to do incremental layout, although
+    typically for non-base URLs this should be done after a URL (i.e. image)
+    has been completely downloaded.
+*/
+- (void)receivedProgress: (WKLoadProgress *)progress forResource: (NSString *)resourceDescription;
+
+- (void)receivedError: (WKError *)error forResource: (NSString *)resourceDescription partialProgress: (WKLoadProgress *)progress;
+
 @end
 
+/*
+   ============================================================================= 
+*/
+@protocol WKContextMenuHandler
+// Returns the array of menu items for this node that will be displayed in the context menu.
+// Typically this would be implemented by returning the results of WKWebView defaultContextMenuItemsForNode:
+// after making any desired changes or additions.
+- (NSArray *)contextMenuItemsForNode: (WKDOMNode *);
+@end
+
+
+/*
+   ============================================================================= 
+
+*/
+@protocol WKCredentialsHandler
+// Ken will come up with a proposal for this.  We decided not to have a generic API,
+// rather we'll have an API that explicitly knows about the authentication
+// attributes needed.
+// Client should use this API to collect information necessary to authenticate,
+// usually by putting up a dialog.
+// Do we provide a default dialog?
+@end
+
+
+/*
+   ============================================================================= 
+
+*/
 @protocol WKWebDataSourceErrorHandler
 - error: (WKError *)error;
 @end
 
 
 /*
+   ============================================================================= 
+
     A class that implements WKScriptContextHandler provides all the state information
     that may be used by Javascript (AppleScript?).
     
@@ -199,12 +256,22 @@
 
 
 /*
+   ============================================================================= 
+
 */
 @protocol WKFrameSetHandler
 - (NSArray *)frameNames;
 - (id <WKFrame>) findFrameNamed: (NSString *)name;
 - (BOOL)frameExists: (NSString *)name;
 - (void)openURL: (NSURL *)url inFrame: (id <WKFrame>) frame;
+@end
+
+
+/*
+   ============================================================================= 
+
+*/
+@protocol WKFrame
 @end
 
 #endif
