@@ -27,8 +27,10 @@
 
 #import <WebFoundation/WebError.h>
 #import <WebFoundation/WebNSURLExtras.h>
+#import <WebFoundation/WebNSStringExtras.h>
 #import <WebFoundation/WebResourceHandle.h>
 #import <WebFoundation/WebResourceRequest.h>
+#import <WebFoundation/WebHTTPResourceRequest.h>
 
 static const char * const stateNames[] = {
     "WebFrameStateProvisional",
@@ -685,9 +687,36 @@ static const char * const stateNames[] = {
     }
     else {
         request = [[WebResourceRequest alloc] initWithURL:itemURL];
-        if (type == WebFrameLoadTypeBack || type == WebFrameLoadTypeForward) {
-            [request setRequestCachePolicy:WebRequestCachePolicyReturnCacheObjectLoadFromOriginIfNoCacheObject];
+    
+        // set the request cache policy based on the type of request we have
+        // however, allow any previously set value to take precendence
+        if ([request requestCachePolicy] == WebRequestCachePolicyUseProtocolDefault) {
+            switch (type) {
+                case WebFrameLoadTypeStandard:
+                    // if it's not a GET, reload from origin
+                    // unsure whether this is the best policy
+                    // other methods might be OK to get from the cache
+                    if (![[request method] _web_isCaseInsensitiveEqualToString:@"GET"]) {
+                        [request setRequestCachePolicy:WebRequestCachePolicyLoadFromOrigin];
+                    }
+                    break;
+                case WebFrameLoadTypeReload:
+                    [request setRequestCachePolicy:WebRequestCachePolicyLoadFromOrigin];
+                    break;
+                case WebFrameLoadTypeBack:
+                case WebFrameLoadTypeForward:
+                case WebFrameLoadTypeIndexedBack:
+                case WebFrameLoadTypeIndexedForward:
+                case WebFrameLoadTypeIntermediateBack:
+                    [request setRequestCachePolicy:WebRequestCachePolicyReturnCacheObjectLoadFromOriginIfNoCacheObject];
+                    break;
+                case WebFrameLoadTypeInternal:
+                case WebFrameLoadTypeReloadAllowingStaleData:
+                    // no-op: leave as protocol default
+                    break;
+            }
         }
+        
         dataSource = [[WebDataSource alloc] initWithRequest:request];
         [request release];
         [self setProvisionalDataSource: dataSource];

@@ -1,3 +1,14 @@
+2002-10-08  Ken Kocienda  <kocienda@apple.com>
+
+	Use WebFrameLoadType variable to set the request cache policy for the WebResourceRequest.
+	This will help us to provide cached results for POST requests when the user navigates
+	using the back/forward list or history for navigation, while making sure we do not
+	use cached results when the user pokes the submit button for a form they have
+	submitted previously.
+
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _goToItem:withFrameLoadType:])
+
 2002-10-08  Chris Blumenberg  <cblu@apple.com>
 
 	Moved assumption that a resource without a content type or extension is HTML to WebFoundation.
