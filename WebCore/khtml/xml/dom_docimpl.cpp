@@ -2495,7 +2495,8 @@ CSSStyleDeclarationImpl *DocumentImpl::getOverrideStyle(ElementImpl */*elt*/, DO
 void DocumentImpl::defaultEventHandler(EventImpl *evt)
 {
     // if any html event listeners are registered on the window, then dispatch them here
-    QPtrListIterator<RegisteredEventListener> it(m_windowEventListeners);
+    QPtrList<RegisteredEventListener> listenersCopy = m_windowEventListeners;
+    QPtrListIterator<RegisteredEventListener> it(listenersCopy);
     Event ev(evt);
     for (; it.current(); ++it) {
         if (it.current()->id == evt->id()) {

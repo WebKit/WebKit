@@ -1,3 +1,14 @@
+2004-09-20  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Richard.
+
+	<rdar://problem/3672101> HANG: typing into login field at dws-direkt.deutsche-bank.de (infinite recursion)
+        
+	* khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::defaultEventHandler): Copy the list of handlers
+	before firing any of them, in case a handler affects the list of
+	event handlers.
+
 2004-09-20  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed:
