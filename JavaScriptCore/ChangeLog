@@ -1,7 +1,9 @@
 2004-05-27  Kevin Decker  <kdecker@apple.com>
 
-        Reviewed by NOBODY (OOPS!).
+        Reviewed by Ken.
 
+        -revised generated error message content
+        
         * kjs/error_object.cpp:
         (ErrorProtoFuncImp::call):
         * kjs/internal.cpp:
