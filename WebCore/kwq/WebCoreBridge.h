@@ -163,6 +163,9 @@ enum FrameBorderStyle {
 
 - (int)frameBorderStyle;
 
++ (NSString *)stringWithData:(NSData *)data textEncoding:(CFStringEncoding)textEncoding;
++ (NSString *)stringWithData:(NSData *)data textEncodingName:(NSString *)textEncodingName;
+
 @end
 
 // The WebCoreBridge protocol contains methods for use by the WebCore side of the bridge.

@@ -70,9 +70,7 @@
 
 - (NSString *)documentSource
 {
-    
-    // FIMXE: Converting to string with ASCII encoding is not appropriate, although it works for some pages.
-    return [[[NSString alloc] initWithData:[[_private->bridge dataSource] data] encoding:NSASCIIStringEncoding] autorelease];
+    return [WebBridge stringWithData:[[_private->bridge dataSource] data] textEncoding:[_private->bridge textEncoding]];
 }
 
 

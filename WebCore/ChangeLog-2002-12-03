@@ -1,3 +1,13 @@
+2002-10-28  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: 3056726 - View Source window always displays the source in current system encoding
+	Fixed: 3019352 - Text encoding is not handled when viewing plain text
+
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (+[WebCoreBridge stringWithData:textEncoding:]): added, creates a string with data using the WebCore's decoding logic.
+        (+[WebCoreBridge stringWithData:textEncodingName:]): added, calls stringWithData:textEncoding: after getting the encoding for a text encoding name
+
 2002-10-28  Don Melton  <gramps@apple.com>
 
         * khtml/html/htmlparser.cpp:

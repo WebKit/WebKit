@@ -195,6 +195,21 @@
     return _private->mainDocumentError;
 }
 
+- (NSString *)stringWithData:(NSData *)data
+{
+    NSString *textEncodingName = [self _overrideEncoding];
+
+    if(!textEncodingName){
+        textEncodingName = [[self response] textEncodingName];
+    }
+
+    if(textEncodingName){
+        return [WebBridge stringWithData:data textEncodingName:textEncodingName];
+    }else{
+        return [WebBridge stringWithData:data textEncoding:kCFStringEncodingISOLatin1];
+    }
+}
+
 + (void)registerRepresentationClass:(Class)repClass forMIMEType:(NSString *)MIMEType
 {
     // FIXME: OK to allow developers to override built-in reps?

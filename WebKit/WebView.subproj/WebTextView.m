@@ -59,11 +59,8 @@
     } else {
         [self setRichText:NO];
         [self setFixedWidthFont];
-        // FIXME: This needs to use the correct encoding, but the list of names of encodings
-        // is currently inside WebCore where we can't share it.
-        string = [[NSString alloc] initWithData:[dataSource data] encoding:NSASCIIStringEncoding];
+        string = [dataSource stringWithData:[dataSource data]];
         [self setString:string];
-        [string release];
     }
 }
 
@@ -125,5 +122,9 @@
                                types:[NSArray arrayWithObject:NSStringPboardType]];
 }
 
+- (BOOL)supportsTextEncoding
+{
+    return YES;
+}
 
 @end

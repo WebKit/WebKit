@@ -799,4 +799,16 @@ static NSAttributedString *attributedString(DOM::NodeImpl *_startNode, int start
     return NoFrameBorder;
 }
 
++ (NSString *)stringWithData:(NSData *)data textEncoding:(CFStringEncoding)textEncoding
+{
+    QString string = QString::fromStringWithEncoding((const char*)[data bytes], [data length], textEncoding);
+    return string.getNSString();
+}
+
++ (NSString *)stringWithData:(NSData *)data textEncodingName:(NSString *)textEncodingName
+{
+    CFStringEncoding textEncoding = KWQCFStringEncodingFromIANACharsetName((CFStringRef)textEncodingName);
+    return [WebCoreBridge stringWithData:data textEncoding:textEncoding];
+}
+
 @end

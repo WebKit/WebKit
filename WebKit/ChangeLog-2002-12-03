@@ -1,3 +1,18 @@
+2002-10-28  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: 3056726 - View Source window always displays the source in current system encoding
+	Fixed: 3019352 - Text encoding is not handled when viewing plain text
+
+        * WebView.subproj/WebDataSource.h:
+        * WebView.subproj/WebDataSource.m:
+        (-[WebDataSource stringWithData:]): added, creates a string using the specified encoding.
+        * WebView.subproj/WebHTMLRepresentation.m:
+        (-[WebHTMLRepresentation documentSource]): uses the bridge specified encoding when creating the string
+        * WebView.subproj/WebTextView.h:
+        * WebView.subproj/WebTextView.m:
+        (-[WebTextView dataSourceUpdated:]): use stringWithData: 
+        (-[WebTextView supportsTextEncoding]): Yup
+
 2002-10-28  Richard Williamson   <rjw@apple.com>
 
         Fixed crasher.
