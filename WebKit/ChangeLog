@@ -1,3 +1,12 @@
+2004-09-27  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3502138> text files don't remember scroll position when going back or reloading
+
+        Reviewed by .
+
+        * WebView.subproj/WebTextView.m:
+        (-[WebTextView layout]): implemented, call sizeToFit, without this scrollPoint: won't work
+
 2004-09-27  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Ken.

@@ -181,6 +181,7 @@
 
 - (void)layout
 {
+    [self sizeToFit];
 }
 
 - (void)viewWillMoveToHostWindow:(NSWindow *)hostWindow
