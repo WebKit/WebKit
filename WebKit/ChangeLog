@@ -1,3 +1,14 @@
+2004-11-22  Richard Williamson   <rjw@apple.com>
+
+	Fixed <rdar://problem/3891737> WebPreferences do not work if they are set before set on the WebView
+
+	John found this problem and suggested the fix.
+
+        Reviewed by John Louch.
+
+        * WebView.subproj/WebView.m:
+        (-[WebView setPreferences:]):
+
 2004-11-22  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Harrison

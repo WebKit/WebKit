@@ -1502,6 +1502,9 @@ NS_ENDHANDLER
         _private->preferences = [prefs retain];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_preferencesChangedNotification:)
                                                     name:WebPreferencesChangedNotification object:[self preferences]];
+
+        [[NSNotificationCenter defaultCenter]
+           postNotificationName:WebPreferencesChangedNotification object:prefs userInfo:nil];
     }
 }
 
