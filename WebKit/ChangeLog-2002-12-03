@@ -1,3 +1,10 @@
+2002-06-27  Richard Williamson (local)  <rjw@apple.com>
+
+        * WebCoreSupport.subproj/IFTextRenderer.m:
+        (-[IFTextRenderer floatWidthForCharacters:stringLength:fromCharacterPosition:numberOfCharacters:applyRounding:attemptFontSubstitution:]):
+        Fixed uninitialized variable warning.  Compile being too aggressive,
+        broke deployment build.
+
 2002-06-27  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed plug-in positioning.

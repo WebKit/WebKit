@@ -732,7 +732,7 @@ cleanup:
 {
     float totalWidth = 0;
     unsigned int i, clusterLength;
-    NSFont *substituteFont;
+    NSFont *substituteFont = nil;
     ATSGlyphRef glyphID;
     float lastWidth = 0;
     
