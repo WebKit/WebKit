@@ -1,3 +1,24 @@
+2003-01-31  Trey Matteson  <trey@apple.com>
+
+	New plumbing for autofill/autocomplete.  WebBrowser receives controlText delegate
+	messages from our form widgets.  Should result in no behavior change.
+
+	New SPI is exposed over the bridge and KWQTextField passes the text delegate msgs to it.
+
+        Reviewed by Richard
+
+        * kwq/KWQTextField.mm:  Pass text delegate msgs through new SPI.
+        (-[KWQTextField controlTextDidBeginEditing:]):
+        (-[KWQTextField controlTextDidEndEditing:]):
+        (-[KWQTextField controlTextDidChange:]):
+        (-[KWQTextField control:textShouldBeginEditing:]):
+        (-[KWQTextField control:textShouldEndEditing:]):
+        (-[KWQTextField control:didFailToFormatString:errorDescription:]):
+        (-[KWQTextField control:didFailToValidatePartialString:errorDescription:]):
+        (-[KWQTextField control:isValidObject:]):
+        (-[KWQTextField control:textView:doCommandBySelector:]):
+        * kwq/WebCoreBridge.h:  New SPI for passing text delegate msgs.
+
 2003-01-31  David Hyatt  <hyatt@apple.com>
 
 	Fix regression that broke John's site.  RenderInline needs

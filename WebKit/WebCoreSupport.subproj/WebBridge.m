@@ -33,6 +33,7 @@
 #import <WebKit/WebSubresourceClient.h>
 #import <WebKit/WebViewPrivate.h>
 #import <WebKit/WebWindowOperationsDelegate.h>
+#import <WebKit/WebFormDelegate.h>
 
 #import <WebFoundation/WebAssertions.h>
 #import <WebFoundation/WebError.h>
@@ -637,6 +638,57 @@ static BOOL loggedObjectCacheSize = NO;
     if (item) {
         [controller goBackOrForwardToItem:item];
     }
+}
+
+static id <WebFormDelegate> formDelegate(WebBridge *self)
+{
+    ASSERT(self->frame != nil);
+    return [[self->frame controller] _formDelegate];
+}
+
+- (void)controlTextDidBeginEditing:(NSNotification *)obj
+{
+    [formDelegate(self) controlTextDidBeginEditing:obj inFrame:frame];
+}
+
+- (void)controlTextDidEndEditing:(NSNotification *)obj
+{
+    [formDelegate(self) controlTextDidEndEditing:obj inFrame:frame];
+}
+
+- (void)controlTextDidChange:(NSNotification *)obj
+{
+    [formDelegate(self) controlTextDidChange:obj inFrame:frame];
+}
+
+- (BOOL)control:(NSControl *)control textShouldBeginEditing:(NSText *)fieldEditor
+{
+    return [formDelegate(self) control:control textShouldBeginEditing:fieldEditor inFrame:frame];
+}
+
+- (BOOL)control:(NSControl *)control textShouldEndEditing:(NSText *)fieldEditor
+{
+    return [formDelegate(self) control:control textShouldEndEditing:fieldEditor inFrame:frame];
+}
+
+- (BOOL)control:(NSControl *)control didFailToFormatString:(NSString *)string errorDescription:(NSString *)error
+{
+    return [formDelegate(self) control:control didFailToFormatString:string errorDescription:error inFrame:frame];
+}
+
+- (void)control:(NSControl *)control didFailToValidatePartialString:(NSString *)string errorDescription:(NSString *)error
+{
+    [formDelegate(self) control:control didFailToValidatePartialString:string errorDescription:error inFrame:frame];
+}
+
+- (BOOL)control:(NSControl *)control isValidObject:(id)obj
+{
+    return [formDelegate(self) control:control isValidObject:obj inFrame:frame];
+}
+
+- (BOOL)control:(NSControl *)control textView:(NSTextView *)textView doCommandBySelector:(SEL)commandSelector
+{
+    return [formDelegate(self) control:control textView:textView doCommandBySelector:commandSelector inFrame:frame];
 }
 
 @end

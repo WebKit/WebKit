@@ -29,6 +29,7 @@
 #import "KWQKHTMLPart.h"
 #import "KWQNSViewExtras.h"
 #import "WebCoreFirstResponderChanges.h"
+#import "WebCoreBridge.h"
 
 // KWQTextFieldFormatter enforces a maximum length.
 
@@ -186,10 +187,60 @@
     edited = ed;
 }
 
-- (void)controlTextDidChange:(NSNotification *)aNotification
+- (void)controlTextDidBeginEditing:(NSNotification *)obj
 {
+    WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(widget);
+    [bridge controlTextDidBeginEditing:obj];
+}
+
+- (void)controlTextDidEndEditing:(NSNotification *)obj
+{
+    WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(widget);
+    [bridge controlTextDidEndEditing:obj];
+}
+
+- (void)controlTextDidChange:(NSNotification *)obj
+{
+    WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(widget);
+    [bridge controlTextDidChange:obj];
     edited = true;
     widget->textChanged();
+}
+
+- (BOOL)control:(NSControl *)control textShouldBeginEditing:(NSText *)fieldEditor
+{
+    WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(widget);
+    return [bridge control:control textShouldBeginEditing:fieldEditor];
+}
+
+- (BOOL)control:(NSControl *)control textShouldEndEditing:(NSText *)fieldEditor
+{
+    WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(widget);
+    return [bridge control:control textShouldEndEditing:fieldEditor];
+}
+
+- (BOOL)control:(NSControl *)control didFailToFormatString:(NSString *)string errorDescription:(NSString *)error
+{
+    WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(widget);
+    return [bridge control:control didFailToFormatString:string errorDescription:error];
+}
+
+- (void)control:(NSControl *)control didFailToValidatePartialString:(NSString *)string errorDescription:(NSString *)error
+{
+    WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(widget);
+    [bridge control:control didFailToValidatePartialString:string errorDescription:error];
+}
+
+- (BOOL)control:(NSControl *)control isValidObject:(id)obj
+{
+    WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(widget);
+    return [bridge control:control isValidObject:obj];
+}
+
+- (BOOL)control:(NSControl *)control textView:(NSTextView *)textView doCommandBySelector:(SEL)commandSelector
+{
+    WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(widget);
+    return [bridge control:control textView:textView doCommandBySelector:commandSelector];
 }
 
 - (NSString *)stringValue

@@ -1,3 +1,42 @@
+2003-01-31  Trey Matteson  <trey@apple.com>
+
+	New plumbing for autofill/autocomplete.  WebBrowser receives controlText delegate
+	messages from our form widgets.  Should result in no behavior change.
+
+	New private API is exposed for the app to set a WebFormDelegate.
+
+        Reviewed by Richard
+
+        * WebCoreSupport.subproj/WebBridge.m:  Pass msgs from WC on to the controller's FormDelegate.
+        (formDelegate):  Little utility function.
+        (-[WebBridge controlTextDidBeginEditing:]):
+        (-[WebBridge controlTextDidEndEditing:]):
+        (-[WebBridge controlTextDidChange:]):
+        (-[WebBridge control:textShouldBeginEditing:]):
+        (-[WebBridge control:textShouldEndEditing:]):
+        (-[WebBridge control:didFailToFormatString:errorDescription:]):
+        (-[WebBridge control:didFailToValidatePartialString:errorDescription:]):
+        (-[WebBridge control:isValidObject:]):
+        (-[WebBridge control:textView:doCommandBySelector:]):
+        * WebKit.exp:  New class exported.
+        * WebKit.pbproj/project.pbxproj:  New WebFormDelegate files.
+        * WebView.subproj/WebControllerPrivate.h:  API to set/get FormDelegate.
+        * WebView.subproj/WebControllerPrivate.m:
+        (-[WebController _setFormDelegate:]):  simple setter
+        (-[WebController _formDelegate]):  simple getter
+        * WebView.subproj/WebFormDelegate.h: Added.
+        * WebView.subproj/WebFormDelegate.m: Added.
+	NOP impls for all these delegate methods.
+        (-[WebFormDelegate controlTextDidBeginEditing:inFrame:]):
+        (-[WebFormDelegate controlTextDidEndEditing:inFrame:]):
+        (-[WebFormDelegate controlTextDidChange:inFrame:]):
+        (-[WebFormDelegate control:textShouldBeginEditing:inFrame:]):
+        (-[WebFormDelegate control:textShouldEndEditing:inFrame:]):
+        (-[WebFormDelegate control:didFailToFormatString:errorDescription:inFrame:]):
+        (-[WebFormDelegate control:didFailToValidatePartialString:errorDescription:inFrame:]):
+        (-[WebFormDelegate control:isValidObject:inFrame:]):
+        (-[WebFormDelegate control:textView:doCommandBySelector:inFrame:]):
+
 2003-01-31  Chris Blumenberg  <cblu@apple.com>
 
         * English.lproj/StringsNotToBeLocalized.txt: Updated for recent changes.

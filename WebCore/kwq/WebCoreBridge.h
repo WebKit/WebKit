@@ -270,6 +270,17 @@ enum FrameBorderStyle {
 - (int)historyLength;
 - (void)goBackOrForward:(int)distance;
 
+- (void)controlTextDidBeginEditing:(NSNotification *)obj;
+- (void)controlTextDidEndEditing:(NSNotification *)obj;
+- (void)controlTextDidChange:(NSNotification *)obj;
+
+- (BOOL)control:(NSControl *)control textShouldBeginEditing:(NSText *)fieldEditor;
+- (BOOL)control:(NSControl *)control textShouldEndEditing:(NSText *)fieldEditor;
+- (BOOL)control:(NSControl *)control didFailToFormatString:(NSString *)string errorDescription:(NSString *)error;
+- (void)control:(NSControl *)control didFailToValidatePartialString:(NSString *)string errorDescription:(NSString *)error;
+- (BOOL)control:(NSControl *)control isValidObject:(id)obj;
+- (BOOL)control:(NSControl *)control textView:(NSTextView *)textView doCommandBySelector:(SEL)commandSelector;
+
 @end
 
 // This interface definition allows those who hold a WebCoreBridge * to call all the methods

@@ -5,6 +5,7 @@
 
 #import <WebKit/WebBackForwardList.h>
 #import <WebKit/WebContextMenuDelegate.h>
+#import <WebKit/WebFormDelegate.h>
 #import <WebKit/WebControllerPrivate.h>
 #import <WebKit/WebControllerSets.h>
 #import <WebKit/WebDataSourcePrivate.h>
@@ -344,6 +345,16 @@
         [_private->userAgent[i] release];
         _private->userAgent[i] = nil;
     }
+}
+
+- (void)_setFormDelegate: (id<WebFormDelegate>)delegate
+{
+    _private->formDelegate = delegate;
+}
+
+- (id<WebFormDelegate>)_formDelegate
+{
+    return _private->formDelegate;
 }
 
 @end

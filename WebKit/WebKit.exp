@@ -8,6 +8,7 @@
 .objc_class_name_WebDebugDOMNode
 .objc_class_name_WebDefaultContextMenuDelegate
 .objc_class_name_WebDefaultPolicyDelegate
+.objc_class_name_WebFormDelegate
 .objc_class_name_WebFrame
 .objc_class_name_WebHTMLView
 .objc_class_name_WebHistory
