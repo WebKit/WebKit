@@ -324,13 +324,13 @@ Value KJS::HTMLDocument::tryGet(ExecState *exec, const Identifier &propertyName)
     DOM::HTMLCollection embeds = doc.embeds();
     DOM::HTMLElement anEmbed = embeds.namedItem (propertyName.string());
     if (!anEmbed.isNull()) {
-	return getDOMNode(exec,anApplet);
+	return getDOMNode(exec,anEmbed);
     }
 
     DOM::HTMLCollection objects = doc.objects();
     DOM::HTMLElement anObject = objects.namedItem (propertyName.string());
     if (!anObject.isNull()) {
-	return getDOMNode(exec,anApplet);
+	return getDOMNode(exec,anObject);
     }
 #endif
 
