@@ -870,7 +870,7 @@ bool KHTMLPart::requestFrame( khtml::RenderPart *frame, const QString &url, cons
         }
         [newFrame _setRenderFramePart: frame];
         
-        newDataSource = WCIFWebDataSourceMake(childURL);
+        newDataSource = WCIFWebDataSourceMake([[[IFURLHandle alloc] initWithURL: childURL attributes: nil flags: 0] autorelease]);
         [newDataSource _setParent: oldDataSource];
         [newFrame setProvisionalDataSource: newDataSource];
     
@@ -964,6 +964,8 @@ void KHTMLPart::submitForm( const char *action, const QString &url, const QByteA
     return;
 #endif
 
+  NSMutableDictionary *attributes = [NSMutableDictionary dictionary];
+
 #ifdef NEED_THIS
   KParts::URLArgs args;
 
@@ -980,6 +982,7 @@ void KHTMLPart::submitForm( const char *action, const QString &url, const QByteA
   if ( strcmp( action, "get" ) == 0 )
   {
     u.setQuery( QString( formData.data(), formData.size() ) );
+    [attributes setObject:@"GET" forKey:IFHTTPURLHandleRequestMethod];
 
 #ifdef NEED_THIS
     args.frameName = target;
@@ -999,6 +1002,9 @@ void KHTMLPart::submitForm( const char *action, const QString &url, const QByteA
     else // contentType must be "multipart/form-data"
       args.setContentType( "Content-Type: " + contentType + "; boundary=" + boundary );
 #endif
+      NSData *postData = [NSData dataWithBytes:formData.data() length:formData.size()];
+      [attributes setObject:postData forKey:IFHTTPURLHandleRequestData];
+      [attributes setObject:@"POST" forKey:IFHTTPURLHandleRequestMethod];
   }
 
 #ifdef NEED_THIS
@@ -1026,7 +1032,7 @@ void KHTMLPart::submitForm( const char *action, const QString &url, const QByteA
     oldDataSource = getDataSource();
     frame = [oldDataSource frame];
     
-    newDataSource = WCIFWebDataSourceMake(qurl);
+    newDataSource = WCIFWebDataSourceMake([[[IFURLHandle alloc] initWithURL: qurl attributes: attributes flags: 0] autorelease]);
     [newDataSource _setParent: [oldDataSource parent]];
     
     [frame setProvisionalDataSource: newDataSource];
@@ -1401,7 +1407,7 @@ void KHTMLPart::khtmlMouseReleaseEvent( khtml::MouseReleaseEvent *event )
             oldDataSource = [frame dataSource];
         }
         
-        newDataSource = WCIFWebDataSourceMake(url);
+        newDataSource = WCIFWebDataSourceMake([[[IFURLHandle alloc] initWithURL: url attributes: nil flags: 0] autorelease]);
         [newDataSource _setParent: [oldDataSource parent]];
         
         [frame setProvisionalDataSource: newDataSource];

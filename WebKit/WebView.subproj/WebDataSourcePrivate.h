@@ -34,7 +34,7 @@ class KHTMLPart;
 
     // The main handle.
     IFURLHandle *mainHandle;
-    
+
     // The handle client for the main document associated with the
     // datasource.
     IFMainURLHandleClient *mainURLHandleClient;

@@ -144,8 +144,6 @@
     theURL = [NSURL URLWithString:urlString];
 
     _private->mainURLHandleClient = [[IFMainURLHandleClient alloc] initWithDataSource: self part: _private->part];
-    
-    _private->mainHandle = [[IFURLHandle alloc] initWithURL:theURL];
     [_private->mainHandle addClient: _private->mainURLHandleClient];
     
     // Mark the start loading time.

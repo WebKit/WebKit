@@ -9,6 +9,7 @@
 #import <WebKit/WebKitDebug.h>
 #import <WebKit/IFWebController.h>
 #import <WebKit/IFWebFrame.h>
+#import <WebFoundation/WebFoundation.h>
 
 #import <xml/dom_docimpl.h>
 #import <khtml_part.h>
@@ -17,9 +18,9 @@
 
 @implementation IFWebDataSource
 
-static id IFWebDataSourceMake(void *url) 
+static id IFWebDataSourceMake(void *handle) 
 {
-    return [[[IFWebDataSource alloc] initWithURL: (NSURL *)url] autorelease];
+    return [[[IFWebDataSource alloc] initWithHandle: (IFURLHandle *)handle] autorelease];
 }
 
 + (void)load
@@ -33,11 +34,20 @@ static id IFWebDataSourceMake(void *url)
 }
 
 // Returns nil if object cannot be initialized due to a malformed URL (RFC 1808).
-- initWithURL: (NSURL *)inputURL
+- initWithURL: (NSURL *)inputURL 
+{
+    IFURLHandle *handle;
+    
+    handle = [[[IFURLHandle alloc] initWithURL: inputURL attributes: nil flags: 0] autorelease];
+    return [self initWithHandle: handle];
+}
+
+- initWithHandle: (IFURLHandle *)handle
 {
     [super init];
     [self _commonInitialization];
-    _private->inputURL = [inputURL retain];
+    _private->mainHandle = [handle retain];
+    _private->inputURL = [[handle url] retain];
     return self;
 }
 

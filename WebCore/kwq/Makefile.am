@@ -35,6 +35,7 @@ libkwq_o_SOURCES = \
 	KWQFrame.mm \
 	KWQGlobal.mm \
 	KWQGuardedPtr.mm \
+	KWQInvisibleButton.mm \
 	KWQPoint.mm \
 	KWQPtrDictImpl.mm \
 	KWQRect.mm \

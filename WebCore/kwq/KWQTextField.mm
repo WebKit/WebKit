@@ -84,6 +84,7 @@
                 [secureField setBounds: [self bounds]];
             }
             [secureField setStringValue: @""];
+            [secureField setDelegate:self];
             [self addSubview: secureField];
         }
         [formatter setPasswordMode: flag];
@@ -151,6 +152,20 @@
 -(void)textDidChange:(NSNotification *)aNotification
 {
     edited = true;
+}
+
+-(NSString *)stringValue
+{
+    NSString *result;
+    
+    if ([self passwordMode]) {
+        result = [secureField stringValue];
+    }
+    else {
+        result = [super stringValue];
+    }
+
+    return result;
 }
 
 @end

@@ -45,6 +45,10 @@ class QListboxItem;
 
 class KHTMLPartBrowserExtension;
 
+#ifdef APPLE_CHANGES
+class KWQInvisibleButton;
+#endif
+
 namespace DOM {
     class HTMLFormElementImpl;
     class HTMLInputElementImpl;
@@ -188,6 +192,14 @@ public:
     RenderImageButton(DOM::HTMLInputElementImpl *element);
 
     virtual const char *renderName() const { return "RenderImageButton"; }
+
+#ifdef APPLE_CHANGES    
+    virtual ~RenderImageButton();
+    virtual void printObject(QPainter *p, int x, int y, int w, int h, int tx, int ty);
+
+private:
+    KWQInvisibleButton *button;
+#endif
 };
 
 

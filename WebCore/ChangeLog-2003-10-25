@@ -1,3 +1,34 @@
+2002-04-19  Kenneth Kocienda  <kocienda@apple.com>
+
+        Changes to support submission of forms using HTTP POST.
+                
+        These changes move us over to using the new WebKit interface for creating 
+        WebDataSource instances, one that passes a handle rather than just a URL, 
+        enabling the specific request method to be communicated to WebFoundation.
+        This fixes:
+
+        Radar 2903602 (IFWebDataSource API must passes attributes and flags to IFURLHandle)
+
+        Fixed handling of password fields:
+
+        Radar 2903605 (WebCore form processing drops out password input data)
+        
+        Added some hacks to get form <input type=image ...> working correctly:
+
+        Radar 2907198 (Forms not getting submitted correctly when <input type=image>)
+        
+        
+	* khtml/rendering/render_form.cpp: (RenderImageButton::RenderImageButton),
+	(RenderImageButton::~RenderImageButton), (RenderImageButton::printObject):
+	* khtml/rendering/render_form.h:
+	* kwq/KWQKHTMLPart.mm: (KHTMLPart::requestFrame), (KHTMLPart::submitForm),
+	(KHTMLPart::khtmlMouseReleaseEvent):
+	* kwq/KWQNSTextField.mm: (-[KWQNSTextField setPasswordMode:]), (-[KWQNSTextField
+	textDidChange:]), (-[KWQNSTextField stringValue]):
+	* kwq/Makefile.am:
+        * kwq/KWQInvisibleButton.h: Added
+        * kwq/KWQInvisibleButton.mm: Added
+
 2002-04-18  Darin Adler  <darin@apple.com>
 
 	Fixes for compiling with gcc3 and more warnings.

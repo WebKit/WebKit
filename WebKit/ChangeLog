@@ -1,3 +1,21 @@
+2002-04-19  Kenneth Kocienda  <kocienda@apple.com>
+
+        Changes to support submission of forms using HTTP POST.
+
+        These changes move us over to using the new WebKit interface for creating 
+        WebDataSource instances, one that passes a handle rather than just a URL, 
+        enabling the specific request method to be communicated to WebFoundation.
+        This fixes:
+
+        Radar 2903602 (IFWebDataSource API must passes attributes and flags to IFURLHandle)
+
+	* WebKit.pbproj/project.pbxproj:
+	* WebView.subproj/IFWebDataSource.h:
+	* WebView.subproj/IFWebDataSource.mm: (IFWebDataSourceMake), (-[IFWebDataSource
+	initWithURL:]), (-[IFWebDataSource initWithHandle:]):
+	* WebView.subproj/IFWebDataSourcePrivate.h:
+	* WebView.subproj/IFWebDataSourcePrivate.mm: (-[IFWebDataSource _startLoading:]):
+
 2002-04-19  Richard Williamson  <rjw@apple.com>
 
         Updated comments to reflect new API.
