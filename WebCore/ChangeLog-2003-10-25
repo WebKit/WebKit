@@ -1,3 +1,14 @@
+2003-02-12  Darin Adler  <darin@apple.com>
+
+        Reviewed by Trey.
+
+        - fixed 3162786 -- hang with large amounts of text in textarea
+
+        * kwq/KWQTextArea.mm: (-[KWQTextArea getCursorPositionAsIndex:inParagraph:]):
+        Rewrite to not use RangeOfParagraph to avoid n^2 algorithm. Also made small
+        changes to similar functions so they look similar, and got rid of an int/unsigned
+        mismatch in a case where the value is guaranteed to be positive.
+
 2003-02-11  Darin Adler  <darin@apple.com>
 
         Reviewed by Dave.

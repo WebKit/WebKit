@@ -255,18 +255,16 @@ const float LargeNumberForText = 1.0e7;
     NSString *text = [textView string];
     int paragraphSoFar = 0;
     NSRange searchRange = NSMakeRange(0, [text length]);
-    NSRange newlineRange;
-    int advance;
 
     while (true) {
-	newlineRange = [text rangeOfString:@"\n" options:NSLiteralSearch range:searchRange];
+	NSRange newlineRange = [text rangeOfString:@"\n" options:NSLiteralSearch range:searchRange];
 	if (newlineRange.location == NSNotFound) {
 	    break;
 	}
 
 	paragraphSoFar++;
 
-        advance = newlineRange.location + 1 - searchRange.location;
+        unsigned advance = newlineRange.location + 1 - searchRange.location;
         
 	searchRange.length -= advance;
 	searchRange.location += advance;
@@ -279,9 +277,8 @@ static NSRange RangeOfParagraph(NSString *text, int paragraph)
 {
     int paragraphSoFar = 0;
     NSRange searchRange = NSMakeRange(0, [text length]);
-    NSRange newlineRange;
-    int advance;
 
+    NSRange newlineRange;
     while (true) {
 	newlineRange = [text rangeOfString:@"\n" options:NSLiteralSearch range:searchRange];
 	if (newlineRange.location == NSNotFound) {
@@ -294,8 +291,8 @@ static NSRange RangeOfParagraph(NSString *text, int paragraph)
 
 	paragraphSoFar++;
 
-        advance = newlineRange.location + 1 - searchRange.location;
-	if ((int)searchRange.length <= advance) {
+        unsigned advance = newlineRange.location + 1 - searchRange.location;
+	if (searchRange.length <= advance) {
 	    searchRange.location = NSNotFound;
 	    searchRange.length = 0;
 	    break;
@@ -367,32 +364,31 @@ static NSRange RangeOfParagraph(NSString *text, int paragraph)
     NSString *text = [textView string];
     NSRange selectedRange = [textView selectedRange];
     
-    *index = 0;
-    *paragraph = 0;
-
     if (selectedRange.location == NSNotFound) {
+        *paragraph = 0;
+        *index = 0;
         return;
     }
     
-    int num = [self paragraphs];
-    if (num == 0) {
-        return;
-    }
-    
-    int i;
-    NSRange range;
-    
-    for (i = 0; i < num; i++) {
-        range = RangeOfParagraph(text, i);
-        if (range.location + range.length > selectedRange.location) {
-            *paragraph = i;
-            *index = selectedRange.location - range.location;
-            return;
-        }
+    int paragraphSoFar = 0;
+    NSRange searchRange = NSMakeRange(0, [text length]);
+
+    while (true) {
+	NSRange newlineRange = [text rangeOfString:@"\n" options:NSLiteralSearch range:searchRange];
+	if (newlineRange.location == NSNotFound || selectedRange.location <= newlineRange.location) {
+	    break;
+	}
+        
+	paragraphSoFar++;
+
+        unsigned advance = newlineRange.location + 1 - searchRange.location;
+
+	searchRange.length -= advance;
+	searchRange.location += advance;
     }
 
-    // Express the end of text as past the last paragraph.
-    *paragraph = num;
+    *paragraph = paragraphSoFar;
+    *index = selectedRange.location - searchRange.location;
 }
 
 - (void)setCursorPositionToIndex:(int)index inParagraph:(int)paragraph
