@@ -1,3 +1,47 @@
+2003-12-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed 3498712: REGRESSION (100-115): Safari aborts at http://www11.dht.dk/~blangstrup_org/
+
+        This was an uncaught exception thrown by DocumentImpl. But the design of KHTML DOM is that
+        "impl" classes return exception codes; they don't throw exceptions.
+
+        * khtml/dom/dom_doc.cpp:
+        (DOM::Document::createElement): Throw exception if necessary. The impl function now returns
+        an exception code.
+        (DOM::Document::createElementNS): Ditto.
+
+        * khtml/html/html_documentimpl.h: Add exception code parameter to createElement.
+        * khtml/html/html_documentimpl.cpp: (HTMLDocumentImpl::createElement): Pass along the
+        exception code from the lower level.
+
+        * khtml/xml/dom_docimpl.h: Add exception code parameters to createElement, createElementNS,
+        and createHTMLElement.
+        * khtml/xml/dom_docimpl.cpp:
+        (DOMImplementationImpl::createDocument): Handle exception code from createElementNS.
+        (DocumentImpl::createElement): Add exception code parameter, not set since there is
+        no exception.
+        (DocumentImpl::importNode): Handle exception code from createElementNS.
+        (DocumentImpl::createElementNS): Add exception code parameter. Propagate the exception
+        codes that we get from createHTMLElement and setPrefix.
+        (DocumentImpl::createHTMLElement): Add exception code parameter. Use an exception code
+        rather than a C++ exception for INVALID_CHARACTER_ERR.
+
+        * khtml/xml/dom_elementimpl.cpp: (ElementImpl::cloneNode): Pass exception code parameter to
+        createElement.
+
+        * khtml/xml/xml_tokenizer.cpp:
+        (XMLHandler::startElement): Pass exception code parameter to createElementNS, and return false
+        if it is not zero. This is where the bug happened. Before we would get an exception from
+        createElementNS, but "impl" functions are not supposed to throw in KHTML's DOM.
+        (XMLTokenizer::finish): Add various exception code parameters to compile, but we know we won't
+        get any exceptions.
+
+        * kwq/WebCoreDOMDocument.mm:
+        (-[WebCoreDOMDocument createElement:]): Pass an (ignored) exception code parameter.
+        (-[WebCoreDOMDocument createElementNS::]): Pass an (ignored) exception code parameter.
+
 === Safari-116 ===
 
 2003-12-03  Richard Williamson   <rjw@apple.com>

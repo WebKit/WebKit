@@ -185,8 +185,9 @@ DocumentImpl *DOMImplementationImpl::createDocument( const DOMString &namespaceU
     if (doc->doctype() && dtype)
         doc->doctype()->copyFrom(*dtype);
 
-    ElementImpl *element = doc->createElementNS(namespaceURI,qualifiedName);
-    doc->appendChild(element,exceptioncode);
+    ElementImpl *element = doc->createElementNS(namespaceURI,qualifiedName,exceptioncode);
+    if (element)
+        doc->appendChild(element,exceptioncode);
     if (exceptioncode) {
         delete element;
         delete doc;
@@ -396,7 +397,7 @@ ElementImpl *DocumentImpl::documentElement() const
     return static_cast<ElementImpl*>(n);
 }
 
-ElementImpl *DocumentImpl::createElement( const DOMString &name )
+ElementImpl *DocumentImpl::createElement( const DOMString &name, int &exceptioncode )
 {
     return new XMLElementImpl( document, name.implementation() );
 }
@@ -442,7 +443,9 @@ NodeImpl *DocumentImpl::importNode(NodeImpl *importedNode, bool deep, int &excep
 
 	if(importedNode->nodeType() == Node::ELEMENT_NODE)
 	{
-		ElementImpl *tempElementImpl = createElementNS(getDocument()->namespaceURI(id()), importedNode->nodeName());
+		ElementImpl *tempElementImpl = createElementNS(getDocument()->namespaceURI(id()), importedNode->nodeName(), exceptioncode);
+                if (exceptioncode)
+                    return 0;
 		result = tempElementImpl;
 
 		if(static_cast<ElementImpl *>(importedNode)->attributes(true) && static_cast<ElementImpl *>(importedNode)->attributes(true)->length())
@@ -504,7 +507,7 @@ NodeImpl *DocumentImpl::importNode(NodeImpl *importedNode, bool deep, int &excep
 	return result;
 }
 
-ElementImpl *DocumentImpl::createElementNS( const DOMString &_namespaceURI, const DOMString &_qualifiedName )
+ElementImpl *DocumentImpl::createElementNS( const DOMString &_namespaceURI, const DOMString &_qualifiedName, int &exceptioncode)
 {
     ElementImpl *e = 0;
     QString qName = _qualifiedName.string();
@@ -514,10 +517,16 @@ ElementImpl *DocumentImpl::createElementNS( const DOMString &_namespaceURI, cons
         _namespaceURI == XHTML_NAMESPACE) {
         // User requested an element in the XHTML namespace - this means we create a HTML element
         // (elements not in this namespace are treated as normal XML elements)
-        e = createHTMLElement(qName.mid(colonPos+1));
-        int exceptioncode = 0;
-        if (e && colonPos >= 0)
-            e->setPrefix(qName.left(colonPos),  exceptioncode);
+        e = createHTMLElement(qName.mid(colonPos+1), exceptioncode);
+        if (exceptioncode)
+            return 0;
+        if (e && colonPos >= 0) {
+            e->setPrefix(qName.left(colonPos), exceptioncode);
+            if (exceptioncode) {
+                delete e;
+                return 0;
+            }
+        }
     }
     if (!e)
         e = new XMLElementImpl( document, _qualifiedName.implementation(), _namespaceURI.implementation() );
@@ -621,9 +630,12 @@ unsigned short DocumentImpl::nodeType() const
     return Node::DOCUMENT_NODE;
 }
 
-ElementImpl *DocumentImpl::createHTMLElement( const DOMString &name )
+ElementImpl *DocumentImpl::createHTMLElement( const DOMString &name, int &exceptioncode )
 {
-    if (!isValidName(name)) throw DOMException(DOMException::INVALID_CHARACTER_ERR);
+    if (!isValidName(name)) {
+        exceptioncode = DOMException::INVALID_CHARACTER_ERR;
+        return 0;
+    }
 
     uint id = khtml::getTagID( name.string().lower().latin1(), name.string().length() );
 

@@ -188,12 +188,14 @@ DOM::DOMString NSStringToDOMString(NSString *aString)
 
 - (id<WebDOMElement>)createElement:(NSString *)tagName
 {
-    return [WebCoreDOMElement elementWithImpl: [self documentImpl]->createElement(NSStringToDOMString(tagName))];
+    int exceptionCode;
+    return [WebCoreDOMElement elementWithImpl: [self documentImpl]->createElement(NSStringToDOMString(tagName), exceptionCode)];
 }
 
 - (id<WebDOMElement>)createElementNS:(NSString *)namespaceURI :(NSString *)qualifiedName
 {
-    return [WebCoreDOMElement elementWithImpl: [self documentImpl]->createElementNS(NSStringToDOMString(namespaceURI),NSStringToDOMString(qualifiedName))];
+    int exceptionCode;
+    return [WebCoreDOMElement elementWithImpl: [self documentImpl]->createElementNS(NSStringToDOMString(namespaceURI), NSStringToDOMString(qualifiedName), exceptionCode)];
 }
 
 - (id<WebDOMDocumentFragment>)createDocumentFragment

@@ -294,7 +294,8 @@ void ElementImpl::setAttributeMap( NamedAttrMapImpl* list )
 NodeImpl *ElementImpl::cloneNode(bool deep)
 {
     // ### we loose the namespace here ... FIXME
-    ElementImpl *clone = getDocument()->createElement(tagName());
+    int exceptioncode;
+    ElementImpl *clone = getDocument()->createElement(tagName(), exceptioncode);
     if (!clone) return 0;
 
     // clone attributes

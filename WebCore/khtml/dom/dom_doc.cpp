@@ -234,14 +234,24 @@ Element Document::documentElement() const
 
 Element Document::createElement( const DOMString &tagName )
 {
-    if (impl) return ((DocumentImpl *)impl)->createElement(tagName);
-    return 0;
+    if (!impl) return 0;
+    int exceptioncode = 0;
+    ElementImpl *e = ((DocumentImpl *)impl)->createElement(tagName, exceptioncode);
+    if (exceptioncode) {
+        throw DOMException(exceptioncode);
+    }
+    return e;
 }
 
 Element Document::createElementNS( const DOMString &namespaceURI, const DOMString &qualifiedName )
 {
-    if (impl) return ((DocumentImpl *)impl)->createElementNS(namespaceURI,qualifiedName);
-    return 0;
+    if (!impl) return 0;
+    int exceptioncode = 0;
+    ElementImpl *e = ((DocumentImpl *)impl)->createElementNS(namespaceURI, qualifiedName, exceptioncode);
+    if (exceptioncode) {
+        throw DOMException(exceptioncode);
+    }
+    return e;
 }
 
 DocumentFragment Document::createDocumentFragment(  )

@@ -77,12 +77,13 @@ bool XMLHandler::startElement( const QString& namespaceURI, const QString& /*loc
     if (m_currentNode->nodeType() == Node::TEXT_NODE)
         exitText();
 
-    ElementImpl *newElement;
-    newElement = m_doc->document()->createElementNS(namespaceURI,qName);
+    int exceptioncode = 0;
+    ElementImpl *newElement = m_doc->document()->createElementNS(namespaceURI,qName,exceptioncode);
+    if (!newElement)
+        return false;
 
     int i;
     for (i = 0; i < atts.length(); i++) {
-        int exceptioncode = 0;
         DOMString uri(atts.uri(i));
         DOMString ln(atts.localName(i));
         DOMString val(atts.value(i));
@@ -376,9 +377,9 @@ void XMLTokenizer::finish()
 
         // Create elements for display
         DocumentImpl *doc = m_doc->document();
-        NodeImpl *html = doc->createElementNS(XHTML_NAMESPACE,"html");
-        NodeImpl   *body = doc->createElementNS(XHTML_NAMESPACE,"body");
-        NodeImpl     *h1 = doc->createElementNS(XHTML_NAMESPACE,"h1");
+        NodeImpl *html = doc->createElementNS(XHTML_NAMESPACE,"html",exceptioncode);
+        NodeImpl   *body = doc->createElementNS(XHTML_NAMESPACE,"body",exceptioncode);
+        NodeImpl     *h1 = doc->createElementNS(XHTML_NAMESPACE,"h1",exceptioncode);
 #if APPLE_CHANGES
         // FIXME: Is there some alternative to having this text hardcoded here?
         NodeImpl       *headingText = doc->createTextNode("XML parsing error");
@@ -391,8 +392,8 @@ void XMLTokenizer::finish()
         NodeImpl       *lineText = 0;
         NodeImpl       *errorLocText = 0;
         if (!line.isNull()) {
-                      hr = doc->createElementNS(XHTML_NAMESPACE,"hr");
-                      pre = doc->createElementNS(XHTML_NAMESPACE,"pre");
+                      hr = doc->createElementNS(XHTML_NAMESPACE,"hr",exceptioncode);
+                      pre = doc->createElementNS(XHTML_NAMESPACE,"pre",exceptioncode);
                         lineText = doc->createTextNode(line+"\n");
                         errorLocText = doc->createTextNode(errorLocPtr);
         }
