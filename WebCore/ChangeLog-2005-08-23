@@ -1,3 +1,11 @@
+2003-01-21  Darin Adler  <darin@apple.com>
+
+        Reviewed by Richard.
+
+	- clean room rewrite of QCString
+
+        * kwq/KWQCString.mm: Replaced functions that needed rewrite.
+
 2003-01-21  Richard Williamson   <rjw@apple.com>
 
         Added support to pause and resume javascript timers.  This allows pages 

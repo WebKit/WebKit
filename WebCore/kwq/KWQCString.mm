@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001, 2002, 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,236 +25,202 @@
 
 #import "KWQCString.h"
 
+#import "KWQAssertions.h"
 #import <ctype.h>
 
 using std::ostream;
 
-QCString::QCString() : QByteArray(0)
+QCString::QCString()
 {
 }
 
 QCString::QCString(int size) : QByteArray(size)
 {
-    if (size > 0) {
-        *data() = '\0';
-        *(data() + (size - 1)) = '\0';
+    if( size>0 && data() )
+    {
+        data()[0] = 0;		// first null
+        data()[size-1] = 0;	// last byte
     }
+    // else null
 }
 
-QCString::QCString(const char *s)
+
+QCString::QCString(const char *str)
 {
-    duplicate(s, strlen(s) + 1);
+    size_t len;
+    if( str && (len=strlen(str)+1) && resize(len) )	// include null
+        strcpy( data(), str );
+    // else null
 }
 
-QCString::QCString(const char *s, uint max)
+
+QCString::QCString(const char *str, uint max)
 {
-    if (s == 0) {
-        return;
-    }
-    uint len; // index of first '\0'
-    for (len = 0; len < max - 1; len++) {
-        if (s[len] == '\0') {
-            break;
+    if( str && max )
+    {
+        // perform a truncated strlen on str
+        const char* p = str;
+	uint len = 1;			// for the null
+        while( *p++ && len<max )
+            len ++;
+
+        if( resize(len) )
+        {
+            char *dest = data();
+            strncpy( dest, str, len );
+            dest[len-1] = 0;	// re-terminate
         }
     }
-    QByteArray::resize(len + 1);
-    memcpy(data(), s, len);
-    data()[len] = 0;
+    // else null
 }
 
 bool QCString::isEmpty() const
+{ return length()==0; }
+
+
+uint QCString::length() const
 {
-    const char *s = data();
-    return !(s && *s);
+    const char *d = data();
+    return d ? strlen(d) : 0;
 }
 
-int QCString::find(const char *s, int index, bool cs) const
+
+bool QCString::resize(uint len)
 {
-    int result;
-    const char *tmp;
+    bool success = QByteArray::resize(len);
+    if( success && len>0 )
+        data()[len-1] = 0;	// always terminate last byte
 
-    result = -1;
+    return success;
+}
 
-    if (!s || index >= (int)size()) {
-        result = -1;
-    }
-    else if (!*s) {
-        result = index;
-    }
-    else {
-        if (cs) {
-            tmp = strstr(data() + index, s);
+
+bool QCString::truncate(uint pos)
+{
+    return resize(pos+1);
+}
+
+
+QCString QCString::lower() const
+{
+    // convert
+    QCString tmp = *this;	// copy
+    char* str = tmp.data();
+    if( str )
+    {
+        while( *str != 0 )
+        {
+            *str = tolower(*str);
+            str++;
         }
-        else {
-            tmp = data() + index;
-            int len = strlen(s);
-            while (*tmp) {
-                if (strncasecmp(tmp, s, len) == 0) {
-                    break;
-                }
-                tmp++;
-            }
-            if (!*tmp) {
-                tmp = 0;
-            }
+    }
+
+    return tmp;
+}
+
+
+QCString QCString::upper() const
+{
+    QCString tmp = *this;	// copy
+    char* str = tmp.data();
+    if( str )
+    {
+        while( *str != 0 )
+        {
+            *str = toupper(*str);
+            str++;
         }
+    }
+
+    return tmp;
+}
+
+
+inline QCString QCString::left(uint len) const
+{ return mid(0, len); }
+
+
+inline QCString QCString::right(uint len) const
+{ return mid(length() - len, len); }
+
+
+QCString QCString::mid(uint index, uint len) const
+{
+    uint size = length();
+    if( data() && index<size )	// return null if index out-of-range
+    {
+        // clip length
+        if( len > size - index )
+            len = size - index;
+
+        // copy and return
+        return QCString( &(data()[index]), len+1);		// include nul
+    }
+
+    // degenerate case
+    return QCString();
+}
+
+int QCString::find(const char *sub, int index, bool cs) const
+{
+    const char* str = data();
+    if( str && str[0] && sub && index>=0 )	// don't search empty strings
+    {
+        // advance until we get to index
+        int pos = 0;
+        while( pos < index )
+            if( str[pos++] == 0 )
+                return -1;		// index is beyond end of str
         
-        if (tmp) {
-            result = (int)(tmp - data());
+        // now search from index onward
+        while( str[index] != 0 )
+        {
+            char a, b;
+            
+            // compare until we reach the end or a mismatch
+            pos = 0;
+            if( cs )
+                while( (a=sub[pos]) && (b=str[index]) && a==b )
+                    pos++, index++;
+            else
+                while( (a=sub[pos]) && (b=str[index]) && tolower(a)==tolower(b) )
+                    pos++, index++;
+            
+            // reached the end of our compare string without a mismatch?
+            if( sub[pos] == 0 )
+                return index - pos;
+            
+            index ++;
         }
     }
-
-    return result;
+    
+    return -1;
 }
 
 int QCString::contains(char c, bool cs) const
 {
-    int result;
-    const char *tmp;
+    const char* str = data();
+    uint found = 0;
+    uint len = length();
 
-    result = 0;
-    tmp = data();
+    if( str && len )
+    {
+        // drop char if we're insensitive
+        if( !cs )
+            c = tolower(c);
 
-    if (tmp) {
-        if (cs) {
-            while (*tmp) {
-                if (*tmp == c) {
-                    result++;
-                }
-                tmp++;
-            }
-        }
-        else {
-            c = tolower((uchar)c);
-            while (*tmp) {
-                if (tolower((uchar)*tmp) == c) {
-                    result++;
-                }
-                tmp++;
-            }
+        for( unsigned i=0; i<len; i++ )
+        {
+            char chr = str[i];
+            if( !cs )
+                chr = tolower(chr);
+
+            if( chr == c )
+                found ++;
         }
     }
 
-    return result;
-}
-
-uint QCString::length() const
-{
-    const char *s = data();
-    return s == NULL ? 0 : strlen(s);
-}
-
-bool QCString::resize(uint len)
-{
-    detach();
-    uint oldlen;
-
-    oldlen = length();
-
-    if (!QByteArray::resize(len)) {
-        return false;
-    }
-    if (len) {
-        *(data() + len-1) = '\0';
-    }
-
-    if (len > 0 && oldlen == 0) {
-        *(data()) = '\0';
-    }
-
-    return true;
-}
-
-bool QCString::truncate(uint pos)
-{
-    return resize(pos + 1);
-}
-
-QCString QCString::lower() const
-{
-    QCString result(data());
-
-    char *p = result.data();
-    if (p) {
-        while(*p) {
-            *p = tolower((uchar)*p);
-            p++;
-        }
-    }
-
-    return result;
-}
-
-QCString QCString::upper() const
-{
-    QCString result(data());
-
-    char *p = result.data();
-    if (p) {
-        while(*p) {
-            *p = toupper((uchar)*p);
-            p++;
-        }
-    }
-
-    return result;
-}
-
-QCString QCString::left(uint len) const
-{
-    if (isEmpty()) {
-        QCString empty;
-        return empty;
-    } 
-    else if (len >= size()) {
-        QCString same(data());
-        return same;
-    } 
-    else {
-        QCString s(len + 1);
-        strncpy(s.data(), data(), len);
-        *(s.data() + len) = '\0';
-        return s;
-    }
-}
-
-QCString QCString::right(uint len) const
-{
-    if (isEmpty()) {
-        QCString empty;
-        return empty;
-    } 
-    else {
-        uint l = length();
-        if (len > l) {
-            len = l;
-        }
-        const char *p = data() + (l - len);
-        return QCString(p);
-    }
-}
-
-QCString QCString::mid(uint index, uint len) const
-{
-    uint slen;
-    
-    slen = strlen(data());
-
-    if (len == 0xffffffff) {
-        len = length() - index;
-    }
-
-    if (isEmpty() || index >= slen) {
-        QCString result;
-        return result;
-    } 
-    else {
-        const char *p = data() + index;
-        QCString result(len + 1);
-        strncpy(result.data(), p, len);
-        *(result.data() + len) = '\0';
-        return result;
-    }
+    return found;
 }
 
 QCString &QCString::operator=(const char *assignFrom)
