@@ -572,26 +572,25 @@ void Selection::paintCaret(QPainter *p, const QRect &rect)
 
 void Selection::validate(ETextGranularity granularity)
 {
-    // move the base and extent nodes to their equivalent leaf positions
+    // Move the selection to rendered positions, if possible. This process
+    // might wind up setting the selection to "empty" (meaning no selection) if
+    // rendered positions cannot be found. Since selection is all about giving
+    // cues to users in displayed content, and this position is used to
+    // determine where user input (like typing) will be accepted, it makes no
+    // sense to put the selection in a place that is not rendered.
     bool baseAndExtentEqual = base() == extent();
     bool updatedLayout = false;
     if (base().notEmpty()) {
         base().node()->getDocument()->updateLayout();
         updatedLayout = true;
-        Position pos = base().equivalentDeepPosition();
-        Position renderedPos(pos.closestRenderedPosition(affinity()));
-        if (renderedPos.notEmpty())
-            pos = renderedPos;
-        assignBase(pos);
+        assignBase(base().equivalentDeepPosition().closestRenderedPosition(affinity()));
         if (baseAndExtentEqual)
-            assignExtent(pos);
+            assignExtent(base());
     }
     if (extent().notEmpty() && !baseAndExtentEqual) {
         if (!updatedLayout)
             extent().node()->getDocument()->updateLayout();
-        Position pos(extent().equivalentDeepPosition());
-        Position renderedPos(pos.closestRenderedPosition(affinity()));
-        assignExtent(renderedPos.notEmpty() ? renderedPos : pos);
+        assignExtent(extent().equivalentDeepPosition().closestRenderedPosition(affinity()));
     }
 
     // make sure we do not have a dangling start or end

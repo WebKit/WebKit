@@ -1,5 +1,18 @@
 2004-07-23  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by John
+
+        * khtml/xml/dom_selection.cpp:
+        (DOM::Selection::validate): Not exactly a fix of anything per se, but more of a refinement
+        of how selection validation works. The idea is to let the selection validation process
+        end up with an empty selection given real DOM position inputs if the validation code
+        cannot find a rendered position. Since selection is all about display, this makes sense.
+        Currently, the code will allow the selection to be placed in a location that is not
+        rendered, and this does nobody any good, as it can lead to bugs like accepting key input
+        in a div that is set to display:none.
+
+2004-07-23  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by me
 
         Updated layout tests with new expected results.
