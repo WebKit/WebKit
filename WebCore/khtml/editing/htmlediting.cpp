@@ -3907,6 +3907,7 @@ ReplaceSelectionCommand::~ReplaceSelectionCommand()
 void ReplaceSelectionCommand::doApply()
 {
     Selection selection = endingSelection();
+    ASSERT(selection.isCaretOrRange());
     VisiblePosition visibleStart(selection.start());
     VisiblePosition visibleEnd(selection.end());
     bool startAtStartOfBlock = isFirstVisiblePositionInBlock(visibleStart);

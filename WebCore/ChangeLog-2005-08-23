@@ -1,3 +1,38 @@
+2005-01-25  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+        Fix for this bug:
+        
+        <rdar://problem/3954710> Mail crashed while editing signatures - NodeImpl::isBlockFlow
+
+        The fix is more general than for this one bug, and may work to fix many crashers. The problem
+        is that the ReplaceSelectionCommand never checked whether its starting selection is empty. If
+        it is, then we need to bail before doing the work of the command, which we need to deref the
+        start and end points of the selection in order to do its work. I think you can see the crash
+        potential.
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::ReplaceSelectionCommand::doApply): Assert selection is not empty.
+        * kwq/WebCoreBridge.mm:
+        (partHasSelection): New helper function to test that bridge has a part with a selection.
+        
+        Use new helper function to test part and selection; return from these function if this test fails.
+        
+        (-[WebCoreBridge rangeByExpandingSelectionWithGranularity:])
+        (-[WebCoreBridge rangeByAlteringCurrentSelection:direction:granularity:])
+        (-[WebCoreBridge alterCurrentSelection:direction:granularity:])
+        (-[WebCoreBridge rangeByAlteringCurrentSelection:verticalDistance:])
+        (-[WebCoreBridge alterCurrentSelection:verticalDistance:])
+        (-[WebCoreBridge documentFragmentWithText:])
+        (-[WebCoreBridge replaceSelectionWithFragment:selectReplacement:smartReplace:])
+        (-[WebCoreBridge insertLineBreak])
+        (-[WebCoreBridge insertParagraphSeparator])
+        (-[WebCoreBridge insertParagraphSeparatorInQuotedContent])
+        (-[WebCoreBridge insertText:selectInsertedText:])
+        (-[WebCoreBridge deleteSelectionWithSmartDelete:])
+        (-[WebCoreBridge ensureSelectionVisible])
+
 2005-01-24  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by Darin.

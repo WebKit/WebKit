@@ -188,6 +188,23 @@ static void updateRenderingForBindings (ExecState *exec, ObjectImp *rootObject)
         doc->updateRendering();
 }
 
+static BOOL partHasSelection(WebCoreBridge *bridge)
+{
+    if (!bridge)
+        return NO;
+    
+    KHTMLPart *part = bridge->_part;
+    if (!part)
+        return NO;
+        
+    if (part->selection().isNone())
+        return NO;
+
+    // If a part has a selection, it should also have a document.        
+    ASSERT(part->xmlDocImpl());
+
+    return YES;
+}
 
 @implementation WebCoreBridge
 
@@ -1415,7 +1432,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 - (DOMRange *)rangeByExpandingSelectionWithGranularity:(WebSelectionGranularity)granularity
 {
-    if (!_part)
+    if (!partHasSelection(self))
         return nil;
         
     // NOTE: The enums *must* match the very similar ones declared in ktml_selection.h
@@ -1426,7 +1443,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 - (DOMRange *)rangeByAlteringCurrentSelection:(WebSelectionAlteration)alteration direction:(WebSelectionDirection)direction granularity:(WebSelectionGranularity)granularity
 {
-    if (!_part)
+    if (!partHasSelection(self))
         return nil;
         
     // NOTE: The enums *must* match the very similar ones declared in ktml_selection.h
@@ -1439,7 +1456,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 - (void)alterCurrentSelection:(WebSelectionAlteration)alteration direction:(WebSelectionDirection)direction granularity:(WebSelectionGranularity)granularity
 {
-    if (!_part)
+    if (!partHasSelection(self))
         return;
         
     // NOTE: The enums *must* match the very similar ones declared in dom_selection.h
@@ -1476,7 +1493,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 - (DOMRange *)rangeByAlteringCurrentSelection:(WebSelectionAlteration)alteration verticalDistance:(float)verticalDistance
 {
-    if (!_part)
+    if (!partHasSelection(self))
         return nil;
         
     Selection selection(_part->selection());
@@ -1486,7 +1503,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 - (void)alterCurrentSelection:(WebSelectionAlteration)alteration verticalDistance:(float)verticalDistance
 {
-    if (!_part)
+    if (!partHasSelection(self))
         return;
         
     Selection selection(_part->selection());
@@ -1569,15 +1586,15 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 - (DOMDocumentFragment *)documentFragmentWithText:(NSString *)text
 {
-    if (!_part || !_part->xmlDocImpl() || !text)
+    if (!partHasSelection(self) || !text)
         return 0;
-
+    
     return [DOMDocumentFragment _documentFragmentWithImpl:createFragmentFromText(_part->xmlDocImpl(), QString::fromNSString(text))];
 }
 
 - (void)replaceSelectionWithFragment:(DOMDocumentFragment *)fragment selectReplacement:(BOOL)selectReplacement smartReplace:(BOOL)smartReplace
 {
-    if (!_part || !_part->xmlDocImpl() || !fragment)
+    if (!partHasSelection(self) || !fragment)
         return;
     
     EditCommandPtr(new ReplaceSelectionCommand(_part->xmlDocImpl(), [fragment _fragmentImpl], selectReplacement, smartReplace)).apply();
@@ -1604,7 +1621,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 - (void)insertLineBreak
 {
-    if (!_part || !_part->xmlDocImpl())
+    if (!partHasSelection(self))
         return;
     
     TypingCommand::insertLineBreak(_part->xmlDocImpl());
@@ -1613,7 +1630,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 - (void)insertParagraphSeparator
 {
-    if (!_part || !_part->xmlDocImpl())
+    if (!partHasSelection(self))
         return;
     
     TypingCommand::insertParagraphSeparator(_part->xmlDocImpl());
@@ -1622,11 +1639,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 - (void)insertParagraphSeparatorInQuotedContent
 {
-    if (!_part || !_part->xmlDocImpl())
-        return;
-    
-    Selection selection(_part->selection());
-    if (selection.isNone())
+    if (!partHasSelection(self))
         return;
     
     TypingCommand::insertParagraphSeparatorInQuotedContent(_part->xmlDocImpl());
@@ -1635,7 +1648,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 - (void)insertText:(NSString *)text selectInsertedText:(BOOL)selectInsertedText
 {
-    if (!_part || !_part->xmlDocImpl())
+    if (!partHasSelection(self))
         return;
     
     TypingCommand::insertText(_part->xmlDocImpl(), text, selectInsertedText);
@@ -1692,11 +1705,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 - (void)deleteSelectionWithSmartDelete:(BOOL)smartDelete
 {
-    if (!_part || !_part->xmlDocImpl())
-        return;
-    
-    Selection selection(_part->selection());
-    if (!selection.isRange())
+    if (!partHasSelection(self))
         return;
     
     EditCommandPtr(new DeleteSelectionCommand(_part->xmlDocImpl(), smartDelete)).apply();
@@ -1785,7 +1794,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 - (void)ensureSelectionVisible
 {
-    if (!_part || _part->selection().isNone())
+    if (!partHasSelection(self))
         return;
     
     KHTMLView *v = _part->view();
