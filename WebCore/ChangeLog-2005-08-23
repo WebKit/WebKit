@@ -1,3 +1,21 @@
+2005-02-23  Richard Williamson   <rjw@apple.com>
+
+	Fixed <rdar://problem/3985579> 8A367: Dashboard: Stock widget not visible when click remove to remove single char ticker symbol
+
+	Explicitly remove scroll bar views when removing them from 
+	the overflow.
+
+	Don't paint synchronously when the scroll position changes,
+	this caused funky clip problems.
+
+        Reviewed by Hyatt.
+
+        * khtml/rendering/render_layer.cpp:
+        (RenderLayer::scrollToOffset):
+        (RenderLayer::setHasHorizontalScrollbar):
+        (RenderLayer::setHasVerticalScrollbar):
+        (RenderLayer::updateScrollInfoAfterLayout):
+
 2005-02-23  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Hyatt
