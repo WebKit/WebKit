@@ -1734,14 +1734,10 @@ void KHTMLPart::scheduleRedirection( int delay, const QString &url, bool doLockH
        d->m_delayRedirect = delay;
        d->m_redirectURL = url;
        d->m_redirectLockHistory = doLockHistory;
-#ifndef APPLE_CHANGES
        if ( d->m_bComplete ) {
-#endif
          d->m_redirectionTimer.stop();
          d->m_redirectionTimer.start( 1000 * d->m_delayRedirect, true );
-#ifndef APPLE_CHANGES
        }
-#endif
     }
 }
 

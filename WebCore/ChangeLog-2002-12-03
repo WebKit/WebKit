@@ -1,3 +1,14 @@
+2002-08-12  Darin Adler  <darin@apple.com>
+
+	- re-fixed 2948387 -- stop button flashes to "go" two extra times while loading citibank.com
+
+	It turns out Maciej and I rebroke this when we made the "completed" code run.
+	There was a related APPLE_CHANGES that had to be removed so that we do each redirect only once.
+	Doing the redirect multiple times sent confusing signals to the web browser.
+
+        * khtml/khtml_part.cpp: (KHTMLPart::scheduleRedirection): Remove APPLE_CHANGES so we don't
+	try to redirect until the page is complete.
+
 === Alexander-17 ===
 
 2002-08-10  Ken Kocienda  <kocienda@apple.com>
