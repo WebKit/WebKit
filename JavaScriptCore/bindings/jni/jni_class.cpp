@@ -56,7 +56,12 @@ void JavaClass::_commonInit (jobject aClass)
         jobject aJMethod = env->GetObjectArrayElement ((jobjectArray)methods, i);
         Method *aMethod = new JavaMethod (env, aJMethod);
         CFStringRef methodName = CFStringCreateWithCString(NULL, aMethod->name(), kCFStringEncodingASCII);
-        CFDictionaryAddValue ((CFMutableDictionaryRef)_methods, methodName, aMethod);
+        MethodList *methodList = (MethodList *)CFDictionaryGetValue ((CFMutableDictionaryRef)_methods, methodName);
+        if (!methodList) {
+            methodList = new MethodList();
+            CFDictionaryAddValue ((CFMutableDictionaryRef)_methods, methodName, methodList);
+        }
+        methodList->addMethod (aMethod);
         CFRelease (methodName);
         env->DeleteLocalRef (aJMethod);
     }
@@ -154,13 +159,14 @@ JavaClass *JavaClass::classForInstance (jobject instance)
     return aClass;
 }
 
-Method *JavaClass::methodNamed(const char *name) const 
+MethodList *JavaClass::methodsNamed(const char *name) const
 {
     CFStringRef methodName = CFStringCreateWithCString(NULL, name, kCFStringEncodingASCII);
-    Method *aMethod = (Method *)CFDictionaryGetValue(_methods, methodName);
+    MethodList *methodList = (MethodList *)CFDictionaryGetValue(_methods, methodName);
     CFRelease (methodName);
-    return aMethod;
-};
+    return methodList;
+}
+
 
 Field *JavaClass::fieldNamed(const char *name) const
 {

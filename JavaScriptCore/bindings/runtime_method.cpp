@@ -31,9 +31,9 @@
 using namespace KJS::Bindings;
 using namespace KJS;
 
-RuntimeMethodImp::RuntimeMethodImp(ExecState *exec, const Identifier &ident, Bindings::Method *m) : FunctionImp (exec, ident)
+RuntimeMethodImp::RuntimeMethodImp(ExecState *exec, const Identifier &ident, Bindings::MethodList *m) : FunctionImp (exec, ident)
 {
-    method = m;
+    _methodList = m;
 }
 
 RuntimeMethodImp::~RuntimeMethodImp()
@@ -56,7 +56,11 @@ Value RuntimeMethodImp::get(ExecState *exec, const Identifier &propertyName) con
     
     // Compute length of parameters.
     if (propertyName == lengthPropertyName) {
-        return Number(method->numParameters());
+        // Ick!  There may be more than one method with this name.  Arbitrarily
+        // just pick the first method.  The fundamental problem here is that 
+        // JavaScript doesn't have the notion of method overloading and
+        // Java does.
+        return Number(_methodList->methodAt(0)->numParameters());
     }
     
     return FunctionImp::get(exec, propertyName);
@@ -69,14 +73,14 @@ bool RuntimeMethodImp::implementsCall() const
 
 Value RuntimeMethodImp::call(ExecState *exec, Object &thisObj, const List &args)
 {
-    if (method) {
+    if (_methodList) {
         RuntimeObjectImp *imp = static_cast<RuntimeObjectImp*>(thisObj.imp());
         if (imp) {
             Instance *instance = imp->getInternalInstance();
             
             instance->begin();
             
-            Value aValue = instance->invokeMethod(exec, method, args);
+            Value aValue = instance->invokeMethod(exec, _methodList, args);
             
             instance->end();
             

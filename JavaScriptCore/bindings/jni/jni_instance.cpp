@@ -103,14 +103,35 @@ KJS::Value JavaInstance::booleanValue() const
     return v;
 }
 
-Value JavaInstance::invokeMethod (KJS::ExecState *exec, const Method *method, const List &args)
+Value JavaInstance::invokeMethod (KJS::ExecState *exec, const MethodList *methodList, const List &args)
 {
-    const JavaMethod *jMethod = static_cast<const JavaMethod*>(method);
     int i, count = args.size();
     jvalue *jArgs;
     Value resultValue;
+    Method *method = 0;
+    unsigned int numMethods = methodList->length();
     
-    JS_LOG ("call %s on %p\n", method->name(), _instance->_instance);
+    // Try to find a good match for the overloaded method.  The 
+    // fundamental problem is that JavaScript doesn have the
+    // notion of method overloading and Java does.  We could 
+    // get a bit more sophisticated and attempt to does some
+    // type checking as we as checking the number of parameters.
+    unsigned int methodIndex;
+    Method *aMethod;
+    for (methodIndex = 0; methodIndex < numMethods; methodIndex++) {
+        aMethod = methodList->methodAt (methodIndex);
+        if (aMethod->numParameters() == count) {
+            method = aMethod;
+            break;
+        }
+    }
+    if (method == 0) {
+        JS_LOG ("unable to find an appropiate method\n");
+        return Undefined();
+    }
+    
+    const JavaMethod *jMethod = static_cast<const JavaMethod*>(method);
+    JS_LOG ("call %s %s on %p\n", method->name(), jMethod->signature(), _instance->_instance);
     
     if (count > 0) {
         jArgs = (jvalue *)malloc (count * sizeof(jvalue));
@@ -135,7 +156,13 @@ Value JavaInstance::invokeMethod (KJS::ExecState *exec, const Method *method, co
         case object_type: {
             result.l = callJNIObjectMethodIDA (obj, jMethod->methodID(obj), jArgs);
             if (result.l != 0) {
-                resultValue = Object(new RuntimeObjectImp(new JavaInstance (result.l)));
+                const char *arrayType = jMethod->returnType();
+                if (arrayType[0] == '[') {
+                    resultValue = JavaArray::convertJObjectToArray (exec, result.l, arrayType);
+                }
+                else {
+                    resultValue = Object(new RuntimeObjectImp(new JavaInstance (result.l)));
+                }
             }
             else {
                 resultValue = Undefined();

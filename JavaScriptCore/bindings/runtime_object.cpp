@@ -72,10 +72,10 @@ Value RuntimeObjectImp::get(ExecState *exec, const Identifier &propertyName) con
     
     // Now check if a method with specified name exists, if so return a function object for
     // that method.
-    Method *aMethod = instance->getClass()->methodNamed(propertyName.ascii());
-    if (aMethod) {
+    MethodList *methodList = instance->getClass()->methodsNamed(propertyName.ascii());
+    if (methodList) {
         instance->end();
-        return Object (new RuntimeMethodImp(exec, propertyName, aMethod));
+        return Object (new RuntimeMethodImp(exec, propertyName, methodList));
     }
     
     instance->end();
@@ -119,11 +119,11 @@ bool RuntimeObjectImp::hasProperty(ExecState *exec,
         return true;
     }
         
-    Method *aMethod = instance->getClass()->methodNamed(propertyName.ascii());
+    MethodList *methodList = instance->getClass()->methodsNamed(propertyName.ascii());
 
     instance->end();
 
-    if (aMethod)
+    if (methodList)
         return true;
         
     return false;

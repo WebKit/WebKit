@@ -1,5 +1,46 @@
 2004-01-16  Richard Williamson   <rjw@apple.com>
 
+	Fixed 3525853.  We weren't handling mapping to overloaded Java
+	methods very well.  Even though this is undefined the other
+	browsers support it.  Also fixed a bug with returning arrays
+	from Java functions.
+
+        Reviewed by John.
+
+        * bindings/jni/jni_class.cpp:
+        (JavaClass::_commonInit):
+        (JavaClass::methodsNamed):
+        * bindings/jni/jni_class.h:
+        * bindings/jni/jni_instance.cpp:
+        (JavaInstance::invokeMethod):
+        * bindings/jni/jni_instance.h:
+        * bindings/jni/jni_runtime.cpp:
+        (JavaArray::convertJObjectToArray):
+        (JavaField::valueFromInstance):
+        (JavaMethod::signature):
+        (JavaArray::valueAt):
+        * bindings/jni/jni_runtime.h:
+        * bindings/jni_jsobject.cpp:
+        (JSObject::call):
+        (JSObject::convertJObjectToValue):
+        * bindings/runtime.cpp:
+        (MethodList::addMethod):
+        (MethodList::length):
+        (MethodList::methodAt):
+        (MethodList::~MethodList):
+        * bindings/runtime.h:
+        (KJS::Bindings::MethodList::MethodList):
+        * bindings/runtime_method.cpp:
+        (RuntimeMethodImp::RuntimeMethodImp):
+        (RuntimeMethodImp::get):
+        (RuntimeMethodImp::call):
+        * bindings/runtime_method.h:
+        * bindings/runtime_object.cpp:
+        (RuntimeObjectImp::get):
+        (RuntimeObjectImp::hasProperty):
+
+2004-01-16  Richard Williamson   <rjw@apple.com>
+
 	Fixed 3531229.  Another place that needs the  Push/PopLocalFrame
 	protection implemented for 3530401.
 

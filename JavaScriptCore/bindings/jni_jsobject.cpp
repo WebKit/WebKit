@@ -441,7 +441,9 @@ jobject JSObject::call(jstring methodName, jobjectArray args) const
     // Lookup the function object.
     ExecState *exec = _root->interpreter()->globalExec();
     Interpreter::lock();
-    Value func = _imp->get (exec, Identifier (JavaString(methodName).ustring()));
+    
+    Identifier identifier(JavaString(methodName).ustring());
+    Value func = _imp->get (exec, identifier);
     Interpreter::unlock();
     if (func.isNull() || func.type() == UndefinedType) {
         // Maybe throw an exception here?
@@ -659,6 +661,9 @@ KJS::Value JSObject::convertJObjectToValue (jobject theObject) const
     // figure 22-4.
     jobject classOfInstance = callJNIObjectMethod(theObject, "getClass", "()Ljava/lang/Class;");
     jstring className = (jstring)callJNIObjectMethod(classOfInstance, "getName", "()Ljava/lang/String;");
+    
+    JS_LOG ("converting instance of class %s\n", Bindings::JavaString(className).UTF8String());
+    
     if (strcmp(Bindings::JavaString(className).UTF8String(), "netscape.javascript.JSObject") == 0) {
         // Pull the nativeJSObject value from the Java instance.  This is a
         // pointer to the ObjectImp.

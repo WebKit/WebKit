@@ -30,6 +30,35 @@
 using namespace KJS;
 using namespace KJS::Bindings;
 
+    
+void MethodList::addMethod (Method *aMethod)
+{
+    Method **_newMethods = new Method *[_length + 1];
+    if (_length > 0) {
+        memcpy (_newMethods, _methods, sizeof(Method *) * _length);
+        delete [] _methods;
+    }
+    _methods = _newMethods;
+    _methods[_length++] = aMethod;
+}
+
+unsigned int MethodList::length() const
+{
+    return _length;
+}
+
+Method *MethodList::methodAt (unsigned int index) const
+{
+    assert (index < _length);
+    return _methods[index];
+}
+    
+MethodList::~MethodList()
+{
+    delete [] _methods;
+}
+
+
 Instance *Instance::createBindingForLanguageInstance (BindingLanguage language, void *instance)
 {
     if (language == Instance::JavaLanguage)

@@ -35,6 +35,7 @@ namespace Bindings
 {
 
 class Instance;
+class Method;
 
 // For now just use Java style type descriptors.
 typedef const char * RuntimeType;
@@ -69,6 +70,24 @@ public:
     virtual ~Field() {};
 };
 
+
+class MethodList
+{
+public:
+    MethodList() : _methods(0), _length(0) {};
+    
+    void addMethod (Method *aMethod);
+    unsigned int length() const;
+    Method *methodAt (unsigned int index) const;
+    
+    ~MethodList();
+    
+private:
+    Method **_methods;
+    unsigned int _length;
+};
+
+
 class Method
 {
 public:
@@ -87,7 +106,7 @@ class Class
 public:
     virtual const char *name() const = 0;
     
-    virtual Method *methodNamed(const char *name) const = 0;
+    virtual MethodList *methodsNamed(const char *name) const = 0;
     
     virtual Constructor *constructorAt(long i) const = 0;
     virtual long numConstructors() const = 0;
@@ -118,7 +137,7 @@ public:
     virtual KJS::Value getValueOfField (const Field *aField) const;
     virtual void setValueOfField (KJS::ExecState *exec, const Field *aField, const KJS::Value &aValue) const;
     
-    virtual KJS::Value invokeMethod (KJS::ExecState *exec, const Method *method, const KJS::List &args) = 0;
+    virtual KJS::Value invokeMethod (KJS::ExecState *exec, const MethodList *method, const KJS::List &args) = 0;
     
     virtual KJS::Value defaultValue (KJS::Type hint) const = 0;
     
