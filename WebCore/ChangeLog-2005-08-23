@@ -1,3 +1,42 @@
+2004-11-22  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Dave.
+
+	<rdar://problem/3890961> selecting an item on the Apache bugzilla query page can be sped up 10% (HTMLFormCollection)
+	<rdar://problem/3890958> JavaScript that toggles checkboxes can be improved 73% (HTMLCollection,HTMLFormCollection)
+
+	This avoids the O(N^2) penalty for named item traversal for form collections.
+
+	It also combines the item traversal logic for all non-form
+	collection operations into a single traverseNextItem
+	function. This avoids having 5 copies of the big switch statement
+	for this.
+
+	Also fixed a bug that prevented the last form element from being removed properly.
+        
+        * khtml/html/html_formimpl.cpp:
+        (DOM::removeFromVector):
+	* khtml/dom/html_misc.cpp:
+        (HTMLCollection::namedItems):
+        * khtml/dom/html_misc.h:
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::HTMLCollection::getNamedItems):
+        * khtml/html/html_miscimpl.cpp:
+        (HTMLCollectionImpl::traverseNextItem):
+        (HTMLCollectionImpl::calcLength):
+        (HTMLCollectionImpl::length):
+        (HTMLCollectionImpl::item):
+        (HTMLCollectionImpl::nextItem):
+        (HTMLCollectionImpl::checkForNameMatch):
+        (HTMLCollectionImpl::namedItem):
+        (HTMLCollectionImpl::namedItems):
+        (HTMLCollectionImpl::nextNamedItem):
+        (HTMLFormCollectionImpl::calcLength):
+        (HTMLFormCollectionImpl::namedItem):
+        (HTMLFormCollectionImpl::nextNamedItem):
+        (HTMLFormCollectionImpl::namedItems):
+        * khtml/html/html_miscimpl.h:
+
 2004-11-22  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Harrison

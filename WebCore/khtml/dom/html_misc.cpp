@@ -169,6 +169,15 @@ Node HTMLCollection::nextNamedItem( const DOMString &name ) const
     return static_cast<HTMLCollectionImpl*>( impl )->nextNamedItem( name );
 }
 
+QValueList<Node> HTMLCollection::namedItems( const DOMString & name ) const
+{
+    if ( !impl )
+        return QValueList<Node>();
+
+    return static_cast<HTMLCollectionImpl*>( impl )->namedItems( name );
+}
+
+
 HTMLCollectionImpl *HTMLCollection::handle() const
 {
     return impl;

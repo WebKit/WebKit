@@ -3100,40 +3100,28 @@ Value KJS::HTMLCollection::getNamedItems(ExecState *exec, const Identifier &prop
   kdDebug(6070) << "KJS::HTMLCollection::getNamedItems " << propertyName.ascii() << endl;
 #endif
   DOM::DOMString pstr = propertyName.string();
-  DOM::Node node = collection.namedItem(pstr);
-  if(!node.isNull())
-  {
-    DOM::Node next = collection.nextNamedItem(pstr);
-    if (next.isNull()) // single item
-    {
+
+  QValueList<DOM::Node> namedItems = collection.namedItems(pstr);
+
+  if (namedItems.isEmpty()) {
 #ifdef KJS_VERBOSE
-      kdDebug(6070) << "returning single node" << endl;
+    kdDebug(6070) << "not found" << endl;
 #endif
-#if APPLE_CHANGES
-	  if (!node.isNull() && (node.handle()->id() == ID_APPLET || node.handle()->id() == ID_EMBED)) {
-	    return getRuntimeObject(exec,node);
-	  }
-#endif
-      return getDOMNode(exec,node);
-    }
-    else // multiple items, return a collection
-    {
-      QValueList<DOM::Node> nodes;
-      nodes.append(node);
-      do {
-        nodes.append(next);
-        next = collection.nextNamedItem(pstr);
-      } while (!next.isNull());
-#ifdef KJS_VERBOSE
-      kdDebug(6070) << "returning list of " << nodes.count() << " nodes" << endl;
-#endif
-      return Value(new DOMNamedNodesCollection(exec,nodes));
-    }
+    return Undefined();
   }
-#ifdef KJS_VERBOSE
-  kdDebug(6070) << "not found" << endl;
+
+  if (namedItems.count() == 1) {
+    DOM::Node node = namedItems[0];
+#if APPLE_CHANGES
+    if (!node.isNull() && (node.handle()->id() == ID_APPLET || node.handle()->id() == ID_EMBED)) {
+      return getRuntimeObject(exec, node);
+    }
 #endif
-  return Undefined();
+
+    return getDOMNode(exec,node);
+  }
+  
+  return Value(new DOMNamedNodesCollection(exec,namedItems));
 }
 
 Value KJS::HTMLCollectionProtoFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)

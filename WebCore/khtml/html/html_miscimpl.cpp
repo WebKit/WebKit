@@ -78,177 +78,83 @@ void HTMLCollectionImpl::resetCollectionInfo() const
     }
 }
 
-unsigned long HTMLCollectionImpl::calcLength(NodeImpl *current) const
+
+NodeImpl *HTMLCollectionImpl::traverseNextItem(NodeImpl *current) const
 {
-    unsigned long len = 0;
-    while(current)
-    {
-        if(current->nodeType() == Node::ELEMENT_NODE)
-        {
+    current = current->traverseNextNode();
+
+    while (current) {
+        if(current->nodeType() == Node::ELEMENT_NODE) {
+            bool found = false;
             bool deep = true;
             HTMLElementImpl *e = static_cast<HTMLElementImpl *>(current);
-            switch(type)
-            {
+            switch(type) {
             case DOC_IMAGES:
                 if(e->id() == ID_IMG)
-                    len++;
+                    found = true;
                 break;
             case DOC_FORMS:
                 if(e->id() == ID_FORM)
-                    len++;
+                    found = true;
                 break;
             case TABLE_TBODIES:
                 if(e->id() == ID_TBODY)
-                    len++;
+                    found = true;
                 else if(e->id() == ID_TABLE)
                     deep = false;
                 break;
             case TR_CELLS:
                 if(e->id() == ID_TD || e->id() == ID_TH)
-                    len++;
+                    found = true;
                 else if(e->id() == ID_TABLE)
                     deep = false;
                 break;
             case TABLE_ROWS:
             case TSECTION_ROWS:
                 if(e->id() == ID_TR)
-                    len++;
+                    found = true;
                 else if(e->id() == ID_TABLE)
                     deep = false;
                 break;
             case SELECT_OPTIONS:
                 if(e->id() == ID_OPTION)
-                    len++;
+                    found = true;
                 break;
             case MAP_AREAS:
                 if(e->id() == ID_AREA)
-                    len++;
+                    found = true;
                 break;
             case DOC_APPLETS:   // all OBJECT and APPLET elements
                 if(e->id() == ID_OBJECT || e->id() == ID_APPLET)
-                    len++;
+                    found = true;
                 break;
             case DOC_EMBEDS:   // all EMBED elements
                 if(e->id() == ID_EMBED)
-                    len++;
+                    found = true;
                 break;
             case DOC_LINKS:     // all A _and_ AREA elements with a value for href
                 if(e->id() == ID_A || e->id() == ID_AREA)
                     if(!e->getAttribute(ATTR_HREF).isNull())
-                        len++;
-                break;
-            case DOC_ANCHORS:      // all A elements with a value for name and all elements with an id attribute
-                if(e->id() == ID_A) {
-                    if(!e->getAttribute(ATTR_NAME).isNull())
-                        len++;
-                }
-                break;
-            case DOC_ALL:      // "all" elements
-                len++;
-                break;
-            case NODE_CHILDREN: // first-level children
-                len++;
-                deep = false;
-                break;
-            default:
-                kdDebug( 6030 ) << "Error in HTMLCollection, wrong tagId!" << endl;
-            }
-            if(deep) {
-                current = current->traverseNextNode(base);
-                continue;
-            }
-        }
-        current = current->traverseNextSibling(base);
-    }
-    return len;
-}
-
-// since the collections are to be "live", we have to do the
-// calculation every time...
-unsigned long HTMLCollectionImpl::length() const
-{
-    resetCollectionInfo();
-    if (!info->haslength) {
-        info->length = calcLength(base->firstChild());
-        info->haslength = true;
-    }
-    return info->length;
-}
-
-NodeImpl *HTMLCollectionImpl::getItem(NodeImpl *current, int index, int &len) const
-{
-    while(current)
-    {
-        if(current->nodeType() == Node::ELEMENT_NODE)
-        {
-            bool deep = true;
-            HTMLElementImpl *e = static_cast<HTMLElementImpl *>(current);
-            switch(type)
-            {
-            case DOC_IMAGES:
-                if(e->id() == ID_IMG)
-                    len++;
-                break;
-            case DOC_FORMS:
-                if(e->id() == ID_FORM)
-                    len++;
-                break;
-            case TABLE_TBODIES:
-                if(e->id() == ID_TBODY)
-                    len++;
-                else if(e->id() == ID_TABLE)
-                    deep = false;
-                break;
-            case TR_CELLS:
-                if(e->id() == ID_TD || e->id() == ID_TH)
-                    len++;
-                else if(e->id() == ID_TABLE)
-                    deep = false;
-                break;
-            case TABLE_ROWS:
-            case TSECTION_ROWS:
-                if(e->id() == ID_TR)
-                    len++;
-                else if(e->id() == ID_TABLE)
-                    deep = false;
-                break;
-            case SELECT_OPTIONS:
-                if(e->id() == ID_OPTION)
-                    len++;
-                break;
-            case MAP_AREAS:
-                if(e->id() == ID_AREA)
-                    len++;
-                break;
-            case DOC_APPLETS:   // all OBJECT and APPLET elements
-                if(e->id() == ID_OBJECT || e->id() == ID_APPLET)
-                    len++;
-                break;
-            case DOC_EMBEDS:   // all EMBED elements
-                if(e->id() == ID_EMBED)
-                    len++;
-                break;
-            case DOC_LINKS:     // all A _and_ AREA elements with a value for href
-                if(e->id() == ID_A || e->id() == ID_AREA)
-                    if(!e->getAttribute(ATTR_HREF).isNull())
-                        len++;
+                        found = true;
                 break;
             case DOC_ANCHORS:      // all A elements with a value for name or an id attribute
                 if(e->id() == ID_A)
                     if(!e->getAttribute(ATTR_NAME).isNull())
-                        len++;
+                        found = true;
                 break;
             case DOC_ALL:
-                len++;
+                found = true;
                 break;
             case NODE_CHILDREN:
-                len++;
+                found = true;
                 deep = false;
                 break;
             default:
                 kdDebug( 6030 ) << "Error in HTMLCollection, wrong tagId!" << endl;
             }
-            if(len == (index + 1)) return current;
+            if (found) {
+                return current;
+            }
             if (deep) {
                 current = current->traverseNextNode(base);
                 continue;
@@ -257,6 +163,30 @@ NodeImpl *HTMLCollectionImpl::getItem(NodeImpl *current, int index, int &len) co
         current = current->traverseNextSibling(base);
     }
     return 0;
+}
+
+
+unsigned long HTMLCollectionImpl::calcLength() const
+{
+    unsigned long len = 0;
+
+    for (NodeImpl *current = traverseNextItem(base); current; current = traverseNextItem(current)) {
+        len++;
+    }
+
+    return len;
+}
+
+// since the collections are to be "live", we have to do the
+// calculation every time if anything has changed
+unsigned long HTMLCollectionImpl::length() const
+{
+    resetCollectionInfo();
+    if (!info->haslength) {
+        info->length = calcLength();
+        info->haslength = true;
+    }
+    return info->length;
 }
 
 NodeImpl *HTMLCollectionImpl::item( unsigned long index ) const
@@ -269,13 +199,15 @@ NodeImpl *HTMLCollectionImpl::item( unsigned long index ) const
          return 0;
      }
      if (!info->current || info->position > index) {
-         info->current = base->firstChild();
+         info->current = traverseNextItem(base);
          info->position = 0;
          if (!info->current)
              return 0;
      }
-     int pos = (int) info->position;
-     NodeImpl *node = getItem(info->current, index, pos);
+     NodeImpl *node = info->current;
+     for (unsigned pos = info->position; pos < index; pos++) {
+         node = traverseNextItem(node);
+     }     
      info->current = node;
      info->position = index;
      return info->current;
@@ -289,114 +221,33 @@ NodeImpl *HTMLCollectionImpl::firstItem() const
 NodeImpl *HTMLCollectionImpl::nextItem() const
 {
      resetCollectionInfo();
-     int pos = 0;
  
      // Look for the 'second' item. The first one is currentItem, already given back.
-     NodeImpl *retval = getItem(info->current, 1, pos);
-
+     NodeImpl *retval = traverseNextItem(info->current);
      info->current = retval;
+     info->position++;
      return retval;
 }
 
-NodeImpl *HTMLCollectionImpl::getNamedItem( NodeImpl *current, int attr_id,
-                                            const DOMString &name, bool caseSensitive ) const
+bool HTMLCollectionImpl::checkForNameMatch(NodeImpl *node, bool checkName, const DOMString &name, bool caseSensitive) const
 {
-    if(name.isEmpty())
-        return 0;
-
-    while(current)
-    {
-        if(current->nodeType() == Node::ELEMENT_NODE)
-        {
-            bool deep = true;
-            bool check = false;
-            HTMLElementImpl *e = static_cast<HTMLElementImpl *>(current);
-            switch(type)
-            {
-            case DOC_IMAGES:
-                if(e->id() == ID_IMG)
-                    check = true;
-                break;
-            case DOC_FORMS:
-                if(e->id() == ID_FORM)
-                    check = true;
-                break;
-            case TABLE_TBODIES:
-                if(e->id() == ID_TBODY)
-                    check = true;
-                else if(e->id() == ID_TABLE)
-                    deep = false;
-                break;
-            case TR_CELLS:
-                if(e->id() == ID_TD || e->id() == ID_TH)
-                    check = true;
-                else if(e->id() == ID_TABLE)
-                    deep = false;
-                break;
-            case TABLE_ROWS:
-            case TSECTION_ROWS:
-                if(e->id() == ID_TR)
-                    check = true;
-                else if(e->id() == ID_TABLE)
-                    deep = false;
-                break;
-            case SELECT_OPTIONS:
-                if(e->id() == ID_OPTION)
-                    check = true;
-                break;
-            case MAP_AREAS:
-                if(e->id() == ID_AREA)
-                    check = true;
-                break;
-            case DOC_APPLETS:   // all OBJECT and APPLET elements
-                if(e->id() == ID_OBJECT || e->id() == ID_APPLET)
-                    check = true;
-                break;
-            case DOC_EMBEDS:   // all EMBED elements
-                if(e->id() == ID_EMBED)
-                    check = true;
-                break;
-            case DOC_LINKS:     // all A _and_ AREA elements with a value for href
-                if(e->id() == ID_A || e->id() == ID_AREA)
-                    if(!e->getAttribute(ATTR_HREF).isNull())
-                        check = true;
-                break;
-            case DOC_ANCHORS:      // all A elements with a value for name
-                if(e->id() == ID_A)
-                    if(!e->getAttribute(ATTR_NAME).isNull())
-                        check = true;
-                break;
-            case DOC_ALL:
-                check = true;
-                break;
-            case NODE_CHILDREN:
-                check = true;
-                deep = false;
-                break;
-            default:
-                kdDebug( 6030 ) << "Error in HTMLCollection, wrong tagId!" << endl;
-                break;
-            }
-            if (check) {
-                bool found;
-                if (caseSensitive)
-                    found = e->getAttribute(attr_id) == name;
-                else
-                    found = e->getAttribute(attr_id).domString().lower() == name.lower();
-                if (found) {
-                    //kdDebug( 6030 ) << "found node: " << e << " " << current << " " << e->id() << " " << e->tagName().string() << endl;
-                    return current;
-                }
-            }
-            if (deep) {
-                current = current->traverseNextNode(base);
-                continue;
-            } 
+    ElementImpl *e = static_cast<ElementImpl *>(node);
+    if (caseSensitive) {
+        if (checkName) {
+            return e->getAttribute(ATTR_NAME) == name && e->getAttribute(ATTR_ID) != name;
+        } else {
+            return e->getAttribute(ATTR_ID) == name;
         }
-        current = current->traverseNextSibling(base);
+    } else {
+        if (checkName) {
+            return e->getAttribute(ATTR_NAME).domString().lower() == name.lower() &&
+                e->getAttribute(ATTR_ID).domString().lower() != name.lower();
+        } else {
+            return e->getAttribute(ATTR_ID).domString().lower() == name.lower();
+        }
     }
-    return 0;
 }
+
 
 NodeImpl *HTMLCollectionImpl::namedItem( const DOMString &name, bool caseSensitive ) const
 {
@@ -407,65 +258,81 @@ NodeImpl *HTMLCollectionImpl::namedItem( const DOMString &name, bool caseSensiti
     // that are allowed a name attribute.
     resetCollectionInfo();
     idsDone = false;
-    info->current = getNamedItem(base->firstChild(), ATTR_ID, name);
+
+    NodeImpl *n;
+    for (n = traverseNextItem(base); n; n = traverseNextItem(n)) {
+        if (checkForNameMatch(n, idsDone, name, caseSensitive)) {
+            break;
+        }
+    }
+        
+    info->current = n;
     if(info->current)
         return info->current;
     idsDone = true;
-    info->current = getNamedItem(base->firstChild(), ATTR_NAME, name);
-    return info->current;
-}
 
-NodeImpl *HTMLCollectionImpl::nextNamedItem( const DOMString &name ) const
-{
-    // nextNamedItemInternal can return an item that has both id=<name> and name=<name>
-    // Here, we have to filter out such cases.
-    NodeImpl *impl = nextNamedItemInternal( name );
-    if (!idsDone) // looking for id=<name> -> no filtering
-        return impl;
-    // looking for name=<name> -> filter out if id=<name>
-    bool ok = false;
-    while (impl && !ok)
-    {
-        if(impl->nodeType() == Node::ELEMENT_NODE)
-        {
-            HTMLElementImpl *e = static_cast<HTMLElementImpl *>(impl);
-            ok = (e->getAttribute(ATTR_ID) != name);
-            if (!ok)
-                impl = nextNamedItemInternal( name );
-        } else // can't happen
-            ok = true;
-    }
-    return impl;
-}
-
-NodeImpl *HTMLCollectionImpl::nextNamedItemInternal( const DOMString &name ) const
-{
-    resetCollectionInfo();
-    //kdDebug() << "\nHTMLCollectionImpl::nextNamedItem starting at " << info->current << endl;
-    // Go to next item first (to avoid returning the same)
-    nextItem(); // sets info->current and invalidates info->postion
-    //kdDebug() << "*HTMLCollectionImpl::nextNamedItem next item is " << info->current << endl;
-
-    if ( info->current )
-    {
-        // Then look for next matching named item
-        NodeImpl *retval = getNamedItem(info->current, idsDone ? ATTR_NAME : ATTR_ID, name);
-        if ( retval )
-        {
-            //kdDebug() << "*HTMLCollectionImpl::nextNamedItem found " << retval << endl;
-            info->current = retval;
-            return retval;
+    for (n = traverseNextItem(base); n; n = traverseNextItem(n)) {
+        if (checkForNameMatch(n, idsDone, name, caseSensitive)) {
+            break;
         }
     }
 
-    if ( idsDone )
-        return 0;
-    // After doing all ATTR_ID, do ATTR_NAME
-    //kdDebug() << "*HTMLCollectionImpl::nextNamedItem going to ATTR_NAME now" << endl;
-    idsDone = true;
-    info->current = getNamedItem(base->firstChild(), ATTR_NAME, name);
+    info->current = n;
     return info->current;
+}
 
+QValueList<Node> HTMLCollectionImpl::namedItems(const DOMString &name) const
+{
+    resetCollectionInfo();
+    
+    QValueList<Node> idResults;
+    QValueList<Node> nameResults;
+
+    for (NodeImpl *n = traverseNextItem(base); n; n = traverseNextItem(n)) {
+        if (checkForNameMatch(n, false, name, true)) {
+            idResults.append(Node(n));
+        } 
+        if (checkForNameMatch(n, true, name, true)) {
+            nameResults.append(Node(n));
+        }
+    }
+
+    if (idResults.isEmpty())
+        return nameResults;
+
+    for (QValueListIterator<Node> iter = nameResults.begin(); iter != nameResults.end(); ++iter) {
+        idResults.append(*iter);
+    }
+
+    return idResults;
+}
+
+
+NodeImpl *HTMLCollectionImpl::nextNamedItem( const DOMString &name ) const
+{
+    resetCollectionInfo();
+
+    for (NodeImpl *n = traverseNextItem(info->current ? info->current : base); n; n = traverseNextItem(n)) {
+        if (checkForNameMatch(n, idsDone, name, true)) {
+            info->current = n;
+            return n;
+        }
+    }
+    
+    if (idsDone) {
+        info->current = 0; 
+        return 0;
+    }
+    idsDone = true;
+
+    for (NodeImpl *n = traverseNextItem(info->current ? info->current : base); n; n = traverseNextItem(n)) {
+        if (checkForNameMatch(n, idsDone, name, true)) {
+            info->current = n;
+            return n;
+        }
+    }
+
+    return 0;
 }
 
 // -----------------------------------------------------------------------------
@@ -489,7 +356,7 @@ void HTMLFormCollectionImpl::resetCollectionInfo() const
     HTMLCollectionImpl::resetCollectionInfo();
 }
 
-unsigned long HTMLFormCollectionImpl::calcLength(NodeImpl*) const
+unsigned long HTMLFormCollectionImpl::calcLength() const
 {
     QPtrVector<HTMLGenericFormElementImpl> &l = static_cast<HTMLFormElementImpl*>( base )->formElements;
 
@@ -613,3 +480,102 @@ NodeImpl * HTMLFormCollectionImpl::nextNamedItemInternal( const DOMString &name 
     idsDone = true;
     return getNamedItem(base->firstChild(), ATTR_NAME, name, true);
 }
+
+NodeImpl *HTMLFormCollectionImpl::namedItem( const DOMString &name, bool caseSensitive ) const
+{
+    // http://msdn.microsoft.com/workshop/author/dhtml/reference/methods/nameditem.asp
+    // This method first searches for an object with a matching id
+    // attribute. If a match is not found, the method then searches for an
+    // object with a matching name attribute, but only on those elements
+    // that are allowed a name attribute.
+    resetCollectionInfo();
+    idsDone = false;
+    info->current = getNamedItem(base->firstChild(), ATTR_ID, name, true);
+    if(info->current)
+        return info->current;
+    idsDone = true;
+    info->current = getNamedItem(base->firstChild(), ATTR_NAME, name, true);
+    return info->current;
+}
+
+
+NodeImpl *HTMLFormCollectionImpl::nextNamedItem( const DOMString &name ) const
+{
+    // nextNamedItemInternal can return an item that has both id=<name> and name=<name>
+    // Here, we have to filter out such cases.
+    NodeImpl *impl = nextNamedItemInternal( name );
+    if (!idsDone) // looking for id=<name> -> no filtering
+        return impl;
+    // looking for name=<name> -> filter out if id=<name>
+    bool ok = false;
+    while (impl && !ok)
+    {
+        if(impl->nodeType() == Node::ELEMENT_NODE)
+        {
+            HTMLElementImpl *e = static_cast<HTMLElementImpl *>(impl);
+            ok = (e->getAttribute(ATTR_ID) != name);
+            if (!ok)
+                impl = nextNamedItemInternal( name );
+        } else // can't happen
+            ok = true;
+    }
+    return impl;
+}
+
+QValueList<Node> HTMLFormCollectionImpl::namedItems(const DOMString &name) const
+{
+    if (name.length()) {
+        return QValueList<Node>();
+    }
+
+    resetCollectionInfo();
+
+    QValueList<Node> idResults;
+    QValueList<Node> nameResults;
+
+    if (base->nodeType() != Node::ELEMENT_NODE ||static_cast<HTMLElementImpl*>(base)->id() != ID_FORM)
+        return idResults;
+
+    HTMLElementImpl* baseElement = static_cast<HTMLElementImpl*>(base);
+
+    bool foundInputElements = false;
+    HTMLFormElementImpl* f = static_cast<HTMLFormElementImpl*>(baseElement);
+    for (unsigned i = 0; i < f->formElements.count(); ++i) {
+        HTMLGenericFormElementImpl* e = f->formElements[i];
+        if (e->isEnumeratable()) {
+            if (checkForNameMatch(e, false, name, true)) {
+                idResults.append(Node(e));
+                foundInputElements = true;
+            } 
+            if (checkForNameMatch(e, true, name, true)) {
+                nameResults.append(Node(e));
+                foundInputElements = true;
+            }
+        }
+    }
+
+    if (!foundInputElements) {
+        HTMLFormElementImpl* f = static_cast<HTMLFormElementImpl*>(baseElement);
+
+        for (unsigned i = 0; i < f->imgElements.count(); ++i) {
+            HTMLImageElementImpl* e = f->imgElements[i];
+
+            if (checkForNameMatch(e, false, name, true)) {
+                idResults.append(Node(e));
+            } 
+            if (checkForNameMatch(e, true, name, true)) {
+                nameResults.append(Node(e));
+            }
+        }
+    }
+
+    if (idResults.isEmpty())
+        return nameResults;
+
+    for (QValueListIterator<Node> iter = nameResults.begin(); iter != nameResults.end(); ++iter) {
+        idResults.append(*iter);
+    }
+
+    return idResults;
+}
+

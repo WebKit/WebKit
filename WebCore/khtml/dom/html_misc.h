@@ -30,6 +30,7 @@
 #define HTML_MISC_H
 
 #include <dom/html_element.h>
+#include <qvaluelist.h>
 
 namespace DOM {
 
@@ -184,6 +185,8 @@ public:
     Node nextItem() const;
     // In case of multiple items named the same way
     Node nextNamedItem( const DOMString &name ) const;
+
+    QValueList<Node> namedItems( const DOMString &name ) const;
 
 protected:
     HTMLCollectionImpl *impl;
