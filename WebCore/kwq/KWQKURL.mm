@@ -159,16 +159,6 @@ static bool pathEndsWithSlash(const QString &sURL)
     }
 }
 
-static CFStringRef copyEscapedPath(CFURLRef anURL)
-{
-    NSRange path;
-    CFStringRef urlString = CFURLGetString(anURL);
-
-    _NSParseStringToGenericURLComponents((NSString *)urlString, NULL, NULL, NULL, NULL, NULL, &path, NULL, NULL, NULL);
-
-    return CFStringCreateWithSubstring(NULL, urlString, CFRangeMake(path.location, path.length));
-}
-
 void KURL::KWQKURLPrivate::decompose()
 {
     makeRef();
@@ -209,7 +199,7 @@ void KURL::KWQKURLPrivate::decompose()
 	    escapedPath = "";
 	} else {
 	    sPath = CFStringToQString(CFURLCopyFileSystemPath(urlRef, kCFURLPOSIXPathStyle));
-	    escapedPath = CFStringToQString(copyEscapedPath(urlRef));
+	    escapedPath = CFStringToQString(CFURLCopyPath(urlRef));
 	}
         
         // Remove "../" or "./" from the start of the path.

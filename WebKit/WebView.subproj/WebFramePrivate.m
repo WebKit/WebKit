@@ -665,7 +665,7 @@ static const char * const stateNames[] = {
     WebDataSource *dataSource;
     NSURL *originalURL = [[self dataSource] originalURL];
     
-    if ([item anchor] && [[itemURL _web_URLWithoutFragment] isEqual: [originalURL _web_URLWithoutFragment]]){
+    if ([item anchor] && [[itemURL _web_URLByRemovingFragment] isEqual: [originalURL _web_URLByRemovingFragment]]) {
         WebBackForwardList *backForwardList = [[self controller] backForwardList];
 
         if (type == WebFrameLoadTypeForward)

@@ -1,3 +1,8 @@
+2002-08-07  Darin Adler  <darin@apple.com>
+
+        * kwq/KWQKURL.mm: (KURL::KWQKURLPrivate::decompose): Use CFURLCopyPath
+	instead calling _NSParseStringToGenericURLComponents.
+
 2002-08-07  Richard Williamson (Home)  <rjw@apple.com>
 
         Turned off temporary debugging I accidentally checked in.
@@ -50,7 +55,7 @@
         * kwq/KWQKHTMLPartImpl.mm: (KWQKHTMLPartImpl::overURL):
 	Fix crash in overURL, another case just like bug 3006336.
 
-2002-08-06  Richard Williamson (Local)  <rjw@apple.com>
+2002-08-06  Richard Williamson  <rjw@apple.com>
 
         Frame resizing related changes.  Frames are now resizable
         w/ a resize bar.  Still need to draw frame borders.
