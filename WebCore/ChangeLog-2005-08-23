@@ -4,6 +4,17 @@
 
         Fix for this bug:
         
+        <rdar://problem/3972851> REGRESSION (179-180+): Repro crash in ApplyStyleCommand::cleanUpEmptyStyleSpans
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::ApplyStyleCommand::cleanUpEmptyStyleSpans): Added two null checks.
+
+2005-01-25  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+        Fix for this bug:
+        
         <rdar://problem/3954710> Mail crashed while editing signatures - NodeImpl::isBlockFlow
 
         The fix is more general than for this one bug, and may work to fix many crashers. The problem
