@@ -1,3 +1,9 @@
+2002-03-25  Richard Williamson  <rjw@apple.com>
+
+        Added private API to allow browser to access the render tree.
+        
+	* WebView.subproj/IFWebViewPrivate.mm:
+
 2002-03-24  Richard Williamson  <rjw@apple.com>
 
         Changed data source to create IFURLHandle of the appropriate class.

@@ -12,6 +12,7 @@
 
 // Includes from KDE
 #include <khtmlview.h>
+#include <html/html_documentimpl.h>
 
 @implementation IFWebViewPrivate
 
@@ -95,6 +96,18 @@
 - (KHTMLView *)_widget
 {
     return ((IFWebViewPrivate *)_viewPrivate)->widget;    
+}
+
+- (khtml::RenderObject *)_renderRoot
+{
+    KHTMLPart *part = ((IFWebViewPrivate *)_viewPrivate)->widget->part();
+    DOM::DocumentImpl *doc;
+    if (part){
+        doc = part->xmlDocImpl();
+        if (doc)
+            return doc->renderer();
+    }
+    return 0;
 }
 
 
