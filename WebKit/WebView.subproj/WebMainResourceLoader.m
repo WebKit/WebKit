@@ -186,8 +186,10 @@
         newRequest = [mutableRequest autorelease];
     }
 
-    // note super will make a copy for us, so reassigning newRequest is important
-    newRequest = [super connection:con willSendRequest:newRequest redirectResponse:redirectResponse];
+    // Note super will make a copy for us, so reassigning newRequest is important. Since we are returning this value, but
+    // it's only guaranteed to be retained by self, and self might be dealloc'ed in this method, we have to autorelease.
+    // See 3777253 for an example.
+    newRequest = [[[super connection:con willSendRequest:newRequest redirectResponse:redirectResponse] retain] autorelease];
 
     // Don't set this on the first request.  It is set
     // when the main load was started.

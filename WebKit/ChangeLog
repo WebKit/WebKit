@@ -1,3 +1,14 @@
+2004-10-10  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Ken.
+        
+        - fixed <rdar://problem/3777253> Crash in redirect mechanism trying to display error page for bad scheme
+
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient connection:willSendRequest:redirectResponse:]):
+        add retain/autorelease to the request returned from call to super. In this case, the return value
+        was being dealloc'ed before being returned.
+
 2004-10-09  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: 
@@ -22,6 +33,7 @@
         * WebView.subproj/WebHTMLView.m:
         (-[WebHTMLView scrollWheel:]): call the bridge to scroll, if that fails, pass to next responder
 
+>>>>>>> 1.2810
 === Safari-166 ===
 
 2004-10-05  Chris Blumenberg  <cblu@apple.com>
