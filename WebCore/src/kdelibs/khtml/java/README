@@ -1,0 +1,20 @@
+Wynn Wilkes- November 14, 2000
+I've just completed a large update that fixes a large number of bugs.  The
+update also adds applet security.  The security update requires a Java 2
+jvm.  
+
+This is libkdejava, the KDE Java support library.
+
+Directory map:
+
+$CWD			CPP sources for KDE binding to KJAS and some
+			additional utility classes.
+kjava-classes.zip	An *uncompressed* ZIP file containing the .class files
+			for the KJAS server. The files must be uncompressed to
+			support some crappy JVMs.
+org/kde/kjas/server	Java sources for KJAS server process
+
+You can find more information at http://developer.kde.org/language-bindings/java/
+
+Richard Moore.
+rich@kde.org

@@ -1,0 +1,46 @@
+<html>
+  <head>
+    <title>JavaScript Test</title>
+  </head>
+  <body bgcolor=green>
+    <h1>JavaScript Test</h1>
+
+<script>
+var swapped = false;
+function swapPic() {
+  if (!swapped) {
+    window.document.Bild.src='konqi.gif';
+    swapped = true;
+  } else {
+    document.images['Bild'].src='image.gif';
+    swapped = false;
+  }
+}
+var colorSwapped = false;
+function swapCol() {
+  if (!colorSwapped) {
+    document.body.bgColor='red';
+    colorSwapped = true;
+  } else {
+    document.body.bgColor='green';
+    colorSwapped = false;
+  }
+}
+
+</script>
+
+<p>
+<script>document.write('Title: ' + document.title);</script>
+<p>
+<script>document.write('URL: ' + document.URL);</script>
+<p>
+<script>document.write('sin(1) = ' + Math.sin(1));</script>
+<p>
+<a href="" onmouseover="window.status='CLICK HERE !';" onmouseout="window.status='';" onClick="window.alert('Greetings !\n\nYour JavaScript interpreter');">Click here.</a>
+
+<p>
+<img src="image.gif" id="Bild" onmouseover="swapPic();" onmouseout="swapPic();">
+
+<p onmouseover="swapCol();" onmouseout="swapCol();">Change background color</p>
+  </body>
+</html>

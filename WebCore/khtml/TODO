@@ -1,0 +1,60 @@
+Here's what's still missing (without order):
+
+Rendering:
+	* text-align: Justify missing
+	* allow font elements in a block level context.
+
+StyleSheets:
+	* @ rules in sheets
+	* lots of properties
+	* delete the old cssproperties in a style attribute in case
+	  the style attribute changes.
+	* border shorthand properties. Unspecified properties get their default
+	  values. border-width: medium; border-color: undefined (== text color)
+
+DOM:
+	* some functions in the Impl classes
+	* fix the set/retrieve functions, which use boolean values
+	  -->> mostly done, still need to fix parseAttribute() calls	
+	* DOM level 2
+	* DOM stylesheets, changes need to trigger the appropriate changes
+	  in the rendering tree
+	* Implementation of NamedAttrMapImpl and Attributes in DOMElementImpl
+	  is ugly. MOve aatributes to the elementImpl and make the namedNodeMap
+	  point to an element. Think of creating AttrImpl's directly in
+	  khtmltoken.cpp
+
+XML:
+	* lots of stuff in the Impl classes
+	* parsing
+	* entities
+	* style sheet processing instructions
+	* proper mimetype detection
+
+misc:
+	* <font size=+3> works as size=+1
+
+Java:
+	* support for the object element
+	    --> mostly done
+	* Java <--> HTMLWidget communication
+	* turn kjava into a kpart
+
+Attributes:
+	* check for unimplemented attributes
+
+Memory usage:
+	* use bitfields for lots of things (especially in the
+	  DOM/CSS/rendering stuff)
+	* try to make better use of shared objects, especially in the
+	  RenderStyle
+	* check for leaks
+	* there's a mem leak with the style objects of anonymous
+	  boxes (and ListMarkers).
+
+Other:
+        * there's a bug on correctly retrieving <textarea> text.
+          see test/forms.html and compare it with the way all other
+          browsers handle that code
+        * paste should be enabled (and implemented) if there's pasteable clipboard
+          content and a form element has the focus

@@ -1,0 +1,522 @@
+/* 
+ * The default style sheet used by khtml to render HTML pages
+ * (C) Lars Knoll (knoll@kde.org) 2000
+ *
+ * Konqueror/khtml relies on the existance of this style sheet for
+ * rendering. Do not remove or modify this file unless you know
+ * what you are doing.
+ */
+
+html {
+	display: block;
+	color: text;        
+} 
+
+/*
+ * head and it's children all have display=none
+ */
+
+head { 
+	display: none;
+}
+     
+meta {
+	display: none;
+}
+
+title {
+	display: none;
+}
+
+link {
+	display: none;
+}
+
+style {
+	display: none;
+}
+
+script {
+	display: none;
+}
+
+/*
+ * generic block level elements
+ */
+
+body {
+	display: block;
+	margin: 10px;
+} 
+
+p {
+	display: block;
+	margin: 1.0em 0px;
+}
+
+div {
+	display: block;
+}
+
+/* to force a block level context for some cases (broken HTML) */
+
+-konqblock {
+	display: block;
+}
+
+layer {
+	display: block;
+}
+
+address {
+	display: block;
+}
+      
+blockquote {
+	display: block;
+	margin-left: 40px; 
+	margin-right: 40px;
+        -konq-flow-mode: -konq-around-floats
+}
+
+IFRAME {
+	display: block;
+}
+
+      
+OBJECT { 
+	display: block;
+} 
+
+APPLET { 
+	display: block;
+} 
+      
+CENTER { 
+	display: block;
+	/* special centering to be able to emulate the html4/netscape behaviour */
+	text-align: -konq-center;
+}  
+      
+HR  { 
+	/* display: -konq-ruler; */
+        display: block; 
+	margin-top: 5px; 
+	margin-bottom: 5px; 
+        border-style: inset;
+        border-width: 1px;
+        margin-left: 1px; /* will be overwritten by ALIGN */ 
+        margin-right: 1px; /* will be overwritten by ALIGN */
+        -konq-flow-mode: -konq-around-floats
+} 
+ 
+MAP { 
+	display: inline;
+} 
+
+object {
+        width: 50px;
+        height: 50px;
+}   
+
+embed {
+        width: 50px;
+        height: 50px;
+}   
+
+
+/* 
+ * heading elements 
+ */
+      
+H1 { 
+	display: block;
+	font-size: 1.7em; 
+	margin: .67em auto;
+	font-weight: bolder;
+}
+      
+H2 { 
+	display: block;
+	font-size: 1.4em; 
+	margin: .83em auto;
+	font-weight: bolder;
+}
+      
+H3 { 
+	display: block;
+	font-size: 1.17em; 
+	margin: 1em auto;
+	font-weight: bolder;
+}
+      
+H4 {
+	display: block;
+	margin: 1.0em auto;
+	font-weight: bolder;
+}
+
+H5 { 
+	display: block;
+	font-size: .83em; 
+	line-height: 1.17em; 
+	margin: 1.67em auto;
+	font-weight: bolder;
+}
+
+H6 { 
+	display: block;
+	font-size: .67em; 
+	margin: 2.33em auto;
+	font-weight: bolder;
+}
+
+/* 
+ * tables
+ */
+
+TABLE { 
+	display: table;
+	border-collapse: separate;
+	vertical-align: middle;
+	text-align: justify;
+	border-spacing: 2px;
+	border-style: outset;
+	border-width: 0px;
+	padding: 1px;
+        -konq-flow-mode: -konq-around-floats;
+}
+      
+TABLE[align="center"] { 
+	margin-left: auto; 
+	margin-right: auto;
+}
+
+THEAD { 
+	display: table-header-group; 
+	border: inherit;
+}
+      
+TBODY { 
+	display: table-row-group;
+	vertical-align: inherit; 
+        border: inherit;
+	padding: inherit; 
+}
+      
+TFOOT { 
+	display: table-footer-group; 
+	border: inherit; 
+}
+
+COL { 
+	display: table-column; 
+}
+      
+COLGROUP { 
+	display: table-column-group; 
+}
+
+TR { 
+	display: table-row;
+	vertical-align: inherit; 
+	border: inherit;
+        border-color: inherit;
+	padding: inherit; 
+}
+      
+      
+TD, TH { 
+	display: table-cell;
+	vertical-align: inherit;
+	padding: inherit;
+	border-style: inset;   /* overwritten by <table bordercolor> */
+	border-color: inherit;
+        border-width: 1px;     /* overwritten by <table border=0> */
+}
+      
+TH { 
+	font-weight: bolder; 
+	text-align: center;
+}
+
+CAPTION { 
+	display: table-caption;  
+	text-align: -konq-center; 
+}
+
+/* don't use "TD[align=...] > *". This sould give problems with
+ * constructs as <td align=left><ul><li>...
+ * Hope the next ones cover all relevant cases. Lars 
+ */ 
+TD[align="center"] > TABLE { margin-left: auto; margin-right: auto; }
+TD[align="right"] > TABLE { margin-left: auto; margin-right: 0px; }
+TD[align="left"] > TABLE { margin-left: 0px; margin-right: auto; }
+TD[align="center"] > DIV { margin-left: auto; margin-right: auto; text-align: center; }
+TD[align="right"] > DIV { margin-left: auto; margin-right: 0px; text-align: right; }
+TD[align="left"] > DIV { margin-left: 0px; margin-right: auto; text-align: left; }
+TD[align="center"] > P { margin-left: auto; margin-right: auto; text-align: center; }
+TD[align="right"] > P { margin-left: auto; margin-right: 0px; text-align: right; }
+TD[align="left"] > P { margin-left: 0px; margin-right: auto; text-align: left; }
+TD[align="center"] > HR { margin-left: auto; margin-right: auto; }
+TD[align="right"] > HR { margin-left: auto; margin-right: 1px; }
+TD[align="left"] > HR { margin-left: 0px; margin-right: auto; }
+
+/*
+ * Lists
+ */
+
+UL, MENU, DIR {
+        display: block;
+        list-style-type: disc;
+        margin: 1em 0;
+        padding-left: 40px;
+        -konq-flow-mode: -konq-around-floats
+}
+
+OL {
+        display: block;
+        list-style-type: decimal;
+        margin: 1em 0;
+        padding-left: 40px;
+        -konq-flow-mode: -konq-around-floats
+}
+
+LI {
+        display: list-item;
+}
+
+
+UL UL { 
+	list-style-type: circle;
+}
+UL UL UL { 
+	list-style-type: square;
+}
+      
+
+DD {
+	display: block;
+	margin-left: 40px;
+}
+
+DL {
+	display: block;
+        -konq-flow-mode: -konq-around-floats
+} 
+
+DT {
+	display: block;
+}
+ 
+/* for right to left */
+      
+*[dir="rtl"] UL, 
+*[dir="rtl"] OL,  
+*[dir="rtl"] DIR, 
+*[dir="rtl"] MENU, 
+*[dir="rtl"] DD { 
+	margin-right:40px; 
+	margin-left: auto;
+}
+      
+OL UL, 
+UL OL,
+UL UL, 
+OL OL { 
+	margin-top: auto; 
+	margin-bottom: auto; 
+}
+
+LI > P { 
+	margin-top: auto; 
+	margin-bottom: auto;
+}
+      
+LI > DIV { 
+	margin-top: auto; 
+	margin-bottom: auto;
+}
+
+/*
+ * form elements
+ */
+
+FORM {
+	display: block;
+}
+
+FIELDSET {
+	display: block;
+	margin: 1.0em auto;
+} 
+
+BUTTON {
+        display: block;
+        border-style: outset;
+}
+
+/* we want a fixed font for form elements (input & textarea) */
+      
+INPUT[type="text"],
+INPUT[type="password"],
+TEXTAREA { 
+	font-family: monospace;
+}
+
+INPUT[type="hidden"] {
+	display: none; 
+}
+
+INPUT[type="radio"], INPUT[type="checkbox"] {
+        margin: 0 0.5ex;
+}
+      
+OPTION, 
+OPTGROUP, 
+AREA  { 
+	display: none; 
+}
+
+SELECT { display: block; }
+
+/*
+ * inline elements
+ */      
+      
+U, 
+INS { 
+	text-decoration: underline;
+}
+      
+STRONG,
+B { 
+	font-weight: bolder; 
+}
+      
+I, 
+CITE, 
+EM,
+VAR, 
+ADDRESS { 
+	font-style: italic; 
+}
+      
+TT, 
+CODE,
+KBD, 
+SAMP { 
+	font-family: monospace; 
+}
+      
+PRE { 
+	display: block;
+	font-family: monospace; 
+	white-space: pre; 
+}
+      
+BIG { 
+	font-size: large; 
+}
+      
+SMALL { 
+	font-size: small; 
+}
+
+S, 
+STRIKE, 
+DEL  { 
+	text-decoration: line-through; 
+}
+
+SUB { 
+	vertical-align: sub;
+	font-size: smaller; 
+}
+SUP { 
+	vertical-align: super;	
+	font-size: smaller;
+}
+
+/* ### not supported at the moment
+ABBR, ACRONYM { 
+	font-variant: small-caps; 
+	letter-spacing: 0.1em 
+}
+*/
+abbr, 
+acronym {
+	font-style: italic;
+}
+
+:focus          { outline: 1px dotted invert }
+a:link:active          { color: red; outline: 1px dotted invert; }
+a:visited:active          { color: red; outline: 1px dotted invert; }
+
+/* ### :before is not supported at the moment
+      BR:before       { content: "\n" }
+*/
+
+
+/* Bidirectionality settings (do not change) */
+
+BDO[DIR="ltr"]  { 
+	direction: ltr; 
+	unicode-bidi: bidi-override; 
+}
+
+BDO[DIR="rtl"]  { 
+	direction: rtl; 
+	unicode-bidi: bidi-override;
+}
+
+/* ### this selector seems to be still broken ...
+      *[DIR="ltr"]    { direction: ltr; unicode-bidi: embed }
+      *[DIR="rtl"]    { direction: rtl; unicode-bidi: embed }
+*/
+      
+/* Elements that are block-level in HTML4 */
+/* ### don't support unicode-bidi at the moment
+      ADDRESS, BLOCKQUOTE, BODY, DD, DIV, DL, DT, FIELDSET,
+      FORM, FRAME, FRAMESET, H1, H2, H3, H4, H5, H6, IFRAME,
+      NOSCRIPT, NOFRAMES, OBJECT, OL, P, UL, APPLET, CENTER,
+      DIR, HR, MENU, PRE, LI, TABLE, TR, THEAD, TBODY, TFOOT,
+      COL, COLGROUP, TD, TH, CAPTION
+                      { unicode-bidi: embed }
+*/
+      
+/* End bidi settings */
+
+/*
+ * other elements
+ */
+
+noframes {
+	display: none;
+}
+
+frameset {
+	display: block;
+}
+
+frame { 
+	display: block;
+}
+
+/* noscript is handled internally, as it depends on the html settings */
+
+/* media rules are commented out for the moment. We'll have to add
+ * them later. Lars, 23.12.99
+ */
+
+/*
+      @media print {
+        @page         { margin: 10% }
+        H1, H2, H3,
+        H4, H5, H6    { page-break-after: avoid; page-break-inside: avoid }
+        BLOCKQUOTE,
+        PRE           { page-break-inside: avoid }
+        UL, OL, DL    { page-break-before: avoid }
+      }
+
+*/

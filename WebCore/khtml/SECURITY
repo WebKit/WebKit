@@ -1,0 +1,57 @@
+This document contains internet security issues.  Discussion of security 
+issues should be directed to kfm-devel@kde.org. 
+
+Note to KDE-developers: When adding entries to this document, provide name, 
+date and additional URLs.
+
+
+Malicious Redirects
+===================
+Entry By: Waldo Bastian <bastian@kde.org>
+Created: May 9th, 2000 
+See also: http://lwn.net/2000/features/Redirect.phtml
+          http://www.zope.org/Members/jim/ZopeSecurity/ClientSideTrojan
+
+I advice the following:
+
+* We should never allow a redirect from a HTTP to any other protocol, including 
+  HTTPS. (OK. The current implementation does not allow redirects to other 
+  protocols)
+
+* We should provide a HTTP referer header iff the referer is on the same host
+as the requested object. (We currently don't support referer headers)
+
+* Either a) Don't allow POST or GET actions from javascript.
+  or b) _Always_ ask the user for confirmation when javascript requests a 
+        POST or GET action.
+  Additional note: Simple requests for e.g. images are also GET actions, 
+  disabling them would break a lot of javascript scripts.
+
+
+SSL certificates
+================
+Entry By: Waldo Bastian <bastian@kde.org>
+Created: May 13th, 2000
+See also: http://www.cert.org/advisories/CA-2000-05.html
+
+We never check SSL certificates. This makes https just as insecure as http.
+
+
+ECMAScript
+==========
+Entry By: Peter Kelly <pmk@post.com>
+Created: May 26th, 2000
+See also: http://developer.netscape.com/docs/manuals/js/client/jsguide/index.htm
+          (chapter 14)
+
+Before KDE 2.0 is released we *MUST* make sure there are checks in place for
+what DOM properties are accessable/writable for the ECMAScript binding. Otherwise
+malicious page authors may be able to access/set cookies from other sites, create
+auto-submitting forms that upload files, and a whole host of other attacks. The
+URL above has information about what properties netscape gives protection to.
+
+We will need to make sure we do this at the right level, as if it is done too
+close to the ECMAScript binding, there could be loopholes such as using
+getAttributeNode(), etc to fool it into letting a script change the wrong properties.
+
+

@@ -1,0 +1,22 @@
+Wynn Wilkes (November 14, 2000)
+As of now, KJAS requires a Java 2 platform for classloading
+and the default security manager.  If anyone wants to implement
+a Java 1.1 security manager, please feel free and we can integrate
+both versions.
+
+- Get the keyboard focus issues fixed
+- Fix khtml_part to have one applet context per Document
+- add a context cache someplace so we can reload contexts-
+  this will keep us from having to restart the jvm over
+  and over- this is the biggest performance problem I think
+- fix khtml_part so it will start and stop applets??
+- Implement class loading via html proxies if one is set
+
+
+- Use of QGuardedPointer
+- LiveScript support
+- Custom applet types
+- Better support for Java 2
+  - Use a factory to create the classloader and security managers
+  - Use URLClassLoader- this is done
+- Support for KIO URLs

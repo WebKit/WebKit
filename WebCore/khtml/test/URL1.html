@@ -1,0 +1,43 @@
+<html> <head> <title>URL Test 1</title> </head>
+
+
+<body>
+<BASE href="http://localhost/test/URL.html">
+<H1>URL Test 1</H1>
+This page is the first regression test out of a set for URL handling
+within HTML.<BR>
+Testing &lt;BASE href="http://localhost/test/URL.html"&gt;<BR>
+The following link should point to "http://localhost/test/URL2.html": 
+<a href="URL2.html">link</a><BR>
+<BR>
+The following link should point to "http://localhost/test/URL2.html?somedata"
+<a href="URL2.html?somedata">link</a><BR>
+<BR>
+The following link should point to "http://localhost/test/~username"
+<a href="~username">link</a><BR>
+<BR>
+The following link should point to "http://www.kde.org" if you click on it
+you should indeed get there.
+<a href="
+http://www.kde.org">link</a><BR>
+<BR>
+The following link should point to "http://www.kde.org" if you click on it
+you should indeed get there.
+<a href="http://www.kde.org
+ ">link</a><BR>
+<BR>
+The following link should point to "http://www.kde.org" if you click on it
+you should indeed get there.
+<a href='http://www.kde.org'>link</a><BR>
+<BR>
+The following link should point to "http://www.kde.org/"quote"/".
+<a href='http://www.kde.org/"quote"/'>link</a><BR>
+<BR>
+The following link should point to "http://www.kde.org/'quote'/".
+<a href="http://www.kde.org/'quote'/">link</a><BR>
+<BR>
+The following link should point to "http://cwisdb.cc.kuleuven.ac.be/oo-bin/9899/liststudj.pl?bla&amp;lang=N&amp;cyclus=tweede".
+<a href="http://cwisdb.cc.kuleuven.ac.be/oo-bin/9899/liststudj.pl?bla&lang=N&cyclus=tweede">link</a><BR>
+</body>
+
+</html>

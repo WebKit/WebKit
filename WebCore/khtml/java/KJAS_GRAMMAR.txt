@@ -1,0 +1,82 @@
+This is documentation for the updated KJAS protocol.
+
+KJAS Grammar
+===============================================================================
+
+## Commands From KAppletWidget(C++) to KJAS(Java Process)
+<KJAS Command>   -> <CMD Length><CMD>
+<CMD Length>     -> <StringNum>
+<CMD>            -> <createContext>  |
+                    <destroyContext> |
+                    <createApplet>   |
+                    <destroyApplet>  |
+                    <startApplet>    |
+                    <stopApplet>     |
+                    <initApplet>     |
+                    <showURLInFrame> |
+                    <showDocument>   |
+                    <showStatus>     |
+                    <resizeApplet>   |
+                    <getURLData>     |
+                    <URLData>        |
+                    <shutDownServer>
+
+<createContext>  -> <1 byte equal to 1 when cast as int><SEP><ContextID><END>
+<destroyContext> -> <1 byte equal to 2 when cast as int><SEP><ContextID><END>
+
+<createApplet>   -> <1 byte equal to 3 when cast as int><SEP><ContextID>
+                    <SEP><AppletID><SEP><AppletName><SEP><ClassName><SEP>
+                    <BaseURL><SEP><CodeBase><SEP><Archives>
+                    <SEP><Width><SEP><Height><SEP><WindowTitle><SEP><ParamList>
+<destroyApplet>  -> <1 byte equal to 4 when cast as int><SEP><ContextID>
+                    <SEP><AppletID><END>
+<startApplet>    -> <1 byte equal to 5 when cast as int><SEP><ContextID>
+                    <SEP><AppletID><END>
+<stopApplet>     -> <1 byte equal to 6 when cast as int><SEP><ContextID>
+                    <SEP><AppletID><END>
+<initApplet>     -> <1 byte equal to 7 when cast as int><SEP><ContextID>
+                    <SEP><AppletID><END>
+
+
+## Commands from KJAS(Java Process) to KAppletWidget(C++)
+<showDocument>   -> <1 byte equal to 8 when cast as int><SEP><ContextID>
+                    <SEP><URL><END>
+<showURLInFrame> -> <1 byte equal to 9 when cast as int><SEP><ContextID>
+                    <SEP><URL><SEP><targetFrame><END>
+<showStatus>     -> <1 byte equal to 10 when cast as int><SEP><ContextID>
+                    <SEP><string><END>
+<resizeApplet>   -> <1 byte equal to 11 when cast as int><SEP><ContextID>
+                    <SEP><AppletID><SEP><Width><SEP><Height><END>
+<getURLData>     -> <1 byte equal to 12 when cast as int><SEP><ClassLoaderID>
+                    <SEP><URL><END>
+<URLData>        -> <1 byte equal to 13 when cast as int><SEP><ClassLoaderID>
+                    <SEP><URL><SEP><DATA><END>
+
+<shutDownServer> -> <1 byte equal to 14 when cast as int><END>
+
+## basic data types
+<CMD Length>     -> <StringNum>
+<ContextID>      -> string
+<AppletID>       -> string
+<AppletName>     -> string
+<ParamList>      -> <StringNum><SEP><ParamPairList>
+<ParamPairList>  -> StringNum of ParamPair
+<ParamPair>      -> <ParamName><SEP><ParamValue><SEP>
+<ClassName>      -> string
+<BaseURL>        -> <URL>
+<CodeBase>       -> <URL>
+<Archives>       -> string (list of jarfile names)
+<Width>          -> string representation of integer
+<Height>         -> string representation of integer
+<Title>          -> string
+<ParamName>      -> string
+<ParamValue>     -> string
+<Host>           -> string (must be a valid URL)
+<URL>            -> string (must be a valid URL)
+<targetFrame>    -> string
+<WindowTitle>    -> string
+<END>            -> <SEP>
+<SEP>            -> Null character- 1 byte = 0
+<StringNum>      -> padded string representation of integer, 8 characters long
+<ClassLoaderID>  -> string
+<DATA>           -> byte array

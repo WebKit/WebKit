@@ -1,0 +1,58 @@
+<html> <head> <title>Textarea Test</title> </head>
+
+
+<body>
+<H1>Textarea Test</H1>
+This page is a regression test for the &lt;textarea&gt; tag.<BR>
+The word "Start" should be above the textarea.<BR>
+The word "End" should be underneath the textarea.<BR>
+The text inside the textarea should match with its description.
+<form action="cgi-bin/test.cgi" method=post> 
+<H2>Textarea 1: Emtpy</H2>
+<P>Start
+<P>
+<textarea wrap=virtual name=textarea1 rows=5 cols=50></textarea>
+<P>End
+<P>
+<H2>Textarea 2: Single words</H2>
+<P>Start
+<P>
+<textarea wrap=virtual name=textarea1 rows=5 cols=50>Single words</textarea>
+<P>End
+<P>
+<H2>Textarea 3: Lines of text</H2>
+<P>Start
+<P>
+<textarea wrap=virtual name=textarea1 rows=5 cols=50>
+This is some text which is inserted into
+the textarea. This area contains 3 lines
+of text.
+</textarea>
+<P>End
+<P>
+<H2>Textarea 4: Text with tags inside</H2>
+<P>Start
+<P>
+<textarea wrap=virtual name=textarea1 rows=5 cols=50>
+This is 3 lines of text.
+This lines contains a <B> tag.
+This line does not.
+</textarea>
+<P>End (Note that this text should NOT be bold)
+<P>
+<H2>Textarea 5: Text with entities</H2>
+<P>Start
+<P>
+<textarea wrap=virtual name=textarea1 rows=5 cols=50>
+This is 3 lines of text.
+The correct way to write &lt;TAGS&gt; is by using &amp;entities.
+This is the third line.
+</textarea>
+<P>End
+<P>
+<input type=submit name=mode value="Submit">
+</form>
+
+</body>
+
+</html>

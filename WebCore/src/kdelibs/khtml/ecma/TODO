@@ -1,0 +1,13 @@
+Has to be done
+==============
+- frame[] correct search and sorting order (DONE ?)
+- optional error message output
+- set this.form in event handlers of form elements (DONE ?)
+- change KParts::WindowArgs && friends 
+  that we can detect if a locationbar is on/or not
+
+Could be done
+=============
+- Make the graphical debugger useable
+- Improve internal structures to give a really useful
+  output on errors (i.e. improve backtrance capabilities)
