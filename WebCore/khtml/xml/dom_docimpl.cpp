@@ -2512,6 +2512,42 @@ bool DocumentImpl::isValidName(const DOMString &name)
     return true;
 }
 
+void DocumentImpl::addImageMap(HTMLMapElementImpl *imageMap)
+{
+    // Add the image map, unless there's already another with that name.
+    // "First map wins" is the rule other browsers seem to implement.
+    QString name = imageMap->getName().string();
+    if (!m_imageMapsByName.contains(name))
+        m_imageMapsByName.insert(name, imageMap);
+}
+
+void DocumentImpl::removeImageMap(HTMLMapElementImpl *imageMap)
+{
+    // Remove the image map by name.
+    // But don't remove some other image map that just happens to have the same name.
+    QString name = imageMap->getName().string();
+    QMapIterator<QString, HTMLMapElementImpl *> it = m_imageMapsByName.find(name);
+    if (it != m_imageMapsByName.end() && *it == imageMap)
+        m_imageMapsByName.remove(it);
+}
+
+HTMLMapElementImpl *DocumentImpl::getImageMap(const DOMString &URL) const
+{
+    if (URL.isNull()) {
+        return 0;
+    }
+
+    QString s = URL.string();
+    int hashPos = s.find('#');
+    if (hashPos >= 0)
+        s = s.mid(hashPos + 1);
+
+    QMapConstIterator<QString, HTMLMapElementImpl *> it = m_imageMapsByName.find(s);
+    if (it == m_imageMapsByName.end())
+        return 0;
+    return *it;
+}
+
 #if APPLE_CHANGES
 
 void DocumentImpl::setDecoder(Decoder *decoder)

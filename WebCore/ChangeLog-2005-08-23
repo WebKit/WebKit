@@ -1,5 +1,35 @@
 2004-04-01  Darin Adler  <darin@apple.com>
 
+        Reviewed by John.
+
+        - cleaned up image map code and made it work with XML documents
+
+        * khtml/html/html_documentimpl.h: Removed getMap and mapMap.
+        * khtml/html/html_documentimpl.cpp: Removed getMap; moved to base class.
+
+        * khtml/html/html_imageimpl.cpp:
+        (HTMLMapElementImpl::~HTMLMapElementImpl): Call new removeImageMap function instead
+        of manipulating the mapMap field directly.
+        (HTMLMapElementImpl::parseHTMLAttribute): Rewrite name changing code for simplicity
+        and to avoid running off the end of the bufffer.
+        Also remove image map before changing name so it doesn't end up in the map twice
+        under both the old and new names.
+        * khtml/html/html_imageimpl.h: Use a DOMString instead of QString for the name, since
+        the public API already uses a DOMString.
+
+        * khtml/rendering/render_image.cpp: (RenderImage::nodeAtPoint): Call the new
+        getImageMap instead of the old getMap.
+
+        * khtml/xml/dom_docimpl.h: Added addImageMap, removeImageMap, getImageMap, and m_imageMapsByName.
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::addImageMap): Added. Stores the image map under its name, unless there's
+        already another map of the same.
+        (DocumentImpl::removeImageMap): Added. Removes the image map if it's already filed by
+        name. Avoid pitfall of removing another image map that has the same name.
+        (DocumentImpl::getImageMap): Added. Simplified version of logic from getMap in HTMLDocumentImpl.
+
+2004-04-01  Darin Adler  <darin@apple.com>
+
         Reviewed by Ken.
 
         - fixed <rdar://problem/3608978>: dual <map> means you can't select the enter site button at jurassicpark.com (same problem in MacIE, works in Netscape)

@@ -292,26 +292,6 @@ void HTMLDocumentImpl::slotHistoryChanged()
     m_render->repaint();
 }
 
-HTMLMapElementImpl* HTMLDocumentImpl::getMap(const DOMString& _url)
-{
-    if (_url.isNull()) {
-        return 0;
-    }
-    
-    QString url = _url.string();
-    QString s;
-    int pos = url.find('#');
-    //kdDebug(0) << "map pos of #:" << pos << endl;
-    s = QString(_url.unicode() + pos + 1, _url.length() - pos - 1);
-
-    QMapConstIterator<QString,HTMLMapElementImpl*> it = mapMap.find(s);
-
-    if (it != mapMap.end())
-        return *it;
-    else
-        return 0;
-}
-
 void HTMLDocumentImpl::addNamedImageOrForm(const QString &name)
 {
     if (name.length() == 0) {

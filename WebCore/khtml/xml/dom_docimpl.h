@@ -92,6 +92,7 @@ namespace DOM {
     class GenericRONamedNodeMapImpl;
     class HTMLDocumentImpl;
     class HTMLElementImpl;
+    class HTMLMapElementImpl;
     class NodeFilter;
     class NodeFilterImpl;
     class NodeIteratorImpl;
@@ -488,6 +489,10 @@ public:
     void addElementById(const DOMString &elementId, ElementImpl *element);
     void removeElementById(const DOMString &elementId, ElementImpl *element);
 
+    void addImageMap(HTMLMapElementImpl *);
+    void removeImageMap(HTMLMapElementImpl *);
+    HTMLMapElementImpl *getImageMap(const DOMString &URL) const;
+
     HTMLElementImpl* body();
 
     DOMString toString() const;
@@ -599,6 +604,8 @@ protected:
     XBL::XBLBindingManager* m_bindingManager; // The access point through which documents and elements communicate with XBL.
 #endif
     
+    QMap<QString, HTMLMapElementImpl *> m_imageMapsByName;
+
 #if APPLE_CHANGES
 public:
     KWQSignal m_finishedParsing;

@@ -28,23 +28,12 @@
 #include "xml/dom_docimpl.h"
 #include "misc/loader_client.h"
 
-#include <qmap.h>
-
 class KHTMLView;
 class QString;
 
 namespace DOM {
 
-    class HTMLCollection;
-    class NodeList;
-    class Element;
-    class HTMLElement;
     class HTMLElementImpl;
-    class DOMString;
-    class CSSStyleSheetImpl;
-    class HTMLMapElementImpl;
-    class HTMLImageElementImpl;
-    class HTMLFormElementImpl;
 
 class HTMLDocumentImpl : public DOM::DocumentImpl, public khtml::CachedObjectClient
 {
@@ -76,8 +65,6 @@ public:
 
     virtual ElementImpl *createElement ( const DOMString &tagName, int &exceptioncode );
 
-    HTMLMapElementImpl* getMap(const DOMString& url_);
-
     virtual void determineParseMode( const QString &str );
 
     void addNamedImageOrForm(const QString &name);
@@ -87,9 +74,6 @@ public:
 protected:
     HTMLElementImpl *bodyElement;
     HTMLElementImpl *htmlElement;
-    friend class HTMLMapElementImpl;
-    friend class HTMLImageElementImpl;
-    QMap<QString,HTMLMapElementImpl*> mapMap;
 
 protected slots:
     /**

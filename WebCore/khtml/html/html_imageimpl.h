@@ -124,7 +124,7 @@ public:
                        khtml::RenderObject::NodeInfo& info);
 private:
 
-    QString name;
+    DOMString name;
 };
 
 
