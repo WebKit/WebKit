@@ -89,7 +89,7 @@ FixedTableLayout::~FixedTableLayout()
 {
 }
 
-int FixedTableLayout::calcWidthArray( int tableWidth )
+int FixedTableLayout::calcWidthArray(int tableWidth)
 {
     int usedWidth = 0;
 
@@ -225,16 +225,15 @@ int FixedTableLayout::calcWidthArray( int tableWidth )
 
 void FixedTableLayout::calcMinMaxWidth()
 {
+    // FIXME: This entire calculation is incorrect for both minwidth and maxwidth.
+    
     // we might want to wait until we have all of the first row before
     // layouting for the first time.
 
     // only need to calculate the minimum width as the sum of the
     // cols/cells with a fixed width.
     //
-    // The maximum width is kMax( minWidth, tableWidth ) if table
-    // width is fixed. If table width is percent, we set maxWidth to
-    // unlimited.
-
+    // The maximum width is kMax( minWidth, tableWidth ).
     int bs = table->bordersPaddingAndSpacing();
     
     int tableWidth = table->style()->width().type == Fixed ? table->style()->width().value - bs : 0;
@@ -242,21 +241,6 @@ void FixedTableLayout::calcMinMaxWidth()
 
     table->m_minWidth = kMax( mw, tableWidth );
     table->m_maxWidth = table->m_minWidth;
-    
-    if ( !tableWidth ) {
-	bool haveNonFixed = false;
-	for ( unsigned int i = 0; i < width.size(); i++ ) {
-	    if ( !(width[i].type == Fixed) ) {
-		haveNonFixed = true;
-		break;
-	    }
-	}
-	if ( haveNonFixed )
-	    table->m_maxWidth = INT_MAX;
-    }
-#ifdef DEBUG_LAYOUT
-    qDebug("FixedTableLayout::calcMinMaxWidth: minWidth=%d, maxWidth=%d", table->m_minWidth, table->m_maxWidth );
-#endif
 }
 
 void FixedTableLayout::layout()
@@ -894,7 +878,7 @@ void AutoTableLayout::layout()
     int totalPercent = 0;
     int allocVariable = 0;
 
-    // fill up every cell with it's minWidth
+    // fill up every cell with its minWidth
     for ( int i = 0; i < nEffCols; i++ ) {
 	int w = layoutStruct[i].effMinWidth;
 	layoutStruct[i].calcWidth = w;

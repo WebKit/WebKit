@@ -137,11 +137,11 @@ void* ArenaAllocate(ArenaPool *pool, unsigned int nb)
 
     /* attempt to allocate from arena_freelist */
     {
-        Arena *p; /* previous pointer, for unlinking from freelist */
+        Arena *p = NULL; /* previous pointer, for unlinking from freelist */
 
-        for ( a = p = arena_freelist; a != NULL ; p = a, a = a->next ) {
+        for ( a = arena_freelist; a != NULL ; p = a, a = a->next ) {
             if ( a->base +nb <= a->limit )  {
-                if ( p == arena_freelist )
+                if ( p == NULL )
                     arena_freelist = a->next;
                 else
                     p->next = a->next;
