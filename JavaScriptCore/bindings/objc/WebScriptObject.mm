@@ -114,7 +114,24 @@ static void _didExecute(WebScriptObject *obj)
 
 + (BOOL)throwException:(NSString *)exceptionMessage
 {
-    NSLog (@"%s:%d:  not yet implemented", __PRETTY_FUNCTION__, __LINE__);
+    InterpreterImp *first, *interp = InterpreterImp::firstInterpreter();
+
+    // This code assumes that we only ever have one running interpreter.  A
+    // good assumption for now, as we depend on that elsewhere.  However,
+    // in the future we may have the ability to run multiple interpreters,
+    // in which case this will have to change.
+    first = interp;
+    do {
+        ExecState *exec = interp->globalExec();
+        // If the interpreter has a context, we set the exception.
+        if (interp->context()) {
+            Object err = Error::create(exec, GeneralError, [exceptionMessage UTF8String]);
+            exec->setException (err);
+            return YES;
+        }
+        interp = interp->nextInterpreter();
+    } while (interp != first);
+    
     return NO;
 }
 

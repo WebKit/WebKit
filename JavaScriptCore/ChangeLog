@@ -1,5 +1,20 @@
 2004-10-05  Richard Williamson   <rjw@apple.com>
 
+        Fixed <rdar://problem/3819234> NPN_SetException (and throwException:) isn't implemented
+
+        Reviewed by Chris.
+
+        * bindings/NP_jsobject.cpp:
+        (_NPN_SetException):
+        * bindings/npruntime.cpp:
+        (_NPN_SetExceptionWithUTF8):
+        * bindings/objc/WebScriptObject.mm:
+        (+[WebScriptObject throwException:]):
+        * kjs/internal.h:
+        (KJS::InterpreterImp::context):
+
+2004-10-05  Richard Williamson   <rjw@apple.com>
+
         Fixed <rdar://problem/3821515> binding layer needs to convert NSNumber-bools to js type boolean not number
 
         Reviewed by Ken.

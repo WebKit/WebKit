@@ -440,9 +440,3 @@ void _NPN_SetExceptionWithUTF8 (NPObject *obj, const NPUTF8 *message, int32_t le
         _NPN_SetException (obj, &string);
     }
 }
-
-
-void _NPN_SetException (NPObject *obj, NPString *message)
-{
-    // FIX ME.  Need to implement.
-}

@@ -320,6 +320,7 @@ namespace KJS {
     static InterpreterImp *interpreterWithGlobalObject(ObjectImp *);
     
     void setContext(ContextImp *c) { _context = c; }
+    ContextImp *context() const { return _context; }
 
     void saveBuiltins (SavedBuiltins &builtins) const;
     void restoreBuiltins (const SavedBuiltins &builtins);
