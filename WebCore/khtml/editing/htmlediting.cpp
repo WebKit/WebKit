@@ -360,11 +360,13 @@ void StyleChange::init(CSSStyleDeclarationImpl *style, const Position &position)
         if (m_usesLegacyStyles && checkForLegacyHTMLStyleChange(property))
             continue;
 
+        // Add this property
         styleText += property->cssText().string();
     }
 
     mutableStyle->deref();
 
+    // Save the result for later
     m_cssStyle = styleText.stripWhiteSpace();
 }
 
@@ -1001,10 +1003,13 @@ ApplyStyleCommand::~ApplyStyleCommand()
 
 void ApplyStyleCommand::doApply()
 {
+    // apply the block-centric properties of the style
     CSSMutableStyleDeclarationImpl *blockStyle = m_style->copyBlockProperties();
     blockStyle->ref();
     applyBlockStyle(blockStyle);
 
+    // apply any remaining styles to the inline elements
+    // NOTE: hopefully, this string comparison is the same as checking for a non-null diff
     if (blockStyle->length() < m_style->length()) {
         CSSMutableStyleDeclarationImpl *inlineStyle = m_style->copy();
         inlineStyle->ref();
@@ -1029,7 +1034,8 @@ void ApplyStyleCommand::applyBlockStyle(CSSMutableStyleDeclarationImpl *style)
     Position start(endingSelection().start());
     Position end(endingSelection().end());
     
-    // Remove block styles
+    // remove current values, if any, of the specified styles from the blocks
+    // NOTE: tracks the previous block to avoid repeated processing
     NodeImpl *beyondEnd = end.node()->traverseNextNode();
     NodeImpl *prevBlock = 0;
     for (NodeImpl *node = start.node(); node != beyondEnd; node = node->traverseNextNode()) {
@@ -1040,7 +1046,7 @@ void ApplyStyleCommand::applyBlockStyle(CSSMutableStyleDeclarationImpl *style)
         }
     }
     
-    // Apply new styles
+    // apply specified styles to the block flow elements in the selected range
     prevBlock = 0;
     for (NodeImpl *node = start.node(); node != beyondEnd; node = node->traverseNextNode()) {
         NodeImpl *block = node->enclosingBlockFlowElement();
@@ -1069,11 +1075,14 @@ void ApplyStyleCommand::applyInlineStyle(CSSMutableStyleDeclarationImpl *style)
     // <rdar://problem/3724344> Bolding and unbolding creates extraneous tags
     removeInlineStyle(style, start.upstream(), end);
     
+    // split the start node if the selection starts inside of it
     bool splitStart = splitTextAtStartIfNeeded(start, end); 
     if (splitStart) {
         start = endingSelection().start();
         end = endingSelection().end();
     }
+
+    // split the end node if the selection ends inside of it
     splitTextAtEndIfNeeded(start, end);
     start = endingSelection().start();
     end = endingSelection().end();

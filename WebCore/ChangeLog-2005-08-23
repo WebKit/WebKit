@@ -1,3 +1,13 @@
+2004-11-23  David Harrison  <harrison@apple.com>
+
+        Added various comments.
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::StyleChange::init):
+        (khtml::ApplyStyleCommand::doApply):
+        (khtml::ApplyStyleCommand::applyBlockStyle):
+        (khtml::ApplyStyleCommand::applyInlineStyle):
+
 2004-11-23  David Hyatt  <hyatt@apple.com>
 
 	Hit testing in table cells with top/bottom space from vertical alignment didn't work.  I forgot about the
