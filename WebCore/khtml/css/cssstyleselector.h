@@ -23,10 +23,12 @@
 #ifndef _CSS_cssstyleselector_h_
 #define _CSS_cssstyleselector_h_
 
-#include <qptrlist.h>
+#include <qptrvector.h>
+#include <qptrdict.h>
 
 #include "rendering/render_style.h"
 #include "dom/dom_string.h"
+#include "css/css_ruleimpl.h"
 
 class KHTMLSettings;
 class KHTMLView;
@@ -38,10 +40,8 @@ namespace DOM {
     class NodeImpl;
     class ElementImpl;
     class StyleSheetImpl;
-    class CSSStyleRuleImpl;
     class CSSStyleSheetImpl;
     class CSSSelector;
-    class CSSStyleDeclarationImpl;
     class CSSProperty;
     class StyleSheetListImpl;
     class CSSValueImpl;
@@ -49,27 +49,10 @@ namespace DOM {
 
 namespace khtml
 {
-    class CSSStyleSelectorList;
-    class CSSOrderedRule;
-    class CSSOrderedProperty;
-    class CSSOrderedPropertyList;
+    class CSSRuleData;
+    class CSSRuleDataList;
+    class CSSRuleSet;
     class RenderStyle;
-
-    /*
-     * to remember the source where a rule came from. Differntiates between
-     * important and not important rules. This is ordered in the order they have to be applied
-     * to the RenderStyle.
-     */
-    enum Source {
-	Default = 0,
-	NonCSSHint = 1,
-        User = 2,
-	Author = 3,
-	Inline = 4,
-	AuthorImportant = 5,
-	InlineImportant = 6,
-	UserImportant =7
-    };
 
     /**
      * this class selects a RenderStyle for a given Element based on the
@@ -107,20 +90,15 @@ namespace khtml
 	 * creates a new StyleSelector for a Document.
 	 * goes through all StyleSheets defined in the document and
 	 * creates a list of rules it needs to apply to objects
-	 *
-	 * Also takes into account special cases for HTML documents,
-	 * including the defaultStyle (which is html only)
 	 */
-	CSSStyleSelector( DOM::DocumentImpl* doc, QString userStyleSheet, DOM::StyleSheetListImpl *styleSheets, const KURL &url,
-                          bool _strictParsing );
+	CSSStyleSelector(DOM::DocumentImpl* doc, QString userStyleSheet, 
+                         DOM::StyleSheetListImpl *styleSheets, const KURL &url,
+                         bool _strictParsing);
 	/**
 	 * same as above but for a single stylesheet.
 	 */
-	CSSStyleSelector( DOM::CSSStyleSheetImpl *sheet );
-
+	CSSStyleSelector(DOM::CSSStyleSheetImpl *sheet);
 	~CSSStyleSelector();
-
-	void addSheet( DOM::CSSStyleSheetImpl *sheet );
 
 	static void loadDefaultStyle(const KHTMLSettings *s = 0);
 	static void clear();
@@ -151,12 +129,14 @@ namespace khtml
         void setFontSize(FontDef& fontDef, float size);
         float getComputedSizeFromSpecifiedSize(bool isAbsoluteSize, float specifiedSize);
         
+        QColor getColorFromPrimitiveValue(DOM::CSSPrimitiveValueImpl* primitiveValue);
+        
     protected:
 
-	/* checks if the complete selector (which can be build up from a few CSSSelector's
-	    with given relationships matches the given Element */
-        void checkSelector(int selector, DOM::ElementImpl *e, 
-                           RenderStyle::PseudoId pseudo = RenderStyle::NOPSEUDO);
+	/* checks if a compound selector (which can consist of multiple simple selectors)
+           matches the given Element */
+        bool checkSelector(DOM::CSSSelector* selector, DOM::ElementImpl *e);
+        
 	/* checks if the selector matches the given Element */
 	bool checkOneSelector(DOM::CSSSelector *selector, DOM::ElementImpl *e);
 
@@ -164,23 +144,24 @@ namespace khtml
 	   current generic font family has changed. -dwh */
 	void checkForGenericFamilyChange(RenderStyle* aStyle, RenderStyle* aParentStyle);
 
-	/* builds up the selectors and properties lists from the CSSStyleSelectorList's */
-	void buildLists();
-	void clearLists();
-
-        unsigned int addInlineDeclarations(DOM::ElementImpl* e, DOM::CSSStyleDeclarationImpl *decl,
-                                           unsigned int numProps);
-
         void adjustRenderStyle(RenderStyle* style, DOM::ElementImpl *e);
     
+        void matchRules(CSSRuleSet* rules, int& firstRuleIndex, int& lastRuleIndex);
+        void matchRulesForList(CSSRuleDataList* rules,
+                               int& firstRuleIndex, int& lastRuleIndex);
+        void sortMatchedRules(uint firstRuleIndex, uint lastRuleIndex);
+        void addMatchedRule(CSSRuleData* rule);
+        void addMatchedDeclaration(DOM::CSSStyleDeclarationImpl* decl);
+        void applyDeclarations(bool firstPass, bool important, int startIndex, int endIndex);
+        
 	static DOM::CSSStyleSheetImpl *defaultSheet;
         static DOM::CSSStyleSheetImpl *quirksSheet;
-	static CSSStyleSelectorList *defaultStyle;
-        static CSSStyleSelectorList *defaultQuirksStyle;
-	static CSSStyleSelectorList *defaultPrintStyle;
-	CSSStyleSelectorList *authorStyle;
-        CSSStyleSelectorList *userStyle;
-        DOM::CSSStyleSheetImpl *userSheet;
+	static CSSRuleSet* defaultStyle;
+        static CSSRuleSet* defaultQuirksStyle;
+	static CSSRuleSet* defaultPrintStyle;
+	CSSRuleSet* m_authorStyle;
+        CSSRuleSet* m_userStyle;
+        DOM::CSSStyleSheetImpl* m_userSheet;
 
 public:
 	static RenderStyle* styleNotYetAvailable;
@@ -188,45 +169,22 @@ public:
     private:
         void init();
 
-    public: // we need to make the enum public for SelectorCache
-	enum SelectorState {
-	    Unknown = 0,
-	    Applies,
-	    AppliesPseudo,
-	    Invalid
-	};
-
-        enum SelectorMedia {
-            MediaAural = 1,
-            MediaBraille,
-            MediaEmboss,
-            MediaHandheld,
-            MediaPrint,
-            MediaProjection,
-            MediaScreen,
-            MediaTTY,
-            MediaTV
-        };
     protected:
-
-        struct SelectorCache {
-            SelectorState state;
-            unsigned int props_size;
-            int *props;
-        };
-
-	unsigned int selectors_size;
-	DOM::CSSSelector **selectors;
-	SelectorCache *selectorCache;
-	unsigned int properties_size;
-	CSSOrderedProperty **properties;
-	QMemArray<CSSOrderedProperty> inlineProps;
+        // We collect the set of decls that match in |m_matchedDecls|.  We then walk the
+        // set of matched decls four times, once for those properties that others depend on (like font-size),
+        // and then a second time for all the remaining properties.  We then do the same two passes
+        // for any !important rules.
+        QMemArray<DOM::CSSStyleDeclarationImpl*> m_matchedDecls;
+        unsigned m_matchedDeclCount;
+        
+        // A buffer used to hold the set of matched rules for an element, and a temporary buffer used for
+        // merge sorting.
+        QMemArray<CSSRuleData*> m_matchedRules;
+        unsigned m_matchedRuleCount;
+        QMemArray<CSSRuleData*> m_tmpRules;
+        unsigned m_tmpRuleCount;
+        
         QString m_medium;
-	CSSOrderedProperty **propsToApply;
-	CSSOrderedProperty **pseudoProps;
-	unsigned int propsToApplySize;
-	unsigned int pseudoPropsSize;
-
 
 	RenderStyle::PseudoId dynamicPseudo;
 	
@@ -234,6 +192,7 @@ public:
 	RenderStyle *parentStyle;
 	DOM::ElementImpl *element;
 	DOM::NodeImpl *parentNode;
+        RenderStyle::PseudoId pseudoStyle;
 	KHTMLView *view;
 	KHTMLPart *part;
 	const KHTMLSettings *settings;
@@ -241,79 +200,69 @@ public:
         bool fontDirty;
         bool isXMLDoc;
         
-	void applyRule(int id, DOM::CSSValueImpl *value);
+	void applyProperty(int id, DOM::CSSValueImpl *value);
     };
 
-    /*
-     * List of properties that get applied to the Element. We need to collect them first
-     * and then apply them one by one, because we have to change the apply order.
-     * Some properties depend on other one already being applied (for example all properties spezifying
-     * some length need to have already the correct font size. Same applies to color
-     *
-     * While sorting them, we have to take care not to mix up the original order.
-     */
-    class CSSOrderedProperty
+    class CSSRuleData {
+    public:
+        CSSRuleData(uint pos, DOM::CSSStyleRuleImpl* r, DOM::CSSSelector* sel, CSSRuleData* prev = 0)
+        :m_position(pos), m_rule(r), m_selector(sel), m_next(0) { if (prev) prev->m_next = this; }
+        ~CSSRuleData() { delete m_next; }
+
+        uint position() { return m_position; }
+        DOM::CSSStyleRuleImpl* rule() { return m_rule; }
+        DOM::CSSSelector* selector() { return m_selector; }
+        CSSRuleData* next() { return m_next; }
+        
+    private:
+        uint m_position;
+        DOM::CSSStyleRuleImpl* m_rule;
+        DOM::CSSSelector* m_selector;
+        CSSRuleData* m_next;
+    };
+
+    class CSSRuleDataList {
+    public:
+        CSSRuleDataList(uint pos, DOM::CSSStyleRuleImpl* rule, DOM::CSSSelector* sel)
+        { m_first = m_last = new CSSRuleData(pos, rule, sel); }
+        ~CSSRuleDataList() { delete m_first; }
+
+        CSSRuleData* first() { return m_first; }
+        CSSRuleData* last() { return m_last; }
+        
+        void append(uint pos, DOM::CSSStyleRuleImpl* rule, DOM::CSSSelector* sel) {
+            m_last = new CSSRuleData(pos, rule, sel, m_last);
+        }
+        
+    private:
+        CSSRuleData* m_first;
+        CSSRuleData* m_last;
+    };
+    
+    class CSSRuleSet
     {
     public:
-	CSSOrderedProperty(DOM::CSSProperty *_prop, uint _selector,
-			   bool first, Source source, unsigned int specificity,
-			   unsigned int _position )
-	    : prop ( _prop ), pseudoId( RenderStyle::NOPSEUDO ), selector( _selector ),
-	      position( _position )
-	{
-	    priority = (!first << 30) | (source << 24) | specificity;
-	}
+        CSSRuleSet();
+        ~CSSRuleSet() { delete m_universalRules; }
 
-	bool operator < ( const CSSOrderedProperty &other ) const {
-             if (priority < other.priority) return true;
-             if (priority > other.priority) return false;
-             if (position < other.position) return true;
-             return false;
-	}
+        void addRulesFromSheet(DOM::CSSStyleSheetImpl* sheet, const DOM::DOMString &medium = "screen");
 
-	DOM::CSSProperty *prop;
-	RenderStyle::PseudoId pseudoId;
-	unsigned int selector;
-	unsigned int position;
+        void addRule(DOM::CSSStyleRuleImpl* rule, DOM::CSSSelector* sel);
+        void addToRuleSet(void* hash, QPtrDict<CSSRuleDataList>& dict,
+                          DOM::CSSStyleRuleImpl* rule, DOM::CSSSelector* sel);
 
-	Q_UINT32 priority;
-    };
+        CSSRuleDataList* getIDRules(void* hash) { return m_idRules.find(hash); }
+        CSSRuleDataList* getClassRules(void* hash) { return m_classRules.find(hash); }
+        CSSRuleDataList* getTagRules(void* hash) { return m_tagRules.find(hash); }
+        CSSRuleDataList* getUniversalRules() { return m_universalRules; }
 
-    /*
-     * This is the list we will collect all properties we need to apply in.
-     * It will get sorted once before applying.
-     */
-    class CSSOrderedPropertyList : public QPtrList<CSSOrderedProperty>
-    {
     public:
-	virtual int compareItems(QPtrCollection::Item i1, QPtrCollection::Item i2);
-	void append(DOM::CSSStyleDeclarationImpl *decl, uint selector, uint specificity,
-		    Source regular, Source important );
+        QPtrDict<CSSRuleDataList> m_idRules;
+        QPtrDict<CSSRuleDataList> m_classRules;
+        QPtrDict<CSSRuleDataList> m_tagRules;
+        CSSRuleDataList*          m_universalRules;
+        
+        uint m_ruleCount;
     };
-
-    class CSSOrderedRule
-    {
-    public:
-	CSSOrderedRule(DOM::CSSStyleRuleImpl *r, DOM::CSSSelector *s, int _index);
-	~CSSOrderedRule();
-
-	DOM::CSSSelector *selector;
-	DOM::CSSStyleRuleImpl *rule;
-	int index;
-    };
-
-    class CSSStyleSelectorList : public QPtrList<CSSOrderedRule>
-    {
-    public:
-	CSSStyleSelectorList();
-	virtual ~CSSStyleSelectorList();
-
-	void append( DOM::CSSStyleSheetImpl *sheet,
-                 const DOM::DOMString &medium = "screen" );
-
-	void collect( QPtrList<DOM::CSSSelector> *selectorList, CSSOrderedPropertyList *propList,
-		      Source regular, Source important );
-    };
-
 };
 #endif

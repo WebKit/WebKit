@@ -276,17 +276,6 @@ void CSSStyleSheetImpl::checkLoaded()
     if(m_parentNode) m_parentNode->sheetLoaded();
 }
 
-void CSSStyleSheetImpl::setNonCSSHints()
-{
-    StyleBaseImpl *rule = m_lstChildren->first();
-    while(rule) {
-        if(rule->isStyleRule()) {
-            static_cast<CSSStyleRuleImpl *>(rule)->setNonCSSHints();
-        }
-        rule = m_lstChildren->next();
-    }
-}
-
 khtml::DocLoader *CSSStyleSheetImpl::docLoader()
 {
     if ( !m_doc ) // doc is 0 for the user- and default-sheet!

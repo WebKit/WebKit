@@ -37,10 +37,10 @@ class DOMStringImpl : public khtml::Shared<DOMStringImpl>
 {
 private:
     struct WithOneRef { };
-    DOMStringImpl(WithOneRef) { s = 0; l = 0; _hash = 0; ref(); }
+    DOMStringImpl(WithOneRef) { s = 0; l = 0; _hash = 0; _inTable = false; ref(); }
 
 protected:
-    DOMStringImpl() { s = 0, l = 0; _hash = 0; }
+    DOMStringImpl() { s = 0, l = 0; _hash = 0; _inTable = false; }
 public:
     DOMStringImpl(const QChar *str, unsigned int len);
     DOMStringImpl(const char *str);
@@ -87,6 +87,7 @@ public:
     unsigned int l;
     QChar *s;
     mutable unsigned _hash;
+    bool _inTable;
 };
 
 };

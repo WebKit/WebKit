@@ -58,13 +58,13 @@ public:
 
     virtual void parseAttribute(AttributeImpl *);
     virtual void insertedIntoDocument();
-    
-    CSSStyleSheetImpl *sheet() const { return m_styleSheet; }
+
+    void createLinkDecl();
 
 protected:
-    CSSStyleSheetImpl *m_styleSheet;
     bool m_bgSet;
     bool m_fgSet;
+    CSSStyleDeclarationImpl* m_linkDecl;
 };
 
 // -------------------------------------------------------------------------

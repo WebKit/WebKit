@@ -203,7 +203,7 @@ public:
     virtual void attach();
 
     // used by table cells to share style decls created by the enclosing table.
-    virtual DOM::CSSStyleDeclarationImpl* getAdditionalStyleDecls();
+    virtual CSSStyleDeclarationImpl* additionalAttributeStyleDecl();
     
 protected:
     int _row;

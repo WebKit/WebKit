@@ -419,28 +419,14 @@ SUP {
 	font-size: smaller;
 }
 
-/* ### not supported at the moment
-ABBR, ACRONYM { 
-	font-variant: small-caps; 
-	letter-spacing: 0.1em 
-}
-*/
 abbr, 
 acronym {
 	font-style: italic;
 }
 
-*|:focus          { outline: auto 3px #1f5ccf }
-a:link          { color: #0000EE; text-decoration: underline; }
-a:link:active          { color: red }
-a:visited              { color: #551A8B; text-decoration: underline; }
-a:visited:active       { color: red }
-
-/* ### :before is now supported, but we haven't tried reinstating this
-   ### rule that was comment out long ago.
-      BR:before       { content: "\n" }
-*/
-
+:focus          { outline: auto 3px #1f5ccf }
+a:-khtml-any-link { color: -khtml-link; text-decoration: underline; }
+a:-khtml-any-link:active { color: -khtml-activelink; }
 
 /* Bidirectionality settings (do not change) */
 
@@ -497,19 +483,3 @@ wbr {
 }
 
 /* noscript is handled internally, as it depends on the html settings */
-
-/* media rules are commented out for the moment. We'll have to add
- * them later. Lars, 23.12.99
- */
-
-/*
-      @media print {
-        @page         { margin: 10% }
-        H1, H2, H3,
-        H4, H5, H6    { page-break-after: avoid; page-break-inside: avoid }
-        BLOCKQUOTE,
-        PRE           { page-break-inside: avoid }
-        UL, OL, DL    { page-break-before: avoid }
-      }
-
-*/

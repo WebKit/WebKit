@@ -43,7 +43,7 @@ public:
     virtual bool isHTMLAttributeMap() const;
     
     virtual void parseClassAttribute(const DOMString& classAttr);
-    bool matchesCSSClass(const AtomicString& c, bool caseSensitive) const;
+    const AtomicStringList* getClassList() const { return &m_classList; }
     
 private:
     AtomicStringList m_classList;
@@ -65,7 +65,7 @@ public:
     virtual void parseAttribute(AttributeImpl *token);
     virtual void createAttributeMap() const;
 
-    virtual bool matchesCSSClass(const AtomicString& c, bool caseSensitive) const;
+     virtual const AtomicStringList* getClassList() const;
 
     void addCSSLength(int id, const DOMString &value); // FIXME: value will be parsed by the CSS parser
     void addCSSProperty(int id, const DOMString &value); // value will be parsed by the CSS parser
@@ -90,6 +90,12 @@ public:
 
     virtual void click();
     
+    virtual CSSStyleDeclarationImpl* inlineStyleDecl() const;
+    virtual CSSStyleDeclarationImpl* attributeStyleDecl() const;
+    virtual CSSStyleDeclarationImpl* getInlineStyleDecl();
+    void createInlineStyleDecl();
+    void createMappedAttributeDecl();
+    
 #if APPLE_CHANGES
     virtual bool isGenericFormElement() const { return false; }
 #endif
@@ -99,6 +105,9 @@ public:
 protected:
     // for IMG, OBJECT and APPLET
     void addHTMLAlignment( const DOMString& alignment );
+    
+    CSSStyleDeclarationImpl* m_inlineStyleDecl;
+    CSSStyleDeclarationImpl* m_attributeStyleDecl;
 };
 
 class HTMLGenericElementImpl : public HTMLElementImpl

@@ -120,6 +120,8 @@ teal
 white
 yellow
 transparent
+-khtml-link
+-khtml-activelink
 activeborder
 activecaption
 appworkspace

@@ -108,9 +108,8 @@ namespace DOM {
 	void parseSheet( DOM::CSSStyleSheetImpl *sheet, const DOM::DOMString &string );
 	DOM::CSSRuleImpl *parseRule( DOM::CSSStyleSheetImpl *sheet, const DOM::DOMString &string );
 	bool parseValue( DOM::CSSStyleDeclarationImpl *decls, int id, const DOM::DOMString &string,
-			 bool _important, bool _nonCSSHint );
-	bool parseDeclaration( DOM::CSSStyleDeclarationImpl *decls, const DOM::DOMString &string,
-			       bool _nonCSSHint );
+			 bool _important );
+	bool parseDeclaration( DOM::CSSStyleDeclarationImpl *decls, const DOM::DOMString &string );
 
 	static CSSParser *current() { return currentParser; }
 
@@ -139,7 +138,6 @@ namespace DOM {
     public:
 	bool strict;
 	bool important;
-	bool nonCSSHint;
 	int id;
 	DOM::StyleListImpl *styleElement;
 	DOM::CSSRuleImpl *rule;

@@ -1,7 +1,6 @@
 typedef union {
     CSSRuleImpl *rule;
     CSSSelector *selector;
-    QPtrList<CSSSelector> *selectorList;
     bool ok;
     MediaListImpl *mediaList;
     CSSMediaRuleImpl *mediaRule;

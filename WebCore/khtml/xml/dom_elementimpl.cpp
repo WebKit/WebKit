@@ -186,22 +186,14 @@ ElementImpl::ElementImpl(DocumentPtr *doc)
     : NodeBaseImpl(doc)
 {
     namedAttrMap = 0;
-    m_styleDecls = 0;
     m_prefix = 0;
 }
 
 ElementImpl::~ElementImpl()
 {
-    if(namedAttrMap) {
+    if (namedAttrMap) {
         namedAttrMap->detachFromElement();
         namedAttrMap->deref();
-    }
-
-    if (m_styleDecls) {
-        m_styleDecls->setNode(0);
-        m_styleDecls->parent()->deref();
-        m_styleDecls->setParent(0);
-        m_styleDecls->deref();
     }
 
     if (m_prefix)
@@ -229,11 +221,34 @@ unsigned short ElementImpl::nodeType() const
     return Node::ELEMENT_NODE;
 }
 
-bool ElementImpl::matchesCSSClass(const AtomicString& c, bool caseSensitive) const
+CSSStyleDeclarationImpl* ElementImpl::inlineStyleDecl() const
 {
-    // Class is not supported on random XML elements.  A language (e.g., HTML, SVG) should indicate
-    // support using a subclass override.
-    return false;
+    return 0;
+}
+
+CSSStyleDeclarationImpl* ElementImpl::attributeStyleDecl() const
+{
+    return 0;
+}
+
+CSSStyleDeclarationImpl* ElementImpl::getInlineStyleDecl()
+{
+    return 0;
+}
+
+CSSStyleDeclarationImpl* ElementImpl::additionalAttributeStyleDecl()
+{
+    return 0;
+}
+
+const AtomicStringList* ElementImpl::getClassList() const
+{
+    return 0;
+}
+
+const AtomicString& ElementImpl::getIDAttribute() const
+{
+    return namedAttrMap ? namedAttrMap->id() : nullAtom;
 }
 
 const AtomicString& ElementImpl::getAttribute(NodeImpl::Id id) const
@@ -313,12 +328,8 @@ NodeImpl *ElementImpl::cloneNode(bool deep)
     if (!clone) return 0;
 
     // clone attributes
-    if(namedAttrMap)
+    if (namedAttrMap)
         *(static_cast<NamedAttrMapImpl*>(clone->attributes())) = *namedAttrMap;
-
-    // clone individual style rules
-    if (m_styleDecls)
-        *(clone->styleRules()) = *m_styleDecls;
 
     if (deep)
         cloneChildNodes(clone);
@@ -542,16 +553,6 @@ bool ElementImpl::childTypeAllowed( unsigned short type )
     }
 }
 
-void ElementImpl::createDecl( )
-{
-    m_styleDecls = new CSSStyleDeclarationImpl(0);
-    m_styleDecls->ref();
-    m_styleDecls->setParent(getDocument()->elementSheet());
-    m_styleDecls->parent()->ref();
-    m_styleDecls->setNode(this);
-    m_styleDecls->setStrictParsing( !getDocument()->inCompatMode() );
-}
-
 void ElementImpl::dispatchAttrRemovalEvent(AttributeImpl *attr)
 {
     if (!getDocument()->hasListenerType(DocumentImpl::DOMATTRMODIFIED_LISTENER))
@@ -708,10 +709,6 @@ NodeImpl *XMLElementImpl::cloneNode ( bool deep )
     // clone attributes
     if(namedAttrMap)
         *(static_cast<NamedAttrMapImpl*>(clone->attributes())) = *namedAttrMap;
-
-    // clone individual style rules
-    if (m_styleDecls)
-        *(clone->styleRules()) = *m_styleDecls;
 
     if (deep)
         cloneChildNodes(clone);

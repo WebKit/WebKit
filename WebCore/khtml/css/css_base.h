@@ -73,15 +73,21 @@ namespace DOM {
     {
     public:
 	CSSSelector()
-	    : tagHistory(0), simpleSelector(0), attr(0), tag(anyQName),
-              relation( Descendant ), match( None ), nonCSSHint( false ), 
+	    : tagHistory(0), simpleSelector(0), nextSelector(0), attr(0), tag(anyQName),
+              relation( Descendant ), match( None ),
               pseudoId( 0 ), _pseudoType(PseudoNotParsed)
         {}
 
 	~CSSSelector() {
 	    delete tagHistory;
             delete simpleSelector;
+            delete nextSelector;
 	}
+
+        void append(CSSSelector* n) {
+            if (!nextSelector) nextSelector = n; else nextSelector->append(n);
+        }
+        CSSSelector* next() { return nextSelector; }
 
 	/**
 	 * Print debug output for this selector
@@ -136,6 +142,7 @@ namespace DOM {
 	    PseudoFirstLetter,
 	    PseudoLink,
 	    PseudoVisited,
+            PseudoAnyLink,
 	    PseudoHover,
 	    PseudoFocus,
 	    PseudoActive,
@@ -156,14 +163,14 @@ namespace DOM {
 	    }
 
 	mutable DOM::AtomicString value;
-	CSSSelector *tagHistory;
+	CSSSelector* tagHistory;
         CSSSelector* simpleSelector; // Used for :not.
+        CSSSelector* nextSelector; // used for ,-chained selectors
 	Q_UINT32     attr;
 	Q_UINT32     tag;
 
         Relation relation     : 2;
 	Match 	 match         : 4;
-	bool	nonCSSHint : 1;
 	unsigned int pseudoId : 3;
 	mutable PseudoType _pseudoType : 5;
 
@@ -175,9 +182,9 @@ namespace DOM {
     class StyleBaseImpl : public khtml::TreeShared<StyleBaseImpl>
     {
     public:
-	StyleBaseImpl()  { m_parent = 0; hasInlinedDecl = false; strictParsing = true; multiLength = false; }
+	StyleBaseImpl()  { m_parent = 0; strictParsing = true; multiLength = false; }
 	StyleBaseImpl(StyleBaseImpl *p) {
-	    m_parent = p; hasInlinedDecl = false;
+	    m_parent = p;
 	    strictParsing = (m_parent ? m_parent->useStrictParsing() : true);
 	    multiLength = false;
 	}
@@ -209,7 +216,7 @@ namespace DOM {
 	void setParent(StyleBaseImpl *parent) { m_parent = parent; }
 
 	static void setParsedValue(int propId, const CSSValueImpl *parsedValue,
-				   bool important, bool nonCSSHint, QPtrList<CSSProperty> *propList);
+				   bool important, QPtrList<CSSProperty> *propList);
 
 	virtual bool parseString(const DOMString &/*cssString*/, bool = false) { return false; }
 
@@ -221,7 +228,6 @@ namespace DOM {
 	StyleSheetImpl* stylesheet();
 
     protected:
-	bool hasInlinedDecl : 1;
 	bool strictParsing : 1;
 	bool multiLength : 1;
     };

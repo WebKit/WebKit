@@ -50,19 +50,29 @@ using namespace khtml;
 
 HTMLBodyElementImpl::HTMLBodyElementImpl(DocumentPtr *doc)
     : HTMLElementImpl(doc),
-    m_bgSet( false ), m_fgSet( false )
+    m_bgSet( false ), m_fgSet( false ), m_linkDecl(0)
 {
-    m_styleSheet = 0;
 }
 
 HTMLBodyElementImpl::~HTMLBodyElementImpl()
 {
-    if(m_styleSheet) m_styleSheet->deref();
+    if (m_linkDecl)
+        m_linkDecl->deref();
 }
 
 NodeImpl::Id HTMLBodyElementImpl::id() const
 {
     return ID_BODY;
+}
+
+void HTMLBodyElementImpl::createLinkDecl()
+{
+    m_linkDecl = new CSSStyleDeclarationImpl(0);
+    m_linkDecl->ref();
+    m_linkDecl->setParent(getDocument()->elementSheet());
+    m_linkDecl->parent()->ref();
+    m_linkDecl->setNode(this);
+    m_linkDecl->setStrictParsing(!getDocument()->inCompatMode());
 }
 
 void HTMLBodyElementImpl::parseAttribute(AttributeImpl *attr)
@@ -111,22 +121,32 @@ void HTMLBodyElementImpl::parseAttribute(AttributeImpl *attr)
     case ATTR_ALINK:
     case ATTR_LINK:
     {
-        if(!m_styleSheet) {
-            m_styleSheet = new CSSStyleSheetImpl(this,DOMString(),true);
-            m_styleSheet->ref();
+        if (attr->isNull()) {
+            if (attr->id() == ATTR_LINK)
+                getDocument()->resetLinkColor();
+            else if (attr->id() == ATTR_VLINK)
+                getDocument()->resetVisitedLinkColor();
+            else
+                getDocument()->resetActiveLinkColor();
         }
-        QString aStr;
-	if ( attr->id() == ATTR_LINK )
-	    aStr = "a:link";
-	else if ( attr->id() == ATTR_VLINK )
-	    aStr = "a:visited";
-	else if ( attr->id() == ATTR_ALINK )
-            aStr = "a:link:active, a:visited:active";
-	aStr += " { color: " + attr->value().string() + "; }";
-        m_styleSheet->parseString(aStr, !getDocument()->inCompatMode());
-        m_styleSheet->setNonCSSHints();
+        else {
+            if (!m_linkDecl)
+                createLinkDecl();
+            m_linkDecl->setProperty(CSS_PROP_COLOR, attr->value(), false, false);
+            CSSValueImpl* val = m_linkDecl->getPropertyCSSValue(CSS_PROP_COLOR);
+            if (val && val->isPrimitiveValue()) {
+                QColor col = getDocument()->styleSelector()->getColorFromPrimitiveValue(static_cast<CSSPrimitiveValueImpl*>(val));
+                if (attr->id() == ATTR_LINK)
+                    getDocument()->setLinkColor(col);
+                else if (attr->id() == ATTR_VLINK)
+                    getDocument()->setVisitedLinkColor(col);
+                else
+                    getDocument()->setActiveLinkColor(col);
+            }
+        }
+        
         if (attached())
-            getDocument()->updateStyleSelector();
+            getDocument()->recalcStyle(Force);
         break;
     }
     case ATTR_ONLOAD:

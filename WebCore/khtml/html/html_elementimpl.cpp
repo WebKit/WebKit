@@ -45,6 +45,7 @@
 #include "css/css_stylesheetimpl.h"
 #include "css/cssproperties.h"
 #include "css/cssvalues.h"
+#include "css/css_ruleimpl.h"
 #include "xml/dom_textimpl.h"
 #include "xml/dom2_eventsimpl.h"
 
@@ -67,11 +68,15 @@ bool HTMLNamedAttrMapImpl::isHTMLAttributeMap() const
     return true;
 }
 
-void HTMLNamedAttrMapImpl::parseClassAttribute(const DOMString& classAttr)
+void HTMLNamedAttrMapImpl::parseClassAttribute(const DOMString& classStr)
 {
     m_classList.clear();
     if (!element->hasClass())
         return;
+    
+    DOMString classAttr = element->getDocument()->inCompatMode() ? 
+        (classStr.implementation()->isLower() ? classStr : DOMString(classStr.implementation()->lower())) :
+        classStr;
     
     if (classAttr.find(' ') == -1)
         m_classList.setString(AtomicString(classAttr));
@@ -97,30 +102,21 @@ void HTMLNamedAttrMapImpl::parseClassAttribute(const DOMString& classAttr)
     }
 }
 
-bool HTMLNamedAttrMapImpl::matchesCSSClass(const AtomicString& c, bool caseSensitive) const
-{
-    for (const AtomicStringList* curr = &m_classList; curr; curr = curr->next()) {
-        if (caseSensitive) {
-            if (c == curr->string())
-                return true;
-        }
-        else {
-            if (equalsIgnoreCase(c, curr->string()))
-                return true;
-        }
-    }
-    return false;
-}
-
 // ------------------------------------------------------------------
 
 HTMLElementImpl::HTMLElementImpl(DocumentPtr *doc)
     : ElementImpl(doc)
 {
+    m_inlineStyleDecl = 0;
+    m_attributeStyleDecl = 0;    
 }
 
 HTMLElementImpl::~HTMLElementImpl()
 {
+    if (m_inlineStyleDecl)
+        m_inlineStyleDecl->deref();
+    if (m_attributeStyleDecl)
+        m_attributeStyleDecl->deref();
 }
 
 bool HTMLElementImpl::isInline() const
@@ -165,6 +161,26 @@ bool HTMLElementImpl::isInline() const
     }
 }
 
+void HTMLElementImpl::createInlineStyleDecl()
+{
+    m_inlineStyleDecl = new CSSStyleDeclarationImpl(0);
+    m_inlineStyleDecl->ref();
+    m_inlineStyleDecl->setParent(getDocument()->elementSheet());
+    m_inlineStyleDecl->parent()->ref();
+    m_inlineStyleDecl->setNode(this);
+    m_inlineStyleDecl->setStrictParsing(!getDocument()->inCompatMode());
+}
+
+void HTMLElementImpl::createMappedAttributeDecl()
+{
+    m_attributeStyleDecl = new CSSStyleDeclarationImpl(0);
+    m_attributeStyleDecl->ref();
+    m_attributeStyleDecl->setParent(getDocument()->elementSheet());
+    m_attributeStyleDecl->parent()->ref();
+    m_attributeStyleDecl->setNode(this);
+    m_attributeStyleDecl->setStrictParsing(!getDocument()->inCompatMode());
+}
+
 void HTMLElementImpl::parseAttribute(AttributeImpl *attr)
 {
     DOMString indexstring;
@@ -184,6 +200,14 @@ void HTMLElementImpl::parseAttribute(AttributeImpl *attr)
     case ATTR_ID:
         // unique id
         setHasID(!attr->isNull());
+        if (namedAttrMap) {
+            if (attr->isNull())
+                namedAttrMap->setID(nullAtom);
+            else if (getDocument()->inCompatMode() && !attr->value().implementation()->isLower())
+                namedAttrMap->setID(AtomicString(attr->value().implementation()->lower()));
+            else
+                namedAttrMap->setID(attr->value());
+        }
         setChanged();
         break;
     case ATTR_CLASS:
@@ -203,8 +227,8 @@ void HTMLElementImpl::parseAttribute(AttributeImpl *attr)
         // ### the inline sheet ay contain more than 1 property!
         // stylesheet info
         setHasStyle();
-        if(!m_styleDecls) createDecl();
-        m_styleDecls->setProperty(attr->value());
+        if (!m_inlineStyleDecl) createInlineStyleDecl();
+        m_inlineStyleDecl->setProperty(attr->value());
         setChanged();
         break;
     case ATTR_TABINDEX:
@@ -284,36 +308,53 @@ void HTMLElementImpl::createAttributeMap() const
     namedAttrMap->ref();
 }
 
-bool HTMLElementImpl::matchesCSSClass(const AtomicString& c, bool cs) const
+CSSStyleDeclarationImpl* HTMLElementImpl::inlineStyleDecl() const
+{ 
+    return m_inlineStyleDecl;
+}
+
+CSSStyleDeclarationImpl* HTMLElementImpl::attributeStyleDecl() const
 {
-    return namedAttrMap ? static_cast<HTMLNamedAttrMapImpl*>(namedAttrMap)->matchesCSSClass(c, cs) : false;
+    return m_attributeStyleDecl;
+}
+
+CSSStyleDeclarationImpl* HTMLElementImpl::getInlineStyleDecl()
+{
+    if (!m_inlineStyleDecl)
+        createInlineStyleDecl();
+    return m_inlineStyleDecl;
+}
+
+const AtomicStringList* HTMLElementImpl::getClassList() const
+{
+    return namedAttrMap ? static_cast<HTMLNamedAttrMapImpl*>(namedAttrMap)->getClassList() : 0;
 }
 
 void HTMLElementImpl::addCSSProperty(int id, const DOMString &value)
 {
-    if(!m_styleDecls) createDecl();
-    m_styleDecls->setProperty(id, value, false, true);
+    if (!m_attributeStyleDecl) createMappedAttributeDecl();
+    m_attributeStyleDecl->setProperty(id, value, false);
     setChanged();
 }
 
 void HTMLElementImpl::addCSSProperty(int id, int value)
 {
-    if(!m_styleDecls) createDecl();
-    m_styleDecls->setProperty(id, value, false, true);
+    if (!m_attributeStyleDecl) createMappedAttributeDecl();
+    m_attributeStyleDecl->setProperty(id, value, false);
     setChanged();
 }
 
 void HTMLElementImpl::addCSSStringProperty(int id, const DOMString &value, CSSPrimitiveValue::UnitTypes type)
 {
-    if(!m_styleDecls) createDecl();
-    m_styleDecls->setStringProperty(id, value, type, false, true);
+    if (!m_attributeStyleDecl) createMappedAttributeDecl();
+    m_attributeStyleDecl->setStringProperty(id, value, type, false);
     setChanged();
 }
 
 void HTMLElementImpl::addCSSImageProperty(int id, const DOMString &URL)
 {
-    if(!m_styleDecls) createDecl();
-    m_styleDecls->setImageProperty(id, URL, false, true);
+    if (!m_attributeStyleDecl) createMappedAttributeDecl();
+    m_attributeStyleDecl->setImageProperty(id, URL, false);
     setChanged();
 }
 
@@ -321,7 +362,7 @@ void HTMLElementImpl::addCSSLength(int id, const DOMString &value)
 {
     // FIXME: This function should not spin up the CSS parser, but should instead just figure out the correct
     // length unit and make the appropriate parsed value.
-    if(!m_styleDecls) createDecl();
+    if (!m_attributeStyleDecl) createMappedAttributeDecl();
 
     // strip attribute garbage..
     DOMStringImpl* v = value.implementation();
@@ -336,13 +377,13 @@ void HTMLElementImpl::addCSSLength(int id, const DOMString &value)
                 break;
         }
         if ( l != v->l ) {
-            m_styleDecls->setLengthProperty( id, DOMString( v->s, l ), false, true );
+            m_attributeStyleDecl->setLengthProperty(id, DOMString( v->s, l ), false);
             setChanged();
             return;
         }
     }
 
-    m_styleDecls->setLengthProperty(id, value, false, true);
+    m_attributeStyleDecl->setLengthProperty(id, value, false);
     setChanged();
 }
 
@@ -365,13 +406,13 @@ static inline int toHex( const QChar &c ) {
 /* color parsing that tries to match as close as possible IE 6. */
 void HTMLElementImpl::addHTMLColor( int id, const DOMString &c )
 {
-    if(!m_styleDecls) createDecl();
+    if (!m_attributeStyleDecl) createMappedAttributeDecl();
 
     // this is the only case no color gets applied in IE.
     if ( !c.length() )
         return;
 
-    if ( m_styleDecls->setProperty(id, c, false, true) )
+    if ( m_attributeStyleDecl->setProperty(id, c, false) )
         return;
 
     QString color = c.string();
@@ -434,21 +475,21 @@ void HTMLElementImpl::addHTMLColor( int id, const DOMString &c )
 
             color.sprintf("#%02x%02x%02x", colors[0], colors[1], colors[2] );
             // 	    qDebug( "trying to add fixed color string '%s'", color.latin1() );
-            if ( m_styleDecls->setProperty(id, DOMString(color), false, true) )
+            if ( m_attributeStyleDecl->setProperty(id, DOMString(color), false) )
                 return;
         }
     }
-    m_styleDecls->setProperty(id, CSS_VAL_BLACK, false, true);
+    m_attributeStyleDecl->setProperty(id, CSS_VAL_BLACK, false);
 }
 
 void HTMLElementImpl::removeCSSProperty(int id)
 {
-    if(!m_styleDecls)
+    if(!m_attributeStyleDecl)
         return;
-    m_styleDecls->parent()->deref();
-    m_styleDecls->setParent(getDocument()->elementSheet());
-    m_styleDecls->parent()->ref();
-    m_styleDecls->removeProperty(id);
+    m_attributeStyleDecl->parent()->deref();
+    m_attributeStyleDecl->setParent(getDocument()->elementSheet());
+    m_attributeStyleDecl->parent()->ref();
+    m_attributeStyleDecl->removeProperty(id);
     setChanged();
 }
 

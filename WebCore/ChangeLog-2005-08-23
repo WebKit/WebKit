@@ -1,5 +1,180 @@
 2004-02-04  David Hyatt  <hyatt@apple.com>
 
+	Improve rule matching in the style system.  Filter out most rules up front, so that only a small
+	number of rules need to be walked for any given element.  Yields a ~4-5% improvement on the PLT.
+	
+        Reviewed by kocienda
+
+        * khtml/css/css_base.cpp:
+        (StyleBaseImpl::setParsedValue):
+        (CSSSelector::specificity):
+        (CSSSelector::extractPseudoType):
+        (CSSSelector::operator == ):
+        * khtml/css/css_base.h:
+        (DOM::CSSSelector::CSSSelector):
+        (DOM::CSSSelector::~CSSSelector):
+        (DOM::CSSSelector::append):
+        (DOM::CSSSelector::next):
+        (DOM::CSSSelector::):
+        (DOM::StyleBaseImpl::StyleBaseImpl):
+        * khtml/css/css_ruleimpl.cpp:
+        (CSSStyleRuleImpl::selectorText):
+        (CSSRuleListImpl::insertRule):
+        * khtml/css/css_ruleimpl.h:
+        (DOM::CSSStyleRuleImpl::setSelector):
+        (DOM::CSSStyleRuleImpl::selector):
+        * khtml/css/css_stylesheetimpl.cpp:
+        * khtml/css/css_stylesheetimpl.h:
+        * khtml/css/css_valueimpl.cpp:
+        (CSSStyleDeclarationImpl::getPropertyCSSValue):
+        (CSSStyleDeclarationImpl::removeProperty):
+        (CSSStyleDeclarationImpl::setProperty):
+        (CSSStyleDeclarationImpl::setStringProperty):
+        (CSSStyleDeclarationImpl::setImageProperty):
+        (CSSStyleDeclarationImpl::setLengthProperty):
+        (CSSStyleDeclarationImpl::cssText):
+        (CSSStyleDeclarationImpl::setCssText):
+        * khtml/css/css_valueimpl.h:
+        (DOM::CSSStyleDeclarationImpl::node):
+        (DOM::CSSProperty::CSSProperty):
+        (DOM::CSSProperty::id):
+        (DOM::CSSProperty::isImportant):
+        * khtml/css/cssparser.cpp:
+        (CSSParser::CSSParser):
+        (ParseString::lower):
+        (CSSParser::parseValue):
+        (CSSParser::parseDeclaration):
+        (CSSParser::addProperty):
+        (CSSParser::parseShadow):
+        * khtml/css/cssparser.h:
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::):
+        (khtml::CSSStyleSelector::CSSStyleSelector):
+        (khtml::CSSStyleSelector::init):
+        (khtml::CSSStyleSelector::~CSSStyleSelector):
+        (khtml::CSSStyleSelector::loadDefaultStyle):
+        (khtml::CSSStyleSelector::addMatchedRule):
+        (khtml::CSSStyleSelector::addMatchedDeclaration):
+        (khtml::CSSStyleSelector::matchRules):
+        (khtml::CSSStyleSelector::matchRulesForList):
+        (khtml::operator >):
+        (khtml::operator <=):
+        (khtml::CSSStyleSelector::sortMatchedRules):
+        (khtml::CSSStyleSelector::initForStyleResolve):
+        (khtml::CSSStyleSelector::styleForElement):
+        (khtml::CSSStyleSelector::pseudoStyleForElement):
+        (khtml::checkPseudoState):
+        (khtml::CSSStyleSelector::checkSelector):
+        (khtml::CSSStyleSelector::checkOneSelector):
+        (khtml::CSSRuleSet::CSSRuleSet):
+        (khtml::CSSRuleSet::addToRuleSet):
+        (khtml::CSSRuleSet::addRule):
+        (khtml::CSSRuleSet::addRulesFromSheet):
+        (khtml::CSSStyleSelector::applyDeclarations):
+        (khtml::CSSStyleSelector::applyProperty):
+        (khtml::CSSStyleSelector::smallerFontSize):
+        (khtml::CSSStyleSelector::getColorFromPrimitiveValue):
+        * khtml/css/cssstyleselector.h:
+        (khtml::):
+        (khtml::CSSRuleData::m_next):
+        (khtml::CSSRuleData::~CSSRuleData):
+        (khtml::CSSRuleData::position):
+        (khtml::CSSRuleData::rule):
+        (khtml::CSSRuleData::selector):
+        (khtml::CSSRuleData::next):
+        (khtml::CSSRuleDataList::CSSRuleDataList):
+        (khtml::CSSRuleDataList::~CSSRuleDataList):
+        (khtml::CSSRuleDataList::first):
+        (khtml::CSSRuleDataList::last):
+        (khtml::CSSRuleDataList::append):
+        (khtml::CSSRuleSet::~CSSRuleSet):
+        (khtml::CSSRuleSet::getIDRules):
+        (khtml::CSSRuleSet::getClassRules):
+        (khtml::CSSRuleSet::getTagRules):
+        (khtml::CSSRuleSet::getUniversalRules):
+        * khtml/css/cssvalues.c:
+        (hash_val):
+        (findValue):
+        * khtml/css/cssvalues.h:
+        * khtml/css/cssvalues.in:
+        * khtml/css/html4.css:
+        * khtml/css/parser.cpp:
+        * khtml/css/parser.h:
+        * khtml/css/parser.y:
+        * khtml/dom/dom_element.cpp:
+        (Element::style):
+        * khtml/html/html_baseimpl.cpp:
+        (HTMLBodyElementImpl::HTMLBodyElementImpl):
+        (HTMLBodyElementImpl::~HTMLBodyElementImpl):
+        (HTMLBodyElementImpl::createLinkDecl):
+        (HTMLBodyElementImpl::parseAttribute):
+        * khtml/html/html_baseimpl.h:
+        * khtml/html/html_elementimpl.cpp:
+        (HTMLNamedAttrMapImpl::parseClassAttribute):
+        (HTMLElementImpl::HTMLElementImpl):
+        (HTMLElementImpl::~HTMLElementImpl):
+        (HTMLElementImpl::createInlineStyleDecl):
+        (HTMLElementImpl::createMappedAttributeDecl):
+        (HTMLElementImpl::parseAttribute):
+        (HTMLElementImpl::getClassList):
+        (HTMLElementImpl::addCSSProperty):
+        (HTMLElementImpl::addCSSStringProperty):
+        (HTMLElementImpl::addCSSImageProperty):
+        (HTMLElementImpl::addCSSLength):
+        (HTMLElementImpl::addHTMLColor):
+        (HTMLElementImpl::removeCSSProperty):
+        * khtml/html/html_elementimpl.h:
+        (DOM::HTMLNamedAttrMapImpl::getClassList):
+        (DOM::HTMLElementImpl::inlineStyleDecl):
+        (DOM::HTMLElementImpl::attributeStyleDecl):
+        (DOM::HTMLElementImpl::getInlineStyleDecl):
+        * khtml/html/html_tableimpl.cpp:
+        (HTMLTableElementImpl::createSharedCellDecls):
+        (HTMLTableCellElementImpl::additionalAttributeStyleDecl):
+        * khtml/html/html_tableimpl.h:
+        * khtml/xml/dom_atomicstring.cpp:
+        (DOM::AtomicString::add):
+        (DOM::AtomicString::remove):
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::DocumentImpl):
+        (DocumentImpl::resetLinkColor):
+        (DocumentImpl::resetVisitedLinkColor):
+        (DocumentImpl::resetActiveLinkColor):
+        (DocumentImpl::recalcStyleSelector):
+        * khtml/xml/dom_docimpl.h:
+        (DOM::DocumentImpl::linkColor):
+        (DOM::DocumentImpl::visitedLinkColor):
+        (DOM::DocumentImpl::activeLinkColor):
+        (DOM::DocumentImpl::setLinkColor):
+        (DOM::DocumentImpl::setVisitedLinkColor):
+        (DOM::DocumentImpl::setActiveLinkColor):
+        * khtml/xml/dom_elementimpl.cpp:
+        (ElementImpl::ElementImpl):
+        (ElementImpl::~ElementImpl):
+        (ElementImpl::getClassList):
+        (ElementImpl::getIDAttribute):
+        (ElementImpl::cloneNode):
+        (XMLElementImpl::cloneNode):
+        * khtml/xml/dom_elementimpl.h:
+        (DOM::ElementImpl::inlineStyleDecl):
+        (DOM::ElementImpl::attributeStyleDecl):
+        (DOM::ElementImpl::getInlineStyleDecl):
+        (DOM::ElementImpl::additionalAttributeStyleDecl):
+        (DOM::NamedAttrMapImpl::id):
+        (DOM::NamedAttrMapImpl::setID):
+        * khtml/xml/dom_stringimpl.cpp:
+        (DOM::DOMStringImpl::DOMStringImpl):
+        (DOM::DOMStringImpl::~DOMStringImpl):
+        (DOM::DOMStringImpl::append):
+        (DOM::DOMStringImpl::insert):
+        (DOM::DOMStringImpl::truncate):
+        (DOM::DOMStringImpl::remove):
+        (DOM::DOMStringImpl::split):
+        * khtml/xml/dom_stringimpl.h:
+        (DOM::DOMStringImpl::DOMStringImpl):
+
+2004-02-04  David Hyatt  <hyatt@apple.com>
+
 	Fix line-height regression on altavista.
 
         * khtml/rendering/render_br.cpp:

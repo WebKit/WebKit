@@ -46,6 +46,7 @@ namespace DOM {
 class ElementImpl;
 class DocumentImpl;
 class NamedAttrMapImpl;
+class AtomicStringList;
 
 // this has no counterpart in DOM, purely internal
 // representation of the nodevalue of an Attr.
@@ -154,8 +155,8 @@ public:
     ~ElementImpl();
 
     // Used to quickly determine whether or not an element has a given CSS class.
-    virtual bool matchesCSSClass(const AtomicString& c, bool caseSensitive) const;
-    
+    virtual const AtomicStringList* getClassList() const;
+    const AtomicString& getIDAttribute() const;
     const AtomicString& getAttribute( NodeImpl::Id id ) const;
     const AtomicString& getAttribute(const DOMString& localName) const { return getAttributeNS(QString::null, localName); }
     const AtomicString& getAttributeNS(const DOMString &namespaceURI,
@@ -201,12 +202,12 @@ public:
     virtual bool childAllowed( NodeImpl *newChild );
     virtual bool childTypeAllowed( unsigned short type );
 
-    DOM::CSSStyleDeclarationImpl *styleRules() {
-      if (!m_styleDecls) createDecl();
-      return m_styleDecls;
-    }
+    virtual CSSStyleDeclarationImpl* inlineStyleDecl() const;
+    virtual CSSStyleDeclarationImpl* attributeStyleDecl() const;
+    virtual CSSStyleDeclarationImpl* getInlineStyleDecl();
+    
     // used by table cells to share style decls created by the enclosing table.
-    virtual DOM::CSSStyleDeclarationImpl* getAdditionalStyleDecls() { return 0; }
+    virtual CSSStyleDeclarationImpl* additionalAttributeStyleDecl();
     
     void dispatchAttrRemovalEvent(AttributeImpl *attr);
     void dispatchAttrAdditionEvent(AttributeImpl *attr);
@@ -226,7 +227,6 @@ public:
 #endif
 protected:
     virtual void createAttributeMap() const;
-    void createDecl();
     DOMString openTagStartToString() const;
 
 private:
@@ -234,8 +234,6 @@ private:
 
 protected: // member variables
     mutable NamedAttrMapImpl *namedAttrMap;
-
-    DOM::CSSStyleDeclarationImpl *m_styleDecls;
     DOMStringImpl *m_prefix;
 };
 
@@ -296,6 +294,9 @@ public:
 
     virtual bool isHTMLAttributeMap() const;
 
+    const AtomicString& id() const { return m_id; }
+    void setID(const AtomicString& _id) { m_id = _id; }
+    
 private:
     // this method is internal, does no error checking at all
     void addAttribute(AttributeImpl* newAttribute);
@@ -308,6 +309,7 @@ protected:
     ElementImpl *element;
     AttributeImpl **attrs;
     uint len;
+    AtomicString m_id;
 };
 
 }; //namespace

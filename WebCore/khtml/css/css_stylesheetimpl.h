@@ -106,7 +106,6 @@ public:
     virtual bool parseString( const DOMString &string, bool strict = true );
 
     bool isLoading();
-    void setNonCSSHints();
 
     virtual void checkLoaded();
     khtml::DocLoader *docLoader();

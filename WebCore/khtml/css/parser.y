@@ -86,7 +86,6 @@ static inline int getValueID(const char *tagStr, int len)
 %union {
     CSSRuleImpl *rule;
     CSSSelector *selector;
-    QPtrList<CSSSelector> *selectorList;
     bool ok;
     MediaListImpl *mediaList;
     CSSMediaRuleImpl *mediaRule;
@@ -208,7 +207,7 @@ static int cssyylex( YYSTYPE *yylval ) {
 %type <selector> specifier_list
 %type <selector> simple_selector
 %type <selector> selector
-%type <selectorList> selector_list
+%type <selector> selector_list
 %type <selector> class
 %type <selector> attrib
 %type <selector> pseudo
@@ -493,11 +492,11 @@ ruleset:
 #endif
 	CSSParser *p = static_cast<CSSParser *>(parser);
 	if ( $1 && $4 && p->numParsedProperties ) {
-	    CSSStyleRuleImpl *rule = new CSSStyleRuleImpl( p->styleElement );
-	    CSSStyleDeclarationImpl *decl = p->createStyleDeclaration( rule );
-	    rule->setSelector( $1 );
-	    rule->setDeclaration(decl);
-	    $$ = rule;
+            CSSStyleRuleImpl *rule = new CSSStyleRuleImpl( p->styleElement );
+            CSSStyleDeclarationImpl *decl = p->createStyleDeclaration( rule );
+            rule->setSelector( $1 );
+            rule->setDeclaration(decl);
+            $$ = rule;
 	} else {
 	    $$ = 0;
 	    delete $1;
@@ -509,13 +508,11 @@ ruleset:
 selector_list:
     selector {
 	if ( $1 ) {
-	    $$ = new QPtrList<CSSSelector>;
-            $$->setAutoDelete( true );
+	    $$ = $1;
 #ifdef CSS_DEBUG
 	    kdDebug( 6080 ) << "   got simple selector:" << endl;
 	    $1->print();
 #endif
-	    $$->append( $1 );
 	} else {
 	    $$ = 0;
 	}
@@ -646,7 +643,6 @@ element_name:
 specifier_list:
     specifier {
 	$$ = $1;
-	$$->nonCSSHint = static_cast<CSSParser *>(parser)->nonCSSHint;
     }
     | specifier_list specifier {
 	$$ = $1;
@@ -669,6 +665,9 @@ specifier:
 	$$ = new CSSSelector();
 	$$->match = CSSSelector::Id;
 	$$->attr = ATTR_ID;
+        CSSParser *p = static_cast<CSSParser *>(parser);
+        if (!p->strict)
+            $1.lower();
 	$$->value = atomicString($1);
     }
   | class
@@ -678,9 +677,12 @@ specifier:
 
 class:
     '.' IDENT {
-	$$ = new CSSSelector();
+        $$ = new CSSSelector();
 	$$->match = CSSSelector::Class;
 	$$->attr = ATTR_CLASS;
+        CSSParser *p = static_cast<CSSParser *>(parser);
+        if (!p->strict)
+            $2.lower();
 	$$->value = atomicString($2);
     }
   ;

@@ -107,16 +107,16 @@ if (id == propID) \
 
 namespace khtml {
 
-CSSStyleSelectorList *CSSStyleSelector::defaultStyle = 0;
-CSSStyleSelectorList *CSSStyleSelector::defaultQuirksStyle = 0;
-CSSStyleSelectorList *CSSStyleSelector::defaultPrintStyle = 0;
+CSSRuleSet *CSSStyleSelector::defaultStyle = 0;
+CSSRuleSet *CSSStyleSelector::defaultQuirksStyle = 0;
+CSSRuleSet *CSSStyleSelector::defaultPrintStyle = 0;
 CSSStyleSheetImpl *CSSStyleSelector::defaultSheet = 0;
 RenderStyle* CSSStyleSelector::styleNotYetAvailable = 0;
 CSSStyleSheetImpl *CSSStyleSelector::quirksSheet = 0;
 
 static CSSStyleSelector::Encodedurl *encodedurl = 0;
 
-enum PseudoState { PseudoUnknown, PseudoNone, PseudoLink, PseudoVisited};
+enum PseudoState { PseudoUnknown, PseudoNone, PseudoAnyLink, PseudoLink, PseudoVisited};
 static PseudoState pseudoState;
 
 
@@ -131,33 +131,26 @@ CSSStyleSelector::CSSStyleSelector( DocumentImpl* doc, QString userStyleSheet, S
     if(!defaultStyle) loadDefaultStyle(settings);
     m_medium = view ? view->mediaType() : QString("all");
 
-    selectors = 0;
-    selectorCache = 0;
-    properties = 0;
-    userStyle = 0;
-    userSheet = 0;
+    m_userStyle = 0;
+    m_userSheet = 0;
     paintDeviceMetrics = doc->paintDeviceMetrics();
 
+    // FIXME: This sucks! The user sheet is reparsed every time!
     if ( !userStyleSheet.isEmpty() ) {
-        userSheet = new DOM::CSSStyleSheetImpl(doc);
-        userSheet->parseString( DOMString( userStyleSheet ) );
+        m_userSheet = new DOM::CSSStyleSheetImpl(doc);
+        m_userSheet->parseString( DOMString( userStyleSheet ) );
 
-        userStyle = new CSSStyleSelectorList();
-        userStyle->append( userSheet, m_medium );
+        m_userStyle = new CSSRuleSet();
+        m_userStyle->addRulesFromSheet( m_userSheet, m_medium );
     }
 
     // add stylesheets from document
-    authorStyle = new CSSStyleSelectorList();
+    m_authorStyle = new CSSRuleSet();
 
-
-    QPtrListIterator<StyleSheetImpl> it( styleSheets->styleSheets );
-    for ( ; it.current(); ++it ) {
-        if ( it.current()->isCSSStyleSheet() ) {
-            authorStyle->append( static_cast<CSSStyleSheetImpl*>( it.current() ), m_medium );
-        }
-    }
-
-    buildLists();
+    QPtrListIterator<StyleSheetImpl> it(styleSheets->styleSheets);
+    for (; it.current(); ++it)
+        if (it.current()->isCSSStyleSheet())
+            m_authorStyle->addRulesFromSheet(static_cast<CSSStyleSheetImpl*>(it.current()), m_medium);
 
     //kdDebug( 6080 ) << "number of style sheets in document " << authorStyleSheets.count() << endl;
     //kdDebug( 6080 ) << "CSSStyleSelector: author style has " << authorStyle->count() << " elements"<< endl;
@@ -187,8 +180,8 @@ CSSStyleSelector::CSSStyleSelector( CSSStyleSheetImpl *sheet )
     KHTMLView *view = sheet->doc()->view();
     m_medium =  view ? view->mediaType() : QString("all");
 
-    authorStyle = new CSSStyleSelectorList();
-    authorStyle->append( sheet, m_medium );
+    m_authorStyle = new CSSRuleSet();
+    m_authorStyle->addRulesFromSheet( sheet, m_medium );
 }
 
 void CSSStyleSelector::init()
@@ -196,27 +189,14 @@ void CSSStyleSelector::init()
     element = 0;
     settings = 0;
     paintDeviceMetrics = 0;
-    propsToApply = (CSSOrderedProperty **)malloc(128*sizeof(CSSOrderedProperty *));
-    pseudoProps = (CSSOrderedProperty **)malloc(128*sizeof(CSSOrderedProperty *));
-    propsToApplySize = 128;
-    pseudoPropsSize = 128;
+    m_matchedRuleCount = m_matchedDeclCount = m_tmpRuleCount = 0;
 }
 
 CSSStyleSelector::~CSSStyleSelector()
 {
-    clearLists();
-    delete authorStyle;
-    delete userStyle;
-    delete userSheet;
-    free(propsToApply);
-    free(pseudoProps);
-}
-
-void CSSStyleSelector::addSheet( CSSStyleSheetImpl *sheet )
-{
-    KHTMLView *view = sheet->doc()->view();
-    m_medium = view ? view->mediaType() : QString("all");
-    authorStyle->append( sheet, m_medium );
+    delete m_authorStyle;
+    delete m_userStyle;
+    delete m_userSheet;
 }
 
 void CSSStyleSelector::loadDefaultStyle(const KHTMLSettings *s)
@@ -242,11 +222,11 @@ void CSSStyleSelector::loadDefaultStyle(const KHTMLSettings *s)
         defaultSheet->parseString( str );
 
         // Collect only strict-mode rules.
-        defaultStyle = new CSSStyleSelectorList();
-        defaultStyle->append( defaultSheet, "screen" );
-
-        defaultPrintStyle = new CSSStyleSelectorList();
-        defaultPrintStyle->append( defaultSheet, "print" );
+        defaultStyle = new CSSRuleSet();
+        defaultStyle->addRulesFromSheet( defaultSheet, "screen" );
+        
+        defaultPrintStyle = new CSSRuleSet();
+        defaultPrintStyle->addRulesFromSheet( defaultSheet, "print" );
     }
     {
         QFile f(locate( "data", "khtml/css/quirks.css" ) );
@@ -265,8 +245,8 @@ void CSSStyleSelector::loadDefaultStyle(const KHTMLSettings *s)
         quirksSheet->parseString( str );
 
         // Collect only quirks-mode rules.
-        defaultQuirksStyle = new CSSStyleSelectorList();
-        defaultQuirksStyle->append( quirksSheet, "screen" );
+        defaultQuirksStyle = new CSSRuleSet();
+        defaultQuirksStyle->addRulesFromSheet( quirksSheet, "screen" );
     }
 
     //kdDebug() << "CSSStyleSelector: default style has " << defaultStyle->count() << " elements"<< endl;
@@ -286,25 +266,157 @@ void CSSStyleSelector::clear()
     styleNotYetAvailable = 0;
 }
 
-static inline void bubbleSort( CSSOrderedProperty **b, CSSOrderedProperty **e )
+void CSSStyleSelector::addMatchedRule(CSSRuleData* rule)
 {
-    while( b < e ) {
-	bool swapped = FALSE;
-        CSSOrderedProperty **y = e+1;
-	CSSOrderedProperty **x = e;
-        CSSOrderedProperty **swappedPos = 0;
-	do {
-	    if ( !((**(--x)) < (**(--y))) ) {
-		swapped = TRUE;
-                swappedPos = x;
-                CSSOrderedProperty *tmp = *y;
-                *y = *x;
-                *x = tmp;
-	    }
-	} while( x != b );
-	if ( !swapped ) break;
-        b = swappedPos + 1;
+    if (m_matchedRules.size() <= m_matchedRuleCount)
+        m_matchedRules.resize(2*m_matchedRules.size()+1);
+    m_matchedRules[m_matchedRuleCount++] = rule;
+}
+
+void CSSStyleSelector::addMatchedDeclaration(CSSStyleDeclarationImpl* decl)
+{
+    if (m_matchedDecls.size() <= m_matchedDeclCount)
+        m_matchedDecls.resize(2*m_matchedDecls.size()+1);
+    m_matchedDecls[m_matchedDeclCount++] = decl;
+}
+
+void CSSStyleSelector::matchRules(CSSRuleSet* rules, int& firstRuleIndex, int& lastRuleIndex)
+{
+    m_matchedRuleCount = 0;
+    firstRuleIndex = lastRuleIndex = -1;
+    if (!rules || !element) return;
+    
+    // We need to collect the rules for id, class, tag, and everything else into a buffer and
+    // then sort the buffer.
+    if (element->hasID())
+        matchRulesForList(rules->getIDRules(element->getIDAttribute().implementation()),
+                          firstRuleIndex, lastRuleIndex);
+    if (element->hasClass()) {
+        for (const AtomicStringList* singleClass = element->getClassList();
+             singleClass; singleClass = singleClass->next())
+            matchRulesForList(rules->getClassRules(singleClass->string().implementation()),
+                                                   firstRuleIndex, lastRuleIndex);
     }
+    matchRulesForList(rules->getTagRules((void*)(int)localNamePart(element->id())),
+                      firstRuleIndex, lastRuleIndex);
+    matchRulesForList(rules->getUniversalRules(), firstRuleIndex, lastRuleIndex);
+    
+    // If we didn't match any rules, we're done.
+    if (m_matchedRuleCount == 0) return;
+    
+    // Sort the set of matched rules.
+    sortMatchedRules(0, m_matchedRuleCount);
+    
+    // Now transfer the set of matched rules over to our list of decls.
+    for (unsigned i = 0; i < m_matchedRuleCount; i++)
+        addMatchedDeclaration(m_matchedRules[i]->rule()->declaration());
+}
+
+void CSSStyleSelector::matchRulesForList(CSSRuleDataList* rules,
+                                         int& firstRuleIndex, int& lastRuleIndex)
+{
+    if (!rules) return;
+    for (CSSRuleData* d = rules->first(); d; d = d->next()) {
+        CSSStyleRuleImpl* rule = d->rule();
+        Q_UINT16 cssTagId = localNamePart(element->id());
+        Q_UINT16 tag = localNamePart(d->selector()->tag);
+        if ((cssTagId == tag || tag == anyLocalName) && checkSelector(d->selector(), element)) {
+            // If the rule has no properties to apply, then ignore it.
+            CSSStyleDeclarationImpl* decl = rule->declaration();
+            if (!decl) continue;
+            
+            // If we're matching normal rules, set a pseudo bit if 
+            // we really just matched a pseudo-element.
+            if (dynamicPseudo != RenderStyle::NOPSEUDO && pseudoStyle == RenderStyle::NOPSEUDO)
+                style->setHasPseudoStyle(dynamicPseudo);
+            else  {
+                // Update our first/last rule indices in the matched rules array.
+                lastRuleIndex = m_matchedDeclCount + m_matchedRuleCount;
+                if (firstRuleIndex == -1) firstRuleIndex = m_matchedDeclCount + m_matchedRuleCount;
+
+                // Add this rule to our list of matched rules.
+                addMatchedRule(d);
+            }
+        }
+    }
+}
+
+bool operator >(CSSRuleData& r1, CSSRuleData& r2)
+{
+    int spec1 = r1.selector()->specificity();
+    int spec2 = r2.selector()->specificity();
+    return (spec1 == spec2) ? r1.position() > r2.position() : spec1 > spec2; 
+}
+bool operator <=(CSSRuleData& r1, CSSRuleData& r2)
+{
+    return !(r1 > r2);
+}
+
+void CSSStyleSelector::sortMatchedRules(uint start, uint end)
+{
+    if (start >= end || (end-start == 1))
+        return; // Sanity check.
+    
+    if (end - start <= 6) {
+        // Apply a bubble sort for smaller lists.
+        for (uint i = end-1; i > start; i--) {
+            bool sorted = true;
+            for (uint j = start; j < i; j++) {
+                CSSRuleData* elt = m_matchedRules[j];
+                CSSRuleData* elt2 = m_matchedRules[j+1];
+                if (*elt > *elt2) {
+                    sorted = false;
+                    m_matchedRules[j] = elt2;
+                    m_matchedRules[j+1] = elt;
+                }
+            }
+            if (sorted)
+                return;
+        }
+    }
+    else {
+        // Peform a merge sort for larger lists.
+        uint mid = (start+end)/2;
+        sortMatchedRules(start, mid);
+        sortMatchedRules(mid, end);
+        
+        CSSRuleData* elt = m_matchedRules[mid-1];
+        CSSRuleData* elt2 = m_matchedRules[mid];
+        
+        // Handle the fast common case (of equal specificity).  The list may already
+        // be completely sorted.
+        if (*elt <= *elt2)
+            return;
+        
+        // We have to merge sort.  Ensure our merge buffer is big enough to hold
+        // all the items.
+        m_tmpRules.resize(end - start);
+        uint i1 = start;
+        uint i2 = mid;
+        
+        elt = m_matchedRules[i1];
+        elt2 = m_matchedRules[i2];
+        
+        while (i1 < mid || i2 < end) {
+            if (i1 < mid && (i2 == end || *elt <= *elt2)) {
+                m_tmpRules[m_tmpRuleCount++] = elt;
+                i1++;
+                if (i1 < mid)
+                    elt = m_matchedRules[i1];
+            }
+            else {
+                m_tmpRules[m_tmpRuleCount++] = elt2;
+                i2++;
+                if (i2 < end)
+                    elt2 = m_matchedRules[i2];
+            }
+        }
+        
+        for (uint i = start; i < end; i++)
+            m_matchedRules[i] = m_tmpRules[i-start];
+        
+        m_tmpRuleCount = 0;
+    }    
 }
 
 void CSSStyleSelector::initForStyleResolve(ElementImpl* e, RenderStyle* defaultParent)
@@ -312,6 +424,7 @@ void CSSStyleSelector::initForStyleResolve(ElementImpl* e, RenderStyle* defaultP
     // set some variables we will need
     ::encodedurl = &encodedurl;
     pseudoState = PseudoUnknown;
+    pseudoStyle = RenderStyle::NOPSEUDO;
     
     element = e;
     parentNode = e->parentNode();
@@ -326,6 +439,12 @@ void CSSStyleSelector::initForStyleResolve(ElementImpl* e, RenderStyle* defaultP
     paintDeviceMetrics = element->getDocument()->paintDeviceMetrics();
     
     style = 0;
+    
+    m_matchedRuleCount = 0;
+    m_matchedDeclCount = 0;
+    m_tmpRuleCount = 0;
+    
+    fontDirty = false;
 }
 
 RenderStyle* CSSStyleSelector::styleForElement(ElementImpl* e, RenderStyle* defaultParent)
@@ -347,86 +466,88 @@ RenderStyle* CSSStyleSelector::styleForElement(ElementImpl* e, RenderStyle* defa
     else
         parentStyle = style;
     
-    unsigned int numPropsToApply = 0;
+    // 1. First we match rules from the user agent sheet.
+    int firstUARule = -1, lastUARule = -1;
+    matchRules(defaultStyle, firstUARule, lastUARule);
     
-    // try to sort out most style rules as early as possible.
-    Q_UINT16 cssTagId = localNamePart(e->id());
-    int smatch = 0;
-    int schecked = 0;
-
-    for ( unsigned int i = 0; i < selectors_size; i++ ) {
-	Q_UINT16 tag = localNamePart(selectors[i]->tag);
-	if ( cssTagId == tag || tag == anyLocalName ) {
-	    ++schecked;
-
-	    checkSelector( i, e );
-
-	    if ( selectorCache[i].state == Applies ) {
-		++smatch;
-
-		//qDebug("adding property" );
-		for ( unsigned int p = 0; p < selectorCache[i].props_size; p += 2 )
-		    for ( unsigned int j = 0; j < (unsigned int )selectorCache[i].props[p+1]; ++j ) {
-                        if (numPropsToApply >= propsToApplySize ) {
-                            propsToApplySize *= 2;
-			    propsToApply = (CSSOrderedProperty **)realloc( propsToApply, propsToApplySize*sizeof( CSSOrderedProperty * ) );
-			}
-			propsToApply[numPropsToApply++] = properties[selectorCache[i].props[p]+j];
-		    }
-	    }
-            else if (selectorCache[i].state == AppliesPseudo)
-                style->setHasPseudoStyle((RenderStyle::PseudoId)selectors[i]->pseudoId);
-	}
-	else
-	    selectorCache[i].state = Invalid;
-
+    // 2. In quirks mode, we match rules from the quirks user agent sheet.
+    if (!strictParsing)
+        matchRules(defaultQuirksStyle, firstUARule, lastUARule);
+    
+    // 3. If our medium is print, then we match rules from the print sheet.
+    if (m_medium == "print")
+        matchRules(defaultPrintStyle, firstUARule, lastUARule);
+    
+    // 4. Now we check user sheet rules.
+    int firstUserRule = -1, lastUserRule = -1;
+    matchRules(m_userStyle, firstUserRule, lastUserRule);
+    
+    // 5. Now check author rules, beginning first with presentational attributes
+    // mapped from HTML.
+    int firstAuthorRule = -1, lastAuthorRule = -1;
+    CSSStyleDeclarationImpl* attributeDecl = e->attributeStyleDecl();
+    if (attributeDecl) {
+        firstAuthorRule = lastAuthorRule = m_matchedDeclCount;
+        addMatchedDeclaration(attributeDecl);
     }
-
-    //qDebug( "styleForElement( %s )", e->tagName().string().latin1() );
-    //qDebug( "%d selectors, %d checked,  %d match,  %d properties ( of %d )",
-    //selectors_size, schecked, smatch, propsToApply->count(), properties_size );
-
-    // inline style declarations, after all others. non css hints
-    // count as author rules, and come before all other style sheets, see hack in append()
-    numPropsToApply = addInlineDeclarations( e, e->m_styleDecls, numPropsToApply );
-            
-    bubbleSort( propsToApply, propsToApply+numPropsToApply-1 );
     
-    //qDebug("applying properties, count=%d", propsToApply->count() );
-
-    // we can't apply style rules without a view() and a part. This
-    // tends to happen on delayed destruction of widget Renderobjects
-    if ( part ) {
+    // Table cells share an additional mapped rule.
+    attributeDecl = e->additionalAttributeStyleDecl();
+    if (attributeDecl) {
+        if (firstAuthorRule == -1) firstAuthorRule = m_matchedDeclCount;
+        lastAuthorRule = m_matchedDeclCount;
+        addMatchedDeclaration(attributeDecl);
+    }
+    
+    // 6. Check the rules in author sheets next.
+    matchRules(m_authorStyle, firstAuthorRule, lastAuthorRule);
+    
+    // 7. Now check our inline style attribute.
+    CSSStyleDeclarationImpl* inlineDecl = e->inlineStyleDecl();
+    if (inlineDecl) {
+        if (firstAuthorRule == -1) firstAuthorRule = m_matchedDeclCount;
+        lastAuthorRule = m_matchedDeclCount;
+        addMatchedDeclaration(inlineDecl);
+    }
+    
+    // Now we have all of the matched rules in the appropriate order.  Walk the rules and apply
+    // high-priority properties first, i.e., those properties that other properties depend on.
+    // The order is (1) high-priority not important, (2) high-priority important, (3) normal not important
+    // and (4) normal important.
+    applyDeclarations(true, false, 0, m_matchedDeclCount-1);
+    applyDeclarations(true, true, firstAuthorRule, lastAuthorRule);
+    applyDeclarations(true, true, firstUserRule, lastUserRule);
+    applyDeclarations(true, true, firstUARule, lastUARule);
+    
+    // If our font got dirtied, go ahead and update it now.
+    if (fontDirty) {
+        checkForGenericFamilyChange(style, parentStyle);
+        style->htmlFont().update(paintDeviceMetrics);
         fontDirty = false;
-
-        if (numPropsToApply ) {
-            CSSStyleSelector::style = style;
-            for (unsigned int i = 0; i < numPropsToApply; ++i) {
-		if ( fontDirty && propsToApply[i]->priority >= (1 << 30) ) {
-		    // we are past the font properties, time to update to the
-		    // correct font
-		    checkForGenericFamilyChange(style, parentStyle);
-		    CSSStyleSelector::style->htmlFont().update( paintDeviceMetrics );
-		    fontDirty = false;
-		}
-                DOM::CSSProperty *prop = propsToApply[i]->prop;
-                applyRule( prop->m_id, prop->value() );
-	    }
-	    if ( fontDirty ) {
-	        checkForGenericFamilyChange(style, parentStyle);
-		CSSStyleSelector::style->htmlFont().update( paintDeviceMetrics );
-	    }
-        }
-
-        // Clean up our style object's display and text decorations (among other fixups).
-        adjustRenderStyle(style, e);
     }
+    
+    // Now do the normal priority properties.
+    applyDeclarations(false, false, 0, m_matchedDeclCount-1);
+    applyDeclarations(false, true, firstAuthorRule, lastAuthorRule);
+    applyDeclarations(false, true, firstUserRule, lastUserRule);
+    applyDeclarations(false, true, firstUARule, lastUARule);
+    
+    // If our font got dirtied by one of the non-essential font props, 
+    // go ahead and update it a second time.
+    if (fontDirty) {
+        checkForGenericFamilyChange(style, parentStyle);
+        style->htmlFont().update(paintDeviceMetrics);
+        fontDirty = false;
+    }
+    
+    // Clean up our style object's display and text decorations (among other fixups).
+    adjustRenderStyle(style, e);
 
     // Now return the style.
     return style;
 }
 
-RenderStyle* CSSStyleSelector::pseudoStyleForElement(RenderStyle::PseudoId pseudoStyle, 
+RenderStyle* CSSStyleSelector::pseudoStyleForElement(RenderStyle::PseudoId pseudo, 
                                                      ElementImpl* e, RenderStyle* parentStyle)
 {
     if (!e)
@@ -442,37 +563,18 @@ RenderStyle* CSSStyleSelector::pseudoStyleForElement(RenderStyle::PseudoId pseud
     }
     
     initForStyleResolve(e, parentStyle);
+    pseudoStyle = pseudo;
     
-    unsigned int numPseudoProps = 0;
+    // Since we don't use pseudo-elements in any of our quirk/print user agent rules, don't waste time walking
+    // those rules.
     
-    // try to sort out most style rules as early as possible.
-    Q_UINT16 cssTagId = localNamePart(e->id());
-    int schecked = 0;
+    // Check UA, user and author rules.
+    int firstUARule = -1, lastUARule = -1, firstUserRule = -1, lastUserRule = -1, firstAuthorRule = -1, lastAuthorRule = -1;
+    matchRules(defaultStyle, firstUARule, lastUARule);
+    matchRules(m_userStyle, firstUserRule, lastUserRule);
+    matchRules(m_authorStyle, firstAuthorRule, lastAuthorRule);
     
-    for ( unsigned int i = 0; i < selectors_size; i++ ) {
-        Q_UINT16 tag = localNamePart(selectors[i]->tag);
-        if ( cssTagId == tag || tag == anyLocalName ) {
-            ++schecked;
-            
-            checkSelector( i, e, pseudoStyle );
-            
-            if ( selectorCache[i].state == AppliesPseudo ) {
-                for ( unsigned int p = 0; p < selectorCache[i].props_size; p += 2 )
-                    for ( unsigned int j = 0; j < (unsigned int) selectorCache[i].props[p+1]; ++j ) {
-                        if (numPseudoProps >= pseudoPropsSize ) {
-                            pseudoPropsSize *= 2;
-                            pseudoProps = (CSSOrderedProperty **)realloc( pseudoProps, pseudoPropsSize*sizeof( CSSOrderedProperty * ) );
-                        }
-                        pseudoProps[numPseudoProps++] = properties[selectorCache[i].props[p]+j];
-                        properties[selectorCache[i].props[p]+j]->pseudoId = (RenderStyle::PseudoId) selectors[i]->pseudoId;
-                    }
-            }
-        }
-        else
-            selectorCache[i].state = Invalid;
-    }
-    
-    if (numPseudoProps == 0)
+    if (m_matchedDeclCount == 0)
         return 0;
     
     style = new RenderStyle();
@@ -481,38 +583,37 @@ RenderStyle* CSSStyleSelector::pseudoStyleForElement(RenderStyle::PseudoId pseud
     else
         parentStyle = style;
     style->noninherited_flags._styleType = pseudoStyle;
-        
-    bubbleSort( pseudoProps, pseudoProps+numPseudoProps-1 );
-        
-    // we can't apply style rules without a view() and a part. This
-    // tends to happen on delayed destruction of widget Renderobjects
-    if ( part ) {
+    
+    // High-priority properties.
+    applyDeclarations(true, false, 0, m_matchedDeclCount-1);
+    applyDeclarations(true, true, firstAuthorRule, lastAuthorRule);
+    applyDeclarations(true, true, firstUserRule, lastUserRule);
+    applyDeclarations(true, true, firstUARule, lastUARule);
+    
+    // If our font got dirtied, go ahead and update it now.
+    if (fontDirty) {
+        checkForGenericFamilyChange(style, parentStyle);
+        style->htmlFont().update(paintDeviceMetrics);
         fontDirty = false;
-        if ( numPseudoProps ) {
-            fontDirty = false;
-            //qDebug("%d applying %d pseudo props", e->cssTagId(), pseudoProps->count() );
-            for (unsigned int i = 0; i < numPseudoProps; ++i) {
-                if ( fontDirty && pseudoProps[i]->priority >= (1 << 30) ) {
-                    // we are past the font properties, time to update to the
-                    // correct font
-                    style->htmlFont().update( paintDeviceMetrics );
-                    fontDirty = false;
-                }
-                
-               DOM::CSSProperty *prop = pseudoProps[i]->prop;
-               applyRule( prop->m_id, prop->value() );
-            }
-            
-            if ( fontDirty ) {
-                checkForGenericFamilyChange(style, parentStyle);
-                style->htmlFont().update( paintDeviceMetrics );
-            }
-        }
     }
     
-    // Do the post-resolve fixups on the style.
+    // Now do the normal priority properties.
+    applyDeclarations(false, false, 0, m_matchedDeclCount-1);
+    applyDeclarations(false, true, firstAuthorRule, lastAuthorRule);
+    applyDeclarations(false, true, firstUserRule, lastUserRule);
+    applyDeclarations(false, true, firstUARule, lastUARule);
+    
+    // If our font got dirtied by one of the non-essential font props, 
+    // go ahead and update it a second time.
+    if (fontDirty) {
+        checkForGenericFamilyChange(style, parentStyle);
+        style->htmlFont().update(paintDeviceMetrics);
+        fontDirty = false;
+    }
+    
+    // Clean up our style object's display and text decorations (among other fixups).
     adjustRenderStyle(style, 0);
-        
+
     // Now return the style.
     return style;
 }
@@ -593,77 +694,6 @@ void CSSStyleSelector::adjustRenderStyle(RenderStyle* style, DOM::ElementImpl *e
         style->addToTextDecorationsInEffect(style->textDecoration());
 }
 
-unsigned int CSSStyleSelector::addInlineDeclarations(DOM::ElementImpl* e,
-                                                     DOM::CSSStyleDeclarationImpl *decl,
-                                                     unsigned int numProps)
-{
-    CSSStyleDeclarationImpl* addDecls = 0;
-    if (e->id() == ID_TD || e->id() == ID_TH)     // For now only TableCellElement implements the
-        addDecls = e->getAdditionalStyleDecls();  // virtual function for shared cell rules.
-
-    if (!decl && !addDecls)
-        return numProps;
-
-    QPtrList<CSSProperty>* values = decl ? decl->values() : 0;
-    QPtrList<CSSProperty>* addValues = addDecls ? addDecls->values() : 0;
-    if (!values && !addValues)
-        return numProps;
-    
-    int firstLen = values ? values->count() : 0;
-    int secondLen = addValues ? addValues->count() : 0;
-    int totalLen = firstLen + secondLen;
-
-    if (inlineProps.size() < (uint)totalLen)
-        inlineProps.resize(totalLen + 1);
-    
-    if (numProps + totalLen >= propsToApplySize ) {
-        propsToApplySize += propsToApplySize;
-        propsToApply = (CSSOrderedProperty **)realloc( propsToApply, propsToApplySize*sizeof( CSSOrderedProperty * ) );
-    }
-
-    CSSOrderedProperty *array = (CSSOrderedProperty *)inlineProps.data();
-    for(int i = 0; i < totalLen; i++)
-    {
-        if (i == firstLen)
-            values = addValues;
-
-        CSSProperty *prop = values->at(i >= firstLen ? i - firstLen : i);
-	Source source = Inline;
-
-        if( prop->m_bImportant ) source = InlineImportant;
-	if( prop->nonCSSHint ) source = NonCSSHint;
-
-	bool first;
-        // give special priority to font-xxx, color properties
-        switch(prop->m_id)
-        {
-	case CSS_PROP_FONT_STYLE:
-        case CSS_PROP_FONT_SIZE:
-	case CSS_PROP_FONT_WEIGHT:
-	case CSS_PROP_FONT_FAMILY:
-        case CSS_PROP_FONT:
-        case CSS_PROP_COLOR:
-        case CSS_PROP_BACKGROUND_IMAGE:
-	case CSS_PROP_DISPLAY:
-            // these have to be applied first, because other properties use the computed
-            // values of these porperties.
-	    first = true;
-            break;
-        default:
-            first = false;
-            break;
-        }
-
-	array->prop = prop;
-	array->pseudoId = RenderStyle::NOPSEUDO;
-	array->selector = 0;
-        array->position = i;
-	array->priority = (!first << 30) | (source << 24);
-	propsToApply[numProps++] = array++;
-    }
-    return numProps;
-}
-
 static bool subject;
 
 // modified version of the one in kurl.cpp
@@ -704,17 +734,24 @@ static void cleanpath(QString &path)
     //kdDebug() << "checkPseudoState " << path << endl;
 }
 
-static void checkPseudoState( DOM::ElementImpl *e )
+static void checkPseudoState( DOM::ElementImpl *e, bool checkVisited = true )
 {
     if (!e->hasAnchor()) {
         pseudoState = PseudoNone;
         return;
     }
+
     const AtomicString& attr = e->getAttribute(ATTR_HREF);
-    if( attr.isNull() ) {
+    if (attr.isNull()) {
         pseudoState = PseudoNone;
         return;
     }
+    
+    if (!checkVisited) {
+        pseudoState = PseudoAnyLink;
+        return;
+    }
+
     QConstString cu(attr.unicode(), attr.length());
     QString u = cu.string();
     if ( !u.contains("://") ) {
@@ -730,14 +767,11 @@ static void checkPseudoState( DOM::ElementImpl *e )
     pseudoState = KHTMLFactory::vLinks()->contains( u ) ? PseudoVisited : PseudoLink;
 }
 
-void CSSStyleSelector::checkSelector(int selIndex, DOM::ElementImpl *e, RenderStyle::PseudoId pseudo)
+bool CSSStyleSelector::checkSelector(CSSSelector* sel, ElementImpl *e)
 {
     dynamicPseudo = RenderStyle::NOPSEUDO;
     
     NodeImpl *n = e;
-
-    selectorCache[ selIndex ].state = Invalid;
-    CSSSelector *sel = selectors[ selIndex ];
 
     // we have the subject part of the selector
     subject = true;
@@ -751,33 +785,34 @@ void CSSStyleSelector::checkSelector(int selIndex, DOM::ElementImpl *e, RenderSt
                                sel->pseudoType() == CSSSelector::PseudoActive)));
     bool affectedByHover = style ? style->affectedByHoverRules() : false;
     bool affectedByActive = style ? style->affectedByActiveRules() : false;
-    bool havePseudo = pseudo != RenderStyle::NOPSEUDO;
+    bool havePseudo = pseudoStyle != RenderStyle::NOPSEUDO;
     
     // first selector has to match
-    if(!checkOneSelector(sel, e)) return;
+    if (!checkOneSelector(sel, e)) return false;
 
     // check the subselectors
     CSSSelector::Relation relation = sel->relation;
     while((sel = sel->tagHistory))
     {
-        if (!n->isElementNode()) return;
+        if (!n->isElementNode()) return false;
         if (relation != CSSSelector::SubSelector) {
             subject = false;
-            if (havePseudo && dynamicPseudo != pseudo)
-                return;
+            if (havePseudo && dynamicPseudo != pseudoStyle)
+                return false;
         }
         
         switch(relation)
         {
         case CSSSelector::Descendant:
         {
+            // FIXME: This match needs to know how to backtrack and be non-deterministic.
             bool found = false;
             while(!found)
             {
 		n = n->parentNode();
-                if(!n || !n->isElementNode()) return;
+                if(!n || !n->isElementNode()) return false;
                 ElementImpl *elem = static_cast<ElementImpl *>(n);
-                if(checkOneSelector(sel, elem)) found = true;
+                if (checkOneSelector(sel, elem)) found = true;
             }
             break;
         }
@@ -786,9 +821,9 @@ void CSSStyleSelector::checkSelector(int selIndex, DOM::ElementImpl *e, RenderSt
             n = n->parentNode();
             if (!strictParsing)
                 while (n && n->implicitNode()) n = n->parentNode();
-            if(!n || !n->isElementNode()) return;
+            if(!n || !n->isElementNode()) return false;
             ElementImpl *elem = static_cast<ElementImpl *>(n);
-            if(!checkOneSelector(sel, elem)) return;
+            if (!checkOneSelector(sel, elem)) return false;
             break;
         }
         case CSSSelector::Sibling:
@@ -796,9 +831,9 @@ void CSSStyleSelector::checkSelector(int selIndex, DOM::ElementImpl *e, RenderSt
             n = n->previousSibling();
 	    while( n && !n->isElementNode() )
 		n = n->previousSibling();
-            if( !n ) return;
+            if( !n ) return false;
             ElementImpl *elem = static_cast<ElementImpl *>(n);
-            if(!checkOneSelector(sel, elem)) return;
+            if (!checkOneSelector(sel, elem)) return false;
             break;
         }
         case CSSSelector::SubSelector:
@@ -811,10 +846,9 @@ void CSSStyleSelector::checkSelector(int selIndex, DOM::ElementImpl *e, RenderSt
 	    //kdDebug() << "CSSOrderedRule::checkSelector" << endl;
 	    ElementImpl *elem = static_cast<ElementImpl *>(n);
 	    // a selector is invalid if something follows :first-xxx
-	    if ( dynamicPseudo != RenderStyle::NOPSEUDO ) {
-		return;
-	    }
-	    if(!checkOneSelector(sel, elem)) return;
+	    if (dynamicPseudo != RenderStyle::NOPSEUDO)
+		return false;
+	    if (!checkOneSelector(sel, elem)) return false;
 	    //kdDebug() << "CSSOrderedRule::checkSelector: passed" << endl;
 	    break;
 	}
@@ -822,31 +856,24 @@ void CSSStyleSelector::checkSelector(int selIndex, DOM::ElementImpl *e, RenderSt
         relation = sel->relation;
     }
 
-    if (subject && havePseudo && dynamicPseudo != pseudo)
-        return;
+    if (subject && havePseudo && dynamicPseudo != pseudoStyle)
+        return false;
     
     // disallow *:hover, *:active, and *:hover:active except for links
     if (onlyHoverActive && subject) {
         if (pseudoState == PseudoUnknown)
-            checkPseudoState( e );
+            checkPseudoState(e);
 
         if (pseudoState == PseudoNone) {
             if (!affectedByHover && style->affectedByHoverRules())
                 style->setAffectedByHoverRules(false);
             if (!affectedByActive && style->affectedByActiveRules())
                 style->setAffectedByActiveRules(false);
-            return;
+            return false;
         }
     }
 
-    if ( dynamicPseudo != RenderStyle::NOPSEUDO ) {
-	selectorCache[selIndex].state = AppliesPseudo;
-	selectors[ selIndex ]->pseudoId = dynamicPseudo;
-    } else
-	selectorCache[ selIndex ].state = Applies;
-    //qDebug( "selector %d applies", selIndex );
-    //selectors[ selIndex ]->print();
-    return;
+    return true;
 }
 
 bool CSSStyleSelector::checkOneSelector(DOM::CSSSelector *sel, DOM::ElementImpl *e)
@@ -870,14 +897,16 @@ bool CSSStyleSelector::checkOneSelector(DOM::CSSSelector *sel, DOM::ElementImpl 
     }
 
     if (sel->attr) {
-        if (sel->match == CSSSelector::Class)
-            return e->hasClass() && e->matchesCSSClass(sel->value, strictParsing);
-        else if (sel->match == CSSSelector::Id) {
-            if (!e->hasID()) return false;
-            const AtomicString& value = e->getAttribute(sel->attr);
-            return !((strictParsing && sel->value != value) ||
-                     (!strictParsing && !equalsIgnoreCase(sel->value, value)));
+        if (sel->match == CSSSelector::Class) {
+            if (!e->hasClass())
+                return false;
+            for (const AtomicStringList* c = e->getClassList(); c; c = c->next())
+                if (c->string() == sel->value)
+                    return true;
+            return false;
         }
+        else if (sel->match == CSSSelector::Id)
+            return e->hasID() && e->getIDAttribute() == sel->value;
 
         const AtomicString& value = e->getAttribute(sel->attr);
         if (value.isNull()) return false; // attribute is not set
@@ -1036,14 +1065,20 @@ bool CSSStyleSelector::checkOneSelector(DOM::CSSSelector *sel, DOM::ElementImpl 
                 if (e == e->getDocument()->getCSSTarget())
                     return true;
                 break;
+            case CSSSelector::PseudoAnyLink:
+                if (pseudoState == PseudoUnknown)
+                    checkPseudoState(e, false);
+                if (pseudoState == PseudoAnyLink || pseudoState == PseudoLink || pseudoState == PseudoVisited)
+                    return true;
+                break;
             case CSSSelector::PseudoLink:
-                if ( pseudoState == PseudoUnknown )
+                if ( pseudoState == PseudoUnknown || pseudoState == PseudoAnyLink )
                     checkPseudoState( e );
                 if ( pseudoState == PseudoLink )
                     return true;
                 break;
             case CSSSelector::PseudoVisited:
-                if ( pseudoState == PseudoUnknown )
+                if ( pseudoState == PseudoUnknown || pseudoState == PseudoAnyLink )
                     checkPseudoState( e );
                 if ( pseudoState == PseudoVisited )
                     return true;
@@ -1121,205 +1156,101 @@ bool CSSStyleSelector::checkOneSelector(DOM::CSSSelector *sel, DOM::ElementImpl 
     return true;
 }
 
-void CSSStyleSelector::clearLists()
-{
-    if ( selectors ) delete [] selectors;
-    if ( selectorCache ) {
-        for ( unsigned int i = 0; i < selectors_size; i++ )
-            if ( selectorCache[i].props )
-                delete [] selectorCache[i].props;
-
-        delete [] selectorCache;
-    }
-    if ( properties ) {
-	CSSOrderedProperty **prop = properties;
-	while ( *prop ) {
-	    delete (*prop);
-	    prop++;
-	}
-        delete [] properties;
-    }
-    selectors = 0;
-    properties = 0;
-    selectorCache = 0;
-}
-
-
-void CSSStyleSelector::buildLists()
-{
-    clearLists();
-    // collect all selectors and Properties in lists. Then transer them to the array for faster lookup.
-
-    QPtrList<CSSSelector> selectorList;
-    CSSOrderedPropertyList propertyList;
-
-    if(m_medium == "print" && defaultPrintStyle)
-      defaultPrintStyle->collect( &selectorList, &propertyList, Default,
-        Default );
-    else if(defaultStyle) defaultStyle->collect( &selectorList, &propertyList,
-      Default, Default );
-      
-    if (!strictParsing && defaultQuirksStyle)
-        defaultQuirksStyle->collect( &selectorList, &propertyList, Default, Default );
-        
-    if(userStyle) userStyle->collect(&selectorList, &propertyList, User, UserImportant );
-    if(authorStyle) authorStyle->collect(&selectorList, &propertyList, Author, AuthorImportant );
-
-    selectors_size = selectorList.count();
-    selectors = new CSSSelector *[selectors_size];
-    CSSSelector *s = selectorList.first();
-    CSSSelector **sel = selectors;
-    while ( s ) {
-	*sel = s;
-	s = selectorList.next();
-	++sel;
-    }
-
-    selectorCache = new SelectorCache[selectors_size];
-    for ( unsigned int i = 0; i < selectors_size; i++ ) {
-        selectorCache[i].state = Unknown;
-        selectorCache[i].props_size = 0;
-        selectorCache[i].props = 0;
-    }
-
-    // presort properties. Should make the sort() calls in styleForElement faster.
-    propertyList.sort();
-    properties_size = propertyList.count() + 1;
-    properties = new CSSOrderedProperty *[ properties_size ];
-    CSSOrderedProperty *p = propertyList.first();
-    CSSOrderedProperty **prop = properties;
-    while ( p ) {
-	*prop = p;
-	p = propertyList.next();
-	++prop;
-    }
-    *prop = 0;
-
-    unsigned int* offsets = new unsigned int[selectors_size];
-    if(properties[0])
-	offsets[properties[0]->selector] = 0;
-    for(unsigned int p = 1; p < properties_size; ++p) {
-
-	if(!properties[p] || (properties[p]->selector != properties[p - 1]->selector)) {
-	    unsigned int sel = properties[p - 1]->selector;
-            int* newprops = new int[selectorCache[sel].props_size+2];
-            for ( unsigned int i=0; i < selectorCache[sel].props_size; i++ )
-                newprops[i] = selectorCache[sel].props[i];
-
-	    newprops[selectorCache[sel].props_size] = offsets[sel];
-	    newprops[selectorCache[sel].props_size+1] = p - offsets[sel];
-            delete [] selectorCache[sel].props;
-            selectorCache[sel].props = newprops;
-            selectorCache[sel].props_size += 2;
-
-	    if(properties[p]) {
-		sel = properties[p]->selector;
-		offsets[sel] = p;
-            }
-        }
-    }
-    delete [] offsets;
-}
-
-
-// ----------------------------------------------------------------------
-
-
-CSSOrderedRule::CSSOrderedRule(DOM::CSSStyleRuleImpl *r, DOM::CSSSelector *s, int _index)
-{
-    rule = r;
-    if(rule) r->ref();
-    index = _index;
-    selector = s;
-}
-
-CSSOrderedRule::~CSSOrderedRule()
-{
-    if(rule) rule->deref();
-}
-
 // -----------------------------------------------------------------
 
-CSSStyleSelectorList::CSSStyleSelectorList()
-    : QPtrList<CSSOrderedRule>()
+CSSRuleSet::CSSRuleSet()
 {
-    setAutoDelete(true);
-}
-CSSStyleSelectorList::~CSSStyleSelectorList()
-{
+    m_idRules.setAutoDelete(true);
+    m_classRules.setAutoDelete(true);
+    m_tagRules.setAutoDelete(true);
+    m_universalRules = 0;
+    m_ruleCount = 0;
 }
 
-void CSSStyleSelectorList::append( CSSStyleSheetImpl *sheet,
-                                   const DOMString &medium )
+void CSSRuleSet::addToRuleSet(void* hash, QPtrDict<CSSRuleDataList>& dict,
+                              CSSStyleRuleImpl* rule, CSSSelector* sel)
 {
-    if(!sheet || !sheet->isCSSStyleSheet()) return;
+    if (!hash) return;
+    CSSRuleDataList* rules = dict.find(hash);
+    if (!rules) {
+        rules = new CSSRuleDataList(m_ruleCount++, rule, sel);
+        dict.insert(hash, rules);
+    }
+    else
+        rules->append(m_ruleCount++, rule, sel);
+}
 
-    // No media implies "all", but if a medialist exists it must
+void CSSRuleSet::addRule(CSSStyleRuleImpl* rule, CSSSelector* sel)
+{
+    if (sel->match == CSSSelector::Id) {
+        addToRuleSet(sel->value.implementation(), m_idRules, rule, sel);
+        return;
+    }
+    if (sel->match == CSSSelector::Class) {
+        addToRuleSet(sel->value.implementation(), m_classRules, rule, sel);
+        return;
+    }
+     
+    Q_UINT16 localName = localNamePart(sel->tag);
+    if (localName != anyLocalName) {
+        addToRuleSet((void*)(int)localName, m_tagRules, rule, sel);
+        return;
+    }
+    
+    // Just put it in the universal rule set.
+    if (!m_universalRules)
+        m_universalRules = new CSSRuleDataList(m_ruleCount++, rule, sel);
+    else
+        m_universalRules->append(m_ruleCount++, rule, sel);
+}
+
+void CSSRuleSet::addRulesFromSheet(CSSStyleSheetImpl *sheet, const DOMString &medium)
+{
+    if (!sheet || !sheet->isCSSStyleSheet()) return;
+
+    // No media implies "all", but if a media list exists it must
     // contain our current medium
-    if( sheet->media() && !sheet->media()->contains( medium ) )
-        return; // style sheet not applicable for this medium
+    if (sheet->media() && !sheet->media()->contains(medium))
+        return; // the style sheet doesn't apply
 
     int len = sheet->length();
 
-    for(int i = 0; i< len; i++)
-    {
+    for (int i = 0; i < len; i++) {
         StyleBaseImpl *item = sheet->item(i);
-        if(item->isStyleRule())
-        {
-            CSSStyleRuleImpl *r = static_cast<CSSStyleRuleImpl *>(item);
-            QPtrList<CSSSelector> *s = r->selector();
-            for(int j = 0; j < (int)s->count(); j++)
-            {
-                CSSOrderedRule *rule = new CSSOrderedRule(r, s->at(j), count());
-		QPtrList<CSSOrderedRule>::append(rule);
-                //kdDebug( 6080 ) << "appending StyleRule!" << endl;
-            }
+        if (item->isStyleRule()) {
+            CSSStyleRuleImpl* rule = static_cast<CSSStyleRuleImpl*>(item);
+            for (CSSSelector* s = rule->selector(); s; s = s->next())
+                addRule(rule, s);
         }
-        else if(item->isImportRule())
-        {
+        else if(item->isImportRule()) {
             CSSImportRuleImpl *import = static_cast<CSSImportRuleImpl *>(item);
 
             //kdDebug( 6080 ) << "@import: Media: "
             //                << import->media()->mediaText().string() << endl;
 
-            if( !import->media() || import->media()->contains( medium ) )
-            {
-                CSSStyleSheetImpl *importedSheet = import->styleSheet();
-                append( importedSheet, medium );
-            }
+            if (!import->media() || import->media()->contains(medium))
+                addRulesFromSheet(import->styleSheet(), medium);
         }
-        else if( item->isMediaRule() )
-        {
-            CSSMediaRuleImpl *r = static_cast<CSSMediaRuleImpl *>( item );
+        else if(item->isMediaRule()) {
+            CSSMediaRuleImpl *r = static_cast<CSSMediaRuleImpl*>(item);
             CSSRuleListImpl *rules = r->cssRules();
 
             //DOMString mediaText = media->mediaText();
             //kdDebug( 6080 ) << "@media: Media: "
             //                << r->media()->mediaText().string() << endl;
 
-            if( ( !r->media() || r->media()->contains( medium ) ) && rules)
-            {
-                // Traverse child elements of the @import rule. Since
-                // many elements are not allowed as child we do not use
-                // a recursive call to append() here
-                for( unsigned j = 0; j < rules->length(); j++ )
-                {
+            if ((!r->media() || r->media()->contains(medium)) && rules) {
+                // Traverse child elements of the @media rule.
+                for (unsigned j = 0; j < rules->length(); j++) {
                     //kdDebug( 6080 ) << "*** Rule #" << j << endl;
 
-                    CSSRuleImpl *childItem = rules->item( j );
-                    if( childItem->isStyleRule() )
-                    {
+                    CSSRuleImpl *childItem = rules->item(j);
+                    if (childItem->isStyleRule()) {
                         // It is a StyleRule, so append it to our list
-                        CSSStyleRuleImpl *styleRule =
-                                static_cast<CSSStyleRuleImpl *>( childItem );
-
-                        QPtrList<CSSSelector> *s = styleRule->selector();
-                        for( int j = 0; j < ( int ) s->count(); j++ )
-                        {
-                            CSSOrderedRule *orderedRule = new CSSOrderedRule(
-                                            styleRule, s->at( j ), count() );
-                	    QPtrList<CSSOrderedRule>::append( orderedRule );
-                        }
+                        CSSStyleRuleImpl* rule = static_cast<CSSStyleRuleImpl*>(childItem);
+                        for (CSSSelector* s = rule->selector(); s; s = s->next())
+                            addRule(rule, s);
+                        
                     }
                     else
                     {
@@ -1335,79 +1266,6 @@ void CSSStyleSelectorList::append( CSSStyleSheetImpl *sheet,
             }
         }
         // ### include other rules
-    }
-}
-
-
-void CSSStyleSelectorList::collect( QPtrList<CSSSelector> *selectorList, CSSOrderedPropertyList *propList,
-				    Source regular, Source important )
-{
-    CSSOrderedRule *r = first();
-    while( r ) {
-	CSSSelector *sel = selectorList->first();
-	int selectorNum = 0;
-	while( sel ) {
-	    if ( *sel == *(r->selector) )
-		break;
-	    sel = selectorList->next();
-	    selectorNum++;
-	}
-	if ( !sel )
-	    selectorList->append( r->selector );
-//	else
-//	    qDebug("merged one selector");
-	propList->append(r->rule->declaration(), selectorNum, r->selector->specificity(), regular, important );
-	r = next();
-    }
-}
-
-// -------------------------------------------------------------------------
-
-int CSSOrderedPropertyList::compareItems(QPtrCollection::Item i1, QPtrCollection::Item i2)
-{
-    int diff =  static_cast<CSSOrderedProperty *>(i1)->priority
-        - static_cast<CSSOrderedProperty *>(i2)->priority;
-    return diff ? diff : static_cast<CSSOrderedProperty *>(i1)->position
-        - static_cast<CSSOrderedProperty *>(i2)->position;
-}
-
-void CSSOrderedPropertyList::append(DOM::CSSStyleDeclarationImpl *decl, uint selector, uint specificity,
-				    Source regular, Source important )
-{
-    QPtrList<CSSProperty> *values = decl->values();
-    if(!values) return;
-    int len = values->count();
-    for(int i = 0; i < len; i++)
-    {
-        CSSProperty *prop = values->at(i);
-	Source source = regular;
-
-	if( prop->m_bImportant ) source = important;
-	if( prop->nonCSSHint ) source = NonCSSHint;
-
-	bool first = false;
-        // give special priority to font-xxx, color properties
-        switch(prop->m_id)
-        {
-	case CSS_PROP_FONT_STYLE:
-        case CSS_PROP_FONT_SIZE:
-	case CSS_PROP_FONT_WEIGHT:
-	case CSS_PROP_FONT_FAMILY:
-        case CSS_PROP_FONT:
-        case CSS_PROP_COLOR:
-        case CSS_PROP_BACKGROUND_IMAGE:
-	case CSS_PROP_DISPLAY:
-            // these have to be applied first, because other properties use the computed
-            // values of these porperties.
-	    first = true;
-            break;
-        default:
-            break;
-        }
-
-	QPtrList<CSSOrderedProperty>::append(new CSSOrderedProperty(prop, selector,
-								 first, source, specificity,
-								 count() ));
     }
 }
 
@@ -1583,8 +1441,48 @@ static QColor colorForCSSValue( int css_value )
     return c;
 };
 
+void CSSStyleSelector::applyDeclarations(bool applyFirst, bool isImportant,
+                                         int startIndex, int endIndex)
+{
+    if (startIndex == -1) return;
+    for (int i = startIndex; i <= endIndex; i++) {
+        CSSStyleDeclarationImpl* decl = m_matchedDecls[i];
+        QPtrList<CSSProperty>* props = decl->values();
+        if (props) {
+            QPtrListIterator<CSSProperty> propertyIt(*props);
+            CSSProperty* current;
+            for (propertyIt.toFirst(); (current = propertyIt.current()); ++propertyIt) {
+                // give special priority to font-xxx, color properties
+                if (isImportant == current->isImportant()) {
+                    bool first;
+                    switch(current->id())
+                    {
+                        case CSS_PROP_FONT_STYLE:
+                        case CSS_PROP_FONT_SIZE:
+                        case CSS_PROP_FONT_WEIGHT:
+                        case CSS_PROP_FONT_FAMILY:
+                        case CSS_PROP_FONT:
+                        case CSS_PROP_COLOR:
+                        case CSS_PROP_BACKGROUND_IMAGE:
+                        case CSS_PROP_DISPLAY:
+                            // these have to be applied first, because other properties use the computed
+                            // values of these porperties.
+                            first = true;
+                            break;
+                        default:
+                            first = false;
+                            break;
+                    }
+                    
+                    if (first == applyFirst)
+                        applyProperty(current->id(), current->value());
+                }
+            }
+        }
+    }
+}
 
-void CSSStyleSelector::applyRule( int id, DOM::CSSValueImpl *value )
+void CSSStyleSelector::applyProperty( int id, DOM::CSSValueImpl *value )
 {
     //kdDebug( 6080 ) << "applying property " << prop->m_id << endl;
 
@@ -2214,20 +2112,11 @@ void CSSStyleSelector::applyRule( int id, DOM::CSSValueImpl *value )
                 col = RenderStyle::initialColor();
         }
         else {
-            if(!primitiveValue )
+            if(!primitiveValue)
                 return;
-            int ident = primitiveValue->getIdent();
-            if ( ident ) {
-                if ( ident == CSS_VAL__KHTML_TEXT )
-                    col = element->getDocument()->textColor();
-                else
-                    col = colorForCSSValue( ident );
-            } else if ( primitiveValue->primitiveType() == CSSPrimitiveValue::CSS_RGBCOLOR )
-                    col.setRgb(primitiveValue->getRGBColorValue());
-            else {
-                return;
-            }
+            col = getColorFromPrimitiveValue(primitiveValue);
         }
+
         //kdDebug( 6080 ) << "applying color " << col.isValid() << endl;
         switch(id)
         {
@@ -3139,10 +3028,10 @@ void CSSStyleSelector::applyRule( int id, DOM::CSSValueImpl *value )
             if ( !font->style || !font->variant || !font->weight ||
                  !font->size || !font->lineHeight || !font->family )
                 return;
-            applyRule( CSS_PROP_FONT_STYLE, font->style );
-            applyRule( CSS_PROP_FONT_VARIANT, font->variant );
-            applyRule( CSS_PROP_FONT_WEIGHT, font->weight );
-            applyRule( CSS_PROP_FONT_SIZE, font->size );
+            applyProperty( CSS_PROP_FONT_STYLE, font->style );
+            applyProperty( CSS_PROP_FONT_VARIANT, font->variant );
+            applyProperty( CSS_PROP_FONT_WEIGHT, font->weight );
+            applyProperty( CSS_PROP_FONT_SIZE, font->size );
 
             // Line-height can depend on font().pixelSize(), so we have to update the font
             // before we evaluate line-height, e.g., font: 1em/1em.  FIXME: Still not
@@ -3150,8 +3039,8 @@ void CSSStyleSelector::applyRule( int id, DOM::CSSValueImpl *value )
             if (fontDirty)
                 CSSStyleSelector::style->htmlFont().update( paintDeviceMetrics );
             
-            applyRule( CSS_PROP_LINE_HEIGHT, font->lineHeight );
-            applyRule( CSS_PROP_FONT_FAMILY, font->family );
+            applyProperty( CSS_PROP_LINE_HEIGHT, font->lineHeight );
+            applyProperty( CSS_PROP_FONT_FAMILY, font->family );
         }
         return;
         
@@ -3624,6 +3513,33 @@ float CSSStyleSelector::smallerFontSize(float size, bool quirksMode) const
     // FIXME: Figure out where we fall in the size ranges (xx-small to xxx-large) and scale down to
     // the next size level. 
     return size/1.2;
+}
+
+QColor CSSStyleSelector::getColorFromPrimitiveValue(CSSPrimitiveValueImpl* primitiveValue)
+{
+    QColor col;
+    int ident = primitiveValue->getIdent();
+    if (ident) {
+        if (ident == CSS_VAL__KHTML_TEXT)
+            col = element->getDocument()->textColor();
+        else if (ident == CSS_VAL__KHTML_LINK) {
+            QColor linkColor = element->getDocument()->linkColor();
+            QColor visitedColor = element->getDocument()->visitedLinkColor();
+            if (linkColor == visitedColor)
+                col = linkColor;
+            else {
+                if (pseudoState == PseudoUnknown || pseudoState == PseudoAnyLink)
+                    checkPseudoState(element);
+                col = (pseudoState == PseudoLink) ? linkColor : visitedColor;
+            }
+        }
+        else if (ident == CSS_VAL__KHTML_ACTIVELINK)
+            col = element->getDocument()->activeLinkColor();
+        else
+            col = colorForCSSValue( ident );
+    } else if ( primitiveValue->primitiveType() == CSSPrimitiveValue::CSS_RGBCOLOR )
+        col.setRgb(primitiveValue->getRGBColorValue());
+    return col;    
 }
 
 } // namespace khtml

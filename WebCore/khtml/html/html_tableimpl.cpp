@@ -94,15 +94,15 @@ DOM::CSSStyleDeclarationImpl* HTMLTableElementImpl::createSharedCellDecls()
         m_sharedCellDecls->setStrictParsing( !getDocument()->inCompatMode() );
 
         if (m_noBorder)
-            m_sharedCellDecls->setProperty(CSS_PROP_BORDER_WIDTH, "0", false, true);
+            m_sharedCellDecls->setProperty(CSS_PROP_BORDER_WIDTH, "0", false);
         else {
-            m_sharedCellDecls->setProperty(CSS_PROP_BORDER_WIDTH, "1px", false, true);
+            m_sharedCellDecls->setProperty(CSS_PROP_BORDER_WIDTH, "1px", false);
             int v = m_solid ? CSS_VAL_SOLID : CSS_VAL_INSET;
-            m_sharedCellDecls->setProperty(CSS_PROP_BORDER_TOP_STYLE, v, false, true);
-            m_sharedCellDecls->setProperty(CSS_PROP_BORDER_BOTTOM_STYLE, v, false, true);
-            m_sharedCellDecls->setProperty(CSS_PROP_BORDER_LEFT_STYLE, v, false, true);
-            m_sharedCellDecls->setProperty(CSS_PROP_BORDER_RIGHT_STYLE, v, false, true);
-            m_sharedCellDecls->setProperty(CSS_PROP_BORDER_COLOR, "inherit", false, true);
+            m_sharedCellDecls->setProperty(CSS_PROP_BORDER_TOP_STYLE, v, false);
+            m_sharedCellDecls->setProperty(CSS_PROP_BORDER_BOTTOM_STYLE, v, false);
+            m_sharedCellDecls->setProperty(CSS_PROP_BORDER_LEFT_STYLE, v, false);
+            m_sharedCellDecls->setProperty(CSS_PROP_BORDER_RIGHT_STYLE, v, false);
+            m_sharedCellDecls->setProperty(CSS_PROP_BORDER_COLOR, "inherit", false);
         }
     }
     
@@ -890,7 +890,7 @@ void HTMLTableCellElementImpl::parseAttribute(AttributeImpl *attr)
 }
 
 // used by table cells to share style decls created by the enclosing table.
-DOM::CSSStyleDeclarationImpl* HTMLTableCellElementImpl::getAdditionalStyleDecls()
+CSSStyleDeclarationImpl* HTMLTableCellElementImpl::additionalAttributeStyleDecl()
 {
     HTMLElementImpl* p = static_cast<HTMLElementImpl*>(parentNode());
     while(p && p->id() != ID_TABLE)

@@ -76,12 +76,12 @@ DOMString StyleBaseImpl::baseURL()
 }
 
 void StyleBaseImpl::setParsedValue(int propId, const CSSValueImpl *parsedValue,
-				   bool important, bool nonCSSHint, QPtrList<CSSProperty> *propList)
+				   bool important, QPtrList<CSSProperty> *propList)
 {
     QPtrListIterator<CSSProperty> propIt(*propList);
     propIt.toLast(); // just remove the top one - not sure what should happen if we have multiple instances of the property
     while (propIt.current() &&
-           ( propIt.current()->m_id != propId || propIt.current()->nonCSSHint != nonCSSHint ||
+           ( propIt.current()->m_id != propId ||
              propIt.current()->m_bImportant != important) )
         --propIt;
     if (propIt.current())
@@ -91,8 +91,7 @@ void StyleBaseImpl::setParsedValue(int propId, const CSSValueImpl *parsedValue,
     prop->m_id = propId;
     prop->setValue((CSSValueImpl *) parsedValue);
     prop->m_bImportant = important;
-    prop->nonCSSHint = nonCSSHint;
-
+    
     propList->append(prop);
 #ifdef CSS_DEBUG
     kdDebug( 6080 ) << "added property: " << getPropertyName(propId).string()
@@ -132,9 +131,8 @@ void CSSSelector::print(void)
 
 unsigned int CSSSelector::specificity()
 {
-    if ( nonCSSHint )
-        return 0;
-
+    // FIXME: Pseudo-elements and pseudo-classes do not have the same specificity. This function
+    // isn't quite correct.
     int s = ((localNamePart(tag) == anyLocalName) ? 0 : 1);
     switch(match)
     {
@@ -167,6 +165,7 @@ void CSSSelector::extractPseudoType() const
     
     static AtomicString active("active");
     static AtomicString after("after");
+    static AtomicString anyLink("-khtml-any-link");
     static AtomicString before("before");
     static AtomicString empty("empty");
     static AtomicString firstChild("first-child");
@@ -189,6 +188,8 @@ void CSSSelector::extractPseudoType() const
         _pseudoType = PseudoActive;
     else if (value == after)
         _pseudoType = PseudoAfter;
+    else if (value == anyLink)
+        _pseudoType = PseudoAnyLink;
     else if (value == before)
         _pseudoType = PseudoBefore;
     else if (value == empty)
@@ -234,7 +235,6 @@ bool CSSSelector::operator == ( const CSSSelector &other )
     while ( sel1 && sel2 ) {
 	if ( sel1->tag != sel2->tag || sel1->attr != sel2->attr ||
 	     sel1->relation != sel2->relation || sel1->match != sel2->match ||
-	     sel1->nonCSSHint != sel2->nonCSSHint ||
 	     sel1->value != sel2->value ||
              sel1->pseudoType() != sel2->pseudoType())
 	    return false;

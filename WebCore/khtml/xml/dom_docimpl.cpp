@@ -315,6 +315,10 @@ DocumentImpl::DocumentImpl(DOMImplementationImpl *_implementation, KHTMLView *v)
     m_cssTarget = 0;
     m_accessKeyDictValid = false;
     
+    resetLinkColor();
+    resetVisitedLinkColor();
+    resetActiveLinkColor();
+
     m_processingLoadEvent = false;
     m_startTime.restart();
 }
@@ -383,6 +387,20 @@ DocumentImpl::~DocumentImpl()
     }
 }
 
+void DocumentImpl::resetLinkColor()
+{
+    m_linkColor = QColor(0, 0, 238);
+}
+
+void DocumentImpl::resetVisitedLinkColor()
+{
+    m_visitedLinkColor = QColor(85, 26, 139);    
+}
+
+void DocumentImpl::resetActiveLinkColor()
+{
+    m_activeLinkColor.setNamedColor(QString("red"));
+}
 
 DocumentTypeImpl *DocumentImpl::doctype() const
 {
@@ -2201,12 +2219,7 @@ void DocumentImpl::recalcStyleSelector()
                     sheet = 0;
             }
         }
-        else if (n->isHTMLElement() && n->id() == ID_BODY) {
-                // <BODY> element (doesn't contain styles as such but vlink="..." and friends
-                // are treated as style declarations)
-            sheet = static_cast<HTMLBodyElementImpl*>(n)->sheet();
-        }
-            
+
         if (sheet) {
             sheet->ref();
             m_styleSheets->styleSheets.append(sheet);
