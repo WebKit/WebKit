@@ -1,3 +1,19 @@
+2003-01-30  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3155954.  Make sure no layers get made for :before,
+	:after or :first-letter.  The only debatable case is whether
+	overflow can apply to generated content.  Included a FIXME
+	to think about that case.
+	
+        Reviewed by darin
+
+        * khtml/rendering/render_container.cpp:
+        (RenderContainer::insertPseudoChild):
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::addChildToFlow):
+        * khtml/rendering/render_text.cpp:
+        (RenderText::nodeAtPoint):
+
 2003-01-30  Darin Adler  <darin@apple.com>
 
         * khtml/html/html_documentimpl.cpp: Updated license.

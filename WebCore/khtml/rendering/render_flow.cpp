@@ -2013,10 +2013,10 @@ void RenderFlow::addChildToFlow(RenderObject* newChild, RenderObject* beforeChil
         if ( (pseudoStyle=style()->getPseudoStyle(RenderStyle::FIRST_LETTER)) ) {
             RenderFlow* firstLetter = new (renderArena()) RenderFlow(0 /* anonymous box */);
             pseudoStyle->setDisplay( INLINE );
+            pseudoStyle->setPosition( STATIC ); // CSS2 says first-letter can't be positioned.
             firstLetter->setStyle(pseudoStyle);
-    
             addChild(firstLetter);
-    
+
             DOMStringImpl* oldText = newTextChild->string();
     
             if(oldText->l >= 1) {
@@ -2028,7 +2028,7 @@ void RenderFlow::addChildToFlow(RenderObject* newChild, RenderObject* beforeChil
                 //kdDebug( 6040 ) << "letter= '" << DOMString(oldText->substring(0,length)).string() << "'" << endl;
                 newTextChild->setText(oldText->substring(length,oldText->l-length));
     
-                RenderText* letter = new (renderArena()) RenderText(0 /* anonymous object */, oldText->substring(0,length));
+                RenderText* letter = new (renderArena()) RenderText(newTextChild->element(), oldText->substring(0,length));
                 RenderStyle* newStyle = new RenderStyle();
                 newStyle->inheritFrom(pseudoStyle);
                 letter->setStyle(newStyle);
