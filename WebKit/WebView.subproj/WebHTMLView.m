@@ -676,7 +676,19 @@ static WebHTMLView *lastHitView = nil;
 - (NSTrackingRectTag)_addTrackingRect:(NSRect)rect owner:(id)owner userData:(void *)data assumeInside:(BOOL)assumeInside useTrackingNum:(int)tag
 {
     ASSERT(tag == TRACKING_RECT_TAG);
-    return [self addTrackingRect:rect owner:owner userData:data assumeInside:assumeInside];
+    ASSERT(_private->trackingRectOwner == nil);
+    _private->trackingRectOwner = owner;
+    _private->trackingRectUserData = data;
+    return tag;
+}
+
+- (void)_addTrackingRects:(NSRect *)rects owner:(id)owner userDataList:(void **)userDataList assumeInsideList:(BOOL *)assumeInsideList trackingNums:(NSTrackingRectTag *)trackingNums count:(int)count
+{
+    ASSERT(count == 1);
+    ASSERT(trackingNums[0] == TRACKING_RECT_TAG);
+    ASSERT(_private->trackingRectOwner == nil);
+    _private->trackingRectOwner = owner;
+    _private->trackingRectUserData = userDataList[0];
 }
 
 - (void)removeTrackingRect:(NSTrackingRectTag)tag
@@ -685,6 +697,15 @@ static WebHTMLView *lastHitView = nil;
     if (_private != nil) {
         _private->trackingRectOwner = nil;
     }
+}
+
+- (void)_removeTrackingRects:(NSTrackingRectTag *)tags count:(int)count
+{
+    ASSERT(count == 1);
+    ASSERT(tags[0] == TRACKING_RECT_TAG);
+    if (count == 0)
+        return;
+    [self removeTrackingRect:TRACKING_RECT_TAG];
 }
 
 - (void)_sendToolTipMouseExited

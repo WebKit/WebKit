@@ -1,3 +1,16 @@
+2004-11-05  Darin Adler  <darin@apple.com>
+
+        Reviewed by Chris.
+
+        - fixed <rdar://problem/3857151> Assertion failure in "trackingRectOwner" while moving mouse over Slashdot.org page
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _addTrackingRect:owner:userData:assumeInside:useTrackingNum:]): Changed to no longer call
+        addTrackingRect to do the work for consistency with the new method below. Not too much copied and pasted code.
+        (-[WebHTMLView _addTrackingRects:owner:userDataList:assumeInsideList:trackingNums:count:]): Added an override
+        for this new method in Tiger. No harm in implementing it on Panther, although it won't be called.
+        (-[WebHTMLView _removeTrackingRects:count:]): Ditto.
+
 2004-11-04  David Hyatt  <hyatt@apple.com>
 
 	Make sure the dominant line direction is properly set for RTL runs so that spaces will reverse.
