@@ -34,7 +34,7 @@
     NSString *newPath = [thePath stringByResolvingSymlinksInPath];
 
     FSRef fref;
-    OSErr err;
+    OSStatus err;
 
     err = FSPathMakeRef((const UInt8 *)[thePath fileSystemRepresentation], &fref, NULL);
     if (err != noErr) {
@@ -43,7 +43,7 @@
 
     Boolean targetIsFolder;
     Boolean wasAliased;
-    err = FSResolveAliasFile (&fref, TRUE, &targetIsFolder, &wasAliased);
+    err = FSResolveAliasFileWithMountFlags(&fref, TRUE, &targetIsFolder, &wasAliased, kResolveAliasFileNoUI);
     if (err != noErr) {
         return newPath;
     }

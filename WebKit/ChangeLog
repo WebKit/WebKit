@@ -1,5 +1,15 @@
 2003-09-17  Darin Adler  <darin@apple.com>
 
+        Reviewed by Maciej.
+
+        * Plugins.subproj/WebBasePluginPackage.m:
+        (-[WebBasePluginPackage pathByResolvingSymlinksAndAliasesInPath:]): Pass the
+        "no UI" flag, so we don't prompt the user when we're trying to load plug-ins.
+        Also use OSStatus rather than OSErr so we don't miss error codes that just
+        happen to have zeroes in the low 16 bits.
+
+2003-09-17  Darin Adler  <darin@apple.com>
+
         Reviewed by John.
 
         * WebCoreSupport.subproj/WebFileButton.m: (-[WebFileButton setFilename:]):
