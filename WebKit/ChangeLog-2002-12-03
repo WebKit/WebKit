@@ -1,3 +1,12 @@
+2002-11-08  Ken Kocienda  <kocienda@apple.com>
+
+	Fix deployment build breaker: a variable was used only in a 
+	LOG statement, causing the variable to become usused when
+	building with the Deployment build style. 
+
+        * Downloads.subproj/WebDownloadHandler.m:
+        (-[WebDownloadHandler finishedLoading])
+
 2002-11-07  Darin Adler  <darin@apple.com>
 
         * History.subproj/WebHistoryItem.h: Replace _URL with _URLString.

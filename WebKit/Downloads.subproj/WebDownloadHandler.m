@@ -340,9 +340,7 @@
 
     [self closeFile];
 
-    NSString *path = [[dataSource contentPolicy] path];
-    
-    LOG(Download, "Download complete. Saved to: %s", [path cString]);
+    LOG(Download, "Download complete. Saved to: %s", [[[dataSource contentPolicy] path] cString]);
 
     return nil;
 }
