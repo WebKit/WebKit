@@ -12,7 +12,7 @@
 				COPY_PHASE_STRIP = NO;
 				DEBUGGING_SYMBOLS = YES;
 				DEBUG_CFLAGS = "";
-                                EXPORTED_SYMBOLS_FILES = "WebKit-combined.exp";
+				EXPORTED_SYMBOLS_FILE = "WebKit-combined.exp";
 				FRAMEWORK_SEARCH_PATHS = "\U0001@executable_path/../Frameworks";
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				OPTIMIZATION_CFLAGS = "-O0";
@@ -1513,8 +1513,8 @@
 			buildSettings = {
 				FRAMEWORK_SEARCH_PATHS = "\U0001@executable_path/../Frameworks";
 				INSTALL_PATH = "@executable_path/../Frameworks";
-				i386 = YES;
 				SKIP_INSTALL = YES;
+				i386 = YES;
 			};
 			isa = PBXBuildStyle;
 			name = DeploymentFat;
@@ -1660,7 +1660,7 @@
 				COPY_PHASE_STRIP = NO;
 				DEBUGGING_SYMBOLS = YES;
 				DEBUG_CFLAGS = "";
-                                EXPORTED_SYMBOLS_FILES = "WebKit-combined.exp";
+				EXPORTED_SYMBOLS_FILE = "WebKit-combined.exp";
 				FRAMEWORK_SEARCH_PATHS = "\U0001@executable_path/../Frameworks";
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				OPTIMIZATION_CFLAGS = "-O";
