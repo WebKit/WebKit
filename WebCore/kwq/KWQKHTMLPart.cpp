@@ -42,23 +42,3 @@ bool KWQKHTMLPart::isFrameSet() const
     NodeImpl *body = static_cast<HTMLDocumentImpl *>(document)->body();
     return body && body->renderer() && body->id() == ID_FRAMESET;
 }
-
-int KWQKHTMLPart::selectionStartOffset() const
-{
-    return d->m_startOffset;
-}
-
-int KWQKHTMLPart::selectionEndOffset() const
-{
-    return d->m_endOffset;
-}
-
-NodeImpl *KWQKHTMLPart::selectionStart() const
-{
-    return d->m_selectionStart.handle();
-}
-
-NodeImpl *KWQKHTMLPart::selectionEnd() const
-{
-    return d->m_selectionEnd.handle();
-}

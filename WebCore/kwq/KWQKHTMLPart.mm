@@ -44,6 +44,7 @@
 #import "KWQLogging.h"
 #import "KWQPageState.h"
 #import "KWQDOMNode.h"
+#import "KWQWindowWidget.h"
 
 #import "xml/dom2_eventsimpl.h"
 
@@ -154,6 +155,7 @@ KWQKHTMLPart::~KWQKHTMLPart()
     }
     [_formValuesAboutToBeSubmitted release];
     [_formAboutToBeSubmitted release];
+    delete _windowWidget;
 }
 
 void KWQKHTMLPart::setSettings (KHTMLSettings *settings)
@@ -1668,4 +1670,38 @@ QRect KWQKHTMLPart::selectionRect() const
     }
 
     return root->selectionRect();
+}
+
+KWQWindowWidget *KWQKHTMLPart::topLevelWidget()
+{
+    return _windowWidget;
+}
+
+int KWQKHTMLPart::selectionStartOffset() const
+{
+    return d->m_startOffset;
+}
+
+int KWQKHTMLPart::selectionEndOffset() const
+{
+    return d->m_endOffset;
+}
+
+NodeImpl *KWQKHTMLPart::selectionStart() const
+{
+    return d->m_selectionStart.handle();
+}
+
+NodeImpl *KWQKHTMLPart::selectionEnd() const
+{
+    return d->m_selectionEnd.handle();
+}
+
+void KWQKHTMLPart::setBridge(WebCoreBridge *p)
+{ 
+    if (_bridge != p) {
+	delete _windowWidget;
+    }
+    _bridge = p;
+    _windowWidget = new KWQWindowWidget(_bridge);
 }

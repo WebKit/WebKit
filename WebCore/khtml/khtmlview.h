@@ -185,6 +185,11 @@ public:
 
     void timerEvent ( QTimerEvent * );
 
+#if APPLE_CHANGES
+    QWidget *topLevelWidget() const;
+    QPoint mapToGlobal(const QPoint &) const;
+#endif
+    
 protected slots:
     void slotPaletteChanged();
     void slotScrollBarMoved();
@@ -247,7 +252,7 @@ private:
 
     // Returns the clipped object we will repaint when we perform our scheduled layout.
     khtml::RenderObject* layoutObject() { return m_layoutObject; }
-    
+
     // ------------------------------------- member variables ------------------------------------
  private:
     int _width;

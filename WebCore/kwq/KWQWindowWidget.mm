@@ -25,59 +25,26 @@
 
 #import "KWQWindowWidget.h"
 
-#import <Cocoa/Cocoa.h>
+#import "WebCoreBridge.h"
 
-@interface KWQWindowWidgetDeleter : NSObject
-{
-    KWQWindowWidget *_widget;
-}
-- initWithWindowWidget:(KWQWindowWidget *)widget;
-- (void)deleteWindowWidget;
-@end
+#import <Cocoa/Cocoa.h>
 
 class KWQWindowWidgetPrivate
 {
 public:
-    NSWindow *window;
-    KWQWindowWidgetDeleter *deleter;
+    WebCoreBridge *bridge;
 };
 
-static CFMutableDictionaryRef windowWidgets = NULL;
-
-KWQWindowWidget::KWQWindowWidget(NSWindow *window) :
+KWQWindowWidget::KWQWindowWidget(WebCoreBridge *bridge) :
     d(new KWQWindowWidgetPrivate())
 {
-    d->window = [window retain];
-    d->deleter = [[KWQWindowWidgetDeleter alloc] initWithWindowWidget:this];
-
-    [[NSNotificationCenter defaultCenter] addObserver:d->deleter
-        selector:@selector(deleteWindowWidget) name:NSWindowWillCloseNotification object:window];
+    // intentionally not retained, since the bridge owns the window widget
+    d->bridge = bridge;
 }
 
 KWQWindowWidget::~KWQWindowWidget()
 {
-    CFDictionaryRemoveValue(windowWidgets, d->window);
-    [[NSNotificationCenter defaultCenter] removeObserver:d->deleter];
-    
-    [d->window release];
-    [d->deleter release];
-    
     delete d;
-}
-
-KWQWindowWidget *KWQWindowWidget::fromNSWindow(NSWindow *window)
-{
-    if (windowWidgets == NULL) {
-	windowWidgets = CFDictionaryCreateMutable(NULL, 0, &kCFTypeDictionaryKeyCallBacks, NULL);
-    }
-    
-    KWQWindowWidget *widget = (KWQWindowWidget *)CFDictionaryGetValue(windowWidgets, window);
-    if (widget == NULL) {
-	widget = new KWQWindowWidget(window);
-	CFDictionarySetValue(windowWidgets, window, widget);
-    }
-
-    return widget;
 }
 
 QSize KWQWindowWidget::sizeHint() const
@@ -87,7 +54,7 @@ QSize KWQWindowWidget::sizeHint() const
 
 QRect KWQWindowWidget::frameGeometry() const
 {
-    NSRect frame = [d->window frame];
+    NSRect frame = [[d->bridge window] frame];
     return QRect((int)frame.origin.x, (int)(NSMaxY([[[NSScreen screens] objectAtIndex:0] frame]) - NSMaxY(frame)),
 		 (int)frame.size.width, (int)frame.size.height);
 }
@@ -99,37 +66,21 @@ QWidget *KWQWindowWidget::topLevelWidget() const
 
 QPoint KWQWindowWidget::mapToGlobal(const QPoint &p) const
 {
-    NSPoint windowPoint = NSMakePoint(p.x(), [d->window frame].size.height - p.y());
-    NSPoint screenPoint = [d->window convertBaseToScreen:windowPoint];
+    NSPoint windowPoint = NSMakePoint(p.x(), [[d->bridge window] frame].size.height - p.y());
+    NSPoint screenPoint = [[d->bridge window] convertBaseToScreen:windowPoint];
     return QPoint((int)screenPoint.x, (int)(NSMaxY([[[NSScreen screens] objectAtIndex:0] frame]) - screenPoint.y));
 }
 
 QPoint KWQWindowWidget::mapFromGlobal(const QPoint &p) const
 {
     NSPoint screenPoint = NSMakePoint(p.x(), NSMaxY([[[NSScreen screens] objectAtIndex:0] frame]) - p.y());
-    NSPoint windowPoint = [d->window convertScreenToBase:screenPoint];
-    return QPoint((int)windowPoint.x, (int)([d->window frame].size.height - windowPoint.y));
+    NSPoint windowPoint = [[d->bridge window] convertScreenToBase:screenPoint];
+    return QPoint((int)windowPoint.x, (int)([[d->bridge window] frame].size.height - windowPoint.y));
 }
 
 void KWQWindowWidget::setFrameGeometry(const QRect &r)
 {
     // FIXME: Could do something to make it easy for the browser to avoid saving this change.
-    [d->window setFrame:NSMakeRect(r.x(), NSMaxY([[[NSScreen screens] objectAtIndex:0] frame]) - (r.y() + r.height()),
+    [[d->bridge window] setFrame:NSMakeRect(r.x(), NSMaxY([[[NSScreen screens] objectAtIndex:0] frame]) - (r.y() + r.height()),
         r.width(), r.height()) display:YES];
 }
-
-@implementation KWQWindowWidgetDeleter
-
-- initWithWindowWidget:(KWQWindowWidget *)widget
-{
-    [super init];
-    _widget = widget;
-    return self;
-}
-
-- (void)deleteWindowWidget
-{
-    delete _widget;
-}
-
-@end

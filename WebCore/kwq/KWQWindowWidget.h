@@ -29,9 +29,9 @@
 #include "KWQWidget.h"
 
 #ifdef __OBJC__
-@class NSWindow;
+@class WebCoreBridge;
 #else
-class NSWindow;
+class WebCoreBridge;
 #endif
 
 class KWQWindowWidgetPrivate;
@@ -41,7 +41,7 @@ class KWQWindowWidget : public QWidget
  public:
     virtual ~KWQWindowWidget();
 
-    static KWQWindowWidget *fromNSWindow(NSWindow *window);
+    KWQWindowWidget(WebCoreBridge *bridge);
 
     virtual QSize sizeHint() const;
     virtual QRect frameGeometry() const;
@@ -52,7 +52,6 @@ class KWQWindowWidget : public QWidget
     virtual QPoint mapFromGlobal(const QPoint &) const;
 
  private:
-    KWQWindowWidget(NSWindow *window);
     KWQWindowWidgetPrivate *d;
 };
 

@@ -1,3 +1,44 @@
+1969-12-31  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Trey.
+
+	Made progress towards better handling of window operations.
+	
+        * khtml/ecma/kjs_window.cpp:
+        (Window::get): Replace a few part->widget() calls with part->view() -- just
+	as good for the real khtml, but easier to adapt to with KWQ.
+        (WindowFunc::tryCall): Likewise.
+        * khtml/khtmlview.h:
+        * kwq/KWQKHTMLPart.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::~KWQKHTMLPart): Delete the window widget.
+        (KWQKHTMLPart::topLevelWidget): Return the window widget.
+        (KWQKHTMLPart::setBridge): Make a new window widget passing it the bridge.
+        * kwq/KWQKHTMLView.mm:
+        (KHTMLView::topLevelWidget): Moved here from KHTMLView; get the top level
+	widget from the part.
+        (KHTMLView::mapToGlobal): Moved here from KHTMLView; add a needed cast.
+        * kwq/KWQWidget.h:
+        * kwq/KWQWidget.mm: Remove all top level widget considerations.
+        * kwq/KWQWindowWidget.h:
+        * kwq/KWQWindowWidget.mm:
+        (KWQWindowWidget::KWQWindowWidget): Changed to work based on bridge, not window.
+        (KWQWindowWidget::~KWQWindowWidget): Ditto.
+        (KWQWindowWidget::frameGeometry): Ditto.
+        (KWQWindowWidget::mapToGlobal): Ditto.
+        (KWQWindowWidget::mapFromGlobal): Ditto.
+        (KWQWindowWidget::setFrameGeometry): Ditto.
+
+        Also:
+
+	* kwq/KWQKHTMLPart.cpp: Removed stuff that did not belong here.
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::selectionStartOffset): Moved here from KWQKHTMLPart.cpp
+        (KWQKHTMLPart::selectionEndOffset): Likewise.
+        (KWQKHTMLPart::selectionStart): Likewise.
+        (KWQKHTMLPart::selectionEnd): Likewise.
+        (KWQKHTMLPart::selectionRect): Likesie.
+
 2003-03-26  Darin Adler  <darin@apple.com>
 
         Reviewed by Trey.

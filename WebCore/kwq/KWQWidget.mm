@@ -160,32 +160,6 @@ int QWidget::baselinePosition() const
     return height();
 }
 
-QWidget *QWidget::topLevelWidget() const 
-{
-    NSWindow *window = nil;
-    NSView *view = getView();
-
-    window = [view window];
-    while (window == nil && view != nil) { 
-	view = [view superview]; 
-	window = [view window];
-    }
-
-    return window ? KWQWindowWidget::fromNSWindow(window) : NULL;
-}
-
-QPoint QWidget::mapToGlobal(const QPoint &p) const
-{
-    // This is only used by JavaScript to implement the getting
-    // the screenX and screen Y coordinates.
-
-    if (topLevelWidget() != nil) {
-	return topLevelWidget()->mapToGlobal(p);
-    } else {
-	return p;
-    }
-}
-
 bool QWidget::hasFocus() const
 {
     NSView *view = getView();

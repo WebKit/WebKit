@@ -475,9 +475,9 @@ Value Window::get(ExecState *exec, const Identifier &p) const
     case OuterHeight:
     case OuterWidth:
     {
-      if (!m_part->widget())
+      if (!m_part->view())
         return Number(0);
-      KWin::Info inf = KWin::info(m_part->widget()->topLevelWidget()->winId());
+      KWin::Info inf = KWin::info(m_part->view()->topLevelWidget()->winId());
       return Number(entry->value == OuterHeight ?
                     inf.geometry.height() : inf.geometry.width());
     }
@@ -1415,7 +1415,7 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
 #if APPLE_CHANGES
            // FIXME: How are we going to handle this?
 #else
-           || KMessageBox::questionYesNo( window->part()->widget(), i18n("Close window?"), i18n("Confirmation Required") ) == KMessageBox::Yes
+           || KMessageBox::questionYesNo( window->part()->view(), i18n("Close window?"), i18n("Confirmation Required") ) == KMessageBox::Yes
 #endif
            )
         (const_cast<Window*>(window))->scheduleClose();

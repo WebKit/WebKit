@@ -34,6 +34,7 @@
 #include <CoreFoundation/CoreFoundation.h>
 
 class KHTMLPartPrivate;
+class KWQWindowWidget;
 
 namespace khtml {
     class RenderObject;
@@ -81,7 +82,7 @@ public:
     KWQKHTMLPart();
     ~KWQKHTMLPart();
     
-    void setBridge(WebCoreBridge *p) { _bridge = p; }
+    void setBridge(WebCoreBridge *p);
     WebCoreBridge *bridge() const { return _bridge; }
     void setView(KHTMLView *view, bool weOwnIt);
     void setOwnsView(bool weOwnIt) { _ownsView = weOwnIt; }
@@ -190,7 +191,9 @@ public:
     NSString *matchLabelsAgainstElement(NSArray *labels, DOM::ElementImpl *element);
 
     void setSettings (KHTMLSettings *s);
-    
+
+    KWQWindowWidget *topLevelWidget();
+
 private:
     virtual void khtmlMousePressEvent(khtml::MousePressEvent *);
     virtual void khtmlMouseDoubleClickEvent(khtml::MouseDoubleClickEvent *);
@@ -236,6 +239,8 @@ private:
     WebCoreDOMElement *_formAboutToBeSubmitted;
 
     static QPtrList<KWQKHTMLPart> &mutableInstances();
+
+    KWQWindowWidget *_windowWidget;
 
     friend class KHTMLPart;
 };
