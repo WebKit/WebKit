@@ -1674,7 +1674,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
 
 void ConsoleConnectionChangeNotifyProc(CGSNotificationType type, CGSNotificationData data, CGSByteCount dataLength, CGSNotificationArg arg)
 {
-    NSString *notificationName;
+    NSString *notificationName = nil;
     if (type == kCGSessionConsoleConnect) {
         notificationName = LoginWindowDidSwitchToUserNotification;
     } else if (type == kCGSessionConsoleDisconnect) {

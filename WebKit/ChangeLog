@@ -1,3 +1,10 @@
+2004-02-04  David Hyatt  <hyatt@apple.com>
+
+	Fix deployment build bustage.
+	
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (ConsoleConnectionChangeNotifyProc):
+
 2004-02-04  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3546028>: Safari should not give plug-ins any time, thus use 0% CPU, when not in the currently active session
