@@ -1,5 +1,16 @@
 2002-10-14  David Hyatt  <hyatt@apple.com>
 
+	Stop the insanity.  Make sure that a sheet that is disabled
+	while it is still loading is removed from the doc's list
+	of pending sheets (for FOUC checks).
+
+	Fixes zeldman.com.
+	
+        * khtml/html/html_headimpl.cpp:
+        (HTMLLinkElementImpl::parseAttribute):
+
+2002-10-14  David Hyatt  <hyatt@apple.com>
+
 	Implementing the ability to individually enable/disable
 	both preferred and alternate stylesheets.  Enabling/disabling
 	sheets via the disabled property of the <link> element overrides

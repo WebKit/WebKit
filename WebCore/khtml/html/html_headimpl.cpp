@@ -149,8 +149,11 @@ void HTMLLinkElementImpl::parseAttribute(AttributeImpl *attr)
     case ATTR_DISABLED: {
         int oldDisabledState = m_disabledState;
         m_disabledState = (attr->val() != 0) ? 2 : 1;
-        if (oldDisabledState != m_disabledState)
+        if (oldDisabledState != m_disabledState) {
+            if (isLoading() && m_disabledState == 2 && (oldDisabledState == 1 || !isAlternate()))
+                getDocument()->stylesheetLoaded();
             process();
+        }
         break;
     }
     default:
