@@ -738,6 +738,24 @@ static BOOL inNSTextViewDrawRect;
     [super sendEvent:event];
 }
 
+// Workaround for bug 3245425 - nextEventMatchingMask:NSScrollWheelMask allows any kind of event.
+// Better to just not return any events (and not coalesce scroll wheel events) than to consume and
+// return other types of events.
+- (NSEvent *)nextEventMatchingMask:(unsigned int)mask untilDate:(NSDate *)expiration inMode:(NSString *)mode dequeue:(BOOL)deqFlag
+{
+    if (mask == NSScrollWheelMask) {
+        return nil;
+    }
+
+    NSEvent *event = [super nextEventMatchingMask:mask untilDate:expiration inMode:mode dequeue:deqFlag];
+
+    // This assertion double-checks that we only get the right types of events from the superclass.
+    // This is part of how I caught bug 3245425 in the act.
+    ASSERT(event == nil || ((1 << [event type]) & mask));
+
+    return event;
+}
+
 @end
 
 @implementation NSMutableDictionary (WebHTMLViewExtras)

@@ -1,3 +1,17 @@
+2003-05-01  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed 3169117 -- dragging while using a scroll wheel affects scroll movement
+
+        * WebView.subproj/WebHTMLViewPrivate.m:
+        (-[WebNSWindow nextEventMatchingMask:untilDate:inMode:dequeue:]):
+        Just return nil when called with NSScrollWheelMask to work around the bug where any
+        kind of event can be returned when this mask is passed. This will prevent scroll wheel
+        events from being coalesced, but it's better than extracting events of all different
+        types. Mouse moved events are particularly bad because they have deltaX/Y/Z and the
+        scroll wheel code in NSScrollView treats them as if they were scroll wheel events.
+
 2003-05-01  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Darin
