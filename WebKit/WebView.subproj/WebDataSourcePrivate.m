@@ -271,16 +271,17 @@
     // source is committed. It would be a WebFoundation bug if it sent
     // a redirect callback after commit.
     ASSERT(!_private->committed);
-    if (_private->request == request){
-        ERROR ("_private->request == request\n");
-        return;
-    }
+    ASSERT (_private->request != request);
     
-    [request retain];
-    [_private->request release];
-    _private->request = request;
+    WebResourceRequest *oldRequest = _private->request;
+    
+    _private->request = [request retain];
 
-    [[_private->controller locationChangeDelegate] serverRedirectedForDataSource:self];
+    // Only send serverRedirectedForDataSource: if URL changed.
+    if (![[oldRequest URL] isEqual: [request URL]])
+        [[_private->controller locationChangeDelegate] serverRedirectedForDataSource:self];
+        
+    [oldRequest release];
 }
 
 - (void)_setResponse:(WebResourceResponse *)response

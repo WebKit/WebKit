@@ -121,29 +121,31 @@
         
     [newRequest setUserAgent:[[dataSource controller] userAgentForURL:[newRequest URL]]];
 
-    [newRequest retain];
-    [request release];
+    // No need to retain here, will be copied after delegate callback.
     request = newRequest;
 
     if (identifier == nil){
         // The identifier is released after the last callback, rather than in dealloc
         // to avoid potential cycles.
-        identifier = [[resourceLoadDelegate identifierForInitialRequest: newRequest fromDataSource: dataSource] retain];
+        identifier = [[resourceLoadDelegate identifierForInitialRequest: request fromDataSource: dataSource] retain];
     }
 
     if (resourceLoadDelegate)
-        newRequest = [resourceLoadDelegate resource: identifier willSendRequest: newRequest fromDataSource: dataSource];
+        request = [resourceLoadDelegate resource: identifier willSendRequest: request fromDataSource: dataSource];
 
     [[WebStandardPanels sharedStandardPanels] _didStopLoadingURL:currentURL inController: [dataSource controller]];
     
-    if ([newRequest URL] != currentURL){
+    if ([request URL] != currentURL){
         [currentURL release];
-        currentURL = [[newRequest URL] retain];
+        currentURL = [[request URL] retain];
     }
     
     [[WebStandardPanels sharedStandardPanels] _didStartLoadingURL:currentURL inController:[dataSource controller]];
 
-    return newRequest;
+    // It'd be nice if we could depend on WebResourceRequest being immutable, but we can't so always
+    // copy.
+    request = [request copy];
+    return request;
 }
 
 -(void)handle:(WebResourceHandle *)h didReceiveResponse:(WebResourceResponse *)r

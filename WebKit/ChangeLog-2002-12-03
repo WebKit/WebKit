@@ -1,3 +1,16 @@
+2002-10-24  Richard Williamson   <rjw@apple.com>
+
+        Always copy request, we can't count on it being immutable.
+        This was the cause of the ASSERT from last night's checkin.
+        
+        * WebView.subproj/WebBaseResourceHandleDelegate.m:
+        (-[WebBaseResourceHandleDelegate handle:willSendRequest:]):
+        
+        Only send serverRedirectedForDataSource: if URL changed.
+        
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _setRequest:]):
+
 2002-10-24  Chris Blumenberg  <cblu@apple.com>
 	
 	- Use "MIMEType" instead of "serviceType".
