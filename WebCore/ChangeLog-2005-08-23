@@ -1,3 +1,14 @@
+2004-10-05  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed <rdar://problem/3673150> Pasting string from clipboard that is longer than input box will accept fails rather than truncating
+
+        * kwq/KWQTextField.mm:
+        (-[KWQTextFieldFormatter isPartialStringValid:proposedSelectedRange:originalString:originalSelectedRange:errorDescription:]):
+        Wrote a new version of this method that truncates incoming strings rather than rejecting them
+        out of hand.
+
 2004-10-04  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

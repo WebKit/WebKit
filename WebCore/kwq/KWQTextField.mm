@@ -963,14 +963,30 @@
     return YES;
 }
 
-- (BOOL)isPartialStringValid:(NSString *)partialString newEditingString:(NSString **)newString errorDescription:(NSString **)error
+- (BOOL)isPartialStringValid:(NSString **)partialStringPtr proposedSelectedRange:(NSRangePointer)proposedSelectedRangePtr
+    originalString:(NSString *)originalString originalSelectedRange:(NSRange)originalSelectedRange errorDescription:(NSString **)errorDescription
 {
-    if ([partialString _KWQ_numComposedCharacterSequences] > maxLength) {
-        *newString = nil;
-        return NO;
+    NSString *p = *partialStringPtr;
+
+    int length = [p _KWQ_numComposedCharacterSequences];
+    if (length <= maxLength) {
+        return YES;
     }
-    
-    return YES;
+
+    int composedSequencesToRemove = length - maxLength;
+    int removeRangeEnd = proposedSelectedRangePtr->location;
+    int removeRangeStart = removeRangeEnd;
+    while (composedSequencesToRemove > 0 && removeRangeStart != 0) {
+        removeRangeStart = [p rangeOfComposedCharacterSequenceAtIndex:removeRangeStart - 1].location;
+        --composedSequencesToRemove;
+    }
+
+    if (removeRangeStart != 0) {
+        *partialStringPtr = [[p substringToIndex:removeRangeStart] stringByAppendingString:[p substringFromIndex:removeRangeEnd]];
+        proposedSelectedRangePtr->location = removeRangeStart;
+    }
+
+    return NO;
 }
 
 - (NSAttributedString *)attributedStringForObjectValue:(id)anObject withDefaultAttributes:(NSDictionary *)attributes
