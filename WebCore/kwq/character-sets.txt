@@ -2,8 +2,7 @@
 ===================================================================
 CHARACTER SETS
 
-(last updated 2002-09-30)
-(Apple Changes: added MIBenum: 1004 for ISO-10646-J-1, 2002-06-26) 
+(last updated 2003-09-19)
 
 These are the official names for character sets that may be used in
 the Internet and may be referred to in Internet documentation.  These
@@ -1358,9 +1357,9 @@ MIBenum: 103
 Source: RFC 1642
 Alias: csUnicode11UTF7
 
-Name: UTF-8                                                    [RFC2279]
+Name: UTF-8                                                    [RFC-draft-yergeau-rfc2279bis-05.txt]
 MIBenum: 106
-Source: RFC 2279
+Source: RFC draft-yergeau-rfc2279bis-05.txt
 Alias: None 
 
 Name: ISO-8859-13
@@ -1472,7 +1471,6 @@ Alias: csUnicodeLatin1
 Alias: ISO-10646
 
 Name: ISO-10646-J-1
-MIBenum: 1004
 Source: ISO 10646 Japanese, see RFC 1815.
 
 Name: ISO-Unicode-IBM-1261
@@ -1819,7 +1817,6 @@ PEOPLE
 [Yick] Nicky Yick, <cliac@itsd.gcn.gov.hk>, October 2000.
 
 []
-
 
 
 

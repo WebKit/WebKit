@@ -1,3 +1,11 @@
+2003-10-12  Darin Adler  <darin@apple.com>
+
+        * layout-tests/fast/js/date-parse-test.html: Fixed a couple of silly mistakes.
+
+        * kwq/character-sets.txt: New version of file from www.iana.org. No substantive change.
+        Also, now that we don't use MIB numbers any more, I could leave out our one local change,
+        the MIB number we added for ISO-10646-J-1.
+
 2003-10-10  David Hyatt  <hyatt@apple.com>
 
 	Beginning of work on border collapsing.  This patch makes sure that cell spacing between cells is
