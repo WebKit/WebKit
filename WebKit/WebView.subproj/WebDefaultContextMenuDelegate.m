@@ -11,6 +11,7 @@
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDefaultContextMenuDelegate.h>
 #import <WebKit/WebFrame.h>
+#import <WebKit/WebNSPasteboardExtras.h>
 #import <WebKit/WebWindowOperationsDelegate.h>
 
 @implementation WebDefaultContextMenuDelegate
@@ -118,11 +119,9 @@
 - (void)copyLinkToClipboard:(id)sender
 {
     NSPasteboard *pasteboard = [NSPasteboard generalPasteboard];
-    NSURL *URL = [element objectForKey:WebContextMenuElementLinkURLKey];
-    
-    [pasteboard declareTypes:[NSArray arrayWithObjects:NSURLPboardType, NSStringPboardType, nil] owner:nil];
-    [pasteboard setString:[URL absoluteString] forType:NSStringPboardType];
-    [URL writeToPasteboard:pasteboard];
+    [pasteboard _web_writeURL:[element objectForKey:WebContextMenuElementLinkURLKey]
+                     andTitle:[element objectForKey:WebContextMenuElementLinkLabelKey]
+                    withOwner:self];
 }
 
 - (void)openImageInNewWindow:(id)sender

@@ -6,9 +6,9 @@
 //  Copyright (c) 2002 Apple Computer, Inc. All rights reserved.
 //
 
-#import "WebNSPasteboardExtras.h"
-
-#import "WebController.h"
+#import <WebKit/WebController.h>
+#import <WebKit/WebNSPasteboardExtras.h>
+#import <WebKit/WebURLsWithTitles.h>
 
 #import <WebFoundation/WebNSStringExtras.h>
 #import <WebFoundation/WebNSURLExtras.h>
@@ -59,6 +59,16 @@
     }
 
     return nil;
+}
+
+- (void)_web_writeURL:(NSURL *)URL andTitle:(NSString *)title withOwner:(id)owner
+{
+    NSArray *types = [NSArray arrayWithObjects:WebURLsWithTitlesPboardType, NSURLPboardType, NSStringPboardType, nil];
+    [self declareTypes:types owner:owner];
+
+    [URL writeToPasteboard:self];
+    [self setString:[URL absoluteString] forType:NSStringPboardType];
+    [WebURLsWithTitles writeURLs:[NSArray arrayWithObject:URL] andTitles:[NSArray arrayWithObject:title] toPasteboard:self];
 }
 
 @end

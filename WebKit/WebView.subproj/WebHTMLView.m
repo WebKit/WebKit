@@ -17,12 +17,12 @@
 #import <WebKit/WebIconDatabase.h>
 #import <WebKit/WebIconLoader.h>
 #import <WebKit/WebKitLogging.h>
+#import <WebKit/WebNSPasteboardExtras.h>
 #import <WebKit/WebNSViewExtras.h>
 #import <WebKit/WebPreferences.h>
 #import <WebKit/WebStringTruncator.h>
 #import <WebKit/WebTextRenderer.h>
 #import <WebKit/WebTextRendererFactory.h>
-#import <WebKit/WebURLsWithTitles.h>
 #import <WebKit/WebViewPrivate.h>
 
 // Needed for the mouse moved notification.
@@ -520,8 +520,7 @@
                 [dragImage unlockFocus];
 
                 NSPasteboard *pasteboard = [NSPasteboard pasteboardWithName:NSDragPboard];
-                [pasteboard declareTypes:[NSArray arrayWithObjects:NSURLPboardType, WebURLsWithTitlesPboardType, nil] owner:nil];
-                [WebURLsWithTitles writeURLs:[NSArray arrayWithObject:linkURL] andTitles:[NSArray arrayWithObject:label] toPasteboard:pasteboard];
+                [pasteboard _web_writeURL:linkURL andTitle:label withOwner:self];
 
                 NSPoint mousePoint = [self convertPoint:[event locationInWindow] fromView:nil];
                 NSSize centerOffset = NSMakeSize(imageSize.width / 2, -DRAG_LABEL_BORDER_Y);

@@ -20,4 +20,6 @@
 // Finds the best URL from the data on the pasteboard, giving priority to http and https URLs
 -(NSURL *)_web_bestURL;
 
+- (void)_web_writeURL:(NSURL *)URL andTitle:(NSString *)title withOwner:(id)owner;
+
 @end

@@ -1,3 +1,19 @@
+2002-09-23  Chris Blumenberg  <cblu@apple.com>
+
+	Factored URL pasteboard initialization to 1 place.
+	Fixed: 3048924 - regression: drag & drop broken for initial empty page
+	Fixed: 3045997 - Dragging a link from one Alex window to another one doesn't work
+
+        * Misc.subproj/WebNSPasteboardExtras.h:
+        * Misc.subproj/WebNSPasteboardExtras.m:
+        (-[NSPasteboard _web_writeURL:andTitle:withOwner:]): new
+        * WebView.subproj/WebDefaultContextMenuDelegate.m:
+        (-[WebDefaultContextMenuDelegate copyLinkToClipboard:]): call -[NSPasteboard _web_writeURL:andTitle:withOwner:]
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView mouseDragged:]): call -[NSPasteboard _web_writeURL:andTitle:withOwner:]
+        * WebView.subproj/WebView.m:
+        (-[WebView draggingEntered:]): handle nil cases
+
 2002-09-23  Maciej Stachowiak  <mjs@apple.com>
 
 	Added documentation for these two delegate protocols.

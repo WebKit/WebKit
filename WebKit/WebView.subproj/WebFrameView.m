@@ -147,7 +147,8 @@ enum {
 
 - (NSDragOperation)draggingEntered:(id <NSDraggingInfo>)sender
 {
-    if([sender draggingSource] != [self documentView] && [[sender draggingPasteboard] _web_bestURL]) {
+    if((![self documentView] || ([sender draggingSource] != [self documentView])) &&
+       [[sender draggingPasteboard] _web_bestURL]) {
         return NSDragOperationCopy;
     } else {
         return NSDragOperationNone;
