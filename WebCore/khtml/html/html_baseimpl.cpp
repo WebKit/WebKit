@@ -85,18 +85,14 @@ void HTMLBodyElementImpl::parseAttribute(AttributeImpl *attr)
         break;
     }
     case ATTR_MARGINWIDTH:
-        // Marginwidth applies to both left and right margins -dwh
         addCSSLength(CSS_PROP_MARGIN_RIGHT, attr->value() );
-        addCSSLength(CSS_PROP_MARGIN_LEFT, attr->value());
         /* nobreak; */
     case ATTR_LEFTMARGIN:
         addCSSLength(CSS_PROP_MARGIN_LEFT, attr->value() );
         break;
     case ATTR_MARGINHEIGHT:
-        // Marginheight applies to both top and bottom margins -dwh 
         addCSSLength(CSS_PROP_MARGIN_BOTTOM, attr->value());
-        addCSSLength(CSS_PROP_MARGIN_TOP, attr->value());
-	/* nobreak */
+        /* nobreak */
     case ATTR_TOPMARGIN:
         addCSSLength(CSS_PROP_MARGIN_TOP, attr->value());
         break;

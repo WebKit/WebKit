@@ -1010,17 +1010,18 @@ void RenderBox::calcAbsoluteVertical()
 
     int pab = borderTop()+borderBottom()+paddingTop()+paddingBottom();
 
-    Length hl = containingBlock()->style()->height();
+    RenderObject* cb = containingBlock();
+    Length hl = cb->style()->height();
     if (hl.isFixed())
-        ch = hl.value + containingBlock()->paddingTop()
-             + containingBlock()->paddingBottom();
+        ch = hl.value + cb->paddingTop()
+             + cb->paddingBottom();
     else
-        ch = containingBlock()->height();
+        ch = cb->height();
 
     if(!style()->top().isVariable())
-        t = style()->top().width(ch);
+        t = style()->top().width(ch) + cb->borderTop();
     if(!style()->bottom().isVariable())
-        b = style()->bottom().width(ch);
+        b = style()->bottom().width(ch) + cb->borderBottom();
     if(!style()->height().isVariable())
     {
         h = style()->height().width(ch);
@@ -1053,12 +1054,9 @@ void RenderBox::calcAbsoluteVertical()
 
         if (ro) static_top = ro->yPos()+ro->marginBottom()+ro->height();
 
-        RenderObject* po = parent();
-        while (po && po!=containingBlock()) {
+        for (RenderObject* po = parent(); po && po != cb; po = po->parent())
             static_top+=po->yPos();
-            po=po->parent();
-        }
-
+            
         if (h==AUTO || style()->top().isStatic())
             t = static_top;
     }
@@ -1143,8 +1141,8 @@ void RenderBox::calcAbsoluteVertical()
     
     m_marginTop = mt;
     m_marginBottom = mb;
-    m_y = t + mt + containingBlock()->borderTop();
-
+    m_y = t + mt;
+    
 //    printf("v: h=%d, t=%d, b=%d, mt=%d, mb=%d, m_y=%d\n",h,t,b,mt,mb,m_y);
 
 }
