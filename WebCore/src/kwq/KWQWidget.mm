@@ -498,8 +498,6 @@ void QWidget::setView(NSView *view)
     if (data->view)
         [data->view release];
     data->view = [view retain];
-        
-    NSRect frame = [data->view frame];
 }
 
 void QWidget::endEditing()

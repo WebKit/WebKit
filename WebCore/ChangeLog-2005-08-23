@@ -1,3 +1,9 @@
+2002-02-13  Richard Williamson  <rjw@apple.com>
+
+    Removed dead code from setView.
+    
+	* src/kwq/KWQWidget.mm: (QWidget::setView):
+
 2002-02-12  Richard Williamson  <rjw@apple.com>
 
     Made basic forms work.
