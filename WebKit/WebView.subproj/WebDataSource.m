@@ -10,6 +10,7 @@
 #import <WebKit/WebException.h>
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebHTMLRepresentation.h>
+#import <WebKit/WebKitLogging.h>
 #import <WebKit/WebKitStatisticsPrivate.h>
 #import <WebKit/WebMainResourceClient.h>
 #import <WebKit/WebView.h>
@@ -33,6 +34,8 @@
     _private = [[WebDataSourcePrivate alloc] init];
     _private->originalRequest = [request retain];
     _private->originalRequestCopy = [request copy];
+    
+    LOG(Loading, "creating datasource for %@", [request URL]);
     _private->request = [_private->originalRequest mutableCopy];
 
     ++WebDataSourceCount;

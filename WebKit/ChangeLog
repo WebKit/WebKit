@@ -1,3 +1,29 @@
+2003-05-20  Richard Williamson   <rjw@apple.com>
+
+	Fixed 3262825.
+	Fixed 3245625.
+	Fixed 3262547.
+
+	Recursively check items when going back/forward to ensure all
+	frame URLs are correct.
+
+	Added some logging to help diagnose back/forward problems.
+
+        Reviewed by John.
+
+        * History.subproj/WebHistory.m:
+        (-[WebHistory addItem:]):
+        * Misc.subproj/WebKitLogging.h:
+        * Misc.subproj/WebKitLogging.m:
+        * WebView.subproj/WebDataSource.m:
+        (-[WebDataSource initWithRequest:]):
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _createItem:]):
+        (-[WebFrame _createItemTreeWithTargetFrame:clippedAtTarget:]):
+        (-[WebFrame _transitionToCommitted:]):
+        (-[WebFrame _URLsMatchItem:]):
+        (-[WebFrame _loadItem:withLoadType:]):
+
 === Safari-80 ===
 
 2003-05-20  Ken Kocienda  <kocienda@apple.com>

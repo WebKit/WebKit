@@ -31,3 +31,5 @@ extern WebLogChannel WebKitLogCacheSizes;
 extern WebLogChannel WebKitLogFormDelegate;
 
 extern WebLogChannel WebKitLogFileDatabaseActivity;
+
+extern WebLogChannel WebKitLogHistory;

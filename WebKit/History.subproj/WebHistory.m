@@ -9,6 +9,7 @@
 #import <WebKit/WebHistoryPrivate.h>
 #import <WebKit/WebHistoryItem.h>
 #import <WebKit/WebHistoryItemPrivate.h>
+#import <WebKit/WebKitLogging.h>
 
 #import <Foundation/NSError.h>
 #import <WebKit/WebAssertions.h>
@@ -109,6 +110,7 @@ static WebHistory *_sharedHistory = nil;
 
 - (void)addItem: (WebHistoryItem *)entry
 {
+    LOG (History, "adding %@", entry);
     [_historyPrivate addItem: entry];
     [self _sendNotification: WebHistoryItemsAddedNotification
                     entries: [NSArray arrayWithObject:entry]];

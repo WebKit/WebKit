@@ -133,6 +133,7 @@ Repeat load of the same URL (by any other means of navigation other than the rel
 - (void)_restoreScrollPosition;
 - (void)_scrollToTop;
 
+- (WebHistoryItem *)_createItem: (BOOL)useOriginal;
 - (WebHistoryItem *)_createItemTreeWithTargetFrame:(WebFrame *)targetFrame clippedAtTarget:(BOOL)doClip;
 
 - (void)_resetBackForwardListToCurrent;
@@ -268,13 +269,23 @@ Repeat load of the same URL (by any other means of navigation other than the rel
     }
 }
 
-- (WebHistoryItem *)_createItem
+- (WebHistoryItem *)_createItem: (BOOL)useOriginal
 {
     WebDataSource *dataSrc = [self dataSource];
-    NSURLRequest *request = [dataSrc request];
-    NSURL *URL = [request URL];
+    NSURLRequest *request;
+    NSURL *URL;
     WebHistoryItem *bfItem;
 
+    if (useOriginal && 1) {
+        request = [dataSrc _originalRequest];
+    }
+    else {
+        request = [dataSrc request];
+    }
+    URL = [request URL];
+
+    LOG (History, "creating item for %@", request);
+    
     bfItem = [[[WebHistoryItem alloc] initWithURL:URL target:[self name] parent:[[self parentFrame] name] title:[dataSrc pageTitle]] autorelease];
     [dataSrc _addBackForwardItem:bfItem];
     [bfItem setOriginalURLString:[[[dataSrc _originalRequest] URL] absoluteString]];
@@ -298,7 +309,7 @@ Repeat load of the same URL (by any other means of navigation other than the rel
 */
 - (WebHistoryItem *)_createItemTreeWithTargetFrame:(WebFrame *)targetFrame clippedAtTarget:(BOOL)doClip
 {
-    WebHistoryItem *bfItem = [self _createItem];
+    WebHistoryItem *bfItem = [self _createItem: [self parentFrame]?YES:NO];
 
     [self _saveScrollPositionToItem:[_private previousItem]];
     if (!(doClip && self == targetFrame)) {
@@ -687,7 +698,7 @@ Repeat load of the same URL (by any other means of navigation other than the rel
                 // The only case where parentItem==nil should be when a parent frame loaded an
                 // empty URL, which doesn't set up a current item in that parent.
                 if (parentItem) {
-                    [parentItem addChildItem:[self _createItem]];
+                    [parentItem addChildItem:[self _createItem: YES]];
                 }
                 [self _makeDocumentView];
                 break;
@@ -1080,6 +1091,28 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     [[currentURL _web_URLByRemovingFragment] isEqual: [destinationURL _web_URLByRemovingFragment]]);
 }
 
+// Walk the frame tree and ensure that the URLs match the URLs in the item.
+- (BOOL)_URLsMatchItem:(WebHistoryItem *)item
+{
+    NSURL *currentURL = [[[self dataSource] request] URL];
+
+    if (![[item URL] isEqual: currentURL])
+        return NO;
+    
+    NSArray *childItems = [item children];
+    WebHistoryItem *childItem;
+    WebFrame *childFrame;
+    int i, count = [childItems count];
+    for (i = 0; i < count; i++){
+        childItem = [childItems objectAtIndex:i];
+        childFrame = [self _immediateChildFrameNamed:[childItem target]];
+        if (![childFrame _URLsMatchItem: childItem])
+            return NO;
+    }
+    
+    return YES;
+}
+
 // loads content into this frame, as specified by item
 - (void)_loadItem:(WebHistoryItem *)item withLoadType:(WebFrameLoadType)loadType
 {
@@ -1096,8 +1129,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     
     // FIXME: These checks don't match the ones in _loadURL:referrer:loadType:target:triggeringEvent:isFormSubmission:
     // Perhaps they should.
-    
-    if (!formData && ![self _shouldReloadForCurrent:itemURL andDestination:currentURL] )
+    if (!formData && ![self _shouldReloadForCurrent:itemURL andDestination:currentURL] && [self _URLsMatchItem:item] )
     {
 #if 0
         // FIXME:  We need to normalize the code paths for anchor navigation.  Something
@@ -1138,10 +1170,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
             [self _loadDataSource:newDataSource withLoadType:loadType formState:nil];            
         }
         else {
-	    // Use the original URL to ensure we get all the side-effects, such as
-	    // onLoad handlers, of any redirects that happened. An example of where
-	    // this is needed is Radar 3213556.
-            NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:itemOriginalURL];
+            NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:itemURL];
             [self _addExtraFieldsToRequest:request alwaysFromRequest: (formData != nil)?YES:NO];
 
             // If this was a repost that failed the page cache, we might try to repost the form.
