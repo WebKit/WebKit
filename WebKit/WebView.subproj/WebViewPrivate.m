@@ -828,12 +828,6 @@ NSString *_WebMainFrameURLKey = @"mainFrameURL";
     }
 }
 
-// Hack that IB calls to ensure that autoresizeFlags get set correctly.
-- (void)_finishedMakingConnections
-{
-	[self setAutoresizesSubviews:YES];
-}
-
 @end
 
 
