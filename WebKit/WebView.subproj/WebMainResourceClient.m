@@ -278,7 +278,18 @@
     ASSERT([[r URL] _webkit_shouldLoadAsEmptyDocument] || ![[dataSource _webView] defersCallbacks]);
 
     LOG(Loading, "main content type: %@", [r MIMEType]);
-
+    
+    // FIXME: Since we're not going to fix <rdar://problem/3087535> for Tiger, we should not 
+    // load multipart/x-mixed-replace content.  Pages with such content contain what is 
+    // essentially an infinite load and therefore a memory leak. Both this code and code in
+    // SubresourceClient must be removed once multipart/x-mixed-replace is fully implemented. 
+    if ([[r MIMEType] isEqualToString:@"multipart/x-mixed-replace"]) {
+        [self cancelWithError:[NSError _webKitErrorWithDomain:NSURLErrorDomain
+                                                         code:NSURLErrorUnsupportedURL
+                                                          URL:[r URL]]];
+        return;
+    }
+        
     // FIXME: This is a workaround to make web archive files work with Foundations that
     // are too old to know about web archive files. We should remove this before we ship.
     NSURL *URL = [r URL];

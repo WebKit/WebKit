@@ -1,3 +1,17 @@
+2005-02-24  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by John.
+
+	Fixed <rdar://problem/3962401> Don't load multipart/x-mixed-replace content to prevent memory leak
+
+	Since we're not going to fix <rdar://problem/3087535> for Tiger, we should not load multipart/x-mixed-replace content.  Pages with such content contain what is essentially an infinite load and therefore may leak.
+
+        * WebView.subproj/WebMainResourceClient.m: 
+        (-[WebMainResourceClient connection:didReceiveResponse:]):  Disabled loading of multipart/x-mixed-replace content until we fully implement server side push. 
+    	 * WebCoreSupport.subproj/WebSubresourceClient.m: 
+        (-[WebSubresourceClient didReceiveResponse:]): Ditto. Same exact thing for sub resources. 
+
+
 2005-02-23  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Ken.

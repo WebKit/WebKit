@@ -127,6 +127,18 @@
 - (void)didReceiveResponse:(NSURLResponse *)r
 {
     ASSERT(r);
+    
+    // FIXME: Since we're not going to fix <rdar://problem/3087535> for Tiger, we should not 
+    // load multipart/x-mixed-replace content.  Pages with such content contain what is 
+    // essentially an infinite load and therefore a memory leak. Both this code and code in 
+    // WebMainRecoureClient must be removed once multipart/x-mixed-replace is fully implemented. 
+    if ([[r MIMEType] isEqualToString:@"multipart/x-mixed-replace"]) {
+        [self cancelWithError:[NSError _webKitErrorWithDomain:NSURLErrorDomain
+                                                         code:NSURLErrorUnsupportedURL
+                                                          URL:[r URL]]];
+        return;
+    }    
+    
     // retain/release self in this delegate method since the additional processing can do
     // anything including possibly releasing self; one example of this is 3266216
     [self retain];
