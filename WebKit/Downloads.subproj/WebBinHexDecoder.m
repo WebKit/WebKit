@@ -327,6 +327,9 @@ done:
 
 - (BOOL)decodeData:(NSData *)data dataForkData:(NSData **)dataForkData resourceForkData:(NSData **)resourceForkData
 {
+    *dataForkData = nil;
+    *resourceForkData = nil;
+    
     [self setUpSourceForData:data];
     
     if (_name[0] == 0) {
@@ -335,7 +338,9 @@ done:
     ASSERT(_sawError || _name[0]);
     
     [self decodeForkWithData:dataForkData count:&_dataForkLengthRemaining CRCCheckFlag:&_dataForkCRCChecked];
-    [self decodeForkWithData:resourceForkData count:&_resourceForkLengthRemaining CRCCheckFlag:&_resourceForkCRCChecked];
+    if (_dataForkCRCChecked) {
+        [self decodeForkWithData:resourceForkData count:&_resourceForkLengthRemaining CRCCheckFlag:&_resourceForkCRCChecked];
+    }
 
     return !_sawError;
 }

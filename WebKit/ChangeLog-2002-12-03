@@ -1,5 +1,16 @@
 2002-11-06  Darin Adler  <darin@apple.com>
 
+	- fixed bug that affected BinHex-encoded files with no resource fork
+
+        * Downloads.subproj/WebBinHexDecoder.m:
+        (-[WebBinHexDecoder decodeData:dataForkData:resourceForkData:]):
+	Don't decode the resource fork unless done with the data fork.
+
+        * Downloads.subproj/WebDownloadHandler.m: (-[WebDownloadHandler receivedData:]):
+	Set the forks to nil before calling through.
+
+2002-11-06  Darin Adler  <darin@apple.com>
+
         * Downloads.subproj/WebMacBinaryDecoder.m: (+[WebMacBinaryDecoder canDecodeHeaderData:]):
 	Fix == 129 check that was supposed to be <= 129.
 

@@ -287,7 +287,8 @@
         return nil;
     }	
     
-    NSData *dataForkData, *resourceForkData;
+    NSData *dataForkData = nil;
+    NSData *resourceForkData = nil;
     
     if (![self decodeData:data dataForkData:&dataForkData resourceForkData:&resourceForkData]) {
         ERROR("Download decoding failed.");
