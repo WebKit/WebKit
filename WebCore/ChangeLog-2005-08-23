@@ -1,3 +1,17 @@
+2003-02-17  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave.
+
+        - fixed 3174332 -- REGRESSION: bad initial layout due to empty QFontMetrics
+
+        * khtml/rendering/render_html.cpp: (RenderHtml::setStyle):
+        Don't set the style's to display:BLOCK if it's display:NONE. This prevents
+        us from modifying the special FOUC style among other things.
+
+        - unrelated code cleanup
+
+        * khtml/html/html_baseimpl.cpp: Moved code around that was grouped badly.
+
 2003-02-17  David Hyatt  <hyatt@apple.com>
 
 	Missed another "Almost Strict" spot.
