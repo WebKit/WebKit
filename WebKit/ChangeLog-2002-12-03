@@ -1,3 +1,9 @@
+2002-10-18  Ken Kocienda  <kocienda@apple.com>
+
+	Removed unneeded import of WebFoundation/WebResourceLoadManager.h
+
+        * Misc.subproj/WebIconLoader.m
+
 2002-10-18  Darin Adler  <darin@apple.com>
 
         * Makefile.am: Move dependency so clean happens before build.

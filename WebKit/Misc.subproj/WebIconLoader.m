@@ -12,7 +12,6 @@
 #import <WebKit/WebIconDatabasePrivate.h>
 
 #import <WebFoundation/WebNSURLExtras.h>
-#import <WebFoundation/WebResourceLoadManager.h>
 #import <WebFoundation/WebResourceHandle.h>
 #import <WebFoundation/WebResourceRequest.h>
 
