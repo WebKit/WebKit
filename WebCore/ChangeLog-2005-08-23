@@ -1,3 +1,17 @@
+2002-09-10  David Hyatt  <hyatt@apple.com>
+
+	Fix FOUC to behave correctly.  I was smoking crack when I
+	implemented this the first time (mainly because KHTML had
+	a badly named API that didn't mean even remotely what
+	I thought it should).
+	
+        * khtml/html/html_headimpl.cpp:
+        (HTMLLinkElementImpl::process):
+        (HTMLLinkElementImpl::setStyleSheet):
+        (HTMLLinkElementImpl::sheetLoaded):
+        (HTMLStyleElementImpl::childrenChanged):
+        (HTMLStyleElementImpl::sheetLoaded):
+
 2002-09-10  Maciej Stachowiak  <mjs@apple.com>
 
 	WebCore part of fix for:

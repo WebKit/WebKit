@@ -152,8 +152,6 @@ void HTMLLinkElementImpl::parseAttribute(AttributeImpl *attr)
     }
 }
 
-static bool inProcessFunction = false;
-
 void HTMLLinkElementImpl::process()
 {
     if (!inDocument())
@@ -186,28 +184,23 @@ void HTMLLinkElementImpl::process()
         // ### there may be in some situations e.g. for an editor or script to manipulate
         if( m_media.isNull() || m_media.contains("screen") || m_media.contains("all") || m_media.contains("print") ) {
             m_loading = true;
-            inProcessFunction = true;
+
+            // Add ourselves as a pending sheet.
+            getDocument()->addPendingSheet();
             
             QString chset = getAttribute( ATTR_CHARSET ).string();
             if (m_cachedSheet)
-		m_cachedSheet->deref(this);
+                m_cachedSheet->deref(this);
             m_cachedSheet = getDocument()->docLoader()->requestStyleSheet(m_url, chset);
             if (m_cachedSheet)
-		m_cachedSheet->ref(this);
-
-            // If the stylesheet was synchronously available, then our m_loading variable will have
-            // been set to false when the cached sheet above gets a ref.  In this case, we don't
-            // need to add the sheet to our list of pending sheets, because it has already loaded.
-            if (m_loading)
-                getDocument()->addPendingSheet(); // Let the document know that we're pending.
-            inProcessFunction = false;
+                m_cachedSheet->ref(this);
         }
     }
     else if (m_sheet) {
-	// we no longer contain a stylesheet, e.g. perhaps rel or type was changed
-	m_sheet->deref();
-	m_sheet = 0;
-	getDocument()->updateStyleSelector();
+        // we no longer contain a stylesheet, e.g. perhaps rel or type was changed
+        m_sheet->deref();
+        m_sheet = 0;
+        getDocument()->updateStyleSelector();
     }
 }
 
@@ -229,7 +222,7 @@ void HTMLLinkElementImpl::setStyleSheet(const DOM::DOMString &url, const DOM::DO
 //    kdDebug( 6030 ) << "**** current medium: " << m_media << endl;
 
     if (m_sheet)
-	m_sheet->deref();
+        m_sheet->deref();
     m_sheet = new CSSStyleSheetImpl(this, url);
     kdDebug( 6030 ) << "style sheet parse mode strict = " << ( getDocument()->parseMode() == DocumentImpl::Strict ) << endl;
     m_sheet->ref();
@@ -240,11 +233,9 @@ void HTMLLinkElementImpl::setStyleSheet(const DOM::DOMString &url, const DOM::DO
 
     m_loading = false;
 
-    // Just tell the doc about the sheet.
-    if (!inProcessFunction)
+    // Tell the doc about the sheet.
+    if (!isLoading())
         getDocument()->stylesheetLoaded();
-    else
-        getDocument()->updateStyleSelector();
 }
 
 bool HTMLLinkElementImpl::isLoading() const
@@ -258,7 +249,8 @@ bool HTMLLinkElementImpl::isLoading() const
 
 void HTMLLinkElementImpl::sheetLoaded()
 {
-    getDocument()->updateStyleSelector();
+    if (!isLoading())
+        getDocument()->stylesheetLoaded();
 }
 
 // -------------------------------------------------------------------------
@@ -389,12 +381,14 @@ void HTMLStyleElementImpl::childrenChanged()
     
     if ((m_type.isEmpty() || m_type == "text/css") // Type must be empty or CSS
          && (m_media.isNull() || m_media.contains("screen") || m_media.contains("all") || m_media.contains("print"))) {
+        getDocument()->addPendingSheet();
         m_sheet = new CSSStyleSheetImpl(this);
         m_sheet->ref();
         m_sheet->parseString( text, (getDocument()->parseMode() == DocumentImpl::Strict) );
     }
-    
-    getDocument()->updateStyleSelector();
+
+    if (!isLoading())
+        getDocument()->stylesheetLoaded();
 }
 
 bool HTMLStyleElementImpl::isLoading() const
@@ -405,8 +399,8 @@ bool HTMLStyleElementImpl::isLoading() const
 
 void HTMLStyleElementImpl::sheetLoaded()
 {
-    if (m_sheet)
-        getDocument()->updateStyleSelector();
+    if (!isLoading())
+        getDocument()->stylesheetLoaded();
 }
 
 // -------------------------------------------------------------------------
