@@ -259,6 +259,7 @@
 				F5488CF602CB04EE01FF6274,
 				F5927D4B02D253C401CA2DBB,
 				F5927D4F02D26C5E01CA2DBB,
+				F508472402DED36E01257167,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -336,6 +337,7 @@
 				F5E0E10B02BC45F8018635CA,
 				F5A7B11C02BC8413018635CA,
 				F5488CF702CB04EE01FF6274,
+				F508472502DED36E01257167,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1312,6 +1314,30 @@
 		};
 		F5065229027F557E01C1A526 = {
 			fileRef = F5065220027F557E01C1A526;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F508472202DED36E01257167 = {
+			isa = PBXFileReference;
+			name = IFPanelCookieAcceptHandler.h;
+			path = Panels.subproj/IFPanelCookieAcceptHandler.h;
+			refType = 4;
+		};
+		F508472302DED36E01257167 = {
+			isa = PBXFileReference;
+			name = IFPanelCookieAcceptHandler.m;
+			path = Panels.subproj/IFPanelCookieAcceptHandler.m;
+			refType = 4;
+		};
+		F508472402DED36E01257167 = {
+			fileRef = F508472202DED36E01257167;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F508472502DED36E01257167 = {
+			fileRef = F508472302DED36E01257167;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -2317,7 +2343,12 @@
 			children = (
 				F8CA15B5029A39D901000122,
 				F8CA15B6029A39D901000122,
+				F83DCC71029D09F301000131,
+				F83DCC72029D09F301000131,
+				F508472202DED36E01257167,
+				F508472302DED36E01257167,
 				F8CA15B7029A39D901000122,
+				F8CA15C1029A3E0D01000122,
 				F8CA15B8029A39D901000122,
 				F8CA15C1029A3E0D01000122,
 				F83DCC71029D09F301000131,

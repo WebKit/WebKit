@@ -1,3 +1,20 @@
+2002-07-15  Maciej Stachowiak  <mjs@apple.com>
+
+	WebKit part of fix for Radar 2896356 - cookie "ask for each site" not implemented yet
+
+        * Panels.subproj/IFPanelCookieAcceptHandler.h: Added.
+        * Panels.subproj/IFPanelCookieAcceptHandler.m: Added.
+        (-[IFPanelCookieAcceptHandler init]):
+        (-[IFPanelCookieAcceptHandler dealloc]):
+        (-[IFPanelCookieAcceptHandler readyToStartCookieAcceptCheck:]):
+        (-[IFPanelCookieAcceptHandler startCookieAcceptCheck:]):
+        (-[IFPanelCookieAcceptHandler cancelCookieAcceptCheck:]):
+        (-[IFPanelCookieAcceptHandler doneWithCheck:returnCode:contextInfo:]):
+        * Panels.subproj/IFStandardPanels.m:
+        (-[IFStandardPanels setUseStandardCookieAcceptPanel:]):
+        (-[IFStandardPanels useStandardCookieAcceptPanel]):
+        * WebKit.pbproj/project.pbxproj:
+
 2002-07-14  Maciej Stachowiak  <mjs@apple.com>
 
         More workarounds for the Objective C++ typecasting bug.
