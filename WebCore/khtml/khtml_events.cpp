@@ -35,8 +35,14 @@ khtml::MouseEvent::MouseEvent( const char *name, QMouseEvent *qmouseEvent, int x
   m_url( url ), m_target(target), m_innerNode( innerNode )
 {
   d = 0;
-  if (innerNode.handle() && innerNode.handle()->renderer())
-      innerNode.handle()->renderer()->absolutePosition(m_nodeAbsX, m_nodeAbsY);
+  if (innerNode.handle() && innerNode.handle()->renderer()) {
+      // FIXME: For text nodes, for now, we get the absolute position from
+      // the parent.
+      DOM::Node n = innerNode;
+      if (n.nodeType() == Node::TEXT_NODE)
+        n = n.parentNode();
+      n.handle()->renderer()->absolutePosition(m_nodeAbsX, m_nodeAbsY);
+  }
 }
 
 khtml::MouseEvent::~MouseEvent()
