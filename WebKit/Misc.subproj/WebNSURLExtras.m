@@ -735,7 +735,7 @@ static NSString *mapHostNames(NSString *string, BOOL encode)
         NSString *substring = [self substringWithRange:range];
         substring = (NSString *)CFURLCreateStringByReplacingPercentEscapes(NULL, (CFStringRef)substring, CFSTR(""));
         if (substring != nil) {
-            string = substring;
+            string = [substring autorelease];
             range = NSMakeRange(0, [string length]);
         }
     }

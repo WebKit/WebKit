@@ -1,3 +1,39 @@
+2004-05-28  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - various editing-related improvements
+
+        * khtml/xml/dom_selection.h: Removed UP and DOWN directions, and added PARAGRAPH granularity.
+        * khtml/xml/dom_selection.cpp:
+        (DOM::Selection::modify): Got rid of the UP and DOWN directions, and made movement
+        between lines happen when granularity is LINE. Added a new unimplemented granularity:
+        PARAGRAPH.
+        (DOM::Selection::validate): Remove some unneeded APPLE_CHANGES. The code need not be ifdef'd.
+        (DOM::Selection::debugPosition): Ditto.
+
+        * kwq/WebCoreBridge.h: Removed WebSelectUp and WebSelectDown, and added WebSelectByParagraph.
+        Added stringForRange: and selectedDOMRangeWithGranularity:, and renamed replaceSelectionWithNewline
+        to insertNewline because it has the insertText: semantic, not the replaceSelectionWithText: one.
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge stringForRange:]): Added.
+        (-[WebCoreBridge selectedDOMRangeWithGranularity:]): Added.
+        (-[WebCoreBridge alterCurrentSelection:direction:granularity:]): Updated code to understand
+        that vertical movement is based on granularity now, not direction.
+        (-[WebCoreBridge replaceSelectionWithFragment:selectReplacement:]): Moved an ensureCaretVisible
+        from the WebKit down here. I think perhaps this should go down even further in WebCore.
+        (-[WebCoreBridge insertNewline]): Renamed, and moved ensureCaretVisible here.
+        (-[WebCoreBridge insertText:]): Moved ensureCaretVisible here.
+        (-[WebCoreBridge deleteKeyPressed]): Moved ensureCaretVisible here.
+
+        * khtml/xml/dom_position.cpp: Some ifdef tweaks.
+
+        * khtml/misc/helper.cpp: Namespace and formatting tweaks.
+        * khtml/misc/helper.h: Removed some unused stuff.
+
+        * khtml/dom/dom2_range.h: Make range constructor public so that anyone with
+        a RangeImpl can easily make a Range.
+
 2004-05-28  Richard Williamson   <rjw@apple.com>
 
 	setStrokeColor and setFillColor now support

@@ -47,8 +47,8 @@ class Selection
 public:
     enum EState { NONE, CARET, RANGE };
     enum EAlter { MOVE, EXTEND };
-    enum EDirection { FORWARD, BACKWARD, RIGHT, LEFT, UP, DOWN };
-    enum ETextGranularity { CHARACTER, WORD, LINE };
+    enum EDirection { FORWARD, BACKWARD, RIGHT, LEFT };
+    enum ETextGranularity { CHARACTER, WORD, LINE, PARAGRAPH };
 
     // These match the AppKit values for these concepts.
     // From NSTextView.h:

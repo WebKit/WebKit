@@ -2118,7 +2118,6 @@ static WebHTMLView *lastHitView = nil;
     WebView *webView = [self _webView];
     if ([[webView _editingDelegateForwarder] webView:webView shouldChangeSelectedDOMRange:[bridge selectedDOMRange] toDOMRange:proposedRange affinity:[bridge selectionAffinity] stillSelecting:NO]) {
         [bridge alterCurrentSelection:alteration direction:direction granularity:granularity];
-        [bridge ensureCaretVisible];
     }
 }
 
@@ -2134,12 +2133,12 @@ static WebHTMLView *lastHitView = nil;
 
 - (void)moveDown:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByMoving direction:WebSelectDown granularity:WebSelectByCharacter];
+    [self _alterCurrentSelection:WebSelectByMoving direction:WebSelectForward granularity:WebSelectByLine];
 }
 
 - (void)moveDownAndModifySelection:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByExtending direction:WebSelectDown granularity:WebSelectByCharacter];
+    [self _alterCurrentSelection:WebSelectByExtending direction:WebSelectForward granularity:WebSelectByLine];
 }
 
 - (void)moveForward:(id)sender
@@ -2204,12 +2203,12 @@ static WebHTMLView *lastHitView = nil;
 
 - (void)moveUp:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByMoving direction:WebSelectUp granularity:WebSelectByCharacter];
+    [self _alterCurrentSelection:WebSelectByMoving direction:WebSelectBackward granularity:WebSelectByLine];
 }
 
 - (void)moveUpAndModifySelection:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByExtending direction:WebSelectUp granularity:WebSelectByCharacter];
+    [self _alterCurrentSelection:WebSelectByExtending direction:WebSelectBackward granularity:WebSelectByLine];
 }
 
 - (void)moveWordBackward:(id)sender
@@ -2262,22 +2261,31 @@ static WebHTMLView *lastHitView = nil;
     ERROR("unimplemented");
 }
 
-
-    /* Selections */
+- (void)_expandSelectionToGranularity:(WebSelectionGranularity)granularity
+{
+    WebBridge *bridge = [self _bridge];
+    DOMRange *range = [bridge selectedDOMRangeWithGranularity:granularity];
+    if (range && ![range collapsed]) {
+        WebView *webView = [self _webView];
+        if ([[webView _editingDelegateForwarder] webView:webView shouldChangeSelectedDOMRange:[bridge selectedDOMRange] toDOMRange:range affinity:[bridge selectionAffinity] stillSelecting:NO]) {
+            [bridge setSelectedDOMRange:range affinity:[bridge selectionAffinity]];
+        }
+    }
+}
 
 - (void)selectParagraph:(id)sender
 {
-    ERROR("unimplemented");
+    [self _expandSelectionToGranularity:WebSelectByParagraph];
 }
 
 - (void)selectLine:(id)sender
 {
-    ERROR("unimplemented");
+    [self _expandSelectionToGranularity:WebSelectByLine];
 }
 
 - (void)selectWord:(id)sender
 {
-    ERROR("unimplemented");
+    [self _expandSelectionToGranularity:WebSelectByWord];
 }
 
 - (void)copy:(id)sender
@@ -2329,7 +2337,7 @@ static WebHTMLView *lastHitView = nil;
     WebView *webView = [self _webView];
     WebBridge *bridge = [self _bridge];
     if ([[webView _editingDelegateForwarder] webView:webView shouldInsertText:text replacingDOMRange:[bridge selectedDOMRange] givenAction:WebViewInsertActionPasted]) {
-        [[self _bridge] replaceSelectionWithText:text selectReplacement:NO];
+        [bridge replaceSelectionWithText:text selectReplacement:NO];
     }
 }
 
@@ -2338,9 +2346,24 @@ static WebHTMLView *lastHitView = nil;
     [self _replaceSelectionWithPasteboard:[NSPasteboard generalPasteboard] selectReplacement:NO allowPlainText:NO];
 }
 
+- (DOMCSSStyleDeclaration *)_fontManagerOperationAsStyle
+{
+    WebBridge *bridge = [self _bridge];
+    DOMCSSStyleDeclaration *style = [[bridge DOMDocument] createCSSStyleDeclaration];
+    //NSFontManager *fontManager = [NSFontManager sharedFontManager];
+    //NSFont *font = [fontManager convertFont:[NSFont]]
+    // FIXME: Figure out what style change to apply!
+    return style;
+}
+
 - (void)changeFont:(id)sender
 {
-    ERROR("unimplemented");
+    DOMCSSStyleDeclaration *style = [self _fontManagerOperationAsStyle];
+    WebView *webView = [self _webView];
+    WebBridge *bridge = [self _bridge];
+    if ([[webView _editingDelegateForwarder] webView:webView shouldApplyStyle:style toElementsInDOMRange:[bridge selectedDOMRange]]) {
+        [bridge applyStyle:style];
+    }
 }
 
 - (void)changeAttributes:(id)sender
@@ -2388,7 +2411,7 @@ static WebHTMLView *lastHitView = nil;
     WebView *webView = [self _webView];
     WebBridge *bridge = [self _bridge];
     if ([[webView _editingDelegateForwarder] webView:webView shouldInsertText:@"\t" replacingDOMRange:[bridge selectedDOMRange] givenAction:WebViewInsertActionPasted]) {
-        [[self _bridge] insertText:@"\t"];
+        [bridge insertText:@"\t"];
     }
 }
 
@@ -2404,14 +2427,14 @@ static WebHTMLView *lastHitView = nil;
     WebView *webView = [self _webView];
     WebBridge *bridge = [self _bridge];
     if ([[webView _editingDelegateForwarder] webView:webView shouldInsertText:@"\n" replacingDOMRange:[bridge selectedDOMRange] givenAction:WebViewInsertActionTyped]) {
-        [bridge replaceSelectionWithNewline];
-        [bridge ensureCaretVisible];
+        [bridge insertNewline];
     }
 }
 
 - (void)insertParagraphSeparator:(id)sender
 {
-    ERROR("unimplemented");
+    // FIXME: Should this do something different?
+    [self insertNewline:sender];
 }
 
 - (void)changeCaseOfLetter:(id)sender
@@ -2419,19 +2442,31 @@ static WebHTMLView *lastHitView = nil;
     ERROR("unimplemented");
 }
 
+- (void)_changeWordCaseWithSelector:(SEL)selector
+{
+    WebView *webView = [self _webView];
+    WebBridge *bridge = [self _bridge];
+    [self selectWord:nil];
+    NSString *word = [[bridge selectedString] performSelector:selector];
+    // FIXME: Does this need a different action context other than "typed"?
+    if ([[webView _editingDelegateForwarder] webView:webView shouldInsertText:word replacingDOMRange:[bridge selectedDOMRange] givenAction:WebViewInsertActionTyped]) {
+        [bridge replaceSelectionWithText:word selectReplacement:NO];
+    }
+}
+
 - (void)uppercaseWord:(id)sender
 {
-    ERROR("unimplemented");
+    [self _changeWordCaseWithSelector:@selector(uppercaseString)];
 }
 
 - (void)lowercaseWord:(id)sender
 {
-    ERROR("unimplemented");
+    [self _changeWordCaseWithSelector:@selector(lowercaseString)];
 }
 
 - (void)capitalizeWord:(id)sender
 {
-    ERROR("unimplemented");
+    [self _changeWordCaseWithSelector:@selector(capitalizedString)];
 }
 
 - (void)deleteForward:(id)sender
@@ -2446,7 +2481,6 @@ static WebHTMLView *lastHitView = nil;
         WebView *webView = [self _webView];
         if ([[webView _editingDelegateForwarder] webView:webView shouldDeleteDOMRange:[bridge selectedDOMRange]]) {
             [bridge deleteKeyPressed];
-            [bridge ensureCaretVisible];
         }
     }
 }
@@ -2499,13 +2533,174 @@ static WebHTMLView *lastHitView = nil;
 
 - (void)checkSpelling:(id)sender
 {
-    ERROR("unimplemented");
+#if 0
+    NSTextStorage *text = _getTextStorage(self);
+    NSTextViewSharedData *sharedData = _getSharedData(self);
+    if (text && ([text length] > 0) && [self isSelectable]) {
+        NSSpellChecker *checker = [NSSpellChecker sharedSpellChecker];
+        NSRange selCharRange = [self selectedRange];
+        NSRange misspellCharRange = {0, 0}, grammarCharRange = {0, 0};
+        unsigned i, count;
+        NSArray *grammarRanges = nil, *grammarDescriptions = nil;
+
+        if (!checker || [checker windowIsSpellingPanel:[self window]]) return;
+
+        misspellCharRange = [checker checkSpellingOfString:[text string] startingAt:NSMaxRange(selCharRange) language:nil wrap:YES inSpellDocumentWithTag:[self spellCheckerDocumentTag] wordCount:NULL];
+#if GRAMMAR_CHECKING
+        grammarCharRange = [checker checkGrammarOfString:[text string] startingAt:NSMaxRange(selCharRange) language:nil wrap:YES inSpellDocumentWithTag:[self spellCheckerDocumentTag] ranges:&grammarRanges descriptions:&grammarDescriptions reconnectOnError:YES];
+#endif
+
+        if (misspellCharRange.length > 0 && (grammarCharRange.length == 0 || misspellCharRange.location <= grammarCharRange.location)) {
+            // select the text and drive the panel
+            [self setSelectedRange:misspellCharRange affinity:NSSelectionAffinityUpstream stillSelecting:NO];
+            if ([self isEditable]) {
+                [self _addSpellingAttributeForRange:misspellCharRange];
+                sharedData->_excludedSpellingCharRange = misspellCharRange;
+            }
+            [self scrollRangeToVisible:misspellCharRange];
+            [checker updateSpellingPanelWithMisspelledWord:[[text string] substringWithRange:misspellCharRange]];
+        } else if (grammarCharRange.length > 0) {
+            [self setSelectedRange:grammarCharRange affinity:NSSelectionAffinityUpstream stillSelecting:NO];
+            count = [grammarRanges count];
+            if ([self isEditable]) {
+                for (i = 0; i < count; i++) {
+                    NSRange range = [grammarRanges rangeAtIndex:i];
+                    range.location += grammarCharRange.location;
+                    [self _addSpellingAttributeForRange:range];
+                    [_getLayoutManager(self) addTemporaryAttributes:[NSDictionary dictionaryWithObjectsAndKeys:[grammarDescriptions objectAtIndex:i], NSToolTipAttributeName, nil] forCharacterRange:range];
+                }
+            }
+            [self scrollRangeToVisible:grammarCharRange];
+        } else {
+            // Cause the beep to indicate there are no more misspellings.
+            [checker updateSpellingPanelWithMisspelledWord:@""];
+        }
+    }
+#endif
 }
 
 - (void)showGuessPanel:(id)sender
 {
-    ERROR("unimplemented");
+#if 0
+    NSTextStorage *text = _getTextStorage(self);
+    NSTextViewSharedData *sharedData = _getSharedData(self);
+    NSSpellChecker *checker = [NSSpellChecker sharedSpellChecker];
+    if (text && ([text length] > 0) && [self isSelectable]) {
+        NSRange selCharRange = [self selectedRange];
+        NSRange misspellCharRange = {0, 0};
+        if (checker && ![checker windowIsSpellingPanel:[self window]]) {
+            misspellCharRange = [checker checkSpellingOfString:[text string] startingAt:((selCharRange.location > 0) ? (selCharRange.location - 1) : 0) language:nil wrap:YES inSpellDocumentWithTag:[self spellCheckerDocumentTag] wordCount:NULL];
+            if (misspellCharRange.length) {
+                // select the text and drive the panel
+                [self setSelectedRange:misspellCharRange affinity:NSSelectionAffinityUpstream stillSelecting:NO];
+                if ([self isEditable]) {
+                    [self _addSpellingAttributeForRange:misspellCharRange];
+                    sharedData->_excludedSpellingCharRange = misspellCharRange;
+                }
+                [self scrollRangeToVisible:misspellCharRange];
+                [checker updateSpellingPanelWithMisspelledWord:[[text string] substringWithRange:misspellCharRange]];
+            }
+        }
+    }
+    if (checker) {
+        [[checker spellingPanel] orderFront:sender];
+    }
+#endif
 }
+
+#if 0
+
+- (void)_changeSpellingToWord:(NSString *)newWord {
+    NSRange charRange = [self rangeForUserTextChange];
+    if ([self isEditable] && charRange.location != NSNotFound) {
+        NSSpellChecker *checker = [NSSpellChecker sharedSpellChecker];
+        if (!checker || [checker windowIsSpellingPanel:[self window]]) return;
+
+        // Don't correct to empty string.
+        if ([newWord isEqualToString:@""]) return;
+
+        if ([self shouldChangeTextInRange:charRange replacementString:newWord]) {
+            [self replaceCharactersInRange:charRange withString:newWord];
+            charRange.length = [newWord length];
+            [self setSelectedRange:charRange affinity:NSSelectionAffinityUpstream stillSelecting:NO];
+            [self didChangeText];
+        }
+    }
+}
+
+- (void)_changeSpellingFromMenu:(id)sender {
+    [self _changeSpellingToWord:[sender title]];
+}
+
+- (void)changeSpelling:(id)sender {
+    [self _changeSpellingToWord:[[sender selectedCell] stringValue]];
+}
+
+- (void)ignoreSpelling:(id)sender {
+    NSRange charRange = [self rangeForUserTextChange];
+    if ([self isEditable]) {
+        NSSpellChecker *checker = [NSSpellChecker sharedSpellChecker];
+        NSString *stringToIgnore;
+        unsigned int length;
+
+        if (!checker) return;
+
+        stringToIgnore = [sender stringValue];
+        length = [stringToIgnore length];
+        if (stringToIgnore && length > 0) {
+            [checker ignoreWord:stringToIgnore inSpellDocumentWithTag:[self spellCheckerDocumentTag]];
+            if (length == charRange.length && [stringToIgnore isEqualToString:[[_getTextStorage(self) string] substringWithRange:charRange]]) {
+                [self _removeSpellingAttributeForRange:charRange];
+            }
+        }
+    }
+}
+
+- (void)_ignoreSpellingFromMenu:(id)sender {
+    NSRange charRange = [self rangeForUserTextChange];
+    if ([self isEditable] && charRange.location != NSNotFound && charRange.length > 0) {
+        NSSpellChecker *checker = [NSSpellChecker sharedSpellChecker];
+        if (!checker || [checker windowIsSpellingPanel:[self window]]) return;
+        [self _removeSpellingAttributeForRange:charRange];
+        [checker ignoreWord:[[_getTextStorage(self) string] substringWithRange:charRange] inSpellDocumentWithTag:[self spellCheckerDocumentTag]];
+    }
+}
+
+- (void)_learnSpellingFromMenu:(id)sender {
+    NSRange charRange = [self rangeForUserTextChange];
+    if ([self isEditable] && charRange.location != NSNotFound && charRange.length > 0) {
+        NSSpellChecker *checker = [NSSpellChecker sharedSpellChecker];
+        if (!checker || [checker windowIsSpellingPanel:[self window]]) return;
+        [self _removeSpellingAttributeForRange:charRange];
+        [checker learnWord:[[_getTextStorage(self) string] substringWithRange:charRange]];
+    }
+}
+
+- (void)_forgetSpellingFromMenu:(id)sender {
+    NSRange charRange = [self rangeForUserTextChange];
+    if ([self isEditable] && charRange.location != NSNotFound && charRange.length > 0) {
+        NSSpellChecker *checker = [NSSpellChecker sharedSpellChecker];
+        if (!checker || [checker windowIsSpellingPanel:[self window]]) return;
+        [checker forgetWord:[[_getTextStorage(self) string] substringWithRange:charRange]];
+    }
+}
+
+- (void)_openLinkFromMenu:(id)sender {
+    NSTextStorage *text = _getTextStorage(self);
+    NSRange charRange = [self selectedRange];
+    if (charRange.location != NSNotFound && charRange.length > 0) {
+        id link = [text attribute:NSLinkAttributeName atIndex:charRange.location effectiveRange:NULL];
+        if (link) {
+            [self clickedOnLink:link atIndex:charRange.location];
+        } else {
+            NSString *string = [[text string] substringWithRange:charRange];
+            link = [NSURL URLWithString:string];
+            if (link) [[NSWorkspace sharedWorkspace] openURL:link];
+        }
+    }
+}
+
+#endif
 
 - (void)performFindPanelAction:(id)sender
 {
@@ -2514,14 +2709,14 @@ static WebHTMLView *lastHitView = nil;
 
 - (void)startSpeaking:(id)sender
 {
-    NSString *string = [self selectedString];
-    if ([string length] == 0) {
-        // FIXME: This cast must go away, because otherwise we have XML bugs.
-        // We agreed to do this by just adding another bridge method analogous to
-        // selectedString rather than trying to straighten this out in the DOM API for now.
-        string = [(DOMHTMLElement *)[[[self _bridge] DOMDocument] documentElement] outerText];
+    WebBridge *bridge = [self _bridge];
+    DOMRange *range = [bridge selectedDOMRange];
+    if (!range || [range collapsed]) {
+        DOMDocument *document = [bridge DOMDocument];
+        range = [document createRange];
+        [range selectNode:document];
     }
-    [NSApp speakString:string];
+    [NSApp speakString:[bridge stringForRange:range]];
 }
 
 - (void)stopSpeaking:(id)sender
@@ -2536,7 +2731,6 @@ static WebHTMLView *lastHitView = nil;
         WebView *webView = [self _webView];
         if ([[webView _editingDelegateForwarder] webView:webView shouldInsertText:text replacingDOMRange:[bridge selectedDOMRange] givenAction:WebViewInsertActionTyped]) {
             [bridge insertText:text];
-            [bridge ensureCaretVisible];
         }
     }
 }
@@ -2585,7 +2779,6 @@ static WebHTMLView *lastHitView = nil;
 
 @implementation WebHTMLView (WebInternal)
 
-// FIXME: Move to WebHTMLView.
 - (void)_updateFontPanel
 {
     // FIXME: NSTextView bails out if becoming or resigning first responder, for which it has ivar flags. Not

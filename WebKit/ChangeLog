@@ -1,3 +1,44 @@
+2004-05-28  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - various editing-related improvements
+        - fixed <rdar://problem/3655366>: (Editing: -selectParagraph: method unimplemented (WebKit editing API))
+        - fixed <rdar://problem/3655367>: (Editing: -selectLine: method unimplemented (WebKit editing API))
+        - fixed <rdar://problem/3655369>: (Editing: -selectWord: method unimplemented (WebKit editing API))
+        - fixed <rdar://problem/3655392>: (Editing: -uppercaseWord: method unimplemented (WebKit editing API))
+        - fixed <rdar://problem/3655393>: (Editing: -lowercaseWord: method unimplemented (WebKit editing API))
+        - fixed <rdar://problem/3655394>: (Editing: -capitalizeWord: method unimplemented (WebKit editing API))
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _alterCurrentSelection:direction:granularity:]): Removed the call to
+        ensureCaretVisible. This is now handled on the other side of the bridge.
+        (-[WebHTMLView moveDown:]): Changed to use WebSelectByLine granularity instead of
+        WebSelectDown direction.
+        (-[WebHTMLView moveDownAndModifySelection:]): Ditto.
+        (-[WebHTMLView moveUp:]): Ditto.
+        (-[WebHTMLView moveUpAndModifySelection:]): Ditto.
+        (-[WebHTMLView _expandSelectionToGranularity:]): Added.
+        (-[WebHTMLView selectParagraph:]): Implemented by calling _expandSelectionToGranularity.
+        (-[WebHTMLView selectLine:]): Ditto.
+        (-[WebHTMLView selectWord:]): Ditto.
+        (-[WebHTMLView _fontManagerOperationAsStyle]): Added. Placeholder for the job of figuring
+        out what style change to make based on NSFontManager.
+        (-[WebHTMLView changeFont:]): Implemented, but not really tested because guts are still
+        missing due to lack of above method.
+        (-[WebHTMLView insertTab:]): Removed the call to ensureCaretVisible.
+        (-[WebHTMLView insertNewline:]): Removed the call to ensureCaretVisible.
+        (-[WebHTMLView insertParagraphSeparator:]): Made this insert a newline for now.
+        (-[WebHTMLView _changeWordCaseWithSelector:]): Added.
+        (-[WebHTMLView uppercaseWord:]): Implemented by calling _changeWordCaseWithSelector.
+        (-[WebHTMLView lowercaseWord:]): Ditto.
+        (-[WebHTMLView capitalizeWord:]): Ditto.
+        (-[WebHTMLView deleteBackward:]): Removed the call to ensureCaretVisible.
+        (-[WebHTMLView checkSpelling:]): Put a pile of AppKit code in here as a placeholder.
+        (-[WebHTMLView startSpeaking:]): Use the new stringForRange: method instead of outerText.
+        That way we can handle cases where the entire document is selected.
+        (-[WebHTMLView insertText:]): Removed the call to ensureCaretVisible.
+
 2004-05-28  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3672129>: (selection deselects when clicking editable WebView in background window)

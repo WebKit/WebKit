@@ -2,7 +2,7 @@
  * This file is part of the CSS implementation for KDE.
  *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2003 Apple Computer, Inc.
+ * Copyright (C) 2004 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -27,18 +27,22 @@
 #include "KWQTextUtilities.h"
 #endif
 
-QPainter *khtml::printpainter = 0;
+namespace khtml {
 
-void khtml::setPrintPainter( QPainter *printer )
+QPainter *printpainter = 0;
+
+void setPrintPainter( QPainter *printer )
 {
     printpainter = printer;
 }
 
-void khtml::findWordBoundary(QChar *chars, int len, int position, int *start, int *end)
+void findWordBoundary(QChar *chars, int len, int position, int *start, int *end)
 {
 #if APPLE_CHANGES
     KWQFindWordBoundary(chars, len, position, start, end);
 #else
     // KDE implementation
 #endif
+}
+
 }

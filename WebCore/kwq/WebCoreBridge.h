@@ -89,24 +89,23 @@ typedef enum {
     WebCoreDevicePrinter
 } WebCoreDeviceType;
 
-typedef enum { 
-    WebSelectByMoving, 
-    WebSelectByExtending 
+typedef enum {
+    WebSelectByMoving,
+    WebSelectByExtending
 } WebSelectionAlteration;
 
-typedef enum { 
-    WebSelectForward, 
-    WebSelectBackward, 
-    WebSelectRight, 
-    WebSelectLeft, 
-    WebSelectUp, 
-    WebSelectDown,
+typedef enum {
+    WebSelectForward,
+    WebSelectBackward,
+    WebSelectRight,
+    WebSelectLeft
 } WebSelectionDirection;
 
-typedef enum { 
-    WebSelectByCharacter, 
-    WebSelectByWord, 
-    WebSelectByLine 
+typedef enum {
+    WebSelectByCharacter,
+    WebSelectByWord,
+    WebSelectByLine,
+    WebSelectByParagraph
 } WebSelectionGranularity;
 
 
@@ -241,6 +240,8 @@ typedef enum {
 - (NSAttributedString *)selectedAttributedString;
 - (NSString *)selectedString;
 
+- (NSString *)stringForRange:(DOMRange *)range;
+
 - (NSString *)markupStringFromNode:(DOMNode *)node nodes:(NSArray **)nodes;
 - (NSString *)markupStringFromRange:(DOMRange *)range nodes:(NSArray **)nodes;
 
@@ -286,6 +287,8 @@ typedef enum {
 
 - (void)undoEditing:(id)arg;
 - (void)redoEditing:(id)arg;
+
+- (DOMRange *)selectedDOMRangeWithGranularity:(WebSelectionGranularity)granularity;
 - (DOMRange *)rangeByAlteringCurrentSelection:(WebSelectionAlteration)alteration direction:(WebSelectionDirection)direction granularity:(WebSelectionGranularity)granularity;
 - (void)alterCurrentSelection:(WebSelectionAlteration)alteration direction:(WebSelectionDirection)direction granularity:(WebSelectionGranularity)granularity;
 
@@ -296,9 +299,9 @@ typedef enum {
 - (void)replaceSelectionWithNode:(DOMNode *)node selectReplacement:(BOOL)selectReplacement;
 - (void)replaceSelectionWithMarkupString:(NSString *)markupString baseURLString:(NSString *)baseURLString selectReplacement:(BOOL)selectReplacement;
 - (void)replaceSelectionWithText:(NSString *)text selectReplacement:(BOOL)selectReplacement;
-- (void)replaceSelectionWithNewline;
 
 - (void)insertText:(NSString *)text;
+- (void)insertNewline;
 
 - (void)setSelectionToDragCaret;
 - (void)moveSelectionToDragCaret:(DOMDocumentFragment *)selectionFragment;

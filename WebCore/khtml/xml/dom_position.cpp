@@ -40,6 +40,9 @@
 #if APPLE_CHANGES
 #include "KWQAssertions.h"
 #include "KWQLogging.h"
+#else
+#define ASSERT(assertion) assert(assertion)
+#define LOG(channel, formatAndArgs...) ((void)0)
 #endif
 
 using khtml::InlineBox;
@@ -49,14 +52,6 @@ using khtml::RenderBlock;
 using khtml::RenderObject;
 using khtml::RenderText;
 using khtml::RootInlineBox;
-
-#if !APPLE_CHANGES
-#define ASSERT(assertion) ((void)0)
-#define ASSERT_WITH_MESSAGE(assertion, formatAndArgs...) ((void)0)
-#define ASSERT_NOT_REACHED() ((void)0)
-#define LOG(channel, formatAndArgs...) ((void)0)
-#define ERROR(formatAndArgs...) ((void)0)
-#endif
 
 namespace DOM {
 

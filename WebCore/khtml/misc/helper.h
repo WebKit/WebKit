@@ -2,6 +2,7 @@
  * This file is part of the CSS implementation for KDE.
  *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
+ * Copyright (C) 2004 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -38,17 +39,6 @@ namespace khtml
     extern QPainter *printpainter;
     void setPrintPainter( QPainter *printer );
 
-    //enumerator for findSelectionNode
-    enum FindSelectionResult { SelectionPointBefore,
-			       SelectionPointAfter,
-			       SelectionPointInside,
-			       // the next two are only used inside one line in RenderText
-			       // to get BiDi contexts right.
-			       SelectionPointBeforeInLine,
-			       SelectionPointAfterInLine };
-
-
- 
     void findWordBoundary(QChar *chars, int len, int position, int *start, int *end);
 };
 

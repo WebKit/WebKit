@@ -501,6 +501,13 @@ static bool initializedKJS = FALSE;
     return [[text.getNSString() copy] autorelease];
 }
 
+- (NSString *)stringForRange:(DOMRange *)range
+{
+    QString text = _part->text([range _rangeImpl]);
+    text.replace('\\', _part->backslashAsCurrencySymbol());
+    return [[text.getNSString() copy] autorelease];
+}
+
 - (void)selectAll
 {
     _part->selectAll();
@@ -1334,6 +1341,17 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     cmd.reapply();
 }
 
+- (DOMRange *)selectedDOMRangeWithGranularity:(WebSelectionGranularity)granularity
+{
+    if (!_part)
+        return nil;
+        
+    // NOTE: The enums *must* match the very similar ones declared in ktml_selection.h
+    Selection selection(_part->selection());
+    selection.expandUsingGranularity(static_cast<Selection::ETextGranularity>(granularity));
+    return [DOMRange _rangeWithImpl:selection.toRange().handle()];
+}
+
 - (DOMRange *)rangeByAlteringCurrentSelection:(WebSelectionAlteration)alteration direction:(WebSelectionDirection)direction granularity:(WebSelectionGranularity)granularity
 {
     if (!_part)
@@ -1359,9 +1377,9 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
                      static_cast<Selection::ETextGranularity>(granularity));
 
     // save vertical navigation x position if necessary
-    int xPos = _part->xPosForVerticalArrowNavigation();
-    if (direction != WebSelectUp && direction != WebSelectDown)
-        xPos = KHTMLPart::NoXPosForVerticalArrowNavigation;
+    int xPos = KHTMLPart::NoXPosForVerticalArrowNavigation;
+    if (granularity == WebSelectByLine)
+        xPos = _part->xPosForVerticalArrowNavigation();
     
     // setting the selection always clears saved vertical navigation x position
     _part->setSelection(selection);
@@ -1369,6 +1387,8 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     // restore vertical navigation x position if necessary
     if (xPos != KHTMLPart::NoXPosForVerticalArrowNavigation)
         _part->setXPosForVerticalArrowNavigation(xPos);
+
+    [self ensureCaretVisible];
 }
 
 - (void)setSelectedDOMRange:(DOMRange *)range affinity:(NSSelectionAffinity)selectionAffinity
@@ -1419,6 +1439,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     [fragment appendChild:[document createTextNode:text]];
     return fragment;
 }
+
 - (void)replaceSelectionWithFragment:(DOMDocumentFragment *)fragment selectReplacement:(BOOL)selectReplacement
 {
     if (!_part || !_part->xmlDocImpl() || !fragment)
@@ -1426,6 +1447,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     
     ReplaceSelectionCommand cmd(_part->xmlDocImpl(), [fragment _fragmentImpl], selectReplacement);
     cmd.apply();
+    [self ensureCaretVisible];
 }
 
 - (void)replaceSelectionWithNode:(DOMNode *)node selectReplacement:(BOOL)selectReplacement
@@ -1446,12 +1468,13 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     [self replaceSelectionWithFragment:[self documentFragmentWithText:text] selectReplacement:selectReplacement];
 }
 
-- (void)replaceSelectionWithNewline
+- (void)insertNewline
 {
     if (!_part || !_part->xmlDocImpl())
         return;
     
     TypingCommand::insertNewline(_part->xmlDocImpl());
+    [self ensureCaretVisible];
 }
 
 - (void)insertText:(NSString *)text
@@ -1460,6 +1483,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
         return;
     
     TypingCommand::insertText(_part->xmlDocImpl(), text);
+    [self ensureCaretVisible];
 }
 
 - (void)setSelectionToDragCaret
@@ -1513,6 +1537,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
         return;
     
     TypingCommand::deleteKeyPressed(_part->xmlDocImpl());
+    [self ensureCaretVisible];
 }
 
 - (void)applyStyle:(DOMCSSStyleDeclaration *)style
