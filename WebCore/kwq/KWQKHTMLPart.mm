@@ -1368,6 +1368,11 @@ bool KWQKHTMLPart::tabsToAllControls() const
     return handlingOptionTab;
 }
 
+KJS::Bindings::RootObject *KWQKHTMLPart::executionContextForDOM()
+{
+    return bindingRootObject();
+}
+
 KJS::Bindings::RootObject *KWQKHTMLPart::bindingRootObject()
 {
     if (!_bindingRoot) {

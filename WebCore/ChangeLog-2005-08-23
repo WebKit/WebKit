@@ -1,3 +1,23 @@
+2004-10-12  Richard Williamson   <rjw@apple.com>
+
+        Fixed access to DOM object via WebScriptObject API.
+        The execution context for DOM objects wasn't being found.	
+        <rdar://problem/3831372> The valueForKey method for @"offsetLeft" on a paragraph element causes a crash.
+        Reviewed by Chris
+
+        Fixed <rdar://problem/3831063> regions use left offset instead of top offset
+	Reviewed by John
+
+        * khtml/khtml_part.h:
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::addDashboardRegions):
+        * kwq/DOM.mm:
+        (-[DOMNode isContentEditable]):
+        (-[DOMNode KJS::Bindings::]):
+        * kwq/KWQKHTMLPart.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::executionContextForDOM):
+
 2004-10-12  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Hyatt

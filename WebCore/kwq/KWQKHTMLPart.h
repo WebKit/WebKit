@@ -338,6 +338,7 @@ public:
     bool shouldBeginEditing(const DOM::Range &) const;
     bool shouldEndEditing(const DOM::Range &) const;
 
+    KJS::Bindings::RootObject *executionContextForDOM();
     KJS::Bindings::RootObject *bindingRootObject();
     
     WebScriptObject *windowScriptObject();

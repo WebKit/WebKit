@@ -19,6 +19,7 @@
 - (void)_initializeWithObjectImp:(KJS::ObjectImp *)imp root:(const KJS::Bindings::RootObject *)root;
 - (void)_initializeScriptDOMNodeImp;
 - (KJS::ObjectImp *)_imp;
+- (const KJS::Bindings::RootObject *)_executionContext;
 @end
 
 @interface WebScriptObjectPrivate : NSObject

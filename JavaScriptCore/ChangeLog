@@ -1,3 +1,21 @@
+2004-10-12  Richard Williamson   <rjw@apple.com>
+
+        Fixed access to DOM object via WebScriptObject API.
+        The execution context for DOM objects wasn't being found.	
+        <rdar://problem/3831372> The valueForKey method for @"offsetLeft" on a paragraph element causes a crash.
+
+        Reviewed by Chris.
+
+        * bindings/objc/WebScriptObject.mm:
+        (_didExecute):
+        (-[WebScriptObject KJS::Bindings::]):
+        (-[WebScriptObject callWebScriptMethod:withArguments:]):
+        (-[WebScriptObject evaluateWebScript:]):
+        (-[WebScriptObject setValue:forKey:]):
+        (-[WebScriptObject valueForKey:]):
+        (-[WebScriptObject stringRepresentation]):
+        * bindings/objc/WebScriptObjectPrivate.h:
+
 2004-10-09  Darin Adler  <darin@apple.com>
 
         Reviewed by Kevin.

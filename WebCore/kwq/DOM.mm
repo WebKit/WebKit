@@ -49,12 +49,15 @@
 #import "html_elementimpl.h"
 #import "htmltags.h"
 
+#import "khtml_part.h"
+
 #import "DOMEventsInternal.h"
 #import "DOMHTML.h"
 #import "DOMInternal.h"
 #import "DOMPrivate.h"
 #import "KWQAssertions.h"
 #import "KWQFoundationExtras.h"
+#import "KWQKHTMLPart.h"
 
 using DOM::Attr;
 using DOM::AttrImpl;
@@ -609,6 +612,23 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 - (BOOL)isContentEditable
 {
     return [self _nodeImpl]->isContentEditable();
+}
+
+- (const KJS::Bindings::RootObject *)_executionContext
+{
+    NodeImpl *n = [self _nodeImpl];
+    if (!n)
+        return 0;
+    
+    DocumentImpl *doc = n->getDocument();
+    if (!doc)
+        return 0;
+    
+    KWQKHTMLPart *p = KWQ(doc->part());
+    if (!p)
+        return 0;
+        
+    return p->executionContextForDOM();
 }
 
 @end
