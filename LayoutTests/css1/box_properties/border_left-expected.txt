@@ -94,7 +94,7 @@ layer at (0,0) size 800x978
           RenderTableRow {TR} at (0,0) size 0x0
             RenderTableCell {TD} at (0,205) size 13x25 [bgcolor=#C0C0C0] [r=1 c=0 rs=1 cs=1]
               RenderText {TEXT} at (5,4) size 4x17
-                text run at (5,4) width 4: "\x{A0}"
+                text run at (5,4) width 4: " "
             RenderTableCell {TD} at (13,25) size 769x385 [r=1 c=1 rs=1 cs=1]
               RenderBlock {P} at (25,4) size 740x34
                 RenderText {TEXT} at (0,0) size 727x34

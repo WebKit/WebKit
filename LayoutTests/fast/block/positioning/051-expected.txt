@@ -24,7 +24,7 @@ layer at (32,2260) size 200x200
 layer at (82,842) size 519x200
   RenderBlock (positioned) zI: -3 {P} at (60,60) size 200x200 [color=#FFFFFF] [bgcolor=#990066]
     RenderText zI: -3 {TEXT} at (50,41) size 469x80
-      text run at (50,41) width 469: "\x{A0}8\x{A0}hide\x{A0}me"
+      text run at (50,41) width 469: " 8 hide me"
 layer at (82,2744) size 200x200
   RenderBlock (positioned) zI: -3 {P} at (60,60) size 200x200 [color=#FFFFFF] [bgcolor=#990066]
     RenderText zI: -3 {TEXT} at (71,41) size 57x80
@@ -111,7 +111,7 @@ layer at (22,148) size 620x620
 layer at (82,208) size 519x200
   RenderBlock (positioned) {P} at (60,60) size 200x200 [color=#FFFFFF] [bgcolor=#990066]
     RenderText {TEXT} at (50,41) size 469x80
-      text run at (50,41) width 469: "\x{A0}8\x{A0}hide\x{A0}me"
+      text run at (50,41) width 469: " 8 hide me"
 layer at (32,358) size 200x200
   RenderBlock (positioned) {P} at (10,210) size 200x200 [color=#FFFFFF] [bgcolor=#660099]
     RenderText {TEXT} at (71,41) size 57x80

@@ -23,7 +23,7 @@ layer at (0,0) size 800x182
                   text run at (0,0) width 20: "X"
                 RenderInline {SPAN} at (0,0) size 60x20 [bgcolor=#00FF00]
                   RenderText {TEXT} at (20,0) size 60x20
-                    text run at (20,0) width 60: "\x{A0}\x{A0}\x{A0}"
+                    text run at (20,0) width 60: "   "
                 RenderText {TEXT} at (80,0) size 20x20
                   text run at (80,0) width 20: "X"
               RenderBlock {DIV} at (0,40) size 100x20 [color=#008000] [bgcolor=#000000]

@@ -13,7 +13,7 @@ layer at (0,0) size 800x57
               RenderText {TEXT} at (14,2) size 127x17
                 text run at (14,2) width 127: "Corporate Services"
             RenderText {TEXT} at (141,2) size 20x17
-              text run at (141,2) width 20: " \x{A0}\x{A0}\x{A0}\x{A0}"
+              text run at (141,2) width 20: "     "
           RenderText {TEXT} at (0,0) size 0x0
           RenderInline {NOBR} at (0,0) size 202x17
             RenderText {TEXT} at (2,19) size 12x17
@@ -26,7 +26,7 @@ layer at (0,0) size 800x57
                 RenderText {TEXT} at (166,24) size 18x15
                   text run at (166,24) width 18: "sm"
             RenderText {TEXT} at (184,19) size 20x17
-              text run at (184,19) width 20: " \x{A0}\x{A0}\x{A0}\x{A0}"
+              text run at (184,19) width 20: "     "
           RenderText {TEXT} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,41) size 784x0
         RenderInline {FONT} at (0,0) size 0x0 [color=#996699]

@@ -11,4 +11,4 @@ layer at (0,0) size 800x45
                 text run at (2,2) width 170: "Big cell gets all the width"
             RenderTableCell {TD} at (565,2) size 213x21 [r=0 c=1 rs=1 cs=1]
               RenderText {TEXT} at (2,2) size 209x17
-                text run at (2,2) width 209: "Icannotbreak\x{A0}noicannot\x{A0}\x{B7}break"
+                text run at (2,2) width 209: "Icannotbreak noicannot \x{B7}break"

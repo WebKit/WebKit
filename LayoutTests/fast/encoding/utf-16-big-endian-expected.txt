@@ -189,13 +189,13 @@ layer at (0,0) size 800x1200
                           text run at (18,2) width 9: "A"
                       RenderTableCell {TD} at (119,20) size 71x20 [r=1 c=2 rs=1 cs=1]
                         RenderText {TEXT} at (2,2) size 67x16
-                          text run at (2,2) width 67: "confirmed\x{A0}"
+                          text run at (2,2) width 67: "confirmed "
                       RenderTableCell {TD} at (190,20) size 282x20 [r=1 c=3 rs=1 cs=1]
                         RenderText {TEXT} at (2,2) size 278x16
                           text run at (2,2) width 278: "Non-Smoking, Window Seat, Preferred Seat"
                       RenderTableCell {TD} at (472,20) size 66x20 [r=1 c=4 rs=1 cs=1]
                         RenderText {TEXT} at (2,2) size 4x16
-                          text run at (2,2) width 4: "\x{A0}"
+                          text run at (2,2) width 4: " "
                 RenderBlock (anonymous) at (1,155) size 540x16
                   RenderBR {BR} at (0,0) size 0x0
                   RenderText {TEXT} at (0,0) size 0x0
@@ -282,13 +282,13 @@ layer at (0,0) size 800x1200
                           text run at (18,2) width 9: "F"
                       RenderTableCell {TD} at (119,20) size 71x20 [r=1 c=2 rs=1 cs=1]
                         RenderText {TEXT} at (2,2) size 67x16
-                          text run at (2,2) width 67: "confirmed\x{A0}"
+                          text run at (2,2) width 67: "confirmed "
                       RenderTableCell {TD} at (190,20) size 181x20 [r=1 c=3 rs=1 cs=1]
                         RenderText {TEXT} at (2,2) size 177x16
                           text run at (2,2) width 177: "Non-Smoking, Window Seat"
                       RenderTableCell {TD} at (371,20) size 66x20 [r=1 c=4 rs=1 cs=1]
                         RenderText {TEXT} at (2,2) size 4x16
-                          text run at (2,2) width 4: "\x{A0}"
+                          text run at (2,2) width 4: " "
                 RenderBlock (anonymous) at (1,155) size 439x16
                   RenderBR {BR} at (0,0) size 0x0
                   RenderText {TEXT} at (0,0) size 0x0

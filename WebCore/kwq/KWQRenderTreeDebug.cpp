@@ -100,6 +100,8 @@ static QString quoteAndEscapeNonPrintables(const QString &s)
             result += "\\\\";
         } else if (c == '"') {
             result += "\\\"";
+        } else if (c == '\n' || c.unicode() == 0x00A0) {
+            result += ' ';
         } else {
             ushort u = c.unicode();
             if (u >= 0x20 && u < 0x7F) {

@@ -30,7 +30,7 @@ layer at (0,0) size 880x1140
       RenderBlock {H4} at (0,257) size 784x17 [bgcolor=#000000]
         RenderInline {A} at (0,0) size 238x17
           RenderText {TEXT} at (0,0) size 238x17
-            text run at (0,0) width 238: "5.3.5 \x{A0}\x{A0} 'background-attachment'"
+            text run at (0,0) width 238: "5.3.5    'background-attachment'"
         RenderText {TEXT} at (0,0) size 0x0
       RenderBlock {P} at (0,292) size 784x85 [bgcolor=#000000]
         RenderInline {EM} at (0,0) size 40x16
@@ -97,7 +97,7 @@ layer at (0,0) size 880x1140
           RenderTableRow {TR} at (0,0) size 0x0
             RenderTableCell {TD} at (0,262) size 12x25 [bgcolor=#C0C0C0] [r=1 c=0 rs=1 cs=1]
               RenderText {TEXT} at (4,4) size 4x17
-                text run at (4,4) width 4: "\x{A0}"
+                text run at (4,4) width 4: " "
             RenderTableCell {TD} at (12,25) size 770x499 [r=1 c=1 rs=1 cs=1]
               RenderBlock {P} at (4,4) size 762x85
                 RenderText {TEXT} at (0,0) size 756x85
@@ -119,7 +119,7 @@ layer at (0,0) size 880x1140
               RenderBlock {H4} at (4,168) size 762x17
                 RenderInline {A} at (0,0) size 238x17
                   RenderText {TEXT} at (0,0) size 238x17
-                    text run at (0,0) width 238: "5.3.5 \x{A0}\x{A0} 'background-attachment'"
+                    text run at (0,0) width 238: "5.3.5    'background-attachment'"
                 RenderText {TEXT} at (0,0) size 0x0
               RenderBlock {P} at (4,203) size 762x85
                 RenderInline {EM} at (0,0) size 40x16
