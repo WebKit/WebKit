@@ -1,3 +1,20 @@
+2003-01-23  Chris Blumenberg  <cblu@apple.com>
+
+	Made WebTextView use the same format for context menus as the rest of WebKit.
+	Implemented "Copy" context menu.
+
+        Reviewed by john.
+
+        * English.lproj/Localizable.strings:
+        * WebView.subproj/WebControllerPrivate.m:
+        (-[WebController _menuForElement:]): tweak.
+        * WebView.subproj/WebDefaultContextMenuDelegate.m:
+        (-[WebDefaultContextMenuDelegate contextMenuItemsForElement:defaultMenuItems:]): added "Copy" context menu.
+        * WebView.subproj/WebImageView.m:
+        (-[WebImageView menuForEvent:]): added asserts
+        * WebView.subproj/WebTextView.m:
+        (-[WebTextView menuForEvent:]): implemented
+
 2003-01-23  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

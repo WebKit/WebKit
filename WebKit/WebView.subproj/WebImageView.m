@@ -15,6 +15,8 @@
 #import <WebKit/WebView.h>
 #import <WebKit/WebViewPrivate.h>
 
+#import <WebFoundation/WebAssertions.h>
+
 @implementation WebImageView
 
 - (void)initialize
@@ -149,12 +151,17 @@
 - (NSMenu *)menuForEvent:(NSEvent *)theEvent
 {
     WebView *webView = [self _web_parentWebView];
-    WebController *controller = [self controller];
+    WebController *controller = [webView controller];
+    WebFrame *frame = [controller frameForView:webView];
+
+    ASSERT(frame);
+    ASSERT(controller);
     
     NSDictionary *element = [NSDictionary dictionaryWithObjectsAndKeys:
         [representation image], WebElementImageKey,
         [representation URL], WebElementImageURLKey,
-        [controller frameForView:webView], WebElementFrameKey, nil];
+        [NSNumber numberWithBool:NO], WebElementIsSelectedTextKey,
+        frame, WebElementFrameKey, nil];
         
     return [controller _menuForElement:element];
 }

@@ -12,6 +12,7 @@
 #import <WebKit/WebDefaultContextMenuDelegate.h>
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebNSPasteboardExtras.h>
+#import <WebKit/WebView.h>
 #import <WebKit/WebWindowOperationsDelegate.h>
 
 #import <WebFoundation/WebHTTPResourceRequest.h>
@@ -47,16 +48,19 @@
 
     if(linkURL){
         if([WebResourceHandle canInitWithRequest:[WebResourceRequest requestWithURL:linkURL]]){
-            [[self class] addMenuItemWithTitle:UI_STRING("Open Link in New Window", "Open in New Window context menu item") 				                	    action:@selector(openLinkInNewWindow:)
+            [[self class] addMenuItemWithTitle:UI_STRING("Open Link in New Window", "Open in New Window context menu item")
+                                        action:@selector(openLinkInNewWindow:)
                                         target:self
                                        toArray:menuItems];
 
-            [[self class] addMenuItemWithTitle:UI_STRING("Download Link to Disk", "Download Link to Disk context menu item") 				                	    action:@selector(downloadLinkToDisk:)
+            [[self class] addMenuItemWithTitle:UI_STRING("Download Link to Disk", "Download Link to Disk context menu item")
+                                        action:@selector(downloadLinkToDisk:)
                                         target:self
                                        toArray:menuItems];
         }
 
-        [[self class] addMenuItemWithTitle:UI_STRING("Copy Link to Clipboard", "Copy Link to Clipboard context menu item") 				                 	   action:@selector(copyLinkToClipboard:)
+        [[self class] addMenuItemWithTitle:UI_STRING("Copy Link to Clipboard", "Copy Link to Clipboard context menu item")
+                                    action:@selector(copyLinkToClipboard:)
                                     target:self
                                    toArray:menuItems];
     }
@@ -74,23 +78,33 @@
                                     target:self
                                    toArray:menuItems];
 
-        [[self class] addMenuItemWithTitle:UI_STRING("Download Image To Disk", "Download Image To Disk context menu item") 				                 	   action:@selector(downloadImageToDisk:)
+        [[self class] addMenuItemWithTitle:UI_STRING("Download Image To Disk", "Download Image To Disk context menu item")
+                                    action:@selector(downloadImageToDisk:)
                                     target:self
                                    toArray:menuItems];
 
-        [[self class] addMenuItemWithTitle:UI_STRING("Copy Image to Clipboard", "Copy Image to Clipboard context menu item") 				              	      action:@selector(copyImageToClipboard:)
+        [[self class] addMenuItemWithTitle:UI_STRING("Copy Image to Clipboard", "Copy Image to Clipboard context menu item")
+                                    action:@selector(copyImageToClipboard:)
                                     target:self
                                    toArray:menuItems];
     }
 
-    if(!imageURL && !linkURL){
-    
-        WebFrame *webFrame = [element objectForKey:WebElementFrameKey];
+    if (!imageURL && !linkURL) {
 
-        if(webFrame != [[webFrame controller] mainFrame]){
-            [[self class] addMenuItemWithTitle:UI_STRING("Open Frame in New Window", "Open Frame in New Window context menu item") 				            	    action:@selector(openFrameInNewWindow:)
-                                        target:self
+        if ([[element objectForKey:WebElementIsSelectedTextKey] boolValue]) {
+            [[self class] addMenuItemWithTitle:UI_STRING("Copy", "Copy context menu item")
+                                        action:@selector(copy:)
+                                        target:nil
                                        toArray:menuItems];
+        } else {        
+            WebFrame *webFrame = [element objectForKey:WebElementFrameKey];
+    
+            if(webFrame != [[webFrame controller] mainFrame]){
+                [[self class] addMenuItemWithTitle:UI_STRING("Open Frame in New Window", "Open Frame in New Window context menu item")
+                                            action:@selector(openFrameInNewWindow:)
+                                            target:self
+                                        toArray:menuItems];
+            }
         }
     }
 

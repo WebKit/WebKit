@@ -5,11 +5,15 @@
 
 #import <WebKit/WebTextView.h>
 
+#import <WebFoundation/WebAssertions.h>
 #import <WebFoundation/WebResourceResponse.h>
 
+#import <WebKit/WebControllerPrivate.h>
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebDocument.h>
+#import <WebKit/WebNSViewExtras.h>
 #import <WebKit/WebPreferences.h>
+#import <WebKit/WebView.h>
 
 @implementation WebTextView
 
@@ -168,6 +172,26 @@
 - (void)keyUp:(NSEvent *)event
 {
     [[self nextResponder] keyUp:event];
+}
+
+- (NSMenu *)menuForEvent:(NSEvent *)theEvent
+{
+    // Calling super causes unselected clicked text to be selected.
+    [super menuForEvent:theEvent];
+    
+    WebView *webView = [self _web_parentWebView];
+    WebController *controller = [webView controller];
+    WebFrame *frame = [controller frameForView:webView];
+
+    ASSERT(frame);
+    ASSERT(controller);
+
+    BOOL hasSelection = ([self selectedRange].location != NSNotFound && [self selectedRange].length > 0);
+    NSDictionary *element = [NSDictionary dictionaryWithObjectsAndKeys:
+        [NSNumber numberWithBool:hasSelection], WebElementIsSelectedTextKey,
+        frame, WebElementFrameKey, nil];
+
+    return [controller _menuForElement:element];
 }
 
 @end
