@@ -92,10 +92,9 @@ public:
     void addIntrinsicMarginsIfAllowed(RenderStyle* _style);
     virtual bool canHaveIntrinsicMargins() const { return false; }
     int intrinsicMargin() const { return 2; }
-
-    virtual void setStyle(RenderStyle* _style);
 #endif
 
+    virtual void setStyle(RenderStyle *);
     virtual void updateFromElement();
 
     virtual void layout();
@@ -194,6 +193,10 @@ public:
     virtual void calcMinMaxWidth();
     virtual void updateFromElement();
     virtual short baselinePosition( bool, bool ) const;
+#if APPLE_CHANGES
+    virtual void setStyle(RenderStyle *);
+#endif
+
 private:
     QString rawText();
 };
@@ -247,6 +250,7 @@ public:
 
     virtual const char *renderName() const { return "RenderLineEdit"; }
     virtual void updateFromElement();
+    virtual void setStyle(RenderStyle *);
 
     void select();
 
@@ -319,7 +323,9 @@ public:
     DOM::HTMLInputElementImpl *element() const
     { return static_cast<DOM::HTMLInputElementImpl*>(RenderObject::element()); }
 
+#if !APPLE_CHANGES
     KLineEdit* lineEdit() const { return m_edit; }
+#endif
 
 public slots:
     virtual void slotClicked();
@@ -327,14 +333,14 @@ public slots:
     virtual void slotTextChanged(const QString &string);
 
 protected:
-    virtual void handleFocusOut();
-
     virtual bool isEditable() const { return true; }
 
-    bool m_clicked;
-    bool m_haveFocus;
+#if !APPLE_CHANGES
+    virtual void handleFocusOut();
+
     KLineEdit   *m_edit;
     QPushButton *m_button;
+#endif
 };
 
 
@@ -395,6 +401,9 @@ public:
     bool selectionChanged() { return m_selectionChanged; }
     void setSelectionChanged(bool _selectionChanged) { m_selectionChanged = _selectionChanged; }
     virtual void updateFromElement();
+#if APPLE_CHANGES
+    virtual void setStyle(RenderStyle *);
+#endif
 
     void updateSelection();
 
@@ -404,6 +413,9 @@ public:
 protected:
     KListBox *createListBox();
     ComboBoxWidget *createComboBox();
+#if APPLE_CHANGES
+    void setWidgetWritingDirection();
+#endif
 
     unsigned  m_size;
     bool m_multiple;
@@ -443,6 +455,7 @@ public:
     virtual void calcMinMaxWidth();
     virtual void close ( );
     virtual void updateFromElement();
+    virtual void setStyle(RenderStyle *);
 
     virtual bool isTextArea() const { return true; }
     

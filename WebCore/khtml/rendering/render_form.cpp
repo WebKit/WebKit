@@ -76,13 +76,28 @@ short RenderFormElement::baselinePosition( bool f, bool isRootLineBox ) const
 #endif
 }
 
+void RenderFormElement::setStyle(RenderStyle* s)
+{
+#if APPLE_CHANGES
+    if (canHaveIntrinsicMargins())
+        addIntrinsicMarginsIfAllowed(s);
+#endif
+
+    RenderWidget::setStyle(s);
+
+#if APPLE_CHANGES
+    // Do not paint a background or border for Aqua form elements
+    setShouldPaintBackgroundOrBorder(false);
+#endif
+
+    m_widget->setFont(style()->font());
+}
+
 void RenderFormElement::updateFromElement()
 {
     m_widget->setEnabled(!element()->disabled());
-#if APPLE_CHANGES
-    m_widget->setFont(style()->font());
-#endif
 
+#if !APPLE_CHANGES
     QColor color = style()->color();
     QColor backgroundColor = style()->backgroundColor();
 
@@ -144,6 +159,7 @@ void RenderFormElement::updateFromElement()
     }
     else
         m_widget->unsetPalette();
+#endif
 }
 
 void RenderFormElement::layout()
@@ -187,6 +203,7 @@ void RenderFormElement::slotClicked()
 }
 
 #if APPLE_CHANGES
+
 void RenderFormElement::addIntrinsicMarginsIfAllowed(RenderStyle* _style)
 {
     if (_style->width().isVariable()) {
@@ -204,15 +221,6 @@ void RenderFormElement::addIntrinsicMarginsIfAllowed(RenderStyle* _style)
     }
 }
 
-void RenderFormElement::setStyle(RenderStyle* _style)
-{
-    if (canHaveIntrinsicMargins())
-        addIntrinsicMarginsIfAllowed(_style);
-    RenderWidget::setStyle(_style);
-
-    // Do not paint a background or border for Aqua form elements
-    setShouldPaintBackgroundOrBorder(false);
-}
 #endif
 
 // -------------------------------------------------------------------------
@@ -383,11 +391,25 @@ void RenderSubmitButton::calcMinMaxWidth()
     RenderButton::calcMinMaxWidth();
 }
 
+#if APPLE_CHANGES
+
+void RenderSubmitButton::setStyle(RenderStyle *s)
+{
+    RenderButton::setStyle(s);
+    
+    QPushButton *w = static_cast<QPushButton*>(m_widget);
+    w->setWritingDirection(style()->direction() == RTL ? QPainter::RTL : QPainter::LTR);
+}
+
+#endif
+
 void RenderSubmitButton::updateFromElement()
 {
-    QString oldText = static_cast<QPushButton*>(m_widget)->text();
+    QPushButton *w = static_cast<QPushButton*>(m_widget);
+
+    QString oldText = w->text();
     QString newText = rawText();
-    static_cast<QPushButton*>(m_widget)->setText(newText);
+    w->setText(newText);
     if ( oldText != newText )
         setNeedsLayoutAndMinMaxRecalc();
     RenderFormElement::updateFromElement();
@@ -553,6 +575,18 @@ void RenderLineEdit::calcMinMaxWidth()
     RenderFormElement::calcMinMaxWidth();
 }
 
+void RenderLineEdit::setStyle(RenderStyle *s)
+{
+    RenderFormElement::setStyle(s);
+
+    KLineEdit *w = widget();
+
+    w->setAlignment(style()->direction() == RTL ? Qt::AlignRight : Qt::AlignLeft);
+#if APPLE_CHANGES
+    w->setWritingDirection(style()->direction() == RTL ? QPainter::RTL : QPainter::LTR);
+#endif
+}
+
 void RenderLineEdit::updateFromElement()
 {
     KLineEdit *w = widget();
@@ -585,8 +619,6 @@ void RenderLineEdit::updateFromElement()
     }
     w->setReadOnly(element()->readOnly());
     
-    w->setAlignment(style()->direction() == RTL ? Qt::AlignRight : Qt::AlignLeft);
-
     RenderFormElement::updateFromElement();
 }
 
@@ -776,7 +808,6 @@ RenderFileButton::RenderFileButton(HTMLInputElementImpl *element)
     w->setFocusProxy(m_edit);
 
     setQWidget(w);
-    m_haveFocus = false;
 #endif
 }
 
@@ -807,6 +838,8 @@ void RenderFileButton::calcMinMaxWidth()
     RenderFormElement::calcMinMaxWidth();
 }
 
+#if !APPLE_CHANGES
+
 void RenderFileButton::handleFocusOut()
 {
     if ( m_edit && m_edit->edited() ) {
@@ -814,6 +847,8 @@ void RenderFileButton::handleFocusOut()
         m_edit->setEdited( false );
     }
 }
+
+#endif
 
 void RenderFileButton::slotClicked()
 {
@@ -952,6 +987,25 @@ RenderSelect::RenderSelect(HTMLSelectElementImpl *element)
         setQWidget(createComboBox());
 }
 
+#if APPLE_CHANGES
+
+void RenderSelect::setWidgetWritingDirection()
+{
+    QPainter::TextDirection d = style()->direction() == RTL ? QPainter::RTL : QPainter::LTR;
+    if (m_useListBox)
+        static_cast<KListBox *>(m_widget)->setWritingDirection(d);
+    else
+        static_cast<ComboBoxWidget *>(m_widget)->setWritingDirection(d);
+}
+
+void RenderSelect::setStyle(RenderStyle *s)
+{
+    RenderFormElement::setStyle(s);
+    setWidgetWritingDirection();
+}
+
+#endif
+
 void RenderSelect::updateFromElement()
 {
     m_ignoreSelectEvents = true;
@@ -974,6 +1028,9 @@ void RenderSelect::updateFromElement()
                 setQWidget(createListBox());
             else
                 setQWidget(createComboBox());
+#if APPLE_CHANGES
+            setWidgetWritingDirection();
+#endif
         }
 
         if (m_useListBox && oldMultiple != m_multiple) {
@@ -1052,22 +1109,23 @@ void RenderSelect::updateFromElement()
         updateSelection();
     }
 
-
     m_ignoreSelectEvents = false;
 
     RenderFormElement::updateFromElement();
 }
 
 #if APPLE_CHANGES
-// Override to deal with our widget.
+
 short RenderSelect::baselinePosition( bool f, bool isRootLineBox ) const
 {
-    if (!m_useListBox) {
-        return RenderFormElement::baselinePosition( f, isRootLineBox );
-    } else {
+    if (m_useListBox) {
+        // FIXME: Should get the hardcoded constant of 7 by calling a QListBox function,
+        // as we do for other widget classes.
         return RenderWidget::baselinePosition( f, isRootLineBox ) - 7;
     }
+    return RenderFormElement::baselinePosition( f, isRootLineBox );
 }
+
 #endif
 
 void RenderSelect::calcMinMaxWidth()
@@ -1378,14 +1436,24 @@ void RenderTextArea::calcMinMaxWidth()
     RenderFormElement::calcMinMaxWidth();
 }
 
+void RenderTextArea::setStyle(RenderStyle *s)
+{
+    RenderFormElement::setStyle(s);
+
+    TextAreaWidget* w = static_cast<TextAreaWidget*>(m_widget);
+    w->setAlignment(style()->direction() == RTL ? Qt::AlignRight : Qt::AlignLeft);
+#if APPLE_CHANGES
+    w->setWritingDirection(style()->direction() == RTL ? QPainter::RTL : QPainter::LTR);
+#endif
+}
+
 void RenderTextArea::updateFromElement()
 {
     TextAreaWidget* w = static_cast<TextAreaWidget*>(m_widget);
     w->setReadOnly(element()->readOnly());
-#ifdef APPLE_CHANGES
+#if APPLE_CHANGES
     w->setDisabled(element()->disabled());
 #endif
-    w->setAlignment(style()->direction() == RTL ? Qt::AlignRight : Qt::AlignLeft);
     
     // Call w->text() before calling element()->value(), because in the case of inline
     // input such as Hiragana, w->text() has a side effect of sending the notification

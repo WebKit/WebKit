@@ -1,3 +1,108 @@
+2003-11-03  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed 3392543 -- incorrect base writing direction in RTL form controls
+        - fixed baseline for list box <select> elements
+        - moved style code from updateFromElement to setStyle
+
+        * khtml/rendering/render_form.h: Added setStyle function to RenderFormElement, RenderLineEdit,
+        RenderSelect, and RenderTextArea. Removed some unused stuff.
+        * khtml/rendering/render_form.cpp:
+        (RenderFormElement::setStyle): Set the font based on the style.
+        (RenderFormElement::updateFromElement): Remove font setting code; moved to setStyle.
+        Also ifdef'd out the color-setting code, which belongs in setStyle and is irrelevant
+        for KWQ anyway.
+        (RenderSubmitButton::setStyle): Set the writing direction based on the style.
+        (RenderSubmitButton::updateFromElement): Tiny code cleanup, using a local variable.
+        (RenderLineEdit::setStyle): Set the alignment and writing direction based on the style.
+        (RenderLineEdit::updateFromElement): Remove alignment setting code; moved to setStyle.
+        (RenderFileButton::RenderFileButton): Remove code to set m_focus, a data member that was
+        never used.
+        (RenderSelect::setWidgetWritingDirection): Added. Helper function.
+        (RenderSelect::setStyle): Call setWidgetWritingDirection.
+        (RenderSelect::updateFromElement): Call setWidgetWritingDirection if a new widget is created.
+        (RenderSelect::baselinePosition): Added a FIXME comment.
+        (RenderTextArea::setStyle): Set the alignment and writing direction based on the style.
+        (RenderTextArea::updateFromElement): Remove alignment setting code; moved to setStyle.
+
+        * kwq/KWQButton.h: Added setWritingDirection function.
+        * kwq/KWQButton.mm:
+        (+[KWQButton cellClass]): Use KWQButtonCell.
+        (-[KWQButtonCell baseWritingDirection:]): Return base writing direction.
+        (-[KWQButtonCell setBaseWritingDirection:]): Store base writing direction.
+        (-[KWQButtonCell _textAttributes]): Set the base writing direction in the paragraph
+        style if it's not already right.
+        (QButton::setWritingDirection): Call setBaseWritingDirection: on the cell and do
+        setNeedsDisplay: as needed.
+
+        * kwq/KWQComboBox.h: Added setWritingDirection function.
+        * kwq/KWQComboBox.mm:
+        (QComboBox::setWritingDirection): Call setBaseWritingDirection: on the cell and do
+        setNeedsDisplay: as needed.
+        (-[KWQPopUpButtonCell setBaseWritingDirection:]): Store base writing direction.
+        (-[KWQPopUpButtonCell baseWritingDirection:]): Return base writing direction.
+        (-[KWQPopUpButtonCell _textAttributes]): Set the base writing direction in the
+        paragraph style if it's not already right.
+
+        * kwq/KWQLineEdit.h: Added setWritingDirection function.
+        * kwq/KWQLineEdit.mm:
+        (QLineEdit::setAlignment): Tweaked to match new setWritingDirection in style.
+        (QLineEdit::setWritingDirection): Call setBaseWritingDirection: on the KWQTextField.
+
+        * kwq/KWQTextField.h: Added setBaseWritingDirection method.
+        * kwq/KWQTextField.mm:
+        (-[KWQTextField setPasswordMode:]): Set the base writing direction of the secure field's
+        cell based on the base writing direction of the parent field's cell, when creating the
+        secure field.
+        (-[KWQTextField setBaseWritingDirection:]): Added. Sets the base writing direction of
+        the field's cell and the secure field's cell, if it exists, and does setNeedsDisplay
+        as needed.
+        (-[KWQTextFieldCell setBaseWritingDirection:]): Added. Stores the base writing direction.
+        (-[KWQTextFieldCell baseWritingDirection]): Added. Returns the base writing direction.
+        (-[KWQTextFieldCell _textAttributes]): Set the base writing direction in the paragraph
+        style if it's not already right.
+        (-[KWQSecureTextFieldCell setBaseWritingDirection:]): Added. Stores the base writing
+        direction.
+        (-[KWQSecureTextFieldCell _textAttributes]): Set the base writing direction in the
+        paragraph style if it's not already right.
+
+        * kwq/KWQListBox.h: Added itemIsGroupLabel and setWritingDirection functions, and made
+        the private insertItem function take a QString instead of an NSObject.
+        (QListBox::insertItem): Changed parameter from unsigned to int to match Qt, and made it
+        use an inlne to call the private insertItem function shared with insertGroupLabel.
+        (QListBox::insertGroupLabel): Changed parameter from unsigned to int and made it use an
+        inline to call the private insertItem function.
+        * kwq/KWQListBox.mm:
+        (itemFont): Added. Returns a suitable font for individual items.
+        (groupLabelFont): Added. Returns a suitable font for group labels.
+        (paragraphStyle): Added. Returns a suitable paragraph style for a given writing direction.
+        (stringAttributes): Added. Returns a string attributes dictionary for a given writing direction for
+        either individual items or group labels.
+        (QListBox::insertItem): Use an attributed string to give the item the appropriate font and
+        writing direction, calling stringAttributes to get the attributes dictionary, and getting
+        the writing direction from the table view.
+        (QListBox::endBatchInsert): Tweak for consistency with other nearby methods.
+        (QListBox::setSelected): Add an assertion and tweak a bit.
+        (QListBox::isSelected): Add an assertion and tweak a bit.
+        (QListBox::setWritingDirection): Update the styles for all the attributed strings and call
+        reloadData if the writing direction changes. Also store the direction in the table view.
+        (QListBox::itemIsGroupLabel): Added. Returns true if a given item is a group label; works
+        by checking the font in the attributed string.
+        (-[KWQTableView initWithListBox:items:]): Use itemFont() instead of computing the font.
+        (-[KWQTableView tableView:shouldSelectRow:]): Use itemIsGroupLabel function instead of
+        checking for NSString vs. NSttributedString in the items array; we now use attributed
+        strings for all the items.
+        (-[KWQTableView setBaseWritingDirection:]): Added. Stores a base writing direction.
+        (-[KWQTableView baseWritingDirection]): Added. Returns the stored base writing direction.
+
+        * kwq/KWQTextEdit.h: Added setWritingDirection function.
+        * kwq/KWQTextEdit.mm:
+        (QTextEdit::setAlignment): Removed code to set base writing direction.
+        (QTextEdit::setWritingDirection): Added. Sets base writing direction.
+
+        * kwq/KWQTextArea.mm: (-[KWQTextArea setBaseWritingDirection:]): Call setNeedsDisplay:YES.
+
 2003-11-03  David Hyatt  <hyatt@apple.com>
 
 	Fix 3472200, media tests fail to parse correctly.  Merging a patch to handle exotic media types

@@ -220,10 +220,22 @@ void QLineEdit::clicked()
 
 void QLineEdit::setAlignment(AlignmentFlags alignment)
 {
+    KWQ_BLOCK_EXCEPTIONS;
+
     ASSERT(alignment == AlignLeft || alignment == AlignRight);
     KWQTextField *textField = getView();
-    KWQ_BLOCK_EXCEPTIONS;
     [textField setAlignment:(alignment == AlignRight ? NSRightTextAlignment : NSLeftTextAlignment)];
+
+    KWQ_UNBLOCK_EXCEPTIONS;
+}
+
+void QLineEdit::setWritingDirection(QPainter::TextDirection direction)
+{
+    KWQ_BLOCK_EXCEPTIONS;
+
+    KWQTextField *textField = getView();
+    [textField setBaseWritingDirection:(direction == QPainter::RTL ? NSWritingDirectionRightToLeft : NSWritingDirectionLeftToRight)];
+
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 

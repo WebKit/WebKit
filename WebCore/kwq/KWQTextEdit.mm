@@ -186,18 +186,26 @@ void QTextEdit::clicked()
 
 void QTextEdit::setAlignment(AlignmentFlags alignment)
 {
-    // The thing we use setAlignment for in WebCore is to set the base writing direction.
-    // Rather than adding a new call for this purpose, we just code it that way.
+    KWQ_BLOCK_EXCEPTIONS;
 
     ASSERT(alignment == AlignLeft || alignment == AlignRight);
     KWQTextArea *textArea = getView();
 
-    KWQ_BLOCK_EXCEPTIONS;
     [textArea setAlignment:(alignment == AlignRight ? NSRightTextAlignment : NSLeftTextAlignment)];
-    [textArea setBaseWritingDirection:(alignment == AlignRight ? NSWritingDirectionRightToLeft : NSWritingDirectionLeftToRight)];
+
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 
+void QTextEdit::setWritingDirection(QPainter::TextDirection direction)
+{
+    KWQ_BLOCK_EXCEPTIONS;
+
+    KWQTextArea *textArea = getView();
+    [textArea setBaseWritingDirection:(direction == QPainter::RTL ? NSWritingDirectionRightToLeft : NSWritingDirectionLeftToRight)];
+
+    KWQ_UNBLOCK_EXCEPTIONS;
+}
+ 
 QSize QTextEdit::sizeWithColumnsAndRows(int numColumns, int numRows) const
 {
     KWQTextArea *textArea = getView();

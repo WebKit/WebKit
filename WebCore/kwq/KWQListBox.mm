@@ -45,11 +45,53 @@
     BOOL processingMouseEvent;
     BOOL clickedDuringMouseEvent;
     BOOL inNextValidKeyView;
+    NSWritingDirection _direction;
 }
 - initWithListBox:(QListBox *)b items:(NSArray *)items;
--(void)_KWQ_setKeyboardFocusRingNeedsDisplay;
+- (void)_KWQ_setKeyboardFocusRingNeedsDisplay;
 - (QWidget *)widget;
+- (void)setBaseWritingDirection:(NSWritingDirection)direction;
+- (NSWritingDirection)baseWritingDirection;
 @end
+
+static NSFont *itemFont()
+{
+    static NSFont *font = [[NSFont systemFontOfSize:[NSFont smallSystemFontSize]] retain];
+    return font;
+}
+
+static NSFont *groupLabelFont()
+{
+    static NSFont *font = [[NSFont boldSystemFontOfSize:[NSFont smallSystemFontSize]] retain];
+    return font;
+}
+
+static NSParagraphStyle *paragraphStyle(NSWritingDirection direction)
+{
+    static NSParagraphStyle *leftStyle;
+    static NSParagraphStyle *rightStyle;
+    NSParagraphStyle **style = direction == NSWritingDirectionRightToLeft ? &rightStyle : &leftStyle;
+    if (*style == nil) {
+        NSMutableParagraphStyle *mutableStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
+        [mutableStyle setBaseWritingDirection:direction];
+        *style = [mutableStyle copy];
+        [mutableStyle release];
+    }
+    return *style;
+}
+
+static NSDictionary *stringAttributes(NSWritingDirection direction, bool isGroupLabel)
+{
+    static NSDictionary *attributeGlobals[4];
+    NSDictionary **attributes = &attributeGlobals[(direction == NSWritingDirectionRightToLeft ? 0 : 1) + (isGroupLabel ? 0 : 2)];
+    if (*attributes == nil) {
+        *attributes = [[NSDictionary dictionaryWithObjectsAndKeys:
+            isGroupLabel ? groupLabelFont() : itemFont(), NSFontAttributeName,
+            paragraphStyle(direction), NSParagraphStyleAttributeName,
+            nil] retain];
+    }
+    return *attributes;
+}
 
 QListBox::QListBox(QWidget *parent)
     : QScrollView(parent)
@@ -134,47 +176,34 @@ void QListBox::setSelectionMode(SelectionMode mode)
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 
-void QListBox::insertItem(NSObject *o, unsigned index)
+void QListBox::insertItem(const QString &text, int index, bool isLabel)
 {
-    unsigned c = count();
+    ASSERT(index >= 0);
 
     KWQ_BLOCK_EXCEPTIONS;
+
+    NSScrollView *scrollView = getView();
+    KWQTableView *tableView = [scrollView documentView];
+
+    NSAttributedString *s = [[NSAttributedString alloc] initWithString:text.getNSString()
+        attributes:stringAttributes([tableView baseWritingDirection], isLabel)];
+
+    int c = count();
     if (index >= c) {
-        [_items addObject:o];
+        [_items addObject:s];
     } else {
-        [_items replaceObjectAtIndex:index withObject:o];
+        [_items replaceObjectAtIndex:index withObject:s];
     }
+ 
+    [s release];
 
     if (!_insertingItems) {
-        NSScrollView *scrollView = getView();
-        NSTableView *tableView = [scrollView documentView];
         [tableView reloadData];
     }
+
     KWQ_UNBLOCK_EXCEPTIONS;
 
     _widthGood = NO;
-}
-
-void QListBox::insertItem(const QString &text, unsigned index)
-{
-    insertItem(text.getNSString(), index);
-}
-
-void QListBox::insertGroupLabel(const QString &text, unsigned index)
-{
-    static NSDictionary *groupLabelAttributes;
-
-    KWQ_BLOCK_EXCEPTIONS;
-    if (groupLabelAttributes == nil) {
-        groupLabelAttributes = [[NSDictionary dictionaryWithObject:
-            [NSFont boldSystemFontOfSize:[NSFont smallSystemFontSize]] forKey:NSFontAttributeName] retain];
-    }
-
-    NSAttributedString *s = [[NSAttributedString alloc]
-        initWithString:text.getNSString() attributes:groupLabelAttributes];
-    insertItem(s, index);
-    [s release];
-    KWQ_UNBLOCK_EXCEPTIONS;
 }
 
 void QListBox::beginBatchInsert()
@@ -187,20 +216,24 @@ void QListBox::endBatchInsert()
 {
     ASSERT(_insertingItems);
     _insertingItems = false;
-    NSScrollView *scrollView = getView();
 
     KWQ_BLOCK_EXCEPTIONS;
+
+    NSScrollView *scrollView = getView();
     NSTableView *tableView = [scrollView documentView];
     [tableView reloadData];
+
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 
 void QListBox::setSelected(int index, bool selectIt)
 {
+    ASSERT(index >= 0);
     ASSERT(!_insertingItems);
-    NSScrollView *scrollView = getView();
 
     KWQ_BLOCK_EXCEPTIONS;
+
+    NSScrollView *scrollView = getView();
     NSTableView *tableView = [scrollView documentView];
     _changingSelection = true;
     if (selectIt) {
@@ -209,18 +242,23 @@ void QListBox::setSelected(int index, bool selectIt)
     } else {
         [tableView deselectRow:index];
     }
+
     KWQ_UNBLOCK_EXCEPTIONS;
+
     _changingSelection = false;
 }
 
 bool QListBox::isSelected(int index) const
 {
+    ASSERT(index >= 0);
     ASSERT(!_insertingItems);
-    NSScrollView *scrollView = getView();
 
     KWQ_BLOCK_EXCEPTIONS;
+
+    NSScrollView *scrollView = getView();
     NSTableView *tableView = [scrollView documentView];
     return [tableView isRowSelected:index]; 
+
     KWQ_UNBLOCK_EXCEPTIONS;
 
     return false;
@@ -298,6 +336,44 @@ bool QListBox::checksDescendantsForFocus() const
     return true;
 }
 
+void QListBox::setWritingDirection(QPainter::TextDirection d)
+{
+    KWQ_BLOCK_EXCEPTIONS;
+
+    NSScrollView *scrollView = getView();
+    KWQTableView *tableView = [scrollView documentView];
+    NSWritingDirection direction = d == QPainter::RTL ? NSWritingDirectionRightToLeft : NSWritingDirectionLeftToRight;
+    if ([tableView baseWritingDirection] != direction) {
+        int n = count();
+        for (int i = 0; i < n; i++) {
+            NSAttributedString *o = [_items objectAtIndex:i];
+            NSAttributedString *s = [[NSAttributedString alloc] initWithString:[o string]
+                attributes:stringAttributes([tableView baseWritingDirection], itemIsGroupLabel(i))];
+            [_items replaceObjectAtIndex:i withObject:s];
+            [s release];
+        }
+        [tableView setBaseWritingDirection:direction];
+        [tableView reloadData];
+    }
+
+    KWQ_UNBLOCK_EXCEPTIONS;
+}
+
+bool QListBox::itemIsGroupLabel(int index) const
+{
+    ASSERT(index >= 0);
+
+    KWQ_BLOCK_EXCEPTIONS;
+
+    NSAttributedString *s = [_items objectAtIndex:index];
+    NSFont *f = [s attribute:NSFontAttributeName atIndex:0 effectiveRange:NULL];
+    return f == groupLabelFont();
+
+    KWQ_UNBLOCK_EXCEPTIONS;
+
+    return false;
+}
+
 @implementation KWQListBoxScrollView
 
 - (void)setFrameSize:(NSSize)size
@@ -330,7 +406,7 @@ bool QListBox::checksDescendantsForFocus() const
     NSTableColumn *column = [[NSTableColumn alloc] initWithIdentifier:nil];
 
     [column setEditable:NO];
-    [[column dataCell] setFont:[NSFont systemFontOfSize:[NSFont smallSystemFontSize]]];
+    [[column dataCell] setFont:itemFont()];
 
     [self addTableColumn:column];
 
@@ -456,7 +532,7 @@ bool QListBox::checksDescendantsForFocus() const
 
 - (BOOL)tableView:(NSTableView *)tableView shouldSelectRow:(int)row
 {
-    return [[_items objectAtIndex:row] isKindOfClass:[NSString class]];
+    return !_box->itemIsGroupLabel(row);
 }
 
 - (BOOL)selectionShouldChangeInTableView:(NSTableView *)aTableView
@@ -478,6 +554,16 @@ bool QListBox::checksDescendantsForFocus() const
 - (QWidget *)widget
 {
     return _box;
+}
+
+- (void)setBaseWritingDirection:(NSWritingDirection)direction
+{
+    _direction = direction;
+}
+
+- (NSWritingDirection)baseWritingDirection
+{
+    return _direction;
 }
 
 @end

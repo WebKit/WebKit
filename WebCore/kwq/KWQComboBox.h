@@ -60,6 +60,8 @@ public:
     
     virtual FocusPolicy focusPolicy() const;
 
+    void setWritingDirection(QPainter::TextDirection);
+    
 private:
     bool updateCurrentItem() const;
     const int *dimensions() const;

@@ -37,12 +37,22 @@
 - (NSString *)_KWQ_truncateToNumComposedCharacterSequences:(int)num;
 @end
 
+@interface NSCell (KWQTextFieldKnowsAppKitSecrets)
+- (NSMutableDictionary *)_textAttributes;
+@end
+
 @interface KWQTextField (KWQInternal)
 - (void)setHasFocus:(BOOL)hasFocus;
 @end
 
-// KWQTextFieldCell allows us to tell when we get focus without an editor subclass.
+// KWQTextFieldCell allows us to tell when we get focus without an editor subclass,
+// and override the base writing direction.
 @interface KWQTextFieldCell : NSTextFieldCell
+{
+    NSWritingDirection baseWritingDirection;
+}
+- (void)setBaseWritingDirection:(NSWritingDirection)direction;
+- (NSWritingDirection)baseWritingDirection;
 @end
 
 // KWQTextFieldFormatter enforces a maximum length.
@@ -64,8 +74,13 @@
 }
 @end
 
-// KWQSecureTextFieldCell allows us to tell when we get focus without an editor subclass.
+// KWQSecureTextFieldCell allows us to tell when we get focus without an editor subclass,
+// and override the base writing direction.
 @interface KWQSecureTextFieldCell : NSSecureTextFieldCell
+{
+    NSWritingDirection baseWritingDirection;
+}
+- (void)setBaseWritingDirection:(NSWritingDirection)direction;
 @end
 
 @implementation KWQTextField
@@ -161,6 +176,7 @@
             [secureField setFont:[self font]];
             [secureField setEditable:[self isEditable]];
             [secureField setSelectable:[self isSelectable]];
+            [[secureField cell] setBaseWritingDirection:[[self cell] baseWritingDirection]];
             [self setUpTextField:secureField];
             [self updateSecureFieldFrame];
         }
@@ -499,6 +515,18 @@
     }
 }
 
+- (void)setBaseWritingDirection:(NSWritingDirection)direction
+{
+    KWQTextFieldCell *cell = [self cell];
+    if ([cell baseWritingDirection] != direction) {
+        [cell setBaseWritingDirection:direction];
+        [[secureField cell] setBaseWritingDirection:direction];
+
+        // One call to setNeedsDisplay will take care of both text fields.
+        [self setNeedsDisplay:YES];
+    }
+}
+
 @end
 
 @implementation KWQTextField (KWQInternal)
@@ -599,6 +627,30 @@
     [super selectWithFrame:frame inView:view editor:editor delegate:delegate start:start length:length];
     ASSERT([delegate isKindOfClass:[KWQTextField class]]);
     [(KWQTextField *)delegate setHasFocus:YES];
+}
+
+- (void)setBaseWritingDirection:(NSWritingDirection)direction
+{
+    baseWritingDirection = direction;
+}
+
+- (NSWritingDirection)baseWritingDirection
+{
+    return baseWritingDirection;
+}
+
+- (NSMutableDictionary *)_textAttributes
+{
+    NSMutableDictionary *attributes = [super _textAttributes];
+    NSParagraphStyle *style = [attributes objectForKey:NSParagraphStyleAttributeName];
+    ASSERT(style != nil);
+    if ([style baseWritingDirection] != baseWritingDirection) {
+        NSMutableParagraphStyle *mutableStyle = [style mutableCopy];
+        [mutableStyle setBaseWritingDirection:baseWritingDirection];
+        [attributes setObject:mutableStyle forKey:NSParagraphStyleAttributeName];
+        [mutableStyle release];
+    }
+    return attributes;
 }
 
 @end
@@ -782,6 +834,25 @@
     [super selectWithFrame:frame inView:view editor:editor delegate:delegate start:start length:length];
     ASSERT([[delegate delegate] isKindOfClass:[KWQTextField class]]);
     [(KWQTextField *)[delegate delegate] setHasFocus:YES];
+}
+
+- (void)setBaseWritingDirection:(NSWritingDirection)direction
+{
+    baseWritingDirection = direction;
+}
+
+- (NSMutableDictionary *)_textAttributes
+{
+    NSMutableDictionary *attributes = [super _textAttributes];
+    NSParagraphStyle *style = [attributes objectForKey:NSParagraphStyleAttributeName];
+    ASSERT(style != nil);
+    if ([style baseWritingDirection] != baseWritingDirection) {
+        NSMutableParagraphStyle *mutableStyle = [style mutableCopy];
+        [mutableStyle setBaseWritingDirection:baseWritingDirection];
+        [attributes setObject:mutableStyle forKey:NSParagraphStyleAttributeName];
+        [mutableStyle release];
+    }
+    return attributes;
 }
 
 @end

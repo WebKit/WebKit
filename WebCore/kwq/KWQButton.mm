@@ -34,6 +34,10 @@
 
 #import "render_form.h"
 
+@interface NSCell (KWQButtonKnowsAppKitSecrets)
+- (NSMutableDictionary *)_textAttributes;
+@end
+
 @interface KWQButton : NSButton
 {
     QButton *button;
@@ -47,7 +51,22 @@
 
 @end
 
+@interface KWQButtonCell : NSButtonCell
+{
+    NSWritingDirection baseWritingDirection;
+}
+
+- (void)setBaseWritingDirection:(NSWritingDirection)direction;
+- (NSWritingDirection)baseWritingDirection;
+
+@end
+
 @implementation KWQButton
+
++ (Class)cellClass
+{
+    return [KWQButtonCell class];
+}
 
 - (id)initWithQButton:(QButton *)b
 {
@@ -153,6 +172,34 @@
     NSView *view = [super previousValidKeyView];
     inNextValidKeyView = NO;
     return view;
+}
+
+@end
+
+@implementation KWQButtonCell
+
+- (NSWritingDirection)baseWritingDirection
+{
+    return baseWritingDirection;
+}
+
+- (void)setBaseWritingDirection:(NSWritingDirection)direction
+{
+    baseWritingDirection = direction;
+}
+
+- (NSMutableDictionary *)_textAttributes
+{
+    NSMutableDictionary *attributes = [super _textAttributes];
+    NSParagraphStyle *style = [attributes objectForKey:NSParagraphStyleAttributeName];
+    ASSERT(style != nil);
+    if ([style baseWritingDirection] != baseWritingDirection) {
+        NSMutableParagraphStyle *mutableStyle = [style mutableCopy];
+        [mutableStyle setBaseWritingDirection:baseWritingDirection];
+        [attributes setObject:mutableStyle forKey:NSParagraphStyleAttributeName];
+        [mutableStyle release];
+    }
+    return attributes;
 }
 
 @end
@@ -287,3 +334,17 @@ QWidget::FocusPolicy QButton::focusPolicy() const
     return QWidget::focusPolicy();
 }
 
+void QButton::setWritingDirection(QPainter::TextDirection direction)
+{
+    KWQ_BLOCK_EXCEPTIONS;
+
+    KWQButton *button = getView();
+    KWQButtonCell *cell = [button cell];
+    NSWritingDirection d = direction == QPainter::RTL ? NSWritingDirectionRightToLeft : NSWritingDirectionLeftToRight;
+    if ([cell baseWritingDirection] != d) {
+        [cell setBaseWritingDirection:d];
+        [button setNeedsDisplay:YES];
+    }
+
+    KWQ_UNBLOCK_EXCEPTIONS;
+}

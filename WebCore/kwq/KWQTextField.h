@@ -42,13 +42,19 @@ class QLineEdit;
     BOOL inDrawingMachinery;
 }
 
--(id)initWithQLineEdit:(QLineEdit *)widget;
--(void)invalidate;
--(void)setPasswordMode:(BOOL)flag;
--(BOOL)passwordMode;
--(void)setMaximumLength:(int)len;
--(int)maximumLength;
--(void)setEdited:(BOOL)edited;
--(BOOL)edited;
+- (id)initWithQLineEdit:(QLineEdit *)widget;
+
+- (void)invalidate;
+
+- (void)setPasswordMode:(BOOL)flag;
+- (BOOL)passwordMode;
+
+- (void)setMaximumLength:(int)len;
+- (int)maximumLength;
+
+- (void)setEdited:(BOOL)edited;
+- (BOOL)edited;
+
+- (void)setBaseWritingDirection:(NSWritingDirection)direction;
 
 @end

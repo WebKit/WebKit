@@ -56,6 +56,8 @@ public:
     void setText(const QString &);
     QString text();
 
+    void setWritingDirection(QPainter::TextDirection);
+    
     void selectAll();
     
     QSize sizeForCharacterWidth(int numCharacters) const;

@@ -495,6 +495,7 @@ static NSRange RangeOfParagraph(NSString *text, int paragraph)
 
     // Set the base writing direction for text.
     [[textView textStorage] _KWQ_setBaseWritingDirection:direction];
+    [textView setNeedsDisplay:YES];
 }
 
 // This is the only one of the display family of calls that we use, and the way we do

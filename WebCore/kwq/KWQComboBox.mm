@@ -37,6 +37,10 @@
 
 using khtml::RenderWidget;
 
+@interface NSCell (KWQComboBoxKnowsAppKitSecrets)
+- (NSMutableDictionary *)_textAttributes;
+@end
+
 enum {
     topMargin,
     bottomMargin,
@@ -58,8 +62,13 @@ enum {
 @interface KWQPopUpButtonCell : NSPopUpButtonCell <KWQWidgetHolder>
 {
     QWidget *widget;
+    NSWritingDirection baseWritingDirection;
 }
-- initWithWidget:(QWidget *)widget;
+
+- (id)initWithWidget:(QWidget *)widget;
+- (void)setBaseWritingDirection:(NSWritingDirection)direction;
+- (NSWritingDirection)baseWritingDirection;
+
 @end
 
 @interface KWQPopUpButton : NSPopUpButton <KWQWidgetHolder>
@@ -279,6 +288,21 @@ QWidget::FocusPolicy QComboBox::focusPolicy() const
     return QWidget::focusPolicy();
 }
 
+void QComboBox::setWritingDirection(QPainter::TextDirection direction)
+{
+    KWQ_BLOCK_EXCEPTIONS;
+
+    KWQPopUpButton *button = getView();
+    KWQPopUpButtonCell *cell = [button cell];
+    NSWritingDirection d = direction == QPainter::RTL ? NSWritingDirectionRightToLeft : NSWritingDirectionLeftToRight;
+    if ([cell baseWritingDirection] != d) {
+        [cell setBaseWritingDirection:d];
+        [button setNeedsDisplay:YES];
+    }
+
+    KWQ_UNBLOCK_EXCEPTIONS;
+}
+
 @implementation KWQComboBoxAdapter
 
 - initWithQComboBox:(QComboBox *)b
@@ -340,6 +364,30 @@ QWidget::FocusPolicy QComboBox::focusPolicy() const
 - (QWidget *)widget
 {
     return widget;
+}
+
+- (void)setBaseWritingDirection:(NSWritingDirection)direction
+{
+    baseWritingDirection = direction;
+}
+
+- (NSWritingDirection)baseWritingDirection
+{
+    return baseWritingDirection;
+}
+
+- (NSMutableDictionary *)_textAttributes
+{
+    NSMutableDictionary *attributes = [super _textAttributes];
+    NSParagraphStyle *style = [attributes objectForKey:NSParagraphStyleAttributeName];
+    ASSERT(style != nil);
+    if ([style baseWritingDirection] != baseWritingDirection) {
+        NSMutableParagraphStyle *mutableStyle = [style mutableCopy];
+        [mutableStyle setBaseWritingDirection:baseWritingDirection];
+        [attributes setObject:mutableStyle forKey:NSParagraphStyleAttributeName];
+        [mutableStyle release];
+    }
+    return attributes;
 }
 
 @end

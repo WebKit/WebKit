@@ -55,13 +55,19 @@ public:
     void setSelectionMode(SelectionMode);
 
     void beginBatchInsert();
-    void insertItem(const QString &, unsigned index);
-    void insertGroupLabel(const QString &, unsigned index);
+    void insertItem(const QString &s, int i) { insertItem(s, i, false); }
+    void insertGroupLabel(const QString &s, int i) { insertItem(s, i, true); }
     void endBatchInsert();
+
     void setSelected(int, bool);
     bool isSelected(int) const;
+
     void setEnabled(bool enabled);
     bool isEnabled();
+    
+    bool itemIsGroupLabel(int index) const;
+    
+    void setWritingDirection(QPainter::TextDirection);
     
     bool changingSelection() { return _changingSelection; }
     void clicked() { _clicked.call(); }
@@ -71,7 +77,7 @@ public:
     virtual bool checksDescendantsForFocus() const;
     
 private:
-    void insertItem(NSObject *, unsigned index);
+    void insertItem(const QString &, int index, bool isLabel);
 
     NSMutableArray *_items;
     bool _insertingItems;
