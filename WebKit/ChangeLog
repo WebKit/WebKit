@@ -1,3 +1,13 @@
+2005-03-09  Deborah Goldsmith  <goldsmit@apple.com>
+
+        Reviewed by Darin.
+
+        - fixed <rdar://problem/3997044> default encoding for non-Latin incorrect
+
+	* WebKit/WebView.subproj/WebPreferences.m: (+[WebPreferences _systemCFStringEncoding]):
+        Call __CFStringGetUserDefaultEncoding to get region, and TECGetWebTextEncodings to get
+        the first encoding to determine the default encoding.
+
 2005-03-09  Darin Adler  <darin@apple.com>
 
         Reviewed by Richard.
