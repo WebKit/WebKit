@@ -235,7 +235,7 @@ bool execIndent(KHTMLPart *part, bool userInterface, const DOMString &value)
     return false;
 }
 
-bool execInsertNewline(KHTMLPart *part, bool userInterface, const DOMString &value)
+bool execInsertLineBreak(KHTMLPart *part, bool userInterface, const DOMString &value)
 {
     TypingCommand::insertLineBreak(part->xmlDocImpl());
     return true;
@@ -471,7 +471,7 @@ QDict<CommandImp> createCommandDictionary()
         { "FontSize", { execFontSize, enabledAnySelection, stateNone, valueFontSize } },
         { "ForeColor", { execForeColor, enabledAnySelection, stateNone, valueForeColor } },
         { "Indent", { execIndent, enabledAnySelection, stateNone, valueNull } },
-        { "InsertNewline", { execInsertNewline, enabledAnySelection, stateNone, valueNull } },
+        { "InsertLineBreak", { execInsertLineBreak, enabledAnySelection, stateNone, valueNull } },
         { "InsertParagraph", { execInsertParagraph, enabledAnySelection, stateNone, valueNull } },
         { "InsertText", { execInsertText, enabledAnySelection, stateNone, valueNull } },
         { "Italic", { execItalic, enabledAnySelection, stateItalic, valueNull } },

@@ -1,3 +1,33 @@
+2004-12-03  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+        Terminology change in execCommand command identifiers. Specifically, the name of 
+        "InsertNewline" command has been changed to "InsertLineBreak". This matches the 
+        terminology used by AppKit. It is also more accurate, since the insertion of a
+        "br" element is what the command does. The inspiration for this change is so the 
+        -insertNewline AppKit method can be mapped to insert a new "div" element in 
+        a document and avoid ambiguity with what the javascript editing command does.
+        
+        * khtml/editing/jsediting.cpp
+        * layout-tests/editing/deleting/delete-tab-004.html
+        * layout-tests/editing/editing.js
+        * layout-tests/editing/inserting/insert-3654864-fix.html
+        * layout-tests/editing/inserting/insert-3659587-fix.html
+        * layout-tests/editing/inserting/insert-3775316-fix.html
+        * layout-tests/editing/inserting/insert-3800346-fix.html
+        * layout-tests/editing/inserting/insert-br-001.html
+        * layout-tests/editing/inserting/insert-br-002.html
+        * layout-tests/editing/inserting/insert-br-003.html
+        * layout-tests/editing/inserting/insert-br-004.html
+        * layout-tests/editing/inserting/insert-br-005.html
+        * layout-tests/editing/inserting/insert-br-006.html
+        * layout-tests/editing/inserting/insert-br-007.html
+        * layout-tests/editing/inserting/insert-br-008.html
+        * layout-tests/editing/inserting/insert-tab-004.html
+        * layout-tests/editing/inserting/insert-text-with-newlines.html
+        * layout-tests/editing/pasteboard/paste-text-010.html
+
 2004-12-02  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by John

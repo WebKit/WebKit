@@ -269,16 +269,16 @@ function justifyRightCommand() {
 
 //-------------------------------------------------------------------------------------------------------
 
-function execInsertNewlineCommand() {
-    document.execCommand("InsertNewline");
+function execInsertLineBreakCommand() {
+    document.execCommand("InsertLineBreak");
 }
-function insertNewlineCommand() {
+function insertLineBreakCommand() {
     if (commandDelay > 0) {
-        window.setTimeout(execInsertNewlineCommand, commandCount * commandDelay);
+        window.setTimeout(execInsertLineBreakCommand, commandCount * commandDelay);
         commandCount++;
     }
     else {
-        execInsertNewlineCommand();
+        execInsertLineBreakCommand();
     }
 }
 
