@@ -2883,6 +2883,16 @@ FORWARD(yankAndSelect)
     [[self _bridgeForCurrentSelection] insertParagraphSeparatorInQuotedContent];
 }
 
+- (BOOL)_selectWordBeforeMenuEvent
+{
+    return _private->selectWordBeforeMenuEvent;
+}
+
+- (void)_setSelectWordBeforeMenuEvent:(BOOL)flag
+{
+    _private->selectWordBeforeMenuEvent = flag;
+}
+
 @end
 
 @implementation WebView (WebFileInternal)

@@ -86,6 +86,7 @@
     BOOL dashboardBehaviorAlwaysAcceptsFirstMouse;
     
     BOOL shouldUseFontSmoothing;
+    BOOL selectWordBeforeMenuEvent;
 }
 @end
 

@@ -1,5 +1,19 @@
 2005-02-02  Chris Blumenberg  <cblu@apple.com>
 
+	Fixed: <rdar://problem/3983628> control-click on WebView is not selecting the word under the cursor (Mail, non-editable WebView)
+
+        Reviewed by rjw.
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge selectWordBeforeMenuEvent]): new
+        * WebView.subproj/WebView.m:
+        (-[WebView _selectWordBeforeMenuEvent]): new SPI
+        (-[WebView _setSelectWordBeforeMenuEvent:]): new SPI
+        * WebView.subproj/WebViewInternal.h:
+        * WebView.subproj/WebViewPrivate.h:
+
+2005-02-02  Chris Blumenberg  <cblu@apple.com>
+
 	Fixed: <rdar://problem/3986013> Assertion failure going back after page load error (no apparent problem in nondebug build)
 
         Reviewed by rjw.

@@ -1,3 +1,13 @@
+2005-02-02  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3983628> control-click on WebView is not selecting the word under the cursor (Mail, non-editable WebView)
+
+        Reviewed by rjw.
+
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::sendContextMenuEvent): check if SPI to always enable selecting closest word is enabled
+        * kwq/WebCoreBridge.h:
+
 2005-02-02  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by me

@@ -538,6 +538,8 @@ typedef enum {
 - (void)handleAutoscrollForMouseDragged:(NSEvent *)event;
 - (BOOL)mayStartDragAtEventLocation:(NSPoint)location;
 
+- (BOOL)selectWordBeforeMenuEvent;
+
 - (int)historyLength;
 - (void)goBackOrForward:(int)distance;
 - (BOOL)canGoBackOrForward:(int)distance;
