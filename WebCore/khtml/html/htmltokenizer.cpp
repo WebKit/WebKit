@@ -517,7 +517,7 @@ void HTMLTokenizer::scriptHandler()
             scriptCodeSize = scriptCodeResync = 0;
             cs->ref(this);
             // will be 0 if script was already loaded and ref() executed it
-            if (cachedScript.count())
+            if (!cachedScript.isEmpty())
                 loadingExtScript = true;
         }
         else if (view && doScriptExec && javascript ) {
@@ -1500,8 +1500,7 @@ void HTMLTokenizer::write(const TokenizerString &str, bool appendData)
     if ( !buffer )
         return;
 
-    if ( ( m_executingScript && appendData ) || 
-	 loadingExtScript) {
+    if ( ( m_executingScript && appendData ) || ( !m_executingScript && loadingExtScript ) ) {
         // don't parse; we will do this later
 	if (currentPrependingSrc) {
 	    currentPrependingSrc->append(str);
@@ -1800,7 +1799,7 @@ void HTMLTokenizer::finish()
         if ( !food.isEmpty() )
             write(food, true);
     }
-    // this indicates we will not recieve any more data... but if we are waiting on
+    // this indicates we will not receive any more data... but if we are waiting on
     // an external script to load, we can't finish parsing until that is done
     noMoreData = true;
     if (!loadingExtScript && !m_executingScript && !onHold)
@@ -1910,8 +1909,9 @@ void HTMLTokenizer::notifyFinished(CachedObject */*finishedObj*/)
         cs->deref(this);
 
 	scriptExecution( scriptSource.string(), cachedScriptUrl );
-        // cachedScript.isEmpty() can change inside the scriptExecution() call above,
-        // so don't test it until afterwards.
+
+        // The state of cachedScript.isEmpty() can change inside the scriptExecution()
+        // call above, so test afterwards.
         finished = cachedScript.isEmpty();
         if (finished) loadingExtScript = false;
 

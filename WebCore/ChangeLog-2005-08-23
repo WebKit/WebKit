@@ -1,3 +1,14 @@
+2004-10-18  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - fixed <rdar://problem/3807234> REGRESSION (152-153): can't get element by ID that was just written with document.write in separate JS file (lacoccinelle.net)
+
+        * khtml/html/htmltokenizer.cpp:
+        (khtml::HTMLTokenizer::scriptHandler): Use !isEmpty instead of count != 0, since it's cheaper.
+        (khtml::HTMLTokenizer::write): Roll back to the old version of the check here. The fix is that
+        we only want to look at loadingExtScript if m_executingScript is 0.
+
 2004-10-18  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Hyatt
