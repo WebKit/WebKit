@@ -102,7 +102,7 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
 
 @interface NSArray (WebSafeMakePerform)
 
-- (void)_web_safeMakeObjectsPerformSelector:(SEL)aSelector
+- (void)_web_safeMakeObjectsPerformSelector:(SEL)aSelector;
 
 @end
 
