@@ -1,3 +1,13 @@
+2003-04-22  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	Adjusted for NSURLCredential changes.
+
+        * Panels.subproj/WebAuthenticationPanel.m:
+        (-[WebAuthenticationPanel runAsModalDialogWithChallenge:]):
+        (-[WebAuthenticationPanel sheetDidEnd:returnCode:contextInfo:]):
+
 2003-04-23  Chris Blumenberg  <cblu@apple.com>
 
         Reviewed by darin.
