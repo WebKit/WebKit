@@ -1178,6 +1178,42 @@ void KWQKHTMLPart::mouseUp(NSEvent *event)
     _mouseDownView = nil;
 }
 
+/*
+ A hack for the benefit of AK's PopUpButton, which uses the Carbon menu manager, which thus
+ eats all subsequent events after it is starts its modal tracking loop.  After the interaction
+ is done, this routine is used to fix things up.  We post a fake mouse up to balance the
+ mouse down we started with.  In addition, we post a fake mouseMoved to get the cursor in sync
+ with whatever we happen to be over after the tracking is done.
+ */
+void KWQKHTMLPart::doFakeMouseUpAfterWidgetTracking(NSEvent *downEvent)
+{
+    _sendingEventToSubview = false;
+    ASSERT([downEvent type] == NSLeftMouseDown);
+    NSEvent *fakeEvent = [NSEvent mouseEventWithType:NSLeftMouseUp
+                                            location:[downEvent locationInWindow]
+                                       modifierFlags:[downEvent modifierFlags]
+                                           timestamp:[downEvent timestamp]
+                                        windowNumber:[downEvent windowNumber]
+                                             context:[downEvent context]
+                                         eventNumber:[downEvent eventNumber]
+                                          clickCount:[downEvent clickCount]
+                                            pressure:[downEvent pressure]];
+    mouseUp(fakeEvent);
+    // FIXME:  We should really get the current modifierFlags here, but there's no way to poll
+    // them in Cocoa, and because the event stream was stolen by the Carbon menu code we have
+    // no up-to-date cache of them anywhere.
+    fakeEvent = [NSEvent mouseEventWithType:NSMouseMoved
+                                   location:[[_bridge window] convertScreenToBase:[NSEvent mouseLocation]]
+                              modifierFlags:[downEvent modifierFlags]
+                                  timestamp:[downEvent timestamp]
+                               windowNumber:[downEvent windowNumber]
+                                    context:[downEvent context]
+                                eventNumber:0
+                                 clickCount:0
+                                   pressure:0];
+    mouseMoved(fakeEvent);
+}
+
 void KWQKHTMLPart::mouseMoved(NSEvent *event)
 {
     if (!d->m_view) {

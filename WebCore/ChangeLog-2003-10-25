@@ -1,3 +1,24 @@
+2003-01-27  Trey Matteson  <trey@apple.com>
+
+	3157146 REGRESSION: using a pop-up menu turns the cursor into an I-beam
+
+ 	A hack for the benefit of AK's PopUpButton, which uses the Carbon menu
+	manager, which thus eats all subsequent events after it is starts its
+	modal tracking loop.  After the interaction is done, we call a new routine
+	to fix things up in the khtml event world.  We post a fake mouse up to balance
+	the mouse down we started with.  In addition, we post a fake mouseMoved to get
+	the cursor in sync with whatever we happen to be over after the tracking is done.
+
+        Reviewed by Darin.
+
+        * kwq/KWQComboBox.mm:
+        (-[KWQPopUpButtonCell trackMouse:inRect:ofView:untilMouseUp:]):
+	Call part after NSPopUp's modal tracking consumes events.
+        * kwq/KWQKHTMLPart.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::doFakeMouseUpAfterWidgetTracking):  New routine to allow widgets
+	to get out event state fixed up after a modal tracking loop.
+
 2003-01-27  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: 3152053 - Safari: Java 141: Only visible applets are instantiated on web page

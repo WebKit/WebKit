@@ -28,6 +28,10 @@
 #import "KWQKHTMLPart.h"
 #import "WebCoreBridge.h"
 
+#import "khtmlview.h"
+#import "render_replaced.h"
+using khtml::RenderWidget;
+
 // We empirically determined that combo boxes have these extra pixels on all
 // sides. It would be better to get this info from AppKit somehow.
 #define TOP_MARGIN 1
@@ -217,6 +221,13 @@ int QComboBox::currentItem() const
     BOOL result = [super trackMouse:event inRect:rect ofView:view untilMouseUp:flag];
     if (!wasDeferringLoading) {
         [bridge setDefersLoading:NO];
+    }
+    if (result) {
+        // Give khtml a chance to fix up its event state, since the popup eats all the
+        // events during tracking.  [NSApp currentEvent] is still the original mouseDown
+        // at this point!
+        RenderWidget *renderWidget = dynamic_cast<RenderWidget *>(const_cast<QObject *>(widget->eventFilterObject()));
+        KWQ(renderWidget->view()->part())->doFakeMouseUpAfterWidgetTracking(event);
     }
     return result;
 }
