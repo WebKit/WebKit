@@ -294,25 +294,11 @@ static BOOL bufferTextDrawing = NO;
     return bufferTextDrawing;
 }
 
-static float _WebAntiAliasingThreshold = 9.0;
-
-+ (void)_updateAntialiasingThreshold {
-    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-    id val;
-
-    [userDefaults synchronize];
-    val = [userDefaults objectForKey:@"AppleAntiAliasingThreshold"];
-    _WebAntiAliasingThreshold = (val ? [val floatValue] : _WebAntiAliasingThreshold);
-}
-
 + (void)initialize
 {
     WebKitInitializeUnicode();
     nonBaseChars = CFCharacterSetGetPredefined(kCFCharacterSetNonBase);
     bufferTextDrawing = [[[NSUserDefaults standardUserDefaults] stringForKey:@"BufferTextDrawing"] isEqual: @"YES"];
-
-    [[NSDistributedNotificationCenter defaultCenter] addObserver:self selector:@selector(_updateAntialiasingThreshold)                                                                 name:@"AppleAquaAntiAliasingChanged" object:nil                                                 suspensionBehavior:NSNotificationSuspensionBehaviorDeliverImmediately];
-    [WebTextRenderer _updateAntialiasingThreshold];
 }
 
 static inline BOOL _fontContainsString (NSFont *font, NSString *string)
@@ -628,16 +614,11 @@ static inline BOOL _fontContainsString (NSFont *font, NSString *string)
     return [font xHeight];
 }
 
+
 // Useful page for testing http://home.att.net/~jameskass
 static void _drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *advances, float x, float y, int numGlyphs)
 {
-    NSGraphicsContext *gc = [NSGraphicsContext currentContext];
     CGContextRef cgContext;
-
-    BOOL flag = [gc shouldAntialias];
-
-    if ([font pointSize] <= _WebAntiAliasingThreshold)
-        [gc setShouldAntialias: NO];
 
     if ([WebTextRenderer shouldBufferTextDrawing] && [[WebTextRendererFactory sharedFactory] coalesceTextDrawing]){
         // Add buffered glyphs and advances
@@ -646,7 +627,7 @@ static void _drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *a
         [gBuffer addGlyphs: glyphs advances: advances count: numGlyphs at: x : y];
     }
     else {
-        cgContext = (CGContextRef)[gc graphicsPort];
+        cgContext = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
         // Setup the color and font.
         [color set];
         [font set];
@@ -654,7 +635,6 @@ static void _drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *a
         CGContextSetTextPosition (cgContext, x, y);
         CGContextShowGlyphsWithAdvances (cgContext, glyphs, advances, numGlyphs);
     }
-    [gc setShouldAntialias: flag];
 }
 
 - (void)drawCharacters:(const UniChar *)characters stringLength: (unsigned int)length fromCharacterPosition: (int)from toCharacterPosition: (int)to atPoint:(NSPoint)point withPadding: (int)padding withTextColor:(NSColor *)textColor backgroundColor: (NSColor *)backgroundColor rightToLeft: (BOOL)rtl letterSpacing: (int)letterSpacing wordSpacing: (int)wordSpacing fontFamilies: (NSString **)families

@@ -1,5 +1,16 @@
 2003-01-02  Darin Adler  <darin@apple.com>
 
+        Reviewed by Don.
+
+        - at Scott and Don's request, roll out small text anti-aliasing cutoff
+
+        Turns out this makes small text look worse, not better. We're not going to respect
+        this setting, and in Panther AppKit will almost certainly be changed not to either.
+
+        * WebCoreSupport.subproj/WebTextRenderer.m: Rolled out yesterday's change using CVS.
+
+2003-01-02  Darin Adler  <darin@apple.com>
+
         Reviewed by John and Don.
 
 	- fixed 3137661 -- REGRESSION: autoscroll selection is broken
