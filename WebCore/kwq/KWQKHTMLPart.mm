@@ -468,13 +468,15 @@ bool KWQKHTMLPart::canCachePage()
     // 1.  We're not a frame or frameset.
     // 2.  The page has no javascript timers.
     // 3.  The page has no unload handler.
-    // 4.  The page has no plugins.
-    // 5.  The page has no JavaScript window timeouts.
+    // 4.  The page has no password fields.
+    // 5.  The page has no plugins.
+    // 6.  The page has no JavaScript window timeouts.
     if (d->m_doc &&
         (d->m_frames.count() ||
         parentPart() ||
         d->m_objects.count() ||
-        d->m_doc->getWindowEventListener (EventImpl::UNLOAD_EVENT))) {
+        d->m_doc->getWindowEventListener (EventImpl::UNLOAD_EVENT) ||
+        d->m_doc->hasPasswordField())) {
         return false;
     }
     if (d->m_doc && d->m_jscript) {
@@ -611,7 +613,11 @@ void KWQKHTMLPart::clearDocumentFocus(QWidget *widget)
 
 void KWQKHTMLPart::saveDocumentState()
 {
-    [_bridge saveDocumentState];
+    // Do not save doc state if the page has a password field and a form that would be submitted
+    // via https
+    if (!(d->m_doc && d->m_doc->hasPasswordField() && d->m_doc->hasSecureForm())) {
+        [_bridge saveDocumentState];
+    }
 }
 
 void KWQKHTMLPart::restoreDocumentState()

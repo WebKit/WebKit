@@ -228,7 +228,8 @@ QPtrList<DocumentImpl> * DocumentImpl::changedDocuments = 0;
 DocumentImpl::DocumentImpl(DOMImplementationImpl *_implementation, KHTMLView *v)
     : NodeBaseImpl( new DocumentPtr() )
 #if APPLE_CHANGES
-    , m_finishedParsing(this, SIGNAL(finishedParsing())), m_inPageCache(0)
+    , m_finishedParsing(this, SIGNAL(finishedParsing())), m_inPageCache(0),
+    m_passwordFields(0), m_secureForms(0)
 #endif
 {
     document->doc = this;
@@ -2242,6 +2243,39 @@ void DocumentImpl::setInPageCache(bool flag)
 {
     m_inPageCache = flag;
 }
+
+void DocumentImpl::passwordFieldAdded()
+{
+    m_passwordFields++;
+}
+
+void DocumentImpl::passwordFieldRemoved()
+{
+    assert(m_passwordFields > 0);
+    m_passwordFields--;
+}
+
+bool DocumentImpl::hasPasswordField() const
+{
+    return m_passwordFields > 0;
+}
+
+void DocumentImpl::secureFormAdded()
+{
+    m_secureForms++;
+}
+
+void DocumentImpl::secureFormRemoved()
+{
+    assert(m_secureForms > 0);
+    m_secureForms--;
+}
+
+bool DocumentImpl::hasSecureForm() const
+{
+    return m_secureForms > 0;
+}
+
 #endif
 
 #include "dom_docimpl.moc"

@@ -418,9 +418,19 @@ public:
     bool inPageCache();
     void setInPageCache (bool flag);
     void restoreRenderer(khtml::RenderObject* render);
-   
+
+    void passwordFieldAdded();
+    void passwordFieldRemoved();
+    bool hasPasswordField() const ;
+
+    void secureFormAdded();
+    void secureFormRemoved();
+    bool hasSecureForm() const ;
+
 private:
     bool m_inPageCache;
+    int m_passwordFields;
+    int m_secureForms;
 #endif
 
 protected:

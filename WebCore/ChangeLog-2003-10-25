@@ -1,3 +1,35 @@
+2003-01-15  Trey Matteson  <trey@apple.com>
+
+	3144458 - user's credentials are present in a form that is revisited via b/f or history
+
+	We now never save/restore password fields.  Also if the page has a form with a password
+	field that would be submitted securely, we do not save anything on that page.
+
+        Reviewed by Darin.
+
+        * force-clean-timestamp:  PB isn't smart enough to know what to rebuild.
+        * khtml/html/html_formimpl.cpp:
+        (HTMLFormElementImpl::formWouldHaveSecureSubmission):  Utility function.
+        (HTMLFormElementImpl::attach):  Tell doc if we've added a secure form.
+        (HTMLFormElementImpl::parseAttribute):  Tell doc if form became secure.
+        (HTMLInputElementImpl::state):  Assert that we never save password fields.
+        (HTMLInputElementImpl::restoreState):  Assert that we never restore password fields.
+        (HTMLInputElementImpl::attach):  Tell doc if we've added a password field.
+        * khtml/html/html_formimpl.h:
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::DocumentImpl):  Init count of secure forms, password fields.
+        (DocumentImpl::passwordFieldAdded):
+        (DocumentImpl::passwordFieldRemoved):
+        (DocumentImpl::hasPasswordField):  New methods to count password fields.
+        (DocumentImpl::secureFormAdded):
+        (DocumentImpl::secureFormRemoved):
+        (DocumentImpl::hasSecureForm):  New methods to count secure forms.
+        * khtml/xml/dom_docimpl.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::canCachePage):   Never let pages with password fields in the page cache.
+        (KWQKHTMLPart::saveDocumentState):  Do not save form state if page has a form with
+	a password field that would be submitted securely
+
 2003-01-15  Darin Adler  <darin@apple.com>
 
         Reviewed by Ken.

@@ -119,6 +119,9 @@ public:
  private:
     QString oldIdAttr;
     QString oldNameAttr;
+#if APPLE_CHANGES
+    bool formWouldHaveSecureSubmission(DOMString url);
+#endif
 };
 
 // -------------------------------------------------------------------------
@@ -282,7 +285,7 @@ public:
     void blur();
     void focus();
 
-    virtual bool maintainsState() { return true; }
+    virtual bool maintainsState() { return m_type != PASSWORD; }
     virtual QString state();
     virtual void restoreState(QStringList &);
 
