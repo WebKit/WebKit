@@ -1,3 +1,15 @@
+2004-02-12  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+
+	Refactored object design for edit commands into something that's
+	starting to feel more solid. Added some accessors to edit 
+	commands.
+
+        * WebCore.pbproj/project.pbxproj:
+        * khtml/editing/htmlediting_impl.h: Added.
+        * khtml/editing/htmlediting_impl.m: Added.
+
 2004-02-11  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3550005, 936 leaks when loading checkbox page of pain.  Make sure to nuke the inline box

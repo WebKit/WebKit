@@ -65,7 +65,6 @@ namespace DOM
 }
 
 using DOM::TristateFlag;
-using khtml::EditCommandPtr;
 
 namespace khtml
 {
@@ -629,7 +628,7 @@ public:
   /**
    * Applies the given edit command.
    */
-  void applyCommand(const khtml::EditCommandPtr &);
+  void applyCommand(khtml::EditCommand &);
 
   /**
    * Performs an undo of the edit.

@@ -102,7 +102,7 @@ using khtml::Decoder;
 using khtml::DeleteKeyCommand;
 using khtml::DeleteSelectionCommand;
 using khtml::EditCommand;
-using khtml::EditCommandPtr;
+using khtml::EditCommand;
 using khtml::InlineTextBox;
 using khtml::PasteHTMLCommand;
 using khtml::RenderObject;
@@ -394,7 +394,7 @@ bool KHTMLPart::openURL( const KURL &url )
   // clear edit commands
   d->m_undoEditCommands.clear();
   d->m_redoEditCommands.clear();
-  d->m_lastEditCommand = EditCommandPtr(0);
+  d->m_lastEditCommand = EditCommand();
 #if APPLE_CHANGES
   KWQ(this)->clearUndoRedoOperations();
 #endif
@@ -2484,7 +2484,7 @@ void KHTMLPart::clearSelection()
 
 void KHTMLPart::deleteSelection()
 {
-    EditCommandPtr cmd(new DeleteSelectionCommand(d->m_doc));
+    EditCommand cmd(DeleteSelectionCommand(d->m_doc));
     applyCommand(cmd);
 }
 
@@ -5068,46 +5068,50 @@ bool KHTMLPart::isEditingAtCaret() const
     return false;
 }
 
-void KHTMLPart::applyCommand(const khtml::EditCommandPtr &cmd)
+void KHTMLPart::applyCommand(khtml::EditCommand &cmd)
 {
-    if (d->m_lastEditCommand.isEmpty() || !d->m_lastEditCommand->coalesce(cmd)) {
-        cmd->apply();
+    assert(cmd.notNull());
+
+    if (d->m_lastEditCommand.isNull() || !d->m_lastEditCommand.coalesce(cmd)) {
+        cmd.apply();
 
         // add to undo commands
         d->m_undoEditCommands.append(cmd);
 
+        if (d->m_lastEditCommand.isNull() || !cmd.groupForUndo(d->m_lastEditCommand)) {
+            // clear redo commands
+            d->m_redoEditCommands.clear();
 #if APPLE_CHANGES
-        if (d->m_lastEditCommand.isEmpty() || !cmd->groupForUndo(d->m_lastEditCommand))
             KWQ(this)->registerCommandForUndo();
 #endif
+        }
 
         d->m_lastEditCommand = cmd;
     }
-
-    // always clear redo commands
-    d->m_redoEditCommands.clear();
 }
 
 void KHTMLPart::undoEditing()
 {
-    EditCommandPtr cmd;
-    EditCommandPtr next;
+    assert(d->m_undoEditCommands.count() > 0);
     
+    EditCommand cmd;
+    EditCommand next;
+
     do {
-        assert(d->m_undoEditCommands.count() > 0);
         cmd = d->m_undoEditCommands.last();
+        assert(cmd.notNull());
         
-        cmd->unapply();
+        cmd.unapply();
 
         // EDIT FIXME: Removal is O(N). Improve QValueList to implement 0(1) removal of last element. 
         d->m_undoEditCommands.remove(cmd); 
         d->m_redoEditCommands.append(cmd);
     
-        next = d->m_undoEditCommands.count() > 0 ? d->m_undoEditCommands.last() : EditCommandPtr(0);
+        next = d->m_undoEditCommands.count() > 0 ? d->m_undoEditCommands.last() : EditCommand();
     } 
-    while (!next.isEmpty() && cmd->groupForUndo(next));
+    while (next.notNull() && cmd.groupForUndo(next));
     
-    d->m_lastEditCommand = EditCommandPtr(0);
+    d->m_lastEditCommand = EditCommand();
     
 #if APPLE_CHANGES
     KWQ(this)->registerCommandForRedo();
@@ -5116,24 +5120,26 @@ void KHTMLPart::undoEditing()
 
 void KHTMLPart::redoEditing()
 {
-    EditCommandPtr cmd;
-    EditCommandPtr next;
+    assert(d->m_redoEditCommands.count() > 0);
 
-    do {
-        assert(d->m_redoEditCommands.count() > 0);
-        cmd = d->m_redoEditCommands.last();
+    EditCommand cmd;
+    EditCommand next;
     
-        cmd->reapply();
+    do {
+        cmd = d->m_redoEditCommands.last();
+        assert(cmd.notNull());
+    
+        cmd.reapply();
 
         // EDIT FIXME: Removal is O(N). Improve QValueList to implement 0(1) removal of last element. 
         d->m_redoEditCommands.remove(cmd); 
         d->m_undoEditCommands.append(cmd);
 
-        next = d->m_redoEditCommands.count() > 0 ? d->m_redoEditCommands.last() : EditCommandPtr(0);
+        next = d->m_redoEditCommands.count() > 0 ? d->m_redoEditCommands.last() : EditCommand();
     }
-    while (!next.isEmpty() && cmd->groupForRedo(next));
+    while (next.notNull() && cmd.groupForRedo(next));
 
-    d->m_lastEditCommand = EditCommandPtr(0);
+    d->m_lastEditCommand = EditCommand();
     
 #if APPLE_CHANGES
     KWQ(this)->registerCommandForUndo();
@@ -5142,7 +5148,7 @@ void KHTMLPart::redoEditing()
 
 void KHTMLPart::pasteHTMLString(const QString &HTMLString)
 {
-    EditCommandPtr cmd(new PasteHTMLCommand(d->m_doc, DOMString(HTMLString)));
+    EditCommand cmd(PasteHTMLCommand(d->m_doc, DOMString(HTMLString)));
     applyCommand(cmd);
 }
 

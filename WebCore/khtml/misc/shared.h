@@ -60,7 +60,10 @@ public:
 	SharedPtr(const SharedPtr &o) : m_ptr(o.m_ptr) { if (m_ptr) m_ptr->ref(); }
     ~SharedPtr() { if (m_ptr) m_ptr->deref(); }
 	
-    bool isEmpty() const { return m_ptr == 0; }
+    bool isNull() const { return m_ptr == 0; }
+    bool notNull() const { return m_ptr != 0; }
+
+    void reset() { if (m_ptr) m_ptr->deref(); m_ptr = 0; }
     
     T * get() const { return m_ptr; }
 	T &operator*() const { return *m_ptr; }

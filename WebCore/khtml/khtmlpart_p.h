@@ -365,9 +365,9 @@ public:
   bool m_focusNodeRestored:1;
 
   TristateFlag m_inEditMode;
-  QValueList<khtml::EditCommandPtr> m_undoEditCommands;
-  QValueList<khtml::EditCommandPtr> m_redoEditCommands;
-  khtml::EditCommandPtr m_lastEditCommand;
+  QValueList<khtml::EditCommand> m_undoEditCommands;
+  QValueList<khtml::EditCommand> m_redoEditCommands;
+  khtml::EditCommand m_lastEditCommand;
 
   int m_focusNodeNumber;
 

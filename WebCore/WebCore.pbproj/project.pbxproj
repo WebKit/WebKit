@@ -523,6 +523,7 @@
 				BC7E782205C5EB700088A50F,
 				BC3B364905C9D5E200E42902,
 				BC3B364A05C9D5E200E42902,
+				BE9580F905DA973B00EC5B54,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -798,6 +799,7 @@
 				BC7FDE3305C1D9AB0070A902,
 				BC3B364805C9D5E200E42902,
 				BC433AD005D3046F003A5A14,
+				BE9580F805DA973B00EC5B54,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2541,6 +2543,36 @@
 			settings = {
 			};
 		};
+		BE9580F605DA973B00EC5B54 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = htmlediting_impl.cpp;
+			path = editing/htmlediting_impl.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		BE9580F705DA973B00EC5B54 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = htmlediting_impl.h;
+			path = editing/htmlediting_impl.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		BE9580F805DA973B00EC5B54 = {
+			fileRef = BE9580F605DA973B00EC5B54;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		BE9580F905DA973B00EC5B54 = {
+			fileRef = BE9580F705DA973B00EC5B54;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		BE983D95052A2E0A00892D85 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
@@ -2562,6 +2594,8 @@
 			children = (
 				BEB1DD2605C197F800DD1F43,
 				BEB1DD2505C197F800DD1F43,
+				BE9580F605DA973B00EC5B54,
+				BE9580F705DA973B00EC5B54,
 			);
 			isa = PBXGroup;
 			name = editing;
