@@ -1810,11 +1810,14 @@ static float widthForNextCharacter (CharacterWidthIterator *iterator, ATSGlyphRe
     // If small-caps convert lowercase to upper.
     if (renderer->isSmallCapsRenderer) {
         if (!isUpper(c)) {
-            c = toUpper(c);
-            useSmallCapsFont = YES;
+            // Only use small cap font if the the uppercase version of the character
+            // is different than the lowercase.
+            UniChar newC = toUpper(c);
+            if (newC != c) {
+                useSmallCapsFont = YES;
+                c = newC;
+            }
         }
-        else
-            useSmallCapsFont = NO;
     }
             
     // Get a glyph for the next characters.  Somewhat complicated by surrogate
