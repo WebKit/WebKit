@@ -1,3 +1,16 @@
+2002-07-29  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed:
+	2971845 - text view uses default "user font" (Helvetica), not fonts chosen in Alexander preferences
+
+        * WebView.subproj/WebTextView.m:
+        (-[WebTextView initWithFrame:]): add observer
+        (-[WebTextView dealloc]): remove observer
+        (-[WebTextView setFixedWidthFont]): added, checks defaults
+        (-[WebTextView dataSourceUpdated:]): calls setFixedWidthFont
+        (-[WebTextView searchFor:direction:caseSensitive:]): no changes
+        (-[WebTextView defaultsChanged:]): calls setFixedWidthFont
+
 2002-07-27  Chris Blumenberg  <cblu@apple.com>
 
 	Implemented click policy, support for option-click

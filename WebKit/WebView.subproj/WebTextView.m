@@ -6,6 +6,7 @@
 #import <WebKit/WebTextView.h>
 
 #import <WebKit/WebDataSource.h>
+#import <WebKit/WebPreferences.h>
 
 @interface NSString (NSStringTextFinding)
 
@@ -55,8 +56,25 @@
         [[self textContainer] setWidthTracksTextView:YES];
         [self setAutoresizingMask:NSViewWidthSizable];
         [self setEditable:NO];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(defaultsChanged:)
+                                                     name:NSUserDefaultsDidChangeNotification
+                                                   object:nil];
     }
     return self;
+}
+
+- (void)dealloc
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [super dealloc];
+}
+
+- (void)setFixedWidthFont
+{
+    WebPreferences *preferences = [WebPreferences standardPreferences];
+    NSFont *font = [NSFont fontWithName:[preferences fixedFontFamily] size:[preferences defaultFontSize]];
+    [self setFont:font];
 }
 
 - (void)provisionalDataSourceChanged:(WebDataSource *)dataSource
@@ -78,7 +96,7 @@
         [self replaceCharactersInRange:NSMakeRange(0,0) withRTF:[dataSource data]];
     } else {
         [self setRichText:NO];
-        
+        [self setFixedWidthFont];
         // FIXME: This needs to use the correct encoding, but the list of names of encodings
         // is currently inside WebCore where we can't share it.
         string = [[NSString alloc] initWithData:[dataSource data] encoding:NSASCIIStringEncoding];
@@ -140,6 +158,13 @@
     }
 
     return lastFindWasSuccessful;
+}
+
+- (void)defaultsChanged:(NSNotification *)notification
+{
+    if(![self isRichText]){
+        [self setFixedWidthFont];
+    }
 }
 
 @end
