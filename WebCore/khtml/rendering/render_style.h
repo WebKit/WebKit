@@ -322,6 +322,7 @@ public:
 
     bool operator==( const StyleVisualData &o ) const {
 	return ( clip == o.clip &&
+         hasClip == o.hasClip &&
 		 colspan == o.colspan &&
 		 counter_increment == o.counter_increment &&
 		 counter_reset == o.counter_reset &&
@@ -332,7 +333,8 @@ public:
     }
 
     LengthBox clip;
-
+    bool hasClip : 1;
+    
     short colspan; // for html, not a css2 attribute
 
     short counter_increment; //ok, so these are not visual mode spesific
@@ -552,7 +554,6 @@ protected:
         PseudoId _styleType : 3;
         bool _hasHover : 1;
         bool _hasActive : 1;
-        bool _jsClipMode : 1;
         EUnicodeBidi _unicodeBidi : 2;
     } noninherited_flags;
 
@@ -612,7 +613,6 @@ protected:
 	noninherited_flags._styleType = NOPSEUDO;
 	noninherited_flags._hasHover = false;
 	noninherited_flags._hasActive = false;
-	noninherited_flags._jsClipMode = false;
 	noninherited_flags._unicodeBidi = UBNormal;
     }
 
@@ -700,8 +700,8 @@ public:
     Length clipRight() const { return visual->clip.right; }
     Length clipTop() const { return visual->clip.top; }
     Length clipBottom() const { return visual->clip.bottom; }
-    bool jsClipMode() const { return noninherited_flags._jsClipMode; }
-
+    bool hasClip() const { return visual->hasClip; }
+    
     EUnicodeBidi unicodeBidi() const { return noninherited_flags._unicodeBidi; }
 
     EClear clear() const { return  noninherited_flags._clear; }
@@ -805,13 +805,13 @@ public:
     void setVerticalAlign(EVerticalAlign v) { noninherited_flags._vertical_align = v; }
     void setVerticalAlignLength(Length l) { SET_VAR(box, vertical_align, l ) }
 
+    void setHasClip() { SET_VAR(visual,hasClip,true) }
     void setClipLeft(Length v) { SET_VAR(visual,clip.left,v) }
     void setClipRight(Length v) { SET_VAR(visual,clip.right,v) }
     void setClipTop(Length v) { SET_VAR(visual,clip.top,v) }
     void setClipBottom(Length v) { SET_VAR(visual,clip.bottom,v) }
     void setClip( Length top, Length right, Length bottom, Length left );
-    void setJsClipMode( bool b ) { noninherited_flags._jsClipMode = b; }
-
+    
     void setUnicodeBidi( EUnicodeBidi b ) { noninherited_flags._unicodeBidi = b; }
 
     void setClear(EClear v) {  noninherited_flags._clear = v; }

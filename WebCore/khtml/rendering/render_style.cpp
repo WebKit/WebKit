@@ -74,7 +74,7 @@ bool StyleBoxData::operator==(const StyleBoxData& o) const
 }
 
 StyleVisualData::StyleVisualData()
-    : colspan( 1 ), counter_increment( 0 ), counter_reset( 0 ),
+    : hasClip(false), colspan( 1 ), counter_increment( 0 ), counter_reset( 0 ),
       palette( QApplication::palette() )
 {
 }
@@ -84,7 +84,7 @@ StyleVisualData::~StyleVisualData() {
 
 StyleVisualData::StyleVisualData(const StyleVisualData& o )
     : Shared<StyleVisualData>(),
-      clip( o.clip ), colspan( o.colspan ),
+      clip( o.clip ), hasClip( o.hasClip ), colspan( o.colspan ),
       counter_increment( o.counter_increment ), counter_reset( o.counter_reset ),
       palette( o.palette )
 {
@@ -407,7 +407,6 @@ RenderStyle::Diff RenderStyle::diff( const RenderStyle *other ) const
 	 !(noninherited_flags._overflow == other->noninherited_flags._overflow) ||
 	 !(noninherited_flags._bg_repeat == other->noninherited_flags._bg_repeat) ||
 	 !(noninherited_flags._bg_attachment == other->noninherited_flags._bg_attachment) ||
-	 !(noninherited_flags._jsClipMode == other->noninherited_flags._jsClipMode) ||
 	 !(inherited_flags._text_decoration == other->inherited_flags._text_decoration) ||
 	 *background.get() != *other->background.get()
 	)

@@ -1,3 +1,23 @@
+2002-09-10  David Hyatt  <hyatt@apple.com>
+
+	Fix the CSS clip property.
+	
+        * khtml/css/cssparser.cpp:
+        (StyleBaseImpl::parseValue):
+        * khtml/css/cssstyleselector.cpp:
+        * khtml/ecma/kjs_css.cpp:
+        (DOMCSSStyleDeclaration::tryPut):
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::calcClip):
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::printObject):
+        * khtml/rendering/render_replaced.cpp:
+        (RenderReplaced::print):
+        * khtml/rendering/render_style.cpp:
+        (StyleVisualData::StyleVisualData):
+        (RenderStyle::diff):
+        * khtml/rendering/render_style.h:
+
 2002-09-10  Richard Williamson (Local)  <rjw@apple.com>
 
         Fixed broken DOM handling of click count.  DOM click 
