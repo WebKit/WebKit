@@ -147,7 +147,7 @@ typedef enum {
 
 - (void)_loadDataSource:(WebDataSource *)dataSource withLoadType:(WebFrameLoadType)type;
 
-- (void)_downloadRequest:(WebResourceRequest *)request toPath:(NSString *)path;
+- (void)_downloadRequest:(WebResourceRequest *)request toDirectory:(NSString *)directory;
 
 - (void)_setJustOpenedForTargetedLink:(BOOL)justOpened;
 

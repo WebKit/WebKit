@@ -56,7 +56,7 @@ enum { NumUserAgentStringTypes = WinIE + 1 };
 + (NSString *)_MIMETypeForFile:(NSString *)path;
 + (NSArray *)_supportedImageMIMETypes;
 - (void)_downloadURL:(NSURL *)URL;
-- (void)_downloadURL:(NSURL *)URL toPath:(NSString *)path;
+- (void)_downloadURL:(NSURL *)URL toDirectory:(NSString *)directoryPath;
 
 - (BOOL)_defersCallbacks;
 - (void)_setDefersCallbacks:(BOOL)defers;

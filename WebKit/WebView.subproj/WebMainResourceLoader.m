@@ -28,6 +28,7 @@
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebLocationChangeDelegate.h>
 #import <WebKit/WebResourceLoadDelegate.h>
+#import <WebKit/WebResourceResponseExtras.h>
 #import <WebKit/WebStandardPanelsPrivate.h>
 #import <WebKit/WebView.h>
 
@@ -190,17 +191,23 @@
         
     case WebPolicySave:
 	[dataSource _setIsDownloading:YES];
-	
-	if ([dataSource downloadPath] == nil) {
-	    NSString *savePath = [[[dataSource controller] policyDelegate]
-                savePathForResponse:r andRequest:req];
-            // FIXME: Maybe there a cleaner way handle the bad filename case?
-            if ([savePath length] == 0 || ![savePath isAbsolutePath]) {
-                ERROR("Nil, empty or non-absolute path returned from savePathForResponse:andRequest:.");
-                [self stopLoadingForPolicyChange];
-                return;
+
+        NSString *path = [dataSource downloadPath];
+        if (path == nil || ![path isAbsolutePath]) {
+            NSString *directory = [dataSource _downloadDirectory];
+            if (directory != nil && [directory isAbsolutePath]) {
+                path = [directory stringByAppendingPathComponent:[r suggestedFilenameForSaving]];
+            } else {
+                path = [[[dataSource controller] policyDelegate] savePathForResponse:r andRequest:req];
+                // FIXME: Maybe there a cleaner way handle the bad filename case?
+                if (path == nil || ![path isAbsolutePath]) {
+                    ERROR("Nil or non-absolute path returned from savePathForResponse:andRequest:.");
+                    [self stopLoadingForPolicyChange];
+                    return;
+                }
             }
-	    [dataSource _setDownloadPath:savePath];
+
+	    [dataSource _setDownloadPath:path];
 	}
 
         [self interruptForPolicyChangeAndKeepLoading:YES];

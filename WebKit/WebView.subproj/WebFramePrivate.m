@@ -1763,11 +1763,14 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     [self _checkNavigationPolicyForRequest:[newDataSource request] dataSource:newDataSource andCall:self withSelector:@selector(_continueLoadRequestAfterNavigationPolicy:request:)];
 }
 
-- (void)_downloadRequest:(WebResourceRequest *)request toPath:(NSString *)path
+- (void)_downloadRequest:(WebResourceRequest *)request toDirectory:(NSString *)directory
 {
     WebDataSource *dataSource = [[WebDataSource alloc] initWithRequest:request];
     [dataSource _setIsDownloading:YES];
-    [dataSource _setDownloadPath:path];
+
+    if (directory != nil && [directory isAbsolutePath]) {
+        [dataSource _setDownloadDirectory:directory];
+    }
 
     [self _loadDataSource:dataSource withLoadType:WebFrameLoadTypeStandard];
 

@@ -1,3 +1,28 @@
+2003-01-28  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: 3156172 - No filename correction when downloading images via drag & drop
+
+        Reviewed by mjs, john, trey.
+
+        * WebView.subproj/WebControllerPrivate.h:
+        * WebView.subproj/WebControllerPrivate.m:
+        (-[WebController _downloadURL:]): call _downloadURL:toDirectory:
+        (-[WebController _downloadURL:toDirectory:]): call -[WebFrame _downloadRequest:toDirectory:]
+        * WebView.subproj/WebDataSourcePrivate.h:
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSourcePrivate dealloc]): release the download directory
+        (-[WebDataSource _setDownloadDirectory:]): new
+        (-[WebDataSource _downloadDirectory]): new
+        * WebView.subproj/WebFramePrivate.h:
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _downloadRequest:toDirectory:]): renamed
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView namesOfPromisedFilesDroppedAtDestination:]): call -[WebController _downloadURL:toDirectory:]
+        * WebView.subproj/WebImageView.m:
+        (-[WebImageView namesOfPromisedFilesDroppedAtDestination:]): call -[WebController _downloadURL:toDirectory:]
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient continueAfterContentPolicy:response:]): if the data source has a download directory, use it plus the filename from the response as download path
+
 2003-01-28  Trey Matteson  <trey@apple.com>
 
 	2940179 - Arrow cursor should change to link cursor after click of link in non-frontmost window

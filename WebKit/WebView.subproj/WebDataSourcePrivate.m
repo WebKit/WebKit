@@ -64,6 +64,7 @@
     [triggeringAction release];
     [lastCheckedRequest release];
     [downloadPath release];
+    [downloadDirectory release];
     [responses release];
 
     [super dealloc];
@@ -641,10 +642,36 @@
 
 - (void)_setDownloadPath:(NSString *)downloadPath
 {
-    [downloadPath retain];
+    if (_private->downloadPath == downloadPath) {
+        return;
+    }
     [_private->downloadPath release];
     _private->downloadPath = [downloadPath copy];
-    [downloadPath release];
+    
+    // Have either a download path or directory, not both at once.
+    [_private->downloadDirectory release];
+    _private->downloadDirectory = nil;
+}
+
+- (void)_setDownloadDirectory:(NSString *)downloadDirectory
+{
+    ASSERT(_private->downloadPath == nil);
+    
+    if (_private->downloadDirectory == downloadDirectory) {
+        return;
+    }
+    [_private->downloadDirectory release];
+    _private->downloadDirectory = [downloadDirectory copy];
+}
+
+- (NSString *)_downloadDirectory
+{
+    if (_private->downloadPath) {
+        ASSERT(_private->downloadDirectory == nil);
+        return [_private->downloadPath stringByDeletingLastPathComponent];
+    }
+
+    return _private->downloadDirectory;
 }
 
 - (void)_setJustOpenedForTargetedLink:(BOOL)justOpened

@@ -220,15 +220,17 @@
 
 - (void)_downloadURL:(NSURL *)URL
 {
-    [self _downloadURL:URL toPath:nil];
+    [self _downloadURL:URL toDirectory:nil];
 }
 
-- (void)_downloadURL:(NSURL *)URL toPath:(NSString *)path
+- (void)_downloadURL:(NSURL *)URL toDirectory:(NSString *)directory
 {
+    ASSERT(URL);
+    
     WebResourceRequest *request = [[WebResourceRequest alloc] initWithURL:URL];
     WebFrame *webFrame = [self mainFrame];
 
-    [webFrame _downloadRequest:request toPath:path];
+    [webFrame _downloadRequest:request toDirectory:directory];
     [request release];
 }
 

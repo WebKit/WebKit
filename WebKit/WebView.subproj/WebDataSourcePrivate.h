@@ -86,6 +86,7 @@
     
     BOOL isDownloading;
     NSString *downloadPath;
+    NSString *downloadDirectory;
 
     BOOL justOpenedForTargetedLink;
 
@@ -146,6 +147,8 @@
 - (void)_setLastCheckedRequest:(WebResourceRequest *)request;
 - (void)_setIsDownloading:(BOOL)isDownloading;
 - (void)_setDownloadPath:(NSString *)downloadPath;
+- (void)_setDownloadDirectory:(NSString *)downloadDirectory;
+- (NSString *)_downloadDirectory;
 - (void)_setJustOpenedForTargetedLink:(BOOL)justOpened;
 - (BOOL)_justOpenedForTargetedLink;
 - (void)_setStoredInPageCache:(BOOL)f;

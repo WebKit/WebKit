@@ -666,13 +666,16 @@
     if (!_private->draggingImageURL) {
         return nil;
     }
-    
-    NSString *filename = [[_private->draggingImageURL path] lastPathComponent];
-    NSString *path = [[dropDestination path] stringByAppendingPathComponent:filename];
 
-    [[self _controller] _downloadURL:_private->draggingImageURL toPath:path];
-    
-    return [NSArray arrayWithObject:filename];
+    [[self _controller] _downloadURL:_private->draggingImageURL toDirectory:[dropDestination path]];
+
+    // FIXME: The file is supposed to be created at this point so the Finder places the file
+    // where the drag ended. Since we can't create the file until the download starts,
+    // this fails. Even if we did create the file at this point, the Finder doesn't
+    // place the file in the right place anyway (2825055).
+    // FIXME: We may return a different filename than the file that we will create.
+    // Since the file isn't created at this point anwyway, it doesn't matter what we return.
+    return [NSArray arrayWithObject:[[_private->draggingImageURL path] lastPathComponent]];
 }
 
 - (void)mouseUp: (NSEvent *)event
