@@ -1,5 +1,12 @@
 2002-08-30  Richard Williamson (Home)  <rjw@apple.com>
 
+        Removed debugging log.
+        
+        * kwq/KWQString.mm:
+        (QString::fromStringWithEncoding):
+
+2002-08-30  Richard Williamson (Home)  <rjw@apple.com>
+
         Made decoder more robust wrt nulls in content.  Changed use
         of QCString to null safe QString rather than modify
         content.

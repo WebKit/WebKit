@@ -740,9 +740,6 @@ QString QString::fromStringWithEncoding(const char *chs, int len, CFStringEncodi
 
         qs.setBufferFromCFString(s);
 
-        fprintf (stderr, "strlen(chs) = %d, CFStringLength (decoderString) = %d, qs.length() = %d, len = %d\n", 
-                (int)strlen(chs), (int)CFStringGetLength (decoderString), (int)qs.length(), (int)len);
-                
         CFRelease (s);
         CFRelease (decoderString);
     }
