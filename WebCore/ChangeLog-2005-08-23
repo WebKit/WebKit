@@ -1,3 +1,14 @@
+2004-04-02  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3610662, rendering sometimes doesn't update in response to mouse events that change style.
+	The document changed list was getting messed up.
+	
+        Reviewed by darin
+
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::updateDocumentsRendering):
+        * khtml/xml/dom_docimpl.h:
+
 === Safari-135 ===
 
 2004-04-01  Darin Adler  <darin@apple.com>
