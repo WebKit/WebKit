@@ -121,5 +121,14 @@
     return isFlipped;
 }
 
+// FIXME.  This should be replaced.  Ultimately we will use something like:
+// [[webView dataSource] setURL: url];
+- (void)setURL: (NSString *)urlString
+{
+    KURL url = [urlString cString];
+    
+    part->openURL (url);
+}
+
 @end
 

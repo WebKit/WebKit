@@ -2,9 +2,10 @@
     IBClasses = (
         {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
         {
+            ACTIONS = {changeURL = id; }; 
             CLASS = _KWQOwner; 
             LANGUAGE = ObjC; 
-            OUTLETS = {window = id; }; 
+            OUTLETS = {containerView = id; window = id; }; 
             SUPERCLASS = NSApplication; 
         }
     ); 

@@ -73,11 +73,12 @@ int main( int argc, char **argv )
     KHTMLView   *htmlView = new KHTMLView (w, 0);
     htmlView->resize (800,800);
     KWQHTMLView *kwqHTMLView = [[[KWQHTMLView alloc] initWithFrame: NSMakeRect (0,0,0,0) widget: htmlView] autorelease];
+    kwqHTMLView->part = w;
         
     w->setView (htmlView);
 
     w->openURL (url);
-    
+        
     htmlView->setView (kwqHTMLView);
     
     htmlView->resize(800, 800);

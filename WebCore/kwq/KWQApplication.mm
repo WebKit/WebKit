@@ -117,6 +117,8 @@ QApplication::~QApplication()
 
 void QApplication::setMainWidget(QWidget *w)
 {
+    NSRect b = [((_KWQOwner *)application)->containerView bounds];
+    
     if (application == nil){
         NSLog (@"ERROR: QApplication::setMainWidget() application not set.\n");
         return;
@@ -126,7 +128,7 @@ void QApplication::setMainWidget(QWidget *w)
         return;
     }
     
-    NSScrollView *sv = [[NSScrollView alloc] initWithFrame: NSMakeRect (0,0,0,0)];
+    NSScrollView *sv = [[NSScrollView alloc] initWithFrame: NSMakeRect (0,0,b.size.width,b.size.height)];
     [sv setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
     [sv setHasVerticalScroller: YES];
     [sv setHasHorizontalScroller: YES];
@@ -136,7 +138,7 @@ void QApplication::setMainWidget(QWidget *w)
     [((_KWQOwner *)application)->window setAlphaValue: (float)0.8];
     
      
-    [((_KWQOwner *)application)->window setContentView: sv];
+    [((_KWQOwner *)application)->containerView addSubview: sv];
 }
 
 

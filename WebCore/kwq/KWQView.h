@@ -27,6 +27,7 @@
 
 
 class QWidget;
+class KHTMLPart;
 
 @interface KWQView : NSView
 {
@@ -62,6 +63,7 @@ class QWidget;
 @interface KWQHTMLView : NSView
 {
     QWidget *widget;
+    KHTMLPart *part;  // FIXME.  This is a temporary reference.
     bool isFlipped;
 }
 - initWithFrame: (NSRect)r widget: (QWidget *)w; 
