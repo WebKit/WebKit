@@ -441,8 +441,12 @@ static unsigned int findLengthOfCharacterCluster(const UniChar *characters, unsi
 
     for (i = 0; i < numGlyphs; i++) {
         advances[i].width = widthForGlyph(self, glyphToWidthMap, glyphs[i]);
-        if (glyphs[i] == spaceGlyph)
+        if (glyphs[i] == spaceGlyph){
+            if (i > 0){
+                advances[i-1].width = ROUND_TO_INT (advances[i-1].width);
+            }
             advances[i].width = ROUND_TO_INT(advances[i].width);
+        }
         advances[i].height = 0;
         advancePoint.x += advances[i].width;
     }
@@ -647,7 +651,7 @@ cleanup:
     IFGlyphWidth glyphWidth;
     ATSLayoutRecord *glyphRecord;
     ATSGlyphRef glyphID;
-    
+    float lastWidth = 0;
     
     ATSInitializeGlyphVector(length, 0, &glyphVector);
     [self convertCharacters: characters length: length toGlyphs: &glyphVector];
@@ -657,9 +661,15 @@ cleanup:
         glyphID = glyphRecord->glyphID;
         glyphRecord = (ATSLayoutRecord *)((char *)glyphRecord + glyphVector.recordSize);
         glyphWidth = widthForGlyph(self, glyphToWidthMap, glyphID);
-        if (glyphID == spaceGlyph && applyRounding)
+        if (glyphID == spaceGlyph && applyRounding){
+            if (lastWidth > 0){
+                totalWidth -= lastWidth;
+                totalWidth += ROUND_TO_INT(lastWidth);
+            }
             glyphWidth = ROUND_TO_INT(glyphWidth);
-        totalWidth += glyphWidth;
+        }
+        lastWidth = glyphWidth;
+        totalWidth += lastWidth;
     }
     ATSClearGlyphVector(&glyphVector);
     
@@ -673,6 +683,7 @@ cleanup:
     unsigned int i, clusterLength;
     NSFont *substituteFont;
     ATSGlyphRef glyphID;
+    float lastWidth = 0;
     
     //printf("width: font %s, size %.1f, text \"%s\"\n", [[font fontName] cString], [font pointSize], [[NSString stringWithCharacters:characters length:length] UTF8String]);
     
@@ -698,16 +709,22 @@ cleanup:
             substituteFont = [self substituteFontForCharacters: &characters[i] length: clusterLength];
             if (substituteFont) {
                 //WEBKITDEBUGLEVEL (WEBKIT_LOG_FONTCACHE, "substituting %s for %s, missing 0x%04x\n", DEBUG_OBJECT(substituteFont), DEBUG_OBJECT([font displayName]), c);
-                totalWidth += [[[IFTextRendererFactory sharedFactory] rendererWithFont: substituteFont] floatWidthForCharacters: &characters[i] length: clusterLength applyRounding: YES];
+                lastWidth = [[[IFTextRendererFactory sharedFactory] rendererWithFont: substituteFont] floatWidthForCharacters: &characters[i] length: clusterLength applyRounding: YES];
             }
         }
         
         if (glyphID > 0 || ((glyphID == 0) && substituteFont == nil)) {
-            if (glyphID == spaceGlyph && applyRounding)
-                totalWidth += ROUND_TO_INT(widthForGlyph(self, glyphToWidthMap, glyphID));
+            if (glyphID == spaceGlyph && applyRounding) {
+                if (lastWidth > 0){
+                    totalWidth -= lastWidth;
+                    totalWidth += ROUND_TO_INT(lastWidth);
+                }   
+                lastWidth = ROUND_TO_INT(widthForGlyph(self, glyphToWidthMap, glyphID));
+            }
             else
-                totalWidth += widthForGlyph(self, glyphToWidthMap, glyphID);
-        }                    
+                lastWidth = widthForGlyph(self, glyphToWidthMap, glyphID);
+        }
+        totalWidth += lastWidth;                
     }
 
     return totalWidth;
