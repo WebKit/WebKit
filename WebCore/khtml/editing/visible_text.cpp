@@ -25,6 +25,7 @@
 
 #include "khtml_text_operations.h"
 
+#include <dom/dom2_range.h>
 #include <misc/htmltags.h>
 #include <rendering/render_text.h>
 #include <xml/dom_nodeimpl.h>
@@ -34,6 +35,7 @@
 using DOM::DOMString;
 using DOM::Node;
 using DOM::NodeImpl;
+using DOM::offsetInCharacters;
 using DOM::Range;
 
 namespace khtml {
@@ -70,33 +72,6 @@ private:
 
 TextIterator::TextIterator() : m_positionNode(0)
 {
-}
-
-inline bool offsetInCharacters(unsigned short type)
-{
-    switch (type) {
-        case Node::ATTRIBUTE_NODE:
-        case Node::DOCUMENT_FRAGMENT_NODE:
-        case Node::DOCUMENT_NODE:
-        case Node::ELEMENT_NODE:
-        case Node::ENTITY_REFERENCE_NODE:
-            return false;
-
-        case Node::CDATA_SECTION_NODE:
-        case Node::COMMENT_NODE:
-        case Node::PROCESSING_INSTRUCTION_NODE:
-        case Node::TEXT_NODE:
-            return true;
-
-        case Node::DOCUMENT_TYPE_NODE:
-        case Node::ENTITY_NODE:
-        case Node::NOTATION_NODE:
-            assert(false); // should never be reached
-            return false;
-    }
-
-    assert(false); // should never be reached
-    return false;
 }
 
 TextIterator::TextIterator(const Range &r)
@@ -483,7 +458,7 @@ SimplifiedBackwardsTextIterator::SimplifiedBackwardsTextIterator(const Range &r)
     m_node = endNode;
     m_offset = endOffset;
     m_handledNode = false;
-    m_handledChildren = false;
+    m_handledChildren = endOffset == 0;
 
     m_startNode = startNode;
     m_startOffset = startOffset;

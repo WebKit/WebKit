@@ -533,6 +533,7 @@
 				BC06F25006D18A7E004A6FA3,
 				93ABCE6006E1A42E0085925B,
 				93B641F406E28C5C0055F610,
+				BEF3442706F1123C000A65D3,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -819,6 +820,7 @@
 				BC06F24F06D18A7E004A6FA3,
 				93ABCE5F06E1A42E0085925B,
 				93B641F306E28C5C0055F610,
+				BEF3442606F1123C000A65D3,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3312,6 +3314,34 @@
 			name = editing;
 			refType = 4;
 			sourceTree = "<group>";
+		};
+		BEF3442406F1123C000A65D3 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = dom_caretposition.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		BEF3442506F1123C000A65D3 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = dom_caretposition.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		BEF3442606F1123C000A65D3 = {
+			fileRef = BEF3442406F1123C000A65D3;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		BEF3442706F1123C000A65D3 = {
+			fileRef = BEF3442506F1123C000A65D3;
+			isa = PBXBuildFile;
+			settings = {
+			};
 		};
 		BEF7EEA005FF8F0D009717EE = {
 			fileEncoding = 30;
@@ -6689,6 +6719,8 @@
 				BC3B364505C9D5E200E42902,
 				BC3B364605C9D5E200E42902,
 				BC3B364705C9D5E200E42902,
+				BEF3442406F1123C000A65D3,
+				BEF3442506F1123C000A65D3,
 				F523D2F402DE4476018635CA,
 				F523D2F502DE4476018635CA,
 				F523D2F702DE4476018635CA,

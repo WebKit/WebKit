@@ -103,19 +103,13 @@ public:
     Position equivalentShallowPosition() const;
     Position equivalentDeepPosition() const;
     Position closestRenderedPosition(EAffinity) const;
-    bool atStartOfContainingEditableBlock() const;
-    bool atStartOfRootEditableElement() const;
     bool inRenderedContent() const;
     bool inRenderedText() const;
     bool isRenderedCharacter() const;
     bool rendersInDifferentPosition(const Position &pos) const;
     bool isFirstRenderedPositionOnLine() const;
     bool isLastRenderedPositionOnLine() const;
-    bool isLastRenderedPositionInEditableBlock() const;
     bool inFirstEditableInRootEditableElement() const;
-    bool inLastEditableInRootEditableElement() const;
-    bool inFirstEditableInContainingEditableBlock() const;
-    bool inLastEditableInContainingEditableBlock() const;
     
     Position &operator=(const Position &o);
     

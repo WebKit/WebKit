@@ -25,23 +25,24 @@
   
 #include "dom_selection.h"
 
+#include "dom_caretposition.h"
+#include "dom_docimpl.h"
+#include "dom_elementimpl.h"
+#include "dom_node.h"
+#include "dom_nodeimpl.h"
+#include "dom_positioniterator.h"
+#include "dom_string.h"
+#include "dom_textimpl.h"
+#include "dom2_range.h"
 #include "htmltags.h"
 #include "khtml_part.h"
 #include "khtmlview.h"
 #include "qevent.h"
 #include "qpainter.h"
 #include "qrect.h"
-#include "dom/dom2_range.h"
-#include "dom/dom_node.h"
-#include "dom/dom_string.h"
-#include "rendering/render_object.h"
-#include "rendering/render_style.h"
-#include "rendering/render_text.h"
-#include "xml/dom_docimpl.h"
-#include "xml/dom_positioniterator.h"
-#include "xml/dom_elementimpl.h"
-#include "xml/dom_nodeimpl.h"
-#include "xml/dom_textimpl.h"
+#include "render_object.h"
+#include "render_style.h"
+#include "render_text.h"
 
 #if APPLE_CHANGES
 #include "KWQAssertions.h"
@@ -204,7 +205,7 @@ Position Selection::modifyExtendingRightForward(ETextGranularity granularity)
             pos = pos.nextCharacterPosition();
             break;
         case WORD:
-            pos = pos.nextWordPosition();
+            pos = CaretPosition(pos).next().deepEquivalent();
             break;
         case PARAGRAPH:
             // "Next paragraph" not implemented yet. Fall through to LINE.
@@ -235,7 +236,7 @@ Position Selection::modifyMovingRightForward(ETextGranularity granularity)
             if (state() == RANGE) 
                 pos = end();
             else
-                pos = extent().nextCharacterPosition();
+                pos = CaretPosition(extent()).next().deepEquivalent();
             break;
         case WORD:
             pos = extent().nextWordPosition();
@@ -269,7 +270,7 @@ Position Selection::modifyExtendingLeftBackward(ETextGranularity granularity)
     Position pos = extent();
     switch (granularity) {
         case CHARACTER:
-            pos = pos.previousCharacterPosition();
+            pos = CaretPosition(pos).previous().deepEquivalent();
             break;
         case WORD:
             pos = pos.previousWordPosition();
@@ -301,7 +302,7 @@ Position Selection::modifyMovingLeftBackward(ETextGranularity granularity)
             if (state() == RANGE) 
                 pos = start();
             else
-                pos = extent().previousCharacterPosition();
+                pos = CaretPosition(extent()).previous().deepEquivalent();
             break;
         case WORD:
             pos = extent().previousWordPosition();
@@ -698,26 +699,26 @@ void Selection::validate(ETextGranularity granularity)
         }
         case PARAGRAPH:
             if (m_baseIsStart) {
-                assignStart(base().startParagraphBoundary().equivalentDeepPosition().closestRenderedPosition(DOWNSTREAM));
-                assignEnd(extent().endParagraphBoundary(IncludeLineBreak).equivalentDeepPosition().closestRenderedPosition(UPSTREAM));
+                assignStart(CaretPosition(base().startParagraphBoundary()).deepEquivalent());
+                assignEnd(CaretPosition(extent().endParagraphBoundary(IncludeLineBreak)).deepEquivalent());
             } else {
-                assignStart(extent().startParagraphBoundary().equivalentDeepPosition().closestRenderedPosition(DOWNSTREAM));
-                assignEnd(base().endParagraphBoundary(IncludeLineBreak).equivalentDeepPosition().closestRenderedPosition(UPSTREAM));
+                assignStart(CaretPosition(extent().startParagraphBoundary()).deepEquivalent());
+                assignEnd(CaretPosition(base().endParagraphBoundary(IncludeLineBreak)).deepEquivalent());
             }
             break;
         case DOCUMENT: {
             NodeImpl *de = start().node()->getDocument()->documentElement();
-            assignStart(Position(de, 0).equivalentDeepPosition().closestRenderedPosition(DOWNSTREAM));
-            assignEnd(Position(de, de->childNodeCount()).equivalentDeepPosition().closestRenderedPosition(UPSTREAM));
+            assignStart(CaretPosition(de, 0).deepEquivalent());
+            assignEnd(CaretPosition(de, de->childNodeCount()).deepEquivalent());
             break;
         }
         case PARAGRAPH_BOUNDARY:
             if (m_baseIsStart) {
-                assignStart(base().startParagraphBoundary().equivalentDeepPosition().closestRenderedPosition(DOWNSTREAM));
-                assignEnd(extent().endParagraphBoundary().equivalentDeepPosition().closestRenderedPosition(UPSTREAM));
+                assignStart(CaretPosition(base().startParagraphBoundary()).deepEquivalent());
+                assignEnd(CaretPosition(extent().endParagraphBoundary(IncludeLineBreak)).deepEquivalent());
             } else {
-                assignStart(extent().startParagraphBoundary().equivalentDeepPosition().closestRenderedPosition(DOWNSTREAM));
-                assignEnd(base().endParagraphBoundary().equivalentDeepPosition().closestRenderedPosition(UPSTREAM));
+                assignStart(CaretPosition(extent().startParagraphBoundary()).deepEquivalent());
+                assignEnd(CaretPosition(base().endParagraphBoundary(IncludeLineBreak)).deepEquivalent());
             }
             break;
     }

@@ -1,5 +1,61 @@
 2004-09-13  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by Darin
+
+        Various editing improvements, many focused on the improvements made possible by the
+        new CaretPosition class.
+        
+        Includes fixes for these bugs:
+        
+        <rdar://problem/3748164> REGRESSION (Mail): Arrow navigation in typical mail message can result in stuck caret
+        <rdar://problem/3782062> REGRESSION (Mail): option-delete can delete almost all of a message when it has trouble finding a word
+        <rdar://problem/3790456> triple click does not select entire paragraph (folklore.org)
+
+        * WebCore.pbproj/project.pbxproj: Added CaretPosition class files.
+        * khtml/dom/dom2_range.h:
+        (DOM::offsetInCharacters): Moved this helper here from khtml_text_operations.cpp. This
+        function helps to determine how to interpret the offsets used in DOM Ranges.
+        * khtml/editing/htmlediting_impl.cpp:
+        (khtml::InputNewlineCommandImpl::doApply): Use CaretPosition class to make "end-of-block" determination.
+        Also, fix a caret placement glitch in "case 1" in the code: Place the caret in the node after the inserted
+        BR. This makes it show up in the right place.
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::handleMousePressEventDoubleClick): Don't limit double-click and triple-click handling only to text nodes.
+        (KHTMLPart::handleMousePressEventTripleClick): Ditto.
+        (KHTMLPart::selectAll): Use CaretPosition class to implement improved selectAll.
+        * khtml/misc/khtml_text_operations.cpp:
+        (khtml::SimplifiedBackwardsTextIterator::SimplifiedBackwardsTextIterator): Make a fix to the initial state setting of
+        m_handledChildren. This is true if the offset into the end node is 0, meaning that we do not want to descend
+        into its children at all.
+        * khtml/xml/dom_caretposition.cpp: Added.
+        * khtml/xml/dom_caretposition.h: Added.
+        * khtml/xml/dom_nodeimpl.cpp:
+        (NodeImpl::traverseNextNode): Fix bugs with the stayWithin implementation. We could miss nodes we want to test
+        due to an erroneous check of stayWithin when no such check is needed.
+        (NodeImpl::traverseNextSibling): Ditto.
+        (NodeImpl::traversePreviousNodePostOrder): Ditto.
+        * khtml/xml/dom_position.cpp:
+        (DOM::Position::Position): Remove spurious semi-colon.
+        (DOM::Position::upstream): Move incoming Position to its equivalentDeepPosition. This is part of the transition
+        that will make this code work better with increased use of CaretPosition.
+        (DOM::Position::downstream): Ditto.
+        (DOM::Position::atStartOfContainingEditableBlock): Removed. Dead code; was not being called.
+        (DOM::Position::atStartOfRootEditableElement): Removed. Dead code; was not being called.
+        (DOM::Position::isLastRenderedPositionInEditableBlock): Removed. Replaced with calls to CaretPosition class.
+        (DOM::Position::inLastEditableInRootEditableElement): Removed. Dead code; was not being called.
+        (DOM::Position::inFirstEditableInRootEditableElement): Removed. Was only being called by other code that has been removed.
+        * khtml/xml/dom_position.h:
+        * khtml/xml/dom_selection.cpp:
+        (DOM::Selection::modifyExtendingRightForward): Moved implementation of CHARACTER case to use CaretPosition class instead
+        of Position class helpers.
+        (DOM::Selection::modifyMovingRightForward): Ditto.
+        (DOM::Selection::modifyExtendingLeftBackward): Ditto.
+        (DOM::Selection::modifyMovingLeftBackward): Ditto.
+        (DOM::Selection::validate): Made simplifications in code that used to call a concoction of Position class helpers to
+        do the right thing. Now calls CaretPosition equivalents.
+
+2004-09-13  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by me
 
         This test was broken. The result is that it was not testing what it was supposed to 

@@ -40,6 +40,7 @@
 #include "rendering/render_object.h"
 #include "rendering/render_style.h"
 #include "rendering/render_text.h"
+#include "xml/dom_caretposition.h"
 #include "xml/dom_docimpl.h"
 #include "xml/dom_elementimpl.h"
 #include "xml/dom_positioniterator.h"
@@ -56,6 +57,7 @@
 #endif
 
 using DOM::AttrImpl;
+using DOM::CaretPosition;
 using DOM::CSSComputedStyleDeclarationImpl;
 using DOM::CSSPrimitiveValue;
 using DOM::CSSPrimitiveValueImpl;
@@ -1381,7 +1383,7 @@ void InputNewlineCommandImpl::doApply()
     Position pos(selection.start().upstream(StayInBlock));
     bool atStart = pos.offset() <= pos.node()->caretMinOffset();
     bool atEnd = pos.offset() >= pos.node()->caretMaxOffset();
-    bool atEndOfBlock = pos.isLastRenderedPositionInEditableBlock();
+    bool atEndOfBlock = CaretPosition(pos).isLastInBlock();
     
     if (atEndOfBlock) {
         LOG(Editing, "input newline case 1");
@@ -1393,7 +1395,7 @@ void InputNewlineCommandImpl::doApply()
         bool hasTrailingBR = next && next->id() == ID_BR;
         insertNodeAfterPosition(nodeToInsert, pos);
         if (hasTrailingBR) {
-            setEndingSelection(Position(nodeToInsert, 0));
+            setEndingSelection(Position(next, 0));
         }
         else {
             // Insert an "extra" BR at the end of the block. 

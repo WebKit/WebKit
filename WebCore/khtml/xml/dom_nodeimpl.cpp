@@ -900,7 +900,7 @@ NodeImpl *NodeImpl::traverseNextNode(NodeImpl *stayWithin) const
     const NodeImpl *n = this;
     while (n && !n->nextSibling() && (!stayWithin || n->parentNode() != stayWithin))
         n = n->parentNode();
-    if (n && (!stayWithin || n->parentNode() != stayWithin))
+    if (n)
         return n->nextSibling();
     return 0;
 }
@@ -912,7 +912,7 @@ NodeImpl *NodeImpl::traverseNextSibling(NodeImpl *stayWithin) const
     const NodeImpl *n = this;
     while (n && !n->nextSibling() && (!stayWithin || n->parentNode() != stayWithin))
         n = n->parentNode();
-    if (n && (!stayWithin || n->parentNode() != stayWithin))
+    if (n)
         return n->nextSibling();
     return 0;
 }
@@ -942,7 +942,7 @@ NodeImpl *NodeImpl::traversePreviousNodePostOrder(NodeImpl *stayWithin) const
     const NodeImpl *n = this;
     while (n && !n->previousSibling() && (!stayWithin || n->parentNode() != stayWithin))
         n = n->parentNode();
-    if (n && (!stayWithin || n->parentNode() != stayWithin))
+    if (n)
         return n->previousSibling();
     return 0;
 }
