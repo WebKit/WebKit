@@ -559,7 +559,7 @@ public:
     
    /**
     * designMode support
-   */
+    */
     enum InheritedBool {
         off=false,
         on=true,
@@ -568,7 +568,7 @@ public:
     
     void setDesignMode(InheritedBool value);
     InheritedBool getDesignMode() const;
-    bool inDesignMode();
+    bool inDesignMode() const;
     DocumentImpl *parentDocument() const;
 
 #ifdef KHTML_XSLT
