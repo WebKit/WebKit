@@ -1,3 +1,45 @@
+2003-04-30  Richard Williamson   <rjw@apple.com>
+
+        API changes from final review meeting.
+        
+        Moved view registry to WebView.
+        Changed WebHistoryItem to use NSTimeInterval (at least for public API).
+        Still creates a NSCalendarDate for compatibility.  We should wean Safari
+        off it's use of NSCalendarDate.
+        Added public init method for WebHistoryItem.
+        Removed anchor from WebHistoryItem.
+        Added WebHistorySavedNotification.
+        
+        Reviewed by Darin.
+
+        * History.subproj/WebHistory.m:
+        (-[WebHistory addItemForURL:]):
+        * History.subproj/WebHistoryItem.h:
+        * History.subproj/WebHistoryItem.m:
+        (-[WebHistoryItem initWithURLString:title:lastVisitedTimeInterval:]):
+        (-[WebHistoryItem copyWithZone:]):
+        (-[WebHistoryItem lastVisitedTimeInterval]):
+        (-[WebHistoryItem anchor]):
+        (-[WebHistoryItem _setLastVisitedTimeInterval:]):
+        (-[WebHistoryItem _lastVisitedDate]):
+        (-[WebHistoryItem dictionaryRepresentation]):
+        (-[WebHistoryItem initFromDictionaryRepresentation:]):
+        * History.subproj/WebHistoryItemPrivate.h:
+        * History.subproj/WebHistoryPrivate.m:
+        (-[WebHistoryPrivate insertItem:atDateIndex:]):
+        (-[WebHistoryPrivate removeItemForURLString:]):
+        (-[WebHistoryPrivate addItem:]):
+        (-[WebHistoryPrivate _loadHistoryGuts:URL:error:]):
+        * Plugins.subproj/WebPluginDatabase.m:
+        (-[WebPluginDatabase init]):
+        * WebView.subproj/WebFrame.h:
+        * WebView.subproj/WebFrame.m:
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _transitionToCommitted:]):
+        * WebView.subproj/WebView.h:
+        * WebView.subproj/WebView.m:
+        (+[WebView registerViewClass:representationClass:forMIMEType:]):
+
 2003-04-29  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

@@ -16,6 +16,14 @@
 
 #import <CoreGraphics/CoreGraphicsPrivate.h>
 
+// Private keys used in the WebHistoryItem's dictionary representation.
+static NSString *WebLastVisitedTimeIntervalKey = @"lastVisitedTimeInterval";
+static NSString *WebVisitCountKey = @"visitCount";
+static NSString *WebOBSOLETELastVisitedDateKey = @"lastVisitedDate";
+static NSString *WebTitleKey = @"title";
+static NSString *WebChildrenKey = @"children";
+static NSString *WebDisplayTitleKey = @"displayTitle";
+
 @interface WebHistoryItemPrivate : NSObject
 {
 @public
@@ -26,8 +34,8 @@
     NSString *title;
     NSString *displayTitle;
     NSCalendarDate *lastVisitedDate;
+    NSTimeInterval lastVisitedTimeInterval;
     NSPoint scrollPoint;
-    NSString *anchor;
     NSArray *documentState;
     NSMutableArray *subItems;
     NSMutableDictionary *pageCache;
@@ -51,7 +59,6 @@
     [title release];
     [displayTitle release];
     [lastVisitedDate release];
-    [anchor release];
     [documentState release];
     [subItems release];
     [pageCache release];
@@ -69,6 +76,17 @@
 {
     self = [super init];
     _private = [[WebHistoryItemPrivate alloc] init];
+    return self;
+}
+
+- (id)initWithURLString:(NSString *)URLString title:(NSString *)title lastVisitedTimeInterval:(NSTimeInterval)time
+{
+    self = [super init];
+    _private->lastVisitedTimeInterval = time;
+    _private->title = [title copy];
+    _private->URLString = [URLString copy];
+    _private->originalURLString = [_private->URLString retain];
+    [self _retainIconInDatabase:YES];
     return self;
 }
 
@@ -92,9 +110,9 @@
     copy->_private->parent = [_private->parent copy];
     copy->_private->title = [_private->title copy];
     copy->_private->displayTitle = [_private->displayTitle copy];
+    copy->_private->lastVisitedTimeInterval = _private->lastVisitedTimeInterval;
     copy->_private->lastVisitedDate = [_private->lastVisitedDate copy];
     copy->_private->scrollPoint = _private->scrollPoint;
-    copy->_private->anchor = [_private->anchor copy];
     copy->_private->documentState = [_private->documentState copy];
     if (_private->subItems) {
         copy->_private->subItems = [[NSMutableArray alloc] initWithArray:_private->subItems copyItems:YES];
@@ -151,19 +169,14 @@
 }
 
 
-- (NSCalendarDate *)lastVisitedDate
+- (NSTimeInterval)lastVisitedTimeInterval
 {
-    return _private->lastVisitedDate;
+    return _private->lastVisitedTimeInterval;
 }
 
 - (unsigned)hash
 {
     return [_private->URLString hash];
-}
-
-- (NSString *)anchor
-{
-    return _private->anchor;
 }
 
 - (BOOL)isEqual:(id)anObject
@@ -304,16 +317,24 @@
     _private->parent = copy;
 }
 
-- (void)setLastVisitedDate:(NSCalendarDate *)date
+- (void)_setLastVisitedTimeInterval:(NSTimeInterval)time
 {
-    if (date != _private->lastVisitedDate) {
-        if (![_private->lastVisitedDate isEqual:date]) {
-            _private->visitCount++;
-        }
-        [date retain];
+    if (_private->lastVisitedTimeInterval != time) {
+        _private->lastVisitedTimeInterval = time;
         [_private->lastVisitedDate release];
-        _private->lastVisitedDate = date;
+        _private->lastVisitedDate = nil;
+        _private->visitCount++;
     }
+}
+
+// FIXME:  Remove this accessor and related ivar.
+- (NSCalendarDate *)_lastVisitedDate
+{
+    if (!_private->lastVisitedDate){
+        _private->lastVisitedDate = [[NSCalendarDate alloc]
+                    initWithTimeIntervalSinceReferenceDate:_private->lastVisitedTimeInterval];
+    }
+    return _private->lastVisitedDate;
 }
 
 - (int)visitCount
@@ -346,13 +367,6 @@
 - (void)setScrollPoint:(NSPoint)scrollPoint
 {
     _private->scrollPoint = scrollPoint;
-}
-
-- (void)setAnchor:(NSString *)a
-{
-    NSString *copy = [a copy];
-    [_private->anchor release];
-    _private->anchor = copy;
 }
 
 - (BOOL)isTargetItem
@@ -471,17 +485,16 @@
         [dict setObject:_private->URLString forKey:@""];
     }
     if (_private->title) {
-        [dict setObject:_private->title forKey:@"title"];
+        [dict setObject:_private->title forKey:WebTitleKey];
     }
     if (_private->displayTitle) {
-        [dict setObject:_private->displayTitle forKey:@"displayTitle"];
+        [dict setObject:_private->displayTitle forKey:WebDisplayTitleKey];
     }
-    if (_private->lastVisitedDate) {
-        [dict setObject:[NSString stringWithFormat:@"%.1lf", [_private->lastVisitedDate timeIntervalSinceReferenceDate]]
-                 forKey:@"lastVisitedDate"];
+    if (_private->lastVisitedTimeInterval != 0.0) {
+        [dict _web_setDouble:_private->lastVisitedTimeInterval forKey:WebLastVisitedTimeIntervalKey];
     }
     if (_private->visitCount) {
-        [dict setObject:[NSNumber numberWithInt:_private->visitCount] forKey:@"visitCount"];
+        [dict setObject:[NSNumber numberWithInt:_private->visitCount] forKey:WebVisitCountKey];
     }
     if (_private->subItems != nil) {
         NSMutableArray *childDicts = [NSMutableArray arrayWithCapacity:[_private->subItems count]];
@@ -489,7 +502,7 @@
         for (i = [_private->subItems count]; i >= 0; i--) {
             [childDicts addObject: [[_private->subItems objectAtIndex:i] dictionaryRepresentation]];
         }
-        [dict setObject: childDicts forKey: @"children"];
+        [dict setObject: childDicts forKey:WebChildrenKey];
     }
 
     return dict;
@@ -498,23 +511,24 @@
 - (id)initFromDictionaryRepresentation:(NSDictionary *)dict
 {
     NSString *URLString = [dict _web_stringForKey:@""];
-    NSString *title = [dict _web_stringForKey:@"title"];
+    NSString *title = [dict _web_stringForKey:WebTitleKey];
 
     self = [self initWithURL:(URLString ? [NSURL _web_URLWithString:URLString] : nil) title:title];
 
-    [self setAlternateTitle:[dict _web_stringForKey:@"displayTitle"]];
+    [self setAlternateTitle:[dict _web_stringForKey:WebDisplayTitleKey]];
 
-    NSString *date = [dict _web_stringForKey:@"lastVisitedDate"];
-    if (date) {
-        NSCalendarDate *calendarDate = [[NSCalendarDate alloc]
-            initWithTimeIntervalSinceReferenceDate:[date doubleValue]];
-        [self setLastVisitedDate:calendarDate];
-        [calendarDate release];
+    // We used to store a string representation of the date.  If we can't
+    // find a time interval check for the presence of that old string.
+    _private->lastVisitedTimeInterval = [dict _web_doubleForKey:WebLastVisitedTimeIntervalKey];
+    if (_private->lastVisitedTimeInterval == 0.0){
+        NSString *date = [dict _web_stringForKey:WebOBSOLETELastVisitedDateKey];
+        if (date)
+            _private->lastVisitedTimeInterval = [date doubleValue];
     }
 
-    _private->visitCount = [dict _web_intForKey:@"visitCount"];
+    _private->visitCount = [dict _web_intForKey:WebVisitCountKey];
 
-    NSArray *childDicts = [dict objectForKey:@"children"];
+    NSArray *childDicts = [dict objectForKey:WebChildrenKey];
     if (childDicts) {
         _private->subItems = [[NSMutableArray alloc] initWithCapacity:[childDicts count]];
         int i;

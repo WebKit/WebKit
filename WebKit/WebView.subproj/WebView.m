@@ -574,6 +574,13 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     return NO;
 }
 
++ (void) registerViewClass:(Class)viewClass representationClass: (Class)representationClass forMIMEType:(NSString *)MIMEType
+{
+    [[WebFrameView _viewTypes] setObject:viewClass forKey:MIMEType];
+    [[WebDataSource _repTypes] setObject:representationClass forKey:MIMEType];
+}
+
+
 @end
 
 

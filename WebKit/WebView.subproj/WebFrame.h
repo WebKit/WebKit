@@ -131,17 +131,4 @@
 */
 - (NSArray *)childFrames;
 
-/*!
-    @method registerViewClass:representationClass:forMIMEType:
-    @discussion Register classes that implement WebDocumentView and WebDocumentRepresentation respectively.
-    A document class may register for a primary MIME type by excluding
-    a subtype, i.e. "video/" will match the document class with
-    all video types.  More specific matching takes precedence
-    over general matching.
-    @param viewClass The WebDocumentView class to use to render data for a given MIME type.
-    @param representationClass The WebDocumentRepresentation class to use to represent data of the given MIME type.
-    @param MIMEType The MIME type to represent with an object of the given class.
-*/
-+ (void)registerViewClass:(Class)viewClass representationClass: (Class)representationClass forMIMEType:(NSString *)MIMEType;
-
 @end

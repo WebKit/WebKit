@@ -40,11 +40,9 @@
 - (void)setTarget:(NSString *)target;
 - (void)setParent:(NSString *)parent;
 - (void)setTitle:(NSString *)title;
-- (void)setLastVisitedDate:(NSCalendarDate *)date;
 - (void)setScrollPoint:(NSPoint)p;
 - (void)setDocumentState:(NSArray *)state;
 - (void)setIsTargetItem:(BOOL)flag;
-- (void)setAnchor:(NSString *)anchor;
 - (void)setFormData:(NSData *)data;
 - (void)setFormContentType:(NSString *)type;
 - (void)setFormReferrer:(NSString *)referrer;
@@ -57,6 +55,9 @@
 
 - (void)setAlwaysAttemptToUsePageCache: (BOOL)flag;
 - (BOOL)alwaysAttemptToUsePageCache;
+
+- (NSCalendarDate *)_lastVisitedDate;
+- (void)_setLastVisitedTimeInterval:(NSTimeInterval)time;
 
 @end
 

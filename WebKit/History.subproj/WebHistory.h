@@ -26,6 +26,7 @@ extern NSString *WebHistoryItemsAddedNotification;
 extern NSString *WebHistoryItemsRemovedNotification;
 extern NSString *WebHistoryAllItemsRemovedNotification;
 extern NSString *WebHistoryLoadedNotification;
+extern NSString *WebHistorySavedNotification;
 
 extern NSString *WebHistoryItemsKey;
 

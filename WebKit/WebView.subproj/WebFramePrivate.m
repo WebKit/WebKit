@@ -274,7 +274,6 @@ Repeat load of the same URL (by any other means of navigation other than the rel
     WebHistoryItem *bfItem;
 
     bfItem = [[[WebHistoryItem alloc] initWithURL:URL target:[self name] parent:[[self parentFrame] name] title:[dataSrc pageTitle]] autorelease];
-    [bfItem setAnchor:[URL fragment]];
     [dataSrc _addBackForwardItem:bfItem];
     [bfItem setOriginalURLString:[[[dataSrc _originalRequest] URL] absoluteString]];
 
@@ -658,7 +657,7 @@ Repeat load of the same URL (by any other means of navigation other than the rel
                 NSURL *URL = [[[ds _originalRequest] URL] _web_canonicalize];
                 WebHistoryItem *oldItem = [[WebHistory optionalSharedHistory] itemForURL:URL];
                 if (oldItem) {
-                    [oldItem setLastVisitedDate:[NSCalendarDate date]];
+                    [oldItem _setLastVisitedTimeInterval:[NSDate timeIntervalSinceReferenceDate]];
                 }
                 [self _makeDocumentView];
                 break;
@@ -1117,8 +1116,9 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         // FIXME: form state might want to be saved here too
 
         // FIXME: Perhaps we can use scrollToAnchorWithURL here instead and remove the older scrollToAnchor:?
-        if ([item anchor])
-            [[_private->dataSource _bridge] scrollToAnchor: [item anchor]];
+        NSString *anchor = [[item URLString] _web_URLFragment];
+        if (anchor)
+            [[_private->dataSource _bridge] scrollToAnchor: anchor];
     
         // must do this maintenance here, since we don't go through a real page reload
         [_private setCurrentItem:item];

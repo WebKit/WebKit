@@ -46,6 +46,7 @@ _WebHistoryItemsAddedNotification
 _WebHistoryItemsKey
 _WebHistoryItemsRemovedNotification
 _WebHistoryLoadedNotification
+_WebHistorySavedNotification
 _WebIconDatabaseDidAddIconNotification
 _WebIconLargeSize
 _WebIconMediumSize

@@ -22,6 +22,7 @@ NSString *WebHistoryItemsAddedNotification = @"WebHistoryItemsAddedNotification"
 NSString *WebHistoryItemsRemovedNotification = @"WebHistoryItemsRemovedNotification";
 NSString *WebHistoryAllItemsRemovedNotification = @"WebHistoryAllItemsRemovedNotification";
 NSString *WebHistoryLoadedNotification = @"WebHistoryLoadedNotification";
+NSString *WebHistorySavedNotification = @"WebHistorySavedNotification";
 NSString *WebHistoryItemsKey = @"WebHistoryItems";
 
 static WebHistory *_sharedHistory = nil;
@@ -99,7 +100,7 @@ static WebHistory *_sharedHistory = nil;
 - (WebHistoryItem *)addItemForURL: (NSURL *)URL
 {
     WebHistoryItem *entry = [[WebHistoryItem alloc] initWithURL:URL title:nil];
-    [entry setLastVisitedDate: [NSCalendarDate date]];
+    [entry _setLastVisitedTimeInterval: [NSDate timeIntervalSinceReferenceDate]];
     [self addItem: entry];
     [entry release];
     return entry;
@@ -190,7 +191,13 @@ static WebHistory *_sharedHistory = nil;
 - (BOOL)saveToURL:(NSURL *)URL error:(NSError **)error
 {
     // FIXME:  Use new foundation API to get error when ready.
-    return [_historyPrivate saveToURL:URL error:error];
+    if([_historyPrivate saveToURL:URL error:error]){
+        [[NSNotificationCenter defaultCenter]
+            postNotificationName: WebHistorySavedNotification
+                          object: self];
+        return YES;
+    }
+    return NO;    
 }
 
 - (WebHistoryItem *)_itemForURLString:(NSString *)URLString

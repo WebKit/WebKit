@@ -176,7 +176,7 @@ static NSArray *pluginLocations(void)
                 // Don't override previously registered types.
                 if(![viewTypes containsObject:mime]){
                     // Cocoa plugins must register themselves.
-                    [WebFrame registerViewClass:[WebNetscapePluginDocumentView class] representationClass:[WebNetscapePluginRepresentation class] forMIMEType:mime];
+                    [WebView registerViewClass:[WebNetscapePluginDocumentView class] representationClass:[WebNetscapePluginRepresentation class] forMIMEType:mime];
                 }
             }
         }

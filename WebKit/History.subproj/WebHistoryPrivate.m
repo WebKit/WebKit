@@ -96,12 +96,12 @@ NSString *DatesArrayKey = @"WebHistoryDates";
     ASSERT_ARG(dateIndex, dateIndex >= 0 && (uint)dateIndex < [_entriesByDate count]);
 
     //FIXME: just does linear search through entries; inefficient if many entries for this date
-    entryDate = [entry lastVisitedDate];
+    entryDate = [entry _lastVisitedDate];
     entriesForDate = [_entriesByDate objectAtIndex: dateIndex];
     count = [entriesForDate count];
     // optimized for inserting oldest to youngest
     for (index = 0; index < count; ++index) {
-        if ([entryDate compare: [[entriesForDate objectAtIndex: index] lastVisitedDate]] != NSOrderedAscending) {
+        if ([entryDate compare: [[entriesForDate objectAtIndex: index] _lastVisitedDate]] != NSOrderedAscending) {
             break;
         }
     }
@@ -123,7 +123,7 @@ NSString *DatesArrayKey = @"WebHistoryDates";
 
     [_entriesByURL removeObjectForKey: URLString];
 
-    foundDate = [self findIndex: &dateIndex forDay: [entry lastVisitedDate]];
+    foundDate = [self findIndex: &dateIndex forDay: [entry _lastVisitedDate]];
 
     ASSERT(foundDate);
     
@@ -145,7 +145,7 @@ NSString *DatesArrayKey = @"WebHistoryDates";
     int dateIndex;
     NSString *URLString;
 
-    ASSERT_ARG(entry, [entry lastVisitedDate] != nil);
+    ASSERT_ARG(entry, [entry _lastVisitedDate] != nil);
 
 #ifdef FIX_VISITED
     URLString = [[[entry URL] _web_canonicalize] absoluteString];
@@ -162,12 +162,12 @@ NSString *DatesArrayKey = @"WebHistoryDates";
 
     [self removeItemForURLString: URLString];
 
-    if ([self findIndex: &dateIndex forDay: [entry lastVisitedDate]]) {
+    if ([self findIndex: &dateIndex forDay: [entry _lastVisitedDate]]) {
         // other entries already exist for this date
         [self insertItem: entry atDateIndex: dateIndex];
     } else {
         // no other entries exist for this date
-        [_datesWithEntries insertObject: [entry lastVisitedDate] atIndex: dateIndex];
+        [_datesWithEntries insertObject: [entry _lastVisitedDate] atIndex: dateIndex];
         [_entriesByDate insertObject: [NSMutableArray arrayWithObject:entry] atIndex: dateIndex];
     }
 
@@ -405,7 +405,7 @@ NSString *DatesArrayKey = @"WebHistoryDates";
 
         entry = [[[WebHistoryItem alloc] initFromDictionaryRepresentation:itemAsDictionary] autorelease];
 
-        if ([entry URL] == nil || [entry lastVisitedDate] == nil) {
+        if ([entry URL] == nil) {
             // entry without URL is useless; data on disk must have been bad; ignore this one
             // entry without lastVisitDate should never happen; ignore that one
             continue;
@@ -413,7 +413,7 @@ NSString *DatesArrayKey = @"WebHistoryDates";
 
         // test against date limit
         if (!ageLimitPassed) {
-            if ([[entry lastVisitedDate] _web_compareDay:ageLimitDate] != NSOrderedDescending) {
+            if ([[entry _lastVisitedDate] _web_compareDay:ageLimitDate] != NSOrderedDescending) {
                 continue;
             } else {
                 ageLimitPassed = YES;
