@@ -924,10 +924,14 @@
 {
 }
 
+#if 0
+
 - (NSView *)hitTest:(NSPoint)point
 {
     // We handle all clicks. We don't allow subviews to handle them.
     return [super hitTest:point] ? self : nil;
 }
+
+#endif
 
 @end
