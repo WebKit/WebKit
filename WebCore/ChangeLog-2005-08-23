@@ -1,3 +1,15 @@
+2003-01-09  David Hyatt  <hyatt@apple.com>
+
+	The "flow-mode" quirk for lists is just that - a quirk, and should
+	not be applied when in strict mode.
+
+	Fixes diveintomark.org's navigation bar on the front page (issue #2
+	on his list).
+	
+        Reviewed by darin and maciej
+
+        * khtml/css/html4.css:
+
 2003-01-08  David Hyatt  <hyatt@apple.com>
 
 	Finish the KONQBLOCK removal and make sure that table rows and

@@ -267,7 +267,6 @@ UL, MENU, DIR {
         list-style-type: disc;
         margin: 1_qem 0 1em 0;
         padding-left: 40px;
-        -konq-flow-mode: -konq-around-floats;
 }
 
 OL {
@@ -275,7 +274,6 @@ OL {
         list-style-type: decimal;
         margin: 1_qem 0 1em 0;
         padding-left: 40px;
-        -konq-flow-mode: -konq-around-floats;
 }
 
 LI {
@@ -539,6 +537,11 @@ marquee {
     
     img[align="right"] {
         margin-left: 3px;
+    }
+    
+    /* Make lists flow around floats. */
+    UL, OL, MENU, DIR {
+        -konq-flow-mode: -konq-around-floats;
     }
 }
 
