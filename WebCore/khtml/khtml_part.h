@@ -21,6 +21,10 @@
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  */
+#ifndef ORIGINAL_KHTMLPART_HEADER
+#include "../../kwq/KWQKHTMLPart.h"
+#else 
+
 #ifndef __khtml_part_h__
 #define __khtml_part_h__
 
@@ -1043,5 +1047,7 @@ private:
   friend class KHTMLPartPrivate;
 };
 
+
+#endif
 
 #endif
