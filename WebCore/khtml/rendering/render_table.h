@@ -404,6 +404,9 @@ public:
 
     virtual short baselinePosition( bool = false ) const;
 
+    virtual int borderTopExtra() { return _topExtra; }
+    virtual int borderBottomExtra() { return _bottomExtra; }
+
 #ifndef NDEBUG
     virtual void dump(QTextStream *stream, QString ind = "") const;
 #endif
@@ -431,10 +434,6 @@ protected:
     int _bottomExtra;
     bool nWrap : 1;
     bool m_widthChanged : 1;
-
-    virtual int borderTopExtra() { return _topExtra; }
-    virtual int borderBottomExtra() { return _bottomExtra; }
-
 
     RenderTableRow *rowimpl;
 };

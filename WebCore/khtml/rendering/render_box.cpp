@@ -198,7 +198,17 @@ void RenderBox::printBackground(QPainter *p, const QColor &c, CachedImage *bg, i
         {
             //scroll
             int pw = m_width - vpab;
-            int ph = m_height - hpab;
+            int h = m_height;
+            if (isTableCell()) {
+                // Table cells' m_height variable is wrong.  You have to take into
+                // account this hack extra stuff to get the right height. 
+                // Otherwise using background-position: bottom won't work in
+                // a table cell that has the extra height. -dwh
+                RenderTableCell* tableCell = static_cast<RenderTableCell*>(this);
+                h += tableCell->borderTopExtra() + tableCell->borderBottomExtra();
+            }
+            int ph = h - hpab;
+            
             int pixw = bg->pixmap_size().width();
             int pixh = bg->pixmap_size().height();
             EBackgroundRepeat bgr = sptr->backgroundRepeat();
