@@ -280,6 +280,9 @@ enum {
     
     if (callSuper) {
         [super keyDown:event];
+    } else {
+        // if we did something useful, get the cursor out of the way
+        [NSCursor setHiddenUntilMouseMoves:YES];
     }
 }
 

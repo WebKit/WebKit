@@ -1,3 +1,12 @@
+2003-02-13  Trey Matteson  <trey@apple.com>
+
+	2943514 hide the cursor when using the arrow keys to scroll	
+
+        Reviewed by Darin
+
+        * WebView.subproj/WebView.m:
+        (-[WebView keyDown:]):  Hide that cursor.
+
 2003-02-16  Chris Blumenberg  <cblu@apple.com>
 
 	Added debug method that can be used inside of gdb to examine an image. Needed this many times.
