@@ -1,5 +1,14 @@
 2003-03-13  David Hyatt  <hyatt@apple.com>
 
+	Add color dumping and bgcolor dumping to the render dump tool.
+	
+        Reviewed by darin
+
+        * kwq/KWQRenderTreeDebug.cpp:
+        (operator<<):
+
+2003-03-13  David Hyatt  <hyatt@apple.com>
+
 	Fix for 3193407, crash in CSS parser on www.hixie.ch.  Improved the grammar to
 	understand the CSS3 :not selector so that it wouldn't think of that case as an
 	error.  Also patched the error handling case that crashed on :not anyway.  Then

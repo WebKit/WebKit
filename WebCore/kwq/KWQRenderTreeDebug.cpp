@@ -77,11 +77,16 @@ static QTextStream &operator<<(QTextStream &ts, const RenderObject &o)
     QRect r(o.xPos(), o.yPos(), o.width(), o.height());
     ts << " " << r;
     
+    if (o.parent() && (o.parent()->style()->color() != o.style()->color()))
+        ts << " [color=" << o.style()->color().name() << "]";
+    if (o.parent() && (o.parent()->style()->backgroundColor() != o.style()->backgroundColor()))
+        ts << " [bgcolor=" << o.style()->backgroundColor().name() << "]";
+
     if (o.isTableCell()) {
         const RenderTableCell &c = static_cast<const RenderTableCell &>(o);
         ts << " [r=" << c.row() << " c=" << c.col() << " rs=" << c.rowSpan() << " cs=" << c.colSpan() << "]";
     }
-
+    
     return ts;
 }
 
