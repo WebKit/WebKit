@@ -58,6 +58,10 @@ public:
     DOMString lastModified() const;
     DOMString cookie() const;
     void setCookie( const DOMString &);
+#if APPLE_CHANGES
+    DOMString policyBaseURL() const { return m_policyBaseURL; }
+    void setPolicyBaseURL(const DOMString &s) { m_policyBaseURL = s; }
+#endif
 
     HTMLElementImpl *body();
     void setBody(HTMLElementImpl *_body);
@@ -87,6 +91,9 @@ protected slots:
     void slotHistoryChanged();
 private:
     mutable DOMString m_domain;
+#if APPLE_CHANGES
+    DOMString m_policyBaseURL;
+#endif
 };
 
 }; //namespace

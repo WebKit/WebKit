@@ -173,14 +173,8 @@ DOMString HTMLDocumentImpl::cookie() const
 
 void HTMLDocumentImpl::setCookie( const DOMString & value )
 {
-#ifdef APPLE_CHANGES
-    KHTMLPart *topLevelPart = view()->part();
-
-    while (topLevelPart->parentPart() != NULL) {
-	topLevelPart = topLevelPart->parentPart();
-    }
-
-    return KWQKCookieJar::setCookie(URL(), topLevelPart->htmlDocument().URL().string(), value.string());
+#if APPLE_CHANGES
+    return KWQKCookieJar::setCookie(URL(), m_policyBaseURL.string(), value.string());
 #else
     long windowId = 0;
     KHTMLView *v = view ();

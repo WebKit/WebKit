@@ -104,7 +104,9 @@ public:
     void layout();
     
     QString userAgent() const;
-    
+
+    void updatePolicyBaseURL();
+
     NSView *nextKeyView(DOM::NodeImpl *startingPoint, KWQSelectionDirection);
     NSView *nextKeyViewInFrameHierarchy(DOM::NodeImpl *startingPoint, KWQSelectionDirection);
     static NSView *nextKeyViewForWidget(QWidget *startingPoint, KWQSelectionDirection);
@@ -129,6 +131,8 @@ public:
     static const QPtrList<KWQKHTMLPartImpl> &instances() { return mutableInstances(); }
 
 private:
+    void setPolicyBaseURL(const DOM::DOMString &);
+
     WebCoreBridge *bridgeForFrameName(const QString &frameName);
 
     NSView *nextKeyViewInFrame(DOM::NodeImpl *startingPoint, KWQSelectionDirection);

@@ -183,6 +183,16 @@ void HTMLDocument::setCookie( const DOMString & value )
 
 }
 
+#if APPLE_CHANGES
+
+void HTMLDocument::setPolicyBaseURL( const DOMString &s )
+{
+   if (impl)
+        ((HTMLDocumentImpl *)impl)->setPolicyBaseURL(s);
+}
+
+#endif
+
 void HTMLDocument::open(  )
 {
     if(impl)

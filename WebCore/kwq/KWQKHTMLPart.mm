@@ -545,3 +545,22 @@ QPtrList<KWQKHTMLPartImpl> &KWQKHTMLPartImpl::mutableInstances()
     static QPtrList<KWQKHTMLPartImpl> instancesList;
     return instancesList;
 }
+
+void KWQKHTMLPartImpl::updatePolicyBaseURL()
+{
+    if (part->parentPart()) {
+        setPolicyBaseURL(part->parentPart()->docImpl()->policyBaseURL());
+    } else {
+        setPolicyBaseURL(part->m_url.url());
+    }
+}
+
+void KWQKHTMLPartImpl::setPolicyBaseURL(const DOM::DOMString &s)
+{
+    part->docImpl()->setPolicyBaseURL(s);
+    ConstFrameIt end = d->m_frames.end();
+    for (ConstFrameIt it = d->m_frames.begin(); it != end; ++it) {
+        ReadOnlyPart *subpart = (*it).m_part;
+        static_cast<KHTMLPart *>(subpart)->impl->setPolicyBaseURL(s);
+    }
+}

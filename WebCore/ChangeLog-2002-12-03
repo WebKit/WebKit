@@ -1,5 +1,30 @@
 2002-09-26  Darin Adler  <darin@apple.com>
 
+	- fixed 3060459 -- REGRESSION: crash leaving page that sets cookie in JavaScript
+	unload handler
+
+        * khtml/khtml_part.cpp: (KHTMLPart::begin): Call updatePolicyBaseURL to set
+	the "policy base URL" on the documents so the cookie can be based on the URL
+	of the main document.
+
+        * khtml/dom/html_document.h: Add setPolicyBaseURL.
+        * khtml/dom/html_document.cpp: (HTMLDocument::setPolicyBaseURL): Call the impl.
+
+        * khtml/html/html_documentimpl.h: Add policyBaseURL, setPolicyBaseURL.
+        * khtml/html/html_documentimpl.cpp: (HTMLDocumentImpl::setCookie): Pass the
+	base URL that's stored here instead of getting at the part through the view,
+	since the view will be 0 during the unload event.
+
+        * kwq/KWQKHTMLPartImpl.h: Add updatePolicyBaseURL and setPolicyBaseURL.
+        * kwq/KWQKHTMLPartImpl.mm:
+        (KWQKHTMLPartImpl::updatePolicyBaseURL): Set the base URL based on the URL
+	if this is the topmost part, based on the parent's policy base URL if this
+	is not the topmost part.
+        (KWQKHTMLPartImpl::setPolicyBaseURL): Change the policy base URL for this
+	part and all the subparts.
+
+2002-09-26  Darin Adler  <darin@apple.com>
+
         * kwq/WebCoreBridge.h: Use NSString for encoding name, not CFStringEncoding.
         * kwq/WebCoreBridge.mm:
         (-[WebCoreBridge addData:withOverrideEncoding:]): Ditto.

@@ -1359,6 +1359,10 @@ void KHTMLPart::begin( const KURL &url, int xOffset, int yOffset )
   d->m_doc->setBaseURL( baseurl.url() );
   d->m_doc->docLoader()->setShowAnimations( KHTMLFactory::defaultHTMLSettings()->showAnimations() );
 
+#if APPLE_CHANGES
+  impl->updatePolicyBaseURL();
+#endif
+
 #ifndef APPLE_CHANGES
   d->m_paUseStylesheet->setItems(QStringList());
   d->m_paUseStylesheet->setEnabled( false );
