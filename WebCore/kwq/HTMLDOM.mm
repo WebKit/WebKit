@@ -23,532 +23,632 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <WebCore/HTMLDOM.h>
-#import <WebCore/KWQAssertions.h>
+#import "HTMLDOM.h"
+
+#import <dom/html_element.h>
+#import <html/html_baseimpl.h>
+#import <html/html_documentimpl.h>
+#import <html/html_elementimpl.h>
+#import <html/html_headimpl.h>
+#import <html/html_miscimpl.h>
+#import <misc/htmlattrs.h>
+#import <xml/dom_elementimpl.h>
+#import <xml/dom_nodeimpl.h>
+
+#import "DOMInternal.h"
+#import "KWQAssertions.h"
+
+using DOM::ElementImpl;
+using DOM::HTMLBaseElementImpl;
+using DOM::HTMLBodyElementImpl;
+using DOM::HTMLCollectionImpl;
+using DOM::HTMLDocumentImpl;
+using DOM::HTMLElementImpl;
+using DOM::HTMLHeadElementImpl;
+using DOM::HTMLHtmlElementImpl;
+using DOM::HTMLLinkElementImpl;
+using DOM::HTMLMetaElementImpl;
+using DOM::HTMLStyleElementImpl;
+using DOM::HTMLTitleElementImpl;
+using DOM::NameNodeListImpl;
+using DOM::NodeImpl;
+
+@interface HTMLCollection (HTMLCollectionInternal)
++ (HTMLCollection *)_collectionWithImpl:(HTMLCollectionImpl *)impl;
+@end;
+
+@interface HTMLElement (HTMLElementInternal)
++ (HTMLElement *)_elementWithImpl:(HTMLElementImpl *)impl;
+- (HTMLElementImpl *)_HTMLElementImpl;
+@end;
 
 @implementation HTMLCollection
 
+- (id)_initWithCollectionImpl:(HTMLCollectionImpl *)impl
+{
+    ASSERT(impl);
+    
+    [super _init];
+    _internal = reinterpret_cast<DOMObjectInternal *>(impl);
+    impl->ref();
+    setDOMWrapperForImpl(self, impl);
+    return self;
+}
+
++ (HTMLCollection *)_collectionWithImpl:(HTMLCollectionImpl *)impl
+{
+    if (!impl)
+        return nil;
+    
+    id cachedInstance;
+    cachedInstance = getDOMWrapperForImpl(impl);
+    if (cachedInstance)
+        return [[cachedInstance retain] autorelease];
+    
+    return [[[self alloc] _initWithCollectionImpl:impl] autorelease];
+}
+
+- (HTMLCollectionImpl *)_collectionImpl
+{
+    return reinterpret_cast<HTMLCollectionImpl *>(_internal);
+}
+
 - (unsigned long)length
 {
-    ASSERT_WITH_MESSAGE(0, "not implemented");
-    return 0;
+    return [self _collectionImpl]->length();
 }
 
 - (DOMNode *)item:(unsigned long)index
 {
-    ASSERT_WITH_MESSAGE(0, "not implemented");
-    return nil;
+    return [DOMNode _nodeWithImpl:[self _collectionImpl]->item(index)];
 }
 
 - (DOMNode *)namedItem:(NSString *)name
 {
-    ASSERT_WITH_MESSAGE(0, "not implemented");
-    return nil;
+    return [DOMNode _nodeWithImpl:[self _collectionImpl]->namedItem(name)];
 }
 
 @end
 
 @implementation HTMLElement
 
+- (id)_initWithElementImpl:(HTMLElementImpl *)impl
+{
+    ASSERT(impl);
+    
+    [super _init];
+    _internal = reinterpret_cast<DOMObjectInternal *>(impl);
+    impl->ref();
+    setDOMWrapperForImpl(self, impl);
+    return self;
+}
+
++ (HTMLElement *)_elementWithImpl:(HTMLElementImpl *)impl
+{
+    if (!impl)
+        return nil;
+    
+    id cachedInstance;
+    cachedInstance = getDOMWrapperForImpl(impl);
+    if (cachedInstance)
+        return [[cachedInstance retain] autorelease];
+    
+    return [[[self alloc] _initWithElementImpl:impl] autorelease];
+}
+
+- (HTMLElementImpl *)_HTMLElementImpl
+{
+    return reinterpret_cast<HTMLElementImpl *>(_internal);
+}
+
 - (NSString *)idName
 {
-    ASSERT_WITH_MESSAGE(0, "not implemented");
-    return nil;
+    return [self _HTMLElementImpl]->getAttribute(ATTR_ID);
 }
 
 - (void)setIdName:(NSString *)idName
 {
-    ASSERT_WITH_MESSAGE(0, "not implemented");
+    [self _HTMLElementImpl]->setAttribute(ATTR_ID, idName);
 }
 
 - (NSString *)title
 {
-    ASSERT_WITH_MESSAGE(0, "not implemented");
-    return nil;
+    return [self _HTMLElementImpl]->getAttribute(ATTR_TITLE);
 }
 
 - (void)setTitle:(NSString *)title
 {
-    ASSERT_WITH_MESSAGE(0, "not implemented");
+    [self _HTMLElementImpl]->setAttribute(ATTR_TITLE, title);
 }
 
 - (NSString *)lang
 {
-    ASSERT_WITH_MESSAGE(0, "not implemented");
-    return nil;
+    return [self _HTMLElementImpl]->getAttribute(ATTR_LANG);
 }
 
 - (void)setLang:(NSString *)lang
 {
-    ASSERT_WITH_MESSAGE(0, "not implemented");
+    [self _HTMLElementImpl]->setAttribute(ATTR_LANG, lang);
 }
 
 - (NSString *)dir
 {
-    ASSERT_WITH_MESSAGE(0, "not implemented");
-    return nil;
+    return [self _HTMLElementImpl]->getAttribute(ATTR_DIR);
 }
 
 - (void)setDir:(NSString *)dir
 {
-    ASSERT_WITH_MESSAGE(0, "not implemented");
+    [self _HTMLElementImpl]->setAttribute(ATTR_DIR, dir);
 }
 
 - (NSString *)className
 {
-    ASSERT_WITH_MESSAGE(0, "not implemented");
-    return nil;
+    return [self _HTMLElementImpl]->getAttribute(ATTR_CLASS);
 }
 
 - (void)setClassName:(NSString *)className
 {
-    ASSERT_WITH_MESSAGE(0, "not implemented");
+    [self _HTMLElementImpl]->setAttribute(ATTR_CLASS, className);
 }
 
 @end
 
 @implementation HTMLDocument
 
+- (HTMLDocumentImpl *)_HTMLDocumentImpl
+{
+    return reinterpret_cast<HTMLDocumentImpl *>(_internal);
+}
+
 - (NSString *)title
 {
-    ASSERT_WITH_MESSAGE(0, "not implemented");
-    return nil;
+    return [self _HTMLDocumentImpl]->title();
 }
 
 - (void)setTitle:(NSString *)title
 {
-    ASSERT_WITH_MESSAGE(0, "not implemented");
+    [self _HTMLDocumentImpl]->setTitle(title);
 }
 
 - (NSString *)referrer
 {
-    ASSERT_WITH_MESSAGE(0, "not implemented");
-    return nil;
+     return [self _HTMLDocumentImpl]->referrer();
 }
 
 - (NSString *)domain
 {
-    ASSERT_WITH_MESSAGE(0, "not implemented");
-    return nil;
+     return [self _HTMLDocumentImpl]->domain();
 }
 
 - (NSString *)URL
 {
-    ASSERT_WITH_MESSAGE(0, "not implemented");
-    return nil;
+    return [self _HTMLDocumentImpl]->URL().getNSString();
 }
 
 - (HTMLElement *)body
 {
-    ASSERT_WITH_MESSAGE(0, "not implemented");
-    return nil;
+    return [HTMLElement _elementWithImpl:[self _HTMLDocumentImpl]->body()];
 }
 
 - (HTMLCollection *)images
 {
-    ASSERT_WITH_MESSAGE(0, "not implemented");
-    return nil;
+    HTMLCollectionImpl *collection = new HTMLCollectionImpl([self _HTMLDocumentImpl], HTMLCollectionImpl::DOC_IMAGES);
+    return [HTMLCollection _collectionWithImpl:collection];
 }
 
 - (HTMLCollection *)applets
 {
-    ASSERT_WITH_MESSAGE(0, "not implemented");
-    return nil;
+    HTMLCollectionImpl *collection = new HTMLCollectionImpl([self _HTMLDocumentImpl], HTMLCollectionImpl::DOC_APPLETS);
+    return [HTMLCollection _collectionWithImpl:collection];
 }
 
 - (HTMLCollection *)links
 {
-    ASSERT_WITH_MESSAGE(0, "not implemented");
-    return nil;
+    HTMLCollectionImpl *collection = new HTMLCollectionImpl([self _HTMLDocumentImpl], HTMLCollectionImpl::DOC_LINKS);
+    return [HTMLCollection _collectionWithImpl:collection];
 }
 
 - (HTMLCollection *)forms
 {
-    ASSERT_WITH_MESSAGE(0, "not implemented");
-    return nil;
+    HTMLCollectionImpl *collection = new HTMLCollectionImpl([self _HTMLDocumentImpl], HTMLCollectionImpl::DOC_FORMS);
+    return [HTMLCollection _collectionWithImpl:collection];
 }
 
 - (HTMLCollection *)anchors
 {
-    ASSERT_WITH_MESSAGE(0, "not implemented");
-    return nil;
+    HTMLCollectionImpl *collection = new HTMLCollectionImpl([self _HTMLDocumentImpl], HTMLCollectionImpl::DOC_ANCHORS);
+    return [HTMLCollection _collectionWithImpl:collection];
 }
 
 - (void)setBody:(HTMLElement *)body
 {
-    ASSERT_WITH_MESSAGE(0, "not implemented");
+    int exceptionCode = 0;
+    [self _HTMLDocumentImpl]->setBody([body _HTMLElementImpl], exceptionCode);
+    raiseOnDOMError(exceptionCode);
 }
 
 - (NSString *)cookie
 {
-    ASSERT_WITH_MESSAGE(0, "not implemented");
-    return nil;
+    return [self _HTMLDocumentImpl]->cookie();
 }
 
 - (void)setCookie:(NSString *)cookie
 {
-    ASSERT_WITH_MESSAGE(0, "not implemented");
+    [self _HTMLDocumentImpl]->setCookie(cookie);
 }
 
 - (void)open
 {
-    ASSERT_WITH_MESSAGE(0, "not implemented");
+    [self _HTMLDocumentImpl]->open();
 }
 
 - (void)close
 {
-    ASSERT_WITH_MESSAGE(0, "not implemented");
+    [self _HTMLDocumentImpl]->close();
 }
 
 - (void)write:(NSString *)text
 {
-    ASSERT_WITH_MESSAGE(0, "not implemented");
+    [self _HTMLDocumentImpl]->write(text);
 }
 
 - (void)writeln:(NSString *)text
 {
-    ASSERT_WITH_MESSAGE(0, "not implemented");
+    [self _HTMLDocumentImpl]->writeln(text);
 }
 
 - (DOMElement *)getElementById:(NSString *)elementId
 {
-    ASSERT_WITH_MESSAGE(0, "not implemented");
-    return nil;
+    return [DOMElement _elementWithImpl:[self _HTMLDocumentImpl]->getElementById(elementId)];
 }
 
 - (DOMNodeList *)getElementsByName:(NSString *)elementName
 {
-    ASSERT_WITH_MESSAGE(0, "not implemented");
-    return nil;
+    NameNodeListImpl *nodeList = new NameNodeListImpl([self _HTMLDocumentImpl], elementName);
+    return [DOMNodeList _nodeListWithImpl:nodeList];
 }
 
 @end
 
 @implementation HTMLHtmlElement
 
+- (HTMLHtmlElementImpl *)_HTMLHtmlElementImpl
+{
+    return reinterpret_cast<HTMLHtmlElementImpl *>(_internal);
+}
+
 - (NSString *)version
 {
-    ASSERT_WITH_MESSAGE(0, "not implemented");
-    return nil;
+    return [self _HTMLHtmlElementImpl]->getAttribute(ATTR_VERSION);
 }
 
 - (void)setVersion:(NSString *)version
 {
-    ASSERT_WITH_MESSAGE(0, "not implemented");
+    [self _HTMLHtmlElementImpl]->setAttribute(ATTR_VERSION, version);
 }
 
 @end
 
 @implementation HTMLHeadElement
 
+- (HTMLHeadElementImpl *)_headElementImpl
+{
+    return reinterpret_cast<HTMLHeadElementImpl *>(_internal);
+}
+
 - (NSString *)profile
 {
-    ASSERT_WITH_MESSAGE(0, "not implemented");
-    return nil;
+    return [self _headElementImpl]->getAttribute(ATTR_PROFILE);
 }
 
 - (void)setProfile:(NSString *)profile
 {
-    ASSERT_WITH_MESSAGE(0, "not implemented");
+    [self _headElementImpl]->setAttribute(ATTR_PROFILE, profile);
 }
 
 @end
 
 @implementation HTMLLinkElement
 
+- (HTMLLinkElementImpl *)_linkElementImpl
+{
+    return reinterpret_cast<HTMLLinkElementImpl *>(_internal);
+}
+
 - (BOOL)disabled
 {
-    ASSERT_WITH_MESSAGE(0, "not implemented");   
-    return NO;
+    return ![self _linkElementImpl]->getAttribute(ATTR_DISABLED).isNull();
 }
 
 - (void)setDisabled:(BOOL)disabled
 {
-    ASSERT_WITH_MESSAGE(0, "not implemented");
+    [self _linkElementImpl]->setAttribute(ATTR_DISABLED, disabled ? "" : 0);
+    [self _linkElementImpl]->setDisabledState(disabled);
 }
 
 - (NSString *)charset
 {
-    ASSERT_WITH_MESSAGE(0, "not implemented");
-    return nil;
+    return [self _linkElementImpl]->getAttribute(ATTR_CHARSET);
 }
 
 - (void)setCharset:(NSString *)charset
 {
-    ASSERT_WITH_MESSAGE(0, "not implemented");
+    [self _linkElementImpl]->setAttribute(ATTR_CHARSET, charset);
 }
 
 - (NSString *)href
 {
-    ASSERT_WITH_MESSAGE(0, "not implemented");
-    return nil;
+    return [self _linkElementImpl]->getAttribute(ATTR_HREF);
 }
 
 - (void)setHref:(NSString *)href
 {
-    ASSERT_WITH_MESSAGE(0, "not implemented");
+    [self _linkElementImpl]->setAttribute(ATTR_HREF, href);
 }
 
 - (NSString *)hreflang
 {
-    ASSERT_WITH_MESSAGE(0, "not implemented");
-    return nil;
+    return [self _linkElementImpl]->getAttribute(ATTR_HREFLANG);
 }
 
 - (void)setHreflang:(NSString *)hreflang
 {
-    ASSERT_WITH_MESSAGE(0, "not implemented");
+   [self _linkElementImpl]->setAttribute(ATTR_HREFLANG, hreflang);
 }
 
 - (NSString *)media
 {
-    ASSERT_WITH_MESSAGE(0, "not implemented");
-    return nil;
+    return [self _linkElementImpl]->getAttribute(ATTR_MEDIA);
 }
 
 - (void)setMedia:(NSString *)media
 {
-    ASSERT_WITH_MESSAGE(0, "not implemented");
+    [self _linkElementImpl]->setAttribute(ATTR_MEDIA, media);
 }
 
 - (NSString *)rel
 {
-    ASSERT_WITH_MESSAGE(0, "not implemented");
-    return nil;
+    return [self _linkElementImpl]->getAttribute(ATTR_REL);
 }
 
-- (void)setRrevel:(NSString *)rel
+- (void)setRel:(NSString *)rel
 {
-    ASSERT_WITH_MESSAGE(0, "not implemented");
+    [self _linkElementImpl]->setAttribute(ATTR_REL, rel);
 }
 
 - (NSString *)rev
 {
-    ASSERT_WITH_MESSAGE(0, "not implemented");
-    return nil;
+    return [self _linkElementImpl]->getAttribute(ATTR_REV);
 }
 
 - (void)setRev:(NSString *)rev
 {
-    ASSERT_WITH_MESSAGE(0, "not implemented");
+    [self _linkElementImpl]->setAttribute(ATTR_REV, rev);
 }
 
 - (NSString *)target
 {
-    ASSERT_WITH_MESSAGE(0, "not implemented");
-    return nil;
+    return [self _linkElementImpl]->getAttribute(ATTR_TARGET);
 }
 
 - (void)setTarget:(NSString *)target
 {
-    ASSERT_WITH_MESSAGE(0, "not implemented");
+    [self _linkElementImpl]->setAttribute(ATTR_TARGET, target);
 }
 
 - (NSString *)type
 {
-    ASSERT_WITH_MESSAGE(0, "not implemented");
-    return nil;
+    return [self _linkElementImpl]->getAttribute(ATTR_TYPE);
 }
 
 - (void)setType:(NSString *)type
 {
-    ASSERT_WITH_MESSAGE(0, "not implemented");
+    [self _linkElementImpl]->setAttribute(ATTR_TYPE, type);
 }
 
 @end
 
 @implementation HTMLTitleElement
 
+- (HTMLTitleElementImpl *)_titleElementImpl
+{
+    return reinterpret_cast<HTMLTitleElementImpl *>(_internal);
+}
+
 - (NSString *)text
 {
-    ASSERT_WITH_MESSAGE(0, "not implemented");
-    return nil;
+    return [self _titleElementImpl]->getAttribute(ATTR_TEXT);
 }
 
 - (void)setText:(NSString *)text
 {
-    ASSERT_WITH_MESSAGE(0, "not implemented");
+    [self _titleElementImpl]->setAttribute(ATTR_TEXT, text);
 }
 
 @end
 
 @implementation HTMLMetaElement
 
+- (HTMLMetaElementImpl *)_metaElementImpl
+{
+    return reinterpret_cast<HTMLMetaElementImpl *>(_internal);
+}
+
 - (NSString *)content
 {
-    ASSERT_WITH_MESSAGE(0, "not implemented");
-    return nil;
+    return [self _metaElementImpl]->getAttribute(ATTR_CONTENT);
 }
 
 - (void)setContent:(NSString *)content
 {
-    ASSERT_WITH_MESSAGE(0, "not implemented");
+    [self _metaElementImpl]->setAttribute(ATTR_CONTENT, content);
 }
 
 - (NSString *)httpEquiv
 {
-    ASSERT_WITH_MESSAGE(0, "not implemented");
-    return nil;
+    return [self _metaElementImpl]->getAttribute(ATTR_HTTP_EQUIV);
 }
 
 - (void)setHttpEquiv:(NSString *)httpEquiv
 {
-    ASSERT_WITH_MESSAGE(0, "not implemented");
+    [self _metaElementImpl]->setAttribute(ATTR_HTTP_EQUIV, httpEquiv);
 }
 
 - (NSString *)name
 {
-    ASSERT_WITH_MESSAGE(0, "not implemented");
-    return nil;
+    return [self _metaElementImpl]->getAttribute(ATTR_NAME);
 }
 
 - (void)setName:(NSString *)name
 {
-    ASSERT_WITH_MESSAGE(0, "not implemented");
+    [self _metaElementImpl]->setAttribute(ATTR_NAME, name);
 }
 
 - (NSString *)scheme
 {
-    ASSERT_WITH_MESSAGE(0, "not implemented");
-    return nil;
+    return [self _metaElementImpl]->getAttribute(ATTR_SCHEME);
 }
 
 - (void)setScheme:(NSString *)scheme
 {
-    ASSERT_WITH_MESSAGE(0, "not implemented");
+    [self _metaElementImpl]->setAttribute(ATTR_SCHEME, scheme);
 }
 
 @end
 
 @implementation HTMLBaseElement
 
+- (HTMLBaseElementImpl *)_baseElementImpl
+{
+    return reinterpret_cast<HTMLBaseElementImpl *>(_internal);
+}
+
 - (NSString *)href
 {
-    ASSERT_WITH_MESSAGE(0, "not implemented");
-    return nil;
+    return [self _baseElementImpl]->getAttribute(ATTR_HREF);
 }
 
 - (void)setHref:(NSString *)href
 {
-    ASSERT_WITH_MESSAGE(0, "not implemented");
+    [self _baseElementImpl]->setAttribute(ATTR_HREF, href);
 }
 
 - (NSString *)target
 {
-    ASSERT_WITH_MESSAGE(0, "not implemented");
-    return nil;
+    return [self _baseElementImpl]->getAttribute(ATTR_TARGET);
 }
 
 - (void)setTarget:(NSString *)target
 {
-    ASSERT_WITH_MESSAGE(0, "not implemented");
+    [self _baseElementImpl]->setAttribute(ATTR_SCHEME, target);
 }
 
 @end
 
 @implementation HTMLStyleElement
 
+- (HTMLStyleElementImpl *)_styleElementImpl
+{
+    return reinterpret_cast<HTMLStyleElementImpl *>(_internal);
+}
+
 - (BOOL)disabled
 {
-    ASSERT_WITH_MESSAGE(0, "not implemented");
-    return NO;
+    return ![self _styleElementImpl]->getAttribute(ATTR_DISABLED).isNull();
 }
 
 - (void)setDisabled:(BOOL)disabled
 {
-    ASSERT_WITH_MESSAGE(0, "not implemented");
+    [self _styleElementImpl]->setAttribute(ATTR_DISABLED, disabled ? "" : 0);
 }
 
 - (NSString *)media
 {
-    ASSERT_WITH_MESSAGE(0, "not implemented");
-    return nil;
+    return [self _styleElementImpl]->getAttribute(ATTR_MEDIA);
 }
 
 - (void)setMedia:(NSString *)media
 {
-    ASSERT_WITH_MESSAGE(0, "not implemented");
+    [self _styleElementImpl]->setAttribute(ATTR_MEDIA, media);
 }
 
 - (NSString *)type
 {
-    ASSERT_WITH_MESSAGE(0, "not implemented");
-    return nil;
+    return [self _styleElementImpl]->getAttribute(ATTR_TYPE);
 }
 
 - (void)setType:(NSString *)type
 {
-    ASSERT_WITH_MESSAGE(0, "not implemented");
+    [self _styleElementImpl]->setAttribute(ATTR_TYPE, type);
 }
 
 @end
 
 @implementation HTMLBodyElement
 
+- (HTMLBodyElementImpl *)_bodyElementImpl
+{
+    return reinterpret_cast<HTMLBodyElementImpl *>(_internal);
+}
+
 - (NSString *)aLink
 {
-    ASSERT_WITH_MESSAGE(0, "not implemented");
-    return nil;
+    return [self _bodyElementImpl]->getAttribute(ATTR_ALINK);
 }
 
 - (void)setALink:(NSString *)aLink
 {
-    ASSERT_WITH_MESSAGE(0, "not implemented");
+    [self _bodyElementImpl]->setAttribute(ATTR_ALINK, aLink);
 }
 
 - (NSString *)background
 {
-    ASSERT_WITH_MESSAGE(0, "not implemented");
-    return nil;
+    return [self _bodyElementImpl]->getAttribute(ATTR_BACKGROUND);
 }
 
 - (void)setBackground:(NSString *)background
 {
-    ASSERT_WITH_MESSAGE(0, "not implemented");
+    [self _bodyElementImpl]->setAttribute(ATTR_BACKGROUND, background);
 }
 
 - (NSString *)bgColor
 {
-    ASSERT_WITH_MESSAGE(0, "not implemented");
-    return nil;
+    return [self _bodyElementImpl]->getAttribute(ATTR_BGCOLOR);
 }
 
 - (void)setBgColor:(NSString *)bgColor
 {
-    ASSERT_WITH_MESSAGE(0, "not implemented");
+    [self _bodyElementImpl]->setAttribute(ATTR_BGCOLOR, bgColor);
 }
 
 - (NSString *)link
 {
-    ASSERT_WITH_MESSAGE(0, "not implemented");
-    return nil;
+    return [self _bodyElementImpl]->getAttribute(ATTR_LINK);
 }
 
 - (void)setLink:(NSString *)link
 {
-    ASSERT_WITH_MESSAGE(0, "not implemented");
+    [self _bodyElementImpl]->setAttribute(ATTR_LINK, link);
 }
 
 - (NSString *)text
 {
-    ASSERT_WITH_MESSAGE(0, "not implemented");
-    return nil;
+    return [self _bodyElementImpl]->getAttribute(ATTR_TEXT);
 }
 
 - (void)setText:(NSString *)text
 {
-    ASSERT_WITH_MESSAGE(0, "not implemented");
+    [self _bodyElementImpl]->setAttribute(ATTR_TEXT, text);
 }
 
 - (NSString *)vLink
 {
-    ASSERT_WITH_MESSAGE(0, "not implemented");
-    return nil;
+    return [self _bodyElementImpl]->getAttribute(ATTR_VLINK);
 }
 
 - (void)setVLink:(NSString *)vLink
 {
-    ASSERT_WITH_MESSAGE(0, "not implemented");
+    [self _bodyElementImpl]->setAttribute(ATTR_VLINK, vLink);
 }
 
 @end

@@ -93,10 +93,6 @@ using DOM::TextImpl;
 + (DOMNamedNodeMap *)_namedNodeMapWithImpl:(NamedNodeMapImpl *)impl;
 @end
 
-@interface DOMNodeList (WebCoreInternal)
-+ (DOMNodeList *)_nodeListWithImpl:(NodeListImpl *)impl;
-@end
-
 //------------------------------------------------------------------------------------------
 // Factory methods
 

@@ -1,3 +1,117 @@
+2004-03-12  Chris Blumenberg  <cblu@apple.com>
+
+	Implemented ~25% of the HTML DOM API.
+
+        Reviewed by kocienda.
+
+        (DOM::HTMLElement::HTMLElement):
+        * kwq/DOM.mm:
+        * kwq/DOMInternal.h:
+        * kwq/HTMLDOM.h:
+        * kwq/HTMLDOM.mm:
+        (-[HTMLCollection _initWithCollectionImpl:]):
+        (+[HTMLCollection _collectionWithImpl:]):
+        (-[HTMLCollection _collectionImpl]):
+        (-[HTMLCollection length]):
+        (-[HTMLCollection item:]):
+        (-[HTMLCollection namedItem:]):
+        (-[HTMLElement _initWithElementImpl:]):
+        (+[HTMLElement _elementWithImpl:]):
+        (-[HTMLElement _HTMLElementImpl]):
+        (-[HTMLElement idName]):
+        (-[HTMLElement setIdName:]):
+        (-[HTMLElement title]):
+        (-[HTMLElement setTitle:]):
+        (-[HTMLElement lang]):
+        (-[HTMLElement setLang:]):
+        (-[HTMLElement dir]):
+        (-[HTMLElement setDir:]):
+        (-[HTMLElement className]):
+        (-[HTMLElement setClassName:]):
+        (-[HTMLDocument _HTMLDocumentImpl]):
+        (-[HTMLDocument title]):
+        (-[HTMLDocument setTitle:]):
+        (-[HTMLDocument referrer]):
+        (-[HTMLDocument domain]):
+        (-[HTMLDocument URL]):
+        (-[HTMLDocument body]):
+        (-[HTMLDocument images]):
+        (-[HTMLDocument applets]):
+        (-[HTMLDocument links]):
+        (-[HTMLDocument forms]):
+        (-[HTMLDocument anchors]):
+        (-[HTMLDocument setBody:]):
+        (-[HTMLDocument cookie]):
+        (-[HTMLDocument setCookie:]):
+        (-[HTMLDocument open]):
+        (-[HTMLDocument close]):
+        (-[HTMLDocument write:]):
+        (-[HTMLDocument writeln:]):
+        (-[HTMLDocument getElementById:]):
+        (-[HTMLDocument getElementsByName:]):
+        (-[HTMLHtmlElement _HTMLHtmlElementImpl]):
+        (-[HTMLHtmlElement version]):
+        (-[HTMLHtmlElement setVersion:]):
+        (-[HTMLHeadElement _headElementImpl]):
+        (-[HTMLHeadElement profile]):
+        (-[HTMLHeadElement setProfile:]):
+        (-[HTMLLinkElement _linkElementImpl]):
+        (-[HTMLLinkElement disabled]):
+        (-[HTMLLinkElement setDisabled:]):
+        (-[HTMLLinkElement charset]):
+        (-[HTMLLinkElement setCharset:]):
+        (-[HTMLLinkElement href]):
+        (-[HTMLLinkElement setHref:]):
+        (-[HTMLLinkElement hreflang]):
+        (-[HTMLLinkElement setHreflang:]):
+        (-[HTMLLinkElement media]):
+        (-[HTMLLinkElement setMedia:]):
+        (-[HTMLLinkElement rel]):
+        (-[HTMLLinkElement setRel:]):
+        (-[HTMLLinkElement rev]):
+        (-[HTMLLinkElement setRev:]):
+        (-[HTMLLinkElement target]):
+        (-[HTMLLinkElement setTarget:]):
+        (-[HTMLLinkElement type]):
+        (-[HTMLLinkElement setType:]):
+        (-[HTMLTitleElement _titleElementImpl]):
+        (-[HTMLTitleElement text]):
+        (-[HTMLTitleElement setText:]):
+        (-[HTMLMetaElement _metaElementImpl]):
+        (-[HTMLMetaElement content]):
+        (-[HTMLMetaElement setContent:]):
+        (-[HTMLMetaElement httpEquiv]):
+        (-[HTMLMetaElement setHttpEquiv:]):
+        (-[HTMLMetaElement name]):
+        (-[HTMLMetaElement setName:]):
+        (-[HTMLMetaElement scheme]):
+        (-[HTMLMetaElement setScheme:]):
+        (-[HTMLBaseElement _baseElementImpl]):
+        (-[HTMLBaseElement href]):
+        (-[HTMLBaseElement setHref:]):
+        (-[HTMLBaseElement target]):
+        (-[HTMLBaseElement setTarget:]):
+        (-[HTMLStyleElement _styleElementImpl]):
+        (-[HTMLStyleElement disabled]):
+        (-[HTMLStyleElement setDisabled:]):
+        (-[HTMLStyleElement media]):
+        (-[HTMLStyleElement setMedia:]):
+        (-[HTMLStyleElement type]):
+        (-[HTMLStyleElement setType:]):
+        (-[HTMLBodyElement _bodyElementImpl]):
+        (-[HTMLBodyElement aLink]):
+        (-[HTMLBodyElement setALink:]):
+        (-[HTMLBodyElement background]):
+        (-[HTMLBodyElement setBackground:]):
+        (-[HTMLBodyElement bgColor]):
+        (-[HTMLBodyElement setBgColor:]):
+        (-[HTMLBodyElement link]):
+        (-[HTMLBodyElement setLink:]):
+        (-[HTMLBodyElement text]):
+        (-[HTMLBodyElement setText:]):
+        (-[HTMLBodyElement vLink]):
+        (-[HTMLBodyElement setVLink:]):
+
 2004-03-12  David Hyatt  <hyatt@apple.com>
 
 	Fix for problem when undoing the deletion of a word in edit mode.

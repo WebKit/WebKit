@@ -32,6 +32,7 @@ namespace DOM {
     class DocumentImpl;
     class ElementImpl;
     class NodeImpl;
+    class NodeListImpl;
     class RangeImpl;
     class StyleSheetListImpl;
 }
@@ -39,6 +40,10 @@ namespace DOM {
 @interface DOMNode (WebCoreInternal)
 + (DOMNode *)_nodeWithImpl:(DOM::NodeImpl *)impl;
 - (DOM::NodeImpl *)_nodeImpl;
+@end
+
+@interface DOMNodeList (WebCoreInternal)
++ (DOMNodeList *)_nodeListWithImpl:(DOM::NodeListImpl *)impl;
 @end
 
 @interface DOMElement (WebCoreInternal)

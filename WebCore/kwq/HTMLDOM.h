@@ -38,7 +38,7 @@
 //=========================================================================
 //=========================================================================
 
-@interface HTMLCollection : NSObject
+@interface HTMLCollection : DOMObject
 - (unsigned long)length;
 - (DOMNode *)item:(unsigned long)index;
 - (DOMNode *)namedItem:(NSString *)name;
@@ -64,12 +64,12 @@
 - (NSString *)domain;
 - (NSString *)URL;
 - (HTMLElement *)body;
+- (void)setBody:(HTMLElement *)body;
 - (HTMLCollection *)images;
 - (HTMLCollection *)applets;
 - (HTMLCollection *)links;
 - (HTMLCollection *)forms;
 - (HTMLCollection *)anchors;
-- (void)setBody:(HTMLElement *)body;
 - (NSString *)cookie;
 - (void)setCookie:(NSString *)cookie;
 - (void)open;
@@ -102,7 +102,7 @@
 - (NSString *)media;
 - (void)setMedia:(NSString *)media;
 - (NSString *)rel;
-- (void)setRrevel:(NSString *)rel;
+- (void)setRel:(NSString *)rel;
 - (NSString *)rev;
 - (void)setRev:(NSString *)rev;
 - (NSString *)target;
