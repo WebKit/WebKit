@@ -214,8 +214,10 @@ static WebGlyphWidth getUncachedWidth(WebTextRenderer *renderer, WidthMap *map, 
     if (font == NULL)
         font = renderer->font;
 
-    if (!CGFontGetGlyphScaledAdvances ([font _backingCGSFont], &glyph, 1, &width, [font pointSize]))
-        FATAL_ALWAYS ("Unable to cache glyph widths for %@ %f",  [font displayName], [font pointSize]);
+    if (!CGFontGetGlyphScaledAdvances ([font _backingCGSFont], &glyph, 1, &width, [font pointSize])) {
+        ERROR ("Unable to cache glyph widths for %@ %f",  [font displayName], [font pointSize]);
+	return 0.;
+    }
 
     return width;
 }
@@ -241,8 +243,10 @@ static WebGlyphWidth getUncachedWidth(WebTextRenderer *renderer, WidthMap *map, 
 
     pointSize = [font pointSize];
     m = CGAffineTransformMakeScale(pointSize, pointSize);
-    if (!CGFontGetGlyphTransformedAdvances([font _backingCGSFont], &m, _AppkitGetCGRenderingMode(font), &glyph, 1, &advance))
-        FATAL_ALWAYS ("Unable to cache glyph widths for %@ %f", [font displayName], pointSize);
+    if (!CGFontGetGlyphTransformedAdvances([font _backingCGSFont], &m, _AppkitGetCGRenderingMode(font), &glyph, 1, &advance)) {
+        ERROR ("Unable to cache glyph widths for %@ %f", [font displayName], pointSize);
+	return 0.;
+    }
 
     return advance.width;
 }

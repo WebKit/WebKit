@@ -1,5 +1,20 @@
 2005-02-15  Richard Williamson   <rjw@apple.com>
 
+	Fixed <rdar://problem/3998368> Tiger8A376: WebTextRenderer assertion failure in Safari while browsing news.bbc.co.uk
+
+	Removed use of FATAL_ALWAYS from getUncachedWidth().  It's unclear
+	why we would trigger the FATAL_ALWAYS.  In the past we've seen
+	the message triggered because of corrupt fonts.  Anyway, in this
+	particular case, we will now return 0 for the character width,
+	rather than exiting.
+
+        Reviewed by David Harrison.
+
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (getUncachedWidth):
+
+2005-02-15  Richard Williamson   <rjw@apple.com>
+
 	Fixed <rdar://problem/3999467> when Osaka-Mono is specified as fixed width font, Osaka used instead
 
 	Lie about Osaka-Mono.  Treat it as fixed pitch, even though,
