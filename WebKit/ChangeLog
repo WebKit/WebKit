@@ -1,3 +1,26 @@
+2003-04-22  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	Renamed classes to match API document.
+	
+        * Panels.subproj/WebAuthenticationPanel.h:
+        * Panels.subproj/WebAuthenticationPanel.m:
+        (-[WebAuthenticationPanel setUpForChallenge:]):
+        (-[WebAuthenticationPanel runAsModalDialogWithChallenge:]):
+        (-[WebAuthenticationPanel runAsSheetOnWindow:withChallenge:]):
+        (-[WebAuthenticationPanel sheetDidEnd:returnCode:contextInfo:]):
+        * Panels.subproj/WebPanelAuthenticationHandler.h:
+        * Panels.subproj/WebPanelAuthenticationHandler.m:
+        (-[WebPanelAuthenticationHandler init]):
+        (-[WebPanelAuthenticationHandler dealloc]):
+        (-[WebPanelAuthenticationHandler isReadyToStartAuthentication:]):
+        (-[WebPanelAuthenticationHandler startAuthentication:]):
+        (-[WebPanelAuthenticationHandler cancelAuthentication:]):
+        (-[WebPanelAuthenticationHandler _authenticationDoneWithChallenge:result:]):
+        * Panels.subproj/WebStandardPanels.m:
+        (-[WebStandardPanels setUsesStandardAuthenticationPanel:]):
+
 2003-04-21  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Darin

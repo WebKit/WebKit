@@ -88,37 +88,37 @@
 
 // Methods related to displaying the panel
 
--(void)setUpForRequest:(WebAuthenticationRequest *)req
+-(void)setUpForChallenge:(NSURLAuthenticationChallenge *)chall
 {
     [self loadNib];
 
-    WebAuthenticatingResource *resource = [req resource];
+    NSURLProtectionSpace *space = [chall  protectionSpace];
 
     NSString *host;
-    if ([resource port] == 0) {
-	host = [resource host];
+    if ([space port] == 0) {
+	host = [space host];
     } else {
-	host = [NSString stringWithFormat:@"%@:%u", [resource host], [resource port]];
+	host = [NSString stringWithFormat:@"%@:%u", [space host], [space port]];
     }
 
-    NSString *realm = [resource realm];
+    NSString *realm = [space realm];
     NSString *message;
 
-    if ([req previousFailureCount] == 0) {
-        if ([resource isProxy]) {
+    if ([chall previousFailureCount] == 0) {
+        if ([space isProxy]) {
             message = [NSString stringWithFormat:UI_STRING("To view this page, you need to log in to the %@ proxy server %@.",
                                                            "prompt string in authentication panel"),
-                [resource type], host];
+                [space type], host];
         } else {
             message = [NSString stringWithFormat:UI_STRING("To view this page, you need to log in to area “%@” on %@.",
                                                            "prompt string in authentication panel"),
                 realm, host];
         }
     } else {
-        if ([resource isProxy]) {
+        if ([space isProxy]) {
             message = [NSString stringWithFormat:UI_STRING("The name or password entered for the %@ proxy server %@ was incorrect. Please try again.",
                                                            "prompt string in authentication panel"),
-				[resource type], host];
+				[space type], host];
         } else {
             message = [NSString stringWithFormat:UI_STRING("The name or password entered for area “%@” on %@ was incorrect. Please try again.",
                                                            "prompt string in authentication panel"),
@@ -129,7 +129,7 @@
     [mainLabel setStringValue:message];
     [mainLabel sizeToFitAndAdjustWindowHeight];
 
-    if ([resource receivesCredentialSecurely]) {
+    if ([space receivesCredentialSecurely]) {
         [smallLabel setStringValue:
             UI_STRING("Your log-in information will be sent securely.",
                 "message in authentication panel")];
@@ -139,8 +139,8 @@
                 "message in authentication panel")];
     }
 
-    if ([req defaultUsername] != nil) {
-        [username setStringValue:[req defaultUsername]];
+    if ([chall defaultUsername] != nil) {
+        [username setStringValue:[chall defaultUsername]];
         [panel setInitialFirstResponder:password];
     } else {
         [username setStringValue:@""];
@@ -149,49 +149,49 @@
     }
 }
 
-- (void)runAsModalDialogWithRequest:(WebAuthenticationRequest *)req
+- (void)runAsModalDialogWithChallenge:(NSURLAuthenticationChallenge *)chall
 {
-    [self setUpForRequest:req];
+    [self setUpForChallenge:chall];
     usingSheet = FALSE;
-    WebCredential *credential = nil;
+    NSURLCredential *credential = nil;
 
     if ([[NSApplication sharedApplication] runModalForWindow:panel] == 0) {
-        credential = [WebCredential credentialWithUsername:[username stringValue] password:[password stringValue] remembered:[remember state] == NSOnState];
+        credential = [NSURLCredential credentialWithUsername:[username stringValue] password:[password stringValue] remembered:[remember state] == NSOnState];
     }
 
-    [callback performSelector:selector withObject:req withObject:credential];
+    [callback performSelector:selector withObject:chall withObject:credential];
 }
 
-- (void)runAsSheetOnWindow:(NSWindow *)window withRequest:(WebAuthenticationRequest *)req
+- (void)runAsSheetOnWindow:(NSWindow *)window withChallenge:(NSURLAuthenticationChallenge *)chall
 {
     ASSERT(!usingSheet);
 
-    [self setUpForRequest:req];
+    [self setUpForChallenge:chall];
 
     usingSheet = TRUE;
-    request = [req retain];
+    chall = [chall retain];
     
     [[NSApplication sharedApplication] beginSheet:panel modalForWindow:window modalDelegate:self didEndSelector:@selector(sheetDidEnd:returnCode:contextInfo:) contextInfo:NULL];
 }
 
 - (void)sheetDidEnd:(NSWindow *)sheet returnCode:(int)returnCode contextInfo:(void  *)contextInfo
 {
-    WebCredential *credential = nil;
-    WebAuthenticationRequest *req;
+    NSURLCredential *credential = nil;
+    NSURLAuthenticationChallenge *chall;
 
     ASSERT(usingSheet);
-    ASSERT(request != nil);
+    ASSERT(challenge != nil);
 
     if (returnCode == 0) {
-        credential = [WebCredential credentialWithUsername:[username stringValue] password:[password stringValue] remembered:[remember state] == NSOnState];
+        credential = [NSURLCredential credentialWithUsername:[username stringValue] password:[password stringValue] remembered:[remember state] == NSOnState];
     }
 
-    // We take this tricky approach to nilling out and releasing the request,
+    // We take this tricky approach to nilling out and releasing the challenge
     // because the callback below might remove our last ref.
-    req = request;
-    request = nil;
-    [callback performSelector:selector withObject:req withObject:credential];
-    [req release];
+    chall = challenge;
+    challenge = nil;
+    [callback performSelector:selector withObject:chall withObject:credential];
+    [chall release];
 }
 
 @end

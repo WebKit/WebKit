@@ -19,7 +19,7 @@ static NSString *WebModalDialogPretendWindow = @"WebModalDialogPretendWindow";
     self = [super init];
     if (self != nil) {
         windowToPanel = [[NSMutableDictionary alloc] init];
-        requestToWindow = [[NSMutableDictionary alloc] init];
+        challengeToWindow = [[NSMutableDictionary alloc] init];
     }
     return self;
 }
@@ -27,14 +27,14 @@ static NSString *WebModalDialogPretendWindow = @"WebModalDialogPretendWindow";
 -(void)dealloc
 {
     [windowToPanel release];
-    [requestToWindow release];    
+    [challengeToWindow release];    
     [super dealloc];
 }
 
 // WebAuthenticationHandler methods
--(BOOL)isReadyToStartAuthentication:(WebAuthenticationRequest *)request
+-(BOOL)isReadyToStartAuthentication:(NSURLAuthenticationChallenge *)challenge
 {
-    id window = [[WebStandardPanels sharedStandardPanels] frontmostWindowLoadingURL:[[request resource] URL]];
+    id window = [[WebStandardPanels sharedStandardPanels] frontmostWindowLoadingURL:[[challenge protectionSpace] URL]];
 
     if (window == nil) {
         window = WebModalDialogPretendWindow;
@@ -43,49 +43,49 @@ static NSString *WebModalDialogPretendWindow = @"WebModalDialogPretendWindow";
     return [windowToPanel objectForKey:window] == nil;
 }
 
--(void)startAuthentication:(WebAuthenticationRequest *)request
+-(void)startAuthentication:(NSURLAuthenticationChallenge *)challenge
 {
-    id window = [[WebStandardPanels sharedStandardPanels] frontmostWindowLoadingURL:[[request resource] URL]];
+    id window = [[WebStandardPanels sharedStandardPanels] frontmostWindowLoadingURL:[[challenge protectionSpace] URL]];
 
     if (window == nil) {
         window = WebModalDialogPretendWindow;
     }
 
     if ([windowToPanel objectForKey:window] != nil) {
-        [request cancel];
+        [challenge cancel];
         return;
     }
 
-    WebAuthenticationPanel *panel = [[WebAuthenticationPanel alloc] initWithCallback:self selector:@selector(_authenticationDoneWithRequest:result:)];
-    [requestToWindow _web_setObject:window forUncopiedKey:request];
+    WebAuthenticationPanel *panel = [[WebAuthenticationPanel alloc] initWithCallback:self selector:@selector(_authenticationDoneWithChallenge:result:)];
+    [challengeToWindow _web_setObject:window forUncopiedKey:challenge];
     [windowToPanel _web_setObject:panel forUncopiedKey:window];
     [panel release];
     
     if (window == WebModalDialogPretendWindow) {
-        [panel runAsModalDialogWithRequest:request];
+        [panel runAsModalDialogWithChallenge:challenge];
     } else {
-        [panel runAsSheetOnWindow:window withRequest:request];
+        [panel runAsSheetOnWindow:window withChallenge:challenge];
     }
 }
 
--(void)cancelAuthentication:(WebAuthenticationRequest *)request
+-(void)cancelAuthentication:(NSURLAuthenticationChallenge *)challenge
 {
-    id window = [requestToWindow objectForKey:request];
+    id window = [challengeToWindow objectForKey:challenge];
     if (window != nil) {
         WebAuthenticationPanel *panel = [windowToPanel objectForKey:window];
         [panel cancel:self];
     }
 }
 
--(void)_authenticationDoneWithRequest:(WebAuthenticationRequest *)request result:(WebCredential *)credential
+-(void)_authenticationDoneWithChallenge:(NSURLAuthenticationChallenge *)challenge result:(NSURLCredential *)credential
 {
-    id window = [requestToWindow objectForKey:request];
+    id window = [challengeToWindow objectForKey:challenge];
     if (window != nil) {
         [windowToPanel removeObjectForKey:window];
-        [requestToWindow removeObjectForKey:request];
+        [challengeToWindow removeObjectForKey:challenge];
     }
 
-    [request useCredential:credential];
+    [challenge useCredential:credential];
 }
 
 @end

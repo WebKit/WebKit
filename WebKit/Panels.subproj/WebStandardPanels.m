@@ -88,11 +88,11 @@ static void initSharedStandardPanels(void)
     if (use) {
         if (![self usesStandardAuthenticationPanel]) {
             _privatePanels->panelAuthenticationHandler = [[WebPanelAuthenticationHandler alloc] init];
-            [[WebAuthenticationManager sharedAuthenticationManager] addAuthenticationHandler:_privatePanels->panelAuthenticationHandler];
+            [[NSURLCredentialStorage sharedCredentialStorage] addAuthenticationHandler:_privatePanels->panelAuthenticationHandler];
         }
     } else {
         if ([self usesStandardAuthenticationPanel]) {
-            [[WebAuthenticationManager sharedAuthenticationManager] removeAuthenticationHandler:_privatePanels->panelAuthenticationHandler];
+            [[NSURLCredentialStorage sharedCredentialStorage] removeAuthenticationHandler:_privatePanels->panelAuthenticationHandler];
             [_privatePanels->panelAuthenticationHandler release];
             _privatePanels->panelAuthenticationHandler = nil;
         }        

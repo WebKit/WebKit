@@ -11,7 +11,7 @@
 @interface WebPanelAuthenticationHandler : NSObject <WebAuthenticationHandler>
 {
     NSMutableDictionary *windowToPanel;
-    NSMutableDictionary *requestToWindow;
+    NSMutableDictionary *challengeToWindow;
 }
 
 @end
