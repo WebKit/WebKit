@@ -220,11 +220,6 @@
     return [[self representation] isKindOfClass: [WebHTMLRepresentation class]];
 }
 
-- (NSString *)encoding
-{
-    return _private->encoding;
-}
-
 // Returns nil or the page title.
 - (NSString *)pageTitle
 {

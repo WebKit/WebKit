@@ -38,7 +38,6 @@
     if (self) {
         dataSource = [ds retain];
         resourceData = [[NSMutableData alloc] init];
-        isFirstChunk = YES;
         
         // set the user agent for the request
         // consult the data source's controller
@@ -140,9 +139,9 @@
     [self receivedError:error forHandle:handle];
     [error release];
 
-    if(downloadHandler){
+    if (downloadHandler) {
         WebError *downloadError = [downloadHandler cancel];
-        if(downloadError){
+        if(downloadError) {
             [self receivedError:downloadError forHandle:handle];
         }
         [downloadHandler release];
@@ -180,9 +179,9 @@
         [self receivedProgressWithHandle:handle complete:YES];
     }
 
-    if(downloadHandler){
+    if (downloadHandler) {
         WebError *downloadError = [downloadHandler finishedLoading];
-        if(downloadError){
+        if (downloadError) {
             [self receivedError:downloadError forHandle:handle];
         }
         [downloadHandler release];
@@ -213,71 +212,66 @@
 
 -(void)handle:(WebResourceHandle *)handle didReceiveResponse:(WebResourceResponse *)response
 {
-    [dataSource _setResponse:response];
-}
-
-- (void)handle:(WebResourceHandle *)handle didReceiveData:(NSData *)data
-{
-    WebController *controller = [dataSource controller];
-    WebResourceResponse *response = [dataSource response];
     NSString *contentType = [response contentType];
-    WebFrame *frame = [dataSource webFrame];
-    WebError *downloadError = nil;
-    
-    LOG(Loading, "URL = %@, data = %p, length %d", currentURL, data, [data length]);
-    
-    // Check the mime type and ask the client for the content policy.
-    if(isFirstChunk){
-        // Make assumption that if the contentType is the default 
-        // and there is no extension, this is text/html
-        if([contentType isEqualToString:@"application/octet-stream"] && [[[currentURL path] pathExtension] isEqualToString:@""])
-            contentType = @"text/html";
-        
-        [dataSource _setEncoding:[response textEncodingName]];
-        
-        // retain the downloadProgressDelegate just in case this is a download.
-        // Alexander releases the WebController if no window is created for it.
-        // This happens in the cases mentioned in 2981866 and 2965312.
-        downloadProgressDelegate = [[[dataSource controller] downloadProgressDelegate] retain];
 
-        WebContentPolicy *contentPolicy = [dataSource contentPolicy];
-        if(contentPolicy == nil){
-            contentPolicy = [[controller policyDelegate] contentPolicyForMIMEType:contentType URL:currentURL inFrame:frame];
-            [dataSource _setContentPolicy:contentPolicy];
-        }
-        policyAction = [contentPolicy policyAction];
-        
-        LOG(Download, "main content type: %@", contentType);
+    [dataSource _setResponse:response];
+
+    // Make assumption that if the contentType is the default and there is no extension, this is text/html.
+    if ([contentType isEqualToString:@"application/octet-stream"]
+            && [[[currentURL path] pathExtension] isEqualToString:@""])
+        contentType = @"text/html";
+    LOG(Download, "main content type: %@", contentType);
+
+    // Retain the downloadProgressDelegate just in case this is a download.
+    // Alexander releases the WebController if no window is created for it.
+    // This happens in the cases mentioned in 2981866 and 2965312.
+    downloadProgressDelegate = [[[dataSource controller] downloadProgressDelegate] retain];
+
+    // Figure out the content policy.
+    WebContentPolicy *contentPolicy = [dataSource contentPolicy];
+    if (contentPolicy == nil) {
+        contentPolicy = [[[dataSource controller] policyDelegate]
+            contentPolicyForMIMEType:contentType URL:currentURL inFrame:[dataSource webFrame]];
+        [dataSource _setContentPolicy:contentPolicy];
     }
+    policyAction = [contentPolicy policyAction];
 
     switch (policyAction) {
     case WebContentPolicyShow:
-        // only need to buffer data in this case
-        [resourceData appendData:data];
-        [dataSource _receivedData:data];
         break;
     case WebContentPolicySave:
     case WebContentPolicySaveAndOpenExternally:
-        if (!downloadHandler) {
-            [frame _setProvisionalDataSource:nil];
-	    [[[dataSource controller] locationChangeDelegate] locationChangeDone:nil forDataSource:dataSource];
-            downloadHandler = [[WebDownloadHandler alloc] initWithDataSource:dataSource];
-        }
-        downloadError = [downloadHandler receivedData:data];
+        [[dataSource webFrame] _setProvisionalDataSource:nil];
+        [[[dataSource controller] locationChangeDelegate] locationChangeDone:nil forDataSource:dataSource];
+        downloadHandler = [[WebDownloadHandler alloc] initWithDataSource:dataSource];
         break;
     case WebContentPolicyIgnore:
         [handle cancel];
         [self didCancelWithHandle:handle];
-        [frame _setProvisionalDataSource:nil];
+        [[dataSource webFrame] _setProvisionalDataSource:nil];
 	[[[dataSource controller] locationChangeDelegate] locationChangeDone:nil forDataSource:dataSource];
         break;
     default:
         ERROR("contentPolicyForMIMEType:URL:inFrame: returned an invalid content policy.");
     }
+}
+
+- (void)handle:(WebResourceHandle *)handle didReceiveData:(NSData *)data
+{
+    LOG(Loading, "URL = %@, data = %p, length %d", currentURL, data, [data length]);
+    
+    WebError *downloadError = nil;
+    
+    if (downloadHandler) {
+        downloadError = [downloadHandler receivedData:data];
+    } else {
+        [resourceData appendData:data];
+        [dataSource _receivedData:data];
+    }
 
     [self receivedProgressWithHandle:handle complete:NO];
 
-    if(downloadError){
+    if (downloadError) {
         [self receivedError:downloadError forHandle:handle];
 
         // Supress errors because we don't want to confuse the client with
@@ -286,8 +280,7 @@
         [handle cancel];
     }
     
-    LOG(Download, "%d of %d", [response contentLengthReceived], [response contentLength]);
-    isFirstChunk = NO;
+    LOG(Download, "%d of %d", [[dataSource response] contentLengthReceived], [[dataSource response] contentLength]);
 }
 
 - (void)handle:(WebResourceHandle *)handle didFailLoadingWithError:(WebError *)result
@@ -299,9 +292,9 @@
 
     [self receivedError:result forHandle:handle];
 
-    if(downloadHandler){
+    if (downloadHandler) {
         WebError *downloadError = [downloadHandler cancel];
-        if(downloadError){
+        if (downloadError) {
             [self receivedError:downloadError forHandle:handle];
         }
         [downloadHandler release];

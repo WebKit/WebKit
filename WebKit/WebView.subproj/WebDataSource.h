@@ -176,12 +176,6 @@
 - (BOOL)isDocumentHTML;
 
 /*!
-    @method encoding
-    // FIXME rename to textEncodingName, move to WebHTMLRepresentation
-*/
-- (NSString *)encoding;
-
-/*!
     @method pageTitle
     @result Returns nil or the page title.
     // FIXME move to WebHTMLRepresentation

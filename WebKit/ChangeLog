@@ -1,3 +1,26 @@
+2002-10-02  Darin Adler  <darin@apple.com>
+
+	Use the text encoding name from the response and got rid of
+	[WebDataSource encoding]. Also remove the "first chunk" logic since we
+	now get a separate callback for the response.
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge receivedData:withDataSource:]): Get the encoding name
+	from the response, or fall back on the default.
+
+        * WebView.subproj/WebDataSource.h: Removed encoding.
+        * WebView.subproj/WebDataSource.m: Ditto.
+
+        * WebView.subproj/WebDataSourcePrivate.h: Removed _setEncoding.
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSourcePrivate dealloc]): No need to release encoding any more.
+
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient initWithDataSource:]): No isFirstChunk to initialize.
+        (-[WebMainResourceClient handle:didReceiveResponse:]): Moved the response handling
+	in here, including the policy logic.
+        (-[WebMainResourceClient handle:didReceiveData:]): This has only what's left.
+
 2002-10-02  Chris Blumenberg  <cblu@apple.com>
 
 	Replaced contentType on WebDataSource to response.

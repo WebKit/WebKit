@@ -23,7 +23,6 @@
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebLocationChangeDelegate.h>
 #import <WebKit/WebMainResourceClient.h>
-#import <WebKit/WebPreferences.h>
 #import <WebKit/WebSubresourceClient.h>
 #import <WebKit/WebTextRepresentation.h>
 #import <WebKit/WebViewPrivate.h>
@@ -38,16 +37,7 @@
 #import <WebFoundation/WebResourceResponse.h>
 #import <WebFoundation/WebHTTPResourceRequest.h>
 
-#import <WebCore/WebCoreEncodings.h>
-
 @implementation WebDataSourcePrivate 
-
-- init
-{
-    [super init];
-    encoding = [[[WebPreferences standardPreferences] defaultTextEncodingName] copy];
-    return self;
-}
 
 - (void)dealloc
 {
@@ -71,7 +61,6 @@
     [mainHandle release];
     [subresourceClients release];
     [pageTitle release];
-    [encoding release];
     [response release];
     [errors release];
     [mainDocumentError release];
@@ -327,13 +316,6 @@
     [self _commitIfReady];
 }
 
-- (void)_setEncoding:(NSString *)encoding
-{
-    NSString *copy = [encoding copy];
-    [_private->encoding release];
-    _private->encoding = copy;
-}
-
 - (void)_setOverrideEncoding:(NSString *)overrideEncoding
 {
     NSString *copy = [overrideEncoding copy];
@@ -556,8 +538,5 @@
     [[frame dataSource] _setParent: self];   
     [_private->frames setObject: frame forKey: [frame name]];    
 }
-
- 
-
 
 @end

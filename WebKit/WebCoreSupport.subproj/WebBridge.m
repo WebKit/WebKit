@@ -15,16 +15,17 @@
 #import <WebKit/WebKitStatisticsPrivate.h>
 #import <WebKit/WebLoadProgress.h>
 #import <WebKit/WebLocationChangeDelegate.h>
+#import <WebKit/WebPreferences.h>
 #import <WebKit/WebSubresourceClient.h>
 #import <WebKit/WebViewPrivate.h>
 #import <WebKit/WebWindowOperationsDelegate.h>
 
 #import <WebFoundation/WebAssertions.h>
 #import <WebFoundation/WebError.h>
+#import <WebFoundation/WebHTTPResourceRequest.h>
 #import <WebFoundation/WebNSStringExtras.h>
 #import <WebFoundation/WebResourceHandle.h>
-#import <WebFoundation/WebResourceRequest.h>
-#import <WebFoundation/WebHTTPResourceRequest.h>
+#import <WebFoundation/WebResourceResponse.h>
 
 @interface NSApplication (DeclarationStolenFromAppKit)
 - (void)_cycleWindowsReversed:(BOOL)reversed;
@@ -153,8 +154,10 @@
 
     if ([withDataSource _overrideEncoding]) {
 	[self addData:data withOverrideEncoding:[withDataSource _overrideEncoding]];
+    } else if ([[withDataSource response] textEncodingName]) {
+	[self addData:data withEncoding:[[withDataSource response] textEncodingName]];
     } else {
-	[self addData:data withEncoding:[withDataSource encoding]];
+        [self addData:data withEncoding:[[WebPreferences standardPreferences] defaultTextEncodingName]];
     }
 }
 
