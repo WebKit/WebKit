@@ -1,1 +1,1 @@
-#include "KWQRegExp.h"
+#import "KWQRegExp.h"

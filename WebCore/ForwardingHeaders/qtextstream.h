@@ -1,1 +1,1 @@
-#include "KWQTextStream.h"
+#import "KWQTextStream.h"

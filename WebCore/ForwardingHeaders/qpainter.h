@@ -1,1 +1,1 @@
-#include "KWQPainter.h"
+#import "KWQPainter.h"

@@ -1,1 +1,1 @@
-#include <kjs_html.lut.h>
+#import <kjs_html.lut.h>

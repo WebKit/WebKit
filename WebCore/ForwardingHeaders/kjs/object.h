@@ -1,1 +1,1 @@
-#include <JavaScriptCore/object.h>
+#import <JavaScriptCore/object.h>

@@ -1,1 +1,1 @@
-#include "KWQPaintDevice.h"
+#import "KWQPaintDevice.h"

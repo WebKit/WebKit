@@ -1,1 +1,1 @@
-#include <kjs_proxy.h>
+#import <kjs_proxy.h>

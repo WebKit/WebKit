@@ -1,1 +1,1 @@
-#include <dom_string.h>
+#import <dom_string.h>

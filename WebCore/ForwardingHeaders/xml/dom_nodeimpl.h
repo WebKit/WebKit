@@ -1,1 +1,1 @@
-#include <dom_nodeimpl.h>
+#import <dom_nodeimpl.h>

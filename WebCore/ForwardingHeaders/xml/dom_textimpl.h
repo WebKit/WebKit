@@ -1,1 +1,1 @@
-#include <dom_textimpl.h>
+#import <dom_textimpl.h>

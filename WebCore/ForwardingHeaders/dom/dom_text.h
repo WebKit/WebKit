@@ -1,1 +1,1 @@
-#include <dom_text.h>
+#import <dom_text.h>

@@ -1,1 +1,1 @@
-#include <dom2_traversalimpl.h>
+#import <dom2_traversalimpl.h>

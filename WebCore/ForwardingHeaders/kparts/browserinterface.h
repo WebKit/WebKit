@@ -1,1 +1,1 @@
-#include "KWQKPartsBrowserInterface.h"
+#import "KWQKPartsBrowserInterface.h"

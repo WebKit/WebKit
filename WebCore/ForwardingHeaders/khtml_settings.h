@@ -1,1 +1,1 @@
-#include "KWQKHTMLSettings.h"
+#import "KWQKHTMLSettings.h"

@@ -1,1 +1,1 @@
-#include <dom_misc.h>
+#import <dom_misc.h>

@@ -1,1 +1,1 @@
-#include <htmlediting_impl.h>
+#import <htmlediting_impl.h>

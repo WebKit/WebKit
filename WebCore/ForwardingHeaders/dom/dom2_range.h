@@ -1,1 +1,1 @@
-#include <dom2_range.h>
+#import <dom2_range.h>

@@ -1,1 +1,1 @@
-#include "KWQLabel.h"
+#import "KWQLabel.h"

@@ -1,1 +1,1 @@
-#include "KWQColor.h"
+#import "KWQColor.h"

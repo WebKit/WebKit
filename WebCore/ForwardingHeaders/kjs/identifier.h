@@ -1,1 +1,1 @@
-#include <JavaScriptCore/identifier.h>
+#import <JavaScriptCore/identifier.h>

@@ -1,1 +1,1 @@
-#include <kjs_binding.h>
+#import <kjs_binding.h>

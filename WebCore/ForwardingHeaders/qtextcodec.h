@@ -1,1 +1,1 @@
-#include "KWQTextCodec.h"
+#import "KWQTextCodec.h"

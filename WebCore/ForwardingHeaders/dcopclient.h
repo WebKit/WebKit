@@ -1,1 +1,1 @@
-#include "KWQDCOPClient.h"
+#import "KWQDCOPClient.h"

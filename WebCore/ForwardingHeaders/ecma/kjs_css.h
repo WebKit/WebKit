@@ -1,1 +1,1 @@
-#include <kjs_css.h>
+#import <kjs_css.h>

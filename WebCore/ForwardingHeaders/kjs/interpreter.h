@@ -1,1 +1,1 @@
-#include <JavaScriptCore/interpreter.h>
+#import <JavaScriptCore/interpreter.h>

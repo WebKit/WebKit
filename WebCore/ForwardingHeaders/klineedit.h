@@ -1,1 +1,1 @@
-#include "KWQKLineEdit.h"
+#import "KWQKLineEdit.h"

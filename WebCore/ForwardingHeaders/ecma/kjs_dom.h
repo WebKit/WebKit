@@ -1,1 +1,1 @@
-#include <kjs_dom.h>
+#import <kjs_dom.h>

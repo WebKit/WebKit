@@ -1,1 +1,1 @@
-#include "KWQRect.h"
+#import "KWQRect.h"

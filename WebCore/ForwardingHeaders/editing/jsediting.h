@@ -1,1 +1,1 @@
-#include <jsediting.h>
+#import <jsediting.h>

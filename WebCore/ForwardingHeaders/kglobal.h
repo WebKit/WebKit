@@ -1,1 +1,1 @@
-#include "KWQKGlobal.h"
+#import "KWQKGlobal.h"

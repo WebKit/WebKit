@@ -1,5 +1,9 @@
 2004-09-22  Darin Adler  <darin@apple.com>
 
+        * ForwardingHeaders/*: Use import instead of include.
+
+2004-09-22  Darin Adler  <darin@apple.com>
+
         - renamed these files:
 
             misc/khtml_text_operations.h   -> editing/visible_text.h

@@ -1,1 +1,1 @@
-#include "KWQCursor.h"
+#import "KWQCursor.h"

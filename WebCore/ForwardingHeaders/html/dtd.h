@@ -1,1 +1,1 @@
-#include <dtd.h>
+#import <dtd.h>

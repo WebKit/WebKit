@@ -1,1 +1,1 @@
-#include "KWQImage.h"
+#import "KWQImage.h"

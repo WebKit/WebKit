@@ -1,1 +1,1 @@
-#include "KWQKHTMLFind.h"
+#import "KWQKHTMLFind.h"

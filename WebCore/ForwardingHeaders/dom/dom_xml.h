@@ -1,1 +1,1 @@
-#include <dom_xml.h>
+#import <dom_xml.h>

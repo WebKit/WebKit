@@ -1,1 +1,1 @@
-#include <khtmllayout.h>
+#import <khtmllayout.h>

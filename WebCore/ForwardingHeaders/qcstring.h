@@ -1,1 +1,1 @@
-#include "KWQCString.h"
+#import "KWQCString.h"

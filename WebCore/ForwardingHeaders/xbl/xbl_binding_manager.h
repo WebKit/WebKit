@@ -1,2 +1,2 @@
-#include <xbl_binding_manager.h>
+#import <xbl_binding_manager.h>
 

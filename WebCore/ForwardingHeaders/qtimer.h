@@ -1,1 +1,1 @@
-#include "KWQTimer.h"
+#import "KWQTimer.h"

@@ -1,1 +1,1 @@
-#include "KWQKLocale.h"
+#import "KWQKLocale.h"

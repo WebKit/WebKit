@@ -1,1 +1,1 @@
-#include <kjs_window.h>
+#import <kjs_window.h>

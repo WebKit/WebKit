@@ -1,1 +1,1 @@
-#include <dom_atomicstring.h>
+#import <dom_atomicstring.h>

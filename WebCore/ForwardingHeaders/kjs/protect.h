@@ -1,1 +1,1 @@
-#include <JavaScriptCore/protect.h>
+#import <JavaScriptCore/protect.h>

@@ -1,1 +1,1 @@
-#include "KWQKStandardDirs.h"
+#import "KWQKStandardDirs.h"

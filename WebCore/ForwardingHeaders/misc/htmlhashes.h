@@ -1,1 +1,1 @@
-#include <htmlhashes.h>
+#import <htmlhashes.h>

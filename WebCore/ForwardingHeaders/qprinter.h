@@ -1,1 +1,1 @@
-#include "KWQPrinter.h"
+#import "KWQPrinter.h"
