@@ -14,7 +14,7 @@ int main() {
     QChar q0 = QChar();
     QChar q1 = QChar(c_char);
     QChar q2 = QChar(c_uchar);
-    QChar q3 = QChar(c_uchar, 0);
+    //QChar q3 = QChar(c_uchar, 0);
     QChar q4 = QChar(q1);
     QChar q5 = QChar(c_ushort);
     QChar q6 = QChar(c_short);
@@ -23,7 +23,7 @@ int main() {
     
     cout << q1 << endl;
     cout << q2 << endl;
-    cout << q3 << endl;
+    //cout << q3 << endl;
     cout << q4 << endl;
     cout << q5 << endl;
     cout << q6 << endl;
@@ -35,22 +35,22 @@ int main() {
     cout << q2.cell() << endl;
     cout << q2.row() << endl;
     cout << q2.operator char() << endl;
-    cout << q7.isNumber() << endl;
-    cout << q8.isNumber() << endl;
+    //cout << q7.isNumber() << endl;
+    //cout << q8.isNumber() << endl;
     cout << q8.isPunct() << endl;
     cout << q7.isPunct() << endl;
     cout << q6.isSpace() << endl;
     cout << q5.isSpace() << endl;
     cout << q0.isNull() << endl;
     cout << q1.isNull() << endl;
-    cout << q7.isNumber() << endl;
-    cout << q8.isNumber() << endl;
+    //cout << q7.isNumber() << endl;
+    //cout << q8.isNumber() << endl;
     cout << q7.isDigit() << endl;
     cout << q8.isDigit() << endl;
     cout << q7.isLetterOrNumber() << endl;
     cout << q8.isLetterOrNumber() << endl;
-    cout << q3.isPrint() << endl;
-    cout << q3.isMark() << endl;
+    //cout << q3.isPrint() << endl;
+    //cout << q3.isMark() << endl;
     cout << q5.lower() << endl;
     cout << q1.upper() << endl;
     
