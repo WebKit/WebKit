@@ -1,5 +1,5 @@
 item keyed to 'one': 1
-remove item keyed to 'three': QDict: [size: 4; items: (one,1), (five,5), (four,4), (two,2)]
+remove item keyed to 'three': QDict: [size: 4; items: (two,2), (five,5), (four,4), (one,1)]
 d0 is empty: 1
 d1 is empty: 0
 d1 count: 4
