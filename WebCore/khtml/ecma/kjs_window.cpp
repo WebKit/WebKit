@@ -1709,7 +1709,7 @@ void Window::updateLayout() const
 {
   DOM::DocumentImpl* docimpl = static_cast<DOM::DocumentImpl *>(m_part->document().handle());
   if (docimpl) {
-    docimpl->updateLayout();
+    docimpl->updateLayoutIgnorePendingStylesheets();
   }
 }
 
@@ -2221,7 +2221,7 @@ Value Selection::get(ExecState *exec, const Identifier &p) const
 
   DocumentImpl *docimpl = m_part->xmlDocImpl();
   if (docimpl)
-    docimpl->updateLayout();
+    docimpl->updateLayoutIgnorePendingStylesheets();
 
   KURL url = m_part->url();
   const HashEntry *entry = Lookup::findEntry(&SelectionTable, p);
@@ -2303,7 +2303,7 @@ Value SelectionFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
     if (part) {
         DocumentImpl *docimpl = part->xmlDocImpl();
         if (docimpl)
-            docimpl->updateLayout();
+            docimpl->updateLayoutIgnorePendingStylesheets();
             
         switch (id) {
             case Selection::Collapse:

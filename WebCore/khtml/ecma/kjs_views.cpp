@@ -2,6 +2,7 @@
 /*
  *  This file is part of the KDE libraries
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
+ *  Copyright (C) 2004 Apple Computer, Inc.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -21,6 +22,8 @@
 #include "ecma/kjs_views.h"
 #include "ecma/kjs_views.lut.h"
 #include "ecma/kjs_css.h"
+
+#include "xml/dom_docimpl.h"
 
 using namespace KJS;
 
@@ -63,9 +66,14 @@ Value DOMAbstractViewFunc::tryCall(ExecState *exec, Object &thisObj, const List 
         DOM::Node arg0 = toNode(args[0]);
         if (arg0.nodeType() != DOM::Node::ELEMENT_NODE)
           return Undefined(); // throw exception?
-        else
+        else {
+          DOM::DocumentImpl* docimpl = arg0.handle()->getDocument();
+          if (docimpl) {
+            docimpl->updateLayoutIgnorePendingStylesheets();
+          }
           return getDOMCSSStyleDeclaration(exec,abstractView.getComputedStyle(static_cast<DOM::Element>(arg0),
                                                                               args[1].toString(exec).string()));
+        }
       }
   }
   return Undefined();

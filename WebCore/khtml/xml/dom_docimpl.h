@@ -292,6 +292,7 @@ public:
     static QPtrList<DocumentImpl> * changedDocuments;
     virtual void updateRendering();
     void updateLayout();
+    void updateLayoutIgnorePendingStylesheets();
     static void updateDocumentsRendering();
     khtml::DocLoader *docLoader() { return m_docLoader; }
 

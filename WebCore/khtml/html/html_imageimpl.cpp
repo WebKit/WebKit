@@ -311,7 +311,7 @@ void HTMLImageElementImpl::detach()
     HTMLElementImpl::detach();
 }
 
-long HTMLImageElementImpl::width() const
+long HTMLImageElementImpl::width(bool ignorePendingStylesheets) const
 {
     if (!m_render) {
 	// check the attribute first for an explicit pixel value
@@ -325,7 +325,10 @@ long HTMLImageElementImpl::width() const
 
     DOM::DocumentImpl* docimpl = getDocument();
     if (docimpl) {
-	docimpl->updateLayout();
+	if (ignorePendingStylesheets)
+            docimpl->updateLayoutIgnorePendingStylesheets();
+        else
+            docimpl->updateLayout();
     }
 
     if (!m_render) {
@@ -335,7 +338,7 @@ long HTMLImageElementImpl::width() const
     return m_render->contentWidth();
 }
 
-long HTMLImageElementImpl::height() const
+long HTMLImageElementImpl::height(bool ignorePendingStylesheets) const
 {
     if (!m_render) {
 	// check the attribute first for an explicit pixel value
@@ -349,7 +352,10 @@ long HTMLImageElementImpl::height() const
 
     DOM::DocumentImpl* docimpl = getDocument();
     if (docimpl) {
-	docimpl->updateLayout();
+	if (ignorePendingStylesheets)
+            docimpl->updateLayoutIgnorePendingStylesheets();
+        else
+            docimpl->updateLayout();
     }
 
     if (!m_render) {

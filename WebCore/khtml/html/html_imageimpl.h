@@ -83,8 +83,8 @@ public:
     virtual khtml::RenderObject *createRenderer(RenderArena *, khtml::RenderStyle *);
     virtual void detach();
 
-    long width() const;
-    long height() const;
+    long width(bool ignorePendingStylesheets = false) const;
+    long height(bool ignorePendingStylesheets = false) const;
 
     bool isServerMap() const { return ( ismap && !usemap.length() );  }
     QImage currentImage() const;

@@ -300,7 +300,7 @@ Value DOMNode::getValueProperty(ExecState *exec, int token) const
     // Make sure our layout is up to date before we allow a query on these attributes.
     DOM::DocumentImpl* docimpl = node.handle()->getDocument();
     if (docimpl) {
-      docimpl->updateLayout();
+      docimpl->updateLayoutIgnorePendingStylesheets();
     }
 
     khtml::RenderObject *rend = node.handle()->renderer();

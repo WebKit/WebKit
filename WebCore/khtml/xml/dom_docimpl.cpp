@@ -1151,6 +1151,23 @@ void DocumentImpl::updateDocumentsRendering()
 
 void DocumentImpl::updateLayout()
 {
+    // FIXME: Dave's pretty sure we can remove this because
+    // layout calls recalcStyle as needed.
+    updateRendering();
+
+    // Only do a layout if changes have occurred that make it necessary.      
+    if (m_view && renderer() && renderer()->needsLayout())
+	m_view->layout();
+}
+
+// FIXME: This is a bad idea and needs to be removed eventually.
+// Other browsers load stylesheets before they continue parsing the web page.
+// Since we don't, we can run JavaScript code that needs answers before the
+// stylesheets are loaded. Doing a layout ignoring the pending stylesheets
+// lets us get reasonable answers. The long term solution to this problem is
+// to instead suspend JavaScript execution.
+void DocumentImpl::updateLayoutIgnorePendingStylesheets()
+{
     bool oldIgnore = m_ignorePendingStylesheets;
     
     if (!haveStylesheetsLoaded()) {
@@ -1158,12 +1175,7 @@ void DocumentImpl::updateLayout()
 	updateStyleSelector();    
     }
 
-    updateRendering();
-
-    // Only do a layout if changes have occurred that make it necessary.      
-    if (m_view && renderer() && renderer()->needsLayout()) {
-	m_view->layout();
-    }
+    updateLayout();
 
     m_ignorePendingStylesheets = oldIgnore;
 }

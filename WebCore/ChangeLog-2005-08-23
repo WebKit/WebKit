@@ -2,6 +2,40 @@
 
         Reviewed by Ken.
 
+        - fixed problem where our updateLayout call ignores pending stylesheets all the time
+
+        * khtml/xml/dom_docimpl.h: Added updateLayoutIgnorePendingStylesheets.
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::updateLayout): Took out the "ignore pending stylesheets" business here.
+        (DocumentImpl::updateLayoutIgnorePendingStylesheets): Put it in here.
+
+        * khtml/ecma/kjs_dom.cpp: (DOMNode::getValueProperty): Call the new
+        updateLayoutIgnorePendingStylesheets function.
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::HTMLElement::getValueProperty): Ditto.
+        (KJS::HTMLElement::putValue): Ditto.
+        * khtml/ecma/kjs_views.cpp: (DOMAbstractViewFunc::tryCall): Ditto.
+        * khtml/ecma/kjs_window.cpp:
+        (Window::updateLayout): Ditto.
+        (Selection::get): Ditto.
+        (SelectionFunc::tryCall): Ditto.
+
+        * khtml/html/html_imageimpl.h: Add ignorePendingStylesheets boolean parameter.
+        * khtml/html/html_imageimpl.cpp:
+        (HTMLImageElementImpl::width): Respect new parameter.
+        (HTMLImageElementImpl::height): Ditto.
+
+        - tweaks
+
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge alterCurrentSelection:direction:granularity:]): Removed unneeded
+        explicit "true" parameter to setSelection.
+        (-[WebCoreBridge alterCurrentSelection:verticalDistance:]): Ditto.
+
+2004-09-21  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
         - fix crash when pasting text at the end of the document and then doing an undo
 
         * khtml/editing/htmlediting_impl.cpp:
