@@ -1249,7 +1249,7 @@ DeleteSelectionCommand::DeleteSelectionCommand(DocumentImpl *document, bool smar
 }
 
 DeleteSelectionCommand::DeleteSelectionCommand(DocumentImpl *document, const Selection &selection, bool smartDelete, bool mergeBlocksAfterDelete)
-    : CompositeEditCommand(document), m_selectionToDelete(selection), m_hasSelectionToDelete(true), m_smartDelete(smartDelete), m_mergeBlocksAfterDelete(m_mergeBlocksAfterDelete)
+    : CompositeEditCommand(document), m_selectionToDelete(selection), m_hasSelectionToDelete(true), m_smartDelete(smartDelete), m_mergeBlocksAfterDelete(mergeBlocksAfterDelete)
 {
 }
 

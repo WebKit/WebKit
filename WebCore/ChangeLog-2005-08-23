@@ -1,3 +1,11 @@
+2004-10-28  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by me
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::DeleteSelectionCommand::DeleteSelectionCommand): Typo in initializer caused
+        new mergeBlocksAfterDelete flag to be set improperly, causing layout regressions.
+
 2004-10-27  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Chris
