@@ -1,3 +1,9 @@
+2004-09-14  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by me
+
+        * khtml/css/parser.cpp: Did not regenerate this file from parser.y before last checkin.
+
 2004-09-14  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed typos in last check-in.
