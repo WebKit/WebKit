@@ -1,3 +1,18 @@
+2004-07-06  Trey Matteson  <trey@apple.com>
+
+	3294652 - Failed drag of links doesn't slide back
+
+	The only reason for this is that because of some hacks, we lie to
+	AK about the drag image offset, which means we slide back to
+	slightly the wrong place.  But it's very minor, so we should
+	just fix it.
+
+        Reviewed by Ken.
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _startDraggingImage:at:operation:event:sourceIsDHTML:DHTMLWroteData:]):
+	Ask for slideback.
+
 2004-07-02  Darin Adler  <darin@apple.com>
 
         Reviewed by Dave.

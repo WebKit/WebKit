@@ -862,7 +862,7 @@ static WebHTMLView *lastHitView = nil;
                   event:mouseDraggedEvent
              pasteboard:pasteboard
                  source:self
-              slideBack:NO];
+              slideBack:YES];
     } else if (isSelected && (_private->dragSourceActionMask & WebDragSourceActionSelection)) {
         if (!dhtmlWroteData) {
             [self _writeSelectionToPasteboard:pasteboard];
