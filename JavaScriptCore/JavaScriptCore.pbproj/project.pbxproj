@@ -136,7 +136,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.2;
 				OPTIMIZATION_CFLAGS = "-Os";
 				OTHER_CFLAGS = "$(DEBUG_CFLAGS) -DAPPLE_CHANGES -DHAVE_CONFIG_H";
-				OTHER_LDFLAGS = "-seg_addr_table_filename \"${SYSTEM_LIBRARY_DIR}/Frameworks/WebKit.framework/Frameworks/${PRODUCT_NAME}.framework/Versions/${FRAMEWORK_VERSION}/${PRODUCT_NAME}\" -umbrella WebKit -allowable_client JSGlue";
+				OTHER_LDFLAGS = "-seg_addr_table_filename \"${SYSTEM_LIBRARY_DIR}/Frameworks/WebKit.framework/Frameworks/${PRODUCT_NAME}.framework/Versions/${FRAMEWORK_VERSION}/${PRODUCT_NAME}\" -umbrella WebKit -allowable_client JavaScriptGlue";
 				PRECOMPILE_PREFIX_HEADER = YES;
 				PREFIX_HEADER = JavaScriptCorePrefix.h;
 				PRODUCT_NAME = JavaScriptCore;
