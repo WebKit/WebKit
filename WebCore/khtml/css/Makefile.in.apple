@@ -18,8 +18,9 @@ include $(TOPSRCDIR)/Makefile.vars
 #----------------------------------------------------------------------
 # Set variables for this directory
 
-ALLOBJECTS = $(patsubst %.cpp,%.o,$(wildcard *.cpp))
-CXXOBJECTS = $(filter-out css_extensionsimpl.o,$(ALLOBJECTS))
+SOURCES = $(wildcard *.cpp)
+HEADERS = $(wildcard *.h)
+CXXOBJECTS = $(patsubst %.cpp,%.o,$(wildcard *.cpp))
 
 VALUEFILES = \
 	cssvalues.c \
@@ -35,7 +36,7 @@ PROPFILES = \
 
 CFILES = $(VALUEFILES) $(PROPFILES)
 
-OBJECTS = $(CFILES) $(CXXOBJECTS)
+OBJECTS = $(CXXOBJECTS)
 
 LIBRARY = libkhtmlcss.a
 
@@ -48,6 +49,7 @@ CLEAN_FILES = $(OBJECTS) \
 # Set flags for this directory
 
 CXXFLAGS = $(BASECXXFLAGS) \
+	-I$(TOPSRCDIR) \
 	-I$(TOPSRCDIR)/src/kwq \
 	-I$(TOPSRCDIR)/src/kwq/qt \
 	-I$(TOPSRCDIR)/src/kwq/dcop \
@@ -65,7 +67,7 @@ CXXFLAGS = $(BASECXXFLAGS) \
 #----------------------------------------------------------------------
 # Set targets for this directory
 
-all: $(OBJECTS) $(LIBRARY)
+all: Makefile.dep $(CFILES) $(OBJECTS) $(LIBRARY)
 
 $(LIBRARY): $(OBJECTS)
 	$(AR) $(ARFLAGS) $(LIBRARY) $(CXXOBJECTS)
@@ -76,6 +78,16 @@ $(VALUEFILES):
 
 $(PROPFILES):
 	sh ./makeprop
+
+depend: Makefile.dep
+
+Makefile.dep: $(VALUEFILES) $(PROPFILES) $(SOURCES) $(HEADERS)
+	$(CC) -MM $(CXXFLAGS) $(SOURCES) > Makefile.dep
+
+#----------------------------------------------------------------------
+# include make dependency rules
+
+-include Makefile.dep
 
 #----------------------------------------------------------------------
 # include make rules boilerplate

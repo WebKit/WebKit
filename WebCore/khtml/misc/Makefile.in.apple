@@ -18,6 +18,8 @@ include $(TOPSRCDIR)/Makefile.vars
 #----------------------------------------------------------------------
 # Set variables for this directory
 
+SOURCES = $(wildcard *.cpp)
+HEADERS = $(wildcard *.h)
 CXXOBJECTS = $(patsubst %.cpp,%.o,$(wildcard *.cpp))
 
 TAGFILES = \
@@ -47,6 +49,7 @@ CLEAN_FILES = $(OBJECTS) \
 # Set flags for this directory
 
 CXXFLAGS = $(BASECXXFLAGS) \
+	-I$(TOPSRCDIR) \
 	-I$(TOPSRCDIR)/src/kwq \
 	-I$(TOPSRCDIR)/src/kwq/qt \
 	-I$(TOPSRCDIR)/src/kwq/kdecore \
@@ -62,12 +65,17 @@ CXXFLAGS = $(BASECXXFLAGS) \
 #----------------------------------------------------------------------
 # Set targets for this directory
 
-all: $(OBJECTS) $(LIBRARY)
+all: Makefile.dep $(OBJECTS) $(LIBRARY)
 
 $(LIBRARY): $(OBJECTS)
 	$(AR) $(ARFLAGS) $(LIBRARY) $(CXXOBJECTS)
 	$(RANLIB) $(LIBRARY)
 
+depend: Makefile.dep
+
+Makefile.dep: $(SOURCES) $(HEADERS)
+	$(CC) -MM $(CXXFLAGS) $(SOURCES) > Makefile.dep
+        
 loader.cpp: loader.moc
 loader.moc:
 	touch loader.moc
@@ -80,6 +88,11 @@ $(TAGFILES):
 
 $(ATTRSFILES):
 	./makeattrs
+
+#----------------------------------------------------------------------
+# include make dependency rules
+
+-include Makefile.dep
 
 #----------------------------------------------------------------------
 # include make rules boilerplate

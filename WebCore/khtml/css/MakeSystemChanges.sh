@@ -1,6 +1,6 @@
 #!/bin/sh
 
-FILES='Makefile.am'
+FILES='Makefile.am css_extensionsimpl.cpp css_extensionsimpl.h'
 for file in $FILES; do
         if (test -f "$file"); then
                 A=`grep APPLE $file`

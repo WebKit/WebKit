@@ -18,8 +18,9 @@ include $(TOPSRCDIR)/Makefile.vars
 #----------------------------------------------------------------------
 # Set variables for this directory
 
-ALLOBJECTS = $(patsubst %.cpp,%.o,$(wildcard *.cpp))
-CXXOBJECTS = $(filter-out css_extensions.o,$(ALLOBJECTS))
+SOURCES = $(wildcard *.cpp)
+HEADERS = $(wildcard *.h)
+CXXOBJECTS = $(patsubst %.cpp,%.o,$(wildcard *.cpp))
 
 OBJECTS = $(CXXOBJECTS) 
 
@@ -33,6 +34,7 @@ CLEAN_FILES = $(OBJECTS) \
 # Set flags for this directory
 
 CXXFLAGS = $(BASECXXFLAGS) \
+	-I$(TOPSRCDIR) \
 	-I$(TOPSRCDIR)/src/kwq \
 	-I$(TOPSRCDIR)/src/kwq/qt \
 	-I$(TOPSRCDIR)/src/kwq/dcop \
@@ -50,11 +52,21 @@ CXXFLAGS = $(BASECXXFLAGS) \
 #----------------------------------------------------------------------
 # Set targets for this directory
 
-all: $(OBJECTS) $(LIBRARY)
+all: Makefile.dep $(OBJECTS) $(LIBRARY)
 
 $(LIBRARY): $(CXXOBJECTS)
 	$(AR) $(ARFLAGS) $(LIBRARY) $(CXXOBJECTS)
 	$(RANLIB) $(LIBRARY)
+
+depend: Makefile.dep
+
+Makefile.dep: $(SOURCES) $(HEADERS)
+	$(CC) -MM $(CXXFLAGS) $(SOURCES) > Makefile.dep
+
+#----------------------------------------------------------------------
+# include make dependency rules
+
+-include Makefile.dep
 
 #----------------------------------------------------------------------
 # include make rules boilerplate

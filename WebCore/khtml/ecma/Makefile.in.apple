@@ -3,9 +3,6 @@
 # Makefile
 #
 # $RCSfile$
-# $Revision$
-# $Author$
-# $Date$
 #
 #======================================================================
 # set top source dir relative to this directory
@@ -18,6 +15,8 @@ include $(TOPSRCDIR)/Makefile.vars
 #----------------------------------------------------------------------
 # Set variables for this directory
 
+SOURCES = $(wildcard *.cpp)
+HEADERS = $(wildcard *.h)
 CXXOBJECTS = $(patsubst %.cpp,%.o,$(wildcard *.cpp))
 
 OBJECTS = $(CXXOBJECTS) 
@@ -35,6 +34,7 @@ CLEAN_FILES = $(OBJECTS) \
 # Set flags for this directory
 
 CXXFLAGS = $(BASECXXFLAGS) \
+	-I$(TOPSRCDIR) \
 	-I$(TOPSRCDIR)/src/kwq \
 	-I$(TOPSRCDIR)/src/kwq/qt \
 	-I$(TOPSRCDIR)/src/kwq/kdecore \
@@ -50,11 +50,10 @@ CXXFLAGS = $(BASECXXFLAGS) \
 	-I. \
 	$(NULL)
 
-
 #----------------------------------------------------------------------
 # Set targets for this directory
 
-all: $(OBJECTS) $(LIBRARY)
+all: Makefile.dep $(OBJECTS) $(LIBRARY) 
 
 $(LIBRARY): $(CXXOBJECTS)
 	$(AR) $(ARFLAGS) $(LIBRARY) $(CXXOBJECTS)
@@ -63,9 +62,19 @@ $(LIBRARY): $(CXXOBJECTS)
 $(PROGRAM): testecma.o
 	$(CC) -o $@ $< -L. -lkhtmlecma
 
+depend: Makefile.dep
+
+Makefile.dep: $(SOURCES) $(HEADERS)
+	$(CC) -MM $(CXXFLAGS) $(SOURCES) > Makefile.dep
+
 kjs_window.cpp: kjs_window.moc
 kjs_window.moc:
 	touch $@
+
+#----------------------------------------------------------------------
+# include make dependency rules
+
+-include Makefile.dep
 
 #----------------------------------------------------------------------
 # include make rules boilerplate

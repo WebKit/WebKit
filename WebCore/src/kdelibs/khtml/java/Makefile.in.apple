@@ -19,8 +19,9 @@ include $(TOPSRCDIR)/Makefile.vars
 #----------------------------------------------------------------------
 # Set variables for this directory
 
-ALLOBJECTS = $(patsubst %.cpp,%.o,$(wildcard *.cpp))
-CXXOBJECTS = $(filter-out javaembed.o,$(ALLOBJECTS))
+SOURCES = $(wildcard *.cpp)
+HEADERS = $(wildcard *.h)
+CXXOBJECTS = $(patsubst %.cpp,%.o,$(wildcard *.cpp))
 
 OBJECTS = $(CXXOBJECTS) 
 
@@ -46,12 +47,16 @@ CXXFLAGS = $(BASECXXFLAGS) \
 #----------------------------------------------------------------------
 # Set targets for this directory
 
-all: $(OBJECTS) $(LIBRARY)
+all: Makefile.dep $(OBJECTS) $(LIBRARY)
 
 $(LIBRARY): $(CXXOBJECTS)
 	$(AR) $(ARFLAGS) $(LIBRARY) $(CXXOBJECTS)
 	$(RANLIB) $(LIBRARY)
 
+depend: Makefile.dep
+
+Makefile.dep: $(SOURCES) $(HEADERS)
+	$(CC) -MM $(CXXFLAGS) $(SOURCES) > Makefile.dep
 
 kjavaapplet.cpp: kjavaapplet.moc
 kjavaapplet.moc:
@@ -76,6 +81,11 @@ kjavadownloader.moc:
 kjavaprocess.cpp: kjavaprocess.moc
 kjavaprocess.moc:
 	touch $@
+
+#----------------------------------------------------------------------
+# include make dependency rules
+
+-include Makefile.dep
 
 #----------------------------------------------------------------------
 # include make rules boilerplate

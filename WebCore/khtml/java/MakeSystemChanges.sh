@@ -1,6 +1,6 @@
 #!/bin/sh
 
-FILES='Makefile.am configure.in.in'
+FILES='Makefile.am configure.in.in javaembed.cpp'
 for file in $FILES; do
         if (test -f "$file"); then
                 A=`grep APPLE $file`

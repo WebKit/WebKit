@@ -19,6 +19,9 @@ include $(TOPSRCDIR)/Makefile.vars
 #----------------------------------------------------------------------
 # Set variables for this directory
 
+SOURCES = $(wildcard *.cpp)
+HEADERS = $(wildcard *.h)
+
 CXXOBJECTS = \
 	dom2_eventsimpl.o \
 	dom2_rangeimpl.o \
@@ -46,6 +49,7 @@ CLEAN_FILES = $(OBJECTS) \
 # Set flags for this directory
 
 CXXFLAGS = $(BASECXXFLAGS) \
+    -I$(TOPSRCDIR) \
     -I$(TOPSRCDIR)/src/kwq \
     -I$(TOPSRCDIR)/src/kwq/qt \
     -I$(TOPSRCDIR)/src/kwq/kdecore \
@@ -62,6 +66,11 @@ CXXFLAGS = $(BASECXXFLAGS) \
 
 all: $(OBJECTS) $(LIBRARY)
 
+depend: Makefile.dep
+
+Makefile.dep: $(SOURCES) $(HEADERS)
+	$(CC) -MM $(CXXFLAGS) $(SOURCES) > Makefile.dep
+
 dom_docimpl.cpp: dom_docimpl.moc
 dom_docimpl.moc:
 	touch $@
@@ -72,6 +81,11 @@ xml_tokenizer.moc:
 $(LIBRARY): $(CXXOBJECTS)
 	$(AR) $(ARFLAGS) $(LIBRARY) $(CXXOBJECTS)
 	$(RANLIB) $(LIBRARY)
+
+#----------------------------------------------------------------------
+# include make dependency rules
+
+-include Makefile.dep
 
 #----------------------------------------------------------------------
 # include make rules boilerplate
