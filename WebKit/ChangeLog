@@ -1,3 +1,14 @@
+2003-11-10  Richard Williamson   <rjw@apple.com>
+
+	Use ICU for upper/lower conversion.  Fixed 3477157, 3478455, 3478456, 3478457, 3478486.
+	Remaining issues with surrogates (3477159) and Turkish I (3478482).
+
+        Reviewed by Ken.
+
+        * Misc.subproj/WebUnicode.m:
+        (_unicodeLower):
+        (_unicodeUpper):
+
 2003-11-07  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3240778>: add "save" menu item to contextual menu for text pages

@@ -5,6 +5,11 @@
 #import <WebKit/WebUnicode.h>
 #import <WebCore/WebCoreUnicode.h>
 
+#define HAVE_ICU_LIBRARY 1
+
+#if HAVE_ICU_LIBRARY
+#import <unicode/uchar.h>
+#endif
 
 static int _unicodeDigitValue(UniChar c)
 {
@@ -80,22 +85,30 @@ static WebCoreUnicodeCombiningClass _unicodeCombiningClass (UniChar c)
 
 static UniChar _unicodeLower(UniChar c)
 {
+#if HAVE_ICU_LIBRARY
+    return u_tolower(c);
+#else
     if ( _unicodeCategory(c) != Letter_Uppercase )
 	return c;
     unsigned short lower = *( case_info[WK_ROW(c)] + WK_CELL(c) );
     if ( lower == 0 )
 	return c;
     return lower;
+#endif
 }
 
 static UniChar _unicodeUpper(UniChar c)
 {
+#if HAVE_ICU_LIBRARY
+    return u_toupper(c);
+#else
     if ( _unicodeCategory(c) != Letter_Lowercase )
 	return c;
     unsigned short upper = *(case_info[WK_ROW(c)]+WK_CELL(c));
     if ( upper == 0 )
 	return c;
     return upper;
+#endif
 }
 
 static bool _unicodeIsMark(UniChar c)
