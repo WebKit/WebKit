@@ -1,3 +1,14 @@
+2004-09-14  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	- fixed <rdar://problem/3800315> encode-URI-test layout test is failing
+	
+        * kjs/function.cpp:
+        (KJS::GlobalFuncImp::call): Make sure to escape null
+	characters. This is a bug in the new code that made part of the
+	test fail.
+
 2004-09-13  Darin Adler  <darin@apple.com>
 
         Reviewed by Kevin and Maciej.

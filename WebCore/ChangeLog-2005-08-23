@@ -1,3 +1,13 @@
+2004-09-14  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	- fixed <rdar://problem/3800315> encode-URI-test layout test is failing
+	- updated escape/encodeURI layout test to match our new, more
+	compatible behavior.
+
+        * layout-tests/fast/js/global/encode-URI-test.html:
+
 2004-09-14  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Richard

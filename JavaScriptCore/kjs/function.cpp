@@ -720,7 +720,7 @@ Value GlobalFuncImp::call(ExecState *exec, Object &/*thisObj*/, const List &args
           char tmp[7];
           sprintf(tmp, "%%u%04X", u);
           s = UString(tmp);
-        } else if (strchr(do_not_escape, (char)u)) {
+        } else if (u != 0 && strchr(do_not_escape, (char)u)) {
           s = UString(c, 1);
         } else {
           char tmp[4];

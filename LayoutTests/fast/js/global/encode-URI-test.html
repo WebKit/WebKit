@@ -54,7 +54,7 @@ function printable(s)
     return "\"" + p + "\"";
 }
 
-function escapedCharacter(c)
+function encodedCharacter(c)
 {
     // UTF-8 is what Gecko does, but not what WinIE 6 does.
     // It makes much more sense, though, to produce encodings that actually work in URLs.
@@ -71,9 +71,30 @@ function escapedCharacter(c)
         case  0xE000: return "%EE%80%80";
         case  0xFFFC: return "%EF%BF%BC";
         case  0xFFFD: return "%EF%BF%BD";
-        case  0xFFFE: return "%EF%BF%BE";
-        case  0xFFFF: return "%EF%BF%BF";
-        case 0x10000: return "%F0%90%80%80";
+    }
+
+    if (c < 0 || c > 0x7F) {
+        window.alert("encodedCharacter doesn't know how to escape character code " + c);
+        return "?";
+    }
+    
+    return "%" + hexDigit(c >> 4) + hexDigit(c - (c >> 4 << 4));
+}
+
+function escapedCharacter(c)
+{
+    // UTF-8 is what Gecko does, but we do what Win IE does instead. We use Latin1 for
+    // unicode characters less than or equal to 255, and %u encoding for everything else.
+    switch (c) {
+        case    0x80: return "%80";
+        case   0x7FF: return "%u07FF";
+        case   0x800: return "%u0800";
+        case  0x2022: return "%u2022";
+        case  0xD7FF: return "%uD7FF";
+        case  0xD800: return "%uD800";
+        case  0xE000: return "%uE000";
+        case  0xFFFC: return "%uFFFC";
+        case  0xFFFD: return "%uFFFD";
     }
 
     if (c < 0 || c > 0x7F) {
@@ -133,8 +154,8 @@ function addURIComponentNoEscape(c)
 function addURINoEscape(c)
 {
     addExpectedNonEscaped("encodeURI", c);
-    expectedResult["decodeURI(" + escapedCharacter(c) + ")"] = escapedCharacter(c);
-    expectedResult["decodeURI(" + escapedCharacter(c).toLowerCase() + ")"] = escapedCharacter(c).toLowerCase();
+    expectedResult["decodeURI(" + escapedCharacter(c) + ")"] = encodedCharacter(c);
+    expectedResult["decodeURI(" + escapedCharacter(c).toLowerCase() + ")"] = encodedCharacter(c).toLowerCase();
 }
 
 forEachCharacterCode(addNoEscape, "*0123456789-.ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_");
@@ -164,11 +185,11 @@ function test(functionName, parameter, desiredResult)
     }
 }
 
-function testEscape(parameter, expected)
+function testEscapeAndEncode(parameter, escapeExpected, encodeExpected)
 {
-    test("escape", parameter, expected);
-    test("encodeURI", parameter, expected);
-    test("encodeURIComponent", parameter, expected);
+    test("escape", parameter, escapeExpected);
+    test("encodeURI", parameter, encodeExpected);
+    test("encodeURIComponent", parameter, encodeExpected);
 }
 
 function testUnescape(parameter, expected)
@@ -195,12 +216,13 @@ function testCharacter(c)
 {
     var s = String.fromCharCode(c);
     var escaped = escapedCharacter(c);
+    var encoded = encodedCharacter(c);
 
-    testEscape(s, escaped);
+    testEscapeAndEncode(s, escaped, encoded);
     testUnescape(escaped, s);
     testUnescape(escaped.toLowerCase(), s);
-    testDecode(escaped, s);
-    testDecode(escaped.toLowerCase(), s);
+    testDecode(encoded, s);
+    testDecode(encoded.toLowerCase(), s);
 }
 
 for (var c = 0; c <= 128; c++) {
@@ -240,21 +262,21 @@ testUnescapeAndDecode("%uxxxx", "%uxxxx", "exception");
 testUnescapeAndDecode(String.fromCharCode(0x80), String.fromCharCode(0x80), String.fromCharCode(0x80));
 testUnescapeAndDecode(String.fromCharCode(0xD800), String.fromCharCode(0xD800), String.fromCharCode(0xD800));
 
-testUnescapeAndDecode("%C2%80", String.fromCharCode(0x80), String.fromCharCode(0x80));
-testUnescapeAndDecode("%C2", "%C2", "exception");
-testUnescapeAndDecode("%C2" + String.fromCharCode(0x80), "%C2" + String.fromCharCode(0x80), "exception");
+testUnescapeAndDecode("%C2%80", String.fromCharCode(0xC2) + String.fromCharCode(0x80), String.fromCharCode(0x80));
+testUnescapeAndDecode("%C2", String.fromCharCode(0xC2), "exception");
+testUnescapeAndDecode("%C2" + String.fromCharCode(0x80), String.fromCharCode(0xC2) + String.fromCharCode(0x80), "exception");
 
 // The characters below hav to be literal because String.fromCharCode will make a single character
 // and the \u syntax won't allow us to specify characters with Unicode values higher than U+FFFF.
 // For most JavaScript engines, this will turn into two characters because they use UTF-16
 // instead of Unicode; it's not clear to me at the moment if the standard asks for this UTF-16
 // behavior, forbids it, or doesn't say either way.
-testEscape("𐀀", "%F0%90%80%80");
-testUnescapeAndDecode("%F0%90%80%80", "𐀀", "𐀀");
-testEscape("𦏵", "%F0%A6%8F%B5");
-testUnescapeAndDecode("%F0%A6%8F%B5", "𦏵", "𦏵");
-testEscape("𯿿", "%F0%AF%BF%BF");
-testUnescapeAndDecode("%F0%AF%BF%BF", "𯿿", "𯿿");
+testEscapeAndEncode("𐀀", "%uD800%uDC00", "%F0%90%80%80");
+testUnescapeAndDecode("%F0%90%80%80", "\xF0\x90\x80\x80", "𐀀");
+testEscapeAndEncode("𦏵", "%uD858%uDFF5", "%F0%A6%8F%B5");
+testUnescapeAndDecode("%F0%A6%8F%B5", "\xF0\xA6\x8F\xB5", "𦏵");
+testEscapeAndEncode("𯿿", "%uD87F%uDFFF", "%F0%AF%BF%BF");
+testUnescapeAndDecode("%F0%AF%BF%BF", "\xF0\xAF\xBF\xBF", "𯿿");
 
 // --------
 
