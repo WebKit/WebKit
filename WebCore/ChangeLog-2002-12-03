@@ -1,3 +1,15 @@
+2002-07-23  David Hyatt  <hyatt@apple.com>
+
+        * khtml/html/html_objectimpl.cpp:
+        (HTMLObjectElementImpl::attach):
+	Oops.  I accidentally removed the call to an ancestor class
+	attach function.  What made this subtle is that it deliberately
+	skipped over a couple of base classes and called the one three
+	superclasses up.  When I went to put it back in, I messed up
+	and called the base class instead of the distant ancestor.  
+
+	Silly me.  marvel.com and matadorrecords.com should be ok now.
+	
 2002-07-22  Darin Adler  <darin@apple.com>
 
         * khtml/rendering/render_text.cpp:

@@ -360,10 +360,14 @@ void HTMLObjectElementImpl::attach()
         parentNode()->renderer()->addChild(m_render, nextRenderer());
     }
 
+    NodeBaseImpl::attach();
+
     // Go ahead and perform the update.
-    if (m_childrenLoaded && m_render && strcmp(m_render->renderName(), "RenderPartObject") == 0)
+    if (m_childrenLoaded && m_render && strcmp(m_render->renderName(), "RenderPartObject") == 0) {
+        m_childrenLoaded = false;
         static_cast<RenderPartObject*>(m_render)->updateWidget();
-    
+    }
+
     // ### do this when we are actually finished loading instead
     dispatchHTMLEvent(EventImpl::LOAD_EVENT,false,false);
 }
