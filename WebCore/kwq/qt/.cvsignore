@@ -1,3 +1,4 @@
 *.o
 *.a
 Makefile
+Makefile.dep
