@@ -1,3 +1,18 @@
+2004-09-28  Chris Blumenberg  <cblu@apple.com>
+
+	Removed range parameter from recursive_toHTML and friends since that code path is no longer used.
+	
+        Reviewed by mjs.
+
+        * khtml/xml/dom2_rangeimpl.cpp:
+        (DOM::RangeImpl::toHTML):
+        * khtml/xml/dom_nodeimpl.cpp:
+        (NodeImpl::recursive_toString):
+        (NodeImpl::recursive_toHTML):
+        * khtml/xml/dom_nodeimpl.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge markupStringFromNode:nodes:]):
+
 2004-09-28  Darin Adler  <darin@apple.com>
 
         Reviewed by Ken.

@@ -320,61 +320,35 @@ QString NodeImpl::endMarkup(void) const
     return "";
 }
 
-QString NodeImpl::recursive_toString(const NodeImpl *startNode, bool onlyIncludeChildren, bool includeSiblings, const DOM::RangeImpl *range, QPtrList<NodeImpl> *nodes)
+QString NodeImpl::recursive_toString(const NodeImpl *startNode, bool onlyIncludeChildren, bool includeSiblings, QPtrList<NodeImpl> *nodes)
 {
+    // Doesn't make sense to only include children and include siblings.
+    assert(!(onlyIncludeChildren && includeSiblings));
     QString me = "";
-
     for (const NodeImpl *current = startNode; current != NULL; current = includeSiblings ? current->nextSibling() : NULL) {
-        bool include = true;
-        if (onlyIncludeChildren) {
-            // Don't include the HTML of this node, but include the children in the next recursion.
-            include = false;
-        } else if (range) {
-            // If a range is passed, only include the node and its children's HTML if they are in the range or parents on nodes in the range.
-            include = false;
-            NodeImpl *pastEnd = range->pastEndNode();
-            for (NodeImpl *n = range->startNode(); n != pastEnd; n = n->traverseNextNode()) {
-                for (NodeImpl *ancestor = n; ancestor; ancestor = ancestor->parentNode()) {
-                    if (current == ancestor) {
-                        include = true;
-                        break;
-                    }
-                }
-                if (include) {
-                    break;
-                }
-            }
-        }
-        
-        if (include) {
+        if (!onlyIncludeChildren) {
             if (nodes) {
                 nodes->append(current);
             }
-            me += current->startMarkup(range);
-        }
-        
+            me += current->startMarkup(0);
+        }        
         if (!current->isHTMLElement() || endTag[current->id()] != FORBIDDEN) {
             // print children
             if (NodeImpl *n = current->firstChild()) {
-                me += recursive_toString(n, false, true, range, nodes);
+                me += recursive_toString(n, false, true, nodes);
             }
             // Print my ending tag
-            if (include) {
+            if (!onlyIncludeChildren) {
                 me += current->endMarkup();
             }
         }
-        
-        // always include children for our siblings
-        onlyIncludeChildren = false;
     }
-    
     return me;
-
 }
 
-QString NodeImpl::recursive_toHTML(bool onlyIncludeChildren, bool includeSiblings, const DOM::RangeImpl *range, QPtrList<NodeImpl> *nodes) const
+QString NodeImpl::recursive_toHTML(bool onlyIncludeChildren, QPtrList<NodeImpl> *nodes) const
 {	
-    return NodeImpl::recursive_toString(this, onlyIncludeChildren, includeSiblings, range, nodes);
+    return NodeImpl::recursive_toString(this, onlyIncludeChildren, false, nodes);
 }
 
 void NodeImpl::recursive_completeURLs(QString baseURL)

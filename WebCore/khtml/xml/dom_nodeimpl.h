@@ -262,8 +262,8 @@ public:
     QString startMarkup(const DOM::RangeImpl *range) const;
     QString endMarkup(void) const;
     virtual QString toHTML() const;
-    QString recursive_toHTML(bool onlyIncludeChildren=false, bool includeSiblings = false, const DOM::RangeImpl *range=NULL, QPtrList<NodeImpl> *nodes=NULL) const;
-    static QString recursive_toString(const NodeImpl *startNode, bool onlyIncludeChildren, bool includeSiblings, const DOM::RangeImpl *range, QPtrList<NodeImpl> *nodes);
+    QString recursive_toHTML(bool onlyIncludeChildren=false, QPtrList<NodeImpl> *nodes=NULL) const;
+    static QString recursive_toString(const NodeImpl *startNode, bool onlyIncludeChildren, bool includeSiblings, QPtrList<NodeImpl> *nodes);
     void recursive_completeURLs(QString baseURL);
     
     virtual bool isContentEditable() const;

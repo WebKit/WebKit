@@ -513,7 +513,7 @@ static bool initializedKJS = FALSE;
     if (nodes) {
         nodeList = new QPtrList<NodeImpl>;
     }
-    NSString *markupString = [node _nodeImpl]->recursive_toHTML(false, false, NULL, nodeList).getNSString();
+    NSString *markupString = [node _nodeImpl]->recursive_toHTML(false, nodeList).getNSString();
     if (nodes) {
         *nodes = [self nodesFromList:nodeList];
         delete nodeList;
