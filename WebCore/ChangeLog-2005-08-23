@@ -1,3 +1,12 @@
+2005-01-04  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by Hyatt.
+
+	Fixed: <rdar://problem/3936879> nil-deref, crash in InlineFlowBox::nodeAtPoint closing DHTML menus at hrweb.apple.com
+
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::fillInlineSelectionGaps): Added a nil check. If there is no selection, don't try to get the selection's containing block. If we do, we'll crash. 
+
 2005-01-04  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3937203, force an update of the dashboard regions when scrollbars are added/removed.

@@ -1461,7 +1461,9 @@ GapRects RenderBlock::fillInlineSelectionGaps(RenderBlock* rootBlock, int blockX
     GapRects result;
     
     RenderObject* selStart = canvas()->selectionStart();
-    bool containsStart = (selStart == this) || (selStart->containingBlock() == this);
+    // If there is no selection, don't try to get the selection's containing block. 
+    // If we do, we'll crash.
+    bool containsStart = (selStart && (selStart == this || selStart->containingBlock() == this));
 
     if (!firstLineBox()) {
         if (containsStart) {
