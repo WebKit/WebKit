@@ -10,7 +10,7 @@
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDefaultContextMenuHandler.h>
 #import <WebKit/WebControllerPolicyHandler.h>
-#import <WebKit/WebControllerPolicyHandlerPrivate.h>
+#import <WebKit/WebControllerPrivate.h>
 #import <WebKit/WebFrame.h>
 
 @implementation WebDefaultContextMenuHandler
@@ -105,12 +105,7 @@
 
     // FIXME: This is a hack
     WebContentPolicy *contentPolicy = [[controller policyHandler] contentPolicyForMIMEType:@"application/octet-stream" dataSource:dataSource];
-    [contentPolicy _setPolicyAction:WebContentPolicySave];
-    [dataSource _setContentPolicy:contentPolicy];
-    if([webFrame setProvisionalDataSource:dataSource]){
-        [webFrame startLoading];
-    }
-    [dataSource release];
+    [controller _downloadURL:URL toPath:[contentPolicy path]];
 }
 
 - (void)openLinkInNewWindow:(id)sender

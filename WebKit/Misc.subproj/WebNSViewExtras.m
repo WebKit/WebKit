@@ -10,6 +10,8 @@
 #import <WebFoundation/WebNSStringExtras.h>
 #import <WebFoundation/WebNSURLExtras.h>
 
+#define DragStartHysteresis  		5.0
+
 #ifdef DEBUG_VIEWS
 @interface NSObject (Foo)
 - (void*)_renderFramePart;
@@ -41,6 +43,66 @@
     if ([view isKindOfClass: [WebView class]])
         return view;
     return nil;
+}
+
+/* Determine whether a mouse down should turn into a drag; started as copy of NSTableView code */
+- (BOOL)_web_dragShouldBeginFromMouseDown: (NSEvent *)mouseDownEvent withExpiration:(NSDate *)expiration
+{
+    NSEvent *nextEvent, *firstEvent, *dragEvent, *mouseUp;
+    BOOL dragIt;
+
+    if ([mouseDownEvent type] != NSLeftMouseDown) {
+        return NO;
+    }
+
+    nextEvent = nil;
+    firstEvent = nil;
+    dragEvent = nil;
+    mouseUp = nil;
+    dragIt = NO;
+
+    while ((nextEvent = [[self window] nextEventMatchingMask:(NSLeftMouseUpMask | NSLeftMouseDraggedMask)
+                                                   untilDate:expiration
+                                                      inMode:NSEventTrackingRunLoopMode
+                                                     dequeue:YES]) != nil) {
+        if (firstEvent == nil) {
+            firstEvent = nextEvent;
+        }
+
+        if ([nextEvent type] == NSLeftMouseDragged) {
+            float deltax = ABS([nextEvent locationInWindow].x - [mouseDownEvent locationInWindow].x);
+            float deltay = ABS([nextEvent locationInWindow].y - [mouseDownEvent locationInWindow].y);
+            dragEvent = nextEvent;
+
+            if (deltax >= DragStartHysteresis) {
+                dragIt = YES;
+                break;
+            }
+
+            if (deltay >= DragStartHysteresis) {
+                dragIt = YES;
+                break;
+            }
+        } else if ([nextEvent type] == NSLeftMouseUp) {
+            mouseUp = nextEvent;
+            break;
+        }
+    }
+
+    // Since we've been dequeuing the events (If we don't, we'll never see the mouse up...),
+    // we need to push some of the events back on.  It makes sense to put the first and last
+    // drag events and the mouse up if there was one.
+    if (mouseUp != nil) {
+        [NSApp postEvent: mouseUp atStart: YES];
+    }
+    if (dragEvent != nil) {
+        [NSApp postEvent: dragEvent atStart: YES];
+    }
+    if (firstEvent != mouseUp && firstEvent != dragEvent) {
+        [NSApp postEvent: firstEvent atStart: YES];
+    }
+
+    return dragIt;
 }
 
 - (NSArray *)_web_acceptableDragTypes
@@ -77,7 +139,7 @@
 
 - (NSDragOperation)_web_dragOperationForDraggingInfo:(id <NSDraggingInfo>)sender
 {
-    if([self _web_bestURLForDraggingInfo:sender]){
+    if([self _web_bestURLForDraggingInfo:sender] && [sender draggingSource] != self){
         return NSDragOperationCopy;
     } else {
         return NSDragOperationNone;

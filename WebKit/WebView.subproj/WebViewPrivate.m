@@ -5,6 +5,7 @@
 
 #import <WebKit/WebBackForwardList.h>
 #import <WebKit/WebControllerPrivate.h>
+#import <WebKit/WebControllerPolicyHandlerPrivate.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDefaultContextMenuHandler.h>
 #import <WebKit/WebFramePrivate.h>
@@ -179,5 +180,17 @@
     _private->openedByScript = openedByScript;
 }
 
+- (void)_downloadURL:(NSURL *)URL toPath:(NSString *)path
+{
+    WebDataSource *dataSource = [[WebDataSource alloc] initWithURL:URL];
+    WebFrame *webFrame = [self mainFrame];
+        
+    WebContentPolicy *contentPolicy = [WebContentPolicy webPolicyWithContentAction:WebContentPolicySave andPath:path];
+    [dataSource _setContentPolicy:contentPolicy];
+    if([webFrame setProvisionalDataSource:dataSource]){
+        [webFrame startLoading];
+    }
+    [dataSource release];
+}
 
 @end

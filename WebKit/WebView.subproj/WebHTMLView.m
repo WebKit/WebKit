@@ -351,13 +351,11 @@
     return YES;
 }
 
-
 - (void)windowDidBecomeMain: (NSNotification *)notification
 {
     if ([notification object] == [self window])
         [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(mouseMovedNotification:) name: NSMouseMovedNotification object: nil];
 }
-
 
 - (void)windowDidResignMain: (NSNotification *)notification
 {
@@ -365,14 +363,33 @@
         [[NSNotificationCenter defaultCenter] removeObserver: self name: NSMouseMovedNotification object: nil];
 }
 
-- (void)mouseUp: (NSEvent *)event
-{
-    [[self _bridge] mouseUp:event];
-}
-
 - (void)mouseDown: (NSEvent *)event
 {
-    [[self _bridge] mouseDown:event];
+    if([self _continueAfterCheckingDragForEvent:event]){
+        [[self _bridge] mouseDown:event];
+    }
+}
+
+- (void)mouseUp: (NSEvent *)event
+{
+    NSEvent *theEvent;
+    
+    if([self _continueAfterClickPolicyForEvent:event]){
+        theEvent = event;
+    }else{
+        // Send a bogus mouse up event so we don't confuse WebCore
+        theEvent = [NSEvent mouseEventWithType: NSLeftMouseUp
+                                      location: NSMakePoint(0,0)
+                                 modifierFlags: [event modifierFlags]
+                                     timestamp: [event timestamp]
+                                  windowNumber: [event windowNumber]
+                                       context: [event context]
+                                   eventNumber: [event eventNumber]
+                                    clickCount: [event clickCount]
+                                      pressure: [event pressure]];
+    }
+    
+    [[self _bridge] mouseUp:theEvent];
 }
 
 - (void)mouseMovedNotification:(NSNotification *)notification
@@ -446,5 +463,19 @@
 }
 
 #endif
+
+- (unsigned int)draggingSourceOperationMaskForLocal:(BOOL)isLocal
+{
+    return NSDragOperationCopy;
+}
+
+- (NSArray *)namesOfPromisedFilesDroppedAtDestination:(NSURL *)dropDestination
+{
+    NSString *filename = [[_private->draggedURL path] lastPathComponent];
+    NSString *path = [[dropDestination path] stringByAppendingPathComponent:filename];
+
+    [[self _controller] _downloadURL:_private->draggedURL toPath:path];
+    return [NSArray arrayWithObject:filename];
+}
 
 @end

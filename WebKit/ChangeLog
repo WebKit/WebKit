@@ -1,3 +1,37 @@
+2002-07-27  Chris Blumenberg  <cblu@apple.com>
+
+	Implemented click policy, support for option-click
+	Implemented dragging of links and images from WebHTMLView	
+
+        * Misc.subproj/WebNSViewExtras.h:
+        * Misc.subproj/WebNSViewExtras.m:
+        (-[NSView _web_dragShouldBeginFromMouseDown:withExpiration:]): added, moved from WebBrowser
+        (-[NSView _web_dragOperationForDraggingInfo:]): don't accept drag if source == destination
+        * WebView.subproj/WebControllerPolicyHandler.h:
+        * WebView.subproj/WebControllerPolicyHandler.m:
+        (-[WebPolicy URL]): needed for click policy
+        (+[WebURLPolicy webPolicyWithURLAction:]):
+        (+[WebFileURLPolicy webPolicyWithFileAction:]):
+        (+[WebContentPolicy webPolicyWithContentAction:andPath:]):
+        * WebView.subproj/WebControllerPrivate.h:
+        * WebView.subproj/WebControllerPrivate.m:
+        (-[WebController _downloadURL:toPath:]): added, simply downloads a URL
+        * WebView.subproj/WebDefaultContextMenuHandler.m:
+        (-[WebDefaultContextMenuHandler downloadURL:]): calls [WebController _downloadURL:toPath:]
+        * WebView.subproj/WebDefaultPolicyHandler.m:
+        (-[WebDefaultPolicyHandler clickPolicyForElement:button:modifierMask:]):
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView mouseDown:]): calls _continueAfterCheckingDragForEvent
+        (-[WebHTMLView mouseUp:]): calls _continueAfterClickPolicyForEvent
+        (-[WebHTMLView draggingSourceOperationMaskForLocal:]): added
+        (-[WebHTMLView namesOfPromisedFilesDroppedAtDestination:]): added, starts download
+        * WebView.subproj/WebHTMLViewPrivate.h:
+        * WebView.subproj/WebHTMLViewPrivate.m:
+        (-[WebHTMLViewPrivate dealloc]):
+        (-[WebHTMLView _elementAtPoint:]):
+        (-[WebHTMLView _continueAfterClickPolicyForEvent:]): added, implements click policy
+        (-[WebHTMLView _continueAfterCheckingDragForEvent:]): added, checks if mouse event is a drag
+
 2002-07-26  Richard Williamson  <rjw@apple.com>
 
         WebframeLoadType enum first value wasn't explicitly set, so 0 was used.  

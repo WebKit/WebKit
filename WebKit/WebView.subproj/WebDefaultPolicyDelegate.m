@@ -65,7 +65,7 @@
 
 - (WebClickPolicy *)clickPolicyForElement: (NSDictionary *)elementInformation button: (NSEventType)eventType modifierMask: (unsigned int)eventMask
 {
-    return [WebClickPolicy webPolicyWithClickAction:WebClickPolicyShow andPath:nil];
+    return [WebClickPolicy webPolicyWithClickAction:WebClickPolicyShow URL:nil andPath:nil];
 }
 
 @end

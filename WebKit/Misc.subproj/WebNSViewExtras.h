@@ -15,6 +15,8 @@
 // Returns the first WebView superview. Only works if self is the WebView's document view.
 - (WebView *)_web_parentWebView;
 
+- (BOOL)_web_dragShouldBeginFromMouseDown: (NSEvent *)mouseDownEvent withExpiration:(NSDate *)expiration;
+
 // FIXME: The following can be class methods
 
 // Returns an array with NSURLPboardType, NSStringPboardType and NSFilenamesPboardType pasteboard types

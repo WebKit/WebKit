@@ -18,6 +18,7 @@ typedef enum {
     WebPolicySave,
     WebPolicyOpenURL,
     WebPolicySaveAndOpen,
+    WebPolicyOpenNewWindow,
     WebPolicyIgnore
 } WebPolicyAction;
 
@@ -43,8 +44,8 @@ typedef enum {
 } WebContentAction;
 
 typedef enum {
-    WebClickPolicyNone = WebPolicyNone,
     WebClickPolicyShow = WebPolicyUse,
+    WebClickPolicyOpenNewWindow = WebPolicyOpenNewWindow,
     WebClickPolicySave = WebPolicySave,
     WebClickPolicySaveAndOpenExternally = WebPolicySaveAndOpen,
     WebClickPolicyIgnore = WebPolicyIgnore
@@ -58,6 +59,7 @@ typedef enum {
 }
 - (WebPolicyAction)policyAction;
 - (NSString *)path;
+- (NSURL *)URL;
 @end
 
 
@@ -74,7 +76,7 @@ typedef enum {
 @end
 
 @interface WebClickPolicy : WebPolicy
-+ webPolicyWithClickAction: (WebClickAction)action andPath: (NSString *)thePath;
++ webPolicyWithClickAction: (WebClickAction)action URL:(NSURL *)URL andPath: (NSString *)thePath;
 @end
 
 

@@ -36,4 +36,5 @@
 + (NSString *)_MIMETypeForFile: (NSString *)path;
 - (BOOL)_openedByScript;
 - (void)_setOpenedByScript:(BOOL)openedByScript;
+- (void)_downloadURL:(NSURL *)URL toPath:(NSString *)path;
 @end

@@ -22,6 +22,7 @@
     NSCursor *cursor;
     BOOL liveAllowsScrolling;
     BOOL inWindow;
+    NSURL *draggedURL;
 }
 @end
 
@@ -37,4 +38,6 @@
 + (BOOL)_modifierTrackingEnabled;
 + (void)_postFlagsChangedEvent:(NSEvent *)flagsChangedEvent;
 - (NSDictionary *)_elementAtPoint:(NSPoint)point;
+- (BOOL)_continueAfterClickPolicyForEvent: (NSEvent *)event;
+- (BOOL)_continueAfterCheckingDragForEvent:(NSEvent *)event;
 @end

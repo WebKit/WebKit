@@ -14,6 +14,7 @@
 #import <WebKit/WebNSViewExtras.h>
 #import <WebKit/WebPluginView.h>
 #import <WebKit/WebController.h>
+#import <WebKit/WebControllerPrivate.h>
 #import <WebKit/WebBridge.h>
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebViewPrivate.h>
@@ -38,7 +39,7 @@
 - (void)dealloc
 {
     [cursor release];
-
+    [draggedURL release];
     [super dealloc];
 }
 
@@ -125,6 +126,66 @@ BOOL _modifierTrackingEnabled = FALSE;
     [elementInfo setObject:webFrame forKey:WebContextFrame];
        
     return elementInfo;
+}
+
+- (BOOL)_continueAfterClickPolicyForEvent: (NSEvent *)event
+{
+    NSPoint point = [self convertPoint:[event locationInWindow] fromView:nil];
+    WebController *controller = [self _controller];
+    WebClickPolicy *clickPolicy;
+
+    clickPolicy = [[controller policyHandler] clickPolicyForElement:[self _elementAtPoint:point]
+                                                             button:[event type]
+                                                       modifierMask:[event modifierFlags]];
+
+    WebPolicyAction clickAction = [clickPolicy policyAction];
+    NSURL *URL = [clickPolicy URL];
+
+    switch (clickAction) {
+        case WebClickPolicyShow:
+            return YES;
+        case WebClickPolicyOpenNewWindow:
+            [[controller windowContext] openNewWindowWithURL:URL];
+            break;
+        case WebClickPolicySave:
+        case WebClickPolicySaveAndOpenExternally:
+            [controller _downloadURL:URL toPath:[clickPolicy path]];
+            break;
+        case WebClickPolicyIgnore:
+            break;
+        default:
+            [NSException raise:NSInvalidArgumentException
+                        format:@"clickPolicyForElement:button:modifierMask: returned an invalid WebClickPolicy"];
+    }
+    return NO;
+}
+
+- (BOOL)_continueAfterCheckingDragForEvent:(NSEvent *)event
+{
+    if([self _web_dragShouldBeginFromMouseDown:event withExpiration:[NSDate distantFuture]]){
+
+        NSPoint point = [self convertPoint:[event locationInWindow] fromView:nil];
+        NSDictionary *element = [self _elementAtPoint:point];
+        NSURL *imageURL = [element objectForKey:WebContextImageURL];
+        NSURL *linkURL = [element objectForKey:WebContextLinkURL];
+
+        if(linkURL || imageURL){
+            [_private->draggedURL release];
+            
+            if(imageURL){
+                _private->draggedURL = imageURL;
+            }else{
+                _private->draggedURL = linkURL;
+            }
+            
+            [_private->draggedURL retain];
+            NSArray *fileType = [NSArray arrayWithObject:[[_private->draggedURL path] pathExtension]];
+            NSRect rect = NSMakeRect(point.x+-16, point.y-16, 32, 32);
+            [self dragPromisedFilesOfTypes:fileType fromRect:rect source:self slideBack:YES event:event];
+            return NO;
+        }
+    }
+    return YES;
 }
 
 @end

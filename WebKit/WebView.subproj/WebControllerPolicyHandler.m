@@ -13,6 +13,7 @@
 @public
     WebPolicyAction policyAction;
     NSString *path;
+    NSURL *URL;
 }
 @end
 
@@ -26,12 +27,13 @@
 @end
 
 @implementation WebPolicy
-- initWithPolicyAction: (WebPolicyAction)action andPath:(NSString *)path;
+- initWithPolicyAction: (WebPolicyAction)action URL:(NSURL *)URL andPath:(NSString *)path;
 {
     [super init];
     _private = [[WebPolicyPrivate alloc] init];
     _private->policyAction = action;
     _private->path = [path retain];
+    _private->URL = [URL retain];
     return self;
 }
 
@@ -48,6 +50,11 @@
 - (NSString *)path
 {
     return _private->path;
+}
+
+- (NSURL *)URL
+{
+    return _private->URL;
 }
 
 - (void)_setPath:(NSString *)path
@@ -69,7 +76,7 @@
 
 + webPolicyWithURLAction: (WebURLAction)action
 {
-    return [[[WebPolicy alloc] initWithPolicyAction:action andPath:nil] autorelease];
+    return [[[WebPolicy alloc] initWithPolicyAction:action URL:nil andPath:nil] autorelease];
 }
 
 @end
@@ -78,7 +85,7 @@
 
 + webPolicyWithFileAction: (WebFileAction)action
 {
-    return [[[WebPolicy alloc] initWithPolicyAction:action andPath:nil] autorelease];
+    return [[[WebPolicy alloc] initWithPolicyAction:action URL:nil andPath:nil] autorelease];
 }
 
 @end
@@ -87,7 +94,7 @@
 
 + webPolicyWithContentAction: (WebContentAction)action andPath: (NSString *)thePath
 {
-    return [[[WebPolicy alloc] initWithPolicyAction:action andPath:thePath] autorelease];
+    return [[[WebPolicy alloc] initWithPolicyAction:action URL:nil andPath:thePath] autorelease];
 }
 
 
@@ -95,9 +102,9 @@
 
 @implementation WebClickPolicy
 
-+ webPolicyWithClickAction: (WebClickAction)action andPath: (NSString *)thePath
++ webPolicyWithClickAction: (WebClickAction)action URL:(NSURL *)URL andPath: (NSString *)thePath;
 {
-    return [[[WebPolicy alloc] initWithPolicyAction:action andPath:thePath] autorelease];
+    return [[[WebPolicy alloc] initWithPolicyAction:action URL:URL andPath:thePath] autorelease];
 }
 
 
