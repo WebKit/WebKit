@@ -69,7 +69,7 @@ void KHTMLPartBrowserExtension::createNewWindow(const KURL &url,
 	bridge = [m_part->kwq->bridge() findFramedNamed:frameName];
 	if (bridge != nil) {
 	    if (!url.isEmpty()) {
-		[bridge openURL:url.getNSURL()];
+		[bridge loadURL:url.getNSURL() reload:urlArgs.reload triggeringEvent:nil isFormSubmission:NO];
 	    }
 	    *partResult = [bridge part];
 	    return;

@@ -1,3 +1,36 @@
+2002-11-13  Darin Adler  <darin@apple.com>
+
+	- fixed 3083982 -- Logging into AOL gives null view
+
+	Turns out AOL was using a refresh header, which we were not supporting.
+
+        * khtml/khtml_part.h: Declare receivedFirstData, a private member function.
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::receivedFirstData): Separate out the part of slotData we
+	want to share, which really seems kinda separate anyway.
+        (KHTMLPart::slotData): More of the same.
+
+        * kwq/KWQKHTMLPart.h: Declare addMetaData.
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::slotData): Call receivedFirstData instead of doing the same
+	thing ourselves.
+        (KWQKHTMLPart::addMetaData): Added. Puts metadata into the job.
+
+        * kwq/KWQKHTMLPartBrowserExtension.mm:
+        (KHTMLPartBrowserExtension::createNewWindow): Fix bug where this was calling
+	openURL: but meant to call loadURL:.
+
+        * kwq/WebCoreBridge.h: Add headers to openURL method. Remove setContentType.
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge openURL:withHeaders:]): Handle Content-Type and Refresh.
+	This method is big enough that I should probably move the guts to KWQKHTMLPart.
+
+	- other things
+
+        * kwq/KWQListImpl.mm: (KWQListImpl::~KWQListImpl): I overlooked something
+	while doing my "bug fix" in here a while back. Change an assignment statement
+	to an assert.
+
 2002-11-13  David Hyatt  <hyatt@apple.com>
 
 	Fix for floats. Force relayout if collapsing margins

@@ -147,6 +147,8 @@ public:
 
     void setCurrentEvent(NSEvent *event);
     
+    void addMetaData(const QString &key, const QString &value);
+    
 private:
     void setPolicyBaseURL(const DOM::DOMString &);
 

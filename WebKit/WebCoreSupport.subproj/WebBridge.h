@@ -19,8 +19,4 @@
 - (void)receivedData:(NSData *)data withDataSource:(WebDataSource *)dataSource;
 - (void)setFrame:(WebFrame *)webFrame;
 
-- (void)dataSourceChanged;
-- (WebDataSource *)dataSource;
-
 @end
-

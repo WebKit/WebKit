@@ -158,6 +158,17 @@
     return [[[frame controller] windowOperationsDelegate] window];
 }
 
+- (WebDataSource *)dataSource
+{
+    ASSERT(frame != nil);
+    WebDataSource *dataSource = [frame dataSource];
+
+    ASSERT(dataSource != nil);
+    ASSERT([dataSource _isCommitted]);
+
+    return dataSource;
+}
+
 - (void)setTitle:(NSString *)title
 {
     [[self dataSource] _setTitle:[title _web_stringByCollapsingNonPrintingCharacters]];
@@ -241,22 +252,6 @@
     } else {
 	ASSERT(frame == webFrame);
     }
-}
-
-- (void)dataSourceChanged
-{
-    [self openURL:[[self dataSource] URL]];
-}
-
-- (WebDataSource *)dataSource
-{
-    ASSERT(frame != nil);
-    WebDataSource *dataSource = [frame dataSource];
-
-    ASSERT(dataSource != nil);
-    ASSERT([dataSource _isCommitted]);
-
-    return dataSource;
 }
 
 - (void)unfocusWindow

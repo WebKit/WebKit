@@ -108,9 +108,24 @@ using khtml::RenderPart;
     _part->setParent([parent part]);
 }
 
-- (void)openURL:(NSURL *)URL
+- (void)openURL:(NSURL *)URL withHeaders:(NSDictionary *)headers
 {
+    // Content-Type
+    NSString *contentType = [headers objectForKey:@"Content-Type"];
+    if (contentType) {
+        KParts::URLArgs args(_part->browserExtension()->urlArgs());
+        args.serviceType = QString::fromNSString(contentType);
+        _part->browserExtension()->setURLArgs(args);
+    }
+
+    // URL
     _part->openURL([[URL absoluteString] cString]);
+    
+    // Refresh
+    NSString *refreshHeader = [headers objectForKey:@"Refresh"];
+    if (refreshHeader) {
+        _part->kwq->addMetaData("http-refresh", QString::fromNSString(refreshHeader));
+    }
 }
 
 - (void)addData:(NSData *)data withEncoding:(NSString *)encoding
@@ -747,13 +762,6 @@ static NSAttributedString *attributedString(DOM::NodeImpl *_startNode, int start
 - (int)selectionEndOffset
 {
     return _part->kwq->selectionEndOffset();
-}
-
-- (void)setContentType:(NSString*)contentType
-{
-    KParts::URLArgs args( _part->browserExtension()->urlArgs() );
-    args.serviceType = QString::fromNSString(contentType);
-    _part->browserExtension()->setURLArgs(args);
 }
 
 - (void)setName:(NSString *)name

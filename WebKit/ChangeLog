@@ -1,3 +1,28 @@
+2002-11-13  Darin Adler  <darin@apple.com>
+
+	- fixed 3083982 -- Logging into AOL gives null view
+
+	Turns out AOL was using a refresh header, which we were not supporting.
+
+        * WebView.subproj/WebDataSourcePrivate.m: (-[WebDataSource _commitIfReady]):
+	Call openURL: and pass headers in.
+
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _loadURL:loadType:clientRedirect:triggeringEvent:isFormSubmission:]):
+	Pass nil for headers in this case, since we know it's just an anchor change.
+
+	- other things
+
+        * WebCoreSupport.subproj/WebBridge.h: Remove dataSourceChanged and dataSource
+	methods. We try to keep the bridge methods down to actual bridging.
+        * WebCoreSupport.subproj/WebBridge.m: Remove dataSourceChanged altogether,
+	and move dataSource up in the file.
+
+        * WebView.subproj/WebHTMLRepresentation.m:
+        (-[WebHTMLRepresentation setDataSource:]): Keep the data source around, so we
+	don't need to ask the bridge for it.
+        (-[WebHTMLRepresentation documentSource]): Use it here.
+
 2002-11-13  Trey Matteson  <trey@apple.com>
 
 	Fixed 3100084 - REGRESSION: web page is not first responder after visiting web page

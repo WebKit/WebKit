@@ -93,7 +93,7 @@ KWQListImpl::~KWQListImpl()
     for (KWQListIteratorImpl *it = iterators; it != NULL; it = next) {
         next = it->next;
         it->list = NULL;
-        it->node = NULL;
+        ASSERT(it->node == NULL);
         it->next = NULL;
         it->prev = NULL;
     }

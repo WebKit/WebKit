@@ -37,6 +37,7 @@
 #import "WebCoreViewFactory.h"
 
 #import "KWQDummyView.h"
+#import "KWQKJobClasses.h"
 #import "KWQLogging.h"
 
 #undef _KWQ_TIMING
@@ -180,8 +181,7 @@ void KWQKHTMLPart::submitForm(const KURL &url, const URLArgs &args)
 void KWQKHTMLPart::slotData(NSString *encoding, bool forceEncoding, const char *bytes, int length, bool complete)
 {
     if (!d->m_workingURL.isEmpty()) {
-        part->begin(d->m_workingURL, 0, 0);
-        d->m_workingURL = KURL();
+        part->receivedFirstData();
     }
     
     ASSERT(d->m_doc);
@@ -566,4 +566,9 @@ void KWQKHTMLPart::setCurrentEvent(NSEvent *event)
     [event retain];
     [_currentEvent release];
     _currentEvent = event;
+}
+
+void KWQKHTMLPart::addMetaData(const QString &key, const QString &value)
+{
+    d->m_job->addMetaData(key, value);
 }

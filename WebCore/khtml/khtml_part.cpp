@@ -1002,21 +1002,15 @@ DOM::DocumentImpl *KHTMLPart::xmlDocImpl() const
     return 0;
 }
 
-#if !APPLE_CHANGES
-
 /*bool KHTMLPart::isSSLInUse() const
 {
   return d->m_ssl_in_use;
 }*/
 
-void KHTMLPart::slotData( KIO::Job* kio_job, const QByteArray &data )
+void KHTMLPart::receivedFirstData()
 {
-  assert ( d->m_job == kio_job );
-
-  //kdDebug( 6050 ) << "slotData: " << data.size() << endl;
-  // The first data ?
-  if ( !d->m_workingURL.isEmpty() )
-  {
+    // Leave indented one extra for easier merging.
+    
       //kdDebug( 6050 ) << "begin!" << endl;
 
     begin( d->m_workingURL, d->m_extension->urlArgs().xOffset, d->m_extension->urlArgs().yOffset );
@@ -1028,6 +1022,9 @@ void KHTMLPart::slotData( KIO::Job* kio_job, const QByteArray &data )
     d->m_cacheId = KHTMLPageCache::self()->createCacheEntry();
 
     // When the first data arrives, the metadata has just been made available
+#if APPLE_CHANGES
+    QString qData;
+#else
     d->m_bSecurityInQuestion = false;
     d->m_ssl_in_use = (d->m_job->queryMetaData("ssl_in_use") == "TRUE");
     kdDebug(6050) << "SSL in use? " << d->m_job->queryMetaData("ssl_in_use") << endl;
@@ -1062,6 +1059,7 @@ void KHTMLPart::slotData( KIO::Job* kio_job, const QByteArray &data )
     QString qData = d->m_job->queryMetaData("charset");
     if ( !qData.isEmpty() && !d->m_haveEncoding ) // only use information if the user didn't override the settings
        d->m_encoding = qData;
+#endif // APPLE_CHANGES
 
     // Support for http-refresh
     qData = d->m_job->queryMetaData("http-refresh");
@@ -1110,7 +1108,18 @@ void KHTMLPart::slotData( KIO::Job* kio_job, const QByteArray &data )
     // Support for http last-modified
     d->m_lastModified = d->m_job->queryMetaData("modified");
     //kdDebug() << "KHTMLPart::slotData metadata modified: " << d->m_lastModified << endl;
-  }
+}
+
+#if !APPLE_CHANGES
+
+void KHTMLPart::slotData( KIO::Job* kio_job, const QByteArray &data )
+{
+  assert ( d->m_job == kio_job );
+
+  //kdDebug( 6050 ) << "slotData: " << data.size() << endl;
+  // The first data ?
+  if ( !d->m_workingURL.isEmpty() )
+    receivedFirstData( );
 
   KHTMLPageCache::self()->addData(d->m_cacheId, data);
   write( data.data(), data.size() );

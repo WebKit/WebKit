@@ -28,6 +28,7 @@
 #import <WebKit/WebViewPrivate.h>
 
 #import <WebFoundation/WebError.h>
+#import <WebFoundation/WebHTTPResourceResponse.h>
 #import <WebFoundation/WebNSDictionaryExtras.h>
 #import <WebFoundation/WebNSStringExtras.h>
 #import <WebFoundation/WebNSURLExtras.h>
@@ -425,9 +426,13 @@
     if (![self isDownloading] && _private->gotFirstByte && !_private->committed) {
         LOG(Loading, "committed resource = %@", [[self request] URL]);
 	_private->committed = TRUE;
+        
         [self _makeRepresentation];
         [[self webFrame] _transitionToCommitted];
-	[[self _bridge] dataSourceChanged];
+	[[self _bridge] openURL:[_private->response URL]
+                    withHeaders:[_private->response isKindOfClass:[WebHTTPResourceResponse class]]
+                        ? [(WebHTTPResourceResponse *)_private->response headers] : nil];
+        
         // Must do this after dataSourceChanged.  makeRep installs a new view, which blows away
         // scroll state, which is saved within _transitionToCommitted
     }

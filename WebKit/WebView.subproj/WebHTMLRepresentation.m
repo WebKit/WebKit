@@ -14,6 +14,7 @@
 @interface WebHTMLRepresentationPrivate : NSObject
 {
 @public
+    WebDataSource *dataSource;
     WebBridge *bridge;
 }
 @end
@@ -50,8 +51,8 @@
 
 - (void)setDataSource:(WebDataSource *)dataSource
 {
+    _private->dataSource = dataSource;
     _private->bridge = [[dataSource webFrame] _bridge];
-    [_private->bridge setContentType: [[dataSource response] contentType]];
 }
 
 - (void)receivedData:(NSData *)data withDataSource:(WebDataSource *)dataSource
@@ -70,7 +71,7 @@
 
 - (NSString *)documentSource
 {
-    return [WebBridge stringWithData:[[_private->bridge dataSource] data] textEncoding:[_private->bridge textEncoding]];
+    return [WebBridge stringWithData:[_private->dataSource data] textEncoding:[_private->bridge textEncoding]];
 }
 
 

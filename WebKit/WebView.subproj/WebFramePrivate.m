@@ -1080,7 +1080,7 @@ static const char * const stateNames[] = {
 
         ASSERT(![_private previousItem]);
         // will save form state to current item, since prevItem not set
-        [_private->bridge openURL:URL];
+        [_private->bridge openURL:URL withHeaders:nil];
         [dataSrc _setURL:URL];
         // NB: must happen after _setURL, since we add based on the current request
         [self _addBackForwardItemClippedAtTarget:NO];

@@ -1076,6 +1076,8 @@ private:
 
   void checkEmitLoadEvent();
   void emitLoadEvent();
+  
+  void receivedFirstData();
 
   KHTMLPartPrivate *d;
   friend class KHTMLPartPrivate;
