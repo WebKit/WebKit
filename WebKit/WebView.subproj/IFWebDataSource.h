@@ -33,7 +33,25 @@
     
     Added finalURL and isRedirected.
    
+    2001-12-13
+    
+        Remove setBase: and setBaseTarget:
         
+        Changed return type of baseTarget to (NSString *)
+        
+        Added the following two methods:
+            - (WKDataSource *)parent;
+            - (NSArry *)children;
+            - (BOOL)isMainDocument;
+  
+        Added the following methods:
+        
+            - (NSArray *)frameNames;
+            - (WKWebDataSource) findDataSourceForFrameNamed: (NSString *)name;
+            - (BOOL)frameExists: (NSString *)name;
+            - (void)openURL: (NSURL *)url inFrameNamed: (NSString *)frameName;
+            - (void)openURL: (NSURL *)url inIFrame: (id)iFrameIdentifier;
+                    
    ============================================================================= 
 */
    
@@ -56,8 +74,44 @@
 - initWithLoader: (WKURILoader *)loader;
 
 
+// Returns nil if this data source represents the main document.  Otherwise
+// returns the parent data source.
+- (WKDataSource *)parent;
+
+
+// Returns YES if this is the main document.  The main document is the 'top'
+// document, typically either a frameset or a normal HTML document.
+- (BOOL)isMainDocument;
+
+// Returns an array of WKWebDataSource.  The data sources in the array are
+// the data source assoicated with a frame set or iframe.  If the main document
+// is not a frameset, or has not iframes children will return nil.
+- (NSArray *)children;
+
+
+// Returns an array of NSStrings or nil.  The NSStrings corresponds to
+// frame names.  If this data source is the main document and has no
+// frames then frameNames will return nil.
+- (NSArray *)frameNames;
+
+// findDataSourceForFrameNamed: returns the child data source associated with
+// the frame named 'name', or nil. 
+- (WKWebDataSource) findDataSourceForFrameNamed: (NSString *)name;
+
+
+- (BOOL)frameExists: (NSString *)name;
+
+
+- (void)openURL: (NSURL *)url inFrameNamed: (NSString *)frameName;
+
+
+- (void)openURL: (NSURL *)url inIFrame: (id)iFrameIdentifier;
+
+
 // Set the controller for this data source.  NOTE:  The controller is not retained by the
-// data source.  Perhaps setController: should be private?
+// data source.  Perhaps setController: should be private?  Perhaps the back pointers
+// can be managed externally, i.e. + controllerForDataSource: as a class method on 
+// WKDefaultWebController?
 - (void)setController: (id <WKWebController>)controller;
 - (id <WKWebController>)controller;
 
@@ -110,10 +164,8 @@
 
 
 // URL reference point, these should probably not be public for 1.0.
-- setBase: (NSURL *)url;
 - (NSURL *)base;
-- setBaseTarget: (NSURL *)url;
-- (NSURL *)baseTarget;
+- (NSString *)baseTarget;
 
 
 - (NSString *)encoding;

@@ -80,7 +80,13 @@
             - (BOOL)directsAllLinksToSystemBrowser;
             
         Removed WKError.  This will be described in WKError.h.
+  
+  2001-12-13
+  
+        Removed WKFrameSetHandler, placed that functionality on WKWebDataSource.
         
+        Changed WKLocationChangeHandler to add a parameter specifying the data source
+        that sent the message.
 */
 
 
@@ -93,13 +99,35 @@
      describe snippets of behavior, but do we explicity reference them anywhere,
      or do we just use the umbrella protocol?]
 */
-@protocol WKWebController <WKLoadHandler, WKScriptContextHandler, WKFrameSetHandler, WKCredentialsHandler, WKLocationChangeHandler>
+@protocol WKWebController <WKLoadHandler, WKScriptContextHandler, WKCredentialsHandler, WKLocationChangeHandler>
+@end
 
-- (void)setDataSource: (WKWebDataSource *)dataSource;
-- (WKWebDataSource *)dataSource
 
-- (void)setView: (WKWebView *)view;
-- (WKWebView *)view;
+
+/*
+   ============================================================================= 
+
+    Is WKConcreteWebController the right name?  The name fits with the
+    scheme used by Foundation, although Foundation's concrete classes
+    typically aren't public.
+*/
+@interface WKDefaultWebController : NSObject <WKWebController>
+
+- initWithView: (WKWebView *) dataSource: (WKWebDataSource *)dataSource;
+
+- setDirectsAllLinksToSystemBrowser: (BOOL)flag
+- (BOOL)directsAllLinksToSystemBrowser;
+
+- (void)setView: (WKWebView *)view andDataSource: (WKWebDataSource *)dataSource;
+- (WKWebView *)viewForDataSource: (WKWebDataSource *)dataSource;
+- (WKWebDataSource *)dataSourceForView: (WKWebVew *)view
+
+- (WKWebView *)mainView;
+- (WKWebDataSource *)mainDataSource;
+
+- (void)createViewForDataSource: (WKWebDataSource *)dataSource inFrameNamed: (NSString *)name;
+
+- (void)createViewForDataSource: (WKWebDataSource *)dataSource inIFrame: (id)iFrameIdentifier;
 
 @end
 
@@ -127,22 +155,6 @@
 /*
    ============================================================================= 
 
-    Is WKConcreteWebController the right name?  The name fits with the
-    scheme used by Foundation, although Foundation's concrete classes
-    typically aren't public.
-*/
-@interface WKDefaultWebController : NSObject <WKWebController>
-
-- initWithView: (WKWebView *) dataSource: (WKWebDataSource *)dataSource;
-
-- setDirectsAllLinksToSystemBrowser: (BOOL)flag
-- (BOOL)directsAllLinksToSystemBrowser;
-
-@end
-
-/*
-   ============================================================================= 
-
     See the comments in WKWebPageView above for more description about this protocol.
 */
 @protocol WKLocationChangeHandler
@@ -158,6 +170,34 @@
 
 - (void)inputURL: (NSURL *)inputURL resolvedTo: (NSURL *)resolvedURL;
 - (void)serverRedirectTo: (NSURL *)url;
+
+@end
+
+
+/*
+   ============================================================================= 
+
+    A frame-aware version of the the WKLocationChangeHandler
+
+    See the comments in WKWebPageView above for more description about this protocol.
+*/
+@protocol WKLocationChangeHandler
+
+// locationWillChangeTo: is required, but will it be sent by the dataSource?  More
+// likely the controller will receive a change request from the view.  That argues for
+// placing locationWillChangeTo: in a different protocol, and making it more or a complete
+// handshake.
+- (BOOL)locationWillChangeTo: (NSURL *)url;
+
+- (void)locationChangeStartedByDataSource: (WKWebDataSource *)dataSource;
+- (void)locationChangeCancelled: (WKError *)error byDataSource: (WKWebDataSource *)dataSource;
+- (void)locationChangeStopped: (WKError *)error byDataSource: (WKWebDataSource *)dataSource;
+- (void)locationChangeFinished byDataSource: (WKWebDataSource *)dataSource;
+
+- (void)receivedPageTitle: (NSString *)title byDataSource: (WKWebDataSource *)dataSource;
+
+- (void)inputURL: (NSURL *)inputURL resolvedTo: (NSURL *)resolvedURL byDataSource: (WKWebDataSource *)dataSource;
+- (void)serverRedirectTo: (NSURL *)url byDataSource: (WKWebDataSource *)dataSource;
 
 @end
 
@@ -195,11 +235,12 @@
     typically for non-base URLs this should be done after a URL (i.e. image)
     has been completely downloaded.
 */
-- (void)receivedProgress: (WKLoadProgress *)progress forResource: (NSString *)resourceDescription;
+- (void)receivedProgress: (WKLoadProgress *)progress forResource: (NSString *)resourceDescription fromDataSource: (WKWebDataSource *)dataSource;
 
-- (void)receivedError: (WKError *)error forResource: (NSString *)resourceDescription partialProgress: (WKLoadProgress *)progress;
+- (void)receivedError: (WKError *)error forResource: (NSString *)resourceDescription partialProgress: (WKLoadProgress *)progress fromDataSource: (WKWebDataSource *)dataSource;
 
 @end
+
 
 /*
    ============================================================================= 
@@ -231,7 +272,7 @@
 
 */
 @protocol WKWebDataSourceErrorHandler
-- error: (WKError *)error;
+- error: (WKError *)error inDataSource: (WKWebDataSource *)dataSource;
 @end
 
 
@@ -245,25 +286,13 @@
 @protocol WKScriptContextHandler
 
 // setStatusText and statusText are used by Javascript's status bar text methods.
-- (void)setStatusText: (NSString *)text;
-- (NSString *)statusText;
+- (void)setStatusText: (NSString *)text forDataSource: (WKWebDataSource *)dataSource;
+- (NSString *)statusTextForDataSource: (WKWebDataSource *)dataSource;
 
 // Need API for things like window size and position, window ids,
 // screen goemetry.  Essentially all the 'view' items that are
 // accessible from Javascript.
 
-@end
-
-
-/*
-   ============================================================================= 
-
-*/
-@protocol WKFrameSetHandler
-- (NSArray *)frameNames;
-- (id <WKFrame>) findFrameNamed: (NSString *)name;
-- (BOOL)frameExists: (NSString *)name;
-- (void)openURL: (NSURL *)url inFrame: (id <WKFrame>) frame;
 @end
 
 
