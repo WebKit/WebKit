@@ -95,11 +95,17 @@ public:
         tp=0;
         paintBuffer=0;
         formCompletions=0;
-        prevScrollbarVisible = true;
-	layoutTimerId = 0;
+        layoutTimerId = 0;
         complete = false;
         mousePressed = false;
 	tooltip = 0;
+#if APPLE_CHANGES
+        vmode = hmode = QScrollView::Auto;
+        firstLayout = true;
+        needToInitScrollBars = true;
+#else
+        prevScrollbarVisible = true;
+#endif
     }
     ~KHTMLViewPrivate()
     {
@@ -120,12 +126,14 @@ public:
         useSlowRepaints = false;
         originalNode = 0;
 	borderTouched = false;
+#if !APPLE_CHANGES
 #ifndef KHTML_NO_SCROLLBARS
         vmode = QScrollView::Auto;
         hmode = QScrollView::Auto;
 #else
         vmode = QScrollView::AlwaysOff;
         hmode = QScrollView::AlwaysOff;
+#endif
 #endif
         scrollBarMoved = false;
         ignoreWheelEvents = false;
@@ -142,6 +150,10 @@ public:
         complete = false;
         mousePressed = false;
         layoutSchedulingEnabled = true;
+        layoutSuppressed = false;
+#if APPLE_CHANGES
+        firstLayout = true;
+#endif
     }
 
     QPainter *tp;
@@ -157,7 +169,9 @@ public:
 
     QScrollView::ScrollBarMode vmode;
     QScrollView::ScrollBarMode hmode;
+#if !APPLE_CHANGES
     bool prevScrollbarVisible;
+#endif
     bool linkPressed;
     bool useSlowRepaints;
     bool ignoreWheelEvents;
@@ -174,6 +188,11 @@ public:
 
     bool complete;
     bool layoutSchedulingEnabled;
+    bool layoutSuppressed;
+#if APPLE_CHANGES
+    bool firstLayout;
+    bool needToInitScrollBars;
+#endif
     bool mousePressed;
     KHTMLToolTip *tooltip;
 };
@@ -212,8 +231,12 @@ KHTMLView::KHTMLView( KHTMLPart *part, QWidget *parent, const char *name)
     m_part->ref();
 #endif
     d = new KHTMLViewPrivate;
+
+#if !APPLE_CHANGES
     QScrollView::setVScrollBarMode(d->vmode);
     QScrollView::setHScrollBarMode(d->hmode);
+#endif
+    
     connect(kapp, SIGNAL(kdisplayPaletteChanged()), this, SLOT(slotPaletteChanged()));
     connect(this, SIGNAL(contentsMoving(int, int)), this, SLOT(slotScrollBarMoved()));
 
@@ -235,6 +258,10 @@ KHTMLView::KHTMLView( KHTMLPart *part, QWidget *parent, const char *name)
 
 KHTMLView::~KHTMLView()
 {
+#if APPLE_CHANGES
+    resetScrollBars();
+#endif
+
     assert(_refCount == 0);
 
     if (m_part)
@@ -260,6 +287,17 @@ void KHTMLView::clearPart()
         m_part = 0;
     }
 }
+
+#if APPLE_CHANGES
+void KHTMLView::resetScrollBars()
+{
+    // Reset the document's scrollbars back to our defaults before we yield the floor.
+    suppressScrollBars(true);
+    QScrollView::setVScrollBarMode(d->vmode);
+    QScrollView::setHScrollBarMode(d->hmode);
+    suppressScrollBars(false);
+}
+#endif
 
 void KHTMLView::init()
 {
@@ -294,13 +332,16 @@ void KHTMLView::clear()
     killTimers();
     emit cleared();
 
+#if APPLE_CHANGES
+    suppressScrollBars(true);
+#else
     QScrollView::setHScrollBarMode(d->hmode);
     if (d->vmode==Auto)
         QScrollView::setVScrollBarMode(d->prevScrollbarVisible?AlwaysOn:Auto);
     else
         QScrollView::setVScrollBarMode(d->vmode);
-
     resizeContents(visibleWidth(), visibleHeight());
+#endif
 }
 
 void KHTMLView::hideEvent(QHideEvent* e)
@@ -334,6 +375,16 @@ void KHTMLView::resizeEvent (QResizeEvent* e)
         m_part->xmlDocImpl()->dispatchWindowEvent( EventImpl::RESIZE_EVENT, false, false );
     KApplication::sendPostedEvents(viewport(), QEvent::Paint);
 }
+
+#if APPLE_CHANGES
+void KHTMLView::initScrollBars()
+{
+    if (!d->needToInitScrollBars)
+        return;
+    d->needToInitScrollBars = false;
+    setScrollBarsMode(hScrollBarMode());
+}
+#endif
 
 #if !APPLE_CHANGES
 
@@ -408,42 +459,110 @@ void KHTMLView::adjustViewSize()
     }
 }
 
+void KHTMLView::applyBodyScrollQuirk(khtml::RenderObject* o, ScrollBarMode& hMode, ScrollBarMode& vMode)
+{
+    // Handle the overflow:hidden/scroll quirk for the body elements.  WinIE treats
+    // overflow:hidden and overflow:scroll on <body> as applying to the document's
+    // scrollbars.  The CSS2.1 draft has even added a sentence, "HTML UAs may apply overflow
+    // specified on the body or HTML elements to the viewport."  Since WinIE and Mozilla both
+    // do it, we will do it too for <body> elements.
+    switch(o->style()->overflow()) {
+        case OHIDDEN:
+            hMode = vMode = AlwaysOff;
+            break;
+        case OSCROLL:
+            hMode = vMode = AlwaysOn;
+            break;
+        case OAUTO:
+	    hMode = vMode = Auto;
+            break;
+        default:
+            // Don't set it at all.
+            ;
+    }
+}
+
+bool KHTMLView::inLayout() const
+{
+    return d->layoutSuppressed;
+}
 
 void KHTMLView::layout()
 {
+    if (d->layoutSuppressed)
+        return;
+    
     d->layoutSchedulingEnabled=false;
-    khtml::RenderCanvas* root = 0;
-    if( m_part->xmlDocImpl() ) {
-        DOM::DocumentImpl *document = m_part->xmlDocImpl();
-
-        root = static_cast<khtml::RenderCanvas *>(document->renderer());
-        if ( !root ) return;
-
-        if (document->isHTMLDocument()) {
-             NodeImpl *body = static_cast<HTMLDocumentImpl*>(document)->body();
-             if(body && body->renderer() && body->id() == ID_FRAMESET) {
-                 QScrollView::setVScrollBarMode(AlwaysOff);
-                 QScrollView::setHScrollBarMode(AlwaysOff);
-                 body->renderer()->setNeedsLayout(true);
-             }
-        }
-
-        _height = visibleHeight();
-        _width = visibleWidth();
-
-        root->layout();
-
-        //kdDebug( 6000 ) << "TIME: layout() dt=" << qt.elapsed() << endl;
-    } else {
-        _width = visibleWidth();
-    }
-
-    d->layoutSchedulingEnabled=true;
     killTimer(d->layoutTimerId);
     d->layoutTimerId = 0;
+    
+    DOM::DocumentImpl* document = m_part->xmlDocImpl();
+    if (!document) {
+        _width = visibleWidth();
+        return;
+    }
 
+    khtml::RenderCanvas* root = static_cast<khtml::RenderCanvas*>(document->renderer());
     if (!root)
         return;
+
+#if APPLE_CHANGES
+    // Now set up our scrollbar state for the layout.
+    suppressScrollBars(true);
+#endif
+
+    ScrollBarMode hMode = d->hmode;
+    ScrollBarMode vMode = d->vmode;
+    
+    if (document->isHTMLDocument()) {
+        NodeImpl *body = static_cast<HTMLDocumentImpl*>(document)->body();
+        if (body && body->renderer()) {
+            if (body->id() == ID_FRAMESET) {
+                body->renderer()->setNeedsLayout(true);
+                vMode = AlwaysOff;
+                hMode = AlwaysOff;
+            }
+            else if (body->id() == ID_BODY)
+                applyBodyScrollQuirk(body->renderer(), hMode, vMode); // Only applies to HTML UAs, not to XML/XHTML UAs
+        }
+    }
+
+#if APPLE_CHANGES
+    if (d->firstLayout) {
+        d->firstLayout = false;
+        
+        // Set the initial vMode to AlwaysOn if we're auto.
+        if (vMode == Auto)
+            QScrollView::setVScrollBarMode(AlwaysOn); // This causes a vertical scrollbar to appear.
+        // Set the initial hMode to AlwaysOff if we're auto.
+        if (hMode == Auto)
+            QScrollView::setHScrollBarMode(AlwaysOff); // This causes a horizontal scrollbar to disappear.
+    }
+    
+    if (hMode == vMode)
+        QScrollView::setScrollBarsMode(hMode);
+    else {
+        QScrollView::setHScrollBarMode(hMode);
+        QScrollView::setVScrollBarMode(vMode);
+    }
+
+    suppressScrollBars(false, true);
+#else
+    QScrollView::setHScrollBarMode(hMode);
+    QScrollView::setVScrollBarMode(vMode);
+#endif
+            
+    _height = visibleHeight();
+    _width = visibleWidth();
+
+    root->layout();
+
+    //kdDebug( 6000 ) << "TIME: layout() dt=" << qt.elapsed() << endl;
+   
+    d->layoutSchedulingEnabled=true;
+    d->layoutSuppressed = false;
+
+    resizeContents(root->docWidth(), root->docHeight());
     
 #ifdef INCREMENTAL_REPAINTING
     if (root->needsLayout()) {
@@ -455,7 +574,6 @@ void KHTMLView::layout()
         scheduleRelayout();
         return;
     }
-    resizeContents(root->docWidth(), root->docHeight());
     setStaticBackground(d->useSlowRepaints);
 
 #ifndef INCREMENTAL_REPAINTING
@@ -465,7 +583,7 @@ void KHTMLView::layout()
     }
     else
         root->repaint();
-#endif
+#endif    
 }
 
 //
@@ -1267,6 +1385,22 @@ void KHTMLView::useSlowRepaints()
     setStaticBackground(true);
 }
 
+void KHTMLView::setScrollBarsMode ( ScrollBarMode mode )
+{
+#ifndef KHTML_NO_SCROLLBARS
+    d->vmode = mode;
+    d->hmode = mode;
+    
+#if APPLE_CHANGES
+    QScrollView::setScrollBarsMode(mode);
+#else
+    QScrollView::setVScrollBarMode(mode);
+    QScrollView::setHScrollBarMode(mode);
+#endif
+#else
+    Q_UNUSED( mode );
+#endif
+}
 
 void KHTMLView::setVScrollBarMode ( ScrollBarMode mode )
 {
@@ -1290,14 +1424,13 @@ void KHTMLView::setHScrollBarMode ( ScrollBarMode mode )
 
 void KHTMLView::restoreScrollBar ( )
 {
+#if APPLE_CHANGES
+    suppressScrollBars(false);
+#else
     int ow = visibleWidth();
     QScrollView::setVScrollBarMode(d->vmode);
     if (visibleWidth() != ow)
-    {
         layout();
-//        scheduleRepaint(contentsX(),contentsY(),visibleWidth(),visibleHeight());
-    }
-#if !APPLE_CHANGES
     d->prevScrollbarVisible = verticalScrollBar()->isVisible();
 #endif
 }

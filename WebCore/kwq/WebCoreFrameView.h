@@ -27,5 +27,19 @@
 // that the view it's embedded in is one that should be resized when the
 // scroll view is resized.
 
+typedef enum {
+    WebCoreScrollBarAlwaysOff,
+    WebCoreScrollBarAlwaysOn,
+    WebCoreScrollBarAuto
+} WebCoreScrollBarMode;
+
 @protocol WebCoreFrameView
+- (void)setHorizontalScrollingMode:(WebCoreScrollBarMode)mode;
+- (void)setVerticalScrollingMode:(WebCoreScrollBarMode)mode;
+- (void)setScrollingMode:(WebCoreScrollBarMode)mode;
+
+- (WebCoreScrollBarMode)horizontalScrollingMode;
+- (WebCoreScrollBarMode)verticalScrollingMode;
+
+- (void)setScrollBarsSuppressed:(BOOL)suppressed repaintOnUnsuppress:(BOOL)repaint;
 @end

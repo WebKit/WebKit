@@ -651,7 +651,7 @@ ReadOnlyPart *KWQKHTMLPart::createPart(const ChildFrame &child, const KURL &url,
         int marginWidth = -1;
         int marginHeight = -1;
         if (child.m_type != ChildFrame::Object) {
-            HTMLIFrameElementImpl *o = static_cast<HTMLIFrameElementImpl *>(child.m_frame->element());
+            HTMLFrameElementImpl *o = static_cast<HTMLFrameElementImpl *>(child.m_frame->element());
             allowsScrolling = o->scrollingMode() != QScrollView::AlwaysOff;
             marginWidth = o->getMarginWidth();
             marginHeight = o->getMarginHeight();

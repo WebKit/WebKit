@@ -122,6 +122,8 @@ void RenderCanvas::calcMinMaxWidth()
 
 void RenderCanvas::layout()
 {
+    KHTMLAssert(!view()->inLayout());
+    
 #ifdef INCREMENTAL_REPAINTING
     QRect oldBounds(m_x, m_y, m_width, m_height);
 #endif
@@ -164,7 +166,6 @@ void RenderCanvas::layout()
     int doch = docHeight();
 
     if (!m_printingMode) {
-        m_view->resizeContents(docw, doch);
         setWidth( m_viewportWidth = m_view->visibleWidth() );
         setHeight(  m_viewportHeight = m_view->visibleHeight() );
     }

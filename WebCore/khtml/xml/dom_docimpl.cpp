@@ -2386,6 +2386,8 @@ bool DocumentImpl::inPageCache()
 void DocumentImpl::setInPageCache(bool flag)
 {
     m_inPageCache = flag;
+    if (m_view && m_inPageCache)
+        m_view->resetScrollBars();
 }
 
 void DocumentImpl::passwordFieldAdded()

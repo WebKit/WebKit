@@ -330,14 +330,15 @@ void HTMLFrameElementImpl::parseAttribute(AttributeImpl *attr)
         break;
     case ATTR_SCROLLING:
         kdDebug( 6031 ) << "set scroll mode" << endl;
-        if( strcasecmp( attr->value(), "auto" ) == 0 )
+	// Auto and yes both simply mean "allow scrolling."  No means
+	// "don't allow scrolling."
+        if( strcasecmp( attr->value(), "auto" ) == 0 ||
+            strcasecmp( attr->value(), "yes" ) == 0 )
             scrolling = QScrollView::Auto;
-        else if( strcasecmp( attr->value(), "yes" ) == 0 )
-            scrolling = QScrollView::AlwaysOn;
         else if( strcasecmp( attr->value(), "no" ) == 0 )
             scrolling = QScrollView::AlwaysOff;
         // FIXME: If we are already attached, this has no effect.
-        // FIXME: Is this falling through on purpose, or do we want a break here?
+        break;
     case ATTR_ONLOAD:
         setHTMLEventListener(EventImpl::LOAD_EVENT,
                                 getDocument()->createHTMLEventListener(attr->value().string()));

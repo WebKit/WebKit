@@ -24,6 +24,7 @@
  */
 
 #import "KWQScrollView.h"
+#import "WebCoreFrameView.h"
 
 #import "KWQLogging.h"
 
@@ -160,14 +161,81 @@ void QScrollView::setContentsPos(int x, int y)
     [view scrollPoint: NSMakePoint(x,y)];
 }
 
-void QScrollView::setVScrollBarMode(ScrollBarMode)
+void QScrollView::setVScrollBarMode(ScrollBarMode vMode)
 {
-    LOG(NotYetImplemented, "not yet implemented");
+    NSView* view = getView();
+    if ([view conformsToProtocol:@protocol(WebCoreFrameView)]) {
+        NSView<WebCoreFrameView>* frameView = (NSView<WebCoreFrameView>*)view;
+        [frameView setVerticalScrollingMode: (WebCoreScrollBarMode)vMode];
+    }
 }
 
-void QScrollView::setHScrollBarMode(ScrollBarMode)
+void QScrollView::setHScrollBarMode(ScrollBarMode hMode)
 {
-    LOG(NotYetImplemented, "not yet implemented");
+    NSView* view = getView();
+    if ([view conformsToProtocol:@protocol(WebCoreFrameView)]) {
+        NSView<WebCoreFrameView>* frameView = (NSView<WebCoreFrameView>*)view;
+        [frameView setHorizontalScrollingMode: (WebCoreScrollBarMode)hMode];
+    }
+}
+
+void QScrollView::setScrollBarsMode(ScrollBarMode mode)
+{
+    NSView* view = getView();
+    if ([view conformsToProtocol:@protocol(WebCoreFrameView)]) {
+        NSView<WebCoreFrameView>* frameView = (NSView<WebCoreFrameView>*)view;
+        [frameView setScrollingMode: (WebCoreScrollBarMode)mode];
+    }
+}
+
+QScrollView::ScrollBarMode
+QScrollView::vScrollBarMode() const
+{
+    NSView* view = getView();
+    if ([view conformsToProtocol:@protocol(WebCoreFrameView)]) {
+        NSView<WebCoreFrameView>* frameView = (NSView<WebCoreFrameView>*)view;
+        return (ScrollBarMode)[frameView verticalScrollingMode];
+    }
+
+    return Auto;
+}
+
+QScrollView::ScrollBarMode
+QScrollView::hScrollBarMode() const
+{
+    NSView* view = getView();
+    if ([view conformsToProtocol:@protocol(WebCoreFrameView)]) {
+        NSView<WebCoreFrameView>* frameView = (NSView<WebCoreFrameView>*)view;
+        return (ScrollBarMode)[frameView horizontalScrollingMode];
+    }
+
+    return Auto;
+}
+
+bool QScrollView::hasVerticalScrollBar() const
+{
+    NSScrollView *view = (NSScrollView *)getView();
+    if ([view _KWQ_isScrollView])
+        return [view hasVerticalScroller];
+    return false;
+}
+
+bool QScrollView::hasHorizontalScrollBar() const
+{
+    NSScrollView *view = (NSScrollView *)getView();
+    if ([view _KWQ_isScrollView])
+        return [view hasHorizontalScroller];
+    return false;
+}
+
+void QScrollView::suppressScrollBars(bool suppressed,  bool repaintOnUnsuppress)
+{
+    NSView* view = getView();
+    if ([view conformsToProtocol:@protocol(WebCoreFrameView)]) {
+        NSView<WebCoreFrameView>* frameView = (NSView<WebCoreFrameView>*)view;
+        [frameView setScrollBarsSuppressed: suppressed
+                       repaintOnUnsuppress: repaintOnUnsuppress];
+    }
 }
 
 void QScrollView::addChild(QWidget* child, int x, int y)

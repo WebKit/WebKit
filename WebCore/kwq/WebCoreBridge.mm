@@ -524,6 +524,8 @@ static BOOL nowPrinting(WebCoreBridge *self)
         _renderPart->setWidget(_part->view());
         // Now the render part owns the view, so we don't any more.
     }
+
+    _part->view()->initScrollBars();
 }
 
 - (void)mouseDown:(NSEvent *)event
