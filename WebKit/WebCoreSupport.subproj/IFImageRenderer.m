@@ -148,7 +148,9 @@ static NSMutableArray *activeImageRenderers;
     
     window = [frameView window];
     
-    if ([[[self representations] objectAtIndex:0] isOpaque]) {
+     // We can't use isOpaque because it returns YES for many non-opaque images (Radar 2966937).
+     // But we can at least assume that any image representatin without alpha is opaque.
+     if (![[[self representations] objectAtIndex:0] hasAlpha]) {
         if ([frameView canDraw]) {
             [frameView lockFocus];
             [self drawInRect:targetRect
