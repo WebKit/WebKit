@@ -1119,10 +1119,11 @@ void DocLoader::removeCachedObject( CachedObject* o ) const
     IFError *error = WCIFErrorMake(result);
     id <IFLoadHandler> controller = [m_dataSource controller];
     
-
     IFLoadProgress *loadProgress = WCIFLoadProgressMake();
     loadProgress->totalToLoad = [sender contentLength];
     loadProgress->bytesSoFar = [[sender availableResourceData] length];
+
+    m_loader->slotFinished(job);
 
     [controller _receivedError: error forResource: QSTRING_TO_NSSTRING(job->url().url()) partialProgress: loadProgress fromDataSource: m_dataSource];
 

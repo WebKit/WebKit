@@ -1,3 +1,13 @@
+2002-03-31  Maciej Stachowiak  <mjs@apple.com>
+
+	Fix Radar 2890464 (abcnews.com renders as a blank blue page (probably a JavaScript
+	problem).) It turns out not to be a JavaScript problem:
+	
+	* src/kwq/KWQKloader.mm: (-[URLLoadClient
+	IFURLHandle:resourceDidFailLoadingWithResult:]): Report that load
+	is finished to KDE layers. Otherwise, the tokenizer will wait
+	forever for a script load completion message that never comes.
+
 2002-03-31  Darin Adler  <darin@apple.com>
 
 	* src/kwq/KWQString.mm: (QString::toDouble): Fix to properly handle
