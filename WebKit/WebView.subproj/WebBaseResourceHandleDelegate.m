@@ -7,9 +7,10 @@
 
 #import <WebFoundation/WebAssertions.h>
 #import <WebFoundation/WebError.h>
-#import <WebFoundation/WebHTTPRequest.h>
+
 #import <WebFoundation/WebResource.h>
 #import <WebFoundation/NSURLRequest.h>
+#import <WebFoundation/NSURLRequestPrivate.h>
 #import <WebFoundation/WebResponse.h>
 
 #import <WebKit/WebDataSourcePrivate.h>
@@ -134,7 +135,7 @@
     ASSERT(resource == h);
     ASSERT(!reachedTerminalState);
     
-    [newRequest setUserAgent:[controller userAgentForURL:[newRequest URL]]];
+    [newRequest HTTPSetUserAgent:[controller userAgentForURL:[newRequest URL]]];
 
     if (identifier == nil) {
         // The identifier is released after the last callback, rather than in dealloc

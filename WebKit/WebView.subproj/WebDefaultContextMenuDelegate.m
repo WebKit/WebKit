@@ -15,10 +15,11 @@
 #import <WebKit/WebViewPrivate.h>
 #import <WebKit/WebWindowOperationsDelegate.h>
 
-#import <WebFoundation/WebHTTPRequest.h>
+
 #import <WebFoundation/WebLocalizableStrings.h>
 #import <WebFoundation/WebResource.h>
 #import <WebFoundation/NSURLRequest.h>
+#import <WebFoundation/NSURLRequestPrivate.h>
 
 @implementation WebDefaultContextMenuDelegate
 
@@ -145,7 +146,7 @@ static WebDefaultContextMenuDelegate *sharedDelegate = nil;
     NSURLRequest *request = [NSURLRequest requestWithURL:URL];
     NSString *referrer = [[webFrame _bridge] referrer];
     if (referrer) {
-	[request setReferrer:referrer];
+	[request HTTPSetReferrer:referrer];
     }
     
     [controller _openNewWindowWithRequest:request];

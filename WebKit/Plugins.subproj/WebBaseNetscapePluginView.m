@@ -20,7 +20,7 @@
 #import <WebKit/WebWindowOperationsDelegate.h>
 
 #import <WebFoundation/WebAssertions.h>
-#import <WebFoundation/WebHTTPRequest.h>
+
 #import <WebFoundation/WebNSDataExtras.h>
 #import <WebFoundation/WebNSStringExtras.h>
 #import <WebFoundation/WebNSURLExtras.h>
@@ -1164,7 +1164,7 @@ typedef struct {
     }
 
     NSURLRequest *request = [self requestWithURLCString:URLCString];
-    [request setRequestMethod:@"POST"];
+    [request HTTPSetMethod:@"POST"];
     
     if (allowHeaders) {
         if ([postData _web_startsWithBlankLine]) {
@@ -1176,7 +1176,7 @@ typedef struct {
                 NSData *headerData = [postData subdataWithRange:NSMakeRange(0, location)];
                 NSDictionary *header = [headerData _web_parseRFC822HeaderFields];
                 if ([header count] > 0) {
-                    [request setHeader:header];
+                    [request HTTPSetAllHeaderFields:header];
                 }
                 // Everything after the blank line is the actual content of the POST.
                 postData = [postData subdataWithRange:NSMakeRange(location, [postData length] - location)];
@@ -1187,7 +1187,7 @@ typedef struct {
         }
     }
 
-    [request setRequestData:postData];
+    [request HTTPSetBody:postData];
     return [self loadRequest:request inTarget:target withNotifyData:notifyData];
 }
 

@@ -36,7 +36,7 @@
 #import <WebFoundation/WebResource.h>
 #import <WebFoundation/NSURLRequest.h>
 #import <WebFoundation/WebResponse.h>
-#import <WebFoundation/WebHTTPRequest.h>
+
 
 @implementation WebDataSourcePrivate 
 

@@ -14,7 +14,8 @@
 #import <WebFoundation/WebError.h>
 #import <WebFoundation/WebResourceDelegate.h>
 #import <WebFoundation/NSURLRequest.h>
-#import <WebFoundation/WebHTTPRequest.h>
+#import <WebFoundation/NSURLRequestPrivate.h>
+
 #import <WebFoundation/WebResponse.h>
 
 #import <WebCore/WebCoreResourceLoader.h>
@@ -47,11 +48,11 @@
 
     NSURLRequest *newRequest = [[NSURLRequest alloc] initWithURL:URL];
     [newRequest setCachePolicy:[[source request] cachePolicy]];
-    [newRequest setReferrer:referrer];
+    [newRequest HTTPSetReferrer:referrer];
     
     WebView *_controller = [source _controller];
-    [newRequest setCookiePolicyBaseURL:[[[[_controller mainFrame] dataSource]  request] URL]];
-    [newRequest setUserAgent:[_controller userAgentForURL:URL]];
+    [newRequest HTTPSetCookiePolicyBaseURL:[[[[_controller mainFrame] dataSource]  request] URL]];
+    [newRequest HTTPSetUserAgent:[_controller userAgentForURL:URL]];
     
     BOOL succeeded = [client loadWithRequest:newRequest];
     [newRequest release];

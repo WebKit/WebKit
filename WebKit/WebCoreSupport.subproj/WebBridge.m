@@ -42,7 +42,9 @@
 
 #import <WebFoundation/WebAssertions.h>
 #import <WebFoundation/WebError.h>
-#import <WebFoundation/WebHTTPRequest.h>
+
+#import <WebFoundation/NSURLRequest.h>
+#import <WebFoundation/NSURLRequestPrivate.h>
 #import <WebFoundation/WebNSStringExtras.h>
 #import <WebFoundation/WebNSDictionaryExtras.h>
 #import <WebFoundation/WebNSURLExtras.h>
@@ -108,7 +110,7 @@
 
     if (URL != nil && [URL length] > 0) {
 	request = [NSURLRequest requestWithURL:[NSURL _web_URLWithString:URL]];
-	[request setReferrer:[self referrer]];
+	[request HTTPSetReferrer:[self referrer]];
     }
 
     WebView *currentController = [frame webView];
@@ -482,7 +484,7 @@
 
 - (NSString *)incomingReferrer
 {
-    return [[[self dataSource] request] referrer];
+    return [[[self dataSource] request] HTTPReferrer];
 }
 
 - (NSView <WebPlugin> *)pluginViewWithPackage:(WebPluginPackage *)pluginPackage

@@ -32,8 +32,9 @@
 #import <WebFoundation/WebNSStringExtras.h>
 #import <WebFoundation/WebResource.h>
 #import <WebFoundation/NSURLRequest.h>
+#import <WebFoundation/NSURLRequestPrivate.h>
 #import <WebFoundation/WebResponse.h>
-#import <WebFoundation/WebHTTPRequest.h>
+
 #import <WebFoundation/WebSynchronousResult.h>
 
 #import <objc/objc-runtime.h>
@@ -277,10 +278,10 @@ Repeat load of the same URL (by any other means of navigation other than the rel
     [bfItem setOriginalURLString:[[[dataSrc _originalRequest] URL] absoluteString]];
 
     // save form state if this is a POST
-    if ([[request requestMethod] _web_isCaseInsensitiveEqualToString:@"POST"]) {
-        [bfItem setFormData:[request requestData]];
-        [bfItem setFormContentType:[request contentType]];
-        [bfItem setFormReferrer:[request referrer]];
+    if ([[request HTTPMethod] _web_isCaseInsensitiveEqualToString:@"POST"]) {
+        [bfItem setFormData:[request HTTPBody]];
+        [bfItem setFormContentType:[request HTTPContentType]];
+        [bfItem setFormReferrer:[request HTTPReferrer]];
     }
 
     // Set the item for which we will save document state
@@ -1090,10 +1091,10 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
             // If this was a repost that failed the page cache, we might try to repost the form.
             NSDictionary *action;
             if (formData) {
-                [request setRequestMethod:@"POST"];
-                [request setRequestData:formData];
-                [request setContentType:[item formContentType]];
-                [request setReferrer:[item formReferrer]];
+                [request HTTPSetMethod:@"POST"];
+                [request HTTPSetBody:formData];
+                [request HTTPSetContentType:[item formContentType]];
+                [request HTTPSetReferrer:[item formReferrer]];
 
                 // Slight hack to test if the WF cache contains the page we're going to.  We want
                 // to know this before talking to the policy delegate, since it affects whether we
@@ -1482,14 +1483,14 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (void)_addExtraFieldsToRequest:(NSURLRequest *)request alwaysFromRequest: (BOOL)f
 {
-    [request setUserAgent:[[self webView] userAgentForURL:[request URL]]];
+    [request HTTPSetUserAgent:[[self webView] userAgentForURL:[request URL]]];
     
     // Don't set the cookie policy URL if it's already been set.
-    if ([request cookiePolicyBaseURL] == nil){
+    if ([request HTTPCookiePolicyBaseURL] == nil){
         if (self == [[self webView] mainFrame] || f) {
-            [request setCookiePolicyBaseURL:[request URL]];
+            [request HTTPSetCookiePolicyBaseURL:[request URL]];
         } else {
-            [request setCookiePolicyBaseURL:[[[[self webView] mainFrame] dataSource] _URL]];
+            [request HTTPSetCookiePolicyBaseURL:[[[[self webView] mainFrame] dataSource] _URL]];
         }
     }
 }
@@ -1524,7 +1525,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     BOOL isFormSubmission = (values != nil);
 
     NSURLRequest *request = [[NSURLRequest alloc] initWithURL:URL];
-    [request setReferrer:referrer];
+    [request HTTPSetReferrer:referrer];
     [self _addExtraFieldsToRequest:request alwaysFromRequest: (event != nil || isFormSubmission)];
     if (loadType == WebFrameLoadTypeReload) {
         [request setCachePolicy:NSURLRequestReloadIgnoringCacheData];
@@ -1653,10 +1654,10 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     NSURLRequest *request = [[NSURLRequest alloc] initWithURL:URL];
     [self _addExtraFieldsToRequest:request alwaysFromRequest: YES];
     [request setCachePolicy:NSURLRequestReloadIgnoringCacheData];
-    [request setRequestMethod:@"POST"];
-    [request setRequestData:data];
-    [request setContentType:contentType];
-    [request setReferrer:referrer];
+    [request HTTPSetMethod:@"POST"];
+    [request HTTPSetBody:data];
+    [request HTTPSetContentType:contentType];
+    [request HTTPSetReferrer:referrer];
 
     NSDictionary *action = [self _actionInformationForLoadType:WebFrameLoadTypeStandard isFormSubmission:YES event:event originalURL:URL];
     WebFormState *formState = nil;

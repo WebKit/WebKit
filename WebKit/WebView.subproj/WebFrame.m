@@ -23,7 +23,7 @@
 
 #import <WebFoundation/WebNSURLExtras.h>
 #import <WebFoundation/NSURLRequest.h>
-#import <WebFoundation/WebHTTPRequest.h>
+
 #import <WebFoundation/WebNSStringExtras.h>
 
 @implementation WebFrame
@@ -141,7 +141,7 @@
     [request setCachePolicy:NSURLRequestReloadIgnoringCacheData];
 
     // If we're about to rePOST, set up action so the app can warn the user
-    if ([[request requestMethod] _web_isCaseInsensitiveEqualToString:@"POST"]) {
+    if ([[request HTTPMethod] _web_isCaseInsensitiveEqualToString:@"POST"]) {
         NSDictionary *action = [self _actionInformationForNavigationType:WebNavigationTypeFormResubmitted event:nil originalURL:[request URL]];
         [newDataSource _setTriggeringAction:action];
     }

@@ -1,3 +1,40 @@
+2003-03-24  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by NOBODY (OOPS!).
+
+        Moved closer to target API for NSURLRequest. Merged in
+        final names for immutable and mutable versions of this
+        class and its HTTP category. The next step will be to
+        actually make the split between immutable/mutable
+        variants of NSURLRequest.
+
+        In WebKit, this amounts to name changes only.
+
+        * Misc.subproj/WebIconLoader.m:
+        (-[WebIconLoader startLoading]):
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView _postURLNotify:target:len:buf:file:notifyData:allowHeaders:]):
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge createWindowWithURL:frameName:]):
+        (-[WebBridge incomingReferrer]):
+        * WebCoreSupport.subproj/WebSubresourceClient.m:
+        (+[WebSubresourceClient startLoadingResource:withURL:referrer:forDataSource:]):
+        * WebView.subproj/WebBaseResourceHandleDelegate.m:
+        (-[WebBaseResourceHandleDelegate resource:willSendRequest:]):
+        * WebView.subproj/WebDataSourcePrivate.m:
+        * WebView.subproj/WebDefaultContextMenuDelegate.m:
+        (-[WebDefaultContextMenuDelegate openNewWindowWithURL:]):
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame reload]):
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _createItem]):
+        (-[WebFrame _loadItem:fromItem:withLoadType:]):
+        (-[WebFrame _addExtraFieldsToRequest:alwaysFromRequest:]):
+        (-[WebFrame _loadURL:referrer:loadType:target:triggeringEvent:form:formValues:]):
+        (-[WebFrame _postWithURL:referrer:target:data:contentType:triggeringEvent:form:formValues:]):
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient resource:willSendRequest:]):
+
 2003-03-22  Darin Adler  <darin@apple.com>
 
         Reviewed by John.

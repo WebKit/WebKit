@@ -7,11 +7,12 @@
 
 #import <WebFoundation/WebCookieConstants.h>
 #import <WebFoundation/WebError.h>
-#import <WebFoundation/WebHTTPRequest.h>
+
 #import <WebFoundation/WebFileTypeMappings.h>
 #import <WebFoundation/WebNSURLExtras.h>
 #import <WebFoundation/WebResource.h>
 #import <WebFoundation/NSURLRequest.h>
+#import <WebFoundation/NSURLRequestPrivate.h>
 #import <WebFoundation/WebResponse.h>
 #import <WebFoundation/WebMutableResponse.h>
 
@@ -114,7 +115,7 @@
     // Update cookie policy base URL as URL changes, except for subframes, which use the
     // URL of the main frame which doesn't change when we redirect.
     if ([dataSource webFrame] == [[dataSource _controller] mainFrame]) {
-        [newRequest setCookiePolicyBaseURL:URL];
+        [newRequest HTTPSetCookiePolicyBaseURL:URL];
     }
 
     // note super will make a copy for us, so reassigning newRequest is important
