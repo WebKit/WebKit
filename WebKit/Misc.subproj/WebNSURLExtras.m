@@ -24,7 +24,7 @@ static inline void ReleaseIfNotNULL(CFTypeRef object)
 
 static char hexDigit(int i) {
     if (i < 0 || i > 16) {
-        ERROR("illegal hex value");
+        ERROR("illegal hex digit");
         return '0';
     }
     int h = i;
@@ -35,6 +35,26 @@ static char hexDigit(int i) {
         h += '0';
     }
     return h;
+}
+
+static BOOL isHexDigit(char c)
+{
+    return (c >= '0' && c <= '9') || (c >= 'A' && c <= 'F') || (c >= 'a' && c <= 'f');
+}
+
+static int hexDigitValue(char c)
+{
+    if (c >= '0' && c <= '9') {
+        return c - '0';
+    }
+    if (c >= 'A' && c <= 'F') {
+        return c - 'A' + 10;
+    }
+    if (c >= 'a' && c <= 'f') {
+        return c - 'a' + 10;
+    }
+    ERROR("illegal hex digit");
+    return 0;
 }
 
 @implementation NSURL (WebNSURLExtras)
@@ -156,21 +176,88 @@ static char hexDigit(int i) {
     }
 }
 
-- (NSString *)_web_displayableString
+- (NSString *)_web_userVisibleString
 {
-    return [[[NSString alloc] initWithData:[self _web_originalData] encoding:NSISOLatin1StringEncoding] autorelease];
+    NSData *data = [self _web_originalData];
+    const unsigned char *before = [data bytes];
+    int length = [data length];
+
+    const unsigned char *p = before;
+    int bufferLength = (length * 3) + 1;
+    char *after = malloc(bufferLength); // large enough to %-escape every character
+    char *q = after;
+    int i;
+    for (i = 0; i < length; i++) {
+        unsigned char c = p[i];
+        // escape control characters, space, and delete
+        if (c <= 0x20 || c == 0x7f) {
+            *q++ = '%';
+            *q++ = hexDigit(c >> 4);
+            *q++ = hexDigit(c & 0xf);
+        }
+        // unescape escape sequences that indicate bytes greater than 0x7f
+        else if (c == '%' && (i + 1 < length && isHexDigit(p[i + 1])) && i + 2 < length && isHexDigit(p[i + 2])) {
+            unsigned char u = (hexDigitValue(p[i + 1]) << 4) | hexDigitValue(p[i + 2]);
+            if (u > 0x7f) {
+                // unescape
+                *q++ = u;
+            }
+            else {
+                // do not unescape
+                *q++ = p[i];
+                *q++ = p[i + 1];
+                *q++ = p[i + 2];
+            }
+            i += 2;
+        } 
+        else {
+            *q++ = c;
+        }
+    }
+    *q = '\0';
+  
+    // Check string to see if it can be converted to display using UTF-8  
+    NSString *result = [NSString stringWithUTF8String:after];
+    if (!result) {
+        // Could not convert to UTF-8.
+        // Convert characters greater than 0x7f to escape sequences.
+        // Shift current string to the end of the buffer
+        // then we will copy back bytes to the start of the buffer 
+        // as we convert.
+        int afterlength = q - after;
+        char *p = after + bufferLength - afterlength - 1;
+        memmove(p, after, afterlength + 1); // copies trailing '\0'
+        char *q = after;
+        while (*p) {
+            unsigned char c = *p;
+            if (c > 0x7f) {
+                *q++ = '%';
+                *q++ = hexDigit(c >> 4);
+                *q++ = hexDigit(c & 0xf);
+            }
+            else {
+                *q++ = *p;
+            }
+            p++;
+        }
+        *q = '\0';
+        result = [NSString stringWithUTF8String:after];
+    }
+    free(after);
+    
+    return result;
 }
 
-- (int)_web_URLStringLength
+- (BOOL)_web_isEmpty
 {
     int length = 0;
     if (!CFURLGetBaseURL((CFURLRef)self)) {
         length = CFURLGetBytes((CFURLRef)self, NULL, 0);
     }
     else {
-        length = [[self _web_displayableString] length];
+        length = [[self _web_userVisibleString] length];
     }
-    return length;
+    return length == 0;
 }
 
 - (const char *)_web_URLCString
@@ -239,26 +326,6 @@ static char hexDigit(int i) {
 
 
 @implementation NSString (WebNSURLExtras)
-
-static BOOL isHexDigit(char c)
-{
-    return (c >= '0' && c <= '9') || (c >= 'A' && c <= 'F') || (c >= 'a' && c <= 'f');
-}
-
-static int hexDigitValue(char c)
-{
-    if (c >= '0' && c <= '9') {
-        return c - '0';
-    }
-    if (c >= 'A' && c <= 'F') {
-        return c - 'A' + 10;
-    }
-    if (c >= 'a' && c <= 'f') {
-        return c - 'a' + 10;
-    }
-    ERROR("illegal hex digit");
-    return 0;
-}
 
 - (BOOL)_webkit_isJavaScriptURL
 {

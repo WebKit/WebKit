@@ -535,7 +535,7 @@
             
         // WebCore will crash if given an empty URL here.
         // FIXME: could use CFURL, when available, range API to save an allocation here
-        if (!URL || [URL _web_URLStringLength] == 0)
+        if (!URL || [URL _web_isEmpty])
             URL = [NSURL URLWithString:@"about:blank"];
 
         [[self _bridge] openURL:URL

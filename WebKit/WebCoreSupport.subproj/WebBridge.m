@@ -119,7 +119,7 @@
 
     NSMutableURLRequest *request = nil;
 
-    if (URL != nil && [URL _web_URLStringLength] > 0) {
+    if (URL != nil && ![URL _web_isEmpty]) {
 	request = [NSMutableURLRequest requestWithURL:URL];
 	[request setHTTPReferrer:[self referrer]];
     }
@@ -568,7 +568,7 @@
 // This URL is only used for coloring visited links.
 - (NSString *)requestedURLString
 {
-    return [[[[self dataSource] request] URL] _web_displayableString];
+    return [[[[self dataSource] request] URL] _web_userVisibleString];
 }
 
 - (NSString *)incomingReferrer
@@ -671,7 +671,7 @@
 
     if (errorCode) {
         NSError *error = [[NSError alloc] _initWithPluginErrorCode:errorCode
-                                                  contentURLString:[URL _web_displayableString]
+                                                  contentURLString:[URL _web_userVisibleString]
                                                pluginPageURLString:[attributes objectForKey:@"pluginspage"]
                                                         pluginName:[pluginPackage name]
                                                           MIMEType:MIMEType];

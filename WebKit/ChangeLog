@@ -2,6 +2,25 @@
 
         Reviewed by Darin
 
+	Fix for this bug:
+
+	<rdar://problem/3366441>: URL strings with UTF-8 characters 
+	processed improperly for display by WebKit
+
+        * Misc.subproj/WebNSURLExtras.h:
+        * Misc.subproj/WebNSURLExtras.m:
+        (isHexDigit): Added
+        (hexDigitValue): Added
+        (-[NSURL _web_userVisibleString]): Added. Produces a string that
+	is suitable for display to a user in the UI.
+        (-[NSURL _web_isEmpty]): Convenience to check for an empty URL
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge requestedURLString]): Now calls _web_userVisibleString
+
+2003-08-13  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin
+
         Fix for this bug:
 
 	<rdar://problem/3374458>: Choose UTF-8 for encoding when calling 
