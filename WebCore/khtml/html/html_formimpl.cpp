@@ -91,6 +91,22 @@ NodeImpl::Id HTMLFormElementImpl::id() const
 }
 
 #if APPLE_CHANGES
+bool HTMLFormElementImpl::isLoginForm()
+{
+    // For now, we just look for a password field.  Perhaps we will want to also
+    // check for a small number of input fields as well?
+    QPtrListIterator<HTMLGenericFormElementImpl> it(formElements);
+    for (; it.current(); ++it) {
+        if (it.current()->id() == ID_INPUT) {
+            HTMLInputElementImpl *inputElt = static_cast<HTMLInputElementImpl*>(it.current());
+            if (inputElt->inputType() == HTMLInputElementImpl::PASSWORD) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
 bool HTMLFormElementImpl::formWouldHaveSecureSubmission(DOMString url)
 {
     if (url.isNull()) {

@@ -57,6 +57,7 @@ typedef khtml::RenderPart KHTMLRenderPart;
 @protocol WebCoreResourceLoader;
 @protocol WebDOMDocument;
 @protocol WebDOMNode;
+@protocol WebDOMElement;
 
 extern NSString *WebCoreElementFrameKey;
 extern NSString *WebCoreElementImageAltStringKey;
@@ -156,6 +157,9 @@ enum FrameBorderStyle {
 - (NSString *)renderTreeAsExternalRepresentation;
 
 - (NSDictionary *)elementAtPoint:(NSPoint)point;
+- (id <WebDOMElement>)elementForView:(NSView *)view;
+- (BOOL)elementIsInLoginForm:(id <WebDOMElement>)element;
+- (BOOL)elementDoesAutoComplete:(id <WebDOMElement>)element;
 
 - (BOOL)searchFor:(NSString *)string direction:(BOOL)forward caseSensitive:(BOOL)caseFlag;
 - (void)jumpToSelection;

@@ -29,6 +29,7 @@
 #import "dom_node.h"
 #import "dom_docimpl.h"
 #import "dom_nodeimpl.h"
+#import "html_formimpl.h"
 #import "html_documentimpl.h"
 #import "htmlattrs.h"
 #import "htmltags.h"
@@ -40,6 +41,8 @@
 #import "render_object.h"
 #import "render_root.h"
 #import "render_style.h"
+#import "render_replaced.h"
+using khtml::RenderWidget;
 
 #import <JavaScriptCore/property_map.h>
 
@@ -50,11 +53,14 @@
 #import "KWQFrame.h"
 #import "KWQPageState.h"
 #import "KWQRenderTreeDebug.h"
+#import "KWQView.h"
 
 #import "WebCoreDOMPrivate.h"
 #import "WebCoreImageRenderer.h"
 #import "WebCoreTextRendererFactory.h"
 #import "WebCoreSettings.h"
+
+#import <AppKit/NSView.h>
 
 using DOM::DocumentImpl;
 using DOM::Node;
@@ -439,6 +445,45 @@ static bool initializedObjectCacheSize = FALSE;
 - (void)mouseMoved:(NSEvent *)event
 {
     _part->mouseMoved(event);
+}
+
+- (id <WebDOMElement>)elementForView:(NSView *)view
+{
+    // FIXME: implemetented currently for only a subset of the KWQ widgets
+    if ([view conformsToProtocol:@protocol(KWQWidgetHolder)]) {
+        QWidget *widget = [(NSView <KWQWidgetHolder> *)view widget];
+        NodeImpl *node = static_cast<const RenderWidget *>(widget->eventFilterObject())->element();
+        return [WebCoreDOMElement elementWithImpl:static_cast<ElementImpl *>(node)];
+    } else {
+        return nil;
+    }
+}
+
+static HTMLInputElementImpl *inputElementFromDOMElement(id <WebDOMElement>element)
+{
+    ASSERT([(NSObject *)element isKindOfClass:[WebCoreDOMElement class]]);
+DOM::ElementImpl *domElement = [(WebCoreDOMElement *)element elementImpl];
+    if (domElement->isHTMLElement()) {
+        HTMLElementImpl *htmlElement = static_cast<HTMLElementImpl *>(domElement);
+        if (idFromNode(htmlElement) == ID_INPUT) {
+            return static_cast<HTMLInputElementImpl *>(htmlElement);
+        }
+    }
+    return nil;
+}
+    
+- (BOOL)elementIsInLoginForm:(id <WebDOMElement>)element
+{
+    HTMLInputElementImpl *inputElement = inputElementFromDOMElement(element);
+    return inputElement->form()->isLoginForm();
+}
+
+- (BOOL)elementDoesAutoComplete:(id <WebDOMElement>)element
+{
+    HTMLInputElementImpl *inputElement = inputElementFromDOMElement(element);
+    return inputElement != nil
+        && inputElement->inputType() == HTMLInputElementImpl::TEXT
+        && inputElement->autoComplete();
 }
 
 - (NSDictionary *)elementAtPoint:(NSPoint)point

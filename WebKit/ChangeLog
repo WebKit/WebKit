@@ -1,3 +1,24 @@
+
+2003-02-13  Trey Matteson  <trey@apple.com>
+
+	First checkin for working forms autocomplete.
+
+	This level mostly just has glue to go from app to WC through the bridge.
+	WebHTMLReo exports some new SPI to get the element of a view, and then to get
+	some HTML-level properties of that element.
+
+        Reviewed by Chris
+
+        * Bookmarks.subproj/WebBookmarkGroup.m:
+        (-[WebBookmarkGroup _saveBookmarkGroupGuts]):  Don't dump entire bookmark
+	dict in the log.
+        * WebKit.exp:  New class used by app, objc_class_name_WebHTMLRepresentation.
+        * WebView.subproj/WebHTMLRepresentation.h:
+        * WebView.subproj/WebHTMLRepresentation.m:
+        (-[WebHTMLRepresentation elementForView:]):  New SPI.
+        (-[WebHTMLRepresentation elementDoesAutoComplete:]):  New SPI.
+        (-[WebHTMLRepresentation elementIsInLoginForm:]):  New SPI.
+
 2003-02-13  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed WebKit typos found by Peter Wilson.

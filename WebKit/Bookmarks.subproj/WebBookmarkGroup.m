@@ -310,7 +310,7 @@ NSString *TagKey = @"WebBookmarkGroupTag";
 
     dictionary = [[self topBookmark] dictionaryRepresentation];
     if (![dictionary writeToFile:path atomically:YES]) {
-        ERROR("attempt to save %@ to %@ failed", dictionary, path);
+        ERROR("attempt to save bookmarks to %@ failed", path);
         return NO;
     }
 

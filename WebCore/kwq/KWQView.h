@@ -27,7 +27,12 @@
 
 class QWidget;
 
-@interface KWQView : NSView
+// all AK View subclasses in KWQ should implement this protocol
+@protocol KWQWidgetHolder
+- (QWidget *)widget;
+@end
+
+@interface KWQView : NSView <KWQWidgetHolder>
 {
     QWidget *widget;
     bool isFlipped;

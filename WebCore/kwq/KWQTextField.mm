@@ -25,6 +25,7 @@
 
 #import "KWQTextField.h"
 
+#import "KWQView.h"
 #import "KWQLineEdit.h"
 #import "KWQKHTMLPart.h"
 #import "KWQNSViewExtras.h"
@@ -47,7 +48,7 @@
 // One is a workaround for bug 3024443.
 // The other is hook up next and previous key views to KHTML.
 
-@interface KWQSecureTextField : NSSecureTextField
+@interface KWQSecureTextField : NSSecureTextField <KWQWidgetHolder>
 {
     QWidget *widget;
     BOOL inSetFrameSize;
@@ -322,6 +323,11 @@
     [self setNeedsDisplay:YES];
 }
 
+- (QWidget *)widget
+{
+    return widget;
+}
+
 @end
 
 @implementation KWQTextFieldFormatter
@@ -440,6 +446,11 @@
     // This is a workaround for Radar 2753974.
     // Also, in the web page context, it's never OK to just display.
     [self setNeedsDisplay:YES];
+}
+
+- (QWidget *)widget
+{
+    return widget;
 }
 
 @end

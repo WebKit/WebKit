@@ -53,7 +53,7 @@
 - (void)_KWQ_setKeyboardFocusRingNeedsDisplay;
 @end
 
-@interface KWQTextAreaTextView : NSTextView
+@interface KWQTextAreaTextView : NSTextView <KWQWidgetHolder>
 {
     QTextEdit *widget;
 }
@@ -470,6 +470,11 @@ static NSRange RangeOfParagraph(NSString *text, int paragraph)
     [self setKeyboardFocusRingNeedsDisplayInRect:[self bounds]];
 }
 
+- (QWidget *)widget
+{
+    return widget;
+}
+
 @end
 
 @implementation KWQTextAreaTextView
@@ -550,6 +555,11 @@ static NSRange RangeOfParagraph(NSString *text, int paragraph)
     if (oldY == [[[self enclosingScrollView] contentView] bounds].origin.y) {
         [[self nextResponder] tryToPerform:@selector(scrollPageDown:) with:nil];
     }
+}
+
+- (QWidget *)widget
+{
+    return widget;
 }
 
 @end

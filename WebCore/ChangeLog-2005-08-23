@@ -1,3 +1,35 @@
+2003-02-13  Trey Matteson  <trey@apple.com>
+
+	First checkin for working forms autocomplete.
+
+	This level has some new support routines.
+
+        Reviewed by Chris
+
+        * khtml/html/html_formimpl.cpp:
+        (HTMLFormElementImpl::isLoginForm):  New, returns if a form is for login.
+        * khtml/html/html_formimpl.h:
+        * kwq/KWQDOMNode.cpp:
+        (idFromNode):  New, helper routine to allow us to use the id() function from ObjC.
+        * kwq/KWQDOMNode.h:
+        * kwq/KWQTextArea.h:  Adopt KWQWidgetHolder protocol.
+        * kwq/KWQTextArea.mm:
+        (-[KWQTextArea widget]):    Adopt KWQWidgetHolder protocol.
+        (-[KWQTextAreaTextView widget]):    Adopt KWQWidgetHolder protocol.
+        * kwq/KWQTextField.h:    Adopt KWQWidgetHolder protocol.
+        * kwq/KWQTextField.mm:
+        (-[KWQTextField widget]):    Adopt KWQWidgetHolder protocol.
+        (-[KWQSecureTextField widget]):    Adopt KWQWidgetHolder protocol.
+        * kwq/KWQView.h:  Define KWQWidgetHolder protocol
+        * kwq/KWQView.mm:  
+        (-[KWQView widget]): Adopt KWQWidgetHolder protocol.
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge elementForView:]):   New method.
+        (inputElementFromDOMElement):  Common code for next two methods.
+        (-[WebCoreBridge elementIsInLoginForm:]):   New method.
+        (-[WebCoreBridge elementDoesAutoComplete:]):   New method.
+
 2003-02-13  Darin Adler  <darin@apple.com>
 
         Reviewed by Trey.

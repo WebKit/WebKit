@@ -10,6 +10,7 @@
 #import <WebKit/WebKitStatisticsPrivate.h>
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebDocument.h>
+#import <WebKit/WebDOMElement.h>
 #import <WebFoundation/WebResourceResponse.h>
 
 @interface WebHTMLRepresentationPrivate : NSObject
@@ -110,6 +111,21 @@
 - (NSAttributedString *)attributedStringFrom: (id<WebDOMNode>)startNode startOffset: (int)startOffset to: (id<WebDOMNode>)endNode endOffset: (int)endOffset
 {
     return [_private->bridge attributedStringFrom: startNode startOffset: startOffset to: endNode endOffset: endOffset];
+}
+
+- (id <WebDOMElement>)elementForView:(NSView *)view
+{
+    return [_private->bridge elementForView:view];
+}
+
+- (BOOL)elementDoesAutoComplete:(id <WebDOMElement>)element
+{
+    return [_private->bridge elementDoesAutoComplete:element];
+}
+
+- (BOOL)elementIsInLoginForm:(id <WebDOMElement>)element
+{
+    return [_private->bridge elementIsInLoginForm:element];
 }
 
 @end

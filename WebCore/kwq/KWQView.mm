@@ -51,4 +51,9 @@
     return isFlipped;
 }
 
+- (QWidget *)widget
+{
+    return widget;
+}
+
 @end

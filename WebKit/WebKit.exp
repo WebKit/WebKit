@@ -11,6 +11,7 @@
 .objc_class_name_WebDownload
 .objc_class_name_WebFormDelegate
 .objc_class_name_WebFrame
+.objc_class_name_WebHTMLRepresentation
 .objc_class_name_WebHTMLView
 .objc_class_name_WebHistory
 .objc_class_name_WebHistoryItem
