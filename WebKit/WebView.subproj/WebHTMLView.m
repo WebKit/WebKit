@@ -729,8 +729,8 @@ static WebHTMLView *lastHitView = nil;
     }
     
     NSSize imageSize, urlStringSize;
-    imageSize.width += labelSize.width + DRAG_LABEL_BORDER_X * 2;
-    imageSize.height += labelSize.height + DRAG_LABEL_BORDER_Y * 2;
+    imageSize.width = labelSize.width + DRAG_LABEL_BORDER_X * 2;
+    imageSize.height = labelSize.height + DRAG_LABEL_BORDER_Y * 2;
     if (drawURLString) {
         urlStringSize.width = [urlString _web_widthWithFont: urlFont];
         urlStringSize.height = [urlFont ascender] - [urlFont descender];

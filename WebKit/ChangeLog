@@ -1,3 +1,16 @@
+2004-06-15  Trey Matteson  <trey@apple.com>
+
+	Fix ASSERT/crash we get sometimes when dragging link images.  Turns
+	out there was an uninitialized variable for the image size,
+	so at random we would try to create huge images that could not
+	be focused.
+	
+        Reviewed by Maciej and Darin.
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _dragImageForLinkElement:]):  Trivial fix to
+	not use += with uninited variable.
+
 2004-06-14  Darin Adler  <darin@apple.com>
 
         Reviewed by me, code changes by Patrick Beard.
