@@ -432,7 +432,7 @@ void ElementImpl::createDecl( )
     m_styleDecls->ref();
     m_styleDecls->setParent(getDocument()->elementSheet());
     m_styleDecls->setNode(this);
-    m_styleDecls->setStrictParsing( !getDocument()->inQuirksMode() );
+    m_styleDecls->setStrictParsing( !getDocument()->inCompatMode() );
 }
 
 void ElementImpl::dispatchAttrRemovalEvent(AttributeImpl *attr)

@@ -1,3 +1,55 @@
+2003-04-24  David Hyatt  <hyatt@apple.com>
+
+	Rename inQuirksMode to inCompatMode.  Drop uses of it in 
+	the render tree code in favor of style()->htmlHacks().
+
+	Remove dead code in the parser dealing with discarded attributes.
+
+	Optimize bidi run justification by adding a guard.
+
+	Fix :target to not match :root when no fragment ID is specified.
+	
+        Reviewed by mjs/gramps
+
+        * khtml/css/cssstyleselector.cpp:
+        * khtml/html/html_baseimpl.cpp:
+        (HTMLBodyElementImpl::parseAttribute):
+        * khtml/html/html_headimpl.cpp:
+        (HTMLLinkElementImpl::setStyleSheet):
+        (HTMLStyleElementImpl::childrenChanged):
+        * khtml/html/html_tableimpl.cpp:
+        (HTMLTableElementImpl::createSharedCellDecls):
+        * khtml/html/htmlparser.cpp:
+        (KHTMLParser::~KHTMLParser):
+        (KHTMLParser::reset):
+        (KHTMLParser::parseToken):
+        (KHTMLParser::insertNode):
+        * khtml/html/htmlparser.h:
+        * khtml/html/htmltokenizer.cpp:
+        (HTMLTokenizer::parseTag):
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::gotoAnchor):
+        * khtml/rendering/bidi.cpp:
+        * khtml/rendering/render_block.cpp:
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::paintLineBoxDecorations):
+        (RenderFlow::repaint):
+        * khtml/rendering/render_inline.cpp:
+        * khtml/rendering/render_inline.h:
+        * khtml/rendering/render_list.cpp:
+        (getParentOfFirstLineBox):
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::createObject):
+        * khtml/rendering/render_text.cpp:
+        (RenderText::paintObject):
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::DocumentImpl):
+        (DocumentImpl::recalcStyle):
+        (DocumentImpl::recalcStyleSelector):
+        * khtml/xml/dom_docimpl.h:
+        * khtml/xml/dom_elementimpl.cpp:
+        (ElementImpl::createDecl):
+
 2003-04-24  Darin Adler  <darin@apple.com>
 
         Reviewed by Chris.

@@ -68,16 +68,15 @@ RenderObject *RenderObject::createObject(DOM::NodeImpl* node,  RenderStyle* styl
         break;
     case INLINE:
     case BLOCK:
-        // In quirks mode, if <td> has a display of block, build a table cell instead.
+        // In compat mode, if <td> has a display of block, build a table cell instead.
         // This corrects erroneous HTML.  A better fix would be to implement full-blown
         // CSS2 anonymous table render object construction, but until then, this will have
         // to suffice. -dwh
-        if (style->display() == BLOCK && node->id() == ID_TD &&
-            node->getDocument()->inQuirksMode())
+        if (style->display() == BLOCK && node->id() == ID_TD && style->htmlHacks())
             o = new (arena) RenderTableCell(node);
         // In quirks mode if <table> has a display of block, make a table. If it has 
         // a display of inline, make an inline-table.
-        else if (node->id() == ID_TABLE && node->getDocument()->inQuirksMode())
+        else if (node->id() == ID_TABLE && style->htmlHacks())
             o = new (arena) RenderTable(node);
         else if (style->display() == INLINE)
             o = new (arena) RenderInline(node);

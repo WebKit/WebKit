@@ -299,7 +299,7 @@ public:
     void setParseMode( ParseMode m ) { pMode = m; }
     ParseMode parseMode() const { return pMode; }
 
-    bool inQuirksMode() { return pMode == Compat; }
+    bool inCompatMode() { return pMode == Compat; }
     bool inAlmostStrictMode() { return pMode == AlmostStrict; }
     bool inStrictMode() { return pMode == Strict; }
     

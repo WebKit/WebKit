@@ -210,11 +210,7 @@ void RenderFlow::paintLineBoxDecorations(QPainter *p, int _x, int _y,
     if (style()->visibility() == VISIBLE && paintAction == PaintActionForeground) {
         // We only paint line box decorations in strict or almost strict mode.
         // Otherwise we let the TextRuns paint their own decorations.
-        RenderObject* curr = this;
-        while (curr && !curr->element())
-            curr = curr->container();
-        bool quirksMode = (curr && curr->element()->getDocument()->inQuirksMode());
-        if (quirksMode)
+        if (style()->htmlHacks())
             return;
         
         // We can check the first box and last box and avoid painting if we don't
@@ -260,7 +256,7 @@ void RenderFlow::repaint(bool immediate)
                              effectiveWidth()+ow*2, effectiveHeight()+ow*2, immediate);
         }
         else
-            return RenderBox::repaint();
+            return RenderBox::repaint(immediate);
     }
 }
 

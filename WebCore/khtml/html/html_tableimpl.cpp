@@ -91,7 +91,7 @@ DOM::CSSStyleDeclarationImpl* HTMLTableElementImpl::createSharedCellDecls()
         m_sharedCellDecls->ref();
         m_sharedCellDecls->setParent(getDocument()->elementSheet());
         m_sharedCellDecls->setNode(this);
-        m_sharedCellDecls->setStrictParsing( !getDocument()->inQuirksMode() );
+        m_sharedCellDecls->setStrictParsing( !getDocument()->inCompatMode() );
 
         if (m_noBorder)
             m_sharedCellDecls->setProperty(CSS_PROP_BORDER_WIDTH, "0", false, true);

@@ -698,25 +698,29 @@ void RenderBlock::computeHorizontalPositionsForLine(InlineFlowBox* lineBox, Bidi
             break;
     }
 
-    for (r = sFirstBidiRun; r; r = r->nextRun) {
-        int spaceAdd = 0;
-        if (numSpaces > 0 && r->obj->isText() && !r->compact) {
-            // get the number of spaces in the run
-            int spaces = 0;
-            for ( int i = r->start; i < r->stop; i++ )
-                if ( static_cast<RenderText *>(r->obj)->text()[i].direction() == QChar::DirWS )
-                    spaces++;
-            KHTMLAssert(spaces <= numSpaces);
-            spaceAdd = (availableWidth - totWidth)*spaces/numSpaces;
-            numSpaces -= spaces;
-            totWidth += spaceAdd;
-            static_cast<TextRun*>(r->box)->setSpaceAdd(spaceAdd);
+    if (numSpaces > 0) {
+        for (r = sFirstBidiRun; r; r = r->nextRun) {
+            int spaceAdd = 0;
+            if (numSpaces > 0 && r->obj->isText() && !r->compact) {
+                // get the number of spaces in the run
+                int spaces = 0;
+                for ( int i = r->start; i < r->stop; i++ )
+                    if ( static_cast<RenderText *>(r->obj)->text()[i].direction() == QChar::DirWS )
+                        spaces++;
+                KHTMLAssert(spaces <= numSpaces);
+                spaceAdd = (availableWidth - totWidth)*spaces/numSpaces;
+                numSpaces -= spaces;
+                totWidth += spaceAdd;
+                static_cast<TextRun*>(r->box)->setSpaceAdd(spaceAdd);
+            }
         }
     }
-
+    
     // The widths of all runs are now known.  We can now place every inline box (and
     // compute accurate widths for the inline flow boxes).
-    lineBox->placeBoxesHorizontally(x);
+    int rightPos = lineBox->placeBoxesHorizontally(x);
+    if (rightPos > m_overflowWidth)
+        m_overflowWidth = rightPos; // FIXME: Work for rtl overflow also.
 }
 
 void RenderBlock::computeVerticalPositionsForLine(InlineFlowBox* lineBox)
@@ -1788,7 +1792,6 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start)
 
  end:
 
-    int determinedWidth = w + tmpW;
     if( lBreak == start && !lBreak.obj->isBR() ) {
         // we just add as much as possible
         if ( m_pre ) {
@@ -1804,7 +1807,6 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start)
                 // better to break between object boundaries than in the middle of a word
                 lBreak.obj = o;
                 lBreak.pos = 0;
-                determinedWidth -= tmpW;
             } else {
                 // Don't ever break in the middle of a word if we can help it.
                 // There's no room at all. We just have to be on this line,
@@ -1815,10 +1817,6 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start)
         }
     }
 
-    // FIXME: XXXdwh Support rtl.
-    if (style()->direction() == LTR && m_overflowWidth < borderLeft() + paddingLeft() + determinedWidth)
-        m_overflowWidth = borderLeft() + paddingLeft() + determinedWidth;
-    
     // make sure we consume at least one char/object.
     if( lBreak == start )
         ++lBreak;

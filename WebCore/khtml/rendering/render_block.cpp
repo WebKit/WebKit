@@ -595,7 +595,7 @@ void RenderBlock::layoutBlockChildren( bool relayoutChildren )
     bool bottomChildQuirk = false;
     bool determinedTopQuirk = false;
 
-    bool strictMode = isAnonymousBox() ? true : (!element()->getDocument()->inQuirksMode());
+    bool strictMode = !style()->htmlHacks();
 
     //kdDebug() << "RenderBlock::layoutBlockChildren " << prevMargin << endl;
 

@@ -1961,7 +1961,7 @@ bool KHTMLPart::gotoAnchor( const QString &name )
     HTMLCollectionImpl *anchors =
         new HTMLCollectionImpl( d->m_doc, HTMLCollectionImpl::DOC_ANCHORS);
     anchors->ref();
-    n = anchors->namedItem(name, !d->m_doc->inQuirksMode());
+    n = anchors->namedItem(name, !d->m_doc->inCompatMode());
     anchors->deref();
   }
 

@@ -157,11 +157,6 @@ KHTMLParser::~KHTMLParser()
 
     delete [] forbiddenTag;
     delete isindex;
-    
-    for (int i = 0; i < DISCARD_MAX; i++) {
-        if (discardedAttrs[i])
-            discardedAttrs[i]->deref();
-    }
 }
 
 void KHTMLParser::reset()
@@ -186,10 +181,6 @@ void KHTMLParser::reset()
     isindex = 0;
     
     discard_until = 0;
-    
-    discardedStackPos = 0;
-    for (int i = 0; i < DISCARD_MAX; i++)
-        discardedAttrs[i] = 0;
 }
 
 void KHTMLParser::parseToken(Token *t)
@@ -216,7 +207,7 @@ void KHTMLParser::parseToken(Token *t)
 
     // holy shit. apparently some sites use </br> instead of <br>
     // be compatible with IE and NS
-    if(t->id == ID_BR+ID_CLOSE_TAG && document->document()->inQuirksMode())
+    if(t->id == ID_BR+ID_CLOSE_TAG && document->document()->inCompatMode())
         t->id -= ID_CLOSE_TAG;
 
     if(t->id > ID_CLOSE_TAG)
@@ -269,17 +260,6 @@ void KHTMLParser::parseToken(Token *t)
         {
             ElementImpl *e = static_cast<ElementImpl *>(n);
             e->setAttributeMap(0);
-            
-            // Save the discarded attributes in case we do a reconstruction later.
-            // For <table><form><tr bgcolor=blue>..., we need to save off the bgcolor
-            // so that when we recreate the row, we can reattach the correct attributes.
-            // <body> fixup is handled already, so we don't need to deal with that here. -dwh
-            if ((n->id() == ID_TR || n->id() == ID_TD) && discardedStackPos < DISCARD_MAX) {
-                if (t->attrs)
-                    t->attrs->ref();
-                discardedAttrs[discardedStackPos] = t->attrs;
-                discardedStackPos++;
-            }
         }
             
 #ifdef PARSER_DEBUG
@@ -653,14 +633,6 @@ bool KHTMLParser::insertNode(NodeImpl *n, bool flat)
                 else
                     e = new HTMLTableRowElementImpl( document );
                 
-                // Now reattach any discarded attributes if they exist. -dwh
-                if (discardedStackPos > 0 && current->id() != ID_TABLE) {
-                    discardedStackPos--;
-                    e->setAttributeMap(discardedAttrs[discardedStackPos]);
-                    if (discardedAttrs[discardedStackPos])
-                        discardedAttrs[discardedStackPos]->deref();
-                    discardedAttrs[discardedStackPos] = 0;
-                }
                 insertNode(e);
                 handled = true;
                 break;
