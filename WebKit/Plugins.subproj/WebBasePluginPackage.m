@@ -12,6 +12,10 @@
 #import <WebKit/WebPluginPackage.h>
 
 
+@interface NSArray (WebPluginExtensions)
+- (NSArray *)_web_lowercaseStrings;
+@end;
+
 @implementation WebBasePluginPackage
 
 + (WebBasePluginPackage *)pluginWithPath:(NSString *)pluginPath
@@ -84,17 +88,19 @@
 
     while ((MIME = [keyEnumerator nextObject]) != nil) {
         MIMEDictionary = [MIMETypes objectForKey:MIME];
-
+        
         // FIXME: Consider storing disabled MIME types.
         NSNumber *isEnabled = [MIMEDictionary objectForKey:WebPluginTypeEnabledKey];
         if (isEnabled && [isEnabled boolValue] == NO) {
             continue;
         }
 
-        extensions = [MIMEDictionary objectForKey:WebPluginExtensionsKey];
-        if (!extensions) {
+        extensions = [[MIMEDictionary objectForKey:WebPluginExtensionsKey] _web_lowercaseStrings];
+        if ([extensions count] == 0) {
             extensions = [NSArray arrayWithObject:@""];
         }
+
+        MIME = [MIME lowercaseString];
 
         [MIMEToExtensionsDictionary setObject:extensions forKey:MIME];
 
@@ -260,3 +266,22 @@
 }
 
 @end
+
+@implementation NSArray (WebPluginExtensions)
+
+- (NSArray *)_web_lowercaseStrings
+{
+    NSMutableArray *lowercaseStrings = [NSMutableArray arrayWithCapacity:[self count]];
+    NSEnumerator *strings = [self objectEnumerator];
+    NSString *string;
+
+    while ((string = [strings nextObject]) != nil) {
+        if ([string isKindOfClass:[NSString class]]) {
+            [lowercaseStrings addObject:[string lowercaseString]];
+        }
+    }
+
+    return lowercaseStrings;
+}
+
+@end;

@@ -73,12 +73,14 @@ static WebPluginDatabase *database = nil;
 
 - (WebBasePluginPackage *)pluginForMIMEType:(NSString *)MIMEType
 {
-    return [self pluginForKey:MIMEType withEnumeratorSelector:@selector(MIMETypeEnumerator)];
+    return [self pluginForKey:[MIMEType lowercaseString]
+       withEnumeratorSelector:@selector(MIMETypeEnumerator)];
 }
 
 - (WebBasePluginPackage *)pluginForExtension:(NSString *)extension
 {
-    return [self pluginForKey:extension withEnumeratorSelector:@selector(extensionEnumerator)];
+    return [self pluginForKey:[extension lowercaseString]
+       withEnumeratorSelector:@selector(extensionEnumerator)];
 }
 
 - (WebBasePluginPackage *)pluginForFilename:(NSString *)filename

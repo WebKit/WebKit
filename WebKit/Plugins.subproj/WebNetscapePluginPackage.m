@@ -16,6 +16,10 @@ typedef void (* TransitionVector) (void);
 static FunctionPointer functionPointerForTVector(TransitionVector);
 static TransitionVector tVectorForFunctionPointer(FunctionPointer);
 
+#define PluginNameOrDescriptionStringNumber 	126
+#define MIMEDescriptionStringNumber		127
+#define MIMEListStringStringNumber 		128
+
 @implementation WebNetscapePluginPackage
 
 + (void)initialize
@@ -108,7 +112,8 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
     NSMutableDictionary *MIMEToDescriptionDictionary = [NSMutableDictionary dictionary];
 
     for (i=1; 1; i+=2) {
-        MIME = [self stringForStringListID:128 andIndex:i];
+        MIME = [[self stringForStringListID:MIMEListStringStringNumber
+                                   andIndex:i] lowercaseString];
         if (!MIME) {
             break;
         }
@@ -119,7 +124,8 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
             continue;
         }
 
-        extensionsList = [self stringForStringListID:128 andIndex:i+1];
+        extensionsList = [[self stringForStringListID:MIMEListStringStringNumber
+                                             andIndex:i+1] lowercaseString];
         if (extensionsList) {
             extensions = [extensionsList componentsSeparatedByString:@","];
             [MIMEToExtensionsDictionary setObject:extensions forKey:MIME];
@@ -128,7 +134,8 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
             [MIMEToExtensionsDictionary setObject:[NSArray arrayWithObject:@""] forKey:MIME];
         }
         
-        description = [self stringForStringListID:127 andIndex:[MIMEToExtensionsDictionary count]];
+        description = [self stringForStringListID:MIMEDescriptionStringNumber
+                                         andIndex:[MIMEToExtensionsDictionary count]];
         if (description) {
             [MIMEToDescriptionDictionary setObject:description forKey:MIME];
         } else {
@@ -155,14 +162,14 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
 
     NSString *filename = [self filename];
     
-    description = [self stringForStringListID:126 andIndex:1];
+    description = [self stringForStringListID:PluginNameOrDescriptionStringNumber andIndex:1];
     if (!description) {
         description = filename;
     }
     [self setPluginDescription:description];
     
     
-    NSString *theName = [self stringForStringListID:126 andIndex:2];
+    NSString *theName = [self stringForStringListID:PluginNameOrDescriptionStringNumber andIndex:2];
     if (!theName) {
         theName = filename;
     }
