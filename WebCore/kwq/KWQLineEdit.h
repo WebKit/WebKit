@@ -59,7 +59,7 @@ public:
     void selectAll();
     
     QSize sizeForCharacterWidth(int numCharacters) const;
-    int baselinePosition() const;
+    int baselinePosition(int height) const;
     
     void returnPressed() { m_returnPressed.call(); }
     void textChanged() { m_textChanged.call(text()); }

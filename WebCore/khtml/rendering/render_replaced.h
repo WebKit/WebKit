@@ -85,6 +85,7 @@ public:
 
 #if APPLE_CHANGES 
     void sendConsumedMouseUp(const QPoint &mousePos, int button, int state);
+    virtual void updateWidgetPositions();
 #endif
 
 public slots:

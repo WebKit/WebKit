@@ -70,7 +70,7 @@ RenderFormElement::~RenderFormElement()
 short RenderFormElement::baselinePosition( bool f, bool isRootLineBox ) const
 {
 #if APPLE_CHANGES
-    return marginTop() + widget()->baselinePosition();
+    return marginTop() + widget()->baselinePosition(m_height);
 #else
     return RenderWidget::baselinePosition( f, isRootLineBox ) - 2 - style()->fontMetrics().descent();
 #endif
@@ -157,13 +157,14 @@ void RenderFormElement::layout()
     calcWidth();
     calcHeight();
 
+#if !APPLE_CHANGES
     if ( m_widget )
         resizeWidget(m_widget,
                      m_width-borderLeft()-borderRight()-paddingLeft()-paddingRight(),
                      m_height-borderLeft()-borderRight()-paddingLeft()-paddingRight());
-
-    if ( !style()->width().isPercent() )
-        setNeedsLayout(false);
+#endif
+    
+    setNeedsLayout(false);
 }
 
 void RenderFormElement::slotClicked()

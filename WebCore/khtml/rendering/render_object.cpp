@@ -1783,6 +1783,14 @@ void RenderObject::getTextDecorationColors(int decorations, QColor& underline, Q
     }        
 }
 
+#if APPLE_CHANGES
+void RenderObject::updateWidgetPositions()
+{
+    for (RenderObject* curr = firstChild(); curr; curr = curr->nextSibling())
+        curr->updateWidgetPositions();
+}
+#endif
+
 QChar RenderObject::backslashAsCurrencySymbol() const
 {
 #if !APPLE_CHANGES

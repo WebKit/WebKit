@@ -189,9 +189,9 @@ QRect QWidget::frameGeometry() const
     return rect;
 }
 
-int QWidget::baselinePosition() const
+int QWidget::baselinePosition(int height) const
 {
-    return height();
+    return height;
 }
 
 bool QWidget::hasFocus() const
@@ -404,7 +404,9 @@ bool QWidget::hasMouseTracking() const
 void QWidget::setFrameGeometry(const QRect &rect)
 {
     KWQ_BLOCK_NS_EXCEPTIONS;
+    [getOuterView() setNeedsDisplay: YES];
     [getOuterView() setFrame:rect];
+    [getOuterView() setNeedsDisplay: YES];
     KWQ_UNBLOCK_NS_EXCEPTIONS;
 }
 

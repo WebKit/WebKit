@@ -209,11 +209,13 @@ void RenderWidget::layout( )
 {
     KHTMLAssert( needsLayout() );
     KHTMLAssert( minMaxKnown() );
+#if !APPLE_CHANGES
     if ( m_widget ) {
 	resizeWidget( m_widget,
 		      m_width-borderLeft()-borderRight()-paddingLeft()-paddingRight(),
 		      m_height-borderLeft()-borderRight()-paddingLeft()-paddingRight() );
     }
+#endif
 
     setNeedsLayout(false);
 }
@@ -421,5 +423,28 @@ void RenderWidget::deref(RenderArena *arena)
     if (!_ref)
         arenaDelete(arena);
 }
+
+#if APPLE_CHANGES
+void RenderWidget::updateWidgetPositions()
+{
+    if (!m_widget)
+        return;
+    
+    int x, y, width, height;
+    absolutePosition(x,y);
+    width = m_width-borderLeft()-borderRight()-paddingLeft()-paddingRight();
+    height = m_height-borderLeft()-borderRight()-paddingLeft()-paddingRight();
+    QRect newBounds(x,y,width,height);
+    const QRect& oldBounds = m_widget->frameGeometry();
+    if (newBounds != oldBounds) {
+        // The widget changed positions.  Update the frame geometry.
+        RenderArena *arena = ref();
+        element()->ref();
+        m_widget->setFrameGeometry(newBounds);
+        element()->deref();
+        deref(arena);
+    }
+}
+#endif
 
 #include "render_replaced.moc"

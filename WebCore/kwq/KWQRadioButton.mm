@@ -85,9 +85,9 @@ bool QRadioButton::isChecked() const
     return result;
 }
 
-int QRadioButton::baselinePosition() const
+int QRadioButton::baselinePosition(int height) const
 {
-    return height() - dimensions()[baselineFudgeFactor];
+    return height - dimensions()[baselineFudgeFactor];
 }
 
 const int *QRadioButton::dimensions() const

@@ -182,7 +182,7 @@ void QComboBox::setFrameGeometry(const QRect &r)
         dimensions()[topMargin] + r.height() + dimensions()[bottomMargin]));
 }
 
-int QComboBox::baselinePosition() const
+int QComboBox::baselinePosition(int height) const
 {
     // Menu text is at the top.
     KWQPopUpButton *button = (KWQPopUpButton *)getView();

@@ -53,7 +53,7 @@ public:
     QSize sizeHint() const;
     QRect frameGeometry() const;
     void setFrameGeometry(const QRect &);
-    int baselinePosition() const;
+    int baselinePosition(int height) const;
     void setFont(const QFont &);
 
     void itemSelected();

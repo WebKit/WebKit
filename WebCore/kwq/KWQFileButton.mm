@@ -107,7 +107,7 @@ void KWQFileButton::setFrameGeometry(const QRect &rect)
     KWQ_UNBLOCK_NS_EXCEPTIONS;
 }
 
-int KWQFileButton::baselinePosition() const
+int KWQFileButton::baselinePosition(int height) const
 {
     NSView <WebCoreFileButton> *button = getView();
 

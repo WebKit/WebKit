@@ -102,9 +102,9 @@ void QCheckBox::clicked()
     QButton::clicked();
 }
 
-int QCheckBox::baselinePosition() const
+int QCheckBox::baselinePosition(int height) const
 {
-    return height() - dimensions()[baselineFudgeFactor];
+    return height - dimensions()[baselineFudgeFactor];
 }
 
 const int *QCheckBox::dimensions() const

@@ -428,18 +428,6 @@ static BOOL nowPrinting(WebCoreBridge *self)
     [self drawRect:rect withPainter:&painter];
 }
 
-- (void)adjustFrames:(NSRect)rect
-{
-    // Ick!  khtml sets the frame size during layout and
-    // the frame origins during drawing!  So we have to 
-    // layout and do a draw with rendering disabled to
-    // correctly adjust the frames.
-    [self forceLayoutAdjustingViewSize:NO];
-    QPainter painter(nowPrinting(self));
-    painter.setPaintingDisabled(YES);
-    [self drawRect:rect withPainter:&painter];
-}
-
 // Vertical pagination hook from AppKit
 - (void)adjustPageHeightNew:(float *)newBottom top:(float)oldTop bottom:(float)oldBottom limit:(float)bottomLimit
 {

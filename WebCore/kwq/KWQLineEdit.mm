@@ -203,7 +203,7 @@ QSize QLineEdit::sizeForCharacterWidth(int numCharacters) const
     return QSize(size);
 }
 
-int QLineEdit::baselinePosition() const
+int QLineEdit::baselinePosition(int height) const
 {
     KWQTextField *textField = (KWQTextField *)getView();
 

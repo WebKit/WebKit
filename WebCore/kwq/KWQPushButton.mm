@@ -83,7 +83,7 @@ void QPushButton::setFrameGeometry(const QRect &r)
         r.height() + dimensions()[topMargin] + dimensions()[bottomMargin]));
 }
 
-int QPushButton::baselinePosition() const
+int QPushButton::baselinePosition(int height) const
 {
     // Button text is centered vertically, with a fudge factor to account for the shadow.
     NSButton *button = (NSButton *)getView();
@@ -98,7 +98,7 @@ int QPushButton::baselinePosition() const
     KWQ_UNBLOCK_NS_EXCEPTIONS;
 
     return (int)ceil(-dimensions()[topMargin]
-        + ((height() + dimensions()[topMargin] + dimensions()[bottomMargin]) - (ascender - descender)) / 2.0
+        + ((height + dimensions()[topMargin] + dimensions()[bottomMargin]) - (ascender - descender)) / 2.0
         + ascender - dimensions()[baselineFudgeFactor]);
 }
 
