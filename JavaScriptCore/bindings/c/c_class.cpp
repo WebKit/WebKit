@@ -46,8 +46,8 @@ void CClass::_commonCopy(const CClass &other) {
 void CClass::_commonInit (NPClass *aClass)
 {
     _isa = aClass;
-    _methods = CFDictionaryCreateMutable(NULL, 16, &kCFTypeDictionaryKeyCallBacks, NULL);
-    _fields = CFDictionaryCreateMutable(NULL, 16, &kCFTypeDictionaryKeyCallBacks, NULL);
+    _methods = CFDictionaryCreateMutable(NULL, 0, &kCFTypeDictionaryKeyCallBacks, NULL);
+    _fields = CFDictionaryCreateMutable(NULL, 0, &kCFTypeDictionaryKeyCallBacks, NULL);
 }
 
 
