@@ -160,17 +160,8 @@ void* Collector::allocate(size_t s)
 bool Collector::collect()
 {
   bool deleted = false;
-  // MARK: first unmark everything
-  for (int block = 0; block < heap.usedBlocks; block++) {
-    for (int cell = 0; cell < CELLS_PER_BLOCK; cell++) {
-      ((ValueImp *)(heap.blocks[block]->cells + cell))->_flags &= ~ValueImp::VI_MARKED;
-    }
-  }
-  for (int cell = 0; cell < heap.usedOversizeCells; cell++) {
-    ((ValueImp *)heap.oversizeCells[cell])->_flags &= ~ValueImp::VI_MARKED;
-  }
-  
-  // mark all referenced objects recursively
+
+  // MARK: first mark all referenced objects recursively
   // starting out from the set of root objects
   if (InterpreterImp::s_hook) {
     InterpreterImp *scr = InterpreterImp::s_hook;
@@ -204,8 +195,8 @@ bool Collector::collect()
       imp->mark();
     }
   }
-  
-  // SWEEP: delete everything with a zero refcount (garbage)
+
+  // SWEEP: delete everything with a zero refcount (garbage) and unmark everything else
   
   int emptyBlocks = 0;
 
@@ -213,17 +204,20 @@ bool Collector::collect()
     for (int wordInBitmap = 0; wordInBitmap < BITMAP_SIZE; wordInBitmap++) {
       uint32_t word = heap.blocks[block]->bitmap[wordInBitmap];
       for (int bitInWord = 0; bitInWord < BITS_PER_WORD; bitInWord++) {
-	ValueImp *imp = (ValueImp *)(heap.blocks[block]->cells + BITS_PER_WORD * wordInBitmap + bitInWord);
 	
-	if ((word & (1 << bitInWord)) &&
-	    !imp->refcount && imp->_flags == (ValueImp::VI_GCALLOWED | ValueImp::VI_CREATED)) {
-	  // emulate destructing part of 'operator delete()'
-	  //fprintf( stderr, "Collector::deleting ValueImp %p (%s)\n", (void*)imp, typeid(*imp).name());
-	  imp->~ValueImp();
-	  heap.blocks[block]->bitmap[wordInBitmap] &= ~(1 << bitInWord);
-	  heap.blocks[block]->usedCells--;
-	  heap.numLiveObjects--;
-	  deleted = true;
+	if (word & (1 << bitInWord)) {
+	ValueImp *imp = (ValueImp *)(heap.blocks[block]->cells + BITS_PER_WORD * wordInBitmap + bitInWord);
+	  if (!imp->refcount && imp->_flags == (ValueImp::VI_GCALLOWED | ValueImp::VI_CREATED)) {
+	    //fprintf( stderr, "Collector::deleting ValueImp %p (%s)\n", (void*)imp, typeid(*imp).name());
+	    // emulate destructing part of 'operator delete()'
+	    imp->~ValueImp();
+	    heap.blocks[block]->bitmap[wordInBitmap] &= ~(1 << bitInWord);
+	    heap.blocks[block]->usedCells--;
+	    heap.numLiveObjects--;
+	    deleted = true;
+	  } else {
+	    imp->_flags &= ~ValueImp::VI_MARKED;
+	  }
 	}
       }
     }
@@ -245,7 +239,6 @@ bool Collector::collect()
       } 
     }
   }
-
 
   
   int cell = 0;
@@ -271,6 +264,7 @@ bool Collector::collect()
       }
 
     } else {
+      imp->_flags &= ~ValueImp::VI_MARKED;
       cell++;
     }
   }

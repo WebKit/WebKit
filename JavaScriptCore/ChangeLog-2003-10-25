@@ -1,3 +1,14 @@
+2002-11-22  Maciej Stachowiak  <mjs@apple.com>
+
+	- a simple change for .5% gain on ibench - instead of unmarking
+	all objects at the start of collection, instead unmark as part of
+	the sweep phase
+	
+        * kjs/collector.cpp:
+        (Collector::collect): Remove separate unmarking pass and instead
+	unmark the objects that don't get collected during the sweep
+	phase.
+
 2002-11-21  Darin Adler  <darin@apple.com>
 
 	- stop garbage collecting the ActivationImp objects, gets 3% on iBench
