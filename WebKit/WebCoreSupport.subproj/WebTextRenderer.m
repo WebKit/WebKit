@@ -15,6 +15,7 @@
 #import <WebCore/WebCoreUnicode.h>
 
 #import <WebKit/WebGlyphBuffer.h>
+#import <WebKit/WebGraphicsBridge.h>
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebNSObjectExtras.h>
 #import <WebKit/WebTextRendererFactory.h>
@@ -517,6 +518,58 @@ static BOOL alwaysUseATSU = NO;
             [self _CG_drawHighlightForRun:run style:style geometry:geometry];
     }
 }
+
+// Constants for pattern underline
+#define patternWidth 4
+#define patternHeight 3
+
+- (void)drawLineForMisspelling:(NSPoint)point withWidth:(int)width
+{
+    // Constants for pattern color
+    static NSColor *spellingPatternColor = nil;
+    static bool usingDot = false;
+ 
+    // Initialize pattern color if needed
+    if (!spellingPatternColor) {
+        NSImage *image = [NSImage imageNamed:@"SpellingDot"];
+        ASSERT(image); // if image is not available, we want to know
+        NSColor *color = (image ? [NSColor colorWithPatternImage:image] : nil);
+        if (color)
+            usingDot = true;
+        else
+            color = [NSColor redColor];
+        spellingPatternColor = [color retain];
+    }
+
+    // Width must be divisible by 4 to make sure we always draw full misspelling dots under words.
+    // Do a small adjustment to shift the underline back to the left if the pattern was
+    // expanded to the right "too much" to accomodate the drawing of a full dot.
+    if (usingDot) {
+        int w = (width + patternWidth) - (width % patternWidth);
+        if (w - width > 2) 
+            point.x -= 1;
+        width = w;
+    }
+
+    // Compute the appropriate phase relative to the top level view in the window.
+    NSPoint originInWindow = [[NSView focusView] convertPoint:point toView:nil];
+    // WebCore may translate the focus, and thus need an extra phase correction
+    NSPoint extraPhase = [[WebGraphicsBridge sharedBridge] additionalPatternPhase];
+    originInWindow.x += extraPhase.x;
+    originInWindow.y += extraPhase.y;
+    CGSize phase = CGSizeMake(fmodf(originInWindow.x, patternWidth), fmodf(originInWindow.y, patternHeight));
+
+    // Draw underline
+    NSGraphicsContext *currentContext = [NSGraphicsContext currentContext];
+    [currentContext saveGraphicsState];
+    [spellingPatternColor set];
+    CGContextSetPatternPhase((CGContextRef)[currentContext graphicsPort], phase);
+    NSRectFillUsingOperation(NSMakeRect(point.x, point.y, width, patternHeight), NSCompositeSourceOver);
+    [currentContext restoreGraphicsState];
+}
+
+#undef patternWidth
+#undef patternHeight
 
 - (int)pointToOffset:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style position:(int)x reversed:(BOOL)reversed includePartialGlyphs:(BOOL)includePartialGlyphs
 {

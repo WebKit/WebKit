@@ -1342,4 +1342,9 @@ static id <WebFormDelegate> formDelegate(WebBridge *self)
     return [[_frame webView] spellCheckerDocumentTag];
 }
 
+- (BOOL)isContinuousSpellCheckingEnabled
+{
+    return [[_frame webView] isContinuousSpellCheckingEnabled];
+}
+
 @end

@@ -226,6 +226,8 @@ public:
     NSImage *snapshotDragImage(DOM::Node node, NSRect *imageRect, NSRect *elementRect) const;
 
     NSFont *fontForCurrentPosition() const;
+    void markMisspellingsInSelection(const DOM::Selection &selection);
+    void updateSpellChecking();
 
     NSFileWrapper *fileWrapperForElement(DOM::ElementImpl *);
     NSAttributedString *attributedString(DOM::NodeImpl *startNode, int startOffset, DOM::NodeImpl *endNode, int endOffset);

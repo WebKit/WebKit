@@ -939,7 +939,7 @@ QString KWQKHTMLPart::advanceToNextMisspelling()
     WordAwareIterator it(searchRange);
     bool wrapped = false;
     
-    // We go to the end of our first range insted of the start of it, just to be sure
+    // We go to the end of our first range instead of the start of it, just to be sure
     // we don't get foiled by any word boundary problems at the start.  It means we might
     // do a tiny bit more searching.
     Node searchEndAfterWrapNode = it.range().endContainer();
@@ -965,11 +965,8 @@ QString KWQKHTMLPart::advanceToNextMisspelling()
                 
                     setSelection(misspellingRange);
                     jumpToSelection();
-#ifndef NDEBUG      // not yet baked enough for deployment
                     // Mark misspelling in document.
                     xmlDocImpl()->addMarker(misspellingRange, DocumentMarker::Spelling);
-#endif
-
                     return result;
                 }
             }
@@ -3643,8 +3640,114 @@ bool KHTMLPart::canRedo() const
     return [[KWQ(this)->_bridge undoManager] canRedo];
 }
 
+void KWQKHTMLPart::markMisspellingsInSelection(const Selection &selection)
+{
+    // No work to do if there is no selection or continuous spell check is off, or the
+    // selection start position is not now rendered (maybe it has been deleted).
+    if (selection.state() == Selection::NONE || 
+        ![_bridge isContinuousSpellCheckingEnabled] || 
+        !selection.start().inRenderedContent())
+        return;
+
+    // Expand selection to word boundaries so that complete words wind up being passed to the spell checker.
+    //
+    // FIXME: It seems that NSSpellChecker is too slow to handle finding multiple mispellings in an
+    // arbitrarily large selection.
+    // So, for now, the idea is to mimic AppKit behavior and limit the selection to the first word 
+    // of the selection passed in.
+    // This is not ideal by any means, but this is the convention.
+    Position end(selection.start().nextWordBoundary());
+    if (end == selection.start())
+        end = end.nextCharacterPosition().nextWordBoundary();
+    Selection s(selection.start().previousWordBoundary(), end);
+    if (s.state() == Selection::NONE)
+        return;
+    // Change to this someday to spell check the entire selection.
+    // The rest of this function is prepared to handle finding multiple misspellings in a 
+    // more-than-one-word selection.
+    //Selection s = Selection(selection.start().previousWordBoundary(), selection.end().nextWordBoundary());
+
+    Range searchRange(s.toRange());
+    
+    // If we're not in an editable node, bail.
+    NodeImpl *editableNodeImpl = searchRange.startContainer().handle();
+    if (!editableNodeImpl->isContentEditable())
+        return;
+    
+    // Make sure start of searchRange is not in the middle of a word.  Jumping back a char and then
+    // forward by a word happens to do the trick.
+    Position start(searchRange.startContainer().handle(), searchRange.startOffset());
+    Position newStart = start.previousCharacterPosition();
+    if (newStart != start) {
+        newStart = newStart.nextWordBoundary();
+        // Must ensure the position is on a container to be usable with a DOMRange
+        newStart = newStart.equivalentRangeCompliantPosition();
+        searchRange.setStart(Node(newStart.node()), newStart.offset());
+    } // else we were already at the start of the editable node
+    
+    if (searchRange.collapsed())
+        // nothing to search in
+        return;       
+    
+    NSSpellChecker *checker = [NSSpellChecker sharedSpellChecker];
+    WordAwareIterator it(searchRange);
+    
+    while (!it.atEnd()) {      // we may be starting at the end of the doc, and already by atEnd
+        const QChar *chars = it.characters();
+        long len = it.length();
+        if (len > 1 || !chars[0].isSpace()) {
+            NSString *chunk = [[NSString alloc] initWithCharactersNoCopy:(unichar *)chars length:len freeWhenDone:NO];
+            int startIndex = 0;
+            // Loop over the chunk to find each misspelling in it.
+            while (startIndex < len) {
+                NSRange misspelling = [checker checkSpellingOfString:chunk startingAt:startIndex language:nil wrap:NO inSpellDocumentWithTag:[_bridge spellCheckerDocumentTag] wordCount:NULL];
+                if (misspelling.length == 0) {
+                    break;
+                }
+                else {
+                    // Build up result range and string.  Note the misspelling may span many text nodes,
+                    // but the CharIterator insulates us from this complexity
+                    Range misspellingRange(xmlDocImpl());
+                    CharacterIterator chars(it.range());
+                    chars.advance(misspelling.location);
+                    misspellingRange.setStart(chars.range().startContainer(), chars.range().startOffset());
+                    chars.advance(misspelling.length);
+                    misspellingRange.setEnd(chars.range().startContainer(), chars.range().startOffset());
+                    // Mark misspelling in document.
+                    xmlDocImpl()->addMarker(misspellingRange, DocumentMarker::Spelling);
+                    startIndex = misspelling.location + misspelling.length;
+                }
+            }
+            [chunk release];
+        }
+    
+        it.advance();
+    }
+}
+
+void KWQKHTMLPart::updateSpellChecking()
+{
+    if (xmlDocImpl()) {
+        if ([_bridge isContinuousSpellCheckingEnabled]) {
+            // When continuous spell checking is on, no markers appear in words that
+            // intersect the current selection.
+            Position start(selection().start().previousWordBoundary());
+            Position end(selection().start().nextWordBoundary());
+            if (end == selection().start())
+                end = end.nextCharacterPosition().nextWordBoundary();
+            Selection selection(start, end);
+            xmlDocImpl()->removeMarker(selection.toRange(), DocumentMarker::Spelling);
+        }
+        else {
+            // When continuous spell checking is off, no markers appear after the selection changes.
+            xmlDocImpl()->removeAllMarkers();
+        }
+    }
+}
+
 void KWQKHTMLPart::respondToChangedSelection()
 {
+    updateSpellChecking();
     [_bridge respondToChangedSelection];
 }
 

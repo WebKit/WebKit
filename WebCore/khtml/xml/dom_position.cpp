@@ -290,21 +290,22 @@ Position Position::previousWordBoundary() const
         return Position();
 
     Position pos = *this;
-    for (PositionIterator it(*this); !it.atStart(); it.previous()) {
-        if (it.current().node()->nodeType() == Node::TEXT_NODE || it.current().node()->nodeType() == Node::CDATA_SECTION_NODE) {
-            DOMString t = it.current().node()->nodeValue();
+    int tries = 0;
+    while (tries < 2) {
+        if (pos.node()->nodeType() == Node::TEXT_NODE || pos.node()->nodeType() == Node::CDATA_SECTION_NODE) {
+            DOMString t = pos.node()->nodeValue();
             QChar *chars = t.unicode();
             uint len = t.length();
             int start, end;
-            khtml::findWordBoundary(chars, len, it.current().offset(), &start, &end);
-            pos = Position(it.current().node(), start);
+            khtml::findWordBoundary(chars, len, pos.offset(), &start, &end);
+            pos = Position(pos.node(), start);
         }
         else {
-            pos = Position(it.current().node(), it.current().node()->caretMinOffset());
+            pos = Position(pos.node(), pos.node()->caretMinOffset());
         }
         if (pos != *this)
             return pos;
-        it.setPosition(pos);
+        tries++;
     }
     
     return *this;
@@ -316,21 +317,22 @@ Position Position::nextWordBoundary() const
         return Position();
 
     Position pos = *this;
-    for (PositionIterator it(*this); !it.atEnd(); it.next()) {
-        if (it.current().node()->nodeType() == Node::TEXT_NODE || it.current().node()->nodeType() == Node::CDATA_SECTION_NODE) {
-            DOMString t = it.current().node()->nodeValue();
+    int tries = 0;
+    while (tries < 2) {
+        if (pos.node()->nodeType() == Node::TEXT_NODE || pos.node()->nodeType() == Node::CDATA_SECTION_NODE) {
+            DOMString t = pos.node()->nodeValue();
             QChar *chars = t.unicode();
             uint len = t.length();
             int start, end;
-            khtml::findWordBoundary(chars, len, it.current().offset(), &start, &end);
-            pos = Position(it.current().node(), end);
+            khtml::findWordBoundary(chars, len, pos.offset(), &start, &end);
+            pos = Position(pos.node(), end);
         }
         else {
-            pos = Position(it.current().node(), it.current().node()->caretMaxOffset());
+            pos = Position(pos.node(), pos.node()->caretMaxOffset());
         }
         if (pos != *this)
             return pos;
-        it.setPosition(pos);
+        tries++;
     }
     
     return *this;

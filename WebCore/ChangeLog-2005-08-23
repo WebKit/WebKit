@@ -1,3 +1,66 @@
+2004-08-06  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Maciej
+
+        Finish off spellchecking support to HTML editing. Includes work to
+        enable continuous spellchecking.
+
+        * khtml/editing/htmlediting_impl.cpp:
+        (khtml::EditCommandImpl::markMisspellingsInSelection): Basically, a one-liner convenience to
+        make the call over to the KWQKHTMLPart.
+        (khtml::ReplaceSelectionCommandImpl::doApply): Did some rearranging of code so that the
+        inserted content can be spell-checked. The function is basically the same, except for
+        the addition of calls to markMisspellingsInSelection.
+        (khtml::TypingCommandImpl::markMisspellingsAfterTyping): New function. Takes a look at the
+        selection that results after typing and determines whether it needs to spellcheck. 
+        Since the word containing the current selection is never marked, this does a check to
+        see if typing made a new word that is not in the current selection. Basically, you
+        get this by being at the end of a word and typing a space.
+        (khtml::TypingCommandImpl::typingAddedToOpenCommand): Call markMisspellingsAfterTyping.
+        * khtml/editing/htmlediting_impl.h: Add new function declarations.
+         * khtml/khtml_part.cpp:
+        (KHTMLPart::setSelection): Since spell checks are updated when the selection changes, 
+        and every selection change passes through here, this is a good place to put the call 
+        to the spellchecker.
+        * khtml/rendering/render_text.cpp:
+        (InlineTextBox::paintMarker): Remove temporary misspelling line drawing code. Replace with
+        call that does AppKit-style drawing. Fix up some comments.
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::addMarker): Repaint the node that had the marker added. This makes it show 
+        up on setting it.
+        (DocumentImpl::removeMarker): Ditto.
+        (DocumentImpl::removeAllMarkers): New function. Convenience for clearing all markers.
+        Used when not in continuous spellchecking mode.
+        (DocumentImpl::shiftMarkers): Moves markers in response to changes in a node's contents.
+        This shifts the marker offsets by a given amount. This keeps the markers in the right
+        place when a user types in a node with markers already set on it.
+        * khtml/xml/dom_docimpl.h: Added new functions. Removed unnecessary enum qualifier from some
+        declarations.
+        * khtml/xml/dom_position.cpp:
+        (DOM::Position::previousWordBoundary): This function was susceptible to endless loops...and
+        needlessly so. Basically, if the current position is at a word boundary, run the code again
+        to find the previous word boundary.
+        (DOM::Position::nextWordBoundary): Same as above, but for next word boundary.
+        * khtml/xml/dom_textimpl.cpp:
+        (CharacterDataImpl::setData): Call shiftMarkers to update markers when this node changes.
+        (CharacterDataImpl::insertData): Ditto.
+        (CharacterDataImpl::deleteData): Ditto.
+        (CharacterDataImpl::replaceData): Ditto.
+        * kwq/KWQKHTMLPart.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::advanceToNextMisspelling):
+        (KWQKHTMLPart::markMisspellingsInSelection):
+        (KWQKHTMLPart::updateSpellChecking):
+        (KWQKHTMLPart::respondToChangedSelection):
+        * kwq/KWQPainter.h:
+        * kwq/KWQPainter.mm:
+        (QPainter::drawLineForMisspelling): New function. Call over to WebKit to do the drawing.
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge alterCurrentSelection:direction:granularity:]): Pass markMisspellings flag to
+        setSelection call. 
+        * kwq/WebCoreTextRenderer.h:
+
 === Safari-155 ===
 
 2004-08-05  David Hyatt  <hyatt@apple.com>

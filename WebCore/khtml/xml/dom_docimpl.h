@@ -544,10 +544,13 @@ public:
     bool queryCommandSupported(const DOMString &command);
     DOMString queryCommandValue(const DOMString &command);
     
-    void addMarker(Range range, enum DocumentMarker::MarkerType type);
-    void removeMarker(Range range, enum DocumentMarker::MarkerType type);
+    void addMarker(Range range, DocumentMarker::MarkerType type);
+    void removeMarker(Range range, DocumentMarker::MarkerType type);
     void addMarker(NodeImpl *node, DocumentMarker marker);
     void removeMarker(NodeImpl *node, DocumentMarker marker);
+    void removeAllMarkers(NodeImpl *node);
+    void removeAllMarkers();
+    void shiftMarkers(NodeImpl *node, ulong startOffset, long delta);
     QValueList<DocumentMarker> markersForNode(NodeImpl *node);
 
 #ifndef KHTML_NO_XBL

@@ -489,6 +489,7 @@ typedef enum {
 - (void)windowObjectCleared;
 
 - (int)spellCheckerDocumentTag;
+- (BOOL)isContinuousSpellCheckingEnabled;
 
 @end
 

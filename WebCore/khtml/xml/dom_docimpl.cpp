@@ -2928,6 +2928,10 @@ void DocumentImpl::addMarker(NodeImpl *node, DocumentMarker newMarker)
         // at this point it points to the node before which we want to insert
         markers->insert(it, newMarker);
     }
+    
+    // repaint the affected node
+    if (node->renderer())
+        node->renderer()->repaint();
 }
 
 void DocumentImpl::removeMarker(NodeImpl *node, DocumentMarker target)
@@ -2972,6 +2976,51 @@ void DocumentImpl::removeMarker(NodeImpl *node, DocumentMarker target)
             }
         }
     }
+
+    // repaint the affected node
+    if (node->renderer())
+        node->renderer()->repaint();
+}
+
+void DocumentImpl::removeAllMarkers(NodeImpl *node)
+{
+    QValueList <DocumentMarker> *markers = m_markers.find(node);
+    if (!markers)
+        return;
+
+    QValueListIterator<DocumentMarker> it;
+    for (it = markers->begin(); it != markers->end(); ++it) {
+        markers->remove(it);
+    }
+}
+
+void DocumentImpl::removeAllMarkers()
+{
+    m_markers.clear();
+}
+
+void DocumentImpl::shiftMarkers(NodeImpl *node, ulong startOffset, long delta)
+{
+    if (m_markers.isEmpty())
+        return;
+
+    QValueList <DocumentMarker> *markers = m_markers.find(node);
+    if (!markers)
+        return;
+
+    QValueListIterator<DocumentMarker> it;
+    for (it = markers->begin(); it != markers->end(); ++it) {
+        DocumentMarker &marker = *it;
+        if (marker.startOffset >= startOffset) {
+            ASSERT(marker.startOffset + delta > 0);
+            marker.startOffset += delta;
+            marker.endOffset += delta;
+        }
+    }
+    
+    // repaint the affected node
+    if (node->renderer())
+        node->renderer()->repaint();
 }
 
 QValueList<DocumentMarker> DocumentImpl::markersForNode(NodeImpl *node)

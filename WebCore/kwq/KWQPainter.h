@@ -107,6 +107,7 @@ public:
                   const QColor& backgroundColor, QPainter::TextDirection d, bool visuallyOrdered,
                   int letterSpacing, int wordSpacing, bool smallCaps);
     void drawLineForText(int x, int y, int yOffset, int width);
+    void drawLineForMisspelling(int x, int y, int width);
 
     QColor selectedTextBackgroundColor() const;
     void setUsesInactiveTextBackgroundColor(bool u) { _usesInactiveTextBackgroundColor = u; }

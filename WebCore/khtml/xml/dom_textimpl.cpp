@@ -76,6 +76,8 @@ void CharacterDataImpl::setData( const DOMString &_data, int &exceptioncode )
     
     dispatchModifiedEvent(oldStr);
     if(oldStr) oldStr->deref();
+    
+    getDocument()->removeAllMarkers(this);
 }
 
 unsigned long CharacterDataImpl::length() const
@@ -130,6 +132,10 @@ void CharacterDataImpl::insertData( const unsigned long offset, const DOMString 
     
     dispatchModifiedEvent(oldStr);
     oldStr->deref();
+    
+    // update the markers for spell checking and grammar checking
+    uint length = arg.length();
+    getDocument()->shiftMarkers(this, offset, length);
 }
 
 void CharacterDataImpl::deleteData( const unsigned long offset, const unsigned long count, int &exceptioncode )
@@ -148,6 +154,9 @@ void CharacterDataImpl::deleteData( const unsigned long offset, const unsigned l
     
     dispatchModifiedEvent(oldStr);
     oldStr->deref();
+
+    // update the markers for spell checking and grammar checking
+    getDocument()->shiftMarkers(this, offset + count, -count);
 }
 
 void CharacterDataImpl::replaceData( const unsigned long offset, const unsigned long count, const DOMString &arg, int &exceptioncode )
@@ -173,6 +182,10 @@ void CharacterDataImpl::replaceData( const unsigned long offset, const unsigned 
     
     dispatchModifiedEvent(oldStr);
     oldStr->deref();
+    
+    // update the markers for spell checking and grammar checking
+    int diff = arg.length() - count;
+    getDocument()->shiftMarkers(this, offset + count, diff);
 }
 
 DOMString CharacterDataImpl::nodeValue() const

@@ -88,6 +88,8 @@ public:
 
     void setStartingSelection(const DOM::Selection &s);
     void setEndingSelection(const DOM::Selection &s);
+    
+    void markMisspellingsInSelection(const DOM::Selection &s);
 
 private:
     DOM::DocumentImpl *m_document;
@@ -612,6 +614,7 @@ public:
 private:
     void issueCommandForDeleteKey();
     void removeCommand(const EditCommand &);
+    void markMisspellingsAfterTyping();
     void typingAddedToOpenCommand();
     
     TypingCommand::ETypingCommand m_commandType;

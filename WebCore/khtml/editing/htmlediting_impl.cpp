@@ -52,6 +52,7 @@
 #if APPLE_CHANGES
 #include "KWQAssertions.h"
 #include "KWQLogging.h"
+#include "KWQKHTMLPart.h"
 #endif
 
 using DOM::AttrImpl;
@@ -320,6 +321,11 @@ void EditCommandImpl::setEndingSelection(const Selection &s)
         cmd.handle()->m_endingSelection = s;
         cmd = cmd.parent();
     }
+}
+
+void EditCommandImpl::markMisspellingsInSelection(const Selection &s)
+{
+    KWQ(document()->part())->markMisspellingsInSelection(s);
 }
 
 EditCommand EditCommandImpl::parent() const
@@ -2005,10 +2011,15 @@ void ReplaceSelectionCommandImpl::doApply()
         ASSERT(!lastChild);
     } else if (firstChild == lastChild && firstChild->isTextNode()) {
         // Simple text paste. Treat as if the text were typed.
-        Position base = selection.base();
+        Position upstreamStart(selection.start().equivalentUpstreamPosition());
         inputText(static_cast<TextImpl *>(firstChild)->data());
         if (m_selectReplacement) {
-            setEndingSelection(Selection(base, endingSelection().extent()));
+            // Select what was inserted.
+            setEndingSelection(Selection(selection.base(), endingSelection().extent()));
+        }
+        else {
+            // Mark misspellings in the inserted content.
+            markMisspellingsInSelection(Selection(upstreamStart, endingSelection().extent()));
         }
     } 
     else {
@@ -2035,21 +2046,26 @@ void ReplaceSelectionCommandImpl::doApply()
                 break;
             lastLeaf = nextChild;
         }
+
+        // Find the first leaf.
+        NodeImpl *firstLeaf = firstChild;
+        while (1) {
+            NodeImpl *nextChild = firstLeaf->firstChild();
+            if (!nextChild)
+                break;
+            firstLeaf = nextChild;
+        }
         
-	if (m_selectReplacement) {            
-            // Find the first leaf.
-            NodeImpl *firstLeaf = firstChild;
-            while (1) {
-                NodeImpl *nextChild = firstLeaf->firstChild();
-                if (!nextChild)
-                    break;
-                firstLeaf = nextChild;
-            }
+        Selection replacementSelection(Position(firstLeaf, firstLeaf->caretMinOffset()), Position(lastLeaf, lastLeaf->caretMaxOffset()));
+	if (m_selectReplacement) {
             // Select what was inserted.
-            setEndingSelection(Selection(Position(firstLeaf, firstLeaf->caretMinOffset()), Position(lastLeaf, lastLeaf->caretMaxOffset())));
-        } else {
-            // Place the cursor after what was inserted.
-            setEndingSelection(Position(lastLeaf, lastLeaf->caretMaxOffset()));
+            setEndingSelection(replacementSelection);
+        } 
+        else {
+            // Place the cursor after what was inserted, and mark misspellings in the inserted content.
+            selection = Selection(Position(lastLeaf, lastLeaf->caretMaxOffset()));
+            setEndingSelection(selection);
+            markMisspellingsInSelection(replacementSelection);
         }
     }
 }
@@ -2461,10 +2477,24 @@ void TypingCommandImpl::doApply()
     }
 }
 
+void TypingCommandImpl::markMisspellingsAfterTyping()
+{
+    // Take a look at the selection that results after typing and determine whether we need to spellcheck. 
+    // Since the word containing the current selection is never marked, this does a check to
+    // see if typing made a new word that is not in the current selection. Basically, you
+    // get this by being at the end of a word and typing a space.    
+    Position start(endingSelection().start());
+    Position p1 = start.previousCharacterPosition().previousWordBoundary();
+    Position p2 = start.previousWordBoundary();
+    if (p1 != p2)
+        markMisspellingsInSelection(Selection(start.previousCharacterPosition()));
+}
+
 void TypingCommandImpl::typingAddedToOpenCommand()
 {
     ASSERT(document());
     ASSERT(document()->part());
+    markMisspellingsAfterTyping();
     EditCommand cmd(this);
     document()->part()->appliedEditing(cmd);
 }

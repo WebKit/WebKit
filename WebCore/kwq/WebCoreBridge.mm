@@ -1389,7 +1389,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
         xPos = _part->xPosForVerticalArrowNavigation();
     
     // setting the selection always clears saved vertical navigation x position
-    _part->setSelection(selection);
+    _part->setSelection(selection, true);
     
     // restore vertical navigation x position if necessary
     if (xPos != KHTMLPart::NoXPosForVerticalArrowNavigation)

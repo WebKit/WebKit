@@ -1,3 +1,16 @@
+2004-08-06  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Maciej
+
+        Finish off spellchecking support to HTML editing. Includes work to
+        enable continuous spellchecking.
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge isContinuousSpellCheckingEnabled]): Simple bridge method.
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (-[WebTextRenderer drawLineForMisspelling:withWidth:]): New method to add
+        AppKit-style misspelling underline.
+
 === Safari-155 ===
 
 2004-08-05  Darin Adler  <darin@apple.com>

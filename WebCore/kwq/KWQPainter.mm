@@ -710,6 +710,14 @@ void QPainter::drawLineForText(int x, int y, int yOffset, int width)
              withColor:data->state.pen.color().getNSColor()];
 }
 
+void QPainter::drawLineForMisspelling(int x, int y, int width)
+{
+    if (data->state.paintingDisabled)
+        return;
+    _updateRenderer();
+    [data->textRenderer drawLineForMisspelling:NSMakePoint(x, y) withWidth:width];
+}
+
 QColor QPainter::selectedTextBackgroundColor() const
 {
     NSColor *color = _usesInactiveTextBackgroundColor ? [NSColor secondarySelectedControlColor] : [NSColor selectedTextBackgroundColor];
