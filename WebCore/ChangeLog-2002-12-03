@@ -1,5 +1,9 @@
 2002-06-14  Darin Adler  <darin@apple.com>
 
+	* kwq/KWQDateTime.mm: Add ifdefs needed to make Deployment build compile.
+
+2002-06-14  Darin Adler  <darin@apple.com>
+
 	Worked on eliminating calls to WebKit. About 3/4 done.
 
 	* WebCore.exp: Export new WebCoreBridge class, fewer other things.

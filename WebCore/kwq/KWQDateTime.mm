@@ -303,6 +303,7 @@ void QDateTime::setTime_t(uint secsSince1Jan1970UTC)
     timeDT.timeMS = 3600000*localTime->tm_hour + 60000*localTime->tm_min + 1000*localTime->tm_sec;
 }
 
+#ifdef _KWQ_IOSTREAM_
 
 std::ostream &operator<<(std::ostream &o, const QDate &date)
 {
@@ -349,3 +350,5 @@ std::ostream &operator<<(std::ostream &o, const QDateTime &dateTime)
         dateTime.timeDT.msec() <<
         ']';
 }
+
+#endif // _KWQ_IOSTREAM_
