@@ -1,5 +1,4 @@
 2005-03-02  Ken Kocienda  <kocienda@apple.com>
-
         Reviewed by John
 
         Fix for this bug:
@@ -107,7 +106,7 @@
 
 2005-03-01  Richard Williamson   <rjw@apple.com>
 
-	Fixed <rdar://problem/4027928> Tiger_8A394:Acrobat crashes while tried to remove the subscription errors by clicking on "Would you like to remove the subscription" from Tracker details view pane
+	Fixed <rdar://problem/4029772> Weather widgets use a lot of memory (more that other widgets)
 
 	The string objects created by KWQHeaderStringFromDictionary() leaked.
 
