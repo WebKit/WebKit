@@ -539,6 +539,11 @@ void CSSStyleSelector::adjustRenderStyle(RenderStyle* style, DOM::ElementImpl *e
                 style->setDisplay(style->isDisplayInlineType() ? INLINE_TABLE : TABLE);
         }
 
+        // Frames and framesets never honor position:relative or position:absolute.  This is necessary to
+        // fix a crash where a site tries to position these objects.
+        if (e && (e->id() == ID_FRAME || e->id() == ID_FRAMESET))
+            style->setPosition(STATIC);
+            
         // Mutate the display to BLOCK or TABLE for certain cases, e.g., if someone attempts to
         // position or float an inline, compact, or run-in.  Cache the original display, since it
         // may be needed for positioned elements that have to compute their static normal flow

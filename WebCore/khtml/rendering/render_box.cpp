@@ -90,13 +90,6 @@ void RenderBox::setStyle(RenderStyle *_style)
             setRelPositioned(true);
     }
 
-    // Frames and framesets never honor position:relative or position:absolute.  This is necessary to
-    // fix a crash where a site tries to position these objects.
-    if (element() && (element()->id() == ID_FRAME || element()->id() == ID_FRAMESET)) {
-        setPositioned(false);
-        setRelPositioned(false);
-    }
-    
     if (requiresLayer()) {
         if (!m_layer) {
             m_layer = new (renderArena()) RenderLayer(this);
