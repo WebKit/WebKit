@@ -1433,6 +1433,32 @@ int InputNewlineCommandImpl::commandID() const
     return InputNewlineCommandID;
 }
 
+void InputNewlineCommandImpl::insertNodeAfterPosition(NodeImpl *node, const Position &pos)
+{
+    // Insert the BR after the caret position. In the case the
+    // position is a block, do an append. We don't want to insert
+    // the BR *after* the block.
+    Position upstream(pos.equivalentUpstreamPosition());
+    NodeImpl *cb = pos.node()->enclosingBlockFlowElement();
+    if (cb == pos.node())
+        appendNode(cb, node);
+    else
+        insertNodeAfter(node, pos.node());
+}
+
+void InputNewlineCommandImpl::insertNodeBeforePosition(NodeImpl *node, const Position &pos)
+{
+    // Insert the BR after the caret position. In the case the
+    // position is a block, do an append. We don't want to insert
+    // the BR *before* the block.
+    Position upstream(pos.equivalentUpstreamPosition());
+    NodeImpl *cb = pos.node()->enclosingBlockFlowElement();
+    if (cb == pos.node())
+        appendNode(cb, node);
+    else
+        insertNodeBefore(node, pos.node());
+}
+
 void InputNewlineCommandImpl::doApply()
 {
     deleteSelection();
@@ -1454,36 +1480,32 @@ void InputNewlineCommandImpl::doApply()
     }
     
     Position pos(selection.start().equivalentDownstreamPosition());
-    bool atEnd = pos.offset() >= pos.node()->caretMaxOffset();
     bool atStart = pos.offset() <= pos.node()->caretMinOffset();
     bool atEndOfBlock = pos.isLastRenderedPositionInEditableBlock();
     
     if (atEndOfBlock) {
         LOG(Editing, "input newline case 1");
-        NodeImpl *cb = pos.node()->enclosingBlockFlowElement();
-        appendNode(cb, nodeToInsert);
-        
         // Insert an "extra" BR at the end of the block. This makes the "real" BR we want
         // to insert appear in the rendering without any significant side effects (and no
         // real worries either since you can't arrow past this extra one.
+        insertNodeAfterPosition(nodeToInsert, pos);
         exceptionCode = 0;
         ElementImpl *extraBreakNode = document()->createHTMLElement("BR", exceptionCode);
         ASSERT(exceptionCode == 0);
-        appendNode(cb, extraBreakNode);
+        insertNodeAfter(extraBreakNode, nodeToInsert);
         setEndingSelection(Position(extraBreakNode, 0));
     }
-    else if (atEnd) {
-        LOG(Editing, "input newline case 2");
-        insertNodeAfter(nodeToInsert, pos.node());
-        setEndingSelection(Position(breakNode, 0));
-    }
     else if (atStart) {
-        LOG(Editing, "input newline case 3");
-        insertNodeAt(nodeToInsert, pos.node(), 0);
+        LOG(Editing, "input newline case 2");
+        // Insert node, but place the caret into index 0 of the downstream
+        // position. This will make the caret appear after the break, and as we know
+        // there is content at that location, this is OK.
+        insertNodeBeforePosition(nodeToInsert, pos);
         setEndingSelection(Position(pos.node(), 0));
     }
     else {
-        LOG(Editing, "input newline case 4");
+        // Split a text node
+        LOG(Editing, "input newline case 3");
         ASSERT(pos.node()->isTextNode());
         TextImpl *textNode = static_cast<TextImpl *>(pos.node());
         TextImpl *textBeforeNode = document()->createTextNode(textNode->substringData(0, selection.start().offset(), exceptionCode));
@@ -1572,7 +1594,7 @@ Position InputTextCommandImpl::prepareForTextInsertion(bool adjustDownstream)
         }
         else if (pos.node()->id() == ID_BR && pos.offset() == 1) {
             LOG(Editing, "prepareForTextInsertion case 2");
-            insertNodeBefore(nodeToInsert, pos.node());
+            insertNodeAfter(nodeToInsert, pos.node());
         }
         else if (pos.node()->caretMinOffset() == pos.offset()) {
             LOG(Editing, "prepareForTextInsertion case 3");

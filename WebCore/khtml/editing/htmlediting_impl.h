@@ -294,6 +294,10 @@ public:
     virtual int commandID() const;
 
     virtual void doApply();
+
+private:
+    void insertNodeAfterPosition(DOM::NodeImpl *node, const DOM::Position &pos);
+    void insertNodeBeforePosition(DOM::NodeImpl *node, const DOM::Position &pos);
 };
 
 //------------------------------------------------------------------------------------------

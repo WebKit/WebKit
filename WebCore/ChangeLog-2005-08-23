@@ -1,3 +1,31 @@
+2004-06-11  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+
+        Fix for this bug:
+        
+        <rdar://problem/3659587>: "when typing in Blot, bold style does not carry over to next line after pressing 'return'"
+
+        Did some work to improve the insert newline command. The refinement is to insert the newline
+        at the upstream position of the caret, ensuring that the newline takes on the 
+        appropriate style, and does not let the caret "escape" from an element that is
+        conferring style.
+
+        * khtml/editing/htmlediting_impl.cpp:
+        (khtml::InputNewlineCommandImpl::insertNodeAfterPosition): New helper. Adds smarts about adding
+        newlines when the selection is a caret in a block.
+        (khtml::InputNewlineCommandImpl::insertNodeBeforePosition): Ditto.
+        (khtml::InputNewlineCommandImpl::doApply): Simplified cases. One case in the code could not
+        happen.
+        * khtml/editing/htmlediting_impl.h:
+
+        Fix for this bug:
+    
+        <rdar://problem/3654864>: "Pasting content at start of line places it at end of previous line"
+
+        (khtml::InputTextCommandImpl::prepareForTextInsertion): Simple code mistake. Content was indeed
+        being added to the line before. Fixed to add new content after the line break.
+
 2004-07-10  Trey Matteson  <trey@apple.com>
 
 	Prep work for latest delegate API for dragging.  In addition, I also straightened out all
