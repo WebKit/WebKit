@@ -1,5 +1,9 @@
 2005-01-17  Darin Adler  <darin@apple.com>
 
+        * DOM.subproj/DOMPrivate.h: Check in generated file.
+
+2005-01-17  Darin Adler  <darin@apple.com>
+
         Reviewed by John and Richard.
 
         - fixed <rdar://problem/3907453> printing a multi-page PDF document from Safari doesn't produce correct output
