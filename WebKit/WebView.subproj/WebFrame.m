@@ -784,12 +784,6 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
             ASSERT_NOT_REACHED();
         }
     }
-
-
-    if (pageCache){
-        [[self dataSource] _setPrimaryLoadComplete: YES];
-        [self _checkLoadCompleteForThisFrame];
-    }
 }
 
 - (BOOL)_canCachePage
@@ -955,6 +949,9 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         // will have already been invalidated by the bridge to prevent
         // premature release.
         [[_private currentItem] setHasPageCache: NO];
+
+        [[self dataSource] _setPrimaryLoadComplete: YES];
+        [self _checkLoadCompleteForThisFrame];
     }
 }
 

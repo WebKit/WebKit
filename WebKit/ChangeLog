@@ -1,3 +1,14 @@
+2004-06-02  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed problem with timing of delegate callbacks in the back/forward cache case
+
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame _transitionToCommitted:]): Move code to indicate page is done loading in the
+        back/forward cache case from here ...
+        (-[WebFrame _opened]): ... to here.
+
 2004-06-01  Richard Williamson   <rjw@apple.com>
 
         Fixed deployment build warning.
@@ -7,8 +18,8 @@
 
 2004-06-01  Richard Williamson   <rjw@apple.com>
 
-		Added support for drawImage and drawImageFromRect to <CANVAS>
-		Added support for composite attribute to <CANVAS>
+        Added support for drawImage and drawImageFromRect to <CANVAS>
+        Added support for composite attribute to <CANVAS>
 
         Reviewed by Trey.
 
@@ -93,7 +104,7 @@
 
 2004-06-01  Chris Blumenberg  <cblu@apple.com>
 
-	Fixed: <rdar://problem/3661505>: (REGRESSION (Safari-140) can't drag standalone images more than once)
+        Fixed: <rdar://problem/3661505>: (REGRESSION (Safari-140) can't drag standalone images more than once)
 
         Reviewed by john.
 
@@ -190,9 +201,9 @@
 
 2004-05-28  Chris Blumenberg  <cblu@apple.com>
 
-	Fixed: <rdar://problem/3672129>: (selection deselects when clicking editable WebView in background window)
-	
-	Fixed this problem by using NSTextView's approach of only allowing dragging on first mouse down.
+        Fixed: <rdar://problem/3672129>: (selection deselects when clicking editable WebView in background window)
+
+        Fixed this problem by using NSTextView's approach of only allowing dragging on first mouse down.
 
         Reviewed by john.
 
@@ -291,9 +302,9 @@
 
 2004-05-27  Trey Matteson  <trey@apple.com>
 
-	First cut at DHTML dragging, destination side.  Dragging text, files and URLs onto
-	elements works.  Type conversion from NSPasteboard to MIME types is hardwired.
-	No JS access yet to modifier keys, or operations mask.
+        First cut at DHTML dragging, destination side.  Dragging text, files and URLs onto
+        elements works.  Type conversion from NSPasteboard to MIME types is hardwired.
+        No JS access yet to modifier keys, or operations mask.
 
         Reviewed by Chris.
 
@@ -304,7 +315,7 @@
         * WebView.subproj/WebHTMLViewPrivate.h:
         * WebView.subproj/WebView.m:
         (-[WebView _setWebKitDragRespondsToDragging:]):  New SPI for finer grained control than the
-	delegate currently has.
+        delegate currently has.
         (-[WebView _webKitDragRespondsToDragging]): Ditto.
         (-[WebView _commonInitializationWithFrameName:groupName:]):  Init new flag.
         (-[WebView _dragOperationForDraggingInfo:]):  Comment.
@@ -368,10 +379,10 @@
 
         Reviewed by Dave.
 
-	- fix further problems with Emerson feed: redirection for RSS feeds
+        - fix further problems with Emerson feed: redirection for RSS feeds
 
-	This is done by removing removing the calls to defer callbacks
-	while waiting for
+        This is done by removing removing the calls to defer callbacks
+        while waiting for [... Maciej stopped typing here ...]
 
         * WebView.subproj/WebMainResourceClient.m:
         (-[WebMainResourceClient continueAfterNavigationPolicy:formState:]):
@@ -381,7 +392,7 @@
 
 2004-05-26  Chris Blumenberg  <cblu@apple.com>
 
-	Added and implemented proposed dragging API changes. These changes are necessary to make JS dragging work properly.
+        Added and implemented proposed dragging API changes. These changes are necessary to make JS dragging work properly.
 
         Reviewed by trey.
 
@@ -522,16 +533,16 @@
 
         Reviewed by Richard.
 
-	<rdar://problem/3652498>: new sniffing support is crashing
+        <rdar://problem/3652498>: new sniffing support is crashing
         
-	* WebView.subproj/WebMainResourceClient.m:
+        * WebView.subproj/WebMainResourceClient.m:
         (-[WebMainResourceClient checkContentPolicyForResponse:]): Retain
-	listener around call, in case delegate does something that ends up
-	invalidating it, like navigating to a new URL.
+        listener around call, in case delegate does something that ends up
+        invalidating it, like navigating to a new URL.
 
 2004-05-25  Chris Blumenberg  <cblu@apple.com>
 
-	Fixed regression where undoing typing would undo character-by-character.
+        Fixed regression where undoing typing would undo character-by-character.
 
         Reviewed by kocienda.
 
@@ -596,9 +607,9 @@
 
 2004-05-24  Chris Blumenberg  <cblu@apple.com>
 
-	Improved editing via drag
+        Improved editing via drag
  
-       	Reviewed by kocienda.
+        Reviewed by kocienda.
 
         * WebView.subproj/WebDataSource.m: 
         (-[WebDataSource _documentFragmentWithImageResource:]): made this method return a fragment instead of replace the selection so that the caller do other things with the fragment
@@ -755,15 +766,15 @@
 
 2004-05-20  Richard Williamson   <rjw@apple.com>
 
-		Fixed typo in header comment.
-		
+        Fixed typo in header comment.
+
         Reviewed by Ken.
 
         * Plugins.subproj/WebScriptObject.h:
 
 2004-05-19  Chris Blumenberg  <cblu@apple.com>
 
-	Fixed: <rdar://problem/3462627>: (API: Need a way to disable/customize dragging)
+        Fixed: <rdar://problem/3462627>: (API: Need a way to disable/customize dragging)
 
         Reviewed by john.
 
@@ -870,7 +881,7 @@
 
 2004-05-18  David Hyatt  <hyatt@apple.com>
 
-	Improve layout scheduling.
+        Improve layout scheduling.
 	
         Reviewed by kocienda
 
@@ -882,7 +893,7 @@
 
 2004-05-18  Richard Williamson   <rjw@apple.com>
 
-		Finished implementation of windowScriptObject.
+        Finished implementation of windowScriptObject.
 		
         Reviewed by Maciej.
 
