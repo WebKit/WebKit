@@ -1,3 +1,13 @@
+2002-03-20  John Sullivan  <sullivan@apple.com>
+
+	Added displayTitle field to IFURIEntry. This is intended to hold the string
+	used in menu items, window titles, etc. Alexander uses this to cache the
+	center-truncated title for pages with very long titles.
+
+	* History.subproj/IFURIEntry.h:
+	* History.subproj/IFURIEntry.m: (-[IFURIEntry setDisplayTitle:]), (-[IFURIEntry
+	dictionaryRepresentation]), (-[IFURIEntry initFromDictionaryRepresentation:]):
+
 2002-03-19  Richard Williamson  <rjw@apple.com>
 
         Fixed IFWebView leak.

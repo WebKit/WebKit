@@ -67,6 +67,11 @@
     return _title;
 }
 
+-(NSString *)displayTitle;
+{
+    return _displayTitle;
+}
+
 -(NSImage *)image
 {
     static NSImage *defaultImage = nil;
@@ -121,6 +126,14 @@
     if (title != _title) {
         [_title release];
         _title = [title retain];
+    }
+}
+
+-(void)setDisplayTitle:(NSString *)displayTitle
+{
+    if (displayTitle != _displayTitle) {
+        [_displayTitle release];
+        _displayTitle = [displayTitle retain];
     }
 }
 
@@ -189,6 +202,9 @@
     if (_title != nil) {
         [dict setObject: _title forKey: @"title"];
     }
+    if (_displayTitle != nil) {
+        [dict setObject: _displayTitle forKey: @"displayTitle"];
+    }
     if (_comment != nil) {
         [dict setObject: _comment forKey: @"comment"];
     }
@@ -214,6 +230,7 @@
     if ((self = [super init]) != nil) {
         _url = [[NSURL URLWithString: [dict objectForKey: @"url"]] retain];
         _title = [[dict objectForKey: @"title"] retain];
+        _displayTitle = [[dict objectForKey: @"displayTitle"] retain];
         _comment = [[dict objectForKey: @"comment"] retain];
         _creationDate = [[[NSCalendarDate alloc] initWithTimeIntervalSinceReferenceDate:
             [[dict objectForKey: @"creationDate"] doubleValue]] retain];

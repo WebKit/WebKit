@@ -13,6 +13,7 @@
 {
     NSURL *_url;
     NSString *_title;
+    NSString *_displayTitle;
     NSImage *_image;
     NSString *_comment;
     NSCalendarDate *_creationDate;
@@ -30,6 +31,7 @@
 
 -(NSURL *)url;
 -(NSString *)title;
+-(NSString *)displayTitle;
 -(NSImage *)image;
 -(NSString *)comment;
 -(NSCalendarDate *)creationDate;
@@ -38,6 +40,7 @@
 
 -(void)setURL:(NSURL *)url;
 -(void)setTitle:(NSString *)title;
+-(void)setDisplayTitle:(NSString *)displayTitle;
 -(void)setImage:(NSImage *)image;
 -(void)setComment:(NSString *)comment;
 -(void)setModificationDate:(NSCalendarDate *)date;
