@@ -680,15 +680,15 @@ void RenderFieldset::paintBorderMinusLegend(QPainter *p, int _tx, int _ty, int w
 
     if(render_t) {
         drawBorder(p, _tx, _ty, _tx + lx, _ty +  style->borderTopWidth(), BSTop, tc, style->color(), ts,
-                   (render_l && ls<=DOUBLE?style->borderLeftWidth():0), 0);
+                   (render_l && (ls == DOTTED || ls == DASHED || ls == DOUBLE)?style->borderLeftWidth():0), 0);
         drawBorder(p, _tx+lx+lw, _ty, _tx + w, _ty +  style->borderTopWidth(), BSTop, tc, style->color(), ts,
-                   0, (render_r && rs<=DOUBLE?style->borderRightWidth():0));
+                   0, (render_r && (rs == DOTTED || rs == DASHED || rs == DOUBLE)?style->borderRightWidth():0));
     }
 
     if(render_b)
         drawBorder(p, _tx, _ty + h - style->borderBottomWidth(), _tx + w, _ty + h, BSBottom, bc, style->color(), bs,
-                   (render_l && ls<=DOUBLE?style->borderLeftWidth():0),
-                   (render_r && rs<=DOUBLE?style->borderRightWidth():0));
+                   (render_l && (ls == DOTTED || ls == DASHED || ls == DOUBLE)?style->borderLeftWidth():0),
+                   (render_r && (rs == DOTTED || rs == DASHED || rs == DOUBLE)?style->borderRightWidth():0));
 
     if(render_l)
     {
@@ -696,12 +696,12 @@ void RenderFieldset::paintBorderMinusLegend(QPainter *p, int _tx, int _ty, int w
 
         bool ignore_top =
             (tc == lc) &&
-            (ls <= OUTSET) &&
+            (ls >= OUTSET) &&
             (ts == DOTTED || ts == DASHED || ts == SOLID || ts == OUTSET);
 
         bool ignore_bottom =
             (bc == lc) &&
-            (ls <= OUTSET) &&
+            (ls >= OUTSET) &&
             (bs == DOTTED || bs == DASHED || bs == SOLID || bs == INSET);
 
         drawBorder(p, _tx, _ty, _tx + style->borderLeftWidth(), _ty + h, BSLeft, lc, style->color(), ls,
@@ -715,12 +715,12 @@ void RenderFieldset::paintBorderMinusLegend(QPainter *p, int _tx, int _ty, int w
 
         bool ignore_top =
             (tc == rc) &&
-            (rs <= SOLID || rs == INSET) &&
+            (rs >= DOTTED || rs == INSET) &&
             (ts == DOTTED || ts == DASHED || ts == SOLID || ts == OUTSET);
 
         bool ignore_bottom =
             (bc == rc) &&
-            (rs <= SOLID || rs == INSET) &&
+            (rs >= DOTTED || rs == INSET) &&
             (bs == DOTTED || bs == DASHED || bs == SOLID || bs == INSET);
 
         drawBorder(p, _tx + w - style->borderRightWidth(), _ty, _tx + w, _ty + h, BSRight, rc, style->color(), rs,

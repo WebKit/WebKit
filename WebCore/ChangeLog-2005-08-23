@@ -1,3 +1,109 @@
+2003-10-17  David Hyatt  <hyatt@apple.com>
+
+	Implement horizontal and vertical border-spacing.  Allow them to be specified individually.
+
+        Reviewed by mjs
+
+	------
+
+	Fix the calcWidth method of tables to account for horizontal margins properly.
+
+	Reviewed by john
+
+	------
+
+	Implement border collapsing in tables.
+
+	Reviewed by kocienda
+
+        * khtml/css/cssparser.cpp:
+        (CSSParser::parseValue):
+        * khtml/css/cssproperties.c:
+        (hash_prop):
+        (findProp):
+        * khtml/css/cssproperties.h:
+        * khtml/css/cssproperties.in:
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::applyRule):
+        * khtml/css/cssvalues.c:
+        * khtml/css/cssvalues.h:
+        * khtml/css/cssvalues.in:
+        * khtml/rendering/bidi.cpp:
+        (khtml::RenderBlock::layoutInlineChildren):
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::paintBoxDecorations):
+        * khtml/rendering/render_form.cpp:
+        (RenderFieldset::paintBorderMinusLegend):
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::paintBorder):
+        (RenderObject::collectBorders):
+        * khtml/rendering/render_object.h:
+        * khtml/rendering/render_style.cpp:
+        (StyleInheritedData::StyleInheritedData):
+        (StyleInheritedData::operator==):
+        (RenderStyle::diff):
+        * khtml/rendering/render_style.h:
+        (khtml::):
+        (khtml::CollapsedBorderValue::precedence):
+        (khtml::CollapsedBorderValue::width):
+        (khtml::CollapsedBorderValue::style):
+        (khtml::CollapsedBorderValue::exists):
+        (khtml::CollapsedBorderValue::color):
+        (khtml::CollapsedBorderValue::isTransparent):
+        (khtml::CollapsedBorderValue::operator==):
+        (khtml::RenderStyle::borderLeft):
+        (khtml::RenderStyle::borderRight):
+        (khtml::RenderStyle::borderTop):
+        (khtml::RenderStyle::borderBottom):
+        (khtml::RenderStyle::horizontalBorderSpacing):
+        (khtml::RenderStyle::verticalBorderSpacing):
+        (khtml::RenderStyle::setHorizontalBorderSpacing):
+        (khtml::RenderStyle::setVerticalBorderSpacing):
+        * khtml/rendering/render_table.cpp:
+        (RenderTable::RenderTable):
+        (RenderTable::setStyle):
+        (RenderTable::calcWidth):
+        (RenderTable::paint):
+        (RenderTable::borderLeft):
+        (RenderTable::borderRight):
+        (RenderTable::borderTop):
+        (RenderTable::borderBottom):
+        (RenderTable::cellAbove):
+        (RenderTable::cellBelow):
+        (RenderTable::cellLeft):
+        (RenderTable::cellRight):
+        (RenderTableSection::setCellWidths):
+        (RenderTableSection::calcRowHeight):
+        (RenderTableSection::layoutRows):
+        (compareBorders):
+        (RenderTableCell::collapsedLeftBorder):
+        (RenderTableCell::collapsedRightBorder):
+        (RenderTableCell::collapsedTopBorder):
+        (RenderTableCell::collapsedBottomBorder):
+        (RenderTableCell::borderLeft):
+        (RenderTableCell::borderRight):
+        (RenderTableCell::borderTop):
+        (RenderTableCell::borderBottom):
+        (collapsedBorderStyle):
+        (CollapsedBorder::CollapsedBorder):
+        (CollapsedBorders:::count):
+        (CollapsedBorders::addBorder):
+        (CollapsedBorders::nextBorder):
+        (addBorderStyle):
+        (RenderTableCell::collectBorders):
+        (RenderTableCell::paintCollapsedBorder):
+        (RenderTableCell::paintObject):
+        (RenderTableCell::paintBoxDecorations):
+        * khtml/rendering/render_table.h:
+        (khtml::RenderTable::hBorderSpacing):
+        (khtml::RenderTable::vBorderSpacing):
+        (khtml::RenderTable::bordersPaddingAndSpacing):
+        (khtml::RenderTable::currentBorderStyle):
+        * khtml/rendering/table_layout.cpp:
+        (FixedTableLayout::layout):
+        (AutoTableLayout::calcEffectiveWidth):
+        (AutoTableLayout::layout):
+
 2003-10-16  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by John.

@@ -345,13 +345,13 @@ void FixedTableLayout::layout()
     }
     
     int pos = 0;
-    int spacing = table->cellSpacing();
+    int hspacing = table->hBorderSpacing();
     for ( int i = 0; i < nEffCols; i++ ) {
 #ifdef DEBUG_LAYOUT
 	qDebug("col %d: %d (width %d)", i, pos, calcWidth[i] );
 #endif
 	table->columnPos[i] = pos;
-	pos += calcWidth[i] + spacing;
+	pos += calcWidth[i] + hspacing;
     }
     table->columnPos[table->columnPos.size()-1] = pos;
 }
@@ -631,7 +631,7 @@ int AutoTableLayout::calcEffectiveWidth()
     int tMaxWidth = 0;
 
     unsigned int nEffCols = layoutStruct.size();
-    int spacing = table->cellSpacing();
+    int hspacing = table->hBorderSpacing();
 #ifdef DEBUG_LAYOUT
     qDebug("AutoTableLayout::calcEffectiveWidth for %d cols", nEffCols );
 #endif
@@ -653,8 +653,8 @@ int AutoTableLayout::calcEffectiveWidth()
 
 	int col = table->colToEffCol( cell->col() );
 	unsigned int lastCol = col;
-	int cMinWidth = cell->minWidth() + spacing;
-	int cMaxWidth = cell->maxWidth() + spacing;
+	int cMinWidth = cell->minWidth() + hspacing;
+	int cMaxWidth = cell->maxWidth() + hspacing;
 	int totalPercent = 0;
 	int minWidth = 0;
 	int maxWidth = 0;
@@ -703,8 +703,8 @@ int AutoTableLayout::calcEffectiveWidth()
 	    minWidth += layoutStruct[lastCol].effMinWidth;
 	    maxWidth += layoutStruct[lastCol].effMaxWidth;
 	    lastCol++;
-	    cMinWidth -= spacing;
-	    cMaxWidth -= spacing;
+	    cMinWidth -= hspacing;
+	    cMaxWidth -= hspacing;
 	}
 #ifdef DEBUG_LAYOUT
 	qDebug("    colspan cell %p at effCol %d, span %d, type %d, value %d cmin=%d min=%d fixedwidth=%d", cell, col, cSpan, w.type, w.value, cMinWidth, minWidth, fixedWidth );
@@ -770,6 +770,8 @@ int AutoTableLayout::calcEffectiveWidth()
 #endif
 		int maxw = maxWidth;
                 int minw = minWidth;
+                
+                // Give min to variable first, to fixed second, and to others third.
                 for ( unsigned int pos = col; maxw > 0 && pos < lastCol; pos++ ) {
 		    if ( layoutStruct[pos].width.type == Fixed && haveVariable && fixedWidth <= cMinWidth ) {
 			int w = QMAX( layoutStruct[pos].effMinWidth, layoutStruct[pos].width.value );
@@ -1158,7 +1160,7 @@ void AutoTableLayout::layout()
 	qDebug("col %d: %d (width %d)", i, pos, layoutStruct[i].calcWidth );
 #endif
 	table->columnPos[i] = pos;
-	pos += layoutStruct[i].calcWidth + table->cellSpacing();
+	pos += layoutStruct[i].calcWidth + table->hBorderSpacing();
     }
     table->columnPos[table->columnPos.size()-1] = pos;
 

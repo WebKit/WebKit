@@ -184,10 +184,10 @@ enum EFloat {
 //------------------------------------------------
 // Border attributes. Not inherited.
 
-
+// These have been defined in the order of their precedence for border-collapsing. Do
+// not change this order!
 enum EBorderStyle {
-    BNONE, BHIDDEN, DOTTED, DASHED, DOUBLE, SOLID,
-    OUTSET, INSET, GROOVE, RIDGE
+    BNONE, BHIDDEN, INSET, GROOVE, RIDGE, OUTSET, DOTTED, DASHED, SOLID, DOUBLE
 };
 
 
@@ -220,6 +220,30 @@ public:
     	return width==o.width && style==o.style && color==o.color && transparent==o.transparent;
     }
 
+};
+
+enum EBorderPrecedence { BOFF, BTABLE, BCOLGROUP, BCOL, BROWGROUP, BROW, BCELL };
+
+struct CollapsedBorderValue
+{
+    CollapsedBorderValue() :border(0), precedence(BOFF) {}
+    CollapsedBorderValue(const BorderValue* b, EBorderPrecedence p) :border(b), precedence(p) {}
+    
+    int width() const { return border ? border->width : 0; }
+    EBorderStyle style() const { return border ? border->style : BHIDDEN; }
+    bool exists() const { return border; }
+    QColor color() const { return border ? border->color : QColor(); }
+    bool isTransparent() const { return border ? border->transparent : true; }
+    
+    bool operator==(const CollapsedBorderValue& o) const
+    {
+        if (!border) return !o.border;
+        if (!o.border) return false;
+        return *border == *o.border && precedence == o.precedence;
+    }
+    
+    const BorderValue* border;
+    EBorderPrecedence precedence;    
 };
 
 class BorderData : public Shared<BorderData>
@@ -515,7 +539,8 @@ public:
     khtml::Font font;
     QColor color;
     
-    short border_spacing;
+    short horizontal_border_spacing;
+    short vertical_border_spacing;
 };
 
 
@@ -799,6 +824,11 @@ public:
     Length  	minHeight() const { return box->min_height; }
     Length  	maxHeight() const { return box->max_height; }
 
+    const BorderValue& borderLeft() const { return surround->border.left; }
+    const BorderValue& borderRight() const { return surround->border.right; }
+    const BorderValue& borderTop() const { return surround->border.top; }
+    const BorderValue& borderBottom() const { return surround->border.bottom; }
+    
     unsigned short  borderLeftWidth() const
     { if( surround->border.left.style == BNONE) return 0; return surround->border.left.width; }
     EBorderStyle    borderLeftStyle() const { return surround->border.left.style; }
@@ -875,7 +905,8 @@ public:
 
     // returns true for collapsing borders, false for separate borders
     bool borderCollapse() const { return inherited_flags._border_collapse; }
-    short borderSpacing() const { return inherited->border_spacing; }
+    short horizontalBorderSpacing() const { return inherited->horizontal_border_spacing; }
+    short verticalBorderSpacing() const { return inherited->vertical_border_spacing; }
     EEmptyCell emptyCells() const { return inherited_flags._empty_cells; }
     ECaptionSide captionSide() const { return inherited_flags._caption_side; }
 
@@ -1017,7 +1048,8 @@ public:
     void setBackgroundYPosition(Length v) {  SET_VAR(background,y_position,v) }
 
     void setBorderCollapse(bool collapse) { inherited_flags._border_collapse = collapse; }
-    void setBorderSpacing(short v) { SET_VAR(inherited,border_spacing,v) }
+    void setHorizontalBorderSpacing(short v) { SET_VAR(inherited,horizontal_border_spacing,v) }
+    void setVerticalBorderSpacing(short v) { SET_VAR(inherited,vertical_border_spacing,v) }
     void setEmptyCells(EEmptyCell v) { inherited_flags._empty_cells = v; }
     void setCaptionSide(ECaptionSide v) { inherited_flags._caption_side = v; }
 

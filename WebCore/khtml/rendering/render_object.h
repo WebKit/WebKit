@@ -71,7 +71,8 @@ typedef enum {
     PaintActionChildBackgrounds,
     PaintActionFloat,
     PaintActionForeground,
-    PaintActionSelection
+    PaintActionSelection,
+    PaintActionCollapsedTableBorders
 } PaintAction;
 
 typedef enum {
@@ -100,6 +101,7 @@ namespace khtml {
     class RenderLayer;
     class InlineBox;
     class InlineFlowBox;
+    class CollapsedBorderValue;
 
 /**
  * Base Class for all rendering tree objects.
@@ -577,6 +579,9 @@ public:
                     int adjbw1, int adjbw2, bool invalidisInvert = false);
 
     virtual void setTable(RenderTable*) {};
+
+    // Used by collapsed border tables.
+    virtual void collectBorders(QPtrList<CollapsedBorderValue>& borderStyles);
 
     // Repaint the entire object.  Called when, e.g., the color of a border changes, or when a border
     // style changes.

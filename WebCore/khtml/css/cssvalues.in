@@ -17,14 +17,14 @@ inherit
 # CSS_PROP_BORDER_LEFT_STYLE
 none
 hidden
-dotted
-dashed
-double
-solid
-outset
 inset
 groove
 ridge
+outset
+dotted
+dashed
+solid
+double
 #
 # CSS_PROP_FONT:
 #

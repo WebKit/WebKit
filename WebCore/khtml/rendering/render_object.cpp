@@ -811,12 +811,12 @@ void RenderObject::paintBorder(QPainter *p, int _tx, int _ty, int w, int h, cons
     if(render_t) {
         bool ignore_left =
             (tc == lc) && (tt == lt) &&
-            (ts <= OUTSET) &&
+            (ts >= OUTSET) &&
             (ls == DOTTED || ls == DASHED || ls == SOLID || ls == OUTSET);
 
         bool ignore_right =
             (tc == rc) && (tt == rt) &&
-            (ts <= OUTSET) &&
+            (ts >= OUTSET) &&
             (rs == DOTTED || rs == DASHED || rs == SOLID || rs == INSET);
         
         drawBorder(p, _tx, _ty, _tx + w, _ty +  style->borderTopWidth(), BSTop, tc, style->color(), ts,
@@ -827,12 +827,12 @@ void RenderObject::paintBorder(QPainter *p, int _tx, int _ty, int w, int h, cons
     if(render_b) {
         bool ignore_left =
         (bc == lc) && (bt == lt) &&
-        (bs <= OUTSET) &&
+        (bs >= OUTSET) &&
         (ls == DOTTED || ls == DASHED || ls == SOLID || ls == OUTSET);
 
         bool ignore_right =
             (bc == rc) && (bt == rt) &&
-            (bs <= OUTSET) &&
+            (bs >= OUTSET) &&
             (rs == DOTTED || rs == DASHED || rs == SOLID || rs == INSET);
         
         drawBorder(p, _tx, _ty + h - style->borderBottomWidth(), _tx + w, _ty + h, BSBottom, bc, style->color(), bs,
@@ -844,12 +844,12 @@ void RenderObject::paintBorder(QPainter *p, int _tx, int _ty, int w, int h, cons
     {
 	bool ignore_top =
 	  (tc == lc) && (tt == lt) &&
-	  (ls <= OUTSET) &&
+	  (ls >= OUTSET) &&
 	  (ts == DOTTED || ts == DASHED || ts == SOLID || ts == OUTSET);
 
 	bool ignore_bottom =
 	  (bc == lc) && (bt == lt) &&
-	  (ls <= OUTSET) &&
+	  (ls >= OUTSET) &&
 	  (bs == DOTTED || bs == DASHED || bs == SOLID || bs == INSET);
 
         drawBorder(p, _tx, _ty, _tx + style->borderLeftWidth(), _ty + h, BSLeft, lc, style->color(), ls,
@@ -861,12 +861,12 @@ void RenderObject::paintBorder(QPainter *p, int _tx, int _ty, int w, int h, cons
     {
 	bool ignore_top =
 	  (tc == rc) && (tt == rt) &&
-	  (rs <= SOLID || rs == INSET) &&
+	  (rs >= DOTTED || rs == INSET) &&
 	  (ts == DOTTED || ts == DASHED || ts == SOLID || ts == OUTSET);
 
 	bool ignore_bottom =
 	  (bc == rc) && (bt == rt) &&
-	  (rs <= SOLID || rs == INSET) &&
+	  (rs >= DOTTED || rs == INSET) &&
 	  (bs == DOTTED || bs == DASHED || bs == SOLID || bs == INSET);
 
         drawBorder(p, _tx + w - style->borderRightWidth(), _ty, _tx + w, _ty + h, BSRight, rc, style->color(), rs,
@@ -1791,6 +1791,12 @@ void RenderObject::updateWidgetPositions()
 }
 #endif
 
+void RenderObject::collectBorders(QPtrList<CollapsedBorderValue>& borderStyles)
+{
+    for (RenderObject* curr = firstChild(); curr; curr = curr->nextSibling())
+        curr->collectBorders(borderStyles);
+}
+    
 QChar RenderObject::backslashAsCurrencySymbol() const
 {
 #if !APPLE_CHANGES

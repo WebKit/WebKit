@@ -565,7 +565,7 @@ bool CSSParser::parseValue( int propId, bool important )
     case CSS_PROP_BORDER_RIGHT_STYLE:   //   Defined as:    none | hidden | dotted | dashed |
     case CSS_PROP_BORDER_BOTTOM_STYLE:  //   solid | double | groove | ridge | inset | outset
     case CSS_PROP_BORDER_LEFT_STYLE:    ////
-	if (id >= CSS_VAL_NONE && id <= CSS_VAL_RIDGE)
+	if (id >= CSS_VAL_NONE && id <= CSS_VAL_DOUBLE)
 	    valid_primitive = true;
 	break;
 
@@ -688,11 +688,27 @@ bool CSSParser::parseValue( int propId, bool important )
 	valid_primitive = validUnit( value, FPercent|FLength, strict&(!nonCSSHint) );
 	break;
 
-    case CSS_PROP_BORDER_SPACING:
-	// ### should be able to have two values
-	valid_primitive = ( validUnit( value, FLength|FNonNeg, strict&(!nonCSSHint) ) );
-	break;
-
+    case CSS_PROP_BORDER_SPACING: {
+        const int properties[2] = { CSS_PROP__KHTML_HORIZONTAL_BORDER_SPACING,
+                                    CSS_PROP__KHTML_VERTICAL_BORDER_SPACING };
+        int num = valueList->numValues;
+        if (num == 1) {
+            if (!parseValue(properties[0], important)) return false;
+            CSSValueImpl* value = parsedProperties[numParsedProperties-1]->value();
+            addProperty(properties[1], value, important);
+            return true;
+        }
+        else if (num == 2) {
+            if (!parseValue(properties[0], important)) return false;
+            if (!parseValue(properties[1], important)) return false;
+            return true;
+        }
+        return false;
+    }
+    case CSS_PROP__KHTML_HORIZONTAL_BORDER_SPACING:
+    case CSS_PROP__KHTML_VERTICAL_BORDER_SPACING:
+        valid_primitive = validUnit(value, FLength|FNonNeg, strict&(!nonCSSHint));
+        break;
     case CSS_PROP_SCROLLBAR_FACE_COLOR:         // IE5.5
     case CSS_PROP_SCROLLBAR_SHADOW_COLOR:       // IE5.5
     case CSS_PROP_SCROLLBAR_HIGHLIGHT_COLOR:    // IE5.5

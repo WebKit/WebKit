@@ -55,11 +55,13 @@ RenderTable::RenderTable(DOM::NodeImpl* node)
     tCaption = 0;
     head = foot = firstBody = 0;
     tableLayout = 0;
-
+    m_currentBorder = 0;
+    
     rules = None;
     frame = Void;
     has_col_elems = false;
-    spacing = 0;
+    hspacing = 0;
+    vspacing = 0;
     padding = 0;
     needSectionRecalc = false;
     padding = 0;
@@ -89,8 +91,9 @@ void RenderTable::setStyle(RenderStyle *_style)
     setReplaced(style()->display()==INLINE_TABLE);
 
     // In the collapsed border model, there is no cell spacing.
-    spacing = collapseBorders() ? 0 : style()->borderSpacing();
-    columnPos[0] = spacing;
+    hspacing = collapseBorders() ? 0 : style()->horizontalBorderSpacing();
+    vspacing = collapseBorders() ? 0 : style()->verticalBorderSpacing();
+    columnPos[0] = hspacing;
 
     if ( !tableLayout || style()->tableLayout() != oldTableLayout ) {
 	delete tableLayout;
@@ -105,6 +108,10 @@ void RenderTable::setStyle(RenderStyle *_style)
 	} else
 	    tableLayout = new AutoTableLayout(this);
     }
+    
+    // The table never paints its border if it collapses.  It lets the cells do the painting.
+    if (collapseBorders())
+        setShouldPaintBackgroundOrBorder(false);
 }
 
 void RenderTable::addChild(RenderObject *child, RenderObject *beforeChild)
@@ -188,26 +195,36 @@ void RenderTable::calcWidth()
     int availableWidth = cb->contentWidth();
 
     LengthType widthType = style()->width().type;
-    if(widthType > Relative && style()->width().value > 0) {
+    if (widthType > Relative && style()->width().value > 0) {
 	// Percent or fixed table
         m_width = style()->width().minWidth( availableWidth );
         if(m_minWidth > m_width) m_width = m_minWidth;
-	//kdDebug( 6040 ) << "1 width=" << m_width << " minWidth=" << m_minWidth << " availableWidth=" << availableWidth << " " << endl;
-    } else {
-        m_width = KMIN(short( availableWidth ),m_maxWidth);
     }
-
-    // restrict width to what we really have in case we flow around floats
-    if (style()->width().isVariable() && style()->flowAroundFloats()) {
-	availableWidth = cb->lineWidth( m_y );
-	m_width = QMIN( availableWidth, m_width );
+    else {
+        // An auto width table should shrink to fit within the line width if necessary in order to 
+        // avoid overlapping floats.
+        if (style()->flowAroundFloats())
+            availableWidth = cb->lineWidth( m_y );
+        
+        // Subtract out any fixed margins from our available width for auto width tables.
+        int marginTotal = 0;
+        if (style()->marginLeft().type != Variable)
+            marginTotal += style()->marginLeft().width(availableWidth);
+        if (style()->marginRight().type != Variable)
+            marginTotal += style()->marginRight().width(availableWidth);
+            
+        // Subtract out our margins to get the available content width.
+        int availContentWidth = KMAX(0, availableWidth - marginTotal);
+        
+        // Ensure we aren't bigger than our max width or smaller than our min width.
+        m_width = KMIN(short(availContentWidth),m_maxWidth);
     }
+    
+    m_width = KMAX(m_width, m_minWidth);
 
-    m_width = KMAX (m_width, m_minWidth);
-
-    m_marginRight=0;
-    m_marginLeft=0;
-
+    // Finally, with our true width determined, compute our margins for real.
+    m_marginRight = 0;
+    m_marginLeft = 0;
     calcHorizontalMargins(style()->marginLeft(),style()->marginRight(),availableWidth);
 }
 
@@ -417,9 +434,8 @@ void RenderTable::paint( QPainter *p, int _x, int _y,
 #endif
 
     if ((paintAction == PaintActionElementBackground || paintAction == PaintActionChildBackground)
-        && style()->visibility() == VISIBLE) {
+        && shouldPaintBackgroundOrBorder() && style()->visibility() == VISIBLE)
         paintBoxDecorations(p, _x, _y, _w, _h, _tx, _ty);
-    }
 
     // We're done.  We don't bother painting any children.
     if (paintAction == PaintActionElementBackground)
@@ -435,6 +451,24 @@ void RenderTable::paint( QPainter *p, int _x, int _y,
 	child = child->nextSibling();
     }
 
+    if (collapseBorders() && 
+        (paintAction == PaintActionElementBackground || paintAction == PaintActionChildBackground)
+        && style()->visibility() == VISIBLE) {
+        // Collect all the unique border styles that we want to paint in a sorted list.  Once we
+        // have all the styles sorted, we then do individual passes, painting each style of border
+        // from lowest precedence to highest precedence.
+        QPtrList<CollapsedBorderValue> borderStyles;
+        borderStyles.setAutoDelete(true);
+        collectBorders(borderStyles);
+        for (uint i = 0; i < borderStyles.count(); i++) {
+            m_currentBorder = borderStyles.at(i);
+            for (child = firstChild(); child; child = child->nextSibling()) {
+                if (child->isTableSection())
+                    child->paint(p, _x, _y, _w, _h, _tx, _ty, PaintActionCollapsedTableBorders);
+            }
+        }
+    }
+        
 #ifdef BOX_DEBUG
     outlineBox(p, _tx, _ty, "blue");
 #endif
@@ -641,30 +675,70 @@ RenderObject* RenderTable::removeChildNode(RenderObject* child)
     return RenderContainer::removeChildNode( child );
 }
 
-#if APPLE_CHANGES
-RenderTableCell* RenderTable::cellAbove(RenderTableCell* cell) const
+int RenderTable::borderLeft() const
+{
+    if (collapseBorders()) {
+        // FIXME: For strict mode, returning 0 is correct, since the table border half spills into the margin,
+        // but I'm working to get this changed.  For now, follow the spec.
+        return 0;
+    }
+    return RenderBlock::borderLeft();
+}
+    
+int RenderTable::borderRight() const
+{
+    if (collapseBorders()) {
+        // FIXME: For strict mode, returning 0 is correct, since the table border half spills into the margin,
+        // but I'm working to get this changed.  For now, follow the spec.
+        return 0;
+    }
+    return RenderBlock::borderRight();
+}
+
+int RenderTable::borderTop() const
+{
+    if (collapseBorders()) {
+        // FIXME: For strict mode, returning 0 is correct, since the table border half spills into the margin,
+        // but I'm working to get this changed.  For now, follow the spec.
+        return 0;
+    }
+    return RenderBlock::borderTop();
+}
+
+int RenderTable::borderBottom() const
+{
+    if (collapseBorders()) {
+        // FIXME: For strict mode, returning 0 is correct, since the table border half spills into the margin,
+        // but I'm working to get this changed.  For now, follow the spec.
+        return 0;
+    }
+    return RenderBlock::borderBottom();
+}
+
+RenderTableCell* RenderTable::cellAbove(const RenderTableCell* cell) const
 {
     // Find the section and row to look in
     int r = cell->row();
-    RenderTableSection *section;
-    int rAbove = 0;
+    RenderTableSection* section = 0;
+    int rAbove = -1;
     if (r > 0) {
         // cell is not in the first row, so use the above row in its own section
         section = cell->section();
         rAbove = r-1;
     } else {
         // cell is at top of a section, use last row in previous section
-        RenderObject *prevSection = cell->section()->previousSibling();
-        while (prevSection && !prevSection->isTableSection()) {
-            prevSection = prevSection->previousSibling();
-        }
-        section = static_cast<RenderTableSection *>(prevSection);
-        if (section) {
-            rAbove = section->numRows()-1;
+        for (RenderObject *prevSection = cell->section()->previousSibling();
+             prevSection && rAbove < 0;
+             prevSection = prevSection->previousSibling()) {
+            if (prevSection->isTableSection()) {
+                section = static_cast<RenderTableSection *>(prevSection);
+                if (section->numRows() > 0)
+                    rAbove = section->numRows()-1;
+            }
         }
     }
 
-    // Look up the cell in the section's grid, which required effective col index
+    // Look up the cell in the section's grid, which requires effective col index
     if (section && rAbove >= 0) {
         int effCol = colToEffCol(cell->col());
         RenderTableCell* aboveCell;
@@ -678,7 +752,69 @@ RenderTableCell* RenderTable::cellAbove(RenderTableCell* cell) const
         return 0;
     }
 }
-#endif
+
+RenderTableCell* RenderTable::cellBelow(const RenderTableCell* cell) const
+{
+    // Find the section and row to look in
+    int r = cell->row() + cell->rowSpan() - 1;
+    RenderTableSection* section = 0;
+    int rBelow = -1;
+    if (r < cell->section()->numRows()-1) {
+        // The cell is not in the last row, so use the next row in the section.
+        section = cell->section();
+        rBelow= r+1;
+    } else {
+        // The cell is at the bottom of a section. Use the first row in the next section.
+        for (RenderObject* nextSection = cell->section()->nextSibling();
+             nextSection && rBelow < 0;
+             nextSection = nextSection->nextSibling()) 
+        {
+            if (nextSection->isTableSection()) {
+                section = static_cast<RenderTableSection *>(nextSection);
+                if (section->numRows() > 0)
+                    rBelow = 0;
+            }
+        }
+    }
+    
+    // Look up the cell in the section's grid, which requires effective col index
+    if (section && rBelow >= 0) {
+        int effCol = colToEffCol(cell->col());
+        RenderTableCell* belowCell;
+        // If we hit a colspan back up to a real cell.
+        do {
+            belowCell = section->cellAt(rBelow, effCol);
+            effCol--;
+        } while (belowCell == (RenderTableCell *)-1 && effCol >=0);
+        return (belowCell == (RenderTableCell *)-1) ? 0 : belowCell;
+    } else {
+        return 0;
+    }    
+}
+
+RenderTableCell* RenderTable::cellLeft(const RenderTableCell* cell) const
+{
+    RenderTableSection* section = cell->section();
+    int effCol = colToEffCol(cell->col());
+    if (effCol == 0)
+        return 0;
+    
+    // If we hit a colspan back up to a real cell.
+    RenderTableCell* prevCell;
+    do {
+        prevCell = section->cellAt(cell->row(), effCol-1);
+        effCol--;
+    } while (prevCell == (RenderTableCell *)-1 && effCol >=0);
+    return (prevCell == (RenderTableCell *)-1) ? 0 : prevCell;
+}
+
+RenderTableCell* RenderTable::cellRight(const RenderTableCell* cell) const
+{
+    int effCol = colToEffCol(cell->col());
+    if (effCol == numEffCols()-1)
+        return 0;
+    return cell->section()->cellAt(cell->row(), effCol+1);
+}
 
 #ifndef NDEBUG
 void RenderTable::dump(QTextStream *stream, QString ind) const
@@ -940,7 +1076,7 @@ void RenderTableSection::setCellWidths()
 		cspan -= table()->columns[endCol].span;
 		endCol++;
 	    }
-	    int w = columnPos[endCol] - columnPos[j] - table()->cellSpacing();
+	    int w = columnPos[endCol] - columnPos[j] - table()->hBorderSpacing();
 #ifdef DEBUG_LAYOUT
 	    kdDebug( 6040 ) << "setting width of cell " << cell << " " << cell->row() << "/" << cell->col() << " to " << w << " colspan=" << cell->colSpan() << " start=" << j << " end=" << endCol << endl;
 #endif
@@ -960,7 +1096,7 @@ void RenderTableSection::calcRowHeight()
     RenderTableCell *cell;
 
     int totalRows = grid.size();
-    int spacing = table()->cellSpacing();
+    int spacing = table()->vBorderSpacing();
 
     rowPos.resize( totalRows + 1 );
     rowPos[0] = spacing;
@@ -972,7 +1108,7 @@ void RenderTableSection::calcRowHeight()
 	int bdesc = 0;
 // 	qDebug("height of row %d is %d/%d", r, grid[r].height.value, grid[r].height.type );
 	int ch = grid[r].height.minWidth( 0 );
-	int pos = rowPos[ r+1 ] + ch + table()->cellSpacing();
+	int pos = rowPos[ r+1 ] + ch + spacing;
 
 	if ( pos > rowPos[r+1] )
 	    rowPos[r+1] = pos;
@@ -991,11 +1127,15 @@ void RenderTableSection::calcRowHeight()
 	    if ( ( indx = r - cell->rowSpan() + 1 ) < 0 )
 		indx = 0;
 
-	    ch = cell->style()->height().width(0);
+            // Explicit heights use the border box in quirks mode.  In strict mode do the right
+            // thing and actually add in the border and padding.
+	    ch = cell->style()->height().width(0) + 
+                (cell->style()->htmlHacks() ? 0 : (cell->paddingTop() + cell->paddingBottom() +
+                                                   cell->borderTop() + cell->borderBottom()));
 	    if (cell->height() > ch)
 		ch = cell->height();
 
-	    pos = rowPos[ indx ] + ch + table()->cellSpacing();
+            pos = rowPos[ indx ] + ch + spacing;
 
 	    if ( pos > rowPos[r+1] )
 		rowPos[r+1] = pos;
@@ -1019,7 +1159,7 @@ void RenderTableSection::calcRowHeight()
 	//do we have baseline aligned elements?
 	if (baseline) {
 	    // increase rowheight if baseline requires
-	    int bRowPos = baseline + bdesc  + table()->cellSpacing() ; // + 2*padding
+	    int bRowPos = baseline + bdesc  + spacing ; // + 2*padding
 	    if (rowPos[r+1]<bRowPos)
 		rowPos[r+1]=bRowPos;
 
@@ -1037,8 +1177,9 @@ int RenderTableSection::layoutRows( int toAdd )
     int rHeight;
     int rindx;
     int totalRows = grid.size();
-    int spacing = table()->cellSpacing();
-
+    int hspacing = table()->hBorderSpacing();
+    int vspacing = table()->vBorderSpacing();
+    
     if (toAdd && totalRows && (rowPos[totalRows] || !nextSibling())) {
 
 	int totalHeight = rowPos[totalRows] + toAdd;
@@ -1103,7 +1244,7 @@ int RenderTableSection::layoutRows( int toAdd )
         }
     }
 
-    int leftOffset = spacing;
+    int leftOffset = hspacing;
 
     int nEffCols = table()->numEffCols();
     for ( int r = 0; r < totalRows; r++ )
@@ -1121,7 +1262,7 @@ int RenderTableSection::layoutRows( int toAdd )
             if ( ( rindx = r-cell->rowSpan()+1 ) < 0 )
                 rindx = 0;
 
-            rHeight = rowPos[r+1] - rowPos[rindx] - spacing;
+            rHeight = rowPos[r+1] - rowPos[rindx] - vspacing;
             
             // Force percent height children to lay themselves out again.
             // This will cause, e.g., textareas to grow to
@@ -1568,6 +1709,313 @@ void RenderTableCell::setStyle( RenderStyle *style )
     }
 }
 
+// The following rules apply for resolving conflicts and figuring out which border
+// to use.
+// (1) Borders with the 'border-style' of 'hidden' take precedence over all other conflicting 
+// borders. Any border with this value suppresses all borders at this location.
+// (2) Borders with a style of 'none' have the lowest priority. Only if the border properties of all 
+// the elements meeting at this edge are 'none' will the border be omitted (but note that 'none' is 
+// the default value for the border style.)
+// (3) If none of the styles are 'hidden' and at least one of them is not 'none', then narrow borders 
+// are discarded in favor of wider ones. If several have the same 'border-width' then styles are preferred 
+// in this order: 'double', 'solid', 'dashed', 'dotted', 'ridge', 'outset', 'groove', and the lowest: 'inset'.
+// (4) If border styles differ only in color, then a style set on a cell wins over one on a row, 
+// which wins over a row group, column, column group and, lastly, table. It is undefined which color 
+// is used when two elements of the same type disagree.
+static const CollapsedBorderValue compareBorders(const CollapsedBorderValue& border1, 
+                                                 const CollapsedBorderValue& border2)
+{
+    // Sanity check the values passed in.  If either is null, return the other.
+    if (!border2.exists()) return border1;
+    if (!border1.exists()) return border2;
+    
+    // Rule #1 above.
+    if (border1.style() == BHIDDEN || border2.style() == BHIDDEN)
+        return CollapsedBorderValue(); // No border should exist at this location.
+    
+    // Rule #2 above.  A style of 'none' has lowest priority and always loses to any other border.
+    if (border2.style() == BNONE) return border1;
+    if (border1.style() == BNONE) return border2;
+    
+    // The first part of rule #3 above. Wider borders win.
+    if (border1.width() != border2.width())
+        return border1.width() > border2.width() ? border1 : border2;
+    
+    // The borders have equal width.  Sort by border style.
+    if (border1.style() != border2.style())
+        return border1.style() > border2.style() ? border1 : border2;
+    
+    // The border have the same width and style.  Rely on precedence (cell over row over row group, etc.)
+    return border1.precedence >= border2.precedence ? border1 : border2;
+}
+
+CollapsedBorderValue RenderTableCell::collapsedLeftBorder() const
+{
+    // For border left, we need to check, in order of precedence:
+    // (1) Our left border.
+    CollapsedBorderValue result(&style()->borderLeft(), BCELL);
+    
+    // (2) The previous cell's right border.
+    RenderTableCell* prevCell = table()->cellLeft(this);
+    if (prevCell) {
+        result = compareBorders(result, CollapsedBorderValue(&prevCell->style()->borderRight(), BCELL));
+        if (!result.exists()) return result;
+    }
+    else if (col() == 0) {
+        // (3) Our row's left border.
+        result = compareBorders(result, CollapsedBorderValue(&parent()->style()->borderLeft(), BROW));
+        if (!result.exists()) return result;
+        
+        // (4) Our row group's left border.
+        result = compareBorders(result, CollapsedBorderValue(&section()->style()->borderLeft(), BROWGROUP));
+        if (!result.exists()) return result;
+    }
+    
+    // (5) Our column's left border.
+    RenderTableCol* colElt = table()->colElement(col());
+    if (colElt) {
+        result = compareBorders(result, CollapsedBorderValue(&colElt->style()->borderLeft(), BCOL));
+        if (!result.exists()) return result;
+    }
+    
+    // (6) The previous column's right border.
+    if (col() > 0) {
+        colElt = table()->colElement(col()-1);
+        if (colElt) {
+            result = compareBorders(result, CollapsedBorderValue(&colElt->style()->borderRight(), BCOL));
+            if (!result.exists()) return result;
+        }
+    }
+    
+    if (col() == 0) {
+        // (7) The table's left border.
+        result = compareBorders(result, CollapsedBorderValue(&table()->style()->borderLeft(), BTABLE));
+        if (!result.exists()) return result;
+    }
+    
+    return result;
+}
+
+CollapsedBorderValue RenderTableCell::collapsedRightBorder() const
+{
+    RenderTable* tableElt = table();
+    bool inLastColumn = false;
+    int effCol = tableElt->colToEffCol(col());
+    if (effCol == tableElt->numEffCols()-1)
+        inLastColumn = true;
+    
+    // For border right, we need to check, in order of precedence:
+    // (1) Our right border.
+    CollapsedBorderValue result = CollapsedBorderValue(&style()->borderRight(), BCELL);
+    
+    // (2) The next cell's left border.
+    if (!inLastColumn) {
+        RenderTableCell* nextCell = tableElt->cellRight(this);
+        if (nextCell) {
+            result = compareBorders(result, CollapsedBorderValue(&nextCell->style()->borderLeft(), BCELL));
+            if (!result.exists()) return result;
+        }
+    }
+    else {
+        // (3) Our row's right border.
+        result = compareBorders(result, CollapsedBorderValue(&parent()->style()->borderRight(), BROW));
+        if (!result.exists()) return result;
+        
+        // (4) Our row group's right border.
+        result = compareBorders(result, CollapsedBorderValue(&section()->style()->borderRight(), BROWGROUP));
+        if (!result.exists()) return result;
+    }
+    
+    // (5) Our column's right border.
+    RenderTableCol* colElt = table()->colElement(col());
+    if (colElt) {
+        result = compareBorders(result, CollapsedBorderValue(&colElt->style()->borderRight(), BCOL));
+        if (!result.exists()) return result;
+    }
+    
+    // (6) The next column's left border.
+    if (!inLastColumn) {
+        colElt = tableElt->colElement(col()+1);
+        if (colElt) {
+            result = compareBorders(result, CollapsedBorderValue(&colElt->style()->borderLeft(), BCOL));
+            if (!result.exists()) return result;
+        }
+    }
+    else {
+        // (7) The table's right border.
+        result = compareBorders(result, CollapsedBorderValue(&tableElt->style()->borderRight(), BTABLE));
+        if (!result.exists()) return result;
+    }
+    
+    return result;
+}
+
+CollapsedBorderValue RenderTableCell::collapsedTopBorder() const
+{
+    // For border top, we need to check, in order of precedence:
+    // (1) Our top border.
+    CollapsedBorderValue result = CollapsedBorderValue(&style()->borderTop(), BCELL);
+    
+    RenderTableCell* prevCell = table()->cellAbove(this);
+    if (prevCell) {
+        // (2) A previous cell's bottom border.
+        result = compareBorders(result, CollapsedBorderValue(&prevCell->style()->borderBottom(), BCELL));
+        if (!result.exists()) return result;
+    }
+    
+    // (3) Our row's top border.
+    result = compareBorders(result, CollapsedBorderValue(&parent()->style()->borderTop(), BROW));
+    if (!result.exists()) return result;
+    
+    // (4) The previous row's bottom border.
+    if (prevCell) {
+        RenderObject* prevRow = 0;
+        if (prevCell->section() == section())
+            prevRow = parent()->previousSibling();
+        else
+            prevRow = prevCell->section()->lastChild();
+    
+        if (prevRow) {
+            result = compareBorders(result, CollapsedBorderValue(&prevRow->style()->borderBottom(), BROW));
+            if (!result.exists()) return result;
+        }
+    }
+    
+    // Now check row groups.
+    RenderObject* currSection = parent()->parent();
+    if (row() == 0) {
+        // (5) Our row group's top border.
+        result = compareBorders(result, CollapsedBorderValue(&currSection->style()->borderTop(), BROWGROUP));
+        if (!result.exists()) return result;
+        
+        // (6) Previous row group's bottom border.
+        for (currSection = currSection->previousSibling(); currSection;
+             currSection = currSection->previousSibling()) {
+            if (currSection->isTableSection()) {
+                RenderTableSection* section = static_cast<RenderTableSection*>(currSection);
+                result = compareBorders(result, CollapsedBorderValue(&section->style()->borderBottom(), BROWGROUP));
+                if (!result.exists()) return result;
+            }
+        }
+    }
+    
+    if (!currSection) {
+        // (8) Our column's top border.
+        RenderTableCol* colElt = table()->colElement(col());
+        if (colElt) {
+            result = compareBorders(result, CollapsedBorderValue(&colElt->style()->borderTop(), BCOL));
+            if (!result.exists()) return result;
+        }
+        
+        // (9) The table's top border.
+        result = compareBorders(result, CollapsedBorderValue(&table()->style()->borderTop(), BTABLE));
+        if (!result.exists()) return result;
+    }
+    
+    return result;
+}
+
+CollapsedBorderValue RenderTableCell::collapsedBottomBorder() const
+{
+    // For border top, we need to check, in order of precedence:
+    // (1) Our bottom border.
+    CollapsedBorderValue result = CollapsedBorderValue(&style()->borderBottom(), BCELL);
+    
+    RenderTableCell* nextCell = table()->cellBelow(this);
+    if (nextCell) {
+        // (2) A following cell's top border.
+        result = compareBorders(result, CollapsedBorderValue(&nextCell->style()->borderTop(), BCELL));
+        if (!result.exists()) return result;
+    }
+    
+    // (3) Our row's bottom border. (FIXME: Deal with rowspan!)
+    result = compareBorders(result, CollapsedBorderValue(&parent()->style()->borderBottom(), BROW));
+    if (!result.exists()) return result;
+    
+    // (4) The next row's top border.
+    if (nextCell) {
+        result = compareBorders(result, CollapsedBorderValue(&nextCell->parent()->style()->borderTop(), BROW));
+        if (!result.exists()) return result;
+    }
+    
+    // Now check row groups.
+    RenderObject* currSection = parent()->parent();
+    if (row()+rowSpan() >= static_cast<RenderTableSection*>(currSection)->numRows()) {
+        // (5) Our row group's bottom border.
+        result = compareBorders(result, CollapsedBorderValue(&currSection->style()->borderBottom(), BROWGROUP));
+        if (!result.exists()) return result;
+        
+        // (6) Following row group's top border.
+        for (currSection = currSection->nextSibling(); currSection;
+             currSection = currSection->nextSibling()) {
+            if (currSection->isTableSection()) {
+                RenderTableSection* section = static_cast<RenderTableSection*>(currSection);
+                result = compareBorders(result, CollapsedBorderValue(&section->style()->borderTop(), BROWGROUP));
+                if (!result.exists()) return result;
+            }
+        }
+    }
+    
+    if (!currSection) {
+        // (8) Our column's bottom border.
+        RenderTableCol* colElt = table()->colElement(col());
+        if (colElt) {
+            result = compareBorders(result, CollapsedBorderValue(&colElt->style()->borderBottom(), BCOL));
+            if (!result.exists()) return result;
+        }
+        
+        // (9) The table's bottom border.
+        result = compareBorders(result, CollapsedBorderValue(&table()->style()->borderBottom(), BTABLE));
+        if (!result.exists()) return result;
+    }
+    
+    return result;    
+}
+
+int RenderTableCell::borderLeft() const
+{
+    if (table()->collapseBorders()) {
+        CollapsedBorderValue border = collapsedLeftBorder();
+        if (border.exists())
+            return int(border.width()/2.0+0.5); // Give the extra pixel to top and left.
+        return 0;
+    }
+    return RenderBlock::borderLeft();
+}
+    
+int RenderTableCell::borderRight() const
+{
+    if (table()->collapseBorders()) {
+        CollapsedBorderValue border = collapsedRightBorder();
+        if (border.exists())
+            return border.width()/2;
+        return 0;
+    }
+    return RenderBlock::borderRight();
+}
+
+int RenderTableCell::borderTop() const
+{
+    if (table()->collapseBorders()) {
+        CollapsedBorderValue border = collapsedTopBorder();
+        if (border.exists())
+            return int(border.width()/2.0+0.5); // Give the extra pixel to top and left.
+        return 0;
+    }
+    return RenderBlock::borderTop();
+}
+
+int RenderTableCell::borderBottom() const
+{
+    if (table()->collapseBorders()) {
+        CollapsedBorderValue border = collapsedBottomBorder();
+        if (border.exists())
+            return border.width()/2;
+        return 0;
+    }
+    return RenderBlock::borderBottom();
+}
+
 #ifdef BOX_DEBUG
 #include <qpainter.h>
 
@@ -1603,10 +2051,168 @@ void RenderTableCell::paint(QPainter *p, int _x, int _y,
 #endif
 }
 
+static EBorderStyle collapsedBorderStyle(EBorderStyle style)
+{
+    if (style == OUTSET)
+        style = GROOVE;
+    else if (style == INSET)
+        style = RIDGE;
+    return style;
+}
+
+struct CollapsedBorder {
+    CollapsedBorder(){}
+    
+    CollapsedBorderValue border;
+    RenderObject::BorderSide side;
+    bool shouldPaint;
+    int x1;
+    int y1;
+    int x2;
+    int y2;
+    EBorderStyle style;
+};
+
+class CollapsedBorders
+{
+public:
+    CollapsedBorders(int i) :count(0) {}
+    
+    void addBorder(const CollapsedBorderValue& b, RenderObject::BorderSide s, bool paint, 
+                   int _x1, int _y1, int _x2, int _y2,
+                   EBorderStyle _style)
+    {
+        if (b.exists() && paint) {
+            borders[count].border = b;
+            borders[count].side = s;
+            borders[count].shouldPaint = paint;
+            borders[count].x1 = _x1;
+            borders[count].x2 = _x2;
+            borders[count].y1 = _y1;
+            borders[count].y2 = _y2;
+            borders[count].style = _style;
+            count++;
+        }
+    }
+
+    CollapsedBorder* nextBorder() {
+        for (int i = 0; i < count; i++) {
+            if (borders[i].border.exists() && borders[i].shouldPaint) {
+                borders[i].shouldPaint = false;
+                return &borders[i];
+            }
+        }
+        
+        return 0;
+    }
+    
+    CollapsedBorder borders[4];
+    int count;
+};
+
+static void addBorderStyle(QPtrList<CollapsedBorderValue>& borderStyles, CollapsedBorderValue borderValue)
+{
+    if (!borderValue.exists())
+        return;
+    
+    uint count = borderStyles.count();
+    if (count == 0)
+        borderStyles.append(new CollapsedBorderValue(borderValue));
+    else {
+        for (uint i = 0; i < count; i++) {
+            CollapsedBorderValue* b = borderStyles.at(i);
+            if (*b == borderValue)
+                return;
+            CollapsedBorderValue result = compareBorders(*b, borderValue);
+            if (result == *b) {
+                borderStyles.insert(i, new CollapsedBorderValue(borderValue));
+                return;
+            }
+        }
+        
+        borderStyles.append(new CollapsedBorderValue(borderValue));
+    }
+}
+
+void RenderTableCell::collectBorders(QPtrList<CollapsedBorderValue>& borderStyles)
+{
+    addBorderStyle(borderStyles, collapsedLeftBorder());
+    addBorderStyle(borderStyles, collapsedRightBorder());
+    addBorderStyle(borderStyles, collapsedTopBorder());
+    addBorderStyle(borderStyles, collapsedBottomBorder());
+}
+
+void RenderTableCell::paintCollapsedBorder(QPainter* p, int _tx, int _ty, int w, int h)
+{
+    if (!table()->currentBorderStyle())
+        return;
+    
+    CollapsedBorderValue leftVal = collapsedLeftBorder();
+    CollapsedBorderValue rightVal = collapsedRightBorder();
+    CollapsedBorderValue topVal = collapsedTopBorder();
+    CollapsedBorderValue bottomVal = collapsedBottomBorder();
+     
+    // Adjust our x/y/width/height so that we paint the collapsed borders at the correct location.
+    int topWidth = topVal.width();
+    int bottomWidth = bottomVal.width();
+    int leftWidth = leftVal.width();
+    int rightWidth = rightVal.width();
+    
+    _tx -= leftWidth/2;
+    _ty -= topWidth/2;
+    w += leftWidth/2 + int(rightWidth/2.0+0.5);
+    h += topWidth/2 + int(bottomWidth/2.0+0.5);
+    
+    bool tt = topVal.isTransparent();
+    bool bt = bottomVal.isTransparent();
+    bool rt = rightVal.isTransparent();
+    bool lt = leftVal.isTransparent();
+    
+    EBorderStyle ts = collapsedBorderStyle(topVal.style());
+    EBorderStyle bs = collapsedBorderStyle(bottomVal.style());
+    EBorderStyle ls = collapsedBorderStyle(leftVal.style());
+    EBorderStyle rs = collapsedBorderStyle(rightVal.style());
+    
+    bool render_t = ts > BHIDDEN && !tt;
+    bool render_l = ls > BHIDDEN && !lt;
+    bool render_r = rs > BHIDDEN && !rt;
+    bool render_b = bs > BHIDDEN && !bt;
+
+    // We never paint diagonals at the joins.  We simply let the border with the highest
+    // precedence paint on top of borders with lower precedence.  
+    CollapsedBorders borders(4);
+    borders.addBorder(topVal, BSTop, render_t, _tx, _ty, _tx + w, _ty + topWidth, ts);
+    borders.addBorder(bottomVal, BSBottom, render_b, _tx, _ty + h - bottomWidth, _tx + w, _ty + h, bs);
+    borders.addBorder(leftVal, BSLeft, render_l, _tx, _ty, _tx + leftWidth, _ty + h, ls);
+    borders.addBorder(rightVal, BSRight, render_r, _tx + w - rightWidth, _ty, _tx + w, _ty + h, rs);
+    
+    for (CollapsedBorder* border = borders.nextBorder(); border; border = borders.nextBorder()) {
+        if (border->border == *table()->currentBorderStyle())
+            drawBorder(p, border->x1, border->y1, border->x2, border->y2, border->side, 
+                       border->border.color(), style()->color(), border->style, 0, 0);
+    }
+}
+
+void RenderTableCell::paintObject(QPainter* p, int _x, int _y, int _w, int _h,
+                                  int _tx, int _ty, PaintAction paintAction)
+{
+    if (paintAction == PaintActionCollapsedTableBorders && style()->visibility() == VISIBLE) {
+        int w = width();
+        int h = height() + borderTopExtra() + borderBottomExtra();
+        _ty -= borderTopExtra();
+        paintCollapsedBorder(p, _tx, _ty, w, h);
+    }
+    else
+        RenderBlock::paintObject(p, _x, _y, _w, _h, _tx, _ty, paintAction);
+}
 
 void RenderTableCell::paintBoxDecorations(QPainter *p,int, int _y,
-                                       int, int _h, int _tx, int _ty)
+                                          int, int _h, int _tx, int _ty)
 {
+    RenderTable* tableElt = table();
+    if (!tableElt->collapseBorders() && style()->emptyCells() == HIDE && !firstChild())
+        return;
+    
     int w = width();
     int h = height() + borderTopExtra() + borderBottomExtra();
     _ty -= borderTopExtra();
@@ -1657,7 +2263,7 @@ void RenderTableCell::paintBoxDecorations(QPainter *p,int, int _y,
     if ( bg || c.isValid() )
 	paintBackground(p, c, bg, my, mh, _tx, _ty, w, h);
 
-    if(style()->hasBorder())
+    if (style()->hasBorder() && !tableElt->collapseBorders())
         paintBorder(p, _tx, _ty, w, h, style());
 }
 

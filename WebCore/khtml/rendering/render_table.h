@@ -84,10 +84,15 @@ public:
     int getColumnPos(int col) const
         { return columnPos[col]; }
 
-    int cellSpacing() const { return spacing; }
+    int hBorderSpacing() const { return hspacing; }
+    int vBorderSpacing() const { return vspacing; }
     
     bool collapseBorders() const { return style()->borderCollapse(); }
-        
+    int borderLeft() const;
+    int borderRight() const;
+    int borderTop() const;
+    int borderBottom() const;
+    
     Rules getRules() const { return rules; }
 
     const QColor &bgColor() const { return style()->backgroundColor(); }
@@ -152,7 +157,7 @@ public:
 
     int bordersPaddingAndSpacing() const {
 	return borderLeft() + borderRight() + 
-               (collapseBorders() ? 0 : (paddingLeft() + paddingRight() + (numEffCols()+1) * cellSpacing()));
+               (collapseBorders() ? 0 : (paddingLeft() + paddingRight() + (numEffCols()+1) * hBorderSpacing()));
     }
 
     RenderTableCol *colElement( int col );
@@ -160,10 +165,14 @@ public:
     void setNeedSectionRecalc() { needSectionRecalc = true; }
 
     virtual RenderObject* removeChildNode(RenderObject* child);
-#if APPLE_CHANGES
-    virtual RenderTableCell* cellAbove(RenderTableCell* cell) const;
-#endif
 
+    RenderTableCell* cellAbove(const RenderTableCell* cell) const;
+    RenderTableCell* cellBelow(const RenderTableCell* cell) const;
+    RenderTableCell* cellLeft(const RenderTableCell* cell) const;
+    RenderTableCell* cellRight(const RenderTableCell* cell) const;
+ 
+    CollapsedBorderValue* currentBorderStyle() { return m_currentBorder; }
+    
 protected:
 
     void recalcSections();
@@ -178,13 +187,17 @@ protected:
 
     TableLayout *tableLayout;
 
+    CollapsedBorderValue* m_currentBorder;
+    
     Frame frame                 : 4;
     Rules rules                 : 4;
 
     bool has_col_elems		: 1;
-    uint spacing                : 11;
-    uint padding		: 11;
+    uint padding		: 22;
     uint needSectionRecalc	: 1;
+    
+    short hspacing;
+    short vspacing;
 };
 
 // -------------------------------------------------------------------------
@@ -326,6 +339,17 @@ public:
     virtual void setWidth( int width );
     virtual void setStyle( RenderStyle *style );
 
+    int borderLeft() const;
+    int borderRight() const;
+    int borderTop() const;
+    int borderBottom() const;
+
+    CollapsedBorderValue collapsedLeftBorder() const;
+    CollapsedBorderValue collapsedRightBorder() const;
+    CollapsedBorderValue collapsedTopBorder() const;
+    CollapsedBorderValue collapsedBottomBorder() const;
+    virtual void collectBorders(QPtrList<CollapsedBorderValue>& borderStyles);
+
     virtual void updateFromElement();
 
     virtual void layout();
@@ -339,6 +363,8 @@ public:
     virtual void paint( QPainter* p, int x, int y,
                         int w, int h, int tx, int ty, PaintAction paintAction);
 
+    void paintCollapsedBorder(QPainter* p, int x, int y, int w, int h);
+    
     virtual void close();
 
     // lie position to outside observers
@@ -359,6 +385,9 @@ public:
     virtual void dump(QTextStream *stream, QString ind = "") const;
 #endif
 
+    virtual void paintObject(QPainter *, int x, int y, int w, int h,
+                             int tx, int ty, PaintAction paintAction);
+    
 protected:
     virtual void paintBoxDecorations(QPainter *p,int _x, int _y,
                                      int _w, int _h, int _tx, int _ty);

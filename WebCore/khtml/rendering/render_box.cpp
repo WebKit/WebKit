@@ -291,7 +291,8 @@ void RenderBox::paintBoxDecorations(QPainter *p,int _x, int _y,
     // since the root could be inline and wrapped in an anonymous block.
     if (!isBody()
         || element()->getDocument()->documentElement()->renderer()->style()->backgroundColor().isValid()
-        || element()->getDocument()->documentElement()->renderer()->style()->backgroundImage())        	paintBackground(p, style()->backgroundColor(), style()->backgroundImage(), my, mh, _tx, _ty, w, h);
+        || element()->getDocument()->documentElement()->renderer()->style()->backgroundImage())
+        paintBackground(p, style()->backgroundColor(), style()->backgroundImage(), my, mh, _tx, _ty, w, h);
    
     if (style()->hasBorder())
         paintBorder(p, _tx, _ty, w, h, style());
