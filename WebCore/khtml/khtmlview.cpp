@@ -234,6 +234,12 @@ KHTMLView::~KHTMLView()
 {
     if (m_part)
     {
+        //WABA: Is this Ok? Do I need to deref it as well?
+        //Does this need to be done somewhere else?
+        DOM::DocumentImpl *doc = m_part->xmlDocImpl();
+        if (doc)
+            doc->detach();
+
 #ifdef APPLE_CHANGES
         killTimer(d->timerId);
         killTimer(d->repaintTimerId);
@@ -241,12 +247,6 @@ KHTMLView::~KHTMLView()
         d->repaintTimerId = 0;
         m_part->deref();
 #endif
-        
-        //WABA: Is this Ok? Do I need to deref it as well?
-        //Does this need to be done somewhere else?
-        DOM::DocumentImpl *doc = m_part->xmlDocImpl();
-        if (doc)
-            doc->detach();
     }
     delete d; d = 0;
 }

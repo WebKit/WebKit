@@ -18,6 +18,7 @@ class KHTMLView;
 {
     IFWebController *controller;
     KHTMLView *widget;
+    BOOL widgetOwned;
     KHTMLView *provisionalWidget;
     BOOL isFlipped;
     BOOL needsLayout;
@@ -31,10 +32,11 @@ class KHTMLView;
 @end
 
 @interface IFHTMLView (IFPrivate)
+- (void)_reset;
+
 - (void)_setController: (IFWebController *)controller;
-- (void)_resetWidget;
+
 - (KHTMLView *)_widget;
 - (KHTMLView *)_provisionalWidget;
-- (void)_stopPlugins;
-- (void)_removeSubviews;
+- (void)_takeOwnershipOfWidget;
 @end

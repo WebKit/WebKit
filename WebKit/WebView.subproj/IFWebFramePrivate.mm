@@ -219,15 +219,6 @@ static const char * const stateNames[6] = {
         {
             WEBKIT_ASSERT (documentView != nil);
 
-            if(isDocumentHTML){
-            
-                // Make sure any plugsin are shut down cleanly.
-                [documentView _stopPlugins];
-                
-                // Remove any widgets.
-                [documentView _removeSubviews];
-            }
-            
             // Set the committed data source on the frame.
             [self _setDataSource: _private->provisionalDataSource];
             
@@ -240,7 +231,8 @@ static const char * const stateNames[6] = {
             khtml::RenderPart *renderPartFrame = [self _renderFramePart];
             if (renderPartFrame && isDocumentHTML) {
                 // Setting the widget will delete the previous KHTMLView associated with the frame.
-                renderPartFrame->setWidget ([documentView _widget]);
+                renderPartFrame->setWidget([documentView _widget]);
+                [documentView _takeOwnershipOfWidget];
             }
            
             // Now that the provisional data source is committed, release it.

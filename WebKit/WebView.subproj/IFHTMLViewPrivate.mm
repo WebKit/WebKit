@@ -18,8 +18,6 @@
 
 - (void)dealloc
 {
-    // FIXME: Do we leak the provisional widget in the non-main frame cases?
-    
     [cursor release];
 
     [super dealloc];
@@ -29,15 +27,7 @@
 
 @implementation IFHTMLView (IFPrivate)
 
-- (void)_resetWidget
-{
-    delete _private->provisionalWidget;
-    _private->provisionalWidget = 0;
-    delete _private->widget;
-    _private->widget = 0;
-}
-
-- (void)_stopPlugins 
+- (void)_reset
 {
     NSArray *subviews = [[self subviews] copy];
 
@@ -52,14 +42,13 @@
         }
     }
     [subviews release];
-}
 
-- (void)_removeSubviews
-{
-    // Remove all the views.  They will be be re-added if this is a re-layout. 
-    NSArray *subviews = [[self subviews] copy];
-    [subviews makeObjectsPerformSelector:@selector(removeFromSuperviewWithoutNeedingDisplay)];
-    [subviews release];
+    delete _private->provisionalWidget;
+    _private->provisionalWidget = 0;
+    if (_private->widgetOwned)
+        delete _private->widget;
+    _private->widget = 0;
+    _private->widgetOwned = NO;
 }
 
 - (void)_setController: (IFWebController *)controller
@@ -76,6 +65,11 @@
 - (KHTMLView *)_provisionalWidget
 {
     return _private->provisionalWidget;    
+}
+
+- (void)_takeOwnershipOfWidget
+{
+    _private->widgetOwned = NO;
 }
 
 @end

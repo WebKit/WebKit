@@ -1,3 +1,12 @@
+2002-06-24  Darin Adler  <darin@apple.com>
+
+        * khtml/khtmlview.cpp: (KHTMLView::~KHTMLView): Put APPLE_CHANGES
+        later in the sequence so we don't deref the part before the code
+        gets to run.
+
+        * kwq/kwqdebug.h: Re-add the __format__ attribute, now that Radar
+        2920557 is fixed.
+
 2002-06-21  Darin Adler  <darin@apple.com>
 
         * kwq/KWQFont.mm: Made it store a copy of the family name instead of

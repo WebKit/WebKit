@@ -1,3 +1,47 @@
+2002-06-24  Darin Adler  <darin@apple.com>
+
+        Fix the last of the "leak the world" problems. The KHTMLView was leaking
+        in IFHTMLView.
+
+        * WebView.subproj/IFHTMLView.mm:
+        (-[IFHTMLView dealloc]): Call _reset instead of _stopPlugins, so we get rid
+        of the widget too.
+        (-[IFHTMLView viewWillMoveToWindow:]): Use _reset now instead of the old
+        _stopPlugins; also check that the window isn't already nil so we don't do a
+        reset as part of our first install.
+        (-[IFHTMLView provisionalDataSourceCommitted:]): Use the new widgetOwned
+        flag to tell if the widget should be deleted instead of deciding based on
+        whether the dataSource is the main document.
+
+        * WebView.subproj/IFHTMLViewPrivate.h: Add a widgetOwned boolean and a
+        private _takeOwnershipOfWidget method. Combine _resetWidget and _stopPlugins
+        into a single _reset call. Remove _removeSubviews.
+
+        * WebView.subproj/IFHTMLViewPrivate.mm:
+        (-[IFHTMLView _reset]): New name for the combination of _resetWidget and
+        _stopPlugins. Now it decides whether to delete the widget based on the
+        widget owned flag, so it is safe to call even for non-main-document views.
+        (-[IFHTMLView _takeOwnershipOfWidget]): Sets widgetOwned to NO.
+
+        * WebView.subproj/IFWebFrame.mm: (-[IFWebFrame reset]): Use _resetWidget
+        under its new name _reset.
+
+        * WebView.subproj/IFWebFramePrivate.mm:
+        (-[IFWebFrame _transitionProvisionalToCommitted]): Don't bother doing
+        explicit _stopPlugins and _removeSubviews. It's now the view's own responsibility
+        to do this in viewWillMoveToWindow:. Call _takeOwnershipOfWidget after attaching
+        the widget to the RenderPart.
+
+        * WebView.subproj/IFImageView.m: (-[IFImageView viewWillMoveToWindow:]): Added.
+        Break the reference cycle by stopping animated IFImageRenderer here instead of
+        waiting for dealloc.
+
+        * Plugins.subproj/IFPluginView.mm: (-[IFPluginView setWindow]): Fix a warning
+        by changing the printf format string to match the parameter type.
+
+        * Misc.subproj/WebKitDebug.h: Re-add the __format__ attribute, now that Radar
+        2920557 is fixed.
+
 2002-06-23  Darin Adler  <darin@apple.com>
 
         * WebCoreSupport.subproj/IFImageRenderer.m: (-[IFImageRenderer nextFrame:]):

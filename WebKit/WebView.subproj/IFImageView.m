@@ -96,4 +96,12 @@
 }
 
 
+- (void)viewWillMoveToWindow:(NSWindow *)newWindow
+{
+    if (!newWindow)
+        [[representation image] stopAnimation];
+    [super viewWillMoveToWindow:newWindow];
+}
+
+
 @end

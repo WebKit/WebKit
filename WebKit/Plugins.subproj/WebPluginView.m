@@ -381,7 +381,7 @@ static char *newCString(NSString *string)
     window.type = NPWindowTypeWindow;
     
     npErr = NPP_SetWindow(instance, &window);
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_SetWindow: %d, port=0x%08lx\n", npErr, (int)nPort.port);
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_SetWindow: %d, port=0x%08x\n", npErr, (int)nPort.port);
 }
 
 -(void)start

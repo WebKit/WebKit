@@ -64,7 +64,7 @@
 
 - (void)dealloc 
 {
-    [self _stopPlugins];
+    [self _reset];
     [[NSNotificationCenter defaultCenter] removeObserver: self];
     [_private release];
     [super dealloc];
@@ -79,8 +79,8 @@
 
 - (void)viewWillMoveToWindow:(NSWindow *)window
 {
-    if (!window)
-        [self _stopPlugins];
+    if ([self window] && !window)
+        [self _reset];
     [super viewWillMoveToWindow:window];
 }
 
@@ -113,19 +113,16 @@
     
     data->provisionalWidget->setView (frameScrollView);
 
-    // Only delete the widget if we're the top level widget.  In other
-    // cases the widget is associated with a RenderFrame which will
-    // delete its widget.
-    if ([dataSource isMainDocument] && data->widget)
+    if (data->widgetOwned)
         delete data->widget;
 
     data->widget = data->provisionalWidget;
+    data->widgetOwned = YES;
     data->provisionalWidget = 0;
 }
 
 - (void)dataSourceUpdated: (IFWebDataSource *)dataSource
 {
-
 }
 
 - (void)reapplyStyles

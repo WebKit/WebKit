@@ -211,8 +211,8 @@
 - (void)reset
 {
     [_private setDataSource: nil];
-    if([[[self webView] documentView] isKindOfClass: NSClassFromString(@"IFHTMLView")])
-        [[[self webView] documentView] _resetWidget];
+    if ([[self webView] isDocumentHTML])
+        [[[self webView] documentView] _reset];
     [_private setWebView: nil];
 }
 

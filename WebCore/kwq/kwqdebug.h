@@ -69,11 +69,7 @@ long _GetMillisecondsSinceEpoch();
 
 void KWQSetLogLevel(int mask);
 unsigned int KWQGetLogLevel();
-void KWQLog(unsigned int level, const char *file, int line, const char *function, const char *format, ...)
-// FIXME: When Radar 2920557 is fixed, we can add this back and turn the -Wmissing-format-attribute
-// switch back on. PFE precompiled headers currently prevent this from working.
-//    __attribute__((__format__ (__printf__, 5, 6)))
-;
+void KWQLog(unsigned int level, const char *file, int line, const char *function, const char *format, ...) __attribute__((__format__ (__printf__, 5, 6)));
 
 #define DEBUG_OBJECT(object) [[object description] lossyCString]
 
