@@ -1,5 +1,54 @@
 2004-06-08  Darin Adler  <darin@apple.com>
 
+        Reviewed by Maciej.
+
+        - implemented a bunch more execCommand commands
+        - fixed <rdar://problem/3684792>: (JavaScript execCommand("paste") presents security issues)
+        - fixed <rdar://problem/3675898>: (Make queryCommandEnabled work as specified in the Javascript execCommand Compatibility Plan)
+        - fixed <rdar://problem/3675903>: (Make queryCommandSupported work as specified in the Javascript execCommand Compatibility Plan)
+        - about half of <rdar://problem/3685231>: (execCommand italic is not implemented)
+        - about half of <rdar://problem/3685232>: (execCommand bold is not implemented)
+
+        * khtml/editing/jsediting.h: Made constructor inline. Deleted a few unneeded member functions
+        that are now just private functions inside jsediting.cpp.
+
+        * khtml/editing/jsediting.cpp:
+        (commandImp): Changed this around, so the dictionary is a static local to this function,
+        and initialized with C++ "first time initialization" rule.
+        (DOM::JSEditor::execCommand): Got rid of special case for 0 for function pointer and added const.
+        (DOM::JSEditor::queryCommandEnabled): Ditto.
+        (DOM::JSEditor::queryCommandIndeterm): Got rid of special case for 0 for function pointer, added const,
+        and use a common three-state state function rather than a separate "indeterm" function.
+        (DOM::JSEditor::queryCommandState): Ditto.
+        (DOM::JSEditor::queryCommandValue): More of the same.
+        (execNotImplemented): Added. Used for unimplemented commands; there are only a few left.
+        (execCopy): Renamed.
+        (execCut): Renamed.
+        (execDelete): Renamed.
+        (execInsertText): Renamed.
+        (execPaste): Renamed, and disabled.
+        (execRedo): Renamed.
+        (execSelectAll): Renamed.
+        (execUndo): Renamed.
+        (execStyleChange): Added. Helper function for commands that are style changes.
+        (execBold): Added.
+        (execItalic): Added.
+        (execJustifyCenter): Added.
+        (execJustifyFull): Added.
+        (execJustifyLeft): Added.
+        (execJustifyRight): Added.
+        (execSubscript): Added.
+        (execSuperscript): Added.
+        (execUnselect): Added.
+        (stateNotImplemented): Added. Used for unimplemented state queries; there are a few left.
+        (noState): Added.
+        (valueNotImplemented): Added. Used for unimplemented value queries; there are a few left.
+        (nullStringValue): Added.
+        (createCommandDictionary): Changed the initDict function into this function. Added implementations
+        for many commands and condensed format so it's easier to work with.
+
+2004-06-08  Darin Adler  <darin@apple.com>
+
         Reviewed by Vicki.
 
         - our part of fix to <rdar://problem/3629334>: (REGRESSION (Tiger): titles on pop-ups menus are truncated and show ellipses)

@@ -40,7 +40,7 @@ class DocumentImpl;
 class JSEditor {
 
 public:
-    JSEditor(DocumentImpl *);
+    JSEditor(DocumentImpl *doc) : m_doc(doc) { }
 
     bool execCommand(const DOMString &command, bool userInterface, const DOMString &value);
     bool queryCommandEnabled(const DOMString &command);
@@ -49,25 +49,9 @@ public:
     bool queryCommandSupported(const DOMString &command);
     DOMString queryCommandValue(const DOMString &command);
 
-    typedef bool (*execCommandFn)(KHTMLPart *part, bool userInterface, const DOMString &value);
-    typedef bool (*queryBoolFn)(KHTMLPart *part);
-    typedef DOMString (*queryValueFn)(KHTMLPart *part);
-
 private:
     JSEditor(const JSEditor &);
     JSEditor &operator=(const JSEditor &);
-
-    struct CommandImp {
-        execCommandFn execFn;
-        queryBoolFn enabledFn;
-        queryBoolFn indetermFn;
-        queryBoolFn stateFn;
-        queryValueFn valueFn;
-    };
-    
-    static QDict<CommandImp> &commandDict();
-    static CommandImp *commandImp(const DOMString &command);
-    static void initDict();
 
     DocumentImpl *m_doc;
 };
