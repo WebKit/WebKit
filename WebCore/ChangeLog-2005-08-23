@@ -1,5 +1,37 @@
 2002-10-08  Richard Williamson   <rjw@apple.com>
 
+        Implemented WebCoreDOMElement.
+        Fixed extra deref of impl in subclasses
+        of WebCoreDOMNode.
+        
+        * khtml/dom/dom_element.h:
+        * khtml/dom/dom_node.h:
+        * khtml/xml/dom_elementimpl.h:
+        * khtml/xml/dom_nodeimpl.h:
+        * kwq/WebCoreDOMDocument.mm:
+        (-[WebCoreDOMDocument initWithImpl:DOM::]):
+        * kwq/WebCoreDOMNode.mm:
+        (DOM::NodeListImpl::createInstance):
+        (DOM::NamedNodeMapImpl::createInstance):
+        (DOM::AttrImpl::createInstance):
+        (DOM::ElementImpl::createInstance):
+        (-[WebCoreDOMNodeList length]):
+        (-[WebCoreDOMNodeList item:]):
+        (-[WebCoreDOMAttr initWithImpl:DOM::]):
+        (+[WebCoreDOMDocumentFragment documentFragmentWithImpl:DOM::]):
+        (-[WebCoreDOMElement tagName]):
+        (-[WebCoreDOMElement setAttribute::]):
+        (-[WebCoreDOMElement removeAttribute:]):
+        (-[WebCoreDOMElement getAttributeNode:]):
+        (-[WebCoreDOMElement removeAttributeNode:]):
+        (-[WebCoreDOMElement getElementsByTagName:]):
+        (-[WebCoreDOMElement getAttributeNS::]):
+        (-[WebCoreDOMElement setAttributeNS:::]):
+        * kwq/WebDOMDocument.h:
+        * kwq/WebDOMElement.h:
+
+2002-10-08  Richard Williamson   <rjw@apple.com>
+
         First cut at ObjC stubs for DOM API.  Finished the
         main classes.  Need to finish
         WebDOMElement, WebDOMElement, WebDOMElement, 

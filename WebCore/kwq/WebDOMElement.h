@@ -1,5 +1,5 @@
 /*	
-    WebDOMElement.m
+    WebDOMElement.h
     Copyright 2002, Apple, Inc. All rights reserved.
 */
 
@@ -88,7 +88,7 @@
 
 - (void)removeAttribute:(NSString *)name;
 
-- (id<WebDOMAttr>)getAttributeNodeNamed:(NSString *)name;
+- (id<WebDOMAttr>)getAttributeNode:(NSString *)name;
 
 - (id<WebDOMAttr>)setAttributeNode:(id<WebDOMAttr>)newAttr;
 

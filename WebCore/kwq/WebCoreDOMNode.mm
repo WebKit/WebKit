@@ -4,16 +4,26 @@
 */
 #import "WebCoreDOMPrivate.h"
 
+DOM::NodeList DOM::NodeListImpl::createInstance(DOM::NodeListImpl *impl)
+{
+    return DOM::NodeList(impl);
+}
 
-DOM::NamedNodeMap DOM::NamedNodeMapImpl::createInstance(NamedNodeMapImpl *impl)
+DOM::NamedNodeMap DOM::NamedNodeMapImpl::createInstance(DOM::NamedNodeMapImpl *impl)
 {
     return DOM::NamedNodeMap(impl);
 }
 
-DOM::Attr DOM::AttrImpl::createInstance(AttrImpl *impl)
+DOM::Attr DOM::AttrImpl::createInstance(DOM::AttrImpl *impl)
 {
     return DOM::Attr(impl);
 }
+
+DOM::Element DOM::ElementImpl::createInstance(DOM::ElementImpl *impl)
+{
+    return DOM::Element(impl);
+}
+
 
 @implementation WebCoreDOMNode
 
@@ -246,6 +256,18 @@ DOM::Attr DOM::AttrImpl::createInstance(AttrImpl *impl)
     [super dealloc];
 }
 
+- (unsigned long)length
+{
+    return [self impl]->length();
+}
+
+- (id<WebDOMNode>)item: (unsigned long)index
+{
+    DOM::NodeList instance = DOM::NodeListImpl::createInstance([self impl]);
+    
+    return [WebCoreDOMNode nodeWithImpl: (DOM::NodeImpl *)instance.item(index).handle()];
+}
+
 @end
 
 
@@ -341,21 +363,12 @@ DOM::Attr DOM::AttrImpl::createInstance(AttrImpl *impl)
 
 - initWithImpl:(DOM::AttrImpl *)coreImpl
 {
-    [super init];
-    impl = coreImpl;
-    impl->ref();
-    return self;
+    return [super initWithImpl:coreImpl];
 }
 
 - (DOM::AttrImpl *)impl
 {
     return (DOM::AttrImpl *)impl;
-}
-
-- (void)dealloc
-{
-    [self impl]->deref();
-    [super dealloc];
 }
 
 - (NSString *)name
@@ -399,52 +412,158 @@ DOM::Attr DOM::AttrImpl::createInstance(AttrImpl *impl)
 {
     return [[(WebCoreDOMCDATASection *)[[self class] alloc] initWithImpl: _impl] autorelease];
 }
+- initWithImpl:(DOM::CDATASectionImpl *)coreImpl { return [super initWithImpl:coreImpl]; }
+- (DOM::CDATASectionImpl *)impl { return (DOM::CDATASectionImpl *)impl; }
 
-- initWithImpl:(DOM::CDATASectionImpl *)coreImpl
-{
-    [super init];
-    impl = coreImpl;
-    impl->ref();
-    return self;
-}
-
-- (DOM::CDATASectionImpl *)impl
-{
-    return (DOM::CDATASectionImpl *)impl;
-}
-
-- (void)dealloc
-{
-    [self impl]->deref();
-    [super dealloc];
-}
-
+// No additional methods.
 @end
 
 @implementation WebCoreDOMDocumentFragment
 
-+ (WebCoreDOMDocumentFragment *)documentFragmentWithImpl: (DOM::DocumentFragmentImpl *)_impl { return [[(WebCoreDOMDocumentFragment *)[[self class] alloc] initWithImpl: _impl] autorelease]; }
-- initWithImpl:(DOM::DocumentFragmentImpl *)coreImpl { [super init]; impl = coreImpl; impl->ref(); return self; }
++ (WebCoreDOMDocumentFragment *)documentFragmentWithImpl: (DOM::DocumentFragmentImpl *)_impl 
+{ 
+    return [[(WebCoreDOMDocumentFragment *)[[self class] alloc] initWithImpl: _impl] autorelease]; 
+}
+- initWithImpl:(DOM::DocumentFragmentImpl *)coreImpl { return [super initWithImpl:coreImpl]; }
 - (DOM::DocumentFragmentImpl *)impl { return (DOM::DocumentFragmentImpl *)impl; }
-- (void)dealloc { [self impl]->deref();  [super dealloc]; }
 
+// No additional methods.
 @end
 
 @implementation WebCoreDOMComment
 
 + (WebCoreDOMComment *)commentWithImpl: (DOM::CommentImpl *)_impl { return [[(WebCoreDOMComment *)[[self class] alloc] initWithImpl: _impl] autorelease]; }
-- initWithImpl:(DOM::CommentImpl *)coreImpl { [super init]; impl = coreImpl; impl->ref(); return self; }
+- initWithImpl:(DOM::CommentImpl *)coreImpl { return [super initWithImpl:coreImpl]; }
 - (DOM::CommentImpl *)impl { return (DOM::CommentImpl *)impl; }
-- (void)dealloc { [self impl]->deref();  [super dealloc]; }
 
 @end
 
 @implementation WebCoreDOMElement
 
 + (WebCoreDOMElement *)elementWithImpl: (DOM::ElementImpl *)_impl { return [[(WebCoreDOMElement *)[[self class] alloc] initWithImpl: _impl] autorelease]; }
-- initWithImpl:(DOM::ElementImpl *)coreImpl { [super init]; impl = coreImpl; impl->ref(); return self; }
+- initWithImpl:(DOM::ElementImpl *)coreImpl { return [super initWithImpl:coreImpl]; }
 - (DOM::ElementImpl *)impl { return (DOM::ElementImpl *)impl; }
-- (void)dealloc { [self impl]->deref();  [super dealloc]; }
+
+- (NSString *)tagName
+{
+    DOM::Element instance = DOM::ElementImpl::createInstance([self impl]);
+    DOM::DOMString _tagName = instance.tagName();
+
+    return domStringToNSString(_tagName);
+}
+
+- (NSString *)getAttribute: (NSString *)name;
+{
+    DOM::Element instance = DOM::ElementImpl::createInstance([self impl]);
+    DOM::DOMString _attribute = instance.getAttribute(NSStringToDOMString(name));
+
+    return domStringToNSString(_attribute);
+}
+
+- (void)setAttribute:(NSString *)name :(NSString *)value
+{
+    DOM::Element instance = DOM::ElementImpl::createInstance([self impl]);
+    instance.setAttribute(NSStringToDOMString(name), NSStringToDOMString(value));
+}
+
+- (void)removeAttribute:(NSString *)name
+{
+    DOM::Element instance = DOM::ElementImpl::createInstance([self impl]);
+    instance.removeAttribute(NSStringToDOMString(name));
+}
+
+- (id<WebDOMAttr>)getAttributeNode:(NSString *)name
+{
+    DOM::Element instance = DOM::ElementImpl::createInstance([self impl]);
+    DOM::Attr ret = instance.getAttributeNode(NSStringToDOMString(name));
+    
+    return [WebCoreDOMAttr attrWithImpl: (DOM::AttrImpl *)ret.handle()];
+}
+
+- (id<WebDOMAttr>)setAttributeNode:(id<WebDOMAttr>)newAttr;
+{
+    DOM::Element instance = DOM::ElementImpl::createInstance([self impl]);
+    DOM::Attr _newAttr = DOM::AttrImpl::createInstance([(WebCoreDOMAttr *)newAttr impl]);
+    DOM::Attr ret = instance.setAttributeNode(_newAttr);
+    
+    return [WebCoreDOMAttr attrWithImpl: (DOM::AttrImpl *)ret.handle()];
+}
+
+- (id<WebDOMAttr>)removeAttributeNode:(id<WebDOMAttr>)oldAttr
+{
+    DOM::Element instance = DOM::ElementImpl::createInstance([self impl]);
+    DOM::Attr _oldAttr = DOM::AttrImpl::createInstance([(WebCoreDOMAttr *)oldAttr impl]);
+    DOM::Attr ret = instance.removeAttributeNode(_oldAttr);
+    
+    return [WebCoreDOMAttr attrWithImpl: (DOM::AttrImpl *)ret.handle()];
+}
+
+- (id<WebDOMNodeList>)getElementsByTagName:(NSString *)name
+{
+    DOM::Element instance = DOM::ElementImpl::createInstance([self impl]);
+    DOM::NodeList ret = instance.getElementsByTagName(NSStringToDOMString(name));
+    
+    return [WebCoreDOMNodeList nodeListWithImpl: (DOM::NodeListImpl *)ret.handle()];
+}
+
+- (id<WebDOMNodeList>)getElementsByTagNameNS:(NSString *)namespaceURI :(NSString *)localName;
+{
+    DOM::Element instance = DOM::ElementImpl::createInstance([self impl]);
+    DOM::NodeList ret = instance.getElementsByTagNameNS(NSStringToDOMString(namespaceURI),NSStringToDOMString(localName));
+    
+    return [WebCoreDOMNodeList nodeListWithImpl: (DOM::NodeListImpl *)ret.handle()];
+}
+
+- (NSString *)getAttributeNS:(NSString *)namespaceURI :(NSString *)localName
+{
+    DOM::Element instance = DOM::ElementImpl::createInstance([self impl]);
+    DOM::DOMString ret = instance.getAttributeNS(NSStringToDOMString(namespaceURI),NSStringToDOMString(localName));
+    
+    return domStringToNSString(ret);
+}
+
+- (void)setAttributeNS:(NSString *)namespaceURI :(NSString *)qualifiedName :(NSString *)value
+{
+    DOM::Element instance = DOM::ElementImpl::createInstance([self impl]);
+    instance.setAttributeNS(NSStringToDOMString(namespaceURI), NSStringToDOMString(qualifiedName), NSStringToDOMString(value));
+}
+
+- (void)removeAttributeNS:(NSString *)namespaceURI :(NSString *)localName;
+{
+    DOM::Element instance = DOM::ElementImpl::createInstance([self impl]);
+    instance.removeAttributeNS(NSStringToDOMString(namespaceURI),NSStringToDOMString(localName));
+}
+
+- (id<WebDOMAttr>)getAttributeNodeNS:(NSString *)namespaceURI :(NSString *)localName;
+{
+    DOM::Element instance = DOM::ElementImpl::createInstance([self impl]);
+    DOM::Attr ret = instance.getAttributeNodeNS(NSStringToDOMString(namespaceURI), NSStringToDOMString(localName));
+    
+    return [WebCoreDOMAttr attrWithImpl: (DOM::AttrImpl *)ret.handle()];
+}
+
+- (id<WebDOMAttr>)setAttributeNodeNS:(id<WebDOMAttr>)newAttr;
+{
+    DOM::Element instance = DOM::ElementImpl::createInstance([self impl]);
+    DOM::Attr _newAttr = DOM::AttrImpl::createInstance([(WebCoreDOMAttr *)newAttr impl]);
+    DOM::Attr ret = instance.setAttributeNodeNS(_newAttr);
+    
+    return [WebCoreDOMAttr attrWithImpl: (DOM::AttrImpl *)ret.handle()];
+}
+
+- (BOOL)hasAttribute: (NSString *)name;
+{
+    DOM::Element instance = DOM::ElementImpl::createInstance([self impl]);
+    
+    return instance.hasAttribute (NSStringToDOMString(name));
+}
+
+- (BOOL)hasAttributeNS:(NSString *)namespaceURI :(NSString *)localName;
+{
+    DOM::Element instance = DOM::ElementImpl::createInstance([self impl]);
+    
+    return instance.hasAttributeNS (NSStringToDOMString(namespaceURI), NSStringToDOMString(localName));
+}
 
 @end
 
@@ -452,9 +571,8 @@ DOM::Attr DOM::AttrImpl::createInstance(AttrImpl *impl)
 @implementation WebCoreDOMEntityReference
 
 + (WebCoreDOMEntityReference *)entityReferenceWithImpl: (DOM::EntityReferenceImpl *)_impl { return [[(WebCoreDOMEntityReference *)[[self class] alloc] initWithImpl: _impl] autorelease]; }
-- initWithImpl:(DOM::EntityReferenceImpl *)coreImpl { [super init]; impl = coreImpl; impl->ref(); return self; }
+- initWithImpl:(DOM::EntityReferenceImpl *)coreImpl { return [super initWithImpl:coreImpl]; }
 - (DOM::EntityReferenceImpl *)impl { return (DOM::EntityReferenceImpl *)impl; }
-- (void)dealloc { [self impl]->deref();  [super dealloc]; }
 
 @end
 
@@ -462,9 +580,8 @@ DOM::Attr DOM::AttrImpl::createInstance(AttrImpl *impl)
 @implementation WebCoreDOMText
 
 + (WebCoreDOMText *)textWithImpl: (DOM::TextImpl *)_impl { return [[(WebCoreDOMText *)[[self class] alloc] initWithImpl: _impl] autorelease]; }
-- initWithImpl:(DOM::TextImpl *)coreImpl { [super init]; impl = coreImpl; impl->ref(); return self; }
+- initWithImpl:(DOM::TextImpl *)coreImpl { return [super initWithImpl:coreImpl]; }
 - (DOM::TextImpl *)impl { return (DOM::TextImpl *)impl; }
-- (void)dealloc { [self impl]->deref();  [super dealloc]; }
 
 @end
 
@@ -473,9 +590,8 @@ DOM::Attr DOM::AttrImpl::createInstance(AttrImpl *impl)
 
 + (WebCoreDOMProcessingInstruction *)processingInstructionWithImpl: (DOM::ProcessingInstructionImpl *)_impl
 { return [[(WebCoreDOMProcessingInstruction *)[[self class] alloc] initWithImpl: _impl] autorelease]; }
-- initWithImpl:(DOM::ProcessingInstructionImpl *)coreImpl { [super init]; impl = coreImpl; impl->ref(); return self; }
+- initWithImpl:(DOM::ProcessingInstructionImpl *)coreImpl { return [super initWithImpl:coreImpl]; }
 - (DOM::ProcessingInstructionImpl *)impl { return (DOM::ProcessingInstructionImpl *)impl; }
-- (void)dealloc { [self impl]->deref();  [super dealloc]; }
 
 @end
 

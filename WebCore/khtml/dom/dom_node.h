@@ -897,6 +897,9 @@ class NodeList
     friend class Node;
     friend class Document;
     friend class HTMLDocument;
+#ifdef APPLE_CHANGES
+    friend class NodeListImpl;
+#endif
 
 public:
     NodeList();

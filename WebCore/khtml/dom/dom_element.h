@@ -211,6 +211,9 @@ class Element : public Node
     friend class Document;
     friend class HTMLDocument;
 //    friend class AttrImpl;
+#ifdef APPLE_CHANGES
+    friend class ElementImpl;
+#endif
     friend class Attr;
 
 public:

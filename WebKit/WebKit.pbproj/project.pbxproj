@@ -2130,8 +2130,6 @@
 				F57D194C034E734901A80180,
 				F57D194D034E734901A80180,
 				F57D194E034E734901A80180,
-				F57D194F034E734901A80180,
-				F57D1950034E734901A80180,
 				F57D1951034E734901A80180,
 				F57D1952034E734901A80180,
 			);
@@ -2165,20 +2163,6 @@
 			isa = PBXFileReference;
 			name = WebDOMElement.m;
 			path = DOM.subproj/WebDOMElement.m;
-			refType = 2;
-		};
-		F57D194F034E734901A80180 = {
-			fileEncoding = 4;
-			isa = PBXFileReference;
-			name = WebDOMNamedNodeMap.h;
-			path = DOM.subproj/WebDOMNamedNodeMap.h;
-			refType = 2;
-		};
-		F57D1950034E734901A80180 = {
-			fileEncoding = 4;
-			isa = PBXFileReference;
-			name = WebDOMNamedNodeMap.m;
-			path = DOM.subproj/WebDOMNamedNodeMap.m;
 			refType = 2;
 		};
 		F57D1951034E734901A80180 = {

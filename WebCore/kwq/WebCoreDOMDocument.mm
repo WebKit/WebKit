@@ -29,6 +29,7 @@ DOM::DOMString NSStringToDOMString(NSString *aString)
     return DOM::DOMString();
 }
 
+
 @implementation WebCoreDOMDocumentType
 
 + (WebCoreDOMDocumentType *)documentTypeWithImpl: (DOM::DocumentTypeImpl *)_impl
@@ -40,12 +41,6 @@ DOM::DOMString NSStringToDOMString(NSString *aString)
 {
     [super initWithImpl:coreImpl];
     return self;
-}
-
-- (void)dealloc
-{
-    impl->deref();
-    [super dealloc];
 }
 
 - (DOM::DocumentTypeImpl *)impl
@@ -160,12 +155,6 @@ DOM::DOMString NSStringToDOMString(NSString *aString)
 {
     [super initWithImpl:coreImpl];
     return self;
-}
-
-- (void)dealloc
-{
-    impl->deref();
-    [super dealloc];
 }
 
 - (DOM::DocumentImpl *)impl

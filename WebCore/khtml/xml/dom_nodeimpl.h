@@ -460,6 +460,9 @@ public:
 
     // Other methods (not part of DOM)
 
+#ifdef APPLE_CHANGES
+    static NodeList createInstance(NodeListImpl *impl);
+#endif
 protected:
     // helper functions for searching all ElementImpls in a tree
     unsigned long recursiveLength(NodeImpl *start) const;
