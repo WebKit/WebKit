@@ -1,5 +1,9 @@
 2003-03-26  Darin Adler  <darin@apple.com>
 
+        * English.lproj/StringsNotToBeLocalized.txt: Updated for recent changes.
+
+2003-03-26  Darin Adler  <darin@apple.com>
+
         Reviewed by Trey.
 
 	- fixed 3209091 -- REGRESSION: WebFrameView leak (world leak)
