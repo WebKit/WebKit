@@ -39,11 +39,11 @@
 }
 
 
-- (WebPolicyAction)contentPolicyForResponse:(WebResourceResponse *)response
-				    andRequest:(WebResourceRequest *)request
-                                       inFrame:(WebFrame *)frame;
+- (WebPolicyAction)contentPolicyForMIMEType:(NSString *)type
+				 andRequest:(WebResourceRequest *)request
+				    inFrame:(WebFrame *)frame;
 {
-    if ([WebController canShowMIMEType:[response contentType]]) {
+    if ([WebController canShowMIMEType:type]) {
         return WebContentPolicyShow;
     } else {
         return WebContentPolicyIgnore;

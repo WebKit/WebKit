@@ -143,7 +143,7 @@
 
     // Figure out the content policy.
     if (![dataSource isDownloading]) {
-	contentPolicy = [[[dataSource controller] policyDelegate] contentPolicyForResponse:r
+	contentPolicy = [[[dataSource controller] policyDelegate] contentPolicyForMIMEType:[r contentType]
 								  andRequest:[dataSource request]
 								  inFrame:[dataSource webFrame]];
     } else {

@@ -93,8 +93,7 @@ typedef enum {
     policies that determine the action of what to do with the URL or the data that
     the URL represents. Typically, the policy handler methods are called in this order:
 
-    clickPolicyForElement:button:modifierFlags:<BR>
-    URLPolicyForRequest:inFrame:<BR>
+    navigationPolicyForAction:andRequest:inFrame:<BR>
     fileURLPolicyForMIMEType:andRequest:inFrame:<BR>
     contentPolicyForMIMEType:andRequest:inFrame:<BR>
 */
@@ -127,11 +126,11 @@ typedef enum {
 /*!
     @method contentPolicyForResponse:andRequest:inFrame:withContentPolicy:
     @discussion Returns the policy for content which has been partially loaded. Sent after locationChangeStarted. 
-    @param response The response for the partially loaded content.
+    @param type MIME type for the file.
     @param request A WebResourceRequest for the partially loaded content.
     @param frame The frame which is loading the URL.
 */
-- (WebContentAction)contentPolicyForResponse:(WebResourceResponse *)response
+- (WebContentAction)contentPolicyForMIMEType:(NSString *)type
                                     andRequest:(WebResourceRequest *)request
                                        inFrame:(WebFrame *)frame;
 
