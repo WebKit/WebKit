@@ -1,3 +1,11 @@
+2002-10-15  John Sullivan  <sullivan@apple.com>
+
+	- fixed 3075777 -- hysteresis for dragging links on web pages
+	is still too large
+
+        * WebView.subproj/WebHTMLView.m: changed hysteresis constants;
+	added comment.
+
 2002-10-15  Darin Adler  <darin@apple.com>
 
 	Fix problem where timer was lasting after window was closed.

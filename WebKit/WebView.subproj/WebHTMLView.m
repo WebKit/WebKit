@@ -30,8 +30,10 @@
 // Needed for the mouse moved notification.
 #import <AppKit/NSResponder_Private.h>
 
-#define DragStartXHysteresis  		5.0
-#define DragStartYHysteresis  		5.0
+// These are a little larger than typical because dragging links is a fairly
+// advanced feature that can confuse non-power-users
+#define DragStartXHysteresis  		10.0
+#define DragStartYHysteresis  		10.0
 
 #define DRAG_LABEL_BORDER_X		4.0
 #define DRAG_LABEL_BORDER_Y		2.0
