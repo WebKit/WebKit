@@ -1,3 +1,12 @@
+2002-06-11  Darin Adler  <darin@apple.com>
+
+	* kwq/KWQKURL.mm:
+	(RelativeURLKeyRetainCallBack): Use a ref count.
+	(RelativeURLKeyReleaseCallBack): Use a ref count instead of assuming there will
+	never be more than one reference.
+	(KURL::normalizeRelativeURLString): Use a ref count.
+	(operator==): Don't put URLs on the autorelease pool just to compare them.
+
 2002-06-10  Darin Adler  <darin@apple.com>
 
 	* khtml/css/cssstyleselector.cpp: Fix uninitialized variable warning.

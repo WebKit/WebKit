@@ -287,6 +287,7 @@ void KURL::KWQKURLPrivate::compose()
 struct RelativeURLKey {
     CFStringRef base;
     CFStringRef relative;
+    int refCount;
 };
 
 static const void *RelativeURLKeyRetainCallBack(CFAllocatorRef allocator, const void *value)
@@ -294,6 +295,7 @@ static const void *RelativeURLKeyRetainCallBack(CFAllocatorRef allocator, const 
     RelativeURLKey *key = (RelativeURLKey *)value;
     CFRetain(key->base);
     CFRetain(key->relative);
+    ++key->refCount;
     return key;
 }
 
@@ -302,7 +304,8 @@ static void RelativeURLKeyReleaseCallBack(CFAllocatorRef allocator, const void *
     RelativeURLKey *key = (RelativeURLKey *)value;
     CFRelease(key->base);
     CFRelease(key->relative);
-    delete key;
+    if (--key->refCount == 0)
+        delete key;
 }
 
 static CFStringRef RelativeURLKeyCopyDescriptionCallBack(const void *value)
@@ -389,45 +392,10 @@ QString KURL::normalizeURLString(const QString &s)
     }
 }
 
-static CFStringRef copyAndReplaceAll(CFStringRef string, CFStringRef stringToFind, CFStringRef replacement)
-{
-    CFMutableStringRef copy = CFStringCreateMutableCopy(0, 0, string);
-    while (true) {
-        CFRange foundSubstring = CFStringFind(copy, stringToFind, 0);
-        if (foundSubstring.location == kCFNotFound) {
-            return copy;
-        }
-        CFStringReplace(copy, foundSubstring, replacement);
-    }
-}
-
-static bool needToHideColons(CFStringRef string)
-{
-    // Do a few quick checks so we don't slow down the normal case too much.
-    // These checks are taken straight out of the buggy code in CFURL.
-    
-    CFRange colon = CFStringFind(string, CFSTR(":"), 0);
-    if (colon.location == kCFNotFound) {
-        return false;
-    }
-    
-    CFRange hash = CFStringFind(string, CFSTR("#"), kCFCompareBackwards);
-    if (!(hash.location == kCFNotFound || hash.location > colon.location)) {
-        return false;
-    }
-    
-    // At this point, we have established the the CFURL code would treat this as
-    // an absolute URL. Now check if there are any "?" or "/" characters before
-    // the first colon; if there are, we need to "hide" the colons.
-    CFRange beforeColon = CFRangeMake(0, colon.location - 1);
-    return CFStringFindWithOptions(string, CFSTR("?"), beforeColon, 0, NULL)
-        || CFStringFindWithOptions(string, CFSTR("/"), beforeColon, 0, NULL);
-}
-
 QString KURL::normalizeRelativeURLString(const KURL &base, const QString &relative)
 {
     CFMutableStringRef result = NULL;
-    RelativeURLKey key = { base.urlString.getCFMutableString(), relative.getCFMutableString() };
+    RelativeURLKey key = { base.urlString.getCFMutableString(), relative.getCFMutableString(), 0 };
 
     if (NormalizedRelativeURLCache == NULL) {
 	NormalizedRelativeURLCache = CFDictionaryCreateMutable(NULL, 0, &RelativeURLKeyCallBacks, &kCFTypeDictionaryValueCallBacks); 
@@ -444,19 +412,9 @@ QString KURL::normalizeRelativeURLString(const KURL &base, const QString &relati
 	} else {
 	    base.parse();
 
-	    CFStringRef relativeURLString;
-	    CFStringRef escapedString = CFURLCreateStringByAddingPercentEscapes(NULL, relative.getCFMutableString(),
-										CFSTR("%#"), NULL, kCFStringEncodingUTF8);
+	    CFStringRef relativeURLString = CFURLCreateStringByAddingPercentEscapes
+                (NULL, relative.getCFMutableString(), CFSTR("%#"), NULL, kCFStringEncodingUTF8);
 
-            // Workaround for CFURL bug with colons, Radar 2891336.
-            bool hideColons = needToHideColons(escapedString );
-            if (hideColons) {
-                relativeURLString = copyAndReplaceAll(escapedString, CFSTR(":"), CFSTR("INTRIGUE_COLON"));
-		CFRelease(escapedString);
-            } else {
-		relativeURLString = escapedString;
-	    }
-            
 	    CFURLRef relativeURL = CFURLCreateWithString(NULL, relativeURLString, base.d->urlRef);
 
 	    CFRelease(relativeURLString);
@@ -465,17 +423,8 @@ QString KURL::normalizeRelativeURLString(const KURL &base, const QString &relati
 		result = normalizeURLString(relative);
 	    } else {
 		CFURLRef absoluteURL = CFURLCopyAbsoluteURL(relativeURL);
-                CFStringRef absoluteURLString = CFURLGetString(absoluteURL);
                 
-                if (hideColons) {
-                    absoluteURLString = copyAndReplaceAll(absoluteURLString, CFSTR("INTRIGUE_COLON"), CFSTR(":"));
-                }
-                
-		result = normalizeURLString(QString::fromCFString(absoluteURLString));
-                
-                if (hideColons) {
-                    CFRelease(absoluteURLString);
-                }
+		result = normalizeURLString(QString::fromCFString(CFURLGetString(absoluteURL)));
                 
 		CFRelease(relativeURL);
 		CFRelease(absoluteURL);
@@ -758,5 +707,7 @@ QString KURL::htmlRef() const
 
 bool operator==(const KURL &a, const KURL &b)
 {
-    return [a.getNSURL() isEqual:b.getNSURL()];
+    a.parse();
+    b.parse();
+    return CFEqual(a.d->urlRef, b.d->urlRef);
 }
