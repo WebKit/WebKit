@@ -28,8 +28,11 @@ DYLIB_NAME = libwebcore.dylib
 EMBED_HOST = $(SYMROOTS)/Alexander.app
 EMBED_DIR = $(EMBED_HOST)/Contents/Frameworks
 
-libwebcorenmedited.dylib: libwebcoreunstripped.dylib libwebcore.exp
-	nmedit -s $(srcdir)/libwebcore.exp -o $@ - $<
+libwebcorecombined.exp: libwebcore.exp libwebcoretests.exp
+	cat $^ > $@
+
+libwebcorenmedited.dylib: libwebcoreunstripped.dylib libwebcorecombined.exp
+	nmedit -s libwebcorecombined.exp -o $@ - $<
 
 libwebcore.dylib: libwebcorenmedited.dylib
 	if test -z "$(STRIP_FLAGS)"; then \

@@ -6,3 +6,4 @@ Makefile
 *.la
 *.lo
 .libs
+libwebcorecombined.exp
