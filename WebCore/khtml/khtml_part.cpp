@@ -5603,15 +5603,7 @@ CSSComputedStyleDeclarationImpl *KHTMLPart::selectionComputedStyle(NodeImpl *&no
         return 0;
 
     Range range(d->m_selection.toRange());
-    Position pos = Position(range.startContainer().handle(), range.startOffset());
-    assert(pos.isNotNull());
-
-    // If the position is in an empty block, which this test checks, then move the position
-    // for the style check downstream. There may be a block placeholder in this block
-    // which has been styled, and we want to use that for the style calculation.
-    VisiblePosition visiblePos(pos, d->m_selection.startAffinity());
-    if (isFirstVisiblePositionInBlock(visiblePos) && isLastVisiblePositionInBlock(visiblePos))
-        pos = pos.downstream(StayInBlock);
+    Position pos = range.handle()->editingStartPosition();
 
     ElementImpl *elem = pos.element();
     if (!elem)

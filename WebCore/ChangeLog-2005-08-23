@@ -1,3 +1,38 @@
+2005-02-23  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+
+        Fix for this bug:
+        
+        <rdar://problem/4017641> REGRESSION (Mail): you can only bold/unbold a selection starting from end of line once
+
+        Problem is with the way we figure out whether to add or remove a style based on
+        the current selection. In this case, the code is looking at the end of the
+        previous line, which is not bold, and deduces incorrectly that the operation is
+        a "make bold". Then the style code runs to make bold, but there is nothing on
+        the end of the previous line to embolden, so we get into a cycle where the same
+        thing happens each time cmd-b is hit.
+
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::selectionComputedStyle):  Call editingStartPosition() to get the right position for the font determination.
+        * khtml/xml/dom2_rangeimpl.cpp:
+        (DOM::RangeImpl::editingStartPosition): New helper function that "does the right thing" based on whether the
+        selection is a caret or a range, moving upstream for the former, and downstream for the latter.
+        * khtml/xml/dom2_rangeimpl.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::fontForSelection): Call editingStartPosition() to get the right position for the font determination.
+
+        New tests:
+
+        * layout-tests/editing/style/style-boundary-001-expected.txt
+        * layout-tests/editing/style/style-boundary-001.html
+        * layout-tests/editing/style/style-boundary-002-expected.txt
+        * layout-tests/editing/style/style-boundary-002.html
+        * layout-tests/editing/style/style-boundary-003-expected.txt
+        * layout-tests/editing/style/style-boundary-003.html
+        * layout-tests/editing/style/style-boundary-004-expected.txt
+        * layout-tests/editing/style/style-boundary-004.html
+
 2005-02-23  Richard Williamson   <rjw@apple.com>
 
 	Fixed <rdar://problem/3985579> 8A367: Dashboard: Stock widget not visible when click remove to remove single char ticker symbol

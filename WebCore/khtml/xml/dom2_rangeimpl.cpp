@@ -40,6 +40,8 @@
 using khtml::createMarkup;
 using khtml::RenderBlock;
 using khtml::RenderObject;
+using khtml::VisiblePosition;
+using khtml::UPSTREAM;
 
 namespace DOM {
 
@@ -1287,6 +1289,23 @@ NodeImpl *RangeImpl::startNode() const
     if (child)
         return child;
     return m_startContainer->traverseNextSibling();
+}
+
+Position RangeImpl::editingStartPosition() const
+{
+    // This function is used to avoid bugs like:
+    // <rdar://problem/4017641> REGRESSION (Mail): you can only bold/unbold a selection starting from end of line once
+    // The issue here is that calculating the selection using the start of a range sometimes considers nodes that
+    // should not be considered. In the case of this bug, we need to move past the offset after the last character
+    // in a text node in order to make the right style calculation, so we do not wind up with a false "mixed"
+    // style.
+    
+    Position pos(m_startContainer, m_startOffset);    
+    if (pos.isNull())
+        return Position();
+    
+    int exceptionCode = 0;
+    return collapsed(exceptionCode) ? VisiblePosition(pos, UPSTREAM).deepEquivalent() : pos.downstream(DoNotStayInBlock);
 }
 
 NodeImpl *RangeImpl::pastEndNode() const

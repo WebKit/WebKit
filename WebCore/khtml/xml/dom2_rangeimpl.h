@@ -96,6 +96,8 @@ public:
     NodeImpl *startNode() const;
     NodeImpl *pastEndNode() const;
 
+    Position editingStartPosition() const;
+
 #if APPLE_CHANGES
     static Range createInstance (RangeImpl *impl);
 #endif
