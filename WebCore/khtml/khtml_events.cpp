@@ -22,6 +22,7 @@
 #include "xml/dom_nodeimpl.h"
 
 using namespace khtml;
+using namespace DOM;
 
 class khtml::MouseEvent::MouseEventPrivate
 {
@@ -50,8 +51,12 @@ long khtml::MouseEvent::offset() const
     int absX, absY;
     absX = absY = 0;
     if (innerNode().handle()->renderer()) {
-        innerNode().handle()->renderer()->absolutePosition(absX, absY);
-        innerNode().handle()->renderer()->checkSelectionPoint( this, absX, absY, tempNode, offset );
+        // FIXME: Shouldn't be necessary to skip text nodes.
+        DOM::Node inner = innerNode();
+        if (inner.nodeType() == Node::TEXT_NODE)
+            inner = inner.parentNode();
+        inner.handle()->renderer()->absolutePosition(absX, absY);
+        inner.handle()->renderer()->checkSelectionPoint( this, absX, absY, tempNode, offset );
     }
     return offset;
 }

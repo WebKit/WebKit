@@ -1,3 +1,17 @@
+2003-01-21  David Hyatt  <hyatt@apple.com>
+
+	Fix selection so that it will go up to the parent node
+	if the innerNode is text, preserving the old behavior for
+	now until we can rewrite selection to not require this.
+	
+        Reviewed by cblu.
+
+        * khtml/khtml_events.cpp:
+        (khtml::MouseEvent::offset):
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::khtmlMousePressEvent):
+        (KHTMLPart::khtmlMouseMoveEvent):
+
 2003-01-21  Trey Matteson  <trey@apple.com>
 
 	3121681 - "localhost" part of link is lost with relative links
