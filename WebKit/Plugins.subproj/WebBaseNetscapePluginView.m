@@ -549,9 +549,9 @@
     baseURL = [theBaseURL retain];
 }
 
-- (void)setArguments:(NSDictionary *)arguments
+- (void)setAttributes:(NSDictionary *)attributes
 {
-    LOG(Plugins, "%@", arguments);
+    LOG(Plugins, "%@", attributes);
 
     // Convert arguments dictionary to 2 string arrays.
     // These arrays are passed to NPP_New, but the strings need to be
@@ -559,21 +559,21 @@
 
     // The Java plug-in requires the first argument to be the base URL
     if ([MIMEType isEqualToString:@"application/x-java-applet"]) {
-        cAttributes = (char **)malloc(([arguments count] + 1) * sizeof(char *));
-        cValues = (char **)malloc(([arguments count] + 1) * sizeof(char *));
+        cAttributes = (char **)malloc(([attributes count] + 1) * sizeof(char *));
+        cValues = (char **)malloc(([attributes count] + 1) * sizeof(char *));
         cAttributes[0] = strdup("DOCBASE");
         cValues[0] = strdup([[baseURL absoluteString] UTF8String]);
         argsCount++;
     } else {
-        cAttributes = (char **)malloc([arguments count] * sizeof(char *));
-        cValues = (char **)malloc([arguments count] * sizeof(char *));
+        cAttributes = (char **)malloc([attributes count] * sizeof(char *));
+        cValues = (char **)malloc([attributes count] * sizeof(char *));
     }
 
-    NSEnumerator *e = [arguments keyEnumerator];
+    NSEnumerator *e = [attributes keyEnumerator];
     NSString *key;
     while ((key = [e nextObject])) {
         cAttributes[argsCount] = strdup([key UTF8String]);
-        cValues[argsCount] = strdup([[arguments objectForKey:key] UTF8String]);
+        cValues[argsCount] = strdup([[attributes objectForKey:key] UTF8String]);
         argsCount++;
     }
 }

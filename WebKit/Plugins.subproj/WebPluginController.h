@@ -12,11 +12,17 @@
 
 @class WebFrame;
 
+@protocol WebPlugin;
+
 @interface WebPluginController : NSObject <WebPluginContainer>
 {
     WebFrame *frame;
+
+    NSMutableArray *views;
 }
 
 - initWithWebFrame:(WebFrame *)theFrame;
+
+- (void)addPluginView:(NSView <WebPlugin> *)view;
 
 @end

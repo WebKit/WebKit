@@ -1,5 +1,32 @@
 2002-10-23  Chris Blumenberg  <cblu@apple.com>
 
+	Call the arguments for plug-ins "attributes" everywhere.
+
+        * Plugins.subproj/WebBaseNetscapePluginView.h:
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView setAttributes:]):
+        * Plugins.subproj/WebNetscapePluginEmbeddedView.h:
+        * Plugins.subproj/WebNetscapePluginEmbeddedView.m:
+        (-[WebNetscapePluginEmbeddedView initWithFrame:plugin:URL:baseURL:mime:attributes:]):
+        * Plugins.subproj/WebNullPluginView.h:
+        * Plugins.subproj/WebNullPluginView.m:
+        (-[WebNullPluginView initWithFrame:mimeType:attributes:]):
+        (-[WebNullPluginView drawRect:]):
+        * Plugins.subproj/WebPluginController.h:
+        * Plugins.subproj/WebPluginController.m:
+        (-[WebPluginController initWithWebFrame:]):
+        (-[WebPluginController dealloc]):
+        (-[WebPluginController addPluginView:]):
+        * Plugins.subproj/WebPluginPackage.h:
+        * Plugins.subproj/WebPluginPackage.m:
+        (-[WebPluginPackage viewFactory]):
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge pluginViewWithPackage:attributes:baseURL:]):
+        (-[WebBridge viewForPluginWithURL:attributes:baseURL:serviceType:]):
+        (-[WebBridge viewForJavaAppletWithFrame:attributes:baseURL:]):
+
+2002-10-23  Chris Blumenberg  <cblu@apple.com>
+
         * WebCoreSupport.subproj/WebBridge.m:
         (-[WebBridge requestedURL]):
         (-[WebBridge viewForPluginWithURL:serviceType:arguments:baseURL:]):

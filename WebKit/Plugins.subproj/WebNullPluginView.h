@@ -8,11 +8,11 @@
 
 @interface WebNullPluginView : NSImageView {
 
-    BOOL errorSent;
+    BOOL didSendError;
     NSString *mimeType;
     NSURL *pluginPage;
 }
 
-- initWithFrame:(NSRect)frame mimeType:(NSString *)mime arguments:(NSDictionary *)arguments;
+- initWithFrame:(NSRect)frame mimeType:(NSString *)mime attributes:(NSDictionary *)attributes;
 
 @end

@@ -1,5 +1,15 @@
 2002-10-23  Chris Blumenberg  <cblu@apple.com>
 
+	Call the arguments for plug-ins "attributes" everywhere.
+
+        * kwq/KWQKHTMLPartImpl.mm:
+        (KWQKHTMLPartImpl::createPart):
+        * kwq/KWQKJavaAppletWidget.mm:
+        (KJavaAppletWidget::showApplet):
+        * kwq/WebCoreBridge.h:
+
+2002-10-23  Chris Blumenberg  <cblu@apple.com>
+
 	For the new plug-in API, we need to pass a WebPluginContainer to the plug-in view upon creation. The is owned by the WebFrame. To make this all work, I had to move the WebCore plug-in and java view constructors to WebBridge from WebViewFactory since WebBridge has the frame. 
 
         * khtml/khtml_part.cpp:

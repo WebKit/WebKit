@@ -16,7 +16,7 @@ static NSImage *image = nil;
 
 @implementation WebNullPluginView
 
-- initWithFrame:(NSRect)frame mimeType:(NSString *)mime arguments:(NSDictionary *)arguments
+- initWithFrame:(NSRect)frame mimeType:(NSString *)mime attributes:(NSDictionary *)attributes
 {
     NSBundle *bundle;
     NSString *imagePath, *pluginPageString;
@@ -32,11 +32,11 @@ static NSImage *image = nil;
         [self setImage:image];
         
         mimeType = [mime retain];
-        pluginPageString = [arguments objectForKey:@"pluginspage"];
-        if(pluginPageString)
-            pluginPage = [[NSURL _web_URLWithString:pluginPageString] retain];
         
-        errorSent = NO;
+        pluginPageString = [attributes objectForKey:@"pluginspage"];
+        if(pluginPageString){
+            pluginPage = [[NSURL _web_URLWithString:pluginPageString] retain];
+        }
     }
     return self;
 }
@@ -53,8 +53,8 @@ static NSImage *image = nil;
     WebController *webController;
 
     [super drawRect:rect];
-    if(!errorSent){
-        errorSent = YES;
+    if(!didSendError){
+        didSendError = YES;
         webView = (WebView *)[self _web_superviewOfClass:[WebView class]];
         webController = [webView controller];
         [[webController policyDelegate] pluginNotFoundForMIMEType:mimeType pluginPageURL:pluginPage];

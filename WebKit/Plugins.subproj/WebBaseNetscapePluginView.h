@@ -75,7 +75,7 @@
 - (void)setPlugin:(WebNetscapePluginPackage *)thePlugin;
 - (void)setMIMEType:(NSString *)theMIMEType;
 - (void)setBaseURL:(NSURL *)theBaseURL;
-- (void)setArguments:(NSDictionary *)theArguments;
+- (void)setAttributes:(NSDictionary *)attributes;
 - (void)setMode:(int)theMode;
 
 @end

@@ -19,8 +19,11 @@
 #import <WebKit/WebNetscapePluginEmbeddedView.h>
 #import <WebKit/WebNetscapePluginPackage.h>
 #import <WebKit/WebNullPluginView.h>
+#import <WebKit/WebPlugin.h>
+#import <WebKit/WebPluginController.h>
 #import <WebKit/WebPluginDatabase.h>
 #import <WebKit/WebPluginPackage.h>
+#import <WebKit/WebPluginViewFactory.h>
 #import <WebKit/WebPreferences.h>
 #import <WebKit/WebResourceLoadDelegate.h>
 #import <WebKit/WebSubresourceClient.h>
@@ -421,23 +424,42 @@
     return [[[self dataSource] request] URL];
 }
 
-- (NSView *)viewForPluginWithURL:(NSURL *)pluginURL serviceType:(NSString *)serviceType arguments:(NSArray *)args baseURL:(NSURL *)baseURL
+- (NSView <WebPlugin> *)pluginViewWithPackage:(WebPluginPackage *)pluginPackage
+                                   attributes:(NSDictionary *)attributes
+                                      baseURL:(NSURL *)baseURL
 {
-    NSMutableDictionary *arguments;
+    WebPluginController *pluginController = [frame pluginController];
+
+    NSDictionary *arguments = [NSDictionary dictionaryWithObjectsAndKeys:
+        baseURL, WebPluginBaseURLKey,
+        attributes, WebPluginAttributesKey,
+        pluginController, WebPluginContainerKey, nil];
+
+    NSView<WebPlugin> *view = [[pluginPackage viewFactory] pluginViewWithArguments:arguments];
+    [pluginController addPluginView:view];
+
+    return view;
+}
+
+- (NSView *)viewForPluginWithURL:(NSURL *)URL
+                      attributes:(NSArray *)attributesArray
+                         baseURL:(NSURL *)baseURL
+                     serviceType:(NSString *)serviceType
+{
     NSString *mimeType, *extension;
     NSRange r1, r2, r3;
     WebBasePluginPackage *pluginPackage;
     uint i;
 
-    arguments = [NSMutableDictionary dictionary];
-    for (i = 0; i < [args count]; i++){
-        NSString *arg = [args objectAtIndex:i];
-        if ([arg rangeOfString:@"__KHTML__"].length == 0) {
-            r1 = [arg rangeOfString:@"="]; // parse out attributes and values
-            r2 = [arg rangeOfString:@"\""];
+    NSMutableDictionary *attributes = [NSMutableDictionary dictionary];
+    for (i = 0; i < [attributesArray count]; i++){
+        NSString *attribute = [attributesArray objectAtIndex:i];
+        if ([attribute rangeOfString:@"__KHTML__"].length == 0) {
+            r1 = [attribute rangeOfString:@"="]; // parse out attributes and values
+            r2 = [attribute rangeOfString:@"\""];
             r3.location = r2.location + 1;
-            r3.length = [arg length] - r2.location - 2; // don't include quotes
-            [arguments setObject:[arg substringWithRange:r3] forKey:[arg substringToIndex:r1.location]];
+            r3.length = [attribute length] - r2.location - 2; // don't include quotes
+            [attributes setObject:[attribute substringWithRange:r3] forKey:[attribute substringToIndex:r1.location]];
         }
     }
 
@@ -445,21 +467,24 @@
         mimeType = serviceType;
         pluginPackage = [[WebPluginDatabase installedPlugins] pluginForMIMEType:mimeType];
     } else {
-        extension = [[pluginURL path] pathExtension];
+        extension = [[URL path] pathExtension];
         pluginPackage = [[WebPluginDatabase installedPlugins] pluginForExtension:extension];
         mimeType = [[pluginPackage extensionToMIMEDictionary] objectForKey:extension];
     }
 
     if (pluginPackage) {
         if([pluginPackage isKindOfClass:[WebPluginPackage class]]){
-            return nil;
-        }else if([pluginPackage isKindOfClass:[WebNetscapePluginPackage class]]){
+            return [self pluginViewWithPackage:(WebPluginPackage *)pluginPackage
+                                    attributes:attributes
+                                       baseURL:baseURL];
+        }
+        else if([pluginPackage isKindOfClass:[WebNetscapePluginPackage class]]){
             return [[[WebNetscapePluginEmbeddedView alloc] initWithFrame:NSMakeRect(0,0,0,0)
                                                                   plugin:(WebNetscapePluginPackage *)pluginPackage
-                                                                     URL:pluginURL
+                                                                     URL:URL
                                                                  baseURL:baseURL
                                                                     mime:mimeType
-                                                               arguments:arguments] autorelease];
+                                                               attributes:attributes] autorelease];
         }else{
             [NSException raise:NSInternalInconsistencyException
                         format:@"Plugin package class not recognized"];
@@ -468,11 +493,11 @@
     }else{
         return [[[WebNullPluginView alloc] initWithFrame:NSMakeRect(0,0,0,0)
                                                 mimeType:mimeType
-                                               arguments:arguments] autorelease];
+                                              attributes:attributes] autorelease];
     }
 }
 
-- (NSView *)viewForJavaAppletWithFrame:(NSRect)theFrame baseURL:(NSURL *)baseURL parameters:(NSDictionary *)parameters
+- (NSView *)viewForJavaAppletWithFrame:(NSRect)theFrame attributes:(NSDictionary *)attributes baseURL:(NSURL *)baseURL
 {
     WebBasePluginPackage *pluginPackage;
 
@@ -483,14 +508,17 @@
     }
 
     if([pluginPackage isKindOfClass:[WebPluginPackage class]]){
-        return nil;
-    }else if([pluginPackage isKindOfClass:[WebNetscapePluginPackage class]]){
+        return [self pluginViewWithPackage:(WebPluginPackage *)pluginPackage
+                                attributes:attributes
+                                   baseURL:baseURL];
+    }
+    else if([pluginPackage isKindOfClass:[WebNetscapePluginPackage class]]){
         return [[[WebNetscapePluginEmbeddedView alloc] initWithFrame:theFrame
                                                               plugin:(WebNetscapePluginPackage *)pluginPackage
                                                                  URL:nil
                                                              baseURL:baseURL
                                                                 mime:@"application/x-java-applet"
-                                                           arguments:parameters] autorelease];
+                                                           attributes:attributes] autorelease];
     }else{
         [NSException raise:NSInternalInconsistencyException
                     format:@"Plugin package class not recognized"];

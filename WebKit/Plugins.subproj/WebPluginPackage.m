@@ -36,4 +36,9 @@
     return self;
 }
 
+- (Class)viewFactory
+{
+    return [bundle principalClass];
+}
+
 @end

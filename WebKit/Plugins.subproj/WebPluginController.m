@@ -9,6 +9,7 @@
 #import <WebKit/WebController.h>
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebFrame.h>
+#import <WebKit/WebPlugin.h>
 #import <WebKit/WebPluginController.h>
 #import <WebKit/WebWindowOperationsDelegate.h>
 
@@ -18,10 +19,27 @@
 
 - initWithWebFrame:(WebFrame *)theFrame
 {
+    [super init];
+    
     // Not retained because the frame retains this plug-in controller.
     frame = theFrame;
-
+    
+    views = [[NSMutableArray array] retain];
+    
     return self;
+}
+
+- (void)dealloc
+{
+    [views removeAllObjects];
+    [views release];
+    [super dealloc];
+}
+
+- (void)addPluginView:(NSView <WebPlugin> *)view
+{
+    [views addObject:view];
+    [view pluginInitialize];
 }
 
 - (void)showURL:(NSURL *)URL inFrame:(NSString *)target

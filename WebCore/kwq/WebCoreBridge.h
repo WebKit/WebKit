@@ -227,8 +227,8 @@ enum FrameBorderStyle {
 
 - (NSURL *)requestedURL;
 
-- (NSView *)viewForPluginWithURL:(NSURL *)url serviceType:(NSString *)serviceType arguments:(NSArray *)arguments baseURL:(NSURL *)baseURL;
-- (NSView *)viewForJavaAppletWithFrame:(NSRect)frame baseURL:(NSURL *)URL parameters:(NSDictionary *)parameters;
+- (NSView *)viewForPluginWithURL:(NSURL *)URL attributes:(NSArray *)attributesArray baseURL:(NSURL *)baseURL serviceType:(NSString *)serviceType;
+- (NSView *)viewForJavaAppletWithFrame:(NSRect)frame attributes:(NSDictionary *)attributes baseURL:(NSURL *)baseURL;
 
 @end
 
