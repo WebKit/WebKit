@@ -176,15 +176,15 @@ static bool initializedObjectCacheSize = FALSE;
     _part->browserExtension()->setURLArgs(args);
 
     // opening the URL
-    _part->didOpenURL([URL cString]);
-
-    // things we have to set up after calling didOpenURL
-    if (refresh) {
-        _part->addMetaData("http-refresh", QString::fromNSString(refresh));
-    }
-    if (lastModified) {
-	NSString *modifiedString = [lastModified descriptionWithCalendarFormat:@"%a %b %d %Y %H:%M:%S" timeZone:nil locale:nil];
-	_part->addMetaData("modified", QString::fromNSString(modifiedString));
+    if (_part->didOpenURL([URL cString])) {
+        // things we have to set up after calling didOpenURL
+        if (refresh) {
+            _part->addMetaData("http-refresh", QString::fromNSString(refresh));
+        }
+        if (lastModified) {
+            NSString *modifiedString = [lastModified descriptionWithCalendarFormat:@"%a %b %d %Y %H:%M:%S" timeZone:nil locale:nil];
+            _part->addMetaData("modified", QString::fromNSString(modifiedString));
+        }
     }
 }
 

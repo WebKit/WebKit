@@ -1,3 +1,12 @@
+2003-06-14  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3293367>: REGRESSION (83-84): nil-deref in addMetaData loading page in pop-up at live365.com
+
+        Reviewed by darin.
+
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge openURL:reload:contentType:refresh:lastModified:pageCache:]): only call addMetaData if didOpenURL
+
 2003-06-13  Darin Adler  <darin@apple.com>
 
         Reviewed by Don.
