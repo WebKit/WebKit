@@ -1,3 +1,12 @@
+2003-03-03  Richard Williamson   <rjw@apple.com>
+
+        Fix build oops from last checkin to khtml/html/html_formimpl.cpp.
+        
+        Reviewed by trey
+
+        * khtml/html/html_formimpl.cpp:
+        (encodeCString):
+
 2003-03-03  Darin Adler  <darin@apple.com>
 
         Reviewed by Dave.

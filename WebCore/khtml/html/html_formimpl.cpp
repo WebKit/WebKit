@@ -171,7 +171,7 @@ static QCString encodeCString(const QCString& e)
 
     //QCString orig(e.data(), e.size());
 
-    for(unsigned pos = 0; pos < elen; pos++) {
+    for(int pos = 0; pos < elen; pos++) {
         unsigned char c = e[pos];
 
         if ( (( c >= 'A') && ( c <= 'Z')) ||
