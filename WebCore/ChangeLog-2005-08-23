@@ -2,6 +2,13 @@
 
         Reviewed by Chris.
 
+        * config.h: Check in newly generated version which has changed due to changes
+        in configure.in.
+
+2003-07-10  Darin Adler  <darin@apple.com>
+
+        Reviewed by Chris.
+
         - fixed 3317693 -- REGRESSION: many web pages are rendering with wrong layout (columns in HelpViewer, etc.)
 
         This is a workaround for the code generation bug in gcc that causes this problem with
