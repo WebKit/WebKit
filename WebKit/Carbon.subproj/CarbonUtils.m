@@ -1,9 +1,9 @@
 /*
- *  CarbonUtils.c
+ *  CarbonUtils.m
  *  WebKit
  *
  *  Created by Ed Voas on Mon Feb 17 2003.
- *  Copyright (c) 2003 __MyCompanyName__. All rights reserved.
+ *  Copyright (c) 2003 Apple Computer, Inc. All rights reserved.
  *
  */
 
@@ -42,8 +42,13 @@ PoolCleaner( EventLoopTimerRef inTimer, EventLoopIdleTimerMessage inState, void 
 {
 	if ( inState == kEventLoopIdleTimerStarted )
 	{
-		[sPool release];
-		sPool = [[NSAutoreleasePool allocWithZone:NULL] init];
+        CFStringRef mode = CFRunLoopCopyCurrentMode( (CFRunLoopRef)GetCFRunLoopFromEventLoop( GetCurrentEventLoop() ));
+        if ( CFEqual( mode, kCFRunLoopDefaultMode ) )
+        {
+            [sPool release];
+            sPool = [[NSAutoreleasePool allocWithZone:NULL] init];
+        }
+        CFRelease( mode );
 	}
 }
 

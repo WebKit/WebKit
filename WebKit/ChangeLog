@@ -1,3 +1,14 @@
+2004-01-09  Darin Adler  <darin@apple.com>
+
+        Reviewed by Chris.
+
+        - fixed 3510805: "PoolCleaner" in Carbon WebKit leads to overrelease and crash using color picker in BBEdit
+
+        * Carbon.subproj/CarbonUtils.m: (PoolCleaner): Only do the autorelease
+        pool stuff in the default run loop mode. If we're in another run loop
+        mode that means we are in some Cocoa code that sets up its own autorelease
+        pool; it's important that we don't release ours in that case.
+
 2004-01-08  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by John.
