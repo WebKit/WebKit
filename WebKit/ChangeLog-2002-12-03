@@ -1,5 +1,29 @@
 2002-10-02  Darin Adler  <darin@apple.com>
 
+	More work on "open window behind".
+
+        * WebView.subproj/WebControllerPolicyDelegate.h: Add new OpenNewWindowBehind
+	constants to the enums.
+
+        * WebView.subproj/WebWindowOperationsDelegate.h: Add a behind: parameter to
+	the openNewWindowWithURL method.
+
+        * WebView.subproj/WebHTMLViewPrivate.m:
+        (-[WebHTMLView _continueAfterClickPolicyForEvent:]): In the new
+	WebClickPolicyOpenNewWindowBehind case, pass YES for behind.
+
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView loadRequest:inTarget:withNotifyData:]):
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge openNewWindowWithURL:referrer:frameName:]):
+        * WebView.subproj/WebDefaultContextMenuDelegate.m:
+        (-[WebDefaultContextMenuDelegate openNewWindowWithURL:referrer:]):
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame frameNamed:]):
+	Pass NO for behind.
+
+2002-10-02  Darin Adler  <darin@apple.com>
+
 	Cut down on unnecessary use of WebFoundation private stuff.
 
         * Plugins.subproj/WebPluginStream.m:

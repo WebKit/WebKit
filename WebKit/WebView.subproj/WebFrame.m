@@ -260,7 +260,7 @@
     }
     
     else if ([name isEqualToString:@"_blank"]){
-        WebController *newController = [[[self controller] windowOperationsDelegate] openNewWindowWithURL:nil referrer:nil];
+        WebController *newController = [[[self controller] windowOperationsDelegate] openNewWindowWithURL:nil referrer:nil behind:NO];
 	[[[[newController windowOperationsDelegate] window] windowController] showWindow:nil];
 
         return [newController mainFrame];

@@ -22,9 +22,10 @@
     @abstract Open a new window and load the specified URL.
     @param URL The URL to load.
     @param referrer The referrer to use when loading the URL.
+    @param behind YES to open the window behind this one, NO to open it in front.
     @result The WebController for the WebView in the new window.
 */
-- (WebController *)openNewWindowWithURL:(NSURL *)URL referrer:(NSString *)referrer;
+- (WebController *)openNewWindowWithURL:(NSURL *)URL referrer:(NSString *)referrer behind:(BOOL)behind;
 
 /*!
     @method setStatusText:
