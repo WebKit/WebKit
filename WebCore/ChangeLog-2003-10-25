@@ -2,6 +2,15 @@
 
         Reviewed by Trey.
 
+	- fixed 3138427 - new window opened by javascript is too small for popcap.com game
+
+        * khtml/ecma/kjs_window.cpp:
+        (WindowFunc::tryCall): Be a bit more tolerant of misformatted attribute strings.
+
+2003-03-29  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Trey.
+
 	- fixed 3180786 - Can't log in to the LL Bean Web site
 
 	The problem on this site was misnested tags, leading to two FORM

@@ -1141,6 +1141,10 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
           if (pos >= 0) {
             key = s.left(pos).stripWhiteSpace().lower();
             val = s.mid(pos + 1).stripWhiteSpace().lower();
+	    int spacePos = val.find(' ');
+	    if (spacePos != -1) {
+	      val = val.left(spacePos);
+	    }
 
             int scnum = QApplication::desktop()->screenNumber(widget->topLevelWidget());
 
