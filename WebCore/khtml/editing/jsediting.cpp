@@ -210,7 +210,7 @@ bool execCut(KHTMLPart *part, bool userInterface, const DOMString &value)
 
 bool execDelete(KHTMLPart *part, bool userInterface, const DOMString &value)
 {
-    TypingCommand::deleteKeyPressed(part->xmlDocImpl(), part->selectionGranularity() == khtml::WORD);
+    TypingCommand::deleteKeyPressed(part->xmlDocImpl());
     return true;
 }
 
