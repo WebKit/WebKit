@@ -43,6 +43,7 @@
 #include "html/html_baseimpl.h"
 #include "html/html_miscimpl.h"
 #include "html/html_imageimpl.h"
+#include "rendering/render_block.h"
 #include "rendering/render_text.h"
 #include "rendering/render_frames.h"
 #include "misc/htmlhashes.h"
@@ -4494,32 +4495,23 @@ void KHTMLPart::customEvent( QCustomEvent *event )
 
 bool KHTMLPart::isPointInsideSelection(int x, int y)
 {
-    // Treat an empty selection like no selection.
+    // Treat a collapsed selection like no selection.
     if (d->m_selection.state() == Selection::CARET)
         return false;
-    if (!xmlDocImpl()->renderer()) {
+    if (!xmlDocImpl()->renderer()) 
         return false;
-    }
     
     RenderObject::NodeInfo nodeInfo(true, true);
     xmlDocImpl()->renderer()->layer()->nodeAtPoint(nodeInfo, x, y);
-    DOM::NodeImpl* innerNode = nodeInfo.innerNode();
-    if (!innerNode || !innerNode->renderer()) {
+    NodeImpl *innerNode = nodeInfo.innerNode();
+    if (!innerNode || !innerNode->renderer())
         return false;
-    }
     
-    // FIXME: Shouldn't be necessary to skip text nodes.
-    if (innerNode->nodeType() == Node::TEXT_NODE) {
-        innerNode = innerNode->parentNode();
-    }
-    int ax, ay;
-    innerNode->renderer()->absolutePosition(ax, ay);
-    Position pos(innerNode->positionForCoordinates(ax + x, ay + y));
-    if (pos.isEmpty()) {
+    Position pos(innerNode->positionForCoordinates(x, y));
+    if (pos.isEmpty())
         return false;
-    }
 
-    DOM::NodeImpl *n = d->m_selection.start().node();
+    NodeImpl *n = d->m_selection.start().node();
     while (n) {
         if (n == pos.node()) {
             if ((n == d->m_selection.start().node() && pos.offset() < d->m_selection.start().offset()) ||
@@ -4528,20 +4520,12 @@ bool KHTMLPart::isPointInsideSelection(int x, int y)
             }
             return true;
         }
-        if (n == d->m_selection.end().node()) {
+        if (n == d->m_selection.end().node())
             break;
-        }
-        DOM::NodeImpl *next = n->firstChild();
-        if (next) {
-            next = n->nextSibling();
-        }
-        while (!next && n->parentNode()) {
-            n = n->parentNode();
-            next = n->nextSibling();
-        }
-        n = next;
+        n = n->traverseNextNode();
     }
-    return false;
+
+   return false;
 }
 
 #if APPLE_CHANGES

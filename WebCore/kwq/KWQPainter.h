@@ -95,7 +95,8 @@ public:
     void setRasterOp(RasterOp);
 
     void drawText(int x, int y, int, int, int alignmentFlags, const QString &);
-    void drawHighlightForText(int x, int y, const QChar *, int length, int from, int to, int toAdd,
+    void drawHighlightForText(int x, int minX, int maxX, int y, int h, 
+                  const QChar *, int length, int from, int to, int toAdd,
                   const QColor& backgroundColor, QPainter::TextDirection d, bool visuallyOrdered,
                   int letterSpacing, int wordSpacing, bool smallCaps);
     void drawText(int x, int y, const QChar *, int length, int from, int to, int toAdd,

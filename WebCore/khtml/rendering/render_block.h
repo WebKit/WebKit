@@ -31,7 +31,7 @@
 
 namespace DOM {
     class Position;
-};
+}
 
 namespace khtml {
 

@@ -1,3 +1,20 @@
+2004-04-27  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+        
+        Make selections draw in a more Cocoa-like way, where
+        fully-selected lines draw out to the ends of lines, and
+        spaces between lines are drawn with the selection color as well.
+
+        * Misc.subproj/WebKitNSStringExtras.m: Use new WebCoreTextGeometry struct. No change in functionality.
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (-[WebTextRenderer drawRun:style:geometry:]): Use new WebCoreTextGeometry struct. No change in functionality.
+        (-[WebTextRenderer drawHighlightForRun:style:geometry:]): Ditto.
+        (-[WebTextRenderer _CG_drawHighlightForRun:style:geometry:]): Many changes to add the new selection drawing behavior.
+        (-[WebTextRenderer _CG_drawRun:style:geometry:]):  Use new WebCoreTextGeometry struct. No change in functionality.
+        (-[WebTextRenderer _ATSU_drawHighlightForRun:style:geometry:]): Many changes to add the new selection drawing behavior.
+        (-[WebTextRenderer _ATSU_drawRun:style:geometry:]):  Use new WebCoreTextGeometry struct. No change in functionality.
+
 2004-04-26  Richard Williamson   <rjw@apple.com>
 
 	Added support for specifying composite operation on an
@@ -8,6 +25,7 @@
 
 	This feature was requested by the dashboard guys.  They can use it to apply
 	transparency masks to widgies.
+
 
         Reviewed by Ken.
 

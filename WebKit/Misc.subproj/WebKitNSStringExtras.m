@@ -43,7 +43,10 @@ static BOOL canUseFastRenderer (const UniChar *buffer, unsigned length)
         style.applyRunRounding = NO;
         style.applyWordRounding = NO;
         style.textColor = textColor;
-        [renderer drawRun:&run style:&style atPoint:point];
+        WebCoreTextGeometry geometry;
+        WebCoreInitializeEmptyTextGeometry(&geometry);
+        geometry.point = point;
+        [renderer drawRun:&run style:&style geometry:&geometry];
     }
     else {
         // WebTextRenderer assumes drawing from baseline.

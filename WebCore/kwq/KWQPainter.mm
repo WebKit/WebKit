@@ -549,8 +549,12 @@ void QPainter::drawText(int x, int y, int, int, int alignmentFlags, const QStrin
     
     if (alignmentFlags & Qt::AlignRight)
         x -= ROUND_TO_INT([data->textRenderer floatWidthForRun:&run style:&style widths:0]);
+
+    WebCoreTextGeometry geometry;
+    WebCoreInitializeEmptyTextGeometry(&geometry);
+    geometry.point = NSMakePoint(x, y);
      
-    [data->textRenderer drawRun:&run style:&style atPoint:NSMakePoint(x, y)];
+    [data->textRenderer drawRun:&run style:&style geometry:&geometry];
 }
 
 void QPainter::drawText(int x, int y, const QChar *str, int len, int from, int to, int toAdd, const QColor &backgroundColor, QPainter::TextDirection d, bool visuallyOrdered, int letterSpacing, int wordSpacing, bool smallCaps)
@@ -582,11 +586,16 @@ void QPainter::drawText(int x, int y, const QChar *str, int len, int from, int t
     style.smallCaps = smallCaps;
     style.families = families;
     style.padding = toAdd;
+    WebCoreTextGeometry geometry;
+    WebCoreInitializeEmptyTextGeometry(&geometry);
+    geometry.point = NSMakePoint(x, y);
     
-    [data->textRenderer drawRun:&run style:&style atPoint:NSMakePoint(x, y)];
+    [data->textRenderer drawRun:&run style:&style geometry:&geometry];
 }
 
-void QPainter::drawHighlightForText(int x, int y, const QChar *str, int len, int from, int to, int toAdd, const QColor &backgroundColor, QPainter::TextDirection d, bool visuallyOrdered, int letterSpacing, int wordSpacing, bool smallCaps)
+void QPainter::drawHighlightForText(int x, int minX, int maxX, int y, int h, 
+    const QChar *str, int len, int from, int to, int toAdd, const QColor &backgroundColor, 
+    QPainter::TextDirection d, bool visuallyOrdered, int letterSpacing, int wordSpacing, bool smallCaps)
 {
     if (data->state.paintingDisabled || len <= 0)
         return;
@@ -615,8 +624,15 @@ void QPainter::drawHighlightForText(int x, int y, const QChar *str, int len, int
     style.smallCaps = smallCaps;
     style.families = families;
     style.padding = toAdd;
-    
-    [data->textRenderer drawHighlightForRun:&run style:&style atPoint:NSMakePoint(x, y)];
+    WebCoreTextGeometry geometry;
+    WebCoreInitializeEmptyTextGeometry(&geometry);
+    geometry.point = NSMakePoint(x, y);
+    geometry.selectionY = y;
+    geometry.selectionHeight = h;
+    geometry.selectionMinX = minX;
+    geometry.selectionMaxX = maxX;
+    geometry.useFontMetricsForSelectionYAndHeight = false;
+    [data->textRenderer drawHighlightForRun:&run style:&style geometry:&geometry];
 }
 
 void QPainter::drawLineForText(int x, int y, int yOffset, int width)

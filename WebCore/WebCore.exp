@@ -98,6 +98,7 @@ _WebCoreElementLinkTargetFrameKey
 _WebCoreElementLinkTitleKey
 _WebCoreElementLinkURLKey
 _WebCoreElementTitleKey
+_WebCoreInitializeEmptyTextGeometry
 _WebCoreInitializeEmptyTextStyle
 _WebCoreInitializeTextRun
 _WebCorePageCacheStateKey

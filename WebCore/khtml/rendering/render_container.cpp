@@ -481,13 +481,13 @@ Position RenderContainer::positionForCoordinates(int _x, int _y)
     if (!firstChild())
         return Position(element(), 0);
 
-    // look for the geometically-closest child and pass off to that child
+    // look for the geometrically-closest child and pass off to that child
     int min = INT_MAX;
-    int absx, absy;
-    absolutePosition(absx, absy);
     RenderObject *closestRenderer = firstChild();
     for (RenderObject *renderer = firstChild(); renderer; renderer = renderer->nextSibling()) {
+        int absx, absy;
         renderer->absolutePosition(absx, absy);
+        
         int top = absy + borderTop() + paddingTop();
         int bottom = top + renderer->contentHeight();
         int left = absx + borderLeft() + paddingLeft();

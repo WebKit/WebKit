@@ -341,7 +341,7 @@ public:
     virtual void setInlineBoxWrapper(InlineBox* b);
     void deleteLineBoxWrapper();
 
-    virtual InlineBox *inlineBox(long offset);
+    virtual InlineBox *inlineBox(long offset=0);
     
     // for discussion of lineHeight see CSS2 spec
     virtual short lineHeight( bool firstLine, bool isRootLineBox=false ) const;

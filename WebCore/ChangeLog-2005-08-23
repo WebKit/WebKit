@@ -1,3 +1,48 @@
+2004-04-27  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+        
+        Make selections draw in a more Cocoa-like way, where
+        fully-selected lines draw out to the ends of lines, and
+        spaces between lines are drawn with the selection color as well.
+
+        * WebCore-combined.exp: Add _WebCoreInitializeEmptyTextGeometry symbol
+        * WebCore.exp: Ditto.
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::isPointInsideSelection): Marginally-related change. Fix up this function
+        so that it works right, given my recent changes to positionForCoordinates. This fix
+        "really" fixes the problem. Unlike my attempt to fix yesterday.
+        * khtml/rendering/font.cpp:
+        (Font::drawHighlightForText): New drawHighlightForText interface which includes extra
+        information to draw the selection.
+        * khtml/rendering/font.h: Ditto.
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::positionForCoordinates): Some minor improvements and cleanups to
+        make this code work correctly in more cases.
+        * khtml/rendering/render_block.h: Remove spurious semi-colon after namespace block.
+        * khtml/rendering/render_container.cpp:
+        (RenderContainer::positionForCoordinates): Fix typo in comment. Also, clean up
+        one unnecessary call to absolutePosition.
+        * khtml/rendering/render_image.cpp:
+        (RenderImage::paint): Many changes to add the new selection drawing behavior.
+        * khtml/rendering/render_inline.cpp:
+        (RenderInline::positionForCoordinates): Added to help make selections work right 
+        with continuations.
+        * khtml/rendering/render_inline.h: Ditto.
+        * khtml/rendering/render_object.h: Give zero default argument to inlineBox() helper.
+        * khtml/rendering/render_text.cpp:
+        (InlineTextBox::paintSelection): Many changes to add the new selection drawing behavior.
+        * kwq/KWQListBox.mm:
+        (-[KWQTableView drawRow:clipRect:]): Use new WebCoreTextGeometry struct.
+        * kwq/KWQPainter.h: New drawHighlightForText interface which includes extra
+        information to draw the selection.
+        * kwq/KWQPainter.mm:
+        (QPainter::drawText): Use new WebCoreInitializeEmptyTextGeometry struct.
+        (QPainter::drawHighlightForText): Use new WebCoreTextGeometry struct.
+        * kwq/WebCoreTextRenderer.h: Declare new WebCoreTextGeometry struct.
+        * kwq/WebCoreTextRendererFactory.m:
+        (WebCoreInitializeEmptyTextGeometry): Initializer for WebCoreTextGeometry struct.
+
 2004-04-27  Richard Williamson   <rjw@apple.com>
 
 	Don't do unnecessary string comparisons when no composite operator is

@@ -53,6 +53,15 @@ struct WebCoreTextRun
     int to;
 };
 
+struct WebCoreTextGeometry
+{
+    NSPoint point;
+    float selectionY;
+    float selectionHeight;
+    float selectionMinX;
+    float selectionMaxX;
+    bool useFontMetricsForSelectionYAndHeight : 1;
+};
 
 #ifdef __cplusplus
 extern "C" {
@@ -60,14 +69,15 @@ extern "C" {
 
 typedef struct WebCoreTextRun WebCoreTextRun;
 typedef struct WebCoreTextStyle WebCoreTextStyle;
+typedef struct WebCoreTextGeometry WebCoreTextGeometry;
 
 extern void WebCoreInitializeTextRun(WebCoreTextRun *run, const UniChar *characters, unsigned int length, int from, int to);
 extern void WebCoreInitializeEmptyTextStyle(WebCoreTextStyle *style);
+extern void WebCoreInitializeEmptyTextGeometry(WebCoreTextGeometry *geometry);
 
 #ifdef __cplusplus
 }
 #endif
-
 
 @protocol WebCoreTextRenderer <NSObject>
 
@@ -87,8 +97,8 @@ extern void WebCoreInitializeEmptyTextStyle(WebCoreTextStyle *style);
 - (float)floatWidthForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style widths:(float *)buffer;
 
 // drawing
-- (void)drawRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style atPoint:(NSPoint)point;
-- (void)drawHighlightForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style atPoint:(NSPoint)point;
+- (void)drawRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style geometry:(const WebCoreTextGeometry *)geometry;
+- (void)drawHighlightForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style geometry:(const WebCoreTextGeometry *)geometry;
 - (void)drawLineForCharacters:(NSPoint)point yOffset:(float)yOffset withWidth:(int)width withColor:(NSColor *)color;
 
 // selection point check

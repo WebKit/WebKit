@@ -532,7 +532,11 @@ void QListBox::setWritingDirection(QPainter::TextDirection d)
     }
     point.y = NSMaxY(cellRect) + [itemFont() descender] - bottomMargin;
 
-    [renderer drawRun:&run style:&style atPoint:point];
+    WebCoreTextGeometry geometry;
+    WebCoreInitializeEmptyTextGeometry(&geometry);
+    geometry.point = point;
+    
+    [renderer drawRun:&run style:&style geometry:&geometry];
 }
 
 - (void)_KWQ_setKeyboardFocusRingNeedsDisplay

@@ -323,6 +323,49 @@ void RenderImage::paint(PaintInfo& i, int _tx, int _ty)
     }
     else if (image && !image->isTransparent())
     {
+#if APPLE_CHANGES
+        // Do the calculations to draw selections as tall as the line.
+        // Ignore the passed-in value for _ty.
+        // Use the bottom of the line above as the y position (if there is one, 
+        // otherwise use the top of this renderer's line) and the height of the line as the height. 
+        // This mimics Cocoa.
+        int selectionTop = -1;
+        int selectionHeight = -1;
+        int selectionLeft = -1;
+        int selectionRight = -1;
+        bool extendSelectionToLeft = false;
+        bool extendSelectionToRight = false;
+        if (drawSelectionTint) {
+            InlineBox *box = inlineBox();
+            if (box) {
+                // Get a value for selectionTop that is relative to the containing block.
+                // This value is used for determining left and right offset for the selection, if necessary,
+                // and for calculating the selection height.
+                if (box->root()->prevRootBox())
+                    selectionTop = box->root()->prevRootBox()->bottomOverflow();
+                else
+                    selectionTop = box->root()->topOverflow();
+
+                selectionHeight = box->root()->bottomOverflow() - selectionTop;
+
+                int absx, absy;
+                containingBlock()->absolutePosition(absx, absy);
+
+                if (box->root()->firstLeafChild() == box) {
+                    extendSelectionToLeft = true;
+                    selectionLeft = absx + containingBlock()->leftOffset(selectionTop);
+                }
+                if (box->root()->lastLeafChild() == box) {
+                    extendSelectionToRight = true;
+                    selectionRight = absx + containingBlock()->rightOffset(selectionTop);
+                }
+        
+                // Now make the selectionTop an absolute coordinate.
+                selectionTop += absy;
+            }
+        }
+#endif
+
         if ( (cWidth != intrinsicWidth() ||  cHeight != intrinsicHeight()) &&
              pix.width() > 0 && pix.height() > 0 && image->valid_rect().isValid())
         {
@@ -371,7 +414,16 @@ void RenderImage::paint(PaintInfo& i, int _tx, int _ty)
             }
 #if APPLE_CHANGES
             if (drawSelectionTint) {
-                p->fillRect(_tx + leftBorder + leftPad, _ty + topBorder + topPad, tintSize.width(), tintSize.height(), QBrush(selectionTintColor(p)));
+                int left = _tx + leftBorder + leftPad;
+                int width = tintSize.width();
+                int top = selectionTop >= 0 ? selectionTop : _ty + topBorder + topPad;
+                int height = selectionHeight >= 0 ? selectionHeight : tintSize.height();
+                QBrush brush(selectionTintColor(p));
+                p->fillRect(left, top, width, height, brush);
+                if (extendSelectionToLeft)
+                    p->fillRect(selectionLeft, selectionTop, left - selectionLeft, selectionHeight, brush);
+                if (extendSelectionToRight)
+                    p->fillRect(left + width, selectionTop, selectionRight - (left + width), selectionHeight, brush);
             }
 #endif
         }
@@ -405,7 +457,16 @@ void RenderImage::paint(PaintInfo& i, int _tx, int _ty)
              }
 #if APPLE_CHANGES
              if (drawSelectionTint) {
-                 p->fillRect(offs.x() + rect.x(), offs.y() + rect.y(), rect.width(), rect.height(), QBrush(selectionTintColor(p)));
+                int left = offs.x() + rect.x();
+                int width = rect.width();
+                int top = selectionTop >= 0 ? selectionTop : offs.y() + rect.y();
+                int height = selectionHeight >= 0 ? selectionHeight : rect.height();
+                QBrush brush(selectionTintColor(p));
+                p->fillRect(left, top, width, height, brush);
+                if (extendSelectionToLeft)
+                    p->fillRect(selectionLeft, selectionTop, left - selectionLeft, selectionHeight, brush);
+                if (extendSelectionToRight)
+                    p->fillRect(left + width, selectionTop, selectionRight - (left + width), selectionHeight, brush);
              }
 #endif
         }

@@ -2075,13 +2075,9 @@ Position RenderBlock::positionForCoordinates(int _x, int _y)
             return Position(element(), 0);
             
         if (_y >= top && _y < absy + firstRootBox()->topOverflow())
-            // y coordinates is above first root line box
+            // y coordinate is above first root line box
             return positionForBox(firstRootBox()->firstLeafChild(), true);
         
-        if (_y < bottom && _y >= absy + lastRootBox()->bottomOverflow())
-            // y coordinates is below last root line box
-            return positionForBox(lastRootBox()->lastLeafChild(), false);
-
         // look for the closest line box in the root box which is at the passed-in y coordinate
         for (RootInlineBox *root = firstRootBox(); root; root = root->nextRootBox()) {
             top = absy + root->topOverflow();
@@ -2093,10 +2089,17 @@ Position RenderBlock::positionForCoordinates(int _x, int _y)
             // check if this root line box is located at this y coordinate
             if (_y >= top && _y < bottom && root->firstChild()) {
                 InlineBox *closestBox = root->closestLeafChildForXPos(_x, absx);
-                if (closestBox)
-                    return closestBox->object()->positionForCoordinates(_x, _y);
+                if (closestBox) {
+                    // pass the box a y position that is inside it
+                    return closestBox->object()->positionForCoordinates(_x, absy + closestBox->m_y);
+                }
             }
         }
+
+        if (lastRootBox())
+            // y coordinate is below last root line box
+            return positionForBox(lastRootBox()->lastLeafChild(), false);
+        
         return Position(element(), 0);
     }
     
@@ -2106,9 +2109,8 @@ Position RenderBlock::positionForCoordinates(int _x, int _y)
             continue;
         renderer->absolutePosition(absx, top);
         RenderObject *next = renderer->nextSibling();
-        while (next && next->isFloatingOrPositioned()) {
+        while (next && next->isFloatingOrPositioned())
             next = next->nextSibling();
-        }
         if (next) 
             next->absolutePosition(absx, bottom);
         else
@@ -2122,7 +2124,7 @@ Position RenderBlock::positionForCoordinates(int _x, int _y)
     if (firstChild())
         return firstChild()->positionForCoordinates(_x, _y);
     
-    // still no luck...return this render object's element, if there isn't one, and offset 0
+    // still no luck...return this render object's element and offset 0
     return Position(element(), 0);
 }
 

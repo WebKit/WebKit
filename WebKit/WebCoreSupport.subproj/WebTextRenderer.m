@@ -140,16 +140,16 @@ struct CharacterWidthIterator
 - (float)_ATSU_floatWidthForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style;
 
 // Drawing runs.
-- (void)_CG_drawRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style atPoint:(NSPoint)point;
-- (void)_ATSU_drawRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style atPoint:(NSPoint)point;
+- (void)_CG_drawRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style geometry:(const WebCoreTextGeometry *)geometry;
+- (void)_ATSU_drawRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style geometry:(const WebCoreTextGeometry *)geometry;
 
 // Selection point detection in runs.
 - (int)_CG_pointToOffset:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style position:(int)x reversed:(BOOL)reversed;
 - (int)_ATSU_pointToOffset:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style position:(int)x reversed:(BOOL)reversed;
 
 // Drawing highlight for runs.
-- (void)_CG_drawHighlightForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style atPoint:(NSPoint)point;
-- (void)_ATSU_drawHighlightForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style atPoint:(NSPoint)point;
+- (void)_CG_drawHighlightForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style geometry:(const WebCoreTextGeometry *)geometry;
+- (void)_ATSU_drawHighlightForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style geometry:(const WebCoreTextGeometry *)geometry;
 
 - (BOOL)_setupFont;
 
@@ -433,16 +433,16 @@ static BOOL alwaysUseATSU = NO;
     return [font xHeight];
 }
 
-- (void)drawRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style atPoint:(NSPoint)point
+- (void)drawRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style geometry:(const WebCoreTextGeometry *)geometry
 {
     if (style->smallCaps && !isSmallCapsRenderer) {
-        [[self _smallCapsRenderer] drawRun:run style:style atPoint:point];
+        [[self _smallCapsRenderer] drawRun:run style:style geometry:geometry];
     }
     else {
         if (shouldUseATSU(run))
-            [self _ATSU_drawRun:run style:style atPoint:point];
+            [self _ATSU_drawRun:run style:style geometry:geometry];
         else
-            [self _CG_drawRun:run style:style atPoint:point];
+            [self _CG_drawRun:run style:style geometry:geometry];
     }
 }
 
@@ -489,16 +489,16 @@ static BOOL alwaysUseATSU = NO;
 }
 
 
-- (void)drawHighlightForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style atPoint:(NSPoint)point
+- (void)drawHighlightForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style geometry:(const WebCoreTextGeometry *)geometry
 {
     if (style->smallCaps && !isSmallCapsRenderer) {
-        [[self _smallCapsRenderer] drawHighlightForRun:run style:style atPoint:point];
+        [[self _smallCapsRenderer] drawHighlightForRun:run style:style geometry:geometry];
     }
     else {
         if (shouldUseATSU(run))
-            [self _ATSU_drawHighlightForRun:run style:style atPoint:point];
+            [self _ATSU_drawHighlightForRun:run style:style geometry:geometry];
         else
-            [self _CG_drawHighlightForRun:run style:style atPoint:point];
+            [self _CG_drawHighlightForRun:run style:style geometry:geometry];
     }
 }
 
@@ -814,7 +814,7 @@ static void _drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *a
 }
 
 
-- (void)_CG_drawHighlightForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style atPoint:(NSPoint)point
+- (void)_CG_drawHighlightForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style geometry:(const WebCoreTextGeometry *)geometry
 {
     if (run->length == 0)
         return;
@@ -824,20 +824,20 @@ static void _drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *a
     completeRun.from = 0;
     completeRun.to = run->length;
     initializeCharacterWidthIterator(&widthIterator, self, &completeRun, style);
-            
+    
     float startPosition = 0;
+
+    // The starting point needs to be adjusted to account for the width of
+    // the glyphs at the start of the run.
     while (widthIterator.currentCharacter < (unsigned)run->from) {
         startPosition += widthForNextCharacter(&widthIterator, 0, 0);
     }
-
+    float startX = startPosition + geometry->point.x;
+    
     float backgroundWidth = 0.0;
     while (widthIterator.currentCharacter < (unsigned)run->to) {
         backgroundWidth += widthForNextCharacter(&widthIterator, 0, 0);
     }
-
-    // The starting point needs to be adjusted to account for the width of
-    // the glyphs at the start of the run.
-    float startX = startPosition + point.x;
 
     if (style->backgroundColor != nil){
         // Calculate the width of the selection background by adding
@@ -845,22 +845,31 @@ static void _drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *a
         
         [style->backgroundColor set];
 
-        float yPos = point.y - [self ascent] - (lineGap/2);
+        float yPos = geometry->useFontMetricsForSelectionYAndHeight ? geometry->point.y - [self ascent] - (lineGap/2) : geometry->selectionY;
+        float height = geometry->useFontMetricsForSelectionYAndHeight ? [self lineSpacing] : geometry->selectionHeight;
         if (style->rtl){
             float completeRunWidth = startPosition + backgroundWidth;
             while (widthIterator.currentCharacter < run->length) {
                 completeRunWidth += widthForNextCharacter(&widthIterator, 0, 0);
             }
 
-            [NSBezierPath fillRect:NSMakeRect(point.x + completeRunWidth - startPosition - backgroundWidth, yPos, backgroundWidth, [self lineSpacing])];
+            [NSBezierPath fillRect:NSMakeRect(geometry->point.x + completeRunWidth - startPosition - backgroundWidth, yPos, backgroundWidth, height)];
         }
-        else
-            [NSBezierPath fillRect:NSMakeRect(startX, yPos, backgroundWidth, [self lineSpacing])];
+        else {
+            [NSBezierPath fillRect:NSMakeRect(startX, yPos, backgroundWidth, height)];
+        }
+
+        // Draw the extra rectangles on either side of the selection to mimic Cocoa behavior.
+        if (geometry->selectionMinX != geometry->point.x) {
+            [NSBezierPath fillRect:NSMakeRect(geometry->selectionMinX, yPos, geometry->point.x - geometry->selectionMinX, height)];
+        }
+        if (geometry->selectionMaxX != geometry->point.x)
+            [NSBezierPath fillRect:NSMakeRect(startX + backgroundWidth, yPos, geometry->selectionMaxX - (startX + backgroundWidth), height)];
     }
 }
 
 
-- (void)_CG_drawRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style atPoint:(NSPoint)point
+- (void)_CG_drawRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style geometry:(const WebCoreTextGeometry *)geometry
 {
     float *widthBuffer, localWidthBuffer[LOCAL_BUFFER_SIZE];
     CGGlyph *glyphBuffer, localGlyphBuffer[LOCAL_BUFFER_SIZE];
@@ -905,10 +914,10 @@ static void _drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *a
 
     // Calculate the starting point of the glyphs to be displayed by adding
     // all the advances up to the first glyph.
-    startX += point.x;
+    startX += geometry->point.x;
 
     if (style->backgroundColor != nil)
-        [self _CG_drawHighlightForRun:run style:style atPoint:point];
+        [self _CG_drawHighlightForRun:run style:style geometry:geometry];
     
     // Finally, draw the glyphs.
     int lastFrom = 0;
@@ -949,7 +958,7 @@ static void _drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *a
 
     while (nextGlyph < numGlyphs){
         if ((fontBuffer[nextGlyph] != 0 && fontBuffer[nextGlyph] != currentFont)){
-            _drawGlyphs(currentFont, style->textColor, &glyphBuffer[lastFrom], &advances[lastFrom], startX, point.y, nextGlyph - lastFrom);
+            _drawGlyphs(currentFont, style->textColor, &glyphBuffer[lastFrom], &advances[lastFrom], startX, geometry->point.y, nextGlyph - lastFrom);
             lastFrom = nextGlyph;
             currentFont = fontBuffer[nextGlyph];
             startX = nextX;
@@ -957,7 +966,7 @@ static void _drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *a
         nextX += advances[nextGlyph].width;
         nextGlyph++;
     }
-    _drawGlyphs(currentFont, style->textColor, &glyphBuffer[lastFrom], &advances[lastFrom], startX, point.y, nextGlyph - lastFrom);
+    _drawGlyphs(currentFont, style->textColor, &glyphBuffer[lastFrom], &advances[lastFrom], startX, geometry->point.y, nextGlyph - lastFrom);
 
     if (advances != localAdvanceBuffer) {
         free(advances);
@@ -1390,7 +1399,7 @@ static WebCoreTextRun reverseCharactersInRun(const WebCoreTextRun *run)
     return swappedRun;
 }
 
-- (void)_ATSU_drawHighlightForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style atPoint:(NSPoint)point
+- (void)_ATSU_drawHighlightForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style geometry:(const WebCoreTextGeometry *)geometry
 {
     // The only Cocoa calls made here are to NSColor and NSBezierPath,
     // plus the self calls to _createATSUTextLayoutForRun: and
@@ -1431,31 +1440,39 @@ static WebCoreTextRun reverseCharactersInRun(const WebCoreTextRun *run)
     // ATSU provides the bounds of the glyphs for the run with an origin of
     // (0,0), so we need to find the width of the glyphs immediately before
     // the actually selected glyphs.
-    ATSTrapezoid leadingTrapezoid = [self _trapezoidForRun:&leadingRun style:style atPoint:point];
-    ATSTrapezoid selectedTrapezoid = [self _trapezoidForRun:run style:style atPoint:point];
+    ATSTrapezoid leadingTrapezoid = [self _trapezoidForRun:&leadingRun style:style atPoint:geometry->point];
+    ATSTrapezoid selectedTrapezoid = [self _trapezoidForRun:run style:style atPoint:geometry->point];
 
     float backgroundWidth = 
             MAX(FixedToFloat(selectedTrapezoid.upperRight.x), FixedToFloat(selectedTrapezoid.lowerRight.x)) - 
             MIN(FixedToFloat(selectedTrapezoid.upperLeft.x), FixedToFloat(selectedTrapezoid.lowerLeft.x));
 
     if (run->from == 0)
-        selectedLeftX = point.x;
+        selectedLeftX = geometry->point.x;
     else
         selectedLeftX = MIN(FixedToFloat(leadingTrapezoid.upperRight.x), FixedToFloat(leadingTrapezoid.lowerRight.x));
     
     [style->backgroundColor set];
 
-    float yPos = point.y - [self ascent];
+    float yPos = geometry->useFontMetricsForSelectionYAndHeight ? geometry->point.y - [self ascent] : geometry->selectionY;
+    float height = geometry->useFontMetricsForSelectionYAndHeight ? [self lineSpacing] : geometry->selectionHeight;
     if (style->rtl || style->visuallyOrdered){
         WebCoreTextRun completeRun = *aRun;
         completeRun.from = 0;
         completeRun.to = aRun->length;
         float completeRunWidth = [self floatWidthForRun:&completeRun style:style widths:0];
-        [NSBezierPath fillRect:NSMakeRect(point.x + completeRunWidth - (selectedLeftX-point.x) - backgroundWidth, yPos, backgroundWidth, [self lineSpacing])];
+        [NSBezierPath fillRect:NSMakeRect(geometry->point.x + completeRunWidth - (selectedLeftX-geometry->point.x) - backgroundWidth, yPos, backgroundWidth, height)];
     }
     else {
-        [NSBezierPath fillRect:NSMakeRect(selectedLeftX, yPos, backgroundWidth, [self lineSpacing])];
+        [NSBezierPath fillRect:NSMakeRect(selectedLeftX, yPos, backgroundWidth, height)];
     }
+
+    // Draw the extra rectangles on either side of the selection to mimic Cocoa behavior.
+    if (geometry->selectionMinX != geometry->point.x) {
+        [NSBezierPath fillRect:NSMakeRect(geometry->selectionMinX, yPos, geometry->point.x - geometry->selectionMinX, height)];
+    }
+    if (geometry->selectionMaxX != geometry->point.x)
+        [NSBezierPath fillRect:NSMakeRect(selectedLeftX + backgroundWidth, yPos, geometry->selectionMaxX - (selectedLeftX + backgroundWidth), height)];
 
     ATSUDisposeTextLayout (layout); // Ignore the error.  Nothing we can do anyway.
 
@@ -1464,7 +1481,7 @@ static WebCoreTextRun reverseCharactersInRun(const WebCoreTextRun *run)
 }
 
 
-- (void)_ATSU_drawRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style atPoint:(NSPoint)point
+- (void)_ATSU_drawRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style geometry:(const WebCoreTextGeometry *)geometry
 {
     // The only Cocoa calls made here are to NSColor, plus the self
     // calls to _createATSUTextLayoutForRun: and
@@ -1495,15 +1512,15 @@ static WebCoreTextRun reverseCharactersInRun(const WebCoreTextRun *run)
     layout = [self _createATSUTextLayoutForRun:aRun];
 
     if (style->backgroundColor != nil)
-        [self _ATSU_drawHighlightForRun:run style:style atPoint:point];
+        [self _ATSU_drawHighlightForRun:run style:style geometry:geometry];
 
     [style->textColor set];
 
     status = ATSUDrawText(layout, 
             aRun->from,
             runLength,
-            FloatToFixed(point.x),   // these values are
-            FloatToFixed(point.y));  // also of type Fixed
+            FloatToFixed(geometry->point.x),   // these values are
+            FloatToFixed(geometry->point.y));  // also of type Fixed
     if (status != noErr){
         // Nothing to do but report the error (dev build only).
         ERROR ("ATSUDrawText() failed(%d)", status);

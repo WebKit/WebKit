@@ -117,12 +117,35 @@ void InlineTextBox::paintSelection(const Font *f, RenderText *text, QPainter *p,
 #else
     QColor c = style->color();
     p->setPen(QColor(0xff-c.red(),0xff-c.green(),0xff-c.blue()));
+    ty + m_baseline;
 #endif
-    ty += m_baseline;
-
+    
 #if APPLE_CHANGES
-    //kdDebug( 6040 ) << "InlineTextBox::painting(" << s.string() << ") at(" << x+_tx << "/" << y+_ty << ")" << endl;
-    f->drawHighlightForText(p, m_x + tx, m_y + ty, text->str->s, text->str->l, m_start, m_len,
+    // Do the calculations to draw selections as tall as the line.
+    // Use the bottom of the line above as the y position (if there is one, 
+    // otherwise use the top of this renderer's line) and the height of the line as the height. 
+    // This mimics Cocoa.
+    RenderBlock *cb = object()->containingBlock();
+
+    if (root()->prevRootBox())
+        ty = root()->prevRootBox()->bottomOverflow();
+    else
+        ty = root()->topOverflow();
+
+    int h = root()->bottomOverflow() - ty;
+
+    int absx, absy;
+    cb->absolutePosition(absx, absy);
+    
+    int x = m_x + tx;
+    int minX = x;
+    int maxX = x;
+    if (startPos == 0 && root()->firstLeafChild() == this)
+        minX = absx + kMax(cb->leftOffset(ty), cb->leftOffset(root()->blockHeight()));
+    if (endPos == m_len && root()->lastLeafChild() == this)
+        maxX = absx + kMin(cb->rightOffset(ty), cb->rightOffset(root()->blockHeight()));
+    
+    f->drawHighlightForText(p, x, minX, maxX, absy + ty, h, text->str->s, text->str->l, m_start, m_len,
 		m_toAdd, m_reversed ? QPainter::RTL : QPainter::LTR, style->visuallyOrdered(), startPos, endPos, c);
 #else
     f->drawHighlightForText(p, m_x + tx, m_y + ty, text->str->s, text->str->l, m_start, m_len,
