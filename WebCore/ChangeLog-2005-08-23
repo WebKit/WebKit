@@ -1,5 +1,28 @@
 2004-10-25  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by Chris
+
+        Fix for this bug:
+        
+        <rdar://problem/3820349> REGRESSION (Mail): select all, delete does not always delete everything
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::DeleteSelectionCommand::startPositionForDelete): New helper that determines when to
+        expand the selection outwards when the selection is on the visible boundary of a root
+        editable element. This fixes the bug. Note that this function also contains a little code
+        I factored out of doApply: it also takes care of adjusting the selection in the smart delete case.
+        (khtml::DeleteSelectionCommand::endPositionForDelete): Ditto.
+        (khtml::DeleteSelectionCommand::doApply): Call new helpers. Refactored out the code as described.
+        * khtml/editing/htmlediting.h: Declare new helpers.
+        * layout-tests/editing/deleting/delete-select-all-001-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-select-all-001.html: Added.
+        * layout-tests/editing/deleting/delete-select-all-002-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-select-all-002.html: Added.
+        * layout-tests/editing/deleting/delete-select-all-003-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-select-all-003.html: Added.
+
+2004-10-25  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by me
         
         Added some more editing layout tests.

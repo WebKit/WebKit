@@ -273,9 +273,9 @@ public:
 private:
     virtual bool preservesTypingStyle() const;
 
-    void deleteDownstreamWS(const DOM::Position &start);
-    bool containsOnlyWhitespace(const DOM::Position &start, const DOM::Position &end);
     void moveNodesAfterNode(DOM::NodeImpl *startNode, DOM::NodeImpl *dstNode);
+    DOM::Position startPositionForDelete() const;
+    DOM::Position endPositionForDelete() const;
 
     khtml::Selection m_selectionToDelete;
     bool m_hasSelectionToDelete;

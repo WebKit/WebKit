@@ -1296,6 +1296,34 @@ void DeleteSelectionCommand::moveNodesAfterNode(NodeImpl *startNode, NodeImpl *d
     }
 }
 
+Position DeleteSelectionCommand::startPositionForDelete() const
+{
+    Position pos = m_selectionToDelete.start();
+    ASSERT(pos.node()->inDocument());
+
+    ElementImpl *rootElement = pos.node()->rootEditableElement();
+    Position rootStart = Position(rootElement, 0);
+    if (pos == VisiblePosition(rootStart).deepEquivalent())
+        pos = rootStart;
+    else if (m_smartDelete && pos.leadingWhitespacePosition().isNotNull())
+        pos = VisiblePosition(pos).previous().deepEquivalent();
+    return pos;
+}
+
+Position DeleteSelectionCommand::endPositionForDelete() const
+{
+    Position pos = m_selectionToDelete.end();
+    ASSERT(pos.node()->inDocument());
+
+    ElementImpl *rootElement = pos.node()->rootEditableElement();
+    Position rootEnd = Position(rootElement, rootElement ? rootElement->childNodeCount() : 0).equivalentDeepPosition();
+    if (pos == VisiblePosition(rootEnd).deepEquivalent())
+        pos = rootEnd;
+    else if (m_smartDelete && pos.leadingWhitespacePosition().isNotNull())
+        pos = VisiblePosition(pos).next().deepEquivalent();
+    return pos;
+}
+
 void DeleteSelectionCommand::doApply()
 {
     // If selection has not been set to a custom selection when the command was created,
@@ -1306,21 +1334,12 @@ void DeleteSelectionCommand::doApply()
     if (!m_selectionToDelete.isRange())
         return;
 
-    ASSERT(m_selectionToDelete.start().node()->inDocument());
-    ASSERT(m_selectionToDelete.end().node()->inDocument());
-
-    if (m_smartDelete) {
-        if (!m_selectionToDelete.start().leadingWhitespacePosition().isNull()) {
-            m_selectionToDelete.modify(Selection::EXTEND, Selection::LEFT, CHARACTER);
-        } else if (!m_selectionToDelete.end().trailingWhitespacePosition().isNull()) {
-            m_selectionToDelete.modify(Selection::EXTEND, Selection::RIGHT, CHARACTER);
-        }
-    }
-    
-    Position upstreamStart(m_selectionToDelete.start().upstream(StayInBlock));
-    Position downstreamStart(m_selectionToDelete.start().downstream(StayInBlock));
-    Position upstreamEnd(m_selectionToDelete.end().upstream(StayInBlock));
-    Position downstreamEnd(m_selectionToDelete.end().downstream(StayInBlock));
+    Position start = startPositionForDelete();
+    Position end = endPositionForDelete();
+    Position upstreamStart(start.upstream(StayInBlock));
+    Position downstreamStart(start.downstream(StayInBlock));
+    Position upstreamEnd(end.upstream(StayInBlock));
+    Position downstreamEnd(end.downstream(StayInBlock));
     Position endingPosition;
 
     // Save away whitespace situation before doing any deletions
