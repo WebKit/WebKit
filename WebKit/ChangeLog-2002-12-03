@@ -1,3 +1,10 @@
+2001-12-17  Kenneth Kocienda  <kocienda@apple.com>
+
+        Added the current draft of the WebKit white paper.
+        
+	* Documentation/WebKit-White-Paper/WebKit-White-Paper.html:
+	* Documentation/WebKit-White-Paper/images/webkit-cache-loader.jpg:
+
 2001-12-14  Maciej Stachowiak  <mjs@apple.com>
 
 	Simplified WKLocationChangeHandler and updated
