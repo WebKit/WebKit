@@ -145,11 +145,11 @@ void RenderListItem::setStyle(RenderStyle *_style)
 
     if(!m_marker && style()->listStyleType() != LNONE) {
 
-        m_marker = new (element()->getDocument()->renderArena()) RenderListMarker();
+        m_marker = new (renderArena()) RenderListMarker();
         m_marker->setStyle(newStyle);
         insertChildNode( m_marker, firstChild() );
     } else if ( m_marker && style()->listStyleType() == LNONE) {
-        m_marker->detach(element()->getDocument()->renderArena());
+        m_marker->detach(renderArena());
         m_marker = 0;
     }
     else if ( m_marker ) {

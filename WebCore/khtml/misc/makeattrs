@@ -63,7 +63,10 @@ print header "\n#endif\n";
 close header;
 
 my $result = system("/bin/sh", "-c", "gperf -c -a -L 'ANSI-C' -D -E -C -o -t -k '*' -NfindAttr -Hhash_attr -Wwordlist_attr -s 2 htmlattrs.gperf > htmlattrs.c");
-exit $result if $result;
+if ($result) {
+  unlink "htmlattrs.c";
+  exit $result;
+}
 system("/bin/sh", "-c", 'perl -pi -e "s/\"\"}/\"\", 0}/g" htmlattrs.c');
 
 open(OUT, ">>htmlattrs.c");

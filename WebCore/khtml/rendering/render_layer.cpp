@@ -225,7 +225,7 @@ RenderLayer::paint(QPainter *p, int x, int y, int w, int h)
     if (currRect != paintRect)
         p->restore(); // Pop the clip.
         
-    node->detach(renderer()->element()->getDocument()->renderArena());
+    node->detach(renderer()->renderArena());
 }
 
 bool
@@ -257,7 +257,7 @@ RenderLayer::nodeAtPoint(RenderObject::NodeInfo& info, int x, int y)
         if (inside)
             break;
     }
-    node->detach(renderer()->element()->getDocument()->renderArena());
+    node->detach(renderer()->renderArena());
 
     return inside;
 }
@@ -268,7 +268,7 @@ RenderLayer::constructZTree(QRect damageRect,
                             bool eventProcessing)
 {
     // The arena we use for allocating our temporary ztree elements.
-    RenderArena* renderArena = renderer()->element()->getDocument()->renderArena();
+    RenderArena* renderArena = renderer()->renderArena();
     
     // This variable stores the result we will hand back.
     RenderLayer::RenderZTreeNode* returnNode = 0;

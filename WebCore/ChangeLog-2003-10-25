@@ -1,5 +1,28 @@
 2002-11-13  Darin Adler  <darin@apple.com>
 
+	- fixed another crash on http://www.w3.org/Style/CSS/, but still not done
+
+        * khtml/rendering/render_box.cpp: (RenderBox::setStyle): Call renderArena()
+	from RenderObject rather than going at the document directly. Safer because
+	it works even when we don't have a node yet.
+        * khtml/rendering/render_flow.cpp: (RenderFlow::addChild): Ditto.
+        * khtml/rendering/render_layer.cpp:
+        (RenderLayer::paint): Ditto.
+        (RenderLayer::nodeAtPoint): Ditto.
+        (RenderLayer::constructZTree): Ditto.
+        * khtml/rendering/render_list.cpp:
+        (RenderListItem::setStyle): Ditto.
+        * khtml/rendering/render_text.cpp:
+        (RenderText::deleteSlaves): Ditto.
+        (RenderText::position): Ditto. This is the one that actually crashed.
+
+        * khtml/misc/makeattrs: Fixed handling of failure case.
+        * khtml/misc/maketags: Ditto.
+
+        * WebCore.pbproj/project.pbxproj: Project Builder wanted to touch this.
+
+2002-11-13  Darin Adler  <darin@apple.com>
+
 	- fixed 3100895 -- REGRESSION: Assertion on http://www.w3.org/Style/CSS/
 
 	A few arena-related fixes.

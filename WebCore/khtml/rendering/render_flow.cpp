@@ -1808,7 +1808,7 @@ void RenderFlow::addChild(RenderObject *newChild, RenderObject *beforeChild)
             newStyle->inheritFrom(style());
             newStyle->setDisplay(BLOCK);
 
-            RenderFlow *newBox = new (element()->getDocument()->renderArena()) RenderFlow(0 /* anonymous box */);
+            RenderFlow *newBox = new (renderArena()) RenderFlow(0 /* anonymous box */);
             newBox->setStyle(newStyle);
             newBox->setIsAnonymousBox(true);
 

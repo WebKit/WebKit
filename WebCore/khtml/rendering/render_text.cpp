@@ -352,7 +352,7 @@ void RenderText::deleteSlaves()
     // us resize() calls
     unsigned int len = m_lines.size();
     if (len) {
-        RenderArena* arena = element()->getDocument()->renderArena();
+        RenderArena* arena = renderArena();
         for(unsigned int i=0; i < len; i++) {
             TextSlave* s = m_lines.at(i);
             if (s)
@@ -1006,7 +1006,7 @@ void RenderText::position(int x, int y, int from, int len, int width, bool rever
     qDebug("setting slave text to *%s*, len=%d, w)=%d" , cstr.string().latin1(), len, width );//" << y << ")" << " height=" << lineHeight(false) << " fontHeight=" << metrics(false).height() << " ascent =" << metrics(false).ascent() << endl;
 #endif
 
-    TextSlave *s = new (element()->getDocument()->renderArena()) TextSlave(x, y, from, len,
+    TextSlave *s = new (renderArena()) TextSlave(x, y, from, len,
                                  baselinePosition( firstLine ),
                                  width+spaceAdd, reverse, spaceAdd, firstLine);
 

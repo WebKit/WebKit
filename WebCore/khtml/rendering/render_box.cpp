@@ -85,7 +85,7 @@ void RenderBox::setStyle(RenderStyle *_style)
     }
     
     if ((isPositioned() || isRelPositioned()) && !m_layer)
-        m_layer = new (element()->getDocument()->renderArena()) RenderLayer(this);
+        m_layer = new (renderArena()) RenderLayer(this);
 }
 
 RenderBox::~RenderBox()

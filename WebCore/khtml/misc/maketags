@@ -66,7 +66,10 @@ print header "\n#endif\n";
 close header;
 
 my $result = system("/bin/sh", "-c", "gperf -a -L 'ANSI-C' -D -E -C -l -o -t -k '*' -NfindTag -Hhash_tag -Wwordlist_tag htmltags.gperf > htmltags.c");
-exit $result if $result;
+if ($result) {
+  unlink "htmltags.c";
+  exit $result;
+}
 
 open(OUT, ">>htmltags.c");
 print OUT "\n\nstatic const char * const tagList[] = {\n";
