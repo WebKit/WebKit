@@ -1,3 +1,26 @@
+2002-03-21  John Sullivan  <sullivan@apple.com>
+
+	Cleaned up defaults registration and use. The class
+	IFPreferences now registers the defaults at load time, early
+	enough that Alexander doesn't have to register them separately
+	as it had been. Also, all the defaults currently in use now
+	have accessor cover methods, which Alexander will use
+	exclusively.
+	
+	* WebView.subproj/IFPreferences.mm:
+	New file, registers defaults and implements cover methods.
+
+	* WebView.subproj/IFPreferences.h:
+	This file existed but wasn't being used (contents #ifdeffed out).
+	Now it declares the cover methods, but still has an #ifdeffed
+	section for possible future stuff.
+
+	* WebKit.pbproj/project.pbxproj: Updated for new file.
+
+	* WebView.subproj/IFWebDataSource.mm:
+	(+[IFWebDataSource initialize]): removed defaults-registration
+	from here.
+
 2002-03-20  John Sullivan  <sullivan@apple.com>
 
 	Added displayTitle field to IFURIEntry. This is intended to hold the string

@@ -1,5 +1,5 @@
 /*	
-        IFWebDataSource.h
+        IFWebDataSource.mm
 	Copyright 2001, Apple, Inc. All rights reserved.
 */
 #import <WebKit/IFWebDataSource.h>
@@ -22,32 +22,6 @@ static id IFWebDataSourceMake(void *url)
 {
     WCSetIFWebDataSourceMakeFunc(IFWebDataSourceMake);
 }
-
-+ (void)initialize {
-
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    NSArray *fontSizeArray = [NSArray arrayWithObjects:@"6", @"8", @"9", @"11", @"14", @"16", @"20", nil];
-    NSNumber *pluginsEnabled = [NSNumber numberWithBool:TRUE];
-    NSNumber *javaEnabled = [NSNumber numberWithBool:FALSE];
-    
-    NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
-//        @"0xffffffff", 		@"WebKitLogLevel",
-        @"0x0", 		@"WebKitLogLevel",
-        @"Georgia", 		@"WebKitStandardFont",
-        @"Andale Mono",  	@"WebKitFixedFont",
-        @"Georgia", 		@"WebKitSerifFont",
-        @"Arial", 		@"WebKitSansSerifFont",
-        @"Apple Chancery", 	@"WebKitCursiveFont",
-        @"Papyrus", 		@"WebKitFantasyFont",
-        @"6", 			@"WebKitMinimumFontSize",
-        fontSizeArray,		@"WebKitFontSizes",
-        pluginsEnabled,		@"WebKitPluginsEnabled",
-        javaEnabled,		@"WebKitJavaEnabled",
-        nil];
-
-    [defaults registerDefaults:dict];
-}
-
 
 - (void)_commonInitialization
 {

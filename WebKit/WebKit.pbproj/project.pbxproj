@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 36;
+	objectVersion = 34;
 	objects = {
 		014CEA440018CDF011CA2923 = {
 			buildRules = (
@@ -230,6 +230,7 @@
 				F5B92B850223191D01C1A525,
 				F5DE3CB5023575AA01A80181,
 				F5D538ED02441FDD01A80181,
+				F5AEBB3E024A527601C1A526,
 			);
 			isa = PBXSourcesBuildPhase;
 		};
@@ -763,6 +764,9 @@
 			fileRef = 3944606E020F50ED0ECA1767;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
 			};
 		};
 		3944608E020F50ED0ECA1767 = {
@@ -941,6 +945,7 @@
 				3944606C020F50ED0ECA1767,
 				3944606D020F50ED0ECA1767,
 				3944606E020F50ED0ECA1767,
+				F5AEBB3D024A527601C1A526,
 				3944606F020F50ED0ECA1767,
 				39446070020F50ED0ECA1767,
 				39446071020F50ED0ECA1767,
@@ -1049,6 +1054,18 @@
 		};
 		F520FB1C0221DEFD01C1A525 = {
 			fileRef = F520FB1A0221DEFD01C1A525;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5AEBB3D024A527601C1A526 = {
+			isa = PBXFileReference;
+			name = IFPreferences.mm;
+			path = WebView.subproj/IFPreferences.mm;
+			refType = 4;
+		};
+		F5AEBB3E024A527601C1A526 = {
+			fileRef = F5AEBB3D024A527601C1A526;
 			isa = PBXBuildFile;
 			settings = {
 			};

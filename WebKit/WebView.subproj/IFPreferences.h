@@ -1,43 +1,68 @@
 /*	
-        IFWebController.h
+        IFPreferences.h
 	Copyright 2001, Apple, Inc. All rights reserved.
 
         Public header file.
 */
 #import <Cocoa/Cocoa.h>
 
+@interface IFPreferences: NSObject
+
++ (IFPreferences *)standardPreferences;
+
+- (NSString *)standardFontFamily;
+- (void)setStandardFontFamily:(NSString *)family;
+
+- (NSString *)fixedFontFamily;
+- (void)setFixedFontFamily:(NSString *)family;
+
+- (NSString *)serifFontFamily;
+- (void)setSerifFontFamily:(NSString *)family;
+
+- (NSString *)sansSerifFontFamily;
+- (void)setSansSerifFontFamily:(NSString *)family;
+
+- (NSString *)cursiveFontFamily;
+- (void)setCursiveFontFamily:(NSString *)family;
+
+- (NSString *)fantasyFontFamily;
+- (void)setFantasyFontFamily:(NSString *)family;
+
+- (NSArray *)fontSizes;
+- (void)setFontSizes:(NSArray *)sizes;
+
+- (int)minimumFontSize;
+- (void)setMinimumFontSize:(int)size;
+
+- (BOOL)javaEnabled;
+- (void)setJavaEnabled:(BOOL)flag;
+
+- (BOOL)jScriptEnabled;
+- (void)setJScriptEnabled:(BOOL)flag;
+
+- (BOOL)pluginsEnabled;
+- (void)setPluginsEnabled:(BOOL)flag;
+
+@end
+
 #ifdef READY_FOR_PRIMETIME
-
-
-
 
 /*
    ============================================================================= 
 
-    This class provides a cover for URL-based preference items. 
+    Here is some not-yet-implemented API that we might want to get around to.
+    Someday we might have preferences on a per-URL basis.
 */
-@interface IFPreferences
+
 + getPreferencesForURL: (NSURL *)url;
 
 // Encoding that will be used in none specified on page? or in header?
 + setEncoding: (NSString *)encoding;
 + (NSString *)encoding;
 
-// Javascript preferences
-- (void)setJScriptEnabled: (BOOL)flag;
-- (BOOL)jScriptEnabled;
-
-// Java preferences
-- (void)setJavaEnabled: (BOOL)flag
-- (BOOL)javaEnabled;
-
 // Document refreshes allowed
 - setRefreshEnabled: (BOOL)flag;
 - (BOOL)refreshEnabled;
-
-// Plugins
-- (void)setPluginsEnabled: (BOOL)flag;
-- (BOOL)pluginEnabled;
 
 // Should images be loaded.
 - (void)setAutoloadImages: (BOOL)flag;
@@ -51,9 +76,6 @@
 */
 - (void)setOnlyLocalReferences: (BOOL)flag;
 - (BOOL)onlyLocalReferences;
-
-@end
-
 
 #endif
 
