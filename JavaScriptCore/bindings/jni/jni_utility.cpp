@@ -480,13 +480,25 @@ jvalue convertValueToJValue (KJS::ExecState *exec, KJS::Value value, Bindings::J
     d = value.toNumber(exec);
     switch (aParameter->getJNIType()){
         case object_type: {
-            KJS::RuntimeObjectImp *imp = static_cast<KJS::RuntimeObjectImp*>(value.imp());
-            if (imp) {
-                Bindings::JavaInstance *instance = static_cast<Bindings::JavaInstance*>(imp->getInternalInstance());
-                result.l = instance->javaInstance();
+            result.l = (jobject)0;
+            
+            // First see if we have a Java instance.
+            if (value.type() == KJS::ObjectType){
+                KJS::ObjectImp *objectImp = static_cast<KJS::ObjectImp*>(value.imp());
+                if (strcmp(objectImp->classInfo()->className, "RuntimeObject") == 0) {
+                    KJS::RuntimeObjectImp *imp = static_cast<KJS::RuntimeObjectImp *>(value.imp());
+                    Bindings::JavaInstance *instance = static_cast<Bindings::JavaInstance*>(imp->getInternalInstance());
+                    result.l = instance->javaInstance();
+                }
             }
-            else
-                result.l = (jobject)0;
+            
+            // Now convert value to a string if the target type is a java.lang.string.
+            if (result.l == 0 && strcmp(aParameter->type(), "java.lang.String") == 0) {
+                KJS::UString stringValue = value.toString(exec);
+                JNIEnv *env = getJNIEnv();
+                jobject javaString = env->functions->NewString (env, (const jchar *)stringValue.data(), stringValue.size());
+                result.l = javaString;
+            }
         }
         break;
         

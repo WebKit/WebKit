@@ -39,6 +39,12 @@
 #include "kjs_dom.lut.h"
 #include "khtmlpart_p.h"
 
+#include "html_objectimpl.h"
+
+#if APPLE_CHANGES
+#include <JavaScriptCore/runtime_object.h>
+#endif
+
 using namespace KJS;
 
 using DOM::DOMException;
@@ -1380,6 +1386,19 @@ Value KJS::getDOMNode(ExecState *exec, const DOM::Node &n)
 Value KJS::getDOMNamedNodeMap(ExecState *exec, const DOM::NamedNodeMap &m)
 {
   return Value(cacheDOMObject<DOM::NamedNodeMap, KJS::DOMNamedNodeMap>(exec, m));
+}
+
+Value KJS::getRuntimeObject(ExecState *exec, const DOM::Node &node)
+{
+    DOM::HTMLElement element = static_cast<DOM::HTMLElement>(node);
+    DOM::HTMLAppletElementImpl *appletElement = static_cast<DOM::HTMLAppletElementImpl *>(element.handle());
+    
+    if (appletElement->getAppletInstance()) {
+        // The instance is owned by the applet element.
+        RuntimeObjectImp *appletImp = new RuntimeObjectImp(appletElement->getAppletInstance(), false);
+        return Value(appletImp);
+    }
+    return Undefined();
 }
 
 Value KJS::getDOMNodeList(ExecState *exec, const DOM::NodeList &l)

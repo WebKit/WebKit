@@ -70,12 +70,10 @@ bool RuntimeMethodImp::implementsCall() const
 
 Value RuntimeMethodImp::call(ExecState *exec, Object &thisObj, const List &args)
 {
-    fprintf(stderr,"%s: this=%p, %s, object = %p\n", __PRETTY_FUNCTION__, this, method->name(), &thisObj);
-    
     if (method) {
         RuntimeObjectImp *imp = static_cast<RuntimeObjectImp*>(thisObj.imp());
         if (imp) {
-            imp->getInternalInstance()->invokeMethod(exec, method, args);
+            return imp->getInternalInstance()->invokeMethod(exec, method, args);
         }
     }
     

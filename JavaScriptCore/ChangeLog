@@ -1,3 +1,59 @@
+2003-12-04  Richard Williamson   <rjw@apple.com>
+
+	Added support for string conversions.
+	Changed various JavaString member variables to be inline.
+	Implemented defaultValue for context relevant type coercion.
+
+        Reviewed by Chris.
+
+        * bindings/jni/jni_class.cpp:
+        (JavaClass::JavaClass):
+        (JavaClass::setClassName):
+        (JavaClass::classForInstance):
+        * bindings/jni/jni_class.h:
+        * bindings/jni/jni_instance.cpp:
+        (JavaInstance::stringValue):
+        (JavaInstance::numberValue):
+        (JavaInstance::booleanValue):
+        (JavaInstance::invokeMethod):
+        * bindings/jni/jni_instance.h:
+        * bindings/jni/jni_runtime.cpp:
+        (JavaParameter::JavaParameter):
+        (JavaField::JavaField):
+        (JavaMethod::JavaMethod):
+        (appendClassName):
+        (JavaMethod::signature):
+        * bindings/jni/jni_runtime.h:
+        (Bindings::JavaString::JavaString):
+        (Bindings::JavaString::~JavaString):
+        (Bindings::JavaString::operator=):
+        (Bindings::JavaString::characters):
+        (Bindings::JavaParameter::JavaParameter):
+        (Bindings::JavaParameter::~JavaParameter):
+        (Bindings::JavaParameter::operator=):
+        (Bindings::JavaParameter::type):
+        (Bindings::JavaField::JavaField):
+        (Bindings::JavaField::~JavaField):
+        (Bindings::JavaField::operator=):
+        (Bindings::JavaField::name):
+        (Bindings::JavaField::type):
+        (Bindings::JavaMethod::JavaMethod):
+        (Bindings::JavaMethod::_commonDelete):
+        (Bindings::JavaMethod::name):
+        (Bindings::JavaMethod::returnType):
+        * bindings/jni/jni_utility.cpp:
+        (convertValueToJValue):
+        * bindings/runtime.h:
+        (Bindings::Instance::valueOf):
+        * bindings/runtime_method.cpp:
+        (RuntimeMethodImp::call):
+        * bindings/runtime_object.cpp:
+        (RuntimeObjectImp::RuntimeObjectImp):
+        (RuntimeObjectImp::get):
+        (RuntimeObjectImp::defaultValue):
+        * bindings/runtime_object.h:
+        (KJS::RuntimeObjectImp::classInfo):
+
 === Safari-116 ===
 
 2003-12-03  Richard Williamson   <rjw@apple.com>

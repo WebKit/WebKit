@@ -82,6 +82,10 @@ public:
         
         return *this;
     };
+
+    virtual KJS::Value booleanValue() const;
+    virtual KJS::Value numberValue() const;
+    virtual KJS::Value stringValue() const;
     
     jobject javaInstance() const { return _instance->_instance; }
 

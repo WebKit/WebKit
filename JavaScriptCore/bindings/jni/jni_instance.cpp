@@ -53,6 +53,30 @@ Class *JavaInstance::getClass() const
     return JavaClass::classForInstance (_instance->_instance);
 }
 
+KJS::Value JavaInstance::stringValue() const
+{
+    jstring stringValue = (jstring)callJNIObjectMethod (_instance->_instance, "toString", "()Ljava/lang/String;");
+    JNIEnv *env = getJNIEnv();
+    const char *c = getCharactersFromJStringInEnv (env, stringValue);
+    KJS::String v(c);
+    releaseCharactersForJStringInEnv (env, stringValue, c);
+    return v;
+}
+
+KJS::Value JavaInstance::numberValue() const
+{
+    jdouble doubleValue = callJNIDoubleMethod (_instance->_instance, "doubleValue", "()D");
+    KJS::Number v(doubleValue);
+    return v;
+}
+
+KJS::Value JavaInstance::booleanValue() const
+{
+    jboolean booleanValue = callJNIBooleanMethod (_instance->_instance, "booleanValue", "()Z");
+    KJS::Boolean v(booleanValue);
+    return v;
+}
+
 Value JavaInstance::invokeMethod (KJS::ExecState *exec, const Method *method, const List &args)
 {
     const JavaMethod *jMethod = static_cast<const JavaMethod*>(method);
@@ -69,7 +93,6 @@ Value JavaInstance::invokeMethod (KJS::ExecState *exec, const Method *method, co
         jArgs = 0;
         
     for (i = 0; i < count; i++) {
-        fprintf (stderr, "%s:  %d, type %d\n", __PRETTY_FUNCTION__, i, args.at(i).type());
         JavaParameter *aParameter = static_cast<JavaParameter *>(jMethod->parameterAt(i));
         jArgs[i] = convertValueToJValue (exec, args.at(i), aParameter);
     }

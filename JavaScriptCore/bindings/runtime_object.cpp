@@ -39,18 +39,12 @@
 using namespace KJS;
 using namespace Bindings;
 
-const ClassInfo *RuntimeObjectImp::classInfo() const
-{
-    return &_classInfo;
-}
+const ClassInfo RuntimeObjectImp::info = {"RuntimeObject", 0, 0, 0};
 
 RuntimeObjectImp::RuntimeObjectImp(ObjectImp *proto)
   : ObjectImp(proto)
 {
     instance = 0;
-    _classInfo.className = 0;
-    _classInfo.parentClass = 0;
-    _classInfo.propHashTable = 0;
 }
 
 RuntimeObjectImp::~RuntimeObjectImp()
@@ -63,20 +57,14 @@ RuntimeObjectImp::RuntimeObjectImp(Bindings::Instance *i, bool oi) : ObjectImp (
 {
     ownsInstance = oi;
     instance = i;
-    _classInfo.className = 0;
-    _classInfo.parentClass = 0;
-    _classInfo.propHashTable = 0;
     _initializeClassInfoFromInstance();
 }
 
 Value RuntimeObjectImp::get(ExecState *exec, const Identifier &propertyName) const
 {
-    printf ("%s: %p: propertyName %s\n", __PRETTY_FUNCTION__, instance, propertyName.ascii());
-    // Get the value of the RuntimeObject's property.
-    
+    // See if the instance have a field with the specified name.
     Field *aField = instance->getClass()->fieldNamed(propertyName.ascii());
     if (aField){
-        printf ("%s: found %s(%p), type = %s\n", __PRETTY_FUNCTION__, propertyName.ascii(), aField, aField->type());
         return instance->getValueOfField (aField); 
     }
     
@@ -84,7 +72,6 @@ Value RuntimeObjectImp::get(ExecState *exec, const Identifier &propertyName) con
     // that method.
     Method *aMethod = instance->getClass()->methodNamed(propertyName.ascii());
     if (aMethod) {
-        printf ("%s: found %s(%p)\n", __PRETTY_FUNCTION__, propertyName.ascii(), aMethod);
         return Object (new RuntimeMethodImp(exec, propertyName, aMethod));
     }
     
@@ -125,8 +112,23 @@ bool RuntimeObjectImp::deleteProperty(ExecState *exec,
 
 Value RuntimeObjectImp::defaultValue(ExecState *exec, Type hint) const
 {
-    printf ("%s: NOT YET IMPLEMENTED %p\n", __PRETTY_FUNCTION__, instance);
-    return ObjectImp::defaultValue(exec, hint);
+    // Return a string representation of the instance.
+    
+    // FIXME:  Convert to appropriate type based on hint.
+    // If UnspecifiedType should only convert to string if
+    // native class is a string.  
+    // FIXME  defaultValue should move to Instance.
+    if (hint == StringType || hint == UnspecifiedType) {
+        return getInternalInstance()->stringValue();
+    }
+    else if (hint == NumberType) {
+        return getInternalInstance()->numberValue();
+    }
+    else if (hint == BooleanType) {
+        return getInternalInstance()->booleanValue();
+    }
+    
+    return getInternalInstance()->valueOf();
 }
     
 void RuntimeObjectImp::_initializeClassInfoFromInstance()

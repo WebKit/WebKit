@@ -37,8 +37,8 @@ using namespace Bindings;
 
 JavaParameter::JavaParameter (JNIEnv *env, jstring type)
 {
-    _type = new JavaString (env, type);
-    _JNIType = primitiveTypeFromClassName (_type->characters());
+    _type = JavaString (env, type);
+    _JNIType = primitiveTypeFromClassName (_type.characters());
 };
 
 JavaField::JavaField (JNIEnv *env, jobject aField)
@@ -46,12 +46,12 @@ JavaField::JavaField (JNIEnv *env, jobject aField)
     // Get field type
     jobject fieldType = callJNIObjectMethod (aField, "getType", "()Ljava/lang/Class;");
     jstring fieldTypeName = (jstring)callJNIObjectMethod (fieldType, "toString", "()Ljava/lang/String;");
-    _type = new JavaString(env, fieldTypeName);
-    _primitiveType = primitiveTypeFromClassName (_type->characters());
+    _type = JavaString(env, fieldTypeName);
+    _primitiveType = primitiveTypeFromClassName (_type.characters());
 
     // Get field name
     jstring fieldName = (jstring)callJNIObjectMethod (aField, "getName", "()Ljava/lang/String;");
-    _name = new JavaString(env, fieldName);
+    _name = JavaString(env, fieldName);
     
     _field = new JavaInstance(aField);
 }
@@ -116,6 +116,16 @@ JavaConstructor::JavaConstructor (JNIEnv *env, jobject aConstructor)
 
 JavaMethod::JavaMethod (JNIEnv *env, jobject aMethod)
 {
+    // Get return type
+    jobject returnType = callJNIObjectMethod (aMethod, "getReturnType", "()Ljava/lang/Class;");
+    jstring returnTypeName = (jstring)callJNIObjectMethod (returnType, "getName", "()Ljava/lang/String;");
+    _returnType =JavaString (env, returnTypeName);
+    _JNIReturnType = primitiveTypeFromClassName (_returnType.characters());
+
+    // Get method name
+    jstring methodName = (jstring)callJNIObjectMethod (aMethod, "getName", "()Ljava/lang/String;");
+    _name = JavaString (env, methodName);
+
     // Get parameters
     jarray jparameters = (jarray)callJNIObjectMethod (aMethod, "getParameterTypes", "()[Ljava/lang/Class;");
     _numParameters = env->GetArrayLength (jparameters);
@@ -128,18 +138,27 @@ JavaMethod::JavaMethod (JNIEnv *env, jobject aMethod)
         _parameters[i] = JavaParameter(env, parameterName);
     }
 
-    // Get return type
-    jobject returnType = callJNIObjectMethod (aMethod, "getReturnType", "()Ljava/lang/Class;");
-    jstring returnTypeName = (jstring)callJNIObjectMethod (returnType, "getName", "()Ljava/lang/String;");
-    _returnType = new JavaString (env, returnTypeName);
-    _JNIReturnType = primitiveTypeFromClassName (_returnType->characters());
-
-    // Get method name
-    jstring methodName = (jstring)callJNIObjectMethod (aMethod, "getName", "()Ljava/lang/String;");
-    _name = new JavaString (env, methodName);
     
     // Created lazily.
     _signature = 0;
+}
+
+// JNI method signatures use '/' between components of a class name, but
+// we get '.' between components from the reflection API.
+static void appendClassName (UString *aString, const char *className)
+{
+    char *result, *cp = strdup(className);
+    
+    result = cp;
+    while (*cp) {
+        if (*cp == '.')
+            *cp = '/';
+        cp++;
+    }
+        
+    aString->append(result);
+
+    free (result);
 }
 
 const char *JavaMethod::signature() const 
@@ -150,14 +169,18 @@ const char *JavaMethod::signature() const
         _signature = new UString("(");
         for (i = 0; i < _numParameters; i++) {
             JavaParameter *aParameter = static_cast<JavaParameter *>(parameterAt(i));
-            _signature->append(signatureFromPrimitiveType (aParameter->getJNIType()));
-            // FIXME!  Add class description for object types.
+            JNIType _JNIType = aParameter->getJNIType();
+            _signature->append(signatureFromPrimitiveType (_JNIType));
+            if (_JNIType == object_type) {
+                appendClassName (_signature, aParameter->type());
+                _signature->append(";");
+            }
         }
         _signature->append(")");
         
         _signature->append(signatureFromPrimitiveType (_JNIReturnType));
         if (_JNIReturnType == object_type) {
-            _signature->append(_returnType->characters());
+            appendClassName (_signature, _returnType.characters());
             _signature->append(";");
         }
     }

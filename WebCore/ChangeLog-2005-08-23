@@ -1,3 +1,19 @@
+2003-12-04  Richard Williamson   <rjw@apple.com>
+
+	Added support for named applet access from document node.
+	Factored creation of KJS::Values from RuntimeObjectImps.
+
+        Reviewed by Chris.
+
+        * khtml/ecma/kjs_dom.cpp:
+        (KJS::getDOMNamedNodeMap):
+        (KJS::getRuntimeObject):
+        * khtml/ecma/kjs_dom.h:
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::HTMLDocument::tryGet):
+        (KJS::HTMLElement::tryGet):
+        (KJS::HTMLCollection::tryGet):
+
 2003-12-04  Darin Adler  <darin@apple.com>
 
         Reviewed by John.

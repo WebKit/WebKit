@@ -40,7 +40,7 @@ public:
     
     RuntimeObjectImp(Bindings::Instance *i, bool ownsInstance = true);
 
-    const ClassInfo *classInfo() const;
+    const ClassInfo *classInfo() const { return &info; }
 
     virtual Value get(ExecState *exec, const Identifier &propertyName) const;
 
@@ -64,7 +64,7 @@ public:
 private:
     void _initializeClassInfoFromInstance();
     
-    ClassInfo _classInfo;
+    static const ClassInfo info;
     Bindings::Instance *instance;
     bool ownsInstance;
 };
