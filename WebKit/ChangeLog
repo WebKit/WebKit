@@ -1,5 +1,9 @@
 2005-02-03  Chris Blumenberg  <cblu@apple.com>
 
+        * English.lproj/StringsNotToBeLocalized.txt: updated
+
+2005-02-03  Chris Blumenberg  <cblu@apple.com>
+
 	Fixed: <rdar://problem/3989611> Evite style "add vCalendar to calendar" do not work
 
         Reviewed by adele.
