@@ -1,3 +1,43 @@
+2002-11-21  Darin Adler  <darin@apple.com>
+
+	- stop garbage collecting the ActivationImp objects, gets 3% on iBench
+	- pave the way to separate the argument lists from scope chains
+
+        * kjs/context.h: Added. Moved ContextImp here so it can use things defined
+	in function.h
+
+        * kjs/scope_chain.h: Added. Starting as a copy of List, to be improved.
+        * kjs/scope_chain.cpp: Added. Starting as a copy of List, to be improved.
+
+        * JavaScriptCore.pbproj/project.pbxproj: Rearranged things, added context.h.
+
+        * kjs/function.cpp:
+        (FunctionImp::call): Pass InterpreterImp, not ExecState, to ContextImp.
+        (DeclaredFunctionImp::DeclaredFunctionImp): List -> ScopeChain.
+        (ActivationImp::createArgumentsObject): ArgumentList -> List.
+        (GlobalFuncImp::call): Pass InterpreterImp, not an ExecState, to ContextImp.
+        * kjs/function.h: List -> ScopeChain.
+        * kjs/function_object.cpp: (FunctionObjectImp::construct): List -> ScopeChain.
+        * kjs/internal.cpp:
+        (ContextImp::ContextImp): Set the context in the interpreter.
+        (ContextImp::~ContextImp): Set the context in the interpreter to the caller.
+        (ContextImp::mark): Mark all the activation objects.
+        (InterpreterImp::InterpreterImp): Initialize context to 0.
+        (InterpreterImp::mark): Mark the top context.
+        (InterpreterImp::evaluate): Pass InterpreterImp to ContextImp.
+        * kjs/internal.h: Move ContextImp to its own header. Add setContext to InterpreterImp.
+        * kjs/interpreter.cpp: (Context::scopeChain): List -> ScopeChain.
+        * kjs/interpreter.h: List -> ScopeChain.
+        * kjs/nodes.cpp:
+        (ResolveNode::evaluateReference): List -> ScopeChain.
+        (FuncDeclNode::processFuncDecl): List -> ScopeChain.
+        (FuncExprNode::evaluate): List -> ScopeChain.
+        * kjs/object.cpp: List -> ScopeChain.
+        * kjs/object.h: List -> ScopeChain.
+
+        * kjs/types.h: Remove needsMarking features from List.
+        * kjs/types.cpp: Ditto.
+
 2002-11-21  Maciej Stachowiak  <mjs@apple.com>
 
 	- reduced the size of PropertyMap by storing sizes and such in the

@@ -36,6 +36,14 @@
 
 namespace KJS {
 
+struct PropertyMapHashTable
+{
+    int sizeMask;
+    int size;
+    int keyCount;
+    PropertyMapHashTableEntry entries[1];
+};
+    
 class SavedProperty {
 public:
     Identifier key;
@@ -190,15 +198,15 @@ void PropertyMap::put(const Identifier &name, ValueImp *value, int attributes)
 
 inline void PropertyMap::insert(UString::Rep *key, ValueImp *value, int attributes)
 {
-  assert(_table);
+    assert(_table);
 
-  int i = hash(key);
-  while (_table->entries[i].key)
-    i = (i + 1) & _table->sizeMask;
+    int i = hash(key);
+    while (_table->entries[i].key)
+        i = (i + 1) & _table->sizeMask;
     
-  _table->entries[i].key = key;
-  _table->entries[i].value = value;
-  _table->entries[i].attributes = attributes;
+    _table->entries[i].key = key;
+    _table->entries[i].value = value;
+    _table->entries[i].attributes = attributes;
 }
 
 void PropertyMap::expand()
@@ -206,12 +214,12 @@ void PropertyMap::expand()
     checkConsistency();
     
     Table *oldTable = _table;
-    int oldTableSize = oldTable ? _table->size : 0;
+    int oldTableSize = oldTable ? oldTable->size : 0;
 
     int newTableSize = oldTableSize ? oldTableSize * 2 : 16;
     _table = (Table *)calloc(1, sizeof(Table) + (newTableSize - 1) * sizeof(Entry) );
     _table->size = newTableSize;
-    _table->sizeMask = _table->size - 1;
+    _table->sizeMask = newTableSize - 1;
 
 #if USE_SINGLE_ENTRY
     UString::Rep *key = _singleEntry.key;

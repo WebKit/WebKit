@@ -233,8 +233,8 @@ Object FunctionObjectImp::construct(ExecState *exec, const List &args)
     return err;
   }
 
-  List scopeChain;
-  scopeChain.append(exec->interpreter()->globalObject());
+  ScopeChain scopeChain;
+  scopeChain.prepend(exec->interpreter()->globalObject());
   FunctionBodyNode *bodyNode = progNode;
 
   FunctionImp *fimp = new DeclaredFunctionImp(exec, Identifier::null, bodyNode,

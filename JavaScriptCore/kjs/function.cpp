@@ -29,6 +29,7 @@
 #include "nodes.h"
 #include "operations.h"
 #include "debugger.h"
+#include "context.h"
 
 #include <stdio.h>
 #include <errno.h>
@@ -92,7 +93,7 @@ Value FunctionImp::call(ExecState *exec, Object &thisObj, const List &args)
   }
 
   // enter a new execution context
-  ContextImp ctx(globalObj, exec, thisObj, codeType(),
+  ContextImp ctx(globalObj, exec->interpreter()->imp(), thisObj, codeType(),
                  exec->context().imp(), this, &args);
   ExecState newExec(exec->interpreter(), &ctx);
   newExec.setException(exec->exception()); // could be null
@@ -254,7 +255,7 @@ bool FunctionImp::deleteProperty(ExecState *exec, const Identifier &propertyName
 const ClassInfo DeclaredFunctionImp::info = {"Function", &FunctionImp::info, 0, 0};
 
 DeclaredFunctionImp::DeclaredFunctionImp(ExecState *exec, const Identifier &n,
-					 FunctionBodyNode *b, const List &sc)
+					 FunctionBodyNode *b, const ScopeChain &sc)
   : FunctionImp(exec,n), body(b)
 {
   Value protect(this);
@@ -380,7 +381,7 @@ void ActivationImp::mark()
 void ActivationImp::createArgumentsObject(ExecState *exec) const
 {
     FunctionImp *function = _context->function();
-    const ArgumentList *arguments = _context->arguments();
+    const List *arguments = _context->arguments();
     if (arguments)
         _argumentsObject = new ArgumentsImp(exec, function, *arguments);
     else
@@ -441,7 +442,7 @@ Value GlobalFuncImp::call(ExecState *exec, Object &/*thisObj*/, const List &args
       // enter a new execution context
       Object thisVal(Object::dynamicCast(exec->context().thisValue()));
       ContextImp ctx(exec->interpreter()->globalObject(),
-                     exec,
+                     exec->interpreter()->imp(),
                      thisVal,
                      EvalCode,
                      exec->context().imp());

@@ -224,6 +224,8 @@
 				F5BB2BC7030F772101FCFE1D,
 				933A349C038AE7C6008635CE,
 				938772E6038BFE19008635CE,
+				9374D3A9038D9D74008635CE,
+				9373524F038DA8C2008635CE,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -270,6 +272,7 @@
 				F5341395030CF5F8018BE7F3,
 				F5BB2BC6030F772101FCFE1D,
 				933A349E038AE80F008635CE,
+				9374D3AA038D9D74008635CE,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -329,6 +332,7 @@
 				F692A8530255597D01FF60F7,
 				F5BB2BC4030F772101FCFE1D,
 				F5BB2BC5030F772101FCFE1D,
+				9373524E038DA8C2008635CE,
 				F692A8550255597D01FF60F7,
 				F692A8560255597D01FF60F7,
 				F692A8570255597D01FF60F7,
@@ -373,19 +377,22 @@
 				F692A87C0255597D01FF60F7,
 				F692A87D0255597D01FF60F7,
 				F692A87E0255597D01FF60F7,
+				9374D3A7038D9D74008635CE,
+				9374D3A8038D9D74008635CE,
 				F50888B6030BB74C012A967E,
 				F692A87F0255597D01FF60F7,
 				F692A8800255597D01FF60F7,
 				F692A8810255597D01FF60F7,
-				F692A8830255597D01FF60F7,
 				F692A8840255597D01FF60F7,
-				F692A8850255597D01FF60F7,
+				F692A8830255597D01FF60F7,
 				F692A8860255597D01FF60F7,
-				F692A8870255597D01FF60F7,
+				F692A8850255597D01FF60F7,
 				F692A8880255597D01FF60F7,
+				F692A8870255597D01FF60F7,
 			);
 			isa = PBXGroup;
 			name = Classes;
+			path = kjs;
 			refType = 4;
 		};
 //080
@@ -440,15 +447,13 @@
 		933A3499038AE7C6008635CE = {
 			fileEncoding = 4;
 			isa = PBXFileReference;
-			name = grammar.y;
-			path = kjs/grammar.y;
+			path = grammar.y;
 			refType = 4;
 		};
 		933A349A038AE7C6008635CE = {
 			fileEncoding = 4;
 			isa = PBXFileReference;
-			name = identifier.h;
-			path = kjs/identifier.h;
+			path = identifier.h;
 			refType = 4;
 		};
 		933A349C038AE7C6008635CE = {
@@ -463,12 +468,53 @@
 		933A349D038AE80F008635CE = {
 			fileEncoding = 4;
 			isa = PBXFileReference;
-			name = identifier.cpp;
-			path = kjs/identifier.cpp;
+			path = identifier.cpp;
 			refType = 4;
 		};
 		933A349E038AE80F008635CE = {
 			fileRef = 933A349D038AE80F008635CE;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		9373524E038DA8C2008635CE = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			path = context.h;
+			refType = 4;
+		};
+		9373524F038DA8C2008635CE = {
+			fileRef = 9373524E038DA8C2008635CE;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Private,
+				);
+			};
+		};
+		9374D3A7038D9D74008635CE = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			path = scope_chain.h;
+			refType = 4;
+		};
+		9374D3A8038D9D74008635CE = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			path = scope_chain.cpp;
+			refType = 4;
+		};
+		9374D3A9038D9D74008635CE = {
+			fileRef = 9374D3A7038D9D74008635CE;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Private,
+				);
+			};
+		};
+		9374D3AA038D9D74008635CE = {
+			fileRef = 9374D3A8038D9D74008635CE;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -498,8 +544,7 @@
 		F50888B6030BB74C012A967E = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			name = simple_number.h;
-			path = kjs/simple_number.h;
+			path = simple_number.h;
 			refType = 4;
 		};
 		F50888B7030BB74C012A967E = {
@@ -526,15 +571,13 @@
 		F5341390030CEEB1018BE7F3 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			name = reference.cpp;
-			path = kjs/reference.cpp;
+			path = reference.cpp;
 			refType = 4;
 		};
 		F5341391030CEEB1018BE7F3 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			name = reference.h;
-			path = kjs/reference.h;
+			path = reference.h;
 			refType = 4;
 		};
 		F5341392030CEEB1018BE7F3 = {
@@ -558,8 +601,7 @@
 		F5341394030CF5F8018BE7F3 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			name = reference_list.cpp;
-			path = kjs/reference_list.cpp;
+			path = reference_list.cpp;
 			refType = 4;
 		};
 		F5341395030CF5F8018BE7F3 = {
@@ -574,8 +616,7 @@
 		F54F0800030CD22001B5C2EB = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			name = reference_list.h;
-			path = kjs/reference_list.h;
+			path = reference_list.h;
 			refType = 4;
 		};
 		F54F0801030CD22001B5C2EB = {
@@ -604,15 +645,13 @@
 		F5BB2BC4030F772101FCFE1D = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			name = completion.cpp;
-			path = kjs/completion.cpp;
+			path = completion.cpp;
 			refType = 4;
 		};
 		F5BB2BC5030F772101FCFE1D = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			name = completion.h;
-			path = kjs/completion.h;
+			path = completion.h;
 			refType = 4;
 		};
 		F5BB2BC6030F772101FCFE1D = {
@@ -645,13 +684,14 @@
 			);
 			isa = PBXGroup;
 			name = "Other Sources";
-			path = "";
+			path = kjs;
 			refType = 4;
 		};
 		F5C290E60284F98E018635CA = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			path = JavaScriptCorePrefix.h;
+			name = JavaScriptCorePrefix.h;
+			path = ../JavaScriptCorePrefix.h;
 			refType = 4;
 		};
 		F5C290E70284F98E018635CA = {
@@ -663,8 +703,7 @@
 		F5FFE656026B47A6018635CA = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			name = nodes2string.cpp;
-			path = kjs/nodes2string.cpp;
+			path = nodes2string.cpp;
 			refType = 4;
 		};
 		F5FFE657026B47A6018635CA = {
@@ -686,8 +725,7 @@
 		F68EBB8C0255D4C601FF60F7 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			name = config.h;
-			path = kjs/config.h;
+			path = config.h;
 			refType = 4;
 		};
 		F68EBB8E0255D4C601FF60F7 = {
@@ -702,400 +740,343 @@
 		F692A84D0255597D01FF60F7 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			name = array_object.cpp;
-			path = kjs/array_object.cpp;
+			path = array_object.cpp;
 			refType = 4;
 		};
 		F692A84E0255597D01FF60F7 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			name = array_object.h;
-			path = kjs/array_object.h;
+			path = array_object.h;
 			refType = 4;
 		};
 		F692A84F0255597D01FF60F7 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			name = array_object.lut.h;
-			path = kjs/array_object.lut.h;
+			path = array_object.lut.h;
 			refType = 4;
 		};
 		F692A8500255597D01FF60F7 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			name = bool_object.cpp;
-			path = kjs/bool_object.cpp;
+			path = bool_object.cpp;
 			refType = 4;
 		};
 		F692A8510255597D01FF60F7 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			name = bool_object.h;
-			path = kjs/bool_object.h;
+			path = bool_object.h;
 			refType = 4;
 		};
 		F692A8520255597D01FF60F7 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			name = collector.cpp;
-			path = kjs/collector.cpp;
+			path = collector.cpp;
 			refType = 4;
 		};
 		F692A8530255597D01FF60F7 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			name = collector.h;
-			path = kjs/collector.h;
+			path = collector.h;
 			refType = 4;
 		};
 		F692A8540255597D01FF60F7 = {
 			fileEncoding = 30;
 			isa = PBXExecutableFileReference;
-			name = create_hash_table;
-			path = kjs/create_hash_table;
+			path = create_hash_table;
 			refType = 4;
 		};
 		F692A8550255597D01FF60F7 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			name = date_object.cpp;
-			path = kjs/date_object.cpp;
+			path = date_object.cpp;
 			refType = 4;
 		};
 		F692A8560255597D01FF60F7 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			name = date_object.h;
-			path = kjs/date_object.h;
+			path = date_object.h;
 			refType = 4;
 		};
 		F692A8570255597D01FF60F7 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			name = date_object.lut.h;
-			path = kjs/date_object.lut.h;
+			path = date_object.lut.h;
 			refType = 4;
 		};
 		F692A8580255597D01FF60F7 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			name = debugger.cpp;
-			path = kjs/debugger.cpp;
+			path = debugger.cpp;
 			refType = 4;
 		};
 		F692A8590255597D01FF60F7 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			name = debugger.h;
-			path = kjs/debugger.h;
+			path = debugger.h;
 			refType = 4;
 		};
 		F692A85A0255597D01FF60F7 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			name = error_object.cpp;
-			path = kjs/error_object.cpp;
+			path = error_object.cpp;
 			refType = 4;
 		};
 		F692A85B0255597D01FF60F7 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			name = error_object.h;
-			path = kjs/error_object.h;
+			path = error_object.h;
 			refType = 4;
 		};
 		F692A85C0255597D01FF60F7 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			name = function_object.cpp;
-			path = kjs/function_object.cpp;
+			path = function_object.cpp;
 			refType = 4;
 		};
 		F692A85D0255597D01FF60F7 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			name = function_object.h;
-			path = kjs/function_object.h;
+			path = function_object.h;
 			refType = 4;
 		};
 		F692A85E0255597D01FF60F7 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			name = function.cpp;
-			path = kjs/function.cpp;
+			path = function.cpp;
 			refType = 4;
 		};
 		F692A85F0255597D01FF60F7 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			name = function.h;
-			path = kjs/function.h;
+			path = function.h;
 			refType = 4;
 		};
 		F692A8610255597D01FF60F7 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			name = internal.cpp;
-			path = kjs/internal.cpp;
+			path = internal.cpp;
 			refType = 4;
 		};
 		F692A8620255597D01FF60F7 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			name = internal.h;
-			path = kjs/internal.h;
+			path = internal.h;
 			refType = 4;
 		};
 		F692A8630255597D01FF60F7 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			name = interpreter.cpp;
-			path = kjs/interpreter.cpp;
+			path = interpreter.cpp;
 			refType = 4;
 		};
 		F692A8640255597D01FF60F7 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			name = interpreter.h;
-			path = kjs/interpreter.h;
+			path = interpreter.h;
 			refType = 4;
 		};
 		F692A8650255597D01FF60F7 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			name = lexer.cpp;
-			path = kjs/lexer.cpp;
+			path = lexer.cpp;
 			refType = 4;
 		};
 		F692A8660255597D01FF60F7 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			name = lexer.h;
-			path = kjs/lexer.h;
+			path = lexer.h;
 			refType = 4;
 		};
 		F692A8670255597D01FF60F7 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			name = lexer.lut.h;
-			path = kjs/lexer.lut.h;
+			path = lexer.lut.h;
 			refType = 4;
 		};
 		F692A8680255597D01FF60F7 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			name = lookup.cpp;
-			path = kjs/lookup.cpp;
+			path = lookup.cpp;
 			refType = 4;
 		};
 		F692A8690255597D01FF60F7 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			name = lookup.h;
-			path = kjs/lookup.h;
+			path = lookup.h;
 			refType = 4;
 		};
 		F692A86A0255597D01FF60F7 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			name = math_object.cpp;
-			path = kjs/math_object.cpp;
+			path = math_object.cpp;
 			refType = 4;
 		};
 		F692A86B0255597D01FF60F7 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			name = math_object.h;
-			path = kjs/math_object.h;
+			path = math_object.h;
 			refType = 4;
 		};
 		F692A86C0255597D01FF60F7 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			name = math_object.lut.h;
-			path = kjs/math_object.lut.h;
+			path = math_object.lut.h;
 			refType = 4;
 		};
 		F692A86D0255597D01FF60F7 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			name = nodes.cpp;
-			path = kjs/nodes.cpp;
+			path = nodes.cpp;
 			refType = 4;
 		};
 		F692A86E0255597D01FF60F7 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			name = nodes.h;
-			path = kjs/nodes.h;
+			path = nodes.h;
 			refType = 4;
 		};
 		F692A8700255597D01FF60F7 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			name = number_object.cpp;
-			path = kjs/number_object.cpp;
+			path = number_object.cpp;
 			refType = 4;
 		};
 		F692A8710255597D01FF60F7 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			name = number_object.h;
-			path = kjs/number_object.h;
+			path = number_object.h;
 			refType = 4;
 		};
 		F692A8720255597D01FF60F7 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			name = number_object.lut.h;
-			path = kjs/number_object.lut.h;
+			path = number_object.lut.h;
 			refType = 4;
 		};
 		F692A8730255597D01FF60F7 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			name = object_object.cpp;
-			path = kjs/object_object.cpp;
+			path = object_object.cpp;
 			refType = 4;
 		};
 		F692A8740255597D01FF60F7 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			name = object_object.h;
-			path = kjs/object_object.h;
+			path = object_object.h;
 			refType = 4;
 		};
 		F692A8750255597D01FF60F7 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			name = object.cpp;
-			path = kjs/object.cpp;
+			path = object.cpp;
 			refType = 4;
 		};
 		F692A8760255597D01FF60F7 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			name = object.h;
-			path = kjs/object.h;
+			path = object.h;
 			refType = 4;
 		};
 		F692A8770255597D01FF60F7 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			name = operations.cpp;
-			path = kjs/operations.cpp;
+			path = operations.cpp;
 			refType = 4;
 		};
 		F692A8780255597D01FF60F7 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			name = operations.h;
-			path = kjs/operations.h;
+			path = operations.h;
 			refType = 4;
 		};
 		F692A8790255597D01FF60F7 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			name = property_map.cpp;
-			path = kjs/property_map.cpp;
+			path = property_map.cpp;
 			refType = 4;
 		};
 		F692A87A0255597D01FF60F7 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			name = property_map.h;
-			path = kjs/property_map.h;
+			path = property_map.h;
 			refType = 4;
 		};
 		F692A87B0255597D01FF60F7 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			name = regexp_object.cpp;
-			path = kjs/regexp_object.cpp;
+			path = regexp_object.cpp;
 			refType = 4;
 		};
 		F692A87C0255597D01FF60F7 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			name = regexp_object.h;
-			path = kjs/regexp_object.h;
+			path = regexp_object.h;
 			refType = 4;
 		};
 		F692A87D0255597D01FF60F7 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			name = regexp.cpp;
-			path = kjs/regexp.cpp;
+			path = regexp.cpp;
 			refType = 4;
 		};
 		F692A87E0255597D01FF60F7 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			name = regexp.h;
-			path = kjs/regexp.h;
+			path = regexp.h;
 			refType = 4;
 		};
 		F692A87F0255597D01FF60F7 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			name = string_object.cpp;
-			path = kjs/string_object.cpp;
+			path = string_object.cpp;
 			refType = 4;
 		};
 		F692A8800255597D01FF60F7 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			name = string_object.h;
-			path = kjs/string_object.h;
+			path = string_object.h;
 			refType = 4;
 		};
 		F692A8810255597D01FF60F7 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			name = string_object.lut.h;
-			path = kjs/string_object.lut.h;
+			path = string_object.lut.h;
 			refType = 4;
 		};
 		F692A8830255597D01FF60F7 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			name = types.cpp;
-			path = kjs/types.cpp;
+			path = types.cpp;
 			refType = 4;
 		};
 		F692A8840255597D01FF60F7 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			name = types.h;
-			path = kjs/types.h;
+			path = types.h;
 			refType = 4;
 		};
 		F692A8850255597D01FF60F7 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			name = ustring.cpp;
-			path = kjs/ustring.cpp;
+			path = ustring.cpp;
 			refType = 4;
 		};
 		F692A8860255597D01FF60F7 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			name = ustring.h;
-			path = kjs/ustring.h;
+			path = ustring.h;
 			refType = 4;
 		};
 		F692A8870255597D01FF60F7 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			name = value.cpp;
-			path = kjs/value.cpp;
+			path = value.cpp;
 			refType = 4;
 		};
 		F692A8880255597D01FF60F7 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			name = value.h;
-			path = kjs/value.h;
+			path = value.h;
 			refType = 4;
 		};
 		F692A8890255597D01FF60F7 = {
@@ -1500,22 +1481,19 @@
 		F692A8C802555BA201FF60F7 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			name = grammar.cpp;
-			path = kjs/grammar.cpp;
+			path = grammar.cpp;
 			refType = 4;
 		};
 		F692A8C902555BA201FF60F7 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			name = grammar.cpp.h;
-			path = kjs/grammar.cpp.h;
+			path = grammar.cpp.h;
 			refType = 4;
 		};
 		F692A8CA02555BA201FF60F7 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			name = grammar.h;
-			path = kjs/grammar.h;
+			path = grammar.h;
 			refType = 4;
 		};
 		F692A8CB02555BA201FF60F7 = {

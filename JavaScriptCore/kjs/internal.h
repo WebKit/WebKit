@@ -29,6 +29,7 @@
 #include "object.h"
 #include "types.h"
 #include "interpreter.h"
+#include "scope_chain.h"
 
 #define I18N_NOOP(s) s
 
@@ -194,42 +195,6 @@ namespace KJS {
 		  AnonymousCode };
 
   /**
-   * @short Execution context.
-   */
-  class ContextImp {
-  public:
-    ContextImp(Object &glob, ExecState *exec, Object &thisV, CodeType type = GlobalCode,
-               ContextImp *_callingContext = 0L, FunctionImp *func = 0L, const ArgumentList *args = 0);
-    ~ContextImp();
-
-    const List scopeChain() const { return scope; }
-    Object variableObject() const { return variable; }
-    void setVariableObject(const Object &v) { variable = v; }
-    Object thisValue() const { return thisVal; }
-    ContextImp *callingContext() { return callingCon; }
-    ObjectImp *activationObject() { return activation.imp(); }
-    FunctionImp *function() const { return _function; }
-    const ArgumentList *arguments() const { return _arguments; }
-
-    void pushScope(const Object &s);
-    void popScope();
-    LabelStack *seenLabels() { return &ls; }
-
-  private:
-
-    List scope;
-    Object variable;
-    Object thisVal;
-    ContextImp *callingCon;
-    Object activation;
-    FunctionImp *_function;
-    const ArgumentList *_arguments;
-
-    LabelStack ls;
-    CodeType codeType;
-  };
-
-  /**
    * @internal
    *
    * Parses ECMAScript source code and converts into ProgramNode objects, which
@@ -308,6 +273,8 @@ namespace KJS {
     static InterpreterImp* firstInterpreter() { return s_hook; }
     InterpreterImp *nextInterpreter() const { return next; }
     InterpreterImp *prevInterpreter() const { return prev; }
+    
+    void setContext(ContextImp *c) { _context = c; }
 
   private:
     void clear();
@@ -359,6 +326,8 @@ namespace KJS {
     // Chained list of interpreters (ring) - for collector
     static InterpreterImp* s_hook;
     InterpreterImp *next, *prev;
+    
+    ContextImp *_context;
 
     int recursion;
   };

@@ -1739,11 +1739,11 @@ UString KJS::HTMLElement::toString(ExecState *exec) const
     return DOMElement::toString(exec);
 }
 
-List KJS::HTMLElement::eventHandlerScope(ExecState *exec) const
+ScopeChain KJS::HTMLElement::eventHandlerScope(ExecState *exec) const
 {
   DOM::HTMLElement element = static_cast<DOM::HTMLElement>(node);
 
-  List scope;
+  ScopeChain scope;
   // The element is the first one, so that it is the most prioritary
   scope.append(getDOMNode(exec,element));
 

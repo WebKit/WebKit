@@ -32,6 +32,7 @@
 #endif
 
 #include "collector.h"
+#include "context.h"
 #include "debugger.h"
 #include "function_object.h"
 #include "internal.h"
@@ -217,8 +218,8 @@ Value ResolveNode::evaluate(ExecState *exec)
 
 Reference ResolveNode::evaluateReference(ExecState *exec)
 {
-  const List chain = exec->context().scopeChain();
-  ListIterator scope = chain.begin();
+  const ScopeChain chain = exec->context().scopeChain();
+  ScopeChainIterator scope = chain.begin();
 
   while (scope != chain.end()) {
     ObjectImp *o = static_cast<ObjectImp*>((*scope).imp());
@@ -2765,7 +2766,7 @@ bool FuncDeclNode::deref()
 // ECMA 13
 void FuncDeclNode::processFuncDecl(ExecState *exec)
 {
-  const List sc = exec->context().imp()->scopeChain();
+  const ScopeChain sc = exec->context().imp()->scopeChain();
 
   // TODO: let this be an object with [[Class]] property "Function"
   FunctionImp *fimp = new DeclaredFunctionImp(exec, ident, body, sc);
@@ -2820,7 +2821,7 @@ bool FuncExprNode::deref()
 // ECMA 13
 Value FuncExprNode::evaluate(ExecState *exec)
 {
-  const List sc = exec->context().scopeChain();
+  const ScopeChain sc = exec->context().scopeChain();
   FunctionImp *fimp = new DeclaredFunctionImp(exec, Identifier::null, body, sc);
   Value ret(fimp);
   List empty;

@@ -33,6 +33,8 @@ namespace KJS {
     
     class SavedProperty;
     
+    struct PropertyMapHashTable;
+    
     class SavedProperties {
     friend class PropertyMap;
     public:
@@ -55,14 +57,6 @@ namespace KJS {
         int attributes;
     };
 
-    struct PropertyMapHashTable
-    {
-        int sizeMask;
-        int size;
-        int keyCount;
-        PropertyMapHashTableEntry entries[1];
-    };
-    
     class PropertyMap {
     public:
         PropertyMap();

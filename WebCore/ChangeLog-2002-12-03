@@ -1,3 +1,13 @@
+2002-11-21  Darin Adler  <darin@apple.com>
+
+        * khtml/ecma/kjs_dom.cpp: (DOMNode::eventHandlerScope): List -> ScopeChain.
+        * khtml/ecma/kjs_dom.h: List -> ScopeChain.
+        * khtml/ecma/kjs_events.cpp: (JSEventListener::handleEvent): List -> ScopeChain.
+        * khtml/ecma/kjs_html.cpp: (KJS::HTMLElement::eventHandlerScope): List -> ScopeChain.
+        * khtml/ecma/kjs_html.h: List -> ScopeChain.
+
+        * force-js-clean-timestamp: Not sure this is required, but better safe than sorry.
+
 2002-11-21  Maciej Stachowiak  <mjs@apple.com>
 
         * force-js-clean-timestamp: Touch so other people's builds work.

@@ -48,8 +48,8 @@ namespace KJS {
   };
 
   struct ListHookNode : public ListNode {
-    ListHookNode(bool needsMarking) : ListNode(Value(), this, this),
-        listRefCount(1), nodesRefCount(needsMarking ? 0 : 1) { }
+    ListHookNode() : ListNode(0, this, this),
+        listRefCount(1), nodesRefCount(1) { }
     int listRefCount;
     int nodesRefCount;
   };
@@ -94,11 +94,11 @@ Value ListIterator::operator--(int)
 
 // ------------------------------ List -----------------------------------------
 
-List::List(bool needsMarking) : hook(new ListHookNode(needsMarking)), m_needsMarking(needsMarking)
+List::List() : hook(new ListHookNode)
 {
 }
 
-List::List(const List& l) : hook(l.hook), m_needsMarking(false)
+List::List(const List& l) : hook(l.hook)
 {
   ++hook->listRefCount;
   if (hook->nodesRefCount++ == 0)
@@ -113,9 +113,8 @@ List& List::operator=(const List& l)
 
 List::~List()
 {
-  if (!m_needsMarking)
-    if (--hook->nodesRefCount == 0)
-      derefAll();
+  if (--hook->nodesRefCount == 0)
+    derefAll();
   
   if (--hook->listRefCount == 0) {
     assert(hook->nodesRefCount == 0);
@@ -299,20 +298,6 @@ void List::derefAll()
 
 void List::swap(List &other)
 {
-  if (!m_needsMarking)
-    if (other.hook->nodesRefCount++ == 0)
-      other.refAll();
-  if (!other.m_needsMarking)
-    if (hook->nodesRefCount++ == 0)
-      refAll();
-
-  if (!m_needsMarking)
-    if (--hook->nodesRefCount == 0)
-      derefAll();
-  if (!other.m_needsMarking)
-    if (--other.hook->nodesRefCount == 0)
-      other.derefAll();
-
   ListHookNode *tmp = hook;
   hook = other.hook;
   other.hook = tmp;

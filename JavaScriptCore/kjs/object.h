@@ -41,6 +41,7 @@
 #include "types.h"
 #include "reference_list.h"
 #include "property_map.h"
+#include "scope_chain.h"
 
 namespace KJS {
 
@@ -318,8 +319,8 @@ namespace KJS {
      * @param exec The current execution state
      * @return The function's scope
      */
-    const List scope() const;
-    void setScope(const List &s);
+    const ScopeChain scope() const;
+    void setScope(const ScopeChain &s);
 
     /**
      * Returns a List of References to all the properties of the object. Used
@@ -568,8 +569,8 @@ namespace KJS {
      *
      * @see Object::scope()
      */
-    const List scope() const;
-    void setScope(const List &s);
+    const ScopeChain scope() const;
+    void setScope(const ScopeChain &s);
 
     ReferenceList propList(ExecState *exec, bool recursive = true);
 
@@ -601,7 +602,7 @@ namespace KJS {
     PropertyMap _prop;
     ValueImp *_proto;
     ValueImp *_internalValue;
-    List _scope;
+    ScopeChain _scope;
   };
 
   /**
@@ -704,10 +705,10 @@ namespace KJS {
   inline Boolean Object::hasInstance(ExecState *exec, const Value &value)
     { return imp()->hasInstance(exec,value); }
 
-  inline const List Object::scope() const
+  inline const ScopeChain Object::scope() const
     { return imp()->scope(); }
 
-  inline void Object::setScope(const List &s)
+  inline void Object::setScope(const ScopeChain &s)
     { imp()->setScope(s); }
 
   inline ReferenceList Object::propList(ExecState *exec, bool recursive)

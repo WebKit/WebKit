@@ -365,12 +365,12 @@ Boolean ObjectImp::hasInstance(ExecState */*exec*/, const Value &/*value*/)
   return Boolean(false);
 }
 
-const List ObjectImp::scope() const
+const ScopeChain ObjectImp::scope() const
 {
   return _scope;
 }
 
-void ObjectImp::setScope(const List &s)
+void ObjectImp::setScope(const ScopeChain &s)
 {
   _scope = s;
 }
