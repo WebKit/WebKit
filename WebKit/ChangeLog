@@ -1,3 +1,10 @@
+2004-09-01  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed deployment build failure.
+
+        * WebView.subproj/WebDefaultContextMenuDelegate.m:
+        (-[WebDefaultUIDelegate menuItemWithTag:]):
+
 2004-08-31  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: 

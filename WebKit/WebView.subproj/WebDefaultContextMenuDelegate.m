@@ -33,8 +33,8 @@
     NSMenuItem *menuItem = [[[NSMenuItem alloc] init] autorelease];
     [menuItem setTag:tag];
     
-    NSString *title;
-    SEL action;
+    NSString *title = nil;
+    SEL action = NULL;
     
     switch(tag) {
         case WebMenuItemTagOpenLinkInNewWindow:
