@@ -1,3 +1,13 @@
+2002-09-04  Darin Adler  <darin@apple.com>
+
+	Fix bug where doing a reload adds an entry to the back/forward list.
+
+        * History.subproj/WebBackForwardList.m: (-[WebBackForwardList addEntry:]):
+	If URL, target, and parent all match, then don't add an entry.
+
+        * WebKit.pbproj/project.pbxproj: Let Project Builder be the boss; I guess
+	this means Chris is still using the old version.
+
 2002-09-04  Chris Blumenberg  <cblu@apple.com>
 
 	- don't set nil data on the web file db
