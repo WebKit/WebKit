@@ -55,11 +55,11 @@ bool KWQServeRequest(Loader *loader, Request *request, TransferJob *job)
 }
 
 @interface NSDictionary (WebCore_Extras)
-- (id)_webcore_initWithHeaderString:(NSString *)string;
++ (id)_webcore_dictionaryWithHeaderString:(NSString *)string;
 @end
 
 @implementation NSDictionary (WebCore_Extras)
-- (id)_webcore_initWithHeaderString:(NSString *)string
++ (id)_webcore_dictionaryWithHeaderString:(NSString *)string
 {
     NSMutableDictionary *headers = [[NSMutableDictionary alloc] init];
 
@@ -99,9 +99,11 @@ bool KWQServeRequest(Loader *loader, Request *request, TransferJob *job)
 	}
     }
 
-    self = [self initWithDictionary:headers];
+    NSDictionary *dictionary =  [NSDictionary dictionaryWithDictionary:headers];
+    
     [headers release];
-    return self;
+    
+    return dictionary;
 }
 
 @end
@@ -122,7 +124,7 @@ bool KWQServeRequest(Loader *loader, DocLoader *docLoader, TransferJob *job)
     QString headerString = job->queryMetaData("customHTTPHeader");
 
     if (!headerString.isEmpty()) {
-	headerDict = [[NSDictionary alloc] _webcore_initWithHeaderString:headerString.getNSString()];
+	headerDict = [NSDictionary _webcore_dictionaryWithHeaderString:headerString.getNSString()];
     }
 
     if (job->method() == "POST") {
@@ -176,7 +178,7 @@ QByteArray KWQServeSynchronousRequest(Loader *loader, DocLoader *docLoader, Tran
     QString headerString = job->queryMetaData("customHTTPHeader");
 
     if (!headerString.isEmpty()) {
-	headerDict = [[NSDictionary alloc] _webcore_initWithHeaderString:headerString.getNSString()];
+	headerDict = [[NSDictionary _webcore_dictionaryWithHeaderString:headerString.getNSString()] retain];
     }
 
     NSArray *postData = nil;
