@@ -1377,6 +1377,38 @@ static WebHTMLView *lastHitView = nil;
 
     (void)HISearchWindowShow((CFStringRef)[self selectedString], kNilOptions);
 }
+- (void)_lookUpInDictionaryFromMenu:(id)sender
+{
+    // This should only be called when there's a selection, but play it safe.
+    if (![self _hasSelection]) {
+        return;
+    }
+    
+    // Soft link to dictionary-display function to avoid linking another framework (ApplicationServices/LangAnalysis)
+    static OSStatus (*__dictionaryServiceWindowShow)(id inWordString, NSRect inWordBoundary, UInt16 inLineDirection) = NULL;
+    static const struct mach_header *frameworkImageHeader = NULL;
+    static BOOL lookedForFunction = NO;
+    if (!lookedForFunction) {
+        __dictionaryServiceWindowShow = _NSSoftLinkingGetFrameworkFuncPtr(@"ApplicationServices", @"LangAnalysis", "_DCMDictionaryServiceWindowShow", &frameworkImageHeader);
+        lookedForFunction = YES;
+    }
+    if (!__dictionaryServiceWindowShow) {
+        ERROR("Couldn't find _DCMDictionaryServiceWindowShow"); 
+        return;
+    }
+    
+    // FIXME: must check for right-to-left here
+    NSWritingDirection writingDirection = NSWritingDirectionLeftToRight;
+    
+    NSAttributedString *attrString = [self selectedAttributedString];
+    // FIXME: the dictionary API expects the rect for the first line of selection. Passing
+    // the rect for the entire selection, as we do here, positions the pop-up window near
+    // the bottom of the selection rather than at the selected word.
+    NSRect rect = [self convertRect:[[self _bridge] visibleSelectionRect] toView:nil];
+    rect.origin = [[self window] convertBaseToScreen:rect.origin];
+    NSData *data = [attrString RTFFromRange:NSMakeRange(0, [attrString length]) documentAttributes:nil];
+    (void)__dictionaryServiceWindowShow(data, rect, (writingDirection == NSWritingDirectionRightToLeft) ? 1 : 0);
+}
 #endif
 
 #if APPKIT_CODE_FOR_REFERENCE
@@ -1697,7 +1729,8 @@ static WebHTMLView *lastHitView = nil;
         return [[self _bridge] isSelectionEditable];
 #ifndef OMIT_TIGER_FEATURES
     } else if (action == @selector(_searchWithSpotlightFromMenu:)
-               || action == @selector(_searchWithGoogleFromMenu:)) {
+               || action == @selector(_searchWithGoogleFromMenu:)
+               || action == @selector(_lookUpInDictionaryFromMenu:)) {
         return [self _hasSelection];
 #endif
     }

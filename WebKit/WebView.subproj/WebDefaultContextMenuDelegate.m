@@ -36,7 +36,11 @@ static NSString *localizedMenuTitleFromAppKit(NSString *key, NSString *comment)
     if (!appKitBundle) {
         return key;
     }
-    return NSLocalizedStringFromTableInBundle(key, @"MenuCommands", appKitBundle, comment);
+    NSString *result = NSLocalizedStringFromTableInBundle(key, @"MenuCommands", appKitBundle, comment);
+    if (result == nil) {
+        return key;
+    }
+    return result;
 }
 #endif
 
@@ -137,6 +141,11 @@ static NSString *localizedMenuTitleFromAppKit(NSString *key, NSString *comment)
             title = localizedMenuTitleFromAppKit(@"Search in Google", @"Search in Google menu title.");
             action = @selector(_searchWithGoogleFromMenu:);
             break;
+        case WebMenuItemTagLookUpInDictionary:
+            // FIXME: Perhaps move this string into WebKit directly when we're not in localization freeze
+            title = localizedMenuTitleFromAppKit(@"Look Up in Dictionary", @"Look Up in Dictionary menu title.");
+            action = @selector(_lookUpInDictionaryFromMenu:);
+            break;
 #endif
         default:
             return nil;
@@ -185,6 +194,8 @@ static NSString *localizedMenuTitleFromAppKit(NSString *key, NSString *comment)
             // but it's a new Tiger-only feature to have it in the context menu by default.
             [menuItems addObject:[self menuItemWithTag:WebMenuItemTagSearchInSpotlight]];
             [menuItems addObject:[self menuItemWithTag:WebMenuItemTagSearchInGoogle]];
+            [menuItems addObject:[NSMenuItem separatorItem]];
+            [menuItems addObject:[self menuItemWithTag:WebMenuItemTagLookUpInDictionary]];
             [menuItems addObject:[NSMenuItem separatorItem]];
 #endif
             [menuItems addObject:[self menuItemWithTag:WebMenuItemTagCopy]];
@@ -247,6 +258,12 @@ static NSString *localizedMenuTitleFromAppKit(NSString *key, NSString *comment)
     // FIXME: When we're not building for Panther anymore we should update the nib to include these.
     [menuItems addObject:[self menuItemWithTag:WebMenuItemTagSearchInSpotlight]];
     [menuItems addObject:[self menuItemWithTag:WebMenuItemTagSearchInGoogle]];
+    [menuItems addObject:[NSMenuItem separatorItem]];
+    // FIXME: The NSTextView behavior for looking text up in the dictionary is different if
+    // there was a selection before you clicked than if the selection was created as part of
+    // the click. This is desired by the dictionary folks apparently, though it seems bizarre.
+    // It might be tricky to pull this off in WebKit.
+    [menuItems addObject:[self menuItemWithTag:WebMenuItemTagLookUpInDictionary]];
     [menuItems addObject:[NSMenuItem separatorItem]];
 #endif
     

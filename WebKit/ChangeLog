@@ -1,3 +1,32 @@
+2005-01-25  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Chris.
+        
+        - WebKit part of fix for: <rdar://problem/3970670> Text context menu 
+          in WebKit needs "Look Up in Dictionary" item
+
+        * WebView.subproj/WebDefaultContextMenuDelegate.m:
+        (localizedMenuTitleFromAppKit):
+        return English string in the case where AppKit bundle is found but doesn't
+        contain the expected string. This case will be hit by people testing with
+        an older AppKit.
+        (-[WebDefaultUIDelegate menuItemWithTag:]):
+        create Look Up in Dictionary item
+        (-[WebDefaultUIDelegate contextMenuItemsForElement:]):
+        add Look Up in Dictionary item and separator
+        (-[WebDefaultUIDelegate editingContextMenuItemsForElement:]):
+        ditto
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _lookUpInDictionaryFromMenu:]):
+        new method, handles bringing up the Dictionary window. Includes FIXMEs
+        for a couple of the known loose ends.
+        (-[WebHTMLView validateUserInterfaceItem:]):
+        handle Look Up in Dictionary item like the other new items
+        
+        * WebView.subproj/WebUIDelegatePrivate.h:
+        added SPI constant for Look Up in Dictionary menu item
+
 2005-01-24  Maciej Stachowiak  <mjs@apple.com>
 
         Fixed Panther build (missing ifdef)
