@@ -30,6 +30,8 @@
 #include <config.h>
 #endif
 
+#ifndef USING_BORROWED_QSTRINGLIST
+
 #include <qstring.h>
 #include <qlist.h>
 
@@ -61,4 +63,7 @@ public:
 
 }; // class QStrList ===========================================================
 
+#else // USING_BORROWED_QSTRINGLIST
+// This will help to keep the linker from complaining about empty archives
+void KWQStrList_Dummy() {}
 #endif
