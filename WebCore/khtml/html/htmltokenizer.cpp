@@ -534,6 +534,7 @@ void HTMLTokenizer::scriptHandler()
     TokenizerString *savedPrependingSrc = currentPrependingSrc;
     TokenizerString prependingSrc;
     currentPrependingSrc = &prependingSrc;
+    bool needToRefCachedScript = false;
     if ( !parser->skipMode() ) {
         if (cs) {
              //kdDebug( 6036 ) << "cachedscript extern!" << endl;
@@ -546,10 +547,9 @@ void HTMLTokenizer::scriptHandler()
 	    }
             setSrc(TokenizerString());
             scriptCodeSize = scriptCodeResync = 0;
-            cs->ref(this);
-            // will be 0 if script was already loaded and ref() executed it
-            if (!cachedScript.isEmpty())
-                loadingExtScript = true;
+            // we need to ref the cached script (which will call notifyFinished), but we want to make sure we the data is setup before notifyFinished is called
+            needToRefCachedScript = true;
+            loadingExtScript = true;
         }
         else if (view && doScriptExec && javascript ) {
             if (!m_executingScript)
@@ -592,6 +592,10 @@ void HTMLTokenizer::scriptHandler()
     }
 
     currentPrependingSrc = savedPrependingSrc;
+
+    // Now that we're sure the pendingSrc is set up for notifyFinished, we can call ref()
+    if (needToRefCachedScript)
+        cs->ref(this);
 }
 
 void HTMLTokenizer::scriptExecution( const QString& str, QString scriptURL,

@@ -1,3 +1,12 @@
+2005-03-04 Adele Amchan  <adele@apple.com>
+ 
+       Reviewed by Maciej
+
+	Fix for <rdar://problem/4021711> REGRESSION(125-188) blank pages when browsing forum at cooperativeresearch.org - cached external script problem
+
+        * khtml/html/htmltokenizer.cpp: (khtml::HTMLTokenizer::scriptHandler): set flag needToRefCachedScript so we can make sure 
+        notifyFinished is called after pendingSrc is set up with the right data from the cached script
+
 2005-03-04  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by John
