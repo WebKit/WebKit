@@ -1,3 +1,29 @@
+2003-05-12  John Sullivan  <sullivan@apple.com>
+
+	- addition to Darin's previous patch; when checking whether a request can
+	be handled, take into account the schemes that were registered without
+	an NSURLProtocol getting involved.
+
+        Reviewed by Darin
+
+        * WebView.subproj/WebViewPrivate.h:
+        * WebView.subproj/WebViewPrivate.m:
+        (+[WebView _canHandleRequest:]):
+	like NSURLConnection canHandleRequest, but also takes into account the
+	schemes that were registered without an NSURLProtocol
+        * Plugins.subproj/WebNetscapePluginStream.m:
+        (-[WebNetscapePluginStream initWithRequest:pluginPointer:notifyData:]):
+	use +[WebView _canHandleRequest] instead of +[NSURLConnection canHandleRequest]
+        * WebView.subproj/WebDefaultContextMenuDelegate.m:
+        (-[WebDefaultUIDelegate webView:contextMenuItemsForElement:defaultMenuItems:]):
+	ditto
+        * WebView.subproj/WebDefaultPolicyDelegate.m:
+        (-[WebDefaultPolicyDelegate webView:decidePolicyForNavigationAction:request:frame:decisionListener:]):
+	ditto
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _continueAfterNavigationPolicy:]):
+	ditto
+
 2003-05-12  Darin Adler  <darin@apple.com>
 
         Reviewed by John.

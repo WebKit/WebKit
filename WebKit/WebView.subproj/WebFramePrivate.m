@@ -1484,7 +1484,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         [[self webView] _downloadURL:[request URL]];
         break;
     case WebPolicyUse:
-        if (![NSURLConnection canHandleRequest:request]) {
+        if (![WebView _canHandleRequest:request]) {
             [self _handleUnimplementablePolicyWithErrorCode:WebKitErrorCannotShowURL forURL:[request URL]];
         } else {
             shouldContinue = YES;

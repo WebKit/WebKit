@@ -21,7 +21,7 @@
 {
     [super init];
 
-    if(!theRequest || !thePluginPointer || ![NSURLConnection canHandleRequest:theRequest]){
+    if(!theRequest || !thePluginPointer || ![WebView _canHandleRequest:theRequest]){
         return nil;
     }
 

@@ -177,6 +177,21 @@ Could be worth adding to the API.
 
 + (NSString *)_generatedMIMETypeForURLScheme:(NSString *)URLScheme;
 + (BOOL)_representationExistsForURLScheme:(NSString *)URLScheme;
+/*!
+     @method _canHandleRequest:
+     @abstract Performs a "preflight" operation that performs some
+     speculative checks to see if a request can be used to create
+     a WebDocumentView and WebDocumentRepresentation.
+     @discussion The result of this method is valid only as long as no
+     protocols or schemes are registered or unregistered, and as long as
+     the request is not mutated (if the request is mutable). Hence, clients
+     should be prepared to handle failures even if they have performed request
+     preflighting by caling this method.
+     @param request The request to preflight.
+     @result YES if it is likely that a WebDocumentView and WebDocumentRepresentation
+     can be created for the request, NO otherwise.
+*/
++ (BOOL)_canHandleRequest:(NSURLRequest *)request;
 
 @end
 

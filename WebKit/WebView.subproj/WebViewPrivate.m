@@ -588,6 +588,15 @@ static NSMutableSet *schemesWithRepresentationsSet;
     return [schemesWithRepresentationsSet containsObject:[URLScheme lowercaseString]];
 }
 
++ (BOOL)_canHandleRequest:(NSURLRequest *)request
+{
+    if ([NSURLConnection canHandleRequest:request]) {
+        return YES;
+    }
+
+    return [self _representationExistsForURLScheme:[[request URL] scheme]];
+}
+
 @end
 
 
