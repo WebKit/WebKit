@@ -1679,12 +1679,7 @@ bool KWQKHTMLPart::passWidgetMouseDownEventToWidget(QWidget* widget)
     NSView *nodeView = widget->getView();
     ASSERT(nodeView);
     ASSERT([nodeView superview]);
-    NSView *topView = nodeView;
-    NSView *superview;
-    while ((superview = [topView superview])) {
-        topView = superview;
-    }
-    NSView *view = [nodeView hitTest:[[nodeView superview] convertPoint:[_currentEvent locationInWindow] fromView:topView]];
+    NSView *view = [nodeView hitTest:[[nodeView superview] convertPoint:[_currentEvent locationInWindow] fromView:nil]];
     if (view == nil) {
         ERROR("KHTML says we hit a RenderWidget, but AppKit doesn't agree we hit the corresponding NSView");
         return true;

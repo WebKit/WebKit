@@ -1,3 +1,12 @@
+2004-03-25  Darin Adler  <darin@apple.com>
+
+        Fix by Kristin Webster, reviewed by me.
+
+        - fixed <rdar://problem/3582431>: HiDPI - Form elements not working when scaling factor != 1.0
+
+        * kwq/KWQKHTMLPart.mm: (KWQKHTMLPart::passWidgetMouseDownEventToWidget): Pass nil for fromView
+        rather than passing the top level view.
+
 2004-03-24  Darin Adler  <darin@apple.com>
 
         Reviewed by John.
