@@ -580,6 +580,19 @@ bool KHTMLParser::insertNode(NodeImpl *n, bool flat)
             break;
         case ID_BODY:
             break;
+        case ID_CAPTION:
+            // Illegal content in a caption. Close the caption and try again.
+            popBlock(ID_CAPTION);
+            switch( id ) {
+            case ID_THEAD:
+            case ID_TFOOT:
+            case ID_TBODY:
+            case ID_TR:
+            case ID_TD:
+            case ID_TH:
+                return insertNode(n, flat);
+            }
+            break;
         case ID__KONQBLOCK:
             switch( id ) {
             case ID_THEAD:
