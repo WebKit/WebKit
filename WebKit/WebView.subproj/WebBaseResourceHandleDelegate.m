@@ -256,9 +256,9 @@
     if([WebDataProtocol _webIsDataProtocolURL:[r URL]]) {
         NSURL *baseURL = [request _webDataRequestBaseURL];
         if (baseURL)
-            [r setURL: baseURL];
+            [r _setURL: baseURL];
         else
-            [r setURL: [NSURL URLWithString: @"about:blank"]];
+            [r _setURL: [NSURL URLWithString: @"about:blank"]];
     }
 
     [r retain];

@@ -1,3 +1,16 @@
+2003-04-30  Kenneth Kocienda  <kocienda@apple.com>
+
+        Reviewed by Richard
+
+	Use NSURLResponse new SPI methods to set instance variables.
+
+        * WebView.subproj/WebBaseResourceHandleDelegate.m:
+        (-[WebBaseResourceHandleDelegate connection:didReceiveResponse:]):
+        * WebView.subproj/WebDataProtocol.m:
+        (-[WebDataProtocol startLoading]):
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient loadWithRequest:]):
+
 2003-04-30  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Richard.

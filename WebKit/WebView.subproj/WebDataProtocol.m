@@ -183,9 +183,9 @@ static NSString *WebDataRequestPropertyKey = @"WebDataRequest";
 
     if (data) {
         NSURLResponse *response = [[NSURLResponse alloc] init];
-        [response setURL:[request URL]];
-        [response setMIMEType:[request _webDataRequestMIMEType]];
-        [response setTextEncodingName:[request _webDataRequestEncoding]];
+        [response _setURL:[request URL]];
+        [response _setMIMEType:[request _webDataRequestMIMEType]];
+        [response _setTextEncodingName:[request _webDataRequestEncoding]];
         [client URLProtocol:self didReceiveResponse:response cacheStoragePolicy:NSURLCacheStorageNotAllowed];
         [client URLProtocol:self didLoadData:data];
         [client URLProtocolDidFinishLoading:self];

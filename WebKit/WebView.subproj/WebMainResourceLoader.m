@@ -295,9 +295,9 @@
 	[self connection:connection willSendRequest:r redirectResponse:nil];
 
 	NSURLResponse *rsp = [[NSURLResponse alloc] init];
-	[rsp setURL:[[[self dataSource] request] URL]];
-	[rsp setMIMEType:@"text/html"];
-	[rsp setExpectedContentLength:0];
+	[rsp _setURL:[[[self dataSource] request] URL]];
+	[rsp _setMIMEType:@"text/html"];
+	[rsp _setExpectedContentLength:0];
 	[self connection:connection didReceiveResponse:rsp];
 	[rsp release];
     } else {
