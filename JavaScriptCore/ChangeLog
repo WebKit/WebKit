@@ -1,3 +1,14 @@
+2004-07-19  Richard Williamson   <rjw@apple.com>
+
+	Fixed 3733349.  Prevent Java applet callbacks into JavaScript after applet
+	has been destroyed.
+
+        Reviewed by John.
+
+        * bindings/jni/jni_jsobject.cpp:
+        (JSObject::invoke):
+        (JSObject::JSObject):
+
 2004-07-16  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Maciej.

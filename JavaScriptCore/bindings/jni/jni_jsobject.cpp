@@ -59,6 +59,8 @@ jvalue JSObject::invoke (JSObjectCallContext *context)
 {
     jvalue result;
 
+    bzero ((void *)&result, sizeof(jvalue));
+    
     if (!isJavaScriptThread()) {        
         // Send the call context to the thread that is allowed to
         // call JavaScript.
@@ -68,71 +70,76 @@ jvalue JSObject::invoke (JSObjectCallContext *context)
     else {
         jlong nativeHandle = context->nativeHandle;
         if (nativeHandle == UndefinedHandle || nativeHandle == 0) {
-            bzero ((void *)&result, sizeof(jvalue));
             return result;
         }
 
-        switch (context->type){
-            case CreateNative: {
-                result.j = JSObject::createNative(nativeHandle);
-                break;
-            }
-        
-            case Call: {
-                result.l = JSObject(nativeHandle).call(context->string, context->args);
-                break;
-            }
-            
-            case Eval: {
-                result.l = JSObject(nativeHandle).eval(context->string);
-                break;
-            }
-        
-            case GetMember: {
-                result.l = JSObject(nativeHandle).getMember(context->string);
-                break;
-            }
-            
-            case SetMember: {
-                JSObject(nativeHandle).setMember(context->string, context->value);
-                break;
-            }
-            
-            case RemoveMember: {
-                JSObject(nativeHandle).removeMember(context->string);
-                break;
-            }
-        
-            case GetSlot: {
-                result.l = JSObject(nativeHandle).getSlot(context->index);
-                break;
-            }
-            
-            case SetSlot: {
-                JSObject(nativeHandle).setSlot(context->index, context->value);
-                break;
-            }
-        
-            case ToString: {
-                result.l = (jobject) JSObject(nativeHandle).toString();
-                break;
+        if (context->type == CreateNative) {
+            result.j = JSObject::createNative(nativeHandle);
+        }
+        else {
+            KJS::ObjectImp *imp = jlong_to_impptr(nativeHandle);
+            if (!rootForImp(imp)) {
+                fprintf (stderr, "%s:%d:  Attempt to access JavaScript from destroyed applet, type %d.\n", __FILE__, __LINE__, context->type);
+                return result;
             }
 
-            case Finalize: {
-                ObjectImp *imp = jlong_to_impptr(nativeHandle);
-                if (findReferenceDictionary(imp) == 0) {
-                    // We may have received a finalize method call from the VM 
-                    // AFTER removing our last reference to the Java instance.
-                    JS_LOG ("finalize called on instance we have already removed.\n");
+            switch (context->type){            
+                case Call: {
+                    result.l = JSObject(nativeHandle).call(context->string, context->args);
+                    break;
                 }
-                else {
-                    JSObject(nativeHandle).finalize();
+                
+                case Eval: {
+                    result.l = JSObject(nativeHandle).eval(context->string);
+                    break;
                 }
-                break;
-            }
             
-            default: {
-                fprintf (stderr, "%s:  invalid JavaScript call\n", __PRETTY_FUNCTION__);
+                case GetMember: {
+                    result.l = JSObject(nativeHandle).getMember(context->string);
+                    break;
+                }
+                
+                case SetMember: {
+                    JSObject(nativeHandle).setMember(context->string, context->value);
+                    break;
+                }
+                
+                case RemoveMember: {
+                    JSObject(nativeHandle).removeMember(context->string);
+                    break;
+                }
+            
+                case GetSlot: {
+                    result.l = JSObject(nativeHandle).getSlot(context->index);
+                    break;
+                }
+                
+                case SetSlot: {
+                    JSObject(nativeHandle).setSlot(context->index, context->value);
+                    break;
+                }
+            
+                case ToString: {
+                    result.l = (jobject) JSObject(nativeHandle).toString();
+                    break;
+                }
+    
+                case Finalize: {
+                    ObjectImp *imp = jlong_to_impptr(nativeHandle);
+                    if (findReferenceDictionary(imp) == 0) {
+                        // We may have received a finalize method call from the VM 
+                        // AFTER removing our last reference to the Java instance.
+                        JS_LOG ("finalize called on instance we have already removed.\n");
+                    }
+                    else {
+                        JSObject(nativeHandle).finalize();
+                    }
+                    break;
+                }
+                
+                default: {
+                    fprintf (stderr, "%s:  invalid JavaScript call\n", __PRETTY_FUNCTION__);
+                }
             }
         }
         context->result = result;
@@ -152,7 +159,7 @@ JSObject::JSObject(jlong nativeJSObject)
     
     _root = rootForImp(_imp);
     
-    // If we can't find the root for the object something is terrible wrong.
+    // If we can't find the root for the object something is terribly wrong.
     assert (_root != 0);
 }
 
