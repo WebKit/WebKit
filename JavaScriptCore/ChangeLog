@@ -1,5 +1,39 @@
 2002-08-16  Maciej Stachowiak  <mjs@apple.com>
 
+	Next step: reimplement ReferenceList from scratch, and store it as
+	an actual Reference object, so ReferenceList no longer depends on
+	Reference being a Value or having a ReferenceImp. A resizing
+	vector might be even better the way this is used.
+
+	Also moved Reference to its own header and implementation file in
+	preparation for reimplementing it.
+	
+        * JavaScriptCore.pbproj/project.pbxproj:
+        * kjs/nodes.cpp:
+        (ForInNode::execute):
+        * kjs/reference.cpp: Added.
+        (Reference::Reference):
+        (Reference::dynamicCast):
+        (ConstReference::ConstReference):
+        * kjs/reference.h: Added.
+        * kjs/reference_list.cpp: Added.
+        (ReferenceList::ReferenceList):
+        (ReferenceList::operator=):
+        (ReferenceList::swap):
+        (ReferenceList::append):
+        (ReferenceList::~ReferenceList):
+        (ReferenceList::begin):
+        (ReferenceList::end):
+        (ReferenceListIterator::ReferenceListIterator):
+        (ReferenceListIterator::operator!=):
+        (ReferenceListIterator::operator->):
+        (ReferenceListIterator::operator++):
+        * kjs/reference_list.h:
+        * kjs/types.cpp:
+        * kjs/types.h:
+
+2002-08-16  Maciej Stachowiak  <mjs@apple.com>
+
 	Fix Development build - some NDEBUG code had to be changed for the
 	Value/Reference split.
 	

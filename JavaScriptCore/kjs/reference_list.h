@@ -1,8 +1,7 @@
 // -*- c-basic-offset: 2 -*-
 /*
  *  This file is part of the KDE libraries
- *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
- *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
+ *  Copyright (C) 2002 Apple Computer, Inc
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -25,31 +24,45 @@
 #define _KJS_REFERENCE_LIST_H_
 
 #include <types.h>
+#include <reference.h>
 
 namespace KJS {
 
+  class ReferenceListNode;
+  class ReferenceListHeadNode;
 
-class ReferenceListIterator : private ListIterator {
-  friend class ReferenceList;
- public:
+  class ReferenceListIterator {
+    friend class ReferenceList;
+  
+  public:
+    bool operator!=(const ReferenceListIterator &it) const;
+    const Reference *operator->() const;
+    const Reference &operator++(int i);
+    
+  private:
+    ReferenceListIterator(ReferenceListNode *n);
+    ReferenceListIterator();
+    ReferenceListNode *node;
+  };
+  
+  class ReferenceList {
+  public:
+    ReferenceList();
+    ReferenceList(const ReferenceList &list);
+    ReferenceList &operator=(const ReferenceList &list);
+    ~ReferenceList();
 
-  bool operator!=(const ReferenceListIterator &it) const { return this->ListIterator::operator!=(it); }
-  ReferenceImp* operator->() const { return (ReferenceImp *)ListIterator::operator->(); }
-  Reference operator++(int i) { return Reference((ReferenceImp *)ListIterator::operator++(i).imp()); }
-
- private:
-  ReferenceListIterator(const ListIterator& it) : ListIterator(it) { }
-};
-
-class ReferenceList : private List {
- public:
-  void ReferenceList::append(const Reference& val) { List::append(val); }
-
-  ReferenceListIterator begin() const { return List::begin(); }
-  ReferenceListIterator end() const { return List::end(); }
-
-}; 
-
+    void append(const Reference& val);
+    
+    ReferenceListIterator begin() const;
+    ReferenceListIterator end() const;
+    
+  private:
+    void swap(ReferenceList &list);
+    ReferenceListHeadNode *head;
+    ReferenceListNode *tail;
+  }; 
+  
 }
 
 #endif

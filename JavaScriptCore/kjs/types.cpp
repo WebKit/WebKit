@@ -38,41 +38,6 @@
 
 using namespace KJS;
 
-// ------------------------------ Reference ------------------------------------
-
-Reference::Reference(const Object& b, const UString& p)
-  : Value(new ReferenceImp(b,p))
-{
-}
-
-Reference::Reference(const Object& b, unsigned p)
-  : Value(new ReferenceImp(b,p))
-{
-}
-
-Reference::Reference(const Null& b, const UString& p)
-  : Value(new ReferenceImp(b,p))
-{
-}
-
-Reference::Reference(const Null& b, unsigned p)
-  : Value(new ReferenceImp(b,p))
-{
-}
-
-Reference Reference::dynamicCast(const Value &v)
-{
-  if (v.isNull() || v.type() != ReferenceType)
-    return 0;
-
-  return static_cast<ReferenceImp*>(v.imp());
-}
-
-ConstReference::ConstReference(ValueImp *v) : 
-  Reference((ReferenceImp *)v) 
-{
-}
-
 // ------------------------------ ListIterator ---------------------------------
 
 //d  dont add   ListIterator();

@@ -219,6 +219,7 @@
 				F5C290E70284F98E018635CA,
 				F50888B7030BB74C012A967E,
 				F54F0801030CD22001B5C2EB,
+				F5341393030CEEB1018BE7F3,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -261,6 +262,8 @@
 				F692A8C30255597D01FF60F7,
 				F692A8CB02555BA201FF60F7,
 				F5FFE657026B47A6018635CA,
+				F5341392030CEEB1018BE7F3,
+				F5341395030CF5F8018BE7F3,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -357,10 +360,15 @@
 				F692A8780255597D01FF60F7,
 				F692A8790255597D01FF60F7,
 				F692A87A0255597D01FF60F7,
+				F5341390030CEEB1018BE7F3,
+				F5341391030CEEB1018BE7F3,
+				F54F0800030CD22001B5C2EB,
+				F5341394030CF5F8018BE7F3,
 				F692A87B0255597D01FF60F7,
 				F692A87C0255597D01FF60F7,
 				F692A87D0255597D01FF60F7,
 				F692A87E0255597D01FF60F7,
+				F50888B6030BB74C012A967E,
 				F692A87F0255597D01FF60F7,
 				F692A8800255597D01FF60F7,
 				F692A8810255597D01FF60F7,
@@ -370,8 +378,6 @@
 				F692A8860255597D01FF60F7,
 				F692A8870255597D01FF60F7,
 				F692A8880255597D01FF60F7,
-				F50888B6030BB74C012A967E,
-				F54F0800030CD22001B5C2EB,
 			);
 			isa = PBXGroup;
 			name = Classes;
@@ -451,6 +457,42 @@
 			};
 			isa = PBXBuildStyle;
 			name = DeploymentFat;
+		};
+		F5341390030CEEB1018BE7F3 = {
+			isa = PBXFileReference;
+			name = reference.cpp;
+			path = kjs/reference.cpp;
+			refType = 4;
+		};
+		F5341391030CEEB1018BE7F3 = {
+			isa = PBXFileReference;
+			name = reference.h;
+			path = kjs/reference.h;
+			refType = 4;
+		};
+		F5341392030CEEB1018BE7F3 = {
+			fileRef = F5341390030CEEB1018BE7F3;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5341393030CEEB1018BE7F3 = {
+			fileRef = F5341391030CEEB1018BE7F3;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5341394030CF5F8018BE7F3 = {
+			isa = PBXFileReference;
+			name = reference_list.cpp;
+			path = kjs/reference_list.cpp;
+			refType = 4;
+		};
+		F5341395030CF5F8018BE7F3 = {
+			fileRef = F5341394030CF5F8018BE7F3;
+			isa = PBXBuildFile;
+			settings = {
+			};
 		};
 		F54F0800030CD22001B5C2EB = {
 			isa = PBXFileReference;
