@@ -276,7 +276,7 @@ KJS::Value ObjcArray::valueAt(KJS::ExecState *exec, unsigned int index) const
 {
     ObjectStructPtr obj = 0;
     Object error;
-    bool haveError = false;
+    volatile bool haveError = false;
     
     if (index > [_array count]) {
         Object error = Error::create(exec, RangeError, "Index exceeds array size.");
