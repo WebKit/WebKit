@@ -1,3 +1,9 @@
+2004-05-19  Richard Williamson   <rjw@apple.com>
+
+	Removed extraneous tabs that were added (by XCode?).
+
+        * bindings/objc/WebScriptObject.h:
+
 2004-05-19  Darin Adler  <darin@apple.com>
 
         - fixed headers with licenses mangled by Xcode auto-indenting

@@ -20,27 +20,27 @@
     automatic reflection can be overriden using the class methods defined in the WebScriptMethods
     informal protocol.
     
-	Access to the attributes of an instance is done using KVC. Specifically the following
+    Access to the attributes of an instance is done using KVC. Specifically the following
     KVC methods:
 	
-	- (void)setValue:(id)value forKey:(NSString *)key
-	- (id)valueForKey:(NSString *)key
+        - (void)setValue:(id)value forKey:(NSString *)key
+        - (id)valueForKey:(NSString *)key
 	
     Instances may also intercept property set/get operations and method invocations that are
     made by the scripting environment, but not reflected.  This is done using the KVC
     methods:
 
-	- (void)setValue:(id)value forUndefinedKey:(NSString *)key
-	- (id)valueForUndefinedKey:(NSString *)key
+        - (void)setValue:(id)value forUndefinedKey:(NSString *)key
+        - (id)valueForUndefinedKey:(NSString *)key
     
     If clients need to raise an exception in the script environment
     they can call [WebScriptObject throwException:].  Note that throwing an
     exception using this method will only succeed if the method that throws the exception
     is being called within the scope of a script invocation.
     
-	By default all attributes, as defined by KVC, will be exposed.  However, a
+    By default all attributes, as defined by KVC, will be exposed.  However, a
     class may further exclude properties that they do not want to expose
-	to web script.
+    to web script.
 	
     Not all methods are exposed.  Only those methods whose parameters and return
     type meets the export criteria will exposed.  Valid types are ObjectiveC instances
@@ -48,11 +48,11 @@
     that they do not want to expose.
     
     Types will be converted to appropriate types in the scripting environment.
-	After any KVC coercion occurs the ObjectiveC types will converted to a type
-	appropriate for the script environment.  For JavaScript NSNumber will be
+    After any KVC coercion occurs the ObjectiveC types will converted to a type
+    appropriate for the script environment.  For JavaScript NSNumber will be
     converted to numbers.  NSString will be converted to strings.  NSArray will
     be mapped to a special read-only array.  NSNull will be converted to null.  
-	WebUndefined will be converted to undefined.  WebScriptObjects will be unwrapped.
+    WebUndefined will be converted to undefined.  WebScriptObjects will be unwrapped.
     Instances of other classes will be wrapped when passed to the script environment
     and unwrapped when returned to ObjectiveC.  Similar conversion happens in the
     other direction.
