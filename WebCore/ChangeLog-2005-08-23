@@ -1,3 +1,14 @@
+2004-05-17  Richard Williamson   <rjw@apple.com>
+
+	Implemented new API for WebScriptObject.
+	Fixed <rdar://problem/3657145>: (objc to javascript method calls do not cause updates.)
+
+        Reviewed by Hyatt.
+
+        * kwq/WebCoreBridge.mm:
+        (updateRenderingForBindings):
+        (-[WebCoreBridge init]):
+
 2004-05-14  Vicki Murley  <vicki@apple.com>
 
         Reviewed by mjs.

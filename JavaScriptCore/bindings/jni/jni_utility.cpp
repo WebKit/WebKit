@@ -614,7 +614,7 @@ jvalue KJS::Bindings::getJNIField( jobject obj, JNIType type, const char *name, 
                 fprintf(stderr, "%s: Could not find field: %s\n", __PRETTY_FUNCTION__, name);
                 env->ExceptionDescribe();
                 env->ExceptionClear();
-				fprintf (stderr, "\n");
+                fprintf (stderr, "\n");
             }
 
             env->DeleteLocalRef(cls);

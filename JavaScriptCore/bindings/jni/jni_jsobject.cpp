@@ -369,8 +369,17 @@ jobject JSObject::convertValueToJObject (KJS::Value value) const
             nativeHandle = UndefinedHandle;
         }
         
-        // Now create the Java JSObject.
-        jclass JSObjectClass = env->FindClass ("apple/applet/JSObject");
+        // Now create the Java JSObject.  Look for the JSObject in it's new (Tiger)
+        // location and in the original Java 1.4.2 location.
+        jclass JSObjectClass;
+        
+        JSObjectClass = env->FindClass ("sun/plugin/javascript/webkit/JSObject");
+        if (!JSObjectClass) {
+            env->ExceptionDescribe();
+            env->ExceptionClear();
+            JSObjectClass = env->FindClass ("apple/applet/JSObject");
+        }
+            
         jmethodID constructorID = env->GetMethodID (JSObjectClass, "<init>", "(J)V");
         if (constructorID != NULL) {
             result = env->NewObject (JSObjectClass, constructorID, nativeHandle);

@@ -98,8 +98,9 @@ Value CInstance::invokeMethod (KJS::ExecState *exec, const MethodList &methodLis
     method = static_cast<CMethod*>(methodList.methodAt(0));
 
     NPIdentifier ident = NPN_GetIdentifier (method->name());
-    if (!_object->_class->hasMethod (_object->_class, ident))
+    if (!_object->_class->hasMethod (_object->_class, ident)) {
         return Undefined();
+    }
 
     unsigned i, count = args.size();
     NPVariant *cArgs;

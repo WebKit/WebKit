@@ -120,6 +120,8 @@ public:
     virtual ~Class() {};
 };
 
+typedef void (*KJSDidExecuteFunctionPtr)(KJS::ExecState *exec, KJS::ObjectImp *rootObject);
+
 class Instance
 {
 public:
@@ -129,6 +131,9 @@ public:
         CLanguage
     } BindingLanguage;
 
+    static void setDidExecuteFunction (KJSDidExecuteFunctionPtr func);
+    static KJSDidExecuteFunctionPtr didExecuteFunction ();
+    
     static Instance *createBindingForLanguageInstance (BindingLanguage language, void *instance);
 
     static Object createRuntimeObject (BindingLanguage language, void *myInterface);

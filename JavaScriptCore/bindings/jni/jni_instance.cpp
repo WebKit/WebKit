@@ -227,7 +227,7 @@ Value JavaInstance::invokeMethod (KJS::ExecState *exec, const MethodList &method
     }
         
     free (jArgs);
-    
+
     return resultValue;
 }
 

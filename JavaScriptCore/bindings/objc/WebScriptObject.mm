@@ -22,91 +22,311 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-#import <JavaScriptCore/WebScriptObject.h>
+#import <JavaScriptCore/WebScriptObjectPrivate.h>
 
-@implementation WebScriptObject
+#include <JavaScriptCore/internal.h>
+#include <JavaScriptCore/list.h>
+#include <JavaScriptCore/value.h>
 
-+ (BOOL)throwException:(NSString *)exceptionMessage
-{
-    NSLog (@"%s:%d  not yet implemented");
-    return NO;
-}
+#include <objc_jsobject.h>
+#include <objc_instance.h>
+#include <objc_utility.h>
 
-- (id)callWebScriptMethod:(NSString *)name withArguments:(NSArray *)args
-{
-    NSLog (@"%s:%d  not yet implemented");
-    return nil;
-}
+#include <runtime_object.h>
+#include <runtime_root.h>
 
-- (id)evaluateWebScript:(NSString *)script
-{
-    NSLog (@"%s:%d  not yet implemented");
-    return nil;
-}
-
-- (void)removeWebScriptKey:(NSString *)name;
-{
-    NSLog (@"%s:%d  not yet implemented");
-}
-
-- (NSString *)stringRepresentation
-{
-    NSLog (@"%s:%d  not yet implemented");
-    return nil;
-}
-
-- (id)webScriptValueAtIndex:(unsigned int)index;
-{
-    NSLog (@"%s:%d  not yet implemented");
-    return nil;
-}
-
-- (void)setWebScriptValueAtIndex:(unsigned int)index value:(id)value;
-{
-    NSLog (@"%s:%d  not yet implemented");
-}
-
-- (void)setException: (NSString *)description;
-{
-    NSLog (@"%s:%d  not yet implemented");
-}
-
-@end
-
-
+using namespace KJS;
+using namespace KJS::Bindings;
 
 @interface WebScriptObjectPrivate : NSObject
 {
+    KJS::ObjectImp *imp;
+    const Bindings::RootObject *root;
 }
 @end
 
 @implementation WebScriptObjectPrivate
 @end
 
+@implementation WebScriptObject
+
+static void _didExecute(WebScriptObject *obj)
+{
+    ExecState *exec = obj->_private->root->interpreter()->globalExec();
+    KJSDidExecuteFunctionPtr func = Instance::didExecuteFunction();
+    if (func)
+        func (exec, static_cast<KJS::ObjectImp*>(obj->_private->root->rootObjectImp()));
+}
+
+- _initWithObjectImp:(KJS::ObjectImp *)imp root:(const Bindings::RootObject *)root
+{
+    assert (imp != 0);
+    //assert (root != 0);
+
+    self = [super init];
+
+    _private = [[WebScriptObjectPrivate alloc] init];
+    _private->imp = imp;
+    _private->root = root;    
+
+    addNativeReference (root, imp);
+    
+    return self;
+}
+
+- (KJS::ObjectImp *)_imp
+{
+    return _private->imp;
+}
+
+- (void)dealloc
+{
+    if (_private)
+        removeNativeReference (_private->imp);
+    [_private release];
+    [super dealloc];
+}
+
++ (BOOL)throwException:(NSString *)exceptionMessage
+{
+    NSLog (@"%s:%d:  not yet implemented", __PRETTY_FUNCTION__, __LINE__);
+    return NO;
+}
+
+static KJS::List listFromNSArray(ExecState *exec, NSArray *array)
+{
+    long i, numObjects = array ? [array count] : 0;
+    KJS::List aList;
+    
+    for (i = 0; i < numObjects; i++) {
+        id anObject = [array objectAtIndex:i];
+        aList.append (convertObjcValueToValue(exec, &anObject, ObjcObjectType));
+    }
+    return aList;
+}
+
+- (id)callWebScriptMethod:(NSString *)name withArguments:(NSArray *)args
+{
+    // Lookup the function object.
+    ExecState *exec = _private->root->interpreter()->globalExec();
+    Interpreter::lock();
+    
+    Value v = convertObjcValueToValue(exec, &name, ObjcObjectType);
+    Identifier identifier(v.toString(exec));
+    Value func = _private->imp->get (exec, identifier);
+    Interpreter::unlock();
+    if (func.isNull() || func.type() == UndefinedType) {
+        // Maybe throw an exception here?
+        return 0;
+    }
+
+    // Call the function object.    
+    ObjectImp *funcImp = static_cast<ObjectImp*>(func.imp());
+    Object thisObj = Object(const_cast<ObjectImp*>(_private->imp));
+    List argList = listFromNSArray(exec, args);
+    Interpreter::lock();
+    Value result = funcImp->call (exec, thisObj, argList);
+    Interpreter::unlock();
+
+    // Convert and return the result of the function call.
+    id resultObj = [WebScriptObject _convertValueToObjcValue:result root:_private->root];
+
+    _didExecute(self);
+        
+    return resultObj;
+}
+
+- (id)evaluateWebScript:(NSString *)script
+{
+    ExecState *exec = _private->root->interpreter()->globalExec();
+    Object thisObj = Object(const_cast<ObjectImp*>(_private->imp));
+    Interpreter::lock();
+    Value v = convertObjcValueToValue(exec, &script, ObjcObjectType);
+    KJS::Value result = _private->root->interpreter()->evaluate(v.toString(exec)).value();
+    Interpreter::unlock();
+    
+    id resultObj = [WebScriptObject _convertValueToObjcValue:result root:_private->root];
+
+    _didExecute(self);
+    
+    return resultObj;
+}
+
+- (void)setValue:(id)value forKey:(NSString *)key
+{
+    ExecState *exec = _private->root->interpreter()->globalExec();
+    Interpreter::lock();
+    Value v = convertObjcValueToValue(exec, &key, ObjcObjectType);
+   _private->imp->put (exec, Identifier (v.toString(exec)), (convertObjcValueToValue(exec, &value, ObjcObjectType)));
+    Interpreter::unlock();
+
+    _didExecute(self);
+}
+
+- (id)valueForKey:(NSString *)key
+{
+    ExecState *exec = _private->root->interpreter()->globalExec();
+    Interpreter::lock();
+    Value v = convertObjcValueToValue(exec, &key, ObjcObjectType);
+    Value result = _private->imp->get (exec, Identifier (v.toString(exec)));
+    Interpreter::unlock();
+    
+    id resultObj = [WebScriptObject _convertValueToObjcValue:result root:_private->root];
+
+    _didExecute(self);
+    
+    return resultObj;
+}
+
+- (void)removeWebScriptKey:(NSString *)key;
+{
+    ExecState *exec = _private->root->interpreter()->globalExec();
+    Interpreter::lock();
+    Value v = convertObjcValueToValue(exec, &key, ObjcObjectType);
+    _private->imp->deleteProperty (exec, Identifier (v.toString(exec)));
+    Interpreter::unlock();
+
+    _didExecute(self);
+}
+
+- (NSString *)stringRepresentation
+{
+    Interpreter::lock();
+    Object thisObj = Object(const_cast<ObjectImp*>(_private->imp));
+    ExecState *exec = _private->root->interpreter()->globalExec();
+    
+    id result = convertValueToObjcValue(exec, thisObj, ObjcObjectType).objectValue;
+
+    Interpreter::unlock();
+    
+    id resultObj = [result description];
+
+    _didExecute(self);
+
+    return resultObj;
+}
+
+- (id)webScriptValueAtIndex:(unsigned int)index;
+{
+    ExecState *exec = _private->root->interpreter()->globalExec();
+    Interpreter::lock();
+    Value result = _private->imp->get (exec, (unsigned)index);
+    Interpreter::unlock();
+
+    id resultObj = [WebScriptObject _convertValueToObjcValue:result root:_private->root];
+
+    _didExecute(self);
+
+    return resultObj;
+}
+
+- (void)setWebScriptValueAtIndex:(unsigned int)index value:(id)value;
+{
+    ExecState *exec = _private->root->interpreter()->globalExec();
+    Interpreter::lock();
+    _private->imp->put (exec, (unsigned)index, (convertObjcValueToValue(exec, &value, ObjcObjectType)));
+    Interpreter::unlock();
+
+    _didExecute(self);
+}
+
+- (void)setException: (NSString *)description;
+{
+    ExecState *exec = _private->root->interpreter()->globalExec();
+    Object err = Error::create(exec, GeneralError, [description UTF8String]);
+    exec->setException (err);
+}
+
++ (id)_convertValueToObjcValue:(KJS::Value)value root:(const Bindings::RootObject *)root
+{
+    id result = 0;
+   
+    // First see if we have a ObjC instance.
+    if (value.type() == KJS::ObjectType){
+        ObjectImp *objectImp = static_cast<ObjectImp*>(value.imp());
+        if (strcmp(objectImp->classInfo()->className, "RuntimeObject") == 0) {
+            RuntimeObjectImp *imp = static_cast<RuntimeObjectImp *>(value.imp());
+            ObjcInstance *instance = static_cast<ObjcInstance*>(imp->getInternalInstance());
+            if (instance)
+                result = instance->getObject();
+        }
+        // Convert to a WebScriptObject
+        else {
+            result = [[[WebScriptObject alloc] _initWithObjectImp:objectImp root:root] autorelease];
+        }
+    }
+    
+    // Convert JavaScript String value to NSString?
+    else if (value.type() == KJS::StringType) {
+        StringImp *s = static_cast<KJS::StringImp*>(value.imp());
+        UString u = s->value();
+        
+        NSString *string = [NSString stringWithCharacters:(const unichar*)u.data() length:u.size()];
+        result = string;
+    }
+    
+    // Convert JavaScript Number value to NSNumber?
+    else if (value.type() == KJS::NumberType) {
+        Number n = Number::dynamicCast(value);
+        result = [NSNumber numberWithDouble:n.value()];
+    }
+    
+    // Boolean?
+    return result;
+}
+
+@end
 
 
 @implementation WebUndefined
+
+static WebUndefined *sharedUndefined = 0;
+
 + (WebUndefined *)undefined
 {
-    NSLog (@"%s:%d  not yet implemented");
-    return nil;
+    if (!sharedUndefined)
+        sharedUndefined = [[WebUndefined alloc] init];
+    return sharedUndefined;
 }
 
 - (id)initWithCoder:(NSCoder *)coder
 {
-    NSLog (@"%s:%d  not yet implemented");
-    return nil;
+    return [WebUndefined undefined];
 }
 
 - (void)encodeWithCoder:(NSCoder *)encoder
 {
-    NSLog (@"%s:%d  not yet implemented");
 }
 
 - (id)copyWithZone:(NSZone *)zone
 {
-    NSLog (@"%s:%d  not yet implemented");
-    return nil;
+    return [WebUndefined undefined];
+}
+
+- (id)retain {
+    return [WebUndefined undefined];
+}
+
+- (void)release {
+}
+
+- (unsigned)retainCount {
+    return 0xFFFFFFFF;
+}
+
+- (id)autorelease {
+    return [WebUndefined undefined];
+}
+
+- (void)dealloc {
+}
+
+- (id)copy {
+    return [WebUndefined undefined];
+}
+
+- (id)replacementObjectForPortCoder:(NSPortCoder *)encoder {
+    return [WebUndefined undefined];
 }
 
 @end

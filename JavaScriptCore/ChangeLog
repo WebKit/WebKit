@@ -1,3 +1,68 @@
+2004-05-17  Richard Williamson   <rjw@apple.com>
+
+	Implemented new API for WebScriptObject.
+
+	Fixed <rdar://problem/3657145>: (objc to javascript method calls do not cause updates.)
+	Fixed <rdar://problem/3654887>: (Update to JSC to refer to new JSObject LiveConnect object)  (w/ help from Vicki)
+
+        Reviewed by Hyatt.
+
+        * JavaScriptCore.pbproj/project.pbxproj:
+        * bindings/c/c_instance.cpp:
+        (CInstance::invokeMethod):
+        * bindings/jni/jni_instance.cpp:
+        (JavaInstance::invokeMethod):
+        * bindings/jni/jni_jsobject.cpp:
+        (JSObject::convertValueToJObject):
+        * bindings/jni/jni_utility.cpp:
+        (KJS::Bindings::getJNIField):
+        * bindings/objc/WebScriptObject.mm:
+        (_didExecute):
+        (-[WebScriptObject _initWithObjectImp:KJS::root:Bindings::]):
+        (-[WebScriptObject KJS::]):
+        (-[WebScriptObject dealloc]):
+        (+[WebScriptObject throwException:]):
+        (listFromNSArray):
+        (-[WebScriptObject callWebScriptMethod:withArguments:]):
+        (-[WebScriptObject evaluateWebScript:]):
+        (-[WebScriptObject setValue:forKey:]):
+        (-[WebScriptObject valueForKey:]):
+        (-[WebScriptObject stringRepresentation]):
+        (+[WebScriptObject _convertValueToObjcValue:KJS::root:Bindings::]):
+        (+[WebUndefined undefined]):
+        (-[WebUndefined initWithCoder:]):
+        (-[WebUndefined encodeWithCoder:]):
+        (-[WebUndefined copyWithZone:]):
+        (-[WebUndefined retain]):
+        (-[WebUndefined release]):
+        (-[WebUndefined retainCount]):
+        (-[WebUndefined autorelease]):
+        (-[WebUndefined dealloc]):
+        (-[WebUndefined copy]):
+        (-[WebUndefined replacementObjectForPortCoder:]):
+        * bindings/objc/WebScriptObjectPrivate.h: Added.
+        * bindings/objc/objc_class.mm:
+        (ObjcClass::methodsNamed):
+        (ObjcClass::fieldNamed):
+        * bindings/objc/objc_instance.mm:
+        (ObjcInstance::invokeMethod):
+        * bindings/objc/objc_jsobject.h:
+        * bindings/objc/objc_jsobject.mm:
+        * bindings/objc/objc_runtime.mm:
+        (ObjcField::valueFromInstance):
+        * bindings/objc/objc_utility.mm:
+        (KJS::Bindings::JSMethodNameToObjCMethodName):
+        (KJS::Bindings::convertValueToObjcValue):
+        (KJS::Bindings::convertObjcValueToValue):
+        * bindings/runtime.cpp:
+        (Instance::setDidExecuteFunction):
+        (Instance::didExecuteFunction):
+        (Instance::setValueOfField):
+        * bindings/runtime.h:
+        * bindings/testbindings.mm:
+        (+[MyFirstInterface webScriptNameForSelector:]):
+        (-[MyFirstInterface callJSObject::]):
+
 2004-05-14  Vicki Murley  <vicki@apple.com>
 
         Reviewed by mjs.

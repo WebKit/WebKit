@@ -149,6 +149,14 @@ static RootObject *rootForView(void *v)
     return 0;
 }
 
+static void updateRenderingForBindings (KJS::ExecState *exec, KJS::ObjectImp *rootObject)
+{
+    KJS::Window *window = static_cast<KJS::Window*>(rootObject);
+    DOM::DocumentImpl *doc = static_cast<DOM::DocumentImpl*>(window->part()->document().handle());
+    doc->updateRendering();
+}
+
+
 @implementation WebCoreBridge
 
 static bool initializedObjectCacheSize = FALSE;
@@ -173,6 +181,9 @@ static bool initializedKJS = FALSE;
     
     if (!initializedKJS) {
         KJS::Bindings::RootObject::setFindRootObjectForNativeHandleFunction (rootForView);
+        
+        KJS::Bindings::Instance::setDidExecuteFunction(updateRenderingForBindings);
+        
         initializedKJS = TRUE;
     }
     

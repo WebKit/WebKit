@@ -28,7 +28,7 @@
 #include <JavaScriptCore/internal.h>
 
 #include <objc_instance.h>
-#include <objc_jsobject.h>
+#include <WebScriptObjectPrivate.h>
 
 #include <runtime_array.h>
 #include <runtime_object.h>
@@ -93,9 +93,9 @@ Value ObjcField::valueFromInstance(KJS::ExecState *exec, const Instance *instanc
         
         case ObjcObjectType: {
             ObjectStructPtr obj = *(ObjectStructPtr *)(ivarValuePtr);
-            if ([obj isKindOfClass:[JavaScriptObject class]]) {
-                JavaScriptObject *jsobject = (JavaScriptObject *)obj;
-                aValue = Object([jsobject imp]);
+            if ([obj isKindOfClass:[WebScriptObject class]]) {
+                WebScriptObject *jsobject = (WebScriptObject *)obj;
+                aValue = Object([jsobject _imp]);
             }
             else {
                 Instance *anInstance = Instance::createBindingForLanguageInstance (Instance::ObjectiveCLanguage, (void *)obj);

@@ -26,33 +26,29 @@
 
 #include <JavascriptCore/internal.h>
 
+#include <objc_instance.h>
+#include <objc_utility.h>
+
 #include <runtime_array.h>
 #include <runtime_object.h>
-#include <objc_instance.h>
-#include <objc_jsobject.h>
-#include <objc_utility.h>
+#include <runtime_root.h>
+
+#include <WebScriptObjectPrivate.h>
 
 
 using namespace KJS;
 using namespace KJS::Bindings;
 
 /*
-    Convert ObjectiveC method names to palatable JavaScript names.  ":" in
-    ObjectiveC names are converted to "_".  "_" are escaped.
-    
-    For example:
-    
-    logLevel:message:
-    
-    would turn into
-    
-    logLevel_message_
-    
-    This name mapping can be overriden by the ObjectiveC class by implementing
-
-    + (NSString *)JavaScriptNameForSelector:(SEL)aSelector;
-    
-    See objc_jsobject.h for more details.
+    The default name concatenates the components of the
+    ObjectiveC selector name and replaces ':' with '_'.  '_' characters
+    are escaped with an additional '$', i.e. '_' becomes "$_".  '$' are
+    also escaped, i.e.
+        ObjectiveC name         Default script name
+        moveTo::                move__
+        moveTo_                 moveTo$_
+        moveTo$_                moveTo$$$_
+    @result Returns the name to be used to represent the specificed selector in the
 */
 void KJS::Bindings::JSMethodNameToObjCMethodName(const char *name, char *buffer, unsigned int len)
 {
@@ -65,15 +61,15 @@ void KJS::Bindings::JSMethodNameToObjCMethodName(const char *name, char *buffer,
 
     bp = buffer;
     while (*np) {
+        if (*np == '$') {
+            np++;
+            *bp++ = *np++;
+            continue;
+        }
+        
         if (*np == '_') {
-            if (*(np+1) == '_') {
-                *bp++ = '_';
-                np += 2;
-            }
-            else {
-                *bp++ = ':';
-                np++;
-            }
+            np++;
+            *bp++ = ':';
         }
         else
             *bp++ = *np++;
@@ -87,7 +83,7 @@ void KJS::Bindings::JSMethodNameToObjCMethodName(const char *name, char *buffer,
     Number          coerced to char, short, int, long, float, double, or NSNumber, as appropriate
     String          NSString
     wrapper         id
-    Object          JavaScriptObject
+    Object          WebScriptObject
     [], other       exception
 
 */
@@ -105,7 +101,7 @@ ObjcValue KJS::Bindings::convertValueToObjcValue (KJS::ExecState *exec, const KJ
                 newRoot->setInterpreter (exec->interpreter());
                 root = newRoot;
             }
-            result.objectValue = [JavaScriptObject _convertValueToObjcValue:value root:root];
+            result.objectValue = [WebScriptObject _convertValueToObjcValue:value root:root];
         }
         break;
         
@@ -204,9 +200,9 @@ Value KJS::Bindings::convertObjcValueToValue (KJS::ExecState *exec, void *buffer
                 else if ([*obj isKindOfClass:[NSArray class]]) {
                     aValue = Object(new RuntimeArrayImp(new ObjcArray (*obj)));
                 }
-                else if ([*obj isKindOfClass:[JavaScriptObject class]]) {
-                    JavaScriptObject *jsobject = (JavaScriptObject *)*obj;
-                    aValue = Object([jsobject imp]);
+                else if ([*obj isKindOfClass:[WebScriptObject class]]) {
+                    WebScriptObject *jsobject = (WebScriptObject *)*obj;
+                    aValue = Object([jsobject _imp]);
                 }
                 else {
                     aValue = Object(new RuntimeObjectImp(new ObjcInstance (*obj)));

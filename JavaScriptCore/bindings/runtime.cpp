@@ -84,12 +84,17 @@ MethodList &MethodList::operator=(const MethodList &other)
 }
 
 
+static KJSDidExecuteFunctionPtr _DidExecuteFunction;
+
+void Instance::setDidExecuteFunction (KJSDidExecuteFunctionPtr func) { _DidExecuteFunction = func; }
+KJSDidExecuteFunctionPtr Instance::didExecuteFunction () { return _DidExecuteFunction; }
+
 Value Instance::getValueOfField (KJS::ExecState *exec, const Field *aField) const {  
     return aField->valueFromInstance (exec, this);
 }
 
 void Instance::setValueOfField (KJS::ExecState *exec, const Field *aField, const Value &aValue) const {  
-    return aField->setValueToInstance (exec, this, aValue);
+    aField->setValueToInstance (exec, this, aValue);
 }
 
 Instance *Instance::createBindingForLanguageInstance (BindingLanguage language, void *instance)

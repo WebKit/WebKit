@@ -262,6 +262,7 @@
 				65C02FBC0637462A003E7EE6,
 				650B68DB0639033F009D42DE,
 				51863F70065420E800E9E8DD,
+				700DA118065984CE00747C0B,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -803,6 +804,7 @@
 		};
 		51856D950562EE9C008B9D83 = {
 			children = (
+				700DA117065984CE00747C0B,
 				51863F6F065420E800E9E8DD,
 				51863FC406542D3100E9E8DD,
 				5199B265061BB1300070C006,
@@ -1433,6 +1435,21 @@
 //702
 //703
 //704
+		700DA117065984CE00747C0B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = WebScriptObjectPrivate.h;
+			path = bindings/objc/WebScriptObjectPrivate.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		700DA118065984CE00747C0B = {
+			fileRef = 700DA117065984CE00747C0B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		704FD35305697E6D003DBED9 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;

@@ -195,7 +195,7 @@ NS_HANDLER
     resultValue = Undefined();
     
 NS_ENDHANDLER
-    
+
     return resultValue;
 }
 

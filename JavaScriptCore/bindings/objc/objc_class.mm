@@ -25,8 +25,8 @@
 #include <Foundation/Foundation.h>
 
 #include <objc_class.h>
-#include <objc_jsobject.h>
 #include <objc_utility.h>
+#include <WebScriptObject.h>
 
 using namespace KJS::Bindings;
 
@@ -113,8 +113,8 @@ MethodList ObjcClass::methodsNamed(const char *_name) const
                 NSString *mappedName = 0;
             
                 // See if the class wants to exclude the selector from visibility in JavaScript.
-                if ([(id)thisClass respondsToSelector:@selector(excludeSelectorFromJavaScript:)]) {
-                    if ([(id)thisClass excludeSelectorFromJavaScript:objcMethod->method_name]) {
+                if ([(id)thisClass respondsToSelector:@selector(isSelectorExcludedFromWebScript:)]) {
+                    if ([(id)thisClass isSelectorExcludedFromWebScript:objcMethod->method_name]) {
                         continue;
                     }
                 }
@@ -122,8 +122,8 @@ MethodList ObjcClass::methodsNamed(const char *_name) const
                 // See if the class want to provide a different name for the selector in JavaScript.
                 // Note that we do not do any checks to guarantee uniqueness. That's the responsiblity
                 // of the class.
-                if ([(id)thisClass respondsToSelector:@selector(JavaScriptNameForSelector:)]){
-                    mappedName = [(id)thisClass JavaScriptNameForSelector: objcMethod->method_name];
+                if ([(id)thisClass respondsToSelector:@selector(webScriptNameForSelector:)]){
+                    mappedName = [(id)thisClass webScriptNameForSelector: objcMethod->method_name];
                 }
 
                 if ((mappedName && [mappedName isEqual:(NSString *)methodName]) ||
@@ -161,7 +161,24 @@ Field *ObjcClass::fieldNamed(const char *name) const
             int i, numFieldsInClass = fieldsInClass->ivar_count;
             for (i = 0; i < numFieldsInClass; i++) {
                 Ivar objcIVar = &fieldsInClass->ivar_list[i];
-                if (strcmp(objcIVar->ivar_name,name) == 0) {
+                NSString *mappedName = 0;
+
+                // See if the class wants to exclude the selector from visibility in JavaScript.
+                if ([(id)thisClass respondsToSelector:@selector(isKeyExcludedFromWebScript:)]) {
+                    if ([(id)thisClass isKeyExcludedFromWebScript:objcIVar->ivar_name]) {
+                        continue;
+                    }
+                }
+                
+                // See if the class want to provide a different name for the selector in JavaScript.
+                // Note that we do not do any checks to guarantee uniqueness. That's the responsiblity
+                // of the class.
+                if ([(id)thisClass respondsToSelector:@selector(webScriptNameForKey:)]){
+                    mappedName = [(id)thisClass webScriptNameForKey:objcIVar->ivar_name];
+                }
+
+                if ((mappedName && [mappedName isEqual:(NSString *)fieldName]) ||
+                    strcmp(objcIVar->ivar_name,name) == 0) {
                     aField = new ObjcField (objcIVar);
                     CFDictionaryAddValue ((CFMutableDictionaryRef)_fields, fieldName, aField);
                     break;
