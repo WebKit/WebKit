@@ -456,11 +456,6 @@ RenderLayer::constructZTree(QRect overflowClipRect, QRect posClipRect,
     // This variable stores the result we will hand back.
     RenderZTreeNode* returnNode = 0;
     
-    // If a layer isn't visible, then none of its child layers are visible either.
-    // Don't build this branch of the z-tree, since these layers should not be painted.
-    if (renderer()->style()->visibility() != VISIBLE)
-        return 0;
-    
     // Compute this layer's absolute position, so that we can compare it with our
     // damage rect and avoid repainting the layer if it falls outside that rect.
     // An exception to this rule is the root layer, which always paints (hence the

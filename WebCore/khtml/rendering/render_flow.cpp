@@ -2175,64 +2175,84 @@ void RenderFlow::addChildToFlow(RenderObject* newChild, RenderObject* beforeChil
         removeLeftoverAnonymousBoxes();
 }
 
-void RenderFlow::makeChildrenNonInline(RenderObject *box2Start)
+static void getInlineRun(RenderObject* start, RenderObject* stop,
+                         RenderObject*& inlineRunStart,
+                         RenderObject*& inlineRunEnd)
 {
+    // Beginning at |start| we find the largest contiguous run of inlines that
+    // we can.  We denote the run with start and end points, |inlineRunStart|
+    // and |inlineRunEnd|.  Note that these two values may be the same if
+    // we encounter only one inline.
+    //
+    // We skip any non-inlines we encounter as long as we haven't found any
+    // inlines yet.
+    //
+    // |stop| indicates a non-inclusive stop point.  Regardless of whether |stop|
+    // is inline or not, we will not include it.  It's as though we encountered
+    // a non-inline.
+    inlineRunStart = inlineRunEnd = 0;
+
+    // Start by skipping as many non-inlines as we can.
+    RenderObject * curr = start;
+    while (curr && !curr->isInline())
+        curr = curr->nextSibling();
+
+    if (!curr)
+        return; // No more inline children to be found.
+
+    inlineRunStart = inlineRunEnd = curr;
+    curr = curr->nextSibling();
+    while (curr && curr->isInline() && (curr != stop)) {
+        inlineRunEnd = curr;
+        curr = curr->nextSibling();
+    }
+}
+
+void RenderFlow::makeChildrenNonInline(RenderObject *insertionPoint)
+{
+    // makeChildrenNonInline takes a block whose children are *all* inline and it
+    // makes sure that inline children are coalesced under anonymous
+    // blocks.  If |insertionPoint| is defined, then it represents the insertion point for
+    // the new block child that is causing us to have to wrap all the inlines.  This
+    // means that we cannot coalesce inlines before |insertionPoint| with inlines following
+    // |insertionPoint|, because the new child is going to be inserted in between the inlines,
+    // splitting them.
     KHTMLAssert(!isInline());
-    KHTMLAssert(!box2Start || box2Start->parent() == this);
+    KHTMLAssert(!insertionPoint || insertionPoint->parent() == this);
 
     m_childrenInline = false;
 
     RenderObject *child = firstChild();
-    RenderObject *next;
-    RenderObject *boxFirst = 0;
-    RenderObject *boxLast = 0;
+    
     while (child) {
-        next = child->nextSibling();
+        RenderObject *inlineRunStart, *inlineRunEnd;
+        getInlineRun(child, insertionPoint, inlineRunStart, inlineRunEnd);
 
-        if (child->isInline()) {
-            if ( !boxFirst )
-                boxFirst = child;
-            boxLast = child;
+        if (!inlineRunStart)
+            break;
+
+        child = inlineRunEnd->nextSibling();
+        
+        RenderStyle *newStyle = new RenderStyle();
+        newStyle->inheritFrom(style());
+        newStyle->setDisplay(BLOCK);
+
+        RenderFlow *box = new (renderArena()) RenderFlow(0 /* anonymous box */);
+        box->setStyle(newStyle);
+        box->setIsAnonymousBox(true);
+       
+        insertChildNode(box, inlineRunStart);
+        RenderObject* o = inlineRunStart;
+        while(o != inlineRunEnd)
+        {
+            RenderObject* no = o;
+            o = no->nextSibling();
+            box->appendChildNode(removeChildNode(no));
         }
-
-        if (boxFirst &&
-            (!child->isInline() || !next || child == box2Start)) {
-            // Create a new anonymous box containing all children starting from boxFirst
-            // and up to boxLast, and put it in place of the children
-            RenderStyle *newStyle = new RenderStyle();
-            newStyle->inheritFrom(style());
-            newStyle->setDisplay(BLOCK);
-
-            RenderFlow *box = new (renderArena()) RenderFlow(0 /* anonymous box */);
-            box->setStyle(newStyle);
-            box->setIsAnonymousBox(true);
-            // ### the children have a wrong style!!!
-            // They get exactly the style of this element, not of the anonymous box
-            // might be important for bg colors!
-
-            insertChildNode(box, boxFirst);
-            RenderObject* o = boxFirst;
-            while(o && o != boxLast)
-            {
-                RenderObject* no = o;
-                o = no->nextSibling();
-                box->appendChildNode(removeChildNode(no));
-            }
-            if (child && box2Start == child) {
-                boxFirst = boxLast = (child->isInline() ? box2Start : 0);
-                box2Start = 0;
-                continue;
-            }
-            else {
-                box->appendChildNode(removeChildNode(boxLast));
-                boxFirst = boxLast = 0;
-            }
-            box->close();
-            box->setPos(box->xPos(), -500000);
-            box->setLayouted(false);
-        }
-
-        child = next;
+        box->appendChildNode(removeChildNode(inlineRunEnd));
+        box->close();
+        box->setPos(box->xPos(), -500000);
+        box->setLayouted(false);
     }
 
     setLayouted(false);
