@@ -1,6 +1,25 @@
 2004-06-14  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by me
+        
+        Added a few more editing-related layout tests.
+
+        * layout-tests/editing/inserting/insert-3654864-fix-expected.txt: Added.
+        * layout-tests/editing/inserting/insert-3654864-fix.html: Added.
+        * layout-tests/editing/inserting/insert-3659587-fix-expected.txt: Added.
+        * layout-tests/editing/inserting/insert-3659587-fix.html: Added.
+        * layout-tests/editing/inserting/insert-after-delete-001-expected.txt: Added.
+        * layout-tests/editing/inserting/insert-after-delete-001.html: Added.
+        * layout-tests/editing/inserting/insert-br-case1-expected.txt: Added.
+        * layout-tests/editing/inserting/insert-br-case1.html: Added.
+        * layout-tests/editing/inserting/insert-br-case2-expected.txt: Added.
+        * layout-tests/editing/inserting/insert-br-case2.html: Added.
+        * layout-tests/editing/inserting/insert-br-case3-expected.txt: Added.
+        * layout-tests/editing/inserting/insert-br-case3.html: Added.
+
+2004-06-14  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by me
 
         Regarding the bug below, removing some tests since we have removed the execCommand("paste") 
         feature, at least for now.
