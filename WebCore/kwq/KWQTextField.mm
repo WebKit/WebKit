@@ -254,13 +254,13 @@
     return become;
 }
 
-- (void)fieldWillBecomeFirstResponder
+- (void)fieldEditorWillBecomeFirstResponder
 {
     QFocusEvent event(QEvent::FocusIn);
     (const_cast<QObject *>(widget->eventFilterObject()))->eventFilter(widget, &event);
 }
 
-- (void)fieldWillResignFirstResponder
+- (void)fieldEditorWillResignFirstResponder
 {
     QFocusEvent event(QEvent::FocusOut);
     (const_cast<QObject *>(widget->eventFilterObject()))->eventFilter(widget, &event);

@@ -1,5 +1,17 @@
 2003-01-23  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Darin.
+
+	- fixed last minute screwup in my last patch fixing onchange
+	
+        * kwq/KWQTextField.mm:
+	(-[KWQTextField fieldEditorWillBecomeFirstResponder]): Renamed
+	from fieldWillBecomeFirstResponder.
+        (-[KWQTextField fieldEditorWillResignFirstResponder]): Renamed
+	from fieldWillResignFirstResponder.
+
+2003-01-23  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Trey.
 
 	- fixed 3151442 - mac.com homepage editing - selection and clicking with mouse don't work
