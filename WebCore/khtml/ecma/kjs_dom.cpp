@@ -146,8 +146,6 @@ Value DOMNode::tryGet(ExecState *exec, const Identifier &propertyName) const
 
 Value DOMNode::getValueProperty(ExecState *exec, int token) const
 {
-  khtml::RenderObject *rend = node.handle() ? node.handle()->renderer() : 0L;
-
   switch (token) {
   case NodeName:
     return getString(node.nodeName());
@@ -239,6 +237,8 @@ Value DOMNode::getValueProperty(ExecState *exec, int token) const
       if ( v && docimpl->renderer() && !docimpl->renderer()->layouted() )
         docimpl->view()->layout();
     }
+
+    khtml::RenderObject *rend = node.handle() ? node.handle()->renderer() : 0L;
 
     switch (token) {
     case OffsetLeft:

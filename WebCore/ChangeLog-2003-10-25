@@ -1,5 +1,15 @@
 2003-01-29  Darin Adler  <darin@apple.com>
 
+        Reviewed by Maciej.
+
+        - fixed 3158958 -- nil-dereference in KJS::DOMNode::getValueProperty at www.babyage.com
+
+        * khtml/ecma/kjs_dom.cpp: (DOMNode::getValueProperty):
+        Move the code that gets the render object down after the point where the render tree
+        is updated, so we don't end up using a stale pointer.
+
+2003-01-29  Darin Adler  <darin@apple.com>
+
         - add new assertion that Dave can use to debug bug 3155954 tomorrow
 
         * khtml/rendering/render_arena.cpp: (RenderArena::allocate): Assert that the arena is not 0.
