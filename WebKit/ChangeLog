@@ -1,3 +1,12 @@
+2002-05-16  Richard J. Williamson  <rjw@apple.com>
+
+	Fix to fix for 0x7f to 0xa0.  I was being overly aggressive about
+	finding substitute glyphs.
+	
+	* WebCoreSupport.subproj/IFTextRenderer.m:
+	(-[IFTextRenderer drawCharacters:length:atPoint:withColor:]):
+	(-[IFTextRenderer floatWidthForCharacters:length:]):
+
 2002-05-16  Darin Adler  <darin@apple.com>
 
 	* Plugins.subproj/IFPluginView.mm:

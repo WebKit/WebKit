@@ -485,7 +485,7 @@ static bool hasMissingGlyphs(ATSGlyphVector *glyphs)
     
         glyphID = glyphForCharacter (characterToGlyphMap, c);
         
-        if (glyphID == 0){
+        if (glyphID == 0 && c >= 0x7f && c <= 0xa0){
             glyphID = [font _defaultGlyphForChar: c];
             setGlyphForCharacter (characterToGlyphMap, glyphID, c);
         }
@@ -623,7 +623,7 @@ cleanup:
             glyphID = [self extendCharacterToGlyphMapToInclude: c];
         }
         
-        if (glyphID == 0){
+        if (glyphID == 0 && c >= 0x7f && c <= 0xa0){
             glyphID = [font _defaultGlyphForChar: c];
             setGlyphForCharacter (characterToGlyphMap, glyphID, c);
         }
