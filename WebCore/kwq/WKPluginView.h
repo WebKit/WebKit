@@ -7,7 +7,6 @@
 //
 
 #import <AppKit/AppKit.h>
-#include <Carbon/Carbon.h> 
 #include <qwidget.h>
 #import <WKPlugin.h>
 #include "npapi.h"

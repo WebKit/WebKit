@@ -9,6 +9,7 @@
 #import "WKPluginView.h"
 #include <WCURICacheData.h>
 #include <WCURICache.h>
+#include <Carbon/Carbon.h> 
 
 @implementation WKPluginView
 
