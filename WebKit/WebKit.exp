@@ -28,3 +28,4 @@ _WebContextMenuElementImageURLKey
 _WebContextMenuElementStringKey
 _WebContextMenuElementImageKey
 _WebContextMenuElementFrameKey
+_WebHistoryEntriesChangedNotification

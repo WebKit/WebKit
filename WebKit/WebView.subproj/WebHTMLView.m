@@ -400,10 +400,53 @@
 
 - (void)mouseDown: (NSEvent *)event
 {
-    if([self _continueAfterCheckingDragForEvent:event]){
-        [[self _bridge] mouseDown:event];
+    // Record the mouse down position so we can determine
+    // drag hysteresis.
+    _private->mouseDownPoint = [event locationInWindow];
+    
+    // Let khtml get a chance to deal with the event.
+    [[self _bridge] mouseDown:event];
+}
+
+#define DragStartXHysteresis  		2.0
+#define DragStartYHysteresis  		1.0
+
+- (void)mouseDragged:(NSEvent *)event
+{
+    // Ensure that we're visible wrt the event location.
+    [self autoscroll:event];
+    
+    // Now do WebKit dragging.
+    float deltaX = ABS([event locationInWindow].x - _private->mouseDownPoint.x);
+    float deltaY = ABS([event locationInWindow].y - _private->mouseDownPoint.y);
+
+    if (deltaX >= DragStartXHysteresis || deltaY >= DragStartYHysteresis){
+        NSPoint point = [self convertPoint:_private->mouseDownPoint fromView:nil];
+        NSDictionary *element = [self _elementAtPoint: point];
+        NSURL *linkURL = [element objectForKey: WebContextMenuElementLinkURLKey];
+        NSURL *imageURL = [element objectForKey: WebContextMenuElementImageURLKey];
+
+        if(imageURL || linkURL){
+            [_private->draggedURL release];
+            
+            if(imageURL)
+                _private->draggedURL = imageURL;
+            else if (linkURL)
+                _private->draggedURL = linkURL;
+            
+            [_private->draggedURL retain];
+            NSArray *fileType = [NSArray arrayWithObject:[[_private->draggedURL path] pathExtension]];
+            NSRect rect = NSMakeRect(point.x + -16, point.y - 16, 32, 32);
+            [self dragPromisedFilesOfTypes: fileType fromRect: rect source: self slideBack: YES event: event];
+        }
+    }
+    else {
+        // Give khtml a crack at the event only if we haven't started
+        // a drag.
+        [[self _bridge] mouseDragged:event];
     }
 }
+
 
 - (void)mouseUp: (NSEvent *)event
 {
@@ -435,12 +478,6 @@
             && [[[self window] contentView] hitTest:[event locationInWindow]] == self) {
         [[self _bridge] mouseMoved:event];
     }
-}
-
-- (void)mouseDragged:(NSEvent *)event
-{
-    [self autoscroll:event];
-    [[self _bridge] mouseDragged:event];
 }
 
 #if 0

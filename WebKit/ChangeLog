@@ -1,3 +1,27 @@
+2002-08-27  Richard Williamson (Local)  <rjw@apple.com>
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView mouseDown:]):
+        (-[WebHTMLView mouseDragged:]):
+        (-[WebHTMLView mouseMovedNotification:]):
+        * WebView.subproj/WebHTMLViewPrivate.h:
+        * WebView.subproj/WebHTMLViewPrivate.m:
+
+        Fixed active link style.  Cleaned up and fixed drag initiation
+        for links and images.  Dotted lines not drawing correcly, but
+        other styles are applied correctly.
+        
+        * WebKit.exp:
+        * History.subproj/WebHistory.h:
+        * History.subproj/WebHistory.m:
+        
+        Added some constants.
+
+        * WebCoreSupport.subproj/WebTextRendererFactory.m:
+
+        Code to change CG caching policy.  Not enabled until
+        we receive a root from CG team.
+        
 2002-08-27  Darin Adler  <darin@apple.com>
 
 	- fixed 3031583 -- directory.apple.com now gives "unsupported" redirect

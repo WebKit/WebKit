@@ -155,32 +155,4 @@ BOOL _modifierTrackingEnabled = FALSE;
     return NO;
 }
 
-- (BOOL)_continueAfterCheckingDragForEvent:(NSEvent *)event
-{
-    if([self _web_dragShouldBeginFromMouseDown:event withExpiration:[NSDate distantFuture]]){
-
-        NSPoint point = [self convertPoint:[event locationInWindow] fromView:nil];
-        NSDictionary *element = [self _elementAtPoint:point];
-        NSURL *imageURL = [element objectForKey:WebContextMenuElementImageURLKey];
-        NSURL *linkURL = [element objectForKey:WebContextMenuElementLinkURLKey];
-
-        if(linkURL || imageURL){
-            [_private->draggedURL release];
-            
-            if(imageURL){
-                _private->draggedURL = imageURL;
-            }else{
-                _private->draggedURL = linkURL;
-            }
-            
-            [_private->draggedURL retain];
-            NSArray *fileType = [NSArray arrayWithObject:[[_private->draggedURL path] pathExtension]];
-            NSRect rect = NSMakeRect(point.x+-16, point.y-16, 32, 32);
-            [self dragPromisedFilesOfTypes:fileType fromRect:rect source:self slideBack:YES event:event];
-            return NO;
-        }
-    }
-    return YES;
-}
-
 @end

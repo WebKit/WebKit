@@ -15,6 +15,7 @@
 @interface WebHTMLViewPrivate : NSObject
 {
 @public
+    NSPoint mouseDownPoint;
     BOOL needsLayout;
     BOOL needsToApplyStyles;
     BOOL canDragTo;
@@ -39,5 +40,4 @@
 + (void)_postFlagsChangedEvent:(NSEvent *)flagsChangedEvent;
 - (NSDictionary *)_elementAtPoint:(NSPoint)point;
 - (BOOL)_continueAfterClickPolicyForEvent: (NSEvent *)event;
-- (BOOL)_continueAfterCheckingDragForEvent:(NSEvent *)event;
 @end

@@ -11,6 +11,8 @@
 
 #import "WebKitDebug.h"
 
+NSString *WebHistoryEntriesChangedNotification = @"WebHistoryEntriesChangedNotification";
+
 @implementation WebHistory
 
 + (WebHistory *)webHistoryWithFile: (NSString*)file

@@ -14,7 +14,7 @@
 @class WebHistoryPrivate;
 
 // notification sent when history is modified
-#define WebHistoryEntriesChangedNotification		@"WebHistoryEntriesChangedNotification"
+extern NSString *WebHistoryEntriesChangedNotification;
 
 @interface WebHistory : WebCoreHistory {
 @private

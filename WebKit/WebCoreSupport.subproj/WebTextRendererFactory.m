@@ -127,6 +127,13 @@
 
 + (WebTextRendererFactory *)sharedFactory;
 {
+#if 0        
+        CGFontCache *fontCache;
+        fontCache = CGFontCacheCreate();
+        CGFontCacheSetMaxSize (fontCache, 1024*1024);
+        CGFontCacheSetLifetime (fontCache, 1024*1024*1024);
+        CGFontCacheRelease(fontCache);
+#endif
     return (WebTextRendererFactory *)[super sharedFactory];
 }
 
