@@ -1,3 +1,13 @@
+2004-08-03  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - fixed <rdar://problem/3740937> ER: A way to turn a DOMRange into text (equivalent of -innerText)
+
+        * DOM.subproj/DOMPrivate.h: Added.
+        * WebKit.pbproj/project.pbxproj: Added DOMPrivate.h.
+        * copy-webcore-files-to-webkit: Added DOMPrivate.h.
+
 2004-08-02  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Darin.

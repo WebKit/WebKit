@@ -29,6 +29,7 @@
 #include "dom_textimpl.h"
 #include "dom_xmlimpl.h"
 #include "html/html_elementimpl.h"
+#include "misc/khtml_text_operations.h"
 
 #include "render_block.h"
 
@@ -863,6 +864,19 @@ DOMString RangeImpl::toHTMLWithOptions(QPtrList<NodeImpl> *nodes)
 DOMString RangeImpl::toHTML(  )
 {
     return toHTMLWithOptions();
+}
+
+DOMString RangeImpl::text() const
+{
+    if (m_detached)
+        return DOMString();
+
+    // We need to update layout, since plainText uses line boxes in the render tree.
+    // FIXME: As with innerText, we'd like this to work even if there are no render objects.
+    m_startContainer->getDocument()->updateLayout();
+
+    // FIXME: Maybe DOMRange constructor take const DOMRangeImpl*; if it did we would not need this const_cast.
+    return plainText(const_cast<RangeImpl *>(this));
 }
 
 DocumentFragmentImpl *RangeImpl::createContextualFragment ( DOMString &html, int &exceptioncode )

@@ -69,6 +69,7 @@ public:
     DOMString toString ( int &exceptioncode );
     DOMString toHTML (  );
     DOMString toHTMLWithOptions(QPtrList<NodeImpl> *nodes=NULL);
+    DOMString text() const;
 
     DocumentFragmentImpl *createContextualFragment ( DOMString &html, int &exceptioncode );
     

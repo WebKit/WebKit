@@ -8,16 +8,17 @@ my $ProgramName = 'copy-webcore-files-to-webkit';
 
 my %WebCoreFiles = (
     'kwq/DOM.h' => 'DOM.subproj/DOM.h',
-    'kwq/DOMCore.h' => 'DOM.subproj/DOMCore.h',
-    'kwq/DOMViews.h' => 'DOM.subproj/DOMViews.h',
-    'kwq/DOMEvents.h' => 'DOM.subproj/DOMEvents.h',
-    'kwq/DOMStylesheets.h' => 'DOM.subproj/DOMStylesheets.h',
-    'kwq/DOMCSS.h' => 'DOM.subproj/DOMCSS.h',
-    'kwq/DOMTraversal.h' => 'DOM.subproj/DOMTraversal.h',
-    'kwq/DOMRange.h' => 'DOM.subproj/DOMRange.h',
-    'kwq/DOMHTML.h' => 'DOM.subproj/DOMHTML.h',
     'kwq/DOM-compat.h' => 'DOM.subproj/DOM-compat.h',
+    'kwq/DOMCSS.h' => 'DOM.subproj/DOMCSS.h',
+    'kwq/DOMCore.h' => 'DOM.subproj/DOMCore.h',
+    'kwq/DOMEvents.h' => 'DOM.subproj/DOMEvents.h',
     'kwq/DOMExtensions.h' => 'DOM.subproj/DOMExtensions.h',
+    'kwq/DOMHTML.h' => 'DOM.subproj/DOMHTML.h',
+    'kwq/DOMPrivate.h' => 'DOM.subproj/DOMPrivate.h',
+    'kwq/DOMRange.h' => 'DOM.subproj/DOMRange.h',
+    'kwq/DOMStylesheets.h' => 'DOM.subproj/DOMStylesheets.h',
+    'kwq/DOMTraversal.h' => 'DOM.subproj/DOMTraversal.h',
+    'kwq/DOMViews.h' => 'DOM.subproj/DOMViews.h',
 );
 
 my %JavaScriptCoreFiles = (

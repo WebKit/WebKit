@@ -27,31 +27,32 @@
 
 #include <objc/objc-class.h>
 
-#import <dom/dom_doc.h>
-#import <dom/dom_element.h>
-#import <dom/dom_exception.h>
-#import <dom/dom_node.h>
-#import <dom/dom_string.h>
-#import <dom/dom_text.h>
-#import <dom/dom_xml.h>
-#import <dom/dom2_range.h>
-#import <dom/dom2_traversal.h>
-#import <html/html_elementimpl.h>
-#import <misc/htmltags.h>
-#import <xml/dom_docimpl.h>
-#import <xml/dom_elementimpl.h>
-#import <xml/dom_nodeimpl.h>
-#import <xml/dom_stringimpl.h>
-#import <xml/dom_textimpl.h>
-#import <xml/dom_xmlimpl.h>
-#import <xml/dom2_rangeimpl.h>
-#import <xml/dom2_viewsimpl.h>
-
 #import <JavaScriptCore/WebScriptObjectPrivate.h>
+
+#import "dom2_range.h"
+#import "dom2_rangeimpl.h"
+#import "dom2_traversal.h"
+#import "dom2_viewsimpl.h"
+#import "dom_doc.h"
+#import "dom_docimpl.h"
+#import "dom_element.h"
+#import "dom_elementimpl.h"
+#import "dom_exception.h"
+#import "dom_node.h"
+#import "dom_nodeimpl.h"
+#import "dom_string.h"
+#import "dom_stringimpl.h"
+#import "dom_text.h"
+#import "dom_textimpl.h"
+#import "dom_xml.h"
+#import "dom_xmlimpl.h"
+#import "html_elementimpl.h"
+#import "htmltags.h"
 
 #import "DOMEventsInternal.h"
 #import "DOMHTML.h"
 #import "DOMInternal.h"
+#import "DOMPrivate.h"
 #import "KWQAssertions.h"
 #import "KWQFoundationExtras.h"
 
@@ -1915,6 +1916,15 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 - (RangeImpl *)_rangeImpl
 {
     return DOM_cast<RangeImpl *>(_internal);
+}
+
+@end
+
+@implementation DOMRange (WebPrivate)
+
+- (NSString *)_text
+{
+    return [self _rangeImpl]->text().string().getNSString();
 }
 
 @end

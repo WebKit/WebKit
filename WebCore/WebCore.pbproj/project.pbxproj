@@ -527,6 +527,7 @@
 				BE02F484066E1C550013A9F6,
 				BE02D4E8066F908A0076809F,
 				93D1FEF7067EBF89009CE68A,
+				9348900606C00363007E7ACE,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1829,6 +1830,20 @@
 		};
 		9342E3EB0646C8FF00004B05 = {
 			fileRef = 9342E3E90646C8FF00004B05;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		9348900506C00363007E7ACE = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = DOMPrivate.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		9348900606C00363007E7ACE = {
+			fileRef = 9348900506C00363007E7ACE;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -6684,6 +6699,7 @@
 				832556E6061DF161007B8054,
 				BE94EB6405EFFE6B0032DCB5,
 				BE9CB64D05F942CB00514D9C,
+				9348900506C00363007E7ACE,
 				9321274F0606724900B62302,
 				932127510606724900B62302,
 				932127530606724900B62302,

@@ -1,3 +1,17 @@
+2004-08-03  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - fixed <rdar://problem/3740937> ER: A way to turn a DOMRange into text (equivalent of -innerText)
+
+        * khtml/xml/dom2_rangeimpl.h: Added text function. Like innerText, but on a range.
+        * khtml/xml/dom2_rangeimpl.cpp: (DOM::RangeImpl::text): Added.
+
+        * kwq/DOM.mm: (-[DOMRange _text]): Added. Calls DOM::RangeImpl::text.
+        * kwq/DOMPrivate.h: Added.
+
+        * WebCore.pbproj/project.pbxproj: Added DOMPrivate.h, an internal header (private in WebKit, internal here).
+
 2004-08-02  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Darin.
