@@ -2715,6 +2715,18 @@ static WebHTMLView *lastHitView = nil;
     [[self _webView] _drawHeaderAndFooter];
 }
 
+- (void)beginDocument
+{
+    NS_DURING
+        [super beginDocument];
+    NS_HANDLER
+        // Exception during [super beginDocument] means that endDocument will not get called,
+        // so we need to clean up our "print mode" here.
+        [self _setPrinting:NO minimumPageWidth:0.0 maximumPageWidth:0.0 adjustViewSize:YES];
+        [[self window] setAutodisplay:YES];
+    NS_ENDHANDLER
+}
+
 - (void)endDocument
 {
     [super endDocument];

@@ -1,3 +1,18 @@
+2004-12-10  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Ken.
+        
+        - fixed <rdar://problem/3855127> Error while printing w/o sheet, then window is left in a bad state, 
+        if there's no default printer set
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView beginDocument]):
+        Our implementation of knowsPageRange puts the WebHTMLView into a special "printing mode". We must
+        exit the "printing mode" to return to normal behavior. This is normally done in endDocument.
+        However, it turns out that if there's an exception in [super beginDocument], then endDocument
+        will not be called (lame-o AppKit API). So, we handle that case by catching the exception and
+        exiting the "printing mode" in beginDocument when it occurs.
+
 2004-12-09  Richard Williamson   <rjw@apple.com>
 
 	Fixed <rdar://problem/3905789> Burn Disc image vibrates rapidly
