@@ -27,6 +27,8 @@
 
 @protocol WebCoreResourceLoader <NSObject>
 
+- (void)receivedResponse: response;
+
 - (void)addData:(NSData *)data;
 
 // Either cancel or finish will be called before the loader is released, but never both.

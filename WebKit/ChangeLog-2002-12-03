@@ -1,3 +1,20 @@
+2002-10-07  Richard Williamson   <rjw@apple.com>
+
+        'Re'play the delegate messages when an item is loaded from
+        the WebCore cache.
+
+        Note that the client will NOT receive a willSendRequest: message.  The client
+        presumably already did any request substitution before the object was loaded 
+        into the cache.  Allowing the delegate to override the request and replace
+        the object in the WebCore cache would introduce significant complexity.
+        
+        Fixes 3069138.
+        
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge objectLoadedFromCache:response:size:]):
+        * WebCoreSupport.subproj/WebSubresourceClient.m:
+        (-[WebSubresourceClient handle:didReceiveResponse:]):
+
 2002-10-05  Darin Adler  <darin@apple.com>
 
 	- fixed 3068323 -- nil object inserted in dictionary exception on mouse move

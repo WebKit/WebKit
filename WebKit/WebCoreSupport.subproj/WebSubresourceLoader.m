@@ -157,6 +157,8 @@
     [response release];
     response = r;
     [resourceProgressDelegate resourceRequest: request didReceiveResponse: r fromDataSource: dataSource];
+
+    [loader receivedResponse:r];
 }
 
 - (void)handle:(WebResourceHandle *)h didReceiveData:(NSData *)data

@@ -70,6 +70,11 @@ using KIO::TransferJob;
     [super dealloc];
 }
 
+- (void)receivedResponse: response
+{
+    loader->receivedResponse (job, response);
+}
+
 - (void)addData:(NSData *)data
 {
     loader->slotData(job, (const char *)[data bytes], [data length]);
@@ -144,6 +149,18 @@ void KWQCheckCacheObjectStatus(DocLoader *loader, CachedObject *cachedObject)
     NSURL *URL = [[NSURL alloc] initWithString:cachedObject->url().string().getNSString()];
     ASSERT(URL);
     CachedImage *cachedImage = dynamic_cast<CachedImage *>(cachedObject);
-    [bridge objectLoadedFromCache:URL size:cachedImage ? cachedImage->dataSize() : cachedObject->size()];
+    [bridge objectLoadedFromCache:URL response: (id)cachedObject->response() size:cachedImage ? cachedImage->dataSize() : cachedObject->size()];
     [URL release];
 }
+
+void KWQRetainResponse(void *response)
+{
+    [(id)response retain];
+}
+
+void KWQReleaseResponse(void *response)
+{
+    [(id)response release];
+}
+
+

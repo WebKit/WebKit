@@ -1,3 +1,23 @@
+2002-10-07  Richard Williamson   <rjw@apple.com>
+
+        Added response to WebCore's CachedObject.  This allows us to correctly
+        emulated the WebResourceLoadDelegate API when 're'loading an item
+        from the WebCore cache.  
+        
+        * khtml/misc/loader.cpp:
+        (CachedObject::~CachedObject):
+        (CachedObject::setResponse):
+        (Loader::receivedResponse):
+        * khtml/misc/loader.h:
+        * kwq/KWQLoaderImpl.h:
+        * kwq/KWQLoaderImpl.mm:
+        (-[WebCoreResourceLoader receivedResponse:]):
+        (KWQCheckCacheObjectStatus):
+        (KWQRetainResponse):
+        (KWQReleaseResponse):
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreResourceLoader.h:
+
 2002-10-06  Darin Adler  <darin@apple.com>
 
 	- fixed 3046737 -- infinite loop in font name matching code on some pages

@@ -15,6 +15,7 @@
 #import <WebKit/WebKitStatisticsPrivate.h>
 #import <WebKit/WebLocationChangeDelegate.h>
 #import <WebKit/WebPreferences.h>
+#import <WebKit/WebResourceLoadDelegate.h>
 #import <WebKit/WebSubresourceClient.h>
 #import <WebKit/WebViewPrivate.h>
 #import <WebKit/WebWindowOperationsDelegate.h>
@@ -168,16 +169,20 @@
                                         forDataSource:[self dataSource]];
 }
 
-- (void)objectLoadedFromCache:(NSURL *)URL size:(unsigned)bytes
+- (void)objectLoadedFromCache:(NSURL *)URL response: response size:(unsigned)bytes
 {
     ASSERT(frame != nil);
 
-    //WebResourceRequest *request = [[WebResourceRequest alloc] initWithURL:URL];
-    //WebResourceHandle *handle = [[WebResourceHandle alloc] initWithRequest:request];
-    //[handle loadWithDelegate:nil];
+    WebResourceRequest *request = [[WebResourceRequest alloc] initWithURL:URL];
+    id <WebResourceLoadDelegate> delegate = [[frame controller] resourceLoadDelegate];
+    
+    // No chance for delegate to modify request, so we don't send a willSendRequest: message.
+    [delegate resourceRequest: request didReceiveResponse: response fromDataSource: [self dataSource]];
+    [delegate resourceRequest: request didReceiveContentLength: bytes fromDataSource: [self dataSource]];
+    [delegate resourceRequest: request didFinishLoadingFromDataSource: [self dataSource]];
+    
     [[frame controller] _receivedProgressForResourceHandle:nil fromDataSource:[self dataSource] complete:YES];
-    //[handle release];
-    //[request release];
+    [request release];
 }
 
 - (BOOL)isReloading

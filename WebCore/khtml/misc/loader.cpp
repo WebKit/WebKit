@@ -72,6 +72,7 @@ CachedObject::~CachedObject()
     if(m_deleted) abort();
     Cache::removeFromLRUList(this);
     m_deleted = true;
+    KWQReleaseResponse (m_response);
 }
 
 void CachedObject::finish()
@@ -113,6 +114,15 @@ bool CachedObject::isExpired() const
     if (!m_expireDate) return false;
     time_t now = time(0);
     return (difftime(now, m_expireDate) >= 0);
+}
+
+void CachedObject::setResponse (void *response)
+{
+    if (m_response != response){
+        KWQReleaseResponse (m_response);
+        m_response = response;
+        KWQRetainResponse (m_response);
+    }
 }
 
 void CachedObject::setRequest(Request *_request)
@@ -1210,6 +1220,18 @@ kdDebug(6060) << "Loader::slotFinished, url = " << j->url().url() << " expires "
   delete r;
   servePendingRequests();
 }
+
+#ifdef APPLE_CHANGES
+void Loader::receivedResponse (KIO::Job*job,void *response)
+{
+    Request *r = m_requestsLoading[job];
+    if(!r) {
+        kdDebug( 6060 ) << "got response for unknown request!" << endl;
+        return;
+    }
+    r->object->setResponse( response );
+}
+#endif
 
 #ifdef APPLE_CHANGES
 void Loader::slotData( KIO::Job*job, const char *data, int size )

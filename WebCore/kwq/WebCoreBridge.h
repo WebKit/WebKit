@@ -174,7 +174,7 @@ typedef khtml::RenderPart KHTMLRenderPart;
 
 - (id <WebCoreResourceHandle>)startLoadingResource:(id <WebCoreResourceLoader>)loader withURL:(NSURL *)URL referrer:(NSString *)referrer;
 - (void)reportBadURL:(NSString *)badURL;
-- (void)objectLoadedFromCache:(NSURL *)URL size:(unsigned)bytes;
+- (void)objectLoadedFromCache:(NSURL *)URL response: response size:(unsigned)bytes;
 - (BOOL)isReloading;
 
 - (void)reportClientRedirectTo:(NSURL *)URL delay:(NSTimeInterval)seconds fireDate:(NSDate *)date;
