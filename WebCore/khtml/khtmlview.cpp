@@ -248,7 +248,10 @@ KHTMLView::~KHTMLView()
     if (m_part)
     {
 #ifdef APPLE_CHANGES
-        killTimers();
+        killTimer(d->timerId);
+        killTimer(d->repaintTimerId);
+        d->timerId = 0;
+        d->repaintTimerId = 0;
         m_part->deref();
 #endif
         

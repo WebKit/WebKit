@@ -63,7 +63,7 @@
     contentPolicy = theContentPolicy;
     
     if(loadFinished)
-        [self processData:resourceData isComplete:YES];
+        [self processData:resourceData isComplete:YES allDataReceived:loadFinished];
 }
 
 - (void)IFURLHandleResourceDidBeginLoading:(IFURLHandle *)sender
@@ -142,10 +142,10 @@
     if(contentPolicy != IFContentPolicyNone){
         if(!processedBufferedData){
             // process all data that has been received now that we have a content policy
-            [self processData:[sender resourceData] isComplete:NO];
+            [self processData:[sender resourceData] isComplete:NO allDataReceived:(contentLength == contentLengthReceived)];
             processedBufferedData = YES;
         }else{
-            [self processData:data isComplete:NO];
+            [self processData:data isComplete:NO allDataReceived:(contentLength == contentLengthReceived)];
         }
     }
     
@@ -198,7 +198,7 @@
 }
 
 
-- (void) processData:(NSData *)data isComplete:(BOOL)complete
+- (void) processData:(NSData *)data isComplete:(BOOL)complete allDataReceived:(BOOL)allDataReceived
 {
     NSString *fakeHTMLDocument;
     const char *fakeHTMLDocumentBytes;
@@ -209,7 +209,7 @@
         
         if(handlerType == IFMIMEHANDLERTYPE_NIL || handlerType == IFMIMEHANDLERTYPE_HTML) {
             // If data is html, send it to the part.
-            part->slotData(encoding, (const char *)[data bytes], [data length]);
+            part->slotData(encoding, (const char *)[data bytes], [data length], allDataReceived);
         }
         
         else if(handlerType == IFMIMEHANDLERTYPE_IMAGE  || 
@@ -221,14 +221,14 @@
                 contentHandler = [[IFContentHandler alloc] initWithURL:url MIMEType:MIMEType MIMEHandlerType:handlerType];
                 fakeHTMLDocument = [contentHandler HTMLDocument];
                 fakeHTMLDocumentBytes = [fakeHTMLDocument cString];
-                part->slotData(encoding, (const char *)fakeHTMLDocumentBytes, strlen(fakeHTMLDocumentBytes));
+                part->slotData(encoding, (const char *)fakeHTMLDocumentBytes, strlen(fakeHTMLDocumentBytes), allDataReceived);
                 [contentHandler release];
                 sentFakeDocForNonHTMLContentType = YES;
             }
             
             // For text documents, the incoming data is part of the main page.
             if(handlerType == IFMIMEHANDLERTYPE_TEXT){
-                part->slotData(encoding, (const char *)[data bytes], [data length]);
+                part->slotData(encoding, (const char *)[data bytes], [data length], allDataReceived);
             }
         }
     }
@@ -263,7 +263,7 @@
             contentHandler = [[IFContentHandler alloc] initWithURL:url MIMEType:MIMEType MIMEHandlerType:IFMIMEHANDLERTYPE_TEXT];
             fakeHTMLDocument = [contentHandler textHTMLDocumentBottom];
             fakeHTMLDocumentBytes = [fakeHTMLDocument cString];
-            part->slotData(encoding, (const char *)fakeHTMLDocumentBytes, strlen(fakeHTMLDocumentBytes));
+            part->slotData(encoding, (const char *)fakeHTMLDocumentBytes, strlen(fakeHTMLDocumentBytes), YES);
             [contentHandler release];
         }
     }

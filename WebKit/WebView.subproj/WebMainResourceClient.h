@@ -31,7 +31,7 @@ class KHTMLPart;
 - initWithDataSource: (IFWebDataSource *)ds part: (KHTMLPart *)p;
 - (void)setContentPolicy:(IFContentPolicy)theContentPolicy;
 
-- (void) processData:(NSData *)data isComplete:(BOOL)complete;
+- (void) processData:(NSData *)data isComplete:(BOOL)complete allDataReceived:(BOOL)allDataReceived;
 - (void) finishProcessingData:(NSData *)data;
 @end
 

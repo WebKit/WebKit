@@ -1,3 +1,22 @@
+2002-05-23  Kenneth Kocienda  <kocienda@apple.com>
+
+        Fixes for these bugs:
+
+        Radar 2883631 (need to implement support for META HTTP_EQUIV=REFRESH)
+        Radar 2935472 (Non-standard html pages don't always get decoded)
+
+	* khtml/khtml_part.cpp: Don't kill all timers. Just kill the ones for this object.
+	(KHTMLPart::~KHTMLPart):
+	* khtml/khtml_part.h: Modified interface to slotData to add a flag for when all data 
+          for a load has been received.
+	* khtml/khtmlview.cpp:
+	(KHTMLView::~KHTMLView): Don't kill all timers. Just kill the ones for this object.
+	* kwq/KWQKHTMLPart.mm:
+	(KHTMLPart::slotData): Senses when text encoding is not available, but all data has been received.
+	(KHTMLPart::write): Ditto
+	(KHTMLPart::scheduleRedirection):
+	* libwebcore.exp: Changed symbol for slotData
+
 2002-05-23  Shelley A Sheridan  <sheridan@apple.com>
 
 	* ChangeLog:

@@ -1,3 +1,17 @@
+2002-05-23  Kenneth Kocienda  <kocienda@apple.com>
+
+        Fixes for these bugs:
+
+        Radar 2883631 (need to implement support for META HTTP_EQUIV=REFRESH)
+        Radar 2935472 (Non-standard html pages don't always get decoded)
+
+	* WebView.subproj/IFMainURLHandleClient.h:
+	* WebView.subproj/IFMainURLHandleClient.mm:
+	(-[IFMainURLHandleClient setContentPolicy:]): Updated method to use new processData interface.
+	(-[IFMainURLHandleClient IFURLHandle:resourceDataDidBecomeAvailable:]): Senses when all data has been received for a load.
+	(-[IFMainURLHandleClient processData:isComplete:allDataReceived:]): Modified interface to add a flag 
+          for when all data for a load has been received.
+
 2002-05-23  Shelley A Sheridan  <sheridan@apple.com>
 
 	* ChangeLog:

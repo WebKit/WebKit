@@ -138,10 +138,17 @@ bool KHTMLPart::openURL( const KURL &url )
     return true;
 }
 
-void KHTMLPart::slotData(NSString *encoding, const char *bytes, int length)
+void KHTMLPart::slotData(NSString *encoding, const char *bytes, int length, bool complete)
 {
 // NOTE: This code emulates the interface used by the original khtml part  
     QString enc;
+
+    // This flag is used to tell when a load has completed so we can be sure
+    // to process the data even if we have not yet determined the proper
+    // encoding.
+    if (complete) {
+        d->m_bComplete = true;    
+    }
 
     if (!d->m_workingURL.isEmpty()) {
         //begin(d->m_workingURL, d->m_extension->urlArgs().xOffset, d->m_extension->urlArgs().yOffset);
@@ -271,7 +278,7 @@ void KHTMLPart::write( const char *str, int len )
     }
 
 #endif APPLE_CHANGES
-
+    
     // begin lines added in lieu of big fixme    
     if ( !d->m_decoder ) {
         d->m_decoder = new khtml::Decoder();
@@ -303,8 +310,16 @@ void KHTMLPart::write( const char *str, int len )
         decoded = d->m_decoder->decode( d->m_documentSource, d->m_documentSource.length() );
 
     if(decoded.isEmpty()){
-        fprintf (stderr, "WARNING:  DECODER unable to decode string, length = %d, total length = %d\n", len, d->m_documentSource.length());
-        return;
+        // Check flag to tell whether the load has completed.
+        // If we get here, it means that no text encoding was available.
+        // Try to process what we have with the default encoding.
+        if (d->m_bComplete) {
+            decoded = d->m_documentSource;
+        }
+        else {
+            fprintf (stderr, "WARNING:  DECODER unable to decode string, length = %d, total length = %d\n", len, d->m_documentSource.length());
+            return;
+        }
     }
 
     d->m_decodingStarted = 1;
@@ -358,6 +373,9 @@ void KHTMLPart::scheduleRedirection( int delay, const QString &url, bool )
 {
 	if( d->m_redirectURL.isEmpty() || delay < d->m_delayRedirect )
 	{
+	    if (delay < 1) {
+	        delay = 1;
+	    }
 		d->m_delayRedirect = delay;
 		d->m_redirectURL = url;
 		killTimer(d->m_redirectionTimer);
