@@ -105,7 +105,7 @@
 
     // FIXME: Need a way to check if stream is seekable
 
-    NPError npErr = NPP_NewStream(instance, (char *)[MIMEType cString], &stream, NO, &transferMode);
+    NPError npErr = NPP_NewStream(instance, (char *)[MIMEType UTF8String], &stream, NO, &transferMode);
     LOG(Plugins, "NPP_NewStream URL=%@ MIME=%@ error=%d", URL, MIMEType, npErr);
 
     if (npErr != NPERR_NO_ERROR) {
@@ -150,8 +150,8 @@
     
     if (reason == NPRES_DONE && (transferMode == NP_ASFILE || transferMode == NP_ASFILEONLY)) {
         ASSERT(path != NULL);
-        NSString *carbonPath = [[NSFileManager defaultManager] _web_carbonPathForPath:[NSString stringWithCString:path]];
-        NPP_StreamAsFile(instance, &stream, [carbonPath cString]);
+        NSString *carbonPath = [[NSFileManager defaultManager] _web_carbonPathForPath:[NSString stringWithUTF8String:path]];
+        NPP_StreamAsFile(instance, &stream, [carbonPath fileSystemRepresentation]);
         LOG(Plugins, "NPP_StreamAsFile URL=%@ path=%@", URL, carbonPath);
     }
     
