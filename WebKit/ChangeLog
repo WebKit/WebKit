@@ -1,3 +1,14 @@
+2002-12-12  Richard Williamson   <rjw@apple.com>
+
+        Fixed 3125585.  One click crasher option clicking on
+        any link.  Added additional check to curtail overly
+        zealous ASSERT.
+        
+        Reviewed by mjs.
+
+        * WebView.subproj/WebControllerPrivate.m:
+        (-[WebController _mainReceivedError:fromDataSource:complete:]):
+
 2002-12-11  Richard Williamson   <rjw@apple.com>
 
         Fixed 3125425.  Just call super if view isn't in view heirarchy,

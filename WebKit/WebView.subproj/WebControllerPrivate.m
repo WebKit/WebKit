@@ -152,7 +152,10 @@
 {
     ASSERT(error);
     ASSERT(dataSource);
-    ASSERT([dataSource webFrame]);
+#ifndef NDEBUG
+    if (![dataSource isDownloading])
+        ASSERT([dataSource webFrame]);
+#endif    
 
     [dataSource _setMainDocumentError: error];
 
