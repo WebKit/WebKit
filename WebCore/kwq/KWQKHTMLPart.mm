@@ -681,6 +681,25 @@ NSView *KWQKHTMLPart::nextKeyViewInFrame(NodeImpl *node, KWQSelectionDirection d
     }
 }
 
+ChildFrame *KWQKHTMLPart::childFrameForPart(const ReadOnlyPart *part) const
+{
+    FrameIt it = d->m_frames.begin();
+    FrameIt end = d->m_frames.end();
+    for (; it != end; ++it) {
+	if ((*it).m_part == part) {
+            return &*it;
+        }
+    }
+    it = d->m_objects.begin();
+    end = d->m_objects.end();
+    for (; it != end; ++it) {
+	if ((*it).m_part == part) {
+            return &*it;
+        }
+    }
+    return 0;
+}
+
 NSView *KWQKHTMLPart::nextKeyViewInFrameHierarchy(NodeImpl *node, KWQSelectionDirection direction)
 {
     NSView *next = nextKeyViewInFrame(node, direction);
@@ -688,9 +707,9 @@ NSView *KWQKHTMLPart::nextKeyViewInFrameHierarchy(NodeImpl *node, KWQSelectionDi
         return next;
     }
     
-    KHTMLPart *parent = parentPart();
+    KWQKHTMLPart *parent = KWQ(parentPart());
     if (parent) {
-        next = KWQ(parent)->nextKeyView(parent->frame(this)->m_frame->element(), direction);
+        next = parent->nextKeyView(parent->childFrameForPart(this)->m_frame->element(), direction);
         if (next) {
             return next;
         }

@@ -1,3 +1,19 @@
+2003-03-31  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+	- fixed 3213093 -- accessing menu items immediately after launch causes crash when about:blank is homepage
+
+        * khtml/khtmlview.cpp: (isSubmitImage): Add check for node of 0.
+        
+        - fixed 3211461 -- crash in KWQListIteratorImpl tabbing through w3c test page
+
+        * kwq/KWQKHTMLPart.h: Added childFrameForPart function, better than KHTMLPart::frame because it works
+        for HTML frames inside objects as well as plain old HTML frames.
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::childFrameForPart): Like KHTMLPart::frame, but looks through m_objects too.
+        (KWQKHTMLPart::nextKeyViewInFrameHierarchy): Use childFrameForPart instead of frame function.
+
 2003-03-30  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
@@ -257,7 +273,7 @@
         * kwq/KWQKHTMLPart.mm:
         (KWQKHTMLPart::KWQKHTMLPart):
 
-1969-12-31  Maciej Stachowiak  <mjs@apple.com>
+2003-03-26  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Trey.
 
