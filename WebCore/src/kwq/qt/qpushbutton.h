@@ -26,4 +26,6 @@
 #ifndef QPUSHBUTTON_H_
 #define QPUSHBUTTON_H_
 
+class QPushButton;
+
 #endif
