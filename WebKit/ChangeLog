@@ -1,3 +1,12 @@
+2003-11-16  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by John.
+
+	- fixed 3362841 - javascript History Object length property is always 0
+        
+	* WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge historyLength]): Add one to the length to match other browsers.
+
 2003-11-14  John Sullivan  <sullivan@apple.com>
         
         - WebKit part of fix for <rdar://problem/3474757>: Safari on-screen text needs review

@@ -1,3 +1,14 @@
+2003-11-16  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by John.
+
+	- fixed 3362841 - javascript History Object length property is always 0
+
+        * kwq/KWQKPartsBrowserInterface.mm:
+        (KParts::BrowserInterface::property): For the historyLength property,
+	retturn a UInt variant, not Int, because that's what the kjs_window code
+	expects.
+
 2003-11-14  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Ken and Dave.

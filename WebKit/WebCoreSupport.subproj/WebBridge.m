@@ -879,7 +879,7 @@ static BOOL loggedObjectCacheSize = NO;
 
 - (int)historyLength
 {
-    return [[[_frame webView] backForwardList] backListCount];
+    return [[[_frame webView] backForwardList] backListCount] + 1;
 }
 
 - (void)goBackOrForward:(int)distance
