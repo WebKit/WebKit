@@ -1,5 +1,15 @@
 2004-09-24  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by me
+        
+        Hyatt made an improvement in the render tree which caused the results
+        to get a little thinner.
+
+        * layout-tests/editing/deleting/delete-block-merge-contents-001-expected.txt.
+        * layout-tests/editing/deleting/delete-block-merge-contents-008-expected.txt.
+
+2004-09-24  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by Hyatt
         
         Fix for this bug:
