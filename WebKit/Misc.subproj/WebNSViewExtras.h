@@ -23,8 +23,8 @@
 // returns NO, else returns YES.
 - (BOOL)_web_dragShouldBeginFromMouseDown:(NSEvent *)mouseDownEvent
                            withExpiration:(NSDate *)expiration
-                              xHysteresis:(unsigned)xHysteresis
-                              yHysteresis:(unsigned)yHysteresis;
+                              xHysteresis:(float)xHysteresis
+                              yHysteresis:(float)yHysteresis;
 
 // Calls _web_dragShouldBeginFromMouseDown:withExpiration:xHysteresis:yHysteresis: with
 // the default values for xHysteresis and yHysteresis

@@ -1,3 +1,15 @@
+ 2002-11-13  John Sullivan  <sullivan@apple.com>
+
+	- fixed 3099922 -- REGRESSION: Back button always pops up menu
+
+        * Misc.subproj/WebNSViewExtras.h:
+        * Misc.subproj/WebNSViewExtras.m:
+        (-[NSView _web_dragShouldBeginFromMouseDown:withExpiration:xHysteresis:yHysteresis:]:
+	Fixed a copy/paste error I made yesterday -- this method was never
+	noticing the mouse-up events because it was checking the event type
+	against the wrong number. Also changed the hysteresis values from
+	unsigneds to floats (unsigned was just wrong).
+
 2002-11-13  Maciej Stachowiak  <mjs@apple.com>
 
 	- fixed 3050447 - Policy handlers have no way of telling client
