@@ -109,7 +109,7 @@
         if ([space isProxy]) {
             message = [NSString stringWithFormat:UI_STRING("To view this page, you need to log in to the %@ proxy server %@.",
                                                            "prompt string in authentication panel"),
-                [space type], host];
+                [space proxyType], host];
         } else {
             message = [NSString stringWithFormat:UI_STRING("To view this page, you need to log in to area “%@” on %@.",
                                                            "prompt string in authentication panel"),
@@ -119,7 +119,7 @@
         if ([space isProxy]) {
             message = [NSString stringWithFormat:UI_STRING("The name or password entered for the %@ proxy server %@ was incorrect. Please try again.",
                                                            "prompt string in authentication panel"),
-				[space type], host];
+				[space proxyType], host];
         } else {
             message = [NSString stringWithFormat:UI_STRING("The name or password entered for area “%@” on %@ was incorrect. Please try again.",
                                                            "prompt string in authentication panel"),

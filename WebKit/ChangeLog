@@ -1,3 +1,12 @@
+2003-04-30  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Richard.
+
+	Moved NSURLProtectionSpace over to officially blessed API.
+	
+        * Panels.subproj/WebAuthenticationPanel.m:
+        (-[WebAuthenticationPanel setUpForChallenge:]):
+
 2003-04-30  Richard Williamson   <rjw@apple.com>
 
         Copy MIME type when copying WebDataProtocol's parameters.
