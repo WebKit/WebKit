@@ -1,3 +1,19 @@
+2004-03-01  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	<rdar://problem/3549201>: repro crash in KHTMLPart::begin inside JavaScript code (gmpartsdirect.com)
+
+	Added some null checks. I am not sure why this page attaches a
+	document that has no view, but these changes make it work
+	perfectly.
+        
+	* khtml/khtml_part.cpp:
+        (KHTMLPart::begin): Add check for null view before use.  *
+	khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::close): ditto
+        (DocumentImpl::recalcStyle): Add check for null paint device.
+
 === Safari-130 ===
 
 2004-03-01  Ken Kocienda  <kocienda@apple.com>

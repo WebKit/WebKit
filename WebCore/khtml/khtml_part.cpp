@@ -1532,7 +1532,8 @@ void KHTMLPart::begin( const KURL &url, int xOffset, int yOffset )
 
   d->m_doc->open();
   // clear widget
-  d->m_view->resizeContents( 0, 0 );
+  if (d->m_view)
+    d->m_view->resizeContents( 0, 0 );
   connect(d->m_doc,SIGNAL(finishedParsing()),this,SLOT(slotFinishedParsing()));
 
 #if !APPLE_CHANGES
