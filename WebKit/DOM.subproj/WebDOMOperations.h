@@ -9,6 +9,7 @@
 #import <WebKit/DOMRange.h>
 
 @class WebArchive;
+@class WebFrame;
 
 @interface DOMNode (WebDOMNodeOperations)
 - (WebArchive *)webArchive;
@@ -16,6 +17,7 @@
 @end
 
 @interface DOMDocument (WebDOMDocumentOperations)
+- (WebFrame *)webFrame;
 - (NSURL *)URLWithRelativeString:(NSString *)string;
 @end
 

@@ -242,7 +242,8 @@
         WebResource *newResource = [[WebResource alloc] initWithData:resourceData
                                                                  URL:originalURL
                                                             MIMEType:[response MIMEType]
-                                                    textEncodingName:[response textEncodingName]];
+                                                    textEncodingName:[response textEncodingName]
+                                                           frameName:nil];
         [dataSource addSubresource:newResource];
         [newResource release];
     }

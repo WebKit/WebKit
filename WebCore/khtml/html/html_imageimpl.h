@@ -60,7 +60,7 @@ public:
 
     DOMString imageMap() const { return usemap; }
     
-    virtual bool isSubresourceURLAttribute(AttributeImpl *attr) const;
+    virtual bool isURLAttribute(AttributeImpl *attr) const;
     
 protected:
     DOMString usemap;

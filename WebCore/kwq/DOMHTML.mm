@@ -45,6 +45,7 @@
 #import <xml/dom_elementimpl.h>
 #import <xml/dom_nodeimpl.h>
 
+#import "DOMExtensions.h"
 #import "DOMInternal.h"
 #import "KWQAssertions.h"
 
@@ -65,6 +66,7 @@ using DOM::HTMLDivElementImpl;
 using DOM::HTMLDListElementImpl;
 using DOM::HTMLDocumentImpl;
 using DOM::HTMLElementImpl;
+using DOM::HTMLEmbedElementImpl;
 using DOM::HTMLFieldSetElementImpl;
 using DOM::HTMLFontElementImpl;
 using DOM::HTMLFormCollectionImpl;
@@ -140,6 +142,7 @@ using DOM::NodeImpl;
 
 @interface DOMHTMLTableCellElement (WebCoreInternal)
 + (DOMHTMLTableCellElement *)_tableCellElementWithImpl:(HTMLTableCellElementImpl *)impl;
+- (HTMLTableCellElementImpl *)_tableCellElementImpl;
 @end
 
 //------------------------------------------------------------------------------------------
@@ -1909,7 +1912,7 @@ using DOM::NodeImpl;
 
 - (void)setWidth:(long)width
 {
-	DOMString string(QString::number(width));
+    DOMString string(QString::number(width));
     [self _preElementImpl]->setAttribute(ATTR_WIDTH, string);
 }
 
@@ -3875,4 +3878,103 @@ using DOM::NodeImpl;
     return [DOMDocument _documentWithImpl:[self _IFrameElementImpl]->contentDocument()];
 }
 
+@end
+
+#pragma mark DOM EXTENSIONS
+
+@implementation DOMHTMLEmbedElement
+
+- (HTMLEmbedElementImpl *)_embedElementImpl
+{
+    return reinterpret_cast<HTMLEmbedElementImpl *>(_internal);
+}
+
+- (NSString *)align
+{
+    return [self _embedElementImpl]->getAttribute(ATTR_ALIGN);
+}
+
+- (void)setAlign:(NSString *)align
+{
+    [self _embedElementImpl]->setAttribute(ATTR_ALIGN, align);
+}
+
+- (long)height
+{
+    return [self _embedElementImpl]->getAttribute(ATTR_HEIGHT).toInt();
+}
+
+- (void)setHeight:(long)height
+{
+    DOMString string(QString::number(height));
+    [self _embedElementImpl]->setAttribute(ATTR_HEIGHT, string);
+}
+
+- (NSString *)name
+{
+    return [self _embedElementImpl]->getAttribute(ATTR_NAME);
+}
+
+- (void)setName:(NSString *)name
+{
+    [self _embedElementImpl]->setAttribute(ATTR_NAME, name);
+}
+
+- (NSString *)src
+{
+    return [self _embedElementImpl]->getAttribute(ATTR_SRC);
+}
+
+- (void)setSrc:(NSString *)src
+{
+    [self _embedElementImpl]->setAttribute(ATTR_SRC, src);
+}
+
+- (NSString *)type
+{
+    return [self _embedElementImpl]->getAttribute(ATTR_TYPE);
+}
+
+- (void)setType:(NSString *)type
+{
+    [self _embedElementImpl]->setAttribute(ATTR_TYPE, type);
+}
+
+- (long)width
+{
+    return [self _embedElementImpl]->getAttribute(ATTR_WIDTH).toInt();
+}
+
+- (void)setWidth:(long)width
+{
+    DOMString string(QString::number(width));
+    [self _embedElementImpl]->setAttribute(ATTR_WIDTH, string);
+}
+
+@end
+
+@implementation DOMHTMLTableElement (DOMHTMLTableElementExtensions)
+
+- (NSString *)background
+{
+    return [self _tableElementImpl]->getAttribute(ATTR_BACKGROUND);
+}
+
+- (void)setBackground:(NSString *)background
+{
+    [self _tableElementImpl]->setAttribute(ATTR_BACKGROUND, background);
+}
+@end
+
+@implementation DOMHTMLTableCellElement (DOMHTMLTableCellElementExtensions)
+
+- (NSString *)background
+{
+    return [self _tableCellElementImpl]->getAttribute(ATTR_BACKGROUND);
+}
+
+- (void)setBackground:(NSString *)background
+{
+    [self _tableCellElementImpl]->setAttribute(ATTR_BACKGROUND, background);
+}
 @end

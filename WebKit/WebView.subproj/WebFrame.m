@@ -247,21 +247,16 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
 
 @implementation WebFrame (WebPrivate)
 
-+ (WebFrame *)frameForDOMDocument:(DOMDocument *)document
+- (void)loadArchive:(WebArchive *)archive
 {
-    return [(WebBridge *)[WebBridge bridgeForDOMDocument:document] webFrame];
-}
-
-- (void)loadArchive:(WebArchive *)webArchive
-{
-    WebResource *mainResource = [webArchive mainResource];
+    WebResource *mainResource = [archive mainResource];
     if (mainResource) {
         NSURLRequest *request = [self _webDataRequestForData:[mainResource data] 
                                                     MIMEType:[mainResource MIMEType]
                                             textEncodingName:[mainResource textEncodingName]
                                                      baseURL:[mainResource URL]
                                               unreachableURL:nil];
-        [self _loadRequest:request subresources:[webArchive subresources]];
+        [self _loadRequest:request subresources:[archive subresources] subframeArchives:[archive subframeArchives]];
     }
 }
 
@@ -306,7 +301,7 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
     return compareDataSource != nil && [unreachableURL isEqual:[[compareDataSource request] URL]];
 }
 
-- (void)_loadRequest:(NSURLRequest *)request subresources:(NSArray *)subresources
+- (void)_loadRequest:(NSURLRequest *)request subresources:(NSArray *)subresources subframeArchives:(NSArray *)subframeArchives
 {
     WebFrameLoadType loadType;
     
@@ -323,6 +318,7 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
     
     [newDataSource _setOverrideEncoding:[[self dataSource] _overrideEncoding]];
     [newDataSource addSubresources:subresources];
+    [newDataSource _setPendingSubframeArchives:subframeArchives];
     
     // When we loading alternate content for an unreachable URL that we're
     // visiting in the b/f list, we treat it as a reload so the b/f list 
@@ -1940,8 +1936,13 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         }
     }
 
-    // FIXME: is this the right referrer?
-    [childFrame _loadURL:URL referrer:[[self _bridge] referrer] loadType:childLoadType target:nil triggeringEvent:nil form:nil formValues:nil];
+    WebArchive *archive = [[self dataSource] _archiveForFrameName:[childFrame name]];
+    if (archive) {
+        [childFrame loadArchive:archive];
+    } else {
+        // FIXME: is this the right referrer?
+        [childFrame _loadURL:URL referrer:[[self _bridge] referrer] loadType:childLoadType target:nil triggeringEvent:nil form:nil formValues:nil];
+    }
 }
 
 - (void)_postWithURL:(NSURL *)URL referrer:(NSString *)referrer target:(NSString *)target data:(NSData *)data contentType:(NSString *)contentType triggeringEvent:(NSEvent *)event form:(DOMElement *)form formValues:(NSDictionary *)values
@@ -2582,7 +2583,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (void)loadRequest:(NSURLRequest *)request
 {
-    [self _loadRequest:request subresources:nil];
+    [self _loadRequest:request subresources:nil subframeArchives:nil];
 }
 
 - (void)_loadData:(NSData *)data MIMEType:(NSString *)MIMEType textEncodingName:(NSString *)encodingName baseURL:(NSURL *)URL unreachableURL:(NSURL *)unreachableURL

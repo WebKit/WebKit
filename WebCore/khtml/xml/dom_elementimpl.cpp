@@ -364,12 +364,8 @@ void ElementImpl::createAttributeMap() const
 
 bool ElementImpl::isURLAttribute(AttributeImpl *attr) const
 {
-    return isSubresourceURLAttribute(attr);
-    
-}
-bool ElementImpl::isSubresourceURLAttribute(AttributeImpl *attr) const
-{
     return false;
+    
 }
 
 void ElementImpl::defaultEventHandler(EventImpl *evt)

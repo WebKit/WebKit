@@ -529,9 +529,9 @@ static WebHTMLView *lastHitView = nil;
 
 - (WebArchive *)_selectedArchive:(NSString **)markupString
 {
-    NSArray *subresourceURLStrings;
-    *markupString = [[self _bridge] markupStringFromRange:[[self _bridge] selectedDOMRange] subresourceURLStrings:&subresourceURLStrings];
-    return [[self _dataSource] _archiveWithMarkupString:*markupString subresourceURLStrings:subresourceURLStrings];
+    NSArray *nodes;
+    *markupString = [[self _bridge] markupStringFromRange:[[self _bridge] selectedDOMRange] nodes:&nodes];
+    return [[self _dataSource] _archiveWithMarkupString:*markupString nodes:nodes];
 }
 
 - (void)_writeSelectionToPasteboard:(NSPasteboard *)pasteboard
@@ -607,14 +607,16 @@ static WebHTMLView *lastHitView = nil;
         WebResource *resource = [[WebResource alloc] initWithData:[pasteboard dataForType:NSTIFFPboardType]
                                                               URL:[NSURL _web_uniqueWebDataURLWithRelativeString:@"/image.tiff"]
                                                          MIMEType:@"image/tiff" 
-                                                 textEncodingName:nil];
+                                                 textEncodingName:nil
+                                                        frameName:nil];
         [[self _dataSource] _replaceSelectionWithImageResource:resource];
         [resource release];
     } else if ([types containsObject:NSPICTPboardType]) {
         WebResource *resource = [[WebResource alloc] initWithData:[pasteboard dataForType:NSPICTPboardType]
                                                               URL:[NSURL _web_uniqueWebDataURLWithRelativeString:@"/image.pict"]
                                                          MIMEType:@"image/pict" 
-                                                 textEncodingName:nil];
+                                                 textEncodingName:nil
+                                                        frameName:nil];
         [[self _dataSource] _replaceSelectionWithImageResource:resource];
         [resource release];
     } else if ((URL = [pasteboard _web_bestURL])) {

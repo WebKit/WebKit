@@ -98,7 +98,6 @@ public:
     void setDisabledState(bool _disabled);
 
     virtual bool isURLAttribute(AttributeImpl *attr) const;
-    virtual bool isSubresourceURLAttribute(AttributeImpl *attr) const;
     
 protected:
     khtml::CachedCSSStyleSheet *m_cachedSheet;
@@ -144,7 +143,7 @@ public:
 
     virtual Id id() const;
     
-    virtual bool isSubresourceURLAttribute(AttributeImpl *attr) const;
+    virtual bool isURLAttribute(AttributeImpl *attr) const;
     
 };
 

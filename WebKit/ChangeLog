@@ -1,3 +1,84 @@
+2004-04-16  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3587599>: Mail Page, Web Archives don't preserve subframes
+	Moved code that assembled subresource URLs from DOM nodes from WebCore to WebKit.
+
+        Reviewed by rjw.
+
+        * DOM.subproj/DOMExtensions.h: copied from WebCore
+        * DOM.subproj/WebDOMOperations.h:
+        * DOM.subproj/WebDOMOperations.m:
+        (-[DOMNode webArchive]): call renamed methods
+        (-[DOMNode markupString]): ditto
+        (-[DOMNode _URLsFromSelectors:]): new, returns array of URLs given selectors
+        (-[DOMNode _subresourceURLs]): new, base class does nothing, subclasses call _URLsFromSelectors with URL selectors
+        (-[DOMDocument webFrame]): new
+        (-[DOMRange webArchive]): call renamed methods
+        (-[DOMRange markupString]): ditto
+        (-[DOMHTMLBodyElement _subresourceURLs]): new
+        (-[DOMHTMLInputElement _subresourceURLs]): new
+        (-[DOMHTMLLinkElement _subresourceURLs]): new
+        (-[DOMHTMLScriptElement _subresourceURLs]): new
+        (-[DOMHTMLImageElement _subresourceURLs]): new
+        (-[DOMHTMLEmbedElement _subresourceURLs]): new
+        (-[DOMHTMLObjectElement _subresourceURLs]): new
+        (-[DOMHTMLParamElement _subresourceURLs]): new
+        (-[DOMHTMLTableElement _subresourceURLs]): new
+        (-[DOMHTMLTableCellElement _subresourceURLs]): new
+        * WebKit.pbproj/project.pbxproj:
+        * WebView.subproj/WebArchive.h:
+        * WebView.subproj/WebArchive.m:
+        (-[WebArchivePrivate dealloc]): release new subframeArchives ivar
+        (-[WebArchive initWithMainResource:subresources:subframeArchives:]): take subframeArchives
+        (-[WebArchive _initWithPropertyList:]): new, recursively creates WebArchives
+        (-[WebArchive initWithData:]): call _initWithPropertyList
+        (-[WebArchive subframeArchives]): new
+        (-[WebArchive _propertyListRepresentation]): new, recursively creates property lists of WebArchives
+        (-[WebArchive data]): call _propertyListRepresentation
+        * WebView.subproj/WebBaseResourceHandleDelegate.m:
+        (-[WebBaseResourceHandleDelegate saveResource]): call renamed methods
+        * WebView.subproj/WebDataSource.m:
+        (-[WebDataSourcePrivate dealloc]): release new pendingSubframeArchives ivar
+        (-[WebDataSource _archiveWithMarkupString:nodes:]): renamed and reimplemented, handles subframes
+        (-[WebDataSource _archive]): new
+        (-[WebDataSource _setPendingSubframeArchives:]): new
+        (-[WebDataSource _archiveForFrameName:]): new
+        * WebView.subproj/WebDataSourcePrivate.h:
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame loadArchive:]): handle subframes
+        (-[WebFrame _loadRequest:subresources:subframeArchives:]): ditto
+        (-[WebFrame _loadURL:intoChild:]): use the subframe archive if we have it
+        (-[WebFrame loadRequest:]): call renamed methods
+        * WebView.subproj/WebFramePrivate.h:
+        * WebView.subproj/WebHTMLRepresentation.m:
+        (-[WebHTMLRepresentation loadWebArchive]): call renamed methods and handle subframes
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _selectedArchive:]): call renamed methods
+        (-[WebHTMLView _pasteFromPasteboard:]): call renamed methods
+        * WebView.subproj/WebHTMLViewPrivate.h:
+        * WebView.subproj/WebImageRepresentation.h:
+        * WebView.subproj/WebImageRepresentation.m: instead of storing some items from the data source, just store the data source
+        (-[WebImageRepresentation dealloc]): removed use of deleted ivars
+        (-[WebImageRepresentation URL]): use dataSource instead of ivar
+        (-[WebImageRepresentation doneLoading]): use new boolean ivar
+        (-[WebImageRepresentation setDataSource:]): store the data source
+        (-[WebImageRepresentation receivedData:withDataSource:]): use dataSource instead of ivar
+        (-[WebImageRepresentation receivedError:withDataSource:]): ditto
+        (-[WebImageRepresentation finishedLoadingWithDataSource:]): ditto
+        (-[WebImageRepresentation title]): ditto
+        (-[WebImageRepresentation data]): ditto
+        (-[WebImageRepresentation filename]): ditto
+        (-[WebImageRepresentation archive]): ditto
+        * WebView.subproj/WebResource.h:
+        * WebView.subproj/WebResource.m:
+        (-[WebResourcePrivate dealloc]): release new frame name ivar
+        (-[WebResource initWithData:URL:MIMEType:textEncodingName:frameName:]): take a frame name
+        (-[WebResource frameName]): new
+        (-[WebResource _initWithPropertyList:]): handle frame name
+        (-[WebResource _initWithCachedResponse:originalURL:]): call renamed methods
+        (-[WebResource _propertyListRepresentation]):
+        * WebView.subproj/WebResourcePrivate.h: handle frame name
+
 2004-04-15  David Hyatt  <hyatt@apple.com>
 
 	Make sure isOpaque returns NO when the WebHTMLVIew doesn't draw its background.

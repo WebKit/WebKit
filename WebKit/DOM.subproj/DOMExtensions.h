@@ -25,7 +25,22 @@
 
 #import "DOMHTML.h"
 
-@interface DOMElement (DOMHTMLExtensions)
+@interface DOMHTMLEmbedElement : DOMHTMLElement
+- (NSString *)align;
+- (void)setAlign:(NSString *)align;
+- (long)height;
+- (void)setHeight:(long)height;
+- (NSString *)name;
+- (void)setName:(NSString *)name;
+- (NSString *)src;
+- (void)setSrc:(NSString *)src;
+- (NSString *)type;
+- (void)setType:(NSString *)type;
+- (long)width;
+- (void)setWidth:(long)width;
+@end
+
+@interface DOMHTMLElement (DOMHTMLElementExtensions)
 - (NSString *)innerHTML;
 - (void)setInnerHTML:(NSString *)innerHTML;
 - (NSString *)innerText;
@@ -34,4 +49,14 @@
 - (NSString *)contentEditable;
 - (void)setContentEditable:(NSString *)contentEditable;
 - (BOOL)isContentEditable;
+@end
+
+@interface DOMHTMLTableElement (DOMHTMLTableElementExtensions)
+- (NSString *)background;
+- (void)setBackground:(NSString *)background;
+@end
+
+@interface DOMHTMLTableCellElement (DOMHTMLTableCellElementExtensions)
+- (NSString *)background;
+- (void)setBackground:(NSString *)background;
 @end

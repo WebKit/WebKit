@@ -1,3 +1,73 @@
+2004-04-16  Chris Blumenberg  <cblu@apple.com>
+
+	Added DOMHTMLEmbedElement as a DOM extension since EMBED is represented in our DOM even though its not part of the spec.
+	Added all DOMCore and DOMHTML symbols to WebCore's symbols file.
+	Removed isSubresourceURLAttribute from dom node. This was only used for the WebArchive feature and all that work is now done in WebKit.
+
+        Reviewed by kocienda.
+
+        * WebCore-combined.exp:
+        * WebCore.exp:
+        * khtml/html/html_baseimpl.cpp:
+        (HTMLBodyElementImpl::isURLAttribute): renamed from isSubresourceURLAttribute. As a convenience to subclasses, dom_elementimpl would call isSubresourceURLAttribute in isURLAttribute, but this is no longer done
+        (HTMLFrameElementImpl::isURLAttribute): ditto
+        (HTMLIFrameElementImpl::isURLAttribute): ditto
+        * khtml/html/html_baseimpl.h:
+        * khtml/html/html_formimpl.cpp:
+        (HTMLInputElementImpl::isURLAttribute): ditto
+        * khtml/html/html_formimpl.h:
+        * khtml/html/html_headimpl.cpp:
+        (HTMLScriptElementImpl::isURLAttribute): ditto
+        * khtml/html/html_headimpl.h:
+        * khtml/html/html_imageimpl.cpp: 
+        (HTMLImageElementImpl::isURLAttribute): ditto
+        * khtml/html/html_imageimpl.h:
+        * khtml/html/html_objectimpl.cpp:
+        (HTMLEmbedElementImpl::isURLAttribute): ditto
+        (HTMLObjectElementImpl::isURLAttribute): ditto
+        (HTMLParamElementImpl::isURLAttribute): ditto
+        * khtml/html/html_objectimpl.h:
+        * khtml/html/html_tableimpl.cpp:
+        (HTMLTableElementImpl::isURLAttribute): ditto
+        (HTMLTableCellElementImpl::isURLAttribute): ditto
+        * khtml/html/html_tableimpl.h:
+        * khtml/xml/dom2_rangeimpl.cpp:
+        (RangeImpl::toHTMLWithOptions): take a node list (see below)
+        * khtml/xml/dom2_rangeimpl.h:
+        * khtml/xml/dom_elementimpl.cpp:
+        (ElementImpl::isURLAttribute):
+        * khtml/xml/dom_elementimpl.h:
+        * khtml/xml/dom_nodeimpl.cpp:
+        (NodeImpl::recursive_toHTMLWithOptions): append copied nodes to a list of nodes so that WebKit can operate on them
+        * khtml/xml/dom_nodeimpl.h:
+        * kwq/DOM.mm:
+        (+[DOMNode _nodeWithImpl:]): added support for HTML types
+        * kwq/DOMExtensions.h:
+        * kwq/DOMHTML.mm:
+        (-[DOMHTMLPreElement setWidth:]):
+        (-[DOMHTMLEmbedElement _embedElementImpl]):
+        (-[DOMHTMLEmbedElement align]):
+        (-[DOMHTMLEmbedElement setAlign:]):
+        (-[DOMHTMLEmbedElement height]):
+        (-[DOMHTMLEmbedElement setHeight:]):
+        (-[DOMHTMLEmbedElement name]):
+        (-[DOMHTMLEmbedElement setName:]):
+        (-[DOMHTMLEmbedElement src]):
+        (-[DOMHTMLEmbedElement setSrc:]):
+        (-[DOMHTMLEmbedElement type]):
+        (-[DOMHTMLEmbedElement setType:]):
+        (-[DOMHTMLEmbedElement width]):
+        (-[DOMHTMLEmbedElement setWidth:]):
+        (-[DOMHTMLTableElement background]):
+        (-[DOMHTMLTableElement setBackground:]):
+        (-[DOMHTMLTableCellElement background]): new extension 
+        (-[DOMHTMLTableCellElement setBackground:]): ditto
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge nodesFromList:]): new
+        (-[WebCoreBridge markupStringFromNode:nodes:]): return a list of nodes instead of subresource URLs so WebKit can operate on the nodes
+        (-[WebCoreBridge markupStringFromRange:nodes:]): ditto
+
 2004-04-15  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3624335, bugs with overflow and positioned objects.  The scrollbar didn't properly update

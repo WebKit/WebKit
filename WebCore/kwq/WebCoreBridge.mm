@@ -449,28 +449,40 @@ static bool initializedKJS = FALSE;
     }
 }
 
-- (NSString *)markupStringFromNode:(DOMNode *)node subresourceURLStrings:(NSArray **)subresourceURLStrings
+- (NSArray *)nodesFromList:(QPtrList<NodeImpl> *)nodeList
 {
-    QStringList *subresourceURLs = NULL;
-    if (subresourceURLStrings) {
-        subresourceURLs = new QStringList();
+    NSMutableArray *nodes = [NSMutableArray array];
+    unsigned int count = nodeList->count();
+    for (unsigned int i = 0; i < count; i++) {
+        [nodes addObject:[DOMNode _nodeWithImpl:nodeList->at(i)]];
+    }    
+    return nodes;
+}
+
+- (NSString *)markupStringFromNode:(DOMNode *)node nodes:(NSArray **)nodes
+{
+    QPtrList<NodeImpl> *nodeList = NULL;
+    if (nodes) {
+        nodeList = new QPtrList<NodeImpl>;
     }
-    NSString *markupString = [node _nodeImpl]->recursive_toHTMLWithOptions(false, NULL, subresourceURLs).getNSString();
-    if (subresourceURLStrings) {
-        *subresourceURLStrings = subresourceURLs->getNSArray();
+    NSString *markupString = [node _nodeImpl]->recursive_toHTMLWithOptions(false, NULL, nodeList).getNSString();
+    if (nodes) {
+        *nodes = [self nodesFromList:nodeList];
+        delete nodeList;
     }
     return [self _stringWithDocumentTypeStringAndMarkupString:markupString];
 }
 
-- (NSString *)markupStringFromRange:(DOMRange *)range subresourceURLStrings:(NSArray **)subresourceURLStrings
+- (NSString *)markupStringFromRange:(DOMRange *)range nodes:(NSArray **)nodes
 {
-    QStringList *subresourceURLs = NULL;
-    if (subresourceURLStrings) {
-        subresourceURLs = new QStringList();
+    QPtrList<NodeImpl> *nodeList = NULL;
+    if (nodes) {
+        nodeList = new QPtrList<NodeImpl>;
     }
-    NSString *markupString = [range _rangeImpl]->toHTMLWithOptions(subresourceURLs).string().getNSString();
-    if (subresourceURLStrings) {
-        *subresourceURLStrings = subresourceURLs->getNSArray();
+    NSString *markupString = [range _rangeImpl]->toHTMLWithOptions(nodeList).string().getNSString();
+    if (nodes) {
+        *nodes = [self nodesFromList:nodeList];
+        delete nodeList;
     }
     return [self _stringWithDocumentTypeStringAndMarkupString:markupString];
 }

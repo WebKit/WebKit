@@ -9,19 +9,24 @@
 #import <Foundation/NSDictionary_NSURLExtras.h>
 #import <Foundation/NSURL_NSURLExtras.h>
 
-NSString *WebArchivePboardType =            @"Apple Web Archive pasteboard type";
-NSString *WebMainResourceKey =              @"WebMainResource";
+extern NSString *WebResourceDataKey;
+extern NSString *WebResourceMIMETypeKey;
+extern NSString *WebResourceURLKey;
+extern NSString *WebResourceTextEncodingNameKey;
+
 NSString *WebResourceDataKey =              @"WebResourceData";
+NSString *WebResourceFrameNameKey =         @"WebResourceFrameName";
 NSString *WebResourceMIMETypeKey =          @"WebResourceMIMEType";
 NSString *WebResourceURLKey =               @"WebResourceURL";
 NSString *WebResourceTextEncodingNameKey =  @"WebResourceTextEncodingName";
-NSString *WebSubresourcesKey =              @"WebSubresources";
+
 
 @interface WebResourcePrivate : NSObject
 {
 @public
     NSData *data;
     NSURL *URL;
+    NSString *frameName;
     NSString *MIMEType;
     NSString *textEncodingName;
 }
@@ -33,6 +38,7 @@ NSString *WebSubresourcesKey =              @"WebSubresources";
 {
     [data release];
     [URL release];
+    [frameName release];
     [MIMEType release];
     [textEncodingName release];
     [super dealloc];
@@ -42,7 +48,7 @@ NSString *WebSubresourcesKey =              @"WebSubresources";
 
 @implementation WebResource
 
-- (id)initWithData:(NSData *)data URL:(NSURL *)URL MIMEType:(NSString *)MIMEType textEncodingName:(NSString *)textEncodingName
+- (id)initWithData:(NSData *)data URL:(NSURL *)URL MIMEType:(NSString *)MIMEType textEncodingName:(NSString *)textEncodingName frameName:(NSString *)frameName
 {
     _private = [[WebResourcePrivate alloc] init];
     
@@ -65,6 +71,7 @@ NSString *WebSubresourcesKey =              @"WebSubresources";
     _private->MIMEType = [MIMEType copy];
     
     _private->textEncodingName = [textEncodingName copy];
+    _private->frameName = [frameName copy];
     
     return self;
 }
@@ -93,6 +100,11 @@ NSString *WebSubresourcesKey =              @"WebSubresources";
 - (NSString *)textEncodingName
 {
     return _private->textEncodingName;
+}
+
+- (NSString *)frameName
+{
+    return _private->frameName;
 }
 
 @end
@@ -139,7 +151,8 @@ NSString *WebSubresourcesKey =              @"WebSubresources";
     return [self initWithData:[data isKindOfClass:[NSData class]] ? data : nil
                           URL:URLString ? [NSURL _web_URLWithDataAsString:URLString] : nil
                      MIMEType:[propertyList _web_stringForKey:WebResourceMIMETypeKey]
-             textEncodingName:[propertyList _web_stringForKey:WebResourceTextEncodingNameKey]];
+             textEncodingName:[propertyList _web_stringForKey:WebResourceTextEncodingNameKey]
+                    frameName:[propertyList _web_stringForKey:WebResourceFrameNameKey]];
 }
 
 - (id)_initWithCachedResponse:(NSCachedURLResponse *)cachedResponse originalURL:(NSURL *)originalURL
@@ -148,7 +161,8 @@ NSString *WebSubresourcesKey =              @"WebSubresources";
     return [self initWithData:[cachedResponse data]
                           URL:originalURL
                      MIMEType:[response MIMEType]
-             textEncodingName:[response textEncodingName]];
+             textEncodingName:[response textEncodingName]
+                    frameName:nil];
 }
 
 - (NSFileWrapper *)_fileWrapperRepresentation
@@ -167,6 +181,9 @@ NSString *WebSubresourcesKey =              @"WebSubresources";
     if (_private->textEncodingName) {
         [propertyList setObject:_private->textEncodingName forKey:WebResourceTextEncodingNameKey];
     }
+    if (_private->frameName) {
+        [propertyList setObject:_private->frameName forKey:WebResourceFrameNameKey];
+    }
     return propertyList;
 }
 
@@ -179,3 +196,4 @@ NSString *WebSubresourcesKey =              @"WebSubresources";
 }
 
 @end
+

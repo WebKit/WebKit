@@ -7,13 +7,6 @@
 
 #import <WebKit/WebResource.h>
 
-extern NSString *WebMainResourceKey;
-extern NSString *WebResourceDataKey;
-extern NSString *WebResourceMIMETypeKey;
-extern NSString *WebResourceURLKey;
-extern NSString *WebResourceTextEncodingNameKey;
-extern NSString *WebSubresourcesKey;
-
 @interface WebResource (WebResourcePrivate)
 
 + (NSArray *)_resourcesFromPropertyLists:(NSArray *)propertyLists;

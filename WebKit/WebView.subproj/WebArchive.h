@@ -18,11 +18,12 @@ extern NSString *WebArchivePboardType;
     WebArchivePrivate *_private;
 }
 
-- (id)initWithMainResource:(WebResource *)mainResource subresources:(NSArray *)subresources;
+- (id)initWithMainResource:(WebResource *)mainResource subresources:(NSArray *)subresources subframeArchives:(NSArray *)subframeArchives;
 - (id)initWithData:(NSData *)data;
 
 - (WebResource *)mainResource;
 - (NSArray *)subresources;
+- (NSArray *)subframeArchives;
 
 - (NSData *)data;
 

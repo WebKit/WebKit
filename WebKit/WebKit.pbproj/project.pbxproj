@@ -352,6 +352,7 @@
 				8373435C0624EE0D00F3B289,
 				930D02BC06275F640076701E,
 				930D02BE06275F710076701E,
+				84AE9060062DE6A80075BBF9,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2420,6 +2421,21 @@
 			refType = 4;
 			sourceTree = "<group>";
 		};
+		84AE905F062DE6A80075BBF9 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = WebDOMOperationsPrivate.h;
+			path = DOM.subproj/WebDOMOperationsPrivate.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		84AE9060062DE6A80075BBF9 = {
+			fileRef = 84AE905F062DE6A80075BBF9;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		84AF355005C724FA00C5ACD9 = {
 			buildActionMask = 2147483647;
 			files = (
@@ -3900,6 +3916,7 @@
 				F57D194D034E734901A80180,
 				F57D1951034E734901A80180,
 				846171F90624AE5B0071A4A3,
+				84AE905F062DE6A80075BBF9,
 				846171FA0624AE5B0071A4A3,
 			);
 			isa = PBXGroup;

@@ -5,44 +5,43 @@
 
 #import <WebKit/WebDataSourcePrivate.h>
 
+#import <WebKit/DOMHTML.h>
+#import <WebKit/WebAssertions.h>
 #import <WebKit/WebArchive.h>
 #import <WebKit/WebBridge.h>
 #import <WebKit/WebDataProtocol.h>
-#import <WebKit/WebDocument.h>
-#import <WebKit/WebException.h>
-#import <WebKit/WebFramePrivate.h>
-#import <WebKit/WebHTMLRepresentation.h>
-#import <WebKit/WebKitLogging.h>
-#import <WebKit/WebKitStatisticsPrivate.h>
-#import <WebKit/WebMainResourceClient.h>
-#import <WebKit/WebResourcePrivate.h>
-#import <WebKit/WebView.h>
-
-#import <WebKit/WebAssertions.h>
-#import <Foundation/NSURLFileTypeMappings.h>
-#import <Foundation/NSURLConnection.h>
-#import <Foundation/NSURLRequest.h>
-#import <Foundation/NSURLResponse.h>
-#import <Foundation/NSDictionary_NSURLExtras.h>
-
-#import <WebKit/WebIconLoader.h>
-#import <WebKit/WebViewPrivate.h>
-#import <WebKit/WebFrameLoadDelegate.h>
-#import <WebKit/WebResourceLoadDelegate.h>
 #import <WebKit/WebDefaultResourceLoadDelegate.h>
-#import <WebKit/WebKitErrorsPrivate.h>
-#import <Foundation/NSString_NSURLExtras.h>
-#import <WebKit/WebNSURLExtras.h>
+#import <WebKit/WebDocument.h>
+#import <WebKit/WebDOMOperationsPrivate.h>
+#import <WebKit/WebException.h>
+#import <WebKit/WebFrameLoadDelegate.h>
+#import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebFrameViewPrivate.h>
 #import <WebKit/WebHistory.h>
 #import <WebKit/WebHistoryItemPrivate.h>
+#import <WebKit/WebHTMLRepresentation.h>
 #import <WebKit/WebHTMLViewPrivate.h>
-#import <WebKit/WebTextRepresentation.h>
+#import <WebKit/WebIconDatabasePrivate.h>
+#import <WebKit/WebIconLoader.h>
 #import <WebKit/WebImageRendererFactory.h>
 #import <WebKit/WebImageRepresentation.h>
 #import <WebKit/WebImageView.h>
+#import <WebKit/WebKitErrorsPrivate.h>
+#import <WebKit/WebKitLogging.h>
+#import <WebKit/WebKitStatisticsPrivate.h>
+#import <WebKit/WebMainResourceClient.h>
+#import <WebKit/WebNSURLExtras.h>
+#import <WebKit/WebResourceLoadDelegate.h>
+#import <WebKit/WebResourcePrivate.h>
+#import <WebKit/WebTextRepresentation.h>
+#import <WebKit/WebViewPrivate.h>
+
+#import <Foundation/NSDictionary_NSURLExtras.h>
+#import <Foundation/NSString_NSURLExtras.h>
+#import <Foundation/NSURLConnection.h>
+#import <Foundation/NSURLFileTypeMappings.h>
+#import <Foundation/NSURLRequest.h>
 #import <Foundation/NSURLResponsePrivate.h>
-#import <WebKit/WebIconDatabasePrivate.h>
 
 @implementation WebDataSourcePrivate 
 
@@ -72,6 +71,7 @@
     [responses release];
     [webFrame release];
     [subresources release];
+    [pendingSubframeArchives release];
 
     [super dealloc];
 }
@@ -126,31 +126,84 @@
     return nil;
 }
 
-- (WebArchive *)_archiveWithMarkupString:(NSString *)markupString subresourceURLStrings:(NSArray *)subresourceURLStrings
+- (WebArchive *)_archiveWithMarkupString:(NSString *)markupString nodes:(NSArray *)nodes
 { 
+    WebFrame *frame = [self webFrame];
     NSURLResponse *response = [self response];
     WebResource *mainResource = [[WebResource alloc] initWithData:[markupString dataUsingEncoding:NSUTF8StringEncoding]
                                                               URL:[response URL] 
                                                          MIMEType:[response MIMEType]
-                                                 textEncodingName:@"UTF-8"];
+                                                 textEncodingName:@"UTF-8"
+                                                        frameName:[frame name]];
     
-    NSEnumerator *enumerator = [subresourceURLStrings objectEnumerator];
+    NSMutableArray *subframeArchives = [[NSMutableArray alloc] init];
     NSMutableArray *subresources = [[NSMutableArray alloc] init];
-    NSString *URLString;
-    while ((URLString = [enumerator nextObject]) != nil) {
-        WebResource *subresource = [_private->subresources objectForKey:URLString];
-        if (subresource) {
-            [subresources addObject:subresource];
+    NSEnumerator *enumerator = [nodes objectEnumerator];
+    DOMNode *node;
+    while ((node = [enumerator nextObject]) != nil) {
+        if ([node isKindOfClass:[DOMHTMLFrameElement class]] || [node isKindOfClass:[DOMHTMLIFrameElement class]]) {
+            [subframeArchives addObject:[[[[(DOMHTMLFrameElement *)node contentDocument] webFrame] dataSource] _archive]];
         } else {
-            ERROR("Failed to copy subresource because data source does not have subresource for %@", URLString);
+            NSEnumerator *enumerator = [[node _subresourceURLs] objectEnumerator];
+            NSURL *URL;
+            while ((URL = [enumerator nextObject]) != nil) {
+                WebResource *subresource = [self subresourceForURL:URL];
+                if (subresource) {
+                    [subresources addObject:subresource];
+                } else {
+                    ERROR("Failed to archive subresource for %@", URL);
+                }
+            }
         }
     }
     
-    WebArchive *webArchive = [[[WebArchive alloc] initWithMainResource:mainResource subresources:subresources] autorelease];
+    WebArchive *archive = [[[WebArchive alloc] initWithMainResource:mainResource subresources:subresources subframeArchives:subframeArchives] autorelease];
     [mainResource release];
     [subresources release];
+    [subframeArchives release];
     
-    return webArchive;
+    return archive;
+}
+
+- (WebArchive *)_archive
+{
+    if ([[self representation] conformsToProtocol:@protocol(WebDocumentDOM)]) {
+        return [[(id <WebDocumentDOM>)[self representation] DOMDocument] webArchive];
+    } else {
+        NSURLResponse *response = [self response];
+        WebResource *mainResource = [[WebResource alloc] initWithData:[self data]
+                                                                  URL:[response URL] 
+                                                             MIMEType:[response MIMEType]
+                                                     textEncodingName:[response textEncodingName]
+                                                            frameName:[[self webFrame] name]];
+        WebArchive *archive = [[[WebArchive alloc] initWithMainResource:mainResource subresources:nil subframeArchives:nil] autorelease];
+        [mainResource release];
+        return archive;
+    }
+}
+
+- (void)_setPendingSubframeArchives:(NSArray *)subframeArchives
+{
+    ASSERT(_private->pendingSubframeArchives == nil);
+
+    if (subframeArchives == nil) {
+        return;
+    }
+    
+    _private->pendingSubframeArchives = [[NSMutableDictionary alloc] init];
+    NSEnumerator *enumerator = [subframeArchives objectEnumerator];
+    WebArchive *archive;
+    while ((archive = [enumerator nextObject]) != nil) {
+        NSString *frameName = [[archive mainResource] frameName];
+        if (frameName) {
+            [_private->pendingSubframeArchives setObject:archive forKey:frameName];
+        }
+    }
+}
+
+- (WebArchive *)_archiveForFrameName:(NSString *)frameName
+{
+    return [_private->pendingSubframeArchives objectForKey:frameName];
 }
 
 - (void)_replaceSelectionWithMarkupString:(NSString *)markupString baseURL:(NSURL *)baseURL

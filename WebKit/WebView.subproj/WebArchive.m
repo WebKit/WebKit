@@ -8,11 +8,17 @@
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebResourcePrivate.h>
 
+NSString *WebArchivePboardType =            @"Apple Web Archive pasteboard type";
+NSString *WebMainResourceKey =              @"WebMainResource";
+NSString *WebSubresourcesKey =              @"WebSubresources";
+NSString *WebSubframeArchivesKey =          @"WebSubframeArchives";
+
 @interface WebArchivePrivate : NSObject
 {
     @public
     WebResource *mainResource;
     NSArray *subresources;
+    NSArray *subframeArchives;
 }
 @end
 
@@ -22,6 +28,7 @@
 {
     [mainResource release];
     [subresources release];
+    [subframeArchives release];
     [super dealloc];
 }
 
@@ -36,14 +43,15 @@
     return self;
 }
 
-- (id)initWithMainResource:(WebResource *)mainResource subresources:(NSArray *)subresources
+- (id)initWithMainResource:(WebResource *)mainResource subresources:(NSArray *)subresources subframeArchives:(NSArray *)subframeArchives
 {
     [self init];
     
     _private->mainResource = [mainResource retain];
     _private->subresources = [subresources retain];
+    _private->subframeArchives = [subframeArchives retain];
     
-    if (!_private->mainResource && [_private->subresources count] == 0) {
+    if (!_private->mainResource) {
         [self release];
         return nil;
     }
@@ -51,10 +59,39 @@
     return self;
 }
 
-- (id)initWithData:(NSData *)data
+- (id)_initWithPropertyList:(id)propertyList
 {
     [self init];
     
+    if (![propertyList isKindOfClass:[NSDictionary class]]) {
+        [self release];
+        return nil;
+    }
+    
+    _private->mainResource = [[WebResource alloc] _initWithPropertyList:[propertyList objectForKey:WebMainResourceKey]];    
+    if (!_private->mainResource) {
+        [self release];
+        return nil;
+    }
+    
+    _private->subresources = [[WebResource _resourcesFromPropertyLists:[propertyList objectForKey:WebSubresourcesKey]] retain];
+    
+    NSEnumerator *enumerator = [[propertyList objectForKey:WebSubframeArchivesKey] objectEnumerator];
+    _private->subframeArchives = [[NSMutableArray alloc] init];
+    NSDictionary *archivePropertyList;
+    while ((archivePropertyList = [enumerator nextObject]) != nil) {
+        WebArchive *archive = [[WebArchive alloc] _initWithPropertyList:archivePropertyList];
+        if (archive) {
+            [(NSMutableArray *)_private->subframeArchives addObject:archive];
+            [archive release];
+        }
+    }
+           
+    return self;
+}
+
+- (id)initWithData:(NSData *)data
+{
 #if !LOG_DISABLED
     CFAbsoluteTime start = CFAbsoluteTimeGetCurrent();
 #endif
@@ -67,20 +104,8 @@
     CFAbsoluteTime duration = end - start;
 #endif
     LOG(Timing, "Parsing web archive with [NSPropertyListSerialization propertyListFromData::::] took %f seconds", duration);
-    if (![propertyList isKindOfClass:[NSDictionary class]]) {
-        [self release];
-        return nil;
-    }
     
-    _private->mainResource = [[WebResource alloc] _initWithPropertyList:[propertyList objectForKey:WebMainResourceKey]];
-    _private->subresources = [[WebResource _resourcesFromPropertyLists:[propertyList objectForKey:WebSubresourcesKey]] retain];
-    
-    if (!_private->mainResource && [_private->subresources count] == 0) {
-        [self release];
-        return nil;
-    }
-    
-    return self;
+    return [self _initWithPropertyList:propertyList];
 }
 
 - (void)dealloc
@@ -99,7 +124,12 @@
     return [[_private->subresources retain] autorelease];
 }
 
-- (NSData *)data
+- (NSArray *)subframeArchives
+{
+    return [[_private->subframeArchives retain] autorelease];
+}
+
+- (NSDictionary *)_propertyListRepresentation
 {
     NSMutableDictionary *propertyList = [NSMutableDictionary dictionary];
     if (_private->mainResource) {
@@ -109,6 +139,21 @@
     if ([propertyLists count] > 0) {
         [propertyList setObject:propertyLists forKey:WebSubresourcesKey];
     }
+    NSEnumerator *enumerator = [_private->subframeArchives objectEnumerator];
+    NSMutableArray *subarchivePropertyLists = [[NSMutableArray alloc] init];
+    WebArchive *archive;
+    while ((archive = [enumerator nextObject]) != nil) {
+        [subarchivePropertyLists addObject:[archive _propertyListRepresentation]];
+    }
+    if ([subarchivePropertyLists count] > 0) {
+        [propertyList setObject:subarchivePropertyLists forKey:WebSubframeArchivesKey];
+    }
+    return propertyList;
+}
+
+- (NSData *)data
+{
+    NSDictionary *propertyList = [self _propertyListRepresentation];
 #if !LOG_DISABLED
     CFAbsoluteTime start = CFAbsoluteTimeGetCurrent();
 #endif

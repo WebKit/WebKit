@@ -88,10 +88,11 @@
 
 - (void)loadWebArchive
 {
-    WebArchive *webArchive = [[WebArchive alloc] initWithData:[_private->dataSource data]];
-    WebResource *mainResource = [webArchive mainResource];
-    NSArray *subresources = [webArchive subresources];
-    [webArchive release];
+    WebArchive *archive = [[WebArchive alloc] initWithData:[_private->dataSource data]];
+    WebResource *mainResource = [archive mainResource];
+    NSArray *subresources = [archive subresources];
+    NSArray *subframeArchives = [archive subframeArchives];
+    [archive release];
     if (!mainResource) {
         return;
     }
@@ -102,6 +103,7 @@
     _private->parsedWebArchiveData = data;
     
     [_private->dataSource addSubresources:subresources];
+    [_private->dataSource _setPendingSubframeArchives:subframeArchives];
     [_private->bridge closeURL];
     [_private->bridge openURL:[mainResource URL]
                        reload:NO 

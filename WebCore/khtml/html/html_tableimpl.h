@@ -107,7 +107,7 @@ public:
 
     virtual void attach();
     
-    virtual bool isSubresourceURLAttribute(AttributeImpl *attr) const;
+    virtual bool isURLAttribute(AttributeImpl *attr) const;
 
 protected:
     HTMLTableSectionElementImpl *head;
@@ -214,7 +214,7 @@ public:
     // used by table cells to share style decls created by the enclosing table.
     virtual CSSStyleDeclarationImpl* additionalAttributeStyleDecl();
     
-    virtual bool isSubresourceURLAttribute(AttributeImpl *attr) const;
+    virtual bool isURLAttribute(AttributeImpl *attr) const;
 
 protected:
     int _row;

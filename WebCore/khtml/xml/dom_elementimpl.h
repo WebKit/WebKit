@@ -217,7 +217,6 @@ public:
     virtual void defaultEventHandler(EventImpl *evt);
     
     virtual bool isURLAttribute(AttributeImpl *attr) const;
-    virtual bool isSubresourceURLAttribute(AttributeImpl *attr) const;
     
 #ifndef NDEBUG
     virtual void dump(QTextStream *stream, QString ind = "") const;

@@ -36,6 +36,7 @@
 #import <dom/dom_xml.h>
 #import <dom/dom2_range.h>
 #import <html/html_elementimpl.h>
+#import <misc/htmltags.h>
 #import <xml/dom_docimpl.h>
 #import <xml/dom_elementimpl.h>
 #import <xml/dom_nodeimpl.h>
@@ -45,6 +46,7 @@
 #import <xml/dom2_rangeimpl.h>
 #import <xml/dom2_viewsimpl.h>
 
+#import "DOMHTML.h"
 #import "DOMInternal.h"
 #import "KWQAssertions.h"
 
@@ -363,42 +365,197 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
     
     Class wrapperClass = nil;
     switch (impl->nodeType()) {
-    case Node::ELEMENT_NODE:
-        wrapperClass = [DOMElement class];
-        break;
-    case Node::ATTRIBUTE_NODE:
-        wrapperClass = [DOMAttr class];
-        break;
-    case Node::TEXT_NODE:
-        wrapperClass = [DOMText class];
-        break;
-    case Node::CDATA_SECTION_NODE:
-        wrapperClass = [DOMCDATASection class];
-        break;
-    case Node::ENTITY_REFERENCE_NODE:
-        wrapperClass = [DOMEntityReference class];
-        break;
-    case Node::ENTITY_NODE:
-        wrapperClass = [DOMEntity class];
-        break;
-    case Node::PROCESSING_INSTRUCTION_NODE:
-        wrapperClass = [DOMProcessingInstruction class];
-        break;
-    case Node::COMMENT_NODE:
-        wrapperClass = [DOMComment class];
-        break;
-    case Node::DOCUMENT_NODE:
-        wrapperClass = [DOMDocument class];
-        break;
-    case Node::DOCUMENT_TYPE_NODE:
-        wrapperClass = [DOMDocumentType class];
-        break;
-    case Node::DOCUMENT_FRAGMENT_NODE:
-        wrapperClass = [DOMDocumentFragment class];
-        break;
-    case Node::NOTATION_NODE:
-        wrapperClass = [DOMNotation class];
-        break;
+        case Node::ELEMENT_NODE:
+            if (impl->isHTMLElement()) {
+                // FIXME: There are no identifiers for HTMLHeadingElement, HTMLModElement, 
+                // HTMLTableCaptionElement, HTMLTableColElement, HTMLTableSectionElement.
+                // Find other ways to identify them.
+                switch (impl->identifier()) {
+                    case ID_HTML:
+                        wrapperClass = [DOMHTMLHtmlElement class];
+                        break;
+                    case ID_HEAD:
+                        wrapperClass = [DOMHTMLHeadElement class];
+                        break;
+                    case ID_LINK:
+                        wrapperClass = [DOMHTMLLinkElement class];
+                        break;
+                    case ID_TITLE:
+                        wrapperClass = [DOMHTMLTitleElement class];
+                        break;
+                    case ID_META:
+                        wrapperClass = [DOMHTMLMetaElement class];
+                        break;
+                    case ID_BASE:
+                        wrapperClass = [DOMHTMLBaseElement class];
+                        break;
+                    case ID_ISINDEX:
+                        wrapperClass = [DOMHTMLIsIndexElement class];
+                        break;
+                    case ID_STYLE:
+                        wrapperClass = [DOMHTMLStyleElement class];
+                        break;
+                    case ID_BODY:
+                        wrapperClass = [DOMHTMLBodyElement class];
+                        break;
+                    case ID_FORM:
+                        wrapperClass = [DOMHTMLFormElement class];
+                        break;
+                    case ID_SELECT:
+                        wrapperClass = [DOMHTMLSelectElement class];
+                        break;
+                    case ID_OPTGROUP:
+                        wrapperClass = [DOMHTMLOptGroupElement class];
+                        break;
+                    case ID_OPTION:
+                        wrapperClass = [DOMHTMLOptionElement class];
+                        break;
+                    case ID_INPUT:
+                        wrapperClass = [DOMHTMLInputElement class];
+                        break;
+                    case ID_TEXTAREA:
+                        wrapperClass = [DOMHTMLTextAreaElement class];
+                        break;
+                    case ID_BUTTON:
+                        wrapperClass = [DOMHTMLButtonElement class];
+                        break;
+                    case ID_LABEL:
+                        wrapperClass = [DOMHTMLLabelElement class];
+                        break;  
+                    case ID_FIELDSET:
+                        wrapperClass = [DOMHTMLFieldSetElement class];
+                        break;      
+                    case ID_LEGEND:
+                        wrapperClass = [DOMHTMLLegendElement class];
+                        break;
+                    case ID_UL:
+                        wrapperClass = [DOMHTMLUListElement class];
+                        break;
+                    case ID_OL:
+                        wrapperClass = [DOMHTMLOListElement class];
+                        break;
+                    case ID_DL:
+                        wrapperClass = [DOMHTMLDListElement class];
+                        break;
+                    case ID_DIR:
+                        wrapperClass = [DOMHTMLDirectoryElement class];
+                        break;
+                    case ID_MENU:
+                        wrapperClass = [DOMHTMLMenuElement class];
+                        break;
+                    case ID_LI:
+                        wrapperClass = [DOMHTMLLIElement class];
+                        break;
+                    case ID_DIV:
+                        wrapperClass = [DOMHTMLDivElement class];
+                        break;
+                    case ID_P:
+                        wrapperClass = [DOMHTMLParagraphElement class];
+                        break;
+                    case ID_Q:
+                        wrapperClass = [DOMHTMLQuoteElement class];
+                        break;
+                    case ID_PRE:
+                        wrapperClass = [DOMHTMLPreElement class];
+                        break;
+                    case ID_BR:
+                        wrapperClass = [DOMHTMLBRElement class];
+                        break;
+                    case ID_BASEFONT:
+                        wrapperClass = [DOMHTMLFontElement class];
+                        break;
+                    case ID_FONT:
+                        wrapperClass = [DOMHTMLFontElement class];
+                        break;
+                    case ID_HR:
+                        wrapperClass = [DOMHTMLHRElement class];
+                        break;
+                    case ID_A:
+                        wrapperClass = [DOMHTMLAnchorElement class];
+                        break;
+                    case ID_IMG:
+                        wrapperClass = [DOMHTMLImageElement class];
+                        break;
+                    case ID_OBJECT:
+                        wrapperClass = [DOMHTMLObjectElement class];
+                        break;
+                    case ID_PARAM:
+                        wrapperClass = [DOMHTMLParamElement class];
+                        break;
+                    case ID_APPLET:
+                        wrapperClass = [DOMHTMLAppletElement class];
+                        break;
+                    case ID_MAP:
+                        wrapperClass = [DOMHTMLMapElement class];
+                        break;
+                    case ID_AREA:
+                        wrapperClass = [DOMHTMLAreaElement class];
+                        break;
+                    case ID_SCRIPT:
+                        wrapperClass = [DOMHTMLScriptElement class];
+                        break;
+                    case ID_TABLE:
+                        wrapperClass = [DOMHTMLTableElement class];
+                        break;
+                    case ID_TD:
+                        wrapperClass = [DOMHTMLTableCellElement class];
+                        break;
+                    case ID_TR:
+                        wrapperClass = [DOMHTMLTableRowElement class];
+                        break;
+                    case ID_FRAMESET:
+                        wrapperClass = [DOMHTMLFrameSetElement class];
+                        break;
+                    case ID_FRAME:
+                        wrapperClass = [DOMHTMLFrameElement class];
+                        break;
+                    case ID_IFRAME:
+                        wrapperClass = [DOMHTMLIFrameElement class];
+                        break;
+                    default:
+                        wrapperClass = [DOMHTMLElement class];
+                }
+            } else {
+                wrapperClass = [DOMElement class];
+            }
+            break;
+        case Node::ATTRIBUTE_NODE:
+            wrapperClass = [DOMAttr class];
+            break;
+        case Node::TEXT_NODE:
+            wrapperClass = [DOMText class];
+            break;
+        case Node::CDATA_SECTION_NODE:
+            wrapperClass = [DOMCDATASection class];
+            break;
+        case Node::ENTITY_REFERENCE_NODE:
+            wrapperClass = [DOMEntityReference class];
+            break;
+        case Node::ENTITY_NODE:
+            wrapperClass = [DOMEntity class];
+            break;
+        case Node::PROCESSING_INSTRUCTION_NODE:
+            wrapperClass = [DOMProcessingInstruction class];
+            break;
+        case Node::COMMENT_NODE:
+            wrapperClass = [DOMComment class];
+            break;
+        case Node::DOCUMENT_NODE:
+            if (static_cast<DocumentImpl *>(impl)->isHTMLDocument()) {
+                wrapperClass = [DOMHTMLDocument class];
+            } else {
+                wrapperClass = [DOMDocument class];
+            }
+            break;
+        case Node::DOCUMENT_TYPE_NODE:
+            wrapperClass = [DOMDocumentType class];
+            break;
+        case Node::DOCUMENT_FRAGMENT_NODE:
+            wrapperClass = [DOMDocumentFragment class];
+            break;
+        case Node::NOTATION_NODE:
+            wrapperClass = [DOMNotation class];
+            break;
     }
     return [[[wrapperClass alloc] _initWithNodeImpl:impl] autorelease];
 }

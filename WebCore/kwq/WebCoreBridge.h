@@ -236,8 +236,8 @@ typedef enum {
 - (NSAttributedString *)selectedAttributedString;
 - (NSString *)selectedString;
 
-- (NSString *)markupStringFromNode:(DOMNode *)node subresourceURLStrings:(NSArray **)subresourceURLStrings;
-- (NSString *)markupStringFromRange:(DOMRange *)range subresourceURLStrings:(NSArray **)subresourceURLStrings;
+- (NSString *)markupStringFromNode:(DOMNode *)node nodes:(NSArray **)nodes;
+- (NSString *)markupStringFromRange:(DOMRange *)range nodes:(NSArray **)nodes;
 
 - (void)selectAll;
 - (void)deselectAll;

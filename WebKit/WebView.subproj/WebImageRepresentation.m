@@ -6,7 +6,7 @@
 #import "WebImageRepresentation.h"
 
 #import <WebKit/WebArchive.h>
-#import <WebKit/WebDataSource.h>
+#import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebImageRenderer.h>
 #import <WebKit/WebImageRendererFactory.h>
 #import <WebKit/WebLocalizableStrings.h>
@@ -20,10 +20,7 @@
 
 - (void)dealloc
 {
-    [filename release];
     [image release];
-    [data release];
-    [URL release];
     [super dealloc];
 }
 
@@ -34,39 +31,40 @@
 
 - (NSURL *)URL
 {
-    return URL;
+    return [[dataSource request] URL];
 }
 
 - (BOOL)doneLoading
 {
-    return data != nil;
+    return doneLoading;
 }
 
-- (void)setDataSource:(WebDataSource *)dataSource
+- (void)setDataSource:(WebDataSource *)theDataSource
 {
-    URL = [[[dataSource request] URL] retain];
-    filename = [[[dataSource response] suggestedFilename] retain];
+    dataSource = theDataSource;
     image = [[[WebImageRendererFactory sharedFactory] imageRendererWithMIMEType:[[dataSource response] MIMEType]] retain];
 }
 
-- (void)receivedData:(NSData *)data withDataSource:(WebDataSource *)dataSource
+- (void)receivedData:(NSData *)data withDataSource:(WebDataSource *)theDataSource
 {
     NSData *allData = [dataSource data];
     [image incrementalLoadWithBytes:[allData bytes] length:[allData length] complete:NO];
 }
 
-- (void)receivedError:(NSError *)error withDataSource:(WebDataSource *)dataSource
+- (void)receivedError:(NSError *)error withDataSource:(WebDataSource *)theDataSource
 {
-    data = [[dataSource data] retain];
-    if ([data length] > 0) {
-        [image incrementalLoadWithBytes:[data bytes] length:[data length] complete:YES];
+    NSData *allData = [dataSource data];
+    if ([allData length] > 0) {
+        [image incrementalLoadWithBytes:[allData bytes] length:[allData length] complete:YES];
     }
+    doneLoading = YES;
 }
 
-- (void)finishedLoadingWithDataSource:(WebDataSource *)dataSource
+- (void)finishedLoadingWithDataSource:(WebDataSource *)theDataSource
 {
-    data = [[dataSource data] retain];
-    [image incrementalLoadWithBytes:[data bytes] length:[data length] complete:YES];
+    NSData *allData = [dataSource data];
+    [image incrementalLoadWithBytes:[allData bytes] length:[allData length] complete:YES];
+    doneLoading = YES;
 }
 
 - (BOOL)canProvideDocumentSource
@@ -81,6 +79,7 @@
 
 - (NSString *)title
 {
+    NSString *filename = [self filename];
     NSSize size = [image size];
     if (!NSEqualSizes(size, NSZeroSize)) {
         return [NSString stringWithFormat:UI_STRING("%@ %.0f×%.0f pixels", "window title for a standalone image (uses multiplication symbol, not x)"), filename, size.width, size.height];
@@ -90,20 +89,17 @@
 
 - (NSData *)data
 {
-    return data;
+    return [dataSource data];
 }
 
 - (NSString *)filename
 {
-    return filename;
+    return [[dataSource response] suggestedFilename];
 }
 
 - (WebArchive *)archive
 {
-    WebResource *resource = [[WebResource alloc] initWithData:data URL:URL MIMEType:[image MIMEType] textEncodingName:nil];
-    WebArchive *archive = [[[WebArchive alloc] initWithMainResource:resource subresources:nil] autorelease];
-    [resource release];
-    return archive;
+    return [dataSource _archive];
 }
 
 @end

@@ -590,7 +590,7 @@ void HTMLTableElementImpl::attach()
 	static_cast<RenderTable *>(m_render)->setCellPadding( padding );
 }
 
-bool HTMLTableElementImpl::isSubresourceURLAttribute(AttributeImpl *attr) const
+bool HTMLTableElementImpl::isURLAttribute(AttributeImpl *attr) const
 {
     return attr->id() == ATTR_BACKGROUND;
 }
@@ -973,7 +973,7 @@ void HTMLTableCellElementImpl::attach()
     HTMLTablePartElementImpl::attach();
 }
 
-bool HTMLTableCellElementImpl::isSubresourceURLAttribute(AttributeImpl *attr) const
+bool HTMLTableCellElementImpl::isURLAttribute(AttributeImpl *attr) const
 {
     return attr->id() == ATTR_BACKGROUND;
 }
