@@ -9,6 +9,7 @@
 
 #import <Foundation/NSURLAuthenticationChallenge.h>
 #import <Foundation/NSURLProtectionSpace.h>
+#import <Foundation/NSURLCredential.h>
 #import <WebKit/WebAssertions.h>
 #import <WebKit/WebLocalizableStrings.h>
 #import <Foundation/NSURL_NSURLExtras.h>

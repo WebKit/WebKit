@@ -2,6 +2,13 @@
 
         Reviewed by Darin
 
+        * Panels.subproj/WebAuthenticationPanel.m: Now imports Foundation/NSURLCredential.h
+        * WebCoreSupport.subproj/WebCookieAdapter.m: Now imports Foundation/NSHTTPCookie.h
+
+2003-05-19  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin
+
         Changed imports to include headers from Foundation                   
         instead of WebFoundation. 
 

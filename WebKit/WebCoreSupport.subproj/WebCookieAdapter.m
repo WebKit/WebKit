@@ -9,6 +9,7 @@
 #import "WebCookieAdapter.h"
 
 #import <WebKit/WebAssertions.h>
+#import <Foundation/NSHTTPCookie.h>
 #import <Foundation/NSHTTPCookieStorage.h>
 #import <Foundation/NSURL_NSURLExtras.h>
 
