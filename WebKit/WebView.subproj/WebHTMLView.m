@@ -4098,14 +4098,14 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
         switch (direction) {
             case WebSelectForward:
             case WebSelectRight:
-                [self _handleKillRing:killRing prepend:NO];
                 [bridge setSelectedDOMRange:range affinity:NSSelectionAffinityDownstream];
+                [self _handleKillRing:killRing prepend:NO];
                 [bridge forwardDeleteKeyPressedWithSmartDelete:NO];
                 break;
             case WebSelectBackward:
             case WebSelectLeft:
-                [self _handleKillRing:killRing prepend:YES];
                 [bridge setSelectedDOMRange:range affinity:NSSelectionAffinityDownstream];
+                [self _handleKillRing:killRing prepend:YES];
                 [bridge deleteKeyPressedWithSmartDelete:NO];
                 break;
         }
@@ -4865,7 +4865,7 @@ static NSArray *validAttributes = nil;
 
 - (void)_insertText:(NSString *)text selectInsertedText:(BOOL)selectText
 {
-    if (text == nil || (![self _isEditable] && ![self hasMarkedText])) {
+    if (text == nil || [text length] == 0 || (![self _isEditable] && ![self hasMarkedText])) {
         return;
     }
 

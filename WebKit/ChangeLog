@@ -1,3 +1,15 @@
+2005-02-25  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed <rdar://problem/4019823> Seed: Control-Y doesn't work
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _deleteWithDirection:granularity:killRing:isTypingAction:]): Call _handleKillRing
+        after setting the selection, since it uses the selection to get the text.
+        (-[WebHTMLView _insertText:selectInsertedText:]): Check for empty string to avoid an assertion
+        on the other side of the bridge when you yank the empty string.
+
 2005-02-24  Richard Williamson   <rjw@apple.com>
 
 	Fixed <rdar://problem/3382926> Bidi neutrals at RTL/LTR boundaries not handled correctly.
