@@ -1,3 +1,26 @@
+2002-07-13  Richard Williamson (Home)  <rjw@apple.com>
+
+        Fixed 2981849 - frames don't always draw correctly.
+        
+        * WebCoreSupport.subproj/IFWebCoreBridge.mm:
+        (-[IFWebCoreBridge childFrameNamed:]):
+        Check provisional data source first.
+        
+        * WebView.subproj/IFHTMLViewPrivate.h:
+        * WebView.subproj/IFHTMLViewPrivate.mm:
+        (-[IFHTMLView _adjustFrames]):
+        Added method to adjust frame geometry.
+        
+        * WebView.subproj/IFWebDataSourcePrivate.h:
+        * WebView.subproj/IFWebDataSourcePrivate.mm:
+        (-[IFWebDataSource _layoutChildren]):
+        Added method to adjust child frame geometries.
+        
+        * WebView.subproj/IFWebFramePrivate.mm:
+        (-[IFWebFrame _isLoadComplete]):
+        Removed unnecessary drawing now that frame geometry is
+        calculated directly.
+        
 2002-07-12  Darin Adler  <darin@apple.com>
 
 	About 1/3 of the remaining work to wean WebKit from its special relationship with WebCore

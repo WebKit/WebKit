@@ -11,6 +11,7 @@
 #import <WebKit/IFDocument.h>
 #import <WebKit/IFException.h>
 #import <WebKit/IFHTMLRepresentation.h>
+#import <WebKit/IFHTMLViewPrivate.h>
 #import <WebKit/IFImageRepresentation.h>
 #import <WebKit/IFLocationChangeHandler.h>
 #import <WebKit/IFMainURLHandleClient.h>
@@ -18,6 +19,7 @@
 #import <WebKit/IFWebController.h>
 #import <WebKit/IFWebCoreBridge.h>
 #import <WebKit/IFWebFramePrivate.h>
+#import <WebKit/IFWebView.h>
 #import <WebKit/WebKitDebug.h>
 
 #import <WebFoundation/IFError.h>
@@ -344,6 +346,25 @@
         _private->errors = [[NSMutableDictionary alloc] init];
         
     [_private->errors setObject: error forKey: resourceDescription];
+}
+
+
+- (void)_layoutChildren
+{
+    if ([[self children] count] > 0){
+        NSArray *subFrames = [self children];
+        IFWebFrame *subFrame;
+        unsigned int i;
+        id dview;
+        for (i = 0; i < [subFrames count]; i++){
+            subFrame = [subFrames objectAtIndex: i];
+            dview = [[subFrame webView] documentView];
+            if ([[subFrame webView] isDocumentHTML])
+                [dview _adjustFrames];
+            [dview setNeedsDisplay: YES];
+            [[subFrame dataSource] _layoutChildren];
+        }
+    }
 }
 
 + (NSMutableDictionary *)_repTypes

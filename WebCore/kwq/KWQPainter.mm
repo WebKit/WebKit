@@ -37,11 +37,12 @@
 #import <WebCoreImageRenderer.h>
 
 struct QPState {				// painter state
-    QPState() : compositingOperation(NSCompositeCopy) { }
+    QPState() : compositingOperation(NSCompositeCopy),paintingDisabled(0) { }
     QFont font;
     QPen pen;
     QBrush brush;
     NSCompositingOperation compositingOperation;
+    bool paintingDisabled;
 };
 
 typedef QPtrStack<QPState> QPStateStack;
@@ -176,6 +177,9 @@ void QPainter::restore()
 // Draws a filled rectangle with a stroked border.
 void QPainter::drawRect(int x, int y, int w, int h)
 {
+    if (data->state.paintingDisabled)
+        return;
+        
     _lockFocus();
     if (data->state.brush.style() != NoBrush) {
         _setColorFromBrush();
@@ -204,6 +208,9 @@ void QPainter::_setColorFromPen()
 // This is only used to draw borders around text, and lines over text.
 void QPainter::drawLine(int x1, int y1, int x2, int y2)
 {
+    if (data->state.paintingDisabled)
+        return;
+        
     PenStyle penStyle = data->state.pen.style();
     if (penStyle == NoPen)
         return;
@@ -256,6 +263,9 @@ void QPainter::drawLine(int x1, int y1, int x2, int y2)
 // This method is only used to draw the little circles used in lists.
 void QPainter::drawEllipse(int x, int y, int w, int h)
 {
+    if (data->state.paintingDisabled)
+        return;
+        
     NSBezierPath *path;
     
     path = [NSBezierPath bezierPathWithOvalInRect: NSMakeRect (x, y, w, h)];
@@ -276,6 +286,9 @@ void QPainter::drawEllipse(int x, int y, int w, int h)
 // Only supports arc on circles.  That's all khtml needs.
 void QPainter::drawArc (int x, int y, int w, int h, int a, int alen)
 {
+    if (data->state.paintingDisabled)
+        return;
+        
     if (data->state.pen.style() != NoPen){
 
         NSBezierPath *path;
@@ -305,11 +318,17 @@ void QPainter::drawArc (int x, int y, int w, int h, int a, int alen)
 
 void QPainter::drawLineSegments(const QPointArray &points, int index, int nlines)
 {
+    if (data->state.paintingDisabled)
+        return;
+        
     _drawPoints (points, 0, index, nlines, FALSE);
 }
 
 void QPainter::drawPolyline(const QPointArray &points, int index, int npoints)
 {
+    if (data->state.paintingDisabled)
+        return;
+        
     _drawPoints (points, 0, index, npoints, FALSE);
 }
 
@@ -317,11 +336,17 @@ void QPainter::drawPolyline(const QPointArray &points, int index, int npoints)
 void QPainter::drawPolygon(const QPointArray &points, bool winding, int index, 
     int npoints)
 {
+    if (data->state.paintingDisabled)
+        return;
+        
     _drawPoints (points, winding, index, npoints, TRUE);
 }
 
 void QPainter::drawConvexPolygon(const QPointArray &points)
 {
+    if (data->state.paintingDisabled)
+        return;
+        
     _drawPoints (points, FALSE, 0, -1, TRUE);
 }
 
@@ -365,18 +390,27 @@ void QPainter::_drawPoints (const QPointArray &_points, bool winding, int index,
 
 void QPainter::drawPixmap(const QPoint &p, const QPixmap &pix)
 {
+    if (data->state.paintingDisabled)
+        return;
+        
     drawPixmap (p.x(), p.y(), pix);
 }
 
 
 void QPainter::drawPixmap(const QPoint &p, const QPixmap &pix, const QRect &r)
 {
+    if (data->state.paintingDisabled)
+        return;
+        
     drawPixmap (p.x(), p.y(), pix, r.x(), r.y(), r.width(), r.height());
 }
 
 void QPainter::drawPixmap( int x, int y, const QPixmap &pixmap,
                            int sx, int sy, int sw, int sh )
 {
+    if (data->state.paintingDisabled)
+        return;
+        
     _lockFocus();
 
     if (sw == -1)
@@ -393,12 +427,18 @@ void QPainter::drawPixmap( int x, int y, const QPixmap &pixmap,
 void QPainter::drawTiledPixmap( int x, int y, int w, int h,
 				const QPixmap &pixmap, int sx, int sy )
 {
+    if (data->state.paintingDisabled)
+        return;
+        
     [pixmap.imageRenderer tileInRect:NSMakeRect(x, y, w, h) fromPoint:NSMakePoint(sx, sy)];
 }
 
 // y is the baseline
 void QPainter::drawText(int x, int y, const QString &qstring, int len)
 {
+    if (data->state.paintingDisabled)
+        return;
+        
     _lockFocus();
     
     if (len == -1)
@@ -412,11 +452,17 @@ void QPainter::drawText(int x, int y, const QString &qstring, int len)
 
 void QPainter::drawText(int x, int y, const QString &qstring, int len, TextDirection dir)
 {
+    if (data->state.paintingDisabled)
+        return;
+        
     drawText(x, y, qstring, 0, len, dir);
 }
 
 void QPainter::drawText(int x, int y, const QString &qstring, int from, int to, const QColor &backgroundColor)
 {
+    if (data->state.paintingDisabled)
+        return;
+        
     _lockFocus();
 
     [[[WebCoreTextRendererFactory sharedFactory]
@@ -431,6 +477,9 @@ void QPainter::drawText(int x, int y, const QString &qstring, int from, int to, 
 
 void QPainter::drawText(int x, int y, const QString &qstring, int pos, int len, TextDirection dir)
 {
+    if (data->state.paintingDisabled)
+        return;
+        
     if (dir == RTL) {
         _logPartiallyImplemented();
     }
@@ -444,6 +493,9 @@ void QPainter::drawText(int x, int y, const QString &qstring, int pos, int len, 
 
 void QPainter::drawUnderlineForText(int x, int y, const QString &qstring, int len)
 {
+    if (data->state.paintingDisabled)
+        return;
+        
     NSString *string;
     
     _lockFocus();
@@ -464,6 +516,9 @@ void QPainter::drawUnderlineForText(int x, int y, const QString &qstring, int le
 void QPainter::drawText(int x, int y, int w, int h, int flags, const QString &qstring, int len, 
     QRect *br, char **internal)
 {
+    if (data->state.paintingDisabled)
+        return;
+        
     NSString *string;
     NSMutableParagraphStyle *style = [[[NSMutableParagraphStyle alloc] init] autorelease];
     
@@ -508,6 +563,9 @@ QColor QPainter::selectedTextBackgroundColor()
 
 void QPainter::fillRect(int x, int y, int w, int h, const QBrush &brush)
 {
+    if (data->state.paintingDisabled)
+        return;
+        
     _lockFocus();
     if (brush.style() == SolidPattern) {
         [brush.color().getNSColor() set];
@@ -624,5 +682,11 @@ void QPainter::_unlockFocus()
     }	
 #endif
 }
+
+void QPainter::setPaintingDisabled(bool f)
+{
+    data->state.paintingDisabled = f;
+}
+
 
 

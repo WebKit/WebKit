@@ -91,7 +91,7 @@
 - (void)_setContentPolicy:(IFContentPolicy)policy;
 - (void)_setContentType:(NSString *)type;
 - (void)_setEncoding:(NSString *)encoding;
-
+- (void)_layoutChildren;
 - (void)_clearErrors;
 - (void)_setMainDocumentError: (IFError *)error;
 - (void)_addError: (IFError *)error forResource: (NSString *)resourceDescription;

@@ -41,4 +41,5 @@ class KHTMLView;
 - (KHTMLView *)_widget;
 - (KHTMLView *)_provisionalWidget;
 - (IFWebCoreBridge *)_bridge;
+- (void)_adjustFrames;
 @end

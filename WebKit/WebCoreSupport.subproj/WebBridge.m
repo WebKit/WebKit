@@ -62,6 +62,12 @@
 
 - (WebCoreFrame *)childFrameNamed:(NSString *)name
 {
+    IFWebDataSource *pd;
+    
+    pd = [[dataSource webFrame] provisionalDataSource];
+    if (pd)
+        return [[pd frameNamed: name] _bridgeFrame];
+
     return [[dataSource frameNamed:name] _bridgeFrame];
 }
 

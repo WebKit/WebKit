@@ -150,16 +150,35 @@
     }
 }
 
-- (void)drawRect:(NSRect)rect
+- (void)_drawRect:(NSRect)rect withPainter: (QPainter *)p
 {
     DOM::DocumentImpl *doc = part->xmlDocImpl();
     if (doc) {
         khtml::RenderObject *renderer = doc->renderer();
         if (renderer) {
-            QPainter p;
-            renderer->print(&p, (int)rect.origin.x, (int)rect.origin.y, (int)rect.size.width, (int)rect.size.height, 0, 0);
+            renderer->print(p, (int)rect.origin.x, (int)rect.origin.y, (int)rect.size.width, (int)rect.size.height, 0, 0);
         }
     }
 }
+
+- (void)drawRect:(NSRect)rect
+{
+    QPainter p;
+    [self _drawRect:rect withPainter: &p];
+}
+
+- (void)adjustFrames: (NSRect)rect
+{
+    // Ick!  khtml sets the frame size during layout and
+    // the frame origins during drawing!  So we have to 
+    // layout and do a draw with rendering disabled to
+    // correclty adjust the frames.
+    [self forceLayout];
+    QPainter p;
+    p.setPaintingDisabled(YES);
+    [self _drawRect:rect withPainter: &p];
+}
+
+
 
 @end

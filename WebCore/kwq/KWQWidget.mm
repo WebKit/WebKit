@@ -95,7 +95,7 @@ long QWidget::winId() const
     return (long)this;
 }
 
-int QWidget::x() const 
+int QWidget::x() const
 {
     return frameGeometry().topLeft().x();
 }
@@ -132,7 +132,7 @@ QPoint QWidget::pos() const
 
 void QWidget::move(int x, int y) 
 {
-    KWQDEBUG ("%p %s to x %d y %d\n", getView(), [[[getView() class] className] cString], x, y);
+    //KWQDEBUG ("%p %s to x %d y %d\n", getView(), [[[getView() class] className] cString], x, y);
     internalSetGeometry(x, y, width(), height());
 }
 
@@ -143,7 +143,12 @@ void QWidget::move(const QPoint &p)
 
 QRect QWidget::frameGeometry() const
 {
-    NSRect vFrame = [getView() frame];
+    NSView *view = getView();
+    
+    if ([view conformsToProtocol:@protocol(WebCoreFrameView)]) {
+        view = [view superview];
+    }
+    NSRect vFrame = [view frame];
     return QRect((int)vFrame.origin.x, (int)vFrame.origin.y, (int)vFrame.size.width, (int)vFrame.size.height);
 }
 

@@ -1,3 +1,41 @@
+2002-07-13  Richard Williamson (Home)  <rjw@apple.com>
+
+        * kwq/KWQPainter.mm:
+        Added disable drawing mode.
+        (QPainter::drawRect):
+        (QPainter::drawLine):
+        (QPainter::drawEllipse):
+        (QPainter::drawArc):
+        (QPainter::drawLineSegments):
+        (QPainter::drawPolyline):
+        (QPainter::drawPolygon):
+        (QPainter::drawConvexPolygon):
+        (QPainter::drawPixmap):
+        (QPainter::drawTiledPixmap):
+        (QPainter::drawText):
+        (QPainter::drawUnderlineForText):
+        (QPainter::fillRect):
+        (QPainter::setPaintingDisabled):
+        
+        * kwq/KWQWidget.mm:
+        (QWidget::frameGeometry):
+        Use the IFWebView's geometry.
+        
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge _drawRect:withPainter:]):
+        (-[WebCoreBridge drawRect:]):
+        (-[WebCoreBridge adjustFrames:]):
+        Added adjustFrames:.  Factored some code.
+        
+        * kwq/qt/qpainter.h:
+        Added setPaintingDisabled.
+
+        * khtml/html/html_baseimpl.cpp:
+        (HTMLFrameElementImpl::attach):
+        (HTMLIFrameElementImpl::attach):
+        Removed uniqueness check.  Need to revisit vis-a-vis provisional ds.
+        
 2002-07-12  Darin Adler  <darin@apple.com>
 
         * WebCore.pbproj/project.pbxproj: Add WebCoreFrame.mm, also export all

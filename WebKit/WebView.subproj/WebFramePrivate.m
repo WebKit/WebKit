@@ -333,56 +333,37 @@ static const char * const stateNames[6] = {
             
             //WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "%s:  checking complete, current state IFWEBFRAMESTATE_COMMITTED\n", [[self name] cString]);
             if (![ds isLoading]) {
-                id mainView = [[[self controller] mainFrame] webView];
-                NSView <IFDocumentView> *mainDocumentView = [mainView documentView];
-#if 0
                 id thisView = [self webView];
                 NSView <IFDocumentView> *thisDocumentView = [thisView documentView];
-#endif
+
                 [self _setState: IFWEBFRAMESTATE_COMPLETE];
                 
                 [[ds _bridge] end];
 
-                // We have to layout the main document as
-                // it may change the size of frames.
-                // FIXME:  Why is this necessary? and recurse.
-                {
-                    if ([mainView isDocumentHTML]) {
-                        [(IFHTMLView *)mainDocumentView setNeedsLayout: YES];
-                    }
-                    [mainDocumentView layout];
-                    
-                    NSArray *subFrames = [[[[self controller] mainFrame] dataSource] children];
-                    unsigned int i;
-                    id dview;
-                    for (i = 0; i < [subFrames count]; i++){
-                        dview = [[[subFrames objectAtIndex: i] webView] documentView];
-                        if ([[[subFrames objectAtIndex: i] webView] isDocumentHTML])
-                            [dview setNeedsLayout: YES];
-                        [dview layout];
-                    }
-                }
+                // Unfortunately we have to get our parent to adjust the frames in this
+                // frameset so this frame's geometry is set correctly.  This should
+                // be a reasonably inexpensive operation.
+                id parentWebView = [[[ds parent] webFrame] webView];
+                if ([parentWebView isDocumentHTML])
+                    [[parentWebView documentView] _adjustFrames];
 
-#if 0
                 // Tell the just loaded document to layout.  This may be necessary
                 // for non-html content that needs a layout message.
                 if ([thisView isDocumentHTML]){
-                    [thisDocumentView setNeedsLayout: YES];
+                    IFHTMLView *hview = thisDocumentView;
+                    [hview setNeedsLayout: YES];
                 }
                 [thisDocumentView layout];
 
+                // Unfortunately if this frame has children we have to lay them
+                // out too.
+                [ds _layoutChildren];
+
                 [thisDocumentView setNeedsDisplay: YES];
-                [thisDocumentView display];
-#endif
+                //[thisDocumentView display];
 
                 // Jump to anchor point, if necessary.
                 [[ds _bridge] scrollToBaseAnchor];
-
-                // FIXME:  We have to draw the whole document hierarchy.  We should be 
-                // able to just draw the document associated with this
-                // frame, but that doesn't work.  Not sure why.
-                [mainDocumentView setNeedsDisplay: YES];
-                [mainDocumentView display];
 
                 [[ds _locationChangeHandler] locationChangeDone: [ds mainDocumentError] forDataSource:ds];
  
