@@ -1,3 +1,22 @@
+2002-10-23  Darin Adler  <darin@apple.com>
+
+	- fix bug where plugins crashed closing a stream that was never opened
+
+        * Plugins.subproj/WebBaseNetscapePluginStream.h: Change type for parameter of
+	receivedError: to NPReason. It's not NPError.
+        * Plugins.subproj/WebBaseNetscapePluginStream.m:
+        (-[WebBaseNetscapePluginStream dealloc]): Assert that stream is destroyed by
+	checking stream.ndata.
+        (-[WebBaseNetscapePluginStream setResponse:]): Set stream.ndata to nil if the
+	stream is not successfully created by NPP_NewStream.
+        (-[WebBaseNetscapePluginStream destroyStreamWithReason:]): Added. Destroys the
+	stream, but only if it's present. Also set stream.ndata to nil. This was the bug fix.
+        (-[WebBaseNetscapePluginStream receivedError:]): Call destroyStreamWithReason:.
+        (-[WebBaseNetscapePluginStream finishedLoadingWithData:]): Call destroyStreamWithReason:.
+
+        * English.lproj/Localizable.strings: Update.
+        * English.lproj/StringsNotToBeLocalized.txt: Update.
+
 2002-10-23  Chris Blumenberg  <cblu@apple.com>
 
 	Forgot to add WebPluginController back to the project after I had a project conflict.

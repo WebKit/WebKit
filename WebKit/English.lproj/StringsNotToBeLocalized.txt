@@ -153,6 +153,7 @@
 "text/xml"
 "tiff"
 "url_icon"
+"~"
 Bookmarks.subproj/WebBookmarkList.m:"Children"
 Bookmarks.subproj/WebBookmarkList.m:"Title"
 Bookmarks.subproj/WebBookmarkProxy.m:"Title"

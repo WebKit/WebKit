@@ -31,7 +31,7 @@
 - (void)setPluginPointer:(NPP)pluginPointer;
 - (void)setResponse:(WebResourceResponse *)theReponse;
 - (void)receivedData:(NSData *)data;
-- (void)receivedError:(NPError)error;
+- (void)receivedError:(NPReason)reason;
 - (void)finishedLoadingWithData:(NSData *)data;
 
 @end
