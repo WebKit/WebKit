@@ -1,3 +1,14 @@
+2004-12-03  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Chris.
+        
+        - fixed <rdar://problem/3903990> can't tab to all items on www.google.com any more (other pages too?)
+
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::nextKeyViewInFrameHierarchy):
+        when checking whether we moved the focus to another view, make sure we didn't "move" it to
+        our documentView, because that's no move at all.
+
 2004-12-03  Darin Adler  <darin@apple.com>
 
         Reviewed by Vicki.

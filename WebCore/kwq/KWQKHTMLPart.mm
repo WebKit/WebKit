@@ -1227,8 +1227,8 @@ NSView *KWQKHTMLPart::nextKeyViewInFrameHierarchy(NodeImpl *node, KWQSelectionDi
         }
     }
     
-    if (next) {
-        // remove focus from currently focused node if we're giving focus to another view
+    // remove focus from currently focused node if we're giving focus to another view
+    if (next && (next != [_bridge documentView])) {
         DocumentImpl *doc = xmlDocImpl();
         if (doc) {
             doc->setFocusNode(0);
