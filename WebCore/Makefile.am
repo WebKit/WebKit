@@ -14,7 +14,7 @@ WebCore-combined.exp: WebCore.exp WebCore-tests.exp previous-clean-timestamp
 config.h: config-timestamp
 
 config-timestamp: ../config.h previous-clean-timestamp
-	perl -ne 'print unless /HAVE_FOUNDATION_SOURCES/' < ../config.h > munged-config.h
+	perl -ne 'print unless /HAVE_FOUNDATION_SOURCES/ || /DLFCN/' < ../config.h > munged-config.h
 	if ! cmp -s config.h munged-config.h; then \
 	    cat munged-config.h > config.h; \
 	fi

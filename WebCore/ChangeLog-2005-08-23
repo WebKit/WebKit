@@ -1,5 +1,10 @@
 2003-08-21  Darin Adler  <darin@apple.com>
 
+        * Makefile.am: Work around DLCFN issue to prevent constant churn of config.h.
+        * config.h: Regenerated without DLCFN.
+
+2003-08-21  Darin Adler  <darin@apple.com>
+
         * khtml/khtmlview.h: Formatting tweak.
 
 2003-08-21  Chris Blumenberg  <cblu@apple.com>
