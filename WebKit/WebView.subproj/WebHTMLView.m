@@ -609,7 +609,23 @@
     [[self _pluginController] destroyAllPlugins];
 }
 
-- (void)mouseDown: (NSEvent *)event
+- (BOOL)_isSelectionEvent:(NSEvent *)event
+{
+    NSPoint point = [self convertPoint:[event locationInWindow] fromView:nil];
+    return [[[self _elementAtPoint:point] objectForKey:WebElementIsSelectedTextKey] boolValue];
+}
+
+- (BOOL)acceptsFirstMouse:(NSEvent *)event
+{
+    return [self _isSelectionEvent:event];
+}
+
+- (BOOL)shouldDelayWindowOrderingForEvent:(NSEvent *)event
+{
+    return [self _isSelectionEvent:event];
+}
+
+- (void)mouseDown:(NSEvent *)event
 {
     _private->ignoringMouseDraggedEvents = NO;
     

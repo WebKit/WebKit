@@ -1,5 +1,16 @@
 2003-04-23  Chris Blumenberg  <cblu@apple.com>
 
+	Fixed: 3161374 - safari windows don't allow text/URL dragging on the first click
+
+        Reviewed by john.
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _isSelectionEvent:]): new, determines if the event occurred over the selection
+        (-[WebHTMLView acceptsFirstMouse:]): newly implemented, return result of _isSelectionEvent:
+        (-[WebHTMLView shouldDelayWindowOrderingForEvent:]): newly implemented, return result of _isSelectionEvent:
+
+2003-04-23  Chris Blumenberg  <cblu@apple.com>
+
 	Renamed the policy delegate methods.
 
         Reviewed by john.
