@@ -302,10 +302,14 @@
 
 - (void)saveDocumentState: (NSArray *)documentState
 {
-    WebHistoryItem *backItem;
+    WebHistoryItem *item;
     
-    backItem = [[[frame controller] backForwardList] backEntry];
-    [backItem setDocumentState: documentState];
+    if ([frame _loadType] == WebFrameLoadTypeBack)
+        item = [[[frame controller] backForwardList] forwardEntry];
+    else
+        item = [[[frame controller] backForwardList] backEntry];
+
+    [item setDocumentState: documentState];
 }
 
 - (NSArray *)documentState
@@ -313,6 +317,7 @@
     WebHistoryItem *currentItem;
     
     currentItem = [[[frame controller] backForwardList] currentEntry];
+    
     return [currentItem documentState];
 }
 
