@@ -87,8 +87,6 @@ const float LargeNumberForText = 1.0e7;
     
     [textView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
 
-    [textView setSelectable:YES]; // must do this explicitly so setEditable:NO does not make it NO
-
     [textView setDelegate:self];
     
     [self setDocumentView:textView];

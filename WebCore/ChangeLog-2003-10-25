@@ -1,5 +1,15 @@
 2003-07-02  Darin Adler  <darin@apple.com>
 
+        Rolled out accidentally-checked-in changes.
+
+        * kwq/KWQCharsetData.c:
+        * kwq/KWQCharsets.mm:
+        * kwq/KWQTextArea.mm:
+        * kwq/mac-encodings.txt:
+        * kwq/make-charset-table.pl:
+
+2003-07-02  Darin Adler  <darin@apple.com>
+
         Reviewed by Ken.
 
         - fixed 3299715 -- unrepro nil-deref in KHTMLPart::xmlDocImpl handling timer

@@ -25,7 +25,7 @@ sub emit_line
     error "$name shows up twice in output" if $namesWritten{$name};
     $namesWritten{$name} = 1;
     
-    $output .= "    { \"$name\", kTextEncoding$encoding, $flags },\n";
+    $output .= "    { \"$name\", kCFStringEncoding$encoding, $flags },\n";
 }
 
 sub process_mac_encodings
