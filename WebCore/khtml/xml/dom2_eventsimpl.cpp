@@ -530,7 +530,7 @@ void MouseEventImpl::computeLayerPos()
 
     DocumentImpl *doc = view()->document();
 
-    if (!doc) {
+    if (!doc || !doc->renderer()) {
 	return;
     }
 
