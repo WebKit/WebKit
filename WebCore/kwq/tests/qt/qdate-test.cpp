@@ -9,39 +9,19 @@
 int main() {
 
     QDate d0;
-    QDate d1 = QDate(1999, 12, 31);
-    //QDate d2;
+    QDate d1(1999, 12, 31);
+    QDate d2(2001, 10, 23);
 
     cout << "d1: " << d1 << endl;
-
+    cout << "d2: " << d2 << endl;
+    
     d0 = d1;
     cout << "d0 = d1: " << d0 << endl;
-
-    //d0 = d1.addDays(1);
-    //cout << "y2k: " << d0 << endl;
-
-    //d1 = QDate(1900, 2, 28);
-    //d0 = d1.addDays(1);
-    //cout << "is not leap year: " << d0 << endl;
-
-    //d1 = QDate(2000, 2, 28);
-    //d0 = d1.addDays(1);
-    //cout << "is leap year: " << d0 << endl;
-
-    //cout << d1.monthName(d1.month()) << endl;
-
-    //d2 = d1;
-    //cout << "d0 is: " << d0 << endl;
-    //cout << "d1 is: " << d1 << endl;
-    //cout << "d2 is: " << d2 << endl;
-    //cout << "(d0 < d1): " << (d0 < d1) << endl;
-    //cout << "(d0 <= d1): " << (d0 <= d1) << endl;
-    //cout << "(d0 > d1): " << (d0 > d1) << endl;
-    //cout << "(d0 >= d1): " << (d0 >= d1) << endl;
-    //cout << "(d2 < d1): " << (d2 < d1) << endl;
-    //cout << "(d2 <= d1): " << (d2 <= d1) << endl;
-    //cout << "(d2 > d1): " << (d2 > d1) << endl;
-    //cout << "(d2 >= d1): " << (d2 >= d1) << endl;
+    
+    cout << "d0.year(): " << d0.year() << endl;
+    cout << "d0.month(): " << d0.month() << endl;
+    cout << "d0.day(): " << d0.day() << endl;
+    cout << "d1.daysTo(d2): " << d1.daysTo(d2) << endl;
     
     return 0;
 }

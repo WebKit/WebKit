@@ -9,8 +9,8 @@
 int main() {
 
     QTime d0;
-    QTime d1 = QTime(23, 59, 59, 999);
-    QTime d2 = QTime(1, 8, 6, 0);
+    QTime d1(23, 59);
+    QTime d2(1, 8);
     QTime d3;
     int elapsedTime;
     
@@ -26,31 +26,16 @@ int main() {
     
     cout << "d1 msec: " << d1.msec() << endl;
     cout << "d2 msec: " << d2.msec() << endl;
+    cout << "d2 hour: " << d2.hour() << endl;
+    cout << "d2 minute: " << d2.minute() << endl;
+    cout << "d2 second: " << d2.second() << endl;
     
+    cout << "d2 secsTo d1: " << d2.secsTo(d1) << endl;
     
     elapsedTime = d3.elapsed(); // nothing is printed because output will never match .chk file
     elapsedTime = d3.restart();
     
     
-    //d0 = d1.addSecs(1);
-    //cout << "day roll (seconds): " << d0 << endl;
-
-    //d0 = d1;
-    //d0 = d1.addMSecs(1);
-    //cout << "day roll (milli-seconds): " << d0 << endl;
-
-    //d2 = d1;
-    //cout << "d0 is: " << d0 << endl;
-    //cout << "d1 is: " << d1 << endl;
-    //cout << "d2 is: " << d2 << endl;
-    //cout << "(d0 < d1): " << (d0 < d1) << endl;
-    //cout << "(d0 <= d1): " << (d0 <= d1) << endl;
-    //cout << "(d0 > d1): " << (d0 > d1) << endl;
-    //cout << "(d0 >= d1): " << (d0 >= d1) << endl;
-    //cout << "(d2 < d1): " << (d2 < d1) << endl;
-    //cout << "(d2 <= d1): " << (d2 <= d1) << endl;
-    //cout << "(d2 > d1): " << (d2 > d1) << endl;
-    //cout << "(d2 >= d1): " << (d2 >= d1) << endl;
     
     return 0;
 }
