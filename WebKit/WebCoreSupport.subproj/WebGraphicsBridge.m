@@ -196,5 +196,13 @@ static void FlipImageSpec(CoreDragImageSpec* imageSpec) {
     [NSApp postEvent:ev atStart:YES];
 }
 
+- (void)setAdditionalPatternPhase:(NSPoint)phase
+{
+    _phase = phase;
+}
+
+- (NSPoint)additionalPatternPhase {
+    return _phase;
+}
 
 @end

@@ -1,5 +1,24 @@
 2004-06-24  Trey Matteson  <trey@apple.com>
 
+	3704950	drag image in DB ConfigBar has horizontal graphics turd	WebCore JavaScript
+
+	When we generate a drag image (or a selection image too, for that matter) we
+	translate the CTM using a CG call.  Later, WebImageRenderer adjusts the pattern
+	phase based on the CTM of the focused view, which doesn't include our translate.
+	So we must inform WebKit about the additional phase adjustment.
+
+        Reviewed by Richard
+
+        * WebCoreSupport.subproj/WebGraphicsBridge.h:
+        * WebCoreSupport.subproj/WebGraphicsBridge.m:
+        (-[WebGraphicsBridge setAdditionalPatternPhase:]):  New trivial setter.
+        (-[WebGraphicsBridge additionalPatternPhase]):      ...and getter.
+        * WebCoreSupport.subproj/WebImageRenderer.m:
+        (-[WebImageRenderer tileInRect:fromPoint:context:]):  Take any additional phase
+	adjustment into account when setting phase.
+
+2004-06-24  Trey Matteson  <trey@apple.com>
+
 	3693420 - onbeforecut and onbeforepaste need real implementaion
 
         Reviewed by Chris.

@@ -54,4 +54,8 @@ static WebCoreGraphicsBridge *sharedBridge;
 {
 }
 
+- (void)setAdditionalPatternPhase:(NSPoint)phase
+{
+}
+
 @end

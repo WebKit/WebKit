@@ -28,9 +28,10 @@
 
 @interface WebGraphicsBridge : WebCoreGraphicsBridge
 {
+    NSPoint _phase;
 }
 
 + (void)createSharedBridge;
 + (WebGraphicsBridge *)sharedBridge;
-
+- (NSPoint)additionalPatternPhase;
 @end

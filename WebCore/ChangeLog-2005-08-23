@@ -1,5 +1,23 @@
 2004-06-24  Trey Matteson  <trey@apple.com>
 
+	3704950	drag image in DB ConfigBar has horizontal graphics turd	WebCore JavaScript
+
+	When we generate a drag image (or a selection image too, for that matter) we
+	translate the CTM using a CG call.  Later, WebImageRenderer adjusts the pattern
+	phase based on the CTM of the focused view, which doesn't include our translate.
+	So we must inform WebKit about the additional phase adjustment.
+
+        Reviewed by Richard
+
+        * kwq/KWQKHTMLPart.mm:  Tell WebKit about the phase adjustment.
+        (KWQKHTMLPart::imageFromRect):
+        * kwq/WebCoreGraphicsBridge.h:
+        * kwq/WebCoreGraphicsBridge.m:
+        (-[WebCoreGraphicsBridge setAdditionalPatternPhase:]):  New routine to receive
+	the phase adjustment.
+
+2004-06-24  Trey Matteson  <trey@apple.com>
+
 	3679986 - screenX and screenY are flipped and relative to the bottom left of the WebView, rather than the screen
 	3699510 - synthesized click events have bogus screen coords
 

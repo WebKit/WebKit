@@ -7,6 +7,7 @@
 
 #import <WebKit/WebAssertions.h>
 #import <WebKit/WebImageRendererFactory.h>
+#import <WebKit/WebGraphicsBridge.h>
 #import <WebKit/WebNSObjectExtras.h>
 
 #import <WebCore/WebCoreImageRenderer.h>
@@ -728,11 +729,21 @@ static NSMutableSet *activeImageRenderers;
     NSRect oneTileRect;
     oneTileRect.origin.x = rect.origin.x + fmodf(fmodf(-point.x, size.width) - size.width, size.width);
     oneTileRect.origin.y = rect.origin.y + fmodf(fmodf(-point.y, size.height) - size.height, size.height);
+// I think this is a simpler way to say the same thing.  Also, if either point.x or point.y is negative, both
+// methods would end up with the wrong answer.  For example, fmod(-22,5) is -2, which is the correct delta to
+// the start of the pattern, but fmod(-(-23), 5) is 3.  This is the delta to the *end* of the pattern
+// instead of the start, so onTileRect will be too far right.
+//    oneTileRect.origin.x = rect.origin.x - fmodf(point.x, size.width);
+//    oneTileRect.origin.y = rect.origin.y - fmodf(point.y, size.height);
     oneTileRect.size = size;
 
     // Compute the appropriate phase relative to the top level view in the window.
     // Conveniently, the oneTileRect we computed above has the appropriate origin.
     NSPoint originInWindow = [[NSView focusView] convertPoint:oneTileRect.origin toView:nil];
+    // WebCore may translate the focus, and thus need an extra phase correction
+    NSPoint extraPhase = [[WebGraphicsBridge sharedBridge] additionalPatternPhase];
+    originInWindow.x += extraPhase.x;
+    originInWindow.y += extraPhase.y;
     CGSize phase = CGSizeMake(fmodf(originInWindow.x, size.width), fmodf(originInWindow.y, size.height));
     
     // If the single image draw covers the whole area, then just draw once.
