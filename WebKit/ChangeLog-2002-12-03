@@ -1,5 +1,13 @@
 2002-11-22  Richard Williamson   <rjw@apple.com>
 
+        Changed NSString category methods to include _web_ prefix.
+
+        * Misc.subproj/WebKitNSStringExtras.h:
+        * Misc.subproj/WebKitNSStringExtras.m:
+        (-[NSString _web_widthForString:font:]):
+
+2002-11-22  Richard Williamson   <rjw@apple.com>
+
         Simplified drawing and measuring SPI for use by Alex.
 
         * Misc.subproj/WebKitNSStringExtras.h: Added.
