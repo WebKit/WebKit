@@ -6,6 +6,7 @@
 #import <WebKit/WebHTMLView.h>
 
 #import <WebKit/DOM.h>
+#import <WebKit/DOMExtensions.h>
 #import <WebKit/WebArchive.h>
 #import <WebKit/WebBridge.h>
 #import <WebKit/WebClipView.h>
@@ -744,7 +745,7 @@ static WebHTMLView *lastHitView = nil;
         WebImageRenderer *image = [element objectForKey:WebElementImageKey];
         ASSERT([image isKindOfClass:[WebImageRenderer class]]);
         [self _web_dragImage:image
-                     archive:[[element objectForKey:WebCoreElementDOMNodeKey] webArchive]
+                     archive:[[element objectForKey:WebElementDOMNodeKey] webArchive]
                         rect:[[element objectForKey:WebElementImageRectKey] rectValue]
                          URL:linkURL ? linkURL : imageURL
                        title:[element objectForKey:WebElementImageAltStringKey]
@@ -1668,7 +1669,7 @@ static WebHTMLView *lastHitView = nil;
 {
     NSPoint point = [self convertPoint:[sender draggingLocation] fromView:nil];
     NSDictionary *element = [self _elementAtPoint:point];
-    if ([[element objectForKey:WebElementIsEditableKey] boolValue] && [[self _bridge] moveCaretToPoint:point]) {
+    if ([[element objectForKey:WebElementDOMNodeKey] isContentEditable] && [[self _bridge] moveCaretToPoint:point]) {
         if (_private->isDragging) {
             if ([[element objectForKey:WebElementIsSelectedKey] boolValue]) {
                 return NSDragOperationMove;

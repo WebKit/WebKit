@@ -104,9 +104,9 @@
 - (NSArray *)webView: (WebView *)wv contextMenuItemsForElement: (NSDictionary *)element  defaultMenuItems: (NSArray *)defaultMenuItems
 {
     NSMutableArray *menuItems = [NSMutableArray array];
-
+    
     NSURL *linkURL = [element objectForKey:WebElementLinkURLKey];
-
+    
     if (linkURL) {
         if([WebView _canHandleRequest:[NSURLRequest requestWithURL:linkURL]]) {
             [menuItems addObject:[self menuItemWithTag:WebMenuItemTagOpenLinkInNewWindow]];
@@ -114,7 +114,7 @@
         }
         [menuItems addObject:[self menuItemWithTag:WebMenuItemTagCopyLinkToClipboard]];
     }
-
+    
     NSURL *imageURL = [element objectForKey:WebElementImageURLKey];
     if (imageURL) {
         if (linkURL) {
@@ -124,33 +124,33 @@
         [menuItems addObject:[self menuItemWithTag:WebMenuItemTagDownloadImageToDisk]];
         [menuItems addObject:[self menuItemWithTag:WebMenuItemTagCopyImageToClipboard]];
     }
-
+    
     if (!imageURL && !linkURL) {
         if ([[element objectForKey:WebElementIsSelectedKey] boolValue]) {
             [menuItems addObject:[self menuItemWithTag:WebMenuItemTagCopy]];
         } else {
-			if ([wv canGoBack]) {
-				[menuItems addObject:[self menuItemWithTag:WebMenuItemTagGoBack]];
-			}
-			if ([wv canGoForward]) {
-				[menuItems addObject:[self menuItemWithTag:WebMenuItemTagGoForward]];
-			}
-			if ([wv isLoading]) {
-				[menuItems addObject:[self menuItemWithTag:WebMenuItemTagStop]];
-			} else {
-				[menuItems addObject:[self menuItemWithTag:WebMenuItemTagReload]];
-			}
-			
+            if ([wv canGoBack]) {
+                [menuItems addObject:[self menuItemWithTag:WebMenuItemTagGoBack]];
+            }
+            if ([wv canGoForward]) {
+                [menuItems addObject:[self menuItemWithTag:WebMenuItemTagGoForward]];
+            }
+            if ([wv isLoading]) {
+                [menuItems addObject:[self menuItemWithTag:WebMenuItemTagStop]];
+            } else {
+                [menuItems addObject:[self menuItemWithTag:WebMenuItemTagReload]];
+            }
+            
             WebFrame *webFrame = [element objectForKey:WebElementFrameKey];
             if (webFrame != [wv mainFrame]) {
                 [menuItems addObject:[self menuItemWithTag:WebMenuItemTagOpenFrameInNewWindow]];
             }
         }
     }
-
+    
     // Attach element as the represented object to each item.
     [menuItems makeObjectsPerformSelector:@selector(setRepresentedObject:) withObject:element];
-
+    
     return menuItems;
 }
 
@@ -215,7 +215,7 @@
     [[NSPasteboard generalPasteboard] _web_writeImage:[element objectForKey:WebElementImageKey] 
                                                   URL:linkURL ? linkURL : [element objectForKey:WebElementImageURLKey]
                                                 title:[element objectForKey:WebElementImageAltStringKey] 
-                                              archive:[[element objectForKey:WebCoreElementDOMNodeKey] webArchive]];
+                                              archive:[[element objectForKey:WebElementDOMNodeKey] webArchive]];
 }
 
 - (void)openFrameInNewWindow:(id)sender

@@ -59,12 +59,12 @@
 #import <Foundation/NSURLRequestPrivate.h>
 #import <Foundation/NSUserDefaults_NSURLExtras.h>
 
+NSString *WebElementDOMNodeKey =            @"WebElementDOMNode";
 NSString *WebElementFrameKey =              @"WebElementFrame";
 NSString *WebElementImageKey =              @"WebElementImage";
 NSString *WebElementImageAltStringKey =     @"WebElementImageAltString";
 NSString *WebElementImageRectKey =          @"WebElementImageRect";
 NSString *WebElementImageURLKey =           @"WebElementImageURL";
-NSString *WebElementIsEditableKey =         @"WebElementIsEditable";
 NSString *WebElementIsSelectedKey =         @"WebElementIsSelected";
 NSString *WebElementLinkURLKey =            @"WebElementLinkURL";
 NSString *WebElementLinkTargetFrameKey =    @"WebElementTargetFrame";

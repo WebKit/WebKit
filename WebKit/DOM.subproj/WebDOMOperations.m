@@ -5,6 +5,7 @@
 
 #import <WebKit/WebDOMOperations.h>
 
+#import <WebKit/WebAssertions.h>
 #import <WebKit/WebBridge.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebFramePrivate.h>
@@ -39,6 +40,15 @@
 
 @end
 
+@implementation DOMDocument (WebDOMDocumentOperations)
+
+- (NSURL *)URLWithRelativeString:(NSString *)string
+{
+    return [[self _bridge] URLWithRelativeString:string];
+}
+
+@end
+
 @implementation DOMRange (WebDOMRangeOperations)
 
 - (WebBridge *)_bridge
@@ -57,15 +67,6 @@
 - (NSString *)markupString
 {		
     return [[self _bridge] markupStringFromRange:self subresourceURLStrings:nil];
-}
-
-@end
-
-@implementation DOMHTMLImageElement (WebDOMHTMLImageElementOperations)
-
-- (NSImage *)image
-{
-    return [[self _bridge] imageForImageElement:self];
 }
 
 @end

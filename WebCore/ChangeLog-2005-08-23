@@ -1,3 +1,16 @@
+2004-04-13  Chris Blumenberg  <cblu@apple.com>
+
+	- Removed WebCoreElementIsEditableKey. This functionality is available via [DOMNode isContentEditable].
+
+        Reviewed by rjw.
+
+        * WebCore-combined.exp:
+        * WebCore.exp:
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge elementAtPoint:]): removed use of WebCoreElementIsEditableKey
+        (-[WebCoreBridge URLWithRelativeString:]): new method for WebKit API
+
 2004-04-13  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3559764, make sure overflow is applied consistently using a separate bit on render objects, so that

@@ -24,7 +24,6 @@ extern NSString *WebElementImageAltStringKey;	// NSString of the ALT attribute o
 extern NSString *WebElementImageKey;		// NSImage of the image element
 extern NSString *WebElementImageRectKey;	// NSValue of an NSRect, the rect of the image element
 extern NSString *WebElementImageURLKey;		// NSURL of the image element
-extern NSString *WebElementIsEditableKey; 	// NSNumber of BOOL indicating whether the element is editable or not
 extern NSString *WebElementIsSelectedKey; 	// NSNumber of BOOL indicating whether the element is selected or not 
 extern NSString *WebElementLinkURLKey;		// NSURL of the link if the element is within an anchor
 extern NSString *WebElementLinkTargetFrameKey;	// NSString of the target of the anchor

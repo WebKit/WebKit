@@ -1,5 +1,25 @@
 2004-04-13  Chris Blumenberg  <cblu@apple.com>
 
+	- Added WebElementDOMNodeKey as a potential API so that clients can get the node from an element dictionary.
+	- Removed WebElementIsEditableKey. This functionality is available via [DOMNode isContentEditable].
+
+        Reviewed by rjw.
+
+        * DOM.subproj/WebDOMOperations.h:
+        * DOM.subproj/WebDOMOperations.m:
+        (-[DOMDocument URLWithRelativeString:]): new potential API
+        * WebView.subproj/WebDefaultContextMenuDelegate.m:
+        (-[WebDefaultUIDelegate webView:contextMenuItemsForElement:defaultMenuItems:]): indenting tweak
+        (-[WebDefaultUIDelegate copyImageToClipboard:]): use WebElementDOMNodeKey
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _handleMouseDragged:]): use WebElementDOMNodeKey
+        (-[WebHTMLView _dragOperationForDraggingInfo:]): use isContentEditable
+        * WebView.subproj/WebView.h:
+        * WebView.subproj/WebView.m:
+        * WebView.subproj/WebViewPrivate.h:
+
+2004-04-13  Chris Blumenberg  <cblu@apple.com>
+
 	Fixed deployment build failure.
 
         Reviewed by john.

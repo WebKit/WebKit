@@ -5,7 +5,8 @@
     Public header file.
 */
 
-#import <WebKit/DOM.h>
+#import <WebKit/DOMCore.h>
+#import <WebKit/DOMRange.h>
 
 @class WebArchive;
 
@@ -14,11 +15,11 @@
 - (NSString *)markupString;
 @end
 
+@interface DOMDocument (WebDOMDocumentOperations)
+- (NSURL *)URLWithRelativeString:(NSString *)string;
+@end
+
 @interface DOMRange (WebDOMRangeOperations)
 - (WebArchive *)webArchive;
 - (NSString *)markupString;
-@end
-
-@interface DOMHTMLImageElement (WebDOMHTMLImageElementOperations)
-- (NSImage *)image;
 @end

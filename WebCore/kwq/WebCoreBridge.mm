@@ -111,13 +111,12 @@ using KParts::URLArgs;
 
 using KJS::Bindings::RootObject;
 
-NSString *WebCoreElementDOMNodeKey =            @"WebCoreElementDOMNode"; // not in WebKit API for now, could be in API some day
+NSString *WebCoreElementDOMNodeKey =            @"WebElementDOMNode";
 NSString *WebCoreElementFrameKey =              @"WebElementFrame";
 NSString *WebCoreElementImageAltStringKey = 	@"WebElementImageAltString";
 NSString *WebCoreElementImageKey =              @"WebElementImage";
 NSString *WebCoreElementImageRectKey =          @"WebElementImageRect";
 NSString *WebCoreElementImageURLKey =           @"WebElementImageURL";
-NSString *WebCoreElementIsEditableKey =         @"WebElementIsEditable";
 NSString *WebCoreElementIsSelectedKey =         @"WebElementIsSelected";
 NSString *WebCoreElementLinkURLKey =            @"WebElementLinkURL";
 NSString *WebCoreElementLinkTargetFrameKey =	@"WebElementTargetFrame";
@@ -944,9 +943,6 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
     NodeImpl *node = nodeInfo.innerNonSharedNode();
     if (node) {
-        [element setObject:[NSNumber numberWithBool:node->isContentEditable()]
-                    forKey:WebCoreElementIsEditableKey];
-        
         [element setObject:[DOMNode _nodeWithImpl:node] forKey:WebCoreElementDOMNodeKey];
     
         if (node->renderer() && node->renderer()->isImage()) {
@@ -992,6 +988,16 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     }
     
     return element;
+}
+
+- (NSURL *)URLWithRelativeString:(NSString *)string
+{
+    DocumentImpl *doc = _part->xmlDocImpl();
+    if (!doc) {
+        return nil;
+    }
+    QString rel = parseURL(QString::fromNSString(string)).string();
+    return KURL(doc->baseURL(), rel, doc->decoder() ? doc->decoder()->codec() : 0).getNSURL();
 }
 
 - (BOOL)searchFor:(NSString *)string direction:(BOOL)forward caseSensitive:(BOOL)caseFlag wrap:(BOOL)wrapFlag
@@ -1142,15 +1148,6 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     [selectionImage setFlipped:NO];
 
     return selectionImage;
-}
-
-- (NSImage *)imageForImageElement:(DOMHTMLImageElement *)element
-{
-    RenderImage *r = static_cast<RenderImage *>([element _nodeImpl]->renderer());
-    if (r && r->isImage() && !r->isDisplayingError()) {
-        return r->pixmap().image();
-    }
-    return nil;
 }
 
 - (void)setName:(NSString *)name
