@@ -1,3 +1,5 @@
+=== Safari-187 ===
+
 2005-02-17  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Hyatt
@@ -23,8 +25,6 @@
         member of CompositeEditCommand. No other change.
         * khtml/editing/htmlediting.h: Moved around some functions. Added removeBlockquoteColorsIfNeeded().
         * khtml/editing/markup.cpp: Remove redundant static implementation of isMailBlockquote.
-
-=== Safari-187 ===
 
 2005-02-17  Richard Williamson   <rjw@apple.com>
 
