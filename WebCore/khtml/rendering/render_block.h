@@ -127,6 +127,7 @@ public:
     InlineFlowBox* createLineBoxes(RenderObject* obj);
     void computeHorizontalPositionsForLine(RootInlineBox* lineBox, BidiState &bidi);
     void computeVerticalPositionsForLine(RootInlineBox* lineBox);
+    void checkLinesForOverflow();
     void deleteEllipsisLineBoxes();
     void checkLinesForTextOverflow();
     // end bidi.cpp functions

@@ -1,5 +1,18 @@
 2004-10-20  David Hyatt  <hyatt@apple.com>
 
+	Fix for 3791146, make sure all lines are checked when computing overflow.
+	
+        Reviewed by kocienda
+
+        * khtml/rendering/bidi.cpp:
+        (khtml::RenderBlock::computeHorizontalPositionsForLine):
+        (khtml::RenderBlock::layoutInlineChildren):
+        (khtml::RenderBlock::findNextLineBreak):
+        (khtml::RenderBlock::checkLinesForOverflow):
+        * khtml/rendering/render_block.h:
+
+2004-10-20  David Hyatt  <hyatt@apple.com>
+
 	Fix for 3790936, make the unicode-breaking on the layout tests match Panther.
 	
         Reviewed by kocienda

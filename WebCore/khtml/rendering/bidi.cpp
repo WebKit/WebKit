@@ -816,9 +816,7 @@ void RenderBlock::computeHorizontalPositionsForLine(RootInlineBox* lineBox, Bidi
     
     // The widths of all runs are now known.  We can now place every inline box (and
     // compute accurate widths for the inline flow boxes).
-    int rightPos = lineBox->placeBoxesHorizontally(x);
-    if (rightPos > m_overflowWidth)
-        m_overflowWidth = rightPos; // FIXME: Work for rtl overflow also.
+    lineBox->placeBoxesHorizontally(x);
 }
 
 void RenderBlock::computeVerticalPositionsForLine(RootInlineBox* lineBox)
@@ -1581,6 +1579,9 @@ QRect RenderBlock::layoutInlineChildren(bool relayoutChildren)
     // Always make sure this is at least our height.
     m_overflowHeight = kMax(m_height, m_overflowHeight);
     
+    // See if any lines spill out of the block.  If so, we need to update our overflow width.
+    checkLinesForOverflow();
+
     if (useRepaintRect) {
         repaintRect.setWidth(kMax((int)m_width, m_overflowWidth));
         if (repaintRect.height() == 0)
@@ -1589,9 +1590,8 @@ QRect RenderBlock::layoutInlineChildren(bool relayoutChildren)
     
     setLinesAppended(false);
     
-    if (!firstLineBox() && element() && element()->isContentEditable() && element()->rootEditableElement() == element()) {
+    if (!firstLineBox() && element() && element()->isContentEditable() && element()->rootEditableElement() == element())
         m_height += lineHeight(true);
-    }
 
     // See if we have any lines that spill out of our block.  If we do, then we will possibly need to
     // truncate text.
@@ -2307,6 +2307,18 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
     }
     
     return lBreak;
+}
+
+void RenderBlock::checkLinesForOverflow()
+{
+    // FIXME: Work for left overflow also.
+    // FIXME: Inline blocks can have overflow.  Need to understand when those objects are present on a line
+    // and factor that in somehow.
+    m_overflowWidth = m_width;
+    for (RootInlineBox* curr = firstRootBox(); curr; curr = curr->nextRootBox()) {
+        int rightPos = curr->xPos() + curr->width();
+        m_overflowWidth = kMax(rightPos, m_overflowWidth);
+    }
 }
 
 void RenderBlock::deleteEllipsisLineBoxes()
