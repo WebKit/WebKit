@@ -424,6 +424,7 @@
         repTypes = [[NSMutableDictionary alloc] initWithObjectsAndKeys:
             [WebHTMLRepresentation class], @"text/html",
 	    [WebHTMLRepresentation class], @"text/xml",
+	    [WebHTMLRepresentation class], @"application/xhtml+xml",
             [WebTextRepresentation class], @"text/",
             [WebTextRepresentation class], @"application/x-javascript",
             nil];

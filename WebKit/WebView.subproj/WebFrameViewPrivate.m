@@ -244,6 +244,7 @@
         viewTypes = [[NSMutableDictionary alloc] initWithObjectsAndKeys:
             [WebHTMLView class], @"text/html",
 	    [WebHTMLView class], @"text/xml",
+	    [WebHTMLView class], @"application/xhtml+xml",
             [WebTextView class], @"text/",
             [WebTextView class], @"application/x-javascript",
             nil];

@@ -1,5 +1,16 @@
 2003-01-03  Richard Williamson   <rjw@apple.com>
 
+        Fixed 3139129.  Added application/xhtml+xml to list of supported type.
+
+        Reviewed by gramps.
+
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (+[WebDataSource _repTypes]):
+        * WebView.subproj/WebViewPrivate.m:
+        (+[WebView _viewTypes]):
+
+2003-01-03  Richard Williamson   <rjw@apple.com>
+
         Support for fixes to 3138743, 3138678.  Added
         isFontFixedPitch used to determine if font is fixed
         pitch.  Makes use of appkit private _isFakeFixedPitch
