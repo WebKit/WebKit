@@ -106,10 +106,6 @@ static NSNumber *IFURLFilePosixPermissions;
     result = [[NSFileManager defaultManager] createFileAtPathWithIntermediateDirectories:filePath contents:data attributes:attributes directoryAttributes:directoryAttributes];
 
     [archiver release];
-
-    NSLog(@"IFURLFileDatabase wrote file: [%@] %@", result ? @"YES" : @"NO", filePath);
-    
-    //return result;
 }
 
 -(void)removeObjectForKey:(id)key
