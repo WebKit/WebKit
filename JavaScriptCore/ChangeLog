@@ -1,3 +1,16 @@
+2004-09-09  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Richard.
+
+	<rdar://problem/3493140> REGRESSION (85-100): cedille displays %-escaped in JavaScript message at hotmail.com
+
+	* kjs/function.cpp:
+        (KJS::GlobalFuncImp::call): Replace our escape() and unescape() implementations with
+	ones from KDE KJS, which have the proper latin-1 behavior to match Win IE.
+        * kjs/lexer.cpp:
+        (Lexer::isHexDigit): Made static and non-const.
+        * kjs/lexer.h:
+
 === Safari-163 ===
 
 2004-09-06  Darin Adler  <darin@apple.com>

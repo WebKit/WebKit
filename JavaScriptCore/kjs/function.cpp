@@ -613,6 +613,7 @@ Value GlobalFuncImp::call(ExecState *exec, Object &/*thisObj*/, const List &args
     "abcdefghijklmnopqrstuvwxyz"
     "0123456789"
     "*+-./@_";
+
   static const char do_not_escape_when_encoding_URI_component[] =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
     "abcdefghijklmnopqrstuvwxyz"
@@ -710,11 +711,54 @@ Value GlobalFuncImp::call(ExecState *exec, Object &/*thisObj*/, const List &args
     res = encode(exec, args, do_not_escape_when_encoding_URI_component);
     break;
   case Escape:
-    res = encode(exec, args, do_not_escape);
-    break;
+    {
+      UString r = "", s, str = args[0].toString(exec);
+      const UChar *c = str.data();
+      for (int k = 0; k < str.size(); k++, c++) {
+        int u = c->uc;
+        if (u > 255) {
+          char tmp[7];
+          sprintf(tmp, "%%u%04X", u);
+          s = UString(tmp);
+        } else if (strchr(do_not_escape, (char)u)) {
+          s = UString(c, 1);
+        } else {
+          char tmp[4];
+          sprintf(tmp, "%%%02X", u);
+          s = UString(tmp);
+        }
+        r += s;
+      }
+      res = String(r);
+      break;
+    }
   case UnEscape:
-    res = decode(exec, args, "", false);
-    break;
+    {
+      UString s, str = args[0].toString(exec);
+      int k = 0, len = str.size();
+      while (k < len) {
+        const UChar *c = str.data() + k;
+        UChar u;
+        if (*c == UChar('%') && k <= len - 6 && *(c+1) == UChar('u')) {
+          if (Lexer::isHexDigit((c+2)->uc) && Lexer::isHexDigit((c+3)->uc) &&
+              Lexer::isHexDigit((c+4)->uc) && Lexer::isHexDigit((c+5)->uc)) {
+	  u = Lexer::convertUnicode((c+2)->uc, (c+3)->uc,
+				    (c+4)->uc, (c+5)->uc);
+	  c = &u;
+	  k += 5;
+          }
+        } else if (*c == UChar('%') && k <= len - 3 &&
+                   Lexer::isHexDigit((c+1)->uc) && Lexer::isHexDigit((c+2)->uc)) {
+          u = UChar(Lexer::convertHex((c+1)->uc, (c+2)->uc));
+          c = &u;
+          k += 2;
+        }
+        k++;
+        s += UString(c, 1);
+      }
+      res = String(s);
+      break;
+    }
 #ifndef NDEBUG
   case KJSPrint:
     puts(args[0].toString(exec).ascii());

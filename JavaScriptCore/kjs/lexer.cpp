@@ -577,7 +577,7 @@ bool Lexer::isDecimalDigit(unsigned short c)
   return (c >= '0' && c <= '9');
 }
 
-bool Lexer::isHexDigit(unsigned short c) const
+bool Lexer::isHexDigit(unsigned short c)
 {
   return (c >= '0' && c <= '9' ||
           c >= 'a' && c <= 'f' ||
