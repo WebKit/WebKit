@@ -1,0 +1,51 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x273
+  RenderBlock {HTML} at (0,0) size 800x273
+    RenderBody {BODY} at (8,8) size 784x257
+      RenderBlock (anonymous) at (0,0) size 784x17
+        RenderText {TEXT} at (0,0) size 367x17
+          text run at (0,0) width 367: "The style rule on this page should be totally ignored. "
+        RenderInline {A} at (0,0) size 88x17
+          RenderText {TEXT} at (367,0) size 88x17
+            text run at (367,0) width 88: "here is a link"
+        RenderText {TEXT} at (0,0) size 0x0
+      RenderBlock {H1} at (0,35) size 784x33
+        RenderText {TEXT} at (0,0) size 116x33
+          text run at (0,0) width 116: "heading"
+      RenderBlock (anonymous) at (0,86) size 784x85
+        RenderInline {SPAN} at (0,0) size 35x17
+          RenderText {TEXT} at (0,0) size 35x17
+            text run at (0,0) width 35: "issue"
+        RenderBR {BR} at (0,0) size 0x0
+        RenderText {TEXT} at (0,0) size 0x0
+        RenderInline {SPAN} at (0,0) size 21x17
+          RenderText {TEXT} at (0,17) size 21x17
+            text run at (0,17) width 21: "fail"
+        RenderBR {BR} at (0,0) size 0x0
+        RenderText {TEXT} at (0,0) size 0x0
+        RenderInline {A} at (0,0) size 133x17
+          RenderText {TEXT} at (0,34) size 133x17
+            text run at (0,34) width 133: "here is another link"
+        RenderBR {BR} at (0,0) size 0x0
+        RenderText {TEXT} at (0,0) size 0x0
+        RenderInline {SPAN} at (0,0) size 24x17
+          RenderText {TEXT} at (0,51) size 24x17
+            text run at (0,51) width 24: "n/a"
+        RenderBR {BR} at (0,0) size 0x0
+        RenderText {TEXT} at (0,0) size 0x0
+        RenderInline {SPAN} at (0,0) size 31x17
+          RenderText {TEXT} at (0,68) size 31x17
+            text run at (0,68) width 31: "pass"
+        RenderBR {BR} at (0,0) size 0x0
+        RenderText {TEXT} at (0,0) size 0x0
+      RenderBlock {H1} at (0,189) size 784x33
+        RenderText {TEXT} at (0,0) size 237x33
+          text run at (0,0) width 237: "another heading"
+      RenderBlock (anonymous) at (0,240) size 784x17
+        RenderInline {SPAN} at (0,0) size 24x17
+          RenderText {TEXT} at (0,0) size 24x17
+            text run at (0,0) width 24: "n/a"
+        RenderBR {BR} at (0,0) size 0x0
+        RenderText {TEXT} at (0,0) size 0x0
+        RenderText {TEXT} at (0,0) size 0x0

@@ -1,0 +1,46 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x57
+  RenderBlock {HTML} at (0,0) size 800x57
+    RenderBody {BODY} at (8,8) size 784x41
+      RenderBlock {P} at (0,0) size 64x38
+        RenderText {TEXT} at (2,2) size 60x17
+          text run at (2,2) width 60: "This text"
+        RenderBR {BR} at (0,0) size 0x0
+        RenderText {TEXT} at (2,19) size 60x17
+          text run at (2,19) width 60: "This text"
+      RenderText {TEXT} at (64,24) size 4x17
+        text run at (64,24) width 4: " "
+      RenderBlock {P} at (68,0) size 123x38
+        RenderBlock {SPAN} at (2,2) size 119x34
+          RenderText {TEXT} at (0,0) size 87x17
+            text run at (0,0) width 87: "should all be"
+          RenderBR {BR} at (0,0) size 0x0
+          RenderText {TEXT} at (0,17) size 119x17
+            text run at (0,17) width 119: "should also all be"
+      RenderText {TEXT} at (191,24) size 4x17
+        text run at (191,24) width 4: " "
+      RenderTable {TABLE} at (195,0) size 48x38
+        RenderTableSection {TBODY} at (2,2) size 0x34
+          RenderTableRow {TR} at (0,0) size 0x0
+            RenderTableCell {TD} at (0,0) size 44x17 [r=0 c=0 rs=1 cs=1]
+              RenderText {TEXT} at (0,0) size 44x17
+                text run at (0,0) width 44: "on the"
+          RenderTableRow {TR} at (0,0) size 0x0
+            RenderTableCell {TD} at (0,17) size 44x17 [r=1 c=0 rs=1 cs=1]
+              RenderText {TEXT} at (0,0) size 44x17
+                text run at (0,0) width 44: "on the"
+      RenderText {TEXT} at (243,24) size 4x17
+        text run at (243,24) width 4: " "
+      RenderTable {TABLE} at (247,0) size 78x38
+        RenderTableSection {TBODY} at (2,2) size 0x34
+          RenderTableRow {TR} at (0,0) size 0x0
+            RenderTableCell {TD} at (0,0) size 74x17 [r=0 c=0 rs=1 cs=1]
+              RenderText {TEXT} at (0,0) size 74x17
+                text run at (0,0) width 74: "same line.\x{A0}"
+          RenderTableRow {TR} at (0,0) size 0x0
+            RenderTableCell {TD} at (0,17) size 74x17 [r=1 c=0 rs=1 cs=1]
+              RenderText {TEXT} at (0,0) size 70x17
+                text run at (0,0) width 70: "same line."
+      RenderText {TEXT} at (0,0) size 0x0
+      RenderText {TEXT} at (0,0) size 0x0

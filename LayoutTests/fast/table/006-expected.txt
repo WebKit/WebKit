@@ -1,0 +1,11 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x239
+  RenderBlock {HTML} at (0,0) size 800x239
+    RenderBody {BODY} at (8,8) size 784x223
+      RenderTable {TABLE} at (0,0) size 231x223
+        RenderTableSection {TBODY} at (2,2) size 0x219
+          RenderTableRow {TR} at (0,0) size 0x0
+            RenderTableCell {TD} at (0,0) size 227x219 [r=0 c=0 rs=1 cs=1]
+              RenderText {TEXT} at (101,101) size 25x17
+                text run at (101,101) width 25: "Foo"

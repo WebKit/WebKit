@@ -1,0 +1,6 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x39
+  RenderBlock {HTML} at (0,0) size 800x39
+    RenderBody {BODY} at (8,8) size 784x23
+      RenderLineEdit {INPUT} at (2,2) size 50x19

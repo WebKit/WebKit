@@ -1,0 +1,14 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x65
+  RenderBlock {HTML} at (0,0) size 800x65
+    RenderBody {BODY} at (8,8) size 784x49 [color=#FFFFFF]
+      RenderBlock {DIV} at (0,0) size 784x32 [bgcolor=#008000]
+        RenderBlock {P} at (0,0) size 784x17 [bgcolor=#000000]
+          RenderText {TEXT} at (0,0) size 438x17
+            text run at (0,0) width 138: "This div should be 2"
+            text run at (138,0) width 105: "em tall with a 1"
+            text run at (243,0) width 195: "em gap underneath the text."
+      RenderBlock {DIV} at (0,32) size 784x17 [bgcolor=#008000]
+        RenderText {TEXT} at (0,0) size 437x17
+          text run at (0,0) width 437: "I should also be green and flush with the other green div above."

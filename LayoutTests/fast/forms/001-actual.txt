@@ -1,0 +1,50 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x296
+  RenderBlock {HTML} at (0,0) size 800x296
+    RenderBody {BODY} at (8,8) size 784x274
+      RenderBlock {H1} at (0,0) size 784x33
+        RenderText {TEXT} at (0,0) size 242x33
+          text run at (0,0) width 242: "Min-Width Tests"
+      RenderTable {TABLE} at (0,51) size 784x24
+        RenderTableSection {TBODY} at (2,2) size 0x20
+          RenderTableRow {TR} at (0,0) size 0x0
+            RenderTableCell {TD} at (0,0) size 57x20 [r=0 c=0 rs=1 cs=1]
+              RenderSelect {SELECT} at (3,1) size 51x18
+            RenderTableCell {TD} at (57,9) size 723x2 [r=0 c=1 rs=1 cs=1]
+      RenderBlock {P} at (0,89) size 784x24
+        RenderTable {TABLE} at (0,0) size 784x24
+          RenderTableSection {TBODY} at (2,2) size 0x20
+            RenderTableRow {TR} at (0,0) size 0x0
+              RenderTableCell {TD} at (0,0) size 20x20 [r=0 c=0 rs=1 cs=1]
+                RenderCheckBox {INPUT} at (4,4) size 12x12
+              RenderTableCell {TD} at (20,9) size 760x2 [r=0 c=1 rs=1 cs=1]
+      RenderBlock {P} at (0,127) size 784x25
+        RenderTable {TABLE} at (0,0) size 784x25
+          RenderTableSection {TBODY} at (2,2) size 0x21
+            RenderTableRow {TR} at (0,0) size 0x0
+              RenderTableCell {TD} at (0,0) size 22x21 [r=0 c=0 rs=1 cs=1]
+                RenderRadioButton {INPUT} at (4,4) size 14x13
+              RenderTableCell {TD} at (22,9) size 758x2 [r=0 c=1 rs=1 cs=1]
+      RenderBlock {P} at (0,166) size 784x28
+        RenderTable {TABLE} at (0,0) size 784x28
+          RenderTableSection {TBODY} at (2,2) size 0x24
+            RenderTableRow {TR} at (0,0) size 0x0
+              RenderTableCell {TD} at (0,0) size 42x24 [r=0 c=0 rs=1 cs=1]
+                RenderSubmitButton {INPUT} at (3,3) size 36x18
+              RenderTableCell {TD} at (42,11) size 738x2 [r=0 c=1 rs=1 cs=1]
+      RenderBlock {P} at (0,208) size 784x66
+        RenderTable {TABLE} at (0,0) size 784x24
+          RenderTableSection {TBODY} at (2,2) size 0x20
+            RenderTableRow {TR} at (0,0) size 0x0
+              RenderTableCell {TD} at (0,0) size 42x20 [r=0 c=0 rs=1 cs=1]
+                RenderSubmitButton {INPUT} at (3,1) size 36x18
+              RenderTableCell {TD} at (42,9) size 738x2 [r=0 c=1 rs=1 cs=1]
+        RenderTable {TABLE} at (0,24) size 784x24
+          RenderTableSection {TBODY} at (2,2) size 0x20
+            RenderTableRow {TR} at (0,0) size 0x0
+              RenderTableCell {TD} at (0,0) size 93x20 [r=0 c=0 rs=1 cs=1]
+                RenderResetButton {INPUT} at (3,1) size 87x18
+              RenderTableCell {TD} at (93,9) size 687x2 [r=0 c=1 rs=1 cs=1]
+        RenderBlock (anonymous) at (0,48) size 784x18
+          RenderSubmitButton {INPUT} at (2,0) size 36x18

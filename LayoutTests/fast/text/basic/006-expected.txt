@@ -1,0 +1,14 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x45
+  RenderBlock {HTML} at (0,0) size 800x45
+    RenderBody {BODY} at (8,8) size 784x29
+      RenderTable {TABLE} at (0,0) size 784x29
+        RenderTableSection {TBODY} at (2,2) size 0x25
+          RenderTableRow {TR} at (0,0) size 0x0
+            RenderTableCell {TD} at (2,2) size 561x21 [r=0 c=0 rs=1 cs=1]
+              RenderText {TEXT} at (2,2) size 170x17
+                text run at (2,2) width 170: "Big cell gets all the width"
+            RenderTableCell {TD} at (565,2) size 213x21 [r=0 c=1 rs=1 cs=1]
+              RenderText {TEXT} at (2,2) size 209x17
+                text run at (2,2) width 209: "Icannotbreak\x{A0}noicannot\x{A0}\x{B7}break"

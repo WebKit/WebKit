@@ -1,0 +1,25 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x179
+  RenderBlock {HTML} at (0,0) size 800x179
+    RenderBody {BODY} at (8,14) size 784x157
+      RenderBlock {P} at (0,0) size 784x17
+        RenderText {TEXT} at (0,0) size 489x17
+          text run at (0,0) width 489: "The following three rectangles should be identical, with no red present."
+      RenderTable {TABLE} at (0,31) size 266x126
+        RenderTableSection {TBODY} at (0,0) size 0x126
+          RenderTableRow {TR} at (0,0) size 0x0
+            RenderTableCell {TD} at (14,14) size 112x42 [bgcolor=#FF0000] [r=0 c=0 rs=1 cs=1]
+              RenderBlock {DIV} at (0,0) size 112x42 [bgcolor=#FFFF00]
+                RenderBlock {DIV} at (0,0) size 112x14 [bgcolor=#000000]
+                RenderBlock {DIV} at (0,28) size 112x14 [bgcolor=#000000]
+            RenderTableCell {TD} at (140,14) size 112x42 [bgcolor=#FF0000] [r=0 c=1 rs=1 cs=1]
+              RenderBlock {DIV} at (0,0) size 112x14 [bgcolor=#00FF00]
+              RenderBlock {DIV} at (0,14) size 112x14 [bgcolor=#FFFF00]
+              RenderBlock {DIV} at (0,28) size 112x14 [bgcolor=#008000]
+          RenderTableRow {TR} at (0,0) size 0x0
+            RenderTableCell {TD} at (14,70) size 112x42 [bgcolor=#FF0000] [r=1 c=0 rs=1 cs=1]
+              RenderBlock {DIV} at (0,0) size 112x14 [bgcolor=#00FF00]
+              RenderBlock {DIV} at (0,14) size 112x14 [bgcolor=#FFFF00]
+              RenderBlock {DIV} at (0,28) size 112x14 [bgcolor=#008000]
+            RenderTableCell {TD} at (140,91) size 112x0 [r=1 c=1 rs=1 cs=1]

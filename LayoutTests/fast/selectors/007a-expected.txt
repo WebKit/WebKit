@@ -1,0 +1,20 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x69
+  RenderBlock {HTML} at (0,0) size 800x69
+    RenderBody {BODY} at (8,14) size 784x47
+      RenderBlock {P} at (0,0) size 784x17 [bgcolor=#00FF00]
+        RenderText {TEXT} at (0,0) size 510x17
+          text run at (0,0) width 428: "This paragraph should have green background because CLASS "
+          text run at (428,0) width 82: "contains \"b\""
+      RenderBlock {ADDRESS} at (0,31) size 784x16 [bgcolor=#00FF00]
+        RenderInline {SPAN} at (0,0) size 158x16 [bgcolor=#000000]
+          RenderText {TEXT} at (0,0) size 158x16
+            text run at (0,0) width 158: "This address should also"
+        RenderText {TEXT} at (158,0) size 4x16
+          text run at (158,0) width 4: " "
+        RenderInline {SPAN} at (0,0) size 605x16 [bgcolor=#000000]
+          RenderText {TEXT} at (162,0) size 605x16
+            text run at (162,0) width 356: "have green background because the selector in the last "
+            text run at (518,0) width 249: "rule does not apply to the inner SPANs."
+        RenderText {TEXT} at (0,0) size 0x0

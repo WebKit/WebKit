@@ -1,0 +1,26 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x226
+  RenderBlock {HTML} at (0,0) size 800x226
+    RenderBody {BODY} at (8,14) size 784x204
+      RenderBlock {P} at (0,0) size 784x34
+        RenderText {TEXT} at (0,0) size 675x17
+          text run at (0,0) width 675: "The following box should contain exactly three bands, one yellow, one orange, and one lime, with "
+        RenderInline {STRONG} at (0,0) size 774x34
+          RenderText {TEXT} at (675,0) size 774x34
+            text run at (675,0) width 99: "absolutely no"
+            text run at (0,17) width 77: "red visible"
+        RenderText {TEXT} at (77,17) size 5x17
+          text run at (77,17) width 5: "."
+      RenderTable {TABLE} at (0,48) size 106x156 [bgcolor=#FF0000]
+        RenderTableSection {TBODY} at (3,3) size 0x150 [bgcolor=#000000]
+          RenderTableRow {TR} at (0,0) size 0x0
+            RenderTableCell {TD} at (0,0) size 50x150 [r=0 c=0 rs=1 cs=1]
+              RenderBlock {DIV} at (0,0) size 50x150 [bgcolor=#FFA500]
+                RenderBlock {DIV} at (0,0) size 50x50 [bgcolor=#FF0000]
+                  RenderBlock {DIV} at (0,0) size 50x50 [bgcolor=#FFFF00]
+                RenderBlock {DIV} at (0,100) size 50x50 [bgcolor=#00FF00]
+            RenderTableCell {TD} at (50,0) size 50x150 [r=0 c=1 rs=1 cs=1]
+              RenderBlock {DIV} at (0,0) size 50x50
+              RenderBlock {DIV} at (0,50) size 50x50
+              RenderBlock {DIV} at (0,100) size 50x50

@@ -1,0 +1,14 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x114
+  RenderBlock {HTML} at (0,0) size 800x114
+    RenderBody {BODY} at (8,8) size 784x92
+      RenderBlock {PRE} at (0,0) size 784x32
+        RenderText {TEXT} at (0,16) size 104x16
+          text run at (0,16) width 104: "text      col"
+      RenderBlock {PRE} at (0,46) size 784x16
+        RenderText {TEXT} at (0,0) size 104x16
+          text run at (0,0) width 104: "          col"
+      RenderBlock {PRE} at (0,76) size 784x16
+        RenderText {TEXT} at (0,0) size 104x16
+          text run at (0,0) width 104: "thistextiscol"

@@ -1,0 +1,17 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x109
+  RenderBlock {HTML} at (0,0) size 800x109
+    RenderBody {BODY} at (8,14) size 784x87
+      RenderBlock {P} at (0,0) size 784x17
+        RenderText {TEXT} at (0,0) size 503x17
+          text run at (0,0) width 503: "The following two vertical bars should be at the same horizontal position."
+      RenderBlock {DIV} at (0,31) size 72x28
+        RenderBlock {DIV} at (48,0) size 0x28
+          RenderInline {SPAN} at (0,0) size 9x28
+            RenderText {TEXT} at (0,0) size 9x28
+              text run at (0,0) width 9: "|"
+      RenderBlock {DIV} at (0,59) size 784x28
+        RenderInline {SPAN} at (0,0) size 9x28
+          RenderText {TEXT} at (48,0) size 9x28
+            text run at (48,0) width 9: "|"

@@ -1,0 +1,18 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x39
+  RenderBlock {HTML} at (0,0) size 800x39
+    RenderBody {BODY} at (8,8) size 784x17
+      RenderBlock {P} at (0,0) size 784x17
+        RenderInline at (0,0) size 57x17
+          RenderInline at (0,0) size 8x17 [color=#FFD800]
+            RenderText at (0,0) size 8x17
+              text run at (0,0) width 8: "S"
+          RenderText at (8,0) size 49x17
+            text run at (8,0) width 49: "pecial: "
+        RenderText {TEXT} at (57,0) size 644x17
+          text run at (57,0) width 234: "The \"S\" to the left should be gold. "
+          text run at (291,0) width 410: "This is testing :before used in conjunction with :first-letter. "
+        RenderInline at (0,0) size 64x17
+          RenderText at (701,0) size 64x17
+            text run at (701,0) width 64: "[The End]"

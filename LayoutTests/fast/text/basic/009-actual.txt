@@ -1,0 +1,15 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x73
+  RenderBlock {HTML} at (0,0) size 800x73
+    RenderBody {BODY} at (8,8) size 784x57
+      RenderInline {SPAN} at (0,0) size 374x28
+        RenderText {TEXT} at (0,0) size 220x28
+          text run at (0,0) width 220: "This is some text. "
+        RenderInline {TT} at (0,0) size 154x28
+          RenderText {TEXT} at (220,1) size 154x28
+            text run at (220,1) width 154: "As is this."
+      RenderText {TEXT} at (374,0) size 745x57
+        text run at (374,0) width 341: " All of this text should be 24"
+        text run at (715,0) width 30: "px"
+        text run at (0,29) width 45: "tall."

@@ -1,0 +1,17 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x8
+  RenderBlock {HTML} at (0,0) size 800x8
+    RenderBody {BODY} at (8,8) size 784x0
+      RenderBlock (floating) {DIV} at (0,0) size 326x21
+        RenderInline {SPAN} at (0,0) size 322x17
+          RenderText {TEXT} at (102,2) size 122x17
+            text run at (102,2) width 122: "This is some text."
+      RenderBlock (anonymous) at (0,0) size 784x0
+        RenderText {TEXT} at (0,0) size 0x0
+      RenderBlock {P} at (0,0) size 784x0
+      RenderBlock (floating) {DIV} at (692,0) size 92x38
+        RenderInline {SPAN} at (0,0) size 88x34
+          RenderText {TEXT} at (12,2) size 78x34
+            text run at (12,2) width 59: "First line"
+            text run at (2,19) width 78: "Second line"

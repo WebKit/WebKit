@@ -1,0 +1,4 @@
+layer at (0,0) size 0x0
+  RenderCanvas at (0,0) size 0x0
+layer at (0,-500000) size 0x0 backgroundClip at (0,0) size 0x-500000 clip at (0,0) size 0x0
+  RenderBlock {COMMENT} at (0,-500000) size 0x0

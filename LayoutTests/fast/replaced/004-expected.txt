@@ -1,0 +1,23 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x290
+  RenderBlock {HTML} at (0,0) size 800x290
+    RenderBody {BODY} at (8,14) size 784x262
+      RenderBlock {P} at (0,0) size 784x34
+        RenderText {TEXT} at (0,0) size 775x34
+          text run at (0,0) width 422: "There should be no red below, just two 300\x{D7}100 pixel green "
+          text run at (422,0) width 314: "rectangles of different shades, seperated by 1"
+          text run at (736,0) width 39: "em of"
+          text run at (0,17) width 53: "margin."
+      RenderBlock {DIV} at (0,48) size 300x100 [bgcolor=#FF0000]
+        RenderBlock {P} at (0,0) size 600x100 [bgcolor=#000000]
+          RenderImage {IMG} at (0,0) size 300x100
+          RenderText {TEXT} at (0,0) size 0x0
+layer at (8,176) size 600x100
+  RenderBlock (relative positioned) {DIV} at (0,162) size 300x100
+    RenderBlock {P} at (0,0) size 600x100
+      RenderImage {IMG} at (0,0) size 300x100
+      RenderText {TEXT} at (0,0) size 0x0
+      RenderText {TEXT} at (0,0) size 0x0
+layer at (0,0) size 300x100 backgroundClip at (8,176) size 300x100
+  RenderBlock (positioned) {SPAN} at (0,0) size 300x100 [bgcolor=#008000]

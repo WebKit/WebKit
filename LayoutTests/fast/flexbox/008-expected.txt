@@ -1,0 +1,17 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x264
+  RenderBlock {HTML} at (0,0) size 800x264
+    RenderBody {BODY} at (8,8) size 784x248
+      RenderBlock {P} at (0,0) size 784x34
+        RenderText {TEXT} at (0,0) size 749x34
+          text run at (0,0) width 147: "You should see a 200"
+          text run at (147,0) width 183: "x200 green square below. "
+          text run at (330,0) width 261: "If you see any red, the test has failed. "
+          text run at (591,0) width 158: "This test is checking to"
+          text run at (0,17) width 674: "make sure that boxes will shift to avoid floats that try to intrude into their space (just as tables do)."
+      RenderBlock {DIV} at (0,48) size 200x200 [bgcolor=#FF0000]
+        RenderBlock (floating) {DIV} at (0,0) size 100x200 [bgcolor=#008000]
+        RenderBlock (anonymous) at (0,0) size 200x0 [bgcolor=#000000]
+          RenderText {TEXT} at (0,0) size 0x0 [bgcolor=#FF0000]
+        RenderFlexibleBox {DIV} at (100,0) size 100x200 [bgcolor=#008000]

@@ -1,0 +1,9 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x8
+  RenderBlock {HTML} at (0,0) size 800x8
+    RenderBody {BODY} at (8,8) size 784x0
+      RenderBlock (floating) {DIV} at (0,0) size 283x21
+        RenderText {TEXT} at (2,2) size 279x17
+          text run at (2,2) width 256: "Words should have a negative spacing of 5"
+          text run at (258,2) width 23: "px."

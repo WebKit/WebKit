@@ -1,0 +1,21 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x56
+  RenderBlock {HTML} at (0,0) size 800x56
+    RenderBody {BODY} at (8,8) size 784x34
+      RenderBlock {DL} at (0,0) size 784x34
+        RenderBlock {DT} at (0,0) size 784x17
+          RenderInline {B} at (0,0) size 27x17
+            RenderText {TEXT} at (0,0) size 27x17
+              text run at (0,0) width 27: "Boo"
+        RenderBlock (anonymous) at (0,17) size 784x0
+          RenderInline {B} at (0,0) size 0x0
+        RenderBlock (anonymous) at (0,17) size 784x17
+          RenderBlock {DD} at (40,0) size 744x17
+            RenderText {TEXT} at (0,0) size 36x17
+              text run at (0,0) width 36: "Goo?"
+        RenderBlock (anonymous) at (0,34) size 784x0
+          RenderInline {B} at (0,0) size 0x0
+      RenderBlock (anonymous) at (0,48) size 784x0
+        RenderInline {B} at (0,0) size 0x0
+          RenderText {TEXT} at (0,0) size 0x0

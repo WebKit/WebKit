@@ -1,0 +1,20 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x212
+  RenderBlock {HTML} at (0,0) size 800x212
+    RenderBody {BODY} at (8,8) size 784x196
+      RenderBlock {P} at (0,0) size 784x34
+        RenderText {TEXT} at (0,0) size 780x34
+          text run at (0,0) width 147: "You should see a 100"
+          text run at (147,0) width 376: "x100 green square below enclosed by an olive border. "
+          text run at (523,0) width 257: "If you see any red, the test has failed."
+          text run at (0,17) width 530: "If the border does not fully enclose the green square, then the test has failed."
+      RenderBlock {P} at (0,48) size 784x34
+        RenderText {TEXT} at (0,0) size 757x34
+          text run at (0,0) width 757: "This test is checking to make sure blocks with auto height that are children of boxes will expand to encompass"
+          text run at (0,17) width 132: "overhanging floats."
+      RenderBlock {DIV} at (0,96) size 100x100 [bgcolor=#FF0000]
+        RenderFlexibleBox {DIV} at (0,0) size 100x100 [bgcolor=#000000]
+          RenderBlock {DIV} at (4,4) size 92x92
+            RenderBlock (floating) {DIV} at (0,0) size 92x92 [bgcolor=#008000]
+            RenderText {TEXT} at (0,0) size 0x0

@@ -1,0 +1,11 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x70
+  RenderBlock {HTML} at (0,0) size 800x70
+    RenderBody {BODY} at (8,8) size 784x48
+      RenderBlock {P} at (0,0) size 784x17
+        RenderText {TEXT} at (0,0) size 202x17
+          text run at (0,0) width 202: "This is a UTF-8 quote mark: \x{2019}"
+      RenderBlock {P} at (0,31) size 784x17
+        RenderText {TEXT} at (0,0) size 679x17
+          text run at (0,0) width 679: "If it shows up as garbage, that means Safari got confused by comments within the <head> section."

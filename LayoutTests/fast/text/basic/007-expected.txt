@@ -1,0 +1,44 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x119
+  RenderBlock {HTML} at (0,0) size 800x119
+    RenderBody {BODY} at (8,8) size 784x103
+      RenderTable {TABLE} at (0,0) size 784x40
+        RenderTableSection {TBODY} at (2,2) size 0x36
+          RenderTableRow {TR} at (0,0) size 0x0
+            RenderTableCell {TD} at (0,8) size 717x19 [r=0 c=0 rs=1 cs=1]
+              RenderText {TEXT} at (1,1) size 65x17
+                text run at (1,1) width 65: "A Big Cell"
+            RenderTableCell {TD} at (717,0) size 63x36 [r=0 c=1 rs=1 cs=1]
+              RenderText {TEXT} at (1,1) size 37x34
+                text run at (1,1) width 10: "A"
+                text run at (1,18) width 37: "small"
+              RenderInline {SPAN} at (0,0) size 24x17
+                RenderText {TEXT} at (38,18) size 24x17
+                  text run at (38,18) width 24: "cell"
+      RenderTable {TABLE} at (0,40) size 784x40
+        RenderTableSection {TBODY} at (2,2) size 0x36
+          RenderTableRow {TR} at (0,0) size 0x0
+            RenderTableCell {TD} at (0,8) size 712x19 [r=0 c=0 rs=1 cs=1]
+              RenderText {TEXT} at (1,1) size 65x17
+                text run at (1,1) width 65: "A Big Cell"
+            RenderTableCell {TD} at (712,0) size 68x36 [r=0 c=1 rs=1 cs=1]
+              RenderText {TEXT} at (1,1) size 51x17
+                text run at (1,1) width 51: "A small"
+              RenderInline {SPAN} at (0,0) size 24x17
+                RenderText {TEXT} at (1,18) size 24x17
+                  text run at (1,18) width 24: "cell"
+              RenderText {TEXT} at (25,18) size 42x17
+                text run at (25,18) width 42: "block!"
+      RenderTable {TABLE} at (0,80) size 784x23
+        RenderTableSection {TBODY} at (2,2) size 0x19
+          RenderTableRow {TR} at (0,0) size 0x0
+            RenderTableCell {TD} at (0,0) size 703x19 [r=0 c=0 rs=1 cs=1]
+              RenderText {TEXT} at (1,1) size 65x17
+                text run at (1,1) width 65: "A Big Cell"
+            RenderTableCell {TD} at (703,0) size 77x19 [r=0 c=1 rs=1 cs=1]
+              RenderText {TEXT} at (1,1) size 51x17
+                text run at (1,1) width 51: "A small"
+              RenderInline {SPAN} at (0,0) size 24x17
+                RenderText {TEXT} at (52,1) size 24x17
+                  text run at (52,1) width 24: "cell"

@@ -1,0 +1,8 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x45
+  RenderBlock {HTML} at (0,0) size 800x45
+    RenderBody {BODY} at (8,14) size 784x17
+      RenderBlock {P} at (0,0) size 784x17 [bgcolor=#00FF00]
+        RenderText {TEXT} at (0,0) size 604x17
+          text run at (0,0) width 604: "This paragraph should have a green background because its title attribute contains \"bar\""

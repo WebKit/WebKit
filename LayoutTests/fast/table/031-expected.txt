@@ -1,0 +1,13 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x320
+  RenderBlock {HTML} at (0,0) size 800x320
+    RenderBody {BODY} at (8,8) size 784x304
+      RenderTable {TABLE} at (0,0) size 306x304
+        RenderTableSection {TBODY} at (0,0) size 0x304
+          RenderTableRow {TR} at (0,0) size 0x0
+            RenderTableCell {TD} at (2,2) size 302x302 [bgcolor=#0000FF] [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (1,1) size 6x300 [bgcolor=#000000]
+                RenderTableSection {TBODY} at (0,0) size 0x300
+                  RenderTableRow {TR} at (0,0) size 0x0
+                    RenderTableCell {TD} at (2,149) size 2x2 [r=0 c=0 rs=1 cs=1]

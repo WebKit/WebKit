@@ -1,0 +1,19 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x72
+  RenderBlock {HTML} at (0,0) size 800x72
+    RenderBody {BODY} at (8,8) size 784x56
+      RenderTable {TABLE} at (0,0) size 784x56
+        RenderTableSection {TBODY} at (0,0) size 0x56
+          RenderTableRow {TR} at (0,0) size 0x0
+            RenderTableCell {TD} at (0,0) size 150x56 [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (0,0) size 150x56
+                RenderTableSection {TBODY} at (10,10) size 0x36
+                  RenderTableRow {TR} at (0,0) size 0x0
+                    RenderTableCell {TD} at (0,0) size 130x36 [r=0 c=0 rs=1 cs=1]
+                      RenderText {TEXT} at (1,1) size 78x34
+                        text run at (1,1) width 78: "left column"
+                        text run at (1,18) width 52: "content"
+            RenderTableCell {TD} at (150,19) size 634x17 [r=0 c=1 rs=1 cs=1]
+              RenderText {TEXT} at (0,0) size 77x17
+                text run at (0,0) width 77: "second cell"

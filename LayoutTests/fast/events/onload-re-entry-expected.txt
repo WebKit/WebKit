@@ -1,0 +1,8 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x39
+  RenderBlock {HTML} at (0,0) size 800x39
+    RenderBody {BODY} at (8,8) size 784x17
+      RenderBlock {P} at (0,0) size 784x17
+        RenderText {TEXT} at (0,0) size 9x17
+          text run at (0,0) width 9: "1"

@@ -1,0 +1,29 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x237
+  RenderBlock {HTML} at (0,0) size 800x237
+    RenderBody {BODY} at (8,8) size 784x221
+      RenderBlock {DIV} at (0,0) size 454x169
+        RenderImage {IMG} at (2,2) size 450x29 [bgcolor=#FFFF00]
+        RenderText {TEXT} at (0,0) size 0x0
+        RenderBR {BR} at (0,0) size 0x0
+        RenderText {TEXT} at (0,0) size 0x0
+        RenderImage {IMG} at (2,31) size 250x125 [bgcolor=#FFA500]
+        RenderText {TEXT} at (255,31) size 197x136
+          text run at (255,31) width 197: "Theme Park Roller Coaster is"
+          text run at (255,48) width 185: "an excellent game that lets"
+          text run at (255,65) width 186: "you create your own virtual"
+          text run at (255,82) width 194: "amusement park. Go behind"
+          text run at (255,99) width 111: "the scenes of its"
+          text run at (255,116) width 139: "development and its"
+          text run at (255,133) width 195: "transition from the PC to the"
+          text run at (255,150) width 30: "PS2."
+      RenderBlock {P} at (0,183) size 784x0
+      RenderBlock {DIV} at (0,183) size 304x38
+        RenderImage {IMG} at (197,5) size 105x70 [bgcolor=#800080]
+        RenderText {TEXT} at (2,2) size 162x17
+          text run at (2,2) width 162: "First non-breaking line."
+        RenderInline {NOBR} at (0,0) size 181x17
+          RenderText {TEXT} at (2,19) size 181x17
+            text run at (2,19) width 181: "Second non-breaking line."
+        RenderText {TEXT} at (0,0) size 0x0

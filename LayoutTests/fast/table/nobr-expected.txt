@@ -1,0 +1,36 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x349
+  RenderBlock {HTML} at (0,0) size 800x349
+    RenderBody {BODY} at (8,8) size 784x333
+      RenderBlock (anonymous) at (0,0) size 784x0
+        RenderInline {NOBR} at (0,0) size 0x0
+      RenderBlock (anonymous) at (0,0) size 784x333
+        RenderTable {TABLE} at (0,0) size 77x333
+          RenderTableSection {TBODY} at (1,1) size 0x331
+            RenderTableRow {TR} at (0,0) size 0x0
+              RenderTableCell {TD} at (2,2) size 71x327 [r=0 c=0 rs=1 cs=1]
+                RenderText {TEXT} at (2,2) size 67x323
+                  text run at (2,2) width 57: "This is a"
+                  text run at (2,19) width 60: "test case"
+                  text run at (2,36) width 20: "for"
+                  text run at (2,53) width 67: "3190580."
+                  text run at (2,70) width 32: "Even"
+                  text run at (2,87) width 49: "though"
+                  text run at (2,104) width 64: "this table"
+                  text run at (2,121) width 12: "is"
+                  text run at (2,138) width 61: "enclosed"
+                  text run at (2,155) width 61: "in a nobr"
+                  text run at (2,172) width 57: "tag, this"
+                  text run at (2,189) width 27: "text"
+                  text run at (2,206) width 46: "should"
+                  text run at (2,223) width 34: "wrap"
+                  text run at (2,240) width 59: "anyway. "
+                  text run at (2,257) width 64: "The table"
+                  text run at (2,274) width 67: "is only 50"
+                  text run at (2,291) width 41: "pixels"
+                  text run at (2,308) width 37: "wide."
+      RenderBlock (anonymous) at (0,333) size 784x0
+        RenderInline {NOBR} at (0,0) size 0x0
+        RenderText {TEXT} at (0,0) size 0x0
+        RenderText {TEXT} at (0,0) size 0x0

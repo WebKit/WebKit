@@ -1,0 +1,47 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x422
+  RenderBlock {HTML} at (0,0) size 800x422
+    RenderBody {BODY} at (8,8) size 784x406
+      RenderBlock {P} at (0,0) size 784x34
+        RenderText {TEXT} at (0,0) size 766x34
+          text run at (0,0) width 147: "You should see a 350"
+          text run at (147,0) width 420: "x350 pixel (7 by 7) black/white checkerboard pattern below. "
+          text run at (567,0) width 199: "This test is checking to see if"
+          text run at (0,17) width 212: "box-pack: justify is supported."
+      RenderFlexibleBox {DIV} at (0,48) size 358x358
+        RenderFlexibleBox {DIV} at (4,4) size 50x350
+          RenderFlexibleBox {DIV} at (0,0) size 50x50 [bgcolor=#000000]
+          RenderFlexibleBox {DIV} at (0,100) size 50x50 [bgcolor=#000000]
+          RenderFlexibleBox {DIV} at (0,200) size 50x50 [bgcolor=#000000]
+          RenderFlexibleBox {DIV} at (0,300) size 50x50 [bgcolor=#000000]
+        RenderFlexibleBox {DIV} at (54,4) size 50x350 [bgcolor=#000000]
+          RenderFlexibleBox {DIV} at (0,0) size 50x50 [bgcolor=#FFFFFF]
+          RenderFlexibleBox {DIV} at (0,100) size 50x50 [bgcolor=#FFFFFF]
+          RenderFlexibleBox {DIV} at (0,200) size 50x50 [bgcolor=#FFFFFF]
+          RenderFlexibleBox {DIV} at (0,300) size 50x50 [bgcolor=#FFFFFF]
+        RenderFlexibleBox {DIV} at (104,4) size 50x350
+          RenderFlexibleBox {DIV} at (0,0) size 50x50 [bgcolor=#000000]
+          RenderFlexibleBox {DIV} at (0,100) size 50x50 [bgcolor=#000000]
+          RenderFlexibleBox {DIV} at (0,200) size 50x50 [bgcolor=#000000]
+          RenderFlexibleBox {DIV} at (0,300) size 50x50 [bgcolor=#000000]
+        RenderFlexibleBox {DIV} at (154,4) size 50x350 [bgcolor=#000000]
+          RenderFlexibleBox {DIV} at (0,0) size 50x50 [bgcolor=#FFFFFF]
+          RenderFlexibleBox {DIV} at (0,100) size 50x50 [bgcolor=#FFFFFF]
+          RenderFlexibleBox {DIV} at (0,200) size 50x50 [bgcolor=#FFFFFF]
+          RenderFlexibleBox {DIV} at (0,300) size 50x50 [bgcolor=#FFFFFF]
+        RenderFlexibleBox {DIV} at (204,4) size 50x350
+          RenderFlexibleBox {DIV} at (0,0) size 50x50 [bgcolor=#000000]
+          RenderFlexibleBox {DIV} at (0,100) size 50x50 [bgcolor=#000000]
+          RenderFlexibleBox {DIV} at (0,200) size 50x50 [bgcolor=#000000]
+          RenderFlexibleBox {DIV} at (0,300) size 50x50 [bgcolor=#000000]
+        RenderFlexibleBox {DIV} at (254,4) size 50x350 [bgcolor=#000000]
+          RenderFlexibleBox {DIV} at (0,0) size 50x50 [bgcolor=#FFFFFF]
+          RenderFlexibleBox {DIV} at (0,100) size 50x50 [bgcolor=#FFFFFF]
+          RenderFlexibleBox {DIV} at (0,200) size 50x50 [bgcolor=#FFFFFF]
+          RenderFlexibleBox {DIV} at (0,300) size 50x50 [bgcolor=#FFFFFF]
+        RenderFlexibleBox {DIV} at (304,4) size 50x350
+          RenderFlexibleBox {DIV} at (0,0) size 50x50 [bgcolor=#000000]
+          RenderFlexibleBox {DIV} at (0,100) size 50x50 [bgcolor=#000000]
+          RenderFlexibleBox {DIV} at (0,200) size 50x50 [bgcolor=#000000]
+          RenderFlexibleBox {DIV} at (0,300) size 50x50 [bgcolor=#000000]

@@ -1,0 +1,23 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x271
+  RenderBlock {HTML} at (0,0) size 800x271
+    RenderBody {BODY} at (8,8) size 784x249
+      RenderBlock {DIV} at (0,0) size 784x97
+        RenderBlock (floating) {DIV} at (10,10) size 120x120 [bgcolor=#FFA500]
+        RenderBlock (anonymous) at (10,10) size 764x0
+          RenderText {TEXT} at (0,0) size 0x0
+        RenderListItem {DIV} at (10,10) size 764x77
+          RenderListItem {DIV} at (10,10) size 744x57
+            RenderListItem {DIV} at (10,10) size 724x37
+              RenderListMarker at (128,10) size 0x14
+              RenderListMarker at (128,10) size 0x14
+              RenderListMarker at (128,10) size 0x14
+              RenderText {TEXT} at (128,10) size 95x17
+                text run at (128,10) width 95: "List item text."
+      RenderBlock {UL} at (158,111) size 626x138
+        RenderListItem {LI} at (40,0) size 586x138
+          RenderListMarker at (83,52) size 0x14
+          RenderText {TEXT} at (83,52) size 451x34
+            text run at (83,52) width 451: "Foo fofodfosjlkdf dslkdjlk asdlksjald djklsd klasjdkas sdajd lsadjkl"
+            text run at (457,69) width 77: "asjdlksajdk"

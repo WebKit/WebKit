@@ -1,0 +1,103 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x176
+  RenderBlock {HTML} at (0,0) size 800x176
+    RenderBody {BODY} at (8,8) size 784x160
+      RenderBlock (anonymous) at (0,0) size 784x17
+        RenderInline {DIV} at (0,0) size 462x14 [color=#FFFFFF] [bgcolor=#FF0000]
+          RenderText {TEXT} at (0,3) size 462x14
+            text run at (0,3) width 462: "Ahem_font_required_for_this_test."
+        RenderText {TEXT} at (0,0) size 0x0
+      RenderBlock {P} at (0,31) size 784x17
+        RenderText {TEXT} at (0,0) size 631x17
+          text run at (0,0) width 631: "There should be a pretty green and lime pattern and the word \"PASS\" in lime on white below."
+      RenderBlock {DIV} at (0,62) size 266x98 [color=#00FF00] [bgcolor=#008000]
+        RenderText {TEXT} at (0,0) size 266x14
+          text run at (0,0) width 266: "1234567890123456789"
+        RenderInline {SPAN} at (0,0) size 266x28 [bgcolor=#000000]
+          RenderText {TEXT} at (0,14) size 28x14
+            text run at (0,14) width 28: "x "
+          RenderInline {SPAN} at (0,0) size 98x14
+            RenderText {TEXT} at (28,14) size 28x14
+              text run at (28,14) width 28: "x "
+            RenderInline {SPAN} at (0,0) size 0x0
+            RenderText {TEXT} at (56,14) size 14x14
+              text run at (56,14) width 14: "x"
+            RenderInline {SPAN} at (0,0) size 14x14
+              RenderText {TEXT} at (70,14) size 14x14
+                text run at (70,14) width 14: " "
+            RenderText {TEXT} at (84,14) size 42x14
+              text run at (84,14) width 42: "x x"
+          RenderText {TEXT} at (126,14) size 42x14
+            text run at (126,14) width 42: " x "
+          RenderInline {SPAN} at (0,0) size 56x14
+            RenderText {TEXT} at (168,14) size 56x14
+              text run at (168,14) width 56: "x x "
+          RenderText {TEXT} at (224,14) size 28x14
+            text run at (224,14) width 28: "x "
+          RenderInline {SPAN} at (0,0) size 14x14
+            RenderText {TEXT} at (252,14) size 14x14
+              text run at (252,14) width 14: "x"
+          RenderText {TEXT} at (0,28) size 56x14
+            text run at (0,28) width 56: "1234"
+        RenderText {TEXT} at (56,28) size 392x14
+          text run at (56,28) width 392: "567890123456789 xxxx xxxx xx"
+        RenderInline {SPAN} at (0,0) size 98x14 [bgcolor=#000000]
+          RenderText {TEXT} at (448,28) size 14x14
+            text run at (448,28) width 14: "x"
+          RenderInline {SPAN} at (0,0) size 84x14
+            RenderText {TEXT} at (462,28) size 84x14
+              text run at (462,28) width 84: "x xxxx"
+          RenderText {TEXT} at (0,0) size 0x0
+        RenderText {TEXT} at (0,42) size 14x14
+          text run at (0,42) width 14: "x"
+        RenderInline {SPAN} at (0,0) size 98x14 [bgcolor=#000000]
+          RenderText {TEXT} at (14,42) size 14x14
+            text run at (14,42) width 14: " "
+          RenderInline {SPAN} at (0,0) size 14x14
+            RenderText {TEXT} at (28,42) size 14x14
+              text run at (28,42) width 14: " "
+          RenderText {TEXT} at (42,42) size 14x14
+            text run at (42,42) width 14: " "
+          RenderInline {SPAN} at (0,0) size 14x14
+            RenderText {TEXT} at (56,42) size 14x14
+              text run at (56,42) width 14: " "
+          RenderText {TEXT} at (70,42) size 14x14
+            text run at (70,42) width 14: " "
+          RenderInline {SPAN} at (0,0) size 14x14
+            RenderText {TEXT} at (84,42) size 14x14
+              text run at (84,42) width 14: " "
+          RenderText {TEXT} at (98,42) size 14x14
+            text run at (98,42) width 14: " "
+          RenderInline {SPAN} at (0,0) size 0x0
+            RenderText {TEXT} at (0,0) size 0x0
+          RenderText {TEXT} at (0,0) size 0x0
+        RenderText {TEXT} at (112,42) size 28x14
+          text run at (112,42) width 28: "  "
+        RenderInline {SPAN} at (0,0) size 14x14 [bgcolor=#000000]
+          RenderText {TEXT} at (140,42) size 14x14
+            text run at (140,42) width 14: " "
+        RenderInline {SPAN} at (0,0) size 14x14 [bgcolor=#000000]
+          RenderText {TEXT} at (154,42) size 14x14
+            text run at (154,42) width 14: " "
+        RenderText {TEXT} at (168,42) size 42x14
+          text run at (168,42) width 42: "   "
+        RenderInline {SPAN} at (0,0) size 14x14 [bgcolor=#000000]
+          RenderText {TEXT} at (210,42) size 14x14
+            text run at (210,42) width 14: " "
+        RenderInline {SPAN} at (0,0) size 0x0 [bgcolor=#000000]
+          RenderText {TEXT} at (0,0) size 0x0
+        RenderText {TEXT} at (224,42) size 336x14
+          text run at (224,42) width 336: "  x x  x x  x x    x    "
+        RenderInline {SPAN} at (0,0) size 560x14 [bgcolor=#000000]
+          RenderText {TEXT} at (0,56) size 560x14
+            text run at (0,56) width 560: "x x x x x x x x x x xxxx xxxx xxxx xxxx "
+        RenderText {TEXT} at (0,70) size 546x14
+          text run at (0,70) width 546: "x                 x x    x  x    x    x"
+        RenderInline {SPAN} at (0,0) size 560x14 [bgcolor=#000000]
+          RenderText {TEXT} at (0,84) size 266x14
+            text run at (0,84) width 266: "xxxxxxxxxxxxxxxxxxx"
+          RenderInline {SPAN} at (0,0) size 294x14
+            RenderText {TEXT} at (266,84) size 294x14
+              text run at (266,84) width 294: " x    x  x xxxx xxxx "
+        RenderText {TEXT} at (0,0) size 0x0

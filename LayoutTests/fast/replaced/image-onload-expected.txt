@@ -1,0 +1,10 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x181
+  RenderBlock {HTML} at (0,0) size 800x181
+    RenderBody {BODY} at (8,8) size 784x159
+      RenderBlock (anonymous) at (0,0) size 784x128
+        RenderImage {IMG} at (0,0) size 128x128
+      RenderBlock {P} at (0,142) size 784x17
+        RenderText {TEXT} at (0,0) size 70x17
+          text run at (0,0) width 70: "not empty"

@@ -1,0 +1,34 @@
+--- /Users/darin/Labyrinth/Site/layout-tests/fast/forms/001-expected.txt	Tue Jul  8 16:44:11 2003
++++ /Users/darin/Labyrinth/Site/layout-tests/fast/forms/001-actual.txt	Wed Jul 30 17:00:49 2003
+@@ -30,21 +30,21 @@
+         RenderTable {TABLE} at (0,0) size 784x28
+           RenderTableSection {TBODY} at (2,2) size 0x24
+             RenderTableRow {TR} at (0,0) size 0x0
+-              RenderTableCell {TD} at (0,0) size 44x24 [r=0 c=0 rs=1 cs=1]
+-                RenderSubmitButton {INPUT} at (3,3) size 38x18
+-              RenderTableCell {TD} at (44,11) size 736x2 [r=0 c=1 rs=1 cs=1]
++              RenderTableCell {TD} at (0,0) size 42x24 [r=0 c=0 rs=1 cs=1]
++                RenderSubmitButton {INPUT} at (3,3) size 36x18
++              RenderTableCell {TD} at (42,11) size 738x2 [r=0 c=1 rs=1 cs=1]
+       RenderBlock {P} at (0,208) size 784x66
+         RenderTable {TABLE} at (0,0) size 784x24
+           RenderTableSection {TBODY} at (2,2) size 0x20
+             RenderTableRow {TR} at (0,0) size 0x0
+-              RenderTableCell {TD} at (0,0) size 44x20 [r=0 c=0 rs=1 cs=1]
+-                RenderSubmitButton {INPUT} at (3,1) size 38x18
+-              RenderTableCell {TD} at (44,9) size 736x2 [r=0 c=1 rs=1 cs=1]
++              RenderTableCell {TD} at (0,0) size 42x20 [r=0 c=0 rs=1 cs=1]
++                RenderSubmitButton {INPUT} at (3,1) size 36x18
++              RenderTableCell {TD} at (42,9) size 738x2 [r=0 c=1 rs=1 cs=1]
+         RenderTable {TABLE} at (0,24) size 784x24
+           RenderTableSection {TBODY} at (2,2) size 0x20
+             RenderTableRow {TR} at (0,0) size 0x0
+-              RenderTableCell {TD} at (0,0) size 95x20 [r=0 c=0 rs=1 cs=1]
+-                RenderResetButton {INPUT} at (3,1) size 89x18
+-              RenderTableCell {TD} at (95,9) size 685x2 [r=0 c=1 rs=1 cs=1]
++              RenderTableCell {TD} at (0,0) size 93x20 [r=0 c=0 rs=1 cs=1]
++                RenderResetButton {INPUT} at (3,1) size 87x18
++              RenderTableCell {TD} at (93,9) size 687x2 [r=0 c=1 rs=1 cs=1]
+         RenderBlock (anonymous) at (0,48) size 784x18
+-          RenderSubmitButton {INPUT} at (2,0) size 38x18
++          RenderSubmitButton {INPUT} at (2,0) size 36x18

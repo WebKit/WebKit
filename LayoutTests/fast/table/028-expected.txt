@@ -1,0 +1,32 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x107
+  RenderBlock {HTML} at (0,0) size 800x107
+    RenderBody {BODY} at (8,8) size 784x91
+      RenderBlock (anonymous) at (0,0) size 784x17
+        RenderText {TEXT} at (0,0) size 299x17
+          text run at (0,0) width 299: "These two tables should be the same width."
+      RenderTable {TABLE} at (0,17) size 320x22
+        RenderTableSection {TBODY} at (0,0) size 0x22
+          RenderTableRow {TR} at (0,0) size 0x0
+            RenderTableCell {TD} at (0,0) size 69x19 [r=0 c=0 rs=1 cs=1]
+              RenderText {TEXT} at (1,1) size 9x17
+                text run at (1,1) width 9: "1"
+            RenderTableCell {TD} at (69,0) size 245x19 [r=0 c=1 rs=1 cs=1]
+              RenderText {TEXT} at (1,1) size 9x17
+                text run at (1,1) width 9: "2"
+            RenderTableCell {TD} at (314,0) size 6x22 [r=0 c=2 rs=1 cs=1]
+              RenderImage {IMG} at (1,1) size 4x20 [bgcolor=#FFA500]
+      RenderBlock {P} at (0,53) size 784x0
+      RenderTable {TABLE} at (0,53) size 320x38
+        RenderTableSection {TBODY} at (0,0) size 0x38
+          RenderTableRow {TR} at (0,0) size 0x0
+            RenderTableCell {TD} at (0,0) size 64x19 [r=0 c=0 rs=1 cs=1]
+              RenderText {TEXT} at (1,1) size 9x17
+                text run at (1,1) width 9: "1"
+            RenderTableCell {TD} at (64,3) size 256x12 [r=0 c=1 rs=1 cs=1]
+              RenderImage {IMG} at (1,1) size 254x10 [bgcolor=#FFA500]
+          RenderTableRow {TR} at (0,0) size 0x0
+            RenderTableCell {TD} at (0,19) size 320x19 [r=1 c=0 rs=1 cs=3]
+              RenderText {TEXT} at (1,1) size 9x17
+                text run at (1,1) width 9: "1"

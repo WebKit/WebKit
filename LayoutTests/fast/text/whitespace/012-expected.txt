@@ -1,0 +1,36 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x70
+  RenderBlock {HTML} at (0,0) size 800x70
+    RenderBody {BODY} at (8,8) size 784x48
+      RenderBlock (anonymous) at (0,0) size 784x17
+        RenderInline {DIV} at (0,0) size 462x14 [color=#FFFFFF] [bgcolor=#FF0000]
+          RenderText {TEXT} at (0,3) size 462x14
+            text run at (0,3) width 462: "Ahem_font_required_for_this_test."
+        RenderText {TEXT} at (0,0) size 0x0
+      RenderBlock {P} at (0,31) size 784x17
+        RenderText {TEXT} at (0,0) size 308x17
+          text run at (0,0) width 308: "The following two blocks should be identical."
+      RenderBlock (floating) {DIV} at (14,76) size 98x14 [color=#00FF00] [bgcolor=#008000]
+        RenderText {TEXT} at (0,0) size 14x14
+          text run at (0,0) width 14: "["
+        RenderInline {SPAN} at (0,0) size 14x14 [bgcolor=#000000]
+          RenderText {TEXT} at (14,0) size 14x14
+            text run at (14,0) width 14: " "
+        RenderInline {SPAN} at (0,0) size 14x14 [bgcolor=#000000]
+          RenderText {TEXT} at (28,0) size 14x14
+            text run at (28,0) width 14: " "
+        RenderInline {SPAN} at (0,0) size 14x14 [bgcolor=#000000]
+          RenderText {TEXT} at (42,0) size 14x14
+            text run at (42,0) width 14: " "
+        RenderInline {SPAN} at (0,0) size 14x14 [bgcolor=#000000]
+          RenderText {TEXT} at (56,0) size 14x14
+            text run at (56,0) width 14: " "
+        RenderInline {SPAN} at (0,0) size 14x14 [bgcolor=#000000]
+          RenderText {TEXT} at (70,0) size 14x14
+            text run at (70,0) width 14: " "
+        RenderText {TEXT} at (84,0) size 14x14
+          text run at (84,0) width 14: "]"
+      RenderBlock (floating) {DIV} at (14,118) size 98x14 [color=#00FF00] [bgcolor=#008000]
+        RenderText {TEXT} at (0,0) size 98x14
+          text run at (0,0) width 98: "[     ]"

@@ -1,0 +1,26 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x66
+  RenderBlock {HTML} at (0,0) size 800x66
+    RenderBody {BODY} at (8,8) size 784x50
+      RenderTable {TABLE} at (0,0) size 744x50
+        RenderTableSection {TBODY} at (1,1) size 0x48
+          RenderTableRow {TR} at (0,0) size 0x0
+            RenderTableCell {TD} at (2,2) size 237x44 [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (2,2) size 233x40
+                RenderTableSection {TBODY} at (0,0) size 0x40
+                  RenderTableRow {TR} at (0,0) size 0x0
+                    RenderTableCell {TD} at (2,2) size 229x36 [r=0 c=0 rs=1 cs=1]
+                      RenderText {TEXT} at (1,1) size 205x34
+                        text run at (1,1) width 205: "This is the first column. It has"
+                        text run at (1,18) width 104: "some text in it."
+            RenderTableCell {TD} at (241,2) size 499x44 [r=0 c=1 rs=1 cs=1]
+              RenderTable {TABLE} at (2,2) size 495x40
+                RenderTableSection {TBODY} at (0,0) size 0x40
+                  RenderTableRow {TR} at (0,0) size 0x0
+                    RenderTableCell {TD} at (2,2) size 491x36 [r=0 c=0 rs=1 cs=1]
+                      RenderText {TEXT} at (1,1) size 449x34
+                        text run at (1,1) width 188: "This is the second column. "
+                        text run at (189,1) width 261: "It has a lot more content than the first"
+                        text run at (1,18) width 60: "column. "
+                        text run at (61,18) width 153: "That shouldn't matter."

@@ -1,0 +1,35 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x182
+  RenderBlock {HTML} at (0,0) size 800x182
+    RenderBody {BODY} at (8,8) size 784x166
+      RenderBlock (anonymous) at (0,0) size 784x17
+        RenderInline {DIV} at (0,0) size 462x14 [color=#FFFFFF] [bgcolor=#FF0000]
+          RenderText {TEXT} at (0,3) size 462x14
+            text run at (0,3) width 462: "Ahem_font_required_for_this_test."
+        RenderText {TEXT} at (0,0) size 0x0
+      RenderBlock {P} at (0,31) size 784x17
+        RenderText {TEXT} at (0,0) size 479x17
+          text run at (0,0) width 479: "There should be no red below, only a green square bordered in green."
+      RenderTable {TABLE} at (0,62) size 104x104
+        RenderTableSection {TBODY} at (0,0) size 0x104
+          RenderTableRow {TR} at (0,0) size 0x0
+            RenderTableCell {TD} at (2,2) size 100x100 [color=#800000] [bgcolor=#FF0000] [r=0 c=0 rs=1 cs=1]
+              RenderBlock {DIV} at (0,0) size 100x20 [color=#008000] [bgcolor=#000000]
+                RenderText {TEXT} at (0,0) size 100x20
+                  text run at (0,0) width 100: "XXXXX"
+              RenderBlock {DIV} at (0,20) size 100x20 [color=#008000] [bgcolor=#000000]
+                RenderInline {SPAN} at (0,0) size 100x20 [bgcolor=#00FF00]
+                  RenderText {TEXT} at (0,0) size 100x20
+                    text run at (0,0) width 100: "X\x{A0}\x{A0}\x{A0}X"
+              RenderBlock {DIV} at (0,40) size 100x20 [color=#008000] [bgcolor=#000000]
+                RenderInline {SPAN} at (0,0) size 100x20 [bgcolor=#00FF00]
+                  RenderText {TEXT} at (0,0) size 100x20
+                    text run at (0,0) width 100: "X\x{200B} \x{200B} \x{200B} \x{200B}X"
+              RenderBlock {DIV} at (0,60) size 100x20 [color=#008000] [bgcolor=#000000]
+                RenderInline {SPAN} at (0,0) size 100x20 [bgcolor=#00FF00]
+                  RenderText {TEXT} at (0,0) size 100x20
+                    text run at (0,0) width 100: "X \x{200B} \x{200B} X"
+              RenderBlock {DIV} at (0,80) size 100x20 [color=#008000] [bgcolor=#000000]
+                RenderText {TEXT} at (0,0) size 100x20
+                  text run at (0,0) width 100: "XXXXX"

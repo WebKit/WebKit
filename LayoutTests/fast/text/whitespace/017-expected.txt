@@ -1,0 +1,11 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x30
+  RenderBlock {HTML} at (0,0) size 800x30
+    RenderBody {BODY} at (8,8) size 784x14
+      RenderBlock {DIV} at (0,0) size 266x14 [color=#00FF00] [bgcolor=#008000]
+        RenderInline {SPAN} at (0,0) size 56x14 [bgcolor=#000000]
+          RenderText {TEXT} at (0,0) size 56x14
+            text run at (0,0) width 56: "1234"
+        RenderText {TEXT} at (56,0) size 392x14
+          text run at (56,0) width 392: "567890123456789 xxxx xxxx xx"

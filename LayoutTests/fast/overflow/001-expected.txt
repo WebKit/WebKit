@@ -1,0 +1,21 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x254
+  RenderBlock {HTML} at (0,0) size 800x254
+    RenderBody {BODY} at (8,8) size 784x238
+      RenderBlock {DIV} at (0,0) size 784x100 [bgcolor=#FFFF00]
+        RenderBlock (floating) {DIV} at (0,0) size 77x500 [bgcolor=#008000]
+          RenderText {TEXT} at (0,0) size 77x17
+            text run at (0,0) width 77: "Hello world"
+        RenderText {TEXT} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,204) size 784x34
+        RenderText {TEXT} at (77,0) size 667x34
+          text run at (77,0) width 310: "This text should not overlap the purple float? "
+          text run at (387,0) width 357: "Will this happen? I'm really not sure. This is a test of"
+          text run at (77,17) width 561: "some of the strange behavior you will find when using overflow auto or scroll, etc."
+layer at (85,108) size 707x104 clip at (87,110) size 703x100
+  RenderBlock {DIV} at (77,100) size 707x104
+    RenderText {TEXT} at (2,2) size 155x17
+      text run at (2,2) width 155: "Does the float intrude?"
+    RenderBlock (floating) {SPAN} at (605,2) size 100x400 [bgcolor=#800080]
+    RenderText {TEXT} at (0,0) size 0x0

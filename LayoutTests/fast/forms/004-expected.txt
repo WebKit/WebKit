@@ -1,0 +1,9 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x38
+  RenderBlock {HTML} at (0,0) size 800x38
+    RenderBody {BODY} at (8,8) size 784x22
+      RenderSelect {SELECT} at (2,2) size 59x18
+      RenderText {TEXT} at (63,0) size 4x17
+        text run at (63,0) width 4: " "
+      RenderSelect {SELECT} at (69,2) size 79x18

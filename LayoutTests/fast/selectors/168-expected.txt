@@ -1,0 +1,17 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x76
+  RenderBlock {HTML} at (0,0) size 800x76
+    RenderBody {BODY} at (8,14) size 784x48
+      RenderBlock {P} at (0,0) size 784x17
+        RenderText {TEXT} at (0,0) size 91x17
+          text run at (0,0) width 91: "This test has "
+        RenderInline {SPAN} at (0,0) size 51x17
+          RenderInline at (0,0) size 51x17 [bgcolor=#00FF00]
+            RenderText at (91,0) size 51x17
+              text run at (91,0) width 51: "PASSED"
+        RenderText {TEXT} at (142,0) size 5x17
+          text run at (142,0) width 5: "."
+      RenderBlock {P} at (0,31) size 784x17
+        RenderText {TEXT} at (0,0) size 490x17
+          text run at (0,0) width 490: "(If the previous line just reads \"This test has .\" then this test has failed.)"

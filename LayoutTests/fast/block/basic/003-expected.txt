@@ -1,0 +1,9 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x54
+  RenderBlock {HTML} at (0,0) size 800x54
+    RenderBody {BODY} at (8,8) size 784x38
+      RenderBlock {DIV} at (0,0) size 204x38
+        RenderText {TEXT} at (2,2) size 198x34
+          text run at (2,2) width 176: "This is some text. What is"
+          text run at (2,19) width 198: "going on here. Does it work?"

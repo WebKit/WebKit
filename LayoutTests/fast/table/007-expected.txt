@@ -1,0 +1,26 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x104
+  RenderBlock {HTML} at (0,0) size 800x104
+    RenderBody {BODY} at (8,8) size 784x88
+      RenderTable {TABLE} at (0,0) size 524x88
+        RenderTableSection {TBODY} at (1,1) size 0x86
+          RenderTableRow {TR} at (0,0) size 0x0
+            RenderTableCell {TD} at (0,0) size 27x3 [r=0 c=0 rs=3 cs=1]
+              RenderImage {IMG} at (1,1) size 25x1
+            RenderTableCell {TD} at (27,0) size 495x19 [r=0 c=1 rs=1 cs=1]
+              RenderText {TEXT} at (1,1) size 23x17
+                text run at (1,1) width 23: "foo"
+          RenderTableRow {TR} at (0,0) size 0x0
+            RenderTableCell {TD} at (27,48) size 495x19 [r=1 c=1 rs=1 cs=1]
+              RenderBlock {DIV} at (1,1) size 493x17
+                RenderText {TEXT} at (12,0) size 473x17
+                  text run at (12,0) width 473: "Affordable, high-quality business services with unparalleled support."
+          RenderTableRow {TR} at (0,0) size 0x0
+            RenderTableCell {TD} at (27,67) size 495x19 [r=2 c=1 rs=2 cs=1]
+              RenderText {TEXT} at (1,1) size 436x17
+                text run at (1,1) width 436: "Wireless Services\x{2014}Take the Net with you when you\x{2019}re on the go"
+          RenderTableRow {TR} at (0,0) size 0x0
+            RenderTableCell {TD} at (0,67) size 522x19 [r=3 c=0 rs=1 cs=2]
+              RenderText {TEXT} at (1,1) size 26x17
+                text run at (1,1) width 26: "goo"

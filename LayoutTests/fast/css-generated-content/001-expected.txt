@@ -1,0 +1,10 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x33
+  RenderBlock {HTML} at (0,0) size 800x33
+    RenderBody {BODY} at (8,8) size 784x17
+      RenderInline {A} at (0,0) size 286x17 [color=#0000EE]
+        RenderText {TEXT} at (0,0) size 286x17
+          text run at (0,0) width 286: "You should not see anything but this link."
+      RenderText {TEXT} at (0,0) size 0x0
+      RenderText {TEXT} at (0,0) size 0x0

@@ -1,0 +1,17 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x124
+  RenderBlock {HTML} at (0,0) size 800x124
+    RenderBody {BODY} at (8,8) size 784x102
+      RenderImage {IMG} at (664,0) size 120x200 [bgcolor=#FF0000]
+      RenderBlock (anonymous) at (0,0) size 784x0
+        RenderText {TEXT} at (0,0) size 0x0
+      RenderBlock {OL} at (0,0) size 704x0
+      RenderBlock {P} at (0,0) size 784x102
+        RenderText {TEXT} at (0,0) size 653x102
+          text run at (0,0) width 628: "Vatican approves policy on sex abuse in clergy. The Vatican gave its approval Monday to the"
+          text run at (0,17) width 653: "revised U.S. bishops' policy to combat sex abuse in the clergy, declaring the need to restore the"
+          text run at (0,34) width 628: "image of the priesthood in a scandal that has rocked the Roman Catholic Church. The policy"
+          text run at (0,51) width 650: "allows bishops to conduct a confidential, preliminary inquiry when a molestation claim is made"
+          text run at (0,68) width 632: "to determine whether it is plausible. If it is, the accused priest is to be put on leave and then"
+          text run at (0,85) width 473: "must go before a clerical tribunal to determine his guilt or innocence."

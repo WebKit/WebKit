@@ -1,0 +1,11 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x50
+  RenderBlock {HTML} at (0,0) size 800x50
+    RenderBody {BODY} at (8,8) size 784x28
+      RenderBlock {P} at (0,0) size 784x28
+        RenderInline at (0,0) size 17x28 [color=#FF0000]
+          RenderText {TEXT} at (0,0) size 17x28
+            text run at (0,0) width 17: "A"
+        RenderText {TEXT} at (17,9) size 437x17
+          text run at (17,9) width 437: " The \"A\" should be big and red and ignore the position: relative."

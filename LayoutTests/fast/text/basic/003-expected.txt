@@ -1,0 +1,11 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x8
+  RenderBlock {HTML} at (0,0) size 800x8
+    RenderBody {BODY} at (8,8) size 784x0
+      RenderBlock (floating) {P} at (0,14) size 742x21
+        RenderText {TEXT} at (2,2) size 738x17
+          text run at (2,2) width 348: "There should be 12"
+          text run at (350,2) width 390: "px of letter spacing."
+      RenderText {TEXT} at (0,0) size 0x0
+      RenderText {TEXT} at (0,0) size 0x0

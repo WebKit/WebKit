@@ -1,0 +1,46 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x126
+  RenderBlock {HTML} at (0,0) size 800x126
+    RenderBody {BODY} at (8,8) size 784x104
+      RenderBlock {DIV} at (0,0) size 784x73
+        RenderTable {TABLE} at (302,0) size 179x73
+          RenderTableSection {TBODY} at (1,1) size 0x71
+            RenderTableRow {TR} at (0,0) size 0x0
+              RenderTableCell {TD} at (2,2) size 27x21 [r=0 c=0 rs=1 cs=1]
+                RenderText {TEXT} at (2,2) size 23x17
+                  text run at (2,2) width 23: "1.1"
+              RenderTableCell {TD} at (31,2) size 71x21 [bgcolor=#00FF00] [r=0 c=1 rs=1 cs=1]
+                RenderText {TEXT} at (2,2) size 67x17
+                  text run at (2,2) width 67: "green cell"
+              RenderTableCell {TD} at (104,2) size 71x21 [bgcolor=#00FF00] [r=0 c=2 rs=1 cs=1]
+                RenderText {TEXT} at (2,2) size 67x17
+                  text run at (2,2) width 67: "green cell"
+            RenderTableRow {TR} at (0,0) size 0x0
+              RenderTableCell {TD} at (2,25) size 27x21 [r=1 c=0 rs=1 cs=1]
+                RenderText {TEXT} at (2,2) size 23x17
+                  text run at (2,2) width 23: "2.1"
+              RenderTableCell {TD} at (31,25) size 71x21 [bgcolor=#00FF00] [r=1 c=1 rs=1 cs=1]
+                RenderText {TEXT} at (2,2) size 67x17
+                  text run at (2,2) width 67: "green cell"
+              RenderTableCell {TD} at (104,25) size 71x21 [bgcolor=#00FF00] [r=1 c=2 rs=1 cs=1]
+                RenderText {TEXT} at (2,2) size 67x17
+                  text run at (2,2) width 67: "green cell"
+            RenderTableRow {TR} at (0,0) size 0x0
+              RenderTableCell {TD} at (2,48) size 27x21 [r=2 c=0 rs=1 cs=1]
+                RenderText {TEXT} at (2,2) size 23x17
+                  text run at (2,2) width 23: "3.1"
+              RenderTableCell {TD} at (31,48) size 71x21 [bgcolor=#00FF00] [r=2 c=1 rs=1 cs=1]
+                RenderText {TEXT} at (2,2) size 67x17
+                  text run at (2,2) width 67: "green cell"
+              RenderTableCell {TD} at (104,48) size 71x21 [bgcolor=#00FF00] [r=2 c=2 rs=1 cs=1]
+                RenderText {TEXT} at (2,2) size 67x17
+                  text run at (2,2) width 67: "green cell"
+      RenderBlock {P} at (0,87) size 784x17
+        RenderText {TEXT} at (0,0) size 107x17
+          text run at (0,0) width 107: "This paragraph "
+        RenderInline {SPAN} at (0,0) size 67x17
+          RenderText {TEXT} at (107,0) size 67x17
+            text run at (107,0) width 67: "should be"
+        RenderText {TEXT} at (174,0) size 67x17
+          text run at (174,0) width 67: " unstyled."

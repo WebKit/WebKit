@@ -1,0 +1,9 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x74
+  RenderBlock {HTML} at (0,0) size 800x74
+    RenderBody {BODY} at (8,8) size 784x52
+      RenderBlock {PRE} at (0,0) size 304x52
+        RenderText {TEXT} at (2,18) size 96x32
+          text run at (2,18) width 88: "This should"
+          text run at (2,34) width 96: "not justify."
