@@ -215,7 +215,7 @@ KJS::Bindings::Instance *HTMLAppletElementImpl::getAppletInstance() const
 // -------------------------------------------------------------------------
 
 HTMLEmbedElementImpl::HTMLEmbedElementImpl(DocumentPtr *doc)
-    : HTMLElementImpl(doc)
+    : HTMLElementImpl(doc), embedInstance(0)
 {}
 
 HTMLEmbedElementImpl::~HTMLEmbedElementImpl()
