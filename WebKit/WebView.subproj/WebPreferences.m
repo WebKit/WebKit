@@ -53,7 +53,7 @@ static IFPreferences *_standardPreferences = nil;
         @"0x0", 			WebKitLogLevelPreferenceKey,
         @"Times New Roman", 		WebKitStandardFontPreferenceKey,
         @"Monaco",	  		WebKitFixedFontPreferenceKey,
-        @"Georgia", 			WebKitSerifFontPreferenceKey,
+        @"Times New Roman", 		WebKitSerifFontPreferenceKey,
         @"Arial", 			WebKitSansSerifFontPreferenceKey,
         @"Apple Chancery", 		WebKitCursiveFontPreferenceKey,
         @"Papyrus", 			WebKitFantasyFontPreferenceKey,
