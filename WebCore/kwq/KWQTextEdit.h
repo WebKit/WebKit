@@ -61,12 +61,10 @@ class QTextEdit : public QScrollView
     QString text() const;
     QString textWithHardLineBreaks() const;
 
-    void setTextFormat(TextFormat);
+    void setTextFormat(TextFormat) { }
 
     void setWordWrap(WrapStyle);
     WrapStyle wordWrap() const;
-
-    void setTabStopWidth(int);
 
     void setWritingDirection(QPainter::TextDirection);
     

@@ -104,21 +104,12 @@ QTextEdit::WrapStyle QTextEdit::wordWrap() const
     return NoWrap;
 }
 
-
 void QTextEdit::setWordWrap(WrapStyle style)
 {
     KWQTextArea *textView = (KWQTextArea *)getView();
     KWQ_BLOCK_EXCEPTIONS;
     [textView setWordWrap:style == WidgetWidth];
     KWQ_UNBLOCK_EXCEPTIONS;
-}
-
-void QTextEdit::setTextFormat(TextFormat)
-{
-}
-
-void QTextEdit::setTabStopWidth(int)
-{
 }
 
 bool QTextEdit::isReadOnly() const

@@ -1,3 +1,21 @@
+2004-06-08  Darin Adler  <darin@apple.com>
+
+        Reviewed by Vicki.
+
+        - our part of fix to <rdar://problem/3629334>: (REGRESSION (Tiger): titles on pop-ups menus are truncated and show ellipses)
+
+        * kwq/KWQComboBox.mm: (QComboBox::QComboBox): Call setLineBreakMode:NSLineBreakByClipping.
+        In the current version of Tiger I am using, this is not implemented yet.
+
+        - a couple of other unrelated changes
+
+        * khtml/rendering/render_form.cpp: (RenderTextArea::calcMinMaxWidth): Put a little more code
+        inside the APPLE_CHANGES ifdef.
+        * kwq/KWQTextEdit.h: Remove unused setTabStopWidth function, and make empty setTextFormat
+        function an inline for slightly smaller code size.
+        * kwq/KWQTextEdit.mm: Ditto.
+        * kwq/KWQTextField.mm: Update copyright date.
+
 2004-06-08  Trey Matteson  <trey@apple.com>
 
 	A DHTML drag source can now change the dragging image during the drag.  Currently
