@@ -44,6 +44,7 @@
 #import "htmlattrs.h"
 #import "dom_elementimpl.h"
 #import "dom_nodeimpl.h"
+#import "markup.h"
 
 #import "DOMExtensions.h"
 #import "DOMInternal.h"
@@ -52,6 +53,7 @@
 #import "KWQFoundationExtras.h"
 
 using DOM::Document;
+using DOM::DocumentFragmentImpl;
 using DOM::DOMString;
 using DOM::ElementImpl;
 using DOM::HTMLAnchorElementImpl;
@@ -534,6 +536,21 @@ using DOM::NodeImpl;
 {
     NameNodeListImpl *nodeList = new NameNodeListImpl([self _HTMLDocumentImpl], elementName);
     return [DOMNodeList _nodeListWithImpl:nodeList];
+}
+
+@end
+
+@implementation DOMHTMLDocument (WebPrivate)
+
+- (DOMDocumentFragment *)_createDocumentFragmentWithMarkupString:(NSString *)markupString baseURLString:(NSString *)baseURLString
+{
+    DocumentFragmentImpl *fragment = createFragmentFromMarkup([self _documentImpl], QString::fromNSString(markupString), QString::fromNSString(baseURLString));
+    return [DOMDocumentFragment _documentFragmentWithImpl:fragment];
+}
+
+- (DOMDocumentFragment *)_createDocumentFragmentWithText:(NSString *)text
+{
+    return [DOMDocumentFragment _documentFragmentWithImpl:createFragmentFromText([self _documentImpl], QString::fromNSString(text))];
 }
 
 @end

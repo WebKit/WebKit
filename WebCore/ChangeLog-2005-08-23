@@ -1,5 +1,18 @@
 2005-03-07  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by Vicki
+    
+        Fix for this bug:
+        
+        <rdar://problem/4040136> Expose SPI for WebCore's functions to create document fragments from plain text and markup strings
+
+        * kwq/DOMHTML.mm: Add two new SPI functions.
+        (-[DOMHTMLDocument _createDocumentFragmentWithMarkupString:baseURLString:])
+        (-[DOMHTMLDocument _createDocumentFragmentWithText:])
+        * kwq/DOMPrivate.h: Declare the new SPI here, a privately-exported header, so Mail can make use of it.
+
+2005-03-07  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by John
 
         Fix for this bug:
