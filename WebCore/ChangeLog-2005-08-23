@@ -1,3 +1,12 @@
+2004-12-10  John Sullivan  <sullivan@apple.com>
+
+        fixed deployment build bustage that John Louch ran into
+
+        * kwq/KWQTextEdit.mm:
+        (QTextEdit::setScrollBarModes):
+        move bool declaration inside exception-handling block to avoid obscure
+        compiler error
+
 2004-12-10  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Richard.

@@ -122,12 +122,13 @@ void QTextEdit::setScrollBarModes(ScrollBarMode hMode, ScrollBarMode vMode)
 {
     KWQTextArea *textView = (KWQTextArea *)getView();
 
+    KWQ_BLOCK_EXCEPTIONS;
+
+    // this declaration must be inside the KWQ_BLOCK_EXCEPTIONS block or the deployment build fails
     bool autohides = hMode == Auto || vMode == Auto;
     
     ASSERT(!autohides || hMode != AlwaysOn);
     ASSERT(!autohides || vMode != AlwaysOn);
-
-    KWQ_BLOCK_EXCEPTIONS;
 
     [textView setHasHorizontalScroller:hMode != AlwaysOff];
     [textView setHasVerticalScroller:vMode != AlwaysOff];
