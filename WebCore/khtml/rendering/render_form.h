@@ -434,7 +434,8 @@ class RenderTextArea : public RenderFormElement
     Q_OBJECT
 public:
     RenderTextArea(DOM::HTMLTextAreaElementImpl *element);
-    ~RenderTextArea();
+
+    virtual void detach(RenderArena *arena);
 
     virtual const char *renderName() const { return "RenderTextArea"; }
     virtual void calcMinMaxWidth();

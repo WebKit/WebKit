@@ -1,3 +1,13 @@
+2003-06-10  Darin Adler  <darin@apple.com>
+
+        Reviewed by Don.
+
+	- fixed 3286343 -- REGRESSION: crashing on pages with text area elements
+
+        * khtml/rendering/render_form.cpp: (RenderTextArea::detach):
+        Do cleanup in detach rather than in destructor.
+        * khtml/rendering/render_form.h: Remove destructor, add detach.
+
 2003-06-09  Richard Williamson  <rjw@apple.com>
 
 	Fixed 3281761.
