@@ -1,3 +1,8 @@
+2002-06-04  Kenneth Kocienda  <kocienda@apple.com>
+
+	* kwq/kwqdebug.h: Added a line of stderr output into the 
+        assertion failure code so that we have some idea of what happened.
+
 2002-06-04  Richard Williamson  <rjw@apple.com>
 
     Changes to support progressive image loading.  Currently disabled
