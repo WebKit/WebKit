@@ -161,7 +161,7 @@ QString QString::fromCFString(CFStringRef cfs)
     CFMutableStringRef ref;
     QString qs;
 
-    ref = CFStringCreateMutableCopy(NULL, CFStringGetLength(cfs), cfs);
+    ref = CFStringCreateMutableCopy(NULL, 0, cfs);
     qs = QString::fromCFMutableString(ref);
 #ifdef KWQ_STRING_DEBUG
 #else
