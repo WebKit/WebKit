@@ -291,6 +291,8 @@
 				848DFF880365FE6A00CA2ACA,
 				848DFF890365FE6A00CA2ACA,
 				51F6866E0366057300CA2D3A,
+				83E4AF48036652150000E506,
+				83E4AF4D036659440000E506,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -393,6 +395,8 @@
 				9345DDB10365FB27008635CE,
 				9345DDB50365FFD0008635CE,
 				51F6866F0366057300CA2D3A,
+				83E4AF49036652150000E506,
+				83E4AF4E036659440000E506,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1422,6 +1426,54 @@
 			settings = {
 			};
 		};
+		83E4AF46036652150000E506 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			path = WebBasePluginPackage.h;
+			refType = 4;
+		};
+		83E4AF47036652150000E506 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			path = WebBasePluginPackage.m;
+			refType = 4;
+		};
+		83E4AF48036652150000E506 = {
+			fileRef = 83E4AF46036652150000E506;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		83E4AF49036652150000E506 = {
+			fileRef = 83E4AF47036652150000E506;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		83E4AF4B036659440000E506 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			path = WebPluginPackage.h;
+			refType = 4;
+		};
+		83E4AF4C036659440000E506 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			path = WebPluginPackage.m;
+			refType = 4;
+		};
+		83E4AF4D036659440000E506 = {
+			fileRef = 83E4AF4B036659440000E506;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		83E4AF4E036659440000E506 = {
+			fileRef = 83E4AF4C036659440000E506;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 //830
 //831
 //832
@@ -1462,6 +1514,8 @@
 			children = (
 				848DFF840365FE6A00CA2ACA,
 				848DFF850365FE6A00CA2ACA,
+				83E4AF4B036659440000E506,
+				83E4AF4C036659440000E506,
 				848DFF860365FE6A00CA2ACA,
 			);
 			isa = PBXGroup;
@@ -3078,6 +3132,8 @@
 			children = (
 				848DFF410365F6FB00CA2ACA,
 				848DFF430365F71500CA2ACA,
+				83E4AF46036652150000E506,
+				83E4AF47036652150000E506,
 				F5883BE0025E5E9D01000102,
 				F5883BE1025E5E9D01000102,
 				F5F717200288493C018635CA,

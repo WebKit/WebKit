@@ -1,3 +1,42 @@
+2002-10-22  Chris Blumenberg  <cblu@apple.com>
+
+	More moving stuff around for the new plug-in API. Added WebBasePluginPackage and added subclass WebPluginPackage. Also made WebNetscapePluginPackage a subclass of WebBasePluginPackage. 
+
+        * Plugins.subproj/WebBasePluginPackage.h: Added.
+        * Plugins.subproj/WebBasePluginPackage.m: Added.
+        (+[WebBasePluginPackage pluginWithPath:]): creates a WebPluginPackage or WebNetscapePluginPackage
+        (-[WebBasePluginPackage initWithPath:]):
+        (-[WebBasePluginPackage name]):
+        (-[WebBasePluginPackage path]):
+        (-[WebBasePluginPackage filename]):
+        (-[WebBasePluginPackage pluginDescription]):
+        (-[WebBasePluginPackage extensionToMIMEDictionary]):
+        (-[WebBasePluginPackage MIMEToExtensionsDictionary]):
+        (-[WebBasePluginPackage MIMEToDescriptionDictionary]):
+        (-[WebBasePluginPackage load]):
+        (-[WebBasePluginPackage unload]):
+        (-[WebBasePluginPackage isLoaded]):
+        (-[WebBasePluginPackage description]):
+        * Plugins.subproj/WebNetscapePluginDocumentView.m:
+        (-[WebNetscapePluginDocumentView setDataSource:]):
+        * Plugins.subproj/WebNetscapePluginPackage.h:
+        * Plugins.subproj/WebNetscapePluginPackage.m:
+        (-[WebNetscapePluginPackage initWithPath:]):
+        * Plugins.subproj/WebPluginDatabase.h:
+        * Plugins.subproj/WebPluginDatabase.m:
+        (-[WebPluginDatabase pluginForMIMEType:]):
+        (-[WebPluginDatabase pluginForExtension:]):
+        (-[WebPluginDatabase pluginForFilename:]):
+        (-[WebPluginDatabase MIMETypes]):
+        (-[WebPluginDatabase init]):
+        * Plugins.subproj/WebPluginPackage.h: Added.
+        * Plugins.subproj/WebPluginPackage.m: Added.
+        (-[WebPluginPackage initWithPath:]):
+        * WebCoreSupport.subproj/WebViewFactory.m:
+        (-[WebViewFactory viewForPluginWithURL:serviceType:arguments:baseURL:]): check the class of the plug-in when deciding which view to create.
+        (-[WebViewFactory viewForJavaAppletWithFrame:baseURL:parameters:]): same here.
+        * WebKit.pbproj/project.pbxproj:
+
 2002-10-22  David Hyatt  <hyatt@apple.com>
 
 	Getting XML docs at least made for XML files...

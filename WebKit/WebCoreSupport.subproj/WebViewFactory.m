@@ -7,12 +7,13 @@
 //
 
 #import <WebKit/WebBaseNetscapePluginView.h>
-
+#import <WebKit/WebBasePluginPackage.h>
 #import <WebKit/WebJavaScriptTextInputPanel.h>
 #import <WebKit/WebNetscapePluginEmbeddedView.h>
 #import <WebKit/WebNullPluginView.h>
 #import <WebKit/WebNetscapePluginPackage.h>
 #import <WebKit/WebPluginDatabase.h>
+#import <WebKit/WebPluginPackage.h>
 #import <WebKit/WebViewFactory.h>
 
 #import <WebFoundation/WebAssertions.h>
@@ -33,7 +34,7 @@
     NSMutableDictionary *arguments;
     NSString *mimeType, *extension;
     NSRange r1, r2, r3;
-    WebNetscapePluginPackage *plugin;
+    WebBasePluginPackage *pluginPackage;
     uint i;
         
     arguments = [NSMutableDictionary dictionary];
@@ -50,22 +51,33 @@
         
     if ([serviceType length]) {
         mimeType = serviceType;
-        plugin = [[WebPluginDatabase installedPlugins] pluginForMIMEType:mimeType];
+        pluginPackage = [[WebPluginDatabase installedPlugins] pluginForMIMEType:mimeType];
     } else {
         extension = [[pluginURL path] pathExtension];
-        plugin = [[WebPluginDatabase installedPlugins] pluginForExtension:extension];
-        mimeType = [[plugin extensionToMIMEDictionary] objectForKey:extension];
+        pluginPackage = [[WebPluginDatabase installedPlugins] pluginForExtension:extension];
+        mimeType = [[pluginPackage extensionToMIMEDictionary] objectForKey:extension];
     }
     
-    if (plugin == nil) {
-        return [[[WebNullPluginView alloc] initWithFrame:NSMakeRect(0,0,0,0) mimeType:mimeType arguments:arguments] autorelease];
+    if (pluginPackage) {
+        if([pluginPackage isKindOfClass:[WebPluginPackage class]]){
+            return nil;
+        }else if([pluginPackage isKindOfClass:[WebNetscapePluginPackage class]]){
+            return [[[WebNetscapePluginEmbeddedView alloc] initWithFrame:NSMakeRect(0,0,0,0)
+                                                                  plugin:(WebNetscapePluginPackage *)pluginPackage
+                                                                     URL:pluginURL
+                                                                 baseURL:baseURL
+                                                                    mime:mimeType
+                                                               arguments:arguments] autorelease];
+        }else{
+            [NSException raise:NSInternalInconsistencyException
+                        format:@"Plugin package class not recognized"];
+            return nil;
+        }
+    }else{
+        return [[[WebNullPluginView alloc] initWithFrame:NSMakeRect(0,0,0,0)
+                                                mimeType:mimeType
+                                               arguments:arguments] autorelease];
     }
-    return [[[WebNetscapePluginEmbeddedView alloc] initWithFrame:NSMakeRect(0,0,0,0)
-                                                          plugin:plugin
-                                                             URL:pluginURL
-                                                         baseURL:baseURL
-                                                            mime:mimeType
-                                                       arguments:arguments] autorelease];
 }
 
 - (NSArray *)pluginsInfo
@@ -75,19 +87,28 @@
 
 - (NSView *)viewForJavaAppletWithFrame:(NSRect)frame baseURL:(NSURL *)baseURL parameters:(NSDictionary *)parameters
 {
-    WebNetscapePluginPackage *plugin;
+    WebBasePluginPackage *pluginPackage;
     
-    plugin = [[WebPluginDatabase installedPlugins] pluginForMIMEType:@"application/x-java-applet"];
-    if (plugin == nil) {
+    pluginPackage = [[WebPluginDatabase installedPlugins] pluginForMIMEType:@"application/x-java-applet"];
+
+    if (!pluginPackage) {
         return nil;
     }
-    
-    return [[[WebNetscapePluginEmbeddedView alloc] initWithFrame:frame
-                                                          plugin:plugin
-                                                             URL:nil
-                                                         baseURL:baseURL
-                                                            mime:@"application/x-java-applet"
-                                                       arguments:parameters] autorelease];
+
+    if([pluginPackage isKindOfClass:[WebPluginPackage class]]){
+        return nil;
+    }else if([pluginPackage isKindOfClass:[WebNetscapePluginPackage class]]){
+        return [[[WebNetscapePluginEmbeddedView alloc] initWithFrame:frame
+                                                              plugin:(WebNetscapePluginPackage *)pluginPackage
+                                                                 URL:nil
+                                                             baseURL:baseURL
+                                                                mime:@"application/x-java-applet"
+                                                           arguments:parameters] autorelease];
+    }else{
+        [NSException raise:NSInternalInconsistencyException
+                    format:@"Plugin package class not recognized"];
+        return nil;
+    }
 }
 
 - (BOOL)runJavaScriptTextInputPanelWithPrompt:(NSString *)prompt defaultText:(NSString *)defaultText returningText:(NSString **)result

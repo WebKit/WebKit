@@ -159,6 +159,8 @@ TransitionVector tVectorForFunctionPointer(FunctionPointer);
 
 - initWithPath:(NSString *)pluginPath
 {
+    [super initWithPath:pluginPath];
+    
     path = [self stringByResolvingSymlinksAndAliasesInPath:pluginPath];
     filename = [path lastPathComponent];
     
@@ -455,48 +457,6 @@ TransitionVector tVectorForFunctionPointer(FunctionPointer);
     return NPP_Print;
 }
 
-- (NSDictionary *)MIMEToExtensionsDictionary
-{
-    return MIMEToExtensions;
-}
-
-- (NSDictionary *)extensionToMIMEDictionary
-{
-    return extensionToMIME;
-}
-
-- (NSDictionary *)MIMEToDescriptionDictionary
-{
-    return MIMEToDescription;
-}
-
-- (NSString *)name{
-    return name;
-}
-
-- (NSString *)filename{
-    return filename;
-}
-
-- (NSString *)path{
-    return path;
-}
-
-- (BOOL)isLoaded{
-    return isLoaded;
-}
-
-- (NSString *)pluginDescription
-{
-    return pluginDescription;
-}
-
-- (NSString *)description
-{
-    
-    return [NSString stringWithFormat:@"name: %@\npath: %@\nisLoaded: %d\nmimeTypes:\n%@\npluginDescription:%@",
-        name, path, isLoaded, [MIMEToExtensions description], [MIMEToDescription description], pluginDescription];
-}
 @end
 
 

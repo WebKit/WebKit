@@ -3,10 +3,10 @@
 	Copyright (c) 2002, Apple, Inc. All rights reserved.
 */
 
+#import <WebKit/WebBasePluginPackage.h>
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebNetscapePluginDocumentView.h>
-#import <WebKit/WebNetscapePluginPackage.h>
 #import <WebKit/WebPluginDatabase.h>
 #import <WebKit/WebNetscapePluginRepresentation.h>
 #import <WebKit/WebView.h>
@@ -26,9 +26,9 @@ static WebPluginDatabase *database = nil;
 }
 
 // The first plugin with the specified mime type is returned.
-- (WebNetscapePluginPackage *)pluginForMIMEType:(NSString *)MIME
+- (WebBasePluginPackage *)pluginForMIMEType:(NSString *)MIME
 {
-    WebNetscapePluginPackage *plugin;
+    WebBasePluginPackage *plugin;
     uint i;
     
     for(i=0; i<[plugins count]; i++){      
@@ -40,9 +40,9 @@ static WebPluginDatabase *database = nil;
     return nil;
 }
 
-- (WebNetscapePluginPackage *)pluginForExtension:(NSString *)extension
+- (WebBasePluginPackage *)pluginForExtension:(NSString *)extension
 {
-    WebNetscapePluginPackage *plugin;
+    WebBasePluginPackage *plugin;
     uint i;
 
     for(i=0; i<[plugins count]; i++){
@@ -54,10 +54,10 @@ static WebPluginDatabase *database = nil;
     return nil;
 }
 
-- (WebNetscapePluginPackage *)pluginForFilename:(NSString *)filename
+- (WebBasePluginPackage *)pluginForFilename:(NSString *)filename
 {
     uint i;
-    WebNetscapePluginPackage *plugin;
+    WebBasePluginPackage *plugin;
     
     for(i=0; i<[plugins count]; i++){
         plugin = [plugins objectAtIndex:i];
@@ -76,7 +76,7 @@ static WebPluginDatabase *database = nil;
 - (NSArray *)MIMETypes
 {
     NSMutableSet *MIMETypes;
-    WebNetscapePluginPackage *plugin;
+    WebBasePluginPackage *plugin;
     uint i;
         
     MIMETypes = [NSMutableSet set];
@@ -133,15 +133,15 @@ static NSArray *pluginLocations(void)
     }
     
     NSMutableArray *pluginArray = [NSMutableArray arrayWithCapacity:[pluginPaths count]];
-    WebNetscapePluginPackage *plugin;
+    WebBasePluginPackage *pluginPackage;
     
     for (i = 0; i < [pluginPaths count]; i++) {
-        plugin = [[WebNetscapePluginPackage alloc] initWithPath:[pluginPaths objectAtIndex:i]];
-        if (plugin) {
-            [pluginArray addObject:plugin];
-            LOG(Plugins, "Found plugin: %s", [[plugin name] lossyCString]);
-            LOG(Plugins, "%s", [[plugin description] lossyCString]);
-            [plugin release];
+        pluginPackage = [WebBasePluginPackage pluginWithPath:[pluginPaths objectAtIndex:i]];
+        if (pluginPackage) {
+            [pluginArray addObject:pluginPackage];
+            LOG(Plugins, "Found plugin: %s", [[pluginPackage name] lossyCString]);
+            LOG(Plugins, "%s", [[pluginPackage description] lossyCString]);
+            [pluginPackage release];
         }
     }
 

@@ -5,7 +5,7 @@
 
 #import <Foundation/Foundation.h>
 
-@class WebNetscapePluginPackage;
+@class WebBasePluginPackage;
 
 @interface WebPluginDatabase : NSObject
 {
@@ -13,9 +13,9 @@
 }
 
 + (WebPluginDatabase *)installedPlugins;
-- (WebNetscapePluginPackage *)pluginForMIMEType:(NSString *)mimeType;
-- (WebNetscapePluginPackage *)pluginForExtension:(NSString *)extension;
-- (WebNetscapePluginPackage *)pluginForFilename:(NSString *)filename;
+- (WebBasePluginPackage *)pluginForMIMEType:(NSString *)mimeType;
+- (WebBasePluginPackage *)pluginForExtension:(NSString *)extension;
+- (WebBasePluginPackage *)pluginForFilename:(NSString *)filename;
 - (NSArray *)plugins;
 
 @end

@@ -60,7 +60,8 @@
     [self setMIMEType:MIME];
     [self setBaseURL:[dataSource URL]];
 
-    WebNetscapePluginPackage *thePlugin = [[WebPluginDatabase installedPlugins] pluginForMIMEType:MIME];
+    WebNetscapePluginPackage *thePlugin;
+    thePlugin = (WebNetscapePluginPackage *)[[WebPluginDatabase installedPlugins] pluginForMIMEType:MIME];
 
     if (![thePlugin load]){
         return;
