@@ -1,3 +1,13 @@
+2003-01-22  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+	- fixed 3153673 -- spoof as MacIE to get into http://www.mazdausa.com
+	- fixed 3153678 -- spoof as MacIE for http://wap.sonyericsson.com/
+
+        * WebView.subproj/WebUserAgentSpoofTable.gperf: Add the two new entries.
+	Also reorganize existing entries a bit.
+
 2003-01-22  Chris Blumenberg  <cblu@apple.com>
 
 	Removed comment that I added by mistake.

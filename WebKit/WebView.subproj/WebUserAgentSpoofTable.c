@@ -27,7 +27,7 @@ hash (register const char *str, register unsigned int len)
       27, 27, 27, 27, 27, 27, 27,  0,  0,  0,
        0,  0, 10,  0,  0,  0, 14, 27,  0,  0,
        0,  0,  0, 27,  0,  0,  0,  0,  5,  0,
-      27,  5, 27, 27, 27, 27, 27, 27, 27, 27,
+      27,  5,  0, 27, 27, 27, 27, 27, 27, 27,
       27, 27, 27, 27, 27, 27, 27, 27, 27, 27,
       27, 27, 27, 27, 27, 27, 27, 27, 27, 27,
       27, 27, 27, 27, 27, 27, 27, 27, 27, 27,
@@ -47,6 +47,10 @@ hash (register const char *str, register unsigned int len)
   switch (hval)
     {
       default:
+      case 20:
+        hval += asso_values[(unsigned char)str[19]];
+      case 19:
+        hval += asso_values[(unsigned char)str[18]];
       case 18:
         hval += asso_values[(unsigned char)str[17]];
       case 17:
@@ -96,9 +100,9 @@ _web_findSpoofTableEntry (register const char *str, register unsigned int len)
 {
   enum
     {
-      TOTAL_KEYWORDS = 14,
+      TOTAL_KEYWORDS = 16,
       MIN_WORD_LENGTH = 6,
-      MAX_WORD_LENGTH = 18,
+      MAX_WORD_LENGTH = 20,
       MIN_HASH_VALUE = 9,
       MAX_HASH_VALUE = 26
     };
@@ -110,7 +114,7 @@ _web_findSpoofTableEntry (register const char *str, register unsigned int len)
       {"watch.com", MacIE},
       {"battle.net", MacIE},
       {"porsche.com", MacIE},
-      {"",0},
+      {"mazdausa.com", MacIE},
       {"hondacars.com", MacIE},
       {"abcnews.go.com", WinIE},
       {"",0},
@@ -123,7 +127,7 @@ _web_findSpoofTableEntry (register const char *str, register unsigned int len)
       {"firstusa.com", MacIE},
       {"microsoft.com", MacIE},
       {"jaguar.com", MacIE},
-      {"",0},
+      {"wap.sonyericsson.com", MacIE},
       {"bang-olufsen.com", MacIE}
     };
 
