@@ -3638,7 +3638,8 @@ void ReplaceSelectionCommand::doApply()
 
     // Handle trailing newline
     if (m_fragment.hasInterchangeNewline()) {
-        if (startBlock == endBlock && !isProbablyBlock(lastNodeInserted)) {
+        if ((startBlock == endBlock) && (VisiblePosition(lastNodeInserted, lastNodeInserted->caretMaxOffset()).next().isNull())) {
+        
             setEndingSelection(insertionPos);
             insertParagraphSeparator();
             endPos = endingSelection().end().downstream();

@@ -1,3 +1,13 @@
+2005-01-09  David Harrison  <harrison@apple.com>
+
+        Reviewed by Ken Kocienda.
+
+        <rdar://problem/3786362> REGRESSION (Mail): pasted text loses one newline
+        
+        * khtml/editing/htmlediting.cpp:
+        (khtml::ReplaceSelectionCommand::doApply):
+        Tune check for need for insertParagraphSeparator when hasInterchangeNewline.
+
 2005-01-09  Darin Adler  <darin@apple.com>
 
         Reviewed by Harrison.
