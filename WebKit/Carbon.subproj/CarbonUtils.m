@@ -6,8 +6,10 @@
  *  Copyright (c) 2003 Apple Computer, Inc. All rights reserved.
  *
  */
+#import <AppKit/NSBitmapImageRep_Private.h>
 
 #include "CarbonUtils.h"
+
 
 extern CGImageRef _NSCreateImageRef( unsigned char *const bitmapData[5], int pixelsWide, int pixelsHigh, int bitsPerSample, int samplesPerPixel, int bitsPerPixel, int bytesPerRow, BOOL isPlanar, BOOL hasAlpha, NSString *colorSpaceName, CGColorSpaceRef customColorSpace, id sourceObj);
 
@@ -45,6 +47,8 @@ WebInitForCarbon()
         InstallEventLoopIdleTimer( GetMainEventLoop(), 1.0, 0, PoolCleaner, 0, NULL );
         
         sAppKitLoaded = true;     
+
+        [NSBitmapImageRep _setEnableFlippedImageFix:YES];
     }
 }
 

@@ -1,3 +1,16 @@
+2004-04-07  Richard Williamson   <rjw@apple.com>
+
+	Fix for 3604388.  The runtime version check (_CFExecutableLinkedOnOrAfter) used by many of
+	our frameworks doesn't work for CFM apps.  So, conditional panther bugs fixes aren't
+	being pickup by CFM apps that use WebKit, specifically Contribute.  This particular radar
+	describes a problem that was conditionally fixed in the AppKit for panther.  The work-around
+	is to force NSBitmapImageRep to execute to conditional code.
+
+        Reviewed by Maciej.
+
+        * Carbon.subproj/CarbonUtils.m:
+        (WebInitForCarbon):
+
 2004-04-06  Richard Williamson   <rjw@apple.com>
 
 	Fixed 3510805.  Only release pool in timer if the current nesting level of the
