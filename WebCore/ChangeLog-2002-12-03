@@ -1,3 +1,12 @@
+2002-11-03  Darin Adler  <darin@apple.com>
+
+	- fixed 3091275 -- can't type into Answer field in RealOne Player order form
+
+        * khtml/rendering/render_form.cpp:
+        (RenderLineEdit::updateFromElement): Treat 0 as max (1024) as other browsers do.
+        (RenderFileButton::updateFromElement): Ditto, although this is in !APPLE_CHANGES code
+	that we don't use in WebCore.
+
 2002-11-01  Darin Adler  <darin@apple.com>
 
 	- applied the same "subclass responsibility" pattern here as in

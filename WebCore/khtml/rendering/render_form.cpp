@@ -529,7 +529,7 @@ void RenderLineEdit::calcMinMaxWidth()
 void RenderLineEdit::updateFromElement()
 {
     int ml = element()->maxLength();
-    if ( ml < 0 || ml > 1024 )
+    if ( ml <= 0 || ml > 1024 )
         ml = 1024;
     if ( widget()->maxLength() != ml )
         widget()->setMaxLength( ml );
@@ -651,7 +651,7 @@ void RenderFileButton::updateFromElement()
     m_edit->setText(element()->value().string());
     m_edit->blockSignals(false);
     int ml = element()->maxLength();
-    if ( ml < 0 || ml > 1024 )
+    if ( ml <= 0 || ml > 1024 )
         ml = 1024;
     m_edit->setMaxLength( ml );
     m_edit->setEdited( false );
