@@ -92,10 +92,15 @@ QPixmap::QPixmap(int w, int h)
 
 QPixmap::QPixmap(const QPixmap &copyFrom) : QPaintDevice(copyFrom)
 {
+#if BUILDING_ON_PANTHER
     imageRenderer = KWQRetain(copyFrom.imageRenderer);
-    MIMEType = KWQRetainNSRelease([copyFrom.MIMEType copy]);
     copyFrom.needCopyOnWrite = true;
     needCopyOnWrite = true;
+#else
+    imageRenderer = KWQRetainNSRelease([copyFrom.imageRenderer copyWithZone:NULL]);;
+    needCopyOnWrite = false;
+#endif
+    MIMEType = KWQRetainNSRelease([copyFrom.MIMEType copy]);
 }
 
 QPixmap::~QPixmap()
@@ -108,6 +113,14 @@ CGImageRef QPixmap::imageRef()
 {
     return [imageRenderer imageRef];
 }
+
+void QPixmap::resetAnimation()
+{
+    if (imageRenderer) {
+        [imageRenderer resetAnimation];
+    }
+}
+
 
 #if !defined(BUILDING_ON_PANTHER)
 @interface WebImageCallback : NSObject

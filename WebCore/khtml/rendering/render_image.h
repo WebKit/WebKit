@@ -82,6 +82,10 @@ public:
     
     DOM::HTMLMapElementImpl* imageMap();
 
+#if APPLE_CHANGES
+    void resetAnimation();
+#endif
+
 private:
     bool isWidthSpecified() const;
     bool isHeightSpecified() const;

@@ -212,6 +212,15 @@ void RenderImage::setPixmap( const QPixmap &p, const QRect& r, CachedImage *o)
     }
 }
 
+#if APPLE_CHANGES
+void RenderImage::resetAnimation()
+{
+    pix.resetAnimation();
+    if (!needsLayout())
+        repaint();
+}
+#endif
+
 void RenderImage::paint(PaintInfo& i, int _tx, int _ty)
 {
     if (!shouldPaint(i, _tx, _ty)) return;

@@ -1,3 +1,17 @@
+2005-02-24  Richard Williamson   <rjw@apple.com>
+
+	Fixed <rdar://problem/3985889> REGRESSION (125-180): setting <img> src to GIF that already animated does not animate; just shows final frame
+	
+        Reviewed by Hyatt.
+
+        * WebCoreSupport.subproj/WebImageData.h:
+        * WebCoreSupport.subproj/WebImageData.m:
+        (-[WebImageData resetAnimation]):
+        * WebCoreSupport.subproj/WebImageRenderer.m:
+        (-[WebImageRenderer resetAnimation]):
+        (-[WebInternalImage resetAnimation]):
+        (-[WebImageRenderer drawImageInRect:fromRect:compositeOperator:context:]):
+
 2005-02-24  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by John.

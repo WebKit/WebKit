@@ -815,6 +815,14 @@ static NSMutableSet *activeAnimations;
     }
 }
 
+- (void)resetAnimation
+{
+    [self _stopAnimation];
+    currentFrame = 0;
+    repetitionsComplete = 0;
+    animationFinished = NO;
+}
+
 - (void)_stopAnimation
 {
     // This timer is used to animate all occurences of this image.  Don't invalidate

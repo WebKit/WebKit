@@ -97,6 +97,8 @@ public:
     
     static bool shouldUseThreadedDecoding();
 
+    void resetAnimation();
+    
 private:
 
     WebCoreImageRendererPtr imageRenderer;

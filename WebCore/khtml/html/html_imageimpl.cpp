@@ -94,6 +94,11 @@ void HTMLImageLoader::updateFromElement()
         if (oldImage)
             oldImage->deref(this);
     }
+#if APPLE_CHANGES
+    khtml::RenderImage *renderer = static_cast<khtml::RenderImage*>(element()->renderer());
+    if (renderer)
+        renderer->resetAnimation();
+#endif
 }
 
 void HTMLImageLoader::dispatchLoadEvent()

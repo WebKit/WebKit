@@ -200,6 +200,11 @@
     [WebImageData stopAnimationsInView:aView];
 }
 
+- (void)resetAnimation
+{
+    [imageData resetAnimation];
+}
+
 
 - (void)stopAnimation
 {
@@ -956,6 +961,14 @@ static NSMutableSet *activeImageRenderers;
     return YES;
 }
 
+- (void)resetAnimation
+{
+    [self stopAnimation];
+    currentFrame = 0;
+    repetitionsComplete = 0;
+    animationFinished = NO;
+}
+
 - (void)nextFrame:(id)context
 {
     int currentFrame;
@@ -1275,6 +1288,11 @@ static NSMutableSet *activeImageRenderers;
 - (void)drawImageInRect:(NSRect)ir fromRect:(NSRect)fr compositeOperator:(NSCompositingOperation)compsiteOperator context:(CGContextRef)context
 {
     [image drawImageInRect:ir fromRect:fr compositeOperator:compsiteOperator context:context];
+}
+
+- (void)resetAnimation
+{
+    [image resetAnimation];
 }
 
 - (void)stopAnimation

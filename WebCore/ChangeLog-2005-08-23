@@ -1,3 +1,25 @@
+2005-02-24  Richard Williamson   <rjw@apple.com>
+
+	Fixed <rdar://problem/3985889> REGRESSION (125-180): setting <img> src to GIF that already animated does not animate; just shows final frame
+	
+        Reviewed by Hyatt.
+
+        * WebCore.pbproj/project.pbxproj:
+        * khtml/html/html_imageimpl.cpp:
+        (HTMLImageLoader::updateFromElement):
+        * khtml/rendering/render_image.cpp:
+        (RenderImage::resetAnimation):
+        * khtml/rendering/render_image.h:
+        * khtml/rendering/render_list.cpp:
+        (RenderListMarker::setStyle):
+        (RenderListMarker::paint):
+        * khtml/rendering/render_list.h:
+        * kwq/KWQPixmap.h:
+        * kwq/KWQPixmap.mm:
+        (QPixmap::QPixmap):
+        (QPixmap::resetAnimation):
+        * kwq/WebCoreImageRenderer.h:
+
 2005-02-24  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/4020110> Safari crashes in setAllData while taking a www.zoomerang.com survey
