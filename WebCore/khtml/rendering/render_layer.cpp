@@ -212,7 +212,7 @@ void RenderLayer::updateLayerPosition()
     }
     
     // Subtract our parent's scroll offset.
-    if (m_object->isPositioned()) {
+    if (m_object->isPositioned() && enclosingPositionedAncestor()) {
         RenderLayer* positionedParent = enclosingPositionedAncestor();
 
         // For positioned layers, we subtract out the enclosing positioned layer's scroll offset.
