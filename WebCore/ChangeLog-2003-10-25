@@ -1,3 +1,32 @@
+2003-01-26  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	- fixed 3156461 - SECURITY: contentDocument of iframe from other domain can be accessed
+	- fixed 3156462 - SECURITY: can invoke setTimeout on other window
+	- fixed 3156469 - SECURITY: can add an event listener on another protected window
+	- fixed 3156527 - SECURITY: Can access HTML document from different domain in another frame
+	- fixed 3156535 - SECURITY: Can access XML document from different domain in another frame
+
+	These fixes are merged from or inspired by security fixes in upstream khtml.
+	
+        * khtml/ecma/kjs_dom.h:
+        * khtml/ecma/kjs_dom.cpp:
+        (KJS::checkNodeSecurity): Prototype new method used to check whether a document
+	is allowed to access the contents of a node.
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::HTMLElement::getValueProperty): Apply security check to
+	getting the contentDocument of an iframe or object.
+        * khtml/ecma/kjs_window.cpp:
+	(Window::get): Make sure addEventListener/removeEventListener, and
+	all timer related functions are protocted from cross-domain calls.
+        (WindowFunc::tryCall): Make sure this is true even if they are
+	detached from one window and called on another.
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::checkEmitLoadEvent): When setting frames to the domain
+	of the parent document, don't force it, so the usual suffix check
+	rule will apply.
+
 2003-01-27  Richard Williamson   <rjw@apple.com>
 
         Reviewed by trey.

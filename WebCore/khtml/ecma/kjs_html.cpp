@@ -1519,7 +1519,8 @@ Value KJS::HTMLElement::getValueProperty(ExecState *exec, int token) const
     case ObjectBorder:          return getString(object.border());
     case ObjectCodeBase:        return getString(object.codeBase());
     case ObjectCodeType:        return getString(object.codeType());
-    case ObjectContentDocument: return getDOMNode(exec, object.contentDocument());
+    case ObjectContentDocument: return checkNodeSecurity(exec,object.contentDocument()) ? 
+				       getDOMNode(exec, object.contentDocument()) : Undefined();
     case ObjectData:            return getString(object.data());
     case ObjectDeclare:         return Boolean(object.declare());
     case ObjectHeight:          return getString(object.height());
@@ -1709,7 +1710,8 @@ Value KJS::HTMLElement::getValueProperty(ExecState *exec, int token) const
   case ID_FRAME: {
     DOM::HTMLFrameElement frameElement = element;
     switch (token) {
-    case FrameContentDocument: return getDOMNode(exec, frameElement.contentDocument());
+    case FrameContentDocument: return checkNodeSecurity(exec,frameElement.contentDocument()) ? 
+				      getDOMNode(exec, frameElement.contentDocument()) : Undefined();
     case FrameFrameBorder:     return getString(frameElement.frameBorder());
     case FrameLongDesc:        return getString(frameElement.longDesc());
     case FrameMarginHeight:    return getString(frameElement.marginHeight());
@@ -1728,7 +1730,8 @@ Value KJS::HTMLElement::getValueProperty(ExecState *exec, int token) const
     case IFrameAlign:                return getString(iFrame.align());
       // ### security check ?
     case IFrameDocument: // non-standard, mapped to contentDocument
-    case IFrameContentDocument:      return getDOMNode(exec, iFrame.contentDocument());
+    case IFrameContentDocument: return checkNodeSecurity(exec,iFrame.contentDocument()) ? 
+				  getDOMNode(exec, iFrame.contentDocument()) : Undefined();
     case IFrameFrameBorder:     return getString(iFrame.frameBorder());
     case IFrameHeight:          return getString(iFrame.height());
     case IFrameLongDesc:        return getString(iFrame.longDesc());

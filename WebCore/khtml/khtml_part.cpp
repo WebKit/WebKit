@@ -1711,7 +1711,7 @@ void KHTMLPart::checkEmitLoadEvent()
         if (htmlFrame->d->m_doc && htmlFrame->d->m_doc->isHTMLDocument() )
         {
           kdDebug() << "KHTMLPart::checkCompleted setting frame domain to " << domain.string() << endl;
-          static_cast<HTMLDocumentImpl*>(htmlFrame->d->m_doc)->setDomain( domain, true );
+          static_cast<HTMLDocumentImpl*>(htmlFrame->d->m_doc)->setDomain( domain );
         }
       }
     }

@@ -251,6 +251,7 @@ namespace KJS {
   };
 
   Value getDOMDocumentNode(ExecState *exec, const DOM::Document &n);
+  bool checkNodeSecurity(ExecState *exec, const DOM::Node& n);
   Value getDOMNode(ExecState *exec, const DOM::Node &n);
   Value getDOMNamedNodeMap(ExecState *exec, const DOM::NamedNodeMap &m);
   Value getDOMNodeList(ExecState *exec, const DOM::NodeList &l);
