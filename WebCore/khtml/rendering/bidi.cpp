@@ -336,11 +336,16 @@ inline bool BidiIterator::atEnd() const
 
 const QChar &BidiIterator::current() const
 {
-    if( !obj || !obj->isText()) {
-      static QChar nonBreakingSpace(0xA0);
+    static QChar nonBreakingSpace(0xA0);
+    
+    if (!obj || !obj->isText())
       return nonBreakingSpace;
-    }
-    return static_cast<RenderText *>(obj)->text()[pos];
+    
+    RenderText* text = static_cast<RenderText*>(obj);
+    if (!text->text())
+        return nonBreakingSpace;
+    
+    return text->text()[pos];
 }
 
 inline QChar::Direction BidiIterator::direction() const
