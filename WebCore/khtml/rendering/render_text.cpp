@@ -1276,16 +1276,23 @@ const QFont &RenderText::font()
 
 void RenderText::setSelectionState(SelectionState s)
 {
+    InlineTextBox* box;
+    
     m_selectionState = s;
     if (s == SelectionStart || s == SelectionEnd || s == SelectionBoth) {
         int startPos, endPos;
         selectionStartEnd(startPos, endPos);
-        if(selectionState() == SelectionStart)
+        if(selectionState() == SelectionStart) {
             endPos = str->l;
-        else if(selectionState() == SelectionEnd)
+            
+            // to handle selection from end of text to end of line
+            if (startPos != 0 && startPos == endPos) {
+                startPos = endPos - 1;
+            }
+        } else if(selectionState() == SelectionEnd)
             startPos = 0;
         
-        for (InlineTextBox* box = firstTextBox(); box; box = box->nextTextBox()) {
+        for (box = firstTextBox(); box; box = box->nextTextBox()) {
             if (box->isSelected(startPos, endPos)) {
                 RootInlineBox* line = box->root();
                 if (line)
@@ -1294,7 +1301,7 @@ void RenderText::setSelectionState(SelectionState s)
         }
     }
     else {
-        for (InlineTextBox* box = firstTextBox(); box; box = box->nextTextBox()) {
+        for (box = firstTextBox(); box; box = box->nextTextBox()) {
             RootInlineBox* line = box->root();
             if (line)
                 line->setHasSelectedChildren(s == SelectionInside);
