@@ -1,5 +1,18 @@
 2002-11-26  David Hyatt  <hyatt@apple.com>
 
+	Backing out support for multiple font families for now.
+	The support is still there in QFont.  I've just stopped
+	the style selector from walking the entire value list (it
+	will only put the first family into the font).
+
+	The original change  caused a 5% perf regression.  
+	I'm going to see what kinds of tricks I can pull to get 
+	some of this back before re-enabling the feature.
+	
+        * khtml/css/cssstyleselector.cpp:
+
+2002-11-26  David Hyatt  <hyatt@apple.com>
+
 	Fix render object removal to remerge adjacent anonymous inline boxes
 	when an intervening block box gets removed.
 	

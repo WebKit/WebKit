@@ -2575,6 +2575,10 @@ void CSSStyleSelector::applyRule( DOM::CSSProperty *prop )
                     if (style->setFontDef( fontDef )) {
                         fontDirty = true;
                     }
+                    
+                    // Turn multiple fonts off for now until I can
+                    // figure out how to make it fast.
+                    return;
                 }
             }
         }
