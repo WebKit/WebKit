@@ -624,6 +624,22 @@ NodeImpl::Id HTMLTableRowElementImpl::id() const
     return ID_TR;
 }
 
+NodeImpl *HTMLTableRowElementImpl::addChild(NodeImpl *child)
+{
+#ifdef DEBUG_LAYOUT
+    kdDebug( 6030 ) << nodeName().string() << "(Tbody)::addChild( " << child->nodeName().string() << " )" << endl;
+#endif
+
+    if (child->id() == ID_FORM) {
+        // First add the child.
+        HTMLElementImpl::addChild(child);
+        // Now simply return ourselves as the newnode.  This has the effect of
+        // demoting the form to a leaf and moving it safely out of the way.
+        return this;
+    }
+    return HTMLTablePartElementImpl::addChild(child);
+}
+
 long HTMLTableRowElementImpl::rowIndex() const
 {
     // some complex traversal stuff here to take into account that some rows may be in different sections

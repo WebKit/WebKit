@@ -739,7 +739,7 @@ bool DOM::checkChild(ushort tagID, ushort childID)
         return false;
     case ID_TR:
         // TR: _9 +
-        if (childID == ID_SCRIPT)
+        if (childID == ID_SCRIPT || childID == ID_FORM)
             return true;
         return check_array(childID, tag_list_9);
     case ID_FRAMESET:

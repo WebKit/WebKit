@@ -1,5 +1,19 @@
 2002-12-03  David Hyatt  <hyatt@apple.com>
 
+	Fix for 3112599, aol.com shopping page doesn't work.  Apply
+	the same form demotion trick to <tr> that I did already for
+	<tbody> and <table>.
+
+	r=gramps
+	
+        * khtml/html/dtd.cpp:
+        (DOM::checkChild):
+        * khtml/html/html_tableimpl.cpp:
+        (HTMLTableRowElementImpl::addChild):
+        * khtml/html/html_tableimpl.h:
+
+2002-12-03  David Hyatt  <hyatt@apple.com>
+
 	Fix link feedback regression on aintitcool.com.  Observe
 	the wacky feedback we give now (yes, it matches MacIE and
 	Gecko).  Gotta love this malformed page.
