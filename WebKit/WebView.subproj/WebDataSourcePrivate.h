@@ -16,6 +16,7 @@
 @class WebResourceRequest;
 @class WebResourceResponse;
 @class WebSubresourceClient;
+@class WebHistoryItem;
 
 @protocol WebDocumentRepresentation;
 
@@ -66,6 +67,13 @@
     
     NSURL *iconURL;
     WebIconLoader *iconLoader;
+
+    // item we are about to go to - used to set position in BFList on commit
+    WebHistoryItem *provisionalBackForwardItem;
+    // item we just left - will receive saved doc state on commit
+    WebHistoryItem *previousBackForwardItem;
+    // BF items that reference what we loaded - we must keep their titles up to date
+    NSMutableArray *ourBackForwardItems;
     
     BOOL defersCallbacks;
 }
@@ -101,6 +109,11 @@
 - (void)_setIconURL:(NSURL *)URL withType:(NSString *)iconType;
 - (void)_setOverrideEncoding:(NSString *)overrideEncoding;
 - (NSString *)_overrideEncoding;
+- (void)_setProvisionalBackForwardItem: (WebHistoryItem *)item;
+- (WebHistoryItem *)_provisionalBackForwardItem;
+- (void)_setPreviousBackForwardItem: (WebHistoryItem *)item;
+- (WebHistoryItem *)_previousBackForwardItem;
+- (void)_addBackForwardItem:(WebHistoryItem *)item;
 
 // Convenience interface for getting here from an WebDataSource.
 // This returns nil if the representation is not an WebHTMLRepresentation.
@@ -111,6 +124,7 @@
 - (void)_makeRepresentation;
 - (void)_receivedData:(NSData *)data;
 - (void)_finishedLoading;
+
 
 - (void)_defersCallbacksChanged;
 - (WebResourceRequest *)_originalRequest;

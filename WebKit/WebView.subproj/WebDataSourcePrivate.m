@@ -59,6 +59,9 @@
     [iconLoader setDelegate:nil];
     [iconLoader release];
     [iconURL release];
+    [provisionalBackForwardItem release];
+    [previousBackForwardItem release];
+    [ourBackForwardItems release];
 
     [super dealloc];
 }
@@ -255,10 +258,8 @@
         entry = [[WebHistory sharedHistory] entryForURL: canonURL];
         [entry setTitle: _private->pageTitle];
 
-        // Must update the entry in the back-forward list too.
-        //WebBackForwardList *bfList = [_private->controller backForwardList];
-        //entry = [bfList entryForURL: canonURL];
-        //[entry setTitle: _private->pageTitle];
+        // Must update the entries in the back-forward list too.
+        [_private->ourBackForwardItems makeObjectsPerformSelector:@selector(setTitle:) withObject:_private->pageTitle];
 
         [[_private->controller locationChangeDelegate] receivedPageTitle:_private->pageTitle forDataSource:self];
     }
@@ -314,6 +315,42 @@
 - (NSString *)_overrideEncoding
 {
     return [[_private->overrideEncoding copy] autorelease];
+}
+
+- (WebHistoryItem *)_provisionalBackForwardItem
+{
+    return _private->provisionalBackForwardItem;
+}
+
+- (void)_setProvisionalBackForwardItem: (WebHistoryItem *)item
+{
+    if (_private->provisionalBackForwardItem != item) {
+        [_private->provisionalBackForwardItem release];
+        _private->provisionalBackForwardItem = [item retain];
+    }
+}
+
+- (WebHistoryItem *)_previousBackForwardItem
+{
+    return _private->previousBackForwardItem;
+}
+
+- (void)_setPreviousBackForwardItem: (WebHistoryItem *)item
+{
+    if (_private->previousBackForwardItem != item) {
+        [_private->previousBackForwardItem release];
+        _private->previousBackForwardItem = [item retain];
+    }
+}
+
+- (void)_addBackForwardItem:(WebHistoryItem *)item
+{
+    if (!_private->ourBackForwardItems) {
+        _private->ourBackForwardItems = [[NSMutableArray alloc] initWithCapacity:1];
+    }
+    if ([_private->ourBackForwardItems indexOfObjectIdenticalTo:item] == NSNotFound) {
+        [_private->ourBackForwardItems addObject:item];
+    }
 }
 
 - (void)_setMainDocumentError: (WebError *)error
@@ -391,6 +428,9 @@
 	[self _makeRepresentation];
         [[self webFrame] _transitionToCommitted];
 	[[self _bridge] dataSourceChanged];
+        // we're done with these after committing
+        [self _setProvisionalBackForwardItem: nil];
+        [self _setPreviousBackForwardItem: nil];
     }
 }
 

@@ -118,16 +118,6 @@ static const char * const stateNames[] = {
     loadType = t;
 }
 
-- (WebHistoryItem *)backForwardItem { return backForwardItem; }
-- (void)setBackForwardItem: (WebHistoryItem *)item
-{
-    if (backForwardItem != item) {
-        [backForwardItem release];
-        backForwardItem = [item retain];
-    }
-}
-
-
 @end
 
 @implementation WebFrame (WebPrivate)
@@ -206,16 +196,6 @@ static const char * const stateNames[] = {
 - (WebFrameLoadType)_loadType
 {
     return [_private loadType];
-}
-
-- (void)_setBackForwardItem: (WebHistoryItem *)item
-{
-    [_private setBackForwardItem: item];
-}
-
-- (WebHistoryItem *)_backForwardItem
-{
-    return [_private backForwardItem];
 }
 
 - (void)_scheduleLayout:(NSTimeInterval)inSeconds
@@ -349,18 +329,9 @@ static const char * const stateNames[] = {
             if ([[self controller] usesBackForwardList]){
                 switch ([self _loadType]) {
                 case WebFrameLoadTypeForward:
-                    [backForwardList goForward];
-                    [self _restoreScrollPosition];
-                    break;
-
                 case WebFrameLoadTypeBack:
-                    [backForwardList goBack];
-                    [self _restoreScrollPosition];
-                    break;
-                    
                 case WebFrameLoadTypeIndexedBackForward:
-                    [backForwardList goToEntry: [self _backForwardItem]];
-                    [self _setBackForwardItem: nil];
+                    [backForwardList goToEntry: [ds _provisionalBackForwardItem]];
                     [self _restoreScrollPosition];
                     break;
                     
@@ -376,11 +347,12 @@ static const char * const stateNames[] = {
                 
                     // Add item to back/forward list.
                     parentFrame = [self parent]; 
-                    backForwardItem = [[WebHistoryItem alloc] initWithURL:[[[self dataSource] request] URL]
+                    backForwardItem = [[WebHistoryItem alloc] initWithURL:[[ds request] URL]
                                                                    target:[self name]
                                                                    parent:[parentFrame name]
-                                                                    title:[[self dataSource] pageTitle]];
+                                                                    title:ptitle];
                     [[[self controller] backForwardList] addEntry: backForwardItem];
+                    [ds _addBackForwardItem:backForwardItem];
                     [backForwardItem release];
                     // Scroll to top.
                     break;
@@ -479,7 +451,7 @@ static const char * const stateNames[] = {
 
                     [[[self controller] locationChangeDelegate] locationChangeDone: [pd mainDocumentError] forDataSource:pd];
 
-                    // We now the provisional data source didn't cut the mustard, release it.
+                    // We know the provisional data source didn't cut the mustard, release it.
                     [_private setProvisionalDataSource: nil];
                     
                     [self _setState: WebFrameStateComplete];
@@ -617,7 +589,6 @@ static const char * const stateNames[] = {
 // Called every time a resource is completely loaded, or an error is received.
 - (void)_checkLoadComplete
 {
-
     ASSERT([self controller] != nil);
 
     // Now walk the frame tree to see if any frame that may have initiated a load is done.
@@ -729,11 +700,10 @@ static const char * const stateNames[] = {
     NSURL *itemURL = [item URL];
     WebResourceRequest *request;
     NSURL *originalURL = [[[self dataSource] request] URL];
+    WebBackForwardList *backForwardList = [[self controller] backForwardList];
 
     // Are we navigating to an anchor within the page?
     if ([item anchor] && [[itemURL _web_URLByRemovingFragment] isEqual: [originalURL _web_URLByRemovingFragment]]) {
-        WebBackForwardList *backForwardList = [[self controller] backForwardList];
-
         if (type == WebFrameLoadTypeForward)
             [backForwardList goForward];
         else if (type == WebFrameLoadTypeBack)
@@ -778,13 +748,13 @@ static const char * const stateNames[] = {
         WebDataSource *newDataSource = [[WebDataSource alloc] initWithRequest:request];
         [request release];
         [self setProvisionalDataSource: newDataSource];
+        // Remember this item in order to set the position in the BFList later.
+        // Important that this happens after our provDataSrc is set, since setting
+        // provDataSrc results in isLoadComplete, which clears provLink!
+        [newDataSource _setProvisionalBackForwardItem: item];
+        // Set the item for which we will save document state
+        [newDataSource _setPreviousBackForwardItem: [backForwardList currentEntry]];
         [self _setLoadType: type];
-        // we need to remember this item in order to set the position in the BFList later
-        if (type == WebFrameLoadTypeIndexedBackForward) {
-            [self _setBackForwardItem: item];
-        } else {
-            [self _setBackForwardItem: nil];
-        }
         [self startLoading];
         [newDataSource release];
     }

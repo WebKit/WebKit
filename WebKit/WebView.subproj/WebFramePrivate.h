@@ -54,7 +54,6 @@ typedef enum {
     WebFrameState state;
     NSTimer *scheduledLayoutTimer;
     WebFrameLoadType loadType;
-    WebHistoryItem *backForwardItem;
     WebFrame *parent;
     NSMutableArray *children;
     WebPluginController *pluginController;
@@ -72,8 +71,6 @@ typedef enum {
 - (WebDataSource *)provisionalDataSource;
 - (WebFrameLoadType)loadType;
 - (void)setLoadType:(WebFrameLoadType)loadType;
-- (void)setBackForwardItem: (WebHistoryItem *)item;
-- (WebHistoryItem *)backForwardItem;
 
 @end
 
@@ -96,8 +93,6 @@ typedef enum {
 - (void)_setProvisionalDataSource:(WebDataSource *)d;
 - (void)_setLoadType: (WebFrameLoadType)loadType;
 - (WebFrameLoadType)_loadType;
-- (void)_setBackForwardItem: (WebHistoryItem *)item;
-- (WebHistoryItem *)_backForwardItem;
 - (void)_goToItem: (WebHistoryItem *)item withFrameLoadType: (WebFrameLoadType)type;
 - (void)_restoreScrollPosition;
 - (void)_scrollToTop;

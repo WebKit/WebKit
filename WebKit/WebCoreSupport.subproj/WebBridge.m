@@ -288,14 +288,15 @@
     if ([[URL _web_URLByRemovingFragment] isEqual:[[self URL] _web_URLByRemovingFragment]]) {
         [self openURL:URL];
 
+        WebDataSource *dataSource = [frame dataSource];
         WebHistoryItem *backForwardItem = [[WebHistoryItem alloc] initWithURL:URL
-            target:[frame name] parent:[[frame parent] name] title:[[frame dataSource] pageTitle]];
+            target:[frame name] parent:[[frame parent] name] title:[dataSource pageTitle]];
         [backForwardItem setAnchor:[URL fragment]];
         [[[frame controller] backForwardList] addEntry:backForwardItem];
         [backForwardItem release];
 
-        WebDataSource *dataSource = [frame dataSource];
-        [dataSource _setURL:URL];        
+        [dataSource _setURL:URL];
+        [dataSource _addBackForwardItem:backForwardItem];
         [[[frame controller] locationChangeDelegate] locationChangedWithinPageForDataSource:dataSource];
     } else {
         WebResourceRequest *request = [[WebResourceRequest alloc] initWithURL:URL];
@@ -359,13 +360,11 @@
 
 - (void)saveDocumentState: (NSArray *)documentState
 {
-//??? does this need a case for WebFrameLoadTypeIndexedBackForward?
-    WebHistoryItem *item;
-    
-    if ([frame _loadType] == WebFrameLoadTypeBack)
-        item = [[[frame controller] backForwardList] forwardEntry];
-    else
+    WebHistoryItem *item = [[frame dataSource] _previousBackForwardItem];
+    // If there wasn't a previous item explicitly set, assume it's the backEntry
+    if (!item) {
         item = [[[frame controller] backForwardList] backEntry];
+    }
 
     [item setDocumentState: documentState];
 }

@@ -1,3 +1,43 @@
+2002-10-28  Trey Matteson  <trey@apple.com>
+
+	Finished 2998200 - access to most-recent in submenu of back & forward buttons
+
+        * WebView.subproj/WebDataSourcePrivate.h:
+	The BF items we are going to and from were moved here from
+	WebFrame because of timing problems among multiple data sources
+	when using the BF buttons during a load.
+	In addition, the datasource has a list of relevant BF items for
+	which it keeps their titles up to date.
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSourcePrivate dealloc]):
+	Free new state.
+        (-[WebDataSource _setTitle:]):
+	Update titles of BF items.
+        (-[WebDataSource _provisionalBackForwardItem]):
+        (-[WebDataSource _setProvisionalBackForwardItem:]):
+        (-[WebDataSource _previousBackForwardItem]):
+        (-[WebDataSource _setPreviousBackForwardItem:]):
+        (-[WebDataSource _addBackForwardItem:]):
+	Maintain new state.
+        (-[WebDataSource _commitIfReady]):
+	Free up previous and provisional BF items after commit.
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge loadURL:]):
+	Add the new BF item to the datasource.
+        (-[WebBridge saveDocumentState:]):
+	Use the right BF item to save the doc state.
+        * WebView.subproj/WebFramePrivate.h:
+	Previous and provisional BF are moved to datasource.
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _transitionToCommitted]):
+	Use provisional BF from datasource to set position in BF list.
+	Add new BF item to datasource.
+        (-[WebFrame _isLoadComplete]):
+        (-[WebFrame _checkLoadComplete]):
+	Comments, whitespace.
+        (-[WebFrame _goToItem:withFrameLoadType:]):
+	Set item we will use to saveDocState at commit time.
+
 2002-10-27  Darin Adler  <darin@apple.com>
 
 	- WebKit part of filename width fix
