@@ -142,7 +142,6 @@ private:
     void _setColorFromBrush();
     void _setColorFromPen();
 
-    // A fillRect designed to work around buggy behavior in NSRectFill.
     void _fillRect(float x, float y, float w, float h, const QColor& color);
     
     void _drawPoints(const QPointArray &_points, bool winding, int index, int _npoints, bool fill);

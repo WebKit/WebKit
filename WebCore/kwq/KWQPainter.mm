@@ -70,6 +70,22 @@ struct QPainterPrivate {
     QColor focusRingColor;
 };
 
+
+static CGColorRef CGColorFromNSColor(NSColor *color)
+{
+    NSColor* deviceColor = [color colorUsingColorSpaceName: @"NSDeviceRGBColorSpace"];
+    float red = [deviceColor redComponent];
+    float green = [deviceColor greenComponent];
+    float blue = [deviceColor blueComponent];
+    float alpha = [deviceColor alphaComponent];
+    const float components[] = { red, green, blue, alpha };
+    
+    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+    CGColorRef cgColor = CGColorCreate(colorSpace, components);
+    CGColorSpaceRelease(colorSpace);
+    return cgColor;
+}
+
 QPainter::QPainter() : data(new QPainterPrivate), _isForPrinting(false), _usesInactiveTextBackgroundColor(false), _drawsFocusRing(true)
 {
 }
@@ -343,11 +359,24 @@ void QPainter::drawEllipse(int x, int y, int w, int h)
 
     if (data->state.brush.style() != NoBrush) {
         _setColorFromBrush();
-        CGContextFillPath(context);
+	if (data->state.pen.style() != NoPen) {
+	    // stroke and fill
+	    _setColorFromPen();
+	    uint penWidth = data->state.pen.width();
+	    if (penWidth == 0) 
+		penWidth++;
+	    CGContextSetLineWidth(context, penWidth);
+	    CGContextDrawPath(context, kCGPathFillStroke);
+	} else {
+	    CGContextFillPath(context);
+	}
     }
     if (data->state.pen.style() != NoPen) {
         _setColorFromPen();
-        CGContextSetLineWidth(context, data->state.pen.width());
+	uint penWidth = data->state.pen.width();
+	if (penWidth == 0) 
+	    penWidth++;
+        CGContextSetLineWidth(context, penWidth);
         CGContextStrokePath(context);
     }
 }
@@ -688,6 +717,7 @@ QColor QPainter::selectedTextBackgroundColor() const
     return QColor((int)(255 * [color redComponent]), (int)(255 * [color greenComponent]), (int)(255 * [color blueComponent]));
 }
 
+// A fillRect designed to work around buggy behavior in NSRectFill.
 void QPainter::_fillRect(float x, float y, float w, float h, const QColor& col)
 {
     [col.getNSColor() set];
@@ -752,24 +782,15 @@ void QPainter::setShadow(int x, int y, int blur, const QColor& color)
     // Check for an invalid color, as this means that the color was not set for the shadow
     // and we should therefore just use the default shadow color.
     CGContextRef context = (CGContextRef)([[NSGraphicsContext currentContext] graphicsPort]);
-    if (!color.isValid())
+    if (!color.isValid()) {
         CGContextSetShadow(context, CGSizeMake(x,-y), blur); // y is flipped.
-    else {
-        NSColor* deviceColor = [color.getNSColor() colorUsingColorSpaceName: @"NSDeviceRGBColorSpace"];
-        float red = [deviceColor redComponent];
-        float green = [deviceColor greenComponent];
-        float blue = [deviceColor blueComponent];
-        float alpha = [deviceColor alphaComponent];
-        const float components[] = { red, green, blue, alpha };
-        
-        CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-        CGColorRef color = CGColorCreate(colorSpace, components);
-        CGColorSpaceRelease(colorSpace);
+    } else {
+	CGColorRef cgColor = CGColorFromNSColor(color.getNSColor());
         CGContextSetShadowWithColor(context,
                                     CGSizeMake(x,-y), // y is flipped.
                                     blur, 
-                                    color);
-        CGColorRelease(color);
+                                    cgColor);
+        CGColorRelease(cgColor);
     }
 }
 

@@ -1,3 +1,16 @@
+2004-07-10  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by John.
+
+	<rdar://problem/3706080>: (REGRESSION (125.8-147u): Nested <ul> do not display bullets)
+	<rdar://problem/3676376>: (Second level bullets not printed when printing Xcode release notes)
+	
+        * kwq/KWQPainter.h:
+        * kwq/KWQPainter.mm:
+        (CGColorFromNSColor):
+        (QPainter::drawEllipse):
+        (QPainter::setShadow):
+
 2004-07-12  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by me
@@ -54,6 +67,7 @@
         The equivalence case is new, and fixes 3723359.
 
 
+>>>>>>> 1.2967
 2004-07-09  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by Hyatt.
