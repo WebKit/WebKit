@@ -82,7 +82,7 @@ void KJS::Bindings::JSMethodNameToObjCMethodName(const char *name, char *buffer,
 /*
 
     JavaScript to   ObjC
-    Number          coerced to char, short, int, long, float, or double as appropriate
+    Number          coerced to char, short, int, long, float, double, or NSNumber, as appropriate
     String          NSString
     wrapper         id
     Object          JavaScriptObject
@@ -118,6 +118,8 @@ ObjcValue KJS::Bindings::convertValueToObjcValue (KJS::ExecState *exec, KJS::Val
                 NSString *string = [NSString stringWithCharacters:(const unichar*)u.data() length:u.size()];
                 result.objectValue = string;
             }
+            
+            // FIXME:  Convert scalars to NSNumber.
             
             // FIXME:  Deal with other Object types by creating a JavaScriptObjects
         }
@@ -180,6 +182,7 @@ ObjcValue KJS::Bindings::convertValueToObjcValue (KJS::ExecState *exec, KJS::Val
     long
     float
     double
+    NSNumber        Number
     NSString        string
     NSArray         []
     id              wrapper
@@ -207,6 +210,9 @@ Value KJS::Bindings::convertObjcValueToValue (KJS::ExecState *exec, void *buffer
                 }
                 else if ([*obj isKindOfClass:[NSArray class]]) {
                     // FIXME:  Deal with NSArray to Array conversions.
+                }
+                else if ([*obj isKindOfClass:[NSNumber class]]) {
+                    // FIXME:  Deal with NSNumber to Number conversions.
                 }
                 else {
                     aValue = Object(new RuntimeObjectImp(new ObjcInstance (*obj)));

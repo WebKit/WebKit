@@ -59,7 +59,7 @@ public:
         return *this;
     };
         
-    virtual KJS::Value valueFromInstance(const Instance *instance) const;
+    virtual KJS::Value valueFromInstance(KJS::ExecState *exec, const Instance *instance) const;
     virtual void setValueToInstance(KJS::ExecState *exec, const Instance *instance, const KJS::Value &aValue) const;
     
     virtual const char *name() const;
@@ -103,6 +103,29 @@ public:
 private:
     struct objc_class *_objcClass;
     const char *_selector;
+};
+
+class ObjcArray : public Array
+{
+public:
+    ObjcArray (ObjectStructPtr a);
+
+    ObjcArray (const ObjcArray &other);
+
+    ObjcArray &operator=(const ObjcArray &other);
+    
+    virtual void setValueAt(KJS::ExecState *exec, unsigned int index, const KJS::Value &aValue) const;
+    virtual KJS::Value valueAt(KJS::ExecState *exec, unsigned int index) const;
+    virtual unsigned int getLength() const;
+    
+    virtual ~ObjcArray();
+
+    ObjectStructPtr getObjcArray() const { return _array; }
+
+    static KJS::Value convertObjcArrayToArray (KJS::ExecState *exec, ObjectStructPtr anObject);
+
+private:
+    ObjectStructPtr _array;
 };
 
 } // namespace Bindings

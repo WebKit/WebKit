@@ -24,6 +24,9 @@
  */
 #include <Foundation/Foundation.h>
 
+
+#include <JavaScriptCore/internal.h>
+
 #include <objc_instance.h>
 
 #include <runtime_array.h>
@@ -33,6 +36,7 @@
 using namespace KJS;
 using namespace KJS::Bindings;
 
+// ---------------------- ObjcMethod ----------------------
 
 ObjcMethod::ObjcMethod(ClassStructPtr aClass, const char *name)
 {
@@ -56,6 +60,8 @@ NSMethodSignature *ObjcMethod::getMethodSignature() const
     return [(id)_objcClass instanceMethodSignatureForSelector:(SEL)_selector];
 }
 
+// ---------------------- ObjcField ----------------------
+
 
 ObjcField::ObjcField(Ivar ivar) 
 {
@@ -72,7 +78,7 @@ RuntimeType ObjcField::type() const
     return _ivar->ivar_type;
 }
 
-Value ObjcField::valueFromInstance(const Instance *instance) const
+Value ObjcField::valueFromInstance(KJS::ExecState *exec, const Instance *instance) const
 {
     Value aValue;
     char *ivarValuePtr = ((char *)(static_cast<const ObjcInstance*>(instance))->getObject() + _ivar->ivar_offset);
@@ -127,10 +133,10 @@ Value ObjcField::valueFromInstance(const Instance *instance) const
         }
         break;
         
-        
         case ObjcInvalidType:
         default: {
-            aValue = Undefined();
+            aValue = Error::create(exec, TypeError, "Invalid ObjectiveC type.");
+            exec->setException(aValue);
         }
         break;
     }
@@ -154,6 +160,8 @@ void ObjcField::setValueToInstance(KJS::ExecState *exec, const Instance *instanc
                 ObjcValue result = convertValueToObjcValue(exec, aValue, objcValueTypeForType(_ivar->ivar_type));
                 *(ObjectStructPtr *)(ivarValuePtr) = result.objectValue;
             }
+            
+            // FIXME.  Deal with numbers.
             
             // FIXME.  Deal with arrays.
             
@@ -193,10 +201,108 @@ void ObjcField::setValueToInstance(KJS::ExecState *exec, const Instance *instanc
         
         case ObjcInvalidType:
         default: {
-            // FIXME:  Throw an exception?
+            Object error = Error::create(exec, TypeError, "Invalid ObjectiveC type.");
+            exec->setException(error);
         }
         break;
     }
 }
 
+// ---------------------- ObjcArray ----------------------
 
+ObjcArray::ObjcArray (ObjectStructPtr a) 
+{
+    _array = [a retain];
+};
+
+ObjcArray::~ObjcArray () 
+{
+    [_array release];
+}
+
+
+ObjcArray::ObjcArray (const ObjcArray &other) : Array() 
+{
+    if (other._array != _array) {
+        [_array release];
+        _array = [other._array retain];
+    }
+};
+
+ObjcArray &ObjcArray::operator=(const ObjcArray &other) {
+    if (this == &other)
+        return *this;
+    
+    ObjectStructPtr _oldArray = _array;
+    _array = other._array;
+    [_array retain];
+    [_oldArray release];
+    
+    return *this;
+};
+
+void ObjcArray::setValueAt(KJS::ExecState *exec, unsigned int index, const KJS::Value &aValue) const
+{
+    if (![_array respondsToSelector:@selector(insertObject:atIndex:)]) {
+        Object error = Error::create(exec, TypeError, "Array is not mutable.");
+        exec->setException(error);
+        return;
+    }
+
+    if (index > [_array count]) {
+        Object error = Error::create(exec, RangeError, "Index exceeds array size.");
+        exec->setException(error);
+        return;
+    }
+    
+    // Always try to convert the value to an ObjC object, so it can be placed in the
+    // array.
+    ObjcValue oValue = convertValueToObjcValue (exec, aValue, ObjcObjectType);
+
+NS_DURING
+
+    [_array insertObject:oValue.objectValue atIndex:index];
+
+NS_HANDLER
+    
+    Object error = Error::create(exec, GeneralError, "ObjectiveC exception.");
+    exec->setException(error);
+    
+NS_ENDHANDLER
+}
+
+
+KJS::Value ObjcArray::valueAt(KJS::ExecState *exec, unsigned int index) const
+{
+    ObjectStructPtr obj = 0;
+    Object error;
+    bool haveError = false;
+    
+    if (index > [_array count]) {
+        Object error = Error::create(exec, RangeError, "Index exceeds array size.");
+        exec->setException(error);
+        return error;
+    }
+    
+NS_DURING
+
+    obj = [_array objectAtIndex:index];
+    
+NS_HANDLER
+    
+    Object error = Error::create(exec, GeneralError, "ObjectiveC exception.");
+    exec->setException(error);
+    haveError = true;
+    
+NS_ENDHANDLER
+
+    if (haveError)
+        return error;
+        
+    return convertObjcValueToValue (exec, &obj, ObjcObjectType);
+}
+
+unsigned int ObjcArray::getLength() const
+{
+    return [_array count];
+}

@@ -181,7 +181,7 @@ public:
         return *this;
     }
     
-    virtual KJS::Value valueFromInstance(const Instance *instance) const;
+    virtual KJS::Value valueFromInstance(KJS::ExecState *exec, const Instance *instance) const;
     virtual void setValueToInstance(KJS::ExecState *exec, const Instance *instance, const KJS::Value &aValue) const;
     
     virtual const char *name() const { return _name.UTF8String(); }
@@ -284,7 +284,7 @@ public:
     };
 
     virtual void setValueAt(KJS::ExecState *exec, unsigned int index, const KJS::Value &aValue) const;
-    virtual KJS::Value valueAt(unsigned int index) const;
+    virtual KJS::Value valueAt(KJS::ExecState *exec, unsigned int index) const;
     virtual unsigned int getLength() const;
     
     virtual ~JavaArray();

@@ -1,3 +1,44 @@
+2004-02-18  Richard Williamson   <rjw@apple.com>
+
+	Added support for export NSArrays.
+
+	Updated valueAt() to take an ExecState so we can throw
+	JS exceptions.
+
+	Implemented excludeSelectorFromJavaScript: in ObjcClass.  This allows
+	ObjectiveC classes to control the visibility of their methods in 
+	JavaScript.
+
+        Reviewed by Ken.
+
+        * bindings/jni/jni_runtime.cpp:
+        (JavaField::valueFromInstance):
+        (JavaArray::valueAt):
+        * bindings/jni/jni_runtime.h:
+        * bindings/objc/objc_class.mm:
+        (ObjcClass::methodsNamed):
+        * bindings/objc/objc_runtime.h:
+        (KJS::Bindings::ObjcArray::getObjcArray):
+        * bindings/objc/objc_runtime.mm:
+        (ObjcField::valueFromInstance):
+        (ObjcField::setValueToInstance):
+        (ObjcArray::ObjcArray):
+        (ObjcArray::~ObjcArray):
+        (ObjcArray::operator=):
+        (ObjcArray::setValueAt):
+        (ObjcArray::valueAt):
+        (ObjcArray::getLength):
+        * bindings/objc/objc_utility.mm:
+        (KJS::Bindings::convertValueToObjcValue):
+        (KJS::Bindings::convertObjcValueToValue):
+        * bindings/runtime.cpp:
+        (Instance::getValueOfField):
+        * bindings/runtime.h:
+        * bindings/runtime_array.cpp:
+        (RuntimeArrayImp::get):
+        * bindings/runtime_object.cpp:
+        (RuntimeObjectImp::get):
+
 2004-02-17  Richard Williamson   <rjw@apple.com>
 
 	Added String <-> NSString conversion.

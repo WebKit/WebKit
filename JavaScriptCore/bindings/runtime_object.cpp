@@ -66,7 +66,7 @@ Value RuntimeObjectImp::get(ExecState *exec, const Identifier &propertyName) con
     // See if the instance have a field with the specified name.
     Field *aField = instance->getClass()->fieldNamed(propertyName.ascii());
     if (aField) {
-        return instance->getValueOfField (aField); 
+        return instance->getValueOfField (exec, aField); 
     }
     
     // Now check if a method with specified name exists, if so return a function object for

@@ -112,6 +112,16 @@ MethodList ObjcClass::methodsNamed(const char *_name) const
                 struct objc_method *objcMethod = &objcMethodList->method_list[i];
                 NSString *mappedName = 0;
             
+                // See if the class wants to exclude the selector from visibility in JavaScript.
+                if ([(id)thisClass respondsToSelector:@selector(excludeSelectorFromJavaScript:)]) {
+                    if ([(id)thisClass excludeSelectorFromJavaScript:objcMethod->method_name]) {
+                        continue;
+                    }
+                }
+                
+                // See if the class want to provide a different name for the selector in JavaScript.
+                // Note that we do not do any checks to guarantee uniqueness. That's the responsiblity
+                // of the class.
                 if ([(id)thisClass respondsToSelector:@selector(JavaScriptNameForSelector:)]){
                     mappedName = [(id)thisClass JavaScriptNameForSelector: objcMethod->method_name];
                 }

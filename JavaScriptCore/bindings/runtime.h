@@ -67,7 +67,7 @@ public:
     virtual const char *name() const = 0;
     virtual RuntimeType type() const = 0;
 
-    virtual KJS::Value valueFromInstance(const Instance *instance) const = 0;
+    virtual KJS::Value valueFromInstance(KJS::ExecState *exec, const Instance *instance) const = 0;
     virtual void setValueToInstance(KJS::ExecState *exec, const Instance *instance, const KJS::Value &aValue) const = 0;
 
     virtual ~Field() {};
@@ -139,7 +139,7 @@ public:
     
     virtual Class *getClass() const = 0;
     
-    virtual KJS::Value getValueOfField (const Field *aField) const;
+    virtual KJS::Value getValueOfField (KJS::ExecState *exec, const Field *aField) const;
     virtual void setValueOfField (KJS::ExecState *exec, const Field *aField, const KJS::Value &aValue) const;
     
     virtual KJS::Value invokeMethod (KJS::ExecState *exec, const MethodList &method, const KJS::List &args) = 0;
@@ -155,7 +155,7 @@ class Array
 {
 public:
     virtual void setValueAt(KJS::ExecState *exec, unsigned int index, const KJS::Value &aValue) const = 0;
-    virtual KJS::Value valueAt(unsigned int index) const = 0;
+    virtual KJS::Value valueAt(KJS::ExecState *exec, unsigned int index) const = 0;
     virtual unsigned int getLength() const = 0;
     virtual ~Array() {};
 };
