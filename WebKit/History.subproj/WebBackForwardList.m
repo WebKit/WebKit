@@ -294,4 +294,9 @@ static BOOL loggedPageCacheSize = NO;
     return [_private->entries objectAtIndex:index + _private->current];
 }
 
+- (NSMutableArray *)_entries
+{
+    return _private->entries;
+}
+
 @end

@@ -10,6 +10,7 @@
 @interface WebPluginDatabase : NSObject
 {
     NSArray *plugins;
+    NSMutableArray *pendingPluginLoads;
 }
 
 + (WebPluginDatabase *)installedPlugins;
@@ -20,5 +21,7 @@
 - (WebBasePluginPackage *)pluginForFilename:(NSString *)filename;
 
 - (NSArray *)plugins;
+
+- (void)loadPluginIfNeededForMIMEType:(NSString *)MIMEType;
 
 @end

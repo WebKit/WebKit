@@ -1,3 +1,64 @@
+2003-04-02  Richard Williamson  <rjw@apple.com>
+
+        Added new API on WebFrame, loadData: and loadString:
+        
+        Reviewed by Maciej.
+
+        Fixed loading of cocoa plugins.
+        
+        Reviewed by Chris.
+        
+        * History.subproj/WebBackForwardList.m:
+        (-[WebBackForwardList _entries]):
+        * Plugins.subproj/WebBasePluginPackage.h:
+        * Plugins.subproj/WebBasePluginPackage.m:
+        (-[WebBasePluginPackage bundle]):
+        * Plugins.subproj/WebPluginDatabase.h:
+        * Plugins.subproj/WebPluginDatabase.m:
+        (-[WebPluginDatabase init]):
+        (-[WebPluginDatabase loadPluginIfNeededForMIMEType:]):
+        (-[WebPluginDatabase dealloc]):
+        * WebKit.pbproj/project.pbxproj:
+        * WebView.subproj/WebBaseResourceHandleDelegate.m:
+        (-[WebBaseResourceHandleDelegate connection:willSendRequest:redirectResponse:]):
+        (-[WebBaseResourceHandleDelegate connection:didReceiveResponse:]):
+        * WebView.subproj/WebDataProtocol.h: Added.
+        * WebView.subproj/WebDataProtocol.m: Added.
+        (-[WebDataRequestParameters copyWithZone:]):
+        (-[WebDataRequestParameters mutableCopyWithZone:]):
+        (-[WebDataRequestParameters dealloc]):
+        (+[NSURLRequest _webDataRequestURLForData:]):
+        (-[NSURLRequest _webDataRequestParameters]):
+        (-[NSURLRequest _webDataRequestData]):
+        (-[NSURLRequest _webDataRequestSetData:]):
+        (-[NSURLRequest _webDataRequestEncoding]):
+        (-[NSURLRequest _webDataRequestSetEncoding:]):
+        (-[NSURLRequest _webDataRequestBaseURL]):
+        (-[NSURLRequest _webDataRequestSetBaseURL:]):
+        (-[NSURLRequest _webDataRequestExternalRequest]):
+        (+[WebDataProtocol load]):
+        (+[WebDataProtocol doesURLHaveInternalDataScheme:]):
+        (+[WebDataProtocol canHandleURL:]):
+        (+[WebDataProtocol canonicalURLForURL:]):
+        (-[WebDataProtocol startLoadingWithCacheObject:]):
+        (-[WebDataProtocol stopLoading]):
+        * WebView.subproj/WebDataSource.m:
+        (-[WebDataSource initialRequest]):
+        (-[WebDataSource request]):
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _commitIfReady:]):
+        * WebView.subproj/WebFrame.h:
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame loadRequest:]):
+        (-[WebFrame loadString:baseURL:]):
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _addBackForwardItemClippedAtTarget:]):
+        (-[WebFrame _transitionToCommitted:]):
+        * WebView.subproj/WebFrameViewPrivate.m:
+        (-[WebFrameView _makeDocumentViewForDataSource:]):
+        * WebView.subproj/WebView.m:
+        (+[WebView canShowMIMEType:]):
+
 2003-04-02  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Ken.

@@ -8,6 +8,7 @@
 
 #import <WebKit/WebBackForwardList.h>
 #import <WebKit/WebBridge.h>
+#import <WebKit/WebDataProtocol.h>
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDefaultWindowOperationsDelegate.h>
@@ -256,11 +257,12 @@ Repeat load of the same URL (by any other means of navigation other than the rel
 
 
 // helper method used in various nav cases below
-- (WebHistoryItem *)_addBackForwardItemClippedAtTarget:(BOOL)doClip
+- (void)_addBackForwardItemClippedAtTarget:(BOOL)doClip
 {
-    WebHistoryItem *bfItem = [[[self webView] mainFrame] _createItemTreeWithTargetFrame:self clippedAtTarget:doClip];
-    [[[self webView] backForwardList] addItem:bfItem];
-    return bfItem;
+    if (![WebDataProtocol canHandleURL:[[[[[self webView] mainFrame] dataSource] response] URL]]){
+        WebHistoryItem *bfItem = [[[self webView] mainFrame] _createItemTreeWithTargetFrame:self clippedAtTarget:doClip];
+        [[[self webView] backForwardList] addItem:bfItem];
+    }
 }
 
 - (WebHistoryItem *)_createItem
@@ -649,7 +651,7 @@ Repeat load of the same URL (by any other means of navigation other than the rel
                 if (![ds _isClientRedirect]) {
                     // Add item to history.
 		    NSURL *URL = [[[ds _originalRequest] URL] _web_canonicalize];
-		    if ([[URL absoluteString] length] > 0) {
+		    if ([[URL absoluteString] length] > 0 && ![WebDataProtocol canHandleURL:URL]) {
 			entry = [[WebHistory sharedHistory] addItemForURL:URL];
 			if (ptitle)
 			    [entry setTitle: ptitle];

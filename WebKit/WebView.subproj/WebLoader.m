@@ -13,7 +13,9 @@
 #import <WebFoundation/NSURLRequest.h>
 #import <WebFoundation/NSURLRequestPrivate.h>
 #import <WebFoundation/NSURLResponse.h>
+#import <WebFoundation/NSURLResponsePrivate.h>
 
+#import <WebKit/WebDataProtocol.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDefaultResourceLoadDelegate.h>
 #import <WebKit/WebKitErrors.h>
@@ -127,25 +129,43 @@
 {
     ASSERT(con == connection);
     ASSERT(!reachedTerminalState);
-    
     NSMutableURLRequest *mutableRequest = [newRequest mutableCopy];
+    NSURLRequest *clientRequest, *updatedRequest;
+    BOOL haveDataSchemeRequest = NO;
+    
     [mutableRequest HTTPSetUserAgent:[controller userAgentForURL:[newRequest URL]]];
     newRequest = [mutableRequest autorelease];
     
+    clientRequest = [newRequest _webDataRequestExternalRequest];
+    if (!clientRequest)
+        clientRequest = newRequest;
+    else
+        haveDataSchemeRequest = YES;
     
     if (identifier == nil) {
         // The identifier is released after the last callback, rather than in dealloc
         // to avoid potential cycles.
         if (implementations.delegateImplementsIdentifierForRequest)
-            identifier = [[resourceLoadDelegate webView: controller identifierForInitialRequest:newRequest fromDataSource:dataSource] retain];
+            identifier = [[resourceLoadDelegate webView: controller identifierForInitialRequest:clientRequest fromDataSource:dataSource] retain];
         else
-            identifier = [[[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:controller identifierForInitialRequest:newRequest fromDataSource:dataSource] retain];
+            identifier = [[[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:controller identifierForInitialRequest:clientRequest fromDataSource:dataSource] retain];
     }
 
+    // If we have a special "applewebdata" scheme URL we send a fake request to the delegate.
     if (implementations.delegateImplementsWillSendRequest)
-        newRequest = [resourceLoadDelegate webView:controller resource:identifier willSendRequest:newRequest redirectResponse:redirectResponse fromDataSource:dataSource];
+        updatedRequest = [resourceLoadDelegate webView:controller resource:identifier willSendRequest:clientRequest redirectResponse:redirectResponse fromDataSource:dataSource];
     else
-        newRequest = [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:controller resource:identifier willSendRequest:newRequest redirectResponse:redirectResponse fromDataSource:dataSource];
+        updatedRequest = [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:controller resource:identifier willSendRequest:clientRequest redirectResponse:redirectResponse fromDataSource:dataSource];
+        
+    if (!haveDataSchemeRequest)
+        newRequest = updatedRequest;
+    else {
+        // If the delegate modified the request use that instead of
+        // our applewebdata request, otherwise use the original
+        // applewebdata request.
+        if (![updatedRequest isEqual:clientRequest])
+            newRequest = updatedRequest;
+    }
 
     // Store a copy of the request.
     [request autorelease];
@@ -174,6 +194,16 @@
 {
     ASSERT(con == connection);
     ASSERT(!reachedTerminalState);
+
+    // If the URL is one of our whacky applewebdata URLs that
+    // fake up a substitute URL to present to the delegate.
+    if([WebDataProtocol doesURLHaveInternalDataScheme: [r URL]] != nil){
+        NSURL *baseURL = [request _webDataRequestBaseURL];
+        if (baseURL)
+            [r setURL: baseURL];
+        else
+            [r setURL: [NSURL URLWithString: @"about:blank"]];
+    }
 
     [r retain];
     [response release];

@@ -4,6 +4,7 @@
 */
 
 #import <WebKit/WebBridge.h>
+#import <WebKit/WebDataProtocol.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDocument.h>
 #import <WebKit/WebDownload.h>
@@ -66,11 +67,17 @@
 
 -(NSURLRequest *)initialRequest
 {
-    return _private->originalRequest;
+    NSURLRequest *clientRequest = [_private->originalRequest _webDataRequestExternalRequest];
+    if (!clientRequest)
+        clientRequest = _private->originalRequest;
+    return clientRequest;
 }
 
 -(NSMutableURLRequest *)request
 {
+    NSURLRequest *clientRequest = [_private->request _webDataRequestExternalRequest];
+    if (!clientRequest)
+        clientRequest = _private->request;
     return _private->request;
 }
 

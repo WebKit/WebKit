@@ -45,6 +45,7 @@
 - (NSString *)path;
 - (NSString *)filename;
 - (NSString *)pluginDescription;
+- (NSBundle *)bundle;
 
 - (NSEnumerator *)extensionEnumerator;
 - (NSEnumerator *)MIMETypeEnumerator;

@@ -306,6 +306,7 @@
 				51443F9D0429392B00CA2D3A,
 				51443F9F0429392B00CA2D3A,
 				5110F7530432AC0800CA2D3A,
+				70ECD6CE043B727400A80181,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -424,6 +425,7 @@
 				51A8B5800428353A00CA2D3A,
 				51443F9E0429392B00CA2D3A,
 				5110F7540432AC0800CA2D3A,
+				70ECD6CF043B727400A80181,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1716,6 +1718,32 @@
 			settings = {
 			};
 		};
+		70ECD6CC043B727400A80181 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = WebDataProtocol.h;
+			path = WebView.subproj/WebDataProtocol.h;
+			refType = 2;
+		};
+		70ECD6CD043B727400A80181 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = WebDataProtocol.m;
+			path = WebView.subproj/WebDataProtocol.m;
+			refType = 2;
+		};
+		70ECD6CE043B727400A80181 = {
+			fileRef = 70ECD6CC043B727400A80181;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		70ECD6CF043B727400A80181 = {
+			fileRef = 70ECD6CD043B727400A80181;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 //700
 //701
 //702
@@ -2471,6 +2499,8 @@
 				5152FAD5033FC43400CA2ACD,
 				6523FACF032DA06B005EFCFF,
 				6523FAD0032DA06B005EFCFF,
+				70ECD6CC043B727400A80181,
+				70ECD6CD043B727400A80181,
 				39446070020F50ED0ECA1767,
 				39446071020F50ED0ECA1767,
 				39446072020F50ED0ECA1767,

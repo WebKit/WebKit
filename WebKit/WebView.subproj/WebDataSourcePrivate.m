@@ -5,6 +5,7 @@
 #import <WebKit/WebDataSourcePrivate.h>
 
 #import <WebKit/WebBridge.h>
+#import <WebKit/WebDataProtocol.h>
 #import <WebKit/WebDocument.h>
 #import <WebKit/WebDownload.h>
 #import <WebKit/WebException.h>
@@ -489,12 +490,17 @@
             
         [frame _transitionToCommitted: pageCache];
 
-	NSString *urlString = [[_private->response URL] absoluteString];
-
-	// WebCore will crash if given an empty URL here.
-	if ([urlString length] == 0) {
-	    urlString = @"about:blank";
-	}
+        NSURL *baseURL = [[self request] _webDataRequestBaseURL];        
+        NSString *urlString;
+        
+        if (baseURL)
+            urlString = [baseURL absoluteString];
+        else
+            urlString = [[_private->response URL] absoluteString];
+            
+        // WebCore will crash if given an empty URL here.
+        if ([urlString length] == 0)
+            urlString = @"about:blank";
 
         [[self _bridge] openURL:urlString
                          reload:reload 

@@ -100,21 +100,6 @@ static WebPluginDatabase *database = nil;
     return plugins;
 }
 
-- (NSArray *)MIMETypes
-{
-    NSMutableSet *MIMETypes;
-    WebBasePluginPackage *plugin;
-    uint i;
-        
-    MIMETypes = [NSMutableSet set];
-    for(i=0; i<[plugins count]; i++){
-        plugin = [plugins objectAtIndex:i];
-        [MIMETypes addObjectsFromArray:[[plugin MIMETypeEnumerator] allObjects]];
-    }
-    return [MIMETypes allObjects];
-}
-
-
 static NSArray *pluginLocations(void)
 {
     // Plug-ins are found in order of precedence.
@@ -146,7 +131,7 @@ static NSArray *pluginLocations(void)
 
     NSArray *files;
     NSString *file;
-    uint i, n;
+    uint i, j, n;
     
     for (i = 0; i < [pluginDirectories count]; i++) {
         files = [fileManager directoryContentsAtPath:[pluginDirectories objectAtIndex:i]];
@@ -174,25 +159,59 @@ static NSArray *pluginLocations(void)
 
     // Register plug-in WebDocumentViews and WebDocumentRepresentations
     NSArray *viewTypes = [[WebFrameView _viewTypes] allKeys];
-    NSArray *mimes = [self MIMETypes];
+    NSArray *mimes;
     NSString *mime;
+    WebBasePluginPackage *plugin;
+    uint pluginCount, mimeCount;
     
-    for (i = 0; i < [mimes count]; i++) {
-        mime = [mimes objectAtIndex:i];
-        
-        // Don't override previously registered types.
-        if(![viewTypes containsObject:mime]){
-            // FIXME: This won't work for the new plug-ins.
-            [WebFrame registerViewClass:[WebNetscapePluginDocumentView class] representationClass:[WebNetscapePluginRepresentation class] forMIMEType:mime];
+    pluginCount = [plugins count];
+    for (i = 0; i < pluginCount; i++) {
+        plugin = [plugins objectAtIndex:i];
+        mimes = [[plugin MIMETypeEnumerator] allObjects];
+        if ([plugin isKindOfClass:[WebNetscapePluginPackage class]]){
+            mimeCount = [mimes count];
+            for (j = 0; j < mimeCount; j++){
+                mime = [mimes objectAtIndex:j];
+                
+                // Don't override previously registered types.
+                if(![viewTypes containsObject:mime]){
+                    // Cocoa plugins must register themselves.
+                    [WebFrame registerViewClass:[WebNetscapePluginDocumentView class] representationClass:[WebNetscapePluginRepresentation class] forMIMEType:mime];
+                }
+            }
+        }
+        else {
+            if (!pendingPluginLoads)
+                pendingPluginLoads = [[NSMutableArray alloc] init];
+            [pendingPluginLoads addObject: plugin];
         }
     }
 
     return self;
 }
 
+- (void)loadPluginIfNeededForMIMEType: (NSString *)MIMEType
+{
+    NSArray *mimes;
+    WebBasePluginPackage *plugin;
+    int i, pluginCount;
+    
+    pluginCount = [pendingPluginLoads count];
+    for (i = pluginCount-1; i >= 0; i--){
+        plugin = [pendingPluginLoads objectAtIndex:i];
+        mimes = [[plugin MIMETypeEnumerator] allObjects];
+        if ([mimes containsObject: MIMEType]){
+            [[plugin bundle] load];
+            [pendingPluginLoads removeObject: plugin];
+            continue;
+        }
+    }
+}
+
 - (void)dealloc
 {
     [plugins release];
+    [pendingPluginLoads release];
     [super dealloc];
 }
 

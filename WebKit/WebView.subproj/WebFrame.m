@@ -9,6 +9,7 @@
 
 #import <WebKit/WebBackForwardList.h>
 #import <WebKit/WebBridge.h>
+#import <WebKit/WebDataProtocol.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebFrameViewPrivate.h>
@@ -21,8 +22,9 @@
 #import <WebKit/WebViewPrivate.h>
 #import <WebKit/WebWindowOperationsDelegate.h>
 
-#import <WebFoundation/WebNSURLExtras.h>
 #import <WebFoundation/NSURLRequest.h>
+#import <WebFoundation/WebNSURLExtras.h>
+#import <WebFoundation/WebProtocol.h>
 
 #import <WebFoundation/WebNSStringExtras.h>
 
@@ -113,6 +115,32 @@
 
     [self _loadDataSource:newDataSource withLoadType:loadType formState:nil];
     [newDataSource release];
+}
+
+- (void)loadData:(NSData *)data encodingName: (NSString *)encodingName baseURL:(NSURL *)URL;
+{
+    NSURL *fakeURL = [NSURLRequest _webDataRequestURLForData: data];
+    NSURLRequest *request = [[[NSURLRequest alloc] initWithURL: fakeURL] autorelease];
+    [request _webDataRequestSetData:data];
+    [request _webDataRequestSetEncoding:encodingName];
+    [request _webDataRequestSetBaseURL:URL];
+    [self loadRequest:request];
+}
+
+- (void)loadString:(NSString *)string baseURL:(NSURL *)URL
+{
+    CFStringEncoding cfencoding = CFStringGetFastestEncoding((CFStringRef)string);
+    NSStringEncoding nsencoding = CFStringConvertEncodingToNSStringEncoding(cfencoding);
+    CFStringRef cfencodingName = CFStringConvertEncodingToIANACharSetName(cfencoding);
+    
+    if (!cfencodingName || nsencoding == kCFStringEncodingInvalidId){
+        NSData *data = [string dataUsingEncoding: NSUnicodeStringEncoding];
+        [self loadData:data encodingName:@"utf-16" baseURL:URL];
+    }
+    else {
+        NSData *data = [string dataUsingEncoding: nsencoding];
+        [self loadData:data encodingName:(NSString *)cfencodingName baseURL:URL];
+    }
 }
 
 - (void)stopLoading

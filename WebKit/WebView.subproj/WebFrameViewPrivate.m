@@ -83,7 +83,9 @@
 
 -(NSView <WebDocumentView> *)_makeDocumentViewForDataSource:(WebDataSource *)dataSource
 {
-    Class viewClass = [[[self class] _viewTypes] _web_objectForMIMEType:[[dataSource response] MIMEType]];
+    NSString *MIMEType = [[dataSource response] MIMEType];
+    
+    Class viewClass = [[[self class] _viewTypes] _web_objectForMIMEType:MIMEType];
     NSView <WebDocumentView> *documentView = viewClass ? [[viewClass alloc] init] : nil;
     [self _setDocumentView:documentView];
     [documentView release];

@@ -58,7 +58,22 @@
     @method loadRequest:
     @param request The web request to load.
 */
--(void)loadRequest:(NSURLRequest *)request;
+- (void)loadRequest:(NSURLRequest *)request;
+
+/*!
+    @method loadData:baseURL:
+    @param data The data to use for the main page of the document.
+    @param encodingName The encoding of the data.
+    @param URL The base URL to apply to relative URLs within the document.
+*/
+- (void)loadData:(NSData *)data encodingName: (NSString *)encodingName baseURL:(NSURL *)URL;
+
+/*!
+    @method loadData:baseURL:
+    @param string The string to use for the main page of the document.
+    @param URL The base URL to apply to relative URLs within the document.
+*/
+- (void)loadString:(NSString *)string baseURL:(NSURL *)URL;
 
 /*!
     @method dataSource
@@ -126,6 +141,6 @@
     @param representationClass The WebDocumentRepresentation class to use to represent data of the given MIME type.
     @param MIMEType The MIME type to represent with an object of the given class.
 */
-+ (void) registerViewClass:(Class)viewClass representationClass: (Class)representationClass forMIMEType:(NSString *)MIMEType;
++ (void)registerViewClass:(Class)viewClass representationClass: (Class)representationClass forMIMEType:(NSString *)MIMEType;
 
 @end

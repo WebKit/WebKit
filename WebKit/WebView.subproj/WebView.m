@@ -57,6 +57,8 @@ NSString *WebElementLinkTitleKey = 		@"WebElementLinkTitle";
 
 + (BOOL)canShowMIMEType:(NSString *)MIMEType
 {
+    [[WebPluginDatabase installedPlugins] loadPluginIfNeededForMIMEType: MIMEType];
+    
     Class viewClass = [WebFrameView _viewClassForMIMEType:MIMEType];
     Class repClass = [WebDataSource _representationClassForMIMEType:MIMEType];
         

@@ -200,6 +200,11 @@
     return [MIMEToExtensions objectForKey:MIMEType];
 }
 
+- (NSBundle *)bundle
+{
+    return bundle;
+}
+
 - (void)setName:(NSString *)theName
 {
     [name release];
