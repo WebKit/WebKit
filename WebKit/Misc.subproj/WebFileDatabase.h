@@ -9,7 +9,7 @@
 
 @interface WebFileDatabase : WebDatabase 
 {
-    struct NSLRUFileList *lru;
+    struct WebLRUFileList *lru;
     NSMutableArray *ops;
     NSMutableDictionary *setCache;
     NSMutableSet *removeCache;

@@ -295,6 +295,9 @@
 				BEE18F940472A0CF00CA289C,
 				BEE18F9B0472B73200CA289C,
 				BEE52D4C0473032500CA289C,
+				BE07CEAD047538F000CA289C,
+				BE07CEAF047538F000CA289C,
+				BE07CEB1047538F000CA289C,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -409,6 +412,9 @@
 				BEE18F950472A0CF00CA289C,
 				BEE18F9C0472B73200CA289C,
 				BEE52D4D0473032500CA289C,
+				BE07CEAE047538F000CA289C,
+				BE07CEB0047538F000CA289C,
+				BE07CEB2047538F000CA289C,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -482,6 +488,12 @@
 				F528E3EA031E91AD01CA2ACA,
 				F5934C8802E894F50197FBCF,
 				F5934C8902E894F50197FBCF,
+				BE07CEA7047538F000CA289C,
+				BE07CEA8047538F000CA289C,
+				BE07CEA9047538F000CA289C,
+				BE07CEAA047538F000CA289C,
+				BE07CEAB047538F000CA289C,
+				BE07CEAC047538F000CA289C,
 				2568C72C0174912D0ECA149E,
 				F5927D4E02D26C5E01CA2DBB,
 				83730F9803FB1E660004736E,
@@ -2377,6 +2389,78 @@
 //BE2
 //BE3
 //BE4
+		BE07CEA7047538F000CA289C = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = WebDatabase.h;
+			refType = 4;
+		};
+		BE07CEA8047538F000CA289C = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = WebDatabase.m;
+			refType = 4;
+		};
+		BE07CEA9047538F000CA289C = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = WebFileDatabase.h;
+			refType = 4;
+		};
+		BE07CEAA047538F000CA289C = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = WebFileDatabase.m;
+			refType = 4;
+		};
+		BE07CEAB047538F000CA289C = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = WebLRUFileList.h;
+			refType = 4;
+		};
+		BE07CEAC047538F000CA289C = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = WebLRUFileList.m;
+			refType = 4;
+		};
+		BE07CEAD047538F000CA289C = {
+			fileRef = BE07CEA7047538F000CA289C;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		BE07CEAE047538F000CA289C = {
+			fileRef = BE07CEA8047538F000CA289C;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		BE07CEAF047538F000CA289C = {
+			fileRef = BE07CEA9047538F000CA289C;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		BE07CEB0047538F000CA289C = {
+			fileRef = BE07CEAA047538F000CA289C;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		BE07CEB1047538F000CA289C = {
+			fileRef = BE07CEAB047538F000CA289C;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		BE07CEB2047538F000CA289C = {
+			fileRef = BE07CEAC047538F000CA289C;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		BEE18F920472A0CF00CA289C = {
 			fileEncoding = 30;
 			isa = PBXFileReference;

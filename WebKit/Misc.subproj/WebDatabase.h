@@ -5,7 +5,6 @@
 
 #import <Foundation/Foundation.h>
 
-
 @interface WebDatabase : NSObject 
 {
     NSString *path;

@@ -25,3 +25,5 @@ WebLogChannel WebKitLogPageCache =              { 0x00080000, "WebKitLogLevel", 
 WebLogChannel WebKitLogCacheSizes =             { 0x00100000, "WebKitLogLevel", WebLogChannelUninitialized };
 
 WebLogChannel WebKitLogFormDelegate = 	        { 0x00200000, "WebKitLogLevel", WebLogChannelUninitialized };
+
+WebLogChannel WebKitLogFileDatabaseActivity =   { 0x00400000, "WebKitLogLevel", WebLogChannelUninitialized };

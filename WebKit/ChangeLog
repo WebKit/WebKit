@@ -1,3 +1,65 @@
+2003-05-16  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Gramps
+
+	Moved in WebDatabase and WebFileDatabase files from WebFoundation.
+
+	Copied NSLRUFileList from WebFoundation and renamed to WebLRUFileList.
+
+	Updated StringsNotToBeLocalized.txt.
+
+        * English.lproj/StringsNotToBeLocalized.txt:
+        * Misc.subproj/WebDatabase.h:
+        * Misc.subproj/WebDatabase.m:
+        * Misc.subproj/WebFileDatabase.h:
+        * Misc.subproj/WebFileDatabase.m:
+        (-[WebFileDatabaseOp initWithCode:key:object:]):
+        (-[WebFileDatabaseOp perform:]):
+        (SetThreadPriority):
+        (-[WebFileDatabase _createLRUList:]):
+        (-[WebFileDatabase _truncateToSizeLimit:]):
+        (+[WebFileDatabase _syncLoop:]):
+        (-[WebFileDatabase setObject:forKey:]):
+        (-[WebFileDatabase removeObjectForKey:]):
+        (-[WebFileDatabase removeAllObjects]):
+        (-[WebFileDatabase objectForKey:]):
+        (-[WebFileDatabase performSetObject:forKey:]):
+        (-[WebFileDatabase performRemoveObjectForKey:]):
+        (-[WebFileDatabase close]):
+        (-[WebFileDatabase lazySync:]):
+        (-[WebFileDatabase sync]):
+        (-[WebFileDatabase count]):
+        (-[WebFileDatabase usage]):
+        * Misc.subproj/WebIconDatabase.m:
+        * Misc.subproj/WebKitLogging.h:
+        * Misc.subproj/WebKitLogging.m:
+        * Misc.subproj/WebLRUFileList.h: Added.
+        * Misc.subproj/WebLRUFileList.m: Added.
+        (WebLRUFileListCreate):
+        (WebLRUFileListRelease):
+        (WebLRUFileListRebuildFileDataUsingRootDirectory):
+        (WebLRUFileListRemoveFileWithPath):
+        (WebLRUFileListTouchFileWithPath):
+        (WebLRUFileListSetFileData):
+        (WebLRUFileListGetPathOfOldestFile):
+        (WebLRUFileListRemoveOldestFileFromList):
+        (WebLRUFileListContainsItem):
+        (WebLRUFileListGetFileSize):
+        (WebLRUFileListCountItems):
+        (WebLRUFileListGetTotalSize):
+        (WebLRUFileListRemoveAllFilesFromList):
+        (compareTimes):
+        (cStringEqual):
+        (cStringHash):
+        (NSLRUFileDataEqual):
+        (WebLRUFileListGetOldestFileData):
+        (NSLRUFileDataReleaseApplierFunction):
+        (NSLRUFileDataRelease):
+        (NSLRUFileDataBinaryHeapDumpApplierFunction):
+        (NSLRUFileDataDictDumpApplierFunction):
+        (WebLRUFileListDescription):
+        * WebKit.pbproj/project.pbxproj:
+
 2003-05-15  Chris Blumenberg  <cblu@apple.com>
 
 		Fixed: 3199310 - No user agent included in favicon.ico requests

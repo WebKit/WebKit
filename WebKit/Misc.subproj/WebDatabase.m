@@ -4,7 +4,7 @@
 */
 
 #import <Foundation/NSPrivateDecls.h>
-#import "WebDatabase.h"
+#import <WebKit/WebDatabase.h>
 
 // implementation WebDatabase ------------------------------------------------------------------------
 

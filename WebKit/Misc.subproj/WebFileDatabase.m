@@ -3,7 +3,11 @@
     Copyright (C) 2003 Apple Computer, Inc. All rights reserved.    
 */
 
-#import "WebFileDatabase.h"
+#import <WebKit/WebFileDatabase.h>
+#import <WebKit/WebKitLogging.h>
+#import <WebKit/WebLRUFileList.h>
+
+#import <WebFoundation/NSFileManager_NSURLExtras.h>
 
 #import <fcntl.h>
 #import <fts.h>
@@ -13,19 +17,14 @@
 #import <sys/types.h>
 #import <sys/mman.h>
 
-#import "NSURLLogging.h"
-#import "NSLRUFileList.h"
-#import "NSFileManager_NSURLExtras.h"
-#import "WebSystemBits.h"
-
-#if NSURL_ERROR_DISABLED
+#if ERROR_DISABLED
 #define BEGIN_EXCEPTION_HANDLER
 #define END_EXCEPTION_HANDLER
 #else
 #define BEGIN_EXCEPTION_HANDLER NS_DURING
 #define END_EXCEPTION_HANDLER \
     NS_HANDLER \
-        NSURL_ERROR("Uncaught exception: %@ [%@] [%@]", [localException class], [localException reason], [localException userInfo]); \
+        ERROR("Uncaught exception: %@ [%@] [%@]", [localException class], [localException reason], [localException userInfo]); \
     NS_ENDHANDLER
 #endif
 
@@ -36,6 +35,9 @@ static NSRunLoop *syncRunLoop;
 
 #define UniqueFilePathSize (34)
 static void UniqueFilePathForKey(id key, char *buffer);
+
+#define MinThreadPriority (10)
+static int SetThreadPriority(int priority);
 
 typedef enum
 {
@@ -80,7 +82,7 @@ enum
 
 -(id)initWithCode:(WebFileDatabaseOpcode)theOpcode key:(id)theKey object:(id)theObject
 {
-    NSURL_ASSERT(theKey);
+    ASSERT(theKey);
 
     if ((self = [super init])) {
         
@@ -111,7 +113,7 @@ enum
 
 -(void)perform:(WebFileDatabase *)target
 {
-    NSURL_ASSERT(target);
+    ASSERT(target);
 
     switch (opcode) {
         case WebFileDatabaseSetObjectOp:
@@ -121,7 +123,7 @@ enum
             [target performRemoveObjectForKey:key];
             break;
         default:
-            NSURL_ASSERT_NOT_REACHED();
+            ASSERT_NOT_REACHED();
             break;
     }
 }
@@ -149,6 +151,19 @@ enum
 // implementation WebFileDatabasePrivate ------------------------------------------------------
 
 @implementation WebFileDatabase (WebFileDatabasePrivate)
+
+static int SetThreadPriority(int priority) 
+{
+    struct sched_param sp;
+
+    memset(&sp, 0, sizeof(struct sched_param));
+    sp.sched_priority=priority;
+    if (pthread_setschedparam(pthread_self(), SCHED_OTHER, &sp) == -1) {
+        ERROR("Failed to change priority.");
+        return -1;
+    }
+    return 0;
+}
 
 static void UniqueFilePathForKey(id key, char *buffer)
 {
@@ -179,19 +194,19 @@ static void UniqueFilePathForKey(id key, char *buffer)
 
 -(void)_createLRUList:(id)arg
 {
-    WebSetThreadPriority(WebMinThreadPriority + 1); // make this a little higher priority than the syncRunLoop thread
+    SetThreadPriority(MinThreadPriority + 1); // make this a little higher priority than the syncRunLoop thread
 
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
     BEGIN_EXCEPTION_HANDLER
     
-    NSLRUFileList *fileList = NSLRUFileListCreate();
-    NSLRUFileListRebuildFileDataUsingRootDirectory(fileList, [path fileSystemRepresentation]);
+    WebLRUFileList *fileList = WebLRUFileListCreate();
+    WebLRUFileListRebuildFileDataUsingRootDirectory(fileList, [path fileSystemRepresentation]);
     lru = fileList;
 
     END_EXCEPTION_HANDLER
 
-    NSURL_LOG(WebFileDatabaseActivity, "lru list created");
+    LOG(FileDatabaseActivity, "lru list created");
 
     [pool release];
 }
@@ -212,13 +227,13 @@ static void UniqueFilePathForKey(id key, char *buffer)
         [mutex lock];
         while ([self usage] > size) {
             char uniqueKey[UniqueFilePathSize];
-            if (!NSLRUFileListGetPathOfOldestFile(lru, uniqueKey, UniqueFilePathSize)) {
+            if (!WebLRUFileListGetPathOfOldestFile(lru, uniqueKey, UniqueFilePathSize)) {
                 break;
             }
             NSString *filePath = [[NSString alloc] initWithFormat:@"%@/%s", path, uniqueKey];
             [defaultManager _web_removeFileOnlyAtPath:filePath];
             [filePath release];
-            NSLRUFileListRemoveOldestFileFromList(lru);
+            WebLRUFileListRemoveOldestFileFromList(lru);
         }
         [mutex unlock];
     }
@@ -236,7 +251,7 @@ static void UniqueFilePathForKey(id key, char *buffer)
 
 +(void)_syncLoop:(id)arg
 {
-    WebSetThreadPriority(WebMinThreadPriority);
+    SetThreadPriority(MinThreadPriority);
 
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     NSPort *placeholderPort;
@@ -324,12 +339,12 @@ static void databaseInit()
 {
     WebFileDatabaseOp *op;
 
-    NSURL_ASSERT(object);
-    NSURL_ASSERT(key);
+    ASSERT(object);
+    ASSERT(key);
 
     touch = CFAbsoluteTimeGetCurrent();
 
-    NSURL_LOG(WebFileDatabaseActivity, "%p - %@", object, key);
+    LOG(FileDatabaseActivity, "%p - %@", object, key);
     
     [mutex lock];
     
@@ -346,7 +361,7 @@ static void databaseInit()
 {
     WebFileDatabaseOp *op;
 
-    NSURL_ASSERT(key);
+    ASSERT(key);
 
     touch = CFAbsoluteTimeGetCurrent();
     
@@ -374,14 +389,14 @@ static void databaseInit()
     [self open];
     [mutex unlock];
 
-    NSURL_LOG(WebFileDatabaseActivity, "removeAllObjects");
+    LOG(FileDatabaseActivity, "removeAllObjects");
 }
 
 -(id)objectForKey:(id)key
 {
     volatile id result;
     
-    NSURL_ASSERT(key);
+    ASSERT(key);
 
     touch = CFAbsoluteTimeGetCurrent();
 
@@ -418,15 +433,15 @@ static void databaseInit()
                         if (lru) {
                             // if we can't update the list yet, that's too bad
                             // but not critically bad
-                            NSLRUFileListTouchFileWithPath(lru, uniqueKey);
+                            WebLRUFileListTouchFileWithPath(lru, uniqueKey);
                         }
-                        NSURL_LOG(WebFileDatabaseActivity, "read disk cache file - %@", key);
+                        LOG(FileDatabaseActivity, "read disk cache file - %@", key);
                     }
                 }
             }
         }
     NS_HANDLER
-        NSURL_LOG(WebFileDatabaseActivity, "cannot unarchive cache file - %@", key);
+        LOG(FileDatabaseActivity, "cannot unarchive cache file - %@", key);
         result = nil;
     NS_ENDHANDLER
 
@@ -448,12 +463,12 @@ static void databaseInit()
     char uniqueKey[UniqueFilePathSize];
     BOOL result;
 
-    NSURL_ASSERT(object);
-    NSURL_ASSERT(key);
+    ASSERT(object);
+    ASSERT(key);
 
     UniqueFilePathForKey(key, uniqueKey);
 
-    NSURL_LOG(WebFileDatabaseActivity, "%@ - %s", key, uniqueKey);
+    LOG(FileDatabaseActivity, "%@ - %s", key, uniqueKey);
 
     data = [NSMutableData data];
     archiver = [[NSArchiver alloc] initForWritingWithMutableData:data];
@@ -479,13 +494,13 @@ static void databaseInit()
 
     // update usage and truncate before writing file
     // this has the effect of _always_ keeping disk usage under sizeLimit by clearing away space in anticipation of the write.
-    NSLRUFileListSetFileData(lru, uniqueKey, [data length], CFAbsoluteTimeGetCurrent());
+    WebLRUFileListSetFileData(lru, uniqueKey, [data length], CFAbsoluteTimeGetCurrent());
     [self _truncateToSizeLimit:[self sizeLimit]];
 
     result = [defaultManager _web_createFileAtPathWithIntermediateDirectories:filePath contents:data attributes:attributes directoryAttributes:directoryAttributes];
 
     if (!result) {
-        NSLRUFileListRemoveFileWithPath(lru, uniqueKey);
+        WebLRUFileListRemoveFileWithPath(lru, uniqueKey);
     }
 
     [archiver release];
@@ -497,14 +512,14 @@ static void databaseInit()
     NSString *filePath;
     char uniqueKey[UniqueFilePathSize];
     
-    NSURL_ASSERT(key);
+    ASSERT(key);
 
-    NSURL_LOG(WebFileDatabaseActivity, "%@", key);
+    LOG(FileDatabaseActivity, "%@", key);
 
     UniqueFilePathForKey(key, uniqueKey);
     filePath = [[NSString alloc] initWithFormat:@"%@/%s", path, uniqueKey];
     [[NSFileManager defaultManager] _web_removeFileOnlyAtPath:filePath];
-    NSLRUFileListRemoveFileWithPath(lru, uniqueKey);
+    WebLRUFileListRemoveFileWithPath(lru, uniqueKey);
     [filePath release];
 }
 
@@ -549,7 +564,7 @@ static void databaseInit()
     if (isOpen) {
         isOpen = NO;
         if (lru) {
-            NSLRUFileListRelease(lru);
+            WebLRUFileListRelease(lru);
             lru = NULL;
         }
     }
@@ -566,11 +581,11 @@ static void databaseInit()
     CFTimeInterval mark = CFAbsoluteTimeGetCurrent();
 #endif
 
-    NSURL_LOG(WebFileDatabaseActivity, ">>> BEFORE lazySync\n%@", NSLRUFileListDescription(lru));
+    LOG(FileDatabaseActivity, ">>> BEFORE lazySync\n%@", WebLRUFileListDescription(lru));
 
     WebFileDatabaseOp *op;
 
-    NSURL_ASSERT(theTimer);
+    ASSERT(theTimer);
 
     while (touch + SYNC_IDLE_THRESHOLD < CFAbsoluteTimeGetCurrent() && [ops count] > 0) {
         [mutex lock];
@@ -603,10 +618,10 @@ static void databaseInit()
 
 #ifndef NDEBUG
     if (lru)
-        NSURL_LOG(WebFileDatabaseActivity, "<<< AFTER lazySync\n%@", NSLRUFileListDescription(lru));
+        LOG(FileDatabaseActivity, "<<< AFTER lazySync\n%@", WebLRUFileListDescription(lru));
 
     CFTimeInterval now = CFAbsoluteTimeGetCurrent();
-    NSURL_LOG(WebFileDatabaseActivity, "lazySync ran in %.3f secs.", now - mark);
+    LOG(FileDatabaseActivity, "lazySync ran in %.3f secs.", now - mark);
 #endif
 }
 
@@ -621,7 +636,7 @@ static void databaseInit()
 
     touch = CFAbsoluteTimeGetCurrent();
 
-    NSURL_LOG(WebFileDatabaseActivity, ">>> BEFORE sync\n%@", NSLRUFileListDescription(lru));
+    LOG(FileDatabaseActivity, ">>> BEFORE sync\n%@", WebLRUFileListDescription(lru));
     
     [mutex lock];
     array = [ops copy];
@@ -636,13 +651,13 @@ static void databaseInit()
     [array makeObjectsPerformSelector:@selector(perform:) withObject:self];
     [array release];
 
-    NSURL_LOG(WebFileDatabaseActivity, "<<< AFTER sync\n%@", NSLRUFileListDescription(lru));
+    LOG(FileDatabaseActivity, "<<< AFTER sync\n%@", WebLRUFileListDescription(lru));
 }
 
 -(unsigned)count
 {
     if (lru)
-        return NSLRUFileListCountItems(lru);
+        return WebLRUFileListCountItems(lru);
     
     return 0;
 }
@@ -650,7 +665,7 @@ static void databaseInit()
 -(unsigned)usage
 {
     if (lru)
-        return NSLRUFileListGetTotalSize(lru);
+        return WebLRUFileListGetTotalSize(lru);
     
     return 0;
 }

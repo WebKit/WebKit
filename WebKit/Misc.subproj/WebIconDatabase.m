@@ -9,11 +9,11 @@
 #import <WebKit/WebIconDatabase.h>
 
 #import <WebKit/WebIconDatabasePrivate.h>
+#import <WebKit/WebFileDatabase.h>
 #import <WebKit/WebKitLogging.h>
 
 #import <WebFoundation/NSString_NSURLExtras.h>
 #import <WebFoundation/NSURL_NSURLExtras.h>
-#import <WebFoundation/WebFileDatabase.h>
 
 NSString * const WebIconDatabaseVersionKey = 	@"WebIconDatabaseVersion";
 NSString * const WebIconsOnDiskKey = 		@"WebIconsOnDisk";
