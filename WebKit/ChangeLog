@@ -1,3 +1,87 @@
+2002-06-15  Darin Adler  <darin@apple.com>
+
+	- fixed 2942808 -- remove all calls to WebKit from WebCore
+
+	Update to use the WebCore bridge for more things, reducing
+	dependencies in both directions. Besides using the bridge for all the
+	remaining WebCore to WebKit calls, almost no WebKit code deals with
+	KHTMLPart directly any more, instead the other side of the bridge handles it.
+
+	* Plugins.subproj/IFPluginStream.mm:
+	(-[IFPluginStream IFURLHandleResourceDidBeginLoading:]): Remove unneeded casts.
+	(-[IFPluginStream IFURLHandle:resourceDataDidBecomeAvailable:]):
+	(-[IFPluginStream IFURLHandleResourceDidFinishLoading:data:]):
+	(-[IFPluginStream IFURLHandleResourceDidCancelLoading:]):
+	(-[IFPluginStream IFURLHandle:resourceDidFailLoadingWithResult:]):
+	(-[IFPluginStream IFURLHandle:didRedirectToURL:]):
+	Use the new IFProgress methods to simplify code.
+
+	* WebCoreSupport.subproj/IFWebCoreBridge.h: Use the new WebCoreBridge protocol
+	so we get a compiler error if we forget to implement anything. Add a method for
+	IFWebDataSource that gets the WebCoreBridge if it has an IFHTMLRepresentation,
+	and nil otherwise.
+	* WebCoreSupport.subproj/IFWebCoreBridge.mm:
+	(-[IFWebDataSource _bridge]): Add; does checking so that it returns
+	nil if the representation is not an IFHTMLRepresentation. This is now used
+	almost everywhere so we don't have to do so much type casting.
+	(-[IFWebCoreBridge loadURL:attributes:flags:inFrame:withParent:]): Remove a
+	stray use of [IFWebCoreBridge dataSource] so we can remove it.
+	(-[IFWebCoreBridge receivedData:withDataSource:]): Use the
+	new [WebCoreBridge openURL:] and [WebCoreBridge addData:] methods from the
+	other side of the bridge so we don't have to deal with the KHTMLPart directly.
+	(-[IFWebCoreBridge addHandle:]): Added.
+	(-[IFWebCoreBridge removeHandle:]): Added.
+	(-[IFWebCoreBridge didStartLoadingWithHandle:]): Added.
+	(-[IFWebCoreBridge receivedProgressWithHandle:]): Added.
+	(-[IFWebCoreBridge didFinishLoadingWithHandle:]): Added.
+	(-[IFWebCoreBridge didCancelLoadingWithHandle:]): Added.
+	(-[IFWebCoreBridge didFailBeforeLoadingWithError:]): Added.
+	(-[IFWebCoreBridge didFailToLoadWithHandle:error:]): Added.
+	(-[IFWebCoreBridge didRedirectWithHandle:fromURL:]): Added.
+
+	* WebView.subproj/IFHTMLRepresentation.h: Remove unneeded declarations.
+	* WebView.subproj/IFHTMLRepresentation.mm: Remove [IFHTMLRepresentation part].
+	* WebView.subproj/IFHTMLRepresentationPrivate.h: Remove [IFHTMLRepresentation part].
+
+	* WebView.subproj/IFHTMLView.mm: (-[IFHTMLView provisionalDataSourceChanged:]): Use the bridge.
+
+	* WebView.subproj/IFHTMLViewPrivate.mm: Remove a bunch of unused stuff that was
+	there for the render and document tree viewers. I had removed it once before but
+	it got re-added as a side effect of the reorganization process.
+
+	* WebView.subproj/IFLoadProgress.h: Remove the unused IFLoadType -- we can add
+	it back if we find that it's needed. It didn't do much good to have it here
+	and only partly implemented, and I don't think it's needed. Added some convenient
+	interfaces for creating IFLoadProgress objects.
+
+	* WebView.subproj/IFLoadProgress.mm: Get rid of WCSetIFLoadProgressMakeFunc stuff.
+	(-[IFLoadProgress init]): Added.
+	(-[IFLoadProgress initWithBytesSoFar:totalToLoad:]): Remove type part.
+	(-[IFLoadProgress initWithURLHandle:]): Added.
+	(+[IFLoadProgress progress]): Added.
+	(+[IFLoadProgress progressWithBytesSoFar:totalToLoad:]): Added.
+	(+[IFLoadProgress progressWithURLHandle:]): Added.
+
+	* WebView.subproj/IFMainURLHandleClient.mm:
+	(-[IFMainURLHandleClient dealloc]): Add more workaround for 2954901.
+	(-[IFMainURLHandleClient IFURLHandleResourceDidBeginLoading:]):
+	(-[IFMainURLHandleClient IFURLHandleResourceDidCancelLoading:]):
+	(-[IFMainURLHandleClient IFURLHandleResourceDidFinishLoading:data:]):
+	(-[IFMainURLHandleClient IFURLHandle:resourceDataDidBecomeAvailable:]):
+	(-[IFMainURLHandleClient IFURLHandle:resourceDidFailLoadingWithResult:]):
+	(-[IFMainURLHandleClient IFURLHandle:didRedirectToURL:]):
+	Remove unneeded type casts and simplify by using new IFLoadProgress methods.
+	Also simplify access to _bridge by using [IFWebDataSource _bridge].
+
+	* WebView.subproj/IFWebControllerPrivate.mm:
+	* WebView.subproj/IFWebFrame.mm:
+	Remove unneeded include of KHTMLPart header.
+
+	* WebView.subproj/IFWebDataSource.mm: (-[IFWebDataSource documentTextFromDOM]):
+	* WebView.subproj/IFWebDataSourcePrivate.mm: (-[IFWebDataSource _stopLoading]):
+	* WebView.subproj/IFWebFramePrivate.mm: (-[IFWebFrame _isLoadComplete]):
+	Use bridge.
+
 2002-06-15  Maciej Stachowiak  <mjs@apple.com>
 
         Made Development build mode mean what Unoptimized used to mean. Removed Unoptimized build mode. 

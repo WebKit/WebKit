@@ -5,12 +5,8 @@
 
 #import <Foundation/Foundation.h>
 
-
 @class IFError;
 @class IFWebDataSource;
-@class IFWebCoreBridge;
-
-class KHTMLPart;
 
 @protocol IFDocumentRepresentation;
 

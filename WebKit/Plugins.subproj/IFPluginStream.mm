@@ -90,7 +90,7 @@ static NSString *getCarbonPath(NSString *posixPath);
 
 - (void)IFURLHandleResourceDidBeginLoading:(IFURLHandle *)sender
 {
-    [(IFWebController *)[view webController] _didStartLoading:URL];
+    [[view webController] _didStartLoading:URL];
 }
 
 - (void)IFURLHandle:(IFURLHandle *)sender resourceDataDidBecomeAvailable:(NSData *)data
@@ -134,13 +134,8 @@ static NSString *getCarbonPath(NSString *posixPath);
         offset += [data length];
     }
      
-    IFLoadProgress *loadProgress = [[IFLoadProgress alloc] init];
-    loadProgress->totalToLoad = [sender contentLength];
-    loadProgress->bytesSoFar = [sender contentLengthReceived];
-    loadProgress->type = IF_LOAD_TYPE_PLUGIN;
-    [[[view webController] resourceProgressHandler] receivedProgress: (IFLoadProgress *)loadProgress
+    [[[view webController] resourceProgressHandler] receivedProgress:[IFLoadProgress progressWithURLHandle:sender]
         forResourceHandle: sender fromDataSource: [view webDataSource]];
-    [loadProgress release];
 }
 
 - (void)IFURLHandleResourceDidFinishLoading:(IFURLHandle *)sender data: (NSData *)data
@@ -170,30 +165,20 @@ static NSString *getCarbonPath(NSString *posixPath);
         WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_URLNotify\n");
     }
     
-    IFLoadProgress *loadProgress = [[IFLoadProgress alloc] init];
-    loadProgress->totalToLoad = [data length];
-    loadProgress->bytesSoFar = [data length];
-    loadProgress->type = IF_LOAD_TYPE_PLUGIN;
-    [[[view webController] resourceProgressHandler] receivedProgress: (IFLoadProgress *)loadProgress 
+    [[[view webController] resourceProgressHandler] receivedProgress:[IFLoadProgress progressWithURLHandle:sender]
         forResourceHandle: sender fromDataSource: [view webDataSource]];
-    [loadProgress release];
     
     [self stop];
-    [(IFWebController *)[view webController] _didStopLoading:URL];
+    [[view webController] _didStopLoading:URL];
 }
 
 - (void)IFURLHandleResourceDidCancelLoading:(IFURLHandle *)sender
 {
-    IFLoadProgress *loadProgress = [[IFLoadProgress alloc] init];
-    loadProgress->totalToLoad = -1;
-    loadProgress->bytesSoFar = -1;
-    loadProgress->type = IF_LOAD_TYPE_PLUGIN;
-    [[[view webController] resourceProgressHandler] receivedProgress: (IFLoadProgress *)loadProgress 
+    [[[view webController] resourceProgressHandler] receivedProgress:[IFLoadProgress progress]
         forResourceHandle: sender fromDataSource: [view webDataSource]];
-    [loadProgress release];
     
     [self stop];
-    [(IFWebController *)[view webController] _didStopLoading:URL];
+    [[view webController] _didStopLoading:URL];
 }
 
 - (void)IFURLHandle:(IFURLHandle *)sender resourceDidFailLoadingWithResult:(IFError *)result
@@ -201,21 +186,20 @@ static NSString *getCarbonPath(NSString *posixPath);
     IFLoadProgress *loadProgress = [[IFLoadProgress alloc] init];
     loadProgress->totalToLoad = [sender contentLength];
     loadProgress->bytesSoFar = [sender contentLengthReceived];
-    loadProgress->type = IF_LOAD_TYPE_PLUGIN;
     
     [[[view webController] resourceProgressHandler] receivedError: result forResourceHandle: sender 
         partialProgress: loadProgress fromDataSource: [view webDataSource]];
     [loadProgress release];
     
     [self stop];
-    [(IFWebController *)[view webController] _didStopLoading:URL];
+    [[view webController] _didStopLoading:URL];
 }
 
-- (void)IFURLHandle:(IFURLHandle *)sender didRedirectToURL:(NSURL *)url
+- (void)IFURLHandle:(IFURLHandle *)sender didRedirectToURL:(NSURL *)toURL
 {
-    [(IFWebController *)[view webController] _didStopLoading:URL];
-    // FIXME: This next line is not going to work. We don't remember the new URL.
-    [(IFWebController *)[view webController] _didStartLoading:url];
+    [[view webController] _didStopLoading:URL];
+    // FIXME: This next line is not sufficient. We don't do anything to remember the new URL.
+    [[view webController] _didStartLoading:toURL];
 }
 
 

@@ -26,6 +26,8 @@
 #import <WebCoreBridge.h>
 
 #import <KWQKHTMLPartImpl.h>
+#import <khtmlview.h>
+#import <xml/dom_docimpl.h>
 
 @implementation WebCoreBridge
 
@@ -51,57 +53,65 @@
     return part;
 }
 
-- (WebCoreBridge *)parent
+- (void)openURL:(NSURL *)URL
 {
-    return nil;
+    part->openURL([[URL absoluteString] cString]);
 }
 
-- (NSArray *)children
+- (void)addData:(NSData *)data withEncoding:(NSString *)encoding
 {
-    return nil;
+    part->impl->slotData(encoding, (const char *)[data bytes], [data length], NO);
 }
 
-- (void)loadURL:(NSURL *)URL
+- (void)closeURL
 {
+    part->closeURL();
 }
 
-- (void)postWithURL:(NSURL *)URL data:(NSData *)data
+- (void)end
 {
+    part->end();
 }
 
-- (BOOL)createNewFrameNamed:(NSString *)frameName
-    withURL:(NSURL *)URL renderPart:(khtml::RenderPart *)renderPart
-    allowsScrolling:(BOOL)allowsScrolling marginWidth:(int)width marginHeight:(int)height
+- (void)setURL:(NSURL *)URL
 {
-    return NO;
+    part->impl->setBaseURL([[URL absoluteString] cString]);
 }
 
-- (void)openNewWindowWithURL:(NSURL *)URL
+- (KHTMLView *)createKHTMLViewWithNSView:(NSView *)view
+    width:(int)width height:(int)height
+    marginWidth:(int)mw marginHeight:(int)mh
 {
+    // Nasty! Set up the cross references between the KHTMLView and the KHTMLPart.
+    KHTMLView *kview = new KHTMLView(part, 0);
+    part->impl->setView(kview);
+
+    kview->setView(view);
+    kview->setMarginWidth(mw);
+    kview->setMarginHeight(mh);
+    kview->resize(width, height);
+    
+    return kview;
 }
 
-- (void)setTitle:(NSString *)title
+- (NSString *)documentTextFromDOM
 {
+    NSString *string = nil;
+    if (part) {
+        DOM::DocumentImpl *doc = part->xmlDocImpl();
+        if (doc) {
+            string = [doc->recursive_toHTML(1).getNSString() copy];
+        }
+    }
+    if (string == nil) {
+        string = @"";
+    }
+    return string;
 }
 
-- (WebCoreBridge *)mainFrame
+- (void)scrollToBaseAnchor
 {
-    return nil;
-}
-
-- (WebCoreBridge *)frameNamed:(NSString *)name
-{
-    return nil;
-}
-
-- (KHTMLView *)widget
-{
-    return 0;
-}
-
-- (IFWebDataSource *)dataSource
-{
-    return nil;
+    part->impl->gotoBaseAnchor();
 }
 
 @end

@@ -6,7 +6,6 @@
 #import <WebKit/IFHTMLRepresentation.h>
 #import <WebKit/IFWebDataSource.h>
 #import <WebKit/IFWebCoreBridge.h>
-#import <KWQKHTMLPartImpl.h>
 
 @interface IFHTMLRepresentationPrivate : NSObject
 {
@@ -40,11 +39,6 @@
 - (IFWebCoreBridge *)_bridge
 {
     return _private->bridge;
-}
-
-- (KHTMLPart *)part
-{
-    return [_private->bridge part];
 }
 
 - (void)receivedData:(NSData *)data withDataSource:(IFWebDataSource *)dataSource

@@ -8,12 +8,13 @@
 
 #import <WebKit/IFDocument.h>
 #import <WebKit/IFException.h>
-#import <WebKit/IFHTMLRepresentationPrivate.h>
+#import <WebKit/IFHTMLRepresentation.h>
 #import <WebKit/IFImageRepresentation.h>
 #import <WebKit/IFLocationChangeHandler.h>
 #import <WebKit/IFMainURLHandleClient.h>
 #import <WebKit/IFTextRepresentation.h>
 #import <WebKit/IFWebController.h>
+#import <WebKit/IFWebCoreBridge.h>
 #import <WebKit/IFWebDataSourcePrivate.h>
 #import <WebKit/IFWebFramePrivate.h>
 #import <WebKit/WebKitDebug.h>
@@ -21,8 +22,6 @@
 #import <WebFoundation/IFError.h>
 #import <WebFoundation/IFNSStringExtensions.h>
 #import <WebFoundation/IFURLHandle.h>
-
-#import <KWQKHTMLPartImpl.h>
 
 #import <kurl.h>
 
@@ -211,8 +210,7 @@ static NSMutableDictionary *_repTypes=nil;
         [[_private->urlHandles objectAtIndex: i] cancelLoadInBackground];
     }
 
-    if ([self isDocumentHTML])
-        [(IFHTMLRepresentation *)[self representation] part]->closeURL();        
+    [[self _bridge] closeURL];        
 }
 
 - (void)_recursiveStopLoading

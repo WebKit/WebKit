@@ -1,6 +1,6 @@
 /*	
-    IFWebController.mm
-	Copyright 2001, Apple, Inc. All rights reserved.
+    IFWebControllerPrivate.mm
+	Copyright 2001, 2002, Apple, Inc. All rights reserved.
 */
 #import <WebKit/IFLoadProgress.h>
 #import <WebKit/IFPreferencesPrivate.h>
@@ -16,7 +16,6 @@
 #import <WebFoundation/IFURLCacheLoaderConstants.h>
 #import <WebFoundation/IFURLHandle.h>
 
-#import <khtml_part.h>
 #import <rendering/render_frames.h>
 
 

@@ -4,12 +4,12 @@
     Copyright 2001, Apple, Inc. All rights reserved.
 */
 #import <WebKit/IFDynamicScrollBarsView.h>
-#import <WebKit/IFHTMLRepresentationPrivate.h>
 #import <WebKit/IFHTMLView.h>
 #import <WebKit/IFHTMLViewPrivate.h>
 #import <WebKit/IFLocationChangeHandler.h>
 #import <WebKit/IFPreferencesPrivate.h>
 #import <WebKit/IFWebController.h>
+#import <WebKit/IFWebCoreBridge.h>
 #import <WebKit/IFWebDataSource.h>
 #import <WebKit/IFWebDataSourcePrivate.h>
 #import <WebKit/IFWebFramePrivate.h>
@@ -21,8 +21,6 @@
 // includes from kde
 #import <khtmlview.h>
 #import <rendering/render_frames.h>
-
-#import <KWQKHTMLPartImpl.h>
 
 static const char * const stateNames[6] = {
     "zero state",
@@ -348,8 +346,7 @@ static const char * const stateNames[6] = {
 
                 [self _setState: IFWEBFRAMESTATE_COMPLETE];
                 
-                if([ds isDocumentHTML])
-                    [(IFHTMLRepresentation *)[ds representation] part]->end();
+                [[ds _bridge] end];
                 
                 // We have to layout the main document as
                 // it may change the size of frames.
@@ -366,8 +363,7 @@ static const char * const stateNames[6] = {
                 [[thisView documentView] layout];
 
                 // Jump to anchor point, if necessary.
-                if ([ds isDocumentHTML])
-                    [(IFHTMLRepresentation *)[ds representation] part]->impl->gotoBaseAnchor();
+                [[ds _bridge] scrollToBaseAnchor];
                                    
                 // FIXME:  We have to draw the whole document hierarchy.  We should be 
                 // able to just draw the document associated with this

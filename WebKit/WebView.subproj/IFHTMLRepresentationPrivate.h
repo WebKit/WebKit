@@ -5,7 +5,8 @@
 
 #import <WebKit/IFHTMLRepresentation.h>
 
+@class IFWebCoreBridge;
+
 @interface IFHTMLRepresentation (IFPrivate)
 - (IFWebCoreBridge *)_bridge;
-- (KHTMLPart *)part;
 @end

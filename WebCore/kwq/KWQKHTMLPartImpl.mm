@@ -635,11 +635,6 @@ void KWQKHTMLPartImpl::setTitle(const DOMString &title)
     [bridge setTitle:title.string().getNSString()];
 }
 
-IFWebDataSource *KWQKHTMLPartImpl::getDataSource()
-{
-    return [bridge dataSource];
-}
-
 KHTMLPart *KWQKHTMLPartImpl::parentPart()
 {
     return [[bridge parent] part];

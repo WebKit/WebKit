@@ -1,3 +1,62 @@
+2002-06-15  Darin Adler  <darin@apple.com>
+
+	- fixed 2942808 -- remove all calls to WebKit from WebCore
+
+	More work on the bridge. Now we don't call anything in WebKit explicitly,
+	although there are still implicit connections that need to be fixed.
+
+	* WebCore.exp: Remove exports that are no longer needed, now that
+	WebKit is using the bridge to get at more things.
+
+	* khtml/misc/loader.h:
+	* khtml/misc/loader.cpp:
+	(CachedCSSStyleSheet::CachedCSSStyleSheet):
+	(CachedScript::CachedScript):
+	(CachedImage::CachedImage):
+	Remove the extra parameter to the CachedObject constructor. We don't
+	need it any more, so we can remove all these APPLE_CHANGES.
+
+	* kwq/KWQKHTMLPart.mm: Remove getDataSource.
+
+	* kwq/KWQLoaderImpl.h: Remove destructor.
+	* kwq/KWQKloader.mm:
+	(-[KWQURLLoadClient initWithLoader:bridge:]): Keep the bridge around instead
+	of the data source.
+	(-[KWQURLLoadClient dealloc]): Release the bridge instead of the data source.
+	Also put another workaround for 2954901 here, like in WebKit.
+	(-[KWQURLLoadClient IFURLHandleResourceDidBeginLoading:]):
+	(-[KWQURLLoadClient IFURLHandle:resourceDataDidBecomeAvailable:]):
+	(-[KWQURLLoadClient doneWithHandle:error:]):
+	(-[KWQURLLoadClient IFURLHandleResourceDidCancelLoading:]):
+	(-[KWQURLLoadClient IFURLHandleResourceDidFinishLoading:data:]):
+	(-[KWQURLLoadClient IFURLHandle:resourceDidFailLoadingWithResult:]):
+	(-[KWQURLLoadClient IFURLHandle:didRedirectToURL:]):
+	(KWQLoaderImpl::setClient):
+	(KWQLoaderImpl::serveRequest):
+	Use the bridge to do all the heavy lifting, and put lots of common code into
+	a doneWithHandle:error: method. Also store the URL so the redirect code works
+	properly for multiple redirects and add asserts like the ones in IFMainURLHandleClient.
+	(KWQLoaderImpl::objectFinished): Add a comment.
+
+	* kwq/WebCoreBridge.h: Make header so it can be included from plain Objective C,
+	not just Objective C++. Add a bunch of methods for bridging in to WebCore as opposed
+	to out of WebCore. Add new methods for bridging out from WebCore too for all the
+	progress hooks. Put all the subclass responsibility methods into a protocol
+	in such a way that we don't need to implement them in the base class, and subclasses
+	can set things up so they get errors if they forget to implement anything.
+
+	* kwq/WebCoreBridge.mm:
+	(-[WebCoreBridge openURL:]): Added.
+	(-[WebCoreBridge addData:withEncoding:]): Added.
+	(-[WebCoreBridge closeURL]): Added.
+	(-[WebCoreBridge end]): Added.
+	(-[WebCoreBridge setURL:]): Added.
+	(-[WebCoreBridge createKHTMLViewWithNSView:width:height:marginWidth:marginHeight:]): Added.
+	(-[WebCoreBridge documentTextFromDOM]): Added.
+	(-[WebCoreBridge scrollToBaseAnchor]): Added.
+
+	* kwq/external.h: Removed.
+
 2002-06-15  Maciej Stachowiak  <mjs@apple.com>
 
 	Get current bits per pixel from CoreGraphics, thereby fixing

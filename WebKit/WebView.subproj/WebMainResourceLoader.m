@@ -6,7 +6,6 @@
 
 #import <WebKit/IFDocument.h>
 #import <WebKit/IFDownloadHandler.h>
-#import <WebKit/IFHTMLRepresentationPrivate.h>
 #import <WebKit/IFLoadProgress.h>
 #import <WebKit/IFLocationChangeHandler.h>
 #import <WebKit/IFMainURLHandleClient.h>
@@ -17,13 +16,14 @@
 #import <WebKit/IFWebFrame.h>
 #import <WebKit/IFWebFramePrivate.h>
 #import <WebKit/IFWebView.h>
+#import <WebKit/IFWebCoreBridge.h>
 #import <WebKit/WebKitDebug.h>
-
-#import <KWQKHTMLPartImpl.h>
 
 #import <WebFoundation/IFError.h>
 #import <WebFoundation/IFFileTypeMappings.h>
 
+// FIXME: This is almost completely redundant with the KWQURLLoadClient in WebCore.
+// We shouldn't have two almost-identical classes that don't share code.
 
 @implementation IFMainURLHandleClient
 
@@ -41,8 +41,12 @@
 
 - (void)dealloc
 {
+    // FIXME Radar 2954901: Changed this not to leak because cancel messages are sometimes sent before begin.
+#ifdef WEBFOUNDATION_LOAD_MESSAGES_FIXED    
     WEBKIT_ASSERT(url == nil);
-
+#else
+    [url release];
+#endif    
     [dataSource release];
     [super dealloc];
 }
@@ -54,7 +58,7 @@
     WEBKIT_ASSERT(url == nil);
     
     url = [[sender url] retain];
-    [(IFWebController *)[dataSource controller] _didStartLoading:url];
+    [[dataSource controller] _didStartLoading:url];
 }
 
 
@@ -64,19 +68,15 @@
 
     // FIXME Radar 2954901: I replaced the assertion below with a more lenient one,
     // since cancel messages are sometimes sent before begin.
-#if wEBFOUNDATION_LOAD_MESSAGES_FIXED    
+#ifdef WEBFOUNDATION_LOAD_MESSAGES_FIXED    
     WEBKIT_ASSERT([url isEqual:[sender redirectedURL] ? [sender redirectedURL] : [sender url]]);
 #else
     WEBKIT_ASSERT(url == nil || [url isEqual:[sender redirectedURL] ? [sender redirectedURL] : [sender url]]);
 #endif    
     
-    IFLoadProgress *loadProgress = [[IFLoadProgress alloc] init];
-    loadProgress->totalToLoad = -1;
-    loadProgress->bytesSoFar = -1;
-    [(IFWebController *)[dataSource controller] _mainReceivedProgress: (IFLoadProgress *)loadProgress 
-        forResourceHandle: sender fromDataSource: dataSource];
-    [loadProgress release];
-    [(IFWebController *)[dataSource controller] _didStopLoading:url];
+    [[dataSource controller] _mainReceivedProgress:[IFLoadProgress progress]
+        forResourceHandle:sender fromDataSource: dataSource];
+    [[dataSource controller] _didStopLoading:url];
     [url release];
     url = nil;
     
@@ -102,19 +102,15 @@
         [[dataSource representation] finishedLoadingWithDataSource:dataSource];
     
     // update progress
-    IFLoadProgress *loadProgress = [[IFLoadProgress alloc] init];
-    loadProgress->totalToLoad = [data length];
-    loadProgress->bytesSoFar = [data length];
-    [[dataSource controller] _mainReceivedProgress: (IFLoadProgress *)loadProgress 
-        forResourceHandle: sender fromDataSource: dataSource];
-    [loadProgress release];
+    [[dataSource controller] _mainReceivedProgress:[IFLoadProgress progressWithURLHandle:sender]
+        forResourceHandle:sender fromDataSource:dataSource];
     [[dataSource controller] _didStopLoading:url];
     [url release];
     url = nil;
     
     IFError *nonTerminalError = [sender error];
     if (nonTerminalError){
-        [[dataSource controller] _mainReceivedError:nonTerminalError forResourceHandle:sender partialProgress:loadProgress fromDataSource:dataSource];
+        [[dataSource controller] _mainReceivedError:nonTerminalError forResourceHandle:sender partialProgress:[IFLoadProgress progressWithURLHandle:sender] fromDataSource:dataSource];
     }
     
     [downloadHandler finishedLoading];
@@ -125,8 +121,6 @@
 
 - (void)IFURLHandle:(IFURLHandle *)sender resourceDataDidBecomeAvailable:(NSData *)incomingData
 {
-    int contentLength = [sender contentLength];
-    int contentLengthReceived = [sender contentLengthReceived];
     NSString *contentType = [sender contentType];
     IFWebFrame *frame = [dataSource webFrame];
     IFWebView *view = [frame webView];
@@ -184,22 +178,11 @@
         return;
     }
     
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_DOWNLOAD, "%d of %d", contentLengthReceived, contentLength);
-    
-    // Don't send the last progress message, it will be sent via
-    // IFURLHandleResourceDidFinishLoading
-    if (contentLength == contentLengthReceived &&
-    	contentLength != -1){
-    	return;
-    }
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_DOWNLOAD, "%d of %d", [sender contentLengthReceived], [sender contentLength]);
     
     // update progress
-    IFLoadProgress *loadProgress = [[IFLoadProgress alloc] init];
-    loadProgress->totalToLoad = contentLength;
-    loadProgress->bytesSoFar = contentLengthReceived;
-    [[dataSource controller] _mainReceivedProgress: (IFLoadProgress *)loadProgress 
-        forResourceHandle: sender fromDataSource: dataSource];
-    [loadProgress release];
+    [[dataSource controller] _mainReceivedProgress:[IFLoadProgress progressWithURLHandle:sender]
+        forResourceHandle:sender fromDataSource:dataSource];
     
     isFirstChunk = NO;
 }
@@ -211,11 +194,7 @@
 
     WEBKIT_ASSERT([url isEqual:[sender redirectedURL] ? [sender redirectedURL] : [sender url]]);
 
-    IFLoadProgress *loadProgress = [[IFLoadProgress alloc] init];
-    loadProgress->totalToLoad = [sender contentLength];
-    loadProgress->bytesSoFar = [sender contentLengthReceived];
-
-    [[dataSource controller] _mainReceivedError:result forResourceHandle:sender partialProgress:loadProgress fromDataSource:dataSource];
+    [[dataSource controller] _mainReceivedError:result forResourceHandle:sender partialProgress:[IFLoadProgress progressWithURLHandle:sender] fromDataSource:dataSource];
     [[dataSource controller] _didStopLoading:url];
     [url release];
     url = nil;
@@ -238,8 +217,7 @@
     url = newURL;
     [[dataSource controller] _didStartLoading:url];
 
-    if([dataSource isDocumentHTML]) 
-        [(IFHTMLRepresentation *)[dataSource representation] part]->impl->setBaseURL([[url absoluteString] cString]);
+    [[dataSource _bridge] setURL:url];
     [dataSource _setFinalURL:url];
     
     [[dataSource _locationChangeHandler] serverRedirectTo:url forDataSource:dataSource];

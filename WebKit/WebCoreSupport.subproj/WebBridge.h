@@ -8,13 +8,20 @@
 
 #import <WebCoreBridge.h>
 
-@class IFWebDataSource;
+#import <WebKit/IFWebDataSource.h>
 
-@interface IFWebCoreBridge : WebCoreBridge
+@interface IFWebCoreBridge : WebCoreBridge <WebCoreBridge>
 {
     IFWebDataSource *dataSource;
 }
 
 - (void)receivedData:(NSData *)data withDataSource:(IFWebDataSource *)dataSource;
 
+@end
+
+// Convenience interface for getting here from an IFWebDataSource.
+// This returns nil if the representation is not an IFHTMLRepresentation.
+
+@interface IFWebDataSource (IFWebCoreBridge)
+- (IFWebCoreBridge *)_bridge;
 @end

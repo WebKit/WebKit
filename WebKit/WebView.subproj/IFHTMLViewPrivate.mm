@@ -12,7 +12,6 @@
 
 // Includes from KDE
 #import <khtmlview.h>
-#import <khtml_part.h>
 #import <html/html_documentimpl.h>
 #import "IFWebController.h"
 
@@ -67,45 +66,6 @@
 - (KHTMLView *)_widget
 {
     return _private->widget;    
-}
-
-- (DOM::DocumentImpl *)_document
-{
-    KHTMLPart *part = _private->widget->part();
-    if (part) {
-        return part->xmlDocImpl();
-    }
-    return 0;
-}
-
-+ (NSString *)_nodeName: (DOM::NodeImpl *)node
-{
-    // FIXME: good for debugging only since it's Latin 1 only
-    return [NSString stringWithCString:node->nodeName().string().latin1()];
-}
-
-+ (NSString *)_nodeValue: (DOM::NodeImpl *)node
-{
-    // FIXME: good for debugging only since it's Latin 1 only
-    return [NSString stringWithCString:node->nodeValue().string().latin1()];
-}
-
-+ (NSString *)_nodeHTML: (DOM::NodeImpl *)node
-{
-    NSString *string =  QSTRING_TO_NSSTRING(node->recursive_toHTML(1));
-    return string;
-}
-
-- (khtml::RenderObject *)_renderRoot
-{
-    KHTMLPart *part = _private->widget->part();
-    DOM::DocumentImpl *doc;
-    if (part) {
-        doc = part->xmlDocImpl();
-        if (doc)
-            return doc->renderer();
-    }
-    return 0;
 }
 
 - (KHTMLView *)_provisionalWidget

@@ -6,23 +6,20 @@
 //  Copyright (c) 2002 Apple Computer, Inc. All rights reserved.
 //
 
-#import <WebKit/IFHTMLRepresentation.h>
-#import <WebKit/IFHTMLViewPrivate.h>
-#import <WebKit/IFWebController.h>
 #import <WebKit/IFWebCoreBridge.h>
+
+#import <WebKit/IFWebControllerPrivate.h>
+#import <WebKit/IFWebFramePrivate.h>
 #import <WebKit/IFWebDataSourcePrivate.h>
 #import <WebKit/IFWebFramePrivate.h>
 #import <WebKit/IFWebViewPrivate.h>
-
+#import <WebKit/IFHTMLRepresentation.h>
+#import <WebKit/IFHTMLViewPrivate.h>
+#import <WebKit/IFLoadProgress.h>
 #import <WebFoundation/IFURLCacheLoaderConstants.h>
-
-#import <KWQKHTMLPartImpl.h>
+#import <WebFoundation/IFURLHandle.h>
 
 #import <WebKit/WebKitDebug.h>
-
-@interface IFWebDataSource (IFWebCoreBridge)
-- (IFWebCoreBridge *)_bridge;
-@end
 
 @interface IFWebFrame (IFWebCoreBridge)
 - (IFWebCoreBridge *)_bridge;
@@ -32,7 +29,8 @@
 
 - (IFWebCoreBridge *)_bridge
 {
-    return [(IFHTMLRepresentation *)[self representation] _bridge];
+    id representation = [self representation];
+    return [representation respondsToSelector:@selector(_bridge)] ? [representation _bridge] : nil;
 }
 
 @end
@@ -89,7 +87,7 @@
 {
     IFWebDataSource *newDataSource = [[IFWebDataSource alloc] initWithURL:URL attributes:attributes flags:flags];
     IFWebCoreBridge *parentPrivate = (IFWebCoreBridge *)parent;
-    [newDataSource _setParent:[parentPrivate dataSource]];
+    [newDataSource _setParent:parentPrivate->dataSource];
     [frame setProvisionalDataSource:newDataSource];
     [newDataSource release];
     [frame startLoading];
@@ -166,17 +164,74 @@
 {
     if (dataSource == nil) {
         dataSource = withDataSource;
-        [self part]->openURL([[[dataSource inputURL] absoluteString] cString]);
+        [self openURL:[dataSource inputURL]];
     } else {
         WEBKIT_ASSERT(dataSource == withDataSource);
     }
     
-    [self part]->impl->slotData([dataSource encoding], (const char *)[data bytes], [data length], NO);
+    [self addData:data withEncoding:[dataSource encoding]];
 }
 
-- (IFWebDataSource *)dataSource
+- (void)addHandle:(IFURLHandle *)handle
 {
-    return dataSource;
+    [dataSource _addURLHandle:handle];
+}
+
+- (void)removeHandle:(IFURLHandle *)handle
+{
+    [dataSource _removeURLHandle:handle];
+}
+
+- (void)didStartLoadingWithHandle:(IFURLHandle *)handle
+{
+    [[self controller] _didStartLoading:[handle url]];
+    [self receivedProgressWithHandle:handle];
+}
+
+- (void)receivedProgressWithHandle:(IFURLHandle *)handle
+{
+    [[self controller] _receivedProgress:[IFLoadProgress progressWithURLHandle:handle]
+        forResourceHandle:handle fromDataSource:dataSource];
+}
+
+- (void)didFinishLoadingWithHandle:(IFURLHandle *)handle
+{
+    [self receivedProgressWithHandle:handle];
+    [[self controller] _didStopLoading:[handle url]];
+}
+
+- (void)didCancelLoadingWithHandle:(IFURLHandle *)handle
+{
+    [[self controller] _receivedProgress:[IFLoadProgress progress]
+        forResourceHandle:handle fromDataSource:dataSource];
+    [[self controller] _didStopLoading:[handle url]];
+}
+
+- (void)didFailBeforeLoadingWithError:(IFError *)error
+{
+    [[self controller] _receivedError:error forResourceHandle:nil
+        partialProgress:nil fromDataSource:dataSource];
+}
+
+- (void)didFailToLoadWithHandle:(IFURLHandle *)handle error:(IFError *)error
+{
+    [[self controller] _receivedError:error forResourceHandle:handle
+        partialProgress:[IFLoadProgress progressWithURLHandle:handle] fromDataSource:dataSource];
+    [[self controller] _didStopLoading:[handle url]];
+}
+
+- (void)didRedirectWithHandle:(IFURLHandle *)handle fromURL:(NSURL *)fromURL
+{
+    NSURL *toURL = [handle redirectedURL];
+    
+    [[self controller] _didStopLoading:fromURL];
+
+    [dataSource _setFinalURL:toURL];
+    [self setURL:toURL];
+
+    [[dataSource _locationChangeHandler] serverRedirectTo:toURL forDataSource:dataSource];
+    
+    [[self controller] _didStartLoading:toURL];
 }
 
 @end

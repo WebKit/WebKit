@@ -5,9 +5,9 @@
 #import <WebKit/IFDynamicScrollBarsView.h>
 #import <WebKit/IFException.h>
 #import <WebKit/IFHTMLViewPrivate.h>
-#import <WebKit/IFHTMLRepresentationPrivate.h>
 #import <WebKit/IFNSViewExtras.h>
 #import <WebKit/IFWebController.h>
+#import <WebKit/IFWebCoreBridge.h>
 #import <WebKit/IFWebDataSourcePrivate.h>
 #import <WebKit/IFWebFrame.h>
 #import <WebKit/IFWebViewPrivate.h>
@@ -18,7 +18,6 @@
 
 // KDE related includes
 #import <khtmlview.h>
-#import <qwidget.h>
 #import <qpainter.h>
 #import <qevent.h>
 #import <html/html_documentimpl.h>
@@ -92,35 +91,28 @@
 
 // This method is typically called by the view's controller when
 // the data source is changed.
-- (void)provisionalDataSourceChanged: (IFWebDataSource *)dataSource 
+- (void)provisionalDataSourceChanged:(IFWebDataSource *)dataSource 
 {
-    NSRect r = [self frame];
-    IFHTMLView *provisionalView;
-    
-    // Nasty!  Setup the cross references between the KHTMLView and
-    // the KHTMLPart.
-    KHTMLPart *part = [(IFHTMLRepresentation *)[dataSource representation] part];
-
-    _private->provisionalWidget = new KHTMLView (part, 0);
-    part->impl->setView (_private->provisionalWidget);
+    IFWebCoreBridge *bridge = [dataSource _bridge];
 
     // Create a temporary provisional view.  It will be replaced with
     // the actual view once the datasource has been committed.
-    provisionalView = [[IFHTMLView alloc] initWithFrame: NSMakeRect (0,0,0,0)];
-        
-    _private->provisionalWidget->setView (provisionalView);
+    IFHTMLView *provisionalView = [[IFHTMLView alloc] initWithFrame:NSMakeRect(0,0,0,0)];
+    
+    NSRect r = [self frame];
+    
+    int mw = [[[dataSource webFrame] webView] _marginWidth];
+    if (mw < 0)
+        mw = 0;
+    int mh = [[[dataSource webFrame] webView] _marginHeight];
+    if (mh < 0)
+        mh = 0;
+
+    _private->provisionalWidget = [bridge createKHTMLViewWithNSView:provisionalView
+        width:(int)r.size.width height:(int)r.size.height
+        marginWidth:mw marginHeight:mh];
     
     [provisionalView release];
-
-    int mw = [[[dataSource webFrame] webView] _marginWidth];
-    if (mw >= 0)
-        _private->provisionalWidget->setMarginWidth (mw);
-    int mh = [[[dataSource webFrame] webView] _marginHeight];
-    if (mh >= 0)
-        _private->provisionalWidget->setMarginHeight (mh);
-        
-    _private->provisionalWidget->resize ((int)r.size.width, (int)r.size.height);
-    
 }
 
 - (void)provisionalDataSourceCommitted: (IFWebDataSource *)dataSource 

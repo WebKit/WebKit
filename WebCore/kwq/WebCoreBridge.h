@@ -25,6 +25,8 @@
 
 #import <Foundation/Foundation.h>
 
+#ifdef __cplusplus
+
 class KHTMLPart;
 class KHTMLView;
 
@@ -32,7 +34,22 @@ namespace khtml {
     class RenderPart;
 }
 
-@class IFWebDataSource; // temporary -- here only until I finish KWQKloader.mm
+typedef khtml::RenderPart KHTMLRenderPart;
+
+#else
+
+typedef struct KHTMLPart KHTMLPart;
+typedef struct KHTMLView KHTMLView;
+typedef struct KHTMLRenderPart KHTMLRenderPart;
+
+#endif
+
+@class IFError;
+@class IFURLHandle;
+
+@class WebCoreBridge;
+
+// The WebCoreBridge class contains methods for use by the non-WebCore side of the bridge.
 
 @interface WebCoreBridge : NSObject
 {
@@ -40,6 +57,27 @@ namespace khtml {
 }
 
 - (KHTMLPart *)part;
+
+- (void)openURL:(NSURL *)URL;
+- (void)addData:(NSData *)data withEncoding:(NSString *)encoding;
+- (void)closeURL;
+- (void)end;
+
+- (void)setURL:(NSURL *)URL;
+
+- (void)scrollToBaseAnchor;
+
+- (NSString *)documentTextFromDOM;
+
+- (KHTMLView *)createKHTMLViewWithNSView:(NSView *)view
+    width:(int)width height:(int)height
+    marginWidth:(int)mw marginHeight:(int)mh;
+
+@end
+
+// The WebCoreBridge protocol contains methods for use by the WebCore side of the bridge.
+
+@protocol WebCoreBridge
 
 - (WebCoreBridge *)parent;
 - (NSArray *)children; // WebCoreBridge objects
@@ -60,6 +98,19 @@ namespace khtml {
 
 - (KHTMLView *)widget;
 
-- (IFWebDataSource *)dataSource; // temporary -- here only until I finish KWQKloader.mm
+- (void)addHandle:(IFURLHandle *)handle;
+- (void)removeHandle:(IFURLHandle *)handle;
 
+- (void)didStartLoadingWithHandle:(IFURLHandle *)handle;
+- (void)receivedProgressWithHandle:(IFURLHandle *)handle;
+- (void)didFinishLoadingWithHandle:(IFURLHandle *)handle;
+
+- (void)didCancelLoadingWithHandle:(IFURLHandle *)handle;
+- (void)didFailToLoadWithHandle:(IFURLHandle *)handle error:(IFError *)error;
+- (void)didRedirectWithHandle:(IFURLHandle *)handle fromURL:(NSURL *)fromURL;
+- (void)didFailBeforeLoadingWithError:(IFError *)error;
+
+@end
+
+@interface WebCoreBridge (SubclassResponsibility) <WebCoreBridge>
 @end

@@ -5,7 +5,8 @@
 
 #import <WebKit/IFDocument.h>
 #import <WebKit/IFException.h>
-#import <WebKit/IFHTMLRepresentationPrivate.h>
+#import <WebKit/IFHTMLRepresentation.h>
+#import <WebKit/IFWebCoreBridge.h>
 #import <WebKit/IFWebDataSourcePrivate.h>
 #import <WebKit/IFWebController.h>
 #import <WebKit/IFWebFramePrivate.h>
@@ -14,9 +15,6 @@
 #import <WebFoundation/WebFoundation.h>
 
 #import <xml/dom_docimpl.h>
-
-#import <WCWebDataSource.h>
-#import <KWQKHTMLPartImpl.h>
 
 @implementation IFWebDataSource
 
@@ -254,25 +252,7 @@
 // FIXME: Move to representation
 - (NSString *)documentTextFromDOM
 {
-    if([self isDocumentHTML]){
-        DOM::DocumentImpl *doc;
-        NSString *string = nil;
-        KHTMLPart *part = [(IFHTMLRepresentation *)[self representation] part];
-        
-        if (part != 0){
-            doc = part->xmlDocImpl();
-            if (doc != 0){
-                QString str = doc->recursive_toHTML(1);
-                string = QSTRING_TO_NSSTRING(str);
-            }
-        }
-        if (string == nil) {
-            string = @"";
-        }
-        return string;
-    }else{
-        return nil;
-    }
+    return [[self _bridge] documentTextFromDOM];
 }
 
 
