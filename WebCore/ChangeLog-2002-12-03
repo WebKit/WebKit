@@ -1,3 +1,14 @@
+2002-09-18  Darin Adler  <darin@apple.com>
+
+	- fixed 3027470 -- hitting tab when the google.com text field is selected
+	(all bars hidden) makes border flash
+
+        * kwq/KWQNSTextField.mm:
+        (-[KWQNSTextField textDidEndEditing:]): Added. Don't call super when the next
+	valid key view is nil.
+        (-[KWQSecureTextField textDidEndEditing:]): Ditto. Too bad we can't share code
+	here. Maybe I'll figure out a way later.
+
 2002-09-17  Darin Adler  <darin@apple.com>
 
 	- fixed 3025022 -- Crash in KWQKHTMLPartImpl::redirectionTimerStartedOrStopped()

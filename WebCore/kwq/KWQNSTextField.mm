@@ -190,7 +190,7 @@
 - (void)setMaximumLength:(int)len
 {
     NSString *oldValue = [self stringValue];
-    if ((int)[oldValue length] > len){
+    if ((int)[oldValue length] > len) {
         [self setStringValue:[oldValue substringToIndex:len]];
     }
     [formatter setMaximumLength:len];
@@ -271,6 +271,30 @@
 {
     [self _KWQ_scrollFrameToVisible];
     return [super becomeFirstResponder];
+}
+
+- (void)textDidEndEditing:(NSNotification *)notification
+{
+    // If we are tabbing nowhere, we don't want to flash as we deselect and reselect.
+    // So we handle those cases here and don't call super.
+    switch ([[[notification userInfo] objectForKey:@"NSTextMovement"] intValue]) {
+        case NSTabTextMovement:
+            if (![self nextValidKeyView]) {
+                [self selectText:self];
+                [self _KWQ_scrollFrameToVisible];
+                return;
+            }
+            break;
+        case NSBacktabTextMovement:
+            if (![self previousValidKeyView]) {
+                [self selectText:self];
+                [self _KWQ_scrollFrameToVisible];
+                return;
+            }
+            break;
+    }
+    
+    [super textDidEndEditing:notification];
 }
 
 @end
@@ -419,6 +443,30 @@
 {
     [self _KWQ_scrollFrameToVisible];
     return [super becomeFirstResponder];
+}
+
+- (void)textDidEndEditing:(NSNotification *)notification
+{
+    // If we are tabbing nowhere, we don't want to flash as we deselect and reselect.
+    // So we handle those cases here and don't call super.
+    switch ([[[notification userInfo] objectForKey:@"NSTextMovement"] intValue]) {
+        case NSTabTextMovement:
+            if (![self nextValidKeyView]) {
+                [self selectText:self];
+                [self _KWQ_scrollFrameToVisible];
+                return;
+            }
+            break;
+        case NSBacktabTextMovement:
+            if (![self previousValidKeyView]) {
+                [self selectText:self];
+                [self _KWQ_scrollFrameToVisible];
+                return;
+            }
+            break;
+    }
+    
+    [super textDidEndEditing:notification];
 }
 
 @end
