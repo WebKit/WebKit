@@ -174,6 +174,15 @@ void CSSImportRuleImpl::init()
       absHref = KURL(doc->URL(),m_strHref.string()).url();
     }
 */
+
+    // Check for a cycle in our import chain.  If we encounter a stylesheet
+    // in our parent chain with the same URL, then just bail.
+    for (parent = static_cast<StyleBaseImpl*>(this)->parent();
+         parent;
+         parent = parent->parent())
+        if (absHref == parent->baseURL())
+            return;
+    
     // ### pass correct charset here!!
     m_cachedSheet = docLoader->requestStyleSheet(absHref, QString::null);
 
