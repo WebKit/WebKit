@@ -400,7 +400,8 @@ RenderBlock* RenderObject::containingBlock() const
             o = o->parent();
     }
     else if (m_style->position() == ABSOLUTE) {
-        while (o && o->style()->position() == STATIC && !o->isHtml() && !o->isRoot())
+        while (o && (o->style()->position() == STATIC || (o->isInline() && !o->isReplaced()))
+               && !o->isHtml() && !o->isRoot())
             o = o->parent();
     } else {
         while (o && ((o->isInline() && !o->isReplaced()) || o->isTableRow() || o->isTableSection()

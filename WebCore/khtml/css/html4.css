@@ -94,22 +94,9 @@ Q:after  {
 }
 
 IFRAME {
-	display: block;
-        width: 300px; height:150px;
+	width: 300px; height:150px;
 }
 
-OBJECT { 
-	display: block;
-} 
-
-OBJECT[type^="image/"] {
-	display: inline;
-}
-
-APPLET { 
-	display: block;
-} 
-      
 CENTER { 
 	display: block;
 	/* special centering to be able to emulate the html4/netscape behaviour */

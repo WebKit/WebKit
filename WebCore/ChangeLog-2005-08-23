@@ -1,3 +1,14 @@
+2003-02-26  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3179109. containingBlock() had a big old bug in it.
+	For ABSOLUTE positioned elements, it would return inline relative
+	positioned parents (when it should only be returning blocks).
+	
+        Reviewed by john
+
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::containingBlock):
+
 2003-02-25  David Hyatt  <hyatt@apple.com>
 
 	Fix for findNextLayer problems.  There was nothing wrong with
