@@ -25,9 +25,7 @@
 
 // FIXME: obviously many functions here can be made inline
 
-//#ifdef _KWQ_DEBUG_
 #include <Foundation/Foundation.h>
-//#endif
 #include <qstring.h>
 #include <qregexp.h>
 #include <stdio.h>
@@ -695,17 +693,17 @@ float QString::toFloat(bool *ok) const
 
 QString QString::arg(const QString &replacement, int padding) const
 {
-    QString modified(*this);
-    if (!modified.s) {
-        modified.s = CFStringCreateMutable(kCFAllocatorDefault, 0);
+    QString qs;
+    if (s && CFStringGetLength(s)) {
+        qs.s = CFStringCreateMutableCopy(kCFAllocatorDefault, 0, s);
     }
-    if (modified.s) {
+    if (qs.s) {
         CFIndex pos = 0;
         UniChar found = 0;
-        CFIndex len = CFStringGetLength(modified.s);
+        CFIndex len = CFStringGetLength(qs.s);
         if (len) {
             CFStringInlineBuffer buf;
-            CFStringInitInlineBuffer(modified.s, &buf, CFRangeMake(0, len));
+            CFStringInitInlineBuffer(qs.s, &buf, CFRangeMake(0, len));
             // find position of lowest numerical position marker
             for (CFIndex i = 0; i < len; i++) {
                 UniChar uc = CFStringGetCharacterFromInlineBuffer(&buf, i);
@@ -726,16 +724,16 @@ QString QString::arg(const QString &replacement, int padding) const
             rlen = 2;
         } else {
             // append space and then replacement text at end of string
-            CFStringAppend(modified.s, CFSTR(" "));
+            CFStringAppend(qs.s, CFSTR(" "));
             pos = len + 1;
             rlen = 0;
         }
         if (replacement.s) {
-            CFStringReplace(modified.s, CFRangeMake(pos, rlen), replacement.s);
+            CFStringReplace(qs.s, CFRangeMake(pos, rlen), replacement.s);
             if (padding) {
-                CFMutableStringRef p =
+                CFMutableStringRef tmp =
                     CFStringCreateMutable(kCFAllocatorDefault, 0);
-                if (p) {
+                if (tmp) {
                     CFIndex plen;
                     if (padding < 0) {
                         plen = -padding;
@@ -743,14 +741,14 @@ QString QString::arg(const QString &replacement, int padding) const
                     } else {
                         plen = padding;
                     }
-                    CFStringPad(p, CFSTR(" "), plen, 0);
-                    CFStringInsert(modified.s, pos, p);
-                    CFRelease(p);
+                    CFStringPad(tmp, CFSTR(" "), plen, 0);
+                    CFStringInsert(qs.s, pos, tmp);
+                    CFRelease(tmp);
                 }
             }
         }
     }
-    return modified;
+    return qs;
 }
 
 QString QString::arg(int replacement, int padding) const
@@ -758,28 +756,76 @@ QString QString::arg(int replacement, int padding) const
     return arg(number(replacement), padding);
 }
 
-QString QString::left(uint) const
+QString QString::left(uint width) const
 {
-    // FIXME: not yet implemented
-    NSLog(@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__,
-            __LINE__);
-    return QString(*this);
+    QString qs;
+    if (s) {
+        CFIndex len = CFStringGetLength(s);
+        if (len && width) {
+            if (len > width) {
+                CFStringRef tmp = CFStringCreateWithSubstring(
+                        kCFAllocatorDefault, s, CFRangeMake(0, width));
+                if (tmp) {
+                    qs.s = CFStringCreateMutableCopy(kCFAllocatorDefault, 0,
+                            tmp);
+                    CFRelease(tmp);
+                }
+            } else {
+                CFRetain(s);
+                qs.s = s;
+            }
+        }
+    }
+    return qs;
 }
 
-QString QString::right(uint) const
+QString QString::right(uint width) const
 {
-    // FIXME: not yet implemented
-    NSLog(@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__,
-            __LINE__);
-    return QString(*this);
+    QString qs;
+    if (s) {
+        CFIndex len = CFStringGetLength(s);
+        if (len && width) {
+            if (len > width) {
+                CFStringRef tmp = CFStringCreateWithSubstring(
+                        kCFAllocatorDefault, s, CFRangeMake(len - width, len));
+                if (tmp) {
+                    qs.s = CFStringCreateMutableCopy(kCFAllocatorDefault, 0,
+                            tmp);
+                    CFRelease(tmp);
+                }
+            } else {
+                CFRetain(s);
+                qs.s = s;
+            }
+        }
+    }
+    return qs;
 }
 
-QString QString::mid(int, int) const
+QString QString::mid(int index, int width) const
 {
-    // FIXME: not yet implemented
-    NSLog(@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__,
-            __LINE__);
-    return QString(*this);
+    QString qs;
+    if (s) {
+        CFIndex len = CFStringGetLength(s);
+        if (len && (index >= 0) && (index < len) && width) {
+            if (!((index == 0) && (width >= len))) {
+                if (width > (len - index)) {
+                    width = len - index;
+                }
+                CFStringRef tmp = CFStringCreateWithSubstring(
+                        kCFAllocatorDefault, s, CFRangeMake(index, width));
+                if (tmp) {
+                    qs.s = CFStringCreateMutableCopy(kCFAllocatorDefault, 0,
+                            tmp);
+                    CFRelease(tmp);
+                }
+            } else {
+                CFRetain(s);
+                qs.s = s;
+            }
+        }
+    }
+    return qs;
 }
 
 #ifdef USING_BORROWED_KURL
@@ -791,34 +837,82 @@ QString QString::copy() const
 
 QString QString::lower() const
 {
-    // FIXME: not yet implemented
-    NSLog(@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__,
-            __LINE__);
-    return QString(*this);
+    QString qs;
+    if (s && CFStringGetLength(s)) {
+        qs.s = CFStringCreateMutableCopy(kCFAllocatorDefault, 0, s);
+    }
+    if (qs.s) {
+	CFStringLowercase(qs.s, NULL);
+    }
+    return qs;
 }
 
 QString QString::stripWhiteSpace() const
 {
-    // FIXME: not yet implemented
-    NSLog(@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__,
-            __LINE__);
-    return QString(*this);
+    QString qs;
+    if (s && CFStringGetLength(s)) {
+        qs.s = CFStringCreateMutableCopy(kCFAllocatorDefault, 0, s);
+    }
+    if (qs.s) {
+	CFStringTrimWhitespace(qs.s);
+    }
+    return qs;
 }
 
 QString QString::simplifyWhiteSpace() const
 {
-    // FIXME: not yet implemented
-    NSLog(@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__,
-            __LINE__);
-    return QString(*this);
+    QString qs;
+    if (s && CFStringGetLength(s)) {
+        qs.s = CFStringCreateMutableCopy(kCFAllocatorDefault, 0, s);
+    }
+    if (qs.s) {
+	CFStringTrimWhitespace(qs.s);
+        CFCharacterSetRef wscs = CFCharacterSetGetPredefined(
+                kCFCharacterSetWhitespaceAndNewline);
+        CFIndex pos = 0;
+        CFIndex len = CFStringGetLength(qs.s);
+        while (pos < len) {
+            if (CFCharacterSetIsCharacterMember(wscs,
+                    CFStringGetCharacterAtIndex(s, pos))) {
+                CFIndex pos2;
+                for (pos2 = pos + 1; pos2 < len; pos2++) {
+                    if (!CFCharacterSetIsCharacterMember(wscs,
+                            CFStringGetCharacterAtIndex(s, pos2))) {
+                        break;
+                    }
+                }
+                CFStringReplace(qs.s, CFRangeMake(pos, pos2 - pos), CFSTR(" "));
+                pos = pos2;
+                len = CFStringGetLength(qs.s);
+            } else {
+                pos++;
+            }
+        }
+    }
+    return qs;
 }
 
-QString &QString::setUnicode(const QChar *, uint)
+QString &QString::setUnicode(const QChar *qcs, uint len)
 {
     flushCache();
-    // FIXME: not yet implemented
-    NSLog(@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__,
-            __LINE__);
+    if (!s && len) {
+        s = CFStringCreateMutable(kCFAllocatorDefault, 0);
+    }
+    if (s) {
+        if (len) {
+            if (qcs) {
+                CFStringRef tmp = CFStringCreateWithCharactersNoCopy(
+                        kCFAllocatorDefault, &qcs->c, len, kCFAllocatorNull);
+                if (tmp) {
+                    CFStringReplaceAll(s, tmp);
+                    CFRelease(tmp);
+                }
+            }
+        } else {
+            CFRelease(s);
+            s = NULL;
+        }
+    }
     return *this;
 }
 
@@ -837,7 +931,7 @@ QString &QString::setNum(int n)
                 kCFAllocatorDefault, buf, kCFStringEncodingISOLatin1,
                 kCFAllocatorDefault);
         if (tmp) {
-            CFStringReplace(s, CFRangeMake(0, CFStringGetLength(s)), tmp);
+            CFStringReplaceAll(s, tmp);
             CFRelease(tmp);
         }
     }
@@ -853,7 +947,17 @@ QString &QString::sprintf(const char *, ...)
     return *this;
 }
 
-QString &QString::prepend(const QString &)
+QString &QString::prepend(const QString &qs)
+{
+    return insert(0, qs);
+}
+
+QString &QString::append(const QString &qs)
+{
+    return operator+=(qs);
+}
+
+QString &QString::insert(uint, const QString &)
 {
     flushCache();
     // FIXME: not yet implemented
@@ -862,7 +966,7 @@ QString &QString::prepend(const QString &)
     return *this;
 }
 
-QString &QString::append(const char *)
+QString &QString::insert(uint, QChar)
 {
     flushCache();
     // FIXME: not yet implemented
@@ -871,7 +975,7 @@ QString &QString::append(const char *)
     return *this;
 }
 
-QString &QString::append(const QString &)
+QString &QString::insert(uint, char)
 {
     flushCache();
     // FIXME: not yet implemented
@@ -890,33 +994,6 @@ QString &QString::remove(uint, uint)
 }
 
 QString &QString::replace(const QRegExp &, const QString &)
-{
-    flushCache();
-    // FIXME: not yet implemented
-    NSLog(@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__,
-            __LINE__);
-    return *this;
-}
-
-QString &QString::insert(uint, char)
-{
-    flushCache();
-    // FIXME: not yet implemented
-    NSLog(@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__,
-            __LINE__);
-    return *this;
-}
-
-QString &QString::insert(uint, QChar)
-{
-    flushCache();
-    // FIXME: not yet implemented
-    NSLog(@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__,
-            __LINE__);
-    return *this;
-}
-
-QString &QString::insert(uint, const QString &)
 {
     flushCache();
     // FIXME: not yet implemented
@@ -948,12 +1025,12 @@ void QString::compose()
             __LINE__);
 }
 
-QString QString::visual(int index, int len)
+QString QString::visual()
 {
     // FIXME: unimplemented because we don't do BIDI yet
     NSLog(@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__,
             __LINE__);
-    return mid(index, len);
+    return QString(*this);
 }
 
 // operators -------------------------------------------------------------------

@@ -242,20 +242,18 @@ public:
     QString &sprintf(const char *, ...);
 
     QString &prepend(const QString &);
-    QString &append(const char *);
     QString &append(const QString &);
-
-    QString &remove(uint, uint);
-    QString &replace(const QRegExp &, const QString &);
     QString &insert(uint, const QString &);
     QString &insert(uint, QChar);
     QString &insert(uint, char);
+    QString &remove(uint, uint);
+    QString &replace(const QRegExp &, const QString &);
 
-    void truncate(uint pos);
+    void truncate(uint);
     void fill(QChar, int len=-1);
 
     void compose();
-    QString visual(int index=0, int len=-1);
+    QString visual();
 
     // operators ---------------------------------------------------------------
 
