@@ -816,7 +816,7 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 
 - (DocumentImpl *)_documentImpl
 {
-    return reinterpret_cast<DocumentImpl *>(_internal);
+    return static_cast<DocumentImpl *>(reinterpret_cast<NodeImpl *>(_internal));
 }
 
 - (DOMDocumentType *)doctype
@@ -980,7 +980,7 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 
 - (CharacterDataImpl *)_characterDataImpl
 {
-    return reinterpret_cast<CharacterDataImpl *>(_internal);
+    return static_cast<CharacterDataImpl *>(reinterpret_cast<NodeImpl *>(_internal));
 }
 
 - (NSString *)data
@@ -1093,7 +1093,7 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 
 - (AttrImpl *)_attrImpl
 {
-    return reinterpret_cast<AttrImpl *>(_internal);
+    return static_cast<AttrImpl *>(reinterpret_cast<NodeImpl *>(_internal));
 }
 
 @end
@@ -1305,7 +1305,7 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 
 - (ElementImpl *)_elementImpl
 {
-    return reinterpret_cast<ElementImpl *>(_internal);
+    return static_cast<ElementImpl *>(reinterpret_cast<NodeImpl *>(_internal));
 }
 
 @end
@@ -1317,7 +1317,7 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 
 - (TextImpl *)_textImpl
 {
-    return reinterpret_cast<TextImpl *>(_internal);
+    return static_cast<TextImpl *>(reinterpret_cast<NodeImpl *>(_internal));
 }
 
 - (DOMText *)splitText:(unsigned long)offset
@@ -1351,7 +1351,7 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 
 - (DocumentTypeImpl *)_documentTypeImpl
 {
-    return reinterpret_cast<DocumentTypeImpl *>(_internal);
+    return static_cast<DocumentTypeImpl *>(reinterpret_cast<NodeImpl *>(_internal));
 }
 
 - (NSString *)name
@@ -1393,7 +1393,7 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 
 - (NotationImpl *)_notationImpl
 {
-    return reinterpret_cast<NotationImpl *>(_internal);
+    return static_cast<NotationImpl *>(reinterpret_cast<NodeImpl *>(_internal));
 }
 
 - (NSString *)publicId
@@ -1415,7 +1415,7 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 
 - (EntityImpl *)_entityImpl
 {
-    return reinterpret_cast<EntityImpl *>(_internal);
+    return static_cast<EntityImpl *>(reinterpret_cast<NodeImpl *>(_internal));
 }
 
 - (NSString *)publicId
@@ -1449,7 +1449,7 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 
 - (ProcessingInstructionImpl *)_processingInstructionImpl
 {
-    return reinterpret_cast<ProcessingInstructionImpl *>(_internal);
+    return static_cast<ProcessingInstructionImpl *>(reinterpret_cast<NodeImpl *>(_internal));
 }
 
 - (NSString *)target
