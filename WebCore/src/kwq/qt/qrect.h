@@ -31,6 +31,9 @@ public:
     QRect();
     QRect(int l, int t, int w, int h);
 
+    int left() const;
+    int top() const;
+    int width() const;
     int height() const;
 };
 

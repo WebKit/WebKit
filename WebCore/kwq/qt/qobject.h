@@ -40,6 +40,10 @@
 #define connect(arg1,arg2,arg3,arg4)
 
 class QObject {
+public:
+    QObject(QObject *parent=0, const char *name=0);
+    const char *name() const;
+    virtual void setName(const char *);
 };
 
 #endif

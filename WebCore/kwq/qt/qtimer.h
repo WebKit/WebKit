@@ -26,4 +26,11 @@
 #ifndef QTIMER_H_
 #define QTIMER_H_
 
+#include "qobject.h"
+
+class QTimer : public QObject {
+public:
+    static void singleShot(int msec, QObject *receiver, const char *member);
+};
+
 #endif

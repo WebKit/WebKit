@@ -27,10 +27,24 @@
 #define QWIDGET_H_
 
 #include "qpaintdevice.h"
+#include "qpoint.h"
+#include "qsize.h"
+#include "qobject.h"
 
-class QWidget : public QPaintDevice {
+class QWidget : public QObject, public QPaintDevice {
 public:
     int winId() const;
+    int x() const;
+    int y() const;
+    int width() const;
+    int height() const;
+    QSize size() const;
+    void resize(const QSize &);
+    QPoint pos() const;
+    virtual void move(const QPoint&);
+    void move(int, int);
+    QWidget *topLevelWidget() const;
+    QPoint mapToGlobal(const QPoint &) const;
 };
 
 #endif

@@ -26,4 +26,13 @@
 #ifndef QINPUTDIALOG_H_
 #define QINPUTDIALOG_H_
 
+#include "qstring.h"
+class QWidget;
+
+class QInputDialog {
+public:
+    static QString getText( const QString &caption, const QString &label, const QString &text = QString::null,
+        bool *ok = 0, QWidget *parent = 0, const char *name = 0 );
+};
+
 #endif

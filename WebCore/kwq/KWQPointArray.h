@@ -26,4 +26,16 @@
 #ifndef QPOINT_H_
 #define QPOINT_H_
 
+class QPoint {
+public:
+    QPoint();
+    QPoint(int,int);
+    QPoint(const QPoint &);
+    
+    int x() const;
+    int y() const;
+
+    friend inline QPoint operator+(const QPoint &, const QPoint &);
+};
+
 #endif

@@ -27,6 +27,9 @@
 #define QMAP_H_
 
 template <class K, class T> class QMap {
+public:
+    void remove(const K&);
+    void clear();
 };
 
 #endif

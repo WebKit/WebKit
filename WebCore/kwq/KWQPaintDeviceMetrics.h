@@ -32,6 +32,7 @@ class QPaintDeviceMetrics {
 public:
     QPaintDeviceMetrics(const QPaintDevice *);
     int logicalDpiY() const;
+    int depth() const;
 };
 
 #endif

@@ -26,4 +26,18 @@
 #ifndef QGUARDEDPTR_H_
 #define QGUARDEDPTR_H_
 
+#include "qobject.h"
+
+template <class T> class QGuardedPtr {
+public:
+    QGuardedPtr();
+    QGuardedPtr(T* o);
+    QGuardedPtr(const QGuardedPtr<T> &p);
+
+    bool isNull() const;
+    
+    operator T*() const;
+    T* operator->() const;
+};
+
 #endif

@@ -26,11 +26,17 @@
 #ifndef QPTRDICT_H_
 #define QPTRDICT_H_
 
+#include <kwq.h>
+
 template <class T> class QPtrDict {
 public:
+    QPtrDict(int size=13);
     uint count() const;
     T *at(uint);
     void append(const T *);
+    void insert(void *, const T *);
+    void remove(void *);
+    T *operator[](void *) const; 
 };
 
 #endif
