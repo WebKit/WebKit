@@ -347,6 +347,8 @@ void RenderTable::layout()
     if (checkForRepaint)
         repaintAfterLayoutIfNeeded(oldBounds, oldFullBounds);
     
+    m_overflowHeight = kMax(m_overflowHeight, m_height);
+
     setNeedsLayout(false);
 }
 
@@ -377,33 +379,32 @@ void RenderTable::paint(PaintInfo& i, int _tx, int _ty)
 #ifdef TABLE_PRINT
     kdDebug( 6040 ) << "RenderTable::paint() w/h = (" << width() << "/" << height() << ")" << endl;
 #endif
-    if (!isRelPositioned() && !isPositioned()) {
-        int os = 2*maximalOutlineSize(paintAction);
-        if ((_ty >= i.r.y() + i.r.height() + os) || (_ty + height() <= i.r.y() - os)) return;
-        if ((_tx >= i.r.x() + i.r.width() + os) || (_tx + width() <= i.r.x() - os)) return;
-    }
+    
+    int os = 2*maximalOutlineSize(paintAction);
+    if ((_ty >= i.r.y() + i.r.height() + os) || (_ty + height() <= i.r.y() - os)) return;
+    if ((_tx >= i.r.x() + i.r.width() + os) || (_tx + width() <= i.r.x() - os)) return;
 
 #ifdef TABLE_PRINT
     kdDebug( 6040 ) << "RenderTable::paint(2) " << _tx << "/" << _ty << " (" << _y << "/" << _h << ")" << endl;
 #endif
 
-    if ((paintAction == PaintActionElementBackground || paintAction == PaintActionChildBackground)
+    if ((paintAction == PaintActionBlockBackground || paintAction == PaintActionChildBlockBackground)
         && shouldPaintBackgroundOrBorder() && style()->visibility() == VISIBLE)
         paintBoxDecorations(i, _tx, _ty);
 
     // We're done.  We don't bother painting any children.
-    if (paintAction == PaintActionElementBackground)
+    if (paintAction == PaintActionBlockBackground)
         return;
     // We don't paint our own background, but we do let the kids paint their backgrounds.
-    if (paintAction == PaintActionChildBackgrounds)
-        paintAction = PaintActionChildBackground;
+    if (paintAction == PaintActionChildBlockBackgrounds)
+        paintAction = PaintActionChildBlockBackground;
     PaintInfo paintInfo(i.p, i.r, paintAction, paintingRootForChildren(i));
     
     for (RenderObject *child = firstChild(); child; child = child->nextSibling())
         if (child->isTableSection() || child == tCaption)
 	    child->paint(paintInfo, _tx, _ty);
 
-    if (collapseBorders() && paintAction == PaintActionChildBackground && style()->visibility() == VISIBLE) {
+    if (collapseBorders() && paintAction == PaintActionChildBlockBackground && style()->visibility() == VISIBLE) {
         // Collect all the unique border styles that we want to paint in a sorted list.  Once we
         // have all the styles sorted, we then do individual passes, painting each style of border
         // from lowest precedence to highest precedence.

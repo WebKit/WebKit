@@ -825,7 +825,7 @@ RenderLayer::paintLayer(RenderLayer* rootLayer, QPainter *p,
         setClip(p, paintDirtyRect, damageRect);
 
         // Paint the background.
-        RenderObject::PaintInfo info(p, damageRect, PaintActionElementBackground, paintingRootForRenderer);
+        RenderObject::PaintInfo info(p, damageRect, PaintActionBlockBackground, paintingRootForRenderer);
         renderer()->paint(info, x - renderer()->xPos(), y - renderer()->yPos());        
 #if APPLE_CHANGES
         // Our scrollbar widgets paint exactly when we tell them to, so that they work properly with
@@ -860,7 +860,7 @@ RenderLayer::paintLayer(RenderLayer* rootLayer, QPainter *p,
         int tx = x - renderer()->xPos();
         int ty = y - renderer()->yPos();
         RenderObject::PaintInfo info(p, clipRectToApply, 
-                                     selectionOnly ? PaintActionSelection : PaintActionChildBackgrounds,
+                                     selectionOnly ? PaintActionSelection : PaintActionChildBlockBackgrounds,
                                      paintingRootForRenderer);
         renderer()->paint(info, tx, ty);
         if (!selectionOnly) {
@@ -895,7 +895,7 @@ RenderLayer::paintLayer(RenderLayer* rootLayer, QPainter *p,
 }
 
 bool
-RenderLayer::nodeAtPoint(RenderObject::NodeInfo& info, int x, int y)
+RenderLayer::hitTest(RenderObject::NodeInfo& info, int x, int y)
 {
 #if APPLE_CHANGES
     // Clear our our scrollbar variable
@@ -903,7 +903,7 @@ RenderLayer::nodeAtPoint(RenderObject::NodeInfo& info, int x, int y)
 #endif
     
     QRect damageRect(m_x, m_y, width(), height());
-    RenderLayer* insideLayer = nodeAtPointForLayer(this, info, x, y, damageRect);
+    RenderLayer* insideLayer = hitTestLayer(this, info, x, y, damageRect);
 
     // Now determine if the result is inside an anchor; make sure an image map wins if
     // it already set URLElement and only use the innermost.
@@ -923,8 +923,8 @@ RenderLayer::nodeAtPoint(RenderObject::NodeInfo& info, int x, int y)
 }
 
 RenderLayer*
-RenderLayer::nodeAtPointForLayer(RenderLayer* rootLayer, RenderObject::NodeInfo& info,
-                                 int xMousePos, int yMousePos, const QRect& hitTestRect)
+RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderObject::NodeInfo& info,
+                          int xMousePos, int yMousePos, const QRect& hitTestRect)
 {
     // Calculate the clip rects we should use.
     QRect layerBounds, bgRect, fgRect;
@@ -943,43 +943,38 @@ RenderLayer::nodeAtPointForLayer(RenderLayer* rootLayer, RenderObject::NodeInfo&
         uint count = m_posZOrderList->count();
         for (int i = count-1; i >= 0; i--) {
             RenderLayer* child = m_posZOrderList->at(i);
-            insideLayer = child->nodeAtPointForLayer(rootLayer, info, xMousePos, yMousePos, hitTestRect);
+            insideLayer = child->hitTestLayer(rootLayer, info, xMousePos, yMousePos, hitTestRect);
             if (insideLayer)
                 return insideLayer;
         }
     }
 
     // Next we want to see if the mouse pos is inside the child RenderObjects of the layer.
-    if (containsPoint(xMousePos, yMousePos, fgRect) &&
-        renderer()->nodeAtPoint(info, xMousePos, yMousePos,
-                                layerBounds.x() - renderer()->xPos(),
-                                layerBounds.y() - renderer()->yPos(),
-                                HitTestChildrenOnly)) {
+    if (containsPoint(xMousePos, yMousePos, fgRect) && 
+        renderer()->hitTest(info, xMousePos, yMousePos,
+                            layerBounds.x() - renderer()->xPos(),
+                            layerBounds.y() - renderer()->yPos(), HitTestDescendants)) {
+        // for positioned generated content, we might still not have a
+        // node by the time we get to the layer level, since none of
+        // the content in the layer has an element. So just walk up
+        // the tree.
+        if (!info.innerNode()) {
+            for (RenderObject *r = renderer(); r != NULL; r = r->parent()) { 
+                if (r->element()) {
+                    info.setInnerNode(r->element());
+                    break;
+                }
+            }
+        }
 
-	// for positioned generated content, we might still not have a
-	// node by the time we get to the layer level, since none of
-	// the content in the layer has an element. So just walk up
-	// the tree.
-         if (!info.innerNode()) {
-	    for (RenderObject *r = renderer(); r != NULL; r = r->parent()) { 
-		if (r->element()) {
-		    info.setInnerNode(r->element());
-		    break;
-		}
-	    }
-	 }
-
-	 if (!info.innerNonSharedNode()) {
-	     for (RenderObject *r = renderer(); r != NULL; r = r->parent()) { 
-		 if (r->element()) {
-		     info.setInnerNonSharedNode(r->element());
-		     break;
-		 }
-	     }
-	 }
-
-
-
+        if (!info.innerNonSharedNode()) {
+             for (RenderObject *r = renderer(); r != NULL; r = r->parent()) { 
+                 if (r->element()) {
+                     info.setInnerNonSharedNode(r->element());
+                     break;
+                 }
+             }
+        }
         return this;
     }
         
@@ -988,7 +983,7 @@ RenderLayer::nodeAtPointForLayer(RenderLayer* rootLayer, RenderObject::NodeInfo&
         uint count = m_negZOrderList->count();
         for (int i = count-1; i >= 0; i--) {
             RenderLayer* child = m_negZOrderList->at(i);
-            insideLayer = child->nodeAtPointForLayer(rootLayer, info, xMousePos, yMousePos, hitTestRect);
+            insideLayer = child->hitTestLayer(rootLayer, info, xMousePos, yMousePos, hitTestRect);
             if (insideLayer)
                 return insideLayer;
         }
@@ -996,10 +991,10 @@ RenderLayer::nodeAtPointForLayer(RenderLayer* rootLayer, RenderObject::NodeInfo&
 
     // Next we want to see if the mouse pos is inside this layer but not any of its children.
     if (containsPoint(xMousePos, yMousePos, bgRect) &&
-        renderer()->nodeAtPoint(info, xMousePos, yMousePos,
-                                layerBounds.x() - renderer()->xPos(),
-                                layerBounds.y() - renderer()->yPos(),
-                                HitTestSelfOnly))
+        renderer()->hitTest(info, xMousePos, yMousePos,
+                            layerBounds.x() - renderer()->xPos(),
+                            layerBounds.y() - renderer()->yPos(),
+                            HitTestSelf))
         return this;
 
     // No luck.

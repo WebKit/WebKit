@@ -1885,67 +1885,51 @@ void RenderObject::updateDragState(bool dragOn)
         continuation()->updateDragState(dragOn);
 }
 
-bool RenderObject::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty,
-                               HitTestAction hitTestAction, bool inside)
+bool RenderObject::hitTest(NodeInfo& info, int x, int y, int tx, int ty, HitTestFilter hitTestFilter)
 {
-    int tx = _tx + xPos();
-    int ty = _ty + yPos();
+    bool inside = false;
+    if (hitTestFilter != HitTestSelf) {
+        // First test the foreground layer (lines and inlines).
+        inside = nodeAtPoint(info, x, y, tx, ty, HitTestForeground);
+        
+        // Test floats next.
+        if (!inside)
+            inside = nodeAtPoint(info, x, y, tx, ty, HitTestFloat);
 
-    QRect boundsRect(tx, ty, width(), height());
-    inside |= (style()->visibility() != HIDDEN && boundsRect.contains(_x, _y)) || isBody() || isRoot();
-    bool inOverflowRect = inside;
-    if (!inOverflowRect) {
-        QRect overflowRect(tx, ty, overflowWidth(false), overflowHeight(false));
-        inOverflowRect = overflowRect.contains(_x, _y);
+        // Finally test to see if the mouse is in the background (within a child block's background).
+        if (!inside)
+            inside = nodeAtPoint(info, x, y, tx, ty, HitTestChildBlockBackgrounds);
     }
     
-    // ### table should have its own, more performant method
-    if (hitTestAction != HitTestSelfOnly &&
-        ((!isRenderBlock() ||
-         !static_cast<RenderBlock*>(this)->isPointInScrollbar(_x, _y, _tx, _ty)) &&
-        (inOverflowRect || isInline() || isCanvas() ||
-         isTableRow() || isTableSection() || inside || mouseInside() ||
-         (childrenInline() && firstChild() && firstChild()->isCompact())))) {
-        if (hitTestAction == HitTestChildrenOnly)
-            inside = false;
-        int stx = _tx + xPos();
-        int sty = _ty + yPos();
-        if (hasOverflowClip())
-            layer()->subtractScrollOffset(stx, sty);
-        for (RenderObject* child = lastChild(); child; child = child->previousSibling())
-            if (!child->layer() && !child->isFloating() &&
-                child->nodeAtPoint(info, _x, _y, stx, sty))
-                inside = true;
-    }
-
-    if (inside) {
-        if (!info.innerNode() && !isInline() && continuation()) {
-            // We are in the margins of block elements that are part of a continuation.  In
-            // this case we're actually still inside the enclosing inline element that was
-            // split.  Go ahead and set our inner node accordingly.
-            info.setInnerNode(continuation()->element());
-            if (!info.innerNonSharedNode())
-                info.setInnerNonSharedNode(continuation()->element());
-        }
-            
-        if (info.innerNode() && info.innerNode()->renderer() && 
-            !info.innerNode()->renderer()->isInline() && element() && isInline()) {
-            // Within the same layer, inlines are ALWAYS fully above blocks.  Change inner node.
-            info.setInnerNode(element());
-            
-            // Clear everything else.
-            info.setInnerNonSharedNode(0);
-            info.setURLElement(0);
-        }
+    // See if the mouse is inside us but not any of our descendants
+    if (hitTestFilter != HitTestDescendants && !inside)
+        inside = nodeAtPoint(info, x, y, tx, ty, HitTestBlockBackground);
         
-        if (!info.innerNode() && element())
-            info.setInnerNode(element());
+    return inside;
+}
 
-        if(!info.innerNonSharedNode() && element())
-            info.setInnerNonSharedNode(element());
+void RenderObject::setInnerNode(NodeInfo& info)
+{
+    if (!info.innerNode() && !isInline() && continuation()) {
+        // We are in the margins of block elements that are part of a continuation.  In
+        // this case we're actually still inside the enclosing inline element that was
+        // split.  Go ahead and set our inner node accordingly.
+        info.setInnerNode(continuation()->element());
+        if (!info.innerNonSharedNode())
+            info.setInnerNonSharedNode(continuation()->element());
     }
 
-    return inside;
+    if (!info.innerNode() && element())
+        info.setInnerNode(element());
+            
+    if(!info.innerNonSharedNode() && element())
+        info.setInnerNonSharedNode(element());
+}
+
+bool RenderObject::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty,
+                               HitTestAction hitTestAction)
+{
+    return false;
 }
 
 short RenderObject::verticalPositionHint( bool firstLine ) const

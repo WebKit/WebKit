@@ -69,7 +69,7 @@ public:
     CachedImage* getImage() const { return image; }
     
     virtual bool nodeAtPoint(NodeInfo& info, int x, int y, int tx, int ty,
-                             HitTestAction hitTestAction = HitTestAll, bool inside=false);
+                             HitTestAction hitTestAction);
     
     virtual int calcReplacedWidth() const;
     virtual int calcReplacedHeight() const;

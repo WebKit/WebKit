@@ -199,6 +199,32 @@ int RenderBox::height() const
     return m_height;
 }
 
+// Hit Testing
+bool RenderBox::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty,
+                            HitTestAction hitTestAction)
+{
+    // Check kids first.
+    _tx += m_x;
+    _ty += m_y;
+    for (RenderObject* child = lastChild(); child; child = child->previousSibling()) {
+        if (child->nodeAtPoint(info, _x, _y, _tx, _ty, hitTestAction)) {
+            setInnerNode(info);
+            return true;
+        }
+    }
+    
+    // Check our bounds next.  For this purpose always assume that we can only be hit in the
+    // foreground phase (which is true for replaced elements like images).
+    if (hitTestAction != HitTestForeground)
+        return false;
+    
+    QRect boundsRect(_tx, _ty, m_width, m_height);
+    if (boundsRect.contains(_x, _y)) {
+        setInnerNode(info);
+        return true;
+    }
+    return false;
+}
 
 // --------------------- painting stuff -------------------------------
 

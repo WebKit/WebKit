@@ -66,9 +66,9 @@ class RenderArena;
  */
 
 typedef enum {
-    PaintActionElementBackground = 0,
-    PaintActionChildBackground,
-    PaintActionChildBackgrounds,
+    PaintActionBlockBackground,
+    PaintActionChildBlockBackground,
+    PaintActionChildBlockBackgrounds,
     PaintActionFloat,
     PaintActionForeground,
     PaintActionOutline,
@@ -77,9 +77,17 @@ typedef enum {
 } PaintAction;
 
 typedef enum {
-    HitTestAll = 0,
-    HitTestSelfOnly = 1,
-    HitTestChildrenOnly = 2
+    HitTestAll,
+    HitTestSelf,
+    HitTestDescendants
+} HitTestFilter;
+
+typedef enum {
+    HitTestBlockBackground,
+    HitTestChildBlockBackground,
+    HitTestChildBlockBackgrounds,
+    HitTestFloat,
+    HitTestForeground
 } HitTestAction;
 
 namespace DOM {
@@ -384,11 +392,13 @@ public:
      */
     struct PaintInfo {
         PaintInfo(QPainter* _p, const QRect& _r, PaintAction _phase, RenderObject *_paintingRoot)
-        : p(_p), r(_r), phase(_phase), paintingRoot(_paintingRoot) {}
+        : p(_p), r(_r), phase(_phase), paintingRoot(_paintingRoot), outlineObjects(0) {}
+        ~PaintInfo() { delete outlineObjects; }
         QPainter* p;
         QRect     r;
         PaintAction phase;
         RenderObject *paintingRoot;      // used to draw just one element and its visual kids
+        QPtrDict<RenderFlow>* outlineObjects; // used to list which outlines should be painted by a block with inline children
     };
     virtual void paint(PaintInfo& i, int tx, int ty);
     void paintBorder(QPainter *p, int _tx, int _ty, int w, int h, const RenderStyle* style, bool begin=true, bool end=true);
@@ -505,9 +515,11 @@ public:
         RepaintInfo(RenderObject* o, const QRect& r) :m_object(o), m_repaintRect(r) {}
     };
     
+    bool hitTest(NodeInfo& info, int x, int y, int tx, int ty, HitTestFilter hitTestFilter = HitTestAll);
     virtual bool nodeAtPoint(NodeInfo& info, int x, int y, int tx, int ty,
-                             HitTestAction hitTestAction = HitTestAll, bool inside=false);
-    
+                             HitTestAction hitTestAction);
+    void setInnerNode(NodeInfo& info);
+
     virtual DOM::Position positionForCoordinates(int x, int y, EAffinity * = 0);
     
     virtual void dirtyLinesFromChangedChild(RenderObject* child, bool adding = true);
@@ -819,6 +831,15 @@ public:
 
     virtual void selectionStartEnd(int& spos, int& epos);
 
+    RenderObject* paintingRootForChildren(PaintInfo &i) const {
+        // if we're the painting root, kids draw normally, and see root of 0
+        return (!i.paintingRoot || i.paintingRoot == this) ? 0 : i.paintingRoot;
+    }
+
+    bool shouldPaintWithinRoot(PaintInfo &i) const {
+        return !i.paintingRoot || i.paintingRoot == this;
+    }
+    
 protected:
 
     virtual void printBoxDecorations(QPainter* /*p*/, int /*_x*/, int /*_y*/,
@@ -834,14 +855,6 @@ protected:
     virtual void removeLeftoverAnonymousBoxes();
     
     void arenaDelete(RenderArena *arena);
-
-    RenderObject *paintingRootForChildren(PaintInfo &i) const {
-        // if we're the painting root, kids draw normally, and see root of 0
-        return (!i.paintingRoot || i.paintingRoot == this) ? 0 : i.paintingRoot;
-    }
-    bool shouldPaintWithinRoot(PaintInfo &i) const {
-        return !i.paintingRoot || i.paintingRoot == this;
-    }
 
 private:
     RenderStyle* m_style;

@@ -335,64 +335,105 @@ InlineBox* RenderFlow::createInlineBox(bool makePlaceHolderBox, bool isRootLineB
     return flowBox;
 }
 
-void RenderFlow::paintLineBoxBackgroundBorder(PaintInfo& i, int _tx, int _ty)
+void RenderFlow::paintLines(PaintInfo& i, int _tx, int _ty)
 {
-    if (!shouldPaintWithinRoot(i))
+    // Only paint during the foreground/selection phases.
+    if (i.phase != PaintActionForeground && i.phase != PaintActionSelection && i.phase != PaintActionOutline)
         return;
 
+    bool inlineFlow = isInlineFlow();
+    if (inlineFlow)
+        KHTMLAssert(m_layer); // The only way a compact/run-in/inline could paint like this is if it has a layer.
+
+    // If we have no lines then we have no work to do.
     if (!firstLineBox())
         return;
- 
-    if (style()->visibility() == VISIBLE && i.phase == PaintActionForeground) {
-        // We can check the first box and last box and avoid painting if we don't
-        // intersect.
-        int yPos = _ty + firstLineBox()->yPos();
-        int h = lastLineBox()->yPos() + lastLineBox()->height() - firstLineBox()->yPos();
-        if( (yPos >= i.r.y() + i.r.height()) || (yPos + h <= i.r.y()))
-            return;
 
-        // See if our boxes intersect with the dirty rect.  If so, then we paint
-        // them.  Note that boxes can easily overlap, so we can't make any assumptions
-        // based off positions of our first line box or our last line box.
-        int xOffsetWithinLineBoxes = 0;
-        for (InlineRunBox* curr = firstLineBox(); curr; curr = curr->nextLineBox()) {
-            yPos = _ty + curr->yPos();
-            h = curr->height();
-            if ((yPos < i.r.y() + i.r.height()) && (yPos + h > i.r.y()))
-                curr->paintBackgroundAndBorder(i, _tx, _ty, xOffsetWithinLineBoxes);
-            xOffsetWithinLineBoxes += curr->width();
+    // We can check the first box and last box and avoid painting if we don't
+    // intersect.  This is a quick short-circuit that we can take to avoid walking any lines.
+    // FIXME: This check is flawed in two extremely obscure ways.
+    // (1) If some line in the middle has a huge overflow, it might actually extend below the last line.
+    // (2) The overflow from an inline block on a line is not reported to the line.
+    int yPos = firstLineBox()->root()->selectionTop() - maximalOutlineSize(i.phase);
+    int h = maximalOutlineSize(i.phase) + lastLineBox()->root()->selectionTop() + lastLineBox()->root()->selectionHeight() - yPos;
+    yPos += _ty;
+    if ((yPos >= i.r.y() + i.r.height()) || (yPos + h <= i.r.y()))
+        return;
+
+    // See if our root lines intersect with the dirty rect.  If so, then we paint
+    // them.  Note that boxes can easily overlap, so we can't make any assumptions
+    // based off positions of our first line box or our last line box.
+    bool isPrinting = (i.p->device()->devType() == QInternal::Printer);
+    for (InlineFlowBox* curr = firstLineBox(); curr; curr = curr->nextFlowBox()) {
+        if (isPrinting) {
+            // FIXME: This is a feeble effort to avoid splitting a line across two pages.
+            // It is utterly inadequate, and this should not be done at paint time at all.
+            // The whole way objects break across pages needs to be redone.
+            if (_ty + curr->root()->bottomOverflow() > i.r.y() + i.r.height()) {
+                RenderCanvas* canvasObj = canvas();
+                if (_ty + curr->root()->topOverflow() < canvasObj->truncatedAt())
+                    canvasObj->setBestTruncatedAt(_ty + curr->root()->topOverflow(), this);
+                // Let's stop here.
+                break;
+            }
+        }
+
+        yPos = _ty + curr->root()->selectionTop() - maximalOutlineSize(i.phase);
+        h = curr->root()->selectionHeight() + 2 * maximalOutlineSize(i.phase);
+        if ((yPos < i.r.y() + i.r.height()) && (yPos + h > i.r.y()))
+            curr->paint(i, _tx, _ty);
+    }
+
+    if (i.phase == PaintActionOutline && i.outlineObjects) {
+        // FIXME: Will the order in which we added objects to the dictionary be preserved? Probably not.
+        // This means the paint order of outlines will be wrong, although this is a minor issue.
+        QPtrDictIterator<RenderFlow> objects(*i.outlineObjects);
+        for (objects.toFirst(); objects.current(); ++objects) {
+#ifdef APPLE_CHANGES
+            if (objects.current()->style()->outlineStyleIsAuto())
+                objects.current()->paintFocusRing(i.p, _tx, _ty);
+            else
+#endif
+                objects.current()->paintOutlines(i.p, _tx, _ty);
         }
     }
 }
 
-void RenderFlow::paintLineBoxDecorations(PaintInfo& i, int _tx, int _ty, bool paintedChildren)
+bool RenderFlow::hitTestLines(NodeInfo& i, int x, int y, int tx, int ty, HitTestAction hitTestAction)
 {
-    if (!shouldPaintWithinRoot(i))
-        return;
+    if (hitTestAction != HitTestForeground)
+        return false;
 
-    // We only paint line box decorations in strict or almost strict mode.
-    // Otherwise we let the InlineTextBoxes paint their own decorations.
-    if (style()->htmlHacks() || !firstLineBox())
-        return;
+    bool inlineFlow = isInlineFlow();
+    if (inlineFlow)
+        KHTMLAssert(m_layer); // The only way a compact/run-in/inline could paint like this is if it has a layer.
 
-    if (style()->visibility() == VISIBLE && i.phase == PaintActionForeground) {
-        // We can check the first box and last box and avoid painting if we don't
-        // intersect.
-        int yPos = _ty + firstLineBox()->yPos();;
-        int h = lastLineBox()->yPos() + lastLineBox()->height() - firstLineBox()->yPos();
-        if( (yPos >= i.r.y() + i.r.height()) || (yPos + h <= i.r.y()))
-            return;
+    // If we have no lines then we have no work to do.
+    if (!firstLineBox())
+        return false;
 
-        // See if our boxes intersect with the dirty rect.  If so, then we paint
-        // them.  Note that boxes can easily overlap, so we can't make any assumptions
-        // based off positions of our first line box or our last line box.
-        for (InlineRunBox* curr = firstLineBox(); curr; curr = curr->nextLineBox()) {
-            yPos = _ty + curr->yPos();
-            h = curr->height();
-            if ((yPos < i.r.y() + i.r.height()) && (yPos + h > i.r.y()))
-                curr->paintDecorations(i, _tx, _ty, paintedChildren);
+    // We can check the first box and last box and avoid hit testing if we don't
+    // contain the point.  This is a quick short-circuit that we can take to avoid walking any lines.
+    // FIXME: This check is flawed in two extremely obscure ways.
+    // (1) If some line in the middle has a huge overflow, it might actually extend below the last line.
+    // (2) The overflow from an inline block on a line is not reported to the line.
+    if ((y >= ty + lastLineBox()->root()->bottomOverflow()) || (y < ty + firstLineBox()->root()->topOverflow()))
+        return false;
+
+    // See if our root lines contain the point.  If so, then we hit test
+    // them further.  Note that boxes can easily overlap, so we can't make any assumptions
+    // based off positions of our first line box or our last line box.
+    for (InlineFlowBox* curr = lastLineBox(); curr; curr = curr->prevFlowBox()) {
+        if (y >= ty + curr->root()->topOverflow() && y < ty + curr->root()->bottomOverflow()) {
+            bool inside = curr->nodeAtPoint(i, x, y, tx, ty);
+            if (inside) {
+                setInnerNode(i);
+                return true;
+            }
         }
     }
+    
+    return false;
 }
 
 QRect RenderFlow::getAbsoluteRepaintRect()
@@ -586,4 +627,142 @@ QRect RenderFlow::caretRect(int offset, EAffinity affinity, int *extraWidthToEnd
     _y += absy + paddingTop() + borderTop();
 
     return QRect(_x, _y, width, height);
+}
+
+#if APPLE_CHANGES
+void RenderFlow::addFocusRingRects(QPainter *p, int _tx, int _ty)
+{
+    for (InlineRunBox* curr = firstLineBox(); curr; curr = curr->nextLineBox()) {
+        p->addFocusRingRect(_tx + curr->xPos(), 
+                            _ty + curr->yPos(), 
+                            curr->width(), 
+                            curr->height());
+    }
+    
+    for (RenderObject* curr = firstChild(); curr; curr = curr->nextSibling()) {
+        if (!curr->isText())
+            curr->addFocusRingRects(p, _tx + curr->xPos(), _ty + curr->yPos());
+    }
+    
+    if (continuation())
+        continuation()->addFocusRingRects(p, 
+                                          _tx - containingBlock()->xPos() + continuation()->xPos(),
+                                          _ty - containingBlock()->yPos() + continuation()->yPos());
+}
+
+void RenderFlow::paintFocusRing(QPainter *p, int tx, int ty)
+{
+    int ow = style()->outlineWidth();
+    QColor oc = style()->outlineColor();
+    if (!oc.isValid())
+        oc = style()->color();
+    
+    p->initFocusRing(ow,  style()->outlineOffset(), oc);
+    addFocusRingRects(p, tx, ty);
+    p->drawFocusRing();
+    p->clearFocusRing();
+}
+#endif
+
+void RenderFlow::paintOutlines(QPainter *p, int _tx, int _ty)
+{
+    if (style()->outlineStyle() <= BHIDDEN)
+        return;
+    
+    QPtrList <QRect> rects;
+    rects.setAutoDelete(true);
+    
+    rects.append(new QRect(0,0,0,0));
+    for (InlineRunBox* curr = firstLineBox(); curr; curr = curr->nextLineBox()) {
+        rects.append(new QRect(curr->xPos(), curr->yPos(), curr->width(), curr->height()));
+    }
+    rects.append(new QRect(0,0,0,0));
+    
+    for (unsigned int i = 1; i < rects.count() - 1; i++)
+        paintOutlineForLine(p, _tx, _ty, *rects.at(i-1), *rects.at(i), *rects.at(i+1));
+}
+
+void RenderFlow::paintOutlineForLine(QPainter *p, int tx, int ty, const QRect &lastline, const QRect &thisline, const QRect &nextline)
+{
+    int ow = style()->outlineWidth();
+    EBorderStyle os = style()->outlineStyle();
+    QColor oc = style()->outlineColor();
+    if (!oc.isValid())
+        oc = style()->color();
+    
+    int offset = style()->outlineOffset();
+    
+    int t = ty + thisline.top() - offset;
+    int l = tx + thisline.left() - offset;
+    int b = ty + thisline.bottom() + offset + 1;
+    int r = tx + thisline.right() + offset + 1;
+    
+    // left edge
+    drawBorder(p,
+               l - ow,
+               t - (lastline.isEmpty() || thisline.left() < lastline.left() || lastline.right() <= thisline.left() ? ow : 0),
+               l,
+               b + (nextline.isEmpty() || thisline.left() <= nextline.left() || nextline.right() <= thisline.left() ? ow : 0),
+               BSLeft,
+               oc, style()->color(), os,
+               (lastline.isEmpty() || thisline.left() < lastline.left() || lastline.right() <= thisline.left() ? ow : -ow),
+               (nextline.isEmpty() || thisline.left() <= nextline.left() || nextline.right() <= thisline.left() ? ow : -ow),
+               true);
+    
+    // right edge
+    drawBorder(p,
+               r,
+               t - (lastline.isEmpty() || lastline.right() < thisline.right() || thisline.right() <= lastline.left() ? ow : 0),
+               r + ow,
+               b + (nextline.isEmpty() || nextline.right() <= thisline.right() || thisline.right() <= nextline.left() ? ow : 0),
+               BSRight,
+               oc, style()->color(), os,
+               (lastline.isEmpty() || lastline.right() < thisline.right() || thisline.right() <= lastline.left() ? ow : -ow),
+               (nextline.isEmpty() || nextline.right() <= thisline.right() || thisline.right() <= nextline.left() ? ow : -ow),
+               true);
+    // upper edge
+    if ( thisline.left() < lastline.left())
+        drawBorder(p,
+                   l - ow,
+                   t - ow,
+                   QMIN(r+ow, (lastline.isValid()? tx+lastline.left() : 1000000)),
+                   t ,
+                   BSTop, oc, style()->color(), os,
+                   ow,
+                   (lastline.isValid() && tx+lastline.left()+1<r+ow ? -ow : ow),
+                   true);
+    
+    if (lastline.right() < thisline.right())
+        drawBorder(p,
+                   QMAX(lastline.isValid()?tx + lastline.right() + 1:-1000000, l - ow),
+                   t - ow,
+                   r + ow,
+                   t ,
+                   BSTop, oc, style()->color(), os,
+                   (lastline.isValid() && l-ow < tx+lastline.right()+1 ? -ow : ow),
+                   ow,
+                   true);
+    
+    // lower edge
+    if ( thisline.left() < nextline.left())
+        drawBorder(p,
+                   l - ow,
+                   b,
+                   QMIN(r+ow, nextline.isValid()? tx+nextline.left()+1 : 1000000),
+                   b + ow,
+                   BSBottom, oc, style()->color(), os,
+                   ow,
+                   (nextline.isValid() && tx+nextline.left()+1<r+ow? -ow : ow),
+                   true);
+    
+    if (nextline.right() < thisline.right())
+        drawBorder(p,
+                   QMAX(nextline.isValid()?tx+nextline.right()+1:-1000000 , l-ow),
+                   b,
+                   r + ow,
+                   b + ow,
+                   BSBottom, oc, style()->color(), os,
+                   (nextline.isValid() && l-ow < tx+nextline.right()+1? -ow : ow),
+                   ow,
+                   true);
 }

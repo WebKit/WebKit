@@ -202,7 +202,7 @@ void RenderCanvas::paint(PaintInfo& i, int _tx, int _ty)
     kdDebug( 6040 ) << renderName() << "(RenderCanvas) " << this << " ::paintObject() w/h = (" << width() << "/" << height() << ")" << endl;
 #endif
     // 1. paint background, borders etc
-    if (i.phase == PaintActionElementBackground) {
+    if (i.phase == PaintActionBlockBackground) {
         paintBoxDecorations(i, _tx, _ty);
         return;
     }

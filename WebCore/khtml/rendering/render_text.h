@@ -79,7 +79,11 @@ public:
     
     QRect selectionRect(int absx, int absy, int startPos, int endPos);
     bool isSelected(int startPos, int endPos) const;
+    void selectionStartEnd(int& sPos, int& ePos);
     
+    virtual void paint(RenderObject::PaintInfo& i, int tx, int ty);
+    virtual bool nodeAtPoint(RenderObject::NodeInfo& i, int x, int y, int tx, int ty);
+
     RenderText* textObject();
     
     virtual void deleteLine(RenderArena* arena);
@@ -110,12 +114,10 @@ public:
     virtual bool isText() const { return m_treatAsText; }
     void setIsText(bool b) { m_treatAsText = b; }
     
-    void paintDecoration( QPainter *pt, int _tx, int _ty, int decoration);
-    void paintSelection(const Font *f, RenderText *text, QPainter *p, RenderStyle* style, int tx, int ty, int startPos, int endPos);
-#if APPLE_CHANGES
-    void paintMarkedTextBackground(const Font *f, RenderText *text, QPainter *p, RenderStyle* style, int tx, int ty, int startPos, int endPos);
-#endif
-    void paintMarker(QPainter *pt, int _tx, int _ty, DOM::DocumentMarker marker);
+    void paintDecoration(QPainter* p, int _tx, int _ty, int decoration);
+    void paintSelection(QPainter* p, int tx, int ty, RenderStyle* style, const Font* font);
+    void paintMarkedTextBackground(QPainter* p, int tx, int ty, RenderStyle* style, const Font* font, int startPos, int endPos);
+    void paintMarker(QPainter* p, int _tx, int _ty, DOM::DocumentMarker marker);
 
     virtual long caretMinOffset() const;
     virtual long caretMaxOffset() const;
@@ -158,8 +160,6 @@ public:
     virtual const char *renderName() const { return "RenderText"; }
 
     virtual void setStyle(RenderStyle *style);
-    
-    virtual void paint(PaintInfo& i, int tx, int ty);
 
     void extractTextBox(InlineTextBox* textBox);
     void attachTextBox(InlineTextBox* textBox);
@@ -173,10 +173,11 @@ public:
     virtual InlineBox* createInlineBox(bool,bool, bool isOnlyRun = false);
     virtual void dirtyLineBoxes(bool fullLayout, bool isRootInlineBox = false);
     
-    virtual void layout() {assert(false);}
+    virtual void paint(PaintInfo& i, int tx, int ty) { assert(false); }
+    virtual void layout() { assert(false); }
 
     virtual bool nodeAtPoint(NodeInfo& info, int x, int y, int tx, int ty,
-                             HitTestAction hitTestAction = HitTestAll, bool inside=false);
+                             HitTestAction hitTestAction) { assert(false); return false; }
 
     virtual void absoluteRects(QValueList<QRect>& rects, int _tx, int _ty);
 

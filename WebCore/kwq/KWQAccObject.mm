@@ -659,7 +659,7 @@ static QRect boundingBoxRect(RenderObject* obj)
         return self;
     
     RenderObject::NodeInfo nodeInfo(true, true);
-    m_renderer->layer()->nodeAtPoint(nodeInfo, (int)point.x, (int)point.y);
+    m_renderer->layer()->hitTest(nodeInfo, (int)point.x, (int)point.y);
     if (!nodeInfo.innerNode())
         return self;
     RenderObject* obj = nodeInfo.innerNode()->renderer();

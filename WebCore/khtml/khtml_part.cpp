@@ -4397,7 +4397,7 @@ bool KHTMLPart::isPointInsideSelection(int x, int y)
         return false;
     
     RenderObject::NodeInfo nodeInfo(true, true);
-    xmlDocImpl()->renderer()->layer()->nodeAtPoint(nodeInfo, x, y);
+    xmlDocImpl()->renderer()->layer()->hitTest(nodeInfo, x, y);
     NodeImpl *innerNode = nodeInfo.innerNode();
     if (!innerNode || !innerNode->renderer())
         return false;

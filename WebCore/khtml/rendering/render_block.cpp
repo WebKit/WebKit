@@ -1178,14 +1178,17 @@ void RenderBlock::paint(PaintInfo& i, int _tx, int _ty)
     _tx += m_x;
     _ty += m_y;
 
-    // check if we need to do anything at all...
-    if (!isRoot() && !isInlineFlow() && !isRelPositioned() && !isPositioned()) {
+    // Check if we need to do anything at all.
+    // FIXME: This check is limited to only the y-coordinates when it could check x as well.
+    // Compacts keep us from being strict about x-direction at the moment.
+    if (!isInlineFlow() && !isRoot()) {
         int h = m_overflowHeight;
         int yPos = _ty;
         if (m_floatingObjects && floatBottom() > h)
             h = floatBottom();
 
-        // Sanity check the first line
+        // FIXME: This is a pretty feeble check that doesn't really work in practice, since top overflow
+        // is not propagated. Sanity check the first line
         // to see if it extended a little above our box. Overflow out the bottom is already handled via
         // overflowHeight(), so we don't need to check that.
         if (m_firstLineBox && m_firstLineBox->topOverflow() < 0)
@@ -1196,41 +1199,16 @@ void RenderBlock::paint(PaintInfo& i, int _tx, int _ty)
             return;
     }
 
-    return RenderBlock::paintObject(i, _tx, _ty);
+    return paintObject(i, _tx, _ty);
 }
 
-void RenderBlock::paintObject(PaintInfo& i, int _tx, int _ty)
+void RenderBlock::paintChildren(PaintInfo& i, int _tx, int _ty)
 {
-    PaintAction paintAction = i.phase;
-
-    // If we're a repositioned run-in, don't paint background/borders.
-    bool inlineFlow = isInlineFlow();
+    // We don't paint our own background, but we do let the kids paint their backgrounds.
+    PaintInfo paintInfo(i.p, i.r, i.phase == PaintActionChildBlockBackgrounds ? PaintActionChildBlockBackground : i.phase,
+                        paintingRootForChildren(i));
     bool isPrinting = (i.p->device()->devType() == QInternal::Printer);
 
-    // 1. paint background, borders etc
-    if (!inlineFlow &&
-        (paintAction == PaintActionElementBackground || paintAction == PaintActionChildBackground) &&
-        shouldPaintBackgroundOrBorder() && style()->visibility() == VISIBLE) {
-        paintBoxDecorations(i, _tx, _ty);
-    }
-
-    // We're done.  We don't bother painting any children.
-    if (paintAction == PaintActionElementBackground)
-        return;
-    // We don't paint our own background, but we do let the kids paint their backgrounds.
-    if (paintAction == PaintActionChildBackgrounds)
-        paintAction = PaintActionChildBackground;
-    PaintInfo paintInfo(i.p, i.r, paintAction, paintingRootForChildren(i));
-    
-    paintLineBoxBackgroundBorder(paintInfo, _tx, _ty);
-
-    // 2. paint contents
-    int scrolledX = _tx;
-    int scrolledY = _ty;
-    if (hasOverflowClip())
-        m_layer->subtractScrollOffset(scrolledX, scrolledY);
-    
-    paintLineBoxDecorations(paintInfo, scrolledX, scrolledY); // Underline/overline
     for (RenderObject *child = firstChild(); child; child = child->nextSibling()) {        
         // Check for page-break-before: always, and if it's set, break and bail.
         if (isPrinting && !childrenInline() && child->style()->pageBreakBefore() == PBALWAYS &&
@@ -1241,7 +1219,7 @@ void RenderBlock::paintObject(PaintInfo& i, int _tx, int _ty)
         }
         
         if (!child->layer() && !child->isFloating())
-            child->paint(paintInfo, scrolledX, scrolledY);
+            child->paint(paintInfo, _tx, _ty);
         
         // Check for page-break-after: always, and if it's set, break and bail.
         if (isPrinting && !childrenInline() && child->style()->pageBreakAfter() == PBALWAYS && 
@@ -1251,28 +1229,55 @@ void RenderBlock::paintObject(PaintInfo& i, int _tx, int _ty)
             return;
         }
     }
-    paintLineBoxDecorations(paintInfo, scrolledX, scrolledY, true); // Strike-through
-    if (!inlineFlow) {
-        paintEllipsisBoxes(paintInfo, scrolledX, scrolledY); // Text overflow ellipsis (...)
-        paintSelection(paintInfo, scrolledX, scrolledY); // Fill in gaps in selection on lines and between blocks.
+}
+
+void RenderBlock::paintObject(PaintInfo& i, int _tx, int _ty)
+{
+    PaintAction paintAction = i.phase;
+
+    // If we're a repositioned run-in or a compact, don't paint background/borders.
+    bool inlineFlow = isInlineFlow();
+
+    // 1. paint background, borders etc
+    if (!inlineFlow &&
+        (paintAction == PaintActionBlockBackground || paintAction == PaintActionChildBlockBackground) &&
+        shouldPaintBackgroundOrBorder() && style()->visibility() == VISIBLE) {
+        paintBoxDecorations(i, _tx, _ty);
     }
 
-    // 3. paint floats.
-    if (!inlineFlow && (paintAction == PaintActionFloat || paintAction == PaintActionSelection))
-        paintFloats(paintInfo, scrolledX, scrolledY, paintAction == PaintActionSelection);
+    // We're done.  We don't bother painting any children.
+    if (paintAction == PaintActionBlockBackground)
+        return;
 
-    // 4. paint outline.
+    // Adjust our painting position if we're inside a scrolled layer (e.g., an overflow:auto div).s
+    int scrolledX = _tx;
+    int scrolledY = _ty;
+    if (hasOverflowClip())
+        m_layer->subtractScrollOffset(scrolledX, scrolledY);
+
+    // 2. paint contents  
+    if (childrenInline())
+        paintLines(i, scrolledX, scrolledY);
+    else
+        paintChildren(i, scrolledX, scrolledY);
+    
+    // 3. paint selection
+    if (!inlineFlow)
+        paintSelection(i, scrolledX, scrolledY); // Fill in gaps in selection on lines and between blocks.
+
+    // 4. paint floats.
+    if (!inlineFlow && (paintAction == PaintActionFloat || paintAction == PaintActionSelection))
+        paintFloats(i, scrolledX, scrolledY, paintAction == PaintActionSelection);
+
+    // 5. paint outline.
     if (!inlineFlow && paintAction == PaintActionOutline && 
         style()->outlineWidth() && style()->visibility() == VISIBLE)
         paintOutline(i.p, _tx, _ty, width(), height(), style());
 
-    // 5. paint caret.
-    /*
-        If the caret's node's render object's containing block is this block,
-        and the paint action is PaintActionForeground,
-        then paint the caret.
-    */
-    if (paintAction == PaintActionForeground) {
+    // 6. paint caret.
+    // If the caret's node's render object's containing block is this block, and the paint action is PaintActionForeground,
+    // then paint the caret.
+    if (!inlineFlow && paintAction == PaintActionForeground) {
         const Selection &s = document()->part()->selection();
         NodeImpl *caretNode = s.start().node();
         RenderObject *renderer = caretNode ? caretNode->renderer() : 0;
@@ -1304,12 +1309,12 @@ void RenderBlock::paintFloats(PaintInfo& i, int _tx, int _ty, bool paintSelectio
     for ( ; (r = it.current()); ++it) {
         // Only paint the object if our noPaint flag isn't set.
         if (!r->noPaint && !r->node->layer()) {
-            PaintInfo info(i.p, i.r, paintSelection ? PaintActionSelection : PaintActionElementBackground, i.paintingRoot);
+            PaintInfo info(i.p, i.r, paintSelection ? PaintActionSelection : PaintActionBlockBackground, i.paintingRoot);
             int tx = _tx + r->left - r->node->xPos() + r->node->marginLeft();
             int ty = _ty + r->startY - r->node->yPos() + r->node->marginTop();
             r->node->paint(info, tx, ty);
             if (!paintSelection) {
-                info.phase = PaintActionChildBackgrounds;
+                info.phase = PaintActionChildBlockBackgrounds;
                 r->node->paint(info, tx, ty);
                 info.phase = PaintActionFloat;
                 r->node->paint(info, tx, ty);
@@ -2328,44 +2333,90 @@ bool RenderBlock::isPointInScrollbar(int _x, int _y, int _tx, int _ty)
 }
 
 bool RenderBlock::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty,
-                              HitTestAction hitTestAction, bool inBox)
+                              HitTestAction hitTestAction)
 {
-    bool inScrollbar = isPointInScrollbar(_x, _y, _tx+xPos(), _ty+yPos());
-    if (inScrollbar && hitTestAction != HitTestChildrenOnly)
-        inBox = true;
-    
-    if (hitTestAction != HitTestSelfOnly && !inScrollbar) {
-        int stx = _tx + xPos();
-        int sty = _ty + yPos();
-        
-        if (m_floatingObjects) {
-            if (hasOverflowClip())
-                m_layer->subtractScrollOffset(stx, sty);
-            if (isCanvas()) {
-                stx += static_cast<RenderCanvas*>(this)->view()->contentsX();
-                sty += static_cast<RenderCanvas*>(this)->view()->contentsY();
-            }
-            FloatingObject* o;
-            QPtrListIterator<FloatingObject> it(*m_floatingObjects);
-            for (it.toLast(); (o = it.current()); --it)
-                if (!o->noPaint && !o->node->layer())
-                    inBox |= o->node->nodeAtPoint(info, _x, _y,
-                                                  stx+o->left + o->node->marginLeft() - o->node->xPos(),
-                                                  sty+o->startY + o->node->marginTop() - o->node->yPos());
-        }
+    bool inlineFlow = isInlineFlow();
 
-        if (hasMarkupTruncation()) {
-            for (RootInlineBox* box = lastRootBox(); box; box = box->prevRootBox()) {
-                if (box->ellipsisBox()) {
-                    inBox |= box->hitTestEllipsisBox(info, _x, _y, stx, sty, hitTestAction, inBox);
-                    break;
-                }
+    int tx = _tx + xPos();
+    int ty = _ty + yPos();
+
+    if (!inlineFlow && !isRoot()) {
+        // Check if we need to do anything at all with this block.
+        // FIXME: This check is limited to only the y-coordinates when it could check x as well.
+        // Compacts keep us from being strict about x-coordinates at the moment.
+        int h = m_overflowHeight;
+        if (m_floatingObjects && floatBottom() > h)
+            h = floatBottom();
+        if (isTableCell())
+            h = kMax(height() + borderTopExtra() + borderBottomExtra(), h);
+        if ((ty > _y) || (ty + h <= _y))
+            return false;
+    }
+    
+    if (isTableCell())
+        ty += borderTopExtra();
+
+    // See if we're inside the scrollbar (if we're overflow:scroll/auto).
+    if (isPointInScrollbar(_x, _y, tx, ty)) {
+        if (hitTestAction == HitTestBlockBackground) {
+            setInnerNode(info);
+            return true;
+        }
+        return false;
+    }
+
+    // Hit test descendants first.
+    int scrolledX = tx;
+    int scrolledY = ty;
+    if (hasOverflowClip())
+        m_layer->subtractScrollOffset(scrolledX, scrolledY);
+    if (childrenInline() && !isTable()) {
+        // We have to hit-test our line boxes.
+        if (hitTestLines(info, _x, _y, scrolledX, scrolledY, hitTestAction)) {
+            setInnerNode(info);
+            return true;
+        }
+    }
+    else {
+        // Hit test our children.
+        HitTestAction childHitTest = hitTestAction;
+        if (hitTestAction == HitTestChildBlockBackgrounds)
+            childHitTest = HitTestChildBlockBackground;
+        for (RenderObject* child = lastChild(); child; child = child->previousSibling())
+            if (!child->layer() && !child->isFloating() && child->nodeAtPoint(info, _x, _y, scrolledX, scrolledY, childHitTest)) {
+                setInnerNode(info);
+                return true;
             }
+    }
+    
+    // Hit test floats.
+    if (hitTestAction == HitTestFloat && m_floatingObjects) {
+        if (isCanvas()) {
+            scrolledX += static_cast<RenderCanvas*>(this)->view()->contentsX();
+            scrolledY += static_cast<RenderCanvas*>(this)->view()->contentsY();
+        }
+        
+        FloatingObject* o;
+        QPtrListIterator<FloatingObject> it(*m_floatingObjects);
+        for (it.toLast(); (o = it.current()); --it)
+            if (!o->noPaint && !o->node->layer() && o->node->hitTest(info, _x, _y,
+                                     scrolledX + o->left + o->node->marginLeft() - o->node->xPos(),
+                                     scrolledY + o->startY + o->node->marginTop() - o->node->yPos())) {
+                setInnerNode(info);
+                return true;
+            }
+    }
+
+    // Now hit test our background.
+    if (!inlineFlow && (hitTestAction == HitTestBlockBackground || hitTestAction == HitTestChildBlockBackground)) {
+        QRect boundsRect(tx, ty, m_width, m_height);
+        if (isRoot() || (style()->visibility() == VISIBLE && boundsRect.contains(_x, _y))) {
+            setInnerNode(info);
+            return true;
         }
     }
 
-    inBox |= RenderFlow::nodeAtPoint(info, _x, _y, _tx, _ty, hitTestAction, inBox);
-    return inBox;
+    return false;
 }
 
 Position RenderBlock::positionForBox(InlineBox *box, bool start) const

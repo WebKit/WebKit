@@ -233,10 +233,10 @@ public:
 
     // The two main functions that use the layer system.  The paint method
     // paints the layers that intersect the damage rect from back to
-    // front.  The nodeAtPoint method looks for mouse events by walking
+    // front.  The hitTest method looks for mouse events by walking
     // layers that intersect the point from front to back.
     void paint(QPainter *p, const QRect& damageRect, bool selectionOnly=false, RenderObject *paintingRoot=0);
-    bool nodeAtPoint(RenderObject::NodeInfo& info, int x, int y);
+    bool hitTest(RenderObject::NodeInfo& info, int x, int y);
 
     // This method figures out our layerBounds in coordinates relative to
     // |rootLayer}.  It also computes our background and foreground clip rects
@@ -277,9 +277,8 @@ private:
 
     void paintLayer(RenderLayer* rootLayer, QPainter *p, const QRect& paintDirtyRect, 
                     bool haveTransparency, bool selectionOnly, RenderObject *paintingRoot);
-    RenderLayer* nodeAtPointForLayer(RenderLayer* rootLayer, RenderObject::NodeInfo& info,
-                                     int x, int y, const QRect& hitTestRect);
-
+    RenderLayer* hitTestLayer(RenderLayer* rootLayer, RenderObject::NodeInfo& info,
+                              int x, int y, const QRect& hitTestRect);
     void computeScrollDimensions(bool* needHBar = 0, bool* needVBar = 0);
     
 protected:   

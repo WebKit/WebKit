@@ -971,7 +971,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
         return nil;
     }
     RenderObject::NodeInfo nodeInfo(true, true);
-    renderer->layer()->nodeAtPoint(nodeInfo, (int)point.x, (int)point.y);
+    renderer->layer()->hitTest(nodeInfo, (int)point.x, (int)point.y);
     
     NSMutableDictionary *element = [NSMutableDictionary dictionary];
     [element setObject:[NSNumber numberWithBool:_part->isPointInsideSelection((int)point.x, (int)point.y)]
@@ -1652,7 +1652,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     }
     
     RenderObject::NodeInfo nodeInfo(true, true);
-    renderer->layer()->nodeAtPoint(nodeInfo, (int)point.x, (int)point.y);
+    renderer->layer()->hitTest(nodeInfo, (int)point.x, (int)point.y);
     NodeImpl *node = nodeInfo.innerNode();
     if (!node->renderer())
         return Position();

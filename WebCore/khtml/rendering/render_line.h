@@ -34,6 +34,7 @@ class EllipsisBox;
 class InlineFlowBox;
 class RootInlineBox;
 class RenderBlock;
+class RenderFlow;
 
 // InlineBox represents a rectangle that occurs on a line.  It corresponds to
 // some RenderObject (i.e., it represents a portion of that RenderObject).
@@ -59,6 +60,9 @@ public:
 
     virtual void adjustPosition(int dx, int dy);
 
+    virtual void paint(RenderObject::PaintInfo& i, int _tx, int _ty);
+    virtual bool nodeAtPoint(RenderObject::NodeInfo& i, int x, int y, int tx, int ty);
+    
     // Overloaded new operator.
     void* operator new(size_t sz, RenderArena* renderArena) throw();
 
@@ -183,7 +187,7 @@ public:
     void setNextLineBox(InlineRunBox* n) { m_nextLine = n; }
     void setPreviousLineBox(InlineRunBox* p) { m_prevLine = p; }
 
-    virtual void paintBackgroundAndBorder(RenderObject::PaintInfo& i, int _tx, int _ty, int xOffsetOnLine) {};
+    virtual void paintBackgroundAndBorder(RenderObject::PaintInfo& i, int _tx, int _ty) {};
     virtual void paintDecorations(RenderObject::PaintInfo& i, int _tx, int _ty, bool paintedChildren = false) {};
     
 protected:
@@ -202,6 +206,8 @@ public:
         m_includeLeftEdge = m_includeRightEdge = false;
         m_hasTextChildren = false;
     }
+
+    RenderFlow* flowObject();
 
     virtual bool isInlineFlowBox() { return true; }
 
@@ -231,13 +237,15 @@ public:
 
     virtual void clearTruncation();
     
-    virtual void paintBackgroundAndBorder(RenderObject::PaintInfo& i, int _tx, int _ty, int xOffsetOnLine);
+    virtual void paintBackgroundAndBorder(RenderObject::PaintInfo& i, int _tx, int _ty);
     void paintBackgrounds(QPainter* p, const QColor& c, const BackgroundLayer* bgLayer,
-                          int my, int mh, int _tx, int _ty, int w, int h, int xoff);
+                          int my, int mh, int _tx, int _ty, int w, int h);
     void paintBackground(QPainter* p, const QColor& c, const BackgroundLayer* bgLayer,
-                         int my, int mh, int _tx, int _ty, int w, int h, int xoff);
+                         int my, int mh, int _tx, int _ty, int w, int h);
     virtual void paintDecorations(RenderObject::PaintInfo& i, int _tx, int _ty, bool paintedChildren = false);
-    
+    virtual void paint(RenderObject::PaintInfo& i, int _tx, int _ty);
+    virtual bool nodeAtPoint(RenderObject::NodeInfo& i, int x, int y, int tx, int ty);
+
     int marginBorderPaddingLeft();
     int marginBorderPaddingRight();
     int marginLeft();
@@ -331,6 +339,9 @@ public:
                             HitTestAction hitTestAction, bool inBox);
     
     virtual void clearTruncation();
+
+    virtual void paint(RenderObject::PaintInfo& i, int _tx, int _ty);
+    virtual bool nodeAtPoint(RenderObject::NodeInfo& i, int x, int y, int tx, int ty);
 
     bool hasSelectedChildren() const { return m_hasSelectedChildren; }
     void setHasSelectedChildren(bool b);

@@ -135,6 +135,7 @@ public:
     virtual void paint(PaintInfo& i, int tx, int ty);
     void paintObject(PaintInfo& i, int tx, int ty);
     void paintFloats(PaintInfo& i, int _tx, int _ty, bool paintSelection = false);
+    void paintChildren(PaintInfo& i, int _tx, int _ty);
     void paintEllipsisBoxes(PaintInfo& i, int _tx, int _ty);
     void paintSelection(PaintInfo& i, int _tx, int _ty);
     
@@ -175,7 +176,7 @@ public:
     int leftOffset(int y) const { return leftRelOffset(y, leftOffset(), true); }
 
     virtual bool nodeAtPoint(NodeInfo& info, int x, int y, int tx, int ty,
-                             HitTestAction hitTestAction = HitTestAll, bool inside=false);
+                             HitTestAction hitTestAction);
 
     bool isPointInScrollbar(int x, int y, int tx, int ty);
 

@@ -87,13 +87,14 @@ RenderFrameSet::~RenderFrameSet()
 }
 
 bool RenderFrameSet::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty,
-                                 HitTestAction hitTestAction, bool inside)
+                                 HitTestAction hitTestAction)
 {
-    RenderContainer::nodeAtPoint(info, _x, _y, _tx, _ty, hitTestAction, inside);
+    if (hitTestAction != HitTestForeground)
+        return false;
 
-    inside = m_resizing || canResize(_x, _y);
-
-    if ( inside && element() && !element()->noResize() && !info.readonly()){
+    bool inside = RenderContainer::nodeAtPoint(info, _x, _y, _tx, _ty, hitTestAction) || 
+                  m_resizing || canResize(_x, _y);
+    if (inside && element() && !element()->noResize() && !info.readonly()){
         info.setInnerNode(element());
         info.setInnerNonSharedNode(element());
     }

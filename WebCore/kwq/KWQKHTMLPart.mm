@@ -1041,7 +1041,7 @@ bool KWQKHTMLPart::scrollOverflowWithScrollWheelEvent(NSEvent *event)
     
     NSPoint point = [d->m_view->getDocumentView() convertPoint:[event locationInWindow] fromView:nil];
     RenderObject::NodeInfo nodeInfo(true, true);
-    r->layer()->nodeAtPoint(nodeInfo, (int)point.x, (int)point.y);    
+    r->layer()->hitTest(nodeInfo, (int)point.x, (int)point.y);    
     
     NodeImpl *node = nodeInfo.innerNode();
     if (node == 0) {
@@ -2206,7 +2206,7 @@ bool KWQKHTMLPart::eventMayStartDrag(NSEvent *event) const
     int mouseDownX, mouseDownY;
     d->m_view->viewportToContents((int)loc.x, (int)loc.y, mouseDownX, mouseDownY);
     RenderObject::NodeInfo nodeInfo(true, false);
-    renderer()->layer()->nodeAtPoint(nodeInfo, mouseDownX, mouseDownY);
+    renderer()->layer()->hitTest(nodeInfo, mouseDownX, mouseDownY);
     bool srcIsDHTML;
     Node possibleSrc = nodeInfo.innerNode()->renderer()->draggableNode(DHTMLFlag, UAFlag, mouseDownX, mouseDownY, srcIsDHTML);
     return !possibleSrc.isNull();
@@ -2241,7 +2241,7 @@ void KWQKHTMLPart::khtmlMouseMoveEvent(MouseMoveEvent *event)
         if (_mouseDownMayStartDrag && _dragSrc.isNull()) {
             // try to find an element that wants to be dragged
             RenderObject::NodeInfo nodeInfo(true, false);
-            renderer()->layer()->nodeAtPoint(nodeInfo, _mouseDownX, _mouseDownY);
+            renderer()->layer()->hitTest(nodeInfo, _mouseDownX, _mouseDownY);
             _dragSrc = nodeInfo.innerNode()->renderer()->draggableNode(_dragSrcMayBeDHTML, _dragSrcMayBeUA, _mouseDownX, _mouseDownY, _dragSrcIsDHTML);
             if (_dragSrc.isNull()) {
                 _mouseDownMayStartDrag = false;     // no element is draggable

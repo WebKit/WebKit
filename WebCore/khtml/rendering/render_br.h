@@ -44,8 +44,6 @@ public:
  
     virtual QRect selectionRect() { return QRect(); }
 
-    virtual void paint(PaintInfo& i, int tx, int ty) {};
-
     virtual unsigned int width(unsigned int, unsigned int, const Font *) const { return 0; }
     virtual unsigned int width( unsigned int, unsigned int, bool) const { return 0; }
 

@@ -1,3 +1,107 @@
+2004-11-22  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3673381, huge directory listing so slow it seems like a hang.  Rework painting and hit testing so that
+	it crawls the line box tree instead of the render tree.  This allows more precise intersection/containment testing
+	that lets us short circuit earlier when painting and hit testing.
+	
+        Reviewed by mjs
+
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::isPointInsideSelection):
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::paint):
+        (khtml::RenderBlock::paintChildren):
+        (khtml::RenderBlock::paintObject):
+        (khtml::RenderBlock::paintFloats):
+        (khtml::RenderBlock::nodeAtPoint):
+        * khtml/rendering/render_block.h:
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::nodeAtPoint):
+        * khtml/rendering/render_box.h:
+        * khtml/rendering/render_br.h:
+        * khtml/rendering/render_canvas.cpp:
+        (RenderCanvas::paint):
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::paintLines):
+        (RenderFlow::hitTestLines):
+        (RenderFlow::caretRect):
+        (RenderFlow::addFocusRingRects):
+        (RenderFlow::paintFocusRing):
+        (RenderFlow::paintOutlines):
+        (RenderFlow::paintOutlineForLine):
+        * khtml/rendering/render_flow.h:
+        * khtml/rendering/render_frames.cpp:
+        (RenderFrameSet::nodeAtPoint):
+        * khtml/rendering/render_frames.h:
+        * khtml/rendering/render_image.cpp:
+        (RenderImage::nodeAtPoint):
+        * khtml/rendering/render_image.h:
+        * khtml/rendering/render_inline.cpp:
+        (RenderInline::paint):
+        (RenderInline::nodeAtPoint):
+        * khtml/rendering/render_inline.h:
+        * khtml/rendering/render_layer.cpp:
+        (RenderLayer::paintLayer):
+        (RenderLayer::hitTest):
+        (RenderLayer::hitTestLayer):
+        * khtml/rendering/render_layer.h:
+        * khtml/rendering/render_line.cpp:
+        (khtml::InlineBox::paint):
+        (khtml::InlineBox::nodeAtPoint):
+        (khtml::InlineFlowBox::flowObject):
+        (khtml::InlineFlowBox::nodeAtPoint):
+        (khtml::InlineFlowBox::paint):
+        (khtml::InlineFlowBox::paintBackgrounds):
+        (khtml::InlineFlowBox::paintBackground):
+        (khtml::InlineFlowBox::paintBackgroundAndBorder):
+        (khtml::InlineFlowBox::paintDecorations):
+        (khtml::EllipsisBox::paint):
+        (khtml::EllipsisBox::nodeAtPoint):
+        (khtml::RootInlineBox::paintEllipsisBox):
+        (khtml::RootInlineBox::paint):
+        (khtml::RootInlineBox::nodeAtPoint):
+        * khtml/rendering/render_line.h:
+        (khtml::InlineRunBox::paintBackgroundAndBorder):
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::hitTest):
+        (RenderObject::setInnerNode):
+        (RenderObject::nodeAtPoint):
+        * khtml/rendering/render_object.h:
+        (khtml::RenderObject::PaintInfo::PaintInfo):
+        (khtml::RenderObject::PaintInfo::~PaintInfo):
+        (khtml::RenderObject::paintingRootForChildren):
+        (khtml::RenderObject::shouldPaintWithinRoot):
+        * khtml/rendering/render_table.cpp:
+        (RenderTable::layout):
+        (RenderTable::paint):
+        * khtml/rendering/render_text.cpp:
+        (simpleDifferenceBetweenColors):
+        (correctedTextColor):
+        (InlineTextBox::nodeAtPoint):
+        (InlineTextBox::paint):
+        (InlineTextBox::selectionStartEnd):
+        (InlineTextBox::paintSelection):
+        (InlineTextBox::paintMarkedTextBackground):
+        (InlineTextBox::paintDecoration):
+        (RenderText::posOfChar):
+        * khtml/rendering/render_text.h:
+        (khtml::RenderText::paint):
+        (khtml::RenderText::layout):
+        (khtml::RenderText::nodeAtPoint):
+        * khtml/xml/dom2_eventsimpl.cpp:
+        (MouseEventImpl::computeLayerPos):
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::prepareMouseEvent):
+        * kwq/KWQAccObject.mm:
+        (-[KWQAccObject accessibilityHitTest:]):
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::scrollOverflowWithScrollWheelEvent):
+        (KWQKHTMLPart::eventMayStartDrag):
+        (KWQKHTMLPart::khtmlMouseMoveEvent):
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge elementAtPoint:]):
+        (-[WebCoreBridge _positionForPoint:]):
+
 2004-11-22  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Dave.

@@ -481,9 +481,9 @@ HTMLMapElementImpl* RenderImage::imageMap()
 }
 
 bool RenderImage::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty,
-                              HitTestAction hitTestAction, bool inside)
+                              HitTestAction hitTestAction)
 {
-    inside |= RenderReplaced::nodeAtPoint(info, _x, _y, _tx, _ty, hitTestAction, inside);
+    bool inside = RenderReplaced::nodeAtPoint(info, _x, _y, _tx, _ty, hitTestAction);
 
     if (inside && element()) {
         int tx = _tx + m_x;
