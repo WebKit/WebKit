@@ -89,27 +89,19 @@
 
 -(void)handle:(WebResourceHandle *)h didReceiveResponse:(WebResourceResponse *)r
 {
-    ASSERT(handle == h);
     ASSERT(r);
-
     [loader receivedResponse:r];
-
-    [super handle: handle didReceiveResponse: r];
+    [super handle:h didReceiveResponse:r];
 }
 
 - (void)handle:(WebResourceHandle *)h didReceiveData:(NSData *)data
 {
-    ASSERT(handle == h);
-
     [loader addData:data];
-
-    [super handle: handle didReceiveData: data];
+    [super handle:h didReceiveData:data];
 }
 
 - (void)handleDidFinishLoading:(WebResourceHandle *)h
 {
-    ASSERT(handle == h);
-
     // Calling _removeSubresourceClient will likely result in a call to release, so we must retain.
     [self retain];
     
@@ -117,32 +109,22 @@
     
     [dataSource _removeSubresourceClient:self];
     
-    WebError *nonTerminalError = [response error];
-    if (nonTerminalError) {
-        [self receivedError:nonTerminalError];
-    }
-    
     [[dataSource controller] _finishedLoadingResourceFromDataSource:dataSource];
     
     [self release];
     
-    [super handleDidFinishLoading: h];
+    [super handleDidFinishLoading:h];
 }
 
 - (void)handle:(WebResourceHandle *)h didFailLoadingWithError:(WebError *)error
 {
-    ASSERT(handle == h);
-    
     // Calling _removeSubresourceClient will likely result in a call to release, so we must retain.
     [self retain];
     
     [loader reportError];
-    
     [dataSource _removeSubresourceClient:self];
-    
     [self receivedError:error];
-
-    [super handle: handle didFailLoadingWithError: error];
+    [super handle:h didFailLoadingWithError:error];
 
     [self release];
 }
@@ -153,14 +135,8 @@
     [self retain];
         
     [loader cancel];
-    
     [dataSource _removeSubresourceClient:self];
-        
-    WebError *error = [[WebError alloc] initWithErrorCode:WebErrorCodeCancelled 
-        inDomain:WebErrorDomainWebFoundation failingURL:[[request URL] absoluteString]];
-    [self receivedError:error];
-    [error release];
-    
+    [self receivedError:[self cancelledError]];
     [super cancel];
 
     [self release];

@@ -17,6 +17,7 @@
 {
     WebNetscapePluginEmbeddedView *view;
     NSMutableData *resourceData;
+    WebResourceRequest *_startingRequest;
 }
 
 - initWithRequest:(WebResourceRequest *)theRequest

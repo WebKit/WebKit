@@ -22,7 +22,7 @@
         return nil;
     }
 
-    request = [theRequest retain];
+    _startingRequest = [theRequest copy];
 
     [self setPluginPointer:thePluginPointer];
 
@@ -39,12 +39,16 @@
 - (void)dealloc
 {
     [resourceData release];
+    [_startingRequest release];
     [super dealloc];
 }
 
 - (void)start
 {
-    [self loadWithRequest:request];
+    ASSERT(_startingRequest);
+    [self loadWithRequest:_startingRequest];
+    [_startingRequest release];
+    _startingRequest = nil;
 }
 
 - (void)stop
@@ -81,7 +85,7 @@
     
     [self receivedData:data];
 
-    [super handle:handle didReceiveData:data];
+    [super handle:h didReceiveData:data];
 }
 
 - (void)handleDidFinishLoading:(WebResourceHandle *)h
@@ -99,8 +103,6 @@
 
 - (void)handle:(WebResourceHandle *)h didFailLoadingWithError:(WebError *)result
 {
-    ASSERT(handle == h);
-
     WebController *controller = [view controller];
 
     [controller _receivedError:result fromDataSource:[view dataSource]];

@@ -25,6 +25,8 @@
     WebDownloadHandler *downloadHandler;
     WebContentAction policyAction;
     NSMutableData *resourceData;
+    int _contentLength; // for logging only
+    int _bytesReceived; // for logging only
 }
 
 - initWithDataSource:(WebDataSource *)dataSource;

@@ -14,6 +14,7 @@
 
 #import <WebKit/WebController.h>
 #import <WebKit/WebDataSource.h>
+#import <WebKit/WebKitErrors.h>
 #import <WebKit/WebResourceLoadDelegate.h>
 #import <WebKit/WebStandardPanelsPrivate.h>
 
@@ -122,30 +123,27 @@
     ASSERT(handle == h);
     ASSERT(!reachedTerminalState);
     
-    NSURL *newURL = [newRequest URL];
-
-    [newRequest setUserAgent:[[dataSource controller] userAgentForURL:newURL]];
-
-    [request autorelease];
-    request = [newRequest copy];
+    [newRequest setUserAgent:[[dataSource controller] userAgentForURL:[newRequest URL]]];
 
     if (identifier == nil) {
         // The identifier is released after the last callback, rather than in dealloc
         // to avoid potential cycles.
-        identifier = [[resourceLoadDelegate identifierForInitialRequest:request fromDataSource:dataSource] retain];
+        identifier = [[resourceLoadDelegate identifierForInitialRequest:newRequest fromDataSource:dataSource] retain];
     }
 
-    if (resourceLoadDelegate)
-        request = [resourceLoadDelegate resource:identifier willSendRequest:request fromDataSource:dataSource];
+    if (resourceLoadDelegate) {
+        newRequest = [resourceLoadDelegate resource:identifier willSendRequest:newRequest fromDataSource:dataSource];
+    }
+
+    // Store a copy of the request.
+    [request autorelease];
+    request = [newRequest copy];
 
     if (currentURL) {
         [[WebStandardPanels sharedStandardPanels] _didStopLoadingURL:currentURL inController:[dataSource controller]];
-    }
-    
-    [newURL retain];
+    }    
     [currentURL release];
-    currentURL = newURL;
-    
+    currentURL = [[newRequest URL] retain];
     [[WebStandardPanels sharedStandardPanels] _didStartLoadingURL:currentURL inController:[dataSource controller]];
 
     return newRequest;
@@ -198,16 +196,16 @@
     ASSERT(!reachedTerminalState);
     
     if ([self isDownload])
-        [downloadDelegate resource: identifier didFailLoadingWithError: result fromDataSource: dataSource];
+        [downloadDelegate resource:identifier didFailLoadingWithError:result fromDataSource:dataSource];
     else
-        [resourceLoadDelegate resource: identifier didFailLoadingWithError: result fromDataSource: dataSource];
+        [resourceLoadDelegate resource:identifier didFailLoadingWithError:result fromDataSource:dataSource];
 
     [[WebStandardPanels sharedStandardPanels] _didStopLoadingURL:currentURL inController:[dataSource controller]];
 
     [self _releaseResources];
 }
 
-- (void)cancel
+- (void)_cancelWithError:(WebError *)error
 {
     ASSERT(!reachedTerminalState);
 
@@ -215,13 +213,33 @@
     
     [[WebStandardPanels sharedStandardPanels] _didStopLoadingURL:currentURL inController:[dataSource controller]];
 
-    if (![self isDownload]) {
-        WebError *error = [[WebError alloc] initWithErrorCode:WebErrorCodeCancelled 
-            inDomain:WebErrorDomainWebFoundation failingURL:[[request URL] absoluteString]];
+    if (error) {
         [resourceLoadDelegate resource:identifier didFailLoadingWithError:error fromDataSource:dataSource];
     }
 
     [self _releaseResources];
+}
+
+- (void)cancel
+{
+    [self _cancelWithError:[self isDownload] ? nil : [self cancelledError]];
+}
+
+- (void)cancelQuietly
+{
+    [self _cancelWithError:nil];
+}
+
+- (WebError *)cancelledError
+{
+    return [WebError errorWithCode:WebErrorCodeCancelled 
+        inDomain:WebErrorDomainWebFoundation failingURL:[[request URL] absoluteString]];
+}
+
+- (void)notifyDelegatesOfInterruptionByPolicyChange
+{
+    WebError *error = [WebError errorWithCode:WebErrorResourceLoadInterruptedByPolicyChange inDomain:WebErrorDomainWebKit failingURL:nil];
+    [[self resourceLoadDelegate] resource:identifier didFailLoadingWithError:error fromDataSource:dataSource];
 }
 
 @end

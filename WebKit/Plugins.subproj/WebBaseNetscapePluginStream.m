@@ -58,7 +58,7 @@
 
     uint32 lastModified = 0;
 
-    if ([response isKindOfClass:[WebHTTPResourceResponse class]]) {
+    if ([r isKindOfClass:[WebHTTPResourceResponse class]]) {
         NSNumber *timeInterval = [[(WebHTTPResourceResponse *)r headers] objectForKey:@"Last-Modified"];
         if(timeInterval) {
             NSTimeInterval lastModifiedInterval;

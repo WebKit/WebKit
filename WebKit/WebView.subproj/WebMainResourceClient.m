@@ -75,21 +75,12 @@
 
 - (void)cancel
 {
-    if (currentURL == nil) {
-        return;
-    }
-    
-    LOG(Loading, "URL = %@", currentURL);
+    LOG(Loading, "URL = %@", [dataSource URL]);
     
     // Calling receivedError will likely result in a call to release, so we must retain.
     [self retain];
     
-    // FIXME: Maybe we should be passing the URL from the handle here, not from the dataSource.
-    WebError *error = [[WebError alloc] initWithErrorCode:WebErrorCodeCancelled
-                                                 inDomain:WebErrorDomainWebFoundation
-                                               failingURL:[[[dataSource request] URL] absoluteString]];
-    [self receivedError:error];
-    [error release];
+    [self receivedError:[self cancelledError]];
 
     if (downloadHandler) {
         [downloadHandler cancel];
@@ -97,68 +88,55 @@
         downloadHandler = nil;
     }
         
-    [self release];
-    
     [super cancel];
+
+    [self release];
 }
 
 -(WebResourceRequest *)handle:(WebResourceHandle *)h willSendRequest:(WebResourceRequest *)newRequest
 {
-    WebResourceRequest *result;
-
-    BOOL firstRequest = request == nil;
-
-    newRequest = [super handle: h willSendRequest: newRequest];
+    newRequest = [super handle:h willSendRequest:newRequest];
     
     ASSERT(newRequest != nil);
 
     NSURL *URL = [newRequest URL];
 
-    if (![[dataSource webFrame] _shouldShowRequest:request]) {
-        [handle cancel];
-        [[WebStandardPanels sharedStandardPanels] _didStopLoadingURL:currentURL inController:[dataSource controller]];
+    if (![[dataSource webFrame] _shouldShowRequest:newRequest]) {
+        [self cancelQuietly];
 
         [[dataSource webFrame] _setProvisionalDataSource:nil];
-	[[[dataSource controller] locationChangeDelegate] locationChangeDone:[WebError errorWithCode:WebErrorLocationChangeInterruptedByPolicyChange inDomain:WebErrorDomainWebKit failingURL:nil] forDataSource:dataSource];
-        result = nil;
+	[[[dataSource controller] locationChangeDelegate] locationChangeDone:
+            [WebError errorWithCode:WebErrorLocationChangeInterruptedByPolicyChange inDomain:WebErrorDomainWebKit failingURL:nil]
+            forDataSource:dataSource];
+        return nil;
     }
-    else {
-        LOG(Redirect, "URL = %@", URL);
     
-        // Update cookie policy base URL as URL changes, except for subframes, which use the
-        // URL of the main frame which doesn't change when we redirect.
-        if ([dataSource webFrame] == [[dataSource controller] mainFrame]) {
-            [newRequest setCookiePolicyBaseURL:URL];
-        }
-        
-	// Don't set this on the first request.  It is set
-	// when the main load was started.
-	if (!firstRequest)
-            [dataSource _setRequest:request];
-        
-        result = newRequest;
+    LOG(Redirect, "URL = %@", URL);
+    
+    // Update cookie policy base URL as URL changes, except for subframes, which use the
+    // URL of the main frame which doesn't change when we redirect.
+    if ([dataSource webFrame] == [[dataSource controller] mainFrame]) {
+        [newRequest setCookiePolicyBaseURL:URL];
     }
-        
-    return result;
+    
+    // Don't set this on the first request.  It is set
+    // when the main load was started.
+    [dataSource _setRequest:newRequest];
+    
+    return newRequest;
 }
 
-- (void)_notifyDelegatesOfInterruptionByPolicyChange
+- (void)notifyDelegatesOfInterruptionByPolicyChange
 {
-    WebError *interruptError;
-            
     // Terminate the locationChangeDelegate correctly.
-    interruptError = [WebError errorWithCode:WebErrorLocationChangeInterruptedByPolicyChange inDomain:WebErrorDomainWebKit failingURL:nil];
-    [[[dataSource controller] locationChangeDelegate] locationChangeDone: interruptError forDataSource:dataSource];
+    WebError *interruptError = [WebError errorWithCode:WebErrorLocationChangeInterruptedByPolicyChange inDomain:WebErrorDomainWebKit failingURL:nil];
+    [[[dataSource controller] locationChangeDelegate] locationChangeDone:interruptError forDataSource:dataSource];
 
-    // Terminate the resourceLoadDelegate correctly.
-    interruptError = [WebError errorWithCode:WebErrorResourceLoadInterruptedByPolicyChange inDomain:WebErrorDomainWebKit failingURL:nil];
-    [resourceLoadDelegate resource: identifier didFailLoadingWithError: interruptError fromDataSource: dataSource];
+    [super notifyDelegatesOfInterruptionByPolicyChange];
 }
 
 -(void)handle:(WebResourceHandle *)h didReceiveResponse:(WebResourceResponse *)r
 {
-    ASSERT (response == nil);
-    
     [dataSource _setResponse:r];
 
     LOG(Download, "main content type: %@", [r contentType]);
@@ -181,12 +159,12 @@
         {
             [[dataSource webFrame] _setProvisionalDataSource:nil];
             
-            [self _notifyDelegatesOfInterruptionByPolicyChange];
+            [self notifyDelegatesOfInterruptionByPolicyChange];
             
             // Hand off the dataSource to the download handler.  This will cause the remaining
             // handle delegate callbacks to go to the controller's download delegate.
             downloadHandler = [[WebDownloadHandler alloc] initWithDataSource:dataSource];
-            [self setIsDownload: YES];
+            [self setIsDownload:YES];
         }
         break;
     
@@ -194,7 +172,7 @@
         {
             [self cancel];
             [[dataSource webFrame] _setProvisionalDataSource:nil];
-            [self _notifyDelegatesOfInterruptionByPolicyChange];
+            [self notifyDelegatesOfInterruptionByPolicyChange];
         }
         break;
     
@@ -202,19 +180,20 @@
         ERROR("contentPolicyForMIMEType:URL:inFrame: returned an invalid content policy.");
     }
 
-    [super handle: h didReceiveResponse: r];
+    [super handle:h didReceiveResponse:r];
+    
+    _contentLength = [r contentLength];
 }
 
 - (void)handle:(WebResourceHandle *)h didReceiveData:(NSData *)data
 {
-    LOG(Loading, "URL = %@, data = %p, length %d", currentURL, data, [data length]);
+    LOG(Loading, "URL = %@, data = %p, length %d", [dataSource URL], data, [data length]);
 
     if (downloadHandler) {
         WebError *downloadError = [downloadHandler receivedData:data];
         if (downloadError) {
             [self receivedError:downloadError];
-            [handle cancel];
-            [[WebStandardPanels sharedStandardPanels] _didStopLoadingURL:currentURL inController:[dataSource controller]];
+            [self cancel];
             return;
         }
     } else {
@@ -225,14 +204,16 @@
                                                 complete:NO];
     }
     
-    [super handle: h didReceiveData: data];
+    [super handle:h didReceiveData:data];
+    
+    _bytesReceived += [data length];
 
-    LOG(Download, "%d of %d", [response contentLengthReceived], [response contentLength]);
+    LOG(Download, "%d of %d", _bytesReceived, _contentLength);
 }
 
 - (void)handleDidFinishLoading:(WebResourceHandle *)h
 {
-    LOG(Loading, "URL = %@", currentURL);
+    LOG(Loading, "URL = %@", [dataSource URL]);
         
     // Calling receivedError will likely result in a call to release, so we must retain.
     [self retain];
@@ -259,17 +240,9 @@
     }
     else {
         [dataSource _finishedLoading];
-
-        // FIXME: Please let Chris know if this is really necessary?
-        // Either send a final error message or a final progress message.
-        WebError *nonTerminalError = [[dataSource response] error];
-        if (nonTerminalError) {
-            [self receivedError:nonTerminalError];
-        } else {
-            [[dataSource controller] _mainReceivedBytesSoFar:[resourceData length]
-                                                             fromDataSource:dataSource
-                                                                   complete:YES];
-        }
+        [[dataSource controller] _mainReceivedBytesSoFar:[resourceData length]
+                                          fromDataSource:dataSource
+                                                complete:YES];
     }
     
     [super handleDidFinishLoading: h];

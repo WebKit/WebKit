@@ -1,5 +1,43 @@
 2002-11-08  Darin Adler  <darin@apple.com>
 
+	- separate WebBaseNetscapePluginStream more cleanly from its subclasses
+	by making most fields private
+
+        * Plugins.subproj/WebBaseNetscapePluginStream.m:
+        (-[WebBaseNetscapePluginStream setResponse:]):
+        * Plugins.subproj/WebNetscapePluginStream.h:
+        * Plugins.subproj/WebNetscapePluginStream.m:
+        (-[WebNetscapePluginStream initWithRequest:pluginPointer:notifyData:]):
+        (-[WebNetscapePluginStream dealloc]):
+        (-[WebNetscapePluginStream start]):
+        (-[WebNetscapePluginStream handle:didReceiveData:]):
+        (-[WebNetscapePluginStream handle:didFailLoadingWithError:]):
+        * WebCoreSupport.subproj/WebSubresourceClient.m:
+        (-[WebSubresourceClient handle:didReceiveResponse:]):
+        (-[WebSubresourceClient handle:didReceiveData:]):
+        (-[WebSubresourceClient handleDidFinishLoading:]):
+        (-[WebSubresourceClient handle:didFailLoadingWithError:]):
+        (-[WebSubresourceClient cancel]):
+        * WebView.subproj/WebBaseResourceHandleDelegate.h:
+        * WebView.subproj/WebBaseResourceHandleDelegate.m:
+        (-[WebBaseResourceHandleDelegate handle:willSendRequest:]):
+        (-[WebBaseResourceHandleDelegate handle:didFailLoadingWithError:]):
+        (-[WebBaseResourceHandleDelegate _cancelWithError:]):
+        (-[WebBaseResourceHandleDelegate cancel]):
+        (-[WebBaseResourceHandleDelegate cancelQuietly]):
+        (-[WebBaseResourceHandleDelegate cancelledError]):
+        (-[WebBaseResourceHandleDelegate notifyDelegatesOfInterruptionByPolicyChange]):
+        * WebView.subproj/WebMainResourceClient.h:
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient cancel]):
+        (-[WebMainResourceClient handle:willSendRequest:]):
+        (-[WebMainResourceClient notifyDelegatesOfInterruptionByPolicyChange]):
+        (-[WebMainResourceClient handle:didReceiveResponse:]):
+        (-[WebMainResourceClient handle:didReceiveData:]):
+        (-[WebMainResourceClient handleDidFinishLoading:]):
+
+2002-11-08  Darin Adler  <darin@apple.com>
+
 	- changed persistent dictionaries to use NSString instead of NSURL
 	because of impact on memory footprint
 
