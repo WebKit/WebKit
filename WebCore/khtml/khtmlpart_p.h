@@ -214,16 +214,6 @@ public:
 #ifndef Q_WS_QWS
     delete m_javaContext;
 #endif
-    
-    QPtrListIterator<khtml::EditCommand> undos(m_undoEditCommands);
-    for (; undos.current(); ++undos) {
-        delete undos.current();
-    }
-    QPtrListIterator<khtml::EditCommand> redos(m_redoEditCommands);
-    for (; redos.current(); ++redos) {
-        delete redos.current();
-    }
-
   }
 
   FrameList m_frames;
@@ -375,8 +365,9 @@ public:
   bool m_focusNodeRestored:1;
 
   TristateFlag m_inEditMode;
-  QPtrList<khtml::EditCommand> m_undoEditCommands;
-  QPtrList<khtml::EditCommand> m_redoEditCommands;
+  QValueList<khtml::EditCommandPtr> m_undoEditCommands;
+  QValueList<khtml::EditCommandPtr> m_redoEditCommands;
+  khtml::EditCommandPtr m_lastEditCommand;
 
   int m_focusNodeNumber;
 

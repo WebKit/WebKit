@@ -29,6 +29,7 @@
 #import "dom_node.h"
 #import "dom_docimpl.h"
 #import "dom_nodeimpl.h"
+#import "htmlediting.h"
 #import "html_documentimpl.h"
 #import "html_formimpl.h"
 #import "html_imageimpl.h"
@@ -64,6 +65,7 @@
 #import "KWQAccObjectCache.h"
 
 #import "WebCoreDOMPrivate.h"
+#import "WebCoreEditing.h"
 #import "WebCoreImageRenderer.h"
 #import "WebCoreTextRendererFactory.h"
 #import "WebCoreViewFactory.h"
@@ -1201,10 +1203,14 @@ static HTMLFormElementImpl *formElementFromDOMElement(id <WebDOMElement>element)
     return string;
 }
 
-- (void)undoRedoEditing:(id)object
+- (void)undoEditing:(id)arg
 {
-    NSNumber *number = (NSNumber *)object;
-    _part->undoRedoEditing([number intValue]);
+    _part->undoEditing();
+}
+
+- (void)redoEditing:(id)arg
+{
+    _part->redoEditing();
 }
 
 @end

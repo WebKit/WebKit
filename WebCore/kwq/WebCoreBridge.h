@@ -248,7 +248,8 @@ typedef enum {
 
 - (NSString *)reconstructedSource;
 
-- (void)undoRedoEditing:(id)object;
+- (void)undoEditing:(id)arg;
+- (void)redoEditing:(id)arg;
 
 @end
 
@@ -386,7 +387,9 @@ typedef enum {
 
 - (jobject)pollForAppletInView:(NSView *)view;
 
-- (void)registerCommandForUndo:(int)cookie;
+- (void)registerCommandForUndo;
+- (void)registerCommandForRedo;
+- (void)clearUndoRedoOperations;
 
 @end
 

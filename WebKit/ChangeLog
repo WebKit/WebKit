@@ -1,3 +1,19 @@
+2004-02-10  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge registerCommandForUndo]): Some cleanup. Cookie for events no longer needed.
+        (-[WebBridge registerCommandForRedo]): Ditto.
+        (-[WebBridge clearUndoRedoOperations]): Tells the Cocoa undo manager to clear
+        steps targeted at the bridge.
+        * WebView.subproj/WebFrame.h: Declare undo manager accessor.
+        * WebView.subproj/WebFrame.m:
+        (-[WebFramePrivate dealloc]): Release undo manager
+        (-[WebFrame undoManager]): Allocate and return an undo manager. This helps
+        undo in a browser to be per tab.
+        * WebView.subproj/WebFramePrivate.h: Declare undo manager ivar.
+
 2004-02-08  Darin Adler  <darin@apple.com>
 
         Reviewed by Dave.

@@ -1161,10 +1161,22 @@ static id <WebFormDelegate> formDelegate(WebBridge *self)
     return applet;
 }
 
-- (void)registerCommandForUndo:(int)cookie
+- (void)registerCommandForUndo
 {
-    NSUndoManager *undoManager = [[_frame webView] undoManager];
-    [undoManager registerUndoWithTarget:self selector:@selector(undoRedoEditing:) object:[NSNumber numberWithInt:cookie]];
+    NSUndoManager *undoManager = [_frame undoManager];
+    [undoManager registerUndoWithTarget:self selector:@selector(undoEditing:) object:nil];
+}
+
+- (void)registerCommandForRedo
+{
+    NSUndoManager *undoManager = [_frame undoManager];
+    [undoManager registerUndoWithTarget:self selector:@selector(redoEditing:) object:nil];
+}
+
+- (void)clearUndoRedoOperations
+{
+    NSUndoManager *undoManager = [_frame undoManager];
+    [undoManager removeAllActionsWithTarget:self];
 }
 
 @end

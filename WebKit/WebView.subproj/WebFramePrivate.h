@@ -84,6 +84,7 @@ extern NSString *WebPageCacheDocumentViewKey;
     WebFormState *policyFormState;
     WebDataSource *policyDataSource;
     WebFrameLoadType policyLoadType;
+    NSUndoManager *undoManager;
 
     BOOL justOpenedForTargetedLink;
     BOOL quickRedirectComing;

@@ -35,6 +35,7 @@
 #import "KWQWindowWidget.h"
 #import "WebCoreBridge.h"
 #import "WebCoreDOMPrivate.h"
+#import "WebCoreEditing.h"
 #import "WebCoreViewFactory.h"
 #import "csshelper.h"
 #import "html_documentimpl.h"
@@ -2825,7 +2826,17 @@ void KWQKHTMLPart::cleanupPluginRootObjects()
     }
 }
 
-void KWQKHTMLPart::registerCommandForUndo(int cookie)
+void KWQKHTMLPart::registerCommandForUndo()
 {
-    [_bridge registerCommandForUndo:cookie];
+    [_bridge registerCommandForUndo];
+}
+
+void KWQKHTMLPart::registerCommandForRedo()
+{
+    [_bridge registerCommandForRedo];
+}
+
+void KWQKHTMLPart::clearUndoRedoOperations()
+{
+    [_bridge clearUndoRedoOperations];
 }

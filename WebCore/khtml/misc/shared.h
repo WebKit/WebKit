@@ -52,6 +52,49 @@ protected:
     type *m_parent;
 };
 
+template <class T> class SharedPtr
+{
+public:
+    SharedPtr() : m_ptr(0) {}
+	explicit SharedPtr(T *ptr) : m_ptr(ptr) { if (m_ptr) m_ptr->ref(); }
+	SharedPtr(const SharedPtr &o) : m_ptr(o.m_ptr) { if (m_ptr) m_ptr->ref(); }
+    ~SharedPtr() { if (m_ptr) m_ptr->deref(); }
+	
+    bool isEmpty() const { return m_ptr == 0; }
+    
+    T * get() const { return m_ptr; }
+	T &operator*() const { return *m_ptr; }
+	T *operator->() const { return m_ptr; }
+
+	bool operator!() const { return m_ptr == 0; }
+
+	inline friend bool operator==(const SharedPtr &a, const SharedPtr &b) { return a.m_ptr == b.m_ptr; }
+	inline friend bool operator==(const SharedPtr &a, const T *b) { return a.m_ptr == b; }
+	inline friend bool operator==(const T *a, const SharedPtr &b) { return a == b.m_ptr; }
+
+	SharedPtr &operator=(const SharedPtr &);
+
+private:
+	T* m_ptr;
+};
+
+template <class T> SharedPtr<T> &SharedPtr<T>::operator=(const SharedPtr<T> &o) 
+{
+	if (m_ptr != o.m_ptr) {
+		if (m_ptr)
+            m_ptr->deref();
+		m_ptr = o.m_ptr;
+		if (m_ptr) 
+            m_ptr->ref();
+	}
+	
+	return *this;
+}
+
+template <class T> inline bool operator!=(const SharedPtr<T> &a, const SharedPtr<T> &b) { return !(a==b); }
+template <class T> inline bool operator!=(const SharedPtr<T> &a, const T *b) { return !(a == b); }
+template <class T> inline bool operator!=(const T *a, const SharedPtr<T> &b) { return !(a == b); }
+
 };
 
 #endif

@@ -257,7 +257,9 @@ public:
     void addPluginRootObject(const KJS::Bindings::RootObject *root);
     void cleanupPluginRootObjects();
     
-    void registerCommandForUndo(int cookie);
+    void registerCommandForUndo();
+    void registerCommandForRedo();
+    void clearUndoRedoOperations();
     
 private:
     virtual void khtmlMousePressEvent(khtml::MousePressEvent *);

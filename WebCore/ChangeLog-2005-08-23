@@ -1,3 +1,151 @@
+2004-02-10  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+        
+        Several big changes.
+        
+        EditSteps are now all EditCommands.
+        Smart pointer for Shared classes added to shared.h.
+		Some events, like text input events, are now coalesced.
+		"Undo typing" now implemented, even though the name is not in the menu yet.
+		Integer id's added to EditCommand and its subclasses.
+		A bunch of cleanup in the EditCommand classes.
+
+        * khtml/editing/htmlediting.cpp:
+        (EditCommand::EditCommand):
+        (EditCommand::~EditCommand):
+        (EditCommand::commandID):
+        (EditCommand::reapply):
+        (EditCommand::beginApply):
+        (EditCommand::endApply):
+        (EditCommand::beginUnapply):
+        (EditCommand::endUnapply):
+        (EditCommand::beginReapply):
+        (EditCommand::endReapply):
+        (EditCommand::currentSelection):
+        (EditCommand::coalesce):
+        (EditCommand::groupForUndo):
+        (EditCommand::groupForRedo):
+        (EditCommand::moveToStartingSelection):
+        (EditCommand::moveToEndingSelection):
+        (EditCommand::name):
+        (CompositeEditCommand::CompositeEditCommand):
+        (CompositeEditCommand::~CompositeEditCommand):
+        (CompositeEditCommand::unapply):
+        (CompositeEditCommand::reapply):
+        (CompositeEditCommand::applyCommand):
+        (CompositeEditCommand::insertNodeBefore):
+        (CompositeEditCommand::insertNodeAfter):
+        (CompositeEditCommand::appendNode):
+        (CompositeEditCommand::removeNode):
+        (CompositeEditCommand::splitTextNode):
+        (CompositeEditCommand::joinTextNodes):
+        (CompositeEditCommand::insertText):
+        (CompositeEditCommand::deleteText):
+        (CompositeEditCommand::moveSelectionTo):
+        (CompositeEditCommand::deleteSelection):
+        (InsertNodeBeforeCommand::InsertNodeBeforeCommand):
+        (InsertNodeBeforeCommand::~InsertNodeBeforeCommand):
+        (InsertNodeBeforeCommand::apply):
+        (InsertNodeBeforeCommand::unapply):
+        (AppendNodeCommand::AppendNodeCommand):
+        (AppendNodeCommand::~AppendNodeCommand):
+        (AppendNodeCommand::apply):
+        (AppendNodeCommand::unapply):
+        (RemoveNodeCommand::RemoveNodeCommand):
+        (RemoveNodeCommand::~RemoveNodeCommand):
+        (RemoveNodeCommand::apply):
+        (RemoveNodeCommand::unapply):
+        (ModifyTextNodeCommand::ModifyTextNodeCommand):
+        (ModifyTextNodeCommand::~ModifyTextNodeCommand):
+        (ModifyTextNodeCommand::splitTextNode):
+        (ModifyTextNodeCommand::joinTextNodes):
+        (SplitTextNodeCommand::SplitTextNodeCommand):
+        (SplitTextNodeCommand::~SplitTextNodeCommand):
+        (SplitTextNodeCommand::apply):
+        (SplitTextNodeCommand::unapply):
+        (JoinTextNodesCommand::JoinTextNodesCommand):
+        (JoinTextNodesCommand::~JoinTextNodesCommand):
+        (JoinTextNodesCommand::apply):
+        (JoinTextNodesCommand::unapply):
+        (InsertTextCommand::InsertTextCommand):
+        (InsertTextCommand::~InsertTextCommand):
+        (InsertTextCommand::apply):
+        (InsertTextCommand::unapply):
+        (DeleteTextCommand::DeleteTextCommand):
+        (DeleteTextCommand::~DeleteTextCommand):
+        (DeleteTextCommand::apply):
+        (DeleteTextCommand::unapply):
+        (MoveSelectionToCommand::MoveSelectionToCommand):
+        (MoveSelectionToCommand::~MoveSelectionToCommand):
+        (MoveSelectionToCommand::commandID):
+        (MoveSelectionToCommand::apply):
+        (MoveSelectionToCommand::unapply):
+        (DeleteSelectionCommand::DeleteSelectionCommand):
+        (DeleteSelectionCommand::~DeleteSelectionCommand):
+        (DeleteSelectionCommand::apply):
+        (InputTextCommand::InputTextCommand):
+        (InputTextCommand::~InputTextCommand):
+        (InputTextCommand::commandID):
+        (InputTextCommand::isLineBreak):
+        (InputTextCommand::isSpace):
+        (InputTextCommand::apply):
+        (InputTextCommand::coalesce):
+        (InputTextCommand::groupForUndo):
+        (InputTextCommand::groupForRedo):
+        (InputTextCommand::execute):
+        (DeleteKeyCommand::DeleteKeyCommand):
+        (DeleteKeyCommand::~DeleteKeyCommand):
+        (DeleteKeyCommand::commandID):
+        (DeleteKeyCommand::apply):
+        (DeleteKeyCommand::groupForUndo):
+        (DeleteKeyCommand::groupForRedo):
+        (PasteHTMLCommand::PasteHTMLCommand):
+        (PasteHTMLCommand::~PasteHTMLCommand):
+        (PasteHTMLCommand::apply):
+        * khtml/editing/htmlediting.h:
+        (khtml::):
+        (khtml::EditCommand::):
+        (khtml::EditCommand::document):
+        (khtml::EditCommand::state):
+        (khtml::EditCommand::setState):
+        (khtml::SplitTextNodeCommand::joinState):
+        (khtml::SplitTextNodeCommand::splitState):
+        (khtml::JoinTextNodesCommand::joinState):
+        (khtml::JoinTextNodesCommand::splitState):
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::openURL):
+        (KHTMLPart::deleteSelection):
+        (KHTMLPart::applyCommand):
+        (KHTMLPart::undoEditing):
+        (KHTMLPart::redoEditing):
+        (KHTMLPart::pasteHTMLString):
+        * khtml/khtml_part.h:
+        * khtml/khtmlpart_p.h:
+        (KHTMLPartPrivate::~KHTMLPartPrivate):
+        * khtml/misc/shared.h:
+        (khtml::SharedPtr::SharedPtr):
+        (khtml::SharedPtr::~SharedPtr):
+        (khtml::SharedPtr::isEmpty):
+        (khtml::SharedPtr::get):
+        (khtml::SharedPtr::operator*):
+        (khtml::SharedPtr::operator->):
+        (khtml::SharedPtr::operator!):
+        (khtml::SharedPtr::operator==):
+        (khtml::::operator):
+        (khtml::operator!=):
+        * khtml/xml/dom_elementimpl.cpp:
+        (ElementImpl::defaultEventHandler):
+        * kwq/KWQKHTMLPart.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::registerCommandForUndo):
+        (KWQKHTMLPart::registerCommandForRedo):
+        (KWQKHTMLPart::clearUndoRedoOperations):
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge undoEditing:]):
+        (-[WebCoreBridge redoEditing:]):
+
 2004-02-10  David Hyatt  <hyatt@apple.com>
 
 	Eliminate the double-completion and double-parsing of KURLs for every single image request.

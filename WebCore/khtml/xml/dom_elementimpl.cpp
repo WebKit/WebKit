@@ -366,11 +366,11 @@ void ElementImpl::defaultEventHandler(EventImpl *evt)
 {
     if (evt->id() == EventImpl::KEYPRESS_EVENT && isContentEditable()) {
         KeyboardEventImpl *k = static_cast<KeyboardEventImpl *>(evt);
-        EditCommand *cmd = 0;
+        EditCommandPtr cmd;
         if (k->keyIdentifier() == "U+00007F" || 
             k->keyIdentifier() == "U+000008" || 
             k->keyIdentifier() == "ForwardDelete") {
-            cmd = new DeleteTextCommand(getDocument());
+            cmd = EditCommandPtr(new DeleteKeyCommand(getDocument()));
         }
         else if (k->keyIdentifier() == "Right") {
             KHTMLPart *part = getDocument()->part();
@@ -398,9 +398,9 @@ void ElementImpl::defaultEventHandler(EventImpl *evt)
         }
         else {
             QString text(k->qKeyEvent()->text());
-            cmd = new InputTextCommand(getDocument(), text);
+            cmd = EditCommandPtr(new InputTextCommand(getDocument(), text));
         }
-        if (cmd) {
+        if (!cmd.isEmpty()) {
             KHTMLPart *part = getDocument()->part();
             if (part) {
                 part->applyCommand(cmd);
