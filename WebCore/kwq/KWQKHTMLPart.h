@@ -197,6 +197,8 @@ private:
     static NSEvent *_currentEvent;
     static NSResponder *_firstResponderAtMouseDownTime;
 
+    bool _formSubmittedFlag;
+
     static QPtrList<KWQKHTMLPart> &mutableInstances();
 
     friend class KHTMLPart;

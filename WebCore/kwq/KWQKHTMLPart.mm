@@ -123,6 +123,7 @@ KWQKHTMLPart::KWQKHTMLPart()
     , _ownsView(false)
     , _mouseDownView(nil)
     , _sendingEventToSubview(false)
+    , _formSubmittedFlag(false)
 {
     // Must init the cache before connecting to any signals
     Cache::init();
@@ -180,6 +181,15 @@ void KWQKHTMLPart::openURLRequest(const KURL &url, const URLArgs &args)
 
 void KWQKHTMLPart::submitForm(const KURL &url, const URLArgs &args)
 {
+    // we do not want to submit more than one form, nor do we want to submit a single form more than once 
+    // this flag prevents these from happening
+    // note that the flag is reset in setView()
+    // since this part may get reused if it is pulled from the b/f cache
+    if (_formSubmittedFlag) {
+        return;
+    }
+    _formSubmittedFlag = true;
+    
     if (!args.doPost()) {
         [bridgeForFrameName(args.frameName) loadURL:url.url().getNSString() reload:args.reload
             triggeringEvent:_currentEvent isFormSubmission:YES];
@@ -258,6 +268,11 @@ void KWQKHTMLPart::setView(KHTMLView *view, bool weOwnIt)
     d->m_view = view;
     setWidget(view);
     _ownsView = weOwnIt;
+    
+    // only one form submission is allowed per view of a part
+    // since this part may be getting reused as a result of being
+    // pulled from the back/forward cache, reset this flag
+    _formSubmittedFlag = false;
 }
 
 KHTMLView *KWQKHTMLPart::view() const

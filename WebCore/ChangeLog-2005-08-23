@@ -1,3 +1,26 @@
+2002-12-20  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin
+
+	Fix for this bug:
+
+	Radar 3132171 (trying to login at mypage.apple.com gives "Already Connected" message)
+
+	The issue is that we submit the login form more than once when the user hits
+	the return key to submit rather than clicking the submit button. We are also
+	susceptible to double form submissions from buggy scripts that ask to submit
+	more than one form.
+
+	The fix is to prevent the KWQKHTMLPart from submitting more than one form by
+	setting and checking a flag.
+
+        * kwq/KWQKHTMLPart.h: Add a form submit flag.
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::submitForm): Check form submit flag. Return if a form
+	has already been submitted.
+        (KWQKHTMLPart::setView): Reset form flag. This is done since the part 
+	may have been retrieved for reuse from the bac/forward cache.
+
 2002-12-20  Richard Williamson   <rjw@apple.com>
 
         Fixed 3133261.  This fix really has two parts.  This first part
