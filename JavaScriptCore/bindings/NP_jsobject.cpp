@@ -149,12 +149,24 @@ bool NPN_Evaluate (NPP npp, NPObject *o, NPString *s, NPVariant *variant)
 
         ExecState *exec = obj->root->interpreter()->globalExec();
         Object thisObj = Object(const_cast<ObjectImp*>(obj->imp));
+        Value result;
         
         Interpreter::lock();
         NPUTF16 *scriptString;
         unsigned int UTF16Length;
         convertNPStringToUTF16 (s, &scriptString, &UTF16Length);    // requires free() of returned memory.
-        KJS::Value result = obj->root->interpreter()->evaluate(UString(), 0, UString((const UChar *)scriptString,UTF16Length)).value();
+        Completion completion = obj->root->interpreter()->evaluate(UString(), 0, UString((const UChar *)scriptString,UTF16Length));
+        ComplType type = completion.complType();
+        
+        if (type == Normal) {
+            result = completion.value();
+            if (result.isNull()) {
+                result = Undefined();
+            }
+        }
+        else
+            result = Undefined();
+            
         Interpreter::unlock();
         
         free ((void *)scriptString);

@@ -170,9 +170,23 @@ static KJS::List listFromNSArray(ExecState *exec, NSArray *array)
 {
     ExecState *exec = _private->root->interpreter()->globalExec();
     Object thisObj = Object(const_cast<ObjectImp*>([self _imp]));
+    Value result;
+    
     Interpreter::lock();
+    
     Value v = convertObjcValueToValue(exec, &script, ObjcObjectType);
-    KJS::Value result = _private->root->interpreter()->evaluate(UString(), 0, v.toString(exec)).value();
+    Completion completion = _private->root->interpreter()->evaluate(UString(), 0, v.toString(exec));
+    ComplType type = completion.complType();
+    
+    if (type == Normal) {
+        result = completion.value();
+        if (result.isNull()) {
+            result = Undefined();
+        }
+    }
+    else
+        result = Undefined();
+
     Interpreter::unlock();
     
     if (exec->hadException()) {

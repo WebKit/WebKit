@@ -1,3 +1,18 @@
+2004-08-16  Richard Williamson   <rjw@apple.com>
+
+        Fixed <rdar://problem/3581092> cash in KJS::Bindings::JSObject::eval at tcvetantcvetkov.com
+
+        Adds bullet proofing to protect against evaluation of bogus JS in all the flavors of bindings (Java, C, and ObjC).
+
+        Reviewed by Chris.
+
+        * bindings/NP_jsobject.cpp:
+        (NPN_Evaluate):
+        * bindings/jni/jni_jsobject.cpp:
+        (JSObject::eval):
+        * bindings/objc/WebScriptObject.mm:
+        (-[WebScriptObject evaluateWebScript:]):
+
 2004-08-15  Richard Williamson   <rjw@apple.com>
 
 	More updates to np headers.  Implemented new NPN functions.

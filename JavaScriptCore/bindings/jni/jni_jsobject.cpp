@@ -197,9 +197,24 @@ jobject JSObject::eval(jstring script) const
     JS_LOG ("script = %s\n", JavaString(script).UTF8String());
 
     Object thisObj = Object(const_cast<ObjectImp*>(_imp));
+    Value result;
+    
     Interpreter::lock();
-    KJS::Value result = _root->interpreter()->evaluate(UString(), 0, JavaString(script).ustring(),thisObj).value();
+
+    Completion completion = _root->interpreter()->evaluate(UString(), 0, JavaString(script).ustring(),thisObj);
+    ComplType type = completion.complType();
+    
+    if (type == Normal) {
+        result = completion.value();
+        if (result.isNull()) {
+            result = Undefined();
+        }
+    }
+    else
+        result = Undefined();
+
     Interpreter::unlock();
+    
     return convertValueToJObject (result);
 }
 
