@@ -705,6 +705,7 @@ void RenderFlexibleBox::layoutVerticalBox(bool relayoutChildren)
                     
                     // Dirty all the positioned objects.
                     static_cast<RenderBlock*>(child)->markPositionedObjectsForLayout();
+                    static_cast<RenderBlock*>(child)->clearTruncation();
                 }
                 child->layoutIfNeeded();
                 if (child->style()->height().isVariable() && child->isBlockFlow())
@@ -715,23 +716,67 @@ void RenderFlexibleBox::layoutVerticalBox(bool relayoutChildren)
         
         // Get the # of lines and then alter all block flow children with auto height to use the
         // specified height.
-        int numLines = int(maxLineCount*style()->lineClamp()/100.0 + 1.0);
-        if (numLines < maxLineCount) {
-            child = iterator.first();
-            while (child) {
-                if (!child->isPositioned() && child->style()->height().isVariable() && child->isBlockFlow() &&
-                    static_cast<RenderBlock*>(child)->lineCount() > numLines) {
-                    int newHeight = static_cast<RenderBlock*>(child)->heightForLineCount(numLines);
-                    if (newHeight != child->height()) {
-                        child->setChildNeedsLayout(true);
-                        child->setOverrideSize(newHeight);
-                        m_flexingChildren = true;
-                        child->layoutIfNeeded();
-                        m_flexingChildren = false;
-                        child->setOverrideSize(-1);
-                    }
-                }
-                child = iterator.next();
+        int numVisibleLines = int(maxLineCount*style()->lineClamp()/100.0 + 1.0);
+        if (numVisibleLines < maxLineCount) {
+            for (child = iterator.first(); child; child = iterator.next()) {
+                if (child->isPositioned() || !child->style()->height().isVariable() || !child->isBlockFlow())
+                    continue;
+                
+                RenderBlock* blockChild = static_cast<RenderBlock*>(child);
+                int lineCount = blockChild->lineCount();
+                if (lineCount <= numVisibleLines) continue;
+                
+                int newHeight = blockChild->heightForLineCount(numVisibleLines);
+                if (newHeight == child->height()) continue;
+                
+                child->setChildNeedsLayout(true);
+                child->setOverrideSize(newHeight);
+                m_flexingChildren = true;
+                child->layoutIfNeeded();
+                m_flexingChildren = false;
+                child->setOverrideSize(-1);
+                
+                // FIXME: For now don't support RTL.
+                if (style()->direction() != LTR) continue;
+                
+                // Get the last line
+                RootInlineBox* lastLine = blockChild->lineAtIndex(lineCount-1);
+                if (!lastLine) continue;
+                
+                // See if the last item is an anchor
+                InlineBox* anchorBox = lastLine->lastChild();
+                if (!anchorBox) continue;
+                if (!anchorBox->object()->element()) continue;
+                if (!anchorBox->object()->element()->hasAnchor()) continue;
+                
+                RootInlineBox* lastVisibleLine = blockChild->lineAtIndex(numVisibleLines-1);
+                if (!lastVisibleLine) continue;
+
+                const unsigned short ellipsisAndSpace[2] = { 0x2026, ' ' };
+                static AtomicString ellipsisAndSpaceStr(ellipsisAndSpace, 2);
+                const Font& font = style(numVisibleLines == 1)->htmlFont();
+                int ellipsisAndSpaceWidth = font.width(const_cast<QChar*>(ellipsisAndSpaceStr.unicode()), 2, 0, 2);
+
+                // Get ellipsis width + " " + anchor width
+                int totalWidth = ellipsisAndSpaceWidth + anchorBox->width();
+                
+                // See if this width can be accommodated on the last visible line
+                RenderBlock* destBlock = static_cast<RenderBlock*>(lastVisibleLine->object());
+                RenderBlock* srcBlock = static_cast<RenderBlock*>(lastLine->object());
+                
+                // FIXME: Directions of src/destBlock could be different from our direction and from one another.
+                if (srcBlock->style()->direction() != LTR) continue;
+                if (destBlock->style()->direction() != LTR) continue;
+
+                int blockEdge = destBlock->rightOffset(lastVisibleLine->yPos());
+                if (!lastVisibleLine->canAccommodateEllipsis(true, blockEdge, 
+                                                             lastVisibleLine->xPos() + lastVisibleLine->width(),
+                                                             totalWidth))
+                    continue;
+
+                // Let the truncation code kick in.
+                lastVisibleLine->placeEllipsis(ellipsisAndSpaceStr, true, blockEdge, totalWidth, anchorBox);
+                destBlock->setHasMarkupTruncation(true);
             }
         }
     }

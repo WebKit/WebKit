@@ -55,6 +55,7 @@ RenderBlock::RenderBlock(DOM::NodeImpl* node)
     m_pre = false;
     m_firstLine = false;
     m_linesAppended = false;
+    m_hasMarkupTruncation = false;
     m_clearStatus = CNONE;
     m_maxTopPosMargin = m_maxTopNegMargin = m_maxBottomPosMargin = m_maxBottomNegMargin = 0;
     m_topMarginQuirk = m_bottomMarginQuirk = false;
@@ -1377,7 +1378,7 @@ void RenderBlock::paintEllipsisBoxes(PaintInfo& i, int _tx, int _ty)
             yPos = _ty + curr->yPos();
             h = curr->height();
             if (curr->ellipsisBox() && (yPos < i.r.y() + i.r.height()) && (yPos + h > i.r.y()))
-                curr->ellipsisBox()->paint(i, _tx, _ty);
+                curr->paintEllipsisBox(i, _tx, _ty);
         }
     }
 }
@@ -2043,22 +2044,34 @@ bool RenderBlock::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty,
     if (inScrollbar && hitTestAction != HitTestChildrenOnly)
         inBox = true;
     
-    if (hitTestAction != HitTestSelfOnly && m_floatingObjects && !inScrollbar) {
+    if (hitTestAction != HitTestSelfOnly && !inScrollbar) {
         int stx = _tx + xPos();
         int sty = _ty + yPos();
-        if (hasOverflowClip())
-            m_layer->subtractScrollOffset(stx, sty);
-        if (isCanvas()) {
-            stx += static_cast<RenderCanvas*>(this)->view()->contentsX();
-            sty += static_cast<RenderCanvas*>(this)->view()->contentsY();
+        
+        if (m_floatingObjects) {
+            if (hasOverflowClip())
+                m_layer->subtractScrollOffset(stx, sty);
+            if (isCanvas()) {
+                stx += static_cast<RenderCanvas*>(this)->view()->contentsX();
+                sty += static_cast<RenderCanvas*>(this)->view()->contentsY();
+            }
+            FloatingObject* o;
+            QPtrListIterator<FloatingObject> it(*m_floatingObjects);
+            for (it.toLast(); (o = it.current()); --it)
+                if (!o->noPaint && !o->node->layer())
+                    inBox |= o->node->nodeAtPoint(info, _x, _y,
+                                                  stx+o->left + o->node->marginLeft() - o->node->xPos(),
+                                                  sty+o->startY + o->node->marginTop() - o->node->yPos());
         }
-        FloatingObject* o;
-        QPtrListIterator<FloatingObject> it(*m_floatingObjects);
-        for (it.toLast(); (o = it.current()); --it)
-            if (!o->noPaint && !o->node->layer())
-                inBox |= o->node->nodeAtPoint(info, _x, _y,
-                                              stx+o->left + o->node->marginLeft() - o->node->xPos(),
-                                              sty+o->startY + o->node->marginTop() - o->node->yPos());
+
+        if (hasMarkupTruncation()) {
+            for (RootInlineBox* box = lastRootBox(); box; box = box->prevRootBox()) {
+                if (box->ellipsisBox()) {
+                    inBox |= box->hitTestEllipsisBox(info, _x, _y, stx, sty, hitTestAction, inBox);
+                    break;
+                }
+            }
+        }
     }
 
     inBox |= RenderFlow::nodeAtPoint(info, _x, _y, _tx, _ty, hitTestAction, inBox);
@@ -2824,7 +2837,66 @@ bool RenderBlock::inRootBlockContext() const
     return containingBlock()->inRootBlockContext();
 }
 
-// Helper methods for computing line counts and heights for line counts.
+// Helper methods for obtaining the last line, computing line counts and heights for line counts
+// (crawling into blocks).
+static bool shouldCheckLines(RenderObject* obj)
+{
+    return !obj->isFloatingOrPositioned() && !obj->isCompact() && !obj->isRunIn() &&
+            obj->isBlockFlow() && obj->style()->height().isVariable() &&
+            (!obj->isFlexibleBox() || obj->style()->boxOrient() == VERTICAL);
+}
+
+static RootInlineBox* getLineAtIndex(RenderBlock* block, int i, int& count)
+{
+    if (block->style()->visibility() == VISIBLE) {
+        if (block->childrenInline()) {
+            for (RootInlineBox* box = block->firstRootBox(); box; box = box->nextRootBox()) {
+                if (count++ == i)
+                    return box;
+            }
+        }
+        else {
+            for (RenderObject* obj = block->firstChild(); obj; obj = obj->nextSibling()) {
+                if (shouldCheckLines(obj)) {
+                    RootInlineBox *box = getLineAtIndex(static_cast<RenderBlock*>(obj), i, count);
+                    if (box)
+                        return box;
+                }
+            }
+        }
+    }
+    return 0;
+}
+
+int getHeightForLineCount(RenderBlock* block, int l, bool includeBottom, int& count)
+{
+    if (block->style()->visibility() == VISIBLE) {
+        if (block->childrenInline()) {
+            for (RootInlineBox* box = block->firstRootBox(); box; box = box->nextRootBox()) {
+                if (++count == l)
+                    return box->bottomOverflow() + (includeBottom ? (block->borderBottom() + block->paddingBottom()) : 0);
+            }
+        }
+        else {
+            for (RenderObject* obj = block->firstChild(); obj; obj = obj->nextSibling()) {
+                if (shouldCheckLines(obj)) {
+                    int result = getHeightForLineCount(static_cast<RenderBlock*>(obj), l, false, count);
+                    if (result != -1)
+                        return result + obj->yPos() + (includeBottom ? (block->borderBottom() + block->paddingBottom()) : 0);
+                }
+            }
+        }
+    }
+    
+    return -1;
+}
+
+RootInlineBox* RenderBlock::lineAtIndex(int i)
+{
+    int count = 0;
+    return getLineAtIndex(this, i, count);
+}
+
 int RenderBlock::lineCount()
 {
     int count = 0;
@@ -2834,35 +2906,31 @@ int RenderBlock::lineCount()
                 count++;
         else
             for (RenderObject* obj = firstChild(); obj; obj = obj->nextSibling())
-                if (!obj->isFloatingOrPositioned() && !obj->isCompact() && !obj->isRunIn() &&
-                    obj->isBlockFlow() && obj->style()->height().isVariable())
+                if (shouldCheckLines(obj))
                     count += static_cast<RenderBlock*>(obj)->lineCount();
     }
     return count;
 }
 
-int RenderBlock::heightForLineCount(int l, bool includeBottom)
+int RenderBlock::heightForLineCount(int l)
+{
+    int count = 0;
+    return getHeightForLineCount(this, l, true, count);
+}
+
+void RenderBlock::clearTruncation()
 {
     if (style()->visibility() == VISIBLE) {
-        int c = 0;
-        if (childrenInline())
-            for (RootInlineBox* box = firstRootBox(); c < l && box; box = box->nextRootBox()) {
-                if (++c == l)
-                    return box->bottomOverflow() + (includeBottom ? (borderBottom() + paddingBottom()) : 0);
-            }
+        if (childrenInline() && hasMarkupTruncation()) {
+            setHasMarkupTruncation(false);
+            for (RootInlineBox* box = firstRootBox(); box; box = box->nextRootBox())
+                box->clearTruncation();
+        }
         else
             for (RenderObject* obj = firstChild(); obj; obj = obj->nextSibling())
-                if (!obj->isFloatingOrPositioned() && !obj->isCompact() && !obj->isRunIn() &&
-                    obj->isBlockFlow() && obj->style()->height().isVariable()) {
-                    int childCount = static_cast<RenderBlock*>(obj)->lineCount();
-                    if (c + childCount >= l)
-                        return obj->yPos() + static_cast<RenderBlock*>(obj)->heightForLineCount(l - c, false) +
-                               (includeBottom ? (borderBottom() + paddingBottom()) : 0);
-                    else
-                        c += childCount;
-                }
+                if (shouldCheckLines(obj))
+                    static_cast<RenderBlock*>(obj)->clearTruncation();
     }
-    return m_height;
 }
 
 const char *RenderBlock::renderName() const

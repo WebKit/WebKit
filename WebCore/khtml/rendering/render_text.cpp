@@ -1485,13 +1485,6 @@ InlineBox *RenderText::inlineBox(long offset)
     return 0;
 }
 
-void RenderText::clearTextOverflowTruncation()
-{
-    // Walk our text boxes and clear any truncation bits that might be set.
-    for (InlineTextBox* box = firstTextBox(); box; box = box->nextTextBox())
-        box->clearTruncation();
-}
-   
 RenderTextFragment::RenderTextFragment(DOM::NodeImpl* _node, DOM::DOMStringImpl* _str,
                                        int startOffset, int endOffset)
 :RenderText(_node, _str->substring(startOffset, endOffset)), 

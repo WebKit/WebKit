@@ -40,11 +40,37 @@
 #include "htmltags.h"
 
 using namespace DOM;
-using namespace khtml;
 
 #ifndef NDEBUG
 static bool inInlineBoxDetach;
 #endif
+
+namespace khtml {
+    
+class EllipsisBox : public InlineBox
+{
+public:
+    EllipsisBox(RenderObject* obj, const DOM::AtomicString& ellipsisStr, InlineFlowBox* p,
+                int w, int y, int h, int b, bool firstLine, InlineBox* markupBox)
+    :InlineBox(obj), m_str(ellipsisStr) {
+        m_parent = p;
+        m_width = w;
+        m_y = y;
+        m_height = h;
+        m_baseline = b;
+        m_firstLine = firstLine;
+        m_constructed = true;
+        m_markupBox = markupBox;
+    }
+    
+    void paint(RenderObject::PaintInfo& i, int _tx, int _ty);
+    bool nodeAtPoint(RenderObject::NodeInfo& info, int _x, int _y, int _tx, int _ty,
+                     HitTestAction hitTestAction, bool inBox);
+
+private:
+    DOM::AtomicString m_str;
+    InlineBox* m_markupBox;
+};
 
 void InlineBox::remove()
 { 
@@ -119,11 +145,12 @@ void InlineBox::attachLine()
     m_object->setInlineBoxWrapper(this);
 }
 
-void InlineBox::adjustVerticalPosition(int delta)
+void InlineBox::adjustPosition(int dx, int dy)
 {
-    m_y += delta;
+    m_x += dx;
+    m_y += dy;
     if (m_object->isReplaced() || m_object->isBR())
-        m_object->setPos(m_object->xPos(), m_object->yPos() + delta);
+        m_object->setPos(m_object->xPos() + dx, m_object->yPos() + dy);
 }
 
 RootInlineBox* InlineBox::root()
@@ -291,11 +318,11 @@ void InlineFlowBox::attachLine()
         child->attachLine();
 }
 
-void InlineFlowBox::adjustVerticalPosition(int delta)
+void InlineFlowBox::adjustPosition(int dx, int dy)
 {
-    InlineRunBox::adjustVerticalPosition(delta);
+    InlineRunBox::adjustPosition(dx, dy);
     for (InlineBox* child = m_firstChild; child; child = child->nextOnLine())
-        child->adjustVerticalPosition(delta);
+        child->adjustPosition(dx, dy);
 }
 
 bool InlineFlowBox::onEndChain(RenderObject* endObject)
@@ -857,7 +884,13 @@ int InlineFlowBox::placeEllipsisBox(bool ltr, int blockEdge, int ellipsisWidth, 
     return result;
 }
 
-void EllipsisBox::paint(const RenderObject::PaintInfo& i, int _tx, int _ty)
+void InlineFlowBox::clearTruncation()
+{
+    for (InlineBox *box = firstChild(); box; box = box->nextOnLine())
+        box->clearTruncation();
+}
+
+void EllipsisBox::paint(RenderObject::PaintInfo& i, int _tx, int _ty)
 {
     QPainter* p = i.p;
     RenderStyle* _style = m_firstLine ? m_object->style(true) : m_object->style();
@@ -885,6 +918,25 @@ void EllipsisBox::paint(const RenderObject::PaintInfo& i, int _tx, int _ty)
                       
     if (setShadow)
         p->clearShadow();
+    
+    if (m_markupBox) {
+        // Paint the markup box
+        _tx += m_x + m_width - m_markupBox->xPos();
+        _ty += m_y + m_baseline - (m_markupBox->yPos() + m_markupBox->baseline());
+        m_markupBox->object()->paint(i, _tx, _ty);
+    }
+}
+
+bool EllipsisBox::nodeAtPoint(RenderObject::NodeInfo& info, int _x, int _y, int _tx, int _ty,
+                              HitTestAction hitTestAction, bool inBox)
+{
+    if (m_markupBox) {
+        _tx += m_x + m_width - m_markupBox->xPos();
+        _ty += m_y + m_baseline - (m_markupBox->yPos() + m_markupBox->baseline());
+        inBox |= m_markupBox->object()->nodeAtPoint(info, _x, _y, _tx, _ty, hitTestAction, inBox);
+    }
+    
+    return inBox;
 }
 
 void RootInlineBox::detach(RenderArena* arena)
@@ -901,6 +953,14 @@ void RootInlineBox::detachEllipsisBox(RenderArena* arena)
     }
 }
 
+void RootInlineBox::clearTruncation()
+{
+    if (m_ellipsisBox) {
+        detachEllipsisBox(m_object->renderArena());
+        InlineFlowBox::clearTruncation();
+    }
+}
+
 bool RootInlineBox::canAccommodateEllipsis(bool ltr, int blockEdge, int lineBoxEdge, int ellipsisWidth)
 {
     // First sanity-check the unoverflowed width of the whole line to see if there is sufficient room.
@@ -913,11 +973,19 @@ bool RootInlineBox::canAccommodateEllipsis(bool ltr, int blockEdge, int lineBoxE
     return InlineFlowBox::canAccommodateEllipsis(ltr, blockEdge, ellipsisWidth);
 }
 
-void RootInlineBox::placeEllipsis(const AtomicString& ellipsisStr,  bool ltr, int blockEdge, int ellipsisWidth)
+void RootInlineBox::placeEllipsis(const AtomicString& ellipsisStr,  bool ltr, int blockEdge, int ellipsisWidth,
+                                  InlineBox* markupBox)
 {
     // Create an ellipsis box.
-    m_ellipsisBox = new (m_object->renderArena()) EllipsisBox(m_object, ellipsisStr, this, ellipsisWidth,
-                                                              yPos(), height(), baseline(), !prevRootBox());
+    m_ellipsisBox = new (m_object->renderArena()) EllipsisBox(m_object, ellipsisStr, this, 
+                                                              ellipsisWidth - (markupBox ? markupBox->width() : 0),
+                                                              yPos(), height(), baseline(), !prevRootBox(),
+                                                              markupBox);
+
+    if (ltr && (xPos() + width() + ellipsisWidth) <= blockEdge) {
+        m_ellipsisBox->m_x = xPos() + width();
+        return;
+    }
 
     // Now attempt to find the nearest glyph horizontally and place just to the right (or left in RTL)
     // of that glyph.  Mark all of the objects that intersect the ellipsis box as not painting (as being
@@ -934,12 +1002,26 @@ int RootInlineBox::placeEllipsisBox(bool ltr, int blockEdge, int ellipsisWidth, 
     return result;
 }
 
-void RootInlineBox::adjustVerticalPosition(int delta)
+void RootInlineBox::paintEllipsisBox(RenderObject::PaintInfo& i, int _tx, int _ty) const
 {
-    InlineFlowBox::adjustVerticalPosition(delta);
-    m_topOverflow += delta;
-    m_bottomOverflow += delta;
-    m_blockHeight += delta;
+    if (m_ellipsisBox)
+        m_ellipsisBox->paint(i, _tx, _ty);
+}
+
+bool RootInlineBox::hitTestEllipsisBox(RenderObject::NodeInfo& info, int _x, int _y, int _tx, int _ty,
+                                       HitTestAction hitTestAction, bool inBox)
+{
+    if (m_ellipsisBox)
+        inBox |= m_ellipsisBox->nodeAtPoint(info, _x, _y, _tx, _ty, hitTestAction, inBox);
+    return inBox;
+}
+
+void RootInlineBox::adjustPosition(int dx, int dy)
+{
+    InlineFlowBox::adjustPosition(dx, dy);
+    m_topOverflow += dy;
+    m_bottomOverflow += dy;
+    m_blockHeight += dy;
 }
 
 void RootInlineBox::childRemoved(InlineBox* box)
@@ -952,4 +1034,6 @@ void RootInlineBox::childRemoved(InlineBox* box)
         prev->setLineBreakInfo(0,0);
         prev->markDirty();
     }
+}
+
 }

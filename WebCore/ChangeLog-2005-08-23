@@ -1,3 +1,48 @@
+2004-06-17  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3674601, "Read More..." links should trail articles in Emerson.
+	
+        Reviewed by darin
+
+        * khtml/rendering/bidi.cpp:
+        (khtml::RenderBlock::layoutInlineChildren):
+        (khtml::RenderBlock::deleteEllipsisLineBoxes):
+        (khtml::RenderBlock::checkLinesForTextOverflow):
+        * khtml/rendering/render_block.cpp:
+        (khtml:::RenderFlow):
+        (khtml::RenderBlock::paintEllipsisBoxes):
+        (khtml::RenderBlock::nodeAtPoint):
+        (khtml::shouldCheckLines):
+        (khtml::getLineAtIndex):
+        (khtml::getHeightForLineCount):
+        (khtml::RenderBlock::lineAtIndex):
+        (khtml::RenderBlock::lineCount):
+        (khtml::RenderBlock::heightForLineCount):
+        (khtml::RenderBlock::clearTruncation):
+        * khtml/rendering/render_block.h:
+        (khtml::RenderBlock::setHasMarkupTruncation):
+        (khtml::RenderBlock::hasMarkupTruncation):
+        * khtml/rendering/render_flexbox.cpp:
+        (khtml::RenderFlexibleBox::layoutVerticalBox):
+        * khtml/rendering/render_line.cpp:
+        (khtml::EllipsisBox::m_str):
+        (khtml::InlineBox::adjustPosition):
+        (khtml::InlineFlowBox::adjustPosition):
+        (khtml::InlineFlowBox::clearTruncation):
+        (khtml::EllipsisBox::paint):
+        (khtml::EllipsisBox::nodeAtPoint):
+        (khtml::RootInlineBox::clearTruncation):
+        (khtml::RootInlineBox::placeEllipsis):
+        (khtml::RootInlineBox::paintEllipsisBox):
+        (khtml::RootInlineBox::hitTestEllipsisBox):
+        (khtml::RootInlineBox::adjustPosition):
+        (khtml::RootInlineBox::childRemoved):
+        * khtml/rendering/render_line.h:
+        (khtml::InlineBox::clearTruncation):
+        * khtml/rendering/render_text.cpp:
+        * khtml/rendering/render_text.h:
+        (khtml::InlineTextBox::clearTruncation):
+
 2004-06-17  Trey Matteson  <trey@apple.com>
 
 	3698514 - coordinates in ondragstart and ondrag events are wrong

@@ -30,6 +30,7 @@ class AtomicString;
 
 namespace khtml {
 
+class EllipsisBox;
 class InlineFlowBox;
 class RootInlineBox;
 
@@ -55,7 +56,7 @@ public:
     virtual void extractLine();
     virtual void attachLine();
 
-    virtual void adjustVerticalPosition(int delta);
+    virtual void adjustPosition(int dx, int dy);
 
     // Overloaded new operator.
     void* operator new(size_t sz, RenderArena* renderArena) throw();
@@ -129,6 +130,8 @@ public:
     virtual long caretMaxOffset() const;
     virtual unsigned long caretMaxRenderedOffset() const;
     
+    virtual void clearTruncation() {};
+
     bool isDirty() const { return m_dirty; }
     void markDirty(bool dirty=true) { m_dirty = dirty; }
 
@@ -227,8 +230,10 @@ public:
     virtual void deleteLine(RenderArena* arena);
     virtual void extractLine();
     virtual void attachLine();
-    virtual void adjustVerticalPosition(int delta);
+    virtual void adjustPosition(int dx, int dy);
 
+    virtual void clearTruncation();
+    
     virtual void paintBackgroundAndBorder(RenderObject::PaintInfo& i, int _tx, int _ty, int xOffsetOnLine);
     virtual void paintDecorations(RenderObject::PaintInfo& i, int _tx, int _ty, bool paintedChildren = false);
     
@@ -278,27 +283,6 @@ protected:
     bool m_hasTextChildren : 1;
 };
 
-class EllipsisBox : public InlineBox
-{
-public:
-    EllipsisBox(RenderObject* obj, const DOM::AtomicString& ellipsisStr, InlineFlowBox* p,
-                int w, int y, int h, int b, bool firstLine)
-    :InlineBox(obj), m_str(ellipsisStr) {
-        m_parent = p;
-        m_width = w;
-        m_y = y;
-        m_height = h;
-        m_baseline = b;
-        m_firstLine = firstLine;
-        m_constructed = true;
-    }
-
-    void paint(const RenderObject::PaintInfo& i, int _tx, int _ty);
-    
-private:
-    DOM::AtomicString m_str;
-};
-
 class RootInlineBox : public InlineFlowBox
 {
 public:
@@ -313,7 +297,7 @@ public:
     RootInlineBox* nextRootBox() { return static_cast<RootInlineBox*>(m_nextLine); }
     RootInlineBox* prevRootBox() { return static_cast<RootInlineBox*>(m_prevLine); }
 
-    virtual void adjustVerticalPosition(int delta);
+    virtual void adjustPosition(int dx, int dy);
     
     virtual bool isRootInlineBox() { return true; }
     virtual int topOverflow() { return m_topOverflow; }
@@ -335,11 +319,16 @@ public:
     void childRemoved(InlineBox* box);
 
     bool canAccommodateEllipsis(bool ltr, int blockEdge, int lineBoxEdge, int ellipsisWidth);
-    void placeEllipsis(const DOM::AtomicString& ellipsisStr, bool ltr, int blockEdge, int ellipsisWidth);
+    void placeEllipsis(const DOM::AtomicString& ellipsisStr, bool ltr, int blockEdge, int ellipsisWidth, InlineBox* markupBox = 0);
     virtual int placeEllipsisBox(bool ltr, int blockEdge, int ellipsisWidth, bool&);
 
     EllipsisBox* ellipsisBox() const { return m_ellipsisBox; }
-        
+    void paintEllipsisBox(RenderObject::PaintInfo& i, int _tx, int _ty) const;
+    bool hitTestEllipsisBox(RenderObject::NodeInfo& info, int _x, int _y, int _tx, int _ty,
+                            HitTestAction hitTestAction, bool inBox);
+    
+    virtual void clearTruncation();
+
 protected:
     // Normally we are only as tall as the style on our block dictates, but we might have content
     // that spills out above the height of our font (e.g, a tall image), or something that extends further
