@@ -21,7 +21,9 @@
     id<WebControllerPolicyHandler> policyHandler;
     id<WebLocationChangeHandler> locationChangeHandler;
     WebBackForwardList *backForwardList;
+    // FIX ME use a bit field;
     BOOL openedByScript;
+    BOOL useBackForwardList;
 }
 @end
 

@@ -158,6 +158,14 @@
         [self stopLoading];
     }
 
+    // May be reset later if this is a back, forward, or refresh.
+    // Hack on hack, get rid of this check when MJS removes the dummy
+    // data source.
+    if ([newDataSource _isDummy])
+       [self _setLoadType: WebFrameLoadTypeUninitialized];
+    else
+       [self _setLoadType: WebFrameLoadTypeStandard];
+
     // _shouldShowDataSource asks the client for the URL policies and reports errors if there are any
     // returns YES if we should show the data source
     if([self _shouldShowDataSource:newDataSource]){

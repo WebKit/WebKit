@@ -237,6 +237,8 @@ static const char * const stateNames[6] = {
 {
     WEBKIT_ASSERT ([self controller] != nil);
     NSView <WebDocumentView> *documentView = [[self webView] documentView];
+    WebHistoryItem *backForwardItem;
+    WebBackForwardList *backForwardList = [[self controller] backForwardList];
     
     switch ([self _state]) {
     	case WebFrameStateProvisional:
@@ -264,10 +266,42 @@ static const char * const stateNames[6] = {
             [self _setState: WebFrameStateCommittedPage];
         
             // Handle adding the URL to the back/forward list.
-            if ([self _loadType] == WebFrameLoadTypeStandard){
-                WebHistoryItem *item = [[WebHistoryItem alloc] initWithURL:[[self dataSource] inputURL] target: [self name] title:[[self dataSource] pageTitle] image: nil];
-                [[[self controller] backForwardList] addEntry: item];
-                [item release];
+            if ([[self controller] useBackForwardList]){
+                switch ([self _loadType]) {
+                case WebFrameLoadTypeForward:
+                    [backForwardList goForward];
+                    // restore scroll position.
+                    break;
+    
+                case WebFrameLoadTypeBack:
+                    [backForwardList goBack];
+                    // restore scroll position.
+                    break;
+                    
+                case WebFrameLoadTypeRefresh:
+                    // restore scroll position.
+                    break;
+    
+                case WebFrameLoadTypeStandard:
+                    backForwardItem = [[WebHistoryItem alloc] initWithURL:[[self dataSource] inputURL] target: [self name] title:[[self dataSource] pageTitle] image: nil];
+                    [[[self controller] backForwardList] addEntry: backForwardItem];
+                    [backForwardItem release];
+                    // Scroll to top.
+                    break;
+    
+                case WebFrameLoadTypeInternal:
+                    // Do nothing, this was a frame/iframe non user load.
+                    break;
+                    
+                // FIXME Remove this check when dummy ds is removed.
+                case WebFrameLoadTypeUninitialized:
+                    NSLog (@"temporary check for WebFrameLoadTypeUninitialized until dummy ds is removed, should never encounter this type.");
+                    break;
+                    
+                default:
+                    [[NSException exceptionWithName:NSGenericException reason:@"invalid load type during commit transition" userInfo: nil] raise];
+                    break;
+                }
             }
             
             // Tell the client we've committed this URL.
@@ -579,6 +613,16 @@ static const char * const stateNames[6] = {
 - (void)_setProvisionalDataSource:(WebDataSource *)d
 {
     [_private setProvisionalDataSource:d];
+}
+
+
+- (void)_goToURL: (NSURL *)url withFrameLoadType: (WebFrameLoadType)type
+{
+    WebDataSource *dataSource = [[WebDataSource alloc] initWithURL:url];
+    [self setProvisionalDataSource: dataSource];
+    [self _setLoadType: type];
+    [self startLoading];
+    [dataSource release];
 }
 
 @end

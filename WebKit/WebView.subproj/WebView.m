@@ -5,6 +5,7 @@
 
 #import <WebKit/WebController.h>
 
+#import <WebKit/WebBackForwardList.h>
 #import <WebKit/WebController.h>
 #import <WebKit/WebControllerPolicyHandler.h>
 #import <WebKit/WebControllerPrivate.h>
@@ -15,6 +16,7 @@
 #import <WebKit/WebException.h>
 #import <WebKit/WebFrame.h>
 #import <WebKit/WebFramePrivate.h>
+#import <WebKit/WebHistoryItem.h>
 #import <WebKit/WebKitErrors.h>
 #import <WebKit/WebKitStatisticsPrivate.h>
 #import <WebKit/WebKitDebug.h>
@@ -37,6 +39,8 @@
     _private = [[WebControllerPrivate alloc] init];
     _private->mainFrame = [[WebFrame alloc] initWithName: @"_top" webView: view provisionalDataSource: dataSource controller: self];
 
+    [self setUseBackForwardList: YES];
+    
     ++WebControllerCount;
 
     return self;
@@ -303,6 +307,44 @@
 {
     return _private->backForwardList;
 }
+
+- (void)setUseBackForwardList: (BOOL)flag
+{
+    _private->useBackForwardList = flag;
+}
+
+- (BOOL)useBackForwardList
+{
+    return _private->useBackForwardList;
+}
+
+
+- (BOOL)goBack
+{
+    WebHistoryItem *item = [[self backForwardList] backEntry];
+    WebFrame *targetFrame;
+    
+    if (item){
+        targetFrame = [self frameNamed: [item target]];
+        [targetFrame _goToURL: [item url] withFrameLoadType: WebFrameLoadTypeBack];
+        return YES;
+    }
+    return NO;
+}
+
+- (BOOL)goForward
+{
+    WebHistoryItem *item = [[self backForwardList] forwardEntry];
+    WebFrame *targetFrame;
+    
+    if (item){
+        targetFrame = [self frameNamed: [item target]];
+        [targetFrame _goToURL: [item url] withFrameLoadType: WebFrameLoadTypeForward];
+        return YES;
+    }
+    return NO;
+}
+
 
 @end
 

@@ -77,9 +77,13 @@
     
     [[newFrame webView] _setMarginWidth:width];
     [[newFrame webView] _setMarginHeight:height];
-
+    
     [[newFrame _bridge] loadURL:URL attributes:nil flags:0 withParent:[self dataSource]];
     
+    // Set the load type so this load doesn't end up in the back
+    // forward list.
+    [newFrame _setLoadType: WebFrameLoadTypeInternal];
+
     return YES;
 }
 

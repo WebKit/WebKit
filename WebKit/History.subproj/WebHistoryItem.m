@@ -11,6 +11,11 @@
 
 @implementation WebHistoryItem
 
++(WebHistoryItem *)entryWithURL:(NSURL *)url
+{
+    return [[[self alloc] initWithURL:url title:nil] autorelease];
+}
+
 -(id)init
 {
     return [self initWithURL:nil title:nil image:nil];

@@ -1,5 +1,35 @@
 2002-07-29  Richard Williamson  <rjw@apple.com>
 
+        Changes to support the migration of back/forward list to WebKit.
+        Back/forward in frames now works (2946164), still not done w/
+        restoring scroll positions (2927633).
+        
+        * History.subproj/WebHistoryItem.h:
+        * History.subproj/WebHistoryItem.m:
+        (+[WebHistoryItem entryWithURL:]):
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge createChildFrameNamed:withURL:renderPart:allowsScrolling:marginWidth:marginHeight:]):
+        * WebView.subproj/WebController.h:
+        * WebView.subproj/WebController.m:
+        (-[WebController initWithView:provisionalDataSource:]):
+        (-[WebController setUseBackForwardList:]):
+        (-[WebController useBackForwardList]):
+        (-[WebController goBack]):
+        (-[WebController goForward]):
+        * WebView.subproj/WebControllerPrivate.h:
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame setProvisionalDataSource:]):
+        * WebView.subproj/WebFramePrivate.h:
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _transitionToCommitted]):
+        (-[WebFrame _setProvisionalDataSource:]):
+        (-[WebFrame _goToURL:withFrameLoadType:]):
+        * WebView.subproj/WebViewPrivate.m:
+        (-[WebView _goBack]):
+        (-[WebView _goForward]):
+
+2002-07-29  Richard Williamson  <rjw@apple.com>
+
         Fixed 3009074.  Added [WebHTMLView jumpToSelection:] and related user interface
         item validation.
         

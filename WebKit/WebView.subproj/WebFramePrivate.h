@@ -36,7 +36,8 @@ typedef enum {
     WebFrameLoadTypeForward = 3,
     WebFrameLoadTypeIndexedBack = 4,
     WebFrameLoadTypeIndexedForward = 5,
-    WebFrameLoadTypeRefresh = 6
+    WebFrameLoadTypeRefresh = 6,
+    WebFrameLoadTypeInternal = 7
 } WebFrameLoadType;
 
 #define WebFrameStateChangedNotification @"WebFrameStateChangedNotification"
@@ -87,4 +88,7 @@ typedef enum {
 - (WebBridge *)_bridge;
 - (BOOL)_shouldShowDataSource:(WebDataSource *)dataSource;
 - (void)_setProvisionalDataSource:(WebDataSource *)d;
+- (void)_setLoadType: (WebFrameLoadType)loadType;
+- (WebFrameLoadType)_loadType;
+- (void)_goToURL: (NSURL *)url withFrameLoadType: (WebFrameLoadType)type;
 @end

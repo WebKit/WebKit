@@ -16,6 +16,8 @@
     NSPoint _scrollPoint;
 }
 
++(WebHistoryItem *)entryWithURL:(NSURL *)url;
+
 -(id)init;
 -(id)initWithURL:(NSURL *)url title:(NSString *)title;
 -(id)initWithURL:(NSURL *)url title:(NSString *)title image:(NSImage *)image;

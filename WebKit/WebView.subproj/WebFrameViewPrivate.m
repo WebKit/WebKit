@@ -238,12 +238,12 @@
 
 - (void)_goBack
 {
-    [[[self _controller] windowContext] goBack];
+    [[self _controller] goBack];
 }
 
 - (void)_goForward
 {
-    [[[self _controller] windowContext] goForward];
+    [[self _controller] goForward];
 }
 
 @end
