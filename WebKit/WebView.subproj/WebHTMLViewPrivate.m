@@ -271,9 +271,22 @@ static BOOL forceRealHitTest = NO;
 
 - (NSView *)hitTest:(NSPoint)point
 {
-    // WebHTMLView objects handle all clicks for objects inside them.
-    BOOL realHitTest = forceRealHitTest || [[[self window] currentEvent] type] != NSLeftMouseDown;
-    return realHitTest ? [super hitTest:point] : [[self superview] mouse:point inRect:[self frame]] ? self : nil;
+    // WebHTMLView objects handle all left mouse clicks for objects inside them.
+    // That does not include left mouse clicks with the control key held down.
+    BOOL captureHitsOnSubviews;
+    if (forceRealHitTest) {
+        captureHitsOnSubviews = NO;
+    } else {
+        NSEvent *event = [[self window] currentEvent];
+        captureHitsOnSubviews = [event type] == NSLeftMouseDown && ([event modifierFlags] & NSControlKeyMask) == 0;
+    }
+    if (!captureHitsOnSubviews) {
+        return [super hitTest:point];
+    }
+    if ([[self superview] mouse:point inRect:[self frame]]) {
+        return self;
+    }
+    return nil;
 }
 
 - (void)_updateMouseoverWithEvent:(NSEvent *)event

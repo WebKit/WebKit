@@ -1,5 +1,14 @@
 2002-12-15  Darin Adler  <darin@apple.com>
 
+        Reviewed by Trey.
+
+	- fixed 3128260 -- REGRESSION: context menus in frames are always the generic page menu
+
+        * WebView.subproj/WebHTMLViewPrivate.m: (-[WebHTMLView hitTest:]):
+	Check the control key in the mouse down event. If it's down, then do no magic.
+
+2002-12-15  Darin Adler  <darin@apple.com>
+
         Reviewed by Dave.
 
 	- fixed 3128651 -- REGRESSION: Mouse wheeling is busted on frames pages
