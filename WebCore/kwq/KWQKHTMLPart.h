@@ -26,10 +26,8 @@
 #include <khtml_part.h>
 
 #ifdef __OBJC__
-@class IFWebDataSource;
 @class WebCoreBridge;
 #else
-class IFWebDataSource;
 class WebCoreBridge;
 #endif
 
@@ -63,8 +61,6 @@ public:
     void setStatusBarText(const QString &status);
 
     QString documentSource() const;
-
-    IFWebDataSource *getDataSource();
 
     bool frameExists(const QString &frameName);
     KHTMLPart *findFrame(const QString &frameName);

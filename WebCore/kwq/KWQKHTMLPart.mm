@@ -249,7 +249,7 @@ void KWQKHTMLPartImpl::write( const char *str, int len )
     double start = CFAbsoluteTimeGetCurrent();
 #endif
     
-    // FIX ME:  This is very expensive.  We should using the IFMutableData
+    // FIX ME:  This is very expensive.  We should be using the data object
     // that represents the document, and only constructing the complete
     // string when requested.
     m_documentSource += QString(str, len);
