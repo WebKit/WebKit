@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
+@class WebImageRenderer;
+
 extern NSString *WebURLPboardType;
 extern NSString *WebURLNamePboardType;
 
@@ -43,5 +45,12 @@ extern NSString *WebURLNamePboardType;
 // Writes a file wrapper to the pasteboard as an RTFD attachment.
 // NSRTFDPboardType must be declared on the pasteboard before calling this method.
 - (void)_web_writeFileWrapperAsRTFDAttachment:(NSFileWrapper *)wrapper;
+
+// Writes an image, URL and other optional types to the pasteboard.
+- (void)_web_writeImage:(WebImageRenderer *)image 
+                    URL:(NSURL *)URL 
+                  title:(NSString *)title
+            fileWrapper:(NSFileWrapper *)wrapper 
+             HTMLString:(NSString *)HTMLString;
 
 @end

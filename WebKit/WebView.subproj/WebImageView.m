@@ -177,9 +177,7 @@
 - (BOOL)writeImageToPasteboard:(NSPasteboard *)pasteboard
 {    
     if ([self haveCompleteImage]) {
-        [pasteboard declareTypes:[NSArray arrayWithObjects:NSRTFDPboardType, NSTIFFPboardType, nil] owner:nil];
-        [pasteboard _web_writeFileWrapperAsRTFDAttachment:[rep fileWrapper]];
-        [pasteboard setData:[[rep image] TIFFRepresentation] forType:NSTIFFPboardType];
+        [pasteboard _web_writeImage:[rep image] URL:[rep URL] title:nil fileWrapper:[rep fileWrapper] HTMLString:nil];
         return YES;
     }
     

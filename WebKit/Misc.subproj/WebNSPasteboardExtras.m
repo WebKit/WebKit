@@ -7,12 +7,15 @@
 //
 
 #import <WebKit/WebNSPasteboardExtras.h>
+
+#import <WebKit/WebAssertions.h>
+#import <WebKit/WebImageRenderer.h>
 #import <WebKit/WebNSURLExtras.h>
 #import <WebKit/WebURLsWithTitles.h>
 #import <WebKit/WebViewPrivate.h>
 
-#import <WebKit/WebAssertions.h>
 #import <Foundation/NSString_NSURLExtras.h>
+#import <Foundation/NSURL_NSURLExtras.h>
 
 #import <HIServices/CoreTranslationFlavorTypeNames.h>
 
@@ -142,6 +145,49 @@ NSString *WebURLNamePboardType = nil;
     
     NSData *RTFDData = [string RTFDFromRange:NSMakeRange(0, [string length]) documentAttributes:nil];
     [self setData:RTFDData forType:NSRTFDPboardType];
+}
+
+- (void)_web_writeImage:(WebImageRenderer *)image 
+                    URL:(NSURL *)URL 
+                  title:(NSString *)title
+            fileWrapper:(NSFileWrapper *)fileWrapper 
+             HTMLString:(NSString *)HTMLString
+{
+    ASSERT(image);
+    ASSERT(URL);
+    
+    BOOL isDrag = (self == [NSPasteboard pasteboardWithName:NSDragPboard]);
+    NSMutableArray *types = [NSMutableArray arrayWithObject:NSTIFFPboardType];
+    
+    [types addObjectsFromArray:[NSPasteboard _web_writableDragTypesForURL]];
+    
+    if (fileWrapper) {
+        [types addObject:NSRTFDPboardType];
+    }
+    if (HTMLString) {
+        [types addObject:NSHTMLPboardType];
+    }
+    if (isDrag) {
+        [types addObject:NSFilesPromisePboardType];
+    }
+
+    [self setData:[image TIFFRepresentation] forType:NSTIFFPboardType];
+    [self _web_writeURL:URL andTitle:title withOwner:self types:types];
+    
+    if (fileWrapper) {
+        [self _web_writeFileWrapperAsRTFDAttachment:fileWrapper];
+    }
+    if (HTMLString) {
+        [self setString:HTMLString forType:NSHTMLPboardType];
+    }
+    if (isDrag) {
+        NSString *filename = [URL _web_suggestedFilenameWithMIMEType:[image MIMEType]];
+        NSString *fileType = [filename pathExtension];
+        if (!fileType) {
+            fileType = @"";
+        }
+        [self setPropertyList:[NSArray arrayWithObject:fileType] forType:NSFilesPromisePboardType];
+    }
 }
 
 @end

@@ -3,12 +3,13 @@
         Copyright (c) 2002, Apple, Inc. All rights reserved.
 */
 
+#import <WebKit/WebNSViewExtras.h>
+
 #import <WebKit/WebFrameView.h>
 #import <WebKit/WebImageRenderer.h>
 #import <WebKit/WebNSImageExtras.h>
 #import <WebKit/WebNSPasteboardExtras.h>
 #import <WebKit/WebNSURLExtras.h>
-#import <WebKit/WebNSViewExtras.h>
 
 #import <Foundation/NSString_NSURLExtras.h>
 #import <Foundation/NSURL_NSURLExtras.h>
@@ -226,23 +227,8 @@
     NSArray *filesTypes = [NSArray arrayWithObject:fileType];
     
     NSPasteboard *pboard = [NSPasteboard pasteboardWithName:NSDragPboard];
-    NSMutableArray *types = [NSMutableArray arrayWithObjects:NSFilesPromisePboardType, NSTIFFPboardType, nil];
-    [types addObjectsFromArray:[NSPasteboard _web_writableDragTypesForURL]];
-    if (fileWrapper) {
-        [types insertObject:NSRTFDPboardType atIndex:0];
-    }
-    if (HTMLString) {
-        [types addObject:NSHTMLPboardType];
-    }
-    [pboard _web_writeURL:URL andTitle:title withOwner:self types:types];
-    if (fileWrapper) {
-        [pboard _web_writeFileWrapperAsRTFDAttachment:fileWrapper];
-    }
-    if (HTMLString) {
-        [pboard setString:HTMLString forType:NSHTMLPboardType];
-    }
-    [pboard setPropertyList:filesTypes forType:NSFilesPromisePboardType];
-    [pboard setData:[image TIFFRepresentation] forType:NSTIFFPboardType];
+
+    [pboard _web_writeImage:image URL:URL title:title fileWrapper:fileWrapper HTMLString:HTMLString];
     
     id source = [[NSFilePromiseDragSource alloc] initWithSource:(id)self];
     [source setTypes:filesTypes onPasteboard:pboard];
