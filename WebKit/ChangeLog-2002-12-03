@@ -1,3 +1,21 @@
+2002-10-09  Darin Adler  <darin@apple.com>
+
+	- fixed 3069764 -- REGRESSION: Plug-ins sometimes don't respond to
+	update events, causes disappearing
+
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView drawRect:]): Set the visible region of the port to the
+	port bounds to work around the fact that NSWindow tries to help us by doing a
+	BeginUpdate call. This ensures we can draw where we think we are dirty, not just
+	where Carbon thinks we are dirty.
+
+        * Plugins.subproj/WebNetscapePluginDocumentView.m: Tweak includes.
+        * Plugins.subproj/WebNetscapePluginEmbeddedView.m: Tweak includes.
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge openNewWindowWithURL:referrer:frameName:]): Tweak.
+
+        * English.lproj/StringsNotToBeLocalized.txt: Update for recent changes.
+
 2002-10-08  Darin Adler  <darin@apple.com>
 
 	Make WebFrame do the entire frame hierarchy, instead of having the

@@ -3,11 +3,12 @@
 	Copyright 2002, Apple, Inc. All rights reserved.
 */
 
+#import <WebKit/WebNetscapePluginDocumentView.h>
+
 #import <WebKit/WebController.h>
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebDocument.h>
 #import <WebKit/WebFrame.h>
-#import <WebKit/WebNetscapePluginDocumentView.h>
 #import <WebKit/WebNSViewExtras.h>
 #import <WebKit/WebPlugin.h>
 #import <WebKit/WebPluginDatabase.h>

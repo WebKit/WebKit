@@ -24,6 +24,7 @@
 "BufferTextDrawing"
 "Courier"
 "DOCBASE"
+"GET"
 "Helvetica"
 "IE"
 "Joy!peff"

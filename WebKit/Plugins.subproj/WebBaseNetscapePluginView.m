@@ -6,6 +6,7 @@
 #define USE_CARBON 1
 
 #import <WebKit/WebBaseNetscapePluginView.h>
+
 #import <WebKit/WebController.h>
 #import <WebKit/WebControllerPrivate.h>
 #import <WebKit/WebDataSource.h>
@@ -21,13 +22,14 @@
 #import <WebKit/WebView.h>
 #import <WebKit/WebWindowOperationsDelegate.h>
 
-//#import <WebFoundation/WebAssertions.h>
-#import <WebFoundation/WebFoundation.h>
+#import <WebFoundation/WebAssertions.h>
+#import <WebFoundation/WebHTTPResourceRequest.h>
 #import <WebFoundation/WebNSStringExtras.h>
 #import <WebFoundation/WebNSURLExtras.h>
 
 #import <AppKit/NSEvent_Private.h>
 #import <AppKit/NSWindow_Private.h>
+
 #import <Carbon/Carbon.h>
 
 @implementation WebBaseNetscapePluginView
@@ -155,10 +157,10 @@
     WindowRef windowRef = [[self window] _windowRef];
     event.message = (UInt32)windowRef;
 
-    BOOL acceptedEvent = [self sendEvent:&event]; 
+    BOOL acceptedEvent = [self sendEvent:&event];
 
     LOG(Plugins, "NPP_HandleEvent(updateEvt): %d", acceptedEvent);
-    
+
     return acceptedEvent;
 }
 
@@ -370,8 +372,8 @@
     nPort.port = port;
     
     // FIXME: Are these values correct? Without them, Flash freaks.
-    nPort.portx = -(int32)boundsInWindow.origin.x;
-    nPort.porty = -(int32)boundsInWindow.origin.y;
+    nPort.portx = (int32)-boundsInWindow.origin.x;
+    nPort.porty = (int32)-boundsInWindow.origin.y;
     
     window.window = &nPort;
     
@@ -626,12 +628,23 @@
 
 - (void)drawRect:(NSRect)rect
 {
-#if 0
-    [[NSColor redColor] set];
-    NSRectFill([self bounds]);
-#endif
-    if(isStarted){
+    if (isStarted) {
+        // AppKit tried to help us by doing a BeginUpdate.
+        // But the invalid region at that level didn't include AppKit's notion of what was not valid.
+        // We reset the port's visible region to counteract what BeginUpdate did.
+        RgnHandle savedVisibleRegion = NewRgn();
+        GetPortVisibleRegion(nPort.port, savedVisibleRegion);
+        Rect portBounds;
+        GetPortBounds(nPort.port, &portBounds);
+        RgnHandle portBoundsAsRegion = NewRgn();
+        RectRgn(portBoundsAsRegion, &portBounds);
+        SetPortVisibleRegion(nPort.port, portBoundsAsRegion);
+        DisposeRgn(portBoundsAsRegion);
+        
         [self sendUpdateEvent];
+
+        SetPortVisibleRegion(nPort.port, savedVisibleRegion);
+        DisposeRgn(savedVisibleRegion);
     }
 }
 

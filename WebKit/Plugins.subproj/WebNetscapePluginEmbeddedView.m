@@ -3,15 +3,16 @@
 	Copyright 2002, Apple, Inc. All rights reserved.
 */
 
+#import <WebKit/WebNetscapePluginEmbeddedView.h>
+
 #import <WebKit/WebBaseNetscapePluginViewPrivate.h>
 #import <WebKit/WebController.h>
 #import <WebKit/WebFrame.h>
-#import <WebKit/WebNetscapePluginEmbeddedView.h>
 #import <WebKit/WebNSViewExtras.h>
 #import <WebKit/WebPlugin.h>
 #import <WebKit/WebView.h>
 
-#import <WebFoundation/WebFoundation.h>
+#import <WebFoundation/WebResourceRequest.h>
 
 @implementation WebNetscapePluginEmbeddedView
 

@@ -73,8 +73,7 @@
 
     WebController *newController = [[[frame controller] windowOperationsDelegate] openNewWindowWithURL:URL referrer:referrer behind:NO];
     [newController _setTopLevelFrameName:name];
-    WebFrame *newFrame = [newController mainFrame];
-    return [newFrame _bridge];
+    return [[newController mainFrame] _bridge];
 }
 
 - (BOOL)areToolbarsVisible
