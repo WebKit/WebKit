@@ -29,6 +29,8 @@
 
 QString i18n(const char* text)
 {
+    // FIXME!  Need to add support for localization.
+    return QString (text);
 }
 
 
