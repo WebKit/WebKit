@@ -1,5 +1,14 @@
 2004-05-14  Chris Blumenberg  <cblu@apple.com>
 
+	Fixed: <rdar://problem/3655495>: (exception loading applets)
+
+        Reviewed by kocienda.
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge pluginViewWithPackage:attributes:baseURL:]): when calling old cocoa plug-ins, use old keys
+
+2004-05-14  Chris Blumenberg  <cblu@apple.com>
+
 	Fixed: <rdar://problem/3655204>: (repro assertion failure and crash loading java applets)
 
         Reviewed by kocienda.

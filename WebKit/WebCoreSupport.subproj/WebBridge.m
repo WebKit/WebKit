@@ -86,6 +86,10 @@
 + (NSView <WebPlugin> *)pluginViewWithArguments:(NSDictionary *)arguments;
 @end
 
+NSString *WebPluginBaseURLKey =     @"WebPluginBaseURL";
+NSString *WebPluginAttributesKey =  @"WebPluginAttributes";
+NSString *WebPluginContainerKey =   @"WebPluginContainer";
+
 @implementation WebBridge
 
 - (id)initWithWebFrame:(WebFrame *)webFrame
@@ -727,22 +731,26 @@
 
     ASSERT([docView isKindOfClass:[WebHTMLView class]]);
     
-    WebPluginController *pluginController = [docView _pluginController];
-    
-    NSDictionary *arguments = [NSDictionary dictionaryWithObjectsAndKeys:
-        baseURL, WebPlugInBaseURLKey,
-        attributes, WebPlugInAttributesKey,
-        pluginController, WebPlugInContainerKey,
-        nil];
-
-    LOG(Plugins, "arguments:\n%@", arguments);
-
     [pluginPackage load];
     
+    WebPluginController *pluginController = [docView _pluginController];
     Class viewFactory = [pluginPackage viewFactory];
+    
     if ([viewFactory respondsToSelector:@selector(plugInViewWithArguments:)]) {
+        NSDictionary *arguments = [NSDictionary dictionaryWithObjectsAndKeys:
+            baseURL, WebPlugInBaseURLKey,
+            attributes, WebPlugInAttributesKey,
+            pluginController, WebPlugInContainerKey,
+            nil];
+        LOG(Plugins, "arguments:\n%@", arguments);
         return [viewFactory plugInViewWithArguments:arguments];
     } else if ([viewFactory respondsToSelector:@selector(pluginViewWithArguments:)]) {
+        NSDictionary *arguments = [NSDictionary dictionaryWithObjectsAndKeys:
+            baseURL, WebPluginBaseURLKey,
+            attributes, WebPluginAttributesKey,
+            pluginController, WebPluginContainerKey,
+            nil];
+        LOG(Plugins, "arguments:\n%@", arguments);
         return [viewFactory pluginViewWithArguments:arguments];
     } else {
         return nil;
