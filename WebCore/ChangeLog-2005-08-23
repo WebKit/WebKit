@@ -23,7 +23,7 @@
 	Make the initial value for dashboard region list a static to minimize allocations
 	of empty lists.
 
-	Make marquee and flex style accessor functions const.
+	Make marquee and flex style accessor functions const.
 
         Reviewed by Hyatt.
 
