@@ -286,7 +286,6 @@ void RenderTable::layout()
     int newHeight = m_height;
     m_height = oldHeight;
 
-    // html tables with percent height are relative to view
     Length h = style()->height();
     int th = -(bpTop + bpBottom); // Tables size as though CSS height includes border/padding.
     if (isPositioned())
@@ -307,17 +306,16 @@ void RenderTable::layout()
         }
 
         if (c->isTableCell()) {
-            RenderTableCell* cell = static_cast<RenderTableCell*>(c);
-            int cellHeight = cell->getCellPercentageHeight();
-            if (cellHeight)
+            int cellHeight = c->overrideSize();
+            if (cellHeight != -1)
                 th += h.width(cellHeight);
         }
         else  {
             Length ch = c->style()->height();
             if (ch.isFixed())
                 th += h.width(ch.value);
-            else
-                // FIXME: Investigate this.  Seems wrong to always expand to fill the viewRect.
+            else if (style()->htmlHacks())
+                // In quirks mode, we always expand to fill the viewRect.
                 // We need to substract out the margins of this block. -dwh
                 th += h.width(viewRect().height() - c->marginBottom() - c->marginTop());
         }
@@ -1134,8 +1132,8 @@ void RenderTableSection::calcRowHeight()
 	    if ( ( indx = r - cell->rowSpan() + 1 ) < 0 )
 		indx = 0;
 
-            if (cell->getCellPercentageHeight()) {
-                cell->setCellPercentageHeight(0);
+            if (cell->overrideSize() != -1) {
+                cell->setOverrideSize(-1);
                 cell->setChildNeedsLayout(true, false);
                 cell->layoutIfNeeded();
             }
@@ -1280,26 +1278,32 @@ int RenderTableSection::layoutRows( int toAdd )
             
             // Force percent height children to lay themselves out again.
             // This will cause, e.g., textareas to grow to
-            // fill the area.  FIXME: <div>s and blocks still don't
-            // work right.  We'll need to have an efficient way of
-            // invalidating all percent height objects in a render subtree.
-            // For now, we just handle immediate children. -dwh
+            // fill the area.
             bool cellChildrenFlex = false;
-            RenderObject* o = cell->firstChild();
-            while (o) {
-                if (!o->isText() && o->style()->height().isPercent()) {
-                    o->setNeedsLayout(true, false);
-                    cell->setChildNeedsLayout(true, false);
-                    cellChildrenFlex = true;
+            if (cell->style()->height().isFixed() || 
+                (!table()->style()->height().isVariable() && rHeight != cell->height())) {
+                // FIXME: There is still more work to do here to fully match WinIE (should
+                // it become necessary to do so).  In quirks mode, WinIE behaves like we
+                // do, but it will clip the cells that spill out of the table section.  In
+                // strict mode, Mozilla and WinIE both regrow the table to accommodate the
+                // new height of the cell (thus letting the percentages cause growth one
+                // time only).  We may also not be handling row-spanning cells correctly.
+                RenderObject* o = cell->firstChild();
+                while (o) {
+                    if (!o->isText() && o->style()->height().isPercent()) {
+                        o->setNeedsLayout(true, false);
+                        cell->setChildNeedsLayout(true, false);
+                        cellChildrenFlex = true;
+                    }
+                    o = o->nextSibling();
                 }
-                o = o->nextSibling();
             }
             if (cellChildrenFlex) {
-                cell->setCellPercentageHeight(kMax(0, 
-                                                   rHeight - cell->borderTop() - cell->paddingTop() - 
-                                                   cell->borderBottom() - cell->paddingBottom()));
+                cell->setOverrideSize(kMax(0, 
+                                           rHeight - cell->borderTop() - cell->paddingTop() - 
+                                                     cell->borderBottom() - cell->paddingBottom()));
                 cell->layoutIfNeeded();
-           
+
                 // Alignment within a cell is based off the calculated
                 // height, which becomes irrelevant once the cell has
                 // been resized based off its percentage. -dwh
@@ -1633,16 +1637,6 @@ void RenderTableCell::updateFromElement()
   } else {
       cSpan = rSpan = 1;
   }
-}
-
-int RenderTableCell::getCellPercentageHeight() const
-{
-    return m_percentageHeight;
-}
-
-void RenderTableCell::setCellPercentageHeight(int h)
-{
-    m_percentageHeight = h;
 }
     
 void RenderTableCell::calcMinMaxWidth()
