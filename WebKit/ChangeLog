@@ -1,3 +1,5 @@
+=== Safari-400 ===
+
 2005-02-25  Richard Williamson   <rjw@apple.com>
 
 	Fixed <rdar://problem/4000962> 8A375: Help Viewer displays voiced sound and semi-voiced characters strangely (characters don't seem to be composed)
