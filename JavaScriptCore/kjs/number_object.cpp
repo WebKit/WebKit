@@ -162,7 +162,7 @@ bool NumberObjectImp::implementsConstruct() const
 // ECMA 15.7.1
 Object NumberObjectImp::construct(ExecState *exec, const List &args)
 {
-  Object Imp *proto = exec->interpreter()->builtinNumberPrototype().imp();
+  ObjectImp *proto = exec->interpreter()->builtinNumberPrototype().imp();
   Object obj(new NumberInstanceImp(proto));
 
   Number n;
