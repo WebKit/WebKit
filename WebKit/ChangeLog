@@ -1,6 +1,16 @@
 2003-06-11  Chris Blumenberg  <cblu@apple.com>
 
+	Fixed: <rdar://problem/3289577>: Reenable Carbon Java plug-ins when in Carbon app
+
+        Reviewed by gramps.
+
+        * Plugins.subproj/WebPluginDatabase.m:
+        (-[WebPluginDatabase pluginForKey:withEnumeratorSelector:]): only call canUsePlugin: for web plug-ins
+
+2003-06-11  Chris Blumenberg  <cblu@apple.com>
+
 	Fixed: <rdar://problem/3289380>: REGRESSION: policyDataSource == nil assertion failure after closing particular window
+
 
         Reviewed by john.
 

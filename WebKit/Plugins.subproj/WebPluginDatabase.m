@@ -126,9 +126,9 @@ static BOOL sIsCocoa = FALSE;
 
     if ([self canUsePlugin:webPlugin]) {
         return webPlugin;
-    } else if ([self canUsePlugin:machoPlugin]) {
+    } else if (machoPlugin) {
         return machoPlugin;
-    } else if ([self canUsePlugin:CFMPlugin]) {
+    } else if (CFMPlugin) {
         return CFMPlugin;
     } else {
         return nil;
