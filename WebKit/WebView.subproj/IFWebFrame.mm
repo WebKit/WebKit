@@ -7,6 +7,7 @@
 
 #import <WebKit/IFWebFrame.h>
 #import <WebKit/IFWebFramePrivate.h>
+#import <WebKit/IFWebViewPrivate.h>
 #import <WebKit/IFWebDataSource.h>
 
 @implementation IFWebFrame
@@ -22,7 +23,7 @@
 
     [super init];
     
-    _framePrivate = [[IFWebFramePrivate alloc] init];
+    _framePrivate = [[IFWebFramePrivate alloc] init];   
     
     data = (IFWebFramePrivate *)_framePrivate;
     
