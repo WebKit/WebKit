@@ -38,7 +38,6 @@ class KWQLoaderImpl
 public:
     KWQLoaderImpl(khtml::Loader *);
     
-    void setClient(khtml::Request *);
     void serveRequest(khtml::Request *, KIO::TransferJob *);
     void objectFinished(khtml::CachedObject *);
 

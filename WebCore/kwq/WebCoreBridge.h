@@ -45,9 +45,7 @@ typedef struct KHTMLRenderPart KHTMLRenderPart;
 #endif
 
 @class IFError;
-#ifndef RESOURCE_URL_CLIENT_READY
 @class IFURLHandle;
-#endif
 
 @class WebCoreBridge;
 
@@ -112,23 +110,7 @@ typedef struct KHTMLRenderPart KHTMLRenderPart;
 
 - (KHTMLView *)widget;
 
-- (void)startLoadingResource:(id <WebCoreResourceLoader>)resourceLoader withURL:(NSURL *)URL;
-
-#ifndef RESOURCE_URL_CLIENT_READY
-
-- (void)addHandle:(IFURLHandle *)handle;
-- (void)removeHandle:(IFURLHandle *)handle;
-
-- (void)didStartLoadingWithHandle:(IFURLHandle *)handle;
-- (void)receivedProgressWithHandle:(IFURLHandle *)handle;
-- (void)didFinishLoadingWithHandle:(IFURLHandle *)handle;
-
-- (void)didCancelLoadingWithHandle:(IFURLHandle *)handle;
-- (void)didFailToLoadWithHandle:(IFURLHandle *)handle error:(IFError *)error;
-- (void)didRedirectWithHandle:(IFURLHandle *)handle fromURL:(NSURL *)fromURL;
-- (void)didFailBeforeLoadingWithError:(IFError *)error;
-
-#endif
+- (IFURLHandle *)startLoadingResource:(id <WebCoreResourceLoader>)resourceLoader withURL:(NSURL *)URL;
 
 @end
 

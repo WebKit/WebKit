@@ -39,126 +39,49 @@ using khtml::DocLoader;
 using khtml::Loader;
 using khtml::Request;
 
-@interface KWQURLLoadClient : NSObject <IFURLHandleClient>
+@interface WebCoreResourceLoader : NSObject <WebCoreResourceLoader>
 {
-    khtml::Loader *m_loader;
-    WebCoreBridge *m_bridge;
-    NSURL *m_currentURL;
+    khtml::Loader *loader;
+    KIO::TransferJob *job;
 }
 
--(id)initWithLoader:(khtml::Loader *)loader bridge:(WebCoreBridge *)bridge;
+-(id)initWithLoader:(khtml::Loader *)loader job:(KIO::TransferJob *)job;
 
 @end
 
-@implementation KWQURLLoadClient
+@implementation WebCoreResourceLoader
 
--(id)initWithLoader:(Loader *)loader bridge:(WebCoreBridge *)bridge
+-(id)initWithLoader:(khtml::Loader *)l job:(KIO::TransferJob *)j;
 {
-    if ((self = [super init])) {
-        m_loader = loader;
-        m_bridge = [bridge retain];
-        return self;
-    }
+    [super init];
     
-    return nil;
+    loader = l;
+    job = j;
+    
+    return self;
 }
 
 - (void)dealloc
 {
-    // FIXME Radar 2954901: Changed this not to leak because cancel messages are sometimes sent before begin.
-#ifdef WEBFOUNDATION_LOAD_MESSAGES_FIXED    
-    KWQ_ASSERT(m_currentURL == nil);
-#else
-    [m_currentURL release];
-#endif    
-    [m_bridge release];
+    delete job;
     [super dealloc];
 }
 
-- (void)IFURLHandleResourceDidBeginLoading:(IFURLHandle *)handle
+- (void)addData:(NSData *)data
 {
-    KWQDEBUGLEVEL(KWQ_LOG_LOADING, "bridge = %p for URL %s", m_bridge, DEBUG_OBJECT([handle url]));
-
-    KWQ_ASSERT(m_currentURL == nil);
-
-    m_currentURL = [[handle url] retain];
-    [m_bridge didStartLoadingWithHandle:handle];
+    loader->slotData(job, (const char *)[data bytes], [data length]);
 }
 
-- (void)IFURLHandle:(IFURLHandle *)handle resourceDataDidBecomeAvailable:(NSData *)data
+- (void)cancel
 {
-    KWQDEBUGLEVEL (KWQ_LOG_LOADING, "bridge = %p for URL %s data at %p, length %d, contentLength %d, contentLengthReceived %d", m_bridge, DEBUG_OBJECT([handle url]), data, [data length], [handle contentLength], [handle contentLengthReceived]);
-
-    KWQ_ASSERT([m_currentURL isEqual:[handle redirectedURL] ? [handle redirectedURL] : [handle url]]);
-
-    void *userData = [[handle attributeForKey:IFURLHandleUserData] pointerValue];
-    KIO::TransferJob *job = static_cast<KIO::TransferJob *>(userData);
-    m_loader->slotData(job, (const char *)[data bytes], [data length]);
-    
-    [m_bridge receivedProgressWithHandle:handle];
+    job->setError(1);
+    [self finish];
 }
 
-- (void)doneWithHandle:(IFURLHandle *)handle error:(BOOL)error
+- (void)finish
 {
-    // FIXME Radar 2954901: Replaced the assertion below with a more lenient one,
-    // since cancel messages are sometimes sent before begin.
-#ifdef WEBFOUNDATION_LOAD_MESSAGES_FIXED    
-    KWQ_ASSERT([m_currentURL isEqual:[handle redirectedURL] ? [handle redirectedURL] : [handle url]]);
-#else
-    KWQ_ASSERT(m_currentURL == nil || [m_currentURL isEqual:[handle redirectedURL] ? [handle redirectedURL] : [handle url]]);
-#endif    
-
-    [m_bridge removeHandle:handle];
-    
-    void *userData = [[handle attributeForKey:IFURLHandleUserData] pointerValue];
-    KIO::TransferJob *job = static_cast<KIO::TransferJob *>(userData);
-    if (error) {
-        job->setError(1);
-    }
-    m_loader->slotFinished(job);
-    delete job;
-    
-    [m_currentURL release];
-    m_currentURL = nil;
-}
-
-- (void)IFURLHandleResourceDidCancelLoading:(IFURLHandle *)handle
-{
-    KWQDEBUGLEVEL(KWQ_LOG_LOADING, "bridge = %p for URL %s", m_bridge, DEBUG_OBJECT([handle url]));
-
-    [self doneWithHandle:handle error:YES];
-    [m_bridge didCancelLoadingWithHandle:handle];
-}
-
-- (void)IFURLHandleResourceDidFinishLoading:(IFURLHandle *)handle data:(NSData *)data
-{
-    KWQDEBUGLEVEL(KWQ_LOG_LOADING, "bridge = %p for URL %s data at %p, length %d", m_bridge, DEBUG_OBJECT([handle url]), data, [data length]);
-    
-    KWQ_ASSERT([handle statusCode] == IFURLHandleStatusLoadComplete);
-    KWQ_ASSERT((int)[data length] == [handle contentLengthReceived]);
-
-    [self doneWithHandle:handle error:NO];
-    [m_bridge didFinishLoadingWithHandle:handle];
-}
-
-- (void)IFURLHandle:(IFURLHandle *)handle resourceDidFailLoadingWithResult:(IFError *)result
-{
-    KWQDEBUGLEVEL (KWQ_LOG_LOADING, "bridge = %p, result = %s, URL = %s", m_bridge, DEBUG_OBJECT([result errorDescription]), DEBUG_OBJECT([handle url]));
-
-    [self doneWithHandle:handle error:YES];
-    [m_bridge didFailToLoadWithHandle:handle error:result];
-}
-
-- (void)IFURLHandle:(IFURLHandle *)handle didRedirectToURL:(NSURL *)URL
-{
-    KWQDEBUGLEVEL(KWQ_LOG_LOADING, "url = %s", DEBUG_OBJECT(URL));
-    
-    KWQ_ASSERT(m_currentURL != nil);
-
-    [m_bridge didRedirectWithHandle:handle fromURL:m_currentURL];
-    [URL retain];
-    [m_currentURL release];
-    m_currentURL = URL;
+    loader->slotFinished(job);
+    job->setHandle(0);
 }
 
 @end
@@ -168,25 +91,17 @@ KWQLoaderImpl::KWQLoaderImpl(Loader *l)
 {
 }
 
-void KWQLoaderImpl::setClient(Request *req)
-{
-    WebCoreBridge *bridge = ((KHTMLPart *)req->m_docLoader->part())->impl->getBridge();
-    req->client = [[[KWQURLLoadClient alloc] initWithLoader:loader bridge:bridge] autorelease];
-}
-
-void KWQLoaderImpl::serveRequest(Request *req, KIO::TransferJob *job)
+void KWQLoaderImpl::start(Request *req, KIO::TransferJob *job)
 {
     KWQDEBUGLEVEL (KWQ_LOG_LOADING, "Serving request for base %s, url %s", 
           req->m_docLoader->part()->baseURL().url().latin1(), req->object->url().string().latin1());
     
-    job->begin(req->client, job);
-    if (job->handle() == nil) {
-        // The only error that prevents us from making a handle is a malformed URL.
-        IFError *error = [IFError errorWithCode:IFURLHandleResultBadURLError inDomain:IFErrorCodeDomainWebFoundation isTerminal:YES];
-        [req->client->m_bridge didFailBeforeLoadingWithError:error];
-    } else {
-        [req->client->m_bridge addHandle:job->handle()];
-    }
+    WebCoreResourceLoader *resourceLoader = [[WebCoreResourceLoader alloc] initWithLoader:loader job:job];
+    
+    WebCoreBridge *bridge = ((KHTMLPart *)req->m_docLoader->part())->impl->getBridge();
+    job->setHandle([bridge startLoadingResource:resourceLoader withURL:job->url()]);
+    
+    [resourceLoader release];
 }
 
 void KWQLoaderImpl::objectFinished(khtml::CachedObject *object)
@@ -200,6 +115,6 @@ void KWQLoaderImpl::objectFinished(khtml::CachedObject *object)
     
     // FIXME: Are we sure that we can globally notify with the URL as the notification
     // name without conflicting with other frameworks? No "IF" prefix needed?
-    // Maybe the notification should have a distinctive name, and the URL should be the object.
+    // Perhaps the notification should have a distinctive name, and the URL should be the object.
     [[NSNotificationCenter defaultCenter] postNotificationName:urlString object:nil];
 }

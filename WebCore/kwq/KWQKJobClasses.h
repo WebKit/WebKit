@@ -31,11 +31,8 @@
 #include <qstring.h>
 
 #ifdef __OBJC__
-@protocol IFURLHandleClient;
 @class IFURLHandle;
-typedef id <IFURLHandleClient> IFURLHandleClientPtr;
 #else
-typedef struct IFURLHandleClient IFURLHandleClientPtr;
 class IFURLHandle;
 #endif
 
@@ -63,7 +60,7 @@ public:
     void addMetaData(const QString &key, const QString &value);
     void kill();
 
-    void begin(IFURLHandleClientPtr, void *userData);
+    void setHandle(IFURLHandle *);
     IFURLHandle *handle() const;
     
     NSURL *url() const;

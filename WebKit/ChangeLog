@@ -1,3 +1,16 @@
+2002-06-16  Darin Adler  <darin@apple.com>
+
+	Moved the IFURLHandleClient subclass here from WebCore, so it can some day be merged
+	with the one for the frames themselves; this one is for resources.
+
+	* WebCoreSupport.subproj/IFResourceURLHandleClient.h: Added.
+	* WebCoreSupport.subproj/IFResourceURLHandleClient.m: Added.
+	* WebKit.pbproj/project.pbxproj: Added IFResourceURLHandleClient.h and .m.
+
+	* WebCoreSupport.subproj/IFWebCoreBridge.mm:
+	(-[IFWebCoreBridge startLoadingResource:withURL:]): Added.
+	Removed all the old methods, with their guts moved into IFResourceURLHandleClient.
+
 2002-06-15  Darin Adler  <darin@apple.com>
 
 	Update for frame-related changes in WebCore.

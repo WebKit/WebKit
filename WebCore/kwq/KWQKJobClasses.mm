@@ -111,14 +111,11 @@ void TransferJob::kill()
     [d->handle cancelLoadInBackground];
 }
 
-void TransferJob::begin(id <IFURLHandleClient> client, void *userData)
+void TransferJob::setHandle(IFURLHandle *handle)
 {
-    NSDictionary *attributes;
-    
-    attributes = [NSDictionary dictionaryWithObject:[NSValue valueWithPointer:userData] forKey:IFURLHandleUserData];
-    d->handle = [[IFURLHandle alloc] initWithURL:d->url attributes:attributes flags:0];    
-    [d->handle addClient:client];
-    [d->handle loadInBackground];
+    [handle retain];
+    [d->handle release];
+    d->handle = handle;
 }
 
 IFURLHandle *TransferJob::handle() const

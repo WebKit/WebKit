@@ -1,3 +1,24 @@
+2002-06-16  Darin Adler  <darin@apple.com>
+
+	Moved the IFURLHandleClient subclass to WebKit, so it can some day be merged
+	with the one for the frames themselves; this one is for resources.
+
+	* kwq/kio/jobclasses.h:
+	* kwq/KWQKjobclasses.mm:
+	(TransferJob::setHandle): Replaced the old TransferJob::begin with this.
+
+	* kwq/KWQLoaderImpl.h: Remove setClient.
+	* kwq/KWQKloader.mm:
+	(-[WebCoreResourceLoader initWithLoader:job:]): Added.
+	(-[WebCoreResourceLoader dealloc]): Added.
+	(-[WebCoreResourceLoader addData:]): Added.
+	(-[WebCoreResourceLoader cancel]): Added.
+	(-[WebCoreResourceLoader finish]): Added.
+	(KWQLoaderImpl::serveRequest): Use [WebCoreBridge startLoadingResource:withURL:].
+	* khtml/misc/loader.cpp: (Loader::load): Removed unneeded call to setClient.
+
+	* kwq/WebCoreBridge.h: Remove unneeded methods. Added [WebCoreBridge startLoadingResource:withURL:].
+
 2002-06-15  Darin Adler  <darin@apple.com>
 
 	Fix frame-related calls. I was always searching all the frames, which was disastrous.

@@ -1076,9 +1076,6 @@ Loader::~Loader()
 void Loader::load(DocLoader* dl, CachedObject *object, bool incremental)
 {
     Request *req = new Request(dl, object, incremental);
-#ifdef APPLE_CHANGES
-    d->setClient(req);
-#endif
     m_requestsPending.append(req);
 
 #ifndef APPLE_CHANGES

@@ -8,7 +8,7 @@
 #import <WebKit/IFHTMLRepresentation.h>
 #import <WebKit/IFHTMLViewPrivate.h>
 #import <WebKit/IFLoadProgress.h>
-//#import <WebKit/IFResourceURLHandleClient.h>
+#import <WebKit/IFResourceURLHandleClient.h>
 #import <WebKit/IFWebControllerPrivate.h>
 #import <WebKit/IFWebDataSourcePrivate.h>
 #import <WebKit/IFWebFramePrivate.h>
@@ -195,87 +195,9 @@
     [self addData:data withEncoding:[dataSource encoding]];
 }
 
-- (void)addHandle:(IFURLHandle *)handle
+- (IFURLHandle *)startLoadingResource:(id <WebCoreResourceLoader>)resourceLoader withURL:(NSURL *)URL
 {
-    WEBKIT_ASSERT(dataSource);
-    [dataSource _addURLHandle:handle];
-}
-
-- (void)removeHandle:(IFURLHandle *)handle
-{
-    WEBKIT_ASSERT(dataSource);
-    [dataSource _removeURLHandle:handle];
-}
-
-- (void)didStartLoadingWithHandle:(IFURLHandle *)handle
-{
-    [[dataSource controller] _didStartLoading:[handle url]];
-    [self receivedProgressWithHandle:handle];
-}
-
-- (void)receivedProgressWithHandle:(IFURLHandle *)handle
-{
-    WEBKIT_ASSERT(dataSource);
-    [[dataSource controller] _receivedProgress:[IFLoadProgress progressWithURLHandle:handle]
-        forResourceHandle:handle fromDataSource:dataSource];
-}
-
-- (void)didFinishLoadingWithHandle:(IFURLHandle *)handle
-{
-    [self receivedProgressWithHandle:handle];
-
-    IFError *nonTerminalError = [handle error];
-    if (nonTerminalError) {
-        [self didFailToLoadWithHandle:handle error:nonTerminalError];
-    } else {
-        [[dataSource controller] _didStopLoading:[handle url]];
-    }
-}
-
-- (void)didCancelLoadingWithHandle:(IFURLHandle *)handle
-{
-    WEBKIT_ASSERT(dataSource);
-    [[dataSource controller] _receivedProgress:[IFLoadProgress progress]
-        forResourceHandle:handle fromDataSource:dataSource];
-    [[dataSource controller] _didStopLoading:[handle url]];
-}
-
-- (void)didFailBeforeLoadingWithError:(IFError *)error
-{
-    WEBKIT_ASSERT(dataSource);
-    [[dataSource controller] _receivedError:error forResourceHandle:nil
-        partialProgress:nil fromDataSource:dataSource];
-}
-
-- (void)didFailToLoadWithHandle:(IFURLHandle *)handle error:(IFError *)error
-{
-    WEBKIT_ASSERT(dataSource);
-    [[dataSource controller] _receivedError:error forResourceHandle:handle
-        partialProgress:[IFLoadProgress progressWithURLHandle:handle] fromDataSource:dataSource];
-    [[dataSource controller] _didStopLoading:[handle url]];
-}
-
-- (void)didRedirectWithHandle:(IFURLHandle *)handle fromURL:(NSURL *)fromURL
-{
-    WEBKIT_ASSERT(dataSource);
-
-    NSURL *toURL = [handle redirectedURL];
-    
-    [[dataSource controller] _didStopLoading:fromURL];
-
-    [dataSource _setFinalURL:toURL];
-    [self setURL:toURL];
-
-    //[[dataSource _locationChangeHandler] serverRedirectTo:toURL forDataSource:dataSource];
-    
-    [[dataSource controller] _didStartLoading:toURL];
-}
-
-- (void)startLoadingResource:(id <WebCoreResourceLoader>)resourceLoader withURL:(NSURL *)URL
-{
-#ifdef RESOURCE_URL_CLIENT_READY
-    [IFResourceURLHandleClient startLoadingResource:resourceLoader withURL:URL dataSource:dataSource];
-#endif
+    return [IFResourceURLHandleClient startLoadingResource:resourceLoader withURL:URL dataSource:dataSource];
 }
 
 @end
