@@ -441,22 +441,34 @@ bool KWQKHTMLPart::canCachePage()
 
 void KWQKHTMLPart::saveWindowProperties(SavedProperties *windowProperties)
 {
-    Window::retrieveWindow(this)->saveProperties(*windowProperties);
+    KJS::Window *window;
+    window = Window::retrieveWindow(this);
+    if (window)
+        window->saveProperties(*windowProperties);
 }
 
 void KWQKHTMLPart::saveLocationProperties(SavedProperties *locationProperties)
 {
-    Window::retrieveWindow(this)->location()->saveProperties(*locationProperties);
+    KJS::Window *window;
+    window = Window::retrieveWindow(this);
+    if (window)
+        window->saveProperties(*locationProperties);
 }
 
 void KWQKHTMLPart::restoreWindowProperties(SavedProperties *windowProperties)
 {
-    Window::retrieveWindow(this)->restoreProperties(*windowProperties);
+    KJS::Window *window;
+    window = Window::retrieveWindow(this);
+    if (window)
+        window->restoreProperties(*windowProperties);
 }
 
 void KWQKHTMLPart::restoreLocationProperties(SavedProperties *locationProperties)
 {
-    Window::retrieveWindow(this)->location()->restoreProperties(*locationProperties);
+    KJS::Window *window;
+    window = Window::retrieveWindow(this);
+    if (window)
+        window->location()->restoreProperties(*locationProperties);
 }
 
 void KWQKHTMLPart::openURLFromPageCache(DocumentImpl *doc, RenderObject *renderer, KURL *url, SavedProperties *windowProperties, SavedProperties *locationProperties)

@@ -1,3 +1,15 @@
+2002-12-16  Richard Williamson   <rjw@apple.com>
+
+        Fixed 3128477.  Check KJS::Window before saving js objects.
+
+        Reviewed by darin.
+
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::saveWindowProperties):
+        (KWQKHTMLPart::saveLocationProperties):
+        (KWQKHTMLPart::restoreWindowProperties):
+        (KWQKHTMLPart::restoreLocationProperties):
+
 === Alexander-37 ===
 
 2002-12-16  Maciej Stachowiak  <mjs@apple.com>
