@@ -6,8 +6,11 @@
 //  Copyright (c) 2002 Apple Computer Inc. All rights reserved.
 //
 
-#import <WebKit/WebKitLogging.h>
 #import <WebKit/WebNSImageExtras.h>
+
+#import <WebKit/WebKitLogging.h>
+
+#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_2
 
 // see +load for details
 @interface NSBitmapImageRep (SPINeededForJagGreen)
@@ -15,8 +18,11 @@
 @end
 static BOOL AKBugIsFixed = NO;
 
+#endif
 
 @implementation NSImage (WebExtras)
+
+#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_2
 
 + (void)load
 {
@@ -31,6 +37,8 @@ static BOOL AKBugIsFixed = NO;
         AKBugIsFixed = YES;
     }
 }
+
+#endif
 
 - (void)_web_scaleToMaxSize:(NSSize)size
 {
@@ -60,7 +68,9 @@ static BOOL AKBugIsFixed = NO;
 {
     NSImage *dissolvedImage = [[NSImage alloc] initWithSize:[self size]];
 
+#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_2
     if (AKBugIsFixed) {
+#endif
         NSPoint point = [self isFlipped] ? NSMakePoint(0, [self size].height) : NSZeroPoint;
         
         // In this case the dragging image is always correct.
@@ -73,6 +83,7 @@ static BOOL AKBugIsFixed = NO;
         [self lockFocus];
         [dissolvedImage compositeToPoint:point operation:NSCompositeCopy];
         [self unlockFocus];
+#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_2
     } else {
         // In this case Thousands mode will have an inverted drag image.  Millions is OK.
         // FIXME 3125264: this branch of code can go when we drop Jaguar support.
@@ -89,6 +100,8 @@ static BOOL AKBugIsFixed = NO;
 
         [self setFlipped:isFlipped];
     }
+#endif
+
     [dissolvedImage release];
 }
 

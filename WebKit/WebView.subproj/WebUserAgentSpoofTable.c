@@ -1,7 +1,7 @@
 /* ANSI-C code produced by gperf version 2.7.2 */
 /* Command-line: gperf -CEot -L ANSI-C -k '*' -N _web_findSpoofTableEntry -F ,0 WebView.subproj/WebUserAgentSpoofTable.gperf  */
 struct UserAgentSpoofTableEntry { const char *name; UserAgentStringType type; };
-/* maximum key range = 27, duplicates = 0 */
+/* maximum key range = 21, duplicates = 0 */
 
 #ifdef __GNUC__
 __inline
@@ -15,32 +15,32 @@ hash (register const char *str, register unsigned int len)
 {
   static const unsigned char asso_values[] =
     {
-      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
-      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
-      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
-      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
-      36, 36, 36, 36, 36,  5,  0, 36, 36, 15,
-      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
-      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
-      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
-      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
-      36, 36, 36, 36, 36, 36, 36,  0,  0,  0,
-       0,  0, 10,  0,  0,  0, 10, 36,  0,  0,
-       0,  0,  0, 36,  0,  0,  0,  0,  5,  0,
-      36, 15,  0, 36, 36, 36, 36, 36, 36, 36,
-      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
-      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
-      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
-      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
-      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
-      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
-      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
-      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
-      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
-      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
-      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
-      36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
-      36, 36, 36, 36, 36, 36
+      27, 27, 27, 27, 27, 27, 27, 27, 27, 27,
+      27, 27, 27, 27, 27, 27, 27, 27, 27, 27,
+      27, 27, 27, 27, 27, 27, 27, 27, 27, 27,
+      27, 27, 27, 27, 27, 27, 27, 27, 27, 27,
+      27, 27, 27, 27, 27,  0,  0, 27, 27, 27,
+      27, 27, 27, 27, 27, 27, 27, 27, 27, 27,
+      27, 27, 27, 27, 27, 27, 27, 27, 27, 27,
+      27, 27, 27, 27, 27, 27, 27, 27, 27, 27,
+      27, 27, 27, 27, 27, 27, 27, 27, 27, 27,
+      27, 27, 27, 27, 27, 27, 27,  0, 10,  0,
+       0,  0,  0,  0,  0,  0,  0, 27,  0,  0,
+       0,  0,  0, 27,  0,  0, 10,  0,  0,  0,
+      27,  5,  0, 27, 27, 27, 27, 27, 27, 27,
+      27, 27, 27, 27, 27, 27, 27, 27, 27, 27,
+      27, 27, 27, 27, 27, 27, 27, 27, 27, 27,
+      27, 27, 27, 27, 27, 27, 27, 27, 27, 27,
+      27, 27, 27, 27, 27, 27, 27, 27, 27, 27,
+      27, 27, 27, 27, 27, 27, 27, 27, 27, 27,
+      27, 27, 27, 27, 27, 27, 27, 27, 27, 27,
+      27, 27, 27, 27, 27, 27, 27, 27, 27, 27,
+      27, 27, 27, 27, 27, 27, 27, 27, 27, 27,
+      27, 27, 27, 27, 27, 27, 27, 27, 27, 27,
+      27, 27, 27, 27, 27, 27, 27, 27, 27, 27,
+      27, 27, 27, 27, 27, 27, 27, 27, 27, 27,
+      27, 27, 27, 27, 27, 27, 27, 27, 27, 27,
+      27, 27, 27, 27, 27, 27
     };
   register int hval = len;
 
@@ -100,41 +100,35 @@ _web_findSpoofTableEntry (register const char *str, register unsigned int len)
 {
   enum
     {
-      TOTAL_KEYWORDS = 18,
+      TOTAL_KEYWORDS = 15,
       MIN_WORD_LENGTH = 6,
       MAX_WORD_LENGTH = 20,
-      MIN_HASH_VALUE = 9,
-      MAX_HASH_VALUE = 35
+      MIN_HASH_VALUE = 6,
+      MAX_HASH_VALUE = 26
     };
 
   static const struct UserAgentSpoofTableEntry wordlist[] =
     {
-      {"",0}, {"",0}, {"",0}, {"",0}, {"",0}, {"",0}, {"",0},
-      {"",0}, {"",0},
-      {"watch.com", MacIE},
-      {"battle.net", MacIE},
+      {"",0}, {"",0}, {"",0}, {"",0}, {"",0}, {"",0},
+      {"nj.com", MacIE},
+      {"",0}, {"",0}, {"",0},
+      {"jaguar.com", MacIE},
       {"porsche.com", MacIE},
       {"mazdausa.com", MacIE},
       {"hondacars.com", MacIE},
-      {"abcnews.go.com", WinIE},
-      {"",0},
-      {"nj.com", MacIE},
-      {"",0},
-      {"hondaredriders.com", MacIE},
       {"oregonlive.com", MacIE},
-      {"jaguar.com", MacIE},
-      {"freebsd.org", MacIE},
-      {"firstusa.com", MacIE},
-      {"microsoft.com", MacIE},
-      {"pier1.com", MacIE},
       {"",0},
       {"olympic.org", MacIE},
       {"",0},
-      {"disney.go.com", MacIE},
-      {"",0}, {"",0},
-      {"bang-olufsen.com", MacIE},
-      {"",0}, {"",0}, {"",0},
-      {"wap.sonyericsson.com", MacIE}
+      {"hondaredriders.com", MacIE},
+      {"watch.com", MacIE},
+      {"",0},
+      {"freebsd.org", MacIE},
+      {"firstusa.com", MacIE},
+      {"microsoft.com", MacIE},
+      {"abcnews.go.com", WinIE},
+      {"wap.sonyericsson.com", MacIE},
+      {"bang-olufsen.com", MacIE}
     };
 
   if (len <= MAX_WORD_LENGTH && len >= MIN_WORD_LENGTH)

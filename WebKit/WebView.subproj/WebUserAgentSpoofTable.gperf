@@ -9,7 +9,6 @@ hondacars.com, MacIE
 hondaredriders.com, MacIE
 jaguar.com, MacIE
 mazdausa.com, MacIE
-pier1.com, MacIE
 porsche.com, MacIE
 wap.sonyericsson.com, MacIE
 #
@@ -25,14 +24,8 @@ firstusa.com, MacIE
 microsoft.com, MacIE
 olympic.org, MacIE
 #
-# pretend to be Mac IE to get the cool animation on the battle.net/war3 page that Darin likes
-battle.net, MacIE
-#
 # pretend to be Mac IE to avoid gzipped HTML which we don't support yet
 freebsd.org, MacIE
 #
 # pretend to be Win IE to get the smaller font sizes the site gives for Windows
 abcnews.go.com, WinIE
-#
-# pretend to be Mac IE to avoid 500 Internal Server Error on disneyland.disney.go.com
-disney.go.com, MacIE

@@ -1,3 +1,20 @@
+2003-04-03  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - remove spoof entries as decided in meeting with Don, Dave, Mark Malone
+
+        * WebView.subproj/WebUserAgentSpoofTable.gperf: Remove battle.net because it's only there to
+        make Darin happy, and the site works fine without it. Remove pier1.com and disney.go.com because
+        we want to try evangelism first in both those cases, and having a released version where the
+        site works weakens our evangelism efforts.
+        
+        * WebView.subproj/WebUserAgentSpoofTable.c: Regenerated.
+
+        - disable workaround for Panther bug in Panther builds
+
+        * Misc.subproj/WebNSImageExtras.m: (-[NSImage _web_dissolveToFraction:]): Add ifdefs.
+        
 2003-04-02  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Trey.

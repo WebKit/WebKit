@@ -677,6 +677,8 @@ static BOOL inNSTextViewDrawRect;
 
 - (BOOL)resignFirstResponder
 {
+    NSLog(@"WebTextView resignFirstResponder");
+    
     bool resign = [super resignFirstResponder];
 
     if (![self _web_inHTMLView]) {
