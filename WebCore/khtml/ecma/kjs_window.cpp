@@ -1750,7 +1750,7 @@ Value History::getValueProperty(ExecState *, int token) const
 #endif
   default:
     kdWarning() << "Unhandled token in History::getValueProperty : " << token << endl;
-    return Value();
+    return Undefined();
   }
 }
 
