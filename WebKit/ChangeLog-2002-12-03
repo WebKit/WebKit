@@ -1,3 +1,8 @@
+2002-06-07  Darin Adler  <darin@apple.com>
+
+	* WebKit.pbproj/project.pbxproj: Don't use any warning flags for C that won't work
+	for C++, because PFE uses the C warning flags on a C++ compile.
+
 2002-06-07  Chris Blumenberg  <cblu@apple.com>
 
 	Made IFWebController a class.
