@@ -1,3 +1,12 @@
+2003-10-28  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3465383>: REGRESSION: Text field progress bar goes to 100% after error or stop
+	
+        Reviewed by john.
+
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame _isLoadComplete]): call _progressCompleted after we deliver the didFailLoadWithError or didFinishLoadForFrame message as we do in other places. This allows to be aware of the error (if there is one), when they get the WebViewProgressFinishedNotification notification.
+
 2003-10-27  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
