@@ -82,11 +82,15 @@
 // Returns YES if there are any pending loads.
 - (BOOL)isLoading
 {
-    if (!_private->primaryLoadComplete && _private->loading) {
-        return YES;
-    }
-    if ([_private->subresourceClients count]) {
-	return YES;
+    // Once a frame has loaded, we no longer need to consider subresources,
+    // but we still need to consider subframes.
+    if ([[self webFrame] _state] != WebFrameStateComplete) {
+        if (!_private->primaryLoadComplete && _private->loading) {
+            return YES;
+        }
+        if ([_private->subresourceClients count]) {
+            return YES;
+        }
     }
     
     // Put in the auto-release pool because it's common to call this from a run loop source,

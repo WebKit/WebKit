@@ -1,10 +1,22 @@
+2003-03-19  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed 3202780 -- REGRESSION: progress bar, stop button, both get stuck in "loading" state (bartsoft.com)
+
+        * WebView.subproj/WebDataSource.m: (-[WebDataSource isLoading]):
+        Add back the "is this page complete" check, so that subresource loads don't make us
+        think we're loading again, once the page is complete. On the other hand, frames
+        must still be checked independent of the "is this page complete" flag to avoid
+        reintroducing bug 3200611.
+
 2003-03-19  Ed Voas  voas@apple.com
 
         Reviewed by Richard.
 
-		Got it working in non-compositing mode as well, so in theory it
-		can work inside a PowerPlant application as well. It's a bit of what
-		I'd consider a hack, but it's pretty straightforward.
+        Got it working in non-compositing mode as well, so in theory it
+        can work inside a PowerPlant application as well. It's a bit of what
+        I'd consider a hack, but it's pretty straightforward.
 
         * Carbon.subproj/CarbonWindowAdapter.m:
         (-[CarbonWindowAdapter setViewsNeedDisplay:]):
@@ -1391,8 +1403,8 @@
 
         Reviewed by Richard.
 
-		Don't use _HIViewSetNeedsDisplayInRect for now. Fixes
-		Jaguar builds.
+        Don't use _HIViewSetNeedsDisplayInRect for now. Fixes
+        Jaguar builds.
 
         * Carbon.subproj/HIViewAdapter.m:
         (-[HIViewAdapter setNeedsDisplay:]):
@@ -1415,9 +1427,9 @@
 
         Reviewed by Richard.
 
-		First cut of Carbon view support. It will need tweaking as we go,
-		but I think I finally have all the assertions taken care of, and
-		I also believe that I have the drawing glitches all sorted out now.
+        First cut of Carbon view support. It will need tweaking as we go,
+        but I think I finally have all the assertions taken care of, and
+        I also believe that I have the drawing glitches all sorted out now.
 
         * Carbon.subproj/CarbonUtils.h: Added.
         * Carbon.subproj/CarbonUtils.m: Added.
