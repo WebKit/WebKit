@@ -37,6 +37,7 @@
 
 - (void)dealloc 
 {
+    [self _stopPlugins];
     [[NSNotificationCenter defaultCenter] removeObserver: self];
     [_viewPrivate release];
     [super dealloc];
@@ -50,6 +51,19 @@
     return ((IFWebViewPrivate *)_viewPrivate)->controller;
 }
 
+
+- (void)removeFromSuperview
+{
+    [self _stopPlugins];
+    [super removeFromSuperview];
+}
+
+
+- (void)removeFromSuperviewWithoutNeedingDisplay
+{
+    [self _stopPlugins];
+    [super removeFromSuperviewWithoutNeedingDisplay];
+}
 
 
 // This method is typically called by the view's controller when

@@ -163,9 +163,10 @@
     }
 
     if (![[self dataSource] isLoading]){
-        if (error)
+        if (error) {
             [self _setLastError: error];
-
+        }
+        
         [self _setState: IFWEBFRAMESTATE_COMPLETE];
         
         [[self dataSource] _part]->end();

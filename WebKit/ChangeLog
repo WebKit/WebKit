@@ -1,5 +1,13 @@
 2002-03-13  Richard Williamson  <rjw@apple.com>
 
+        Added support to stop plugins in removeFromSuperview.
+        
+	* WebView.subproj/IFWebFramePrivate.mm: (-[IFWebFrame _checkLoadComplete:]):
+	* WebView.subproj/IFWebView.mm: (-[IFWebView dealloc]), (-[IFWebView
+	removeFromSuperview]), (-[IFWebView removeFromSuperviewWithoutNeedingDisplay]):
+
+2002-03-13  Richard Williamson  <rjw@apple.com>
+
         Fixed open window w/ no open windows crasher.
         
 	* ChangeLog:
