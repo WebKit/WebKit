@@ -466,6 +466,8 @@ static char *newCString(NSString *string)
         [notificationCenter addObserver:self selector:@selector(viewHasMoved:) 
             name:NSViewBoundsDidChangeNotification object:view];
     }
+    [notificationCenter addObserver:self selector:@selector(windowWillClose:)
+            name:NSWindowWillCloseNotification object:theWindow];
     [notificationCenter addObserver:self selector:@selector(windowBecameKey:) 
         name:NSWindowDidBecomeKeyNotification object:theWindow];
     [notificationCenter addObserver:self selector:@selector(windowResignedKey:) 
@@ -490,7 +492,7 @@ static char *newCString(NSString *string)
         }
     }
     
-    eventSender = [[IFPluginNullEventSender alloc] initializeWithNPP:instance functionPointer:NPP_HandleEvent window:theWindow];
+    eventSender = [[IFPluginNullEventSender alloc] initWithPluginView:self];
     [eventSender sendNullEvents];
     [self resetTrackingRect];
 }
@@ -648,6 +650,11 @@ static char *newCString(NSString *string)
 
     // reset the tracking rect
     [self resetTrackingRect];
+}
+
+-(void) windowWillClose:(NSNotification *)notification
+{
+    [self stop];
 }
 
 -(void) windowBecameKey:(NSNotification *)notification
@@ -920,4 +927,8 @@ static char *newCString(NSString *string)
     return NPP_URLNotify;
 }
 
+- (NPP_HandleEventProcPtr) NPP_HandleEvent
+{
+    return NPP_HandleEvent;
+}
 @end

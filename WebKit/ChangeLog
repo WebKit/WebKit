@@ -1,3 +1,15 @@
+2002-07-11  Chris Blumenberg  <cblu@apple.com>
+
+        * Plugins.subproj/IFPluginNullEventSender.h:
+        * Plugins.subproj/IFPluginNullEventSender.m:
+        (-[IFPluginNullEventSender initWithPluginView:]): renamed, simplified
+        (-[IFPluginNullEventSender stop]): call plugin debug function
+        * Plugins.subproj/IFPluginView.h:
+        * Plugins.subproj/IFPluginView.mm:
+        (-[IFPluginView start]): call new initWithPluginView
+        (-[IFPluginView windowWillClose:]): added back to fix plugin view leak
+        (-[IFPluginView NPP_HandleEvent]): added
+
 2002-07-11  Darin Adler  <darin@apple.com>
 
 	- fixed 2930872 -- option-arrow keys should page up and down

@@ -6,6 +6,8 @@
 #import <Foundation/Foundation.h>
 #import <npapi.h>
 
+@class IFPluginView;
+
 @interface IFPluginNullEventSender : NSObject{
     NPP instance;
     NPP_HandleEventProcPtr NPP_HandleEvent;
@@ -13,7 +15,7 @@
     NSWindow *window;
 }
 
--(id)initializeWithNPP:(NPP)pluginInstance functionPointer:(NPP_HandleEventProcPtr)handleEventFunction window:(NSWindow *)theWindow;
+-(id)initWithPluginView:(IFPluginView *)pluginView;
 -(void)sendNullEvents;
 -(void)stop;
 @end

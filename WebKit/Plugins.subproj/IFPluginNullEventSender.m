@@ -10,14 +10,13 @@
 
 @implementation IFPluginNullEventSender
 
--(id)initializeWithNPP:(NPP)pluginInstance functionPointer:(NPP_HandleEventProcPtr)handleEventFunction window:(NSWindow *)theWindow
+-(id)initWithPluginView:(IFPluginView *)pluginView
 {
     [super init];
     
-    instance = pluginInstance;
-    NPP_HandleEvent = handleEventFunction;
-    shouldStop = FALSE;
-    window = [theWindow retain];
+    instance = [pluginView pluginInstance];
+    NPP_HandleEvent = [pluginView NPP_HandleEvent];
+    window = [[pluginView window] retain];
     
     return self;
 }
@@ -52,7 +51,7 @@
 
 -(void) stop
 {
-    WEBKITDEBUG("Stopping null events\n");
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "Stopping null events\n");
     shouldStop = TRUE;
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(sendNullEvents) object:nil];
 }
