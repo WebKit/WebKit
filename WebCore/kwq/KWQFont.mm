@@ -145,7 +145,7 @@ bool QFont::operator==(const QFont &compareFont) const
 
 NSFont *QFont::getNSFont() const
 {
-    CREATE_FAMILY_ARRAY(this, families);
+    CREATE_FAMILY_ARRAY(*this, families);
 
     return [[WebCoreTextRendererFactory sharedFactory] 
     	fontWithFamilies:families
