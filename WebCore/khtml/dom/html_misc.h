@@ -126,8 +126,8 @@ class HTMLCollection
 public:
     HTMLCollection();
     HTMLCollection(const HTMLCollection &other);
-protected:
     HTMLCollection(NodeImpl *base, int type);
+
 public:
 
     HTMLCollection & operator = (const HTMLCollection &other);

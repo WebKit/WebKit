@@ -42,13 +42,18 @@
 #import "render_replaced.h"
 #import "render_style.h"
 #import "render_text.h"
+#import "kjs_html.h"
+#import "html_miscimpl.h"
 
 using DOM::DocumentImpl;
 using DOM::ElementImpl;
 using DOM::HTMLAnchorElementImpl;
+using DOM::HTMLCollection;
+using DOM::HTMLCollectionImpl;
 using DOM::Node;
 using DOM::NodeImpl;
 using DOM::Range;
+using DOM::DOMString;
 
 using khtml::RenderObject;
 using khtml::RenderWidget;
@@ -197,6 +202,8 @@ using khtml::RenderBlock;
         return NSAccessibilityStaticTextRole;
     if (m_renderer->isImage())
        return NSAccessibilityImageRole;
+    if (m_renderer->isCanvas())
+        return @"AXWebArea";
     if (m_renderer->isBlockFlow())
         return NSAccessibilityGroupRole;
     
@@ -213,21 +220,20 @@ using khtml::RenderBlock;
     // (which would be the best way to localize them)
     
     NSString *role = [self role];
-    if ([role isEqualToString:NSAccessibilityButtonRole]) {
+    if ([role isEqualToString:NSAccessibilityButtonRole])
         return UI_STRING("button", "accessibility role description for button");
-    }
     
-    if ([role isEqualToString:NSAccessibilityStaticTextRole]) {
+    if ([role isEqualToString:NSAccessibilityStaticTextRole])
         return UI_STRING("text", "accessibility role description for static text");
-    }
-    
-    if ([role isEqualToString:NSAccessibilityImageRole]) {
+
+    if ([role isEqualToString:NSAccessibilityImageRole])
         return UI_STRING("image", "accessibility role description for image");
-    }
     
-    if ([role isEqualToString:NSAccessibilityGroupRole]) {
+    if ([role isEqualToString:NSAccessibilityGroupRole])
         return UI_STRING("group", "accessibility role description for group");
-    }
+    
+    if ([role isEqualToString:@"AXWebArea"])
+        return UI_STRING("web area", "accessibility role description for web area");
     
     return UI_STRING("unknown", "accessibility role description for unknown role");
 }
@@ -375,6 +381,8 @@ static QRect boundingBoxRect(RenderObject* obj)
 - (NSArray *)accessibilityAttributeNames
 {
     static NSArray* attributes = nil;
+    static NSArray* anchorAttrs = nil;
+    static NSArray* webAreaAttrs = nil;
     if (attributes == nil) {
         attributes = [[NSArray alloc] initWithObjects: NSAccessibilityRoleAttribute,
             NSAccessibilityRoleDescriptionAttribute,
@@ -390,6 +398,43 @@ static QRect boundingBoxRect(RenderObject* obj)
             NSAccessibilityWindowAttribute,
             nil];
     }
+    if (anchorAttrs == nil) {
+        anchorAttrs = [[NSArray alloc] initWithObjects: NSAccessibilityRoleAttribute,
+            NSAccessibilityRoleDescriptionAttribute,
+            NSAccessibilityChildrenAttribute,
+            NSAccessibilityHelpAttribute,
+            NSAccessibilityParentAttribute,
+            NSAccessibilityPositionAttribute,
+            NSAccessibilitySizeAttribute,
+            NSAccessibilityTitleAttribute,
+            NSAccessibilityValueAttribute,
+            NSAccessibilityFocusedAttribute,
+            NSAccessibilityEnabledAttribute,
+            NSAccessibilityWindowAttribute,
+            @"AXURL",
+            nil];
+    }
+    if (webAreaAttrs == nil) {
+        webAreaAttrs = [[NSArray alloc] initWithObjects: NSAccessibilityRoleAttribute,
+            NSAccessibilityRoleDescriptionAttribute,
+            NSAccessibilityChildrenAttribute,
+            NSAccessibilityHelpAttribute,
+            NSAccessibilityParentAttribute,
+            NSAccessibilityPositionAttribute,
+            NSAccessibilitySizeAttribute,
+            NSAccessibilityTitleAttribute,
+            NSAccessibilityValueAttribute,
+            NSAccessibilityFocusedAttribute,
+            NSAccessibilityEnabledAttribute,
+            NSAccessibilityWindowAttribute,
+            @"AXLinkUIElements",
+            nil];
+    }
+    
+    if (m_renderer->isCanvas())
+        return webAreaAttrs;
+    if (m_renderer->element() && m_renderer->element()->hasAnchor())
+        return anchorAttrs;
     return attributes;
 }
 
@@ -450,6 +495,33 @@ static QRect boundingBoxRect(RenderObject* obj)
         return m_children;
     }
 
+    if ([attributeName isEqualToString: @"AXLinkUIElements"] && m_renderer->isCanvas()) {
+        HTMLCollection coll(m_renderer->document(), HTMLCollectionImpl::DOC_LINKS);
+        if (coll.isNull())
+            return nil;
+        NSMutableArray* links = [NSMutableArray arrayWithCapacity: 32];
+        Node curr = coll.firstItem();
+        while (!curr.isNull()) {
+            RenderObject* obj = curr.handle()->renderer();
+            if (obj)
+                [links addObject: obj->document()->getOrCreateAccObjectCache()->accObject(obj)];
+            curr = coll.nextItem();
+        }
+        return links;
+    }
+    
+    if ([attributeName isEqualToString: @"AXURL"] && m_renderer->element() &&
+        m_renderer->element()->hasAnchor()) {
+        HTMLAnchorElementImpl* anchor = [self anchorElement];
+        if (anchor) {
+            QString s = anchor->getAttribute(ATTR_HREF).string();
+            if (!s.isNull()) {
+                s = anchor->getDocument()->completeURL(s);
+                return s.getNSString();
+            }
+        }
+    }
+    
     if ([attributeName isEqualToString: NSAccessibilityTitleAttribute])
         return [self title];
     
