@@ -13,6 +13,7 @@
 
 @interface WebNetscapePluginRepresentation : WebBaseNetscapePluginStream <WebDocumentRepresentation>
 {
+    unsigned _dataLengthReceived;
     WebDataSource *_dataSource;
     WebError *_error;
 }

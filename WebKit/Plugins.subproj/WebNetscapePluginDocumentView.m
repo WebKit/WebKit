@@ -54,12 +54,11 @@
 
 - (void)didStart
 {
-    if ([[dataSource data] length] > 0) {
-        // Plug-in started after data was received. Redeliver what was already received.
-        WebNetscapePluginRepresentation *representation = (WebNetscapePluginRepresentation *)[dataSource representation];
-        ASSERT([representation isKindOfClass:[WebNetscapePluginRepresentation class]]);
-        [representation redeliverStream];
-    }
+    // Deliver what has not been passed to the plug-in up to this point.
+    // Do this in case the plug-in was started after the load started.
+    WebNetscapePluginRepresentation *representation = (WebNetscapePluginRepresentation *)[dataSource representation];
+    ASSERT([representation isKindOfClass:[WebNetscapePluginRepresentation class]]);
+    [representation redeliverStream];
 }
 
 - (WebDataSource *)dataSource

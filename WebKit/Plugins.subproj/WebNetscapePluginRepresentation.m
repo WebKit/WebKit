@@ -37,6 +37,8 @@
 
 - (void)receivedData:(NSData *)data withDataSource:(WebDataSource *)ds
 {
+    _dataLengthReceived += [data length];
+    
     WebNetscapePluginDocumentView *view = (WebNetscapePluginDocumentView *)[[[_dataSource webFrame] frameView] documentView];
     ASSERT([view isKindOfClass:[WebNetscapePluginDocumentView class]]);
     
@@ -90,9 +92,11 @@
 - (void)redeliverStream
 {
     if (_dataSource && [self isPluginViewStarted]) {
-        instance = NULL;
-        NSData *data = [_dataSource data];
-        if ([data length] > 0) {
+        // Deliver what has not been passed to the plug-in up to this point.
+        if (_dataLengthReceived > 0) {
+            NSData *data = [[_dataSource data] subdataWithRange:NSMakeRange(0, _dataLengthReceived)];
+            instance = NULL;
+            _dataLengthReceived = 0;
             [self receivedData:data withDataSource:_dataSource];
             if (![_dataSource isLoading]) {
                 if (_error) {

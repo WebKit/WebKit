@@ -1,3 +1,16 @@
+2003-04-08  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: 3220463 - REGRESSION: PDF viewer plug-in does not display (worked in 69 and previous)
+
+        Reviewed by darin.
+
+        * Plugins.subproj/WebNetscapePluginDocumentView.m:
+        (-[WebNetscapePluginDocumentView didStart]): always call redeliverStream. Have WebNetscapePluginRepresentation determine if it actually needs to do that.
+        * Plugins.subproj/WebNetscapePluginRepresentation.h:
+        * Plugins.subproj/WebNetscapePluginRepresentation.m:
+        (-[WebNetscapePluginRepresentation receivedData:withDataSource:]): keep track of _dataLengthReceived which is independent of the data received by the data source
+        (-[WebNetscapePluginRepresentation redeliverStream]): only redeliver the stream if _dataLengthReceived is greater than 0
+
 2003-04-07  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: 3206018 - REGRESSION: Clicks on the BBC news ticker applet don't open story in new window
