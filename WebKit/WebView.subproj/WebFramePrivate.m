@@ -791,6 +791,7 @@ static const char * const stateNames[] = {
     [_private->children addObject:child];
 
     child->_private->parent = self;
+    [[child _bridge] setParent:[self _bridge]];
     [[child dataSource] _setOverrideEncoding:[[self dataSource] _overrideEncoding]];   
 }
 

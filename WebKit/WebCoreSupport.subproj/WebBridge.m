@@ -211,7 +211,6 @@
     if (frame == nil) {
 	// FIXME: non-retained because data source owns representation owns bridge
 	frame = webFrame;
-        [self setParent:[[frame parent] _bridge]];
         [self setTextSizeMultiplier:[[frame controller] textSizeMultiplier]];
     } else {
 	ASSERT(frame == webFrame);
