@@ -196,7 +196,7 @@ namespace KJS {
     void setVariableObject(const Object &v) { variable = v; }
     Object thisValue() const { return thisVal; }
     ContextImp *callingContext() { return callingCon; }
-    Object activationObject() { return activation; }
+    ObjectImp *activationObject() { return activation.imp(); }
 
     void pushScope(const Object &s);
     void popScope();

@@ -57,9 +57,7 @@ FunctionImp::FunctionImp(ExecState *exec, const Identifier &n)
       static_cast<FunctionPrototypeImp*>(exec->interpreter()->builtinFunctionPrototype().imp())
       ), param(0L), ident(n)
 {
-  Value protect(this);
   //fprintf(stderr,"FunctionImp::FunctionImp this=%p\n");
-  put(exec,argumentsPropertyName,Null(),ReadOnly|DontDelete|DontEnum);
 }
 
 FunctionImp::~FunctionImp()
@@ -104,18 +102,6 @@ Value FunctionImp::call(ExecState *exec, Object &thisObj, const List &args)
   ExecState newExec(exec->interpreter(), &ctx);
   newExec.setException(exec->exception()); // could be null
 
-  // In order to maintain our "arguments" property, we save the old
-  // value from a possible earlier call. Upon return, we restore the
-  // previous arguments object.
-  // Note: this does not appear to be part of the spec
-  Value oldArgs = get(&newExec, argumentsPropertyName);
-
-  if (codeType() == FunctionCode) {
-    assert(ctx.activationObject().inherits(&ActivationImp::info));
-    Object argsObj = static_cast<ActivationImp*>(ctx.activationObject().imp())->argumentsObject();
-    put(&newExec, argumentsPropertyName, argsObj, DontDelete|DontEnum|ReadOnly);
-  }
-
   // assign user supplied arguments to parameters
   processParameters(&newExec, args);
   // add variable declarations (initialized to undefined)
@@ -126,8 +112,6 @@ Value FunctionImp::call(ExecState *exec, Object &thisObj, const List &args)
   // if an exception occured, propogate it back to the previous execution object
   if (newExec.hadException())
     exec->setException(newExec.exception());
-  if (codeType() == FunctionCode)
-    put(&newExec, argumentsPropertyName, oldArgs, DontDelete|DontEnum|ReadOnly);
 
 #ifdef KJS_VERBOSE
   if (comp.complType() == Throw)
@@ -169,12 +153,12 @@ void FunctionImp::addParameter(const Identifier &n)
 UString FunctionImp::parameterString() const
 {
   UString s;
-  const Parameter * const *p = &param;
-  while (*p) {
+  const Parameter *p = param;
+  while (p) {
     if (!s.isEmpty())
         s += ", ";
-    s += (*p)->name.ustring();
-    p = &(*p)->next;
+    s += p->name.ustring();
+    p = p->next;
   }
 
   return s;
@@ -194,18 +178,18 @@ void FunctionImp::processParameters(ExecState *exec, const List &args)
 
   if (param) {
     ListIterator it = args.begin();
-    Parameter **p = &param;
-    while (*p) {
+    Parameter *p = param;
+    while (p) {
       if (it != args.end()) {
 #ifdef KJS_VERBOSE
-	fprintf(stderr, "setting parameter %s ", (*p)->name.ascii());
+	fprintf(stderr, "setting parameter %s ", p->name.ascii());
 	printInfo(exec,"to", *it);
 #endif
-	variable.put(exec,(*p)->name, *it);
+	variable.put(exec, p->name, *it);
 	it++;
       } else
-	variable.put(exec,(*p)->name, Undefined());
-      p = &(*p)->next;
+	variable.put(exec, p->name, Undefined());
+      p = p->next;
     }
   }
 #ifdef KJS_VERBOSE
@@ -218,6 +202,55 @@ void FunctionImp::processParameters(ExecState *exec, const List &args)
 
 void FunctionImp::processVarDecls(ExecState */*exec*/)
 {
+}
+
+Value FunctionImp::get(ExecState *exec, const Identifier &propertyName) const
+{
+    // Find the arguments from the closest context.
+    if (propertyName == argumentsPropertyName) {
+        ContextImp *context = exec->_context;
+        while (context) {
+            ActivationImp *activation = static_cast<ActivationImp *>(context->activationObject());
+            if (activation->function() == this)
+                return activation->get(exec, propertyName);
+            context = context->callingContext();
+        }
+        return Undefined();
+    }
+    
+    // Compute length of parameters.
+    if (propertyName == lengthPropertyName) {
+        const Parameter * p = param;
+        int count = 0;
+        while (p) {
+            ++count;
+            p = p->next;
+        }
+        return Number(count);
+    }
+    
+    return InternalFunctionImp::get(exec, propertyName);
+}
+
+void FunctionImp::put(ExecState *exec, const Identifier &propertyName, const Value &value, int attr)
+{
+    if (propertyName == argumentsPropertyName || propertyName == lengthPropertyName)
+        return;
+    InternalFunctionImp::put(exec, propertyName, value, attr);
+}
+
+bool FunctionImp::hasProperty(ExecState *exec, const Identifier &propertyName) const
+{
+    if (propertyName == argumentsPropertyName || propertyName == lengthPropertyName)
+        return true;
+    return InternalFunctionImp::hasProperty(exec, propertyName);
+}
+
+bool FunctionImp::deleteProperty(ExecState *exec, const Identifier &propertyName)
+{
+    if (propertyName == argumentsPropertyName || propertyName == lengthPropertyName)
+        return false;
+    return InternalFunctionImp::deleteProperty(exec, propertyName);
 }
 
 // ------------------------------ DeclaredFunctionImp --------------------------
@@ -304,7 +337,7 @@ const ClassInfo ActivationImp::info = {"Activation", 0, 0, 0};
 
 // ECMA 10.1.6
 ActivationImp::ActivationImp(ExecState *exec, FunctionImp *f, const List &args)
-  : ObjectImp()
+  : _function(f)
 {
   Value protect(this);
   arguments = new ArgumentsImp(exec,f, args);

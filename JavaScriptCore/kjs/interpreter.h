@@ -31,7 +31,6 @@
 namespace KJS {
 
   class ContextImp;
-  class ExecStateImp;
   class InterpreterImp;
 
   /**

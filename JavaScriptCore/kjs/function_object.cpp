@@ -283,7 +283,6 @@ Object FunctionObjectImp::construct(ExecState *exec, const List &args)
   prototype.put(exec, constructorPropertyName,
 		Object(fimp), DontEnum|DontDelete|ReadOnly);
   fimp->put(exec,prototypePropertyName,prototype,DontEnum|DontDelete|ReadOnly);
-  fimp->put(exec,argumentsPropertyName,Null(),DontEnum|DontDelete|ReadOnly);
   return ret;
 }
 

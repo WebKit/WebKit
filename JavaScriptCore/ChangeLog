@@ -1,5 +1,31 @@
 2002-11-20  Darin Adler  <darin@apple.com>
 
+	- on the road to killing ActivationImp
+
+        * kjs/function.h: Add get/put to FunctionImp. Remove argumentsObject() from
+	ActivationImp. Add function() to ActivationImp.
+        * kjs/function.cpp:
+        (FunctionImp::FunctionImp): No arguments property.
+        (FunctionImp::call): No need to set up the arguments property.
+        (FunctionImp::parameterString): Remove ** strangeness.
+        (FunctionImp::processParameters): Ditto.
+        (FunctionImp::get): Added, handles arguments and length properties.
+        (FunctionImp::put): Ditto.
+        (FunctionImp::hasProperty): Ditto.
+        (FunctionImp::deleteProperty): Ditto.
+        (ActivationImp::ActivationImp): Store a function pointer so we can find it
+	in the context.
+
+        * kjs/function_object.cpp: (FunctionObjectImp::construct): No need to set up
+	arguments property.
+        * kjs/nodes.cpp: (FuncExprNode::evaluate): No need to set up length property.
+
+        * kjs/internal.h: Return ObjectImp * for activation object.
+
+        * kjs/interpreter.h: Remove stray declaration of ExecStateImp.
+
+2002-11-20  Darin Adler  <darin@apple.com>
+
 	- add a couple of list operations to avoid clearing lists so much during sorting; gives 1.5% iBench
 
         * kjs/types.h: Added replaceFirst/replaceLast.

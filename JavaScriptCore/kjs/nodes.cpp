@@ -2830,7 +2830,6 @@ Value FuncExprNode::evaluate(ExecState *exec)
   int plen = 0;
   for(ParameterNode *p = param; p != 0L; p = p->nextParam(), plen++)
     fimp->addParameter(p->ident());
-  fimp->put(exec,lengthPropertyName, Number(plen), ReadOnly|DontDelete|DontEnum);
 
   return ret;
 }
