@@ -1,3 +1,15 @@
+2002-07-23  David Hyatt  <hyatt@apple.com>
+
+        * khtml/rendering/font.cpp:
+	Fix deployment build bustage by including <algorithm>.
+	
+        * khtml/rendering/render_frames.cpp:
+        (RenderPartObject::calcReplacedWidth):
+	Fix a bug with http://www.moveabletype.com's top portion
+	not showing up (bug 2986714).  A hack was being improperly
+	applied to fixed width plugins, when it should have only
+	been applied to variable width plugins.
+	
 2002-07-23  Darin Adler  <darin@apple.com>
 
         * Makefile.am: Clean based on all, not all-am, so it happens before subdirs

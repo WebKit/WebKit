@@ -33,6 +33,8 @@
 #include <qfontdatabase.h>
 #include <qpaintdevicemetrics.h>
 
+#include <algorithm>
+
 using namespace khtml;
 
 void Font::drawText( QPainter *p, int x, int y, QChar *str, int slen, int pos, int len,

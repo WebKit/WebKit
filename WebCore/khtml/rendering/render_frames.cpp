@@ -846,11 +846,32 @@ void RenderPartObject::slotPartLoadingErrorNotify()
 short RenderPartObject::calcReplacedWidth(bool* ieHack) const
 {
     Length w = style()->width();
-    if (ieHack)
-        *ieHack = true;
-
-    if ( w.isVariable() )
+    
+    // Always setting ieHack is incorrect and causes the following example test case to break.
+    // <table width="100%" height="90">
+    // <tr>
+    //   <td width="200" style="border: 2px solid green">
+    //     <object width="200" height="90" style="border: 2px solid red">
+    //       <embed width="200" height="90" style="border: 2px solid blue"></embed>
+    //     </object>
+    //   </td>
+    //   <td width="100%" style="border: 2px solid blue"></td>
+    //   <td width="500" style="border: 2px solid green">
+    //     <object width="500" height="90" style="border: 2px solid red">
+    //       <embed width="500" height="90" style="border: 2px solid blue"></embed>
+    //     </object>
+    //   </td>
+    // </tr>
+    // </table>
+    //
+    // Real-world example is at: http://www.moveabletype.com/top.html
+    // I am commenting this out, since it causes all plugins to have a min width of 0
+    // all the time (unless they have a variable length).  This is clearly wrong. - dwh
+    if ( w.isVariable() ) {
+        if (ieHack) // Move it inside.  Only applies in the override case. -dwh
+            *ieHack = true;
         return intrinsicWidth();
+    }
     else
         return RenderReplaced::calcReplacedWidth();
 }
