@@ -575,7 +575,8 @@ static BOOL loggedObjectCacheSize = NO;
     // If we're a supported type other than a plugin, we want to make a frame.
     // Ultimately we should just use frames for all mime types (plugins and HTML/XML/text documents),
     // but for now we're burdened with making a distinction between the two.
-    return ![result isSubclassOfClass: [WebNetscapePluginDocumentView class]];
+    return !([result isSubclassOfClass: [WebNetscapePluginDocumentView class]] ||
+            [result conformsToProtocol: @protocol(WebPlugin)]);
 }
 
 - (void)loadEmptyDocumentSynchronously

@@ -1,3 +1,18 @@
+2003-03-01  Richard Williamson   <rjw@apple.com>
+
+        Reviewed by Chris & Darin.
+
+        Fixed frameRequiredForMIMEType: to correctly check for BOTH
+        netscape plugins and cocoa plugins.
+        
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge frameRequiredForMIMEType:]):
+        
+        Made WebPluginViewFactory.h private (SPI) to provide access to
+        plugin package keys.
+        
+        * WebKit.pbproj/project.pbxproj:
+
 2003-02-28  Richard Williamson   <rjw@apple.com>
 
         Make WebDOM* classes private instead of public.  This change
