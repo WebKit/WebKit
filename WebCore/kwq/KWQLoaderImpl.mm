@@ -60,10 +60,8 @@ typedef enum {
 @end
 
 @interface IFWebController <IFLocationChangeHandler>
-- (void)_receivedProgress: (IFLoadProgress *)progress forResource: (NSString *)resourceDescription fromDataSource: (IFWebDataSource *)dataSource;
-- (void)_receivedError: (IFError *)error forResource: (NSString *)resourceDescription partialProgress: (IFLoadProgress *)progress fromDataSource: (IFWebDataSource *)dataSource;
-- (void)_mainReceivedProgress: (IFLoadProgress *)progress forResource: (NSString *)resourceDescription fromDataSource: (IFWebDataSource *)dataSource;
-- (void)_mainReceivedError: (IFError *)error forResource: (NSString *)resourceDescription partialProgress: (IFLoadProgress *)progress fromDataSource: (IFWebDataSource *)dataSource;
+- (void)_receivedProgress: (IFLoadProgress *)progress forResourceHandle: (IFURLHandle *)handle fromDataSource: (IFWebDataSource *)dataSource;
+- (void)_receivedError: (IFError *)error forResourceHandle: (IFURLHandle *)handle partialProgress: (IFLoadProgress *)progress fromDataSource: (IFWebDataSource *)dataSource;
 - (void)_didStartLoading: (NSURL *)url;
 - (void)_didStopLoading: (NSURL *)url;
 @end
@@ -74,6 +72,7 @@ typedef enum {
 - (void)_removeURLHandle: (IFURLHandle *)handle;
 - (void)_setFinalURL: (NSURL *)url;
 - representation;
+- (id <IFLocationChangeHandler>)_locationChangeHandler;
 @end
 
 @interface IFHTMLRepresentation : NSObject
@@ -145,7 +144,7 @@ void WCSetIFLoadProgressMakeFunc(WCIFLoadProgressMakeFunc func)
     loadProgress->bytesSoFar = contentLengthReceived;
     
     controller = [m_dataSource controller];
-    [controller _receivedProgress: loadProgress forResource: [job->url() absoluteString] fromDataSource: m_dataSource];
+    [controller _receivedProgress: loadProgress forResourceHandle: sender fromDataSource: m_dataSource];
     [controller _didStartLoading:job->url()];
 }
 
@@ -170,7 +169,7 @@ void WCSetIFLoadProgressMakeFunc(WCIFLoadProgressMakeFunc func)
     loadProgress->bytesSoFar = -1;
 
     controller = [m_dataSource controller];
-    [controller _receivedProgress: loadProgress forResource: [job->url() absoluteString] fromDataSource: m_dataSource];
+    [controller _receivedProgress: loadProgress forResourceHandle: sender fromDataSource: m_dataSource];
 
     [controller _didStopLoading:job->url()];
 
@@ -197,7 +196,7 @@ void WCSetIFLoadProgressMakeFunc(WCIFLoadProgressMakeFunc func)
     loadProgress->bytesSoFar = [data length];
 
     controller = [m_dataSource controller];
-    [controller _receivedProgress: loadProgress forResource: [job->url() absoluteString] fromDataSource: m_dataSource];
+    [controller _receivedProgress: loadProgress forResourceHandle: sender fromDataSource: m_dataSource];
 
     [controller _didStopLoading:job->url()];
 
@@ -232,7 +231,7 @@ void WCSetIFLoadProgressMakeFunc(WCIFLoadProgressMakeFunc func)
     loadProgress->bytesSoFar = contentLengthReceived;
     
     controller = [m_dataSource controller];
-    [controller _receivedProgress: loadProgress forResource: [job->url() absoluteString] fromDataSource: m_dataSource];
+    [controller _receivedProgress: loadProgress forResourceHandle: sender fromDataSource: m_dataSource];
 }
 
 - (void)IFURLHandle:(IFURLHandle *)sender resourceDidFailLoadingWithResult:(IFError *)result
@@ -252,7 +251,7 @@ void WCSetIFLoadProgressMakeFunc(WCIFLoadProgressMakeFunc func)
     job->setError(1);
     m_loader->slotFinished(job);
 
-    [(IFWebController *)controller _receivedError: result forResource: [job->url() absoluteString] partialProgress: loadProgress fromDataSource: m_dataSource];
+    [(IFWebController *)controller _receivedError: result forResourceHandle: sender partialProgress: loadProgress fromDataSource: m_dataSource];
 
     [(IFWebController *)controller _didStopLoading:job->url()];
 
@@ -270,7 +269,7 @@ void WCSetIFLoadProgressMakeFunc(WCIFLoadProgressMakeFunc func)
     
     [m_dataSource _setFinalURL: url];
     
-    [(id <IFLocationChangeHandler>)[m_dataSource controller] serverRedirectTo: url forDataSource: m_dataSource];
+    [[m_dataSource _locationChangeHandler] serverRedirectTo: url forDataSource: m_dataSource];
     [(IFWebController *)[m_dataSource controller] _didStopLoading:oldURL];
     [(IFWebController *)[m_dataSource controller] _didStartLoading:url];
 }
@@ -301,11 +300,11 @@ void KWQLoaderImpl::serveRequest(Request *req, KIO::TransferJob *job)
     job->begin(req->client, job);
     if (job->handle() == nil) {
         // Must be a malformed URL.
-        NSString *urlString = QSTRING_TO_NSSTRING(req->object->url().string());
+        //NSString *urlString = QSTRING_TO_NSSTRING(req->object->url().string());
         IFError *error = [IFError errorWithCode:IFURLHandleResultBadURLError inDomain:IFErrorCodeDomainWebFoundation isTerminal:YES];
 
         id <IFLoadHandler> controller = [(req->client)->m_dataSource controller];
-        [(IFWebController *)controller _receivedError: error forResource: urlString partialProgress: nil fromDataSource: req->client->m_dataSource];
+        [(IFWebController *)controller _receivedError: error forResourceHandle: nil partialProgress: nil fromDataSource: req->client->m_dataSource];
     }
     else {
         [req->client->m_dataSource _addURLHandle: job->handle()];

@@ -1,3 +1,18 @@
+2002-06-14  Richard Williamson  <rjw@apple.com>
+
+    Changed IFResourceProgressHandler to pass back resource handle instead of
+    string description.  This will address the needs descibed in 2954160.
+
+	* kwq/KWQKloader.mm:
+	(-[KWQURLLoadClient IFURLHandleResourceDidBeginLoading:]):
+	(-[KWQURLLoadClient IFURLHandleResourceDidCancelLoading:]):
+	(-[KWQURLLoadClient IFURLHandleResourceDidFinishLoading:data:]):
+	(-[KWQURLLoadClient IFURLHandle:resourceDataDidBecomeAvailable:]):
+	(-[KWQURLLoadClient IFURLHandle:resourceDidFailLoadingWithResult:]):
+	(-[KWQURLLoadClient IFURLHandle:didRedirectToURL:]):
+	(KWQLoaderImpl::serveRequest):
+	* kwq/external.h:
+
 2002-06-14  Darin Adler  <darin@apple.com>
 
 	* kwq/KWQDateTime.mm: Add ifdefs needed to make Deployment build compile.

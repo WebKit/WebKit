@@ -45,7 +45,7 @@ namespace khtml {
 @protocol IFLocationChangeHandler;
 
 @interface IFWebController <IFLocationChangeHandler>
-- (IFWebFrame *)createFrameNamed: (NSString *)name for: (IFWebDataSource *)dataSource inParent: (IFWebDataSource *)dataSource inScrollView: (BOOL)inScrollView;
+- (IFWebFrame *)createFrameNamed: (NSString *)name for: (IFWebDataSource *)dataSource inParent: (IFWebDataSource *)dataSource allowsScrolling: (BOOL)allowsScrolling;
 - (IFWebFrame *)frameNamed: (NSString *)name;
 - (IFWebFrame *)mainFrame;
 - (IFWebController *)openNewWindowWithURL: (NSURL *)url;
