@@ -1480,7 +1480,8 @@ void RenderObject::recalcMinMaxWidths()
     }
 
     // we need to recalculate, if the contains inline children, as the change could have
-    // happened somewhere deep inside the child tree
+    // happened somewhere deep inside the child tree. Also do this for blocks or tables that
+    // are inline (i.e., inline-block and inline-table).
     if ((!isInline() || isInlineBlockOrInlineTable()) && childrenInline())
 	m_minMaxKnown = false;
 
