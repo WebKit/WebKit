@@ -393,6 +393,13 @@ static KJS::List listFromNSArray(ExecState *exec, NSArray *array)
         result = [NSNumber numberWithBool:b->value()];
     }
     
+    // Convert JavaScript Undefined types to WebUndefined
+    else if (value.type() == KJS::UndefinedType) {
+        result = [WebUndefined undefined];
+    }
+    
+    // Other types (UnspecifiedType and NullType) converted to 0.
+    
     return result;
 }
 

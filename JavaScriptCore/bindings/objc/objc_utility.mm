@@ -194,6 +194,9 @@ Value KJS::Bindings::convertObjcValueToValue (KJS::ExecState *exec, void *buffer
                     aValue = String (u);
                     free((void *)chars);
                 }
+                else if (*obj == [WebUndefined undefined]) {
+                    return Undefined();
+                }
                 else if ((CFBooleanRef)*obj == kCFBooleanTrue) {
                     aValue = Boolean(true);
                 }

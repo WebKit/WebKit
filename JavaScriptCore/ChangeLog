@@ -1,3 +1,25 @@
+2004-11-01  Richard Williamson   <rjw@apple.com>
+
+        Fixed <rdar://problem/3861257> WebUndefined should be returned for undefined values
+
+        Reviewed by John.
+
+        * ChangeLog:
+        * bindings/objc/WebScriptObject.mm:
+        (+[WebScriptObject _convertValueToObjcValue:KJS::root:Bindings::]):
+	Added additional conversion Undefined -> WebUndefined.
+        * bindings/objc/objc_utility.mm:
+        (KJS::Bindings::convertObjcValueToValue):
+	Added additional conversion WebUndefined -> Undefined.
+
+2004-11-01  Richard Williamson   <rjw@apple.com>
+
+
+        Reviewed by John.
+
+        * bindings/objc/WebScriptObject.mm:
+        (+[WebScriptObject _convertValueToObjcValue:KJS::root:Bindings::]):
+
 2004-11-01  Darin Adler  <darin@apple.com>
 
         - fixed <rdar://problem/3855573> Remove reference to "WebScriptMethods" from WebScriptObject.h comments
