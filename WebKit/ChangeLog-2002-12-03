@@ -1,5 +1,14 @@
 2001-12-17  Kenneth Kocienda  <kocienda@apple.com>
 
+        Added header files by chopping up the CacheAPI.h document I have been working on.
+
+	* Cache.subproj/WKLoadChunk.h:
+	* Cache.subproj/WKWebCache.h:
+	* Cache.subproj/WKWebCacheClient.h:
+	* Cache.subproj/WKWebContentType.h:
+
+2001-12-17  Kenneth Kocienda  <kocienda@apple.com>
+
         Did some verb tense cleanup.
 
 	* Documentation/WebKit-White-Paper/WebKit-White-Paper.html:
