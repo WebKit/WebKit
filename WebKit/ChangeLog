@@ -1,3 +1,12 @@
+2005-02-23  Darin Adler  <darin@apple.com>
+
+        Reviewed by Hyatt.
+
+        - fixed <rdar://problem/4010196> REGRESSION (125-186+): 8-character timestamps in gmail wrap to 2 lines (width:8ex; font-size:80%)
+
+        * WebCoreSupport.subproj/WebTextRenderer.m: (-[WebTextRenderer xHeight]): Return the maximum
+        of the "x" height and width. Comment in the code explains why in more detail.
+
 2005-02-22  Richard Williamson   <rjw@apple.com>
 
 	Fixed <rdar://problem/3937203> when a div adds a scrollbar (overflow:auto) we do not get regions

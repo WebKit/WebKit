@@ -514,7 +514,11 @@ static BOOL alwaysUseATSU = NO;
     NSGlyph xGlyph = [font glyphWithName:@"x"];
     if (xGlyph) {
         NSRect xBox = [font boundingRectForGlyph:xGlyph];
-        return NSMaxY(xBox);
+        // Use the maximum of either width or height because "x" is nearly square
+        // and web pages that foolishly use this metric for width will be laid out
+        // poorly if we return an accurate height. Classic case is Times 13 point,
+        // which has an "x" that is 7x6 pixels.
+        return MAX(NSMaxX(xBox), NSMaxY(xBox));
     }
 
     return [font xHeight];
