@@ -1,3 +1,16 @@
+2002-02-08  John Sullivan  <sullivan@apple.com>
+
+	Changed back & forward to goBack and goForward and made them not return
+	a value (so signatures match those in WebBrowser). Added backEntry and
+	forwardEntry that don't alter the list. These will be needed to ask to
+	go to the URL at the back position without altering the back list until
+	the change is committed.
+
+	* History.subproj/IFBackForwardList.h:
+	* History.subproj/IFBackForwardList.m: (-[IFBackForwardList goBack]),
+	(-[IFBackForwardList backEntry]), (-[IFBackForwardList currentEntry]),
+	(-[IFBackForwardList forwardEntry]), (-[IFBackForwardList goForward]):
+
 2002-02-07  Richard Williamson  <rjw@apple.com>
     
     More changes to IFLocationChangeHandler API.

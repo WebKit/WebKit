@@ -15,16 +15,23 @@
 
 -(id)init;
 
+// add to the list
 -(void)addEntry:(IFURIEntry *)entry;
 
--(IFURIEntry *)back;
--(IFURIEntry *)forward;
+// change position in the list
+-(void)goBack;
+-(void)goForward;
 
+// examine entries without changing position
+-(IFURIEntry *)backEntry;
 -(IFURIEntry *)currentEntry;
+-(IFURIEntry *)forwardEntry;
 
+// examine entire list
 -(NSArray *)backList;
 -(NSArray *)forwardList;
 
+// check whether entries exist
 -(BOOL)canGoBack;
 -(BOOL)canGoForward;
 

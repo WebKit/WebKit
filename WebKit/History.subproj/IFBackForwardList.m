@@ -44,13 +44,25 @@
     [mutex unlock];
 }
 
--(IFURIEntry *)back
+-(void)goBack
 {
-    IFURIEntry *result;
-    
     [mutex lock];
     index++;
-    result = [uriList entryAtIndex:index];
+    [mutex unlock];
+}
+
+-(IFURIEntry *)backEntry
+{
+    IFURIEntry *result;
+    int count;
+    
+    [mutex lock];
+    count = [uriList count];
+    if (count > 1 && index < (count - 1)) {
+        result = [uriList entryAtIndex:index+1];
+    } else {
+        result = nil;
+    }
     [mutex unlock];
 
     return result;
@@ -58,19 +70,35 @@
 
 -(IFURIEntry *)currentEntry
 {
-    return [uriList entryAtIndex:index];
+    IFURIEntry *result;
+    
+    [mutex lock];
+    result = [uriList entryAtIndex:index];
+    [mutex unlock];
+
+    return result;
 }
 
--(IFURIEntry *)forward
+-(IFURIEntry *)forwardEntry
 {
     IFURIEntry *result;
 
     [mutex lock];
-    index--;
-    result = [uriList entryAtIndex:index];
+    if (index > 0) {
+        result = [uriList entryAtIndex:index-1];
+    } else {
+        result = nil;
+    }
     [mutex unlock];
-    
+
     return result;
+}
+
+-(void)goForward
+{
+    [mutex lock];
+    index--;
+    [mutex unlock];
 }
 
 -(BOOL)canGoBack
