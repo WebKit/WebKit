@@ -1,5 +1,16 @@
 2002-04-22  Chris Blumenberg  <cblu@apple.com>
 
+	* WebView.subproj/IFMainURLHandleClient.mm:
+	(-[IFMainURLHandleClient IFURLHandle:resourceDataDidBecomeAvailable:]):
+
+	Send an IFError when we're asked to show content we can't handle.
+
+	* WebView.subproj/IFWebDataSourcePrivate.mm:
+
+	Cleaning
+
+2002-04-22  Chris Blumenberg  <cblu@apple.com>
+
 	* WebKit.pbproj/project.pbxproj:
 	* WebView.subproj/IFBaseWebController.mm:
 	(-[IFBaseWebController haveContentPolicy:andPath:forLocationChangeHandler:]):

@@ -144,7 +144,7 @@
     
         else if(handlerType == IFMIMEHANDLERTYPE_APPLICATION){
             // can't show a type that we don't handle
-            [[dataSource _locationChangeHandler] unableToImplementContentPolicy:0];
+            [[dataSource _locationChangeHandler] unableToImplementContentPolicy:[IFError errorWithCode:IFCantShowMIMEType]];
         }
     }
     

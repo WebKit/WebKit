@@ -302,13 +302,13 @@
         nextFrame = [frames objectAtIndex: i];
         childDataSource = [nextFrame dataSource];
         dataSource = [childDataSource _recursiveDataSourceForLocationChangeHandler:handler];
-        if(dataSource){
+        if(dataSource)
             return dataSource;
-        }else{
-            childProvisionalDataSource = [nextFrame provisionalDataSource];
-            if(childProvisionalDataSource)
-                return [childProvisionalDataSource _recursiveDataSourceForLocationChangeHandler:handler];
-        }
+            
+        childProvisionalDataSource = [nextFrame provisionalDataSource];
+        dataSource = [childProvisionalDataSource _recursiveDataSourceForLocationChangeHandler:handler];
+        if(dataSource)
+            return dataSource;
     }
     return nil;
 }
