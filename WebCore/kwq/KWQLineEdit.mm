@@ -138,23 +138,7 @@ QSize QLineEdit::sizeForCharacterWidth(int numCharacters) const
     NSSize size = [[textField cell] cellSize];
     [textField setStringValue:value];
     
-    size.width -= FOCUS_BORDER_SIZE * 2;
-    size.height -= FOCUS_BORDER_SIZE * 2;
-    
     return QSize(size);
-}
-
-QRect QLineEdit::frameGeometry() const
-{
-    QRect r = QWidget::frameGeometry();
-    return QRect(r.x() + FOCUS_BORDER_SIZE, r.y() + FOCUS_BORDER_SIZE,
-        r.width() - FOCUS_BORDER_SIZE * 2, r.height() - FOCUS_BORDER_SIZE * 2);
-}
-
-void QLineEdit::setFrameGeometry(const QRect &r)
-{
-    QWidget::setFrameGeometry(QRect(r.x() - FOCUS_BORDER_SIZE, r.y() - FOCUS_BORDER_SIZE,
-        r.width() + FOCUS_BORDER_SIZE * 2, r.height() + FOCUS_BORDER_SIZE * 2));
 }
 
 int QLineEdit::baselinePosition() const

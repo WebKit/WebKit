@@ -29,14 +29,6 @@
 #import <KWQKHTMLPartImpl.h>
 #import <KWQNSViewExtras.h>
 
-// KWQTextFieldCell is larger than a normal text field cell, so it includes
-// the focus border as well as the rest of the text field.
-
-@interface KWQTextFieldCell : NSTextFieldCell
-{
-}
-@end
-
 // KWQTextFieldFormatter enforces a maximum length.
 
 @interface KWQTextFieldFormatter : NSFormatter
@@ -65,13 +57,6 @@
 @end
 
 @implementation KWQNSTextField
-
-+ (void)initialize
-{
-    if (self == [KWQNSTextField class]) {
-        [self setCellClass:[KWQTextFieldCell class]];
-    }
-}
 
 - (void)setUpTextField:(NSTextField *)field
 {
@@ -120,7 +105,7 @@
 
 - (void)updateSecureFieldFrame
 {
-    [secureField setFrame:NSInsetRect([self bounds], FOCUS_BORDER_SIZE, FOCUS_BORDER_SIZE)];
+    [secureField setFrame:[self bounds]];
 }
 
 - (void)setFrameSize:(NSSize)size
@@ -289,42 +274,6 @@
 
 - (void)display
 {
-}
-
-@end
-
-// This cell is used so that our frame includes the place where the focus rectangle is drawn.
-// We account for this at the QWidget level so the placement of the text field is still correct,
-// just as we account for the margins in NSButton and other AppKit controls.
-
-@implementation KWQTextFieldCell
-
-- (BOOL)isOpaque
-{
-    return NO;
-}
-
-- (NSSize)cellSizeForBounds:(NSRect)bounds
-{
-    NSSize size = [super cellSizeForBounds:bounds];
-    size.width += FOCUS_BORDER_SIZE * 2;
-    size.height += FOCUS_BORDER_SIZE * 2;
-    return size;
-}
-
-- (void)drawWithFrame:(NSRect)frame inView:(NSView *)view
-{
-    [super drawWithFrame:NSInsetRect(frame, FOCUS_BORDER_SIZE, FOCUS_BORDER_SIZE) inView:view];
-}
-
-- (void)editWithFrame:(NSRect)frame inView:(NSView *)view editor:(NSText *)editor delegate:(id)delegate event:(NSEvent *)event
-{
-    [super editWithFrame:NSInsetRect(frame, FOCUS_BORDER_SIZE, FOCUS_BORDER_SIZE) inView:view editor:editor delegate:delegate event:event];
-}
-
-- (void)selectWithFrame:(NSRect)frame inView:(NSView *)view editor:(NSText *)editor delegate:(id)delegate start:(int)start length:(int)length
-{
-    [super selectWithFrame:NSInsetRect(frame, FOCUS_BORDER_SIZE, FOCUS_BORDER_SIZE) inView:view editor:editor delegate:delegate start:start length:length];
 }
 
 @end

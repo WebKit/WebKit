@@ -1,5 +1,16 @@
 2002-09-24  Darin Adler  <darin@apple.com>
 
+	Remove the focus border hack, which was no longer doing us any good.
+
+        * kwq/KWQNSTextField.h: Don't define FOCUS_BORDER_SIZE.
+        * kwq/KWQNSTextField.mm: Remove KWQTextFieldCell.
+        (-[KWQNSTextField updateSecureFieldFrame]): Don't inset by FOCUS_BORDER_SIZE.
+        * kwq/qt/qlineedit.h: Don't override frameGeometry and setFrameGeometry any more.
+        * kwq/KWQLineEdit.mm: (QLineEdit::sizeForCharacterWidth): Don't subtract
+	the focus border size.
+
+2002-09-24  Darin Adler  <darin@apple.com>
+
         * kwq/mac-encodings.txt: Remove constant for Japanese auto-detect.
 
 2002-09-24  Darin Adler  <darin@apple.com>
