@@ -1,3 +1,11 @@
+2002-03-28  Maciej Stachowiak  <mjs@apple.com>
+
+	Fix Radar 2890340 (JavaScript doesn't work)
+
+	* src/kwq/KWQKHTMLPart.mm: (KHTMLPart::executeScript): Implement
+	the other overloaded version of this function. This is needed for
+	JavaScript to work.
+
 2002-03-28  Darin Adler  <darin@apple.com>
 
 	* src/kdelibs/khtml/misc/loader.h: Added API for looking at the contents of the

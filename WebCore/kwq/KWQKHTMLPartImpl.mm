@@ -335,6 +335,11 @@ QVariant KHTMLPart::executeScript( const QString &script )
 
 QVariant KHTMLPart::executeScript( const DOM::Node &n, const QString &script )
 {
+    return executeScript(QString::null, 0, n, script);
+}
+
+QVariant KHTMLPart::executeScript(QString filename, int baseLine, const DOM::Node &n, const QString &script)
+{
 // DUBIOUS, rather than executing the script this document should be
 // passed to the interpreter.
     KJSProxy *proxy = jScript();
@@ -342,7 +347,7 @@ QVariant KHTMLPart::executeScript( const DOM::Node &n, const QString &script )
     if (!proxy || proxy->paused())
       return QVariant();
     d->m_runningScripts++;
-    QVariant ret = proxy->evaluate( QString::null, 0, script, n );
+    QVariant ret = proxy->evaluate( filename, baseLine, script, n );
     d->m_runningScripts--;
 
     // FIXME: implement
@@ -355,13 +360,6 @@ QVariant KHTMLPart::executeScript( const DOM::Node &n, const QString &script )
     
     //kdDebug(6050) << "KHTMLPart::executeScript - done" << endl;
     return ret;
-}
-
-QVariant KHTMLPart::executeScript(QString filename, int baseLine, const DOM::Node &n, const QString &script)
-{
-  // FIXME:MERGE need to implement this, I think
-  _logNotYetImplemented();
-  return QVariant();
 }
 
 QVariant KHTMLPart::executeScheduledScript()
