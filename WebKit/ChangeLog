@@ -1,3 +1,5 @@
+=== Safari-176 ===
+
 2004-12-20  Richard Williamson   <rjw@apple.com>
 
 	Add call to new API.  ImageIO deprecated some older (although
