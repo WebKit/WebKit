@@ -481,37 +481,36 @@ void ConsoleConnectionChangeNotifyProc(CGSNotificationType type, CGSNotification
     }
 }
 
+- (void)setHasFocus:(BOOL)flag
+{
+    if (hasFocus != flag) {
+        hasFocus = flag;
+        EventRecord event;
+        [self getCarbonEvent:&event];
+        BOOL acceptedEvent;
+        if (hasFocus) {
+            event.what = getFocusEvent;
+            acceptedEvent = [self sendEvent:&event]; 
+            LOG(PluginEvents, "NPP_HandleEvent(getFocusEvent): %d", acceptedEvent);
+            [self installKeyEventHandler];
+        } else {
+            event.what = loseFocusEvent;
+            acceptedEvent = [self sendEvent:&event]; 
+            LOG(PluginEvents, "NPP_HandleEvent(loseFocusEvent): %d", acceptedEvent);
+            [self removeKeyEventHandler];
+        }
+    }
+}
+
 - (BOOL)becomeFirstResponder
 {
-    EventRecord event;
-    
-    [self getCarbonEvent:&event];
-    event.what = getFocusEvent;
-    
-    BOOL acceptedEvent;
-    acceptedEvent = [self sendEvent:&event]; 
-    
-    LOG(PluginEvents, "NPP_HandleEvent(getFocusEvent): %d", acceptedEvent);
-    
-    [self installKeyEventHandler];
-        
+    [self setHasFocus:YES];
     return YES;
 }
 
 - (BOOL)resignFirstResponder
 {
-    EventRecord event;
-    
-    [self getCarbonEvent:&event];
-    event.what = loseFocusEvent;
-    
-    BOOL acceptedEvent;
-    acceptedEvent = [self sendEvent:&event]; 
-    
-    LOG(PluginEvents, "NPP_HandleEvent(loseFocusEvent): %d", acceptedEvent);
-    
-    [self removeKeyEventHandler];
-    
+    [self setHasFocus:NO];    
     return YES;
 }
 
@@ -1170,6 +1169,9 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     // Once we move to the new window, it will be too late.
     [self removeTrackingRect];
     [self removeWindowObservers];
+    
+    // Workaround for: <rdar://problem/3822871> resignFirstResponder is not sent to first responder view when it is removed from the window
+    [self setHasFocus:NO];
 
     if (!newWindow) {
         if ([[self webView] hostWindow]) {
