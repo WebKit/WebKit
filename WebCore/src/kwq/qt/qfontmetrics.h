@@ -79,7 +79,11 @@ public:
 // private ---------------------------------------------------------------------
 #ifdef _KWQ_
     void _initialize();
+#if (defined(__APPLE__) && defined(__OBJC__) && defined(__cplusplus))
     void _initializeWithFont(NSFont *);
+#else
+    void _initializeWithFont(void *);
+#endif
     void _free();
     
     struct KWQFontMetricsData {

@@ -183,7 +183,11 @@ private:
 	QPen qpen;
 	uint isFocusLocked:1;
         void *ps_stack;
+#if (defined(__APPLE__) && defined(__OBJC__) && defined(__cplusplus))
         NSCompositingOperation compositingOperation;
+#else
+        uint compositingOperation;
+#endif
     } *data;
 #endif
 }; // end class QPainter
