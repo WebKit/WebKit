@@ -109,10 +109,26 @@ public:
 
     // constants ---------------------------------------------------------------
 
-    static const QColor &black;
-    static const QColor &white;
-    static const QColor &darkGray;
-
+    QT_STATIC_CONST QColor &color0;
+    QT_STATIC_CONST QColor &color1;
+    QT_STATIC_CONST QColor &black;
+    QT_STATIC_CONST QColor &white;
+    QT_STATIC_CONST QColor &darkGray;
+    QT_STATIC_CONST QColor &gray;
+    QT_STATIC_CONST QColor &lightGray;
+    QT_STATIC_CONST QColor &red;
+    QT_STATIC_CONST QColor &green;
+    QT_STATIC_CONST QColor &blue;
+    QT_STATIC_CONST QColor &cyan;
+    QT_STATIC_CONST QColor &magenta;
+    QT_STATIC_CONST QColor &yellow;
+    QT_STATIC_CONST QColor &darkRed;
+    QT_STATIC_CONST QColor &darkGreen;
+    QT_STATIC_CONST QColor &darkBlue;
+    QT_STATIC_CONST QColor &darkCyan;
+    QT_STATIC_CONST QColor &darkMagenta;
+    QT_STATIC_CONST QColor &darkYellow;
+                  
     static const QCursor &sizeAllCursor;
     static const QCursor &splitHCursor;
     static const QCursor &splitVCursor;
