@@ -1371,7 +1371,8 @@ QRect RenderBlock::layoutInlineChildren(bool relayoutChildren)
          deleteEllipsisLineBoxes();
 
     int oldLineBottom = lastRootBox() ? lastRootBox()->bottomOverflow() : m_height;
-    
+    int startLineBottom = 0;
+
     if (firstChild()) {
         // layout replaced elements
         bool endOfInline = false;
@@ -1450,6 +1451,7 @@ QRect RenderBlock::layoutInlineChildren(bool relayoutChildren)
                                  0 : determineEndPosition(startLine, cleanLineStart, endLineYPos);
         if (startLine) {
             useRepaintRect = true;
+            startLineBottom = startLine->bottomOverflow();
             repaintRect.setY(kMin(m_height, startLine->topOverflow()));
             RenderArena* arena = renderArena();
             RootInlineBox* box = startLine;
@@ -1531,6 +1533,12 @@ QRect RenderBlock::layoutInlineChildren(bool relayoutChildren)
         
         if (endLine) {
             if (endLineMatched) {
+                // Note our current y-position for correct repainting when no lines move.  If no lines move, we still have to
+                // repaint up to the maximum of the bottom overflow of the old start line or the bottom overflow of the new last line.
+                int currYPos = kMax(startLineBottom, m_height);
+                if (lastRootBox())
+                    currYPos = kMax(currYPos, lastRootBox()->bottomOverflow());
+                
                 // Attach all the remaining lines, and then adjust their y-positions as needed.
                 for (RootInlineBox* line = endLine; line; line = line->nextRootBox())
                     line->attachLine();
@@ -1540,9 +1548,6 @@ QRect RenderBlock::layoutInlineChildren(bool relayoutChildren)
                 if (delta)
                     for (RootInlineBox* line = endLine; line; line = line->nextRootBox())
                         line->adjustPosition(0, delta);
-
-                // Now set our height and check for overflow.
-                int currYPos = m_height;
                 m_height = lastRootBox()->blockHeight();
                 m_overflowHeight = kMax(m_height, m_overflowHeight);
                 int bottomOfLine = lastRootBox()->bottomOverflow();

@@ -1,5 +1,15 @@
 2005-01-12  David Hyatt  <hyatt@apple.com>
 
+	Fix for 3951203, CSS border style incorrectly clipped on inline elements.  Make sure the repaint rect set during
+	line layout is smarter about including the overflow for both old states and new states.
+	
+        Reviewed by john
+
+        * khtml/rendering/bidi.cpp:
+        (khtml::RenderBlock::layoutInlineChildren):
+
+2005-01-12  David Hyatt  <hyatt@apple.com>
+
 	Fix for bug 3937608, versiontracker.com flashes and displays the right column below content.  Make sure to move
 	tables/overflows that dont fit within a block only in strict mode.
 
