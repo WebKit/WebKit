@@ -30,7 +30,23 @@
 #include <config.h>
 #endif
 
-class QString;
+// USING_BORROWED_KURL =========================================================
+
+#ifdef USING_BORROWED_KURL
+#include <_kurl.h>
+
+#else
+
+#include <qstring.h>
+
+// FIXME: this clever hack may need to be moved into KWQDef.h or elsewhere
+#define Fixed MacFixed
+#define Rect MacRect
+#define Boolean MacBoolean
+#include <CoreFoundation/CoreFoundation.h>
+#undef Fixed
+#undef Rect
+#undef Boolean
 
 // class KURL ==================================================================
 
@@ -85,6 +101,25 @@ public:
 // protected -------------------------------------------------------------------
 // private ---------------------------------------------------------------------
 
+private:
+    
+    void init();
+    
+    CFURLRef urlRef; 
+    bool malformed;
+    QString sURL;   
+    QString sProtocol;   
+    QString sHost;   
+    unsigned short int iPort;   
+    QString sPass;   
+    QString sUser;   
+    QString sRef;   
+    QString sQuery;   
+    QString sPath;   
+
+
 }; // class KURL ===============================================================
 
 #endif
+
+#endif // USING_BORROWED_KURL

@@ -27,7 +27,7 @@
 
 class QGArray					// generic array
 {
-//friend class QBuffer;
+friend class QBuffer;
 public:
     //### DO NOT USE THIS.  IT IS PUBLIC BUT DO NOT USE IT IN NEW CODE.
     struct array_data : public QShared {	// shared array

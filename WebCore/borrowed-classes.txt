@@ -1,8 +1,11 @@
+KURL
 QArray
+QBuffer
 QCollection
 QColor
 QDateTime
 QDict
+QDir
 QFile
 QList
 QMap

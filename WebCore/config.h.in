@@ -33,8 +33,14 @@
 /* Our platform requires this to handle certain Qt memory mgmt. conventions */
 #define Q_DELETING_VOID_UNDEFINED 1
 
+/* Define if using "borrowed" KURL */
+#undef USING_BORROWED_KURL
+
 /* Define if using "borrowed" QArray */
 #undef USING_BORROWED_QARRAY
+
+/* Define if using "borrowed" QBuffer */
+#undef USING_BORROWED_QBUFFER
 
 /* Define if using "borrowed" QCollection */
 #undef USING_BORROWED_QCOLLECTION
@@ -47,6 +53,9 @@
 
 /* Define if using "borrowed" QDict */
 #undef USING_BORROWED_QDICT
+
+/* Define if using "borrowed" QDir */
+#undef USING_BORROWED_QDIR
 
 /* Define if using "borrowed" QFile */
 #undef USING_BORROWED_QFILE

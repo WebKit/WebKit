@@ -244,6 +244,25 @@ dnl -------------------------------------------------------------------
 dnl
 
 dnl
+dnl KURL borrowing 
+dnl
+AC_ARG_ENABLE(borrowed-kurl,
+[  --enable-borrowed-kurl   enabled use of borrowed KURL (default on)],
+if ( test "$enableval" = "yes" ); then
+    AC_DEFINE_UNQUOTED(USING_BORROWED_KURL, 1)
+fi
+,
+if ( test -f borrowed-classes.txt )
+then
+BORROWED=`sed -e 's/^KURL$/yes/' borrowed-classes.txt | grep yes`
+if ( test "$BORROWED" = "yes" )
+then 
+AC_DEFINE_UNQUOTED(USING_BORROWED_KURL, 1)
+fi
+fi
+)
+
+dnl
 dnl QArray borrowing 
 dnl
 AC_ARG_ENABLE(borrowed-qarray,
@@ -258,6 +277,25 @@ BORROWED=`sed -e 's/^QArray$/yes/' borrowed-classes.txt | grep yes`
 if ( test "$BORROWED" = "yes" )
 then 
 AC_DEFINE_UNQUOTED(USING_BORROWED_QARRAY, 1)
+fi
+fi
+)
+
+dnl
+dnl QBuffer borrowing 
+dnl
+AC_ARG_ENABLE(borrowed-qbuffer,
+[  --enable-borrowed-qbuffer   enabled use of borrowed QBuffer (default on)],
+if ( test "$enableval" = "yes" ); then
+    AC_DEFINE_UNQUOTED(USING_BORROWED_QBUFFER, 1)
+fi
+,
+if ( test -f borrowed-classes.txt )
+then
+BORROWED=`sed -e 's/^QBuffer$/yes/' borrowed-classes.txt | grep yes`
+if ( test "$BORROWED" = "yes" )
+then 
+AC_DEFINE_UNQUOTED(USING_BORROWED_QBUFFER, 1)
 fi
 fi
 )
@@ -334,6 +372,25 @@ BORROWED=`sed -e 's/^QDict$/yes/' borrowed-classes.txt | grep yes`
 if ( test "$BORROWED" = "yes" )
 then 
 AC_DEFINE_UNQUOTED(USING_BORROWED_QDICT, 1)
+fi
+fi
+)
+
+dnl
+dnl QDir borrowing 
+dnl
+AC_ARG_ENABLE(borrowed-qdir,
+[  --enable-borrowed-qdir   enabled use of borrowed QDir (default on)],
+if ( test "$enableval" = "yes" ); then
+    AC_DEFINE_UNQUOTED(USING_BORROWED_QDIR, 1)
+fi
+,
+if ( test -f borrowed-classes.txt )
+then
+BORROWED=`sed -e 's/^QDir$/yes/' borrowed-classes.txt | grep yes`
+if ( test "$BORROWED" = "yes" )
+then 
+AC_DEFINE_UNQUOTED(USING_BORROWED_QDIR, 1)
 fi
 fi
 )
@@ -664,6 +721,7 @@ AC_OUTPUT(
 	src/kdelibs/khtml/rendering/Makefile
 	src/kwq/Makefile
 	src/kwq/qt/Makefile
+	src/kwq/kde/Makefile
 	src/kwq/tests/Makefile
 	src/kwq/tests/qt/Makefile
 )

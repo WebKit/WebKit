@@ -30,6 +30,13 @@
 #include <config.h>
 #endif
 
+// USING_BORROWED_QDIR =========================================================
+
+#ifdef USING_BORROWED_QDIR
+#include <_qdir.h>
+#else
+
+#include <KWQDef.h>
 #include "qstring.h"
 #include "qstringlist.h"
 #include "qfile.h"
@@ -67,5 +74,7 @@ public:
 // private ---------------------------------------------------------------------
 
 }; // class QDir ===============================================================
+
+#endif // USING_BORROWED_QDIR
 
 #endif

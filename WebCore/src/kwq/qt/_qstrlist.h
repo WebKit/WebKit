@@ -40,6 +40,10 @@
 
 // KWQ hacks ---------------------------------------------------------------
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #ifndef USING_BORROWED_QSTRINGLIST
 #define USING_BORROWED_QSTRINGLIST
 #endif
