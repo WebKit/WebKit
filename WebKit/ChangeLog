@@ -2,6 +2,13 @@
 
         Reviewed by me
 
+        * DOM.subproj/DOM.h: Oh, it's like the Keystone Cops this afternoon...
+	Backed out an unintended change to thsi file.
+
+2004-03-01  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by me
+
         * copy-webcore-files-to-webkit: Dumb typing error on my part in making
 	my previous quick fix. This quick fix works. 
 
