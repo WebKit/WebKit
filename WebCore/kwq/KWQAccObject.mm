@@ -283,15 +283,18 @@ static QRect boundingBoxRect(RenderObject* obj)
     if (obj) {
         if (obj->isInlineContinuation())
             obj = obj->element()->renderer();
-        QPtrList<QRect> rects;
+        QValueList<QRect> rects;
         int x = 0, y = 0;
         obj->absolutePosition(x, y);
         obj->absoluteRects(rects, x, y);
-        for (QRect* curr = rects.first(); curr; curr = rects.next()) {
-            if (rect.isEmpty())
-                rect = *curr;
-            else if (!curr->isEmpty())
-                rect = rect.unite(*curr);
+        for (QValueList<QRect>::ConstIterator it = rects.begin(); it != rects.end(); ++it) {
+            QRect r = *it;
+            if (r.isValid()) {
+                if (rect.isEmpty())
+                    rect = r;
+                else
+                    rect.unite(r);
+            }
         }
     }
     return rect;

@@ -904,20 +904,20 @@ void RenderObject::paintBorder(QPainter *p, int _tx, int _ty, int w, int h, cons
     }
 }
 
-void RenderObject::absoluteRects(QPtrList<QRect>& rects, int _tx, int _ty)
+void RenderObject::absoluteRects(QValueList<QRect>& rects, int _tx, int _ty)
 {
     // For blocks inside inlines, we go ahead and include margins so that we run right up to the
     // inline boxes above and below us (thus getting merged with them to form a single irregular
     // shape).
     if (continuation()) {
-        rects.append(new QRect(_tx, _ty - collapsedMarginTop(), 
-                               width(), height()+collapsedMarginTop()+collapsedMarginBottom()));
+        rects.append(QRect(_tx, _ty - collapsedMarginTop(), 
+                           width(), height()+collapsedMarginTop()+collapsedMarginBottom()));
         continuation()->absoluteRects(rects, 
                                       _tx - xPos() + continuation()->containingBlock()->xPos(),
                                       _ty - yPos() + continuation()->containingBlock()->yPos());
     }
     else
-        rects.append(new QRect(_tx, _ty, width(), height()));
+        rects.append(QRect(_tx, _ty, width(), height()));
 }
 
 #if APPLE_CHANGES

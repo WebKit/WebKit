@@ -366,13 +366,13 @@ DOM::DOMStringImpl* RenderText::originalString() const
     return element() ? element()->string() : 0;
 }
 
-void RenderText::absoluteRects(QPtrList<QRect>& rects, int _tx, int _ty)
+void RenderText::absoluteRects(QValueList<QRect>& rects, int _tx, int _ty)
 {
     for (unsigned int i = 0; i < m_lines.count(); i++)
-        rects.append(new QRect(_tx + m_lines[i]->xPos(), 
-                               _ty + m_lines[i]->yPos(), 
-                               m_lines[i]->width(), 
-                               m_lines[i]->height()));
+        rects.append(QRect(_tx + m_lines[i]->xPos(), 
+                           _ty + m_lines[i]->yPos(), 
+                           m_lines[i]->width(), 
+                           m_lines[i]->height()));
 }
 
 InlineTextBox * RenderText::findNextInlineTextBox( int offset, int &pos )

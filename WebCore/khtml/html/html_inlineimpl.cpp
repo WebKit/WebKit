@@ -55,22 +55,37 @@ HTMLAnchorElementImpl::~HTMLAnchorElementImpl()
 
 bool HTMLAnchorElementImpl::isFocusable() const
 {
-    return m_hasAnchor && 
-        m_render && 
-        m_render->style() && m_render->style()->visibility() == VISIBLE &&
-        (m_render->width() > 0 && m_render->height() > 0) && 
-        (m_render->firstChild() || m_render->continuation());
+    // FIXME: Even if we are not visible, we might have a child that is visible.
+    // Dave wants to fix that some day with a "has visible content" flag or the like.
+    if (!(m_hasAnchor && m_render && m_render->style()->visibility() == VISIBLE))
+        return false;
+
+    // Before calling absoluteRects, check for the common case where the renderer
+    // or one of the continuations is non-empty, since this is a faster check and
+    // almost always returns true.
+    for (RenderObject *r = m_render; r; r = r->continuation()) {
+        if (r->width() > 0 && r->height() > 0)
+            return true;
+    }
+
+    QValueList<QRect> rects;
+    int x = 0, y = 0;
+    m_render->absolutePosition(x, y);
+    m_render->absoluteRects(rects, x, y);
+    for (QValueList<QRect>::ConstIterator it = rects.begin(); it != rects.end(); ++it) {
+        if ((*it).isValid())
+            return true;
+    }
+
+    return false;
 }
 
 bool HTMLAnchorElementImpl::isMouseFocusable() const
 {
-    if (!isFocusable())
-        return false;
-    
-#ifdef APPLE_CHANGES
-    return false; // FIXME: This behavior is being debated currently. We might want to make links be mouse focusable.
+#if APPLE_CHANGES
+    return false;
 #else
-    return true;
+    return isFocusable();
 #endif
 }
 

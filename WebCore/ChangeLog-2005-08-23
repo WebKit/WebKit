@@ -1,3 +1,24 @@
+2003-12-17  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave.
+
+        - fixed 3469085: can't tab to all links on aintitcool.com
+
+        * khtml/html/html_inlineimpl.cpp:
+        (HTMLAnchorElementImpl::isFocusable): Re-implemented this to check width and height of
+        all continuations, not just the main render object. Also, check the absoluteRects after
+        checking all the render objects to catch things like floats.
+        (HTMLAnchorElementImpl::isMouseFocusable): Clean up the code here a bit.
+
+        * khtml/rendering/render_inline.h:
+        * khtml/rendering/render_inline.cpp: (RenderInline::absoluteRects):
+        * khtml/rendering/render_object.h:
+        * khtml/rendering/render_object.cpp: (RenderObject::absoluteRects):
+        * khtml/rendering/render_text.h:
+        * khtml/rendering/render_text.cpp: (RenderText::absoluteRects):
+        * kwq/KWQAccObject.mm: (boundingBoxRect):
+        Use QValueList instead of QPtrList for clarity and to fix storage leaks.
+
 === Safari-118 ===
 
 2003-12-16  David Hyatt  <hyatt@apple.com>
