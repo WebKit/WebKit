@@ -1,3 +1,12 @@
+2003-07-23  Richard Williamson   <rjw@apple.com>
+
+	Fixed 3341119:  Crash when content contains nil (0x0) characters.
+
+        Reviewed by Ken.
+
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (-[WebTextRenderer _CG_drawRun:style:atPoint:]):
+
 2003-07-23  Darin Adler  <darin@apple.com>
 
         Reviewed by John.

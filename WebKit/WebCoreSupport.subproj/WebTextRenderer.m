@@ -848,6 +848,10 @@ static void _drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *a
         endGlyph:&endGlyph
         numGlyphs: &numGlyphs];
         
+    // Eek.  We couldn't generate ANY glyphs for the run.
+    if (numGlyphs <= 0)
+        return;
+        
     // Fill the advances array.
     for (i = 0; i <= endGlyph; i++){
         advances[i].width = widthBuffer[i];
