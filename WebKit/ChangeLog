@@ -1,6 +1,11 @@
 2003-06-09  Chris Blumenberg  <cblu@apple.com>
 
+        * WebView.subproj/WebDataSource.h: Removed FIXME related to pageTitle.
+
+2003-06-09  Chris Blumenberg  <cblu@apple.com>
+
 	<rdar://problem/3283359>: don't load Cocoa Java plug-in if in Carbon app
+
 
         Reviewed by darin.
 
