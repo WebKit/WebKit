@@ -1,3 +1,10 @@
+2002-06-19  Kenneth Kocienda  <kocienda@apple.com>
+
+        I just played alchemical voodoo games with the linker to
+        make all our frameworks and Alexander prebound.
+
+	* WebKit.pbproj/project.pbxproj
+
 2002-06-18  Chris Blumenberg  <cblu@apple.com>
 
 	Fix for 2961733 - Progress of plug-in files not shown in activity window

@@ -1,3 +1,10 @@
+2002-06-19  Kenneth Kocienda  <kocienda@apple.com>
+
+        I just played alchemical voodoo games with the linker to 
+        make all our frameworks and Alexander prebound.
+
+	* JavaScriptCore.pbproj/project.pbxproj
+
 2002-06-15  Darin Adler  <darin@apple.com>
 
 	* JavaScriptCore.pbproj/project.pbxproj: Removed explicit PFE_FILE_C_DIALECTS now that
