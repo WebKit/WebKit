@@ -1,5 +1,13 @@
 2002-11-22  David Hyatt  <hyatt@apple.com>
 
+	Oops. I meant to do that for <input type=button> and not
+	<button>.  Just do it for <select>s for now.
+	
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::calcReplacedWidth):
+
+2002-11-22  David Hyatt  <hyatt@apple.com>
+
 	Make <select>s and <button>s ignore a CSS-specified width if that
 	width is smaller than their intrinsic width.
 
