@@ -699,7 +699,7 @@ void ApplyStyleCommandImpl::doApply()
     // This will ensure we remove all traces of the relevant styles from the selection
     // and prevent us from adding redundant ones, as described in:
     // <rdar://problem/3724344> Bolding and unbolding creates extraneous tags
-    removeStyle(start.upstream(StayInBlock), end);
+    removeStyle(start.upstream(), end);
     
     bool splitStart = splitTextAtStartIfNeeded(start, end); 
     if (splitStart) {
@@ -805,7 +805,7 @@ void ApplyStyleCommandImpl::removeStyle(const Position &start, const Position &e
     NodeImpl *node = start.node();
     while (1) {
         NodeImpl *next = node->traverseNextNode();
-        if (node->isHTMLElement() && nodeFullySelected(node)) {
+        if (node->isHTMLElement() && nodeFullySelected(start, node)) {
             HTMLElementImpl *elem = static_cast<HTMLElementImpl *>(node);
             if (isHTMLStyleNode(elem))
                 removeHTMLStyleNode(elem);
@@ -818,21 +818,19 @@ void ApplyStyleCommandImpl::removeStyle(const Position &start, const Position &e
     }
 }
 
-bool ApplyStyleCommandImpl::nodeFullySelected(const NodeImpl *node) const
+bool ApplyStyleCommandImpl::nodeFullySelected(const Position &start, const NodeImpl *node) const
 {
     ASSERT(node);
 
-    Position end(endingSelection().end().upstream(StayInBlock));
-    
-    if (node == end.node())
-        return end.offset() >= node->caretMaxOffset();
+    if (node == start.node())
+        return start.offset() >= node->caretMaxOffset();
 
     for (NodeImpl *child = node->lastChild(); child; child = child->lastChild()) {
-        if (child == end.node())
-            return end.offset() >= child->caretMaxOffset();
+        if (child == start.node())
+            return start.offset() >= child->caretMaxOffset();
     }
 
-    return !end.node()->isAncestor(node);
+    return !start.node()->isAncestor(node);
 }
 
 //------------------------------------------------------------------------------------------

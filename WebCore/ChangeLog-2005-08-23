@@ -1,5 +1,20 @@
 2004-08-26  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by John
+
+        * khtml/editing/htmlediting_impl.cpp:
+        (khtml::ApplyStyleCommandImpl::doApply): Remove the StayInBlock modifier from the
+        call to upstream when passing the start position to removeStyle(). This makes the
+        start position sufficiently upstream so that all relevant style tags are removed.
+        (khtml::ApplyStyleCommandImpl::removeStyle): Pass the start position to nodeFullySelected.
+        (khtml::ApplyStyleCommandImpl::nodeFullySelected): Change interface so start position
+        for calculation is passed in, rather than recalculating it every time.
+        * khtml/editing/htmlediting_impl.h: nodeFullySelected interface change.
+        * khtml/xml/dom_position.h: Add a comment about the working of upstream() and
+        downstream().
+
+2004-08-26  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by me
         
         Fix garbled contenteditable attribute. I must have checked
