@@ -1,3 +1,13 @@
+2003-09-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave.
+
+        - fixed a recent regression, and ...
+        - fixed 3386544 -- ARCH: <object>s don't support transclusion like <iframe>s do
+
+        * khtml/khtml_part.cpp: (KHTMLPart::childFrame): Added back a cast I should
+        not have removed to fix the function.
+
 2003-09-24  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3430612, crash on about:blank in updateHoverActiveState.  Just missing

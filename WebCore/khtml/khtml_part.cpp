@@ -3597,18 +3597,18 @@ void KHTMLPart::slotChildURLRequest( const KURL &url, const KParts::URLArgs &arg
 khtml::ChildFrame *KHTMLPart::childFrame( const QObject *obj )
 {
     assert( obj->inherits( "KParts::ReadOnlyPart" ) );
-    const KParts::ReadOnlyPart *part = static_cast<const KParts::ReadOnlyPart *>( obj );
+    const ReadOnlyPart *part = static_cast<const ReadOnlyPart *>( obj );
 
     FrameIt it = d->m_frames.begin();
     FrameIt end = d->m_frames.end();
     for (; it != end; ++it )
-      if ( (*it).m_part == part )
+      if ( static_cast<ReadOnlyPart *>((*it).m_part) == part )
         return &(*it);
 
     it = d->m_objects.begin();
     end = d->m_objects.end();
     for (; it != end; ++it )
-      if ( (*it).m_part == part )
+      if ( static_cast<ReadOnlyPart *>((*it).m_part) == part )
         return &(*it);
 
     return 0L;
