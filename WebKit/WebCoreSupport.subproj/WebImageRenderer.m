@@ -171,7 +171,9 @@ static NSMutableArray *activeImageRenderers;
                 ir.origin.y += ir.size.height - clippedDestinationHeight;
             }
             ir.size.height = clippedDestinationHeight;
-            fr.origin.y += fr.size.height - clippedSourceHeight;
+            if (![self isFlipped]) {
+                fr.origin.y += fr.size.height - clippedSourceHeight;
+            }
             fr.size.height = clippedSourceHeight;
         }
     }
