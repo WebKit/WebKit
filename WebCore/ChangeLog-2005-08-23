@@ -1,3 +1,9 @@
+2004-03-08  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin
+
+        * WebCore.pbproj/project.pbxproj: Added CFBundleName to Info.plist.
+
 2004-03-05  David Hyatt  <hyatt@apple.com>
 
 	Fix for first-line inheritance problem caused by incorrectly inheriting first-line into floating
