@@ -1,7 +1,10 @@
 2002-10-24  Richard Williamson   <rjw@apple.com>
 
         Fixed many font substitution related bugs, at least including:
-        3006966, 3026675, 3071106, and more... 
+        3006966, 3026675, 3071106, and more... (each of these bugs
+        has a list of related bugs). 
+        
+        Needs little more cleanup to correctly deal with non base characters.
         
         * WebCoreSupport.subproj/WebTextRenderer.h:
         * WebCoreSupport.subproj/WebTextRenderer.m:
