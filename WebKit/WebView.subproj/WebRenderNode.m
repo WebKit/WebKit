@@ -40,7 +40,7 @@
         NSView *view = part->widget()->getView();
         if ([view isKindOfClass:[NSScrollView class]]) {
             NSScrollView *scrollView = (NSScrollView *)view;
-            view = [scrollView documentView];
+            view = [scrollView superview];
         }
         if ([view isKindOfClass:[IFWebView class]]) {
             IFWebView *webView = (IFWebView *)view;
