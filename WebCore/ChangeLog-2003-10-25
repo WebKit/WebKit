@@ -1,3 +1,16 @@
+2003-01-15  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+	- fixed problem where Content-Type was coming in with suffixes like "charset"
+
+        * kwq/WebCoreBridge.h: Add contentType and refresh parameters, and remove "headers"
+	parameter, from openURL method.
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge openURL:reload:contentType:refresh:lastModified:pageCache:]): Get the
+	content type from a parameter, and the refresh header from a separate parameter rather
+	than extracting both from a headers dictionary.
+
 2003-01-14  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

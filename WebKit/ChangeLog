@@ -1,3 +1,15 @@
+2003-01-15  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+	- fixed problem where Content-Type was going into WebCore with suffixes like "charset"
+
+        * WebView.subproj/WebDataSourcePrivate.m: (-[WebDataSource _commitIfReady:]):
+	Pass in contentType from the response, rather than the "Content-Type" header.
+	Also pass in the refresh header separately.
+
+        * English.lproj/StringsNotToBeLocalized.txt: Updated for above change.
+
 2003-01-13  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin, Dave and Trey, and given the seal of approval by Don.

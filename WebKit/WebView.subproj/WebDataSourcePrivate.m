@@ -481,10 +481,11 @@
 	}
 
         [[self _bridge] openURL:urlString
-                reload:reload 
-                headers:headers 
-                lastModified: (pageCache ? nil : [_private->response lastModifiedDate])
-                pageCache: pageCache];
+                         reload:reload 
+                    contentType:[_private->response contentType]
+                        refresh:[headers objectForKey:@"Refresh"]
+                   lastModified:(pageCache ? nil : [_private->response lastModifiedDate])
+                      pageCache:pageCache];
 
         [[self webFrame] _opened];
     }

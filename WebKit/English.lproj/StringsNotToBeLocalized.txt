@@ -251,5 +251,6 @@ WebCoreSupport.subproj/WebBridge.m:"height"
 WebCoreSupport.subproj/WebBridge.m:"width"
 WebCoreSupport.subproj/WebCookieAdapter.m:"Cookie"
 WebCoreSupport.subproj/WebTextRenderer.m:"YES"
+WebView.subproj/WebDataSourcePrivate.m:"Refresh"
 WebView.subproj/WebPreferences.m:"latin1"
 WebView.subproj/WebRenderNode.m

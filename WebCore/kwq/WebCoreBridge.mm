@@ -138,7 +138,7 @@ static bool initializedObjectCacheSize = FALSE;
     _part->setParent([parent part]);
 }
 
-- (void)openURL:(NSString *)URL reload:(BOOL)reload headers:(NSDictionary *)headers lastModified:(NSDate *)lastModified pageCache:(NSDictionary *)pageCache
+- (void)openURL:(NSString *)URL reload:(BOOL)reload contentType:(NSString *)contentType refresh:(NSString *)refresh lastModified:(NSDate *)lastModified pageCache:(NSDictionary *)pageCache
 {
     if (pageCache) {
         KWQPageState *state = [pageCache objectForKey:@"WebCorePageState"];
@@ -150,7 +150,6 @@ static bool initializedObjectCacheSize = FALSE;
     // arguments
     URLArgs args(_part->browserExtension()->urlArgs());
     args.reload = reload;
-    NSString *contentType = [headers objectForKey:@"Content-Type"];
     if (contentType) {
         args.serviceType = QString::fromNSString(contentType);
     }
@@ -160,9 +159,8 @@ static bool initializedObjectCacheSize = FALSE;
     _part->didOpenURL([URL cString]);
 
     // things we have to set up after calling didOpenURL
-    NSString *refreshHeader = [headers objectForKey:@"Refresh"];
-    if (refreshHeader) {
-        _part->addMetaData("http-refresh", QString::fromNSString(refreshHeader));
+    if (refresh) {
+        _part->addMetaData("http-refresh", QString::fromNSString(refresh));
     }
     if (lastModified) {
 	_part->addMetaData("modified", QString::fromNSString([lastModified description]));
