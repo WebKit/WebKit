@@ -4,6 +4,21 @@
 
         Fix for this bug:
         
+        <rdar://problem/3957204> Mail crashed when sending a message in ~InsertParagraphSeparatorInQuotedContentCommand
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::InsertParagraphSeparatorInQuotedContentCommand::InsertParagraphSeparatorInQuotedContentCommand):
+        InsertParagraphSeparatorInQuotedContentCommand has this member variable: DOM::ElementImpl *m_breakNode;
+        I failed to initialize this variable to null in the constructor, and there is an uncommonly-traveled 
+        code path which does not set this variable to something good. In the destructor, we check for null, 
+        and deref if non-null. Obvious "BOOM" potential. Fixed.
+
+2005-01-21  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+        Fix for this bug:
+        
         <rdar://problem/3966311> REGRESSION (Mail): Hitting return makes space character disappear
 
         * khtml/editing/htmlediting.cpp:
