@@ -45,19 +45,4 @@ static WebCoreImageRendererFactory *sharedFactory;
     return self;
 }
 
-- (id <WebCoreImageRenderer>)imageRendererWithBytes: (const void *)bytes length:(unsigned)length
-{
-    return nil;
-}
-
-- (id <WebCoreImageRenderer>)imageRendererWithSize: (NSSize)s
-{
-    return nil;
-}
-
-- (id <WebCoreImageRenderer>)imageRenderer
-{
-    return nil;
-}
-
 @end

@@ -1,3 +1,11 @@
+2002-11-01  Darin Adler  <darin@apple.com>
+
+	- applied the same "subclass responsibility" pattern here as in
+	some of the other WebCore classes
+
+        * kwq/WebCoreImageRendererFactory.h: Move the subclass responsibility into a protocol.
+        * kwq/WebCoreImageRendererFactory.m: Remove now-unneeded stubs.
+
 2002-11-01  Richard Williamson   <rjw@apple.com>
 
         Removed old implementation.
