@@ -431,7 +431,10 @@ bool KWQKHTMLPartImpl::requestFrame( khtml::RenderPart *frame, const QString &ur
     WebCoreFrameBridge *wcFrame = [bridge childFrameNamed:name];
     if (wcFrame) {
         KWQDEBUGLEVEL(KWQ_LOG_FRAMES, "found %s\n", DEBUG_OBJECT(name));
-        frame->setWidget([[wcFrame bridge] part]->impl->getView());
+        KHTMLPart *part = [[wcFrame bridge] part];
+        if (part) {
+            frame->setWidget(part->impl->getView());
+        }
     }
     else {
         KWQDEBUGLEVEL(KWQ_LOG_FRAMES, "creating %s\n", DEBUG_OBJECT(name));

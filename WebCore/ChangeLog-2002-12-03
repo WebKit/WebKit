@@ -1,5 +1,13 @@
 2002-07-16  Darin Adler  <darin@apple.com>
 
+	- fixed 2998692 -- crash when you type "googl" into the page address
+
+        * kwq/KWQKHTMLPartImpl.mm: (KWQKHTMLPartImpl::requestFrame): Check for
+	a nil part here to restore the old behavior. Whether that's OK or not
+	is another question that I'd prefer to deal with later.
+
+2002-07-16  Darin Adler  <darin@apple.com>
+
         * almost every file: Renamed IF* -> Web*.
 
 2002-07-15  Darin Adler  <darin@apple.com>
