@@ -1,3 +1,13 @@
+2005-02-09  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3999213> Sometimes 2 Windows Media Player plugin instances are loaded
+
+        Reviewed by hyatt.
+
+        * khtml/html/html_objectimpl.cpp:
+        (HTMLObjectElementImpl::attach): Set needWidgetUpdate to false before calling updateWidget because updateWidget may cause this method or another method (which also calls updateWidget) to be called.
+        (HTMLObjectElementImpl::recalcStyle): ditto
+
 2005-02-09  David Harrison  <harrison@apple.com>
 
         Reviewed by Darin.

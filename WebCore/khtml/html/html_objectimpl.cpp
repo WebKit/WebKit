@@ -533,8 +533,10 @@ void HTMLObjectElementImpl::attach()
             }
         } else {
             if (needWidgetUpdate) {
-                static_cast<RenderPartObject*>(m_render)->updateWidget();
+                // Set needWidgetUpdate to false before calling updateWidget because updateWidget may cause
+                // this method or recalcStyle (which also calls updateWidget) to be called.
                 needWidgetUpdate = false;
+                static_cast<RenderPartObject*>(m_render)->updateWidget();
                 dispatchHTMLEvent(EventImpl::LOAD_EVENT,false,false);
             } else {
                 needWidgetUpdate = true;
@@ -557,8 +559,10 @@ void HTMLObjectElementImpl::detach()
 void HTMLObjectElementImpl::recalcStyle(StyleChange ch)
 {
     if (needWidgetUpdate && m_render && !canRenderImageType(serviceType)) {
-        static_cast<RenderPartObject*>(m_render)->updateWidget();
+        // Set needWidgetUpdate to false before calling updateWidget because updateWidget may cause
+        // this method or attach (which also calls updateWidget) to be called.
         needWidgetUpdate = false;
+        static_cast<RenderPartObject*>(m_render)->updateWidget();
         dispatchHTMLEvent(EventImpl::LOAD_EVENT,false,false);
     }
     HTMLElementImpl::recalcStyle(ch);
