@@ -80,7 +80,7 @@ QTextCodec *QTextCodec::codecForLocale()
 
 // constructors, copy constructors, and destructors ----------------------------
 
-QTextCodec::QTextCodec(int e)
+QTextCodec::QTextCodec(CFStringEncoding e)
 {
     encoding = e;
 }

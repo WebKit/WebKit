@@ -73,7 +73,7 @@ public:
 
     // constructors, copy constructors, and destructors ------------------------
 
-    QTextCodec(int);
+    QTextCodec(CFStringEncoding);
     ~QTextCodec();
 
     // member functions --------------------------------------------------------
