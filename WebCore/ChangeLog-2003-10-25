@@ -1,3 +1,26 @@
+2002-06-15  Maciej Stachowiak  <mjs@apple.com>
+
+	Removed product and vendor properties, thereby fixing:
+        
+        Radar 2943751 - JavaScript navigator.product property is "Konqueror/khtml"
+        Radar 2943753 - JavaScript navigator.vendor property is "KDE"
+        
+        * khtml/ecma/kjs_navigator.cpp:
+	(Navigator::getValueProperty): Return undefined for the above mentioned properties.
+
+2002-06-15  Maciej Stachowiak  <mjs@apple.com>
+
+        Implemented functionality needed for missing Screen properties, thereby fixing the following
+        bugs:
+        
+        Radar 2943730 - JavaScript screen.availHeight property is not implemented
+        Radar 2943732 - JavaScript screen.availLeft property is not implemented
+        Radar 2943734 - JavaScript screen.availTop property not implemented
+        Radar 2943735 - JavaScript screen.availWidth property is not implemented
+        
+	* kwq/KWQKWinModule.mm:
+	(KWinModule::workArea): Return the correct screen size to fix the above bugs.
+
 2002-06-14  Richard Williamson  <rjw@apple.com>
 
     Changed IFResourceProgressHandler to pass back resource handle instead of

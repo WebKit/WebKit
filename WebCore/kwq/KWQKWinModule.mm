@@ -28,6 +28,10 @@
 
 QRect KWinModule::workArea() const
 {
-    _logNotYetImplemented();
-    return QRect();
+    NSRect visibleRect = [[NSScreen mainScreen] visibleFrame];
+    NSRect rect = [[NSScreen mainScreen] frame];
+    return QRect((int)visibleRect.origin.x,
+                 (int)(rect.size.height - visibleRect.size.height - visibleRect.origin.y),
+                 (int)visibleRect.size.width,
+                 (int)visibleRect.size.height);
 }
