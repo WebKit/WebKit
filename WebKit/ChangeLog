@@ -1,3 +1,14 @@
+2003-12-02  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed:
+	<rdar://problem/3439222>: always hangs opening plain text file on a particular machine due to missing font, no UI to detect
+	<rdar://problem/3492983>: Certain fonts cause Safari to hang on text/plain pages
+
+        Reviewed by rjw.
+
+        * WebView.subproj/WebTextView.m:
+        (-[WebTextView setFixedWidthFont]): Use [[WebTextRendererFactory sharedFactory] fontWithFamilies:traits:size:] to get the font since it takes the font family which is what we store in WebPreferences and it does fallback work. Only set the font if non-nil is returned.
+
 2003-11-21  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Richard.

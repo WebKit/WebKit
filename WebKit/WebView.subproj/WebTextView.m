@@ -14,6 +14,7 @@
 #import <WebKit/WebFrameViewPrivate.h>
 #import <WebKit/WebNSViewExtras.h>
 #import <WebKit/WebPreferences.h>
+#import <WebKit/WebTextRendererFactory.h>
 #import <WebKit/WebViewPrivate.h>
 
 @interface WebTextView (ForwardDeclarations)
@@ -69,9 +70,15 @@
 - (void)setFixedWidthFont
 {
     WebPreferences *preferences = [WebPreferences standardPreferences];
-    NSFont *font = [NSFont fontWithName:[preferences fixedFontFamily]
-                                   size:[preferences defaultFixedFontSize]*_textSizeMultiplier];
-    [self setFont:font];
+    NSString *families[2];
+    families[0] = [preferences fixedFontFamily];
+    families[1] = nil;
+    NSFont *font = [[WebTextRendererFactory sharedFactory] fontWithFamilies:families 
+                                                                     traits:0 
+                                                                       size:[preferences defaultFixedFontSize]*_textSizeMultiplier];
+    if (font) {
+        [self setFont:font];
+    }
 }
 
 // This method was borrowed from Mail and changed to use ratios rather than deltas.
