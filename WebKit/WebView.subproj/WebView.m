@@ -104,6 +104,7 @@ NSString *_WebMainFrameURLKey = @"mainFrameURL";
     backForwardList = [[WebBackForwardList alloc] init];
     textSizeMultiplier = 1;
     progressNotificationInterval = 0.02;
+    progressNotificationTimeInterval = 0.1;
     settings = [[WebCoreSettings alloc] init];
 
     return self;
@@ -707,6 +708,10 @@ NSString *_WebMainFrameURLKey = @"mainFrameURL";
     [self willChangeValueForKey: key];
 }
 
+// Always start progress at INITIAL_PROGRESS_VALUE so it appears progress indicators
+// will immediately show some progress.  This helps provide feedback as soon as a load
+// starts.
+#define INITIAL_PROGRESS_VALUE 0.1
 
 - (void)_progressStarted
 {
@@ -714,8 +719,10 @@ NSString *_WebMainFrameURLKey = @"mainFrameURL";
     if (_private->numProgressTrackedFrames == 0){
         _private->totalPageAndResourceBytesToLoad = 0;
         _private->totalBytesReceived = 0;
-        _private->progressValue = 0;
+        _private->progressValue = INITIAL_PROGRESS_VALUE;
         _private->lastNotifiedProgressValue = 0;
+        _private->lastNotifiedProgressTime = 0;
+        LOG (Progress, "");
         [[NSNotificationCenter defaultCenter] postNotificationName:WebViewProgressStartedNotification object:self];
     }
     _private->numProgressTrackedFrames++;
@@ -724,14 +731,16 @@ NSString *_WebMainFrameURLKey = @"mainFrameURL";
 
 - (void)_progressCompleted
 {
+    ASSERT (_private->numProgressTrackedFrames > 0);
+    
     [self _willChangeValueForKey: @"estimatedProgress"];
-    if (![[[self mainFrame] dataSource] isLoading])
-        _private->numProgressTrackedFrames = 0;
-        
+
+    _private->numProgressTrackedFrames--;
     if (_private->numProgressTrackedFrames == 0){
         [_private->progressItems release];
         _private->progressItems = nil;
         _private->progressValue = 1;
+        LOG (Progress, "");
         [[NSNotificationCenter defaultCenter] postNotificationName:WebViewProgressFinishedNotification object:self];
     }
     [self _didChangeValueForKey: @"estimatedProgress"];
@@ -799,8 +808,16 @@ NSString *_WebMainFrameURLKey = @"mainFrameURL";
     if (_private->progressValue > 1.0)
         _private->progressValue = 1.0;
 
+    double now = CFAbsoluteTimeGetCurrent();
+    double notifiedProgressTimeDelta = CFAbsoluteTimeGetCurrent() - _private->lastNotifiedProgressTime;
+    _private->lastNotifiedProgressTime = now;
+    
     double notificationProgressDelta = _private->progressValue - _private->lastNotifiedProgressValue;
-    if (notificationProgressDelta >= _private->progressNotificationInterval){
+    if ((notificationProgressDelta >= _private->progressNotificationInterval ||
+        notifiedProgressTimeDelta >= _private->progressNotificationTimeInterval) &&
+        _private->numProgressTrackedFrames > 0){
+
+        LOG (Progress, "_private->progressValue %g", _private->progressValue);
         [[NSNotificationCenter defaultCenter] postNotificationName:WebViewProgressEstimateChangedNotification object:self];
         _private->lastNotifiedProgressValue = _private->progressValue;
     }

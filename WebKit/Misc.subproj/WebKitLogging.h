@@ -32,3 +32,4 @@ extern WebLogChannel WebKitLogBindings;
 extern WebLogChannel WebKitLogEncoding;
 extern WebLogChannel WebKitLogLiveConnect;
 extern WebLogChannel WebKitLogBackForward;
+extern WebLogChannel WebKitLogProgress;

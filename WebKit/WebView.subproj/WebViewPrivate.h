@@ -80,7 +80,9 @@ extern NSString *_WebMainFrameURLKey;
     long long totalBytesReceived;
     double progressValue;
     double lastNotifiedProgressValue;
+    double lastNotifiedProgressTime;
     double progressNotificationInterval;
+    double progressNotificationTimeInterval;
     
     int numProgressTrackedFrames;
     NSMutableDictionary *progressItems;

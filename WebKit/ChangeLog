@@ -1,3 +1,22 @@
+2003-10-14  Richard Williamson   <rjw@apple.com>
+
+        Added logging for estimated progress.
+        
+        Added a time delta to the throttler, so we now send notifications
+        if a delta amount has been exceeded OR a delta between notifications
+        has been exceeded.
+
+        Reviewed by Chris.
+
+        * Misc.subproj/WebKitLogging.h:
+        * Misc.subproj/WebKitLogging.m:
+        * WebView.subproj/WebView.m:
+        (-[WebViewPrivate init]):
+        (-[WebView _progressStarted]):
+        (-[WebView _progressCompleted]):
+        (-[WebView _incrementProgressForConnection:data:]):
+        * WebView.subproj/WebViewPrivate.h:
+
 2003-10-14  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Darin
