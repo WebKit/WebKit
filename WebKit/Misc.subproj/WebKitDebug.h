@@ -102,7 +102,6 @@ void WebKitLog(unsigned int level, const char *file, int line, const char *funct
 
 #define WEBKITDEBUG(format...) WEBKITDEBUGLEVEL(WEBKIT_LOG_GENERIC_DEBUG, format)
 
-#define IF_MALLOC_TESTING
 #ifdef IF_MALLOC_TESTING
 #ifdef __cplusplus
 extern "C" {

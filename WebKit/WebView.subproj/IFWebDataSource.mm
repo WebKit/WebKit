@@ -44,7 +44,6 @@ static id IFWebDataSourceMake(void *url)
 
 +(void) load
 {
-    setupDebugMalloc();
     WCSetIFWebDataSourceMakeFunc(IFWebDataSourceMake);
 }
 
