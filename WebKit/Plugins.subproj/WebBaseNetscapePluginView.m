@@ -1019,7 +1019,7 @@ typedef struct {
 
 - (void)viewDidMoveToHostWindow
 {
-    if ([self currentWindow]) {
+    if ([[self controller] hostWindow]) {
         // View now has an associated window. Start it if not already started.
         [self start];
     }

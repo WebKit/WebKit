@@ -1,3 +1,12 @@
+2003-04-10  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: 3222896 - REGRESSION: sound plays after closing a window with a RealPlayer plug-in in it
+
+        Reviewed by darin.
+
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView viewDidMoveToHostWindow]): We were starting plug-in on window close because that's when the host window is set to nil. Just check if we now have a host window before we start. 
+
 2003-04-10  Darin Adler  <darin@apple.com>
 
         Reviewed by Trey.
