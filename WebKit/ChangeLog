@@ -1,10 +1,14 @@
+2004-02-06  Darin Adler  <darin@apple.com>
+
+        * Resources/missing_image.tiff: Compressed with compress-tiffs; saved 15890 bytes.
+
 === Safari-127 ===
 
 2004-02-05  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Hyatt
 
-		Added so that editing can hook into Cocoa undo architecture. 
+        Added so that editing can hook into Cocoa undo architecture. 
 
         * WebCoreSupport.subproj/WebBridge.m:
         (-[WebBridge registerCommandForUndo:]):
