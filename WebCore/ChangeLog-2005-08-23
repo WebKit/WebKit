@@ -1,3 +1,21 @@
+2005-02-11  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed <rdar://problem/3915449> paths are relative to the old src URL after document.open, which is supposed to clear the document, including the URL
+
+        * khtml/xml/dom_docimpl.h: Added a new openInternal function for use by KHTMLPart.
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::open): Changed to do everything we did before, but also clear the URL and set the
+        base URL based on the enclosing document. This is the basic JavaScript/DOM operation of opening a
+        document, which is supposed to clear the document, including the URL. In the long run we might want
+        to do even more document "resetting and clearing" in here, but this URL clearing is what's needed
+        now to fix the most important problem.
+        (DocumentImpl::openInternal): Moved the old open code in here, except for the "parsing" check, which
+        is unnecessary and inappropriate in the one place we call this.
+
+        * khtml/khtml_part.cpp: (KHTMLPart::begin): Call openInternal instead of open.
+
 2005-02-10  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Hyatt

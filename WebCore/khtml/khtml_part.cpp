@@ -1571,7 +1571,7 @@ void KHTMLPart::begin( const KURL &url, int xOffset, int yOffset )
   d->m_doc->setRestoreState(args.docState);
 #endif
 
-  d->m_doc->open();
+  d->m_doc->openInternal();
   d->m_doc->setParsing(true);
   // clear widget
   if (d->m_view)
