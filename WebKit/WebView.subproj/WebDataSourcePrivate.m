@@ -468,7 +468,7 @@
 
 - (void)receivedPageIcon:(NSImage *)image
 {
-    [_private->locationChangeHandler receivedPageIcon:image forDataSource:self];
+    [[self _locationChangeHandler] receivedPageIcon:image forDataSource:self];
 }
 
 - (void)_loadIcon

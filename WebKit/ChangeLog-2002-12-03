@@ -1,3 +1,10 @@
+2002-07-24  Chris Blumenberg  <cblu@apple.com>
+
+	Call [self _locationChangeHandler] instead of _private-locationChangeHandler
+
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource receivedPageIcon:]):
+
 2002-07-24  Richard Williamson (Local)  <rjw@apple.com>
 
         Implemented find for text views.
