@@ -1,5 +1,12 @@
 2002-07-25  David Hyatt  <hyatt@apple.com>
 
+	Floated images using "align" should have margins to prevent the text from running right
+	up against them.  Matches IE and Mozilla behavior.
+	
+        * khtml/css/html4.css:
+
+2002-07-25  David Hyatt  <hyatt@apple.com>
+
 	Fix <blockquote> tags to have top and bottom margins of 1em.  This matches the <blockquote>
 	behavior in Gecko.
 	

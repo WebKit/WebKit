@@ -550,6 +550,15 @@ marquee {
 }
 
 
+/* Give floated images margins of 3px */
+img[align="left"] {
+	margin-right: 3px;
+}
+
+img[align="right"] {
+	margin-left: 3px;
+}
+
 /* noscript is handled internally, as it depends on the html settings */
 
 /* media rules are commented out for the moment. We'll have to add
