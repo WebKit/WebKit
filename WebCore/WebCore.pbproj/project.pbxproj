@@ -519,6 +519,7 @@
 				BE26F15505517DE000BFA0C3,
 				654E7EE40569FD4600358BD2,
 				654E7EE50569FD4600358BD2,
+				84B2B1F9056BEF3A00D2B771,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -782,6 +783,8 @@
 				65732B69054EF483007B42F8,
 				BE26F15605517DE000BFA0C3,
 				654E7EE30569FD4600358BD2,
+				84B2B1FA056BEF3A00D2B771,
+				84B2B250056BF15F00D2B771,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1142,6 +1145,51 @@
 //842
 //843
 //844
+		84B2B1F7056BEF3A00D2B771 = {
+			expectedFileType = sourcecode.c.h;
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = WebCoreLocalizedStringFactory.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		84B2B1F8056BEF3A00D2B771 = {
+			expectedFileType = sourcecode.c.objc;
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = WebCoreLocalizedStringFactory.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		84B2B1F9056BEF3A00D2B771 = {
+			fileRef = 84B2B1F7056BEF3A00D2B771;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Private,
+				);
+			};
+		};
+		84B2B1FA056BEF3A00D2B771 = {
+			fileRef = 84B2B1F8056BEF3A00D2B771;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		84B2B24F056BF15F00D2B771 = {
+			expectedFileType = sourcecode.cpp.objcpp;
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = KWQKSSLKeyGen.mm;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		84B2B250056BF15F00D2B771 = {
+			fileRef = 84B2B24F056BF15F00D2B771;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		84C0FA1E052B9652000440A1 = {
 			children = (
 				84C0FA24052B966D000440A1,
@@ -7750,6 +7798,8 @@
 				F5B2A52B02E22573018635CB,
 				F5B2A52C02E22573018635CB,
 				BE983D95052A2E0A00892D85,
+				84B2B1F7056BEF3A00D2B771,
+				84B2B1F8056BEF3A00D2B771,
 				F587855002DE375901EA4122,
 				9325AAB7041D0E9A00A9CAC5,
 				9325AAB8041D0E9A00A9CAC5,
@@ -8407,7 +8457,6 @@
 		};
 		F587865F02DE3A9C01EA4122 = {
 			children = (
-				F587866602DE3B1201EA4122,
 				F58784E502DE375901EA4122,
 				F587864902DE3A9A01EA4122,
 				F587864A02DE3A9A01EA4122,
@@ -8421,6 +8470,8 @@
 				F587850602DE375901EA4122,
 				F587865202DE3A9A01EA4122,
 				F587850702DE375901EA4122,
+				F587866202DE3B1101EA4122,
+				84B2B24F056BF15F00D2B771,
 			);
 			isa = PBXGroup;
 			name = kio;
@@ -8441,16 +8492,6 @@
 			isa = PBXBuildFile;
 			settings = {
 			};
-		};
-		F587866602DE3B1201EA4122 = {
-			children = (
-				F587866202DE3B1101EA4122,
-			);
-			isa = PBXGroup;
-			name = kssl;
-			path = "";
-			refType = 4;
-			sourceTree = "<group>";
 		};
 		F587866702DE3B3201EA4122 = {
 			expectedFileType = sourcecode.c.h;

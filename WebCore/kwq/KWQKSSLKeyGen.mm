@@ -16,32 +16,25 @@
  * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR
  * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
  * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
- * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
- * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+                                        * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+                                        * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef KSSLKEYGEN_H_
-#define KSSLKEYGEN_H_
+#import "KWQKSSLKeyGen.h"
 
-#include "KWQStringList.h"
-#include "QWidget.h"
+#import "KWQString.h"
+#import "WebCoreLocalizedStringFactory.h"
 
-class QDialog
-{
-public:
-    enum DialogCode { Accepted, Rejected };
-};
-
-class KSSLKeyGen
-{
-public:
-    static QStringList supportedKeySizes();
-    KSSLKeyGen(QWidget *, const char *, bool) { }
-    void setKeySize(int) { }
-    int exec() { return QDialog::Rejected; }
-};
-
-#endif
+QStringList KSSLKeyGen::supportedKeySizes()
+{ 
+    NSEnumerator *enumerator = [[[WebCoreLocalizedStringFactory sharedFactory] keyGenerationMenuItemTitles] objectEnumerator];
+    QStringList supportedKeySizes = QStringList(); 
+    NSString *string;
+    while ((string = [enumerator nextObject]) != nil) {
+        supportedKeySizes.append(QString::fromNSString(string));
+    }
+    return supportedKeySizes;
+}

@@ -1,3 +1,19 @@
+2003-11-20  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3491229>: Need UI and localized strings for <KEYGEN> support
+
+        Reviewed by john.
+
+        * ChangeLog:
+        * English.lproj/Localizable.strings:
+        * WebCoreSupport.subproj/WebLocalizedStringFactory.h: Added.
+        * WebCoreSupport.subproj/WebLocalizedStringFactory.m: Added.
+        (+[WebLocalizedStringFactory createSharedFactory]): new
+        (-[WebLocalizedStringFactory dealloc]): new
+        (-[WebLocalizedStringFactory keyGenerationMenuItemTitles]): new
+        * WebKit.pbproj/project.pbxproj:
+        * WebView.subproj/WebFrameView.m: call [WebLocalizedStringFactory createSharedFactory]
+
 2003-11-20  Richard Williamson   <rjw@apple.com>
 
 	Added spin of event loop during applet lookup poll.  This

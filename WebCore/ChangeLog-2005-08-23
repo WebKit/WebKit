@@ -1,3 +1,21 @@
+2003-11-20  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3491225>: Need UI and localized strings for <KEYGEN> support
+
+        Reviewed by john.
+
+        * WebCore-combined.exp:
+        * WebCore.exp:
+        * WebCore.pbproj/project.pbxproj:
+        * kwq/KWQKSSLKeyGen.h:
+        * kwq/KWQKSSLKeyGen.mm: Added.
+        (KSSLKeyGen::supportedKeySizes): implemented, calls [WebCoreLocalizedStringFactory keyGenerationMenuItemTitles]
+        * kwq/WebCoreLocalizedStringFactory.h: Added.
+        * kwq/WebCoreLocalizedStringFactory.m: Added.
+        (+[WebCoreLocalizedStringFactory sharedFactory]): new
+        (-[WebCoreLocalizedStringFactory init]): new
+        (-[WebCoreLocalizedStringFactory keyGenerationMenuItemTitles]): new
+
 2003-11-19  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Ken.
