@@ -583,26 +583,26 @@ using khtml::RenderPart;
 static NSAttributedString *attributedString(DOM::NodeImpl *_startNode, int startOffset, DOM::NodeImpl *endNode, int endOffset)
 {
     bool hasNewLine = true;
-    DOM::Node n = _startNode;
-    khtml::RenderObject *renderer;
+    bool hasParagraphBreak = true;
+DOM::Node n = _startNode;
+khtml::RenderObject *renderer;
     NSFont *font;
     NSMutableAttributedString *result = [[[NSMutableAttributedString alloc] init] autorelease];
     NSAttributedString *partialString;
-    
+
     while(!n.isNull()) {
         renderer = n.handle()->renderer();
         if (n.nodeType() == DOM::Node::TEXT_NODE && renderer) {
             QString text;
             QString str = n.nodeValue().string();
-            khtml::RenderStyle *style = 0;
-            
+khtml::RenderStyle *style = 0;
+
             font = nil;
             style = renderer->style();
             if (style) {
                 font = style->font().getNSFont();
             }
-            
-            hasNewLine = false;            
+
             if(n == _startNode && n == endNode && startOffset >=0 && endOffset >= 0)
                 text = str.mid(startOffset, endOffset - startOffset);
             else if(n == _startNode && startOffset >= 0)
@@ -611,21 +611,28 @@ static NSAttributedString *attributedString(DOM::NodeImpl *_startNode, int start
                 text = str.left(endOffset);
             else
                 text = str;
-                
-            if (font){
-                NSMutableDictionary *attrs = [[[NSMutableDictionary alloc] init] autorelease];
-                [attrs setObject:font forKey:NSFontAttributeName];
-                if (style && style->color().isValid())
-                    [attrs setObject:style->color().getNSColor() forKey:NSForegroundColorAttributeName];
-                if (style && style->backgroundColor().isValid())
-                    [attrs setObject:style->backgroundColor().getNSColor() forKey:NSBackgroundColorAttributeName];
-                partialString = [[NSAttributedString alloc] initWithString: text.getNSString() attributes: attrs];
+
+            text = text.stripWhiteSpace();
+            if (text.length() > 1)
+                text += ' ';
+
+            if (text.length() > 0){
+                hasNewLine = false;
+                hasParagraphBreak = false;
+                if (font){
+                    NSMutableDictionary *attrs = [[[NSMutableDictionary alloc] init] autorelease];
+                    [attrs setObject:font forKey:NSFontAttributeName];
+                    if (style && style->color().isValid())
+                        [attrs setObject:style->color().getNSColor() forKey:NSForegroundColorAttributeName];
+                    if (style && style->backgroundColor().isValid())
+                        [attrs setObject:style->backgroundColor().getNSColor() forKey:NSBackgroundColorAttributeName];
+                    partialString = [[[NSAttributedString alloc] initWithString: text.getNSString() attributes: attrs] autorelease];
+                }
+                else
+                    partialString = [[[NSAttributedString alloc] initWithString: text.getNSString() attributes: nil] autorelease];
+
+                [result appendAttributedString: partialString];
             }
-            else
-                partialString = [[NSAttributedString alloc] initWithString: text.getNSString() attributes: nil];
-                
-            [result appendAttributedString: partialString];
-            [partialString release];
         }
         else if (renderer != 0){
             // This is our simple HTML -> ASCII transformation:
@@ -635,8 +642,8 @@ static NSAttributedString *attributedString(DOM::NodeImpl *_startNode, int start
                 case ID_BR:
                     text += "\n";
                     hasNewLine = true;
-                break;
-        
+                    break;
+
                 case ID_TD:
                 case ID_TH:
                 case ID_HR:
@@ -652,7 +659,7 @@ static NSAttributedString *attributedString(DOM::NodeImpl *_startNode, int start
                     if (!hasNewLine)
                         text += "\n";
                     hasNewLine = true;
-                break;
+                    break;
                 case ID_P:
                 case ID_TR:
                 case ID_H1:
@@ -663,26 +670,28 @@ static NSAttributedString *attributedString(DOM::NodeImpl *_startNode, int start
                 case ID_H6:
                     if (!hasNewLine)
                         text += "\n";
-                    text += "\n";
+                    if (!hasParagraphBreak)
+                        text += "\n";
+                        hasParagraphBreak = true;
                     hasNewLine = true;
-                break;
+                    break;
             }
-            partialString = [[NSAttributedString alloc] initWithString: text.getNSString() attributes: nil];
+            partialString = [[[NSAttributedString alloc] initWithString: text.getNSString() attributes: nil] autorelease];
             [result appendAttributedString: partialString];
-            [partialString release];
         }
-        
+
         if(n == endNode)
             break;
-        
-        DOM::Node next = n.firstChild();
+
+DOM::Node next = n.firstChild();
         if(next.isNull())
             next = n.nextSibling();
+
         while( next.isNull() && !n.parentNode().isNull() ) {
             QString text;
             n = n.parentNode();
             next = n.nextSibling();
-            
+
             unsigned short _id = n.elementId();
             switch(_id) {
                 case ID_TD:
@@ -697,10 +706,10 @@ static NSAttributedString *attributedString(DOM::NodeImpl *_startNode, int start
                 case ID_PRE:
                 case ID_BLOCKQUOTE:
                 case ID_DIV:
-                if (!hasNewLine)
-                    text += "\n";
-                hasNewLine = true;
-                break;
+                    if (!hasNewLine)
+                        text += "\n";
+                    hasNewLine = true;
+                    break;
                 case ID_P:
                 case ID_TR:
                 case ID_H1:
@@ -709,34 +718,20 @@ static NSAttributedString *attributedString(DOM::NodeImpl *_startNode, int start
                 case ID_H4:
                 case ID_H5:
                 case ID_H6:
-                if (!hasNewLine)
-                    text += "\n";
-                // An extra newline is needed at the start, not the end, of these types of tags,
-                // so don't add another here.
-                hasNewLine = true;
-                break;
+                    if (!hasNewLine)
+                        text += "\n";
+                    // An extra newline is needed at the start, not the end, of these types of tags,
+                    // so don't add another here.
+                    hasNewLine = true;
+                    break;
             }
-            partialString = [[NSAttributedString alloc] initWithString: text.getNSString() attributes: nil];
+            partialString = [[[NSAttributedString alloc] initWithString: text.getNSString() attributes: nil] autorelease];
             [result appendAttributedString: partialString];
-            [partialString release];
         }
-    
+
         n = next;
     }
-/*    
-    int start = 0;
-    int end = text.length();
-    
-    // Strip leading LFs
-    while ((start < end) && (text[start] == '\n'))
-        start++;
-    
-    // Strip excessive trailing LFs
-    while ((start < (end-1)) && (text[end-1] == '\n') && (text[end-2] == '\n'))
-        end--;
-        
-    text.mid(start, end-start);
-*/    
+
     return result;
 }
 
