@@ -41,9 +41,6 @@
 
 #define MIN_DRAG_LABEL_WIDTH_BEFORE_CLIP	120.0
 
-#define DragImageAlpha    		0.75
-#define MaxDragImageSize 		NSMakeSize(400, 400)
-
 #import <CoreGraphics/CGStyle.h>
 #import <CoreGraphics/CGSTypes.h>
 #import <CoreGraphics/CGContextGState.h>
@@ -304,36 +301,11 @@
 }
 
 - (NSMenu *)menuForEvent:(NSEvent *)theEvent
-{
-    id <WebContextMenuDelegate> contextMenuDelegate, defaultContextMenuDelegate;
-    NSArray *menuItems, *defaultMenuItems;
-    NSDictionary *elementInfo;
-    NSMenu *menu = nil;
-    NSPoint point;
-    unsigned i;
-    
-    point = [self convertPoint:[theEvent locationInWindow] fromView:nil];
-    elementInfo = [self _elementAtPoint:point];
+{    
+    NSPoint point = [self convertPoint:[theEvent locationInWindow] fromView:nil];
+    NSDictionary *element = [self _elementAtPoint:point];
 
-    defaultContextMenuDelegate = [[self _controller] _defaultContextMenuDelegate];
-    defaultMenuItems = [defaultContextMenuDelegate contextMenuItemsForElement: elementInfo  defaultMenuItems: nil];
-    contextMenuDelegate = [[self _controller] contextMenuDelegate];
-
-    if(contextMenuDelegate){
-        menuItems = [contextMenuDelegate contextMenuItemsForElement: elementInfo  defaultMenuItems: defaultMenuItems];
-    } else {
-        menuItems = defaultMenuItems;
-    }
-    
-    if([menuItems count] > 0){
-        menu = [[[NSMenu alloc] init] autorelease];
-    
-        for(i=0; i<[menuItems count]; i++){
-            [menu addItem:[menuItems objectAtIndex:i]];
-        }
-    }
-    
-    return menu;
+    return [[self _controller] _menuForElement:element];
 }
 
 - (void)setContextMenusEnabled: (BOOL)flag
@@ -596,29 +568,15 @@
     if(_private->draggingImageElement){
         // Subclassing dragImage for image drags let's us change aspects of the drag that the
         // promised file API doesn't provide such as a different drag image, other pboard types etc.
-        
-        NSImage *originalImage = [_private->draggingImageElement objectForKey:WebElementImageKey];
-        anImage = [[originalImage copy] autorelease];
-        
-        NSSize originalSize = [anImage size];
-        [anImage _web_scaleToMaxSize:MaxDragImageSize];
-        NSSize newSize = [anImage size];
 
-        [anImage _web_dissolveToFraction:DragImageAlpha];
-
-        NSPoint mouseDownPoint = [self convertPoint:[theEvent locationInWindow] fromView:nil];
-        NSPoint currentPoint = [self convertPoint:[[_window currentEvent] locationInWindow] fromView:nil];
-
-        // Properly orient the drag image and orient it differently if it's smaller than the original
         imageLoc = [[_private->draggingImageElement objectForKey:WebElementImageLocationKey] pointValue];
-        imageLoc.x = mouseDownPoint.x - (((mouseDownPoint.x - imageLoc.x) / originalSize.width) * newSize.width);
-        imageLoc.y = imageLoc.y + originalSize.height;
-        imageLoc.y = mouseDownPoint.y - (((mouseDownPoint.y - imageLoc.y) / originalSize.height) * newSize.height);
-        
-        mouseOffset = NSMakeSize(currentPoint.x - mouseDownPoint.x, currentPoint.y - mouseDownPoint.y);
 
-        [pboard addTypes:[NSArray arrayWithObject:NSTIFFPboardType] owner:self];
-        [pboard setData:[originalImage TIFFRepresentation] forType:NSTIFFPboardType];
+        [self _web_setPromisedImageDragImage:&anImage
+                                          at:&imageLoc
+                                      offset:&mouseOffset
+                               andPasteboard:pboard
+                                   withImage:[_private->draggingImageElement objectForKey:WebElementImageKey]
+                                    andEvent:theEvent];
     }
 
     [super dragImage:anImage

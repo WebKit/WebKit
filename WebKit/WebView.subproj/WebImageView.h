@@ -12,8 +12,8 @@
 @interface WebImageView : NSView <WebDocumentView, WebDocumentDragSettings>
 {
     WebImageRepresentation *representation;
-    BOOL canDragFrom;
-    BOOL canDragTo;
+    BOOL acceptsDrags;
+    BOOL acceptsDrops;
     BOOL didSetFrame;
 }
 @end

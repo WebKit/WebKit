@@ -3,9 +3,9 @@
         Copyright (c) 2002, Apple, Inc. All rights reserved.
 */
 
-#import <WebKit/WebNSViewExtras.h>
-
+#import <WebKit/WebNSImageExtras.h>
 #import <WebKit/WebNSPasteboardExtras.h>
+#import <WebKit/WebNSViewExtras.h>
 #import <WebKit/WebView.h>
 
 #import <WebFoundation/WebNSStringExtras.h>
@@ -143,5 +143,35 @@
     }
 }
 #endif
+
+- (void)_web_setPromisedImageDragImage:(NSImage **)dragImage
+                                    at:(NSPoint *)imageLoc
+                                offset:(NSSize *)mouseOffset
+                         andPasteboard:(NSPasteboard *)pboard
+                             withImage:(NSImage *)image
+                              andEvent:(NSEvent *)theEvent;
+{
+    *dragImage = [[image copy] autorelease];
+    
+    NSSize originalSize = [*dragImage size];
+    [*dragImage _web_scaleToMaxSize:MaxDragImageSize];
+    NSSize newSize = [*dragImage size];
+
+    [*dragImage _web_dissolveToFraction:DragImageAlpha];
+
+    NSPoint mouseDownPoint = [self convertPoint:[theEvent locationInWindow] fromView:nil];
+    NSPoint currentPoint = [self convertPoint:[[_window currentEvent] locationInWindow] fromView:nil];
+
+    // Properly orient the drag image and orient it differently if it's smaller than the original
+    imageLoc->x = mouseDownPoint.x - (((mouseDownPoint.x - imageLoc->x) / originalSize.width) * newSize.width);
+    imageLoc->y = imageLoc->y + originalSize.height;
+    imageLoc->y = mouseDownPoint.y - (((mouseDownPoint.y - imageLoc->y) / originalSize.height) * newSize.height);
+
+    NSSize offset = NSMakeSize(currentPoint.x - mouseDownPoint.x, currentPoint.y - mouseDownPoint.y);
+    mouseOffset = &offset;
+    
+    [pboard addTypes:[NSArray arrayWithObject:NSTIFFPboardType] owner:self];
+    [pboard setData:[image TIFFRepresentation] forType:NSTIFFPboardType];
+}
 
 @end

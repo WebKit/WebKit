@@ -61,4 +61,5 @@
 
 - (WebController *)_openNewWindowWithURL:(NSURL *)URL referrer:(NSString *)referrer behind:(BOOL)behind;
 
+- (NSMenu *)_menuForElement:(NSDictionary *)element;
 @end

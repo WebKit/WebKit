@@ -1,3 +1,34 @@
+2002-10-20  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed 3050010: Should show contextual menu for WebImageView
+	Also made drags from WebImageView work.
+
+        * Misc.subproj/WebNSViewExtras.h:
+        * Misc.subproj/WebNSViewExtras.m: added _web_setPromisedImageDragImage which does the hackery to extend the promised file drag for images
+        * WebView.subproj/WebControllerPrivate.h:
+        * WebView.subproj/WebControllerPrivate.m:
+        (-[WebController _menuForElement:]): added, gets menu items from delegate and creates menu
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView menuForEvent:]): simplified, gets element and calls -[WebController _menuForElement:]
+        (-[WebHTMLView dragImage:at:offset:event:pasteboard:source:slideBack:]): call _web_setPromisedImageDragImage: when dragging image
+        * WebView.subproj/WebImageRepresentation.h:
+        * WebView.subproj/WebImageRepresentation.m:
+        (-[WebImageRepresentation dealloc]): release the URL
+        (-[WebImageRepresentation URL]): added so WebImageView can get the URL
+        (-[WebImageRepresentation setDataSource:]): retain the URL
+        * WebView.subproj/WebImageView.h: use new drag bools
+        * WebView.subproj/WebImageView.m:
+        (-[WebImageView initWithFrame:]): ditto
+        (-[WebImageView setAcceptsDrags:]): ditto
+        (-[WebImageView acceptsDrags]): ditto
+        (-[WebImageView setAcceptsDrops:]): ditto
+        (-[WebImageView acceptsDrops]): ditto
+        (-[WebImageView controller]): new
+        (-[WebImageView menuForEvent:]): new, creates element and calls -[WebController _menuForElement:]
+        (-[WebImageView mouseDragged:]): drag promised file
+        (-[WebImageView dragImage:at:offset:event:pasteboard:source:slideBack:]): call _web_setPromisedImageDragImage:
+        (-[WebImageView namesOfPromisedFilesDroppedAtDestination:]): new
+
 2002-10-20  Darin Adler  <darin@apple.com>
 
 	- fixed a problem where you would get garbage bits when resizing while loading a standalone image

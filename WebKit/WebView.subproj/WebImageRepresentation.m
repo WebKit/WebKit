@@ -23,6 +23,7 @@
 - (void)dealloc
 {
     [image release];
+    [URL release];
     [super dealloc];
 }
 
@@ -31,8 +32,14 @@
     return image;
 }
 
+- (NSURL *)URL
+{
+    return URL;
+}
+
 - (void)setDataSource:(WebDataSource *)dataSource
 {
+    URL = [[dataSource URL] retain];
 }
 
 - (void)receivedData:(NSData *)data withDataSource:(WebDataSource *)dataSource

@@ -260,4 +260,30 @@
     return newWindowController;
 }
 
+- (NSMenu *)_menuForElement:(NSDictionary *)element
+{
+    NSArray *defaultMenuItems = [_private->defaultContextMenuDelegate contextMenuItemsForElement:element
+                                                                                defaultMenuItems:nil];
+    NSArray *menuItems = nil;
+    NSMenu *menu = nil;
+    unsigned i;
+
+    if(_private->contextMenuDelegate){
+        menuItems = [_private->contextMenuDelegate contextMenuItemsForElement:element
+                                                             defaultMenuItems:defaultMenuItems];
+    } else {
+        menuItems = defaultMenuItems;
+    }
+
+    if(menuItems && [menuItems count] > 0){
+        menu = [[[NSMenu alloc] init] autorelease];
+
+        for(i=0; i<[menuItems count]; i++){
+            [menu addItem:[menuItems objectAtIndex:i]];
+        }
+    }
+
+    return menu;
+}
+
 @end
