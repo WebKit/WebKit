@@ -1,0 +1,78 @@
+#======================================================================
+#
+# Makefile
+#
+# $RCSfile$
+#
+#======================================================================
+# set top source dir relative to this directory
+# include make vars boilerplate
+#
+
+TOPSRCDIR = ../../../..
+include $(TOPSRCDIR)/Makefile.vars
+
+#----------------------------------------------------------------------
+# Set variables for this directory
+
+SOURCES = $(wildcard *.cpp)
+HEADERS = $(wildcard *.h)
+CXXOBJECTS = $(patsubst %.cpp,%.o,$(wildcard *.cpp))
+
+OBJECTS = $(CXXOBJECTS) 
+
+LIBRARY = libkhtmlecma.a
+
+PROGRAM = testecma
+
+CLEAN_FILES = $(OBJECTS) \
+	kjs_window.moc \
+	$(LIBRARY) \
+	$(NULL)
+
+#----------------------------------------------------------------------
+# Set flags for this directory
+
+CXXFLAGS = $(BASECXXFLAGS) \
+	-I$(TOPSRCDIR) \
+	-I$(TOPSRCDIR)/src/kwq \
+	-I$(TOPSRCDIR)/src/kwq/qt \
+	-I$(TOPSRCDIR)/src/kwq/kdecore \
+	-I$(TOPSRCDIR)/src/kwq/kdeui \
+	-I$(TOPSRCDIR)/src/kwq/kparts \
+	-I../css \
+	-I../dom \
+	-I../html \
+	-I../misc \
+	-I../xml \
+	-I../.. \
+	-I.. \
+	-I. \
+	$(NULL)
+
+DEPFLAGS = $(CXXFLAGS)
+
+#----------------------------------------------------------------------
+# Set targets for this directory
+
+all: $(OBJECTS) $(LIBRARY) 
+
+$(LIBRARY): $(CXXOBJECTS)
+	$(AR) $(ARFLAGS) $(LIBRARY) $(CXXOBJECTS)
+	$(RANLIB) $(LIBRARY)
+
+$(PROGRAM): testecma.o
+	$(CC) -o $@ $< -L. -lkhtmlecma
+
+kjs_window.cpp: kjs_window.moc
+kjs_window.moc:
+	touch $@
+
+#----------------------------------------------------------------------
+# include make rules boilerplate
+
+include $(TOPSRCDIR)/Makefile.rules
+
+#======================================================================
+# end
+#======================================================================

@@ -1,0 +1,98 @@
+#======================================================================
+#
+# Makefile
+#
+# $RCSfile$
+# $Revision$
+# $Author$
+# $Date$
+#
+#======================================================================
+# set top source dir relative to this directory
+# include make vars boilerplate
+#
+
+TOPSRCDIR = ../../../..
+include $(TOPSRCDIR)/Makefile.vars
+
+#----------------------------------------------------------------------
+# Set variables for this directory
+
+SOURCES = $(wildcard *.cpp)
+HEADERS = $(wildcard *.h)
+CXXOBJECTS = css_ruleimpl.o \
+    css_stylesheetimpl.o \
+    css_valueimpl.o \
+    csshelper.o \
+    cssparser.o \
+    cssstyleselector.o \
+    $(NULL)
+
+VALUEFILES = \
+	cssvalues.c \
+	cssvalues.h \
+	cssvalues.gperf \
+	$(NULL)
+
+PROPFILES = \
+	cssproperties.c \
+	cssproperties.h \
+	cssproperties.gperf \
+	$(NULL)
+
+CFILES = $(VALUEFILES) $(PROPFILES)
+
+OBJECTS = $(CXXOBJECTS)
+
+LIBRARY = libkhtmlcss.a
+
+CLEAN_FILES = $(OBJECTS) \
+	$(LIBRARY) \
+	$(CFILES) \
+	$(NULL)
+
+#----------------------------------------------------------------------
+# Set flags for this directory
+
+CXXFLAGS = $(BASECXXFLAGS) \
+	-I$(TOPSRCDIR) \
+	-I$(TOPSRCDIR)/src/kwq \
+	-I$(TOPSRCDIR)/src/kwq/qt \
+	-I$(TOPSRCDIR)/src/kwq/dcop \
+	-I$(TOPSRCDIR)/src/kwq/kdecore \
+	-I$(TOPSRCDIR)/src/kwq/kdeui \
+	-I$(TOPSRCDIR)/src/kwq/kio \
+	-I$(TOPSRCDIR)/src/kwq/kparts \
+	-I../dom \
+	-I../html \
+	-I../misc \
+	-I../xml \
+	-I.. \
+	-I. \
+	$(NULL)
+
+DEPFLAGS = $(CXXFLAGS)
+
+#----------------------------------------------------------------------
+# Set targets for this directory
+
+all: $(CFILES) $(OBJECTS) $(LIBRARY)
+
+$(LIBRARY): $(OBJECTS)
+	$(AR) $(ARFLAGS) $(LIBRARY) $(CXXOBJECTS)
+	$(RANLIB) $(LIBRARY)
+
+$(VALUEFILES):
+	sh ./makevalues
+
+$(PROPFILES):
+	sh ./makeprop
+
+#----------------------------------------------------------------------
+# include make rules boilerplate
+
+include $(TOPSRCDIR)/Makefile.rules
+
+#======================================================================
+# end
+#======================================================================
