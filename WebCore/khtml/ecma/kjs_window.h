@@ -89,6 +89,7 @@ namespace KJS {
     virtual void put(ExecState *exec, const Identifier &propertyName, const Value &value, int attr = None);
     virtual bool toBoolean(ExecState *exec) const;
     int installTimeout(const UString &handler, int t, bool singleShot);
+    int installTimeout(const Value &function, List &args, int t, bool singleShot);
     void clearTimeout(int timerId);
 #ifdef APPLE_CHANGES
     bool hasTimeouts();

@@ -1,5 +1,17 @@
 2003-09-25  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by John.
+
+        * khtml/ecma/kjs_window.cpp:
+        (Window::installTimeout): Variant that takes a function and args.
+	(WindowFunc::tryCall): If the argument is a function, call the
+	function variant of installTimeout instead of pointlessly passing
+	the string. Also, correctly implement the code to pass extra args
+	along.
+        * khtml/ecma/kjs_window.h:
+
+2003-09-25  Maciej Stachowiak  <mjs@apple.com>
+
 	Roll out build system change since it did not actually work. :-(
 	
         * WebCore.pbproj/project.pbxproj:
