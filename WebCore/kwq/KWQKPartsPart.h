@@ -44,11 +44,20 @@ namespace KParts {
 
 class Part : public QObject {
 public:
-    Part() : m_widget(0) { }
+    Part() : m_widget(0), m_ref(1) { }
+    
     QWidget *widget() const { return m_widget; }
     void setWidget(QWidget *widget) { m_widget = widget; }
+    
+    void ref() { m_ref++; }
+    void deref() { if(m_ref) m_ref--; if (!m_ref) delete this; }
+    
+    void event(QEvent *event) { customEvent((QCustomEvent *)event); }
+    virtual void customEvent(QCustomEvent *) { }
+    
 private:
     QWidget *m_widget;
+    unsigned int m_ref;
 };
 
 class ReadOnlyPart : public Part {

@@ -28,6 +28,7 @@
 
 #include <qguardedptr.h>
 #include <qtimer.h>
+#include <qdatetime.h>
 
 namespace KParts {
 

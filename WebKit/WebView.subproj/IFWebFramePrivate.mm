@@ -19,6 +19,8 @@
 #import <khtmlview.h>
 #import <rendering/render_frames.h>
 
+#import <KWQKHTMLPartImpl.h>
+
 static const char * const stateNames[6] = {
     "zero state",
     "IFWEBFRAMESTATE_UNINITIALIZED",
@@ -348,7 +350,7 @@ static const char * const stateNames[6] = {
                 }
  
                 // Jump to anchor point, if necessary.
-                [ds _part]->gotoBaseAnchor();
+                [ds _part]->impl->gotoBaseAnchor();
                    
                 [[ds _locationChangeHandler] locationChangeDone: [ds mainDocumentError]];
                 

@@ -234,10 +234,26 @@ void QScrollView::repaintContents(int x, int y, int w, int h, bool erase=TRUE)
     KWQDEBUGLEVEL (KWQ_LOG_FRAMES, "%p %s at (%d,%d) w %d h %d\n", getView(), [[[getView() class] className] cString], x, y, w, h);
 }
 
-QPoint QScrollView::contentsToViewport(const QPoint &)
+QPoint QScrollView::contentsToViewport(const QPoint &p)
 {
-    _logNeverImplemented();
-    return QPoint();
+    int vx, vy;
+    contentsToViewport(p.x(), p.y(), vx, vy);
+    return QPoint(vx, vy);
+}
+
+
+void QScrollView::contentsToViewport(int x, int y, int& vx, int& vy)
+{
+    NSView *view = getView();    
+    if ([view isKindOfClass: [NSScrollView class]]) {
+        NSScrollView *scrollView = (NSScrollView *)view;
+        view = [scrollView documentView];
+    }
+        
+    NSPoint np = [view convertPoint: NSMakePoint (x, y) toView: nil];
+    
+    vx = (int)np.x;
+    vy = (int)np.y;
 }
 
 
@@ -250,7 +266,6 @@ void QScrollView::viewportToContents(int vx, int vy, int& x, int& y)
     }
         
     NSPoint np = [view convertPoint: NSMakePoint (vx, vy) fromView: nil];
-
     
     x = (int)np.x;
     y = (int)np.y;

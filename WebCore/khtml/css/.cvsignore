@@ -9,6 +9,3 @@ cssproperties.strip
 cssproperties.h
 .deps
 *-stamp
-*.lo
-*.la
-.libs

@@ -23,27 +23,29 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef KHTML_PAGECACHE_H_
-#define KHTML_PAGECACHE_H_
+namespace khtml {
+    class CachedObject;
+    class Loader;
+    class Request;
+}
 
-#include <qcstring.h>
+namespace KIO {
+    class TransferJob;
+}
 
-class QObject;
-
-class KHTMLPageCache
+class KWQLoaderImpl
 {
 public:
-    static KHTMLPageCache *self() { return 0; }
+    KWQLoaderImpl(khtml::Loader *);
+    ~KWQLoaderImpl();
     
-    long createCacheEntry() { return 0; }
-    void addData(long, const QByteArray &) { }
-    void cancelEntry(long) { }
-    void endData(long) { }
-    
-    bool isValid(long) { return false; }
-    
-    void fetchData(long, QObject *, const char *) { }
-    void cancelFetch(QObject *) { }
-};
+    void setClient(khtml::Request *);
+    void serveRequest(khtml::Request *, KIO::TransferJob *);
+    void objectFinished(khtml::CachedObject *);
 
-#endif
+private:
+    KWQLoaderImpl(const KWQLoaderImpl&);
+    KWQLoaderImpl& operator=(const KWQLoaderImpl&);
+    
+    khtml::Loader *loader;
+};

@@ -26,62 +26,18 @@
 #ifndef HISTORYPROVIDER_H_
 #define HISTORYPROVIDER_H_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
 #include <qobject.h>
 
 namespace KParts {
 
-// class HistoryProvider =======================================================
-
 class HistoryProvider : public QObject {
 public:
-
-    // structs -----------------------------------------------------------------
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-
-    // static member functions -------------------------------------------------
-
     static HistoryProvider *self();
 
-    // constructors, copy constructors, and destructors ------------------------
-
-    HistoryProvider();
-    virtual ~HistoryProvider();
-
-    // member functions --------------------------------------------------------
-
+    void insert(const QString &);
     bool contains(const QString &) const;
+};
 
-    // operators ---------------------------------------------------------------
+}
 
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
-
-private:
-
-// add copy constructor
-// this private declaration prevents copying
-#ifdef _KWQ_PEDANTIC_
-    HistoryProvider(const HistoryProvider &);
 #endif
-
-// add assignment operator 
-// this private declaration prevents assignment
-#ifdef _KWQ_PEDANTIC_
-    HistoryProvider &operator=(const HistoryProvider &);
-#endif
-
-}; // class HistoryProvider ====================================================
-
-
-} // namespace KParts
- 
-#endif
-
-
-

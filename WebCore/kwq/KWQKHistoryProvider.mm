@@ -23,41 +23,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <kwqdebug.h>
-
 #include <historyprovider.h>
 
 namespace KParts {
 
-static HistoryProvider *instance = 0;
-
 HistoryProvider *HistoryProvider::self()
 {
-     if (instance == 0) {
-        instance = new HistoryProvider();
-    }
-    return instance;
+    static HistoryProvider instance;
+    return &instance;
 }
 
-
-HistoryProvider::HistoryProvider()
+void HistoryProvider::insert(const QString &)
 {
+    // FIXME: implement real history?
 }
-
-
-HistoryProvider::~HistoryProvider()
-{
-}
-
 
 bool HistoryProvider::contains(const QString &s) const
 {
-    // FIXME: implement real history
-    return FALSE;
+    // FIXME: implement real history?
+    return false;
 }
 
-
 } // namespace KParts
-
-
-

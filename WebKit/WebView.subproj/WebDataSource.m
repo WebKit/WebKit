@@ -12,7 +12,7 @@
 #import <WebFoundation/WebFoundation.h>
 
 #import <xml/dom_docimpl.h>
-#import <khtml_part.h>
+#import <KWQKHTMLPartImpl.h>
 
 #import <WCWebDataSource.h>
 
@@ -240,7 +240,7 @@ static id IFWebDataSourceMake(void *url, void *attributes, unsigned flags)
 {
     KHTMLPart *part = [self _part];
     
-    return QSTRING_TO_NSSTRING(part->documentSource());
+    return QSTRING_TO_NSSTRING(part->impl->documentSource());
 }
 
 

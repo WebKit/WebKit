@@ -27,6 +27,7 @@
 #import <qevent.h>
 #import <html/html_documentimpl.h>
 
+#import <KWQKHTMLPartImpl.h>
 
 @implementation IFWebView
 
@@ -103,7 +104,7 @@
     KHTMLPart *part = [dataSource _part];
 
     _private->provisionalWidget = new KHTMLView (part, 0);
-    part->setView (_private->provisionalWidget);
+    part->impl->setView (_private->provisionalWidget);
 
     // Create a temporary provisional view.  It will be replaced with
     // the actual view once the datasource has been committed.

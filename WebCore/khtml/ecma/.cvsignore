@@ -1,9 +1,4 @@
 Makefile.in
 Makefile
-testecma
 .deps
-.libs
-*.la
-*.lo
-*.moc
 *.lut.h

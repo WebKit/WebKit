@@ -28,6 +28,12 @@
 
 #import <WebFoundation/WebFoundation.h>
 
+class KHTMLPart;
+class QWidget;
+
+namespace khtml {
+    class Loader;
+}
 
 @class IFWebDataSource;
 @class IFWebView;

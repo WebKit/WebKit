@@ -15,6 +15,7 @@ libkhtmlmisc_o_SOURCES = \
 	htmltags.h \
 	khtmldata.h \
 	khtmllayout.h \
+	loader.cpp \
 	loader.h \
 	loader_client.h \
 	stringit.h \

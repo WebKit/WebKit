@@ -26,23 +26,17 @@
 #include <qstring.h>
 #include <klocale.h>
 
-//FIX ME:
-static QString *tempQString = NULL;
-
 QString i18n(const char* text)
 {
     NSBundle *wkBundle = [NSBundle bundleWithIdentifier:@"com.apple.webkit"];
     NSString *locString = [wkBundle localizedStringForKey:[NSString stringWithCString:text] value:nil table:nil];
-    
     return NSSTRING_TO_QSTRING(locString);
 }
 
 QString KLocale::language() const
 {
     _logNotYetImplemented();
-    if (tempQString == NULL) {
-        tempQString = new QString("en_US");
-    }
-    return *tempQString;
+    static QString language("en_US");
+    return language;
 }
 

@@ -64,13 +64,14 @@ namespace DOM
     class DocumentImpl;
 };
 
+#ifdef APPLE_CHANGES
+class KWQLoaderImpl;
+#endif
+
 namespace khtml
 {
     class CachedObject;
     class Request;
-#ifdef APPLE_CHANGES
-    class LoaderPrivate;
-#endif
     class DocLoader;
 
     /**
@@ -420,7 +421,7 @@ namespace khtml
         KJPEGFormatType m_jpegloader;
 #endif
 #ifdef APPLE_CHANGES
-        LoaderPrivate *d;
+        KWQLoaderImpl *d;
 #endif
     };
 

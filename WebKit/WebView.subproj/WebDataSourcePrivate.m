@@ -15,7 +15,7 @@
 #import <WebFoundation/IFError.h>
 #import <WebFoundation/IFNSStringExtensions.h>
 #import <WebKit/IFLocationChangeHandler.h>
-#import <khtml_part.h>
+#import <KWQKHTMLPartImpl.h>
 #import "IFWebController.h"
 
 @implementation IFWebDataSourcePrivate 
@@ -102,7 +102,7 @@
         [_private->controller release];
     }
     _private->controller = controller;
-    _private->part->setDataSource(self);
+    _private->part->impl->setDataSource(self);
 }
 
 - (KHTMLPart *)_part

@@ -31,6 +31,7 @@
 #endif
 
 #include <qobject.h>
+#include <qtimer.h>
 
 #include "job.h"
 #include "jobclasses.h"

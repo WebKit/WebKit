@@ -1,6 +1,5 @@
 Makefile
 Makefile.in
-khtmldata.h
 htmltags.c
 htmltags.h
 htmltags.gperf
@@ -9,6 +8,3 @@ htmlattrs.h
 htmlattrs.gperf
 .deps
 *-stamp
-*.lo
-*.la
-.libs

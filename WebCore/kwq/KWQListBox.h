@@ -34,7 +34,7 @@
 #include <qstring.h>
 
 #if (defined(__APPLE__) && defined(__OBJC__) && defined(__cplusplus))
-#include <Cocoa/Cocoa.h>
+#import <Cocoa/Cocoa.h>
 #endif
 
 class QListBoxItem;

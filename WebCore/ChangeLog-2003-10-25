@@ -1,3 +1,63 @@
+2002-05-30  Darin Adler  <darin@apple.com>
+
+	Cut down our copied and pasted code even more.
+
+	* WebCore.exp: Change what's exported for things that moved from
+	KHTMLPart into KWQKHTMLPartImpl.
+
+	* khtml/.cvsignore:
+	* khtml/css/.cvsignore:
+	* khtml/dom/.cvsignore:
+	* khtml/ecma/.cvsignore:
+	* khtml/html/.cvsignore:
+	* khtml/java/.cvsignore:
+	* khtml/misc/.cvsignore:
+	* khtml/rendering/.cvsignore:
+	* khtml/xml/.cvsignore:
+	Some .cvsignore hygiene.
+
+	* khtml/khtml_part.cpp: Use a lot more of this file, rather than using a copy inside
+	the kwq directory. Now we have KWQKHTMLPartImpl for the part that does need to be in kwq.
+	* khtml/khtml_part.h: Add KWQKHTMLPartImpl pointer, remove most of the other APPLE_CHANGES.
+	* khtml/khtmlpart_p.h: Remove almost all of the APPLE_CHANGES.
+	* kwq/KWQKHTMLPart.mm: Changed everything from being part of KHTMLPart to be a separate
+	KWQKHTMLPartImpl class. Minimized copied and pasted code; still more to do.
+	* kwq/KWQKHTMLPartImpl.h: Added. Interface so KHTMLPart can call into kwq as necessary.
+
+	* khtml/misc/Makefile.am: Added loader.cpp.
+	* khtml/misc/loader.cpp: Added from KDE 3.0. Rolled most of the changes from KWQKloader.mm
+	in here. The kwq-specific part is now in a KWQLoaderImpl class.
+	* khtml/misc/loader.h: Replace LoaderPrivate with KWQLoaderImpl.
+	* khtml/misc/loader.moc: Added empty file.
+	* kwq/KWQKloader.mm: Changed everything to be a separate KWQLoaderImpl class.
+	Minimized copied and pasted code.
+	* kwq/KWQLoaderImpl.h: Added. Interface so loader can call into kwq as necessary.
+	* kwq/loader.moc: Removed empty file.
+
+	* kwq/kparts/historyprovider.h: Add HistoryProvider::insert.
+	* kwq/KWQKHistoryProvider.mm: Add HistoryProvider::insert.
+
+	* kwq/KWQKLocale.mm: (KLocale::language): Simplify.
+
+	* kwq/KWQListBox.h:
+	* kwq/KWQNSTextField.h:
+	Use import instead of include for Cocoa.h.
+
+	* kwq/KWQScrollView.mm: (QScrollView::contentsToViewport): Implement this.
+
+	* kwq/external.h: Add declarations so this can be included cleanly.
+
+	* kwq/khtml/khtml_pagecache.h: Put a no-op cache in here so we don't have to do so
+	many APPLE_CHANGES ifdefs.
+
+	* kwq/kparts/part.h: Put ref/deref and event/customEvent in here so they don't need
+	to be added to KHTMLPart.
+
+	* kwq/kio/scheduler.h: Add <qtimer.h> include to help us build (not sure if it's
+	really needed.
+	* kwq/kparts/partmanager.h: Add <qdatetime.h> include to help us build (not sure if it's
+	really needed.
+
 === Alexander-7 ===
 
 2002-05-29  Richard Williamson  <rjw@apple.com>

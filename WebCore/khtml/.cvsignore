@@ -1,13 +1,3 @@
 Makefile
 Makefile.in
-testkhtml
-testcss
-testrender
-SunWS_cache
-ir.out
-testkhtml_static
-*.moc
 .deps
-.libs
-*.lo
-*.la
