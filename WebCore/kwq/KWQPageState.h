@@ -42,6 +42,7 @@ namespace KJS {
 @interface KWQPageState : NSObject
 {
     DOM::DocumentImpl *document;
+    DOM::NodeImpl *mousePressNode;
     KURL *URL;
     KJS::SavedProperties *windowProperties;
     KJS::SavedProperties *locationProperties;
@@ -52,6 +53,7 @@ namespace KJS {
 - initWithDocument:(DOM::DocumentImpl *)doc URL:(const KURL &)u windowProperties:(KJS::SavedProperties *)wp locationProperties:(KJS::SavedProperties *)lp interpreterBuiltins:(KJS::SavedBuiltins *)ib;
 
 - (DOM::DocumentImpl *)document;
+- (DOM::NodeImpl *)mousePressNode;
 - (KURL *)URL;
 - (KJS::SavedProperties *)windowProperties;
 - (KJS::SavedProperties *)locationProperties;

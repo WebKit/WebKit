@@ -1,3 +1,18 @@
+2005-01-14  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3886415> arrow keys don't work when the user hits Back to return to RSS page
+
+        Reviewed by hyatt.
+
+        (KWQKHTMLPart::openURLFromPageCache): restore mousePressNode
+        (KWQKHTMLPart::mousePressNode): new
+        * kwq/KWQPageState.h:
+        * kwq/KWQPageState.mm:
+        (-[KWQPageState initWithDocument:URL:windowProperties:locationProperties:interpreterBuiltins:]): save the mousePressNode
+        (-[KWQPageState clear]): clear the mousePressNode
+        (-[KWQPageState dealloc]): deref the mousePressNode
+        (-[KWQPageState mousePressNode]): new
+
 === Safari-179 ===
 
 2005-01-13  Vicki Murley <vicki@apple.com>

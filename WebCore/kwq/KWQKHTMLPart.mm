@@ -1509,6 +1509,7 @@ void KWQKHTMLPart::openURLFromPageCache(KWQPageState *state)
     // does not throw
 
     DocumentImpl *doc = [state document];
+    NodeImpl *mousePressNode = [state mousePressNode];
     KURL *url = [state URL];
     SavedProperties *windowProperties = [state windowProperties];
     SavedProperties *locationProperties = [state locationProperties];
@@ -1565,6 +1566,8 @@ void KWQKHTMLPart::openURLFromPageCache(KWQPageState *state)
     
     d->m_doc = doc;
     d->m_doc->ref();
+    
+    d->m_mousePressNode = Node(mousePressNode);
     
     Decoder *decoder = doc->decoder();
     if (decoder) {
@@ -4175,4 +4178,9 @@ bool KWQKHTMLPart::isCharacterSmartReplaceExempt(const QChar &c, bool isPrevious
 bool KWQKHTMLPart::isKHTMLPart() const
 {
     return true;
+}
+
+DOM::NodeImpl *KWQKHTMLPart::mousePressNode()
+{
+    return d->m_mousePressNode.handle();
 }

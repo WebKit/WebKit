@@ -51,6 +51,10 @@ using KJS::SavedBuiltins;
     document = doc;
     document->setInPageCache(YES);
     document->view()->ref();
+    mousePressNode = static_cast<KWQKHTMLPart *>(document->part())->mousePressNode();
+    if (mousePressNode) {
+        mousePressNode->ref();
+    }
     URL = new KURL(u);
     windowProperties = wp;
     locationProperties = lp;
@@ -85,6 +89,7 @@ using KJS::SavedBuiltins;
 - (void)clear
 {
     document = 0;
+    mousePressNode = 0;
 
     delete URL;
     URL = 0;
@@ -125,6 +130,10 @@ using KJS::SavedBuiltins;
             document->detach();
         }
         document->deref();
+        
+        if (mousePressNode) {
+            mousePressNode->deref();
+        }
         
         if (view) {
             view->clearPart();
@@ -171,6 +180,11 @@ using KJS::SavedBuiltins;
 - (DocumentImpl *)document
 {
     return document;
+}
+
+- (DOM::NodeImpl *)mousePressNode
+{
+    return mousePressNode;
 }
 
 - (KURL *)URL
