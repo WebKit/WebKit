@@ -218,7 +218,10 @@
     }
 
     // Let the resourceProgressDelegate get a crack at modifying the request.
-    newRequest = [resourceProgressDelegate resourceRequest: request willSendRequest: newRequest fromDataSource: dataSource];
+    if (resourceProgressDelegate)
+        newRequest = [resourceProgressDelegate resourceRequest: request willSendRequest: newRequest fromDataSource: dataSource];
+
+    ASSERT (newRequest != nil);
 
     WebResourceRequest *oldRequest = request;
     request = [newRequest copy];
