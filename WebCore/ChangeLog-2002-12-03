@@ -1,3 +1,10 @@
+\2002-09-23  David Hyatt  <hyatt@apple.com>
+
+	Make overflow:auto and scroll map to hidden until we figure
+	out something better.
+	
+        * khtml/css/cssstyleselector.cpp:
+ 
 2002-09-23  Darin Adler  <darin@apple.com>
 
 	More refinement of the AppKit hackery.

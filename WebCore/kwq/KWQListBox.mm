@@ -89,7 +89,6 @@
 
 @end
 
-
 QListBox::QListBox(QWidget *parent)
     : QScrollView(parent), m_insertingItems(false)
     , m_clicked(this, SIGNAL(clicked(QListBoxItem *)))
