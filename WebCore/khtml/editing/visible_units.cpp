@@ -127,7 +127,7 @@ static VisiblePosition nextWordBoundary(const VisiblePosition &c, unsigned (*sea
     Position start(pos.equivalentRangeCompliantPosition());
     searchRange.setStart(start.node(), start.offset());
     searchRange.setEndAfter(de);
-    TextIterator it(searchRange);
+    TextIterator it(searchRange, RUNFINDER);
     QString string;
     unsigned next = 0;
     while (!it.atEnd() && it.length() > 0) {

@@ -79,7 +79,7 @@ TextIterator::TextIterator() : m_endContainer(0), m_endOffset(0), m_positionNode
 {
 }
 
-TextIterator::TextIterator(const Range &r) : m_endContainer(0), m_endOffset(0), m_positionNode(0)
+TextIterator::TextIterator(const Range &r, IteratorKind kind) : m_endContainer(0), m_endOffset(0), m_positionNode(0)
 {
     const RangeImpl *ri = r.handle();
     if (!ri)
@@ -87,56 +87,68 @@ TextIterator::TextIterator(const Range &r) : m_endContainer(0), m_endOffset(0), 
 
     int exceptionCode = 0;
 
+    // get and validate the range endpoints
     NodeImpl *startContainer = ri->startContainer(exceptionCode);
     long startOffset = ri->startOffset(exceptionCode);
     NodeImpl *endContainer = ri->endContainer(exceptionCode);
     long endOffset = ri->endOffset(exceptionCode);
-
     if (exceptionCode != 0)
         return;
 
+    // remember ending place - this does not change
     m_endContainer = endContainer;
     m_endOffset = endOffset;
 
+    // set up the current node for processing
     m_node = ri->startNode();
     if (m_node == 0)
         return;
-
     m_offset = m_node == startContainer ? startOffset : 0;
     m_handledNode = false;
     m_handledChildren = false;
 
+    // calculate first out of bounds node
     m_pastEndNode = ri->pastEndNode();
 
+    // initialize node processing state
     m_needAnotherNewline = false;
     m_textBox = 0;
 
+    // initialize record of previous node processing
     m_lastTextNode = 0;
     m_lastTextNodeEndedWithCollapsedSpace = false;
-    m_lastCharacter = '\n';
+    if (kind == RUNFINDER)
+        m_lastCharacter = 0;
+    else
+        m_lastCharacter = '\n';
 
 #ifndef NDEBUG
-    // Need this just because of the assert.
+    // need this just because of the assert in advance()
     m_positionNode = m_node;
 #endif
 
+    // identify the first run
     advance();
 }
 
 void TextIterator::advance()
 {
+    // otherwise, where are we advancing from?
     assert(m_positionNode);
 
+    // reset the run information
     m_positionNode = 0;
     m_textLength = 0;
 
+    // handle remembered node that needed a newline after the text node's newline
     if (m_needAnotherNewline) {
-        // Emit the newline, with position a collapsed range at the end of current node.
+        // emit the newline, with position a collapsed range at the end of current node.
         emitCharacter('\n', m_node->parentNode(), m_node, 1, 1);
         m_needAnotherNewline = false;
         return;
     }
 
+    // handle remembered text box
     if (m_textBox) {
         handleTextBox();
         if (m_positionNode) {
@@ -145,6 +157,7 @@ void TextIterator::advance()
     }
 
     while (m_node && m_node != m_pastEndNode) {
+        // handle current node according to its type
         if (!m_handledNode) {
             RenderObject *renderer = m_node->renderer();
             if (renderer && renderer->isText() && m_node->nodeType() == Node::TEXT_NODE) {
@@ -164,6 +177,8 @@ void TextIterator::advance()
             }
         }
 
+        // find a new current node to handle in depth-first manner,
+        // calling exitNode() as we come back thru a parent node
         NodeImpl *next = m_handledChildren ? 0 : m_node->firstChild();
         m_offset = 0;
         if (!next) {
@@ -184,10 +199,12 @@ void TextIterator::advance()
             }
         }
 
+        // set the new current node
         m_node = next;
         m_handledNode = false;
         m_handledChildren = false;
 
+        // how would this ever be?
         if (m_positionNode) {
             return;
         }
@@ -201,6 +218,7 @@ bool TextIterator::handleTextNode()
     RenderText *renderer = static_cast<RenderText *>(m_node->renderer());
     DOMString str = m_node->nodeValue();
 
+    // handle pre-formatted text
     if (renderer->style()->whiteSpace() == khtml::PRE) {
         long runStart = m_offset;
         if (m_lastTextNodeEndedWithCollapsedSpace) {
@@ -389,6 +407,8 @@ void TextIterator::exitNode()
         case ID_P: {
             endLine = true;
 
+            // In certain cases, emit a new newline character for this node
+            // regardless of whether we emit another one.
             // FIXME: Some day we could do this for other tags.
             // However, doing it just for the tags above makes it more likely
             // we'll end up getting the right result without margin collapsing.
@@ -409,31 +429,44 @@ void TextIterator::exitNode()
         }
     }
 
-    if (endLine && m_lastCharacter != '\n' && m_lastTextNode) {
-        emitCharacter('\n', m_lastTextNode->parentNode(), m_lastTextNode, 0, 1);
-        m_needAnotherNewline = addNewline;
-    } else if (addNewline && m_lastTextNode) {
-        long offset = m_node->childNodeCount();
-        emitCharacter('\n', m_node, 0, offset, offset);
+    // emit character(s) iff there is an earlier text node and we need at least one newline
+    if (m_lastTextNode && endLine) {
+        if (m_lastCharacter != '\n') {
+            // insert a newline with a position following this block
+            emitCharacter('\n', m_node->parentNode(), m_node, 1, 1);
+
+            //...and, if needed, set flag to later add a newline for the current node
+            assert(!m_needAnotherNewline);
+            m_needAnotherNewline = addNewline;
+        } else if (addNewline) {
+            // insert a newline with a position following this block
+            emitCharacter('\n', m_node->parentNode(), m_node, 1, 1);
+        }
     }
 }
 
 void TextIterator::emitCharacter(QChar c, NodeImpl *textNode, NodeImpl *offsetBaseNode, long textStartOffset, long textEndOffset)
 {
-    m_singleCharacterBuffer = c;
+    // remember information with which to construct the TextIterator::range()
+    // NOTE: textNode is often not a text node, so the range will specify child nodes of positionNode
     m_positionNode = textNode;
     m_positionOffsetBaseNode = offsetBaseNode;
     m_positionStartOffset = textStartOffset;
     m_positionEndOffset = textEndOffset;
+ 
+    // remember information with which to construct the TextIterator::characters() and length()
+    m_singleCharacterBuffer = c;
     m_textCharacters = &m_singleCharacterBuffer;
     m_textLength = 1;
 
+    // remember some iteration state
     m_lastTextNodeEndedWithCollapsedSpace = false;
     m_lastCharacter = c;
 }
 
 Range TextIterator::range() const
 {
+    // use the current run information, if we have it
     if (m_positionNode) {
         if (m_positionOffsetBaseNode) {
             long index = m_positionOffsetBaseNode->nodeIndex();
@@ -443,8 +476,11 @@ Range TextIterator::range() const
         }
         return Range(m_positionNode, m_positionStartOffset, m_positionNode, m_positionEndOffset);
     }
+
+    // otherwise, return the end of the overall range we were given
     if (m_endContainer)
         return Range(m_endContainer, m_endOffset, m_endContainer, m_endOffset);
+        
     return Range();
 }
 
@@ -690,7 +726,7 @@ CharacterIterator::CharacterIterator()
 }
 
 CharacterIterator::CharacterIterator(const Range &r)
-    : m_offset(0), m_runOffset(0), m_atBreak(true), m_textIterator(r)
+    : m_offset(0), m_runOffset(0), m_atBreak(true), m_textIterator(r, RUNFINDER)
 {
     while (!atEnd() && m_textIterator.length() == 0) {
         m_textIterator.advance();
@@ -720,6 +756,7 @@ void CharacterIterator::advance(long count)
 
     m_atBreak = false;
 
+    // easy if there is enough left in the current m_textIterator run
     long remaining = m_textIterator.length() - m_runOffset;
     if (count < remaining) {
         m_runOffset += count;
@@ -727,23 +764,30 @@ void CharacterIterator::advance(long count)
         return;
     }
 
+    // exhaust the current m_textIterator run
     count -= remaining;
     m_offset += remaining;
+    
+    // move to a subsequent m_textIterator run
     for (m_textIterator.advance(); !atEnd(); m_textIterator.advance()) {
         long runLength = m_textIterator.length();
         if (runLength == 0) {
             m_atBreak = true;
         } else {
+            // see whether this is m_textIterator to use
             if (count < runLength) {
                 m_runOffset = count;
                 m_offset += count;
                 return;
             }
+            
+            // exhaust this m_textIterator run
             count -= runLength;
             m_offset += runLength;
         }
     }
 
+    // ran to the end of the m_textIterator... no more runs left
     m_atBreak = true;
     m_runOffset = 0;
 }

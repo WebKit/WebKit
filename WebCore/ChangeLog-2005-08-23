@@ -2,6 +2,38 @@
 
         Reviewed by Ken Kocienda.
 
+        <rdar://problem/3924934> REGRESSION: double click at end of line selects start of next line
+
+        Problem was the TextIterator was not handling exitNode() from a P block properly.
+        
+        * khtml/editing/visible_text.cpp:
+        (khtml::TextIterator::TextIterator):
+        Add new param that specifies whether the iterator is for content or for searching.
+        Search iterators do not prevent newlines at the beginning.
+        (khtml::TextIterator::advance):
+        Added some comments.
+        (khtml::TextIterator::handleTextNode):
+        Added some comments.
+        (khtml::TextIterator::exitNode):
+        Emit newline for P (and other) blocks with position following the block, instead of the m_lastTextNode.
+        (khtml::TextIterator::emitCharacter):
+        Added some comments.
+        (khtml::TextIterator::range):
+        Added some comments.
+        (khtml::CharacterIterator::CharacterIterator):
+        Specify search type TextIterator.
+        (khtml::CharacterIterator::advance):
+        * khtml/editing/visible_text.h:
+        (khtml::):
+        Add new TextIterator::TextIterator param that specifies whether the iterator is for content or for searching.
+        * khtml/editing/visible_units.cpp:
+        (khtml::nextWordBoundary):
+        Specify search type TextIterator.
+
+2004-12-21  David Harrison  <harrison@apple.com>
+
+        Reviewed by Ken Kocienda.
+
         <rdar://problem/3924695> REGRESSION (Mail): double-clicking past end of line shows no selection, should select to EOL
         
         Problem was that RenderText::setSelectionState did not handle the SelectionStart case where start and end are the end of the line.
