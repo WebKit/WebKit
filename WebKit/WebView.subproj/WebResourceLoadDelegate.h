@@ -52,7 +52,7 @@
     @result Returns the request, which may be mutated by the implementor, although typically
     will be request.
 */
-- (NSURLRequest *)webView:(WebView *)sender resource:identifier willSendRequest:(NSURLRequest *)request redirectResponse:(NSURLResponse *)redirectResponse fromDataSource:(WebDataSource *)dataSource;
+- (NSURLRequest *)webView:(WebView *)sender resource:(id)identifier willSendRequest:(NSURLRequest *)request redirectResponse:(NSURLResponse *)redirectResponse fromDataSource:(WebDataSource *)dataSource;
 
 /*!
     @method webView:resource:didReceiveAuthenticationChallenge:fromDataSource:

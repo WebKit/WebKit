@@ -143,7 +143,7 @@ enum {
 - (void)webView:(WebView *)sender setStatusText:(NSString *)text;
 
 /*!
-    @method webViewStatusText
+    @method webViewStatusText:
     @abstract Get the currently displayed status text.
     @param sender The WebView sending the delegate method.
     @result The status text

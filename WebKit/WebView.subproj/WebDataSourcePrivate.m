@@ -6,6 +6,7 @@
 
 #import <WebKit/WebBridge.h>
 #import <WebKit/WebDataProtocol.h>
+#import <WebKit/WebDefaultResourceLoadDelegate.h>
 #import <WebKit/WebDocument.h>
 #import <WebKit/WebException.h>
 #import <WebKit/WebFrameLoadDelegate.h>
@@ -187,9 +188,15 @@
         [self _commitIfReady: pageCache];
     } else if (!_private->mainClient) {
         _private->loadingFromPageCache = NO;
-        _private->mainClient = [[WebMainResourceClient alloc] initWithDataSource:self];
+        
         id identifier;
-        identifier = [[_private->webView resourceLoadDelegate] webView:_private->webView identifierForInitialRequest:_private->originalRequest fromDataSource:self];
+        id resourceLoadDelegate = [_private->webView resourceLoadDelegate];
+        if ([resourceLoadDelegate respondsToSelector:@selector(webView:identifierForInitialRequest:fromDataSource:)])
+            identifier = [resourceLoadDelegate webView:_private->webView identifierForInitialRequest:_private->originalRequest fromDataSource:self];
+        else
+            identifier = [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:_private->webView identifierForInitialRequest:_private->originalRequest fromDataSource:self];
+            
+        _private->mainClient = [[WebMainResourceClient alloc] initWithDataSource:self];
         [_private->mainClient setIdentifier: identifier];
         [[self webFrame] _addExtraFieldsToRequest:_private->request alwaysFromRequest: NO];
         if (![_private->mainClient loadWithRequest:_private->request]) {

@@ -1,3 +1,17 @@
+2003-06-02  Richard Williamson  <rjw@apple.com>
+
+	Fix for 3250352.
+
+        Reviewed by Chris.
+
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _startLoading:]):
+	Check respondsToSelector: before calling.
+
+        * WebView.subproj/WebResourceLoadDelegate.h:
+        * WebView.subproj/WebUIDelegate.h:
+	Headerdoc tweaks.
+
 === Safari-81 ===
 
 2003-06-02  Chris Blumenberg  <cblu@apple.com>
