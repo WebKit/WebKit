@@ -1,5 +1,22 @@
 2002-07-16  Darin Adler  <darin@apple.com>
 
+	- fixed 2997244 -- crash when visiting cnn.com followed by another page
+
+	Turns out the requestFrame code I've been tinkering with used to be
+	dead code until we accidentally re-triggered the code path.
+
+        * khtml/html/html_baseimpl.cpp: (HTMLFrameElementImpl::attach):
+	Remove APPLE_CHANGES that were causing us to reuse the same frame which
+	were an attempt to fix a frame targeting problem that was actually elsewhere.
+
+        * kwq/KWQKHTMLPartImpl.mm: (KWQKHTMLPartImpl::requestFrame): Remove the code
+	that handles the case of an already-existing frame with the same name. This
+	is handled at a higher level.
+
+        * kwq/WebCoreBridge.h: Remove now-unneeded childFrameNamed method.
+
+2002-07-16  Darin Adler  <darin@apple.com>
+
 	- fixed 2998692 -- crash when you type "googl" into the page address
 
         * kwq/KWQKHTMLPartImpl.mm: (KWQKHTMLPartImpl::requestFrame): Check for

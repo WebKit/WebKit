@@ -425,32 +425,19 @@ void KWQKHTMLPartImpl::urlSelected( const QString &url, int button, int state, c
 bool KWQKHTMLPartImpl::requestFrame( khtml::RenderPart *frame, const QString &url, const QString &frameName,
                                      const QStringList &params, bool isIFrame )
 {
-    NSString *name = frameName.getNSString();
-
-    KWQDEBUGLEVEL(KWQ_LOG_FRAMES, "name %s\n", DEBUG_OBJECT(name));
-    WebCoreFrameBridge *wcFrame = [bridge childFrameNamed:name];
-    if (wcFrame) {
-        KWQDEBUGLEVEL(KWQ_LOG_FRAMES, "found %s\n", DEBUG_OBJECT(name));
-        KHTMLPart *part = [[wcFrame bridge] part];
-        if (part) {
-            frame->setWidget(part->impl->getView());
-        }
+    NSURL *childURL = part->completeURL(url).getNSURL();
+    if (childURL == nil || [childURL path] == nil) {
+        NSLog (@"ERROR (probably need to fix CFURL): unable to create URL with path");
+        return false;
     }
-    else {
-        KWQDEBUGLEVEL(KWQ_LOG_FRAMES, "creating %s\n", DEBUG_OBJECT(name));
-        
-        NSURL *childURL = part->completeURL(url).getNSURL();
-        if (childURL == nil || [childURL path] == nil) {
-            NSLog (@"ERROR (probably need to fix CFURL): unable to create URL with path");
-            return false;
-        }
-        
-        HTMLIFrameElementImpl *o = static_cast<HTMLIFrameElementImpl *>(frame->element());
-        if (![bridge createChildFrameNamed:name withURL:childURL
-                renderPart:frame allowsScrolling:o->scrollingMode() != QScrollView::AlwaysOff
-                marginWidth:o->getMarginWidth() marginHeight:o->getMarginHeight()]) {
-            return false;
-        }
+    
+    KWQDEBUGLEVEL(KWQ_LOG_FRAMES, "name %s\n", frameName.ascii());
+    
+    HTMLIFrameElementImpl *o = static_cast<HTMLIFrameElementImpl *>(frame->element());
+    if (![bridge createChildFrameNamed:frameName.getNSString() withURL:childURL
+            renderPart:frame allowsScrolling:o->scrollingMode() != QScrollView::AlwaysOff
+            marginWidth:o->getMarginWidth() marginHeight:o->getMarginHeight()]) {
+        return false;
     }
 
 #ifdef _SUPPORT_JAVASCRIPT_URL_    
@@ -470,7 +457,6 @@ bool KWQKHTMLPartImpl::requestFrame( khtml::RenderPart *frame, const QString &ur
         return false;
     }
 #endif
-
 
     return true;
 }

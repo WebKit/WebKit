@@ -116,7 +116,6 @@ typedef khtml::RenderPart KHTMLRenderPart;
 
 - (WebCoreFrameBridge *)frame;
 - (NSArray *)childFrames; // WebCoreFrameBridge objects
-- (WebCoreFrameBridge *)childFrameNamed:(NSString *)name;
 - (WebCoreFrameBridge *)descendantFrameNamed:(NSString *)name;
 
 - (WebCoreFrameBridge *)mainFrame;

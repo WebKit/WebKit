@@ -1,5 +1,14 @@
 2002-07-16  Darin Adler  <darin@apple.com>
 
+        * WebCoreSupport.subproj/WebBridge.m:
+	Remove childFrameNamed since it's not needed, and every one of these bridge
+	methods adds potential confusion.
+	(-[WebBridge descendantFrameNamed:]): Make this look for descendants in the
+	provisional data sources first. This is the same change Richard made to
+	childFrameNamed, but it turns out that this is the method that's really used.
+
+2002-07-16  Darin Adler  <darin@apple.com>
+
         * almost every file: Renamed IF* -> Web*.
 
 2002-07-15  Richard Williamson (Home)  <rjw@apple.com>

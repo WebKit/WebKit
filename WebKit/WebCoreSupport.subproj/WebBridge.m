@@ -60,19 +60,12 @@
     return frameBridges;
 }
 
-- (WebCoreFrameBridge *)childFrameNamed:(NSString *)name
-{
-    WebDataSource *pd;
-    
-    pd = [[dataSource webFrame] provisionalDataSource];
-    if (pd)
-        return [[pd frameNamed: name] _frameBridge];
-
-    return [[dataSource frameNamed:name] _frameBridge];
-}
-
 - (WebCoreFrameBridge *)descendantFrameNamed:(NSString *)name
 {
+    WebCoreFrameBridge *provisionalBridge = [[[[dataSource webFrame] provisionalDataSource] frameNamed:name] _frameBridge];
+    if (provisionalBridge) {
+        return provisionalBridge;
+    }
     return [[[dataSource webFrame] frameNamed:name] _frameBridge];
 }
 
