@@ -30,9 +30,26 @@
 
 template <class T> class QList {
 public:
+    // FIXME: should any of these functions be moved into a base collection
+    // class implementation?
     uint count() const;
     T *at(uint);
     void append(const T *);
+    void setAutoDelete(bool);
+    bool removeLast();
+    T *first();
+    T *next();
+    T *last();
+    bool isEmpty() const;
+    bool removeRef(const T *);
+};
+
+template <class T> class QListIterator {
+public:
+    QListIterator(const QList<T> &);
+    T *toLast();
+    T *current() const;
+    T *operator--();
 };
 
 #endif
