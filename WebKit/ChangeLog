@@ -1,3 +1,17 @@
+2003-11-14  Vicki Murley <vicki@apple.com>
+
+        - rolled out Darin's fixes for 3457162 and 3160035, since these changes broke plugins on macromedia.com and disney.go.com
+
+        * WebView.subproj/WebBaseResourceHandleDelegate.m:
+        (-[WebBaseResourceHandleDelegate setDataSource:]):
+        * WebView.subproj/WebDataSource.m:
+        (-[WebDataSource _addSubresourceClient:]):
+        * WebView.subproj/WebMainResourceClient.h:
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient dealloc]):
+        (-[WebMainResourceClient loadWithRequest:]):
+        (-[WebMainResourceClient setDefersCallbacks:]):
+
 2003-11-14  Darin Adler  <darin@apple.com>
 
         Reviewed by John.

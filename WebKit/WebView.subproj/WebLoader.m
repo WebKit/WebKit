@@ -155,8 +155,6 @@
 
     [downloadDelegate release];
     downloadDelegate = [[webView downloadDelegate] retain];
-
-    [self setDefersCallbacks:[webView defersCallbacks]];
 }
 
 - (WebDataSource *)dataSource

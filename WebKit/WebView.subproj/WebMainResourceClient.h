@@ -21,7 +21,6 @@
     WebPolicyDecisionListener *listener;
     NSURLResponse *policyResponse;
     NSURLConnectionDelegateProxy *proxy;
-    NSURLRequest *_initialRequest;
 }
 
 - (id)initWithDataSource:(WebDataSource *)dataSource;
