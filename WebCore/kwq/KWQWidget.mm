@@ -24,12 +24,10 @@
  */
 
 #import <qwidget.h>
-
 #import <WebCoreFrameView.h>
-
 #import <KWQView.h>
-
 #import <kwqdebug.h>
+#import <KWQWindowWidget.h>
 
 /*
     A QWidget rougly corresponds to an NSView.  In Qt a QFrame and QMainWindow inherit
@@ -99,28 +97,27 @@ int QWidget::winId() const
 
 int QWidget::x() const 
 {
-    return (int)[getView() frame].origin.x;
+    return frameGeometry().topLeft().x();
 }
 
 int QWidget::y() const 
 {
-    return (int)[getView() frame].origin.y;
+    return frameGeometry().topLeft().y();
 }
 
 int QWidget::width() const 
 { 
-    return (int)[getView() frame].size.width;
+    return frameGeometry().size().width();
 }
 
 int QWidget::height() const 
 {
-    return (int)[getView() frame].size.height;
+    return frameGeometry().size().height();
 }
 
 QSize QWidget::size() const 
 {
-    NSRect vFrame = [getView() frame];
-    return QSize((int)vFrame.size.width, (int)vFrame.size.height);
+    return frameGeometry().size();
 }
 
 void QWidget::resize(const QSize &s) 
@@ -130,8 +127,7 @@ void QWidget::resize(const QSize &s)
 
 QPoint QWidget::pos() const 
 {
-    NSRect vFrame = [getView() frame];
-    return QPoint((int)vFrame.origin.x, (int)vFrame.origin.y);
+    return frameGeometry().topLeft();
 }
 
 void QWidget::move(int x, int y) 
@@ -153,13 +149,20 @@ QRect QWidget::frameGeometry() const
 
 QWidget *QWidget::topLevelWidget() const 
 {
-    // This is only used by JavaScript to implement the various
-    // window geometry manipulations and accessors, i.e.:
-    // window.moveTo(), window.moveBy(), window.resizeBy(), window.resizeTo(),
-    // outerWidth, outerHeight.
-    
-    // This should return a subclass of QWidget that fronts for an NSWindow.
-    return (QWidget *)this;
+    NSWindow *window = nil;
+    NSView *view = getView();
+
+    window = [view window];
+    while (window == nil && view != nil) { 
+	view = [view superview]; 
+	window = [view window];
+    }
+
+    if (window != nil) {	
+	return KWQWindowWidget::fromNSWindow(window);
+    } else {
+	return NULL;
+    }
 }
 
 QPoint QWidget::mapToGlobal(const QPoint &p) const
@@ -260,6 +263,7 @@ QSize QWidget::minimumSizeHint() const
 
 bool QWidget::isVisible() const
 {
+    // FIXME - rewrite interms of top level widget?
     return [[data->view window] isVisible];
 }
 

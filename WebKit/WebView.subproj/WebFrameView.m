@@ -191,5 +191,15 @@
 {
 }
 
+- (NSWindow *)window
+{
+    NSWindow *window = [super window];
+
+    if (window == nil) {
+	window = [[[self controller] windowContext] window];
+    }
+
+    return window;
+}
 
 @end

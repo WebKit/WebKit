@@ -1,3 +1,39 @@
+2002-07-01  Maciej Stachowiak  <mjs@apple.com>
+
+        Fixed Radar 2953256 - JavaScript window.moveTo() and
+	window.moveBy() methods do not work
+
+	This was done by creating a class to wrap an NSWindow as a
+	QWidget, which should be useful for many other window-related
+	features.
+	
+	* kwq/KWQWidget.mm:
+        (QWidget::x): Implement in terms of the virtual frameGeometry() method.
+        (QWidget::y): Likewise.
+        (QWidget::width): Likewise.
+        (QWidget::height): Likewise.
+        (QWidget::size): Likewise.
+        (QWidget::pos): Likewise.
+        (QWidget::topLevelWidget): Implement by creating a KWQWindowWidget
+        (QWidget::isVisible): Added FIXME comment.
+        * kwq/KWQWindowWidget.h: Added.
+        * kwq/KWQWindowWidget.mm: Added.
+	(KWQWindowWidget::fromNSWindow): Static method that maintains a
+	dictionary of top-level widgets, and creates them on demand.
+        (deleteOnWindowClose): Delete top level widget on close.
+        (KWQWindowWidget::KWQWindowWidget):
+        (KWQWindowWidget::~KWQWindowWidget):
+        (KWQWindowWidget::sizeHint): Implemented using NSWindow.
+        (KWQWindowWidget::minimumSizeHint): Likewise.
+        (KWQWindowWidget::frameGeometry): Likewise.
+        (KWQWindowWidget::topLevelWidget): Likewise.
+        (KWQWindowWidget::mapToGlobal): Likewise.
+        (KWQWindowWidget::mapFromGlobal): Likewise.
+        (KWQWindowWidget::setCursor): No-op implementation.
+        (KWQWindowWidget::internalSetGeometry): Implemented using NSWindow.
+        * kwq/Makefile.am: Add new files to build.
+        * kwq/qt/qwidget.h: Make methods virtual as needed.
+
 2002-07-01  Darin Adler  <darin@apple.com>
 
         * khtml/css/cssparser.cpp:

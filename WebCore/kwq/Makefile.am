@@ -103,6 +103,7 @@ libkwq_o_SOURCES = \
 	KWQView.mm \
 	KWQWMatrix.mm \
 	KWQWidget.mm \
+	KWQWindowWidget.mm \
 	KWQbrowserinterface.mm \
 	KWQsignals.mm \
 	KWQtextcodec.mm \
