@@ -1,3 +1,14 @@
+2004-08-15  David Hyatt  <hyatt@apple.com>
+
+	Fix the blank textarea problem by ensuring that any change to a <textarea>'s DOM children causes the form control
+	to resync with the DOM.  This behavior matches WinIE.
+	
+        Reviewed by kocienda
+
+        * khtml/html/html_formimpl.cpp:
+        (HTMLTextAreaElementImpl::childrenChanged):
+        * khtml/html/html_formimpl.h:
+
 2004-08-13  Trey Matteson  <trey@apple.com>
 
 	3761794 Slider doesn't call onmouseup handler
