@@ -29,9 +29,12 @@
 #import "KWQAssertions.h"
 
 const QObject *QObject::_sender;
+bool QObject::_defersTimers;
 
 static CFMutableDictionaryRef timerDictionaries;
 static CFMutableDictionaryRef allPausedTimers;
+static NSMutableArray *deferredTimers;
+static bool deferringTimers;
 
 @interface KWQObjectTimerTarget : NSObject
 {
@@ -278,6 +281,23 @@ void QObject::killTimers()
     CFDictionaryRemoveValue(timerDictionaries, this);
 }
 
+void QObject::setDefersTimers(bool defers)
+{
+    if (defers) {
+        _defersTimers = true;
+        deferringTimers = true;
+        [NSObject cancelPreviousPerformRequestsWithTarget:[KWQObjectTimerTarget class]];
+        return;
+    }
+    
+    if (_defersTimers) {
+        _defersTimers = false;
+        if (deferringTimers) {
+            [KWQObjectTimerTarget performSelector:@selector(stopDeferringTimers) withObject:nil afterDelay:0];
+        }
+    }
+}
+
 @implementation KWQObjectTimerTarget
 
 - initWithQObject:(QObject *)qo timerId:(int)t
@@ -288,10 +308,32 @@ void QObject::killTimers()
     return self;
 }
 
-- (void)timerFired
+- (void)sendTimerEvent
 {
     QTimerEvent event(timerId);
     target->timerEvent(&event);
+}
+
+- (void)timerFired
+{
+    if (deferringTimers) {
+        if (deferredTimers == nil) {
+            deferredTimers = [[NSMutableArray alloc] init];
+        }
+        [deferredTimers addObject:self];
+    } else {
+        [self sendTimerEvent];
+    }
+}
+
++ (void)stopDeferringTimers
+{
+    ASSERT(deferringTimers);
+    while ([deferredTimers count] != 0) {
+        [[deferredTimers objectAtIndex:0] sendTimerEvent];
+        [deferredTimers removeObjectAtIndex:0];
+    }
+    deferringTimers = false;
 }
 
 @end

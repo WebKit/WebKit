@@ -215,18 +215,25 @@ int QComboBox::currentItem() const
 
 - (BOOL)trackMouse:(NSEvent *)event inRect:(NSRect)rect ofView:(NSView *)view untilMouseUp:(BOOL)flag
 {
-    // We need to "defer loading" while we are tracking the menu.
+    // We need to "defer loading" and defer timers while we are tracking the menu.
     // That's because we don't want the new page to load while the user is holding the mouse down.
     // Normally, this is not a problem because we use a different run loop mode, but pop-up menus
     // use a Carbon implementation, and it uses the default run loop mode.
-    // See bug 3021018 for more information.
+    // See bugs 3021018 and 3242460 for some more information.
     
     WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(widget);
     BOOL wasDeferringLoading = [bridge defersLoading];
     if (!wasDeferringLoading) {
         [bridge setDefersLoading:YES];
     }
+    BOOL wasDeferringTimers = QObject::defersTimers();
+    if (!wasDeferringTimers) {
+        QObject::setDefersTimers(true);
+    }
     BOOL result = [super trackMouse:event inRect:rect ofView:view untilMouseUp:flag];
+    if (!wasDeferringTimers) {
+        QObject::setDefersTimers(false);
+    }
     if (!wasDeferringLoading) {
         [bridge setDefersLoading:NO];
     }

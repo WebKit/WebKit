@@ -105,6 +105,9 @@ public:
     virtual bool event(QEvent *);
 
     static const QObject *sender() { return _sender; }
+    
+    static bool defersTimers() { return _defersTimers; }
+    static void setDefersTimers(bool defers);
 
 private:
     void _addTimer(NSTimer *timer, int _timerId);
@@ -125,6 +128,8 @@ private:
     
     const QObject *_eventFilterObject;
     
+    static bool _defersTimers;
+
     friend class KWQGuardedPtrBase;
     friend class KWQSignal;
     friend class KWQObjectSenderScope;

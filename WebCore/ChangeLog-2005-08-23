@@ -2,6 +2,26 @@
 
         Reviewed by Ken.
 
+	- fixed 3242460 -- crash in NSPopUpButtonCell at acheter-moins-cher.com
+
+        * kwq/KWQComboBox.mm: (-[KWQPopUpButtonCell trackMouse:inRect:ofView:untilMouseUp:]):
+        Defer QObject timers too as well as loading while tracking a pop-up.
+        
+        * kwq/KWQObject.h: Add defersTimers and setDefersTimers functions.
+        * kwq/KWQObject.mm:
+        (QObject::setDefersTimers): Added. When called with true starts deferring timers. When called
+        with false schedules a "delay 0" task to deliver all the timers and stop deferring them.
+        (-[KWQObjectTimerTarget sendTimerEvent]): Added. Contains guts of the old timerFired method.
+        (-[KWQObjectTimerTarget timerFired]): Puts timer on the deferred timers list or calls sendTimerEvent.
+        (+[KWQObjectTimerTarget stopDeferringTimers]): Remove timers items from the deferred timers list,
+        and makes them fire, then stops deferring timers.
+
+        * WebCore.pbproj/project.pbxproj: Reorder things a bit.
+
+2003-04-29  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
 	- fixed 3230885 -- crash loading hixie test page in -[WebSubresourceClient connection:didReceiveData:]
 
         * khtml/rendering/render_style.cpp: (RenderStyle::setContent):
