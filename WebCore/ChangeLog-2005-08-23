@@ -1,3 +1,17 @@
+2005-01-21  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+        Fix for this bug:
+        
+        <rdar://problem/3959464> REGRESSION (Mail): Insertion point goes back to beginning of document after deleting
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::DeleteSelectionCommand::handleGeneralDelete): Add special case to handle retaining a fully-selected block.
+        This fixes the bug.
+        * layout-tests/editing/deleting/delete-3959464-fix-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-3959464-fix.html: Added.
+
 2005-01-21  Richard Williamson   <rjw@apple.com>
 
 	Fixed <rdar://problem/3966998> REGRESSION(179-TOT) clicking on gmail message brings me to blank screen

@@ -1922,17 +1922,37 @@ void DeleteSelectionCommand::handleGeneralDelete()
 
     if (startOffset == 0 && m_startNode->isBlockFlow() && m_startBlock != m_endBlock && !m_endBlock->isAncestor(m_startBlock)) {
         // The block containing the start of the selection is completely selected. 
-        // Delete it all in one step right here.
+        // See if it can be deleted in one step right here.
         ASSERT(!m_downstreamEnd.node()->isAncestor(m_startNode));
 
-        // shift the start node to the start of the next block.
+        // The next few lines help us deal with a bit of a quirk.
+        //     1. Open a new Blot or Mail document
+        //     2. hit Return ten times or so
+        //     3. Type a letter (do not hit Return after it)
+        //     4. Type shift-up-arrow to select the line containing the letter and the previous blank line
+        //     5. Hit Delete
+        // You expect the insertion point to wind up at the start of the line where your selection began.
+        // Because of the nature of HTML, the editing code needs to perform a special check to get
+        // this behavior. So:
+        // If the entire start block is selected, and
+        //     a) the selection does not extend to the end of the document, then delete the start block, otherwise
+        //     b) the selection extends to the end of the document, then do not delete the start block.
+        //
         NodeImpl *old = m_startNode;
-        m_startNode = m_startBlock->traverseNextSibling();
-        m_startNode->ref();
+        VisiblePosition visibleEnd = VisiblePosition(m_downstreamEnd);
+        if (visibleEnd.next().isNull() && !isFirstVisiblePositionOnLine(visibleEnd)) {
+            m_startNode = m_startBlock->firstChild();
+        }
+        else {
+            // shift the start node to the start of the next block.
+            m_startNode = m_startBlock->traverseNextSibling();
+            removeFullySelectedNode(m_startBlock);
+        }
+
+        if (m_startNode)
+            m_startNode->ref();
         old->deref();
         startOffset = 0;
-
-        removeFullySelectedNode(m_startBlock);
     }
     else if (startOffset >= m_startNode->caretMaxOffset()) {
         // Move the start node to the next node in the tree since the startOffset is equal to
