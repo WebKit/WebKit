@@ -1,3 +1,12 @@
+2003-11-21  Maciej Stachowiak  <mjs@apple.com>
+
+        Patch from Harri Porten, reviewed by me.
+
+	- fixed 3491709 - using Function.apply with a primitive type as the arg list causes crash
+        
+	* kjs/function_object.cpp:
+        (FunctionProtoFuncImp::call): Nest parentheses properly.
+
 2003-11-20  Richard Williamson   <rjw@apple.com>
 
 	More LiveConnect stuff.  Primitive Java fields are now

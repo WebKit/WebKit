@@ -127,9 +127,9 @@ Value FunctionProtoFuncImp::call(ExecState *exec, Object &thisObj, const List &a
 
     List applyArgs;
     if (!argArray.isA(NullType) && !argArray.isA(UndefinedType)) {
-      if ((argArray.isA(ObjectType) &&
-           Object::dynamicCast(argArray).inherits(&ArrayInstanceImp::info)) ||
-           Object::dynamicCast(argArray).inherits(&ArgumentsImp::info)) {
+      if (argArray.isA(ObjectType) &&
+           (Object::dynamicCast(argArray).inherits(&ArrayInstanceImp::info) ||
+            Object::dynamicCast(argArray).inherits(&ArgumentsImp::info))) {
 
         Object argArrayObj = Object::dynamicCast(argArray);
         unsigned int length = argArrayObj.get(exec,lengthPropertyName).toUInt32(exec);
