@@ -191,10 +191,18 @@ TABLE {
 	padding: 1px;
         -konq-flow-mode: -konq-around-floats;
 }
-      
+
+TD[align=left] > TABLE {
+    margin-right: auto;
+}
+
+TD[align=right] > TABLE {
+    margin-left: auto;
+}
+
 TABLE[align="center"] { 
-	margin-left: auto; 
-	margin-right: auto;
+	margin-left: auto !important; 
+	margin-right: auto !important;
 }
 
 THEAD { 

@@ -1,5 +1,16 @@
 2002-12-14  David Hyatt  <hyatt@apple.com>
 
+	Fix insidemacgames.com.  Reinstate rules I removed
+	and fix other rules to be !important so that the
+	td[align=right] rules won't affect child tables
+	with align=center.
+	
+        Reviewed by gramps
+
+        * khtml/css/html4.css:
+
+2002-12-14  David Hyatt  <hyatt@apple.com>
+
 	Fix for 3016385, menus on webreference.com don't show up.
 	
 	Fixes to make webreference.com menus show up.  This involved
