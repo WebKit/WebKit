@@ -1,3 +1,12 @@
+2004-09-03  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - <rdar://problem/3788040> REGRESSION: text that i type into a textarea disappears when i tab out of the textarea
+
+        * kwq/KWQTextArea.mm: (-[KWQTextArea textDidChange:]): Bring back an unconditional version of
+        this method. Earlier, we deleted this method, but we should have instead removed the check.
+
 2004-09-03  Richard Williamson   <rjw@apple.com>
 
 	Made drawImage() in <canvas> compliant with whatwg spec.

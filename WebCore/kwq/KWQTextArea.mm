@@ -166,6 +166,11 @@ const float LargeNumberForText = 1.0e7;
     [super dealloc];
 }
 
+- (void)textDidChange:(NSNotification *)aNotification
+{
+    widget->textChanged();
+}
+
 - (void)setWordWrap:(BOOL)f
 {
     if (f != wrap) {
