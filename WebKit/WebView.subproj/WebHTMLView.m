@@ -25,10 +25,6 @@
 
 #import <KWQKHTMLPartImpl.h>
 
-@interface NSScrollView (NSPrivate)
-- (void)_adjustForGrowBox;
-@end
-
 @implementation IFHTMLView
 
 - initWithFrame: (NSRect) frame
@@ -37,7 +33,6 @@
     
     _private = [[IFHTMLViewPrivate alloc] init];
 
-    _private->isFlipped = YES;
     _private->needsLayout = YES;
 
     _private->canDragTo = YES;
@@ -52,11 +47,6 @@
     [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(mouseMovedNotification:) name: NSMouseMovedNotification object: nil];
 
     [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(windowResized:) name: NSWindowDidResizeNotification object: nil];
-
-    // We remove this view as an observer from all window notifications when the window
-    // is closed.  This may be redundant, but ensures that the view has no outstanding
-    // references.
-    [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(windowWillClose:) name: NSWindowWillCloseNotification object: nil];
 
     return self;
 }
@@ -77,10 +67,21 @@
 }
 
 
+- (void)removeNotifications
+{
+    [[NSNotificationCenter defaultCenter] removeObserver: self name: NSMouseMovedNotification object: nil];
+    [[NSNotificationCenter defaultCenter] removeObserver: self name: NSWindowDidResignMainNotification object: nil];
+    [[NSNotificationCenter defaultCenter] removeObserver: self name: NSWindowDidResignMainNotification object: nil];
+    [[NSNotificationCenter defaultCenter] removeObserver: self name: NSWindowDidResizeNotification object: nil];
+}
+
+
 - (void)viewWillMoveToWindow:(NSWindow *)window
 {
-    if ([self window] && !window)
+    if ([self window] && !window) {
+        [self removeNotifications];
         [self _reset];
+    }
     [super viewWillMoveToWindow:window];
 }
 
@@ -153,7 +154,6 @@
 {
     KHTMLView *widget = _private->widget;
 
-
     // Ensure that we will receive mouse move events.  Is this the best place to put this?
     [[self window] setAcceptsMouseMovedEvents: YES];
     [[self window] _setShouldPostEventNotifications: YES];
@@ -161,19 +161,19 @@
     if (widget->part()->xmlDocImpl() && 
         widget->part()->xmlDocImpl()->renderer()){
         if (_private->needsLayout){
-#ifdef _KWQ_TIMING        
+ #ifdef _KWQ_TIMING        
     double start = CFAbsoluteTimeGetCurrent();
-#endif
+ #endif
 
             WEBKITDEBUGLEVEL (WEBKIT_LOG_VIEW, "doing layout\n");
             //double start = CFAbsoluteTimeGetCurrent();
             widget->layout();
             //WebKitDebugAtLevel (WEBKIT_LOG_TIMING, "layout time %e\n", CFAbsoluteTimeGetCurrent() - start);
             _private->needsLayout = NO;
-#ifdef _KWQ_TIMING        
+ #ifdef _KWQ_TIMING        
     double thisTime = CFAbsoluteTimeGetCurrent() - start;
     WEBKITDEBUGLEVEL (WEBKIT_LOG_TIMING, "%s layout seconds = %f\n", widget->part()->baseURL().url().latin1(), thisTime);
-#endif
+ #endif
         }
     }
 
@@ -260,32 +260,6 @@
 }
 
 
-#ifdef DELAY_LAYOUT
-- delayLayout: sender
-{
-    [NSObject cancelPreviousPerformRequestsWithTarget: self selector: @selector(delayLayout:) object: self];
-    WEBKITDEBUG("KWQHTMLView:  delayLayout called\n");
-    [self setNeedsLayout: YES];
-    [self setNeedsDisplay: YES];
-}
-
--(void)notificationReceived:(NSNotification *)notification
-{
-    if ([[notification name] rangeOfString: @"uri-fin-"].location == 0){
-        WEBKITDEBUG1("KWQHTMLView: Received notification, %s\n", DEBUG_OBJECT([notification name]));
-        [self performSelector:@selector(delayLayout:) withObject:self afterDelay:(NSTimeInterval)0.5];
-    }
-}
-#else
--(void)notificationReceived:(NSNotification *)notification
-{
-    if ([[notification name] rangeOfString: @"uri-fin-"].location == 0){
-        [self setNeedsLayout: YES];
-        [self setNeedsDisplay: YES];
-    }
-}
-#endif
-
 - (void)setNeedsDisplay:(BOOL)flag
 {
     WEBKITDEBUGLEVEL (WEBKIT_LOG_VIEW, "flag = %d\n", (int)flag);
@@ -297,6 +271,8 @@
 {
     WEBKITDEBUGLEVEL (WEBKIT_LOG_VIEW, "flag = %d\n", (int)flag);
     _private->needsLayout = flag;
+    if (flag)
+        [self setNeedsDisplay:YES];
 }
 
 
@@ -321,7 +297,7 @@
     // no page is yet loaded (2890818). We may need to modify this to always
     // draw the background color, in which case we'll have to make sure the
     // no-widget case is still handled correctly.
-    if (widget == 0l) {
+    if (widget == 0) {
         [[NSColor whiteColor] set];
         NSRectFill(rect);
         return;
@@ -373,55 +349,18 @@
 #endif
 }
 
-- (void)setIsFlipped: (bool)flag
-{
-    _private->isFlipped = flag;
-}
-
-
 - (BOOL)isFlipped 
 {
-    return _private->isFlipped;
-}
-
-
-- (void)viewWillStartLiveResize
-{
-    [super viewWillStartLiveResize];
-}
-
-- (void)viewDidEndLiveResize
-{
-    id scrollView = [[self superview] superview];
-
-    [super viewDidEndLiveResize];
-    
-    if ([scrollView isKindOfClass: [NSScrollView class]]){
-        [scrollView updateScrollers];
-        [scrollView tile];
-        [scrollView setNeedsDisplay: YES];
-    }
-
-    [self setNeedsLayout: YES];
-    [self setNeedsDisplay: YES];
-}
-
-
-- (void)windowWillClose: (NSNotification *)notification
-{
-    [[NSNotificationCenter defaultCenter] removeObserver: self name: NSMouseMovedNotification object: nil];
-    [[NSNotificationCenter defaultCenter] removeObserver: self name: NSWindowDidResignMainNotification object: nil];
-    [[NSNotificationCenter defaultCenter] removeObserver: self name: NSWindowDidResignMainNotification object: nil];
-    [[NSNotificationCenter defaultCenter] removeObserver: self name: NSWindowDidResizeNotification object: nil];
-    [[NSNotificationCenter defaultCenter] removeObserver: self name: NSWindowWillCloseNotification object: nil];
+    return YES;
 }
 
 
 - (void)windowResized: (NSNotification *)notification
 {
-    if ([notification object] == [self window]){
+    // FIXME: This is a hack. We should relayout when the width of our
+    // superview's bounds changes, not when the window is resized.
+    if ([notification object] == [self window]) {
         [self setNeedsLayout: YES];
-        [self setNeedsDisplay: YES];
     }
 }
 
@@ -430,7 +369,6 @@
 {
     if ([notification object] == [self window])
         [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(mouseMovedNotification:) name: NSMouseMovedNotification object: nil];
-    
 }
 
 
@@ -480,7 +418,7 @@
 
     QMouseEvent kEvent(QEvent::MouseButtonPress, QPoint((int)p.x, (int)p.y), button, state);
     KHTMLView *widget = _private->widget;
-    if (widget != 0l) {
+    if (widget) {
         widget->viewportMouseReleaseEvent(&kEvent);
     }
 }
@@ -511,7 +449,7 @@
 
     QMouseEvent kEvent(QEvent::MouseButtonPress, QPoint((int)p.x, (int)p.y), button, state);
     KHTMLView *widget = _private->widget;
-    if (widget != 0l) {
+    if (widget) {
         widget->viewportMousePressEvent(&kEvent);
     }
 }
@@ -529,7 +467,7 @@
         [[thisWindow contentView] hitTest:p] == self) {
         QMouseEvent kEvent(QEvent::MouseMove, QPoint((int)p.x, (int)p.y), 0, 0);
         KHTMLView *widget = _private->widget;
-        if (widget != 0l) {
+        if (widget) {
             widget->viewportMouseMoveEvent(&kEvent);
         }
     }
@@ -541,7 +479,7 @@
     
     QMouseEvent kEvent(QEvent::MouseMove, QPoint((int)p.x, (int)p.y), Qt::LeftButton, Qt::LeftButton);
     KHTMLView *widget = _private->widget;
-    if (widget != 0l) {
+    if (widget) {
         widget->viewportMouseMoveEvent(&kEvent);
     }
 }
@@ -555,7 +493,7 @@
     QKeyEvent kEvent(QEvent::KeyPress, 0, 0, state, NSSTRING_TO_QSTRING([event characters]), [event isARepeat], 1);
     
     KHTMLView *widget = _private->widget;
-    if (widget != 0l)
+    if (widget)
         widget->keyPressEvent(&kEvent);
 }
 
@@ -569,33 +507,8 @@
     QKeyEvent kEvent(QEvent::KeyPress, 0, 0, state, NSSTRING_TO_QSTRING([event characters]), [event isARepeat], 1);
     
     KHTMLView *widget = _private->widget;
-    if (widget != 0l)
+    if (widget)
         widget->keyReleaseEvent(&kEvent);
-}
-
-- (void)setCursor:(NSCursor *)cursor
-{
-    [_private->cursor release];
-    _private->cursor = [cursor retain];
-
-    // We have to make both of these calls, because:
-    // - Just setting a cursor rect will have no effect, if the mouse cursor is already
-    //   inside the area of the rect.
-    // - Just calling invalidateCursorRectsForView will not call resetCursorRects if
-    //   there is no cursor rect set currently and the view has no subviews.
-    // Therefore we have to call resetCursorRects to ensure that a cursor rect is set
-    // at all, if we are going to want one, and then invalidateCursorRectsForView: to
-    // call resetCursorRects from the proper context that will
-    // actually result in updating the cursor.
-    [self resetCursorRects];
-    [[self window] invalidateCursorRectsForView:self];
-}
-
-- (void)resetCursorRects
-{
-    if (_private->cursor != nil && _private->cursor != [NSCursor arrowCursor]) {
-        [self addCursorRect:[self visibleRect] cursor:_private->cursor];
-    }
 }
 
 @end

@@ -1,5 +1,39 @@
 2002-06-24  Darin Adler  <darin@apple.com>
 
+	Remove some unused stuff. Other minor cleanup.
+
+        * WebView.subproj/IFDynamicScrollBarsView.h: Remove breakRecursionCycle,
+        don't declare updateScrollers or resetCursorRects.
+
+        * WebView.subproj/IFDynamicScrollBarsView.m:
+        (-[IFDynamicScrollBarsView updateScrollers]): Make this work even for a view
+        that doesn't allow scrolling, turning off both scrollers in that case.
+        (-[IFDynamicScrollBarsView reflectScrolledClipView:]): Call updateScrollers
+	unconditionally, letting it decide what to do, rather than looking at
+	allowsScrolling. Also, no need to use a boolean to break the recursion cycle,
+	now that updateScrollers does no work if none is needed.
+        (-[IFDynamicScrollBarsView setCursor:]): Do nothing if the cursor is not
+	changing. Also handle arrowCursor case here.
+        (-[IFDynamicScrollBarsView resetCursorRects]): Call discardCursorRects so
+	the old rects won't keep accumulating.
+        (-[IFDynamicScrollBarsView setAllowsScrolling:]): Always call updateScrollers,
+	not just when turning scrolling off.
+
+        * WebView.subproj/IFHTMLView.mm:
+        (-[IFHTMLView initWithFrame:]): Remove unneeded NSWindowWillCloseNotification
+	and isFlipped field.
+        (-[IFHTMLView removeNotifications]): Moved here from NSWindowWillCloseNotification.
+        (-[IFHTMLView viewWillMoveToWindow:]): Remove all the notifications when the
+	view is removed from the window.
+        (-[IFHTMLView setNeedsLayout:]): Call setNeedsDisplay in the YES case, so the
+	callers don't all have to.
+        (-[IFHTMLView isFlipped]): Just return YES. No need to store it.
+        (-[IFHTMLView windowResized:]): Add a FIXME, since this is not the way we want
+	to handle view resizing for the long run.
+        * WebView.subproj/IFHTMLViewPrivate.h: Remove isFlipped.
+
+2002-06-24  Darin Adler  <darin@apple.com>
+
         Fix the last of the "leak the world" problems. The KHTMLView was leaking
         in IFHTMLView.
 

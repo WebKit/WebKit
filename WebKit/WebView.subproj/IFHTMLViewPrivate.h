@@ -20,7 +20,6 @@ class KHTMLView;
     KHTMLView *widget;
     BOOL widgetOwned;
     KHTMLView *provisionalWidget;
-    BOOL isFlipped;
     BOOL needsLayout;
     BOOL needsToApplyStyles;
     BOOL canDragTo;

@@ -7,74 +7,84 @@
 //
 
 #import <WebKit/IFDynamicScrollBarsView.h>
-#import <WebKit/WebKitDebug.h>
 
 @implementation IFDynamicScrollBarsView
 
-- initWithFrame: (NSRect)frame
+- initWithFrame:(NSRect)frame
 {
-    [super initWithFrame: frame];
+    [super initWithFrame:frame];
     allowsScrolling = YES;
     return self;
 }
 
-// make the horizontal and vertical scroll bars come and go as needed
-- (void) reflectScrolledClipView: (NSClipView*)clipView
-{
-    if (allowsScrolling){    
-        if( clipView == [self contentView] && breakRecursionCycle == NO ) {
-            breakRecursionCycle = YES;
-            
-            [self updateScrollers];
-            
-            breakRecursionCycle = NO;
-        }
-    }
-    [super reflectScrolledClipView: clipView];
-}
-
-
 - (void)updateScrollers
 {
-    BOOL scrollersChanged = NO;
-    if (allowsScrolling){    
-        BOOL scrollsVertically;
-        BOOL scrollsHorizontally;
-        id dview = [self documentView];
+    BOOL scrollsVertically;
+    BOOL scrollsHorizontally;
+    BOOL scrollersChanged;    
+
+    if (!allowsScrolling) {
+        scrollsVertically = NO;
+        scrollsHorizontally = NO;
+    } else {
+        NSSize documentSize = [[self documentView] bounds].size;
+        NSSize frameSize = [self frame].size;
         
-        scrollsVertically = [dview bounds].size.height > [self frame].size.height;
-        
+        scrollsVertically = documentSize.height > frameSize.height;
         if (scrollsVertically)
-            scrollsHorizontally = ([dview bounds].size.width + [NSScroller scrollerWidth]) > [self frame].size.width;
-        else
-            scrollsHorizontally = [dview bounds].size.width > [self frame].size.width;
-        
-        if (scrollsHorizontally && !scrollsVertically)
-            scrollsVertically = ([dview bounds].size.height + [NSScroller scrollerWidth]) > [self frame].size.height;
-        
-        if ([self hasVerticalScroller] != scrollsVertically){
-            [self setHasVerticalScroller: scrollsVertically];
-            scrollersChanged = YES;
-        }
-            
-        if ([self hasHorizontalScroller] != scrollsHorizontally){
-            [self setHasHorizontalScroller: scrollsHorizontally];
-            scrollersChanged = YES;
+            scrollsHorizontally = documentSize.width + [NSScroller scrollerWidth] > frameSize.width;
+        else {
+            scrollsHorizontally = documentSize.width > frameSize.width;
+            if (scrollsHorizontally)
+                scrollsVertically = documentSize.height + [NSScroller scrollerWidth] > frameSize.height;
         }
     }
+
+    scrollersChanged = NO;
+        
+    if ([self hasVerticalScroller] != scrollsVertically) {
+        [self setHasVerticalScroller:scrollsVertically];
+        scrollersChanged = YES;
+    }
+        
+    if ([self hasHorizontalScroller] != scrollsHorizontally) {
+        [self setHasHorizontalScroller:scrollsHorizontally];
+        scrollersChanged = YES;
+    }
     
-    if (scrollersChanged){
+    if (scrollersChanged) {
         [self tile];
-        [self setNeedsDisplay: YES];
+        [self setNeedsDisplay:YES];
     }
 }
 
+// Make the horizontal and vertical scroll bars come and go as needed.
+- (void)reflectScrolledClipView:(NSClipView *)clipView
+{
+    if (clipView == [self contentView]) {
+        [self updateScrollers];
+    }
+    [super reflectScrolledClipView:clipView];
+}
 
 - (void)setCursor:(NSCursor *)cur
 {
-    [cur retain];
+    // Do nothing for cases where the cursor isn't changing.
+    // Also turn arrowCursor into nil.
+    if (!cur) {
+        if (!cursor) {
+            return;
+        }
+    } else {
+        if ([cur isEqual:[NSCursor arrowCursor]]) {
+            cur = nil;
+        } else if (cursor && [cursor isEqual:cur]) {
+            return;
+        }
+    }
+    
     [cursor release];
-    cursor = cur;
+    cursor = [cur retain];
 
     // We have to make both of these calls, because:
     // - Just setting a cursor rect will have no effect, if the mouse cursor is already
@@ -83,33 +93,29 @@
     //   there is no cursor rect set currently and the view has no subviews.
     // Therefore we have to call resetCursorRects to ensure that a cursor rect is set
     // at all, if we are going to want one, and then invalidateCursorRectsForView: to
-    // call resetCursorRects from the proper context that will
-    // actually result in updating the cursor.
+    // call resetCursorRects from the proper context that will actually result in
+    // updating the cursor.
     [self resetCursorRects];
     [[self window] invalidateCursorRectsForView:self];
 }
 
 - (void)resetCursorRects
 {
-    if (cursor != nil && cursor != [NSCursor arrowCursor]) {
+    [self discardCursorRects];
+    if (cursor) {
         [self addCursorRect:[self visibleRect] cursor:cursor];
     }
 }
 
-- (void)setAllowsScrolling: (BOOL)flag
+- (void)setAllowsScrolling:(BOOL)flag
 {
     allowsScrolling = flag;
-    if (allowsScrolling == NO){
-        [self setHasVerticalScroller: NO];
-        [self setHasHorizontalScroller: NO];
-    }
+    [self updateScrollers];
 }
 
 - (BOOL)allowsScrolling
 {
     return allowsScrolling;
 }
-
-
 
 @end
