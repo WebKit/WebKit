@@ -44,13 +44,13 @@ void TextSlave::printSelection(const Font *f, RenderText *text, QPainter *p, Ren
     if(startPos < 0) startPos = 0;
 
     p->save();
-#ifdef APPLE_CHANGES
+#if APPLE_CHANGES
     // Macintosh-style text highlighting is to draw with a particular background color, not invert.
     QColor textColor = style->color();
     QColor c = QPainter::selectedTextBackgroundColor();
     if (textColor == c)
         c = QColor(0xff - c.red(), 0xff - c.green(), 0xff - c.blue());
-    p->setPen(textColor);
+    p->setPen(c); // Don't draw text at all!
 #else
     QColor c = style->color();
     p->setPen(QColor(0xff-c.red(),0xff-c.green(),0xff-c.blue()));
@@ -76,7 +76,7 @@ void TextSlave::printDecoration( QPainter *pt, RenderText* p, int _tx, int _ty, 
     if ( end )
         width -= p->paddingRight() + p->borderRight();
 
-#ifdef APPLE_CHANGES
+#if APPLE_CHANGES
     // Use a special function for underlines to get the positioning exactly right.
     if(deco & UNDERLINE)
         pt->drawUnderlineForText(_tx, _ty + m_baseline, p->str->s + m_start, m_len);
@@ -158,7 +158,7 @@ FindSelectionResult TextSlave::checkSelectionPoint(int _x, int _y, int _tx, int 
         return m_reversed ? SelectionPointAfterInLine : SelectionPointBeforeInLine;
     }
 
-#ifdef APPLE_CHANGES
+#if APPLE_CHANGES
     // Floating point version needed for best results with Mac OS X text.
     float delta = _x - (_tx + m_x);
     float widths[m_len]; 
@@ -553,6 +553,18 @@ void RenderText::printObject( QPainter *p, int /*x*/, int y, int /*w*/, int h,
 
 	const Font *font = &style()->htmlFont();
 
+#if APPLE_CHANGES
+        // Do one pass for the selection, then another for the rest.
+        bool haveSelection = startPos != endPos && !isPrinting && selectionState() != SelectionNone;
+        int startLine = si;
+        for (int pass = 0; pass < (haveSelection ? 2 : 1); pass++) {
+            si = startLine;
+            
+            bool drawDecorations = !haveSelection || pass == 0;
+            bool drawSelectionBackground = haveSelection && pass == 0;
+            bool drawText = !haveSelection || pass == 1;
+#endif
+
         // run until we find one that is outside the range, then we
         // know we can stop
         do {
@@ -584,11 +596,18 @@ void RenderText::printObject( QPainter *p, int /*x*/, int y, int /*w*/, int h,
 		font = &_style->htmlFont();
 	    }
 
+#if APPLE_CHANGES
+            if (drawDecorations)
+#endif
             if((hasSpecialObjects()  &&
                 (parent()->isInline() || pseudoStyle)) &&
                (!pseudoStyle || s->m_firstLine))
                 s->printBoxDecorations(p, _style, this, tx, ty, si == 0, si == (int)m_lines.count()-1);
 
+
+#if APPLE_CHANGES
+            if (drawText) {
+#endif
 
             if(_style->color() != p->pen().color())
                 p->setPen(_style->color());
@@ -603,7 +622,15 @@ void RenderText::printObject( QPainter *p, int /*x*/, int y, int /*w*/, int h,
                 s->printDecoration(p, this, tx, ty, d, si == 0, si == ( int ) m_lines.count()-1);
             }
 
-            if (!isPrinting && (selectionState() != SelectionNone)) {
+#if APPLE_CHANGES
+            } // drawText
+#endif
+
+#if APPLE_CHANGES
+            if (drawSelectionBackground)
+#endif
+            if (!isPrinting && (selectionState() != SelectionNone))
+            {
 		int offset = s->m_start;
 		int sPos = QMAX( startPos - offset, 0 );
 		int ePos = QMIN( endPos - offset, s->m_len );
@@ -612,6 +639,10 @@ void RenderText::printObject( QPainter *p, int /*x*/, int y, int /*w*/, int h,
 		    s->printSelection(font, this, p, _style, tx, ty, sPos, ePos);
 
             }
+
+#if APPLE_CHANGES
+            if (drawText)
+#endif
             if(renderOutline) {
                 if(outlinebox_y == s->m_y) {
                     if(minx > s->m_x)  minx = s->m_x;
@@ -643,6 +674,10 @@ void RenderText::printObject( QPainter *p, int /*x*/, int y, int /*w*/, int h,
 #endif
 
         } while (++si < (int)m_lines.count() && m_lines[si]->checkVerticalPoint(y-ow, ty, h, m_lineHeight));
+
+#if APPLE_CHANGES
+        } // end of for loop
+#endif
 
         if(renderOutline)
 	  {
@@ -770,7 +805,7 @@ const QFont &RenderText::font()
 
 void RenderText::setText(DOMStringImpl *text, bool force)
 {
-#ifdef APPLE_CHANGES
+#if APPLE_CHANGES
     if (!text)
         return;
 #endif

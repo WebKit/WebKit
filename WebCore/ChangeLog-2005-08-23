@@ -1,5 +1,17 @@
 2002-10-15  Darin Adler  <darin@apple.com>
 
+	- fixed 3021713 -- text selection background obliterates descenders
+	(in www.theregister.co.uk articles)
+	- fixed 3038207 -- Selected link text doesn't draw its link underline
+
+        * khtml/rendering/render_text.cpp:
+        (TextSlave::printSelection): Don't draw text at all, just draw a selection background.
+        (RenderText::printObject): Draw in two passes. Draw the selection background in the
+	first pass, and the text in the second pass. That way pieces of the background won't
+	cover any other text or adornments, like underlines.
+
+2002-10-15  Darin Adler  <darin@apple.com>
+
         * kwq/KWQKHTMLPartImpl.mm: (KWQKHTMLPartImpl::urlSelected):
 	Move the special case of a different anchor within the same
 	page into WebKit from here.
