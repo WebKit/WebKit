@@ -26,7 +26,13 @@
 
 #include <kglobal.h>
 
+#define Fixed MacFixed
+#define Rect MacRect
+#define Boolean MacBoolean
 #include <Cocoa/Cocoa.h>
+#undef Fixed
+#undef Rect
+#undef Boolean
 
 KInstance *KGlobal::instance()
 {
