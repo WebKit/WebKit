@@ -151,6 +151,8 @@ private:
 
     WebCoreBridge *bridgeForFrameName(const QString &frameName);
 
+    QString generateFrameName();
+
     NSView *nextKeyViewInFrame(DOM::NodeImpl *startingPoint, KWQSelectionDirection);
     static DOM::NodeImpl *nodeForWidget(QWidget *);
     static KWQKHTMLPart *partForNode(DOM::NodeImpl *);

@@ -68,10 +68,6 @@
     NSURL *iconURL;
     WebIconLoader *iconLoader;
 
-    // item we are about to go to - used to set position in BFList on commit
-    WebHistoryItem *provisionalBackForwardItem;
-    // item we just left - will receive saved doc state on commit
-    WebHistoryItem *previousBackForwardItem;
     // BF items that reference what we loaded - we must keep their titles up to date
     NSMutableArray *ourBackForwardItems;
 
@@ -114,10 +110,6 @@
 - (void)_setIconURL:(NSURL *)URL withType:(NSString *)iconType;
 - (void)_setOverrideEncoding:(NSString *)overrideEncoding;
 - (NSString *)_overrideEncoding;
-- (void)_setProvisionalBackForwardItem: (WebHistoryItem *)item;
-- (WebHistoryItem *)_provisionalBackForwardItem;
-- (void)_setPreviousBackForwardItem: (WebHistoryItem *)item;
-- (WebHistoryItem *)_previousBackForwardItem;
 - (void)_addBackForwardItem:(WebHistoryItem *)item;
 - (void)_addBackForwardItems:(NSArray *)items;
 - (NSArray *)_backForwardItems;

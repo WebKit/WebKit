@@ -11,6 +11,7 @@
 #import <WebFoundation/WebNSDictionaryExtras.h>
 #import <WebFoundation/WebNSURLExtras.h>
 
+
 @implementation WebHistoryItem
 
 - (void)_retainIconInDatabase:(BOOL)retain
@@ -72,6 +73,7 @@
     [_lastVisitedDate release];
     [anchor release];
     [_documentState release];
+    [_subItems release];
     
     [super dealloc];
 }
@@ -221,6 +223,45 @@
     anchor = copy;
 }
 
+- (BOOL)isTargetItem
+{
+    return _isTargetItem;
+}
+
+- (void)setIsTargetItem:(BOOL)flag
+{
+    _isTargetItem = flag;
+}
+
+// Main diff from the public method is that the public method will default to returning
+// the top item if it can't find anything marked as target and has no kids
+- (WebHistoryItem *)_recurseToFindTargetItem
+{
+    if (_isTargetItem) {
+        return self;
+    } else if (!_subItems) {
+        return nil;
+    } else {
+        int i;
+        for (i = [_subItems count]-1; i >= 0; i--) {
+            WebHistoryItem *match = [[_subItems objectAtIndex:i] _recurseToFindTargetItem];
+            if (match) {
+                return match;
+            }
+        }
+        return nil;
+    }
+}
+
+- (WebHistoryItem *)targetItem
+{
+    if (_isTargetItem || !_subItems) {
+        return self;
+    } else {
+        return [self _recurseToFindTargetItem];
+    }
+}
+
 - (BOOL)isEqual:(id)anObject
 {
     if (![anObject isMemberOfClass:[WebHistoryItem class]]) {
@@ -231,9 +272,51 @@
     return _URLString == otherURL || [_URLString isEqualToString:otherURL];
 }
 
+- (NSArray *)children
+{
+    return _subItems;
+}
+
+- (void)addChildItem:(WebHistoryItem *)item
+{
+    if (!_subItems) {
+        _subItems = [[NSMutableArray arrayWithObject:item] retain];
+    } else {
+        [_subItems addObject:item];
+    }
+}
+
+- (WebHistoryItem *)childItemWithName:(NSString *)name
+{
+    int i;
+    for (i = (_subItems ? [_subItems count] : 0)-1; i >= 0; i--) {
+        WebHistoryItem *child = [_subItems objectAtIndex:i];
+        if ([[child target] isEqualToString:name]) {
+            return child;
+        }
+    }
+    return nil;
+}
+
 - (NSString *)description
 {
-    return [NSString stringWithFormat:@"WebHistoryItem %@", _URLString];
+    NSMutableString *result = [NSMutableString stringWithFormat:@"%@ %@ in \"%@\"", [super description], _URLString, _target];
+    if (_isTargetItem) {
+        [result appendString:@" *target*"];
+    }
+    if (_subItems) {
+        int currPos = [result length];
+        int i;
+        for (i = 0; i < (int)[_subItems count]; i++) {
+            WebHistoryItem *child = [_subItems objectAtIndex:i];
+            [result appendString:@"\n"];
+            [result appendString:[child description]];
+        }
+        // shift all the contents over.  A bit slow, but hey, this is for debugging.
+        NSRange replRange = {currPos, [result length]-currPos};
+        [result replaceOccurrencesOfString:@"\n" withString:@"\n    " options:0 range:replRange];
+    }
+    return result;
 }
 
 - (NSDictionary *)dictionaryRepresentation
@@ -253,7 +336,16 @@
         [dict setObject:[NSString stringWithFormat:@"%lf", [_lastVisitedDate timeIntervalSinceReferenceDate]]
                  forKey:@"lastVisitedDate"];
     }
-
+    if (_subItems != nil) {
+        NSMutableArray *childDicts = [NSMutableArray arrayWithCapacity:[_subItems count]];
+        int i;
+        for (i = [_subItems count]; i >= 0; i--) {
+            [childDicts addObject: [[_subItems objectAtIndex:i] dictionaryRepresentation]];
+        }
+        [dict setObject: childDicts forKey: @"children"];
+    }
+    [dict setObject: (_isTargetItem ? @"YES" : @"NO") forKey: @"isTargetItem"];
+    
     return dict;
 }
 
@@ -273,6 +365,18 @@
         [calendarDate release];
     }
     
+    NSArray *childDicts = [dict objectForKey:@"children"];
+    if (childDicts) {
+        _subItems = [[NSMutableArray alloc] initWithCapacity:[childDicts count]];
+        int i;
+        for (i = [childDicts count]; i >= 0; i--) {
+            WebHistoryItem *child = [[WebHistoryItem alloc] initFromDictionaryRepresentation: [childDicts objectAtIndex:i]];
+            [_subItems addObject: child];
+        }
+    }
+    NSString *value = [dict objectForKey:@"isTargetItem"];
+    _isTargetItem = (value != nil) && [value isEqualToString:@"YES"];
+
     return self;
 }
     

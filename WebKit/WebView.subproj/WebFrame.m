@@ -120,18 +120,6 @@
     // KDE drop we should fix this dependency.
     ASSERT([self webView] != nil);
 
-    // Record the current scroll position if this frame is associated with the
-    // current entry in the back/forward list.
-    {
-        WebHistoryItem *entry;
-    
-        entry = (WebHistoryItem *)[[[self controller] backForwardList] currentEntry];
-        if ([[[entry URL] _web_URLByRemovingFragment] isEqual: [[[[self dataSource] request] URL] _web_URLByRemovingFragment]]) {
-            NSPoint point = [[[[self webView] documentView] superview] bounds].origin;
-            [entry setScrollPoint: point];
-        }
-    }
-
     if ([self _state] != WebFrameStateComplete) {
         [self stopLoading];
     }
@@ -173,9 +161,11 @@
 
 - (void)stopLoading
 {
-    [_private->provisionalDataSource stopLoading];
-    [_private->dataSource stopLoading];
-    [_private->scheduledLayoutTimer fire];
+    if (_private->state != WebFrameStateComplete) {
+        [_private->provisionalDataSource stopLoading];
+        [_private->dataSource stopLoading];
+        [_private->scheduledLayoutTimer fire];
+    }
     ASSERT(_private->scheduledLayoutTimer == nil);
 }
 

@@ -22,10 +22,10 @@ typedef enum {
     // This state indicates we are ready to commit to a page,
     // which means the view will transition to use the new data source.
     WebFrameStateCommittedPage,
-    
+
     // This state indicates that it is reasonable to perform a layout.
     WebFrameStateLayoutAcceptable,
-    
+
     WebFrameStateComplete
 } WebFrameState;
 
@@ -59,6 +59,10 @@ typedef enum {
     WebFrame *parent;
     NSMutableArray *children;
     WebPluginController *pluginController;
+    WebHistoryItem *currentItem;	// BF item for our current content
+    WebHistoryItem *provisionalItem;	// BF item for where we're trying to go
+                                        // (only known when navigating to a pre-existing BF item)
+    WebHistoryItem *previousItem;	// BF item for previous content, see _itemForSavingDocState
 }
 
 - (void)setName:(NSString *)name;
@@ -73,6 +77,13 @@ typedef enum {
 - (WebDataSource *)provisionalDataSource;
 - (WebFrameLoadType)loadType;
 - (void)setLoadType:(WebFrameLoadType)loadType;
+
+- (void)setProvisionalItem: (WebHistoryItem *)item;
+- (WebHistoryItem *)provisionalItem;
+- (void)setPreviousItem:(WebHistoryItem *)item;
+- (WebHistoryItem *)previousItem;
+- (void)setCurrentItem:(WebHistoryItem *)item;
+- (WebHistoryItem *)currentItem;
 
 @end
 
@@ -95,12 +106,15 @@ typedef enum {
 - (void)_setProvisionalDataSource:(WebDataSource *)d;
 - (void)_setLoadType: (WebFrameLoadType)loadType;
 - (WebFrameLoadType)_loadType;
-- (void)_goToItem: (WebHistoryItem *)item withFrameLoadType: (WebFrameLoadType)type;
 
--(NSDictionary *)_actionInformationForNavigationType:(WebNavigationType)navigationType event:(NSEvent *)event;
--(BOOL)_continueAfterClickPolicyForEvent:(NSEvent *)event request:(WebResourceRequest *)request;
--(void)_loadURL:(NSURL *)URL loadType:(WebFrameLoadType)loadType clientRedirect:(BOOL)clientRedirect triggeringEvent:(NSEvent *)event;
+- (NSDictionary *)_actionInformationForNavigationType:(WebNavigationType)navigationType event:(NSEvent *)event;
+- (BOOL)_continueAfterClickPolicyForEvent:(NSEvent *)event request:(WebResourceRequest *)request;
+- (void)_goToItem: (WebHistoryItem *)item withLoadType: (WebFrameLoadType)type;
+- (void)_loadURL:(NSURL *)URL loadType:(WebFrameLoadType)loadType clientRedirect:(BOOL)clientRedirect triggeringEvent:(NSEvent *)event;
+- (void)_loadURL:(NSURL *)URL intoChild:(WebFrame *)childFrame;
 - (void)_postWithURL:(NSURL *)URL data:(NSData *)data contentType:(NSString *)contentType;
+
+- (void)_saveScrollPositionToItem:(WebHistoryItem *)item;
 - (void)_restoreScrollPosition;
 - (void)_scrollToTop;
 - (void)_textSizeMultiplierChanged;
@@ -111,6 +125,13 @@ typedef enum {
 
 - (void)_addChild:(WebFrame *)child;
 
+- (NSString *)_generateFrameName;
+
 - (WebPluginController *)_pluginController;
+
+- (WebHistoryItem *)_createItemTreeWithTargetFrame:(WebFrame *)targetFrame clippedAtTarget:(BOOL)doClip;
+
+- (WebHistoryItem *)_itemForSavingDocState;
+- (WebHistoryItem *)_itemForRestoringDocState;
 
 @end

@@ -34,19 +34,6 @@
 
 - (void)addEntry:(WebHistoryItem *)entry;
 {
-    // If the last entry matches this new entry, then replace it rather than adding
-    // a new one, since we are doing a reload.
-    if (_current >= 0) {
-        WebHistoryItem *curr = [_entries objectAtIndex:_current];
-        if ([[curr URL] isEqual:[entry URL]]
-            && [[curr target] isEqual:[entry target]]
-            && [[curr parent] isEqual:[entry parent]])
-        {
-            [_entries replaceObjectAtIndex:_current withObject:entry];
-            return;	// skip clearing the forward list
-        }
-    }
-
     // Toss anything in the forward list
     int currSize = [_entries count];
     if (_current != currSize-1 && _current != -1) {
@@ -170,9 +157,15 @@
         else {
             [result appendString:@"    "]; 
         }   
-        [result appendFormat:@" %d) ", i]; 
-        [result appendString:[[_entries objectAtIndex:i] description]]; 
-        [result appendString:@"\n"]; 
+        [result appendFormat:@"%2d) ", i];
+        int currPos = [result length];
+        [result appendString:[[_entries objectAtIndex:i] description]];
+
+        // shift all the contents over.  a bit slow, but this is for debugging
+        NSRange replRange = {currPos, [result length]-currPos};
+        [result replaceOccurrencesOfString:@"\n" withString:@"\n        " options:0 range:replRange];
+        
+        [result appendString:@"\n"];
     }
 
     [result appendString:@"\n--------------------------------------------\n"];    

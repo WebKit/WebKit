@@ -287,6 +287,11 @@
     [frame _postWithURL:URL data:data contentType:contentType];
 }
 
+- (NSString *)generateFrameName
+{
+    return [frame _generateFrameName];
+}
+
 - (WebCoreBridge *)createChildFrameNamed:(NSString *)frameName withURL:(NSURL *)URL
     renderPart:(KHTMLRenderPart *)childRenderPart
     allowsScrolling:(BOOL)allowsScrolling marginWidth:(int)width marginHeight:(int)height
@@ -305,7 +310,7 @@
     // We must avoid loading the document itself as a subframe, like
     // other browsers do, otherwise bugs like Radar 3083732
     if (![[[URL _web_URLByRemovingFragment] absoluteURL] isEqual:[[[frame dataSource] URL] absoluteURL]]) {
-	[newFrame _loadURL:URL loadType:WebFrameLoadTypeInternal clientRedirect:NO triggeringEvent:nil];
+	[frame _loadURL:URL intoChild:newFrame];
     }
 
     return [newFrame _bridge];
@@ -323,22 +328,20 @@
 
 - (void)saveDocumentState: (NSArray *)documentState
 {
-    WebHistoryItem *item = [[frame dataSource] _previousBackForwardItem];
-    // If there wasn't a previous item explicitly set, assume it's the backEntry
-    if (!item) {
-        item = [[[frame controller] backForwardList] backEntry];
+    WebHistoryItem *item = [frame _itemForSavingDocState];
+    LOG(Loading, "%@: saving form state from to 0x%x", [frame name], item);
+    if (item) {
+        [item setDocumentState: documentState];
+        // You might think we could save the scroll state here too, but unfortunately this
+        // often gets called after WebFrame::_transitionToCommitted has restored the scroll
+        // position of the next document.
     }
-
-    [item setDocumentState: documentState];
 }
 
 - (NSArray *)documentState
 {
-    WebHistoryItem *currentItem;
-    
-    currentItem = [[[frame controller] backForwardList] currentEntry];
-    
-    return [currentItem documentState];
+    LOG(Loading, "%@: restoring form state from item 0x%x", [frame name], [frame _itemForRestoringDocState]);
+    return [[frame _itemForRestoringDocState] documentState];
 }
 
 - (NSString *)userAgentForURL:(NSURL *)URL

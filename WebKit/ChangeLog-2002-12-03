@@ -1,3 +1,92 @@
+2002-11-11  Trey Matteson  <trey@apple.com>
+
+        * History.subproj/WebBackForwardList.m:
+        (-[WebBackForwardList addEntry:]):  Yank code to avoid adding a duplicate entry, to catch the
+	refresh case.  That's dealt with in WebFramePrivate now.
+        (-[WebBackForwardList description]):  Enhanced to print more info.
+
+        * History.subproj/WebHistoryItem.h:
+	History items now hold an array of subitems to mirror the frame tree.  One item in the tree
+	is designated the target of the navigation.
+        * History.subproj/WebHistoryItem.m:
+        (-[WebHistoryItem dealloc]):  Release new ivars.
+        (-[WebHistoryItem isTargetItem]):
+        (-[WebHistoryItem setIsTargetItem:]):
+	New setter and setter.
+        (-[WebHistoryItem _recurseToFindTargetItem]):
+        (-[WebHistoryItem targetItem]):
+	Search the tree to find the target item.
+        (-[WebHistoryItem children]):
+        (-[WebHistoryItem addChildItem:]):
+        (-[WebHistoryItem childItemWithName:]):
+	Maintain and search new child item list.
+        (-[WebHistoryItem description]):
+	Enhanced to print out the tree of items.
+        (-[WebHistoryItem dictionaryRepresentation]):
+        (-[WebHistoryItem initFromDictionaryRepresentation:]):
+	Save and load the new state.
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge generateFrameName]):  New call from KWQ, just forwards to Frame.
+        (-[WebBridge createChildFrameNamed:withURL:renderPart:allowsScrolling:marginWidth:marginHeight:]):
+	Call new frame method dedicated to this case.
+        (-[WebBridge saveDocumentState:]):
+        (-[WebBridge documentState]):
+	Call frame methods to get the right item to save/restore to/from.
+
+        * WebView.subproj/WebController.m:
+        (-[WebController _goToItem:withLoadType:]):  Stop any current loading before going to a new item.
+        (-[WebController goBack]):
+        (-[WebController goForward]):
+        (-[WebController goBackOrForwardToItem:]):  Name change of private method (for consistency)
+
+        * WebView.subproj/WebDataSourcePrivate.h:
+	ProvisionalItem and PreviousItem are moved back up to WebFrame, where we know more about the
+	state transitions that happen during loading.
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSourcePrivate dealloc]): Don't release removed ivars.
+        (-[WebDataSource _commitIfReady]): Make the view representations -after- the transition to committed.
+	This allows us to save away the scroll location successfully, since making the view was resetting it.
+        * WebView.subproj/WebFrame.h:
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame setProvisionalDataSource:]):  Saving the scroll location has moved elsewhere to handle frames.
+        (-[WebFrame stopLoading]):  Skip all the work if we're already state=complete.
+
+        * WebView.subproj/WebFramePrivate.h:
+	The frame now holds a ref to the current, previous and provisional back-forward items.
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFramePrivate dealloc]):  Release new state.
+        (-[WebFramePrivate setProvisionalItem:]):
+        (-[WebFramePrivate setPreviousItem:]):
+        (-[WebFramePrivate setCurrentItem:]):	New setters (1 line getters were missed by script)
+        (-[WebFrame _addBackForwardItemClippedAtTarget:]):  Adds a BF item to the top of the BF list.
+        (-[WebFrame _createItem]):  Create a single BF item.
+        (-[WebFrame _createItemTreeWithTargetFrame:clippedAtTarget:]):  Create a tree of BF items, which
+	mirror the frame tree.
+        (-[WebFrame _immediateChildFrameNamed:]):  New frame search utility (doesn't recurse)
+        (-[WebFrame _detachFromParent]):  Save the scroll position when detaching a frame.
+        (-[WebFrame _transitionToCommitted]):  Maintain new item ivars.  Save scroll position when
+	appropriate.  Hook up items for child frames to their parent, as they are created.
+        (-[WebFrame _setState:]):  Clear previousItem whenever we reach committed.
+        (-[WebFrame _isLoadComplete]):  Clear previousItem if we are committed.
+        (-[WebFrame _childFramesMatchItem:]):  Does the frame's frame tree match the one held by the item?
+        (-[WebFrame _loadItem:fromItem:withLoadType:]):  Only do simple anchor navigation if the frame
+	has no children (fixes oddball corner case with a frame reloading itself).  Set provisional item.
+        (-[WebFrame _recursiveGoToItem:fromItem:withLoadType:]):  Heart of returning to an item that had
+	frames.  We either find that the existing content is good, or initiate a load.
+        (-[WebFrame _goToItem:withLoadType:]):  Adjust the BF list cursor, and recurse to do the work.
+        (-[WebFrame _loadURL:loadType:clientRedirect:triggeringEvent:]):  Only do anchor-style nav if
+	the destination URL has a fragment.  Save scroll position.
+        (-[WebFrame _loadURL:intoChild:]):  If returning to an item with frames, possibly replace the
+	new content with the stuff that was there at the time, substituting the URL.
+        (-[WebFrame _saveScrollPositionToItem:]):  Don't croak on nil item or view.
+        (-[WebFrame _restoreScrollPosition]):  Do croak (ASSERT) on nil item.
+        (-[WebFrame _scrollToTop]):  Nit cleanup.
+        (-[WebFrame _addFramePathToString:]):  Add a component for our frame to the frame name we're generating.
+        (-[WebFrame _generateFrameName]):  Generate a frame name that is repeatable.
+        (-[WebFrame _itemForSavingDocState]):  Returns correct item to use for formstate save.
+        (-[WebFrame _itemForRestoringDocState]):  Returns correct item to use for formstate restore
+
 2002-11-11  Maciej Stachowiak  <mjs@apple.com>
 
 	Store path and the fact that we're downloading in the data source,

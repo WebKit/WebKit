@@ -123,6 +123,11 @@ WebCoreBridge *KWQKHTMLPart::bridgeForFrameName(const QString &frameName)
     return frame;
 }
 
+QString KWQKHTMLPart::generateFrameName()
+{
+    return QString::fromNSString([_bridge generateFrameName]);
+}
+
 void KWQKHTMLPart::openURL(const KURL &url)
 {
     NSURL *cocoaURL = url.getNSURL();

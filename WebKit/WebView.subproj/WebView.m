@@ -244,29 +244,15 @@ NSString *WebElementFrameKey = @"WebElementFrame";
     return _private->useBackForwardList;
 }
 
-- (void)_goToItem: (WebHistoryItem *)item withFrameLoadType: (WebFrameLoadType)type
+- (void)_goToItem: (WebHistoryItem *)item withLoadType: (WebFrameLoadType)type
 {
     WebFrame *targetFrame;
-    
+
+    // abort any current load if we're going back/forward
+    [[self mainFrame] stopLoading];
     targetFrame = [self _findFrameNamed: [item target]];
-    if (targetFrame == nil){
-        NSLog (@"Target frame not found, using main frame instead, will be fixed soon");
-#if 0
-        int pos = 1;
-        WebHistoryItem *next = item;
-        while (next){
-            NSLog (@"frame name %@, parent %@", [next target], [next parent]);
-            nextFrame = [self _findFrameNamed: [next parent]];
-            next = [[self backForwardList] backEntryAtIndex: pos++];
-            if ([[next target] isEqual: @"_top"]){
-                [[self mainFrame] _goToItem: next withFrameLoadType: WebFrameLoadTypeIntermediateBack];
-                return;
-            }
-        }
-#endif            
-        targetFrame = [self mainFrame];
-    }
-    [targetFrame _goToItem: item withFrameLoadType: type];
+    ASSERT(targetFrame != nil);
+    [targetFrame _goToItem: item withLoadType: type];
 }
 
 - (BOOL)goBack
@@ -274,7 +260,7 @@ NSString *WebElementFrameKey = @"WebElementFrame";
     WebHistoryItem *item = [[self backForwardList] backEntry];
     
     if (item){
-        [self _goToItem: item withFrameLoadType: WebFrameLoadTypeBack];
+        [self _goToItem: item withLoadType: WebFrameLoadTypeBack];
         return YES;
     }
     return NO;
@@ -285,7 +271,7 @@ NSString *WebElementFrameKey = @"WebElementFrame";
     WebHistoryItem *item = [[self backForwardList] forwardEntry];
     
     if (item){
-        [self _goToItem: item withFrameLoadType: WebFrameLoadTypeForward];
+        [self _goToItem: item withLoadType: WebFrameLoadTypeForward];
         return YES;
     }
     return NO;
@@ -293,7 +279,7 @@ NSString *WebElementFrameKey = @"WebElementFrame";
 
 - (BOOL)goBackOrForwardToItem:(WebHistoryItem *)item
 {
-    [self _goToItem: item withFrameLoadType: WebFrameLoadTypeIndexedBackForward];
+    [self _goToItem: item withLoadType: WebFrameLoadTypeIndexedBackForward];
     return YES;
 }
 

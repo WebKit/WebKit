@@ -177,6 +177,8 @@ enum FrameBorderStyle {
 - (WebCoreBridge *)mainFrame;
 - (WebCoreBridge *)findFramedNamed:(NSString *)name;
 - (WebCoreBridge *)findOrCreateFramedNamed:(NSString *)name;
+/* Creates a name for an frame unnamed in the HTML.  It should produce repeatable results for loads of the same frameset. */
+- (NSString *)generateFrameName;
 
 - (void)loadURL:(NSURL *)URL reload:(BOOL)reload triggeringEvent:(NSEvent *)event;
 - (void)postWithURL:(NSURL *)URL data:(NSData *)data contentType:(NSString *)contentType;

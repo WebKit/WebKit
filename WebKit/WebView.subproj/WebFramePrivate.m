@@ -69,6 +69,10 @@ static const char * const stateNames[] = {
     [scheduledLayoutTimer release];
     [children release];
     [pluginController release];
+
+    [currentItem release];
+    [provisionalItem release];
+    [previousItem release];
     
     [super dealloc];
 }
@@ -117,9 +121,99 @@ static const char * const stateNames[] = {
     loadType = t;
 }
 
+- (WebHistoryItem *)provisionalItem { return provisionalItem; }
+- (void)setProvisionalItem: (WebHistoryItem *)item
+{
+    [item retain];
+    [provisionalItem release];
+    provisionalItem = item;
+}
+
+- (WebHistoryItem *)previousItem { return previousItem; }
+- (void)setPreviousItem:(WebHistoryItem *)item
+{
+    [item retain];
+    [previousItem release];
+    previousItem = item;
+}
+
+- (WebHistoryItem *)currentItem { return currentItem; }
+- (void)setCurrentItem:(WebHistoryItem *)item
+{
+    [item retain];
+    [currentItem release];
+    currentItem = item;
+}
+
 @end
 
 @implementation WebFrame (WebPrivate)
+
+// helper method used in various nav cases below
+- (WebHistoryItem *)_addBackForwardItemClippedAtTarget:(BOOL)doClip
+{
+    WebHistoryItem *bfItem = [[[self controller] mainFrame] _createItemTreeWithTargetFrame:self clippedAtTarget:doClip];
+    [[[self controller] backForwardList] addEntry:bfItem];
+    [bfItem release];
+    return bfItem;
+}
+
+// NB: this returns an object with retain count of 1
+- (WebHistoryItem *)_createItem
+{
+    WebDataSource *dataSrc = [self dataSource];
+    NSURL *url = [[dataSrc request] URL];
+    WebHistoryItem *bfItem = [[WebHistoryItem alloc] initWithURL:url target:[self name] parent:[[self parent] name] title:[dataSrc pageTitle]];
+    [bfItem setAnchor:[url fragment]];
+    [dataSrc _addBackForwardItem:bfItem];
+
+    // Set the item for which we will save document state
+    [_private setPreviousItem:[_private currentItem]];
+    [_private setCurrentItem:bfItem];
+
+    return bfItem;
+}
+
+/*
+    In the case of saving state about a page with frames, we store a tree of items that mirrors the frame tree.  The item that was the target of the user's navigation is designated as the "targetItem".  When this method is called with doClip=YES we're able to create the whole tree except for the target's children, which will be loaded in the future.  That part of the tree will be filled out as the child loads are committed.
+*/
+// NB: this returns an object with retain count of 1
+- (WebHistoryItem *)_createItemTreeWithTargetFrame:(WebFrame *)targetFrame clippedAtTarget:(BOOL)doClip
+{
+    WebHistoryItem *bfItem = [self _createItem];
+
+    [self _saveScrollPositionToItem:[_private previousItem]];
+    if (!(doClip && self == targetFrame)) {
+        // save frame state for items that aren't loading (khtml doesn't save those)
+        [_private->bridge saveDocumentState];
+
+        if (_private->children) {
+            unsigned i;
+            for (i = 0; i < [_private->children count]; i++) {
+                WebFrame *child = [_private->children objectAtIndex:i];
+                WebHistoryItem *childItem = [child _createItemTreeWithTargetFrame:targetFrame clippedAtTarget:doClip];
+                [bfItem addChildItem:childItem];
+                [childItem release];
+            }
+        }
+    }
+    if (self == targetFrame) {
+        [bfItem setIsTargetItem:YES];
+    }
+    return bfItem;
+}
+
+- (WebFrame *)_immediateChildFrameNamed:(NSString *)name
+{
+    int i;
+    for (i = [_private->children count]-1; i >= 0; i--) {
+        WebFrame *frame = [_private->children objectAtIndex:i];
+        if ([[frame name] isEqualToString:name]) {
+            return frame;
+        }
+    }
+    return nil;
+}
 
 - (WebFrame *)_descendantFrameNamed:(NSString *)name
 {
@@ -153,6 +247,7 @@ static const char * const stateNames[] = {
     _private->bridge = nil;
     
     [self stopLoading];
+    [self _saveScrollPositionToItem:[_private currentItem]];
     [bridge closeURL];
 
     [[self children] makeObjectsPerformSelector:@selector(_detachFromParent)];
@@ -305,12 +400,6 @@ static const char * const stateNames[] = {
 - (void)_transitionToCommitted
 {
     ASSERT([self controller] != nil);
-    NSView <WebDocumentView> *documentView;
-    WebHistoryItem *backForwardItem;
-    WebBackForwardList *backForwardList = [[self controller] backForwardList];
-    WebFrame *parentFrame;
-    
-    documentView = [[self webView] documentView];
 
     // Destroy plug-ins before blowing away the view.
     [_private->pluginController destroyAllPlugins];
@@ -318,7 +407,20 @@ static const char * const stateNames[] = {
     switch ([self _state]) {
     	case WebFrameStateProvisional:
         {
-	    ASSERT(documentView != nil);
+            WebFrameLoadType loadType = [self _loadType];
+            if (loadType == WebFrameLoadTypeForward ||
+                loadType == WebFrameLoadTypeBack ||
+                loadType == WebFrameLoadTypeIndexedBackForward)
+            {
+                // Once committed, we want to use current item for saving DocState, and
+                // the provisional item for restoring state.
+                // Note previousItem must be set before we close the URL, which will
+                // happen when the data source is made non-provisional below
+                [_private setPreviousItem:[_private currentItem]];
+                ASSERT([_private provisionalItem]);
+                [_private setCurrentItem:[_private provisionalItem]];
+                [_private setProvisionalItem:nil];
+            }
 
             // Set the committed data source on the frame.
             [self _setDataSource:_private->provisionalDataSource];
@@ -331,12 +433,13 @@ static const char * const stateNames[] = {
             WebHistoryItem *entry = nil;
             NSString *ptitle = [ds pageTitle];
 
-            if ([[self controller] usesBackForwardList]){
-                switch ([self _loadType]) {
+            if ([[self controller] usesBackForwardList]) {
+                switch (loadType) {
                 case WebFrameLoadTypeForward:
                 case WebFrameLoadTypeBack:
                 case WebFrameLoadTypeIndexedBackForward:
-                    [backForwardList goToEntry: [ds _provisionalBackForwardItem]];
+                    // Must grab the current scroll position before disturbing it
+                    [self _saveScrollPositionToItem:[_private previousItem]];
                     [self _restoreScrollPosition];
                     break;
                     
@@ -351,15 +454,7 @@ static const char * const stateNames[] = {
                         [entry setTitle: ptitle];
 
                     if (![ds _isClientRedirect]) {
-                        // Add item to back/forward list.
-                        parentFrame = [self parent];
-                        backForwardItem = [[WebHistoryItem alloc] initWithURL:[[ds request] URL]
-                                                                       target:[self name]
-                                                                       parent:[parentFrame name]
-                                                                        title:ptitle];
-                        [[[self controller] backForwardList] addEntry: backForwardItem];
-                        [ds _addBackForwardItem:backForwardItem];
-                        [backForwardItem release];
+                        [self _addBackForwardItemClippedAtTarget:YES];
                     } else {
                         // update the URL in the BF list that we made before the redirect
                         [[[[self controller] backForwardList] currentEntry] setURL:[[ds request] URL]];
@@ -367,7 +462,15 @@ static const char * const stateNames[] = {
                     break;
                     
                 case WebFrameLoadTypeInternal:
-                    // Do nothing, this was a frame/iframe non user load.
+                    {  // braces because the silly compiler lets you declare vars everywhere but here?!
+                    // Add an item to the item tree for this frame
+                    WebHistoryItem *item = [self _createItem];
+                    ASSERT([[self parent]->_private currentItem]);
+                    [[[self parent]->_private currentItem] addChildItem:item];
+                    [item release];
+                    }
+                    break;
+
                 case WebFrameLoadTypeReloadAllowingStaleData:
                     break;
                     
@@ -437,6 +540,7 @@ static const char * const stateNames[] = {
         [[sv contentView] setCopiesOnScroll:YES];
         [_private->scheduledLayoutTimer fire];
    	ASSERT(_private->scheduledLayoutTimer == nil);
+        [_private setPreviousItem:nil];
     }
 }
 
@@ -479,6 +583,7 @@ static const char * const stateNames[] = {
             if (![ds isLoading]) {
                 id thisView = [self webView];
                 NSView <WebDocumentView> *thisDocumentView = [thisView documentView];
+                ASSERT(thisDocumentView != nil);
 
                 [self _setState: WebFrameStateComplete];
 
@@ -567,6 +672,9 @@ static const char * const stateNames[] = {
         case WebFrameStateComplete:
         {
             LOG(Loading, "%@:  checking complete, current state WebFrameStateComplete", [self name]);
+            // Even if already complete, we might have set a previous item on a frame that
+            // didn't do any data loading on the past transaction.  Make sure to clear these out.
+            [_private setPreviousItem:nil];
             return;
         }
         
@@ -704,28 +812,46 @@ static const char * const stateNames[] = {
     [_private setProvisionalDataSource:d];
 }
 
-// main funnel for navigating via back/forward
-- (void)_goToItem: (WebHistoryItem *)item withFrameLoadType: (WebFrameLoadType)type
+// helper method that determines whether the subframes described by the item's subitems
+// match our own current frameset
+- (BOOL)_childFramesMatchItem:(WebHistoryItem *)item
+{
+    NSArray *childItems = [item children];
+    int numChildItems = childItems ? [childItems count] : 0;
+    int numChildFrames = _private->children ? [_private->children count] : 0;
+    if (numChildFrames != numChildItems) {
+        return NO;
+    } else {
+        int i;
+        for (i = 0; i < numChildItems; i++) {
+            NSString *itemTargetName = [[childItems objectAtIndex:i] target];
+            //Search recursive here?
+            if (![self _immediateChildFrameNamed:itemTargetName]) {
+                return NO;	// couldn't match the i'th itemTarget
+            }
+        }
+        return YES;		// found matches for all itemTargets
+    }
+}
+
+// loads content into this frame, as specified by item
+- (void)_loadItem:(WebHistoryItem *)item fromItem:(WebHistoryItem *)fromItem withLoadType: (WebFrameLoadType)type
 {
     NSURL *itemURL = [item URL];
     WebResourceRequest *request;
-    NSURL *originalURL = [[[self dataSource] request] URL];
-    WebBackForwardList *backForwardList = [[self controller] backForwardList];
+    NSURL *currentURL = [[[self dataSource] request] URL];
 
     // Are we navigating to an anchor within the page?
-    if ([item anchor] && [[itemURL _web_URLByRemovingFragment] isEqual: [originalURL _web_URLByRemovingFragment]]) {
-        if (type == WebFrameLoadTypeForward)
-            [backForwardList goForward];
-        else if (type == WebFrameLoadTypeBack)
-            [backForwardList goBack];
-        else if (type == WebFrameLoadTypeIndexedBackForward)
-            [backForwardList goToEntry:item];
-        else 
-            [NSException raise:NSInvalidArgumentException format:@"WebFrameLoadType incorrect"];
+    // Note if we have child frames we do a real reload, since the child frames might not
+    // match our current frame structure, or they might not have the right content.  We could
+    // check for all that as an additional optimization.
+    if ([item anchor] &&
+        [[itemURL _web_URLByRemovingFragment] isEqual: [currentURL _web_URLByRemovingFragment]] &&
+        (!_private->children || ![_private->children count]))
+    {
         [[_private->dataSource _bridge] scrollToAnchor: [item anchor]];
         [[[self controller] locationChangeDelegate] locationChangedWithinPageForDataSource:_private->dataSource];
-    }
-    else {
+    } else {
         request = [[WebResourceRequest alloc] initWithURL:itemURL];
     
         // set the request cache policy based on the type of request we have
@@ -759,17 +885,79 @@ static const char * const stateNames[] = {
 
         WebDataSource *newDataSource = [[WebDataSource alloc] initWithRequest:request];
         [request release];
-        [self setProvisionalDataSource: newDataSource];
-        // Remember this item in order to set the position in the BFList later.
-        // Important that this happens after our provDataSrc is set, since setting
-        // provDataSrc results in isLoadComplete, which clears provLink!
-        [newDataSource _setProvisionalBackForwardItem: item];
-        // Set the item for which we will save document state
-        [newDataSource _setPreviousBackForwardItem: [backForwardList currentEntry]];
-        [self _setLoadType: type];
+        [self setProvisionalDataSource:newDataSource];
+        // Remember this item so we can traverse any child items as child frames load
+        [_private setProvisionalItem:item];
+        [self _setLoadType:type];
         [self startLoading];
         [newDataSource release];
     }
+}
+
+// The general idea here is to traverse the frame tree and the item tree in parallel,
+// tracking whether each frame already has the content the item requests.  If there is
+// a match (by URL), we just restore scroll position and recurse.  Otherwise we must
+// reload that frame, and all its kids.
+- (void)_recursiveGoToItem:(WebHistoryItem *)item fromItem:(WebHistoryItem *)fromItem withLoadType:(WebFrameLoadType)type
+{
+    NSURL *itemURL = [item URL];
+    NSURL *currentURL = [[[self dataSource] request] URL];
+
+    // Always reload the target frame of the item we're going to.  This ensures that we will
+    // do -some- load for the transition, which means a proper notification will be posted
+    // to the app.
+    // The exact URL has to match, including fragment.  We want to go through the _load
+    // method, even if to do a within-page navigation.
+    // The current frame tree and the frame tree snapshot in the item have to match.
+    if (![item isTargetItem] &&
+        [itemURL isEqual:currentURL] &&
+        [_private->name isEqualToString:[item target]] &&
+        [self _childFramesMatchItem:item])
+    {
+        // This content is good, so leave it alone and look for children that need reloading
+
+        // Save form state (works from currentItem, since prevItem is nil)
+        ASSERT(![_private previousItem]);
+        [_private->bridge saveDocumentState];
+        [self _saveScrollPositionToItem:[_private currentItem]];
+        
+        [_private setCurrentItem:item];
+
+        // Restore form state (works from currentItem)
+        [_private->bridge restoreDocumentState];
+        // Restore the scroll position (taken in favor of going back to the anchor)
+        [self _restoreScrollPosition];
+        
+        NSArray *childItems = [item children];
+        int numChildItems = childItems ? [childItems count] : 0;
+        int i;
+        for (i = numChildItems - 1; i >= 0; i--) {
+            WebHistoryItem *childItem = [childItems objectAtIndex:i];
+            NSString *childName = [childItem target];
+            WebHistoryItem *fromChildItem = [fromItem childItemWithName:childName];
+            ASSERT(fromChildItem || [fromItem isTargetItem]);
+            WebFrame *childFrame = [self _immediateChildFrameNamed:childName];
+            ASSERT(childFrame);
+            [childFrame _recursiveGoToItem:childItem fromItem:fromChildItem withLoadType:type];
+        }
+    } else {
+        // We need to reload the content
+        [self _loadItem:item fromItem:fromItem withLoadType:type];
+    }
+}
+
+// Main funnel for navigating to a previous location (back/forward, non-search snap-back)
+// This includes recursion to handle loading into framesets properly
+- (void)_goToItem: (WebHistoryItem *)item withLoadType: (WebFrameLoadType)type
+{
+    ASSERT(!_private->parent);
+    WebBackForwardList *backForwardList = [[self controller] backForwardList];
+    WebHistoryItem *currItem = [backForwardList currentEntry];
+    // Set the BF cursor before commit, which lets the user quickly click back/forward again.
+    // - plus, it only makes sense for the top level of the operation through the frametree,
+    // as opposed to happening for some/one of the page commits that might happen soon
+    [backForwardList goToEntry:item];
+    [self _recursiveGoToItem:item fromItem:currItem withLoadType:type];
 }
 
 - (void)_loadRequest:(WebResourceRequest *)request
@@ -871,18 +1059,29 @@ static const char * const stateNames[] = {
 
     // FIXME: This logic doesn't exactly match what KHTML does in openURL, so it's possible
     // this will screw up in some cases involving framesets.
-    if (loadType != WebFrameLoadTypeReload && [[URL _web_URLByRemovingFragment] isEqual:[[_private->bridge URL] _web_URLByRemovingFragment]]) {
+    if (loadType != WebFrameLoadTypeReload && [URL fragment] && [[URL _web_URLByRemovingFragment] isEqual:[[_private->bridge URL] _web_URLByRemovingFragment]]) {
+        // Just do anchor navigation within the existing content.  Note we only do this if there is
+        // an anchor in the URL - otherwise this check might prevent us from reloading a document
+        // that has subframes that are different than what we're displaying (in other words, a link
+        // from within a frame is trying to reload the frameset into _top).
+        WebDataSource *dataSrc = [self dataSource];
+
+        // save scroll position before we open URL, which will jump to anchor
+        [self _saveScrollPositionToItem:[_private currentItem]];
+
+        // ???Might need to save scroll-state, form-state for all other frames
+
+        ASSERT(![_private previousItem]);
+        // will save form state to current item, since prevItem not set
         [_private->bridge openURL:URL];
-
-        WebDataSource *dataSource = [self dataSource];
-        WebHistoryItem *backForwardItem = [[WebHistoryItem alloc] initWithURL:URL target:[self name] parent:[[self parent] name] title:[dataSource pageTitle]];
-        [backForwardItem setAnchor:[URL fragment]];
-        [[[self controller] backForwardList] addEntry:backForwardItem];
-        [backForwardItem release];
-
-        [dataSource _setURL:URL];
-        [dataSource _addBackForwardItem:backForwardItem];
-        [[[self controller] locationChangeDelegate] locationChangedWithinPageForDataSource:dataSource];
+        [dataSrc _setURL:URL];
+        // NB: must happen after _setURL, since we add based on the current request
+        [self _addBackForwardItemClippedAtTarget:NO];
+        // This will clear previousItem from the rest of the frame tree tree that didn't
+        // doing any loading.  We need to make a pass on this now, since for anchor nav
+        // we'll not go through a real load and reach Completed state
+        [self _checkLoadComplete];
+        [[[self controller] locationChangeDelegate] locationChangedWithinPageForDataSource:dataSrc];
     } else {
         WebFrameLoadType previousLoadType = [self _loadType];
         WebDataSource *oldDataSource = [[self dataSource] retain];
@@ -898,12 +1097,47 @@ static const char * const stateNames[] = {
             // need to transfer BF items from the dataSource that we're replacing
             WebDataSource *newDataSource = [self provisionalDataSource];
             [newDataSource _setIsClientRedirect:YES];
-            [newDataSource _setProvisionalBackForwardItem:[oldDataSource _provisionalBackForwardItem]];
-            [newDataSource _setPreviousBackForwardItem:[oldDataSource _previousBackForwardItem]];
             [newDataSource _addBackForwardItems:[oldDataSource _backForwardItems]];
         }
         [request release];
         [oldDataSource release];
+    }
+}
+
+- (void)_loadURL:(NSURL *)URL intoChild:(WebFrame *)childFrame
+{
+    //WebDataSource *dataSrc = [self dataSource];
+    WebHistoryItem *parentItem = [_private currentItem];
+    NSArray *childItems = [parentItem children];
+    WebFrameLoadType loadType = [self _loadType];
+    WebFrameLoadType childLoadType = WebFrameLoadTypeInternal;
+    WebHistoryItem *childItem = nil;
+
+    // If we're moving in the backforward list, we might want to replace the content
+    // of this child frame with whatever was there at that point.
+    if ((loadType == WebFrameLoadTypeForward || 
+        loadType == WebFrameLoadTypeBack ||
+        loadType == WebFrameLoadTypeIndexedBackForward ||
+        loadType == WebFrameLoadTypeReload) && childItems)
+    {
+        childItem = [parentItem childItemWithName:[childFrame name]];
+        if (childItem) {
+            URL = [childItem URL];
+            // These behaviors implied by these loadTypes should apply to the child frames
+            childLoadType = loadType;
+        }
+    }
+            
+    [childFrame _loadURL:URL loadType:childLoadType clientRedirect:NO triggeringEvent:nil];
+    // want this here???
+    if (childItem) {
+        if (loadType != WebFrameLoadTypeReload) {
+            // For back/forward, remember this item so we can traverse any child items as child frames load
+            [childFrame->_private setProvisionalItem:childItem];
+        } else {
+            // For reload, just reinstall the current item, since a new child frame was created but we won't be creating a new BF item
+            [childFrame->_private setCurrentItem:childItem];
+        }
     }
 }
 
@@ -922,20 +1156,28 @@ static const char * const stateNames[] = {
     [request release];
 }
 
+- (void)_saveScrollPositionToItem:(WebHistoryItem *)item
+{
+    if (item) {
+        NSView *clipView = [[[self webView] documentView] superview];
+        // we might already be detached when this is called from detachFromParent, in which
+        // case we don't want to override real data earlier gathered with (0,0)
+        if (clipView) {
+            [item setScrollPoint:[clipView bounds].origin];
+        }
+    }
+}
+
 - (void)_restoreScrollPosition
 {
-    WebHistoryItem *entry;
-
-    entry = (WebHistoryItem *)[[[self controller] backForwardList] currentEntry];
-    [[[self webView] documentView] scrollPoint: [entry scrollPoint]];
+    WebHistoryItem *entry = [_private currentItem];
+    ASSERT(entry);
+    [[[self webView] documentView] scrollPoint:[entry scrollPoint]];
 }
 
 - (void)_scrollToTop
 {
-    NSPoint origin;
-
-    origin.x = origin.y = 0.0;
-    [[[self webView] documentView] scrollPoint: origin];
+    [[[self webView] documentView] scrollPoint: NSZeroPoint];
 }
 
 - (void)_textSizeMultiplierChanged
@@ -990,6 +1232,59 @@ static const char * const stateNames[] = {
     }
 
     return _private->pluginController;
+}
+
+- (void)_addFramePathToString:(NSMutableString *)path
+{
+    if ([_private->name hasPrefix:@"<!--framePath "]) {
+        // we have a generated name - take the path from our name
+        NSRange ourPathRange = {14, [_private->name length] - 14 - 3};
+        [path appendString:[_private->name substringWithRange:ourPathRange]];
+    } else {
+        // we have a generated name - just add our simple name to the end
+        if (_private->parent) {
+            [_private->parent _addFramePathToString:path];
+        }
+        [path appendString:@"/"];
+        [path appendString:_private->name];
+    }
+}
+
+// Generate a repeatable name for a child about to be added to us.  The name must be
+// unique within the frame tree.  The string we generate includes a "path" of names
+// from the root frame down to us.  For this path to be unique, each set of siblings must
+// contribute a unique name to the path, which can't collide with any HTML-assigned names.
+// We generate this path component by index in the child list along with an unlikely frame name.
+- (NSString *)_generateFrameName
+{
+    NSMutableString *path = [NSMutableString stringWithCapacity:256];
+    [path insertString:@"<!--framePath " atIndex:0];
+    [self _addFramePathToString:path];
+    // The new child's path component is all but the 1st char and the last 3 chars
+    [path appendFormat:@"/<!--frame%d-->-->", _private->children ? [_private->children count] : 0];
+    return path;
+}
+
+- (WebHistoryItem *)_itemForSavingDocState
+{
+    // For a standard page load, we will have a previous item set, which will be used to
+    // store the form state.  However, in some cases we will have no previous item, and
+    // the current item is the right place to save the state.  One example is when we
+    // detach a bunch of frames because we are navigating from a site with frames to
+    // another site.  Another is when saving the frame state of a frame that is not the
+    // target of the current navigation (if we even decide to save with that granularity).
+
+    // Because of previousItem's "masking" of currentItem for this purpose, it's important
+    // that previousItem be cleared at the end of a page transition.  We leverage the
+    // checkLoadComplete recursion to achieve this goal.
+
+    WebHistoryItem *result = [_private previousItem] ? [_private previousItem] : [_private currentItem];
+    return result;
+}
+
+- (WebHistoryItem *)_itemForRestoringDocState
+{
+    return [_private currentItem];
 }
 
 @end

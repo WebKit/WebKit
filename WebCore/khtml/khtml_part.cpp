@@ -2668,7 +2668,11 @@ unsigned KHTMLPartPrivate::m_frameNameId = 0;
 
 QString KHTMLPart::requestFrameName()
 {
-   return QString::fromLatin1("<!--frame %1-->").arg(d->m_frameNameId++);
+#if APPLE_CHANGES
+    return kwq->generateFrameName();
+#else
+    return QString::fromLatin1("<!--frame %1-->").arg(d->m_frameNameId++);
+#endif
 }
 
 bool KHTMLPart::requestObject( khtml::RenderPart *frame, const QString &url, const QString &serviceType,

@@ -1,3 +1,12 @@
+2002-11-11  Trey Matteson  <trey@apple.com>
+
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::requestFrameName):  Call through bridge to get generated frame name.
+        * kwq/KWQKHTMLPart.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::generateFrameName):  New call that just forwards through the bridge.
+        * kwq/WebCoreBridge.h:
+
 2002-11-11  Darin Adler  <darin@apple.com>
 
 	- fixed 3097253 -- text tagged <small> inside <h1> is too small

@@ -56,8 +56,6 @@
     [iconLoader setDelegate:nil];
     [iconLoader release];
     [iconURL release];
-    [provisionalBackForwardItem release];
-    [previousBackForwardItem release];
     [ourBackForwardItems release];
     [triggeringEvent release];
     [downloadPath release];
@@ -322,32 +320,6 @@
     return _private->isClientRedirect;
 }
 
-- (WebHistoryItem *)_provisionalBackForwardItem
-{
-    return _private->provisionalBackForwardItem;
-}
-
-- (void)_setProvisionalBackForwardItem: (WebHistoryItem *)item
-{
-    if (_private->provisionalBackForwardItem != item) {
-        [_private->provisionalBackForwardItem release];
-        _private->provisionalBackForwardItem = [item retain];
-    }
-}
-
-- (WebHistoryItem *)_previousBackForwardItem
-{
-    return _private->previousBackForwardItem;
-}
-
-- (void)_setPreviousBackForwardItem: (WebHistoryItem *)item
-{
-    if (_private->previousBackForwardItem != item) {
-        [_private->previousBackForwardItem release];
-        _private->previousBackForwardItem = [item retain];
-    }
-}
-
 - (void)_addBackForwardItem:(WebHistoryItem *)item
 {
     if (!item) {
@@ -452,12 +424,11 @@
     if (![self isDownloading] && _private->gotFirstByte && !_private->committed) {
         LOG(Loading, "committed resource = %@", [[self request] URL]);
 	_private->committed = TRUE;
-	[self _makeRepresentation];
         [[self webFrame] _transitionToCommitted];
 	[[self _bridge] dataSourceChanged];
-        // we're done with these after committing
-        [self _setProvisionalBackForwardItem: nil];
-        [self _setPreviousBackForwardItem: nil];
+        // Must do this after dataSourceChanged.  makeRep installs a new view, which blows away
+        // scroll state, which is saved within _transitionToCommitted
+        [self _makeRepresentation];
     }
 }
 
