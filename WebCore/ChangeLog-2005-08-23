@@ -1,5 +1,13 @@
 2003-04-04  Darin Adler  <darin@apple.com>
 
+        Reviewed by John and Richard.
+
+	- fixed 3218725 -- REGRESSION: reproducible crash in recalcStyle on reload
+
+        * khtml/xml/dom_docimpl.cpp: (DocumentImpl::DocumentImpl): Initialize m_paintDevice to 0.
+
+2003-04-04  Darin Adler  <darin@apple.com>
+
         Reviewed by Dave.
 
 	- fixed 3125850 -- VIP: "search by goo" instead of "search by google" at livepage.apple.com
