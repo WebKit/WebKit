@@ -1846,7 +1846,6 @@ InsertTextCommandImpl::InsertTextCommandImpl(DocumentImpl *document, TextImpl *n
 {
     ASSERT(m_node);
     ASSERT(m_offset >= 0);
-    ASSERT(text.length() > 0);
     
     m_node->ref();
     m_text = text.copy(); // make a copy to ensure that the string never changes
@@ -1866,7 +1865,10 @@ int InsertTextCommandImpl::commandID() const
 void InsertTextCommandImpl::doApply()
 {
     ASSERT(m_node);
-    ASSERT(!m_text.isEmpty());
+
+    if (m_text.isEmpty())
+	return;
+
 
     int exceptionCode = 0;
     m_node->insertData(m_offset, m_text, exceptionCode);
@@ -1877,6 +1879,9 @@ void InsertTextCommandImpl::doUnapply()
 {
     ASSERT(m_node);
     ASSERT(!m_text.isEmpty());
+
+    if (m_text.isEmpty())
+	return;
 
     int exceptionCode = 0;
     m_node->deleteData(m_offset, m_text.length(), exceptionCode);

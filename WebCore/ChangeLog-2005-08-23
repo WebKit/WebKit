@@ -1,3 +1,16 @@
+2004-08-03  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Ken.
+
+	- remove assertions that asserted text is non-empty, just avoid
+	doing anything for the empty case; this is needed because input
+	methods like to insert empty text in various cases.
+
+        * khtml/editing/htmlediting_impl.cpp:
+        (khtml::InsertTextCommandImpl::InsertTextCommandImpl):
+        (khtml::InsertTextCommandImpl::doApply):
+        (khtml::InsertTextCommandImpl::doUnapply):
+
 2004-08-03  Darin Adler  <darin@apple.com>
 
         Reviewed by Ken.
