@@ -1,3 +1,13 @@
+2003-03-02  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Trey.
+
+	Updated string hash function to match the new, improved one in
+	JavaScriptCore.
+	
+        * kwq/KWQCharsets.mm:
+        (encodingNameHash):
+
 2003-03-03  Darin Adler  <darin@apple.com>
 
         Reviewed by Dave.

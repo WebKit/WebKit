@@ -1,3 +1,22 @@
+2003-03-02  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Trey.
+
+	- fixed 3158833 - ebay prefs page is so slow, it seems like a hang.
+
+	92% speed improvement on ebay prefs page.
+	1% speed improvement on js-ibench and js-performance plt suites.
+	
+	There were a couple of problems with the identifier hash table that
+	I fixed:
+	
+        * kjs/identifier.cpp:
+	(void Identifier::remove): Adjust the shrink threshold to avoid
+	constantly growing and shrinking.
+        * kjs/ustring.cpp:
+        (UString::Rep::computeHash): Use a better hash function that
+	avoids collisions for obvious data sets.
+
 === Safari-64 ===
 
 === Safari-63 ===

@@ -254,7 +254,7 @@ void Identifier::remove(UString::Rep *r)
     _table[i] = 0;
     --_keyCount;
     
-    if (_keyCount * 3 < _tableSize && _tableSize > _minTableSize) {
+    if (_keyCount * 6 < _tableSize && _tableSize > _minTableSize) {
         shrink();
         return;
     }

@@ -177,34 +177,76 @@ void UString::Rep::destroy()
   delete this;
 }
 
+// Golden ratio - arbitrary start value to avoid mapping all 0's to all 0's
+// or anything like that.
+const unsigned PHI = 0x9e3779b9U;
+
+// This hash algorithm comes from:
+// http://burtleburtle.net/bob/hash/hashfaq.html
+// http://burtleburtle.net/bob/hash/doobs.html
 unsigned UString::Rep::computeHash(const UChar *s, int length)
 {
     int prefixLength = length < 8 ? length : 8;
     int suffixPosition = length < 16 ? 8 : length - 8;
 
-    unsigned h = length;
-    for (int i = 0; i < prefixLength; i++)
-        h = 127 * h + s[i].uc;
-    for (int i = suffixPosition; i < length; i++)
-        h = 127 * h + s[i].uc;
+    unsigned h = PHI;
+    h += length;
+    h += (h << 10); 
+    h ^= (h << 6); 
+
+    for (int i = 0; i < prefixLength; i++) {
+        h += s[i].uc; 
+	h += (h << 10); 
+	h ^= (h << 6); 
+    }
+    for (int i = suffixPosition; i < length; i++){
+        h += s[i].uc; 
+	h += (h << 10); 
+	h ^= (h << 6); 
+    }
+
+    h += (h << 3);
+    h ^= (h >> 11);
+    h += (h << 15);
+ 
     if (h == 0)
         h = 0x80000000;
+
     return h;
 }
 
+// This hash algorithm comes from:
+// http://burtleburtle.net/bob/hash/hashfaq.html
+// http://burtleburtle.net/bob/hash/doobs.html
 unsigned UString::Rep::computeHash(const char *s)
 {
     int length = strlen(s);
     int prefixLength = length < 8 ? length : 8;
     int suffixPosition = length < 16 ? 8 : length - 8;
 
-    unsigned h = length;
-    for (int i = 0; i < prefixLength; i++)
-        h = 127 * h + (unsigned char)s[i];
-    for (int i = suffixPosition; i < length; i++)
-        h = 127 * h + (unsigned char)s[i];
+    unsigned h = PHI;
+    h += length;
+    h += (h << 10); 
+    h ^= (h << 6); 
+
+    for (int i = 0; i < prefixLength; i++) {
+        h += (unsigned char)s[i];
+	h += (h << 10); 
+	h ^= (h << 6); 
+    }
+    for (int i = suffixPosition; i < length; i++) {
+        h += (unsigned char)s[i];
+	h += (h << 10); 
+	h ^= (h << 6); 
+    }
+
+    h += (h << 3);
+    h ^= (h >> 11);
+    h += (h << 15);
+
     if (h == 0)
         h = 0x80000000;
+
     return h;
 }
 

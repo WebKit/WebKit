@@ -103,11 +103,19 @@ static Boolean encodingNamesEqual(const void *value1, const void *value2)
     }
 }
 
+// Golden ratio - arbitrary start value to avoid mapping all 0's to all 0's
+// or anything like that.
+const unsigned PHI = 0x9e3779b9U;
+
+// This hash algorithm comes from:
+// http://burtleburtle.net/bob/hash/hashfaq.html
+// http://burtleburtle.net/bob/hash/doobs.html
 static CFHashCode encodingNameHash(const void *value)
 {
     const char *s = (const char *)value;
     
-    CFHashCode h = 0;
+    CFHashCode h = PHI;
+
     for (int i = 0; i != 16; ++i) {
         char c;
         do {
@@ -116,10 +124,18 @@ static CFHashCode encodingNameHash(const void *value)
         if (!c) {
             break;
         }
-        h = 127 * h + tolower(c);
+        h += c;
+	h += (h << 10); 
+	h ^= (h << 6); 
     }
+
+    h += (h << 3);
+    h ^= (h >> 11);
+    h += (h << 15);
+ 
     if (h == 0) {
         h = 0x80000000;
     }
+
     return h;
 }
