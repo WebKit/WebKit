@@ -1,3 +1,28 @@
+2002-11-18  Ken Kocienda  <kocienda@apple.com>
+
+	Added feature to import bookmarks/favorites from MSIE. This
+	fixes Radar 2961230 (import Mac IE bookmarks).
+
+        * Bookmarks.subproj/WebBookmarkImporter.h: Added.
+        * Bookmarks.subproj/WebBookmarkImporter.m: Added.
+        (_breakStringIntoLines):
+        (_HREFRangeFromSpec):
+        (_HREFTextFromSpec):
+        (_linkTextRangeFromSpec):
+        (_linkTextFromSpec):
+        (-[WebBookmarkImporter initWithPath:group:]):
+        (-[WebBookmarkImporter topBookmark]):
+        (-[WebBookmarkImporter error]):
+        (-[WebBookmarkImporter dealloc]):
+        * Bookmarks.subproj/WebBookmarkList.m:
+        (-[WebBookmarkList init]): Create the bookmark list object. This
+	was not created with the -init initializer, causing bookmark lists
+	to fail.
+        * English.lproj/Localizable.strings:
+        * English.lproj/StringsNotToBeLocalized.txt:
+        * WebKit.exp:
+        * WebKit.pbproj/project.pbxproj:
+
 2002-11-17  Trey Matteson  <trey@apple.com>
 
 	Code cleanup to make some internal methods return autoreleased objects.

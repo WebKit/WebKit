@@ -17,6 +17,15 @@
 
 @implementation WebBookmarkList
 
+- (id)init
+{
+    [super init];
+
+    _list = [[NSMutableArray alloc] init];
+    
+    return self;
+}
+
 - (id)initWithTitle:(NSString *)title
               group:(WebBookmarkGroup *)group
 {
