@@ -966,7 +966,7 @@ void RenderText::calcMinMaxWidth()
                 str->s[i] = ' ';
         }
         
-        bool oldSpace = isSpace;
+        bool previousCharacterIsSpace = isSpace;
         isSpace = str->s[i].direction() == QChar::DirWS;
         
         if ((isSpace || isNewline) && i == 0)
@@ -974,7 +974,7 @@ void RenderText::calcMinMaxWidth()
         if ((isSpace || isNewline) && i == len-1)
             m_hasEndWS = true;
             
-        if (!ignoringSpaces && !isPre && oldSpace && isSpace)
+        if (!ignoringSpaces && !isPre && previousCharacterIsSpace && isSpace)
             ignoringSpaces = true;
         
         if (ignoringSpaces && !isSpace)

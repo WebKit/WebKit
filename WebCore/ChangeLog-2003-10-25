@@ -1,3 +1,18 @@
+2003-01-23  Richard Williamson   <rjw@apple.com>
+
+        Fixed whitespace exclusion code.  Fixes many sites
+        that have problems that were exposed after
+        fixing 3119777.
+        
+        Reviewed by hyatt.
+
+        * khtml/rendering/bidi.cpp:
+        (RenderFlow::bidiReorderLine):
+        (RenderFlow::findNextLineBreak):
+        * khtml/rendering/break_lines.cpp:
+        * khtml/rendering/render_text.cpp:
+        (RenderText::calcMinMaxWidth):
+
 2003-01-23  David Hyatt  <hyatt@apple.com>
 
 	Dump textslaves in the regression tests.
