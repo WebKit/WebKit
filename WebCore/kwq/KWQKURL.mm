@@ -715,21 +715,25 @@ QString KURL::decode_string(const QString &urlString)
 static void appendEscapingBadChars(char*& buffer, const char *strStart, size_t length)
 {
     char *p = buffer;
+
     const char *str = strStart;
     const char *strEnd = strStart + length;
-
     while (str < strEnd) {
-	if (*str == '%' && IS_HEX_DIGIT(str[1]) && IS_HEX_DIGIT(str[2])) {
-	    *p++ = *str++;
-	    *p++ = *str++;
-	    *p++ = *str++;
-	} else if (IS_BAD_CHAR(*str)) {
-	    *p++ = '%';
-	    *p++ = hexDigits[(*str >> 4) & 0xF];
-	    *p++ = hexDigits[*str & 0xF];
-	    str++;
+	unsigned char c = *str++;
+        if (IS_BAD_CHAR(c)) {
+            if (c == '%' && strEnd - str >= 2 && IS_HEX_DIGIT(str[0]) && IS_HEX_DIGIT(str[1])) {
+                *p++ = c;
+                *p++ = *str++;
+                *p++ = *str++;
+            } else if (c == '?') {
+                *p++ = c;
+            } else {
+                *p++ = '%';
+                *p++ = hexDigits[c >> 4];
+                *p++ = hexDigits[c & 0xF];
+            }
 	} else {
-	    *p++ = *str++;
+	    *p++ = c;
 	}
     }
     
@@ -1162,7 +1166,19 @@ QString KURL::encode_string(const QString& notEncodedString)
     }
     
     char *p = buffer;
-    appendEscapingBadChars(p, asUTF8, asUTF8.length());
+
+    const char *str = asUTF8;
+    const char *strEnd = str + asUTF8.length();
+    while (str < strEnd) {
+	unsigned char c = *str++;
+        if (IS_BAD_CHAR(c)) {
+            *p++ = '%';
+            *p++ = hexDigits[c >> 4];
+            *p++ = hexDigits[c & 0xF];
+	} else {
+	    *p++ = c;
+	}
+    }
     
     QString result(buffer, p - buffer);
     

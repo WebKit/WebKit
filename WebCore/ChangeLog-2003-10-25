@@ -1,5 +1,24 @@
 2003-02-04  Darin Adler  <darin@apple.com>
 
+        Reviewed by Maciej.
+
+        - fixed 3164850 -- REGRESSION: query URLs are broken
+
+        Mea culpa. The KURL test in the Tests directory failed last time, but for
+        some reason I didn't notice that when I ran it, perhaps due to the other
+        failing tests.
+
+        * kwq/KWQKURL.mm: (appendEscapingBadChars): Don't escape '?' even though
+        it is in the "bad character" set, since this is a more-lenient definition
+        of bad character. Also fixed a buffer overrun bug in the '%'-sequence-preserving
+        code, which is a second way this function is lenient. We still get the speed
+        because most characters this routine processes are not bad characters.
+        (KURL::encode_string): Instead of calling appendEscapingBadChars, put in
+        a strict version of the escaping loop that does not tolerate pre-existing
+        '%' sequences or '?' characters.
+
+2003-02-04  Darin Adler  <darin@apple.com>
+
         Reviewed by Dave.
 
         - rolled in table code fix from Dirk on the khtml-dev list
