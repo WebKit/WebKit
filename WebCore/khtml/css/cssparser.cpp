@@ -150,6 +150,9 @@ void CSSParser::parseSheet( CSSStyleSheetImpl *sheet, const DOMString &string )
 #ifdef CSS_DEBUG
     kdDebug( 6080 ) << "<<<<<<< done parsing style sheet" << endl;
 #endif
+
+    delete rule;
+    rule = 0;
 }
 
 CSSRuleImpl *CSSParser::parseRule( const DOM::DOMString &string )
@@ -170,12 +173,15 @@ CSSRuleImpl *CSSParser::parseRule( const DOM::DOMString &string )
     yytext = yy_c_buf_p = data;
     yy_hold_char = *yy_c_buf_p;
 
-
     CSSParser *old = currentParser;
     currentParser = this;
     cssyyparse( this );
     currentParser = old;
-    return rule;
+
+    CSSRuleImpl *result = rule;
+    rule = 0;
+    
+    return result;
 }
 
 bool CSSParser::parseValue( DOM::CSSStyleDeclarationImpl *declaration, int _id, const DOM::DOMString &string,
@@ -212,6 +218,9 @@ bool CSSParser::parseValue( DOM::CSSStyleDeclarationImpl *declaration, int _id, 
     currentParser = this;
     cssyyparse( this );
     currentParser = old;
+    
+    delete rule;
+    rule = 0;
 
     bool ok = false;
     if ( numParsedProperties ) {
@@ -258,6 +267,9 @@ bool CSSParser::parseDeclaration( DOM::CSSStyleDeclarationImpl *declaration, con
     currentParser = this;
     cssyyparse( this );
     currentParser = old;
+
+    delete rule;
+    rule = 0;
 
     bool ok = false;
     if ( numParsedProperties ) {

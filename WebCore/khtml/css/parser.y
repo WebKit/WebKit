@@ -186,7 +186,7 @@ static int cssyylex( YYSTYPE *yylval ) {
 %type <string> hexcolor
 
 %type <mediaList> media_list
-%type <mediaList> media_list2
+%type <mediaList> maybe_media_list
 
 %type <ruleList> ruleset_list
 
@@ -232,7 +232,7 @@ stylesheet:
 konq_rule:
     KONQ_RULE_SYM '{' maybe_space ruleset maybe_space '}' {
         CSSParser *p = static_cast<CSSParser *>(parser);
-	p->rule = $4;
+        p->rule = $4;
     }
 ;
 
@@ -324,15 +324,17 @@ rule:
     ;
 
 import:
-    IMPORT_SYM maybe_space string_or_uri maybe_space media_list ';' {
+    IMPORT_SYM maybe_space string_or_uri maybe_space maybe_media_list ';' {
 #ifdef CSS_DEBUG
 	kdDebug( 6080 ) << "@import: " << qString($3) << endl;
 #endif
 	CSSParser *p = static_cast<CSSParser *>(parser);
 	if ( p->styleElement && p->styleElement->isCSSStyleSheet() )
 	    $$ = new CSSImportRuleImpl( p->styleElement, domString($3), $5 );
-	else
+	else {
 	    $$ = 0;
+            delete $5;
+        }
     }
   | IMPORT_SYM error invalid_block {
         $$ = 0;
@@ -347,6 +349,14 @@ string_or_uri:
   | URI
     ;
 
+maybe_media_list
+     /* empty */ {
+        $$ = 0;
+     }
+     | media_list
+;
+
+
 media_list:
     /* empty */ {
 	$$ = 0;
@@ -357,13 +367,16 @@ media_list:
     }
     | media_list ',' maybe_space medium {
 	$$ = $1;
-	if ( !$$ ) $$ = new MediaListImpl();
 	$$->appendMedium( domString($4) );
     }
-;
+    | media_list error {
+        delete $1;
+        $$ = 0;
+    }
+    ;
 
 media:
-    MEDIA_SYM maybe_space media_list2 '{' maybe_space ruleset_list '}' {
+    MEDIA_SYM maybe_space media_list '{' maybe_space ruleset_list '}' {
 	CSSParser *p = static_cast<CSSParser *>(parser);
 	if ( $3 && $6 &&
 	     p->styleElement && p->styleElement->isCSSStyleSheet() ) {
@@ -375,18 +388,6 @@ media:
 	}
     }
   ;
-
-media_list2:
-    medium {
-	$$ = new MediaListImpl();
-	$$->appendMedium( domString($1) );
-    }
-    | media_list ',' maybe_space medium {
-	$$ = $1;
-	$$->appendMedium( domString($4) );
-    }
-    ;
-
 
 ruleset_list:
     /* empty */ { $$ = 0; }
@@ -485,18 +486,22 @@ selector_list:
 	}
     }
     | selector_list ',' maybe_space selector {
-	$$ = $1;
-	if ( $4 ) {
-	    if ( !$$ ) {
-                $$ = new QPtrList<CSSSelector>;
-                $$->setAutoDelete(true);
-            }
+	if ( $1 && $4 ) {
+	    $$ = $1;
 	    $$->append( $4 );
 #ifdef CSS_DEBUG
 	    kdDebug( 6080 ) << "   got simple selector:" << endl;
 	    $4->print();
 #endif
-	}
+	} else {
+            delete $1;
+            delete $4;
+            $$ = 0;
+        }
+    }
+  | selector_list error {
+        delete $1;
+        $$ = 0;
     }
    ;
 
@@ -519,6 +524,10 @@ DOM::DocumentImpl *doc = p->document();
                 doc->setUsesDescendantRules(true);
         }
     }
+    | selector error {
+        delete $1;
+        $$ = 0;
+    }
     ;
 
 simple_selector:
@@ -528,11 +537,13 @@ simple_selector:
     }
     | element_name specifier_list maybe_space {
 	$$ = $2;
-	$$->tag = $1;
+	if ( $$ )
+            $$->tag = $1;
     }
     | specifier_list maybe_space {
 	$$ = $1;
-	$$->tag = -1;
+	if ( $$ )
+            $$->tag = 0xffffffff;
     }
   ;
 
@@ -558,7 +569,7 @@ element_name:
 	}
     }
     | '*' {
-	$$ = -1;
+	$$ = 0xffff;
     }
   ;
 
@@ -574,6 +585,10 @@ specifier_list:
             end = end->tagHistory;
         end->relation = CSSSelector::SubSelector;
         end->tagHistory = $2;
+    }
+    | specifier_list error {
+        delete $1;
+        $$ = 0;
     }
 ;
 
@@ -754,7 +769,9 @@ declaration:
 	    else
 		kdDebug( 6080 ) << "     couldn't parse value!" << endl;
 #endif
-	}
+	} else {
+            delete $4;
+        }
 	delete p->valueList;
 	p->valueList = 0;
     }
@@ -778,15 +795,21 @@ expr:
 	$$->addValue( $1 );
     }
     | expr operator term {
-	$$ = $1;
-	if ( $2 ) {
-	    Value v;
-	    v.id = 0;
-	    v.unit = Value::Operator;
-	    v.iValue = $2;
-	    $$->addValue( v );
-	}
-	$$->addValue( $3 );
+        $$ = $1;
+	if ( $$ ) {
+            if ( $2 ) {
+                Value v;
+                v.id = 0;
+                v.unit = Value::Operator;
+                v.iValue = $2;
+                $$->addValue( v );
+            }
+            $$->addValue( $3 );
+        }
+    }
+    | expr error {
+        delete $1;
+        $$ = 0;
     }
   ;
 

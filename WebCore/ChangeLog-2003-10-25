@@ -1,3 +1,31 @@
+2003-02-28  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave.
+
+        - fixed some storage leaks; this code is still leaking when we run cvs-base
+
+        * khtml/css/parser.y:
+        (import): Use the new maybe_media_list (ported from KDE), and delete the
+        media list if the current item we are parsing is not a style sheet.
+        (maybe_media_list): Added. (ported from KDE).
+        (media_list): Added error case so we don't leak in that case (ported from KDE).
+        (media): Use media_list instead of media_list2 (ported from KDE).
+        (selector_list): Added error case so we don't leak in that case (ported from KDE).
+        (selector): Added error case so we don't leak in that case (ported from KDE).
+        (simple_selector): Added nil-checking (ported from KDE).
+        (element_name): Use 0xFFFF instead of -1 (ported from KDE).
+        (specifier_list): Added error case so we don't leak in that case (ported from KDE).
+        (declaration): Delete the expr if we don't use it because property is 0.
+        (expr): Added error case so we don't leak in that case (ported from KDE).
+
+        * khtml/css/cssparser.cpp:
+        (CSSParser::parseSheet): Delete the rule in case one was created.
+        (CSSParser::parseRule): Zero out the rule after extracting it to return.
+        (CSSParser::parseValue): Delete the rule in case one was created.
+        (CSSParser::parseDeclaration): Delete the rule in case one was created.
+
+        * khtml/css/parser.cpp: Regenerated.
+
 2003-02-28  David Hyatt  <hyatt@apple.com>
 
 	Fix for text-dec regression, 3185121.
