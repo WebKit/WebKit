@@ -233,6 +233,7 @@ __ZNK5QTime4msecEv
 __ZNK6QPoint15manhattanLengthEv
 __ZNK7QRegExp5matchERK7QStringiPi
 __ZNK7QRegExp7patternEv
+__ZNK7QString10startsWithEPKc
 __ZNK7QString10startsWithERKS_
 __ZNK7QString15stripWhiteSpaceEv
 __ZNK7QString18simplifyWhiteSpaceEv
