@@ -1,3 +1,9 @@
+2003-04-30  Richard Williamson   <rjw@apple.com>
+
+        Fixed doc errors.
+        
+        * History.subproj/WebHistory.h:
+
 2003-04-30  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

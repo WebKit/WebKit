@@ -50,7 +50,6 @@ extern NSString *WebHistoryItemsKey;
 /*!
     @method setOptionalSharedHistory:
     @param history The history to use for the global WebHistory.
-    @result Returns a WebHistory initialized with the contents of file.
 */
 + (void)setOptionalSharedHistory:(WebHistory *)history;
 
@@ -59,7 +58,7 @@ extern NSString *WebHistoryItemsKey;
     @param URL The URL to use to initialize the WebHistory.
     @param error Set to nil or an NSError instance if an error occurred.
     @abstract The designated initializer for WebHistory.
-    @result Returns an initialized WebHistory.
+    @result Returns YES if successful, NO otherwise.
 */
 - (BOOL)loadFromURL:(NSURL *)URL error:(NSError **)error;
 
@@ -107,7 +106,7 @@ extern NSString *WebHistoryItemsKey;
 - (NSArray *)orderedItemsLastVisitedOnDay:(NSCalendarDate *)calendarDate;
 
 /*!
-    @method entryForURL:
+    @method itemForURL:
     @abstract Get an item for a specific URL
     @param URL The URL of the history item to search for
     @result Returns an item matching the URL
