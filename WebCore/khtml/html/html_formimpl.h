@@ -276,7 +276,8 @@ public:
         FILE,
         HIDDEN,
         IMAGE,
-        BUTTON
+        BUTTON,
+        SEARCH
     };
 
     HTMLInputElementImpl(DocumentPtr *doc, HTMLFormElementImpl *f = 0);

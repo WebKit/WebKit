@@ -32,7 +32,7 @@
 
 class KLineEdit : public QLineEdit, public KCompletionBase {
 public:
-    KLineEdit(QWidget *parent) { }
+    KLineEdit(Type t) : QLineEdit(t) { }
 
     void setContextMenuEnabled(bool showMenu) { }
     KCompletionBox *completionBox(bool create) { return 0; }

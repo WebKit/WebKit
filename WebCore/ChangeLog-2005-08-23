@@ -1,3 +1,142 @@
+2004-03-22  David Hyatt  <hyatt@apple.com>
+
+	Factoring of form control code to enable sharing between three types of text fields: normal, password, and
+	the new search field.  Also made search field creatable using <input type="search">.  There are still many
+	bugs with the field, but you can at least type in it and submit it with a form.
+	
+        Reviewed by darin
+
+        * khtml/html/html_formimpl.cpp:
+        (HTMLInputElementImpl::setType):
+        (HTMLInputElementImpl::type):
+        (HTMLInputElementImpl::click):
+        (HTMLInputElementImpl::accessKeyAction):
+        (HTMLInputElementImpl::rendererIsNeeded):
+        (HTMLInputElementImpl::createRenderer):
+        (HTMLInputElementImpl::encoding):
+        (HTMLInputElementImpl::defaultEventHandler):
+        (HTMLInputElementImpl::isEditable):
+        * khtml/html/html_formimpl.h:
+        (DOM::HTMLInputElementImpl::):
+        * khtml/rendering/render_form.cpp:
+        (RenderLineEdit::RenderLineEdit):
+        * kwq/KWQKLineEdit.h:
+        (KLineEdit::KLineEdit):
+        * kwq/KWQLineEdit.h:
+        (QLineEdit::):
+        * kwq/KWQLineEdit.mm:
+        (QLineEdit::QLineEdit):
+        (QLineEdit::~QLineEdit):
+        (QLineEdit::setFont):
+        (QLineEdit::setText):
+        (QLineEdit::text):
+        (QLineEdit::setMaxLength):
+        (QLineEdit::isReadOnly):
+        (QLineEdit::setReadOnly):
+        (QLineEdit::maxLength):
+        (QLineEdit::selectAll):
+        (QLineEdit::edited):
+        (QLineEdit::setEdited):
+        (QLineEdit::sizeForCharacterWidth):
+        (QLineEdit::baselinePosition):
+        (QLineEdit::setAlignment):
+        (QLineEdit::setWritingDirection):
+        (KWQNSTextAlignmentForAlignmentFlags):
+        (QLineEdit::setLiveSearch):
+        * kwq/KWQTextField.h:
+        * kwq/KWQTextField.mm:
+        (-[KWQTextFieldController initWithTextField:QLineEdit:]):
+        (-[KWQTextFieldController action:]):
+        (-[KWQTextFieldController dealloc]):
+        (-[KWQTextFieldController widget]):
+        (-[KWQTextFieldController setMaximumLength:]):
+        (-[KWQTextFieldController controlTextDidBeginEditing:]):
+        (-[KWQTextFieldController controlTextDidEndEditing:]):
+        (-[KWQTextFieldController controlTextDidChange:]):
+        (-[KWQTextFieldController control:textShouldBeginEditing:]):
+        (-[KWQTextFieldController control:textShouldEndEditing:]):
+        (-[KWQTextFieldController control:didFailToFormatString:errorDescription:]):
+        (-[KWQTextFieldController control:didFailToValidatePartialString:errorDescription:]):
+        (-[KWQTextFieldController control:isValidObject:]):
+        (-[KWQTextFieldController control:textView:doCommandBySelector:]):
+        (-[KWQTextFieldController textChanged]):
+        (-[KWQTextFieldController setInDrawingMachinery:]):
+        (-[KWQTextFieldController textView:shouldDrawInsertionPointInRect:color:turnedOn:]):
+        (-[KWQTextFieldController textView:shouldHandleEvent:]):
+        (-[KWQTextFieldController textView:didHandleEvent:]):
+        (-[KWQTextFieldController setBaseWritingDirection:]):
+        (-[KWQTextFieldController baseWritingDirection]):
+        (-[KWQTextFieldController selectedRange]):
+        (-[KWQTextFieldController setSelectedRange:]):
+        (-[KWQTextFieldController setHasFocus:]):
+        (-[KWQTextFieldController updateTextAttributes:]):
+        (+[KWQTextField cellClass]):
+        (-[KWQTextField initWithQLineEdit:]):
+        (-[KWQTextField dealloc]):
+        (-[KWQTextField controller]):
+        (-[KWQTextField widget]):
+        (-[KWQTextField selectText:]):
+        (-[KWQTextField setStringValue:]):
+        (-[KWQTextField nextKeyView]):
+        (-[KWQTextField previousKeyView]):
+        (-[KWQTextField nextValidKeyView]):
+        (-[KWQTextField previousValidKeyView]):
+        (-[KWQTextField acceptsFirstResponder]):
+        (-[KWQTextField display]):
+        (-[KWQTextField displayRectIgnoringOpacity:]):
+        (-[KWQTextField textView:shouldDrawInsertionPointInRect:color:turnedOn:]):
+        (-[KWQTextField textView:shouldHandleEvent:]):
+        (-[KWQTextField textView:didHandleEvent:]):
+        (-[KWQTextFieldCell editWithFrame:inView:editor:delegate:event:]):
+        (-[KWQTextFieldCell selectWithFrame:inView:editor:delegate:start:length:]):
+        (-[KWQTextFieldCell _textAttributes]):
+        (-[KWQSecureTextField initWithQLineEdit:]):
+        (-[KWQSecureTextField dealloc]):
+        (-[KWQSecureTextField controller]):
+        (-[KWQSecureTextField widget]):
+        (-[KWQSecureTextField setStringValue:]):
+        (-[KWQSecureTextField nextKeyView]):
+        (-[KWQSecureTextField previousKeyView]):
+        (-[KWQSecureTextField acceptsFirstResponder]):
+        (-[KWQSecureTextField display]):
+        (-[KWQSecureTextField displayRectIgnoringOpacity:]):
+        (-[KWQSecureTextField textView:shouldDrawInsertionPointInRect:color:turnedOn:]):
+        (-[KWQSecureTextField textView:shouldHandleEvent:]):
+        (-[KWQSecureTextField textView:didHandleEvent:]):
+        (-[KWQSecureTextField selectText:]):
+        (-[KWQSecureTextFieldCell editWithFrame:inView:editor:delegate:event:]):
+        (-[KWQSecureTextFieldCell selectWithFrame:inView:editor:delegate:start:length:]):
+        (-[KWQSecureTextFieldCell _textAttributes]):
+        (+[KWQSearchField cellClass]):
+        (-[KWQSearchField initWithQLineEdit:]):
+        (-[KWQSearchField dealloc]):
+        (-[KWQSearchField controller]):
+        (-[KWQSearchField widget]):
+        (-[KWQSearchField selectText:]):
+        (-[KWQSearchField setStringValue:]):
+        (-[KWQSearchField nextKeyView]):
+        (-[KWQSearchField previousKeyView]):
+        (-[KWQSearchField nextValidKeyView]):
+        (-[KWQSearchField previousValidKeyView]):
+        (-[KWQSearchField acceptsFirstResponder]):
+        (-[KWQSearchField display]):
+        (-[KWQSearchField displayRectIgnoringOpacity:]):
+        (-[KWQSearchField textView:shouldDrawInsertionPointInRect:color:turnedOn:]):
+        (-[KWQSearchField textView:shouldHandleEvent:]):
+        (-[KWQSearchField textView:didHandleEvent:]):
+        (-[KWQSearchFieldCell editWithFrame:inView:editor:delegate:event:]):
+        (-[KWQSearchFieldCell selectWithFrame:inView:editor:delegate:start:length:]):
+        (-[KWQSearchFieldCell _textAttributes]):
+        (-[KWQTextFieldFormatter init]):
+        (-[KWQTextFieldFormatter setMaximumLength:]):
+        (-[KWQTextFieldFormatter maximumLength]):
+        (-[KWQTextFieldFormatter stringForObjectValue:]):
+        (-[KWQTextFieldFormatter getObjectValue:forString:errorDescription:]):
+        (-[KWQTextFieldFormatter isPartialStringValid:newEditingString:errorDescription:]):
+        (-[KWQTextFieldFormatter attributedStringForObjectValue:withDefaultAttributes:]):
+        (-[NSString _KWQ_truncateToNumComposedCharacterSequences:]):
+        (-[NSTextField _KWQ_currentEditor]):
+
 === Safari-133 ===
 
 2004-03-19  Darin Adler  <darin@apple.com>

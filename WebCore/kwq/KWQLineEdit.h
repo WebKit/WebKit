@@ -29,18 +29,22 @@
 #include "KWQString.h"
 #include "KWQWidget.h"
 
+#ifdef __OBJC__
+@class KWQTextFieldController;
+#else
+class KWQTextFieldController;
+#endif
+
 class QLineEdit : public QWidget {
 public:
-    enum EchoMode { Normal, Password };
+    enum Type { Normal, Password, Search };
 
-    QLineEdit();
+    QLineEdit(Type);
     ~QLineEdit();
     void setAlignment(AlignmentFlags);
 
     void setCursorPosition(int);
     int cursorPosition() const;
-
-    void setEchoMode(EchoMode);
 
     void setEdited(bool);
     bool edited() const;
@@ -70,10 +74,14 @@ public:
     
     virtual bool checksDescendantsForFocus() const;
 
+    void setLiveSearch(bool liveSearch);
+
 private:
     KWQSignal m_returnPressed;
     KWQSignal m_textChanged;
     KWQSignal m_clicked;
+    Type m_type;
+    KWQTextFieldController *m_controller;
 };
 
 #ifdef __OBJC__

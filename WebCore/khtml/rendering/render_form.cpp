@@ -532,7 +532,20 @@ RenderLineEdit::RenderLineEdit(HTMLInputElementImpl *element)
     : RenderFormElement(element), m_updating(false)
 {
 #if APPLE_CHANGES
-    KLineEdit *edit = new KLineEdit(view()->viewport());
+    QLineEdit::Type type;
+    switch (element->inputType()) {
+        case HTMLInputElementImpl::PASSWORD:
+            type = QLineEdit::Password;
+            break;
+        case HTMLInputElementImpl::SEARCH:
+            type = QLineEdit::Search;
+            break;
+        default:
+            type = QLineEdit::Normal;
+    }
+    KLineEdit *edit = new KLineEdit(type);
+    if (type == QLineEdit::Search)
+        edit->setLiveSearch(false);
 #else
     LineEditWidget *edit = new LineEditWidget(view()->viewport());
 #endif
@@ -540,10 +553,10 @@ RenderLineEdit::RenderLineEdit(HTMLInputElementImpl *element)
     connect(edit,SIGNAL(textChanged(const QString &)),this,SLOT(slotTextChanged(const QString &)));
     connect(edit,SIGNAL(clicked()),this,SLOT(slotClicked()));
 
+#if !APPLE_CHANGES
     if(element->inputType() == HTMLInputElementImpl::PASSWORD)
         edit->setEchoMode( QLineEdit::Password );
 
-#if !APPLE_CHANGES
     if ( element->autoComplete() ) {
         QStringList completions = view()->formCompletionItems(element->name().string());
         if (completions.count()) {

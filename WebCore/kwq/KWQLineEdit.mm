@@ -23,6 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#import "KWQButton.h"
 #import "KWQLineEdit.h"
 
 #import "KWQExceptions.h"
@@ -31,15 +32,27 @@
 #import "WebCoreTextRenderer.h"
 #import "WebCoreTextRendererFactory.h"
 
-QLineEdit::QLineEdit()
+QLineEdit::QLineEdit(Type type)
     : m_returnPressed(this, SIGNAL(returnPressed()))
     , m_textChanged(this, SIGNAL(textChanged(const QString &)))
-    , m_clicked(this, SIGNAL(clicked()))
+    , m_clicked(this, SIGNAL(clicked())), m_type(type)
 {
-    KWQTextField *view = nil;
+    id view = nil;
 
     KWQ_BLOCK_EXCEPTIONS;
-    view = [[KWQTextField alloc] initWithQLineEdit:this];
+    switch (type) {
+        case Normal:
+            view = [KWQTextField alloc];
+            break;
+        case Password:
+            view = [KWQSecureTextField alloc];
+            break;
+        case Search:
+            view = [KWQSearchField alloc];
+            break;
+    }
+    [view initWithQLineEdit:this];
+    m_controller = [view controller];
     setView(view);
     [view release];
     [view setSelectable:YES]; // must do this explicitly so setEditable:NO does not make it NO
@@ -48,17 +61,8 @@ QLineEdit::QLineEdit()
 
 QLineEdit::~QLineEdit()
 {
-    KWQTextField* textField = (KWQTextField*)getView();
     KWQ_BLOCK_EXCEPTIONS;
-    [textField invalidate];
-    KWQ_UNBLOCK_EXCEPTIONS;
-}
-
-void QLineEdit::setEchoMode(EchoMode mode)
-{
-    KWQTextField *textField = (KWQTextField *)getView();
-    KWQ_BLOCK_EXCEPTIONS;
-    [textField setPasswordMode:mode == Password];
+    [m_controller invalidate];
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 
@@ -76,15 +80,23 @@ int QLineEdit::cursorPosition() const
 void QLineEdit::setFont(const QFont &font)
 {
     QWidget::setFont(font);
-    KWQTextField *textField = (KWQTextField *)getView();
-    KWQ_BLOCK_EXCEPTIONS;
-    [textField setFont:font.getNSFont()];
-    KWQ_UNBLOCK_EXCEPTIONS;
+    if (m_type == Search) {
+        const NSControlSize size = KWQNSControlSizeForFont(font);    
+        NSControl * const searchField = static_cast<NSControl *>(getView());
+        [[searchField cell] setControlSize:size];
+        [searchField setFont:[NSFont systemFontOfSize:[NSFont systemFontSizeForControlSize:size]]];
+    }
+    else {
+        NSTextField *textField = (NSTextField *)getView();
+        KWQ_BLOCK_EXCEPTIONS;
+        [textField setFont:font.getNSFont()];
+        KWQ_UNBLOCK_EXCEPTIONS;
+    }
 }
 
 void QLineEdit::setText(const QString &s)
 {
-    KWQTextField *textField = (KWQTextField *)getView();
+    NSTextField *textField = (NSTextField *)getView();
     KWQ_BLOCK_EXCEPTIONS;
     [textField setStringValue:s.getNSString()];
     KWQ_UNBLOCK_EXCEPTIONS;
@@ -92,7 +104,7 @@ void QLineEdit::setText(const QString &s)
 
 QString QLineEdit::text()
 {
-    KWQTextField *textField = (KWQTextField *)getView();
+    NSTextField *textField = (NSTextField *)getView();
 
     KWQ_BLOCK_EXCEPTIONS;
     NSMutableString *text = [[[textField stringValue] mutableCopy] autorelease];
@@ -106,13 +118,12 @@ QString QLineEdit::text()
 
 void QLineEdit::setMaxLength(int len)
 {
-    KWQTextField *textField = (KWQTextField *)getView();
-    [textField setMaximumLength:len];
+    [m_controller setMaximumLength:len];
 }
 
 bool QLineEdit::isReadOnly() const
 {
-    KWQTextField *textField = (KWQTextField *)getView();
+    NSTextField *textField = (NSTextField *)getView();
 
     KWQ_BLOCK_EXCEPTIONS;
     return ![textField isEditable];
@@ -123,7 +134,7 @@ bool QLineEdit::isReadOnly() const
 
 void QLineEdit::setReadOnly(bool flag)
 {
-    KWQTextField *textField = (KWQTextField *)getView();
+    NSTextField *textField = (NSTextField *)getView();
     KWQ_BLOCK_EXCEPTIONS;
     [textField setEditable:!flag];
     KWQ_UNBLOCK_EXCEPTIONS;
@@ -131,18 +142,12 @@ void QLineEdit::setReadOnly(bool flag)
 
 int QLineEdit::maxLength() const
 {
-    KWQTextField *textField = (KWQTextField *)getView();
-    
-    KWQ_BLOCK_EXCEPTIONS;
-    return [textField maximumLength];
-    KWQ_UNBLOCK_EXCEPTIONS;
-
-    return 0;
+    return [m_controller maximumLength];
 }
 
 void QLineEdit::selectAll()
 {
-    KWQTextField *textField = (KWQTextField *)getView();
+    NSTextField *textField = (NSTextField *)getView();
     KWQ_BLOCK_EXCEPTIONS;
     [textField selectText:nil];
     KWQ_UNBLOCK_EXCEPTIONS;
@@ -150,21 +155,12 @@ void QLineEdit::selectAll()
 
 bool QLineEdit::edited() const
 {
-    KWQTextField *textField = (KWQTextField *)getView();
-    
-    KWQ_BLOCK_EXCEPTIONS;
-    return [textField edited];
-    KWQ_UNBLOCK_EXCEPTIONS;
-
-    return false;
+    return [m_controller edited];
 }
 
 void QLineEdit::setEdited(bool flag)
 {
-    KWQTextField *textField = (KWQTextField *)getView();
-    KWQ_BLOCK_EXCEPTIONS;
-    [textField setEdited:flag];
-    KWQ_UNBLOCK_EXCEPTIONS;
+    [m_controller setEdited:flag];
 }
 
 QSize QLineEdit::sizeForCharacterWidth(int numCharacters) const
@@ -172,7 +168,7 @@ QSize QLineEdit::sizeForCharacterWidth(int numCharacters) const
     // Figure out how big a text field needs to be for a given number of characters
     // (using "0" as the nominal character).
 
-    KWQTextField *textField = (KWQTextField *)getView();
+    NSTextField *textField = (NSTextField *)getView();
 
     ASSERT(numCharacters > 0);
 
@@ -206,7 +202,7 @@ QSize QLineEdit::sizeForCharacterWidth(int numCharacters) const
 
 int QLineEdit::baselinePosition(int height) const
 {
-    KWQTextField *textField = (KWQTextField *)getView();
+    NSTextField *textField = (NSTextField *)getView();
 
     KWQ_BLOCK_EXCEPTIONS;
     NSRect bounds = [textField bounds];
@@ -227,7 +223,7 @@ void QLineEdit::setAlignment(AlignmentFlags alignment)
 {
     KWQ_BLOCK_EXCEPTIONS;
 
-    KWQTextField *textField = getView();
+    NSTextField *textField = (NSTextField *)getView();
     [textField setAlignment:KWQNSTextAlignmentForAlignmentFlags(alignment)];
 
     KWQ_UNBLOCK_EXCEPTIONS;
@@ -236,10 +232,7 @@ void QLineEdit::setAlignment(AlignmentFlags alignment)
 void QLineEdit::setWritingDirection(QPainter::TextDirection direction)
 {
     KWQ_BLOCK_EXCEPTIONS;
-
-    KWQTextField *textField = getView();
-    [textField setBaseWritingDirection:(direction == QPainter::RTL ? NSWritingDirectionRightToLeft : NSWritingDirectionLeftToRight)];
-
+    [m_controller setBaseWritingDirection:(direction == QPainter::RTL ? NSWritingDirectionRightToLeft : NSWritingDirectionLeftToRight)];
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 
@@ -260,4 +253,13 @@ NSTextAlignment KWQNSTextAlignmentForAlignmentFlags(Qt::AlignmentFlags a)
         case Qt::AlignHCenter:
             return NSCenterTextAlignment;
     }
+}
+
+void QLineEdit::setLiveSearch(bool liveSearch)
+{
+    if (m_type != Search)
+        return;
+    
+    NSSearchField *searchField = (NSSearchField *)getView();
+    [[searchField cell] setSendsWholeSearchString: !liveSearch];
 }
