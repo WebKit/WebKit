@@ -1,3 +1,13 @@
+2004-09-20  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - fixed problem where up and down arrow keys are not preserving X position
+
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::selectionLayoutChanged): Moved code to clear m_xPosForVerticalArrowNavigation out of here.
+        (KHTMLPart::notifySelectionChanged): Moved it into here.
+
 2004-09-18  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

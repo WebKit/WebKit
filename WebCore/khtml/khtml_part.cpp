@@ -2451,15 +2451,15 @@ void KHTMLPart::selectionLayoutChanged()
 
     if (d->m_doc)
         d->m_doc->updateSelection();
-
-    // Always clear the x position used for vertical arrow navigation.
-    // It will be restored by the vertical arrow navigation code if necessary.
-    d->m_xPosForVerticalArrowNavigation = NoXPosForVerticalArrowNavigation;
 }
 
 void KHTMLPart::notifySelectionChanged(bool closeTyping)
 {
     selectionLayoutChanged();
+
+    // Always clear the x position used for vertical arrow navigation.
+    // It will be restored by the vertical arrow navigation code if necessary.
+    d->m_xPosForVerticalArrowNavigation = NoXPosForVerticalArrowNavigation;
 
     if (closeTyping)
         TypingCommand::closeTyping(lastEditCommand());
