@@ -1,3 +1,19 @@
+2003-02-06  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fixed 3140738 -- textarea contents are LF delimited instead of CRLF
+
+        * khtml/html/html_formimpl.cpp:
+        (encodeCString): Turn CR followed by something other than LF into CRLF.
+        (fixLineBreaks): Added. Turns stray CRs and LFs into CRLF.
+        (HTMLFormElementImpl::formData): Call fixLineBreaks on form data.
+
+        - fixed 3167235 -- REGRESSION: assert after clicking on a link on radioslack.com
+
+        * kwq/KWQTextCodec.mm: (KWQTextDecoder::toUnicode): Return the null string
+        if the passed in string pointer is NULL, rather than asserting.
+
 2003-02-06  David Hyatt  <hyatt@apple.com>
 
 	Fix rollingstone regression.

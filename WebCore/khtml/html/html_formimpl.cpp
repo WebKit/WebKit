@@ -163,7 +163,7 @@ static QCString encodeCString(const QCString& e)
             encoded[enclen++] = c;
         else if ( c == ' ' )
             encoded[enclen++] = '+';
-        else if ( c == '\n' )
+        else if ( c == '\n' || ( c == '\r' && e[pos+1] != '\n' ) )
         {
             encoded[enclen++] = '%';
             encoded[enclen++] = '0';
@@ -195,6 +195,55 @@ inline static QCString fixUpfromUnicode(const QTextCodec* codec, const QString& 
     QCString str = codec->fromUnicode(s);
     str.truncate(str.length());
     return str;
+}
+
+// Change plain CR and plain LF to CRLF pairs.
+static QCString fixLineBreaks(const QCString &s)
+{
+    // Compute the length.
+    unsigned newLen = 0;
+    const char *p = s.data();
+    while (char c = *p++) {
+        if (c == '\r') {
+            // Safe to look ahead because of trailing '\0'.
+            if (*p != '\n') {
+                // Turn CR into CRLF.
+                newLen += 2;
+            }
+        } else if (c == '\n') {
+            // Turn LF into CRLF.
+            newLen += 2;
+        } else {
+            // Leave other characters alone.
+            newLen += 1;
+        }
+    }
+    if (newLen == s.length()) {
+        return s;
+    }
+    
+    // Make a copy of the string.
+    p = s.data();
+    QCString result(newLen + 1);
+    char *q = result.data();
+    while (char c = *p++) {
+        if (c == '\r') {
+            // Safe to look ahead because of trailing '\0'.
+            if (*p != '\n') {
+                // Turn CR into CRLF.
+                *q++ = '\r';
+                *q++ = '\n';
+            }
+        } else if (c == '\n') {
+            // Turn LF into CRLF.
+            *q++ = '\r';
+            *q++ = '\n';
+        } else {
+            // Leave other characters alone.
+            *q++ = c;
+        }
+    }
+    return result;
 }
 
 #if !APPLE_CHANGES
@@ -348,9 +397,10 @@ QByteArray HTMLFormElementImpl::formData(bool& ok)
 
                     // append body
                     unsigned int old_size = form_data.size();
-                    form_data.resize( old_size + hstr.length() + (*it).size() + 1);
+                    QCString data = fixLineBreaks(*it);
+                    form_data.resize( old_size + hstr.length() + data.size() + 1);
                     memcpy(form_data.data() + old_size, hstr.data(), hstr.length());
-                    memcpy(form_data.data() + old_size + hstr.length(), *it, (*it).size());
+                    memcpy(form_data.data() + old_size + hstr.length(), data, data.size());
                     form_data[form_data.size()-2] = '\r';
                     form_data[form_data.size()-1] = '\n';
                 }

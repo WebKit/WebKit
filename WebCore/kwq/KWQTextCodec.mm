@@ -277,10 +277,9 @@ QString KWQTextDecoder::convertUsingTEC(const UInt8 *chs, int len)
 
 QString KWQTextDecoder::toUnicode(const char *chs, int len)
 {
-    ASSERT_ARG(chs, chs);
     ASSERT_ARG(len, len >= 0);
     
-    if (len <= 0) {
+    if (!chs || len <= 0) {
         return QString::null;
     }
 
