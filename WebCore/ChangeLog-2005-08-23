@@ -1,3 +1,17 @@
+2005-02-25  Richard Williamson   <rjw@apple.com>
+
+	Fixed <rdar://problem/3382926> Bidi neutrals at RTL/LTR boundaries not handled correctly.
+
+	Second pass at fixing 3382926 w/o causing layout regressions.  Same concept:
+	if directionality of text's element is RTL and first character has neutral directionality
+	then set the initial directionality to RTL.
+
+        Reviewed by Hyatt.
+
+        * khtml/rendering/bidi.cpp:
+        (khtml::RenderBlock::bidiReorderLine):
+        (khtml::RenderBlock::determineStartPosition):
+
 === Safari-400 ===
 
 2005-02-25  Ken Kocienda  <kocienda@apple.com>
