@@ -315,7 +315,7 @@ DOM::Node KJS::toNode(const Value& val)
   return dobj->toNode();
 }
 
-Value KJS::getString(DOM::DOMString s)
+Value KJS::getStringOrNull(DOM::DOMString s)
 {
   if (s.isNull())
     return Null();

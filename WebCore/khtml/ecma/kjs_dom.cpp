@@ -150,9 +150,9 @@ Value DOMNode::getValueProperty(ExecState *exec, int token) const
 {
   switch (token) {
   case NodeName:
-    return getString(node.nodeName());
+    return getStringOrNull(node.nodeName());
   case NodeValue:
-    return getString(node.nodeValue());
+    return getStringOrNull(node.nodeValue());
   case NodeType:
     return Number((unsigned int)node.nodeType());
   case ParentNode:
@@ -172,11 +172,11 @@ Value DOMNode::getValueProperty(ExecState *exec, int token) const
   case Attributes:
     return getDOMNamedNodeMap(exec,node.attributes());
   case NamespaceURI:
-    return getString(node.namespaceURI());
+    return getStringOrNull(node.namespaceURI());
   case Prefix:
-    return getString(node.prefix());
+    return getStringOrNull(node.prefix());
   case LocalName:
-    return getString(node.localName());
+    return getStringOrNull(node.localName());
   case OwnerDocument:
     return getDOMNode(exec,node.ownerDocument());
   case OnAbort:
@@ -615,11 +615,11 @@ Value DOMAttr::getValueProperty(ExecState *exec, int token) const
 {
   switch (token) {
   case Name:
-    return getString(static_cast<DOM::Attr>(node).name());
+    return getStringOrNull(static_cast<DOM::Attr>(node).name());
   case Specified:
     return Boolean(static_cast<DOM::Attr>(node).specified());
   case ValueProperty:
-    return getString(static_cast<DOM::Attr>(node).value());
+    return getStringOrNull(static_cast<DOM::Attr>(node).value());
   case OwnerElement: // DOM2
     return getDOMNode(exec,static_cast<DOM::Attr>(node).ownerElement());
   }
@@ -725,9 +725,9 @@ Value DOMDocument::getValueProperty(ExecState *exec, int token) const
     //kdDebug() << "DOMDocument::StyleSheets, returning " << doc.styleSheets().length() << " stylesheets" << endl;
     return getDOMStyleSheetList(exec, doc.styleSheets(), doc);
   case PreferredStylesheetSet:
-    return getString(doc.preferredStylesheetSet());
+    return getStringOrNull(doc.preferredStylesheetSet());
   case SelectedStylesheetSet:
-    return getString(doc.selectedStylesheetSet());
+    return getStringOrNull(doc.selectedStylesheetSet());
   case ReadyState:
     {
     DOM::DocumentImpl* docimpl = node.handle()->getDocument();
@@ -905,7 +905,7 @@ Value DOMElement::tryGet(ExecState *exec, const Identifier &propertyName) const
   {
     switch( entry->value ) {
     case TagName:
-      return getString(element.tagName());
+      return getStringOrNull(element.tagName());
     case Style:
       return getDOMCSSStyleDeclaration(exec,element.style());
     default:
@@ -922,7 +922,7 @@ Value DOMElement::tryGet(ExecState *exec, const Identifier &propertyName) const
   DOM::DOMString attr = element.getAttribute( propertyName.string() );
   // Give access to attributes
   if ( !attr.isNull() )
-    return getString( attr );
+    return getStringOrNull( attr );
 
   return Undefined();
 }
@@ -939,7 +939,9 @@ Value DOMElementProtoFunc::tryCall(ExecState *exec, Object &thisObj, const List 
 
   switch(id) {
     case DOMElement::GetAttribute:
-      return String(element.getAttribute(args[0].toString(exec).string()));
+      // getString should be used here, since if the attribute isn't present at all, you should
+      // return null and not "".
+      return getStringOrNull(element.getAttribute(args[0].toString(exec).string()));
     case DOMElement::SetAttribute:
       element.setAttribute(args[0].toString(exec).string(),args[1].toString(exec).string());
       return Undefined();
@@ -1057,17 +1059,17 @@ Value DOMDocumentType::getValueProperty(ExecState *exec, int token) const
   DOM::DocumentType type = static_cast<DOM::DocumentType>(node);
   switch (token) {
   case Name:
-    return getString(type.name());
+    return getStringOrNull(type.name());
   case Entities:
     return getDOMNamedNodeMap(exec,type.entities());
   case Notations:
     return getDOMNamedNodeMap(exec,type.notations());
   case PublicId: // DOM2
-    return getString(type.publicId());
+    return getStringOrNull(type.publicId());
   case SystemId: // DOM2
-    return getString(type.systemId());
+    return getStringOrNull(type.systemId());
   case InternalSubset: // DOM2
-    return getString(type.internalSubset());
+    return getStringOrNull(type.internalSubset());
   default:
     kdWarning() << "DOMDocumentType::getValueProperty unhandled token " << token << endl;
     return Value();
@@ -1177,9 +1179,9 @@ Value DOMProcessingInstruction::getValueProperty(ExecState *exec, int token) con
 {
   switch (token) {
   case Target:
-    return getString(static_cast<DOM::ProcessingInstruction>(node).target());
+    return getStringOrNull(static_cast<DOM::ProcessingInstruction>(node).target());
   case Data:
-    return getString(static_cast<DOM::ProcessingInstruction>(node).data());
+    return getStringOrNull(static_cast<DOM::ProcessingInstruction>(node).data());
   case Sheet:
     return getDOMStyleSheet(exec,static_cast<DOM::ProcessingInstruction>(node).sheet());
   default:
@@ -1216,9 +1218,9 @@ Value DOMNotation::getValueProperty(ExecState *, int token) const
 {
   switch (token) {
   case PublicId:
-    return getString(static_cast<DOM::Notation>(node).publicId());
+    return getStringOrNull(static_cast<DOM::Notation>(node).publicId());
   case SystemId:
-    return getString(static_cast<DOM::Notation>(node).systemId());
+    return getStringOrNull(static_cast<DOM::Notation>(node).systemId());
   default:
     kdWarning() << "DOMNotation::getValueProperty unhandled token " << token << endl;
     return Value();
@@ -1245,11 +1247,11 @@ Value DOMEntity::getValueProperty(ExecState *, int token) const
 {
   switch (token) {
   case PublicId:
-    return getString(static_cast<DOM::Entity>(node).publicId());
+    return getStringOrNull(static_cast<DOM::Entity>(node).publicId());
   case SystemId:
-    return getString(static_cast<DOM::Entity>(node).systemId());
+    return getStringOrNull(static_cast<DOM::Entity>(node).systemId());
   case NotationName:
-    return getString(static_cast<DOM::Entity>(node).notationName());
+    return getStringOrNull(static_cast<DOM::Entity>(node).notationName());
   default:
     kdWarning() << "DOMEntity::getValueProperty unhandled token " << token << endl;
     return Value();
@@ -1629,7 +1631,7 @@ Value DOMCharacterDataProtoFunc::tryCall(ExecState *exec, Object &thisObj, const
   DOM::CharacterData data = static_cast<DOMCharacterData *>(thisObj.imp())->toData();
   switch(id) {
     case DOMCharacterData::SubstringData:
-      return getString(data.substringData(args[0].toInteger(exec),args[1].toInteger(exec)));
+      return getStringOrNull(data.substringData(args[0].toInteger(exec),args[1].toInteger(exec)));
     case DOMCharacterData::AppendData:
       data.appendData(args[0].toString(exec).string());
       return Undefined();

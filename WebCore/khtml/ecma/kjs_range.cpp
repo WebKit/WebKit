@@ -171,7 +171,7 @@ Value DOMRangeProtoFunc::tryCall(ExecState *exec, Object &thisObj, const List &a
       result = getDOMRange(exec,range.cloneRange());
       break;
     case DOMRange::ToString:
-      result = getString(range.toString());
+      result = getStringOrNull(range.toString());
       break;
     case DOMRange::Detach:
       range.detach();

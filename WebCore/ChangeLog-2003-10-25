@@ -1,5 +1,22 @@
 2003-05-22  David Hyatt  <hyatt@apple.com>
 
+	Fix for 3259947.  Can't add clippings on iht.com.  The fix is
+	to make sure all DOM properties that relate to attributes return ""
+	and not "null" when the attribute isn't present or when the 
+	DOMString is null.
+
+	Also patching the code for text-indent to make sure that floats
+	don't improperly consume text-indent.  This fixes two of the issues
+	on diveintomark.
+	
+        Reviewed by mjs
+
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::HTMLDocument::tryGet):
+        (KJS::HTMLElement::getValueProperty):
+
+2003-05-22  David Hyatt  <hyatt@apple.com>
+
 	Make sure the overflow clip rect clips out the scrollbars
 	so that child layers aren't able to draw on top of the
 	scrollbars.

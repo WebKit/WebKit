@@ -1388,9 +1388,28 @@ void RenderBlock::newLine()
 int
 RenderBlock::leftOffset() const
 {
-    int left = 0;
+    return borderLeft()+paddingLeft();
+}
 
-    left += borderLeft() + paddingLeft();
+int
+RenderBlock::leftRelOffset(int y, int fixedOffset, int *heightRemaining ) const
+{
+    int left = fixedOffset;
+    if (m_floatingObjects) {
+        if ( heightRemaining ) *heightRemaining = 1;
+        FloatingObject* r;
+        QPtrListIterator<FloatingObject> it(*m_floatingObjects);
+        for ( ; (r = it.current()); ++it )
+        {
+            //kdDebug( 6040 ) <<(void *)this << " left: sy, ey, x, w " << r->startY << "," << r->endY << "," << r->left << "," << r->width << " " << endl;
+            if (r->startY <= y && r->endY > y &&
+                r->type == FloatingObject::FloatLeft &&
+                r->left + r->width > left) {
+                left = r->left + r->width;
+                if ( heightRemaining ) *heightRemaining = r->endY - y;
+            }
+        }
+    }
 
     if ( m_firstLine && style()->direction() == LTR ) {
         int cw=0;
@@ -1399,29 +1418,6 @@ RenderBlock::leftOffset() const
         left += style()->textIndent().minWidth(cw);
     }
 
-    return left;
-}
-
-int
-RenderBlock::leftRelOffset(int y, int fixedOffset, int *heightRemaining ) const
-{
-    int left = fixedOffset;
-    if(!m_floatingObjects)
-        return left;
-
-    if ( heightRemaining ) *heightRemaining = 1;
-    FloatingObject* r;
-    QPtrListIterator<FloatingObject> it(*m_floatingObjects);
-    for ( ; (r = it.current()); ++it )
-    {
-        //kdDebug( 6040 ) <<(void *)this << " left: sy, ey, x, w " << r->startY << "," << r->endY << "," << r->left << "," << r->width << " " << endl;
-        if (r->startY <= y && r->endY > y &&
-            r->type == FloatingObject::FloatLeft &&
-            r->left + r->width > left) {
-            left = r->left + r->width;
-            if ( heightRemaining ) *heightRemaining = r->endY - y;
-        }
-    }
     //kdDebug( 6040 ) << "leftOffset(" << y << ") = " << left << endl;
     return left;
 }
@@ -1429,20 +1425,9 @@ RenderBlock::leftRelOffset(int y, int fixedOffset, int *heightRemaining ) const
 int
 RenderBlock::rightOffset() const
 {
-    int right = m_width;
-
-    right -= borderRight() + paddingRight();
-
+    int right = m_width - borderRight() - paddingRight();
     if (style()->scrollsOverflow() && m_layer)
         right -= m_layer->verticalScrollbarWidth();
-    
-    if ( m_firstLine && style()->direction() == RTL ) {
-        int cw=0;
-        if (style()->textIndent().isPercent())
-            cw = containingBlock()->contentWidth();
-        right += style()->textIndent().minWidth(cw);
-    }
-
     return right;
 }
 
@@ -1451,21 +1436,29 @@ RenderBlock::rightRelOffset(int y, int fixedOffset, int *heightRemaining ) const
 {
     int right = fixedOffset;
 
-    if (!m_floatingObjects) return right;
-
-    if (heightRemaining) *heightRemaining = 1;
-    FloatingObject* r;
-    QPtrListIterator<FloatingObject> it(*m_floatingObjects);
-    for ( ; (r = it.current()); ++it )
-    {
-        //kdDebug( 6040 ) << "right: sy, ey, x, w " << r->startY << "," << r->endY << "," << r->left << "," << r->width << " " << endl;
-        if (r->startY <= y && r->endY > y &&
-            r->type == FloatingObject::FloatRight &&
-            r->left < right) {
-            right = r->left;
-            if ( heightRemaining ) *heightRemaining = r->endY - y;
+    if (m_floatingObjects) {
+        if (heightRemaining) *heightRemaining = 1;
+        FloatingObject* r;
+        QPtrListIterator<FloatingObject> it(*m_floatingObjects);
+        for ( ; (r = it.current()); ++it )
+        {
+            //kdDebug( 6040 ) << "right: sy, ey, x, w " << r->startY << "," << r->endY << "," << r->left << "," << r->width << " " << endl;
+            if (r->startY <= y && r->endY > y &&
+                r->type == FloatingObject::FloatRight &&
+                r->left < right) {
+                right = r->left;
+                if ( heightRemaining ) *heightRemaining = r->endY - y;
+            }
         }
     }
+    
+    if ( m_firstLine && style()->direction() == RTL ) {
+        int cw=0;
+        if (style()->textIndent().isPercent())
+            cw = containingBlock()->contentWidth();
+        right += style()->textIndent().minWidth(cw);
+    }
+    
     //kdDebug( 6040 ) << "rightOffset(" << y << ") = " << right << endl;
     return right;
 }

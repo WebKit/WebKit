@@ -94,7 +94,7 @@ Value DOMCSSStyleDeclaration::tryGet(ExecState *exec, const Identifier &property
   if (entry)
     switch (entry->value) {
     case CssText:
-      return getString(styleDecl.cssText());
+      return getStringOrNull(styleDecl.cssText());
     case Length:
       return Number(styleDecl.length());
     case ParentRule:
@@ -111,7 +111,7 @@ Value DOMCSSStyleDeclaration::tryGet(ExecState *exec, const Identifier &property
   bool ok;
   long unsigned int u = propertyName.toULong(&ok);
   if (ok)
-    return getString(DOM::CSSStyleDeclaration(styleDecl).item(u));
+    return getStringOrNull(DOM::CSSStyleDeclaration(styleDecl).item(u));
 
 #ifdef KJS_VERBOSE
   kdDebug(6070) << "DOMCSSStyleDeclaration: converting to css property name: " << jsNameToProp(propertyName) << endl;
@@ -136,13 +136,13 @@ Value DOMCSSStyleDeclaration::tryGet(ExecState *exec, const Identifier &property
     if (asNumber && v.cssValueType() == DOM::CSSValue::CSS_PRIMITIVE_VALUE)
       return Number(static_cast<DOM::CSSPrimitiveValue>(v).getFloatValue(DOM::CSSPrimitiveValue::CSS_PX));
 
-    return getString(v.cssText());
+    return getStringOrNull(v.cssText());
   }
 
   // see if we know this css property, return empty then
   QCString prop = p.string().latin1();
   if (DOM::getPropertyID(prop.data(), prop.length()))
-      return getString(DOM::DOMString(""));
+      return getStringOrNull(DOM::DOMString(""));
 
   return DOMObject::tryGet(exec, propertyName);
 }
@@ -191,20 +191,20 @@ Value DOMCSSStyleDeclarationProtoFunc::tryCall(ExecState *exec, Object &thisObj,
 
   switch (id) {
     case DOMCSSStyleDeclaration::GetPropertyValue:
-      return getString(styleDecl.getPropertyValue(s));
+      return getStringOrNull(styleDecl.getPropertyValue(s));
     case DOMCSSStyleDeclaration::GetPropertyCSSValue:
       return getDOMCSSValue(exec,styleDecl.getPropertyCSSValue(s));
     case DOMCSSStyleDeclaration::RemoveProperty:
-      return getString(styleDecl.removeProperty(s));
+      return getStringOrNull(styleDecl.removeProperty(s));
     case DOMCSSStyleDeclaration::GetPropertyPriority:
-      return getString(styleDecl.getPropertyPriority(s));
+      return getStringOrNull(styleDecl.getPropertyPriority(s));
     case DOMCSSStyleDeclaration::SetProperty:
       styleDecl.setProperty(args[0].toString(exec).string(),
                             args[1].toString(exec).string(),
                             args[2].toString(exec).string());
       return Undefined();
     case DOMCSSStyleDeclaration::Item:
-      return getString(styleDecl.item(args[0].toInteger(exec)));
+      return getStringOrNull(styleDecl.item(args[0].toInteger(exec)));
     default:
       return Undefined();
   }
@@ -244,7 +244,7 @@ Value DOMStyleSheet::getValueProperty(ExecState *exec, int token) const
 {
   switch (token) {
   case Type:
-    return getString(styleSheet.type());
+    return getStringOrNull(styleSheet.type());
   case Disabled:
     return Boolean(styleSheet.disabled());
   case OwnerNode:
@@ -252,9 +252,9 @@ Value DOMStyleSheet::getValueProperty(ExecState *exec, int token) const
   case ParentStyleSheet:
     return getDOMStyleSheet(exec,styleSheet.parentStyleSheet());
   case Href:
-    return getString(styleSheet.href());
+    return getStringOrNull(styleSheet.href());
   case Title:
-    return getString(styleSheet.title());
+    return getStringOrNull(styleSheet.title());
   case Media:
     return getDOMMediaList(exec, styleSheet.media());
   }
@@ -417,14 +417,14 @@ DOMMediaList::~DOMMediaList()
 Value DOMMediaList::tryGet(ExecState *exec, const Identifier &p) const
 {
   if (p == "mediaText")
-    return getString(mediaList.mediaText());
+    return getStringOrNull(mediaList.mediaText());
   else if (p == lengthPropertyName)
     return Number(mediaList.length());
 
   bool ok;
   long unsigned int u = p.toULong(&ok);
   if (ok)
-    return getString(mediaList.item(u));
+    return getStringOrNull(mediaList.item(u));
 
   return DOMObject::tryGet(exec, p);
 }
@@ -452,7 +452,7 @@ Value KJS::DOMMediaListProtoFunc::tryCall(ExecState *exec, Object &thisObj, cons
   DOM::MediaList mediaList = static_cast<DOMMediaList *>(thisObj.imp())->toMediaList();
   switch (id) {
     case DOMMediaList::Item:
-      return getString(mediaList.item(args[0].toInteger(exec)));
+      return getStringOrNull(mediaList.item(args[0].toInteger(exec)));
     case DOMMediaList::DeleteMedium:
       mediaList.deleteMedium(args[0].toString(exec).string());
       return Undefined();
@@ -672,7 +672,7 @@ Value DOMCSSRule::getValueProperty(ExecState *exec, int token) const
   case Type:
     return Number(cssRule.type());
   case CssText:
-    return getString(cssRule.cssText());
+    return getStringOrNull(cssRule.cssText());
   case ParentStyleSheet:
     return getDOMStyleSheet(exec,cssRule.parentStyleSheet());
   case ParentRule:
@@ -680,7 +680,7 @@ Value DOMCSSRule::getValueProperty(ExecState *exec, int token) const
 
   // for DOM::CSSRule::STYLE_RULE:
   case Style_SelectorText:
-    return getString(static_cast<DOM::CSSStyleRule>(cssRule).selectorText());
+    return getStringOrNull(static_cast<DOM::CSSStyleRule>(cssRule).selectorText());
   case Style_Style:
     return getDOMCSSStyleDeclaration(exec,static_cast<DOM::CSSStyleRule>(cssRule).style());
 
@@ -696,13 +696,13 @@ Value DOMCSSRule::getValueProperty(ExecState *exec, int token) const
 
   // for DOM::CSSRule::PAGE_RULE:
   case Page_SelectorText:
-    return getString(static_cast<DOM::CSSPageRule>(cssRule).selectorText());
+    return getStringOrNull(static_cast<DOM::CSSPageRule>(cssRule).selectorText());
   case Page_Style:
     return getDOMCSSStyleDeclaration(exec,static_cast<DOM::CSSPageRule>(cssRule).style());
 
   // for DOM::CSSRule::IMPORT_RULE:
   case Import_Href:
-    return getString(static_cast<DOM::CSSImportRule>(cssRule).href());
+    return getStringOrNull(static_cast<DOM::CSSImportRule>(cssRule).href());
   case Import_Media:
     return getDOMMediaList(exec,static_cast<DOM::CSSImportRule>(cssRule).media());
   case Import_StyleSheet:
@@ -710,7 +710,7 @@ Value DOMCSSRule::getValueProperty(ExecState *exec, int token) const
 
   // for DOM::CSSRule::CHARSET_RULE:
   case Charset_Encoding:
-    return getString(static_cast<DOM::CSSCharsetRule>(cssRule).encoding());
+    return getStringOrNull(static_cast<DOM::CSSCharsetRule>(cssRule).encoding());
 
   default:
     kdWarning() << "DOMCSSRule::getValueProperty unhandled token " << token << endl;
@@ -862,7 +862,7 @@ DOMCSSValue::~DOMCSSValue()
 Value DOMCSSValue::tryGet(ExecState *exec, const Identifier &p) const
 {
   if (p == "cssText")
-    return getString(cssValue.cssText());
+    return getStringOrNull(cssValue.cssText());
   else if (p == "cssValueType");
     return Number(cssValue.cssValueType());
   return DOMObject::tryGet(exec,p);
@@ -981,7 +981,7 @@ Value DOMCSSPrimitiveValueProtoFunc::tryCall(ExecState *exec, Object &thisObj, c
       val.setStringValue(args[0].toInteger(exec),args[1].toString(exec).string());
       return Undefined();
     case DOMCSSPrimitiveValue::GetStringValue:
-      return getString(val.getStringValue());
+      return getStringOrNull(val.getStringValue());
     case DOMCSSPrimitiveValue::GetCounterValue:
       return getDOMCounter(exec,val.getCounterValue());
     case DOMCSSPrimitiveValue::GetRectValue:
@@ -1204,11 +1204,11 @@ Value DOMCounter::getValueProperty(ExecState *, int token) const
 {
   switch (token) {
   case identifier:
-    return getString(counter.identifier());
+    return getStringOrNull(counter.identifier());
   case listStyle:
-    return getString(counter.listStyle());
+    return getStringOrNull(counter.listStyle());
   case separator:
-    return getString(counter.separator());
+    return getStringOrNull(counter.separator());
   default:
     return Value();
   }

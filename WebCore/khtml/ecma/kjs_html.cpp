@@ -186,13 +186,13 @@ Value KJS::HTMLDocument::tryGet(ExecState *exec, const Identifier &propertyName)
   if (entry) {
     switch (entry->value) {
     case Title:
-      return getString(doc.title());
+      return String(doc.title());
     case Referrer:
-      return doc.referrer().isNull() ? String() : getString(doc.referrer());
+      return String(doc.referrer());
     case Domain:
       return String(doc.domain());
     case URL:
-      return getString(doc.URL());
+      return String(doc.URL());
     case Body:
       return getDOMNode(exec,doc.body());
     case Location:
@@ -1116,26 +1116,26 @@ Value KJS::HTMLElement::getValueProperty(ExecState *exec, int token) const
   switch (element.elementId()) {
   case ID_HTML: {
     DOM::HTMLHtmlElement html = element;
-    if      (token == HtmlVersion)         return getString(html.version());
+    if      (token == HtmlVersion)         return String(html.version());
   }
   break;
   case ID_HEAD: {
     DOM::HTMLHeadElement head = element;
-    if      (token == HeadProfile)         return getString(head.profile());
+    if      (token == HeadProfile)         return String(head.profile());
   }
   break;
   case ID_LINK: {
     DOM::HTMLLinkElement link = element;
     switch (token) {
     case LinkDisabled:        return Boolean(link.disabled());
-    case LinkCharset:         return getString(link.charset());
-    case LinkHref:            return getString(link.href());
-    case LinkHrefLang:        return getString(link.hreflang());
-    case LinkMedia:           return getString(link.media());
-    case LinkRel:             return getString(link.rel());
-    case LinkRev:             return getString(link.rev());
-    case LinkTarget:          return getString(link.target());
-    case LinkType:            return getString(link.type());
+    case LinkCharset:         return String(link.charset());
+    case LinkHref:            return String(link.href());
+    case LinkHrefLang:        return String(link.hreflang());
+    case LinkMedia:           return String(link.media());
+    case LinkRel:             return String(link.rel());
+    case LinkRev:             return String(link.rev());
+    case LinkTarget:          return String(link.target());
+    case LinkType:            return String(link.type());
     case LinkSheet:           return getDOMStyleSheet(exec,static_cast<DOM::ProcessingInstruction>(node).sheet());
     }
   }
@@ -1143,25 +1143,25 @@ Value KJS::HTMLElement::getValueProperty(ExecState *exec, int token) const
   case ID_TITLE: {
     DOM::HTMLTitleElement title = element;
     switch (token) {
-    case TitleText:                 return getString(title.text());
+    case TitleText:                 return String(title.text());
     }
   }
   break;
   case ID_META: {
     DOM::HTMLMetaElement meta = element;
     switch (token) {
-    case MetaContent:         return getString(meta.content());
-    case MetaHttpEquiv:       return getString(meta.httpEquiv());
-    case MetaName:            return getString(meta.name());
-    case MetaScheme:          return getString(meta.scheme());
+    case MetaContent:         return String(meta.content());
+    case MetaHttpEquiv:       return String(meta.httpEquiv());
+    case MetaName:            return String(meta.name());
+    case MetaScheme:          return String(meta.scheme());
     }
   }
   break;
   case ID_BASE: {
     DOM::HTMLBaseElement base = element;
     switch (token) {
-    case BaseHref:            return getString(base.href());
-    case BaseTarget:          return getString(base.target());
+    case BaseHref:            return String(base.href());
+    case BaseTarget:          return String(base.target());
     }
   }
   break;
@@ -1169,7 +1169,7 @@ Value KJS::HTMLElement::getValueProperty(ExecState *exec, int token) const
     DOM::HTMLIsIndexElement isindex = element;
     switch (token) {
     case IsIndexForm:            return getDOMNode(exec,isindex.form()); // type HTMLFormElement
-    case IsIndexPrompt:          return getString(isindex.prompt());
+    case IsIndexPrompt:          return String(isindex.prompt());
     }
   }
   break;
@@ -1177,8 +1177,8 @@ Value KJS::HTMLElement::getValueProperty(ExecState *exec, int token) const
     DOM::HTMLStyleElement style = element;
     switch (token) {
     case StyleDisabled:        return Boolean(style.disabled());
-    case StyleMedia:           return getString(style.media());
-    case StyleType:            return getString(style.type());
+    case StyleMedia:           return String(style.media());
+    case StyleType:            return String(style.type());
     case StyleSheet:           return getDOMStyleSheet(exec,static_cast<DOM::ProcessingInstruction>(node).sheet());
     }
   }
@@ -1186,12 +1186,12 @@ Value KJS::HTMLElement::getValueProperty(ExecState *exec, int token) const
   case ID_BODY: {
     DOM::HTMLBodyElement body = element;
     switch (token) {
-    case BodyALink:           return getString(body.aLink());
-    case BodyBackground:      return getString(body.background());
-    case BodyBgColor:         return getString(body.bgColor());
-    case BodyLink:            return getString(body.link());
-    case BodyText:            return getString(body.text());
-    case BodyVLink:           return getString(body.vLink());
+    case BodyALink:           return String(body.aLink());
+    case BodyBackground:      return String(body.background());
+    case BodyBgColor:         return String(body.bgColor());
+    case BodyLink:            return String(body.link());
+    case BodyText:            return String(body.text());
+    case BodyVLink:           return String(body.vLink());
     case BodyScrollHeight:   return Number(body.ownerDocument().view() ? body.ownerDocument().view()->contentsHeight() : 0);
     case BodyScrollWidth:    return Number(body.ownerDocument().view() ? body.ownerDocument().view()->contentsWidth() : 0);
     }
@@ -1203,11 +1203,11 @@ Value KJS::HTMLElement::getValueProperty(ExecState *exec, int token) const
     switch (token) {
     case FormElements:        return getHTMLCollection(exec,form.elements());
     case FormLength:          return Number(form.length());
-    case FormName:            return getString(form.name());
-    case FormAcceptCharset:   return getString(form.acceptCharset());
-    case FormAction:          return getString(form.action());
-    case FormEncType:         return getString(form.enctype());
-    case FormMethod:          return getString(form.method());
+    case FormName:            return String(form.name());
+    case FormAcceptCharset:   return String(form.acceptCharset());
+    case FormAction:          return String(form.action());
+    case FormEncType:         return String(form.enctype());
+    case FormMethod:          return String(form.method());
     case FormTarget:          return String(form.target());
     }
   }
@@ -1215,15 +1215,15 @@ Value KJS::HTMLElement::getValueProperty(ExecState *exec, int token) const
   case ID_SELECT: {
     DOM::HTMLSelectElement select = element;
     switch (token) {
-    case SelectType:            return getString(select.type());
+    case SelectType:            return String(select.type());
     case SelectSelectedIndex:   return Number(select.selectedIndex());
-    case SelectValue:           return getString(select.value());
+    case SelectValue:           return String(select.value());
     case SelectLength:          return Number(select.length());
     case SelectForm:            return getDOMNode(exec,select.form()); // type HTMLFormElement
     case SelectOptions:         return getSelectHTMLCollection(exec, select.options(), select); // type HTMLCollection
     case SelectDisabled:        return Boolean(select.disabled());
     case SelectMultiple:        return Boolean(select.multiple());
-    case SelectName:            return getString(select.name());
+    case SelectName:            return String(select.name());
     case SelectSize:            return Number(select.size());
     case SelectTabIndex:        return Number(select.tabIndex());
     }
@@ -1233,7 +1233,7 @@ Value KJS::HTMLElement::getValueProperty(ExecState *exec, int token) const
     DOM::HTMLOptGroupElement optgroup = element;
     switch (token) {
     case OptGroupDisabled:        return Boolean(optgroup.disabled());
-    case OptGroupLabel:           return getString(optgroup.label());
+    case OptGroupLabel:           return String(optgroup.label());
     }
   }
   break;
@@ -1242,53 +1242,53 @@ Value KJS::HTMLElement::getValueProperty(ExecState *exec, int token) const
     switch (token) {
     case OptionForm:            return getDOMNode(exec,option.form()); // type HTMLFormElement
     case OptionDefaultSelected: return Boolean(option.defaultSelected());
-    case OptionText:            return getString(option.text());
+    case OptionText:            return String(option.text());
     case OptionIndex:           return Number(option.index());
     case OptionDisabled:        return Boolean(option.disabled());
-    case OptionLabel:           return getString(option.label());
+    case OptionLabel:           return String(option.label());
     case OptionSelected:        return Boolean(option.selected());
-    case OptionValue:           return getString(option.value());
+    case OptionValue:           return String(option.value());
     }
   }
   break;
   case ID_INPUT: {
     DOM::HTMLInputElement input = element;
     switch (token) {
-    case InputDefaultValue:    return getString(input.defaultValue());
+    case InputDefaultValue:    return String(input.defaultValue());
     case InputDefaultChecked:  return Boolean(input.defaultChecked());
     case InputForm:            return getDOMNode(exec,input.form()); // type HTMLFormElement
-    case InputAccept:          return getString(input.accept());
-    case InputAccessKey:       return getString(input.accessKey());
-    case InputAlign:           return getString(input.align());
-    case InputAlt:             return getString(input.alt());
+    case InputAccept:          return String(input.accept());
+    case InputAccessKey:       return String(input.accessKey());
+    case InputAlign:           return String(input.align());
+    case InputAlt:             return String(input.alt());
     case InputChecked:         return Boolean(input.checked());
     case InputDisabled:        return Boolean(input.disabled());
     case InputMaxLength:       return Number(input.maxLength());
-    case InputName:            return getString(input.name());
+    case InputName:            return String(input.name());
     case InputReadOnly:        return Boolean(input.readOnly());
-    case InputSize:            return getString(input.size());
-    case InputSrc:             return getString(input.src());
+    case InputSize:            return String(input.size());
+    case InputSrc:             return String(input.src());
     case InputTabIndex:        return Number(input.tabIndex());
-    case InputType:            return getString(input.type());
-    case InputUseMap:          return getString(input.useMap());
-    case InputValue:           return getString(input.value());
+    case InputType:            return String(input.type());
+    case InputUseMap:          return String(input.useMap());
+    case InputValue:           return String(input.value());
     }
   }
   break;
   case ID_TEXTAREA: {
     DOM::HTMLTextAreaElement textarea = element;
     switch (token) {
-    case TextAreaDefaultValue:    return getString(textarea.defaultValue());
+    case TextAreaDefaultValue:    return String(textarea.defaultValue());
     case TextAreaForm:            return getDOMNode(exec,textarea.form()); // type HTMLFormElement
-    case TextAreaAccessKey:       return getString(textarea.accessKey());
+    case TextAreaAccessKey:       return String(textarea.accessKey());
     case TextAreaCols:            return Number(textarea.cols());
     case TextAreaDisabled:        return Boolean(textarea.disabled());
-    case TextAreaName:            return getString(textarea.name());
+    case TextAreaName:            return String(textarea.name());
     case TextAreaReadOnly:        return Boolean(textarea.readOnly());
     case TextAreaRows:            return Number(textarea.rows());
     case TextAreaTabIndex:        return Number(textarea.tabIndex());
-    case TextAreaType:            return getString(textarea.type());
-    case TextAreaValue:           return getString(textarea.value());
+    case TextAreaType:            return String(textarea.type());
+    case TextAreaValue:           return String(textarea.value());
     }
   }
   break;
@@ -1296,12 +1296,12 @@ Value KJS::HTMLElement::getValueProperty(ExecState *exec, int token) const
     DOM::HTMLButtonElement button = element;
     switch (token) {
     case ButtonForm:            return getDOMNode(exec,button.form()); // type HTMLFormElement
-    case ButtonAccessKey:       return getString(button.accessKey());
+    case ButtonAccessKey:       return String(button.accessKey());
     case ButtonDisabled:        return Boolean(button.disabled());
-    case ButtonName:            return getString(button.name());
+    case ButtonName:            return String(button.name());
     case ButtonTabIndex:        return Number(button.tabIndex());
-    case ButtonType:            return getString(button.type());
-    case ButtonValue:           return getString(button.value());
+    case ButtonType:            return String(button.type());
+    case ButtonValue:           return String(button.value());
     }
   }
   break;
@@ -1309,8 +1309,8 @@ Value KJS::HTMLElement::getValueProperty(ExecState *exec, int token) const
     DOM::HTMLLabelElement label = element;
     switch (token) {
     case LabelForm:            return getDOMNode(exec,label.form()); // type HTMLFormElement
-    case LabelAccessKey:       return getString(label.accessKey());
-    case LabelHtmlFor:         return getString(label.htmlFor());
+    case LabelAccessKey:       return String(label.accessKey());
+    case LabelHtmlFor:         return String(label.htmlFor());
     }
   }
   break;
@@ -1325,8 +1325,8 @@ Value KJS::HTMLElement::getValueProperty(ExecState *exec, int token) const
     DOM::HTMLLegendElement legend = element;
     switch (token) {
     case LegendForm:            return getDOMNode(exec,legend.form()); // type HTMLFormElement
-    case LegendAccessKey:       return getString(legend.accessKey());
-    case LegendAlign:           return getString(legend.align());
+    case LegendAccessKey:       return String(legend.accessKey());
+    case LegendAlign:           return String(legend.align());
     }
   }
   break;
@@ -1334,7 +1334,7 @@ Value KJS::HTMLElement::getValueProperty(ExecState *exec, int token) const
     DOM::HTMLUListElement uList = element;
     switch (token) {
     case UListCompact:         return Boolean(uList.compact());
-    case UListType:            return getString(uList.type());
+    case UListType:            return String(uList.type());
     }
   }
   break;
@@ -1343,7 +1343,7 @@ Value KJS::HTMLElement::getValueProperty(ExecState *exec, int token) const
     switch (token) {
     case OListCompact:         return Boolean(oList.compact());
     case OListStart:           return Number(oList.start());
-    case OListType:            return getString(oList.type());
+    case OListType:            return String(oList.type());
     }
   }
   break;
@@ -1371,7 +1371,7 @@ Value KJS::HTMLElement::getValueProperty(ExecState *exec, int token) const
   case ID_LI: {
     DOM::HTMLLIElement li = element;
     switch (token) {
-    case LIType:            return getString(li.type());
+    case LIType:            return String(li.type());
     case LIValue:           return Number(li.value());
     }
   }
@@ -1379,14 +1379,14 @@ Value KJS::HTMLElement::getValueProperty(ExecState *exec, int token) const
   case ID_DIV: {
     DOM::HTMLDivElement div = element;
     switch (token) {
-    case DivAlign:           return getString(div.align());
+    case DivAlign:           return String(div.align());
     }
   }
   break;
   case ID_P: {
     DOM::HTMLParagraphElement paragraph = element;
     switch (token) {
-    case ParagraphAlign:           return getString(paragraph.align());
+    case ParagraphAlign:           return String(paragraph.align());
     }
   }
   break;
@@ -1398,20 +1398,20 @@ Value KJS::HTMLElement::getValueProperty(ExecState *exec, int token) const
   case ID_H6: {
     DOM::HTMLHeadingElement heading = element;
     switch (token) {
-    case HeadingAlign:           return getString(heading.align());
+    case HeadingAlign:           return String(heading.align());
     }
   }
   break;
   case ID_BLOCKQUOTE: {
     DOM::HTMLBlockquoteElement blockquote = element;
     switch (token) {
-    case BlockQuoteCite:            return getString(blockquote.cite());
+    case BlockQuoteCite:            return String(blockquote.cite());
     }
   }
   case ID_Q: {
     DOM::HTMLQuoteElement quote = element;
     switch (token) {
-    case QuoteCite:            return getString(quote.cite());
+    case QuoteCite:            return String(quote.cite());
     }
   }
   case ID_PRE: {
@@ -1424,35 +1424,35 @@ Value KJS::HTMLElement::getValueProperty(ExecState *exec, int token) const
   case ID_BR: {
     DOM::HTMLBRElement br = element;
     switch (token) {
-    case BRClear:           return getString(br.clear());
+    case BRClear:           return String(br.clear());
     }
   }
   break;
   case ID_BASEFONT: {
     DOM::HTMLBaseFontElement baseFont = element;
     switch (token) {
-    case BaseFontColor:           return getString(baseFont.color());
-    case BaseFontFace:            return getString(baseFont.face());
-    case BaseFontSize:            return getString(baseFont.size());
+    case BaseFontColor:           return String(baseFont.color());
+    case BaseFontFace:            return String(baseFont.face());
+    case BaseFontSize:            return String(baseFont.size());
     }
   }
   break;
   case ID_FONT: {
     DOM::HTMLFontElement font = element;
     switch (token) {
-    case FontColor:           return getString(font.color());
-    case FontFace:            return getString(font.face());
-    case FontSize:            return getString(font.size());
+    case FontColor:           return String(font.color());
+    case FontFace:            return String(font.face());
+    case FontSize:            return String(font.size());
     }
   }
   break;
   case ID_HR: {
     DOM::HTMLHRElement hr = element;
     switch (token) {
-    case HRAlign:           return getString(hr.align());
+    case HRAlign:           return String(hr.align());
     case HRNoShade:         return Boolean(hr.noShade());
-    case HRSize:            return getString(hr.size());
-    case HRWidth:           return getString(hr.width());
+    case HRSize:            return String(hr.size());
+    case HRWidth:           return String(hr.width());
     }
   }
   break;
@@ -1460,57 +1460,57 @@ Value KJS::HTMLElement::getValueProperty(ExecState *exec, int token) const
   case ID_DEL: {
     DOM::HTMLModElement mod = element;
     switch (token) {
-    case ModCite:            return getString(mod.cite());
-    case ModDateTime:        return getString(mod.dateTime());
+    case ModCite:            return String(mod.cite());
+    case ModDateTime:        return String(mod.dateTime());
     }
   }
   break;
   case ID_A: {
     DOM::HTMLAnchorElement anchor = element;
     switch (token) {
-    case AnchorAccessKey:       return getString(anchor.accessKey());
-    case AnchorCharset:         return getString(anchor.charset());
-    case AnchorCoords:          return getString(anchor.coords());
-    case AnchorHref:            return getString(anchor.href());
-    case AnchorHrefLang:        return getString(anchor.hreflang());
-    case AnchorHash:            return getString('#'+KURL(anchor.href().string()).ref());
-    case AnchorHost:            return getString(KURL(anchor.href().string()).host());
+    case AnchorAccessKey:       return String(anchor.accessKey());
+    case AnchorCharset:         return String(anchor.charset());
+    case AnchorCoords:          return String(anchor.coords());
+    case AnchorHref:            return String(anchor.href());
+    case AnchorHrefLang:        return String(anchor.hreflang());
+    case AnchorHash:            return String('#'+KURL(anchor.href().string()).ref());
+    case AnchorHost:            return String(KURL(anchor.href().string()).host());
     case AnchorHostname: {
       KURL url(anchor.href().string());
       kdDebug(6070) << "anchor::hostname uses:" <<url.url()<<endl;
       if (url.port()==0)
-        return getString(url.host());
+        return String(url.host());
       else
-        return getString(url.host() + ":" + QString::number(url.port()));
+        return String(url.host() + ":" + QString::number(url.port()));
     }
-    case AnchorPathName:        return getString(KURL(anchor.href().string()).path());
-    case AnchorPort:            return getString(QString::number(KURL(anchor.href().string()).port()));
-    case AnchorProtocol:        return getString(KURL(anchor.href().string()).protocol()+":");
-    case AnchorSearch:          return getString(KURL(anchor.href().string()).query());
-    case AnchorName:            return getString(anchor.name());
-    case AnchorRel:             return getString(anchor.rel());
-    case AnchorRev:             return getString(anchor.rev());
-    case AnchorShape:           return getString(anchor.shape());
+    case AnchorPathName:        return String(KURL(anchor.href().string()).path());
+    case AnchorPort:            return String(QString::number(KURL(anchor.href().string()).port()));
+    case AnchorProtocol:        return String(KURL(anchor.href().string()).protocol()+":");
+    case AnchorSearch:          return String(KURL(anchor.href().string()).query());
+    case AnchorName:            return String(anchor.name());
+    case AnchorRel:             return String(anchor.rel());
+    case AnchorRev:             return String(anchor.rev());
+    case AnchorShape:           return String(anchor.shape());
     case AnchorTabIndex:        return Number(anchor.tabIndex());
-    case AnchorTarget:          return getString(anchor.target());
-    case AnchorText:            return getString(anchor.innerHTML());
-    case AnchorType:            return getString(anchor.type());
+    case AnchorTarget:          return String(anchor.target());
+    case AnchorText:            return String(anchor.innerHTML());
+    case AnchorType:            return String(anchor.type());
     }
   }
   break;
   case ID_IMG: {
     DOM::HTMLImageElement image = element;
     switch (token) {
-    case ImageName:            return getString(image.name());
-    case ImageAlign:           return getString(image.align());
-    case ImageAlt:             return getString(image.alt());
+    case ImageName:            return String(image.name());
+    case ImageAlign:           return String(image.align());
+    case ImageAlt:             return String(image.alt());
     case ImageBorder:          return Number(image.border());
     case ImageHeight:          return Number(image.height());
     case ImageHspace:          return Number(image.hspace());
     case ImageIsMap:           return Boolean(image.isMap());
-    case ImageLongDesc:        return getString(image.longDesc());
+    case ImageLongDesc:        return String(image.longDesc());
     case ImageSrc:             return String(image.src());
-    case ImageUseMap:          return getString(image.useMap());
+    case ImageUseMap:          return String(image.useMap());
     case ImageVspace:          return Number(image.vspace());
     case ImageWidth:           return Number(image.width());
     case ImageX:               return Number(image.x());
@@ -1522,52 +1522,52 @@ Value KJS::HTMLElement::getValueProperty(ExecState *exec, int token) const
     DOM::HTMLObjectElement object = element;
     switch (token) {
     case ObjectForm:            return getDOMNode(exec,object.form()); // type HTMLFormElement
-    case ObjectCode:            return getString(object.code());
-    case ObjectAlign:           return getString(object.align());
-    case ObjectArchive:         return getString(object.archive());
-    case ObjectBorder:          return getString(object.border());
-    case ObjectCodeBase:        return getString(object.codeBase());
-    case ObjectCodeType:        return getString(object.codeType());
+    case ObjectCode:            return String(object.code());
+    case ObjectAlign:           return String(object.align());
+    case ObjectArchive:         return String(object.archive());
+    case ObjectBorder:          return String(object.border());
+    case ObjectCodeBase:        return String(object.codeBase());
+    case ObjectCodeType:        return String(object.codeType());
     case ObjectContentDocument: return checkNodeSecurity(exec,object.contentDocument()) ? 
 				       getDOMNode(exec, object.contentDocument()) : Undefined();
-    case ObjectData:            return getString(object.data());
+    case ObjectData:            return String(object.data());
     case ObjectDeclare:         return Boolean(object.declare());
-    case ObjectHeight:          return getString(object.height());
-    case ObjectHspace:          return getString(object.hspace());
-    case ObjectName:            return getString(object.name());
-    case ObjectStandby:         return getString(object.standby());
+    case ObjectHeight:          return String(object.height());
+    case ObjectHspace:          return String(object.hspace());
+    case ObjectName:            return String(object.name());
+    case ObjectStandby:         return String(object.standby());
     case ObjectTabIndex:        return Number(object.tabIndex());
-    case ObjectType:            return getString(object.type());
-    case ObjectUseMap:          return getString(object.useMap());
-    case ObjectVspace:          return getString(object.vspace());
-    case ObjectWidth:           return getString(object.width());
+    case ObjectType:            return String(object.type());
+    case ObjectUseMap:          return String(object.useMap());
+    case ObjectVspace:          return String(object.vspace());
+    case ObjectWidth:           return String(object.width());
     }
   }
   break;
   case ID_PARAM: {
     DOM::HTMLParamElement param = element;
     switch (token) {
-    case ParamName:            return getString(param.name());
-    case ParamType:            return getString(param.type());
-    case ParamValue:           return getString(param.value());
-    case ParamValueType:       return getString(param.valueType());
+    case ParamName:            return String(param.name());
+    case ParamType:            return String(param.type());
+    case ParamValue:           return String(param.value());
+    case ParamValueType:       return String(param.valueType());
     }
   }
   break;
   case ID_APPLET: {
     DOM::HTMLAppletElement applet = element;
     switch (token) {
-    case AppletAlign:           return getString(applet.align());
-    case AppletAlt:             return getString(applet.alt());
-    case AppletArchive:         return getString(applet.archive());
-    case AppletCode:            return getString(applet.code());
-    case AppletCodeBase:        return getString(applet.codeBase());
-    case AppletHeight:          return getString(applet.height());
-    case AppletHspace:          return getString(applet.hspace());
-    case AppletName:            return getString(applet.name());
-    case AppletObject:          return getString(applet.object());
-    case AppletVspace:          return getString(applet.vspace());
-    case AppletWidth:           return getString(applet.width());
+    case AppletAlign:           return String(applet.align());
+    case AppletAlt:             return String(applet.alt());
+    case AppletArchive:         return String(applet.archive());
+    case AppletCode:            return String(applet.code());
+    case AppletCodeBase:        return String(applet.codeBase());
+    case AppletHeight:          return String(applet.height());
+    case AppletHspace:          return String(applet.hspace());
+    case AppletName:            return String(applet.name());
+    case AppletObject:          return String(applet.object());
+    case AppletVspace:          return String(applet.vspace());
+    case AppletWidth:           return String(applet.width());
     }
   }
   break;
@@ -1575,48 +1575,48 @@ Value KJS::HTMLElement::getValueProperty(ExecState *exec, int token) const
     DOM::HTMLMapElement map = element;
     switch (token) {
     case MapAreas:           return getHTMLCollection(exec, map.areas()); // type HTMLCollection
-    case MapName:            return getString(map.name());
+    case MapName:            return String(map.name());
     }
   }
   break;
   case ID_AREA: {
     DOM::HTMLAreaElement area = element;
     switch (token) {
-    case AreaAccessKey:       return getString(area.accessKey());
-    case AreaAlt:             return getString(area.alt());
-    case AreaCoords:          return getString(area.coords());
-    case AreaHref:            return getString(area.href());
-    case AreaHash:            return getString('#'+KURL(area.href().string()).ref());
-    case AreaHost:            return getString(KURL(area.href().string()).host());
+    case AreaAccessKey:       return String(area.accessKey());
+    case AreaAlt:             return String(area.alt());
+    case AreaCoords:          return String(area.coords());
+    case AreaHref:            return String(area.href());
+    case AreaHash:            return String('#'+KURL(area.href().string()).ref());
+    case AreaHost:            return String(KURL(area.href().string()).host());
     case AreaHostName: {
       KURL url(area.href().string());
       kdDebug(6070) << "link::hostname uses:" <<url.url()<<endl;
       if (url.port()==0)
-        return getString(url.host());
+        return String(url.host());
       else
-        return getString(url.host() + ":" + QString::number(url.port()));
+        return String(url.host() + ":" + QString::number(url.port()));
     }
-    case AreaPathName:        return getString(KURL(area.href().string()).path());
-    case AreaPort:            return getString(QString::number(KURL(area.href().string()).port()));
-    case AreaProtocol:        return getString(KURL(area.href().string()).protocol()+":");
-    case AreaSearch:          return getString(KURL(area.href().string()).query());
+    case AreaPathName:        return String(KURL(area.href().string()).path());
+    case AreaPort:            return String(QString::number(KURL(area.href().string()).port()));
+    case AreaProtocol:        return String(KURL(area.href().string()).protocol()+":");
+    case AreaSearch:          return String(KURL(area.href().string()).query());
     case AreaNoHref:          return Boolean(area.noHref());
-    case AreaShape:           return getString(area.shape());
+    case AreaShape:           return String(area.shape());
     case AreaTabIndex:        return Number(area.tabIndex());
-    case AreaTarget:          return getString(area.target());
+    case AreaTarget:          return String(area.target());
     }
   }
   break;
   case ID_SCRIPT: {
     DOM::HTMLScriptElement script = element;
     switch (token) {
-    case ScriptText:            return getString(script.text());
-    case ScriptHtmlFor:         return getString(script.htmlFor());
-    case ScriptEvent:           return getString(script.event());
-    case ScriptCharset:         return getString(script.charset());
+    case ScriptText:            return String(script.text());
+    case ScriptHtmlFor:         return String(script.htmlFor());
+    case ScriptEvent:           return String(script.event());
+    case ScriptCharset:         return String(script.charset());
     case ScriptDefer:           return Boolean(script.defer());
-    case ScriptSrc:             return getString(script.src());
-    case ScriptType:            return getString(script.type());
+    case ScriptSrc:             return String(script.src());
+    case ScriptType:            return String(script.type());
     }
   }
   break;
@@ -1628,34 +1628,34 @@ Value KJS::HTMLElement::getValueProperty(ExecState *exec, int token) const
     case TableTFoot:           return getDOMNode(exec,table.tFoot()); // type HTMLTableSectionElement
     case TableRows:            return getHTMLCollection(exec,table.rows()); // type HTMLCollection
     case TableTBodies:         return getHTMLCollection(exec,table.tBodies()); // type HTMLCollection
-    case TableAlign:           return getString(table.align());
-    case TableBgColor:         return getString(table.bgColor());
-    case TableBorder:          return getString(table.border());
-    case TableCellPadding:     return getString(table.cellPadding());
-    case TableCellSpacing:     return getString(table.cellSpacing());
-    case TableFrame:           return getString(table.frame());
-    case TableRules:           return getString(table.rules());
-    case TableSummary:         return getString(table.summary());
-    case TableWidth:           return getString(table.width());
+    case TableAlign:           return String(table.align());
+    case TableBgColor:         return String(table.bgColor());
+    case TableBorder:          return String(table.border());
+    case TableCellPadding:     return String(table.cellPadding());
+    case TableCellSpacing:     return String(table.cellSpacing());
+    case TableFrame:           return String(table.frame());
+    case TableRules:           return String(table.rules());
+    case TableSummary:         return String(table.summary());
+    case TableWidth:           return String(table.width());
     }
   }
   break;
   case ID_CAPTION: {
     DOM::HTMLTableCaptionElement tableCaption;
     switch (token) {
-    case TableCaptionAlign:       return getString(tableCaption.align());
+    case TableCaptionAlign:       return String(tableCaption.align());
     }
   }
   break;
   case ID_COL: {
     DOM::HTMLTableColElement tableCol = element;
     switch (token) {
-    case TableColAlign:           return getString(tableCol.align());
-    case TableColCh:              return getString(tableCol.ch());
-    case TableColChOff:           return getString(tableCol.chOff());
+    case TableColAlign:           return String(tableCol.align());
+    case TableColCh:              return String(tableCol.ch());
+    case TableColChOff:           return String(tableCol.chOff());
     case TableColSpan:            return Number(tableCol.span());
-    case TableColVAlign:          return getString(tableCol.vAlign());
-    case TableColWidth:           return getString(tableCol.width());
+    case TableColVAlign:          return String(tableCol.vAlign());
+    case TableColWidth:           return String(tableCol.width());
     }
   }
   break;
@@ -1664,10 +1664,10 @@ Value KJS::HTMLElement::getValueProperty(ExecState *exec, int token) const
   case ID_TFOOT: {
     DOM::HTMLTableSectionElement tableSection = element;
     switch (token) {
-    case TableSectionAlign:           return getString(tableSection.align());
-    case TableSectionCh:              return getString(tableSection.ch());
-    case TableSectionChOff:           return getString(tableSection.chOff());
-    case TableSectionVAlign:          return getString(tableSection.vAlign());
+    case TableSectionAlign:           return String(tableSection.align());
+    case TableSectionCh:              return String(tableSection.ch());
+    case TableSectionChOff:           return String(tableSection.chOff());
+    case TableSectionVAlign:          return String(tableSection.vAlign());
     case TableSectionRows:            return getHTMLCollection(exec,tableSection.rows()); // type HTMLCollection
     }
   }
@@ -1678,11 +1678,11 @@ Value KJS::HTMLElement::getValueProperty(ExecState *exec, int token) const
    case TableRowRowIndex:        return Number(tableRow.rowIndex());
    case TableRowSectionRowIndex: return Number(tableRow.sectionRowIndex());
    case TableRowCells:           return getHTMLCollection(exec,tableRow.cells()); // type HTMLCollection
-   case TableRowAlign:           return getString(tableRow.align());
-   case TableRowBgColor:         return getString(tableRow.bgColor());
-   case TableRowCh:              return getString(tableRow.ch());
-   case TableRowChOff:           return getString(tableRow.chOff());
-   case TableRowVAlign:          return getString(tableRow.vAlign());
+   case TableRowAlign:           return String(tableRow.align());
+   case TableRowBgColor:         return String(tableRow.bgColor());
+   case TableRowCh:              return String(tableRow.ch());
+   case TableRowChOff:           return String(tableRow.chOff());
+   case TableRowVAlign:          return String(tableRow.vAlign());
    }
   }
   break;
@@ -1691,28 +1691,28 @@ Value KJS::HTMLElement::getValueProperty(ExecState *exec, int token) const
     DOM::HTMLTableCellElement tableCell = element;
     switch (token) {
     case TableCellCellIndex:       return Number(tableCell.cellIndex());
-    case TableCellAbbr:            return getString(tableCell.abbr());
-    case TableCellAlign:           return getString(tableCell.align());
-    case TableCellAxis:            return getString(tableCell.axis());
-    case TableCellBgColor:         return getString(tableCell.bgColor());
-    case TableCellCh:              return getString(tableCell.ch());
-    case TableCellChOff:           return getString(tableCell.chOff());
+    case TableCellAbbr:            return String(tableCell.abbr());
+    case TableCellAlign:           return String(tableCell.align());
+    case TableCellAxis:            return String(tableCell.axis());
+    case TableCellBgColor:         return String(tableCell.bgColor());
+    case TableCellCh:              return String(tableCell.ch());
+    case TableCellChOff:           return String(tableCell.chOff());
     case TableCellColSpan:         return Number(tableCell.colSpan());
-    case TableCellHeaders:         return getString(tableCell.headers());
-    case TableCellHeight:          return getString(tableCell.height());
+    case TableCellHeaders:         return String(tableCell.headers());
+    case TableCellHeight:          return String(tableCell.height());
     case TableCellNoWrap:          return Boolean(tableCell.noWrap());
     case TableCellRowSpan:         return Number(tableCell.rowSpan());
-    case TableCellScope:           return getString(tableCell.scope());
-    case TableCellVAlign:          return getString(tableCell.vAlign());
-    case TableCellWidth:           return getString(tableCell.width());
+    case TableCellScope:           return String(tableCell.scope());
+    case TableCellVAlign:          return String(tableCell.vAlign());
+    case TableCellWidth:           return String(tableCell.width());
     }
   }
   break;
   case ID_FRAMESET: {
     DOM::HTMLFrameSetElement frameSet = element;
     switch (token) {
-    case FrameSetCols:            return getString(frameSet.cols());
-    case FrameSetRows:            return getString(frameSet.rows());
+    case FrameSetCols:            return String(frameSet.cols());
+    case FrameSetRows:            return String(frameSet.rows());
     }
   }
   break;
@@ -1721,35 +1721,35 @@ Value KJS::HTMLElement::getValueProperty(ExecState *exec, int token) const
     switch (token) {
     case FrameContentDocument: return checkNodeSecurity(exec,frameElement.contentDocument()) ? 
 				      getDOMNode(exec, frameElement.contentDocument()) : Undefined();
-    case FrameFrameBorder:     return getString(frameElement.frameBorder());
-    case FrameLongDesc:        return getString(frameElement.longDesc());
-    case FrameMarginHeight:    return getString(frameElement.marginHeight());
-    case FrameMarginWidth:     return getString(frameElement.marginWidth());
-    case FrameName:            return getString(frameElement.name());
+    case FrameFrameBorder:     return String(frameElement.frameBorder());
+    case FrameLongDesc:        return String(frameElement.longDesc());
+    case FrameMarginHeight:    return String(frameElement.marginHeight());
+    case FrameMarginWidth:     return String(frameElement.marginWidth());
+    case FrameName:            return String(frameElement.name());
     case FrameNoResize:        return Boolean(frameElement.noResize());
-    case FrameScrolling:       return getString(frameElement.scrolling());
+    case FrameScrolling:       return String(frameElement.scrolling());
     case FrameSrc:
-    case FrameLocation:        return getString(frameElement.src());
+    case FrameLocation:        return String(frameElement.src());
     }
   }
   break;
   case ID_IFRAME: {
     DOM::HTMLIFrameElement iFrame = element;
     switch (token) {
-    case IFrameAlign:                return getString(iFrame.align());
+    case IFrameAlign:                return String(iFrame.align());
       // ### security check ?
     case IFrameDocument: // non-standard, mapped to contentDocument
     case IFrameContentDocument: return checkNodeSecurity(exec,iFrame.contentDocument()) ? 
 				  getDOMNode(exec, iFrame.contentDocument()) : Undefined();
-    case IFrameFrameBorder:     return getString(iFrame.frameBorder());
-    case IFrameHeight:          return getString(iFrame.height());
-    case IFrameLongDesc:        return getString(iFrame.longDesc());
-    case IFrameMarginHeight:    return getString(iFrame.marginHeight());
-    case IFrameMarginWidth:     return getString(iFrame.marginWidth());
-    case IFrameName:            return getString(iFrame.name());
-    case IFrameScrolling:       return getString(iFrame.scrolling());
-    case IFrameSrc:             return getString(iFrame.src());
-    case IFrameWidth:           return getString(iFrame.width());
+    case IFrameFrameBorder:     return String(iFrame.frameBorder());
+    case IFrameHeight:          return String(iFrame.height());
+    case IFrameLongDesc:        return String(iFrame.longDesc());
+    case IFrameMarginHeight:    return String(iFrame.marginHeight());
+    case IFrameMarginWidth:     return String(iFrame.marginWidth());
+    case IFrameName:            return String(iFrame.name());
+    case IFrameScrolling:       return String(iFrame.scrolling());
+    case IFrameSrc:             return String(iFrame.src());
+    case IFrameWidth:           return String(iFrame.width());
     }
     break;
   }
@@ -1759,19 +1759,21 @@ Value KJS::HTMLElement::getValueProperty(ExecState *exec, int token) const
   // generic properties
   switch (token) {
   case ElementId:
-    return getString(element.id());
+      // iht.com relies on this value being "" when no id is present.  Other browsers do this as well.
+      // So we use String() instead of String() here.
+    return String(element.id());
   case ElementTitle:
-    return getString(element.title());
+    return String(element.title());
   case ElementLang:
-    return getString(element.lang());
+    return String(element.lang());
   case ElementDir:
-    return getString(element.dir());
+    return String(element.dir());
   case ElementClassName:
-    return getString(element.className());
+    return String(element.className());
   case ElementInnerHTML:
-    return getString(element.innerHTML());
+    return String(element.innerHTML());
   case ElementInnerText:
-    return getString(element.innerText());
+    return String(element.innerText());
   case ElementDocument:
     return getDOMNode(exec,element.ownerDocument());
   case ElementChildren:

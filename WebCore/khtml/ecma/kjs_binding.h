@@ -160,7 +160,7 @@ namespace KJS {
   /**
    *  Get a String object, or Null() if s is null
    */
-  Value getString(DOM::DOMString s);
+  Value getStringOrNull(DOM::DOMString s);
 
   /**
    * Convery a KJS value into a QVariant
