@@ -3275,7 +3275,10 @@ void ReplaceSelectionCommand::doApply()
     // can be removed.
     NodeImpl *block = startPos.node()->enclosingBlockFlowElement();
     if (removeBlockPlaceholderIfNeeded(block)) {
-        startPos = Position(block, 0);
+        Position pos = Position(block, 0);
+        if (!endPos.node()->inDocument()) // endPos might have been in the placeholder just removed.
+            endPos = pos;
+        startPos = pos;
     }
     
     bool addLeadingSpace = false;

@@ -1,3 +1,16 @@
+2004-12-10  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+        Fix for this bug:
+
+        <rdar://problem/3914755> REGRESSION (Mail): Insertion point disappears after pasting paragraph
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::ReplaceSelectionCommand::doApply): Selection could end up in a "placeholder" node
+        that was removed from the document when pasting. This caused the disappearance. Now this
+        is detected, and the selection is shifted to a node that is in the document.
+
 2004-12-09  Richard Williamson   <rjw@apple.com>
 
 	Check to disable threaded decoding during
