@@ -1,3 +1,16 @@
+2003-12-19  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3515255>: Standalone image drag makes ocassionally makes 2 copies
+
+        Reviewed by john.
+
+	* WebKit.pbproj/project.pbxproj: Xcode 1.1 file format change
+        * WebView.subproj/WebImageView.h:
+        * WebView.subproj/WebImageView.m: copied double-drag protection code from WebHTMLView
+        (-[WebImageView mouseDown:]): set ignoringMouseDraggedEvents to NO
+        (-[WebImageView mouseDragged:]): if ignoringMouseDraggedEvents, return
+        (-[WebImageView draggedImage:endedAt:operation:]): set ignoringMouseDraggedEvents to YES
+
 === Safari-119 ===
 
 2003-12-18  Richard Williamson   <rjw@apple.com>

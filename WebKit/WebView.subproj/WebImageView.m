@@ -226,9 +226,15 @@
     return [webView _menuForElement:element];
 }
 
+- (void)mouseDown:(NSEvent *)event
+{
+    ignoringMouseDraggedEvents = NO;
+    [super mouseDown:event];
+}
+
 - (void)mouseDragged:(NSEvent *)event
 {
-    if (![self haveCompleteImage]) {
+    if (ignoringMouseDraggedEvents || ![self haveCompleteImage]) {
         return;
     }
     
@@ -257,6 +263,9 @@
 
 - (void)draggedImage:(NSImage *)anImage endedAt:(NSPoint)aPoint operation:(NSDragOperation)operation
 {
+    // Prevent queued mouseDragged events from coming after the drag which can cause a double drag.
+    ignoringMouseDraggedEvents = YES;
+    
     // Reregister for drag types because they were unregistered before the drag.
     [[[self _web_parentWebFrameView] _webView] _registerDraggedTypes];
 

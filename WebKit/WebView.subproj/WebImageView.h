@@ -13,6 +13,7 @@
 {
     WebImageRepresentation *rep;
     BOOL needsLayout;
+    BOOL ignoringMouseDraggedEvents;
 }
 + (NSArray *)supportedImageMIMETypes;
 @end
