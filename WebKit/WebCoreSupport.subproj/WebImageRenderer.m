@@ -102,7 +102,6 @@ static NSMutableArray *activeImageRenderers;
     return self;
 }
 
-// Part of the workaround for bug 3090341.
 - (id)initWithData:(NSData *)data MIMEType:(NSString *)MIME
 {
     self = [super initWithData:data];
