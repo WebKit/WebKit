@@ -25,12 +25,9 @@
 
 #import <Foundation/Foundation.h>
 
-// The WebCore client must arrange to call these methods when a text
-// field's field editor becomes or resigns first responder, and before
-// and after it process a mouseDown: event.
+// The WebCore client must arrange to call these methods after a text
+// field's field editor process a mouseDown: event.
 
 @interface NSObject (WebCoreFieldDelegate)
-- (void)fieldEditorWillBecomeFirstResponder;
-- (void)fieldEditorWillResignFirstResponder;
 - (void)fieldEditorDidMouseDown:(NSEvent *)event;
 @end

@@ -1,5 +1,14 @@
 2003-04-03  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Trey.
+
+	- removed no-longer forwarding of become/resignFirstResponder
+	
+        * WebView.subproj/WebHTMLViewPrivate.m: Removed
+	become/resignFirstResponder poses for WebNSTextView.
+
+2003-04-03  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Richard and Don.
 
         * WebView.subproj/WebDataProtocol.m:

@@ -675,43 +675,6 @@ static BOOL inNSTextViewDrawRect;
     inNSTextViewDrawRect = NO;
 }
 
-- (BOOL)resignFirstResponder
-{
-    NSLog(@"WebTextView resignFirstResponder");
-    
-    bool resign = [super resignFirstResponder];
-
-    if (![self _web_inHTMLView]) {
-	return resign;
-    }
-
-    NSView *possibleContainingField = [self delegate];
-
-    if (resign && [possibleContainingField respondsToSelector:@selector(fieldEditorWillResignFirstResponder)]) {
-	[possibleContainingField fieldEditorWillResignFirstResponder];
-    }
-
-    return resign;
-}
-
-- (BOOL)becomeFirstResponder
-{
-    bool become = [super becomeFirstResponder];
-
-    if (![self _web_inHTMLView]) {
-	return become;
-    }
-
-    NSView *possibleContainingField = [self delegate];
-
-    if (become && [possibleContainingField respondsToSelector:@selector(fieldEditorWillBecomeFirstResponder)]) {
-        //FIXME:  Note due to 3178518, this code is never executed.  Delegate==nil at this point.
-        [possibleContainingField fieldEditorWillBecomeFirstResponder];
-    }
-
-    return become;
-}
-
 -(void)mouseDown:(NSEvent *)event
 {
     NSView *possibleContainingField = [self delegate];

@@ -223,13 +223,27 @@
 - (BOOL)control:(NSControl *)control textShouldBeginEditing:(NSText *)fieldEditor
 {
     WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(widget);
-    return [bridge control:control textShouldBeginEditing:fieldEditor];
+    BOOL should = [bridge control:control textShouldBeginEditing:fieldEditor];
+
+    if (should) {
+	QFocusEvent event(QEvent::FocusIn);
+	(const_cast<QObject *>(widget->eventFilterObject()))->eventFilter(widget, &event);
+    }
+
+    return should;
 }
 
 - (BOOL)control:(NSControl *)control textShouldEndEditing:(NSText *)fieldEditor
 {
     WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(widget);
-    return [bridge control:control textShouldEndEditing:fieldEditor];
+    BOOL should = [bridge control:control textShouldEndEditing:fieldEditor];
+
+    if (should) {
+	QFocusEvent event(QEvent::FocusOut);
+	(const_cast<QObject *>(widget->eventFilterObject()))->eventFilter(widget, &event);
+    }
+
+    return should;
 }
 
 - (BOOL)control:(NSControl *)control didFailToFormatString:(NSString *)string errorDescription:(NSString *)error
@@ -315,19 +329,6 @@
     }
     [self _KWQ_scrollFrameToVisible];
     return [super becomeFirstResponder];
-}
-
-- (void)fieldEditorWillBecomeFirstResponder
-{
-    //FIXME:  Note due to 3178518, this code is never called.
-    QFocusEvent event(QEvent::FocusIn);
-    (const_cast<QObject *>(widget->eventFilterObject()))->eventFilter(widget, &event);
-}
-
-- (void)fieldEditorWillResignFirstResponder
-{
-    QFocusEvent event(QEvent::FocusOut);
-    (const_cast<QObject *>(widget->eventFilterObject()))->eventFilter(widget, &event);
 }
 
 - (void)display

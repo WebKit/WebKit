@@ -1,3 +1,18 @@
+2003-04-03  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Trey.
+
+	- fixed 3031544 - can't login on secure paytrust page due to lack of onchange handler
+
+        * kwq/KWQTextField.mm:
+        (-[KWQTextField control:textShouldBeginEditing:]): Send FocusIn event
+	to event filter here.
+        (-[KWQTextField control:textShouldEndEditing:]): Send FocusOut event to
+	event filter here.
+        (-[KWQTextField fieldEditorDidBecomeFirstResponder]): Removed.
+        (-[KWQTextField fieldEditorDidResignFirstResponder]): Removed.
+        * kwq/WebCoreFirstResponderChanges.h: Removed first responder methods.
+
 2003-04-03  Trey Matteson  <trey@apple.com>
 
 	3067928 - printing should not break lines in half
