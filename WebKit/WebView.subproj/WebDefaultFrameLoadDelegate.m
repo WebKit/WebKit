@@ -47,4 +47,6 @@ static WebDefaultFrameLoadDelegate *sharedDelegate = nil;
 
 - (void)webView:(WebView *)sender windowScriptObjectAvailable:(WebScriptObject *)obj { }
 
+- (void)webView:(WebView *)sender didFirstLayoutInFrame:(WebFrame *)frame { }
+
 @end

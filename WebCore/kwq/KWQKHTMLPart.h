@@ -339,6 +339,8 @@ public:
 
     bool canGoBackOrForward(int distance) const;
 
+    void didFirstLayout();
+    
 private:
     virtual void khtmlMousePressEvent(khtml::MousePressEvent *);
     virtual void khtmlMouseDoubleClickEvent(khtml::MouseDoubleClickEvent *);

@@ -247,3 +247,7 @@ Could be worth adding to the API.
 - (id)initWithTarget:(id)t defaultTarget:(id)dt templateClass:(Class)aClass;
 + (id)safeForwarderWithTarget:(id)t defaultTarget:(id)dt templateClass:(Class)aClass;
 @end
+
+@interface NSObject (WebFrameLoadDelegatePrivate)
+- (void)webView:(WebView *)sender didFirstLayoutInFrame:(WebFrame *)frame;
+@end

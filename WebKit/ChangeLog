@@ -1,3 +1,15 @@
+2004-09-09  Chris Blumenberg  <cblu@apple.com>
+
+	Support for: <rdar://problem/3795485> debug menu item to enable RSS animation on first layout
+
+        Reviewed by NOBODY (OOPS!).
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge didFirstLayout]): new
+        * WebView.subproj/WebDefaultFrameLoadDelegate.m:
+        (-[WebDefaultFrameLoadDelegate webView:didFirstLayoutInFrame:]): new
+        * WebView.subproj/WebViewPrivate.h:
+
 2004-09-09  Richard Williamson   <rjw@apple.com>
 
         Alternate implementation of image rendering.  Use CGImageRefs instead

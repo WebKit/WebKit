@@ -620,10 +620,12 @@ void KHTMLView::layout()
     ScrollBarMode currentHMode = hScrollBarMode();
     ScrollBarMode currentVMode = vScrollBarMode();
 
+    bool didFirstLayout = false;
     if (d->firstLayout || (hMode != currentHMode || vMode != currentVMode)) {
         suppressScrollBars(true);
         if (d->firstLayout) {
             d->firstLayout = false;
+            didFirstLayout = true;
             
             // Set the initial vMode to AlwaysOn if we're auto.
             if (vMode == Auto)
@@ -705,6 +707,12 @@ void KHTMLView::layout()
         return;
     }
     setStaticBackground(d->useSlowRepaints);
+
+#if APPLE_CHANGES
+    if (didFirstLayout) {
+        m_part->didFirstLayout();
+    }
+#endif
 }
 
 //

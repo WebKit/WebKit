@@ -3929,3 +3929,8 @@ void KWQKHTMLPart::prepareForUserAction()
     // We'll let you submit the same form twice if you do two separate user actions.
     _submittedFormURL = KURL();
 }
+
+void KWQKHTMLPart::didFirstLayout()
+{
+    [_bridge didFirstLayout];
+}

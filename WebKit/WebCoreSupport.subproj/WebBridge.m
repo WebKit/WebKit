@@ -1382,6 +1382,12 @@ static id <WebFormDelegate> formDelegate(WebBridge *self)
     return [[_frame webView] isContinuousSpellCheckingEnabled];
 }
 
+- (void)didFirstLayout
+{
+    WebView *wv = [_frame webView];
+    [[wv _frameLoadDelegateForwarder] webView:wv didFirstLayoutInFrame:_frame];
+}
+
 // This method exists to hold localizable strings for action names for the Undo menu item. It contains
 // all of the names used in NSTextView. We will wire some or all of these up eventually; for now we are
 // just putting them here to get them localized before the localization freeze for Tiger.

@@ -1319,6 +1319,7 @@ public:
   void setStatusBarText(const QString &);
   void started(KIO::Job *);
   void frameDetached();
+  virtual void didFirstLayout() {}
 #endif
 
   int frameCount;
