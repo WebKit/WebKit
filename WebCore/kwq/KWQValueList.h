@@ -26,7 +26,7 @@
 #ifndef QVALUELIST_H_
 #define QVALUELIST_H_
 
-#include <kwqdef.h>
+#include <KWQDef.h>
 
 template<class T> class QValueListIterator {
 public: 

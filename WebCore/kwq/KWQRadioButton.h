@@ -26,10 +26,11 @@
 #ifndef QRADIOBUTTON_H_
 #define QRADIOBUTTON_H_
 
-#include "qwidget.h"
-#include "qbutton.h"
+#include <KWQButton.h>
 
-class QRadioButton : public QButton {
+#include "qwidget.h"
+
+class QRadioButton : public KWQButton {
 public:
     QRadioButton();
     QRadioButton(QWidget *);

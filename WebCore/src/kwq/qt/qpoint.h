@@ -26,7 +26,7 @@
 #ifndef QPOINT_H_
 #define QPOINT_H_
 
-#include <kwqdef.h>
+#include <KWQDef.h>
 
 class QPoint {
 public:

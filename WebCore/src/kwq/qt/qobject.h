@@ -26,9 +26,8 @@
 #ifndef QOBJECT_H_
 #define QOBJECT_H_
 
-#include <kwqdef.h>
+#include <KWQDef.h>
 
-#include "qobjectdefs.h"
 #include "qnamespace.h"
 #include "qstring.h"
 #include "qevent.h"
@@ -41,8 +40,29 @@
 #define SIGNAL(x) "x"
 #define emit
 #define Q_OBJECT
+#define Q_PROPERTY(text)
 
+class QEvent;
+class QPaintDevice;
+class QPaintDeviceMetrics;
+class QWidget;
+class QColor;
+class QColorGroup;
+class QPalette;
+class QPainter;
+class QRegion;
+class QSize;
+class QSizePolicy;
+class QRect;
+class QFont;
+class QFontMetrics;
+class QBrush;
+class QBitmap;
+class QMovie;
+class QTimer;
+class QImage;
 class QVariant;
+
 
 class QObject : public Qt {
 public:

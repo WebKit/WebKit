@@ -29,12 +29,17 @@
 #include <qpixmap.h>
 #include <qstring.h>
 #include <kinstance.h>
-#include "kicontheme.h"
+
+class KIcon {
+public:
+    enum Context { Any, Action, Application, Device, FileSystem, MimeType };
+    enum States { DefaultState, ActiveState, DisabledState, LastState };
+};
 
 class KIconLoader {
 public:
-    QPixmap loadIcon(const QString& name, int group, int size=0, int state=KIcon::DefaultState, 
-        QString *path_store=0L, bool canReturnNull=false) const;
+    QPixmap loadIcon(const QString &name, int group, int size=0, int state=KIcon::DefaultState, 
+    QString *path_store=0L, bool canReturnNull=false) const;
 };
 
 #endif

@@ -26,9 +26,8 @@
 #ifndef QSTYLE_H_
 #define QSTYLE_H_
 
-#include "qobject.h"
-#include "qobjectdefs.h"
-#include "qsize.h"
+#include <qobject.h>
+#include <qsize.h>
 
 class QStyle : public QObject {
 public:

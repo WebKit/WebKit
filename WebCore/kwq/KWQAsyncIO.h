@@ -26,7 +26,7 @@
 #ifndef QASYNCIO_H_
 #define QASYNCIO_H_
 
-#include <kwqdef.h>
+#include <KWQDef.h>
 
 class QAsynchIO {
 protected:

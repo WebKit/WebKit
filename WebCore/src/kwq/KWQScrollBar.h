@@ -23,10 +23,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef KXMLGUICLIENT_H_
-#define KXMLGUICLIENT_H_
+#ifndef KWQSCROLLVIEW_H_
+#define KWQSCROLLVIEW_H_
 
-class KXMLGUIClient {
+#include <qwidget.h>
+#include <qpalette.h>
+
+class KWQScrollBar : public QWidget {
+public:
+    virtual void setPalette(const QPalette &);
 };
 
 #endif

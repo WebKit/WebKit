@@ -30,6 +30,7 @@
 
 class QFrame : public QWidget {
 public:
+
     enum Shape {
         NoFrame,
         Box,

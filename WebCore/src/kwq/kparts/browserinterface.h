@@ -26,7 +26,8 @@
 #ifndef BROWSERINTERFACE_H_
 #define BROWSERINTERFACE_H_
 
-class QVariant;
+#include <qobject.h>
+#include <qvariant.h>
 
 namespace KParts {
 

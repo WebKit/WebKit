@@ -26,7 +26,7 @@
 #ifndef QARRAY_H_
 #define QARRAY_H_
 
-#include <kwqdef.h>
+#include <KWQDef.h>
 
 template <class T> class QArray {
 public:

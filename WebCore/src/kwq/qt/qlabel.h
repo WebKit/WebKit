@@ -27,6 +27,8 @@
 #define QLABEL_H_
 
 #include "qframe.h"
+#include "qwidget.h"
+#include "qstring.h"
 
 class QLabel : public QFrame {
 public:

@@ -23,29 +23,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef KCONFIGBASE_H_
-#define KCONFIGBASE_H_
+#ifndef KWQBUTTON_H_
+#define KWQBUTTON_H_
 
-#include <qobject.h>
-#include <qcolor.h>
-#include <qfont.h>
-#include <qdatetime.h>
-#include <qstrlist.h>
-#include <qstringlist.h>
-#include <qvariant.h>
-#include <qmap.h>
+#include <qwidget.h>
+#include <qstring.h>
 
-class QString;
-class QColor;
-
-class KConfigBase {
+class KWQButton : public QWidget {
 public:
-    void setGroup(const QString& pGroup);
-    QString readEntry(const char *pKey, const QString& aDefault = QString::null) const;
-    int readNumEntry(const char *pKey, int nDefault = 0) const;
-    unsigned int readUnsignedNumEntry(const char *pKey, unsigned int nDefault = 0) const;
-    bool readBoolEntry(const char *pKey, bool nDefault = 0) const;
-    QColor readColorEntry(const char *pKey, const QColor* pDefault = 0L) const;
+    KWQButton();
+    KWQButton(QWidget *);
+    
+    virtual void setText(const QString &);
+    QString text() const;
 };
 
 #endif

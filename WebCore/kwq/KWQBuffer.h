@@ -26,7 +26,7 @@
 #ifndef QBUFFER_H_
 #define QBUFFER_H_
 
-#include <kwqdef.h>
+#include <KWQDef.h>
 
 #include "qstring.h"
 

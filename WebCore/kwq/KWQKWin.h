@@ -26,7 +26,7 @@
 #ifndef KWIN_H_
 #define KWIN_H_
 
-#include <qobjectdefs.h>
+#include <qobject.h>
 #include <qrect.h>
 #include <qstring.h>
 

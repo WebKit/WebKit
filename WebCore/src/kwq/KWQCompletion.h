@@ -23,31 +23,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef QOBJECTDEFS_H_
-#define QOBJECTDEFS_H_
+#ifndef KWQCOMPLETION_H_
+#define KWQCOMPLETION_H_
 
-#define Q_PROPERTY(text)
+#include <qobject.h>
+#include <qstringlist.h>
 
-class QObject;
-class QEvent;
+class KWQCompletion : public QObject {
+public:
+    KWQCompletion();
+    void setItems(const QStringList &);
+};
 
-class QPaintDevice;
-class QPaintDeviceMetrics;
-class QWidget;
-class QColor;
-class QColorGroup;
-class QPalette;
-class QPainter;
-class QRegion;
-class QSize;
-class QSizePolicy;
-class QRect;
-class QFont;
-class QFontMetrics;
-class QBrush;
-class QBitmap;
-class QMovie;
-class QTimer;
-class QImage;
+class KWQCompletionBase {
+public:
+     KWQCompletionBase();
+     KWQCompletion *completionObject(bool hsig = true);
+};
 
 #endif

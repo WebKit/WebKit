@@ -23,31 +23,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef QOBJECTDEFS_H_
-#define QOBJECTDEFS_H_
+#ifndef KWQSCROLLVIEW_H_
+#define KWQSCROLLVIEW_H_
 
-#define Q_PROPERTY(text)
+#include <qwidget.h>
+#include <qpalette.h>
 
-class QObject;
-class QEvent;
-
-class QPaintDevice;
-class QPaintDeviceMetrics;
-class QWidget;
-class QColor;
-class QColorGroup;
-class QPalette;
-class QPainter;
-class QRegion;
-class QSize;
-class QSizePolicy;
-class QRect;
-class QFont;
-class QFontMetrics;
-class QBrush;
-class QBitmap;
-class QMovie;
-class QTimer;
-class QImage;
+class KWQScrollBar : public QWidget {
+public:
+    virtual void setPalette(const QPalette &);
+};
 
 #endif

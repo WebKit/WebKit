@@ -26,7 +26,7 @@
 #ifndef QMAP_H_
 #define QMAP_H_
 
-#include <kwqdef.h>
+#include <KWQDef.h>
 
 template<class K, class T> class QMapIterator {
 public:

@@ -26,10 +26,11 @@
 #ifndef QLIST_H_
 #define QLIST_H_
 
-#include <kwqdef.h>
+#include <KWQDef.h>
+
 #include "qcollection.h"
 
-template <class T> class QList {
+template <class T> class QList : public QCollection {
 public:
     // FIXME: should any of these functions be moved into a base collection
     // class implementation?

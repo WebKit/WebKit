@@ -26,11 +26,12 @@
 #ifndef QPUSHBUTTON_H_
 #define QPUSHBUTTON_H_
 
+#include <KWQButton.h>
+
 #include "qwidget.h"
-#include "qbutton.h"
 #include "qstring.h"
 
-class QPushButton : public QButton {
+class QPushButton : public KWQButton {
 public:
     QPushButton();
     QPushButton(QWidget *);

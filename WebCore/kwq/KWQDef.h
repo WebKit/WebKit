@@ -23,23 +23,42 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef QDATASTREAM_H_
-#define QDATASTREAM_H_
+#ifndef KWQDEF_H_
+#define KWQDEF_H_
 
-#include <qarray.h>
-#include <qiodevice.h>
-#include <qstring.h>
+typedef unsigned char uchar;
+typedef unsigned short ushort;
+typedef unsigned uint;
 
-class QDataStream {
-public:
-    QDataStream( QByteArray, int mode );
-    virtual ~QDataStream();
+typedef int Q_INT32;  
+typedef unsigned int Q_UINT32;  
 
-    QDataStream &operator<<(long int);
-    QDataStream &operator<<(const char *);
-    QDataStream &operator<<(const QString &);
-    QDataStream &operator<<(const QCString &);
-    QDataStream &operator>>(const QString &);
-};
+typedef Q_INT32 QCOORD;
+
+typedef uint WFlags;
+typedef int WId;
+
+#define QMAX(a,b) ((a) > (b) ? (a) : (b))
+#define QMIN(a,b) ((a) < (b) ? (a) : (b))
+
+#define KMAX(a,b) QMAX(a, b)
+#define KMIN(a,b) QMIN(a, b)
+
+#define QABS(a) (((a) >= 0) ? (a) : -(a))
+
+#ifndef TRUE
+#define TRUE (1)
+#endif
+
+#ifndef FALSE
+#define FALSE (0)
+#endif
+
+#define ASSERT(a)
+void qDebug(const char *msg, ...);
+
+#ifdef NEED_BOGUS_X_DEFINES
+typedef int XEvent;
+#endif
 
 #endif

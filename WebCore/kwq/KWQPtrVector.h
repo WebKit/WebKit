@@ -26,8 +26,9 @@
 #ifndef QVECTOR_H_
 #define QVECTOR_H_
 
-#include <kwqdef.h>
-#include <qcollection.h>
+#include <KWQDef.h>
+
+#include "qcollection.h"
 
 typedef void *Item;
 

@@ -26,7 +26,7 @@
 #ifndef QASYNCIMAGEIO_H_
 #define QASYNCIMAGEIO_H_
 
-#include <kwqdef.h>
+#include <KWQDef.h>
 
 class QImageDecoder {
 public:

@@ -32,10 +32,10 @@
 #include "qpoint.h"
 #include "qsize.h"
 #include "qpalette.h"
-#include "qstyle.h"
 #include "qfont.h"
 #include "qcursor.h"
 #include "qevent.h"
+#include "qstyle.h"
 
 class QWidget : public QObject, public QPaintDevice {
 public:

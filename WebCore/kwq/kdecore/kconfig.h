@@ -26,9 +26,26 @@
 #ifndef KCONFIG_H_
 #define KCONFIG_H_
 
-#include "kconfigbase.h"
+#include <qobject.h>
+#include <qcolor.h>
+#include <qfont.h>
+#include <qdatetime.h>
+#include <qstring.h>
+#include <qstrlist.h>
+#include <qstringlist.h>
+#include <qvariant.h>
+#include <qmap.h>
+#include <qcolor.h>
 
-class QString;
+class KConfigBase {
+public:
+    void setGroup(const QString& pGroup);
+    QString readEntry(const char *pKey, const QString& aDefault = QString::null) const;
+    int readNumEntry(const char *pKey, int nDefault = 0) const;
+    unsigned int readUnsignedNumEntry(const char *pKey, unsigned int nDefault = 0) const;
+    bool readBoolEntry(const char *pKey, bool nDefault = 0) const;
+    QColor readColorEntry(const char *pKey, const QColor* pDefault = 0L) const;
+};
 
 class KConfig : public KConfigBase {
 public:

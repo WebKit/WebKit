@@ -26,7 +26,8 @@
 #ifndef KMESSAGEBOX_H_
 #define KMESSAGEBOX_H_
 
-class QWidget;
+#include <qwidget.h>
+#include <qstring.h>
 
 class KMessageBox {
 public:

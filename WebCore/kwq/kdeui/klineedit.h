@@ -27,10 +27,12 @@
 #define KLINEEDIT_H_
 
 #include <qlineedit.h>
-#include <kcompletion.h>
-#include <kcompletionbox.h>
 
-class KLineEdit : public QLineEdit, public KCompletionBase {
+#include <KWQCompletion.h>
+
+#include "kcompletionbox.h"
+
+class KLineEdit : public QLineEdit, public KWQCompletionBase {
 public:
     KLineEdit(QWidget *parent=0, const char *name=0);
 
