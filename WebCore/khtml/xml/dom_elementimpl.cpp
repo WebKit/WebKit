@@ -240,6 +240,15 @@ DOMString ElementImpl::getAttribute(NodeImpl::Id id) const
     return defattr->val();
 }
 
+DOMString ElementImpl::getAttributeNS(const DOMString &namespaceURI,
+                                      const DOMString &localName) const
+{
+    NodeImpl::Id id = getDocument()->attrId(namespaceURI.implementation(),
+                                            localName.implementation(), true);
+    if (!id) return DOMString();
+    return getAttribute(id);
+}
+
 void ElementImpl::setAttribute(NodeImpl::Id id, DOMStringImpl* value, int &exceptioncode )
 {
     // allocate attributemap if necessary
@@ -464,14 +473,10 @@ bool ElementImpl::childAllowed( NodeImpl *newChild )
     if (!childTypeAllowed(newChild->nodeType()))
         return false;
 
-    // ### check xml element allowedness according to DTD
-
-    // If either this node or the other node is an XML element node, allow regardless (we don't do DTD checks for XML
-    // yet)
-    if (isXMLElementNode() || newChild->isXMLElementNode())
-	return true;
-    else
-	return checkChild(id(), newChild->id());
+    // For XML documents, we are non-validating and do not check against a DTD, even for HTML elements.
+    if (getDocument()->isHTMLDocument())
+        return checkChild(id(), newChild->id());
+    return true;
 }
 
 bool ElementImpl::childTypeAllowed( unsigned short type )

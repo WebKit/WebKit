@@ -136,7 +136,7 @@ static void warningHandler(void *userData, const char *message, ...)
         va_start(args, message);
         vasprintf(&m, message, args);
         va_end(args);
-        if (!reader->errorHandler()->warning(QXmlParseException(m, reader->lineNumber(), reader->columnNumber()))) {
+        if (!reader->errorHandler()->warning(QXmlParseException(m, reader->columnNumber(), reader->lineNumber()))) {
             reader->stopParsing();
         }
         free(m);
@@ -157,9 +157,32 @@ static void fatalErrorHandler(void *userData, const char *message, ...)
         va_start(args, message);
         vasprintf(&m, message, args);
         va_end(args);
-        if (!reader->errorHandler()->fatalError(QXmlParseException(m, reader->lineNumber(), reader->columnNumber()))) {
+        if (!reader->errorHandler()->fatalError(QXmlParseException(m, reader->columnNumber(), reader->lineNumber()))) {
             reader->stopParsing();
         }
+        reader->recordError();
+        free(m);
+    }
+}
+
+static void normalErrorHandler(void *userData, const char *message, ...)
+{
+    QXmlSimpleReader *reader = static_cast<QXmlSimpleReader *>(userData);
+    if (reader->parserStopped()) {
+        return;
+    }
+    if (!reader->errorHandler()) {
+        reader->stopParsing();
+    } else {
+        char *m;
+        va_list args;
+        va_start(args, message);
+        vasprintf(&m, message, args);
+        va_end(args);
+        if (!reader->errorHandler()->error(QXmlParseException(m, reader->columnNumber(), reader->lineNumber()))) {
+            reader->stopParsing();
+        }
+        reader->recordError();
         free(m);
     }
 }
@@ -212,7 +235,7 @@ bool QXmlSimpleReader::parse(const QXmlInputSource &input)
     xmlSAXHandler handler = {
         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
-        NULL, NULL, NULL, NULL, NULL, NULL, fatalErrorHandler, fatalErrorHandler,
+        NULL, NULL, NULL, NULL, NULL, NULL, normalErrorHandler, fatalErrorHandler,
         NULL, NULL, NULL,
         0
     };
@@ -230,6 +253,7 @@ bool QXmlSimpleReader::parse(const QXmlInputSource &input)
         handler.warning = warningHandler;
     }
     m_parserStopped = false;
+    m_sawError = false;
     m_context = xmlCreatePushParserCtxt(&handler, this, NULL, 0, NULL);
     const QChar BOM(0xFEFF);
     const unsigned char BOMHighByte = *reinterpret_cast<const unsigned char *>(&BOM);
@@ -239,7 +263,7 @@ bool QXmlSimpleReader::parse(const QXmlInputSource &input)
         input.data().length() * sizeof(QChar), 1);
     xmlFreeParserCtxt(m_context);
     m_context = NULL;
-    return !m_parserStopped;
+    return !m_sawError;
 }
 
 void QXmlSimpleReader::stopParsing()

@@ -43,6 +43,9 @@
 #include "khtmlview.h"
 #include "khtml_part.h"
 
+#ifndef KHTML_NO_XBL
+#include "xbl/xbl_binding_manager.h"
+#endif
 
 using namespace DOM;
 using namespace khtml;
@@ -1245,7 +1248,17 @@ void NodeImpl::createRendererIfNeeded()
     if (parentRenderer && parentRenderer->canHaveChildren()) {
         RenderStyle *style = styleForRenderer(parentRenderer);
         style->ref();
+#ifndef KHTML_NO_XBL
+        bool resolveStyle = false;
+        if (getDocument()->bindingManager()->loadBindings(this, style->bindingURIs(), true, &resolveStyle) && 
+            rendererIsNeeded(style)) {
+            if (resolveStyle) {
+                style->deref();
+                style = styleForRenderer(parentRenderer);
+            }
+#else
         if (rendererIsNeeded(style)) {
+#endif
             m_render = createRenderer(getDocument()->renderArena(), style);
             m_render->setStyle(style);
             parentRenderer->addChild(m_render, nextRenderer());

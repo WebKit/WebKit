@@ -978,6 +978,38 @@ bool CSSParser::parseValue( int propId, bool important )
 	break;
 
     /* CSS3 properties */
+    case CSS_PROP__KHTML_BINDING:
+#ifndef KHTML_NO_XBL
+        if (id == CSS_VAL_NONE)
+            valid_primitive = true;
+        else {
+            CSSValueListImpl* values = new CSSValueListImpl();
+            Value* val;
+            CSSValueImpl* parsedValue = 0;
+            while ((val = valueList->current())) {
+                if (val->unit == CSSPrimitiveValue::CSS_URI) {
+                    DOMString value = khtml::parseURL(domString(val->string));
+                    parsedValue = new CSSPrimitiveValueImpl(
+                                    DOMString(KURL(styleElement->baseURL().string(), value.string()).url()), 
+                                    CSSPrimitiveValue::CSS_URI);
+                } 
+                
+                if (parsedValue)
+                    values->append(parsedValue);
+                else
+                    break;
+                valueList->next();
+            }
+            if ( values->length() ) {
+                addProperty( propId, values, important );
+                valueList->next();
+                return true;
+            }
+            delete values;
+            return false;
+        }
+#endif
+        break;
     case CSS_PROP_OUTLINE_OFFSET:
         valid_primitive = validUnit(value, FLength, strict&(!nonCSSHint));
         break;

@@ -2714,7 +2714,6 @@ void CSSStyleSelector::applyRule( int id, DOM::CSSValueImpl *value )
         HANDLE_INHERIT(zIndex, ZIndex)
         else if (isInitial) {
             style->setHasAutoZIndex();
-            style->setZIndex(0);
             return;
         }
         
@@ -3195,6 +3194,38 @@ void CSSStyleSelector::applyRule( int id, DOM::CSSValueImpl *value )
         break;
 
     // CSS3 Properties
+    case CSS_PROP__KHTML_BINDING: {
+#ifndef KHTML_NO_XBL
+        if (isInitial || (primitiveValue && primitiveValue->getIdent() == CSS_VAL_NONE)) {
+            style->deleteBindingURIs();
+            return;
+        }
+        else if (isInherit) {
+            if (parentStyle->bindingURIs())
+                style->inheritBindingURIs(parentStyle->bindingURIs());
+            else
+                style->deleteBindingURIs();
+            return;
+        }
+
+        if (!value->isValueList()) return;
+        CSSValueListImpl* list = static_cast<CSSValueListImpl*>(value);
+        bool firstBinding = true;
+        for (unsigned int i = 0; i < list->length(); i++) {
+            CSSValueImpl *item = list->item(i);
+            CSSPrimitiveValueImpl *val = static_cast<CSSPrimitiveValueImpl *>(item);
+            if (val->primitiveType() == CSSPrimitiveValue::CSS_URI) {
+                if (firstBinding) {
+                    firstBinding = false;
+                    style->deleteBindingURIs();
+                }
+                style->addBindingURI(val->getStringValue());
+            }
+        }
+#endif
+        break;
+    }
+
     case CSS_PROP_OUTLINE_OFFSET: {
         HANDLE_INHERIT_AND_INITIAL(outlineOffset, OutlineOffset)
 

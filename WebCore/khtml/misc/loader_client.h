@@ -5,6 +5,12 @@
 #include <qpixmap.h>
 #include "dom/dom_string.h"
 
+#ifndef KHTML_NO_XBL
+namespace XBL {
+    class XBLDocumentImpl;
+};
+#endif
+
 namespace khtml {
     class CachedObject;
     class CachedImage;
@@ -26,6 +32,9 @@ namespace khtml {
         // return whether we need manual update
 	virtual void setPixmap(const QPixmap &, const QRect&, CachedImage *);
 	virtual void setStyleSheet(const DOM::DOMString &/*url*/, const DOM::DOMString &/*sheet*/);
+#ifndef KHTML_NO_XBL
+        virtual void setXBLDocument(const DOM::DOMString& url, XBL::XBLDocumentImpl* doc);
+#endif
 	virtual void notifyFinished(CachedObject * /*finishedObj*/);
     };
 };

@@ -40,8 +40,10 @@
 using namespace DOM;
 using namespace khtml;
 
+const int maxErrors = 25;
+
 XMLHandler::XMLHandler(DocumentPtr *_doc, KHTMLView *_view)
-    : errorLine(0)
+    : errorLine(0), m_errorCount(0)
 {
     m_doc = _doc;
     if ( m_doc ) m_doc->ref();
@@ -66,6 +68,7 @@ bool XMLHandler::startDocument()
 {
     // at the beginning of parsing: do some initialization
     errorProt = "";
+    m_errorCount = 0;
     state = StateInit;
 
     return true;
@@ -74,6 +77,8 @@ bool XMLHandler::startDocument()
 
 bool XMLHandler::startElement( const QString& namespaceURI, const QString& /*localName*/, const QString& qName, const QXmlAttributes& atts )
 {
+    if (m_errorCount) return true;
+    
     if (m_currentNode->nodeType() == Node::TEXT_NODE)
         exitText();
 
@@ -84,6 +89,7 @@ bool XMLHandler::startElement( const QString& namespaceURI, const QString& /*loc
 
     int i;
     for (i = 0; i < atts.length(); i++) {
+        // FIXME: qualified name not supported for attributes! The prefix has been lost.
         DOMString uri(atts.uri(i));
         DOMString ln(atts.localName(i));
         DOMString val(atts.value(i));
@@ -129,6 +135,8 @@ bool XMLHandler::startElement( const QString& namespaceURI, const QString& /*loc
 
 bool XMLHandler::endElement( const QString& /*namespaceURI*/, const QString& /*localName*/, const QString& /*qName*/ )
 {
+    if (m_errorCount) return true;
+    
     if (m_currentNode->nodeType() == Node::TEXT_NODE)
         exitText();
     if (m_currentNode->parentNode() != 0) {
@@ -145,6 +153,8 @@ bool XMLHandler::endElement( const QString& /*namespaceURI*/, const QString& /*l
 
 bool XMLHandler::startCDATA()
 {
+    if (m_errorCount) return true;
+    
     if (m_currentNode->nodeType() == Node::TEXT_NODE)
         exitText();
 
@@ -164,6 +174,8 @@ bool XMLHandler::startCDATA()
 
 bool XMLHandler::endCDATA()
 {
+    if (m_errorCount) return true;
+    
     if (m_currentNode->parentNode() != 0)
         m_currentNode = m_currentNode->parentNode();
     return true;
@@ -171,6 +183,8 @@ bool XMLHandler::endCDATA()
 
 bool XMLHandler::characters( const QString& ch )
 {
+    if (m_errorCount) return true;
+    
     if (m_currentNode->nodeType() == Node::TEXT_NODE ||
         m_currentNode->nodeType() == Node::CDATA_SECTION_NODE ||
         enterText()) {
@@ -187,6 +201,8 @@ bool XMLHandler::characters( const QString& ch )
 
 bool XMLHandler::comment(const QString & ch)
 {
+    if (m_errorCount) return true;
+    
     if (m_currentNode->nodeType() == Node::TEXT_NODE)
         exitText();
     // ### handle exceptions
@@ -196,6 +212,8 @@ bool XMLHandler::comment(const QString & ch)
 
 bool XMLHandler::processingInstruction(const QString &target, const QString &data)
 {
+    if (m_errorCount) return true;
+    
     if (m_currentNode->nodeType() == Node::TEXT_NODE)
         exitText();
     // ### handle exceptions
@@ -219,14 +237,53 @@ QString XMLHandler::errorString()
 #endif
 }
 
+bool XMLHandler::warning( const QXmlParseException& exception )
+{
+#if APPLE_CHANGES
+    errorProt += QString("warning on line %2 at column %3: %1")
+#else
+    errorProt += i18n( "warning: %1 in line %2, column %3\n" )
+#endif
+        .arg( exception.message() )
+        .arg( exception.lineNumber() )
+        .arg( exception.columnNumber() );
+    
+    errorLine = exception.lineNumber();
+    errorCol = exception.columnNumber();
+    
+    return true;
+}
+
+bool XMLHandler::error( const QXmlParseException& exception )
+{
+    if (m_errorCount >= maxErrors) return true;
+    
+    if (errorLine == exception.lineNumber() && errorCol == exception.columnNumber())
+        return true; // Only report 1 error for any given line/col position to reduce noise.
+    
+    m_errorCount++;
+    
+#if APPLE_CHANGES
+    errorProt += QString("error on line %2 at column %3: %1")
+#else
+    errorProt += i18n( "error: %1 in line %2, column %3\n" )
+#endif
+        .arg( exception.message() )
+        .arg( exception.lineNumber() )
+        .arg( exception.columnNumber() );
+    
+    errorLine = exception.lineNumber();
+    errorCol = exception.columnNumber();
+    
+    return true;
+}
 
 bool XMLHandler::fatalError( const QXmlParseException& exception )
 {
 #if APPLE_CHANGES
-    // FIXME: Does the user ever see this?
-    errorProt += QString("fatal parsing error: %1 in line %2, column %3")
+    errorProt += QString("error on line %2 at column %3: %1")
 #else
-    errorProt += i18n( "fatal parsing error: %1 in line %2, column %3" )
+    errorProt += i18n( "fatal error: %1 in line %2, column %3\n" )
 #endif
         .arg( exception.message() )
         .arg( exception.lineNumber() )
@@ -343,85 +400,42 @@ void XMLTokenizer::end()
 void XMLTokenizer::finish()
 {
     // parse xml file
-    XMLHandler handler(m_doc,m_view);
+    XMLHandler* handler = m_doc->document()->createTokenHandler();
     QXmlInputSource source;
     source.setData(m_xmlCode);
     QXmlSimpleReader reader;
-    reader.setContentHandler( &handler );
-    reader.setLexicalHandler( &handler );
-    reader.setErrorHandler( &handler );
-    reader.setDeclHandler( &handler );
-    reader.setDTDHandler( &handler );
+    reader.setContentHandler( handler );
+    reader.setLexicalHandler( handler );
+    reader.setErrorHandler( handler );
+    reader.setDeclHandler( handler );
+    reader.setDTDHandler( handler );
     bool ok = reader.parse( source );
 
     if (!ok) {
-        // An error occurred during parsing of the code. Display an error page to the user (the DOM
-        // tree is created manually and includes an excerpt from the code where the error is located)
-
-        // ### for multiple error messages, display the code for each (can this happen?)
-
-        // Clear the document
-        int exceptioncode = 0;
-        while (m_doc->document()->hasChildNodes())
-            static_cast<NodeImpl*>(m_doc->document())->removeChild(m_doc->document()->firstChild(),exceptioncode);
-
-        QString line;
-        QString errorLocPtr;
-        if (handler.errorLine) {
-            QTextIStream stream(&m_xmlCode);
-            for (unsigned long lineno = 0; lineno < handler.errorLine-1; lineno++)
-                stream.readLine();
-            line = stream.readLine();
-    
-            for (unsigned long colno = 0; colno < handler.errorCol-1; colno++)
-                errorLocPtr += " ";
-            errorLocPtr += "^";
-        }
+        // One or more errors occurred during parsing of the code. Display an error block to the user above
+        // the normal content (the DOM tree is created manually and includes line/col info regarding 
+        // where the errors are located)
 
         // Create elements for display
+        int exceptioncode = 0;
         DocumentImpl *doc = m_doc->document();
-        NodeImpl *html = doc->createElementNS(XHTML_NAMESPACE,"html",exceptioncode);
-        NodeImpl   *body = doc->createElementNS(XHTML_NAMESPACE,"body",exceptioncode);
-        NodeImpl     *h1 = doc->createElementNS(XHTML_NAMESPACE,"h1",exceptioncode);
-#if APPLE_CHANGES
-        // FIXME: Is there some alternative to having this text hardcoded here?
-        NodeImpl       *headingText = doc->createTextNode("XML parsing error");
-#else
-        NodeImpl       *headingText = doc->createTextNode(i18n("XML parsing error"));
-#endif
-        NodeImpl     *errorText = doc->createTextNode(handler.errorProtocol());
-        NodeImpl     *hr = 0;
-        NodeImpl     *pre = 0;
-        NodeImpl       *lineText = 0;
-        NodeImpl       *errorLocText = 0;
-        if (!line.isNull()) {
-                      hr = doc->createElementNS(XHTML_NAMESPACE,"hr",exceptioncode);
-                      pre = doc->createElementNS(XHTML_NAMESPACE,"pre",exceptioncode);
-                        lineText = doc->createTextNode(line+"\n");
-                        errorLocText = doc->createTextNode(errorLocPtr);
+        NodeImpl* root = doc->documentElement();
+        if (!root) {
+            root = doc->createElementNS(XHTML_NAMESPACE, "html", exceptioncode);
+            NodeImpl* body = doc->createElementNS(XHTML_NAMESPACE, "body", exceptioncode);
+            root->appendChild(body, exceptioncode);
+            doc->appendChild(root, exceptioncode);
+            root = body;
         }
 
-        // Construct DOM tree. We ignore exceptions as we assume they will not be thrown here (due to the
-        // fact we are using a known tag set)
-        doc->appendChild(html,exceptioncode);
-        html->appendChild(body,exceptioncode);
-        body->appendChild(h1,exceptioncode);
-        h1->appendChild(headingText,exceptioncode);
-        body->appendChild(errorText,exceptioncode);
-        if (hr)
-            body->appendChild(hr,exceptioncode);
-        if (pre) {
-            body->appendChild(pre,exceptioncode);
-            pre->appendChild(lineText,exceptioncode);
-            pre->appendChild(errorLocText,exceptioncode);
-        }
-
-        // Close the renderers so that they update their display correctly
-        // ### this should not be necessary, but requires changes in the rendering code...
-        h1->closeRenderer();
-        if (pre)
-            pre->closeRenderer();
-        body->closeRenderer();
+        ElementImpl* reportDiv = doc->createElementNS(XHTML_NAMESPACE, "div", exceptioncode);
+        reportDiv->setAttribute(ATTR_STYLE, "white-space: pre; border: 2px solid #c77; padding: 0 1em 1em 1em; margin: 1em; background-color: #fdd; color: black");
+        NodeImpl* h3 = doc->createElementNS(XHTML_NAMESPACE, "h3", exceptioncode);
+        h3->appendChild(doc->createTextNode("This page contains the following errors:"), exceptioncode);
+        reportDiv->appendChild(h3, exceptioncode);
+        NodeImpl* textNode = doc->createTextNode(handler->errorProtocol());
+        reportDiv->appendChild(textNode, exceptioncode);
+        root->insertBefore(reportDiv, root->firstChild(), exceptioncode);
 
         m_doc->document()->recalcStyle( NodeImpl::Inherit );
         m_doc->document()->updateRendering();
@@ -436,6 +450,7 @@ void XMLTokenizer::finish()
         executeScripts();
     }
 
+    delete handler;
 }
 
 void XMLTokenizer::addScripts(NodeImpl *n)

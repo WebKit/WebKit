@@ -181,17 +181,46 @@ bool StyleFlexibleBoxData::operator==(const StyleFlexibleBoxData& o) const
 
 StyleCSS3NonInheritedData::StyleCSS3NonInheritedData()
 :Shared<StyleCSS3NonInheritedData>(), opacity(RenderStyle::initialOpacity())
+#ifndef KHTML_NO_XBL
+, bindingURI(0)
+#endif
 {
 }
 
 StyleCSS3NonInheritedData::StyleCSS3NonInheritedData(const StyleCSS3NonInheritedData& o)
 :Shared<StyleCSS3NonInheritedData>(), opacity(o.opacity), flexibleBox(o.flexibleBox), marquee(o.marquee)
 {
+#ifndef KHTML_NO_XBL
+    bindingURI = o.bindingURI ? o.bindingURI->copy() : 0;
+#endif
 }
+
+StyleCSS3NonInheritedData::~StyleCSS3NonInheritedData()
+{
+#ifndef KHTML_NO_XBL
+    delete bindingURI;
+#endif
+}
+
+#ifndef KHTML_NO_XBL
+bool StyleCSS3NonInheritedData::bindingsEquivalent(const StyleCSS3NonInheritedData& o) const
+{
+    if (this == &o) return true;
+    if (!bindingURI && o.bindingURI || bindingURI && !o.bindingURI)
+        return false;
+    if (bindingURI && o.bindingURI && (*bindingURI != *o.bindingURI))
+        return false;
+    return true;
+}
+#endif
 
 bool StyleCSS3NonInheritedData::operator==(const StyleCSS3NonInheritedData& o) const
 {
-    return opacity == o.opacity && flexibleBox == o.flexibleBox && marquee == o.marquee;
+    return opacity == o.opacity && flexibleBox == o.flexibleBox && marquee == o.marquee
+#ifndef KHTML_NO_XBL
+           && bindingsEquivalent(o)
+#endif
+    ;
 }
 
 StyleCSS3InheritedData::StyleCSS3InheritedData()
@@ -741,6 +770,59 @@ void ContentData::clearContent()
             ;
     }
 }
+
+#ifndef KHTML_NO_XBL
+BindingURI::BindingURI(DOM::DOMStringImpl* uri) 
+:m_next(0)
+{ 
+    m_uri = uri;
+    if (uri) uri->ref();
+}
+
+BindingURI::~BindingURI()
+{
+    if (m_uri)
+        m_uri->deref();
+    delete m_next;
+}
+
+BindingURI* BindingURI::copy()
+{
+    BindingURI* newBinding = new BindingURI(m_uri);
+    if (next()) {
+        BindingURI* nextCopy = next()->copy();
+        newBinding->setNext(nextCopy);
+    }
+    
+    return newBinding;
+}
+
+bool BindingURI::operator==(const BindingURI& o) const
+{
+    if ((m_next && !o.m_next) || (!m_next && o.m_next) ||
+        (m_next && o.m_next && *m_next != *o.m_next))
+        return false;
+    
+    if (m_uri == o.m_uri)
+        return true;
+    if (!m_uri || !o.m_uri)
+        return false;
+    
+    return DOMString(m_uri) == DOMString(o.m_uri);
+}
+
+void RenderStyle::addBindingURI(DOM::DOMStringImpl* uri)
+{
+    BindingURI* binding = new BindingURI(uri);
+    if (!bindingURIs())
+        SET_VAR(css3NonInheritedData, bindingURI, binding)
+    else 
+        for (BindingURI* b = bindingURIs(); b; b = b->next()) {
+            if (!b->next())
+                b->setNext(binding);
+        }
+}
+#endif
 
 void RenderStyle::setTextShadow(ShadowData* val, bool add)
 {

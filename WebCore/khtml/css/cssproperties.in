@@ -19,7 +19,7 @@ background-position
 # IE Extensions
 background-position-x
 background-position-y
-
+-khtml-binding
 border-collapse
 border-spacing
 -khtml-border-horizontal-spacing

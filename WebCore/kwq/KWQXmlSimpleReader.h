@@ -153,6 +153,9 @@ public:
     bool parserStopped() const { return m_parserStopped; }
     void stopParsing();
 
+    bool sawError() const { return m_sawError; }
+    void recordError() { m_sawError = true; }
+    
     int lineNumber() const;
     int columnNumber() const;
     
@@ -163,8 +166,9 @@ private:
     QXmlErrorHandler *_errorHandler;
     QXmlLexicalHandler *_lexicalHandler;
     QPtrStack<KWQXmlNamespace> m_namespaceStack;
-    bool m_parserStopped;
     struct _xmlParserCtxt *m_context;
+    bool m_parserStopped : 1;
+    bool m_sawError : 1;
 };
 
 #endif

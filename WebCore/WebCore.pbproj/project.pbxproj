@@ -125,9 +125,9 @@
 				F5C2869402846DCD018635CA,
 				F5C2869502846DCD018635CA,
 				F8216299029F4FB501000131,
-				93F1D31A0558CC5C00821BC0,
-				BCF0B2FA05BF7694003F612A,
 				704FD2FE056972FA003DBED9,
+				93F1D31A0558CC5C00821BC0,
+				BC8CAEC705BF251000E11F1B,
 				848A320F057E688B001A2362,
 			);
 			isa = PBXGroup;
@@ -511,6 +511,13 @@
 				84B2B1F9056BEF3A00D2B771,
 				65912B110586921000123A69,
 				65912B120586921000123A69,
+				BC41978F059293F30016347F,
+				BCEACC910592E0AD009D6AEF,
+				BCD990DE0594B9FC00AB848D,
+				BC74596505954CC80058C893,
+				BC745A1D05955F390058C893,
+				BCBDB03A0597B36E00B83B92,
+				BCBDB096059A28B100B83B92,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -774,6 +781,13 @@
 				84B2B1FA056BEF3A00D2B771,
 				84B2B250056BF15F00D2B771,
 				65912B100586921000123A69,
+				BC419796059294CA0016347F,
+				BCEACC900592E0AD009D6AEF,
+				BCD990DA0594B9E500AB848D,
+				BC74596405954CC80058C893,
+				BC745A1C05955F390058C893,
+				BCBDB0390597B36E00B83B92,
+				BCBDB095059A28B100B83B92,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -788,7 +802,7 @@
 				93F1D31B0558CC5C00821BC0,
 				704FD2FF056972FA003DBED9,
 				848A3210057E688B001A2362,
-				BCF0B2FB05BF7694003F612A,
+				BC8CAEC805BF251000E11F1B,
 			);
 			isa = PBXFrameworksBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1828,6 +1842,59 @@
 			settings = {
 			};
 		};
+		BC41978B059293BE0016347F = {
+			children = (
+				BC41978E059293F30016347F,
+				BC419795059294CA0016347F,
+				BCBDB094059A28B100B83B92,
+				BCBDB093059A28B100B83B92,
+				BCEACC8F0592E0AD009D6AEF,
+				BCEACC8E0592E0AD009D6AEF,
+				BCD990DD0594B9FC00AB848D,
+				BCD990D90594B9E500AB848D,
+				BC74596305954CC80058C893,
+				BC74596205954CC80058C893,
+				BC745A1B05955F390058C893,
+				BC745A1A05955F380058C893,
+				BCBDB0380597B36E00B83B92,
+				BCBDB0370597B36E00B83B92,
+			);
+			isa = PBXGroup;
+			name = xbl;
+			path = khtml;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		BC41978E059293F30016347F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = xbl_binding_manager.h;
+			path = xbl/xbl_binding_manager.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		BC41978F059293F30016347F = {
+			fileRef = BC41978E059293F30016347F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		BC419795059294CA0016347F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = xbl_binding_manager.cpp;
+			path = xbl/xbl_binding_manager.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		BC419796059294CA0016347F = {
+			fileRef = BC419795059294CA0016347F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		BC7294F703804B3C00A80166 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
@@ -1880,6 +1947,66 @@
 		};
 		BC7294FE03804B5600A80166 = {
 			fileRef = BC7294FC03804B5600A80166;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		BC74596205954CC80058C893 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = xbl_protobinding.cpp;
+			path = xbl/xbl_protobinding.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		BC74596305954CC80058C893 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = xbl_protobinding.h;
+			path = xbl/xbl_protobinding.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		BC74596405954CC80058C893 = {
+			fileRef = BC74596205954CC80058C893;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		BC74596505954CC80058C893 = {
+			fileRef = BC74596305954CC80058C893;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		BC745A1A05955F380058C893 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = xbl_protohandler.cpp;
+			path = xbl/xbl_protohandler.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		BC745A1B05955F390058C893 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = xbl_protohandler.h;
+			path = xbl/xbl_protohandler.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		BC745A1C05955F390058C893 = {
+			fileRef = BC745A1A05955F380058C893;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		BC745A1D05955F390058C893 = {
+			fileRef = BC745A1B05955F390058C893;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -1996,6 +2123,20 @@
 			settings = {
 			};
 		};
+		BC8CAEC705BF251000E11F1B = {
+			isa = PBXFileReference;
+			lastKnownFileType = "compiled.mach-o.dylib";
+			name = libxml2.dylib;
+			path = /usr/lib/libxml2.dylib;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		BC8CAEC805BF251000E11F1B = {
+			fileRef = BC8CAEC705BF251000E11F1B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		BC8F61850405949900A80004 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
@@ -2075,6 +2216,66 @@
 			settings = {
 			};
 		};
+		BCBDB0370597B36E00B83B92 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = xbl_protoimplementation.cpp;
+			path = xbl/xbl_protoimplementation.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		BCBDB0380597B36E00B83B92 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = xbl_protoimplementation.h;
+			path = xbl/xbl_protoimplementation.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		BCBDB0390597B36E00B83B92 = {
+			fileRef = BCBDB0370597B36E00B83B92;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		BCBDB03A0597B36E00B83B92 = {
+			fileRef = BCBDB0380597B36E00B83B92;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		BCBDB093059A28B100B83B92 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = xbl_binding.cpp;
+			path = xbl/xbl_binding.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		BCBDB094059A28B100B83B92 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = xbl_binding.h;
+			path = xbl/xbl_binding.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		BCBDB095059A28B100B83B92 = {
+			fileRef = BCBDB093059A28B100B83B92;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		BCBDB096059A28B100B83B92 = {
+			fileRef = BCBDB094059A28B100B83B92;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		BCC60E5603F5055A00A80004 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
@@ -2103,6 +2304,66 @@
 			settings = {
 			};
 		};
+		BCD990D90594B9E500AB848D = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = xbl_tokenizer.cpp;
+			path = xbl/xbl_tokenizer.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		BCD990DA0594B9E500AB848D = {
+			fileRef = BCD990D90594B9E500AB848D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		BCD990DD0594B9FC00AB848D = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = xbl_tokenizer.h;
+			path = xbl/xbl_tokenizer.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		BCD990DE0594B9FC00AB848D = {
+			fileRef = BCD990DD0594B9FC00AB848D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		BCEACC8E0592E0AD009D6AEF = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = xbl_docimpl.cpp;
+			path = xbl/xbl_docimpl.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		BCEACC8F0592E0AD009D6AEF = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = xbl_docimpl.h;
+			path = xbl/xbl_docimpl.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		BCEACC900592E0AD009D6AEF = {
+			fileRef = BCEACC8E0592E0AD009D6AEF;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		BCEACC910592E0AD009D6AEF = {
+			fileRef = BCEACC8F0592E0AD009D6AEF;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		BCF0192403D3802200B2D04D = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
@@ -2127,20 +2388,6 @@
 		};
 		BCF0192703D3802200B2D04D = {
 			fileRef = BCF0192503D3802200B2D04D;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		BCF0B2FA05BF7694003F612A = {
-			isa = PBXFileReference;
-			lastKnownFileType = "compiled.mach-o.dylib";
-			name = libxml2.dylib;
-			path = /usr/lib/libxml2.dylib;
-			refType = 0;
-			sourceTree = "<absolute>";
-		};
-		BCF0B2FB05BF7694003F612A = {
-			fileRef = BCF0B2FA05BF7694003F612A;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -2439,6 +2686,7 @@
 				F523D27702DE4398018635CA,
 				F523D29C02DE43D9018635CA,
 				F523D2F302DE443B018635CA,
+				BC41978B059293BE0016347F,
 				F523D32402DE4478018635CA,
 				F523D15202DE42AD018635CA,
 				F523D15102DE42AD018635CA,

@@ -1,3 +1,202 @@
+2004-01-22  David Hyatt  <hyatt@apple.com>
+
+	(1) Implement better XML error handling.
+	(2) Fix a minor z-index bug with the 'initial' value.
+	(3) Initial landing of XBL support.  Code is all ifnef KHTML_NO_XBL so that it can be turned off easily if
+	XBL never comes to fruition.
+	
+        Reviewed by darin
+
+        * ForwardingHeaders/xbl/xbl_binding_manager.h: Added.
+        * ForwardingHeaders/xbl/xbl_docimpl.h: Added.
+        * WebCore.pbproj/project.pbxproj:
+        * khtml/css/cssparser.cpp:
+        (CSSParser::parseValue):
+        * khtml/css/cssproperties.c:
+        (hash_prop):
+        (findProp):
+        * khtml/css/cssproperties.h:
+        * khtml/css/cssproperties.in:
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::applyRule):
+        * khtml/dom/dom_element.cpp:
+        (Element::getAttributeNS):
+        * khtml/misc/loader.cpp:
+        (CachedXBLDocument::CachedXBLDocument):
+        (CachedXBLDocument::~CachedXBLDocument):
+        (CachedXBLDocument::ref):
+        (CachedXBLDocument::deref):
+        (CachedXBLDocument::data):
+        (CachedXBLDocument::checkNotify):
+        (CachedXBLDocument::error):
+        (DocLoader::requestXBLDocument):
+        (Cache::requestXBLDocument):
+        (CachedObjectClient::setXBLDocument):
+        (Cache::getStatistics):
+        * khtml/misc/loader.h:
+        (khtml::CachedObject::):
+        (khtml::CachedXBLDocument::document):
+        (khtml::CachedXBLDocument::schedule):
+        * khtml/misc/loader_client.h:
+        * khtml/rendering/render_style.cpp:
+        (bindingURI):
+        (marquee):
+        (StyleCSS3NonInheritedData::~StyleCSS3NonInheritedData):
+        (StyleCSS3NonInheritedData::bindingsEquivalent):
+        (StyleCSS3NonInheritedData::operator==):
+        (:m_next):
+        (BindingURI::~BindingURI):
+        (BindingURI::copy):
+        (BindingURI::operator==):
+        (RenderStyle::addBindingURI):
+        * khtml/rendering/render_style.h:
+        (khtml::BindingURI::operator!=):
+        (khtml::BindingURI::next):
+        (khtml::BindingURI::setNext):
+        (khtml::BindingURI::uri):
+        (khtml::RenderStyle::bindingURIs):
+        (khtml::RenderStyle::setHasAutoZIndex):
+        (khtml::RenderStyle::setZIndex):
+        (khtml::RenderStyle::deleteBindingURIs):
+        (khtml::RenderStyle::inheritBindingURIs):
+        * khtml/xbl/xbl_binding.cpp: Added.
+        (XBL::m_markedForDeath):
+        (XBL::XBLBindingChain::~XBLBindingChain):
+        (XBL::XBLBindingChain::firstStyleBindingChain):
+        (XBL::XBLBindingChain::lastBindingChain):
+        (XBL::XBLBindingChain::insertBindingChain):
+        (XBL::XBLBindingChain::markForDeath):
+        (XBL::XBLBindingChain::loaded):
+        (XBL::XBLBindingChain::hasStylesheets):
+        (XBL::XBLBindingChain::failed):
+        (XBL::m_nextBinding):
+        (XBL::XBLBinding::~XBLBinding):
+        (XBL::XBLBinding::loaded):
+        (XBL::XBLBinding::setXBLDocument):
+        * khtml/xbl/xbl_binding.h: Added.
+        (XBL::):
+        (XBL::XBLBindingChain::uri):
+        (XBL::XBLBindingChain::nextChain):
+        (XBL::XBLBindingChain::previousChain):
+        (XBL::XBLBindingChain::setNextBindingChain):
+        (XBL::XBLBindingChain::setPreviousBindingChain):
+        (XBL::XBLBindingChain::markedForDeath):
+        (XBL::XBLBindingChain::element):
+        * khtml/xbl/xbl_binding_manager.cpp: Added.
+        (XBL::m_bindingChainTable):
+        (XBL::XBLBindingManager::~XBLBindingManager):
+        (XBL::XBLBindingManager::getBindingChain):
+        (XBL::XBLBindingManager::setBindingChain):
+        (XBL::XBLBindingManager::loadBindings):
+        (XBL::XBLBindingManager::checkLoadState):
+        * khtml/xbl/xbl_binding_manager.h: Added.
+        * khtml/xbl/xbl_docimpl.cpp: Added.
+        (XBL:::DocumentImpl):
+        (XBL::XBLDocumentImpl::~XBLDocumentImpl):
+        (XBL::XBLDocumentImpl::createTokenHandler):
+        (XBL::XBLDocumentImpl::setPrototypeBinding):
+        (XBL::XBLDocumentImpl::prototypeBinding):
+        * khtml/xbl/xbl_docimpl.h: Added.
+        (XBL::):
+        * khtml/xbl/xbl_protobinding.cpp: Added.
+        (XBL::m_handler):
+        (XBL::XBLPrototypeBinding::initialize):
+        (XBL::XBLPrototypeBinding::document):
+        (XBL::XBLPrototypeBinding::addResource):
+        * khtml/xbl/xbl_protobinding.h: Added.
+        (XBL::XBLPrototypeBinding::element):
+        (XBL::XBLPrototypeBinding::setHandler):
+        (XBL::XBLPrototypeBinding::handler):
+        * khtml/xbl/xbl_protohandler.cpp: Added.
+        (XBL::m_unused):
+        (XBL::XBLPrototypeHandler::~XBLPrototypeHandler):
+        (XBL::XBLPrototypeHandler::appendData):
+        * khtml/xbl/xbl_protohandler.h: Added.
+        (XBL::XBLPrototypeHandler::setNext):
+        (XBL::XBLPrototypeHandler::next):
+        * khtml/xbl/xbl_protoimplementation.cpp: Added.
+        (XBL::m_compiled):
+        (XBL::m_next):
+        (XBL::XBLPrototypeMember::appendData):
+        (XBL:::XBLPrototypeMember):
+        (XBL::XBLPrototypeMethod::isConstructor):
+        (XBL::XBLPrototypeMethod::isDestructor):
+        (XBL::XBLPrototypeMethod::addParameter):
+        (XBL:::XBLPrototypeMethod):
+        (XBL::XBLPrototypeConstructor::isConstructor):
+        (XBL::XBLPrototypeDestructor::isDestructor):
+        (XBL::m_readonly):
+        (XBL::XBLPrototypeProperty::appendGetterText):
+        (XBL::XBLPrototypeProperty::appendSetterText):
+        * khtml/xbl/xbl_protoimplementation.h: Added.
+        (XBL::XBLPrototypeMember::~XBLPrototypeMember):
+        (XBL::XBLPrototypeMember::setNext):
+        (XBL::XBLPrototypeMember::next):
+        (XBL::XBLPrototypeImplementation::~XBLPrototypeImplementation):
+        (XBL::XBLPrototypeImplementation::setMember):
+        (XBL::XBLPrototypeParameter::m_next):
+        (XBL::XBLPrototypeParameter::~XBLPrototypeParameter):
+        (XBL::XBLPrototypeParameter::next):
+        (XBL::XBLPrototypeParameter::setNext):
+        (XBL::):
+        * khtml/xbl/xbl_tokenizer.cpp: Added.
+        (XBL::XBLTokenHandler::XBLTokenHandler):
+        (XBL::XBLTokenHandler::~XBLTokenHandler):
+        (XBL::XBLTokenHandler::xblDocument):
+        (XBL::XBLTokenHandler::startElement):
+        (XBL::XBLTokenHandler::endElement):
+        (XBL::XBLTokenHandler::characters):
+        (XBL::XBLTokenHandler::createBinding):
+        (XBL::XBLTokenHandler::createHandler):
+        (XBL::XBLTokenHandler::createResource):
+        (XBL::XBLTokenHandler::createImplementation):
+        (XBL::XBLTokenHandler::addMember):
+        (XBL::XBLTokenHandler::createConstructor):
+        (XBL::XBLTokenHandler::createDestructor):
+        (XBL::XBLTokenHandler::createField):
+        (XBL::XBLTokenHandler::createProperty):
+        (XBL::XBLTokenHandler::createMethod):
+        (XBL::XBLTokenHandler::createParameter):
+        * khtml/xbl/xbl_tokenizer.h: Added.
+        (XBL::):
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::DocumentImpl):
+        (DocumentImpl::~DocumentImpl):
+        (DocumentImpl::createTokenHandler):
+        (DocumentTypeImpl::DocumentTypeImpl):
+        (DocumentTypeImpl::~DocumentTypeImpl):
+        * khtml/xml/dom_docimpl.h:
+        (DOM::DocumentImpl::bindingManager):
+        * khtml/xml/dom_elementimpl.cpp:
+        (ElementImpl::getAttributeNS):
+        (ElementImpl::childAllowed):
+        * khtml/xml/dom_elementimpl.h:
+        (DOM::ElementImpl::getAttribute):
+        * khtml/xml/dom_nodeimpl.cpp:
+        * khtml/xml/xml_tokenizer.cpp:
+        (XMLHandler::XMLHandler):
+        (XMLHandler::startDocument):
+        (XMLHandler::startElement):
+        (XMLHandler::endElement):
+        (XMLHandler::startCDATA):
+        (XMLHandler::endCDATA):
+        (XMLHandler::characters):
+        (XMLHandler::comment):
+        (XMLHandler::processingInstruction):
+        (XMLHandler::warning):
+        (XMLHandler::error):
+        (XMLHandler::fatalError):
+        (XMLTokenizer::finish):
+        * khtml/xml/xml_tokenizer.h:
+        * kwq/KWQXmlSimpleReader.h:
+        (QXmlSimpleReader::sawError):
+        (QXmlSimpleReader::recordError):
+        * kwq/KWQXmlSimpleReader.mm:
+        (warningHandler):
+        (fatalErrorHandler):
+        (normalErrorHandler):
+        (QXmlSimpleReader::parse):
+
 2004-01-22  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3537542>: support for copying HTML

@@ -203,10 +203,7 @@ DOMString Element::getAttributeNS( const DOMString &namespaceURI,
                                    const DOMString &localName)
 {
     if (!impl) throw DOMException(DOMException::NOT_FOUND_ERR);
-    NodeImpl::Id id = impl->getDocument()->attrId(namespaceURI.implementation(),
-                                                 localName.implementation(), true);
-    if (!id) return DOMString();
-    return static_cast<ElementImpl*>(impl)->getAttribute(id);
+    return static_cast<ElementImpl*>(impl)->getAttributeNS(namespaceURI, localName);
 }
 
 void Element::setAttributeNS( const DOMString &namespaceURI,

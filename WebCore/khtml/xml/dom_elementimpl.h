@@ -162,6 +162,9 @@ public:
     ~ElementImpl();
 
     DOMString getAttribute( NodeImpl::Id id ) const;
+    DOMString getAttribute(const DOMString& localName) const { return getAttributeNS(QString::null, localName); }
+    DOMString getAttributeNS(const DOMString &namespaceURI,
+                             const DOMString &localName) const;
     void setAttribute( NodeImpl::Id id, DOMStringImpl* value, int &exceptioncode );
     void removeAttribute( NodeImpl::Id id, int &exceptioncode );
 

@@ -55,7 +55,10 @@
 
 #include "html/html_documentimpl.h"
 #include "css/css_stylesheetimpl.h"
-#include "xml/dom_docimpl.h"
+
+#ifndef KHTML_NO_XBL
+#include "xbl/xbl_docimpl.h"
+#endif
 
 #if APPLE_CHANGES
 #include "KWQAssertions.h"
@@ -980,6 +983,84 @@ void CachedImage::checkNotify()
         c->notifyFinished(this);
 }
 
+// -------------------------------------------------------------------------------------------
+
+#ifndef KHTML_NO_XBL
+CachedXBLDocument::CachedXBLDocument(DocLoader* dl, const DOMString &url, KIO::CacheControl _cachePolicy, time_t _expireDate)
+: CachedObject(url, XBL, _cachePolicy, _expireDate), m_document(0)
+{
+    // It's XML we want.
+    setAccept( QString::fromLatin1("text/xml, application/xml, application/xml+xhtml") );
+    
+    // Load the file
+    Cache::loader()->load(dl, this, false);
+    m_loading = true;
+    m_codec = QTextCodec::codecForName("iso8859-1");
+}
+
+CachedXBLDocument::~CachedXBLDocument()
+{
+    if (m_document)
+        m_document->deref();
+}
+
+void CachedXBLDocument::ref(CachedObjectClient *c)
+{
+    CachedObject::ref(c);
+    if (!m_loading)
+        c->setXBLDocument(m_url, m_document);
+}
+
+void CachedXBLDocument::deref(CachedObjectClient *c)
+{
+    Cache::flush();
+    CachedObject::deref(c);
+    if (canDelete() && m_free)
+        delete this;
+}
+
+void CachedXBLDocument::data( QBuffer &buffer, bool eof )
+{
+    if (!eof) return;
+    
+    assert(!m_document);
+    
+    m_document =  new XBL::XBLDocumentImpl();
+    m_document->ref();
+    m_document->open();
+    
+    QString data = m_codec->toUnicode(buffer.buffer().data(), buffer.buffer().size());
+    m_document->write(data);
+    setSize(buffer.buffer().size());
+    buffer.close();
+    
+    m_document->finishParsing();
+    m_document->close();
+    m_loading = false;
+    checkNotify();
+}
+
+void CachedXBLDocument::checkNotify()
+{
+    if(m_loading) return;
+    
+#ifdef CACHE_DEBUG
+    kdDebug( 6060 ) << "CachedXBLDocument:: finishedLoading " << m_url.string() << endl;
+#endif
+    
+    CachedObjectClientWalker w(m_clients);
+    while (CachedObjectClient *c = w.next())
+        c->setXBLDocument(m_url, m_document);
+}
+
+
+void CachedXBLDocument::error( int /*err*/, const char */*text*/ )
+{
+    m_loading = false;
+    checkNotify();
+}
+#endif
+
 // ------------------------------------------------------------------------------------------
 
 Request::Request(DocLoader* dl, CachedObject *_object, bool _incremental)
@@ -1119,6 +1200,32 @@ CachedScript *DocLoader::requestScript( const DOM::DOMString &url, const QString
     return Cache::requestScript(this, url, reload, m_expireDate, charset);
 #endif
 }
+
+#ifndef KHTML_NO_XBL
+CachedXBLDocument* DocLoader::requestXBLDocument(const DOM::DOMString &url)
+{
+    KURL fullURL = m_doc->completeURL(url.string());
+    
+    // FIXME: Is this right for XBL?
+    if (m_part && m_part->onlyLocalReferences() && fullURL.protocol() != "file") return 0;
+    
+#if APPLE_CHANGES
+    if (KWQCheckIfReloading(this)) {
+        setCachePolicy(KIO::CC_Reload);
+    }
+#endif
+    
+    bool reload = needReload(fullURL);
+    
+#if APPLE_CHANGES
+    CachedXBLDocument *cachedObject = Cache::requestXBLDocument(this, url, reload, m_expireDate);
+    KWQCheckCacheObjectStatus(this, cachedObject);
+    return cachedObject;
+#else
+    return Cache::requestXBLDocument(this, url, reload, m_expireDate);
+#endif
+}
+#endif
 
 void DocLoader::setAutoloadImages( bool enable )
 {
@@ -1714,6 +1821,83 @@ void Cache::preloadScript( const QString &url, const QString &script_data)
     cache->insert( url, script );
 }
 
+#ifndef KHTML_NO_XBL
+CachedXBLDocument* Cache::requestXBLDocument(DocLoader* dl, const DOMString & url, bool reload, 
+                                             time_t _expireDate)
+{
+    // this brings the _url to a standard form...
+    KURL kurl;
+    KIO::CacheControl cachePolicy;
+    if (dl) {
+        kurl = dl->m_doc->completeURL(url.string());
+        cachePolicy = dl->cachePolicy();
+    }
+    else {
+        kurl = url.string();
+        cachePolicy = KIO::CC_Verify;
+    }
+    
+#if APPLE_CHANGES
+    // Checking if the URL is malformed is lots of extra work for little benefit.
+#else
+    if( kurl.isMalformed() )
+    {
+        kdDebug( 6060 ) << "Cache: Malformed url: " << kurl.url() << endl;
+        return 0;
+    }
+#endif
+    
+    CachedObject *o = cache->find(kurl.url());
+    if(!o)
+    {
+#ifdef CACHE_DEBUG
+        kdDebug( 6060 ) << "Cache: new: " << kurl.url() << endl;
+#endif
+        CachedXBLDocument* doc = new CachedXBLDocument(dl, kurl.url(), cachePolicy, _expireDate);
+#if APPLE_CHANGES
+        if (cacheDisabled)
+            doc->setFree(true);
+        else {
+#endif
+            cache->insert(kurl.url(), doc);
+            moveToHeadOfLRUList(doc);
+#if APPLE_CHANGES
+        }
+#endif
+        o = doc;
+    }
+    
+#if !APPLE_CHANGES
+    o->setExpireDate(_expireDate, true);
+#endif
+    
+    if(o->type() != CachedObject::XBL)
+    {
+#ifdef CACHE_DEBUG
+        kdDebug( 6060 ) << "Cache::Internal Error in requestXBLDocument url=" << kurl.url() << "!" << endl;
+#endif
+        return 0;
+    }
+    
+#ifdef CACHE_DEBUG
+    if( o->status() == CachedObject::Pending )
+        kdDebug( 6060 ) << "Cache: loading in progress: " << kurl.url() << endl;
+    else
+        kdDebug( 6060 ) << "Cache: using cached: " << kurl.url() << endl;
+#endif
+    
+    moveToHeadOfLRUList(o);
+    if ( dl ) {
+        dl->m_docObjects.remove( o );
+#if APPLE_CHANGES
+        if (!cacheDisabled)
+#endif
+            dl->m_docObjects.append( o );
+    }
+    return static_cast<CachedXBLDocument*>(o);
+}
+#endif
+
 void Cache::flush(bool force)
 {
     if (force)
@@ -1990,6 +2174,9 @@ CachedObjectClient *CachedObjectClientWalker::next()
 
 void CachedObjectClient::setPixmap(const QPixmap &, const QRect&, CachedImage *) {}
 void CachedObjectClient::setStyleSheet(const DOM::DOMString &/*url*/, const DOM::DOMString &/*sheet*/) {}
+#ifndef KHTML_NO_XBL
+void CachedObjectClient::setXBLDocument(const DOM::DOMString& url, XBL::XBLDocumentImpl* doc) {}
+#endif
 void CachedObjectClient::notifyFinished(CachedObject * /*finishedObj*/) {}
 
 #include "loader.moc"
@@ -2027,7 +2214,12 @@ Cache::Statistics Cache::getStatistics()
                 stats.scripts.count++;
                 stats.scripts.size += o->size();
                 break;
-
+#ifndef KHTML_NO_XBL
+            case CachedObject::XBL:
+                stats.xblDocs.count++;
+                stats.xblDocs.size += o->size();
+                break;
+#endif
             default:
                 stats.other.count++;
                 stats.other.size += o->size();
