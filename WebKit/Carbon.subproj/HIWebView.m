@@ -700,34 +700,41 @@ OwningWindowChanged(
 	WindowRef			oldWindow,
 	WindowRef			newWindow )
 {
-	if ( newWindow )
-	{
+    if ( newWindow ){
         WindowAttributes	attrs;
         
-    	OSStatus err = GetWindowProperty(newWindow, NSAppKitPropertyCreator, NSCarbonWindowPropertyTag, sizeof(NSWindow *), NULL, &view->fKitWindow);
-		if ( err != noErr )
-		{
-			const EventTypeSpec kWindowEvents[] = {
-                { kEventClassWindow, kEventWindowClosed },
-                { kEventClassMouse, kEventMouseMoved },
-                { kEventClassMouse, kEventMouseUp },
-                { kEventClassMouse, kEventMouseDragged },
-                { kEventClassMouse, kEventMouseWheelMoved }
+        OSStatus err = GetWindowProperty(newWindow, NSAppKitPropertyCreator, NSCarbonWindowPropertyTag, sizeof(NSWindow *), NULL, &view->fKitWindow);
+        if ( err != noErr )
+        {
+            const EventTypeSpec kWindowEvents[] = {
+            { kEventClassWindow, kEventWindowClosed },
+            { kEventClassMouse, kEventMouseMoved },
+            { kEventClassMouse, kEventMouseUp },
+            { kEventClassMouse, kEventMouseDragged },
+            { kEventClassMouse, kEventMouseWheelMoved }
             };
-
-			view->fKitWindow = [[CarbonWindowAdapter alloc] initWithCarbonWindowRef: newWindow takingOwnership: NO disableOrdering:NO carbon:YES];
-    		SetWindowProperty(newWindow, NSAppKitPropertyCreator, NSCarbonWindowPropertyTag, sizeof(NSWindow *), &view->fKitWindow);
-		
-			InstallWindowEventHandler( newWindow, WindowHandler, GetEventTypeCount( kWindowEvents ), kWindowEvents, newWindow, NULL );
-		}
-		
-		[[view->fKitWindow contentView] addSubview:view->fWebView];
-
+            
+            view->fKitWindow = [[CarbonWindowAdapter alloc] initWithCarbonWindowRef: newWindow takingOwnership: NO disableOrdering:NO carbon:YES];
+            SetWindowProperty(newWindow, NSAppKitPropertyCreator, NSCarbonWindowPropertyTag, sizeof(NSWindow *), &view->fKitWindow);
+            
+            InstallWindowEventHandler( newWindow, WindowHandler, GetEventTypeCount( kWindowEvents ), kWindowEvents, newWindow, NULL );
+        }
+        
+        [[view->fKitWindow contentView] addSubview:view->fWebView];
+        
         GetWindowAttributes( newWindow, &attrs );
         view->fIsComposited = ( ( attrs & kWindowCompositingAttribute ) != 0 );
-
-		SyncFrame( view );        
-	}
+        
+        SyncFrame( view );        
+    }
+    else
+    {
+        // Be sure to detach the cocoa view, too.
+        if ( view->fWebView )
+            [view->fWebView removeFromSuperview];
+        
+        view->fKitWindow = NULL; // break the ties that bind
+    }
 }
 
 //-------------------------------------------------------------------------------------
