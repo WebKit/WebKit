@@ -108,7 +108,7 @@ static VisiblePosition previousWordBoundary(const VisiblePosition &c, unsigned (
     }
     // Use DOWNSTREAM here so that we don't jump past words at the start of lines.
     // <rdar://problem/3765519> REGRESSION (Mail): word movement goes too far upstream at start of line
-    return VisiblePosition(pos).deepEquivalent();
+    return VisiblePosition(pos);
 }
 
 static VisiblePosition nextWordBoundary(const VisiblePosition &c, unsigned (*searchFunction)(const QChar *, unsigned))
@@ -168,7 +168,7 @@ static VisiblePosition nextWordBoundary(const VisiblePosition &c, unsigned (*sea
         charIt.advance(next - 1);
         pos = Position(charIt.range().endContainer().handle(), charIt.range().endOffset());
     }
-    return VisiblePosition(pos, UPSTREAM).deepEquivalent();
+    return VisiblePosition(pos, UPSTREAM);
 }
 
 static unsigned startWordBoundary(const QChar *characters, unsigned length)
@@ -229,12 +229,12 @@ VisiblePosition nextWordPosition(const VisiblePosition &c)
 
 VisiblePosition previousLinePosition(const VisiblePosition &c, int x)
 {
-    return c.deepEquivalent().previousLinePosition(x);
+    return VisiblePosition(c.deepEquivalent().previousLinePosition(x));
 }
 
 VisiblePosition nextLinePosition(const VisiblePosition &c, int x)
 {
-    return c.deepEquivalent().nextLinePosition(x);
+    return VisiblePosition(c.deepEquivalent().nextLinePosition(x));
 }
 
 VisiblePosition startOfParagraph(const VisiblePosition &c)

@@ -1,3 +1,31 @@
+2004-09-28  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin
+        
+        Mark the VisiblePosition taking (Position &, EAffinity=DOWNSTREAM) explicit. Recently, when I added
+        the EAffinity argument, I left this constructor implicit. Darin pointed out to me that this is
+        undesirable since implicit use of the the constructor involved making the affinity choice, something
+        which should be done explicitly.
+
+        * khtml/editing/selection.cpp:
+        (khtml::Selection::modifyExtendingRightForward): Make explicit use of constructor mentioned above.
+        (khtml::Selection::modifyMovingRightForward): Ditto.
+        (khtml::Selection::modifyExtendingLeftBackward): Ditto.
+        (khtml::Selection::modifyMovingLeftBackward): Ditto.
+        (khtml::Selection::modify): Ditto.
+        (khtml::Selection::validate): Ditto.
+        * khtml/editing/visible_position.h: Make constructor taking (Position &, EAffinity) explicit.
+        * khtml/editing/visible_units.cpp: Ditto.
+        (khtml::previousWordBoundary): Make explicit use of constructor mentioned above.
+        (khtml::nextWordBoundary): Ditto.
+        (khtml::previousLinePosition): Ditto.
+        (khtml::nextLinePosition): Ditto.
+        * kwq/KWQKHTMLPart.mm: Ditto.
+        (KWQKHTMLPart::findString): Ditto.
+        (KWQKHTMLPart::advanceToNextMisspelling): Ditto.
+        (KWQKHTMLPart::markMisspellingsInSelection): Ditto.
+        (KWQKHTMLPart::updateSpellChecking): Ditto.
+
 2004-09-28  Darin Adler  <darin@apple.com>
 
         Reviewed by John.

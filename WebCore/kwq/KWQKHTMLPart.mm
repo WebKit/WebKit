@@ -592,9 +592,9 @@ bool KWQKHTMLPart::findString(NSString *string, bool forward, bool caseFlag, boo
     searchRange.selectNodeContents(xmlDocImpl());
     if (selectionStart()) {
         if (forward) {
-            setStart(searchRange, selection().end());
+            setStart(searchRange, VisiblePosition(selection().end()));
         } else {
-            setEnd(searchRange, selection().start());
+            setEnd(searchRange, VisiblePosition(selection().start()));
         }
     }
 
@@ -917,7 +917,7 @@ QString KWQKHTMLPart::advanceToNextMisspelling(bool startBeforeSelection)
     if (selectionStart()) {
         startedWithSelection = true;
         if (startBeforeSelection) {
-            VisiblePosition start = selection().start();
+            VisiblePosition start(selection().start());
             // We match AppKit's rule: Start 1 character before the selection.
             VisiblePosition oneBeforeStart = start.previous();
             setStart(searchRange, oneBeforeStart.isNotNull() ? oneBeforeStart : start);
@@ -3793,7 +3793,7 @@ void KWQKHTMLPart::markMisspellingsInSelection(const Selection &selection)
     // So, for now, the idea is to mimic AppKit behavior and limit the selection to the first word 
     // of the selection passed in.
     // This is not ideal by any means, but this is the convention.
-    VisiblePosition start = selection.start();
+    VisiblePosition start(selection.start());
     Selection s(startOfWord(start, LeftWordIfOnBoundary), endOfWord(start, RightWordIfOnBoundary));
     if (!s.isRange())
         return;
@@ -3854,7 +3854,7 @@ void KWQKHTMLPart::updateSpellChecking()
         if ([_bridge isContinuousSpellCheckingEnabled]) {
             // This only erases a marker in the first word of the selection.  Perhaps peculiar, but it
             // matches AppKit.
-            VisiblePosition start = selection().start();
+            VisiblePosition start(selection().start());
             Selection s(startOfWord(start, LeftWordIfOnBoundary), endOfWord(start, RightWordIfOnBoundary));
             xmlDocImpl()->removeMarker(s.toRange(), DocumentMarker::Spelling);
         }

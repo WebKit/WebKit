@@ -219,7 +219,7 @@ void Selection::setModifyBias(EAlter alter, EDirection direction)
 
 VisiblePosition Selection::modifyExtendingRightForward(ETextGranularity granularity)
 {
-    VisiblePosition pos = m_extent;
+    VisiblePosition pos(m_extent);
     switch (granularity) {
         case CHARACTER:
             pos = pos.next();
@@ -234,14 +234,14 @@ VisiblePosition Selection::modifyExtendingRightForward(ETextGranularity granular
             pos = nextLinePosition(pos, xPosForVerticalArrowNavigation(EXTENT));
             break;
         case LINE_BOUNDARY:
-            pos = selectionForLine(m_end).end();
+            pos = VisiblePosition(selectionForLine(m_end).end());
             break;
         case PARAGRAPH_BOUNDARY:
-            pos = endOfParagraph(m_end);
+            pos = endOfParagraph(VisiblePosition(m_end));
             break;
         case DOCUMENT_BOUNDARY: {
             NodeImpl *de = m_start.node()->getDocument()->documentElement();
-            pos = Position(de, de ? de->childNodeCount() : 0);
+            pos = VisiblePosition(de, de ? de->childNodeCount() : 0);
             break;
         }
     }
@@ -254,28 +254,28 @@ VisiblePosition Selection::modifyMovingRightForward(ETextGranularity granularity
     switch (granularity) {
         case CHARACTER:
             if (isRange()) 
-                pos = m_end;
+                pos = VisiblePosition(m_end);
             else
                 pos = VisiblePosition(m_extent).next();
             break;
         case WORD:
-            pos = nextWordPosition(m_extent);
+            pos = nextWordPosition(VisiblePosition(m_extent));
             break;
         case PARAGRAPH:
-            pos = nextParagraphPosition(m_end, xPosForVerticalArrowNavigation(END, isRange()));
+            pos = nextParagraphPosition(VisiblePosition(m_end), xPosForVerticalArrowNavigation(END, isRange()));
             break;
         case LINE:
-            pos = nextLinePosition(m_end, xPosForVerticalArrowNavigation(END, isRange()));
+            pos = nextLinePosition(VisiblePosition(m_end), xPosForVerticalArrowNavigation(END, isRange()));
             break;
         case LINE_BOUNDARY:
-            pos = selectionForLine(m_end).end();
+            pos = VisiblePosition(selectionForLine(m_end).end());
             break;
         case PARAGRAPH_BOUNDARY:
-            pos = endOfParagraph(m_end);
+            pos = endOfParagraph(VisiblePosition(m_end));
             break;
         case DOCUMENT_BOUNDARY: {
             NodeImpl *de = m_start.node()->getDocument()->documentElement();
-            pos = Position(de, de ? de->childNodeCount() : 0);
+            pos = VisiblePosition(de, de ? de->childNodeCount() : 0);
             break;
         }
     }
@@ -284,7 +284,7 @@ VisiblePosition Selection::modifyMovingRightForward(ETextGranularity granularity
 
 VisiblePosition Selection::modifyExtendingLeftBackward(ETextGranularity granularity)
 {
-    VisiblePosition pos = m_extent;
+    VisiblePosition pos(m_extent);
     switch (granularity) {
         case CHARACTER:
             pos = pos.previous();
@@ -299,10 +299,10 @@ VisiblePosition Selection::modifyExtendingLeftBackward(ETextGranularity granular
             pos = previousLinePosition(pos, xPosForVerticalArrowNavigation(EXTENT));
             break;
         case LINE_BOUNDARY:
-            pos = selectionForLine(m_start).start();
+            pos = VisiblePosition(selectionForLine(m_start).start());
             break;
         case PARAGRAPH_BOUNDARY:
-            pos = startOfParagraph(m_start);
+            pos = startOfParagraph(VisiblePosition(m_start));
             break;
         case DOCUMENT_BOUNDARY:
             pos = VisiblePosition(m_start.node()->getDocument()->documentElement(), 0);
@@ -317,24 +317,24 @@ VisiblePosition Selection::modifyMovingLeftBackward(ETextGranularity granularity
     switch (granularity) {
         case CHARACTER:
             if (isRange()) 
-                pos = m_start;
+                pos = VisiblePosition(m_start);
             else
                 pos = VisiblePosition(m_extent).previous();
             break;
         case WORD:
-            pos = previousWordPosition(m_extent);
+            pos = previousWordPosition(VisiblePosition(m_extent));
             break;
         case PARAGRAPH:
-            pos = previousParagraphPosition(m_start, xPosForVerticalArrowNavigation(START, isRange()));
+            pos = previousParagraphPosition(VisiblePosition(m_start), xPosForVerticalArrowNavigation(START, isRange()));
             break;
         case LINE:
-            pos = previousLinePosition(m_start, xPosForVerticalArrowNavigation(START, isRange()));
+            pos = previousLinePosition(VisiblePosition(m_start), xPosForVerticalArrowNavigation(START, isRange()));
             break;
         case LINE_BOUNDARY:
-            pos = selectionForLine(m_start).start();
+            pos = VisiblePosition(selectionForLine(m_start).start());
             break;
         case PARAGRAPH_BOUNDARY:
-            pos = startOfParagraph(m_start).deepEquivalent();
+            pos = startOfParagraph(VisiblePosition(m_start));
             break;
         case DOCUMENT_BOUNDARY:
             pos = VisiblePosition(m_start.node()->getDocument()->documentElement(), 0);
@@ -412,11 +412,11 @@ bool Selection::modify(EAlter alter, int verticalDistance)
     int xPos = 0; /* initialized only to make compiler happy */
     switch (alter) {
         case MOVE:
-            pos = verticalDistance > 0 ? m_end : m_start;
+            pos = VisiblePosition(verticalDistance > 0 ? m_end : m_start);
             xPos = xPosForVerticalArrowNavigation(verticalDistance > 0 ? END : START, isRange());
             break;
         case EXTEND:
-            pos = m_extent;
+            pos = VisiblePosition(m_extent);
             xPos = xPosForVerticalArrowNavigation(EXTENT);
             break;
     }
@@ -733,13 +733,13 @@ void Selection::validate(ETextGranularity granularity)
             break;
         case WORD:
             if (m_baseIsStart) {
-                m_end = endOfWord(m_extent).deepEquivalent();
+                m_end = endOfWord(VisiblePosition(m_extent)).deepEquivalent();
                 // If at the end of the document, expand to the left.
                 EWordSide side = (m_end == m_extent) ? LeftWordIfOnBoundary : RightWordIfOnBoundary;
-                m_start = startOfWord(m_base, side).deepEquivalent();
+                m_start = startOfWord(VisiblePosition(m_base), side).deepEquivalent();
             } else {
-                m_start = startOfWord(m_extent).deepEquivalent();
-                m_end = endOfWord(m_base).deepEquivalent();
+                m_start = startOfWord(VisiblePosition(m_extent)).deepEquivalent();
+                m_end = endOfWord(VisiblePosition(m_base)).deepEquivalent();
             }
             break;
         case LINE:
@@ -765,11 +765,11 @@ void Selection::validate(ETextGranularity granularity)
         }
         case PARAGRAPH:
             if (m_baseIsStart) {
-                m_start = startOfParagraph(m_base).deepEquivalent();
-                m_end = endOfParagraph(m_extent, IncludeLineBreak).deepEquivalent();
+                m_start = startOfParagraph(VisiblePosition(m_base)).deepEquivalent();
+                m_end = endOfParagraph(VisiblePosition(m_extent), IncludeLineBreak).deepEquivalent();
             } else {
-                m_start = startOfParagraph(m_extent).deepEquivalent();
-                m_end = endOfParagraph(m_base, IncludeLineBreak).deepEquivalent();
+                m_start = startOfParagraph(VisiblePosition(m_extent)).deepEquivalent();
+                m_end = endOfParagraph(VisiblePosition(m_base), IncludeLineBreak).deepEquivalent();
             }
             break;
         case DOCUMENT_BOUNDARY: {
@@ -780,11 +780,11 @@ void Selection::validate(ETextGranularity granularity)
         }
         case PARAGRAPH_BOUNDARY:
             if (m_baseIsStart) {
-                m_start = startOfParagraph(m_base).deepEquivalent();
-                m_end = endOfParagraph(m_extent).deepEquivalent();
+                m_start = startOfParagraph(VisiblePosition(m_base)).deepEquivalent();
+                m_end = endOfParagraph(VisiblePosition(m_extent)).deepEquivalent();
             } else {
-                m_start = startOfParagraph(m_extent).deepEquivalent();
-                m_end = endOfParagraph(m_base).deepEquivalent();
+                m_start = startOfParagraph(VisiblePosition(m_extent)).deepEquivalent();
+                m_end = endOfParagraph(VisiblePosition(m_base)).deepEquivalent();
             }
             break;
     }
