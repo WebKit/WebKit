@@ -151,6 +151,7 @@ CMMFLAGS = $(BASECMMFLAGS) \
     -g \
     -I$(TOPSRCDIR) \
     -I$(TOPSRCDIR)/WebCore/include \
+    -I$(TOPSRCDIR)/WebCore/src/kdelibs/kjs \
     -I$(TOPSRCDIR)/WebCore/src/kdelibs/khtml \
     -I$(TOPSRCDIR)/WebCore/src/kdelibs/khtml/dom \
     -I$(TOPSRCDIR)/WebCore/src/kdelibs/khtml/ecma \
