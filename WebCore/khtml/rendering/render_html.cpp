@@ -62,15 +62,15 @@ void RenderHtml::printBoxDecorations(QPainter *p,int, int _y,
     QColor c = style()->backgroundColor();
     CachedImage *bg = style()->backgroundImage();
 
-    if( firstChild() ) {
-	if( !c.isValid() )
-	    c = firstChild()->style()->backgroundColor();
-	if( !bg )
-	    bg = firstChild()->style()->backgroundImage();
+    if (!c.isValid() && !bg && firstChild()) {
+        if (!c.isValid())
+            c = firstChild()->style()->backgroundColor();
+        if (!bg)
+            bg = firstChild()->style()->backgroundImage();
         if( !c.isValid() && root()->view())
             c = root()->view()->palette().active().color(QColorGroup::Base);
     }
-
+    
     int w = width();
     int h = height();
 

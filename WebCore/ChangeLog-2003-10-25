@@ -1,5 +1,16 @@
 2002-09-12  David Hyatt  <hyatt@apple.com>
 
+	KHTML was butchering the laws of background propagation from
+	the <body> to the <html>.  This fixes the logical flaws and
+	makes some of the geekiest CSS on the planet render correctly. ;)
+	
+        * khtml/rendering/render_body.cpp:
+        (RenderBody::printBoxDecorations):
+        * khtml/rendering/render_html.cpp:
+        (RenderHtml::printBoxDecorations):
+
+2002-09-12  David Hyatt  <hyatt@apple.com>
+
 	Make fixed positioned elements work when you scroll.  We were
 	just missing the implementation of a QScrollView method.
 	
