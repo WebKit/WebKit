@@ -2520,6 +2520,8 @@ static WebHTMLView *lastHitView = nil;
 
 - (void)keyDown:(NSEvent *)event
 {
+    BOOL callSuper = NO;
+
     _private->keyDownEvent = event;
 
     WebBridge *bridge = [self _bridge];
@@ -2534,8 +2536,13 @@ static WebHTMLView *lastHitView = nil;
         if ([self _canType] && [self _interceptEditingKeyEvent:event]) {
             // Consumed by key bindings manager.
         } else {
-            [super keyDown:event];
+            callSuper = YES;
         }
+    }
+    if (callSuper) {
+        [super keyDown:event];
+    } else {
+        [NSCursor setHiddenUntilMouseMoves:YES];
     }
 
     _private->keyDownEvent = nil;
@@ -3621,6 +3628,28 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
     [bridge setMarkDOMRange:selection];
 }
 
+- (void)transpose:(id)sender
+{
+    WebBridge *bridge = [self _bridge];
+    DOMRange *r = [bridge rangeOfCharactersAroundCaret];
+    if (!r) {
+        return;
+    }
+    NSString *characters = [bridge stringForRange:r];
+    if ([characters length] != 2) {
+        return;
+    }
+    NSString *transposed = [[characters substringFromIndex:1] stringByAppendingString:[characters substringToIndex:1]];
+    WebView *webView = [self _webView];
+    if (![[webView _editingDelegateForwarder] webView:webView shouldChangeSelectedDOMRange:[self _selectedRange] toDOMRange:r affinity:NSSelectionAffinityUpstream stillSelecting:NO]) {
+        return;
+    }
+    [bridge setSelectedDOMRange:r affinity:NSSelectionAffinityUpstream];
+    if ([self _shouldReplaceSelectionWithText:transposed givenAction:WebViewInsertActionTyped]) {
+        [bridge replaceSelectionWithText:transposed selectReplacement:NO];
+    }
+}
+
 #if 0
 
 // CSS does not have a way to specify an outline font, which may make this difficult to implement.
@@ -3632,8 +3661,6 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 - (void)insertTable:(id)sender;
 
 // === methods with standard key bindings
-
-- (void)transpose:(id)sender;
 
 // Implementing these requires motion by paragraph.
 // Currently move right by paragraph is actually "move to end of paragraph".

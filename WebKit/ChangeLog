@@ -1,3 +1,14 @@
+2004-09-14  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fixed <rdar://problem/3788894> REGRESSION (Mail): ctrl-t emacs key binding does not work (transpose)
+        - fixed <rdar://problem/3798946> REGRESSION (Mail): Cursor does not disappear when typing
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView keyDown:]): Hide cursor by calling setHiddenUntilMouseMoves:YES.
+        (-[WebHTMLView transpose:]): Added.
+
 2004-09-14  Richard Williamson   <rjw@apple.com>
 
         1.  Add class parameter to object allocation function.  This is somewhat redundant, given that
