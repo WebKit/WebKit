@@ -131,8 +131,11 @@
                 fontWeight = [[fontInfo objectAtIndex: 2] intValue];
                 fontMask = [[fontInfo objectAtIndex: 3] unsignedIntValue];
                 
-                // First look for a 'normal' weight font.  The weight and mask
-                // properties are somewhat conflicting.
+                // First look for a 'normal' weight font.  Note that the 
+                // documentation indicates that the weight parameter is ignored if the 
+                // trait contains the bold mask.  This is odd as one would think that other
+                // traits could also indicate weight changes.  In fact, the weight parameter
+                // and the trait mask together make a conflicted API.
                 if (fontWeight == 5 && (fontMask & traits) == traits){
                     font = [[NSFontManager sharedFontManager] fontWithFamily:availableFamily traits:traits weight:5 size:size];
                     if (font != nil) {
