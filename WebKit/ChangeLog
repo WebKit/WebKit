@@ -1,3 +1,7 @@
+2005-03-09  Darin Adler  <darin@apple.com>
+
+        * DOM.subproj/DOMPrivate.h: Checked in file copied from WebCore.
+
 2005-03-08  Richard Williamson   <rjw@apple.com>
 
         Fixed <rdar://problem/4036949> many JPEG images fail to incremental-load due to change in ImageIO JPEG header parsing (to be fixed in WebKit)

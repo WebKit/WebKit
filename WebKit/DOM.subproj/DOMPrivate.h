@@ -44,3 +44,8 @@
 - (NSString *)_fontSizeDelta;
 - (void)_setFontSizeDelta:(NSString *)fontSizeDelta;
 @end
+
+@interface DOMHTMLDocument (WebPrivate)
+- (DOMDocumentFragment *)_createDocumentFragmentWithMarkupString:(NSString *)markupString baseURLString:(NSString *)baseURLString;
+- (DOMDocumentFragment *)_createDocumentFragmentWithText:(NSString *)text;
+@end
