@@ -1,3 +1,24 @@
+2002-04-22  Darin Adler  <darin@apple.com>
+
+	* khtml/ecma/Makefile.am: Don't build kjs_debugwin any more.
+	* khtml/ecma/kjs_debugwin.cpp: Removed.
+	* khtml/ecma/kjs_debugwin.h: Removed.
+
+	* kwq/qt/qpixmap.h:
+	* kwq/KWQPixmap.mm:
+	(QPixmap::QPixmap): Clear needsCopyOnWrite flag in all the
+	constructors other than the copy constructor. Set it in the copy
+	constructor.
+	(QPixmap::~QPixmap): Simplify.
+	(QPixmap::mask): Always return 0 rather than leaking a QBitmap each time,
+	since Qt uses 0 to mean "no mask".
+	(QPixmap::isNull): Simplify.
+	(QPixmap::resize): Do the copy here if we need it, and do the setScalesWhenResized:
+	call in here instead of trying to do it elsewhere.
+	(QPixmap::xForm): Only copy the pixmap once.
+	(QPixmap::operator=): Set the needsCopyOnWrite flag. Also change the retain/release
+	idiom around so we don't need to check for self-assignment.
+
 2002-04-22  Chris Blumenberg  <cblu@apple.com>
 
 	Added a new method to WCPluginDatabase allHandledMIMETypes.

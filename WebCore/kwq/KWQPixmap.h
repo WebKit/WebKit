@@ -26,10 +26,6 @@
 #ifndef QPIXMAP_H_
 #define QPIXMAP_H_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
 #include "qpaintdevice.h"
 #include "qcolor.h"
 #include "qstring.h"
@@ -39,8 +35,10 @@
 #include "qrect.h"
 #include "qpainter.h"
 
-#if (defined(__APPLE__) && defined(__OBJC__) && defined(__cplusplus))
-#import <Cocoa/Cocoa.h>
+#ifdef __OBJC__
+@class NSImage;
+#else
+typedef void NSImage;
 #endif
 
 class QBitmap;
@@ -62,7 +60,7 @@ public:
     QPixmap();
     QPixmap(const QSize&);
     QPixmap(const QByteArray&);
-    QPixmap(int,int);
+    QPixmap(int, int);
     QPixmap(const QPixmap &);
     ~QPixmap();
 
@@ -78,7 +76,7 @@ public:
     int width() const;
     int height() const;
     void resize(const QSize &);
-    void resize(int,int);
+    void resize(int, int);
 
     QPixmap xForm(const QWMatrix &) const;
     QImage convertToImage() const;
@@ -87,13 +85,10 @@ public:
 
     QPixmap &operator=(const QPixmap &);
 
-#ifdef _KWQ_
-#if (defined(__APPLE__) && defined(__OBJC__) && defined(__cplusplus))
+private:
     NSImage *nsimage;
-#else
-    void *nsimage;
-#endif
-#endif
+    bool needCopyOnWrite;
+
 }; // class QPixmap ============================================================
 
 #endif

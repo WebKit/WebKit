@@ -9,8 +9,6 @@ libkhtmlecma_o_SOURCES = \
 	kjs_binding.h \
 	kjs_css.cpp \
 	kjs_css.h \
-	kjs_debugwin.cpp \
-	kjs_debugwin.h \
 	kjs_dom.cpp \
 	kjs_dom.h \
 	kjs_events.cpp \
