@@ -42,17 +42,6 @@ NSString *WebPreferencesChangedNotification = @"WebPreferencesChangedNotificatio
 
 @implementation WebPreferences
 
-+ (WebPreferences *)standardPreferences
-{
-    static WebPreferences *_standardPreferences = nil;
-
-    if (_standardPreferences == nil) {
-        _standardPreferences = [[WebPreferences alloc] init];
-    }
-
-    return _standardPreferences;
-}
-
 - (void)_postPreferencesChangesNotification
 {
     [[NSNotificationCenter defaultCenter]
@@ -60,11 +49,21 @@ NSString *WebPreferencesChangedNotification = @"WebPreferencesChangedNotificatio
                     userInfo:nil];
 }
 
-// if we ever have more than one WebPreferences object, this would move to init
-+ (void)load
++ (WebPreferences *)standardPreferences
 {
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    static WebPreferences *_standardPreferences = nil;
 
+    if (_standardPreferences == nil) {
+        _standardPreferences = [[WebPreferences alloc] init];
+        [_standardPreferences _postPreferencesChangesNotification];
+    }
+
+    return _standardPreferences;
+}
+
+// if we ever have more than one WebPreferences object, this would move to init
++ (void)initialize
+{
     NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
         @"0x0",                         WebKitLogLevelPreferenceKey,
         @"Lucida Grande",               WebKitStandardFontPreferenceKey,
@@ -96,17 +95,6 @@ NSString *WebPreferencesChangedNotification = @"WebPreferencesChangedNotificatio
         nil];
 
     [[NSUserDefaults standardUserDefaults] registerDefaults:dict];
-
-/*
-    [[NSNotificationCenter defaultCenter]
-        addObserver:[self standardPreferences]
-           selector:@selector(_postPreferencesChangesNotification)
-               name:NSUserDefaultsDidChangeNotification
-             object:[NSUserDefaults standardUserDefaults]];
-*/    
-    [[self standardPreferences] _postPreferencesChangesNotification];
-
-    [pool release];
 }
 
 - (NSString *)_stringValueForKey: (NSString *)key

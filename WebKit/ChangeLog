@@ -1,3 +1,16 @@
+2003-03-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - got rid of some framework initialization (working on bug 3185161)
+
+        * WebView.subproj/WebPreferences.m:
+        (-[WebPreferences _postPreferencesChangesNotification]): Moved this function up.
+        (+[WebPreferences standardPreferences]): Call _postPreferencesChangesNotification when this is made,
+        for consistency with the old behavior.
+        (+[WebPreferences initialize]): Changed to initialize from load, and got rid of stuff we don't want
+        to do from inside an initialize function.
+
 2003-03-04  Richard Williamson   <rjw@apple.com>
 
         Remove initWithURL: and frameName from WebDataSource public API.
