@@ -307,7 +307,7 @@ static int
 ord2utf8(int cvalue, uschar *buffer)
 {
 register int i, j;
-for (i = 0; i < sizeof(utf8_table1)/sizeof(int); i++)
+for (i = 0; i < (int)(sizeof(utf8_table1)/sizeof(int)); i++)
   if (cvalue <= utf8_table1[i]) break;
 buffer += i;
 for (j = i; j > 0; j--)
@@ -3014,7 +3014,7 @@ while ((c = *(++ptr)) != 0)
         if (c > 127 && (options & PCRE_UTF8) != 0)
           {
           int i;
-          for (i = 0; i < sizeof(utf8_table1)/sizeof(int); i++)
+          for (i = 0; i < (int)(sizeof(utf8_table1)/sizeof(int)); i++)
             if (c <= utf8_table1[i]) break;
           runlength += i;
           }

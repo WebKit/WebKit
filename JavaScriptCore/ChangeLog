@@ -1,5 +1,64 @@
 2002-12-04  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by: NOBODY (OOPS!)
+
+	Set things up so JavaScriptCore builds in PCRE and uses it for
+	regular expressions. This fixes many form validation bugs:
+
+	- fixed 3103197 - javascript at fidelity.com rejects valid input
+	- fixed 2942552 - form validation at weather.com fails
+	- fixed 3079752 - js always reports textarea is empty
+	- fixed 3079719 - covad.com "check availalbility" fails
+	
+        * Makefile.am: Add pcre subdir.
+        * kjs/config.h: define HAVE_PCREPOSIX to true.
+	* kjs/regexp.h: Don't include pcreposix.h since nothing from there
+	is used.
+	* pcre/.cvsignore: Added.
+        * pcre/ChangeLog: Removed.
+        * pcre/INSTALL: Removed.
+        * pcre/Makefile.am: Added.
+        * pcre/Makefile.in: Removed.
+        * pcre/NEWS: Removed.
+        * pcre/NON-UNIX-USE: Removed.
+        * pcre/README: Removed.
+        * pcre/chartables.c: Added.
+        * pcre/config.guess: Removed.
+        * pcre/config.in: Removed.
+        * pcre/config.sub: Removed.
+        * pcre/configure: Removed.
+        * pcre/configure.in: Removed.
+        * pcre/dll.mk: Removed.
+        * pcre/doc/Tech.Notes: Removed.
+        * pcre/doc/pcre.3: Removed.
+        * pcre/doc/pcre.html: Removed.
+        * pcre/doc/pcre.txt: Removed.
+        * pcre/doc/pcregrep.1: Removed.
+        * pcre/doc/pcregrep.html: Removed.
+        * pcre/doc/pcregrep.txt: Removed.
+        * pcre/doc/pcreposix.3: Removed.
+        * pcre/doc/pcreposix.html: Removed.
+        * pcre/doc/pcreposix.txt: Removed.
+        * pcre/doc/pcretest.1: Removed.
+        * pcre/doc/pcretest.html: Removed.
+        * pcre/doc/pcretest.txt: Removed.
+        * pcre/doc/perltest.txt: Removed.
+        * pcre/install-sh: Removed.
+        * pcre/ltmain.sh: Removed.
+        * pcre/pcre-config.h: Added.
+        * pcre/pcre-config.in: Removed.
+        * pcre/internal.h: Include pcre-config.h instead of config.h
+        * pcre/pcre.c:
+        (ord2utf8): Fix warnings.
+        (pcre_compile): Fix warnings.
+        * pcre/pcre.def: Removed.
+        * pcre/pcre.h: Added.
+        * pcre/pcre.in: Removed.
+        * JavaScriptCore.pbproj/project.pbxproj: Added pcre files to build.
+        * JavaScriptCorePrefix.h: Guard c++ headers with #ifdef __cplusplus.
+
+2002-12-04  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by: Richard Williamson
 
         * pcre/doc/*: Added.

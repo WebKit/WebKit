@@ -80,8 +80,8 @@
 		};
 		0867D691FE84028FC02AAC07 = {
 			children = (
-				08FB77AEFE84172EC02AAC07,
-				F5C290E50284F960018635CA,
+				65417203039E01F90058BFEB,
+				65417200039E01BA0058BFEB,
 				089C1665FE841158C02AAC07,
 				0867D69AFE84028FC02AAC07,
 				034768DFFF38A50411DB9C8B,
@@ -228,6 +228,8 @@
 				9373524F038DA8C2008635CE,
 				931C6CF1038EE8DE008635CE,
 				651F6415039D5B5F0078395C,
+				65417211039E08B90058BFEB,
+				65417219039E0B390058BFEB,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -276,6 +278,10 @@
 				9374D3AA038D9D74008635CE,
 				931C6CF2038EE8DE008635CE,
 				651F6414039D5B5F0078395C,
+				6541720A039E02E70058BFEB,
+				6541720B039E02E70058BFEB,
+				6541720C039E02E70058BFEB,
+				6541720D039E02E70058BFEB,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -396,7 +402,7 @@
 			);
 			isa = PBXGroup;
 			name = Classes;
-			path = kjs;
+			path = "";
 			refType = 4;
 		};
 //080
@@ -468,6 +474,122 @@
 		};
 		651F6415039D5B5F0078395C = {
 			fileRef = 651F6413039D5B5F0078395C;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		65417200039E01BA0058BFEB = {
+			children = (
+				08FB77AEFE84172EC02AAC07,
+				F5C290E50284F960018635CA,
+			);
+			isa = PBXGroup;
+			path = kjs;
+			refType = 4;
+		};
+		65417203039E01F90058BFEB = {
+			children = (
+				6541720E039E08B90058BFEB,
+				65417204039E02E70058BFEB,
+				65417205039E02E70058BFEB,
+				65417206039E02E70058BFEB,
+				65417217039E0B280058BFEB,
+				6541720F039E08B90058BFEB,
+				65417207039E02E70058BFEB,
+				65417208039E02E70058BFEB,
+			);
+			isa = PBXGroup;
+			name = pcre;
+			refType = 4;
+		};
+		65417204039E02E70058BFEB = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = chartables.c;
+			path = pcre/chartables.c;
+			refType = 4;
+		};
+		65417205039E02E70058BFEB = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = get.c;
+			path = pcre/get.c;
+			refType = 4;
+		};
+		65417206039E02E70058BFEB = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = maketables.c;
+			path = pcre/maketables.c;
+			refType = 4;
+		};
+		65417207039E02E70058BFEB = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = pcre.c;
+			path = pcre/pcre.c;
+			refType = 4;
+		};
+		65417208039E02E70058BFEB = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = study.c;
+			path = pcre/study.c;
+			refType = 4;
+		};
+		6541720A039E02E70058BFEB = {
+			fileRef = 65417205039E02E70058BFEB;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		6541720B039E02E70058BFEB = {
+			fileRef = 65417206039E02E70058BFEB;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		6541720C039E02E70058BFEB = {
+			fileRef = 65417207039E02E70058BFEB;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		6541720D039E02E70058BFEB = {
+			fileRef = 65417208039E02E70058BFEB;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		6541720E039E08B90058BFEB = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = dftables.c;
+			path = pcre/dftables.c;
+			refType = 4;
+		};
+		6541720F039E08B90058BFEB = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = pcre.h;
+			path = pcre/pcre.h;
+			refType = 4;
+		};
+		65417211039E08B90058BFEB = {
+			fileRef = 6541720F039E08B90058BFEB;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		65417217039E0B280058BFEB = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = "pcre-config.h";
+			path = "pcre/pcre-config.h";
+			refType = 4;
+		};
+		65417219039E0B390058BFEB = {
+			fileRef = 65417217039E0B280058BFEB;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -751,7 +873,7 @@
 			);
 			isa = PBXGroup;
 			name = "Other Sources";
-			path = kjs;
+			path = "";
 			refType = 4;
 		};
 		F5C290E60284F98E018635CA = {
