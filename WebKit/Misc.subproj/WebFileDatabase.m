@@ -113,132 +113,6 @@ static CFArrayRef CreateArrayListingFilesSortedByAccessTime(const char *path)
     return atimeArray;
 }
 
-// interface WebFileReader -------------------------------------------------------------
-
-@interface WebFileReader : NSObject
-{
-    NSData *data;
-    caddr_t mappedBytes;
-    size_t mappedLength;
-}
-
-- (id)initWithPath:(NSString *)path;
-- (NSData *)data;
-
-@end
-
-// implementation WebFileReader -------------------------------------------------------------
-
-static NSMutableSet *notMappableFileNameSet = nil;
-static NSLock *mutex;
-
-static void URLFileReaderInit(void)
-{
-    mutex = [[NSLock alloc] init];
-    notMappableFileNameSet = [[NSMutableSet alloc] init];    
-}
-
-@implementation WebFileReader
-
-- (id)initWithPath:(NSString *)path
-{
-    int fd;
-    struct stat statInfo;
-    const char *fileSystemPath;
-    BOOL fileNotMappable;
-    static pthread_once_t cacheFileReaderControl = PTHREAD_ONCE_INIT;
-
-    pthread_once(&cacheFileReaderControl, URLFileReaderInit);
-
-    [super init];
-
-    if (self == nil || path == nil) {
-        [self dealloc];
-        return nil;
-    }
-    
-    data = nil;
-    mappedBytes = NULL;
-    mappedLength = 0;
-
-    NS_DURING
-        fileSystemPath = [path fileSystemRepresentation];
-    NS_HANDLER
-        fileSystemPath = NULL;
-    NS_ENDHANDLER
-
-    [mutex lock];
-    fileNotMappable = [notMappableFileNameSet containsObject:path];
-    [mutex unlock];
-
-    if (fileNotMappable) {
-        data = [[NSData alloc] initWithContentsOfFile:path];
-    }
-    else if (fileSystemPath && (fd = open(fileSystemPath, O_RDONLY, 0)) >= 0) {
-        // File exists. Retrieve the file size.
-        if (fstat(fd, &statInfo) == 0) {
-            // Map the file into a read-only memory region.
-            mappedBytes = mmap(NULL, statInfo.st_size, PROT_READ, 0, fd, 0);
-            if (mappedBytes == MAP_FAILED) {
-                // map has failed but file exists
-                // add file to set of paths known not to be mappable
-                // then, read file from file system
-                [mutex lock];
-                [notMappableFileNameSet addObject:path];
-                [mutex unlock];
-                
-                mappedBytes = NULL;
-                data = [[NSData alloc] initWithContentsOfFile:path];
-            }
-            else {
-                // On success, create data object using mapped bytes.
-                mappedLength = statInfo.st_size;
-                data = [[NSData alloc] initWithBytesNoCopy:mappedBytes length:mappedLength freeWhenDone:NO];
-                // ok data creation failed but we know file exists
-                // be stubborn....try to read bytes again
-                if (!data) {
-                    munmap(mappedBytes, mappedLength);    
-                    data = [[NSData alloc] initWithContentsOfFile:path];
-                }
-            }
-        }
-        close(fd);
-    }
-    
-    if (data) {
-        if (mappedBytes) {
-            LOG(DiskCacheActivity, "mmaped disk cache file - %@", path);
-        }
-        else {
-            LOG(DiskCacheActivity, "fs read disk cache file - %@", path);
-        }
-        return self;
-    }
-    else {
-        LOG(DiskCacheActivity, "no disk cache file - %@", path);
-        [self dealloc];
-        return nil;
-    }
-}
-
-- (NSData *)data
-{
-    return data;
-}
-
-- (void)dealloc
-{
-    if (mappedBytes) {
-        munmap(mappedBytes, mappedLength); 
-    }
-    
-    [data release];
-    
-    [super dealloc];
-}
-
-@end
-
 // interface WebFileDatabaseOp -------------------------------------------------------------
 
 @interface WebFileDatabaseOp : NSObject
@@ -632,13 +506,11 @@ static void databaseInit()
 
     // go to disk
     NSString *filePath = [[NSString alloc] initWithFormat:@"%@/%@", path, [WebFileDatabase uniqueFilePathForKey:key]];
-    WebFileReader *fileReader = [[WebFileReader alloc] initWithPath:filePath];
-    
-    NSData *data;
+    NSData *data = [[NSData alloc] initWithContentsOfFile:filePath];
     NSUnarchiver * volatile unarchiver = nil;
 
     NS_DURING
-        if (fileReader && (data = [fileReader data])) {
+        if (data) {
             unarchiver = [[NSUnarchiver alloc] initForReadingWithData:data];
             if (unarchiver) {
                 id fileKey = [unarchiver decodeObject];
@@ -648,6 +520,7 @@ static void databaseInit()
                         // Decoded objects go away when the unarchiver does, so we need to
                         // retain this so we can return it to our caller.
                         result = [[object retain] autorelease];
+                        LOG(DiskCacheActivity, "read disk cache file - %@", key);
                     }
                 }
             }
@@ -658,7 +531,7 @@ static void databaseInit()
     NS_ENDHANDLER
 
     [unarchiver release];
-    [fileReader release];
+    [data release];
     [filePath release];
 
     return result;
