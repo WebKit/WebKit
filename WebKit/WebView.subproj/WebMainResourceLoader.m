@@ -83,7 +83,7 @@
 {
     return [WebError errorWithCode:WebKitErrorLocationChangeInterruptedByPolicyChange
                           inDomain:WebErrorDomainWebKit
-                        failingURL:nil];
+                        failingURL:[[request URL] absoluteString]];
 }
 
 -(void)stopLoadingForPolicyChange

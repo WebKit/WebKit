@@ -379,29 +379,29 @@ NSSize WebIconLargeSize = {128, 128};
 {
     ASSERT(size.width);
     ASSERT(size.height);
-    
-    NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
-    NSImage *icon;
-    NSURL *URL = [NSURL _web_URLWithString:file];
-    if (!URL) {
-        return nil;
-    }
 
-    NSString *path = [URL path];
+    NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
+    NSString *path = [[NSURL _web_URLWithString:file] path];
     NSString *suffix = [path pathExtension];
-    if([suffix _web_isCaseInsensitiveEqualToString:@"htm"]
-       || [suffix _web_isCaseInsensitiveEqualToString:@"html"])
-    {
-        if(!_private->htmlIcons){
+    NSImage *icon = nil;
+    
+    if ([suffix _web_isCaseInsensitiveEqualToString:@"htm"] || [suffix _web_isCaseInsensitiveEqualToString:@"html"]) {
+        if (!_private->htmlIcons) {
             icon = [workspace iconForFileType:@"html"];
             _private->htmlIcons = [[self _iconsBySplittingRepresentationsOfIcon:icon] retain];
         }
-        return [self _iconFromDictionary:_private->htmlIcons forSize:size cache:YES];
-    }else{
-        icon = [workspace iconForFile:path];
+        icon = [self _iconFromDictionary:_private->htmlIcons forSize:size cache:YES];
+    } else {
+        if (!path || ![path isAbsolutePath]) {
+            // Return the generic icon when there is no path.
+            icon = [workspace iconForFileType:@"????"];
+        } else {
+            icon = [workspace iconForFile:path];
+        }
         [self _scaleIcon:icon toSize:size];
-        return icon;
     }
+
+    return icon;
 }
 
 - (void)_setIcon:(NSImage *)icon forIconURL:(NSString *)iconURL

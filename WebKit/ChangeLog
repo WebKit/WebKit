@@ -1,3 +1,14 @@
+2003-03-20  Chris Blumenberg  <cblu@apple.com>
+
+	Properly handle file URL directory errors.
+
+        Reviewed by trey.
+
+        * Misc.subproj/WebIconDatabase.m:
+        (-[WebIconDatabase _iconForFileURL:withSize:]): when file URL has no path, return generic file icon
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient interruptForPolicyChangeError]): set the URL, don't set it to nil!
+
 2003-03-20  Vicki Murley  <vicki@apple.com>
 
 	don't include WebFoundation.h
