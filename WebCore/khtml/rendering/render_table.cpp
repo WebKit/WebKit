@@ -239,7 +239,8 @@ void RenderTable::layout()
     //kdDebug( 6040 ) << renderName() << "(Table)"<< this << " ::layout0() width=" << width() << ", layouted=" << layouted() << endl;
 
     m_height = 0;
-
+    initMaxMarginValues();
+    
     //int oldWidth = m_width;
     calcWidth();
 

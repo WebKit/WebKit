@@ -300,14 +300,7 @@ void RenderFlow::layout()
     // Start out by setting our margin values to our current margins.  Table cells have
     // no margins, so we don't fill in the values for table cells.
     if (!isTableCell()) {
-        if (m_marginTop >= 0)
-            m_maxTopPosMargin = m_marginTop;
-        else
-            m_maxTopNegMargin = -m_marginTop;
-        if (m_marginBottom >= 0)
-            m_maxBottomPosMargin = m_marginBottom;
-        else
-            m_maxBottomNegMargin = -m_marginBottom;
+        initMaxMarginValues();
             
         m_topMarginQuirk = style()->marginTop().quirk;
         m_bottomMarginQuirk = style()->marginBottom().quirk;

@@ -195,6 +195,17 @@ public:
             return m_maxBottomNegMargin;
     }
 
+    void initMaxMarginValues() {
+        if (m_marginTop >= 0)
+            m_maxTopPosMargin = m_marginTop;
+        else
+            m_maxTopNegMargin = -m_marginTop;
+        if (m_marginBottom >= 0)
+            m_maxBottomPosMargin = m_marginBottom;
+        else
+            m_maxBottomNegMargin = -m_marginBottom;
+    }
+    
 protected:
 
     struct SpecialObject {
