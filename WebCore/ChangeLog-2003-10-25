@@ -1,3 +1,17 @@
+2002-12-11  Richard Williamson   <rjw@apple.com>
+
+        Fixed 3124121, 3124716 (and other dupes).  Regressions related to b/f crash.
+        
+        Reviewed by hyatt.
+
+        * kwq/KWQKHTMLPart.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::openURLFromPageCache):
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge dealloc]):
+        (-[WebCoreBridge openURL:reload:headers:lastModified:pageCache:]):
+
 2002-12-11  Darin Adler  <darin@apple.com>
 
         Reviewed by Richard.

@@ -118,6 +118,8 @@ NSString *WebCoreElementStringKey = 		@"WebElementString";
     _part->setBridge(nil);
     _part->deref();
     
+    [_currentPageCache release];
+    
     [super dealloc];
 }
 
@@ -149,10 +151,15 @@ NSString *WebCoreElementStringKey = 		@"WebElementString";
 {
     if (pageCache) {
         KWQPageState *state = [pageCache objectForKey:@"WebCorePageState"];
-        [state document]->restoreRenderer([state renderer]);
-        _part->openURLFromPageCache([state document], [state URL], [state windowProperties], [state locationProperties]);
+        _currentPageCache = [pageCache retain];
+        _part->openURLFromPageCache([state document], [state renderer], [state URL], [state windowProperties], [state locationProperties]);
         return;
     }
+    else if (_currentPageCache){
+        [_currentPageCache release];
+        _currentPageCache = 0;
+    }
+        
 
     // arguments
     URLArgs args(_part->browserExtension()->urlArgs());

@@ -500,6 +500,7 @@ static NSTimer *_pageCacheReleaseTimer = nil;
     if (pageCache){
         [_pendingPageCacheToRelease addObject: pageCache];
         [pageCache release]; // Last reference held by _pendingPageCacheToRelease.
+        pageCache = 0;
     }
     
     if (!_windowWatcher){

@@ -328,7 +328,6 @@
     if (![item hasPageCache]){
         return false;
     }
-    ASSERT ([[item pageCache] objectForKey: @"WebCorePageState"] == nil);
     [[item pageCache] setObject: documentInfo forKey: @"WebCorePageState"];
     return true;
 }

@@ -85,6 +85,7 @@ enum FrameBorderStyle {
 {
     KWQKHTMLPart *_part;
     KHTMLRenderPart *_renderPart;
+    id _currentPageCache;
 }
 
 - (void)setRenderPart:(KHTMLRenderPart *)renderPart;

@@ -18,6 +18,7 @@
 #import <WebKit/WebDynamicScrollBarsView.h>
 #import <WebKit/WebHistory.h>
 #import <WebKit/WebHistoryItemPrivate.h>
+#import <WebKit/WebHTMLRepresentation.h>
 #import <WebKit/WebHTMLView.h>
 #import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebKitLogging.h>
@@ -700,7 +701,8 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
             && item
             && !_private->quickRedirectComing
             && loadType != WebFrameLoadTypeReload && loadType != WebFrameLoadTypeSame
-            && ![[self dataSource] isLoading])
+            && ![[self dataSource] isLoading]
+            && [[[self dataSource] representation] isKindOfClass: [WebHTMLRepresentation class]])
         {
             if (![item pageCache]){
                 LOG(PageCache, "Saving page to back/forward cache, %s\n", [[[[self dataSource] URL] absoluteString] cString]);

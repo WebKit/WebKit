@@ -55,6 +55,8 @@ enum KWQSelectionDirection {
     KWQSelectingPrevious
 };
 
+using khtml::RenderObject;
+
 class KWQKHTMLPart : public KHTMLPart
 {
 public:
@@ -93,7 +95,7 @@ public:
     void saveLocationProperties(KJS::SavedProperties *locationProperties);
     void restoreWindowProperties(KJS::SavedProperties *windowProperties);
     void restoreLocationProperties(KJS::SavedProperties *locationProperties);
-    void openURLFromPageCache(DOM::DocumentImpl *doc, KURL *url, KJS::SavedProperties *windowProperties, KJS::SavedProperties *locationProperties);
+    void openURLFromPageCache(DOM::DocumentImpl *doc, RenderObject *renderer, KURL *url, KJS::SavedProperties *windowProperties, KJS::SavedProperties *locationProperties);
 
     void saveDocumentState();
     void restoreDocumentState();

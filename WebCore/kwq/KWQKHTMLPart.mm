@@ -457,7 +457,7 @@ void KWQKHTMLPart::restoreLocationProperties(SavedProperties *locationProperties
     Window::retrieveWindow(this)->location()->restoreProperties(*locationProperties);
 }
 
-void KWQKHTMLPart::openURLFromPageCache(DocumentImpl *doc, KURL *url, SavedProperties *windowProperties, SavedProperties *locationProperties)
+void KWQKHTMLPart::openURLFromPageCache(DocumentImpl *doc, RenderObject *renderer, KURL *url, SavedProperties *windowProperties, SavedProperties *locationProperties)
 {
     d->m_redirectionTimer.stop();
 
@@ -500,20 +500,14 @@ void KWQKHTMLPart::openURLFromPageCache(DocumentImpl *doc, KURL *url, SavedPrope
     
     // -----------begin-----------
     clear();
+
+    doc->restoreRenderer(renderer);
     
     d->m_bCleared = false;
     d->m_cacheId = 0;
     d->m_bComplete = false;
     d->m_bLoadEventEmitted = false;
-            
     d->m_referrer = m_url.url();
-    m_url = *url;
-    KURL baseurl;
-    
-    // We don't need KDE chained URI handling or window caption setting
-    if ( !m_url.isEmpty() ){
-        baseurl = m_url;
-    }
     
     d->m_doc = doc;
     d->m_doc->ref();
@@ -521,9 +515,7 @@ void KWQKHTMLPart::openURLFromPageCache(DocumentImpl *doc, KURL *url, SavedPrope
     setView (doc->view(), true);
     
     updatePolicyBaseURL();
-    
-    d->m_doc->setParsing(true);
-    
+        
     restoreWindowProperties (windowProperties);
     restoreLocationProperties (locationProperties);
 }
