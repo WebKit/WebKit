@@ -259,6 +259,14 @@ typedef struct {
         return NO;
     }
     
+    // Make sure we don't call NPP_HandleEvent while we're inside NPP_SetWindow.
+    // We probably don't want more general reentrancy protection; we are really
+    // protecting only against this one case, which actually comes up when
+    // you first install the SVG viewer plug-in.
+    if (inSetWindow) {
+        return NO;
+    }
+
     BOOL defers = [[self controller] _defersCallbacks];
     if (!defers) {
         [[self controller] _setDefersCallbacks:YES];
@@ -566,8 +574,15 @@ typedef struct {
     
     PortState portState = [self saveAndSetPortState];
 
+    // Make sure we don't call NPP_HandleEvent while we're inside NPP_SetWindow.
+    // We probably don't want more general reentrancy protection; we are really
+    // protecting only against this one case, which actually comes up when
+    // you first install the SVG viewer plug-in.
     NPError npErr;
+    ASSERT(!inSetWindow);
+    inSetWindow = YES;
     npErr = NPP_SetWindow(instance, &window);
+    inSetWindow = NO;
     LOG(Plugins, "NPP_SetWindow: %d, port=0x%08x, window.x:%d window.y:%d",
         npErr, (int)nPort.port, (int)window.x, (int)window.y);
 

@@ -1,3 +1,18 @@
+2002-12-30  Darin Adler  <darin@apple.com>
+
+        Reviewed by Don and Ken.
+
+	- fixed 3136797 -- crash when Adobe SVG Viewer plug-in puts up modal dialog
+
+        * Plugins.subproj/WebBaseNetscapePluginView.h: Add inSetWindow boolean.
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView sendEvent:]): Don't send any events to a plug-in while it's
+	inside NPP_SetWindow. We don't want to implement more general reentrancy protection, because
+	it could cause trouble for plugins that can handle it correctly, but it's unlikely that any
+	legitimate use would require reentrant calls while inside NPP_SetWindow, and that's the case
+	that crashes for the SVG viewer plug-in when it presents its registration dialog.
+        (-[WebBaseNetscapePluginView setWindow]): Set boolean.
+
 2002-12-29  Darin Adler  <darin@apple.com>
 
         Reviewed by Don.
