@@ -350,6 +350,7 @@ static BOOL alwaysUseATSU = NO;
     font = [(p ? [f printerFont] : [f screenFont]) retain];
     usingPrinterFont = p;
     
+    bool failedSetup = false;
     if (![self _setupFont]){
         // Ack!  Something very bad happened, like a corrupt font.  Try
         // looking for an alternate 'base' font for this renderer.
@@ -381,12 +382,14 @@ static BOOL alwaysUseATSU = NO;
 		font = [(p ? [af printerFont] : [af screenFont]) retain];
 		if (![self _setupFont]){
 		    // We tried, Times, Times New Roman, and the system font.  No joy.  We have to give up.
-		    FATAL_ALWAYS ("%@ unable to initialize with font %@ at %@", self, initialFont, filePath);
+		    ERROR ("%@ unable to initialize with font %@ at %@", self, initialFont, filePath);
+                    failedSetup = true;
 		}
 	    }
 	    else {
 		// We tried the requested font and the syste, font.  No joy.  We have to give up.
-		FATAL_ALWAYS ("%@ unable to initialize with font %@ at %@", self, initialFont, filePath);
+		ERROR ("%@ unable to initialize with font %@ at %@", self, initialFont, filePath);
+                failedSetup = true;
 	    }
         }
 
@@ -397,6 +400,15 @@ static BOOL alwaysUseATSU = NO;
                     filePath);
     }
 
+    // If all else fails try to setup using the system font.  This is probably because
+    // Times and Times New Roman are both unavailable.
+    if (failedSetup) {
+        f = [NSFont systemFontOfSize:[f pointSize]];
+        ERROR ("%@ failed to setup font, using system font %s", self, f);
+        font = [(p ? [f printerFont] : [f screenFont]) retain];
+        [self _setupFont];
+    }
+    
     // We emulate the appkit metrics by applying rounding as is done
     // in the appkit.
     CGFontRef cgFont = [font _backingCGSFont];

@@ -1,3 +1,16 @@
+2005-03-07  Richard Williamson   <rjw@apple.com>
+
+	More bullet proofing for <rdar://problem/4038304> CrashTracer: ....9 crashes at com.apple.WebKit: -[WebTextRenderer initWithFont:usingPrinterFont:] + 840
+
+	Protect against removal of Times and Times New Roman from
+	system.  If these fonts are removed attempt to get system font
+	instead of FATAL_ALWAYS.
+
+        Reviewed by John.
+
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (-[WebTextRenderer initWithFont:usingPrinterFont:]):
+
 === Safari-403 ===
 
 2005-03-06  Darin Adler  <darin@apple.com>
