@@ -190,6 +190,7 @@
 				39446098020F50ED0ECA1767,
 				F5EBC45702134BC301CA1520,
 				F5EBC45802134BC301CA1520,
+				9CF0E24B021361B10ECA16EA,
 			);
 			isa = PBXHeadersBuildPhase;
 			name = Headers;
@@ -222,6 +223,7 @@
 				394460AA020F50ED0ECA1767,
 				F5EBC45902134BC301CA1520,
 				F5EBC45A02134BC301CA1520,
+				9CF0E24C021361B10ECA16EA,
 			);
 			isa = PBXSourcesBuildPhase;
 			name = Sources;
@@ -938,10 +940,36 @@
 				39446077020F50ED0ECA1767,
 				39446078020F50ED0ECA1767,
 				39446079020F50ED0ECA1767,
+				9CF0E249021361B00ECA16EA,
+				9CF0E24A021361B00ECA16EA,
 			);
 			isa = PBXGroup;
 			name = WebView;
 			refType = 4;
+		};
+		9CF0E249021361B00ECA16EA = {
+			isa = PBXFileReference;
+			name = IFWebFramePrivate.h;
+			path = WebView.subproj/IFWebFramePrivate.h;
+			refType = 2;
+		};
+		9CF0E24A021361B00ECA16EA = {
+			isa = PBXFileReference;
+			name = IFWebFramePrivate.mm;
+			path = WebView.subproj/IFWebFramePrivate.mm;
+			refType = 2;
+		};
+		9CF0E24B021361B10ECA16EA = {
+			fileRef = 9CF0E249021361B00ECA16EA;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		9CF0E24C021361B10ECA16EA = {
+			fileRef = 9CF0E24A021361B00ECA16EA;
+			isa = PBXBuildFile;
+			settings = {
+			};
 		};
 //9C0
 //9C1

@@ -11,11 +11,8 @@
 
 @interface IFWebFrame : NSObject
 {
-    // FIXME:  Create private class for ivars.
-    NSString *name;
-    id view;
-    IFWebDataSource *dataSource;
-    void *renderFramePart;
+@private
+    id _framePrivate;
 }
 
 - initWithName: (NSString *)name view: view dataSource: (IFWebDataSource *)dataSource;
@@ -30,4 +27,5 @@
 // private
 - (void)_setRenderFramePart: (void *)p;
 - (void *)_renderFramePart;
+
 @end

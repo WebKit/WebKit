@@ -1,85 +1,98 @@
 /*	
-        IFWebFrame.h
+        IFWebFrame.m
 	    
 	    Copyright 2001, Apple, Inc. All rights reserved.
-
-        Public header file.
 */
 #import <Cocoa/Cocoa.h>
 
 #import <WebKit/IFWebFrame.h>
+#import <WebKit/IFWebFramePrivate.h>
 #import <WebKit/IFWebDataSource.h>
 
 @implementation IFWebFrame
 
+- init
+{
+    return [self initWithName: nil view: nil dataSource: nil];
+}
+
 - initWithName: (NSString *)n view: v dataSource: (IFWebDataSource *)d
 {
+    IFWebFramePrivate *data;
+
     [super init];
-    name = [n retain];
-    view = [v retain];
-    dataSource = [d retain];
-    return self;
+    
+    _framePrivate = [[IFWebFramePrivate alloc] init];
+    
+    data = (IFWebFramePrivate *)_framePrivate;
+    
+    [data setName: n];
+    [data setView: v];
+    [data setDataSource:  d];
+    
+    return self; 
 }
 
 - (void)dealloc
 {
-    [name autorelease];
-    [view autorelease];
-    [dataSource autorelease];
+    [_framePrivate release];
 }
 
 - (NSString *)name
 {
-    return name;
+    IFWebFramePrivate *data = (IFWebFramePrivate *)_framePrivate;
+    return [data name];
 }
 
 
 - (void)setView: v
 {
-    if (view)
-        [view autorelease];
-    view = [v retain];
+    IFWebFramePrivate *data = (IFWebFramePrivate *)_framePrivate;
+    [data setView: v];
 }
 
 - view
 {
-    return view;
+    IFWebFramePrivate *data = (IFWebFramePrivate *)_framePrivate;
+    return [data view];
 }
 
 
 - (IFWebDataSource *)dataSource
 {
-    return dataSource;
+    IFWebFramePrivate *data = (IFWebFramePrivate *)_framePrivate;
+    return [data dataSource];
 }
 
 - (void)setDataSource: (IFWebDataSource *)ds
 {
-    if (dataSource == ds)
+    IFWebFramePrivate *data = (IFWebFramePrivate *)_framePrivate;
+    if ([data dataSource] == ds)
         return;
         
-    [dataSource autorelease];
-    dataSource = [ds retain];
-    [dataSource setFrame: self];
+    [data setDataSource: ds];
+    [[data dataSource] setFrame: self];
 }
 
 // Required to break retain cycle between frame and data source.
 - (void)reset
 {
-    [dataSource autorelease];
-    dataSource = nil;
-    [view autorelease];
-    view = nil;
+    IFWebFramePrivate *data = (IFWebFramePrivate *)_framePrivate;
+    [data setDataSource: nil];
+    [data setView: nil];
 }
 
 // renderFramePart is a pointer to a RenderPart
 - (void)_setRenderFramePart: (void *)p
 {
-    renderFramePart = p;
+    IFWebFramePrivate *data = (IFWebFramePrivate *)_framePrivate;
+    [data setRenderFramePart: p];
 }
 
 - (void *)_renderFramePart
 {
-    return renderFramePart;
+    IFWebFramePrivate *data = (IFWebFramePrivate *)_framePrivate;
+    return [data renderFramePart];
 }
 
 @end
