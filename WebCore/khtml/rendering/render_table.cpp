@@ -379,10 +379,19 @@ void RenderTable::recalcColInfo( ColInfo *col )
 
     KHTMLAssert( colInfos[col->span-1]->data()[col->start] == col );
     ColInfoLine *line = (colInfos[col->span-1]);
+#ifdef APPLE_CHANGES
+    // We can't mutate the buffer in place, so we use remove to clear out the item. 
+    // We unset auto-delete so that the |col| is not deleted.  That happens at the
+    // end of the function below. -dwh
+    line->setAutoDelete(false);
+    line->remove(col->start);
+    line->setAutoDelete(true);
+#else
     ColInfo **data = line->data() + col->start;
     *data = 0;
     KHTMLAssert( colInfos[col->span-1]->data()[col->start] == 0 );
-
+#endif
+    
     // add table-column if exists
     RenderObject *child = firstChild();
     while( child ) {
@@ -531,10 +540,10 @@ void RenderTable::addColInfo(int _startCol, int _colSpan,
 	    }
 	}
     }
-#ifndef APPLE_CHANGES
+    
     if ( recalc )
         recalcColInfo( col );
-#endif
+    
     if ( changed )
 	setMinMaxKnown(false);
 
