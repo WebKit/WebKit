@@ -57,9 +57,6 @@
 - (void)setAlwaysAttemptToUsePageCache:(BOOL)flag;
 - (BOOL)alwaysAttemptToUsePageCache;
 
-- (void)setNotificationsSuppressed:(BOOL)flag;
-- (BOOL)notificationsSuppressed;
-
 - (NSCalendarDate *)_lastVisitedDate;
 - (void)_setLastVisitedTimeInterval:(NSTimeInterval)time;
 

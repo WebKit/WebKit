@@ -1,3 +1,30 @@
+2004-10-25  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Chris.
+        
+        - Cleanup from fix for <rdar://problem/3851676> bookmarks should not hold onto a WebHistoryItem object;
+          eliminated notificationsSuppressed mechanism, which was used only by WebBookmark
+
+        * History.subproj/WebHistoryItem.m:
+        removed notificationsSuppressed ivar from private data object
+        (-[WebHistoryItem setAlternateTitle:]):
+        remove notificationsSuppressed guard
+        (-[WebHistoryItem setURLString:]):
+        ditto
+        (-[WebHistoryItem setOriginalURLString:]):
+        ditto
+        (-[WebHistoryItem setTitle:]):
+        ditto
+        (-[WebHistoryItem _setLastVisitedTimeInterval:]):
+        ditto
+        (-[WebHistoryItem setNotificationsSuppressed:]):
+        removed this method
+        (-[WebHistoryItem notificationsSuppressed]):
+        ditto
+        
+        * History.subproj/WebHistoryItemPrivate.h:
+        removed notificationsSuppressed and setNotificationsSuppressed
+
 2004-10-22  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3851491> installedPlugins being called for a page without plugins
