@@ -1,3 +1,14 @@
+2003-10-01  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3440804, broken scrollbars in downloads window.  Make Auto be the default
+	value in the enum, so that all scrollviews will be automatically initialized to be
+	auto.
+
+	Reviewed by cblu
+
+        * kwq/KWQScrollView.h:
+        * kwq/WebCoreFrameView.h:
+
 2003-09-30  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by me

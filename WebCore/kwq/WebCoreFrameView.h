@@ -28,9 +28,9 @@
 // scroll view is resized.
 
 typedef enum {
+    WebCoreScrollBarAuto,
     WebCoreScrollBarAlwaysOff,
-    WebCoreScrollBarAlwaysOn,
-    WebCoreScrollBarAuto
+    WebCoreScrollBarAlwaysOn
 } WebCoreScrollBarMode;
 
 @protocol WebCoreFrameView

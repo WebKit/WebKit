@@ -36,7 +36,7 @@ class NSView;
 
 class QScrollView : public QFrame {
 public:
-    enum ScrollBarMode { AlwaysOff, AlwaysOn, Auto };
+    enum ScrollBarMode { Auto, AlwaysOff, AlwaysOn };
 
     QScrollView(QWidget *parent = 0, const char *name = 0, int flags = 0) { }
 
