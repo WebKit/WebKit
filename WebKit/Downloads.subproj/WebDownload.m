@@ -32,7 +32,7 @@
         [WebMacBinaryDecoder class],
         nil] retain];
     
-    LOG(Download, "Download started for: %s", [[[[dSource request] URL] absoluteString] cString]);
+    LOG(Download, "Download started for: %@", [[dSource request] URL]);
     return self;
 }
 
@@ -340,7 +340,7 @@
 
     [self closeFile];
 
-    LOG(Download, "Download complete. Saved to: %s", [[[dataSource contentPolicy] path] cString]);
+    LOG(Download, "Download complete. Saved to: %@", [[dataSource contentPolicy] path]);
 
     return nil;
 }

@@ -213,7 +213,7 @@ static const char * const stateNames[] = {
 
 - (void)_timedLayout: (id)userInfo
 {
-    LOG(Timing, "%s:  state = %s", [[self name] cString], stateNames[_private->state]);
+    LOG(Timing, "%@:  state = %s", [self name], stateNames[_private->state]);
     
     [_private->scheduledLayoutTimer release];
     _private->scheduledLayoutTimer = nil;
@@ -222,7 +222,7 @@ static const char * const stateNames[] = {
         NSView <WebDocumentView> *documentView = [[self webView] documentView];
         
         if ([self controller])
-            LOG(Timing, "%s:  performing timed layout, %f seconds since start of document load", [[self name] cString], CFAbsoluteTimeGetCurrent() - [[[[self controller] mainFrame] dataSource] _loadingStartedTime]);
+            LOG(Timing, "%@:  performing timed layout, %f seconds since start of document load", [self name], CFAbsoluteTimeGetCurrent() - [[[[self controller] mainFrame] dataSource] _loadingStartedTime]);
             
         [documentView setNeedsLayout: YES];
 
@@ -250,7 +250,7 @@ static const char * const stateNames[] = {
     }
     else {
         if ([self controller])
-            LOG(Timing, "%s:  NOT performing timed layout (not needed), %f seconds since start of document load", [[self name] cString], CFAbsoluteTimeGetCurrent() - [[[[self controller] mainFrame] dataSource] _loadingStartedTime]);
+            LOG(Timing, "%@:  NOT performing timed layout (not needed), %f seconds since start of document load", [self name], CFAbsoluteTimeGetCurrent() - [[[[self controller] mainFrame] dataSource] _loadingStartedTime]);
     }
 }
 
@@ -406,12 +406,12 @@ static const char * const stateNames[] = {
 
 - (void)_setState: (WebFrameState)newState
 {
-    LOG(Loading, "%s:  transition from %s to %s", [[self name] cString], stateNames[_private->state], stateNames[newState]);
+    LOG(Loading, "%@:  transition from %s to %s", [self name], stateNames[_private->state], stateNames[newState]);
     if ([self controller])
-        LOG(Timing, "%s:  transition from %s to %s, %f seconds since start of document load", [[self name] cString], stateNames[_private->state], stateNames[newState], CFAbsoluteTimeGetCurrent() - [[[[self controller] mainFrame] dataSource] _loadingStartedTime]);
+        LOG(Timing, "%@:  transition from %s to %s, %f seconds since start of document load", [self name], stateNames[_private->state], stateNames[newState], CFAbsoluteTimeGetCurrent() - [[[[self controller] mainFrame] dataSource] _loadingStartedTime]);
     
     if (newState == WebFrameStateComplete && self == [[self controller] mainFrame]){
-        LOG(DocumentLoad, "completed %s (%f seconds)", [[[[[self dataSource] request] URL] absoluteString] cString], CFAbsoluteTimeGetCurrent() - [[self dataSource] _loadingStartedTime]);
+        LOG(DocumentLoad, "completed %@ (%f seconds)", [[[self dataSource] request] URL], CFAbsoluteTimeGetCurrent() - [[self dataSource] _loadingStartedTime]);
     }
     
     NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
@@ -449,14 +449,14 @@ static const char * const stateNames[] = {
         {
             WebDataSource *pd = [self provisionalDataSource];
             
-            LOG(Loading, "%s:  checking complete in WebFrameStateProvisional", [[self name] cString]);
+            LOG(Loading, "%@:  checking complete in WebFrameStateProvisional", [self name]);
             // If we've received any errors we may be stuck in the provisional state and actually
             // complete.
             if ([pd mainDocumentError]) {
                 // Check all children first.
-                LOG(Loading, "%s:  checking complete, current state WebFrameStateProvisional", [[self name] cString]);
+                LOG(Loading, "%@:  checking complete, current state WebFrameStateProvisional", [self name]);
                 if (![pd isLoading]) {
-                    LOG(Loading, "%s:  checking complete in WebFrameStateProvisional, load done", [[self name] cString]);
+                    LOG(Loading, "%@:  checking complete in WebFrameStateProvisional, load done", [self name]);
 
                     [[[self controller] locationChangeDelegate] locationChangeDone: [pd mainDocumentError] forDataSource:pd];
 
@@ -475,7 +475,7 @@ static const char * const stateNames[] = {
         {
             WebDataSource *ds = [self dataSource];
             
-            //LOG(Loading, "%s:  checking complete, current state WEBFRAMESTATE_COMMITTED", [[self name] cString]);
+            //LOG(Loading, "%@:  checking complete, current state WEBFRAMESTATE_COMMITTED", [self name]);
             if (![ds isLoading]) {
                 id thisView = [self webView];
                 NSView <WebDocumentView> *thisDocumentView = [thisView documentView];
@@ -566,7 +566,7 @@ static const char * const stateNames[] = {
         
         case WebFrameStateComplete:
         {
-            LOG(Loading, "%s:  checking complete, current state WebFrameStateComplete", [[self name] cString]);
+            LOG(Loading, "%@:  checking complete, current state WebFrameStateComplete", [self name]);
             return;
         }
         

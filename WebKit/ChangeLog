@@ -1,3 +1,23 @@
+2002-11-08  Darin Adler  <darin@apple.com>
+
+	- fixed crash on boot that Don was seeing
+
+        * History.subproj/WebHistoryItem.m:
+        (-[WebHistoryItem URL]): Make this work when _URLString is nil.
+        (-[WebHistoryItem initFromDictionaryRepresentation:]): Make this work for nil URL.
+
+	- my own private war on the cString method
+
+        * Downloads.subproj/WebDownloadHandler.m:
+        (-[WebDownloadHandler initWithDataSource:]): Use %@ in LOG to avoid cString.
+        (-[WebDownloadHandler finishedLoading]): Ditto.
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _commitIfReady]): Ditto.
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _timedLayout:]): Ditto.
+        (-[WebFrame _setState:]): More of the same.
+        (-[WebFrame _isLoadComplete]): Ditto.
+
 2002-11-08  Ken Kocienda  <kocienda@apple.com>
 
 	Fix deployment build breaker: a variable was used only in a 

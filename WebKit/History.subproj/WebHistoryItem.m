@@ -78,7 +78,7 @@
 
 - (NSURL *)URL
 {
-    return [NSURL _web_URLWithString:_URLString];
+    return _URLString ? [NSURL _web_URLWithString:_URLString] : nil;
 }
 
 - (NSString *)target
@@ -249,10 +249,10 @@
 
 - (id)initFromDictionaryRepresentation:(NSDictionary *)dict
 {
-    NSString *URL = [dict _web_stringForKey:@""];
+    NSString *URLString = [dict _web_stringForKey:@""];
     NSString *title = [dict _web_stringForKey:@"title"];
 
-    [self initWithURL:[NSURL _web_URLWithString:URL] title:title];
+    [self initWithURL:(URLString ? [NSURL _web_URLWithString:URLString] : nil) title:title];
     
     [self setDisplayTitle:[dict _web_stringForKey:@"displayTitle"]];
     NSString *date = [dict _web_stringForKey:@"lastVisitedDate"];
