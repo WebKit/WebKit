@@ -2480,6 +2480,7 @@ Value SelectionFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
                     granularity = khtml::PARAGRAPH;
                 s.modify(alter, direction, granularity);
                 part->setSelection(s);
+                part->setSelectionGranularity(granularity);
             }
         }
     }

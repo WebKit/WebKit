@@ -1,0 +1,32 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x212 [border: (2px solid #0000FF)]
+        RenderBlock {DIV} at (14,14) size 756x56
+          RenderText {TEXT} at (0,0) size 67x28
+            text run at (0,0) width 67: "Tests: "
+          RenderBR {BR} at (0,0) size 0x0
+          RenderText {TEXT} at (0,28) size 643x28
+            text run at (0,28) width 643: "Smart paste when pasting at the beginning of a line before a word."
+        RenderBlock {DIV} at (14,86) size 756x112
+          RenderText {TEXT} at (0,0) size 189x28
+            text run at (0,0) width 189: "Expected Results: "
+          RenderBR {BR} at (0,0) size 0x0
+          RenderText {TEXT} at (0,28) size 743x56
+            text run at (0,28) width 743: "A space should be added after the pasted word before the preexising word. It"
+            text run at (0,56) width 202: "should like this this: "
+          RenderBR {BR} at (0,0) size 0x0
+          RenderText {TEXT} at (0,84) size 74x28
+            text run at (0,84) width 74: "test test"
+      RenderBlock {DIV} at (0,236) size 784x32
+        RenderBlock {DIV} at (0,0) size 784x32 [border: (2px solid #FF0000)]
+          RenderText {TEXT} at (2,2) size 34x28
+            text run at (2,2) width 34: "test"
+          RenderText {TEXT} at (36,2) size 40x28
+            text run at (36,2) width 40: " test"
+selection is CARET:
+start:      position 4 of child 1 {TEXT} of child 1 {DIV} of root {DIV}
+upstream:   position 4 of child 1 {TEXT} of child 1 {DIV} of root {DIV}
+downstream: position 0 of child 2 {TEXT} of child 1 {DIV} of root {DIV}

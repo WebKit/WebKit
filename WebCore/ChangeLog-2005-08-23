@@ -1,5 +1,28 @@
 2005-03-01  Chris Blumenberg  <cblu@apple.com>
 
+	Fixed: <rdar://problem/4030404> selection granularity should be set when extending selection via JS
+
+        Reviewed by kocienda.
+
+        * khtml/ecma/kjs_window.cpp:
+        (SelectionFunc::tryCall): set the granularity on the part. This will allow us to write smart paste layout tests.
+        * layout-tests/editing/pasteboard/smart-paste-001-expected.txt: Added.
+        * layout-tests/editing/pasteboard/smart-paste-001.html: Added.
+        * layout-tests/editing/pasteboard/smart-paste-002-expected.txt: Added.
+        * layout-tests/editing/pasteboard/smart-paste-002.html: Added.
+        * layout-tests/editing/pasteboard/smart-paste-003-expected.txt: Added.
+        * layout-tests/editing/pasteboard/smart-paste-003.html: Added.
+        * layout-tests/editing/pasteboard/smart-paste-004-expected.txt: Added.
+        * layout-tests/editing/pasteboard/smart-paste-004.html: Added.
+        * layout-tests/editing/pasteboard/smart-paste-005-expected.txt: Added.
+        * layout-tests/editing/pasteboard/smart-paste-005.html: Added.
+        * layout-tests/editing/pasteboard/smart-paste-006-expected.txt: Added.
+        * layout-tests/editing/pasteboard/smart-paste-006.html: Added.
+        * layout-tests/editing/pasteboard/smart-paste-007-expected.txt: Added.
+        * layout-tests/editing/pasteboard/smart-paste-007.html: Added.
+
+2005-03-01  Chris Blumenberg  <cblu@apple.com>
+
 	Fixed: <rdar://problem/4029934> smart paste with plain text can add too many spaces
 
         Reviewed by kocienda.
