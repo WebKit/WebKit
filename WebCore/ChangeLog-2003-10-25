@@ -1,3 +1,14 @@
+2003-01-02  David Hyatt  <hyatt@apple.com>
+
+	Fix for bug #3137935.  When a float causes a line to get
+	moved down past the float, the line would incorrectly break
+	rather than expanding to use the newly-available width.
+	
+        Reviewed by darin.
+
+        * khtml/rendering/bidi.cpp:
+        (RenderFlow::findNextLineBreak):
+
 2003-01-02  Darin Adler  <darin@apple.com>
 
         Reviewed by John.

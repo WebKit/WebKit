@@ -1393,7 +1393,7 @@ BidiIterator RenderFlow::findNextLineBreak(BidiIterator &start, QPtrList<BidiIte
             // if we have floats, try to get below them.
             if (sawSpace && !ignoringSpaces && o->style()->whiteSpace() != PRE)
                 trailingSpaceObject = 0;
-                
+            
             int fb = floatBottom();
             int newLineWidth = lineWidth(fb);
             if( !w && m_height < fb && width < newLineWidth ) {
@@ -1420,7 +1420,12 @@ BidiIterator RenderFlow::findNextLineBreak(BidiIterator &start, QPtrList<BidiIte
                     lBreak.pos = pos;
                 }
             }
-            goto end;
+            
+            // |width| may have been adjusted because we got shoved down past a float (thus
+            // giving us more room), so we need to retest, and only jump to
+            // the end label if we still don't fit on the line. -dwh
+            if (w + tmpW > width+1)
+                goto end;
         }
         
         last = o;
