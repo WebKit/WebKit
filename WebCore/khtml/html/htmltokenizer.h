@@ -340,7 +340,10 @@ protected:
     int scriptStartLineno;
     int tagStartLineno;
 
-#define CBUFLEN 14
+// This buffer can hold arbitrarily long user-defined attribute names, such as in EMBED tags.
+// So any fixed number might be too small, but rather than rewriting all usage of this buffer
+// we'll just make it large enough to handle all imaginable cases.
+#define CBUFLEN 1024
     char cBuffer[CBUFLEN+2];
     unsigned int cBufferPos;
 

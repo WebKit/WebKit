@@ -1,3 +1,15 @@
+2003-07-24  John Sullivan  <sullivan@apple.com>
+
+	- fixed 3332622 -- Safari Abbreviates Attribute Names in EMBED tags
+
+        Reviewed by Richard
+
+        * khtml/html/htmltokenizer.h:
+	bumped fixed max length of attributes from 14 to 1024.
+	Theoretically they could be any arbitrary length, but it's
+	more risk than it's worth to rewrite the code that uses the
+	fixed-size buffer that is based on this value.
+
 2003-07-24  Dave Hyatt  <hyatt@apple.com>
 
 	Change all uses of "konq-" in CSS to "khtml-".  
