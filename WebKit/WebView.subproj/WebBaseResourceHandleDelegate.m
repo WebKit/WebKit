@@ -5,8 +5,8 @@
 
 #import <WebKit/WebBaseResourceHandleDelegate.h>
 
+#import <WebFoundation/NSURLAuthenticationChallenge.h>
 #import <WebFoundation/NSURLConnection.h>
-#import <WebFoundation/NSURLConnectionAuthenticationChallenge.h>
 #import <WebFoundation/NSURLConnectionPrivate.h>
 #import <WebFoundation/NSURLRequest.h>
 #import <WebFoundation/NSURLRequestPrivate.h>
@@ -15,14 +15,58 @@
 #import <WebFoundation/WebAssertions.h>
 #import <WebFoundation/WebNSErrorExtras.h>
 
-#import <WebKit/WebAuthenticationChallenge.h>
-#import <WebKit/WebAuthenticationChallengeInternal.h>
 #import <WebKit/WebDataProtocol.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDefaultResourceLoadDelegate.h>
 #import <WebKit/WebKitErrors.h>
 #import <WebKit/WebResourceLoadDelegate.h>
 #import <WebKit/WebViewPrivate.h>
+
+@interface WebBaseResourceHandleDelegate (WebNSURLAuthenticationChallengeSender) <NSURLAuthenticationChallengeSender>
+@end
+
+@implementation WebBaseResourceHandleDelegate (WebNSURLAuthenticationChallengeSender) 
+
+- (void)useCredential:(NSURLCredential *)credential forAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
+{
+    if (challenge == nil || challenge != currentWebChallenge) {
+	return;
+    }
+
+    [[currentConnectionChallenge sender] useCredential:credential forAuthenticationChallenge:currentConnectionChallenge];
+
+    [currentConnectionChallenge release];
+    currentConnectionChallenge = nil;
+    
+    [currentWebChallenge release];
+    currentWebChallenge = nil;
+}
+
+- (void)continueWithoutCredentialForAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
+{
+    if (challenge == nil || challenge != currentWebChallenge) {
+	return;
+    }
+
+    [[currentConnectionChallenge sender] continueWithoutCredentialForAuthenticationChallenge:currentConnectionChallenge];
+
+    [currentConnectionChallenge release];
+    currentConnectionChallenge = nil;
+    
+    [currentWebChallenge release];
+    currentWebChallenge = nil;
+}
+
+- (void)cancelAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
+{
+    if (challenge == nil || challenge != currentWebChallenge) {
+	return;
+    }
+
+    [self cancel];
+}
+
+@end
 
 @implementation WebBaseResourceHandleDelegate
 
@@ -183,7 +227,7 @@
     return request;
 }
 
-- (void)connection:(NSURLConnection *)con didReceiveAuthenticationChallenge:(NSURLConnectionAuthenticationChallenge *)challenge
+- (void)connection:(NSURLConnection *)con didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 {
     ASSERT(con == connection);
     ASSERT(!reachedTerminalState);
@@ -192,7 +236,7 @@
     ASSERT(!currentWebChallenge);
 
     currentConnectionChallenge = [challenge retain];;
-    currentWebChallenge = [[WebAuthenticationChallenge alloc] _initWithAuthenticationChallenge:challenge delegate:self];
+    currentWebChallenge = [[NSURLAuthenticationChallenge alloc] initWithAuthenticationChallenge:challenge sender:self];
 
     if (implementations.delegateImplementsDidReceiveAuthenticationChallenge) {
         [resourceLoadDelegate webView:webView resource:identifier didReceiveAuthenticationChallenge:currentWebChallenge fromDataSource:dataSource];
@@ -201,7 +245,7 @@
     }
 }
 
--(void)connection:(NSURLConnection *)con didCancelAuthenticationChallenge:(NSURLConnectionAuthenticationChallenge *)challenge
+-(void)connection:(NSURLConnection *)con didCancelAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 {
     ASSERT(con == connection);
     ASSERT(!reachedTerminalState);
@@ -215,37 +259,6 @@
     } else {
         [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:webView resource:identifier didCancelAuthenticationChallenge:currentWebChallenge fromDataSource:dataSource];
     }
-}
-
-
--(void)useCredential:(NSURLCredential *)credential forAuthenticationChallenge:(WebAuthenticationChallenge *)challenge
-{
-    if (challenge == nil || challenge != currentWebChallenge) {
-	return;
-    }
-
-    [[currentConnectionChallenge connection] useCredential:credential forAuthenticationChallenge:currentConnectionChallenge];
-
-    [currentConnectionChallenge release];
-    currentConnectionChallenge = nil;
-    
-    [currentWebChallenge release];
-    currentWebChallenge = nil;
-}
-
--(void)continueWithoutCredentialForAuthenticationChallenge:(WebAuthenticationChallenge *)challenge
-{
-    if (challenge == nil || challenge != currentWebChallenge) {
-	return;
-    }
-
-    [[currentConnectionChallenge connection] continueWithoutCredentialForAuthenticationChallenge:currentConnectionChallenge];
-
-    [currentConnectionChallenge release];
-    currentConnectionChallenge = nil;
-    
-    [currentWebChallenge release];
-    currentWebChallenge = nil;
 }
 
 - (void)connection:(NSURLConnection *)con didReceiveResponse:(NSURLResponse *)r
@@ -349,6 +362,5 @@
         identifier = [ident retain];
     }
 }
-
 
 @end

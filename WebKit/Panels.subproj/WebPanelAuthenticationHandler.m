@@ -6,11 +6,10 @@
 
 
 #import <WebKit/WebPanelAuthenticationHandler.h>
-#import <WebKit/WebAuthenticationChallenge.h>
 #import <WebKit/WebAuthenticationPanel.h>
+#import <WebFoundation/NSURLAuthenticationChallenge.h>
 #import <WebFoundation/WebAssertions.h>
 #import <WebFoundation/WebNSDictionaryExtras.h>
-#import <WebFoundation/NSURLDownloadAuthenticationChallenge.h>
 
 static NSString *WebModalDialogPretendWindow = @"WebModalDialogPretendWindow";
 
@@ -46,9 +45,6 @@ WebPanelAuthenticationHandler *sharedHandler;
 
 -(void)startAuthentication:(NSURLAuthenticationChallenge *)challenge window:(NSWindow *)w
 {
-    ASSERT([challenge isKindOfClass:[WebAuthenticationChallenge class]] ||
-	   [challenge isKindOfClass:[NSURLDownloadAuthenticationChallenge class]]);
-
     if ([w attachedSheet] != nil) {
 	w = nil;
     }
@@ -56,15 +52,7 @@ WebPanelAuthenticationHandler *sharedHandler;
     id window = w ? (id)w : (id)WebModalDialogPretendWindow;
 
     if ([windowToPanel objectForKey:window] != nil) {
-	if ([challenge isKindOfClass:[WebAuthenticationChallenge class]]) {
-	    WebAuthenticationChallenge *webChallenge = (WebAuthenticationChallenge *)challenge;
-	    [webChallenge cancel];
-	} else if ([challenge isKindOfClass:[NSURLDownloadAuthenticationChallenge class]]) {
-	    NSURLDownloadAuthenticationChallenge *downloadChallenge = (NSURLDownloadAuthenticationChallenge *)challenge;
-	    [[downloadChallenge download] cancel];
-	} else {
-	    ASSERT_NOT_REACHED();
-	}
+	[[challenge sender] cancelAuthenticationChallenge:challenge];
         return;
     }
 
@@ -97,24 +85,10 @@ WebPanelAuthenticationHandler *sharedHandler;
         [challengeToWindow removeObjectForKey:challenge];
     }
 
-    if ([challenge isKindOfClass:[WebAuthenticationChallenge class]]) {
-	WebAuthenticationChallenge *webChallenge = (WebAuthenticationChallenge *)challenge;
-
-	if (credential == nil) {
-	    [webChallenge cancel];
-	} else {
-	    [webChallenge useCredential:credential];
-	}
-    } else if ([challenge isKindOfClass:[NSURLDownloadAuthenticationChallenge class]]) {
-	NSURLDownloadAuthenticationChallenge *downloadChallenge = (NSURLDownloadAuthenticationChallenge *)challenge;
-
-	if (credential == nil) {
-	    [[downloadChallenge download] cancel];
-	} else {
-	    [[downloadChallenge download] useCredential:credential forAuthenticationChallenge:downloadChallenge];
-	}
+    if (credential == nil) {
+	[[challenge sender] cancelAuthenticationChallenge:challenge];
     } else {
-	ASSERT_NOT_REACHED();
+	[[challenge sender] useCredential:credential forAuthenticationChallenge:challenge];
     }
 }
 

@@ -5,13 +5,12 @@
 
 #import <WebKit/WebDefaultResourceLoadDelegate.h>
 
-#import <WebFoundation/NSURLRequest.h>
+#import <WebFoundation/NSURLAuthenticationChallenge.h>
 #import <WebFoundation/NSURLConnection.h>
-#import <WebFoundation/NSURLConnectionAuthenticationChallenge.h>
+#import <WebFoundation/NSURLRequest.h>
 #import <WebFoundation/NSURLResponse.h>
 #import <WebFoundation/WebNSErrorExtras.h>
 
-#import <WebKit/WebAuthenticationChallenge.h>
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebPanelAuthenticationHandler.h>
 #import <WebKit/WebView.h>
@@ -41,13 +40,13 @@ static WebDefaultResourceLoadDelegate *sharedDelegate = nil;
     return newRequest;
 }
 
-- (void)webView:(WebView *)wv resource:(id)identifier didReceiveAuthenticationChallenge:(WebAuthenticationChallenge *)challenge fromDataSource:(WebDataSource *)dataSource
+- (void)webView:(WebView *)wv resource:(id)identifier didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge fromDataSource:(WebDataSource *)dataSource
 {
     NSWindow *window = [wv hostWindow] ? [wv hostWindow] : [wv window];
     [[WebPanelAuthenticationHandler sharedHandler] startAuthentication:challenge window:window];
 }
 
-- (void)webView:(WebView *)wv resource:(id)identifier didCancelAuthenticationChallenge:(WebAuthenticationChallenge *)challenge fromDataSource:(WebDataSource *)dataSource
+- (void)webView:(WebView *)wv resource:(id)identifier didCancelAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge fromDataSource:(WebDataSource *)dataSource
 {
     [(WebPanelAuthenticationHandler *)[WebPanelAuthenticationHandler sharedHandler] cancelAuthentication:challenge];
 }

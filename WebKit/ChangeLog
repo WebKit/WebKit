@@ -1,3 +1,35 @@
+2003-05-09  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	- removed WebAuthenticationChallenge
+	- adjusted everything for removal of NSURLAuthenticationChallenge subclasses.
+	
+        * Misc.subproj/WebDownload.m:
+        (-[WebDownloadInternal download:didReceiveAuthenticationChallenge:]):
+        (-[WebDownloadInternal download:didCancelAuthenticationChallenge:]):
+        * Panels.subproj/WebPanelAuthenticationHandler.m:
+        (-[WebPanelAuthenticationHandler startAuthentication:window:]):
+        (-[WebPanelAuthenticationHandler _authenticationDoneWithChallenge:result:]):
+        * WebView.subproj/WebAuthenticationChallenge.h: Removed.
+        * WebView.subproj/WebAuthenticationChallenge.m: Removed.
+        * WebView.subproj/WebAuthenticationChallengeInternal.h: Removed.
+        * WebView.subproj/WebBaseResourceHandleDelegate.h:
+        * WebView.subproj/WebBaseResourceHandleDelegate.m:
+        (-[WebBaseResourceHandleDelegate useCredential:forAuthenticationChallenge:]):
+        (-[WebBaseResourceHandleDelegate continueWithoutCredentialForAuthenticationChallenge:]):
+        (-[WebBaseResourceHandleDelegate cancelAuthenticationChallenge:]):
+        (-[WebBaseResourceHandleDelegate connection:didReceiveAuthenticationChallenge:]):
+        (-[WebBaseResourceHandleDelegate connection:didCancelAuthenticationChallenge:]):
+        (-[WebBaseResourceHandleDelegate setIdentifier:]):
+        * WebView.subproj/WebDefaultResourceLoadDelegate.m:
+        (-[WebDefaultResourceLoadDelegate webView:resource:didReceiveAuthenticationChallenge:fromDataSource:]):
+        (-[WebDefaultResourceLoadDelegate webView:resource:didCancelAuthenticationChallenge:fromDataSource:]):
+        * WebView.subproj/WebResourceLoadDelegate.h:
+        * Misc.subproj/WebKit.h: Remove headers that are gone.
+        * WebKit.exp: Remove classes that are gone.
+        * WebKit.pbproj/project.pbxproj: Remove files that are gone.
+
 2003-05-09  David Hyatt  <hyatt@apple.com>
 
 	Change the minfontsize to 1, i.e., to have no minimum.  This

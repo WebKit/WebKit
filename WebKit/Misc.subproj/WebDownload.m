@@ -5,7 +5,7 @@
 #import <WebKit/WebDownload.h>
 
 #import <WebFoundation/NSURLDownload.h>
-#import <WebFoundation/NSURLDownloadAuthenticationChallenge.h>
+#import <WebFoundation/NSURLAuthenticationChallenge.h>
 #import <WebFoundation/NSURLDownloadPrivate.h>
 #import <WebKit/WebPanelAuthenticationHandler.h>
 
@@ -73,7 +73,7 @@
     return [realDelegate download:download willSendRequest:request redirectResponse:redirectResponse];
 }
 
-- (void)download:(NSURLDownload *)download didReceiveAuthenticationChallenge:(NSURLDownloadAuthenticationChallenge *)challenge
+- (void)download:(NSURLDownload *)download didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 {
     if ([realDelegate respondsToSelector:@selector(download:didReceiveAuthenticationChallenge:)]) {
 	[realDelegate download:download didReceiveAuthenticationChallenge:challenge];
@@ -87,7 +87,7 @@
     }
 }
 
-- (void)download:(NSURLDownload *)download didCancelAuthenticationChallenge:(NSURLDownloadAuthenticationChallenge *)challenge
+- (void)download:(NSURLDownload *)download didCancelAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 {
     if ([realDelegate respondsToSelector:@selector(download:didCancelAuthenticationChallenge:)]) {
 	[realDelegate download:download didCancelAuthenticationChallenge:challenge];

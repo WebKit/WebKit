@@ -8,12 +8,12 @@
 #import <WebKit/WebViewPrivate.h>
 
 @class NSError;
+@class NSURLAuthenticationChallenge;
 @class NSURLConnection;
 @class NSURLConnectionAuthenticationChallenge;
 @class NSURLCredential;
 @class NSURLRequest;
 @class NSURLResponse;
-@class WebAuthenticationChallenge;
 @class WebDataSource;
 @class WebView;
 
@@ -29,8 +29,8 @@
     id identifier;
     id resourceLoadDelegate;
     id downloadDelegate;
-    NSURLConnectionAuthenticationChallenge *currentConnectionChallenge;
-    WebAuthenticationChallenge *currentWebChallenge;
+    NSURLAuthenticationChallenge *currentConnectionChallenge;
+    NSURLAuthenticationChallenge *currentWebChallenge;
     BOOL reachedTerminalState;
     BOOL defersCallbacks;
     WebResourceDelegateImplementationCache implementations;
@@ -53,9 +53,5 @@
 - (NSError *)cancelledError;
 
 - (void)setIdentifier:(id)ident;
-
-- (void)useCredential:(NSURLCredential *)credential forAuthenticationChallenge:(WebAuthenticationChallenge *)challenge;
-
-- (void)continueWithoutCredentialForAuthenticationChallenge:(WebAuthenticationChallenge *)challenge;
 
 @end

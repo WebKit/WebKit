@@ -5,7 +5,6 @@
     Public header file.
 */
 
-#import <WebKit/WebAuthenticationChallenge.h>
 #import <WebKit/WebBackForwardList.h>
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebDocument.h>
