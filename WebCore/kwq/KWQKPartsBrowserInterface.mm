@@ -45,9 +45,9 @@ void BrowserInterface::callMethod(const char *name, const QVariant &argument)
 {
     if (strcmp(name, "goHistory(int)") == 0) {
         int distance = argument.toInt();
-	KWQ_BLOCK_NS_EXCEPTIONS;
+	KWQ_BLOCK_EXCEPTIONS;
 	[_part->bridge() goBackOrForward:distance];
-	KWQ_UNBLOCK_NS_EXCEPTIONS;
+	KWQ_UNBLOCK_EXCEPTIONS;
         return;
     }
     ERROR("method %s not implemented", name);

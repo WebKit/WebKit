@@ -147,11 +147,10 @@ bool QFont::bold() const
 
 bool QFont::isFixedPitch() const
 {
-    volatile bool isFixed = false;
-    KWQ_BLOCK_NS_EXCEPTIONS;
-    isFixed = [[WebCoreTextRendererFactory sharedFactory] isFontFixedPitch: getNSFont()];
-    KWQ_UNBLOCK_NS_EXCEPTIONS;
-    return isFixed;
+    KWQ_BLOCK_EXCEPTIONS;
+    return [[WebCoreTextRendererFactory sharedFactory] isFontFixedPitch: getNSFont()];
+    KWQ_UNBLOCK_EXCEPTIONS;
+    return false;
 }
 
 
@@ -167,12 +166,12 @@ NSFont *QFont::getNSFont() const
 {
     if (!_NSFont) {
         CREATE_FAMILY_ARRAY(*this, families);
-	KWQ_BLOCK_NS_EXCEPTIONS;
+	KWQ_BLOCK_EXCEPTIONS;
         _NSFont = [[[WebCoreTextRendererFactory sharedFactory] 
             fontWithFamilies:families
                       traits:getNSTraits() 
                         size:getNSSize()] retain];
-	KWQ_UNBLOCK_NS_EXCEPTIONS;
+	KWQ_UNBLOCK_EXCEPTIONS;
     }
     return _NSFont;
 }

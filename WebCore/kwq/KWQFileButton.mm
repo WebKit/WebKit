@@ -48,29 +48,29 @@ KWQFileButton::KWQFileButton(KHTMLPart *part)
     , _textChanged(this, SIGNAL(textChanged(const QString &)))
     , _adapter(0)
 {
-    KWQ_BLOCK_NS_EXCEPTIONS;
+    KWQ_BLOCK_EXCEPTIONS;
 
     setView([KWQ(part)->bridge() fileButton]);
     _adapter = [[KWQFileButtonAdapter alloc] initWithKWQFileButton:this];
 
-    KWQ_UNBLOCK_NS_EXCEPTIONS;
+    KWQ_UNBLOCK_EXCEPTIONS;
 }
 
 KWQFileButton::~KWQFileButton()
 {
     _adapter->button = 0;
-    KWQ_BLOCK_NS_EXCEPTIONS;
+    KWQ_BLOCK_EXCEPTIONS;
     [_adapter release];
-    KWQ_UNBLOCK_NS_EXCEPTIONS;
+    KWQ_UNBLOCK_EXCEPTIONS;
 }
     
 void KWQFileButton::setFilename(const QString &f)
 {
     NSView <WebCoreFileButton> *button = getView();
 
-    KWQ_BLOCK_NS_EXCEPTIONS;
+    KWQ_BLOCK_EXCEPTIONS;
     [button setFilename:f.getNSString()];
-    KWQ_UNBLOCK_NS_EXCEPTIONS;
+    KWQ_UNBLOCK_EXCEPTIONS;
 }
 
 QSize KWQFileButton::sizeForCharacterWidth(int characters) const
@@ -79,9 +79,9 @@ QSize KWQFileButton::sizeForCharacterWidth(int characters) const
     NSView <WebCoreFileButton> *button = getView();
 
     NSSize size = {0,0};
-    KWQ_BLOCK_NS_EXCEPTIONS;
+    KWQ_BLOCK_EXCEPTIONS;
     size = [button bestVisualFrameSizeForCharacterCount:characters];
-    KWQ_UNBLOCK_NS_EXCEPTIONS;
+    KWQ_UNBLOCK_EXCEPTIONS;
 
     return QSize(size);
 }
@@ -91,9 +91,9 @@ QRect KWQFileButton::frameGeometry() const
     NSView <WebCoreFileButton> *button = getView();
 
     NSRect frame = {{0,0},{0,0}};
-    KWQ_BLOCK_NS_EXCEPTIONS;
+    KWQ_BLOCK_EXCEPTIONS;
     frame = [button visualFrame];
-    KWQ_UNBLOCK_NS_EXCEPTIONS;
+    KWQ_UNBLOCK_EXCEPTIONS;
 
     return QRect(frame);
 }
@@ -102,21 +102,20 @@ void KWQFileButton::setFrameGeometry(const QRect &rect)
 {
     NSView <WebCoreFileButton> *button = getView();
 
-    KWQ_BLOCK_NS_EXCEPTIONS;
+    KWQ_BLOCK_EXCEPTIONS;
     [button setVisualFrame:rect];
-    KWQ_UNBLOCK_NS_EXCEPTIONS;
+    KWQ_UNBLOCK_EXCEPTIONS;
 }
 
 int KWQFileButton::baselinePosition(int height) const
 {
     NSView <WebCoreFileButton> *button = getView();
 
-    volatile int position = 0;
-    KWQ_BLOCK_NS_EXCEPTIONS;
-    position = (int)([button frame].origin.y + [button baseline] - [button visualFrame].origin.y);
-    KWQ_UNBLOCK_NS_EXCEPTIONS;
+    KWQ_BLOCK_EXCEPTIONS;
+    return (int)([button frame].origin.y + [button baseline] - [button visualFrame].origin.y);
+    KWQ_UNBLOCK_EXCEPTIONS;
 
-    return position;
+    return 0;
 }
 
 void KWQFileButton::filenameChanged()
@@ -124,9 +123,9 @@ void KWQFileButton::filenameChanged()
     NSView <WebCoreFileButton> *button = getView();
 
     QString filename;
-    KWQ_BLOCK_NS_EXCEPTIONS;
+    KWQ_BLOCK_EXCEPTIONS;
     filename = QString::fromNSString([button filename]);
-    KWQ_UNBLOCK_NS_EXCEPTIONS;
+    KWQ_UNBLOCK_EXCEPTIONS;
 
     _textChanged.call();
 }

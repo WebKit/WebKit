@@ -48,9 +48,9 @@
         nameToCursor = [[NSMutableDictionary alloc] init];
     }
     
-    NSCursor * volatile cursor = [nameToCursor objectForKey:name];
+    KWQ_BLOCK_EXCEPTIONS;
+    NSCursor * cursor = [nameToCursor objectForKey:name];
     if (!cursor) { 
-	KWQ_BLOCK_NS_EXCEPTIONS;
 	NSImage *cursorImage = [[NSImage alloc] initWithContentsOfFile:
             [[NSBundle bundleForClass:[KWQKCursorBundleDummy class]]
             pathForResource:name ofType:@"tiff"]];
@@ -60,10 +60,12 @@
             [nameToCursor setObject:cursor forKey:name];
             [cursor release];
         }
-	KWQ_UNBLOCK_NS_EXCEPTIONS;
-    }
 
+    }
     return cursor;
+    KWQ_UNBLOCK_EXCEPTIONS;
+    
+    return nil;
 }
 
 @end

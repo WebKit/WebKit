@@ -1,3 +1,43 @@
+2003-10-27  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	Improved exception blocking in the following ways:
+
+	- use C++ constructors and destructors so returning or breaking out of an exception block works
+	- Remove use of volatile
+	- Collapse the caught exception case into a single function call to reduce code size.
+
+        * WebCore.pbproj/project.pbxproj:
+        * kwq/KWQButton.mm:
+        * kwq/KWQCheckBox.mm:
+        * kwq/KWQComboBox.mm:
+        * kwq/KWQExceptions.h:
+        * kwq/KWQExceptions.mm: Added.
+        * kwq/KWQFileButton.mm:
+        * kwq/KWQFont.mm:
+        * kwq/KWQFrame.mm:
+        * kwq/KWQKConfigBase.mm:
+        * kwq/KWQKCookieJar.mm:
+        * kwq/KWQKCursor.mm:
+        * kwq/KWQKHTMLPart.mm:
+        * kwq/KWQKHTMLPartBrowserExtension.mm:
+        * kwq/KWQKHistoryProvider.mm:
+        * kwq/KWQKJavaAppletWidget.mm:
+        * kwq/KWQKJobClasses.mm:
+        * kwq/KWQKLocale.mm:
+        * kwq/KWQKPartsBrowserInterface.mm:
+        * kwq/KWQLineEdit.mm:
+        * kwq/KWQListBox.mm:
+        * kwq/KWQLoader.mm:
+        * kwq/KWQPainter.mm:
+        * kwq/KWQPushButton.mm:
+        * kwq/KWQRadioButton.mm:
+        * kwq/KWQScrollBar.mm:
+        * kwq/KWQScrollView.mm:
+        * kwq/KWQTextEdit.mm:
+        * kwq/KWQWidget.mm:
+        
 2003-10-26  Darin Adler  <darin@apple.com>
 
         * khtml/khtml_part.cpp: (findWordBoundary): Fix small mistake from NULL check-in earlier.

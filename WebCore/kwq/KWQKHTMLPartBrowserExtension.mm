@@ -80,7 +80,7 @@ void KHTMLPartBrowserExtension::createNewWindow(const KURL &url,
 						const KParts::WindowArgs &winArgs, 
 						KParts::ReadOnlyPart **partResult)
 { 
-    KWQ_BLOCK_NS_EXCEPTIONS;
+    KWQ_BLOCK_EXCEPTIONS;
 
     NSString *frameName = urlArgs.frameName.length() == 0 ? nil : urlArgs.frameName.getNSString();
     
@@ -96,7 +96,7 @@ void KHTMLPartBrowserExtension::createNewWindow(const KURL &url,
 	    if (partResult) {
 		*partResult = [bridge part];
 	    }
-	    KWQ_UNBLOCK_RETURN;
+	    return;
 	}
     }
     
@@ -149,9 +149,9 @@ void KHTMLPartBrowserExtension::createNewWindow(const KURL &url,
     if (partResult) {
 	*partResult = [bridge part];
     }
-    KWQ_UNBLOCK_RETURN;
+    return;
 
-    KWQ_UNBLOCK_NS_EXCEPTIONS;
+    KWQ_UNBLOCK_EXCEPTIONS;
 
     if (partResult) {
 	*partResult = NULL;
@@ -160,14 +160,14 @@ void KHTMLPartBrowserExtension::createNewWindow(const KURL &url,
 
 void KHTMLPartBrowserExtension::setIconURL(const KURL &url)
 {
-    KWQ_BLOCK_NS_EXCEPTIONS;
+    KWQ_BLOCK_EXCEPTIONS;
     [_part->bridge() setIconURL:url.getNSURL()];
-    KWQ_UNBLOCK_NS_EXCEPTIONS;
+    KWQ_UNBLOCK_EXCEPTIONS;
 }
 
 void KHTMLPartBrowserExtension::setTypedIconURL(const KURL &url, const QString &type)
 {
-    KWQ_BLOCK_NS_EXCEPTIONS;
+    KWQ_BLOCK_EXCEPTIONS;
     [_part->bridge() setIconURL:url.getNSURL() withType:type.getNSString()];
-    KWQ_UNBLOCK_NS_EXCEPTIONS;
+    KWQ_UNBLOCK_EXCEPTIONS;
 }

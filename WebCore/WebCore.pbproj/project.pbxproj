@@ -771,6 +771,7 @@
 				BC32C2EE048BF95C00A8000B,
 				55998A5F052B59CC0017A6C1,
 				55998A61052B59CC0017A6C1,
+				65F80698054D9F86008BF776,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1023,6 +1024,20 @@
 			settings = {
 				ATTRIBUTES = (
 				);
+			};
+		};
+		65F80697054D9F86008BF776 = {
+			expectedFileType = sourcecode.cpp.objcpp;
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = KWQExceptions.mm;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		65F80698054D9F86008BF776 = {
+			fileRef = 65F80697054D9F86008BF776;
+			isa = PBXBuildFile;
+			settings = {
 			};
 		};
 //650
@@ -2331,6 +2346,7 @@
 				F587854402DE375901EA4122,
 				BC7B2AF80450824100A8000F,
 				BC7B2AF90450824100A8000F,
+				65F80697054D9F86008BF776,
 			);
 			isa = PBXGroup;
 			name = other;

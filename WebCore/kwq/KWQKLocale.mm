@@ -32,54 +32,45 @@
 
 QString inputElementAltText()
 {
-    NSString * volatile altText = @"";
-    KWQ_BLOCK_NS_EXCEPTIONS;
-    altText = [[WebCoreViewFactory sharedFactory] inputElementAltText];
-    KWQ_UNBLOCK_NS_EXCEPTIONS;
+    KWQ_BLOCK_EXCEPTIONS;
+    return QString::fromNSString([[WebCoreViewFactory sharedFactory] inputElementAltText]);
+    KWQ_UNBLOCK_EXCEPTIONS;
 
-    return QString::fromNSString(altText);
+    return QString();
 }
 
 QString resetButtonDefaultLabel()
 {
-    NSString * volatile defaultLabel = @"";
+    KWQ_BLOCK_EXCEPTIONS;
+    return QString::fromNSString([[WebCoreViewFactory sharedFactory] resetButtonDefaultLabel]);
+    KWQ_UNBLOCK_EXCEPTIONS;
 
-    KWQ_BLOCK_NS_EXCEPTIONS;
-    defaultLabel = [[WebCoreViewFactory sharedFactory] resetButtonDefaultLabel];
-    KWQ_UNBLOCK_NS_EXCEPTIONS;
-
-    return QString::fromNSString(defaultLabel);
+    return QString();
 }
 
 QString searchableIndexIntroduction()
 {
-    NSString * volatile introduction = @"";
+    KWQ_BLOCK_EXCEPTIONS;
+    return QString::fromNSString([[WebCoreViewFactory sharedFactory] searchableIndexIntroduction]);
+    KWQ_UNBLOCK_EXCEPTIONS;
 
-    KWQ_BLOCK_NS_EXCEPTIONS;
-    introduction = [[WebCoreViewFactory sharedFactory] searchableIndexIntroduction];
-    KWQ_UNBLOCK_NS_EXCEPTIONS;
-
-    return QString::fromNSString(introduction);
+    return QString();
 }
 
 QString submitButtonDefaultLabel()
 {
-    NSString * volatile defaultLabel = @"";
+    KWQ_BLOCK_EXCEPTIONS;
+    return QString::fromNSString([[WebCoreViewFactory sharedFactory] submitButtonDefaultLabel]);
+    KWQ_UNBLOCK_EXCEPTIONS;
 
-    KWQ_BLOCK_NS_EXCEPTIONS;
-    defaultLabel = [[WebCoreViewFactory sharedFactory] submitButtonDefaultLabel];
-    KWQ_UNBLOCK_NS_EXCEPTIONS;
-
-    return QString::fromNSString(defaultLabel);
+    return QString();
 }
 
 QString KLocale::language()
 {
-    NSString * volatile code = @"";
+    KWQ_BLOCK_EXCEPTIONS;
+    return QString::fromNSString([[WebCoreViewFactory sharedFactory] defaultLanguageCode]);
+    KWQ_UNBLOCK_EXCEPTIONS;
 
-    KWQ_BLOCK_NS_EXCEPTIONS;
-    code = [[WebCoreViewFactory sharedFactory] defaultLanguageCode];
-    KWQ_UNBLOCK_NS_EXCEPTIONS;
-
-    return QString::fromNSString(code);
+    return QString();
 }

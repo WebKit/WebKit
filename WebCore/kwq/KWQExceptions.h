@@ -26,16 +26,30 @@
 #import <Foundation/NSException.h>
 #import "KWQAssertions.h"
 
-#define KWQ_BLOCK_NS_EXCEPTIONS NS_DURING
+class KWQNSHandler
+{
+ public:
+    KWQNSHandler() { _NSAddHandler2(&handler); }
+    ~KWQNSHandler() { _NSRemoveHandler2(&handler); }
 
-#define KWQ_UNBLOCK_NS_EXCEPTIONS NS_HANDLER \
-     if (ASSERT_DISABLED) { \
-     NSLog(@"Uncaught exception - %@\n", localException); \
-     } else { \
-     ASSERT_WITH_MESSAGE(0, "Uncaught exception - %@", localException); \
-     } \
-NS_ENDHANDLER
+    NSHandler2 handler;
+ private:
+    KWQNSHandler(const KWQNSHandler &);
+    KWQNSHandler &operator=(const KWQNSHandler &);
+};
 
-#define KWQ_UNBLOCK_RETURN_VALUE(val,type) NS_VALUERETURN(val,type)
 
-#define KWQ_UNBLOCK_RETURN NS_VOIDRETURN
+void KWQReportBlockedException(KWQNSHandler& _localHandler);
+
+#define KWQ_BLOCK_EXCEPTIONS                            \
+{                                                       \
+    KWQNSHandler _localHandler;	                        \
+    if (!_NSSETJMP(_localHandler.handler._state, 0)) {
+
+
+#define KWQ_UNBLOCK_EXCEPTIONS                    \
+    } else {                                      \
+        KWQReportBlockedException(_localHandler); \
+    }                                             \
+}
+

@@ -39,12 +39,12 @@ enum {
 QCheckBox::QCheckBox(QWidget *w)
     : m_stateChanged(this, SIGNAL(stateChanged(int)))
 {
-    KWQ_BLOCK_NS_EXCEPTIONS;
+    KWQ_BLOCK_EXCEPTIONS;
 
     NSButton *button = (NSButton *)getView();
     [button setButtonType:NSSwitchButton];
 
-    KWQ_UNBLOCK_NS_EXCEPTIONS;
+    KWQ_UNBLOCK_EXCEPTIONS;
 }
 
 QSize QCheckBox::sizeHint() const 
@@ -69,26 +69,22 @@ void QCheckBox::setFrameGeometry(const QRect &r)
 
 void QCheckBox::setChecked(bool isChecked)
 {
-    KWQ_BLOCK_NS_EXCEPTIONS;
+    KWQ_BLOCK_EXCEPTIONS;
 
     NSButton *button = (NSButton *)getView();
     [button setState:isChecked ? NSOnState : NSOffState];
 
-    KWQ_UNBLOCK_NS_EXCEPTIONS;
+    KWQ_UNBLOCK_EXCEPTIONS;
 }
 
 bool QCheckBox::isChecked()
 {
-    volatile bool result = false;
-
-    KWQ_BLOCK_NS_EXCEPTIONS;
-
+    KWQ_BLOCK_EXCEPTIONS;
     NSButton *button = (NSButton *)getView();
-    result = [button state] == NSOnState;
+    return [button state] == NSOnState;
+    KWQ_UNBLOCK_EXCEPTIONS;
 
-    KWQ_UNBLOCK_NS_EXCEPTIONS;
-
-    return result;
+    return false;
 }
 
 void QCheckBox::clicked()
@@ -117,11 +113,10 @@ const int *QCheckBox::dimensions() const
         { 4, 3, 3, 3, 2, 10, 10 },
     };
     NSControl * const button = static_cast<NSControl *>(getView());
-    volatile NSControlSize size = NSSmallControlSize;
 
-    KWQ_BLOCK_NS_EXCEPTIONS;
-    size = [[button cell] controlSize];
-    KWQ_UNBLOCK_NS_EXCEPTIONS;
+    KWQ_BLOCK_EXCEPTIONS;
+    return w[[[button cell] controlSize]];
+    KWQ_UNBLOCK_EXCEPTIONS;
 
-    return w[size];
+    return w[NSSmallControlSize];
 }

@@ -70,9 +70,9 @@ void KConfig::writeEntry(const QString &pKey, const QStringList &rValue,
 QString KConfig::readEntry(const char *pKey, const QString& aDefault) const
 {
     if (impl->isPluginInfo) {
-	NSString * volatile result = @"";
+	KWQ_BLOCK_EXCEPTIONS;
 
-	KWQ_BLOCK_NS_EXCEPTIONS;
+	NSString *result = nil;
 
         id <WebCorePluginInfo> plugin = [[[WebCoreViewFactory sharedFactory] pluginsInfo] objectAtIndex:impl->pluginIndex];
         if (strcmp(pKey, "name") == 0) {
@@ -104,9 +104,11 @@ QString KConfig::readEntry(const char *pKey, const QString& aDefault) const
             result = MIMEString;
         }
 
-	KWQ_UNBLOCK_NS_EXCEPTIONS;
-	
 	return QString::fromNSString(result);
+
+	KWQ_UNBLOCK_EXCEPTIONS;
+
+	return QString();
     }
     
     ERROR("not yet implemented");
@@ -116,12 +118,11 @@ QString KConfig::readEntry(const char *pKey, const QString& aDefault) const
 int KConfig::readNumEntry(const char *pKey, int nDefault) const
 {
     if (impl->isPluginInfo && strcmp(pKey, "number") == 0) {
-        volatile int count = 0;
-	KWQ_BLOCK_NS_EXCEPTIONS;
-	count = [[[WebCoreViewFactory sharedFactory] pluginsInfo] count];
-	KWQ_UNBLOCK_NS_EXCEPTIONS;
-	return count;
-
+        KWQ_BLOCK_EXCEPTIONS;
+	return [[[WebCoreViewFactory sharedFactory] pluginsInfo] count];
+	KWQ_UNBLOCK_EXCEPTIONS;
+	
+	return 0;
     }
     ERROR("not yet implemented");
     return nDefault;
@@ -159,8 +160,8 @@ QStringList KConfig::readListEntry(const QString &pKey, char sep) const
 
 void RefreshPlugins(bool reload)
 {
-    KWQ_BLOCK_NS_EXCEPTIONS;
+    KWQ_BLOCK_EXCEPTIONS;
     [[WebCoreViewFactory sharedFactory] refreshPlugins:reload];
-    KWQ_UNBLOCK_NS_EXCEPTIONS;
+    KWQ_UNBLOCK_EXCEPTIONS;
 }
 

@@ -23,37 +23,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import "KWQFrame.h"
-
 #import "KWQExceptions.h"
-#import "KWQKHTMLPart.h"
-#import "WebCoreBridge.h"
-#import "khtmlview.h"
 
-void QFrame::setFrameStyle(int s)
+void KWQReportBlockedException(KWQNSHandler& _localHandler)
 {
-    _frameStyle = s;
-
-    // Tell the other side of the bridge about the frame style change.
-    KHTMLView *view = dynamic_cast<KHTMLView *>(this);
-    if (view) {
-        KHTMLPart *part = view->part();
-        if (part) {
-	    KWQ_BLOCK_EXCEPTIONS;
-            [KWQ(part)->bridge() setHasBorder:(s != NoFrame)];
-	    KWQ_UNBLOCK_EXCEPTIONS;
-        }
-    }
-}
-
-int QFrame::frameStyle()
-{
-    return _frameStyle;
-}
-
-int QFrame::frameWidth() const
-{
-    if (_frameStyle == (StyledPanel | Sunken))
-        return 3;
-    return 0;
+        NSException *localException = _NSExceptionObjectFromHandler2(&_localHandler.handler);
+#if ASSERT_DISABLED
+	NSLog(@"Uncaught exception - %@\n", localException);
+#else
+	ASSERT_WITH_MESSAGE(0, "Uncaught exception - %@", localException );
+#endif
 }

@@ -73,7 +73,7 @@ QComboBox::QComboBox()
     , _widthGood(false)
     , _activated(this, SIGNAL(activated(int)))
 {
-    KWQ_BLOCK_NS_EXCEPTIONS;
+    KWQ_BLOCK_EXCEPTIONS;
 
     _adapter = [[KWQComboBoxAdapter alloc] initWithQComboBox:this];
     KWQPopUpButton *button = [[KWQPopUpButton alloc] init];
@@ -92,23 +92,23 @@ QComboBox::QComboBox()
 
     updateCurrentItem();
 
-    KWQ_UNBLOCK_NS_EXCEPTIONS;
+    KWQ_UNBLOCK_EXCEPTIONS;
 }
 
 QComboBox::~QComboBox()
 {
-    KWQ_BLOCK_NS_EXCEPTIONS;
+    KWQ_BLOCK_EXCEPTIONS;
 
     KWQPopUpButton *button = (KWQPopUpButton *)getView();
     [button setTarget:nil];
     [_adapter release];
 
-    KWQ_UNBLOCK_NS_EXCEPTIONS;
+    KWQ_UNBLOCK_EXCEPTIONS;
 }
 
 void QComboBox::insertItem(const QString &text, int i)
 {
-    KWQ_BLOCK_NS_EXCEPTIONS;
+    KWQ_BLOCK_EXCEPTIONS;
 
     int index = i;
 
@@ -129,14 +129,14 @@ void QComboBox::insertItem(const QString &text, int i)
 
     updateCurrentItem();
 
-    KWQ_UNBLOCK_NS_EXCEPTIONS;
+    KWQ_UNBLOCK_EXCEPTIONS;
 }
 
 QSize QComboBox::sizeHint() const 
 {
     NSSize size = {0,0};
 
-    KWQ_BLOCK_NS_EXCEPTIONS;
+    KWQ_BLOCK_EXCEPTIONS;
 
     KWQPopUpButton *button = (KWQPopUpButton *)getView();
     
@@ -161,7 +161,7 @@ QSize QComboBox::sizeHint() const
     
     size = [[button cell] cellSize];
 
-    KWQ_UNBLOCK_NS_EXCEPTIONS;
+    KWQ_UNBLOCK_EXCEPTIONS;
 
     return QSize((int)_width + dimensions()[widthNotIncludingText],
         (int)size.height - (dimensions()[topMargin] + dimensions()[bottomMargin]));
@@ -199,12 +199,12 @@ void QComboBox::clear()
 
 void QComboBox::setCurrentItem(int index)
 {
-    KWQ_BLOCK_NS_EXCEPTIONS;
+    KWQ_BLOCK_EXCEPTIONS;
 
     KWQPopUpButton *button = (KWQPopUpButton *)getView();
     [button selectItemAtIndex:index];
 
-    KWQ_UNBLOCK_NS_EXCEPTIONS;
+    KWQ_UNBLOCK_EXCEPTIONS;
 
     updateCurrentItem();
 }
@@ -213,16 +213,15 @@ bool QComboBox::updateCurrentItem() const
 {
     KWQPopUpButton *button = (KWQPopUpButton *)getView();
 
-    volatile int i = 0;
-
-    KWQ_BLOCK_NS_EXCEPTIONS;
-    i = [button indexOfSelectedItem];
-    KWQ_UNBLOCK_NS_EXCEPTIONS;
+    KWQ_BLOCK_EXCEPTIONS;
+    int i = [button indexOfSelectedItem];
 
     if (_currentItem == i) {
         return false;
     }
     _currentItem = i;
+    KWQ_UNBLOCK_EXCEPTIONS;
+
     return true;
 }
 
@@ -240,7 +239,7 @@ void QComboBox::setFont(const QFont &f)
     const NSControlSize size = KWQNSControlSizeForFont(f);
     NSControl * const button = static_cast<NSControl *>(getView());
 
-    KWQ_BLOCK_NS_EXCEPTIONS;
+    KWQ_BLOCK_EXCEPTIONS;
 
     if (size != [[button cell] controlSize]) {
         [[button cell] setControlSize:size];
@@ -248,7 +247,7 @@ void QComboBox::setFont(const QFont &f)
         _widthGood = false;
     }
 
-    KWQ_UNBLOCK_NS_EXCEPTIONS;
+    KWQ_UNBLOCK_EXCEPTIONS;
 }
 
 const int *QComboBox::dimensions() const
@@ -262,12 +261,11 @@ const int *QComboBox::dimensions() const
     };
     NSControl * const button = static_cast<NSControl *>(getView());
 
-    volatile NSControlSize size = NSSmallControlSize;
-    KWQ_BLOCK_NS_EXCEPTIONS;
-    size = [[button cell] controlSize];
-    KWQ_UNBLOCK_NS_EXCEPTIONS;
+    KWQ_BLOCK_EXCEPTIONS;
+    return  w[[[button cell] controlSize]];
+    KWQ_UNBLOCK_EXCEPTIONS;
 
-    return w[size];
+    return w[NSSmallControlSize];
 }
 
 QWidget::FocusPolicy QComboBox::focusPolicy() const

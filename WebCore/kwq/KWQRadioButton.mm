@@ -40,9 +40,9 @@ enum {
 QRadioButton::QRadioButton(QWidget *w)
 {
     NSButton *button = (NSButton *)getView();
-    KWQ_BLOCK_NS_EXCEPTIONS;
+    KWQ_BLOCK_EXCEPTIONS;
     [button setButtonType:NSRadioButton];
-    KWQ_UNBLOCK_NS_EXCEPTIONS;
+    KWQ_UNBLOCK_EXCEPTIONS;
 }
 
 QSize QRadioButton::sizeHint() const 
@@ -68,21 +68,20 @@ void QRadioButton::setFrameGeometry(const QRect &r)
 void QRadioButton::setChecked(bool isChecked)
 {
     NSButton *button = (NSButton *)getView();
-    KWQ_BLOCK_NS_EXCEPTIONS;
+    KWQ_BLOCK_EXCEPTIONS;
     [button setState:isChecked ? NSOnState : NSOffState];
-    KWQ_UNBLOCK_NS_EXCEPTIONS;
+    KWQ_UNBLOCK_EXCEPTIONS;
 }
 
 bool QRadioButton::isChecked() const
 {
     NSButton *button = (NSButton *)getView();
     
-    volatile bool result = false;
-    KWQ_BLOCK_NS_EXCEPTIONS;
-    result = [button state] == NSOnState;
-    KWQ_UNBLOCK_NS_EXCEPTIONS;
+    KWQ_BLOCK_EXCEPTIONS;
+    return [button state] == NSOnState;
+    KWQ_UNBLOCK_EXCEPTIONS;
 
-    return result;
+    return false;
 }
 
 int QRadioButton::baselinePosition(int height) const
@@ -101,10 +100,9 @@ const int *QRadioButton::dimensions() const
     };
     NSControl * const button = static_cast<NSControl *>(getView());
 
-    volatile NSControlSize size = NSSmallControlSize;
-    KWQ_BLOCK_NS_EXCEPTIONS;
-    size = [[button cell] controlSize];
-    KWQ_UNBLOCK_NS_EXCEPTIONS;
+    KWQ_BLOCK_EXCEPTIONS;
+    return w[[[button cell] controlSize]];
+    KWQ_UNBLOCK_EXCEPTIONS;
 
-    return w[size];
+    return w[NSSmallControlSize];
 }

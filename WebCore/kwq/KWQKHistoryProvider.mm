@@ -44,15 +44,11 @@ void HistoryProvider::insert(const QString &s)
 
 bool HistoryProvider::contains(const QString &s) const
 {
-    volatile bool result = false;
-    
-    KWQ_BLOCK_NS_EXCEPTIONS;
+    KWQ_BLOCK_EXCEPTIONS;
+    return [[WebCoreHistory historyProvider] containsItemForURLString: KURL(s).canonicalURL().getNSString()];
+    KWQ_UNBLOCK_EXCEPTIONS;
 
-    result = [[WebCoreHistory historyProvider] containsItemForURLString: KURL(s).canonicalURL().getNSString()];
-
-    KWQ_UNBLOCK_NS_EXCEPTIONS;
-
-    return result;
+    return false;
 }
 
 } // namespace KParts

@@ -80,21 +80,21 @@ QScrollBar::QScrollBar(Qt::Orientation orientation, QWidget* parent)
     m_pageStep = 0;
     m_scroller = 0;
 
-    KWQ_BLOCK_NS_EXCEPTIONS;
+    KWQ_BLOCK_EXCEPTIONS;
     m_scroller = [[KWQScrollBar alloc] initWithQScrollBar:this];
     setView(m_scroller);
     [m_scroller release];
     [parent->getView() addSubview: m_scroller];
-    KWQ_UNBLOCK_NS_EXCEPTIONS;
+    KWQ_UNBLOCK_EXCEPTIONS;
 
     setFocusPolicy(NoFocus);
 }
 
 QScrollBar::~QScrollBar()
 {
-    KWQ_BLOCK_NS_EXCEPTIONS;
+    KWQ_BLOCK_EXCEPTIONS;
     [m_scroller removeFromSuperview];
-    KWQ_UNBLOCK_NS_EXCEPTIONS;
+    KWQ_UNBLOCK_EXCEPTIONS;
 }
 
 void QScrollBar::setValue(int v)
@@ -106,10 +106,10 @@ void QScrollBar::setValue(int v)
     if (m_currentPos == v)
         return; // Our value stayed the same.
     m_currentPos = v;
-    KWQ_BLOCK_NS_EXCEPTIONS;
+    KWQ_BLOCK_EXCEPTIONS;
     [m_scroller setFloatValue: (float)m_currentPos/maxPos
                knobProportion: [m_scroller knobProportion]];
-    KWQ_UNBLOCK_NS_EXCEPTIONS;
+    KWQ_UNBLOCK_EXCEPTIONS;
     valueChanged(); // Emit the signal that indicates our value has changed.
 }
 
@@ -125,10 +125,10 @@ void QScrollBar::setKnobProportion(int visibleArea, int totalArea)
     m_totalSize = totalArea;
     float val = (float)m_visibleSize/m_totalSize;
 
-    KWQ_BLOCK_NS_EXCEPTIONS;
+    KWQ_BLOCK_EXCEPTIONS;
     if (!(val == [m_scroller knobProportion] || val < 0.0))
 	[m_scroller setFloatValue: [m_scroller floatValue] knobProportion: val];
-    KWQ_UNBLOCK_NS_EXCEPTIONS;
+    KWQ_UNBLOCK_EXCEPTIONS;
 }
 
 void QScrollBar::scrollbarHit(NSScrollerPart hitPart)
@@ -155,9 +155,9 @@ void QScrollBar::scrollbarHit(NSScrollerPart hitPart)
             // If the thumb is hit, then the scrollbar changed its value for us.
         case NSScrollerKnob:
         case NSScrollerKnobSlot:
-	    KWQ_BLOCK_NS_EXCEPTIONS;
+	    KWQ_BLOCK_EXCEPTIONS;
             newPos = (int)([m_scroller floatValue]*maxPos);
-	    KWQ_UNBLOCK_NS_EXCEPTIONS;
+	    KWQ_UNBLOCK_EXCEPTIONS;
             break;
         default: ;
     }

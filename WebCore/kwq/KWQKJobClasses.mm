@@ -73,9 +73,9 @@ TransferJob::TransferJob(const KURL &url, const QByteArray &postData, bool showP
 TransferJob::~TransferJob()
 {
     // This will cancel the handle, and who knows what that could do
-    KWQ_BLOCK_NS_EXCEPTIONS;
+    KWQ_BLOCK_EXCEPTIONS;
     [d->loader jobWillBeDeallocated];
-    KWQ_UNBLOCK_NS_EXCEPTIONS;
+    KWQ_UNBLOCK_EXCEPTIONS;
     delete d;
 }
 

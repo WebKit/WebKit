@@ -32,32 +32,28 @@
 
 QString KWQKCookieJar::cookie(const KURL &url)
 {
-    NSString * volatile result = nil;
+    KWQ_BLOCK_EXCEPTIONS;
+    return QString::fromNSString([[WebCoreCookieAdapter sharedAdapter] cookiesForURL:url.url().getNSString()]);
+    KWQ_UNBLOCK_EXCEPTIONS;
 
-    KWQ_BLOCK_NS_EXCEPTIONS;
-    result = [[WebCoreCookieAdapter sharedAdapter] cookiesForURL:url.url().getNSString()];
-    KWQ_UNBLOCK_NS_EXCEPTIONS;
-
-    return QString::fromNSString(result);
+    return QString();
 }
 
 void KWQKCookieJar::setCookie(const KURL &url, const KURL &policyBaseURL, const QString &cookie)
 {
-    KWQ_BLOCK_NS_EXCEPTIONS;
+    KWQ_BLOCK_EXCEPTIONS;
 
     [[WebCoreCookieAdapter sharedAdapter] setCookies:cookie.getNSString()
      forURL:url.url().getNSString() policyBaseURL:policyBaseURL.url().getNSString()];
 
-    KWQ_UNBLOCK_NS_EXCEPTIONS;
+    KWQ_UNBLOCK_EXCEPTIONS;
 }
 
 bool KWQKCookieJar::cookieEnabled()
 {
-    volatile bool enabled = false;
-    
-    KWQ_BLOCK_NS_EXCEPTIONS;
-    enabled = [[WebCoreCookieAdapter sharedAdapter] cookiesEnabled];
-    KWQ_UNBLOCK_NS_EXCEPTIONS;
+    KWQ_BLOCK_EXCEPTIONS;
+    return [[WebCoreCookieAdapter sharedAdapter] cookiesEnabled];
+    KWQ_UNBLOCK_EXCEPTIONS;
 
-    return enabled;
+    return false;
 }

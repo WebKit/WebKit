@@ -432,21 +432,21 @@ void QPainter::drawPixmap(const QPoint &p, const QPixmap &pix, const QRect &r)
 void QPainter::drawPixmap( int x, int y, const QPixmap &pixmap,
                            int sx, int sy, int sw, int sh )
 {
-    volatile int _sw = sw;
-    volatile int _sh = sh;
-
     if (data->state.paintingDisabled)
         return;
         
-    if (_sw == -1)
-        _sw = pixmap.width();
-    if (_sh == -1)
-        _sh = pixmap.height();
+    if (sw == -1)
+        sw = pixmap.width();
+    if (sh == -1)
+        sh = pixmap.height();
+
+    NSRect inRect = NSMakeRect(x, y, sw, sh);
+    NSRect fromRect = NSMakeRect(sx, sy, sw, sh);
     
-    KWQ_BLOCK_NS_EXCEPTIONS;
-    [pixmap.imageRenderer beginAnimationInRect:NSMakeRect(x, y, _sw, _sh)
-                                      fromRect:NSMakeRect(sx, sy, _sw, _sh)];
-    KWQ_UNBLOCK_NS_EXCEPTIONS;
+    KWQ_BLOCK_EXCEPTIONS;
+    [pixmap.imageRenderer beginAnimationInRect:inRect
+                                      fromRect:fromRect];
+    KWQ_UNBLOCK_EXCEPTIONS;
 }
 
 void QPainter::drawTiledPixmap( int x, int y, int w, int h,
@@ -455,9 +455,9 @@ void QPainter::drawTiledPixmap( int x, int y, int w, int h,
     if (data->state.paintingDisabled)
         return;
     
-    KWQ_BLOCK_NS_EXCEPTIONS;
+    KWQ_BLOCK_EXCEPTIONS;
     [pixmap.imageRenderer tileInRect:NSMakeRect(x, y, w, h) fromPoint:NSMakePoint(sx, sy)];
-    KWQ_UNBLOCK_NS_EXCEPTIONS;
+    KWQ_UNBLOCK_EXCEPTIONS;
 }
 
 void QPainter::_updateRenderer(NSString **families)
@@ -465,12 +465,12 @@ void QPainter::_updateRenderer(NSString **families)
     if (data->textRenderer == 0 || data->state.font != data->textRendererFont) {
         data->textRendererFont = data->state.font;
         id <WebCoreTextRenderer> oldRenderer = data->textRenderer;
-	KWQ_BLOCK_NS_EXCEPTIONS;
+	KWQ_BLOCK_EXCEPTIONS;
         data->textRenderer = [[[WebCoreTextRendererFactory sharedFactory]
             rendererWithFont:data->textRendererFont.getNSFont()
             usingPrinterFont:data->textRendererFont.isPrinterFont()] retain];
         [oldRenderer release];
-	KWQ_UNBLOCK_NS_EXCEPTIONS;
+	KWQ_UNBLOCK_EXCEPTIONS;
     }
 }
     

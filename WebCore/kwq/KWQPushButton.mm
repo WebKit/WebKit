@@ -38,18 +38,18 @@ enum {
 QPushButton::QPushButton(QWidget *)
 {
     NSButton *button = (NSButton *)getView();
-    KWQ_BLOCK_NS_EXCEPTIONS;
+    KWQ_BLOCK_EXCEPTIONS;
     [button setBezelStyle:NSRoundedBezelStyle];
-    KWQ_UNBLOCK_NS_EXCEPTIONS;
+    KWQ_UNBLOCK_EXCEPTIONS;
 }
 
 QPushButton::QPushButton(const QString &text, QWidget *)
 {
     NSButton *button = (NSButton *)getView();
 
-    KWQ_BLOCK_NS_EXCEPTIONS;
+    KWQ_BLOCK_EXCEPTIONS;
     [button setBezelStyle:NSRoundedBezelStyle];
-    KWQ_UNBLOCK_NS_EXCEPTIONS;
+    KWQ_UNBLOCK_EXCEPTIONS;
 
     setText(text);
 }
@@ -60,10 +60,10 @@ QSize QPushButton::sizeHint() const
 
     QSize size;
 
-    KWQ_BLOCK_NS_EXCEPTIONS;
+    KWQ_BLOCK_EXCEPTIONS;
     size = QSize((int)[[button cell] cellSize].width - (dimensions()[leftMargin] + dimensions()[rightMargin]),
         (int)[[button cell] cellSize].height - (dimensions()[topMargin] + dimensions()[bottomMargin]));
-    KWQ_UNBLOCK_NS_EXCEPTIONS;
+    KWQ_UNBLOCK_EXCEPTIONS;
 
     return size;
 }
@@ -88,18 +88,18 @@ int QPushButton::baselinePosition(int height) const
     // Button text is centered vertically, with a fudge factor to account for the shadow.
     NSButton *button = (NSButton *)getView();
 
-    volatile float ascender = 0;
-    volatile float descender = 0;
-
-    KWQ_BLOCK_NS_EXCEPTIONS;
+    KWQ_BLOCK_EXCEPTIONS;
     NSFont *font = [button font];
-    ascender = [font ascender];
-    descender = [font descender];
-    KWQ_UNBLOCK_NS_EXCEPTIONS;
-
+    float ascender = [font ascender];
+    float descender = [font descender];
     return (int)ceil(-dimensions()[topMargin]
         + ((height + dimensions()[topMargin] + dimensions()[bottomMargin]) - (ascender - descender)) / 2.0
         + ascender - dimensions()[baselineFudgeFactor]);
+    KWQ_UNBLOCK_EXCEPTIONS;
+
+    return (int)ceil(-dimensions()[topMargin]
+        + ((height + dimensions()[topMargin] + dimensions()[bottomMargin])) / 2.0
+        - dimensions()[baselineFudgeFactor]);
 }
 
 const int *QPushButton::dimensions() const
@@ -112,11 +112,10 @@ const int *QPushButton::dimensions() const
         { 0, 1, 1, 1, 1 }
     };
     NSControl * const button = static_cast<NSControl *>(getView());
-    volatile NSControlSize size = NSSmallControlSize;
 
-    KWQ_BLOCK_NS_EXCEPTIONS;
-    size = [[button cell] controlSize];
-    KWQ_UNBLOCK_NS_EXCEPTIONS;
+    KWQ_BLOCK_EXCEPTIONS;
+    return w[[[button cell] controlSize]];
+    KWQ_UNBLOCK_EXCEPTIONS;
 
-    return w[size];
+    return w[NSSmallControlSize];
 }

@@ -182,13 +182,11 @@ void KWQKHTMLPart::setSettings (KHTMLSettings *settings)
 
 QString KWQKHTMLPart::generateFrameName()
 {
-    NSString * volatile name = @"";
+    KWQ_BLOCK_EXCEPTIONS;
+    return QString::fromNSString([_bridge generateFrameName]);
+    KWQ_UNBLOCK_EXCEPTIONS;
 
-    KWQ_BLOCK_NS_EXCEPTIONS;
-    name = [_bridge generateFrameName];
-    KWQ_UNBLOCK_NS_EXCEPTIONS;
-
-    return QString::fromNSString(name);
+    return QString();
 }
 
 void KWQKHTMLPart::provisionalLoadStarted()
@@ -201,7 +199,9 @@ void KWQKHTMLPart::provisionalLoadStarted()
 
 bool KWQKHTMLPart::openURL(const KURL &url)
 {
-    volatile bool onLoad = false;
+    KWQ_BLOCK_EXCEPTIONS;
+
+    bool onLoad = false;
     
     if (jScript() && jScript()->interpreter()) {
         KHTMLPart *rootPart;
@@ -217,8 +217,6 @@ bool KWQKHTMLPart::openURL(const KURL &url)
         }
     }
 
-    KWQ_BLOCK_NS_EXCEPTIONS;
-
     // FIXME: The lack of args here to get the reload flag from
     // indicates a problem in how we use KHTMLPart::processObjectRequest,
     // where we are opening the URL before the args are set up.
@@ -231,14 +229,14 @@ bool KWQKHTMLPart::openURL(const KURL &url)
                 form:nil
           formValues:nil];
 
-    KWQ_UNBLOCK_NS_EXCEPTIONS;
+    KWQ_UNBLOCK_EXCEPTIONS;
 
     return true;
 }
 
 void KWQKHTMLPart::openURLRequest(const KURL &url, const URLArgs &args)
 {
-    KWQ_BLOCK_NS_EXCEPTIONS;
+    KWQ_BLOCK_EXCEPTIONS;
 
     [_bridge loadURL:url.getNSURL()
             referrer:[_bridge referrer]
@@ -249,7 +247,7 @@ void KWQKHTMLPart::openURLRequest(const KURL &url, const URLArgs &args)
                 form:nil
           formValues:nil];
 
-    KWQ_UNBLOCK_NS_EXCEPTIONS;
+    KWQ_UNBLOCK_EXCEPTIONS;
 }
 
 void KWQKHTMLPart::didNotOpenURL(const KURL &URL)
@@ -578,7 +576,7 @@ void KWQKHTMLPart::recordFormValue(const QString &name, const QString &value, HT
 
 void KWQKHTMLPart::submitForm(const KURL &url, const URLArgs &args)
 {
-    KWQ_BLOCK_NS_EXCEPTIONS;
+    KWQ_BLOCK_EXCEPTIONS;
 
     // The form multi-submit logic here is only right when we are submitting a form that affects this frame.
     // Eventually when we find a better fix we can remove this altogether.
@@ -625,7 +623,7 @@ void KWQKHTMLPart::submitForm(const KURL &url, const URLArgs &args)
     }
     clearRecordedFormValues();
 
-    KWQ_UNBLOCK_NS_EXCEPTIONS;
+    KWQ_UNBLOCK_EXCEPTIONS;
 }
 
 void KWQKHTMLPart::setEncoding(const QString &name, bool userChosen)
@@ -647,9 +645,9 @@ void KWQKHTMLPart::addData(const char *bytes, int length)
 
 void KHTMLPart::frameDetached()
 {
-    KWQ_BLOCK_NS_EXCEPTIONS;
+    KWQ_BLOCK_EXCEPTIONS;
     [KWQ(this)->bridge() frameDetached];
-    KWQ_UNBLOCK_NS_EXCEPTIONS;
+    KWQ_UNBLOCK_EXCEPTIONS;
 
     // FIXME: There may be a better place to do this that works for KHTML too.
     FrameList& parentFrames = parentPart()->d->m_frames;
@@ -665,7 +663,7 @@ void KHTMLPart::frameDetached()
 
 void KWQKHTMLPart::urlSelected(const KURL &url, int button, int state, const URLArgs &args)
 {
-    KWQ_BLOCK_NS_EXCEPTIONS;
+    KWQ_BLOCK_EXCEPTIONS;
     [_bridge loadURL:url.getNSURL()
             referrer:[_bridge referrer]
               reload:args.reload
@@ -674,7 +672,7 @@ void KWQKHTMLPart::urlSelected(const KURL &url, int button, int state, const URL
      triggeringEvent:_currentEvent
                 form:nil
           formValues:nil];
-    KWQ_UNBLOCK_NS_EXCEPTIONS;
+    KWQ_UNBLOCK_EXCEPTIONS;
 }
 
 class KWQPluginPart : public ReadOnlyPart
@@ -685,9 +683,8 @@ class KWQPluginPart : public ReadOnlyPart
 
 ReadOnlyPart *KWQKHTMLPart::createPart(const ChildFrame &child, const KURL &url, const QString &mimeType)
 {
-    ReadOnlyPart * volatile part = NULL;
-
-    KWQ_BLOCK_NS_EXCEPTIONS;
+    KWQ_BLOCK_EXCEPTIONS;
+    ReadOnlyPart *part;
 
     BOOL needFrame = [_bridge frameRequiredForMIMEType:mimeType.getNSString() URL:url.getNSURL()];
     if (child.m_type == ChildFrame::Object && !needFrame) {
@@ -725,9 +722,11 @@ ReadOnlyPart *KWQKHTMLPart::createPart(const ChildFrame &child, const KURL &url,
         part = [childBridge part];
     }
 
-    KWQ_UNBLOCK_NS_EXCEPTIONS;
-
     return part;
+
+    KWQ_UNBLOCK_EXCEPTIONS;
+
+    return NULL;
 }
     
 void KWQKHTMLPart::setView(KHTMLView *view)
@@ -764,9 +763,9 @@ void KWQKHTMLPart::setTitle(const DOMString &title)
     QString text = title.string();
     text.replace('\\', backslashAsCurrencySymbol());
 
-    KWQ_BLOCK_NS_EXCEPTIONS;
+    KWQ_BLOCK_EXCEPTIONS;
     [_bridge setTitle:text.getNSString()];
-    KWQ_UNBLOCK_NS_EXCEPTIONS;
+    KWQ_UNBLOCK_EXCEPTIONS;
 }
 
 void KWQKHTMLPart::setStatusBarText(const QString &status)
@@ -774,23 +773,23 @@ void KWQKHTMLPart::setStatusBarText(const QString &status)
     QString text = status;
     text.replace('\\', backslashAsCurrencySymbol());
 
-    KWQ_BLOCK_NS_EXCEPTIONS;
+    KWQ_BLOCK_EXCEPTIONS;
     [_bridge setStatusText:text.getNSString()];
-    KWQ_UNBLOCK_NS_EXCEPTIONS;
+    KWQ_UNBLOCK_EXCEPTIONS;
 }
 
 void KWQKHTMLPart::scheduleClose()
 {
-    KWQ_BLOCK_NS_EXCEPTIONS;
+    KWQ_BLOCK_EXCEPTIONS;
     [_bridge closeWindowSoon];
-    KWQ_UNBLOCK_NS_EXCEPTIONS;
+    KWQ_UNBLOCK_EXCEPTIONS;
 }
 
 void KWQKHTMLPart::unfocusWindow()
 {
-    KWQ_BLOCK_NS_EXCEPTIONS;
+    KWQ_BLOCK_EXCEPTIONS;
     [_bridge unfocusWindow];
-    KWQ_UNBLOCK_NS_EXCEPTIONS;
+    KWQ_UNBLOCK_EXCEPTIONS;
 }
 
 void KWQKHTMLPart::jumpToSelection()
@@ -813,7 +812,7 @@ void KWQKHTMLPart::jumpToSelection()
  
         NSView *docView = d->m_view->getDocumentView();
 
-	KWQ_BLOCK_NS_EXCEPTIONS;
+	KWQ_BLOCK_EXCEPTIONS;
         NSRect selRect = NSRect(selectionRect());
         NSRect visRect = [docView visibleRect];
         if (!NSContainsRect(visRect, selRect)) {
@@ -822,7 +821,7 @@ void KWQKHTMLPart::jumpToSelection()
             selRect = NSIntersectionRect(selRect, [docView bounds]);
             [docView scrollRectToVisible:selRect];
         }
-	KWQ_UNBLOCK_NS_EXCEPTIONS;
+	KWQ_UNBLOCK_EXCEPTIONS;
 */
     }
 }
@@ -834,7 +833,7 @@ void KWQKHTMLPart::redirectionTimerStartedOrStopped()
         return;
     }
     
-    KWQ_BLOCK_NS_EXCEPTIONS;
+    KWQ_BLOCK_EXCEPTIONS;
     if (d->m_redirectionTimer.isActive()) {
         [_bridge reportClientRedirectToURL:KURL(d->m_redirectURL).getNSURL()
                                      delay:d->m_delayRedirect
@@ -844,7 +843,7 @@ void KWQKHTMLPart::redirectionTimerStartedOrStopped()
     } else {
         [_bridge reportClientRedirectCancelled:d->m_cancelWithLoadInProgress];
     }
-    KWQ_UNBLOCK_NS_EXCEPTIONS;
+    KWQ_UNBLOCK_EXCEPTIONS;
 }
 
 void KWQKHTMLPart::paint(QPainter *p, const QRect &rect)
@@ -901,25 +900,22 @@ RenderObject *KWQKHTMLPart::renderer()
 
 QString KWQKHTMLPart::userAgent() const
 {
-    NSString * volatile us = nil;
-
-    KWQ_BLOCK_NS_EXCEPTIONS;
-    us = [_bridge userAgentForURL:m_url.getNSURL()];
-    KWQ_UNBLOCK_NS_EXCEPTIONS;
+    KWQ_BLOCK_EXCEPTIONS;
+    return QString::fromNSString([_bridge userAgentForURL:m_url.getNSURL()]);
+    KWQ_UNBLOCK_EXCEPTIONS;
          
-    return QString::fromNSString(us);
+    return QString();
 }
 
 QString KWQKHTMLPart::mimeTypeForFileName(const QString &fileName) const
 {
     NSString *ns = fileName.getNSString();
-    NSString * volatile mimeType = @"";
 
-    KWQ_BLOCK_NS_EXCEPTIONS;
-    mimeType = [_bridge MIMETypeForPath:ns];
-    KWQ_UNBLOCK_NS_EXCEPTIONS;
+    KWQ_BLOCK_EXCEPTIONS;
+    return QString::fromNSString([_bridge MIMETypeForPath:ns]);
+    KWQ_UNBLOCK_EXCEPTIONS;
 
-    return QString::fromNSString(mimeType);
+    return QString();
 }
 
 NSView *KWQKHTMLPart::nextKeyViewInFrame(NodeImpl *node, KWQSelectionDirection direction)
@@ -978,22 +974,24 @@ NSView *KWQKHTMLPart::nextKeyViewInFrameHierarchy(NodeImpl *node, KWQSelectionDi
 
 NSView *KWQKHTMLPart::nextKeyView(NodeImpl *node, KWQSelectionDirection direction)
 {
-    NSView * volatile next = nextKeyViewInFrameHierarchy(node, direction);
+    KWQ_BLOCK_EXCEPTIONS;
+
+    NSView * next = nextKeyViewInFrameHierarchy(node, direction);
     if (next) {
         return next;
     }
 
     // Look at views from the top level part up, looking for a next key view that we can use.
 
-    KWQ_BLOCK_NS_EXCEPTIONS;
     next = direction == KWQSelectingNext
         ? [_bridge nextKeyViewOutsideWebFrameViews]
         : [_bridge previousKeyViewOutsideWebFrameViews];
-    KWQ_UNBLOCK_NS_EXCEPTIONS;
 
     if (next) {
         return next;
     }
+
+    KWQ_UNBLOCK_EXCEPTIONS;
     
     // If all else fails, make a loop by starting from 0.
     return nextKeyViewInFrameHierarchy(0, direction);
@@ -1010,13 +1008,8 @@ NSView *KWQKHTMLPart::nextKeyViewForWidget(QWidget *startingWidget, KWQSelection
 
 bool KWQKHTMLPart::currentEventIsMouseDownInWidget(QWidget *candidate)
 {
-    volatile NSEventType eventType = (NSEventType)0;
-
-    KWQ_BLOCK_NS_EXCEPTIONS;
-    eventType = [[NSApp currentEvent] type];
-    KWQ_UNBLOCK_NS_EXCEPTIONS;
-
-    switch (eventType) {
+    KWQ_BLOCK_EXCEPTIONS;
+    switch ([[NSApp currentEvent] type]) {
         case NSLeftMouseDown:
         case NSRightMouseDown:
         case NSOtherMouseDown:
@@ -1024,6 +1017,7 @@ bool KWQKHTMLPart::currentEventIsMouseDownInWidget(QWidget *candidate)
         default:
             return NO;
     }
+    KWQ_UNBLOCK_EXCEPTIONS;
 
     NodeImpl *node = nodeForWidget(candidate);
     ASSERT(node);
@@ -1250,17 +1244,17 @@ void KWQKHTMLPart::saveDocumentState()
     // Do not save doc state if the page has a password field and a form that would be submitted
     // via https
     if (!(d->m_doc && d->m_doc->hasPasswordField() && d->m_doc->hasSecureForm())) {
-	KWQ_BLOCK_NS_EXCEPTIONS;
+	KWQ_BLOCK_EXCEPTIONS;
         [_bridge saveDocumentState];
-	KWQ_UNBLOCK_NS_EXCEPTIONS;
+	KWQ_UNBLOCK_EXCEPTIONS;
     }
 }
 
 void KWQKHTMLPart::restoreDocumentState()
 {
-    KWQ_BLOCK_NS_EXCEPTIONS;
+    KWQ_BLOCK_EXCEPTIONS;
     [_bridge restoreDocumentState];
-    KWQ_UNBLOCK_NS_EXCEPTIONS;
+    KWQ_UNBLOCK_EXCEPTIONS;
 }
 
 QPtrList<KWQKHTMLPart> &KWQKHTMLPart::mutableInstances()
@@ -1294,24 +1288,20 @@ void KWQKHTMLPart::setPolicyBaseURL(const DOMString &s)
 
 QString KWQKHTMLPart::requestedURLString() const
 {
-    NSString * volatile URL = @"";
+    KWQ_BLOCK_EXCEPTIONS;
+    return QString::fromNSString([_bridge requestedURLString]);
+    KWQ_UNBLOCK_EXCEPTIONS;
 
-    KWQ_BLOCK_NS_EXCEPTIONS;
-    URL = [_bridge requestedURLString];
-    KWQ_UNBLOCK_NS_EXCEPTIONS;
-
-    return QString::fromNSString(URL);
+    return QString();
 }
 
 QString KWQKHTMLPart::incomingReferrer() const
 {
-    NSString * volatile referrer = @"";
+    KWQ_BLOCK_EXCEPTIONS;
+    return QString::fromNSString([_bridge incomingReferrer]);
+    KWQ_UNBLOCK_EXCEPTIONS;
 
-    KWQ_BLOCK_NS_EXCEPTIONS;
-    referrer = [_bridge incomingReferrer];
-    KWQ_UNBLOCK_NS_EXCEPTIONS;
-
-    return QString::fromNSString(referrer);
+    return QString();
 }
 
 void KWQKHTMLPart::forceLayout()
@@ -1358,22 +1348,21 @@ void KWQKHTMLPart::runJavaScriptAlert(const QString &message)
 {
     QString text = message;
     text.replace('\\', backslashAsCurrencySymbol());
-    KWQ_BLOCK_NS_EXCEPTIONS;
+    KWQ_BLOCK_EXCEPTIONS;
     [_bridge runJavaScriptAlertPanelWithMessage:text.getNSString()];
-    KWQ_UNBLOCK_NS_EXCEPTIONS;
+    KWQ_UNBLOCK_EXCEPTIONS;
 }
 
 bool KWQKHTMLPart::runJavaScriptConfirm(const QString &message)
 {
     QString text = message;
     text.replace('\\', backslashAsCurrencySymbol());
-    volatile bool result = false;
 
-    KWQ_BLOCK_NS_EXCEPTIONS;
-    result = [_bridge runJavaScriptConfirmPanelWithMessage:text.getNSString()];
-    KWQ_UNBLOCK_NS_EXCEPTIONS;
+    KWQ_BLOCK_EXCEPTIONS;
+    return [_bridge runJavaScriptConfirmPanelWithMessage:text.getNSString()];
+    KWQ_UNBLOCK_EXCEPTIONS;
 
-    return result;
+    return false;
 }
 
 bool KWQKHTMLPart::runJavaScriptPrompt(const QString &prompt, const QString &defaultValue, QString &result)
@@ -1383,13 +1372,12 @@ bool KWQKHTMLPart::runJavaScriptPrompt(const QString &prompt, const QString &def
     QString defaultValueText = defaultValue;
     defaultValueText.replace('\\', backslashAsCurrencySymbol());
 
-    NSString * volatile returnedText = @"";
-    volatile bool ok = false;
+    KWQ_BLOCK_EXCEPTIONS;
+    NSString *returnedText = nil;
+    bool ok = false;
 
-    KWQ_BLOCK_NS_EXCEPTIONS;
     [_bridge runJavaScriptTextInputPanelWithPrompt:prompt.getNSString()
         defaultText:defaultValue.getNSString() returningText:(NSString **)&returnedText];
-    KWQ_UNBLOCK_NS_EXCEPTIONS;
 
     if (ok) {
         result = QString::fromNSString(returnedText);
@@ -1397,6 +1385,9 @@ bool KWQKHTMLPart::runJavaScriptPrompt(const QString &prompt, const QString &def
     }
 
     return ok;
+    KWQ_UNBLOCK_EXCEPTIONS;
+    
+    return false;
 }
 
 void KWQKHTMLPart::createEmptyDocument()
@@ -1405,9 +1396,9 @@ void KWQKHTMLPart::createEmptyDocument()
     // it does nothing if we already have a document, and just creates an
     // empty one if we have no document at all.
     if (!d->m_doc) {
-	KWQ_BLOCK_NS_EXCEPTIONS;
+	KWQ_BLOCK_EXCEPTIONS;
         [_bridge loadEmptyDocumentSynchronously];
-	KWQ_UNBLOCK_NS_EXCEPTIONS;
+	KWQ_UNBLOCK_EXCEPTIONS;
     }
 }
 
@@ -1418,9 +1409,7 @@ void KWQKHTMLPart::addMetaData(const QString &key, const QString &value)
 
 bool KWQKHTMLPart::keyEvent(NSEvent *event)
 {
-    volatile bool result = false;
-
-    KWQ_BLOCK_NS_EXCEPTIONS;
+    KWQ_BLOCK_EXCEPTIONS;
 
     ASSERT([event type] == NSKeyDown || [event type] == NSKeyUp);
 
@@ -1428,14 +1417,14 @@ bool KWQKHTMLPart::keyEvent(NSEvent *event)
     // from pressing return in the location bar.
     DocumentImpl *doc = xmlDocImpl();
     if (!doc) {
-        KWQ_UNBLOCK_RETURN_VALUE(false, bool);
+        return false;
     }
     NodeImpl *node = doc->focusNode();
     if (!node && docImpl()) {
 	node = docImpl()->body();
     }
     if (!node) {
-        KWQ_UNBLOCK_RETURN_VALUE(false, bool);
+        return false;
     }
     
     NSEvent *oldCurrentEvent = _currentEvent;
@@ -1450,7 +1439,7 @@ bool KWQKHTMLPart::keyEvent(NSEvent *event)
 		     stateForCurrentEvent(),
 		     QString::fromNSString([event characters]),
 		     [event isARepeat]);
-    result = !node->dispatchKeyEvent(&qEvent);
+    bool result = !node->dispatchKeyEvent(&qEvent);
 
     // We want to send both a down and a press for the initial key event.
     // This is a temporary hack; we need to do this a better way.
@@ -1470,9 +1459,11 @@ bool KWQKHTMLPart::keyEvent(NSEvent *event)
     [event release];
     _currentEvent = oldCurrentEvent;
 
-    KWQ_UNBLOCK_NS_EXCEPTIONS;
-
     return result;
+
+    KWQ_UNBLOCK_EXCEPTIONS;
+
+    return false;
 }
 
 // This does the same kind of work that KHTMLPart::openURL does, except it relies on the fact
@@ -1511,11 +1502,11 @@ void KWQKHTMLPart::khtmlMousePressEvent(MousePressEvent *event)
         // because we don't want to do it until we know we didn't hit a widget.
         NSView *view = d->m_view->getDocumentView();
 
-	KWQ_BLOCK_NS_EXCEPTIONS;
+	KWQ_BLOCK_EXCEPTIONS;
         if ([_currentEvent clickCount] <= 1 && [_bridge firstResponder] != view) {
             [_bridge makeFirstResponder:view];
         }
-	KWQ_UNBLOCK_NS_EXCEPTIONS;
+	KWQ_UNBLOCK_EXCEPTIONS;
 
         KHTMLPart::khtmlMousePressEvent(event);
     }
@@ -1566,7 +1557,7 @@ bool KWQKHTMLPart::passWidgetMouseDownEventToWidget(QWidget* widget)
         return true;
     }
 
-    KWQ_BLOCK_NS_EXCEPTIONS;
+    KWQ_BLOCK_EXCEPTIONS;
     
     NSView *nodeView = widget->getView();
     ASSERT(nodeView);
@@ -1579,7 +1570,7 @@ bool KWQKHTMLPart::passWidgetMouseDownEventToWidget(QWidget* widget)
     NSView *view = [nodeView hitTest:[[nodeView superview] convertPoint:[_currentEvent locationInWindow] fromView:topView]];
     if (view == nil) {
         ERROR("KHTML says we hit a RenderWidget, but AppKit doesn't agree we hit the corresponding NSView");
-        KWQ_UNBLOCK_RETURN_VALUE(true, bool);
+        return true;
     }
     
     if ([_bridge firstResponder] == view) {
@@ -1617,7 +1608,7 @@ bool KWQKHTMLPart::passWidgetMouseDownEventToWidget(QWidget* widget)
     _mouseDownView = view;
     _mouseDownWasInSubframe = false;
 
-    KWQ_UNBLOCK_NS_EXCEPTIONS;
+    KWQ_UNBLOCK_EXCEPTIONS;
 
     return true;
 }
@@ -1628,18 +1619,17 @@ bool KWQKHTMLPart::lastEventIsMouseUp()
     // When they finish, currentEvent is the mouseUp that they exited on.  We need to update
     // the khtml state with this mouseUp, which khtml never saw.  This method lets us detect
     // that state.
-    volatile bool result = false;
 
-    KWQ_BLOCK_NS_EXCEPTIONS;
+    KWQ_BLOCK_EXCEPTIONS;
     NSEvent *currentEventAfterHandlingMouseDown = [NSApp currentEvent];
     if (_currentEvent != currentEventAfterHandlingMouseDown) {
         if ([currentEventAfterHandlingMouseDown type] == NSLeftMouseUp) {
-            result = true;
+            return true;
         }
     }
-    KWQ_UNBLOCK_NS_EXCEPTIONS;
+    KWQ_UNBLOCK_EXCEPTIONS;
 
-    return result;
+    return false;
 }
     
 // Note that this does the same kind of check as [target isDescendantOf:superview].
@@ -1647,19 +1637,17 @@ bool KWQKHTMLPart::lastEventIsMouseUp()
 // tree, and this works in cases where the target has already been deallocated.
 static bool findViewInSubviews(NSView *superview, NSView *target)
 {
-    volatile bool result = false;
-    
-    KWQ_BLOCK_NS_EXCEPTIONS;
+    KWQ_BLOCK_EXCEPTIONS;
     NSEnumerator *e = [[superview subviews] objectEnumerator];
     NSView *subview;
     while ((subview = [e nextObject])) {
         if (subview == target || findViewInSubviews(subview, target)) {
-            result = true;
+            return true;
 	}
     }
-    KWQ_UNBLOCK_NS_EXCEPTIONS;
+    KWQ_UNBLOCK_EXCEPTIONS;
     
-    return result;
+    return false;
 }
 
 NSView *KWQKHTMLPart::mouseDownViewIfStillGood()
@@ -1682,7 +1670,7 @@ NSView *KWQKHTMLPart::mouseDownViewIfStillGood()
 
 void KWQKHTMLPart::khtmlMouseMoveEvent(MouseMoveEvent *event)
 {
-    KWQ_BLOCK_NS_EXCEPTIONS;
+    KWQ_BLOCK_EXCEPTIONS;
 
     if ([_currentEvent type] == NSLeftMouseDragged) {
     	NSView *view = mouseDownViewIfStillGood();
@@ -1691,7 +1679,7 @@ void KWQKHTMLPart::khtmlMouseMoveEvent(MouseMoveEvent *event)
             _sendingEventToSubview = true;
             [view mouseDragged:_currentEvent];
             _sendingEventToSubview = false;
-            KWQ_UNBLOCK_RETURN;
+            return;
         }
 
 	if (_mouseDownMayStartDrag &&
@@ -1702,14 +1690,14 @@ void KWQKHTMLPart::khtmlMouseMoveEvent(MouseMoveEvent *event)
             // We are starting a text/image/url drag, so the cursor should be an arrow
             d->m_view->resetCursor();
             [_bridge handleMouseDragged:_currentEvent];
-            KWQ_UNBLOCK_RETURN;
+            return;
 	} else if (_mouseDownMayStartSelect) {
 	    // we use khtml's selection but our own autoscrolling
 	    [_bridge handleAutoscrollForMouseDragged:_currentEvent];
             // Don't allow dragging after we've started selecting.
             _mouseDownMayStartDrag = false;
 	} else {
-            KWQ_UNBLOCK_RETURN;
+            return;
 	}
     } else {
 	// If we allowed the other side of the bridge to handle a drag
@@ -1721,7 +1709,7 @@ void KWQKHTMLPart::khtmlMouseMoveEvent(MouseMoveEvent *event)
 
     KHTMLPart::khtmlMouseMoveEvent(event);
 
-    KWQ_UNBLOCK_NS_EXCEPTIONS;
+    KWQ_UNBLOCK_EXCEPTIONS;
 }
 
 void KWQKHTMLPart::khtmlMouseReleaseEvent(MouseReleaseEvent *event)
@@ -1733,9 +1721,9 @@ void KWQKHTMLPart::khtmlMouseReleaseEvent(MouseReleaseEvent *event)
     }
     
     _sendingEventToSubview = true;
-    KWQ_BLOCK_NS_EXCEPTIONS;
+    KWQ_BLOCK_EXCEPTIONS;
     [view mouseUp:_currentEvent];
-    KWQ_UNBLOCK_NS_EXCEPTIONS;
+    KWQ_UNBLOCK_EXCEPTIONS;
     _sendingEventToSubview = false;
 }
 
@@ -1752,13 +1740,9 @@ void KWQKHTMLPart::clearTimers()
 
 bool KWQKHTMLPart::passSubframeEventToSubframe(NodeImpl::MouseEvent &event)
 {
-    volatile NSEventType eventType = (NSEventType)0;
+    KWQ_BLOCK_EXCEPTIONS;
 
-    KWQ_BLOCK_NS_EXCEPTIONS;
-    eventType = [_currentEvent type];
-    KWQ_UNBLOCK_NS_EXCEPTIONS;
-
-    switch (eventType) {
+    switch ([_currentEvent type]) {
     	case NSLeftMouseDown: {
             NodeImpl *node = event.innerNode.handle();
             if (!node) {
@@ -1784,10 +1768,8 @@ bool KWQKHTMLPart::passSubframeEventToSubframe(NodeImpl::MouseEvent &event)
             }
             ASSERT(!_sendingEventToSubview);
             _sendingEventToSubview = true;
-	    KWQ_BLOCK_NS_EXCEPTIONS;
-            [view mouseUp:_currentEvent];
-	    KWQ_UNBLOCK_NS_EXCEPTIONS;
-            _sendingEventToSubview = false;
+	    [view mouseUp:_currentEvent];
+	    _sendingEventToSubview = false;
             return true;
         }
         case NSLeftMouseDragged: {
@@ -1800,26 +1782,23 @@ bool KWQKHTMLPart::passSubframeEventToSubframe(NodeImpl::MouseEvent &event)
             }
             ASSERT(!_sendingEventToSubview);
             _sendingEventToSubview = true;
-	    KWQ_BLOCK_NS_EXCEPTIONS;
-            [view mouseDragged:_currentEvent];
-	    KWQ_UNBLOCK_NS_EXCEPTIONS;
-            _sendingEventToSubview = false;
+	    [view mouseDragged:_currentEvent];
+	    _sendingEventToSubview = false;
             return true;
         }
         default:
             return false;
     }
+    KWQ_UNBLOCK_EXCEPTIONS;
+
+    return false;
 }
 
 int KWQKHTMLPart::buttonForCurrentEvent()
 {
-    volatile NSEventType eventType = (NSEventType)0;
-
-    KWQ_BLOCK_NS_EXCEPTIONS;
-    eventType = [_currentEvent type];
-    KWQ_UNBLOCK_NS_EXCEPTIONS;
+    KWQ_BLOCK_EXCEPTIONS;
     
-    switch (eventType) {
+    switch ([_currentEvent type]) {
     case NSLeftMouseDown:
     case NSLeftMouseUp:
         return Qt::LeftButton;
@@ -1832,17 +1811,17 @@ int KWQKHTMLPart::buttonForCurrentEvent()
     default:
         return 0;
     }
+    KWQ_UNBLOCK_EXCEPTIONS;
+
+    return 0;
 }
 
 int KWQKHTMLPart::stateForCurrentEvent()
 {
-    volatile int state = buttonForCurrentEvent();
-    
-    volatile unsigned modifiers = 0;
+    KWQ_BLOCK_EXCEPTIONS;
 
-    KWQ_BLOCK_NS_EXCEPTIONS;
-    modifiers = [_currentEvent modifierFlags];
-    KWQ_UNBLOCK_NS_EXCEPTIONS;
+    int state = buttonForCurrentEvent();
+    unsigned modifiers =  [_currentEvent modifierFlags];
 
     if (modifiers & NSControlKeyMask)
         state |= Qt::ControlButton;
@@ -1856,6 +1835,10 @@ int KWQKHTMLPart::stateForCurrentEvent()
         state |= Qt::Keypad;
     
     return state;
+
+    KWQ_UNBLOCK_EXCEPTIONS;
+
+    return buttonForCurrentEvent();
 }
 
 void KWQKHTMLPart::mouseDown(NSEvent *event)
@@ -1865,7 +1848,7 @@ void KWQKHTMLPart::mouseDown(NSEvent *event)
         return;
     }
 
-    KWQ_BLOCK_NS_EXCEPTIONS;
+    KWQ_BLOCK_EXCEPTIONS;
 
     _mouseDownView = nil;
 
@@ -1897,7 +1880,7 @@ void KWQKHTMLPart::mouseDown(NSEvent *event)
     [event release];
     _currentEvent = oldCurrentEvent;
 
-    KWQ_UNBLOCK_NS_EXCEPTIONS;
+    KWQ_UNBLOCK_EXCEPTIONS;
 }
 
 void KWQKHTMLPart::mouseDragged(NSEvent *event)
@@ -1907,7 +1890,7 @@ void KWQKHTMLPart::mouseDragged(NSEvent *event)
         return;
     }
 
-    KWQ_BLOCK_NS_EXCEPTIONS;
+    KWQ_BLOCK_EXCEPTIONS;
 
     NSEvent *oldCurrentEvent = _currentEvent;
     _currentEvent = [event retain];
@@ -1923,7 +1906,7 @@ void KWQKHTMLPart::mouseDragged(NSEvent *event)
     [event release];
     _currentEvent = oldCurrentEvent;
 
-    KWQ_UNBLOCK_NS_EXCEPTIONS;
+    KWQ_UNBLOCK_EXCEPTIONS;
 }
 
 void KWQKHTMLPart::mouseUp(NSEvent *event)
@@ -1933,7 +1916,7 @@ void KWQKHTMLPart::mouseUp(NSEvent *event)
         return;
     }
 
-    KWQ_BLOCK_NS_EXCEPTIONS;
+    KWQ_BLOCK_EXCEPTIONS;
 
     NSEvent *oldCurrentEvent = _currentEvent;
     _currentEvent = [event retain];
@@ -1966,7 +1949,7 @@ void KWQKHTMLPart::mouseUp(NSEvent *event)
     
     _mouseDownView = nil;
 
-    KWQ_UNBLOCK_NS_EXCEPTIONS;
+    KWQ_UNBLOCK_EXCEPTIONS;
 }
 
 /*
@@ -1980,7 +1963,7 @@ void KWQKHTMLPart::mouseUp(NSEvent *event)
  */
 void KWQKHTMLPart::sendFakeEventsAfterWidgetTracking(NSEvent *initiatingEvent)
 {
-    KWQ_BLOCK_NS_EXCEPTIONS;
+    KWQ_BLOCK_EXCEPTIONS;
 
     _sendingEventToSubview = false;
     int eventType = [initiatingEvent type];
@@ -2026,7 +2009,7 @@ void KWQKHTMLPart::sendFakeEventsAfterWidgetTracking(NSEvent *initiatingEvent)
                                    pressure:0];
     mouseMoved(fakeEvent);
 
-    KWQ_UNBLOCK_NS_EXCEPTIONS;
+    KWQ_UNBLOCK_EXCEPTIONS;
 }
 
 void KWQKHTMLPart::mouseMoved(NSEvent *event)
@@ -2038,7 +2021,7 @@ void KWQKHTMLPart::mouseMoved(NSEvent *event)
         return;
     }
     
-    KWQ_BLOCK_NS_EXCEPTIONS;
+    KWQ_BLOCK_EXCEPTIONS;
 
     NSEvent *oldCurrentEvent = _currentEvent;
     _currentEvent = [event retain];
@@ -2054,7 +2037,7 @@ void KWQKHTMLPart::mouseMoved(NSEvent *event)
     [event release];
     _currentEvent = oldCurrentEvent;
 
-    KWQ_UNBLOCK_NS_EXCEPTIONS;
+    KWQ_UNBLOCK_EXCEPTIONS;
 }
 
 bool KWQKHTMLPart::sendContextMenuEvent(NSEvent *event)
@@ -2065,9 +2048,7 @@ bool KWQKHTMLPart::sendContextMenuEvent(NSEvent *event)
         return false;
     }
 
-    volatile bool swallowEvent = false;
-
-    KWQ_BLOCK_NS_EXCEPTIONS;
+    KWQ_BLOCK_EXCEPTIONS;
 
     NSEvent *oldCurrentEvent = _currentEvent;
     _currentEvent = [event retain];
@@ -2084,7 +2065,7 @@ bool KWQKHTMLPart::sendContextMenuEvent(NSEvent *event)
     // Sending an event can result in the destruction of the view and part.
     // We ref so that happens after we return from the KHTMLView function.
     v->ref();
-    swallowEvent = v->dispatchMouseEvent(EventImpl::CONTEXTMENU_EVENT,
+    bool swallowEvent = v->dispatchMouseEvent(EventImpl::CONTEXTMENU_EVENT,
         mev.innerNode.handle(), true, 0, &qev, true, NodeImpl::MousePress);
     v->deref();
 
@@ -2092,9 +2073,11 @@ bool KWQKHTMLPart::sendContextMenuEvent(NSEvent *event)
     [event release];
     _currentEvent = oldCurrentEvent;
 
-    KWQ_UNBLOCK_NS_EXCEPTIONS;
-
     return swallowEvent;
+
+    KWQ_UNBLOCK_EXCEPTIONS;
+
+    return false;
 }
 
 struct ListItemInfo {
@@ -2107,17 +2090,17 @@ static NSFileWrapper *fileWrapperForElement(ElementImpl *e)
     RenderImage *renderer = static_cast<RenderImage *>(e->renderer());
     NSImage *image = renderer->pixmap().image();
 
-    NSFileWrapper * volatile wrapper = nil;
-    
-    KWQ_BLOCK_NS_EXCEPTIONS;
+    KWQ_BLOCK_EXCEPTIONS;
     NSData *tiffData = [image TIFFRepresentationUsingCompression:NSTIFFCompressionLZW factor:0.0];
 
-    wrapper = [[NSFileWrapper alloc] initRegularFileWithContents:tiffData];
+    NSFileWrapper *wrapper = [[NSFileWrapper alloc] initRegularFileWithContents:tiffData];
     [wrapper setPreferredFilename:@"image.tiff"];
     [wrapper autorelease];
-    KWQ_UNBLOCK_NS_EXCEPTIONS;
 
     return wrapper;
+    KWQ_UNBLOCK_EXCEPTIONS;
+
+    return nil;
 }
 
 static ElementImpl *listParent(ElementImpl *item)
@@ -2156,7 +2139,9 @@ static NodeImpl* isTextFirstInListItem(NodeImpl *e)
 
 NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_start, int startOffset, NodeImpl *endNode, int endOffset)
 {
-    NodeImpl * volatile _startNode = _start;
+    KWQ_BLOCK_EXCEPTIONS;
+
+    NodeImpl * _startNode = _start;
 
     if (_startNode == nil) {
         return nil;
@@ -2164,9 +2149,7 @@ NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_start, int startOf
 
     // This allocation and autorelease won't raise so it's OK to do it
     // outside the exception block
-    NSMutableAttributedString * volatile result = [[[NSMutableAttributedString alloc] init] autorelease];
-
-    KWQ_BLOCK_NS_EXCEPTIONS;
+    NSMutableAttributedString *result = [[[NSMutableAttributedString alloc] init] autorelease];
 
     bool hasNewLine = true;
     bool addedSpace = true;
@@ -2551,10 +2534,12 @@ NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_start, int startOf
         }
     }
 
-    KWQ_UNBLOCK_NS_EXCEPTIONS;
-
     //NSLog (@"%@", result);
     return result;
+
+    KWQ_UNBLOCK_EXCEPTIONS;
+
+    return nil;
 }
 
 QRect KWQKHTMLPart::selectionRect() const
@@ -2646,11 +2631,9 @@ NSColor *KWQKHTMLPart::bodyBackgroundColor(void) const
 
 WebCoreKeyboardUIMode KWQKHTMLPart::keyboardUIMode() const
 {
-    volatile WebCoreKeyboardUIMode mode = WebCoreDefaultKeyboardAccess;
+    KWQ_BLOCK_EXCEPTIONS;
+    return [_bridge keyboardUIMode];
+    KWQ_UNBLOCK_EXCEPTIONS;
 
-    KWQ_BLOCK_NS_EXCEPTIONS;
-    mode = [_bridge keyboardUIMode];
-    KWQ_UNBLOCK_NS_EXCEPTIONS;
-
-    return mode;
+    return WebCoreDefaultKeyboardAccess;
 }
