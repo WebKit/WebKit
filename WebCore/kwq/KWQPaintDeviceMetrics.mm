@@ -27,6 +27,9 @@
 
 #include <kwqdebug.h>
 
+#import <ApplicationServices/ApplicationServices.h>
+
+
 QPaintDeviceMetrics::QPaintDeviceMetrics(const QPaintDevice *)
 {
 }
@@ -41,8 +44,7 @@ int QPaintDeviceMetrics::logicalDpiY() const
 
 int QPaintDeviceMetrics::depth() const
 {
-    _logPartiallyImplemented();
-    return 32;
+    return CGDisplayBitsPerPixel(kCGDirectMainDisplay);
 }
 
 

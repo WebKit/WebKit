@@ -1,5 +1,15 @@
 2002-06-15  Maciej Stachowiak  <mjs@apple.com>
 
+	Get current bits per pixel from CoreGraphics, thereby fixing
+        
+        Radar 2943736 - JavaScript screen.colorDepth and screen.pixelDepth properties always returns 32, 
+        regardless of real depth
+        
+        * kwq/KWQPaintDeviceMetrics.mm:
+	(QPaintDeviceMetrics::depth):
+
+2002-06-15  Maciej Stachowiak  <mjs@apple.com>
+
 	Removed product and vendor properties, thereby fixing:
         
         Radar 2943751 - JavaScript navigator.product property is "Konqueror/khtml"
