@@ -271,6 +271,37 @@ BOOL _modifierTrackingEnabled = FALSE;
     }
 }
 
++ (NSArray *)_pasteboardTypes
+{
+    return [NSArray arrayWithObjects:NSStringPboardType,
+#ifdef SUPPORT_HTML_PBOARD
+        NSHTMLPboardType,
+#endif
+        NSRTFPboardType, nil];
+}
+
+- (void)_writeSelectionToPasteboard:(NSPasteboard *)pasteboard
+{
+    NSAttributedString *attributedString;
+    NSData *attributedData;
+    WebBridge *b = [self _bridge];
+
+    [pasteboard declareTypes:[[self class] _pasteboardTypes] owner:nil];
+    [pasteboard setString:[b selectedText] forType:NSStringPboardType];
+
+    // Put attributed string on the pasteboard.
+    attributedString = [b attributedStringFrom:[b selectionStart]
+                                   startOffset:[b selectionStartOffset]
+                                            to:[b selectionEnd]
+                                     endOffset:[b selectionEndOffset]];
+    attributedData = [attributedString RTFFromRange:NSMakeRange(0, [attributedString length]) documentAttributes:nil];
+    [pasteboard setData:attributedData forType:NSRTFPboardType];
+
+#ifdef SUPPORT_HTML_PBOARD
+    // Put HTML on the pasteboard.
+#endif
+}
+
 @end
 
 @implementation NSView (WebHTMLViewPrivate)

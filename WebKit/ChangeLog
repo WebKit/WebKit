@@ -1,3 +1,25 @@
+2002-11-09  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: 2991610 - Alexander should support services, including Speech
+
+        * WebView.subproj/WebHTMLView.m:
+        (+[WebHTMLView initialize]): register for service types
+        (-[WebHTMLView dealloc]): moved to top of file
+        (-[WebHTMLView copy:]): call _writeSelectionToPasteboard
+        (-[WebHTMLView writeSelectionToPasteboard:types:]): call _writeSelectionToPasteboard
+        (-[WebHTMLView validRequestorForSendType:returnType:]): return self for our pboard types
+        * WebView.subproj/WebHTMLViewPrivate.h:
+        * WebView.subproj/WebHTMLViewPrivate.m:
+        (+[WebHTMLView _pasteboardTypes]): new, returns the array of supported pboard types 
+        (-[WebHTMLView _writeSelectionToPasteboard:]): new, adds data to pboard
+        * WebView.subproj/WebImageView.m:
+        (-[WebImageView initialize]): register for service types
+        (-[WebImageView validateUserInterfaceItem:]): respond to copy
+        (-[WebImageView validRequestorForSendType:returnType:]): return self for images
+        (-[WebImageView writeImageToPasteboard:]): writes image data to pboard
+        (-[WebImageView copy:]): calls writeImageToPasteboard
+        (-[WebImageView writeSelectionToPasteboard:types:]): calls writeImageToPasteboard
+
 2002-11-08  Darin Adler  <darin@apple.com>
 
         * History.subproj/WebHistoryItem.m:

@@ -16,6 +16,11 @@
 
 @implementation WebImageView
 
+- (void)initialize
+{
+    [NSApp registerServicesMenuSendTypes:[NSArray arrayWithObject:NSTIFFPboardType] returnTypes:nil];
+}
+
 - (id)initWithFrame:(NSRect)frame
 {
     self = [super initWithFrame:frame];
@@ -99,6 +104,45 @@
 - (WebController *)controller
 {
     return [[self _web_parentWebView] controller];
+}
+
+- (BOOL)validateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)item
+{
+    if ([item action] == @selector(copy:)){
+        return ([representation image] != nil);
+    }
+
+    return YES;
+}
+
+- (id)validRequestorForSendType:(NSString *)sendType returnType:(NSString *)returnType
+{
+    if (sendType && [sendType isEqualToString:NSTIFFPboardType]){
+        return self;
+    }
+
+    return [super validRequestorForSendType:sendType returnType:returnType];
+}
+
+- (void)writeImageToPasteboard:(NSPasteboard *)pasteboard
+{
+    NSData *TIFFData = [[representation image] TIFFRepresentation];
+    
+    if(TIFFData){
+        [pasteboard declareTypes:[NSArray arrayWithObject:NSTIFFPboardType] owner:nil];
+        [pasteboard setData:TIFFData forType:NSTIFFPboardType];
+    }
+}
+
+- (void)copy:(id)sender
+{
+    [self writeImageToPasteboard:[NSPasteboard generalPasteboard]];
+}
+
+- (BOOL)writeSelectionToPasteboard:(NSPasteboard *)pasteboard types:(NSArray *)types
+{
+    [self writeImageToPasteboard:pasteboard];
+    return YES;
 }
 
 - (NSMenu *)menuForEvent:(NSEvent *)theEvent

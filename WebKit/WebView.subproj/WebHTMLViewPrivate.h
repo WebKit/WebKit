@@ -57,4 +57,7 @@
 - (BOOL)_insideAnotherHTMLView;
 - (void)_updateMouseoverWithEvent:(NSEvent *)event;
 
++ (NSArray *)_pasteboardTypes;
+- (void)_writeSelectionToPasteboard:(NSPasteboard *)pasteboard;
+
 @end

@@ -49,6 +49,11 @@
 
 @implementation WebHTMLView
 
++(void)initialize
+{
+    [NSApp registerServicesMenuSendTypes:[[self class] _pasteboardTypes] returnTypes:nil];
+}
+
 - initWithFrame: (NSRect) frame
 {
     [super initWithFrame: frame];
@@ -63,12 +68,19 @@
     return self;
 }
 
+- (void)dealloc
+{
+    [self _reset];
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [_private release];
+    _private = nil;
+    [super dealloc];
+}
+
 - (BOOL)hasSelection
 {
     return [[[self _bridge] selectedText] length] != 0;
 }
-
-
 
 - (IBAction)takeFindStringFromSelection:(id)sender
 {
@@ -88,29 +100,14 @@
 
 - (void)copy:(id)sender
 {
-    NSPasteboard *pboard = [NSPasteboard generalPasteboard];
-    NSAttributedString *attributedString;
-    NSData *attributedData;
-    WebBridge *b = [self _bridge];
-    
-#ifdef SUPPORT_HTML_PBOARD
-    [pboard declareTypes:[NSArray arrayWithObjects:NSStringPboardType, NSHTMLPboardType, NSRTFPboardType, nil] owner:nil];
-#endif
-    [pboard declareTypes:[NSArray arrayWithObjects:NSStringPboardType, NSRTFPboardType, nil] owner:nil];
-    [pboard setString:[b selectedText] forType:NSStringPboardType];
-    
-    // Put attributed string on the pasteboard.
-    attributedString = [b
-        attributedStringFrom: [b selectionStart] startOffset: [b selectionStartOffset]
-        to: [b selectionEnd] endOffset: [b selectionEndOffset]];
-    attributedData = [attributedString RTFFromRange:NSMakeRange(0, [attributedString length]) documentAttributes:nil];
-    [pboard setData:attributedData forType:NSRTFPboardType];
-
-#ifdef SUPPORT_HTML_PBOARD
-    // Put HTML on the pasteboard.
-#endif
+    [self _writeSelectionToPasteboard:[NSPasteboard generalPasteboard]];
 }
 
+- (BOOL)writeSelectionToPasteboard:(NSPasteboard *)pasteboard types:(NSArray *)types
+{
+    [self _writeSelectionToPasteboard:pasteboard];
+    return YES;
+}
 
 - (void)selectAll: sender
 {
@@ -137,14 +134,13 @@
     return YES;
 }
 
-
-- (void)dealloc 
+- (id)validRequestorForSendType:(NSString *)sendType returnType:(NSString *)returnType
 {
-    [self _reset];
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
-    [_private release];
-    _private = nil;
-    [super dealloc];
+    if (sendType && ([[[self class] _pasteboardTypes] containsObject:sendType]) && [self hasSelection]){
+        return self;
+    }
+
+    return [super validRequestorForSendType:sendType returnType:returnType];
 }
 
 - (BOOL)acceptsFirstResponder
