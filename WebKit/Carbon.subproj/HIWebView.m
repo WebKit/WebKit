@@ -45,6 +45,7 @@ typedef struct HIWebView HIWebView;
 
 @interface NSEvent( Secret )
 - (NSEvent *)_initWithCGSEvent:(CGSEventRecord)cgsEvent eventRef:(void *)eventRef;
+- (NSEvent *)_eventRelativeToWindow:(NSWindow *)aWin;
 @end
 
 @interface NSView( Secret )
@@ -514,12 +515,9 @@ Click( HIWebView* inView, EventRef inEvent )
 	
 	kitEvent = [[NSEvent alloc] _initWithCGSEvent:(CGSEventRecord)eventRec eventRef:(void *)newEvent];
 
-//	targ = [[inView->fKitWindow _borderView] hitTest:[kitEvent locationInWindow]];
-
     if ( !inView->fIsComposited )
         StartUpdateObserver( inView );
         
-//	[targ mouseDown:kitEvent];
     [inView->fKitWindow sendEvent:kitEvent];
 
     if ( !inView->fIsComposited )
@@ -540,15 +538,10 @@ MouseUp( HIWebView* inView, EventRef inEvent )
 {
 	CGSEventRecord			eventRec;
 	NSEvent*				kitEvent;
-//	NSView*					targ;
 	
 	WebGetEventPlatformEventRecord( inEvent, &eventRec );
 	RetainEvent( inEvent );
 	kitEvent = [[NSEvent alloc] _initWithCGSEvent:(CGSEventRecord)eventRec eventRef:(void *)inEvent];
-
-//	targ = [[inView->fKitWindow _borderView] hitTest:[kitEvent locationInWindow]];
-
-//	[targ mouseUp:kitEvent];
 
     [inView->fKitWindow sendEvent:kitEvent];
 	
@@ -566,27 +559,31 @@ MouseMoved( HIWebView* inView, EventRef inEvent )
 {
 	CGSEventRecord			eventRec;
 	NSEvent*				kitEvent;
-//	NSView*					targ;
 	
 	WebGetEventPlatformEventRecord( inEvent, &eventRec );
 	RetainEvent( inEvent );
 
-#define WORK_AROUND_3585644
-#ifdef WORK_AROUND_3585644
+#define WORK_AROUND_3585644 1
+#if WORK_AROUND_3585644 && BUILDING_ON_PANTHER
     int windowNumber = [inView->fKitWindow windowNumber];
     CGSWindowID *winID = (void *)windowNumber;
     eventRec.window = winID;
 #endif
     
-	kitEvent = [[NSEvent alloc] _initWithCGSEvent:(CGSEventRecord)eventRec eventRef:(void *)inEvent];
+	kitEvent = [[[NSEvent alloc] _initWithCGSEvent:eventRec eventRef:inEvent] autorelease];
 
-//	targ = [[inView->fKitWindow _borderView] hitTest:[kitEvent locationInWindow]];
+#if WORK_AROUND_3585644 && !BUILDING_ON_PANTHER
+    // We preflight here and don't do any work when the window is already correct
+    // because _eventRelativeToWindow will malfunction if the event's window method
+    // has been hijacked by the bug workaround used by Contribute. It's fine to just
+    // leave the event alone if the window is already correct.
+    if ([kitEvent window] != inView->fKitWindow) {
+        kitEvent = [kitEvent _eventRelativeToWindow:inView->fKitWindow];
+    }
+#endif
 
-//	[targ mouseMoved:kitEvent];
     [inView->fKitWindow sendEvent:kitEvent];
 
-	[kitEvent release];
-	
 	return noErr;
 }
 
@@ -599,15 +596,11 @@ MouseDragged( HIWebView* inView, EventRef inEvent )
 {
 	CGSEventRecord			eventRec;
 	NSEvent*				kitEvent;
-//	NSView*					targ;
     
 	WebGetEventPlatformEventRecord( inEvent, &eventRec );
 	RetainEvent( inEvent );
 	kitEvent = [[NSEvent alloc] _initWithCGSEvent:(CGSEventRecord)eventRec eventRef:(void *)inEvent];
 
-//	targ = [[inView->fKitWindow _borderView] hitTest:[kitEvent locationInWindow]];
-
-//	[targ mouseDragged:kitEvent];
     [inView->fKitWindow sendEvent:kitEvent];
 
 	[kitEvent release];
@@ -624,15 +617,11 @@ MouseWheelMoved( HIWebView* inView, EventRef inEvent )
 {
 	CGSEventRecord			eventRec;
 	NSEvent*				kitEvent;
-//	NSView*					targ;
 	
 	WebGetEventPlatformEventRecord( inEvent, &eventRec );
 	RetainEvent( inEvent );
 	kitEvent = [[NSEvent alloc] _initWithCGSEvent:(CGSEventRecord)eventRec eventRef:(void *)inEvent];
 
-//	targ = [[inView->fKitWindow _borderView] hitTest:[kitEvent locationInWindow]];
-
-//	[targ scrollWheel:kitEvent];
     [inView->fKitWindow sendEvent:kitEvent];
 
 	[kitEvent release];

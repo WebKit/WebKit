@@ -1,3 +1,16 @@
+2005-01-20  Darin Adler  <darin@apple.com>
+
+        Reviewed by Kristin Forster.
+
+        - fixed <rdar://problem/3964972> update _initWithCGSEvent:eventRef: call in mouse moved workaround (breaks cursors in Carbon WebKit applications)
+
+        * Carbon.subproj/HIWebView.m: (MouseMoved): Instead of munging the event record's window number directly
+        before calling _initWithCGSEvent, on Tiger we call _eventRelativeToWindow on the event after creating it.
+        Also added a check so that with Macromedia Contribute's workaround in place we don't do anything at all
+        to the event. Tested with both Contribute and CarbonWeb.
+
+        * English.lproj/StringsNotToBeLocalized.txt: Update for recent changes.
+
 2005-01-20  Richard Williamson   <rjw@apple.com>
 
 	Fixed <rdar://problem/3815672> REGRESSION (Mail): Japanese text cannot be made bold
