@@ -1745,22 +1745,23 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     return [self length] > 0 && ((const char *)[self bytes])[0] == '\n';
 }
 
+// Returns the position after 2 CRLF's or 1 CRLF if it is the first line.
 - (unsigned)_web_locationAfterFirstBlankLine
 {
     const char *bytes = (const char *)[self bytes];
     unsigned length = [self length];
-
+    
     unsigned i;
-    for (i = 0; i < length - 2; i++) {
-        if (bytes[i] == '\n' && (i == 0 || bytes[i+1] == '\n')) {
-            i++;
-            while (i < length - 2 && bytes[i] == '\n') {
-                i++;
+    for (i = 0; i < length - 4; i++) {
+        if (bytes[i] == '\r' && bytes[i+1] == '\n') {
+            i += 2;
+            if (i == 2) {
+                return i;
+            } else if (bytes[i] == '\r' && bytes[i+1] == '\n') {
+                return i+2;
             }
-            return i;
         }
     }
-    
     return NSNotFound;
 }
 

@@ -1,3 +1,14 @@
+2004-10-04  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3758113> REGRESSION: Macromedia ColdFusion page doesn't show main content
+
+	After bumping up our plug-in version, Flash now sends 2 CRLF's between the headers and body of their POST request. Our code was not prepared for this.
+
+        Reviewed by darin.
+
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[NSData _web_locationAfterFirstBlankLine]): looks for 2 CRLF's, not for 2 LF's
+
 2004-10-04  Darin Adler  <darin@apple.com>
 
         Reviewed by Ken.
