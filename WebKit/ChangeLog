@@ -1,3 +1,12 @@
+2003-04-15  Richard Williamson   <rjw@apple.com>
+
+        Fixed clipping of progressive images to correctly clip.
+        
+        Reviewed by darin.
+
+        * WebCoreSupport.subproj/WebImageRenderer.m:
+        (-[WebImageRenderer drawClippedToValidInRect:fromRect:]):
+
 2003-04-15  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Darin

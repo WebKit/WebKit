@@ -242,7 +242,8 @@ static NSMutableArray *activeImageRenderers;
     if (loadStatus > 0) {
         int pixelsHigh = [[[self representations] objectAtIndex:0] pixelsHigh];
         if (pixelsHigh > loadStatus) {
-            // Figure out how much of the image is OK to draw.
+            // Figure out how much of the image is OK to draw.  We can't simply
+            // use loadStatus because the image may be scaled.
             float clippedImageHeight = floor([self size].height * loadStatus / pixelsHigh);
             
             // Figure out how much of the source is OK to draw from.
@@ -257,13 +258,10 @@ static NSMutableArray *activeImageRenderers;
             // Reduce heights of both rectangles without changing their positions.
             // In the non-flipped case, this means moving the origins up from the bottom left.
             // In the flipped case, just adjusting the height is sufficient.
-            if (![[NSView focusView] isFlipped]) {
-                ir.origin.y += ir.size.height - clippedDestinationHeight;
-            }
+            ASSERT ([self isFlipped]);
+            ASSERT ([[NSView focusView] isFlipped]);
             ir.size.height = clippedDestinationHeight;
-            if (![self isFlipped]) {
-                fr.origin.y += fr.size.height - clippedSourceHeight;
-            }
+            fr.origin.y += fr.size.height - clippedSourceHeight;
             fr.size.height = clippedSourceHeight;
         }
     }
