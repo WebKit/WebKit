@@ -78,8 +78,8 @@ public:
     EditCommandPtr parent() const;
     void setParent(const EditCommandPtr &) const;
 
-    bool isInputTextCommand() const;
-    bool isInputNewlineCommand() const;
+    bool isInsertTextCommand() const;
+    bool isInsertLineBreakCommand() const;
     bool isTypingCommand() const;
 
     static EditCommandPtr &emptyCommand();
@@ -150,7 +150,7 @@ public:
     DOM::CSSStyleDeclarationImpl *typingStyle() const { return m_typingStyle; };
     void setTypingStyle(DOM::CSSStyleDeclarationImpl *);
     
-    virtual bool isInputTextCommand() const;
+    virtual bool isInsertTextCommand() const;
     virtual bool isTypingCommand() const;
 
 private:
@@ -186,19 +186,19 @@ protected:
     void deleteKeyPressed();
     void deleteSelection(bool smartDelete=false, bool mergeBlocksAfterDelete=true);
     void deleteSelection(const khtml::Selection &selection, bool smartDelete=false, bool mergeBlocksAfterDelete=true);
-    void deleteText(DOM::TextImpl *node, long offset, long count);
+    void deleteTextFromNode(DOM::TextImpl *node, long offset, long count);
     void inputText(const DOM::DOMString &text, bool selectInsertedText = false);
     void insertNodeAfter(DOM::NodeImpl *insertChild, DOM::NodeImpl *refChild);
     void insertNodeAt(DOM::NodeImpl *insertChild, DOM::NodeImpl *refChild, long offset);
     void insertNodeBefore(DOM::NodeImpl *insertChild, DOM::NodeImpl *refChild);
-    void insertText(DOM::TextImpl *node, long offset, const DOM::DOMString &text);
+    void insertTextIntoNode(DOM::TextImpl *node, long offset, const DOM::DOMString &text);
     void joinTextNodes(DOM::TextImpl *text1, DOM::TextImpl *text2);
     void removeCSSProperty(DOM::CSSStyleDeclarationImpl *, int property);
     void removeFullySelectedNode(DOM::NodeImpl *);
     void removeNodeAttribute(DOM::ElementImpl *, int attribute);
     void removeNode(DOM::NodeImpl *removeChild);
     void removeNodePreservingChildren(DOM::NodeImpl *node);
-    void replaceText(DOM::TextImpl *node, long offset, long count, const DOM::DOMString &replacementText);
+    void replaceTextInNode(DOM::TextImpl *node, long offset, long count, const DOM::DOMString &replacementText);
     void setNodeAttribute(DOM::ElementImpl *, int attribute, const DOM::DOMString &);
     void splitTextNode(DOM::TextImpl *text, long offset);
 
@@ -210,6 +210,8 @@ protected:
 
     void insertBlockPlaceholderIfNeeded(DOM::NodeImpl *);
     bool removeBlockPlaceholderIfNeeded(DOM::NodeImpl *);
+
+    bool isLastVisiblePositionInNode(const VisiblePosition &, const DOM::NodeImpl *) const;
 
     QValueList<EditCommandPtr> m_cmds;
 };
@@ -272,6 +274,29 @@ private:
 };
 
 //------------------------------------------------------------------------------------------
+// DeleteFromTextNodeCommand
+
+class DeleteFromTextNodeCommand : public EditCommand
+{
+public:
+    DeleteFromTextNodeCommand(DOM::DocumentImpl *document, DOM::TextImpl *node, long offset, long count);
+    virtual ~DeleteFromTextNodeCommand();
+	
+    virtual void doApply();
+    virtual void doUnapply();
+
+    DOM::TextImpl *node() const { return m_node; }
+    long offset() const { return m_offset; }
+    long count() const { return m_count; }
+
+private:
+    DOM::TextImpl *m_node;
+    long m_offset;
+    long m_count;
+    DOM::DOMString m_text;
+};
+
+//------------------------------------------------------------------------------------------
 // DeleteSelectionCommand
 
 class DeleteSelectionCommand : public CompositeEditCommand
@@ -318,85 +343,25 @@ private:
 };
 
 //------------------------------------------------------------------------------------------
-// DeleteTextCommand
+// InsertIntoTextNode
 
-class DeleteTextCommand : public EditCommand
+class InsertIntoTextNode : public EditCommand
 {
 public:
-    DeleteTextCommand(DOM::DocumentImpl *document, DOM::TextImpl *node, long offset, long count);
-    virtual ~DeleteTextCommand();
+    InsertIntoTextNode(DOM::DocumentImpl *document, DOM::TextImpl *, long, const DOM::DOMString &);
+    virtual ~InsertIntoTextNode();
 	
     virtual void doApply();
     virtual void doUnapply();
 
     DOM::TextImpl *node() const { return m_node; }
     long offset() const { return m_offset; }
-    long count() const { return m_count; }
+    DOM::DOMString text() const { return m_text; }
 
 private:
     DOM::TextImpl *m_node;
     long m_offset;
-    long m_count;
     DOM::DOMString m_text;
-};
-
-//------------------------------------------------------------------------------------------
-// InputNewlineCommand
-
-class InputNewlineCommand : public CompositeEditCommand
-{
-public:
-    InputNewlineCommand(DOM::DocumentImpl *document);
-
-    virtual void doApply();
-
-private:
-    void insertNodeAfterPosition(DOM::NodeImpl *node, const DOM::Position &pos);
-    void insertNodeBeforePosition(DOM::NodeImpl *node, const DOM::Position &pos);
-};
-
-//------------------------------------------------------------------------------------------
-// InputNewlineInQuotedContentCommand
-
-class InputNewlineInQuotedContentCommand : public CompositeEditCommand
-{
-public:
-    InputNewlineInQuotedContentCommand(DOM::DocumentImpl *);
-    virtual ~InputNewlineInQuotedContentCommand();
-	
-    virtual void doApply();
-    
-private:
-    bool isMailBlockquote(const DOM::NodeImpl *) const;
-    bool isLastVisiblePositionInBlockquote(const VisiblePosition &pos, const DOM::NodeImpl *) const;
-
-    QPtrList<DOM::NodeImpl> ancestors;
-    QPtrList<DOM::NodeImpl> clonedNodes;
-    DOM::ElementImpl *m_breakNode;
-};
-
-//------------------------------------------------------------------------------------------
-// InputTextCommand
-
-class InputTextCommand : public CompositeEditCommand
-{
-public:
-    InputTextCommand(DOM::DocumentImpl *document);
-
-    virtual void doApply();
-
-    void deleteCharacter();
-    void input(const DOM::DOMString &text, bool selectInsertedText = false);
-    
-    unsigned long charactersAdded() const { return m_charactersAdded; }
-    
-private:
-    virtual bool isInputTextCommand() const;
-
-    DOM::Position prepareForTextInsertion(bool adjustDownstream);
-    void insertSpace(DOM::TextImpl *textNode, unsigned long offset);
-
-    unsigned long m_charactersAdded;
 };
 
 //------------------------------------------------------------------------------------------
@@ -420,25 +385,76 @@ private:
 };
 
 //------------------------------------------------------------------------------------------
-// InsertTextCommand
+// InsertLineBreakCommand
 
-class InsertTextCommand : public EditCommand
+class InsertLineBreakCommand : public CompositeEditCommand
 {
 public:
-    InsertTextCommand(DOM::DocumentImpl *document, DOM::TextImpl *, long, const DOM::DOMString &);
-    virtual ~InsertTextCommand();
-	
-    virtual void doApply();
-    virtual void doUnapply();
+    InsertLineBreakCommand(DOM::DocumentImpl *document);
 
-    DOM::TextImpl *node() const { return m_node; }
-    long offset() const { return m_offset; }
-    DOM::DOMString text() const { return m_text; }
+    virtual void doApply();
 
 private:
-    DOM::TextImpl *m_node;
-    long m_offset;
-    DOM::DOMString m_text;
+    void insertNodeAfterPosition(DOM::NodeImpl *node, const DOM::Position &pos);
+    void insertNodeBeforePosition(DOM::NodeImpl *node, const DOM::Position &pos);
+};
+
+//------------------------------------------------------------------------------------------
+// InsertParagraphSeparatorCommand
+
+class InsertParagraphSeparatorCommand : public CompositeEditCommand
+{
+public:
+    InsertParagraphSeparatorCommand(DOM::DocumentImpl *document);
+
+    virtual void doApply();
+
+private:
+    QPtrList<DOM::NodeImpl> ancestors;
+    QPtrList<DOM::NodeImpl> clonedNodes;
+};
+
+//------------------------------------------------------------------------------------------
+// InsertParagraphSeparatorInQuotedContentCommand
+
+class InsertParagraphSeparatorInQuotedContentCommand : public CompositeEditCommand
+{
+public:
+    InsertParagraphSeparatorInQuotedContentCommand(DOM::DocumentImpl *);
+    virtual ~InsertParagraphSeparatorInQuotedContentCommand();
+	
+    virtual void doApply();
+    
+private:
+    bool isMailBlockquote(const DOM::NodeImpl *) const;
+
+    QPtrList<DOM::NodeImpl> ancestors;
+    QPtrList<DOM::NodeImpl> clonedNodes;
+    DOM::ElementImpl *m_breakNode;
+};
+
+//------------------------------------------------------------------------------------------
+// InsertTextCommand
+
+class InsertTextCommand : public CompositeEditCommand
+{
+public:
+    InsertTextCommand(DOM::DocumentImpl *document);
+
+    virtual void doApply();
+
+    void deleteCharacter();
+    void input(const DOM::DOMString &text, bool selectInsertedText = false);
+    
+    unsigned long charactersAdded() const { return m_charactersAdded; }
+    
+private:
+    virtual bool isInsertTextCommand() const;
+
+    DOM::Position prepareForTextInsertion(bool adjustDownstream);
+    void insertSpace(DOM::TextImpl *textNode, unsigned long offset);
+
+    unsigned long m_charactersAdded;
 };
 
 //------------------------------------------------------------------------------------------
@@ -626,14 +642,21 @@ private:
 class TypingCommand : public CompositeEditCommand
 {
 public:
-    enum ETypingCommand { DeleteKey, InsertText, InsertNewline, InsertNewlineInQuotedContent };
+    enum ETypingCommand { 
+        DeleteKey, 
+        InsertText, 
+        InsertLineBreak, 
+        InsertParagraphSeparator,
+        InsertParagraphSeparatorInQuotedContent,
+    };
 
     TypingCommand(DOM::DocumentImpl *document, ETypingCommand, const DOM::DOMString &text = "", bool selectInsertedText = false);
 
-    static void deleteKeyPressed(DOM::DocumentImpl *document);
-    static void insertText(DOM::DocumentImpl *document, const DOM::DOMString &text, bool selectInsertedText = false);
-    static void insertNewline(DOM::DocumentImpl *document);
-    static void insertNewlineInQuotedContent(DOM::DocumentImpl *document);
+    static void deleteKeyPressed(DOM::DocumentImpl *);
+    static void insertText(DOM::DocumentImpl *, const DOM::DOMString &, bool selectInsertedText = false);
+    static void insertLineBreak(DOM::DocumentImpl *);
+    static void insertParagraphSeparator(DOM::DocumentImpl *);
+    static void insertParagraphSeparatorInQuotedContent(DOM::DocumentImpl *);
     static bool isOpenForMoreTypingCommand(const EditCommandPtr &);
     static void closeTyping(const EditCommandPtr &);
     
@@ -643,8 +666,9 @@ public:
     void closeTyping() { m_openForMoreTyping = false; }
 
     void insertText(const DOM::DOMString &text, bool selectInsertedText);
-    void insertNewline();
-    void insertNewlineInQuotedContent();
+    void insertLineBreak();
+    void insertParagraphSeparatorInQuotedContent();
+    void insertParagraphSeparator();
     void deleteKeyPressed();
 
 private:

@@ -3533,7 +3533,19 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
     // Perhaps we should make this delegate call sensitive to the real DOM operation we actually do.
     WebBridge *bridge = [self _bridge];
     if ([self _shouldReplaceSelectionWithText:@"\n" givenAction:WebViewInsertActionTyped]) {
-        [bridge insertNewline];
+        [bridge insertLineBreak];
+    }
+}
+
+- (void)insertLineBreak:(id)sender
+{
+    if (![self _canEdit])
+        return;
+        
+    // Perhaps we should make this delegate call sensitive to the real DOM operation we actually do.
+    WebBridge *bridge = [self _bridge];
+    if ([self _shouldReplaceSelectionWithText:@"\n" givenAction:WebViewInsertActionTyped]) {
+        [bridge insertLineBreak];
     }
 }
 
@@ -3542,8 +3554,11 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
     if (![self _canEdit])
         return;
 
-    // FIXME: Should this do something different? Do we have the equivalent of a paragraph separator?
-    [self insertNewline:sender];
+    // Perhaps we should make this delegate call sensitive to the real DOM operation we actually do.
+    WebBridge *bridge = [self _bridge];
+    if ([self _shouldReplaceSelectionWithText:@"\n" givenAction:WebViewInsertActionTyped]) {
+        [bridge insertParagraphSeparator];
+    }
 }
 
 - (void)_changeWordCaseWithSelector:(SEL)selector

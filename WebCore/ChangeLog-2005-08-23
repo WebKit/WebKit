@@ -1,3 +1,84 @@
+2004-11-02  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+
+        Implemented command to insert a block in response to typing a return key (even though
+        I am not turning that on by default with this patch....that will come later). 
+        
+        This new command is called InsertParagraphSeparatorCommand.
+        
+        Reworked the command and function names associated with inserting content into a 
+        document. Before this patch, there were inputXXX and insertXXX variants, with the
+        former used for more high-level actions and the latter used for lower-level stuff.
+        However, this was confusing as the AppKit uses insertXXX for everything. This resulted
+        in an insertXXX command going through an inputXXX WebCore step and then finally to an
+        insertXXX WebCore step. To make this less confusing, I have changes all the names to
+        be insertXXX, and modified the lower-level operations so that it is clear what they do.
+        
+        * khtml/editing/htmlediting.cpp:
+        (khtml::EditCommandPtr::isInsertTextCommand): Name change.
+        (khtml::EditCommand::isInsertTextCommand): Ditto.
+        (khtml::CompositeEditCommand::inputText): Ditto.
+        (khtml::CompositeEditCommand::insertTextIntoNode): Ditto.
+        (khtml::CompositeEditCommand::deleteTextFromNode): Ditto.
+        (khtml::CompositeEditCommand::replaceTextInNode): Ditto.
+        (khtml::CompositeEditCommand::deleteInsignificantText): Name changes in implementation.
+        (khtml::CompositeEditCommand::isLastVisiblePositionInNode): Ditto.
+        (khtml::DeleteFromTextNodeCommand::DeleteFromTextNodeCommand): Class name change, was DeleteTextCommand.
+        (khtml::DeleteFromTextNodeCommand::~DeleteFromTextNodeCommand): Ditto.
+        (khtml::DeleteFromTextNodeCommand::doApply): Ditto.
+        (khtml::DeleteFromTextNodeCommand::doUnapply): Ditto.
+        (khtml::DeleteSelectionCommand::performGeneralDelete): Ditto.
+        (khtml::DeleteSelectionCommand::fixupWhitespace): Ditto.
+        (khtml::DeleteSelectionCommand::moveNodesAfterNode): Ditto.
+        (khtml::InsertIntoTextNode::InsertIntoTextNode): Class name change.
+        (khtml::InsertIntoTextNode::~InsertIntoTextNode): Ditto.
+        (khtml::InsertIntoTextNode::doApply): Ditto.
+        (khtml::InsertIntoTextNode::doUnapply): Ditto.
+        (khtml::InsertLineBreakCommand::InsertLineBreakCommand): Class name change, was InsertNewlineCommand.
+        (khtml::InsertLineBreakCommand::insertNodeAfterPosition):
+        (khtml::InsertLineBreakCommand::insertNodeBeforePosition):
+        (khtml::InsertLineBreakCommand::doApply):
+        (khtml::InsertNodeBeforeCommand::InsertNodeBeforeCommand): Code moved. No changes.
+        (khtml::InsertNodeBeforeCommand::~InsertNodeBeforeCommand): Ditto.
+        (khtml::InsertNodeBeforeCommand::doApply): Ditto.
+        (khtml::InsertNodeBeforeCommand::doUnapply): Ditto.
+        (khtml::InsertParagraphSeparatorCommand::InsertParagraphSeparatorCommand): New command.
+        (khtml::InsertParagraphSeparatorCommand::doApply):
+        (khtml::InsertParagraphSeparatorInQuotedContentCommand::InsertParagraphSeparatorInQuotedContentCommand):
+        Class name change, was InsertNewlineCommandInQuotedContentCommand.
+        (khtml::InsertParagraphSeparatorInQuotedContentCommand::~InsertParagraphSeparatorInQuotedContentCommand): Ditto.
+        (khtml::InsertParagraphSeparatorInQuotedContentCommand::isMailBlockquote): Ditto.
+        (khtml::InsertParagraphSeparatorInQuotedContentCommand::doApply): Ditto.
+        (khtml::InsertTextCommand::InsertTextCommand): Class name change, was InputTextCommand.
+        (khtml::InsertTextCommand::doApply): Ditto.
+        (khtml::InsertTextCommand::deleteCharacter): Ditto.
+        (khtml::InsertTextCommand::prepareForTextInsertion): Ditto.
+        (khtml::InsertTextCommand::input): Ditto.
+        (khtml::InsertTextCommand::insertSpace): Ditto.
+        (khtml::InsertTextCommand::isInsertTextCommand): Ditto.
+        (khtml::TypingCommand::insertLineBreak): Name change, was insertNewline.
+        (khtml::TypingCommand::insertParagraphSeparatorInQuotedContent): Name change, was insertNewlineInQuotedContent.
+        (khtml::TypingCommand::insertParagraphSeparator): New function.
+        (khtml::TypingCommand::doApply): Name changes, as above.
+        (khtml::TypingCommand::insertText): Ditto.
+        (khtml::TypingCommand::deleteKeyPressed): Ditto.
+        (khtml::TypingCommand::preservesTypingStyle): Ditto.
+        * khtml/editing/htmlediting.h:
+        (khtml::DeleteFromTextNodeCommand::node): Name change.
+        (khtml::DeleteFromTextNodeCommand::offset): Ditto.
+        (khtml::DeleteFromTextNodeCommand::count): Ditto.
+        (khtml::InsertIntoTextNode::text): Ditto.
+        (khtml::InsertNodeBeforeCommand::insertChild): Ditto.
+        (khtml::InsertNodeBeforeCommand::refChild): Ditto.
+        (khtml::TypingCommand::): Ditto.
+        * khtml/editing/jsediting.cpp: Name changes, as above.
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge insertLineBreak]): Name change, was insertNewline.
+        (-[WebCoreBridge insertParagraphSeparator]): New function.
+        (-[WebCoreBridge insertParagraphSeparatorInQuotedContent]): Name change, was insertNewlineInQuotedContent.
+
 2004-11-01  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by rjw.

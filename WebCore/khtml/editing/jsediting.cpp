@@ -228,14 +228,14 @@ bool execIndent(KHTMLPart *part, bool userInterface, const DOMString &value)
 
 bool execInsertNewline(KHTMLPart *part, bool userInterface, const DOMString &value)
 {
-    TypingCommand::insertNewline(part->xmlDocImpl());
+    TypingCommand::insertLineBreak(part->xmlDocImpl());
     return true;
 }
 
 bool execInsertParagraph(KHTMLPart *part, bool userInterface, const DOMString &value)
 {
-    // FIXME: Implement.
-    return false;
+    TypingCommand::insertParagraphSeparator(part->xmlDocImpl());
+    return true;
 }
 
 bool execInsertText(KHTMLPart *part, bool userInterface, const DOMString &value)

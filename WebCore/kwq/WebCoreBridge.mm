@@ -1555,16 +1555,25 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     [self replaceSelectionWithFragment:[self documentFragmentWithText:text] selectReplacement:selectReplacement smartReplace:smartReplace];
 }
 
-- (void)insertNewline
+- (void)insertLineBreak
 {
     if (!_part || !_part->xmlDocImpl())
         return;
     
-    TypingCommand::insertNewline(_part->xmlDocImpl());
+    TypingCommand::insertLineBreak(_part->xmlDocImpl());
     [self ensureSelectionVisible];
 }
 
-- (void)insertNewlineInQuotedContent
+- (void)insertParagraphSeparator
+{
+    if (!_part || !_part->xmlDocImpl())
+        return;
+    
+    TypingCommand::insertParagraphSeparator(_part->xmlDocImpl());
+    [self ensureSelectionVisible];
+}
+
+- (void)insertParagraphSeparatorInQuotedContent
 {
     if (!_part || !_part->xmlDocImpl())
         return;
@@ -1573,7 +1582,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     if (selection.isNone())
         return;
     
-    TypingCommand::insertNewlineInQuotedContent(_part->xmlDocImpl());
+    TypingCommand::insertParagraphSeparatorInQuotedContent(_part->xmlDocImpl());
     [self ensureSelectionVisible];
 }
 

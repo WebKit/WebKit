@@ -215,10 +215,10 @@ bool EditCommandPtr::isCompositeStep() const
     return get()->isCompositeStep();
 }
 
-bool EditCommandPtr::isInputTextCommand() const
+bool EditCommandPtr::isInsertTextCommand() const
 {
     IF_IMPL_NULL_RETURN_ARG(false);        
-    return get()->isInputTextCommand();
+    return get()->isInsertTextCommand();
 }
 
 bool EditCommandPtr::isTypingCommand() const
@@ -514,7 +514,7 @@ bool EditCommand::preservesTypingStyle() const
     return false;
 }
 
-bool EditCommand::isInputTextCommand() const
+bool EditCommand::isInsertTextCommand() const
 {
     return false;
 }
@@ -657,29 +657,29 @@ void CompositeEditCommand::joinTextNodes(TextImpl *text1, TextImpl *text2)
 
 void CompositeEditCommand::inputText(const DOMString &text, bool selectInsertedText)
 {
-    InputTextCommand *impl = new InputTextCommand(document());
+    InsertTextCommand *impl = new InsertTextCommand(document());
     EditCommandPtr cmd(impl);
     applyCommandToComposite(cmd);
     impl->input(text, selectInsertedText);
 }
 
-void CompositeEditCommand::insertText(TextImpl *node, long offset, const DOMString &text)
+void CompositeEditCommand::insertTextIntoNode(TextImpl *node, long offset, const DOMString &text)
 {
-    EditCommandPtr cmd(new InsertTextCommand(document(), node, offset, text));
+    EditCommandPtr cmd(new InsertIntoTextNode(document(), node, offset, text));
     applyCommandToComposite(cmd);
 }
 
-void CompositeEditCommand::deleteText(TextImpl *node, long offset, long count)
+void CompositeEditCommand::deleteTextFromNode(TextImpl *node, long offset, long count)
 {
-    EditCommandPtr cmd(new DeleteTextCommand(document(), node, offset, count));
+    EditCommandPtr cmd(new DeleteFromTextNodeCommand(document(), node, offset, count));
     applyCommandToComposite(cmd);
 }
 
-void CompositeEditCommand::replaceText(TextImpl *node, long offset, long count, const DOMString &replacementText)
+void CompositeEditCommand::replaceTextInNode(TextImpl *node, long offset, long count, const DOMString &replacementText)
 {
-    EditCommandPtr deleteCommand(new DeleteTextCommand(document(), node, offset, count));
+    EditCommandPtr deleteCommand(new DeleteFromTextNodeCommand(document(), node, offset, count));
     applyCommandToComposite(deleteCommand);
-    EditCommandPtr insertCommand(new InsertTextCommand(document(), node, offset, replacementText));
+    EditCommandPtr insertCommand(new InsertIntoTextNode(document(), node, offset, replacementText));
     applyCommandToComposite(insertCommand);
 }
 
@@ -817,14 +817,14 @@ void CompositeEditCommand::deleteInsignificantText(TextImpl *textNode, int start
     if (str) {
         // Replace the text between start and end with our pruned version.
         if (str->l > 0) {
-            replaceText(textNode, start, end - start, str);
+            replaceTextInNode(textNode, start, end - start, str);
         }
         else {
             // Assert that we are not going to delete all of the text in the node.
             // If we were, that should have been done above with the call to 
             // removeNode and return.
             ASSERT(start > 0 || (unsigned long)end - start < textNode->length());
-            deleteText(textNode, start, end - start);
+            deleteTextFromNode(textNode, start, end - start);
         }
         str->deref();
     }
@@ -902,6 +902,15 @@ bool CompositeEditCommand::removeBlockPlaceholderIfNeeded(NodeImpl *node)
         }
     }
     return false;
+}
+
+bool CompositeEditCommand::isLastVisiblePositionInNode(const VisiblePosition &pos, const NodeImpl *node) const
+{
+    if (pos.isNull())
+        return false;
+        
+    VisiblePosition next = pos.next();
+    return next.isNull() || !next.deepEquivalent().node()->isAncestor(node);
 }
 
 //==========================================================================================
@@ -1322,6 +1331,48 @@ Position ApplyStyleCommand::positionInsertionPoint(Position pos)
 }
 
 //------------------------------------------------------------------------------------------
+// DeleteFromTextNodeCommand
+
+DeleteFromTextNodeCommand::DeleteFromTextNodeCommand(DocumentImpl *document, TextImpl *node, long offset, long count)
+    : EditCommand(document), m_node(node), m_offset(offset), m_count(count)
+{
+    ASSERT(m_node);
+    ASSERT(m_offset >= 0);
+    ASSERT(m_offset < (long)m_node->length());
+    ASSERT(m_count >= 0);
+    
+    m_node->ref();
+}
+
+DeleteFromTextNodeCommand::~DeleteFromTextNodeCommand()
+{
+    ASSERT(m_node);
+    m_node->deref();
+}
+
+void DeleteFromTextNodeCommand::doApply()
+{
+    ASSERT(m_node);
+
+    int exceptionCode = 0;
+    m_text = m_node->substringData(m_offset, m_count, exceptionCode);
+    ASSERT(exceptionCode == 0);
+    
+    m_node->deleteData(m_offset, m_count, exceptionCode);
+    ASSERT(exceptionCode == 0);
+}
+
+void DeleteFromTextNodeCommand::doUnapply()
+{
+    ASSERT(m_node);
+    ASSERT(!m_text.isEmpty());
+
+    int exceptionCode = 0;
+    m_node->insertData(m_offset, m_text, exceptionCode);
+    ASSERT(exceptionCode == 0);
+}
+
+//------------------------------------------------------------------------------------------
 // DeleteSelectionCommand
 
 DeleteSelectionCommand::DeleteSelectionCommand(DocumentImpl *document, bool smartDelete, bool mergeBlocksAfterDelete)
@@ -1459,7 +1510,7 @@ void DeleteSelectionCommand::performGeneralDelete()
             // Delete any insignificant text from this node.
             TextImpl *text = static_cast<TextImpl *>(m_startNode);
             if (text->length() > (unsigned)m_startNode->caretMaxOffset())
-                deleteText(text, m_startNode->caretMaxOffset(), text->length() - m_startNode->caretMaxOffset());
+                deleteTextFromNode(text, m_startNode->caretMaxOffset(), text->length() - m_startNode->caretMaxOffset());
         }
         // shift the start node to the next
         NodeImpl *old = m_startNode;
@@ -1479,7 +1530,7 @@ void DeleteSelectionCommand::performGeneralDelete()
         else if (m_downstreamEnd.offset() - startOffset > 0) {
             // in a text node that needs to be trimmed
             TextImpl *text = static_cast<TextImpl *>(m_startNode);
-            deleteText(text, startOffset, m_downstreamEnd.offset() - startOffset);
+            deleteTextFromNode(text, startOffset, m_downstreamEnd.offset() - startOffset);
             m_trailingWhitespaceValid = false;
         }
     }
@@ -1489,7 +1540,7 @@ void DeleteSelectionCommand::performGeneralDelete()
         if (startOffset > 0) {
             // in a text node that needs to be trimmed
             TextImpl *text = static_cast<TextImpl *>(node);
-            deleteText(text, startOffset, text->length() - startOffset);
+            deleteTextFromNode(text, startOffset, text->length() - startOffset);
             node = node->traverseNextNode();
         }
         
@@ -1526,7 +1577,7 @@ void DeleteSelectionCommand::performGeneralDelete()
                 // in a text node that needs to be trimmed
                 TextImpl *text = static_cast<TextImpl *>(m_downstreamEnd.node());
                 if (m_downstreamEnd.offset() > 0) {
-                    deleteText(text, 0, m_downstreamEnd.offset());
+                    deleteTextFromNode(text, 0, m_downstreamEnd.offset());
                     m_trailingWhitespaceValid = false;
                 }
             }
@@ -1542,14 +1593,14 @@ void DeleteSelectionCommand::fixupWhitespace()
     if (m_leadingWhitespace.isNotNull() && (m_trailingWhitespace.isNotNull() || !m_leadingWhitespace.isRenderedCharacter())) {
         LOG(Editing, "replace leading");
         TextImpl *textNode = static_cast<TextImpl *>(m_leadingWhitespace.node());
-        replaceText(textNode, m_leadingWhitespace.offset(), 1, nonBreakingSpaceString());
+        replaceTextInNode(textNode, m_leadingWhitespace.offset(), 1, nonBreakingSpaceString());
     }
     else if (m_trailingWhitespace.isNotNull()) {
         if (m_trailingWhitespaceValid) {
             if (!m_trailingWhitespace.isRenderedCharacter()) {
                 LOG(Editing, "replace trailing [valid]");
                 TextImpl *textNode = static_cast<TextImpl *>(m_trailingWhitespace.node());
-                replaceText(textNode, m_trailingWhitespace.offset(), 1, nonBreakingSpaceString());
+                replaceTextInNode(textNode, m_trailingWhitespace.offset(), 1, nonBreakingSpaceString());
             }
         }
         else {
@@ -1558,7 +1609,7 @@ void DeleteSelectionCommand::fixupWhitespace()
             if (isWS(pos) && !pos.isRenderedCharacter()) {
                 LOG(Editing, "replace trailing [invalid]");
                 TextImpl *textNode = static_cast<TextImpl *>(pos.node());
-                replaceText(textNode, pos.offset(), 1, nonBreakingSpaceString());
+                replaceTextInNode(textNode, pos.offset(), 1, nonBreakingSpaceString());
                 // need to adjust ending position since the trailing position is not valid.
                 m_endingPosition = pos;
             }
@@ -1602,7 +1653,10 @@ void DeleteSelectionCommand::moveNodesAfterNode()
         NodeImpl *moveNode = node;
         node = node->nextSibling();
         removeNode(moveNode);
-        insertNodeAfter(moveNode, refNode);
+        if (refNode->isBlockFlow())
+            appendNode(moveNode, refNode);
+        else
+            insertNodeAfter(moveNode, refNode);
         refNode = moveNode;
     }
 
@@ -1619,7 +1673,7 @@ void DeleteSelectionCommand::moveNodesAfterNode()
     // and 'Two'. This is undesirable. We fix this up by adding a BR before the 'Three'.
     // This may not be ideal, but it is better than nothing.
     document()->updateLayout();
-    if (startBlock->renderer() && startBlock->renderer()->height() == 0) {
+    if (!startBlock->renderer() || !startBlock->renderer()->firstChild()) {
         removeNode(startBlock);
         if (refNode->renderer() && refNode->renderer()->inlineBox() && refNode->renderer()->inlineBox()->nextOnLineExists()) {
             int exceptionCode = 0;
@@ -1757,40 +1811,29 @@ bool DeleteSelectionCommand::preservesTypingStyle() const
 }
 
 //------------------------------------------------------------------------------------------
-// DeleteTextCommand
+// InsertIntoTextNode
 
-DeleteTextCommand::DeleteTextCommand(DocumentImpl *document, TextImpl *node, long offset, long count)
-    : EditCommand(document), m_node(node), m_offset(offset), m_count(count)
+InsertIntoTextNode::InsertIntoTextNode(DocumentImpl *document, TextImpl *node, long offset, const DOMString &text)
+    : EditCommand(document), m_node(node), m_offset(offset)
 {
     ASSERT(m_node);
     ASSERT(m_offset >= 0);
-    ASSERT(m_offset < (long)m_node->length());
-    ASSERT(m_count >= 0);
+    ASSERT(!text.isEmpty());
     
     m_node->ref();
+    m_text = text.copy(); // make a copy to ensure that the string never changes
 }
 
-DeleteTextCommand::~DeleteTextCommand()
+InsertIntoTextNode::~InsertIntoTextNode()
 {
-    ASSERT(m_node);
-    m_node->deref();
+    if (m_node)
+        m_node->deref();
 }
 
-void DeleteTextCommand::doApply()
+void InsertIntoTextNode::doApply()
 {
     ASSERT(m_node);
-
-    int exceptionCode = 0;
-    m_text = m_node->substringData(m_offset, m_count, exceptionCode);
-    ASSERT(exceptionCode == 0);
-    
-    m_node->deleteData(m_offset, m_count, exceptionCode);
-    ASSERT(exceptionCode == 0);
-}
-
-void DeleteTextCommand::doUnapply()
-{
-    ASSERT(m_node);
+    ASSERT(m_offset >= 0);
     ASSERT(!m_text.isEmpty());
 
     int exceptionCode = 0;
@@ -1798,15 +1841,26 @@ void DeleteTextCommand::doUnapply()
     ASSERT(exceptionCode == 0);
 }
 
-//------------------------------------------------------------------------------------------
-// InputNewlineCommand
+void InsertIntoTextNode::doUnapply()
+{
+    ASSERT(m_node);
+    ASSERT(m_offset >= 0);
+    ASSERT(!m_text.isEmpty());
 
-InputNewlineCommand::InputNewlineCommand(DocumentImpl *document) 
+    int exceptionCode = 0;
+    m_node->deleteData(m_offset, m_text.length(), exceptionCode);
+    ASSERT(exceptionCode == 0);
+}
+
+//------------------------------------------------------------------------------------------
+// InsertLineBreakCommand
+
+InsertLineBreakCommand::InsertLineBreakCommand(DocumentImpl *document) 
     : CompositeEditCommand(document)
 {
 }
 
-void InputNewlineCommand::insertNodeAfterPosition(NodeImpl *node, const Position &pos)
+void InsertLineBreakCommand::insertNodeAfterPosition(NodeImpl *node, const Position &pos)
 {
     // Insert the BR after the caret position. In the case the
     // position is a block, do an append. We don't want to insert
@@ -1819,7 +1873,7 @@ void InputNewlineCommand::insertNodeAfterPosition(NodeImpl *node, const Position
         insertNodeAfter(node, pos.node());
 }
 
-void InputNewlineCommand::insertNodeBeforePosition(NodeImpl *node, const Position &pos)
+void InsertLineBreakCommand::insertNodeBeforePosition(NodeImpl *node, const Position &pos)
 {
     // Insert the BR after the caret position. In the case the
     // position is a block, do an append. We don't want to insert
@@ -1832,7 +1886,7 @@ void InputNewlineCommand::insertNodeBeforePosition(NodeImpl *node, const Positio
         insertNodeBefore(node, pos.node());
 }
 
-void InputNewlineCommand::doApply()
+void InsertLineBreakCommand::doApply()
 {
     deleteSelection();
     Selection selection = endingSelection();
@@ -1904,7 +1958,7 @@ void InputNewlineCommand::doApply()
         // Do the split
         TextImpl *textNode = static_cast<TextImpl *>(pos.node());
         TextImpl *textBeforeNode = document()->createTextNode(textNode->substringData(0, selection.start().offset(), exceptionCode));
-        deleteText(textNode, 0, pos.offset());
+        deleteTextFromNode(textNode, 0, pos.offset());
         insertNodeBefore(textBeforeNode, textNode);
         insertNodeBefore(nodeToInsert, textNode);
         Position endingPosition = Position(textNode, 0);
@@ -1914,7 +1968,7 @@ void InputNewlineCommand::doApply()
         if (!endingPosition.isRenderedCharacter()) {
             // Clear out all whitespace and insert one non-breaking space
             deleteInsignificantTextDownstream(endingPosition);
-            insertText(textNode, 0, nonBreakingSpaceString());
+            insertTextIntoNode(textNode, 0, nonBreakingSpaceString());
         }
         
         setEndingSelection(endingPosition);
@@ -1922,22 +1976,188 @@ void InputNewlineCommand::doApply()
 }
 
 //------------------------------------------------------------------------------------------
-// InputNewlineInQuotedContentCommand
+// InsertNodeBeforeCommand
 
-InputNewlineInQuotedContentCommand::InputNewlineInQuotedContentCommand(DocumentImpl *document)
+InsertNodeBeforeCommand::InsertNodeBeforeCommand(DocumentImpl *document, NodeImpl *insertChild, NodeImpl *refChild)
+    : EditCommand(document), m_insertChild(insertChild), m_refChild(refChild)
+{
+    ASSERT(m_insertChild);
+    m_insertChild->ref();
+
+    ASSERT(m_refChild);
+    m_refChild->ref();
+}
+
+InsertNodeBeforeCommand::~InsertNodeBeforeCommand()
+{
+    ASSERT(m_insertChild);
+    m_insertChild->deref();
+
+    ASSERT(m_refChild);
+    m_refChild->deref();
+}
+
+void InsertNodeBeforeCommand::doApply()
+{
+    ASSERT(m_insertChild);
+    ASSERT(m_refChild);
+    ASSERT(m_refChild->parentNode());
+
+    int exceptionCode = 0;
+    m_refChild->parentNode()->insertBefore(m_insertChild, m_refChild, exceptionCode);
+    ASSERT(exceptionCode == 0);
+}
+
+void InsertNodeBeforeCommand::doUnapply()
+{
+    ASSERT(m_insertChild);
+    ASSERT(m_refChild);
+    ASSERT(m_refChild->parentNode());
+
+    int exceptionCode = 0;
+    m_refChild->parentNode()->removeChild(m_insertChild, exceptionCode);
+    ASSERT(exceptionCode == 0);
+}
+
+//------------------------------------------------------------------------------------------
+// InsertParagraphSeparatorCommand
+
+InsertParagraphSeparatorCommand::InsertParagraphSeparatorCommand(DocumentImpl *document) 
     : CompositeEditCommand(document)
 {
     ancestors.setAutoDelete(true);
     clonedNodes.setAutoDelete(true);
 }
 
-InputNewlineInQuotedContentCommand::~InputNewlineInQuotedContentCommand()
+void InsertParagraphSeparatorCommand::doApply()
+{
+    Selection selection = endingSelection();
+    if (selection.isNone())
+        return;
+    
+    // Delete the current selection.
+    // If the selection is a range and the start and end nodes are in different blocks, 
+    // then this command bails after the delete, but takes the one additional step of
+    // moving the selection downstream so it is in the ending block (if that block is
+    // still around, that is).
+    Position pos = selection.start();
+    if (selection.isRange()) {
+        NodeImpl *startBlockBeforeDelete = selection.start().node()->enclosingBlockFlowElement();
+        NodeImpl *endBlockBeforeDelete = selection.end().node()->enclosingBlockFlowElement();
+        bool doneAfterDelete = startBlockBeforeDelete != endBlockBeforeDelete;
+        deleteSelection(false, false);
+        if (doneAfterDelete) {
+            document()->updateLayout();
+            setEndingSelection(endingSelection().start().downstream());
+            return;
+        }
+        pos = endingSelection().start().upstream();
+    }
+    
+    // Find the start block.
+    NodeImpl *startNode = pos.node();
+    NodeImpl *startBlock = startNode->enclosingBlockFlowElement();
+    if (!startBlock || !startBlock->parentNode())
+        return;
+
+    // Build up list of ancestors in between the start node and the start block.
+    for (NodeImpl *n = startNode->parentNode(); n && n != startBlock; n = n->parentNode())
+        ancestors.prepend(n);
+
+    // Make new block to represent the newline.
+    // If the start block is the body, just make a P tag, otherwise, make a shallow clone
+    // of the the start block.
+    NodeImpl *addedBlock = 0;
+    if (startBlock->id() == ID_BODY) {
+        int exceptionCode = 0;
+        addedBlock = document()->createHTMLElement("P", exceptionCode);
+        ASSERT(exceptionCode == 0);
+        appendNode(addedBlock, startBlock);
+    }
+    else {
+        addedBlock = startBlock->cloneNode(false);
+        insertNodeAfter(addedBlock, startBlock);
+    }
+    clonedNodes.append(addedBlock);
+
+    if (!isLastVisiblePositionInNode(VisiblePosition(pos), startBlock)) {
+        // Split at pos if in the middle of a text node.
+        if (startNode->isTextNode()) {
+            TextImpl *textNode = static_cast<TextImpl *>(startNode);
+            bool atEnd = (unsigned long)pos.offset() >= textNode->length();
+            if (pos.offset() > 0 && !atEnd) {
+                SplitTextNodeCommand *splitCommand = new SplitTextNodeCommand(document(), textNode, pos.offset());
+                EditCommandPtr cmd(splitCommand);
+                applyCommandToComposite(cmd);
+                startNode = splitCommand->node();
+                pos = Position(startNode, 0);
+            }
+            else if (atEnd) {
+                startNode = startNode->traverseNextNode();
+                ASSERT(startNode);
+            }
+        }
+        else if (pos.offset() > 0) {
+            startNode = startNode->traverseNextNode();
+            ASSERT(startNode);
+        }
+
+        // Make clones of ancestors in between the start node and the start block.
+        NodeImpl *parent = addedBlock;
+        for (QPtrListIterator<NodeImpl> it(ancestors); it.current(); ++it) {
+            NodeImpl *child = it.current()->cloneNode(false); // shallow clone
+            clonedNodes.append(child);
+            appendNode(child, parent);
+            parent = child;
+        }
+
+        // Move the start node and the siblings of the start node.
+        NodeImpl *n = startNode;
+        if (n->id() == ID_BR)
+            n = n->nextSibling();
+        while (n && n != addedBlock) {
+            NodeImpl *next = n->nextSibling();
+            removeNode(n);
+            appendNode(n, parent);
+            n = next;
+        }
+        
+        // Move everything after the start node.
+        NodeImpl *leftParent = ancestors.last();
+        while (leftParent && leftParent != startBlock) {
+            parent = parent->parentNode();
+            NodeImpl *n = leftParent->nextSibling();
+            while (n) {
+                NodeImpl *next = n->nextSibling();
+                removeNode(n);
+                appendNode(n, parent);
+                n = next;
+            }
+            leftParent = leftParent->parentNode();
+        }
+    }
+    
+    // Put the selection right at the start of the added block.
+    setEndingSelection(Position(addedBlock, 0));
+}
+
+//------------------------------------------------------------------------------------------
+// InsertParagraphSeparatorInQuotedContentCommand
+
+InsertParagraphSeparatorInQuotedContentCommand::InsertParagraphSeparatorInQuotedContentCommand(DocumentImpl *document)
+    : CompositeEditCommand(document)
+{
+    ancestors.setAutoDelete(true);
+    clonedNodes.setAutoDelete(true);
+}
+
+InsertParagraphSeparatorInQuotedContentCommand::~InsertParagraphSeparatorInQuotedContentCommand()
 {
     if (m_breakNode)
         m_breakNode->deref();
 }
 
-bool InputNewlineInQuotedContentCommand::isMailBlockquote(const NodeImpl *node) const
+bool InsertParagraphSeparatorInQuotedContentCommand::isMailBlockquote(const NodeImpl *node) const
 {
     if (!node || !node->renderer() || !node->isElementNode() && node->id() != ID_BLOCKQUOTE)
         return false;
@@ -1945,16 +2165,7 @@ bool InputNewlineInQuotedContentCommand::isMailBlockquote(const NodeImpl *node) 
     return static_cast<const ElementImpl *>(node)->getAttribute("type") == "cite";
 }
 
-bool InputNewlineInQuotedContentCommand::isLastVisiblePositionInBlockquote(const VisiblePosition &pos, const NodeImpl *blockquote) const
-{
-    if (pos.isNull())
-        return false;
-        
-    VisiblePosition next = pos.next();
-    return next.isNull() || !next.deepEquivalent().node()->isAncestor(blockquote);
-}
-
-void InputNewlineInQuotedContentCommand::doApply()
+void InsertParagraphSeparatorInQuotedContentCommand::doApply()
 {
     Selection selection = endingSelection();
     if (selection.isNone())
@@ -1988,7 +2199,7 @@ void InputNewlineInQuotedContentCommand::doApply()
     ASSERT(exceptionCode == 0);
     insertNodeAfter(m_breakNode, topBlockquote);
 
-    if (!isLastVisiblePositionInBlockquote(VisiblePosition(pos), topBlockquote)) {
+    if (!isLastVisiblePositionInNode(VisiblePosition(pos), topBlockquote)) {
         // Split at pos if in the middle of a text node.
         if (startNode->isTextNode()) {
             TextImpl *textNode = static_cast<TextImpl *>(startNode);
@@ -2067,18 +2278,18 @@ void InputNewlineInQuotedContentCommand::doApply()
 }
 
 //------------------------------------------------------------------------------------------
-// InputTextCommand
+// InsertTextCommand
 
-InputTextCommand::InputTextCommand(DocumentImpl *document) 
+InsertTextCommand::InsertTextCommand(DocumentImpl *document) 
     : CompositeEditCommand(document), m_charactersAdded(0)
 {
 }
 
-void InputTextCommand::doApply()
+void InsertTextCommand::doApply()
 {
 }
 
-void InputTextCommand::deleteCharacter()
+void InsertTextCommand::deleteCharacter()
 {
     ASSERT(state() == Applied);
 
@@ -2099,7 +2310,7 @@ void InputTextCommand::deleteCharacter()
     }
 }
 
-Position InputTextCommand::prepareForTextInsertion(bool adjustDownstream)
+Position InsertTextCommand::prepareForTextInsertion(bool adjustDownstream)
 {
     // Prepare for text input by looking at the current position.
     // It may be necessary to insert a text node to receive characters.
@@ -2168,7 +2379,7 @@ Position InputTextCommand::prepareForTextInsertion(bool adjustDownstream)
     return pos;
 }
 
-void InputTextCommand::input(const DOMString &text, bool selectInsertedText)
+void InsertTextCommand::input(const DOMString &text, bool selectInsertedText)
 {
     Selection selection = endingSelection();
     bool adjustDownstream = selection.start().downstream(StayInBlock).isFirstRenderedPositionOnLine();
@@ -2226,9 +2437,9 @@ void InputTextCommand::input(const DOMString &text, bool selectInsertedText)
             // convert the nbsp to a regular space.
             // EDIT FIXME: This needs to be improved some day to convert back only
             // those nbsp's added by the editor to make rendering come out right.
-            replaceText(textNode, offset - 1, 1, " ");
+            replaceTextInNode(textNode, offset - 1, 1, " ");
         }
-        insertText(textNode, offset, text);
+        insertTextIntoNode(textNode, offset, text);
         if (selectInsertedText)
             setEndingSelection(Selection(Position(textNode, offset), Position(textNode, offset + text.length())));
         else
@@ -2237,7 +2448,7 @@ void InputTextCommand::input(const DOMString &text, bool selectInsertedText)
     }
 }
 
-void InputTextCommand::insertSpace(TextImpl *textNode, unsigned long offset)
+void InsertTextCommand::insertSpace(TextImpl *textNode, unsigned long offset)
 {
     ASSERT(textNode);
 
@@ -2261,12 +2472,12 @@ void InputTextCommand::insertSpace(TextImpl *textNode, unsigned long offset)
         if (downstream.offset() < (long)text.length() && isWS(text[downstream.offset()]))
             count--; // leave this WS in
         if (count > 0)
-            deleteText(textNode, offset, count);
+            deleteTextFromNode(textNode, offset, count);
     }
 
     if (offset > 0 && offset <= text.length() - 1 && !isWS(text[offset]) && !isWS(text[offset - 1])) {
         // insert a "regular" space
-        insertText(textNode, offset, " ");
+        insertTextIntoNode(textNode, offset, " ");
         return;
     }
 
@@ -2274,103 +2485,17 @@ void InputTextCommand::insertSpace(TextImpl *textNode, unsigned long offset)
         // DOM looks like this:
         // nbsp nbsp caret
         // insert a space between the two nbsps
-        insertText(textNode, offset - 1, " ");
+        insertTextIntoNode(textNode, offset - 1, " ");
         return;
     }
 
     // insert an nbsp
-    insertText(textNode, offset, nonBreakingSpaceString());
+    insertTextIntoNode(textNode, offset, nonBreakingSpaceString());
 }
 
-bool InputTextCommand::isInputTextCommand() const
+bool InsertTextCommand::isInsertTextCommand() const
 {
     return true;
-}
-
-//------------------------------------------------------------------------------------------
-// InsertNodeBeforeCommand
-
-InsertNodeBeforeCommand::InsertNodeBeforeCommand(DocumentImpl *document, NodeImpl *insertChild, NodeImpl *refChild)
-    : EditCommand(document), m_insertChild(insertChild), m_refChild(refChild)
-{
-    ASSERT(m_insertChild);
-    m_insertChild->ref();
-
-    ASSERT(m_refChild);
-    m_refChild->ref();
-}
-
-InsertNodeBeforeCommand::~InsertNodeBeforeCommand()
-{
-    ASSERT(m_insertChild);
-    m_insertChild->deref();
-
-    ASSERT(m_refChild);
-    m_refChild->deref();
-}
-
-void InsertNodeBeforeCommand::doApply()
-{
-    ASSERT(m_insertChild);
-    ASSERT(m_refChild);
-    ASSERT(m_refChild->parentNode());
-
-    int exceptionCode = 0;
-    m_refChild->parentNode()->insertBefore(m_insertChild, m_refChild, exceptionCode);
-    ASSERT(exceptionCode == 0);
-}
-
-void InsertNodeBeforeCommand::doUnapply()
-{
-    ASSERT(m_insertChild);
-    ASSERT(m_refChild);
-    ASSERT(m_refChild->parentNode());
-
-    int exceptionCode = 0;
-    m_refChild->parentNode()->removeChild(m_insertChild, exceptionCode);
-    ASSERT(exceptionCode == 0);
-}
-
-//------------------------------------------------------------------------------------------
-// InsertTextCommand
-
-InsertTextCommand::InsertTextCommand(DocumentImpl *document, TextImpl *node, long offset, const DOMString &text)
-    : EditCommand(document), m_node(node), m_offset(offset)
-{
-    ASSERT(m_node);
-    ASSERT(m_offset >= 0);
-    ASSERT(!text.isEmpty());
-    
-    m_node->ref();
-    m_text = text.copy(); // make a copy to ensure that the string never changes
-}
-
-InsertTextCommand::~InsertTextCommand()
-{
-    if (m_node)
-        m_node->deref();
-}
-
-void InsertTextCommand::doApply()
-{
-    ASSERT(m_node);
-    ASSERT(m_offset >= 0);
-    ASSERT(!m_text.isEmpty());
-
-    int exceptionCode = 0;
-    m_node->insertData(m_offset, m_text, exceptionCode);
-    ASSERT(exceptionCode == 0);
-}
-
-void InsertTextCommand::doUnapply()
-{
-    ASSERT(m_node);
-    ASSERT(m_offset >= 0);
-    ASSERT(!m_text.isEmpty());
-
-    int exceptionCode = 0;
-    m_node->deleteData(m_offset, m_text.length(), exceptionCode);
-    ASSERT(exceptionCode == 0);
 }
 
 //------------------------------------------------------------------------------------------
@@ -2888,7 +3013,7 @@ void TypingCommand::insertText(DocumentImpl *document, const DOMString &text, bo
     }
 }
 
-void TypingCommand::insertNewline(DocumentImpl *document)
+void TypingCommand::insertLineBreak(DocumentImpl *document)
 {
     ASSERT(document);
     
@@ -2897,15 +3022,15 @@ void TypingCommand::insertNewline(DocumentImpl *document)
     
     EditCommandPtr lastEditCommand = part->lastEditCommand();
     if (isOpenForMoreTypingCommand(lastEditCommand)) {
-        static_cast<TypingCommand *>(lastEditCommand.get())->insertNewline();
+        static_cast<TypingCommand *>(lastEditCommand.get())->insertLineBreak();
     }
     else {
-        EditCommandPtr cmd(new TypingCommand(document, InsertNewline));
+        EditCommandPtr cmd(new TypingCommand(document, InsertLineBreak));
         cmd.apply();
     }
 }
 
-void TypingCommand::insertNewlineInQuotedContent(DocumentImpl *document)
+void TypingCommand::insertParagraphSeparatorInQuotedContent(DocumentImpl *document)
 {
     ASSERT(document);
     
@@ -2914,10 +3039,27 @@ void TypingCommand::insertNewlineInQuotedContent(DocumentImpl *document)
     
     EditCommandPtr lastEditCommand = part->lastEditCommand();
     if (isOpenForMoreTypingCommand(lastEditCommand)) {
-        static_cast<TypingCommand *>(lastEditCommand.get())->insertNewlineInQuotedContent();
+        static_cast<TypingCommand *>(lastEditCommand.get())->insertParagraphSeparatorInQuotedContent();
     }
     else {
-        EditCommandPtr cmd(new TypingCommand(document, InsertNewlineInQuotedContent));
+        EditCommandPtr cmd(new TypingCommand(document, InsertParagraphSeparatorInQuotedContent));
+        cmd.apply();
+    }
+}
+
+void TypingCommand::insertParagraphSeparator(DocumentImpl *document)
+{
+    ASSERT(document);
+    
+    KHTMLPart *part = document->part();
+    ASSERT(part);
+    
+    EditCommandPtr lastEditCommand = part->lastEditCommand();
+    if (isOpenForMoreTypingCommand(lastEditCommand)) {
+        static_cast<TypingCommand *>(lastEditCommand.get())->insertParagraphSeparator();
+    }
+    else {
+        EditCommandPtr cmd(new TypingCommand(document, InsertParagraphSeparator));
         cmd.apply();
     }
 }
@@ -2943,14 +3085,17 @@ void TypingCommand::doApply()
         case DeleteKey:
             deleteKeyPressed();
             return;
+        case InsertLineBreak:
+            insertLineBreak();
+            return;
+        case InsertParagraphSeparator:
+            insertParagraphSeparator();
+            return;
+        case InsertParagraphSeparatorInQuotedContent:
+            insertParagraphSeparatorInQuotedContent();
+            return;
         case InsertText:
             insertText(m_textToInsert, m_selectInsertedText);
-            return;
-        case InsertNewline:
-            insertNewline();
-            return;
-        case InsertNewlineInQuotedContent:
-            insertNewlineInQuotedContent();
             return;
     }
 
@@ -2992,19 +3137,19 @@ void TypingCommand::insertText(const DOMString &text, bool selectInsertedText)
     // FIXME: Improve typing style.
     // See this bug: <rdar://problem/3769899> Implementation of typing style needs improvement
     if (document()->part()->typingStyle() || m_cmds.count() == 0) {
-        InputTextCommand *impl = new InputTextCommand(document());
+        InsertTextCommand *impl = new InsertTextCommand(document());
         EditCommandPtr cmd(impl);
         applyCommandToComposite(cmd);
         impl->input(text, selectInsertedText);
     }
     else {
         EditCommandPtr lastCommand = m_cmds.last();
-        if (lastCommand.isInputTextCommand()) {
-            InputTextCommand *impl = static_cast<InputTextCommand *>(lastCommand.get());
+        if (lastCommand.isInsertTextCommand()) {
+            InsertTextCommand *impl = static_cast<InsertTextCommand *>(lastCommand.get());
             impl->input(text, selectInsertedText);
         }
         else {
-            InputTextCommand *impl = new InputTextCommand(document());
+            InsertTextCommand *impl = new InsertTextCommand(document());
             EditCommandPtr cmd(impl);
             applyCommandToComposite(cmd);
             impl->input(text, selectInsertedText);
@@ -3013,16 +3158,23 @@ void TypingCommand::insertText(const DOMString &text, bool selectInsertedText)
     typingAddedToOpenCommand();
 }
 
-void TypingCommand::insertNewline()
+void TypingCommand::insertLineBreak()
 {
-    EditCommandPtr cmd(new InputNewlineCommand(document()));
+    EditCommandPtr cmd(new InsertLineBreakCommand(document()));
     applyCommandToComposite(cmd);
     typingAddedToOpenCommand();
 }
 
-void TypingCommand::insertNewlineInQuotedContent()
+void TypingCommand::insertParagraphSeparator()
 {
-    EditCommandPtr cmd(new InputNewlineInQuotedContentCommand(document()));
+    EditCommandPtr cmd(new InsertParagraphSeparatorCommand(document()));
+    applyCommandToComposite(cmd);
+    typingAddedToOpenCommand();
+}
+
+void TypingCommand::insertParagraphSeparatorInQuotedContent()
+{
+    EditCommandPtr cmd(new InsertParagraphSeparatorInQuotedContentCommand(document()));
     applyCommandToComposite(cmd);
     typingAddedToOpenCommand();
 }
@@ -3074,14 +3226,14 @@ void TypingCommand::deleteKeyPressed()
     }
     else {
         EditCommandPtr lastCommand = m_cmds.last();
-        if (lastCommand.isInputTextCommand()) {
-            InputTextCommand &cmd = static_cast<InputTextCommand &>(lastCommand);
+        if (lastCommand.isInsertTextCommand()) {
+            InsertTextCommand &cmd = static_cast<InsertTextCommand &>(lastCommand);
             cmd.deleteCharacter();
             if (cmd.charactersAdded() == 0) {
                 removeCommand(lastCommand);
             }
         }
-        else if (lastCommand.isInputNewlineCommand()) {
+        else if (lastCommand.isInsertLineBreakCommand()) {
             lastCommand.unapply();
             removeCommand(lastCommand);
         }
@@ -3111,9 +3263,10 @@ bool TypingCommand::preservesTypingStyle() const
     switch (m_commandType) {
         case DeleteKey:
             return true;
+        case InsertLineBreak:
+        case InsertParagraphSeparator:
+        case InsertParagraphSeparatorInQuotedContent:
         case InsertText:
-        case InsertNewline:
-        case InsertNewlineInQuotedContent:
             return false;
     }
     ASSERT_NOT_REACHED();

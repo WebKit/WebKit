@@ -332,9 +332,10 @@ typedef enum {
 - (void)replaceSelectionWithMarkupString:(NSString *)markupString baseURLString:(NSString *)baseURLString selectReplacement:(BOOL)selectReplacement smartReplace:(BOOL)smartReplace;
 - (void)replaceSelectionWithText:(NSString *)text selectReplacement:(BOOL)selectReplacement smartReplace:(BOOL)smartReplace;
 
+- (void)insertLineBreak;
+- (void)insertParagraphSeparator;
+- (void)insertParagraphSeparatorInQuotedContent;
 - (void)insertText:(NSString *)text selectInsertedText:(BOOL)selectInsertedText;
-- (void)insertNewline;
-- (void)insertNewlineInQuotedContent;
 
 - (void)setSelectionToDragCaret;
 - (void)moveSelectionToDragCaret:(DOMDocumentFragment *)selectionFragment smartMove:(BOOL)smartMove;

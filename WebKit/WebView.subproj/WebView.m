@@ -2838,7 +2838,7 @@ FORWARD(yankAndSelect)
 
 - (void)_insertNewlineInQuotedContent;
 {
-    [[self _bridgeForCurrentSelection] insertNewlineInQuotedContent];
+    [[self _bridgeForCurrentSelection] insertParagraphSeparatorInQuotedContent];
 }
 
 @end
