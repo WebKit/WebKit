@@ -1,6 +1,6 @@
 2002-12-22  Darin Adler  <darin@apple.com>
 
-        Reviewed by NOBODY (OOPS!).
+        Reviewed by Don.
 
 	- fixed 3134383 -- crash in KWQKHTMLPart::canCachePage at www.apple.com
 
