@@ -1,3 +1,10 @@
+2004-08-31  Darin Adler  <darin@apple.com>
+
+        - fixed B&I build failure
+
+        * WebView.subproj/WebHTMLView.m: (-[WebTextCompleteController _buildUI]):
+        Work around unwanted warning by adding a cast.
+
 2004-08-27  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by John.
