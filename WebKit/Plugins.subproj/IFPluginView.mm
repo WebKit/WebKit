@@ -11,7 +11,6 @@
 #include "kwqdebug.h"
 #include <WebFoundation/IFURLHandle.h>
 #import <IFWebDataSource.h>
-#import <IFBaseWebController.h>
 #include <WCPluginWidget.h>
 
 #ifdef __cplusplus
@@ -165,6 +164,8 @@ static id IFPluginMake(NSRect rect, WCPlugin *plugin, NSString *url, NSString *m
         eventSender = [[IFPluginViewNullEventSender alloc] initializeWithNPP:instance functionPointer:NPP_HandleEvent];
         [eventSender sendNullEvents];
         transferred = TRUE;
+        webView = [self findSuperview:@"IFWebView"];
+        webController = [webView controller];
     }
     [self sendUpdateEvent];
 }
@@ -511,11 +512,9 @@ static id IFPluginMake(NSRect rect, WCPlugin *plugin, NSString *url, NSString *m
 
 -(NPError)getURLNotify:(const char *)url target:(const char *)target notifyData:(void *)notifyData
 {
-    IFBaseWebController *webController;
-    IFWebDataSource *dataSource;
-    IFWebView *webView;
     NSURL *newURL;
-   
+    IFWebDataSource *dataSource;
+    
     KWQDebug("NPN_GetURLNotify: %s target: %s\n", url, target);
  
     if(!strcmp(url, "")){
@@ -524,12 +523,12 @@ static id IFPluginMake(NSRect rect, WCPlugin *plugin, NSString *url, NSString *m
     if(target == NULL){ // send data to plug-in if target is null
         [self newStream:[NSString stringWithCString:url] mimeType:[plugin mimeTypeForURL:[NSString stringWithCString:url]] notifyData:(void *)notifyData];
     }else if(!strcmp(target, "_self") || !strcmp(target, "_current") || !strcmp(target, "_parent") || !strcmp(target, "_top")){
-        newURL = [NSURL URLWithString:[NSString stringWithCString:url]];
-        dataSource = [[[IFWebDataSource alloc] initWithURL:newURL] autorelease];
-        webView = [self findSuperview:@"IFWebView"];
-        webController = [webView controller];
-        [[webController mainFrame] setProvisionalDataSource:dataSource];
-        [[webController mainFrame] startLoading];
+        if(webController){
+            newURL = [NSURL URLWithString:[NSString stringWithCString:url]];
+            dataSource = [[[IFWebDataSource alloc] initWithURL:newURL] autorelease];
+            [[webController mainFrame] setProvisionalDataSource:dataSource];
+            [[webController mainFrame] startLoading];
+        }
     }else if(!strcmp(target, "_blank") || !strcmp(target, "_new")){
         printf("Error: No API to open new browser window\n");
     }
@@ -574,7 +573,13 @@ static id IFPluginMake(NSRect rect, WCPlugin *plugin, NSString *url, NSString *m
 
 -(void)status:(const char *)message
 {
-    KWQDebug("NPN_Status\n");
+    IFWebDataSource *dataSource;
+    
+    KWQDebug("NPN_Status: %s\n", message);
+    if(webController){
+        dataSource = [[webController mainFrame] dataSource];
+        [webController setStatusText:[NSString stringWithCString:message] forDataSource:dataSource];
+    }
 }
 
 -(NPError)getValue:(NPNVariable)variable value:(void *)value

@@ -9,6 +9,7 @@
 #include <npapi.h>
 #import <WebFoundation/WebFoundation.h>
 #import <IFWebView.h>
+#import <IFBaseWebController.h>
 
 typedef struct _StreamData{
     uint16 transferMode;
@@ -33,6 +34,9 @@ typedef struct _StreamData{
 @interface IFPluginView : NSView {
     WCPlugin *plugin;
     IFPluginViewNullEventSender *eventSender;
+    
+    IFBaseWebController *webController;
+    IFWebView *webView;
     
     NPP instance;
     NPWindow window;
