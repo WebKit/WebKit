@@ -232,7 +232,7 @@
     url = newURL;
     [[dataSource controller] _didStartLoading:url];
 
-    if([dataSource _isDocumentHTML]) 
+    if([dataSource isDocumentHTML]) 
         [(IFHTMLRepresentation *)[dataSource representation] part]->impl->setBaseURL([[url absoluteString] cString]);
     [dataSource _setFinalURL:url];
     

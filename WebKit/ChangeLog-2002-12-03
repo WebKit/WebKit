@@ -1,5 +1,18 @@
 2002-06-14  Richard Williamson  <rjw@apple.com>
 
+    Removed redundant private _isDocumentHTML method.
+    
+	* WebView.subproj/IFMainURLHandleClient.mm:
+	(-[IFMainURLHandleClient IFURLHandle:didRedirectToURL:]):
+	* WebView.subproj/IFWebDataSourcePrivate.h:
+	* WebView.subproj/IFWebDataSourcePrivate.mm:
+	(-[IFWebDataSource _stopLoading]):
+	(-[IFWebDataSource _addError:forResource:]):
+	* WebView.subproj/IFWebFramePrivate.mm:
+	(-[IFWebFrame _isLoadComplete]):
+
+2002-06-14  Richard Williamson  <rjw@apple.com>
+
     Added handlers to IFWebController.  Should eventually be possible to use
     IFWebController w/o subclassing.
     

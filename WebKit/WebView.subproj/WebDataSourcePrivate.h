@@ -77,7 +77,6 @@
 - (void)_setController: (IFWebController *)controller;
 - (void)_setParent: (IFWebDataSource *)p;
 - (void)_startLoading: (BOOL)forceRefresh;
-- (BOOL)_isDocumentHTML;
 - (void)_stopLoading;
 - (BOOL)_isStopping;
 - (void)_recursiveStopLoading;
