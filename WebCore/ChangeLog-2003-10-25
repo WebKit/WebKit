@@ -1,3 +1,7 @@
+2003-09-24  Darin Adler  <darin@apple.com>
+
+        * layout-tests/fast/table/003-expected.txt: Updated for textarea width change.
+
 2003-09-24  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3429646, <img src="blah"<img src="foo"> should show up as two images.
