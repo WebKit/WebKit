@@ -385,7 +385,7 @@ static int parseDocTypePart(const QString& buffer, int index)
         else if (ch == '-') {
             int tmpIndex;
             if (buffer[index+1] == '-' &&
-                ((tmpIndex=buffer.findRev("--", index+2) != -1)))
+                ((tmpIndex=buffer.find("--", index+2)) != -1))
                 index = tmpIndex+2;
             else
                 return index;
@@ -552,8 +552,9 @@ void HTMLDocumentImpl::determineParseMode( const QString &str )
         else {
             // We have to check a list of public IDs to see what we
             // should do.
-            const char* pubIDStr = publicID.lower().latin1();
-
+            QString lowerPubID = publicID.lower();
+            const char* pubIDStr = lowerPubID.latin1();
+           
             // Look up the entry in our gperf-generated table.
             const PubIDInfo* doctypeEntry = Perfect_Hash::findDoctypeEntry(pubIDStr, publicID.length());
             if (!doctypeEntry) {

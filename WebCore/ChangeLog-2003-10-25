@@ -1,5 +1,16 @@
 2003-01-28  David Hyatt  <hyatt@apple.com>
 
+	Fix quirks/strict regression caused by improper use of findRev (should
+	be find), and latin1() (can't be invoked on temporaries).
+	
+        Reviewed by darin
+
+        * khtml/html/html_documentimpl.cpp:
+        (parseDocTypePart):
+        (HTMLDocumentImpl::determineParseMode):
+
+2003-01-28  David Hyatt  <hyatt@apple.com>
+
 	Fix for 3155209, dashed-line schmutz left behind when dragging
 	links.  
 
