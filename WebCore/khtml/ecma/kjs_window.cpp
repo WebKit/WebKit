@@ -2240,7 +2240,7 @@ Value Selection::get(ExecState *exec, const Identifier &p) const
         case ExtentOffset:
             return Number(m_part->selection().extent().offset());
         case IsCollapsed:
-            return Boolean(m_part->selection().state() == DOM::Selection::CARET);
+            return Boolean(!m_part->selection().isRange());
         case _Type: {
             switch (m_part->selection().state()) {
                 case DOM::Selection::NONE:
@@ -2286,7 +2286,7 @@ Value Selection::toPrimitive(ExecState *exec, Type) const
 
 UString Selection::toString(ExecState *) const
 {
-    if (m_part->selection().state() != DOM::Selection::RANGE)
+    if (!m_part->selection().isRange())
         return UString("");
     return UString(m_part->selection().toRange().toString());
 }

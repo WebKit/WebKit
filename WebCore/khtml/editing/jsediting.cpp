@@ -346,7 +346,7 @@ bool enabled(KHTMLPart *part)
 
 bool enabledAnySelection(KHTMLPart *part)
 {
-    return part->selection().notEmpty();
+    return part->selection().isCaretOrRange();
 }
 
 #if SUPPORT_PASTE
@@ -360,7 +360,7 @@ bool enabledPaste(KHTMLPart *part)
 
 bool enabledRangeSelection(KHTMLPart *part)
 {
-    return part->selection().state() == Selection::RANGE;
+    return part->selection().isRange();
 }
 
 bool enabledRedo(KHTMLPart *part)

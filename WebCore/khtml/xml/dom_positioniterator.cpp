@@ -33,8 +33,8 @@ Position PositionIterator::peekPrevious() const
 {
     Position pos = m_current;
     
-    if (pos.isEmpty())
-        return pos;
+    if (pos.isNull())
+        return Position();
     
     if (pos.offset() <= 0) {
         NodeImpl *prevNode = pos.node()->traversePreviousNode();
@@ -52,8 +52,8 @@ Position PositionIterator::peekNext() const
 {
     Position pos = m_current;
     
-    if (pos.isEmpty())
-        return pos;
+    if (pos.isNull())
+        return Position();
     
     if (pos.offset() >= pos.node()->maxOffset()) {
         NodeImpl *nextNode = pos.node()->traverseNextNode();
@@ -69,7 +69,7 @@ Position PositionIterator::peekNext() const
 
 bool PositionIterator::atStart() const
 {
-    if (m_current.isEmpty())
+    if (m_current.isNull())
         return true;
 
     return m_current.offset() == 0 && 
@@ -78,7 +78,7 @@ bool PositionIterator::atStart() const
 
 bool PositionIterator::atEnd() const
 {
-    if (m_current.isEmpty())
+    if (m_current.isNull())
         return true;
 
     return m_current.offset() >= m_current.node()->maxOffset() && 

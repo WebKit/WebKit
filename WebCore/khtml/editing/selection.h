@@ -107,8 +107,11 @@ public:
     void clearModifyBias() { m_modifyBiasSet = false; }
     void setModifyBias(EAlter, EDirection);
     
-    bool isEmpty() const { return state() == NONE; }
-    bool notEmpty() const { return !isEmpty(); }
+    bool isNone() const { return state() == NONE; }
+    bool isCaret() const { return state() == CARET; }
+    bool isRange() const { return state() == RANGE; }
+    bool isCaretOrRange() const { return state() != NONE; }
+
     Range toRange() const;
 
     void debugPosition() const;

@@ -57,90 +57,67 @@ using khtml::VISIBLE;
 namespace DOM {
 
 CaretPosition::CaretPosition(NodeImpl *node, long offset)
-    : m_node(0)
 {
     init(Position(node, offset));
 }
 
 CaretPosition::CaretPosition(const Position &pos)
-    : m_node(0)
 {
     init(pos);
 }
 
-CaretPosition::CaretPosition(const CaretPosition &pos)
-    : m_node(0)
-{
-    setPosition(pos.deepEquivalent());
-}
-
-CaretPosition::~CaretPosition()
-{
-    if (m_node)
-        m_node->deref();
-}
-
 void CaretPosition::init(const Position &pos)
 {
-    Position result;
     Position deepPos = deepEquivalent(pos);
     
     if (isCandidate(deepPos)) {
-        result = deepPos;
+        m_position = deepPos;
         Position previous = previousCaretPosition(deepPos);
-        if (previous.notEmpty()) {
+        if (previous.isNotNull()) {
             Position next = nextCaretPosition(previous);
-            if (next.notEmpty())
-                result = next;
+            if (next.isNotNull())
+                m_position = next;
         }
     }
     else {
         Position next = nextCaretPosition(deepPos);
-        if (next.notEmpty()) {
-            result = next;
+        if (next.isNotNull()) {
+            m_position = next;
         }
         else {
             Position previous = previousCaretPosition(deepPos);
-            if (previous.notEmpty())
-                result = previous;
+            if (previous.isNotNull())
+                m_position = previous;
         }
     }
-    
-    setPosition(result);
-}
-
-CaretPosition &CaretPosition::operator=(const CaretPosition &pos)
-{
-    setPosition(pos.deepEquivalent());
-    return *this;
 }
 
 bool CaretPosition::isLastInBlock() const
 {
-    if (isEmpty())
+    if (isNull())
         return false;
         
     CaretPosition n = next();
-    return n.isEmpty() || (n.deepEquivalent().node()->enclosingBlockFlowElement() != node()->enclosingBlockFlowElement());
+    return n.isNull() || (n.deepEquivalent().node()->enclosingBlockFlowElement() != node()->enclosingBlockFlowElement());
 }
 
 CaretPosition CaretPosition::next() const
 {
     CaretPosition result;
-    result.setPosition(nextCaretPosition(deepEquivalent()));
+    result.m_position = nextCaretPosition(m_position);
     return result;
 }
 
 CaretPosition CaretPosition::previous() const
 {
     CaretPosition result;
-    result.setPosition(previousCaretPosition(deepEquivalent()));
+    result.m_position = previousCaretPosition(m_position);
     return result;
 }
 
 Position CaretPosition::previousCaretPosition(const Position &pos)
 {
-    if (pos.isEmpty() || atStart(pos))
+    if (pos.isNull() || atStart(pos))
         return Position();
 
     Position test = deepEquivalent(pos);
@@ -159,7 +136,7 @@ Position CaretPosition::previousCaretPosition(const Position &pos)
 
 Position CaretPosition::nextCaretPosition(const Position &pos)
 {
-    if (pos.isEmpty() || atEnd(pos))
+    if (pos.isNull() || atEnd(pos))
         return Position();
 
     Position test = deepEquivalent(pos);
@@ -178,7 +155,7 @@ Position CaretPosition::nextCaretPosition(const Position &pos)
 
 Position CaretPosition::previousPosition(const Position &pos)
 {
-    if (pos.isEmpty())
+    if (pos.isNull())
         return pos;
     
     Position result;
@@ -197,7 +174,7 @@ Position CaretPosition::previousPosition(const Position &pos)
 
 Position CaretPosition::nextPosition(const Position &pos)
 {
-    if (pos.isEmpty())
+    if (pos.isNull())
         return pos;
     
     Position result;
@@ -216,7 +193,7 @@ Position CaretPosition::nextPosition(const Position &pos)
 
 bool CaretPosition::atStart(const Position &pos)
 {
-    if (pos.isEmpty())
+    if (pos.isNull())
         return true;
 
     return pos.offset() <= 0 && pos.node()->previousLeafNode() == 0;
@@ -224,7 +201,7 @@ bool CaretPosition::atStart(const Position &pos)
 
 bool CaretPosition::atEnd(const Position &pos)
 {
-    if (pos.isEmpty())
+    if (pos.isNull())
         return true;
 
     return pos.offset() >= pos.node()->maxOffset() && pos.node()->nextLeafNode() == 0;
@@ -232,7 +209,7 @@ bool CaretPosition::atEnd(const Position &pos)
 
 bool CaretPosition::isCandidate(const Position &pos)
 {
-    if (pos.isEmpty())
+    if (pos.isNull())
         return false;
         
     RenderObject *renderer = pos.node()->renderer();
@@ -334,51 +311,19 @@ bool CaretPosition::isAtomicNode(const NodeImpl *node)
     return node && (!node->hasChildNodes() || (node->id() == ID_OBJECT && node->renderer() && node->renderer()->isReplaced()));
 }
 
-// CaretPosition objects are immutable.
-// This helper is only used during construction and assignment.
-void CaretPosition::setPosition(const Position &pos)
-{
-    ASSERT(pos.isEmpty() || isCandidate(pos));
-
-    if (m_node)
-        m_node->deref();
-    m_node = pos.node();
-    if (m_node)
-        m_node->ref();
-    
-    m_offset = pos.offset();
-}
-
 void CaretPosition::debugPosition(const char *msg) const
 {
-    if (isEmpty())
+    if (isNull())
         fprintf(stderr, "Position [%s]: empty\n", msg);
     else
         fprintf(stderr, "Position [%s]: %s [%p] at %d\n", msg, getTagName(node()->id()).string().latin1(), node(), offset());
 }
 
 #ifndef NDEBUG
-#define FormatBufferSize 1024
 void CaretPosition::formatForDebugger(char *buffer, unsigned length) const
 {
-    DOMString result;
-    DOMString s;
-    
-    if (isEmpty()) {
-        result = "<empty>";
-    }
-    else {
-        char s[FormatBufferSize];
-        result += "offset ";
-        result += QString::number(m_offset);
-        result += " of ";
-        m_node->formatForDebugger(s, FormatBufferSize);
-        result += s;
-    }
-          
-    strncpy(buffer, result.string().latin1(), length - 1);
+    m_position.formatForDebugger(buffer, length);
 }
-#undef FormatBufferSize
 #endif
 
 Range makeRange(const CaretPosition &start, const CaretPosition &end)
@@ -563,7 +508,7 @@ CaretPosition startOfWord(const CaretPosition &c, EWordSide side)
     CaretPosition p = c;
     if (side == RightWordIfOnBoundary) {
         p = c.next();
-        if (p.isEmpty())
+        if (p.isNull())
             return c;
     }
     return previousWordBoundary(p, startWordBoundary);
@@ -581,7 +526,7 @@ CaretPosition endOfWord(const CaretPosition &c, EWordSide side)
     CaretPosition p = c;
     if (side == LeftWordIfOnBoundary) {
         p = c.previous();
-        if (p.isEmpty())
+        if (p.isNull())
             return c;
     }
     return nextWordBoundary(p, endWordBoundary);
@@ -722,7 +667,7 @@ CaretPosition previousParagraphPosition(const CaretPosition &p, int x)
     CaretPosition pos = p;
     do {
         CaretPosition n = previousLinePosition(pos, x);
-        if (n.isEmpty() || n == pos)
+        if (n.isNull() || n == pos)
             return p;
         pos = n;
     } while (inSameParagraph(p, pos));
@@ -734,7 +679,7 @@ CaretPosition nextParagraphPosition(const CaretPosition &p, int x)
     CaretPosition pos = p;
     do {
         CaretPosition n = nextLinePosition(pos, x);
-        if (n.isEmpty() || n == pos)
+        if (n.isNull() || n == pos)
             return p;
         pos = n;
     } while (inSameParagraph(p, pos));

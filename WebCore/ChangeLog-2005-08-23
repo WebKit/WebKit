@@ -2,6 +2,132 @@
 
         Reviewed by Maciej.
 
+        - fixed regression from my recent check-in where misspelled words do not get unmarked when moving the caret
+        - changed CaretPosition to hold a Position instead of a node and offset
+        - renamed isEmpty to isNull, etc.
+
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::jumpToSelection): Updated for name changes.
+        (KWQKHTMLPart::advanceToNextMisspelling): Ditto.
+        (KWQKHTMLPart::fontForSelection): Ditto.
+        (KWQKHTMLPart::setDisplaysWithFocusAttributes): Ditto.
+        (KWQKHTMLPart::markMisspellingsInSelection): Ditto.
+        (KWQKHTMLPart::updateSpellChecking): Fixed bug by using LeftWordIfOnBoundary.
+
+        * khtml/xml/dom_position.h: Updated for name changes.
+        * khtml/xml/dom_position.cpp:
+        (DOM::Position::element): Change to not use a separate null check.
+        (DOM::Position::computedStyle): Updated for name changes.
+        (DOM::Position::previousCharacterPosition): Ditto.
+        (DOM::Position::nextCharacterPosition): Ditto.
+        (DOM::Position::equivalentRangeCompliantPosition): Ditto.
+        (DOM::Position::equivalentShallowPosition): Ditto.
+        (DOM::Position::equivalentDeepPosition): Ditto.
+        (DOM::Position::closestRenderedPosition): Ditto.
+        (DOM::Position::inRenderedContent): Ditto.
+        (DOM::Position::inRenderedText): Ditto.
+        (DOM::Position::isRenderedCharacter): Ditto.
+        (DOM::Position::rendersInDifferentPosition): Ditto.
+        (DOM::Position::isFirstRenderedPositionOnLine): Ditto.
+        (DOM::Position::isLastRenderedPositionOnLine): Ditto.
+        (DOM::Position::inFirstEditableInRootEditableElement): Ditto.
+        (DOM::Position::leadingWhitespacePosition): Ditto.
+        (DOM::Position::trailingWhitespacePosition): Ditto.
+        (DOM::Position::debugPosition): Ditto.
+        (DOM::Position::formatForDebugger): Ditto.
+
+        * khtml/xml/dom_caretposition.h: Change to use m_position, and change names.
+        * khtml/xml/dom_caretposition.cpp:
+        (DOM::CaretPosition::CaretPosition): Remove code to set up m_node.
+        (DOM::CaretPosition::init): Set m_position directly.
+        (DOM::CaretPosition::isLastInBlock): Updated for name changes.
+        (DOM::CaretPosition::next): Set m_position directly.
+        (DOM::CaretPosition::previous): Set m_position directly.
+        (DOM::CaretPosition::previousCaretPosition): Updated for name changes.
+        (DOM::CaretPosition::nextCaretPosition): Ditto.
+        (DOM::CaretPosition::previousPosition): Ditto.
+        (DOM::CaretPosition::nextPosition): Ditto.
+        (DOM::CaretPosition::atStart): Ditto.
+        (DOM::CaretPosition::atEnd): Ditto.
+        (DOM::CaretPosition::isCandidate): Ditto.
+        (DOM::CaretPosition::debugPosition): Ditto.
+        (DOM::CaretPosition::formatForDebugger): Ditto.
+        (DOM::startOfWord): Ditto.
+        (DOM::endOfWord): Ditto.
+        (DOM::previousParagraphPosition): Ditto.
+        (DOM::nextParagraphPosition): Ditto.
+
+        * khtml/xml/dom_selection.h: Updated names. Added isCaret and isRange.
+        * khtml/xml/dom_selection.cpp:
+        (DOM::Selection::modifyMovingRightForward): Updated for name changes.
+        (DOM::Selection::modifyMovingLeftBackward): Ditto.
+        (DOM::Selection::modify): Ditto.
+        (DOM::Selection::expandUsingGranularity): Ditto.
+        (DOM::Selection::xPosForVerticalArrowNavigation): Ditto.
+        (DOM::Selection::toRange): Ditto.
+        (DOM::Selection::layoutCaret): Ditto.
+        (DOM::Selection::needsCaretRepaint): Ditto.
+        (DOM::Selection::validate): Ditto.
+        (DOM::startOfFirstRunAt): Ditto.
+        (DOM::endOfLastRunAt): Ditto.
+        (DOM::selectionForLine): Ditto.
+        (DOM::Selection::formatForDebugger): Ditto.
+
+        * khtml/ecma/kjs_window.cpp:
+        (Selection::get): Updated for name changes.
+        (Selection::toString): Ditto.
+        * khtml/editing/htmlediting_impl.cpp:
+        (khtml::debugPosition): Ditto.
+        (khtml::StyleChange::init): Ditto.
+        (khtml::StyleChange::currentlyHasStyle): Ditto.
+        (khtml::CompositeEditCommandImpl::deleteSelection): Ditto.
+        (khtml::CompositeEditCommandImpl::deleteUnrenderedText): Ditto.
+        (khtml::ApplyStyleCommandImpl::doApply): Ditto.
+        (khtml::DeleteSelectionCommandImpl::doApply): Ditto.
+        (khtml::InputNewlineCommandImpl::doApply): Ditto.
+        (khtml::InputTextCommandImpl::prepareForTextInsertion): Ditto.
+        (khtml::InputTextCommandImpl::input): Ditto.
+        (khtml::ReplaceSelectionCommandImpl::doApply): Ditto.
+        (khtml::MoveSelectionCommandImpl::doApply): Ditto.
+        (khtml::TypingCommandImpl::doApply): Ditto.
+        (khtml::TypingCommandImpl::markMisspellingsAfterTyping): Ditto.
+        (khtml::TypingCommandImpl::issueCommandForDeleteKey): Ditto.
+        * khtml/editing/jsediting.cpp:
+        (enabledAnySelection): Ditto.
+        (enabledRangeSelection): Ditto.
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::hasSelection): Ditto.
+        (KHTMLPart::setFocusNodeIfNeeded): Ditto.
+        (KHTMLPart::selectionLayoutChanged): Ditto.
+        (KHTMLPart::timerEvent): Ditto.
+        (KHTMLPart::isPointInsideSelection): Ditto.
+        (KHTMLPart::selectClosestWordFromMouseEvent): Ditto.
+        (KHTMLPart::handleMousePressEventTripleClick): Ditto.
+        (KHTMLPart::handleMousePressEventSingleClick): Ditto.
+        (KHTMLPart::handleMouseMoveEventSelection): Ditto.
+        (KHTMLPart::khtmlMouseReleaseEvent): Ditto.
+        (KHTMLPart::selectionHasStyle): Ditto.
+        (KHTMLPart::selectionComputedStyle): Ditto.
+        * khtml/xml/dom_docimpl.cpp: (DocumentImpl::updateSelection): Ditto.
+        * khtml/xml/dom_positioniterator.cpp:
+        (DOM::PositionIterator::peekPrevious): Ditto.
+        (DOM::PositionIterator::peekNext): Ditto.
+        (DOM::PositionIterator::atStart): Ditto.
+        (DOM::PositionIterator::atEnd): Ditto.
+        * khtml/xml/dom_positioniterator.h:
+        (DOM::PositionIterator::isEmpty): Ditto.
+        * kwq/KWQRenderTreeDebug.cpp:
+        (writeSelection): Ditto.
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge editableDOMRangeForPoint:]): Ditto.
+        (-[WebCoreBridge deleteSelection]): Ditto.
+        (-[WebCoreBridge ensureCaretVisible]): Ditto.
+        (-[WebCoreBridge rangeOfCharactersAroundCaret]): Ditto.
+
+2004-09-20  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
         - fixed <rdar://problem/3808073> find is broken
 
         * khtml/misc/khtml_text_operations.h: Add m_pastEndNode and change name of m_endNode to

@@ -87,11 +87,13 @@ using DOM::HTMLFormElementImpl;
 using DOM::HTMLFrameElementImpl;
 using DOM::HTMLGenericFormElementImpl;
 using DOM::HTMLTableCellElementImpl;
+using DOM::LeftWordIfOnBoundary;
 using DOM::Node;
 using DOM::NodeImpl;
 using DOM::Position;
 using DOM::Range;
 using DOM::RangeImpl;
+using DOM::RightWordIfOnBoundary;
 using DOM::Selection;
 using DOM::TextImpl;
 using DOM::UPSTREAM;
@@ -853,16 +855,16 @@ void KWQKHTMLPart::unfocusWindow()
 
 void KWQKHTMLPart::jumpToSelection()
 {
-    // Assumes that selection will only ever be text nodes. This is currently
+    // Assumes that selection start will only ever be a text node. This is currently
     // true, but will it always be so?
-    if (d->m_selection.start().notEmpty()) {
+    if (d->m_selection.start().isNotNull()) {
         RenderText *rt = dynamic_cast<RenderText *>(d->m_selection.start().node()->renderer());
         if (rt) {
             int x = 0, y = 0;
             rt->posOfChar(d->m_selection.start().offset(), x, y);
             // The -50 offset is copied from KHTMLPart::findTextNext, which sets the contents position
             // after finding a matched text string.
-           d->m_view->setContentsPos(x - 50, y - 50);
+            d->m_view->setContentsPos(x - 50, y - 50);
         }
 /*
         Something like this would fix <rdar://problem/3154293>: "Find Next should not scroll page if the next target is already visible"
@@ -903,7 +905,7 @@ QString KWQKHTMLPart::advanceToNextMisspelling(bool startBeforeSelection)
             CaretPosition start = selection().start();
             // We match AppKit's rule: Start 1 character before the selection.
             CaretPosition oneBeforeStart = start.previous();
-            setStart(searchRange, oneBeforeStart.notEmpty() ? oneBeforeStart : start);
+            setStart(searchRange, oneBeforeStart.isNotNull() ? oneBeforeStart : start);
         } else {
             setStart(searchRange, CaretPosition(selection().end()));
         }
@@ -928,7 +930,7 @@ QString KWQKHTMLPart::advanceToNextMisspelling(bool startBeforeSelection)
     // forward by a word happens to do the trick.
     if (startedWithSelection) {
         CaretPosition oneBeforeStart= start(searchRange).previous();
-        if (oneBeforeStart.notEmpty()) {
+        if (oneBeforeStart.isNotNull()) {
             setStart(searchRange, endOfWord(oneBeforeStart));
         } // else we were already at the start of the editable node
     }
@@ -3308,12 +3310,12 @@ NSFont *KWQKHTMLPart::fontForSelection(bool *hasMultipleFonts) const
 
     if (!xmlDocImpl())
         return nil;
-    if (d->m_selection.state() == Selection::NONE)
+    if (d->m_selection.isNone())
         return nil;
     
-    if (d->m_selection.state() == Selection::CARET) {
+    if (d->m_selection.isCaret()) {
         Position pos(d->m_selection.start().equivalentDeepPosition().closestRenderedPosition(UPSTREAM));
-        ASSERT(pos.notEmpty());
+        ASSERT(pos.isNotNull());
         if (!pos.inRenderedContent())
             return nil;
         NodeImpl *node = pos.node();
@@ -3421,11 +3423,11 @@ void KWQKHTMLPart::setMediaType(const QString &type)
 
 void KWQKHTMLPart::setSelectionFromNone()
 {
-    //    Put the caret someplace if the selection is empty and the part is editable.
-    //    This has the effect of flashing the caret in a contentEditable view automatically 
-    //    without requiring the programmer to set a selection explicitly.
+    // Put the caret someplace if the selection is empty and the part is editable.
+    // This has the effect of flashing the caret in a contentEditable view automatically 
+    // without requiring the programmer to set a selection explicitly.
     DocumentImpl *doc = xmlDocImpl();
-    if (doc && selection().state() == Selection::NONE && isContentEditable()) {
+    if (doc && selection().isNone() && isContentEditable()) {
         NodeImpl *node = doc->documentElement();
         while (node) {
             // Look for a block flow, but skip over the HTML element, since we really
@@ -3751,7 +3753,7 @@ void KWQKHTMLPart::markMisspellingsInSelection(const Selection &selection)
 {
     // No work to do if there is no selection or continuous spell check is off, or the
     // selection start position is not now rendered (maybe it has been deleted).
-    if (selection.state() == Selection::NONE || 
+    if (selection.isNone() || 
         ![_bridge isContinuousSpellCheckingEnabled] || 
         !selection.start().inRenderedContent())
         return;
@@ -3767,7 +3769,7 @@ void KWQKHTMLPart::markMisspellingsInSelection(const Selection &selection)
     if (end == selection.start())
         end = endOfWord(end.next());
     Selection s(startOfWord(selection.start()), end);
-    if (s.state() == Selection::NONE)
+    if (s.isNone())
         return;
     // Change to this someday to spell check the entire selection.
     // The rest of this function is prepared to handle finding multiple misspellings in a 
@@ -3827,10 +3829,10 @@ void KWQKHTMLPart::updateSpellChecking()
         if ([_bridge isContinuousSpellCheckingEnabled]) {
             // This only erases a marker in the first word of the selection.  Perhaps peculiar, but it
             // matches AppKit.
-            CaretPosition start(startOfWord(selection().start()));
-            CaretPosition end(endOfWord(selection().start()));
+            CaretPosition start(startOfWord(selection().start(), LeftWordIfOnBoundary));
+            CaretPosition end(endOfWord(selection().start(), LeftWordIfOnBoundary));
             if (end == selection().start())
-                end = endOfWord(end.next());
+                end = endOfWord(end, RightWordIfOnBoundary);
             Selection selection(start, end);
             xmlDocImpl()->removeMarker(selection.toRange(), DocumentMarker::Spelling);
         }

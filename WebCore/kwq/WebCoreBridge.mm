@@ -1590,7 +1590,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 - (DOMRange *)editableDOMRangeForPoint:(NSPoint)point
 {
     Position position = [self _positionForPoint:point];
-    return position.isEmpty() ? nil : [DOMRange _rangeWithImpl:Selection(position).toRange().handle()];
+    return position.isNull() ? nil : [DOMRange _rangeWithImpl:Selection(position).toRange().handle()];
 }
 
 - (void)deleteSelection
@@ -1599,7 +1599,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
         return;
     
     Selection selection(_part->selection());
-    if (selection.state() != Selection::RANGE)
+    if (!selection.isRange())
         return;
     
     DeleteSelectionCommand cmd(_part->xmlDocImpl());
@@ -1642,7 +1642,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 - (void)ensureCaretVisible
 {
-    if (!_part || _part->selection().state() != Selection::CARET)
+    if (!_part || !_part->selection().isCaret())
         return;
     
     KHTMLView *v = _part->view();
@@ -1802,7 +1802,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
         return nil;
         
     Selection selection(_part->selection());
-    if (selection.state() != Selection::CARET)
+    if (!selection.isCaret())
         return nil;
 
     CaretPosition caret(selection.start());

@@ -1251,13 +1251,13 @@ void DocumentImpl::updateSelection()
     
     RenderCanvas *canvas = static_cast<RenderCanvas*>(m_render);
     Selection s = part()->selection();
-    if (s.isEmpty() || s.state() == Selection::CARET) {
+    if (!s.isRange()) {
         canvas->clearSelection();
     }
     else {
         Position startPos(s.start());
         Position endPos(s.end());
-        if (startPos.notEmpty() && endPos.notEmpty()) {
+        if (startPos.isNotNull() && endPos.isNotNull()) {
             RenderObject *startRenderer = startPos.node()->renderer();
             RenderObject *endRenderer = endPos.node()->renderer();
             static_cast<RenderCanvas*>(m_render)->setSelection(startRenderer, startPos.offset(), endRenderer, endPos.offset());

@@ -36,24 +36,20 @@ class NodeImpl;
 class CaretPosition
 {
 public:
-    CaretPosition() : m_node(0), m_offset(0) {}
+    CaretPosition() { }
     CaretPosition(NodeImpl *, long offset);
     CaretPosition(const Position &);
-    CaretPosition(const CaretPosition &);
-    ~CaretPosition();
-
-    CaretPosition &operator=(const CaretPosition &o);
 
     bool isLastInBlock() const;
 
     CaretPosition next() const;
     CaretPosition previous() const;
 
-    bool isEmpty() const { return m_node == 0; }
-    bool notEmpty() const { return m_node != 0; }
+    bool isNull() const { return m_position.isNull(); }
+    bool isNotNull() const { return m_position.isNotNull(); }
 
-    Position position() const { return rangeCompliantEquivalent(deepEquivalent()); }
-    Position deepEquivalent() const { return Position(node(), offset()); }
+    Position position() const { return rangeCompliantEquivalent(m_position); }
+    Position deepEquivalent() const { return m_position; }
 
     friend inline bool operator==(const CaretPosition &a, const CaretPosition &b);
 
@@ -65,10 +61,9 @@ public:
     
 private:
     void init(const Position &);
-    void setPosition(const Position &);
 
-    NodeImpl *node() const { return m_node; }
-    long offset() const { return m_offset; }
+    NodeImpl *node() const { return m_position.node(); }
+    long offset() const { return m_position.offset(); }
 
     static Position deepEquivalent(const Position &);
     static Position rangeCompliantEquivalent(const Position &);
@@ -87,13 +82,12 @@ private:
 
     static bool isCandidate(const Position &);
     
-    NodeImpl *m_node;
-    long m_offset;
+    Position m_position;
 };
 
 inline bool operator==(const CaretPosition &a, const CaretPosition &b)
 {
-    return a.node() == b.node() && a.offset() == b.offset();
+    return a.m_position == b.m_position;
 }
 
 inline bool operator!=(const CaretPosition &a, const CaretPosition &b)
