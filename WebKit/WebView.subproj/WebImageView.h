@@ -12,7 +12,7 @@
 @interface WebImageView : NSView <WebDocumentView>
 {
     WebImageRepresentation *representation;
-    BOOL didSetFrame;
+    BOOL needsLayout;
 }
 
 + (NSArray *)supportedImageMIMETypes;

@@ -1,3 +1,16 @@
+2003-07-03  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3291566>: Aborting standalone image load makes image directory page unusable
+
+        Reviewed by john.
+
+        * WebKit.pbproj/project.pbxproj: Xcode-ified WebKit.pbproj
+        * WebView.subproj/WebImageView.h:
+        * WebView.subproj/WebImageView.m:
+        (-[WebImageView drawRect:]): layout if we need to, fill with white if we don't have an image yet
+        (-[WebImageView setNeedsLayout:]): set the bit
+        (-[WebImageView layout]): if we don't have an image, the frame size is the visible area so we draw white over the previous web page
+
 2003-07-02  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Ken.

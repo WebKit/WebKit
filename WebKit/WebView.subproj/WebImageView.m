@@ -51,7 +51,17 @@
 
 - (void)drawRect:(NSRect)rect
 {
-    [[representation image] beginAnimationInRect:[self frame] fromRect:[self frame]];
+    if (needsLayout) {
+        [self layout];
+    }
+    
+    NSImage *image = [representation image];
+    if (image) {
+        [[representation image] beginAnimationInRect:[self frame] fromRect:[self frame]];
+    } else {
+        [[NSColor whiteColor] set];
+        NSRectFill(rect);
+    }
 }
 
 - (void)setDataSource:(WebDataSource *)dataSource
@@ -65,6 +75,7 @@
 
 - (void)setNeedsLayout: (BOOL)flag
 {
+    needsLayout = flag;
 }
 
 - (void)layout
@@ -73,8 +84,11 @@
     if (image) {
         [self setFrameSize:[image size]];
     } else {
-        [self setFrameSize:NSMakeSize(0, 0)];
+        NSRect superFrame = [[self _web_superviewOfClass:[WebFrameView class]] frame];
+        [self setFrame:NSMakeRect(0, 0, NSWidth(superFrame), NSHeight(superFrame))];
     }
+    
+    needsLayout = NO;
 }
 
 - (void)viewWillMoveToHostWindow:(NSWindow *)hostWindow
