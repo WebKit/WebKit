@@ -52,6 +52,7 @@ using khtml::Decoder;
   getAllResponseHeaders	XMLHttpRequest::GetAllResponseHeaders	DontDelete|Function 0
   getResponseHeader	XMLHttpRequest::GetResponseHeader	DontDelete|Function 1
   open			XMLHttpRequest::Open			DontDelete|Function 5
+  overrideMimeType      XMLHttpRequest::OverrideMIMEType        DontDelete|Function 1
   send			XMLHttpRequest::Send			DontDelete|Function 1
   setRequestHeader	XMLHttpRequest::SetRequestHeader	DontDelete|Function 2
 @end
@@ -135,11 +136,17 @@ Value XMLHttpRequest::getValueProperty(ExecState *exec, int token) const
       return Undefined();
     }
     if (!createdDocument) {
-      QString mimeType = "text/xml";
+      QString mimeType;
       
-      Value header = getResponseHeader("Content-Type");
-      if (header.type() != UndefinedType) {
-	mimeType = QStringList::split(";", header.toString(exec).qstring())[0].stripWhiteSpace();
+      if (MIMETypeOverride.isEmpty()) {
+        Value header = getResponseHeader("Content-Type");
+        if (header.type() == UndefinedType) {
+          mimeType = "text/xml";
+        } else {
+	  mimeType = QStringList::split(";", header.toString(exec).qstring())[0].stripWhiteSpace();
+        }
+      } else {
+        mimeType = MIMETypeOverride;
       }
       
       if (mimeType == "text/xml" || mimeType == "application/xml" || mimeType == "application/xhtml+xml") {
@@ -646,6 +653,12 @@ Value XMLHttpRequestProtoFunc::tryCall(ExecState *exec, Object &thisObj, const L
     
     request->setRequestHeader(args[0].toString(exec).qstring(), args[1].toString(exec).qstring());
     
+    return Undefined();
+  case XMLHttpRequest::OverrideMIMEType:
+    if (args.size() != 1) {
+      return Undefined();
+    }
+    request->MIMETypeOverride = args[0].toString(exec).qstring();
     return Undefined();
   }
 

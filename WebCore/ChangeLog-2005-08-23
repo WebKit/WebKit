@@ -1,3 +1,17 @@
+2004-04-25  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave.
+
+        - fixed <rdar://problem/3633091>: "add overrideMimeType function to XMLHttpRequest"
+
+        * khtml/ecma/xmlhttprequest.cpp:
+        (KJS::XMLHttpRequest::getValueProperty): Add logic to override MIME type if
+        OverrideMIMEType was called.
+        (KJS::XMLHttpRequestProtoFunc::tryCall): Store the MIME type when overrideMimeType is called.
+        * khtml/ecma/xmlhttprequest.h: Add OverrideMIMEType to the XMLHttpRequest property enum,
+        and also add a MIMETypeOverride data member to the class.
+        * khtml/ecma/xmlhttprequest.lut.h: Regenerated.
+
 2004-04-25  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
