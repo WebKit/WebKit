@@ -223,6 +223,7 @@
         viewTypes = [[NSMutableDictionary alloc] initWithObjectsAndKeys:
             [WebHTMLView class], @"text/html",
             [WebTextView class], @"text/",
+            [WebTextView class], @"application/x-javascript",
             [WebImageView class], @"image/jpeg",
             [WebImageView class], @"image/gif",
             [WebImageView class], @"image/png",

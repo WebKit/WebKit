@@ -347,10 +347,11 @@
     if (!repTypes) {
         repTypes = [[NSMutableDictionary alloc] initWithObjectsAndKeys:
             [WebHTMLRepresentation class], @"text/html",
+            [WebTextRepresentation class], @"text/",
+            [WebTextRepresentation class], @"application/x-javascript",
             [WebImageRepresentation class], @"image/jpeg",
             [WebImageRepresentation class], @"image/gif",
             [WebImageRepresentation class], @"image/png",
-            [WebTextRepresentation class], @"text/",
             nil];
     }
     
