@@ -1,3 +1,7 @@
+2002-06-12  Kenneth Kocienda  <kocienda@apple.com>
+
+	* kwq/kwqdebug.h: Made assertion failure console message bolder and easier to see.
+
 2002-06-11  Darin Adler  <darin@apple.com>
 
 	* kwq/KWQKURL.mm:

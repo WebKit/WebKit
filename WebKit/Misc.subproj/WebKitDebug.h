@@ -83,7 +83,7 @@ void WebKitLog(unsigned int level, const char *file, int line, const char *funct
     do { \
         struct rlimit _rlimit = {RLIM_INFINITY, RLIM_INFINITY}; \
         setrlimit(RLIMIT_CORE, &_rlimit); \
-        fprintf(stderr, "assertion failure at %s:%d %s\n", __FILE__, __LINE__, __PRETTY_FUNCTION__); \
+        fprintf(stderr, "=================\nASSERTION FAILURE at %s:%d %s\n=================\n", __FILE__, __LINE__, __PRETTY_FUNCTION__); \
         raise(SIGQUIT); \
     } while (0)
 
