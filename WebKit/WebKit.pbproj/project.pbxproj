@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 36;
+	objectVersion = 38;
 	objects = {
 		014CEA440018CDF011CA2923 = {
 			buildRules = (
@@ -68,6 +68,7 @@
 			buildStyles = (
 				014CEA440018CDF011CA2923,
 				014CEA450018CDF011CA2923,
+				F58C8A07025BD3BC018635CA,
 			);
 			isa = PBXProject;
 			knownRegions = (
@@ -1125,6 +1126,21 @@
 					Public,
 				);
 			};
+		};
+		F58C8A07025BD3BC018635CA = {
+			buildRules = (
+			);
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				DEBUGGING_SYMBOLS = YES;
+				DEBUG_CFLAGS = "";
+				FRAMEWORK_SEARCH_PATHS = "@executable_path/../Frameworks";
+				INSTALL_PATH = "@executable_path/../Frameworks";
+				OPTIMIZATION_CFLAGS = "";
+				SKIP_INSTALL = YES;
+			};
+			isa = PBXBuildStyle;
+			name = Unoptimized;
 		};
 		F59EAE3E0253C7EE018635CA = {
 			isa = PBXFileReference;

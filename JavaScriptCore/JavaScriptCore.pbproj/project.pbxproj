@@ -66,6 +66,7 @@
 			buildStyles = (
 				014CEA440018CDF011CA2923,
 				014CEA450018CDF011CA2923,
+				F58C8A1D025BD408018635CA,
 			);
 			isa = PBXProject;
 			mainGroup = 0867D691FE84028FC02AAC07;
@@ -412,6 +413,30 @@
 //102
 //103
 //104
+//F50
+//F51
+//F52
+//F53
+//F54
+		F58C8A1D025BD408018635CA = {
+			buildRules = (
+			);
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				DEBUGGING_SYMBOLS = YES;
+				DEBUG_CFLAGS = "";
+				INSTALL_PATH = "@executable_path/../Frameworks";
+				OPTIMIZATION_CFLAGS = "";
+				SKIP_INSTALL = YES;
+			};
+			isa = PBXBuildStyle;
+			name = Unoptimized;
+		};
+//F50
+//F51
+//F52
+//F53
+//F54
 //F60
 //F61
 //F62

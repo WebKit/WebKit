@@ -1,3 +1,8 @@
+2002-04-04  Darin Adler  <darin@apple.com>
+
+	* JavaScriptCore.pbproj/project.pbxproj: Add an Unoptimized build
+	style: exactly like Development except without the -O.
+
 2002-04-03  Darin Adler  <darin@apple.com>
 
 	* kjs/Makefile.am: Gratuitous cleanup.
