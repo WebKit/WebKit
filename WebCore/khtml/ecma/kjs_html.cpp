@@ -3592,6 +3592,7 @@ Value KJS::Context2DFunction::tryCall(ExecState *exec, Object &thisObj, const Li
                 exec->setException(err);
                 return err;
             }
+            // FIXME:  Implement
             renderer->setNeedsImageUpdate();
             break;
         }
@@ -3601,6 +3602,7 @@ Value KJS::Context2DFunction::tryCall(ExecState *exec, Object &thisObj, const Li
                 exec->setException(err);
                 return err;
             }
+            // FIXME:  Implement
             renderer->setNeedsImageUpdate();
             break;
         }
@@ -3633,7 +3635,7 @@ const ClassInfo KJS::Context2D::info = { "Context2D", 0, &Context2DTable, 0 };
   addQuadraticCurveToPoint Context2D::AddQuadraticCurveToPoint    DontDelete|Function 4
   addBezierCurveToPoint    Context2D::AddBezierCurveToPoint       DontDelete|Function 6
   clearRect                Context2D::ClearRect                   DontDelete|Function 4
-  drawImage                Context2D::DrawImge                    DontDelete|Function 6
+  drawImage                Context2D::DrawImage                    DontDelete|Function 6
   drawImageFromRect        Context2D::DrawImageFromRect           DontDelete|Function 10
 @end
 */

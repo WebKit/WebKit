@@ -256,7 +256,7 @@ namespace KJS {
         FillPath, StrokePath, 
         MoveToPoint, AddLineToPoint, AddQuadraticCurveToPoint, AddBezierCurveToPoint,
         ClearRect,
-        drawImage, drawImageFromRect };
+        DrawImage, DrawImageFromRect };
 
     DOM::HTMLElementImpl *_element;
   };

@@ -1,5 +1,16 @@
 2004-05-26  Richard Williamson   <rjw@apple.com>
 
+	Fixed build snafu.
+
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::Context2DFunction::tryCall):
+        * khtml/ecma/kjs_html.h:
+        (KJS::Context2D::):
+        * khtml/ecma/kjs_html.lut.h:
+        (KJS::):
+
+2004-05-26  Richard Williamson   <rjw@apple.com>
+
 	Part 2 of the new <CANVAS> tag implementation.  This adds the 
 	basic machinery and draw operations for the <CANVAS> tag.  Pretty cool.  
 
@@ -18,6 +29,16 @@
         ...
 
         <canvas id="canvas1" width="400" height="400">
+
+Currently supported operations on the 2D context are:
+
+Save, Restore,
+Scale, Rotate, Translate,
+BeginPath, ClosePath,
+SetStrokeColor, SetFillColor, SetLineWidth, SetLineCap, SetLineJoin, SetMiterLimit,
+FillPath, StrokePath,
+MoveToPoint, AddLineToPoint, AddQuadraticCurveToPoint, AddBezierCurveToPoint,
+ClearRect
 
 	More to come.
 
