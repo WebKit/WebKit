@@ -407,12 +407,12 @@ bool HTMLFormElementImpl::prepareSubmit()
     m_insubmit = false;
 
     if ( m_doingsubmit )
-        submit();
+        submit(true);
 
     return m_doingsubmit;
 }
 
-void HTMLFormElementImpl::submit(  )
+void HTMLFormElementImpl::submit( bool activateSubmitButton )
 {
     if ( m_insubmit ) {
         m_doingsubmit = true;
@@ -426,7 +426,7 @@ void HTMLFormElementImpl::submit(  )
 #endif
 
     HTMLGenericFormElementImpl* firstSuccessfulSubmitButton = 0;
-    bool needButtonActivation = true;	// do we need to activate a submit button?
+    bool needButtonActivation = activateSubmitButton;	// do we need to activate a submit button?
     
     KHTMLView *view = getDocument()->view();
     for (QPtrListIterator<HTMLGenericFormElementImpl> it(formElements); it.current(); ++it) {

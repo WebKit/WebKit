@@ -91,7 +91,7 @@ public:
     void removeFormElement(HTMLGenericFormElementImpl *);
 
     bool prepareSubmit();
-    void submit();
+    void submit(bool activateSubmitButton);
     void reset();
 
     void setMalformed(bool malformed) { m_malformed = malformed; }

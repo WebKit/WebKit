@@ -275,7 +275,7 @@ void HTMLFormElement::setTarget( const DOMString &value )
 
 void HTMLFormElement::submit(  )
 {
-    if(impl) static_cast<HTMLFormElementImpl*>(impl)->submit(  );
+    if(impl) static_cast<HTMLFormElementImpl*>(impl)->submit( false );
 }
 
 void HTMLFormElement::reset(  )

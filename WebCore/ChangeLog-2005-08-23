@@ -1,3 +1,18 @@
+2003-01-02  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej and Trey.
+
+	- fixed 3138063 -- REGRESSION: JavaScript-submitted form activates input type=image (webmail.mac.com)
+
+	JavaScript-submitted forms must not get a submit button activated as return-key-submitted ones do.
+
+        * khtml/html/html_formimpl.h: Add boolean activateSubmitButton parameter to submit.
+        * khtml/html/html_formimpl.cpp:
+        (HTMLFormElementImpl::prepareSubmit): Pass true for activateSubmitButton.
+        (HTMLFormElementImpl::submit): Only activate a button if activateSubmitButton is true.
+
+        * khtml/dom/html_form.cpp: (HTMLFormElement::submit): Pass false for activateSubmitButton.
+
 2003-01-02  David Hyatt  <hyatt@apple.com>
 
 	Fix for the 3137790.   This patch passes the mouse event x and y as 
