@@ -1,3 +1,14 @@
+2003-08-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Richard.
+
+        - fixed 3298153 -- get "screen font while printing" error, bad stuff happens after that (Sherlock, Safari)
+
+        * WebView.subproj/WebHTMLView.m: (-[WebHTMLView drawRect:]):
+        If we find ourselves in drawRect with the wrong printing mode, that usually
+        means we're being printed as part of some larger print process, so do the
+        layout in printing mode.
+
 2003-08-04  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3360977>: REGRESSION (7B28-7B29): main webview rejects drop of doc icon from BBEdit

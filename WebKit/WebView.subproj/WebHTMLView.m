@@ -27,6 +27,10 @@
 #import <AppKit/NSResponder_Private.h>
 #import <CoreGraphics/CGContextGState.h>
 
+@interface WebHTMLView (WebHTMLViewPrivate)
+- (void)_setPrinting:(BOOL)printing pageWidth:(float)pageWidth;
+@end
+
 @interface NSArray (WebHTMLView)
 - (void)_web_makePluginViewsPerformSelector:(SEL)selector withObject:(id)object;
 @end
@@ -518,11 +522,17 @@
 {
     LOG(View, "%@ drawing", self);
     
-    WebTextRendererFactory *textRendererFactory = [WebTextRendererFactory sharedFactory];
-    
     BOOL subviewsWereSetAside = _private->subviewsSetAside;
     if (subviewsWereSetAside) {
         [self _restoreSubviews];
+    }
+    
+    // This helps when we print as part of a larger print process.
+    // If the WebHTMLView itself is what we're printing, then we will never have to do this.
+    BOOL wasInPrintingMode = _private->printing;
+    BOOL isPrinting = ![NSGraphicsContext currentContextDrawingToScreen];
+    if (wasInPrintingMode != isPrinting) {
+        [self _setPrinting:isPrinting pageWidth:0];
     }
     
     if ([[self _bridge] needsLayout]) {
@@ -561,16 +571,19 @@
     [(WebClipView *)[self superview] setAdditionalClip:rect];
 
     NS_DURING {
-        NSView *focusView = [NSView focusView];
-        if ([WebTextRenderer shouldBufferTextDrawing] && focusView)
-            [textRendererFactory startCoalesceTextDrawing];
+        WebTextRendererFactory *textRendererFactoryIfCoalescing = nil;
+        if ([WebTextRenderer shouldBufferTextDrawing] && [NSView focusView]) {
+            textRendererFactoryIfCoalescing = [WebTextRendererFactory sharedFactory];
+            [textRendererFactoryIfCoalescing startCoalesceTextDrawing];
+        }
 
         //double start = CFAbsoluteTimeGetCurrent();
         [[self _bridge] drawRect:rect];
         //LOG(Timing, "draw time %e", CFAbsoluteTimeGetCurrent() - start);
 
-        if ([WebTextRenderer shouldBufferTextDrawing] && focusView)
-            [textRendererFactory endCoalesceTextDrawing];
+        if (textRendererFactoryIfCoalescing != nil) {
+            [textRendererFactoryIfCoalescing endCoalesceTextDrawing];
+        }
 
         [(WebClipView *)[self superview] resetAdditionalClip];
 
@@ -606,6 +619,10 @@
     double thisTime = CFAbsoluteTimeGetCurrent() - start;
     LOG(Timing, "%s draw seconds = %f", widget->part()->baseURL().URL().latin1(), thisTime);
 #endif
+
+    if (wasInPrintingMode != isPrinting) {
+        [self _setPrinting:wasInPrintingMode pageWidth:0];
+    }
 
     if (subviewsWereSetAside) {
         [self _setAsideSubviews];
