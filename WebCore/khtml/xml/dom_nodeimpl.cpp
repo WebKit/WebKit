@@ -1876,11 +1876,6 @@ void NodeBaseImpl::detach()
     NodeImpl::detach();
 }
 
-long NodeBaseImpl::maxOffset() const
-{
-    return childNodeCount();
-}
-
 void NodeBaseImpl::insertedIntoDocument()
 {
     NodeImpl::insertedIntoDocument();

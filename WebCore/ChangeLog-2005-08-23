@@ -1,3 +1,17 @@
+2004-07-30  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+        Fix a large number of editing layout test regressions.
+
+        * khtml/misc/khtml_text_operations.cpp:
+        (khtml::TextIterator::TextIterator): Use a new way to compute the end offset of a node for
+        purposes of text iteration. The end offset is either child count of a node with children,
+        or the maxOffset() of a node that does not.
+        * khtml/xml/dom_nodeimpl.cpp: Remove maxOffset() implementation from NodeBaseImpl. This 
+        conflicted with the usage of this function that is needed for editing.
+        * khtml/xml/dom_nodeimpl.h: Ditto.
+
 2004-07-30  Trey Matteson  <trey@apple.com>
 
 	Next steps for spell checking:  We have data structures for the marked pieces of

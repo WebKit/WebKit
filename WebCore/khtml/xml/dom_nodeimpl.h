@@ -496,7 +496,6 @@ public:
     virtual NodeImpl *addChild(NodeImpl *newChild);
     virtual void attach();
     virtual void detach();
-    virtual long maxOffset() const;
 
     virtual NodeListImpl *getElementsByTagNameNS ( DOMStringImpl* namespaceURI,
                                                    DOMStringImpl* localName );
