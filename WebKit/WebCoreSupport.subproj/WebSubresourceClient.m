@@ -105,10 +105,6 @@
     return [[dataSource controller] userAgentForURL:URL];
 }
 
-- (void)handleDidBeginLoading:(WebResourceHandle *)h
-{
-}
-
 - (void)handleDidReceiveData:(WebResourceHandle *)h data:(NSData *)data
 {
     ASSERT(handle == h);
@@ -116,10 +112,6 @@
 
     [self receivedProgressWithComplete:NO];
     [loader addData:data];
-}
-
-- (void)handleDidCancelLoading:(WebResourceHandle *)h
-{
 }
 
 - (void)handleDidFinishLoading:(WebResourceHandle *)h

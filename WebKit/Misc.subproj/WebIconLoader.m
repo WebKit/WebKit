@@ -109,14 +109,6 @@
     return nil;
 }
 
-- (void)handleDidBeginLoading:(WebResourceHandle *)sender
-{
-}
-
-- (void)handleDidCancelLoading:(WebResourceHandle *)sender
-{
-}
-
 - (void)handleDidFinishLoading:(WebResourceHandle *)sender
 {
     NSImage *icon = [[NSImage alloc] initWithData:_private->resourceData];

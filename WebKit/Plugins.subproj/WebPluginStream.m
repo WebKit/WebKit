@@ -274,10 +274,6 @@
     return [[view webController] userAgentForURL:theURL];
 }
 
-- (void)handleDidBeginLoading:(WebResourceHandle *)handle
-{
-}
-
 - (void)handleDidReceiveData:(WebResourceHandle *)handle data:(NSData *)data
 {
     ASSERT(resource == handle);
@@ -305,10 +301,6 @@
     
     [resource release];
     resource = nil;
-}
-
-- (void)handleDidCancelLoading:(WebResourceHandle *)handle
-{
 }
 
 - (void)cancel

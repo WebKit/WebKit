@@ -115,10 +115,6 @@
     return [[dataSource controller] userAgentForURL:URL];
 }
 
-- (void)handleDidBeginLoading:(WebResourceHandle *)handle
-{
-}
-
 - (void)didCancelWithHandle:(WebResourceHandle *)handle
 {
     if (currentURL == nil) {
@@ -138,10 +134,6 @@
     downloadHandler = nil;
 
     [self didStopLoading];
-}
-
-- (void)handleDidCancelLoading:(WebResourceHandle *)handle
-{
 }
 
 - (void)handleDidFinishLoading:(WebResourceHandle *)handle

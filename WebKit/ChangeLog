@@ -1,5 +1,15 @@
 2002-09-08  Darin Adler  <darin@apple.com>
 
+	Remove empty handleDidBeginLoading and handleDidCancelLoading
+	methods, now that they will never be called.
+
+        * Misc.subproj/WebIconLoader.m:
+        * Plugins.subproj/WebPluginStream.m:
+        * WebCoreSupport.subproj/WebSubresourceClient.m:
+        * WebView.subproj/WebMainResourceClient.m:
+
+2002-09-08  Darin Adler  <darin@apple.com>
+
 	Forgot to save out files from the editor in my last change.
 
         * WebView.subproj/WebDataSource.m:
