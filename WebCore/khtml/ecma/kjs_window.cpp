@@ -1391,7 +1391,13 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
            || KMessageBox::questionYesNo( window->part()->widget(), i18n("Close window?"), i18n("Confirmation Required") ) == KMessageBox::Yes
 #endif
            )
+	// FIXME: we can't ever close a non-JS window until we fix the
+	// history object to really work.
+#if APPLE_CHANGES
+	;
+#else
         (const_cast<Window*>(window))->scheduleClose();
+#endif
     }
     else
     {

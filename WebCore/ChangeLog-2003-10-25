@@ -1,3 +1,15 @@
+2003-01-17  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by John.
+
+	- fixed 3149511 - Blogger.com window closes after update is posted
+	
+        * khtml/ecma/kjs_window.cpp:
+        (WindowFunc::tryCall): For now, don't allow closing the window at
+	all if it wasn't opened by JavaScript, since we don't support the
+	history object and so can't tell if the window has only one
+	history item.
+
 2003-01-17  Darin Adler  <darin@apple.com>
 
         Reviewed by Dave.
