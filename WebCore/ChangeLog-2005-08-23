@@ -1,6 +1,10 @@
-2004-10-25  Ken Kocienda  <kocienda@apple.com>
+2004-10-25  Adele Amchan  <adele@apple.com>
 
-        Reviewed by me
+        Reviewed by me, code change by Darin.
+
+        * khtml/xml/dom_docimpl.cpp: Moved design mode code outside the XSLT ifdef.
+
+2004-10-25  Ken Kocienda  <kocienda@apple.com>
 
         Oops. These two test results changed with my last checkin, for the better.
 
@@ -32,8 +36,6 @@
 
 2004-10-25  Ken Kocienda  <kocienda@apple.com>
 
-        Reviewed by me
-        
         Added some more editing layout tests.
 
         * layout-tests/editing/deleting/delete-ws-fixup-001-expected.txt: Added.
@@ -122,8 +124,6 @@
 === Safari-168 ===
 
 2004-10-22  Ken Kocienda  <kocienda@apple.com>
-
-        Reviewed by me
 
         * WebCore.pbproj/project.pbxproj:
          Add GCC_ENABLE_OBJC_GC and GCC_FAST_OBJC_DISPATCH flags.
@@ -533,8 +533,6 @@
         is non-null before appending.
 
 2004-10-13  Ken Kocienda  <kocienda@apple.com>
-
-        Reviewed by me
 
         Update expected results for improved behavior as a result of fix to 3816768.
     
