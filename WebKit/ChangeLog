@@ -1,5 +1,13 @@
 2003-03-13  John Sullivan  <sullivan@apple.com>
 
+        Reviewed by Trey.
+
+        * English.lproj/StringsNotToBeLocalized.txt:
+	Removed all the bookmarks-related strings that I forgot
+	to remove in my previous checkin.
+
+2003-03-13  John Sullivan  <sullivan@apple.com>
+
 	Removed all the bookmarks code from WebKit; put it
 	in WebBrowser instead.
 
