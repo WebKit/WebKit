@@ -633,7 +633,7 @@
         slideBack:(BOOL)slideBack
 {    
     // Don't allow drags to be accepted by this WebFrameView.
-    [[self _web_parentWebFrameView] unregisterDraggedTypes];
+    [[self _webView] unregisterDraggedTypes];
     
     // Retain this view during the drag because it may be released before the drag ends.
     [self retain];
@@ -670,7 +670,7 @@
     [self mouseUp:fakeEvent];	    // This will also update the mouseover state.
 
     // Reregister for drag types because they were unregistered before the drag.
-    [[self _web_parentWebFrameView] _reregisterDraggedTypes];
+    [[self _webView] _registerDraggedTypes];
     
     // Balance the previous retain from when the drag started.
     [self release];

@@ -9,7 +9,6 @@
 #import <WebKit/WebDynamicScrollBarsView.h>
 #import <WebKit/WebHTMLView.h>
 #import <WebKit/WebImageView.h>
-#import <WebKit/WebNSPasteboardExtras.h>
 #import <WebKit/WebTextView.h>
 #import <WebKit/WebViewPrivate.h>
 
@@ -300,11 +299,6 @@
 - (BOOL)_isMainFrame
 {
     return [_private->controller mainFrame] == [self webFrame];
-}
-
-- (void)_reregisterDraggedTypes
-{
-    [self registerForDraggedTypes:[NSPasteboard _web_dragTypesForURL]];
 }
 
 @end

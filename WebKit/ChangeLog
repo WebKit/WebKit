@@ -1,3 +1,28 @@
+2003-04-18  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: 3139385 - don't accept drags from other frames in the same WebView
+
+        Reviewed by john.
+
+        * WebView.subproj/WebFrameView.m: moved drag destination code from WebFrameView to WebView
+        (-[WebFrameView initWithFrame:]): removed drag registration code
+        * WebView.subproj/WebFrameViewPrivate.h:
+        * WebView.subproj/WebFrameViewPrivate.m:
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView dragImage:at:offset:event:pasteboard:source:slideBack:]): unregister drag types on the WebView
+        (-[WebHTMLView draggedImage:endedAt:operation:]): reregister drag types on the WebView
+        * WebView.subproj/WebImageView.m:
+        (-[WebImageView mouseDragged:]): unregister drag types on the WebView
+        (-[WebImageView draggedImage:endedAt:operation:]): reregister drag types on the WebView
+        * WebView.subproj/WebView.m: moved drag destination code from WebFrameView to WebView
+        (-[WebView draggingEntered:]): moved from WebFrameView
+        (-[WebView prepareForDragOperation:]): ditto
+        (-[WebView performDragOperation:]): ditto
+        (-[WebView concludeDragOperation:]): ditto
+        * WebView.subproj/WebViewPrivate.h:
+        * WebView.subproj/WebViewPrivate.m:
+        (-[WebView _registerDraggedTypes]): ditto
+
 2003-04-17  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Maciej.

@@ -55,8 +55,6 @@ enum {
     [scrollView setHasHorizontalScroller: NO];
     [scrollView setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
     [self addSubview: scrollView];
-
-    [self _reregisterDraggedTypes];
     
     ++WebFrameViewCount;
     
@@ -102,36 +100,6 @@ enum {
 - (BOOL)isDocumentHTML
 {
     return [[self documentView] isKindOfClass:[WebHTMLView class]];
-}
-
-- (NSDragOperation)draggingEntered:(id <NSDraggingInfo>)sender
-{
-    if([[sender draggingPasteboard] _web_bestURL]){
-        return NSDragOperationCopy;
-    }
-
-    return NSDragOperationNone;
-}
-
-- (BOOL)prepareForDragOperation:(id <NSDraggingInfo>)sender
-{
-    return YES;
-}
-
-- (BOOL)performDragOperation:(id <NSDraggingInfo>)sender
-{
-    return YES;
-}
-
-- (void)concludeDragOperation:(id <NSDraggingInfo>)sender
-{
-    NSURL *URL = [[sender draggingPasteboard] _web_bestURL];
-
-    if (URL) {
-	NSURLRequest *request = [[NSURLRequest alloc] initWithURL:URL];
-	[[[self _controller] mainFrame] loadRequest:request];
-	[request release];
-    }
 }
 
 -(BOOL)acceptsFirstResponder

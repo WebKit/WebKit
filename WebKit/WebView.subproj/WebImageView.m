@@ -162,17 +162,17 @@
 - (void)mouseDragged:(NSEvent *)event
 {
     // Don't allow drags to be accepted by this WebFrameView.
-    [[self _web_parentWebFrameView] unregisterDraggedTypes];
+    [[[self _web_parentWebFrameView] _controller] unregisterDraggedTypes];
 
     // Retain this view during the drag because it may be released before the drag ends.
     [self retain];
-    
+
     [self _web_dragPromisedImage:[representation image]
                             rect:[self bounds]
-                                URL:[representation URL]
+                             URL:[representation URL]
                         fileType:[[[representation URL] path] pathExtension]
-                            title:nil
-                            event:event];
+                           title:nil
+                           event:event];
 }
 
 - (NSArray *)namesOfPromisedFilesDroppedAtDestination:(NSURL *)dropDestination
@@ -192,7 +192,7 @@
 - (void)draggedImage:(NSImage *)anImage endedAt:(NSPoint)aPoint operation:(NSDragOperation)operation
 {
     // Reregister for drag types because they were unregistered before the drag.
-    [[self _web_parentWebFrameView] _reregisterDraggedTypes];
+    [[[self _web_parentWebFrameView] _controller] _registerDraggedTypes];
 
     // Balance the previous retain from when the drag started.
     [self release];

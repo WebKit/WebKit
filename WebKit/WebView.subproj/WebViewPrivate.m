@@ -18,6 +18,7 @@
 #import <WebKit/WebFrameViewPrivate.h>
 #import <WebKit/WebHistoryItemPrivate.h>
 #import <WebKit/WebLocationChangeDelegate.h>
+#import <WebKit/WebNSPasteboardExtras.h>
 #import <WebKit/WebPreferencesPrivate.h>
 #import <WebKit/WebResourceLoadDelegate.h>
 #import <WebKit/WebStandardPanelsPrivate.h>
@@ -573,6 +574,11 @@
     WebFrame *frame = [self mainFrame];
 
     return [self _frameForView: aView fromFrame: frame];
+}
+
+- (void)_registerDraggedTypes
+{
+    [self registerForDraggedTypes:[NSPasteboard _web_dragTypesForURL]];
 }
 
 @end

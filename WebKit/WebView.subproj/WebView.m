@@ -19,6 +19,7 @@
 #import <WebKit/WebHTMLView.h>
 #import <WebKit/WebKitErrors.h>
 #import <WebKit/WebKitStatisticsPrivate.h>
+#import <WebKit/WebNSPasteboardExtras.h>
 #import <WebKit/WebNSViewExtras.h>
 #import <WebKit/WebPluginDatabase.h>
 #import <WebKit/WebPolicyDelegate.h>
@@ -119,6 +120,7 @@ NSString *WebElementLinkTitleKey = 		@"WebElementLinkTitle";
     [self addSubview: wv];
     [self _commonInitialization: wv frameName:frameName groupName:groupName];
     [wv release];
+    [self _registerDraggedTypes];
     return self;
 }
 
@@ -463,7 +465,38 @@ NSString *WebElementLinkTitleKey = 		@"WebElementLinkTitle";
     return _private->hostWindow;
 }
 
--(BOOL)acceptsFirstResponder
+
+- (NSDragOperation)draggingEntered:(id <NSDraggingInfo>)sender
+{
+    if([[sender draggingPasteboard] _web_bestURL]){
+        return NSDragOperationCopy;
+    }
+
+    return NSDragOperationNone;
+}
+
+- (BOOL)prepareForDragOperation:(id <NSDraggingInfo>)sender
+{
+    return YES;
+}
+
+- (BOOL)performDragOperation:(id <NSDraggingInfo>)sender
+{
+    return YES;
+}
+
+- (void)concludeDragOperation:(id <NSDraggingInfo>)sender
+{
+    NSURL *URL = [[sender draggingPasteboard] _web_bestURL];
+
+    if (URL) {
+        NSURLRequest *request = [[NSURLRequest alloc] initWithURL:URL];
+        [[self mainFrame] loadRequest:request];
+        [request release];
+    }
+}
+
+- (BOOL)acceptsFirstResponder
 {
     return YES;
 }
