@@ -1,3 +1,12 @@
+2002-10-28  Darin Adler  <darin@apple.com>
+
+	- fixed 3015800 -- bad URL error - unescaped # in URL
+
+	Actually this has to be fixed both here and in NSURLExtras.
+
+        * kwq/KWQKURL.mm: Set the "BadChar" flag for "#" so we escape any
+	"#" characters we see after the first one.
+
 2002-10-27  Darin Adler  <darin@apple.com>
 
 	- fixed 3058845 -- <input type=file> uses hard-coded width of 200

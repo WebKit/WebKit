@@ -71,7 +71,7 @@ static const unsigned char characterClassTable[256] = {
     /* 24 can */ BadChar,   /* 25 em */ BadChar,    /* 26 sub */ BadChar,   /* 27 esc */ BadChar,
     /* 28 fs */ BadChar,    /* 29 gs */ BadChar,    /* 30 rs */ BadChar,    /* 31 us */ BadChar,
     /* 32 sp */ BadChar,    /* 33  ! */ UserInfoChar,
-    /* 34  " */ BadChar,    /* 35  # */ PathSegmentEndChar,    
+    /* 34  " */ BadChar,    /* 35  # */ PathSegmentEndChar | BadChar,    
     /* 36  $ */ UserInfoChar,    /* 37  % */ UserInfoChar | HostnameChar | IPv6Char | BadChar,
     /* 38  & */ UserInfoChar,    /* 39  ' */ UserInfoChar,
     /* 40  ( */ UserInfoChar,    /* 41  ) */ UserInfoChar,    
