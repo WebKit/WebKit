@@ -1,3 +1,14 @@
+2002-09-05  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed 3021365 - Crash failing to load plugin from local file
+
+        * Plugins.subproj/WebPluginStream.h:
+        * Plugins.subproj/WebPluginStream.m:
+        (-[WebNetscapePluginStream receivedData:withHandle:]):
+        (-[WebNetscapePluginStream receivedError:]):
+        (-[WebNetscapePluginStream receivedData:withDataSource:]):
+        (-[WebNetscapePluginStream handleDidReceiveData:data:]):
+
 2002-09-05  Ken Kocienda  <kocienda@apple.com>
 
         The first use of the WebResourceResponse object. This is just a baby step, though.

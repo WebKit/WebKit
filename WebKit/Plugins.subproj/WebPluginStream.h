@@ -21,7 +21,6 @@
     int32 offset;
     NPStream npStream;
     NSString *path;
-    NSString *mimeType;
     NSDictionary *attributes;
     
     void *notifyData;

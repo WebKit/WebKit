@@ -3,6 +3,7 @@
 	Copyright (c) 2002, Apple, Inc. All rights reserved.
 */
 
+#import <WebKit/npapi.h>
 #import <WebKit/WebLoadProgress.h>
 #import <WebKit/WebPluginStream.h>
 #import <WebKit/WebView.h>
@@ -16,10 +17,9 @@
 #import <WebFoundation/WebResourceRequest.h>
 
 @interface WebNetscapePluginStream (ClassInternal)
-- (void)receivedData:(NSData *)data;
+- (void)receivedData:(NSData *)data withHandle:(WebResourceHandle *)handle;
 - (void)receivedError:(NPError)error;
 - (void)finishedLoadingWithData:(NSData *)data;
-- (void)setUpGlobalsWithHandle:(WebResourceHandle *)handle;
 @end
 
 @interface WebNetscapePluginStream (WebResourceClient) <WebResourceClient>
@@ -113,33 +113,40 @@
     view = nil;
 }
 
-- (void)setUpGlobalsWithHandle:(WebResourceHandle *)handle
-{
-    NSString *URLString = [[handle URL] absoluteString];
-    char *cURL = (char *)malloc([URLString cStringLength]+1);
-    [URLString getCString:cURL];
-
-    npStream.ndata = self;
-    npStream.URL = cURL;
-    npStream.end = 0;
-    npStream.lastmodified = 0;
-    npStream.notifyData = notifyData;
-    offset = 0;
-    
-    mimeType = [[handle contentType] retain];
-}
-
-- (void)receivedData:(NSData *)data
-{
-    int32 numBytes;
-    NPError npErr;
-    
+- (void)receivedData:(NSData *)data withHandle:(WebResourceHandle *)handle
+{    
     if(isFirstChunk){
-        isFirstChunk = NO;
+
+        NSString *mimeType = [handle contentType];
+        NSString *URLString = [[handle URL] absoluteString];
+        char *cURL = (char *)malloc([URLString cStringLength]+1);
+        [URLString getCString:cURL];
+
+        NSNumber *timeInterval = [handle attributeForKey:@"Last-Modified"];
+        uint32 lastModified;
         
-        //FIXME: Need a way to check if stream is seekable
+        if(timeInterval){
+            NSTimeInterval lastModifiedInterval = [[NSDate dateWithTimeIntervalSinceReferenceDate:[timeInterval doubleValue]] timeIntervalSince1970];
+            if(lastModifiedInterval < 0){
+                lastModified = 0;
+            }else{
+                lastModified = (uint32)lastModifiedInterval;
+            }
+        }else{
+            lastModified = 0;
+        }
         
-        npErr = NPP_NewStream(instance, (char *)[mimeType cString], &npStream, NO, &transferMode);
+        npStream.ndata = self;
+        npStream.URL = cURL;
+        npStream.end = [handle contentLength];
+        npStream.lastmodified = lastModified;
+        npStream.notifyData = notifyData;
+        
+        offset = 0;
+        
+        // FIXME: Need a way to check if stream is seekable
+        
+        NPError npErr = NPP_NewStream(instance, (char *)[mimeType cString], &npStream, NO, &transferMode);
         WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_NewStream: %d %s\n", npErr, [[URL absoluteString] cString]);
         
         if(npErr != NPERR_NO_ERROR){
@@ -158,6 +165,8 @@
             [self stop];
             return;
         }
+        
+        isFirstChunk = NO;
     }
 
     if(transferMode == NP_ASFILE || transferMode == NP_ASFILEONLY) {
@@ -166,7 +175,7 @@
     }
 
     if(transferMode != NP_ASFILEONLY){
-        numBytes = NPP_WriteReady(instance, &npStream);
+        int32 numBytes = NPP_WriteReady(instance, &npStream);
         WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_WriteReady bytes=%lu\n", numBytes);
         
         numBytes = NPP_Write(instance, &npStream, offset, [data length], (void *)[data bytes]);
@@ -178,10 +187,11 @@
 
 - (void)receivedError:(NPError)error
 {
-    NPError npErr;
-    
-    npErr = NPP_DestroyStream(instance, &npStream, error);
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_DestroyStream: %d\n", npErr);
+    // Don't report error before we've called NPP_NewStream
+    if(!isFirstChunk){
+        NPError npErr = NPP_DestroyStream(instance, &npStream, error);
+        WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_DestroyStream: %d\n", npErr);
+    }
 }
 
 - (void)finishedLoadingWithData:(NSData *)data
@@ -229,10 +239,9 @@
         instance = [view pluginInstance];
 
         [self getFunctionPointersFromPluginView:view];
-        [self setUpGlobalsWithHandle:[dataSource _mainHandle]];
     }
-    
-    [self receivedData:data];
+
+    [self receivedData:data withHandle:[dataSource _mainHandle]];
 }
 
 - (void)receivedError:(WebError *)error withDataSource:(WebDataSource *)dataSource
@@ -269,10 +278,7 @@
 {
     WebController *webController = [view webController];
 
-    if(isFirstChunk){
-        [self setUpGlobalsWithHandle:handle];
-    }
-    [self receivedData:data];
+    [self receivedData:data withHandle:handle];
     
     [webController _receivedProgress:[WebLoadProgress progressWithResourceHandle:handle]
         forResourceHandle: handle fromDataSource: [view webDataSource] complete: NO];
