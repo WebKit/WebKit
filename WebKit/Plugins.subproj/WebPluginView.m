@@ -112,7 +112,8 @@
     
     [self getCarbonEvent:&event];
     event.what = activateEvt;
-    event.message = (UInt32)[[self window] _windowRef];
+    WindowRef windowRef = [[self window] _windowRef];
+    event.message = (UInt32)windowRef;
     if (activate)
         event.modifiers |= activMask;
     
@@ -128,7 +129,8 @@
     
     [self getCarbonEvent:&event];
     event.what = updateEvt;
-    event.message = (UInt32)[[self window] _windowRef];
+    WindowRef windowRef = [[self window] _windowRef];
+    event.message = (UInt32)windowRef;
 
     acceptedEvent = NPP_HandleEvent(instance, &event); 
     
@@ -681,8 +683,8 @@
         return;
     
     notifyData = [notifyDataValue pointerValue];
-    frameState = (WebFrameState)[[[notification userInfo] objectForKey:WebCurrentFrameState] intValue];
-    if(frameState == WebFrameStateComplete){
+    frameState = [[[notification userInfo] objectForKey:WebCurrentFrameState] intValue];
+    if (frameState == WebFrameStateComplete) {
         NPP_URLNotify(instance, [[url absoluteString] cString], NPRES_DONE, notifyData);
     }
     //FIXME: Need to send other NPReasons

@@ -1,5 +1,15 @@
 2002-07-20  Darin Adler  <darin@apple.com>
 
+        * WebKit.pbproj/project.pbxproj: Turn stricter warnings back on now that we
+	don't use C++ any more.
+
+        * Plugins.subproj/WebPluginView.m:
+        (-[WebPluginView sendActivateEvent:]): Fix cast that stricter warning didn't like.
+        (-[WebPluginView sendUpdateEvent]): Fix cast that stricter warning didn't like.
+        (-[WebPluginView frameStateChanged:]): Remove unneeded cast that stricter warning didn't like.
+
+2002-07-20  Darin Adler  <darin@apple.com>
+
 	- fixed 2999643 -- Leak of NSSet in -[IFStandardPanels _didStartLoadingURL:inController:]
 
 	This is another case of the leak I fixed a month ago. I don't know how I managed to
