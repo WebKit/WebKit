@@ -1,5 +1,13 @@
 2004-01-27  Chris Blumenberg  <cblu@apple.com>
 
+        Fixed build breakage.
+
+        Reviewed by darin.
+
+        * WebKit.pbproj/project.pbxproj: Use full patch instead of -L to get at WebKitSecurity.a
+
+2004-01-27  Chris Blumenberg  <cblu@apple.com>
+
         Fixed: <rdar://problem/3536624>: Webkit 1.2 links against SecurityNssAsn1.framework
 
         Reviewed by Darin.
