@@ -2229,7 +2229,20 @@ QString KHTMLPart::text(const DOM::Range &r) const
   bool hasNewLine = true;
   bool addedSpace = true;
   QString text;
-  DOM::Node n = r.startContainer();
+  DOM::Node startNode = r.startContainer();
+  DOM::Node endNode = r.endContainer();
+  int startOffset = r.startOffset();
+  int endOffset = r.endOffset();
+  if (!startNode.isNull() && startNode.nodeType() == DOM::Node::ELEMENT_NODE) {
+      startOffset = -1;
+      startNode = !startNode.childNodes().isNull() ? startNode.childNodes().item(r.startOffset()) : Node();
+  }
+  if (!endNode.isNull() && endNode.nodeType() == DOM::Node::ELEMENT_NODE) {
+      endOffset = -1;
+      endNode = !endNode.childNodes().isNull() ? endNode.childNodes().item(r.endOffset()-1) : Node();
+  }
+
+  DOM::Node n = startNode;
   while(!n.isNull()) {
       if(n.nodeType() == DOM::Node::TEXT_NODE) {
           if (hasNewLine) {
@@ -2237,8 +2250,8 @@ QString KHTMLPart::text(const DOM::Range &r) const
               hasNewLine = false;
           }
           QString str = n.nodeValue().string();
-          int start = (n == r.startContainer()) ? r.startOffset() : -1;
-          int end = (n == r.endContainer()) ? r.endOffset() : -1;
+          int start = (n == startNode) ? startOffset : -1;
+          int end = (n == endNode) ? endOffset : -1;
           RenderObject* renderer = n.handle()->renderer();
           if (renderer && renderer->isText()) {
               if (renderer->style()->whiteSpace() == khtml::PRE) {
@@ -2324,7 +2337,7 @@ QString KHTMLPart::text(const DOM::Range &r) const
             break;
         }
       }
-      if(n == r.endContainer()) break;
+      if(n == endNode) break;
       DOM::Node next = n.firstChild();
       if(next.isNull()) next = n.nextSibling();
       while( next.isNull() && !n.parentNode().isNull() ) {

@@ -722,12 +722,14 @@ static HTMLFormElementImpl *formElementFromDOMElement(id <WebDOMElement>element)
         
         DOMString link = e->getAttribute(ATTR_HREF);
         if (!link.isNull()) {
-            Range r(_part->document());
-            r.setStartBefore(e->firstChild());
-            r.setEndAfter(e->lastChild());
-            QString t = _part->text(r);
-            if (!t.isEmpty()) {
-                [element setObject:t.getNSString() forKey:WebCoreElementLinkLabelKey];
+            if (e->firstChild()) {
+                Range r(_part->document());
+                r.setStartBefore(e->firstChild());
+                r.setEndAfter(e->lastChild());
+                QString t = _part->text(r);
+                if (!t.isEmpty()) {
+                    [element setObject:t.getNSString() forKey:WebCoreElementLinkLabelKey];
+                }
             }
             [element setObject:_part->xmlDocImpl()->completeURL(link.string()).getNSString() forKey:WebCoreElementLinkURLKey];
         }

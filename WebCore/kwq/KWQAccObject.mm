@@ -33,6 +33,7 @@
 #import "dom_string.h"
 #import "dom2_range.h"
 #import "htmlattrs.h"
+#import "htmltags.h"
 #import "khtmlview.h"
 #import "khtml_part.h"
 #import "render_canvas.h"
@@ -191,12 +192,13 @@ using khtml::RenderWidget;
 
     if (m_renderer->element() && m_renderer->element()->hasAnchor())
         return NSAccessibilityButtonRole;
+    if (m_renderer->element() && m_renderer->element()->isHTMLElement() &&
+        Node(m_renderer->element()).elementId() == ID_BUTTON)
+        return NSAccessibilityButtonRole;
     if (m_renderer->isText())
         return NSAccessibilityStaticTextRole;
     if (m_renderer->isImage())
-        return NSAccessibilityImageRole;
-    if (m_renderer->isListMarker()) // FIXME: Can be an image/bullet or can be text.
-        return NSAccessibilityStaticTextRole;
+       return NSAccessibilityButtonRole;
     if (m_renderer->isCanvas())
         return NSAccessibilityGroupRole;
     if (m_renderer->isTable() || m_renderer->isTableCell())
@@ -210,13 +212,53 @@ using khtml::RenderWidget;
     if (!m_renderer)
         return nil;
 
-    if (m_renderer->element() && m_renderer->element()->isHTMLElement()) {
-        QString title = static_cast<ElementImpl*>(m_renderer->element())->getAttribute(ATTR_TITLE).string();
-        if (!title.isEmpty())
-            return title.getNSString();
+    return UI_STRING("Testing role description", "not real yet");
+}
+
+-(NSString*)helpText
+{
+    if (!m_renderer)
+        return nil;
+
+    for (RenderObject* curr = m_renderer; curr; curr = curr->parent()) {
+        if (curr->element() && curr->element()->isHTMLElement()) {
+            QString title = static_cast<ElementImpl*>(curr->element())->getAttribute(ATTR_TITLE).string();
+            if (!title.isEmpty())
+                return title.getNSString();
+        }
     }
 
-    return UI_STRING("Testing role description", "not real yet");
+    return nil;
+}
+
+-(NSString*)textUnderElement
+{
+    if (!m_renderer)
+        return nil;
+
+    NodeImpl* e = m_renderer->element();
+    DocumentImpl* d = m_renderer->document();
+    if (e && d) {
+        KHTMLView* v = d->view();
+        if (v) {
+            KHTMLPart* p = v->part();
+            if (p) {
+                Range r(p->document());
+                if (m_renderer->isText()) {
+                    r.setStartBefore(e);
+                    r.setEndAfter(e);
+                    return p->text(r).getNSString();
+                }
+                if (e->firstChild()) {
+                    r.setStartBefore(e->firstChild());
+                    r.setEndAfter(e->lastChild());
+                    return p->text(r).getNSString();
+                }
+            }
+        }
+    }
+
+    return nil;
 }
 
 -(NSString*)value
@@ -224,29 +266,30 @@ using khtml::RenderWidget;
     if (!m_renderer)
         return nil;
 
-    if (m_renderer->isText()) {
-        NodeImpl *e = m_renderer->element();
-        DocumentImpl *d = m_renderer->document();
-        if (e && d) {
-            KHTMLView *v = d->view();
-            if (v) {
-                KHTMLPart *p = v->part();
-                if (p) {
-                    Range r(p->document());
-                    r.setStartBefore(e);
-                    r.setEndAfter(e);
-                    return p->text(r).getNSString();
-                }
-            }
-        }
-    }
+    if (m_renderer->isText())
+        return [self textUnderElement];
     
     return UI_STRING("Value not implemented yet.", "not real yet");
 }
 
 -(NSString*)title
 {
-    return UI_STRING("Title not implemented yet.", "not real yet");
+    if (!m_renderer)
+        return nil;
+
+    if (m_renderer->isImage()) {
+        if (m_renderer->element() && m_renderer->element()->isHTMLElement()) {
+            QString alt = static_cast<ElementImpl*>(m_renderer->element())->getAttribute(ATTR_ALT).string();
+            return !alt.isEmpty() ? alt.getNSString() : nil;
+        }
+    }
+    else if (m_renderer->element() && m_renderer->element()->isHTMLElement() &&
+             Node(m_renderer->element()).elementId() == ID_BUTTON)
+        return [self textUnderElement];
+    else if (m_renderer->element() && m_renderer->element()->hasAnchor())
+        return [self textUnderElement];
+
+    return nil;
 }
 
 -(NSValue*)position
@@ -263,12 +306,14 @@ using khtml::RenderWidget;
 {
     if (!m_renderer || m_renderer->style()->visibility() != khtml::VISIBLE)
         return YES;
-    
+
     if (m_renderer->element() && m_renderer->element()->hasAnchor())
         return NO;
     
     return (!m_renderer->isCanvas() && !m_renderer->isTable() && !m_renderer->isTableCell() &&
-            !m_renderer->isImage() && !m_renderer->isText() && !m_renderer->isListMarker());
+            !m_renderer->isImage() && !m_renderer->isText() &&
+            !(m_renderer->element() && m_renderer->element()->isHTMLElement() &&
+              Node(m_renderer->element()).elementId() == ID_BUTTON));
 }
 
 - (NSArray *)accessibilityAttributeNames
@@ -329,8 +374,8 @@ using khtml::RenderWidget;
         return [self value];
 
     if ([attributeName isEqualToString: NSAccessibilityHelpAttribute])
-        return @"Help";
-
+        return [self helpText];
+    
     if ([attributeName isEqualToString: NSAccessibilityFocusedAttribute])
         return [NSNumber numberWithBool: (m_renderer->element() && m_renderer->document()->focusNode() == m_renderer->element())];
 
