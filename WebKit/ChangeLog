@@ -1,5 +1,15 @@
 2003-01-09  Darin Adler  <darin@apple.com>
 
+        Reviewed by Chris.
+
+	- second pass on 3143332 - we still need a test case to be sure this is right
+
+        * Plugins.subproj/WebBaseNetscapePluginStream.m:
+        (-[WebBaseNetscapePluginStream finishedLoadingWithData:]):
+	Check for "/". Also report the failure instead of just hanging on forever.
+
+2003-01-09  Darin Adler  <darin@apple.com>
+
         Reviewed by Richard.
         
         - fixed 3143332 -- if path returned is empty string (or "." or "..") it will trash the /tmp symlink

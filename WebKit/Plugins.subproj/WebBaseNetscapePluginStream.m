@@ -136,7 +136,14 @@
     }
     
     NSString *filename = [[URL path] lastPathComponent];
-    if ([filename length] == 0 || [filename isEqualToString:@"."] || [filename isEqualToString:@".."]) {
+    
+    // It's very important to not do the below calls, like "removeFileAtPath:", on empty paths.
+    // That's the way you lose your "/tmp" directory.
+    if ([filename length] == 0
+            || [filename isEqualToString:@"."]
+            || [filename isEqualToString:@".."]
+            || [filename isEqualToString:@"/"]) {
+        [self destroyStreamWithReason:NPRES_NETWORK_ERR];
         return;
     }
     
