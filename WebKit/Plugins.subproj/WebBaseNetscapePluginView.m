@@ -4,6 +4,8 @@
 */
 
 #import <WebKit/WebBaseNetscapePluginView.h>
+
+#import <WebKit/WebBridge.h>
 #import <WebKit/WebController.h>
 #import <WebKit/WebControllerPrivate.h>
 #import <WebKit/WebDataSource.h>
@@ -25,11 +27,26 @@
 #import <AppKit/NSEvent_Private.h>
 #import <Carbon/Carbon.h>
 
-// FIXME: Why .01? Why not 0? Why not a larger number?
+// FIXME: Why 0.1? Why not 0? Why not an even larger number?
 #define NullEventIntervalActive 	0.1
 #define NullEventIntervalNotActive	0.25
 
 static WebBaseNetscapePluginView *currentPluginView = nil;
+
+@interface WebPluginRequest : NSObject
+{
+    WebResourceRequest *_request;
+    WebFrame *_frame;
+    void *_notifyData;
+}
+
+- (id)initWithRequest:(WebResourceRequest *)request frame:(WebFrame *)frame notifyData:(void *)notifyData;
+
+- (WebResourceRequest *)request;
+- (WebFrame *)webFrame;
+- (void *)notifyData;
+
+@end
 
 @implementation WebBaseNetscapePluginView
 
@@ -110,6 +127,8 @@ static WebBaseNetscapePluginView *currentPluginView = nil;
 
 - (BOOL)sendEvent:(EventRecord *)event
 {
+    ASSERT(isStarted);
+    
     BOOL defers = [[self controller] _defersCallbacks];
     if (!defers) {
         [[self controller] _setDefersCallbacks:YES];
@@ -314,7 +333,7 @@ static WebBaseNetscapePluginView *currentPluginView = nil;
     BOOL acceptedEvent = [self sendEvent:&event];
 
     LOG(Plugins, "NPP_HandleEvent(keyUp): %d charCode:%c keyCode:%lu",
-                     acceptedEvent, (char) (event.message & charCodeMask), (event.message & keyCodeMask));
+        acceptedEvent, (char) (event.message & charCodeMask), (event.message & keyCodeMask));
     
     // If the plug-in didn't accept this event,
     // pass it along so that keyboard scrolling, for example, will work.
@@ -343,7 +362,7 @@ static WebBaseNetscapePluginView *currentPluginView = nil;
     BOOL acceptedEvent = [self sendEvent:&event];
 
     LOG(Plugins, "NPP_HandleEvent(keyDown): %d charCode:%c keyCode:%lu",
-                     acceptedEvent, (char) (event.message & charCodeMask), (event.message & keyCodeMask));
+        acceptedEvent, (char) (event.message & charCodeMask), (event.message & keyCodeMask));
     
     // If the plug-in didn't accept this event,
     // pass it along so that keyboard scrolling, for example, will work.
@@ -387,7 +406,7 @@ static WebBaseNetscapePluginView *currentPluginView = nil;
     BOOL acceptedEvent = [self sendEvent:&event];
 
     LOG(Plugins, "NPP_HandleEvent(performKeyEquivalent): %d charCode:%c keyCode:%lu",
-                     acceptedEvent, (char) (event.message & charCodeMask), (event.message & keyCodeMask));
+        acceptedEvent, (char) (event.message & charCodeMask), (event.message & keyCodeMask));
     
     return acceptedEvent;
 }
@@ -430,12 +449,14 @@ static WebBaseNetscapePluginView *currentPluginView = nil;
 
 - (void)setWindow
 {
+    ASSERT(isStarted);
+    
     [self setUpWindowAndPort];
 
     NPError npErr;
     npErr = NPP_SetWindow(instance, &window);
     LOG(Plugins, "NPP_SetWindow: %d, port=0x%08x, window.x:%d window.y:%d",
-                     npErr, (int)nPort.port, (int)window.x, (int)window.y);
+        npErr, (int)nPort.port, (int)window.x, (int)window.y);
 
 #if 0
     // Draw test    
@@ -555,8 +576,9 @@ static WebBaseNetscapePluginView *currentPluginView = nil;
     // Set cursor back to arrow cursor
     [[NSCursor arrowCursor] set];
     
-    // Stop notifications
+    // Stop notifications and callbacks.
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [NSObject cancelPreviousPerformRequestsWithTarget:self];
     
     NPError npErr;
     npErr = NPP_Destroy(instance, NULL);
@@ -798,17 +820,19 @@ static WebBaseNetscapePluginView *currentPluginView = nil;
     WebFrame *frame = [notification object];
     NSURL *URL = [[[frame dataSource] request] URL];
     NSValue *notifyDataValue = [streamNotifications objectForKey:URL];
-    
-    if(!notifyDataValue){
+    if (!notifyDataValue) {
         return;
     }
     
     void *notifyData = [notifyDataValue pointerValue];
     WebFrameState frameState = [[[notification userInfo] objectForKey:WebCurrentFrameState] intValue];
     if (frameState == WebFrameStateComplete) {
-        NPP_URLNotify(instance, [[URL absoluteString] cString], NPRES_DONE, notifyData);
+        if (isStarted) {
+            NPP_URLNotify(instance, [[URL absoluteString] cString], NPRES_DONE, notifyData);
+        }
         [streamNotifications removeObjectForKey:URL];
     }
+
     //FIXME: Need to send other NPReasons
 }
 
@@ -840,50 +864,68 @@ static WebBaseNetscapePluginView *currentPluginView = nil;
     return [[[WebResourceRequest alloc] initWithURL:URL] autorelease];
 }
 
+- (void)loadPluginRequest:(WebPluginRequest *)pluginRequest
+{
+    WebResourceRequest *request = [pluginRequest request];
+    WebFrame *frame = [pluginRequest webFrame];
+    void *notifyData = [pluginRequest notifyData];
+
+    NSURL *URL = [request URL];
+    
+    NSString *JSString = [URL _web_scriptIfJavaScriptURL];
+    if (JSString) {
+        [[frame _bridge] stringByEvaluatingJavaScriptFromString:JSString];
+        // FIXME: If the result is a string, we probably want to put that string into the frame, just
+        // like we do in KHTMLPartBrowserExtension::openURLRequest.
+        if (notifyData && isStarted) {
+            NPP_URLNotify(instance, [[URL absoluteString] cString], NPRES_DONE, notifyData);
+        }
+    } else {
+        [frame loadRequest:request];
+        if (notifyData) {
+            // FIXME: How do we notify about failures? It seems this will only notify about success.
+        
+            // FIXME: This will overwrite any previous notification for the same URL.
+            // It might be better to keep track of these per frame.
+            [streamNotifications setObject:[NSValue valueWithPointer:notifyData] forKey:URL];
+            
+            // FIXME: We add this same observer to a frame multiple times. Is that OK?
+            // FIXME: This observer doesn't get removed until the plugin stops, so we could
+            // end up with lots and lots of these.
+            [[NSNotificationCenter defaultCenter] addObserver:self
+                                                     selector:@selector(frameStateChanged:)
+                                                         name:WebFrameStateChangedNotification
+                                                       object:frame];
+        }
+    }
+}
+
 - (NPError)loadRequest:(WebResourceRequest *)request inTarget:(const char *)cTarget withNotifyData:(void *)notifyData
 {
-    NSURL *URL = [request URL];
-    if (!URL) {
+    if (![request URL]) {
         return NPERR_INVALID_URL;
     }
     
     if (!cTarget) {
-        WebNetscapePluginStream *stream = [[WebNetscapePluginStream alloc] initWithRequest:request
-                                                                             pluginPointer:instance
-                                                                                notifyData:notifyData];
-        if (stream) {
-            [streams addObject:stream];
-            [stream start];
-            [stream release];
-        } else {
+        WebNetscapePluginStream *stream = [[WebNetscapePluginStream alloc]
+            initWithRequest:request pluginPointer:instance notifyData:notifyData];
+        if (!stream) {
             return NPERR_INVALID_URL;
         }
+        [streams addObject:stream];
+        [stream start];
+        [stream release];
     } else {
-        NSString *JSString = [URL _web_scriptIfJavaScriptURL];
-        if(JSString){
-            [[self controller] stringByEvaluatingJavaScriptFromString:JSString];
-            if(notifyData){
-               NPP_URLNotify(instance, [[URL absoluteString] cString], NPRES_DONE, notifyData);
-            }
-        }else{
-            NSString *target = (NSString *)CFStringCreateWithCString(kCFAllocatorDefault, cTarget, kCFStringEncodingWindowsLatin1);
-            WebFrame *frame = [[self webFrame] findOrCreateFramedNamed:target];
-            [frame loadRequest:request];
-    
-            if (notifyData) {
-                if (![target isEqualToString:@"_self"] && ![target isEqualToString:@"_current"] &&
-                    ![target isEqualToString:@"_parent"] && ![target isEqualToString:@"_top"]) {
-                    
-                    [streamNotifications setObject:[NSValue valueWithPointer:notifyData] forKey:URL];
-                    [[NSNotificationCenter defaultCenter] addObserver:self
-                                                             selector:@selector(frameStateChanged:)
-                                                                 name:WebFrameStateChangedNotification
-                                                               object:frame];
-                }
-                
-            }
-            [target release];
-        }
+        // Find the frame given the target string.
+        NSString *target = (NSString *)CFStringCreateWithCString(kCFAllocatorDefault, cTarget, kCFStringEncodingWindowsLatin1);
+        WebFrame *frame = [[self webFrame] findOrCreateFramedNamed:target];
+        [target release];
+
+        // Make a request, but don't do it right away because it could make the plugin view go away.
+        WebPluginRequest *pluginRequest = [[WebPluginRequest alloc]
+            initWithRequest:request frame:frame notifyData:notifyData];
+        [self performSelector:@selector(loadPluginRequest:) withObject:pluginRequest afterDelay:0];
+        [pluginRequest release];
     }
     
     return NPERR_NO_ERROR;
@@ -891,6 +933,8 @@ static WebBaseNetscapePluginView *currentPluginView = nil;
 
 -(NPError)getURLNotify:(const char *)URLCString target:(const char *)cTarget notifyData:(void *)notifyData
 {
+    LOG(Plugins, "NPN_GetURLNotify: %s target: %s", URLCString, cTarget);
+
     WebResourceRequest *request = [self requestWithURLCString:URLCString];
     return [self loadRequest:request inTarget:cTarget withNotifyData:notifyData];
 }
@@ -992,7 +1036,7 @@ static WebBaseNetscapePluginView *currentPluginView = nil;
         return;
     }
 
-    NSString *status = (NSString *)CFStringCreateWithCString(NULL, message, kCFStringEncodingMacRoman);
+    NSString *status = (NSString *)CFStringCreateWithCString(NULL, message, kCFStringEncodingWindowsLatin1);
     LOG(Plugins, "NPN_Status: %@", status);
     [[[self controller] windowOperationsDelegate] setStatusText:status];
     [status release];
@@ -1014,6 +1058,41 @@ static WebBaseNetscapePluginView *currentPluginView = nil;
 {
     LOG(Plugins, "forceRedraw");
     [self sendUpdateEvent];
+}
+
+@end
+
+@implementation WebPluginRequest
+
+- (id)initWithRequest:(WebResourceRequest *)request frame:(WebFrame *)frame notifyData:(void *)notifyData
+{
+    [super init];
+    _request = [request retain];
+    _frame = [frame retain];
+    _notifyData = notifyData;
+    return self;
+}
+
+- (void)dealloc
+{
+    [_request release];
+    [_frame release];
+    [super dealloc];
+}
+
+- (WebResourceRequest *)request
+{
+    return _request;
+}
+
+- (WebFrame *)webFrame
+{
+    return _frame;
+}
+
+- (void *)notifyData
+{
+    return _notifyData;
 }
 
 @end

@@ -1,3 +1,29 @@
+2002-12-19  Darin Adler  <darin@apple.com>
+
+        Reviewed by Chris.
+
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView sendEvent:]): Added an assert.
+        (-[WebBaseNetscapePluginView setWindow]): Added an assert.
+        (-[WebBaseNetscapePluginView stop]): Cancel perform requests, now that we are using them for
+	URL navigation.
+        (-[WebBaseNetscapePluginView frameStateChanged:]): Only notify if the plugin is still running.
+        (-[WebBaseNetscapePluginView loadPluginRequest:]): Added. Does the actual load at idle time.
+	Also fixed to only notify if plugin is loaded. Added a number of FIXMEs for other problems here.
+	Also send JavaScript to the appropriate frame, not always the top level.
+        (-[WebBaseNetscapePluginView loadRequest:inTarget:withNotifyData:]): Use loadPluginRequest:
+	to do the request after a delay. Also remove the special cases for special frame names; they
+	were trying to avoid calling a plugin that has gone away, but we do that a better way now.
+        (-[WebBaseNetscapePluginView getURLNotify:target:notifyData:]): Added logging.
+        (-[WebBaseNetscapePluginView status:]): Use Windows Latin-1 rather than MacRoman for messages.
+	I guess we should test later to find out which is used by MacIE and conform to that, but for now
+	this seems like a better default.
+        (-[WebPluginRequest initWithRequest:frame:notifyData:]): Added.
+        (-[WebPluginRequest dealloc]): Added.
+        (-[WebPluginRequest request]): Added.
+        (-[WebPluginRequest webFrame]): Added.
+        (-[WebPluginRequest notifyData]): Added.
+
 2002-12-18  Darin Adler  <darin@apple.com>
 
         Reviewed by Chris.
