@@ -622,7 +622,7 @@ newCString(NSString *string)
     loadProgress->bytesSoFar = [sender contentLengthReceived];
     loadProgress->type = IF_LOAD_TYPE_PLUGIN;
     
-    IFError *error = [[IFError alloc] initWithErrorCode: result failingURL: [sender url]];
+    IFError *error = [[IFError alloc] initWithErrorCode: result  inDomain:IFErrorCodeDomainWebFoundation failingURL: [sender url]];
     [webController receivedError: error forResource: [[sender url] absoluteString] 
         partialProgress: loadProgress fromDataSource: webDataSource];
     [error release];

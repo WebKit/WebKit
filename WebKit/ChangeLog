@@ -1,3 +1,23 @@
+2002-05-10  Kenneth Kocienda  <kocienda@apple.com>
+
+        Reviewed by: Maciej Stachowiak
+
+        This code was modified to use the new interface and features of IFError.
+        These features and changes are described in these four bug reports:
+
+        Radar 2923998 (Change IFError private data into a pointer to a private data object)
+        Radar 2924002 (IFError should include an error domain)
+        Radar 2924013 (IFError initialization is not threadsafe)        
+        Radar 2924280 (IFError should contain a new field which tells whether the error is terminal)
+                                                            
+	* Plugins.subproj/IFPluginView.mm:
+	(-[IFPluginView IFURLHandle:resourceDidFailLoadingWithResult:]):
+	* WebView.subproj/IFBaseWebControllerPrivate.mm:
+	(-[IFBaseWebController _receivedProgress:forResource:fromDataSource:]):
+	(-[IFBaseWebController _mainReceivedProgress:forResource:fromDataSource:]):
+	* WebView.subproj/IFMainURLHandleClient.mm:
+	(-[IFMainURLHandleClient IFURLHandle:resourceDataDidBecomeAvailable:]):
+
 2002-05-09  Richard J. Williamson  <rjw@apple.com>
 
     Tuned implementation more.  Cleaned up and factored code.

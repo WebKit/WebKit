@@ -69,7 +69,7 @@
     if (progress->bytesSoFar == -1 && progress->totalToLoad == -1){
 	WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "cancelled resource = %s\n", [[[dataSource inputURL] absoluteString] cString]);
         if (frame != nil) {
-            IFError *error = [[IFError alloc] initWithErrorCode: IFURLHandleResultCancelled failingURL: [dataSource inputURL]];
+            IFError *error = [[IFError alloc] initWithErrorCode: IFURLHandleResultCancelled inDomain:IFErrorCodeDomainWebFoundation failingURL: [dataSource inputURL]];
             [dataSource _addError: error forResource: resourceDescription];
             [error release];
             [frame _checkLoadComplete];
@@ -98,7 +98,7 @@
 	WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "cancelled resource = %s\n", [[[dataSource inputURL] absoluteString] cString]);
         [dataSource _setPrimaryLoadComplete: YES];
         if (frame != nil) {
-            IFError *error = [[IFError alloc] initWithErrorCode: IFURLHandleResultCancelled failingURL: [dataSource inputURL]];
+            IFError *error = [[IFError alloc] initWithErrorCode: IFURLHandleResultCancelled inDomain:IFErrorCodeDomainWebFoundation failingURL: [dataSource inputURL]];
             [dataSource _setMainDocumentError: error];
             [error release];
             [frame _checkLoadComplete];
