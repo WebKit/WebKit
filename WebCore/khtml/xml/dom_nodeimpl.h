@@ -241,7 +241,7 @@ public:
     void setInDocument(bool b=true) { m_inDocument = b; }
     virtual void setFocus(bool b=true) { m_focused = b; }
     virtual void setActive(bool b=true) { m_active = b; }
-    virtual void setChanged(bool b=true);
+    void setChanged(bool b=true);
 
     unsigned short tabIndex() const { return m_tabIndex; }
     void setTabIndex(unsigned short _tabIndex) { m_tabIndex = _tabIndex; }

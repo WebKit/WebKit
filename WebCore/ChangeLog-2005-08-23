@@ -1,5 +1,22 @@
 2004-05-20  Darin Adler  <darin@apple.com>
 
+        Reviewed by Maciej.
+
+        - fixed <rdar://problem/3575385>: (multiple radio buttons checked when arriving at sites (poll at www.1170kfaq.com, many others))
+
+        * khtml/html/html_formimpl.cpp:
+        (HTMLInputElementImpl::parseHTMLAttribute): Use setChecked to set the default value if we are still in
+        "use default checked" mode. That way, other radio buttons will be unchecked properly and the proper
+        changed methods will be dispatched.
+        (HTMLInputElementImpl::reset): Ditto.
+        * khtml/html/html_formimpl.h: (DOM::HTMLInputElementImpl::checked): Changed to just return m_checked.
+        The m_useDefaultChecked flag is now only really looked at when you parse a checked attribute; that's
+        because m_checked and m_defaultChecked are kept equal as long as m_useDefaultChecked is true.
+
+        * khtml/xml/dom_nodeimpl.h: Removed an unnecessary virtual, to make code a little smaller and faster.
+
+2004-05-20  Darin Adler  <darin@apple.com>
+
         Reviewed by Chris.
 
         - fixed <rdar://problem/3662383>: (REGRESSION: drag slide-back sometimes causes link to load)

@@ -297,7 +297,7 @@ public:
 
     bool autoComplete() const { return m_autocomplete; }
 
-    bool checked() const { return m_useDefaultChecked ? m_defaultChecked : m_checked; }
+    bool checked() const { return m_checked; }
     void setChecked(bool);
     long maxLength() const { return m_maxLen; }
     int size() const { return m_size; }
