@@ -510,4 +510,9 @@
     _private->iconURL = [url retain];
 }
 
+- (WebResourceHandle*)_mainHandle
+{
+    return _private->mainHandle;
+}
+
 @end

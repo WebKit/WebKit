@@ -118,7 +118,7 @@
 - (void)_setIconURL:(NSURL *)url withType:(NSString *)iconType;
 - (BOOL)_isDummy;
 - (void)_setIsDummy: (BOOL)f;
-
+- (WebResourceHandle*)_mainHandle;
 
 // Convenience interface for getting here from an WebDataSource.
 // This returns nil if the representation is not an WebHTMLRepresentation.

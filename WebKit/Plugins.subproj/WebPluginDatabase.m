@@ -183,15 +183,15 @@ static NSArray *pluginLocations(void)
             [plugin release];
         }
     }
-        
+
+    plugins = [pluginArray copy];
+    
     // register plug-in WebDocumentViews and WebDocumentRepresentations
-    NSArray *mimes = [database MIMETypes];
+    NSArray *mimes = [self MIMETypes];
     for (i = 0; i < [mimes count]; i++) {
         [WebView registerViewClass:[WebPluginView class] forMIMEType:[mimes objectAtIndex:i]];
         [WebDataSource registerRepresentationClass:[WebPluginStream class] forMIMEType:[mimes objectAtIndex:i]];
     }
-    
-    plugins = [pluginArray copy];
 
     return self;
 }

@@ -1,3 +1,27 @@
+2002-07-26  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed crash in unknown_text
+	Fixed full-window plug-ins. I think darin broken this :)
+	Cleaned up WebPluginStream a bit
+
+        * Plugins.subproj/WebPluginDatabase.m:
+        (-[WebPluginDatabase init]):
+        * Plugins.subproj/WebPluginStream.m:
+        (-[WebPluginStream getFunctionPointersFromPluginView:]):
+        (-[WebPluginStream initWithURL:pluginPointer:notifyData:attributes:]):
+        (-[WebPluginStream startLoad]):
+        (-[WebPluginStream stop]):
+        (-[WebPluginStream setUpGlobalsWithHandle:]):
+        (-[WebPluginStream receivedError:]):
+        (-[WebPluginStream receivedData:withDataSource:]):
+        (-[WebPluginStream receivedError:withDataSource:]):
+        (-[WebPluginStream WebResourceHandle:dataDidBecomeAvailable:]):
+        (-[WebPluginStream WebResourceHandleDidCancelLoading:]):
+        (-[WebPluginStream WebResourceHandle:didFailLoadingWithResult:]):
+        * WebView.subproj/WebDataSourcePrivate.h:
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _mainHandle]): added, WebPluginStream needs this
+
 2002-07-25  Richard Williamson (Local)  <rjw@apple.com>
 
         More incremental changes for back/forward migration.

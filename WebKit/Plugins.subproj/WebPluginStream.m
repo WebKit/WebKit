@@ -7,6 +7,7 @@
 #import <WebKit/WebPluginStream.h>
 #import <WebKit/WebView.h>
 #import <WebKit/WebDataSource.h>
+#import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebControllerPrivate.h>
 #import <WebKitDebug.h>
 
@@ -18,6 +19,16 @@
 static NSString *getCarbonPath(NSString *posixPath);
 
 @implementation WebPluginStream
+
+- (void) getFunctionPointersFromPluginView:(WebPluginView *)pluginView
+{
+    NPP_NewStream = 	[pluginView NPP_NewStream];
+    NPP_WriteReady = 	[pluginView NPP_WriteReady];
+    NPP_Write = 	[pluginView NPP_Write];
+    NPP_StreamAsFile = 	[pluginView NPP_StreamAsFile];
+    NPP_DestroyStream = [pluginView NPP_DestroyStream];
+    NPP_URLNotify = 	[pluginView NPP_URLNotify];
+}
 
 - init
 {
@@ -54,13 +65,8 @@ static NSString *getCarbonPath(NSString *posixPath);
     attributes = [theAttributes retain];
     instance = thePluginPointer;
     notifyData = theNotifyData;
-    
-    NPP_NewStream = 	[view NPP_NewStream];
-    NPP_WriteReady = 	[view NPP_WriteReady];
-    NPP_Write = 	[view NPP_Write];
-    NPP_StreamAsFile = 	[view NPP_StreamAsFile];
-    NPP_DestroyStream = [view NPP_DestroyStream];
-    NPP_URLNotify = 	[view NPP_URLNotify];
+
+    [self getFunctionPointersFromPluginView:view];
     
     isFirstChunk = YES;
     stopped = YES;
@@ -85,10 +91,13 @@ static NSString *getCarbonPath(NSString *posixPath);
 
 - (void)startLoad
 {
-    resource = [[WebResourceHandle alloc] initWithURL:URL attributes:attributes flags:0];
-    if(resource){
-        [resource addClient:self];
-        [resource loadInBackground];
+    if(stopped){
+        stopped = NO;
+        resource = [[WebResourceHandle alloc] initWithURL:URL attributes:attributes flags:0];
+        if(resource){
+            [resource addClient:self];
+            [resource loadInBackground];
+        }
     }
 }
 
@@ -96,13 +105,30 @@ static NSString *getCarbonPath(NSString *posixPath);
 {
     if(!stopped){
         stopped = YES;
-        if([resource statusCode] == WebResourceHandleStatusLoading)
+        if([resource statusCode] == WebResourceHandleStatusLoading){
             [resource cancelLoadInBackground];
+        }
         [resource removeClient:self];
         [resource release];
     }
     [view release];
     view = nil;
+}
+
+- (void)setUpGlobalsWithHandle:(WebResourceHandle *)handle
+{
+    NSString *URLString = [[handle url] absoluteString];
+    char *cURL = (char *)malloc([URLString cStringLength]+1);
+    [URLString getCString:cURL];
+
+    npStream.ndata = self;
+    npStream.url = cURL;
+    npStream.end = 0;
+    npStream.lastmodified = 0;
+    npStream.notifyData = notifyData;
+    offset = 0;
+    
+    mimeType = [[handle contentType] retain];
 }
 
 - (void)receivedData:(NSData *)data
@@ -147,11 +173,11 @@ static NSString *getCarbonPath(NSString *posixPath);
     }
 }
 
-- (void)receivedError
+- (void)receivedError:(NPError)error
 {
     NPError npErr;
     
-    npErr = NPP_DestroyStream(instance, &npStream, NPRES_NETWORK_ERR);
+    npErr = NPP_DestroyStream(instance, &npStream, error);
     WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_DestroyStream: %d\n", npErr);
 }
 
@@ -184,46 +210,38 @@ static NSString *getCarbonPath(NSString *posixPath);
     [self stop];
 }
 
+#pragma mark WebDocumentRepresentation
+
 - (void)receivedData:(NSData *)data withDataSource:(WebDataSource *)dataSource
 {
     if(isFirstChunk){
-        URL = [[dataSource inputURL] retain];
-        NSString *URLString = [URL absoluteString];
-        char *cURL = (char *)malloc([URLString cStringLength]+1);
-        [URLString getCString:cURL];
-        
-        npStream.ndata = self;
-        npStream.url = cURL;
-        npStream.end = 0;
-        npStream.lastmodified = 0;
-        npStream.notifyData = 0;
-        offset = 0;
-        mimeType = [[dataSource contentType] retain];
-        
         WebFrame *frame = [dataSource webFrame];
         WebView *webView = [frame webView];
         view = [[webView documentView] retain];
         instance = [view pluginInstance];
-        
-        NPP_NewStream = 	[view NPP_NewStream];
-        NPP_WriteReady = 	[view NPP_WriteReady];
-        NPP_Write = 		[view NPP_Write];
-        NPP_StreamAsFile = 	[view NPP_StreamAsFile];
-        NPP_DestroyStream = 	[view NPP_DestroyStream];
-        NPP_URLNotify = 	[view NPP_URLNotify];
+
+        [self getFunctionPointersFromPluginView:view];
+        [self setUpGlobalsWithHandle:[dataSource _mainHandle]];
     }
+    
     [self receivedData:data];
 }
 
 - (void)receivedError:(WebError *)error withDataSource:(WebDataSource *)dataSource
 {
-    [self receivedError];
+    if([error errorCode] == WebResultCancelled){
+        [self receivedError:NPRES_USER_BREAK];
+    } else {
+        [self receivedError:NPRES_NETWORK_ERR];
+    }
 }
 
 - (void)finishedLoadingWithDataSource:(WebDataSource *)dataSource
 {
     [self finishedLoadingWithData:[dataSource data]];
 }
+
+#pragma mark WebResourceHandle
 
 - (void)WebResourceHandleDidBeginLoading:(WebResourceHandle *)handle
 {
@@ -233,19 +251,9 @@ static NSString *getCarbonPath(NSString *posixPath);
 - (void)WebResourceHandle:(WebResourceHandle *)handle dataDidBecomeAvailable:(NSData *)data
 {
     WebController *webController = [view webController];
-    
+
     if(isFirstChunk){
-        NSString *URLString = [[handle url] absoluteString];
-        char *cURL = (char *)malloc([URLString cStringLength]+1);
-        [URLString getCString:cURL];
-        
-        npStream.ndata = self;
-        npStream.url = cURL;
-        npStream.end = 0;
-        npStream.lastmodified = 0;
-        npStream.notifyData = notifyData;
-        offset = 0;
-        mimeType = [[handle contentType] retain];
+        [self setUpGlobalsWithHandle:handle];
     }
     [self receivedData:data];
     
@@ -271,8 +279,8 @@ static NSString *getCarbonPath(NSString *posixPath);
     
     [webController _receivedProgress:[WebLoadProgress progress]
         forResourceHandle: handle fromDataSource: [view webDataSource] complete: YES];
-            
-    [self receivedError];
+
+    [self receivedError:NPRES_USER_BREAK];
     
     [webController _didStopLoading:URL];
 }
@@ -286,8 +294,8 @@ static NSString *getCarbonPath(NSString *posixPath);
     [webController _receivedError: result forResourceHandle: handle 
         partialProgress: loadProgress fromDataSource: [view webDataSource]];
     [loadProgress release];
-    
-    [self receivedError];
+
+    [self receivedError:NPRES_NETWORK_ERR];
     
     [webController _didStopLoading:URL];
 }
