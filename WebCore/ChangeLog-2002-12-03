@@ -1,3 +1,53 @@
+2002-05-06  Darin Adler  <darin@apple.com>
+
+	* WebCorePrefix.h: Added.
+
+	* .cvsignore: Ignore the .pfe files in this directory.
+
+	* khtml/dom/dom_doc.cpp:
+	* khtml/dom/dom_text.cpp:
+	Added namespace directives as a clean workaround for a conflict
+	with the struct named Comment in <Carbon/AIFF.h>
+
+	* kwq/KWQFont.mm:
+	* kwq/KWQFontMetrics.mm:
+	* kwq/KWQKGlobal.mm:
+	* kwq/KWQListImpl.mm:
+	* kwq/KWQPtrDictImpl.h:
+	* kwq/KWQVectorImpl.mm:
+	* kwq/kwqdebug.h:
+	* kwq/qt/qcolor.h:
+	* kwq/qt/qcombobox.h:
+	* kwq/qt/qregion.h:
+	* kwq/qt/qstring.h:
+	* kwq/qt/qwidget.h:
+	Remove old workaround for conflicts with Fixed, Rect, and Boolean.
+	It does not good with a precompiled header anyway, and there is a
+	more elegant small fix in the KDE code itself.
+
+	* kwq/qt/qpoint.h:
+	* kwq/KWQPointArray.mm: (QPointArray::setPoints):
+	Work around bug with va_arg and PFE by not using varargs here.
+
+	* kwq/KWQRect.mm: (QRect::unite): (QRect::operator&):
+	Use std::min and std::max instead of defining our own MIN and MAX, which
+	conflict with something in one of the headers we are precompiling (error
+	message did not make it clear which).
+
+	* kwq/KWQView.mm: (-[KWQHTMLView layout]), (-[KWQHTMLView drawRect:]):
+	Switch from xNDEBUG to NDEBUG.
+
+	* kwq/Makefile.am: Remove stuff for getting at the header inside the
+	ApplicationServices and QD frameworks, since that code is now in WebKit.
+
+	* kwq/kwqdebug.h: Get rid of format attribute because of bug 2920557.
+	Switch from xNDEBUG to NDEBUG.
+
+	* kwq/kwqdebug.mm: Switch from xNDEBUG to NDEBUG.
+
+	* kwq/qt/qstring.h: Define QT_VERSION in here instead of on the command
+	line to work around a PFE bug with -D, Radar 2921026.
+
 2002-05-06  Richard J. Williamson  <rjw@apple.com>
         
         Changes to support dhmtl.

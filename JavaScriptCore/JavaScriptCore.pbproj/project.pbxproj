@@ -79,6 +79,7 @@
 		0867D691FE84028FC02AAC07 = {
 			children = (
 				08FB77AEFE84172EC02AAC07,
+				F5C290E50284F960018635CA,
 				089C1665FE841158C02AAC07,
 				0867D69AFE84028FC02AAC07,
 				034768DFFF38A50411DB9C8B,
@@ -93,7 +94,7 @@
 				1058C7B2FEA5585E11CA2CBB,
 			);
 			isa = PBXGroup;
-			name = "External Frameworks and Libraries";
+			name = Frameworks;
 			refType = 4;
 		};
 		0867D69BFE84028FC02AAC07 = {
@@ -114,7 +115,7 @@
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
 				DEBUGGING_SYMBOLS = NO;
-				DEBUG_CFLAGS = "-DxNDEBUG";
+				DEBUG_CFLAGS = "-DNDEBUG";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_SEARCH_PATHS = "";
@@ -124,9 +125,13 @@
 				LIBRARY_SEARCH_PATHS = "";
 				OPTIMIZATION_CFLAGS = "-Os";
 				OTHER_CFLAGS = "$(DEBUG_CFLAGS) -DAPPLE_CHANGES -DHAVE_CONFIG_H";
+				PFE_FILE_C_DIALECTS = "c++";
+				PRECOMPILE_PREFIX_HEADER = YES;
+				PREFIX_HEADER = JavaScriptCorePrefix.h;
 				PRODUCT_NAME = JavaScriptCore;
 				SECTORDER_FLAGS = "";
 				USE_GCC3 = YES;
+				USE_GCC3_PFE_SUPPORT = YES;
 				WARNING_CFLAGS = "-Werror -Wall -W -Wbad-function-cast -Wcast-align -Wchar-subscripts -Wformat-security -Wmissing-declarations -Wmissing-format-attribute -Wmissing-prototypes -Wnested-externs -Wpointer-arith -Wwrite-strings -Wno-format-y2k -Wno-unused-parameter";
 				WRAPPER_EXTENSION = framework;
 			};
@@ -138,8 +143,8 @@
 			productName = JavaScriptCore;
 			productReference = 034768E0FF38A50411DB9C8B;
 			productSettingsXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
-<!DOCTYPE plist SYSTEM \"file://localhost/System/Library/DTDs/PropertyList.dtd\">
-<plist version=\"0.9\">
+<!DOCTYPE plist PUBLIC \"-//Apple Computer//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">
+<plist version=\"1.0\">
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
@@ -211,6 +216,7 @@
 				F692A8CC02555BA201FF60F7,
 				F692A8CD02555BA201FF60F7,
 				F68EBB8E0255D4C601FF60F7,
+				F5C290E70284F98E018635CA,
 			);
 			isa = PBXHeadersBuildPhase;
 		};
@@ -312,7 +318,6 @@
 				F692A8510255597D01FF60F7,
 				F692A8520255597D01FF60F7,
 				F692A8530255597D01FF60F7,
-				F692A8540255597D01FF60F7,
 				F692A8550255597D01FF60F7,
 				F692A8560255597D01FF60F7,
 				F692A8570255597D01FF60F7,
@@ -366,7 +371,6 @@
 				F692A8860255597D01FF60F7,
 				F692A8870255597D01FF60F7,
 				F692A8880255597D01FF60F7,
-				F68EBB8C0255D4C601FF60F7,
 			);
 			isa = PBXGroup;
 			name = Classes;
@@ -434,6 +438,28 @@
 			};
 			isa = PBXBuildStyle;
 			name = Unoptimized;
+		};
+		F5C290E50284F960018635CA = {
+			children = (
+				F692A8540255597D01FF60F7,
+				F68EBB8C0255D4C601FF60F7,
+				F5C290E60284F98E018635CA,
+			);
+			isa = PBXGroup;
+			name = "Other Sources";
+			path = "";
+			refType = 4;
+		};
+		F5C290E60284F98E018635CA = {
+			isa = PBXFileReference;
+			path = JavaScriptCorePrefix.h;
+			refType = 4;
+		};
+		F5C290E70284F98E018635CA = {
+			fileRef = F5C290E60284F98E018635CA;
+			isa = PBXBuildFile;
+			settings = {
+			};
 		};
 		F5FFE656026B47A6018635CA = {
 			isa = PBXFileReference;

@@ -25,7 +25,7 @@
 
 #include <kwqdebug.h>
 
-#ifndef xNDEBUG
+#ifndef NDEBUG
 
 static unsigned int KWQ_LOG_LEVEL = 0;
 

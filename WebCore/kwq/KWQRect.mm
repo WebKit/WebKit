@@ -25,11 +25,8 @@
 
 #include <qrect.h>
 
-#ifndef USING_BORROWED_QRECT
-
-#define MAX(a,b) ((a) >= (b) ? (a) : (b))
-#define MIN(a,b) ((a) <= (b) ? (a) : (b))
-
+using std::max;
+using std::min;
 
 QRect::QRect() : xp(0), yp(0), w(1), h(1)
 {
@@ -127,8 +124,8 @@ QRect QRect::unite(const QRect &r) const
 {
     int nx, ny, nw, nh;
 
-    nx = MIN(xp, r.xp);
-    ny = MIN(yp, r.yp);
+    nx = min(xp, r.xp);
+    ny = min(yp, r.yp);
 
     if (xp + w >= r.xp + r.w) {
         nw = xp + w - nx;
@@ -154,8 +151,8 @@ QRect QRect::operator&(const QRect &r) const
 {
     int nx, ny, nw, nh;
 
-    nx = MAX(xp, r.xp);
-    ny = MAX(yp, r.yp);
+    nx = max(xp, r.xp);
+    ny = max(yp, r.yp);
 
     if (xp + w <= r.xp + r.w) {
         nw = xp + w - nx;
@@ -187,6 +184,4 @@ std::ostream &operator<<(std::ostream &o, const QRect &r)
 {
     return o << "QRect: [left: " << r.left () << "; top: " << r.top() << "; right: " << r.right() << "; bottom: " << r.bottom() << "]";
 }
-#endif
-
 #endif

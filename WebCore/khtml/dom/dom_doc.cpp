@@ -35,6 +35,9 @@
 #include <kdebug.h>
 
 using namespace DOM;
+#ifdef APPLE_CHANGES
+namespace DOM {
+#endif
 
 DOMImplementation::DOMImplementation()
 {
@@ -539,3 +542,6 @@ DOMString DocumentType::internalSubset() const
     return static_cast<DocumentTypeImpl*>(impl)->internalSubset();
 }
 
+#ifdef APPLE_CHANGES
+} // namespace DOM
+#endif

@@ -26,15 +26,9 @@
 #ifndef KWQDEBUG_H_
 #define KWQDEBUG_H_
 
-#define Fixed MacFixed
-#define Rect MacRect
-#define Boolean MacBoolean
-#include <Foundation/Foundation.h>
-#undef Fixed
-#undef Rect
-#undef Boolean
+#import <Foundation/Foundation.h>
 
-#ifdef xNDEBUG
+#ifdef NDEBUG
 
 #define KWQDEBUGLEVEL(level,format...) ((void)0)
 
@@ -76,8 +70,10 @@ long _GetMillisecondsSinceEpoch();
 void KWQSetLogLevel(int mask);
 unsigned int KWQGetLogLevel();
 void KWQLog(unsigned int level, const char *file, int line, const char *function, const char *format, ...)
-    __attribute__((__format__ (__printf__, 5, 6)));
-
+// FIXME: When Radar 2920557 is fixed, we can add this back and turn the -Wmissing-format-attribute
+// switch back on. PFE precompiled headers currently prevent this from working.
+//    __attribute__((__format__ (__printf__, 5, 6)))
+;
 
 #define DEBUG_OBJECT(object) [[object description] lossyCString]
 
@@ -117,12 +113,12 @@ void KWQLog(unsigned int level, const char *file, int line, const char *function
 #define KWQDEBUG(format...) KWQDEBUGLEVEL(KWQ_LOG_DEBUG,format)
 
 #define _logNeverImplemented() \
-   KWQDEBUGLEVEL(KWQ_LOG_NEVER_IMPLEMENTED, "ERROR (NOT IMPLEMENTED)\n")
+   KWQDEBUGLEVEL(KWQ_LOG_NEVER_IMPLEMENTED, "ERROR (NOT IMPLEMENTED)")
 
 #define _logPartiallyImplemented() \
-   KWQDEBUGLEVEL(KWQ_LOG_PARTIALLY_IMPLEMENTED, "WARNING (PARTIALLY IMPLEMENTED)\n")
+   KWQDEBUGLEVEL(KWQ_LOG_PARTIALLY_IMPLEMENTED, "WARNING (PARTIALLY IMPLEMENTED)")
 
 #define _logNotYetImplemented() \
-   KWQDEBUGLEVEL (KWQ_LOG_NOT_YET_IMPLEMENTED, "WARNING (NOT YET IMPLEMENTED)\n")
+   KWQDEBUGLEVEL (KWQ_LOG_NOT_YET_IMPLEMENTED, "WARNING (NOT YET IMPLEMENTED)")
 
 #endif /* KWQDEBUG_H_ */

@@ -26,15 +26,7 @@
 #ifndef QPOINT_H_
 #define QPOINT_H_
 
-#ifdef HAVE_CONFIG_H
 #include <config.h>
-#endif
-
-#ifdef USING_BORROWED_QPOINT
-
-#include <_qpoint.h>
-
-#else /* !USING_BORROWED_QPOINT */
 
 #ifdef _KWQ_IOSTREAM_
 #include <iostream>
@@ -44,95 +36,48 @@
 
 #include "qarray.h"
 
-// class QPoint ================================================================
-
 class QPoint {
 public:
 
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-    // static member functions -------------------------------------------------
-
-    // constructors, copy constructors, and destructors ------------------------
-
     QPoint();
     QPoint(int, int);
-
-    // QPoint(const QPoint &);
-    // default copy constructor is fine
-
-// add no-op destructor
-#ifdef _KWQ_PEDANTIC_
-    ~QPoint() {}
-#endif
-
-    // member functions --------------------------------------------------------
 
     int x() const;
     int y() const;
 
     int manhattanLength() const;
-
-    // operators ---------------------------------------------------------------
-
-    /* Note: Trolltech seems to want operator= to be a bitwise copy
-     * QPoint &operator=(const QPoint &);
-     */
     
     friend QPoint operator+(const QPoint &, const QPoint &);
     friend QPoint operator-(const QPoint &, const QPoint &);
 
-// protected -------------------------------------------------------------------
-
-// private ---------------------------------------------------------------------
 private:
 
     QCOORD xCoord;
     QCOORD yCoord;
 
-}; // class QPoint =============================================================
-
-
-// class QPointArray ===========================================================
+};
 
 class QPointArray : public QMemArray<QPoint> {
 public:
 
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-    // static member functions -------------------------------------------------
-    // constructors, copy constructors, and destructors ------------------------
-
     QPointArray() {}
-    ~QPointArray() {}
-    QPointArray(int size) : QMemArray<QPoint> (size){};
+    QPointArray(int size) : QMemArray<QPoint>(size) {}
 
-    QPointArray(const QPointArray &);
     QPointArray(int, const QCOORD *);
 
-    // member functions --------------------------------------------------------
-
     void setPoint(uint, int, int);
+#if 0
+    // FIXME: Workaround for Radar 2921061
     bool setPoints(int, int, int, ...);
+#else
+    bool setPoints(int, int, int, int, int, int, int, int, int);
+#endif
     bool setPoints( int nPoints, const QCOORD *points );
     
-    // operators ---------------------------------------------------------------
-
-    //QPointArray &operator=(const QPointArray &);
-    QPointArray	 &operator=( const QPointArray &a )
-	{ return (QPointArray&)assign( a ); }
-
 #ifdef _KWQ_IOSTREAM_
     friend std::ostream &operator<<(std::ostream &, const QPoint &);
 #endif
 
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
-
-}; // class QPointArray ========================================================
+};
 
 #endif
-
-#endif /* USING_BORROWED_QPOINT */

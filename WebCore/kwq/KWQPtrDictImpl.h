@@ -33,13 +33,7 @@
 
 #include <stddef.h>
 
-#define Fixed MacFixed
-#define Rect MacRect
-#define Boolean MacBoolean
 #include <CoreFoundation/CFDictionary.h>
-#undef Fixed
-#undef Rect
-#undef Boolean
 
 class KWQPtrDictImpl
 {

@@ -29,13 +29,7 @@
 
 #include <cstddef>
 
-#define Fixed MacFixed
-#define Rect MacRect
-#define Boolean MacBoolean
 #include <CoreFoundation/CFArray.h>
-#undef Fixed
-#undef Rect
-#undef Boolean
 
 // KWQListNode
 

@@ -16,8 +16,8 @@
 #import <WebFoundation/IFError.h>
 
 // includes from kde
-#include <khtmlview.h>
-#include <rendering/render_frames.h>
+#import <khtmlview.h>
+#import <rendering/render_frames.h>
 
 static const char * const stateNames[6] = {
     "zero state",

@@ -25,13 +25,7 @@
 
 #import <qfontmetrics.h>
 
-#define Fixed MacFixed
-#define Rect MacRect
-#define Boolean MacBoolean
 #include <Cocoa/Cocoa.h>
-#undef Fixed
-#undef Rect
-#undef Boolean
 
 #import <qfont.h>
 #import <IFTextRendererFactory.h>

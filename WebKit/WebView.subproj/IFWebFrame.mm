@@ -17,8 +17,8 @@
 
 #import <WebKit/WebKitDebug.h>
 
-#include <khtml_part.h>
-#include <rendering/render_frames.h>
+#import <khtml_part.h>
+#import <rendering/render_frames.h>
 
 @implementation IFWebFrame
 

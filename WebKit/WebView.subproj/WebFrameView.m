@@ -12,11 +12,11 @@
 #import <WebKit/WebKitDebug.h>
 
 // KDE related includes
-#include <khtmlview.h>
-#include <qwidget.h>
-#include <qpainter.h>
-#include <qevent.h>
-#include <html/html_documentimpl.h>
+#import <khtmlview.h>
+#import <qwidget.h>
+#import <qpainter.h>
+#import <qevent.h>
+#import <html/html_documentimpl.h>
 
 
 @implementation IFWebView

@@ -11,7 +11,7 @@
 #import <Cocoa/Cocoa.h>
 
 #import <ApplicationServices/ApplicationServices.h>
-#import <CoreGraphics/CGFontPrivate.h>
+#import <CoreGraphics/CoreGraphicsPrivate.h>
 #import <WebKit/WebKitDebug.h>
 
 #define NON_BREAKING_SPACE 0xA0

@@ -8,8 +8,8 @@
 
 #import "IFCache.h"
 
-#include "misc/loader.h"
-#include "kjs/collector.h"
+#import "misc/loader.h"
+#import "kjs/collector.h"
 
 @implementation IFCache
 

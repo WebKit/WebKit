@@ -12,7 +12,7 @@
 				COPY_PHASE_STRIP = NO;
 				DEBUGGING_SYMBOLS = YES;
 				DEBUG_CFLAGS = "";
-				FRAMEWORK_SEARCH_PATHS = "@executable_path/../Frameworks";
+				FRAMEWORK_SEARCH_PATHS = "\U0001@executable_path/../Frameworks";
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				OPTIMIZATION_CFLAGS = "-O";
 				SKIP_INSTALL = YES;
@@ -24,7 +24,7 @@
 			buildRules = (
 			);
 			buildSettings = {
-				FRAMEWORK_SEARCH_PATHS = "@executable_path/../Frameworks";
+				FRAMEWORK_SEARCH_PATHS = "\U0001@executable_path/../Frameworks";
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				SKIP_INSTALL = YES;
 			};
@@ -90,12 +90,12 @@
 		0867D691FE84028FC02AAC07 = {
 			children = (
 				9C7CABBB0190A37C0ECA16EA,
-				254DC334016E1D3F0ECA149E,
 				25A8176801B5474B0ECA149E,
 				F5065217027F555001C1A526,
 				F5F084B8024BBFFE01CA1520,
 				F5B36B400281DE87018635CB,
 				F5EBC45202134BB601CA1520,
+				254DC334016E1D3F0ECA149E,
 				089C1665FE841158C02AAC07,
 				0867D69AFE84028FC02AAC07,
 				034768DFFF38A50411DB9C8B,
@@ -106,18 +106,13 @@
 		};
 		0867D69AFE84028FC02AAC07 = {
 			children = (
-				1058C7B0FEA5585E11CA2CBB,
-				1058C7B2FEA5585E11CA2CBB,
+				F5C2869302846DCD018635CA,
+				F5C2869402846DCD018635CA,
+				F5C2869502846DCD018635CA,
 			);
 			isa = PBXGroup;
-			name = "External Frameworks and Libraries";
+			name = Frameworks;
 			refType = 4;
-		};
-		0867D69BFE84028FC02AAC07 = {
-			isa = PBXFrameworkReference;
-			name = Foundation.framework;
-			path = /System/Library/Frameworks/Foundation.framework;
-			refType = 0;
 		};
 		0867D69CFE84028FC02AAC07 = {
 			buildPhases = (
@@ -131,20 +126,25 @@
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
 				DEBUGGING_SYMBOLS = NO;
-				DEBUG_CFLAGS = "-DxNDEBUG";
+				DEBUG_CFLAGS = "-DNDEBUG";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_SEARCH_PATHS = "\"$(SYSTEM_LIBRARY_DIR)/Frameworks/ApplicationServices.framework/Frameworks\" \"$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Frameworks\"";
 				FRAMEWORK_VERSION = A;
-				HEADER_SEARCH_PATHS = ".. ../JavaScriptCore ../WebCore/khtml ../WebCore/kwq ../WebCore/kwq/kdecore ../WebCore/kwq/khtml ../WebCore/kwq/kparts ../WebCore/kwq/qt /System/Library/Frameworks/ApplicationServices.framework/Frameworks/QD.framework/PrivateHeaders";
+				HEADER_SEARCH_PATHS = ".. ../JavaScriptCore ../WebCore/khtml ../WebCore/kwq ../WebCore/kwq/kdecore ../WebCore/kwq/khtml ../WebCore/kwq/kparts ../WebCore/kwq/qt";
 				INSTALL_PATH = "";
 				LIBRARY_SEARCH_PATHS = "";
 				OPTIMIZATION_CFLAGS = "-Os";
-				OTHER_CFLAGS = "$(DEBUG_CFLAGS) -DAPPLE_CHANGES -DHAVE_CONFIG_H -F/System/Library/Frameworks/ApplicationServices.framework/Frameworks/ -F/System/Library/Frameworks/CoreServices.framework/Frameworks/ -F/System/Library/Frameworks/Carbon.framework/Frameworks/";
-				OTHER_LDFLAGS = "-lwebcore -framework JavaScriptCore -framework WebFoundation -seg1addr 0x4000000";
+				OTHER_CFLAGS = "$(DEBUG_CFLAGS) -DAPPLE_CHANGES -DHAVE_CONFIG_H";
+				OTHER_LDFLAGS = "-framework WebFoundation -framework JavaScriptCore -lwebcore -seg1addr 0x4000000";
+				PFE_FILE_C_DIALECTS = "objective-c objective-c++";
+				PRECOMPILE_PREFIX_HEADER = YES;
+				PREFIX_HEADER = WebKitPrefix.h;
 				PRODUCT_NAME = WebKit;
 				SECTORDER_FLAGS = "";
 				USE_GCC3 = YES;
-				WARNING_CFLAGS = "-Werror -Wall -W -Wbad-function-cast -Wcast-align -Wchar-subscripts -Wformat-security -Wmissing-declarations -Wmissing-format-attribute -Wmissing-prototypes -Wnested-externs -Wpointer-arith -Wwrite-strings -Wno-format-y2k -Wno-unused-parameter";
+				USE_GCC3_PFE_SUPPORT = YES;
+				WARNING_CFLAGS = "-Werror -Wall -W -Wbad-function-cast -Wcast-align -Wchar-subscripts -Wformat-security -Wmissing-declarations -Wmissing-prototypes -Wnested-externs -Wpointer-arith -Wwrite-strings -Wno-format-y2k -Wno-unused-parameter";
 				WRAPPER_EXTENSION = framework;
 			};
 			dependencies = (
@@ -155,8 +155,8 @@
 			productName = WebKit;
 			productReference = 034768E0FF38A50411DB9C8B;
 			productSettingsXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
-<!DOCTYPE plist SYSTEM \"file://localhost/System/Library/DTDs/PropertyList.dtd\">
-<plist version=\"0.9\">
+<!DOCTYPE plist PUBLIC \"-//Apple Computer//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">
+<plist version=\"1.0\">
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
@@ -229,6 +229,7 @@
 				F5B36B430281DF55018635CB,
 				F5B36B470281DF9C018635CB,
 				F50AD3880282028B01C1A526,
+				F5C283740284676D018635CA,
 			);
 			isa = PBXHeadersBuildPhase;
 		};
@@ -289,8 +290,9 @@
 		0867D6A0FE84028FC02AAC07 = {
 			buildActionMask = 2147483647;
 			files = (
-				1058C7B3FEA5585E11CA2CBB,
-				F5EBC45C02134C0C01CA1520,
+				F5C287BB02846DCD018635CA,
+				F5C287BC02846DCD018635CA,
+				F5C287BD02846DCD018635CA,
 			);
 			isa = PBXFrameworksBuildPhase;
 		};
@@ -299,12 +301,6 @@
 			files = (
 			);
 			isa = PBXRezBuildPhase;
-		};
-		0867D6A5FE840307C02AAC07 = {
-			isa = PBXFrameworkReference;
-			name = AppKit.framework;
-			path = /System/Library/Frameworks/AppKit.framework;
-			refType = 0;
 		};
 		089C1665FE841158C02AAC07 = {
 			children = (
@@ -353,46 +349,6 @@
 //082
 //083
 //084
-//100
-//101
-//102
-//103
-//104
-		1058C7B0FEA5585E11CA2CBB = {
-			children = (
-				1058C7B1FEA5585E11CA2CBB,
-			);
-			isa = PBXGroup;
-			name = "Linked Frameworks";
-			refType = 4;
-		};
-		1058C7B1FEA5585E11CA2CBB = {
-			isa = PBXFrameworkReference;
-			name = Cocoa.framework;
-			path = /System/Library/Frameworks/Cocoa.framework;
-			refType = 0;
-		};
-		1058C7B2FEA5585E11CA2CBB = {
-			children = (
-				0867D69BFE84028FC02AAC07,
-				0867D6A5FE840307C02AAC07,
-				F5EBC45B02134C0C01CA1520,
-			);
-			isa = PBXGroup;
-			name = "Other Frameworks";
-			refType = 4;
-		};
-		1058C7B3FEA5585E11CA2CBB = {
-			fileRef = 1058C7B1FEA5585E11CA2CBB;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-//100
-//101
-//102
-//103
-//104
 //250
 //251
 //252
@@ -404,13 +360,14 @@
 				3944607B020F50ED0ECA1767,
 				2568C72C0174912D0ECA149E,
 				25C29825016E29620ECA149E,
+				F5C283730284676D018635CA,
 				25A5593101A5996D0ECA149E,
 				25A5593201A5996D0ECA149E,
 				F59EAE410253C8DE018635CA,
 				F59EAE3E0253C7EE018635CA,
 			);
 			isa = PBXGroup;
-			name = Misc;
+			name = "Other Sources";
 			refType = 4;
 		};
 		255AF6590250FC030ECA149E = {
@@ -1377,7 +1334,7 @@
 				COPY_PHASE_STRIP = NO;
 				DEBUGGING_SYMBOLS = YES;
 				DEBUG_CFLAGS = "";
-				FRAMEWORK_SEARCH_PATHS = "@executable_path/../Frameworks";
+				FRAMEWORK_SEARCH_PATHS = "\U0001@executable_path/../Frameworks";
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				OPTIMIZATION_CFLAGS = "-O0";
 				SKIP_INSTALL = YES;
@@ -1504,7 +1461,7 @@
 				F5B36B420281DF55018635CB,
 			);
 			isa = PBXGroup;
-			name = WebCoreSupport;
+			name = "WebCore Support";
 			refType = 4;
 		};
 		F5B36B410281DF55018635CB = {
@@ -1585,6 +1542,53 @@
 		};
 		F5B92B850223191D01C1A525 = {
 			fileRef = F5B92B830223191D01C1A525;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5C283730284676D018635CA = {
+			isa = PBXFileReference;
+			path = WebKitPrefix.h;
+			refType = 4;
+		};
+		F5C283740284676D018635CA = {
+			fileRef = F5C283730284676D018635CA;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5C2869302846DCD018635CA = {
+			isa = PBXFrameworkReference;
+			name = ApplicationServices.framework;
+			path = /System/Library/Frameworks/ApplicationServices.framework;
+			refType = 0;
+		};
+		F5C2869402846DCD018635CA = {
+			isa = PBXFrameworkReference;
+			name = Carbon.framework;
+			path = /System/Library/Frameworks/Carbon.framework;
+			refType = 0;
+		};
+		F5C2869502846DCD018635CA = {
+			isa = PBXFrameworkReference;
+			name = Cocoa.framework;
+			path = /System/Library/Frameworks/Cocoa.framework;
+			refType = 0;
+		};
+		F5C287BB02846DCD018635CA = {
+			fileRef = F5C2869302846DCD018635CA;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5C287BC02846DCD018635CA = {
+			fileRef = F5C2869402846DCD018635CA;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5C287BD02846DCD018635CA = {
+			fileRef = F5C2869502846DCD018635CA;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -1672,18 +1676,6 @@
 		};
 		F5EBC45A02134BC301CA1520 = {
 			fileRef = F5EBC45602134BC301CA1520;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F5EBC45B02134C0C01CA1520 = {
-			isa = PBXFrameworkReference;
-			name = Carbon.framework;
-			path = /System/Library/Frameworks/Carbon.framework;
-			refType = 0;
-		};
-		F5EBC45C02134C0C01CA1520 = {
-			fileRef = F5EBC45B02134C0C01CA1520;
 			isa = PBXBuildFile;
 			settings = {
 			};

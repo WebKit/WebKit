@@ -4,26 +4,30 @@
 
 #import "WebKitDebug.h"
 
-#ifndef xNDEBUG
+// FIXME: Workaround for Radar xxx.
+#undef putc
 
-unsigned int WEBKIT_LOG_LEVEL = 0;
+#ifndef NDEBUG
 
+static unsigned WEBKIT_LOG_LEVEL = 0;
 
-void WebKitSetLogLevel(int mask) {
+void WebKitSetLogLevel(int mask)
+{
     WEBKIT_LOG_LEVEL = mask;    
 }
 
-bool __checkedDefault = 0;
+unsigned int WebKitGetLogLevel(void)
+{
+    static BOOL checkedDefault = NO;
 
-unsigned int WebKitGetLogLevel(){
-    if (!__checkedDefault){
+    if (!checkedDefault) {
         NSString *logLevelString = [[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitLogLevel"];
         if (logLevelString != nil){
-            if (![[NSScanner scannerWithString: logLevelString] scanHexInt: &WEBKIT_LOG_LEVEL]){
+            if (![[NSScanner scannerWithString: logLevelString] scanHexInt: &WEBKIT_LOG_LEVEL]) {
                 NSLog (@"Unable to scan hex value for WebKitLogLevel, default to value of %d", WEBKIT_LOG_LEVEL);
             }
         }
-        __checkedDefault = 1; 
+        checkedDefault = YES; 
     }
     return WEBKIT_LOG_LEVEL;
 }
@@ -40,7 +44,7 @@ timestamp(void)
 #endif
 
 void WebKitLog(unsigned int level, const char *file, int line, const char *function, const char *format, ...)
-{    
+{
     if (WebKitGetLogLevel() & level) {
         va_list args;
         fprintf(stderr, "[WEBKIT] - %s:%d %s - ", file, line, function);
@@ -53,7 +57,6 @@ void WebKitLog(unsigned int level, const char *file, int line, const char *funct
 }
 
 #endif
-
 
 #ifdef IF_MALLOC_TESTING
 #include <objc/malloc.h>

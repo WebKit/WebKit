@@ -41,16 +41,8 @@
 #include "qevent.h"
 #include <KWQStyle.h>
 
-#if (defined(__APPLE__) && defined(__OBJC__) && defined(__cplusplus))
-#define Fixed MacFixed
-#define Rect MacRect
-#define Boolean MacBoolean
-
+#ifdef __OBJC__
 #import <Cocoa/Cocoa.h>
-
-#undef Fixed
-#undef Rect
-#undef Boolean
 #endif
 
 class QWidgetPrivate;

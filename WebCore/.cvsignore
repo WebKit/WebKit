@@ -5,3 +5,4 @@ libwebcorecombined.exp
 libwebcorenmedited.dylib
 libwebcoreunstripped.dylib
 webcore-install-stamp
+*.pfe

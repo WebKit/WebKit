@@ -26,7 +26,6 @@
 #include "qpoint.h"
 #include <stdarg.h>
 
-
 QPointArray::QPointArray(int nPoints, const QCOORD *points)
 {
     setPoints( nPoints, points );
@@ -52,6 +51,8 @@ bool QPointArray::setPoints( int nPoints, const QCOORD *points )
     return TRUE;
 }
 
+// FIXME: Workaround for Radar 2921061
+#if 0
 
 bool QPointArray::setPoints( int nPoints, int firstx, int firsty, ... )
 {
@@ -70,3 +71,18 @@ bool QPointArray::setPoints( int nPoints, int firstx, int firsty, ... )
     va_end( ap );
     return TRUE;
 }
+
+#else
+
+bool QPointArray::setPoints( int nPoints, int x0, int y0, int x1, int y1, int x2, int y2, int x3, int y3)
+{
+    if ( !resize(nPoints) )
+	return FALSE;
+    setPoint( 0, x0, y0 );
+    setPoint( 1, x1, y1 );
+    setPoint( 2, x2, y2 );
+    setPoint( 3, x3, y3 );
+    return TRUE;
+}
+
+#endif

@@ -1,3 +1,32 @@
+2002-05-06  Darin Adler  <darin@apple.com>
+
+	* WebKitPrefix.h: Added.
+	* WebKit.pbproj/project.pbxproj: Use PFE precompiling.
+	Also switch from xNDEBUG to NDEBUG.
+
+	* Misc.subproj/WebKitDebug.h: Get rid of format attribute because of bug
+	2920557. Switch from xNDEBUG to NDEBUG.
+
+	* Misc.subproj/WebKitDebug.m:
+	Add undef to work around PFE problem with inline functions, Radar 2920554.
+
+	* Plugins.subproj/IFPluginView.mm: Changed how we work around the bug in
+	the CGS defines.
+
+	* WebCoreSupport.subproj/IFCachedTextRenderer.h: Change include of the
+	private QD header to use the form that works with more-normal way of
+	getting at the private bits of frameworks.
+
+	* WebCoreSupport.subproj/IFCachedTextRenderer.m: Use the header
+	<CoreGraphics/CoreGraphicsPrivate.h> instead of <CoreGraphics/CGFontPrivate.h>.
+
+	* Misc.subproj/IFCache.mm:
+	* WebView.subproj/IFLoadProgress.mm:
+	* WebView.subproj/IFWebFrame.mm:
+	* WebView.subproj/IFWebFramePrivate.mm:
+	* WebView.subproj/IFWebView.mm:
+	Changed includes to imports.
+
 2002-05-06  Chris Blumenberg  <cblu@apple.com>
 
 	Made start and stop work cleaner. 

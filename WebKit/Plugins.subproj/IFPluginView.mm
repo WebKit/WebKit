@@ -30,10 +30,14 @@
 #import <IFPluginNullEventSender.h>
 #import "IFNullPluginView.h"
 
-extern "C" {
 #import <CoreGraphics/CoreGraphics.h>
+
+// Work around bug in CGSDefines.h.
+#import <CoreGraphics/CGSDefines.h>
+#undef CGS_EXTERN
+#define CGS_EXTERN extern "C"
+
 #import <CoreGraphics/CoreGraphicsPrivate.h>
-}
 
 @implementation IFPluginView
 

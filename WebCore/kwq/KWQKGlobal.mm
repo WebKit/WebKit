@@ -31,13 +31,7 @@
 
 #include <qdict.h>
 
-#define Fixed MacFixed
-#define Rect MacRect
-#define Boolean MacBoolean
 #include <Cocoa/Cocoa.h>
-#undef Fixed
-#undef Rect
-#undef Boolean
 
 KWQStaticStringDict *KGlobal::_stringDict = 0;
 KInstance *KGlobal::_instance = 0;

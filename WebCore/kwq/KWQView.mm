@@ -171,7 +171,7 @@
 - (void)layout
 {
     if (needsLayout){
-#ifndef xNDEBUG
+#ifndef NDEBUG
         double start = CFAbsoluteTimeGetCurrent();
 #endif
         ((KHTMLView *)widget)->layout();
@@ -197,7 +197,7 @@
         
         [self lockFocus];
 
-#ifndef xNDEBUG
+#ifndef NDEBUG
         double start = CFAbsoluteTimeGetCurrent();
 #endif
         ((KHTMLView *)widget)->drawContents( &p, (int)rect.origin.x, 

@@ -4,7 +4,7 @@
 
 #import <Foundation/Foundation.h>
 
-#ifdef xNDEBUG
+#ifdef NDEBUG
 
 #define WEBKITDEBUGLEVEL(level, format...) ((void)0)
 #define WEBKIT_ASSERT(expr) ((void)0)
@@ -55,8 +55,11 @@ extern "C" {
 void WebKitSetLogLevel(int mask);
 unsigned int WebKitGetLogLevel(void);
 void WebKitLog(unsigned int level, const char *file, int line, const char *function, const char *format, ...)
-    __attribute__((__format__ (__printf__, 5, 6)));
-    
+// FIXME: When Radar 2920557 is fixed, we can add this back and turn the -Wmissing-format-attribute
+// switch back on. PFE precompiled headers currently prevent this from working.
+//    __attribute__((__format__ (__printf__, 5, 6)))
+;
+
 #ifdef __cplusplus
 }
 #endif
@@ -97,13 +100,13 @@ void WebKitLog(unsigned int level, const char *file, int line, const char *funct
 #endif
 
 #define _logNeverImplemented() \
-   WEBKITDEBUGLEVEL(WEBKIT_LOG_NEVER_IMPLEMENTED, "ERROR (NOT IMPLEMENTED)\n")
+   WEBKITDEBUGLEVEL(WEBKIT_LOG_NEVER_IMPLEMENTED, "ERROR (NOT IMPLEMENTED)")
 
 #define _logPartiallyImplemented() \
-   WEBKITDEBUGLEVEL(WEBKIT_LOG_PARTIALLY_IMPLEMENTED, "WARNING (PARTIALLY IMPLEMENTED)\n")
+   WEBKITDEBUGLEVEL(WEBKIT_LOG_PARTIALLY_IMPLEMENTED, "WARNING (PARTIALLY IMPLEMENTED)")
 
 #define _logNotYetImplemented() \
-   WEBKITDEBUGLEVEL (WEBKIT_LOG_NOT_YET_IMPLEMENTED, "WARNING (NOT YET IMPLEMENTED)\n")
+   WEBKITDEBUGLEVEL (WEBKIT_LOG_NOT_YET_IMPLEMENTED, "WARNING (NOT YET IMPLEMENTED)")
 
 #define WEBKITDEBUG(format...) WEBKITDEBUGLEVEL(WEBKIT_LOG_GENERIC_DEBUG, format)
 

@@ -5,7 +5,7 @@
 
 #import "IFLoadProgress.h"
 
-#include <WCLoadProgress.h>
+#import <WCLoadProgress.h>
 
 @implementation IFLoadProgress
 

@@ -26,15 +26,12 @@
 #ifndef QSTRING_H_
 #define QSTRING_H_
 
-#define Fixed MacFixed
-#define Rect MacRect
-#define Boolean MacBoolean
 #include <CoreFoundation/CoreFoundation.h>
-#undef Fixed
-#undef Rect
-#undef Boolean
 
 #include "qcstring.h"
+
+// Make htmltokenizer.cpp happy
+#define QT_VERSION 300
 
 #define _FAST_QSTRING_TO_NSSTRING(aString) (aString).getNSString()
 #define QSTRING_TO_NSSTRING(aString) (aString).getNSString()

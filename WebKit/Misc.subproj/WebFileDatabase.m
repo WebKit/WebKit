@@ -2,11 +2,11 @@
 	Copyright 2002, Apple, Inc. All rights reserved.
 */
 
-#include <fcntl.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <sys/mman.h>
-#include <pthread.h>
+#import <fcntl.h>
+#import <sys/stat.h>
+#import <sys/types.h>
+#import <sys/mman.h>
+#import <pthread.h>
 
 #import "IFURLFileDatabase.h"
 #import "IFNSFileManagerExtensions.h"

@@ -7,7 +7,7 @@
 //
 
 #import <IFTextRenderer.h>
-#import <ATSUnicodePriv.h>
+#import <QD/ATSUnicodePriv.h>
 
 typedef float IFGlyphWidth;
 

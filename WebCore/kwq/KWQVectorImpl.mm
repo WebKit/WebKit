@@ -27,13 +27,7 @@
 
 #ifndef USING_BORROWED_QVECTOR
 
-#define Fixed MacFixed
-#define Rect MacRect
-#define Boolean MacBoolean
 #include <CoreFoundation/CFArray.h>
-#undef Fixed
-#undef Rect
-#undef Boolean
 
 #include <new>
 #include <stdlib.h>
