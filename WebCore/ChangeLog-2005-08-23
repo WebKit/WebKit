@@ -68,7 +68,6 @@
         * khtml/xml/dom_docimpl.cpp:
         (DocumentImpl::detach): Took out the call to removeAllEventListenersFromAllNodes(). If we remove all event listeners here then when KHTMLPart::closeURL() checks for even listeners, it will never have any because they'll already be gone. 
 
->>>>>>> 1.4064
 2005-03-15  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Vicki
