@@ -1,3 +1,55 @@
+2002-09-17  Darin Adler  <darin@apple.com>
+
+	- fixed 2936933 -- Pages that claim to be UTF-8 but contain invalid
+	sequences do not render at all
+
+	Misc. speed improvements. Total 2.6% speedup for cvs-base.
+
+	Improvements for signals.
+
+        * kwq/KWQChar.mm:
+        (QChar::isSpace): Add fast case for ASCII.
+        (QChar::lower): Add fast case for ASCII.
+        (QChar::upper): Add fast case for ASCII.
+
+        * kwq/qt/qcolor.h: Just store RGB values, not NSColor objects.
+        * kwq/KWQColor.mm:
+        (QColor::QColor): No need to set color to nil.
+        (QColor::name): Use QString::sprintf instead of NSString.
+        (QColor::setNamedColor): Use KWQInvalidColor instead of nil.
+        (QColor::getNSColor): Make an autoreleased NSColor.
+
+        * kwq/KWQKHTMLPartImpl.mm:
+        (moveWidgetsAside): Use isWidget() instead of dynamic_cast.
+
+        * kwq/KWQSignal.h: use a QValueList instead of a fixed-size array.
+        * kwq/KWQSignal.mm:
+        (KWQSignal::connect): Append to list.
+        (KWQSignal::disconnect): Remove from list.
+        (KWQSignal::call): Use the QValueList.
+
+        * kwq/KWQSlot.mm:
+        (KWQSlot::call): Use static_cast instead of dynamic_cast where possible.
+
+        * kwq/qt/qstring.h: Add return value to forceUnicode.
+        * kwq/KWQString.mm:
+        (QString::fromStringWithEncoding): Implemented using the Text Encoding
+	Converter instead of CFString.
+        (compareIgnoringCaseForASCIIOnly): New function. Faster find.
+        (QString::find): Separate case-sensitive from case-insensitive and speed
+	up both of them.
+        (QString::stripWhiteSpace): Use the new forceUnicode for simplicity.
+        (QString::simplifyWhiteSpace): Ditto.
+        (QString::insert): Ditto.
+        (QString::remove): Ditto.
+        (QString::forceUnicode): Return the unicode pointer.
+        (QString::fill): Use the new forceUnicode for simplicity.
+
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge mouseUp:]): Fix two bugs. First, don't treat a slow
+	click as a double click. Second, deliver a mouse release event even for
+	a double click, as Qt does.
+
 2002-09-17  Richard Williamson   <rjw@apple.com>
 
         * khtml/css/cssstyleselector.cpp:

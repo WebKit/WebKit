@@ -119,13 +119,9 @@ void KWQSlot::call() const
     }
     
     #define CASE(member, type, function) \
-        case member: { \
-            type *o = dynamic_cast<type *>(m_object.pointer()); \
-            if (o) { \
-                o->function(); \
-            } \
-            return; \
-        }
+        case member: \
+            static_cast<type *>(m_object.pointer())->function(); \
+            return;
     
     switch (m_function) {
         CASE(signalFinishedParsing, DocumentImpl, m_finishedParsing.call)
@@ -145,7 +141,7 @@ void KWQSlot::call() const
             }
             RenderFileButton *button = dynamic_cast<RenderFileButton *>(m_object.pointer());
             if (button) {
-                edit->slotReturnPressed();
+                button->slotReturnPressed();
             }
             return;
         }
@@ -161,13 +157,9 @@ void KWQSlot::call(bool b) const
     }
     
     #define CASE(member, type, function) \
-        case member: { \
-            type *o = dynamic_cast<type *>(m_object.pointer()); \
-            if (o) { \
-                o->function(b); \
-            } \
-            return; \
-        }
+        case member: \
+            static_cast<type *>(m_object.pointer())->function(b); \
+            return;
     
     switch (m_function) {
         CASE(slotChildCompletedWithBool, KHTMLPart, slotChildCompleted)
@@ -185,20 +177,12 @@ void KWQSlot::call(int i) const
     }
     
     switch (m_function) {
-        case slotStateChanged: {
-            RenderCheckBox *checkBox = dynamic_cast<RenderCheckBox *>(m_object.pointer());
-            if (checkBox) {
-                checkBox->slotStateChanged(i);
-            }
+        case slotStateChanged:
+            static_cast<RenderCheckBox *>(m_object.pointer())->slotStateChanged(i);
             return;
-        }
-        case slotSelected: {
-            RenderSelect *select = dynamic_cast<RenderSelect *>(m_object.pointer());
-            if (select) {
-                select->slotSelected(i);
-            }
+        case slotSelected:
+            static_cast<RenderSelect *>(m_object.pointer())->slotSelected(i);
             return;
-        }
     }
     
     call();
@@ -218,7 +202,7 @@ void KWQSlot::call(const QString &string) const
             }
             RenderFileButton *button = dynamic_cast<RenderFileButton *>(m_object.pointer());
             if (button) {
-                edit->slotTextChanged(string);
+                button->slotTextChanged(string);
             }
             return;
         }
@@ -234,13 +218,9 @@ void KWQSlot::call(Job *job) const
     }
     
     switch (m_function) {
-        case slotChildStarted: {
-            KHTMLPart *part = dynamic_cast<KHTMLPart *>(m_object.pointer());
-            if (part) {
-                part->slotChildStarted(job);
-            }
+        case slotChildStarted:
+            static_cast<KHTMLPart *>(m_object.pointer())->slotChildStarted(job);
             return;
-        }
     }
     
     call();

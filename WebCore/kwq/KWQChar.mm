@@ -41,6 +41,10 @@ const QChar QChar::null;
 
 bool QChar::isSpace() const
 {
+    // Without this first quick case, this function was showing up in profiles.
+    if (c <= 0x7F) {
+        return isspace(c);
+    }
     static CFCharacterSetRef set = CFCharacterSetGetPredefined(kCFCharacterSetWhitespaceAndNewline);
     return CFCharacterSetIsCharacterMember(set, c);
 }
@@ -76,6 +80,10 @@ bool QChar::isPunct() const
 
 QChar QChar::lower() const
 {
+    // Without this first quick case, this function was showing up in profiles.
+    if (c <= 0x7F) {
+        return (char)tolower(c);
+    }
     scratchUniChar = c;
     CFStringLowercase(GetScratchUniCharString(), NULL);
     return scratchUniChar;
@@ -83,6 +91,10 @@ QChar QChar::lower() const
 
 QChar QChar::upper() const
 {
+    // Without this first quick case, this function was showing up in profiles.
+    if (c <= 0x7F) {
+        return (char)toupper(c);
+    }
     scratchUniChar = c;
     CFStringUppercase(GetScratchUniCharString(), NULL);
     return scratchUniChar;

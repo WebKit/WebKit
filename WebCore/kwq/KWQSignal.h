@@ -50,7 +50,7 @@ private:
     QObject *m_object;
     KWQSignal *m_next;
     const char *m_name;
-    KWQSlot m_slots[4];
+    QValueList<KWQSlot> m_slots;
     
     friend class QObject;
 };

@@ -39,27 +39,26 @@ typedef unsigned int QRgb;			// RGB triplet
 QRgb qRgb(int r, int g, int b);
 QRgb qRgba(int r, int g, int b, int a);
 
+const QRgb KWQInvalidColor = 0x40000000;
+
 class QColor {
 public:
-    QColor();
-    QColor(int,int,int);
+    QColor() : color(KWQInvalidColor) { }
+    QColor(int r, int g, int b) : color(qRgb(r, g, b)) { }
     explicit QColor(const QString &);
     QColor(const char *); // can't be explicit because of helper.cpp
-    QColor(const QColor &);
-
-    ~QColor();
 
     QString name() const;
     void setNamedColor(const QString&);
 
-    bool isValid() const;
+    bool isValid() const { return color != KWQInvalidColor; }
 
-    int red() const;
-    int green() const;
-    int blue() const;
-    QRgb rgb() const;
-    void setRgb(int,int,int);
-    void setRgb(int);
+    int red() const { return (color >> 16) & 0xFF; }
+    int green() const { return (color >> 8) & 0xFF; }
+    int blue() const { return color & 0xFF; }
+    QRgb rgb() const { return color & 0xFFFFFF; }
+    void setRgb(int r, int g, int b) { color = qRgb(r, g, b); }
+    void setRgb(int rgb) { color = rgb; }
 
     void hsv(int *, int *, int *) const;
     void setHsv(int h, int s, int v);
@@ -67,14 +66,23 @@ public:
     QColor light(int f = 150) const;
     QColor dark(int f = 200) const;
 
-    QColor &operator=(const QColor &);
-    bool operator==(const QColor &x) const;
-    bool operator!=(const QColor &x) const;
+    friend bool operator==(const QColor &a, const QColor &b);
+    friend bool operator!=(const QColor &a, const QColor &b);
 
     NSColor *getNSColor() const;
 
 private:
-    NSColor *color;
+    QRgb color;
 };
+
+inline bool operator==(const QColor &a, const QColor &b)
+{
+    return a.color == b.color;
+}
+
+inline bool operator!=(const QColor &a, const QColor &b)
+{
+    return a.color != b.color;
+}
 
 #endif

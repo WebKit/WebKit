@@ -282,7 +282,7 @@ using khtml::RenderPart;
     int nx, ny;
     node->absolutePosition(nx,ny);
     NSObject *copiedNode = [copier nodeWithName:name
-                                           position:NSMakePoint(nx,ny)
+                                       position:NSMakePoint(nx,ny)
                                            rect:NSMakeRect(node->xPos(), node->yPos(), node->width(), node->height())
                                            view:view
                                        children:children];
@@ -366,13 +366,15 @@ using khtml::RenderPart;
     state |= [self stateForEvent:event];
     
     if (part->impl->view()) {
-        if ([event clickCount] % 2 == 0){
-            QMouseEvent kEvent(QEvent::MouseButtonDblClick, QPoint((int)p.x, (int)p.y), button, state, [event clickCount]);
-            part->impl->view()->viewportMouseDoubleClickEvent(&kEvent);
-        }
-        else {
-            QMouseEvent kEvent(QEvent::MouseButtonRelease, QPoint((int)p.x, (int)p.y), button, state, [event clickCount]);
-            part->impl->view()->viewportMouseReleaseEvent(&kEvent);
+        int clickCount = [event clickCount];
+
+        // Qt documentation says you always get a release event before a double-click event.
+        QMouseEvent releaseEvent(QEvent::MouseButtonRelease, QPoint(p), button, state, clickCount);
+        part->impl->view()->viewportMouseReleaseEvent(&releaseEvent);
+        
+        if (clickCount > 0 && clickCount % 2 == 0) {
+            QMouseEvent doubleClickEvent(QEvent::MouseButtonDblClick, QPoint(p), button, state, clickCount);
+            part->impl->view()->viewportMouseDoubleClickEvent(&doubleClickEvent);
         }
     }
 }
@@ -399,7 +401,7 @@ using khtml::RenderPart;
     state |= [self stateForEvent:event];
     
     if (part->impl->view()) {
-        QMouseEvent kEvent(QEvent::MouseButtonPress, QPoint((int)p.x, (int)p.y), button, state, [event clickCount]);
+        QMouseEvent kEvent(QEvent::MouseButtonPress, QPoint(p), button, state, [event clickCount]);
         part->impl->view()->viewportMousePressEvent(&kEvent);
     }
 }
@@ -408,7 +410,7 @@ using khtml::RenderPart;
 {
     NSPoint p = [event locationInWindow];
     
-    QMouseEvent kEvent(QEvent::MouseMove, QPoint((int)p.x, (int)p.y), 0, [self stateForEvent:event]);
+    QMouseEvent kEvent(QEvent::MouseMove, QPoint(p), 0, [self stateForEvent:event]);
     if (part->impl->view()) {
         part->impl->view()->viewportMouseMoveEvent(&kEvent);
     }
@@ -418,7 +420,7 @@ using khtml::RenderPart;
 {
     NSPoint p = [event locationInWindow];
     
-    QMouseEvent kEvent(QEvent::MouseMove, QPoint((int)p.x, (int)p.y), Qt::LeftButton, Qt::LeftButton);
+    QMouseEvent kEvent(QEvent::MouseMove, QPoint(p), Qt::LeftButton, Qt::LeftButton);
     if (part->impl->view()) {
         part->impl->view()->viewportMouseMoveEvent(&kEvent);
     }

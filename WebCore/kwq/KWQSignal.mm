@@ -51,39 +51,32 @@ KWQSignal::~KWQSignal()
 
 void KWQSignal::connect(const KWQSlot &slot)
 {
-    const int numSlots = sizeof(m_slots) / sizeof(m_slots[0]);
-    for (int i = 0; i != numSlots; ++i) {
-        if (m_slots[i].isEmpty()) {
-            m_slots[i] = slot;
-            return;
-        }
+#if !ERROR_DISABLED
+    if (m_slots.contains(slot)) {
+        ERROR("connecting the same slot to a signal twice, %s", m_name);
     }
-    ERROR("more than %d connections to the same signal not supported, %s", numSlots, m_name);
+#endif
+    m_slots.append(slot);
 }
 
 void KWQSignal::disconnect(const KWQSlot &slot)
 {
-    const int numSlots = sizeof(m_slots) / sizeof(m_slots[0]);
-    for (int i = 0; i != numSlots; ++i) {
-        if (m_slots[i] == slot) {
-            m_slots[i].clear();
-            return;
-        }
+#if !ERROR_DISABLED
+    if (!m_slots.contains(slot)) {
+        ERROR("disconnecting a signal that wasn't connected, %s", m_name);
     }
-    ERROR("disconnecting a signal that wasn't connected, %s", m_name);
+#endif
+    m_slots.remove(slot);
 }
 
 void KWQSignal::call() const
 {
     if (!m_object->m_signalsBlocked) {
         KWQObjectSenderScope senderScope(m_object);
-        const int numSlots = sizeof(m_slots) / sizeof(m_slots[0]);
-        KWQSlot copiedSlots[numSlots];
-        for (int i = 0; i != numSlots; ++i) {
-            copiedSlots[i] = m_slots[i];
-        }
-        for (int i = 0; i != numSlots; ++i) {
-            copiedSlots[i].call();
+        QValueList<KWQSlot> copiedSlots(m_slots);
+        QValueListConstIterator<KWQSlot> end = copiedSlots.end();
+        for (QValueListConstIterator<KWQSlot> it = copiedSlots.begin(); it != end; ++it) {
+            (*it).call();
         }
     }
 }
@@ -92,28 +85,22 @@ void KWQSignal::call(bool b) const
 {
     if (!m_object->m_signalsBlocked) {
         KWQObjectSenderScope senderScope(m_object);
-        const int numSlots = sizeof(m_slots) / sizeof(m_slots[0]);
-        KWQSlot copiedSlots[numSlots];
-        for (int i = 0; i != numSlots; ++i) {
-            copiedSlots[i] = m_slots[i];
-        }
-        for (int i = 0; i != numSlots; ++i) {
-            copiedSlots[i].call(b);
+        QValueList<KWQSlot> copiedSlots(m_slots);
+        QValueListConstIterator<KWQSlot> end = copiedSlots.end();
+        for (QValueListConstIterator<KWQSlot> it = copiedSlots.begin(); it != end; ++it) {
+            (*it).call(b);
         }
     }
 }
 
-void KWQSignal::call(int j) const
+void KWQSignal::call(int i) const
 {
     if (!m_object->m_signalsBlocked) {
         KWQObjectSenderScope senderScope(m_object);
-        const int numSlots = sizeof(m_slots) / sizeof(m_slots[0]);
-        KWQSlot copiedSlots[numSlots];
-        for (int i = 0; i != numSlots; ++i) {
-            copiedSlots[i] = m_slots[i];
-        }
-        for (int i = 0; i != numSlots; ++i) {
-            copiedSlots[i].call(j);
+        QValueList<KWQSlot> copiedSlots(m_slots);
+        QValueListConstIterator<KWQSlot> end = copiedSlots.end();
+        for (QValueListConstIterator<KWQSlot> it = copiedSlots.begin(); it != end; ++it) {
+            (*it).call(i);
         }
     }
 }
@@ -122,13 +109,10 @@ void KWQSignal::call(const QString &s) const
 {
     if (!m_object->m_signalsBlocked) {
         KWQObjectSenderScope senderScope(m_object);
-        const int numSlots = sizeof(m_slots) / sizeof(m_slots[0]);
-        KWQSlot copiedSlots[numSlots];
-        for (int i = 0; i != numSlots; ++i) {
-            copiedSlots[i] = m_slots[i];
-        }
-        for (int i = 0; i != numSlots; ++i) {
-            copiedSlots[i].call(s);
+        QValueList<KWQSlot> copiedSlots(m_slots);
+        QValueListConstIterator<KWQSlot> end = copiedSlots.end();
+        for (QValueListConstIterator<KWQSlot> it = copiedSlots.begin(); it != end; ++it) {
+            (*it).call(s);
         }
     }
 }
@@ -137,13 +121,10 @@ void KWQSignal::call(Job *j) const
 {
     if (!m_object->m_signalsBlocked) {
         KWQObjectSenderScope senderScope(m_object);
-        const int numSlots = sizeof(m_slots) / sizeof(m_slots[0]);
-        KWQSlot copiedSlots[numSlots];
-        for (int i = 0; i != numSlots; ++i) {
-            copiedSlots[i] = m_slots[i];
-        }
-        for (int i = 0; i != numSlots; ++i) {
-            copiedSlots[i].call(j);
+        QValueList<KWQSlot> copiedSlots(m_slots);
+        QValueListConstIterator<KWQSlot> end = copiedSlots.end();
+        for (QValueListConstIterator<KWQSlot> it = copiedSlots.begin(); it != end; ++it) {
+            (*it).call(j);
         }
     }
 }

@@ -373,9 +373,9 @@ void KWQKHTMLPartImpl::redirectionTimerStartedOrStopped()
 
 static void moveWidgetsAside(RenderObject *object)
 {
-    RenderWidget *renderWidget = dynamic_cast<RenderWidget *>(object);
-    if (renderWidget) {
-        QWidget *widget = renderWidget->widget();
+    // Would use dynamic_cast, but a virtual function call is faster.
+    if (object->isWidget()) {
+        QWidget *widget = static_cast<RenderWidget *>(object)->widget();
         if (widget) {
             widget->move(999999, 0);
         }

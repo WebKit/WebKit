@@ -215,7 +215,6 @@ static void freeHandle(void *free);
 #define IS_ASCII_QCHAR(c) ((c).unicode() > 0 && (c).unicode() <= 0xff)
 
 static const int caseDelta = ('a' - 'A');
-#define ASCII_TO_LOWER (p) ((p >= 'A' && p <= 'Z') ? (p + caseDelta) : p)
 
 QStringData *QString::shared_null = 0;
 QStringData **QString::shared_null_handle = 0;
@@ -716,20 +715,85 @@ void QString::setBufferFromCFString(CFStringRef cfs)
     }
 }
 
-// This function is used by the decoder. It will be replaced with TEC eventually.
+// This function is used by the decoder.
 QString QString::fromStringWithEncoding(const char *chs, int len, CFStringEncoding encoding)
 {
-    QString qs;
+    ASSERT_ARG(len, len >= 0);
+    ASSERT_ARG(encoding, encoding != kCFStringEncodingInvalidId);
     
-    if (chs && len > 0) {
-        CFStringRef s = CFStringCreateWithBytes(kCFAllocatorDefault, (const UInt8 *)chs, len, encoding, true);
-        if (s) {
-            qs.setBufferFromCFString(s);
-            CFRelease(s);
+    if (len <= 0) {
+        return QString::null;
+    }
+
+    // Get a converter for the passed-in encoding.
+    static TECObjectRef converter;
+    static CFStringEncoding converterEncoding = kCFStringEncodingInvalidId;
+    OSStatus status;
+    if (encoding != converterEncoding) {
+        TECObjectRef newConverter;
+        status = TECCreateConverter(&newConverter, encoding,
+            CreateTextEncoding(kTextEncodingUnicodeDefault, kTextEncodingDefaultVariant, kUnicode16BitFormat));
+        if (status) {
+            ERROR("the Text Encoding Converter won't convert from text encoding 0x%X, error %d", encoding, status);
+            return QString::null;
+        }
+        if (converter) {
+            TECDisposeConverter(converter);
+        }
+        converter = newConverter;
+    } else {
+        TECClearConverterContextInfo(converter);
+    }
+    
+    const UInt8 *sourcePointer = (UInt8 *)chs;
+    unsigned long sourceLength = len;
+    
+    QString result;
+    int resultLength = 0;
+
+    for (;;) {
+        UniChar buffer[4096];
+        unsigned long bytesWritten = 0;
+        bool doingFlush = sourceLength == 0;
+        if (doingFlush) {
+            status = TECFlushText(converter,
+                (UInt8 *)buffer, sizeof(buffer), &bytesWritten);
+        } else {
+            unsigned long bytesRead = 0;
+            status = TECConvertText(converter, sourcePointer, sourceLength, &bytesRead,
+                (UInt8 *)buffer, sizeof(buffer), &bytesWritten);
+            sourcePointer += bytesRead;
+            sourceLength -= bytesRead;
+        }
+        if (bytesWritten) {
+            ASSERT(bytesWritten % sizeof(UniChar) == 0);
+            result.setLength(resultLength + bytesWritten / sizeof(UniChar));
+            memcpy(result.forceUnicode() + resultLength, buffer, bytesWritten);
+            resultLength += bytesWritten / sizeof(UniChar);
+        }
+        if (status == kTextMalformedInputErr || status == kTextUndefinedElementErr) {
+            // FIXME: Put in FFFD character here?
+            TECClearConverterContextInfo(converter);
+            if (sourceLength) {
+                sourcePointer += 1;
+                sourceLength -= 1;
+            }
+            status = noErr;
+        }
+        if (status == kTECOutputBufferFullStatus) {
+            continue;
+        }
+        if (status != noErr) {
+            ERROR("text decoding failed with error %d", status);
+            break;
+        }
+        if (doingFlush) {
+            // Done.
+            break;
         }
     }
     
-    return qs;
+    return result;
 }
 
 QString QString::fromCFString(CFStringRef cfs)
@@ -1144,30 +1208,33 @@ int QString::find(const QString &str, int index, bool caseSensitive) const
 }
 
 
-static inline bool compareToLatinCharacter (UniChar c1, UniChar c2, bool caseSensitive)
+static inline bool compareIgnoringCaseForASCIIOnly(char c1, char c2)
 {
-    if (!caseSensitive){
-        if (c2 >= 'a' && c2 <= 'z'){
-            if (c1 == c2 || c1 == c2 - caseDelta)
-                return true;
-        }
-        else if (c2 >= 'A' && c2 <= 'Z'){
-            if (c1 == c2 || c1 == c2 + caseDelta)
-                return true;
-        }
-        else if (c1 == c2)
-            return true;
+    if (c2 >= 'a' && c2 <= 'z') {
+        return c1 == c2 || c1 == c2 - caseDelta;
     }
-    else if (c1 == c2)
-        return true;
-    return false;
+    if (c2 >= 'A' && c2 <= 'Z') {
+        return c1 == c2 || c1 == c2 + caseDelta;
+    }
+    return c1 == c2;
+}
+
+static inline bool compareIgnoringCaseForASCIIOnly(QChar c1, char c2)
+{
+    if (c2 >= 'a' && c2 <= 'z') {
+        return c1 == c2 || c1.unicode() == c2 - caseDelta;
+    }
+    if (c2 >= 'A' && c2 <= 'Z') {
+        return c1 == c2 || c1.unicode() == c2 + caseDelta;
+    }
+    return c1 == c2;
 }
 
 
 // This function should be as fast as possible, every little bit helps.
 // Our usage patterns are typically small strings.  In time trials
 // this simplistic algorithm is much faster than Boyer-Moore or hash
-// based alrogithms.
+// based algorithms.
 int QString::find(const char *chs, int index, bool caseSensitive) const
 {
     if (dataHandle[0]->_isAsciiValid){
@@ -1179,29 +1246,40 @@ int QString::find(const char *chs, int index, bool caseSensitive) const
             ptr += index;
             
             if (len && (index >= 0) && (index < len)) {
-                QChar firstC, c1, c2;
-                const char *_chs;
-                int remaining = len - index, found = -1;
+                int remaining = len - index;
                 int compareToLength = strlen(chs);
                             
-                _chs = chs + 1;
-                firstC = (QChar)(*chs);
-                while (remaining >= compareToLength){
-                    if (compareToLatinCharacter((UniChar)*ptr++,firstC,caseSensitive)){
-                        char *compareTo = ptr;
-                        
-                        found = len - remaining;
-                        while ( (c2 = (UniChar)(*_chs++)) ){
-                            c1 = (UniChar)(*compareTo++);
-                            if (compareToLatinCharacter(c1, c2,caseSensitive))
-                                continue;
-                            break;
+                char firstC = *chs;
+                
+                if (caseSensitive) {
+                    while (remaining >= compareToLength) {
+                        if (*ptr++ == firstC) {
+                            const char *_chs = chs + 1;
+                            char *compareTo = ptr;
+                            char c2;
+                            while ((c2 = *_chs++))
+                                if (*compareTo++ != c2)
+                                    break;
+                            if (c2 == 0)
+                                return len - remaining;
                         }
-                        if (c2 == (QChar)0)
-                            return found;
-                        _chs = chs + 1;
+                        remaining--;
                     }
-                    remaining--;
+                } else {
+                    while (remaining >= compareToLength) {
+                        if (compareIgnoringCaseForASCIIOnly(*ptr++, firstC)) {
+                            const char *_chs = chs + 1;
+                            char *compareTo = ptr;
+                            char c2;
+                            while ((c2 = *_chs++))
+                                if (!compareIgnoringCaseForASCIIOnly(*compareTo++, c2))
+                                    break;
+                            if (c2 == 0)
+                                return len - remaining;
+                            _chs = chs + 1;
+                        }
+                        remaining--;
+                    }
                 }
             }
         }
@@ -1214,29 +1292,39 @@ int QString::find(const char *chs, int index, bool caseSensitive) const
 
             ptr += index;
             if (len && (index >= 0) && (index < len)) {
-                QChar firstC, c1, c2;
-                const char *_chs;
-                int remaining = len - index, found = -1;
+                int remaining = len - index;
                 int compareToLength = strlen(chs);
-                            
-                _chs = chs + 1;
-                firstC = (QChar)(*chs);
-                while (remaining >= compareToLength){
-                    if (compareToLatinCharacter((UniChar)*ptr++,firstC,caseSensitive)){
-                        QChar *compareTo = ptr;
-                        
-                        found = len - remaining;
-                        while ( (c2 = (UniChar)(*_chs++)) ){
-                            c1 = (UniChar)(*compareTo++);
-                            if (compareToLatinCharacter(c1, c2,caseSensitive))
-                                continue;
-                            break;
+                
+                if (caseSensitive) {
+                    QChar firstC = *chs;
+                    while (remaining >= compareToLength) {
+                        if (*ptr++ == firstC) {
+                            QChar *compareTo = ptr;
+                            const char *_chs = chs + 1;
+                            char c2;
+                            while ((c2 = *_chs++))
+                                if (*compareTo++ != c2)
+                                    break;
+                            if (c2 == 0)
+                                return len - remaining;
                         }
-                        if (c2 == (QChar)0)
-                            return found;
-                        _chs = chs + 1;
+                        remaining--;
                     }
-                    remaining--;
+                } else {
+                    char firstC = *chs;
+                    while (remaining >= compareToLength) {
+                        if (compareIgnoringCaseForASCIIOnly(*ptr++, firstC)) {
+                            QChar *compareTo = ptr;
+                            const char *_chs = chs + 1;
+                            char c2;
+                            while ((c2 = *_chs++))
+                                if (!compareIgnoringCaseForASCIIOnly(*compareTo++, c2))
+                                    break;
+                            if (c2 == 0)
+                                return len - remaining;
+                        }
+                        remaining--;
+                    }
                 }
             }
         }
@@ -1803,10 +1891,9 @@ QString QString::stripWhiteSpace() const
             memcpy( (char *)result.data()->ascii(), &ascii()[start], l );
     }
     else if (dataHandle[0]->_isUnicodeValid){
-        result.forceUnicode();
         result.setLength( l );
         if ( l )
-            memcpy( (QChar *)result.data()->unicode(), &unicode()[start], sizeof(QChar)*l );
+            memcpy(result.forceUnicode(), &unicode()[start], sizeof(QChar)*l );
     }
     else
         FATAL("invalid character cache");
@@ -1842,13 +1929,12 @@ QString QString::simplifyWhiteSpace() const
         result.truncate( outc );
     }
     else if (dataHandle[0]->_isUnicodeValid){
-        result.forceUnicode();
         result.setLength( dataHandle[0]->_length );
         const QChar *from = unicode();
         const QChar *fromend = from + dataHandle[0]->_length;
         int outc=0;
         
-        QChar *to = (QChar *)result.unicode();
+        QChar *to = result.forceUnicode();
         while ( TRUE ) {
             while ( from!=fromend && from->isSpace() )
                 from++;
@@ -2090,8 +2176,7 @@ QString &QString::insert(uint index, const QString &qs)
         
         // Ensure that we have enough space.
         setLength (originalLength + insertLength);
-        forceUnicode();
-        targetChars = (QChar *)unicode();
+        targetChars = forceUnicode();
         
         // Move tail to make space for inserted characters.
         memmove (targetChars+(index+insertLength), targetChars+index, (originalLength-index)*sizeof(QChar));
@@ -2145,8 +2230,7 @@ QString &QString::insert(uint index, QChar qc)
         
         // Ensure that we have enough space.
         setLength (originalLength + 1);
-        forceUnicode();
-        targetChars = (QChar *)unicode();
+        targetChars = forceUnicode();
         
         // Move tail to make space for inserted character.
         memmove (targetChars+(index+1), targetChars+index, (originalLength-index)*sizeof(QChar));
@@ -2273,8 +2357,9 @@ QString &QString::remove(uint index, uint len)
 	detach();
         
 #ifdef QSTRING_DEBUG_UNICODE
-    forceUnicode();
+        forceUnicode();
 #endif
+
         if (dataHandle[0]->_isAsciiValid){
             memmove( dataHandle[0]->ascii()+index, dataHandle[0]->ascii()+index+len,
                     sizeof(char)*(olen-index-len) );
@@ -2328,14 +2413,12 @@ QString &QString::replace(const QRegExp &qre, const QString &str)
 }
 
 
-
-void QString::forceUnicode()
+QChar *QString::forceUnicode()
 {
     detach();
-    
-    unicode();
-
+    QChar *result = const_cast<QChar *>(unicode());
     dataHandle[0]->_isAsciiValid = 0;
+    return result;
 }
 
 
@@ -2413,9 +2496,8 @@ void QString::fill(QChar qc, int len)
             dataHandle[0]->_isUnicodeValid = 0;
         }
         else {
-            forceUnicode();
             setLength(len);
-            QChar *nd = (QChar *)unicode();
+            QChar *nd = forceUnicode();
             while (len--) 
                 *nd++ = qc;
         }

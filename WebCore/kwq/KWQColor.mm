@@ -29,17 +29,6 @@
 #import <qstring.h>
 #import <KWQAssertions.h>
 
-static void createStaticConstructorAutoreleasePool()
-{
-    static bool created;
-    if (created)
-        return;
-    created = true;
-    [[NSAutoreleasePool alloc] init];
-    // FIXME: It would be great if there was some way to release this
-    // without help from the application.
-}
-
 const QColor Qt::black    (0x00, 0x00, 0x00);
 const QColor Qt::white    (0xFF, 0xFF, 0xFF);
 const QColor Qt::darkGray (0x80, 0x80, 0x80);
@@ -217,45 +206,21 @@ QRgb qRgba(int r, int g, int b, int a)
     return a << 24 | r << 16 | g << 8 | b;
 }
 
-QColor::QColor()
-{
-    color = nil;
-}
-
-QColor::QColor(int r, int g, int b)
-{
-    // This function is used during static contructor time, and needs to set up an autorelease pool.
-    createStaticConstructorAutoreleasePool();
-    
-    color = nil;
-    setRgb(r, g, b);
-}
-
 QColor::QColor(const QString &name)
 {
-    color = nil;
     setNamedColor(name);
 }
 
 QColor::QColor(const char *name)
 {
-    color = nil;
     setNamedColor(name);
-}
-
-QColor::~QColor()
-{
-    [color release];
-}
-
-QColor::QColor(const QColor &copyFrom)
-{
-    color = [copyFrom.color retain];
 }
 
 QString QColor::name() const
 {
-    return QString::fromNSString([NSString stringWithFormat:@"#%02X%02X%02X", red(), green(), blue()]);
+    QString name;
+    name.sprintf("#%02X%02X%02X", red(), green(), blue());
+    return name;
 }
 
 static int hex2int(QChar hexchar)
@@ -332,8 +297,7 @@ void QColor::setNamedColor(const QString &name)
     int r, g, b;
     
     if (name.isEmpty()) {
-        [color release];
-        color = nil;
+        color = KWQInvalidColor;
     } 
     else if (decodeColorFromHexColorString(name, &r, &g, &b)) {
         setRgb(r, g, b);
@@ -348,60 +312,9 @@ void QColor::setNamedColor(const QString &name)
         }
         else {
             ERROR("couldn't create color using name %s", name.ascii());
-            [color release];
-            color = nil;
+            color = KWQInvalidColor;
         }
     }
-}
-
-bool QColor::isValid() const
-{
-    return color != nil;
-}
-
-int QColor::red() const
-{
-    if (color == nil)
-        return 0;
-    return (int)(rint([color redComponent] * 255));
-}
-
-int QColor::green() const
-{
-    if (color == nil)
-        return 0;
-    return (int)(rint([color greenComponent] * 255));
-}
-
-int QColor::blue() const
-{
-    if (color == nil)
-        return 0;
-    return (int)(rint([color blueComponent] * 255));
-}
-
-QRgb QColor::rgb() const
-{
-    if (color == nil)
-        return 0;
-    return qRgb(red(),green(),blue());
-}
-
-void QColor::setRgb(int r, int g, int b)
-{
-    [color release];
-    if (r < 0 || r > 255 || g < 0 || g > 255 || b < 0 || b > 255)
-        color = nil;
-    else
-        color = [[NSColor colorWithCalibratedRed: r / 255.0
-                                           green: g / 255.0
-                                            blue: b / 255.0
-                                           alpha: 1.0] retain];
-}
-
-void QColor::setRgb(int rgb)
-{
-    setRgb((rgb >> 16) & 0xFF, (rgb >> 8) & 0xFF, rgb & 0xFF);
 }
 
 void QColor::hsv(int *h, int *s, int *v) const
@@ -533,29 +446,10 @@ QColor QColor::dark(int factor) const
     return result;
 }
 
-QColor &QColor::operator=(const QColor &assignFrom)
-{
-    [assignFrom.color retain];
-    [color release];
-    color = assignFrom.color;
-    return *this;
-}
-
-bool QColor::operator==(const QColor &compareTo) const
-{
-    if (color == compareTo.color)
-        return true;
-    if (color && compareTo.color)
-        return [color isEqual:compareTo.color];
-    return false;
-}
-
-bool QColor::operator!=(const QColor &compareTo) const
-{
-    return !(*this == compareTo);
-}
-
 NSColor *QColor::getNSColor() const
 {
-    return color ? color : [[NSColor blackColor] retain];
+    return [NSColor colorWithCalibratedRed:red() / 255.0
+                                     green:green() / 255.0
+                                      blue:blue() / 255.0
+                                     alpha:1.0];
 }
