@@ -6,8 +6,6 @@
 	objectVersion = 39;
 	objects = {
 		014CEA440018CDF011CA2923 = {
-			buildRules = (
-			);
 			buildSettings = {
 				DEBUG_CFLAGS = "";
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -24,8 +22,6 @@
 			name = Development;
 		};
 		014CEA450018CDF011CA2923 = {
-			buildRules = (
-			);
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
@@ -58,8 +54,7 @@
 		};
 		034768E0FF38A50411DB9C8B = {
 			explicitFileType = wrapper.framework;
-			fallbackIsa = PBXFileReference;
-			isa = PBXFrameworkReference;
+			isa = PBXFileReference;
 			path = JavaScriptCore.framework;
 			refType = 3;
 			sourceTree = BUILT_PRODUCTS_DIR;
@@ -1847,8 +1842,6 @@
 			};
 		};
 		F58C8A1D025BD408018635CA = {
-			buildRules = (
-			);
 			buildSettings = {
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				SECTORDER_FLAGS = "";
@@ -2000,9 +1993,8 @@
 			sourceTree = "<group>";
 		};
 		F692A8540255597D01FF60F7 = {
-			fallbackIsa = PBXFileReference;
 			fileEncoding = 30;
-			isa = PBXExecutableFileReference;
+			isa = PBXFileReference;
 			lastKnownFileType = text.script.perl;
 			path = create_hash_table;
 			refType = 4;

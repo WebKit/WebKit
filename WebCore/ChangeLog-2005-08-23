@@ -1,3 +1,15 @@
+
+2004-07-09  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by Hyatt.
+        
+        fixes the width:auto problem in
+        <rdar://problem/3698344> REGRESSION (143?-144): macrumors.com tabs are compressed and illegible
+        
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::applyProperty):
+
+=======
 2004-07-09  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by me
@@ -6,6 +18,7 @@
 
         * layout-tests/editing/deleting/delete-image-004-expected.txt:
         * layout-tests/editing/selection/extend-by-character-006-expected.txt:
+
 
 2004-07-09  Chris Blumenberg  <cblu@apple.com>
 
