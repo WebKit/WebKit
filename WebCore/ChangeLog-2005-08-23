@@ -1,5 +1,15 @@
 2004-09-13  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by me
+
+        This test was broken. The result is that it was not testing what it was supposed to 
+        be testing. I fixed the test and updated the expected results.
+
+        * layout-tests/editing/selection/move-between-blocks-no-001-expected.txt
+        * layout-tests/editing/selection/move-between-blocks-no-001.html
+
+2004-09-13  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by John
 
         Fix for these bugs:
