@@ -1,3 +1,16 @@
+2003-01-26  David Hyatt  <hyatt@apple.com>
+
+	Fix :active to behave just like :hover.  It was being
+	restricted and only allowed to match <a> tags, when :active
+	should be applicable to any element (e.g., like images).
+
+	Fixes the :active feedback on numerous blog sites (e.g.,
+	the photo image buttons on joehewitt.com).
+	
+        Reviewed by gramps
+
+        * khtml/css/cssstyleselector.cpp:
+
 2003-01-25  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
