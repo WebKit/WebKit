@@ -9,23 +9,13 @@ grammar-stamp: grammar.y
 
 LUT_FILES = math_object.lut.h lexer.lut.h array_object.lut.h date_object.lut.h string_object.lut.h number_object.lut.h
 
-lexer.lut.h: keywords.table
-	$(srcdir)/create_hash_table $< -i > $@
+CREATE_HASH_TABLE = $(srcdir)/create_hash_table
 
-array_object.lut.h: array_object.cpp
-	$(srcdir)/create_hash_table $< -i > $@
+lexer.lut.h: keywords.table $(CREATE_HASH_TABLE)
+	$(CREATE_HASH_TABLE) $< -i > $@
 
-math_object.lut.h: math_object.cpp
-	$(srcdir)/create_hash_table $< -i > $@
-
-date_object.lut.h: date_object.cpp
-	$(srcdir)/create_hash_table $< -i > $@
-
-number_object.lut.h: number_object.cpp
-	$(srcdir)/create_hash_table $< -i > $@
-
-string_object.lut.h: string_object.cpp
-	$(srcdir)/create_hash_table $< -i > $@
+%.lut.h: %.cpp $(CREATE_HASH_TABLE)
+	$(CREATE_HASH_TABLE) $< -i > $@
 
 BUILT_SOURCES = $(GRAMMAR_FILES) $(LUT_FILES) grammar-stamp
 

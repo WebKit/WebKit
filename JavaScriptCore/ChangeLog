@@ -1,3 +1,9 @@
+2003-01-25  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        * kjs/Makefile.am: Add dependencies so the .lut.h files get rebuilt if the script changes.
+
 === Safari-54 ===
 
 2003-01-22  Darin Adler  <darin@apple.com>
