@@ -1,3 +1,9 @@
+2004-11-09  Chris Blumenberg  <cblu@apple.com>
+
+        Reviewed by vicki.
+
+        * WebCore.pbproj/project.pbxproj: explicitly link against libxml2.2.6.14.dylib since the version number has been bumped
+
 2004-11-08  David Harrison  <harrison@apple.com>
 
         Reviewed by Ken Kocienda.

@@ -131,7 +131,7 @@
 				0867D6A0FE84028FC02AAC07,
 			);
 			buildSettings = {
-				COMMON_LDFLAGS = "\"`if [ -f /usr/lib/libxml2.2.6.11.dylib ]; then echo \\\"-lxml2.2.6.11\\\"; else echo \\\"-lxml2\\\"; fi`\"";
+				COMMON_LDFLAGS = "\"`if [ -f /usr/lib/libxml2.2.6.14.dylib ]; then echo \\\"-lxml2.2.6.14\\\"; else echo \\\"-lxml2\\\"; fi`\"";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_CFLAGS = "-DNDEBUG";
 				DYLIB_COMPATIBILITY_VERSION = 1;
