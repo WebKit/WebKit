@@ -254,13 +254,13 @@ private:
     bool m_pre            : 1;
     bool firstLine        : 1; // used in inline layouting
     EClear m_clearStatus  : 2; // used during layuting of paragraphs
-     
+    bool m_topMarginQuirk : 1;
+    bool m_bottomMarginQuirk : 1;
+    
     short m_maxTopPosMargin;
     short m_maxTopNegMargin;
     short m_maxBottomPosMargin;
     short m_maxBottomNegMargin;
-    bool m_topMarginQuirk;
-    bool m_bottomMarginQuirk;
     
     // How much content overflows out of our block vertically or horizontally (all we support
     // for now is spillage out of the bottom and the right, which are the common cases).
