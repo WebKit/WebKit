@@ -1,3 +1,16 @@
+2002-12-16  Trey Matteson  <trey@apple.com>
+
+	3129175 - we're doing needless GETs when using b/f cache
+
+	Turns out that an empty UserStyle was causing WebCore to reload the base URL
+	of the page, since it tried to load the style "".
+
+        Reviewed by Darin
+
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::reparseConfiguration):  Of the UserStyle is empty, set it to an
+	empty string instead of an empty URL.
+
 2002-12-16  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
