@@ -88,11 +88,10 @@ void KWQCheckCacheObjectStatus(DocLoader *loader, CachedObject *cachedObject)
     
     // Notify the caller that we "loaded".
     WebCoreBridge *bridge = ((KHTMLPart *)loader->part())->kwq->bridge();
-    NSURL *URL = [[NSURL alloc] initWithString:cachedObject->url().string().getNSString()];
+    NSURL *URL = KURL::getNSURLFromString(cachedObject->url().string());
     ASSERT(URL);
     CachedImage *cachedImage = dynamic_cast<CachedImage *>(cachedObject);
     [bridge objectLoadedFromCache:URL response:(id)cachedObject->response() size:cachedImage ? cachedImage->dataSize() : cachedObject->size()];
-    [URL release];
 }
 
 void KWQRetainResponse(void *response)

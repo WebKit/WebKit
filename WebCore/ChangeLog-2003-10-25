@@ -1,3 +1,22 @@
+2002-11-15  Ken Kocienda  <kocienda@apple.com>
+
+	Fix for this bug:
+
+	Radar 3102708 (REGRESSION: assertion failure backing up to page)
+
+	KWQCheckCacheObjectStatus did not create an NSURL in a way that 
+	dealt with the fact that we handle non-NSURL-compliant URL strings.
+	I have fixed it so it does, and in the process, factored out
+	the code to do it into a new KURL static function (KURL::getNSURLFromString).
+
+        * kwq/KWQKURL.h:
+        * kwq/KWQKURL.mm:
+        (KURL::getNSURL): Now calls through to KURL::getNSURLFromString
+        (KURL::encode_string)
+        (KURL::getNSURLFromString): New function to handle NSURL creation
+        * kwq/KWQLoader.mm:
+        (KWQCheckCacheObjectStatus)
+
 2002-11-15  David Hyatt  <hyatt@apple.com>
 
 	Fix asserts in tables.

@@ -1057,28 +1057,7 @@ void KURL::parse(const char *url, const QString *originalString)
 
 NSURL *KURL::getNSURL() const
 {
-    NSString *string = urlString.getNSString();
-    
-    // Had to re-add this hack to work around CFURL bug 2908969, and to prevent the symptoms
-    // described in bug 3032058.
-    if ([string hasPrefix:@"file:/"] && ![string hasPrefix:@"file://"]) {
-        string = [NSString stringWithFormat:@"file://%@", [string substringFromIndex:5]];
-    }
-    
-    NSURL *URL = [NSURL URLWithString:string];
-    if (!URL) {
-        // Try to create URL again, but this time do some more string escaping first.
-        // Eventually, we would prefer not to have to take this extra step, as the extra
-        // escaping causes bugs like 3064743.
-        // Note the set of unescaped characters contains the square brackets.
-        // This is a bit of license we take with CFURL and its code to detect characters
-        // it considers illegal. See 3102332 for more information.
-        CFStringRef stricterString = CFURLCreateStringByAddingPercentEscapes(NULL, (CFStringRef)string, CFSTR("[]%"), NULL, kCFStringEncodingUTF8);
-        URL = [NSURL URLWithString:(NSString *)stricterString];
-        CFRelease(stricterString);
-    }
-    
-    return URL;
+    return KURL::getNSURLFromString(urlString);
 }
 
 QString KURL::encodedHtmlRef() const
@@ -1133,4 +1112,32 @@ QString KURL::encode_string(const QString& notEncodedString)
     }
 
     return result;
+}
+
+NSURL *KURL::getNSURLFromString(const QString &urlString)
+{
+    NSString *string = urlString.getNSString();
+    
+    // Had to re-add this hack to work around CFURL bug 2908969, and to prevent the symptoms
+    // described in bug 3032058.
+    if ([string hasPrefix:@"file:/"] && ![string hasPrefix:@"file://"]) {
+        string = [NSString stringWithFormat:@"file://%@", [string substringFromIndex:5]];
+    }
+    
+    NSURL *URL = [NSURL URLWithString:string];
+    if (!URL) {
+        // Try to create URL again, but this time do some more string escaping first.
+        // Eventually, we would prefer not to have to take this extra step, as the extra
+        // escaping causes bugs like 3064743.
+        // Note the set of unescaped characters contains the square brackets.
+        // This is a bit of license we take with CFURL and its code to detect characters
+        // it considers illegal. See 3102332 for more information.
+        CFStringRef stricterString = CFURLCreateStringByAddingPercentEscapes(NULL, (CFStringRef)string, CFSTR("[]%"), NULL, kCFStringEncodingUTF8);
+        if (stricterString) {
+            URL = [NSURL URLWithString:(NSString *)stricterString];
+            CFRelease(stricterString);
+        }
+    }
+    
+    return URL;
 }

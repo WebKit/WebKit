@@ -75,6 +75,7 @@ public:
 
     static QString decode_string(const QString &);
     static QString encode_string(const QString &);
+    static NSURL *getNSURLFromString(const QString &);
     
     friend bool operator==(const KURL &, const KURL &);
 
