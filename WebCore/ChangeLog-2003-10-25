@@ -1,5 +1,12 @@
 2002-11-12  Richard Williamson  <rjw@apple.com>
 
+        Oops, removed debugging.
+        
+        * khtml/rendering/font.cpp:
+        (Font::drawText):
+
+2002-11-12  Richard Williamson  <rjw@apple.com>
+
         Implemented letter-spacing and word-spacing CSS properties.
         
         * khtml/rendering/font.cpp:
