@@ -83,8 +83,7 @@ address {
       
 blockquote {
 	display: block;
-	margin-left: 40px; 
-	margin-right: 40px;
+	margin: 1em 40px;
         -konq-flow-mode: -konq-around-floats
 }
 

@@ -1,3 +1,10 @@
+2002-07-25  David Hyatt  <hyatt@apple.com>
+
+	Fix <blockquote> tags to have top and bottom margins of 1em.  This matches the <blockquote>
+	behavior in Gecko.
+	
+        * khtml/css/html4.css:
+
 2002-07-25  Darin Adler  <darin@apple.com>
 
 	- fixed 2965269 -- sizes reported to progress handler from KWQCheckCacheObjectStatus for images are wrong
