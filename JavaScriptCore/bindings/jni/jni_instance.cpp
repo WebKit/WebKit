@@ -297,6 +297,11 @@ Value JavaInstance::invokeMethod (KJS::ExecState *exec, const MethodList &method
     return resultValue;
 }
 
+KJS::Value JavaInstance::invokeDefaultMethod (KJS::ExecState *exec, const KJS::List &args)
+{
+    return Undefined();
+}
+
 
 KJS::Value JavaInstance::defaultValue (KJS::Type hint) const
 {

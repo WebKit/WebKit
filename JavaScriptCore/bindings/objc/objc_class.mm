@@ -234,5 +234,5 @@ Field *ObjcClass::fieldNamed(const char *name, Instance *instance) const
 
 KJS::Value ObjcClass::fallbackObject (ExecState *exec, Instance *instance, const Identifier &propertyName)
 {
-    return Object (new FallbackObjectImp(static_cast<ObjcInstance*>(instance), propertyName));
+    return Object (new ObjcFallbackObjectImp(static_cast<ObjcInstance*>(instance), propertyName));
 }

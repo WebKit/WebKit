@@ -244,6 +244,59 @@ NS_ENDHANDLER
     return resultValue;
 }
 
+Value ObjcInstance::invokeDefaultMethod (KJS::ExecState *exec, const List &args)
+{
+    Value resultValue;
+    
+NS_DURING
+
+    if (![_instance respondsToSelector:@selector(invokeDefaultMethodWithArguments:)])
+        return Undefined();
+    
+    NSMethodSignature *signature = [_instance methodSignatureForSelector:@selector(invokeDefaultMethodWithArguments:)];
+    NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:signature];
+    [invocation setSelector:@selector(invokeDefaultMethodWithArguments:)];
+    [invocation setTarget:_instance];
+    unsigned i, count = args.size();
+    
+    // invokeDefaultMethodWithArguments: implementation must return an
+    // object.
+    if (strcmp ([signature methodReturnType], "@") != 0) {
+        OBJC_LOG ("incorrect signature for invokeDefaultMethodWithArguments:, expected object return type");
+        return Undefined();
+    }
+    
+    NSMutableArray *objcArgs = [NSMutableArray array];
+    for (i = 0; i < count; i++) {
+        ObjcValue value = convertValueToObjcValue (exec, args.at(i), ObjcObjectType);
+        [objcArgs addObject:value.objectValue];
+    }
+    [invocation setArgument:&objcArgs atIndex:2];
+    
+    // Invoke the ObjectiveC method.
+    [invocation invoke];
+
+    // Get the return value type, should always be "@" because of
+    // check above.
+    const char *type = [signature methodReturnType];
+    ObjcValueType objcValueType = objcValueTypeForType (type);
+    
+    // Get the return value and convert it to a KJS::Value.  Length
+    // of return value will never exceed the size of a pointer, so we're
+    // OK we 32 here.
+    char buffer[32];
+    [invocation getReturnValue:buffer];
+    resultValue = convertObjcValueToValue (exec, buffer, objcValueType);
+
+NS_HANDLER
+    
+    resultValue = Undefined();
+    
+NS_ENDHANDLER
+
+    return resultValue;
+}
+
 void ObjcInstance::setValueOfField (KJS::ExecState *exec, const Field *aField, const KJS::Value &aValue) const
 {
     aField->setValueToInstance (exec, this, aValue);

@@ -44,6 +44,7 @@ using namespace KJS;
 CInstance::CInstance (NPObject *o) 
 {
     _object = NPN_RetainObject (o);
+    _class = 0;
 };
 
 CInstance::~CInstance () 
@@ -56,6 +57,7 @@ CInstance::~CInstance ()
 CInstance::CInstance (const CInstance &other) : Instance() 
 {
     _object = NPN_RetainObject (other._object);
+    _class = 0;
 };
 
 CInstance &CInstance::operator=(const CInstance &other){
@@ -65,6 +67,7 @@ CInstance &CInstance::operator=(const CInstance &other){
     NPObject *_oldObject = _object;
     _object= NPN_RetainObject (other._object);
     NPN_ReleaseObject (_oldObject);
+    _class = 0;
     
     return *this;
 };
@@ -124,15 +127,56 @@ Value CInstance::invokeMethod (KJS::ExecState *exec, const MethodList &methodLis
         NPN_ReleaseVariantValue (&cArgs[i]);
     }
 
+    if (cArgs != localBuffer)
+        free ((void *)cArgs);
+            
     if (!NPVARIANT_IS_VOID(resultVariant)) {
         resultValue = convertNPVariantToValue (exec, &resultVariant);
         
-        if (cArgs != localBuffer)
-            free ((void *)cArgs);
-            
         NPN_ReleaseVariantValue (&resultVariant);
         
         return resultValue;
+    }
+    
+    return Undefined();
+}
+
+
+Value CInstance::invokeDefaultMethod (KJS::ExecState *exec, const List &args)
+{
+    Value resultValue;
+
+    if (_object->_class->invokeDefault) {     
+        unsigned i, count = args.size();
+        NPVariant *cArgs;
+        NPVariant localBuffer[128];
+        if (count > 128)
+            cArgs = (NPVariant *)malloc (sizeof(NPVariant)*count);
+        else
+            cArgs = localBuffer;
+        
+        for (i = 0; i < count; i++) {
+            convertValueToNPVariant (exec, args.at(i), &cArgs[i]);
+        }
+
+        // Invoke the 'C' method.
+        NPVariant resultVariant;
+        _object->_class->invokeDefault (_object, cArgs, count, &resultVariant);
+
+        for (i = 0; i < count; i++) {
+            NPN_ReleaseVariantValue (&cArgs[i]);
+        }
+
+        if (cArgs != localBuffer)
+            free ((void *)cArgs);
+                
+        if (!NPVARIANT_IS_VOID(resultVariant)) {
+            resultValue = convertNPVariantToValue (exec, &resultVariant);
+            
+            NPN_ReleaseVariantValue (&resultVariant);
+            
+            return resultValue;
+        }
     }
     
     return Undefined();

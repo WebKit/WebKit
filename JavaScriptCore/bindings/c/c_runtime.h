@@ -39,6 +39,8 @@ class Value;
 namespace Bindings
 {
 
+class CInstance;
+
 class CField : public Field
 {
 public:
@@ -91,6 +93,7 @@ public:
 private:
 };
 #endif
+
 
 } // namespace Bindings
 

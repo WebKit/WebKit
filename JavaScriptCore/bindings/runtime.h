@@ -68,8 +68,8 @@ public:
     virtual const char *name() const = 0;
     virtual RuntimeType type() const = 0;
 
-    virtual KJS::Value valueFromInstance(KJS::ExecState *exec, const Instance *instance) const = 0;
-    virtual void setValueToInstance(KJS::ExecState *exec, const Instance *instance, const KJS::Value &aValue) const = 0;
+    virtual KJS::Value valueFromInstance(ExecState *exec, const Instance *instance) const = 0;
+    virtual void setValueToInstance(ExecState *exec, const Instance *instance, const Value &aValue) const = 0;
 
     virtual ~Field() {};
 };
@@ -117,12 +117,12 @@ public:
     
     virtual Field *fieldNamed(const char *name, Instance *instance) const = 0;
 
-    virtual Value fallbackObject(KJS::ExecState *exec, Bindings::Instance *instance, const KJS::Identifier &propertyName) { return Undefined(); }
+    virtual Value fallbackObject(ExecState *exec, Bindings::Instance *instance, const Identifier &propertyName) { return Undefined(); }
     
     virtual ~Class() {};
 };
 
-typedef void (*KJSDidExecuteFunctionPtr)(KJS::ExecState *exec, KJS::ObjectImp *rootObject);
+typedef void (*KJSDidExecuteFunctionPtr)(ExecState *exec, ObjectImp *rootObject);
 
 class Instance
 {
@@ -148,16 +148,17 @@ public:
     
     virtual Class *getClass() const = 0;
     
-    virtual KJS::Value getValueOfField (KJS::ExecState *exec, const Field *aField) const;
-    virtual KJS::Value getValueOfUndefinedField (KJS::ExecState *exec, const KJS::Identifier &property, KJS::Type hint) const { return Undefined(); };
-    virtual void setValueOfField (KJS::ExecState *exec, const Field *aField, const KJS::Value &aValue) const;
-    virtual void setValueOfUndefinedField (KJS::ExecState *exec, const KJS::Identifier &property, const KJS::Value &aValue) {};
+    virtual Value getValueOfField (ExecState *exec, const Field *aField) const;
+    virtual Value getValueOfUndefinedField (ExecState *exec, const Identifier &property, Type hint) const { return Undefined(); };
+    virtual void setValueOfField (ExecState *exec, const Field *aField, const Value &aValue) const;
+    virtual void setValueOfUndefinedField (ExecState *exec, const Identifier &property, const Value &aValue) {};
     
-    virtual KJS::Value invokeMethod (KJS::ExecState *exec, const MethodList &method, const KJS::List &args) = 0;
+    virtual Value invokeMethod (ExecState *exec, const MethodList &method, const List &args) = 0;
+    virtual Value invokeDefaultMethod (ExecState *exec, const List &args) = 0;
     
-    virtual KJS::Value defaultValue (KJS::Type hint) const = 0;
+    virtual Value defaultValue (Type hint) const = 0;
     
-    virtual KJS::Value valueOf() const { return KJS::String(getClass()->name()); };
+    virtual Value valueOf() const { return String(getClass()->name()); };
     
     virtual void setExecutionContext (RootObject *r) = 0;
     virtual const RootObject *executionContext () const = 0;
@@ -170,8 +171,8 @@ private:
 class Array
 {
 public:
-    virtual void setValueAt(KJS::ExecState *exec, unsigned int index, const KJS::Value &aValue) const = 0;
-    virtual KJS::Value valueAt(KJS::ExecState *exec, unsigned int index) const = 0;
+    virtual void setValueAt(ExecState *exec, unsigned int index, const Value &aValue) const = 0;
+    virtual Value valueAt(ExecState *exec, unsigned int index) const = 0;
     virtual unsigned int getLength() const = 0;
     virtual ~Array() {};
 };

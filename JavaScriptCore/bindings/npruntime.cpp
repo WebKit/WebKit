@@ -378,7 +378,7 @@ NPObject *NPN_CreateObject (NPP npp, NPClass *aClass)
         NPObject *obj;
         
         if (aClass->allocate != NULL)
-            obj = aClass->allocate (npp);
+            obj = aClass->allocate (npp, aClass);
         else
             obj = (NPObject *)malloc (sizeof(NPObject));
             

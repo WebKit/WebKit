@@ -23,6 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 #include <c_class.h>
+#include <c_instance.h>
+#include <c_runtime.h>
 
 using namespace KJS::Bindings;
 

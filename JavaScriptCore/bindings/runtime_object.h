@@ -59,6 +59,9 @@ public:
     void setInternalInstance (Bindings::Instance *i) { instance = i; }
     Bindings::Instance *getInternalInstance() const { return instance; }
 
+    virtual bool implementsCall() const;
+    virtual Value call(ExecState *exec, Object &thisObj, const List &args);
+
 private:
     
     static const ClassInfo info;

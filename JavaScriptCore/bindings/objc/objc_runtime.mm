@@ -253,42 +253,42 @@ unsigned int ObjcArray::getLength() const
 }
 
 
-const ClassInfo FallbackObjectImp::info = {"FallbackObject", 0, 0, 0};
+const ClassInfo ObjcFallbackObjectImp::info = {"ObjcFallbackObject", 0, 0, 0};
 
-FallbackObjectImp::FallbackObjectImp(ObjectImp *proto)
+ObjcFallbackObjectImp::ObjcFallbackObjectImp(ObjectImp *proto)
   : ObjectImp(proto)
 {
     _instance = 0;
 }
 
-FallbackObjectImp::FallbackObjectImp(ObjcInstance *i, const KJS::Identifier propertyName) : ObjectImp ((ObjectImp *)0)
+ObjcFallbackObjectImp::ObjcFallbackObjectImp(ObjcInstance *i, const KJS::Identifier propertyName) : ObjectImp ((ObjectImp *)0)
 {
     _instance = i;
     _item = propertyName;
 }
 
-Value FallbackObjectImp::get(ExecState *exec, const Identifier &propertyName) const
+Value ObjcFallbackObjectImp::get(ExecState *exec, const Identifier &propertyName) const
 {
     return Undefined();
 }
 
-void FallbackObjectImp::put(ExecState *exec, const Identifier &propertyName,
+void ObjcFallbackObjectImp::put(ExecState *exec, const Identifier &propertyName,
                  const Value &value, int attr)
 {
 }
 
-bool FallbackObjectImp::canPut(ExecState *exec, const Identifier &propertyName) const
+bool ObjcFallbackObjectImp::canPut(ExecState *exec, const Identifier &propertyName) const
 {
     return false;
 }
 
 
-bool FallbackObjectImp::implementsCall() const
+bool ObjcFallbackObjectImp::implementsCall() const
 {
     return true;
 }
 
-Value FallbackObjectImp::call(ExecState *exec, Object &thisObj, const List &args)
+Value ObjcFallbackObjectImp::call(ExecState *exec, Object &thisObj, const List &args)
 {
     Value result = Undefined();
     
@@ -317,19 +317,19 @@ Value FallbackObjectImp::call(ExecState *exec, Object &thisObj, const List &args
     return result;
 }
 
-bool FallbackObjectImp::hasProperty(ExecState *exec,
+bool ObjcFallbackObjectImp::hasProperty(ExecState *exec,
                          const Identifier &propertyName) const
 {
     return false;
 }
 
-bool FallbackObjectImp::deleteProperty(ExecState *exec,
+bool ObjcFallbackObjectImp::deleteProperty(ExecState *exec,
                             const Identifier &propertyName)
 {
     return false;
 }
 
-Value FallbackObjectImp::defaultValue(ExecState *exec, Type hint) const
+Value ObjcFallbackObjectImp::defaultValue(ExecState *exec, Type hint) const
 {
     return _instance->getValueOfUndefinedField(exec, _item, hint);
 }

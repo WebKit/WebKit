@@ -1,3 +1,70 @@
+2004-09-14  Richard Williamson   <rjw@apple.com>
+
+        1.  Add class parameter to object allocation function.  This is somewhat redundant, given that
+        the allocation function is in the class function vector, but people wanted to use the same
+        allocation function for different classes.
+        
+        2.  Renamed NPN_Class to NPN_Invoke to match the name in the function vector.
+        
+        3.  Add support for a default function on an object.  This is a feature that ActiveX supports,
+        and will allow JavaScript code to be written that will look exactly the same for both ActiveX
+        plugins and Netscape or WebKit plugins.  There are implementations included for the 'C' and
+        'Objective-C' bindings.
+        
+        There bugs are covered by
+        
+        <rdar://problem/3776343> Support for default functions in the JavaScript bindings
+        <rdar://problem/3779186> NPN_Call needs to be renamed to NPN_Invoke
+        <rdar://problem/3674754> Need to implement latest npruntime.h
+
+        Reviewed by John.
+
+        * bindings/NP_jsobject.cpp:
+        (jsAllocate):
+        (NPN_InvokeDefault):
+        (NPN_Invoke):
+        * bindings/c/c_class.cpp:
+        * bindings/c/c_instance.cpp:
+        (CInstance::CInstance):
+        (CInstance::operator=):
+        (CInstance::invokeMethod):
+        (CInstance::invokeDefaultMethod):
+        * bindings/c/c_instance.h:
+        * bindings/c/c_runtime.cpp:
+        * bindings/c/c_runtime.h:
+        * bindings/jni/jni_instance.cpp:
+        (JavaInstance::invokeDefaultMethod):
+        * bindings/jni/jni_instance.h:
+        * bindings/npruntime.cpp:
+        (NPN_CreateObject):
+        * bindings/npruntime.h:
+        * bindings/objc/WebScriptObject.h:
+        * bindings/objc/objc_class.mm:
+        (ObjcClass::fallbackObject):
+        * bindings/objc/objc_instance.h:
+        * bindings/objc/objc_instance.mm:
+        (ObjcInstance::invokeDefaultMethod):
+        * bindings/objc/objc_runtime.h:
+        * bindings/objc/objc_runtime.mm:
+        (ObjcFallbackObjectImp::ObjcFallbackObjectImp):
+        (ObjcFallbackObjectImp::get):
+        (ObjcFallbackObjectImp::put):
+        (ObjcFallbackObjectImp::canPut):
+        (ObjcFallbackObjectImp::implementsCall):
+        (ObjcFallbackObjectImp::call):
+        (ObjcFallbackObjectImp::hasProperty):
+        (ObjcFallbackObjectImp::deleteProperty):
+        (ObjcFallbackObjectImp::defaultValue):
+        * bindings/runtime.h:
+        (KJS::Bindings::Class::fallbackObject):
+        (KJS::Bindings::Instance::getValueOfUndefinedField):
+        (KJS::Bindings::Instance::setValueOfUndefinedField):
+        (KJS::Bindings::Instance::valueOf):
+        * bindings/runtime_object.cpp:
+        (RuntimeObjectImp::implementsCall):
+        (RuntimeObjectImp::call):
+        * bindings/runtime_object.h:
+
 2004-09-13  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

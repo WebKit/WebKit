@@ -163,3 +163,20 @@ Value RuntimeObjectImp::defaultValue(ExecState *exec, Type hint) const
     return aValue;
 }
     
+bool RuntimeObjectImp::implementsCall() const
+{
+    // Only true for default functions.
+    return true;
+}
+
+Value RuntimeObjectImp::call(ExecState *exec, Object &thisObj, const List &args)
+{
+    instance->begin();
+
+    Value aValue = getInternalInstance()->invokeDefaultMethod(exec, args);
+    
+    instance->end();
+    
+    return aValue;
+}
+

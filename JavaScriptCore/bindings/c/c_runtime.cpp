@@ -61,4 +61,3 @@ void CField::setValueToInstance(KJS::ExecState *exec, const Instance *inst, cons
 }
 
 // ---------------------- CArray ----------------------
-

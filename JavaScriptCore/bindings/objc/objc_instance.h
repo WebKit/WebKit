@@ -53,22 +53,23 @@ public:
     virtual void begin();
     virtual void end();
     
-    virtual KJS::Value valueOf() const;
-    virtual KJS::Value defaultValue (KJS::Type hint) const;
+    virtual Value valueOf() const;
+    virtual Value defaultValue (Type hint) const;
 
-    virtual KJS::Value invokeMethod (KJS::ExecState *exec, const MethodList &method, const KJS::List &args);
+    virtual Value invokeMethod (ExecState *exec, const MethodList &method, const List &args);
+    virtual Value invokeDefaultMethod (ExecState *exec, const List &args);
 
-    virtual void setValueOfField (KJS::ExecState *exec, const Field *aField, const KJS::Value &aValue) const;
-    virtual void setValueOfUndefinedField (KJS::ExecState *exec, const KJS::Identifier &property, const KJS::Value &aValue);
+    virtual void setValueOfField (ExecState *exec, const Field *aField, const Value &aValue) const;
+    virtual void setValueOfUndefinedField (ExecState *exec, const Identifier &property, const Value &aValue);
     
-    virtual Value ObjcInstance::getValueOfField (KJS::ExecState *exec, const Field *aField) const;
-    virtual KJS::Value getValueOfUndefinedField (KJS::ExecState *exec, const KJS::Identifier &property, KJS::Type hint) const;
+    virtual Value ObjcInstance::getValueOfField (ExecState *exec, const Field *aField) const;
+    virtual Value getValueOfUndefinedField (ExecState *exec, const Identifier &property, Type hint) const;
 
     ObjectStructPtr getObject() const { return _instance; }
     
-    KJS::Value stringValue() const;
-    KJS::Value numberValue() const;
-    KJS::Value booleanValue() const;
+    Value stringValue() const;
+    Value numberValue() const;
+    Value booleanValue() const;
     
     void setExecutionContext (RootObject *r) { _root = r; }
     const RootObject *executionContext() const { return _root; }

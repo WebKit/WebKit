@@ -123,6 +123,14 @@
 - (id)invokeUndefinedMethodFromWebScript:(NSString *)name withArguments:(NSArray *)args;
 
 /*!
+    @method invokeDefaultMethodWithArguments:
+    @param args The args to pass the method.
+    @discussion If a script attempts to invoke a method on an exposed object
+    directory this method will be called.
+*/
+- (id)invokeDefaultMethodWithArguments:(NSArray *)args;
+
+/*!
     @method finalizeForWebScript
     @discussion finalizeForScript is called on objects exposed to the script
     environment just before the script environment releases the object.  After calls to

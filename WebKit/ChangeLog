@@ -1,3 +1,30 @@
+2004-09-14  Richard Williamson   <rjw@apple.com>
+
+        1.  Add class parameter to object allocation function.  This is somewhat redundant, given that
+        the allocation function is in the class function vector, but people wanted to use the same
+        allocation function for different classes.
+        
+        2.  Renamed NPN_Class to NPN_Invoke to match the name in the function vector.
+        
+        3.  Add support for a default function on an object.  This is a feature that ActiveX supports,
+        and will allow JavaScript code to be written that will look exactly the same for both ActiveX
+        plugins and Netscape or WebKit plugins.  There are implementations included for the 'C' and
+        'Objective-C' bindings.
+        
+        There bugs are covered by
+        
+        <rdar://problem/3776343> Support for default functions in the JavaScript bindings
+        <rdar://problem/3779186> NPN_Call needs to be renamed to NPN_Invoke
+        <rdar://problem/3674754> Need to implement latest npruntime.h
+
+        Reviewed by John.
+
+        * Plugins.subproj/WebNetscapePluginPackage.m:
+        (-[WebNetscapePluginPackage load]):
+        * Plugins.subproj/WebScriptObject.h:
+        * Plugins.subproj/npfunctions.h:
+        * Plugins.subproj/npruntime.h:
+
 2004-09-13  Richard Williamson   <rjw@apple.com>
 
         D'oh.  How many times can I screw up a simple fix!

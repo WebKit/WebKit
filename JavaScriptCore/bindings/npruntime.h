@@ -235,11 +235,12 @@ int32_t NPN_IntFromIdentifier(NPIdentifier identifier);
     The NPVariant *result argument of these functions (where
     applicable) should be released using NPN_ReleaseVariantValue().
 */
-typedef NPObject *(*NPAllocateFunctionPtr)(NPP npp);
+typedef NPObject *(*NPAllocateFunctionPtr)(NPP npp, NPClass *aClass);
 typedef void (*NPDeallocateFunctionPtr)(NPObject *obj);
 typedef void (*NPInvalidateFunctionPtr)(NPObject *obj);
 typedef bool (*NPHasMethodFunctionPtr)(NPClass *theClass, NPIdentifier name);
-typedef bool (*NPInvokeFunctionPtr)(NPObject *obj, NPIdentifier name, const NPVariant *args, unsigned argCount, NPVariant *result);
+typedef bool (*NPInvokeFunctionPtr)(NPObject *obj, NPIdentifier name, const NPVariant *args, uint32_t argCount, NPVariant *result);
+typedef bool (*NPInvokeDefaultFunctionPtr)(NPObject *npobj, const NPVariant *args, uint32_t argCount, NPVariant *result);
 typedef bool (*NPHasPropertyFunctionPtr)(NPClass *theClass, NPIdentifier name);
 typedef bool (*NPGetPropertyFunctionPtr)(NPObject *obj, NPIdentifier name, NPVariant *result);
 typedef bool (*NPSetPropertyFunctionPtr)(NPObject *obj, NPIdentifier name, const NPVariant *value);
@@ -269,6 +270,7 @@ struct NPClass
     NPInvalidateFunctionPtr invalidate;
     NPHasMethodFunctionPtr hasMethod;
     NPInvokeFunctionPtr invoke;
+    NPInvokeDefaultFunctionPtr invokeDefault;
     NPHasPropertyFunctionPtr hasProperty;
     NPGetPropertyFunctionPtr getProperty;
     NPSetPropertyFunctionPtr setProperty;
@@ -314,7 +316,8 @@ void NPN_ReleaseObject (NPObject *obj);
     Calls made from plugin code to script must be made from the thread
     on which the plugin was initialized.
 */
-bool NPN_Call(NPP npp, NPObject *npobj, NPIdentifier methodName, const NPVariant *args, uint32_t argCount, NPVariant *result);
+bool NPN_Invoke(NPP npp, NPObject *npobj, NPIdentifier methodName, const NPVariant *args, uint32_t argCount, NPVariant *result);
+bool NPN_InvokeDefault(NPP npp, NPObject *npobj, const NPVariant *args, uint32_t argCount, NPVariant *result);
 bool NPN_Evaluate(NPP npp, NPObject *npobj, NPString *script, NPVariant *result);
 bool NPN_GetProperty(NPP npp, NPObject *npobj, NPIdentifier propertyName, NPVariant *result);
 bool NPN_SetProperty(NPP npp, NPObject *npobj, NPIdentifier propertyName, const NPVariant *value);
