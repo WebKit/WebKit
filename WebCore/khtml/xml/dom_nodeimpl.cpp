@@ -1485,6 +1485,31 @@ NodeImpl::Id NodeImpl::identifier() const
 #endif
 
 #ifndef NDEBUG
+void NodeImpl::displayNode(const char *prefix)
+{
+    if (!prefix)
+        prefix = "";
+    if (isTextNode())
+        fprintf(stderr, "%s%s\t%p %s\n", prefix, getTagName(id()).string().latin1(), this, nodeValue().ascii());
+    else
+        fprintf(stderr, "%s%s\t%p\n", prefix, getTagName(id()).string().latin1(), this);
+}
+
+void NodeImpl::displayTree()
+{
+    NodeImpl    *rootNode = rootEditableElement();
+    NodeImpl    *node;
+    
+    for (node = rootNode; node; node = node->traverseNextNode()) {
+        NodeImpl *tmpNode;
+        if (node == this)
+            fprintf(stderr, "*");
+        for (tmpNode = node; tmpNode != rootNode; tmpNode = tmpNode->parentNode())
+            fprintf(stderr, "\t");
+        node->displayNode(0);
+    }
+}
+
 void NodeImpl::formatForDebugger(char *buffer, unsigned length) const
 {
     DOMString result;
@@ -2218,7 +2243,7 @@ void NodeBaseImpl::dispatchChildRemovalEvents( NodeImpl *child, int &exceptionco
 
     bool hasRemovalListeners = getDocument()->hasListenerType(DocumentImpl::DOMNODEREMOVEDFROMDOCUMENT_LISTENER);
 
-    // dispatch the DOMNOdeRemovedFromDocument event to all descendants
+    // dispatch the DOMNodeRemovedFromDocument event to all descendants
     if (inDocument()) {
 	for (NodeImpl *c = child; c; c = c->traverseNextNode(child)) {
 	    if (hasRemovalListeners) {
