@@ -1,3 +1,25 @@
+2005-03-15  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Vicki
+
+        Fox for this bug:
+        
+        <rdar://problem/4052642> Each delete keystroke is in its own undo group; not included in undo group with other typing
+
+        Calling -[WebCore setSelectedDOMRange:range affinity:] had the result of "closing" any active set of typing
+        keystrokes grouped together in a single undo operation. A change on 27 Jan in WebKit to change the way delete
+        keystrokes are handled made this feature regress. Previous to that change, the backwards delete
+        key went through separate code that is no longer in the tree that did not set the selection in the way
+        it is done now.
+        
+        The solution is to add an extra argument to the set-selection call. The WebCoreBridge now offers this method:
+        -[WebCore setSelectedDOMRange:range affinity:closeTyping:]. Now, callers must indicate whether setting the 
+        selection will act to close typing or not.
+
+        * kwq/WebCoreBridge.h: Changed header accordingly to change method shown below.
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge setSelectedDOMRange:affinity:closeTyping:]): Added closeTyping argument to this method.
+
 2005-03-15  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Vicki.

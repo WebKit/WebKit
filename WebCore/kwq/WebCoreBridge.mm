@@ -1584,7 +1584,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     return static_cast<WebSelectionGranularity>(_part->selectionGranularity());
 }
 
-- (void)setSelectedDOMRange:(DOMRange *)range affinity:(NSSelectionAffinity)selectionAffinity
+- (void)setSelectedDOMRange:(DOMRange *)range affinity:(NSSelectionAffinity)selectionAffinity closeTyping:(BOOL)closeTyping
 {
     NodeImpl *startContainer = [[range startContainer] _nodeImpl];
     NodeImpl *endContainer = [[range endContainer] _nodeImpl];
@@ -1615,7 +1615,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
     // FIXME: Can we provide extentAffinity?
     Selection selection(start, affinity, end, khtml::SEL_DEFAULT_AFFINITY);
-    _part->setSelection(selection);
+    _part->setSelection(selection, closeTyping);
 }
 
 - (DOMRange *)selectedDOMRange
