@@ -67,6 +67,13 @@ using namespace DOM;
 static bool cacheDisabled;
 #endif
 
+CachedObject::~CachedObject()
+{
+    if(m_deleted) abort();
+    Cache::removeFromLRUList(this);
+    m_deleted = true;
+}
+
 void CachedObject::finish()
 {
     if( m_size > MAXCACHEABLE )
@@ -115,6 +122,22 @@ void CachedObject::setRequest(Request *_request)
     m_request = _request;
     if (canDelete() && m_free)
         delete this;
+    else if (allowInLRUList())
+        Cache::insertInLRUList(this);
+}
+
+void CachedObject::ref(CachedObjectClient *c)
+{
+    m_clients.remove(c);
+    m_clients.append(c);
+    Cache::removeFromLRUList(this);
+}
+
+void CachedObject::deref(CachedObjectClient *c)
+{
+    m_clients.remove(c);
+    if (allowInLRUList())
+        Cache::insertInLRUList(this);
 }
 
 // -------------------------------------------------------------------------------------------
@@ -151,9 +174,7 @@ CachedCSSStyleSheet::~CachedCSSStyleSheet()
 
 void CachedCSSStyleSheet::ref(CachedObjectClient *c)
 {
-    // make sure we don't get it twice...
-    m_clients.remove(c);
-    m_clients.append(c);
+    CachedObject::ref(c);
 
     if(!m_loading) c->setStyleSheet( m_url, m_sheet );
 }
@@ -161,7 +182,7 @@ void CachedCSSStyleSheet::ref(CachedObjectClient *c)
 void CachedCSSStyleSheet::deref(CachedObjectClient *c)
 {
     Cache::flush();
-    m_clients.remove(c);
+    CachedObject::deref(c);
     if ( canDelete() && m_free )
       delete this;
 }
@@ -233,9 +254,7 @@ CachedScript::~CachedScript()
 
 void CachedScript::ref(CachedObjectClient *c)
 {
-    // make sure we don't get it twice...
-    m_clients.remove(c);
-    m_clients.append(c);
+    CachedObject::ref(c);
 
     if(!m_loading) c->notifyFinished(this);
 }
@@ -243,7 +262,7 @@ void CachedScript::ref(CachedObjectClient *c)
 void CachedScript::deref(CachedObjectClient *c)
 {
     Cache::flush();
-    m_clients.remove(c);
+    CachedObject::deref(c);
     if ( canDelete() && m_free )
       delete this;
 }
@@ -486,9 +505,7 @@ void CachedImage::ref( CachedObjectClient *c )
     kdDebug( 6060 ) << this << " CachedImage::ref(" << c << ") " << endl;
 #endif
 
-    // make sure we don't get it twice...
-    m_clients.remove(c);
-    m_clients.append(c);
+    CachedObject::ref(c);
 
     if( m ) {
         m->unpause();
@@ -507,7 +524,7 @@ void CachedImage::deref( CachedObjectClient *c )
     kdDebug( 6060 ) << this << " CachedImage::deref(" << c << ") " << endl;
 #endif
     Cache::flush();
-    m_clients.remove( c );
+    CachedObject::deref(c);
     if(m && m_clients.isEmpty() && m->running())
         m->pause();
     if ( canDelete() && m_free )
@@ -1293,23 +1310,24 @@ KIO::Job *Loader::jobForRequest( const DOM::DOMString &url ) const
 
 QDict<CachedObject> *Cache::cache = 0;
 QPtrList<DocLoader>* Cache::docloader = 0;
-Cache::LRUList *Cache::lru = 0;
 Loader *Cache::m_loader = 0;
 
 int Cache::maxSize = DEFCACHESIZE;
 int Cache::flushCount = 0;
-int Cache::cacheSize = 0;
 
 QPixmap *Cache::nullPixmap = 0;
 QPixmap *Cache::brokenPixmap = 0;
+
+CachedObject *Cache::m_headOfLRUList = 0;
+CachedObject *Cache::m_tailOfLRUList = 0;
+CachedObject *Cache::m_headOfUncacheableList = 0;
+int Cache::m_totalSizeOfLRUList = 0;
+int Cache::m_countOfLRUAndUncacheableLists;
 
 void Cache::init()
 {
     if ( !cache )
         cache = new QDict<CachedObject>(401, true);
-
-    if ( !lru )
-        lru = new LRUList;
 
     if ( !docloader )
         docloader = new QPtrList<DocLoader>;
@@ -1338,7 +1356,6 @@ void Cache::clear()
 #endif
     cache->setAutoDelete( true );
     delete cache; cache = 0;
-    delete lru;   lru = 0;
     delete nullPixmap; nullPixmap = 0;
     delete brokenPixmap; brokenPixmap = 0;
     delete m_loader;   m_loader = 0;
@@ -1389,7 +1406,7 @@ CachedImage *Cache::requestImage( DocLoader* dl, const DOMString & url, bool rel
         else {
 #endif
         cache->insert( kurl.url(), im );
-        lru->prepend( kurl.url() );
+        moveToHeadOfLRUList(im);
 #ifdef APPLE_CHANGES
         }
 #endif
@@ -1413,7 +1430,7 @@ CachedImage *Cache::requestImage( DocLoader* dl, const DOMString & url, bool rel
         kdDebug( 6060 ) << "Cache: using cached: " << kurl.url() << ", status " << o->status() << endl;
 #endif
 
-    lru->touch( kurl.url() );
+    moveToHeadOfLRUList(o);
     if ( dl ) {
         dl->m_docObjects.remove( o );
 #ifdef APPLE_CHANGES
@@ -1463,7 +1480,7 @@ CachedCSSStyleSheet *Cache::requestStyleSheet( DocLoader* dl, const DOMString & 
         else {
 #endif
         cache->insert( kurl.url(), sheet );
-        lru->prepend( kurl.url() );
+        moveToHeadOfLRUList(sheet);
 #ifdef APPLE_CHANGES
         }
 #endif
@@ -1487,7 +1504,7 @@ CachedCSSStyleSheet *Cache::requestStyleSheet( DocLoader* dl, const DOMString & 
         kdDebug( 6060 ) << "Cache: using cached: " << kurl.url() << endl;
 #endif
 
-    lru->touch( kurl.url() );
+    moveToHeadOfLRUList(o);
     if ( dl ) {
         dl->m_docObjects.remove( o );
 #ifdef APPLE_CHANGES
@@ -1547,7 +1564,7 @@ CachedScript *Cache::requestScript( DocLoader* dl, const DOM::DOMString &url, bo
         else {
 #endif
         cache->insert( kurl.url(), script );
-        lru->prepend( kurl.url() );
+        moveToHeadOfLRUList(script);
 #ifdef APPLE_CHANGES
         }
 #endif
@@ -1571,7 +1588,7 @@ CachedScript *Cache::requestScript( DocLoader* dl, const DOM::DOMString &url, bo
         kdDebug( 6060 ) << "Cache: using cached: " << kurl.url() << endl;
 #endif
 
-    lru->touch( kurl.url() );
+    moveToHeadOfLRUList(o);
     if ( dl ) {
         dl->m_docObjects.remove( o );
 #ifdef APPLE_CHANGES
@@ -1597,7 +1614,7 @@ void Cache::flush(bool force)
     if (force)
        flushCount = 0;
     // Don't flush for every image.
-    if (!lru || (lru->count() < (uint) flushCount))
+    if (m_countOfLRUAndUncacheableLists < flushCount)
        return;
 
     init();
@@ -1607,37 +1624,12 @@ void Cache::flush(bool force)
     kdDebug( 6060 ) << "Cache: flush()" << endl;
 #endif
 
-    int _cacheSize = 0;
+    while (m_headOfUncacheableList)
+        removeCacheEntry(m_headOfUncacheableList);
+    while (m_totalSizeOfLRUList > maxSize)
+        removeCacheEntry(m_tailOfLRUList);
 
-    for ( QStringList::Iterator it = lru->fromLast(); it != lru->end(); )
-    {
-        QString url = *it;
-        --it; // Update iterator, we might delete the current entry later on.
-        CachedObject *o = cache->find( url );
-
-#ifdef APPLE_CHANGES
-        if (!o) {
-            continue;
-        }
-#endif
-
-        if( !o->canDelete() || o->status() == CachedObject::Persistent ) {
-               continue; // image is still used or cached permanently
-               // in this case don't count it for the size of the cache.
-        }
-
-        if( o->status() != CachedObject::Uncacheable )
-        {
-           _cacheSize += o->size();
-
-           if( _cacheSize < maxSize )
-               continue;
-        }
-        removeCacheEntry( o );
-    }
-    Cache::cacheSize = _cacheSize;
-
-    flushCount = lru->count()+10; // Flush again when the cache has grown.
+    flushCount = m_countOfLRUAndUncacheableLists+10; // Flush again when the cache has grown.
 #ifdef CACHE_DEBUG
     //statistics();
 #endif
@@ -1686,7 +1678,7 @@ void Cache::statistics()
 
     kdDebug( 6060 ) << "------------------------- image cache statistics -------------------" << endl;
     kdDebug( 6060 ) << "Number of items in cache: " << cache->count() << endl;
-    kdDebug( 6060 ) << "Number of items in lru  : " << lru->count() << endl;
+    kdDebug( 6060 ) << "Number of items in lru  : " << m_countOfLRUAndUncacheableLists << endl;
     kdDebug( 6060 ) << "Number of cached images: " << cache->count()-movie << endl;
     kdDebug( 6060 ) << "Number of cached movies: " << movie << endl;
     kdDebug( 6060 ) << "Number of cached stylesheets: " << stylesheets << endl;
@@ -1704,7 +1696,7 @@ void Cache::removeCacheEntry( CachedObject *object )
   object->setFree( true );
 
   cache->remove( key );
-  lru->remove( key );
+  removeFromLRUList(object);
 
   const DocLoader* dl;
   for ( dl=docloader->first(); dl; dl=docloader->next() )
@@ -1714,6 +1706,61 @@ void Cache::removeCacheEntry( CachedObject *object )
      delete object;
 }
 
+void Cache::removeFromLRUList(CachedObject *object)
+{
+    CachedObject *next = object->m_nextInLRUList;
+    CachedObject *prev = object->m_prevInLRUList;
+    bool uncacheable = object->status() == CachedObject::Uncacheable;
+    CachedObject *&head = uncacheable ? m_headOfUncacheableList : m_headOfLRUList;
+    
+    if (next == 0 && prev == 0 && head != object) {
+        return;
+    }
+    
+    object->m_nextInLRUList = 0;
+    object->m_prevInLRUList = 0;
+    
+    if (next)
+        next->m_prevInLRUList = prev;
+    else if (m_tailOfLRUList == object)
+        m_tailOfLRUList = prev;
+
+    if (prev)
+        prev->m_nextInLRUList = next;
+    else if (head == object)
+        head = next;
+    
+    --m_countOfLRUAndUncacheableLists;
+    
+    if (!uncacheable)
+        m_totalSizeOfLRUList -= object->size();
+}
+
+void Cache::moveToHeadOfLRUList(CachedObject *object)
+{
+    insertInLRUList(object);
+}
+
+void Cache::insertInLRUList(CachedObject *object)
+{
+    removeFromLRUList(object);
+    
+    bool uncacheable = object->status() == CachedObject::Uncacheable;
+    CachedObject *&head = uncacheable ? m_headOfUncacheableList : m_headOfLRUList;
+
+    object->m_nextInLRUList = head;
+    if (head)
+        head->m_prevInLRUList = object;
+    head = object;
+    
+    if (object->m_nextInLRUList == 0 && !uncacheable)
+        m_tailOfLRUList = object;
+    
+    ++m_countOfLRUAndUncacheableLists;
+    
+    if (!uncacheable)
+        m_totalSizeOfLRUList += object->size();
+}
 
 // --------------------------------------
 
@@ -1779,7 +1826,6 @@ void Cache::flushAll()
             break;
         removeCacheEntry(o);
     }
-    cacheSize = 0;
 }
 
 void Cache::setCacheDisabled(bool disabled)

@@ -194,7 +194,7 @@
     [handle release];
 }
 
-- (BOOL)dataSourceIsReloading
+- (BOOL)isReloading
 {
     return ([[self dataSource] flags] & WebResourceHandleFlagLoadFromOrigin);
 }

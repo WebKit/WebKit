@@ -1,3 +1,8 @@
+2002-08-12  Darin Adler  <darin@apple.com>
+
+        * WebCoreSupport.subproj/WebBridge.m: (-[WebBridge isReloading]):
+	Change dataSourceIsReloading to isReloading.
+
 2002-08-12  Maciej Stachowiak  <mjs@apple.com>
 
         * WebView.subproj/WebDataSourcePrivate.h:

@@ -1,3 +1,38 @@
+2002-08-12  Darin Adler  <darin@apple.com>
+
+	At Ken's urging, fixed the loader cache to be more efficient.
+	Gives 1% on the cvs-base test.
+
+        * force-clean-timestamp: This requires a full rebuild.
+
+        * khtml/misc/loader.h:
+        * khtml/misc/loader.cpp:
+        (CachedObject::~CachedObject): No longer inline, which is fine since
+	it was a virtual function anyway. Remove from the LRU list.
+        (CachedObject::setRequest): Add to the LRU list if it qualifies now.
+        (CachedObject::ref): Remove from the LRU list.
+        (CachedObject::deref): Add to the LRU list if it qualifies now.
+        (CachedCSSStyleSheet::ref): Call CachedObject::ref.
+        (CachedCSSStyleSheet::deref): Call CachedObject::deref.
+        (CachedScript::ref): Call CachedObject::ref.
+        (CachedScript::deref): Call CachedObject::deref.
+        (CachedImage::ref): Call CachedObject::ref.
+        (CachedImage::deref): Call CachedObject::deref.
+        (Cache::init): No "LRU list" to create.
+        (Cache::clear): No "LRU list" to delete.
+        (Cache::requestImage): Call moveToHeadOfLRUList.
+        (Cache::requestStyleSheet): Call moveToHeadOfLRUList.
+        (Cache::requestScript): Call moveToHeadOfLRUList.
+        (Cache::flush): New algorithm.
+        (Cache::removeCacheEntry): Call removeFromLRUList.
+        (Cache::removeFromLRUList): Added.
+        (Cache::moveToHeadOfLRUList): Added.
+        (Cache::insertInLRUList): Added.
+
+        * kwq/KWQLoaderImpl.mm: (KWQCheckIfReloading):
+        * kwq/WebCoreBridge.h:
+	Change dataSourceIsReloading to isReloading.
+
 2002-08-12  David Hyatt  <hyatt@apple.com>
 
 	Fix for the crash (assert) at mlb.com (3014322).  recalcStyle was
