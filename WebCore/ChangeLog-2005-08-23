@@ -1,3 +1,21 @@
+2003-11-10  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed:
+	<rdar://problem/3478883>: REGRESSION (113-114u): drag image for selected text includes unselected images
+	<rdar://problem/3479204>: selected images don't look selected
+
+        Reviewed by dave.
+
+        * khtml/rendering/render_image.cpp:
+        (RenderImage::RenderImage): init m_selectionState
+        (RenderImage::paintObject): draw a tint over the image if selected, don't draw anything if not selected and the action is PaintActionSelection
+        * khtml/rendering/render_image.h:
+        (khtml::RenderImage::selectionState): new
+        (khtml::RenderImage::setSelectionState): new
+        * kwq/KWQPainter.h:
+        * kwq/KWQPainter.mm:
+        (QPainter::selectedImageTintColor): new
+
 2003-11-10  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Hyatt

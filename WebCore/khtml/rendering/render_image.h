@@ -42,6 +42,9 @@ public:
     virtual ~RenderImage();
 
     virtual const char *renderName() const { return "RenderImage"; }
+    
+    virtual SelectionState selectionState() const {return m_selectionState;}
+    virtual void setSelectionState(SelectionState s) {m_selectionState = s;}
 
     virtual bool isImage() const { return true; }
     
@@ -101,6 +104,7 @@ private:
     CachedImage *image;
     bool berrorPic : 1;
     bool loadEventSent : 1;
+    SelectionState m_selectionState : 3;
 };
 
 
