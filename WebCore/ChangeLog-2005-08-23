@@ -1,3 +1,7 @@
+2002-11-18  Darin Adler  <darin@apple.com>
+
+        * force-js-clean-timestamp: Another Object change.
+
 2002-11-18  David Hyatt  <hyatt@apple.com>
 
 	Implement phased painting to correct the paint order of blocks,

@@ -240,7 +240,7 @@ namespace KJS {
     InterpreterImp(Interpreter *interp, const Object &glob);
     ~InterpreterImp();
 
-    Object globalObject() const { return global; }
+    Object &globalObject() const { return const_cast<Object &>(global); }
     Interpreter* interpreter() const { return m_interpreter; }
 
     void initGlobalObject();

@@ -229,8 +229,8 @@ static int compareWithCompareFunctionForQSort(const void *a, const void *b)
     CompareWithCompareFunctionArguments *args = compareWithCompareFunctionArguments;
     
     args->arguments.clear();
-    args->arguments.append(Value(*(ValueImp **)a));
-    args->arguments.append(Value(*(ValueImp **)b));
+    args->arguments.append(*(ValueImp **)a);
+    args->arguments.append(*(ValueImp **)b);
     return args->compareFunction->call(args->exec, args->globalObject, args->arguments)
         .toInt32(args->exec);
 }
@@ -530,8 +530,7 @@ Value ArrayProtoFuncImp::call(ExecState *exec, Object &thisObj, const List &args
                 List l;
                 l.append(jObj);
                 l.append(minObj);
-                Object thisObj = exec->interpreter()->globalObject();
-                cmp = sortFunction.call(exec,thisObj, l ).toInt32(exec);
+                cmp = sortFunction.call(exec, exec->interpreter()->globalObject(), l).toInt32(exec);
             } else {
               cmp = (jObj.toString(exec) < minObj.toString(exec)) ? -1 : 1;
             }

@@ -46,6 +46,8 @@ namespace KJS {
   protected:
     ListNode(const Value &val, ListNode *p, ListNode *n)
       : member(val.imp()), prev(p), next(n) {};
+    ListNode(ValueImp *val, ListNode *p, ListNode *n)
+      : member(val), prev(p), next(n) {};
     ValueImp *member;
     ListNode *prev, *next;
   };
@@ -61,27 +63,16 @@ namespace KJS {
 
 // ------------------------------ ListIterator ---------------------------------
 
-ListIterator::ListIterator(ListNode *n) : node(n)
-{
-}
-
-ListIterator::ListIterator(const List &l)
-  : node(l.hook->next)
-{
-}
-
 ValueImp* ListIterator::operator->() const
 {
   return node->member;
 }
 
-//    operator Value* () const { return node->member; }
 Value ListIterator::operator*() const
 {
   return Value(node->member);
 }
 
-//    operator Value*() const { return node->member; }
 Value ListIterator::operator++()
 {
   node = node->next;
@@ -106,16 +97,6 @@ Value ListIterator::operator--(int)
   const ListNode *n = node;
   --*this;
   return Value(n->member);
-}
-
-bool ListIterator::operator==(const ListIterator &it) const
-{
-  return (node==it.node);
-}
-
-bool ListIterator::operator!=(const ListIterator &it) const
-{
-  return (node!=it.node);
 }
 
 // ------------------------------ List -----------------------------------------
@@ -182,6 +163,16 @@ void List::append(const Value& val)
   hook->prev = n;
 }
 
+void List::append(ValueImp *val)
+{
+  ListNode *n = new ListNode(val, hook->prev, hook);
+  if (!m_needsMarking) {
+    val->ref();
+  }
+  hook->prev->next = n;
+  hook->prev = n;
+}
+
 void List::prepend(const Value& val)
 {
   ListNode *n = new ListNode(val, hook, hook->next);
@@ -192,23 +183,33 @@ void List::prepend(const Value& val)
   hook->next = n;
 }
 
+void List::prepend(ValueImp *val)
+{
+  ListNode *n = new ListNode(val, hook->prev, hook);
+  if (!m_needsMarking) {
+    val->ref();
+  }
+  hook->next->prev = n;
+  hook->next = n;
+}
+
 void List::appendList(const List& lst)
 {
-  ListIterator it = lst.begin();
-  ListIterator e = lst.end();
-  while(it != e) {
-    append(*it);
-    ++it;
+  ListNode *otherHook = lst.hook;
+  ListNode *o = otherHook->next;
+  while (o != otherHook) {
+    append(o->member);
+    o = o->next;
   }
 }
 
 void List::prependList(const List& lst)
 {
-  ListIterator it = lst.end();
-  ListIterator e = lst.begin();
-  while(it != e) {
-    --it;
-    prepend(*it);
+  ListNode *otherHook = lst.hook;
+  ListNode *o = otherHook->prev;
+  while (o != otherHook) {
+    prepend(o->member);
+    o = o->prev;
   }
 }
 
@@ -260,15 +261,7 @@ void List::clearInternal()
 List List::copy() const
 {
   List newList;
-
-  ListIterator e = end();
-  ListIterator it = begin();
-
-  while(it != e) {
-    newList.append(*it);
-    ++it;
-  }
-
+  newList.appendList(*this);
   return newList;
 }
 
@@ -315,9 +308,10 @@ Value List::operator[](int i) const
   return at(i);
 }
 
-const List List::empty()
+const List &List::empty()
 {
-  return List();
+  static List l;
+  return l;
 }
 
 

@@ -1,5 +1,38 @@
 2002-11-18  Darin Adler  <darin@apple.com>
 
+	- reduced the creation of Value objects and hoisted the property map
+        into Object for another gain of about 6%
+
+        * JavaScriptCore.pbproj/project.pbxproj: Made property_map.h public.
+        * kjs/array_object.cpp:
+        (compareWithCompareFunctionForQSort): Don't wrap the ValueImp * in a Value
+	just to add it to a list.
+        (ArrayProtoFuncImp::call): Pass the globalObject directly so we don't have
+	to ref/deref.
+        * kjs/function.cpp:
+        (FunctionImp::call): Use a reference for the global object to avoid ref/deref.
+        (GlobalFuncImp::call): Ditto.
+        * kjs/internal.cpp:
+        (BooleanImp::toObject): Put the object directly into the list, don't create a Value.
+        (StringImp::toObject): Ditto.
+        (NumberImp::toObject): Ditto.
+        (InterpreterImp::evaluate): Use a reference for the global object.
+        * kjs/internal.h: Return a reference for the global object.
+        * kjs/interpreter.cpp: (Interpreter::globalObject): Ditto.
+        * kjs/interpreter.h: Ditto.
+        * kjs/object.cpp: Use _prop directly in the object, not a separate pointer.
+        * kjs/object.h: Ditto.
+        * kjs/types.cpp: Added List methods that work directly with ValueImp.
+        (List::append): Added a ValueImp version.
+        (List::prepend): Ditto.
+        (List::appendList): Work directly with the ValueImp's.
+        (List::prependList): Ditto.
+        (List::copy): Use appendList.
+        (List::empty): Use a shared global List.
+        * kjs/types.h: Update for above changes.
+
+2002-11-18  Darin Adler  <darin@apple.com>
+
         * kjs/property_map.cpp: Oops, copyright goes to Apple, not me.
         * kjs/property_map.h: Ditto.
 

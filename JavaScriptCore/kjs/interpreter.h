@@ -145,7 +145,7 @@ namespace KJS {
      * Returns the object that is used as the global object during all script
      * execution performed by this interpreter
      */
-    Object globalObject() const;
+    Object &globalObject() const;
 
     void initGlobalObject();
 

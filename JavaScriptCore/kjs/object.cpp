@@ -37,7 +37,6 @@
 #include "operations.h"
 #include "error_object.h"
 #include "nodes.h"
-#include "property_map.h"
 
 namespace KJS {
 
@@ -61,26 +60,22 @@ Object Object::dynamicCast(const Value &v)
 // ------------------------------ ObjectImp ------------------------------------
 
 ObjectImp::ObjectImp(const Object &proto)
-  : _prop(0), _proto(static_cast<ObjectImp*>(proto.imp())), _internalValue(0L), _scope(true)
+  : _proto(static_cast<ObjectImp*>(proto.imp())), _internalValue(0L), _scope(true)
 {
   //fprintf(stderr,"ObjectImp::ObjectImp %p\n",(void*)this);
-  _prop = new PropertyMap();
 }
 
 ObjectImp::ObjectImp() :
   _scope(true)
 {
   //fprintf(stderr,"ObjectImp::ObjectImp %p\n",(void*)this);
-  _prop = 0;
   _proto = NullImp::staticNull;
   _internalValue = 0L;
-  _prop = new PropertyMap();
 }
 
 ObjectImp::~ObjectImp()
 {
   //fprintf(stderr,"ObjectImp::~ObjectImp %p\n",(void*)this);
-  delete _prop;
 }
 
 void ObjectImp::mark()
@@ -91,7 +86,7 @@ void ObjectImp::mark()
   if (_proto && !_proto->marked())
     _proto->mark();
 
-  _prop->mark();
+  _prop.mark();
 
   if (_internalValue && !_internalValue->marked())
     _internalValue->mark();
@@ -170,7 +165,7 @@ Value ObjectImp::get(ExecState *exec, unsigned propertyName) const
 // to look up in the prototype, it might already exist there)
 ValueImp* ObjectImp::getDirect(const UString& propertyName) const
 {
-  return _prop->get(propertyName);
+  return _prop.get(propertyName);
 }
 
 // ECMA 8.6.2.2
@@ -198,7 +193,7 @@ void ObjectImp::put(ExecState *exec, const UString &propertyName,
     return;
   }
 
-  _prop->put(propertyName,value.imp(),attr);
+  _prop.put(propertyName,value.imp(),attr);
 }
 
 void ObjectImp::put(ExecState *exec, unsigned propertyName,
@@ -211,7 +206,7 @@ void ObjectImp::put(ExecState *exec, unsigned propertyName,
 bool ObjectImp::canPut(ExecState *, const UString &propertyName) const
 {
   int attributes;
-  ValueImp *v = _prop->get(propertyName, attributes);
+  ValueImp *v = _prop.get(propertyName, attributes);
   if (v)
     return!(attributes & ReadOnly);
 
@@ -228,7 +223,7 @@ bool ObjectImp::canPut(ExecState *, const UString &propertyName) const
 // ECMA 8.6.2.4
 bool ObjectImp::hasProperty(ExecState *exec, const UString &propertyName) const
 {
-  if (_prop->get(propertyName))
+  if (_prop.get(propertyName))
     return true;
 
   // Look in the static hashtable of properties
@@ -253,11 +248,11 @@ bool ObjectImp::hasProperty(ExecState *exec, unsigned propertyName) const
 bool ObjectImp::deleteProperty(ExecState */*exec*/, const UString &propertyName)
 {
   int attributes;
-  ValueImp *v = _prop->get(propertyName, attributes);
+  ValueImp *v = _prop.get(propertyName, attributes);
   if (v) {
     if ((attributes & DontDelete))
       return false;
-    _prop->remove(propertyName);
+    _prop.remove(propertyName);
     return true;
   }
 
@@ -275,7 +270,7 @@ bool ObjectImp::deleteProperty(ExecState *exec, unsigned propertyName)
 
 void ObjectImp::deleteAllProperties( ExecState * )
 {
-  _prop->clear();
+  _prop.clear();
 }
 
 // ECMA 8.6.2.6
@@ -396,7 +391,7 @@ ReferenceList ObjectImp::propList(ExecState *exec, bool recursive)
   if (_proto && _proto->dispatchType() == ObjectType && recursive)
     list = static_cast<ObjectImp*>(_proto)->propList(exec,recursive);
 
-  _prop->addEnumerablesToReferenceList(list, Object(this));
+  _prop.addEnumerablesToReferenceList(list, Object(this));
 
   // Add properties from the static hashtable of properties
   const ClassInfo *info = classInfo();

@@ -42,8 +42,8 @@ namespace KJS {
    */
   class ListIterator {
     friend class List;
-    ListIterator();
-    ListIterator(ListNode *n);
+    ListIterator() : node(0) { }
+    ListIterator(ListNode *n) : node(n) { }
   public:
     /**
      * Construct an iterator that points to the first element of the list.
@@ -55,13 +55,7 @@ namespace KJS {
      * @return A pointer to the element the iterator operates on.
      */
     ValueImp* operator->() const;
-    //    operator Value* () const { return node->member; }
     Value operator*() const;
-    /**
-     * Conversion to @ref KJS::Value*
-     * @return A pointer to the element the iterator operates on.
-     */
-    //    operator Value*() const { return node->member; }
     /**
      * Postfix increment operator.
      * @return The element after the increment.
@@ -84,12 +78,12 @@ namespace KJS {
      * @return True if the two iterators operate on the same list element.
      * False otherwise.
      */
-    bool operator==(const ListIterator &it) const;
+    bool operator==(const ListIterator &it) const { return node == it.node; }
     /**
      * Check for inequality with another iterator.
      * @return True if the two iterators operate on different list elements.
      */
-    bool operator!=(const ListIterator &it) const;
+    bool operator!=(const ListIterator &it) const { return node != it.node; }
   private:
     ListNode *node;
   };
@@ -119,12 +113,14 @@ namespace KJS {
      * @param val Pointer to object.
      */
     void append(const Value& val);
+    void append(ValueImp *val);
     /**
      * Insert an object at the beginning of the list.
      *
      * @param val Pointer to object.
      */
     void prepend(const Value& val);
+    void prepend(ValueImp *val);
     /**
      * Appends the items of another list at the end of this one.
      */
@@ -146,6 +142,7 @@ namespace KJS {
      * Remove val from list.
      */
     void remove(const Value &val);
+    void remove(ValueImp *val);
     /**
      * Remove all elements from the list.
      */
@@ -189,7 +186,7 @@ namespace KJS {
      * Returns a pointer to a static instance of an empty list. Useful if a
      * function has a @ref KJS::List parameter.
      */
-    static const List empty();
+    static const List &empty();
 #ifdef KJS_DEBUG_MEM
     static void globalClear();
 #endif

@@ -40,10 +40,10 @@
 #include "value.h"
 #include "types.h"
 #include "reference_list.h"
+#include "property_map.h"
 
 namespace KJS {
 
-  class PropertyMap;
   class HashTable;
   class HashEntry;
   class ListImp;
@@ -582,7 +582,7 @@ namespace KJS {
     ValueImp* getDirect(const UString& propertyName) const;
   private:
     const HashEntry* findPropertyHashEntry( const UString& propertyName ) const;
-    PropertyMap *_prop;
+    PropertyMap _prop;
     ValueImp *_proto;
     ValueImp *_internalValue;
     List _scope;

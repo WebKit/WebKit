@@ -108,7 +108,7 @@ Interpreter::~Interpreter()
   delete rep;
 }
 
-Object Interpreter::globalObject() const
+Object &Interpreter::globalObject() const
 {
   return rep->globalObject();
 }
