@@ -213,10 +213,10 @@
 
     WebView *c = [dataSource _controller];
     [c setDefersCallbacks:YES];
-    [[c _policyDelegateForwarder] webView:c decideContentPolicyForMIMEType:[r MIMEType]
-                                                                   andRequest:[dataSource request]
-                                                                      inFrame:[dataSource webFrame]
-                                                             decisionListener:listener];
+    [[c _policyDelegateForwarder] webView:c decidePolicyForMIMEType:[r MIMEType]
+                                                            request:[dataSource request]
+                                                              frame:[dataSource webFrame]
+                                                   decisionListener:listener];
 }
 
 

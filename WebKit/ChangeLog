@@ -1,3 +1,21 @@
+2003-04-23  Chris Blumenberg  <cblu@apple.com>
+
+	Renamed the policy delegate methods.
+
+        Reviewed by john.
+
+        * WebView.subproj/WebDefaultPolicyDelegate.m:
+        (-[WebDefaultPolicyDelegate webView:unableToImplementPolicyWithError:frame:]):
+        (-[WebDefaultPolicyDelegate webView:decidePolicyForNavigationAction:request:frame:decisionListener:]):
+        (-[WebDefaultPolicyDelegate webView:decidePolicyForNewWindowAction:request:newFrameName:decisionListener:]):
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _handleUnimplementablePolicyWithErrorCode:forURL:]):
+        (-[WebFrame _checkNewWindowPolicyForRequest:action:frameName:formState:andCall:withSelector:]):
+        (-[WebFrame _checkNavigationPolicyForRequest:dataSource:formState:andCall:withSelector:]):
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient checkContentPolicyForResponse:]):
+        * WebView.subproj/WebPolicyDelegate.h:
+
 2003-04-22  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Darin

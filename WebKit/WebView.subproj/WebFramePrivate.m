@@ -1042,7 +1042,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     WebError *error = [WebError _webKitErrorWithCode:code
 				          failingURL:[URL absoluteString]];
     WebView *c = [self webView];
-    [[c _policyDelegateForwarder] webView:c unableToImplementPolicyWithError:error inFrame:self];    
+    [[c _policyDelegateForwarder] webView:c unableToImplementPolicyWithError:error frame:self];    
 }
 
 - (void)_clearProvisionalDataSource
@@ -1382,10 +1382,10 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     _private->policyFormState = [formState retain];
 
     WebView *c = [self webView];
-    [[c _policyDelegateForwarder] webView:c decideNewWindowPolicyForAction:action
-						                      andRequest:request
-						                    newFrameName:frameName
-						                decisionListener:listener];
+    [[c _policyDelegateForwarder] webView:c decidePolicyForNewWindowAction:action
+                                                                   request:request
+                                                              newFrameName:frameName
+                                                          decisionListener:listener];
     
     [listener release];
 }
@@ -1454,10 +1454,10 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     _private->policyFormState = [formState retain];
 
     WebView *c = [self webView];
-    [[c _policyDelegateForwarder] webView:c decideNavigationPolicyForAction:action
-                                                             andRequest:request
-                                                                inFrame:self
-                                                       decisionListener:listener];
+    [[c _policyDelegateForwarder] webView:c decidePolicyForNavigationAction:action
+                                                                    request:request
+                                                                      frame:self
+                                                           decisionListener:listener];
     
     [listener release];
 }
