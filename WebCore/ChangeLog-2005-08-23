@@ -1,3 +1,13 @@
+2004-08-18  David Hyatt  <hyatt@apple.com>
+
+	Make the header overlap the footer in the zero-line case.  Changes to Emerson's template will ensure the
+	header draws over the footer.
+	
+        Reviewed by darin
+
+        * khtml/rendering/render_block.cpp:
+        (khtml::getHeightForLineCount):
+
 2004-08-18  Richard Williamson   <rjw@apple.com>
 
         Replace horrible pollForAppletInView: with new
