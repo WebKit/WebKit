@@ -1,5 +1,10 @@
 2002-07-12  Darin Adler  <darin@apple.com>
 
+        * WebKit.pbproj/project.pbxproj: Re-added JavaScriptCore, which
+	I removed by accident.
+
+2002-07-12  Darin Adler  <darin@apple.com>
+
         * WebKit.pbproj/project.pbxproj: Don't include the html4.css file
 	from WebCore any more. WebCore handles this on its own now. Also,
 	don't include the document templates; we don't use them any more.

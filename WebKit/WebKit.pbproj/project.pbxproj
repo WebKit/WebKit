@@ -349,6 +349,7 @@
 				F5C287BD02846DCD018635CA,
 				F82162D8029F4FB501000131,
 				F82162D9029F4FB501000131,
+				F52BD8BA02DF4FBD018635CA,
 			);
 			isa = PBXFrameworksBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1405,6 +1406,12 @@
 		};
 		F520FB1C0221DEFD01C1A525 = {
 			fileRef = F520FB1A0221DEFD01C1A525;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F52BD8BA02DF4FBD018635CA = {
+			fileRef = F8216299029F4FB501000131;
 			isa = PBXBuildFile;
 			settings = {
 			};
