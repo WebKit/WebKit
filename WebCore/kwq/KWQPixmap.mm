@@ -61,8 +61,6 @@ QPixmap::QPixmap(const QPixmap &copyFrom) : QPaintDevice(copyFrom)
 
 QPixmap::~QPixmap()
 {
-    if ([imageRenderer retainCount] == 1)
-        [imageRenderer stopAnimation];
     [imageRenderer release];
 }
 

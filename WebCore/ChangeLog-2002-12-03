@@ -1,3 +1,12 @@
+2002-11-08  Richard Williamson   <rjw@apple.com>
+
+        Cleanup of fix to 3083281.  Never call stopAnimating from
+        QPixmap's destructor.  With the fix it wouldn't have been
+        called anyway.
+        
+        * kwq/KWQPixmap.mm:
+        (QPixmap::~QPixmap):
+
 2002-11-08  Darin Adler  <darin@apple.com>
 
         * kwq/WebCoreBridge.mm: (attributedString): Remove some dead code.
