@@ -105,7 +105,11 @@
     if ([resource isProxy]) {
         host = [resource proxyHost];
     } else {
-        host = [[resource URL] port] == 0 ? [[resource URL] host] : [NSString stringWithFormat:@"%@:%u", [[resource URL] host], [[resource URL] port]];
+        host = [[resource URL] host];
+        int port = [[[resource URL] port] intValue];
+        if (port) {
+            host = [NSString stringWithFormat:@"%@:%u", host, port];
+        }
     }
     
     NSString *message;

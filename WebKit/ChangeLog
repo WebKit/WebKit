@@ -1,3 +1,10 @@
+2002-11-02  Darin Adler  <darin@apple.com>
+
+	- fixed bug where the address of an NSNumber object would be used for the port number
+
+        * Panels.subproj/WebAuthenticationPanel.m: (-[WebAuthenticationPanel setUpForRequest:]):
+	Call intValue on the object returned from [NSURL port].
+
 2002-11-01  Darin Adler  <darin@apple.com>
 
         * Plugins.subproj/WebBaseNetscapePluginView.m: (-[WebBaseNetscapePluginView sendEvent:]):
