@@ -290,11 +290,12 @@ VisiblePosition endOfParagraph(const VisiblePosition &c, EIncludeLineBreak inclu
         return VisiblePosition();
 
     NodeImpl *startBlock = startNode->enclosingBlockFlowElement();
-
+    NodeImpl *stayInsideBlock = includeLineBreak ? 0 : startBlock;
+    
     NodeImpl *node = startNode;
     long offset = p.offset();
 
-    for (NodeImpl *n = startNode; n; n = n->traverseNextNode(startBlock)) {
+    for (NodeImpl *n = startNode; n; n = n->traverseNextNode(stayInsideBlock)) {
         RenderObject *r = n->renderer();
         if (!r)
             continue;
@@ -312,6 +313,8 @@ VisiblePosition endOfParagraph(const VisiblePosition &c, EIncludeLineBreak inclu
             break;
         }
         if (r->isText()) {
+            if (includeLineBreak && !n->isAncestor(startBlock))
+                return VisiblePosition(n, 0);
             long length = static_cast<RenderText *>(r)->length();
             if (style->whiteSpace() == PRE) {
                 QChar *text = static_cast<RenderText *>(r)->text();
@@ -327,6 +330,8 @@ VisiblePosition endOfParagraph(const VisiblePosition &c, EIncludeLineBreak inclu
         } else if (r->isReplaced()) {
             node = n;
             offset = 1;
+            if (includeLineBreak && !n->isAncestor(startBlock))
+                break;
         }
     }
 
