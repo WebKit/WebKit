@@ -39,6 +39,8 @@
         @"text/ldif",           // Netscape Address Book
         @"text/qif",		// Quicken
         @"text/x-qif",
+        @"text/x-csv",          // CSV (for Address Book and Microsoft Outlook)
+        @"text/x-vcf",          // vCard type used in Sun affinity app
         nil];
 }
 

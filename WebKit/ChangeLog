@@ -1,3 +1,13 @@
+2005-03-04  Adele Amchan  <adele@apple.com>
+
+        Reviewed by Chris.
+
+        Fix for <rdar://problem/4032982> Sun iPlanet app: not able to import AddressBook CSV format addresses properly
+        Fix for <rdar://problem/4032985> Sun iPlanet app: not able to import vCard format addresses properly
+
+        * WebView.subproj/WebTextView.m:
+        (+[WebTextView unsupportedTextMIMETypes]): added "text/x-csv" and "text/x-vcf" to the list of MIME types that our text view doesn't handle
+
 2005-03-04  Darin Adler  <darin@apple.com>
 
         Reviewed by John.
