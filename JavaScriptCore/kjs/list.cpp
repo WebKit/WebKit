@@ -304,12 +304,12 @@ List List::copyTail() const
     int size = imp->size;
 
     int inlineSize = MIN(size, inlineValuesSize);
-    for (int i = 1; i != inlineSize; ++i)
+    for (int i = 1; i < inlineSize; ++i)
         copy.append(imp->values[i]);
 
     ValueImp **overflow = imp->overflow;
     int overflowSize = size - inlineSize;
-    for (int i = 0; i != overflowSize; ++i)
+    for (int i = 0; i < overflowSize; ++i)
         copy.append(overflow[i]);
 
     return copy;

@@ -1,3 +1,12 @@
+2003-08-05  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by John.
+
+        * kjs/list.cpp:
+	(List::copyTail): Test for loop termination with < instead of !=,
+	since i starts at 1 but size could be 0. Do the same for the other
+	loop for consistency's sake.
+	
 2003-08-01  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by John.
