@@ -545,8 +545,7 @@ void KHTMLPart::setJavaEnabled( bool enable )
 
 bool KHTMLPart::javaEnabled() const
 {
-    //return [[[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitJavaEnabled"] boolValue];
-    return FALSE;
+    return [[[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitJavaEnabled"] boolValue];
 }
 
 

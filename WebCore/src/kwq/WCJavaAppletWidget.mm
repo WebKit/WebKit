@@ -32,18 +32,14 @@
 #include <kwqdebug.h>
 #include <WCPluginWidget.h>
 
-@interface IFPluginView : NSObject
-- initWithFrame: (NSRect) r plugin: (WCPlugin *)plug url: (NSString *)location mime:(NSString *)mime arguments:(NSDictionary *)arguments mode:(uint16)mode;
-@end
-
-WCIFPluginMakeFunc WCIFPluginMake;
 
 WCJavaAppletWidget::WCJavaAppletWidget(QMap<QString, QString> args)
 {
     NSMutableDictionary *arguments;
     WCPlugin *plugin;
     QMap<QString, QString>::Iterator it;
-
+    WCIFPluginMakeFunc WCIFPluginMake;
+    
     WCIFPluginMake = WCIFPluginMakeFunction();
 
     plugin = [[WCPluginDatabase installedPlugins] getPluginForFilename:@"Java.plugin"];
@@ -53,8 +49,10 @@ WCJavaAppletWidget::WCJavaAppletWidget(QMap<QString, QString> args)
     }
     
     arguments = [NSMutableDictionary dictionaryWithCapacity:10];
+    [arguments setObject:QSTRING_TO_NSSTRING(args["baseURL"]) forKey:@"DOCBASE"];
     for( it = args.begin(); it != args.end(); ++it ){
-        [arguments setObject:QSTRING_TO_NSSTRING(it.data()) forKey:QSTRING_TO_NSSTRING(it.key())];
+        if(it.key() != "baseURL")
+            [arguments setObject:QSTRING_TO_NSSTRING(it.data()) forKey:QSTRING_TO_NSSTRING(it.key())];
     }
     setView(WCIFPluginMake(NSMakeRect(0,0,0,0), plugin, nil, @"application/x-java-applet", arguments, NP_EMBED));
 }
