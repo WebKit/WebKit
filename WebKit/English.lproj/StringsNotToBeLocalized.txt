@@ -198,7 +198,7 @@
 "application/xhtml+xml"
 "application/xml"
 "audio/mp4"
-"com.apple.HIWebFrameView"
+"com.apple.HIWebView"
 "com.apple.WebKit"
 "com.apple.hiview"
 "displayTitle"
