@@ -1,7 +1,7 @@
 // !$*UTF8*$!
 {
 	0867D690FE84028FC02AAC07 = {
-		activeBuildStyle = 014CEA440018CDF011CA2923;
+		activeBuildStyle = 257486E20221853F0ECA149E;
 		activeTarget = 0867D69CFE84028FC02AAC07;
 		addToTargets = (
 			0867D69CFE84028FC02AAC07,
@@ -106,21 +106,6 @@
 	25A5593201A5996D0ECA149E = {
 		uiCtxt = {
 			sepNavWindowFrame = "{{38, 650}, {750, 502}}";
-		};
-	};
-	25A8176D01B5B9180ECA149E = {
-		uiCtxt = {
-			sepNavWindowFrame = "{{15, 267}, {853, 906}}";
-		};
-	};
-	25A8176E01B5B9180ECA149E = {
-		uiCtxt = {
-			sepNavWindowFrame = "{{672, 74}, {790, 1081}}";
-		};
-	};
-	25BECC94017E0A0D0ECA149E = {
-		uiCtxt = {
-			sepNavWindowFrame = "{{84, 608}, {750, 502}}";
 		};
 	};
 	25C29825016E29620ECA149E = {

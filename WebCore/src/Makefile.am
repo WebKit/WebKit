@@ -21,12 +21,18 @@ libwebcore_dylib_LIBADD = \
 	-ljpeg \
 	$(NULL)
 
+
+if AlexanderTest
+LIBWEBCORE_INSTALL_PATH=@executable_path/../Frameworks
+else
+LIBWEBCORE_INSTALL_PATH=$(symrootsdir)
+endif
+
 LDFLAGS = \
         -dynamiclib \
         -flat_namespace -undefined suppress \
         -all_load \
-        -install_name $(symrootsdir)/libwebcore.dylib
-	-version-info $(WEBCORE_VERSION_INFO) \
+        -install_name $(LIBWEBCORE_INSTALL_PATH)/libwebcore.dylib \
 	$(NULL)
 
 libwebcore_dylib_AR = $(OBJCXXLD) $(AM_OBJCXXFLAGS) $(OBJCXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o

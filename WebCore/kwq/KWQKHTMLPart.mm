@@ -1123,6 +1123,8 @@ static QString splitUrlTarget(const QString &url, QString *target=0)
 
 void KHTMLPart::khtmlMouseMoveEvent( khtml::MouseMoveEvent *event )
 {
+// FIXME: need working implementation of this event
+#if 0
   QMouseEvent *_mouse = event->qmouseEvent();
   DOM::DOMString url = event->url();
   DOM::Node innerNode = event->innerNode();
@@ -1185,6 +1187,8 @@ void KHTMLPart::khtmlMouseMoveEvent( khtml::MouseMoveEvent *event )
           if(r)
           {
             int absx, absy, vx, vy;
+            // FIXME: when compiling with -02, compilation breaks with a 
+	    // complaint that vx and vy might be uninitialized before use
             r->absolutePosition(absx, absy);
             //view()->contentsToViewport( absx, absy, vx, vy );
 
@@ -1290,6 +1294,7 @@ void KHTMLPart::khtmlMouseMoveEvent( khtml::MouseMoveEvent *event )
     }
 #endif
   }
+#endif
 
 }
 

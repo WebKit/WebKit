@@ -1,3 +1,10 @@
+2002-02-18  Kenneth Kocienda  <kocienda@apple.com>
+
+	* src/Makefile.am:
+	* src/kwq/KWQKHTMLPart.mm: (KHTMLPart::khtmlMouseMoveEvent):
+	* src/kwq/KWQView.mm: (-[KWQHTMLView mouseUp:]), (-[KWQHTMLView mouseDown:]):
+	* src/kwq/kde/_kurl.cpp: (KURL::htmlRef):
+
 2002-02-18  Richard Williamson  <rjw@apple.com>
 
         Fixed the prefences won't stay in front problem after John found 

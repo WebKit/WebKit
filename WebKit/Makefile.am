@@ -1,6 +1,6 @@
 
 all: 
-	pbxbuild
+	pbxbuild -buildstyle $(BUILDSTYLE)
 
 clean:
 	pbxbuild clean

@@ -253,6 +253,8 @@
 - (void)mouseUp: (NSEvent *)event
 {
     int button, state;
+
+    button = state = 0;
      
     if ([event type] == NSLeftMouseDown){
         button = Qt::LeftButton;
@@ -276,6 +278,8 @@
 {
     int button, state;
      
+    button = state = 0;
+
     if ([event type] == NSLeftMouseDown){
         button = Qt::LeftButton;
         state = Qt::LeftButton;

@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 34;
+	objectVersion = 35;
 	objects = {
 		014CEA440018CDF011CA2923 = {
 			buildRules = (
@@ -60,6 +60,7 @@
 			buildStyles = (
 				014CEA440018CDF011CA2923,
 				014CEA450018CDF011CA2923,
+				257486E20221853F0ECA149E,
 			);
 			isa = PBXProject;
 			knownRegions = (
@@ -193,7 +194,6 @@
 				9CF0E24B021361B10ECA16EA,
 			);
 			isa = PBXHeadersBuildPhase;
-			name = Headers;
 		};
 		0867D69EFE84028FC02AAC07 = {
 			buildActionMask = 2147483647;
@@ -203,7 +203,6 @@
 				35F357800198AAB80ACA1520,
 			);
 			isa = PBXResourcesBuildPhase;
-			name = "Bundle Resources";
 		};
 		0867D69FFE84028FC02AAC07 = {
 			buildActionMask = 2147483647;
@@ -226,7 +225,6 @@
 				F584CFE70221BDB601A80181,
 			);
 			isa = PBXSourcesBuildPhase;
-			name = Sources;
 		};
 		0867D6A0FE84028FC02AAC07 = {
 			buildActionMask = 2147483647;
@@ -235,14 +233,12 @@
 				F5EBC45C02134C0C01CA1520,
 			);
 			isa = PBXFrameworksBuildPhase;
-			name = "Frameworks & Libraries";
 		};
 		0867D6A2FE84028FC02AAC07 = {
 			buildActionMask = 2147483647;
 			files = (
 			);
 			isa = PBXRezBuildPhase;
-			name = "ResourceManager Resources";
 		};
 		0867D6A5FE840307C02AAC07 = {
 			isa = PBXFrameworkReference;
@@ -364,6 +360,19 @@
 					Public,
 				);
 			};
+		};
+		257486E20221853F0ECA149E = {
+			buildRules = (
+			);
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				FRAMEWORK_SEARCH_PATHS = "@executable_path/../Frameworks";
+				INSTALL_PATH = "@executable_path/../Frameworks";
+				OPTIMIZATION_CFLAGS = "-O2";
+				SKIP_INSTALL = YES;
+			};
+			isa = PBXBuildStyle;
+			name = AlexanderTest;
 		};
 		25A5593101A5996D0ECA149E = {
 			isa = PBXFileReference;
