@@ -1,5 +1,10 @@
 2002-07-24  Darin Adler  <darin@apple.com>
 
+        * khtml/khtml_part.cpp: (KHTMLPart::clear): Remove code that reset m_frameNameId,
+	to complete Maciej's change to fix bug 3006354.
+
+2002-07-24  Darin Adler  <darin@apple.com>
+
 	- fixed 2906567 -- Font size calculations should use 96 dpi instead of 72 dpi
 	- fixed 3005932 -- fonts specified in 'ex' units rendered waaaaaaay too large
 	
@@ -103,7 +108,7 @@
 	assertion go away by itself, but it seems good to avoid the
 	possibility of triggering it in the future.
 	
-        * khtml/khtmlpart_p.h: Make m_partNameId static.
+        * khtml/khtmlpart_p.h: Make m_frameNameId static.
         * khtml/khtml_part.cpp: Initialize it here.
 
 2002-07-24  Darin Adler  <darin@apple.com>
