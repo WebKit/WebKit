@@ -43,17 +43,12 @@ public:
     KURL(const KURL &, const QString &);
     KURL(const QString &, int encoding_hint=0);
     
-    KURL(const KURL &);
-
-    ~KURL();
-    KURL &operator=(const KURL &);
-
-    bool isEmpty() const;
-    bool isMalformed() const;
-    bool isValid() const { return !isMalformed(); }
+    inline bool isEmpty() const { return urlString.isEmpty(); } 
+    inline bool isMalformed() const { return !m_isValid; }
+    inline bool isValid() const { return m_isValid; }
     bool hasPath() const;
 
-    QString url() const;
+    inline QString url() const { return urlString; }
     QString protocol() const;
     QString host() const;
     unsigned short int port() const;
@@ -77,22 +72,23 @@ public:
     NSURL *getNSURL() const;
 
     static QString decode_string(const QString &urlString);
-    static void clearCaches();
     
     friend bool operator==(const KURL &, const KURL &);
 
 private:
-    void swap(KURL &other);
-    void copyOnWrite();
-    void parse() const;
-    void assemble();
-    QString normalizeURLString(const QString &s);
-    QString normalizeRelativeURLString(const KURL &base, const QString &relative);
+    void parse(const char *url);
 
-    class KWQKURLPrivate;
-
-    mutable KWQRefPtr<KWQKURLPrivate> d;
     QString urlString;
+    bool m_isValid;
+    int schemeEndPos;
+    int userStartPos;
+    int userEndPos;
+    int passwordEndPos;
+    int hostEndPos;
+    int portEndPos;
+    int pathEndPos;
+    int queryEndPos;
+    int fragmentEndPos;
 };
 
 #endif

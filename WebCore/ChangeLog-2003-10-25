@@ -1,3 +1,37 @@
+2002-08-22  Maciej Stachowiak  <mjs@apple.com>
+
+	Brand new KURL implementation which avoids CFURL, CFString, and
+	all that other allocation-happy goodness and instead does as much
+	work as possible with raw ASCII buffers.
+
+	For me this gave a ~5% performance improvement on cvs-base.
+	
+        * kwq/KWQKURL.mm:
+        (KURL::KURL):
+        (KURL::hasPath):
+        (KURL::protocol):
+        (KURL::host):
+        (KURL::port):
+        (KURL::pass):
+        (KURL::user):
+        (KURL::ref):
+        (KURL::query):
+        (KURL::path):
+        (KURL::setProtocol):
+        (KURL::setHost):
+        (KURL::setPort):
+        (KURL::setRef):
+        (KURL::setQuery):
+        (KURL::setPath):
+        (KURL::prettyURL):
+        (KURL::decode_string):
+        (escapeBadChars):
+        (KURL::parse):
+        (KURL::getNSURL):
+        * kwq/kdecore/kurl.h:
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::end): Don't call KURL::clearCaches() any more.
+
 2002-08-22  Darin Adler  <darin@apple.com>
 
         * kwq/KWQButton.mm: (QButton::~QButton): Disconnect the view

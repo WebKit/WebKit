@@ -1451,10 +1451,6 @@ void KHTMLPart::end()
         write(d->m_decoder->flush());
     if (d->m_doc)
 	d->m_doc->finishParsing();
-
-#ifdef APPLE_CHANGES
-    KURL::clearCaches();
-#endif
 }
 
 #ifndef APPLE_CHANGES
