@@ -81,7 +81,8 @@ KURL::KWQKURLPrivate::KWQKURLPrivate(const KWQKURLPrivate &other) :
     sQuery(other.sQuery),   
     sPath(other.sPath),   
     escapedPath(other.escapedPath),   
-    addedSlash(other.addedSlash)
+    addedSlash(other.addedSlash),
+    refCount(0)
 {
 }
 
