@@ -439,9 +439,10 @@ void RenderImage::detach(RenderArena *arena)
     RenderReplaced::detach(arena);
 }
 
-bool RenderImage::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty, bool inside)
+bool RenderImage::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty,
+                              HitTestAction hitTestAction, bool inside)
 {
-    inside |= RenderReplaced::nodeAtPoint(info, _x, _y, _tx, _ty, inside);
+    inside |= RenderReplaced::nodeAtPoint(info, _x, _y, _tx, _ty, hitTestAction, inside);
 
     if (inside && element()) {
         int tx = _tx + m_x;

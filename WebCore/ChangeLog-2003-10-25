@@ -1,3 +1,82 @@
+2003-09-19  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3401409, fix negative z-index.  This code actually substantially
+	reworks layers to be more efficient in both painting and event handling.
+	It also fixes bugs with clipping as well as with negative z-indices.
+	
+        Reviewed by kocienda
+
+        * khtml/css/cssstyleselector.cpp:
+        * khtml/rendering/render_block.cpp:
+        * khtml/rendering/render_block.h:
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::setStyle):
+        (RenderBox::repaintRectangle):
+        * khtml/rendering/render_box.h:
+        * khtml/rendering/render_frames.cpp:
+        (RenderFrameSet::nodeAtPoint):
+        * khtml/rendering/render_frames.h:
+        * khtml/rendering/render_image.cpp:
+        (RenderImage::nodeAtPoint):
+        * khtml/rendering/render_image.h:
+        * khtml/rendering/render_inline.cpp:
+        (RenderInline::nodeAtPoint):
+        * khtml/rendering/render_inline.h:
+        * khtml/rendering/render_layer.cpp:
+        (RenderLayer::RenderLayer):
+        (RenderLayer::~RenderLayer):
+        (RenderLayer::updateLayerPosition):
+        (RenderLayer::stackingContext):
+        (RenderLayer::enclosingPositionedAncestor):
+        (RenderLayer::transparentAncestor):
+        (RenderLayer::addChild):
+        (RenderLayer::removeChild):
+        (RenderLayer::convertToLayerCoords):
+        (RenderLayer::checkScrollbarsAfterLayout):
+        (RenderLayer::paintScrollbars):
+        (RenderLayer::paint):
+        (setClip):
+        (restoreClip):
+        (RenderLayer::paintLayer):
+        (RenderLayer::nodeAtPoint):
+        (RenderLayer::nodeAtPointForLayer):
+        (RenderLayer::calculateClipRects):
+        (RenderLayer::calculateRects):
+        (RenderLayer::intersectsDamageRect):
+        (RenderLayer::containsPoint):
+        (hoverAncestor):
+        (commonAncestor):
+        (RenderLayer::updateHoverActiveState):
+        (sortByZOrder):
+        (RenderLayer::dirtyZOrderLists):
+        (RenderLayer::updateZOrderLists):
+        (RenderLayer::collectLayers):
+        * khtml/rendering/render_layer.h:
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::setStyle):
+        (RenderObject::document):
+        (RenderObject::renderArena):
+        (RenderObject::nodeAtPoint):
+        * khtml/rendering/render_object.h:
+        * khtml/rendering/render_text.cpp:
+        (RenderText::nodeAtPoint):
+        * khtml/rendering/render_text.h:
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::DocumentImpl):
+        (DocumentImpl::~DocumentImpl):
+        (DocumentImpl::recalcStyleSelector):
+        (DocumentImpl::setHoverNode):
+        * khtml/xml/dom_docimpl.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::paint):
+        (KWQKHTMLPart::paintSelectionOnly):
+        (KWQKHTMLPart::adjustPageHeight):
+        * kwq/KWQRect.h:
+        * kwq/KWQRenderTreeDebug.cpp:
+        (write):
+        (writeLayers):
+        (externalRepresentation):
+
 2003-09-19  Darin Adler  <darin@apple.com>
 
         Reviewed by Dave.

@@ -379,7 +379,8 @@ TextRun * RenderText::findTextRun( int offset, int &pos )
     return s;
 }
 
-bool RenderText::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty, bool inside)
+bool RenderText::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty,
+                             HitTestAction hitTestAction, bool inside)
 {
     assert(parent());
 
@@ -395,8 +396,6 @@ bool RenderText::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty, b
         s = si < (int) m_lines.count()-1 ? m_lines[++si] : 0;
     }
 
-    setMouseInside(inside);
-
     if (inside && element()) {
         if (info.innerNode() && info.innerNode()->renderer() && 
             !info.innerNode()->renderer()->isInline()) {
@@ -411,7 +410,7 @@ bool RenderText::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty, b
         if (!info.innerNode())
             info.setInnerNode(element());
 
-        if(!info.innerNonSharedNode())
+        if (!info.innerNonSharedNode())
             info.setInnerNonSharedNode(element());
     }
 

@@ -70,10 +70,17 @@ typedef enum {
     PaintActionSelection
 } PaintAction;
 
+typedef enum {
+    HitTestAll = 0,
+    HitTestSelfOnly = 1,
+    HitTestChildrenOnly = 2
+} HitTestAction;
+
 namespace DOM {
     class HTMLAreaElementImpl;
     class DOMString;
     class NodeImpl;
+    class DocumentImpl;
     class ElementImpl;
     class EventImpl;
 };
@@ -241,7 +248,8 @@ public:
 
     // don't even think about making this method virtual!
     DOM::NodeImpl* element() const { return m_node; }
-
+    DOM::DocumentImpl* document() const;
+    
    /**
      * returns the object containing this one. can be different from parent for
      * positioned elements
@@ -405,8 +413,8 @@ public:
 
     FindSelectionResult checkSelectionPoint(int x, int y, int tx, int ty, DOM::NodeImpl*&, int& offset);
     virtual FindSelectionResult checkSelectionPointIgnoringContinuations(int x, int y, int tx, int ty, DOM::NodeImpl*&, int& offset);
-    virtual bool nodeAtPoint(NodeInfo& info, int x, int y, int tx, int ty, bool inside=false);
-    void setHoverAndActive(NodeInfo& info, bool oldinside, bool inside);
+    virtual bool nodeAtPoint(NodeInfo& info, int x, int y, int tx, int ty,
+                             HitTestAction hitTestAction = HitTestAll, bool inside=false);
     
     // set the style of the object.
     virtual void setStyle(RenderStyle *style);

@@ -64,7 +64,8 @@ public:
     virtual void notifyFinished(CachedObject *finishedObj);
     void dispatchLoadEvent();
 
-    virtual bool nodeAtPoint(NodeInfo& info, int x, int y, int tx, int ty, bool inside=false);
+    virtual bool nodeAtPoint(NodeInfo& info, int x, int y, int tx, int ty,
+                             HitTestAction hitTestAction = HitTestAll, bool inside=false);
     
     virtual short calcReplacedWidth() const;
     virtual int calcReplacedHeight() const;

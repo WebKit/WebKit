@@ -56,6 +56,8 @@
 
 #import <JavaScriptCore/property_map.h>
 
+#import <qscrollbar.h>
+
 #undef _KWQ_TIMING
 
 using DOM::DocumentImpl;
@@ -787,7 +789,7 @@ void KWQKHTMLPart::paint(QPainter *p, const QRect &rect)
 #endif
 
     if (renderer()) {
-        renderer()->layer()->paint(p, rect.x(), rect.y(), rect.width(), rect.height(), false);
+        renderer()->layer()->paint(p, rect);
     } else {
         ERROR("called KWQKHTMLPart::paint with nil renderer");
     }
@@ -796,7 +798,7 @@ void KWQKHTMLPart::paint(QPainter *p, const QRect &rect)
 void KWQKHTMLPart::paintSelectionOnly(QPainter *p, const QRect &rect)
 {
     if (renderer()) {
-        renderer()->layer()->paint(p, rect.x(), rect.y(), rect.width(), rect.height(), true);
+        renderer()->layer()->paint(p, rect, true);
     } else {
         ERROR("called KWQKHTMLPart::paintSelectionOnly with nil renderer");
     }
@@ -811,8 +813,9 @@ void KWQKHTMLPart::adjustPageHeight(float *newBottom, float oldTop, float oldBot
         painter.setPaintingDisabled(true);
 
         root->setTruncatedAt((int)floor(oldBottom));
-        root->layer()->paint(&painter, 0, (int)floor(oldTop),
-                             root->docWidth(), (int)ceil(oldBottom-oldTop), false);
+        QRect dirtyRect(0, (int)floor(oldTop),
+                        root->docWidth(), (int)ceil(oldBottom-oldTop));
+        root->layer()->paint(&painter, dirtyRect);
         *newBottom = root->bestTruncatedAt();
         if (*newBottom == 0) {
             *newBottom = oldBottom;

@@ -42,10 +42,8 @@ using khtml::RenderText;
 using khtml::TextRun;
 using khtml::TextRunArray;
 
-typedef khtml::RenderLayer::RenderLayerElement RenderLayerElement;
-typedef khtml::RenderLayer::RenderZTreeNode RenderZTreeNode;
-
-static void writeLayers(QTextStream &ts, const RenderObject &o, int indent = 0);
+static void writeLayers(QTextStream &ts, const RenderLayer* rootLayer, RenderLayer* l,
+                        const QRect& paintDirtyRect, int indent=0);
 
 static QTextStream &operator<<(QTextStream &ts, const QRect &r)
 {
@@ -149,16 +147,18 @@ static void write(QTextStream &ts, const RenderObject &o, int indent = 0)
         if (view) {
             RenderObject *root = KWQ(view->part())->renderer();
             if (root) {
-                writeLayers(ts, *root, indent + 1);
+                RenderLayer* l = root->layer();
+                if (l)
+                    writeLayers(ts, l, l, QRect(l->xPos(), l->yPos(), l->width(), l->height()), indent+1);
             }
         }
     }
 }
 
-static void write(QTextStream &ts, const RenderLayerElement &e, int indent = 0)
+static void write(QTextStream &ts, const RenderLayer &l,
+                  const QRect& layerBounds, const QRect& backgroundClipRect, const QRect& clipRect,
+                  int layerType = 0, int indent = 0)
 {
-    RenderLayer &l = *e.layer;
-    
     writeIndent(ts, indent);
     
     ts << "layer";
@@ -166,34 +166,52 @@ static void write(QTextStream &ts, const RenderLayerElement &e, int indent = 0)
     QRect r(e.absBounds);
     
     ts << " " << r;
-    
-    if (r != r.intersect(e.backgroundClipRect)) {
-        ts << " backgroundClip " << e.backgroundClipRect;
+
+    if (layerBounds != layerBounds.intersect(backgroundClipRect)) {
+        ts << " backgroundClip " << backgroundClipRect;
     }
-    if (r != r.intersect(e.clipRect)) {
-        ts << " clip " << e.clipRect;
+    if (layerBounds != layerBounds.intersect(clipRect)) {
+        ts << " clip " << clipRect;
     }
 
-    if (e.layerElementType == RenderLayerElement::Background)
+    if (layerType == -1)
         ts << " layerType: background only";
-    else if (e.layerElementType == RenderLayerElement::Foreground)
+    else if (layerType == 1)
         ts << " layerType: foreground only";
     
     ts << "\n";
 
-    if (e.layerElementType != RenderLayerElement::Background)
+    if (layerType != -1)
         write(ts, *l.renderer(), indent + 1);
 }
-
-static void writeLayers(QTextStream &ts, const RenderObject &o, int indent)
+    
+static void writeLayers(QTextStream &ts, const RenderLayer* rootLayer, RenderLayer* l,
+                        const QRect& paintDirtyRect, int indent)
 {
-    RenderZTreeNode *node;
-    QPtrVector<RenderLayerElement> list = o.layer()->elementList(node);
-    for (unsigned i = 0; i != list.count(); ++i) {
-        write(ts, *list[i], indent);
+    // Calculate the clip rects we should use.
+    QRect layerBounds, damageRect, clipRectToApply;
+    l->calculateRects(rootLayer, paintDirtyRect, layerBounds, damageRect, clipRectToApply);
+    
+    // Ensure our z-order lists are up-to-date.
+    l->updateZOrderLists();
+
+    bool shouldPaint = l->intersectsDamageRect(layerBounds, damageRect);
+    QPtrVector<RenderLayer>* negList = l->negZOrderList();
+    if (shouldPaint && negList && negList->count() > 0)
+        write(ts, *l, layerBounds, damageRect, clipRectToApply, -1, indent);
+
+    if (negList) {
+        for (unsigned i = 0; i != negList->count(); ++i)
+            writeLayers(ts, rootLayer, negList->at(i), paintDirtyRect, indent);
     }
-    if (node) {
-        node->detach(o.renderArena());
+
+    if (shouldPaint)
+        write(ts, *l, layerBounds, damageRect, clipRectToApply, negList && negList->count() > 0, indent);
+
+    QPtrVector<RenderLayer>* posList = l->posZOrderList();
+    if (posList) {
+        for (unsigned i = 0; i != posList->count(); ++i)
+            writeLayers(ts, rootLayer, posList->at(i), paintDirtyRect, indent);
     }
 }
 
@@ -203,7 +221,9 @@ QString externalRepresentation(const RenderObject *o)
     {
         QTextStream ts(&s);
         if (o) {
-            writeLayers(ts, *o);
+            RenderLayer* l = o->layer();
+            if (l)
+                writeLayers(ts, l, l, QRect(l->xPos(), l->yPos(), l->width(), l->height()));
         }
     }
     return s;

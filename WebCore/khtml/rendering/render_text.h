@@ -141,7 +141,8 @@ public:
     
     virtual void layout() {assert(false);}
 
-    virtual bool nodeAtPoint(NodeInfo& info, int x, int y, int tx, int ty, bool inside = false);
+    virtual bool nodeAtPoint(NodeInfo& info, int x, int y, int tx, int ty,
+                             HitTestAction hitTestAction = HitTestAll, bool inside=false);
 
     // Return before, after (offset set to max), or inside the text, at @p offset
     virtual FindSelectionResult checkSelectionPointIgnoringContinuations

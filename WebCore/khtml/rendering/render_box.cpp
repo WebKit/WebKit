@@ -108,32 +108,9 @@ void RenderBox::setStyle(RenderStyle *_style)
         m_layer = 0;
     }
 
-    adjustZIndex();
-
     // Set the text color if we're the body.
     if (isBody())
         element()->getDocument()->setTextColor(_style->color());
-}
-
-void RenderBox::adjustZIndex()
-{
-    if (m_layer) {
-        // Make sure our z-index values are only applied if we're positioned or
-        // relpositioned or transparent.
-        if (!isPositioned() && !isRelPositioned() && style()->opacity() == 1.0f) {
-            // Set the auto z-index flag.
-            if (isRoot())
-                style()->setZIndex(0);
-            else
-                style()->setHasAutoZIndex();
-        }
-        
-        // Auto z-index becomes 0 for transparent objects.  This prevents cases where
-        // objects that should be blended as a single unit end up with a non-transparent object
-        // wedged in between them.
-        if (style()->opacity() < 1.0f && style()->hasAutoZIndex())
-            style()->setZIndex(0);
-    }
 }
 
 RenderBox::~RenderBox()
@@ -612,8 +589,9 @@ void RenderBox::repaintRectangle(int x, int y, int w, int h, bool immediate, boo
     
     // Apply the relative position offset when invalidating a rectangle.  The layer
     // is translated, but the render box isn't, so we need to do this to get the
-    // right dirty rect.
-    if (isRelPositioned())
+    // right dirty rect.  Since this is called from RenderObject::setStyle, the relative position
+    // flag on the RenderObject has been cleared, so use the one on the style().
+    if (style()->position() == RELATIVE)
         relativePositionOffset(x,y);
     
     if (style()->position()==FIXED) f=true;

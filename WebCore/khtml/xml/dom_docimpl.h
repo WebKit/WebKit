@@ -344,9 +344,13 @@ public:
     void setSelectedStylesheetSet(const DOMString& aString);
 
     QStringList availableStyleSheets() const;
+
     NodeImpl *focusNode() const { return m_focusNode; }
     void setFocusNode(NodeImpl *newFocusNode);
 
+    NodeImpl *hoverNode() const { return m_hoverNode; }
+    void setHoverNode(NodeImpl *newHoverNode);
+    
     // Updates for :target (CSS3 selector).
     void setCSSTarget(NodeImpl* n);
     NodeImpl* getCSSTarget();
@@ -478,8 +482,10 @@ protected:
     HTMLMode hMode;
 
     QColor m_textColor;
-    NodeImpl *m_focusNode;
 
+    NodeImpl *m_focusNode;
+    NodeImpl *m_hoverNode;
+    
     // ### replace me with something more efficient
     // in lookup and insertion.
     DOMStringImpl **m_elementNames;

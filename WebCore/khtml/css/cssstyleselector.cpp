@@ -527,6 +527,21 @@ void CSSStyleSelector::adjustRenderStyle(RenderStyle* style, DOM::ElementImpl *e
         }
     }
 
+    // Make sure our z-index value is only applied if the object is positioned,
+    // relatively positioned, or transparent.
+    if (style->position() == STATIC && style->opacity() == 1.0f) {
+        if (e && e->getDocument()->documentElement() == e)
+            style->setZIndex(0); // The root has a z-index of 0 if not positioned or transparent.
+        else
+            style->setHasAutoZIndex(); // Everyone else gets an auto z-index.
+    }
+
+    // Auto z-index becomes 0 for transparent objects.  This prevents cases where
+    // objects that should be blended as a single unit end up with a non-transparent object
+    // wedged in between them.
+    if (style->opacity() < 1.0f && style->hasAutoZIndex())
+        style->setZIndex(0);
+    
     // Finally update our text decorations in effect, but don't allow text-decoration to percolate through
     // tables, inline blocks, inline tables, or run-ins.
     if (style->display() == TABLE || style->display() == INLINE_TABLE || style->display() == RUN_IN

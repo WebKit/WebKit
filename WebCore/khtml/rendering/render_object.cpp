@@ -983,6 +983,19 @@ void RenderObject::setStyle(RenderStyle *style)
     if (m_style == style)
         return;
 
+    // If our z-index changes value or our visibility changes,
+    // we need to dirty our stacking context's z-order list.
+    if (m_style && style) {
+        if ((m_style->hasAutoZIndex() != style->hasAutoZIndex() ||
+             m_style->zIndex() != style->zIndex() ||
+             m_style->visibility() != style->visibility()) && layer()) {
+            layer()->stackingContext()->dirtyZOrderLists();
+            if (m_style->hasAutoZIndex() != style->hasAutoZIndex() ||
+                m_style->visibility() != style->visibility())
+                layer()->dirtyZOrderLists();
+        }
+    }
+
     RenderStyle::Diff d = m_style ? m_style->diff( style ) : RenderStyle::Layout;
 
     if (m_style && m_parent && d == RenderStyle::Visible && !isText())
@@ -1220,7 +1233,7 @@ void RenderObject::removeFromObjectLists()
     }
 }
 
-RenderArena* RenderObject::renderArena() const
+DOM::DocumentImpl* RenderObject::document() const
 {
     DOM::NodeImpl* elt = element();
     RenderObject* current = parent();
@@ -1228,9 +1241,13 @@ RenderArena* RenderObject::renderArena() const
         elt = current->element();
         current = current->parent();
     }
-    if (!elt)
-        return 0;
-    return elt->getDocument()->renderArena();
+    return elt ? elt->getDocument() : 0;
+}
+
+RenderArena* RenderObject::renderArena() const
+{
+    DOM::DocumentImpl* doc = document();
+    return doc ? doc->renderArena() : 0;
 }
 
 
@@ -1336,20 +1353,8 @@ bool RenderObject::mouseInside() const
     return m_mouseInside; 
 }
 
-void RenderObject::setHoverAndActive(NodeInfo& info, bool oldinside, bool inside)
-{
-    DOM::NodeImpl* elt = element();
-    if (elt) {
-        bool oldactive = elt->active();
-        if (oldactive != (inside && info.active()))
-            elt->setActive(inside && info.active());
-        if ((oldinside != mouseInside() && style()->affectedByHoverRules()) ||
-            (oldactive != elt->active() && style()->affectedByActiveRules()))
-            elt->setChanged();
-    }
-}
-
-bool RenderObject::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty, bool inside)
+bool RenderObject::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty,
+                               HitTestAction hitTestAction, bool inside)
 {
     int tx = _tx + xPos();
     int ty = _ty + yPos();
@@ -1363,11 +1368,14 @@ bool RenderObject::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty,
     }
     
     // ### table should have its own, more performant method
-    if ((!isRenderBlock() ||
+    if (hitTestAction != HitTestSelfOnly &&
+        ((!isRenderBlock() ||
          !static_cast<RenderBlock*>(this)->isPointInScrollbar(_x, _y, _tx, _ty)) &&
         (overhangingContents() || inOverflowRect || isInline() || isCanvas() ||
          isTableRow() || isTableSection() || inside || mouseInside() ||
-         (childrenInline() && firstChild() && firstChild()->isCompact()))) {
+         (childrenInline() && firstChild() && firstChild()->isCompact())))) {
+        if (hitTestAction == HitTestChildrenOnly)
+            inside = false;
         int stx = _tx + xPos();
         int sty = _ty + yPos();
         if (style()->hidesOverflow() && layer())
@@ -1379,6 +1387,15 @@ bool RenderObject::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty,
     }
 
     if (inside) {
+        if (!info.innerNode() && !isInline() && continuation()) {
+            // We are in the margins of block elements that are part of a continuation.  In
+            // this case we're actually still inside the enclosing inline element that was
+            // split.  Go ahead and set our inner node accordingly.
+            info.setInnerNode(continuation()->element());
+            if (!info.innerNonSharedNode())
+                info.setInnerNonSharedNode(continuation()->element());
+        }
+            
         if (info.innerNode() && info.innerNode()->renderer() && 
             !info.innerNode()->renderer()->isInline() && element() && isInline()) {
             // Within the same layer, inlines are ALWAYS fully above blocks.  Change inner node.
@@ -1394,28 +1411,6 @@ bool RenderObject::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty,
 
         if(!info.innerNonSharedNode() && element())
             info.setInnerNonSharedNode(element());
-        
-        if (!info.URLElement()) {
-            RenderObject* p = (!isInline() && continuation()) ? continuation() : this;
-            while (p) {
-                if (p->element() && p->element()->hasAnchor()) {
-                    info.setURLElement(p->element());
-                    break;
-                }
-                if (!isFloatingOrPositioned()) break;
-                p = p->parent();
-            }
-        }
-    }
-
-    if (!info.readonly()) {
-        // lets see if we need a new style
-        bool oldinside = mouseInside();
-        setMouseInside(inside);
-        
-        setHoverAndActive(info, oldinside, inside);
-        if (!isInline() && continuation())
-            continuation()->setHoverAndActive(info, oldinside, inside);
     }
 
     return inside;
