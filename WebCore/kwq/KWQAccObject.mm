@@ -48,6 +48,7 @@ using DOM::HTMLAnchorElementImpl;
 using khtml::RenderObject;
 using khtml::RenderWidget;
 using khtml::RenderCanvas;
+using khtml::RenderText;
 
 // FIXME: This will eventually need to really localize.
 #define UI_STRING(string, comment) ((NSString *)[NSString stringWithUTF8String:(string)])
@@ -349,11 +350,14 @@ static QRect boundingBoxRect(RenderObject* obj)
     if (!m_renderer || m_renderer->style()->visibility() != khtml::VISIBLE)
         return YES;
 
+    if (m_renderer->isText())
+        return static_cast<RenderText*>(m_renderer)->inlineTextBoxes().count() == 0;
+    
     if (m_renderer->element() && m_renderer->element()->hasAnchor())
         return NO;
-    
+
     return (!m_renderer->isCanvas() && 
-            !m_renderer->isImage() && !m_renderer->isText() &&
+            !m_renderer->isImage() &&
             !(m_renderer->element() && m_renderer->element()->isHTMLElement() &&
               Node(m_renderer->element()).elementId() == ID_BUTTON));
 }
