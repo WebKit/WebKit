@@ -33,6 +33,8 @@
 
 using namespace KJS;
 
+using DOM::KeyboardEvent;
+
 // -------------------------------------------------------------------------
 
 JSEventListener::JSEventListener(Object _listener, const Object &_win, bool _html)
@@ -304,7 +306,9 @@ Value KJS::getDOMEvent(ExecState *exec, DOM::Event e)
     return Value(ret);
 
   DOM::DOMString module = e.eventModuleName();
-  if (module == "UIEvents")
+  if (e.handle()->isKeyboardEvent())
+    ret = new DOMKeyboardEvent(exec, static_cast<DOM::KeyboardEvent>(e));
+  else if (module == "UIEvents")
     ret = new DOMUIEvent(exec, static_cast<DOM::UIEvent>(e));
   else if (module == "MouseEvents")
     ret = new DOMMouseEvent(exec, static_cast<DOM::MouseEvent>(e));
@@ -564,6 +568,94 @@ Value DOMMouseEventProtoFunc::tryCall(ExecState *exec, Object &thisObj, const Li
                                 args[12].toBoolean(exec), // metaKeyArg
                                 args[13].toInteger(exec), // buttonArg
                                 toNode(args[14])); // relatedTargetArg
+      return Undefined();
+  }
+  return Undefined();
+}
+
+// -------------------------------------------------------------------------
+
+const ClassInfo DOMKeyboardEvent::info = { "KeyboardEvent", &DOMUIEvent::info, &DOMKeyboardEventTable, 0 };
+
+/*
+@begin DOMKeyboardEventTable 5
+  keyIdentifier	DOMKeyboardEvent::KeyIdentifier	DontDelete|ReadOnly
+  keyLocation	DOMKeyboardEvent::KeyLocation	DontDelete|ReadOnly
+  ctrlKey	DOMKeyboardEvent::CtrlKey	DontDelete|ReadOnly
+  shiftKey	DOMKeyboardEvent::ShiftKey	DontDelete|ReadOnly
+  altKey	DOMKeyboardEvent::AltKey	DontDelete|ReadOnly
+  metaKey	DOMKeyboardEvent::MetaKey	DontDelete|ReadOnly
+  altGraphKey	DOMKeyboardEvent::AltGraphKey	DontDelete|ReadOnly
+@end
+@begin DOMKeyboardEventProtoTable 1
+  initKeyboardEvent	DOMKeyboardEvent::InitKeyboardEvent	DontDelete|Function 11
+@end
+*/
+DEFINE_PROTOTYPE("DOMKeyboardEvent", DOMKeyboardEventProto)
+IMPLEMENT_PROTOFUNC(DOMKeyboardEventProtoFunc)
+IMPLEMENT_PROTOTYPE_WITH_PARENT(DOMKeyboardEventProto, DOMKeyboardEventProtoFunc, DOMUIEventProto)
+
+DOMKeyboardEvent::~DOMKeyboardEvent()
+{
+}
+
+const ClassInfo* DOMKeyboardEvent::classInfo() const
+{
+    return &info;
+}
+
+Value DOMKeyboardEvent::tryGet(ExecState *exec, const Identifier &p) const
+{
+#ifdef KJS_VERBOSE
+  kdDebug(6070) << "DOMKeyboardEvent::tryGet " << p.qstring() << endl;
+#endif
+  return DOMObjectLookupGetValue<DOMKeyboardEvent, DOMUIEvent>(exec, p, &DOMKeyboardEventTable, this);
+}
+
+Value DOMKeyboardEvent::getValueProperty(ExecState *exec, int token) const
+{
+  switch (token) {
+  case KeyIdentifier:
+    return String(static_cast<KeyboardEvent>(event).keyIdentifier());
+  case KeyLocation:
+    return Number(static_cast<KeyboardEvent>(event).keyLocation());
+  case CtrlKey:
+    return Boolean(static_cast<KeyboardEvent>(event).ctrlKey());
+  case ShiftKey:
+    return Boolean(static_cast<KeyboardEvent>(event).shiftKey());
+  case AltKey:
+    return Boolean(static_cast<KeyboardEvent>(event).altKey());
+  case MetaKey:
+    return Boolean(static_cast<KeyboardEvent>(event).metaKey());
+  case AltGraphKey:
+    return Boolean(static_cast<KeyboardEvent>(event).altGraphKey());
+  default:
+    kdWarning() << "Unhandled token in DOMKeyboardEvent::getValueProperty : " << token << endl;
+    return Value();
+  }
+}
+
+Value DOMKeyboardEventProtoFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
+{
+  if (!thisObj.inherits(&DOMKeyboardEvent::info)) {
+    Object err = Error::create(exec,TypeError);
+    exec->setException(err);
+    return err;
+  }
+  KeyboardEvent event = static_cast<DOMKeyboardEvent *>(thisObj.imp())->toKeyboardEvent();
+  switch (id) {
+    case DOMKeyboardEvent::InitKeyboardEvent:
+      event.initKeyboardEvent(args[0].toString(exec).string(), // typeArg
+                              args[1].toBoolean(exec), // canBubbleArg
+                              args[2].toBoolean(exec), // cancelableArg
+                              toAbstractView(args[3]), // viewArg
+                              args[4].toString(exec).string(), // keyIdentifier
+                              args[5].toInteger(exec), // keyLocationArg
+                              args[6].toBoolean(exec), // ctrlKeyArg
+                              args[7].toBoolean(exec), // altKeyArg
+                              args[8].toBoolean(exec), // shiftKeyArg
+                              args[9].toBoolean(exec), // metaKeyArg
+                              args[10].toBoolean(exec)); // altGraphKeyArg
       return Undefined();
   }
   return Undefined();

@@ -1,3 +1,26 @@
+2003-11-05  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fixed 3475109 -- support keyboard event object properties of altkey, ctrlKey, shiftKey
+
+        We had the DOM Level 3 KeyboardEvent class already; I just had to add JavaScript bindings.
+
+        * khtml/ecma/kjs_events.h: Added DOMKeyboardEvent class.
+        * khtml/ecma/kjs_events.cpp:
+        (KJS::getDOMEvent): Added code to make a DOMKeyboardEvent if the event is a DOM::KeyboardEvent.
+        (DOMKeyboardEvent::~DOMKeyboardEvent): Added.
+        (DOMKeyboardEvent::classInfo): Added.
+        (DOMKeyboardEvent::tryGet): Added.
+        (DOMKeyboardEvent::getValueProperty): Added.
+        (DOMKeyboardEventProtoFunc::tryCall): Added.
+
+        * khtml/dom/dom2_events.cpp:
+        (KeyboardEvent::keyIdentifier): Added.
+        (KeyboardEvent::keyLocation): Added.
+
+        * khtml/ecma/kjs_events.lut.h: Regenerated.
+
 2003-11-05  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by John.

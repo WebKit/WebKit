@@ -141,6 +141,33 @@ const struct HashTable DOMMouseEventProtoTable = { 2, 1, DOMMouseEventProtoTable
 
 namespace KJS {
 
+const struct HashEntry DOMKeyboardEventTableEntries[] = {
+   { "metaKey", DOMKeyboardEvent::MetaKey, DontDelete|ReadOnly, 0, 0 },
+   { "keyIdentifier", DOMKeyboardEvent::KeyIdentifier, DontDelete|ReadOnly, 0, &DOMKeyboardEventTableEntries[7] },
+   { 0, 0, 0, 0, 0 },
+   { "altKey", DOMKeyboardEvent::AltKey, DontDelete|ReadOnly, 0, 0 },
+   { "keyLocation", DOMKeyboardEvent::KeyLocation, DontDelete|ReadOnly, 0, &DOMKeyboardEventTableEntries[5] },
+   { "ctrlKey", DOMKeyboardEvent::CtrlKey, DontDelete|ReadOnly, 0, &DOMKeyboardEventTableEntries[6] },
+   { "shiftKey", DOMKeyboardEvent::ShiftKey, DontDelete|ReadOnly, 0, 0 },
+   { "altGraphKey", DOMKeyboardEvent::AltGraphKey, DontDelete|ReadOnly, 0, 0 }
+};
+
+const struct HashTable DOMKeyboardEventTable = { 2, 8, DOMKeyboardEventTableEntries, 5 };
+
+} // namespace
+
+namespace KJS {
+
+const struct HashEntry DOMKeyboardEventProtoTableEntries[] = {
+   { "initKeyboardEvent", DOMKeyboardEvent::InitKeyboardEvent, DontDelete|Function, 11, 0 }
+};
+
+const struct HashTable DOMKeyboardEventProtoTable = { 2, 1, DOMKeyboardEventProtoTableEntries, 1 };
+
+} // namespace
+
+namespace KJS {
+
 const struct HashEntry MutationEventConstructorTableEntries[] = {
    { "ADDITION", DOM::MutationEvent::ADDITION, DontDelete|ReadOnly, 0, &MutationEventConstructorTableEntries[3] },
    { "MODIFICATION", DOM::MutationEvent::MODIFICATION, DontDelete|ReadOnly, 0, 0 },
