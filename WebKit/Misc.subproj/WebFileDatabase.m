@@ -510,7 +510,7 @@ static void databaseInit()
 // database management functions ---------------------------------------------------------------------------
 #pragma mark database management functions
 
--(BOOL)open
+-(void)open
 {
     NSFileManager *manager;
     NSDictionary *attributes;
@@ -541,11 +541,9 @@ static void databaseInit()
             [NSThread detachNewThreadSelector:@selector(_createLRUList:) toTarget:self withObject:nil];
         }
     }
-    
-    return isOpen;
 }
 
--(BOOL)close
+-(void)close
 {
     if (isOpen) {
         isOpen = NO;
@@ -554,8 +552,6 @@ static void databaseInit()
             lru = NULL;
         }
     }
-    
-    return YES;
 }
 
 -(void)lazySync:(NSTimer *)theTimer

@@ -71,16 +71,14 @@
 
 @implementation WebDatabase (WebDatabaseManagement)
 
--(BOOL)open
+-(void)open
 {
     NSRequestConcreteImplementation(self, _cmd, [WebDatabase class]);
-    return NO;
 }
 
--(BOOL)close
+-(void)close
 {
     NSRequestConcreteImplementation(self, _cmd, [WebDatabase class]);
-    return NO;
 }
 
 -(void)sync
