@@ -224,10 +224,13 @@
     [_bridge runOpenPanelForFileButtonWithResultListener:self];
 }
 
-- (void)chooseFilename:(NSString *)fileName
+- (void)chooseFilename:(NSString *)filename
 {
-    [self setFilename:fileName];
-    [_delegate filenameChanged:fileName];
+    // The != check here makes sure we don't consider a change from nil to nil as a change.
+    if (_filename != filename && ![_filename isEqualToString:filename]) {
+        [self setFilename:filename];
+        [_delegate filenameChanged:filename];
+    }
     [_bridge release];
 }
 
@@ -235,7 +238,6 @@
 {
     [_bridge release];
 }
-
 
 - (void)chooseButtonPressed:(id)sender
 {
