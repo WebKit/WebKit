@@ -1,3 +1,19 @@
+2003-03-29  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Trey.
+
+	- fixed 3180786 - Can't log in to the LL Bean Web site
+
+	The problem on this site was misnested tags, leading to two FORM
+	elements that were nested. Both their onSubmit handlers fired, and
+	the outer one returned false. The fix was to avoid bubbling submit
+	events, since this can never be useful in a valid document and
+	because that is what other browsers seem to do, and what Win IE
+	documents.
+	
+        * khtml/html/html_formimpl.cpp:
+        (HTMLFormElementImpl::prepareSubmit): Don't allow the submit event to bubble.
+
 2003-03-28  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Ken.
