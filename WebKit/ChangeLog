@@ -1,5 +1,15 @@
 2002-08-20  Darin Adler  <darin@apple.com>
 
+	- fixed 3023076 -- Strange font chosen, widths screwed up, when text includes 007F characters
+
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (-[WebTextRenderer convertCharacters:length:toGlyphs:skipControlCharacters:]):
+        (-[WebTextRenderer _drawCharacters:length:fromCharacterPosition:toCharacterPosition:atPoint:withTextColor:backgroundColor:]):
+        (-[WebTextRenderer floatWidthForCharacters:stringLength:fromCharacterPosition:numberOfCharacters:applyRounding:attemptFontSubstitution:]):
+	Treat 007F as a control character, skipping it just as we do other control characters.
+
+2002-08-20  Darin Adler  <darin@apple.com>
+
         * WebView.subproj/WebController.m:
         (-[WebController setApplicationNameForUserAgent:]):
 	Lock in here, in anticipation of actually using the name in the

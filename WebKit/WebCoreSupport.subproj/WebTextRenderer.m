@@ -16,8 +16,10 @@
 
 #import <QD/ATSUnicodePriv.h>
 
-#define NON_BREAKING_SPACE 0xA0
-#define SPACE 0x20
+#define NON_BREAKING_SPACE 0x00A0
+#define SPACE 0x0020
+
+#define IS_CONTROL_CHARACTER(c) ((c) < 0x0020 || (c) == 0x007F)
 
 #define ROUND_TO_INT(x) (unsigned int)((x)+.5)
 
@@ -256,7 +258,8 @@ static BOOL bufferTextDrawing = NO;
     OSStatus status;
     
     for (i = 0; i < numCharacters; i++) {
-        if ((skipControlCharacters && characters[i] < 0x0020) || characters[i] == NON_BREAKING_SPACE) {
+        UniChar c = characters[i];
+        if ((skipControlCharacters && IS_CONTROL_CHARACTER(c)) || c == NON_BREAKING_SPACE) {
             break;
         }
     }
@@ -268,9 +271,10 @@ static BOOL bufferTextDrawing = NO;
         
         numCharactersInBuffer = 0;
         for (i = 0; i < numCharacters; i++) {
-            if (characters[i] == NON_BREAKING_SPACE) {
+            UniChar c = characters[i];
+            if (c == NON_BREAKING_SPACE) {
                 buffer[numCharactersInBuffer++] = SPACE;
-            } else if (!(skipControlCharacters && characters[i] < 0x0020)) {
+            } else if (!(skipControlCharacters && IS_CONTROL_CHARACTER(c))) {
                 buffer[numCharactersInBuffer++] = characters[i];
             }
         }
@@ -589,7 +593,7 @@ typedef enum {
         UniChar c = characters[i];
         
         // Skip control characters.
-        if (c < 0x0020) {
+        if (IS_CONTROL_CHARACTER(c)) {
             continue;
         }
 
@@ -777,7 +781,7 @@ cleanup:
         UniChar c = characters[i];
         
         // Skip control characters.
-        if (c < 0x0020) {
+        if (IS_CONTROL_CHARACTER(c)) {
             continue;
         }
         
