@@ -608,7 +608,9 @@ VisiblePosition endOfParagraph(const VisiblePosition &c, EIncludeLineBreak inclu
                 return VisiblePosition(n, 0, DOWNSTREAM);
             break;
         }
-        if (r->isText()) {
+        // FIXME: We avoid returning a position where the renderer can't accept the caret.
+        // We should probably do this in other cases such as startOfParagraph.
+        if (r->isText() && r->caretMaxRenderedOffset() > 0) {
             if (includeLineBreak && !n->isAncestor(startBlock))
                 return VisiblePosition(n, 0, DOWNSTREAM);
             long length = static_cast<RenderText *>(r)->length();

@@ -1,3 +1,12 @@
+2005-03-04  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/4032840> REGRESSION (Mail): crash in RemoveNodeCommand after pasting attachment at end of message
+
+        Reviewed by darin.
+
+        * khtml/editing/visible_units.cpp:
+        (khtml::endOfParagraph): don't consider text nodes that have no rendered characters
+
 2005-03-04  Richard Williamson   <rjw@apple.com>
 
 	Fixed <rdar://problem/4034764> REGRESSION(125-188)Viewing text/plain page and going back/forward corrupts HTML pages (google.com)
