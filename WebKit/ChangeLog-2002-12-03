@@ -1,3 +1,9 @@
+2002-04-15  John Sullivan  <sullivan@apple.com>
+
+	* Plugins.subproj/IFNullPluginView.mm: (-[IFNullPluginView drawRect:]):
+	Moved a line of code to prevent pluginNotFound message from being
+	sent twice.
+
 2002-04-15  Richard Williamson  <rjw@apple.com>
 
         Changes to IFLocationChangeHandler.

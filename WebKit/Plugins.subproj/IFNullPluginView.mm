@@ -71,10 +71,10 @@ static id IFNullPluginMake(NSRect rect, NSString *mimeType, NSDictionary *argume
     
     [super drawRect:rect];
     if(!errorSent){
+        errorSent = YES;
         webView = [self findSuperview:@"IFWebView"];
         webController = [webView controller];
         [webController pluginNotFoundForMIMEType:mimeType pluginPageURL:pluginPage];
-        errorSent = YES;
     }
 }
 
