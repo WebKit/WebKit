@@ -119,9 +119,9 @@ namespace KJS {
   };
 
   // helper functions
-  Value parseDate(const UString &u);
+  double parseDate(const UString &u);
   time_t KRFCDate_parseDate(const UString &_date); 
-  Value timeClip(const Value &t);
+  double timeClip(double);
 
 }; // namespace
 

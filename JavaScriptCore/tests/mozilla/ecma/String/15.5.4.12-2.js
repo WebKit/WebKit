@@ -122,8 +122,8 @@ function GetUnicodeValues( c ) {
 
     // upper case Latin-1 Supplement
     if ( c == 0x00B5 ) {
-        u[0] = c;
-        u[1] = 0x039C;
+        u[0] = 0x039C;
+        u[1] = c;
         return u;
     }
     if ( (c >= 0x00C0 && c <= 0x00D6) || (c >= 0x00D8 && c<=0x00DE) ) {

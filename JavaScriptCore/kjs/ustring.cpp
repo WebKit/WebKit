@@ -1069,14 +1069,19 @@ int UString::rfind(UChar ch, int pos) const
 
 UString UString::substr(int pos, int len) const
 {
+  int s = size();
+
   if (pos < 0)
     pos = 0;
-  else if (pos >= (int) size())
-    pos = size();
+  else if (pos >= s)
+    pos = s;
   if (len < 0)
-    len = size();
-  if (pos + len >= (int) size())
-    len = size() - pos;
+    len = s;
+  if (pos + len >= s)
+    len = s - pos;
+
+  if (pos == 0 && len == s)
+    return *this;
 
   UString::Rep *newRep = Rep::create(rep, pos, len);
   UString result(newRep);

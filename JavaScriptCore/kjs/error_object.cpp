@@ -146,7 +146,7 @@ NativeErrorImp::NativeErrorImp(ExecState *exec, FunctionPrototypeImp *funcProto,
   proto = static_cast<ObjectImp*>(prot.imp());
 
   putDirect(lengthPropertyName, NumberImp::one(), DontDelete|ReadOnly|DontEnum); // ECMA 15.11.7.5
-  putDirect(prototypePropertyName, proto, 0);
+  putDirect(prototypePropertyName, proto, DontDelete|ReadOnly|DontEnum);
 }
 
 bool NativeErrorImp::implementsConstruct() const

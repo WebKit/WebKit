@@ -41,6 +41,7 @@ FunctionPrototypeImp::FunctionPrototypeImp(ExecState *exec)
   : InternalFunctionImp(0)
 {
   Value protect(this);
+  putDirect(lengthPropertyName,   NumberImp::zero(),                                                       DontDelete|ReadOnly|DontEnum);
   putDirect(toStringPropertyName, new FunctionProtoFuncImp(exec, this, FunctionProtoFuncImp::ToString, 0), DontEnum);
   static const Identifier applyPropertyName("apply");
   putDirect(applyPropertyName,    new FunctionProtoFuncImp(exec, this, FunctionProtoFuncImp::Apply,    2), DontEnum);

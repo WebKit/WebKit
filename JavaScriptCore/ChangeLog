@@ -1,3 +1,71 @@
+2004-08-12  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - fixed 43 Mozilla JavaScript tests
+
+        * kjs/date_object.h: Change parseDate and timeClip to take and return doubles.
+        * kjs/date_object.cpp:
+        (DateObjectImp::construct): Change to use a timeClip function that takes and returns a double rather
+        than constructing a number object to pass to it.
+        (DateObjectFuncImp::call): Change to use a parseDate function that returns a double.
+        (KJS::parseDate): Change to return a double instead of creating the Number object here.
+        (KJS::timeClip): Implement this as specified in the language standard.
+
+        * kjs/error_object.cpp: (NativeErrorImp::NativeErrorImp): Set the DontDelete, ReadOnly, and DontEnum
+        flags on the prototype property.
+
+        * kjs/function.cpp:
+        (KJS::FunctionImp::get): Return null rather than undefined for arguments when the function is not
+        currently in scope.
+        (KJS::isStrWhiteSpace): Added. Matches specification for StrWhiteSpace. Could move it to some utility
+        file later.
+        (KJS::parseDigit): Added. Helper function for parseInt.
+        (KJS::parseInt): Added. Integer parser that puts result in a double so we're not limited to what
+        strtoll can handle. Also matches standard more closely.
+        (KJS::parseFloat): Added. Handles "0x" properly and passes flag to make empty string turn into NaN
+        instead of 0.
+        (KJS::GlobalFuncImp::call): Use the new parseInt and parseFloat.
+
+        * kjs/function_object.cpp: (FunctionPrototypeImp::FunctionPrototypeImp): Add a length property.
+
+        * kjs/lexer.h: Added error flag and sawError() function for detecting errors.
+        * kjs/lexer.cpp:
+        (Lexer::setCode): Clear error state.
+        (Lexer::lex): Set error state if the lexer encounters an error
+
+        * kjs/internal.cpp:
+        (NumberImp::toString): Roll in change from KDE version to special case 0 so we handle -0 correctly.
+        (Parser::parse): Use new lexer error method so those errors are treated like parser errors.
+
+        * kjs/math_object.cpp: (MathFuncImp::call): Change min and max to treat -0 as less than +0.
+        Change round to round values between -0.5 and -0 to -0 instead of +0.
+
+        * kjs/nodes.h: Add evaluateReference function to GroupNode.
+        * kjs/nodes.cpp: (GroupNode::evaluateReference): Pass references through groups (parenthesized
+        expressions) properly so that expressions like "delete (x.y)" work. Before, the parentheses
+        would change x.y into a value that can't be deleted as a side effect.
+
+        * kjs/string_object.cpp: Change parameter count for indexOf and lastIndexOf from 2 to 1 to match
+        the specification.
+
+        * kjs/testkjs.cpp: Rolled in changes from KDE to add a "quit" function to the test tool and
+        get rid of the fixed size limit for code.
+
+        * kjs/ustring.cpp: (KJS::UString::substr): Added optimized case for substr(0, length) so it just
+        returns the string without creating a new Rep, since I'm using substr in a place where it will
+        often be passed a 0.
+
+        * tests/mozilla/ecma/String/15.5.4.11-1.js: Fixed one wrong entry in the Unicode table I added to
+        the other day that was making a couple tests fail.
+        * tests/mozilla/ecma/String/15.5.4.12-1.js: Ditto.
+        * tests/mozilla/ecma/String/15.5.4.12-2.js: Ditto.
+        * tests/mozilla/ecma/String/15.5.4.12-3.js: Ditto.
+        * tests/mozilla/ecma/String/15.5.4.12-4.js: Ditto.
+        * tests/mozilla/ecma/String/15.5.4.12-5.js: Ditto.
+
+        * kjs/string_object.lut.h: Regenerated.
+
 2004-08-11  Darin Adler  <darin@apple.com>
 
         - fixed a tiny problem with the UTF-16 PCRE check-in

@@ -22,6 +22,7 @@
  */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "value.h"
@@ -33,14 +34,35 @@ using namespace KJS;
 
 class TestFunctionImp : public ObjectImp {
 public:
-  TestFunctionImp() : ObjectImp() {}
+  TestFunctionImp(int i, int length);
   virtual bool implementsCall() const { return true; }
   virtual Value call(ExecState *exec, Object &thisObj, const List &args);
+
+  enum { Print, Debug, Quit };
+
+private:
+  int id;
 };
+
+TestFunctionImp::TestFunctionImp(int i, int length) : ObjectImp(), id(i)
+{
+  putDirect(lengthPropertyName,length,DontDelete|ReadOnly|DontEnum);
+}
 
 Value TestFunctionImp::call(ExecState *exec, Object &/*thisObj*/, const List &args)
 {
-  fprintf(stderr,"--> %s\n",args[0].toString(exec).ascii());
+  switch (id) {
+  case Print:
+  case Debug:
+    fprintf(stderr,"--> %s\n",args[0].toString(exec).ascii());
+    return Undefined();
+  case Quit:
+    exit(0);
+    return Undefined();
+  default:
+    break;
+  }
+
   return Undefined();
 }
 
@@ -51,7 +73,7 @@ public:
   virtual Value call(ExecState *exec, Object &thisObj, const List &args);
 };
 
-Value VersionFunctionImp::call(ExecState *exec, Object &/*thisObj*/, const List &args)
+Value VersionFunctionImp::call(ExecState */*exec*/, Object &/*thisObj*/, const List &/*args*/)
 {
   // We need this function for compatibility with the Mozilla JS tests but for now
   // we don't actually do any version-specific handling
@@ -80,16 +102,19 @@ int main(int argc, char **argv)
     // create interpreter
     Interpreter interp(global);
     // add debug() function
-    global.put(interp.globalExec(), Identifier("debug"), Object(new TestFunctionImp()));
+    global.put(interp.globalExec(), "debug", Object(new TestFunctionImp(TestFunctionImp::Debug,1)));
     // add "print" for compatibility with the mozilla js shell
-    global.put(interp.globalExec(), Identifier("print"), Object(new TestFunctionImp()));
+    global.put(interp.globalExec(), "print", Object(new TestFunctionImp(TestFunctionImp::Print,1)));
+    // add "quit" for compatibility with the mozilla js shell
+    global.put(interp.globalExec(), "quit", Object(new TestFunctionImp(TestFunctionImp::Quit,0)));
     // add "version" for compatibility with the mozilla js shell 
-    global.put(interp.globalExec(), Identifier("version"), Object(new VersionFunctionImp()));
-
-    const int BufferSize = 200000;
-    char code[BufferSize];
+    global.put(interp.globalExec(), "version", Object(new VersionFunctionImp()));
 
     for (int i = 1; i < argc; i++) {
+      int code_len = 0;
+      int code_alloc = 1024;
+      char *code = (char*)malloc(code_alloc);
+
       const char *file = argv[i];
       if (strcmp(file, "-f") == 0)
 	continue;
@@ -98,10 +123,17 @@ int main(int argc, char **argv)
         fprintf(stderr, "Error opening %s.\n", file);
         return 2;
       }
-      int num = fread(code, 1, BufferSize, f);
-      code[num] = '\0';
-      if(num >= BufferSize)
-        fprintf(stderr, "Warning: File may have been too long.\n");
+
+      while (!feof(f) && !ferror(f)) {
+	size_t len = fread(code+code_len,1,code_alloc-code_len,f);
+	code_len += len;
+	if (code_len >= code_alloc) {
+	  code_alloc *= 2;
+	  code = (char*)realloc(code,code_alloc);
+	}
+      }
+      code = (char*)realloc(code,code_len+1);
+      code[code_len] = '\0';
 
       // run
       Completion comp(interp.evaluate(file, 1, code));
@@ -114,7 +146,7 @@ int main(int argc, char **argv)
         char *msg = exVal.toString(exec).ascii();
         int lineno = -1;
         if (exVal.type() == ObjectType) {
-          Value lineVal = Object::dynamicCast(exVal).get(exec,Identifier("line"));
+          Value lineVal = Object::dynamicCast(exVal).get(exec,"line");
           if (lineVal.type() == NumberType)
             lineno = int(lineVal.toNumber(exec));
         }
@@ -128,6 +160,8 @@ int main(int argc, char **argv)
         char *msg = comp.value().toString(interp.globalExec()).ascii();
         fprintf(stderr,"Return value: %s\n",msg);
       }
+
+      free(code);
     }
 
     Interpreter::unlock();

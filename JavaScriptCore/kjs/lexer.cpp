@@ -115,6 +115,7 @@ void Lexer::setCode(const UString &sourceURL, int startingLineNumber, const UCha
   length = len;
   skipLF = false;
   skipCR = false;
+  error = false;
 #ifndef KJS_PURE_ECMA
   bol = true;
 #endif
@@ -535,9 +536,11 @@ int Lexer::lex()
     break;
   case Bad:
     fprintf(stderr, "yylex: ERROR.\n");
+    error = true;
     return -1;
   default:
     assert(!"unhandled numeration value in switch");
+    error = true;
     return -1;
   }
   lastToken = token;

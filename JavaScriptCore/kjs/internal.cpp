@@ -272,6 +272,8 @@ double NumberImp::toNumber(ExecState *) const
 
 UString NumberImp::toString(ExecState *) const
 {
+  if (val == 0.0) // +0.0 or -0.0
+    return "0";
   return UString::from(val);
 }
 
@@ -453,12 +455,13 @@ ProgramNode *Parser::parse(const UString &sourceURL, int startingLineNumber,
   //extern int kjsyydebug;
   //kjsyydebug=1;
   int parseError = kjsyyparse();
+  bool lexError = Lexer::curr()->sawError();
   Lexer::curr()->doneParsing();
   ProgramNode *prog = progNode;
   progNode = 0;
   sid = -1;
 
-  if (parseError) {
+  if (parseError || lexError) {
     int eline = Lexer::curr()->lineNo();
     if (errLine)
       *errLine = eline;
