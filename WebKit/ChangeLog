@@ -1,5 +1,15 @@
 2003-03-28  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by John
+
+	Imports NSURLConnection private header to access NSURLConnection code 
+	that did not make the API cut.
+
+        * WebView.subproj/WebBaseResourceHandleDelegate.m:
+        * WebView.subproj/WebMainResourceClient.m:
+
+2003-03-28  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by Trey
 
         NSURLConnection class method changed name:
