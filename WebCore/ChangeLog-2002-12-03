@@ -1,5 +1,11 @@
 2002-08-10  Ken Kocienda  <kocienda@apple.com>
 
+	Check box in target setting panel to enable prebinding.
+
+        * WebCore.pbproj/project.pbxproj
+
+2002-08-10  Ken Kocienda  <kocienda@apple.com>
+
 	Added an extra function which checks with WebKit to see if
 	the load is a reload. If it is, the WebCore cache is bypassed.
 
