@@ -1,5 +1,12 @@
 2004-05-18  David Hyatt  <hyatt@apple.com>
 
+	Fix crash when retrieving the AXHelp text.
+	
+        * kwq/KWQAccObject.mm:
+        (-[KWQAccObject helpText]):
+
+2004-05-18  David Hyatt  <hyatt@apple.com>
+
 	Improve layout scheduling and add instrumentation for debugging layout scheduling
 	
         Reviewed by kocienda

@@ -308,7 +308,7 @@ using khtml::RenderImage;
 
     for (RenderObject* curr = m_renderer; curr; curr = curr->parent()) {
         if (curr->element() && curr->element()->isHTMLElement()) {
-            QString summary = static_cast<ElementImpl*>(m_areaElement)->getAttribute(ATTR_SUMMARY).string();
+            QString summary = static_cast<ElementImpl*>(curr->element())->getAttribute(ATTR_SUMMARY).string();
             if (!summary.isEmpty())
                 return summary.getNSString();
             QString title = static_cast<ElementImpl*>(curr->element())->getAttribute(ATTR_TITLE).string();
