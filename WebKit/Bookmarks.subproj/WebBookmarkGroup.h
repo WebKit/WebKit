@@ -42,10 +42,6 @@
                            image:(NSImage *)newImage
                        URLString:(NSString *)newURLString
                           isLeaf:(BOOL)flag;
-- (void)updateBookmark:(IFBookmark *)bookmark
-                 title:(NSString *)newTitle
-                 image:(NSString *)newImage
-             URLString:(NSString *)newURLString;
 
 // storing contents on disk
 

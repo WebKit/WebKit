@@ -28,7 +28,7 @@
     return nil;
 }
 
-- (void)_setTitle:(NSString *)title
+- (void)setTitle:(NSString *)title
 {
     NSRequestConcreteImplementation(self, _cmd, [self class]);
 }
@@ -39,7 +39,7 @@
     return nil;
 }
 
-- (void)_setImage:(NSImage *)image
+- (void)setImage:(NSImage *)image
 {
     NSRequestConcreteImplementation(self, _cmd, [self class]);
 }
@@ -55,7 +55,7 @@
     return nil;
 }
 
-- (void)_setURLString:(NSString *)URLString
+- (void)setURLString:(NSString *)URLString
 {
     if ([self isLeaf]) {
         NSRequestConcreteImplementation(self, _cmd, [self class]);
@@ -78,21 +78,21 @@
     return 0;
 }
 
-- (void)_insertChild:(IFBookmark *)bookmark atIndex:(unsigned)index
+- (void)insertChild:(IFBookmark *)bookmark atIndex:(unsigned)index
 {
     if (![self isLeaf]) {
         NSRequestConcreteImplementation(self, _cmd, [self class]);
     }
 }
 
-- (void)_removeChild:(IFBookmark *)bookmark
+- (void)removeChild:(IFBookmark *)bookmark
 {
     if (![self isLeaf]) {
         NSRequestConcreteImplementation(self, _cmd, [self class]);
     }
 }
 
-- (IFBookmark *)parent
+- (IFBookmark *)_parent
 {
     return _parent;
 }
@@ -104,7 +104,7 @@
     _parent = parent;
 }
 
-- (IFBookmarkGroup *)group
+- (IFBookmarkGroup *)_group
 {
     return _group;
 }

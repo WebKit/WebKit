@@ -16,7 +16,10 @@
 }
 
 - (NSString *)title;
+- (void)setTitle:(NSString *)title;
+
 - (NSImage *)image;
+- (void)setImage:(NSImage *)image;
 
 // Distinguishes a single bookmark from a list 
 - (BOOL)isLeaf;
@@ -25,17 +28,20 @@
 // This is nil if isLeaf returns NO.
 - (NSString *)URLString;
 
-// Array of child IFBookmarks. This is nil if isLeaf returns YES.
+// Sets the string intended to represent URL for leaf bookmarks. URLString need not be
+// a valid URL string. Does nothing if isLeaf returns NO.
+- (void)setURLString:(NSString *)URLString;
+
+// Array of child IFBookmarks. Returns nil if isLeaf returns YES.
 - (NSArray *)children;
 
-// Number of children. This is 0 if isLeaf returns YES.
+// Number of children. Returns 0 if isLeaf returns YES.
 - (unsigned)numberOfChildren;
 
-// The list of bookmarks containing this one.
-- (IFBookmark *)parent;
+// Insert a bookmark into the list. Does nothing if isLeaf returns YES.
+- (void)insertChild:(IFBookmark *)bookmark atIndex:(unsigned)index;
 
-// The IFBookmarkGroup containing this bookmark. To make changes to a bookmark,
-// use methods on its group.
-- (IFBookmarkGroup *)group;
+// Remove a bookmark from the list. Does nothing if isLeaf returns YES.
+- (void)removeChild:(IFBookmark *)bookmark;
 
 @end

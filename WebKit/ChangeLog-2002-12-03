@@ -1,5 +1,43 @@
 2002-05-02  John Sullivan  <sullivan@apple.com>
 
+	Changed API such that mutating methods can now be called on bookmark objects,
+	which in turn tell their group that they have changed (so the group can send
+	out notifications).
+
+	* Bookmarks.subproj/IFBookmark.h:
+	* Bookmarks.subproj/IFBookmark.m:
+	(-[IFBookmark setTitle:]):
+	(-[IFBookmark setImage:]):
+	(-[IFBookmark setURLString:]):
+	(-[IFBookmark insertChild:atIndex:]):
+	(-[IFBookmark removeChild:]):
+	(-[IFBookmark _parent]):
+	(-[IFBookmark _group]):
+	* Bookmarks.subproj/IFBookmarkGroup.h:
+	* Bookmarks.subproj/IFBookmarkGroup.m:
+	(-[IFBookmarkGroup _resetTopBookmark]):
+	(-[IFBookmarkGroup _bookmarkDidChange:]):
+	(-[IFBookmarkGroup _bookmarkChildrenDidChange:]):
+	(-[IFBookmarkGroup removeBookmark:]):
+	(-[IFBookmarkGroup insertNewBookmarkAtIndex:ofBookmark:withTitle:image:URLString:isLeaf:]):
+	* Bookmarks.subproj/IFBookmarkLeaf.m:
+	(-[IFBookmarkLeaf setTitle:]):
+	(-[IFBookmarkLeaf setImage:]):
+	(-[IFBookmarkLeaf setURLString:]):
+	* Bookmarks.subproj/IFBookmarkList.m:
+	(-[IFBookmarkList setTitle:]):
+	(-[IFBookmarkList setImage:]):
+	(-[IFBookmarkList removeChild:]):
+	(-[IFBookmarkList insertChild:atIndex:]):
+	* Bookmarks.subproj/IFBookmark_Private.h:
+	Made _parent and _group private; made setTitle, setImage, setURLString,
+	insertChild:atIndex:, and removeChild: public.
+
+	* Bookmarks.subproj/IFBookmarkGroup_Private.h: Added.
+	* WebKit.pbproj/project.pbxproj: Changed for new file.
+
+2002-05-02  John Sullivan  <sullivan@apple.com>
+
 	Implemented removing the root node bookmark (i.e.,
 	removing all bookmarks with one call).
 

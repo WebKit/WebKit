@@ -7,23 +7,21 @@
 //
 
 #import <WebKit/IFBookmarkGroup.h>
+#import <WebKit/IFBookmarkGroup_Private.h>
 #import <WebKit/IFBookmark_Private.h>
 #import <WebKit/IFBookmarkList.h>
 #import <WebKit/IFBookmarkLeaf.h>
 #import <WebKit/WebKitDebug.h>
+
+@interface IFBookmarkGroup (IFForwardDeclarations)
+- (void)_resetTopBookmark;
+@end
 
 @implementation IFBookmarkGroup
 
 + (IFBookmarkGroup *)bookmarkGroupWithFile: (NSString *)file
 {
     return [[[IFBookmarkGroup alloc] initWithFile:file] autorelease];
-}
-
-- (void)_resetTopBookmark
-{
-    [_topBookmark _setGroup:nil];
-    [_topBookmark autorelease];
-    _topBookmark = [[[IFBookmarkList alloc] initWithTitle:nil image:nil group:self] retain];
 }
 
 - (id)initWithFile: (NSString *)file
@@ -60,6 +58,42 @@
                       object: self];
 }
 
+- (void)_resetTopBookmark
+{
+    BOOL hadChildren;
+
+    hadChildren = [_topBookmark numberOfChildren] > 0;
+    
+    // bail out early if nothing needs resetting
+    if (!hadChildren && _topBookmark != nil) {
+        return;
+    }
+
+    [_topBookmark _setGroup:nil];
+    [_topBookmark autorelease];
+    _topBookmark = [[[IFBookmarkList alloc] initWithTitle:nil image:nil group:self] retain];
+
+    if (hadChildren) {
+        [self _sendBookmarkGroupChangedNotification];
+    }
+}
+
+- (void)_bookmarkDidChange:(IFBookmark *)bookmark
+{
+    // FIXME: send enough info that organizing window can know
+    // to only update this item
+    [self _sendBookmarkGroupChangedNotification];
+}
+
+- (void)_bookmarkChildrenDidChange:(IFBookmark *)bookmark
+{
+    WEBKIT_ASSERT_VALID_ARG (bookmark, ![bookmark isLeaf]);
+    
+    // FIXME: send enough info that organizing window can know
+    // to only update this folder deep
+    [self _sendBookmarkGroupChangedNotification];
+}
+
 - (void)insertBookmark:(IFBookmark *)bookmark
                atIndex:(unsigned)index
             ofBookmark:(IFBookmark *)parent
@@ -69,17 +103,15 @@
 
 - (void)removeBookmark:(IFBookmark *)bookmark
 {
-    WEBKIT_ASSERT_VALID_ARG (bookmark, [bookmark group] == self);
-    WEBKIT_ASSERT_VALID_ARG (bookmark, [bookmark parent] != nil || bookmark == _topBookmark);
+    WEBKIT_ASSERT_VALID_ARG (bookmark, [bookmark _group] == self);
+    WEBKIT_ASSERT_VALID_ARG (bookmark, [bookmark _parent] != nil || bookmark == _topBookmark);
 
     if (bookmark == _topBookmark) {
         [self _resetTopBookmark];
     } else {
-        [[bookmark parent] _removeChild:bookmark];
+        [[bookmark _parent] removeChild:bookmark];
         [bookmark _setGroup:nil];
     }
-    
-    [self _sendBookmarkGroupChangedNotification];
 }
 
 - (void)addNewBookmarkToBookmark:(IFBookmark *)parent
@@ -105,7 +137,7 @@
 {
     IFBookmark *bookmark;
 
-    WEBKIT_ASSERT_VALID_ARG (parent, [parent group] == self);
+    WEBKIT_ASSERT_VALID_ARG (parent, [parent _group] == self);
     WEBKIT_ASSERT_VALID_ARG (parent, ![parent isLeaf]);
     WEBKIT_ASSERT_VALID_ARG (newURLString, flag ? (newURLString != nil) : (newURLString == nil));
 
@@ -120,16 +152,7 @@
                                                     group:self] autorelease];
     }
 
-    [parent _insertChild:bookmark atIndex:index];
-    [self _sendBookmarkGroupChangedNotification];
-}
-
-- (void)updateBookmark:(IFBookmark *)bookmark
-                 title:(NSString *)newTitle
-                 image:(NSString *)newImage
-             URLString:(NSString *)newURLString
-{
-    _logNotYetImplemented();
+    [parent insertChild:bookmark atIndex:index];
 }
 
 - (NSString *)file

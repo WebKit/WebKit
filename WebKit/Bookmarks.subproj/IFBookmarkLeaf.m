@@ -9,6 +9,7 @@
 #import <WebKit/IFBookmarkLeaf.h>
 #import <WebKit/IFBookmark_Private.h>
 #import <WebKit/IFBookmarkGroup.h>
+#import <WebKit/IFBookmarkGroup_Private.h>
 #import <WebKit/IFURIEntry.h>
 #import <WebKit/WebKitDebug.h>
 
@@ -45,9 +46,11 @@
     return [_entry title];
 }
 
-- (void)_setTitle:(NSString *)title
+- (void)setTitle:(NSString *)title
 {
     [_entry setTitle:title];
+
+    [[self _group] _bookmarkDidChange:self];    
 }
 
 - (NSImage *)image
@@ -55,9 +58,11 @@
     return [_entry image];
 }
 
-- (void)_setImage:(NSImage *)image
+- (void)setImage:(NSImage *)image
 {
     [_entry setImage:image];
+
+    [[self _group] _bookmarkDidChange:self];    
 }
 
 - (BOOL)isLeaf
@@ -70,13 +75,16 @@
     return _URLString;
 }
 
-- (void)_setURLString:(NSString *)URLString
+- (void)setURLString:(NSString *)URLString
 {
-    NSString *oldValue;
+    if ([URLString isEqualToString:_URLString]) {
+        return;
+    }
 
-    oldValue = _URLString;
+    [_URLString release];
     _URLString = [[NSString stringWithString:URLString] retain];
-    [oldValue release];
+
+    [[self _group] _bookmarkDidChange:self];    
 }
 
 @end

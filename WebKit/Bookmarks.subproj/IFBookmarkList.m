@@ -8,6 +8,7 @@
 
 #import <WebKit/IFBookmarkList.h>
 #import <WebKit/IFBookmark_Private.h>
+#import <WebKit/IFBookmarkGroup_Private.h>
 #import <WebKit/WebKitDebug.h>
 
 @implementation IFBookmarkList
@@ -41,13 +42,16 @@
     return _title;
 }
 
-- (void)_setTitle:(NSString *)title
+- (void)setTitle:(NSString *)title
 {
-    NSString *oldTitle;
+    if ([title isEqualToString:_title]) {
+        return;
+    }
 
-    oldTitle = _title;
+    [_title release];
     _title = [[NSString stringWithString:title] retain];
-    [oldTitle release];
+
+    [[self _group] _bookmarkDidChange:self]; 
 }
 
 - (NSImage *)image
@@ -55,11 +59,17 @@
     return _image;
 }
 
-- (void)_setImage:(NSImage *)image
+- (void)setImage:(NSImage *)image
 {
+    if ([image isEqual:_image]) {
+        return;
+    }
+    
     [image retain];
     [_image release];
     _image = image;
+
+    [[self _group] _bookmarkDidChange:self]; 
 }
 
 - (BOOL)isLeaf
@@ -77,17 +87,22 @@
     return [_list count];
 }
 
-- (void)_removeChild:(IFBookmark *)bookmark
+- (void)removeChild:(IFBookmark *)bookmark
 {
-    WEBKIT_ASSERT_VALID_ARG (bookmark, [bookmark parent] == self);
+    WEBKIT_ASSERT_VALID_ARG (bookmark, [bookmark _parent] == self);
     [_list removeObject:bookmark];
     [bookmark _setParent:nil];
+
+    [[self _group] _bookmarkChildrenDidChange:self]; 
 }
 
 
-- (void)_insertChild:(IFBookmark *)bookmark atIndex:(unsigned)index
+- (void)insertChild:(IFBookmark *)bookmark atIndex:(unsigned)index
 {
     [_list insertObject:bookmark atIndex:index];
+    [bookmark _setParent:self];
+    
+    [[self _group] _bookmarkChildrenDidChange:self]; 
 }
 
 @end
