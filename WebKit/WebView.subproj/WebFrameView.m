@@ -432,8 +432,10 @@ static NSMutableDictionary *viewTypes;
 {
     if ([self documentView] == nil) {
         // Need to paint ourselves if there's no documentView to do it instead.
-        [[NSColor whiteColor] set];
-        NSRectFill(rect);
+        if ([[self _webView] drawsBackground]) {
+            [[NSColor whiteColor] set];
+            NSRectFill(rect);
+        }
     } else {
 #ifndef NDEBUG
         if ([[self _scrollView] drawsBackground]) {

@@ -91,8 +91,10 @@
         [self layout];
     }
     
-    [[NSColor whiteColor] set];
-    NSRectFill(rect);
+    if ([[self _webView] drawsBackground]) {
+        [[NSColor whiteColor] set];
+        NSRectFill(rect);
+    }
     
     NSRect drawingRect = [self drawingRect];
     [[rep image] drawImageInRect:drawingRect fromRect:drawingRect];

@@ -1,3 +1,16 @@
+2005-01-26  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed <rdar://problem/3829517> WebView still draws white when setDrawsBackground set to NO and no content loaded yet
+
+        * WebView.subproj/WebFrameView.m: (-[WebFrameView drawRect:]): Check drawsBackground, and don't
+        draw the white "no document" background if it's NO. This fixes things for frames with no document.
+        * WebView.subproj/WebImageView.m: (-[WebImageView drawRect:]): Same as above. This fixes things
+        for frames with just an image.
+        * WebView.subproj/WebFrame.m: (-[WebFrame _updateDrawsBackground]): Call setDrawsBackground: on the
+        document view if it implements it. This fixes things for frames with plain text.
+
 2005-01-25  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Chris.

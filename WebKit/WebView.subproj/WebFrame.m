@@ -2534,6 +2534,9 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     BOOL drawsBackground = [[self webView] drawsBackground];
     if (!drawsBackground)
         [[[self frameView] _scrollView] setDrawsBackground:NO];
+    id documentView = [[self frameView] documentView];
+    if ([documentView respondsToSelector:@selector(setDrawsBackground:)])
+        [documentView setDrawsBackground:drawsBackground];
     [[self _bridge] setDrawsBackground:drawsBackground];
     [_private->children makeObjectsPerformSelector:@selector(_updateDrawsBackground)];
 }
