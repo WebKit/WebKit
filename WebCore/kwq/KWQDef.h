@@ -55,7 +55,9 @@ typedef int WId;
 #endif
 
 #define ASSERT(a)
+
 void qDebug(const char *msg, ...);
+void qWarning(const char *msg, ...);
 
 #ifdef NEED_BOGUS_X_DEFINES
 typedef int XEvent;

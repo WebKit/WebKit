@@ -49,6 +49,7 @@ public:
     void start();
     int msec() const;
     int elapsed() const;
+    int restart();
 
     // operators ---------------------------------------------------------------
 

@@ -26,7 +26,54 @@
 #ifndef QASYNCIMAGEIO_H_
 #define QASYNCIMAGEIO_H_
 
+// for memset
+#include <string.h> 
+
 #include <KWQDef.h>
+
+#include "qimage.h"
+#include "qcolor.h"
+#include "qrect.h"
+
+// =============================================================================
+// class QImageConsumer
+
+class QImageConsumer {
+public:
+
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+    
+    // static member functions -------------------------------------------------
+
+    static const char* formatName(const uchar* buffer, int length);
+
+    // constructors, copy constructors, and destructors ------------------------
+    
+    QImageConsumer();
+
+    ~QImageConsumer();
+    
+    // member functions --------------------------------------------------------
+
+    virtual void changed(const QRect &)=0;
+    virtual void end()=0;
+    virtual void setSize(int,int)=0;
+    
+    // operators ---------------------------------------------------------------
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+private:
+    // no copying or assignment
+    QImageConsumer(const QImageConsumer &);
+    QImageConsumer &operator=(const QImageConsumer &);
+
+}; // end class QImageConsumer
+
+// =============================================================================
 
 // =============================================================================
 // class QImageDecoder
@@ -60,6 +107,74 @@ private:
     QImageDecoder &operator=(const QImageDecoder &);
 
 }; // end class QImageDecoder
+
+// =============================================================================
+
+// =============================================================================
+// class QImageFormat
+
+class QImageFormat {
+public:
+
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
+
+    // constructors, copy constructors, and destructors ------------------------
+    
+    QImageFormat();
+    virtual ~QImageFormat();
+    
+    // member functions --------------------------------------------------------
+
+    virtual int decode(QImage &, QImageConsumer *, const uchar *, int) = 0;
+    
+    // operators ---------------------------------------------------------------
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+private:
+    // no copying or assignment
+    QImageFormat(const QImageFormat &);
+    QImageFormat &operator=(const QImageFormat &);
+
+}; // end class QImageFormat
+
+// =============================================================================
+
+// =============================================================================
+// class QImageFormatType
+
+class QImageFormatType {
+public:
+
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
+
+    // constructors, copy constructors, and destructors ------------------------
+    
+    QImageFormatType();
+    virtual ~QImageFormatType();
+    
+    // member functions --------------------------------------------------------
+
+    virtual QImageFormat *decoderFor(const uchar *, int)=0;
+    
+    // operators ---------------------------------------------------------------
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+private:
+    // no copying or assignment
+    QImageFormatType(const QImageFormatType &);
+    QImageFormatType &operator=(const QImageFormatType &);
+
+}; // end class QImageFormatType
 
 // =============================================================================
 

@@ -142,7 +142,18 @@ dnl
 
 AC_HEADER_DIRENT
 AC_HEADER_STDC
-AC_CHECK_HEADERS(sys/param.h sys/mman.h sys/time.h sys/cdefs.h fnmatch.h sysent.h strings.h sys/stat.h sys/select.h sys/socket.h socketbits.h sigaction.h paths.h malloc.h limits.h dlfcn.h)
+AC_CHECK_HEADERS(sys/param.h sys/mman.h sys/time.h sys/cdefs.h)
+AC_CHECK_HEADERS(fnmatch.h sysent.h strings.h sys/stat.h sys/select.h)
+AC_CHECK_HEADERS(sys/socket.h socketbits.h sigaction.h paths.h) 
+AC_CHECK_HEADERS(malloc.h limits.h dlfcn.h)
+
+dnl
+dnl -------------------------------------------------------------------
+dnl Checks for libraries.
+dnl -------------------------------------------------------------------
+dnl
+
+AC_CHECK_LIB(jpeg,jpeg_mem_init)
 
 dnl
 dnl -------------------------------------------------------------------

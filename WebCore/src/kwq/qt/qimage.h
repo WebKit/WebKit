@@ -26,6 +26,9 @@
 #ifndef QIMAGE_H_
 #define QIMAGE_H_
 
+#include "qnamespace.h"
+#include "qcolor.h"
+
 // class QImage ================================================================
 
 class QImage {
@@ -45,12 +48,23 @@ public:
 
     // member functions --------------------------------------------------------
 
+    bool isNull();
+
+    QRgb color(int) const;
+    void setColor(int, QRgb);
+
     int width() const;
     int height() const;
     int depth() const;
     int pixelIndex(int,int) const;
+
+    bool create(int,int,int,int numColors=0);
+    
     QImage createAlphaMask(int conversion_flags=0) const;
     bool hasAlphaBuffer() const;
+
+    uchar **jumpTable() const;
+    uchar *scanLine(int) const;
 
     // operators ---------------------------------------------------------------
 

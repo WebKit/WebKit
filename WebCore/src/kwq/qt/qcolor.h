@@ -26,7 +26,10 @@
 #ifndef QCOLOR_H_
 #define QCOLOR_H_
 
+#include "qnamespace.h"
 #include "qstring.h"
+
+QRgb qRgb(int r, int g, int b);
 
 // class QColor ================================================================
 

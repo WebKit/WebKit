@@ -29,6 +29,8 @@
 class QColor;
 class QCursor;
 
+typedef unsigned int QRgb;
+
 // class Qt ====================================================================
 
 class Qt {
