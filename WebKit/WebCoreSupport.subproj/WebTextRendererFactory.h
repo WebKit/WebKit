@@ -5,7 +5,6 @@
 
 #import <WebCore/WebCoreTextRendererFactory.h>
 #import <WebKit/WebGlyphBuffer.h>
-#import <WebFoundation/WebQueue.h>
 
 @class WebTextRenderer;
 
