@@ -42,9 +42,11 @@
 #import <Foundation/NSURL_NSURLExtras.h>
 #import <Foundation/NSURLRequestPrivate.h>
 
-// These are a little larger than typical because dragging links is a fairly
-// advanced feature that can confuse non-power-users
-#define DragHysteresis  		10.0
+// The link drag hysteresis is much larger than the others because there
+// needs to be enough space to cancel the link press without starting a link drag,
+// and because dragging links is rare.
+#define LinkDragHysteresis              40.0
+#define ImageDragHysteresis  		5.0
 #define TextDragHysteresis  		3.0
 #define TextDragDelay			0.15
 
@@ -627,7 +629,8 @@ static WebHTMLView *lastHitView = nil;
     float deltaY = ABS(mouseDraggedPoint.y - mouseDownPoint.y);
     
     // Drag hysteresis hasn't been met yet but we don't want to do other drag actions like selection.
-    if (((imageURL || linkURL) && deltaX < DragHysteresis && deltaY < DragHysteresis) ||
+    if ((imageURL && deltaX < ImageDragHysteresis && deltaY < ImageDragHysteresis) ||
+        (linkURL && deltaX < LinkDragHysteresis && deltaY < LinkDragHysteresis) ||
         (isSelectedText && deltaX < TextDragHysteresis && deltaY < TextDragHysteresis)) {
 	return;
     }

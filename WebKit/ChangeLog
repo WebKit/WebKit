@@ -1,3 +1,15 @@
+2003-10-27  John Sullivan  <sullivan@apple.com>
+
+        - fixed 3441258 -- hysteresis to start dragging a link is too small; too easy to start drag
+
+        Reviewed by Chris.
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _handleMouseDragged:]):
+        Split DragHysteresis into two values, one for links and one for images. Make
+        the link one much larger than the image one (since dragging an image doesn't
+        occur accidentally in the ways that dragging a link does).
+
 2003-10-27  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3462523>: Safari Sometimes Destroys Applets When Going "Back"
