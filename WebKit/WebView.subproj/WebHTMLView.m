@@ -4045,6 +4045,7 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 
 - (void)doCommandBySelector:(SEL)aSelector
 {
+    WebView *webView = [self _webView];
     if (![[webView _editingDelegateForwarder] webView:webView doCommandBySelector:aSelector]) {
         [super doCommandBySelector:aSelector];
     }

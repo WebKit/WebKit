@@ -1,6 +1,14 @@
 2004-09-21  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Ken.
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView doCommandBySelector:]):
+        Fix build failure from previous checkin, d'oh! Didn't set up webview variable.
+
+2004-09-21  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Ken.
         
         - fixed <rdar://problem/3809477> WebHTMLView needs to pass doCommandBySelector through delegate
 
