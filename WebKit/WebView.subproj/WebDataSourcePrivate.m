@@ -236,8 +236,8 @@
         [_private->mainClient cancel];
     }else{
         // Main handle is already done. Set the cancelled error.
-        NSError *cancelledError = [NSError _web_errorWithDomain:WebFoundationErrorDomain
-                                                           code:WebFoundationErrorCancelled
+        NSError *cancelledError = [NSError _web_errorWithDomain:NSURLErrorDomain
+                                                           code:NSURLErrorCancelled
                                                      failingURL:[[self _URL] absoluteString]];
         [self _setMainDocumentError:cancelledError];
     }

@@ -65,8 +65,8 @@
 
         [rLoader reportError];
 
-        NSError *badURLError = [[NSError alloc] _web_initWithDomain:WebFoundationErrorDomain 
-                                                               code:WebFoundationErrorBadURL
+        NSError *badURLError = [[NSError alloc] _web_initWithDomain:NSURLErrorDomain 
+                                                               code:NSURLErrorBadURL
                                                          failingURL:[URL absoluteString]];
         [_controller _receivedError:badURLError fromDataSource:source];
         [badURLError release];

@@ -69,7 +69,7 @@
         return;
     }
     
-    if ([error code] == WebFoundationErrorCancelled) {
+    if ([error code] == NSURLErrorCancelled) {
         [self receivedError:NPRES_USER_BREAK];
     } else {
         [self receivedError:NPRES_NETWORK_ERR];

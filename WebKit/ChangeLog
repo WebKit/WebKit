@@ -2,6 +2,24 @@
 
         Reviewed by Richard
 
+        Modified WebFoundation error constant names. Names
+        now begin with NSURLError prefix.
+
+        * Plugins.subproj/WebNetscapePluginRepresentation.m:
+        (-[WebNetscapePluginRepresentation receivedError:withDataSource:]):
+        * WebCoreSupport.subproj/WebSubresourceClient.m:
+        (+[WebSubresourceClient startLoadingResource:withURL:referrer:forDataSource:]):
+        * WebView.subproj/WebBaseResourceHandleDelegate.m:
+        (-[WebBaseResourceHandleDelegate cancelledError]):
+        * WebView.subproj/WebDataProtocol.m:
+        (-[WebDataProtocol startLoading]):
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _stopLoadingInternal]):
+
+2003-04-30  Kenneth Kocienda  <kocienda@apple.com>
+
+        Reviewed by Richard
+
 	Use NSURLResponse new SPI methods to set instance variables.
 
         * WebView.subproj/WebBaseResourceHandleDelegate.m:

@@ -335,8 +335,8 @@
 
 - (NSError *)cancelledError
 {
-    return [NSError _web_errorWithDomain:WebFoundationErrorDomain
-                                    code:WebFoundationErrorCancelled
+    return [NSError _web_errorWithDomain:NSURLErrorDomain
+                                    code:NSURLErrorCancelled
                               failingURL:[[request URL] absoluteString]];
 }
 

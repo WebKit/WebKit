@@ -193,9 +193,9 @@ static NSString *WebDataRequestPropertyKey = @"WebDataRequest";
     } else {
         int resultCode;
 
-        resultCode = WebFoundationErrorResourceUnavailable;
+        resultCode = NSURLErrorResourceUnavailable;
 
-        [client URLProtocol:self didFailWithError:[NSError _web_errorWithDomain:WebFoundationErrorDomain code:resultCode failingURL:[[request URL] absoluteString]]];
+        [client URLProtocol:self didFailWithError:[NSError _web_errorWithDomain:NSURLErrorDomain code:resultCode failingURL:[[request URL] absoluteString]]];
     }
 }
 
