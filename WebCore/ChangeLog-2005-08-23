@@ -1,3 +1,15 @@
+2004-02-15  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave.
+
+        - fixed 3548533: crash in XMLHttpRequest::slotData using Orkut's rating system
+
+        * khtml/ecma/xmlhttprequest.cpp: (KJS::XMLHttpRequest::~XMLHttpRequest):
+        Delete the QObject side, which has a side effect of disconnecting the
+        signals which seem to be firing after the request is gone. There may be
+        another way of addressing the crash by correcting some other problem with
+        killing the job, but this demonstrably works and fixes a storage leak.
+
 2004-02-12  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by John.

@@ -90,7 +90,7 @@ void XMLHttpRequestQObject::slotRedirection( KIO::Job* job, const KURL& url)
 }
 
 XMLHttpRequestConstructorImp::XMLHttpRequestConstructorImp(ExecState *, const DOM::Document &d)
-    : ObjectImp(), doc(d)
+    : doc(d)
 {
 }
 
@@ -223,6 +223,7 @@ XMLHttpRequest::XMLHttpRequest(ExecState *exec, const DOM::Document &d)
 
 XMLHttpRequest::~XMLHttpRequest()
 {
+  delete qObject;
   if (decoder) {
     decoder->deref();
   }
