@@ -1,3 +1,36 @@
+2004-09-27  David Hyatt  <hyatt@apple.com>
+
+	Fix style sharing so that it doesn't share when it shouldn't.  Partially fixes 3671516, table cells don't update
+	their color on macosx.apple.com.
+
+	Fix 3521639, iframe mispositioned on bidi page.  Make sure that when the width of a line exceeds the available line
+	width that the spillage out of the block is determined by the direction of the block and not by the text-align value.
+
+	Partial fix for 3762962, make sure the image cells with specified widths but percentage heights don't just get a minwidth
+	of 0.
+
+	Fix for 3533878, framesets that use percentages that add up to a value > 100% should normalize those percentages.
+	
+        Reviewed by john
+
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::locateCousinList):
+        (khtml::CSSStyleSelector::elementsCanShareStyle):
+        (khtml::CSSStyleSelector::locateSharedStyle):
+        * khtml/css/cssstyleselector.h:
+        * khtml/html/html_elementimpl.h:
+        (DOM::HTMLNamedAttrMapImpl::hasMappedAttributes):
+        (DOM::HTMLElementImpl::inlineStyleDecl):
+        * khtml/rendering/bidi.cpp:
+        (khtml::RenderBlock::computeHorizontalPositionsForLine):
+        * khtml/rendering/render_frames.cpp:
+        (RenderFrameSet::layout):
+        * khtml/rendering/render_replaced.cpp:
+        (RenderReplaced::calcMinMaxWidth):
+        * khtml/xml/dom_elementimpl.h:
+        (DOM::ElementImpl::inlineStyleDecl):
+        (DOM::ElementImpl::hasMappedAttributes):
+
 2004-09-27  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by John

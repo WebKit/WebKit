@@ -112,7 +112,7 @@ namespace khtml
 
         RenderStyle* locateSharedStyle();
         DOM::NodeImpl* locateCousinList(DOM::ElementImpl* parent);
-        bool canShareStyleWithElement(DOM::NodeImpl* e);
+        bool elementsCanShareStyle(DOM::ElementImpl* e1, DOM::ElementImpl* e2);
         
 	bool strictParsing;
 	

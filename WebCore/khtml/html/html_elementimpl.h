@@ -99,7 +99,7 @@ public:
     virtual void parseClassAttribute(const DOMString& classAttr);
     const AtomicStringList* getClassList() const { return &m_classList; }
     
-    bool hasMappedAttributes() const { return m_mappedAttributeCount > 0; }
+    virtual bool hasMappedAttributes() const { return m_mappedAttributeCount > 0; }
     void declRemoved() { m_mappedAttributeCount--; }
     void declAdded() { m_mappedAttributeCount++; }
     
@@ -168,7 +168,7 @@ public:
 
     virtual void click();
     
-    CSSStyleDeclarationImpl* inlineStyleDecl() const { return m_inlineStyleDecl; }
+    virtual CSSStyleDeclarationImpl* inlineStyleDecl() const { return m_inlineStyleDecl; }
     virtual CSSStyleDeclarationImpl* additionalAttributeStyleDecl();
     CSSStyleDeclarationImpl* getInlineStyleDecl();
     void createInlineStyleDecl();

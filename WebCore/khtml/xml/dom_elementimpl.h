@@ -196,6 +196,9 @@ public:
     // State of the element.
     virtual QString state() { return QString::null; }
 
+    virtual CSSStyleDeclarationImpl* inlineStyleDecl() const { return 0; }
+    virtual bool hasMappedAttributes() const { return false; }
+
     virtual void attach();
     virtual void detach();
     virtual khtml::RenderStyle *styleForRenderer(khtml::RenderObject *parent);

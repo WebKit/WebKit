@@ -155,7 +155,7 @@ void RenderFrameSet::layout( )
         if (grid) {
             // first distribute the available width for fixed rows, then handle the
             // percentage ones and distribute remaining over relative
-            for(int i = 0; i< gridLen; ++i)
+            for(int i = 0; i< gridLen; ++i) {
                 if (grid[i].isFixed()) {
                     gridLayout[i] = kMin(grid[i].value > 0 ? grid[i].value : 0, remainingLen[k]);
                     remainingLen[k] -= gridLayout[i];
@@ -165,13 +165,18 @@ void RenderFrameSet::layout( )
                     totalRelative += grid[i].value > 1 ? grid[i].value : 1;
                     countRelative++;
                 }
-
-            for(int i = 0; i < gridLen; i++)
-                if(grid[i].isPercent()) {
-                    gridLayout[i] = kMin(kMax(grid[i].width(availableLen[k]), 0), remainingLen[k]);
-                    remainingLen[k] -= gridLayout[i];
-                    totalPercent += grid[i].value;
+                else if (grid[i].isPercent()) {
+                    totalPercent += grid[i].value >= 0 ? grid[i].value : 0;
                     countPercent++;
+                }
+            }
+
+            int currPercent = totalPercent;
+            for(int i = 0; i < gridLen; i++)
+                if (grid[i].isPercent() && grid[i].value >= 0 && currPercent) {
+                    gridLayout[i] = grid[i].value * remainingLen[k] / currPercent;
+                    remainingLen[k] -= gridLayout[i];
+                    currPercent -= grid[i].value;
                 }
 
             assert(remainingLen[k] >= 0);
