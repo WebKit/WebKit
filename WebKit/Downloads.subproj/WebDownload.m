@@ -133,13 +133,28 @@
 
 - (void)cleanUpAfterFailure
 {
-    NSString *path = [dataSource downloadPath];
+    if (fileRefPtr) {
+        // Only cleanup if we have opened a file, since the downloadPath might be an existing
+        // file that we haven't discovered that we conflict with
+        NSString *path = [dataSource downloadPath];
 
-    [self closeFile];
-    
-    [[NSFileManager defaultManager] removeFileAtPath:path handler:nil];
+        [self closeFile];
 
-    [[NSWorkspace sharedWorkspace] _web_noteFileChangedAtPath:path];
+        NSFileManager *fileMgr = [NSFileManager defaultManager];
+        BOOL isDirectory;
+        BOOL fileExists = [fileMgr fileExistsAtPath:path isDirectory:&isDirectory];
+        if (fileExists && !isDirectory) {
+            [fileMgr removeFileAtPath:path handler:nil];
+            [[NSWorkspace sharedWorkspace] _web_noteFileChangedAtPath:path];
+        } else if (!fileExists) {
+            ERROR("Download file disappeared in the middle of download");
+        } else {
+            // Note we currently don't support downloading directories, so we know this is wrong
+            ERROR("Download file is a directory - will not be removed");
+        }
+    } else {
+        ERROR("Was about to remove a non-download file");
+    }
 }
 
 - (WebError *)createFileIfNecessary
@@ -166,7 +181,11 @@
 
         for (i = 1; 1; i++) {
             pathWithAppendedNumber = [NSString stringWithFormat:@"%@-%d", pathWithoutExtension, i];
-            path = [pathWithAppendedNumber stringByAppendingPathExtension:extension];
+            if (extension && [extension length]) {
+                path = [pathWithAppendedNumber stringByAppendingPathExtension:extension];
+            } else {
+                path = pathWithAppendedNumber;
+            }
             if (![fileManager fileExistsAtPath:path]) {
                 break;
             }

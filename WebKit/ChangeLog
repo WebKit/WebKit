@@ -1,3 +1,23 @@
+2003-01-08  Trey Matteson  <trey@apple.com>
+
+	3142201 - home directory nuked during power download session
+
+	We add checks for various error cases that could combine to cause this problem.  While we
+	never got a reproducible case, we are confident that this is the only file removal done
+	in the download code, and its ability to wreak havoc has been clipped.
+	
+        Reviewed by Richard.
+
+        * Downloads.subproj/WebDownloadHandler.m:
+        (-[WebDownloadHandler cleanUpAfterFailure]):  Only nuke the partial download if in fact we created
+	a new download file.  Never nuke a directory.
+        (-[WebDownloadHandler createFileIfNecessary]):  Don't add "." to the foo-1 filenames we generate
+	if the original filename doesn't have any extension.
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient continueAfterContentPolicy:response:]):
+	If the policyDelegate gives us a nil filename, just stop the whole load, instead of trying to
+	overwrite the user's home directory.
+
 2003-01-08  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: 3111432 - Support OBJECT tags with type text/plain or text/html

@@ -197,7 +197,9 @@
                 saveFilenameForResponse:r andRequest:req];
             // FIXME: Maybe there a cleaner way handle the bad filename case?
             if(!saveFilename || [saveFilename length] == 0){
-                saveFilename = NSHomeDirectory();
+                ERROR("Nil or empty response to saveFilenameForResponse:andRequest:.");
+                [self stopLoadingForPolicyChange];
+                return;
             }
 	    [dataSource _setDownloadPath:saveFilename];
 	}
