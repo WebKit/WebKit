@@ -1040,10 +1040,9 @@ void DocumentImpl::updateDocumentsRendering()
 void DocumentImpl::updateLayout()
 {
     bool oldIgnore = m_ignorePendingStylesheets;
-
-    m_ignorePendingStylesheets = true;
     
-    if (!oldIgnore) {
+    if (!haveStylesheetsLoaded()) {
+        m_ignorePendingStylesheets = true;
 	updateStyleSelector();    
     }
 
