@@ -1,10 +1,7 @@
-//
-//  IFPluginNullEventSender.h
-//  WebKit
-//
-//  Created by Chris Blumenberg on Mon Apr 08 2002.
-//  Copyright (c) 2002 __MyCompanyName__. All rights reserved.
-//
+/*	
+    IFPluginNullEventSender.h
+	Copyright 2002, Apple, Inc. All rights reserved.
+*/
 
 #import <Foundation/Foundation.h>
 #import <npapi.h>

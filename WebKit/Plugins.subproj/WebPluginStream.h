@@ -1,10 +1,7 @@
-//
-//  IFPluginStream.h
-//  WebKit
-//
-//  Created by Chris Blumenberg on Tue Apr 09 2002.
-//  Copyright (c) 2002 __MyCompanyName__. All rights reserved.
-//
+/*	
+    IFPluginStream.h
+	Copyright 2002, Apple, Inc. All rights reserved.
+*/
 
 #import <Foundation/Foundation.h>
 #import <npapi.h>

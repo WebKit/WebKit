@@ -1,10 +1,7 @@
-//
-//  IFNullPluginView.h
-//  WebKit
-//
-//  Created by Chris Blumenberg on Fri Apr 05 2002.
-//  Copyright (c) 2002 __MyCompanyName__. All rights reserved.
-//
+/*	
+    IFNullPluginView.h
+	Copyright 2002, Apple, Inc. All rights reserved.
+*/
 
 #import <AppKit/AppKit.h>
 
