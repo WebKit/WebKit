@@ -223,7 +223,9 @@ public:
 
     bool usesDescendantRules() { return m_usesDescendantRules; }
     void setUsesDescendantRules(bool b) { m_usesDescendantRules = b; }
-    
+    bool usesSiblingRules() { return m_usesSiblingRules; }
+    void setUsesSiblingRules(bool b) { m_usesSiblingRules = b; }\
+
     QString nextState();
 
     // Query all registered elements for their state
@@ -589,7 +591,8 @@ protected:
     bool m_styleSelectorDirty;
     bool m_inStyleRecalc;
     bool m_usesDescendantRules;
-    
+    bool m_usesSiblingRules;
+
     DOMString m_title;
     
     RenderArena* m_renderArena;

@@ -560,6 +560,12 @@ selector:
                 if ( doc )
                     doc->setUsesDescendantRules(true);
             }
+            else if ($2 == CSSSelector::Sibling) {
+                CSSParser *p = static_cast<CSSParser *>(parser);
+                DOM::DocumentImpl *doc = p->document();
+                if (doc)
+                    doc->setUsesSiblingRules(true);
+            }
         } else {
             delete $1;
         }
@@ -770,6 +776,13 @@ pseudo:
         $$->match = CSSSelector::Pseudo;
         $2.lower();
         $$->value = atomicString($2);
+        if ($$->value == "empty" || $$->value == "only-child" ||
+            $$->value == "first-child" || $$->value == "last-child") {
+            CSSParser *p = static_cast<CSSParser *>(parser);
+            DOM::DocumentImpl *doc = p->document();
+            if (doc)
+                doc->setUsesSiblingRules(true);
+        }
     }
     |
     ':' ':' IDENT {

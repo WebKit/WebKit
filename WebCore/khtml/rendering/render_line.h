@@ -167,7 +167,7 @@ public:
     void setPreviousLineBox(InlineRunBox* p) { m_prevLine = p; }
 
     virtual void paintBackgroundAndBorder(RenderObject::PaintInfo& i, int _tx, int _ty, int xOffsetOnLine) {};
-    virtual void paintDecorations(RenderObject::PaintInfo& i, int _tx, int _ty) {};
+    virtual void paintDecorations(RenderObject::PaintInfo& i, int _tx, int _ty, bool paintedChildren = false) {};
     
 protected:
     InlineRunBox* m_prevLine;  // The previous box that also uses our RenderObject
@@ -223,7 +223,7 @@ public:
     virtual void adjustVerticalPosition(int delta);
 
     virtual void paintBackgroundAndBorder(RenderObject::PaintInfo& i, int _tx, int _ty, int xOffsetOnLine);
-    virtual void paintDecorations(RenderObject::PaintInfo& i, int _tx, int _ty);
+    virtual void paintDecorations(RenderObject::PaintInfo& i, int _tx, int _ty, bool paintedChildren = false);
     
     int marginBorderPaddingLeft();
     int marginBorderPaddingRight();

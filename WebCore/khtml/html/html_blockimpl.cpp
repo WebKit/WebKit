@@ -66,9 +66,9 @@ NodeImpl::Id HTMLDivElementImpl::id() const
     return ID_DIV;
 }
 
-bool HTMLDivElementImpl::mapToEntry(AttributeImpl* attr, MappedAttributeEntry& result) const
+bool HTMLDivElementImpl::mapToEntry(NodeImpl::Id attr, MappedAttributeEntry& result) const
 {
-    if (attr->id() == ATTR_ALIGN) {
+    if (attr == ATTR_ALIGN) {
         result = eBlock;
         return false;
     }
@@ -113,9 +113,9 @@ NodeImpl::Id HTMLHRElementImpl::id() const
     return ID_HR;
 }
 
-bool HTMLHRElementImpl::mapToEntry(AttributeImpl* attr, MappedAttributeEntry& result) const
+bool HTMLHRElementImpl::mapToEntry(NodeImpl::Id attr, MappedAttributeEntry& result) const
 {
-    switch (attr->id()) {
+    switch (attr) {
         case ATTR_ALIGN:
         case ATTR_WIDTH:
         case ATTR_COLOR:
@@ -209,9 +209,9 @@ NodeImpl::Id HTMLParagraphElementImpl::id() const
     return ID_P;
 }
 
-bool HTMLParagraphElementImpl::mapToEntry(AttributeImpl* attr, MappedAttributeEntry& result) const
+bool HTMLParagraphElementImpl::mapToEntry(NodeImpl::Id attr, MappedAttributeEntry& result) const
 {
-    if (attr->id() == ATTR_ALIGN) {
+    if (attr == ATTR_ALIGN) {
         result = eBlock; // We can share with DIV here.
         return false;
     }
@@ -274,9 +274,9 @@ NodeImpl::Id HTMLMarqueeElementImpl::id() const
     return ID_MARQUEE;
 }
 
-bool HTMLMarqueeElementImpl::mapToEntry(AttributeImpl* attr, MappedAttributeEntry& result) const
+bool HTMLMarqueeElementImpl::mapToEntry(NodeImpl::Id attr, MappedAttributeEntry& result) const
 {
-    switch (attr->id()) {
+    switch (attr) {
         case ATTR_WIDTH:
         case ATTR_HEIGHT:
         case ATTR_BGCOLOR:

@@ -344,9 +344,9 @@ NodeImpl *HTMLTableElementImpl::addChild(NodeImpl *child)
     return retval;
 }
 
-bool HTMLTableElementImpl::mapToEntry(AttributeImpl* attr, MappedAttributeEntry& result) const
+bool HTMLTableElementImpl::mapToEntry(NodeImpl::Id attr, MappedAttributeEntry& result) const
 {
-    switch(attr->id()) {
+    switch(attr) {
         case ATTR_WIDTH:
         case ATTR_HEIGHT:
         case ATTR_BGCOLOR:
@@ -597,9 +597,9 @@ bool HTMLTableElementImpl::isURLAttribute(AttributeImpl *attr) const
 
 // --------------------------------------------------------------------------
 
-bool HTMLTablePartElementImpl::mapToEntry(AttributeImpl* attr, MappedAttributeEntry& result) const
+bool HTMLTablePartElementImpl::mapToEntry(NodeImpl::Id attr, MappedAttributeEntry& result) const
 {
-    switch(attr->id()) {
+    switch(attr) {
         case ATTR_BGCOLOR:
         case ATTR_BACKGROUND:
         case ATTR_BORDERCOLOR:
@@ -892,9 +892,9 @@ HTMLTableCellElementImpl::~HTMLTableCellElementImpl()
 }
 
 
-bool HTMLTableCellElementImpl::mapToEntry(AttributeImpl* attr, MappedAttributeEntry& result) const
+bool HTMLTableCellElementImpl::mapToEntry(NodeImpl::Id attr, MappedAttributeEntry& result) const
 {
-    switch(attr->id()) {
+    switch(attr) {
         case ATTR_NOWRAP:
             result = eUniversal;
             return false;
@@ -992,9 +992,9 @@ NodeImpl::Id HTMLTableColElementImpl::id() const
     return _id;
 }
 
-bool HTMLTableColElementImpl::mapToEntry(AttributeImpl* attr, MappedAttributeEntry& result) const
+bool HTMLTableColElementImpl::mapToEntry(NodeImpl::Id attr, MappedAttributeEntry& result) const
 {
-    switch(attr->id()) {
+    switch(attr) {
         case ATTR_WIDTH:
             result = eUniversal;
             return false;
@@ -1028,9 +1028,9 @@ NodeImpl::Id HTMLTableCaptionElementImpl::id() const
     return ID_CAPTION;
 }
 
-bool HTMLTableCaptionElementImpl::mapToEntry(AttributeImpl* attr, MappedAttributeEntry& result) const
+bool HTMLTableCaptionElementImpl::mapToEntry(NodeImpl::Id attr, MappedAttributeEntry& result) const
 {
-    if (attr->id() == ATTR_ALIGN) {
+    if (attr == ATTR_ALIGN) {
         result = eCaption;
         return false;
     }

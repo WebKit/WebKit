@@ -136,6 +136,7 @@ private:
     DATA* data;
 };
 
+enum PseudoState { PseudoUnknown, PseudoNone, PseudoAnyLink, PseudoLink, PseudoVisited};
 
 //------------------------------------------------
 
@@ -843,6 +844,9 @@ protected:
     // added this here, so we can get rid of the vptr in this class.
     // makes up for the same size.
     ContentData *content;
+
+    PseudoState m_pseudoState : 3;
+    bool m_affectedByAttributeSelectors : 1;
     
     int m_ref;
     
@@ -1292,6 +1296,14 @@ public:
                originalDisplay() == INLINE_BOX || originalDisplay() == INLINE_TABLE;
     }
     
+    // To obtain at any time the pseudo state for a given link.
+    PseudoState pseudoState() const { return m_pseudoState; }
+    void setPseudoState(PseudoState s) { m_pseudoState = s; }
+    
+    // To tell if this style matched attribute selectors. This makes it impossible to share.
+    bool affectedByAttributeSelectors() const { return m_affectedByAttributeSelectors; }
+    void setAffectedByAttributeSelectors() { m_affectedByAttributeSelectors = true; }
+
     // Initial values for all the properties
     static bool initialBackgroundAttachment() { return true; }
     static EBackgroundRepeat initialBackgroundRepeat() { return REPEAT; }

@@ -347,6 +347,7 @@ void RenderStyle::arenaDelete(RenderArena *arena)
 }
 
 RenderStyle::RenderStyle()
+:m_pseudoState(PseudoUnknown), m_affectedByAttributeSelectors(false)
 {
     m_ref = 0;
     
@@ -369,6 +370,7 @@ RenderStyle::RenderStyle()
 }
 
 RenderStyle::RenderStyle(bool)
+:m_pseudoState(PseudoUnknown), m_affectedByAttributeSelectors(false)
 {
     setBitDefaults();
 
@@ -391,7 +393,8 @@ RenderStyle::RenderStyle(const RenderStyle& o)
     : inherited_flags( o.inherited_flags ), noninherited_flags( o.noninherited_flags ),
       box( o.box ), visual( o.visual ), background( o.background ), surround( o.surround ),
       css3NonInheritedData( o.css3NonInheritedData ), css3InheritedData( o.css3InheritedData ),
-      inherited( o.inherited ), pseudoStyle( 0 ), content( o.content )
+      inherited( o.inherited ), pseudoStyle( 0 ), content( o.content ), m_pseudoState(o.m_pseudoState),
+      m_affectedByAttributeSelectors(false)
 {
     m_ref = 0;
 }

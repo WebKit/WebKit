@@ -1,3 +1,86 @@
+2004-04-27  David Hyatt  <hyatt@apple.com>
+
+	Implement sharing of similar style objects. Cuts the # of style objects allocated on the PLT by more
+	than half.
+	
+        Reviewed by kocienda
+
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::initElementAndPseudoState):
+        (khtml::CSSStyleSelector::initForStyleResolve):
+        (khtml::cleanpath):
+        (khtml::checkPseudoState):
+        (khtml::CSSStyleSelector::locateSiblingList):
+        (khtml::CSSStyleSelector::canShareStyleWithElement):
+        (khtml::CSSStyleSelector::locateSharedStyle):
+        (khtml::CSSStyleSelector::styleForElement):
+        (khtml::CSSStyleSelector::pseudoStyleForElement):
+        (khtml::CSSStyleSelector::checkOneSelector):
+        * khtml/css/cssstyleselector.h:
+        * khtml/css/html4.css:
+        * khtml/css/parser.cpp:
+        * khtml/css/parser.y:
+        * khtml/html/html_baseimpl.cpp:
+        (HTMLBodyElementImpl::mapToEntry):
+        (HTMLIFrameElementImpl::mapToEntry):
+        * khtml/html/html_baseimpl.h:
+        * khtml/html/html_blockimpl.cpp:
+        (HTMLDivElementImpl::mapToEntry):
+        (HTMLHRElementImpl::mapToEntry):
+        (HTMLParagraphElementImpl::mapToEntry):
+        (HTMLMarqueeElementImpl::mapToEntry):
+        * khtml/html/html_blockimpl.h:
+        * khtml/html/html_elementimpl.cpp:
+        (HTMLNamedAttrMapImpl::declCount):
+        (HTMLNamedAttrMapImpl::mapsEquivalent):
+        (HTMLElementImpl::attributeChanged):
+        (HTMLElementImpl::mapToEntry):
+        * khtml/html/html_elementimpl.h:
+        (DOM::HTMLElementImpl::isMappedAttribute):
+        * khtml/html/html_formimpl.cpp:
+        (HTMLInputElementImpl::mapToEntry):
+        * khtml/html/html_formimpl.h:
+        * khtml/html/html_imageimpl.cpp:
+        (HTMLImageElementImpl::mapToEntry):
+        * khtml/html/html_imageimpl.h:
+        * khtml/html/html_inlineimpl.cpp:
+        (HTMLBRElementImpl::mapToEntry):
+        (HTMLFontElementImpl::mapToEntry):
+        * khtml/html/html_inlineimpl.h:
+        * khtml/html/html_listimpl.cpp:
+        (HTMLUListElementImpl::mapToEntry):
+        (HTMLOListElementImpl::mapToEntry):
+        (HTMLLIElementImpl::mapToEntry):
+        * khtml/html/html_listimpl.h:
+        * khtml/html/html_objectimpl.cpp:
+        (HTMLAppletElementImpl::mapToEntry):
+        (HTMLEmbedElementImpl::mapToEntry):
+        (HTMLObjectElementImpl::mapToEntry):
+        * khtml/html/html_objectimpl.h:
+        * khtml/html/html_tableimpl.cpp:
+        (HTMLTableElementImpl::mapToEntry):
+        (HTMLTablePartElementImpl::mapToEntry):
+        (HTMLTableCellElementImpl::mapToEntry):
+        (HTMLTableColElementImpl::mapToEntry):
+        (HTMLTableCaptionElementImpl::mapToEntry):
+        * khtml/html/html_tableimpl.h:
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::setStyle):
+        * khtml/rendering/render_style.cpp:
+        (m_affectedByAttributeSelectors):
+        (RenderStyle::RenderStyle):
+        * khtml/rendering/render_style.h:
+        (khtml::):
+        (khtml::RenderStyle::pseudoState):
+        (khtml::RenderStyle::setPseudoState):
+        (khtml::RenderStyle::affectedByAttributeSelectors):
+        (khtml::RenderStyle::setAffectedByAttributeSelectors):
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::DocumentImpl):
+        * khtml/xml/dom_docimpl.h:
+        (DOM::DocumentImpl::usesSiblingRules):
+        (DOM::DocumentImpl::setUsesSiblingRules):
+
 2004-04-28  Darin Adler  <darin@apple.com>
 
         Reviewed by Chris.
@@ -139,7 +222,6 @@
 2004-04-27  Richard Williamson   <rjw@apple.com>
 
 	<rdar://problem/3564519>: API: please add a way to set the media type for a WebView
-
 
         Reviewed by Chris.
 

@@ -37,9 +37,9 @@ NodeImpl::Id HTMLUListElementImpl::id() const
     return ID_UL;
 }
 
-bool HTMLUListElementImpl::mapToEntry(AttributeImpl* attr, MappedAttributeEntry& result) const
+bool HTMLUListElementImpl::mapToEntry(NodeImpl::Id attr, MappedAttributeEntry& result) const
 {
-    switch (attr->id()) {
+    switch (attr) {
         case ATTR_TYPE:
             result = eUnorderedList;
             return false;
@@ -83,9 +83,9 @@ NodeImpl::Id HTMLOListElementImpl::id() const
     return ID_OL;
 }
 
-bool HTMLOListElementImpl::mapToEntry(AttributeImpl* attr, MappedAttributeEntry& result) const
+bool HTMLOListElementImpl::mapToEntry(NodeImpl::Id attr, MappedAttributeEntry& result) const
 {
-    switch (attr->id()) {
+    switch (attr) {
         case ATTR_TYPE:
             result = eListItem; // Share with <li>
             return false;
@@ -126,9 +126,9 @@ NodeImpl::Id HTMLLIElementImpl::id() const
     return ID_LI;
 }
 
-bool HTMLLIElementImpl::mapToEntry(AttributeImpl* attr, MappedAttributeEntry& result) const
+bool HTMLLIElementImpl::mapToEntry(NodeImpl::Id attr, MappedAttributeEntry& result) const
 {
-    switch (attr->id()) {
+    switch (attr) {
         case ATTR_TYPE:
             result = eListItem; // Share with <ol> since all the values are the same
             return false;

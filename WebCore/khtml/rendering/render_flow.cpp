@@ -334,17 +334,14 @@ void RenderFlow::paintLineBoxBackgroundBorder(PaintInfo& i, int _tx, int _ty)
     }
 }
 
-void RenderFlow::paintLineBoxDecorations(PaintInfo& i, int _tx, int _ty)
+void RenderFlow::paintLineBoxDecorations(PaintInfo& i, int _tx, int _ty, bool paintedChildren)
 {
-    if (!firstLineBox())
+    // We only paint line box decorations in strict or almost strict mode.
+    // Otherwise we let the InlineTextBoxes paint their own decorations.
+    if (style()->htmlHacks() || !firstLineBox())
         return;
 
     if (style()->visibility() == VISIBLE && i.phase == PaintActionForeground) {
-        // We only paint line box decorations in strict or almost strict mode.
-        // Otherwise we let the InlineTextBoxes paint their own decorations.
-        if (style()->htmlHacks())
-            return;
-        
         // We can check the first box and last box and avoid painting if we don't
         // intersect.
         int yPos = _ty + firstLineBox()->yPos();;
@@ -359,7 +356,7 @@ void RenderFlow::paintLineBoxDecorations(PaintInfo& i, int _tx, int _ty)
             yPos = _ty + curr->yPos();
             h = curr->height();
             if ((yPos < i.r.y() + i.r.height()) && (yPos + h > i.r.y()))
-                curr->paintDecorations(i, _tx, _ty);
+                curr->paintDecorations(i, _tx, _ty, paintedChildren);
         }
     }
 }

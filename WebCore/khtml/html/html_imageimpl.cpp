@@ -70,9 +70,9 @@ NodeImpl::Id HTMLImageElementImpl::id() const
     return ID_IMG;
 }
 
-bool HTMLImageElementImpl::mapToEntry(AttributeImpl* attr, MappedAttributeEntry& result) const
+bool HTMLImageElementImpl::mapToEntry(NodeImpl::Id attr, MappedAttributeEntry& result) const
 {
-    switch(attr->id())
+    switch(attr)
     {
         case ATTR_WIDTH:
         case ATTR_HEIGHT:

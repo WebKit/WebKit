@@ -56,7 +56,7 @@ public:
 
     virtual Id id() const;
 
-    virtual bool mapToEntry(AttributeImpl* attr, MappedAttributeEntry& result) const;
+    virtual bool mapToEntry(NodeImpl::Id attr, MappedAttributeEntry& result) const;
     virtual void parseHTMLAttribute(HTMLAttributeImpl *);
 
     virtual void insertedIntoDocument();
@@ -202,7 +202,7 @@ public:
 
     virtual Id id() const;
 
-    virtual bool mapToEntry(AttributeImpl* attr, MappedAttributeEntry& result) const;
+    virtual bool mapToEntry(NodeImpl::Id attr, MappedAttributeEntry& result) const;
     virtual void parseHTMLAttribute(HTMLAttributeImpl *attr);
 
     virtual void attach();

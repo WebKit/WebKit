@@ -170,9 +170,9 @@ TABLE {
 	border-color: gray;
 }
 
-TABLE[align="center"] { 
-    margin-left: auto; 
-    margin-right: auto;
+TABLE[align="center"] {
+        margin-left: auto;
+        margin-right: auto;
 }
 
 THEAD { 
@@ -231,14 +231,14 @@ UL, MENU, DIR {
         display: block;
         list-style-type: disc;
         margin: 1__qem 0 1em 0;
-        padding-left: 40px;
+        padding-left: 40px; /* For RTL, we need to implement padding-start */
 }
 
 OL {
         display: block;
         list-style-type: decimal;
         margin: 1__qem 0 1em 0;
-        padding-left: 40px;
+        padding-left: 40px; /* For RTL, we need to implement padding-start */
 }
 
 LI {
@@ -246,22 +246,18 @@ LI {
 }
 
 
-UL UL { 
+UL UL, OL UL { 
 	list-style-type: circle;
 }
 
-OL UL { 
-	list-style-type: circle;
-}
-
-UL UL UL { 
+OL OL UL, OL UL UL, UL OL UL, UL UL UL { 
 	list-style-type: square;
 }
       
 
 DD {
 	display: block;
-	margin-left: 40px;
+	margin-left: 40px; /* For RTL, we need to implement margin-start */
 }
 
 DL {
@@ -272,24 +268,13 @@ DL {
 DT {
 	display: block;
 }
- 
-/* for right to left */
-      
-*[dir="rtl"] UL, 
-*[dir="rtl"] OL,  
-*[dir="rtl"] DIR, 
-*[dir="rtl"] MENU, 
-*[dir="rtl"] DD { 
-	margin-right:40px; 
-	margin-left: auto;
-}
-      
+
 OL UL, 
 UL OL,
 UL UL, 
 OL OL { 
-	margin-top: auto; 
-	margin-bottom: auto; 
+	margin-top: 0; 
+	margin-bottom: 0; 
 }
 
 /*
@@ -437,12 +422,7 @@ BDO[DIR="rtl"]  {
 	direction: rtl; 
 	unicode-bidi: bidi-override;
 }
-
-/* ### this selector seems to be still broken ...
-      *[DIR="ltr"]    { direction: ltr; unicode-bidi: embed }
-      *[DIR="rtl"]    { direction: rtl; unicode-bidi: embed }
-*/
-      
+   
 /* Elements that are block-level in HTML4 */
 /* ### don't support unicode-bidi at the moment
       ADDRESS, BLOCKQUOTE, BODY, DD, DIV, DL, DT, FIELDSET,

@@ -136,7 +136,7 @@ private:
     
     void _drawPoints(const QPointArray &_points, bool winding, int index, int _npoints, bool fill);
 
-    void _updateRenderer(NSString **families);
+    void _updateRenderer();
 
     QPainterPrivate *data;
     bool _isForPrinting;

@@ -512,7 +512,7 @@ void QPainter::drawTiledPixmap( int x, int y, int w, int h,
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 
-void QPainter::_updateRenderer(NSString **families)
+void QPainter::_updateRenderer()
 {
     if (data->textRenderer == 0 || data->state.font != data->textRendererFont) {
         data->textRendererFont = data->state.font;
@@ -530,12 +530,12 @@ void QPainter::drawText(int x, int y, int, int, int alignmentFlags, const QStrin
 {
     if (data->state.paintingDisabled)
         return;
-        
+
     // Avoid allocations, use stack array to pass font families.  Normally these
     // css fallback lists are small <= 3.
-    CREATE_FAMILY_ARRAY(data->state.font, families);
+    CREATE_FAMILY_ARRAY(data->state.font, families);    
 
-    _updateRenderer(families);
+    _updateRenderer();
 
     const UniChar* str = (const UniChar*)qstring.unicode();
 
@@ -565,8 +565,8 @@ void QPainter::drawText(int x, int y, const QChar *str, int len, int from, int t
     // Avoid allocations, use stack array to pass font families.  Normally these
     // css fallback lists are small <= 3.
     CREATE_FAMILY_ARRAY(data->state.font, families);
-    
-    _updateRenderer(families);
+
+    _updateRenderer();
 
     if (from < 0)
         from = 0;
@@ -603,8 +603,8 @@ void QPainter::drawHighlightForText(int x, int minX, int maxX, int y, int h,
     // Avoid allocations, use stack array to pass font families.  Normally these
     // css fallback lists are small <= 3.
     CREATE_FAMILY_ARRAY(data->state.font, families);
-    
-    _updateRenderer(families);
+
+    _updateRenderer();
 
     if (from < 0)
         from = 0;
@@ -622,7 +622,7 @@ void QPainter::drawHighlightForText(int x, int minX, int maxX, int y, int h,
     style.letterSpacing = letterSpacing;
     style.wordSpacing = wordSpacing;
     style.smallCaps = smallCaps;
-    style.families = families;
+    style.families = families;    
     style.padding = toAdd;
     WebCoreTextGeometry geometry;
     WebCoreInitializeEmptyTextGeometry(&geometry);
@@ -639,7 +639,7 @@ void QPainter::drawLineForText(int x, int y, int yOffset, int width)
 {
     if (data->state.paintingDisabled)
         return;
-
+    _updateRenderer();
     [data->textRenderer
         drawLineForCharacters: NSMakePoint(x, y)
                yOffset:(float)yOffset

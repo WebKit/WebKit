@@ -51,7 +51,7 @@ public:
 
     virtual Id id() const;
 
-    virtual bool mapToEntry(AttributeImpl* attr, MappedAttributeEntry& result) const;
+    virtual bool mapToEntry(NodeImpl::Id attr, MappedAttributeEntry& result) const;
     virtual void parseHTMLAttribute(HTMLAttributeImpl *token);
     
     virtual bool rendererIsNeeded(khtml::RenderStyle *);
@@ -83,7 +83,7 @@ public:
 
     virtual Id id() const;
 
-    virtual bool mapToEntry(AttributeImpl* attr, MappedAttributeEntry& result) const;
+    virtual bool mapToEntry(NodeImpl::Id attr, MappedAttributeEntry& result) const;
     virtual void parseHTMLAttribute(HTMLAttributeImpl *attr);
 
     virtual void attach();
@@ -110,7 +110,7 @@ public:
 
     HTMLFormElementImpl *form() const;
 
-    virtual bool mapToEntry(AttributeImpl* attr, MappedAttributeEntry& result) const;
+    virtual bool mapToEntry(NodeImpl::Id attr, MappedAttributeEntry& result) const;
     virtual void parseHTMLAttribute(HTMLAttributeImpl *token);
 
     virtual void attach();

@@ -55,7 +55,7 @@ public:
 
     virtual NodeImpl::Id id() const;
     
-    virtual bool mapToEntry(AttributeImpl* attr, MappedAttributeEntry& result) const;
+    virtual bool mapToEntry(NodeImpl::Id attr, MappedAttributeEntry& result) const;
     virtual void parseHTMLAttribute(HTMLAttributeImpl *token);
 };
 
@@ -69,7 +69,7 @@ public:
 
     virtual NodeImpl::Id id() const;
     
-    virtual bool mapToEntry(AttributeImpl* attr, MappedAttributeEntry& result) const;
+    virtual bool mapToEntry(NodeImpl::Id attr, MappedAttributeEntry& result) const;
     virtual void parseHTMLAttribute(HTMLAttributeImpl *);
 };
 
@@ -94,7 +94,7 @@ class HTMLParagraphElementImpl : public HTMLElementImpl
 public:
     HTMLParagraphElementImpl(DocumentPtr *doc);
 
-    virtual bool mapToEntry(AttributeImpl* attr, MappedAttributeEntry& result) const;
+    virtual bool mapToEntry(NodeImpl::Id attr, MappedAttributeEntry& result) const;
     virtual void parseHTMLAttribute(HTMLAttributeImpl *attr);
     
     virtual NodeImpl::Id id() const;
@@ -120,7 +120,7 @@ public:
 
     virtual NodeImpl::Id id() const;
     
-    virtual bool mapToEntry(AttributeImpl* attr, MappedAttributeEntry& result) const;
+    virtual bool mapToEntry(NodeImpl::Id attr, MappedAttributeEntry& result) const;
     virtual void parseHTMLAttribute(HTMLAttributeImpl *token);
 
     int minimumDelay() const { return m_minimumDelay; }

@@ -103,11 +103,16 @@ namespace khtml
 
 	static void loadDefaultStyle(const KHTMLSettings *s = 0);
 
+        void initElementAndPseudoState(DOM::ElementImpl* e);
         void initForStyleResolve(DOM::ElementImpl* e, RenderStyle* parentStyle);
 	RenderStyle *styleForElement(DOM::ElementImpl* e, RenderStyle* parentStyle=0);
         RenderStyle* pseudoStyleForElement(RenderStyle::PseudoId pseudoStyle, 
                                            DOM::ElementImpl* e, RenderStyle* parentStyle=0);
 
+        RenderStyle* locateSharedStyle();
+        DOM::NodeImpl* locateCousinList(DOM::ElementImpl* parent);
+        bool canShareStyleWithElement(DOM::NodeImpl* e);
+        
 	bool strictParsing;
 	struct Encodedurl {
 	    QString host; //also contains protocol

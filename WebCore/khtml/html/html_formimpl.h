@@ -318,7 +318,7 @@ public:
     virtual void click();
     virtual void accessKeyAction();
 
-    virtual bool mapToEntry(AttributeImpl* attr, MappedAttributeEntry& result) const;
+    virtual bool mapToEntry(NodeImpl::Id attr, MappedAttributeEntry& result) const;
     virtual void parseHTMLAttribute(HTMLAttributeImpl *attr);
 
     virtual void attach();

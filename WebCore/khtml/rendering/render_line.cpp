@@ -681,7 +681,7 @@ static bool shouldDrawDecoration(RenderObject* obj)
     return shouldDraw;
 }
 
-void InlineFlowBox::paintDecorations(RenderObject::PaintInfo& i, int _tx, int _ty)
+void InlineFlowBox::paintDecorations(RenderObject::PaintInfo& i, int _tx, int _ty, bool paintedChildren)
 {
     // Now paint our text decorations. We only do this if we aren't in quirks mode (i.e., in
     // almost-strict mode or strict mode).
@@ -690,7 +690,9 @@ void InlineFlowBox::paintDecorations(RenderObject::PaintInfo& i, int _tx, int _t
     _ty += m_y;
     RenderStyle* styleToUse = object()->style(m_firstLine);
     int deco = parent() ? styleToUse->textDecoration() : styleToUse->textDecorationsInEffect();
-    if (deco != TDNONE && shouldDrawDecoration(object())) {
+    if (deco != TDNONE && 
+        ((!paintedChildren && ((deco & UNDERLINE) || (deco & OVERLINE))) || (paintedChildren && (deco & LINE_THROUGH))) &&
+        shouldDrawDecoration(object())) {
 #if APPLE_CHANGES
         // Set up the appropriate text-shadow effect for the decoration.
         // FIXME: Support multiple shadow effects.  Need more from the CG API before we can do this.
@@ -709,15 +711,19 @@ void InlineFlowBox::paintDecorations(RenderObject::PaintInfo& i, int _tx, int _t
         underline = overline = linethrough = styleToUse->color();
         if (!parent())
             object()->getTextDecorationColors(deco, underline, overline, linethrough);
-        if (deco & UNDERLINE) {
+
+        if (styleToUse->font() != p->font())
+            p->setFont(styleToUse->font());
+
+        if (deco & UNDERLINE && !paintedChildren) {
             p->setPen(underline);
             p->drawLineForText(_tx, _ty, m_baseline, w);
         }
-        if (deco & OVERLINE) {
+        if (deco & OVERLINE && !paintedChildren) {
             p->setPen(overline);
             p->drawLineForText(_tx, _ty, 0, w);
         }
-        if (deco & LINE_THROUGH) {
+        if (deco & LINE_THROUGH && paintedChildren) {
             p->setPen(linethrough);
             p->drawLineForText(_tx, _ty, 2*m_baseline/3, w);
         }

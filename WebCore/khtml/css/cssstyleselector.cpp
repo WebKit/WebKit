@@ -115,10 +115,7 @@ RenderStyle* CSSStyleSelector::styleNotYetAvailable = 0;
 CSSStyleSheetImpl *CSSStyleSelector::quirksSheet = 0;
 
 static CSSStyleSelector::Encodedurl *encodedurl = 0;
-
-enum PseudoState { PseudoUnknown, PseudoNone, PseudoAnyLink, PseudoLink, PseudoVisited};
 static PseudoState pseudoState;
-
 
 CSSStyleSelector::CSSStyleSelector( DocumentImpl* doc, QString userStyleSheet, StyleSheetListImpl *styleSheets,
                                     const KURL &url, bool _strictParsing )
@@ -405,18 +402,21 @@ void CSSStyleSelector::sortMatchedRules(uint start, uint end)
     }    
 }
 
-void CSSStyleSelector::initForStyleResolve(ElementImpl* e, RenderStyle* defaultParent)
+void CSSStyleSelector::initElementAndPseudoState(ElementImpl* e)
 {
-    // set some variables we will need
-    ::encodedurl = &encodedurl;
-    pseudoState = PseudoUnknown;
-    pseudoStyle = RenderStyle::NOPSEUDO;
-    
     element = e;
     if (element && element->isHTMLElement())
         htmlElement = static_cast<HTMLElementImpl*>(element);
     else
         htmlElement = 0;
+    ::encodedurl = &encodedurl;
+    pseudoState = PseudoUnknown;
+}
+
+void CSSStyleSelector::initForStyleResolve(ElementImpl* e, RenderStyle* defaultParent)
+{
+    // set some variables we will need
+    pseudoStyle = RenderStyle::NOPSEUDO;
 
     parentNode = e->parentNode();
     if (defaultParent)
@@ -438,6 +438,195 @@ void CSSStyleSelector::initForStyleResolve(ElementImpl* e, RenderStyle* defaultP
     fontDirty = false;
 }
 
+// modified version of the one in kurl.cpp
+static void cleanpath(QString &path)
+{
+    int pos;
+    while ( (pos = path.find( "/../" )) != -1 ) {
+        int prev = 0;
+        if ( pos > 0 )
+            prev = path.findRev( "/", pos -1 );
+        // don't remove the host, i.e. http://foo.org/../foo.html
+        if (prev < 0 || (prev > 3 && path.findRev("://", prev-1) == prev-2))
+            path.remove( pos, 3);
+        else
+            // matching directory found ?
+            path.remove( prev, pos- prev + 3 );
+    }
+    pos = 0;
+    
+    // Don't remove "//" from an anchor identifier. -rjw
+    // Set refPos to -2 to mean "I haven't looked for the anchor yet".
+    // We don't want to waste a function call on the search for the the anchor
+    // in the vast majority of cases where there is no "//" in the path.
+    int refPos = -2;
+    while ( (pos = path.find( "//", pos )) != -1) {
+        if (refPos == -2)
+            refPos = path.find("#", 0);
+        if (refPos > 0 && pos >= refPos)
+            break;
+        
+        if ( pos == 0 || path[pos-1] != ':' )
+            path.remove( pos, 1 );
+        else
+            pos += 2;
+    }
+    while ( (pos = path.find( "/./" )) != -1)
+        path.remove( pos, 2 );
+    //kdDebug() << "checkPseudoState " << path << endl;
+}
+
+static void checkPseudoState( DOM::ElementImpl *e, bool checkVisited = true )
+{
+    if (!e->hasAnchor()) {
+        pseudoState = PseudoNone;
+        return;
+    }
+    
+    const AtomicString& attr = e->getAttribute(ATTR_HREF);
+    if (attr.isNull()) {
+        pseudoState = PseudoNone;
+        return;
+    }
+    
+    if (!checkVisited) {
+        pseudoState = PseudoAnyLink;
+        return;
+    }
+    
+    QConstString cu(attr.unicode(), attr.length());
+    QString u = cu.string();
+    if ( !u.contains("://") ) {
+        if ( u[0] == '/' )
+            u.prepend(encodedurl->host);
+        else if ( u[0] == '#' )
+            u.prepend(encodedurl->file);
+        else
+            u.prepend(encodedurl->path);
+        cleanpath( u );
+    }
+    //completeURL( attr.string() );
+    pseudoState = KHTMLFactory::vLinks()->contains( u ) ? PseudoVisited : PseudoLink;
+}
+
+#ifdef STYLE_SHARING_STATS
+static int fraction = 0;
+static int total = 0;
+#endif
+
+const int siblingThreshold = 10;
+
+NodeImpl* CSSStyleSelector::locateCousinList(ElementImpl* parent)
+{
+    if (parent && parent->isHTMLElement()) {
+        HTMLElementImpl* p = static_cast<HTMLElementImpl*>(parent);
+        if (p->renderer() && !p->inlineStyleDecl() && !p->hasID()) {
+            DOM::NodeImpl* r = p->previousSibling();
+            int subcount = 0;
+            RenderStyle* st = p->renderer()->style();
+            while (r) {
+                if (r->renderer() && r->renderer()->style() == st)
+                    return r->lastChild();
+                if (subcount++ == siblingThreshold)
+                    return 0;
+                r = r->previousSibling();
+            }
+            if (!r)
+                r = locateCousinList(static_cast<ElementImpl*>(parent->parentNode()));
+            while (r) {
+                if (r->renderer() && r->renderer()->style() == st)
+                    return r->lastChild();
+                if (subcount++ == siblingThreshold)
+                    return 0;
+                r = r->previousSibling();
+            }
+        }
+    }
+    return 0;
+}
+
+bool CSSStyleSelector::canShareStyleWithElement(NodeImpl* n)
+{
+    if (n->isHTMLElement()) {
+        bool mouseInside = element->renderer() ? element->renderer()->mouseInside() : false;
+        HTMLElementImpl* s = static_cast<HTMLElementImpl*>(n);
+        if (s->renderer() && (s->id() == element->id()) && !s->hasID() &&
+            (s->hasClass() == element->hasClass()) && !s->inlineStyleDecl() &&
+            (s->hasMappedAttributes() == htmlElement->hasMappedAttributes()) &&
+            (s->hasAnchor() == element->hasAnchor()) && 
+            !s->renderer()->style()->affectedByAttributeSelectors() &&
+            (s->renderer()->mouseInside() == mouseInside) &&
+            (s->active() == element->active()) &&
+            (s->focused() == element->focused())) {
+            bool classesMatch = true;
+            if (s->hasClass()) {
+                const AtomicString& class1 = element->getAttribute(ATTR_CLASS);
+                const AtomicString& class2 = s->getAttribute(ATTR_CLASS);
+                classesMatch = (class1 == class2);
+            }
+            
+            if (classesMatch) {
+                bool mappedAttrsMatch = true;
+                if (s->hasMappedAttributes())
+                    mappedAttrsMatch = s->htmlAttributes()->mapsEquivalent(htmlElement->htmlAttributes());
+                if (mappedAttrsMatch) {
+                    bool anchorsMatch = true;
+                    if (s->hasAnchor()) {
+                        // We need to check to see if the visited state matches.
+                        QColor linkColor = element->getDocument()->linkColor();
+                        QColor visitedColor = element->getDocument()->visitedLinkColor();
+                        if (pseudoState == PseudoUnknown)
+                            checkPseudoState(s, s->renderer()->style()->pseudoState() != PseudoAnyLink ||
+                                             linkColor != visitedColor);
+                        anchorsMatch = (pseudoState == s->renderer()->style()->pseudoState());
+                    }
+                    
+                    if (anchorsMatch) {
+#ifdef STYLE_SHARING_STATS
+                        fraction++;
+                        printf("Sharing %d out of %d\n", fraction, total);
+#endif
+                        return true;
+                    }
+                }
+            }
+        }
+    }
+    return false;
+}
+
+RenderStyle* CSSStyleSelector::locateSharedStyle()
+{
+    //total++;
+    if (htmlElement && !htmlElement->inlineStyleDecl() && !htmlElement->hasID() &&
+        !htmlElement->getDocument()->usesSiblingRules()) {
+        // Check previous siblings.
+        int count = 0;
+        DOM::NodeImpl* n;
+        for (n = element->previousSibling(); n && !n->isElementNode(); n = n->previousSibling());
+        while (n) {
+            if (canShareStyleWithElement(n))
+                return n->renderer()->style();
+            if (count++ == siblingThreshold)
+                return 0;
+            for (n = n->previousSibling(); n && !n->isElementNode(); n = n->previousSibling());
+        }
+        if (!n) 
+            n = locateCousinList(static_cast<ElementImpl*>(element->parentNode()));
+        while (n) {
+            if (canShareStyleWithElement(n))
+                return n->renderer()->style();
+            if (count++ == siblingThreshold)
+                return 0;
+            for (n = n->previousSibling(); n && !n->isElementNode(); n = n->previousSibling());
+        }        
+    }
+#ifdef STYLE_SHARING_STATS
+    printf("Sharing %d out of %d\n", fraction, total);
+#endif
+    return 0;
+}
+
 RenderStyle* CSSStyleSelector::styleForElement(ElementImpl* e, RenderStyle* defaultParent)
 {
     if (!e->getDocument()->haveStylesheetsLoaded()) {
@@ -449,6 +638,10 @@ RenderStyle* CSSStyleSelector::styleForElement(ElementImpl* e, RenderStyle* defa
         return styleNotYetAvailable;
     }
     
+    initElementAndPseudoState(e);
+    style = locateSharedStyle();
+    if (style)
+        return style;
     initForStyleResolve(e, defaultParent);
 
     style = new (e->getDocument()->renderArena()) RenderStyle();
@@ -548,6 +741,10 @@ RenderStyle* CSSStyleSelector::styleForElement(ElementImpl* e, RenderStyle* defa
     // Clean up our style object's display and text decorations (among other fixups).
     adjustRenderStyle(style, e);
 
+    // If we are a link, cache the determined pseudo-state.
+    if (e->hasAnchor())
+        style->setPseudoState(pseudoState);
+
     // Now return the style.
     return style;
 }
@@ -567,6 +764,7 @@ RenderStyle* CSSStyleSelector::pseudoStyleForElement(RenderStyle::PseudoId pseud
         return styleNotYetAvailable;
     }
     
+    initElementAndPseudoState(e);
     initForStyleResolve(e, parentStyle);
     pseudoStyle = pseudo;
     
@@ -700,77 +898,6 @@ void CSSStyleSelector::adjustRenderStyle(RenderStyle* style, DOM::ElementImpl *e
 }
 
 static bool subject;
-
-// modified version of the one in kurl.cpp
-static void cleanpath(QString &path)
-{
-    int pos;
-    while ( (pos = path.find( "/../" )) != -1 ) {
-        int prev = 0;
-        if ( pos > 0 )
-            prev = path.findRev( "/", pos -1 );
-        // don't remove the host, i.e. http://foo.org/../foo.html
-        if (prev < 0 || (prev > 3 && path.findRev("://", prev-1) == prev-2))
-            path.remove( pos, 3);
-        else
-            // matching directory found ?
-            path.remove( prev, pos- prev + 3 );
-    }
-    pos = 0;
-
-    // Don't remove "//" from an anchor identifier. -rjw
-    // Set refPos to -2 to mean "I haven't looked for the anchor yet".
-    // We don't want to waste a function call on the search for the the anchor
-    // in the vast majority of cases where there is no "//" in the path.
-    int refPos = -2;
-    while ( (pos = path.find( "//", pos )) != -1) {
-        if (refPos == -2)
-            refPos = path.find("#", 0);
-        if (refPos > 0 && pos >= refPos)
-            break;
-
-        if ( pos == 0 || path[pos-1] != ':' )
-            path.remove( pos, 1 );
-        else
-            pos += 2;
-    }
-    while ( (pos = path.find( "/./" )) != -1)
-        path.remove( pos, 2 );
-    //kdDebug() << "checkPseudoState " << path << endl;
-}
-
-static void checkPseudoState( DOM::ElementImpl *e, bool checkVisited = true )
-{
-    if (!e->hasAnchor()) {
-        pseudoState = PseudoNone;
-        return;
-    }
-
-    const AtomicString& attr = e->getAttribute(ATTR_HREF);
-    if (attr.isNull()) {
-        pseudoState = PseudoNone;
-        return;
-    }
-    
-    if (!checkVisited) {
-        pseudoState = PseudoAnyLink;
-        return;
-    }
-
-    QConstString cu(attr.unicode(), attr.length());
-    QString u = cu.string();
-    if ( !u.contains("://") ) {
-        if ( u[0] == '/' )
-            u.prepend(encodedurl->host);
-        else if ( u[0] == '#' )
-            u.prepend(encodedurl->file);
-        else
-            u.prepend(encodedurl->path);
-        cleanpath( u );
-    }
-    //completeURL( attr.string() );
-    pseudoState = KHTMLFactory::vLinks()->contains( u ) ? PseudoVisited : PseudoLink;
-}
 
 bool CSSStyleSelector::checkSelector(CSSSelector* sel, ElementImpl *e)
 {
@@ -912,6 +1039,8 @@ bool CSSStyleSelector::checkOneSelector(DOM::CSSSelector *sel, DOM::ElementImpl 
         }
         else if (sel->match == CSSSelector::Id)
             return e->hasID() && e->getIDAttribute() == sel->value;
+        else if (e != element || !htmlElement || !htmlElement->isMappedAttribute(sel->attr))
+            style->setAffectedByAttributeSelectors();
 
         const AtomicString& value = e->getAttribute(sel->attr);
         if (value.isNull()) return false; // attribute is not set

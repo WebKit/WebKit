@@ -1379,57 +1379,57 @@ void RenderObject::setStyle(RenderStyle *style)
     if (m_style == style)
         return;
 
-    // If our z-index changes value or our visibility changes,
-    // we need to dirty our stacking context's z-order list.
-    if (m_style && style) {
-        if ((m_style->hasAutoZIndex() != style->hasAutoZIndex() ||
-             m_style->zIndex() != style->zIndex() ||
-             m_style->visibility() != style->visibility()) && layer()) {
-            layer()->stackingContext()->dirtyZOrderLists();
-            if (m_style->hasAutoZIndex() != style->hasAutoZIndex() ||
-                m_style->visibility() != style->visibility())
-                layer()->dirtyZOrderLists();
+    bool affectsParentBlock = false;
+    RenderStyle::Diff d = RenderStyle::Equal;
+    if (m_style) {
+        // If our z-index changes value or our visibility changes,
+        // we need to dirty our stacking context's z-order list.
+        if (style) {
+            if ((m_style->hasAutoZIndex() != style->hasAutoZIndex() ||
+                 m_style->zIndex() != style->zIndex() ||
+                 m_style->visibility() != style->visibility()) && layer()) {
+                layer()->stackingContext()->dirtyZOrderLists();
+                if (m_style->hasAutoZIndex() != style->hasAutoZIndex() ||
+                    m_style->visibility() != style->visibility())
+                    layer()->dirtyZOrderLists();
+            }
         }
+
+        d = m_style->diff(style);
+
+        // The background of the root element or the body element could propagate up to
+        // the canvas.  Just dirty the entire canvas when our style changes substantially.
+        if (d >= RenderStyle::Visible && element() &&
+            (element()->id() == ID_HTML || element()->id() == ID_BODY))
+            canvas()->repaint();
+        else if (m_parent && d == RenderStyle::Visible && !isText())
+            // Do a repaint with the old style first, e.g., for example if we go from
+            // having an outline to not having an outline.
+            repaint();
+
+        if (m_style->position() != style->position() && layer())
+            layer()->repaintIncludingDescendants();
+
+        if (isFloating() && (m_style->floating() != style->floating()))
+            // For changes in float styles, we need to conceivably remove ourselves
+            // from the floating objects list.
+            removeFromObjectLists();
+        else if (isPositioned() && (style->position() != ABSOLUTE && style->position() != FIXED))
+            // For changes in positioning styles, we need to conceivably remove ourselves
+            // from the positioned objects list.
+            removeFromObjectLists();
+        
+        // reset style flags
+        m_floating = false;
+        m_positioned = false;
+        m_relPositioned = false;
+        m_paintBackground = false;
+        m_hasOverflowClip = false;
+        
+        affectsParentBlock = m_style && isFloatingOrPositioned() &&
+            (!style->isFloating() && style->position() != ABSOLUTE && style->position() != FIXED)
+            && parent() && (parent()->isBlockFlow() || parent()->isInlineFlow());
     }
-
-    RenderStyle::Diff d = m_style ? m_style->diff( style ) : RenderStyle::Layout;
-
-    // The background of the root element or the body element could propagate up to
-    // the canvas.  Just dirty the entire canvas when our style changes substantially.
-    if (m_style && d >= RenderStyle::Visible && element() &&
-        (element()->id() == ID_HTML || element()->id() == ID_BODY))
-        canvas()->repaint();
-    else if (m_style && m_parent && d == RenderStyle::Visible && !isText())
-        // Do a repaint with the old style first, e.g., for example if we go from
-        // having an outline to not having an outline.
-        repaint();
-
-    if (m_style && m_style->position() != style->position() && layer())
-        layer()->repaintIncludingDescendants();
-
-    if (m_style && isFloating() && (m_style->floating() != style->floating()))
-        // For changes in float styles, we need to conceivably remove ourselves
-        // from the floating objects list.
-        removeFromObjectLists();
-    else if (isPositioned() && (style->position() != ABSOLUTE && style->position() != FIXED))
-        // For changes in positioning styles, we need to conceivably remove ourselves
-        // from the positioned objects list.
-        removeFromObjectLists();
-
-    bool affectsParentBlock = m_style && isFloatingOrPositioned() &&
-        (!style->isFloating() && style->position() != ABSOLUTE && style->position() != FIXED)
-        && parent() && (parent()->isBlockFlow() || parent()->isInlineFlow());
-    
-    //qDebug("new style, diff=%d", d);
-    // reset style flags
-    m_floating = false;
-    m_positioned = false;
-    m_relPositioned = false;
-    m_paintBackground = false;
-    m_hasOverflowClip = false;
-    // no support for changing the display type dynamically... object must be
-    // detached and re-attached as a different type
-    //m_inline = true;
 
     RenderStyle *oldStyle = m_style;
     m_style = style;
@@ -1437,20 +1437,18 @@ void RenderObject::setStyle(RenderStyle *style)
     CachedImage* ob = 0;
     CachedImage* nb = 0;
 
-    if (m_style)
-    {
+    if (m_style) {
         m_style->ref();
         nb = m_style->backgroundImage();
     }
-    if (oldStyle)
-    {
+    if (oldStyle) {
         ob = oldStyle->backgroundImage();
         oldStyle->deref(renderArena());
     }
 
-    if( ob != nb ) {
-        if(ob) ob->deref(this);
-        if(nb) nb->ref(this);
+    if (ob != nb) {
+        if (ob) ob->deref(this);
+        if (nb) nb->ref(this);
     }
 
     setShouldPaintBackgroundOrBorder((m_style->backgroundColor().isValid() &&
@@ -1464,7 +1462,7 @@ void RenderObject::setStyle(RenderStyle *style)
     // we already did this for the parent of the text run.
     if (d >= RenderStyle::Position && m_parent)
         setNeedsLayoutAndMinMaxRecalc();
-    else if (!isText() && m_parent && d == RenderStyle::Visible)
+    else if (d == RenderStyle::Visible && !isText() && m_parent)
         repaint();
 }
 

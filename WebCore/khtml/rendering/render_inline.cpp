@@ -273,11 +273,14 @@ void RenderInline::paint(PaintInfo& i, int _tx, int _ty)
 
     paintLineBoxBackgroundBorder(paintInfo, _tx, _ty);
     
+    paintLineBoxDecorations(paintInfo, _tx, _ty); // Underline/overline
+    
     for (RenderObject *child = firstChild(); child; child = child->nextSibling())
         if(!child->layer() && !child->isFloating())
             child->paint(paintInfo, _tx, _ty);
 
-    paintLineBoxDecorations(paintInfo, _tx, _ty);
+    paintLineBoxDecorations(paintInfo, _tx, _ty, true); // Strike-through
+    
     if (style()->visibility() == VISIBLE && paintInfo.phase == PaintActionOutline) {
 #if APPLE_CHANGES
         if (style()->outlineStyleIsAuto())

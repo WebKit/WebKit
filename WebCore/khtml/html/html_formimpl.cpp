@@ -1382,9 +1382,9 @@ void HTMLInputElementImpl::accessKeyAction()
     }
 }
 
-bool HTMLInputElementImpl::mapToEntry(AttributeImpl* attr, MappedAttributeEntry& result) const
+bool HTMLInputElementImpl::mapToEntry(NodeImpl::Id attr, MappedAttributeEntry& result) const
 {
-    switch (attr->id()) {
+    switch (attr) {
         case ATTR_WIDTH:
         case ATTR_HEIGHT:
         case ATTR_VSPACE:

@@ -98,7 +98,7 @@ public:
     // overrides
     virtual NodeImpl *addChild(NodeImpl *child);
     
-    virtual bool mapToEntry(AttributeImpl* attr, MappedAttributeEntry& result) const;
+    virtual bool mapToEntry(NodeImpl::Id attr, MappedAttributeEntry& result) const;
     virtual void parseHTMLAttribute(HTMLAttributeImpl *attr);
 
     // Used to obtain either a solid or outset border decl.
@@ -137,7 +137,7 @@ public:
         : HTMLElementImpl(doc)
         { }
 
-    virtual bool mapToEntry(AttributeImpl* attr, MappedAttributeEntry& result) const;
+    virtual bool mapToEntry(NodeImpl::Id attr, MappedAttributeEntry& result) const;
     virtual void parseHTMLAttribute(HTMLAttributeImpl *attr);
 };
 
@@ -206,7 +206,7 @@ public:
     
     virtual Id id() const { return _id; }
     
-    virtual bool mapToEntry(AttributeImpl* attr, MappedAttributeEntry& result) const;
+    virtual bool mapToEntry(NodeImpl::Id attr, MappedAttributeEntry& result) const;
     virtual void parseHTMLAttribute(HTMLAttributeImpl *attr);
 
     virtual void attach();
@@ -238,7 +238,7 @@ public:
     void setTable(HTMLTableElementImpl *t) { table = t; }
 
     // overrides
-    virtual bool mapToEntry(AttributeImpl* attr, MappedAttributeEntry& result) const;
+    virtual bool mapToEntry(NodeImpl::Id attr, MappedAttributeEntry& result) const;
     virtual void parseHTMLAttribute(HTMLAttributeImpl *attr);
 
     int span() const { return _span; }
@@ -262,7 +262,7 @@ public:
 
     virtual Id id() const;
     
-    virtual bool mapToEntry(AttributeImpl* attr, MappedAttributeEntry& result) const;
+    virtual bool mapToEntry(NodeImpl::Id attr, MappedAttributeEntry& result) const;
     virtual void parseHTMLAttribute(HTMLAttributeImpl *attr);
 };
 
