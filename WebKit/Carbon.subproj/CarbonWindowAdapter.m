@@ -203,14 +203,6 @@ extern const OSType NSCarbonWindowPropertyTag;
         return nil;
     }
     
-    if (windowModality == kWindowModalityNone || windowModality == kWindowModalityWindowModal) {
-        if (inDisableOrdering) {
-            // Take over the ordering of the window from Carbon.
-            osStatus = _SetWindowCGOrderingEnabled(inWindowRef, FALSE);
-            if (osStatus!=noErr) NSLog(@"A Carbon window's ordering couldn't be disabled.");
-        }
-    }
-
     // Create one of our special content views.
     carbonWindowContentView = [[[CarbonWindowContentView alloc] init] autorelease];
 
@@ -229,37 +221,35 @@ extern const OSType NSCarbonWindowPropertyTag;
     // We didn't even really try to get it right at _initContent:... time, because it's more trouble that it's worth to write a real +[NSCarbonWindow frameRectForContentRect:styleMask:].  M.P. Notice - 10/10/00
     [self reconcileToCarbonWindowBounds];
 
-	if (windowModality == kWindowModalityNone || windowModality == kWindowModalityWindowModal || inDisableOrdering) {
-		// Install an event handler for the Carbon window events in which we're interested.
-		const EventTypeSpec kEvents[] = {
-			{ kEventClassWindow, kEventWindowActivated },
-			{ kEventClassWindow, kEventWindowDeactivated },
-			{ kEventClassWindow, kEventWindowBoundsChanged },
-			{ kEventClassWindow, kEventWindowShown },
-			{ kEventClassWindow, kEventWindowHidden }
-		};
-		
-		const EventTypeSpec kControlBoundsChangedEvent = { kEventClassControl, kEventControlBoundsChanged };
-		
-		osStatus = InstallEventHandler( GetWindowEventTarget(_windowRef), NSCarbonWindowHandleEvent, GetEventTypeCount( kEvents ), kEvents, (void*)self, &_eventHandler);
-		if (osStatus!=noErr) {
-			[self release];
-			return nil;
-		}
+    // Install an event handler for the Carbon window events in which we're interested.
+    const EventTypeSpec kEvents[] = {
+            { kEventClassWindow, kEventWindowActivated },
+            { kEventClassWindow, kEventWindowDeactivated },
+            { kEventClassWindow, kEventWindowBoundsChanged },
+            { kEventClassWindow, kEventWindowShown },
+            { kEventClassWindow, kEventWindowHidden }
+    };
+    
+    const EventTypeSpec kControlBoundsChangedEvent = { kEventClassControl, kEventControlBoundsChanged };
+    
+    osStatus = InstallEventHandler( GetWindowEventTarget(_windowRef), NSCarbonWindowHandleEvent, GetEventTypeCount( kEvents ), kEvents, (void*)self, &_eventHandler);
+    if (osStatus!=noErr) {
+            [self release];
+            return nil;
+    }
 
-		osStatus = InstallEventHandler( GetControlEventTarget( HIViewGetRoot( _windowRef ) ), NSCarbonWindowHandleEvent, 1, &kControlBoundsChangedEvent, (void*)self, &_eventHandler);
-		if (osStatus!=noErr) {
-			[self release];
-			return nil;
-		}
+    osStatus = InstallEventHandler( GetControlEventTarget( HIViewGetRoot( _windowRef ) ), NSCarbonWindowHandleEvent, 1, &kControlBoundsChangedEvent, (void*)self, &_eventHandler);
+    if (osStatus!=noErr) {
+            [self release];
+            return nil;
+    }
 
-		HIViewFindByID( HIViewGetRoot( _windowRef ), kHIViewWindowContentID, &contentView );
-		osStatus = InstallEventHandler( GetControlEventTarget( contentView ), NSCarbonWindowHandleEvent, 1, &kControlBoundsChangedEvent, (void*)self, &_eventHandler);
-		if (osStatus!=noErr) {
-			[self release];
-			return nil;
-		}
-	}
+    HIViewFindByID( HIViewGetRoot( _windowRef ), kHIViewWindowContentID, &contentView );
+    osStatus = InstallEventHandler( GetControlEventTarget( contentView ), NSCarbonWindowHandleEvent, 1, &kControlBoundsChangedEvent, (void*)self, &_eventHandler);
+    if (osStatus!=noErr) {
+            [self release];
+            return nil;
+    }
 	
     // Put a pointer to this Cocoa NSWindow in a Carbon window property tag.
     // Right now, this is just used by NSViewCarbonControl.  M.P. Notice - 10/9/00
