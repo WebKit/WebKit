@@ -1,3 +1,39 @@
+2002-05-10  Maciej Stachowiak  <mjs@apple.com>
+
+	Reviewed by: Ken Kocienda and Darin Adler
+
+	Fixed the following bug:
+
+	Radar 2890573 - JavaScriptCore needs to be thread-safe
+
+	Actually this is only a weak form of thread-safety - you can safely
+	use different interpreters from different threads at the same
+	time. If you try to use a single interpreter object from multiple
+	threads, you need to provide your own locking.
+
+	* kjs/collector.h, kjs/collector.cpp:
+	(Collector::lock, Collector::unlock): Trivial implementation of a
+	recursive mutex.
+	(Collector::allocate): Lock around the body of this function.
+	(Collector::collect): Likewise.
+	(Collector::finalCheck): Likewise.
+	(Collector::numInterpreters): Likewise.
+	(Collector::numGCNotAllowedObjects): Likewise.
+	(Collector::numReferencedObjects): Likewise.
+	* kjs/internal.cpp:
+	(Parser::parse): use a mutex to lock around the whole parse, since
+	it uses a bunch of global state.
+	(InterpreterImp::InterpreterImp): Grab the Collector lock here,
+	both the mutually exclude calls to the body of this function, and
+	to protect the s_hook static member which the collector pokes at.
+	(InterpreterImp::clear): Likewise.
+	* kjs/ustring.cpp:
+	(statBufferKeyCleanup, statBufferKeyInit, UString::ascii): Convert
+	use of static variable
+	* kjs/value.cpp:
+	(ValueImp::ValueImp, ValueImp::mark, ValueImp::marked,
+	ValueImp::setGcAllowed): Grab the GC lock around any flag changes.
+
 === Alexander-3 ===
 
 2002-05-08  Darin Adler  <darin@apple.com>

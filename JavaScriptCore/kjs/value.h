@@ -94,6 +94,30 @@ namespace KJS {
     ValueImp();
     virtual ~ValueImp();
 
+#ifdef APPLE_CHANGES
+    // The collecter lock is not locked around the ref() and unref()
+    // methods for the following reasons:
+    //
+    // - The only cases where chaging the refcount could possibly
+    // affect the collector's behavior is incrementing from 0 to 1,
+    // and decrementing from 1 to 0.
+    //
+    // - In the 0 to 1 case, the GC allowed flag will always be off
+    // beforehand, and set right afterwards. And setting it grabs the
+    // collector lock. So if this happens in the middle of GC, the
+    // collector will see either a refcount 0 GC not allowed object,
+    // or a refcount 1 GC not allowed object, and these cases are
+    // treated exactly the same.
+    //
+    // - In the 1 to 0 case, the only possible bad effect is that the
+    // object will live for one GC cycle longer than it should have
+    // to, which is really not so bad.
+    //
+    // - In theory on some platforms increment or decrement could make
+    // other threads see intermediate values that are different from
+    // both the start and end value. If that turns out to really be
+    // the case we will have to reconsider this scheme.
+#endif
     inline ValueImp* ref() { refcount++; return this; }
     inline bool deref() { return (!--refcount); }
     unsigned int refcount;

@@ -92,6 +92,8 @@ namespace KJS {
     static int numInterpreters();
     static int numGCNotAllowedObjects();
     static int numReferencedObjects();
+    static void lock();
+    static void unlock();
 #endif
   private:
     static CollectorBlock* root;

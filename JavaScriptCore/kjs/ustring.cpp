@@ -121,7 +121,13 @@ bool KJS::operator==(const KJS::CString& c1, const KJS::CString& c2)
 UChar UChar::null;
 UString::Rep UString::Rep::null = { 0, 0, 1 };
 UString UString::null;
+#ifdef APPLE_CHANGES
+// FIXME: fix this once static initializers for pthread_once_t
+pthread_once_t statBufferKeyOnce = {_PTHREAD_ONCE_SIG_init, {}};
+pthread_key_t statBufferKey;
+#else
 static char *statBuffer = 0L;
+#endif
 
 UChar::UChar(const UCharReference &c)
     : uc( c.unicode() )
@@ -277,8 +283,25 @@ CString UString::cstring() const
   return CString(ascii());
 }
 
+#ifdef APPLE_CHANGES
+static void statBufferKeyCleanup(void *statBuffer)
+{
+  if (statBuffer != NULL)
+    delete [] (char *)statBuffer;
+}
+
+static void statBufferKeyInit(void)
+{
+  pthread_key_create(&statBufferKey, statBufferKeyCleanup);
+}
+#endif
+
 char *UString::ascii() const
 {
+#ifdef APPLE_CHANGES
+  pthread_once(&statBufferKeyOnce, statBufferKeyInit);
+  char *statBuffer = (char *)pthread_getspecific(statBufferKey);
+#endif
   if (statBuffer)
     delete [] statBuffer;
 
@@ -287,6 +310,9 @@ char *UString::ascii() const
     statBuffer[i] = data()[i].low();
   statBuffer[size()] = '\0';
 
+#ifdef APPLE_CHANGES
+  pthread_setspecific(statBufferKey, statBuffer);
+#endif
   return statBuffer;
 }
 
