@@ -1,4 +1,3 @@
 Makefile.in
 Makefile
 .deps
-*.lut.h
