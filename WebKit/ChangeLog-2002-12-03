@@ -1,3 +1,10 @@
+2002-06-13  Kenneth Kocienda  <kocienda@apple.com>
+
+        Fixed uninitialized varible that broke the build.
+
+	* WebView.subproj/IFMainURLHandleClient.mm:
+	(-[IFMainURLHandleClient IFURLHandle:resourceDataDidBecomeAvailable:])
+
 2002-06-13  Richard Williamson  <rjw@apple.com>
 
     Lots of cleanup.  Fixed most regressions.

@@ -116,7 +116,7 @@
     IFWebFrame *frame = [dataSource webFrame];
     IFWebView *view = [frame view];
     IFContentPolicy contentPolicy;
-    NSData *data;
+    NSData *data = nil;
     
     WEBKITDEBUGLEVEL(WEBKIT_LOG_LOADING, "url = %s, data = %p, length %d\n", DEBUG_OBJECT([sender url]), incomingData, [incomingData length]);
     
