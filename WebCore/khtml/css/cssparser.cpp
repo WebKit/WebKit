@@ -1786,11 +1786,11 @@ bool CSSParser::parseDashboardRegions( int propId, bool important )
         }
             
         // Commas count as values, so allow:
-        // dashbaord-region(label, type, t, r, b, l) or dashbaord-region(label type t r b l)
-        // dashbaord-region(label, type, t, r, b, l) or dashbaord-region(label type t r b l)
+        // dashboard-region(label, type, t, r, b, l) or dashboard-region(label type t r b l)
+        // dashboard-region(label, type, t, r, b, l) or dashboard-region(label type t r b l)
         // also allow
-        // dashbaord-region(label, type) or dashbaord-region(label type)
-        // dashbaord-region(label, type) or dashbaord-region(label type)
+        // dashboard-region(label, type) or dashboard-region(label type)
+        // dashboard-region(label, type) or dashboard-region(label type)
         ValueList *args = value->function->args;
         int numArgs = value->function->args->numValues;
         if ((numArgs != DASHBOARD_REGION_NUM_PARAMETERS && numArgs != (DASHBOARD_REGION_NUM_PARAMETERS*2-1)) &&

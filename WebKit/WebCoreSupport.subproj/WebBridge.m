@@ -127,6 +127,8 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 
 - (void)dealloc
 {
+    [lastDashboardRegions release];
+    
     [self fini];
     [super dealloc];
 }
@@ -1409,6 +1411,11 @@ static id <WebFormDelegate> formDelegate(WebBridge *self)
     [[wv _frameLoadDelegateForwarder] webView:wv didFirstLayoutInFrame:_frame];
 }
 
+- (BOOL)_compareDashboardRegions:(NSDictionary *)regions
+{
+    return [lastDashboardRegions isEqualToDictionary:regions];
+}
+
 - (void)dashboardRegionsChanged:(NSMutableDictionary *)regions
 {
     WebView *wv = [_frame webView];
@@ -1416,8 +1423,12 @@ static id <WebFormDelegate> formDelegate(WebBridge *self)
     
     [wv _addScrollerDashboardRegions:regions];
     
-    if ([wd respondsToSelector: @selector(webView:dashboardRegionsChanged:)]) {
-        [wd webView:wv dashboardRegionsChanged:regions];
+    if (![self _compareDashboardRegions:regions]) {
+	if ([wd respondsToSelector: @selector(webView:dashboardRegionsChanged:)]) {
+	    [wd webView:wv dashboardRegionsChanged:regions];
+	    [lastDashboardRegions release];
+	    lastDashboardRegions = [regions retain];
+	}
     }
 }
 

@@ -1,5 +1,20 @@
 2005-02-22  Richard Williamson   <rjw@apple.com>
 
+	Fixed <rdar://problem/3937203> when a div adds a scrollbar (overflow:auto) we do not get regions
+
+	Compare regions after automatice scroll regions have been
+	added.
+
+        Reviewed by Maciej.
+
+        * WebCoreSupport.subproj/WebBridge.h:
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge dealloc]):
+        (-[WebBridge _compareDashboardRegions:]):
+        (-[WebBridge dashboardRegionsChanged:]):
+
+2005-02-22  Richard Williamson   <rjw@apple.com>
+
 	Fixed <rdar://problem/4012463> Dashboard widgets don't work with authenticating proxies
 
 	Added new SPI for dashboard that just calls default delegate

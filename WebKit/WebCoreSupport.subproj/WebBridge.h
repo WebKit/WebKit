@@ -20,6 +20,8 @@
     BOOL _doingClientRedirect;
     BOOL _inNextKeyViewOutsideWebFrameViews;
     BOOL _haveUndoRedoOperations;
+    
+    NSDictionary *lastDashboardRegions;
 }
 
 - (id)initWithWebFrame:(WebFrame *)webFrame;

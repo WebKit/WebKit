@@ -66,4 +66,9 @@
                         "Unknown")))];
 }
 
+- (BOOL)isEqual:(id)other
+{
+    return NSEqualRects (rect, [other dashboardRegionRect]) && NSEqualRects (clip, [other dashboardRegionClip]) && type == [other dashboardRegionType];
+}
+
 @end

@@ -1,3 +1,27 @@
+2005-02-22  Richard Williamson   <rjw@apple.com>
+
+	Fixed <rdar://problem/3937203> when a div adds a scrollbar (overflow:auto) we do not get regions
+
+	Just set dashboard dirty bit when overflow scrolling changes.
+
+	Don't do comparison of regions in before scroll regions are
+	added, instead do it in WebKit after automatic scroll regions
+	are added.
+
+        Reviewed by Maciej.
+
+        * khtml/css/cssparser.cpp:
+        (CSSParser::parseDashboardRegions):  Cleaned up comments
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::styleForElement): Cleaned up comments
+
+        * khtml/khtmlview.cpp:
+        (KHTMLView::updateDashboardRegions):
+        * khtml/rendering/render_layer.cpp:
+        (RenderLayer::updateScrollInfoAfterLayout):
+        * kwq/WebDashboardRegion.m:
+        (-[WebDashboardRegion isEqual:]):
+
 2005-02-22  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3976872> Pasted plain text doesn't get the proper style if pasted into newlines

@@ -737,10 +737,8 @@ void KHTMLView::updateDashboardRegions()
     if (document->hasDashboardRegions()) {
         QValueList<DashboardRegionValue> newRegions = document->renderer()->computeDashboardRegions();
         QValueList<DashboardRegionValue> currentRegions = document->dashboardRegions();
-        if (!(newRegions == currentRegions)) {
-            document->setDashboardRegions(newRegions);
-            KWQ(m_part)->dashboardRegionsChanged();
-        }
+	document->setDashboardRegions(newRegions);
+	KWQ(m_part)->dashboardRegionsChanged();
     }
 }
 #endif
