@@ -1,3 +1,16 @@
+2002-09-11  Darin Adler  <darin@apple.com>
+
+	Add machinery needed for fix to 3021137, changing font prefs
+	doesn't redraw frames other than the main frame.
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge setNeedsReapplyStyles]): Added. Lets the web views know that they
+	need to reapply styles. If we did this over on the WebCore side, we'd have to do
+	it right away. Maybe that would be OK; we can move that that later.
+
+        * WebView.subproj/WebTextView.m: (-[WebTextView setFixedWidthFont]): Use the
+	fixed-width size, rather than using the other size with the fixed-width family.
+
 2002-09-11  Ken Kocienda  <kocienda@apple.com>
 
         Major change to the API and design of WebFoundation. WebKit has been modified

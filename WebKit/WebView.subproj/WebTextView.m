@@ -36,7 +36,8 @@
 - (void)setFixedWidthFont
 {
     WebPreferences *preferences = [WebPreferences standardPreferences];
-    NSFont *font = [NSFont fontWithName:[preferences fixedFontFamily] size:[preferences defaultFontSize]];
+    NSFont *font = [NSFont fontWithName:[preferences fixedFontFamily]
+        size:[preferences defaultFixedFontSize]];
     [self setFont:font];
 }
 
