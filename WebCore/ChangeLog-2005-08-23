@@ -1,3 +1,20 @@
+2003-10-31  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin
+
+	Fix for this bug:
+
+	<rdar://problem/3440719>: Read-only text field form controls 
+	do not keyboard focus and do not take part in tabbing
+
+        * kwq/KWQTextField.mm:
+        (-[KWQTextField acceptsFirstResponder]): We want our text fields
+        to accept first responder even if not editable.
+
+	Once this is fixed, this one comes along for free:
+
+	<rdar://problem/3440710>: Read-only textarea form controls should select all text when focused
+
 2003-10-31  Darin Adler  <darin@apple.com>
 
         Reviewed by Ken.

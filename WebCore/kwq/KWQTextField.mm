@@ -394,6 +394,11 @@
     return view;
 }
 
+- (BOOL)acceptsFirstResponder
+{
+    return [self isEnabled];
+}
+
 - (BOOL)becomeFirstResponder
 {
     if ([self passwordMode]) {
