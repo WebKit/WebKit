@@ -1,3 +1,11 @@
+2004-11-23  David Hyatt  <hyatt@apple.com>
+
+	Hit testing in table cells with top/bottom space from vertical alignment didn't work.  I forgot about the
+	super-secret yPos() lie that table cells do.  Use m_y instead of yPos().
+
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::nodeAtPoint):
+
 2004-11-22  David Hyatt  <hyatt@apple.com>
 
 	Make sure you can use document.createElement to make a <canvas> element.
