@@ -504,7 +504,13 @@ QString Decoder::decode(const char *data, int len)
     }
     QString out;
 
+#ifdef APPLE_CHANGES
+    // We don't need to special-case unicode like this, and doing so 
+    // will drop the buffer which is really bad!
+    if(!buffer.isEmpty()) {
+#else
     if(!buffer.isEmpty() && enc != "ISO-10646-UCS-2") {
+#endif
         out = m_decoder->toUnicode(buffer, buffer.length());
         buffer = "";
     } else {
@@ -520,7 +526,11 @@ QString Decoder::decode(const char *data, int len)
             }
         }
         out = m_decoder->toUnicode(data, len);
+#ifdef APPLE_CHANGES
+    } // need to balance braces for benefit of ChangeLog script
+#else
     }
+#endif
 
     if (out.isNull()) {
         fprintf(stderr, "ERROR:  decoded string is null\n");

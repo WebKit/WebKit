@@ -1,3 +1,20 @@
+2002-07-30  Maciej Stachowiak  <mjs@apple.com>
+
+	Fixes of various bugs that prevented Alexander from running the
+	Mozilla page load test.
+
+	- fixed 3008682 - Alexander cannot run Mozilla-PLT
+	
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge dataSourceChanged]): Don't call setURL: to set a URL
+	that we got from a redirect; just pass it directly to
+	openURL:. The inputURL is irrelevant.
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _setFinalURL:]): Don't call setURL: on the
+	bridge; instead, assert that the data source is committed, because
+	it would be a mistake to get a redirect after having received
+	data.
+
 2002-07-30  Richard Williamson (local)  <rjw@apple.com>
 
         Remove annoying log, it's really annoying.  Added FIX ME

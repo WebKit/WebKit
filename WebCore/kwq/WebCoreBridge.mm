@@ -110,11 +110,6 @@ using namespace khtml;
     part->end();
 }
 
-- (void)setURL:(NSURL *)URL
-{
-    part->impl->setBaseURL([[URL absoluteString] cString]);
-}
-
 - (void)createKHTMLViewWithNSView:(NSView *)view
     width:(int)width height:(int)height
     marginWidth:(int)mw marginHeight:(int)mh

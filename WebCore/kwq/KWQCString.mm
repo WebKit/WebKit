@@ -293,10 +293,10 @@ QCString &QCString::operator+=(char c)
 bool operator==(const QCString &s1, const char *s2)
 {
     if (s1.size() == 0 && !s2) {
-        return FALSE;
+        return TRUE;
     }
     else if (s1.size() == 0 && s2) {
-        return TRUE;
+        return FALSE;
     }
     return (strcmp(s1, s2) == 0);
 }

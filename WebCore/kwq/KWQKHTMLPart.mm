@@ -103,19 +103,19 @@ void KWQKHTMLPartImpl::slotData(NSString *encoding, const char *bytes, int lengt
 // NOTE: This code emulates the interface used by the original khtml part  
     QString enc;
 
-    // This flag is used to tell when a load has completed so we can be sure
-    // to process the data even if we have not yet determined the proper
-    // encoding.
-    if (complete) {
-        d->m_bComplete = true;    
-    }
-
     if (!d->m_workingURL.isEmpty()) {
         //begin(d->m_workingURL, d->m_extension->urlArgs().xOffset, d->m_extension->urlArgs().yOffset);
         part->begin(d->m_workingURL, 0, 0);
 
 	//d->m_doc->docLoader()->setReloading(d->m_bReloading);
         d->m_workingURL = KURL();
+    }
+
+    // This flag is used to tell when a load has completed so we can be sure
+    // to process the data even if we have not yet determined the proper
+    // encoding.
+    if (complete) {
+        d->m_bComplete = true;    
     }
 
     if (encoding != NULL) {
@@ -136,6 +136,7 @@ void KWQKHTMLPartImpl::begin( const KURL &url, int xOffset, int yOffset )
   args.yOffset = yOffset;
   d->m_extension->setURLArgs( args );
 
+  d->m_bComplete = false;
   // d->m_referrer = url.url();
   part->m_url = url;
   KURL baseurl;
@@ -250,16 +251,14 @@ void KWQKHTMLPartImpl::write( const char *str, int len )
     double start = CFAbsoluteTimeGetCurrent();
 #endif
     
-    // FIX ME:  This is very expensive.  We should be using the data object
+    // FIXME:  This is very expensive.  We should be using the data object
     // that represents the document, and only constructing the complete
     // string when requested.
     m_documentSource += QString(str, len);
 
     QString decoded;
-    if (m_decodingStarted)
-        decoded = d->m_decoder->decode( str, len );
-    else    
-        decoded = d->m_decoder->decode( m_documentSource.latin1(), m_documentSource.length() );
+    
+    decoded = d->m_decoder->decode( str, len );
 
     if(decoded.isEmpty()){
         // Check flag to tell whether the load has completed.

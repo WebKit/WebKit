@@ -284,9 +284,12 @@
     [url retain];
     [_private->finalURL release];
     _private->finalURL = url;
-    if (_private->committed) {
-	[[self _bridge] setURL:url];
-    }
+
+    // We should never be getting a redirect callback after the data
+    // source is committed. It would be a WebFoundation bug if it sent
+    // a redirect callback after commit.
+    WEBKIT_ASSERT(!_private->committed);
+
     [[self _locationChangeHandler] serverRedirectTo:url forDataSource:self];
 }
 

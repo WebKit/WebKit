@@ -217,10 +217,9 @@
     if ([frame dataSource] == nil) {
 	[self openURL:nil];
     } else {
-	[self openURL:[[self dataSource] inputURL]];
-	if ([[self dataSource] redirectedURL]) {
-	    [self setURL:[[self dataSource] redirectedURL]];
-	}
+	[self openURL:[[self dataSource] redirectedURL] == nil ?
+	              [[self dataSource] inputURL] : 
+		      [[self dataSource] redirectedURL]];
     }
 }
 

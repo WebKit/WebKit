@@ -1,3 +1,24 @@
+2002-07-30  Maciej Stachowiak  <mjs@apple.com>
+
+	Fixes of various bugs that prevented Alexander from running the
+	Mozilla page load test.
+
+	- fixed 3008682 - Alexander cannot run Mozilla-PLT
+
+        * khtml/misc/decoder.cpp:
+        (Decoder::decode): Don't drop the accumulated buffer if the document
+	happens to be unicode!
+	* kwq/KWQCString.mm:
+        (operator==): Fix reversed logic when comparing an empty QCString
+	to a const char *.
+        * kwq/KWQKHTMLPartImpl.mm:
+	(KWQKHTMLPartImpl::slotData): Set complete flag later so that
+	initializing it to false doesn't clobber setting it.
+        (KWQKHTMLPartImpl::begin): Initialize complete flag to false.
+        (KWQKHTMLPartImpl::write): Don't buffer things up for the decoder -
+	the decoder does that internally.
+        * kwq/WebCoreBridge.h, kwq/WebCoreBridge.mm: Remove setURL: method.
+
 2002-07-30  Richard Williamson (local)  <rjw@apple.com>
 
         Don't create unnecessary unicode string.  Of the 
