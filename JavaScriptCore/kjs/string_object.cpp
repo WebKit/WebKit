@@ -272,7 +272,14 @@ Value StringProtoFuncImp::call(ExecState *exec, Object &thisObj, const List &arg
 	}
 	if (imp)
 	  imp->put(exec, "lastIndex", Number(lastIndex), DontDelete|DontEnum);
-	result = exec->interpreter()->builtinArray().construct(exec, list);
+	if (list.isEmpty()) {
+	  // if there are no matches at all, it's important to return
+	  // Null instead of an empty array, because this matches
+	  // other browsers and because Null is a false value.
+	  result = Null(); 
+	} else {
+	  result = exec->interpreter()->builtinArray().construct(exec, list);
+	}
       }
     }
     delete tmpReg;

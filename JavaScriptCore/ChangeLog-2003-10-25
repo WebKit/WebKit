@@ -1,3 +1,14 @@
+2003-08-07  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	- fixed 3366975 - repro hang in KJS::Value::Value entering text at eil.com
+	
+        * kjs/string_object.cpp:
+        (StringProtoFuncImp::call): When doing a match against a regexp
+	with the global flag set, make sure to return null rather than an
+	empty array when there is no match. This is what other browsers do.
+
 2003-08-05  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by John.
