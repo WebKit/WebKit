@@ -1,3 +1,15 @@
+2003-11-17  Maciej Stachowiak  <mjs@apple.com>
+
+	Merged from khtml:
+	
+	-fixed 3487324 -  CSS url values should be wrapped in "url()" for cssText purposes
+	
+    2003-11-07  Dirk Mueller  <mueller@kde.org>
+	 
+	* css/css_valueimpl.cpp (cssText): wrap uri's into url(). 
+	Stephan Kulow noted that other browsers do that.
+	
+
 2003-11-17  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3472998, stop a crash on an insanely malformed page.  I had to change the concept of 

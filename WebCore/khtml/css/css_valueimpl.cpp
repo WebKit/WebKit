@@ -746,7 +746,9 @@ DOM::DOMString CSSPrimitiveValueImpl::cssText() const
 	    // ###
 	    break;
 	case CSSPrimitiveValue::CSS_URI:
-	    text = DOMString( m_value.string );
+            text  = "url(";
+	    text += DOMString( m_value.string );
+            text += ")";
 	    break;
 	case CSSPrimitiveValue::CSS_IDENT:
 	    text = getValueName(m_value.ident);
