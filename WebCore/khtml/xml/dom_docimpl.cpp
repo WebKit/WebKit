@@ -1472,15 +1472,12 @@ void DocumentImpl::processHttpEquiv(const DOMString &equiv, const DOMString &con
         {
             bool ok = false;
             int delay = 0;
-	    delay = content.implementation()->toInt(&ok);
+	    delay = str.toInt(&ok);
             if(ok) v->part()->scheduleRedirection(delay, v->part()->url().url() );
         } else {
             double delay = 0;
             bool ok = false;
-
-	    DOMStringImpl* s = content.implementation()->substring(0, pos);
-	    delay = QConstString(s->s, s->l).string().stripWhiteSpace().toDouble(&ok);
-	    delete s;
+	    delay = str.left(pos).stripWhiteSpace().toDouble(&ok);
 
             pos++;
             while(pos < (int)str.length() && str[pos].isSpace()) pos++;

@@ -216,8 +216,7 @@ public:
     { return static_cast<DOM::TextImpl*>(RenderObject::element()); }
 
 #if APPLE_CHANGES
-    TextSlave * findTextSlave( int offset, int &pos );
-    TextSlaveArray textSlaves() { return m_lines; }
+    TextSlaveArray textSlaves() const { return m_lines; }
     int widthFromCache(const Font *, int start, int len) const;
     bool shouldUseMonospaceCache(const Font *) const;
     void cacheWidths();
@@ -226,10 +225,10 @@ public:
 protected:
     void paintTextOutline(QPainter *p, int tx, int ty, const QRect &prevLine, const QRect &thisLine, const QRect &nextLine);
 
-#if !APPLE_CHANGES
-    TextSlave * findTextSlave( int offset, int &pos );
-    
+#if APPLE_CHANGES
+public:
 #endif
+    TextSlave * findTextSlave( int offset, int &pos );
 
 protected: // members
     TextSlaveArray m_lines;

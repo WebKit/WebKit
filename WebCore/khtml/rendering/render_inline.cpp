@@ -311,3 +311,11 @@ int RenderInline::offsetTop() const
     return y;
 }
 
+const char *RenderInline::renderName() const
+{
+    if (isRelPositioned())
+        return "RenderInline (relative positioned)";
+    if (isAnonymousBox())
+        return "RenderInline (anonymous)";
+    return "RenderInline";
+}

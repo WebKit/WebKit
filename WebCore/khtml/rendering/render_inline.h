@@ -33,14 +33,7 @@ public:
     RenderInline(DOM::NodeImpl* node);
     virtual ~RenderInline();
 
-    virtual const char *renderName() const
-    {
-        if (isRelPositioned())
-            return "Inline (Rel Positioned)";
-        else if (isAnonymousBox())
-            return "Inline (Anonymous)";
-        return "Inline";
-    };
+    virtual const char *renderName() const;
 
     virtual bool isRenderInline() const { return true; }
     virtual bool childrenInline() const { return true; }

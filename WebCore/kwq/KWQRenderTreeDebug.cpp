@@ -51,15 +51,14 @@ static void writeLayers(QTextStream &ts, const RenderObject &o, int indent = 0);
 
 static QTextStream &operator<<(QTextStream &ts, const QRect &r)
 {
-    return ts << "(" << r.x() << "," << r.y() << "," << r.width() << "," << r.height() << ")";
+    return ts << "at (" << r.x() << "," << r.y() << ") size " << r.width() << "x" << r.height();
 }
 
-static QTextStream &operator<<(QTextStream &ts, const TextSlave& slave)
+static void writeIndent(QTextStream &ts, int indent)
 {
-    ts << "TextSlave at pos (";
-    ts << slave.m_x << "," << slave.m_y << ") with width: " << slave.m_width;
-    ts << "\n"; 
-    return ts;
+    for (int i = 0; i != indent; ++i) {
+        ts << "  ";
+    }
 }
 
 static QTextStream &operator<<(QTextStream &ts, const RenderObject &o)
@@ -88,11 +87,36 @@ static QTextStream &operator<<(QTextStream &ts, const RenderObject &o)
     return ts;
 }
 
-static void writeIndent(QTextStream &ts, int indent)
+static QString quoteAndEscapeNonPrintables(const QString &s)
 {
-    for (int i = 0; i != indent; ++i) {
-        ts << "  ";
+    QString result;
+    result += '"';
+    for (uint i = 0; i != s.length(); ++i) {
+        QChar c = s.at(i);
+        if (c == '\\') {
+            result += "\\\\";
+        } else if (c == '"') {
+            result += "\\\"";
+        } else {
+            ushort u = c.unicode();
+            if (u >= 0x20 && u < 0x7F) {
+                result += c;
+            } else {
+                QString hex;
+                hex.sprintf("\\x{%X}", u);
+                result += hex;
+            }
+        }
     }
+    result += '"';
+    return result;
+}
+
+static void writeTextSlave(QTextStream &ts, const RenderText &o, const TextSlave &slave)
+{
+    ts << "text run at (" << slave.m_x << "," << slave.m_y << ") width " << slave.m_width << ": "
+    	<< quoteAndEscapeNonPrintables(o.data().string().mid(slave.m_start, slave.m_len))
+    	<< "\n"; 
 }
 
 static void write(QTextStream &ts, const RenderObject &o, int indent = 0)
@@ -102,11 +126,11 @@ static void write(QTextStream &ts, const RenderObject &o, int indent = 0)
     ts << o << "\n";
     
     if (o.isText()) {
-        RenderText* text = (RenderText*)(&o);
-        TextSlaveArray slaves = text->textSlaves();
+        const RenderText &text = static_cast<const RenderText &>(o);
+        TextSlaveArray slaves = text.textSlaves();
         for (unsigned int i = 0; i < slaves.count(); i++) {
             writeIndent(ts, indent+1);
-            ts << *slaves[i];
+            writeTextSlave(ts, text, *slaves[i]);
         }
     }
 
@@ -134,7 +158,7 @@ static void write(QTextStream &ts, const RenderLayerElement &e, int indent = 0)
     
     writeIndent(ts, indent);
     
-    ts << "RenderLayer";
+    ts << "layer";
     
     QRect r(l.xPos(), l.yPos(), l.width(), l.height());
     

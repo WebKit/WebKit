@@ -1,3 +1,35 @@
+2003-02-03  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fixed 3146862 -- meta http-equiv refresh with a space before the delay does not work
+
+        * khtml/xml/dom_docimpl.cpp: (DocumentImpl::processHttpEquiv):
+        Fix code that was trying to use positions within the whitespace-stripped string,
+        but extracting substrings from the non-stripped original.
+
+        - tweaks to render tree dumping format
+
+        * khtml/rendering/render_block.h: Make renderName not be inline, since
+        an inline virtual function doesn't really do any good.
+        * khtml/rendering/render_block.cpp: (RenderBlock::renderName): Use the
+        string RenderBlock instead of the string Block for consistency with all the
+        other renderName results.
+        
+        * khtml/rendering/render_inline.h: Make renderName not be inline, since
+        an inline virtual function doesn't really do any good.
+        * khtml/rendering/render_inline.cpp: (RenderInline::renderName): Use the
+        string RenderInline instead of the string Inline for consistency with all the
+        other renderName results.
+        
+        * khtml/rendering/render_text.h: Make textSlaves() a const member function.
+        * kwq/KWQRenderTreeDebug.cpp:
+        (operator<<): Format rectangles as "x at (1,2) size 3x4" rather than "(1,2,3,4)".
+        (quoteAndEscapeNonPrintables): Added. Makes it easy to turn an arbitrary Unicode
+        string into something that's all ASCII.
+        (writeTextSlave): Change this so it also writes out the text.
+        (write): Call the new writeTextSlave, and also use "layer" instead of "RenderLayer".
+
 2003-02-01  Darin Adler  <darin@apple.com>
 
         - fix mistake that broke build

@@ -1964,6 +1964,19 @@ void RenderBlock::close()
     RenderFlow::close();
 }
 
+const char *RenderBlock::renderName() const
+{
+    if (isFloating())
+        return "RenderBlock (floating)";
+    if (isPositioned())
+        return "RenderBlock (positioned)";
+    if (isAnonymousBox())
+        return "RenderBlock (anonymous)";
+    if (isRelPositioned())
+        return "RenderBlock (relative positioned)";
+    return "RenderBlock";
+}
+
 #ifndef NDEBUG
 void RenderBlock::printTree(int indent) const
 {

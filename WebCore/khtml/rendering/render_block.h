@@ -35,18 +35,7 @@ public:
     RenderBlock(DOM::NodeImpl* node);
     virtual ~RenderBlock();
 
-    virtual const char *renderName() const
-    {
-        if (isFloating())
-            return "Block (Floating)";
-        if (isPositioned())
-            return "Block (Positioned)";
-        if (isAnonymousBox())
-            return "Block (Anonymous)";
-        if (isRelPositioned())
-            return "Block (Rel Positioned)";
-        return "Block";
-    };
+    virtual const char *renderName() const;
 
     virtual bool isRenderBlock() const { return true; }
     virtual bool containsSpecial() { return m_specialObjects!=0; }
