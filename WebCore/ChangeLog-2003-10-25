@@ -1,3 +1,11 @@
+2002-07-18  David Hyatt  <hyatt@apple.com>
+
+        Small change that gives us 25% speedup (uncached) on the cvs-base suite.
+
+        * khtml/css/cssstyleselector.cpp:
+        Optimized CLASS style comparison to avoid allocing QStrings when the CLASS
+        attribute only contains one entry (as opposed to a list of entries).
+        
 === Alexander-13 ===
 
 2002-07-17  Darin Adler  <darin@apple.com>

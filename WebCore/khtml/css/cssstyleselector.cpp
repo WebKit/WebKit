@@ -660,6 +660,16 @@ bool CSSStyleSelector::checkOneSelector(DOM::CSSSelector *sel, DOM::ElementImpl 
             break;
         case CSSSelector::List:
         {
+            int spacePos = value.find(' ', 0);
+            if (spacePos == -1) {
+                // There is no list, just a single item.  We can avoid
+                // allocing QStrings and just treat this as an exact
+                // match check.
+                if( (strictParsing && strcmp(sel->value, value) ) ||
+                     (!strictParsing && strcasecmp(sel->value, value)))
+                    return false;
+                break;
+            }
             QString str = value.string();
             QString selStr = sel->value.string();
             int pos = str.find(selStr, 0, strictParsing);
