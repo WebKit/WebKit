@@ -57,16 +57,34 @@ Value KJS::HTMLDocFunction::tryCall(ExecState *exec, Object &thisObj, const List
     return err;
   }
   DOM::HTMLDocument doc = static_cast<KJS::HTMLDocument *>(thisObj.imp())->toDocument();
-  String s;
-  DOM::HTMLElement element;
-
-  Value v = args[0];
 
   switch (id) {
   case HTMLDocument::Clear: // even IE doesn't support that one...
     //doc.clear(); // TODO
     return Undefined();
   case HTMLDocument::Open:
+    // For compatibility with other browsers, pass open calls with parameters to the window.
+    if (args.size() != 0) {
+      KHTMLView *view = static_cast<DOM::DocumentImpl *>(doc.handle())->view();
+      if (view) {
+        KHTMLPart *part = view->part();
+        if (part) {
+          Window *window = Window::retrieveWindow(part);
+          if (window) {
+            Object functionObject = Object::dynamicCast(window->get(exec, "open"));
+            if (functionObject.isNull() || !functionObject.implementsCall()) {
+                Object exception = Error::create(exec, TypeError);
+                exec->setException(exception);
+                return exception;
+            }
+            Object windowObject(window);
+            return functionObject.call(exec, windowObject, args);
+          }
+        }
+      }
+      return Undefined();
+    }
+    // In the case of no prameters, do a normal document open.
     doc.open();
     return Undefined();
   case HTMLDocument::Close:
@@ -87,7 +105,7 @@ Value KJS::HTMLDocFunction::tryCall(ExecState *exec, Object &thisObj, const List
     return Undefined();
   }
   case HTMLDocument::GetElementsByName:
-    return getDOMNodeList(exec,doc.getElementsByName(v.toString(exec).string()));
+    return getDOMNodeList(exec,doc.getElementsByName(args[0].toString(exec).string()));
   case HTMLDocument::CaptureEvents:
   case HTMLDocument::ReleaseEvents:
     // Do nothing for now. These are NS-specific legacy calls.

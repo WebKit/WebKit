@@ -1,5 +1,17 @@
 2002-12-29  Darin Adler  <darin@apple.com>
 
+        Reviewed by Maciej.
+
+	- fixed 3136391 -- PianoNanny.com screens turn to garbage when resized
+
+	Turns out browsers pass open calls to the window object if they show up at the document
+	with parameters. We now emulate that too.
+
+        * khtml/ecma/kjs_html.cpp: (KJS::HTMLDocFunction::tryCall): If we get an open call with
+	parameters, pass it on to the window.
+
+2002-12-29  Darin Adler  <darin@apple.com>
+
         Reviewed by Ken.
 
 	- fixed 3134560 -- Lord of the Rings desktops don't load
