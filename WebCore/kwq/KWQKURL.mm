@@ -54,7 +54,7 @@ typedef enum {
     // digit | "A" | "B" | "C" | "D" | "E" | "F" | "a" | "b" | "c" | "d" | "e" | "f"
     HexDigitChar = 1 << 6,
 
-    // not allowed in path and not ? or #
+    // not allowed in path
     BadChar = 1 << 7
 } URLCharacterClasses;
 
@@ -92,7 +92,7 @@ static const unsigned char characterClassTable[256] = {
     /* 57  9 */ SchemeChar | UserInfoChar | HostnameChar | HexDigitChar | IPv6Char,
     /* 58  : */ UserInfoChar | IPv6Char,    /* 59  ; */ UserInfoChar,
     /* 60  < */ BadChar,    /* 61  = */ UserInfoChar,
-    /* 62  > */ BadChar,    /* 63  ? */ PathSegmentEndChar,
+    /* 62  > */ BadChar,    /* 63  ? */ PathSegmentEndChar | BadChar,
     /* 64  @ */ 0,
     /* 65  A */ SchemeFirstChar | SchemeChar | UserInfoChar | HostnameChar | HexDigitChar | IPv6Char,    
     /* 66  B */ SchemeFirstChar | SchemeChar | UserInfoChar | HostnameChar | HexDigitChar | IPv6Char,
@@ -595,7 +595,7 @@ void KURL::setQuery(const QString &query, int encoding_hint)
 void KURL::setPath(const QString &s)
 {
     if (m_isValid) {
-	QString newURL = urlString.left(portEndPos) + s + urlString.mid(pathEndPos);
+	QString newURL = urlString.left(portEndPos) + encode_string(s) + urlString.mid(pathEndPos);
 	parse(newURL.ascii(), &newURL);
     }
 }

@@ -324,18 +324,22 @@ QByteArray HTMLFormElementImpl::formData(bool& ok)
                         if (path.length()) fileUploads << path;
                         QString onlyfilename = path.mid(path.findRev('/')+1);
 
+                        // FIXME: This won't work if the filename includes a " mark,
+                        // or control characters like CR or LF.
                         hstr += ("; filename=\"" + onlyfilename + "\"").ascii();
                         if(!static_cast<HTMLInputElementImpl*>(current)->value().isEmpty())
                         {
-                            hstr += "\r\nContent-Type: ";
 #if APPLE_CHANGES
                             KWQKHTMLPart *part = KWQ(current->getDocument()->view()->part());
                             QString mimeType = part->mimeTypeForFileName(onlyfilename);
-                            hstr += mimeType.ascii();
-#else /* APPLE_CHANGES not defined */
+#else
                             KMimeType::Ptr ptr = KMimeType::findByURL(KURL(path));
-                            hstr += ptr->name().ascii();
-#endif /* APPLE_CHANGES not defined */
+                            QString mimeType = ptr->name();
+#endif
+                            if (!mimeType.isEmpty()) {
+                                hstr += "\r\nContent-Type: ";
+                                hstr += mimeType.ascii();
+                            }
                         }
                     }
 
@@ -1436,7 +1440,8 @@ bool HTMLInputElementImpl::encoding(const QTextCodec* codec, khtml::encodingList
                 return true;
             }
 
-            KURL fileurl(value().string());
+            KURL fileurl("file:///");
+            fileurl.setPath(value().string());
             KIO::UDSEntry filestat;
 
             if (!KIO::NetAccess::stat(fileurl, filestat)) {
@@ -1454,7 +1459,7 @@ bool HTMLInputElementImpl::encoding(const QTextCodec* codec, khtml::encodingList
                 return false;
             }
 
-            if ( KIO::NetAccess::download(KURL(value().string()), local) )
+            if ( KIO::NetAccess::download(fileurl, local) )
             {
                 QFile file(local);
                 if (file.open(IO_ReadOnly))
@@ -1788,7 +1793,7 @@ QString HTMLSelectElementImpl::state( )
 {
 #if !APPLE_CHANGES
     QString state;
-#endif /* APPLE_CHANGES not defined */
+#endif
     QMemArray<HTMLGenericFormElementImpl*> items = listItems();
 
     int l = items.count();
@@ -1823,12 +1828,11 @@ void HTMLSelectElementImpl::restoreState(QStringList &_states)
     if(!state.isEmpty() && !state.contains('X') && !m_multiple) {
         qWarning("should not happen in restoreState!");
 #if APPLE_CHANGES
-        // Invalid access to string's internal buffer.  Should never get here
-        // anyway.
+        // KWQString doesn't support this operation. Should never get here anyway.
         //state[0] = 'X';
-#else /* APPLE_CHANGES not defined */
+#else
         state[0] = 'X';
-#endif /* APPLE_CHANGES not defined */
+#endif
     }
 
     QMemArray<HTMLGenericFormElementImpl*> items = listItems();

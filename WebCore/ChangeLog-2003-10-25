@@ -1,3 +1,22 @@
+2003-02-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Trey.
+
+        - fixed 3150252 -- files with question marks in their names fail to upload as attachments
+
+        * khtml/html/html_formimpl.cpp:
+        (HTMLFormElementImpl::formData): Don't include a Content-Type header at all if we don't
+        have a MIME type to send. Matches other web browsers' behavior.
+        (HTMLInputElementImpl::encoding): Construct the URL using setPath rather than just passing
+        a filename to the KURL constructor.
+        (HTMLSelectElementImpl::state): Tweak #if formatting a bit.
+        (HTMLSelectElementImpl::restoreState): Improve comment a bit.
+        * kwq/KWQKURL.mm: Make ? be a "bad character". I checked carefully to be sure this does
+        not adversely affect any calls, including running our KURL tests.
+        (KURL::setPath): Encode the passed-in path. I determined this was correct both by looking
+        at all the call sites in KHTML code to see that they would want this behavior, and by noticing
+        that the path() getter decodes the path.
+
 2003-02-04  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Darin
@@ -85,7 +104,7 @@
 
 	The bug # is 3162989.
 	
-        Reviewed by NOBODY (OOPS!).
+        Reviewed by Darin.
 
         * khtml/rendering/render_object.cpp:
         (RenderObject::containingBlock):
