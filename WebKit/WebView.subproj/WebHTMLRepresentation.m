@@ -143,4 +143,14 @@
     return [_private->bridge controlsInForm:form];
 }
 
+- (NSString *)searchForLabels:(NSArray *)labels beforeElement:(id <WebDOMElement>)element
+{
+    return [_private->bridge searchForLabels:labels beforeElement:element];
+}
+
+- (NSString *)matchLabels:(NSArray *)labels againstElement:(id <WebDOMElement>)element
+{
+    return [_private->bridge matchLabels:labels againstElement:element];
+}
+
 @end

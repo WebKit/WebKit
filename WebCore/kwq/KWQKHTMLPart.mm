@@ -33,6 +33,7 @@
 #import "khtmlpart_p.h"
 #import "khtmlview.h"
 #import "kjs_window.h"
+#import "misc/htmlattrs.h"
 
 #import "WebCoreBridge.h"
 #import "WebCoreViewFactory.h"
@@ -205,7 +206,7 @@ static HTMLFormElementImpl *scanForForm(NodeImpl *start)
     NodeImpl *n;
     for (n = start; n; n = n->traverseNextNode()) {
         NodeImpl::Id nodeID = idFromNode(n);
-        if (idFromNode(n) == ID_FORM) {
+        if (nodeID == ID_FORM) {
             return static_cast<HTMLFormElementImpl *>(n);
         } else if (n->isHTMLElement()
                    && static_cast<HTMLElementImpl *>(n)->isGenericFormElement()) {
@@ -246,6 +247,132 @@ HTMLFormElementImpl *KWQKHTMLPart::currentForm() const
         start = xmlDocImpl();
     }
     return scanForForm(start);
+}
+
+// Either get cached regexp or build one that matches any of the labels.
+// The regexp we build is of the form:   \b(STR1|STR2|STRN)\b
+QRegExp *regExpForLabels(NSArray *labels)
+{
+    // Parallel arrays that we use to cache regExps.  In practice the number of expressions
+    // that the app will use is equal to the number of locales is used in searching.
+    static const unsigned int regExpCacheSize = 4;
+    static NSMutableArray *regExpLabels = nil;
+    static QPtrList <QRegExp> regExps;
+
+    QRegExp *result;
+    if (!regExpLabels) {
+        regExpLabels = [[NSMutableArray alloc] initWithCapacity:regExpCacheSize];
+    }
+    unsigned int cacheHit = [regExpLabels indexOfObject:labels];
+    if (cacheHit != NSNotFound) {
+        result = regExps.at(cacheHit);
+    } else {
+        QString pattern("\\b(");
+        unsigned int numLabels = [labels count];
+        unsigned int i;
+        for (i = 0; i < numLabels; i++) {
+            QString label = QString::fromNSString([labels objectAtIndex:i]);
+            if (i != 0) {
+                pattern.append("|");
+            }
+            pattern.append(label);
+        }
+        pattern.append(")\\b");
+        result = new QRegExp(pattern, false);
+    }
+
+    // add regexp to the cache, making sure it is at the front for LRU ordering
+    if (cacheHit != 0) {
+        if (cacheHit != NSNotFound) {
+            // remove from old spot
+            [regExpLabels removeObjectAtIndex:cacheHit];
+            regExps.remove(cacheHit);
+        }
+        // add to start
+        [regExpLabels insertObject:labels atIndex:0];
+        regExps.insert(0, result);
+        // trim if too big
+        if ([regExpLabels count] > regExpCacheSize) {
+            [regExpLabels removeObjectAtIndex:regExpCacheSize];
+            QRegExp *last = regExps.last();
+            regExps.removeLast();
+            delete last;
+        }
+    }
+    return result;
+}
+    
+
+NSString *KWQKHTMLPart::searchForLabelsBeforeElement(NSArray *labels, DOM::ElementImpl *element)
+{
+    QRegExp *regExp = regExpForLabels(labels);
+    // We stop searching after we've seen this many chars
+    const unsigned int charsSearchedThreshold = 500;
+    // This is the absolute max we search.  We allow a little more slop, to
+    // make it more likely that we'll search whole nodes
+    const unsigned int maxCharsSearched = 600;
+    
+    // walk backwards in the node tree, until another element, or form, or end of tree
+    int unsigned lengthSearched = 0;
+    NodeImpl *n;
+    for (n = element->traversePreviousNode();
+         n && lengthSearched < charsSearchedThreshold;
+         n = n->traversePreviousNode())
+    {
+        NodeImpl::Id nodeID = idFromNode(n);
+        if (nodeID == ID_FORM
+            || (n->isHTMLElement()
+                && static_cast<HTMLElementImpl *>(n)->isGenericFormElement()))
+        {
+            // We hit another form element or the start of the form - bail out
+            break;
+        } else if (nodeID == ID_TEXT) {
+            // For each text chunk, run the regexp
+            //??? CDATA_SECTION_NODE too?  See html_formimpl.cpp:2323
+            //??? must we have a renderer?  See khtml_part.cpp:2036
+            QString nodeString = n->nodeValue().string();
+            // add 100 for slop, to make it more likely that we'll search whole nodes
+            if (lengthSearched + nodeString.length() > maxCharsSearched) {
+                nodeString = nodeString.right(charsSearchedThreshold - lengthSearched);
+            }
+            int pos = regExp->searchRev(nodeString);
+            if (pos >= 0) {
+                return nodeString.mid(pos, regExp->matchedLength()).getNSString();
+            } else {
+                lengthSearched += nodeString.length();
+            }
+        }
+    }
+    return nil;
+}
+
+NSString *KWQKHTMLPart::matchLabelsAgainstElement(NSArray *labels, DOM::ElementImpl *element)
+{
+    QString name = element->getAttribute(ATTR_NAME).string();
+    QRegExp *regExp = regExpForLabels(labels);
+    // Use the largest match we can find in the whole name string
+    int pos;
+    int length;
+    int bestPos = -1;
+    int bestLength = -1;
+    int start = 0;
+    do {
+        pos = regExp->search(name, start);
+        if (pos != -1) {
+            length = regExp->matchedLength();
+            if (length >= bestLength) {
+                bestPos = pos;
+                bestLength = length;
+            }
+            start = pos+1;
+        }
+    } while (pos != -1);
+
+    if (bestPos != -1) {
+        return name.mid(bestPos, bestLength).getNSString();
+    } else {
+        return nil;
+    }
 }
 
 void KWQKHTMLPart::clearRecordedFormValues()

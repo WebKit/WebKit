@@ -1,3 +1,18 @@
+2003-03-04  Trey Matteson  <trey@apple.com>
+
+	Support for autofill.  These are just two new glue routines
+	that call down through the bridge.  They allow regexp driven
+	binding of AB data to form elements.
+
+        Reviewed by Maciej.
+
+        * WebView.subproj/WebHTMLRepresentation.h:
+        * WebView.subproj/WebHTMLRepresentation.m:
+        (-[WebHTMLRepresentation searchForLabels:beforeElement:]):
+	Call straight to bridge.
+        (-[WebHTMLRepresentation matchLabels:againstElement:]):
+	Call straight to bridge.
+
 2003-03-04  Maciej Stachowiak  <mjs@apple.com>
 
 	Reinstate missing part of last checking.

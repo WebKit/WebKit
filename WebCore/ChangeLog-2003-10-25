@@ -1,3 +1,37 @@
+2003-03-04  Trey Matteson  <trey@apple.com>
+
+	New support for autofill.  We provide a routine that scans backwards in the text
+	before a given element, looking for a match with a set of labels.  In addition,
+	we provide for a similar match against the element's name.
+
+	To implement a few more methods in QRegExp API were implemented.
+
+        Reviewed by Maciej.
+
+        * kwq/KWQKHTMLPart.h:
+        * kwq/KWQKHTMLPart.mm:
+        (scanForForm):  Remove redundant call to a helper function.
+        (regExpForLabels):  Return a regexp used to search for the set of labels.
+        (KWQKHTMLPart::searchForLabelsBeforeElement):  Walk the DOM to scan backwards
+	in the text before the element, apply regexp to the text we find.
+        (KWQKHTMLPart::matchLabelsAgainstElement):  Get the element name, use regexp
+	to check it for any of the labels.
+        * kwq/KWQRegExp.h:
+        * kwq/KWQRegExp.mm:
+        (QRegExp::KWQRegExpPrivate::KWQRegExpPrivate):  Init two new ivars.
+        (RegExpFromPattern):  Massage a non-glob expression before handing to Darwin.
+        (QRegExp::KWQRegExpPrivate::compile):  Call RegExpFromPattern.
+        (QRegExp::match):  Set new ivars based on match result.
+        (QRegExp::search):  New API, just call match.
+        (QRegExp::searchRev):  New API, call match repeatedly to (weakly) simulate a 
+	reverse search.
+        (QRegExp::pos):  Return info from last result.
+        (QRegExp::matchedLength):  Return info from last result.
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge searchForLabels:beforeElement:]):  Call straight through to part.
+        (-[WebCoreBridge matchLabels:againstElement:]):  Call straight through to part.
+
 2003-03-04  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

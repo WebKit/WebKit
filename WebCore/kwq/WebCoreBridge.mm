@@ -540,6 +540,18 @@ static HTMLFormElementImpl *formElementFromDOMElement(id <WebDOMElement>element)
     return results;
 }
 
+- (NSString *)searchForLabels:(NSArray *)labels beforeElement:(id <WebDOMElement>)element
+{
+    ASSERT([(NSObject *)element isKindOfClass:[WebCoreDOMElement class]]);
+    return _part->searchForLabelsBeforeElement(labels, [(WebCoreDOMElement *)element elementImpl]);
+}
+
+- (NSString *)matchLabels:(NSArray *)labels againstElement:(id <WebDOMElement>)element
+{
+    ASSERT([(NSObject *)element isKindOfClass:[WebCoreDOMElement class]]);
+    return _part->matchLabelsAgainstElement(labels, [(WebCoreDOMElement *)element elementImpl]);
+}
+
 - (NSDictionary *)elementAtPoint:(NSPoint)point
 {
     RenderObject *renderer = _part->renderer();

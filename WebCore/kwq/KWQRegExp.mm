@@ -25,6 +25,7 @@
 
 
 #import "KWQRegExp.h"
+#import "KWQLogging.h"
 
 #import <sys/types.h>
 #import <regex.h>
@@ -43,6 +44,9 @@ public:
     regex_t regex;
 
     uint refCount;
+
+    int lastMatchPos;
+    int lastMatchLength;
 };
 
 QRegExp::KWQRegExpPrivate::KWQRegExpPrivate() : pattern(""), refCount(0)
@@ -50,7 +54,7 @@ QRegExp::KWQRegExpPrivate::KWQRegExpPrivate() : pattern(""), refCount(0)
     compile(true, false);
 }
 
-QRegExp::KWQRegExpPrivate::KWQRegExpPrivate(QString p, bool caseSensitive, bool glob) : pattern(p), refCount(0)
+QRegExp::KWQRegExpPrivate::KWQRegExpPrivate(QString p, bool caseSensitive, bool glob) : pattern(p), refCount(0), lastMatchPos(-1), lastMatchLength(-1)
 {
     compile(caseSensitive, glob);
 }
@@ -78,6 +82,31 @@ static QString RegExpFromGlob(QString glob)
     return result;
 }
 
+static QString RegExpFromPattern(QString pattern)
+{
+    // map word boundary QRegExp assertion to RegEx beginning and end of word boundaries
+    // FIXME:  Not sure how we would deal with \b appearing within a string.
+    int length = pattern.length();
+    if (length < 2) {
+        return pattern;
+    }
+    
+    bool fixStart = (pattern[0] == '\\' && pattern[1] == 'b');
+    bool fixEnd = (pattern[length-2] == '\\' && pattern[length-1] == 'b');
+    if (fixStart || fixEnd) {
+        QString result = pattern;
+        if (fixStart) {
+            result.replace(0, 2, "[[:<:]]");
+        }
+        if (fixEnd) {
+            result.replace(result.length()-2, 2, "[[:>:]]");
+        }
+        return result;
+    } else {
+        return pattern;
+    }
+}
+
 void QRegExp::KWQRegExpPrivate::compile(bool caseSensitive, bool glob)
 {
     QString p;
@@ -85,7 +114,7 @@ void QRegExp::KWQRegExpPrivate::compile(bool caseSensitive, bool glob)
     if (glob) {
 	p = RegExpFromGlob(pattern);
     } else {
-	p = pattern;
+	p = RegExpFromPattern(pattern);
     }
 
     const char *cpattern = p.latin1();
@@ -150,11 +179,59 @@ int QRegExp::match(const QString &str, int startFrom, int *matchLength, bool tre
     int result = regexec(&d->regex, cstring, 1, match, flags);
 
     if (result != 0) {
+        d->lastMatchPos = -1;
+        d->lastMatchLength = -1;
 	return -1;
     } else {
+        d->lastMatchPos = startFrom + match[0].rm_so;
+        d->lastMatchLength = match[0].rm_eo - match[0].rm_so;
 	if (matchLength != NULL) {
-	    *matchLength = match[0].rm_eo - match[0].rm_so;
+            *matchLength = d->lastMatchLength;
 	}
-	return startFrom + match[0].rm_so;
+        return d->lastMatchPos;
     }
+}
+
+int QRegExp::search(const QString &str, int startFrom) const
+{
+    if (startFrom < 0) {
+        startFrom = str.length() - startFrom;
+    }
+    return match(str, startFrom, NULL, false);
+}
+
+int QRegExp::searchRev(const QString &str, int startFrom) const
+{
+    ASSERT(startFrom == -1);
+    // FIXME: Total hack for now.  Search forward, return the last, greedy match
+    int start = 0;
+    int pos;
+    int lastPos = -1;
+    int lastMatchLength = -1;
+    do {
+        int matchLength;
+        pos = match(str, startFrom, &matchLength, start == 0);
+        if (pos >= 0) {
+            if ((pos+matchLength) > (lastPos+lastMatchLength)) {
+                // replace last match if this one is later and not a subset of the last match
+                lastPos = pos;
+                lastMatchLength = matchLength;
+            }
+            startFrom = pos + 1;
+        }
+    } while (pos != -1);
+    d->lastMatchPos = lastPos;
+    d->lastMatchLength = lastMatchLength;
+    return lastPos;
+}
+
+int QRegExp::pos(int n)
+{
+    ASSERT(n == 0);
+    return d->lastMatchPos;
+}
+
+int QRegExp::matchedLength() const
+{
+    return d->lastMatchLength;
 }
