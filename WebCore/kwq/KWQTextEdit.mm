@@ -118,6 +118,24 @@ void QTextEdit::setWordWrap(WrapStyle style)
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 
+void QTextEdit::setScrollBarModes(ScrollBarMode hMode, ScrollBarMode vMode)
+{
+    KWQTextArea *textView = (KWQTextArea *)getView();
+
+    bool autohides = hMode == Auto || vMode == Auto;
+    
+    ASSERT(!autohides || hMode != AlwaysOn);
+    ASSERT(!autohides || vMode != AlwaysOn);
+
+    KWQ_BLOCK_EXCEPTIONS;
+
+    [textView setHasHorizontalScroller:hMode != AlwaysOff];
+    [textView setHasVerticalScroller:vMode != AlwaysOff];
+    [textView setAutohidesScrollers:autohides];
+
+    KWQ_UNBLOCK_EXCEPTIONS;
+}
+
 bool QTextEdit::isReadOnly() const
 {
     KWQTextArea *textView = (KWQTextArea *)getView();

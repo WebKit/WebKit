@@ -1,3 +1,40 @@
+2004-12-10  Darin Adler  <darin@apple.com>
+
+        Reviewed by Hyatt.
+
+        - fixed <rdar://problem/3910419> setting style={overflow:hidden} for <textarea> does not prevent appearance of scrollbars
+
+        * khtml/rendering/render_form.h: Remove now-unneeded wrap parameter.
+        * khtml/rendering/render_form.cpp:
+        (RenderSubmitButton::rawText): Convert to QChar explicitly.
+        (RenderLineEdit::updateFromElement): Ditto.
+        (RenderLineEdit::slotTextChanged): Ditto.
+        (RenderSelect::updateFromElement): Ditto.
+        (TextAreaWidget::TextAreaWidget): Moved out most of the initialization since it's not something
+        that requires a derived class. Now we don't use this class at all for WebCore, but they still
+        have it for KDE.
+        (TextAreaWidget::event): Moved out the ifdefs.
+        (RenderTextArea::RenderTextArea): Moved setting code from TextAreaWidget here. Put a bunch that
+        we don't need at all inside !APPLE_CHANGES, and removed the setting for scroll bars, since that's
+        now done in setStyle.
+        (RenderTextArea::handleFocusOut): Use type QTextEdit instead of TextAreaWidget since that's all
+        that's needed and WebCore no longer has TextAreaWidget.
+        (RenderTextArea::calcMinMaxWidth): Ditto.
+        (RenderTextArea::setStyle): Add code to set scroll bar modes based on wrap setting combined with
+        overflow style.
+        (RenderTextArea::updateFromElement): Use type QTextEdit.
+        (RenderTextArea::text): Ditto.
+        (RenderTextArea::select): Ditto.
+
+        * kwq/KWQTextArea.mm:
+        (-[KWQTextArea _configureTextViewForWordWrapMode]): Don't set horizontal scroller visibility here,
+        since it's now handled by QTextEdit.
+        (-[KWQTextArea initWithFrame:]): Don't set vertical scroller visibility or scroller auto-hiding.
+
+        * kwq/KWQTextEdit.h: Add setScrollBarModes function to be used instead of separate setter for
+        the horizontal and vertical mode; needed because AppKit switches "autohide" for both at once.
+        * kwq/KWQTextEdit.mm: (QTextEdit::setScrollBarModes): Added.
+
 2004-12-10  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Darin

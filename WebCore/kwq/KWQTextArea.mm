@@ -84,8 +84,6 @@ const float LargeNumberForText = 1.0e7;
 
 - (void)_configureTextViewForWordWrapMode
 {
-    [self setHasHorizontalScroller:!wrap];
-
     [textView setHorizontallyResizable:!wrap];
     [textView setMaxSize:NSMakeSize(LargeNumberForText, LargeNumberForText)];
 
@@ -117,14 +115,10 @@ const float LargeNumberForText = 1.0e7;
 
     wrap = YES;
 
-    [self setHasVerticalScroller:YES];
     [self setBorderType:NSBezelBorder];
 
     [self _createTextView];
     [self _updateTextViewWidth];
-
-    // Do this last, because it works better if done after the scrollers are created.
-    [self setAutohidesScrollers:YES];
 
     // In WebHTMLView, we set a clip. This is not typical to do in an
     // NSView, and while correct for any one invocation of drawRect:,

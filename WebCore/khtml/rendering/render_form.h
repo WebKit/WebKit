@@ -438,7 +438,7 @@ protected slots:
 class TextAreaWidget : public KTextEdit
 {
 public:
-    TextAreaWidget(int wrap, QWidget* parent);
+    TextAreaWidget(QWidget* parent);
 
 protected:
     virtual bool event (QEvent *e );

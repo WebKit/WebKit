@@ -69,6 +69,8 @@ class QTextEdit : public QScrollView
     void setWordWrap(WrapStyle);
     WrapStyle wordWrap() const;
 
+    void setScrollBarModes(ScrollBarMode hMode, ScrollBarMode vMode);
+
     void setWritingDirection(QPainter::TextDirection);
     
     void selectAll();
