@@ -31,8 +31,8 @@
 // This is not yet in QuickdrawPriv.h, although it's supposed to be.
 void CallDrawingNotifications(CGrafPtr port, Rect *mayDrawIntoThisRect, int drawingType);
 
-// Send null events as often as possible when active so plug-ins like Flash get high frame rates.
-#define NullEventIntervalActive 	0.0
+// Send null events 50 times a second when active so plug-ins like Flash get high frame rates.
+#define NullEventIntervalActive 	0.02
 #define NullEventIntervalNotActive	0.25
 
 static WebBaseNetscapePluginView *currentPluginView = nil;

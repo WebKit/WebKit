@@ -1,3 +1,11 @@
+2003-01-27  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: 3156235 - change throttle for plug-in null events to 50 frames per second (when frontmost)
+
+        Reviewed by dave.
+
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+
 2003-01-27  Richard Williamson   <rjw@apple.com>
 
         Fixed 3151241.  Cleanly handle nil return from resource:willSendRequest:fromDataSource:.
