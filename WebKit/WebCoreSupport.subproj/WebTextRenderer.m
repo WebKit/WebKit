@@ -28,13 +28,13 @@
 
 #define ROUND_TO_INT(x) (unsigned int)((x)+.5)
 
-// Loose precision beyond 1000ths place.  This is a work-around to CG adding
-// small errors to some metrics.
-#define CEIL_TO_INT(x) ((int)((((int)(x*1000.0))/(1000.0)) + (1.0 - FLT_EPSILON)))
+// Lose precision beyond 1000ths place. This is to work around an apparent
+// bug in CoreGraphics where there seem to be small errors to some metrics.
+#define CEIL_TO_INT(x) ((int)(x + 0.999)) /* ((int)(x + 1.0 - FLT_EPSILON)) */
 
 #define LOCAL_BUFFER_SIZE 1024
 
-// Covers most of latin1.
+// Covers Latin1.
 #define INITIAL_BLOCK_SIZE 0x200
 
 // Get additional blocks of glyphs and widths in bigger chunks.
