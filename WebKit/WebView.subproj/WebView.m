@@ -149,8 +149,8 @@ NSString *_WebMainFrameURLKey = @"mainFrameURL";
     
     // Simple optimization that avoids loading the plug-in DB and image types for the HTML case.
     if ([self canShowMIMETypeAsHTML:MIMEType]) {
-        viewClass = [[WebFrameView _viewTypesAllowImageTypeOmission:YES] objectForKey:MIMEType];
-        repClass = [[WebDataSource _repTypesAllowImageTypeOmission:YES] objectForKey:MIMEType];
+        viewClass = [[WebFrameView _viewTypesAllowImageTypeOmission:YES] _web_objectForMIMEType:MIMEType];
+        repClass = [[WebDataSource _repTypesAllowImageTypeOmission:YES] _web_objectForMIMEType:MIMEType];
         if (viewClass && repClass) {
             if (vClass) {
                 *vClass = viewClass;
@@ -164,21 +164,10 @@ NSString *_WebMainFrameURLKey = @"mainFrameURL";
     
     // Load the plug-in DB allowing plug-ins to install types.
     [[WebPluginDatabase installedPlugins] loadPluginIfNeededForMIMEType:MIMEType];
-    viewClass = [[WebFrameView _viewTypesAllowImageTypeOmission:YES] objectForKey:MIMEType];
-    repClass = [[WebDataSource _repTypesAllowImageTypeOmission:YES] objectForKey:MIMEType];
-    if (viewClass && repClass) {
-        if (vClass) {
-            *vClass = viewClass;
-        }
-        if (rClass) {
-            *rClass = repClass;
-        }
-        return YES;
-    }
     
     // Load the image types and get the view class and rep class. This should be the fullest picture of all handled types.
-    viewClass = [[WebFrameView _viewTypesAllowImageTypeOmission:NO] objectForKey:MIMEType];
-    repClass = [[WebDataSource _repTypesAllowImageTypeOmission:NO] objectForKey:MIMEType];
+    viewClass = [[WebFrameView _viewTypesAllowImageTypeOmission:NO] _web_objectForMIMEType:MIMEType];
+    repClass = [[WebDataSource _repTypesAllowImageTypeOmission:NO] _web_objectForMIMEType:MIMEType];
     if (viewClass && repClass) {
         // Special-case WebTextView for text types that shouldn't be shown.
         if (viewClass == [WebTextView class] &&
