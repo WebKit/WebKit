@@ -1610,9 +1610,11 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start)
                         if (!currentCharacterIsSpace) {
                             // Stop ignoring spaces and begin at this
                             // new point.
+                            ignoringSpaces = false;
+                            lastSpacePos = 0;
+                            lastSpace = pos; // e.g., "Foo    goo", don't add in any of the ignored spaces.
                             BidiIterator startMid = { 0, o, pos };
                             addMidpoint(startMid);
-                            ignoringSpaces = false;
                         }
                         else {
                             // Just keep ignoring these spaces.
