@@ -84,7 +84,7 @@ Q:after  {
     /*   content: close-quote;  */
 }
 
-IFRAME {
+IFRAME, EMBED, OBJECT {
 	width: 300px; height:150px;
 }
 
