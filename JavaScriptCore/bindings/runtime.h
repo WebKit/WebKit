@@ -47,7 +47,7 @@ class Field
 {
 public:
     virtual const char *name() const = 0;
-    virtual const char *type() const = 0;
+    virtual RuntimeType type() const = 0;
     virtual ~Field() {};
 };
 

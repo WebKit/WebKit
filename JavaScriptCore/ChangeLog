@@ -1,5 +1,19 @@
 2003-11-13  Richard Williamson   <rjw@apple.com>
 
+	Factored common code between copy constructor and assignment operator.
+
+        Reviewed by Chris.
+
+        * ChangeLog:
+        * bindings/jni/jni_runtime.h:
+        (Bindings::JavaConstructor::_commonCopy):
+        (Bindings::JavaConstructor::JavaConstructor):
+        (Bindings::JavaConstructor::operator=):
+        (Bindings::JavaField::type):
+        * bindings/runtime.h:
+
+2003-11-13  Richard Williamson   <rjw@apple.com>
+
 	More LiveConnect stuff.  This checkin adds abstract classes to model
 	language runtimes and a JNI based set of concrete implementations for
 	Java.
