@@ -38,6 +38,7 @@
 #import <WebKit/WebPreferencesPrivate.h>
 #import <WebKit/WebResourceLoadDelegate.h>
 #import <WebKit/WebSubresourceClient.h>
+#import <WebKit/WebViewInternal.h>
 #import <WebKit/WebViewPrivate.h>
 #import <WebKit/WebUIDelegatePrivate.h>
 
@@ -1168,11 +1169,13 @@ static id <WebFormDelegate> formDelegate(WebBridge *self)
 
 - (void)postDidChangeNotification
 {
+    [[_frame webView] _updateFontPanel];
     [[NSNotificationCenter defaultCenter] postNotificationName:WebViewDidChangeNotification object:[_frame webView]];
 }
 
 - (void)postDidChangeSelectionNotification
 {
+    [[_frame webView] _updateFontPanel];
     [[NSNotificationCenter defaultCenter] postNotificationName:WebViewDidChangeSelectionNotification object:[_frame webView]];
 }
 

@@ -1,5 +1,34 @@
 2004-04-28  John Sullivan  <sullivan@apple.com>
 
+        A little bit more progress in wiring up the font panel.
+
+        Reviewed by Ken.
+
+        * WebView.subproj/WebViewInternal.h:
+        put _updateFontPanel here. Also moved _isLoading here, since it was
+        already in a category named WebInternal
+
+        * WebView.subproj/WebView.m:
+        (-[WebView _isLoading]):
+        moved into WebInternal category implementation
+        (_textAttributesFromStyle):
+        changed from method to function
+        (_fontFromStyle):
+        added, guts not filled in yet
+        (-[WebView _updateFontPanel]):
+        now calls these two functions (but results are always nil)
+        (-[WebView setSelectedDOMRange:affinity:]):
+        remove call to _updateFontPanel here since it's now called in
+        the proper bottleneck
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge postDidChangeNotification]):
+        call -[WebView _updateFontPanel] in addition to sending notification
+        (-[WebBridge postDidChangeSelectionNotification]):
+        ditto
+
+2004-04-28  John Sullivan  <sullivan@apple.com>
+
         - fixed these bugs:
         <rdar://problem/3636570>: "API: [WebPreferences tabsToLinks] should be public API"        
         <rdar://problem/3610597>: "API: could turn "stealth browsing" preference into API"

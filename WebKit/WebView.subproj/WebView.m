@@ -1150,10 +1150,6 @@ NSMutableDictionary *countInvocations;
 
 @end
 
-@interface WebView (WebInternal)
-- (BOOL)_isLoading;
-@end
-
 @implementation WebView
 
 + (BOOL)canShowMIMEType:(NSString *)MIMEType
@@ -1904,13 +1900,6 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     [self setTextSizeMultiplier:[self textSizeMultiplier]*TextSizeMultiplierRatio];
 }
 
-- (BOOL)_isLoading
-{
-    WebFrame *mainFrame = [self mainFrame];
-    return [[mainFrame dataSource] isLoading]
-        || [[mainFrame provisionalDataSource] isLoading];
-}
-
 - (BOOL)validateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)item
 {
     SEL action = [item action];
@@ -2140,11 +2129,23 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 
 @end
 
-@implementation WebView (WebViewEditing)
+@implementation WebView (WebInternal)
 
-- (NSDictionary *)_textAttributesFromStyle:(DOMCSSStyleDeclaration *)style
+- (BOOL)_isLoading
 {
-    // FIXME: this should probably be a method of DOMCSSStyleDeclaration
+    WebFrame *mainFrame = [self mainFrame];
+    return [[mainFrame dataSource] isLoading]
+        || [[mainFrame provisionalDataSource] isLoading];
+}
+
+static NSDictionary *_textAttributesFromStyle(DOMCSSStyleDeclaration *style)
+{
+    ERROR("unimplemented");
+    return nil;
+}
+
+static NSFont *_fontFromStyle(DOMCSSStyleDeclaration *style)
+{
     ERROR("unimplemented");
     return nil;
 }
@@ -2182,9 +2183,12 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
         font = [NSFont menuFontOfSize:23];
     } else {
         style = [self typingStyle];
-        // FIXME: get font from style somehow. For now, return some bogus font to test the rest of the code path.
-        font = [NSFont toolTipsFontOfSize:17];
-        textAttributes = [self _textAttributesFromStyle:style];
+        font = _fontFromStyle(style);
+        if (font == nil) {
+            // For now, return some bogus font to test the rest of the code path.
+            font = [NSFont toolTipsFontOfSize:17];
+        }
+        textAttributes = _textAttributesFromStyle(style);
     }
     
     if (font != nil) {
@@ -2192,6 +2196,10 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     }
     [fm setSelectedAttributes:textAttributes isMultiple:!attributesIdenticalThroughoutSelection];
 }
+
+@end
+
+@implementation WebView (WebViewEditing)
 
 - (void)_editingKeyDown:(NSEvent *)event
 {   
@@ -2206,12 +2214,6 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 - (void)setSelectedDOMRange:(DOMRange *)range affinity:(NSSelectionAffinity)selectionAffinity
 {
     [[self _bridgeForCurrentSelection] setSelectedDOMRange:range affinity:selectionAffinity];
-
-    // FIXME: this doesn't catch the cases where the selection is changed on the other side
-    // of the bridge. Eventually we need to notice all such changes and call _updateFontPanel,
-    // but this is not yet implemented. (The bottlenecks that send the notifications like
-    // webViewDidChangeSelection and friends will also need to call _updateFontPanel).
-    [self _updateFontPanel];
 }
 
 - (DOMRange *)selectedDOMRange
