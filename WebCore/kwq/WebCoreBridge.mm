@@ -180,7 +180,6 @@ using khtml::RenderPart;
     RenderObject *renderer = part->impl->getRenderer();
     KHTMLView *view = part->impl->getView();
 
-#define DEBUG_DRAWING
 #ifdef DEBUG_DRAWING
     [[NSColor redColor] set];
     [NSBezierPath fillRect:[view->getView() visibleRect]];
