@@ -10,6 +10,8 @@
 @class WebNetscapePluginPackage;
 @class NSURLResponse;
 
+#define WEB_REASON_PLUGIN_CANCELLED -1
+
 @interface WebBaseNetscapePluginStream : NSObject
 {
     NSMutableData *deliveryData;

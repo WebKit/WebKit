@@ -33,6 +33,8 @@ NSString * const WebKitErrorPlugInPageURLStringKey = 	@"WebKitErrorPlugInPageURL
 #define WebKitErrorDescriptionCannotLoadPlugin UI_STRING("Cannot load plug-in", "WebKitErrorCannotLoadPlugin description")
 #define WebKitErrorDescriptionJavaUnavailable UI_STRING("Java is unavailable", "WebKitErrorJavaUnavailable description")
 
+// FIXME: We use "Cannot load plug-in" to avoid localization changes. Update the string when localization is not an issue.
+#define WebKitErrorDescriptionPlugInCancelledConnection UI_STRING("Cannot load plug-in", "WebKitErrorDescriptionPlugInCancelledConnection description")
 
 static pthread_once_t registerErrorsControl = PTHREAD_ONCE_INIT;
 static void registerErrors(void);
@@ -65,8 +67,7 @@ static void registerErrors(void);
                                contentURL:[NSURL _web_URLWithUserTypedString:contentURLString]
                             pluginPageURL:[NSURL _web_URLWithUserTypedString:pluginPageURLString]
                                pluginName:pluginName
-                                 MIMEType:MIMEType
-           ];
+                                 MIMEType:MIMEType];
 }
 
 - (id)_initWithPluginErrorCode:(int)code
@@ -118,6 +119,7 @@ static void registerErrors()
         WebKitErrorDescriptionCannotFindPlugin,		[NSNumber numberWithInt: WebKitErrorCannotFindPlugIn],
         WebKitErrorDescriptionCannotLoadPlugin,		[NSNumber numberWithInt: WebKitErrorCannotLoadPlugIn],
         WebKitErrorDescriptionJavaUnavailable,		[NSNumber numberWithInt: WebKitErrorJavaUnavailable],
+        WebKitErrorDescriptionPlugInCancelledConnection,[NSNumber numberWithInt: WebKitErrorPlugInCancelledConnection],
         nil];
 
     [NSError _web_addErrorsWithCodesAndDescriptions:dict inDomain:WebKitErrorDomain];

@@ -10,6 +10,7 @@
 #import <WebKit/WebKitErrorsPrivate.h>
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebNetscapePluginEmbeddedView.h>
+#import <WebKit/WebNetscapePluginPackage.h>
 #import <WebKit/WebViewPrivate.h>
 
 #import <Foundation/NSError_NSURLExtras.h>
@@ -74,7 +75,18 @@
 
 - (void)cancelWithReason:(NPReason)theReason
 {
-    [_loader cancel];
+    if (theReason == WEB_REASON_PLUGIN_CANCELLED) {
+        NSURLResponse *response = [_loader response];
+        NSError *error = [[NSError alloc] _initWithPluginErrorCode:WebKitErrorPlugInCancelledConnection
+                                                        contentURL:[response URL]
+                                                     pluginPageURL:nil
+                                                        pluginName:[plugin name]
+                                                          MIMEType:[response MIMEType]];
+        [_loader cancelWithError:error];
+        [error release];
+    } else {
+        [_loader cancel];
+    }
     [super cancelWithReason:theReason];
 }
 

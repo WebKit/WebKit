@@ -1,3 +1,21 @@
+2004-06-21  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3701269> change in error handling behavior from 10.3.3 to 10.3.4 breaks unreleased Adobe PDF plug-in
+
+        Reviewed by john.
+
+        * Misc.subproj/WebKitErrors.m:
+        (registerErrors): register string for WebKitErrorPlugInCancelledConnection
+        * Misc.subproj/WebKitErrorsPrivate.h:
+        * Plugins.subproj/WebBaseNetscapePluginStream.h:
+        * Plugins.subproj/WebBaseNetscapePluginStream.m:
+        (-[WebBaseNetscapePluginStream startStreamWithURL:expectedContentLength:lastModifiedDate:MIMEType:]): use renamed WEB_REASON_PLUGIN_CANCELLED constant
+        (-[WebBaseNetscapePluginStream destroyStream]): ditto
+        * Plugins.subproj/WebNetscapePluginRepresentation.m:
+        (-[WebNetscapePluginRepresentation cancelWithReason:]): if the reason is WEB_REASON_PLUGIN_CANCELLED, cancel the load with WebKitErrorPlugInCancelledConnection
+        * Plugins.subproj/WebNetscapePluginStream.m:
+        (-[WebNetscapePluginStream cancelWithReason:]): ditto
+
 === Safari-146 ===
 
 2004-06-17  Richard Williamson   <rjw@apple.com>

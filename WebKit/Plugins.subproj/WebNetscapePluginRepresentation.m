@@ -3,10 +3,12 @@
 	Copyright 2002, Apple, Inc. All rights reserved.
 */
 
-#import <WebKit/WebDataSource.h>
+#import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebFrame.h>
 #import <WebKit/WebFrameView.h>
+#import <WebKit/WebKitErrorsPrivate.h>
 #import <WebKit/WebNetscapePluginDocumentView.h>
+#import <WebKit/WebNetscapePluginPackage.h>
 #import <WebKit/WebNetscapePluginRepresentation.h>
 
 #import <Foundation/NSURLResponse.h>
@@ -68,7 +70,17 @@
 
 - (void)cancelWithReason:(NPReason)theReason
 {
-    [[_dataSource webFrame] stopLoading];
+    if (theReason == WEB_REASON_PLUGIN_CANCELLED) {
+        NSError *error = [[NSError alloc] _initWithPluginErrorCode:WebKitErrorPlugInCancelledConnection
+                                                        contentURL:[[_dataSource request] URL]
+                                                     pluginPageURL:nil
+                                                        pluginName:[plugin name]
+                                                          MIMEType:[[_dataSource response] MIMEType]];
+        [_dataSource _stopLoadingWithError:error];
+        [error release];
+    } else {
+        [[_dataSource webFrame] stopLoading];
+    }
     [super cancelWithReason:theReason];
 }
 
