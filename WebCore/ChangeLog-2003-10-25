@@ -1,3 +1,14 @@
+2003-03-20  Richard Williamson   <rjw@apple.com>
+
+        Use "Item" consistently in the WebHistory and WebBackForwardList.
+        Change createSharedHistoryWithFile: to setSharedHistory:
+        Make the various page cache methods per WebBackForwardList instead of global.
+        
+        Reviewed by gramps.
+
+        * kwq/KWQKHistoryProvider.mm:
+        * kwq/WebCoreHistory.h:
+
 2003-03-20  David Hyatt  <hyatt@apple.com>
 
 	Always do residual style fixups in all three Safari rendering

@@ -5,6 +5,7 @@
 #import <Foundation/Foundation.h>
 
 @class WebHistoryItem;
+@class WebBackForwardListPrivate;
 
 /*!
     @class WebBackForwardList
@@ -16,10 +17,8 @@
     structure.
 */
 @interface WebBackForwardList : NSObject {
-    @private
-    NSMutableArray *_entries;
-    int _current;
-    int _maximumSize;
+@private
+    WebBackForwardListPrivate *_private;
 }
 
 /*!
@@ -29,28 +28,28 @@
     will load much more quickly; however, they may not always be up-to-date.  The
     page cache may not apply to all pages.
 */
-+ (void)setUsesPageCache: (BOOL)flag;
+- (void)setUsesPageCache: (BOOL)flag;
 
 /*!
     @method usesPageCache
     @abstract Returns whether page cacheing is enabled. 
     @result YES if the page cache is enabled, otherwise NO. 
 */
-+ (BOOL)usesPageCache;
+- (BOOL)usesPageCache;
 
 /*!
     @method setPageCacheSize:
     @abstract Sets the size of the page cache.
     @param size The number of pages to allow in the page cache.
 */
-+ (void)setPageCacheSize: (unsigned)size;
+- (void)setPageCacheSize: (unsigned)size;
 
 /*!
     @method pageCacheSize
     @abstract Returns the number of pages that may be cached.
     @result The number of pages that may be cached.
 */
-+ (unsigned)pageCacheSize;
+- (unsigned)pageCacheSize;
 
 /*!
     @method clearPageCache
@@ -59,7 +58,7 @@
 - (void)clearPageCache;
 
 /*!
-    @method addEntry:
+    @method addItem:
     @abstract Adds an entry to the list.
     @param entry The entry to add.
     @discussion The added entry is inserted immediately after the current entry.
@@ -67,7 +66,7 @@
     forward list will be dropped at this point.  In addition, entries may be dropped to keep
     the size of the list within the maximum size.
 */    
-- (void)addEntry:(WebHistoryItem *)entry;
+- (void)addItem:(WebHistoryItem *)item;
 
 /*!
     @method goBack
@@ -82,40 +81,40 @@
 - (void)goForward;
 
 /*!
-    @method goToEntry:
+    @method goToItem:
     @abstract Move the current pointer to the given entry.
-    @param entry The history item to move the pointer to
+    @param item The history item to move the pointer to
 */
-- (void)goToEntry:(WebHistoryItem *)entry;
+- (void)goToItem:(WebHistoryItem *)item;
 
 /*!
-    @method backEntry
+    @method backItem
     @abstract Returns the entry right before the current entry.
     @result The entry right before the current entry, or nil if there isn't one.
 */
-- (WebHistoryItem *)backEntry;
+- (WebHistoryItem *)backItem;
 
 /*!
-    @method currentEntry
+    @method currentItem
     @abstract Returns the current entry.
     @result The current entry.
 */
-- (WebHistoryItem *)currentEntry;
+- (WebHistoryItem *)currentItem;
 
 /*!
-    @method forwardEntry
+    @method forwardItem
     @abstract Returns the entry right after the current entry.
     @result The entry right after the current entry, or nil if there isn't one.
 */
-- (WebHistoryItem *)forwardEntry;
+- (WebHistoryItem *)forwardItem;
 
 /*!
-    @method containsEntry:
+    @method containsItem:
     @abstract Returns whether the receiver contains the given entry.
-    @param entry The history item to search for.
+    @param item The history item to search for.
     @result YES if the list contains the given entry, otherwise NO.
 */
-- (BOOL)containsEntry:(WebHistoryItem *)entry;
+- (BOOL)containsItem:(WebHistoryItem *)item;
 
 /*!
     @method backListWithSizeLimit:
@@ -162,11 +161,11 @@
 - (int)forwardListCount;
 
 /*!
-    @method entryAtIndex:
+    @method itemAtIndex:
     @abstract Returns an entry the given distance from the current entry.
     @param index Index of the desired list item relative to the current item; 0 is current item, -1 is back item, 1 is forward item, etc.
     @result The entry the given distance from the current entry. If index exceeds the limits of the list, nil is returned.
 */
-- (WebHistoryItem *)entryAtIndex:(int)index;
+- (WebHistoryItem *)itemAtIndex:(int)index;
 
 @end

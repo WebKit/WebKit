@@ -87,7 +87,7 @@
     return NO;
 }
 
-- (void)insertEntry: (WebHistoryItem *)entry atDateIndex: (int)dateIndex
+- (void)insertItem: (WebHistoryItem *)entry atDateIndex: (int)dateIndex
 {
     int index, count;
     NSMutableArray *entriesForDate;
@@ -110,7 +110,7 @@
     [entriesForDate insertObject: entry atIndex: index];
 }
 
-- (BOOL)removeEntryForURLString: (NSString *)URLString
+- (BOOL)removeItemForURLString: (NSString *)URLString
 {
     NSMutableArray *entriesForDate;
     WebHistoryItem *entry;
@@ -141,7 +141,7 @@
 }
 
 
-- (void)addEntry: (WebHistoryItem *)entry
+- (void)addItem: (WebHistoryItem *)entry
 {
     int dateIndex;
     NSString *URLString;
@@ -153,11 +153,11 @@
 #else
     URLString = [[entry URL] absoluteString];
 #endif
-    [self removeEntryForURLString: URLString];
+    [self removeItemForURLString: URLString];
 
     if ([self findIndex: &dateIndex forDay: [entry lastVisitedDate]]) {
         // other entries already exist for this date
-        [self insertEntry: entry atDateIndex: dateIndex];
+        [self insertItem: entry atDateIndex: dateIndex];
     } else {
         // no other entries exist for this date
         [_datesWithEntries insertObject: [entry lastVisitedDate] atIndex: dateIndex];
@@ -167,7 +167,7 @@
     [_entriesByURL setObject: entry forKey: URLString];
 }
 
-- (BOOL)removeEntry: (WebHistoryItem *)entry
+- (BOOL)removeItem: (WebHistoryItem *)entry
 {
     WebHistoryItem *matchingEntry;
     NSString *URLString;
@@ -186,12 +186,12 @@
         return NO;
     }
 
-    [self removeEntryForURLString: URLString];
+    [self removeItemForURLString: URLString];
 
     return YES;
 }
 
-- (BOOL)removeEntries: (NSArray *)entries
+- (BOOL)removeItems: (NSArray *)entries
 {
     int index, count;
 
@@ -201,13 +201,13 @@
     }
 
     for (index = 0; index < count; ++index) {
-        [self removeEntry:[entries objectAtIndex:index]];
+        [self removeItem:[entries objectAtIndex:index]];
     }
     
     return YES;
 }
 
-- (BOOL)removeAllEntries
+- (BOOL)removeAllItems
 {
     if ([_entriesByURL count] == 0) {
         return NO;
@@ -220,19 +220,19 @@
     return YES;
 }
 
-- (void)addEntries:(NSArray *)newEntries
+- (void)addItems:(NSArray *)newEntries
 {
     NSEnumerator *enumerator;
     WebHistoryItem *entry;
 
     // There is no guarantee that the incoming entries are in any particular
     // order, but if this is called with a set of entries that were created by
-    // iterating through the results of orderedLastVisitedDays and orderedEntriesLastVisitedOnDayy
+    // iterating through the results of orderedLastVisitedDays and orderedItemsLastVisitedOnDayy
     // then they will be ordered chronologically from newest to oldest. We can make adding them
     // faster (fewer compares) by inserting them from oldest to newest.
     enumerator = [newEntries reverseObjectEnumerator];
     while ((entry = [enumerator nextObject]) != nil) {
-        [self addEntry:entry];
+        [self addItem:entry];
     }
 }
 
@@ -243,7 +243,7 @@
     return _datesWithEntries;
 }
 
-- (NSArray *)orderedEntriesLastVisitedOnDay: (NSCalendarDate *)date
+- (NSArray *)orderedItemsLastVisitedOnDay: (NSCalendarDate *)date
 {
     int index;
 
@@ -261,7 +261,7 @@
     return [_entriesByURL objectForKey: URLString];
 }
 
-- (BOOL)containsEntryForURLString: (NSString *)URLString
+- (BOOL)containsItemForURLString: (NSString *)URLString
 {
     return [self _entryForURLString:URLString] != nil;
 }
@@ -275,7 +275,7 @@
 #endif
 }
 
-- (WebHistoryItem *)entryForURL:(NSURL *)URL
+- (WebHistoryItem *)itemForURL:(NSURL *)URL
 {
 #ifdef FIX_VISITED
     return [self _entryForURLString:[[URL _web_canonicalize] absoluteString]];
@@ -396,7 +396,7 @@
             }
         }
         
-        [self addEntry: entry];
+        [self addItem: entry];
         if (++index >= limit) {
             break;
         }

@@ -16,9 +16,9 @@
 #import <WebCore/WebCoreHistory.h>
 
 
-NSString *WebHistoryEntriesAddedNotification = @"WebHistoryEntriesAddedNotification";
-NSString *WebHistoryEntriesRemovedNotification = @"WebHistoryEntriesRemovedNotification";
-NSString *WebHistoryAllEntriesRemovedNotification = @"WebHistoryAllEntriesRemovedNotification";
+NSString *WebHistoryItemsAddedNotification = @"WebHistoryItemsAddedNotification";
+NSString *WebHistoryItemsRemovedNotification = @"WebHistoryItemsRemovedNotification";
+NSString *WebHistoryAllItemsRemovedNotification = @"WebHistoryAllItemsRemovedNotification";
 NSString *WebHistoryLoadedNotification = @"WebHistoryLoadedNotification";
 
 static WebHistory *_sharedHistory = nil;
@@ -37,9 +37,9 @@ static WebHistory *_sharedHistory = nil;
     return self;
 }
 
-- (BOOL)containsEntryForURLString: (NSString *)URLString
+- (BOOL)containsItemForURLString: (NSString *)URLString
 {
-    return [history containsEntryForURLString: URLString];
+    return [history containsItemForURLString: URLString];
 }
 
 - (void)dealloc
@@ -58,15 +58,15 @@ static WebHistory *_sharedHistory = nil;
 }
 
 
-+ (WebHistory *)createSharedHistoryWithFile: (NSString*)file
++ (void)setSharedHistory: (WebHistory *)history
 {
     // FIXME.  Need to think about multiple instances of WebHistory per application
     // and correct synchronization of history file between applications.
-    WebHistory *h = [[self alloc] initWithFile:file];
-    [WebCoreHistory setHistoryProvider: [[[_WebCoreHistoryProvider alloc] initWithHistory: h] autorelease]];
-    _sharedHistory = h;
-    
-    return h;
+    [WebCoreHistory setHistoryProvider: [[[_WebCoreHistoryProvider alloc] initWithHistory: history] autorelease]];
+    if (_sharedHistory != history){
+        [_sharedHistory release];
+        _sharedHistory = [history retain];
+    }
 }
 
 - (id)initWithFile: (NSString *)file;
@@ -93,51 +93,51 @@ static WebHistory *_sharedHistory = nil;
         postNotificationName: name object: self userInfo: userInfo];
 }
 
-- (WebHistoryItem *)addEntryForURL: (NSURL *)URL
+- (WebHistoryItem *)addItemForURL: (NSURL *)URL
 {
     WebHistoryItem *entry = [[WebHistoryItem alloc] initWithURL:URL title:nil];
-    [self addEntry: entry];
+    [self addItem: entry];
     [entry release];
     return entry;
 }
 
 
-- (void)addEntry: (WebHistoryItem *)entry
+- (void)addItem: (WebHistoryItem *)entry
 {
-    [_historyPrivate addEntry: entry];
-    [self _sendNotification: WebHistoryEntriesAddedNotification
+    [_historyPrivate addItem: entry];
+    [self _sendNotification: WebHistoryItemsAddedNotification
                     entries: [NSArray arrayWithObject:entry]];
 }
 
-- (void)removeEntry: (WebHistoryItem *)entry
+- (void)removeItem: (WebHistoryItem *)entry
 {
-    if ([_historyPrivate removeEntry: entry]) {
-        [self _sendNotification: WebHistoryEntriesRemovedNotification
+    if ([_historyPrivate removeItem: entry]) {
+        [self _sendNotification: WebHistoryItemsRemovedNotification
                         entries: [NSArray arrayWithObject:entry]];
     }
 }
 
-- (void)removeEntries: (NSArray *)entries
+- (void)removeItems: (NSArray *)entries
 {
-    if ([_historyPrivate removeEntries:entries]) {
-        [self _sendNotification: WebHistoryEntriesRemovedNotification
+    if ([_historyPrivate removeItems:entries]) {
+        [self _sendNotification: WebHistoryItemsRemovedNotification
                         entries: entries];
     }
 }
 
-- (void)removeAllEntries
+- (void)removeAllItems
 {
-    if ([_historyPrivate removeAllEntries]) {
+    if ([_historyPrivate removeAllItems]) {
         [[NSNotificationCenter defaultCenter]
-            postNotificationName: WebHistoryAllEntriesRemovedNotification
+            postNotificationName: WebHistoryAllItemsRemovedNotification
                           object: self];
     }
 }
 
-- (void)addEntries:(NSArray *)newEntries
+- (void)addItems:(NSArray *)newEntries
 {
-    [_historyPrivate addEntries:newEntries];
-    [self _sendNotification: WebHistoryEntriesAddedNotification
+    [_historyPrivate addItems:newEntries];
+    [self _sendNotification: WebHistoryItemsAddedNotification
                     entries: newEntries];
 }
 
@@ -148,16 +148,16 @@ static WebHistory *_sharedHistory = nil;
     return [_historyPrivate orderedLastVisitedDays];
 }
 
-- (NSArray *)orderedEntriesLastVisitedOnDay: (NSCalendarDate *)date
+- (NSArray *)orderedItemsLastVisitedOnDay: (NSCalendarDate *)date
 {
-    return [_historyPrivate orderedEntriesLastVisitedOnDay: date];
+    return [_historyPrivate orderedItemsLastVisitedOnDay: date];
 }
 
 #pragma mark URL MATCHING
 
-- (BOOL)containsEntryForURLString: (NSString *)URLString
+- (BOOL)containsItemForURLString: (NSString *)URLString
 {
-    return [_historyPrivate containsEntryForURLString: URLString];
+    return [_historyPrivate containsItemForURLString: URLString];
 }
 
 - (BOOL)containsURL: (NSURL *)URL
@@ -165,9 +165,9 @@ static WebHistory *_sharedHistory = nil;
     return [_historyPrivate containsURL: URL];
 }
 
-- (WebHistoryItem *)entryForURL:(NSURL *)URL
+- (WebHistoryItem *)itemForURL:(NSURL *)URL
 {
-    return [_historyPrivate entryForURL:URL];
+    return [_historyPrivate itemForURL:URL];
 }
 
 #pragma mark SAVING TO DISK

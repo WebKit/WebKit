@@ -10,6 +10,26 @@
 #import <WebFoundation/WebAssertions.h>
 #import <WebFoundation/WebSystemBits.h>
 
+@interface WebBackForwardListPrivate : NSObject
+{
+@public
+    NSMutableArray *entries;
+    int current;
+    int maximumSize;
+    BOOL usesPageCache;
+    BOOL pageCacheSizeModified;
+    unsigned pageCacheSize;
+}
+@end
+
+@implementation WebBackForwardListPrivate
+- (void)dealloc
+{
+    [entries release];
+    [super dealloc];
+}
+@end
+
 @implementation WebBackForwardList
 
 - (id)init
@@ -19,112 +39,118 @@
         return nil;
     }
     
-    _entries = [[NSMutableArray alloc] init];
-    _current = -1;
-    _maximumSize = 100;		// typically set by browser app
+    _private = [[WebBackForwardListPrivate alloc] init];
+    
+    _private->entries = [[NSMutableArray alloc] init];
+    _private->current = -1;
+    _private->maximumSize = 100;		// typically set by browser app
 
+    _private->usesPageCache = YES;
+    _private->pageCacheSizeModified = NO;
+    _private->pageCacheSize = 4;
+    
     return self;
 }
 
 - (void)dealloc
 {
     unsigned i;
-    for (i = 0; i < [_entries count]; i++){
-        WebHistoryItem *item = [_entries objectAtIndex: i];
+    for (i = 0; i < [_private->entries count]; i++){
+        WebHistoryItem *item = [_private->entries objectAtIndex: i];
         [item setHasPageCache: NO]; 
     }
-    [_entries release];
+    [_private release];
     [super dealloc];
 }
 
-- (void)addEntry:(WebHistoryItem *)entry;
+- (void)addItem:(WebHistoryItem *)entry;
 {
     // Toss anything in the forward list
-    int currSize = [_entries count];
-    if (_current != currSize-1 && _current != -1) {
-        NSRange forwardRange = NSMakeRange(_current+1, currSize-(_current+1));
+    int currSize = [_private->entries count];
+    if (_private->current != currSize-1 && _private->current != -1) {
+        NSRange forwardRange = NSMakeRange(_private->current+1, currSize-(_private->current+1));
         NSArray *subarray;
-        subarray = [_entries subarrayWithRange:forwardRange];
+        subarray = [_private->entries subarrayWithRange:forwardRange];
         unsigned i;
         for (i = 0; i < [subarray count]; i++){
             WebHistoryItem *item = [subarray objectAtIndex: i];
             [item setHasPageCache: NO];            
         }
-        [_entries removeObjectsInRange: forwardRange];
+        [_private->entries removeObjectsInRange: forwardRange];
         currSize -= forwardRange.length;
     }
 
     // Toss the first item if the list is getting too big, as long as we're not using it
-    if (currSize == _maximumSize && _current != 0) {
-        WebHistoryItem *item = [_entries objectAtIndex: 0];
+    if (currSize == _private->maximumSize && _private->current != 0) {
+        WebHistoryItem *item = [_private->entries objectAtIndex: 0];
         [item setHasPageCache: NO];
-        [_entries removeObjectAtIndex:0];
+        [_private->entries removeObjectAtIndex:0];
         currSize--;
-        _current--;
+        _private->current--;
     }
 
-    [_entries addObject:entry];
-    _current++;
+    [_private->entries addObject:entry];
+    _private->current++;
 }
 
 - (void)goBack
 {
-    ASSERT(_current > 0);
-    _current--;
+    ASSERT(_private->current > 0);
+    _private->current--;
 }
 
 - (void)goForward
 {
-    ASSERT(_current < (int)[_entries count]-1);
-    _current++;
+    ASSERT(_private->current < (int)[_private->entries count]-1);
+    _private->current++;
 }
 
-- (void)goToEntry:(WebHistoryItem *)entry
+- (void)goToItem:(WebHistoryItem *)entry
 {
-    int index = [_entries indexOfObjectIdenticalTo:entry];
+    int index = [_private->entries indexOfObjectIdenticalTo:entry];
     ASSERT(index != NSNotFound);
-    _current = index;
+    _private->current = index;
 }
 
-- (WebHistoryItem *)backEntry
+- (WebHistoryItem *)backItem
 {
-    if (_current > 0) {
-        return [_entries objectAtIndex:_current-1];
+    if (_private->current > 0) {
+        return [_private->entries objectAtIndex:_private->current-1];
     } else {
         return nil;
     }
 }
 
-- (WebHistoryItem *)currentEntry;
+- (WebHistoryItem *)currentItem
 {
-    if (_current >= 0) {
-        return [_entries objectAtIndex:_current];
+    if (_private->current >= 0) {
+        return [_private->entries objectAtIndex:_private->current];
     } else {
         return nil;
     }
 }
 
-- (WebHistoryItem *)forwardEntry
+- (WebHistoryItem *)forwardItem
 {
-    if (_current < (int)[_entries count]-1) {
-        return [_entries objectAtIndex:_current+1];
+    if (_private->current < (int)[_private->entries count]-1) {
+        return [_private->entries objectAtIndex:_private->current+1];
     } else {
         return nil;
     }
 }
 
-- (BOOL)containsEntry:(WebHistoryItem *)entry
+- (BOOL)containsItem:(WebHistoryItem *)entry
 {
-    return [_entries indexOfObjectIdenticalTo:entry] != NSNotFound;
+    return [_private->entries indexOfObjectIdenticalTo:entry] != NSNotFound;
 }
 
 - (NSArray *)backListWithSizeLimit:(int)limit;
 {
-    if (_current > 0) {
+    if (_private->current > 0) {
         NSRange r;
-        r.location = MAX(_current-limit, 0);
-        r.length = _current - r.location;
-        return [_entries subarrayWithRange:r];
+        r.location = MAX(_private->current-limit, 0);
+        r.length = _private->current - r.location;
+        return [_private->entries subarrayWithRange:r];
     } else {
         return nil;
     }
@@ -132,12 +158,12 @@
 
 - (NSArray *)forwardListWithSizeLimit:(int)limit;
 {
-    int lastEntry = (int)[_entries count]-1;
-    if (_current < lastEntry) {
+    int lastEntry = (int)[_private->entries count]-1;
+    if (_private->current < lastEntry) {
         NSRange r;
-        r.location = _current+1;
-        r.length =  MIN(_current+limit, lastEntry) - _current;
-        return [_entries subarrayWithRange:r];
+        r.location = _private->current+1;
+        r.length =  MIN(_private->current+limit, lastEntry) - _private->current;
+        return [_private->entries subarrayWithRange:r];
     } else {
         return nil;
     }
@@ -145,12 +171,12 @@
 
 - (int)maximumSize
 {
-    return _maximumSize;
+    return _private->maximumSize;
 }
 
 - (void)setMaximumSize:(int)size
 {
-    _maximumSize = size;
+    _private->maximumSize = size;
 }
 
 
@@ -164,8 +190,8 @@
     [result appendString:@"\n--------------------------------------------\n"];    
     [result appendString:@"WebBackForwardList:\n"];
     
-    for (i = 0; i < (int)[_entries count]; i++) {
-        if (i == _current) {
+    for (i = 0; i < (int)[_private->entries count]; i++) {
+        if (i == _private->current) {
             [result appendString:@" >>>"]; 
         }
         else {
@@ -173,7 +199,7 @@
         }   
         [result appendFormat:@"%2d) ", i];
         int currPos = [result length];
-        [result appendString:[[_entries objectAtIndex:i] description]];
+        [result appendString:[[_private->entries objectAtIndex:i] description]];
 
         // shift all the contents over.  a bit slow, but this is for debugging
         NSRange replRange = {currPos, [result length]-currPos};
@@ -190,28 +216,26 @@
 - (void)clearPageCache
 {
     int i;
-    for (i = 0; i < (int)[_entries count]; i++) {
-        [[_entries objectAtIndex:i] setHasPageCache:NO];
+    for (i = 0; i < (int)[_private->entries count]; i++) {
+        [[_private->entries objectAtIndex:i] setHasPageCache:NO];
     }
     [WebHistoryItem _releaseAllPendingPageCaches];
 }
 
-static BOOL pageCacheSizeModified = NO;
-static unsigned pageCacheSize = 4;
 
-+ (void)setPageCacheSize: (unsigned)size
+- (void)setPageCacheSize: (unsigned)size
 {
-    pageCacheSizeModified = YES;
-    pageCacheSize = size;
+    _private->pageCacheSizeModified = YES;
+    _private->pageCacheSize = size;
 }
 
 #ifndef NDEBUG
 static BOOL loggedPageCacheSize = NO;
 #endif
 
-+ (unsigned)pageCacheSize
+- (unsigned)pageCacheSize
 {
-    if (!pageCacheSizeModified){
+    if (!_private->pageCacheSizeModified){
         unsigned s;
         vm_size_t memSize = WebSystemMainMemory();
         unsigned multiplier = 1;
@@ -231,44 +255,43 @@ static BOOL loggedPageCacheSize = NO;
 
         return s * multiplier;
     }
-    return pageCacheSize;
+    return _private->pageCacheSize;
 }
 
 // On be default for now.
-static BOOL usesPageCache = YES;
 
-+ (void)setUsesPageCache: (BOOL)f
+- (void)setUsesPageCache: (BOOL)f
 {
-    usesPageCache = f ? YES : NO;
+    _private->usesPageCache = f ? YES : NO;
 }
 
-+ (BOOL)usesPageCache
+- (BOOL)usesPageCache
 {
-    if ([WebBackForwardList pageCacheSize] == 0)
+    if ([self pageCacheSize] == 0)
         return NO;
-    return usesPageCache;
+    return _private->usesPageCache;
 }
 
 - (int)backListCount
 {
-    return _current;
+    return _private->current;
 }
 
 - (int)forwardListCount
 {
-    return (int)[_entries count] - (_current + 1);
+    return (int)[_private->entries count] - (_private->current + 1);
 }
 
-- (WebHistoryItem *)entryAtIndex:(int)index
+- (WebHistoryItem *)itemAtIndex:(int)index
 {
     // Do range checks without doing math on index to avoid overflow.
-    if (index < -_current) {
+    if (index < -_private->current) {
         return nil;
     }
     if (index > [self forwardListCount]) {
         return nil;
     }
-    return [_entries objectAtIndex:index + _current];
+    return [_private->entries objectAtIndex:index + _private->current];
 }
 
 @end

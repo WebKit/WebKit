@@ -260,7 +260,7 @@ Repeat load of the same URL (by any other means of navigation other than the rel
 - (WebHistoryItem *)_addBackForwardItemClippedAtTarget:(BOOL)doClip
 {
     WebHistoryItem *bfItem = [[[self webView] mainFrame] _createItemTreeWithTargetFrame:self clippedAtTarget:doClip];
-    [[[self webView] backForwardList] addEntry:bfItem];
+    [[[self webView] backForwardList] addItem:bfItem];
     return bfItem;
 }
 
@@ -644,7 +644,7 @@ Repeat load of the same URL (by any other means of navigation other than the rel
                     // Add item to history.
 		    NSURL *URL = [[[ds _originalRequest] URL] _web_canonicalize];
 		    if ([[URL absoluteString] length] > 0) {
-			entry = [[WebHistory sharedHistory] addEntryForURL:URL];
+			entry = [[WebHistory sharedHistory] addItemForURL:URL];
 			if (ptitle)
 			    [entry setTitle: ptitle];
                         [self _addBackForwardItemClippedAtTarget:YES];
@@ -706,13 +706,13 @@ Repeat load of the same URL (by any other means of navigation other than the rel
 
 - (BOOL)_canCachePage
 {
-    return [WebBackForwardList usesPageCache];
+    return [[[self webView] backForwardList] usesPageCache];
 }
 
 - (void)_purgePageCache
 {
     // This method implements the rule for purging the page cache.
-    unsigned sizeLimit = [WebBackForwardList pageCacheSize];
+    unsigned sizeLimit = [[[self webView] backForwardList] pageCacheSize];
     unsigned pagesCached = 0;
     WebBackForwardList *backForwardList = [[self webView] backForwardList];
     NSArray *backList = [backForwardList backListWithSizeLimit: 999999];
@@ -1200,11 +1200,11 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 {
     ASSERT(!_private->parent);
     WebBackForwardList *backForwardList = [[self webView] backForwardList];
-    WebHistoryItem *currItem = [backForwardList currentEntry];
+    WebHistoryItem *currItem = [backForwardList currentItem];
     // Set the BF cursor before commit, which lets the user quickly click back/forward again.
     // - plus, it only makes sense for the top level of the operation through the frametree,
     // as opposed to happening for some/one of the page commits that might happen soon
-    [backForwardList goToEntry:item];
+    [backForwardList goToItem:item];
     [self _recursiveGoToItem:item fromItem:currItem withLoadType:type];
 }
 
@@ -1815,7 +1815,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         && [_private currentItem]
         && self == [[self webView] mainFrame])
     {
-        [[[self webView] backForwardList] goToEntry:[_private currentItem]];
+        [[[self webView] backForwardList] goToItem:[_private currentItem]];
     }
 }
 

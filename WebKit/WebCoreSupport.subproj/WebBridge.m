@@ -722,17 +722,17 @@ static BOOL loggedObjectCacheSize = NO;
     }
     WebView *controller = [frame webView];
     WebBackForwardList *list = [controller backForwardList];
-    WebHistoryItem *item = [list entryAtIndex:distance];
+    WebHistoryItem *item = [list itemAtIndex:distance];
     if (!item) {
         if (distance > 0) {
             int forwardListCount = [list forwardListCount];
             if (forwardListCount > 0) {
-                item = [list entryAtIndex:forwardListCount];
+                item = [list itemAtIndex:forwardListCount];
             }
         } else {
             int backListCount = [list forwardListCount];
             if (backListCount > 0) {
-                item = [list entryAtIndex:-backListCount];
+                item = [list itemAtIndex:-backListCount];
             }
         }
     }

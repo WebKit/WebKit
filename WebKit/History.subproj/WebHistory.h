@@ -13,12 +13,12 @@
 // The first two come with a userInfo dictionary with a single key "Entries", which contains
 // an array of entries that were added or removed.
 
-// posted from addEntry: and addEntries:
-extern NSString *WebHistoryEntriesAddedNotification;
-// posted from removeEntry: and removeEntries:
-extern NSString *WebHistoryEntriesRemovedNotification;
-// posted from removeAllEntries
-extern NSString *WebHistoryAllEntriesRemovedNotification;
+// posted from addItems:
+extern NSString *WebHistoryItemsAddedNotification;
+// posted from and removeItemss:
+extern NSString *WebHistoryItemsRemovedNotification;
+// posted from removeAllItems
+extern NSString *WebHistoryAllItemsRemovedNotification;
 // posted from loadHistory
 extern NSString *WebHistoryLoadedNotification;
 
@@ -44,43 +44,31 @@ extern NSString *WebHistoryLoadedNotification;
     @param file The file to use to initialize the WebHistory.
     @result Returns a WebHistory initialized with the contents of file.
 */
-+ (WebHistory *)createSharedHistoryWithFile: (NSString*)file;
++ (void)setSharedHistory:(WebHistory *)file;
 
 /*!
     @method initWithFile:
     @abstract The designated initializer for WebHistory.
     @result Returns an initialized WebHistory.
 */
-- initWithFile: (NSString *)file;
-
-/*!
-    @method addEntry:
-    @param entry The history item to add to the WebHistory.
-*/
-- (void)addEntry: (WebHistoryItem *)entry;
+- initWithFile:(NSString *)file;
 
 /*!
     @method addEntries:
     @param newEntries An array of WebHistoryItems to add to the WebHistory.
 */
-- (void)addEntries:(NSArray *)newEntries;
-
-/*!
-    @method removeEntry:
-    @param entry The WebHistoryItem to remove from the WebHistory.
-*/
-- (void)removeEntry: (WebHistoryItem *)entry;
+- (void)addItems:(NSArray *)newEntries;
 
 /*!
     @method removeEntries:
     @param entries An array of WebHistoryItems to remove from the WebHistory.
 */
-- (void)removeEntries: (NSArray *)entries;
+- (void)removeItems:(NSArray *)entries;
 
 /*!
     @method removeAllEntries
 */
-- (void)removeAllEntries;
+- (void)removeAllItems;
 
 /*!
     @method orderedLastVisitedDays
@@ -97,7 +85,7 @@ extern NSString *WebHistoryLoadedNotification;
     @param calendarDate A date identifying the unique day of interest.
     @result Returns an array of WebHistoryItems last visited on the indicated day.
 */
-- (NSArray *)orderedEntriesLastVisitedOnDay: (NSCalendarDate *)calendarDate;
+- (NSArray *)orderedItemsLastVisitedOnDay:(NSCalendarDate *)calendarDate;
 
 /*!
     @method containsURL:
@@ -106,7 +94,7 @@ extern NSString *WebHistoryLoadedNotification;
     @discussion This method is useful for implementing a visited-link mechanism.
     @result YES if WebHistory contains a history item for the given URL, otherwise NO.
 */
-- (BOOL)containsURL: (NSURL *)URL;
+- (BOOL)containsURL:(NSURL *)URL;
 
 /*!
     @method entryForURL:
@@ -114,7 +102,7 @@ extern NSString *WebHistoryLoadedNotification;
     @param URL The URL of the history item to search for
     @result Returns an item matching the URL
 */
-- (WebHistoryItem *)entryForURL:(NSURL *)URL;
+- (WebHistoryItem *)itemForURL:(NSURL *)URL;
 
 /*!
     @method file

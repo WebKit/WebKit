@@ -76,7 +76,7 @@ NSString *WebElementLinkTitleKey = 		@"WebElementLinkTitle";
         [WebControllerSets addController:self toSetNamed:_private->controllerSetName];
     }
 
-    [self setUsesBackForwardList: YES];
+    [self setMaintainsBackForwardList: YES];
 
     ++WebControllerCount;
 
@@ -212,7 +212,7 @@ NSString *WebElementLinkTitleKey = 		@"WebElementLinkTitle";
     return nil;
 }
 
-- (void)setUsesBackForwardList: (BOOL)flag
+- (void)setMaintainsBackForwardList: (BOOL)flag
 {
     _private->useBackForwardList = flag;
 }
@@ -229,7 +229,7 @@ NSString *WebElementLinkTitleKey = 		@"WebElementLinkTitle";
 
 - (BOOL)goBack
 {
-    WebHistoryItem *item = [[self backForwardList] backEntry];
+    WebHistoryItem *item = [[self backForwardList] backItem];
     
     if (item){
         [self _goToItem: item withLoadType: WebFrameLoadTypeBack];
@@ -240,7 +240,7 @@ NSString *WebElementLinkTitleKey = 		@"WebElementLinkTitle";
 
 - (BOOL)goForward
 {
-    WebHistoryItem *item = [[self backForwardList] forwardEntry];
+    WebHistoryItem *item = [[self backForwardList] forwardItem];
     
     if (item){
         [self _goToItem: item withLoadType: WebFrameLoadTypeForward];

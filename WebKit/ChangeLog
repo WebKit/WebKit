@@ -1,3 +1,83 @@
+2003-03-20  Richard Williamson   <rjw@apple.com>
+
+        Use "Item" consistently in the WebHistory and WebBackForwardList.
+        Change createSharedHistoryWithFile: to setSharedHistory:
+        Make the various page cache methods per WebBackForwardList instead of global.
+        
+        Reviewed by gramps.
+
+        * History.subproj/WebBackForwardList.h:
+        * History.subproj/WebBackForwardList.m:
+        (-[WebBackForwardListPrivate dealloc]):
+        (-[WebBackForwardList init]):
+        (-[WebBackForwardList dealloc]):
+        (-[WebBackForwardList goBack]):
+        (-[WebBackForwardList goForward]):
+        (-[WebBackForwardList goToItem:]):
+        (-[WebBackForwardList backItem]):
+        (-[WebBackForwardList currentItem]):
+        (-[WebBackForwardList forwardItem]):
+        (-[WebBackForwardList containsItem:]):
+        (-[WebBackForwardList maximumSize]):
+        (-[WebBackForwardList setMaximumSize:]):
+        (-[WebBackForwardList description]):
+        (-[WebBackForwardList clearPageCache]):
+        (-[WebBackForwardList setPageCacheSize:]):
+        (-[WebBackForwardList pageCacheSize]):
+        (-[WebBackForwardList setUsesPageCache:]):
+        (-[WebBackForwardList usesPageCache]):
+        (-[WebBackForwardList backListCount]):
+        (-[WebBackForwardList forwardListCount]):
+        (-[WebBackForwardList itemAtIndex:]):
+        * History.subproj/WebHistory.h:
+        * History.subproj/WebHistory.m:
+        (-[_WebCoreHistoryProvider containsItemForURLString:]):
+        (+[WebHistory setSharedHistory:]):
+        (-[WebHistory addItemForURL:]):
+        (-[WebHistory addItem:]):
+        (-[WebHistory removeItem:]):
+        (-[WebHistory removeItems:]):
+        (-[WebHistory removeAllItems]):
+        (-[WebHistory addItems:]):
+        (-[WebHistory orderedItemsLastVisitedOnDay:]):
+        (-[WebHistory containsItemForURLString:]):
+        (-[WebHistory itemForURL:]):
+        * History.subproj/WebHistoryItem.h:
+        * History.subproj/WebHistoryPrivate.h:
+        * History.subproj/WebHistoryPrivate.m:
+        (-[WebHistoryPrivate insertItem:atDateIndex:]):
+        (-[WebHistoryPrivate removeItemForURLString:]):
+        (-[WebHistoryPrivate addItem:]):
+        (-[WebHistoryPrivate removeItem:]):
+        (-[WebHistoryPrivate removeItems:]):
+        (-[WebHistoryPrivate removeAllItems]):
+        (-[WebHistoryPrivate addItems:]):
+        (-[WebHistoryPrivate orderedItemsLastVisitedOnDay:]):
+        (-[WebHistoryPrivate containsItemForURLString:]):
+        (-[WebHistoryPrivate itemForURL:]):
+        (-[WebHistoryPrivate _loadHistoryGuts:]):
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge goBackOrForward:]):
+        * WebKit.exp:
+        * WebKit.pbproj/project.pbxproj:
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _setTitle:]):
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _addBackForwardItemClippedAtTarget:]):
+        (-[WebFrame _transitionToCommitted:]):
+        (-[WebFrame _canCachePage]):
+        (-[WebFrame _purgePageCache]):
+        (-[WebFrame _goToItem:withLoadType:]):
+        (-[WebFrame _resetBackForwardListToCurrent]):
+        * WebView.subproj/WebLocationChangeDelegate.h:
+        * WebView.subproj/WebResourceLoadDelegate.h:
+        * WebView.subproj/WebView.h:
+        * WebView.subproj/WebView.m:
+        (-[WebView _commonInitialization:frameName:groupName:]):
+        (-[WebView setMaintainsBackForwardList:]):
+        (-[WebView goBack]):
+        (-[WebView goForward]):
+
 2003-03-20  Chris Blumenberg  <cblu@apple.com>
 
 	Properly handle file URL directory errors.

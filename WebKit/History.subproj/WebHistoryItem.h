@@ -36,7 +36,11 @@
     // info used to repost form data
     NSData *_formData;
     NSString *_formContentType;
-    NSString *_formReferrer;    
+    NSString *_formReferrer;
+    void *_reserved1;
+    void *_reserved2;
+    void *_reserved3;
+    void *_reserved4;
 }
 
 /*!

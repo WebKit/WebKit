@@ -203,7 +203,7 @@ extern NSString *WebElementLinkLabelKey;	// NSString of the text within the anch
     @abstract Enable or disable the use of a backforward list for this controller.
     @param flag Turns use of the back forward list on or off
 */    
-- (void)setUsesBackForwardList: (BOOL)flag;
+- (void)setMaintainsBackForwardList: (BOOL)flag;
 
 /*!
     @method goBack

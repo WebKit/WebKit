@@ -22,17 +22,17 @@
 
 - (id)initWithFile: (NSString *)file;
 
-- (void)addEntry: (WebHistoryItem *)entry;
-- (void)addEntries:(NSArray *)newEntries;
-- (BOOL)removeEntry: (WebHistoryItem *)entry;
-- (BOOL)removeEntries: (NSArray *)entries;
-- (BOOL)removeAllEntries;
+- (void)addItem: (WebHistoryItem *)entry;
+- (void)addItems:(NSArray *)newEntries;
+- (BOOL)removeItem: (WebHistoryItem *)entry;
+- (BOOL)removeItems: (NSArray *)entries;
+- (BOOL)removeAllItems;
 
 - (NSArray *)orderedLastVisitedDays;
-- (NSArray *)orderedEntriesLastVisitedOnDay: (NSCalendarDate *)calendarDate;
-- (BOOL)containsEntryForURLString: (NSString *)URLString;
+- (NSArray *)orderedItemsLastVisitedOnDay: (NSCalendarDate *)calendarDate;
+- (BOOL)containsItemForURLString: (NSString *)URLString;
 - (BOOL)containsURL: (NSURL *)URL;
-- (WebHistoryItem *)entryForURL:(NSURL *)URL;
+- (WebHistoryItem *)itemForURL:(NSURL *)URL;
 
 - (NSString *)file;
 - (BOOL)loadHistory;
@@ -41,8 +41,11 @@
 @end
 
 @interface WebHistory (WebPrivate)
+- (void)removeItem: (WebHistoryItem *)entry;
+- (void)addItem: (WebHistoryItem *)entry;
+
 - (BOOL)loadHistory;
 - initWithFile: (NSString *)file;
-- (WebHistoryItem *)addEntryForURL: (NSURL *)URL;
-- (BOOL)containsEntryForURLString: (NSString *)URLString;
+- (WebHistoryItem *)addItemForURL: (NSURL *)URL;
+- (BOOL)containsItemForURLString: (NSString *)URLString;
 @end
