@@ -633,7 +633,7 @@ RenderFrame::RenderFrame( DOM::HTMLFrameElementImpl *frame )
 
 void RenderFrame::slotViewCleared()
 {
-    if(m_widget->inherits("QScrollView")) {
+    if(element() && m_widget->inherits("QScrollView")) {
 #ifdef DEBUG_LAYOUT
         kdDebug(6031) << "frame is a scrollview!" << endl;
 #endif
@@ -964,7 +964,7 @@ void RenderPartObject::layout( )
 
 void RenderPartObject::slotViewCleared()
 {
-  if(m_widget->inherits("QScrollView") ) {
+  if(element() && m_widget->inherits("QScrollView") ) {
 #ifdef DEBUG_LAYOUT
       kdDebug(6031) << "iframe is a scrollview!" << endl;
 #endif

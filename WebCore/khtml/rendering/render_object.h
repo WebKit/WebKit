@@ -626,7 +626,9 @@ protected:
 
 private:
     RenderStyle* m_style;
+protected:
     DOM::NodeImpl* m_node;
+private:
     RenderObject *m_parent;
     RenderObject *m_previous;
     RenderObject *m_next;

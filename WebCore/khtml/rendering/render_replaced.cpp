@@ -142,6 +142,8 @@ void RenderWidget::detach(RenderArena* renderArena)
         m_widget->setMouseTracking( false );
     }
     
+    m_node = 0;
+    
     deref(renderArena);
 }
 

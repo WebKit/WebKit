@@ -1,3 +1,18 @@
+2003-06-09  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - first step in fixing 3275675 -- REGRESSION: crash when replacing <div> which contains iframe (at www.kbs.co.kr)
+
+        * khtml/rendering/render_object.h: Made m_node protected, so RenderWidget can zero it out.
+        * khtml/rendering/render_replaced.cpp: (RenderWidget::detach): Set m_node to 0 here.
+        RenderWidget does this strange thing of staying around after the DOM node is gone, but we need
+        to get rid of the dangling pointer to the DOM node.
+
+        * khtml/rendering/render_frames.cpp:
+        (RenderFrame::slotViewCleared): Do nothing if element() is 0, since we are on our way out anyway.
+        (RenderPartObject::slotViewCleared): Ditto.
+
 2003-06-09  John Sullivan  <sullivan@apple.com>
 
 	- fixed 3284312 -- repro nil-deref in 
