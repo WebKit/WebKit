@@ -1,5 +1,18 @@
 2004-05-18  Richard Williamson   <rjw@apple.com>
 
+	Added exception logging.  Also check for exception and
+	set results as appropriate.
+
+        Reviewed by Maciej (partially reviewed).
+
+        * bindings/objc/WebScriptObject.mm:
+        (-[WebScriptObject callWebScriptMethod:withArguments:]):
+        (-[WebScriptObject evaluateWebScript:]):
+        (-[WebScriptObject setValue:forKey:]):
+        (-[WebScriptObject valueForKey:]):
+
+2004-05-18  Richard Williamson   <rjw@apple.com>
+
 	Finsished implementing support for windowScriptObject.
 	Had to make WebScriptObjectPrivate.h accessible from
 	WebCore.
