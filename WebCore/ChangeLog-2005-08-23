@@ -2,6 +2,7 @@
 
 	Fixed: 
 	<rdar://problem/3625352> up and down arrow and page up/down keys don't work to scroll overflow:auto/scroll/overlay areas
+	<rdar://problem/3397658> scroll wheel does not work to scroll overflow:auto/scroll/overlay areas (RSS)
 	<rdar://problem/3822027> REGRESSION (Mail): When selection moves out of visible area, should center as NSText does
 
         Reviewed by hyatt, kocienda.
