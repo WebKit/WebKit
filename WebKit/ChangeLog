@@ -1,3 +1,14 @@
+2003-09-09  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3412380>: REGRESSION (85-98): www.minoltan.com is decoded incorrectly on Japanese system
+
+	The default encoding that Safari uses is latin1 regardless of the current system encoding. This is how it's always been. The problem is that the UI is displaying shift JIS for the default text encoding instead of latin1. This is happening because WebKit is using "latin1" instead of "ISO-8859-1" for the default text encoding name. "ISO-8859-1" is the IANA character set name for latin1 and this is what the  WebKitDefaultTextEncodingNamePreferenceKey preference expects. This ends up confusing Safari, so Safari just ends up displaying the first item in the pop-up menu which is shift JIS.
+
+        Reviewed by rjw.
+
+        * WebView.subproj/WebPreferences.m:
+        (+[WebPreferences initialize]): The WebKitDefaultTextEncodingNamePreferenceKey should be "ISO-8859-1" not "latin1" since "ISO-8859-1" is the IANA character set name for latin1.
+
 === Safari-99 ===
 
 2003-09-08  Darin Adler  <darin@apple.com>

@@ -194,7 +194,7 @@ NS_ENDHANDLER
         @"9",                           WebKitMinimumFontSizePreferenceKey,
         @"16",                          WebKitDefaultFontSizePreferenceKey,
         @"13",                          WebKitDefaultFixedFontSizePreferenceKey,
-        @"latin1",                      WebKitDefaultTextEncodingNamePreferenceKey,
+        @"ISO-8859-1",                  WebKitDefaultTextEncodingNamePreferenceKey,
         @"1.00",                        WebKitInitialTimedLayoutDelayPreferenceKey,
         @"4096",                        WebKitInitialTimedLayoutSizePreferenceKey,
         @"1.00",                        WebKitResourceTimedLayoutDelayPreferenceKey,
