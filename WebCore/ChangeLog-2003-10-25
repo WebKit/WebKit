@@ -1,3 +1,24 @@
+2003-02-28  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Trey.
+
+	- fixed 3180170 - filepile.com does not work correctly
+
+	I fixed this by making referrer work correctly for targetted
+	cross-frame and cross-window links. It is still not working right
+	for JavaScript window.open though.
+
+        * khtml/ecma/kjs_window.cpp:
+        (WindowFunc::tryCall): Add some FIXMEs about not handling referrer right.
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::openURL): Pass referrer.
+        (KWQKHTMLPart::openURLRequest): Pass referrer.
+        (KWQKHTMLPart::submitForm): Pass referrer.
+        (KWQKHTMLPart::urlSelected): Pass referrer.
+        * kwq/KWQKHTMLPartBrowserExtension.mm:
+        (KHTMLPartBrowserExtension::createNewWindow): Pass referrer.
+        * kwq/WebCoreBridge.h: Ad referrer argument to loadURL:
+
 2003-02-28  David Hyatt  <hyatt@apple.com>
 
 	Exclude <BR>s from the text-dec check.  Really fixes 3185121.

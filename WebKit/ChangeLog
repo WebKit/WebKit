@@ -1,3 +1,31 @@
+2003-02-28  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Trey.
+
+	- fixed 3180170 - filepile.com does not work correctly
+
+	I fixed this by making referrer work correctly for targetted
+	cross-frame and cross-window links. It is still not working right
+	for JavaScript window.open though.
+	
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge createWindowWithURL:frameName:]): Set referrer.
+        (-[WebBridge loadURL:referrer:reload:triggeringEvent:formValues:]): Pass referrer
+	along to frame.
+        (-[WebBridge postWithURL:referrer:data:contentType:triggeringEvent:formValues:]):
+	Likewise.
+        * WebView.subproj/WebFramePrivate.h:
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _loadItem:fromItem:withLoadType:]): Pass referrer.
+	(-[WebFrame
+	_loadURL:referrer:loadType:triggeringEvent:formValues:]): Use
+	passed-in referrer (link could have been clicked in another
+	frame).
+        (-[WebFrame _loadURL:intoChild:]): Pass referrer.
+        (-[WebFrame
+	_postWithURL:referrer:data:contentType:triggeringEvent:formValues:]):
+	Use passed-in referrer.
+
 2003-02-28  Darin Adler  <darin@apple.com>
 
         Reviewed by Trey.

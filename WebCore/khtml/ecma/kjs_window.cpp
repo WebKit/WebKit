@@ -1224,6 +1224,7 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
                         : QString("_blank");
       if ( uargs.frameName == "_top" )
       {
+	  // FIXME: referrer?
           while ( part->parentPart() )
               part = part->parentPart();
           part->scheduleRedirection(0, url.url(), false/*don't lock history*/);
@@ -1231,6 +1232,7 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
       }
       if ( uargs.frameName == "_parent" )
       {
+	  // FIXME: referrer?
           if ( part->parentPart() )
               part = part->parentPart();
           part->scheduleRedirection(0, url.url(), false/*don't lock history*/);
@@ -1260,6 +1262,7 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
         if (uargs.frameName == "_blank")
           uargs.frameName = QString::null;
         if (!url.isEmpty())
+	  // FIXME: need to pass referrer here
           emit khtmlpart->browserExtension()->openURLRequest(url,uargs);
         return Window::retrieve(khtmlpart); // global object
       } else

@@ -179,13 +179,13 @@ bool KWQKHTMLPart::openURL(const KURL &url)
     // FIXME: The lack of args here to get the reload flag from
     // indicates a problem in how we use KHTMLPart::processObjectRequest,
     // where we are opening the URL before the args are set up.
-    [_bridge loadURL:url.url().getNSString() reload:NO triggeringEvent:nil formValues:nil];
+    [_bridge loadURL:url.url().getNSString() referrer:[_bridge referrer] reload:NO triggeringEvent:nil formValues:nil];
     return true;
 }
 
 void KWQKHTMLPart::openURLRequest(const KURL &url, const URLArgs &args)
 {
-    [bridgeForFrameName(args.frameName) loadURL:url.url().getNSString() reload:args.reload triggeringEvent:nil formValues:nil];
+    [bridgeForFrameName(args.frameName) loadURL:url.url().getNSString() referrer:[_bridge referrer] reload:args.reload triggeringEvent:nil formValues:nil];
 }
 
 void KWQKHTMLPart::didNotOpenURL(const QString &URL)
@@ -238,6 +238,7 @@ void KWQKHTMLPart::submitForm(const KURL &url, const URLArgs &args)
 
     if (!args.doPost()) {
         [target loadURL:URLString.getNSString()
+	       referrer:[_bridge referrer] 
                  reload:args.reload
         triggeringEvent:_currentEvent
             formValues:_formValues];
@@ -245,6 +246,7 @@ void KWQKHTMLPart::submitForm(const KURL &url, const URLArgs &args)
         QString contentType = args.contentType();
         ASSERT(contentType.startsWith("Content-Type: "));
         [target postWithURL:URLString.getNSString()
+	           referrer:[_bridge referrer] 
                        data:[NSData dataWithBytes:args.postData.data() length:args.postData.size()]
                 contentType:contentType.mid(14).getNSString()
             triggeringEvent:_currentEvent
@@ -273,7 +275,7 @@ void KWQKHTMLPart::slotData(NSString *encoding, bool forceEncoding, const char *
 
 void KWQKHTMLPart::urlSelected(const KURL &url, int button, int state, const URLArgs &args)
 {
-    [bridgeForFrameName(args.frameName) loadURL:url.url().getNSString() reload:args.reload triggeringEvent:_currentEvent formValues:nil];
+    [bridgeForFrameName(args.frameName) loadURL:url.url().getNSString() referrer:[_bridge referrer] reload:args.reload triggeringEvent:_currentEvent formValues:nil];
 }
 
 class KWQPluginPart : public ReadOnlyPart

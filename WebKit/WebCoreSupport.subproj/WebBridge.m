@@ -108,6 +108,7 @@
 
     if (URL != nil && [URL length] > 0) {
 	request = [WebRequest requestWithURL:[NSURL _web_URLWithString:URL]];
+	[request setReferrer:[self referrer]];
     }
 
     WebController *newController = [[[frame controller] windowOperationsDelegate] createWindowWithRequest:request];
@@ -281,14 +282,14 @@
     [[self dataSource] _setIconURL:[NSURL _web_URLWithString:URL] withType:type];
 }
 
-- (void)loadURL:(NSString *)URL reload:(BOOL)reload triggeringEvent:(NSEvent *)event formValues:(NSDictionary *)values
+- (void)loadURL:(NSString *)URL referrer:(NSString *)referrer reload:(BOOL)reload triggeringEvent:(NSEvent *)event formValues:(NSDictionary *)values
 {
-    [frame _loadURL:[NSURL _web_URLWithString:URL] loadType:(reload ? WebFrameLoadTypeReload : WebFrameLoadTypeStandard)  triggeringEvent:event formValues:values];
+    [frame _loadURL:[NSURL _web_URLWithString:URL] referrer:referrer loadType:(reload ? WebFrameLoadTypeReload : WebFrameLoadTypeStandard)  triggeringEvent:event formValues:values];
 }
 
-- (void)postWithURL:(NSString *)URL data:(NSData *)data contentType:(NSString *)contentType triggeringEvent:(NSEvent *)event formValues:(NSDictionary *)values
+- (void)postWithURL:(NSString *)URL referrer:(NSString *)referrer data:(NSData *)data contentType:(NSString *)contentType triggeringEvent:(NSEvent *)event formValues:(NSDictionary *)values
 {
-    [frame _postWithURL:[NSURL _web_URLWithString:URL] data:data contentType:contentType triggeringEvent:event formValues:values];
+    [frame _postWithURL:[NSURL _web_URLWithString:URL] referrer:(NSString *)referrer data:data contentType:contentType triggeringEvent:event formValues:values];
 }
 
 - (NSString *)generateFrameName

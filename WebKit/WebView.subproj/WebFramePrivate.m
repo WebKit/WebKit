@@ -993,7 +993,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     // check for all that as an additional optimization.
     // We also do not do anchor-style navigation if we're posting a form.
     
-    // FIXME: These checks don't match the ones in _loadURL:loadType:triggeringEvent:isFormSubmission:
+    // FIXME: These checks don't match the ones in _loadURL:referrer:loadType:triggeringEvent:isFormSubmission:
     // Perhaps they should.
     
     if (!formData
@@ -1400,11 +1400,11 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 }
 
 // main funnel for navigating via callback from WebCore (e.g., clicking a link, redirect)
-- (void)_loadURL:(NSURL *)URL loadType:(WebFrameLoadType)loadType triggeringEvent:(NSEvent *)event formValues:(NSDictionary *)values
+- (void)_loadURL:(NSURL *)URL referrer:(NSString *)referrer loadType:(WebFrameLoadType)loadType triggeringEvent:(NSEvent *)event formValues:(NSDictionary *)values
 {
     BOOL isFormSubmission = (values != nil);
     WebRequest *request = [[WebRequest alloc] initWithURL:URL];
-    [request setReferrer:[_private->bridge referrer]];
+    [request setReferrer:referrer];
     [self _addExtraFieldsToRequest:request alwaysFromRequest: (event != nil || isFormSubmission)];
     if (loadType == WebFrameLoadTypeReload) {
         [request setRequestCachePolicy:WebRequestCachePolicyLoadFromOrigin];
@@ -1503,10 +1503,11 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         }
     }
 
-    [childFrame _loadURL:URL loadType:childLoadType triggeringEvent:nil formValues:nil];
+    // FIXME: is this the right referrer?
+    [childFrame _loadURL:URL referrer:[[self _bridge] referrer] loadType:childLoadType triggeringEvent:nil formValues:nil];
 }
 
-- (void)_postWithURL:(NSURL *)URL data:(NSData *)data contentType:(NSString *)contentType triggeringEvent:(NSEvent *)event formValues:(NSDictionary *)values
+- (void)_postWithURL:(NSURL *)URL referrer:(NSString *)referrer data:(NSData *)data contentType:(NSString *)contentType triggeringEvent:(NSEvent *)event formValues:(NSDictionary *)values
 {
     // When posting, use the WebResourceHandleFlagLoadFromOrigin load flag.
     // This prevents a potential bug which may cause a page with a form that uses itself
@@ -1517,7 +1518,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     [request setRequestMethod:@"POST"];
     [request setRequestData:data];
     [request setContentType:contentType];
-    [request setReferrer:[_private->bridge referrer]];
+    [request setReferrer:referrer];
 
     NSDictionary *action = [self _actionInformationForLoadType:WebFrameLoadTypeStandard isFormSubmission:YES event:event originalURL:URL];
 
