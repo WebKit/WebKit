@@ -166,7 +166,15 @@
         NSLog (@"Removing 0x%08x %@", [views objectAtIndex: 0], [[[views objectAtIndex: 0] class] className]);
         [[views objectAtIndex: 0] removeFromSuperviewWithoutNeedingDisplay]; 
     }
+    [self setFrameSize: NSMakeSize (0,0)];
 }
+
+- (void)setFrame:(NSRect)frameRect
+{
+    [super setFrame:frameRect];
+    [self setNeedsLayout: YES];
+}
+
 
 // FIXME.  This should be replaced.  Ultimately we will use something like:
 // [[webView dataSource] setURL: url];

@@ -115,7 +115,7 @@ QSize QWidget::sizeHint() const
 
 void QWidget::resize(int w, int h) 
 {
-    internalSetGeometry( data->rect.x(), data->rect.y(), w, h, TRUE );
+    internalSetGeometry( pos().x(), pos().y(), w, h );
 }
 
 void QWidget::setActiveWindow() 
@@ -157,31 +157,36 @@ int QWidget::winId() const
 
 int QWidget::x() const 
 {
-    return data->rect.x();
+    NSRect vFrame = [getView() frame];
+    return (int)vFrame.origin.x;
 }
 
 
 int QWidget::y() const 
 {
-    return data->rect.y();
+    NSRect vFrame = [getView() frame];
+    return (int)vFrame.origin.y;
 }
 
 
 int QWidget::width() const 
 { 
-    return data->rect.width();
+    NSRect vFrame = [getView() frame];
+    return (int)vFrame.size.width;
 }
 
 
 int QWidget::height() const 
 {
-    return data->rect.height();
+    NSRect vFrame = [getView() frame];
+    return (int)vFrame.size.height;
 }
 
 
 QSize QWidget::size() const 
 {
-    return data->rect.size();
+    NSRect vFrame = [getView() frame];
+    return QSize ((int)vFrame.size.width, (int)vFrame.size.height);
 }
 
 
@@ -193,18 +198,16 @@ void QWidget::resize(const QSize &s)
 
 QPoint QWidget::pos() const 
 {
-    return data->pos;
+    NSRect vFrame = [getView() frame];
+    return QPoint ((int)vFrame.origin.x, (int)vFrame.origin.y);
 }
 
 
 void QWidget::move(int x, int y) 
 {
-//    internalSetGeometry( x + data->rect.x(),
-//			 y + data->rect.y(),
-//			 width(), height(), TRUE );
     internalSetGeometry( x,
 			 y,
-			 width(), height(), TRUE );
+			 width(), height() );
 }
 
 
@@ -388,34 +391,9 @@ void QWidget::hide()
 
 
 
-// Non-public
-void QWidget::setCRect( const QRect &r )
+void QWidget::internalSetGeometry( int x, int y, int w, int h )
 {
-    // One rect is both the same.
-    data->pos = r.topLeft();
-    data->rect = r;
-}
-
-void QWidget::internalSetGeometry( int x, int y, int w, int h, bool updateView )
-{
-    if ( w < 1 )				// invalid size
-	w = 1;
-    if ( h < 1 )
-	h = 1;
-
-    QRect  r( x, y, w, h );
-
-    // We only care about stuff that changes the geometry, or may
-    // cause the window manager to change its state
-    if ( data->rect == r )
-	return;
-
-    QSize oldSize( size() );
-
-    setCRect( r );
-
-    if (updateView != FALSE)
-        [data->view setFrame: NSMakeRect (data->rect.x(), data->rect.y(), data->rect.width(), data->rect.height())];
+    [data->view setFrame: NSMakeRect (x, y, w, h)];
 }
 
 
@@ -509,7 +487,6 @@ void QWidget::setView(NSView *view)
     data->view = [view retain];
         
     NSRect frame = [data->view frame];
-    internalSetGeometry (frame.origin.x, frame.origin.y, frame.size.width, frame.size.height, FALSE);
 }
 #else
 void *QWidget::getView() const
@@ -524,7 +501,6 @@ void QWidget::setView(void *view)
     data->view = [view retain];
         
     NSRect frame = [data->view frame];
-    internalSetGeometry (frame.x, frame.y, frame.width, frame.height, FALSE);
 }
 #endif
 

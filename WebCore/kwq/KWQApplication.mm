@@ -142,6 +142,7 @@ void QApplication::setMainWidget(QWidget *w)
     [sv setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
     [sv setHasVerticalScroller: YES];
     [sv setHasHorizontalScroller: YES];
+    [w->getView() setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
     [sv setDocumentView: w->getView()];
     
     [((_KWQOwner *)application)->window setOpaque: FALSE];
