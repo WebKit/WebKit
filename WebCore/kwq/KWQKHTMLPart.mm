@@ -2681,7 +2681,7 @@ bool KWQKHTMLPart::sendContextMenuEvent(NSEvent *event)
 
     bool swallowEvent = v->dispatchMouseEvent(EventImpl::CONTEXTMENU_EVENT,
         mev.innerNode.handle(), true, 0, &qev, true, NodeImpl::MousePress);
-    if (!swallowEvent && ([_bridge isEditable] || mev.innerNode.handle()->isContentEditable())) {
+    if (!swallowEvent && ([_bridge isEditable] || mev.innerNode.handle()->isContentEditable()) && !isPointInsideSelection(xm, ym)) {
         selectClosetWordFromMouseEvent(&qev, mev.innerNode, xm, ym);
     }
 

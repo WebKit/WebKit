@@ -1,5 +1,14 @@
 2004-09-14  Chris Blumenberg  <cblu@apple.com>
 
+	Fixed: Control-click shouldn't cause deselect when clicking selection.
+
+        Reviewed by rjw.
+
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::sendContextMenuEvent): don't attempt to select the closest word when the selection is clicked
+
+2004-09-14  Chris Blumenberg  <cblu@apple.com>
+
 	Fixed badness that my last patch caused. Because there was a conflict, my last patch added stuff that darin had just removed.
 
         Reviewed by darin.
