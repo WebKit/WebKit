@@ -1,5 +1,14 @@
 2004-04-21  David Hyatt  <hyatt@apple.com>
 
+	Fix for 3020449, ensure that the paint order of cells with rowspans matches other browsers.
+	
+        Reviewed by darin
+
+        * khtml/rendering/render_table.cpp:
+        (RenderTableSection::paint):
+
+2004-04-21  David Hyatt  <hyatt@apple.com>
+
 	Remove the (incorrect) restriction on table flexing that required the cell to have a fixed width.  In
 	reality, the style on the cell is completely irrelevant.
 	

@@ -1418,7 +1418,11 @@ void RenderTableSection::paint(PaintInfo& i, int tx, int ty)
 		RenderTableCell *cell = cellAt(r, c);
 		if (!cell || cell == (RenderTableCell *)-1 )
 		    continue;
-		if ( (r < endrow - 1) && (cellAt(r+1, c) == cell) )
+                
+                // Cells must always paint in the order in which they appear taking into account
+                // their upper left originating row/column.  For cells with rowspans, avoid repainting
+                // if we've already seen the cell.
+		if (r > startrow && (cellAt(r-1, c) == cell))
 		    continue;
 
 #ifdef TABLE_PRINT
