@@ -42,11 +42,11 @@ TransitionVector tVectorForFunctionPointer(FunctionPointer);
     if(isBundle){
         return CFBundleOpenBundleResourceMap(bundle);
     }else{
-        err = FSPathMakeRef((UInt8 *)[path cString], &fref, NULL);
+        err = FSPathMakeRef((const UInt8 *)[[NSFileManager defaultManager] fileSystemRepresentationWithPath:path], &fref, NULL);
         if(err != noErr){
             return -1;
         }
-            
+        
         return FSOpenResFile(&fref, fsRdPerm);
     }
 }
@@ -69,7 +69,7 @@ TransitionVector tVectorForFunctionPointer(FunctionPointer);
     if (pString[0] == 0){
         return nil;
     }
-    
+
     CopyPascalStringToC(pString, cString);
     
     return [NSString stringWithCString:cString];
@@ -121,24 +121,61 @@ TransitionVector tVectorForFunctionPointer(FunctionPointer);
         [MIMEToDescription setObject:description forKey:MIME];
     }
     
-    pluginDescription = [[self stringForStringListID:126 andIndex:1] retain];
-    name = [[self stringForStringListID:126 andIndex:2] retain]; // plugin's name
+    pluginDescription = [self stringForStringListID:126 andIndex:1];
+    if(!pluginDescription){
+        pluginDescription = filename;
+    }
+    
+    name = [self stringForStringListID:126 andIndex:2];
+    if(!name){
+        name = filename;
+    }
+
+    [pluginDescription retain];
+    [name retain];
     
     [self closeResourceFile:resRef];
     
     return YES;
 }
 
+- (NSString *)stringByResolvingSymlinksAndAliasesInPath:(NSString *)thePath
+{
+    NSString *newPath = [thePath stringByResolvingSymlinksInPath];
+
+    FSRef fref;
+    OSErr err;
+
+    err = FSPathMakeRef((const UInt8 *)[[NSFileManager defaultManager] fileSystemRepresentationWithPath:thePath], &fref, NULL);
+    if(err != noErr){
+        return newPath;
+    }
+
+    Boolean targetIsFolder;
+    Boolean wasAliased;
+    err = FSResolveAliasFile (&fref, TRUE, &targetIsFolder, &wasAliased);
+    if(err != noErr){
+        return newPath;
+    }
+    
+    if(wasAliased){
+        NSURL *URL = (NSURL *)CFURLCreateFromFSRef(kCFAllocatorDefault, &fref);
+        newPath = [URL path];
+        [URL release];
+    }
+
+    return newPath;
+}
+
 - initWithPath:(NSString *)pluginPath
 {
-    NSFileManager *fileManager;
-    NSDictionary *fileInfo;
+    path = [self stringByResolvingSymlinksAndAliasesInPath:pluginPath];
+    filename = [path lastPathComponent];
+    
+    NSFileManager *fileManager = [NSFileManager defaultManager];;
+    NSDictionary *fileInfo = [fileManager fileAttributesAtPath:path traverseLink:YES];
     UInt32 type;
-    
-    path = pluginPath;
-    fileManager = [NSFileManager defaultManager];
-    fileInfo = [fileManager fileAttributesAtPath:pluginPath traverseLink:YES];
-    
+
     // single-file plug-in with resource fork
     if([[fileInfo objectForKey:@"NSFileType"] isEqualToString:@"NSFileTypeRegular"]){
         type = [[fileInfo objectForKey:@"NSFileHFSTypeCode"] unsignedLongValue];
@@ -148,7 +185,7 @@ TransitionVector tVectorForFunctionPointer(FunctionPointer);
 #endif
     // bundle
     }else if([[fileInfo objectForKey:@"NSFileType"] isEqualToString:@"NSFileTypeDirectory"]){
-        CFURLRef pluginURL = CFURLCreateWithFileSystemPath(NULL, (CFStringRef)pluginPath, kCFURLPOSIXPathStyle, TRUE);
+        CFURLRef pluginURL = CFURLCreateWithFileSystemPath(NULL, (CFStringRef)path, kCFURLPOSIXPathStyle, TRUE);
         bundle = CFBundleCreate(NULL, pluginURL);
         CFRelease(pluginURL);
         
@@ -183,9 +220,9 @@ TransitionVector tVectorForFunctionPointer(FunctionPointer);
         return nil;
     }
     
-    filename = [[path lastPathComponent] retain];
+    [filename retain];
     [path retain];
-    isLoaded = NO;
+
     return self;
 }
 
@@ -365,53 +402,66 @@ TransitionVector tVectorForFunctionPointer(FunctionPointer);
     isLoaded = FALSE;
 }
 
-- (NPP_SetWindowProcPtr)NPP_SetWindow{
+- (NPP_SetWindowProcPtr)NPP_SetWindow
+{
     return NPP_SetWindow;
 }
 
-- (NPP_NewProcPtr)NPP_New{
+- (NPP_NewProcPtr)NPP_New
+{
     return NPP_New;
 }
 
-- (NPP_DestroyProcPtr)NPP_Destroy{
+- (NPP_DestroyProcPtr)NPP_Destroy
+{
     return NPP_Destroy;
 }
 
-- (NPP_NewStreamProcPtr)NPP_NewStream{
+- (NPP_NewStreamProcPtr)NPP_NewStream
+{
     return NPP_NewStream;
 }
 
-- (NPP_StreamAsFileProcPtr)NPP_StreamAsFile{
+- (NPP_StreamAsFileProcPtr)NPP_StreamAsFile
+{
     return NPP_StreamAsFile;
 }
-- (NPP_DestroyStreamProcPtr)NPP_DestroyStream{
+- (NPP_DestroyStreamProcPtr)NPP_DestroyStream
+{
     return NPP_DestroyStream;
 }
 
-- (NPP_WriteReadyProcPtr)NPP_WriteReady{
+- (NPP_WriteReadyProcPtr)NPP_WriteReady
+{
     return NPP_WriteReady;
 }
-- (NPP_WriteProcPtr)NPP_Write{
+- (NPP_WriteProcPtr)NPP_Write
+{
     return NPP_Write;
 }
 
-- (NPP_HandleEventProcPtr)NPP_HandleEvent{
+- (NPP_HandleEventProcPtr)NPP_HandleEvent
+{
     return NPP_HandleEvent;
 }
 
--(NPP_URLNotifyProcPtr)NPP_URLNotify{
+-(NPP_URLNotifyProcPtr)NPP_URLNotify
+{
     return NPP_URLNotify;
 }
 
--(NPP_GetValueProcPtr)NPP_GetValue{
+-(NPP_GetValueProcPtr)NPP_GetValue
+{
     return NPP_GetValue;
 }
 
--(NPP_SetValueProcPtr)NPP_SetValue{
+-(NPP_SetValueProcPtr)NPP_SetValue
+{
     return NPP_SetValue;
 }
 
--(NPP_PrintProcPtr)NPP_Print{
+-(NPP_PrintProcPtr)NPP_Print
+{
     return NPP_Print;
 }
 
@@ -446,10 +496,13 @@ TransitionVector tVectorForFunctionPointer(FunctionPointer);
     return isLoaded;
 }
 
-- (NSString *)pluginDescription{
+- (NSString *)pluginDescription
+{
     return pluginDescription;
 }
-- (NSString *)description{
+
+- (NSString *)description
+{
     
     return [NSString stringWithFormat:@"name: %@\npath: %@\nisLoaded: %d\nmimeTypes:\n%@\npluginDescription:%@",
         name, path, isLoaded, [MIMEToExtensions description], [MIMEToDescription description], pluginDescription];

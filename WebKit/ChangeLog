@@ -1,3 +1,13 @@
+2002-09-27  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed KJS crasher caused by nil plug-in returned from WebPlugin.
+	Got the RealPlayer plug-in loaded, nothing playing yet.
+
+        * Plugins.subproj/WebPlugin.m:
+        (-[WebNetscapePlugin getPluginInfo]): check for nil plug-in names/descriptions
+        (-[WebNetscapePlugin stringByResolvingSymlinksAndAliasesInPath:]): new, resolves old-style aliases
+        (-[WebNetscapePlugin initWithPath:]): call stringByResolvingSymlinksAndAliasesInPath
+
 2002-09-27  Richard Williamson   <rjw@apple.com>
 
         Fix 3058315:  crash in WebHTMLRepresentation receivedData:withDataSource
