@@ -132,8 +132,7 @@ void TextIterator::advance()
 
     if (m_needAnotherNewline) {
         // Emit the newline, with position a collapsed range at the end of current node.
-        long offset = m_node->nodeIndex();
-        emitCharacter('\n', m_node->parentNode(), offset + 1, offset + 1);
+        emitCharacter('\n', m_node->parentNode(), m_node, 1, 1);
         m_needAnotherNewline = false;
         return;
     }
@@ -205,7 +204,7 @@ bool TextIterator::handleTextNode()
     if (renderer->style()->whiteSpace() == khtml::PRE) {
         long runStart = m_offset;
         if (m_lastTextNodeEndedWithCollapsedSpace) {
-            emitCharacter(' ', m_node, runStart, runStart);
+            emitCharacter(' ', m_node, 0, runStart, runStart);
             return false;
         }
         long strLength = str.length();
@@ -213,6 +212,7 @@ bool TextIterator::handleTextNode()
         long runEnd = kMin(strLength, end);
 
         m_positionNode = m_node;
+        m_positionOffsetBaseNode = 0;
         m_positionStartOffset = runStart;
         m_positionEndOffset = runEnd;
         m_textCharacters = str.unicode() + runStart;
@@ -247,7 +247,7 @@ void TextIterator::handleTextBox()
         bool needSpace = m_lastTextNodeEndedWithCollapsedSpace
             || (m_textBox == renderer->firstTextBox() && textBoxStart == runStart && runStart > 0);
         if (needSpace && !m_lastCharacter.isSpace()) {
-            emitCharacter(' ', m_node, runStart, runStart);
+            emitCharacter(' ', m_node, 0, runStart, runStart);
             return;
         }
 
@@ -259,7 +259,7 @@ void TextIterator::handleTextBox()
             // or a run of characters that does not include a newline.
             // This effectively translates newlines to spaces without copying the text.
             if (str[runStart] == '\n') {
-                emitCharacter(' ', m_node, runStart, runStart + 1);
+                emitCharacter(' ', m_node, 0, runStart, runStart + 1);
                 m_offset = runStart + 1;
             } else {
                 long subrunEnd = str.find('\n', runStart);
@@ -270,6 +270,7 @@ void TextIterator::handleTextBox()
                 m_offset = subrunEnd;
 
                 m_positionNode = m_node;
+                m_positionOffsetBaseNode = 0;
                 m_positionStartOffset = runStart;
                 m_positionEndOffset = subrunEnd;
                 m_textCharacters = str.unicode() + runStart;
@@ -300,16 +301,14 @@ void TextIterator::handleTextBox()
 bool TextIterator::handleReplacedElement()
 {
     if (m_lastTextNodeEndedWithCollapsedSpace) {
-        long offset = m_lastTextNode->nodeIndex();
-        emitCharacter(' ', m_lastTextNode->parentNode(), offset + 1, offset + 1);
+        emitCharacter(' ', m_lastTextNode->parentNode(), m_lastTextNode, 1, 1);
         return false;
     }
 
-    long offset = m_node->nodeIndex();
-
     m_positionNode = m_node->parentNode();
-    m_positionStartOffset = offset;
-    m_positionEndOffset = offset + 1;
+    m_positionOffsetBaseNode = m_node;
+    m_positionStartOffset = 0;
+    m_positionEndOffset = 1;
 
     m_textCharacters = 0;
     m_textLength = 0;
@@ -323,16 +322,14 @@ bool TextIterator::handleNonTextNode()
 {
     switch (m_node->id()) {
         case ID_BR: {
-            long offset = m_node->nodeIndex();
-            emitCharacter('\n', m_node->parentNode(), offset, offset + 1);
+            emitCharacter('\n', m_node->parentNode(), m_node, 0, 1);
             break;
         }
 
         case ID_TD:
         case ID_TH:
             if (m_lastCharacter != '\n' && m_lastTextNode) {
-                long offset = m_lastTextNode->nodeIndex();
-                emitCharacter('\t', m_lastTextNode->parentNode(), offset, offset + 1);
+                emitCharacter('\t', m_lastTextNode->parentNode(), m_lastTextNode, 0, 1);
             }
             break;
 
@@ -355,8 +352,7 @@ bool TextIterator::handleNonTextNode()
         case ID_TR:
         case ID_UL:
             if (m_lastCharacter != '\n' && m_lastTextNode) {
-                long offset = m_lastTextNode->nodeIndex();
-                emitCharacter('\n', m_lastTextNode->parentNode(), offset, offset + 1);
+                emitCharacter('\n', m_lastTextNode->parentNode(), m_lastTextNode, 0, 1);
             }
             break;
     }
@@ -414,19 +410,19 @@ void TextIterator::exitNode()
     }
 
     if (endLine && m_lastCharacter != '\n' && m_lastTextNode) {
-        long offset = m_lastTextNode->nodeIndex();
-        emitCharacter('\n', m_lastTextNode->parentNode(), offset, offset + 1);
+        emitCharacter('\n', m_lastTextNode->parentNode(), m_lastTextNode, 0, 1);
         m_needAnotherNewline = addNewline;
     } else if (addNewline && m_lastTextNode) {
         long offset = m_node->childNodeCount();
-        emitCharacter('\n', m_node, offset, offset);
+        emitCharacter('\n', m_node, 0, offset, offset);
     }
 }
 
-void TextIterator::emitCharacter(QChar c, NodeImpl *textNode, long textStartOffset, long textEndOffset)
+void TextIterator::emitCharacter(QChar c, NodeImpl *textNode, NodeImpl *offsetBaseNode, long textStartOffset, long textEndOffset)
 {
     m_singleCharacterBuffer = c;
     m_positionNode = textNode;
+    m_positionOffsetBaseNode = offsetBaseNode;
     m_positionStartOffset = textStartOffset;
     m_positionEndOffset = textEndOffset;
     m_textCharacters = &m_singleCharacterBuffer;
@@ -438,8 +434,15 @@ void TextIterator::emitCharacter(QChar c, NodeImpl *textNode, long textStartOffs
 
 Range TextIterator::range() const
 {
-    if (m_positionNode)
+    if (m_positionNode) {
+        if (m_positionOffsetBaseNode) {
+            long index = m_positionOffsetBaseNode->nodeIndex();
+            m_positionStartOffset += index;
+            m_positionEndOffset += index;
+            m_positionOffsetBaseNode = 0;
+        }
         return Range(m_positionNode, m_positionStartOffset, m_positionNode, m_positionEndOffset);
+    }
     if (m_endContainer)
         return Range(m_endContainer, m_endOffset, m_endContainer, m_endOffset);
     return Range();

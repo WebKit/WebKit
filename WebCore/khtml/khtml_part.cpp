@@ -25,7 +25,6 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#define SPEED_DEBUG
 #include "khtml_part.h"
 
 #if APPLE_CHANGES

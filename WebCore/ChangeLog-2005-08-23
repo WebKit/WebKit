@@ -1,3 +1,29 @@
+2004-12-21  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - fixed <rdar://problem/3899133> text search in a Safari window takes a very long time on Tiger updates page (and some other pages)
+
+        * khtml/editing/visible_text.h: Add an "offset base node" parameter to emitCharacter, and also
+        add a field to track it. Must make a few things mutable so we can update them in the range accessor.
+        * khtml/editing/visible_text.cpp:
+        (khtml::TextIterator::advance): Pass in base node and offsets rather than computing actual offsets
+        using the node's index. We only compute the node index if actually asked for the range.
+        (khtml::TextIterator::handleTextNode): Pass 0 for base node and set base node to 0 when setting
+        up the offsets.
+        (khtml::TextIterator::handleTextBox): Ditto.
+        (khtml::TextIterator::handleReplacedElement): Pass base node and set base node instead of calling
+        nodeIndex.
+        (khtml::TextIterator::handleNonTextNode): Pass 0 for offset.
+        (khtml::TextIterator::exitNode): More of the same.
+        (khtml::TextIterator::emitCharacter): Ditto.
+        (khtml::TextIterator::range): If an offset base node is stored, then get its node index, and then
+        add that in to the offsets. Doing the work here guarantees it's done only once when doing a text search.
+
+        - another small fix
+
+        * khtml/khtml_part.cpp: Removed SPEED_DEBUG define. Not sure why it was on.
+
 === Safari-176 ===
 
 2004-12-20  Ken Kocienda  <kocienda@apple.com>
