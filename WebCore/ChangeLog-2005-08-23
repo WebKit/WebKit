@@ -1,3 +1,66 @@
+2004-01-28  David Hyatt  <hyatt@apple.com>
+
+	Make AtomicString a new class that owns DOMStrings, instead of using KJS::Identifier.  One day when we
+	convert DOMString and UString to have the same underlying rep, then these classes could possibly re-merge.
+	For now this provides an easy migration path for all the code that is using DOMStringImpl*.
+
+	Also fixed a bug with float clearing in the style cascade.
+	
+        Reviewed by darin
+
+        * khtml/css/cssparser.h:
+        (DOM::atomicString):
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::checkOneSelector):
+        (khtml::CSSStyleSelector::applyRule):
+        * khtml/dom/dom_string.cpp:
+        (DOMString::DOMString):
+        * khtml/xml/dom_nameimpl.cpp:
+        (DOM::AtomicStringStatisticsExitLogger::~AtomicStringStatisticsExitLogger):
+        (DOM::AtomicString::equal):
+        (DOM::AtomicString::add):
+        (DOM::AtomicString::insert):
+        (DOM::AtomicString::remove):
+        (DOM::AtomicString::expand):
+        (DOM::AtomicString::shrink):
+        (DOM::AtomicString::rehash):
+        (DOM::AtomicString::null):
+        (DOM::AtomicString::init):
+        (DOM::operator==):
+        (DOM::equalsIgnoreCase):
+        * khtml/xml/dom_nameimpl.h:
+        (DOM::AtomicString::AtomicString):
+        (DOM::AtomicString:::m_string):
+        (DOM::AtomicString::string):
+        (DOM::AtomicString::qstring):
+        (DOM::AtomicString::implementation):
+        (DOM::AtomicString::unicode):
+        (DOM::AtomicString::length):
+        (DOM::AtomicString::ascii):
+        (DOM::AtomicString::find):
+        (DOM::AtomicString::isNull):
+        (DOM::AtomicString::isEmpty):
+        (DOM::AtomicString::equal):
+        (DOM::operator==):
+        (DOM::operator!=):
+        * khtml/xml/dom_stringimpl.cpp:
+        (DOM::DOMStringImpl::empty):
+        (DOM::DOMStringImpl::DOMStringImpl):
+        (DOM::DOMStringImpl::~DOMStringImpl):
+        (DOM::DOMStringImpl::append):
+        (DOM::DOMStringImpl::insert):
+        (DOM::DOMStringImpl::truncate):
+        (DOM::DOMStringImpl::remove):
+        (DOM::DOMStringImpl::split):
+        (DOM::DOMStringImpl::substring):
+        (DOM::DOMStringImpl::replace):
+        (DOM::DOMStringImpl::computeHash):
+        * khtml/xml/dom_stringimpl.h:
+        (DOM::DOMStringImpl::DOMStringImpl):
+        (DOM::DOMStringImpl::hash):
+        * khtml/xml/dom_textimpl.cpp:
+        (CharacterDataImpl::CharacterDataImpl):
+
 2004-01-27  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed:

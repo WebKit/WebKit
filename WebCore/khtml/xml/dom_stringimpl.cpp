@@ -28,16 +28,37 @@
 #include <kdebug.h>
 
 #include <string.h>
+#include "dom_nameimpl.h"
 
-using namespace DOM;
 using namespace khtml;
 
 namespace DOM {
 
 using khtml::Fixed;
 
+DOMStringImpl* DOMStringImpl::empty()
+{
+    static DOMStringImpl e = WithOneRef();
+    return &e;
+}
+
+DOMStringImpl::DOMStringImpl(const QChar *str, unsigned int len) {
+    _hash = 0;
+    bool havestr = str && len;
+    s = QT_ALLOC_QCHAR_VEC( havestr ? len : 1 );
+    if(str && len) {
+        memcpy( s, str, len * sizeof(QChar) );
+        l = len;
+    } else {
+        // crash protection
+        s[0] = 0x0;
+        l = 0;
+    }
+}
+
 DOMStringImpl::DOMStringImpl(const char *str)
 {
+    _hash = 0;
     if(str && *str)
     {
         l = strlen(str);
@@ -55,8 +76,36 @@ DOMStringImpl::DOMStringImpl(const char *str)
     }
 }
 
+DOMStringImpl::DOMStringImpl(const char *str, unsigned int len)
+{
+    _hash = 0;
+    l = len;
+    if (!l || !str)
+        return;
+    
+    s = QT_ALLOC_QCHAR_VEC(l);
+    int i = l;
+    QChar* ptr = s;
+    while( i-- )
+        *ptr++ = *str++;
+}
+
+DOMStringImpl::DOMStringImpl(const QChar &ch) {
+    _hash = 0;
+    s = QT_ALLOC_QCHAR_VEC( 1 );
+    s[0] = ch;
+    l = 1;
+}
+
+DOMStringImpl::~DOMStringImpl()
+{
+    if (_hash) AtomicString::remove(this);
+    if(s) QT_DELETE_QCHAR_VEC(s);
+}
+
 void DOMStringImpl::append(DOMStringImpl *str)
 {
+    assert(_hash == 0);
     if(str && str->l != 0)
     {
         int newlen = l+str->l;
@@ -71,6 +120,7 @@ void DOMStringImpl::append(DOMStringImpl *str)
 
 void DOMStringImpl::insert(DOMStringImpl *str, uint pos)
 {
+    assert(_hash == 0);
     if(pos > l)
     {
         append(str);
@@ -91,6 +141,7 @@ void DOMStringImpl::insert(DOMStringImpl *str, uint pos)
 
 void DOMStringImpl::truncate(int len)
 {
+    assert(_hash == 0);
     if(len > (int)l) return;
 
     int nl = len < 1 ? 1 : len;
@@ -103,31 +154,33 @@ void DOMStringImpl::truncate(int len)
 
 void DOMStringImpl::remove(uint pos, int len)
 {
-  if(len <= 0) return;
-  if(pos >= l ) return;
-  if((unsigned)len > l - pos)
+    assert(_hash == 0);
+    if(len <= 0) return;
+    if(pos >= l ) return;
+    if((unsigned)len > l - pos)
     len = l - pos;
 
-  uint newLen = l-len;
-  QChar *c = QT_ALLOC_QCHAR_VEC(newLen);
-  memcpy(c, s, pos*sizeof(QChar));
-  memcpy(c+pos, s+pos+len, (l-len-pos)*sizeof(QChar));
-  if(s) QT_DELETE_QCHAR_VEC(s);
-  s = c;
-  l = newLen;
+    uint newLen = l-len;
+    QChar *c = QT_ALLOC_QCHAR_VEC(newLen);
+    memcpy(c, s, pos*sizeof(QChar));
+    memcpy(c+pos, s+pos+len, (l-len-pos)*sizeof(QChar));
+    if(s) QT_DELETE_QCHAR_VEC(s);
+    s = c;
+    l = newLen;
 }
 
 DOMStringImpl *DOMStringImpl::split(uint pos)
 {
-  if( pos >=l ) return new DOMStringImpl();
+    assert(_hash == 0);
+    if( pos >=l ) return new DOMStringImpl();
 
-  uint newLen = l-pos;
-  QChar *c = QT_ALLOC_QCHAR_VEC(newLen);
-  memcpy(c, s+pos, newLen*sizeof(QChar));
+    uint newLen = l-pos;
+    QChar *c = QT_ALLOC_QCHAR_VEC(newLen);
+    memcpy(c, s+pos, newLen*sizeof(QChar));
 
-  DOMStringImpl *str = new DOMStringImpl(s + pos, newLen);
-  truncate(pos);
-  return str;
+    DOMStringImpl *str = new DOMStringImpl(s + pos, newLen);
+    truncate(pos);
+    return str;
 }
 
 bool DOMStringImpl::containsOnlyWhitespace() const
@@ -149,11 +202,10 @@ bool DOMStringImpl::containsOnlyWhitespace() const
     
 DOMStringImpl *DOMStringImpl::substring(uint pos, uint len)
 {
-  if( pos >=l ) return new DOMStringImpl();
-  if(len > l - pos)
+    if (pos >=l) return new DOMStringImpl();
+    if (len > l - pos)
     len = l - pos;
-
-  return new DOMStringImpl(s + pos, len);
+    return new DOMStringImpl(s + pos, len);
 }
 
 static Length parseLength(QChar *s, unsigned int l)
@@ -348,6 +400,79 @@ DOMStringImpl *DOMStringImpl::replace(QChar oldC, QChar newC)
     }
 
     return c;
+}
+
+// Golden ratio - arbitrary start value to avoid mapping all 0's to all 0's
+// or anything like that.
+const unsigned PHI = 0x9e3779b9U;
+
+// This hash algorithm comes from:
+// http://burtleburtle.net/bob/hash/hashfaq.html
+// http://burtleburtle.net/bob/hash/doobs.html
+unsigned DOMStringImpl::computeHash(const QChar *s, int length)
+{
+    int prefixLength = length < 8 ? length : 8;
+    int suffixPosition = length < 16 ? 8 : length - 8;
+    
+    unsigned h = PHI;
+    h += length;
+    h += (h << 10); 
+    h ^= (h << 6); 
+    
+    for (int i = 0; i < prefixLength; i++) {
+        h += s[i].unicode(); 
+	h += (h << 10); 
+	h ^= (h << 6); 
+    }
+    for (int i = suffixPosition; i < length; i++){
+        h += s[i].unicode(); 
+	h += (h << 10); 
+	h ^= (h << 6); 
+    }
+    
+    h += (h << 3);
+    h ^= (h >> 11);
+    h += (h << 15);
+    
+    if (h == 0)
+        h = 0x80000000;
+    
+    return h;
+}
+
+// This hash algorithm comes from:
+// http://burtleburtle.net/bob/hash/hashfaq.html
+// http://burtleburtle.net/bob/hash/doobs.html
+unsigned DOMStringImpl::computeHash(const char *s)
+{
+    int length = strlen(s);
+    int prefixLength = length < 8 ? length : 8;
+    int suffixPosition = length < 16 ? 8 : length - 8;
+    
+    unsigned h = PHI;
+    h += length;
+    h += (h << 10); 
+    h ^= (h << 6); 
+    
+    for (int i = 0; i < prefixLength; i++) {
+        h += (unsigned char)s[i];
+	h += (h << 10); 
+	h ^= (h << 6); 
+    }
+    for (int i = suffixPosition; i < length; i++) {
+        h += (unsigned char)s[i];
+	h += (h << 10); 
+	h ^= (h << 6); 
+    }
+    
+    h += (h << 3);
+    h ^= (h >> 11);
+    h += (h << 15);
+    
+    if (h == 0)
+        h = 0x80000000;
+    
+    return h;
 }
 
 } // namespace DOM

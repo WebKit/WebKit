@@ -21,9 +21,322 @@
  */
 
 #include "dom/dom_string.h"
+#include "xml/dom_stringimpl.h"
 #include "dom_nameimpl.h"
 
 namespace DOM {
+
+// For KHTML we need to avoid having static constructors.
+// Our strategy is to declare the global objects with a different type (initialized to 0)
+// and then use placement new to initialize the global objects later. This is not completely
+// portable, and it would be good to figure out a 100% clean way that still avoids code that
+// runs at init time.
+    
+#if APPLE_CHANGES
+#define AVOID_STATIC_CONSTRUCTORS 1
+#endif
+    
+#if AVOID_STATIC_CONSTRUCTORS
+#define KHTML_ATOMICSTRING_HIDE_GLOBALS 1
+#endif
+    
+#include "dom_nameimpl.h"
+    
+#define DUMP_STATISTICS 0
+
+#if DUMP_STATISTICS
+    
+static int numProbes;
+static int numCollisions;
+
+struct AtomicStringStatisticsExitLogger { ~AtomicStringStatisticsExitLogger(); };
+
+static AtomicStringStatisticsExitLogger logger;
+
+AtomicStringStatisticsExitLogger::~AtomicStringStatisticsExitLogger()
+{
+    printf("\nDOM::AtomicString statistics\n\n");
+    printf("%d probes\n", numProbes);
+    printf("%d collisions (%.1f%%)\n", numCollisions, 100.0 * numCollisions / numProbes);
+}
+
+#endif
+
+const int _minTableSize = 64;
+
+DOMStringImpl **AtomicString::_table;
+int AtomicString::_tableSize;
+int AtomicString::_tableSizeMask;
+int AtomicString::_keyCount;
+
+bool AtomicString::equal(DOMStringImpl *r, const char *s)
+{
+    if (!r && !s) return true;
+    if (!r || !s) return false;
+
+    int length = r->l;
+    const QChar *d = r->s;
+    for (int i = 0; i != length; ++i)
+        if (d[i] != s[i])
+            return false;
+    return s[length] == 0;
+}
+
+bool AtomicString::equal(DOMStringImpl *r, const QChar *s, uint length)
+{
+    if (!r && !s) return true;
+    if (!r || !s) return false;
+    
+    if (r->l != length)
+        return false;
+    const QChar *d = r->s;
+    for (uint i = 0; i != length; ++i)
+        if (d[i] != s[i])
+            return false;
+    return true;
+}
+
+bool AtomicString::equal(DOMStringImpl *r, DOMStringImpl *b)
+{
+    if (r == b) return true;
+    if (!r || !b) return false;
+    uint length = r->l;
+    if (length != b->l)
+        return false;
+    const QChar *d = r->s;
+    const QChar *s = b->s;
+    for (uint i = 0; i != length; ++i)
+        if (d[i] != s[i])
+            return false;
+    return true;
+}
+
+DOMStringImpl *AtomicString::add(const char *c)
+{
+    if (!c)
+        return 0;
+    int length = strlen(c);
+    if (length == 0)
+        return DOMStringImpl::empty();
+    
+    if (!_table)
+        expand();
+    
+    unsigned hash = DOMStringImpl::computeHash(c);
+    
+    int i = hash & _tableSizeMask;
+#if DUMP_STATISTICS
+    ++numProbes;
+    numCollisions += _table[i] && !equal(_table[i], c);
+#endif
+    while (DOMStringImpl *key = _table[i]) {
+        if (equal(key, c))
+            return key;
+        i = (i + 1) & _tableSizeMask;
+    }
+    
+    QChar *d = new QChar[length];
+    for (int j = 0; j != length; j++)
+        d[j] = c[j];
+    
+    DOMStringImpl *r = new DOMStringImpl(d, length);
+    r->_hash = hash;
+    
+    _table[i] = r;
+    ++_keyCount;
+    
+    if (_keyCount * 2 >= _tableSize)
+        expand();
+    
+    return r;
+}
+
+DOMStringImpl *AtomicString::add(const QChar *s, int length)
+{
+    if (!s)
+        return 0;
+
+    if (length == 0)
+        return DOMStringImpl::empty();
+    
+    if (!_table)
+        expand();
+    
+    unsigned hash = DOMStringImpl::computeHash(s, length);
+    
+    int i = hash & _tableSizeMask;
+#if DUMP_STATISTICS
+    ++numProbes;
+    numCollisions += _table[i] && !equal(_table[i], s, length);
+#endif
+    while (DOMStringImpl *key = _table[i]) {
+        if (equal(key, s, length))
+            return key;
+        i = (i + 1) & _tableSizeMask;
+    }
+    
+    QChar *d = new QChar[length];
+    for (int j = 0; j != length; j++)
+        d[j] = s[j];
+    
+    DOMStringImpl *r = new DOMStringImpl(d, length);
+    r->_hash = hash;
+    
+    _table[i] = r;
+    ++_keyCount;
+    
+    if (_keyCount * 2 >= _tableSize)
+        expand();
+    
+    return r;
+}
+
+DOMStringImpl *AtomicString::add(DOMStringImpl *r)
+{
+    if (!r)
+        return 0;
+
+    if (r->l == 0)
+        return DOMStringImpl::empty();
+    
+    if (!_table)
+        expand();
+    
+    unsigned hash = r->hash();
+    
+    int i = hash & _tableSizeMask;
+#if DUMP_STATISTICS
+    ++numProbes;
+    numCollisions += _table[i] && !equal(_table[i], r);
+#endif
+    while (DOMStringImpl *key = _table[i]) {
+        if (equal(key, r))
+            return key;
+        i = (i + 1) & _tableSizeMask;
+    }
+
+    _table[i] = r;
+    ++_keyCount;
+    
+    if (_keyCount * 2 >= _tableSize)
+        expand();
+    
+    return r;
+}
+
+inline void AtomicString::insert(DOMStringImpl *key)
+{
+    unsigned hash = key->hash();
+    
+    int i = hash & _tableSizeMask;
+#if DUMP_STATISTICS
+    ++numProbes;
+    numCollisions += _table[i] != 0;
+#endif
+    while (_table[i])
+        i = (i + 1) & _tableSizeMask;
+    
+    _table[i] = key;
+}
+
+void AtomicString::remove(DOMStringImpl *r)
+{
+    unsigned hash = r->hash();
+    
+    DOMStringImpl *key;
+    
+    int i = hash & _tableSizeMask;
+#if DUMP_STATISTICS
+    ++numProbes;
+    numCollisions += _table[i] && equal(_table[i], r);
+#endif
+    while ((key = _table[i])) {
+        if (equal(key, r))
+            break;
+        i = (i + 1) & _tableSizeMask;
+    }
+    if (!key)
+        return;
+ 
+    _table[i] = 0;
+    --_keyCount;
+    
+    if (_keyCount * 6 < _tableSize && _tableSize > _minTableSize) {
+        shrink();
+        return;
+    }
+    
+    // Reinsert all the items to the right in the same cluster.
+    while (1) {
+        i = (i + 1) & _tableSizeMask;
+        key = _table[i];
+        if (!key)
+            break;
+        _table[i] = 0;
+        insert(key);
+    }
+}
+
+void AtomicString::expand()
+{
+    rehash(_tableSize == 0 ? _minTableSize : _tableSize * 2);
+}
+
+void AtomicString::shrink()
+{
+    rehash(_tableSize / 2);
+}
+
+void AtomicString::rehash(int newTableSize)
+{
+    int oldTableSize = _tableSize;
+    DOMStringImpl **oldTable = _table;
+    
+    _tableSize = newTableSize;
+    _tableSizeMask = newTableSize - 1;
+    _table = (DOMStringImpl **)calloc(newTableSize, sizeof(DOMStringImpl *));
+    
+    for (int i = 0; i != oldTableSize; ++i)
+        if (DOMStringImpl *key = oldTable[i])
+            insert(key);
+    
+    free(oldTable);
+}
+
+const AtomicString &AtomicString::null()
+{
+    static AtomicString null;
+    return null;
+}
+
+// Global constants for property name strings.
+
+#if !AVOID_STATIC_CONSTRUCTORS
+    // Define an AtomicString in the normal way.
+    #define DEFINE_GLOBAL(name, string) extern const AtomicString name ## PropertyName(string);
+#else
+    // Define an AtomicString-sized array of pointers to avoid static initialization.
+    // Use an array of pointers instead of an array of char in case there is some alignment issue.
+    #define DEFINE_GLOBAL(name, string) \
+        void * name ## PropertyName[(sizeof(AtomicString) + sizeof(void *) - 1) / sizeof(void *)];
+#endif
+
+#define CALL_DEFINE_GLOBAL(name) DEFINE_GLOBAL(name, #name)
+KHTML_ATOMICSTRING_EACH_GLOBAL(CALL_DEFINE_GLOBAL)
+
+void AtomicString::init()
+{
+#if AVOID_STATIC_CONSTRUCTORS
+    static bool initialized;
+    if (!initialized) {
+        // Use placement new to initialize the globals.
+        #define PLACEMENT_NEW_GLOBAL(name, string) new (&name ## PropertyName) AtomicString(string);
+        #define CALL_PLACEMENT_NEW_GLOBAL(name) PLACEMENT_NEW_GLOBAL(name, #name)
+        KHTML_ATOMICSTRING_EACH_GLOBAL(CALL_PLACEMENT_NEW_GLOBAL)
+        initialized = true;
+    }
+#endif
+}
 
 AtomicStringList* AtomicStringList::clone()
 {
@@ -32,47 +345,21 @@ AtomicStringList* AtomicStringList::clone()
 
 bool operator==(const AtomicString &a, const DOMString &b)
 {
-    unsigned l = a.size();
-    if (l != b.length()) return false;
-    
-    if (!memcmp(a.ustring().data(), b.unicode(), l*sizeof(unsigned short)))
-	return true;
-    return false;
-    
+    return a.string() == b;    
 }
    
 bool equalsIgnoreCase(const AtomicString &as, const DOMString &bs)
 {
     // returns true when equal, false otherwise (ignoring case)
-    unsigned l = as.size();
-    if (l != bs.length()) return false;
-    
-    const QChar *a = reinterpret_cast<const QChar*>(as.ustring().data());
-    const QChar *b = bs.unicode();
-    if (a == b)  return true;
-    if (!(a && b))  return false;
-    while (l--) {
-        if (*a != *b && a->lower() != b->lower()) return false;
-	a++,b++;
-    }
-    return true;
+    return !strcasecmp(as.string(), bs);
 }
 
 bool equalsIgnoreCase(const AtomicString &as, const AtomicString &bs)
 {
     // returns true when equal, false otherwise (ignoring case)
-    int l = as.size();
-    if (l != bs.size()) return false;
-    
-    const QChar *a = reinterpret_cast<const QChar*>(as.ustring().data());
-    const QChar *b = reinterpret_cast<const QChar*>(bs.ustring().data());
-    if ( a == b )  return true;
-    if ( !( a && b ) )  return false;
-    while ( l-- ) {
-        if ( *a != *b && a->lower() != b->lower() ) return false;
-	a++,b++;
-    }
-    return true;    
+    if (as == bs)
+        return true;
+    return !strcasecmp(as.string(), bs.string());
 }
 
 }

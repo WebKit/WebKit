@@ -901,7 +901,7 @@ bool CSSStyleSelector::checkOneSelector(DOM::CSSSelector *sel, DOM::ElementImpl 
             }
 
             // The selector's value can't contain a space, or it's totally bogus.
-            spacePos = sel->value.ustring().find(' ');
+            spacePos = sel->value.find(' ');
             if (spacePos != -1)
                 return false;
 
@@ -1716,9 +1716,11 @@ void CSSStyleSelector::applyRule( int id, DOM::CSSValueImpl *value )
     {
         HANDLE_INHERIT_AND_INITIAL(clear, Clear)
         if(!primitiveValue) break;
-        EClear c = CNONE;
+        EClear c;
         switch(primitiveValue->getIdent())
         {
+        case CSS_VAL_NONE:
+            c = CNONE; break;
         case CSS_VAL_LEFT:
             c = CLEFT; break;
         case CSS_VAL_RIGHT:

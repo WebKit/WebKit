@@ -76,7 +76,7 @@ namespace DOM {
 	return DOMString( (QChar *)ps.string, ps.length );
     }
     static inline AtomicString atomicString( const ParseString &ps ) {
-	return AtomicString( (AtomicChar*)ps.string, ps.length );
+	return AtomicString( ps.string, ps.length );
     }
     
     class ValueList {
