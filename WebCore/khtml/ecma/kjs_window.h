@@ -87,7 +87,6 @@ namespace KJS {
     static Window *retrieveActive(ExecState *exec);
     QGuardedPtr<KHTMLPart> part() const { return m_part; }
     virtual void mark();
-    virtual bool hasProperty(ExecState *exec, const Identifier &p) const;
     virtual Value get(ExecState *exec, const Identifier &propertyName) const;
     virtual void put(ExecState *exec, const Identifier &propertyName, const Value &value, int attr = None);
     virtual bool toBoolean(ExecState *exec) const;

@@ -2,6 +2,21 @@
 
         Reviewed by Ken.
 
+        - fixed <rdar://problem/3809600> REGRESSION: text in search field doesn't disappear when clicked at developer.apple.com
+
+        Reversing the order of scope caused us to get and set too many properties in the window
+        object; in the case of this bug setting value ended up setting a window.value property
+        instead of the value of the <input> element.
+
+        * khtml/ecma/kjs_window.h: Removed bogus hasProperty function that always returns true.
+        Testing shows that MacIE and Gecko match our behavior when we remove this, despite the
+        "need this to match IE behavior" comment in the file, which I believe is incorrect.
+        * khtml/ecma/kjs_window.cpp: Ditto.
+
+2004-09-23  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
         - fixed <rdar://problem/3812471> -[DOMRange cloneContents] clones too much in some cases where endOffset is 0
 
         * khtml/xml/dom2_rangeimpl.cpp: (DOM::RangeImpl::processContents): Added some nil

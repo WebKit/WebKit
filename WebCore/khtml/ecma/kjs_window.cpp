@@ -445,16 +445,6 @@ void Window::mark()
     m_toolbar->mark();
 }
 
-bool Window::hasProperty(ExecState * /*exec*/, const Identifier &/*p*/) const
-{
-  //fprintf( stderr, "Window::hasProperty: always saying true\n" );
-
-  // emulate IE behaviour: it doesn't throw exceptions when undeclared
-  // variables are used. Returning true here will lead to get() returning
-  // 'undefined' in those cases.
-  return true;
-}
-
 UString Window::toString(ExecState *) const
 {
   return "[object Window]";
