@@ -30,12 +30,13 @@ typedef enum {
 } WebFrameState;
 
 typedef enum {
-    WebFrameLoadTypeStandard,
-    WebFrameLoadTypeBack,
-    WebFrameLoadTypeForward,
-    WebFrameLoadTypeIndexedBack,
-    WebFrameLoadTypeIndexedForward,
-    WebFrameLoadTypeRefresh,
+    WebFrameLoadTypeUninitialized = 0,
+    WebFrameLoadTypeStandard = 1,
+    WebFrameLoadTypeBack = 2,
+    WebFrameLoadTypeForward = 3,
+    WebFrameLoadTypeIndexedBack = 4,
+    WebFrameLoadTypeIndexedForward = 5,
+    WebFrameLoadTypeRefresh = 6
 } WebFrameLoadType;
 
 #define WebFrameStateChangedNotification @"WebFrameStateChangedNotification"
