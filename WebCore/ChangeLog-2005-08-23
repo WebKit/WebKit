@@ -1,3 +1,15 @@
+2004-12-10  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by John.
+
+	<rdar://problem/3912979> REGRESSION (125-173): repro crash in HTMLCollectionImpl code (www.clubtravel.ie)
+
+        * khtml/html/html_miscimpl.cpp:
+        (HTMLCollectionImpl::traverseNextItem): Pass base when traversing
+	the initial one step, otherwise we might inadvertantly step
+	outside the collection base, thereby causing assertion failures or
+	other badness later.
+
 2004-12-10  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Chris
