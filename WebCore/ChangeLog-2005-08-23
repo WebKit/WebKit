@@ -1,6 +1,27 @@
 2004-10-22  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Hyatt
+
+        Fix for this bug:
+        
+        <rdar://problem/3844662> REGRESSION (Mail): Style changes can affect adjacent, unselected text
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::ApplyStyleCommand::doApply): Move end position downstream to be sure we remove style from
+        everything that could be affected.
+        (khtml::ApplyStyleCommand::removeCSSStyle): Comma in intended function call was outside the
+        braces, making it act as a comma operator, with a zero value as the right value!!! This made
+        an important check always fail!!! It turns out that we do not want the constant at all, since
+        that constant is only needed when checking a computed style, not an inline style as is being
+        done here.
+        (khtml::ApplyStyleCommand::removeStyle): Call nodeFullySelected with new interface.
+        (khtml::ApplyStyleCommand::nodeFullySelected): Change interface and implementation to rely on
+        RangeImpl::compareBoundaryPoints to perform the required check.
+        * khtml/editing/htmlediting.h: Changed nodeFullySelected function interface.
+
+2004-10-22  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
         
         Fix for this bugs:
         

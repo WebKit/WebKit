@@ -1054,7 +1054,7 @@ void ApplyStyleCommand::removeCSSStyle(HTMLElementImpl *elem)
 
     for (QPtrListIterator<CSSProperty> it(*(style()->values())); it.current(); ++it) {
         CSSProperty *property = it.current();
-        if (decl->getPropertyCSSValue(property->id()), DoNotUpdateLayout)
+        if (decl->getPropertyCSSValue(property->id()))
             removeCSSProperty(decl, property->id());
     }
 
@@ -1073,10 +1073,15 @@ void ApplyStyleCommand::removeCSSStyle(HTMLElementImpl *elem)
 
 void ApplyStyleCommand::removeStyle(const Position &start, const Position &end)
 {
+    ASSERT(start.isNotNull());
+    ASSERT(end.isNotNull());
+    ASSERT(start.node()->inDocument());
+    ASSERT(end.node()->inDocument());
+    
     NodeImpl *node = start.node();
-    while (1) {
+    while (node) {
         NodeImpl *next = node->traverseNextNode();
-        if (node->isHTMLElement() && nodeFullySelected(start, node)) {
+        if (node->isHTMLElement() && nodeFullySelected(node, start, end)) {
             HTMLElementImpl *elem = static_cast<HTMLElementImpl *>(node);
             if (isHTMLStyleNode(elem))
                 removeHTMLStyleNode(elem);
@@ -1089,19 +1094,13 @@ void ApplyStyleCommand::removeStyle(const Position &start, const Position &end)
     }
 }
 
-bool ApplyStyleCommand::nodeFullySelected(const Position &start, const NodeImpl *node) const
+bool ApplyStyleCommand::nodeFullySelected(NodeImpl *node, const Position &start, const Position &end) const
 {
     ASSERT(node);
 
-    if (node == start.node())
-        return start.offset() >= node->caretMaxOffset();
-
-    for (NodeImpl *child = node->lastChild(); child; child = child->lastChild()) {
-        if (child == start.node())
-            return start.offset() >= child->caretMaxOffset();
-    }
-
-    return !start.node()->isAncestor(node);
+    Position pos = Position(node, node->childNodeCount()).upstream();
+    return RangeImpl::compareBoundaryPoints(node, 0, start.node(), start.offset()) >= 0 &&
+        RangeImpl::compareBoundaryPoints(pos.node(), pos.offset(), end.node(), end.offset()) <= 0;
 }
 
 //------------------------------------------------------------------------------------------

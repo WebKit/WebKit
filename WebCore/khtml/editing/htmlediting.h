@@ -247,7 +247,7 @@ private:
     void removeHTMLStyleNode(DOM::HTMLElementImpl *);
     void removeCSSStyle(DOM::HTMLElementImpl *);
     void removeStyle(const DOM::Position &start, const DOM::Position &end);
-    bool nodeFullySelected(const DOM::Position &, const DOM::NodeImpl *node) const;
+    bool nodeFullySelected(DOM::NodeImpl *, const DOM::Position &start, const DOM::Position &end) const;
 
     // style-application helpers
     bool splitTextAtStartIfNeeded(const DOM::Position &start, const DOM::Position &end);
