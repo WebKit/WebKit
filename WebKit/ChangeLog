@@ -1,5 +1,13 @@
 2002-08-30  Ken Kocienda  <kocienda@apple.com>
 
+	Removed one last reference to the now-removed WebDefaultMIMEType symbol.
+	I missed it earlier.
+
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient handleDidReceiveData:data:])
+
+2002-08-30  Ken Kocienda  <kocienda@apple.com>
+
 	Failed to remove debugging spam before my last checkin. Sorry.
 
         * WebKit.pbproj/project.pbxproj:

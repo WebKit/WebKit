@@ -182,7 +182,7 @@
     
         // Make assumption that if the contentType is the default 
         // and there is no extension, this is text/html
-        if([contentType isEqualToString:WebDefaultMIMEType] && [[[currentURL path] pathExtension] isEqualToString:@""])
+        if([contentType isEqualToString:@"application/octet-stream"] && [[[currentURL path] pathExtension] isEqualToString:@""])
             contentType = @"text/html";
         
         [dataSource _setContentType:contentType];
