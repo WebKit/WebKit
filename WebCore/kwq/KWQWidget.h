@@ -126,8 +126,8 @@ public:
     bool focusNextPrevChild(bool);
     bool hasMouseTracking() const;
 
-    void show() { }
-    void hide() { }
+    void show();
+    void hide();
 
     void showEvent(QShowEvent *) { }
     void hideEvent(QHideEvent *) { }

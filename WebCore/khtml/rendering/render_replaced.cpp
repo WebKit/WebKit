@@ -199,6 +199,15 @@ void RenderWidget::setQWidget(QWidget *widget, bool deleteWidget)
             }
             else
                 setPos(xPos(), -500000);
+
+#if APPLE_CHANGES
+	    if (style()) {
+	        if (style()->visibility() != VISIBLE)
+                    m_widget->hide();
+		else
+		    m_widget->show();
+	    }
+#endif
         }
 	m_view->addChild( m_widget, -500000, 0 );
     }
@@ -239,21 +248,34 @@ void RenderWidget::slotWidgetDestructed()
 void RenderWidget::setStyle(RenderStyle *_style)
 {
     RenderReplaced::setStyle(_style);
-    if(m_widget)
+    if (m_widget)
     {
         m_widget->setFont(style()->font());
-        if (style()->visibility() != VISIBLE) {
+        if (style()->visibility() != VISIBLE)
             m_widget->hide();
-        }
+#if APPLE_CHANGES
+        else
+            m_widget->show();
+#endif
     }
 }
 
 void RenderWidget::paintObject(QPainter *p, int x, int y, int width, int height, int _tx, int _ty,
                                PaintAction paintAction)
 {
-    if (!m_widget || !m_view || paintAction != PaintActionForeground)
+#if APPLE_CHANGES
+    if (!m_widget || !m_view || paintAction != PaintActionForeground ||
+        style()->visibility() != VISIBLE)
         return;
 
+    // Tell the widget to paint now.  This is the only time the widget is allowed
+    // to paint itself.  That way it will composite properly with z-indexed layers.
+    m_widget->paint(p, QRect(x, y, width, height));
+    
+#else
+    if (!m_widget || !m_view || paintAction != PaintActionForeground)
+        return;
+    
     if (style()->visibility() != VISIBLE) {
         m_widget->hide();
         return;
@@ -262,7 +284,6 @@ void RenderWidget::paintObject(QPainter *p, int x, int y, int width, int height,
     int xPos = _tx+borderLeft()+paddingLeft();
     int yPos = _ty+borderTop()+paddingTop();
 
-#if !APPLE_CHANGES
     int childw = m_widget->width();
     int childh = m_widget->height();
     if ( (childw == 2000 || childh == 3072) && m_widget->inherits( "KHTMLView" ) ) {
@@ -296,15 +317,9 @@ void RenderWidget::paintObject(QPainter *p, int x, int y, int width, int height,
 	xPos = xNew;
 	yPos = yNew;
     }
-#endif
 
     m_view->addChild(m_widget, xPos, yPos );
     m_widget->show();
-    
-#if APPLE_CHANGES
-    // Tell the widget to paint now.  This is the only time the widget is allowed
-    // to paint itself.  That way it will composite properly with z-indexed layers.
-    m_widget->paint(p, QRect(x, y, width, height));
 #endif
 }
 

@@ -53,6 +53,7 @@ public:
     QFont font;
     QPalette pal;
     NSView *view;
+    bool visible;
 };
 
 QWidget::QWidget() 
@@ -66,6 +67,8 @@ QWidget::QWidget()
 
     static QStyle defaultStyle;
     data->style = &defaultStyle;
+
+    data->visible = true;
 }
 
 QWidget::QWidget(NSView *view)
@@ -75,6 +78,7 @@ QWidget::QWidget(NSView *view)
 
     static QStyle defaultStyle;
     data->style = &defaultStyle;
+    data->visible = true;
 }
 
 QWidget::~QWidget() 
@@ -399,6 +403,30 @@ bool QWidget::focusNextPrevChild(bool)
 bool QWidget::hasMouseTracking() const
 {
     return true;
+}
+
+void QWidget::show()
+{
+    if (!data || data->visible)
+        return;
+
+    data->visible = true;
+
+    KWQ_BLOCK_NS_EXCEPTIONS;
+    [getOuterView() setHidden: NO];
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
+}
+
+void QWidget::hide()
+{
+    if (!data || !data->visible)
+        return;
+
+    data->visible = false;
+
+    KWQ_BLOCK_NS_EXCEPTIONS;
+    [getOuterView() setHidden: YES];
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
 }
 
 void QWidget::setFrameGeometry(const QRect &rect)

@@ -1,3 +1,20 @@
+2003-10-22  David Hyatt  <hyatt@apple.com>
+
+	Fix visibility to be done when widgets are added or when styles are set rather than at paint time.  Fixes
+	the ads painting on top of content at tvguide.com.
+	
+        Reviewed by cblu
+
+        * khtml/rendering/render_replaced.cpp:
+        (RenderWidget::setQWidget):
+        (RenderWidget::setStyle):
+        (RenderWidget::paintObject):
+        * kwq/KWQWidget.h:
+        * kwq/KWQWidget.mm:
+        (QWidget::QWidget):
+        (QWidget::show):
+        (QWidget::hide):
+
 2003-10-21  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Dave.
