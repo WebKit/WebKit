@@ -1,3 +1,11 @@
+2003-07-10  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fixed 3217731 -- after going back to a page, forms are submitted with the wrong encoding (back/forward cache)
+
+        * kwq/KWQKHTMLPart.mm: (KWQKHTMLPart::openURLFromPageCache): Put decoder from document into the part.
+
 === Safari-89 ===
 
 2003-07-10  Maciej Stachowiak  <mjs@apple.com>

@@ -1044,6 +1044,15 @@ void KWQKHTMLPart::openURLFromPageCache(KWQPageState *state)
     
     d->m_doc = doc;
     d->m_doc->ref();
+    
+    Decoder *decoder = doc->decoder();
+    if (decoder) {
+        decoder->ref();
+    }
+    if (d->m_decoder) {
+        d->m_decoder->deref();
+    }
+    d->m_decoder = decoder;
 
     updatePolicyBaseURL();
         
