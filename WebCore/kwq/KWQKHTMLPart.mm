@@ -444,13 +444,19 @@ bool KWQKHTMLPart::canCachePage()
     // 2.  The page has no javascript timers.
     // 3.  The page has no unload handler.
     // 4.  The page has no plugins.
+    // 5.  The page has no JavaScript window timeouts.
     if (d->m_doc &&
         (d->m_frames.count() ||
         parentPart() ||
         d->m_objects.count() ||
-        d->m_doc->getWindowEventListener (EventImpl::UNLOAD_EVENT) ||
-        (d->m_jscript && Window::retrieveWindow(this)->hasTimeouts()))){
+        d->m_doc->getWindowEventListener (EventImpl::UNLOAD_EVENT))) {
         return false;
+    }
+    if (d->m_doc && d->m_jscript) {
+        Window *w = Window::retrieveWindow(this);
+        if (w && w->hasTimeouts()) {
+            return false;
+        }
     }
     return true;
 }
