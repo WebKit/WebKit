@@ -26,7 +26,7 @@
 
 #import <WebKit/WebImageRendererFactory.h>
 #import <WebKit/WebImageRenderer.h>
-#import <WebKit/WebKitDebug.h>
+#import <WebFoundation/WebAssertions.h>
 
 @implementation WebImageRendererFactory
 
@@ -35,7 +35,7 @@
     if (![self sharedFactory]) {
         [[[self alloc] init] release];
     }
-    WEBKIT_ASSERT([[self sharedFactory] isMemberOfClass:self]);
+    ASSERT([[self sharedFactory] isKindOfClass:self]);
 }
 
 + (WebImageRendererFactory *)sharedFactory

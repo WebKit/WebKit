@@ -4,7 +4,7 @@
 */
 #import "WebPreferences.h"
 
-#import <WebKit/WebKitDebug.h>
+#import <WebFoundation/WebAssertions.h>
 
 // These are private because callers should be using the cover methods
 #define        WebKitLogLevelPreferenceKey                @"WebKitLogLevel"

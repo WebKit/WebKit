@@ -24,7 +24,7 @@
  */
 
 #import "WebPlugin.h"
-#import "WebKitDebug.h"
+#import <WebFoundation/WebAssertions.h>
 
 typedef void (* FunctionPointer) (void);
 typedef void (* TransitionVector) (void);
@@ -202,17 +202,17 @@ TransitionVector tVectorForFunctionPointer(FunctionPointer);
     }else{ // single CFM file
         err = FSPathMakeRef((UInt8 *)[path cString], &fref, NULL);
         if(err != noErr){
-            WEBKITDEBUG("WebNetscapePlugin: load: FSPathMakeRef failed. Error=%d\n", err);
+            ERROR("WebNetscapePlugin: load: FSPathMakeRef failed. Error=%d", err);
             return NO;
         }
         err = FSGetCatalogInfo(&fref, kFSCatInfoNone, NULL, NULL, &spec, NULL);
         if(err != noErr){
-            WEBKITDEBUG("WebNetscapePlugin: load: FSGetCatalogInfo failed. Error=%d\n", err);
+            ERROR("WebNetscapePlugin: load: FSGetCatalogInfo failed. Error=%d", err);
             return NO;
         }
         err = GetDiskFragment(&spec, 0, kCFragGoesToEOF, nil, kPrivateCFragCopy, &connID, (Ptr *)&pluginMainFunc, nil);
         if(err != noErr){
-            WEBKITDEBUG("WebNetscapePlugin: load: GetDiskFragment failed. Error=%d\n", err);
+            ERROR("WebNetscapePlugin: load: GetDiskFragment failed. Error=%d", err);
             return NO;
         }
         pluginMainFunc = (mainFuncPtr)functionPointerForTVector((TransitionVector)pluginMainFunc);
@@ -260,7 +260,7 @@ TransitionVector tVectorForFunctionPointer(FunctionPointer);
         
         pluginSize = pluginFuncs.size;
         pluginVersion = pluginFuncs.version;
-        WEBKITDEBUG("pluginMainFunc: %d, size=%d, version=%d\n", npErr, pluginSize, pluginVersion);
+        ERROR("pluginMainFunc: %d, size=%d, version=%d", npErr, pluginSize, pluginVersion);
         
         NPP_New = (NPP_NewProcPtr)functionPointerForTVector((TransitionVector)pluginFuncs.newp);
         NPP_Destroy = (NPP_DestroyProcPtr)functionPointerForTVector((TransitionVector)pluginFuncs.destroy);
@@ -320,7 +320,7 @@ TransitionVector tVectorForFunctionPointer(FunctionPointer);
         NPP_GetValue = pluginFuncs.getvalue;
         NPP_SetValue = pluginFuncs.setvalue;
     }
-    WEBKITDEBUG("Plugin Loaded\n");
+    ERROR("Plugin Loaded");
     isLoaded = TRUE;
     return YES;
 }
@@ -337,7 +337,7 @@ TransitionVector tVectorForFunctionPointer(FunctionPointer);
     }else{
         CloseConnection(&connID);
     }
-    WEBKITDEBUG("Plugin Unloaded\n");
+    ERROR("Plugin Unloaded");
     isLoaded = FALSE;
 }
 

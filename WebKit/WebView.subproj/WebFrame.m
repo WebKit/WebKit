@@ -20,6 +20,7 @@
 #import <WebKit/WebLocationChangeHandler.h>
 #import <WebKit/WebViewPrivate.h>
 
+#import <WebFoundation/WebAssertions.h>
 #import <WebFoundation/WebFoundation.h>
 #import <WebFoundation/WebNSURLExtras.h>
 
@@ -121,12 +122,12 @@
     id <WebLocationChangeHandler>locationChangeHandler;
     WebDataSource *oldDataSource;
     
-    WEBKIT_ASSERT ([self controller] != nil);
+    ASSERT([self controller] != nil);
 
     // Unfortunately the view must be non-nil, this is ultimately due
     // to KDE parser requiring a KHTMLView.  Once we settle on a final
     // KDE drop we should fix this dependency.
-    WEBKIT_ASSERT ([self webView] != nil);
+    ASSERT([self webView] != nil);
 
     // Record the current scroll position if this frame is associated with the
     // current entry in the back/forward list.

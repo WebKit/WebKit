@@ -23,6 +23,7 @@
 #import <WebKit/WebPreferencesPrivate.h>
 #import <WebKit/WebViewPrivate.h>
 
+#import <WebFoundation/WebAssertions.h>
 #import <WebFoundation/WebNSURLExtras.h>
 #import <WebFoundation/WebFoundation.h>
 
@@ -157,7 +158,7 @@ static const char * const stateNames[] = {
 
 - (void)_timedLayout: (id)userInfo
 {
-    WEBKITDEBUGLEVEL (WEBKIT_LOG_TIMING, "%s:  state = %s\n", [[self name] cString], stateNames[_private->state]);
+    WEBKITDEBUGLEVEL (WEBKIT_LOG_TIMING, "%s:  state = %s", [[self name] cString], stateNames[_private->state]);
     
     [_private->scheduledLayoutTimer release];
     _private->scheduledLayoutTimer = nil;
@@ -166,7 +167,7 @@ static const char * const stateNames[] = {
         NSView <WebDocumentView> *documentView = [[self webView] documentView];
         
         if ([self controller])
-            WEBKITDEBUGLEVEL (WEBKIT_LOG_TIMING, "%s:  performing timed layout, %f seconds since start of document load\n", [[self name] cString], CFAbsoluteTimeGetCurrent() - [[[[self controller] mainFrame] dataSource] _loadingStartedTime]);
+            WEBKITDEBUGLEVEL (WEBKIT_LOG_TIMING, "%s:  performing timed layout, %f seconds since start of document load", [[self name] cString], CFAbsoluteTimeGetCurrent() - [[[[self controller] mainFrame] dataSource] _loadingStartedTime]);
             
         if ([[self webView] isDocumentHTML]) {
             WebHTMLView *htmlView = (WebHTMLView *)documentView;
@@ -193,7 +194,7 @@ static const char * const stateNames[] = {
     }
     else {
         if ([self controller])
-            WEBKITDEBUGLEVEL (WEBKIT_LOG_TIMING, "%s:  NOT performing timed layout (not needed), %f seconds since start of document load\n", [[self name] cString], CFAbsoluteTimeGetCurrent() - [[[[self controller] mainFrame] dataSource] _loadingStartedTime]);
+            WEBKITDEBUGLEVEL (WEBKIT_LOG_TIMING, "%s:  NOT performing timed layout (not needed), %f seconds since start of document load", [[self name] cString], CFAbsoluteTimeGetCurrent() - [[[[self controller] mainFrame] dataSource] _loadingStartedTime]);
     }
 }
 
@@ -217,13 +218,13 @@ static const char * const stateNames[] = {
                 // ahead and schedule a layout.
                 timeSinceStart = (CFAbsoluteTimeGetCurrent() - [[self dataSource] _loadingStartedTime]);
                 if (timeSinceStart > (double)defaultTimedDelay) {
-                    WEBKITDEBUGLEVEL (WEBKIT_LOG_TIMING, "performing early layout because commit time, %f, exceeded initial layout interval %f\n", timeSinceStart, defaultTimedDelay);
+                    WEBKITDEBUGLEVEL (WEBKIT_LOG_TIMING, "performing early layout because commit time, %f, exceeded initial layout interval %f", timeSinceStart, defaultTimedDelay);
                     [self _timedLayout: nil];
                 }
                 else {
                     NSTimeInterval timedDelay = defaultTimedDelay - timeSinceStart;
                     
-                    WEBKITDEBUGLEVEL (WEBKIT_LOG_TIMING, "registering delayed layout after %f seconds, time since start %f\n", timedDelay, timeSinceStart);
+                    WEBKITDEBUGLEVEL (WEBKIT_LOG_TIMING, "registering delayed layout after %f seconds, time since start %f", timedDelay, timeSinceStart);
                     [self _scheduleLayout: timedDelay];
                 }
             }
@@ -239,7 +240,7 @@ static const char * const stateNames[] = {
         
         default:
         {
-	    WEBKIT_ASSERT_NOT_REACHED();
+	    ASSERT_NOT_REACHED();
         }
     }
 }
@@ -247,7 +248,7 @@ static const char * const stateNames[] = {
 
 - (void)_transitionToCommitted
 {
-    WEBKIT_ASSERT ([self controller] != nil);
+    ASSERT([self controller] != nil);
     NSView <WebDocumentView> *documentView;
     WebHistoryItem *backForwardItem;
     WebBackForwardList *backForwardList = [[self controller] backForwardList];
@@ -258,7 +259,7 @@ static const char * const stateNames[] = {
     switch ([self _state]) {
     	case WebFrameStateProvisional:
         {
-	    WEBKIT_ASSERT (documentView != nil);
+	    ASSERT(documentView != nil);
 
             // Set the committed data source on the frame.
             [self _setDataSource: _private->provisionalDataSource];
@@ -307,7 +308,7 @@ static const char * const stateNames[] = {
                 // if we're in the WebFrameLoadTypeUninitialized state.
                 case WebFrameLoadTypeUninitialized:
                 default:
-		    WEBKIT_ASSERT_NOT_REACHED();
+		    ASSERT_NOT_REACHED();
                 }
             }
             
@@ -325,7 +326,7 @@ static const char * const stateNames[] = {
         case WebFrameStateComplete:
         default:
         {
-	    WEBKIT_ASSERT_NOT_REACHED();
+	    ASSERT_NOT_REACHED();
         }
     }
 }
@@ -337,9 +338,9 @@ static const char * const stateNames[] = {
 
 - (void)_setState: (WebFrameState)newState
 {
-    WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "%s:  transition from %s to %s\n", [[self name] cString], stateNames[_private->state], stateNames[newState]);
+    WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "%s:  transition from %s to %s", [[self name] cString], stateNames[_private->state], stateNames[newState]);
     if ([self controller])
-        WEBKITDEBUGLEVEL (WEBKIT_LOG_TIMING, "%s:  transition from %s to %s, %f seconds since start of document load\n", [[self name] cString], stateNames[_private->state], stateNames[newState], CFAbsoluteTimeGetCurrent() - [[[[self controller] mainFrame] dataSource] _loadingStartedTime]);
+        WEBKITDEBUGLEVEL (WEBKIT_LOG_TIMING, "%s:  transition from %s to %s, %f seconds since start of document load", [[self name] cString], stateNames[_private->state], stateNames[newState], CFAbsoluteTimeGetCurrent() - [[[[self controller] mainFrame] dataSource] _loadingStartedTime]);
     
     if (newState == WebFrameStateComplete && self == [[self controller] mainFrame]){
         WEBKITDEBUGLEVEL (WEBKIT_LOG_DOCUMENTLOAD, "completed %s (%f seconds)", [[[[self dataSource] originalURL] absoluteString] cString], CFAbsoluteTimeGetCurrent() - [[self dataSource] _loadingStartedTime]);
@@ -366,21 +367,21 @@ static const char * const stateNames[] = {
 
 - (void)_isLoadComplete
 {
-    WEBKIT_ASSERT ([self controller] != nil);
+    ASSERT([self controller] != nil);
 
     switch ([self _state]) {
         case WebFrameStateProvisional:
         {
             WebDataSource *pd = [self provisionalDataSource];
             
-            WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "%s:  checking complete in WebFrameStateProvisional\n", [[self name] cString]);
+            WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "%s:  checking complete in WebFrameStateProvisional", [[self name] cString]);
             // If we've received any errors we may be stuck in the provisional state and actually
             // complete.
             if ([[pd errors] count] != 0 || [pd mainDocumentError]) {
                 // Check all children first.
-                WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "%s:  checking complete, current state WebFrameStateProvisional, %d errors\n", [[self name] cString], [[pd errors] count]);
+                WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "%s:  checking complete, current state WebFrameStateProvisional, %d errors", [[self name] cString], [[pd errors] count]);
                 if (![pd isLoading]) {
-                    WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "%s:  checking complete in WebFrameStateProvisional, load done\n", [[self name] cString]);
+                    WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "%s:  checking complete in WebFrameStateProvisional, load done", [[self name] cString]);
 
                     [[[self controller] locationChangeHandler] locationChangeDone: [pd mainDocumentError] forDataSource:pd];
 
@@ -399,7 +400,7 @@ static const char * const stateNames[] = {
         {
             WebDataSource *ds = [self dataSource];
             
-            //WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "%s:  checking complete, current state WEBFRAMESTATE_COMMITTED\n", [[self name] cString]);
+            //WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "%s:  checking complete, current state WEBFRAMESTATE_COMMITTED", [[self name] cString]);
             if (![ds isLoading]) {
                 id thisView = [self webView];
                 NSView <WebDocumentView> *thisDocumentView = [thisView documentView];
@@ -503,14 +504,14 @@ static const char * const stateNames[] = {
         
         case WebFrameStateComplete:
         {
-            WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "%s:  checking complete, current state WebFrameStateComplete\n", [[self name] cString]);
+            WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "%s:  checking complete, current state WebFrameStateComplete", [[self name] cString]);
             return;
         }
         
         // Yikes!  Serious horkage.
         default:
         {
-	    WEBKIT_ASSERT_NOT_REACHED();
+	    ASSERT_NOT_REACHED();
         }
     }
 }
@@ -536,7 +537,7 @@ static const char * const stateNames[] = {
 - (void)_checkLoadComplete
 {
 
-    WEBKIT_ASSERT ([self controller] != nil);
+    ASSERT([self controller] != nil);
 
     // Now walk the frame tree to see if any frame that may have initiated a load is done.
     [WebFrame _recursiveCheckCompleteFromFrame: [[self controller] mainFrame]];

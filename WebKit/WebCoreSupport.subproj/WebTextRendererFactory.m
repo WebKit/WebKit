@@ -2,13 +2,15 @@
     WebTextRendererFactory.m
     Copyright 2002, Apple, Inc. All rights reserved.
 */
-#import <mach-o/dyld.h>                // for NSSymbol, NSAddressOfSymbolWithHint(), NSLookupAndBindSymbolWithHint()
 
 #import <WebKit/WebTextRendererFactory.h>
 #import <WebKit/WebTextRenderer.h>
-#import <WebKit/WebKitDebug.h>
+
+#import <WebFoundation/WebAssertions.h>
 
 #import <CoreGraphics/CoreGraphicsPrivate.h>
+
+#import <mach-o/dyld.h>
 
 @interface WebFontCacheKey : NSObject
 {
@@ -77,7 +79,7 @@
 
 - (void)endCoalesceTextDrawing
 {
-    WEBKIT_ASSERT ([self coalesceTextDrawing]);
+    ASSERT([self coalesceTextDrawing]);
     
     NSView *targetView = [viewStack objectAtIndex: [viewStack count]-1];
     [viewStack removeLastObject];
@@ -91,7 +93,7 @@
 
 - (WebGlyphBuffer *)glyphBufferForFont: (NSFont *)font andColor: (NSColor *)color
 {
-    WEBKIT_ASSERT ([self coalesceTextDrawing]);
+    ASSERT([self coalesceTextDrawing]);
 
     NSMutableSet *glyphBuffers;
     WebGlyphBuffer *glyphBuffer = nil;
@@ -128,13 +130,9 @@
 
         // Turn off auto expiration of glyphs in CG's cache
         // and increase the cache size.
-        NSSymbol symbol;
-        void (*functionPtr)(CGFontCache *,bool) = NULL;
-        
-        symbol = NSLookupAndBindSymbol("_CGFontCacheSetShouldAutoExpire");
+        NSSymbol symbol = NSLookupAndBindSymbol("_CGFontCacheSetShouldAutoExpire");
         if (symbol != NULL) {
-            NSLog (@"Disabling glyph auto expiration in CG\n");
-            functionPtr = NSAddressOfSymbol(symbol);
+            void (*functionPtr)(CGFontCache *,bool) = NSAddressOfSymbol(symbol);
     
             CGFontCache *fontCache;
             fontCache = CGFontCacheCreate();
@@ -143,10 +141,10 @@
             CGFontCacheRelease(fontCache);
         }
         else {
-            NSLog (@"Unable to disabling glyph auto expiration in CG.  Performance will be degraded.\n");
+            NSLog(@"CoreGraphics is missing call to disable glyph auto expiration. Pages will load more slowly.");
         }
     }
-    WEBKIT_ASSERT([[self sharedFactory] isMemberOfClass:self]);
+    ASSERT([[self sharedFactory] isKindOfClass:self]);
 }
 
 + (WebTextRendererFactory *)sharedFactory;
@@ -236,7 +234,6 @@
         }
     }
     
-    //NSLog(@"unable to find font for family %@, traits 0x%08x(%d), size %f", family, traits, traits, size);
     return [[NSFontManager sharedFontManager] fontWithFamily:@"Helvetica" traits:traits weight:5 size:size];
 }
 

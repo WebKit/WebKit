@@ -28,6 +28,7 @@
 #import <WebKit/WebViewPrivate.h>
 #import <WebKit/WebKitDebug.h>
 
+#import <WebFoundation/WebAssertions.h>
 #import <WebFoundation/WebError.h>
 #import <WebFoundation/WebNSDictionaryExtras.h>
 #import <WebFoundation/WebNSStringExtras.h>
@@ -51,7 +52,7 @@
 {
     // controller is only retained while loading, but this object is also
     // retained while loading, so no need to release here
-    WEBKIT_ASSERT(!loading);
+    ASSERT(!loading);
     
     NSEnumerator *e = [[frames allValues] objectEnumerator];
     WebFrame *frame;
@@ -104,7 +105,7 @@
 
 - (void)_setLoading:(BOOL)loading
 {
-    WEBKIT_ASSERT_VALID_ARG("loading", loading == NO || loading == YES);
+    ASSERT_ARG("loading", loading == NO || loading == YES);
     
     if (_private->loading == loading)
         return;
@@ -162,11 +163,11 @@
 
 - (void)_startLoading: (BOOL)forceRefresh
 {
-    WEBKIT_ASSERT ([self _isStopping] == NO);
+    ASSERT([self _isStopping] == NO);
 
     [self _setPrimaryLoadComplete: NO];
     
-    WEBKIT_ASSERT ([self webFrame] != nil);
+    ASSERT([self webFrame] != nil);
     
     [self _clearErrors];
     
@@ -278,7 +279,7 @@
     // We should never be getting a redirect callback after the data
     // source is committed. It would be a WebFoundation bug if it sent
     // a redirect callback after commit.
-    WEBKIT_ASSERT(!_private->committed);
+    ASSERT(!_private->committed);
 
     [URL retain];
     [_private->finalURL release];
@@ -384,7 +385,7 @@
 
 - (WebBridge *)_bridge
 {
-    WEBKIT_ASSERT(_private->committed);
+    ASSERT(_private->committed);
     return [[self webFrame] _bridge];
 }
 
@@ -396,7 +397,7 @@
 -(void)_commitIfReady
 {
     if ([[self contentPolicy] policyAction] == WebContentPolicyShow && _private->gotFirstByte && !_private->committed) {
-        WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "committed resource = %s\n", [[[self originalURL] absoluteString] cString]);
+        WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "committed resource = %s", [[[self originalURL] absoluteString] cString]);
 	_private->committed = TRUE;
 	[self _makeRepresentation];
         [[self webFrame] _transitionToCommitted];
@@ -447,7 +448,7 @@
 
 - (void)_loadIcon
 {
-    WEBKIT_ASSERT(!_private->iconLoader);
+    ASSERT(!_private->iconLoader);
 
     if([self isMainDocument] && !_private->mainDocumentError){
         

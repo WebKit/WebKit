@@ -9,7 +9,7 @@
 #import <WebKit/WebHTMLViewPrivate.h>
 
 #import <AppKit/NSResponder_Private.h>
-#import <WebKit/WebKitDebug.h>
+#import <WebFoundation/WebAssertions.h>
 #import <WebKit/WebImageRenderer.h>
 #import <WebKit/WebNSViewExtras.h>
 #import <WebKit/WebPluginView.h>

@@ -7,7 +7,7 @@
 //
 
 #import "WebURLsWithTitles.h"
-#import <WebKit/WebKitDebug.h>
+#import <WebFoundation/WebAssertions.h>
 
 #import <WebFoundation/WebNSURLExtras.h>
 

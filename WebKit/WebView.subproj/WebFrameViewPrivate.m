@@ -8,7 +8,7 @@
 
 #import <WebKit/WebViewPrivate.h>
 
-#import <WebKit/WebKitDebug.h>
+#import <WebFoundation/WebAssertions.h>
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebDocument.h>
 #import <WebKit/WebDynamicScrollBarsView.h>

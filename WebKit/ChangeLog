@@ -1,3 +1,51 @@
+2002-09-05  Darin Adler  <darin@apple.com>
+
+	Update to use the new style of assertions.
+	A few places still use the WebKitDebug.h, for logging.
+
+        * Bookmarks.subproj/WebBookmark.m:
+        * Bookmarks.subproj/WebBookmarkGroup.m:
+        * Bookmarks.subproj/WebBookmarkLeaf.m:
+        * Bookmarks.subproj/WebBookmarkList.m:
+        * Bookmarks.subproj/WebBookmarkSeparator.m:
+        * History.subproj/WebHistory.m:
+        * History.subproj/WebHistoryList.m:
+        * History.subproj/WebHistoryPrivate.m:
+        * History.subproj/WebURLsWithTitles.m:
+        * Misc.subproj/WebDownloadHandler.m:
+        * Misc.subproj/WebIconDatabase.m:
+        * Misc.subproj/WebIconLoader.m:
+        * Misc.subproj/WebKitDebug.h:
+        * Misc.subproj/WebStringTruncator.m:
+        * Panels.subproj/WebAuthenticationPanel.m:
+        * Plugins.subproj/WebPlugin.m:
+        * Plugins.subproj/WebPluginDatabase.m:
+        * Plugins.subproj/WebPluginNullEventSender.m:
+        * Plugins.subproj/WebPluginStream.m:
+        * Plugins.subproj/WebPluginView.m:
+        * Plugins.subproj/npapi.m:
+        * WebCoreSupport.subproj/WebBridge.m:
+        * WebCoreSupport.subproj/WebCookieAdapter.m:
+        * WebCoreSupport.subproj/WebImageRenderer.m:
+        * WebCoreSupport.subproj/WebImageRendererFactory.m:
+        * WebCoreSupport.subproj/WebSubresourceClient.m:
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        * WebCoreSupport.subproj/WebTextRendererFactory.m:
+        * WebCoreSupport.subproj/WebViewFactory.m:
+        * WebView.subproj/WebController.m:
+        * WebView.subproj/WebControllerPrivate.m:
+        * WebView.subproj/WebDataSource.m:
+        * WebView.subproj/WebDataSourcePrivate.m:
+        * WebView.subproj/WebDefaultPolicyHandler.m:
+        * WebView.subproj/WebFrame.m:
+        * WebView.subproj/WebFramePrivate.m:
+        * WebView.subproj/WebHTMLView.m:
+        * WebView.subproj/WebHTMLViewPrivate.m:
+        * WebView.subproj/WebMainResourceClient.m:
+        * WebView.subproj/WebPreferences.m:
+        * WebView.subproj/WebViewPrivate.m:
+	Use new assertions.
+
 2002-09-05  Richard Williamson (Local)  <rjw@apple.com>
 
         Removed debugging.
@@ -22,7 +70,6 @@
         (-[WebBridge documentState]):
         * WebView.subproj/WebDataSourcePrivate.m:
         (-[WebDataSource _startLoading:]):
-        
         
         Lookup post Jaguar CG SPI.  Can now run and build
         w/o patched CG.

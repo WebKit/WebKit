@@ -8,10 +8,12 @@
 
 #import "WebHistoryPrivate.h"
 
+#import "WebHistoryItem.h"
+#import <WebKit/WebKitDebug.h>
+
+#import <WebFoundation/WebAssertions.h>
 #import <WebFoundation/WebNSCalendarDateExtras.h>
 #import <WebFoundation/WebNSURLExtras.h>
-#import <WebKit/WebKitDebug.h>
-#import "WebHistoryItem.h"
 
 @interface WebHistoryPrivate (Private)
 -(WebHistoryItem *)_entryForURLString:(NSString *)URLString;
@@ -65,7 +67,7 @@
 {
     int count;
 
-    WEBKIT_ASSERT_VALID_ARG (index, index != nil);
+    ASSERT_ARG(index, index != nil);
 
     //FIXME: just does linear search through days; inefficient if many days
     count = [_datesWithEntries count];
@@ -88,8 +90,8 @@
     NSMutableArray *entriesForDate;
     NSCalendarDate *entryDate;
 
-    WEBKIT_ASSERT_VALID_ARG (entry, entry != nil);
-    WEBKIT_ASSERT_VALID_ARG (dateIndex, dateIndex >= 0 && (uint)dateIndex < [_entriesByDate count]);
+    ASSERT_ARG(entry, entry != nil);
+    ASSERT_ARG(dateIndex, dateIndex >= 0 && (uint)dateIndex < [_entriesByDate count]);
 
     //FIXME: just does linear search through entries; inefficient if many entries for this date
     entryDate = [entry lastVisitedDate];
@@ -120,7 +122,7 @@
 
     foundDate = [self findIndex: &dateIndex forDay: [entry lastVisitedDate]];
 
-    WEBKIT_ASSERT (foundDate);
+    ASSERT(foundDate);
     
     entriesForDate = [_entriesByDate objectAtIndex: dateIndex];
     [entriesForDate removeObject: entry];
@@ -140,7 +142,7 @@
     int dateIndex;
     NSString *URLString;
 
-    WEBKIT_ASSERT_VALID_ARG (entry, [entry lastVisitedDate] != nil);
+    ASSERT_ARG(entry, [entry lastVisitedDate] != nil);
 
     URLString = [[entry URL] absoluteString];
     [self removeEntryForURLString: URLString];
@@ -229,7 +231,7 @@
 {
     WebHistoryItem *entry;
 
-    WEBKIT_ASSERT (oldURLString != nil);
+    ASSERT(oldURLString != nil);
 
     entry = [self _entryForURLString:oldURLString];
     if (entry == nil) {
@@ -369,17 +371,17 @@
 
     path = [self file];
     if (path == nil) {
-        WEBKITDEBUG("couldn't load history; couldn't find or create directory to store it in\n");
+        ERROR("couldn't load history; couldn't find or create directory to store it in");
         return NO;
     }
 
     array = [NSArray arrayWithContentsOfFile: path];
     if (array == nil) {
         if (![[NSFileManager defaultManager] fileExistsAtPath: path]) {
-            WEBKITDEBUG("no history file found at %s\n",
+            ERROR("no history file found at %s",
                             DEBUG_OBJECT(path));
         } else {
-            WEBKITDEBUG("attempt to read history from %s failed; perhaps contents are corrupted\n",
+            ERROR("attempt to read history from %s failed; perhaps contents are corrupted",
                             DEBUG_OBJECT(path));
         }
         return NO;
@@ -432,7 +434,7 @@
 
     if (result) {
         duration = CFAbsoluteTimeGetCurrent() - start;
-        WEBKITDEBUGLEVEL (WEBKIT_LOG_TIMING, "loading %d history entries from %s took %f seconds\n",
+        WEBKITDEBUGLEVEL (WEBKIT_LOG_TIMING, "loading %d history entries from %s took %f seconds",
                            numberOfItems, DEBUG_OBJECT([self file]), duration);
     }
 
@@ -447,13 +449,13 @@
 
     path = [self file];
     if (path == nil) {
-        WEBKITDEBUG("couldn't save history; couldn't find or create directory to store it in\n");
+        ERROR("couldn't save history; couldn't find or create directory to store it in");
         return NO;
     }
 
     array = [self arrayRepresentation];
     if (![array writeToFile:path atomically:YES]) {
-        WEBKITDEBUG("attempt to save %s to %s failed\n", DEBUG_OBJECT(array), DEBUG_OBJECT(path));
+        ERROR("attempt to save %s to %s failed", DEBUG_OBJECT(array), DEBUG_OBJECT(path));
         return NO;
     }
     
@@ -472,7 +474,7 @@
 
     if (result) {
         duration = CFAbsoluteTimeGetCurrent() - start;
-        WEBKITDEBUGLEVEL (WEBKIT_LOG_TIMING, "saving %d history entries to %s took %f seconds\n",
+        WEBKITDEBUGLEVEL (WEBKIT_LOG_TIMING, "saving %d history entries to %s took %f seconds",
                            numberOfItems, DEBUG_OBJECT([self file]), duration);
     }
 

@@ -12,7 +12,7 @@
 #import <WebKit/WebHistoryItem.h>
 #import <WebKit/WebHTMLRepresentationPrivate.h>
 #import <WebKit/WebHTMLViewPrivate.h>
-#import <WebKit/WebKitDebug.h>
+#import <WebFoundation/WebAssertions.h>
 #import <WebKit/WebKitStatisticsPrivate.h>
 #import <WebKit/WebLoadProgress.h>
 #import <WebKit/WebSubresourceClient.h>
@@ -58,7 +58,7 @@
 
 - (WebCoreBridge *)descendantFrameNamed:(NSString *)name
 {
-    WEBKIT_ASSERT(frame != nil);
+    ASSERT(frame != nil);
     return [[frame frameNamed:name] _bridge];
 }
 
@@ -66,7 +66,7 @@
     withURL:(NSURL *)URL renderPart:(KHTMLRenderPart *)childRenderPart
     allowsScrolling:(BOOL)allowsScrolling marginWidth:(int)width marginHeight:(int)height
 {
-    WEBKIT_ASSERT(frame != nil);
+    ASSERT(frame != nil);
     WebFrame *newFrame = [[frame controller] createFrameNamed:frameName for:nil inParent:[self dataSource] allowsScrolling:allowsScrolling];
     if (newFrame == nil) {
         return nil;
@@ -88,7 +88,7 @@
 
 - (WebCoreBridge *)openNewWindowWithURL:(NSURL *)URL
 {
-    WEBKIT_ASSERT(frame != nil);
+    ASSERT(frame != nil);
 
     WebController *newController = [[[frame controller] windowContext] openNewWindowWithURL:URL];
     WebFrame *newFrame = [newController mainFrame];
@@ -98,49 +98,49 @@
 
 - (BOOL)areToolbarsVisible
 {
-    WEBKIT_ASSERT(frame != nil);
+    ASSERT(frame != nil);
     return [[[frame controller] windowContext] areToolbarsVisible];
 }
 
 - (void)setToolbarsVisible:(BOOL)visible
 {
-    WEBKIT_ASSERT(frame != nil);
+    ASSERT(frame != nil);
     [[[frame controller] windowContext] setToolbarsVisible:visible];
 }
 
 - (BOOL)areScrollbarsVisible
 {
-    WEBKIT_ASSERT(frame != nil);
+    ASSERT(frame != nil);
     return [[frame webView] allowsScrolling];
 }
 
 - (void)setScrollbarsVisible:(BOOL)visible
 {
-    WEBKIT_ASSERT(frame != nil);
+    ASSERT(frame != nil);
     return [[frame webView] setAllowsScrolling:visible];
 }
 
 - (BOOL)isStatusBarVisible
 {
-    WEBKIT_ASSERT(frame != nil);
+    ASSERT(frame != nil);
     return [[[frame controller] windowContext] isStatusBarVisible];
 }
 
 - (void)setStatusBarVisible:(BOOL)visible
 {
-    WEBKIT_ASSERT(frame != nil);
+    ASSERT(frame != nil);
     [[[frame controller] windowContext] setStatusBarVisible:visible];
 }
 
 - (void)setWindowFrame:(NSRect)frameRect
 {
-    WEBKIT_ASSERT(frame != nil);
+    ASSERT(frame != nil);
     [[[frame controller] windowContext] setFrame:frameRect];
 }
 
 - (NSWindow *)window
 {
-    WEBKIT_ASSERT(frame != nil);
+    ASSERT(frame != nil);
     return [[[frame controller] windowContext] window];
 }
 
@@ -151,25 +151,25 @@
 
 - (void)setStatusText:(NSString *)status
 {
-    WEBKIT_ASSERT(frame != nil);
+    ASSERT(frame != nil);
     [[[frame controller] windowContext] setStatusText:status];
 }
 
 - (WebCoreBridge *)mainFrame
 {
-    WEBKIT_ASSERT(frame != nil);
+    ASSERT(frame != nil);
     return [[[frame controller] mainFrame] _bridge];
 }
 
 - (WebCoreBridge *)frameNamed:(NSString *)name
 {
-    WEBKIT_ASSERT(frame != nil);
+    ASSERT(frame != nil);
     return [[[frame controller] frameNamed:name] _bridge];
 }
 
 - (void)receivedData:(NSData *)data withDataSource:(WebDataSource *)withDataSource
 {
-    WEBKIT_ASSERT([self dataSource] == withDataSource);
+    ASSERT([self dataSource] == withDataSource);
 
     if ([withDataSource _overrideEncoding] != kCFStringEncodingInvalidId) {
 	[self addData:data withOverrideEncoding:[withDataSource _overrideEncoding]];
@@ -185,7 +185,7 @@
 
 - (void)objectLoadedFromCache:(NSURL *)URL size:(unsigned)bytes
 {
-    WEBKIT_ASSERT(frame != nil);
+    ASSERT(frame != nil);
 
     WebResourceRequest *request = [[WebResourceRequest alloc] initWithClient:nil URL:URL];
     WebResourceHandle *handle = [[WebResourceHandle alloc] initWithRequest:request];
@@ -213,14 +213,14 @@
 
 - (void)setFrame:(WebFrame *)webFrame
 {
-    WEBKIT_ASSERT(webFrame != nil);
+    ASSERT(webFrame != nil);
 
     if (frame == nil) {
 	// FIXME: non-retained because data source owns representation owns bridge
 	frame = webFrame;
         [self setTextSizeMultiplier:[[frame controller] textSizeMultiplier]];
     } else {
-	WEBKIT_ASSERT(frame == webFrame);
+	ASSERT(frame == webFrame);
     }
 }
 
@@ -232,11 +232,11 @@
 
 - (WebDataSource *)dataSource
 {
-    WEBKIT_ASSERT(frame != nil);
+    ASSERT(frame != nil);
     WebDataSource *dataSource = [frame dataSource];
 
-    WEBKIT_ASSERT(dataSource != nil);
-    WEBKIT_ASSERT([dataSource _isCommitted]);
+    ASSERT(dataSource != nil);
+    ASSERT([dataSource _isCommitted]);
 
     return dataSource;
 }

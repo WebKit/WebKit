@@ -6,10 +6,13 @@
 //  Copyright (c) 2002 Apple Computer, Inc.
 //
 
-#import <WebKit/WebControllerPolicyHandlerPrivate.h>
 #import <WebKit/WebDownloadHandler.h>
+
+#import <WebKit/WebControllerPolicyHandlerPrivate.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebKitDebug.h>
+
+#import <WebFoundation/WebAssertions.h>
 
 @implementation WebDownloadHandler
 

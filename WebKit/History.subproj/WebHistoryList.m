@@ -5,7 +5,7 @@
 
 #import "WebHistoryList.h"
 #import "WebHistoryItem.h"
-#import "WebKitDebug.h"
+#import <WebFoundation/WebAssertions.h>
 
 struct WebHistoryListNode
 {
@@ -96,7 +96,7 @@ static void freeNode(WebHistoryListNode *node)
 
 -(void)setMaximumSize:(int)size
 {
-    WEBKIT_ASSERT(size > 0 || size == -1);
+    ASSERT(size > 0 || size == -1);
     _maximumSize = size;
 }
 
@@ -178,7 +178,7 @@ static void freeNode(WebHistoryListNode *node)
 
 -(WebHistoryItem *)entryAtIndex:(int)index
 {
-    WEBKIT_ASSERT(index >= 0 && index < _count);
+    ASSERT(index >= 0 && index < _count);
 
     WebHistoryListNode *node = _head;
     int i;
@@ -191,7 +191,7 @@ static void freeNode(WebHistoryListNode *node)
 
 -(void)replaceEntryAtIndex:(int)index withEntry:(WebHistoryItem *)entry
 {
-    WEBKIT_ASSERT(index >= 0 && index < _count);
+    ASSERT(index >= 0 && index < _count);
 
     WebHistoryListNode *node = _head;
     int i;
@@ -205,7 +205,7 @@ static void freeNode(WebHistoryListNode *node)
 
 -(WebHistoryItem *)removeEntryAtIndex:(int)index
 {
-    WEBKIT_ASSERT(index > 0 && index < _count);
+    ASSERT(index > 0 && index < _count);
 
     WebHistoryListNode *node = _head;
     int i;
@@ -238,7 +238,7 @@ static void freeNode(WebHistoryListNode *node)
 
 -(void)removeEntriesToIndex:(int)index
 {
-    WEBKIT_ASSERT(index > 0 && index < _count);
+    ASSERT(index > 0 && index < _count);
 
     WebHistoryListNode *node = _head;
     int i;

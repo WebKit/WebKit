@@ -8,10 +8,6 @@
 #ifdef NDEBUG
 
 #define WEBKITDEBUGLEVEL(level, format...) ((void)0)
-#define WEBKIT_ASSERT(expr) ((void)0)
-#define WEBKIT_ASSERT_VALID_ARG(arg, expr) ((void)0)
-#define WEBKIT_ASSERT_NOT_NIL(arg) ((void)0)
-#define WEBKIT_ASSERT_NOT_REACHED() ((void)0)
 
 #else
 
@@ -67,50 +63,7 @@ void WebKitLog(unsigned int level, const char *file, int line, const char *funct
 #define WEBKITDEBUGLEVEL(level, format...) \
     WebKitLog(level, __FILE__, __LINE__, __PRETTY_FUNCTION__, format)
 
-/*-----------------------------------------------------------------------------
- * Assertion macros
- */
-
-#import <signal.h>
-#import <sys/types.h>
-#import <sys/time.h>
-#import <sys/resource.h>
-
-#define WEBKIT_ASSERTION_FAILURE(str_expr) \
-    do { \
-        struct rlimit _rlimit = {RLIM_INFINITY, RLIM_INFINITY}; \
-        setrlimit(RLIMIT_CORE, &_rlimit); \
-            fprintf(stderr, "=================\nASSERTION FAILED: %s (%s:%d %s)\n=================\n", str_expr, __FILE__, __LINE__, __PRETTY_FUNCTION__); \
-        raise(SIGQUIT); \
-    } while (0)
-
-#define WEBKIT_ASSERT(expr) \
-    do { \
-        if (!(expr)) { \
-            WEBKIT_ASSERTION_FAILURE(#expr); \
-        } \
-    } while (0)
-
-#define WEBKIT_ASSERT_VALID_ARG(arg, expr) \
-    do { \
-        if (!(expr)) { \
-            WEBKIT_ASSERTION_FAILURE("bad arg " #arg " (" #expr ")"); \
-        } \
-    } while (0)
-    
-#define WEBKIT_ASSERT_NOT_NIL(arg) \
-    do { \
-        if ((arg) == nil) { \
-            WEBKIT_ASSERTION_FAILURE("bad arg " #arg " (" #arg " not nil )"); \
-        } \
-    } while (0)
-
-#define WEBKIT_ASSERT_NOT_REACHED() \
-    WEBKIT_ASSERTION_FAILURE("reached unreachable code")
-
 #endif
-
-#define WEBKITDEBUG(format...) WEBKITDEBUGLEVEL(WEBKIT_LOG_GENERIC_DEBUG, format)
 
 #ifdef WEB_MALLOC_TESTING
 #ifdef __cplusplus

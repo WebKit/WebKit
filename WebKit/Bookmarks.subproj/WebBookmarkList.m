@@ -11,7 +11,7 @@
 #import <WebKit/WebBookmarkSeparator.h>
 #import <WebKit/WebBookmarkPrivate.h>
 #import <WebKit/WebBookmarkGroupPrivate.h>
-#import <WebKit/WebKitDebug.h>
+#import <WebFoundation/WebAssertions.h>
 
 #define TitleKey		@"Title"
 #define ChildrenKey		@"Children"
@@ -36,7 +36,7 @@
     WebBookmark *child;
     unsigned index, count;
     
-    WEBKIT_ASSERT_VALID_ARG (dict, dict != nil);
+    ASSERT_ARG(dict, dict != nil);
 
     [super init];
 
@@ -175,8 +175,8 @@
 
 - (void)removeChild:(WebBookmark *)bookmark
 {
-    WEBKIT_ASSERT_VALID_ARG (bookmark, [bookmark parent] == self);
-    WEBKIT_ASSERT_VALID_ARG (bookmark, [_list containsObject:bookmark]);
+    ASSERT_ARG(bookmark, [bookmark parent] == self);
+    ASSERT_ARG(bookmark, [_list containsObject:bookmark]);
     
     [_list removeObject:bookmark];
     [bookmark _setParent:nil];
@@ -187,8 +187,8 @@
 
 - (void)insertChild:(WebBookmark *)bookmark atIndex:(unsigned)index
 {
-    WEBKIT_ASSERT_VALID_ARG (bookmark, [bookmark parent] == nil);
-    WEBKIT_ASSERT_VALID_ARG (bookmark, ![_list containsObject:bookmark]);
+    ASSERT_ARG(bookmark, [bookmark parent] == nil);
+    ASSERT_ARG(bookmark, ![_list containsObject:bookmark]);
 
     [_list insertObject:bookmark atIndex:index];
     [bookmark _setParent:self];

@@ -19,7 +19,7 @@
 #import <WebKit/WebHistoryItem.h>
 #import <WebKit/WebKitErrors.h>
 #import <WebKit/WebKitStatisticsPrivate.h>
-#import <WebKit/WebKitDebug.h>
+#import <WebFoundation/WebAssertions.h>
 #import <WebKit/WebPluginDatabase.h>
 #import <WebKit/WebViewPrivate.h>
 
@@ -320,12 +320,12 @@ NSString * WebContextMenuElementFrameKey = @"WebContextFrame";
     
     targetFrame = [self frameNamed: [item target]];
     if (targetFrame == nil){
-        NSLog (@"Target frame not found, using main frame instead, will be fixed soon\n");
+        NSLog (@"Target frame not found, using main frame instead, will be fixed soon");
 #if 0
         int pos = 1;
         WebHistoryItem *next = item;
         while (next){
-            NSLog (@"frame name %@, parent %@\n", [next target], [next parent]);
+            NSLog (@"frame name %@, parent %@", [next target], [next parent]);
             nextFrame = [self frameNamed: [next parent]];
             next = [[self backForwardList] backEntryAtIndex: pos++];
             if ([[next target] isEqual: @"_top"]){

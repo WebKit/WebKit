@@ -14,7 +14,7 @@
 #import <WebKit/WebStandardPanelsPrivate.h>
 #import <WebKit/WebViewPrivate.h>
 
-#import <WebKit/WebKitDebug.h>
+#import <WebFoundation/WebAssertions.h>
 
 #import <WebFoundation/WebCacheLoaderConstants.h>
 #import <WebFoundation/WebError.h>
@@ -84,7 +84,7 @@
 {
     WebFrame *frame = [dataSource webFrame];
     
-    WEBKIT_ASSERT (dataSource != nil);
+    ASSERT(dataSource != nil);
     
     [[self resourceProgressHandler] receivedProgress: progress forResourceHandle: resourceHandle 
         fromDataSource: dataSource complete:isComplete];
@@ -102,7 +102,7 @@
 {
     WebFrame *frame = [dataSource webFrame];
     
-    WEBKIT_ASSERT (dataSource != nil);
+    ASSERT(dataSource != nil);
 
     [[self resourceProgressHandler] receivedProgress: progress forResourceHandle: resourceHandle 
         fromDataSource: dataSource complete:isComplete];

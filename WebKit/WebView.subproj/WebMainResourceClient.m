@@ -18,6 +18,7 @@
 #import <WebKit/WebBridge.h>
 #import <WebKit/WebKitDebug.h>
 
+#import <WebFoundation/WebAssertions.h>
 #import <WebFoundation/WebError.h>
 #import <WebFoundation/WebFileTypeMappings.h>
 #import <WebFoundation/WebResourceHandle.h>
@@ -42,14 +43,14 @@
 
 - (void)didStartLoadingWithURL:(NSURL *)URL
 {
-    WEBKIT_ASSERT(currentURL == nil);
+    ASSERT(currentURL == nil);
     currentURL = [URL retain];
     [[dataSource controller] _didStartLoading:currentURL];
 }
 
 - (void)didStopLoading
 {
-    WEBKIT_ASSERT(currentURL != nil);
+    ASSERT(currentURL != nil);
     [[dataSource controller] _didStopLoading:currentURL];
     [currentURL release];
     currentURL = nil;
@@ -57,8 +58,8 @@
 
 - (void)dealloc
 {
-    WEBKIT_ASSERT(currentURL == nil);
-    WEBKIT_ASSERT(downloadHandler == nil);
+    ASSERT(currentURL == nil);
+    ASSERT(downloadHandler == nil);
     
     [downloadProgressHandler release];
     [resourceData release];
@@ -110,13 +111,13 @@
 
 - (NSString *)handleWillUseUserAgent:(WebResourceHandle *)handle forURL:(NSURL *)URL
 {
-    WEBKIT_ASSERT([dataSource controller]);
+    ASSERT([dataSource controller]);
     return [[dataSource controller] userAgentForURL:URL];
 }
 
 - (void)handleDidBeginLoading:(WebResourceHandle *)handle
 {
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_LOADING, "URL = %s\n", DEBUG_OBJECT([handle URL]));
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_LOADING, "URL = %s", DEBUG_OBJECT([handle URL]));
     
     [self didStartLoadingWithURL:[handle URL]];
 }
@@ -125,7 +126,7 @@
 {
     WebError *error;
     
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_LOADING, "URL = %s\n", DEBUG_OBJECT([handle URL]));
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_LOADING, "URL = %s", DEBUG_OBJECT([handle URL]));
     
     // FIXME: Maybe we should be passing the URL from the handle here, not from the dataSource.
     error = [[WebError alloc] initWithErrorCode:WebResultCancelled 
@@ -141,10 +142,10 @@
 
 - (void)handleDidFinishLoading:(WebResourceHandle *)handle
 {
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_LOADING, "URL = %s\n", DEBUG_OBJECT([handle URL]));
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_LOADING, "URL = %s", DEBUG_OBJECT([handle URL]));
     
-    WEBKIT_ASSERT([currentURL isEqual:[handle URL]]);
-    WEBKIT_ASSERT([[handle response] statusCode] == WebResourceHandleStatusLoadComplete);
+    ASSERT([currentURL isEqual:[handle URL]]);
+    ASSERT([[handle response] statusCode] == WebResourceHandleStatusLoadComplete);
 
     WebContentAction contentAction = [[dataSource contentPolicy] policyAction];
     
@@ -178,9 +179,9 @@
     NSString *contentType = [handle contentType];
     WebFrame *frame = [dataSource webFrame];
     
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_LOADING, "URL = %s, data = %p, length %d\n", DEBUG_OBJECT([handle URL]), data, [data length]);
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_LOADING, "URL = %s, data = %p, length %d", DEBUG_OBJECT([handle URL]), data, [data length]);
     
-    WEBKIT_ASSERT([currentURL isEqual:[handle URL]]);
+    ASSERT([currentURL isEqual:[handle URL]]);
     
     // Check the mime type and ask the client for the content policy.
     if(isFirstChunk){
@@ -239,9 +240,9 @@
 
 - (void)handleDidFailLoading:(WebResourceHandle *)handle withError:(WebError *)result
 {
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_LOADING, "URL = %s, result = %s\n", DEBUG_OBJECT([handle URL]), DEBUG_OBJECT([result errorDescription]));
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_LOADING, "URL = %s, result = %s", DEBUG_OBJECT([handle URL]), DEBUG_OBJECT([result errorDescription]));
 
-    WEBKIT_ASSERT([currentURL isEqual:[handle URL]]);
+    ASSERT([currentURL isEqual:[handle URL]]);
 
     [self receivedError:result forHandle:handle];
     
@@ -254,10 +255,10 @@
 
 - (void)handleDidRedirect:(WebResourceHandle *)handle toURL:(NSURL *)URL
 {
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_REDIRECT, "URL = %s\n", DEBUG_OBJECT(URL));
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_REDIRECT, "URL = %s", DEBUG_OBJECT(URL));
 
-    WEBKIT_ASSERT(currentURL != nil);
-    WEBKIT_ASSERT([URL isEqual:[handle URL]]);
+    ASSERT(currentURL != nil);
+    ASSERT([URL isEqual:[handle URL]]);
     
     [dataSource _setURL:URL];
 

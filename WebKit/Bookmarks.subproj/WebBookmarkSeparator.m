@@ -9,7 +9,7 @@
 #import "WebBookmarkSeparator.h"
 
 #import "WebBookmarkPrivate.h"
-#import <WebKit/WebKitDebug.h>
+#import <WebFoundation/WebAssertions.h>
 
 
 @implementation WebBookmarkSeparator
@@ -25,7 +25,7 @@
 - (id)initFromDictionaryRepresentation:(NSDictionary *)dict withGroup:(WebBookmarkGroup *)group
 {
     if (![[dict objectForKey:WebBookmarkTypeKey] isEqualToString:WebBookmarkTypeSeparatorValue]) {
-        WEBKITDEBUG("Can't initialize Bookmark separator from non-separator type");
+        ERROR("Can't initialize Bookmark separator from non-separator type");
         return nil;
     }
 

@@ -12,7 +12,7 @@
 #import <WebKit/WebPluginDatabase.h>
 #import <WebKit/WebPluginView.h>
 #import <WebKit/WebViewFactory.h>
-#import <WebKit/WebKitDebug.h>
+#import <WebFoundation/WebAssertions.h>
 
 #import <WebFoundation/WebNSURLExtras.h>
 
@@ -23,7 +23,7 @@
     if (![self sharedFactory]) {
         [[[self alloc] init] release];
     }
-    WEBKIT_ASSERT([[self sharedFactory] isMemberOfClass:self]);
+    ASSERT([[self sharedFactory] isKindOfClass:self]);
 }
 
 - (NSView *)viewForPluginWithURL:(NSURL *)pluginURL serviceType:(NSString *)serviceType arguments:(NSArray *)args baseURL:(NSURL *)baseURL

@@ -50,7 +50,7 @@
 
 - (void)pluginNotFoundForMIMEType:(NSString *)mime pluginPageURL:(NSURL *)URL
 {
-    NSLog (@"pluginNotFoundForMIMEType:pluginPageURL: - MIME %@, URL \n", mime, URL);
+    NSLog (@"pluginNotFoundForMIMEType:pluginPageURL: - MIME %@, URL ", mime, URL);
 }
 
 - (WebClickPolicy *)clickPolicyForElement: (NSDictionary *)elementInformation button: (NSEventType)eventType modifierMask: (unsigned int)eventMask

@@ -6,10 +6,12 @@
 //  Copyright (c) 2002 __MyCompanyName__. All rights reserved.
 //
 
-#import <WebKit/WebKitDebug.h>
 #import <WebKit/WebIconDatabase.h>
-#import <WebKit/WebIconDatabasePrivate.h>
 
+#import <WebKit/WebIconDatabasePrivate.h>
+#import <WebKit/WebKitDebug.h>
+
+#import <WebFoundation/WebAssertions.h>
 #import <WebFoundation/WebNSURLExtras.h>
 #import <WebFoundation/WebFileDatabase.h>
 
@@ -365,7 +367,7 @@ NSSize WebIconMediumSize = {32, 32};
                 NSImage *icon = [[NSImage alloc] initWithData:iconData];
                 if(icon){
                     duration = CFAbsoluteTimeGetCurrent() - start;
-                    WEBKITDEBUGLEVEL (WEBKIT_LOG_TIMING, "loading and creating icon %s took %f seconds\n",
+                    WEBKITDEBUGLEVEL (WEBKIT_LOG_TIMING, "loading and creating icon %s took %f seconds",
                                       DEBUG_OBJECT(iconURL), duration);
                     
                     // Cache it
@@ -729,7 +731,7 @@ NSSize WebIconMediumSize = {32, 32};
 #endif
     
     duration = CFAbsoluteTimeGetCurrent() - start;
-    WEBKITDEBUGLEVEL (WEBKIT_LOG_TIMING, "scaling icon took %f seconds.\n", duration);
+    WEBKITDEBUGLEVEL (WEBKIT_LOG_TIMING, "scaling icon took %f seconds.", duration);
 
     return scaledIcon;
 }

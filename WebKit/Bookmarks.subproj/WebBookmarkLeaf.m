@@ -11,7 +11,7 @@
 #import <WebKit/WebBookmarkGroup.h>
 #import <WebKit/WebBookmarkGroupPrivate.h>
 #import <WebKit/WebHistoryItem.h>
-#import <WebKit/WebKitDebug.h>
+#import <WebFoundation/WebAssertions.h>
 
 #import <WebFoundation/WebNSURLExtras.h>
 
@@ -45,7 +45,7 @@
 
 - (id)initFromDictionaryRepresentation:(NSDictionary *)dict withGroup:(WebBookmarkGroup *)group
 {
-    WEBKIT_ASSERT_VALID_ARG (dict, dict != nil);
+    ASSERT_ARG(dict, dict != nil);
 
     [super init];
 
@@ -98,7 +98,7 @@
         return;
     }
 
-    WEBKIT_ASSERT (_entry != nil);
+    ASSERT(_entry != nil);
     [_entry setTitle:title];
 
     [[self group] _bookmarkDidChange:self];    

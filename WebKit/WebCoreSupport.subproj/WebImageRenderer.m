@@ -6,7 +6,7 @@
 #import <WebKit/WebImageRenderer.h>
 
 #import <WebKit/WebException.h>
-#import <WebKit/WebKitDebug.h>
+#import <WebFoundation/WebAssertions.h>
 
 #define MINIMUM_DURATION (1.0/30.0)
 
@@ -245,7 +245,7 @@ static NSMutableArray *activeImageRenderers;
     NSSize size = [self size];
 
     // Check and see if a single draw of the image can convert the entire area we are supposed to tile.
-    WEBKIT_ASSERT([[NSView focusView] isFlipped]);
+    ASSERT([[NSView focusView] isFlipped]);
     NSRect oneTileRect;
     oneTileRect.origin.x = rect.origin.x + fmodf(fmodf(-point.x, size.width) - size.width, size.width);
     oneTileRect.origin.y = rect.origin.y + fmodf(fmodf(-point.y, size.height) - size.height, size.height);

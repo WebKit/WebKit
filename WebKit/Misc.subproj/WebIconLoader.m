@@ -6,7 +6,7 @@
 //  Copyright (c) 2002 Apple Computer, Inc. All rights reserved.
 //
 
-#import <WebKit/WebKitDebug.h>
+#import <WebFoundation/WebAssertions.h>
 #import <WebKit/WebIconDatabase.h>
 #import <WebKit/WebIconDatabasePrivate.h>
 #import <WebKit/WebIconLoader.h>

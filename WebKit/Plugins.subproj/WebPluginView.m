@@ -20,6 +20,7 @@
 #import <WebKit/WebNSViewExtras.h>
 #import <WebKit/WebKitDebug.h>
 
+#import <WebFoundation/WebAssertions.h>
 #import <WebFoundation/WebError.h>
 #import <WebFoundation/WebNSStringExtras.h>
 #import <WebFoundation/WebNSURLExtras.h>
@@ -143,7 +144,7 @@
 #endif
     [self sendEvent:&event]; 
     
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(activateEvent): %d  isActive: %d\n", acceptedEvent, (event.modifiers & activeFlag));
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(activateEvent): %d  isActive: %d", acceptedEvent, (event.modifiers & activeFlag));
 }
 
 - (BOOL)sendUpdateEvent
@@ -157,7 +158,7 @@
 
     BOOL acceptedEvent = [self sendEvent:&event]; 
     
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(updateEvt): %d\n", acceptedEvent);
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(updateEvt): %d", acceptedEvent);
     
     return acceptedEvent;
 }
@@ -179,7 +180,7 @@
 #endif
     [self sendEvent:&event]; 
     
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(getFocusEvent): %d\n", acceptedEvent);
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(getFocusEvent): %d", acceptedEvent);
     return YES;
 }
 
@@ -195,7 +196,7 @@
 #endif
     [self sendEvent:&event]; 
     
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(loseFocusEvent): %d\n", acceptedEvent);
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(loseFocusEvent): %d", acceptedEvent);
     return YES;
 }
 
@@ -211,7 +212,7 @@
 #endif
     [self sendEvent:&event]; 
     
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(mouseDown): %d pt.v=%d, pt.h=%d\n", acceptedEvent, event.where.v, event.where.h);
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(mouseDown): %d pt.v=%d, pt.h=%d", acceptedEvent, event.where.v, event.where.h);
 }
 
 - (void)mouseUp:(NSEvent *)theEvent
@@ -226,7 +227,7 @@
 #endif
     [self sendEvent:&event]; 
     
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(mouseUp): %d pt.v=%d, pt.h=%d\n", acceptedEvent, event.where.v, event.where.h);
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(mouseUp): %d pt.v=%d, pt.h=%d", acceptedEvent, event.where.v, event.where.h);
 }
 
 - (void)mouseEntered:(NSEvent *)theEvent
@@ -241,7 +242,7 @@
 #endif
     [self sendEvent:&event]; 
     
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(mouseEntered): %d\n", acceptedEvent);
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(mouseEntered): %d", acceptedEvent);
 }
 
 - (void)mouseExited:(NSEvent *)theEvent
@@ -256,7 +257,7 @@
 #endif
     [self sendEvent:&event]; 
     
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(mouseExited): %d\n", acceptedEvent);
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(mouseExited): %d", acceptedEvent);
     
     // Set cursor back to arrow cursor.
     [[NSCursor arrowCursor] set];
@@ -275,7 +276,7 @@
     
     BOOL acceptedEvent = [self sendEvent:&event];
 
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(keyUp): %d charCode:%c keyCode:%lu\n",
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(keyUp): %d charCode:%c keyCode:%lu",
                      acceptedEvent, (char) (event.message & charCodeMask), (event.message & keyCodeMask));
     
     // If the plug-in didn't accept this event,
@@ -304,7 +305,7 @@
     
     BOOL acceptedEvent = [self sendEvent:&event];
 
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(keyDown): %d charCode:%c keyCode:%lu\n",
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(keyDown): %d charCode:%c keyCode:%lu",
                      acceptedEvent, (char) (event.message & charCodeMask), (event.message & keyCodeMask));
     
     // If the plug-in didn't accept this event,
@@ -345,7 +346,7 @@
 
     BOOL acceptedEvent = [self sendEvent:&event];
 
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(performKeyEquivalent): %d charCode:%c keyCode:%lu\n",
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(performKeyEquivalent): %d charCode:%c keyCode:%lu",
                      acceptedEvent, (char) (event.message & charCodeMask), (event.message & keyCodeMask));
     
     return acceptedEvent;
@@ -362,7 +363,7 @@
 #endif
     [self sendEvent:&event];
     
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(menuForEvent): %d pt.v=%d, pt.h=%d\n", acceptedEvent, event.where.v, event.where.h);
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(menuForEvent): %d pt.v=%d, pt.h=%d", acceptedEvent, event.where.v, event.where.h);
 
     return nil;
 }
@@ -496,7 +497,7 @@
     NPError npErr =
 #endif
     NPP_SetWindow(instance, &window);
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_SetWindow: %d, port=0x%08x, window.x:%d window.y:%d\n",
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_SetWindow: %d, port=0x%08x, window.x:%d window.y:%d",
                      npErr, (int)nPort.port, (int)window.x, (int)window.y);
 
 #if 0
@@ -544,7 +545,7 @@
     NPError npErr =
 #endif
     NPP_New((char *)[mime cString], instance, fullMode ? NP_FULL : NP_EMBED, argsCount, cAttributes, cValues, NULL);
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_New: %d\n", npErr);
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_New: %d", npErr);
     
     // Create a WindowRef is one doesn't already exist
     [[self window] _windowRef];
@@ -621,7 +622,7 @@
     NPError npErr =
 #endif
     NPP_Destroy(instance, NULL);
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_Destroy: %d\n", npErr);
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_Destroy: %d", npErr);
 }
 
 - (WebDataSource *)webDataSource
@@ -895,7 +896,7 @@
 {
     NSString *theTarget = nil;
         
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPN_GetURLNotify: %s target: %s\n", URL, target);
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPN_GetURLNotify: %s target: %s", URL, target);
         
     if(!URL)
         return NPERR_INVALID_URL;
@@ -910,7 +911,7 @@
 {
     NSString *theTarget = nil;
     
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPN_GetURL: %s target: %s\n", URL, target);
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPN_GetURL: %s target: %s", URL, target);
     
     if(!URL)
         return NPERR_INVALID_URL;
@@ -928,7 +929,7 @@
     NSURL *tempURL;
     NSString *path, *theTarget = nil;
     
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPN_PostURLNotify: %s\n", URL);
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPN_PostURLNotify: %s", URL);
  
     if(!URL)
         return NPERR_INVALID_URL;
@@ -960,7 +961,7 @@
 {
     NSString *theTarget = nil;
         
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPN_PostURL: %s\n", URL);
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPN_PostURL: %s", URL);
     
     if(!URL)
         return NPERR_INVALID_URL;
@@ -973,19 +974,19 @@
 
 -(NPError)newStream:(NPMIMEType)type target:(const char *)target stream:(NPStream**)stream
 {
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPN_NewStream\n");
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPN_NewStream");
     return NPERR_GENERIC_ERROR;
 }
 
 -(NPError)write:(NPStream*)stream len:(SInt32)len buffer:(void *)buffer
 {
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPN_Write\n");
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPN_Write");
     return NPERR_GENERIC_ERROR;
 }
 
 -(NPError)destroyStream:(NPStream*)stream reason:(NPReason)reason
 {
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPN_DestroyStream\n");
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPN_DestroyStream");
     if(!stream->ndata)
         return NPERR_INVALID_INSTANCE_ERROR;
         
@@ -995,7 +996,7 @@
 
 -(void)status:(const char *)message
 {
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPN_Status: %s\n", message);
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPN_Status: %s", message);
     if(webController){
         [[webController windowContext] setStatusText:[NSString stringWithCString:message]];
     }
@@ -1003,19 +1004,19 @@
 
 -(void)invalidateRect:(NPRect *)invalidRect
 {
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPN_InvalidateRect\n");
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPN_InvalidateRect");
     [self sendUpdateEvent];
 }
 
 -(void)invalidateRegion:(NPRegion)invalidateRegion
 {
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPN_InvalidateRegion\n");
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPN_InvalidateRegion");
     [self sendUpdateEvent];
 }
 
 -(void)forceRedraw
 {
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "forceRedraw\n");
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "forceRedraw");
     [self sendUpdateEvent];
 }
 

@@ -19,7 +19,7 @@
 #import <WebKit/WebControllerPrivate.h>
 #import <WebKit/WebBridge.h>
 #import <WebKit/WebDataSourcePrivate.h>
-#import <WebKit/WebKitDebug.h>
+#import <WebFoundation/WebAssertions.h>
 
 @implementation WebSubresourceClient
 
@@ -35,14 +35,14 @@
 
 - (void)didStartLoadingWithURL:(NSURL *)URL
 {
-    WEBKIT_ASSERT(currentURL == nil);
+    ASSERT(currentURL == nil);
     currentURL = [URL retain];
     [[dataSource controller] _didStartLoading:currentURL];
 }
 
 - (void)didStopLoading
 {
-    WEBKIT_ASSERT(currentURL != nil);
+    ASSERT(currentURL != nil);
     [[dataSource controller] _didStopLoading:currentURL];
     [currentURL release];
     currentURL = nil;
@@ -50,7 +50,7 @@
 
 - (void)dealloc
 {
-    WEBKIT_ASSERT(currentURL == nil);
+    ASSERT(currentURL == nil);
     
     [loader release];
     [dataSource release];
@@ -109,7 +109,7 @@
 
 - (void)handleDidReceiveData:(WebResourceHandle *)handle data:(NSData *)data
 {
-    WEBKIT_ASSERT([currentURL isEqual:[handle URL]]);
+    ASSERT([currentURL isEqual:[handle URL]]);
 
     [self receivedProgressWithHandle:handle complete: NO];
     [loader addData:data];
@@ -133,8 +133,8 @@
 
 - (void)handleDidFinishLoading:(WebResourceHandle *)handle
 {    
-    WEBKIT_ASSERT([currentURL isEqual:[handle URL]]);
-    WEBKIT_ASSERT([[handle response] statusCode] == WebResourceHandleStatusLoadComplete);
+    ASSERT([currentURL isEqual:[handle URL]]);
+    ASSERT([[handle response] statusCode] == WebResourceHandleStatusLoadComplete);
 
     [loader finish];
     
@@ -152,7 +152,7 @@
 
 - (void)handleDidFailLoading:(WebResourceHandle *)handle withError:(WebError *)error
 {
-    WEBKIT_ASSERT([currentURL isEqual:[handle URL]]);
+    ASSERT([currentURL isEqual:[handle URL]]);
 
     [loader cancel];
     
@@ -165,8 +165,8 @@
 
 - (void)handleDidRedirect:(WebResourceHandle *)handle toURL:(NSURL *)URL
 {
-    WEBKIT_ASSERT(currentURL != nil);
-    WEBKIT_ASSERT([URL isEqual:[handle URL]]);
+    ASSERT(currentURL != nil);
+    ASSERT([URL isEqual:[handle URL]]);
 
     // FIXME: We do want to tell the client about redirects.
     // But the current API doesn't give any way to tell redirects on

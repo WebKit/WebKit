@@ -9,7 +9,7 @@
 #import <WebKit/WebStringTruncator.h>
 #import <Cocoa/Cocoa.h>
 
-#import <WebKit/WebKitDebug.h>
+#import <WebFoundation/WebAssertions.h>
 #import <WebKit/WebTextRendererFactory.h>
 #import <WebKit/WebTextRenderer.h>
 
@@ -28,7 +28,7 @@ static float currentEllipsisWidth;
     NSRange omitEndRange, beforeRange, afterRange;
     unsigned truncatedLength;
     
-    WEBKIT_ASSERT(keepCount < STRING_BUFFER_SIZE);
+    ASSERT(keepCount < STRING_BUFFER_SIZE);
     
     omitStart = (keepCount + 1) / 2;
     
@@ -41,7 +41,7 @@ static float currentEllipsisWidth;
     afterRange.length = length - afterRange.location;
     
     truncatedLength = beforeRange.length + 1 + afterRange.length;
-    WEBKIT_ASSERT(truncatedLength <= length);
+    ASSERT(truncatedLength <= length);
 
     [string getCharacters:buffer range:beforeRange];
     buffer[beforeRange.length] = ELLIPSIS_CHARACTER;
@@ -67,8 +67,8 @@ static float currentEllipsisWidth;
     float widthForLargestKnownToFit, widthForSmallestKnownToNotFit;
     float ratio;
     
-    WEBKIT_ASSERT_VALID_ARG(font, font);
-    WEBKIT_ASSERT_VALID_ARG(maxWidth, maxWidth >= 0);
+    ASSERT_ARG(font, font);
+    ASSERT_ARG(maxWidth, maxWidth >= 0);
     
     if (![currentFont isEqual:font]) {
         [currentFont release];
@@ -80,7 +80,7 @@ static float currentEllipsisWidth;
         currentEllipsisWidth = [currentRenderer floatWidthForCharacters:&ellipsis stringLength:1 fromCharacterPosition: 0 numberOfCharacters: 1 applyRounding: NO attemptFontSubstitution: YES];
     }
     
-    WEBKIT_ASSERT(currentRenderer);
+    ASSERT(currentRenderer);
 
     length = [string length];
     if (length > STRING_BUFFER_SIZE) {
@@ -113,8 +113,8 @@ static float currentEllipsisWidth;
     }
     
     while (keepCountForLargestKnownToFit + 1 < keepCountForSmallestKnownToNotFit) {
-        WEBKIT_ASSERT(widthForLargestKnownToFit <= maxWidth);
-        WEBKIT_ASSERT(widthForSmallestKnownToNotFit > maxWidth);
+        ASSERT(widthForLargestKnownToFit <= maxWidth);
+        ASSERT(widthForSmallestKnownToNotFit > maxWidth);
 
         ratio = (keepCountForSmallestKnownToNotFit - keepCountForLargestKnownToFit)
             / (widthForSmallestKnownToNotFit - widthForLargestKnownToFit);
@@ -126,10 +126,10 @@ static float currentEllipsisWidth;
             keepCount = keepCountForSmallestKnownToNotFit - 1;
         }
         
-        WEBKIT_ASSERT(keepCount < length);
-        WEBKIT_ASSERT(keepCount > 0);
-        WEBKIT_ASSERT(keepCount < keepCountForSmallestKnownToNotFit);
-        WEBKIT_ASSERT(keepCount > keepCountForLargestKnownToFit);
+        ASSERT(keepCount < length);
+        ASSERT(keepCount > 0);
+        ASSERT(keepCount < keepCountForSmallestKnownToNotFit);
+        ASSERT(keepCount > keepCountForLargestKnownToFit);
         
 	truncatedLength = [self centerTruncateString:string
                                               length:length

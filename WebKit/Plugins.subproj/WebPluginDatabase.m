@@ -178,7 +178,7 @@ static NSArray *pluginLocations(void)
         plugin = [[WebNetscapePlugin alloc] initWithPath:[pluginPaths objectAtIndex:i]];
         if (plugin) {
             [pluginArray addObject:plugin];
-            WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "Found plugin: %s\n", [[plugin name] lossyCString]);
+            WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "Found plugin: %s", [[plugin name] lossyCString]);
             WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "%s", [[plugin description] lossyCString]);
             [plugin release];
         }

@@ -7,7 +7,7 @@
 
 #import <WebKit/WebAuthenticationPanel.h>
 #import <WebKit/WebStandardPanelsPrivate.h>
-#import <WebKit/WebKitDebug.h>
+#import <WebFoundation/WebAssertions.h>
 
 
 #define WebAuthenticationPanelNibName @"WebAuthenticationPanel"
@@ -114,7 +114,7 @@
 
 - (void)runAsSheetOnWindow:(NSWindow *)window withRequest:(WebAuthenticationRequest *)req
 {
-    WEBKIT_ASSERT(!usingSheet);
+    ASSERT(!usingSheet);
 
     [self setUpForRequest:req];
 
@@ -129,8 +129,8 @@
     WebAuthenticationResult *result = nil;
     WebAuthenticationRequest *req;
 
-    WEBKIT_ASSERT(usingSheet);
-    WEBKIT_ASSERT(request != nil);
+    ASSERT(usingSheet);
+    ASSERT(request != nil);
 
     if (returnCode == 0) {
         result = [WebAuthenticationResult authenticationResultWithUsername:[username stringValue] password:[password stringValue]];

@@ -14,6 +14,8 @@
 #import <WebKit/WebBookmarkSeparator.h>
 #import <WebKit/WebKitDebug.h>
 
+#import <WebFoundation/WebAssertions.h>
+
 @interface WebBookmarkGroup (WebForwardDeclarations)
 - (void)_setTopBookmark:(WebBookmark *)newTopBookmark;
 @end
@@ -60,7 +62,7 @@
 {
     NSDictionary *userInfo;
 
-    WEBKIT_ASSERT (bookmark != nil);
+    ASSERT(bookmark != nil);
     
     if (_loading) {
         return;
@@ -79,7 +81,7 @@
 
 - (void)_setTopBookmark:(WebBookmark *)newTopBookmark
 {
-    WEBKIT_ASSERT_VALID_ARG (newTopBookmark, newTopBookmark == nil ||
+    ASSERT_ARG(newTopBookmark, newTopBookmark == nil ||
                              [newTopBookmark bookmarkType] == WebBookmarkTypeList);
     
     [newTopBookmark retain];
@@ -103,20 +105,20 @@
 
 - (void)_bookmarkChildrenDidChange:(WebBookmark *)bookmark
 {
-    WEBKIT_ASSERT_VALID_ARG (bookmark, [bookmark bookmarkType] == WebBookmarkTypeList);
+    ASSERT_ARG(bookmark, [bookmark bookmarkType] == WebBookmarkTypeList);
     
     [self _sendChangeNotificationForBookmark:bookmark childrenChanged:YES];
 }
 
 - (void)_removedBookmark:(WebBookmark *)bookmark
 {
-    WEBKIT_ASSERT ([_bookmarksByID objectForKey:[bookmark identifier]] == bookmark);
+    ASSERT([_bookmarksByID objectForKey:[bookmark identifier]] == bookmark);
     [_bookmarksByID removeObjectForKey:[bookmark identifier]];
 }
 
 - (void)_addedBookmark:(WebBookmark *)bookmark
 {
-    WEBKIT_ASSERT ([_bookmarksByID objectForKey:[bookmark identifier]] == nil);
+    ASSERT([_bookmarksByID objectForKey:[bookmark identifier]] == nil);
     [_bookmarksByID setObject:bookmark forKey:[bookmark identifier]];
 }
 
@@ -127,8 +129,8 @@
 
 - (void)removeBookmark:(WebBookmark *)bookmark
 {
-    WEBKIT_ASSERT_VALID_ARG (bookmark, [bookmark group] == self);
-    WEBKIT_ASSERT_VALID_ARG (bookmark, [bookmark parent] != nil || bookmark == _topBookmark);
+    ASSERT_ARG(bookmark, [bookmark group] == self);
+    ASSERT_ARG(bookmark, [bookmark parent] != nil || bookmark == _topBookmark);
 
     if (bookmark == _topBookmark) {
         [self _setTopBookmark:nil];
@@ -158,9 +160,9 @@
 {
     WebBookmark *bookmark;
 
-    WEBKIT_ASSERT_VALID_ARG (parent, [parent group] == self);
-    WEBKIT_ASSERT_VALID_ARG (parent, [parent bookmarkType] == WebBookmarkTypeList);
-    WEBKIT_ASSERT_VALID_ARG (newURLString, bookmarkType == WebBookmarkTypeLeaf || (newURLString == nil));
+    ASSERT_ARG(parent, [parent group] == self);
+    ASSERT_ARG(parent, [parent bookmarkType] == WebBookmarkTypeList);
+    ASSERT_ARG(newURLString, bookmarkType == WebBookmarkTypeLeaf || (newURLString == nil));
     
     if (bookmarkType == WebBookmarkTypeLeaf) {
         bookmark = [[WebBookmarkLeaf alloc] initWithURLString:newURLString
@@ -169,7 +171,7 @@
     } else if (bookmarkType == WebBookmarkTypeSeparator) {
         bookmark = [[WebBookmarkSeparator alloc] initWithGroup:self];
     } else {
-        WEBKIT_ASSERT (bookmarkType == WebBookmarkTypeList);
+        ASSERT(bookmarkType == WebBookmarkTypeList);
         bookmark = [[WebBookmarkList alloc] initWithTitle:newTitle
                                                     group:self];
     }
@@ -191,17 +193,17 @@
 
     path = [self file];
     if (path == nil) {
-        WEBKITDEBUG("couldn't load bookmarks; couldn't find or create directory to store it in\n");
+        ERROR("couldn't load bookmarks; couldn't find or create directory to store it in");
         return NO;
     }
 
     dictionary = [NSDictionary dictionaryWithContentsOfFile: path];
     if (dictionary == nil) {
         if (![[NSFileManager defaultManager] fileExistsAtPath: path]) {
-            WEBKITDEBUG("no bookmarks file found at %s\n",
+            ERROR("no bookmarks file found at %s",
                         DEBUG_OBJECT(path));
         } else {
-            WEBKITDEBUG("attempt to read bookmarks from %s failed; perhaps contents are corrupted\n",
+            ERROR("attempt to read bookmarks from %s failed; perhaps contents are corrupted",
                         DEBUG_OBJECT(path));
         }
         return NO;
@@ -226,7 +228,7 @@
 
     if (result == YES) {
         duration = CFAbsoluteTimeGetCurrent() - start;
-        WEBKITDEBUGLEVEL (WEBKIT_LOG_TIMING, "loading %d bookmarks from %s took %f seconds\n",
+        WEBKITDEBUGLEVEL (WEBKIT_LOG_TIMING, "loading %d bookmarks from %s took %f seconds",
                           [[self topBookmark] _numberOfDescendants], DEBUG_OBJECT([self file]), duration);
     }
 
@@ -240,13 +242,13 @@
 
     path = [self file];
     if (path == nil) {
-        WEBKITDEBUG("couldn't save bookmarks; couldn't find or create directory to store it in\n");
+        ERROR("couldn't save bookmarks; couldn't find or create directory to store it in");
         return NO;
     }
 
     dictionary = [[self topBookmark] dictionaryRepresentation];
     if (![dictionary writeToFile:path atomically:YES]) {
-        WEBKITDEBUG("attempt to save %s to %s failed\n", DEBUG_OBJECT(dictionary), DEBUG_OBJECT(path));
+        ERROR("attempt to save %s to %s failed", DEBUG_OBJECT(dictionary), DEBUG_OBJECT(path));
         return NO;
     }
 
@@ -263,7 +265,7 @@
     
     if (result == YES) {
         duration = CFAbsoluteTimeGetCurrent() - start;
-        WEBKITDEBUGLEVEL (WEBKIT_LOG_TIMING, "saving %d bookmarks to %s took %f seconds\n",
+        WEBKITDEBUGLEVEL (WEBKIT_LOG_TIMING, "saving %d bookmarks to %s took %f seconds",
                           [[self topBookmark] _numberOfDescendants], DEBUG_OBJECT([self file]), duration);
     }
 

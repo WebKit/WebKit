@@ -13,7 +13,7 @@
 #import <WebKit/WebController.h>
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebView.h>
-#import <WebKit/WebKitDebug.h>
+#import <WebFoundation/WebAssertions.h>
 #import <WebKit/WebKitStatisticsPrivate.h>
 
 #import <WebFoundation/WebFoundation.h>
@@ -168,7 +168,7 @@
     // All data sources used in a document share the same controller.
     // A single document may have many data sources corresponding to
     // frames or iframes.
-    WEBKIT_ASSERT(_private->parent == nil || [_private->parent controller] == _private->controller);
+    ASSERT(_private->parent == nil || [_private->parent controller] == _private->controller);
     return _private->controller;
 }
 

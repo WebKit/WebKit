@@ -13,7 +13,7 @@
 #import <WebKit/WebBookmarkLeaf.h>
 #import <WebKit/WebBookmarkList.h>
 #import <WebKit/WebBookmarkSeparator.h>
-#import <WebKit/WebKitDebug.h>
+#import <WebFoundation/WebAssertions.h>
 
 // to get NSRequestConcreteImplementation
 #import <Foundation/NSPrivateDecls.h>
@@ -36,7 +36,7 @@ static unsigned _highestUsedID = 0;
 
 - (void)dealloc
 {
-    WEBKIT_ASSERT (_group == nil);
+    ASSERT(_group == nil);
 
     [_identifier release];    
     [super dealloc];
@@ -44,7 +44,7 @@ static unsigned _highestUsedID = 0;
 
 - (NSString *)identifier
 {
-    WEBKIT_ASSERT(_identifier != nil);
+    ASSERT(_identifier != nil);
     return [[_identifier retain] autorelease];
 }
 

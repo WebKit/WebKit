@@ -9,7 +9,7 @@
 #import "WebHistory.h"
 #import "WebHistoryPrivate.h"
 
-#import "WebKitDebug.h"
+#import <WebFoundation/WebAssertions.h>
 
 NSString *WebHistoryEntriesChangedNotification = @"WebHistoryEntriesChangedNotification";
 
@@ -19,7 +19,7 @@ NSString *WebHistoryEntriesChangedNotification = @"WebHistoryEntriesChangedNotif
 {
     // Should only be called once.  Need to rationalize usage
     // of history.
-    WEBKIT_ASSERT ([[self class] sharedHistory] == nil);
+    ASSERT([[self class] sharedHistory] == nil);
     
     WebHistory *h = [[self alloc] initWithFile:file];
     [[self class] setSharedHistory: h];

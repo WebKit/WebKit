@@ -8,7 +8,7 @@
 
 #import "WebCookieAdapter.h"
 #import <WebFoundation/WebCookieManager.h>
-#import <WebKit/WebKitDebug.h>
+#import <WebFoundation/WebAssertions.h>
 
 
 @implementation WebCookieAdapter
@@ -18,7 +18,7 @@
     if (![self sharedAdapter]) {
         [[[self alloc] init] release];
     }
-    WEBKIT_ASSERT([[self sharedAdapter] isMemberOfClass:self]);
+    ASSERT([[self sharedAdapter] isKindOfClass:self]);
 }
 
 - (BOOL)cookiesEnabled

@@ -25,40 +25,40 @@
 
 #import "npapi.h"
 
-#import "WebKitDebug.h"
+#import <WebKit/WebKitDebug.h>
 #import "WebNetscapePluginViewPrivate.h"
 
 // general plug-in to browser functions
 
 const char* NPN_UserAgent(NPP instance)
 {
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPN_UserAgent\n");
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPN_UserAgent");
     return "IE";
 }
 
 void* NPN_MemAlloc(UInt32 size)
 {
-    //WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPN_MemAlloc\n");
+    //WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPN_MemAlloc");
     return malloc(size);
 
 }
 
 void NPN_MemFree(void* ptr)
 {
-    //WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPN_MemFree\n");
+    //WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPN_MemFree");
     free(ptr);
 
 }
 
 UInt32 NPN_MemFlush(UInt32 size)
 {
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPN_MemFlush\n");
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPN_MemFlush");
     return 0;
 }
 
 void NPN_ReloadPlugins(NPBool reloadPages)
 {
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPN_ReloadPlugins\n");
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPN_ReloadPlugins");
 
 }
 
