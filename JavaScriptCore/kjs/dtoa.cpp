@@ -1544,7 +1544,7 @@ strtod
 	double aadj, aadj1, adj, rv, rv0;
 	Long L;
 	ULong y, z;
-	Bigint *bb, *bb1, *bd, *bd0, *bs, *delta;
+	Bigint *bb = NULL, *bb1 = NULL, *bd = NULL, *bd0 = NULL, *bs = NULL, *delta = NULL;
 #ifdef SET_INEXACT
 	int inexact, oldinexact;
 #endif
@@ -2677,7 +2677,7 @@ dtoa
 		to hold the suppressed trailing zeros.
 	*/
 
-	int bbits, b2, b5, be, dig, i, ieps, ilim, ilim0, ilim1,
+	int bbits, b2, b5, be, dig, i, ieps, ilim = 0, ilim0, ilim1 = 0,
 		j, j1, k, k0, k_check, leftright, m2, m5, s2, s5,
 		spec_case, try_quick;
 	Long L;
@@ -2685,7 +2685,7 @@ dtoa
 	int denorm;
 	ULong x;
 #endif
-	Bigint *b, *b1, *delta, *mlo, *mhi, *S;
+	Bigint *b, *b1, *delta, *mlo = NULL, *mhi, *S;
 	double d2, ds, eps;
 	char *s, *s0;
 #ifdef Honor_FLT_ROUNDS

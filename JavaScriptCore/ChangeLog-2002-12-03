@@ -1,5 +1,13 @@
 2002-12-03  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by: Darin Adler
+
+	- fixed Deployment build.
+	
+        * kjs/dtoa.cpp: Work around warnings.
+
+2002-12-03  Maciej Stachowiak  <mjs@apple.com>
+
 	- fixed 3114790 - Gamespot reviews pages badly mis-rendering
 	because floating point numbers format wide
 
