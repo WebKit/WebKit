@@ -12,6 +12,8 @@
 #import <WebKit/IFBaseWebControllerPrivate.h>
 #import <WebKit/IFWebController.h>
 #import <WebKit/IFLocationChangeHandler.h>
+#import <WebKit/IFDownloadHandler.h>
+#import <WebFoundation/WebFoundation.h>
 
 #import <WebKit/WebKitDebug.h>
 
@@ -102,7 +104,8 @@
 {
     IFWebDataSource *oldDataSource;
     id <IFLocationChangeHandler>locationChangeHandler;
-
+    IFURLPolicy urlPolicy;
+    
     WEBKIT_ASSERT ([self controller] != nil);
 
     // Unfortunately the view must be non-nil, this is ultimately due
@@ -110,39 +113,48 @@
     // KDE drop we should fix this dependency.
     WEBKIT_ASSERT ([self view] != nil);
 
-    if ([self _state] != IFWEBFRAMESTATE_COMPLETE){
-        [self stopLoading];
+    urlPolicy = [[self controller] URLPolicyForURL:[newDataSource inputURL]];
+
+    if(urlPolicy == IFURLPolicyUseContentPolicy){
+            
+        if ([self _state] != IFWEBFRAMESTATE_COMPLETE){
+            [self stopLoading];
+        }
+        
+        locationChangeHandler = [[self controller] provideLocationChangeHandlerForFrame: self];
+    
+        [newDataSource _setLocationChangeHandler: locationChangeHandler];
+    
+        oldDataSource = [self dataSource];
+        
+        // Is this the top frame?  If so set the data source's parent to nil.
+        if (self == [[self controller] mainFrame])
+            [newDataSource _setParent: nil];
+            
+        // Otherwise set the new data source's parent to the old data source's parent.
+        else if (oldDataSource && oldDataSource != newDataSource)
+            [newDataSource _setParent: [oldDataSource parent]];
+                
+        [newDataSource _setController: [self controller]];
+        
+        [_private setProvisionalDataSource: newDataSource];
+        
+        [[self view] provisionalDataSourceChanged: newDataSource];
+    
+    #ifdef OLD_WAY
+        // This introduces a nasty dependency on the view.
+        khtml::RenderPart *renderPartFrame = [self _renderFramePart];
+        id view = [self view];
+        if (renderPartFrame && [view isKindOfClass: NSClassFromString(@"IFWebView")])
+            renderPartFrame->setWidget ([view _provisionalWidget]);
+    #endif
+    
+        [self _setState: IFWEBFRAMESTATE_PROVISIONAL];
     }
     
-    locationChangeHandler = [[self controller] provideLocationChangeHandlerForFrame: self];
-
-    [newDataSource _setLocationChangeHandler: locationChangeHandler];
-
-    oldDataSource = [self dataSource];
-    
-    // Is this the top frame?  If so set the data source's parent to nil.
-    if (self == [[self controller] mainFrame])
-        [newDataSource _setParent: nil];
-        
-    // Otherwise set the new data source's parent to the old data source's parent.
-    else if (oldDataSource && oldDataSource != newDataSource)
-        [newDataSource _setParent: [oldDataSource parent]];
-            
-    [newDataSource _setController: [self controller]];
-    
-    [_private setProvisionalDataSource: newDataSource];
-    
-    [[self view] provisionalDataSourceChanged: newDataSource];
-
-#ifdef OLD_WAY
-    // This introduces a nasty dependency on the view.
-    khtml::RenderPart *renderPartFrame = [self _renderFramePart];
-    id view = [self view];
-    if (renderPartFrame && [view isKindOfClass: NSClassFromString(@"IFWebView")])
-        renderPartFrame->setWidget ([view _provisionalWidget]);
-#endif
-
-    [self _setState: IFWEBFRAMESTATE_PROVISIONAL];
+    else if(urlPolicy == IFURLPolicyOpenExternally){
+        [IFDownloadHandler launchURL:[newDataSource inputURL]];
+    }
     
     return YES;
 }

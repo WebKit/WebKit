@@ -36,10 +36,10 @@ static id IFWebDataSourceMake(void *handle)
 // Returns nil if object cannot be initialized due to a malformed URL (RFC 1808).
 - initWithURL: (NSURL *)inputURL 
 {
-    IFURLHandle *handle;
-    
-    handle = [[[IFURLHandle alloc] initWithURL: inputURL attributes: nil flags: 0] autorelease];
-    return [self initWithHandle: handle];
+    [super init];
+    [self _commonInitialization];
+    _private->inputURL = [inputURL retain];
+    return self;
 }
 
 - initWithHandle: (IFURLHandle *)handle
@@ -185,6 +185,9 @@ static id IFWebDataSourceMake(void *handle)
 // If forceRefresh is YES the document will load from the net, not the cache.
 - (void)startLoading: (BOOL)forceRefresh
 {
+    if(!_private->mainHandle){
+        _private->mainHandle = [[IFURLHandle alloc] initWithURL: _private->inputURL attributes: nil flags: 0];
+    }
     [self _startLoading: forceRefresh];
 }
 

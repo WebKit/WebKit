@@ -28,7 +28,6 @@
 {
     NSString *path = [dataSource _downloadPath];
     NSFileManager *fileManager;
-    CFURLRef pathURL;
        
     // FIXME: Should probably not replace existing file
     // FIXME: Should report error if there is one
@@ -38,14 +37,16 @@
     
     // Send Finder notification
     WEBKITDEBUGLEVEL(WEBKIT_LOG_DOWNLOAD, "Notifying Finder");
-    FNNotifyByPath((UInt8 *)[[path stringByDeletingLastPathComponent] cString], kFNDirectoryModifiedMessage, kNilOptions);
+    FNNotifyByPath((UInt8 *)[[path stringByDeletingLastPathComponent] UTF8String], kFNDirectoryModifiedMessage, kNilOptions);
     
-    if([dataSource _contentPolicy] == IFContentPolicyOpenExternally){
-        pathURL = CFURLCreateWithFileSystemPath(kCFAllocatorDefault, (CFStringRef)path, kCFURLPOSIXPathStyle, FALSE);
-        WEBKITDEBUGLEVEL(WEBKIT_LOG_DOWNLOAD,"Opening: %s", [path cString]);
-        LSOpenCFURLRef(pathURL, NULL);
-        CFRelease(pathURL);
+    if([dataSource contentPolicy] == IFContentPolicyOpenExternally){
+        [IFDownloadHandler launchURL:[NSURL fileURLWithPath:path]];
     }
+}
+
++ (void) launchURL:(NSURL *) url{
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_DOWNLOAD,"Launching: %s", [[url absoluteString] cString]);
+    LSOpenCFURLRef((CFURLRef)url, NULL);
 }
 
 @end

@@ -15,4 +15,6 @@
 
 - initWithDataSource:(IFWebDataSource *)dSource;
 - (void)downloadCompletedWithData:(NSData *)data;
+
++ (void) launchURL:(NSURL *) url;
 @end

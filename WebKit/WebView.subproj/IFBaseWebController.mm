@@ -246,7 +246,12 @@
 
 - (IFURLPolicy)URLPolicyForURL: (NSURL *)url
 {
-    return IFURLPolicyNone;
+    // We need a factory method or something that tells us what schemes we handle
+    if([[url scheme] isEqualToString:@"http"] || [[url scheme] isEqualToString:@"https"] || [[url scheme] isEqualToString:@"file"]){
+        return IFURLPolicyUseContentPolicy;
+    }else{
+        return IFURLPolicyOpenExternally;
+    }
 }
 
 - (void)unableToImplementURLPolicyForURL: (NSURL *)url error: (IFError *)error

@@ -1,3 +1,28 @@
+2002-04-25  Chris Blumenberg  <set EMAIL_ADDRESS environment variable>
+
+	* MIME.subproj/IFDownloadHandler.h:
+	* MIME.subproj/IFDownloadHandler.mm:
+	(+[IFDownloadHandler launchURL:]):
+
+	Added the above method as a way to universally launch an URL
+	within WebKit
+
+	* WebView.subproj/IFBaseWebController.mm:
+	(-[IFBaseWebController URLPolicyForURL:]):
+
+	We handle http, https and file URL's
+
+	* WebView.subproj/IFWebDataSource.mm:
+	(-[IFWebDataSource initWithURL:]):
+	(-[IFWebDataSource startLoading:]):
+
+	The IFURLHandle is now lazilly allocated.
+
+	* WebView.subproj/IFWebFrame.mm:
+	(-[IFWebFrame setProvisionalDataSource:]):
+
+	We only load a data source if the URL policy is IFURLPolicyUseContentPolicy
+
 2002-04-25  Richard Williamson  <rjw@apple.com>
 
         Fixed problem with errors potentially being reported on
