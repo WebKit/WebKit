@@ -2,6 +2,13 @@
 
         Reviewed by Dave.
 
+        * WebCore.pbproj/project.pbxproj: Tweak build styles a bit, fixing OptimizedWithSymbols,
+        and removing redundant settings of things that match defaults in other build styles.
+
+2004-02-15  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave.
+
         - fixed 3548533: crash in XMLHttpRequest::slotData using Orkut's rating system
 
         * khtml/ecma/xmlhttprequest.cpp: (KJS::XMLHttpRequest::~XMLHttpRequest):
