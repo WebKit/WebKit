@@ -2,6 +2,20 @@
 
         Reviewed by Maciej.
 
+        - fixed <rdar://problem/3993722> need oncut and onpaste handlers implemented for <textarea> (needed for widgets)
+
+        * kwq/KWQTextArea.mm:
+        (-[KWQTextAreaTextView dispatchHTMLEvent:]): Added.
+        (-[KWQTextAreaTextView cut:]): Dispatch "before cut" and "cut" events.
+        (-[KWQTextAreaTextView copy:]): Dispatch "before copy" and "copy" events.
+        (-[KWQTextAreaTextView paste:]): Dispatch "before paste" and "paste" events.
+        (-[KWQTextAreaTextView pasteAsPlainText:]): Ditto.
+        (-[KWQTextAreaTextView pasteAsRichText:]): Ditto.
+
+2005-02-06  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
         - fixed <rdar://problem/3943038> <input type=search> that is focused in onload handler doesn't have a visible editor
 
         * khtml/xml/dom_docimpl.cpp: (DocumentImpl::setFocusNode): Always update layout before giving focus to a widget.

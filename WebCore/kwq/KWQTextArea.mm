@@ -28,7 +28,12 @@
 #import "KWQKHTMLPart.h"
 #import "KWQNSViewExtras.h"
 #import "KWQTextEdit.h"
+#import "render_replaced.h"
 #import "WebCoreBridge.h"
+
+using DOM::EventImpl;
+using DOM::NodeImpl;
+using khtml::RenderWidget;
 
 /*
     This widget is used to implement the <TEXTAREA> element.
@@ -64,6 +69,7 @@
     QTextEdit *widget;
     BOOL disabled;
     BOOL editableIfEnabled;
+    BOOL inCut;
 }
 
 - (void)setWidget:(QTextEdit *)widget;
@@ -763,6 +769,63 @@ static NSString *WebContinuousSpellCheckingEnabled = @"WebContinuousSpellCheckin
     // Make the text look disabled by changing its color.
     NSColor *color = disabled ? [NSColor disabledControlTextColor] : [NSColor controlTextColor];
     [[self textStorage] setForegroundColor:color];
+}
+
+// Could get fancy and send this to QTextEdit, then RenderTextArea, but there's really no harm
+// in doing this directly right here. Could refactor some day if you disagree.
+
+// FIXME: This does not yet implement the feature of canceling the operation, or the necessary
+// support to implement the clipboard operations entirely in JavaScript.
+- (void)dispatchHTMLEvent:(EventImpl::EventId)eventID
+{
+    if (widget) {
+        const RenderWidget *rw = static_cast<const RenderWidget *>(widget->eventFilterObject());
+        if (rw) {
+            NodeImpl *node = rw->element();
+            if (node) {
+                node->dispatchHTMLEvent(eventID, false, false);
+            }
+        }
+    }
+}
+
+- (void)cut:(id)sender
+{
+    inCut = YES;
+    [self dispatchHTMLEvent:EventImpl::BEFORECUT_EVENT];
+    [super cut:sender];
+    [self dispatchHTMLEvent:EventImpl::CUT_EVENT];
+    inCut = NO;
+}
+
+- (void)copy:(id)sender
+{
+    if (!inCut)
+        [self dispatchHTMLEvent:EventImpl::BEFORECOPY_EVENT];
+    [super copy:sender];
+    if (!inCut)
+        [self dispatchHTMLEvent:EventImpl::COPY_EVENT];
+}
+
+- (void)paste:(id)sender
+{
+    [self dispatchHTMLEvent:EventImpl::BEFOREPASTE_EVENT];
+    [super paste:sender];
+    [self dispatchHTMLEvent:EventImpl::PASTE_EVENT];
+}
+
+- (void)pasteAsPlainText:(id)sender
+{
+    [self dispatchHTMLEvent:EventImpl::BEFOREPASTE_EVENT];
+    [super pasteAsPlainText:sender];
+    [self dispatchHTMLEvent:EventImpl::PASTE_EVENT];
+}
+
+- (void)pasteAsRichText:(id)sender
+{
+    [self dispatchHTMLEvent:EventImpl::BEFOREPASTE_EVENT];
+    [super pasteAsRichText:sender];
+    [self dispatchHTMLEvent:EventImpl::PASTE_EVENT];
 }
 
 @end
