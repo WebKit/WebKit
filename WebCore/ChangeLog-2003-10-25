@@ -1,5 +1,12 @@
 2003-02-21  Maciej Stachowiak  <mjs@apple.com>
 
+        Back out last change, mondo layout regressions.
+
+        * khtml/html/html_documentimpl.cpp:
+        (HTMLDocumentImpl::close):
+
+2003-02-21  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Dave.
 
 	- fixed 3167642 - crash in renderArena.

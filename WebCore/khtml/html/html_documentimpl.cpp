@@ -331,13 +331,6 @@ void HTMLDocumentImpl::close()
 {
     // First fire the onload.
     bool doload = !parsing() && m_tokenizer;
-
-    // We must clear the tokenizer as early as possible to avoid
-    // re-entering the onload handler. This is done in the base class
-    // call, but now that we call the handler before anything else
-    // instead of last, we have to also do it manually here.
-    delete m_tokenizer;
-    m_tokenizer = 0;
     
     bool wasNotRedirecting = !view() || view()->part()->d->m_scheduledRedirection == noRedirectionScheduled;
     
@@ -359,6 +352,8 @@ void HTMLDocumentImpl::close()
             // paint every fourth page.
             // Just bail out. During the onload we were shifted to another page.
             // i-Bench does this. When this happens don't bother painting or laying out.        
+            delete m_tokenizer;
+            m_tokenizer = 0;
             view()->unscheduleRelayout();
             return;
         }
