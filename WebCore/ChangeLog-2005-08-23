@@ -1,3 +1,17 @@
+2002-10-10  David Hyatt  <hyatt@apple.com>
+
+	Fix a subtle bug with layers.  When a parent is sorted with its
+	children the parent's zindex must be treated as 0, so that
+	negative children draw behind the layer's content and positive
+	children (or auto children) draw in front of the layer's content.
+
+	This fix makes chrysler.com work again (and doubtless many other
+	messed up DHTML sites).
+	
+        * khtml/rendering/render_layer.cpp:
+        (RenderLayer::constructZTree):
+        (RenderLayer::RenderZTreeNode::constructLayerList):
+
 2002-10-09  Richard Williamson  <rjw@apple.com>
 
         Implemented string conversion functions.

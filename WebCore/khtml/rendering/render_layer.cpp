@@ -315,6 +315,12 @@ RenderLayer::constructZTree(QRect damageRect,
             RenderZTreeNode* leaf = new RenderZTreeNode(layerElt);
             leaf->next = returnNode->child;
             returnNode->child = leaf;
+            
+            // We are an interior node and have other child layers.  Our layer
+            // will need to be sorted with the other layers as though it has
+            // a z-index of 0.
+            if (!layerElt->zauto)
+                layerElt->zindex = 0;
         }
         else
             returnNode->layerElement = layerElt;
@@ -443,7 +449,6 @@ void RenderLayer::RenderZTreeNode::constructLayerList(QPtrVector<RenderLayerElem
             buffer->resize(2*(buffer->size()+1));
         
         buffer->insert(buffer->count(), layerElement);
-        layerElement->zindex = explicitZIndex;
         return;
     }
 
