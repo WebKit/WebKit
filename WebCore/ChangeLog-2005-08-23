@@ -1,5 +1,22 @@
 2002-11-17  David Hyatt  <hyatt@apple.com>
 
+	Don't use the immediate painting code for now.  Revert
+	to non-immediate code.  Using the non-immediate path I
+	have managed to fix all the regressions except for 
+	mrskin losing updates in its marquee (this works only with
+	immediate painting) and the general scrollbar regression 
+	(which I just don't understand).
+	
+        * khtml/html/html_documentimpl.cpp:
+        (HTMLDocumentImpl::close):
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::setLayouted):
+        * khtml/rendering/render_root.cpp:
+        (RenderRoot::repaintRectangle):
+        (RenderRoot::repaint):
+
+2002-11-17  David Hyatt  <hyatt@apple.com>
+
 	More refinements to immediate painting code.  Still doesn't
 	fix the scrollbar problem though. :(
 	

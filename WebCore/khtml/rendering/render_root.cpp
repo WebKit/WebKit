@@ -246,7 +246,7 @@ void RenderRoot::repaintRectangle(int x, int y, int w, int h, bool immediate, bo
 
     if (m_view && ur.intersects(vr))
         if (immediate)
-            m_view->updateContents(ur);
+            m_view->updateContents(ur, true);
         else
             m_view->scheduleRepaint(x, y, w, h);
 }
@@ -262,7 +262,7 @@ void RenderRoot::repaint(bool immediate)
                 return;
             }
             m_view->updateContents(m_view->contentsX(), m_view->contentsY(),
-                                   m_view->visibleWidth(), m_view->visibleHeight());
+                                   m_view->visibleWidth(), m_view->visibleHeight(), true);
         }
         else
             m_view->scheduleRepaint(m_view->contentsX(), m_view->contentsY(),

@@ -324,13 +324,11 @@ void HTMLDocumentImpl::close()
     if (body() && doload) {
         updateRendering();
         
-        // Always do a full and immediate layout/repaint after loading.
+        // Always do a layout/repaint after loading.
         if (renderer()) {
-            if (!renderer()->layouted()) {
+            if (!renderer()->layouted())
                 renderer()->layout();
-                view()->unscheduleRelayout();
-            }
-            renderer()->repaint(true);
+            renderer()->repaint();
         }
     }
 }

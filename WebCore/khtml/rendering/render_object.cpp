@@ -256,8 +256,7 @@ void RenderObject::setLayouted(bool b)
             if (clippedObj) {
                 gClipObject = clippedObj;
                 root->layout();
-                clippedObj->repaintRectangle(0, 0, clippedObj->contentWidth(), 
-                                             clippedObj->contentHeight(), true);
+                clippedObj->repaint();
                 gClipObject = 0;
             }
             else
