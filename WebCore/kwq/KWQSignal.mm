@@ -78,8 +78,12 @@ void KWQSignal::call() const
     if (!m_object->m_signalsBlocked) {
         KWQObjectSenderScope senderScope(m_object);
         const int numSlots = sizeof(m_slots) / sizeof(m_slots[0]);
+        KWQSlot copiedSlots[numSlots];
         for (int i = 0; i != numSlots; ++i) {
-            m_slots[i].call();
+            copiedSlots[i] = m_slots[i];
+        }
+        for (int i = 0; i != numSlots; ++i) {
+            copiedSlots[i].call();
         }
     }
 }
@@ -89,8 +93,12 @@ void KWQSignal::call(bool b) const
     if (!m_object->m_signalsBlocked) {
         KWQObjectSenderScope senderScope(m_object);
         const int numSlots = sizeof(m_slots) / sizeof(m_slots[0]);
+        KWQSlot copiedSlots[numSlots];
         for (int i = 0; i != numSlots; ++i) {
-            m_slots[i].call(b);
+            copiedSlots[i] = m_slots[i];
+        }
+        for (int i = 0; i != numSlots; ++i) {
+            copiedSlots[i].call(b);
         }
     }
 }
@@ -100,8 +108,12 @@ void KWQSignal::call(int j) const
     if (!m_object->m_signalsBlocked) {
         KWQObjectSenderScope senderScope(m_object);
         const int numSlots = sizeof(m_slots) / sizeof(m_slots[0]);
+        KWQSlot copiedSlots[numSlots];
         for (int i = 0; i != numSlots; ++i) {
-            m_slots[i].call(j);
+            copiedSlots[i] = m_slots[i];
+        }
+        for (int i = 0; i != numSlots; ++i) {
+            copiedSlots[i].call(j);
         }
     }
 }
@@ -111,8 +123,12 @@ void KWQSignal::call(const QString &s) const
     if (!m_object->m_signalsBlocked) {
         KWQObjectSenderScope senderScope(m_object);
         const int numSlots = sizeof(m_slots) / sizeof(m_slots[0]);
+        KWQSlot copiedSlots[numSlots];
         for (int i = 0; i != numSlots; ++i) {
-            m_slots[i].call(s);
+            copiedSlots[i] = m_slots[i];
+        }
+        for (int i = 0; i != numSlots; ++i) {
+            copiedSlots[i].call(s);
         }
     }
 }
@@ -122,8 +138,12 @@ void KWQSignal::call(Job *j) const
     if (!m_object->m_signalsBlocked) {
         KWQObjectSenderScope senderScope(m_object);
         const int numSlots = sizeof(m_slots) / sizeof(m_slots[0]);
+        KWQSlot copiedSlots[numSlots];
         for (int i = 0; i != numSlots; ++i) {
-            m_slots[i].call(j);
+            copiedSlots[i] = m_slots[i];
+        }
+        for (int i = 0; i != numSlots; ++i) {
+            copiedSlots[i].call(j);
         }
     }
 }

@@ -1,5 +1,12 @@
 2002-09-13  Darin Adler  <darin@apple.com>
 
+	Fix crash in slot code.
+
+        * kwq/KWQSignal.mm: (KWQSignal::call): Copy the slots before
+	calling through in case we are destroyed by the called function.
+
+2002-09-13  Darin Adler  <darin@apple.com>
+
 	Here's the *real* mistake that killed plugins. I accidentally
 	stopped creating objects at all! Duh. Fixed now.
 
