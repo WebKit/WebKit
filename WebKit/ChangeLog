@@ -1,3 +1,13 @@
+2005-02-16  John Sullivan  <sullivan@apple.com>
+
+        Written by Darin, reviewed by me.
+        
+        - WebKit part of fix for <rdar://problem/4007384> 
+        FILTER: Bookmark of RSS with Japanese search word & multiple RSS pages loses filter
+
+        * DOM.subproj/DOMPrivate.h:
+        updated this file, which is a copy of the WebCore version
+
 2005-02-16  Richard Williamson   <rjw@apple.com>
 
 	Fixed <rdar://problem/3966973> Tiger 8A357: Binary Compatiblity: frequent Webstractor.app crashes [WebImageData _nextFrame]
