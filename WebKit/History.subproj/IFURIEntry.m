@@ -55,6 +55,19 @@ id <WCURIEntry> WCCreateURIEntry(void)
     return self;
 }
 
+- (void)dealloc
+{
+    [_url release];
+    [_title release];
+    [_image release];
+    [_comment release];
+    [_creationDate release];
+    [_modificationDate release];
+    [_lastVisitedDate release];
+    
+    [super dealloc];
+}
+
 -(NSURL *)url
 {
     return _url;

@@ -68,6 +68,8 @@ static void freeNode(IFURIListNode *node)
         curNode = curNode->next;
         freeNode(delNode);
     }
+
+    [super dealloc];
 }
 
 -(BOOL)allowsDuplicates

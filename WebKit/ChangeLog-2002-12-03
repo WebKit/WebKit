@@ -1,3 +1,11 @@
+2002-02-26  John Sullivan  <sullivan@apple.com>
+
+	* History.subproj/IFURIEntry.m: (-[IFURIEntry dealloc]):
+	Added missing dealloc method that 'leaks' found.
+
+	* History.subproj/IFURIList.m: (-[IFURIList dealloc]):
+	Added missing [super dealloc] call that 'leaks' found.
+
 2002-02-22  Maciej Stachowiak  <mjs@apple.com>
 
 	Fix prebinding:
