@@ -52,7 +52,7 @@
 {
     if ((self = [super init])) {
     
-        path = [[NSString alloc] initWithString:[thePath stringByStandardizingPath]];
+        path = [[thePath stringByStandardizingPath] copy];
         isOpen = NO;
     
         return self;
