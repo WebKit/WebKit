@@ -29,6 +29,6 @@
 
 KSimpleConfig::KSimpleConfig(const QString &s, bool bReadOnly) : KConfig (s, bReadOnly)
 {
-    LOG(NotYetImplemented, "not yet implemented");
+    ERROR("not yet implemented");
 }
 

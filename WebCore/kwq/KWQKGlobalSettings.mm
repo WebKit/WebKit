@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,34 +23,26 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <qfont.h>
-
 #import <kglobalsettings.h>
 
-#import <KWQLogging.h>
+#import <qfont.h>
 
 QFont KGlobalSettings::generalFont()
 {
     return QFont();
 }
 
-
 QFont KGlobalSettings::windowTitleFont()
 {
     return QFont();
 }
-
 
 QFont KGlobalSettings::menuFont()
 {
     return QFont();
 }
 
-
 int KGlobalSettings::contrast()
 {
-    LOG(NotYetImplemented, "not yet implemented");
     return 0;
 }
-
-

@@ -33,6 +33,6 @@ QFontInfo::QFontInfo(const QFont &f)
 
 bool QFontInfo::fixedPitch() const
 {
-    LOG(NotYetImplemented, "not yet implemented");
+    ERROR("not yet implemented");
     return FALSE;
 }

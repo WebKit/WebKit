@@ -8,8 +8,7 @@
 
 #import "KWQLogging.h"
 
-KWQLogChannel KWQLogNeverImplemented =  { 0x00000001, "WebCoreLogLevel", KWQLogChannelUninitialized };
-KWQLogChannel KWQLogNotYetImplemented = { 0x00000002, "WebCoreLogLevel", KWQLogChannelUninitialized };
+KWQLogChannel KWQLogNotYetImplemented = { 0x00000001, "WebCoreLogLevel", KWQLogChannelUninitialized };
 
 KWQLogChannel KWQLogFrames =            { 0x00000010, "WebCoreLogLevel", KWQLogChannelUninitialized };
 KWQLogChannel KWQLogLoading =           { 0x00000020, "WebCoreLogLevel", KWQLogChannelUninitialized };

@@ -12,7 +12,6 @@
 #define LOG_CHANNEL_PREFIX KWQLog
 #endif
 
-extern KWQLogChannel KWQLogNeverImplemented;
 extern KWQLogChannel KWQLogNotYetImplemented;
 
 extern KWQLogChannel KWQLogFrames;

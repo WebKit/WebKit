@@ -164,12 +164,12 @@ QSize QFontMetrics::size(int, const QString &qstring) const
 
 int QFontMetrics::rightBearing(QChar) const
 {
-    LOG(NotYetImplemented, "not yet implemented");
+    ERROR("not yet implemented");
     return 0;
 }
 
 int QFontMetrics::leftBearing(QChar) const
 {
-    LOG(NotYetImplemented, "not yet implemented");
+    ERROR("not yet implemented");
     return 0;
 }

@@ -28,6 +28,6 @@
 
 QPixmap KIconLoader::loadIcon(const QString &name, int group, int size, int state) const
 {
-    LOG(NotYetImplemented, "not yet implemented");
+    ERROR("not yet implemented");
     return QPixmap();
 }

@@ -45,7 +45,7 @@ QCursor::QCursor(NSCursor *cur)
 QCursor::QCursor(const QPixmap &pixmap)
     : cursor([[NSCursor arrowCursor] retain])
 {
-    LOG(NotYetImplemented, "not yet implemented");
+    ERROR("not yet implemented");
 }
 
 QCursor::QCursor(const QCursor &other)

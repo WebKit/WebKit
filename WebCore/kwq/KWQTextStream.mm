@@ -31,51 +31,51 @@
 
 QTextStream::QTextStream()
 {
-    LOG(NotYetImplemented, "not yet implemented");
+    ERROR("not yet implemented");
 }
 
 
 QTextStream::QTextStream(QByteArray, int)
 {
-    LOG(NotYetImplemented, "not yet implemented");
+    ERROR("not yet implemented");
 }
 
 QTextStream::QTextStream(QString *, int)
 {
-    LOG(NotYetImplemented, "not yet implemented");
+    ERROR("not yet implemented");
 }
 
 
 QTextStream::~QTextStream()
 {
-    LOG(NotYetImplemented, "not yet implemented");
+    ERROR("not yet implemented");
 }
 
 
 QTextStream &QTextStream::operator<<(char)
 {
-    LOG(NotYetImplemented, "not yet implemented");
+    ERROR("not yet implemented");
     return *this;
 }
 
 
 QTextStream &QTextStream::operator<<(const char *)
 {
-    LOG(NotYetImplemented, "not yet implemented");
+    ERROR("not yet implemented");
     return *this;
 }
 
 
 QTextStream &QTextStream::operator<<(const QCString &)
 {
-    LOG(NotYetImplemented, "not yet implemented");
+    ERROR("not yet implemented");
     return *this;
 }
 
 
 QTextStream &QTextStream::operator<<(const QString &)
 {
-    LOG(NotYetImplemented, "not yet implemented");
+    ERROR("not yet implemented");
     return *this;
 }
 
@@ -84,13 +84,13 @@ QTextStream &QTextStream::operator<<(const QString &)
 
 QTextIStream::QTextIStream(QString *)
 {
-    LOG(NotYetImplemented, "not yet implemented");
+    ERROR("not yet implemented");
 }
 
 
 QString QTextIStream::readLine()
 {
-    LOG(NotYetImplemented, "not yet implemented");
+    ERROR("not yet implemented");
     return QString();
 }
 
@@ -99,36 +99,36 @@ QString QTextIStream::readLine()
 
 QTextOStream::QTextOStream(QString *)
 {
-    LOG(NotYetImplemented, "not yet implemented");
+    ERROR("not yet implemented");
 }
 
 
 QTextOStream::QTextOStream(QByteArray)
 {
-    LOG(NotYetImplemented, "not yet implemented");
+    ERROR("not yet implemented");
 }
 
 QString QTextOStream::readLine()
 {
-    LOG(NotYetImplemented, "not yet implemented");
+    ERROR("not yet implemented");
     return QString();
 }
 
 
 QTextStream &QTextStream::operator<<(QTextStream &(*const &)(QTextStream &)) 
 {
-    LOG(NotYetImplemented, "not yet implemented");
+    ERROR("not yet implemented");
     return *this;
 }
 
 QTextStream &QTextStream::operator<<(void const *)
 {
-    LOG(NotYetImplemented, "not yet implemented");
+    ERROR("not yet implemented");
     return *this;
 }
 
 QTextStream &endl(QTextStream& stream)
 {
-    LOG(NotYetImplemented, "not yet implemented");
+    ERROR("not yet implemented");
     return stream;
 }

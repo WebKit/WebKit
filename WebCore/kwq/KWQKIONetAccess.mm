@@ -33,14 +33,14 @@ namespace KIO {
 
 bool NetAccess::stat(const KURL &, KIO::UDSEntry &)
 {
-    LOG(NotYetImplemented, "not yet implemented");
+    ERROR("not yet implemented");
     return FALSE;
 }
 
 
 QString NetAccess::lastErrorString()
 {
-    LOG(NotYetImplemented, "not yet implemented");
+    ERROR("not yet implemented");
     if (tempQString == NULL) {
 	tempQString = new QString();
     }
@@ -51,14 +51,14 @@ QString NetAccess::lastErrorString()
 
 bool NetAccess::download(const KURL &, QString &)
 {
-    LOG(NotYetImplemented, "not yet implemented");
+    ERROR("not yet implemented");
     return FALSE;
 }
 
 
 void NetAccess::removeTempFile(const QString &)
 {
-    LOG(NotYetImplemented, "not yet implemented");
+    ERROR("not yet implemented");
 }
 
 } // namespace KIO

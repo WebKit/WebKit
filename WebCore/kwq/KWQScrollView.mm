@@ -174,12 +174,12 @@ void QScrollView::setContentsPos(int x, int y)
 
 void QScrollView::setVScrollBarMode(ScrollBarMode)
 {
-    LOG(NeverImplemented, "never implemented");
+    LOG(NotYetImplemented, "not yet implemented");
 }
 
 void QScrollView::setHScrollBarMode(ScrollBarMode)
 {
-    LOG(NeverImplemented, "never implemented");
+    LOG(NotYetImplemented, "not yet implemented");
 }
 
 void QScrollView::addChild(QWidget* child, int x, int y)
@@ -296,7 +296,7 @@ void QScrollView::viewportToContents(int vx, int vy, int& x, int& y)
 
 void QScrollView::setStaticBackground(bool)
 {
-    LOG(NeverImplemented, "never implemented");
+    LOG(NotYetImplemented, "not yet implemented");
 }
 
 void QScrollView::resizeEvent(QResizeEvent *)
@@ -305,10 +305,10 @@ void QScrollView::resizeEvent(QResizeEvent *)
 
 void QScrollView::ensureVisible(int,int)
 {
-    LOG(NeverImplemented, "never implemented");
+    ERROR("not yet implemented");
 }
 
 void QScrollView::ensureVisible(int,int,int,int)
 {
-    LOG(NeverImplemented, "never implemented");
+    LOG(NotYetImplemented, "not yet implemented");
 }

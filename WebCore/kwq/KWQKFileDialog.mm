@@ -29,6 +29,6 @@
 QString KFileDialog::getOpenFileName(const QString &startDir, 
     const QString &filter, QWidget *parent, const QString &caption)
 {
-    LOG(NotYetImplemented, "not yet implemented");
+    ERROR("not yet implemented");
     return QString();
 }

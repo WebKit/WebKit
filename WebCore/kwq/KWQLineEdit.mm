@@ -97,7 +97,7 @@ void QLineEdit::setReadOnly(bool flag)
 
 bool QLineEdit::frame() const
 {
-    LOG(NotYetImplemented, "not yet implemented");
+    ERROR("not yet implemented");
     return FALSE;
 }
 

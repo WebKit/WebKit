@@ -2411,13 +2411,13 @@ void QString::fill(QChar qc, int len)
 void QString::compose()
 {
     // FIXME: unimplemented because we don't do ligatures yet
-    LOG(NotYetImplemented, "not yet implemented");
+    ERROR("not yet implemented");
 }
 
 QString QString::visual()
 {
     // FIXME: unimplemented because we don't do BIDI yet
-    LOG(NotYetImplemented, "not yet implemented");
+    ERROR("not yet implemented");
     return QString(*this);
 }
 

@@ -28,40 +28,40 @@
 
 KMimeType::Ptr KMimeType::findByURL(const KURL &, mode_t, bool, bool)
 {
-    LOG(NotYetImplemented, "not yet implemented");
+    ERROR("not yet implemented");
     return KMimeType::Ptr();
 }
 
 
 KMimeType::~KMimeType()
 {
-    LOG(NotYetImplemented, "not yet implemented");
+    ERROR("not yet implemented");
 }
 
 
 QString KMimeType::name() const
 {
-    LOG(NotYetImplemented, "not yet implemented");
+    ERROR("not yet implemented");
     return QString();
 }
 
 QString KMimeType::comment() const
 {
-    LOG(NotYetImplemented, "not yet implemented");
+    ERROR("not yet implemented");
     return QString();
 }
 
 
 KMimeType::Ptr KMimeType::mimeType(QString serviceType)
 {
-    LOG(NotYetImplemented, "not yet implemented");
+    ERROR("not yet implemented");
     return KMimeType::Ptr();
 }
 
 
 QString KMimeType::defaultMimeType()
 {
-    LOG(NotYetImplemented, "not yet implemented");
+    ERROR("not yet implemented");
     return QString();
 }
 

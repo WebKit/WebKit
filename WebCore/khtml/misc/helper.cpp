@@ -219,6 +219,7 @@ void khtml::setNamedColor(QColor &color, const QString &_name)
 	    return;
 	}
         color.setNamedColor(name);
+        return;
 #else /* APPLE_CHANGES not defined */
         bool ok;
         int val = name.toInt(&ok, 16);

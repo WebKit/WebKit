@@ -1,3 +1,42 @@
+2002-09-09  Darin Adler  <darin@apple.com>
+
+        * khtml/misc/helper.cpp: (khtml::setNamedColor): Add a missing return I spotted.
+
+        * kwq/KWQApplication.mm:
+        * kwq/KWQChar.mm:
+        * kwq/KWQCompletion.mm:
+        * kwq/KWQCursor.mm:
+        * kwq/KWQEvent.mm:
+        * kwq/KWQFontInfo.mm:
+        * kwq/KWQFontMetrics.mm:
+        * kwq/KWQInputDialog.mm:
+        * kwq/KWQKConfigBase.mm:
+        * kwq/KWQKFileDialog.mm:
+        * kwq/KWQKFileItem.mm:
+        * kwq/KWQKGlobalSettings.mm:
+        * kwq/KWQKHTMLSettings.mm:
+        * kwq/KWQKIconLoader.mm:
+        * kwq/KWQKMimeType.mm:
+        * kwq/KWQKSimpleConfig.mm:
+        * kwq/KWQKjobclasses.mm:
+        * kwq/KWQKnetaccess.mm:
+        * kwq/KWQLineEdit.mm:
+        * kwq/KWQScrollView.mm:
+        * kwq/KWQString.mm:
+        * kwq/KWQWidget.mm:
+        * kwq/KWQbrowserinterface.mm:
+        * kwq/KWQtextstream.mm:
+        * kwq/KWQxml.mm:
+	Change various LOG(NotYetImplemented) to ERROR, FATAL, or removed them entirely.
+	This will help us with the task of getting every last one either "not implemented
+	on purpose" or implemented. I'm not sure the NotYetImplemented log channel is
+	useful, because it's chock full of continuous "direction not implemented" messages.
+
+        * kwq/KWQLogging.h:
+        * kwq/KWQLogging.m:
+	Removed the NeverImplemented logging channel. The distinction is no longer worth
+	keeping around. We use NotYetImplemented instead.
+
 2002-09-08  Darin Adler  <darin@apple.com>
 
 	Switch over to new assertion/logging scheme.

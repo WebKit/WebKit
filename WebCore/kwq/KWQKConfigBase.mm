@@ -61,7 +61,7 @@ void KConfig::setGroup(const QString &pGroup)
 void KConfig::writeEntry(const QString &pKey, const QStringList &rValue, 
     char sep, bool bPersistent, bool bGlobal, bool bNLS)
 {
-    LOG(NotYetImplemented, "not yet implemented");
+    ERROR("not yet implemented");
 }
 
 QString KConfig::readEntry(const char *pKey, const QString& aDefault) const
@@ -94,7 +94,7 @@ QString KConfig::readEntry(const char *pKey, const QString& aDefault) const
         }
     }
     
-    LOG(NotYetImplemented, "not yet implemented");
+    ERROR("not yet implemented");
     return QString();
 }
 
@@ -103,7 +103,7 @@ int KConfig::readNumEntry(const char *pKey, int nDefault) const
     if (impl->isPluginInfo) {
         return [[[WebCoreViewFactory sharedFactory] pluginsInfo] count];
     }
-    LOG(NotYetImplemented, "not yet implemented");
+    ERROR("not yet implemented");
     return nDefault;
 }
 
@@ -116,14 +116,14 @@ unsigned int KConfig::readUnsignedNumEntry(const char *pKey, unsigned int nDefau
 	    return 3;
 	}
     }
-    LOG(NotYetImplemented, "not yet implemented");
+    ERROR("not yet implemented");
     return nDefault;
 }
 
 
 bool KConfig::readBoolEntry(const char *pKey, bool nDefault) const
 {
-    LOG(NotYetImplemented, "not yet implemented");
+    ERROR("not yet implemented");
     return nDefault;
 }
 
@@ -137,6 +137,6 @@ QColor KConfig::readColorEntry(const char *pKey, const QColor *pDefault) const
 
 QStringList KConfig::readListEntry(const QString &pKey, char sep) const
 {
-    LOG(NotYetImplemented, "not yet implemented");
+    ERROR("not yet implemented");
     return QStringList();
 }

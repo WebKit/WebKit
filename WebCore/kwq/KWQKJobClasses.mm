@@ -86,7 +86,7 @@ void TransferJob::setError(int e)
 QString TransferJob::errorText() const
 {
     LOG(NotYetImplemented, "not yet implemented");
-    return 0;
+    return QString::null;
 }
 
 QString TransferJob::queryMetaData(const QString &key) const

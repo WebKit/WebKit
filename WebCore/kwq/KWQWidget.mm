@@ -206,7 +206,7 @@ void QWidget::setFocus()
 
 void QWidget::clearFocus()
 {
-    LOG(NeverImplemented, "never implemented");
+    ERROR("not yet implemented");
 }
 
 QWidget::FocusPolicy QWidget::focusPolicy() const
@@ -315,8 +315,8 @@ bool QWidget::event(QEvent *)
 
 bool QWidget::focusNextPrevChild(bool)
 {
-    LOG(NeverImplemented, "never implemented");
-    return TRUE;
+    ERROR("not yet implemented");
+    return true;
 }
 
 bool QWidget::hasMouseTracking() const

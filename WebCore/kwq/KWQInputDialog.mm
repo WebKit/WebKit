@@ -28,6 +28,6 @@
 
 QString QInputDialog::getText(const QString &, const QString &, QLineEdit::EchoMode, const QString &, bool *)
 {
-    LOG(NeverImplemented, "never implemented");
+    FATAL("not implemented");
     return QString();
 }

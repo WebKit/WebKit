@@ -28,11 +28,11 @@
 
 void KCompletion::setItems(const QStringList &)
 {
-    LOG(NotYetImplemented, "not yet implemented");
+    ERROR("not yet implemented");
 }
 
 KCompletion *KCompletionBase::completionObject()
 {
-    LOG(NotYetImplemented, "not yet implemented");
+    ERROR("not yet implemented");
     return 0;
 }

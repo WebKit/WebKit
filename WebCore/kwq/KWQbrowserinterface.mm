@@ -31,7 +31,7 @@ namespace KParts {
 
 void BrowserInterface::callMethod(const char *name, const QVariant &argument)
 {
-    LOG(NotYetImplemented, "not yet implemented");
+    ERROR("not yet implemented");
 }
 
 } // namespace KParts

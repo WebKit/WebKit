@@ -100,7 +100,7 @@ QChar::Direction QChar::direction() const
 bool QChar::mirrored() const
 {
     // FIXME: unimplemented because we don't do BIDI yet
-    LOG(NotYetImplemented, "not yet implemented");
+    ERROR("not yet implemented");
     // return whether character should be reversed if text direction is reversed
     return false;
 }
@@ -108,7 +108,7 @@ bool QChar::mirrored() const
 QChar QChar::mirroredChar() const
 {
     // FIXME: unimplemented because we don't do BIDI yet
-    LOG(NotYetImplemented, "not yet implemented");
+    ERROR("not yet implemented");
     // return mirrored character if it is mirrored else return itself
     return *this;
 }

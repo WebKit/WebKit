@@ -114,7 +114,6 @@ bool KHTMLSettings::isJavaEnabled() const
 
 bool KHTMLSettings::autoLoadImages() const
 {
-    LOG(NotYetImplemented, "not yet implemented");
     return true;
 }
 
