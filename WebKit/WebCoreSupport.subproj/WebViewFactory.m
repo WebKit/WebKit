@@ -3,25 +3,25 @@
 //  WebKit
 //
 //  Created by Darin Adler on Tue May 07 2002.
-//  Copyright (c) 2002 Apple Computer, Inc. All rights reserved.
+//  Copyright (c) 2004 Apple Computer, Inc. All rights reserved.
 //
 
 #import <WebKit/WebViewFactory.h>
 
+#import <Foundation/NSUserDefaults_NSURLExtras.h>
 #import <WebKit/WebAssertions.h>
 #import <WebKit/WebBridge.h>
 #import <WebKit/WebControllerSets.h>
-#import <WebKit/WebFrameView.h>
 #import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebLocalizableStrings.h>
-
 #import <WebKit/WebPluginDatabase.h>
 
-@interface NSMenu (BrowserMenuAdditions)
+@interface NSMenu (WebViewFactoryAdditions)
 - (NSMenuItem *)addItemWithTitle:(NSString *)title action:(SEL)action tag:(int)tag;
 @end
 
-@implementation NSMenu (BrowserMenuAdditions)
+@implementation NSMenu (WebViewFactoryAdditions)
+
 - (NSMenuItem *)addItemWithTitle:(NSString *)title action:(SEL)action tag:(int)tag
 {
     NSMenuItem *item = [[[NSMenuItem alloc] initWithTitle:title action:action keyEquivalent:@""] autorelease];
@@ -29,11 +29,12 @@
     [self addItem:item];
     return item;
 }
+
 @end
 
 @implementation WebViewFactory
 
-+ (void)createSharedFactory;
++ (void)createSharedFactory
 {
     if (![self sharedFactory]) {
         [[[self alloc] init] release];
@@ -106,8 +107,7 @@
 
 - (NSString *)defaultLanguageCode
 {
-    // FIXME: Need implementation. Defaults gives us a list of languages, but by name, not code.
-    return @"en";
+    return [NSUserDefaults _web_preferredLanguageCode];
 }
 
 @end
