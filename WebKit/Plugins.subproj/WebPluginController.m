@@ -94,8 +94,8 @@
         LOG(Plugins, "destroying WebKit plugins: %@", [_views description]);
     }
     
-    [_views makeObjectsPerformSelector:@selector(removeFromSuperviewWithoutNeedingDisplay)];
     [_views makeObjectsPerformSelector:@selector(pluginDestroy)];
+    [_views makeObjectsPerformSelector:@selector(removeFromSuperviewWithoutNeedingDisplay)];
     [_views release];
     _views = nil;
 

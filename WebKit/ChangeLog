@@ -1,3 +1,15 @@
+2004-04-01  Richard Williamson   <rjw@apple.com>
+
+	Fixed 3609493.  Don't remove the plugin's view until after
+	sending pluginDestroy.  This change was requested by Greg
+	and is needed in the Lavender update.
+
+        Reviewed by Greg Bolsinga.
+
+        * Plugins.subproj/WebPluginController.m:
+        (-[WebPluginController destroyAllPlugins]):
+        * Plugins.subproj/npruntime.h:
+
 2004-03-31  John Sullivan  <sullivan@apple.com>
 
         - fixed <rdar://problem/3577917>: API: mechanism for displaying error 
