@@ -308,7 +308,7 @@ void RenderTable::layout()
         if (c->isTableCell()) {
             RenderTableCell* cell = static_cast<RenderTableCell*>(c);
             int cellHeight = cell->getCellPercentageHeight();
-            if (cellHeight && cell->style()->height().isFixed())
+            if (cellHeight)
                 th = h.width(cellHeight);
         }
         else  {
