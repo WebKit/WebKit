@@ -64,6 +64,26 @@
             action = @selector(copy:);
             [menuItem setTarget:nil];
             break;
+		case WebMenuItemTagGoBack:
+			title = UI_STRING("Back", "Back context menu item");
+            action = @selector(goBack:);
+            [menuItem setTarget:nil];
+            break;
+		case WebMenuItemTagGoForward:
+			title = UI_STRING("Forward", "Forward context menu item");
+            action = @selector(goForward:);
+            [menuItem setTarget:nil];
+            break;
+		case WebMenuItemTagStop:
+			title = UI_STRING("Stop", "Stop context menu item");
+            action = @selector(stopLoading:);
+            [menuItem setTarget:nil];
+            break;
+		case WebMenuItemTagReload:
+			title = UI_STRING("Reload", "Reload context menu item");
+            action = @selector(reload:);
+            [menuItem setTarget:nil];
+            break;
         default:
             [menuItem release];
             return nil;
@@ -102,10 +122,21 @@
     if (!imageURL && !linkURL) {
         if ([[element objectForKey:WebElementIsSelectedKey] boolValue]) {
             [menuItems addObject:[self menuItemWithTag:WebMenuItemTagCopy]];
-        } else {        
+        } else {
+			if ([wv canGoBack]) {
+				[menuItems addObject:[self menuItemWithTag:WebMenuItemTagGoBack]];
+			}
+			if ([wv canGoForward]) {
+				[menuItems addObject:[self menuItemWithTag:WebMenuItemTagGoForward]];
+			}
+			if ([wv isLoading]) {
+				[menuItems addObject:[self menuItemWithTag:WebMenuItemTagStop]];
+			} else {
+				[menuItems addObject:[self menuItemWithTag:WebMenuItemTagReload]];
+			}
+			
             WebFrame *webFrame = [element objectForKey:WebElementFrameKey];
-    
-            if (webFrame != [[webFrame webView] mainFrame]) {
+            if (webFrame != [wv mainFrame]) {
                 [menuItems addObject:[self menuItemWithTag:WebMenuItemTagOpenFrameInNewWindow]];
             }
         }

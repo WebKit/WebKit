@@ -1,3 +1,15 @@
+2004-01-28  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3197222>: need context menu items for back, forward, refresh.
+
+        Reviewed by rjw.
+
+        * English.lproj/Localizable.strings:
+        * WebView.subproj/WebDefaultContextMenuDelegate.m:
+        (-[WebDefaultUIDelegate menuItemWithTag:]): added support for WebMenuItemTagGoBack, WebMenuItemTagGoForward, WebMenuItemTagStop and WebMenuItemTagReload tags
+        (-[WebDefaultUIDelegate webView:contextMenuItemsForElement:defaultMenuItems:]): added support for Back, Forward, Stop and Reload
+        * WebView.subproj/WebUIDelegate.h: added WebMenuItemTagGoBack, WebMenuItemTagGoForward, WebMenuItemTagStop and WebMenuItemTagReload tags
+
 2004-01-27  John Sullivan  <sullivan@apple.com>
 
         WebKit part of fixes for:
