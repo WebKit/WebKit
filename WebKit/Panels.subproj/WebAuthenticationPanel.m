@@ -10,7 +10,9 @@
 #import <WebFoundation/WebAssertions.h>
 #import <WebFoundation/WebLocalizableStrings.h>
 
+#import <WebKit/WebNSControlExtras.h>
 #import <WebKit/WebStandardPanelsPrivate.h>
+
 
 #define WebAuthenticationPanelNibName @"WebAuthenticationPanel"
 
@@ -95,11 +97,13 @@
     // FIXME Radar 2876448: we should display a different dialog depending on the
     // failure count (if the user tried and failed, the dialog should
     // explain possible reasons)
-    // FIXME Radar 2876446: need to automatically adjust height of main label
     [mainLabel setStringValue:[NSString stringWithFormat:
         UI_STRING("To view this page, you need to log in to area “%@” on %@.",
             "prompt string in authentication panel"),
         [resource realm], [[resource URL] host]]];
+
+    [mainLabel sizeToFitAndAdjustWindowHeight];
+
     if ([resource receivesCredentialSecurely]) {
         [smallLabel setStringValue:
             UI_STRING("Your log-in information will be sent securely.",

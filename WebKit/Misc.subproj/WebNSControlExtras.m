@@ -13,16 +13,16 @@
 
 - (void)sizeToFitAndAdjustWindowHeight
 {
-    float heightBefore = [self frame].size.height;
-    
-    [self sizeToFit];
-    
     NSRect frame = [self frame];
-    float heightDelta = frame.size.height - heightBefore;
+
+    NSSize bestSize = [[self cell] cellSizeForBounds:NSMakeRect(0, 0, frame.size.width, 10000.0)];
     
-    frame.origin.y -= heightDelta;
-    [self setFrameOrigin:frame.origin];
-    
+    float heightDelta = bestSize.height - frame.size.height;
+
+    frame.size.height += heightDelta;
+    frame.origin.y    -= heightDelta;
+    [self setFrame:frame];
+
     NSRect windowFrame = [[self window] frame];
     windowFrame.size.height += heightDelta;
     [[self window] setFrame:windowFrame display:NO];

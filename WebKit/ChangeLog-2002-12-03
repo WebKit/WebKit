@@ -1,3 +1,22 @@
+2002-10-23  Maciej Stachowiak  <mjs@apple.com>
+
+	- fixed 2876446 - The label in the authentication panel needs to
+	adjust its height depending on content
+
+	Also improved [NSControl sizeToFitAndAdjustWindowHeight] method.
+	
+        * Panels.subproj/English.lproj/WebAuthenticationPanel.nib: Adjusted
+	springs.
+        * Panels.subproj/WebAuthenticationPanel.m:
+	(-[WebAuthenticationPanel setUpForRequest:]): Use
+	sizeToFitAndAdjustWindowHeight on main label.
+	
+        * Misc.subproj/WebNSControlExtras.m:
+        (-[NSControl sizeToFitAndAdjustWindowHeight]): Improved the logic
+	so the best height is picked while leaving the width
+	alone. Before, the label would always come out to be a very wide
+	single line.
+
 2002-10-22  Maciej Stachowiak  <mjs@apple.com>
 
         * WebKit.pbproj/project.pbxproj: Made WebControllerSets.h
