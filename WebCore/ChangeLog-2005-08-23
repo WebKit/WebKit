@@ -1,3 +1,12 @@
+2004-08-19  David Hyatt  <hyatt@apple.com>
+
+	Fix crash when text is contained inside a table-colgroup.
+	
+        Reviewed by john
+
+        * khtml/xml/dom_textimpl.cpp:
+        (TextImpl::rendererIsNeeded):
+
 2004-08-19  Trey Matteson  <trey@apple.com>
 
 	Unexpected errors hit while finding word boundaries, leading to crash.
