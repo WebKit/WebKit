@@ -2,6 +2,28 @@
 
         Reviewed by Vicki.
 
+        <rdar://problem/4014691> switch to correctly spelled NSAccessibilityForegroundColorTextAttribute constant
+        
+        Also removed two older, now unneeded, wrappers.
+
+        * kwq/KWQAccObject.mm:
+        (-[KWQAccObject visiblePositionForStartOfTextMarkerRange:]):
+        (-[KWQAccObject visiblePositionForEndOfTextMarkerRange:]):
+        Removed these older, now unneeded, wrappers.
+        
+        (NSAccessibilityForegroundColorTextAttributeWrapper):
+        New wrapper for NSAccessibilityForegroundColorTextAttribute.
+        
+        (AXAttributeStringSetStyle):
+        Use NSAccessibilityForegroundColorTextAttributeWrapper.
+        
+        (-[KWQAccObject doAXTextMarkerRangeForUnorderedTextMarkers:]):
+        Remove uses of visiblePositionForStartOfTextMarkerRange and visiblePositionForEndOfTextMarkerRange.
+
+2005-02-23  David Harrison  <harrison@apple.com>
+
+        Reviewed by Vicki.
+
         <rdar://problem/3524784> AX hit test doesn't return info when done in empty space of content area
 
         * kwq/KWQAccObject.mm:
