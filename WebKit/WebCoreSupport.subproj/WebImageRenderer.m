@@ -24,13 +24,23 @@ static NSMutableArray *activeImageRenderers;
     
 }
 
-- init
+- initWithSize:(NSSize)size
 {
     lastStatus = -9999;
-    lastLength = 0;
-    return [super init];
+    return [super initWithSize:size];
 }
 
+
+- copyWithZone:(NSZone *)zone
+{
+    IFImageRenderer *copy = [super copyWithZone:zone];
+    
+    copy->frameTimer = nil;
+    copy->frameView = nil;
+    copy->patternColor = nil;
+    
+    return copy;
+}
 
 - (BOOL)incrementalLoadWithBytes: (const void *)bytes length:(unsigned)length complete:(BOOL)isComplete
 {
@@ -218,6 +228,7 @@ static NSMutableArray *activeImageRenderers;
 
 - (void)tileInRect:(NSRect)rect fromPoint:(NSPoint)point
 {
+    // FIXME: Does this optimization work right if the image is changed later?
     if (!patternColor)
         patternColor = [[NSColor colorWithPatternImage:self] retain];
     
@@ -238,6 +249,8 @@ static NSMutableArray *activeImageRenderers;
     [NSBezierPath fillRect:rect];
 
     [NSGraphicsContext restoreGraphicsState];
+
+    NSLog(@"used %@, retain count %d", patternColor, [patternColor retainCount]);
 }
 
 // required by protocol -- apparently inherited methods don't count

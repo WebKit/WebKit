@@ -1,3 +1,26 @@
+2002-06-25  Darin Adler  <darin@apple.com>
+
+	- fixed 2968298 -- IFImageRenderer crash at download.com
+
+        * WebCoreSupport.subproj/IFImageRenderer.m:
+        (-[IFImageRenderer initWithSize:]): Override this instead of [init].
+	This is the designated initializer and all the others call this.
+        (-[IFImageRenderer copyWithZone:]): Override to nil out fields that
+	can't be shared by the copy.
+
+	Fix leaks.
+
+        * History.subproj/IFURIEntry.m:
+        (-[IFURIEntry initWithURL:title:image:]): Use copy instead of retain
+	in case we are passed a mutable string.
+        (-[IFURIEntry dealloc]): Release _displayTitle. Fixes a leak.
+        (-[IFURIEntry setTitle:]): Use copy instead of retain in case we are
+	passed a mutable string.
+        (-[IFURIEntry setDisplayTitle:]): Use copy instead of retain in case
+	we are passed a mutable string.
+        (-[IFURIEntry initFromDictionaryRepresentation:]): Lose the extra
+	retain for _lastVisitedDate. Fixes a leak.
+
 2002-06-24  Darin Adler  <darin@apple.com>
 
         * Panels.subproj/IFStandardPanels.m:

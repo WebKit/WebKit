@@ -3,7 +3,7 @@
 //  WebKit
 //
 //  Created by Kenneth Kocienda on Thu Nov 29 2001.
-//  Copyright (c) 2001 __MyCompanyName__. All rights reserved.
+//  Copyright (c) 2001, 2002 Apple Computer, Inc. All rights reserved.
 //
 
 #import "IFURIEntry.h"
@@ -31,7 +31,7 @@
     }
     
     _url = [url retain];
-    _title = [title retain];
+    _title = [title copy];
     _image = [image retain];
     _lastVisitedDate = [[NSCalendarDate alloc] init];
     
@@ -42,6 +42,7 @@
 {
     [_url release];
     [_title release];
+    [_displayTitle release];
     [_image release];
     [_lastVisitedDate release];
     
@@ -103,7 +104,7 @@
 {
     if (title != _title) {
         [_title release];
-        _title = [title retain];
+        _title = [title copy];
     }
 }
 
@@ -111,7 +112,7 @@
 {
     if (displayTitle != _displayTitle) {
         [_displayTitle release];
-        _displayTitle = [displayTitle retain];
+        _displayTitle = [displayTitle copy];
     }
 }
 
@@ -143,7 +144,7 @@
     result = NO;
 
     if ([anObject isMemberOfClass:[IFURIEntry class]]) {
-        result = [_url isEqual:[((IFURIEntry *)anObject) url]];
+        result = [_url isEqual:[anObject url]];
     }
     
     return result;
@@ -188,10 +189,10 @@
     if (storedURLString != nil) {
         _url = [[NSURL _IF_URLWithString:storedURLString] retain];
     }
-    _title = [[dict objectForKey: @"title"] retain];
-    _displayTitle = [[dict objectForKey: @"displayTitle"] retain];
-    _lastVisitedDate = [[[NSCalendarDate alloc] initWithTimeIntervalSinceReferenceDate:
-        [[dict objectForKey: @"lastVisitedDate"] doubleValue]] retain];
+    _title = [[dict objectForKey: @"title"] copy];
+    _displayTitle = [[dict objectForKey: @"displayTitle"] copy];
+    _lastVisitedDate = [[NSCalendarDate alloc] initWithTimeIntervalSinceReferenceDate:
+        [[dict objectForKey: @"lastVisitedDate"] doubleValue]];
 
     return self;
 }
