@@ -11,7 +11,7 @@
 
 @interface WKPlugin : NSObject {
 
-    NSDictionary *mimeTypes;
+    NSMutableArray *mimeTypes;
     NSString *name, *executablePath, *filename, *pluginDescription;
     BOOL isLoaded;
     NPPluginFuncs pluginFuncs;
@@ -36,9 +36,10 @@
 }
 
 - (BOOL)initializeWithPath:(NSString *)plugin;
+- (BOOL)getPluginInfoForResourceFile:(SInt16)resRef;
 - (void)load;
 - (void)unload;
-- (NSDictionary *)mimeTypes;
+- (NSArray *)mimeTypes;
 - (NSString *)name;
 - (NSString *)filename;
 - (NSString *)executablePath;
@@ -58,6 +59,4 @@
 - (NPP_HandleEventProcPtr)NPP_HandleEvent;
 
 @end
-    
-NSMutableDictionary *getMimeTypesForResourceFile(SInt16 resRef);
 

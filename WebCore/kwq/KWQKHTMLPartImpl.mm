@@ -1586,7 +1586,7 @@ bool KHTMLPart::requestObject( khtml::RenderPart *frame, const QString &url, con
 #ifdef _KWQ_
     WKPluginWidget *pluginWidget;
     
-    if(url.isEmpty() || serviceType.isEmpty()){
+    if(url.isEmpty()){
         return FALSE;
     }
     pluginWidget = new WKPluginWidget(0, url, serviceType, args);

@@ -46,8 +46,14 @@ WKPluginWidget::WKPluginWidget(QWidget *parent, const QString &url, const QStrin
         [arguments setObject:[arg substringWithRange:r3] forKey:[arg substringToIndex:r1.location]];
     }
     plugin = [[WKPluginDatabase installedPlugins] getPluginForMimeType:QSTRING_TO_NSSTRING(serviceType)];
-    if(plugin == nil)
+    if(plugin == nil){
+        plugin = [[WKPluginDatabase installedPlugins] getPluginForURL:QSTRING_TO_NSSTRING(url)];
+    }
+    if(plugin == nil){
+        //FIXME: Error dialog should be shown here
+        KWQDebug("Could not find plugin for mime: %s or URL: %s\n", serviceType.latin1(), url.latin1());
         return;
+    }
     [plugin load];
     setView([[[WKPluginView alloc] initWithFrame:NSMakeRect(0,0,0,0) widget:this plugin:plugin url:QSTRING_TO_NSSTRING(url) mime:QSTRING_TO_NSSTRING(serviceType) arguments:arguments] autorelease]);
 }

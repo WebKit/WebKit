@@ -79,6 +79,11 @@ QString KConfigBase::readEntry(const char *pKey,
     
     if(file == pluginsinfo){
         WKPlugin *plugin;
+        NSArray *mimeTypes;
+        NSMutableString *bigMimeString;
+        NSString *bigMimeString2;
+        uint i;
+        
         plugin = [[[WKPluginDatabase installedPlugins] plugins] objectAtIndex:group];
         if(strcmp(pKey, "name") == 0){
             return NSSTRING_TO_QSTRING([plugin name]);
@@ -86,6 +91,20 @@ QString KConfigBase::readEntry(const char *pKey,
             return NSSTRING_TO_QSTRING([plugin filename]);
         }else if(strcmp(pKey, "description") == 0){
             return NSSTRING_TO_QSTRING([plugin pluginDescription]);
+        }else if(strcmp(pKey, "mime") == 0){
+            mimeTypes = [plugin mimeTypes];
+            bigMimeString = [NSMutableString stringWithCapacity:1000];
+            for(i=0; i<[mimeTypes count]; i++){
+                [bigMimeString appendString:[[mimeTypes objectAtIndex:i] objectAtIndex:0]]; // mime type
+                [bigMimeString appendString:@":"];
+                [bigMimeString appendString:[[mimeTypes objectAtIndex:i] objectAtIndex:1]]; // mime's extension
+                [bigMimeString appendString:@":"];
+                [bigMimeString appendString:[[mimeTypes objectAtIndex:i] objectAtIndex:2]]; // mime's description
+                [bigMimeString appendString:@";"];
+            }
+            bigMimeString2 = [NSString stringWithString:bigMimeString];
+            [bigMimeString2 retain];
+            return NSSTRING_TO_QSTRING(bigMimeString2);
         }
     }
     if(tempQString == NULL) {

@@ -7,6 +7,8 @@
 //
 
 #import "WKPluginView.h"
+#include <WCURICacheData.h>
+#include <WCURICache.h>
 #include <Carbon/Carbon.h> 
 #include "kwqdebug.h"
 
@@ -111,6 +113,8 @@
 {
     NPError npErr;
     char cMime[200], cURL[800];
+    id <WCURICache> cache;
+    NSFileManager *fileManager;
     //WindowRef windowRef;
     
     //windowRef = [[self window] _windowRef]; // give the window a WindowRef
@@ -132,20 +136,23 @@
         npErr = NPP_NewStream(instance, cMime, stream, FALSE, &transferMode);
         KWQDebug("NPP_NewStream: %d\n", npErr);
         
+        cache = WCGetDefaultURICache();
         if(transferMode == NP_NORMAL){
             KWQDebug("Stream type: NP_NORMAL\n");
-            //[cache requestWithString:url requestor:self userData:nil];
-            [WCURLHandleCreate([NSURL URLWithString:url], self, nil) loadInBackground];
-        }else if(transferMode == NP_ASFILEONLY){
-            KWQDebug("Stream type: NP_ASFILEONLY not yet supported\n");
-        }else if(transferMode == NP_ASFILE){
-            KWQDebug("Stream type: NP_ASFILE not fully supported\n");
-            [WCURLHandleCreate([NSURL URLWithString:url], self, nil) loadInBackground];
+            [cache requestWithString:url requestor:self userData:nil];
+        }else if(transferMode == NP_ASFILEONLY || transferMode == NP_ASFILE){
+            KWQDebug("Stream type: NP_ASFILEONLY or NP_ASFILE\n");
+            fileManager = [NSFileManager defaultManager];
+            filename = [NSString stringWithString:[@"/symroots" stringByAppendingPathComponent:[url lastPathComponent]]];
+            [fileManager createFileAtPath:filename contents:nil attributes:nil];
+            file = [NSFileHandle fileHandleForWritingAtPath:filename];
+            [file retain];
+            [filename retain];
+            [cache requestWithString:url requestor:self userData:nil];
         }else if(transferMode == NP_SEEK){
             KWQDebug("Stream type: NP_SEEK not yet supported\n");
         }
         transferred = TRUE;
-        
     }
     [self sendUpdateEvent];
 }
@@ -184,70 +191,42 @@
 
 // cache methods
 
-- (void)WCURLHandleResourceDidBeginLoading:(id)sender userData:(void *)userData
-{
-}
-
-- (void)WCURLHandleResourceDidCancelLoading:(id)sender userData:(void *)userData
-{
-}
-
-- (void)WCURLHandleResourceDidFinishLoading:(id)sender userData:(void *)userData
-{
-    NPError npErr;
-    
-    streamOffset = 0;
-    if(transferMode == NP_ASFILE || transferMode == NP_ASFILEONLY){
-        NPP_StreamAsFile(instance, stream, NULL);
-    }
-    npErr = NPP_DestroyStream(instance, stream, NPRES_DONE);
-    KWQDebug("NPP_DestroyStream: %d\n", npErr);
-}
-
-- (void)WCURLHandle:(id)sender resourceDataDidBecomeAvailable:(NSData *)data userData:(void *)userData
-{
-    int32 bytes;
-    
-    bytes = NPP_WriteReady(instance, stream);
-    KWQDebug("NPP_WriteReady bytes=%d\n", (int)bytes);
-    
-    bytes = NPP_Write(instance, stream, streamOffset, [data length], (void *)[data bytes]);
-    KWQDebug("NPP_Write bytes=%d\n", (int)bytes);
-    streamOffset += [data length];
-}
-
-- (void)WCURLHandle:(id)sender resourceDidFailLoadingWithResult:(int)result userData:(void *)userData
-{
-}
-
-// FIXME: Remove old cache code
-#if 0
 -(void)cacheDataAvailable:(NSNotification *)notification
 {
     id <WCURICacheData> data;
     int32 bytes;
     
     data = [notification object];
-    bytes = NPP_WriteReady(instance, stream);
-    KWQDebug("NPP_WriteReady bytes=%d\n", (int)bytes);
-    
-    bytes = NPP_Write(instance, stream, streamOffset, [data cacheDataSize], [data cacheData]);
-    KWQDebug("NPP_Write bytes=%d\n", (int)bytes);
-    streamOffset += [data cacheDataSize];
+    if(transferMode != NP_ASFILEONLY){
+        bytes = NPP_WriteReady(instance, stream);
+        KWQDebug("NPP_WriteReady bytes=%d\n", (int)bytes);
+        bytes = NPP_Write(instance, stream, streamOffset, [data cacheDataSize], [data cacheData]);
+        KWQDebug("NPP_Write bytes=%d\n", (int)bytes);
+        streamOffset += [data cacheDataSize];
+    }
+    if(transferMode == NP_ASFILE || transferMode == NP_ASFILEONLY){
+        if(file != nil){
+            [file writeData:[NSData dataWithBytes:[data cacheData] length:[data cacheDataSize]]];
+        }
+    }
 }
 
 -(void)cacheFinished:(NSNotification *)notification
 {
     NPError npErr;
+    char filenameC[400];
     
     streamOffset = 0;
     if(transferMode == NP_ASFILE || transferMode == NP_ASFILEONLY){
-        NPP_StreamAsFile(instance, stream, NULL);
+        [file closeFile];
+        strcpy(filenameC, [rootName() cString]);
+        strcat(filenameC, ":symroots:"); //FIXME: This should be the user's cache directory or somewhere else
+        strcat(filenameC, [[url lastPathComponent] cString]);
+        NPP_StreamAsFile(instance, stream, filenameC);
     }
     npErr = NPP_DestroyStream(instance, stream, NPRES_DONE);
     KWQDebug("NPP_DestroyStream: %d\n", npErr);
 }
-#endif
 
 // event methods
 
@@ -502,15 +481,31 @@
     KWQDebug("forceRedraw\n");
 }
 
-
 -(void)dealloc
 {
     NPError npErr;
+    NSFileManager *fileManager;
     
-    [eventSender stop];
+    [eventSender stop]; 
     npErr = NPP_Destroy(instance, NULL);
     KWQDebug("NPP_Destroy: %d\n", npErr);
+    fileManager = [NSFileManager defaultManager];
+    [fileManager removeFileAtPath:filename handler:nil];
     [super dealloc];
 }
 
 @end
+
+NSString* rootName(void)
+{
+    NSString* rootName = nil;
+    FSRef rootRef;
+    if (FSPathMakeRef ((const UInt8 *) "/", & rootRef, NULL /*isDirectory*/) == noErr) {         
+        HFSUniStr255  nameString;
+        if (FSGetCatalogInfo (&rootRef, kFSCatInfoNone, NULL /*catalogInfo*/, &nameString, NULL /*fsSpec*/, NULL /*parentRef*/) == noErr) {
+            rootName = [NSString stringWithCharacters:nameString.unicode length:nameString.length];
+        }
+    }
+    return rootName;
+}
+

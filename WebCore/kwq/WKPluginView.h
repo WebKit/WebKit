@@ -10,7 +10,6 @@
 #include <qwidget.h>
 #import <WKPlugin.h>
 #include "npapi.h"
-#include <WCURLHandle.h>
 
 
 typedef NPStream* NPS;
@@ -25,7 +24,7 @@ typedef NPStream* NPS;
 -(void)stop;
 @end
 
-@interface WKPluginView : NSQuickDrawView <WCURLHandleClient> {
+@interface WKPluginView : NSQuickDrawView {
     QWidget *widget;
     WKPlugin *plugin;
     WKPluginViewNullEventSender *eventSender;
@@ -42,8 +41,9 @@ typedef NPStream* NPS;
     char **cAttributes, **cValues;
     bool isFlipped, transferred, hidden;
             
-    NSString *url, *mime;
+    NSString *url, *mime, *filename;
     NSTrackingRectTag trackingTag;
+    NSFileHandle *file;
     
     NPP_NewProcPtr NPP_New;
     NPP_DestroyProcPtr NPP_Destroy;
@@ -95,3 +95,4 @@ typedef NPStream* NPS;
 
 @end
 
+NSString* rootName(void);

@@ -24,20 +24,44 @@ static WKPluginDatabase *__WKPluginDatabase = nil;
 
 // The first plugin with the specified mime type is returned. We may want to tie this to the defaults so that this is configurable.
 - (WKPlugin *)getPluginForMimeType:(NSString *)mimeType{
-    uint i;
+    uint i, n;
     WKPlugin *plugin;
-    NSDictionary *temp;
+    NSArray *mimeArray;
     
     for(i=0; i<[plugins count]; i++){      
         plugin = [plugins objectAtIndex:i];
-        temp = [plugin mimeTypes];
-        if([[temp allKeys] containsObject:mimeType]){
-            return plugin;
+        mimeArray = [plugin mimeTypes];
+        for(n=0; n<[mimeArray count]; n++){
+            if([[[mimeArray objectAtIndex:n] objectAtIndex:0] isEqualToString:mimeType]){
+                return plugin;
+            }
         }
     }
-    KWQDebug("No plug-in found for mime type: %s\n", [mimeType cString]);
     return nil;
 }
+
+- (WKPlugin *)getPluginForURL:(NSString *)URL{
+    uint i, n;
+    WKPlugin *plugin;
+    NSArray *mimeArray;
+    NSRange hasExtension;
+    NSString *extension;
+    
+    extension = [URL pathExtension];
+    for(i=0; i<[plugins count]; i++){      
+        plugin = [plugins objectAtIndex:i];
+        mimeArray = [plugin mimeTypes];
+        for(n=0; n<[mimeArray count]; n++){
+            hasExtension = [[[mimeArray objectAtIndex:n] objectAtIndex:1] rangeOfString:extension];
+            if(hasExtension.length){
+                return plugin;
+            }
+        }
+    }
+    return nil;
+}
+
+
 
 - (NSArray *) plugins{
     return plugins;

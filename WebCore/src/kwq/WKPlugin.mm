@@ -25,9 +25,8 @@
     
     fileManager = [NSFileManager defaultManager];
     fileInfo = [fileManager fileAttributesAtPath:plugin traverseLink:YES];
-    if([[fileInfo objectForKey:@"NSFileType"] isEqualToString:@"NSFileTypeRegular"]){ 
+    if([[fileInfo objectForKey:@"NSFileType"] isEqualToString:@"NSFileTypeRegular"]){  // plug-in with resource fork
         if([[fileInfo objectForKey:@"NSFileHFSTypeCode"] unsignedLongValue] == 1112690764){ // 1112690764 = 'BRPL'
-            name = [plugin lastPathComponent]; // FIXME: Should the name of the plugin be the filename?
             filename = [plugin lastPathComponent];
             executablePath = plugin;
             err = FSPathMakeRef((UInt8 *)[plugin cString], &fref, NULL);
@@ -40,23 +39,22 @@
                 KWQDebug("WKPlugin: FSOpenResFile failed. Can't open resource file: %s, Error=%d\n", [plugin cString], err);
                 return FALSE;
             }
-            mimeTypes = getMimeTypesForResourceFile(resRef);
-            if(mimeTypes == nil) return FALSE;
-            //FIXME: Need to get plug-in's description
+            if(![self getPluginInfoForResourceFile:resRef]){
+            	return FALSE;
+            }
         }else return FALSE;
-    }else if([[fileInfo objectForKey:@"NSFileType"] isEqualToString:@"NSFileTypeDirectory"]){
+    }else if([[fileInfo objectForKey:@"NSFileType"] isEqualToString:@"NSFileTypeDirectory"]){ //bundle plug-in
         pluginURL = CFURLCreateWithFileSystemPath(NULL, (CFStringRef)plugin, kCFURLPOSIXPathStyle, TRUE);
         bundle = CFBundleCreate(NULL, pluginURL);
         bundle2 = [NSBundle bundleWithPath:plugin]; // CFBundleCopyExecutableURL doesn't return full path! Have to use NSBundle
         CFBundleGetPackageInfo(bundle, &type, NULL);
         if(type == 1112690764){  // 1112690764 = 'BRPL'
-            name = [plugin lastPathComponent]; // FIXME: Should the name of the plugin be the filename?
             filename = [plugin lastPathComponent];
             executablePath = [bundle2 executablePath];
             resRef = CFBundleOpenBundleResourceMap(bundle);
-            mimeTypes = getMimeTypesForResourceFile(resRef);
-            if(mimeTypes == nil) return FALSE;
-            //FIXME: Need to get plug-in's description
+            if(![self getPluginInfoForResourceFile:resRef]){
+            	return FALSE;
+            }
         }else return FALSE;
         CFRelease(bundle);
         CFRelease(pluginURL);
@@ -64,13 +62,55 @@
     }else{
         return FALSE;
     }
-    [mimeTypes retain];
-    [name retain];
+
     [executablePath retain];
+    [filename retain];
     isLoaded = FALSE;
     return TRUE;
 }
 
+- (BOOL)getPluginInfoForResourceFile:(SInt16)resRef{
+    Str255 theString;
+    char temp[300], description[600]; // I wish I didn't have to use these C strings
+    NSMutableArray *mime; // mime is an array containing the mime type, extension(s) and descriptions for that mime type.
+    NSString *tempString;
+    uint n, i;
+    
+    mimeTypes = [NSMutableArray arrayWithCapacity:1];
+    UseResFile(resRef);
+    for(n=1, i=0; 1; n+=2, i++){
+        GetIndString(theString, 128, n);
+        CopyPascalStringToC(theString, temp);
+        if(!strcmp(temp, "")) break;
+        mime = [NSMutableArray arrayWithCapacity:3];
+        [mimeTypes insertObject:mime atIndex:i];
+        tempString = [NSString stringWithCString:temp];
+        [mime insertObject:tempString atIndex:0]; // mime type
+        
+        GetIndString(theString, 128, n+1);
+        CopyPascalStringToC(theString, temp);
+        tempString = [NSString stringWithCString:temp];
+        [mime insertObject:tempString atIndex:1]; // mime's extension
+    }
+    for(i=1; i<=[mimeTypes count]; i++){
+        GetIndString(theString, 127, i);
+        CopyPascalStringToC(theString, temp);
+        tempString = [NSString stringWithCString:temp];
+        mime = [mimeTypes objectAtIndex:(i-1)];
+        [mime insertObject:tempString atIndex:2]; // mime's description
+    }
+    GetIndString(theString, 126, 1);
+    CopyPascalStringToC(theString, description);
+    pluginDescription = [NSString stringWithCString:description];
+    [pluginDescription retain];
+    
+    GetIndString(theString, 126, 2); 
+    CopyPascalStringToC(theString, temp);
+    name = [NSString stringWithCString:temp]; // plugin's name
+    [name retain];
+    [mimeTypes retain];
+    return TRUE;
+}
 
 - (void)load{    
     OSErr err;
@@ -186,7 +226,7 @@
     return NPP_HandleEvent;
 }
 
-- (NSDictionary *)mimeTypes{
+- (NSArray *)mimeTypes{
     return mimeTypes;
 }
 
@@ -231,26 +271,10 @@
     [desc appendString:@"\n"];
     return desc;
 }
+
 @end
 
-NSMutableDictionary *getMimeTypesForResourceFile(SInt16 resRef){
-    NSMutableDictionary *mimeDict;
-    Str255 theString;
-    char mimeString[200], extString[200];
-    int n;
-    
-    mimeDict = [NSMutableDictionary dictionaryWithCapacity:1];
-    UseResFile(resRef);
-    for(n=1; 1; n+=2){
-        GetIndString(theString, 128, n);
-        CopyPascalStringToC(theString, mimeString);
-        if(!strcmp(mimeString, "")) break;
-        GetIndString(theString, 128, n+1);
-        CopyPascalStringToC(theString, extString);
-        [mimeDict setObject:[NSString stringWithCString:extString] forKey:[NSString stringWithCString:mimeString]];
-    }
-    return mimeDict;
-}
+
 
 
 
