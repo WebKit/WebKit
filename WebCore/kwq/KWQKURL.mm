@@ -289,14 +289,16 @@ KURL::KURL(const KURL &base, const QString &relative, const QTextCodec *codec)
         // what these protocols expect.
         if (codec) {
             QString protocol;
-            for (uint i = 0; i < relative.length(); i++) {
-                char p = relative.at(i).latin1();
-                if (!isSchemeCharOrColon(p)) {
-                    break;
-                }
-                if (p == ':') {
-                    protocol = relative.left(i);
-                    break;
+            if (relative.length() > 0 && isSchemeFirstChar(relative.at(0).latin1())) {
+                for (uint i = 1; i < relative.length(); i++) {
+                    char p = relative.at(i).latin1();
+                    if (!isSchemeCharOrColon(p)) {
+                        break;
+                    }
+                    if (p == ':') {
+                        protocol = relative.left(i);
+                        break;
+                    }
                 }
             }
             if (!protocol) {
@@ -319,18 +321,17 @@ KURL::KURL(const KURL &base, const QString &relative, const QTextCodec *codec)
     // absolute URI if possible, using the "leftmost, longest"
     // algorithm. If the URI reference is absolute it will have a
     // scheme, meaning that it will have a colon before the first
-    // non-scheme element. "/", "?" and "#" are used to detect the
-    // start of a path segment, a query or a fragment ID, which would
-    // indicate no scheme had been found. isPathSegmentEndChar
-    // tests for those three characters or NULL.
-
-    for (const char *p = str; isSchemeCharOrColon(*p); ++p) {
-	if (*p == ':') {
-	    absolute = true;
-	    break;
-	}
+    // non-scheme element.
+    const char *p = str;
+    if (isSchemeFirstChar(*p)) {
+        for (++p; isSchemeCharOrColon(*p); ++p) {
+            if (*p == ':') {
+                absolute = true;
+                break;
+            }
+        }
     }
-    
+        
     if (absolute) {
 	parse(str, allASCII ? &relative : 0);
     } else {

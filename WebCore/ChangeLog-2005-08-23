@@ -1,3 +1,15 @@
+2003-11-17  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Maciej
+
+	<rdar://problem/3487079>: Some scheme checks in KURL do not verify 
+	first char is a legal first char for a scheme
+
+        * kwq/KWQKURL.mm:
+        (KURL::KURL): Added some additional checks when looking through
+	strings looking for schemes. Now the first character is checked
+	for validity as a first character in a scheme.
+
 2003-11-17  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3486441, don't use the visibleWidth when computing the containingBlockWidth().  No need to
