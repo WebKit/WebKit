@@ -620,7 +620,7 @@ Position Position::nextLinePosition(int x) const
     // Move to the end of the content in this block, which effectively moves us
     // to the end of the line we're on.
     ElementImpl *rootElement = node()->rootEditableElement();
-    return Position(rootElement, rootElement->childNodeCount());
+    return Position(rootElement, rootElement ? rootElement->childNodeCount() : 0);
 }
 
 Position Position::startParagraphBoundary() const

@@ -1,5 +1,20 @@
 2004-09-13  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by Darin
+        
+        Fix for this bug:
+        
+        <rdar://problem/3798346> REGRESSION (125-162): crash pushing down arrow key on KLM.com site
+
+        * khtml/xml/dom_position.cpp:
+        (DOM::Position::nextLinePosition): This function was being called in a case where it was not expected
+        until we traced the code. It has to do with some deeper issues associated with handling arrow keys, 
+        resulting in the editing arrow-down code running in a case where we are not editing. I discussed this 
+        with Darin, and we decided to handle the broader issues at a later date. The fix I am checking in
+        here to fix the bug is merely avoiding a null-deref.
+
+2004-09-13  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by John
 
         Fix for this bug:
