@@ -1,3 +1,17 @@
+2004-04-23  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin
+
+        * khtml/editing/htmlediting_impl.cpp:
+        (DeleteSelectionCommandImpl::doApply): Fix editing test
+        regression with deleting whitespace at the end of the line.
+        I just made this "improvement" yesterday, and the concept
+        of the change is a good one, but instead of short-circuiting
+        if the selection after deleting collapsible whitespace is a
+        range (which can be confused by "significant" collapsed 
+        whitespace at the end of a line), short-circuit if the 
+        upstream start position equals the downstream end position.
+
 === Safari-138 ===
 
 2004-04-23  Ken Kocienda  <kocienda@apple.com>

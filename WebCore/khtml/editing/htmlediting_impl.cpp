@@ -841,17 +841,17 @@ void DeleteSelectionCommandImpl::doApply()
     deleteCollapsibleWhitespace(m_selectionToDelete);
     Selection selection = endingSelection();
 
-    if (selection.state() != Selection::RANGE)
-        // after collapsing whitespace, selection is not a range...no work to do
-        return;
-
-    Position endingPosition;
-    bool adjustEndingPositionDownstream = false;
-
     Position upstreamStart(selection.start().equivalentUpstreamPosition());
     Position downstreamStart(selection.start().equivalentDownstreamPosition());
     Position upstreamEnd(selection.end().equivalentUpstreamPosition());
     Position downstreamEnd(selection.end().equivalentDownstreamPosition());
+
+    if (upstreamStart == downstreamEnd)
+        // after collapsing whitespace, selection is empty...no work to do
+        return;
+
+    Position endingPosition;
+    bool adjustEndingPositionDownstream = false;
 
     bool onlyWhitespace = containsOnlyWhitespace(upstreamStart, downstreamEnd);
  
