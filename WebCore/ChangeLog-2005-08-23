@@ -33,8 +33,6 @@
         (RenderObject::scheduleRelayout):
         * khtml/rendering/render_object.h:
 
-=======
-=======
 2002-12-20  Darin Adler  <darin@apple.com>
 
         Reviewed by John.
