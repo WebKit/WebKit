@@ -25,12 +25,20 @@
 
 #import <java/kjavaappletwidget.h>
 #import <WebCoreViewFactory.h>
+#include <iostream.h>
 
-KJavaAppletWidget::KJavaAppletWidget(const QMap<QString, QString> &args)
+KJavaAppletWidget::KJavaAppletWidget(const QMap<QString, QString> &args) {
+    arguments = args; 
+    m_applet = new KJavaApplet(this);
+}
+
+void KJavaAppletWidget::showApplet()
 {
-    NSMutableDictionary *argsDictionary = [NSMutableDictionary dictionaryWithCapacity:args.count()];
-    for (QMap<QString, QString>::ConstIterator it = args.begin(); it != args.end(); ++it) {
+    NSMutableDictionary *argsDictionary = [NSMutableDictionary dictionaryWithCapacity:arguments.count()];
+    for (QMap<QString, QString>::ConstIterator it = arguments.begin(); it != arguments.end(); ++it) {
         [argsDictionary setObject:it.data().getNSString() forKey:it.key().getNSString()];
     }
-    setView([[WebCoreViewFactory sharedFactory] viewForJavaAppletWithArguments:argsDictionary]);
+    setView([[WebCoreViewFactory sharedFactory] 
+                viewForJavaAppletWithFrame:NSMakeRect(pos().x(), pos().y(), size().width(), size().height())
+                andArguments:argsDictionary]);
 }

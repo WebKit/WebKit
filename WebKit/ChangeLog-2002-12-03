@@ -1,3 +1,12 @@
+2002-06-27  Chris Blumenberg  <cblu@apple.com>
+
+	Support for Java.
+
+        * Plugins.subproj/IFPluginView.mm:
+        (-[IFPluginView initWithFrame:plugin:url:baseURL:mime:arguments:]): set DOCBASE argument
+        * WebCoreSupport.subproj/IFWebCoreViewFactory.m:
+        (-[IFWebCoreViewFactory viewForJavaAppletWithFrame:andArguments:]): renamed
+
 2002-06-26  Richard Williamson  <rjw@apple.com>
 
         * WebCoreSupport.subproj/IFTextRenderer.m:

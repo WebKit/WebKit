@@ -1,3 +1,18 @@
+2002-06-27  Chris Blumenberg  <cblu@apple.com>
+
+	Fix to support sending PARAM tags to the Java plug-in.
+
+        * khtml/rendering/render_applet.cpp:
+        (RenderApplet::RenderApplet): removed APPLE_CHANGES
+        (RenderApplet::layout): removed APPLE_CHANGES
+        * kwq/KWQKJavaAppletWidget.mm:
+        (KJavaAppletWidget::KJavaAppletWidget): removed setView
+        (KJavaAppletWidget::showApplet): call setView here
+        * kwq/WebCoreViewFactory.h:
+        * kwq/WebCoreViewFactory.m:
+        (-[WebCoreViewFactory viewForJavaAppletWithFrame:andArguments:]): renamed
+        * kwq/khtml/java/kjavaappletwidget.h: added KJavaApplet
+
 2002-06-26  Richard Williamson  <rjw@apple.com>
 
         Many improvements to selection.  More Cocoa like,

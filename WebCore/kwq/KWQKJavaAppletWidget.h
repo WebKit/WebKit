@@ -27,9 +27,26 @@
 #include <qmap.h>
 #include <qstring.h>
 
+class KJavaApplet;
+
 class KJavaAppletWidget : public QWidget
 {
+    KJavaApplet *m_applet;
+    QMap<QString, QString> arguments;
+    QRect frame;
+    
 public:
     KJavaAppletWidget(const QMap<QString, QString> &args);
-    void showApplet() { }
+    void setParameter(const QString &name, const QString &value){arguments.insert(name, value);}
+    KJavaApplet* applet() { return m_applet; }
+    void showApplet();
+};
+
+class KJavaApplet
+{
+    KJavaAppletWidget *m_widget;
+    
+public:
+    KJavaApplet(KJavaAppletWidget *widget){m_widget = widget;}
+    void setParameter(const QString &name, const QString &value) { m_widget->setParameter(name, value); }
 };

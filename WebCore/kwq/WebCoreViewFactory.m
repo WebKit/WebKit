@@ -55,7 +55,7 @@ static WebCoreViewFactory *sharedFactory;
     return nil;
 }
 
-- (NSView *)viewForJavaAppletWithArguments:(NSDictionary *)arguments
+- (NSView *)viewForJavaAppletWithFrame:(NSRect)frame andArguments:(NSDictionary *)arguments
 {
     return nil;
 }

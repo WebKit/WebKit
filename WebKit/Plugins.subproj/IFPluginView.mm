@@ -302,7 +302,7 @@ static char *newCString(NSString *string)
     if([mime isEqualToString:@"application/x-java-applet"]){
         cAttributes = new char * [[arguments count]+1];
         cValues = new char * [[arguments count]+1]; 
-        cAttributes[0] = newCString(@"CODEBASE");
+        cAttributes[0] = newCString(@"DOCBASE");
         cValues[0] = newCString([baseURL absoluteString]);
         argsCount++;
     }else{
