@@ -195,7 +195,7 @@ public:
 
     void KWQKHTMLPart::addMessageToConsole(const QString &message,  unsigned int lineNumber, const QString &sourceID);
     using KHTMLPart::xmlDocImpl;
-    khtml::RenderObject *renderer();
+    khtml::RenderObject *renderer() const;
     void forceLayout();
     void forceLayoutWithPageWidthRange(float minPageWidth, float maxPageWidth);
     void sendResizeEvent();
@@ -240,10 +240,11 @@ public:
     void sendFakeEventsAfterWidgetTracking(NSEvent *initiatingEvent);
     void mouseMoved(NSEvent *);
     bool keyEvent(NSEvent *);
-    bool lastEventIsMouseUp();
+
+    bool lastEventIsMouseUp() const;
     void setActivationEventNumber(int num) { _activationEventNumber = num; }
 
-    bool eventMayStartDrag(NSEvent *);
+    bool eventMayStartDrag(NSEvent *) const;
     void dragSourceMovedTo(const QPoint &loc);
     void dragSourceEndedAt(const QPoint &loc, NSDragOperation operation);
 
@@ -255,6 +256,10 @@ public:
     bool tryPaste();
     
     bool sendContextMenuEvent(NSEvent *);
+
+    // Call this method before handling a new user action, like on a mouse down or key down.
+    // Currently, all this does is clear the "don't submit form twice" data member.
+    void prepareForUserAction();
 
     void clearTimers();
     static void clearTimers(KHTMLView *);
@@ -279,7 +284,7 @@ public:
 
     KWQWindowWidget *topLevelWidget();
     
-    QString overrideMediaType();
+    QString overrideMediaType() const;
     
     void setMediaType(const QString &);
 
@@ -332,7 +337,8 @@ public:
     DOM::Range markedRange() const;
     void setMarkedRange(const DOM::Range &);
 
-    bool canGoBackOrForward(int distance);
+    bool canGoBackOrForward(int distance) const;
+
 private:
     virtual void khtmlMousePressEvent(khtml::MousePressEvent *);
     virtual void khtmlMouseDoubleClickEvent(khtml::MouseDoubleClickEvent *);

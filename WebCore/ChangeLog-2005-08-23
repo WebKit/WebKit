@@ -1,3 +1,24 @@
+2004-08-30  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - improved multiple submit logic in preparation for making command-click on a form
+          button load a form in another frame
+
+        * kwq/KWQKHTMLPart.h: Added const to a bunch of member functions for cleanup.
+        Added prepareForUserAction member function.
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::submitForm): Simplified logic and removed special case for "http" and "https".
+        (KWQKHTMLPart::renderer): Added const.
+        (KWQKHTMLPart::keyEvent): Added call to prepareForUserAction.
+        (KWQKHTMLPart::lastEventIsMouseUp): Added const.
+        (KWQKHTMLPart::eventMayStartDrag): Added const.
+        (KWQKHTMLPart::mouseDown): Added call to prepareForUserAction.
+        (KWQKHTMLPart::overrideMediaType): Added const.
+        (KWQKHTMLPart::canGoBackOrForward): Added const.
+        (KWQKHTMLPart::prepareForUserAction): Added. Clears _submittedFormURL.
+        * kwq/KWQAccObject.mm: (-[KWQAccObject accessibilityPerformAction:]): Added call to prepareForUserAction.
+
 2004-08-30  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by John
@@ -196,8 +217,6 @@
 
 2004-08-26  Ken Kocienda  <kocienda@apple.com>
 
-        Reviewed by me
-        
         Silly me. Forgot to add this file before.
 
         * layout-tests/editing/inserting/insert-3775316-fix-expected.txt: Added.
@@ -258,8 +277,6 @@
 
 2004-08-26  Ken Kocienda  <kocienda@apple.com>
 
-        Reviewed by me
-        
         Fix garbled contenteditable attribute. I must have checked
         this in with a typo.
 
@@ -300,23 +317,17 @@
 
 2004-08-25  Ken Kocienda  <kocienda@apple.com>
 
-        Reviewed by me
-
         * layout-tests/editing/deleting/delete-3775172-fix.html: Wrong version of test checked in
         a moment ago.
 
 2004-08-25  Ken Kocienda  <kocienda@apple.com>
 
-        Reviewed by me
-        
         Added test case for <rdar://problem/3775172> Blot crashes after typing one character then deleting it
 
         * layout-tests/editing/deleting/delete-3775172-fix-expected.txt: Added.
         * layout-tests/editing/deleting/delete-3775172-fix.html: Added.
 
 2004-08-25  Ken Kocienda  <kocienda@apple.com>
-
-        Reviewed by me
 
         * layout-tests/editing/style/style-3690704-fix-expected.txt: Fewer styling spans added
         on this test as a result of the previously-checked-in fix.
@@ -920,8 +931,6 @@
 
 2004-08-18  Ken Kocienda  <kocienda@apple.com>
 
-        Reviewed by me
-
         * khtml/css/css_valueimpl.cpp:
         (CSSStyleDeclarationImpl::copy): Roll back silly last minute change that broke this code.
         Note to self: read code before making changes to it.
@@ -1426,8 +1435,6 @@
         even for the case of shifting focus from a secure text field back to itself.
 
 2004-08-11  Ken Kocienda  <kocienda@apple.com>
-
-        Reviewed by me
 
         Missed adding this file before.
 
@@ -2094,8 +2101,6 @@
 
 2004-07-28  Ken Kocienda  <kocienda@apple.com>
 
-        Reviewed by me
-        
         Added more layout tests.
 
         * layout-tests/editing/style/style-3681552-fix-001-expected.txt: Added.
@@ -2111,8 +2116,6 @@
 
 2004-07-28  Ken Kocienda  <kocienda@apple.com>
 
-        Reviewed by me
-        
         Added some layout tests.
 
         * layout-tests/editing/selection/select-all-001-expected.txt: Added.
@@ -2415,8 +2418,6 @@
         in a div that is set to display:none.
 
 2004-07-23  Ken Kocienda  <kocienda@apple.com>
-
-        Reviewed by me
 
         Updated layout tests with new expected results.
 
@@ -3014,8 +3015,6 @@
 
 2004-07-12  Ken Kocienda  <kocienda@apple.com>
 
-        Reviewed by me
-        
         Added new editing-related layout tests
 
         * layout-tests/editing/deleting/delete-after-span-ws-001-expected.txt: Added.
@@ -3079,8 +3078,6 @@
 
 2004-07-09  Ken Kocienda  <kocienda@apple.com>
 
-        Reviewed by me
-        
         Updated some layout test results.
 
         * layout-tests/editing/deleting/delete-image-004-expected.txt:
@@ -3252,8 +3249,6 @@
         * khtml/editing/htmlediting_impl.h:
 
 2004-07-06  Ken Kocienda  <kocienda@apple.com>
-
-        Reviewed by me
 
         * khtml/html/html_tableimpl.cpp:
         (HTMLTableElementImpl::addChild): Added a better comment in the
@@ -4272,8 +4267,6 @@
 
 2004-06-14  Ken Kocienda  <kocienda@apple.com>
 
-        Reviewed by me
-        
         Added a few more editing-related layout tests.
 
         * layout-tests/editing/inserting/insert-3654864-fix-expected.txt: Added.
@@ -4290,8 +4283,6 @@
         * layout-tests/editing/inserting/insert-br-case3.html: Added.
 
 2004-06-14  Ken Kocienda  <kocienda@apple.com>
-
-        Reviewed by me
 
         Regarding the bug below, removing some tests since we have removed the execCommand("paste") 
         feature, at least for now.
@@ -4894,8 +4885,6 @@
         (-[WebCoreBridge concludeDragForDraggingInfo:]):  Ditto
 
 2004-06-08  Ken Kocienda  <kocienda@apple.com>
-
-        Reviewed by me
 
         * khtml/editing/jsediting.cpp:
         (DOM::EditorCommand::): Stray capital letter in "selectAll" command static
@@ -5506,8 +5495,6 @@
         (-[WebCoreBridge dragSourceEndedAt:operation:]):
 
 2004-06-02  Ken Kocienda  <kocienda@apple.com>
-
-        Reviewed by me
 
         Finish off name change from previous check-in by changing dom_edititerator
         file names to dom_positioniterator. Files copied and renamed in repository.
@@ -7266,8 +7253,6 @@ ClearRect
 
 2004-05-13  Ken Kocienda  <kocienda@apple.com>
 
-        Reviewed by me
-
         * khtml/editing/htmlediting_impl.cpp:
         (khtml::ApplyStyleCommandImpl::applyStyleIfNeeded): Fix deployment
         build bustage. Uninitialized variable.
@@ -7759,8 +7744,6 @@ ClearRect
 
 2004-05-04  Ken Kocienda  <kocienda@apple.com>
 
-        Reviewed by me
-        
         Added layout tests for DOM traversal objects.
 
         * layout-tests/traversal/node-iterator-001-expected.txt: Added.
@@ -7797,8 +7780,6 @@ ClearRect
         (DOM::NodeIteratorImpl::previousNode): Ditto.
 
 2004-05-04  Ken Kocienda  <kocienda@apple.com>
-
-        Reviewed by me
 
         * WebCore.pbproj/project.pbxproj: Backed out unintentional
         change.
@@ -9637,8 +9618,6 @@ ClearRect
 
 2004-04-09  Ken Kocienda  <kocienda@apple.com>
 
-        Reviewed by me
-        
         Added one more layout test for editing.
 
         * layout-tests/editing/deleting/delete-3608445-fix-expected.txt: Added.
@@ -9706,8 +9685,6 @@ ClearRect
 
 2004-04-09  Ken Kocienda  <kocienda@apple.com>
 
-        Reviewed by me
-        
         Added two more layout tests for editing.
 
         * layout-tests/editing/selection/move-between-blocks-no-001-expected.txt: Added.
@@ -9972,8 +9949,6 @@ ClearRect
         (RenderText::caretPos): Ditto.
 
 2004-04-06  Ken Kocienda  <kocienda@apple.com>
-
-        Reviewed by me
 
         Added a new suite of layout tests for editing, all added
         in the new layout-tests/editing subtree.
@@ -10349,8 +10324,6 @@ ClearRect
 
 2004-04-01  Ken Kocienda  <kocienda@apple.com>
 
-        Reviewed by me
-        
         Missing file broke build after my last checkin
 
         * ForwardingHeaders/rendering/render_line.h: Added.
@@ -10743,8 +10716,6 @@ ClearRect
         matches the base URL, then treat it as a relative URL.
 
 2004-03-24  Ken Kocienda  <kocienda@apple.com>
-
-        Reviewed by me.
 
 	I neglected to check in these required changes when I landed previously.
 	This is what I get for trying to commit when I had other changes in
@@ -12051,8 +12022,6 @@ ClearRect
 
 2004-03-05  Ken Kocienda  <kocienda@apple.com>
 
-        Reviewed by me.
-
 	Forgot to add this when I checked in last time.
 
         * ForwardingHeaders/css/css_computedstyle.h: Added.
@@ -12221,8 +12190,6 @@ ClearRect
 
 2004-03-01  Ken Kocienda  <kocienda@apple.com>
 
-        Reviewed by me
-        
         Rollout last night's checkin. The tree was closed.
 
         * kwq/DOM.h
@@ -12283,8 +12250,6 @@ ClearRect
         * khtml/misc/maketags: Ditto.
 
 2004-03-01  Ken Kocienda  <kocienda@apple.com>
-
-        Reviewed by me
 
         * kwq/DOMInternal.h: Replaced tabs with spaces.
 
@@ -13087,8 +13052,6 @@ ClearRect
         * khtml/rendering/render_text.h:
 
 2004-02-11  Ken Kocienda  <kocienda@apple.com>
-
-        Reviewed by me
 
 		Removed include file I was considering checking, but 
 		decided against. Of course, this dangling include

@@ -532,9 +532,19 @@ static QRect boundingBoxRect(RenderObject* obj)
 - (void)accessibilityPerformAction:(NSString *)action
 {
     // We only have the one action (press).
+
     // Locate the anchor element. If it doesn't exist, just bail.
     HTMLAnchorElementImpl* anchorElt = [self anchorElement];
     if (!anchorElt) return;
+
+    DocumentImpl* d = anchorElt->getDocument();
+    if (d) {
+	KHTMLPart* p = d->part();
+        if (p) {
+            KWQ(p)->prepareForUserAction();
+        }
+    }
+
     anchorElt->click();
 }
 

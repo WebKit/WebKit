@@ -634,8 +634,16 @@ void KWQKHTMLPart::submitForm(const KURL &url, const URLArgs &args)
 {
     KWQ_BLOCK_EXCEPTIONS;
 
-    // The form multi-submit logic here is only right when we are submitting a form that affects this frame.
-    // Eventually when we find a better fix we can remove this altogether.
+    // FIXME: We'd like to remove this altogether and fix the multiple form submission issue another way.
+    // We do not want to submit more than one form from the same page,
+    // nor do we want to submit a single form more than once.
+    // This flag prevents these from happening; not sure how other browsers prevent this.
+    // The flag is reset in each time we start handle a new mouse or key down event, and
+    // also in setView since this part may get reused for a page from the back/forward cache.
+    // The form multi-submit logic here is only needed when we are submitting a form that affects this frame.
+    // FIXME: Frame targeting is only one of the ways the submission could end up doing something other
+    // than replacing this frame's content, so this check is flawed. On the other hand, the check is hardly
+    // needed any more now that we reset _submittedFormURL on each mouse or key down event.
     WebCoreBridge *target = args.frameName.isEmpty() ? _bridge : [_bridge findFrameNamed:args.frameName.getNSString()];
     KHTMLPart *targetPart = [target part];
     bool willReplaceThisFrame = false;
@@ -646,15 +654,7 @@ void KWQKHTMLPart::submitForm(const KURL &url, const URLArgs &args)
         }
     }
     if (willReplaceThisFrame) {
-        // We do not want to submit more than one form from the same page,
-        // nor do we want to submit a single form more than once.
-        // This flag prevents these from happening.
-        // Note that the flag is reset in setView()
-        // since this part may get reused if it is pulled from the b/f cache.
-        // Only do this for http and https since users may want to submit forms 
-        // more than once for other schemes.
-        QString protocol = url.protocol().lower();
-        if (_submittedFormURL == url && (protocol == "http" || protocol == "https")) {
+        if (_submittedFormURL == url) {
             return;
         }
         _submittedFormURL = url;
@@ -1070,7 +1070,7 @@ void KWQKHTMLPart::adjustPageHeight(float *newBottom, float oldTop, float oldBot
     }
 }
 
-RenderObject *KWQKHTMLPart::renderer()
+RenderObject *KWQKHTMLPart::renderer() const
 {
     DocumentImpl *doc = xmlDocImpl();
     return doc ? doc->renderer() : 0;
@@ -1803,6 +1803,10 @@ bool KWQKHTMLPart::keyEvent(NSEvent *event)
         return false;
     }
     
+    if ([event type] == NSKeyDown) {
+        prepareForUserAction();
+    }
+
     NSEvent *oldCurrentEvent = _currentEvent;
     _currentEvent = KWQRetain(event);
 
@@ -1996,7 +2000,7 @@ bool KWQKHTMLPart::passWidgetMouseDownEventToWidget(QWidget* widget)
     return true;
 }
 
-bool KWQKHTMLPart::lastEventIsMouseUp()
+bool KWQKHTMLPart::lastEventIsMouseUp() const
 {
     // Many AK widgets run their own event loops and consume events while the mouse is down.
     // When they finish, currentEvent is the mouseUp that they exited on.  We need to update
@@ -2086,7 +2090,7 @@ bool KWQKHTMLPart::dispatchDragSrcEvent(int eventId, const QPoint &loc) const
     return !noDefaultProc;
 }
 
-bool KWQKHTMLPart::eventMayStartDrag(NSEvent *event)
+bool KWQKHTMLPart::eventMayStartDrag(NSEvent *event) const
 {
     // This is a pre-flight check of whether the event might lead to a drag being started.  Be careful
     // that its logic needs to stay in sync with khtmlMouseMoveEvent() and the way we set
@@ -2459,6 +2463,8 @@ void KWQKHTMLPart::mouseDown(NSEvent *event)
     }
 
     KWQ_BLOCK_EXCEPTIONS;
+
+    prepareForUserAction();
 
     _mouseDownView = nil;
     _dragSrc = 0;
@@ -3401,7 +3407,7 @@ void KWQKHTMLPart::setBridge(WebCoreBridge *p)
     _windowWidget = new KWQWindowWidget(_bridge);
 }
 
-QString KWQKHTMLPart::overrideMediaType()
+QString KWQKHTMLPart::overrideMediaType() const
 {
     NSString *overrideType = [_bridge overrideMediaType];
     if (overrideType)
@@ -3889,7 +3895,14 @@ void KWQKHTMLPart::setMarkedRange(const DOM::Range &range)
     }
 }
 
-bool KWQKHTMLPart::canGoBackOrForward(int distance)
+bool KWQKHTMLPart::canGoBackOrForward(int distance) const
 {
     return [_bridge canGoBackOrForward:distance];
+}
+
+void KWQKHTMLPart::prepareForUserAction()
+{
+    // Reset the multiple form submission protection code.
+    // We'll let you submit the same form twice if you do two separate user actions.
+    _submittedFormURL = KURL();
 }
