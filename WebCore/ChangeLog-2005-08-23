@@ -1,3 +1,15 @@
+2004-08-27  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3739239, getComputedStyle of top not being implemented broke a site that checked for it.
+	
+        Reviewed by kocienda
+
+        * khtml/css/css_computedstyle.cpp:
+        (DOM::valueForLength):
+        (DOM::CSSComputedStyleDeclarationImpl::getPositionOffsetValue):
+        (DOM::CSSComputedStyleDeclarationImpl::getPropertyCSSValue):
+        * khtml/css/css_computedstyle.h:
+
 2004-08-27  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Ken.

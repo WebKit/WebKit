@@ -64,13 +64,15 @@ static const int InheritableProperties[] = {
     CSS_PROP_WORD_SPACING,
 };
 
-static CSSValueImpl *valueForLength(const Length &length, int max)
+static CSSValueImpl* valueForLength(const Length &length)
 {
-    if (length.isPercent()) {
-        return new CSSPrimitiveValueImpl(length.length(), CSSPrimitiveValue::CSS_PERCENTAGE);
-    }
-    else {
-        return new CSSPrimitiveValueImpl(length.minWidth(max), CSSPrimitiveValue::CSS_PX);
+    switch (length.type) {
+        case khtml::Percent:
+            return new CSSPrimitiveValueImpl(length.length(), CSSPrimitiveValue::CSS_PERCENTAGE);
+        case khtml::Fixed:
+            return new CSSPrimitiveValueImpl(length.length(), CSSPrimitiveValue::CSS_PX);
+        default: // FIXME: Intrinsic and MinIntrinsic should probably return keywords...
+            return new CSSPrimitiveValueImpl("auto", CSSPrimitiveValue::CSS_STRING);
     }
 }
 
@@ -124,6 +126,38 @@ static DOMString stringForTextAlign(ETextAlign align)
     }
     ASSERT_NOT_REACHED();
     return "";
+}
+
+CSSValueImpl* CSSComputedStyleDeclarationImpl::getPositionOffsetValue(int propertyID) const
+{
+    Length l;
+    switch (propertyID) {
+    case CSS_PROP_LEFT:
+        l = m_renderer->style()->left();
+        break;
+    case CSS_PROP_RIGHT:
+        l = m_renderer->style()->right();
+        break;
+    case CSS_PROP_TOP:
+        l = m_renderer->style()->top();
+        break;
+    case CSS_PROP_BOTTOM:
+        l = m_renderer->style()->bottom();
+        break;
+    default:
+        return 0;
+    }
+
+    if (m_renderer->isPositioned())
+        return valueForLength(l);
+    
+    if (m_renderer->isRelPositioned())
+        // FIXME: It's not enough to simply return "auto" values for one offset if the other side is defined.
+        // In other words if left is auto and right is not auto, then left's computed value is negative right.
+        // So we get the opposite length unit and see if it is auto.
+        return valueForLength(l);
+    
+    return new CSSPrimitiveValueImpl("auto", CSSPrimitiveValue::CSS_STRING);
 }
 
 CSSComputedStyleDeclarationImpl::CSSComputedStyleDeclarationImpl(NodeImpl *n)
@@ -202,9 +236,9 @@ CSSValueImpl *CSSComputedStyleDeclarationImpl::getPropertyCSSValue(int propertyI
         return new CSSPrimitiveValueImpl(string, CSSPrimitiveValue::CSS_STRING);
     }
     case CSS_PROP_BACKGROUND_POSITION_X:
-        return valueForLength(m_renderer->style()->backgroundXPosition(), m_renderer->contentWidth());
+        return valueForLength(m_renderer->style()->backgroundXPosition());
     case CSS_PROP_BACKGROUND_POSITION_Y:
-        return valueForLength(m_renderer->style()->backgroundYPosition(), m_renderer->contentHeight());
+        return valueForLength(m_renderer->style()->backgroundYPosition());
 #ifndef KHTML_NO_XBL
     case CSS_PROP__KHTML_BINDING:
         // FIXME: unimplemented
@@ -252,8 +286,7 @@ CSSValueImpl *CSSComputedStyleDeclarationImpl::getPropertyCSSValue(int propertyI
     case CSS_PROP_BORDER_LEFT_WIDTH:
         return new CSSPrimitiveValueImpl(m_renderer->style()->borderLeftWidth(), CSSPrimitiveValue::CSS_PX);
     case CSS_PROP_BOTTOM:
-        // FIXME: unimplemented
-		break;
+        return getPositionOffsetValue(CSS_PROP_BOTTOM);
     case CSS_PROP__KHTML_BOX_ALIGN:
         // FIXME: unimplemented
 		break;
@@ -407,8 +440,7 @@ CSSValueImpl *CSSComputedStyleDeclarationImpl::getPropertyCSSValue(int propertyI
     case CSS_PROP_HEIGHT:
         return new CSSPrimitiveValueImpl(m_renderer->contentHeight(), CSSPrimitiveValue::CSS_PX);
     case CSS_PROP_LEFT:
-        // FIXME: unimplemented
-		break;
+        return getPositionOffsetValue(CSS_PROP_LEFT);
     case CSS_PROP_LETTER_SPACING:
         if (m_renderer->style()->letterSpacing() == 0)
             return new CSSPrimitiveValueImpl("normal", CSSPrimitiveValue::CSS_STRING);
@@ -433,13 +465,13 @@ CSSValueImpl *CSSComputedStyleDeclarationImpl::getPropertyCSSValue(int propertyI
         // FIXME: unimplemented
 		break;
     case CSS_PROP_MARGIN_TOP:
-        return valueForLength(m_renderer->style()->marginTop(), m_renderer->contentHeight());
+        return valueForLength(m_renderer->style()->marginTop());
     case CSS_PROP_MARGIN_RIGHT:
-        return valueForLength(m_renderer->style()->marginRight(), m_renderer->contentWidth());
+        return valueForLength(m_renderer->style()->marginRight());
     case CSS_PROP_MARGIN_BOTTOM:
-        return valueForLength(m_renderer->style()->marginBottom(), m_renderer->contentHeight());
+        return valueForLength(m_renderer->style()->marginBottom());
     case CSS_PROP_MARGIN_LEFT:
-        return valueForLength(m_renderer->style()->marginLeft(), m_renderer->contentWidth());
+        return valueForLength(m_renderer->style()->marginLeft());
     case CSS_PROP__KHTML_MARQUEE:
         // FIXME: unimplemented
 		break;
@@ -511,13 +543,13 @@ CSSValueImpl *CSSComputedStyleDeclarationImpl::getPropertyCSSValue(int propertyI
         }
     }
     case CSS_PROP_PADDING_TOP:
-        return valueForLength(m_renderer->style()->paddingTop(), m_renderer->contentHeight());
+        return valueForLength(m_renderer->style()->paddingTop());
     case CSS_PROP_PADDING_RIGHT:
-        return valueForLength(m_renderer->style()->paddingRight(), m_renderer->contentWidth());
+        return valueForLength(m_renderer->style()->paddingRight());
     case CSS_PROP_PADDING_BOTTOM:
-        return valueForLength(m_renderer->style()->paddingBottom(), m_renderer->contentHeight());
+        return valueForLength(m_renderer->style()->paddingBottom());
     case CSS_PROP_PADDING_LEFT:
-        return valueForLength(m_renderer->style()->paddingLeft(), m_renderer->contentWidth());
+        return valueForLength(m_renderer->style()->paddingLeft());
     case CSS_PROP_PAGE:
         // FIXME: unimplemented
 		break;
@@ -537,8 +569,7 @@ CSSValueImpl *CSSComputedStyleDeclarationImpl::getPropertyCSSValue(int propertyI
         // FIXME: unimplemented
 		break;
     case CSS_PROP_RIGHT:
-        // FIXME: unimplemented
-		break;
+        return getPositionOffsetValue(CSS_PROP_RIGHT);
     case CSS_PROP_SIZE:
         // FIXME: unimplemented
 		break;
@@ -575,7 +606,7 @@ CSSValueImpl *CSSComputedStyleDeclarationImpl::getPropertyCSSValue(int propertyI
         // FIXME: unimplemented
 		break;
     case CSS_PROP_TEXT_INDENT:
-        return valueForLength(m_renderer->style()->textIndent(), m_renderer->contentWidth());
+        return valueForLength(m_renderer->style()->textIndent());
     case CSS_PROP_TEXT_SHADOW:
         // FIXME: unimplemented
 		break;
@@ -583,8 +614,7 @@ CSSValueImpl *CSSComputedStyleDeclarationImpl::getPropertyCSSValue(int propertyI
         // FIXME: unimplemented
 		break;
     case CSS_PROP_TOP:
-        // FIXME: unimplemented
-		break;
+        return getPositionOffsetValue(CSS_PROP_TOP);
     case CSS_PROP_UNICODE_BIDI:
         // FIXME: unimplemented
 		break;
@@ -610,7 +640,7 @@ CSSValueImpl *CSSComputedStyleDeclarationImpl::getPropertyCSSValue(int propertyI
             case khtml::BASELINE_MIDDLE:
                 return new CSSPrimitiveValueImpl("baseline-middle", CSSPrimitiveValue::CSS_STRING);
             case khtml::LENGTH:
-                return valueForLength(m_renderer->style()->verticalAlignLength(), m_renderer->contentWidth());
+                return valueForLength(m_renderer->style()->verticalAlignLength());
         }
     }
     case CSS_PROP_VISIBILITY:
