@@ -87,7 +87,7 @@ extern NSString *NSImageLoopCount;
     if (_cgsContext) {
         CGContextRelease(_cgsContext);
     }
-    [super dealloc];
+    [super finalize];
 }
 
 - (void)saveGraphicsState

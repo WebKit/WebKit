@@ -269,7 +269,10 @@ HIWebViewConstructor( HIViewRef inView )
 	
 		view->fViewRef = inView;
 
-		view->fWebView = [[webViewClass alloc] initWithFrame: frame];
+                WebView *webView = [[webViewClass alloc] initWithFrame: frame];
+                CFRetain(webView);
+                [webView release];
+		view->fWebView = webView;
 		[HIViewAdapter bindHIViewToNSView:inView nsView:view->fWebView];
 		
 		view->fFirstResponder = NULL;
@@ -289,7 +292,7 @@ static void
 HIWebViewDestructor( HIWebView* inView )
 {
 	[HIViewAdapter unbindNSView:inView->fWebView];
-	[inView->fWebView release];
+	CFRelease(inView->fWebView);
 	
 	free( inView );
 }

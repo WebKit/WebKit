@@ -301,7 +301,7 @@ static void databaseInit()
     [super initWithPath:thePath];
     
     if (self == nil || thePath == nil) {
-        [self dealloc];
+        [self release];
         return nil;
     }
 

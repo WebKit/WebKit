@@ -30,7 +30,7 @@
 {
     WebKitDOMTreeCopier *copier;
     
-    [self dealloc];
+    [self release];
 
     if (![[view documentView] isMemberOfClass:[WebHTMLView class]]) {
         return nil;

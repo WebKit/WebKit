@@ -16,6 +16,7 @@
 
 #import <WebKit/WebGlyphBuffer.h>
 #import <WebKit/WebKitLogging.h>
+#import <WebKit/WebNSObjectExtras.h>
 #import <WebKit/WebTextRendererFactory.h>
 #import <WebKit/WebUnicode.h>
 
@@ -405,6 +406,21 @@ static BOOL alwaysUseATSU = NO;
         ATSUDisposeStyle(_ATSUSstyle);
     
     [super dealloc];
+}
+
+- (void)finalize
+{
+    if (styleGroup)
+        ATSUDisposeStyleGroup(styleGroup);
+
+    freeWidthMap(glyphToWidthMap);
+    freeGlyphMap(characterToGlyphMap);
+    freeUnicodeGlyphMap(unicodeCharacterToGlyphMap);
+
+    if (ATSUStyleInitialized)
+        ATSUDisposeStyle(_ATSUSstyle);
+    
+    [super finalize];
 }
 
 - (int)ascent

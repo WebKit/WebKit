@@ -1,3 +1,23 @@
+2004-06-14  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fixed some things for GC that Patrick missed, or that happened after the branch
+
+        * Carbon.subproj/HIWebView.m:
+        (HIWebViewConstructor): Use CFRetain instead of retain.
+        (HIWebViewDestructor): Use CFRelease instead of release.
+        * Misc.subproj/WebFileDatabase.m:
+        (-[WebFileDatabase initWithPath:]): Use release instead of dealloc.
+        * WebCoreSupport.subproj/WebImageRenderer.m:
+        (-[WebImageContext finalize]): Had [super dealloc] here by mistake; change to [super finalize].
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (-[WebTextRenderer finalize]): Added.
+        * WebView.subproj/WebDebugDOMNode.m:
+        (-[WebDebugDOMNode initWithWebFrameView:]): Use release instead of dealloc.
+        * WebView.subproj/WebRenderNode.m:
+        (-[WebRenderNode initWithWebFrameView:]): Use release instead of dealloc.
+
 2004-06-15  Trey Matteson  <trey@apple.com>
 
 	Fix ASSERT/crash we get sometimes when dragging link images.  Turns
