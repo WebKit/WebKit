@@ -65,8 +65,14 @@ public:
     virtual void notifyFinished(CachedObject *finishedObj);
 
     virtual bool nodeAtPoint(NodeInfo& info, int x, int y, int tx, int ty, bool inside=false);
+    
+    virtual short calcReplacedWidth() const;
+    virtual int calcReplacedHeight() const;
 
 private:
+    bool isWidthSpecified() const;
+    bool isHeightSpecified() const;
+
     /*
      * Pointer to the image
      * If this pointer is 0L, that means that the picture could not be loaded

@@ -400,3 +400,51 @@ void RenderImage::updateFromElement()
     else if (element()->id() == ID_IMG)
         alt = static_cast<HTMLImageElementImpl*>(element())->altText();
 }
+
+bool RenderImage::isWidthSpecified() const
+{
+    switch (style()->width().type) {
+        case Fixed:
+        case Percent:
+            return true;
+        case Variable:
+        case Relative:
+        case Static:
+            return false;
+    }
+    assert(false);
+    return false;
+}
+
+bool RenderImage::isHeightSpecified() const
+{
+    switch (style()->height().type) {
+        case Fixed:
+        case Percent:
+            return true;
+        case Variable:
+        case Relative:
+        case Static:
+            return false;
+    }
+    assert(false);
+    return false;
+}
+
+short RenderImage::calcReplacedWidth() const
+{
+    // If height is specified and not width, preserve aspect ratio.
+    if (isHeightSpecified() && !isWidthSpecified()) {
+        return calcReplacedHeight() * intrinsicWidth() / intrinsicHeight();
+    }
+    return RenderReplaced::calcReplacedWidth();
+}
+
+int RenderImage::calcReplacedHeight() const
+{
+    // If width is specified and not height, preserve aspect ratio.
+    if (isWidthSpecified() && !isHeightSpecified()) {
+        return calcReplacedWidth() * intrinsicHeight() / intrinsicWidth();
+    }
+    return RenderReplaced::calcReplacedHeight();
+}

@@ -1,3 +1,24 @@
+2003-01-23  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave.
+
+	- fixed 3154575 -- REGRESSION: Right sidebar on Yahoo! page in base PLT renders incorrectly
+
+        * khtml/rendering/break_lines.cpp: (isBreakable): Pass kUCTextBreakLineMask to the
+	UC calls, which looks for places where line breaks are allowed, instead of kUCTextBreakWordMask,
+	which finds all word breaks instead. We still pass all the layout tests, so I think this means
+	Japanese word breaking is still OK.
+
+	- fixed 3154416 -- images that specify width but not height should keep aspect ratio (example at thegods.org.uk)
+
+        * khtml/rendering/render_image.h: Declared new member functions.
+        * khtml/rendering/render_image.cpp:
+        (RenderImage::widthSpecified): Added helper function.
+        (RenderImage::heightSpecified): Added helper function.
+        (RenderImage::calcReplacedWidth): Added. Derives width from height keeping aspect ratio if we
+	have a specified height and no width.
+        (RenderImage::calcReplacedHeight): Added. Same thing in the opposite direction.
+
 2003-01-22  Trey Matteson  <trey@apple.com>
 
 	3153313 cursor changes during text selection when we cross links
