@@ -88,10 +88,15 @@ noshade
 nowrap
 object
 onabort
+onbeforecopy
+onbeforecut
+onbeforepaste
 onblur
 onchange
 onclick
 oncontextmenu
+oncopy
+oncut
 ondblclick
 ondrag
 ondragend
@@ -112,6 +117,7 @@ onmousemove
 onmouseout
 onmouseover
 onmouseup
+onpaste
 onreset
 onresize
 onscroll

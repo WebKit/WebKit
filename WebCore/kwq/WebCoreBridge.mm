@@ -1649,4 +1649,19 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     }
 }
 
+- (BOOL)tryDHTMLCut
+{
+    return _part->tryCut();
+}
+
+- (BOOL)tryDHTMLCopy
+{
+    return _part->tryCopy();
+}
+
+- (BOOL)tryDHTMLPaste
+{
+    return _part->tryPaste();
+}
+
 @end

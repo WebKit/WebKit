@@ -28,8 +28,17 @@
 #ifndef KWQCLIPBOARD_H_
 #define KWQCLIPBOARD_H_
 
-#import <AppKit/AppKit.h>
 #include "xml/dom2_eventsimpl.h"
+
+#ifdef __OBJC__
+@class NSImage;
+@class NSPasteboard;
+#else
+class NSImage;
+class NSPasteboard;
+#endif
+
+typedef unsigned NSDragOperation;
 
 class KWQKHTMLPart;
 

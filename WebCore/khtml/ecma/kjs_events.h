@@ -90,10 +90,11 @@ namespace KJS {
     enum { Type, Target, CurrentTarget, EventPhase, Bubbles,
            Cancelable, TimeStamp, StopPropagation, PreventDefault, InitEvent,
 	   // MS IE equivalents
-	   SrcElement, ReturnValue, CancelBubble };
+	   SrcElement, ReturnValue, CancelBubble, ClipboardData, DataTransfer };
     DOM::Event toEvent() const { return event; }
   protected:
     DOM::Event event;
+    mutable Clipboard *clipboard;
   };
 
   Value getDOMEvent(ExecState *exec, DOM::Event e);
@@ -131,7 +132,7 @@ namespace KJS {
 
   class DOMMouseEvent : public DOMUIEvent {
   public:
-    DOMMouseEvent(ExecState *exec, DOM::MouseEvent me) : DOMUIEvent(exec, me), clipboard(0) {}
+    DOMMouseEvent(ExecState *exec, DOM::MouseEvent me) : DOMUIEvent(exec, me) {}
     ~DOMMouseEvent();
     virtual Value tryGet(ExecState *exec,const Identifier &p) const;
     Value getValueProperty(ExecState *, int token) const;
@@ -141,11 +142,9 @@ namespace KJS {
     static const ClassInfo info;
     enum { ScreenX, ScreenY, ClientX, X, ClientY, Y, OffsetX, OffsetY,
            CtrlKey, ShiftKey, AltKey,
-           MetaKey, Button, RelatedTarget, FromElement, ToElement, DataTransfer,
+           MetaKey, Button, RelatedTarget, FromElement, ToElement,
            InitMouseEvent };
     DOM::MouseEvent toMouseEvent() const { return static_cast<DOM::MouseEvent>(event); }
-  protected:
-    mutable Clipboard *clipboard;
   };
 
   class DOMKeyboardEvent : public DOMUIEvent {

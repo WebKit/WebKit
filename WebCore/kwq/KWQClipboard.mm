@@ -29,6 +29,8 @@
 #import "KWQStringList.h"
 #import "WebCoreGraphicsBridge.h"
 
+#import <AppKit/AppKit.h>
+
 using DOM::DOMString;
 
 KWQClipboard::KWQClipboard(bool forDragging, NSPasteboard *pasteboard, AccessPolicy policy, KWQKHTMLPart *part)

@@ -447,6 +447,30 @@ void HTMLElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
         setHTMLEventListener(EventImpl::SCROLL_EVENT,
             getDocument()->createHTMLEventListener(attr->value().string()));
         break;
+    case ATTR_ONBEFORECUT:
+        setHTMLEventListener(EventImpl::BEFORECUT_EVENT,
+                             getDocument()->createHTMLEventListener(attr->value().string()));
+        break;
+    case ATTR_ONCUT:
+        setHTMLEventListener(EventImpl::CUT_EVENT,
+                             getDocument()->createHTMLEventListener(attr->value().string()));
+        break;
+    case ATTR_ONBEFORECOPY:
+        setHTMLEventListener(EventImpl::BEFORECOPY_EVENT,
+                             getDocument()->createHTMLEventListener(attr->value().string()));
+        break;
+    case ATTR_ONCOPY:
+        setHTMLEventListener(EventImpl::COPY_EVENT,
+                             getDocument()->createHTMLEventListener(attr->value().string()));
+        break;
+    case ATTR_ONBEFOREPASTE:
+        setHTMLEventListener(EventImpl::BEFOREPASTE_EVENT,
+                             getDocument()->createHTMLEventListener(attr->value().string()));
+        break;
+    case ATTR_ONPASTE:
+        setHTMLEventListener(EventImpl::PASTE_EVENT,
+                             getDocument()->createHTMLEventListener(attr->value().string()));
+        break;        
     case ATTR_ONDRAGENTER:
         setHTMLEventListener(EventImpl::DRAGENTER_EVENT,
                              getDocument()->createHTMLEventListener(attr->value().string()));

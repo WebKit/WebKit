@@ -1,3 +1,66 @@
+2004-06-13  Trey Matteson  <trey@apple.com>
+
+	Support for DHTML cut/copy/paste.  We now support oncut, oncopy, onpaste.  The events
+	are sent to the first node in the selection, or else the body.  Current holes are
+	that we do not send events for operations in text fields or text areas (because it
+	is hard to get the right hooks into the AppKit).
+
+	We also send onbeforecut, onbeforecopy, onbeforepaste before the other events, which
+	isn't really WinIE compatible, but is close.  WinIE uses these to enable cut/paste
+	menu items in its UI.  DB doesn't need this for now.
+
+        Reviewed by NOBODY (OOPS!).
+
+        * khtml/ecma/kjs_dom.cpp:
+        (DOMNode::getValueProperty):  Boilerplate for new events
+        (DOMNode::putValue):    Boilerplate for new events
+        * khtml/ecma/kjs_dom.h:
+        (KJS::DOMNode::):    Boilerplate for new events
+        * khtml/ecma/kjs_dom.lut.h:
+        * khtml/ecma/kjs_events.cpp:
+        (DOMEvent::DOMEvent): "dataTransfer" and "clipboardData" properties are conditionally
+	defined on DOMEvent, depending on if the event is a dragging or clipboard event.
+        (DOMMouseEvent::mark):  Pass mark along to any clipboard object we have.
+        (DOMEvent::getValueProperty):  Return "dataTransfer" or "clipboardData".
+        (DOMMouseEvent::getValueProperty):  Returning "dataTransfer" now handled by
+	the superclass.
+        * khtml/ecma/kjs_events.h:
+        (KJS::DOMEvent::):
+        (KJS::DOMMouseEvent::DOMMouseEvent):
+        (KJS::DOMMouseEvent::):
+        (KJS::DOMMouseEvent::toMouseEvent):
+        * khtml/ecma/kjs_events.lut.h:
+        * khtml/html/html_elementimpl.cpp:
+        (HTMLElementImpl::parseHTMLAttribute):  Boilerplate for new events
+        * khtml/misc/htmlattrs.c:
+        * khtml/misc/htmlattrs.h:
+        * khtml/misc/htmlattrs.in:  Boilerplate for new events
+        * khtml/xml/dom2_eventsimpl.cpp:
+        (EventImpl::typeToId):  Boilerplate for new events
+        (EventImpl::idToType):  Boilerplate for new events
+        (EventImpl::isDragEvent):  New utility
+        (EventImpl::isClipboardEvent):  New utility
+        (MouseEventImpl::isDragEvent):  New utility
+        (ClipboardEventImpl::ClipboardEventImpl):  ref optional clipboard
+        (ClipboardEventImpl::~ClipboardEventImpl):  deref optional clipboard
+        (ClipboardEventImpl::isClipboardEvent):  New utility
+        * khtml/xml/dom2_eventsimpl.h:
+        (DOM::EventImpl::):  Boilerplate for new events
+        (DOM::ClipboardEventImpl::clipboard):
+        * kwq/KWQClipboard.h:  Monkey business so this file is includable in C++.
+        * kwq/KWQClipboard.mm:
+        * kwq/KWQKHTMLPart.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::dispatchCPPEvent):  Send one of the new events.
+        (KWQKHTMLPart::tryCut):  Declare pasteboard types, send cut events.
+        (KWQKHTMLPart::tryCopy):  Declare pasteboard types, send copy events.
+        (KWQKHTMLPart::tryPaste):  Send paste events.
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge tryDHTMLCut]):  Pass through to part
+        (-[WebCoreBridge tryDHTMLCopy]):  Ditto
+        (-[WebCoreBridge tryDHTMLPaste]):  Ditto
+
 2004-06-14  Trey Matteson  <trey@apple.com>
 
 	A new CSS pseudo-class ".drag" is added.  Analogous to the "hover" class,

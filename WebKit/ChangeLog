@@ -1,3 +1,14 @@
+2004-06-13  Trey Matteson  <trey@apple.com>
+
+	Support for DHTML cut/copy/paste.
+
+        Reviewed by NOBODY (OOPS!).
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView copy:]):  Give DHTML first crack at executing the command.
+        (-[WebHTMLView cut:]):  Ditto
+        (-[WebHTMLView paste:]):  Ditto
+
 2004-06-14  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3674456> make new drag & drop API compatible with DHTML dragging

@@ -323,6 +323,10 @@ typedef enum {
 - (void)dragSourceMovedTo:(NSPoint)windowLoc;
 - (void)dragSourceEndedAt:(NSPoint)windowLoc operation:(NSDragOperation)operation;
 
+- (BOOL)tryDHTMLCut;
+- (BOOL)tryDHTMLCopy;
+- (BOOL)tryDHTMLPaste;
+
 @end
 
 // The WebCoreBridge protocol contains methods for use by the WebCore side of the bridge.

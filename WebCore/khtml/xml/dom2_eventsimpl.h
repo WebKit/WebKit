@@ -60,6 +60,13 @@ public:
         MOUSEOVER_EVENT,
         MOUSEMOVE_EVENT,
         MOUSEOUT_EVENT,
+        // IE copy/paste events
+        BEFORECUT_EVENT,
+        CUT_EVENT,
+        BEFORECOPY_EVENT,
+        COPY_EVENT,
+        BEFOREPASTE_EVENT,
+        PASTE_EVENT,
         // IE drag and drop events
         DRAGENTER_EVENT,
         DRAGOVER_EVENT,
@@ -135,6 +142,8 @@ public:
     virtual bool isMouseEvent() const;
     virtual bool isMutationEvent() const;
     virtual bool isKeyboardEvent() const;
+    virtual bool isDragEvent() const;   // a subset of mouse events
+    virtual bool isClipboardEvent() const;
 
     bool propagationStopped() const { return m_propagationStopped; }
     bool defaultPrevented() const { return m_defaultPrevented; }
@@ -246,6 +255,7 @@ public:
 			unsigned short buttonArg,
 			const Node &relatedTargetArg);
     virtual bool isMouseEvent() const;
+    virtual bool isDragEvent() const;
 protected:
     long m_screenX;
     long m_screenY;
@@ -358,6 +368,17 @@ protected:
     unsigned short m_attrChange;
 };
 
+class ClipboardEventImpl : public EventImpl {
+public:
+    ClipboardEventImpl();
+    ClipboardEventImpl(EventId _id, bool canBubbleArg, bool cancelableArg, ClipboardImpl *clipboardArg);
+    ~ClipboardEventImpl();
+
+    ClipboardImpl *clipboard() const { return m_clipboard; }
+    virtual bool isClipboardEvent() const;
+protected:
+    ClipboardImpl *m_clipboard;
+};
 
 class RegisteredEventListener {
 public:

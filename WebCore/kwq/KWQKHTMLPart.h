@@ -41,6 +41,7 @@
 #include <JavaScriptCore/runtime.h>
 
 #include "KWQDict.h"
+#include "KWQClipboard.h"
 
 class KHTMLPartPrivate;
 class KWQClipboard;
@@ -232,6 +233,10 @@ public:
     void dragSourceMovedTo(const QPoint &loc);
     void dragSourceEndedAt(const QPoint &loc);
 
+    bool tryCut();
+    bool tryCopy();
+    bool tryPaste();
+
     bool sendContextMenuEvent(NSEvent *);
 
     void clearTimers();
@@ -329,9 +334,10 @@ private:
     static NSView *documentViewForNode(DOM::NodeImpl *);
     
     bool dragHysteresisExceeded(float dragLocationX, float dragLocationY) const;
+    bool dispatchCPPEvent(int eventId, KWQClipboard::AccessPolicy policy);
     bool dispatchDragSrcEvent(int eventId, const QPoint &loc) const;
 
-    NSImage *KWQKHTMLPart::imageFromRect(NSRect rect) const;
+    NSImage *imageFromRect(NSRect rect) const;
 
     void freeClipboard();
 

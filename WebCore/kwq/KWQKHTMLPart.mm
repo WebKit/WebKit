@@ -70,6 +70,7 @@
 #undef _KWQ_TIMING
 
 using DOM::AtomicString;
+using DOM::ClipboardEventImpl;
 using DOM::DocumentImpl;
 using DOM::DOMString;
 using DOM::ElementImpl;
@@ -2078,6 +2079,61 @@ void KWQKHTMLPart::dragSourceEndedAt(const QPoint &loc)
     }
     freeClipboard();
     _dragSrc = 0;
+}
+
+bool KWQKHTMLPart::dispatchCPPEvent(int eventId, KWQClipboard::AccessPolicy policy)
+{
+    NodeImpl *target = d->m_selection.start().element();
+    if (!target) {
+        target = docImpl()->body();
+    }
+
+    KWQClipboard *clipboard = new KWQClipboard(false, [NSPasteboard generalPasteboard], (KWQClipboard::AccessPolicy)policy);
+    clipboard->ref();
+
+    int exceptioncode = 0;
+    EventImpl *evt = new ClipboardEventImpl(static_cast<EventImpl::EventId>(eventId), true, true, clipboard);
+    evt->ref();
+    target->dispatchEvent(evt, exceptioncode, true);
+    bool noDefaultProcessing = evt->defaultPrevented();
+    evt->deref();
+
+    // invalidate clipboard here for security
+    clipboard->setAccessPolicy(KWQClipboard::Numb);
+    clipboard->deref();
+
+    return !noDefaultProcessing;
+}
+
+// In the next three functions, for now, we send the "before" event to gain some compatibility with WinIE.
+// WinIE uses onbeforecut and onbeforepaste to enables the cut and paste menu items, but we don't yet.  They
+// also send onbeforecopy, apparently for symmetry, but it doesn't affect the menu items.  The return of these
+// routines should not block the sending of non-"before" event.
+
+bool KWQKHTMLPart::tryCut()
+{
+    // Must be done before oncut adds types and data to the pboard,
+    // also done for security, as it erases data from the last copy/paste.
+    [[NSPasteboard generalPasteboard] declareTypes:[NSArray array] owner:nil];
+
+    dispatchCPPEvent(EventImpl::BEFORECUT_EVENT, KWQClipboard::Writable);
+    return !dispatchCPPEvent(EventImpl::CUT_EVENT, KWQClipboard::Writable);
+}
+
+bool KWQKHTMLPart::tryCopy()
+{
+    // Must be done before oncopy adds types and data to the pboard,
+    // also done for security, as it erases data from the last copy/paste.
+    [[NSPasteboard generalPasteboard] declareTypes:[NSArray array] owner:nil];
+
+    dispatchCPPEvent(EventImpl::BEFORECOPY_EVENT, KWQClipboard::Writable);
+    return !dispatchCPPEvent(EventImpl::COPY_EVENT, KWQClipboard::Writable);
+}
+
+bool KWQKHTMLPart::tryPaste()
+{
+    dispatchCPPEvent(EventImpl::BEFOREPASTE_EVENT, KWQClipboard::Readable);
+    return !dispatchCPPEvent(EventImpl::PASTE_EVENT, KWQClipboard::Readable);
 }
 
 void KWQKHTMLPart::khtmlMouseReleaseEvent(MouseReleaseEvent *event)

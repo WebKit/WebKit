@@ -2460,6 +2460,10 @@ static WebHTMLView *lastHitView = nil;
 
 - (void)copy:(id)sender
 {
+    if ([[self _bridge] tryDHTMLCopy]) {
+        return;     // DHTML did the whole operation
+    }
+
     if (![self _haveSelection]) {
         NSBeep();
         return;
@@ -2468,7 +2472,11 @@ static WebHTMLView *lastHitView = nil;
 }
 
 - (void)cut:(id)sender
-{   
+{
+    if ([[self _bridge] tryDHTMLCut]) {
+        return;     // DHTML did the whole operation
+    }
+
     if (![self _haveSelection]) {
         NSBeep();
         return;
@@ -2488,6 +2496,10 @@ static WebHTMLView *lastHitView = nil;
 
 - (void)paste:(id)sender
 {
+    if ([[self _bridge] tryDHTMLPaste]) {
+        return;     // DHTML did the whole operation
+    }
+
     [self _pasteWithPasteboard:[NSPasteboard generalPasteboard] allowPlainText:YES];
 }
 

@@ -31,21 +31,26 @@ const struct HashTable EventConstructorTable = { 2, 19, EventConstructorTableEnt
 namespace KJS {
 
 const struct HashEntry DOMEventTableEntries[] = {
-   { "currentTarget", DOMEvent::CurrentTarget, DontDelete|ReadOnly, 0, &DOMEventTableEntries[7] },
-   { 0, 0, 0, 0, 0 },
-   { "type", DOMEvent::Type, DontDelete|ReadOnly, 0, 0 },
-   { "target", DOMEvent::Target, DontDelete|ReadOnly, 0, &DOMEventTableEntries[9] },
-   { 0, 0, 0, 0, 0 },
-   { "returnValue", DOMEvent::ReturnValue, DontDelete, 0, &DOMEventTableEntries[11] },
-   { "srcElement", DOMEvent::SrcElement, DontDelete|ReadOnly, 0, 0 },
-   { "eventPhase", DOMEvent::EventPhase, DontDelete|ReadOnly, 0, &DOMEventTableEntries[8] },
-   { "bubbles", DOMEvent::Bubbles, DontDelete|ReadOnly, 0, 0 },
-   { "cancelable", DOMEvent::Cancelable, DontDelete|ReadOnly, 0, &DOMEventTableEntries[10] },
    { "timeStamp", DOMEvent::TimeStamp, DontDelete|ReadOnly, 0, 0 },
-   { "cancelBubble", DOMEvent::CancelBubble, DontDelete, 0, 0 }
+   { 0, 0, 0, 0, 0 },
+   { "cancelBubble", DOMEvent::CancelBubble, DontDelete, 0, &DOMEventTableEntries[16] },
+   { "bubbles", DOMEvent::Bubbles, DontDelete|ReadOnly, 0, 0 },
+   { 0, 0, 0, 0, 0 },
+   { "returnValue", DOMEvent::ReturnValue, DontDelete, 0, 0 },
+   { "type", DOMEvent::Type, DontDelete|ReadOnly, 0, &DOMEventTableEntries[12] },
+   { 0, 0, 0, 0, 0 },
+   { 0, 0, 0, 0, 0 },
+   { 0, 0, 0, 0, 0 },
+   { "srcElement", DOMEvent::SrcElement, DontDelete|ReadOnly, 0, &DOMEventTableEntries[14] },
+   { "target", DOMEvent::Target, DontDelete|ReadOnly, 0, &DOMEventTableEntries[13] },
+   { "currentTarget", DOMEvent::CurrentTarget, DontDelete|ReadOnly, 0, 0 },
+   { "eventPhase", DOMEvent::EventPhase, DontDelete|ReadOnly, 0, &DOMEventTableEntries[15] },
+   { "cancelable", DOMEvent::Cancelable, DontDelete|ReadOnly, 0, 0 },
+   { "dataTransfer", DOMMouseEvent::DataTransfer, DontDelete|ReadOnly, 0, 0 },
+   { "clipboardData", DOMEvent::ClipboardData, DontDelete|ReadOnly, 0, 0 }
 };
 
-const struct HashTable DOMEventTable = { 2, 12, DOMEventTableEntries, 7 };
+const struct HashTable DOMEventTable = { 2, 17, DOMEventTableEntries, 12 };
 
 } // namespace
 
@@ -107,32 +112,32 @@ const struct HashTable DOMUIEventProtoTable = { 2, 1, DOMUIEventProtoTableEntrie
 namespace KJS {
 
 const struct HashEntry DOMMouseEventTableEntries[] = {
-   { 0, 0, 0, 0, 0 },
-   { "x", DOMMouseEvent::X, DontDelete|ReadOnly, 0, 0 },
-   { "y", DOMMouseEvent::Y, DontDelete|ReadOnly, 0, 0 },
-   { "ctrlKey", DOMMouseEvent::CtrlKey, DontDelete|ReadOnly, 0, 0 },
-   { "offsetX", DOMMouseEvent::OffsetX, DontDelete|ReadOnly, 0, 0 },
    { "offsetY", DOMMouseEvent::OffsetY, DontDelete|ReadOnly, 0, &DOMMouseEventTableEntries[20] },
-   { "shiftKey", DOMMouseEvent::ShiftKey, DontDelete|ReadOnly, 0, &DOMMouseEventTableEntries[18] },
    { 0, 0, 0, 0, 0 },
    { 0, 0, 0, 0, 0 },
-   { "relatedTarget", DOMMouseEvent::RelatedTarget, DontDelete|ReadOnly, 0, 0 },
    { 0, 0, 0, 0, 0 },
-   { "fromElement", DOMMouseEvent::FromElement, DontDelete|ReadOnly, 0, 0 },
    { 0, 0, 0, 0, 0 },
-   { "clientX", DOMMouseEvent::ClientX, DontDelete|ReadOnly, 0, 0 },
-   { "screenX", DOMMouseEvent::ScreenX, DontDelete|ReadOnly, 0, &DOMMouseEventTableEntries[17] },
-   { "screenY", DOMMouseEvent::ScreenY, DontDelete|ReadOnly, 0, 0 },
    { 0, 0, 0, 0, 0 },
-   { "clientY", DOMMouseEvent::ClientY, DontDelete|ReadOnly, 0, 0 },
-   { "altKey", DOMMouseEvent::AltKey, DontDelete|ReadOnly, 0, &DOMMouseEventTableEntries[19] },
-   { "metaKey", DOMMouseEvent::MetaKey, DontDelete|ReadOnly, 0, &DOMMouseEventTableEntries[21] },
+   { 0, 0, 0, 0, 0 },
+   { "clientX", DOMMouseEvent::ClientX, DontDelete|ReadOnly, 0, &DOMMouseEventTableEntries[19] },
+   { "screenX", DOMMouseEvent::ScreenX, DontDelete|ReadOnly, 0, &DOMMouseEventTableEntries[16] },
+   { "screenY", DOMMouseEvent::ScreenY, DontDelete|ReadOnly, 0, &DOMMouseEventTableEntries[18] },
+   { "altKey", DOMMouseEvent::AltKey, DontDelete|ReadOnly, 0, 0 },
+   { 0, 0, 0, 0, 0 },
    { "button", DOMMouseEvent::Button, DontDelete|ReadOnly, 0, 0 },
-   { "toElement", DOMMouseEvent::ToElement, DontDelete|ReadOnly, 0, &DOMMouseEventTableEntries[22] },
-   { "dataTransfer", DOMMouseEvent::DataTransfer, DontDelete|ReadOnly, 0, 0 }
+   { "toElement", DOMMouseEvent::ToElement, DontDelete|ReadOnly, 0, 0 },
+   { "ctrlKey", DOMMouseEvent::CtrlKey, DontDelete|ReadOnly, 0, &DOMMouseEventTableEntries[22] },
+   { "offsetX", DOMMouseEvent::OffsetX, DontDelete|ReadOnly, 0, 0 },
+   { "x", DOMMouseEvent::X, DontDelete|ReadOnly, 0, &DOMMouseEventTableEntries[17] },
+   { "clientY", DOMMouseEvent::ClientY, DontDelete|ReadOnly, 0, &DOMMouseEventTableEntries[21] },
+   { "y", DOMMouseEvent::Y, DontDelete|ReadOnly, 0, 0 },
+   { "shiftKey", DOMMouseEvent::ShiftKey, DontDelete|ReadOnly, 0, 0 },
+   { "metaKey", DOMMouseEvent::MetaKey, DontDelete|ReadOnly, 0, 0 },
+   { "relatedTarget", DOMMouseEvent::RelatedTarget, DontDelete|ReadOnly, 0, 0 },
+   { "fromElement", DOMMouseEvent::FromElement, DontDelete|ReadOnly, 0, 0 }
 };
 
-const struct HashTable DOMMouseEventTable = { 2, 23, DOMMouseEventTableEntries, 17 };
+const struct HashTable DOMMouseEventTable = { 2, 23, DOMMouseEventTableEntries, 16 };
 
 } // namespace
 

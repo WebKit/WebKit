@@ -183,6 +183,18 @@ EventImpl::EventId EventImpl::typeToId(DOMString type)
 	return MOUSEMOVE_EVENT;
     else if (type == "mouseout")
 	return MOUSEOUT_EVENT;
+    else if (type == "onbeforecut")
+	return BEFORECUT_EVENT;
+    else if (type == "oncut")
+	return CUT_EVENT;
+    else if (type == "onbeforecopy")
+	return BEFORECOPY_EVENT;
+    else if (type == "oncopy")
+	return COPY_EVENT;
+    else if (type == "onbeforepaste")
+	return BEFOREPASTE_EVENT;
+    else if (type == "onpaste")
+	return PASTE_EVENT;
     else if (type == "dragenter")
 	return DRAGENTER_EVENT;
     else if (type == "dragover")
@@ -277,6 +289,18 @@ DOMString EventImpl::idToType(EventImpl::EventId id)
 	    return "mousemove";
 	case MOUSEOUT_EVENT:
 	    return "mouseout";
+        case BEFORECUT_EVENT:
+            return "onbeforecut";
+	case CUT_EVENT:
+            return "oncut";
+	case BEFORECOPY_EVENT:
+            return "onbeforecopy";
+	case COPY_EVENT:
+            return "oncopy";
+	case BEFOREPASTE_EVENT:
+            return "onbeforepaste";
+	case PASTE_EVENT:
+            return "onpaste";
 	case DRAGENTER_EVENT:
             return "dragenter";
 	case DRAGOVER_EVENT:
@@ -382,6 +406,16 @@ bool EventImpl::isMutationEvent() const
 }
 
 bool EventImpl::isKeyboardEvent() const
+{
+    return false;
+}
+
+bool EventImpl::isDragEvent() const
+{
+    return false;
+}
+
+bool EventImpl::isClipboardEvent() const
 {
     return false;
 }
@@ -563,6 +597,14 @@ void MouseEventImpl::initMouseEvent(const DOMString &typeArg,
 bool MouseEventImpl::isMouseEvent() const
 {
     return true;
+}
+
+bool MouseEventImpl::isDragEvent() const
+{
+    return (m_id == EventImpl::DRAGENTER_EVENT || m_id == EventImpl::DRAGOVER_EVENT
+            || m_id == EventImpl::DRAGLEAVE_EVENT || m_id == EventImpl::DROP_EVENT 
+            || m_id == EventImpl::DRAGSTART_EVENT || m_id == EventImpl::DRAG_EVENT
+            || m_id == EventImpl::DRAGEND_EVENT);
 }
 
 //---------------------------------------------------------------------------------------------
@@ -788,6 +830,31 @@ void MutationEventImpl::initMutationEvent(const DOMString &typeArg,
 }
 
 bool MutationEventImpl::isMutationEvent() const
+{
+    return true;
+}
+
+// -----------------------------------------------------------------------------
+
+ClipboardEventImpl::ClipboardEventImpl()
+{
+    m_clipboard = 0;
+}
+
+ClipboardEventImpl::ClipboardEventImpl(EventId _id, bool canBubbleArg, bool cancelableArg, ClipboardImpl *clipboardArg)
+  : EventImpl(_id, canBubbleArg, cancelableArg), m_clipboard(clipboardArg)
+{
+      if (m_clipboard)
+          m_clipboard->ref();
+}
+
+ClipboardEventImpl::~ClipboardEventImpl()
+{
+    if (m_clipboard)
+        m_clipboard->deref();
+}
+
+bool ClipboardEventImpl::isClipboardEvent() const
 {
     return true;
 }
