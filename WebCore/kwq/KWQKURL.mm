@@ -905,7 +905,7 @@ QString KURL::decode_string(const QString &urlString, const QTextCodec *codec)
     int decodedPosition = 0;
     int searchPosition = 0;
     int encodedRunPosition;
-    while ((encodedRunPosition = urlString.find('%', searchPosition)) > 0) {
+    while ((encodedRunPosition = urlString.find('%', searchPosition)) >= 0) {
         // Find the sequence of %-escape codes.
         int encodedRunEnd = encodedRunPosition;
         while (length - encodedRunEnd >= 3

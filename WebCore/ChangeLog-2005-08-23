@@ -1,3 +1,13 @@
+2004-09-11  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	<rdar://problem/3787208> can't log in to SAP SDN site (JS parse error)
+
+        * kwq/KWQKURL.mm:
+        (KURL::decode_string): Check for find result >= 0 instead of >0,
+	to handle case of first character in a string being encoded.
+
 2004-09-09  Chris Blumenberg  <cblu@apple.com>
 
 	Support for: <rdar://problem/3795485> debug menu item to enable RSS animation on first layout
