@@ -1,3 +1,34 @@
+2005-03-15  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Vicki
+
+        Fox for this bug:
+        
+        <rdar://problem/4052642> Each delete keystroke is in its own undo group; not included in undo group with other typing
+
+        Calling -[WebCore setSelectedDOMRange:range affinity:] had the result of "closing" any active set of typing
+        keystrokes grouped together in a single undo operation. My change on 27 Jan to route delete keystrokes 
+        through _deleteRange:killRing:... made this feature regress. Previous to that change, the backwards delete
+        key went through separate code that is no longer in the tree that did not set the selection in the way
+        it is done now.
+        
+        The solution is to add an extra argument to the set-selection call. The WebCoreBridge now offers this method:
+        -[WebCore setSelectedDOMRange:range affinity:closeTyping:]. Now, callers must indicate whether setting the 
+        selection will act to close typing or not. The code changes below all add this new argument with the
+        appropriate value for closeTyping.
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _deleteRange:killRing:prepend:smartDeleteOK:deletionAction:]): Passes NO for closeTyping when
+        deletionAction is deleteKeyAction or forwardDeleteKeyAction; YES when deleteSelectionAction.
+        (-[WebHTMLView _expandSelectionToGranularity:]): Passes YES for closeTyping.
+        (-[WebHTMLView selectToMark:]): Passes YES for closeTyping.
+        (-[WebHTMLView swapWithMark:]): Passes YES for closeTyping.
+        (-[WebHTMLView transpose:]): Passes YES for closeTyping.
+        (-[WebHTMLView _selectMarkedText]): Passes NO for closeTyping.
+        (-[WebHTMLView _selectRangeInMarkedText:]): Passes NO for closeTyping.
+        * WebView.subproj/WebView.m:
+        (-[WebView setSelectedDOMRange:affinity:]): Passes YES for closeTyping.
+
 2005-03-14  Richard Williamson   <rjw@apple.com>
 
 	Fix <rdar://problem/4051389> 8A413: gifs animating too fast

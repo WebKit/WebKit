@@ -516,15 +516,17 @@ void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFrameworkName,
         startNewKillRingSequence = NO;
     }
 
-    [bridge setSelectedDOMRange:range affinity:NSSelectionAffinityDownstream];
     switch (deletionAction) {
         case deleteSelectionAction:
+            [bridge setSelectedDOMRange:range affinity:NSSelectionAffinityDownstream closeTyping:YES];
             [bridge deleteSelectionWithSmartDelete:smartDelete];
             break;
         case deleteKeyAction:
+            [bridge setSelectedDOMRange:range affinity:NSSelectionAffinityDownstream closeTyping:NO];
             [bridge deleteKeyPressedWithSmartDelete:smartDelete];
             break;
         case forwardDeleteKeyAction:
+            [bridge setSelectedDOMRange:range affinity:NSSelectionAffinityDownstream closeTyping:NO];
             [bridge forwardDeleteKeyPressedWithSmartDelete:smartDelete];
             break;
     }
@@ -3525,7 +3527,7 @@ static WebHTMLView *lastHitView = nil;
     if (range && ![range collapsed]) {
         WebView *webView = [self _webView];
         if ([[webView _editingDelegateForwarder] webView:webView shouldChangeSelectedDOMRange:[self _selectedRange] toDOMRange:range affinity:[bridge selectionAffinity] stillSelecting:NO]) {
-            [bridge setSelectedDOMRange:range affinity:[bridge selectionAffinity]];
+            [bridge setSelectedDOMRange:range affinity:[bridge selectionAffinity] closeTyping:YES];
         }
     }
 }
@@ -4528,7 +4530,7 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
     }
     DOMRange *selection = [self _selectedRange];
     @try {
-        [bridge setSelectedDOMRange:unionDOMRanges(mark, selection) affinity:NSSelectionAffinityDownstream];
+        [bridge setSelectedDOMRange:unionDOMRanges(mark, selection) affinity:NSSelectionAffinityDownstream closeTyping:YES];
     } @catch (NSException *exception) {
         NSBeep();
     }
@@ -4544,7 +4546,7 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
     }
     DOMRange *selection = [self _selectedRange];
     @try {
-        [bridge setSelectedDOMRange:mark affinity:NSSelectionAffinityDownstream];
+        [bridge setSelectedDOMRange:mark affinity:NSSelectionAffinityDownstream closeTyping:YES];
     } @catch (NSException *exception) {
         NSBeep();
         return;
@@ -4571,7 +4573,7 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
     if (![[webView _editingDelegateForwarder] webView:webView shouldChangeSelectedDOMRange:[self _selectedRange] toDOMRange:r affinity:NSSelectionAffinityDownstream stillSelecting:NO]) {
         return;
     }
-    [bridge setSelectedDOMRange:r affinity:NSSelectionAffinityDownstream];
+    [bridge setSelectedDOMRange:r affinity:NSSelectionAffinityDownstream closeTyping:YES];
     if ([self _shouldReplaceSelectionWithText:transposed givenAction:WebViewInsertActionTyped]) {
         [bridge replaceSelectionWithText:transposed selectReplacement:NO smartReplace:NO];
     }
@@ -4937,7 +4939,7 @@ static NSArray *validAttributes = nil;
     if ([self hasMarkedText]) {
 	WebBridge *bridge = [self _bridge];
 	DOMRange *markedTextRange = [bridge markedTextDOMRange];
-	[bridge setSelectedDOMRange:markedTextRange affinity:NSSelectionAffinityDownstream];
+	[bridge setSelectedDOMRange:markedTextRange affinity:NSSelectionAffinityDownstream closeTyping:NO];
     }
 }
 
@@ -4957,7 +4959,7 @@ static NSArray *validAttributes = nil;
     [selectedRange setStart:[markedTextRange startContainer] :selectionStart];
     [selectedRange setEnd:[markedTextRange startContainer] :selectionEnd];
 
-    [bridge setSelectedDOMRange:selectedRange affinity:NSSelectionAffinityDownstream];
+    [bridge setSelectedDOMRange:selectedRange affinity:NSSelectionAffinityDownstream closeTyping:NO];
 }
 
 - (void)_extractAttributes:(NSArray **)a ranges:(NSArray **)r fromAttributedString:(NSAttributedString *)string

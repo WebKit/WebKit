@@ -2703,7 +2703,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     // Derive the bridge to use from the range passed in.
     // Using _bridgeForCurrentSelection could give us a different document than
     // the one the range uses.
-    [[[range startContainer] _bridge] setSelectedDOMRange:range affinity:selectionAffinity];
+    [[[range startContainer] _bridge] setSelectedDOMRange:range affinity:selectionAffinity closeTyping:YES];
 }
 
 - (DOMRange *)selectedDOMRange
