@@ -128,6 +128,8 @@ static const char * const stateNames[] = {
 
 - (void)_detachFromParent
 {
+    [_private->bridge closeURL];
+
     [[self children] makeObjectsPerformSelector:@selector(_detachFromParent)];
     
     [_private setController:nil];
@@ -153,7 +155,7 @@ static const char * const stateNames[] = {
     ASSERT(ds != _private->dataSource);
     
     if ([_private->dataSource isDocumentHTML] && ![ds isDocumentHTML]) {
-        [[self _bridge] removeFromFrame];
+        [_private->bridge removeFromFrame];
     }
 
     [[self children] makeObjectsPerformSelector:@selector(_detachFromParent)];
@@ -452,7 +454,7 @@ static const char * const stateNames[] = {
 		// non-HTML content.
 
                 if ([ds isDocumentHTML]) {
-		    [[self _bridge] end];
+		    [_private->bridge end];
 		}
 
                 // Unfortunately we have to get our parent to adjust the frames in this
@@ -752,7 +754,7 @@ static const char * const stateNames[] = {
 
 - (void)_textSizeMultiplierChanged
 {
-    [[self _bridge] setTextSizeMultiplier:[[self controller] textSizeMultiplier]];
+    [_private->bridge setTextSizeMultiplier:[[self controller] textSizeMultiplier]];
     [[self children] makeObjectsPerformSelector:@selector(_textSizeMultiplierChanged)];
 }
 
@@ -791,7 +793,7 @@ static const char * const stateNames[] = {
     [_private->children addObject:child];
 
     child->_private->parent = self;
-    [[child _bridge] setParent:[self _bridge]];
+    [[child _bridge] setParent:_private->bridge];
     [[child dataSource] _setOverrideEncoding:[[self dataSource] _overrideEncoding]];   
 }
 

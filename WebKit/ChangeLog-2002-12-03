@@ -1,3 +1,10 @@
+2002-10-15  Darin Adler  <darin@apple.com>
+
+	Fix problem where timer was lasting after window was closed.
+
+        * WebView.subproj/WebFramePrivate.m: (-[WebFrame _detachFromParent]):
+	Add a call to [_private->bridge closeURL].
+
 2002-10-15  Richard Williamson  <rjw@apple.com>
 
         Added attributed string to pasteboard.  Fixes 3006760.
