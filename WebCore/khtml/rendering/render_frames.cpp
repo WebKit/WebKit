@@ -46,7 +46,7 @@
 #include <qcursor.h>
 
 #include <assert.h>
-
+#include <iostream.h>
 using namespace khtml;
 using namespace DOM;
 
@@ -698,6 +698,21 @@ void RenderPartObject::updateWidget()
 #endif
               return;
           }
+#ifdef APPLE_CHANGES
+          // Fix for 2894742
+          // The EMBED attributes must override the PARAM attributes.
+          // This mimics IE's behavior.
+          NamedAttrMapImpl* attributes = embed->attributes();
+          for (unsigned long index = 0; index < attributes->length(); ++index) {
+              AttributeImpl* attribute = attributes->attributeItem(index);
+              for (unsigned long n = 0; n < params.count(); ++n) {
+                  if(params[n].lower().startsWith(embed->getDocument()->attrName(attribute->id()).string().lower())){
+                      params.remove(params[n]);
+                  }
+              }
+              params.append(embed->getDocument()->attrName(attribute->id()).string() + "=\"" + attribute->value().string() + "\"");
+          }
+#endif
           part->requestObject( this, url, serviceType, params );
       }
   }

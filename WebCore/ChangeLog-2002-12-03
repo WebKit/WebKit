@@ -1,3 +1,11 @@
+2002-06-27  Chris Blumenberg  <cblu@apple.com>
+
+	Added an APPLE_CHANGES to fix 2894742. The attributes of an EMBED tag
+	must override the attributes of PARAM tags.
+
+        * khtml/rendering/render_frames.cpp:
+        (RenderPartObject::updateWidget):
+
 2002-06-27  Darin Adler  <darin@apple.com>
 
 	- fixed 2973342 -- copied text seems to have an extra blank line between paragraphs
