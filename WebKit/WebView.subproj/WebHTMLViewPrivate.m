@@ -83,7 +83,7 @@
 {
     WebView *webView = [self _web_parentWebView];
     WebFrame *webFrame = [[webView _controller] frameForView:webView];
-    return [[webFrame dataSource] _bridge];
+    return [webFrame _bridge];
 }
 
 BOOL _modifierTrackingEnabled = FALSE;

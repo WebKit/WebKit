@@ -27,6 +27,7 @@
 @end
 
 @protocol WebDocumentRepresentation <NSObject>
+- (void)setDataSource:(WebDataSource *)dataSource;
 - (void)receivedData:(NSData *)data withDataSource:(WebDataSource *)dataSource;
 - (void)receivedError:(WebError *)error withDataSource:(WebDataSource *)dataSource;
 - (void)finishedLoadingWithDataSource:(WebDataSource *)dataSource;

@@ -45,6 +45,7 @@ static const char * const stateNames[6] = {
     [dataSource _setController: nil];
     [provisionalDataSource _setController: nil];
 
+    [bridge release];
     [name release];
     [webView release];
     [dataSource release];
@@ -73,7 +74,6 @@ static const char * const stateNames[6] = {
 - (void)setDataSource: (WebDataSource *)d
 {
     if (dataSource != d) {
-        [dataSource _removeFromFrame];
         [dataSource release];
         dataSource = [d retain];
     }
@@ -243,22 +243,10 @@ static const char * const stateNames[6] = {
     switch ([self _state]) {
     	case WebFrameStateProvisional:
         {
-	    // FIXME: allow documentView to be nil for now if webView is,
-	    // to handle the case of the special data source in a just created
-	    // frame. This is temporary, eventually the frame will hang on to
-	    // a bridge without the need for a dummy data source
-            WEBKIT_ASSERT (documentView != nil || [self webView] == nil);
-
-	    if ([[_private->dataSource _bridge] renderPart] != nil) {
-		[[_private->provisionalDataSource _bridge] setRenderPart:[[_private->dataSource _bridge] renderPart]]; 
-	    }
+	    WEBKIT_ASSERT (documentView != nil);
 
             // Set the committed data source on the frame.
             [self _setDataSource: _private->provisionalDataSource];
-
-            // provisionalDataSourceCommitted: will reset the view and begin trying to
-            // display the new new datasource.
-            [documentView provisionalDataSourceCommitted: _private->provisionalDataSource];
 
             // Now that the provisional data source is committed, release it.
             [_private setProvisionalDataSource: nil];
@@ -305,12 +293,11 @@ static const char * const stateNames[6] = {
             }
             
             // Tell the client we've committed this URL.
-            [[[self dataSource] _locationChangeHandler] locationChangeCommittedForDataSource:[self dataSource]];
+	    [[[self controller] locationChangeHandler] locationChangeCommittedForDataSource:[self dataSource]];
             
             // If we have a title let the controller know about it.
             if ([[self dataSource] pageTitle])
-                [[[self dataSource] _locationChangeHandler] receivedPageTitle:[[self dataSource] pageTitle] forDataSource:[self dataSource]];
-
+		[[[self controller] locationChangeHandler] receivedPageTitle:[[self dataSource] pageTitle] forDataSource:[self dataSource]];
             break;
         }
         
@@ -385,7 +372,7 @@ static const char * const stateNames[6] = {
                 if (![pd isLoading]) {
                     WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "%s:  checking complete in WebFrameStateProvisional, load done\n", [[self name] cString]);
 
-                    [[pd _locationChangeHandler] locationChangeDone: [pd mainDocumentError] forDataSource:pd];
+                    [[[self controller] locationChangeHandler] locationChangeDone: [pd mainDocumentError] forDataSource:pd];
 
                     // We now the provisional data source didn't cut the mustard, release it.
                     [_private setProvisionalDataSource: nil];
@@ -408,8 +395,15 @@ static const char * const stateNames[6] = {
                 NSView <WebDocumentView> *thisDocumentView = [thisView documentView];
 
                 [self _setState: WebFrameStateComplete];
-                
-                [[ds _bridge] end];
+
+		// FIXME: need to avoid doing this in the non-HTML
+		// case or the bridge may assert. Should make sure
+		// there is a bridge/part in the proper state even for
+		// non-HTML content.
+
+                if ([ds isDocumentHTML]) {
+		    [[ds _bridge] end];
+		}
 
                 // Unfortunately we have to get our parent to adjust the frames in this
                 // frameset so this frame's geometry is set correctly.  This should
@@ -442,7 +436,7 @@ static const char * const stateNames[6] = {
                 // Jump to anchor point, if necessary.
                 [[ds _bridge] scrollToBaseAnchor];
 
-                [[ds _locationChangeHandler] locationChangeDone: [ds mainDocumentError] forDataSource:ds];
+                [[[self controller] locationChangeHandler] locationChangeDone: [ds mainDocumentError] forDataSource:ds];
  
                 //if ([ds isDocumentHTML])
                 //    [[ds representation] part]->closeURL();        
@@ -505,9 +499,22 @@ static const char * const stateNames[6] = {
     [WebFrame _recursiveCheckCompleteFromFrame: [[self controller] mainFrame]];
 }
 
+- (void)_changeBridge
+{
+    WebBridge *oldBridge = _private->bridge;
+    //[oldBridge removeFromFrame];
+    _private->bridge = [[WebBridge alloc] init];
+    [_private->bridge setFrame:self];
+    if ([oldBridge renderPart] != nil) {
+	[_private->bridge setRenderPart:[oldBridge renderPart]]; 
+    }
+
+    [oldBridge release];
+}
+
 - (WebBridge *)_bridge
 {
-    return [[self dataSource] _bridge];
+    return _private->bridge;
 }
 
 - (BOOL)_shouldShowDataSource:(WebDataSource *)dataSource

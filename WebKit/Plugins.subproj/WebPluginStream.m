@@ -212,6 +212,10 @@ static NSString *getCarbonPath(NSString *posixPath);
 
 #pragma mark WebDocumentRepresentation
 
+- (void)setDataSource:(WebDataSource *)dataSource
+{
+}
+
 - (void)receivedData:(NSData *)data withDataSource:(WebDataSource *)dataSource
 {
     if(isFirstChunk){

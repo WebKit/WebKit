@@ -1,3 +1,72 @@
+2002-07-31  Maciej Stachowiak  <mjs@apple.com>
+
+	Changed things around so that WebFrame, not WebDataSource, owns
+	WebBridge. This allows us to remove the dummy data source.
+	
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame
+	initWithName:webView:provisionalDataSource:controller:]): Remove
+	all dummy data source-related crud, but call _changeBridge to
+	create the initial bridge.
+        (-[WebFrame setProvisionalDataSource:]): Remove dummy data
+	source-related epicycles.
+        * WebView.subproj/WebFramePrivate.h: Add bridge member to private class.
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFramePrivate setDataSource:]): Don't remove old data source from frame,
+	this is no longer needed and may even be harmful.
+        (-[WebFrame _transitionToCommitted]): Remove much now-unneeded code.
+        (-[WebFrame _isLoadComplete]): Get location change handler from controller.
+	Don't call end on the bridge if the document is not html.
+        (-[WebFrame _changeBridge]): Free the old bridge and make a new one.
+        (-[WebFrame _bridge]): Get it directly, not from the data source.
+        
+	* WebView.subproj/WebDataSourcePrivate.h: Remove everything related to the
+	`dummy' concept.
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _setFinalURL:]): Reorder code a bit.
+        (-[WebDataSource _bridge]): Get bridge from frame.
+        (-[WebDataSource _commitIfReady]): No more need to set the bridge's frame.
+        (-[WebDataSource _makeRepresentation]): Set data source on the rep.
+        (-[WebDataSource _startLoading:]): Get location change handler from controller.
+        (-[WebDataSource _setTitle:]): Likewise.
+        (-[WebDataSource receivedPageIcon:]): Likewise.
+        (-[WebDataSource _loadIcon]): Likewise.
+        
+	* WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient
+	WebResourceHandle:dataDidBecomeAvailable:]): Get location change
+	handler from the controller.
+
+        * WebView.subproj/WebViewPrivate.m:
+        (-[WebView _makeDocumentViewForDataSource:]): Change *and* commit
+	the data source. This could probably be collapsed down to one
+	method now.
+
+        * WebView.subproj/WebDocument.h: Added setDataSource: method to
+	the WebDocumentRepresenation protocol. For now it is only useful
+	for the HTML representation, but could potentially be useful for
+	other representation classes. It should also allow the data source
+	to be removed as a parameter from other methods, but I have not
+	done that yet. It may be even better still to pass the data source
+	as a paremeter to the init method.
+
+        * WebView.subproj/WebHTMLRepresentation.m:
+        (-[WebHTMLRepresentation init]): Remove allocation of bridge.
+        (-[WebHTMLRepresentation dealloc]): Remove release of bridge.
+        (-[WebHTMLRepresentation setDataSource:]): Store unretained reference
+	to the data source's frame's bridge.
+        * WebView.subproj/WebHTMLViewPrivate.m:
+        (-[WebHTMLView _bridge]): Fetch the bridge from the frame, not the
+	data source.
+        * WebView.subproj/WebImageRepresentation.m:
+        (-[WebImageRepresentation setDataSource:]): Added empty
+	implementation.
+        * WebView.subproj/WebTextRepresentation.m:
+        (-[WebTextRepresentation setDataSource:]): Added empty
+	implementation.
+        * Plugins.subproj/WebPluginStream.m:
+        (-[WebPluginStream setDataSource:]): Added empty implementation.
+
 2002-07-30  Maciej Stachowiak  <mjs@apple.com>
 
 	Fixes of various bugs that prevented Alexander from running the

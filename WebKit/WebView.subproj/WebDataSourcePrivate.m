@@ -174,7 +174,7 @@
     
     [self _setLoading:YES];
     
-    [[self _locationChangeHandler] locationChangeStartedForDataSource:self];
+    [[_private->controller locationChangeHandler] locationChangeStartedForDataSource:self];
 
     // Fire this guy up.
     [_private->mainHandle loadInBackground];
@@ -276,38 +276,21 @@
     // The title doesn't get communicated to the controller until
     // we reach the committed state for this data source's frame.
     if ([[self webFrame] _state] >= WebFrameStateCommittedPage)
-        [[self _locationChangeHandler] receivedPageTitle:_private->pageTitle forDataSource:self];
+        [[_private->controller locationChangeHandler] receivedPageTitle:_private->pageTitle forDataSource:self];
 }
 
 - (void)_setFinalURL: (NSURL *)url
 {
-    [url retain];
-    [_private->finalURL release];
-    _private->finalURL = url;
-
     // We should never be getting a redirect callback after the data
     // source is committed. It would be a WebFoundation bug if it sent
     // a redirect callback after commit.
     WEBKIT_ASSERT(!_private->committed);
 
-    [[self _locationChangeHandler] serverRedirectTo:url forDataSource:self];
-}
+    [url retain];
+    [_private->finalURL release];
+    _private->finalURL = url;
 
-- (void)_setIsDummy: (BOOL)f
-{
-    _private->_isDummy = f;
-}
-
-- (BOOL)_isDummy
-{
-    return _private->_isDummy;
-}
-
-- (id <WebLocationChangeHandler>)_locationChangeHandler
-{
-    if ([self _isDummy])
-        return nil;
-    return [_private->controller locationChangeHandler];
+    [[_private->controller locationChangeHandler] serverRedirectTo:url forDataSource:self];
 }
 
 - (void) _setContentPolicy:(WebContentPolicy *)policy
@@ -394,18 +377,10 @@
     return [[self _repTypes] _web_objectForMIMEType:MIMEType] != nil;
 }
 
-- (void)_removeFromFrame
-{
-    WEBKIT_ASSERT(_private->committed);
-    [[self _bridge] removeFromFrame];
-    [self _setController:nil];
-}
-
 - (WebBridge *)_bridge
 {
     WEBKIT_ASSERT(_private->committed);
-    id representation = [self representation];
-    return [representation respondsToSelector:@selector(_bridge)] ? [representation _bridge] : nil;
+    return [[self webFrame] _bridge];
 }
 
 - (BOOL)_isCommitted
@@ -419,7 +394,6 @@
         WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "committed resource = %s\n", [[[self inputURL] absoluteString] cString]);
 	_private->committed = TRUE;
 	[self _makeRepresentation];
-	[[self _bridge] setFrame:[self webFrame]];
         [[self webFrame] _transitionToCommitted];
 	[[self _bridge] dataSourceChanged];
     }
@@ -435,6 +409,8 @@
 	[self _setRepresentation:(id <WebDocumentRepresentation>)newRep];
         [newRep release];
     }
+
+    [_private->representation setDataSource:self];
 
     [[[self webFrame] webView] _makeDocumentViewForDataSource:self];
 }
@@ -465,7 +441,7 @@
 
 - (void)receivedPageIcon:(NSImage *)image
 {
-    [[self _locationChangeHandler] receivedPageIcon:image forDataSource:self];
+    [[_private->controller locationChangeHandler] receivedPageIcon:image forDataSource:self];
 }
 
 - (void)_loadIcon
@@ -481,7 +457,7 @@
     
             if([dataSourceURL isFileURL]){
                 NSImage *icon = [[NSWorkspace sharedWorkspace] iconForFile:[dataSourceURL path]];
-                [[self _locationChangeHandler] receivedPageIcon:icon forDataSource:self];
+                [[_private->controller locationChangeHandler] receivedPageIcon:icon forDataSource:self];
             } else {
                 _private->iconURL = [[NSURL _web_URLWithString:@"/favicon.ico" relativeToURL:dataSourceURL] retain];
             }

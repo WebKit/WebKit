@@ -205,7 +205,7 @@
     case WebContentPolicySaveAndOpenExternally:
         if (!downloadHandler) {
             [frame _setProvisionalDataSource:nil];
-            [[dataSource _locationChangeHandler] locationChangeDone:nil forDataSource:dataSource];
+	    [[[dataSource controller] locationChangeHandler] locationChangeDone:nil forDataSource:dataSource];
             downloadHandler = [[WebDownloadHandler alloc] initWithDataSource:dataSource];
         }
         [downloadHandler receivedData:data];
@@ -213,7 +213,7 @@
     case WebContentPolicyIgnore:
         [handle cancelLoadInBackground];
         [frame _setProvisionalDataSource:nil];
-        [[dataSource _locationChangeHandler] locationChangeDone:nil forDataSource:dataSource];
+	[[[dataSource controller] locationChangeHandler] locationChangeDone:nil forDataSource:dataSource];
         break;
     default:
         [NSException raise:NSInvalidArgumentException format:

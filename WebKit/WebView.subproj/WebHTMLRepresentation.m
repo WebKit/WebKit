@@ -8,6 +8,7 @@
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebBridge.h>
 #import <WebKit/WebKitStatisticsPrivate.h>
+#import <WebKit/WebFramePrivate.h>
 
 @interface WebHTMLRepresentationPrivate : NSObject
 {
@@ -26,7 +27,6 @@
     [super init];
     
     _private = [[WebHTMLRepresentationPrivate alloc] init];
-    _private->bridge = [[WebBridge alloc] init];
     
     ++WebHTMLRepresentationCount;
     
@@ -37,7 +37,6 @@
 {
     --WebHTMLRepresentationCount;
     
-    [_private->bridge release];
     [_private release];
 
     [super dealloc];
@@ -47,6 +46,13 @@
 {
     return _private->bridge;
 }
+
+- (void)setDataSource:(WebDataSource *)dataSource
+{
+    [[dataSource webFrame] _changeBridge];
+    _private->bridge = [[dataSource webFrame] _bridge];
+}
+
 
 - (void)receivedData:(NSData *)data withDataSource:(WebDataSource *)dataSource
 {

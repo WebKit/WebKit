@@ -8,6 +8,10 @@
 
 @implementation WebTextRepresentation
 
+- (void)setDataSource:(WebDataSource *)dataSource
+{
+}
+
 - (void)receivedData:(NSData *)data withDataSource:(WebDataSource *)dataSource
 {
 

@@ -31,6 +31,10 @@
     return image;
 }
 
+- (void)setDataSource:(WebDataSource *)dataSource
+{
+}
+
 - (void)receivedData:(NSData *)data withDataSource:(WebDataSource *)dataSource
 {
     //[image incrementalLoadWithBytes:[data bytes] length:[data length] complete:isComplete];

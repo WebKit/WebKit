@@ -75,6 +75,7 @@
     [documentView release];
 
     [[self documentView] provisionalDataSourceChanged:dataSource];
+    [[self documentView] provisionalDataSourceCommitted:dataSource];
 }
 
 - (void)_setController: (WebController *)controller

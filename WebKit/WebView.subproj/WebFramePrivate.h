@@ -52,6 +52,7 @@ typedef enum {
     WebView *webView;
     WebDataSource *dataSource;
     WebDataSource *provisionalDataSource;
+    WebBridge *bridge;
     WebController *controller;
     WebFrameState state;
     NSTimer *scheduledLayoutTimer;
@@ -85,6 +86,7 @@ typedef enum {
 - (void)_isLoadComplete;
 - (void)_checkLoadComplete;
 - (void)_timedLayout: userInfo;
+- (void)_changeBridge;
 - (WebBridge *)_bridge;
 - (BOOL)_shouldShowDataSource:(WebDataSource *)dataSource;
 - (void)_setProvisionalDataSource:(WebDataSource *)d;

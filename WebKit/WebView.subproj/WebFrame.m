@@ -35,38 +35,8 @@
 
     [self setController: c];
 
-    // set a dummy data source so that the main from for a
-    // newly-created empty window has a KHTMLPart. JavaScript
-    // always creates new windows initially empty, and then wants
-    // to use the main frame's part to make the new window load
-    // it's URL, so we need to make sure empty frames have a part.
-    // However, we don't want to do the spinner, so we do this
-    // weird thing:
-    
-    // FIXME: HACK ALERT!!!
-    // We need to keep a shadow part for all frames, even in the case
-    // of a non HTML representation.  This is required khtml
-    // can reference the frame (window.frames, targeting, etc.).
-    
-    WebDataSource *dummyDataSource = [[WebDataSource alloc] initWithURL:nil];
-    [dummyDataSource _setController: [self controller]];
-    [_private setProvisionalDataSource: dummyDataSource];
-    [self _setState: WebFrameStateProvisional];
-     
-    [dummyDataSource _setIsDummy:YES];	// hack on hack!
-    [dummyDataSource _setContentType:@"text/html"];
-    [dummyDataSource _setContentPolicy:[WebContentPolicy webPolicyWithContentAction:WebContentPolicyShow andPath:nil]];
-    [dummyDataSource _receivedData:[NSData data]];
+    [self _changeBridge];
 
-    // We have to do the next two steps manually, because the above
-    // data source won't be hooked up to its frame yet. Fortunately,
-    // this is only needed temporarily...
-
-    [[dummyDataSource _bridge] setFrame:self];
-    [self _transitionToCommitted];
-
-    [dummyDataSource release];
-        
     if (d != nil && [self setProvisionalDataSource: d] == NO){
         [self release];
         return nil;
@@ -158,13 +128,7 @@
         [self stopLoading];
     }
 
-    // May be reset later if this is a back, forward, or refresh.
-    // Hack on hack, get rid of this check when MJS removes the dummy
-    // data source.
-    if ([newDataSource _isDummy])
-       [self _setLoadType: WebFrameLoadTypeUninitialized];
-    else
-       [self _setLoadType: WebFrameLoadTypeStandard];
+    [self _setLoadType: WebFrameLoadTypeStandard];
 
     // _shouldShowDataSource asks the client for the URL policies and reports errors if there are any
     // returns YES if we should show the data source
