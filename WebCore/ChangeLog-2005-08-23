@@ -1,3 +1,23 @@
+2002-12-13  David Hyatt  <hyatt@apple.com>
+
+	Two fixes.  Bugs are 3121024, which had to do with handling
+	escaped characters in the CSS content property, and 
+	bug 3127375 (44854 in bugs.kde.org), which had to do with
+	making sure table cells relayout properly when images load
+	async.
+	
+        Reviewed by darin and john
+
+        * khtml/css/cssparser.cpp:
+        (StyleBaseImpl::parseContent):
+        (StyleBaseImpl::isHexadecimal):
+        * khtml/css/cssparser.h:
+        * khtml/rendering/bidi.cpp:
+        (RenderFlow::layoutInlineChildren):
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::layout):
+        * khtml/rendering/render_flow.h:
+
 2002-12-13  Darin Adler  <darin@apple.com>
 
         Reviewed by Trey.

@@ -2420,14 +2420,38 @@ CSSValueImpl* StyleBaseImpl::parseContent(const QChar *curP, const QChar *endP)
             QString strstr;
             for (int i = 0; i < l; ++i) {
                 if (i < l - 1 && str[i] == '\\') {
-                    if (str[i+1] == 'a')
-                        strstr += '\n';
-                    else
-                        strstr += str[i+1];
-                    ++i;
-                    continue;
+                    QChar nextChar = str[i+1];
+                    if (nextChar == '\n')
+                        i++;
+                    else if ( nextChar == '\r' ) {
+                        i++;
+                        if ( str[i+1] == '\n' )       
+                            i++;
+                    }
+                    else if ( isHexadecimal( nextChar ) ) 
+                    {                            
+                        int initial=i;                            
+                        QString hex;                            
+                        bool ok;                            
+                        while ( i-initial<6 && i<l-1 && isHexadecimal( nextChar ) ) {                                							hex += nextChar;                                
+                            i++;                                
+                            nextChar = str[i+1];                            
+                        }                               
+                            
+                        strstr += QChar( hex.toInt(&ok, 16) );                            
+                        
+                        if ( i<l-1 && nextChar.isSpace() ) {                                
+                            i++;                                
+                            if ( nextChar == '\r' && str[i+1] == '\n' )                                   										i++;
+                        }
+                    }                        
+                    else {                            
+                        ++i;                            
+                        strstr += nextChar;                
+                    }
                 }
-                strstr += str[i];
+                else if (str[i] != '\'' && str[i] != '"')
+                    strstr += str[i];
             }
             parsedValue = new CSSPrimitiveValueImpl(DOMString(strstr), CSSPrimitiveValue::CSS_STRING);
         }
@@ -2441,6 +2465,10 @@ CSSValueImpl* StyleBaseImpl::parseContent(const QChar *curP, const QChar *endP)
     return values;
 }
 
+bool StyleBaseImpl::isHexadecimal( const QChar &c )
+{
+    return ( c >= '0' && c <= '9' ) || ( c >= 'a' && c <= 'f' ) || ( c >= 'A' && c <= 'F' );
+}
 
 QPtrList<QChar> StyleBaseImpl::splitShorthandProperties(const QChar *curP, const QChar *endP)
 {

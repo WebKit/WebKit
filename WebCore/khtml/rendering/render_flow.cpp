@@ -315,7 +315,7 @@ void RenderFlow::layout()
     if(childrenInline()) {
         // ### make bidi resumeable so that we can get rid of this ugly hack
         if (!m_blockBidi)
-            layoutInlineChildren();
+            layoutInlineChildren( relayoutChildren );
     }
     else
         layoutBlockChildren( relayoutChildren );

@@ -167,6 +167,7 @@ public:
 	void setParsedValue(int propId, const CSSValueImpl *parsedValue);
 	void setParsedValue(int propId, const CSSValueImpl *parsedValue,
 			    bool important, bool nonCSSHint, QPtrList<CSSProperty> *propList);
+    bool isHexadecimal( const QChar &c );
 	QPtrList<QChar> splitShorthandProperties(const QChar *curP, const QChar *endP);
 	bool parseBackgroundPosition(const QChar *curP, const QChar *&nextP, const QChar *endP);
 
