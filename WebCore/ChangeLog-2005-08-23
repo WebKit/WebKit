@@ -1,3 +1,14 @@
+2004-09-23  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	<rdar://problem/3685235> REGRESSION (Mail): links are not properly editable
+        
+	* khtml/html/html_inlineimpl.cpp:
+        (HTMLAnchorElementImpl::isFocusable): If this element is editable, then follow
+	the normal focus rules so the link does not swallow focus when you arrow key
+	or drag-select into it.
+
 2004-09-23  Darin Adler  <darin@apple.com>
 
         - added test for the DOM::Range bug fixed recently

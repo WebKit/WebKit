@@ -55,6 +55,9 @@ HTMLAnchorElementImpl::~HTMLAnchorElementImpl()
 
 bool HTMLAnchorElementImpl::isFocusable() const
 {
+    if (isContentEditable())
+        return HTMLElementImpl::isFocusable();
+
     // FIXME: Even if we are not visible, we might have a child that is visible.
     // Dave wants to fix that some day with a "has visible content" flag or the like.
     if (!(m_hasAnchor && m_render && m_render->style()->visibility() == VISIBLE))
