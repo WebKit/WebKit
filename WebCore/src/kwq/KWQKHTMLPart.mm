@@ -634,7 +634,7 @@ void KHTMLPart::write(const char *str, int len)
 #ifdef _KWQ_TIMING        
     double thisTime = CFAbsoluteTimeGetCurrent() - start;
     totalWriteTime += thisTime;
-    KWQDEBUGLEVEL3 (0x200, "tokenize/parse length = %e, milliseconds = %e, total = %e\n", len, thisTime, totalWriteTime);
+    KWQDEBUGLEVEL3 (0x200, "tokenize/parse length = %d, milliseconds = %e, total = %e\n", len, thisTime, totalWriteTime);
 #endif
 }
 

@@ -277,6 +277,7 @@ void KHTMLView::resizeEvent (QResizeEvent* e)
     KApplication::sendPostedEvents(viewport(), QEvent::Paint);
 }
 
+#ifdef KWQ_RENDER_TREE_DEBUG
 static void printLevel(int level){
     while (level--)
         printf ("    ");
@@ -293,7 +294,7 @@ static void printRenderTree(RenderObject *node, int level)
         child = child->nextSibling();
     }
 }
-
+#endif
 
 
 void KHTMLView::drawContents( QPainter *p, int ex, int ey, int ew, int eh )
@@ -311,7 +312,7 @@ void KHTMLView::drawContents( QPainter *p, int ex, int ey, int ew, int eh )
     if (doc){
         ro = doc->renderer();
         if (ro){
-#ifdef RENDER_TREE_DEBUG
+#ifdef KWQ_RENDER_TREE_DEBUG
                 printRenderTree (ro, 0);
 #endif
             ro->print(p, ex, ey, ew, eh, 0, 0);
