@@ -353,7 +353,7 @@ NSSize WebIconMediumSize = {32, 32};
     if([[[fileURL path] pathExtension] rangeOfString:@"htm"].length > 0){
         if(!_private->htmlIcons){
             icon = [workspace iconForFileType:@"html"];
-            _private->htmlIcons = [NSMutableArray arrayWithObject:icon];
+            _private->htmlIcons = [[NSMutableArray arrayWithObject:icon] retain];
         }
         return [self _cachedIconFromArray:_private->htmlIcons withSize:size];
     }else{
