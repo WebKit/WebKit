@@ -84,8 +84,13 @@
 
 - (void)cancel
 {
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
+    NSString *path = [dataSource downloadPath];
+    
     [fileHandle closeFile];
-    // FIXME: Do something to mark it as resumable?
+    [fileManager removeFileAtPath:path handler:nil];
+    [workspace noteFileSystemChanged:path];
 }
 
 

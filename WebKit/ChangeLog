@@ -1,3 +1,10 @@
+2002-06-25  Chris Blumenberg  <cblu@apple.com>
+
+	Remove downloaded file if cancelled.
+
+        * Misc.subproj/IFDownloadHandler.mm:
+        (-[IFDownloadHandler cancel]):
+
 2002-06-25  Richard Williamson  <rjw@apple.com>
 
         Support for rudimentary plain text 'copy'.
