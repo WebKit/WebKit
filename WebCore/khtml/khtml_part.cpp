@@ -91,6 +91,10 @@ using namespace DOM;
 
 #include "khtmlpart_p.h"
 
+#ifdef APPLE_CHANGES
+#include <CoreServices/CoreServices.h>
+#endif
+
 namespace khtml {
     class PartStyleSheetLoader : public CachedObjectClient
     {
@@ -4056,6 +4060,52 @@ static bool startAndEndLineNodesIncludingNode (DOM::NodeImpl *node, int offset, 
     }
     return false;
 }
+
+static void findWordBoundary(QChar *chars, int len, int position, int *start, int *end){
+    OSStatus status, findStatus = 0;
+    TextBreakLocatorRef breakLocator;
+    
+    status = UCCreateTextBreakLocator (NULL, 0, kUCTextBreakWordMask, &breakLocator);
+    if (status == 0){
+        findStatus = UCFindTextBreak (breakLocator,  kUCTextBreakWordMask, NULL, (const UniChar *)chars, (UniCharCount)len, (UniCharArrayOffset)position, (UniCharArrayOffset *)end);
+        findStatus |= UCFindTextBreak (breakLocator,  kUCTextBreakWordMask, kUCTextBreakGoBackwardsMask,  (const UniChar *)chars, (UniCharCount)len, (UniCharArrayOffset)position, (UniCharArrayOffset *)start);
+        UCDisposeTextBreakLocator (&breakLocator);
+    }
+    
+    // If carbon fails do a simple space/punctuation boundary check.
+    if (findStatus){
+        if (chars[position].isSpace()){
+            int pos = position;
+            while (chars[pos].isSpace() && pos >= 0)
+                pos--;
+            *start = pos+1;
+            pos = position;
+            while (chars[pos].isSpace() && pos < (int)len)
+                pos++;
+            *end = pos;
+        }
+        else if (chars[position].isPunct()){
+            int pos = position;
+            while (chars[pos].isPunct() && pos >= 0)
+                pos--;
+            *start = pos+1;
+            pos = position;
+            while (chars[pos].isPunct() && pos < (int)len)
+                pos++;
+            *end = pos;
+        }
+        else {
+            int pos = position;
+            while (!chars[pos].isSpace() && !chars[pos].isPunct() && pos >= 0)
+                pos--;
+            *start = pos+1;
+            pos = position;
+            while (!chars[pos].isSpace() && !chars[pos].isPunct() && pos < (int)len)
+                pos++;
+            *end = pos;
+        }
+    }
+}
 #endif
 
 void KHTMLPart::khtmlMousePressEvent( khtml::MousePressEvent *event )
@@ -4098,7 +4148,7 @@ void KHTMLPart::khtmlMousePressEvent( khtml::MousePressEvent *event )
                 int startOffset = 0, endOffset = 0;
                 DOM::NodeImpl* node = 0;
                 
-                innerNode.handle()->renderer()->checkSelectionPoint( event->x(), event->y(),
+                innerNode.handle()->renderer()->checkSelectionPoint( event,
                                             event->absX()-innerNode.handle()->renderer()->xPos(),
                                             event->absY()-innerNode.handle()->renderer()->yPos(), 
                                             node, startOffset);
@@ -4107,27 +4157,9 @@ void KHTMLPart::khtmlMousePressEvent( khtml::MousePressEvent *event )
                     DOMString t = node->nodeValue();
                     QChar *chars = t.unicode();
                     uint len = t.length();
-                    
-                    if (chars[startOffset] == ' '){
-                        int pos = startOffset;
-                        while (chars[pos].isSpace() && pos >= 0)
-                            pos--;
-                        startOffset = pos+1;
-                        pos = startOffset;
-                        while (chars[pos].isSpace() && pos < (int)len)
-                            pos++;
-                        endOffset = pos;
-                    }
-                    else {
-                        int pos = startOffset;
-                        while (!chars[pos].isSpace() && pos >= 0)
-                            pos--;
-                        startOffset = pos+1;
-                        pos = startOffset;
-                        while (!chars[pos].isSpace() && pos < (int)len)
-                            pos++;
-                        endOffset = pos;
-                    }
+
+                    findWordBoundary (chars, len, startOffset, &startOffset, &endOffset);
+
                     d->m_startBeforeEnd = true;
                     d->m_selectionStart = node;
                     d->m_startOffset = startOffset;
@@ -4164,7 +4196,7 @@ void KHTMLPart::khtmlMousePressEvent( khtml::MousePressEvent *event )
                 int startOffset = 0;
                 DOM::NodeImpl* node = 0;
                 
-                innerNode.handle()->renderer()->checkSelectionPoint( event->x(), event->y(),
+                innerNode.handle()->renderer()->checkSelectionPoint( event,
                                             event->absX()-innerNode.handle()->renderer()->xPos(),
                                             event->absY()-innerNode.handle()->renderer()->yPos(), 
                                             node, startOffset);
@@ -4194,7 +4226,8 @@ void KHTMLPart::khtmlMousePressEvent( khtml::MousePressEvent *event )
             if ( !innerNode.isNull()  && innerNode.handle()->renderer()) {
                 int offset = 0;
                 DOM::NodeImpl* node = 0;
-                innerNode.handle()->renderer()->checkSelectionPoint( event->x(), event->y(),
+
+                innerNode.handle()->renderer()->checkSelectionPoint( event,
                                                                     event->absX()-innerNode.handle()->renderer()->xPos(),
                                                                     event->absY()-innerNode.handle()->renderer()->yPos(), node, offset);
                 
@@ -4348,7 +4381,7 @@ void KHTMLPart::khtmlMouseMoveEvent( khtml::MouseMoveEvent *event )
         //              << " nodeAbsX=" << event->nodeAbsX() << " nodeAbsY=" << event->nodeAbsY()
         //              << endl;
         DOM::NodeImpl* node=0;
-        innerNode.handle()->renderer()->checkSelectionPoint( event->x(), event->y(),
+        innerNode.handle()->renderer()->checkSelectionPoint( event,
                                                             event->absX()-innerNode.handle()->renderer()->xPos(),
                                                             event->absY()-innerNode.handle()->renderer()->yPos(), node, offset);
         //        if (d->m_selectionEnd.handle() && d->m_selectionEnd.handle()->renderer())
@@ -4378,22 +4411,36 @@ void KHTMLPart::khtmlMouseMoveEvent( khtml::MouseMoveEvent *event )
         }
 #if APPLE_CHANGES
         if ( d->m_selectionInitiatedWithDoubleClick){
+            int wordStartOffset = offset, wordEndOffset = offset;
+            
+            if (node && (node->nodeType() == Node::TEXT_NODE || node->nodeType() == Node::CDATA_SECTION_NODE)){
+                DOMString t = node->nodeValue();
+                QChar *chars = t.unicode();
+                uint len = t.length();
+
+                findWordBoundary (chars, len, offset, &wordStartOffset, &wordEndOffset);
+            }
             if (d->m_startBeforeEnd) {
                 if (node == d->m_initialSelectionStart.handle() && node == d->m_initialSelectionEnd.handle()){
-                    d->m_startOffset = MIN(d->m_initialSelectionStartOffset, offset);
-                    offset = MAX(d->m_initialSelectionEndOffset, offset);
+                    d->m_selectionStart = d->m_initialSelectionStart;
+                    d->m_startOffset = MIN(d->m_initialSelectionStartOffset, wordStartOffset);
+                    wordEndOffset = MAX(d->m_initialSelectionEndOffset, wordEndOffset);
+                    d->m_selectionEnd = node;
+                    d->m_endOffset = wordEndOffset;
                 }
                 else {
                     d->m_selectionStart = d->m_initialSelectionStart;
                     d->m_startOffset = d->m_initialSelectionStartOffset;
+                    d->m_selectionEnd = node;
+                    d->m_endOffset = wordEndOffset;
                 }
             }
             else {
                 d->m_selectionStart = d->m_initialSelectionEnd;
                 d->m_startOffset = d->m_initialSelectionEndOffset;
+                d->m_selectionEnd = node;
+                d->m_endOffset = wordStartOffset;
             }
-            d->m_selectionEnd = node;
-            d->m_endOffset = offset;
         }
         else if (d->m_selectionInitiatedWithTripleClick ){
             DOM::Node lineStart, lineEnd;

@@ -1,3 +1,28 @@
+2002-12-13  Richard Williamson   <rjw@apple.com>
+    
+        Fixed 3127310 and 3127920.
+
+        Implemented findWordBoundary.  We now correctly detect word boundaries.
+        This function makes use of carbon unicode utilities.
+        
+        With help from hyatt, made selection correctly account for render 
+        continuations.  This fixes many of the 'unable to select' issues.
+        
+        Reviewed by trey and hyatt.
+
+        * khtml/khtml_events.cpp:
+        (khtml::MouseEvent::offset):
+        * khtml/khtml_part.cpp:
+        (findWordBoundary):
+        (KHTMLPart::khtmlMousePressEvent):
+        (KHTMLPart::khtmlMouseMoveEvent):
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::checkSelectionPoint):
+        * khtml/rendering/render_object.h:
+        * khtml/rendering/render_text.cpp:
+        (RenderText::checkSelectionPoint):
+        * khtml/rendering/render_text.h:
+
 2002-12-13  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Don.
