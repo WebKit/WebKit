@@ -95,6 +95,8 @@ extern NSString *_WebMainFrameURLKey;
     void *observationInfo;
     
     NSArray *draggedTypes;
+    
+    BOOL drawsBackground;
 }
 @end
 
@@ -105,6 +107,9 @@ extern NSString *_WebMainFrameURLKey;
 - (BOOL)isLoading;
 - (NSString *)mainFrameTitle;
 - (NSImage *)mainFrameIcon;
+
+- (void)setDrawsBackground:(BOOL)drawsBackround;
+- (BOOL)drawsBackground;
 
 @end
 

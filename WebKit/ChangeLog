@@ -1,3 +1,33 @@
+2004-04-09  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - added "transparent mode"
+
+        * WebView.subproj/WebFrameInternal.h: Added. Contains _updateDrawsBackground.
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame _makeDocumentView]): Call _updateDrawsBackground to tell the newly created
+        KHTMLView whether to draw a background or not.
+        (-[WebFrame _setState:]): Don't tell the scroll view to start drawing background if the
+        WebView is not supposed to draw a background.
+        (-[WebFrame _updateDrawsBackground]): Call setDrawsBackground: on the bridge, and do the
+        same for all subframes.
+
+        * WebView.subproj/WebFrameView.m: (-[WebFrameView setFrameSize:]): Only call setDrawsBackground:YES
+        on the scroll view if the WebView has drawsBackground set to YES.
+
+        * WebView.subproj/WebViewPrivate.h: Added new proposed API, setDrawsBackground and drawsBackground.
+        Also added drawsBackground boolean to private structure.
+        * WebView.subproj/WebView.m:
+        (-[WebView _commonInitializationWithFrameName:groupName:]): Set drawsBackground to YES by default.
+        (-[WebView setDrawsBackground:]): Added. Sets boolean and calls _updateDrawsBackground to update
+        the flag for each frame.
+        (-[WebView drawsBackground]): Added. Returns value of boolean.
+        (-[WebView _bridgeForCurrentSelection]): Tweaked comment for no good reason.
+
+        * WebView.subproj/WebViewInternal.h: Added, but empty for the moment.
+        * WebView.subproj/WebFramePrivate.h: Tweaked a bit.
+
 2004-04-08  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed:

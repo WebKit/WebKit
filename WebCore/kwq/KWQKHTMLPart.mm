@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -867,8 +867,17 @@ void KWQKHTMLPart::redirectionTimerStartedOrStopped()
 void KWQKHTMLPart::paint(QPainter *p, const QRect &rect)
 {
 #ifndef NDEBUG
-    bool isPrinting = (p->device()->devType() == QInternal::Printer);
-    if (!isPrinting && xmlDocImpl() && !xmlDocImpl()->ownerElement()) {
+    bool fillWithRed;
+    if (p->device()->devType() == QInternal::Printer)
+        fillWithRed = false; // Printing, don't fill with red (can't remember why).
+    else if (!xmlDocImpl() || xmlDocImpl()->ownerElement())
+        fillWithRed = false; // Subframe, don't fill with red.
+    else if (view() && view()->isTransparent())
+        fillWithRed = false; // Transparent, don't fill with red.
+    else
+        fillWithRed = true;
+
+    if (fillWithRed) {
         p->fillRect(rect.x(), rect.y(), rect.width(), rect.height(), QColor(0xFF, 0, 0));
     }
 #endif

@@ -3,7 +3,7 @@
         Copyright (c) 2001, Apple, Inc. All rights reserved.
 */
 
-#import <WebKit/WebFramePrivate.h>
+#import <WebKit/WebFrameInternal.h>
 
 #import <WebKit/DOM.h>
 #import <WebKit/WebArchive.h>
@@ -29,7 +29,7 @@
 #import <WebKit/WebPreferencesPrivate.h>
 #import <WebKit/WebPlugin.h>
 #import <WebKit/WebResourcePrivate.h>
-#import <WebKit/WebViewPrivate.h>
+#import <WebKit/WebViewInternal.h>
 #import <WebKit/WebUIDelegate.h>
 
 #import <Foundation/NSDictionary_NSURLExtras.h>
@@ -686,6 +686,7 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
     // FIXME: We could save work and not do this for a top-level view that is not a WebHTMLView.
     WebFrameView *v = _private->webFrameView;
     [_private->bridge createKHTMLViewWithNSView:documentView marginWidth:[v _marginWidth] marginHeight:[v _marginHeight]];
+    [self _updateDrawsBackground];
     [_private->bridge installInFrame:[v _scrollView]];
 
     // Call setDataSource on the document view after it has been placed in the view hierarchy.
@@ -978,7 +979,8 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     
     if (_private->state == WebFrameStateComplete) {
         NSScrollView *sv = [[self frameView] _scrollView];
-        [sv setDrawsBackground:YES];
+        if ([[self webView] drawsBackground])
+            [sv setDrawsBackground:YES];
         NSTimer *timer = _private->scheduledLayoutTimer;
         _private->scheduledLayoutTimer = nil;
         [_private setPreviousItem:nil];
@@ -2445,7 +2447,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     return [_private->bridge bodyBackgroundColor];
 }
 
-- (void)_reloadForPluginChanges;
+- (void)_reloadForPluginChanges
 {
     NSView <WebDocumentView> *documentView = [[self frameView] documentView];
     if ([documentView isKindOfClass:[WebNetscapePluginDocumentView class]]) {
@@ -2464,7 +2466,16 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     } else {
         [[self childFrames] makeObjectsPerformSelector:@selector(_reloadForPluginChanges)];
     }
+}
 
+@end
+
+@implementation WebFrame (WebInternal)
+
+- (void)_updateDrawsBackground
+{
+    [[self _bridge] setDrawsBackground:[[self webView] drawsBackground]];
+    [_private->children makeObjectsPerformSelector:@selector(_updateDrawsBackground)];
 }
 
 @end

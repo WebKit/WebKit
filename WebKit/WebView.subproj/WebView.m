@@ -3,7 +3,7 @@
     Copyright 2001, 2002 Apple, Inc. All rights reserved.
 */
 
-#import <WebKit/WebViewPrivate.h>
+#import <WebKit/WebViewInternal.h>
 
 #import <WebKit/WebAssertions.h>
 #import <WebKit/WebBackForwardList.h>
@@ -23,7 +23,7 @@
 #import <WebKit/WebDownload.h>
 #import <WebKit/WebException.h>
 #import <WebKit/WebFormDelegatePrivate.h>
-#import <WebKit/WebFramePrivate.h>
+#import <WebKit/WebFrameInternal.h>
 #import <WebKit/WebFrameViewPrivate.h>
 #import <WebKit/WebHistoryItemPrivate.h>
 #import <WebKit/WebHTMLView.h>
@@ -1152,6 +1152,8 @@ NSMutableDictionary *countInvocations;
 
 - (void)_commonInitializationWithFrameName:(NSString *)frameName groupName:(NSString *)groupName
 {
+    _private->drawsBackground = YES;
+
     NSRect f = [self frame];
     WebFrameView *wv = [[WebFrameView alloc] initWithFrame: NSMakeRect(0,0,f.size.width,f.size.height)];
     [wv setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
@@ -1746,7 +1748,6 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 
 @end
 
-
 @implementation WebView (WebIBActions)
 
 - (IBAction)takeStringURLFrom: sender
@@ -1901,6 +1902,19 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     return [[WebIconDatabase sharedIconDatabase] iconForURL:[[[[self mainFrame] dataSource] _URL] _web_originalDataAsString] withSize:WebIconSmallSize];
 }
 
+- (void)setDrawsBackground:(BOOL)drawsBackground
+{
+    if (_private->drawsBackground == drawsBackground)
+        return;
+    _private->drawsBackground = drawsBackground;
+    [[self mainFrame] _updateDrawsBackground];
+}
+
+- (BOOL)drawsBackground
+{
+    return _private->drawsBackground;
+}
+
 @end
 
 @implementation WebView (WebViewPrintingPrivate)
@@ -2027,7 +2041,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 
 - (WebBridge *)_bridgeForCurrentSelection
 {
-    // FIXME: This does not deal properly with subframes
+    // FIXME: This needs to be changed to deal properly with subframes.
     return [[self mainFrame] _bridge];
 }
 

@@ -6,6 +6,10 @@
         Private header file.
 */
 
+// This header contains the WebFrame SPI.
+
+// But it also contains a bunch of internal stuff that should be moved to WebFrameInternal.h
+
 #import <WebKit/WebFrame.h>
 #import <WebKit/WebPolicyDelegatePrivate.h>
 

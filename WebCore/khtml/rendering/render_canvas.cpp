@@ -2,7 +2,7 @@
  * This file is part of the HTML widget for KDE.
  *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2003 Apple Computer, Inc.
+ * Copyright (C) 2004 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -244,7 +244,7 @@ void RenderCanvas::paintBoxDecorations(PaintInfo& i, int _tx, int _ty)
     // This code typically only executes if the root element's visibility has been set to hidden.
     // Only fill with a base color (e.g., white) if we're the root document, since iframes/frames with
     // no background in the child document should show the parent's background.
-    if (elt)
+    if (elt || view()->isTransparent())
         view()->useSlowRepaints(); // The parent must show behind the child.
     else
         i.p->fillRect(i.r.x(), i.r.y(), i.r.width(), i.r.height(), 

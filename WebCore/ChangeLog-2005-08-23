@@ -1,3 +1,29 @@
+2004-04-09  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - added "transparent mode"
+
+        * khtml/khtmlview.h: Added isTransparent and setTransparent functions.
+        * khtml/khtmlview.cpp:
+        (KHTMLViewPrivate::KHTMLViewPrivate): Initialize isTransparent to false.
+        (KHTMLView::isTransparent): Return isTransparent.
+        (KHTMLView::setTransparent): Set isTransparent.
+
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::paintRootBoxDecorations): Use slow repaints for the top frame when the view
+        is transparent; also don't draw a background. This is the same thing we do for subframes.
+        (RenderBox::paintBackgroundExtended): Don't do the extra draw so we can blend with the
+        background color for the top frame when the view is transparent.
+        * khtml/rendering/render_canvas.cpp: (RenderCanvas::paintBoxDecorations): More of the same.
+
+        * kwq/KWQKHTMLPart.mm: (KWQKHTMLPart::paint): Make "fill with red" debug mode work only
+        when the view is not transparent.
+
+        * kwq/WebCoreBridge.h: Added setDrawsBackground: method.
+        * kwq/WebCoreBridge.mm: (-[WebCoreBridge setDrawsBackground:]): If told NO
+        (don't draw background), then set isTransparent to true on the KHTMLView.
+
 2004-04-09  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by me

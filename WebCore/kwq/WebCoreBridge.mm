@@ -1378,4 +1378,10 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     TypingCommand::deleteKeyPressed(_part->xmlDocImpl());
 }
 
+- (void)setDrawsBackground:(BOOL)drawsBackground
+{
+    if (_part && _part->view())
+        _part->view()->setTransparent(!drawsBackground);
+}
+
 @end

@@ -5,7 +5,7 @@
              (C) 1998, 1999 Torben Weis (weis@kde.org)
              (C) 1999 Lars Knoll (knoll@kde.org)
              (C) 1999 Antti Koivisto (koivisto@kde.org)
-   Copyright (C) 2003 Apple Computer, Inc.
+   Copyright (C) 2004 Apple Computer, Inc.
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -205,6 +205,9 @@ public:
     void timerEvent ( QTimerEvent * );
 
     void repaintRectangle(const QRect& r, bool immediate);
+
+    bool isTransparent() const;
+    void setTransparent(bool isTransparent);
     
 #if APPLE_CHANGES
     QWidget *topLevelWidget() const;

@@ -4,7 +4,7 @@
  *                     1999 Lars Knoll <knoll@kde.org>
  *                     1999 Antti Koivisto <koivisto@kde.org>
  *                     2000 Dirk Mueller <mueller@kde.org>
- * Copyright (C) 2003 Apple Computer, Inc.
+ * Copyright (C) 2004 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -108,6 +108,7 @@ public:
         mousePressed = false;
         tooltip = 0;
         doFullRepaint = true;
+        isTransparent = false;
 #if APPLE_CHANGES
         vmode = hmode = QScrollView::Auto;
         firstLayout = true;
@@ -208,6 +209,7 @@ public:
     bool needToInitScrollBars;
 #endif
     bool mousePressed;
+    bool isTransparent;
     KHTMLToolTip *tooltip;
     
     // Used by objects during layout to communicate repaints that need to take place only
@@ -1845,5 +1847,15 @@ void KHTMLView::complete()
         killTimer(d->layoutTimerId);
         d->layoutTimerId = startTimer( 0 );
     }
+}
+
+bool KHTMLView::isTransparent() const
+{
+    return d->isTransparent;
+}
+
+void KHTMLView::setTransparent(bool isTransparent)
+{
+    d->isTransparent = isTransparent;
 }
 

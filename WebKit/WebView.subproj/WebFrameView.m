@@ -536,7 +536,7 @@ static NSMutableDictionary *viewTypes;
 
 - (void)setFrameSize:(NSSize)size
 {
-    if (!NSEqualSizes(size, [self frame].size)) {
+    if (!NSEqualSizes(size, [self frame].size) && [[[self webFrame] webView] drawsBackground]) {
         [[self _scrollView] setDrawsBackground:YES];
     }
     [super setFrameSize:size];
