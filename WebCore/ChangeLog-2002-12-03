@@ -1,3 +1,13 @@
+2002-03-30  Darin Adler  <darin@apple.com>
+
+	* src/kwq/KWQKURL.mm: (copyAndReplaceAll), (needToHideColons): New
+        functions used in workaround for CFURL bug.
+	(KURL::normalizeRelativeURLString): Add workaround for CFURL bug; hide colons
+        that would confuse CFURL from the CFURL code.
+
+	* src/kwq/KWQFont.mm: (QFont::getFont): Use lossyCString instead of cString for
+        debugging messages.
+        
 2002-03-30  Maciej Stachowiak  <mjs@apple.com>
 
 	* src/Makefile.am: Link against JavaScriptCore.framework instead

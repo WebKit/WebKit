@@ -161,7 +161,7 @@ NSFont *QFont::getFont()
         NSString *fontKey;
 #ifdef DEBUG_GETFONT
         getFontCount++;
-        fprintf (stdout, "getFountCount = %d, family = %s, traits = 0x%08x, size = %f\n", getFontCount, [_family cString], _trait, _size);
+        fprintf (stdout, "getFountCount = %d, family = %s, traits = 0x%08x, size = %f\n", getFontCount, [_family lossyCString], _trait, _size);
 #endif
         if (fontCache == nil){
             fontCache = [[NSMutableDictionary alloc] init];
@@ -175,21 +175,21 @@ NSFont *QFont::getFont()
                     _availableFamiles = [[[NSFontManager sharedFontManager] availableFontFamilies] retain];
                     
                 // FIXME:  For now do a simple case insensitive search for a matching font.
-                // The font manager requires exact name matches.  The will at least address the problem
+                // The font manager requires exact name matches.  This will at least address the problem
                 // of matching arial to Arial, etc.
                 int i, count = [_availableFamiles count];
                 NSString *actualFamily;
-                for (i = 0; i < count; i++){
+                for (i = 0; i < count; i++) {
                     actualFamily = [_availableFamiles objectAtIndex: i];
-                    if ([_family caseInsensitiveCompare: actualFamily] == NSOrderedSame){
+                    if ([_family caseInsensitiveCompare: actualFamily] == NSOrderedSame) {
                         [_family release];
                         _family = [actualFamily retain];
                         font = [[NSFontManager sharedFontManager] fontWithFamily:_family traits:_trait weight:5 size:_size];
                         break;
                     }
                 }
-                if (font == nil){
-                    KWQDEBUGLEVEL1(KWQ_LOG_FONTCACHE, "unable to find font for family %s\n", [_family cString]);
+                if (font == nil) {
+                    KWQDEBUGLEVEL1(KWQ_LOG_FONTCACHE, "unable to find font for family %s\n", [_family lossyCString]);
                     loadDefaultFont();
                     font = [[NSFontManager sharedFontManager] fontWithFamily:defaultFontFamilyName traits:_trait weight:5 size:_size];
                 }
