@@ -112,13 +112,10 @@ Position RenderBR::positionForCoordinates(int _x, int _y)
     return Position(element(), 0);
 }
 
-QRect RenderBR::caretRect(int offset, bool override, int *extraWidthToEndOfLine)
+QRect RenderBR::caretRect(int offset, bool override)
 {
     // EDIT FIXME: This does not work yet. Some other changes are need before
     // an accurate position can be determined.
-
-    if (extraWidthToEndOfLine)
-        *extraWidthToEndOfLine = containingBlockWidth();
 
     int absx, absy;
     absolutePosition(absx,absy);

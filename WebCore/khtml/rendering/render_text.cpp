@@ -650,7 +650,7 @@ Position RenderText::positionForCoordinates(int _x, int _y)
     return Position(element(), 0);
 }
 
-QRect RenderText::caretRect(int offset, bool override, int *extraWidthToEndOfLine)
+QRect RenderText::caretRect(int offset, bool override)
 {
     if (!firstTextBox() || stringLength() == 0) {
         return QRect(-1, -1, 1, -1);
@@ -682,11 +682,6 @@ QRect RenderText::caretRect(int offset, bool override, int *extraWidthToEndOfLin
     if (pos)
         _x += fm.rightBearing(*(str->s + box->m_start + offset));
 #endif
-
-    // FIXME: should we use the width of the root inline box or the
-    // width of the containing block for this?
-    if (extraWidthToEndOfLine)
-        *extraWidthToEndOfLine = (box->root()->width() + box->root()->xPos()) - (_x + 1);
 
     int absx, absy;
     absolutePosition(absx,absy);

@@ -1,3 +1,25 @@
+2004-09-09  Maciej Stachowiak  <mjs@apple.com>
+
+        - roll out the last change, it appears to cause a performance regression
+
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::caretRect):
+        * khtml/rendering/render_box.h:
+        * khtml/rendering/render_br.cpp:
+        (RenderBR::caretRect):
+        * khtml/rendering/render_br.h:
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::caretRect):
+        * khtml/rendering/render_flow.h:
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::caretRect):
+        * khtml/rendering/render_object.h:
+        * khtml/rendering/render_text.cpp:
+        (RenderText::caretRect):
+        * khtml/rendering/render_text.h:
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+
 2004-09-08  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Dave.
