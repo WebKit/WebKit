@@ -1,3 +1,11 @@
+2002-11-05  John Sullivan  <sullivan@apple.com>
+
+	- fixed 3091271 -- missing plug-in icon is on white
+	background, not transparent.
+
+        * Resources/nullplugin.tiff: Photoshopped the white away. It's
+	still ugly, but that's a separate bug (3091274)
+
 2002-11-05  Maciej Stachowiak  <mjs@apple.com>
 
 	- fixed 3083732 - SJ: window comes out blank on samsung site
