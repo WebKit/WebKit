@@ -2240,6 +2240,28 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 //==========================================================================================
 // Editing
 
+@interface ElementOrTextFilter : NSObject <DOMNodeFilter>
++ (ElementOrTextFilter *)filter;
+@end
+
+static ElementOrTextFilter *elementOrTextFilterInstance = nil;
+
+@implementation ElementOrTextFilter
+
++ (ElementOrTextFilter *)filter 
+{
+    if (!elementOrTextFilterInstance)
+        elementOrTextFilterInstance = [[ElementOrTextFilter alloc] init];
+    return elementOrTextFilterInstance;
+}
+
+- (short)acceptNode:(DOMNode *)n
+{
+    return ([n isKindOfClass:[DOMElement class]] || [n isKindOfClass:[DOMText class]]) ? DOM_FILTER_ACCEPT : DOM_FILTER_SKIP;
+}
+
+@end
+
 @implementation WebView (WebViewCSS)
 
 - (DOMCSSStyleDeclaration *)computedStyleForElement:(DOMElement *)element pseudoElement:(NSString *)pseudoElement
@@ -2281,19 +2303,6 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 }
 
 // FIXME: Move to WebHTMLView.
-static NSFont *_fontFromStyle(DOMCSSStyleDeclaration *style)
-{
-    // FIXME: can't get at CSS_PROP_FONT_FAMILY and such from cssproperties.h in WebCore
-    // because that header file isn't available to WebKit. Is that a problem?
-    // FIXME: calling [DOMCSSStyleDeclaration fontFamily] doesn't work yet, returns nil.
-    // FIXME: calling [DOMCSSStyleDeclaration fontSize] doesn't work yet, returns nil.
-    // FIXME: is there SPI/API for converting a fontSize string into a numeric value?
-    // FIXME: calling [DOMCSSStyleDeclaration font] doesn't work yet, fails WebCore assertion
-    //ERROR("unimplemented");
-    return nil;
-}
-
-// FIXME: Move to WebHTMLView.
 - (void)_updateFontPanel
 {
     // FIXME: NSTextView bails out if becoming or resigning first responder, for which it has ivar flags. Not
@@ -2310,55 +2319,38 @@ static NSFont *_fontFromStyle(DOMCSSStyleDeclaration *style)
     }
     
     BOOL onlyOneFontInSelection = YES;
-    DOMCSSStyleDeclaration *style = nil;
     NSFont *font = nil;
+    WebBridge *bridge = [self _bridgeForCurrentSelection];
     
-    if (![[self _bridgeForCurrentSelection] haveSelection]) {
-        style = [self typingStyle];
-        font = _fontFromStyle(style);
-        // FIXME: We're currently thinking that typingStyle will always specify a font, but we need to
-        // make sure that it's implemented that way when it is implemented.
-    } else {
-        // FIXME: This code is being reached after backspacing with only an insertion
-        // point showing; this must be a bug in haveSelection or underlying code.
+    if (![bridge haveSelection]) {
+        font = [bridge fontForCurrentPosition];
+    } 
+    else {
         DOMRange *selection = [self selectedDOMRange];
+        DOMNode *startContainer = [selection startContainer];
+        DOMNode *endContainer = [selection endContainer];
         
-        DOMNode *firstSelectedElement = [selection startContainer];
-        while (firstSelectedElement != nil && ![firstSelectedElement isKindOfClass:[DOMElement class]]) {
-            firstSelectedElement = [firstSelectedElement parentNode];
-        }
-        ASSERT([firstSelectedElement isKindOfClass:[DOMElement class]]);
+        ASSERT(startContainer);
+        ASSERT(endContainer);
+        ASSERT([[ElementOrTextFilter filter] acceptNode:startContainer] == DOM_FILTER_ACCEPT);
+        ASSERT([[ElementOrTextFilter filter] acceptNode:endContainer] == DOM_FILTER_ACCEPT);
         
-        font = [[self _bridgeForCurrentSelection] renderedFontForNode:firstSelectedElement];
-        style = [self computedStyleForElement:(DOMElement *)firstSelectedElement pseudoElement:nil];
+        font = [bridge renderedFontForNode:startContainer];
         
-        // Iterate through all selected elements to see if fonts or attributes change.
-        if ([selection startContainer] != [selection endContainer]) {
-            DOMNode *lastSelectedElement = [selection endContainer];
-            while (lastSelectedElement != nil && ![lastSelectedElement isKindOfClass:[DOMElement class]]) {
-                lastSelectedElement = [lastSelectedElement parentNode];
-            }
-            ASSERT([lastSelectedElement isKindOfClass:[DOMElement class]]);
-            
-            // FIXME: The "&& NO" prevents createNodeIterator from being called, which is nice because
-            // it's not actually defined yet.
-            if (lastSelectedElement != firstSelectedElement && NO) {
-                DOMNodeIterator *iterator = [[[selection startContainer] ownerDocument]
-                    createNodeIterator:firstSelectedElement :DOM_SHOW_ELEMENT :nil :NO];
-                DOMNode *element = [iterator nextNode];
-                ASSERT(element == firstSelectedElement);
-                
-                for (; element != lastSelectedElement; element = [iterator nextNode]) {
-                    ASSERT([element isKindOfClass:[DOMElement class]]);
-                    
-                    NSFont *otherFont = [[self _bridgeForCurrentSelection] renderedFontForNode:element];
-                    if (![font isEqual:otherFont]) {
-                        onlyOneFontInSelection = NO;
-                        break;
-                    }
+        if (startContainer != endContainer) {
+            DOMDocument *document = [bridge DOMDocument];
+            DOMTreeWalker *treeWalker = [document createTreeWalker:document :DOM_SHOW_ALL :[ElementOrTextFilter filter] :NO];
+            DOMNode *node = startContainer;
+            [treeWalker setCurrentNode:node];
+            while (node) {
+                NSFont *otherFont = [bridge renderedFontForNode:node];
+                if (![font isEqual:otherFont]) {
+                    onlyOneFontInSelection = NO;
+                    break;
                 }
-                
-                // Since our iterator is autoreleased, we needn't call [iterator detach]
+                if (node == endContainer)
+                    break;
+                node = [treeWalker nextNode];
             }
         }
     }

@@ -397,6 +397,12 @@ Range Selection::toRange() const
     if (isEmpty())
         return Range();
 
+    // Make sure we have an updated layout since this function is called
+    // in the course of running edit commands which modify the DOM.
+    // Failing to call this can result in equivalentXXXPosition calls returning
+    // incorrect results.
+    start().node()->getDocument()->updateLayout();
+
     Position s, e;
     if (state() == CARET) {
         // If the selection is a caret, move the range start upstream. This helps us match
@@ -418,8 +424,8 @@ Range Selection::toRange() const
         //                       ^ selected
         //
         ASSERT(state() == RANGE);
-        s = start().equivalentDownstreamPosition().equivalentRangeCompliantPosition();
-        e = end().equivalentUpstreamPosition().equivalentRangeCompliantPosition();
+        s = start().equivalentDownstreamPosition();
+        e = end().equivalentUpstreamPosition();
         if ((s.node() == e.node() && s.offset() > e.offset()) || !nodeIsBeforeNode(s.node(), e.node())) {
             // Make sure the start is before the end.
             // The end can wind up before the start if collapsed whitespace is the only thing selected.
@@ -427,8 +433,9 @@ Range Selection::toRange() const
             s = e;
             e = tmp;
         }
+        s = s.equivalentRangeCompliantPosition();
+        e = e.equivalentRangeCompliantPosition();
     }
-    ASSERT((s.node() == e.node() && s.offset() <= e.offset()) || nodeIsBeforeNode(s.node(), e.node()));
 
     return Range(Node(s.node()), s.offset(), Node(e.node()), e.offset());
 }

@@ -1,3 +1,21 @@
+2004-05-27  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+        The font panel now updates correctly, reflecting the current selection. There may
+        still be some bugs and corner cases to handle, but this will work for a general
+        implementation of the feature.
+
+        * WebView.subproj/WebView.m:
+        (+[ElementOrTextFilter filter]): Added. This filter will accept DOM elements and
+        text nodes and skip everything else. This filter is used when walking a selection
+        to determine the fonts in use.
+        (-[ElementOrTextFilter acceptNode:]): DOM node filter implementation method.
+        (-[WebView _fontFromStyle]): Removed, in lieu of new fontForCurrentPosition call on the bridge.
+        (-[WebView _updateFontPanel]): Reworked to use a TreeWalker instead of a NodeIterator. This
+        was done since the iterator must be rooted at the document root, but start iterating 
+        at the start of the selection. TreeWalker's setCurrentNode allows this to be done.
+
 2004-05-27  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by NOBODY (OOPS!).

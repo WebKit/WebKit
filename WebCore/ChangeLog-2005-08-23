@@ -1,3 +1,15 @@
+2004-05-27  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+        * khtml/xml/dom_selection.cpp:
+        (DOM::Selection::toRange): Add call to update document layout before returning a Range.
+        This is done to ensure recently-done editing changes are reflected in the calculation
+        of the Range. This change solves a specific problem with updating the font panel, where
+        the wrong Range was used, resulting in an incorrect font. Also, defer converting 
+        positions to be range-compliant positions. The nodeIsBeforeNode function is not 
+        range-compliant-position-savvy.
+
 2004-05-27  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by NOBODY (OOPS!).
