@@ -1,3 +1,12 @@
+2004-12-06  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fixed <rdar://problem/3906327> Select All of a large document is slow (>15 secs on my machine for attached specimen)
+
+        * kwq/KWQScrollView.mm: (QScrollView::updateContents): Intersect with visibleRect before calling through
+        to NSView to dirty; NSView could also be more efficient in this case (I filed 3906343).
+
 2004-12-06  John Sullivan  <sullivan@apple.com>
 
         Darin found what appears to be the real leak that we were falsely blaming

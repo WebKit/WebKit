@@ -351,15 +351,23 @@ void QScrollView::updateContents(int x, int y, int w, int h, bool now)
 void QScrollView::updateContents(const QRect &rect, bool now)
 {
     KWQ_BLOCK_EXCEPTIONS;
-    NSView * view = getView();
+
+    NSView *view = getView();
 
     if ([view _KWQ_isScrollView])
         view = getDocumentView();
 
-    if (now)
-        [view displayRect: rect];
-    else
-        [view setNeedsDisplayInRect:rect];
+    // Checking for rect visibility is an important optimization for the case of
+    // Select All of a large document. AppKit does not do this check, and so ends
+    // up building a large complicated NSRegion if we don't perform the check.
+    NSRect dirtyRect = NSIntersectionRect(rect, [view visibleRect]);
+    if (!NSIsEmptyRect(dirtyRect)) {
+        if (now)
+            [view displayRect:dirtyRect];
+        else
+            [view setNeedsDisplayInRect:dirtyRect];
+    }
+
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 
