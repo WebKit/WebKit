@@ -1,3 +1,17 @@
+2004-07-26  Richard Williamson   <rjw@apple.com>
+
+        Fixed 3739737.  When setting the focus to a NSView, set the focus
+        carbon focus to kControlIndicatorPart.  kControlIndicatorPart is a
+        placeholder value for use to indicate that Cocoa has the focus.  
+	
+        Reviewed by Ken.
+
+        * Carbon.subproj/CarbonWindowAdapter.m:
+        (-[CarbonWindowAdapter makeFirstResponder:]):
+        * Carbon.subproj/HIWebView.m:
+        (Click):
+        (SetFocusPart):
+
 2004-07-26  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3689734> dragging to an editable WebView does not scroll document

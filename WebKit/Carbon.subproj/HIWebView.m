@@ -480,7 +480,6 @@ Click( HIWebView* inView, EventRef inEvent )
 {
 	CGSEventRecord			eventRec;
 	NSEvent*				kitEvent;
-	ControlRef				focus;
 //	NSView*					targ;
 	EventRef				newEvent;
 	Point					where;
@@ -510,14 +509,6 @@ Click( HIWebView* inView, EventRef inEvent )
 	SetEventParameter( newEvent, kEventParamKeyModifiers, typeUInt32, sizeof( UInt32 ), &modifiers );
 	
 	kitEvent = [[NSEvent alloc] _initWithCGSEvent:(CGSEventRecord)eventRec eventRef:(void *)newEvent];
-
-	// Grab the keyboard focus
-	// еее FIX: Need to switch to a real part code, not focusnextpart. Have to handle
-	//			subviews properly as well.
-
-	GetKeyboardFocus( GetWindowRef( inView ), &focus );
-	if ( focus != inView->fViewRef )
-		SetKeyboardFocus( GetWindowRef( inView ), inView->fViewRef, kControlFocusNextPart );
 
 //	targ = [[inView->fKitWindow _borderView] hitTest:[kitEvent locationInWindow]];
 
@@ -981,9 +972,11 @@ SetFocusPart(
 	else
 	{
 		// What's this?
-		check(false);
+                if (desiredFocus != kControlIndicatorPart) {
+                    check(false);
+                }
 		freshlyMadeFirstResponderView = nil;
-		partCodeToReturn = kControlFocusNoPart;
+		partCodeToReturn = desiredFocus;
     }
 
 	view->fFirstResponder = freshlyMadeFirstResponderView;
