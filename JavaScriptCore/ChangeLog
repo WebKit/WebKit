@@ -1,5 +1,27 @@
 2003-12-15  Richard Williamson   <rjw@apple.com>
 
+	Fixed a couple of snafus and removed some logging.
+
+        Reviewed by Maciej.
+
+        * bindings/jni_jsobject.cpp:
+        (Bindings::performJavaScriptAccess):
+        (Bindings::completedJavaScriptAccess):
+        (Bindings::dispatchToJavaScriptThread):
+	Removed some annoying JS_LOG clutter.
+
+        (Bindings::RootObject::removeAllJavaReferencesForRoot):
+	Fixed allocation of key buffer that was called after it was needed.
+
+        (Bindings::JSObject::invoke):
+        (Bindings::JSObject::JSObject):
+        (Bindings::JSObject::getMember):
+        (Bindings::JSObject::getSlot):
+	Added additional interpreter locks around getMember and getSlot. 
+	These functions may cause allocation of JS impls.  
+
+2003-12-15  Richard Williamson   <rjw@apple.com>
+
 	args weren't passed to 'call' invocation.  d'oh.
 	lock interpreter when we create instances of JS impls.	
 
