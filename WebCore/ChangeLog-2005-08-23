@@ -1,5 +1,9 @@
 2004-11-30  Chris Blumenberg  <cblu@apple.com>
 
+        * ChangeLog: removed conflict marker
+
+2004-11-30  Chris Blumenberg  <cblu@apple.com>
+
 	Fixed:
 	<rdar://problem/3685766> WebDataSource is missing subresources when they use cached WebCore data
 	<rdar://problem/3722434> REGRESSION?: Assertion failure trying to drag image in iframe (itapema.sc.gov.br)
@@ -50,7 +54,6 @@
 
         Reviewed by John.
 
->>>>>>> 1.3551
 	- fix recent regression from collection perf fixes.
 	
         * khtml/html/html_miscimpl.cpp:
