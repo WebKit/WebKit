@@ -30,6 +30,7 @@
 #import <WebKit/WebResourceLoadDelegate.h>
 #import <WebKit/WebTextView.h>
 #import <WebKit/WebTextRepresentation.h>
+#import <WebKit/WebTextRenderer.h>
 #import <WebKit/WebViewPrivate.h>
 #import <WebKit/WebUIDelegate.h>
 
@@ -138,8 +139,13 @@ NSString *_WebMainFrameURLKey = @"mainFrameURL";
 
 @end
 
-
 @implementation WebView (WebPrivate)
+
++ (void)_setAlwaysUseATSU:(BOOL)f
+{
+    [WebTextRenderer _setAlwaysUseATSU:f];
+}
+
 
 + (BOOL)canShowFile:(NSString *)path
 {
@@ -757,10 +763,12 @@ NSString *_WebMainFrameURLKey = @"mainFrameURL";
 }
 
 - (void)_progressCompleted:(WebFrame *)frame
-{
-    ASSERT (_private->numProgressTrackedFrames > 0);
-    
+{    
     LOG (Progress, "frame %p(%@), _private->numProgressTrackedFrames %d, _private->orginatingProgressFrame %p", frame, [frame name], _private->numProgressTrackedFrames, _private->orginatingProgressFrame);
+
+    if (_private->numProgressTrackedFrames <= 0)
+        return;
+
     [self _willChangeValueForKey: @"estimatedProgress"];
 
     _private->numProgressTrackedFrames--;
@@ -776,6 +784,11 @@ NSString *_WebMainFrameURLKey = @"mainFrameURL";
     if (!con)
         return;
 
+    LOG (Progress, "_private->numProgressTrackedFrames %d, _private->orginatingProgressFrame %p", _private->numProgressTrackedFrames, _private->orginatingProgressFrame);
+    
+    if (_private->numProgressTrackedFrames <= 0)
+        return;
+        
     WebProgressItem *item = [[WebProgressItem alloc] init];
 
     if (!item)

@@ -1,3 +1,33 @@
+2003-10-20  Richard Williamson   <rjw@apple.com>
+
+	Fixed 3456103.  Don't assert, just check for inappropriate state.
+	Reviewed by Hyatt
+
+	Add a debug menu item to always use ATSU text drawing.  This will be helpful
+	to the ATSU folks in performance tuning there API.  Right now I see approx.
+	2X slowdown using ATSU.
+
+	Also did some shuffling around of inline related stuff.
+
+      	Reviewed by Chris.
+
+        * WebCoreSupport.subproj/WebTextRenderer.h:
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (isControlCharacter):
+        (isAlternateSpace):
+        (isSpace):
+        (getUncachedWidth):
+        (widthFromMap):
+        (widthForGlyph):
+        (+[WebTextRenderer _setAlwaysUseATSU:]):
+        (glyphForCharacter):
+        (glyphForUnicodeCharacter):
+        (shouldUseATSU):
+        * WebView.subproj/WebView.m:
+        (+[WebView _setAlwaysUseATSU:]):
+        (-[WebView _progressCompleted:]):
+        * WebView.subproj/WebViewPrivate.h:
+
 2003-10-19  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3442218>: crash due to infinite recursion trying to load standalone plug-in content

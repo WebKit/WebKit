@@ -22,6 +22,39 @@
 
 #import <float.h>
 
+// Macros
+#define SPACE 0x0020
+
+#define ROUND_TO_INT(x) (unsigned)((x)+.5)
+
+// Lose precision beyond 1000ths place. This is to work around an apparent
+// bug in CoreGraphics where there seem to be small errors to some metrics.
+#define CEIL_TO_INT(x) ((int)(x + 0.999)) /* ((int)(x + 1.0 - FLT_EPSILON)) */
+
+// MAX_GLYPH_EXPANSION is the maximum numbers of glyphs that may be
+// use to represent a single unicode code point.
+#define MAX_GLYPH_EXPANSION 4
+#define LOCAL_BUFFER_SIZE 2048
+
+// Covers Latin1.
+#define INITIAL_BLOCK_SIZE 0x200
+
+// Get additional blocks of glyphs and widths in bigger chunks.
+// This will typically be for other character sets.
+#define INCREMENTAL_BLOCK_SIZE 0x400
+
+#define UNINITIALIZED_GLYPH_WIDTH 65535
+
+// combining char, hangul jamo, or Apple corporate variant tag
+#define JunseongStart 0x1160
+#define JonseongEnd 0x11F9
+#define IsHangulConjoiningJamo(X) (X >= JunseongStart && X <= JonseongEnd)
+#define IsNonBaseChar(X) ((CFCharacterSetIsCharacterMember(nonBaseChars, X) || IsHangulConjoiningJamo(X) || (((X) & 0x1FFFF0) == 0xF870)))
+
+#define ATSFontRefFromNSFont(font) (FMGetATSFontRefFromFont((FMFont)[font _atsFontID]))
+
+#define SMALLCAPS_FONTSIZE_MULTIPLIER 0.7
+#define INVALID_WIDTH -(__FLT_MAX__)
 
 // Datatypes
 typedef float WebGlyphWidth;
@@ -78,80 +111,6 @@ struct CharacterWidthIterator
 };
 
 
-// Character property functions.
-static inline BOOL isControlCharacter(UniChar c);
-static inline BOOL isAlternateSpace(UniChar c);
-static inline BOOL isSpace(UniChar c);
-static inline UniChar toUpper(UniChar c);
-static inline BOOL isUpper(UniChar c);
-
-
-// Map utility functions
-static void freeWidthMap (WidthMap *map);
-static void freeGlyphMap (GlyphMap *map);
-static inline ATSGlyphRef glyphForUnicodeCharacter (UnicodeGlyphMap *map, UnicodeChar c, NSFont **font);
-static inline SubstituteFontWidthMap *mapForSubstituteFont(WebTextRenderer *renderer, NSFont *font);
-static inline ATSGlyphRef glyphForCharacter (GlyphMap *map, UniChar c, NSFont **font);
-static inline SubstituteFontWidthMap *mapForSubstituteFont(WebTextRenderer *renderer, NSFont *font);
-static inline WebGlyphWidth widthFromMap (WebTextRenderer *renderer, WidthMap *map, ATSGlyphRef glyph, NSFont *font);
-static inline WebGlyphWidth widthForGlyph (WebTextRenderer *renderer, ATSGlyphRef glyph, NSFont *font);
-
-
-// Iterator functions
-static void initializeCharacterWidthIterator (CharacterWidthIterator *iterator, WebTextRenderer *renderer, const WebCoreTextRun *run , const WebCoreTextStyle *style);
-static float widthForNextCharacter (CharacterWidthIterator *iterator, ATSGlyphRef *glyphUsed, NSFont **fontUsed);
-
-
-// Misc.
-static BOOL fillStyleWithAttributes(ATSUStyle style, NSFont *theFont);
-#ifdef NEED_FINDLENGTHOFCHARACTERCLUSTER
-static unsigned findLengthOfCharacterCluster(const UniChar *characters, unsigned length);
-#endif
-static inline BOOL fontContainsString (NSFont *font, NSString *string);
-static inline BOOL shouldUseATSU(const WebCoreTextRun *run);
-static NSString *pathFromFont (NSFont *font);
-
-
-// Globals
-static CFCharacterSetRef nonBaseChars = NULL;
-static BOOL bufferTextDrawing = NO;
-static NSString *WebFallbackFontFamily = nil;
-
-
-// Macros
-#define SPACE 0x0020
-
-#define ROUND_TO_INT(x) (unsigned)((x)+.5)
-
-// Lose precision beyond 1000ths place. This is to work around an apparent
-// bug in CoreGraphics where there seem to be small errors to some metrics.
-#define CEIL_TO_INT(x) ((int)(x + 0.999)) /* ((int)(x + 1.0 - FLT_EPSILON)) */
-
-// MAX_GLYPH_EXPANSION is the maximum numbers of glyphs that may be
-// use to represent a single unicode code point.
-#define MAX_GLYPH_EXPANSION 4
-#define LOCAL_BUFFER_SIZE 2048
-
-// Covers Latin1.
-#define INITIAL_BLOCK_SIZE 0x200
-
-// Get additional blocks of glyphs and widths in bigger chunks.
-// This will typically be for other character sets.
-#define INCREMENTAL_BLOCK_SIZE 0x400
-
-#define UNINITIALIZED_GLYPH_WIDTH 65535
-
-// combining char, hangul jamo, or Apple corporate variant tag
-#define JunseongStart 0x1160
-#define JonseongEnd 0x11F9
-#define IsHangulConjoiningJamo(X) (X >= JunseongStart && X <= JonseongEnd)
-#define IsNonBaseChar(X) ((CFCharacterSetIsCharacterMember(nonBaseChars, X) || IsHangulConjoiningJamo(X) || (((X) & 0x1FFFF0) == 0xF870)))
-
-#define ATSFontRefFromNSFont(font) (FMGetATSFontRefFromFont((FMFont)[font _atsFontID]))
-
-#define SMALLCAPS_FONTSIZE_MULTIPLIER 0.7
-#define INVALID_WIDTH -(__FLT_MAX__)
-
 // SPI from other frameworks.
 @interface NSLanguage : NSObject 
 {}
@@ -169,6 +128,7 @@ static NSString *WebFallbackFontFamily = nil;
 - (BOOL)_isSystemFont;
 - (BOOL)_isFakeFixedPitch;
 @end
+
 
 // Internal API
 @interface WebTextRenderer (WebInternal)
@@ -207,6 +167,125 @@ static NSString *WebFallbackFontFamily = nil;
 - (NSFont *)_smallCapsFont;
 
 @end
+
+
+// Character property functions.
+static inline BOOL isControlCharacter(UniChar c);
+static inline BOOL isAlternateSpace(UniChar c);
+static inline BOOL isSpace(UniChar c);
+static inline UniChar toUpper(UniChar c);
+static inline BOOL isUpper(UniChar c);
+
+static inline BOOL isControlCharacter(UniChar c)
+{
+    return c < 0x0020 || c == 0x007F;
+}
+
+static inline BOOL isAlternateSpace(UniChar c)
+{
+    return c == '\n' || c == 0xA0;
+}
+
+static inline BOOL isSpace(UniChar c)
+{
+    return c == SPACE || isAlternateSpace(c);
+}
+
+
+// Map utility functions
+static void freeWidthMap (WidthMap *map);
+static void freeGlyphMap (GlyphMap *map);
+static inline ATSGlyphRef glyphForUnicodeCharacter (UnicodeGlyphMap *map, UnicodeChar c, NSFont **font);
+static inline SubstituteFontWidthMap *mapForSubstituteFont(WebTextRenderer *renderer, NSFont *font);
+static inline ATSGlyphRef glyphForCharacter (GlyphMap *map, UniChar c, NSFont **font);
+static inline SubstituteFontWidthMap *mapForSubstituteFont(WebTextRenderer *renderer, NSFont *font);
+static inline WebGlyphWidth widthFromMap (WebTextRenderer *renderer, WidthMap *map, ATSGlyphRef glyph, NSFont *font);
+static inline WebGlyphWidth widthForGlyph (WebTextRenderer *renderer, ATSGlyphRef glyph, NSFont *font);
+
+static WebGlyphWidth getUncachedWidth(WebTextRenderer *renderer, WidthMap *map, ATSGlyphRef glyph, NSFont *font)
+{
+    WebGlyphWidth width;
+    BOOL errorResult;
+
+    if (font)
+        errorResult = CGFontGetGlyphScaledAdvances ([font _backingCGSFont], &glyph, 1, &width, [font pointSize]);
+    else
+        errorResult = CGFontGetGlyphScaledAdvances ([renderer->font _backingCGSFont], &glyph, 1, &width, [renderer->font pointSize]);
+    if (errorResult == 0)
+        FATAL_ALWAYS ("Unable to cache glyph widths for %@ %f",  [renderer->font displayName], [renderer->font pointSize]);
+
+    // Hack to ensure that characters that match the width of the space character
+    // have the same integer width as the space character.  This is necessary so
+    // glyphs in fixed pitch fonts all have the same integer width.  We can't depend
+    // on the fixed pitch property of NSFont because that isn't set for all
+    // monospaced fonts, in particular Courier!  This has the downside of inappropriately
+    // adjusting the widths of characters in non-monospaced fonts that are coincidentally
+    // the same width as a space in that font.  In practice this is not an issue as the
+    // adjustment is always as the sub-pixel level.
+    if (width == renderer->spaceWidth)
+        return renderer->ceiledSpaceWidth;
+
+    return width;
+}
+
+static inline WebGlyphWidth widthFromMap (WebTextRenderer *renderer, WidthMap *map, ATSGlyphRef glyph, NSFont *font)
+{
+    WebGlyphWidth width = UNINITIALIZED_GLYPH_WIDTH;
+    
+    while (1){
+        if (map == 0)
+            map = [renderer _extendGlyphToWidthMapToInclude: glyph font:font];
+
+        if (glyph >= map->startRange && glyph <= map->endRange){
+            width = map->widths[glyph - map->startRange].width;
+            if (width == UNINITIALIZED_GLYPH_WIDTH){
+                width = getUncachedWidth (renderer, map, glyph, font);
+                map->widths[glyph - map->startRange].width = width;
+            }
+        }
+        else {
+            map = map->next;
+            continue;
+        }
+        
+        return width;
+    }
+    // never get here.
+    return 0;
+}    
+
+static inline WebGlyphWidth widthForGlyph (WebTextRenderer *renderer, ATSGlyphRef glyph, NSFont *font)
+{
+    WidthMap *map;
+
+    if (font && font != renderer->font)
+        map = mapForSubstituteFont(renderer, font)->map;
+    else
+        map = renderer->glyphToWidthMap;
+
+    return widthFromMap (renderer, map, glyph, font);
+}
+
+// Iterator functions
+static void initializeCharacterWidthIterator (CharacterWidthIterator *iterator, WebTextRenderer *renderer, const WebCoreTextRun *run , const WebCoreTextStyle *style);
+static float widthForNextCharacter (CharacterWidthIterator *iterator, ATSGlyphRef *glyphUsed, NSFont **fontUsed);
+
+
+// Misc.
+static BOOL fillStyleWithAttributes(ATSUStyle style, NSFont *theFont);
+#ifdef NEED_FINDLENGTHOFCHARACTERCLUSTER
+static unsigned findLengthOfCharacterCluster(const UniChar *characters, unsigned length);
+#endif
+static inline BOOL fontContainsString (NSFont *font, NSString *string);
+static inline BOOL shouldUseATSU(const WebCoreTextRun *run);
+static NSString *pathFromFont (NSFont *font);
+
+
+// Globals
+static CFCharacterSetRef nonBaseChars = NULL;
+static BOOL bufferTextDrawing = NO;
+static NSString *WebFallbackFontFamily = nil;
+static BOOL alwaysUseATSU = NO;
 
 
 @implementation WebTextRenderer
@@ -487,6 +566,11 @@ static NSString *WebFallbackFontFamily = nil;
 
 
 @implementation WebTextRenderer (WebInternal)
+
++ (void)_setAlwaysUseATSU:(BOOL)f
+{
+    alwaysUseATSU = f;
+}
 
 - (void)_setIsSmallCapsRenderer:(BOOL)flag
 {
@@ -1552,12 +1636,14 @@ static inline ATSGlyphRef glyphForCharacter (GlyphMap *map, UniChar c, NSFont **
     if (map == 0)
         return nonGlyphID;
         
-    if (c >= map->startRange && c <= map->endRange){
-        *font = map->glyphs[c-map->startRange].font;
-        return map->glyphs[c-map->startRange].glyph;
+    while (map) {
+        if (c >= map->startRange && c <= map->endRange){
+            *font = map->glyphs[c-map->startRange].font;
+            return map->glyphs[c-map->startRange].glyph;
+        }
+        map = map->next;
     }
-        
-    return glyphForCharacter (map->next, c, font);
+    return nonGlyphID;
 }
  
  
@@ -1566,12 +1652,14 @@ static inline ATSGlyphRef glyphForUnicodeCharacter (UnicodeGlyphMap *map, Unicod
     if (map == 0)
         return nonGlyphID;
         
-    if (c >= map->startRange && c <= map->endRange){
-        *font = map->glyphs[c-map->startRange].font;
-        return map->glyphs[c-map->startRange].glyph;
+    while (map) {
+        if (c >= map->startRange && c <= map->endRange){
+            *font = map->glyphs[c-map->startRange].font;
+            return map->glyphs[c-map->startRange].glyph;
+        }
+        map = map->next;
     }
-        
-    return glyphForUnicodeCharacter (map->next, c, font);
+    return nonGlyphID;
 }
  
 
@@ -1600,72 +1688,6 @@ static inline SubstituteFontWidthMap *mapForSubstituteFont(WebTextRenderer *rend
     renderer->substituteFontWidthMaps[renderer->numSubstituteFontWidthMaps].font = font;
     return &renderer->substituteFontWidthMaps[renderer->numSubstituteFontWidthMaps++];
 }
-
-static inline WebGlyphWidth widthFromMap (WebTextRenderer *renderer, WidthMap *map, ATSGlyphRef glyph, NSFont *font)
-{
-    WebGlyphWidth width = UNINITIALIZED_GLYPH_WIDTH;
-    BOOL errorResult;
-    
-    while (1){
-        if (map == 0)
-            map = [renderer _extendGlyphToWidthMapToInclude: glyph font:font];
-
-        if (glyph >= map->startRange && glyph <= map->endRange){
-            width = map->widths[glyph-map->startRange].width;
-            if (width == UNINITIALIZED_GLYPH_WIDTH){
-
-#ifdef _TIMING
-                double startTime = CFAbsoluteTimeGetCurrent();
-#endif
-                if (font)
-                    errorResult = CGFontGetGlyphScaledAdvances ([font _backingCGSFont], &glyph, 1, &map->widths[glyph-map->startRange].width, [font pointSize]);
-                else
-                    errorResult = CGFontGetGlyphScaledAdvances ([renderer->font _backingCGSFont], &glyph, 1, &map->widths[glyph-map->startRange].width, [renderer->font pointSize]);
-                if (errorResult == 0)
-                    FATAL_ALWAYS ("Unable to cache glyph widths for %@ %f",  [renderer->font displayName], [renderer->font pointSize]);
-
-#ifdef _TIMING
-                double thisTime = CFAbsoluteTimeGetCurrent() - startTime;
-                totalCGGetAdvancesTime += thisTime;
-#endif
-                width = map->widths[glyph-map->startRange].width;
-            }
-        }
-
-        if (width == UNINITIALIZED_GLYPH_WIDTH){
-            map = map->next;
-            continue;
-        }
-        
-        // Hack to ensure that characters that match the width of the space character
-        // have the same integer width as the space character.  This is necessary so
-        // glyphs in fixed pitch fonts all have the same integer width.  We can't depend
-        // on the fixed pitch property of NSFont because that isn't set for all
-        // monospaced fonts, in particular Courier!  This has the downside of inappropriately
-        // adjusting the widths of characters in non-monospaced fonts that are coincidentally
-        // the same width as a space in that font.  In practice this is not an issue as the
-        // adjustment is always as the sub-pixel level.
-        if (width == renderer->spaceWidth)
-            return renderer->ceiledSpaceWidth;
-
-        return width;
-    }
-    // never get here.
-    return 0;
-}    
-
-static inline WebGlyphWidth widthForGlyph (WebTextRenderer *renderer, ATSGlyphRef glyph, NSFont *font)
-{
-    WidthMap *map;
-
-    if (font && font != renderer->font)
-        map = mapForSubstituteFont(renderer, font)->map;
-    else
-        map = renderer->glyphToWidthMap;
-
-    return widthFromMap (renderer, map, glyph, font);
-}
-
 
 static void initializeCharacterWidthIterator (CharacterWidthIterator *iterator, WebTextRenderer *renderer, const WebCoreTextRun *run , const WebCoreTextStyle *style) 
 {
@@ -1991,6 +2013,9 @@ static inline BOOL shouldUseATSU(const WebCoreTextRun *run)
     const UniChar *characters = run->characters;
     int i, from = run->from, to = run->to;
     
+    if (alwaysUseATSU)
+        return YES;
+        
     for (i = from; i < to; i++){
         c = characters[i];
         if (c < 0x300)                      // Early continue to avoid  other checks.
@@ -2013,21 +2038,6 @@ static inline BOOL shouldUseATSU(const WebCoreTextRun *run)
     }
     
     return NO;
-}
-
-static inline BOOL isControlCharacter(UniChar c)
-{
-    return c < 0x0020 || c == 0x007F;
-}
-
-static inline BOOL isAlternateSpace(UniChar c)
-{
-    return c == '\n' || c == 0xA0;
-}
-
-static inline BOOL isSpace(UniChar c)
-{
-    return c == SPACE || isAlternateSpace(c);
 }
 
 static inline BOOL fontContainsString (NSFont *font, NSString *string)
