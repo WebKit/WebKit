@@ -1,3 +1,20 @@
+2003-05-02  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	- fixed 2936175 - MALLORY: please implement onResize
+
+        * khtml/khtmlview.cpp:
+        (KHTMLView::resizeEvent): Put most of this in #if !APPLE_CHANGES,
+	since we already do the relayout and such on resize elswhere.
+        * kwq/KWQEvent.h: Add a minimal QResizeEvent.
+        * kwq/KWQKHTMLPart.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::sendResizeEvent): Send it to the view.
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge sendResizeEvent]): Send it to the part.
+
 2003-05-02  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3184113, bottom margins didn't collapse with their children

@@ -143,6 +143,7 @@ public:
     khtml::RenderObject *renderer();
     void forceLayout();
     void forceLayoutForPageWidth(float pageWidth);
+    void sendResizeEvent();
     void paint(QPainter *, const QRect &);
     void paintSelectionOnly(QPainter *p, const QRect &rect);
 

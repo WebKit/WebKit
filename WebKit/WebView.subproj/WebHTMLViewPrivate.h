@@ -22,6 +22,7 @@
     BOOL inNextValidKeyView;
     BOOL ignoringMouseDraggedEvents;
     BOOL printing;
+    BOOL laidOutAtLeastOnce;
     
     id savedSubviews;
     BOOL subviewsSetAside;

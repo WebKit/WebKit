@@ -1,3 +1,15 @@
+2003-05-02  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	- fixed 2936175 - MALLORY: please implement onResize
+
+        * WebView.subproj/WebHTMLViewPrivate.h:
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView layoutToPageWidth:]): If we just resized and we're
+	not printing, make sure to send a resize event after the layout.
+	
+
 2003-05-02  Darin Adler  <darin@apple.com>
 
         Reviewed by John.

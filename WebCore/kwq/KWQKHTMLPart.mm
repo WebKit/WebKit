@@ -1154,6 +1154,15 @@ void KWQKHTMLPart::forceLayoutForPageWidth(float pageWidth)
     }
 }
 
+void KWQKHTMLPart::sendResizeEvent()
+{
+    KHTMLView *v = d->m_view;
+    if (v) {
+	QResizeEvent e;
+	d->m_view->resizeEvent(&e);
+    }
+}
+
 void KWQKHTMLPart::runJavaScriptAlert(const QString &message)
 {
     [_bridge runJavaScriptAlertPanelWithMessage:message.getNSString()];

@@ -321,6 +321,7 @@ void KHTMLView::resizeEvent (QResizeEvent* e)
 {
     QScrollView::resizeEvent(e);
 
+#if !APPLE_CHANGES
     int w = visibleWidth();
     int h = visibleHeight();
 
@@ -330,7 +331,7 @@ void KHTMLView::resizeEvent (QResizeEvent* e)
     // due to the size change.
     if(visibleHeight() != h || visibleWidth() != w)
         layout();
-
+#endif
     if ( m_part && m_part->xmlDocImpl() )
         m_part->xmlDocImpl()->dispatchWindowEvent( EventImpl::RESIZE_EVENT, false, false );
     KApplication::sendPostedEvents(viewport(), QEvent::Paint);

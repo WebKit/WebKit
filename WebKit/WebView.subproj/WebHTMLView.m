@@ -317,7 +317,14 @@
     }
     _private->needsLayout = NO;
     
-    _private->lastLayoutSize = [(NSClipView *)[self superview] documentVisibleRect].size;
+    if (!_private->printing) {
+	NSSize newLayoutSize = [(NSClipView *)[self superview] documentVisibleRect].size;
+	if (_private->laidOutAtLeastOnce && !NSEqualSizes(_private->lastLayoutSize, newLayoutSize)) {
+	    [[self _bridge] sendResizeEvent];
+	}
+	_private->lastLayoutSize = newLayoutSize;
+	_private->laidOutAtLeastOnce = YES;
+    }
     
     [self setNeedsDisplay:YES];
 
