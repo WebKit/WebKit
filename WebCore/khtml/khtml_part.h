@@ -1290,6 +1290,10 @@ private:
 public:
   DOM::DocumentImpl *xmlDocImpl() const;
   void replaceDocImpl(DOM::DocumentImpl* newDoc);
+
+  // Workaround for the fact that it's hard to delete a frame.
+  // Call this after doing user-triggered selections to make it easy to delete the frame you entirely selected.
+  void selectFrameElementInParentIfFullySelected();
   
 private:
   khtml::ChildFrame *childFrame( const QObject *obj );

@@ -1,5 +1,26 @@
 2005-03-20  Darin Adler  <darin@apple.com>
 
+        Reviewed by Harrison.
+
+        - fixed <rdar://problem/4059914> when you select all of a frame's content, need to select the frame in the parent document so it can be easily deleted
+
+        * khtml/khtml_part.h: Added selectFrameElementInParentIfFullySelected.
+        * khtml/khtml_part.cpp:
+        (isFrame): Added.
+        (KHTMLPart::setFocusNodeIfNeeded): Changed to not set focus to a frame; was not what this function was
+        intended to do, and caused trouble when trying to select a frame element.
+        (KHTMLPart::khtmlMouseReleaseEvent): Call selectFrameElementInParentIfFullySelected.
+        (KHTMLPart::selectAll): Call selectFrameElementInParentIfFullySelected.
+        (KHTMLPart::selectFrameElementInParentIfFullySelected): Added. Selects the frame element in the parent
+        if a frame is entirely selected, which makes it easier to delete or replace the frame and is consistent
+        with the changes Maciej made recently for other elements.
+
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge alterCurrentSelection:direction:granularity:]): Call selectFrameElementInParentIfFullySelected.
+        (-[WebCoreBridge alterCurrentSelection:verticalDistance:]): Call selectFrameElementInParentIfFullySelected.
+
+2005-03-20  Darin Adler  <darin@apple.com>
+
         Reviewed by me, code change by Ken.
 
         - fixed <rdar://problem/4059852> Deleting from first element of list makes content jump to wrong place

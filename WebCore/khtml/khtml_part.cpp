@@ -47,6 +47,7 @@
 #include "editing/selection.h"
 #include "editing/visible_position.h"
 #include "editing/visible_text.h"
+#include "editing/visible_units.h"
 #include "html/html_documentimpl.h"
 #include "html/html_baseimpl.h"
 #include "html/html_miscimpl.h"
@@ -116,10 +117,13 @@ using khtml::EditCommandPtr;
 using khtml::ETextGranularity;
 using khtml::FormData;
 using khtml::InlineTextBox;
+using khtml::isEndOfDocument;
+using khtml::isStartOfDocument;
 using khtml::PARAGRAPH;
 using khtml::plainText;
 using khtml::RenderObject;
 using khtml::RenderText;
+using khtml::RenderWidget;
 using khtml::Selection;
 using khtml::Tokenizer;
 using khtml::TypingCommand;
@@ -2501,6 +2505,19 @@ void KHTMLPart::clearCaretRectIfNeeded()
     }        
 }
 
+// Helper function that tells whether a particular node is an element that has an entire
+// KHTMLPart and KHTMLView, a <frame>, <iframe>, or <object>.
+static bool isFrame(const NodeImpl *n)
+{
+    if (!n)
+        return false;
+    RenderObject *renderer = n->renderer();
+    if (!renderer || !renderer->isWidget())
+        return false;
+    QWidget *widget = static_cast<RenderWidget *>(renderer)->widget();
+    return widget && widget->inherits("KHTMLView");
+}
+
 void KHTMLPart::setFocusNodeIfNeeded()
 {
     if (!xmlDocImpl() || d->m_selection.isNone() || !d->m_isFocused)
@@ -2521,7 +2538,10 @@ void KHTMLPart::setFocusNodeIfNeeded()
     
     if (target) {
         for ( ; target; target = target->parentNode()) {
-            if (target->isMouseFocusable()) {
+            // We don't want to set focus on a subframe when selecting in a parent frame,
+            // so add the !isFrame check here. There's probably a better way to make this
+            // work in the long term, but this is the safest fix at this time.
+            if (target->isMouseFocusable() && !isFrame(target)) {
                 xmlDocImpl()->setFocusNode(target);
                 return;
             }
@@ -4907,6 +4927,8 @@ void KHTMLPart::khtmlMouseReleaseEvent( khtml::MouseReleaseEvent *event )
     cb->setSelectionMode(false);
 #endif // QT_NO_CLIPBOARD
 
+    selectFrameElementInParentIfFullySelected();
+
 #endif // KHTML_NO_SELECTION
 }
 
@@ -5057,6 +5079,7 @@ void KHTMLPart::selectAll()
     NodeImpl *de = d->m_doc->documentElement();
     int n = de ? de->childNodeCount() : 0;
     setSelection(Selection(VisiblePosition(de, 0, khtml::DOWNSTREAM), VisiblePosition(de, n, khtml::DOWNSTREAM)));
+    selectFrameElementInParentIfFullySelected();
 }
 
 bool KHTMLPart::shouldBeginEditing(const Range &range) const
@@ -5820,6 +5843,50 @@ void KHTMLPart::slotEndLifeSupport()
 {
     d->m_lifeSupportTimer.stop();
     deref();
+}
+
+// Workaround for the fact that it's hard to delete a frame.
+// Call this after doing user-triggered selections to make it easy to delete the frame you entirely selected.
+// Can't do this implicitly as part of every setSelection call because in some contexts it might not be good
+// for the focus to move to another frame. So instead we call it from places where we are selecting with the
+// mouse or the keyboard after setting the selection.
+void KHTMLPart::selectFrameElementInParentIfFullySelected()
+{
+    // Find the parent frame; if there is none, then we have nothing to do.
+    KHTMLPart *parent = parentPart();
+    if (!parent)
+        return;
+    KHTMLView *parentView = parent->view();
+    if (!parentView)
+        return;
+
+    // Check if the selection contains the entire frame contents; if not, then there is nothing to do.
+    if (!d->m_selection.isRange())
+        return;
+    if (!isStartOfDocument(VisiblePosition(d->m_selection.start(), d->m_selection.startAffinity())))
+        return;
+    if (!isEndOfDocument(VisiblePosition(d->m_selection.end(), d->m_selection.endAffinity())))
+        return;
+
+    // Get to the <iframe> or <frame> (or even <object>) element in the parent frame.
+    DocumentImpl *document = xmlDocImpl();
+    if (!document)
+        return;
+    ElementImpl *ownerElement = document->ownerElement();
+    if (!ownerElement)
+        return;
+    NodeImpl *ownerElementParent = ownerElement->parentNode();
+    if (!ownerElementParent)
+        return;
+
+    // Create compute positions before and after the element.
+    unsigned long ownerElementNodeIndex = ownerElement->nodeIndex();
+    VisiblePosition beforeOwnerElement(VisiblePosition(ownerElementParent, ownerElementNodeIndex, khtml::SEL_DEFAULT_AFFINITY));
+    VisiblePosition afterOwnerElement(VisiblePosition(ownerElementParent, ownerElementNodeIndex + 1, khtml::SEL_PREFER_UPSTREAM_AFFINITY));
+
+    // Focus on the parent frame, and then select from before this element to after.
+    parentView->setFocus();
+    parent->setSelection(Selection(beforeOwnerElement, afterOwnerElement));
 }
 
 using namespace KParts;

@@ -1545,6 +1545,8 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     if (xPos != KHTMLPart::NoXPosForVerticalArrowNavigation)
         _part->setXPosForVerticalArrowNavigation(xPos);
 
+    _part->selectFrameElementInParentIfFullySelected();
+
     [self ensureSelectionVisible];
 }
 
@@ -1571,6 +1573,8 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     _part->setSelection(selection);
     _part->setSelectionGranularity(static_cast<ETextGranularity>(WebSelectByCharacter));
     _part->setXPosForVerticalArrowNavigation(xPos);
+
+    _part->selectFrameElementInParentIfFullySelected();
 
     [self ensureSelectionVisible];
 }
