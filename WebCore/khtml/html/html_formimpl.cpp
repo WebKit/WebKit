@@ -1839,6 +1839,7 @@ bool HTMLInputElementImpl::appendFormData(FormDataList &encoding, bool multipart
 
 #if APPLE_CHANGES
             encoding.appendFile(name(), value());
+            return true;
 #else
             KURL fileurl("file:///");
             fileurl.setPath(value().string());

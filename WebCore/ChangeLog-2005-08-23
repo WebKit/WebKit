@@ -1,3 +1,13 @@
+2005-02-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by Vicki.
+
+        - fixed <rdar://problem/4023360> REGRESSION (186-187): image file upload is broken at pep.apple.com
+
+        * khtml/html/html_formimpl.cpp: (DOM::HTMLInputElementImpl::appendFormData): Return true after
+        setting up the form data for an uploaded file. The old code would fall through to the ISINDEX
+        case and send double form data (the filename instead of the file contents the second time).
+
 2005-02-24  David Harrison  <harrison@apple.com>
 
         Reviewed by Ken.
