@@ -1,3 +1,14 @@
+2003-01-22  Richard Williamson   <rjw@apple.com>
+
+        Fix the fix to 3119777 to scan for break over entire string
+        instead of trying to optimize.
+        
+        Reviewed by hyatt.
+
+        * khtml/rendering/break_lines.cpp:
+        Pass offset into entire string, rather than try to optimize
+        by passing a shorter string.
+
 2003-01-22  David Hyatt  <hyatt@apple.com>
 
 	Fix the CSS parser so that it disallows class names beginning
