@@ -1,3 +1,30 @@
+2002-12-03  Trey Matteson  <trey@apple.com>
+
+	Re-fix of 3113393 - Clients side redirects shouldn't always add item to back/forward list
+	Fix 3116980 - REGRESSION: Back button goes back twice
+	Fix 3099631 - assertion failure at http://www.calendarlive.com/ when pop-up blocking is off
+
+	The earlier fix for the first bug was to consider any redirect happening within one
+	second as a continuation of the previous load.  To fix the regressions I re-cast that
+	fix using a similar, pre-existing mechanism.
+
+        Reviewed by: Richwill
+
+        * WebView.subproj/WebFramePrivate.h:  Nuke shortRedirectComing, rename
+	instantRedirectComing to quickRedirectComing.
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _createOrUpdateItem]):  Remove code related to shortRedirectComing,
+	the fix that brought the regressions.
+        (-[WebFrame _setState:]):  Don't cache the page we're leaving if we're doing
+	a redirect (since we don't want the redirecting page in the cache).
+        (-[WebFrame _continueFragmentScrollAfterNavigationPolicy:request:]):  Above rename.
+        (-[WebFrame _loadURL:loadType:triggeringEvent:isFormSubmission:]):  Above rename.
+        (-[WebFrame _loadURL:intoChild:]):  Comment fix.
+        (-[WebFrame _clientRedirectedTo:delay:fireDate:]):  Use 1 second instead of 0
+	seconds as the metric of a client redirect.  Do not consider whether the frame
+	state is completed as part of the decision.
+        (-[WebFrame _clientRedirectCancelled]):  Above rename.
+
 2002-12-03  John Sullivan  <sullivan@apple.com>
 
         Reviewed by: Darin

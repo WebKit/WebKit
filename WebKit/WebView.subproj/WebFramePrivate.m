@@ -181,25 +181,15 @@ static const char * const loadTypeNames[] = {
     WebDataSource *dataSrc = [self dataSource];
     NSURL *url = [[dataSrc request] URL];
     WebHistoryItem *bfItem;
-    
-    if (!_private->shortRedirectComing){
-        bfItem = [[[WebHistoryItem alloc] initWithURL:url target:[self name] parent:[[self parent] name] title:[dataSrc pageTitle]] autorelease];
-        [bfItem setAnchor:[url fragment]];
-        [dataSrc _addBackForwardItem:bfItem];
-    
-        // Set the item for which we will save document state
-        [_private setPreviousItem:[_private currentItem]];
-        [_private setCurrentItem:bfItem];
-    }
-     else {
-        _private->shortRedirectComing = NO;
-        bfItem = [_private currentItem];
-        [bfItem setURL: url];
-        [bfItem setTitle: [dataSrc pageTitle]];
-        [bfItem setParent: [[self parent] name]];
-        [bfItem setAnchor:[url fragment]];
-    }
-    
+
+    bfItem = [[[WebHistoryItem alloc] initWithURL:url target:[self name] parent:[[self parent] name] title:[dataSrc pageTitle]] autorelease];
+    [bfItem setAnchor:[url fragment]];
+    [dataSrc _addBackForwardItem:bfItem];
+
+    // Set the item for which we will save document state
+    [_private setPreviousItem:[_private currentItem]];
+    [_private setCurrentItem:bfItem];
+
     return bfItem;
 }
 
@@ -613,13 +603,14 @@ static const char * const loadTypeNames[] = {
         [[[self webView] frameScrollView] setDrawsBackground:NO];
 
         // Cache the page, if possible.
-        if ([self _canCachePage] && [_private->bridge canCachePage] && [_private currentItem] && ![[self dataSource] isLoading]){
-            if (![[_private currentItem] pageCache]){
+        WebHistoryItem *item = [_private currentItem];
+        if ([self _canCachePage] && [_private->bridge canCachePage] && item && !_private->quickRedirectComing && ![[self dataSource] isLoading]){
+            if (![item pageCache]){
                 printf ("Saving page to back/forward cache, %s\n", [[[[self dataSource] URL] absoluteString] cString]);
-                [[_private currentItem] setHasPageCache: YES];
+                [item setHasPageCache: YES];
                 [[self dataSource] _setStoredInPageCache: YES];
-                [[[_private currentItem] pageCache] setObject: [self dataSource] forKey: @"WebKitDataSource"];
-                [[[_private currentItem] pageCache] setObject: [[self webView] documentView] forKey: @"WebKitDocumentView"];
+                [[item pageCache] setObject: [self dataSource] forKey: @"WebKitDataSource"];
+                [[item pageCache] setObject: [[self webView] documentView] forKey: @"WebKitDocumentView"];
                 [_private->bridge saveDocumentToPageCache];
                 [self _purgePageCache];
             }
@@ -1149,8 +1140,8 @@ static const char * const loadTypeNames[] = {
     NSURL *URL = [request URL];
     WebDataSource *dataSrc = [self dataSource];
 
-    BOOL isRedirect = _private->instantRedirectComing;
-    _private->instantRedirectComing = NO;
+    BOOL isRedirect = _private->quickRedirectComing;
+    _private->quickRedirectComing = NO;
 
     [dataSrc _setURL:URL];
     if (!isRedirect) {
@@ -1222,8 +1213,8 @@ static const char * const loadTypeNames[] = {
         WebDataSource *oldDataSource = [[self dataSource] retain];
 
         [self _loadRequest:request triggeringAction:action loadType:loadType];
-        if (_private->instantRedirectComing) {
-            _private->instantRedirectComing = NO;
+        if (_private->quickRedirectComing) {
+            _private->quickRedirectComing = NO;
             
             // Inherit the loadType from the operation that spawned the redirect,
             // unless the new load type is some kind of reload.
@@ -1266,7 +1257,7 @@ static const char * const loadTypeNames[] = {
     }
             
     [childFrame _loadURL:URL loadType:childLoadType triggeringEvent:nil isFormSubmission:NO];
-    // want this here???
+
     if (childItem) {
         if (loadType != WebFrameLoadTypeReload) {
             // For back/forward, remember this item so we can traverse any child items as child frames load
@@ -1302,25 +1293,19 @@ static const char * const loadTypeNames[] = {
     LOG(Redirect, "Client redirect to: %@", URL);
 
     [[[self controller] locationChangeDelegate] clientWillRedirectTo:URL delay:seconds fireDate:date forFrame:self];
-    // If a zero-time redirect comes in and we're still finishing the previous page, we set
-    // a special mode so we treat the next load as part of the same navigation.
-    if (seconds == 0.0 && [self _state] != WebFrameStateComplete) {
-        _private->instantRedirectComing = YES;
+    // If a "quick" redirect comes in an, we set a special mode so we treat the next
+    // load as part of the same navigation.
+    // If we don't have a dataSource, we have no "original" load on which to base a redirect,
+    // so we better just treat the redirect as a normal load.
+    if (seconds <= 1.0 && [self dataSource]) {
+        _private->quickRedirectComing = YES;
     }
-    
-    // We don't create new back/forward items if a redirect is expected to happen in
-    // less than 1 second.  This prevents getting 'stuck' in a back forward loop
-    // when going back.  Also it prevent the intermediate page from being cached in
-    // the back forward page cache.
-    if (seconds <= 1.0)
-        _private->shortRedirectComing = YES;
 }
 
 - (void)_clientRedirectCancelled
 {
     [[[self controller] locationChangeDelegate] clientRedirectCancelledForFrame:self];
-    _private->instantRedirectComing = NO;
-    _private->shortRedirectComing = NO;
+    _private->quickRedirectComing = NO;
 }
 
 - (void)_saveScrollPositionToItem:(WebHistoryItem *)item
