@@ -1,3 +1,12 @@
+2004-08-26  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by me
+        
+        Fix garbled contenteditable attribute. I must have checked
+        this in with a typo.
+
+        * layout-tests/editing/deleting/delete-3775172-fix.html
+
 2004-08-25  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by John and Maciej.
