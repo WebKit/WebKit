@@ -662,7 +662,7 @@
     webDataSource = [dataSource retain];
     
     mime = [[dataSource contentType] retain];
-    plugin = [[WebNetscapePluginDatabase installedPlugins] pluginForMimeType:mime];
+    plugin = [[WebNetscapePluginDatabase installedPlugins] pluginForMIMEType:mime];
     
     if(![plugin load])
         return;

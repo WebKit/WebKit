@@ -44,49 +44,36 @@ static WebNetscapePluginDatabase *database = nil;
     return database;
 }
 
-// FIXME: Use a dictionary for this?
-// The first plugin with the specified mime type is returned. We may want to tie this to the defaults so that this is configurable.
-- (WebNetscapePlugin *)pluginForMimeType:(NSString *)mimeType
+// The first plugin with the specified mime type is returned.
+- (WebNetscapePlugin *)pluginForMIMEType:(NSString *)MIME
 {
-    uint i, n;
     WebNetscapePlugin *plugin;
-    NSArray *mimeArray;
+    uint i;
     
     for(i=0; i<[plugins count]; i++){      
         plugin = [plugins objectAtIndex:i];
-        mimeArray = [plugin mimeTypes];
-        for(n=0; n<[mimeArray count]; n++){
-            if([[[mimeArray objectAtIndex:n] objectAtIndex:0] isEqualToString:mimeType]){
-                return plugin;
-            }
+        if([[plugin MIMEToExtensionsDictionary] objectForKey:MIME]){
+            return plugin;
         }
     }
     return nil;
 }
 
-// FIXME: Use a dictionary for this?
 - (WebNetscapePlugin *)pluginForExtension:(NSString *)extension
 {
-    uint i, n;
     WebNetscapePlugin *plugin;
-    NSArray *mimeArray;
-    NSRange hasExtension;
+    uint i;
 
-    for(i=0; i<[plugins count]; i++){      
+    for(i=0; i<[plugins count]; i++){
         plugin = [plugins objectAtIndex:i];
-        mimeArray = [plugin mimeTypes];
-        for(n=0; n<[mimeArray count]; n++){
-            hasExtension = [[[mimeArray objectAtIndex:n] objectAtIndex:1] rangeOfString:extension];
-            if(hasExtension.length){
-                return plugin;
-            }
+        if([[plugin extensionToMIMEDictionary] objectForKey:extension]){
+            return plugin;
         }
     }
     return nil;
 }
 
-// FIXME: Use a dictionary for this?
-- (WebNetscapePlugin *)pluginWithFilename:(NSString *)filename
+- (WebNetscapePlugin *)pluginForFilename:(NSString *)filename
 {
     uint i;
     WebNetscapePlugin *plugin;
@@ -105,24 +92,20 @@ static WebNetscapePluginDatabase *database = nil;
     return plugins;
 }
 
-// FIXME: Maybe a set rather than an array?
 - (NSArray *)MIMETypes
 {
-    NSMutableArray *allHandledMIMETypes;
+    NSMutableSet *MIMETypes;
     WebNetscapePlugin *plugin;
-    NSArray *mimeArray;
-    uint i, n;
+    uint i;
         
-    allHandledMIMETypes = [NSMutableArray arrayWithCapacity:20];
+    MIMETypes = [NSMutableSet set];
     for(i=0; i<[plugins count]; i++){
         plugin = [plugins objectAtIndex:i];
-        mimeArray = [plugin mimeTypes];
-        for(n=0; n<[mimeArray count]; n++){
-            [allHandledMIMETypes addObject:[[mimeArray objectAtIndex:n] objectAtIndex:0]];
-        }
+        [MIMETypes addObjectsFromArray:[[plugin MIMEToDescriptionDictionary] allKeys]];
     }
-    return allHandledMIMETypes;
+    return [MIMETypes allObjects];
 }
+
 
 static NSArray *pluginLocations(void)
 {
@@ -185,7 +168,7 @@ static NSArray *pluginLocations(void)
     }
 
     plugins = [pluginArray copy];
-    
+
     // register plug-in WebDocumentViews and WebDocumentRepresentations
     NSArray *mimes = [self MIMETypes];
     for (i = 0; i < [mimes count]; i++) {

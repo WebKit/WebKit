@@ -97,7 +97,7 @@
         [NSNumber numberWithBool:YES],  WebKitResourceTimedLayoutEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitUserStyleSheetEnabledPreferenceKey,
         @"",                    	WebKitUserStyleSheetLocationPreferenceKey,
-        [NSNumber numberWithBool:NO],   WebKitJavaEnabledPreferenceKey,
+        [NSNumber numberWithBool:YES],   WebKitJavaEnabledPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitJavaScriptEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitJavaScriptCanOpenWindowsAutomaticallyPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitPluginsEnabledPreferenceKey,

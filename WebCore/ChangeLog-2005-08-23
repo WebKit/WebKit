@@ -1,3 +1,11 @@
+2002-09-27  Chris Blumenberg  <cblu@apple.com>
+
+	WebPlugin clean up.
+
+        * kwq/KWQKConfigBase.mm:
+        (KConfig::readEntry):
+        * kwq/WebCoreViewFactory.h:
+
 2002-09-27  Richard Williamson   <rjw@apple.com>
 
         Fixed 3059237:  Visited links do not appear in a different color on yahoo.com

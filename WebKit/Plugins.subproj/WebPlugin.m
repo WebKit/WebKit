@@ -34,7 +34,7 @@ TransitionVector tVectorForFunctionPointer(FunctionPointer);
 
 @implementation WebNetscapePlugin
 
-- (SInt16)_openResourceFile
+- (SInt16)openResourceFile
 {
     FSRef fref;
     OSErr err;
@@ -51,7 +51,7 @@ TransitionVector tVectorForFunctionPointer(FunctionPointer);
     }
 }
 
-- (void)_closeResourceFile:(SInt16)resRef
+- (void)closeResourceFile:(SInt16)resRef
 {
     if(isBundle){
         CFBundleCloseBundleResourceMap(bundle, resRef);
@@ -60,62 +60,71 @@ TransitionVector tVectorForFunctionPointer(FunctionPointer);
     }
 }
 
-- (BOOL)_getPluginInfo
+- (NSString *)stringForStringListID:(SInt16)stringListID andIndex:(SInt16)index
 {
-    Str255 theString;
-    char temp[256], description[256];
-    NSMutableArray *mime; // mime is an array containing the mime type, extension(s) and descriptions for that mime type.
-    NSString *tempString;
-    uint n, i;
+    Str255 pString;
+    char cString[256];
+        
+    GetIndString(pString, stringListID, index);
+    if (pString[0] == 0){
+        return nil;
+    }
     
-    SInt16 resRef = [self _openResourceFile];
-    if(resRef == -1)
+    CopyPascalStringToC(pString, cString);
+    
+    return [NSString stringWithCString:cString];
+}
+
+- (BOOL)getPluginInfo
+{
+    SInt16 resRef = [self openResourceFile];
+    if(resRef == -1){
         return NO;
+    }
     
     UseResFile(resRef);
     if(ResError() != noErr){
         return NO;
     }
+
+    NSString *MIME, *extension, *extensionsList, *description;
+    NSArray *extensions;
+    NSRange r;
+    uint i;
     
-    mimeTypes = [NSMutableArray arrayWithCapacity:1];
-    for(n=1, i=0; 1; n+=2, i++){
-        GetIndString(theString, 128, n);
-        if (theString[0] == 0)
+    MIMEToExtensions = [[NSMutableDictionary dictionary] retain];
+    MIMEToDescription = [[NSMutableDictionary dictionary] retain];
+    extensionToMIME = [[NSMutableDictionary dictionary] retain];
+
+    for(i=1; 1; i+=2){
+        MIME = [self stringForStringListID:128 andIndex:i];
+        if(!MIME){
             break;
-        CopyPascalStringToC(theString, temp);
-        mime = [NSMutableArray arrayWithCapacity:3];
-        [mimeTypes insertObject:mime atIndex:i];
-        
-        //FIXME: Because our JS engine poops on semi-colons, I'm removing ";version=1.3"
-        //Scott Adler is checking if semi-colons are allowed to be in mime-types
-        if(!strcmp(temp, "application/x-java-applet;version=1.3")){
-            strcpy(temp, "application/x-java-applet");
         }
-        tempString = [NSString stringWithCString:temp];
-        [mime insertObject:tempString atIndex:0]; // mime type
+
+        // FIXME: Avoid mime types with semi-colons because KJS can't properly parse them using KWQKConfigBase
+        r = [MIME rangeOfString:@";"];
+        if(r.length > 0){
+            continue;
+        }
+
+        extensionsList = [self stringForStringListID:128 andIndex:i+1];
+        extensions = [extensionsList componentsSeparatedByString:@","];
+        [MIMEToExtensions setObject:extensions forKey:MIME];
+
+        NSEnumerator *enumerator = [extensions objectEnumerator];
+        while ((extension = [enumerator nextObject]) != nil) {
+            [extensionToMIME setObject:MIME forKey:extension];
+        }
         
-        GetIndString(theString, 128, n+1);
-        CopyPascalStringToC(theString, temp);
-        tempString = [NSString stringWithCString:temp];
-        [mime insertObject:tempString atIndex:1]; // mime's extension
+        description = [self stringForStringListID:127 andIndex:[MIMEToExtensions count]];
+        [MIMEToDescription setObject:description forKey:MIME];
     }
-    for(i=1; i<=[mimeTypes count]; i++){
-        GetIndString(theString, 127, i);
-        CopyPascalStringToC(theString, temp);
-        tempString = [NSString stringWithCString:temp];
-        mime = [mimeTypes objectAtIndex:(i-1)];
-        [mime insertObject:tempString atIndex:2]; // mime's description
-    }
-    GetIndString(theString, 126, 1);
-    CopyPascalStringToC(theString, description);
-    pluginDescription = [[NSString stringWithCString:description] retain];
     
-    GetIndString(theString, 126, 2); 
-    CopyPascalStringToC(theString, temp);
-    name = [[NSString stringWithCString:temp] retain]; // plugin's name
-    [mimeTypes retain];
+    pluginDescription = [[self stringForStringListID:126 andIndex:1] retain];
+    name = [[self stringForStringListID:126 andIndex:2] retain]; // plugin's name
     
-    [self _closeResourceFile:resRef];
+    [self closeResourceFile:resRef];
     
     return YES;
 }
@@ -125,7 +134,6 @@ TransitionVector tVectorForFunctionPointer(FunctionPointer);
     NSFileManager *fileManager;
     NSDictionary *fileInfo;
     UInt32 type;
-    CFURLRef pluginURL;
     
     path = pluginPath;
     fileManager = [NSFileManager defaultManager];
@@ -135,20 +143,40 @@ TransitionVector tVectorForFunctionPointer(FunctionPointer);
     if([[fileInfo objectForKey:@"NSFileType"] isEqualToString:@"NSFileTypeRegular"]){
         type = [[fileInfo objectForKey:@"NSFileHFSTypeCode"] unsignedLongValue];
         isBundle = NO;
-    
+#ifndef __ppc__
+        return nil;
+#endif
     // bundle
     }else if([[fileInfo objectForKey:@"NSFileType"] isEqualToString:@"NSFileTypeDirectory"]){
-        pluginURL = CFURLCreateWithFileSystemPath(NULL, (CFStringRef)pluginPath, kCFURLPOSIXPathStyle, TRUE);
+        CFURLRef pluginURL = CFURLCreateWithFileSystemPath(NULL, (CFStringRef)pluginPath, kCFURLPOSIXPathStyle, TRUE);
         bundle = CFBundleCreate(NULL, pluginURL);
         CFRelease(pluginURL);
+        
         CFBundleGetPackageInfo(bundle, &type, NULL);
+
+        // Check if the executable is mach-o or CFM
+        NSURL *executableURL = (NSURL *)CFBundleCopyExecutableURL(bundle);
+        NSFileHandle *executableFile = [NSFileHandle fileHandleForReadingAtPath:[executableURL path]];
+        [executableURL release];
+        
+        NSData *data = [executableFile readDataOfLength:8];
+        if(!memcmp([data bytes], "Joy!peff", 8)){
+            isCFM = TRUE;
+#ifndef __ppc__
+            return nil;
+#endif
+        }else{
+            isCFM = FALSE;
+        }
+        [executableFile closeFile];
+        
         isBundle = YES;
     }else{
         return nil;
     }
     
     if(type == FOUR_CHAR_CODE('BRPL') || type == FOUR_CHAR_CODE('IEPL') ){
-        if(![self _getPluginInfo]){
+        if(![self getPluginInfo]){
             return nil;
         }
     }else{
@@ -175,17 +203,6 @@ TransitionVector tVectorForFunctionPointer(FunctionPointer);
     }
     
     if(isBundle){
-        // Check if the executable is mach-o or CFM
-        NSBundle *tempBundle = [NSBundle bundleWithPath:path];
-        NSFileHandle *executableFile = [NSFileHandle fileHandleForReadingAtPath:[tempBundle executablePath]];
-        NSData *data = [executableFile readDataOfLength:8];
-        if(!memcmp([data bytes], "Joy!peff", 8)){
-            isCFM = TRUE;
-        }else{
-            isCFM = FALSE;
-        }
-        [executableFile closeFile];
-        
         if (!CFBundleLoadExecutable(bundle)){
             return NO;
         }
@@ -231,7 +248,7 @@ TransitionVector tVectorForFunctionPointer(FunctionPointer);
     
     // Plugins (at least QT) require that you call UseResFile on the resource file before loading it.
     
-    resourceRef = [self _openResourceFile];
+    resourceRef = [self openResourceFile];
     if(resourceRef == -1)
         return NO;
     
@@ -336,7 +353,7 @@ TransitionVector tVectorForFunctionPointer(FunctionPointer);
 {
     NPP_Shutdown();
     
-    [self _closeResourceFile:resourceRef];
+    [self closeResourceFile:resourceRef];
     
     if(isBundle){
         CFBundleUnloadExecutable(bundle);
@@ -346,20 +363,6 @@ TransitionVector tVectorForFunctionPointer(FunctionPointer);
     }
     LOG(Plugins, "Plugin Unloaded");
     isLoaded = FALSE;
-}
-
-- (NSString *)mimeTypeForExtension:(NSString *)extension;
-{
-    uint n;
-    NSRange hasExtension;
-
-    for(n=0; n<[mimeTypes count]; n++){
-        hasExtension = [[[mimeTypes objectAtIndex:n] objectAtIndex:1] rangeOfString:extension];
-        if(hasExtension.length){
-            return [[mimeTypes objectAtIndex:n] objectAtIndex:0];
-        }
-    }
-    return nil;
 }
 
 - (NPP_SetWindowProcPtr)NPP_SetWindow{
@@ -412,8 +415,19 @@ TransitionVector tVectorForFunctionPointer(FunctionPointer);
     return NPP_Print;
 }
 
-- (NSArray *)mimeTypes{
-    return mimeTypes;
+- (NSDictionary *)MIMEToExtensionsDictionary
+{
+    return MIMEToExtensions;
+}
+
+- (NSDictionary *)extensionToMIMEDictionary
+{
+    return extensionToMIME;
+}
+
+- (NSDictionary *)MIMEToDescriptionDictionary
+{
+    return MIMEToDescription;
 }
 
 - (NSString *)name{
@@ -438,7 +452,7 @@ TransitionVector tVectorForFunctionPointer(FunctionPointer);
 - (NSString *)description{
     
     return [NSString stringWithFormat:@"name: %@\npath: %@\nisLoaded: %d\nmimeTypes:\n%@\npluginDescription:%@",
-        name, path, isLoaded, [mimeTypes description], pluginDescription];
+        name, path, isLoaded, [MIMEToExtensions description], [MIMEToDescription description], pluginDescription];
 }
 @end
 

@@ -33,10 +33,9 @@
 }
 
 + (WebNetscapePluginDatabase *)installedPlugins;
-- (WebNetscapePlugin *)pluginForMimeType:(NSString *)mimeType;
+- (WebNetscapePlugin *)pluginForMIMEType:(NSString *)mimeType;
 - (WebNetscapePlugin *)pluginForExtension:(NSString *)extension;
-- (WebNetscapePlugin *)pluginWithFilename:(NSString *)filename;
-- (NSArray *)MIMETypes;
+- (WebNetscapePlugin *)pluginForFilename:(NSString *)filename;
 - (NSArray *)plugins;
 
 @end

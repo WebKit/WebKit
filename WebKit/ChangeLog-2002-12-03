@@ -1,3 +1,38 @@
+2002-09-27  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: 3056559 - QT plugin doesn't load (claudius)
+	Fixed: 3042850 - Enable Java by default
+
+	Cleaned up WebPlugin and WebPluginDatabase.
+
+        * Plugins.subproj/WebPlugin.h:
+        * Plugins.subproj/WebPlugin.m:
+        (-[WebNetscapePlugin openResourceFile]):
+        (-[WebNetscapePlugin closeResourceFile:]):
+        (-[WebNetscapePlugin stringForStringListID:andIndex:]):
+        (-[WebNetscapePlugin getPluginInfo]):
+        (-[WebNetscapePlugin initWithPath:]):
+        (-[WebNetscapePlugin load]):
+        (-[WebNetscapePlugin unload]):
+        (-[WebNetscapePlugin MIMEToExtensionsDictionary]):
+        (-[WebNetscapePlugin extensionToMIMEDictionary]):
+        (-[WebNetscapePlugin MIMEToDescriptionDictionary]):
+        (-[WebNetscapePlugin description]):
+        * Plugins.subproj/WebPluginDatabase.h:
+        * Plugins.subproj/WebPluginDatabase.m:
+        (-[WebNetscapePluginDatabase pluginForMIMEType:]):
+        (-[WebNetscapePluginDatabase pluginForExtension:]):
+        (-[WebNetscapePluginDatabase pluginForFilename:]):
+        (-[WebNetscapePluginDatabase MIMETypes]):
+        (-[WebNetscapePluginDatabase init]):
+        * Plugins.subproj/WebPluginView.m:
+        (-[WebNetscapePluginView setDataSource:]):
+        * WebCoreSupport.subproj/WebViewFactory.m:
+        (-[WebViewFactory viewForPluginWithURL:serviceType:arguments:baseURL:]):
+        (-[WebViewFactory viewForJavaAppletWithFrame:baseURL:parameters:]):
+        * WebView.subproj/WebPreferences.m:
+        (+[WebPreferences load]): Enable Java by default
+
 2002-09-27  Richard Williamson   <rjw@apple.com>
 
         Fixed 3060158:  REGRESSION: iframes added to session history

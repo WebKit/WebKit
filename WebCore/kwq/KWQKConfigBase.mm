@@ -76,15 +76,25 @@ QString KConfig::readEntry(const char *pKey, const QString& aDefault) const
         } else if (strcmp(pKey, "description") == 0) {
             return QString::fromNSString([plugin pluginDescription]);
         } else if (strcmp(pKey, "mime") == 0) {
-            NSArray *mimeTypes = [plugin mimeTypes];
+            NSDictionary *MIMEToExtensions =  [plugin MIMEToExtensionsDictionary];
+            NSDictionary *MIMEToDescription = [plugin MIMEToDescriptionDictionary];
+            NSArray *MIMETypes = [MIMEToExtensions allKeys], *extensions;
+            NSString *MIME, *extension;
             NSMutableString *bigMimeString = [NSMutableString string];
-            for (uint i = 0; i < [mimeTypes count]; i++) {
-                [bigMimeString appendString:[[mimeTypes objectAtIndex:i] objectAtIndex:0]]; // mime type
-                [bigMimeString appendString:@":"];
-                [bigMimeString appendString:[[mimeTypes objectAtIndex:i] objectAtIndex:1]]; // mime's extension
-                [bigMimeString appendString:@":"];
-                [bigMimeString appendString:[[mimeTypes objectAtIndex:i] objectAtIndex:2]]; // mime's description
-                [bigMimeString appendString:@";"];
+            
+            for (uint i = 0; i < [MIMETypes count]; i++) {
+                MIME = [MIMETypes objectAtIndex:i];
+                [bigMimeString appendFormat:@"%@:", MIME]; // mime type
+
+                extensions = [MIMEToExtensions objectForKey:MIME];
+                for (uint n = 0; n < [extensions count]; n++) {
+                    extension = [extensions objectAtIndex:n];
+                    [bigMimeString appendString:extension]; // mime's extension
+                    if(n < [extensions count] - 1){
+                        [bigMimeString appendString:@","];
+                    }
+                }
+                [bigMimeString appendFormat:@":%@;", [MIMEToDescription objectForKey:MIME]]; // mime's description
             }
             return QString::fromNSString(bigMimeString);
         }

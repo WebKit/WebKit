@@ -48,11 +48,11 @@
         
     if ([serviceType length]) {
         mimeType = serviceType;
-        plugin = [[WebNetscapePluginDatabase installedPlugins] pluginForMimeType:mimeType];
+        plugin = [[WebNetscapePluginDatabase installedPlugins] pluginForMIMEType:mimeType];
     } else {
         extension = [[pluginURL path] pathExtension];
         plugin = [[WebNetscapePluginDatabase installedPlugins] pluginForExtension:extension];
-        mimeType = [plugin mimeTypeForExtension:extension];
+        mimeType = [[plugin extensionToMIMEDictionary] objectForKey:extension];
     }
     
     if (plugin == nil) {
@@ -70,7 +70,7 @@
 {
     WebNetscapePlugin *plugin;
     
-    plugin = [[WebNetscapePluginDatabase installedPlugins] pluginForMimeType:@"application/x-java-applet"];
+    plugin = [[WebNetscapePluginDatabase installedPlugins] pluginForMIMEType:@"application/x-java-applet"];
     if (plugin == nil) {
         return nil;
     }

@@ -47,6 +47,7 @@
 - (NSString *)name;
 - (NSString *)filename;
 - (NSString *)pluginDescription;
-- (NSArray *)mimeTypes; // array of NSArrays with 3 parts of MIME type in each
+- (NSDictionary *)MIMEToExtensionsDictionary;
+- (NSDictionary *)MIMEToDescriptionDictionary;
 
 @end
