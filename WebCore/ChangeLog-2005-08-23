@@ -1,5 +1,22 @@
 2004-10-25  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by me
+        
+        Added some more editing layout tests.
+
+        * layout-tests/editing/deleting/delete-ws-fixup-001-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-ws-fixup-001.html: Added.
+        * layout-tests/editing/deleting/delete-ws-fixup-002-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-ws-fixup-002.html: Added.
+        * layout-tests/editing/deleting/delete-ws-fixup-003-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-ws-fixup-003.html: Added.
+        * layout-tests/editing/deleting/delete-ws-fixup-004-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-ws-fixup-004.html: Added.
+        * layout-tests/editing/inserting/typing-003-expected.txt: Added.
+        * layout-tests/editing/inserting/typing-003.html: Added.
+
+2004-10-25  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by John
 
         * khtml/rendering/bidi.cpp:

@@ -1,0 +1,40 @@
+<html> 
+<head>
+
+<style>
+.editing { 
+    border: 2px solid red; 
+    padding: 12px; 
+    font-size: 24px; 
+    word-wrap: break-word;
+    -khtml-nbsp-mode: space;
+    -khtml-line-break: after-white-space;
+}
+</style>
+<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
+
+<script>
+
+function editingTest() {
+    for (i = 0; i < 29; i++)
+        moveSelectionForwardByCharacterCommand();    
+    deleteCommand();
+}
+
+</script>
+
+<title>Editing Test</title> 
+</head> 
+<body>
+<div contenteditable id="root" class="editing">
+<span id="test">in Liberty<i>F    and seven</i> years <b>  as </b>our fathers  f upon this
+continent, a new nation, conceived &nbsp;&nbsp; in Liberty,                 and dedicated to the
+proposition that all</span>
+</div>
+
+<script>
+runEditingTest();
+</script>
+
+</body>
+</html>

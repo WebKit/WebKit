@@ -1,0 +1,28 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (0,0) size 784x84 [border: (2px solid #FF0000)]
+        RenderInline {SPAN} at (0,0) size 744x56
+          RenderText {TEXT} at (14,14) size 97x28
+            text run at (14,14) width 97: "in Liberty"
+          RenderInline {I} at (0,0) size 117x28
+            RenderText {TEXT} at (111,14) size 117x28
+              text run at (111,14) width 21: "F "
+              text run at (132,14) width 96: "and seven"
+          RenderText {TEXT} at (228,14) size 63x28
+            text run at (228,14) width 63: " years "
+          RenderInline {B} at (0,0) size 15x28
+            RenderText {TEXT} at (291,14) size 15x28
+              text run at (291,14) width 15: "s "
+          RenderText {TEXT} at (306,14) size 744x56
+            text run at (306,14) width 110: "our fathers "
+            text run at (416,14) width 342: "f upon this continent, a new nation,"
+            text run at (14,42) width 232: "conceived    in Liberty, "
+            text run at (246,42) width 386: "and dedicated to the proposition that all"
+        RenderText {TEXT} at (0,0) size 0x0
+selection is CARET:
+start:      position 7 of child 3 {TEXT} of child 2 {SPAN} of root {DIV}
+upstream:   position 7 of child 3 {TEXT} of child 2 {SPAN} of root {DIV}
+downstream: position 0 of child 1 {TEXT} of child 4 {B} of child 2 {SPAN} of root {DIV}
