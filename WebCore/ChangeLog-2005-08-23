@@ -1,3 +1,33 @@
+2005-03-02  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+        Fix for this bug:
+        
+        <rdar://problem/4020574> REGRESSION (Mail): copy/paste first part of reply-quoted text alters downstream style
+        
+        The problem was that the operation to move nodes following the newly-pasted nodes did not preserve the
+        style of these moved nodes. I have generalized some of the functions that compute and preserve styles
+        for nodes and then apply these styles after a DOM operation.
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::ReplacementFragment::~ReplacementFragment): Call new derefNodesAndStylesInMap() helper function
+        in place of old code that had this deref'ing inline.
+        (khtml::ReplacementFragment::computeStylesUsingTestRendering): Now calls new mapDesiredStyleForNode() helper
+        function place of old code that had this style computation inline.
+        (khtml::ReplacementFragment::removeStyleNodes): Updated comment for new helper name.
+        (khtml::ReplaceSelectionCommand::doApply): Now calls new helpers in place of helpers whose names were changed,
+        or in place of pre-refactored inline code.
+        (khtml::ReplaceSelectionCommand::fixupNodeStyles): Renamed from applyStyleToInsertedNodes(). Now generalized
+        to take the map of nodes to use for the fixup. This makes it possible to call this code with different maps,
+        and that is needed to fix the bug.
+        (khtml::mapDesiredStyleForNode): New helper function to compute the inheritable styles for a given node
+        and map this style to the given node in the given map. This function now also includes the code that was
+        in the removeBlockquoteColorsIfNeeded(). This latter helper has now been removed.
+        (khtml::derefNodesAndStylesInMap): Simple helper to deref map members.
+        * khtml/editing/htmlediting.h:
+        (khtml::ReplacementFragment::desiredStyles): New helper to return map of nodes-to-desiredStyles.
+
 2005-03-01  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Hyatt

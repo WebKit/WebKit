@@ -4139,11 +4139,7 @@ ReplacementFragment::ReplacementFragment(DocumentImpl *document, DocumentFragmen
 
 ReplacementFragment::~ReplacementFragment()
 {
-    QMapIterator<NodeImpl *, CSSMutableStyleDeclarationImpl *> it;
-    for (it = m_styles.begin(); it != m_styles.end(); ++it) {
-        it.key()->deref();
-        it.data()->deref();
-    }
+    derefNodesAndStylesInMap(m_styles);
     if (m_document)
         m_document->deref();
     if (m_fragment)
@@ -4158,12 +4154,6 @@ NodeImpl *ReplacementFragment::firstChild() const
 NodeImpl *ReplacementFragment::lastChild() const 
 { 
     return  m_fragment->lastChild(); 
-}
-
-CSSMutableStyleDeclarationImpl *ReplacementFragment::styleForNode(NodeImpl *node)
-{
-    QMapConstIterator<NodeImpl *,CSSMutableStyleDeclarationImpl *> it = m_styles.find(node);
-    return it != m_styles.end() ? *it : 0;
 }
 
 NodeImpl *ReplacementFragment::mergeStartNode() const
@@ -4304,14 +4294,7 @@ void ReplacementFragment::computeStylesUsingTestRendering(NodeImpl *holder)
     m_document->updateLayout();
 
     for (NodeImpl *node = holder->firstChild(); node; node = node->traverseNextNode(holder)) {
-        CSSComputedStyleDeclarationImpl *computedStyle = Position(node, 0).computedStyle();
-        computedStyle->ref();
-        CSSMutableStyleDeclarationImpl *style = computedStyle->copyInheritableProperties();
-        style->ref();
-        node->ref();
-        removeBlockquoteColorsIfNeeded(node, style);
-        m_styles[node] = style;
-        computedStyle->deref();
+        mapDesiredStyleForNode(node, m_styles);
     }
 }
 
@@ -4361,7 +4344,7 @@ void ReplacementFragment::removeStyleNodes()
 {
     // Since style information has been computed and cached away in
     // computeStylesForNodes(), these style nodes can be removed, since
-    // the correct styles will be added back in applyStyleToInsertedNodes().
+    // the correct styles will be added back in fixupNodeStyles().
     NodeImpl *node = m_fragment->firstChild();
     while (node) {
         NodeImpl *next = node->traverseNextNode();
@@ -4391,32 +4374,6 @@ void ReplacementFragment::removeStyleNodes()
             }
         }
         node = next;
-    }
-}
-
-void ReplacementFragment::removeBlockquoteColorsIfNeeded(NodeImpl *node, CSSMutableStyleDeclarationImpl *style)
-{
-    if (!node || !style)
-        return;
-
-    // In either of the color-matching tests below, set the color to a pseudo-color that will
-    // make the content take on the color of the nearest-enclosing blockquote (if any) after
-    // being pasted in.
-        
-    if (NodeImpl *blockquote = nearestMailBlockquote(node)) {
-        CSSComputedStyleDeclarationImpl *blockquoteStyle = Position(blockquote, 0).computedStyle();
-        if (blockquoteStyle->getPropertyValue(CSS_PROP_COLOR) == style->getPropertyValue(CSS_PROP_COLOR)) {
-            style->setProperty(CSS_PROP__KHTML_MATCH_NEAREST_MAIL_BLOCKQUOTE_COLOR, matchNearestBlockquoteColorString());
-            return;
-        }
-    }
-    
-    NodeImpl *documentElement = node->getDocument() ? node->getDocument()->documentElement() : 0;
-    if (documentElement) {
-        CSSComputedStyleDeclarationImpl *documentStyle = Position(documentElement, 0).computedStyle();
-        if (documentStyle->getPropertyValue(CSS_PROP_COLOR) == style->getPropertyValue(CSS_PROP_COLOR)) {
-            style->setProperty(CSS_PROP__KHTML_MATCH_NEAREST_MAIL_BLOCKQUOTE_COLOR, matchNearestBlockquoteColorString());
-        }
     }
 }
 
@@ -4660,7 +4617,7 @@ void ReplaceSelectionCommand::doApply()
             endPos = endingSelection().end().downstream();
         }
         if (!m_matchStyle) {
-            applyStyleToInsertedNodes();
+            fixupNodeStyles(m_fragment.desiredStyles());
         }
         completeHTMLReplacement(startPos, endPos);
     } else {
@@ -4678,12 +4635,15 @@ void ReplaceSelectionCommand::doApply()
         }
 
         if (moveNodesAfterEnd) {
+            document()->updateLayout();
+            QMap<NodeImpl *, CSSMutableStyleDeclarationImpl *> styles;
             QPtrList<NodeImpl> blocks;
             NodeImpl *node = beyondEndNode;
             NodeImpl *refNode = m_lastNodeInserted;
             while (node) {
                 NodeImpl *next = node->nextSibling();
                 blocks.append(node->enclosingBlockFlowElement());
+                mapDesiredStyleForNode(node, styles);
                 removeNode(node);
                 // No need to update inserted node variables.
                 insertNodeAfter(node, refNode);
@@ -4702,10 +4662,13 @@ void ReplaceSelectionCommand::doApply()
                     document()->updateLayout();
                 }
             }
+
+            fixupNodeStyles(styles);
+            derefNodesAndStylesInMap(styles);
         }
     
         if (!m_matchStyle) {
-            applyStyleToInsertedNodes();
+            fixupNodeStyles(m_fragment.desiredStyles());
         }
         
         completeHTMLReplacement();
@@ -4830,70 +4793,107 @@ void ReplaceSelectionCommand::updateNodesInserted(NodeImpl *node)
         old->deref();
 }
 
-void ReplaceSelectionCommand::applyStyleToInsertedNodes()
+void ReplaceSelectionCommand::fixupNodeStyles(const QMap<NodeImpl *, CSSMutableStyleDeclarationImpl *> &map)
 {
-    // This function uses the cached style information computed in by the 
-    // ReplacementFragment class to apply the styles necessary to make
-    // the document look right.
+    // This function uses the mapped "desired style" to apply the additional style needed, if any,
+    // to make the node have the desired style.
 
     document()->updateLayout();
 
-    NodeImpl *node = m_firstNodeInserted;
-    NodeImpl *beyondEnd = m_lastNodeInserted->traverseNextNode();
-    while (node && node != beyondEnd) {
-        NodeImpl *next = node->traverseNextNode();
+    QMapConstIterator<NodeImpl *, CSSMutableStyleDeclarationImpl *> it;
+    for (it = map.begin(); it != map.end(); ++it) {
+        NodeImpl *node = it.key();
+        CSSMutableStyleDeclarationImpl *desiredStyle = it.data();
+        ASSERT(desiredStyle);
+
+        if (!node->inDocument())
+            continue;
+
+        // The desiredStyle declaration tells what style this node wants to be.
+        // Compare that to the style that it is right now in the document.
+        Position pos(node, 0);
+        CSSComputedStyleDeclarationImpl *currentStyle = pos.computedStyle();
+        currentStyle->ref();
+
+        // Check for the special "match nearest blockquote color" property and resolve to the correct
+        // color if necessary.
+        DOMString matchColorCheck = desiredStyle->getPropertyValue(CSS_PROP__KHTML_MATCH_NEAREST_MAIL_BLOCKQUOTE_COLOR);
+        if (matchColorCheck == matchNearestBlockquoteColorString()) {
+            NodeImpl *blockquote = nearestMailBlockquote(node);
+            Position pos(blockquote ? blockquote : node->getDocument()->documentElement(), 0);
+            CSSComputedStyleDeclarationImpl *style = pos.computedStyle();
+            DOMString desiredColor = desiredStyle->getPropertyValue(CSS_PROP_COLOR);
+            DOMString nearestColor = style->getPropertyValue(CSS_PROP_COLOR);
+            if (desiredColor != nearestColor)
+                desiredStyle->setProperty(CSS_PROP_COLOR, nearestColor);
+        }
+        desiredStyle->removeProperty(CSS_PROP__KHTML_MATCH_NEAREST_MAIL_BLOCKQUOTE_COLOR);
+
+        currentStyle->diff(desiredStyle);
         
-        // See if this node was present in the fragment, or was added by the paste algorithm. 
-        // If it was in the fragment, then we need to check, and perhaps fix up, its style.
-        CSSMutableStyleDeclarationImpl *desiredStyle = m_fragment.styleForNode(node);
-        if (desiredStyle) {
-            // The desiredStyle declaration tells what style this node wants to be.
-            // Compare that to the style that it is right now in the document.
-            Position pos(node, 0);
-            CSSComputedStyleDeclarationImpl *currentStyle = pos.computedStyle();
-            currentStyle->ref();
-
-            // Check for the special "match nearest blockquote color" property and resolve to the correct
-            // color if necessary.
-            DOMString matchColorCheck = desiredStyle->getPropertyValue(CSS_PROP__KHTML_MATCH_NEAREST_MAIL_BLOCKQUOTE_COLOR);
-            if (matchColorCheck == matchNearestBlockquoteColorString()) {
-                NodeImpl *blockquote = nearestMailBlockquote(node);
-                Position pos(blockquote ? blockquote : node->getDocument()->documentElement(), 0);
-                CSSComputedStyleDeclarationImpl *style = pos.computedStyle();
-                DOMString desiredColor = desiredStyle->getPropertyValue(CSS_PROP_COLOR);
-                DOMString nearestColor = style->getPropertyValue(CSS_PROP_COLOR);
-                if (desiredColor != nearestColor)
-                    desiredStyle->setProperty(CSS_PROP_COLOR, nearestColor);
-            }
-            desiredStyle->removeProperty(CSS_PROP__KHTML_MATCH_NEAREST_MAIL_BLOCKQUOTE_COLOR);
-
-            currentStyle->diff(desiredStyle);
-            
-            // Only add in block properties if the node is at the start of a 
-            // paragraph. This matches AppKit.
-            if (!isStartOfParagraph(VisiblePosition(pos, DOWNSTREAM)))
-                desiredStyle->removeBlockProperties();
-            
-            // If the desiredStyle is non-zero length, that means the current style differs
-            // from the desired by the styles remaining in the desiredStyle declaration.
-            if (desiredStyle->length() > 0) {
-                DOM::RangeImpl *rangeAroundNode = document()->createRange();
-                rangeAroundNode->ref();
-                int exceptionCode = 0;
-                rangeAroundNode->selectNode(node, exceptionCode);
-                ASSERT(exceptionCode == 0);
-				// affinity is not really important since this is a temp selection
-				// just for calling applyStyle
-                setEndingSelection(Selection(rangeAroundNode, SEL_DEFAULT_AFFINITY, SEL_DEFAULT_AFFINITY));
-                applyStyle(desiredStyle);
-                rangeAroundNode->deref();
-            }
-
-            currentStyle->deref();
+        // Only add in block properties if the node is at the start of a 
+        // paragraph. This matches AppKit.
+        if (!isStartOfParagraph(VisiblePosition(pos, DOWNSTREAM)))
+            desiredStyle->removeBlockProperties();
+        
+        // If the desiredStyle is non-zero length, that means the current style differs
+        // from the desired by the styles remaining in the desiredStyle declaration.
+        if (desiredStyle->length() > 0) {
+            DOM::RangeImpl *rangeAroundNode = document()->createRange();
+            rangeAroundNode->ref();
+            int exceptionCode = 0;
+            rangeAroundNode->selectNode(node, exceptionCode);
+            ASSERT(exceptionCode == 0);
+            // affinity is not really important since this is a temp selection
+            // just for calling applyStyle
+            setEndingSelection(Selection(rangeAroundNode, SEL_DEFAULT_AFFINITY, SEL_DEFAULT_AFFINITY));
+            applyStyle(desiredStyle);
+            rangeAroundNode->deref();
         }
 
-        node = next;
+        currentStyle->deref();
     }
+}
+
+void mapDesiredStyleForNode(DOM::NodeImpl *node, QMap<NodeImpl *, CSSMutableStyleDeclarationImpl *> &map)
+{
+    if (!node || !node->inDocument())
+        return;
+        
+    CSSComputedStyleDeclarationImpl *computedStyle = Position(node, 0).computedStyle();
+    computedStyle->ref();
+    CSSMutableStyleDeclarationImpl *style = computedStyle->copyInheritableProperties();
+    node->ref();
+    style->ref();
+    map[node] = style;
+    computedStyle->deref();
+
+    // In either of the color-matching tests below, set the color to a pseudo-color that will
+    // make the content take on the color of the nearest-enclosing blockquote (if any) after
+    // being pasted in.
+    if (NodeImpl *blockquote = nearestMailBlockquote(node)) {
+        CSSComputedStyleDeclarationImpl *blockquoteStyle = Position(blockquote, 0).computedStyle();
+        if (blockquoteStyle->getPropertyValue(CSS_PROP_COLOR) == style->getPropertyValue(CSS_PROP_COLOR)) {
+            style->setProperty(CSS_PROP__KHTML_MATCH_NEAREST_MAIL_BLOCKQUOTE_COLOR, matchNearestBlockquoteColorString());
+            return;
+        }
+    }
+    NodeImpl *documentElement = node->getDocument() ? node->getDocument()->documentElement() : 0;
+    if (documentElement) {
+        CSSComputedStyleDeclarationImpl *documentStyle = Position(documentElement, 0).computedStyle();
+        if (documentStyle->getPropertyValue(CSS_PROP_COLOR) == style->getPropertyValue(CSS_PROP_COLOR)) {
+            style->setProperty(CSS_PROP__KHTML_MATCH_NEAREST_MAIL_BLOCKQUOTE_COLOR, matchNearestBlockquoteColorString());
+        }
+    }
+}
+
+void derefNodesAndStylesInMap(const QMap<NodeImpl *, CSSMutableStyleDeclarationImpl *> &map)
+{
+    QMapConstIterator<NodeImpl *, CSSMutableStyleDeclarationImpl *> it;
+    for (it = map.begin(); it != map.end(); ++it) {
+        it.key()->deref();
+        it.data()->deref();
+    }    
 }
 
 //------------------------------------------------------------------------------------------
