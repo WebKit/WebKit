@@ -116,6 +116,14 @@ static NSNumber *IFURLFilePosixPermissions;
     [[NSFileManager defaultManager] removeFileAtPath:filePath handler:nil];
 }
 
+// FIXME: [kocienda] Radar 2861446 (Implement removeAllObjects on concrete IFDatabase classes)
+-(void)removeAllObjects
+{
+    [self close];
+    [[NSFileManager defaultManager] removeFileAtPath:path handler:nil];
+    [self open];
+}
+
 -(id)objectForKey:(id)key
 {
     id result;
