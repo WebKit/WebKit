@@ -10,454 +10,410 @@
 @namespace "http://www.w3.org/1999/xhtml";
 
 html {
-	display: block;
+    display: block
 } 
 
-/*
- * head and its children all have display=none
- */
+/* The children of the <head> element all have display:none */
 
 head { 
-	display: none;
+    display: none
 }
      
 meta {
-	display: none;
+    display: none
 }
 
 title {
-	display: none;
+    display: none
 }
 
 link {
-	display: none;
+    display: none
 }
 
 style {
-	display: none;
+    display: none
 }
 
 script {
-	display: none;
+    display: none
 }
 
-/*
- * generic block level elements
- */
+/* generic block-level elements */
 
 body {
     display: block;
-    margin: 8px;
+    margin: 8px
 }
 
 p {
-	display: block;
-	margin: 1.0__qem 0px;
+    display: block;
+    margin: 1.0__qem 0px
 }
 
 div {
-	display: block;
+    display: block
 }
 
 layer {
-	display: block;
+    display: block
 }
 
 marquee {
     display: inline-block;
-    overflow: marquee;
+    overflow: marquee
 }
 
 address {
-	display: block;
+    display: block
 }
       
 blockquote {
-	display: block;
-	margin: 1__qem 40px 1em 40px;
+    display: block;
+    margin: 1__qem 40px 1em 40px
 }
 
-Q        {
-         display: inline;
+q {
+    display: inline
 }
 
-Q:before {
-         content: '"';
-    /*   content: open-quote;   */
+q:before {
+    content: '"'
+    /* FIXME: content: open-quote; */
 }
 
-Q:after  {
-         content: '"';
-    /*   content: close-quote;  */
+q:after {
+    content: '"'
+    /* FIXME: content: close-quote; */
 }
 
-IFRAME, EMBED, OBJECT {
-	width: 300px; height:150px;
+iframe, embed, object {
+    width: 300px;
+    height: 150px
 }
 
-CENTER { 
-	display: block;
-	/* special centering to be able to emulate the html4/netscape behaviour */
-	text-align: -khtml-center;
+center {
+    display: block;
+    /* special centering to be able to emulate the html4/netscape behaviour */
+    text-align: -khtml-center
 }  
-      
-HR  { 
-        display: block; 
-        margin: 0.5em auto; 
-        border-style: inset;
-        border-width: 1px;
+
+hr {
+    display: block;
+    margin: 0.5em auto;
+    border-style: inset;
+    border-width: 1px
 }
 
-MAP { 
-	display: inline;
-} 
+map {
+    display: inline
+}
 
-
-/* 
- * heading elements 
- */
+/* heading elements */
       
-H1 { 
-	display: block;
-	font-size: 2em; 
-	margin: .67__qem 0 .67em 0;
-	font-weight: bold;
+h1 {
+    display: block;
+    font-size: 2em;
+    margin: .67__qem 0 .67em 0;
+    font-weight: bold
 }
       
-H2 { 
-	display: block;
-	font-size: 1.5em; 
-	margin: .83__qem 0 .83em 0;
-	font-weight: bold;
+h2 {
+    display: block;
+    font-size: 1.5em;
+    margin: .83__qem 0 .83em 0;
+    font-weight: bold
 }
       
-H3 { 
-	display: block;
-	font-size: 1.17em; 
-	margin: 1__qem 0 1em 0;
-	font-weight: bold;
+h3 {
+    display: block;
+    font-size: 1.17em;
+    margin: 1__qem 0 1em 0;
+    font-weight: bold
 }
       
-H4 {
-	display: block;
-	margin: 1.33__qem 0 1.33em 0;
-	font-weight: bold;
+h4 {
+    display: block;
+    margin: 1.33__qem 0 1.33em 0;
+    font-weight: bold
 }
 
-H5 { 
-	display: block;
-	font-size: .83em; 
-	margin: 1.67__qem 0 1.67em 0;
-	font-weight: bold;
+h5 {
+    display: block;
+    font-size: .83em;
+    margin: 1.67__qem 0 1.67em 0;
+    font-weight: bold
 }
 
-H6 { 
-	display: block;
-	font-size: .67em; 
-	margin: 2.33__qem 0 2.33em 0;
-	font-weight: bold;
+h6 {
+    display: block;
+    font-size: .67em;
+    margin: 2.33__qem 0 2.33em 0;
+    font-weight: bold
 }
 
-/* 
- * tables
- */
+/* tables */
 
-TABLE { 
-	display: table;
-        border-collapse: separate;
-	text-align: -khtml-auto;
-	border-spacing: 2px;
-	border-color: gray;
+table {
+    display: table;
+    border-collapse: separate;
+    text-align: -khtml-auto;
+    border-spacing: 2px;
+    border-color: gray
 }
 
-TABLE[align="center"] {
-        margin-left: auto;
-        margin-right: auto;
+table[align="center"] {
+    margin-left: auto;
+    margin-right: auto
 }
 
-THEAD { 
-	display: table-header-group; 
+thead {
+    display: table-header-group;
     vertical-align: middle;
-    border-color: inherit;
+    border-color: inherit
 }
       
-TBODY { 
-	display: table-row-group;
+tbody {
+    display: table-row-group;
     vertical-align: middle; 
-    border-color: inherit;
+    border-color: inherit
 }
       
-TFOOT { 
-	display: table-footer-group; 
+tfoot {
+    display: table-footer-group;
     vertical-align: middle;
-    border-color: inherit;
+    border-color: inherit
 }
 
-COL { 
-	display: table-column; 
-}
-      
-COLGROUP { 
-	display: table-column-group; 
+col {
+    display: table-column
 }
 
-TR { 
-	display: table-row;
-	vertical-align: inherit; 
-    border-color: inherit; 
-}
-      
-      
-TD, TH { 
-	display: table-cell;
-	vertical-align: inherit;
-}
-      
-TH { 
-	font-weight: bolder; 
-	text-align: center;
+colgroup {
+    display: table-column-group
 }
 
-CAPTION { 
-	display: table-caption;  
-	text-align: -khtml-center; 
+tr {
+    display: table-row;
+    vertical-align: inherit;
+    border-color: inherit
 }
 
-/*
- * Lists
- */
-
-UL, MENU, DIR {
-        display: block;
-        list-style-type: disc;
-        margin: 1__qem 0 1em 0;
-        padding-left: 40px; /* For RTL, we need to implement padding-start */
+td, th {
+    display: table-cell;
+    vertical-align: inherit
 }
 
-OL {
-        display: block;
-        list-style-type: decimal;
-        margin: 1__qem 0 1em 0;
-        padding-left: 40px; /* For RTL, we need to implement padding-start */
+th {
+    font-weight: bold
 }
 
-LI {
-        display: list-item;
+caption {
+    display: table-caption;
+    text-align: -khtml-center
 }
 
+/* Lists */
 
-UL UL, OL UL { 
-	list-style-type: circle;
+ul, menu, dir {
+    display: block;
+    list-style-type: disc;
+    margin: 1__qem 0 1em 0;
+    padding-left: 40px /* FIXME: For RTL, we need to implement padding-start */
 }
 
-OL OL UL, OL UL UL, UL OL UL, UL UL UL { 
-	list-style-type: square;
-}
-      
-
-DD {
-	display: block;
-	margin-left: 40px; /* For RTL, we need to implement margin-start */
+ol {
+    display: block;
+    list-style-type: decimal;
+    margin: 1__qem 0 1em 0;
+    padding-left: 40px /* FIXME: For RTL, we need to implement padding-start */
 }
 
-DL {
-	display: block;
-	margin: 1__qem 0 1em 0;
+li {
+    display: list-item
+}
+
+ul ul, ol ul {
+    list-style-type: circle
+}
+
+ol ol ul, ol ul ul, ul ol ul, ul ul ul {
+    list-style-type: square
+}
+
+dd {
+    display: block;
+    margin-left: 40px /* FIXME: For RTL, we need to implement margin-start */
+}
+
+dl {
+    display: block;
+    margin: 1__qem 0 1em 0
 } 
 
-DT {
-	display: block;
+dt {
+    display: block
 }
 
-OL UL, 
-UL OL,
-UL UL, 
-OL OL { 
-	margin-top: 0; 
-	margin-bottom: 0; 
+ol ul, ul ol, ul ul, ol ol {
+    margin-top: 0;
+    margin-bottom: 0
 }
 
-/*
- * form elements
- */
+/* form elements */
 
-FORM {
-	display: block;
-    margin: 0__qem 0 1em 0;
+form {
+    display: block;
+    margin: 0__qem 0 1em 0
 }
 
-LEGEND {
+legend {
     display: block;
     padding-left: 2px;
     padding-right: 2px;
-    border: none;
+    border: none
 }
 
-FIELDSET {
+fieldset {
     display: block;
     margin-left: 2px;
     margin-right: 2px;
     padding: 0.75em 0.625em;
-    border: 2px groove ThreeDFace;
+    border: 2px groove ThreeDFace
 }
 
-BUTTON {
-        display: inline-block;
-        border: 2px outset ButtonFace;
-        background-color: ButtonFace;
-        color: ButtonText;
-        padding: 2px 2px 2px 2px;
-        cursor: default;
+button {
+    display: inline-block;
+    border: 2px outset ButtonFace;
+    background-color: ButtonFace;
+    color: ButtonText;
+    padding: 2px 2px 2px 2px;
+    cursor: default
 }
 
-BUTTON:active {
-        border-style: inset;
+button:active {
+    border-style: inset
 }
 
-INPUT, TEXTAREA {
-        text-align: -khtml-auto;
+input, textarea {
+    text-align: -khtml-auto
 }
 
-/* XXX Need to implement support for CSS2 system fonts, so that I don't have to hard code this.
-   -dwh */
-INPUT, TEXTAREA, SELECT, BUTTON {
+/* FIXME: Need to implement support for CSS2 system fonts, so that I don't have to hard code Lucida Grande. */
+input, textarea, select, button {
     margin: 0__qem;
-    font: 11px 'Lucida Grande';
+    font: 11px 'Lucida Grande'
 }
 
-INPUT[type="hidden"] {
-	display: none; 
+input[type="hidden"] {
+    display: none
 }
 
-INPUT[type="radio"], INPUT[type="checkbox"] {
-        margin: 3px 0.5ex;
+input[type="radio"], input[type="checkbox"] {
+    margin: 3px 0.5ex
 }
 
-OPTION, 
-OPTGROUP, 
-AREA,
-PARAM  { 
-	display: none; 
+option, optgroup, area, param {
+    display: none
 }
 
-/*
- * inline elements
- */      
+/* inline elements */      
       
-U, 
-INS { 
-	text-decoration: underline;
+u, ins {
+    text-decoration: underline
 }
       
-STRONG,
-B { 
-	font-weight: bolder; 
+strong, b {
+    font-weight: bolder
 }
       
-I, 
-CITE, 
-EM,
-VAR, 
-ADDRESS { 
-	font-style: italic; 
+i, cite, em, var, address {
+    font-style: italic
 }
       
-TT, 
-CODE,
-KBD, 
-SAMP { 
-	font-family: monospace; 
+tt, code, kbd, samp {
+    font-family: monospace
 }
       
-PRE,
-XMP, 
-PLAINTEXT { 
-	display: block;
-	font-family: monospace; 
-	white-space: pre; 
-	margin: 1__qem 0;
+pre, xmp, plaintext {
+    display: block;
+    font-family: monospace;
+    white-space: pre;
+    margin: 1__qem 0
 }
       
-BIG { 
-	font-size: larger; 
+big {
+    font-size: larger; 
 }
       
-SMALL { 
-	font-size: smaller; 
+small {
+    font-size: smaller; 
 }
 
-S, 
-STRIKE, 
-DEL  { 
-	text-decoration: line-through; 
+s, strike, del {
+    text-decoration: line-through
 }
 
-SUB { 
-	vertical-align: sub;
-	font-size: smaller; 
-}
-SUP { 
-	vertical-align: super;	
-	font-size: smaller;
+sub {
+    vertical-align: sub;
+    font-size: smaller
 }
 
-abbr, 
-acronym {
-	font-style: italic;
-}
-
-:focus          { outline: auto 3px #1f5ccf }
-html:focus,body:focus  { outline: none }
-a:-khtml-any-link { color: -khtml-link; text-decoration: underline; }
-a:-khtml-any-link:active { color: -khtml-activelink; }
-
-/* Bidirectionality settings (do not change) */
-
-BDO[DIR="ltr"]  { 
-	direction: ltr; 
-	unicode-bidi: bidi-override; 
-}
-
-BDO[DIR="rtl"]  { 
-	direction: rtl; 
-	unicode-bidi: bidi-override;
-}
-   
-/* Elements that are block-level in HTML4 */
-/* ### don't support unicode-bidi at the moment
-      ADDRESS, BLOCKQUOTE, BODY, DD, DIV, DL, DT, FIELDSET,
-      FORM, FRAME, FRAMESET, H1, H2, H3, H4, H5, H6, IFRAME,
-      NOSCRIPT, NOFRAMES, OBJECT, OL, P, UL, APPLET, CENTER,
-      DIR, HR, MENU, PRE, LI, TABLE, TR, THEAD, TBODY, TFOOT,
-      COL, COLGROUP, TD, TH, CAPTION
-                      { unicode-bidi: embed }
-*/
-      
-/* End bidi settings */
-
-/*
- * other elements
- */
-
-noframes {
-	display: none;
-}
-
-frameset {
-	display: block;
-}
-
-frame { 
-	display: block;
+sup {
+    vertical-align: super;
+    font-size: smaller
 }
 
 nobr {
-        display: inline;
-        white-space: nowrap; 
+    display: inline;
+    white-space: nowrap
 }
 
 wbr {
-        white-space: normal;
+    white-space: normal
+}
+
+/* End Inline Elements */
+
+:focus { 
+    outline: auto 3px #1f5ccf
+}
+
+html:focus, body:focus { 
+    outline: none
+}
+
+a:-khtml-any-link {
+    color: -khtml-link;
+    text-decoration: underline
+}
+
+a:-khtml-any-link:active {
+    color: -khtml-activelink
+}
+
+/* Bidirectionality settings */
+
+bdo[dir="ltr"]  {
+    direction: ltr;
+    unicode-bidi: bidi-override
+}
+
+bdo[dir="rtl"]  {
+    direction: rtl;
+    unicode-bidi: bidi-override
+}
+      
+/* End bidi settings */
+
+/* other elements */
+
+noframes {
+    display: none
+}
+
+frameset, frame {
+    display: block
 }
 
 /* noscript is handled internally, as it depends on the html settings */
