@@ -1,3 +1,14 @@
+2003-08-22  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3388363, copying a word in a list item copied too much.  The code that checked
+	for the bullet would add in too much text sometimes.
+	
+        Reviewed by john
+
+        * kwq/KWQKHTMLPart.mm:
+        (isTextFirstInListItem):
+        (KWQKHTMLPart::attributedString):
+
 2003-08-21  Darin Adler  <darin@apple.com>
 
         * Makefile.am: Work around DLCFN issue to prevent constant churn of config.h.

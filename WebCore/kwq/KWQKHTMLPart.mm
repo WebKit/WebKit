@@ -1908,12 +1908,18 @@ static ElementImpl *listParent(ElementImpl *item)
     return item;
 }
 
-static NodeImpl *inList(NodeImpl *e)
+static NodeImpl* isTextFirstInListItem(NodeImpl *e)
 {
-    while (e){
-        if (Node(e).elementId() == ID_LI)
-            return e;
-        e = e->parentNode();
+    if (Node(e).nodeType() != Node::TEXT_NODE)
+        return 0;
+    NodeImpl* par = e->parentNode();
+    while (par) {
+        if (par->firstChild() != e)
+            return 0;
+        if (Node(par).elementId() == ID_LI)
+            return par;
+        e = par;
+        par = par->parentNode();
     }
     return 0;
 }
@@ -1943,8 +1949,8 @@ NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_startNode, int sta
     
     // If the first item is the entire text of a list item, use the list item node as the start of the 
     // selection, not the text node.  The user's intent was probably to select the list.
-    if (n.nodeType() == Node::TEXT_NODE && startOffset == 0){
-        NodeImpl *startListNode = inList(_startNode);
+    if (n.nodeType() == Node::TEXT_NODE && startOffset == 0) {
+        NodeImpl *startListNode = isTextFirstInListItem(_startNode);
         if (startListNode){
             _startNode = startListNode;
             n = _startNode;
