@@ -1,1 +1,12 @@
+2002-12-03  Darin Adler  <darin@apple.com>
+
+	- fixed 3117193 -- REGRESSION: Hang on Hixie's weblog
+
+        Reviewed by Maciej.
+
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (-[WebTextRenderer substituteFontForString:families:]):
+	Do the operation on the whole string at once instead of a character at a time.
+        I decided to do this rather than correct the bug in the character-at-a-time version.
+
 == Rolled over to ChangeLog-2002-12-03 ==

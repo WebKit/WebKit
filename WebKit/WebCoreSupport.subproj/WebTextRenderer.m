@@ -266,27 +266,16 @@ static BOOL bufferTextDrawing = NO;
     // First search the CSS family fallback list.
     NSString *family = nil;
     int i = 0;
-    while (families && families[i] != 0 && substituteFont == nil){
+    while (families && families[i] != 0) {
         family = families[i++];
         substituteFont = [[WebTextRendererFactory sharedFactory] cachedFontFromFamily: family traits:[[NSFontManager sharedFontManager] traitsOfFont:font] size:[font pointSize]];
-        if (substituteFont){
-            NSCharacterSet *cs = [substituteFont coveredCharacterSet];
-            int pos = 0;
-            int length = [string length];
-            while (pos < length){
-                if (![cs characterIsMember: [string characterAtIndex: pos]]){
-                    substituteFont = nil;
-                    continue;
-                }
-            }
+        if (substituteFont && [string rangeOfCharacterFromSet:[[substituteFont coveredCharacterSet] invertedSet]].location == NSNotFound) {
+            return substituteFont;
         }
     }
-    if (substituteFont)
-        return substituteFont;
     
     // Now do string based lookup
     substituteFont = [NSFont findFontLike:font forString:string withRange:NSMakeRange (0,[string length]) inLanguage:[NSLanguage defaultLanguage]];
-
     if ([substituteFont isEqual: font])
         substituteFont = nil;
 
