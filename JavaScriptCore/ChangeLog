@@ -1,3 +1,31 @@
+2004-08-05  Richard Williamson   <rjw@apple.com>
+
+        Fixed part of 3674747.  The QT guys need this for feature freeze.
+
+        This patch implements support for the
+
+        - (id)invokeUndefinedMethodFromWebScript:(NSString *)name withArguments:(NSArray *)args
+
+        method of objects bound to JavaScript.
+
+        Reviewed by John.
+
+        * ChangeLog:
+        * bindings/objc/objc_class.mm:
+        (ObjcClass::methodsNamed):
+        (ObjcClass::fieldNamed):
+        * bindings/objc/objc_instance.mm:
+        (ObjcInstance::invokeMethod):
+        * bindings/objc/objc_runtime.h:
+        (KJS::Bindings::ObjcMethod::~ObjcMethod):
+        (KJS::Bindings::ObjcMethod::isFallbackMethod):
+        (KJS::Bindings::ObjcMethod::javaScriptName):
+        * bindings/objc/objc_runtime.mm:
+        (ObjcMethod::ObjcMethod):
+        (ObjcMethod::getMethodSignature):
+        (ObjcMethod::setJavaScriptName):
+        * bindings/testbindings.mm:
+
 2004-08-04  Vicki Murley  <vicki@apple.com>
 
         Reviewed by mjs.

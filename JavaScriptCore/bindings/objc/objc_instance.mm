@@ -138,52 +138,75 @@ NS_DURING
     [invocation setTarget:_instance];
     unsigned i, count = args.size();
     
-    if (count != [signature numberOfArguments] - 2){
-        return Undefined();
+    if (method->isFallbackMethod()) {
+        // invokeUndefinedMethodFromWebScript:withArguments: implementation must return an
+        // object.
+        if (strcmp ([signature methodReturnType], "@") != 0) {
+            OBJC_LOG ("incorrect signature for invokeUndefinedMethodFromWebScript:withArguments:, expected object return type");
+            delete method;
+            return Undefined();
+        }
+        
+        // Invoke invokeUndefinedMethodFromWebScript:withArguments:, pass JavaScript function
+        // name as first (actually at 2) argument and array of args as second.
+        NSString *jsName = (NSString *)method->javaScriptName();
+        [invocation setArgument:&jsName atIndex:2];
+        
+        NSMutableArray *objcArgs = [NSMutableArray array];
+        for (i = 0; i < count; i++) {
+            ObjcValue value = convertValueToObjcValue (exec, args.at(i), ObjcObjectType);
+            [objcArgs addObject:value.objectValue];
+        }
+        [invocation setArgument:&objcArgs atIndex:3];
     }
-    
-    for (i = 2; i < count+2; i++) {
-        const char *type = [signature getArgumentTypeAtIndex:i];
-        ObjcValueType objcValueType = objcValueTypeForType (type);
+    else {
+        if (count != [signature numberOfArguments] - 2){
+            return Undefined();
+        }
+        
+        for (i = 2; i < count+2; i++) {
+            const char *type = [signature getArgumentTypeAtIndex:i];
+            ObjcValueType objcValueType = objcValueTypeForType (type);
 
-        // Must have a valid argument type.  This method signature should have
-        // been filtered already to ensure that it has acceptable argument
-        // types.
-        assert (objcValueType != ObjcInvalidType && objcValueType != ObjcVoidType);
-        
-        ObjcValue value = convertValueToObjcValue (exec, args.at(i-2), objcValueType);
-        
-        switch (objcValueType) {
-            case ObjcObjectType:
-                [invocation setArgument:&value.objectValue atIndex:i];
-                break;
-            case ObjcCharType:
-                [invocation setArgument:&value.charValue atIndex:i];
-                break;
-            case ObjcShortType:
-                [invocation setArgument:&value.shortValue atIndex:i];
-                break;
-            case ObjcIntType:
-                [invocation setArgument:&value.intValue atIndex:i];
-                break;
-            case ObjcLongType:
-                [invocation setArgument:&value.longValue atIndex:i];
-                break;
-            case ObjcFloatType:
-                [invocation setArgument:&value.floatValue atIndex:i];
-                break;
-            case ObjcDoubleType:
-                [invocation setArgument:&value.doubleValue atIndex:i];
-                break;
-            default:
-                // Should never get here.  Argument types are filtered (and
-                // the assert above should have fired in the impossible case
-                // of an invalid type anyway).
-                fprintf (stderr, "%s:  invalid type (%d)\n", __PRETTY_FUNCTION__, (int)objcValueType);
-                assert (true);
+            // Must have a valid argument type.  This method signature should have
+            // been filtered already to ensure that it has acceptable argument
+            // types.
+            assert (objcValueType != ObjcInvalidType && objcValueType != ObjcVoidType);
+            
+            ObjcValue value = convertValueToObjcValue (exec, args.at(i-2), objcValueType);
+            
+            switch (objcValueType) {
+                case ObjcObjectType:
+                    [invocation setArgument:&value.objectValue atIndex:i];
+                    break;
+                case ObjcCharType:
+                    [invocation setArgument:&value.charValue atIndex:i];
+                    break;
+                case ObjcShortType:
+                    [invocation setArgument:&value.shortValue atIndex:i];
+                    break;
+                case ObjcIntType:
+                    [invocation setArgument:&value.intValue atIndex:i];
+                    break;
+                case ObjcLongType:
+                    [invocation setArgument:&value.longValue atIndex:i];
+                    break;
+                case ObjcFloatType:
+                    [invocation setArgument:&value.floatValue atIndex:i];
+                    break;
+                case ObjcDoubleType:
+                    [invocation setArgument:&value.doubleValue atIndex:i];
+                    break;
+                default:
+                    // Should never get here.  Argument types are filtered (and
+                    // the assert above should have fired in the impossible case
+                    // of an invalid type anyway).
+                    fprintf (stderr, "%s:  invalid type (%d)\n", __PRETTY_FUNCTION__, (int)objcValueType);
+                    assert (true);
+            }
         }
     }
-
+    
     // Invoke the ObjectiveC method.
     [invocation invoke];
 
@@ -209,6 +232,11 @@ NS_DURING
         [invocation getReturnValue:buffer];
         resultValue = convertObjcValueToValue (exec, buffer, objcValueType);
     }
+
+    // Fallback methods are created for one-shot use.  They are created in 
+    // ObjcClass::methodsNamed() and deleted here.
+    if (method->isFallbackMethod())
+        delete method;
     
 NS_HANDLER
     

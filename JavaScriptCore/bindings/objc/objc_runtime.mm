@@ -43,6 +43,7 @@ ObjcMethod::ObjcMethod(ClassStructPtr aClass, const char *name)
 {
     _objcClass = aClass;
     _selector = name;   // Assume ObjC runtime keeps these around forever.
+    _javaScriptName = 0;
 }
 
 const char *ObjcMethod::name() const
@@ -59,6 +60,15 @@ long ObjcMethod::numParameters() const
 NSMethodSignature *ObjcMethod::getMethodSignature() const
 {
     return [(id)_objcClass instanceMethodSignatureForSelector:(SEL)_selector];
+}
+
+void ObjcMethod::setJavaScriptName (CFStringRef n)
+{
+    if (n != _javaScriptName) {
+        if (_javaScriptName != 0)
+            CFRelease (_javaScriptName);
+        _javaScriptName = (CFStringRef)CFRetain (n);
+    }
 }
 
 // ---------------------- ObjcField ----------------------

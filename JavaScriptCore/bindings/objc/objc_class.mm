@@ -113,8 +113,10 @@ MethodList ObjcClass::methodsNamed(const char *_name) const
                 NSString *mappedName = 0;
             
                 // See if the class wants to exclude the selector from visibility in JavaScript.
-                if ([(id)thisClass isSelectorExcludedFromWebScript:objcMethod->method_name]) {
-                    continue;
+                if ([(id)thisClass respondsToSelector:@selector(isSelectorExcludedFromWebScript:)]){
+                    if ([(id)thisClass isSelectorExcludedFromWebScript:objcMethod->method_name]) {
+                        continue;
+                    }
                 }
                 
                 // See if the class want to provide a different name for the selector in JavaScript.
@@ -136,8 +138,19 @@ MethodList ObjcClass::methodsNamed(const char *_name) const
         thisClass = thisClass->super_class;
     }
 
-    CFRelease (methodName);
+    if (methodList.length() == 0) {
+        thisClass = _isa;
+        if ([(id)thisClass instancesRespondToSelector:@selector(invokeUndefinedMethodFromWebScript:withArguments:)]){
+            // Fallback methods are created for one-shot use.  They are created here 
+            // and deleted in ObjcInstance::invokeMethod().
+            ObjcMethod *fallbackMethod = new ObjcMethod (thisClass, (const char *)@selector(invokeUndefinedMethodFromWebScript:withArguments:));
+            fallbackMethod->setJavaScriptName(methodName);
+            methodList.addMethod ((Method *)fallbackMethod);
+        }
+    }
     
+    CFRelease (methodName);
+
     return methodList;
 }
 
@@ -153,6 +166,8 @@ Field *ObjcClass::fieldNamed(const char *name) const
         return aField;
     }
 
+    // FIX ME.  See if the instance implement attributeKeys.  Will need to 
+    // change fieldNamed() signature to take a Bindings::Instance.
     while (thisClass != 0) {
         struct objc_ivar_list *fieldsInClass = thisClass->ivars;
         if (fieldsInClass) {
@@ -162,8 +177,10 @@ Field *ObjcClass::fieldNamed(const char *name) const
                 NSString *mappedName = 0;
 
                 // See if the class wants to exclude the selector from visibility in JavaScript.
-                if ([(id)thisClass isKeyExcludedFromWebScript:objcIVar->ivar_name]) {
-                    continue;
+                if ([(id)thisClass respondsToSelector:@selector(isKeyExcludedFromWebScript:)]) {
+                    if ([(id)thisClass isKeyExcludedFromWebScript:objcIVar->ivar_name]) {
+                        continue;
+                    }
                 }
                 
                 // See if the class want to provide a different name for the selector in JavaScript.
