@@ -1,3 +1,18 @@
+2003-11-11  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Ken.
+
+	- fixed 3472330 -  REGRESSION: onKeyPress handler not called when hitting keys in <input type=password> field
+
+        * kwq/KWQTextField.mm:
+        (-[KWQSecureTextField initWithQLineEdit:]): New initializer, so
+	the secure text field knows about the widget.
+        (-[KWQTextField setPasswordMode:]): Use new initializer for
+	KWQSecureTextField.
+        (-[KWQSecureTextField textView:shouldHandleEvent:]): New method,
+	do the same thing as the non-secure text field to pass the event on.
+        (-[KWQSecureTextField textView:didHandleEvent:]): Ditto.
+
 2003-11-11  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Maciej

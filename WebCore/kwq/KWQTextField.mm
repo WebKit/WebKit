@@ -69,9 +69,13 @@
 // Another is hook up next and previous key views to KHTML.
 @interface KWQSecureTextField : NSSecureTextField <KWQWidgetHolder>
 {
+    QLineEdit *widget;
     BOOL inNextValidKeyView;
     BOOL inSetFrameSize;
 }
+
+- (id)initWithQLineEdit:(QLineEdit *)widget;
+
 @end
 
 // KWQSecureTextFieldCell allows us to tell when we get focus without an editor subclass,
@@ -171,7 +175,7 @@
         [secureField removeFromSuperview];
     } else {
         if (secureField == nil) {
-            secureField = [[KWQSecureTextField alloc] init];
+            secureField = [[KWQSecureTextField alloc] initWithQLineEdit:widget];
             [secureField setFormatter:formatter];
             [secureField setFont:[self font]];
             [secureField setEditable:[self isEditable]];
@@ -704,6 +708,12 @@
 
 @implementation KWQSecureTextField
 
+-(id)initWithQLineEdit:(QLineEdit *)w 
+{
+    widget = w;
+    return [self init];
+}
+
 // Can't use setCellClass: because NSSecureTextField won't let us (for no good reason).
 + (Class)cellClass
 {
@@ -815,6 +825,30 @@
 	BOOL oldSelectable = [textObject isSelectable];
 	[textObject setSelectable:YES];
 	[textObject setSelectable:oldSelectable];
+    }
+}
+
+- (BOOL)textView:(NSTextView *)view shouldHandleEvent:(NSEvent *)event
+{
+    if (!widget) {
+	return YES;
+    }
+
+    if ([event type] == NSKeyDown || [event type] == NSKeyUp) {
+        WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(widget);
+        return ![bridge interceptKeyEvent:event toView:view];
+    }
+    return YES;
+}
+
+- (void)textView:(NSTextView *)view didHandleEvent:(NSEvent *)event
+{
+    if (!widget) {
+	return;
+    }
+    if ([event type] == NSLeftMouseUp) {
+        widget->sendConsumedMouseUp();
+        widget->clicked();
     }
 }
 
