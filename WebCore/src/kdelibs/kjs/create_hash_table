@@ -1,0 +1,116 @@
+#! /usr/bin/perl
+
+$file = $ARGV[0];
+open(IN, $file) or die "No such file $file";
+
+@keys = ();
+@values = ();
+@attrs = ();
+
+my $inside = 0;
+my $name;
+my $size;
+my $hashsize;
+my $banner = 0;
+
+while (<IN>) {
+  chop; 
+  s/^\s*//g; 
+  if (/^\#|^$/) {
+      # comment. do nothing
+    } elsif (/^\@begin\s*(\w+)\s*(\d+)\s*$/ && !$inside) {
+      $inside = 1;
+      $name = $1;
+      $hashsize = $2;
+    } elsif (/^\@end\s*$/ && $inside) {
+      calcTable();
+      output();
+      @keys = ();
+      @values = ();
+      @attrs = ();
+      $inside = 0;
+    } elsif (/^(\w+)\s*([\w\:]+)\s*([\w\|]*)\s*$/ && $inside) {
+      push(@keys, $1);
+      push(@values, $2);
+      push(@attrs, length($3) > 0 ? $3 : "0");
+    } else {
+      die "invalid data";
+    }
+}
+
+die "missing closing \@end" if ($inside);
+
+sub calcTable() {
+  @table = ();
+  @links = ();
+  $size = $hashsize;
+  my $collisions = 0;
+  my $i = 0;
+  foreach $key (@keys) {
+    my $h = hashValue($key) % $hashsize;
+    while (defined($table[$h])) {
+      if (defined($links[$h])) {
+	$h = $links[$h];
+      } else {
+	$collisions++;
+	$links[$h] = $size;
+	$h = $size;
+	$size++;
+      }
+    }
+    $table[$h] = $i;
+    $i++;
+  }
+
+# print "// Number of collisions: $collisions\n";
+#  printf "total size: $size\n";
+#  my $i = 0;
+#  foreach $entry (@table) {
+#    print "$i " . $entry;
+#    print " -> " . $links[$i] if (defined($links[$i]));
+#    print "\n";
+#    $i++;
+#  }
+}
+
+sub hashValue {
+  @chars = split(/ */, @_[0]);
+  my $val = 0;
+  foreach $c (@chars) {
+    $val += ord($c);
+  }
+  return $val;
+}
+
+sub output {
+  if (!$banner) {
+    $banner = 1;
+    print "/* automatically generated from $file. DO NOT EDIT ! */\n";
+  }
+
+  print "\nnamespace KJS {\n";
+  print "\nconst struct HashEntry2 ${name}Entries[] = {\n";
+  my $i = 0;
+  foreach $entry (@table) {
+    if (defined($entry)) {
+      my $key = $keys[$entry];
+      print "   \{ \"" . $key . "\"";
+      print ", " . $values[$entry];
+      print ", " . $attrs[$entry] . ", ";
+      if (defined($links[$i])) {
+	print "&${name}Entries[$links[$i]]" . " \}";
+      } else {
+	print "0 \}"
+      }
+    } else {
+      print "   \{ 0, 0, 0, 0 \}";
+    }
+    print "," unless ($i == $size - 1);
+    print "\n";
+    $i++;
+  }
+  print "};\n";
+  print "\nconst struct HashTable2 $name = ";
+  print "\{ 2, $size, ${name}Entries, $hashsize \};\n\n";
+  print "}; // namespace\n";
+}

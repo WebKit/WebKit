@@ -1,0 +1,24 @@
+2001-01-04  Harri Porten  <harri@trolltech.com>
+
+	* ustring.h: pack bytes to avoid alignment problems (ARM) reported
+	by Stefan Hanske <sh990154@mail.uni-greifswald.de>
+	* nodes.cpp: typeof fix by Emmeran Seehuber <the_emmy@gmx.de>
+	* nodes.cpp: fixed order of function declaration proccessing
+
+2000-12-18  Harri Porten  <harri@trolltech.com>
+
+	* string_object.cpp: fixed out-of-bounds error in fromCharCode()
+
+2000-12-11  Harri Porten  <harri@trolltech.com>
+
+	* regexp.h: compile fix for buggy libc
+	* ustring.cpp: format string conversion of numbers with %g
+
+2000-12-10  Harri Porten  <harri@trolltech.com>
+
+	* lexer.cpp: parsing != was broken, added \v escape in strings,
+		fixed "\u" and "\x" and \x with non hex chars following.
+	* nodes.cpp: implemented <<=, >>=, >>>=, &=, ^=, |= and %=
+	* internal.cpp: create error message including line no on parse errors
+
+
