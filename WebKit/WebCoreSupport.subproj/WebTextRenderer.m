@@ -871,6 +871,11 @@ cleanup:
         totalWidth += lastWidth;       
     }
 
+    // Don't ever apply rounding for single character.  Single character measurement
+    // intra word needs to be non-ceiled.
+    if ((len > 1 || stringLength == 1) && applyRounding)
+        totalWidth += ceil(totalWidth) - totalWidth;
+
     return totalWidth;
 }
 

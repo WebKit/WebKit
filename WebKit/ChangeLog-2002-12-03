@@ -1,3 +1,10 @@
+2002-09-11  Richard Williamson  <rjw@apple.com>
+
+        Better fix for previous problem.
+        
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (-[WebTextRenderer floatWidthForCharacters:stringLength:fromCharacterPosition:numberOfCharacters:applyRounding:attemptFontSubstitution:]):
+
 2002-09-11  Richard Williamson (Local)  <rjw@apple.com>
 
         Remove ceiling of text width at end of fragment.  This was screwing up
