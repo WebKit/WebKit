@@ -171,7 +171,7 @@ void NPN_InitializeVariantWithVariant (NPVariant *destination, const NPVariant *
 	NPVariant (with type NPVariantUndefinedType)          Undefined
 	NPVariant (with type NPVariantNullType)               Null
 	NPArray                                               Array (restricted)
-	NObject                                               Object or (NPObject wrapper)
+	NPObject                                              Object or (NPObject wrapper)
 
 */
 
