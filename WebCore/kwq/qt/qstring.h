@@ -156,6 +156,11 @@ public:
     // static member functions -------------------------------------------------
 
     static QString number(int /* NOTE: base NOT used */ );
+    static QString number(uint /* NOTE: base NOT used */ );
+    static QString number(long /* NOTE: base NOT used */ );
+    static QString number(ulong /* NOTE: base NOT used */ );
+    static QString number(double);
+
     static QString fromLatin1(const char * /* NOTE: len NOT used */ );
 #ifdef USING_BORROWED_KURL
     static QString fromLocal8Bit(const char *, int len=-1);
@@ -223,7 +228,13 @@ public:
     float toFloat(bool *ok=NULL) const;
 
     QString arg(const QString &, int width=0) const;
+    QString arg(short, int width=0 /* NOTE: base NOT used */ ) const;
+    QString arg(ushort, int width=0 /* NOTE: base NOT used */ ) const;
     QString arg(int, int width=0 /* NOTE: base NOT used */ ) const;
+    QString arg(uint, int width=0 /* NOTE: base NOT used */ ) const;
+    QString arg(long, int width=0 /* NOTE: base NOT used */ ) const;
+    QString arg(ulong, int width=0 /* NOTE: base NOT used */ ) const;
+    QString arg(double, int width=0) const;
 
     QString left(uint) const;
     QString right(uint) const;
@@ -238,7 +249,16 @@ public:
     QString simplifyWhiteSpace() const;
 
     QString &setUnicode(const QChar *, uint);
+    QString &setLatin1(const char *);
+
+    QString &setNum(short /* NOTE: base NOT used */ );
+    QString &setNum(ushort /* NOTE: base NOT used */ );
     QString &setNum(int /* NOTE: base NOT used */ );
+    QString &setNum(uint /* NOTE: base NOT used */ );
+    QString &setNum(long /* NOTE: base NOT used */ );
+    QString &setNum(ulong /* NOTE: base NOT used */ );
+    QString &setNum(double);
+
     QString &sprintf(const char *, ...);
 
     QString &prepend(const QString &);

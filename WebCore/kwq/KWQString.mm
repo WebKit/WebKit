@@ -47,6 +47,34 @@ QString QString::number(int n)
     return qs;
 }
 
+QString QString::number(uint n)
+{
+    QString qs;
+    qs.setNum(n);
+    return qs;
+}
+
+QString QString::number(long n)
+{
+    QString qs;
+    qs.setNum(n);
+    return qs;
+}
+
+QString QString::number(ulong n)
+{
+    QString qs;
+    qs.setNum(n);
+    return qs;
+}
+
+QString QString::number(double n)
+{
+    QString qs;
+    qs.setNum(n);
+    return qs;
+}
+
 QString QString::fromLatin1(const char *chs)
 {
     return QString(chs);
@@ -571,7 +599,11 @@ uint QString::toUInt(bool *ok) const
             while (i < len) {
                 uc = CFStringGetCharacterFromInlineBuffer(&buf, i);
                 if ((uc >= '0') && (uc <= '9')) {
-                    n += uc - '0';
+                    if (n > (UINT_MAX / 10)) {
+                        valid = FALSE;
+                        break;
+                    }
+                    n = (n * 10) + (uc - '0');
                 } else {
                     break;
                 }
@@ -634,12 +666,24 @@ long QString::toLong(bool *ok, int base) const
                 uc = CFStringGetCharacterFromInlineBuffer(&buf, i);
                 // NOTE: ignore anything other than base 10 and base 16
                 if ((uc >= '0') && (uc <= '9')) {
-                    n += uc - '0';
+                    if (n > (INT_MAX / 10)) {
+                        valid = FALSE;
+                        break;
+                    }
+                    n = (n * 10) + (uc - '0');
                 } else if (base == 16) {
                     if ((uc >= 'A') && (uc <= 'F')) {
-                        n += 10 + (uc - 'A');
+                        if (n > (INT_MAX / 16)) {
+                            valid = FALSE;
+                            break;
+                        }
+                        n = (n * 16) + (10 + (uc - 'A'));
                     } else if ((uc >= 'a') && (uc <= 'f')) {
-                        n += 10 + (uc - 'a');
+                        if (n > (INT_MAX / 16)) {
+                            valid = FALSE;
+                            break;
+                        }
+                        n = (n * 16) + (10 + (uc - 'a'));
                     } else {
                         break;
                     }
@@ -753,7 +797,37 @@ QString QString::arg(const QString &replacement, int width) const
     return qs;
 }
 
+QString QString::arg(short replacement, int width) const
+{
+    return arg(number((int)replacement), width);
+}
+
+QString QString::arg(ushort replacement, int width) const
+{
+    return arg(number((uint)replacement), width);
+}
+
 QString QString::arg(int replacement, int width) const
+{
+    return arg(number(replacement), width);
+}
+
+QString QString::arg(uint replacement, int width) const
+{
+    return arg(number(replacement), width);
+}
+
+QString QString::arg(long replacement, int width) const
+{
+    return arg(number(replacement), width);
+}
+
+QString QString::arg(ulong replacement, int width) const
+{
+    return arg(number(replacement), width);
+}
+
+QString QString::arg(double replacement, int width) const
 {
     return arg(number(replacement), width);
 }
@@ -901,47 +975,100 @@ QString QString::simplifyWhiteSpace() const
 QString &QString::setUnicode(const QChar *qcs, uint len)
 {
     flushCache();
-    if (!s && len) {
-        s = CFStringCreateMutable(kCFAllocatorDefault, 0);
-    }
-    if (s) {
-        if (len) {
-            if (qcs) {
-                CFStringRef tmp = CFStringCreateWithCharactersNoCopy(
-                        kCFAllocatorDefault, &qcs->c, len, kCFAllocatorNull);
-                if (tmp) {
-                    CFStringReplaceAll(s, tmp);
-                    CFRelease(tmp);
-                }
+    if (qcs && len) {
+        if (s) {
+            CFStringRef tmp = CFStringCreateWithCharactersNoCopy(
+                    kCFAllocatorDefault, &qcs->c, len, kCFAllocatorNull);
+            if (tmp) {
+                CFStringReplaceAll(s, tmp);
+                CFRelease(tmp);
             }
         } else {
-            CFRelease(s);
-            s = NULL;
+            s = CFStringCreateMutable(kCFAllocatorDefault, 0);
+            if (s) {
+                CFStringAppendCharacters(s, &qcs->c, len);
+            }
         }
+    } else if (s) {
+        CFRelease(s);
+        s = NULL;
     }
     return *this;
 }
 
-QString &QString::setNum(int n)
+QString &QString::setLatin1(const char *chs)
 {
     flushCache();
-    if (!s) {
-        s = CFStringCreateMutable(kCFAllocatorDefault, 0);
-    }
-    if (s) {
-        const int capacity = 64;
-        char buf[capacity];
-        buf[snprintf(buf, capacity - 1, "%d", n)] = '\0';
-        // FIXME: is ISO Latin-1 the correct encoding?
-        CFStringRef tmp = CFStringCreateWithCStringNoCopy(
-                kCFAllocatorDefault, buf, kCFStringEncodingISOLatin1,
-                kCFAllocatorNull);
-        if (tmp) {
-            CFStringReplaceAll(s, tmp);
-            CFRelease(tmp);
+    if (chs && *chs) {
+        if (s) {
+            CFStringRef tmp = CFStringCreateWithCStringNoCopy(
+                    kCFAllocatorDefault, chs, kCFStringEncodingISOLatin1,
+                    kCFAllocatorNull);
+            if (tmp) {
+                CFStringReplaceAll(s, tmp);
+                CFRelease(tmp);
+            }
+        } else {
+            s = CFStringCreateMutable(kCFAllocatorDefault, 0);
+            if (s) {
+                CFStringAppendCString(s, chs, kCFStringEncodingISOLatin1);
+            }
         }
+    } else if (s) {
+        CFRelease(s);
+        s = NULL;
     }
     return *this;
+}
+
+QString &QString::setNum(short n)
+{
+    return setNum((long)n);
+}
+
+QString &QString::setNum(ushort n)
+{
+    return setNum((ulong)n);
+}
+
+QString &QString::setNum(int n)
+{
+    const int capacity = 64;
+    char buf[capacity];
+    buf[snprintf(buf, capacity - 1, "%d", n)] = '\0';
+    return setLatin1(buf);
+}
+
+QString &QString::setNum(uint n)
+{
+    const int capacity = 64;
+    char buf[capacity];
+    buf[snprintf(buf, capacity - 1, "%u", n)] = '\0';
+    return setLatin1(buf);
+}
+
+QString &QString::setNum(long n)
+{
+    const int capacity = 64;
+    char buf[capacity];
+    buf[snprintf(buf, capacity - 1, "%D", n)] = '\0';
+    return setLatin1(buf);
+}
+
+QString &QString::setNum(ulong n)
+{
+    const int capacity = 64;
+    char buf[capacity];
+    buf[snprintf(buf, capacity - 1, "%U", n)] = '\0';
+    return setLatin1(buf);
+}
+
+QString &QString::setNum(double n)
+{
+    const int capacity = 64;
+    char buf[capacity];
+    buf[snprintf(buf, capacity - 1, "%.6lg", n)] = '\0';
+    return setLatin1(buf);
 }
 
 QString &QString::sprintf(const char *format, ...)
