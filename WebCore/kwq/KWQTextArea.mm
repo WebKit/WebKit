@@ -98,6 +98,7 @@ const float LargeNumberForText = 1.0e7;
     textView = [[KWQTextAreaTextView alloc] init];
 
     [textView setRichText:NO];
+    [textView setAllowsUndo:YES];
     [textView setMaxSize:NSMakeSize(LargeNumberForText, LargeNumberForText)];
     [textView setDelegate:self];
 

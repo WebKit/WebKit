@@ -1,3 +1,13 @@
+2004-07-19  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Trey.
+        
+        - fixed <rdar://problem/3141150> can't undo in form textarea fields
+
+        * kwq/KWQTextArea.mm:
+        (-[KWQTextArea _createTextView]):
+        call setAllowsUndo:YES. My, wasn't this easy?
+
 2004-07-19  David Hyatt  <hyatt@apple.com>
 
 	Merge @import fix for CSS1 test suite from Stephan Kulow.
