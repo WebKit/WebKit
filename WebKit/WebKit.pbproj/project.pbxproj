@@ -72,6 +72,7 @@
 				F58C8A07025BD3BC018635CA,
 				F531DDFF02F0C36F018635CA,
 			);
+			hasScannedForEncodings = 1;
 			isa = PBXProject;
 			knownRegions = (
 				English,
@@ -2108,12 +2109,14 @@
 			};
 		};
 		F57FB8C4034E180101A80180 = {
+			fileEncoding = 4;
 			isa = PBXFileReference;
 			name = WebDebugDOMNode.h;
 			path = WebView.subproj/WebDebugDOMNode.h;
 			refType = 2;
 		};
 		F57FB8C5034E180101A80180 = {
+			fileEncoding = 4;
 			isa = PBXFileReference;
 			name = WebDebugDOMNode.m;
 			path = WebView.subproj/WebDebugDOMNode.m;

@@ -208,7 +208,7 @@ static NSMutableArray *activeImageRenderers;
      if (![[[self representations] objectAtIndex:0] hasAlpha]) {
         if ([frameView canDraw]) {
             [frameView lockFocus];
-            [self drawClippedToValidInRect:imageRect fromRect:targetRect];
+            [self drawClippedToValidInRect:targetRect fromRect:imageRect];
             [frameView unlockFocus];
         }
         if (!animationFinished) {

@@ -1,5 +1,18 @@
 2002-10-04  Darin Adler  <darin@apple.com>
 
+	- fixed 3060140 -- REGRESSION: frames of animated gif drawn in wrong position.
+
+	I got the "fromRect" and "toRect" parameters backwards when I made the changes
+	to fix bug 3050810.
+
+        * WebCoreSupport.subproj/WebImageRenderer.m: (-[WebImageRenderer nextFrame:]):
+	Reverse targetRect and imageRect.
+
+        * WebKit.pbproj/project.pbxproj: Mark some new files as UTF-8 because Project
+	Builder asked me to.
+
+2002-10-04  Darin Adler  <darin@apple.com>
+
         * Panels.subproj/WebPanelCookieAcceptHandler.h: Removed.
         * Panels.subproj/WebPanelCookieAcceptHandler.m: Removed.
 
