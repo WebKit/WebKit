@@ -47,9 +47,11 @@ public:
 
     virtual void parseAttribute(AttributeImpl *token);
 
-    void addCSSLength(int id, const DOMString &value);
-    void addCSSProperty(int id, const DOMString &value);
+    void addCSSLength(int id, const DOMString &value); // value will be parsed by the CSS parser
+    void addCSSProperty(int id, const DOMString &value); // value will be parsed by the CSS parser
     void addCSSProperty(int id, int value);
+    void addCSSStringProperty(int id, const DOMString &value, DOM::CSSPrimitiveValue::UnitTypes = DOM::CSSPrimitiveValue::CSS_STRING);
+    void addCSSImageProperty(int id, const DOMString &URL);
     void addHTMLColor( int id, const DOMString &c );
     void removeCSSProperty(int id);
 

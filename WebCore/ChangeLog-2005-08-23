@@ -1,5 +1,30 @@
 2004-01-26  Darin Adler  <darin@apple.com>
 
+        Reviewed by Dave.
+
+        - fixed <rdar://problem/3538433>: HomePage: table background URL with a single quote in it does not work
+
+        * khtml/html/html_baseimpl.cpp: (HTMLBodyElementImpl::parseAttribute): Use addCSSImageProperty
+        instead of addCSSProperty, obviating the need for the "url()" syntax (and fixing quoting issues).
+
+        * khtml/html/html_tableimpl.cpp:
+        (HTMLTableElementImpl::parseAttribute): Ditto.
+        (HTMLTablePartElementImpl::parseAttribute): Ditto.
+
+        * khtml/html/html_elementimpl.h: Added addCSSStringProperty and addCSSImageProperty.
+        * khtml/html/html_elementimpl.cpp:
+        (HTMLElementImpl::addCSSStringProperty): Added. Calls setStringProperty. Not used yet.
+        (HTMLElementImpl::addCSSImageProperty): Added. Calls setImageProperty.
+
+        * khtml/css/css_valueimpl.h: Added setStringProperty and setImageProperty.
+        * khtml/css/css_valueimpl.cpp:
+        (CSSStyleDeclarationImpl::setStringProperty): Added. Sets a property without parsing.
+        (CSSStyleDeclarationImpl::setImageProperty): Added. Sets a property without parsing.
+        You'd think we'd be able to just use setStringProperty, but that's not how the image
+        properties work.
+
+2004-01-26  Darin Adler  <darin@apple.com>
+
         * Makefile.am: Switch from pbxbuild to xcodebuild.
 
 2004-01-26  David Hyatt  <hyatt@apple.com>

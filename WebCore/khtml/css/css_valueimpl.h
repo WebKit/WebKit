@@ -62,6 +62,8 @@ public:
     // this treats integers as pixels!
     // needed for conversion of html attributes
     void setLengthProperty(int id, const DOM::DOMString &value, bool important, bool nonCSSHint = true, bool multiLength = false);
+    void setStringProperty(int propertyId, const DOM::DOMString &value, DOM::CSSPrimitiveValue::UnitTypes, bool important = false, bool nonCSSHint = false); // parsed string value
+    void setImageProperty(int propertyId, const DOM::DOMString &URL, bool important = false, bool nonCSSHint = false);
 
     // add a whole, unparsed property
     void setProperty ( const DOMString &propertyString);

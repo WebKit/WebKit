@@ -309,6 +309,28 @@ void CSSStyleDeclarationImpl::setProperty(int id, int value, bool important, boo
     setChanged();
 }
 
+void CSSStyleDeclarationImpl::setStringProperty(int propertyId, const DOMString &value, CSSPrimitiveValue::UnitTypes type, bool important, bool nonCSSHint)
+{
+    if (!m_lstValues) {
+	m_lstValues = new QPtrList<CSSProperty>;
+	m_lstValues->setAutoDelete(true);
+    }
+    removeProperty(propertyId, nonCSSHint);
+    setParsedValue(propertyId, new CSSPrimitiveValueImpl(value, type), important, nonCSSHint, m_lstValues);
+    setChanged();
+}
+
+void CSSStyleDeclarationImpl::setImageProperty(int propertyId, const DOMString &URL, bool important, bool nonCSSHint)
+{
+    if (!m_lstValues) {
+	m_lstValues = new QPtrList<CSSProperty>;
+	m_lstValues->setAutoDelete(true);
+    }
+    removeProperty(propertyId, nonCSSHint);
+    setParsedValue(propertyId, new CSSImageValueImpl(URL, this), important, nonCSSHint, m_lstValues);
+    setChanged();
+}
+
 void CSSStyleDeclarationImpl::setProperty ( const DOMString &propertyString)
 {
     if(!m_lstValues) {

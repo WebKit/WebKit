@@ -231,6 +231,20 @@ void HTMLElementImpl::addCSSProperty(int id, int value)
     setChanged();
 }
 
+void HTMLElementImpl::addCSSStringProperty(int id, const DOMString &value, CSSPrimitiveValue::UnitTypes type)
+{
+    if(!m_styleDecls) createDecl();
+    m_styleDecls->setStringProperty(id, value, type, false, true);
+    setChanged();
+}
+
+void HTMLElementImpl::addCSSImageProperty(int id, const DOMString &URL)
+{
+    if(!m_styleDecls) createDecl();
+    m_styleDecls->setImageProperty(id, URL, false, true);
+    setChanged();
+}
+
 void HTMLElementImpl::addCSSLength(int id, const DOMString &value)
 {
     if(!m_styleDecls) createDecl();
