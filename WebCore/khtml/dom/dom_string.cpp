@@ -172,6 +172,13 @@ void DOMString::remove(unsigned int pos, int len)
   if(impl) impl->remove(pos, len);
 }
 
+DOMString DOMString::substring(unsigned int pos, unsigned int len)
+{
+    if (!impl) 
+        return DOMString();
+    return impl->substring(pos, len);
+}
+
 DOMString DOMString::split(unsigned int pos)
 {
   if(!impl) return DOMString();

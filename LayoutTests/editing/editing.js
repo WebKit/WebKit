@@ -283,6 +283,21 @@ function insertLineBreakCommand() {
 }
 
 //-------------------------------------------------------------------------------------------------------
+ 
+function execInsertParagraphCommand() {
+    document.execCommand("InsertParagraph");
+}
+function insertParagraphCommand() {
+    if (commandDelay > 0) {
+        window.setTimeout(execInsertParagraphCommand, commandCount * commandDelay);
+        commandCount++;
+    }
+    else {
+        execInsertParagraphCommand();
+    }
+}
+
+//-------------------------------------------------------------------------------------------------------
 
 function execTypeCharacterCommand(c) {
     if (arguments.length == 0 || c == undefined || c.length == 0 || c.length > 1)

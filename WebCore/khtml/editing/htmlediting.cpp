@@ -762,6 +762,19 @@ void CompositeEditCommand::setNodeAttribute(ElementImpl *element, int attribute,
     applyCommandToComposite(cmd);
 }
 
+void CompositeEditCommand::rebalanceWhitespace()
+{
+    Selection selection = endingSelection();
+    if (selection.isCaretOrRange()) {
+        EditCommandPtr startCmd(new RebalanceWhitespaceCommand(document(), endingSelection().start()));
+        applyCommandToComposite(startCmd);
+        if (selection.isRange()) {
+            EditCommandPtr endCmd(new RebalanceWhitespaceCommand(document(), endingSelection().end()));
+            applyCommandToComposite(endCmd);
+        }
+    }
+}
+
 NodeImpl *CompositeEditCommand::applyTypingStyle(NodeImpl *child) const
 {
     // FIXME: This function should share code with ApplyStyleCommand::applyStyleIfNeeded
@@ -1911,6 +1924,7 @@ void DeleteSelectionCommand::doApply()
     setEndingSelection(m_endingPosition);
     debugPosition("endingPosition   ", m_endingPosition);
     clearTransientState();
+    rebalanceWhitespace();
 }
 
 bool DeleteSelectionCommand::preservesTypingStyle() const
@@ -2081,6 +2095,7 @@ void InsertLineBreakCommand::doApply()
         
         setEndingSelection(endingPosition);
     }
+    rebalanceWhitespace();
 }
 
 //------------------------------------------------------------------------------------------
@@ -2160,6 +2175,7 @@ void InsertParagraphSeparatorCommand::doApply()
         if (doneAfterDelete) {
             document()->updateLayout();
             setEndingSelection(endingSelection().start().downstream());
+            rebalanceWhitespace();
             return;
         }
         pos = endingSelection().start().upstream();
@@ -2252,6 +2268,7 @@ void InsertParagraphSeparatorCommand::doApply()
     
     // Put the selection right at the start of the added block.
     setEndingSelection(Position(addedBlock, 0));
+    rebalanceWhitespace();
 }
 
 //------------------------------------------------------------------------------------------
@@ -2390,6 +2407,7 @@ void InsertParagraphSeparatorInQuotedContentCommand::doApply()
     
     // Put the selection right before the break.
     setEndingSelection(Position(m_breakNode, 0));
+    rebalanceWhitespace();
 }
 
 //------------------------------------------------------------------------------------------
@@ -2527,6 +2545,7 @@ void InsertTextCommand::input(const DOMString &text, bool selectInsertedText)
         // a set number of spaces. This also seems to be the HTML editing convention.
         for (int i = 0; i < spacesPerTab; i++) {
             insertSpace(textNode, offset);
+            rebalanceWhitespace();
             document()->updateLayout();
         }
         if (selectInsertedText)
@@ -2542,6 +2561,7 @@ void InsertTextCommand::input(const DOMString &text, bool selectInsertedText)
         else
             setEndingSelection(Position(textNode, offset + 1));
         m_charactersAdded++;
+        rebalanceWhitespace();
     }
     else {
         const DOMString &existingText = textNode->data();
@@ -2709,6 +2729,108 @@ void MoveSelectionCommand::doApply()
     setEndingSelection(Position(positionNode, positionOffset));
     EditCommandPtr cmd(new ReplaceSelectionCommand(document(), m_fragment, true, m_smartMove));
     applyCommandToComposite(cmd);
+}
+
+//------------------------------------------------------------------------------------------
+// RebalanceWhitespaceCommand
+
+RebalanceWhitespaceCommand::RebalanceWhitespaceCommand(DocumentImpl *document, const Position &pos)
+    : EditCommand(document), m_position(pos), m_upstreamOffset(InvalidOffset), m_downstreamOffset(InvalidOffset)
+{
+}
+
+RebalanceWhitespaceCommand::~RebalanceWhitespaceCommand()
+{
+}
+
+void RebalanceWhitespaceCommand::doApply()
+{
+    static DOMString space(" ");
+
+    if (m_position.isNull() || !m_position.node()->isTextNode())
+        return;
+        
+    TextImpl *textNode = static_cast<TextImpl *>(m_position.node());
+    DOMString text = textNode->data();
+    if (text.length() == 0)
+        return;
+    
+    // find upstream offset
+    long upstream = m_position.offset();
+    while (upstream > 0 && isWS(text[upstream - 1]) || isNBSP(text[upstream - 1])) {
+        upstream--;
+        m_upstreamOffset = upstream;
+    }
+
+    // find downstream offset
+    long downstream = m_position.offset();
+    while ((unsigned)downstream < text.length() && isWS(text[downstream]) || isNBSP(text[downstream])) {
+        downstream++;
+        m_downstreamOffset = downstream;
+    }
+
+    if (m_upstreamOffset == InvalidOffset && m_downstreamOffset == InvalidOffset)
+        return;
+        
+    m_upstreamOffset = upstream;
+    m_downstreamOffset = downstream;
+    long length = m_downstreamOffset - m_upstreamOffset;
+    
+    m_beforeString = text.substring(m_upstreamOffset, length);
+    
+    // The following loop figures out a "rebalanced" whitespace string for any length
+    // string, and takes into account the special cases that need to handled for the
+    // start and end of strings (i.e. first and last character must be an nbsp.
+    long i = m_upstreamOffset;
+    while (i < m_downstreamOffset) {
+        long add = (m_downstreamOffset - i) % 3;
+        switch (add) {
+            case 0:
+                m_afterString += nonBreakingSpaceString();
+                m_afterString += space;
+                m_afterString += nonBreakingSpaceString();
+                add = 3;
+                break;
+            case 1:
+                if (i == 0 || (unsigned)i + 1 == text.length()) // at start or end of string
+                    m_afterString += nonBreakingSpaceString();
+                else
+                    m_afterString += space;
+                break;
+            case 2:
+                if ((unsigned)i + 2 == text.length()) {
+                     // at end of string
+                    m_afterString += nonBreakingSpaceString();
+                    m_afterString += nonBreakingSpaceString();
+                }
+                else {
+                    m_afterString += nonBreakingSpaceString();
+                    m_afterString += space;
+                }
+                break;
+        }
+        i += add;
+    }
+    
+    text.remove(m_upstreamOffset, length);
+    text.insert(m_afterString, m_upstreamOffset);
+}
+
+void RebalanceWhitespaceCommand::doUnapply()
+{
+    if (m_upstreamOffset == InvalidOffset && m_downstreamOffset == InvalidOffset)
+        return;
+    
+    ASSERT(m_position.node()->isTextNode());
+    TextImpl *textNode = static_cast<TextImpl *>(m_position.node());
+    DOMString text = textNode->data();
+    text.remove(m_upstreamOffset, m_afterString.length());
+    text.insert(m_beforeString, m_upstreamOffset);
+}
+
+bool RebalanceWhitespaceCommand::preservesTypingStyle() const
+{
+    return true;
 }
 
 //------------------------------------------------------------------------------------------
@@ -3322,6 +3444,7 @@ void ReplaceSelectionCommand::completeHTMLReplacement(const Position &start, con
     if (start.isNull() || !start.node()->inDocument() || end.isNull() || !end.node()->inDocument())
         return;
     m_selectReplacement ? setEndingSelection(Selection(start, end)) : setEndingSelection(end);
+    rebalanceWhitespace();
 }
 
 void ReplaceSelectionCommand::completeHTMLReplacement(NodeImpl *firstNodeInserted, NodeImpl *lastNodeInserted)
@@ -3359,6 +3482,7 @@ void ReplaceSelectionCommand::completeHTMLReplacement(NodeImpl *firstNodeInserte
         // Place the cursor after what was inserted, and mark misspellings in the inserted content.
         setEndingSelection(end);
     }
+    rebalanceWhitespace();
 }
 
 //------------------------------------------------------------------------------------------

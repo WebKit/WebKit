@@ -1,3 +1,27 @@
+2004-12-06  Ken Kocienda  <kocienda@apple.com>
+ 
+        Reviewed by John
+        
+        * khtml/dom/dom_string.cpp:
+        (DOM::DOMString::substring): Expose method already on DOMStrimgImpl.
+        * khtml/dom/dom_string.h: Ditto.
+        * khtml/editing/htmlediting.cpp:
+        (khtml::CompositeEditCommand::rebalanceWhitespace): New helper to create and execute a
+        RebalanceWhitespaceCommand instance.
+        (khtml::DeleteSelectionCommand::doApply): Call rebalanceWhitespace() after running command.
+        (khtml::InsertLineBreakCommand::doApply): Ditto.
+        (khtml::InsertParagraphSeparatorCommand::doApply): Ditto.
+        (khtml::InsertParagraphSeparatorInQuotedContentCommand::doApply): Ditto.
+        (khtml::InsertTextCommand::input): Ditto.
+        (khtml::RebalanceWhitespaceCommand::RebalanceWhitespaceCommand): New command.
+        (khtml::RebalanceWhitespaceCommand::~RebalanceWhitespaceCommand): Ditto.
+        (khtml::RebalanceWhitespaceCommand::doApply): Ditto.
+        (khtml::RebalanceWhitespaceCommand::doUnapply): Ditto.
+        (khtml::RebalanceWhitespaceCommand::preservesTypingStyle): Ditto.
+        (khtml::ReplaceSelectionCommand::completeHTMLReplacement): Ditto.
+        * khtml/editing/htmlediting.h: Ditto.
+        (khtml::RebalanceWhitespaceCommand::): Ditto.
+
 2004-12-05  Darin Adler  <darin@apple.com>
 
         - fixed small problem in my check-in from yesterday
