@@ -1,3 +1,15 @@
+2003-05-16  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Ken.
+
+	- fixed 3254063 - REGRESSION: hang in KJS PropertyMap with many items in iDisk pictures folder
+
+        * kjs/property_map.cpp:
+	(PropertyMap::expand): Fixed to maintain key count properly - otherwise the hashtable
+	could get completely full, resulting in disaster.
+	(PropertyMap::checkConsistency): Fixed compilation. Fixed to know about deleted
+	sentinel. Fixed to search with double-hashing instead of linear probing.
+	
 === Safari-79 ===
 
 2003-05-15  Maciej Stachowiak  <mjs@apple.com>

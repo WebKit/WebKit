@@ -329,17 +329,23 @@ void PropertyMap::expand()
     
     Table *oldTable = _table;
     int oldTableSize = oldTable ? oldTable->size : 0;
-
+    int oldTableKeyCount = oldTable ? oldTable->keyCount : 0;
+    
     int newTableSize = oldTableSize ? oldTableSize * 2 : 16;
     _table = (Table *)calloc(1, sizeof(Table) + (newTableSize - 1) * sizeof(Entry) );
     _table->size = newTableSize;
     _table->sizeMask = newTableSize - 1;
+    _table->keyCount = oldTableKeyCount;
 
 #if USE_SINGLE_ENTRY
     UString::Rep *key = _singleEntry.key;
     if (key) {
         insert(key, _singleEntry.value, _singleEntry.attributes);
         _singleEntry.key = 0;
+	// update the count, because single entries don't count towards
+	// the table key count
+	++_table->keyCount;
+	assert(_table->keyCount == 1);
     }
 #endif
     
@@ -555,14 +561,17 @@ void PropertyMap::checkConsistency()
     int count = 0;
     for (int j = 0; j != _table->size; ++j) {
         UString::Rep *rep = _table->entries[j].key;
-        if (!rep)
+        if (!rep || rep == &UString::Rep::null)
             continue;
         unsigned h = rep->hash();
         int i = h & _table->sizeMask;
+	int k = 0;
         while (UString::Rep *key = _table->entries[i].key) {
             if (rep == key)
                 break;
-            i = (i + 1) & _tableSizeMask;
+	    if (k == 0)
+		k = 1 | (h % _table->sizeMask);
+	    i = (i + k) & _table->sizeMask;
         }
         assert(i == j);
         count++;
