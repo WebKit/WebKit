@@ -1,3 +1,15 @@
+2002-11-06  Darin Adler  <darin@apple.com>
+
+	- fixed problem where files small enough to fit entirely in the buffer
+	(8K or less) would not be decoded
+
+        * Downloads.subproj/WebDownloadHandler.m:
+        (-[WebDownloadHandler decodeData:]): Added. Moved most of the code from
+	receivedData into here.
+        (-[WebDownloadHandler receivedData:]): Changed to call decodeData.
+        (-[WebDownloadHandler finishedLoading]): Call decodeData on any remaining
+	bytes rather than writing them straight out to the data fork.
+
 2002-11-06  Richard Williamson  <rjw@apple.com>
 
         More work on rendering scripts. Now most complex scripts render correctly.

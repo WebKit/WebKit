@@ -253,7 +253,7 @@
 {
     if (!bufferedData) {
         bufferedData = [data mutableCopy];
-    } else if([bufferedData length] == 0) {
+    } else if ([bufferedData length] == 0) {
         // When bufferedData's length is 0, we're done buffering.
         return data;
     } else {
@@ -273,19 +273,11 @@
     }
 }
 
-- (WebError *)receivedData:(NSData *)data
+- (WebError *)decodeData:(NSData *)data
 {
-    ASSERT(data);
-
     if ([data length] == 0) {
-        // Workaround for 3093170.
         return nil;
     }
-    
-    data = [self dataIfDoneBufferingData:data];
-    if (!data) {
-        return nil;
-    }	
     
     NSData *dataForkData = nil;
     NSData *resourceForkData = nil;
@@ -302,6 +294,18 @@
     }
 
     return nil;
+}
+
+- (WebError *)receivedData:(NSData *)data
+{
+    ASSERT(data);
+
+    if ([data length] == 0) {
+        // Workaround for 3093170.
+        return nil;
+    }
+    
+    return [self decodeData:[self dataIfDoneBufferingData:data]];
 }
 
 - (BOOL)finishDecoding
@@ -321,19 +325,17 @@
 
 - (WebError *)finishedLoading
 {
-    if(![self finishDecoding]){
+    WebError *error = [self decodeData:bufferedData];
+    [bufferedData release];
+    bufferedData = nil;
+    if (error) {
+        return error;
+    }
+
+    if (![self finishDecoding]) {
         ERROR("Download decoding failed.");
         [self cleanUpAfterFailure];
         return [self errorWithCode:WebErrorDownloadDecodingFailedToComplete];
-    }
-
-    if ([bufferedData length]) {
-        // All data has been buffered because we never received the minimum header length.
-        // Write it out now.
-        WebError *error = [self writeDataForkData:bufferedData resourceForkData:nil];
-        if (error) {
-            return error;
-        }
     }
 
     [self closeFile];
