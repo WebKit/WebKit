@@ -1190,7 +1190,7 @@ void Loader::load(DocLoader* dl, CachedObject *object, bool incremental = true)
 #if APPLE_CHANGES
     id client;
     
-    id dataSource = ((KHTMLPart *)(((DocLoader *)(object->loader()))->part()))->getDataSource();
+    IFWebDataSource *dataSource = ((KHTMLPart *)(((DocLoader *)(object->loader()))->part()))->getDataSource();
     client = [[[URLLoadClient alloc] initWithLoader:this dataSource: dataSource] autorelease];
     req->client = client;
 #endif

@@ -12,7 +12,7 @@
 
 #import <WebFoundation/IFError.h>
 #import <WebFoundation/IFURLCacheLoaderConstants.h>
-#import <KWQKHTMLPart.h>
+#import <khtml_part.h>
 #import <rendering/render_frames.h>
 
 #import <WebKit/WebKitDebug.h>

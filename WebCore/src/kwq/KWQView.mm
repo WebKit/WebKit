@@ -170,16 +170,13 @@
 
 - (void)layout
 {
-    if (((KHTMLView *)widget)->part()->xmlDocImpl() && 
-        ((KHTMLView *)widget)->part()->xmlDocImpl()->renderer()){
-        if (needsLayout){
+    if (needsLayout){
 #ifndef xNDEBUG
-            double start = CFAbsoluteTimeGetCurrent();
+        double start = CFAbsoluteTimeGetCurrent();
 #endif
-            ((KHTMLView *)widget)->layout();
-            KWQDEBUGLEVEL (KWQ_LOG_TIMING, "layout time %e\n", CFAbsoluteTimeGetCurrent() - start);
-            needsLayout = NO;
-        }
+        ((KHTMLView *)widget)->layout();
+        KWQDEBUGLEVEL (KWQ_LOG_TIMING, "layout time %e\n", CFAbsoluteTimeGetCurrent() - start);
+        needsLayout = NO;
     }
 }
 

@@ -235,13 +235,10 @@ static id IFWebDataSourceMake(void *url)
     KHTMLPart *part = [self _part];
     
     if (part != 0){
-        doc = (DOM::DocumentImpl *)[self _part]->xmlDocImpl();
+        doc = [self _part]->xmlDocImpl();
         if (doc != 0){
             QString str = doc->recursive_toHTML(1);
             string = QSTRING_TO_NSSTRING(str);
-            
-            // Ensure life of NSString to end of call frame.
-            [[string retain] autorelease];
         }
     }
     if (string == nil) {

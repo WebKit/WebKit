@@ -1,5 +1,37 @@
 2002-04-16  Darin Adler  <darin@apple.com>
 
+	* src/kdelibs/khtml/khtml_part.cpp: Added. Not used yet, but maybe we'll use
+	part of it some time soon.
+
+	* src/kdelibs/khtml/khtml_part.h: Reenabled this file, and made changes so it
+	could be used instead of our own header.
+	* src/kwq/KWQKHTMLPart.h: Removed.
+
+	* src/kwq/KWQKHTMLPart.mm: (KHTMLPart::KHTMLPart): Add parameter to match KDE.
+	(KHTMLPart::settings): Add const to match KDE.
+	(KHTMLPart::scheduleRedirection): Add parameter to match KDE.
+	(KHTMLPart::encoding): Add const to match KDE.
+	(KHTMLPart::urlCursor): Update return value to match KDE.
+	(KHTMLPart::urlSelected): Add parameter to match KDE.
+	(KHTMLPart::requestObject): Put plugins array on private object.
+	(KHTMLPart::frames): Remove const to match KDE.
+	(KHTMLPart::documentSource): Add const to match KDE.
+	(KHTMLPart::setTitle): Put dataSource on private object.
+	(KHTMLPart::setDataSource): New, not inline any more.
+	(KHTMLPart::getDataSource): New, not inline any more.
+
+	* src/libwebcore.exp: Update for function name changes.
+
+	* src/kwq/khtml/khtml_settings.h:
+	* src/kwq/KWQKHTMLSettings.mm: (KHTMLSettings::changeCursor): Add const.
+
+	* src/kwq/KWQView.mm: (-[KWQHTMLView layout]): No need to check xmlDocImpl()
+	and renderer() for NULL now, because KHTMLView::layout does.
+
+	* src/kwq/KWQKloader.mm: (Loader::load): Use type instead of id.
+
+2002-04-16  Darin Adler  <darin@apple.com>
+
 	* src/kwq/kio/jobclasses.h:
 	* src/kwq/KWQKjobclasses.mm: (TransferJob::setError): New.
 

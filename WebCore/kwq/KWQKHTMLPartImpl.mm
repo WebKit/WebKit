@@ -48,7 +48,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-
 #include <kwqdebug.h>
 
 #include <decoder.h>
@@ -73,13 +72,15 @@
 #include <loader.h>
 #include <kjs/interpreter.h>
 #include <kjs/collector.h>
+#include <ecma/kjs_proxy.h>
 #include <kjs_dom.h>
 #include <dom_doc.h>
 #include <qcursor.h>
 #include <kurl.h>
 #include <khtmlview.h>
 
-#include <KWQKHTMLPart.h>
+#include <khtml_part.h>
+#include <khtml_events.h>
 
 #import <WCPluginWidget.h>
 
@@ -169,6 +170,10 @@ public:
 #endif
 
     QString m_sheetUsed;
+    
+    QValueList<QString> plugins;
+    
+    IFWebDataSource *m_dataSource;
 
     KHTMLPartPrivate(KHTMLPart *part)
     {
@@ -195,6 +200,8 @@ public:
         
         m_documentSource = "";
         m_decodingStarted = 0;
+        
+        m_dataSource = 0;
     }
 
     ~KHTMLPartPrivate()
@@ -238,17 +245,7 @@ static QString splitUrlTarget(const QString &url, QString *target=0)
     return result;
 }
 
-KHTMLPart::KHTMLPart()
-{
-    init();
-}
-
-KHTMLPart::KHTMLPart(const KURL &url)
-{
-    init();
-}
-
-void KHTMLPart::init()
+KHTMLPart::KHTMLPart( QWidget *, const char *, QObject *, const char *, GUIProfile )
 {
     d = new KHTMLPartPrivate(this);
     _ref = 1;
@@ -322,6 +319,8 @@ bool KHTMLPart::metaRefreshEnabled() const
     _logNotYetImplemented();
     return TRUE;
 }
+
+extern "C" { KJSProxy *kjs_html_init(KHTMLPart *khtmlpart); }
 
 KJSProxy *KHTMLPart::jScript()
 {
@@ -692,8 +691,7 @@ bool KHTMLPart::gotoAnchor( const QString &name )
     return true;
 }
 
-
-KHTMLSettings *KHTMLPart::settings()
+const KHTMLSettings *KHTMLPart::settings() const
 {
   return d->m_settings;
 }
@@ -708,16 +706,11 @@ KURL KHTMLPart::completeURL(const QString &url)
   return KURL( d->m_doc->completeURL( url ) );
 }
 
-void KHTMLPart::scheduleRedirection( int delay, const QString &url )
+void KHTMLPart::scheduleRedirection( int delay, const QString &url, bool )
 {
     _logNeverImplemented();
 }
 
-bool KHTMLPart::setCharset( const QString &name, bool override = false )
-{
-    _logNeverImplemented();
-    return FALSE;
-}
 
 bool KHTMLPart::setEncoding( const QString &name, bool override )
 {
@@ -747,7 +740,7 @@ bool KHTMLPart::setEncoding( const QString &name, bool override )
 #endif /* not APPLE_CHANGES */
 }
 
-QString KHTMLPart::encoding()
+QString KHTMLPart::encoding() const
 {
     _logNeverImplemented();
     return d->m_settings->encoding();
@@ -781,7 +774,7 @@ void KHTMLPart::setURLCursor( const QCursor &c )
 // FIXME: this should be removed
 static const QCursor *staticURLCursor = NULL;
 
-const QCursor& KHTMLPart::urlCursor() const
+QCursor KHTMLPart::urlCursor() const
 {
     _logNeverImplemented();
     if (staticURLCursor == NULL) {
@@ -804,20 +797,6 @@ void KHTMLPart::findTextBegin()
 {
 // DUBIOUS, perhaps searching should be handled externally
     _logNeverImplemented();
-}
-
-bool KHTMLPart::findTextNext( const QRegExp &exp, bool forward )
-{
-// DUBIOUS, perhaps searching should be handled externally
-    _logNeverImplemented();
-    return FALSE;
-}
-
-bool KHTMLPart::findTextNext( const QString &str, bool forward, bool caseSensitive )
-{
-// DUBIOUS, perhaps searching should be handled externally
-    _logNeverImplemented();
-    return FALSE;
 }
 
 QString KHTMLPart::selectedText() const
@@ -847,12 +826,7 @@ void KHTMLPart::setSelection( const DOM::Range & )
     _logNeverImplemented();
 }
 
-void KHTMLPart::overURL( const QString &url, const QString &target)
-{
-    _logNeverImplemented();
-}
-
-void KHTMLPart::urlSelected( const QString &url, int button, int state, const QString &_target)
+void KHTMLPart::urlSelected( const QString &url, int button, int state, const QString &_target, KParts::URLArgs )
 {
     _logNeverImplemented();
 }
@@ -947,10 +921,10 @@ bool KHTMLPart::requestObject( khtml::RenderPart *frame, const QString &url, con
   // requestObject can be called multiple times for a single plug-in.
   // The plugins array is an attempt to avoid multiple creations of the same plug-in.
   // FIXME: Can't have multiple plug-ins with the same URL on a page
-  if(!plugins.contains(url)) {
+  if(!d->plugins.contains(url)) {
     WCPluginWidget *pluginWidget = new WCPluginWidget(completeURL(url).url(), serviceType, args, d->m_baseURL.url());
     frame->setWidget(pluginWidget);
-    plugins.append(url);
+    d->plugins.append(url);
   }
   return true;
 }
@@ -1112,7 +1086,7 @@ QString KHTMLPart::jsDefaultStatusBarText() const
     return QString();
 }
 
-const QPtrList<KParts::ReadOnlyPart> KHTMLPart::frames() const
+QPtrList<KParts::ReadOnlyPart> KHTMLPart::frames() const
 
 {
     _logNeverImplemented();
@@ -1566,7 +1540,7 @@ void KHTMLPart::setOpenedByJS(bool _openedByJS)
     _logNeverImplemented();
 }
 
-QString KHTMLPart::documentSource()
+QString KHTMLPart::documentSource() const
 {
     return d->m_documentSource;
 }
@@ -1591,26 +1565,9 @@ KURL KHTMLPart::baseURL() const
     return d->m_baseURL;
 }
 
-const KURL & KHTMLPart::url() const
-{
-    return d->m_workingURL;
-}
-
 void KHTMLPart::setView(KHTMLView *view)
 {
     d->m_view = view;
-}
-
-QWidget *KHTMLPart::widget()
-{
-    _logNotYetImplemented();
-    return 0L;
-}
-
-
-void KHTMLPart::emitUnloadEvent()
-{
-    _logNeverImplemented();
 }
 
 void KHTMLPart::nodeActivated(const DOM::Node &aNode)
@@ -1625,7 +1582,7 @@ void KHTMLPart::stopAutoScroll()
 
 void KHTMLPart::setTitle(const DOMString &title)
 {
-    [dataSource _setTitle:(NSString *)title.string().getCFMutableString()];
+    [getDataSource() _setTitle:(NSString *)title.string().getCFMutableString()];
 }
 
 QString KHTMLPart::sheetUsed() const
@@ -1641,4 +1598,14 @@ void KHTMLPart::setSheetUsed(const QString &qs)
 int KHTMLPart::zoomFactor(void) const
 {
     return 100;
+}
+
+void KHTMLPart::setDataSource(IFWebDataSource *dataSource)
+{
+    d->m_dataSource = dataSource; // not retained
+}
+
+IFWebDataSource *KHTMLPart::getDataSource()
+{
+    return d->m_dataSource;
 }

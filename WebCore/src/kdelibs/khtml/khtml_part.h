@@ -23,9 +23,6 @@
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  */
-#ifdef APPLE_CHANGES
-#include "../../kwq/KWQKHTMLPart.h"
-#else /* APPLE_CHANGES not defined */
 #ifndef __khtml_part_h__
 #define __khtml_part_h__
 
@@ -43,6 +40,16 @@ class KJSProxy;
 class KHTMLView;
 class KHTMLSettings;
 class KJavaAppletContext;
+
+#ifdef APPLE_CHANGES
+#ifdef __OBJC__
+@class IFURLHandle;
+@class IFWebDataSource;
+#else
+typedef void IFURLHandle;
+typedef void IFWebDataSource;
+#endif
+#endif
 
 namespace DOM
 {
@@ -206,6 +213,7 @@ public:
    */
   virtual bool closeURL();
 
+#ifndef APPLE_CHANGES
   /**
    * is called when a certain error situation (i.e. connection timed out) occured.
    * default implementation either shows a KIO error dialog or loads a more verbose
@@ -213,6 +221,7 @@ public:
    * @p job is the job that signaled the error situation
    */
   virtual void showError(KIO::Job* job);
+#endif
 
   /**
    * Returns a reference to the DOM HTML document (for non-HTML documents, returns null)
@@ -350,11 +359,13 @@ public:
   bool onlyLocalReferences() const;
 
 #ifndef KDE_NO_COMPAT
+#ifndef APPLE_CHANGES
   void enableJScript(bool e) { setJScriptEnabled(e); }
   void enableJava(bool e) { setJavaEnabled(e); }
   void enablePlugins(bool e) { setPluginsEnabled(e); }
   void autoloadImages(bool e) { setAutoloadImages(e); }
   void enableMetaRefresh(bool e) { setMetaRefreshEnabled(e); }
+#endif
   bool setCharset( const QString &, bool ) { return true; }
 
   KURL baseURL() const;
@@ -590,6 +601,7 @@ public:
    */
   KParts::PartManager *partManager();
 
+#ifndef APPLE_CHANGES
   /**
    * Saves the KHTMLPart's complete state (including child frame
    * objects) to the provided @ref QDataStream.
@@ -608,6 +620,7 @@ public:
    * @ref browserExtension() .
    **/
   virtual void restoreState( QDataStream &stream );
+#endif
 
   /**
    * Returns the @p Node currently under the mouse
@@ -751,7 +764,9 @@ protected:
    */
   void htmlError(int errorCode, const QString& text, const KURL& reqUrl);
 
+#ifndef APPLE_CHANGES
   virtual void customEvent( QCustomEvent *event );
+#endif
 
   /**
    * Eventhandler of the khtml::MousePressEvent.
@@ -774,6 +789,7 @@ protected:
    */
   virtual void khtmlDrawContentsEvent( khtml::DrawContentsEvent * );
 
+#ifndef APPLE_CHANGES
   /**
    * Internal reimplementation of KParts::Part::guiActivateEvent .
    */
@@ -783,10 +799,12 @@ protected:
    * Internal empty reimplementation of @ref KParts::ReadOnlyPart::openFile .
    */
   virtual bool openFile();
+#endif
 
   virtual void urlSelected( const QString &url, int button, int state,
                             const QString &_target, KParts::URLArgs args = KParts::URLArgs());
 
+#ifndef APPLE_CHANGES
   /**
    * This method is called when a new embedded object (include html frames) is to be created.
    * Reimplement it if you want to add support for certain embeddable objects without registering
@@ -799,6 +817,7 @@ protected:
                                             QObject *parent, const char *name,
                                             const QString &mimetype, QString &serviceName,
                                             QStringList &serviceTypes, const QStringList &params);
+#endif
 
 public slots:
 
@@ -819,6 +838,8 @@ public slots:
   void stopAnimations();
 
   QCString dcopObjectId() const;
+
+#ifndef APPLE_CHANGES
 
 private slots:
 
@@ -978,6 +999,8 @@ private slots:
    */
   void slotClearSelection();
 
+#endif
+
 private:
 
 
@@ -1046,7 +1069,13 @@ private:
   DOM::EventListener *createHTMLEventListener( QString code );
 
   DOM::HTMLDocumentImpl *docImpl() const;
+#ifdef APPLE_CHANGES
+public:
+#endif
   DOM::DocumentImpl *xmlDocImpl() const;
+#ifdef APPLE_CHANGES
+private:
+#endif
   khtml::ChildFrame *frame( const QObject *obj );
 
   khtml::ChildFrame *recursiveFrameRequest( const KURL &url, const KParts::URLArgs &args, bool callParent = true );
@@ -1067,8 +1096,38 @@ private:
 
   KHTMLPartPrivate *d;
   friend class KHTMLPartPrivate;
+
+#ifdef APPLE_CHANGES
+public:
+    // In the original KDE, these come from superclasses.
+    void ref() { _ref++; }
+    void deref() { if(_ref) _ref--; if(!_ref) delete this; }
+    bool event(QEvent *event);
+
+    // Additions.
+    
+    bool gotoBaseAnchor();
+
+    void setView(KHTMLView *view);
+
+    void slotData(IFURLHandle *, const char *bytes, int length);
+
+    void setBaseURL(const KURL &);
+
+    QString documentSource() const;
+
+    QString sheetUsed() const;
+    void setSheetUsed(const QString &);
+
+    void setTitle(const DOM::DOMString &);
+    
+    void setDataSource(IFWebDataSource *);
+    IFWebDataSource *getDataSource();
+    
+private:
+    unsigned int _ref;
+#endif
+
 };
 
-
 #endif
-#endif /* APPLE_CHANGES not defined */

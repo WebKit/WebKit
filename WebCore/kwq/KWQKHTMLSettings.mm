@@ -150,7 +150,7 @@ const QValueList<int> &KHTMLSettings::fontSizes() const
 }
 
 
-bool KHTMLSettings::changeCursor()
+bool KHTMLSettings::changeCursor() const
 {
     _logNotYetImplemented();
     return FALSE;
