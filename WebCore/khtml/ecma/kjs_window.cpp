@@ -233,6 +233,7 @@ const ClassInfo Window::info = { "Window", 0, &WindowTable, 0 };
   setTimeout	Window::SetTimeout	DontDelete|Function 2
   clearTimeout	Window::ClearTimeout	DontDelete|Function 1
   focus		Window::Focus		DontDelete|Function 0
+  getSelection  Window::GetSelection    DontDelete|Function 0
   blur		Window::Blur		DontDelete|Function 0
   close		Window::Close		DontDelete|Function 0
   setInterval	Window::SetInterval	DontDelete|Function 2
@@ -558,6 +559,7 @@ Value Window::get(ExecState *exec, const Identifier &p) const
     case ClearTimeout:
     case SetInterval:
     case ClearInterval:
+    case GetSelection:
       if (isSafeScript(exec))
         return lookupOrCreateFunction<WindowFunc>(exec,p,this,entry->value,entry->params,entry->attr);
       else
@@ -1405,6 +1407,10 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
     if (widget)
       widget->setActiveWindow();
     return Undefined();
+  case Window::GetSelection:
+    if (!window->isSafeScript(exec))
+        return Undefined();
+    return String(part->selectedText());
   case Window::Blur:
 #if APPLE_CHANGES
     KWQ(part)->unfocusWindow();

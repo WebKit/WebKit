@@ -1,3 +1,15 @@
+2003-04-13  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Trey.
+
+	- fixed 3165326 - javascript getSelection not implemented
+	
+        * khtml/ecma/kjs_window.cpp:
+        (Window::get):
+        (WindowFunc::tryCall):
+        * khtml/ecma/kjs_window.h:
+        * khtml/ecma/kjs_window.lut.h:
+
 2003-04-13  Trey Matteson  <trey@apple.com>
 
 	3219720 - autofill mapping confused by tables, worse than MacIE (at store.apple.com)
