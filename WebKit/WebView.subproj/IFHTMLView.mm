@@ -42,8 +42,20 @@
     _private->canDragTo = YES;
     _private->canDragFrom = YES;
 
-    [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(windowResized:) name: NSWindowDidResizeNotification object: nil];
+    // We added add/remove this view as a mouse moved observer when it's window becomes/resigns main.
+    [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(windowDidBecomeMain:) name: NSWindowDidBecomeMainNotification object: nil];
+    [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(windowDidResignMain:) name: NSWindowDidResignMainNotification object: nil];
+
+    // Add this view initially as a mouse move observer.  Subsequently we will add/remove this view
+    // when the window becomes/resigns main.
     [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(mouseMovedNotification:) name: NSMouseMovedNotification object: nil];
+
+    [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(windowResized:) name: NSWindowDidResizeNotification object: nil];
+
+    // We remove this view as an observer from all window notifications when the window
+    // is closed.  This may be redundant, but ensures that the view has no outstanding
+    // references.
+    [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(windowWillClose:) name: NSWindowWillCloseNotification object: nil];
 
     return self;
 }
@@ -395,18 +407,28 @@
 
 - (void)viewWillStartLiveResize
 {
-    id scrollView = [[self superview] superview];
-    _private->liveAllowsScrolling = [scrollView allowsScrolling];
-    [scrollView setAllowsScrolling: NO];
+    //id scrollView = [[self superview] superview];
+    //_private->liveAllowsScrolling = [scrollView allowsScrolling];
+    //[scrollView setAllowsScrolling: NO];
 }
 
 - (void)viewDidEndLiveResize
 {
     id scrollView = [[self superview] superview];
-    [scrollView setAllowsScrolling: _private->liveAllowsScrolling];
+    //[scrollView setAllowsScrolling: _private->liveAllowsScrolling];
     [self setNeedsLayout: YES];
     [self setNeedsDisplay: YES];
     [scrollView updateScrollers];
+}
+
+
+- (void)windowWillClose: (NSNotification *)notification
+{
+    [[NSNotificationCenter defaultCenter] removeObserver: self name: NSMouseMovedNotification object: nil];
+    [[NSNotificationCenter defaultCenter] removeObserver: self name: NSWindowDidResignMainNotification object: nil];
+    [[NSNotificationCenter defaultCenter] removeObserver: self name: NSWindowDidResignMainNotification object: nil];
+    [[NSNotificationCenter defaultCenter] removeObserver: self name: NSWindowDidResizeNotification object: nil];
+    [[NSNotificationCenter defaultCenter] removeObserver: self name: NSWindowWillCloseNotification object: nil];
 }
 
 
@@ -416,6 +438,21 @@
         [self setNeedsLayout: YES];
         [self setNeedsDisplay: YES];
     }
+}
+
+
+- (void)windowDidBecomeMain: (NSNotification *)notification
+{
+    if ([notification object] == [self window])
+        [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(mouseMovedNotification:) name: NSMouseMovedNotification object: nil];
+    
+}
+
+
+- (void)windowDidResignMain: (NSNotification *)notification
+{
+    if ([notification object] == [self window])
+        [[NSNotificationCenter defaultCenter] removeObserver: self name: NSMouseMovedNotification object: nil];
 }
 
 
@@ -498,15 +535,18 @@
 {
     NSEvent *event = [(NSDictionary *)[notification userInfo] objectForKey: @"NSEvent"];
     NSPoint p = [event locationInWindow];
-
+    NSWindow *thisWindow = [self window];
+    
     // Only act on the mouse move event if it's inside this view (and
     // not inside a subview)
-    if ([[[self window] contentView] hitTest:p] == self) {
-	QMouseEvent kEvent(QEvent::MouseButtonPress, QPoint((int)p.x, (int)p.y), 0, 0);
-	KHTMLView *widget = _private->widget;
-	if (widget != 0l) {
-	    widget->viewportMouseMoveEvent(&kEvent);
-	}
+    if ([thisWindow isMainWindow] &&
+        [[[notification userInfo] objectForKey: @"NSEvent"] window] == thisWindow &&
+        [[thisWindow contentView] hitTest:p] == self) {
+        QMouseEvent kEvent(QEvent::MouseButtonPress, QPoint((int)p.x, (int)p.y), 0, 0);
+        KHTMLView *widget = _private->widget;
+        if (widget != 0l) {
+            widget->viewportMouseMoveEvent(&kEvent);
+        }
     }
 }
 

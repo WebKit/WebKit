@@ -42,13 +42,6 @@
     }
 }
 
-- (void)removeFromSuperview
-{
-    NSView *scrollView = [self _IF_superviewWithName:@"IFDynamicScrollBarsView"];
-    [(NSScrollView *)scrollView setDrawsBackground:NO];
-    [super removeFromSuperview];
-}
-
 - (void)provisionalDataSourceChanged:(IFWebDataSource *)dataSource
 {
 
@@ -74,13 +67,10 @@
     IFImageRenderer *image = [representation image];
     
     if(image){
-        NSView *scrollView = [self _IF_superviewWithName:@"IFDynamicScrollBarsView"];
         NSSize imageSize = [image size];
 
         [self setFrameSize:imageSize];
         [image setFlipped:YES];
-        [(NSScrollView *)scrollView setDrawsBackground:YES];
-        [(NSScrollView *)scrollView setBackgroundColor:[NSColor whiteColor]];
     }
 
 }

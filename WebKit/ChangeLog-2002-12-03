@@ -1,3 +1,31 @@
+2002-06-14  Richard Williamson  <rjw@apple.com>
+
+	* WebView.subproj/IFHTMLView.mm:
+	(-[IFHTMLView initWithFrame:]):
+	    Added notification so we can intelligently add/remove
+	    mouse move observation when the window becomes/resigns
+	    main.  Also added window close observation so we can
+	    clean up other observers.
+	(-[IFHTMLView viewWillStartLiveResize]):\
+	    Backed out removal of scroll bars during resize.
+	(-[IFHTMLView viewDidEndLiveResize]):
+	    Backed out removal of scroll bars during resize.
+	(-[IFHTMLView windowWillClose:]):
+        Clean up observers.
+	(-[IFHTMLView windowDidBecomeMain:]):
+        Add mouse move observer.
+	(-[IFHTMLView windowDidResignMain:]):
+        Remove mouse move observer.
+	(-[IFHTMLView mouseMovedNotification:]):
+	    Only pay attention to mouse moves for this window.
+	* WebView.subproj/IFImageView.m:
+	(-[IFImageView layout]):
+	    Removed unnecessary scroll view setDrawBackground calls.
+	* WebView.subproj/IFWebFramePrivate.mm:
+	(-[IFWebFrame _setState:]):
+	    Added calls to scroll view setDrawBackground when the view
+	    rect is valid.
+
 2002-06-14  Chris Blumenberg  <cblu@apple.com>
 
 	Enabled displaying of text, images and RTF

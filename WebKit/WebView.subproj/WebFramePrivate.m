@@ -287,6 +287,14 @@ static const char * const stateNames[6] = {
     [[NSNotificationCenter defaultCenter] postNotificationName:IFFrameStateChangedNotification object:self userInfo:userInfo];
     
     _private->state = newState;
+    
+    if (_private->state == IFWEBFRAMESTATE_PROVISIONAL){
+        [[[self view] frameScrollView] setDrawsBackground: NO];
+    }
+    
+    if (_private->state == IFWEBFRAMESTATE_COMPLETE){
+        [[[self view] frameScrollView] setDrawsBackground: YES];
+    }
 }
 
 - (void)_isLoadComplete
