@@ -351,7 +351,25 @@ public:
     CSSPrimitiveValueImpl* blur;
     CSSPrimitiveValueImpl* color;
 };
+
+// Used by box-flex-group-transition
+class FlexGroupTransitionValueImpl : public CSSValueImpl
+{
+public:
+    FlexGroupTransitionValueImpl(unsigned int _group1, 
+                                 unsigned int _group2,
+                                 CSSPrimitiveValueImpl* _length);
+    virtual ~FlexGroupTransitionValueImpl();
     
+    virtual unsigned short cssValueType() const { return CSSValue::CSS_CUSTOM; }
+    
+    virtual DOM::DOMString cssText() const;
+    
+    unsigned int group1;
+    unsigned int group2;
+    CSSPrimitiveValueImpl* length;
+};
+
 // ------------------------------------------------------------------------------
 
 // another helper class

@@ -1,3 +1,56 @@
+2004-06-03  David Hyatt  <hyatt@apple.com>
+
+	Add support for box-flex-group-transition (whew!), a new property that is going to enable some incredibly
+	complicated flexing layouts in HTML.
+
+	This is Stage 1 - wire up the CSS property and make it get parsed into front-end data.  Nobody actually looks
+	at this data yet.
+	
+        Reviewed by darin
+
+        * khtml/css/css_valueimpl.cpp:
+        (CSSInheritedValueImpl::cssText):
+        (ShadowValueImpl::cssText):
+        (length):
+        (FlexGroupTransitionValueImpl::~FlexGroupTransitionValueImpl):
+        (FlexGroupTransitionValueImpl::cssText):
+        * khtml/css/css_valueimpl.h:
+        (DOM::FlexGroupTransitionValueImpl::cssValueType):
+        * khtml/css/cssparser.cpp:
+        (CSSParser::parseValue):
+        (CSSParser::parseShadow):
+        (FlexGroupTransitionParseContext::length):
+        (FlexGroupTransitionParseContext::~FlexGroupTransitionParseContext):
+        (FlexGroupTransitionParseContext::failed):
+        (FlexGroupTransitionParseContext::allowGroup):
+        (FlexGroupTransitionParseContext::commitGroup):
+        (FlexGroupTransitionParseContext::commitSlash):
+        (FlexGroupTransitionParseContext::commitLength):
+        (FlexGroupTransitionParseContext::commitValue):
+        (CSSParser::parseFlexGroupTransition):
+        * khtml/css/cssparser.h:
+        * khtml/css/cssproperties.c:
+        (hash_prop):
+        (findProp):
+        * khtml/css/cssproperties.h:
+        * khtml/css/cssproperties.in:
+        * khtml/rendering/render_style.cpp:
+        (StyleFlexibleBoxData::StyleFlexibleBoxData):
+        (StyleFlexibleBoxData::operator==):
+        (StyleFlexibleBoxData::transitionDataEquivalent):
+        (StyleCSS3InheritedData::operator==):
+        (StyleCSS3InheritedData::shadowDataEquivalent):
+        (ShadowData::operator==):
+        (RenderStyle::setBoxFlexGroupTransition):
+        (length):
+        (FlexGroupTransitionData::operator==):
+        * khtml/rendering/render_style.h:
+        (khtml::FlexGroupTransitionData::next):
+        (khtml::FlexGroupTransitionData::~FlexGroupTransitionData):
+        (khtml::FlexGroupTransitionData::operator!=):
+        (khtml::StyleFlexibleBoxData::~StyleFlexibleBoxData):
+        (khtml::RenderStyle::boxFlexGroupTransition):
+
 2004-06-03  Richard Williamson   <rjw@apple.com>
 
 	Add extra sanity check to Image parameter of drawImage...

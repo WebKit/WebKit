@@ -425,7 +425,7 @@ unsigned short CSSInheritedValueImpl::cssValueType() const
 
 DOM::DOMString CSSInheritedValueImpl::cssText() const
 {
-    return DOMString("inherited");
+    return DOMString("inherit");
 }
 
 unsigned short CSSInitialValueImpl::cssValueType() const
@@ -1028,6 +1028,32 @@ DOMString ShadowValueImpl::cssText() const
 	text += blur->cssText();
     }
 
+    return text;
+}
+
+// Used for box-flex-transition-group
+FlexGroupTransitionValueImpl::FlexGroupTransitionValueImpl(unsigned int _group1, 
+                                                           unsigned int _group2,
+                                                           CSSPrimitiveValueImpl* _length)
+:group1(_group1), group2(_group2), length(_length)
+{}
+
+FlexGroupTransitionValueImpl::~FlexGroupTransitionValueImpl()
+{
+    delete length;
+}
+
+DOMString FlexGroupTransitionValueImpl::cssText() const
+{
+    DOMString text(QString::number(group1));
+    if (group2) {
+        text += "/";
+        text += QString::number(group2);
+    }
+    if (length) {
+        text += " ";
+        text += length->cssText();
+    }
     return text;
 }
 

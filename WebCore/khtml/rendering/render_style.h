@@ -57,6 +57,7 @@ class RenderArena;
 namespace DOM {
     class DOMStringImpl;
     class ShadowValueImpl;
+    class FlexGroupTransitionValueImpl;
 }
 
 namespace khtml {
@@ -450,6 +451,25 @@ public:
 //------------------------------------------------
 // CSS3 Flexible Box Properties
 
+// This struct holds information about flex group transitions for the box-flex-group-transition property.
+struct FlexGroupTransitionData {
+    FlexGroupTransitionData(unsigned int _group1, unsigned int _group2, Length _l)
+    :group1(_group1), group2(_group2), length(_l), next(0) {}
+    FlexGroupTransitionData(const FlexGroupTransitionData& o);
+    
+    ~FlexGroupTransitionData() { delete next; }
+    
+    bool operator==(const FlexGroupTransitionData& o) const;
+    bool operator!=(const FlexGroupTransitionData &o) const {
+        return !(*this == o);
+    }
+    
+    unsigned int group1;
+    unsigned int group2;
+    Length length;
+    FlexGroupTransitionData* next;
+};
+
 enum EBoxAlignment { BSTRETCH, BSTART, BCENTER, BEND, BJUSTIFY, BBASELINE };
 enum EBoxOrient { HORIZONTAL, VERTICAL };
 enum EBoxLines { SINGLE, MULTIPLE };
@@ -459,7 +479,7 @@ class StyleFlexibleBoxData : public Shared<StyleFlexibleBoxData>
 {
 public:
     StyleFlexibleBoxData();
-    ~StyleFlexibleBoxData() {}
+    ~StyleFlexibleBoxData() { delete transitions; }
     StyleFlexibleBoxData(const StyleFlexibleBoxData& o);
 
     bool operator==(const StyleFlexibleBoxData& o) const;
@@ -467,11 +487,14 @@ public:
         return !(*this == o);
     }
 
+    bool transitionDataEquivalent(const StyleFlexibleBoxData& o) const;
+    
     float flex;
     unsigned int flex_group;
     unsigned int ordinal_group;
     int flexed_height; // Not an actual CSS property. Vertical flexing has to use this as a cache.
-    
+    FlexGroupTransitionData* transitions;
+
     EBoxAlignment align : 3;
     EBoxAlignment pack: 3;
     EBoxOrient orient: 1;
@@ -1087,6 +1110,7 @@ public:
     EBoxOrient boxOrient() { return css3NonInheritedData->flexibleBox->orient; }
     EBoxAlignment boxPack() { return css3NonInheritedData->flexibleBox->pack; }
     int boxFlexedHeight() { return css3NonInheritedData->flexibleBox->flexed_height; }
+    FlexGroupTransitionData* boxFlexGroupTransition() { return css3NonInheritedData->flexibleBox->transitions; }
     Length marqueeIncrement() { return css3NonInheritedData->marquee->increment; }
     int marqueeSpeed() { return css3NonInheritedData->marquee->speed; }
     int marqueeLoopCount() { return css3NonInheritedData->marquee->loops; }
@@ -1266,6 +1290,7 @@ public:
     void setBoxOrient(EBoxOrient o) { SET_VAR(css3NonInheritedData.access()->flexibleBox, orient, o); }
     void setBoxPack(EBoxAlignment p) { SET_VAR(css3NonInheritedData.access()->flexibleBox, pack, p); }
     void setBoxFlexedHeight(int h) { SET_VAR(css3NonInheritedData.access()->flexibleBox, flexed_height, h); }
+    void setBoxFlexGroupTransition(FlexGroupTransitionData* transition, bool add = false);
     void setMarqueeIncrement(const Length& f) { SET_VAR(css3NonInheritedData.access()->marquee, increment, f); }
     void setMarqueeSpeed(int f) { SET_VAR(css3NonInheritedData.access()->marquee, speed, f); }
     void setMarqueeDirection(EMarqueeDirection d) { SET_VAR(css3NonInheritedData.access()->marquee, direction, d); }

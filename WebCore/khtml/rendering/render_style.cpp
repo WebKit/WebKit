@@ -157,6 +157,7 @@ StyleFlexibleBoxData::StyleFlexibleBoxData()
     orient = RenderStyle::initialBoxOrient();
     lines = RenderStyle::initialBoxLines();
     flexed_height = -1;
+    transitions = 0;
 }
 
 StyleFlexibleBoxData::StyleFlexibleBoxData(const StyleFlexibleBoxData& o)
@@ -170,6 +171,7 @@ StyleFlexibleBoxData::StyleFlexibleBoxData(const StyleFlexibleBoxData& o)
     orient = o.orient;
     lines = o.lines;
     flexed_height = o.flexed_height;
+    transitions = o.transitions ? new FlexGroupTransitionData(*o.transitions) : 0;
 }
 
 bool StyleFlexibleBoxData::operator==(const StyleFlexibleBoxData& o) const
@@ -177,7 +179,17 @@ bool StyleFlexibleBoxData::operator==(const StyleFlexibleBoxData& o) const
     return flex == o.flex && flex_group == o.flex_group &&
            ordinal_group == o.ordinal_group && align == o.align &&
            pack == o.pack && orient == o.orient && lines == o.lines &&
-           flexed_height == o.flexed_height;
+           flexed_height == o.flexed_height &&
+           transitionDataEquivalent(o);
+}
+
+bool StyleFlexibleBoxData::transitionDataEquivalent(const StyleFlexibleBoxData& o) const
+{
+    if (!transitions && o.transitions || transitions && !o.transitions)
+        return false;
+    if (transitions && o.transitions && (*transitions != *o.transitions))
+        return false;
+    return true;
 }
 
 StyleCSS3NonInheritedData::StyleCSS3NonInheritedData()
@@ -259,13 +271,11 @@ StyleCSS3InheritedData::~StyleCSS3InheritedData()
 
 bool StyleCSS3InheritedData::operator==(const StyleCSS3InheritedData& o) const
 {
-    return shadowDataEquivalent(o);
+    return (userModify == o.userModify) && shadowDataEquivalent(o);
 }
 
 bool StyleCSS3InheritedData::shadowDataEquivalent(const StyleCSS3InheritedData& o) const
 {
-    if (userModify != o.userModify)
-        return false;
     if (!textShadow && o.textShadow || textShadow && !o.textShadow)
         return false;
     if (textShadow && o.textShadow && (*textShadow != *o.textShadow))
@@ -886,4 +896,33 @@ bool ShadowData::operator==(const ShadowData& o) const
         return false;
     
     return x == o.x && y == o.y && blur == o.blur && color == o.color;
+}
+
+void RenderStyle::setBoxFlexGroupTransition(FlexGroupTransitionData* val, bool add)
+{
+    StyleFlexibleBoxData* boxData = css3NonInheritedData.access()->flexibleBox.access(); 
+    if (!add) {
+        delete boxData->transitions;
+        boxData->transitions = val;
+        return;
+    }
+    
+    FlexGroupTransitionData* last = boxData->transitions;
+    while (last->next) last = last->next;
+    last->next = val;
+}
+
+FlexGroupTransitionData::FlexGroupTransitionData(const FlexGroupTransitionData& o)
+:group1(o.group1), group2(o.group2), length(o.length)
+{
+    next = o.next ? new FlexGroupTransitionData(*o.next) : 0;
+}
+
+bool FlexGroupTransitionData::operator==(const FlexGroupTransitionData& o) const
+{
+    if ((next && !o.next) || (!next && o.next) ||
+        (next && o.next && *next != *o.next))
+        return false;
+    
+    return group1 == o.group1 && group2 == o.group2 && length == o.length;
 }

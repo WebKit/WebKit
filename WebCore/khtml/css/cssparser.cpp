@@ -1055,6 +1055,8 @@ bool CSSParser::parseValue( int propId, bool important )
     case CSS_PROP__KHTML_BOX_ORDINAL_GROUP:
         valid_primitive = validUnit(value, FInteger|FNonNeg, true);
         break;
+    case CSS_PROP__KHTML_BOX_FLEX_GROUP_TRANSITION:
+        return parseFlexGroupTransition(propId, important);
     case CSS_PROP__KHTML_MARQUEE: {
         const int properties[5] = { CSS_PROP__KHTML_MARQUEE_DIRECTION, CSS_PROP__KHTML_MARQUEE_INCREMENT,
                                     CSS_PROP__KHTML_MARQUEE_REPETITION,
@@ -1857,7 +1859,6 @@ struct ShadowParseContext {
     }
     
     CSSValueListImpl* values;
-    bool succeeded;
     CSSPrimitiveValueImpl* x;
     CSSPrimitiveValueImpl* y;
     CSSPrimitiveValueImpl* blur;
@@ -1870,7 +1871,7 @@ struct ShadowParseContext {
     bool allowBreak;
 };
 
-bool CSSParser::parseShadow( int propId, bool important )
+bool CSSParser::parseShadow(int propId, bool important)
 {
     ShadowParseContext context;
     Value* val;
@@ -1929,6 +1930,133 @@ bool CSSParser::parseShadow( int propId, bool important )
     }
     
     return context.failed();
+}
+
+struct FlexGroupTransitionParseContext {
+    FlexGroupTransitionParseContext()
+    :values(0), allowGroup1(true), allowSlash(false), allowGroup2(false), allowLength(false),
+     allowBreak(true), group1(0), group2(0), length(0)
+    {}
+    
+    ~FlexGroupTransitionParseContext() {
+        if (!allowBreak) {
+            delete values;
+            delete length;
+        }        
+    }
+
+    bool failed() { return allowBreak = false; }
+    
+    bool allowGroup() const {
+        return allowGroup1 || allowGroup2;
+    }
+    
+    void commitGroup(Value* val) {
+        if (allowGroup1) {
+            allowGroup1 = allowGroup2 = allowBreak = false;
+            allowSlash = allowLength = true;
+            group1 = (unsigned int)val->fValue;
+        }
+        else if (allowGroup2) {
+            allowGroup1 = allowGroup2 = allowBreak = allowSlash = false;
+            allowLength = true;
+            group2 = (unsigned int)val->fValue;
+        }
+    }
+
+    void commitSlash() {
+        allowSlash = allowLength = allowGroup1 = allowBreak = false;
+        allowGroup2 = true;
+    }
+    
+    void commitLength(Value* v) {
+        length = new CSSPrimitiveValueImpl(v->fValue,
+                                           (CSSPrimitiveValue::UnitTypes)v->unit);
+        allowLength = allowGroup1 = allowGroup2 = allowSlash = false;
+        allowBreak = true;
+    }
+
+    void commitValue() {
+        // Handle the ,, case gracefully by doing nothing.
+        if ((group1 || group2) && length) {
+            if (!values)
+                values = new CSSValueListImpl();
+            
+            // Construct the current shadow value and add it to the list.
+            values->append(new FlexGroupTransitionValueImpl(group1, group2, length));
+        }
+        
+        // Now reset for the next shadow value.
+        group1 = group2 = 0;
+        length = 0;
+        allowGroup1 = allowBreak = true;
+        allowSlash = allowGroup2 = allowLength = false;
+    }
+    
+    CSSValueListImpl* values;
+    bool allowGroup1;
+    bool allowSlash;
+    bool allowGroup2;
+    bool allowLength;
+    bool allowBreak;
+    unsigned int group1;
+    unsigned int group2;
+    CSSPrimitiveValueImpl* length;
+};
+
+bool CSSParser::parseFlexGroupTransition(int propId, bool important)
+{
+    FlexGroupTransitionParseContext context;
+    Value* val;
+    while ((val = valueList->current())) {
+        // Check for a comma break first.
+        if (val->unit == Value::Operator) {
+            if (val->iValue == '/') {
+                if (context.allowSlash)
+                    context.commitSlash();
+                else
+                    return context.failed();
+            }    
+            else if (val->iValue != ',' || !context.allowBreak)
+                // Other operators aren't legal or we aren't done with the current flex group transitiion
+                // value.  Treat as invalid.
+                return context.failed();
+            
+            // The value is good.  Commit it.
+            context.commitValue();
+        }
+        // Check to see if we're a non-negative number.
+        else if (validUnit(val, FInteger|FNonNeg, true)) {
+            if (context.allowGroup())
+                context.commitGroup(val);
+            else
+                return context.failed();
+        }
+        // Check to see if we're a length.
+        else if (validUnit(val, FLength, true)) {
+            // We required a length and didn't get one. Invalid.
+            if (!context.allowLength)
+                return context.failed();
+            
+            // A length is allowed here.  Construct the value and add it.
+            context.commitLength(val);
+        }
+        else 
+            return context.failed();
+        
+        valueList->next();
+    }
+    
+    if (context.allowBreak) {
+        context.commitValue();
+        if (context.values->length()) {
+            addProperty(propId, context.values, important);
+            valueList->next();
+            return true;
+        }
+    }
+    
+    return context.failed();    
 }
 
 static inline int yyerror( const char *str ) {
