@@ -26,29 +26,14 @@
 #ifndef KURL_H_
 #define KURL_H_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
-// USING_BORROWED_KURL =========================================================
-
-#ifdef USING_BORROWED_KURL
-
-#include <_kurl.h>
-
-#else
-
 #include <qstring.h>
 #include <KWQRefPtr.h>
 
-// FIXME: this clever hack may need to be moved into KWQDef.h or elsewhere
-#define Fixed MacFixed
-#define Rect MacRect
-#define Boolean MacBoolean
-#include <CoreFoundation/CoreFoundation.h>
-#undef Fixed
-#undef Rect
-#undef Boolean
+#ifdef __OBJC__
+@class NSURL;
+#else
+typedef void NSURL;
+#endif
 
 // class KURL ==================================================================
 
@@ -98,6 +83,8 @@ public:
     void setPath(const QString &);
 
     QString prettyURL(int trailing=0) const;
+    
+    NSURL *getNSURL() const;
 
     // operators ---------------------------------------------------------------
 
@@ -121,5 +108,3 @@ private:
 }; // class KURL ===============================================================
 
 #endif
-
-#endif // USING_BORROWED_KURL

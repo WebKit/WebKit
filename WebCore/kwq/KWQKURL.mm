@@ -26,10 +26,7 @@
 #include <kurl.h>
 #include <kwqdebug.h>
 
-#ifndef USING_BORROWED_KURL
-
 #import <Foundation/NSURLPathUtilities.h>
-#include <CoreFoundation/CoreFoundation.h>
 
 class KURL::KWQKURLPrivate
 {
@@ -115,7 +112,7 @@ void KURL::KWQKURLPrivate::makeRef()
         sURL = (QString("file://")) + sURL;
     } else if (sURL.startsWith("file:/") && !sURL.startsWith("file://")) {
         sURL = (QString("file:///") + sURL.mid(6));
-    } 
+    }
 
     QString sURLMaybeAddSlash;
     int colonPos = sURL.find(':');
@@ -741,4 +738,8 @@ void KURL::assemble()
     }
 }
 
-#endif
+NSURL *KURL::getNSURL() const
+{
+    parse();
+    return [[(NSURL *)d->urlRef retain] autorelease];
+}

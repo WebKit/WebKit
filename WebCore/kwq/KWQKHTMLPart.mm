@@ -850,14 +850,11 @@ bool KHTMLPart::requestFrame( khtml::RenderPart *frame, const QString &url, cons
         NSURL *childURL;
         IFWebFrame *newFrame;
         id <IFWebController> controller;
-        NSString *urlString;
         HTMLIFrameElementImpl *o = static_cast<HTMLIFrameElementImpl *>(frame->element());
                 
-        urlString = QSTRING_TO_NSSTRING (completeURL( url ).url() );
-        childURL = [NSURL URLWithString: QSTRING_TO_NSSTRING (completeURL( url ).url() )];
-        
-        if (childURL == nil){
-            NSLog (@"ERROR (probably need to fix CFURL):  unable to create URL for %@\n", urlString);
+        childURL = completeURL(url).getNSURL();
+        if (childURL == nil || [childURL path] == nil) {
+            NSLog (@"ERROR (probably need to fix CFURL): unable to create URL with path");
             return false;
         }
         
@@ -1025,14 +1022,12 @@ void KHTMLPart::submitForm( const char *action, const QString &url, const QByteA
     emit d->m_extension->openURLRequest( u, args );
 #endif
     IFWebDataSource *oldDataSource, *newDataSource;
-    NSString *urlString = [NSString stringWithCString:u.url().latin1()];
-    NSURL *qurl = [NSURL URLWithString: urlString];
     IFWebFrame *frame;
     
     oldDataSource = getDataSource();
     frame = [oldDataSource frame];
     
-    newDataSource = WCIFWebDataSourceMake([[[IFURLHandle alloc] initWithURL: qurl attributes: attributes flags: 0] autorelease]);
+    newDataSource = WCIFWebDataSourceMake([[[IFURLHandle alloc] initWithURL: u.getNSURL() attributes: attributes flags: 0] autorelease]);
     [newDataSource _setParent: [oldDataSource parent]];
     
     [frame setProvisionalDataSource: newDataSource];
@@ -1385,8 +1380,6 @@ void KHTMLPart::khtmlMouseReleaseEvent( khtml::MouseReleaseEvent *event )
         IFWebDataSource *oldDataSource, *newDataSource;
         QString target;
         KURL clickedURL(completeURL( splitUrlTarget(d->m_strSelectedURL, &target)));
-        NSString *urlString = [NSString stringWithCString:clickedURL.url().latin1()];
-        NSURL *url = [NSURL URLWithString: urlString];
         IFWebFrame *frame;
         KURL refLess(clickedURL);
         
@@ -1407,7 +1400,7 @@ void KHTMLPart::khtmlMouseReleaseEvent( khtml::MouseReleaseEvent *event )
             oldDataSource = [frame dataSource];
         }
         
-        newDataSource = WCIFWebDataSourceMake([[[IFURLHandle alloc] initWithURL: url attributes: nil flags: 0] autorelease]);
+        newDataSource = WCIFWebDataSourceMake([[[IFURLHandle alloc] initWithURL: clickedURL.getNSURL() attributes: nil flags: 0] autorelease]);
         [newDataSource _setParent: [oldDataSource parent]];
         
         [frame setProvisionalDataSource: newDataSource];

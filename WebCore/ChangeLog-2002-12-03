@@ -1,3 +1,17 @@
+2002-04-20  Darin Adler  <darin@apple.com>
+
+	Problems loading iframes seemed to be due to NSURL objects that
+	were not normalized, so I made the NSURL creation all be done
+	by KURL, which fixed the problem.
+
+	* kwq/KWQKHTMLPart.mm: (KHTMLPart::requestFrame), (KHTMLPart::submitForm),
+	(KHTMLPart::khtmlMouseReleaseEvent):
+	* kwq/KWQKjobclasses.mm:
+	Call getNSURL instead of creating NSURLs by converting to strings.
+
+	* kwq/kdecore/kurl.h:
+	* kwq/KWQKURL.mm: (KURL::getNSURL): New.
+
 2002-04-19  Kenneth Kocienda  <kocienda@apple.com>
 
         Changes to support submission of forms using HTTP POST.
@@ -207,8 +221,8 @@
 
 	* .cvsignore: Ignore new generated files at this level.
 
-	* include/*: Removed. We don't need this hack any more.
-	* src/*: Removed. Sources are now in their new locations.
+	* include/ *: Removed. We don't need this hack any more.
+	* src/ *: Removed. Sources are now in their new locations.
 	* src/libwebcore.exp: Removed. This is now in its new location.
 	* src/libwebcoretests.exp: Removed. This is now in its new location.
 

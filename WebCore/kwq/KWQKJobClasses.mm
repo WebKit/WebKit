@@ -89,29 +89,15 @@ class TransferJobPrivate
 friend class TransferJob;
 public:
 
-    TransferJobPrivate(TransferJob *parent, KURL &kurl) {
+    TransferJobPrivate(TransferJob *parent, KURL &kurl)
+    {
         metaData = [[NSMutableDictionary alloc] initWithCapacity:17];
-
-        // FIXME: create NSURL for now, later KURL and NSURL should play better together
-        NSString *string = [NSString stringWithCString:kurl.url().latin1()];
-	// FIXME: temporary hack to make file: URLs work right
-	if ([string hasPrefix:@"file:/"] && [string characterAtIndex:6] != '/') {
-	    string = [@"file:///" stringByAppendingString:[string substringFromIndex:6]];
-	}
-	if ([string hasSuffix:@"/"]) {
-	    string = [string substringToIndex:([string length] - 1)];
-	}
-
-        url = [[NSURL URLWithString:string] retain];
-        if (url == 0){
-            NSLog (@"Unable to create NSURL (probably a bug in NS/CFURL) for %@\n", string);
-            // Now what?
-        }
-
+        url = [kurl.getNSURL() retain];
         handle = nil;
     }
 
-    ~TransferJobPrivate() {
+    ~TransferJobPrivate()
+    {
         [metaData autorelease];
         [url autorelease];
         [handle autorelease];
