@@ -38,11 +38,9 @@
     WebBaseNetscapePluginView *view = (WebBaseNetscapePluginView *)thePluginPointer->ndata;
 
     WebBridge *bridge = [[view webFrame] _bridge];
-
-    // Since this is a subresource, we can load any URL (we ignore the return value).
-    // But we still want to know whether we should hide the referrer or not, so we call the canLoadURL method.
     BOOL hideReferrer;
-    [bridge canLoadURL:[theRequest URL] fromReferrer:[bridge referrer] hideReferrer:&hideReferrer];
+    if (![bridge canLoadURL:[theRequest URL] fromReferrer:[bridge referrer] hideReferrer:&hideReferrer])
+        return nil;
 
     if ([self initWithRequestURL:[theRequest URL]
                     pluginPointer:thePluginPointer

@@ -1,5 +1,16 @@
 2005-03-19  Darin Adler  <darin@apple.com>
 
+        Reviewed by Maciej (a while back).
+
+        - fixed <rdar://problem/4059323> local-file security check is allowing plug-in streams, but must not
+
+        * Plugins.subproj/WebNetscapePluginStream.m:
+        (-[WebNetscapePluginStream initWithRequest:pluginPointer:notifyData:sendNotification:]):
+        Roll out change I made on 3-13. That change is needed for subresource, but not for plug-in streams.
+        For plug-in streams it's too risky, and leaves a serious security hole open.
+
+2005-03-19  Darin Adler  <darin@apple.com>
+
         Reviewed by Ken and John.
 
         - fixed <rdar://problem/4059123> REGRESSION (402-403): deleteWordForward: and deleteWordBackward: start deleting single characters after the first delete
