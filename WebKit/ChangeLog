@@ -1,5 +1,12 @@
 2003-04-24  Maciej Stachowiak  <mjs@apple.com>
 
+	Fixed build.
+	
+        * Panels.subproj/WebStandardPanels.m:
+        (-[WebStandardPanels setUsesStandardAuthenticationPanel:]):
+
+2003-04-24  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Ken.
 
 	Updated for auth API changes.
