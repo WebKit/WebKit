@@ -96,7 +96,8 @@ DOMString HTMLAnchorElement::href() const
 {
     if(!impl) return DOMString();
     DOMString s = ((ElementImpl *)impl)->getAttribute(ATTR_HREF);
-    s = ownerDocument().completeURL( s );
+    if (!s.isNull())
+	s = ownerDocument().completeURL( s );
     return s;
 }
 

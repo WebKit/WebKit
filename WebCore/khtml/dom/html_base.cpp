@@ -371,7 +371,8 @@ DOMString HTMLIFrameElement::src() const
 {
     if(!impl) return DOMString();
     DOMString s = ((ElementImpl *)impl)->getAttribute(ATTR_SRC);
-    s = ownerDocument().completeURL( s );
+    if (!s.isNull())
+	s = ownerDocument().completeURL( s );
     return s;
 }
 

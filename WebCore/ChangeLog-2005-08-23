@@ -1,3 +1,24 @@
+2003-11-02  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	- don't resolve Null href or src attributes, since the distinction
+	between empty and absent attribute is important.
+
+        * khtml/dom/html_base.cpp:
+        (HTMLIFrameElement::src):
+        * khtml/dom/html_form.cpp:
+        (HTMLInputElement::src):
+        * khtml/dom/html_head.cpp:
+        (HTMLBaseElement::href):
+        (HTMLLinkElement::href):
+        (HTMLScriptElement::src):
+        * khtml/dom/html_image.cpp:
+        (HTMLAreaElement::href):
+        (HTMLImageElement::src):
+        * khtml/dom/html_inline.cpp:
+        (HTMLAnchorElement::href):
+
 2003-11-01  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3468924, an implementation of outline-offset.  We also give :focus links a built-in offset of 

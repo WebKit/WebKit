@@ -506,7 +506,7 @@ QString KWQTextDecoder::toUnicode(const char *chs, int len, bool flush)
 {
     ASSERT_ARG(len, len >= 0);
     
-    if (_error || !chs || len <= 0) {
+    if (_error || !chs || (len <= 0 && !flush)) {
         return QString();
     }
 

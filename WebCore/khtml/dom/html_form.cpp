@@ -464,7 +464,8 @@ DOMString HTMLInputElement::src() const
 {
     if(!impl) return DOMString();
     DOMString s = static_cast<ElementImpl*>(impl)->getAttribute(ATTR_SRC);
-    s = ownerDocument().completeURL( s );
+    if (!s.isNull())
+	s = ownerDocument().completeURL( s );
     return s;
 }
 
