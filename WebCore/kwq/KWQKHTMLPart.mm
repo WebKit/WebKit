@@ -601,6 +601,9 @@ void KHTMLPart::begin( const KURL &url, int xOffset, int yOffset)
 
     if (!d->m_workingURL.isEmpty())
     {
+	// We're not planning to support the KDE chained URL feature, AFAIK
+#define KDE_CHAINED_URIS 0
+#if KDE_CHAINED_URIS
         KURL::List lst = KURL::split( d->m_workingURL );
         KURL baseurl;
         if ( !lst.isEmpty() )
@@ -609,6 +612,9 @@ void KHTMLPart::begin( const KURL &url, int xOffset, int yOffset)
         // We prefer m_baseURL over m_url because m_url changes when we are
         // about to load a new page.
         setBaseURL(baseurl);
+#else
+	setBaseURL(d->m_workingURL);
+#endif
     }
 
     //FIXME: do we need this? 
@@ -1554,7 +1560,7 @@ void KHTMLPart::submitForm( const char *action, const QString &url, const QByteA
 
   KURL u = completeURL( url, target );
 
-  if ( !u.isValid() )
+  if ( u.isMalformed() )
   {
     // ### ERROR HANDLING!
     return;
@@ -1562,7 +1568,7 @@ void KHTMLPart::submitForm( const char *action, const QString &url, const QByteA
 
   QString urlstring = u.url();
 
-  if ( urlstring.find( QString::fromLatin1( "javascript:" ), 0, false ) == 0 ) {
+  if ( urlstring.find( u.protocol() ==  "javascript" ) == 0 ) {
       urlstring = KURL::decode_string(urlstring);
       executeScript( urlstring.right( urlstring.length() - 11) );
       return;

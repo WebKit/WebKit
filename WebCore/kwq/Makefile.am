@@ -79,6 +79,7 @@ libkwq_o_SOURCES = \
 	KWQKScheduler.mm \
 	KWQKSimpleConfig.mm \
 	KWQKStringHandler.mm \
+	KWQKURL.mm \
 	KWQKWin.mm \
 	KWQKWinModule.mm \
 	KWQKjobclasses.mm \

@@ -1,3 +1,31 @@
+2002-02-16  Maciej Stachowiak  <mjs@apple.com>
+
+	Reimplement KURL in terms of CFURL (many workarounds needed to
+	account for differing semantics).
+
+	* src/kwq/kdecore/kurl.h:
+	* src/kwq/KWQKURL.mm: (KURL::KWQKURLPrivate::KWQKURLPrivate),
+	(KURL::KWQKURLPrivate::~KWQKURLPrivate), (KURL::KWQKURLPrivate::init),
+	(KURL::KWQKURLPrivate::makeRef), (CFStringToQString), (escapeQString),
+	(pathEndsWithSlash), (KWQCFURLCopyEscapedPath),
+	(KURL::KWQKURLPrivate::decompose), (KURL::KWQKURLPrivate::compose), (KURL::KURL),
+	(KURL::~KURL), (KURL::isEmpty), (KURL::isMalformed), (KURL::hasPath),
+	(KURL::url), (KURL::protocol), (KURL::host), (KURL::port), (KURL::pass),
+	(KURL::user), (KURL::ref), (KURL::query), (KURL::path), (KURL::setProtocol),
+	(KURL::setHost), (KURL::setPort), (KURL::setRef), (KURL::setQuery),
+	(KURL::setPath), (KURL::prettyURL), (KURL::operator=), (KURL::decode_string),
+	(KURL::copyOnWrite):
+	* src/kwq/Makefile.am: Add new file to build.
+
+	* src/kwq/KWQKHTMLPart.mm: (KHTMLPart::begin,
+	KHTMLPart::submitForm): Don't 
+
+	Minor tweaks to make it all build:
+
+	* src/kwq/kde/_kurl.cpp:
+	* src/kwq/qt/_qurl.cpp:
+	* src/kwq/qt/_qurl.h:
+
 2002-02-16  Richard Williamson  <rjw@apple.com>
 
         Fixed problem with default text not showing up in text area.

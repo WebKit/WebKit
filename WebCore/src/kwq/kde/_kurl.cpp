@@ -17,7 +17,8 @@
     Boston, MA 02111-1307, USA.
 */
 
-#include "_kurl.h"
+#include <kurl.h>
+
 #include <kdebug.h>
 #include <kglobal.h>
 
