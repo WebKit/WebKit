@@ -139,6 +139,7 @@ const ClassInfo KJS::HTMLDocument::info =
   location		HTMLDocument::Location		DontDelete
   cookie		HTMLDocument::Cookie		DontDelete
   images		HTMLDocument::Images		DontDelete|ReadOnly
+  embeds		HTMLDocument::Embeds		DontDelete|ReadOnly
   applets		HTMLDocument::Applets		DontDelete|ReadOnly
   links			HTMLDocument::Links		DontDelete|ReadOnly
   forms			HTMLDocument::Forms		DontDelete|ReadOnly
@@ -225,6 +226,8 @@ Value KJS::HTMLDocument::tryGet(ExecState *exec, const Identifier &propertyName)
       return String(doc.cookie());
     case Images:
       return getHTMLCollection(exec,doc.images());
+    case Embeds:
+      return getHTMLCollection(exec,doc.embeds());
     case Applets:
       return getHTMLCollection(exec,doc.applets());
     case Links:
@@ -284,6 +287,7 @@ Value KJS::HTMLDocument::tryGet(ExecState *exec, const Identifier &propertyName)
       return String(body.dir());
     }
   }
+
   if (DOMDocument::hasProperty(exec, propertyName))
     return DOMDocument::tryGet(exec, propertyName);
 
@@ -298,6 +302,12 @@ Value KJS::HTMLDocument::tryGet(ExecState *exec, const Identifier &propertyName)
     DOM::HTMLElement anApplet = applets.namedItem (propertyName.string());
     if (!anApplet.isNull()) {
         return getRuntimeObject(exec,anApplet);
+    }
+
+    DOM::HTMLCollection embeds = doc.embeds();
+    DOM::HTMLElement anEmbed = embeds.namedItem (propertyName.string());
+    if (!anEmbed.isNull()) {
+        return getRuntimeObject(exec,anEmbed);
     }
 #endif
 
@@ -1139,6 +1149,7 @@ Value KJS::HTMLElement::tryGet(ExecState *exec, const Identifier &propertyName) 
     }
       break;
 #if APPLE_CHANGES
+    case ID_EMBED:
     case ID_APPLET: {
         return getRuntimeObject(exec,element);
     }
@@ -2962,7 +2973,7 @@ Value KJS::HTMLCollection::tryGet(ExecState *exec, const Identifier &propertyNam
       DOM::Node node = collection.item(u);
 
 #if APPLE_CHANGES
-        if (!node.isNull() && node.handle()->id() == ID_APPLET) {
+        if (!node.isNull() && (node.handle()->id() == ID_APPLET || node.handle()->id() == ID_EMBED)) {
             return getRuntimeObject(exec,node);
         }
 #endif
@@ -3049,7 +3060,7 @@ Value KJS::HTMLCollection::getNamedItems(ExecState *exec, const Identifier &prop
       kdDebug(6070) << "returning single node" << endl;
 #endif
 #if APPLE_CHANGES
-	  if (!node.isNull() && node.handle()->id() == ID_APPLET) {
+	  if (!node.isNull() && (node.handle()->id() == ID_APPLET || node.handle()->id() == ID_EMBED)) {
 	    return getRuntimeObject(exec,node);
 	  }
 #endif

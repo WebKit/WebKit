@@ -1,3 +1,37 @@
+2004-06-16  Richard Williamson   <rjw@apple.com>
+
+	Fixed 3695730:  Added support for embeds[], much like
+	applets[], to allow access to a plugin's exported interface.
+
+        Reviewed by Chris.
+
+        * khtml/dom/html_document.cpp:
+        (HTMLDocument::embeds):
+        * khtml/dom/html_document.h:
+        * khtml/ecma/kjs_dom.cpp:
+        (KJS::getRuntimeObject):
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::HTMLDocument::tryGet):
+        (KJS::HTMLElement::tryGet):
+        (KJS::HTMLCollection::tryGet):
+        (KJS::HTMLCollection::getNamedItems):
+        * khtml/ecma/kjs_html.h:
+        (KJS::HTMLDocument::):
+        * khtml/ecma/kjs_html.lut.h:
+        (KJS::):
+        * khtml/html/html_miscimpl.cpp:
+        (HTMLCollectionImpl::calcLength):
+        (HTMLCollectionImpl::getItem):
+        (HTMLCollectionImpl::getNamedItem):
+        * khtml/html/html_miscimpl.h:
+        (DOM::HTMLCollectionImpl::):
+        * khtml/html/html_objectimpl.cpp:
+        (HTMLEmbedElementImpl::getEmbedInstance):
+        * khtml/html/html_objectimpl.h:
+        * kwq/KWQKHTMLPart.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::getEmbedInstanceForView):
+
 2004-06-15  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Dave.

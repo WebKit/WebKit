@@ -3277,6 +3277,20 @@ KJS::Bindings::Instance *KWQKHTMLPart::getAppletInstanceForView (NSView *aView)
     return 0;
 }
 
+@interface NSObject (WebPlugIn)
+- (id)objectForWebScript;
+@end
+
+KJS::Bindings::Instance *KWQKHTMLPart::getEmbedInstanceForView (NSView *aView)
+{
+    if ([aView respondsToSelector:@selector(objectForWebScript)]){
+        id object = [aView objectForWebScript];
+        if (object)
+            return KJS::Bindings::Instance::createBindingForLanguageInstance (KJS::Bindings::Instance::ObjectiveCLanguage, object);
+    }
+    return 0;
+}
+
 void KWQKHTMLPart::addPluginRootObject(const KJS::Bindings::RootObject *root)
 {
     rootObjects.append (root);

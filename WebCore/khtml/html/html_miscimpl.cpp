@@ -112,6 +112,10 @@ unsigned long HTMLCollectionImpl::calcLength(NodeImpl *current) const
                 if(e->id() == ID_OBJECT || e->id() == ID_APPLET)
                     len++;
                 break;
+            case DOC_EMBEDS:   // all EMBED elements
+                if(e->id() == ID_EMBED)
+                    len++;
+                break;
             case DOC_LINKS:     // all A _and_ AREA elements with a value for href
                 if(e->id() == ID_A || e->id() == ID_AREA)
                     if(!e->getAttribute(ATTR_HREF).isNull())
@@ -195,6 +199,10 @@ NodeImpl *HTMLCollectionImpl::getItem(NodeImpl *current, int index, int &len) co
                 break;
             case DOC_APPLETS:   // all OBJECT and APPLET elements
                 if(e->id() == ID_OBJECT || e->id() == ID_APPLET)
+                    len++;
+                break;
+            case DOC_EMBEDS:   // all EMBED elements
+                if(e->id() == ID_EMBED)
                     len++;
                 break;
             case DOC_LINKS:     // all A _and_ AREA elements with a value for href
@@ -319,6 +327,10 @@ NodeImpl *HTMLCollectionImpl::getNamedItem( NodeImpl *current, int attr_id,
                 break;
             case DOC_APPLETS:   // all OBJECT and APPLET elements
                 if(e->id() == ID_OBJECT || e->id() == ID_APPLET)
+                    check = true;
+                break;
+            case DOC_EMBEDS:   // all EMBED elements
+                if(e->id() == ID_EMBED)
                     check = true;
                 break;
             case DOC_LINKS:     // all A _and_ AREA elements with a value for href

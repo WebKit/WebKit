@@ -227,6 +227,29 @@ NodeImpl::Id HTMLEmbedElementImpl::id() const
     return ID_EMBED;
 }
 
+#if APPLE_CHANGES
+KJS::Bindings::Instance *HTMLEmbedElementImpl::getEmbedInstance() const
+{
+    KHTMLPart* part = getDocument()->part();
+    if (!part)
+        return 0;
+
+    if (embedInstance)
+        return embedInstance;
+    
+    RenderPartObject *r = static_cast<RenderPartObject*>(m_render);
+    if (r) {
+        if (r->widget()){
+            // Call into the part (and over the bridge) to pull the Bindings::Instance
+            // from the guts of the Java VM.
+            void *_view = r->widget()->getView();
+            embedInstance = KWQ(part)->getEmbedInstanceForView((NSView *)_view);
+        }
+    }
+    return embedInstance;
+}
+#endif
+
 bool HTMLEmbedElementImpl::mapToEntry(NodeImpl::Id attr, MappedAttributeEntry& result) const
 {
     switch (attr) {

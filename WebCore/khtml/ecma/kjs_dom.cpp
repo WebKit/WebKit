@@ -41,6 +41,8 @@
 
 #include "html_objectimpl.h"
 
+#include "misc/htmltags.h"
+
 #if APPLE_CHANGES
 #include <JavaScriptCore/runtime_object.h>
 #endif
@@ -1523,12 +1525,25 @@ Value KJS::getDOMNamedNodeMap(ExecState *exec, const DOM::NamedNodeMap &m)
 Value KJS::getRuntimeObject(ExecState *exec, const DOM::Node &node)
 {
     DOM::HTMLElement element = static_cast<DOM::HTMLElement>(node);
-    DOM::HTMLAppletElementImpl *appletElement = static_cast<DOM::HTMLAppletElementImpl *>(element.handle());
-    
-    if (appletElement->getAppletInstance()) {
-        // The instance is owned by the applet element.
-        RuntimeObjectImp *appletImp = new RuntimeObjectImp(appletElement->getAppletInstance(), false);
-        return Value(appletImp);
+
+    if (!node.isNull()) {
+        if (node.handle()->id() == ID_APPLET) {
+            DOM::HTMLAppletElementImpl *appletElement = static_cast<DOM::HTMLAppletElementImpl *>(element.handle());
+            
+            if (appletElement->getAppletInstance()) {
+                // The instance is owned by the applet element.
+                RuntimeObjectImp *appletImp = new RuntimeObjectImp(appletElement->getAppletInstance(), false);
+                return Value(appletImp);
+            }
+        }
+        else if (node.handle()->id() == ID_EMBED) {
+            DOM::HTMLEmbedElementImpl *embedElement = static_cast<DOM::HTMLEmbedElementImpl *>(element.handle());
+            
+            if (embedElement->getEmbedInstance()) {
+                RuntimeObjectImp *runtimeImp = new RuntimeObjectImp(embedElement->getEmbedInstance(), false);
+                return Value(runtimeImp);
+            }
+        }
     }
     return Undefined();
 }

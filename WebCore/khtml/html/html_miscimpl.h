@@ -52,6 +52,7 @@ public:
         // from HTMLDocument
         DOC_IMAGES,    // all IMG elements in the document
         DOC_APPLETS,   // all OBJECT and APPLET elements
+        DOC_EMBEDS,   // all EMBED elements
         DOC_FORMS,     // all FORMS
         DOC_LINKS,     // all A _and_ AREA elements with a value for href
         DOC_ANCHORS,      // all A elements with a value for name

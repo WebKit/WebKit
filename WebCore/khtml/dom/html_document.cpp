@@ -160,6 +160,12 @@ HTMLCollection HTMLDocument::applets() const
     return HTMLCollection(impl, HTMLCollectionImpl::DOC_APPLETS);
 }
 
+HTMLCollection HTMLDocument::embeds() const
+{
+    if(!impl) return HTMLCollection();
+    return HTMLCollection(impl, HTMLCollectionImpl::DOC_EMBEDS);
+}
+
 HTMLCollection HTMLDocument::links() const
 {
     if(!impl) return HTMLCollection();

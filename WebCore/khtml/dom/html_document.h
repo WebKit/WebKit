@@ -157,6 +157,13 @@ public:
     HTMLCollection applets() const;
 
     /**
+     * A collection of all the <embed> OBJECT </embed> elements that
+     * include embedded elements in a document.
+     *
+     */
+    HTMLCollection embeds() const;
+
+    /**
      * A collection of all <code> AREA </code> elements and anchor (
      * <code> A </code> ) elements in a document with a value for the
      * <code> href </code> attribute.
