@@ -1,3 +1,18 @@
+2005-01-20  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+        Fix for this bug:
+        
+        <rdar://problem/3964646> REGRESSION (179-180): Typing space at end of line makes following paragraph disappear
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::CompositeEditCommand::removeBlockPlaceholderIfNeeded): Recent change to block placeholder removal code 
+        caused this regression. The code became too aggressive in removing block placeholders, and would remove them
+        from blocks other than the block containing the selection.
+        * layout-tests/editing/inserting/insert-div-023-expected.txt: This file had a spur
+        * layout-tests/editing/inserting/insert-div-024-expected.txt:
+
 2005-01-20  David Hyatt  <hyatt@apple.com>
 
 	Fix for oddness on albertsons.com.  Make sure not to crash when setting/removing style properties on a node

@@ -1000,7 +1000,8 @@ bool CompositeEditCommand::removeBlockPlaceholderIfNeeded(NodeImpl *node)
     for (NodeImpl *checkMe = node; checkMe; checkMe = checkMe->traverseNextNode(node)) {
         if (checkMe->isElementNode()) {
             ElementImpl *element = static_cast<ElementImpl *>(checkMe);
-            if (element->getAttribute(ATTR_CLASS) == blockPlaceholderClassString()) {
+            if (element->enclosingBlockFlowElement() == node && 
+                element->getAttribute(ATTR_CLASS) == blockPlaceholderClassString()) {
                 removeNode(element);
                 return true;
             }
