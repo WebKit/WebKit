@@ -35,7 +35,7 @@
         return [self init];
     }
     int b = [theResponse contentLengthReceived];
-    int t = [theResponse statusCode] == WebResourceHandleStatusLoadComplete ? b : [theResponse contentLength];
+    int t = [handle _statusCode] == WebResourceHandleStatusLoadComplete ? b : [theResponse contentLength];
     return [self initWithBytesSoFar:b totalToLoad:t];
 }
 

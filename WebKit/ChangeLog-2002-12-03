@@ -1,5 +1,11 @@
 2002-10-01  Ken Kocienda  <kocienda@apple.com>
 
+        * WebView.subproj/WebLoadProgress.m:
+        (-[WebLoadProgress initWithResourceHandle:]): Status code moved from WebResourceResponse
+	to WebResourceHandle private API.
+
+2002-10-01  Ken Kocienda  <kocienda@apple.com>
+
         Changed WebResourceHandle so that the init method no longer starts the
         loading of the request to begin. Added new loadWithDelegate: method which
         is called separatetly from the init method, to start loads.
