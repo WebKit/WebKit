@@ -1,3 +1,12 @@
+2004-04-16  Maciej Stachowiak  <mjs@apple.com>
+        Reviewed by Richard.
+
+	No more need for Completion or Reference to privately inherit from
+	Value, none of the superclass functionality is used.
+
+        * kjs/completion.h:
+        * kjs/reference.h:
+
 === Safari-137 ===
 
 2004-04-16  Richard Williamson   <rjw@apple.com>

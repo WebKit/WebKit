@@ -28,7 +28,7 @@
 
 namespace KJS {
 
-  class Reference : private Value {
+  class Reference {
     friend class ReferenceList;
     friend class ReferenceListIterator;
   public:
