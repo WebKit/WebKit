@@ -133,6 +133,7 @@
 				DEBUG_CFLAGS = "-DNDEBUG";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
+				EXPORTED_SYMBOLS_FILE = WebKit.exp;
 				FRAMEWORK_SEARCH_PATHS = "\"$(SYSTEM_LIBRARY_DIR)/Frameworks/ApplicationServices.framework/Frameworks\" \"$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Frameworks\"";
 				FRAMEWORK_VERSION = A;
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
@@ -347,6 +348,7 @@
 				354F260102EF441D0ACA2ACA,
 				35E371B502F0BAC60ACA2ACA,
 				F505C20C02FB4F18018635CE,
+				F5F732D302FF4D4F01A80180,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -371,6 +373,7 @@
 				F599A817028C6D0D0124FDD6,
 				F5B67130023EDF8901C1A525,
 				F5883BDE025E5C6A01000102,
+				F5F732D202FF4D4F01A80180,
 			);
 			isa = PBXGroup;
 			name = Resources;
@@ -2242,6 +2245,17 @@
 		};
 		F5F7174F02885C5B018635CA = {
 			fileRef = F5F7174D02885C5B018635CA;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5F732D202FF4D4F01A80180 = {
+			isa = PBXFileReference;
+			path = WebKit.exp;
+			refType = 2;
+		};
+		F5F732D302FF4D4F01A80180 = {
+			fileRef = F5F732D202FF4D4F01A80180;
 			isa = PBXBuildFile;
 			settings = {
 			};
