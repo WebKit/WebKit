@@ -1,3 +1,36 @@
+2002-10-21  Richard Williamson   <rjw@apple.com>
+
+        Changed WebResourceLoadDelegate methods to include an identifier
+        as first parameter.  This will help clients track callbacks relating
+        to a particular resource.  Added identifierForInitialRequest:fromDataSource:
+        so clients can create their own identifier.
+        
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge objectLoadedFromCache:response:size:]):
+        * WebCoreSupport.subproj/WebSubresourceClient.h:
+        * WebCoreSupport.subproj/WebSubresourceClient.m:
+        (-[WebSubresourceClient handle:willSendRequest:]):
+        (-[WebSubresourceClient handle:didReceiveResponse:]):
+        (-[WebSubresourceClient handle:didReceiveData:]):
+        (-[WebSubresourceClient handleDidFinishLoading:]):
+        (-[WebSubresourceClient handle:didFailLoadingWithError:]):
+        * WebView.subproj/WebController.m:
+        (-[WebResourceLoadDelegate identifierForInitialRequest:fromDataSource:]):
+        (-[WebResourceLoadDelegate resource:willSendRequest:fromDataSource:]):
+        (-[WebResourceLoadDelegate resource:didReceiveResponse:fromDataSource:]):
+        (-[WebResourceLoadDelegate resource:didReceiveContentLength:fromDataSource:]):
+        (-[WebResourceLoadDelegate resource:didFinishLoadingFromDataSource:]):
+        (-[WebResourceLoadDelegate resource:didFailLoadingWithError:fromDataSource:]):
+        * WebView.subproj/WebMainResourceClient.h:
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient receivedError:forHandle:]):
+        (-[WebMainResourceClient handleDidFinishLoading:]):
+        (-[WebMainResourceClient handle:willSendRequest:]):
+        (-[WebMainResourceClient handle:didReceiveResponse:]):
+        (-[WebMainResourceClient handle:didReceiveData:]):
+        (-[WebMainResourceClient handle:didFailLoadingWithError:]):
+        * WebView.subproj/WebResourceLoadDelegate.h:
+
 2002-10-21  Chris Blumenberg  <cblu@apple.com>
 
 	Changed content policy API to pass a response instead of MIME type so client can get the mime type and filename from one class.

@@ -180,11 +180,13 @@
 
     WebResourceRequest *request = [[WebResourceRequest alloc] initWithURL:URL];
     id <WebResourceLoadDelegate> delegate = [[frame controller] resourceLoadDelegate];
+    id identifier;
     
     // No chance for delegate to modify request, so we don't send a willSendRequest: message.
-    [delegate resourceRequest: request didReceiveResponse: response fromDataSource: [self dataSource]];
-    [delegate resourceRequest: request didReceiveContentLength: bytes fromDataSource: [self dataSource]];
-    [delegate resourceRequest: request didFinishLoadingFromDataSource: [self dataSource]];
+    identifier = [delegate identifierForInitialRequest: request fromDataSource: [self dataSource]];
+    [delegate resource: identifier didReceiveResponse: response fromDataSource: [self dataSource]];
+    [delegate resource: identifier didReceiveContentLength: bytes fromDataSource: [self dataSource]];
+    [delegate resource: identifier didFinishLoadingFromDataSource: [self dataSource]];
     
     [[frame controller] _receivedProgressForResourceHandle:nil fromDataSource:[self dataSource] complete:YES];
     [request release];

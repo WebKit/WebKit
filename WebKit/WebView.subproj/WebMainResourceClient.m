@@ -93,7 +93,7 @@
     WebContentAction contentAction = [[dataSource contentPolicy] policyAction];
 
     if (contentAction == WebContentPolicySaveAndOpenExternally || contentAction == WebContentPolicySave) {
-        [downloadProgressDelegate resourceRequest: [handle _request] didFailLoadingWithError:error fromDataSource:dataSource];
+        [downloadProgressDelegate resource: identifier didFailLoadingWithError:error fromDataSource:dataSource];
     } else {
         [[dataSource controller] _mainReceivedError:error forResourceHandle:handle 
             fromDataSource:dataSource];
@@ -152,7 +152,7 @@
         if (downloadError) {
             [self receivedError:downloadError forHandle:handle];
         }else{
-            [downloadProgressDelegate resourceRequest:[handle _request] didFinishLoadingFromDataSource:dataSource];
+            [downloadProgressDelegate resource:identifier didFinishLoadingFromDataSource:dataSource];
         }
         [dataSource _setPrimaryLoadComplete:YES];
         [downloadHandler release];
@@ -160,7 +160,7 @@
     }
     else {
         [dataSource _finishedLoading];
-        [resourceProgressDelegate resourceRequest:[handle _request] didFinishLoadingFromDataSource:dataSource];
+        [resourceProgressDelegate resource:identifier didFinishLoadingFromDataSource:dataSource];
 
         // FIXME: Please let Chris know if this is really necessary?
         // Either send a final error message or a final progress message.
@@ -174,7 +174,10 @@
                                                                    complete:YES];
         }
     }
-    
+
+    [identifier release];
+    identifier = nil;
+        
     [self didStopLoading];
     
     [self release];
@@ -185,8 +188,14 @@
     [newRequest setUserAgent:[[dataSource controller] userAgentForURL:[newRequest URL]]];
 
     // Let the resourceProgressDelegate get a crack at modifying the request.
-    if (resourceProgressDelegate)
-        newRequest = [resourceProgressDelegate resourceRequest: request willSendRequest: newRequest fromDataSource: dataSource];
+    if (resourceProgressDelegate) {
+        if (identifier == nil){
+            // The identifier is released after the last callback, rather than in dealloc
+            // to avoid potential cycles.
+            identifier = [[resourceProgressDelegate identifierForInitialRequest: newRequest fromDataSource: dataSource] retain];
+        }
+        newRequest = [resourceProgressDelegate resource: identifier willSendRequest: newRequest fromDataSource: dataSource];
+    }
     
     ASSERT(newRequest != nil);
 
@@ -246,7 +255,7 @@
 
     switch (policyAction) {
     case WebContentPolicyShow:
-        [resourceProgressDelegate resourceRequest: request didReceiveResponse: response fromDataSource: dataSource];
+        [resourceProgressDelegate resource: identifier didReceiveResponse: response fromDataSource: dataSource];
         break;
     case WebContentPolicySave:
     case WebContentPolicySaveAndOpenExternally:
@@ -254,7 +263,7 @@
         [[[dataSource controller] locationChangeDelegate] locationChangeDone:nil forDataSource:dataSource];
         downloadHandler = [[WebDownloadHandler alloc] initWithDataSource:dataSource];
         WebError *downloadError = [downloadHandler receivedResponse:response];
-        [downloadProgressDelegate resourceRequest: request didReceiveResponse: response fromDataSource: dataSource];
+        [downloadProgressDelegate resource: identifier didReceiveResponse: response fromDataSource: dataSource];
 
         if (downloadError) {
             [self receivedError:downloadError forHandle:handle];
@@ -278,11 +287,11 @@
         
     if (downloadHandler) {
         [downloadHandler receivedData:data];
-        [downloadProgressDelegate resourceRequest: request didReceiveContentLength: [data length] fromDataSource:dataSource];
+        [downloadProgressDelegate resource: identifier didReceiveContentLength: [data length] fromDataSource:dataSource];
     } else {
         [resourceData appendData:data];
         [dataSource _receivedData:data];
-        [resourceProgressDelegate resourceRequest: request didReceiveContentLength: [data length] fromDataSource:dataSource];
+        [resourceProgressDelegate resource: identifier didReceiveContentLength: [data length] fromDataSource:dataSource];
         [[dataSource controller] _mainReceivedProgressForResourceHandle:handle
                                                              bytesSoFar:[resourceData length]
                                                          fromDataSource:dataSource
@@ -297,7 +306,7 @@
     LOG(Loading, "URL = %@, result = %@", [result failingURL], [result errorDescription]);
 
     if (!downloadHandler)
-        [resourceProgressDelegate resourceRequest: request didFailLoadingWithError: result fromDataSource: dataSource];
+        [resourceProgressDelegate resource: identifier didFailLoadingWithError: result fromDataSource: dataSource];
 
     // Calling receivedError will likely result in a call to release, so we must retain.
     [self retain];
@@ -310,6 +319,9 @@
         downloadHandler = nil;
     }
 
+    [identifier release];
+    identifier = nil;
+    
     [self didStopLoading];
     
     [self release];

@@ -24,6 +24,8 @@
     id <WebResourceLoadDelegate> resourceProgressDelegate;
     WebResourceRequest *request;
     WebResourceResponse *response;
+    
+    id identifier;
 }
 
 + (WebSubresourceClient *)startLoadingResource:(id <WebCoreResourceLoader>)rLoader

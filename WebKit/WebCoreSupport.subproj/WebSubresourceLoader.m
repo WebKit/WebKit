@@ -134,8 +134,14 @@
     }
 
     // Let the resourceProgressDelegate get a crack at modifying the request.
-    if (resourceProgressDelegate)
-        newRequest = [resourceProgressDelegate resourceRequest: request willSendRequest: newRequest fromDataSource: dataSource];
+    if (resourceProgressDelegate){
+        if (identifier == nil){
+            // The identifier is released after the last callback, rather than in dealloc
+            // to avoid potential cycles.
+            identifier = [[resourceProgressDelegate identifierForInitialRequest: newRequest fromDataSource: dataSource] retain];
+        }
+        newRequest = [resourceProgressDelegate resource: identifier willSendRequest: newRequest fromDataSource: dataSource];
+    }
         
     ASSERT (newRequest != nil); 
 
@@ -153,7 +159,7 @@
     [r retain];
     [response release];
     response = r;
-    [resourceProgressDelegate resourceRequest: request didReceiveResponse: r fromDataSource: dataSource];
+    [resourceProgressDelegate resource: identifier didReceiveResponse: r fromDataSource: dataSource];
 
     [loader receivedResponse:r];
 }
@@ -162,7 +168,7 @@
 {
     ASSERT(handle == h);
 
-    [resourceProgressDelegate resourceRequest: request didReceiveContentLength: [data length] 
+    [resourceProgressDelegate resource: identifier didReceiveContentLength: [data length] 
         fromDataSource: dataSource];
 
     [self receivedProgressWithComplete:NO];
@@ -185,7 +191,7 @@
         [self receivedError:nonTerminalError];
     }
     
-    [resourceProgressDelegate resourceRequest:request didFinishLoadingFromDataSource:dataSource];
+    [resourceProgressDelegate resource:identifier didFinishLoadingFromDataSource:dataSource];
 
     [self receivedProgressWithComplete:YES];
     
@@ -193,7 +199,10 @@
 
     [handle release];
     handle = nil;
-        
+    
+    [identifier release];
+    identifier = nil;
+    
     [self release];
 }
 
@@ -208,7 +217,7 @@
     
     [dataSource _removeSubresourceClient:self];
 
-    [resourceProgressDelegate resourceRequest: request didFailLoadingWithError: error fromDataSource: dataSource];
+    [resourceProgressDelegate resource: identifier didFailLoadingWithError: error fromDataSource: dataSource];
     
     [self receivedError:error];
 
@@ -216,7 +225,10 @@
 
     [handle release];
     handle = nil;
-    
+
+    [identifier release];
+    identifier = nil;
+        
     [self release];
 }
 
