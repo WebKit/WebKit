@@ -409,8 +409,7 @@ void RenderListMarker::paint(PaintInfo& i, int _tx, int _ty)
             return;
         
         RenderCanvas* c = canvas();
-        // printRect can be null if WebCore's pagination is not used (ie Mail).
-        if (!c->printRect().isNull() && _ty + m_height + paddingBottom() + borderBottom() >= c->printRect().y() + c->printRect().height()) {
+        if (_ty + m_height + paddingBottom() + borderBottom() >= c->printRect().y() + c->printRect().height()) {
             if (_ty < c->truncatedAt())
                 c->setBestTruncatedAt(_ty, this);
             // Let's print this on the next page.

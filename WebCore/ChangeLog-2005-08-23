@@ -1,3 +1,18 @@
+2005-01-11  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3930733> Mail prints second page of email blank
+
+        Reviewed by dave.
+
+        * khtml/rendering/render_canvas.cpp:
+        (RenderCanvas::paint): cache the print rect since the dirty rect can get changed during printing
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::paintLines): removed null check since the print rect should never be null
+        * khtml/rendering/render_list.cpp:
+        (RenderListMarker::paint): ditto
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::adjustPageHeight): don't set the print rect here since this method is not called for the last page
+
 2005-01-10  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Hyatt

@@ -1153,7 +1153,6 @@ void KWQKHTMLPart::adjustPageHeight(float *newBottom, float oldTop, float oldBot
         root->setTruncatedAt((int)floor(oldBottom));
         QRect dirtyRect(0, (int)floor(oldTop),
                         root->docWidth(), (int)ceil(oldBottom-oldTop));
-        root->setPrintRect(dirtyRect);
         root->layer()->paint(&painter, dirtyRect);
         *newBottom = root->bestTruncatedAt();
         if (*newBottom == 0) {
