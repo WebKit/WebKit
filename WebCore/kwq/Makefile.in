@@ -128,8 +128,6 @@ MMOBJECTS = \
     KWQxml.o \
     _KWQOwner.o \
     kwqdebug.o \
-    WKPluginDatabase.m \
-    WKPluginDatabase.h \
     $(NULL)
 
 MOBJECTS = \

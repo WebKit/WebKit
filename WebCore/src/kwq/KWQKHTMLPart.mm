@@ -52,7 +52,7 @@
 #import <WCURICache.h>
 #import <WCURICacheData.h>
 
-#import <WKPluginDatabase.h>
+//#import <WKPluginDatabase.h>
 
 #import <KWQView.h>
 
@@ -1333,7 +1333,7 @@ void KHTMLPart::urlSelected( const QString &url, int button, int state, const QS
 bool KHTMLPart::requestObject( khtml::RenderPart *frame, const QString &url, const QString &serviceType,
                     const QStringList &args)
 {
-    [WKPluginDatabase installedPlugins];
+    //[WKPluginDatabase installedPlugins];
     return FALSE;
 }
 
