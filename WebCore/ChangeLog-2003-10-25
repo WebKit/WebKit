@@ -1,5 +1,13 @@
 2002-11-11  Darin Adler  <darin@apple.com>
 
+	- fixed 3097253 -- text tagged <small> inside <h1> is too small
+
+        * khtml/css/html4.css: Change BIG to use "font-size: larger" rather
+	than "font-size: large" and SMALL to use "font-size: smaller" rather
+	than "font-size: small".
+
+2002-11-11  Darin Adler  <darin@apple.com>
+
         * kwq/WebCoreBridge.h: Remove unused modifierTrackingEnabled method.
 
 2002-11-08  Maciej Stachowiak  <mjs@apple.com>

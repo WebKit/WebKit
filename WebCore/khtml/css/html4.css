@@ -454,11 +454,11 @@ PLAINTEXT {
 }
       
 BIG { 
-	font-size: large; 
+	font-size: larger; 
 }
       
 SMALL { 
-	font-size: small; 
+	font-size: smaller; 
 }
 
 S, 
