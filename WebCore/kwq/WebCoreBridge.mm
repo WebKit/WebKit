@@ -340,6 +340,15 @@ static bool initializedObjectCacheSize = FALSE;
 
 - (void)deselectAll
 {
+    [self deselectText];
+    DocumentImpl *doc = _part->xmlDocImpl();
+    if (doc) {
+        doc->setFocusNode(0);
+    }
+}
+
+- (void)deselectText
+{
     _part->slotClearSelection();
 }
 

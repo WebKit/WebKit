@@ -198,6 +198,7 @@ typedef enum {
 
 - (void)selectAll;
 - (void)deselectAll;
+- (void)deselectText;
 
 - (NSRect)selectionRect;
 - (NSRect)visibleSelectionRect;

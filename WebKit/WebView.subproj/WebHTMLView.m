@@ -1252,6 +1252,11 @@ static WebHTMLView *lastHitView = nil;
     [[self _bridge] deselectAll];
 }
 
+- (void)deselectText
+{
+    [[self _bridge] deselectText];
+}
+
 - (BOOL)isOpaque
 {
     return YES;
@@ -1587,7 +1592,12 @@ static WebHTMLView *lastHitView = nil;
 {
     BOOL resign = [super resignFirstResponder];
     if (resign) {
-        [self deselectAll];
+        if ([[self _webView] _isPerformingProgrammaticFocus]) {
+            [self deselectText];
+        }
+        else {
+            [self deselectAll];
+        }
         [self updateTextBackgroundColor];
     }
     return resign;

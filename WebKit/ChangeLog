@@ -1,3 +1,17 @@
+2003-10-31  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin
+
+        Fix for this bug:
+
+        <rdar://problem/3469088>: focus not removed from text link         
+	when user hits cmd-L or clicks in window chrome
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView deselectText]): Added new method just to deselect text.
+        (-[WebHTMLView resignFirstResponder]): Just deseclect text if we
+	are doing a programmatic setting of focus. Deselect all otherwise.
+
 2003-10-30  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3458368>: drawing to the screen while window hidden: http://www.bhphotovideo.com/

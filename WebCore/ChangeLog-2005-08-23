@@ -1,3 +1,17 @@
+2003-10-31  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin
+
+	Fix for this bug:
+
+	<rdar://problem/3469088>: focus not removed from text link 
+	when user hits cmd-L or clicks in window chrome
+
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge deselectAll]): Now clears the focus ring as well.
+        (-[WebCoreBridge deselectText]): Just clears text selection.
+
 2003-10-31  David Hyatt  <hyatt@apple.com>
 
 	Three simple fixes:
