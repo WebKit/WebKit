@@ -1,3 +1,15 @@
+2005-03-11  Adele Amchan  <adele@apple.com>
+
+        backing out fix for <rdar://problem/4021711> REGRESSION (125-188): blank pages when browsing forum at cooperativeresearch.org - cached external script problem
+
+        This caused the following regressions (that we know of): 
+        <rdar://problem/4047445> REGRESSION (Safari-400-403?): Some or all page contents sometimes don't appear (macworld.com)
+        <rdar://problem/4046153> 8a409: Problem loading Citibank page in Safari 2 (403)
+        <rdar://problem/4047801> REGRESSION (402-403): .Mac homepage links don't work
+
+        * khtml/html/htmltokenizer.cpp:
+        (khtml::HTMLTokenizer::scriptHandler):
+
 2005-03-11  David Harrison  <harrison@apple.com>
 
         Reviewed by Darin.
