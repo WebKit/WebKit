@@ -18,6 +18,7 @@
     WebResourceHandle *handle;
     id delegate;
     NSURL *URL;
+    BOOL doingSyncLoad;
 }
 
 @end;
@@ -137,7 +138,9 @@
                                                                attributes:attributes
                                                                     flags:WebResourceHandleFlagNone];
     if (handle) {        
+        _private->doingSyncLoad = YES;
         NSData *data = [handle loadInForeground];
+        _private->doingSyncLoad = NO;
         if (data) {
             icon = [[[NSImage alloc] initWithData:data] autorelease];
             if (icon) {
@@ -186,6 +189,9 @@
 
 - (void)WebResourceHandleDidFinishLoading:(WebResourceHandle *)sender data:(NSData *)data
 {
+    if (_private->doingSyncLoad) {
+        return;
+    }
     NSImage *icon = [[NSImage alloc] initWithData:data];
     if (icon) {
         [[self class] _resizeImage:icon];

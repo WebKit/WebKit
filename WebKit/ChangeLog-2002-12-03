@@ -1,3 +1,11 @@
+2002-08-18  Darin Adler  <darin@apple.com>
+
+        * Misc.subproj/WebIconLoader.m:
+        (-[WebIconLoader iconFromCache]):
+        (-[WebIconLoader WebResourceHandleDidFinishLoading:data:]):
+	Don't process each icon twice. We need to have the loader as a client even for the
+	synchronous case because of the user agent issue, but that causes double work.
+
 2002-08-16  Darin Adler  <darin@apple.com>
 
 	Step 3 in adding user agent API to WebKit and WebFoundation.
