@@ -93,7 +93,6 @@ void KWQKHTMLPartImpl::openURL(const KURL &url)
     d->m_workingURL = url;
     part->m_url = url;
 
-    m_documentSource = "";
     m_decodingStarted = false;
 }
 
@@ -250,23 +249,9 @@ void KWQKHTMLPartImpl::write( const char *str, int len )
     double start = CFAbsoluteTimeGetCurrent();
 #endif
     
-    // FIXME: We are putting all the source into this QString for a few bad reasons.
-    // Once those reasons go away, we need to delete this.
-    m_documentSource += QString(str, len);
-
     QString decoded = d->m_decoder->decode(str, len);
     if (decoded.isEmpty()) {
-        // Check flag to tell whether the load has completed.
-        // If we get here, it means that no text encoding was available.
-        // Try to process what we have with the default encoding.
-        if (d->m_bComplete) {
-            // FIXME: We should get the decoder to give up its raw input since it buffers it
-            // rather than keeping our own copy.
-            decoded = m_documentSource;
-        } else {
-            fprintf (stderr, "WARNING:  DECODER unable to decode string, length = %d, total length = %d\n", len, m_documentSource.length());
-            return;
-        }
+	return;
     }
     
     if (!m_decodingStarted) {

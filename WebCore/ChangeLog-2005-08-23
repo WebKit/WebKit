@@ -1,5 +1,14 @@
 2002-08-01  Maciej Stachowiak  <mjs@apple.com>
 
+	Removed m_documentSource and remaining ill-conceived uses thereof.
+	
+        * kwq/KWQKHTMLPartImpl.h:
+        * kwq/KWQKHTMLPartImpl.mm:
+        (KWQKHTMLPartImpl::openURL): Don't initialize it.
+        (KWQKHTMLPartImpl::write): Don't use it.
+
+2002-08-01  Maciej Stachowiak  <mjs@apple.com>
+
         Remove stuff formerly useful for "View Reconstructed Source"
 	feature but now useless.
 
