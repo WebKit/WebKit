@@ -1,5 +1,13 @@
 2002-05-16  Darin Adler  <darin@apple.com>
 
+	* Plugins.subproj/IFPluginView.mm:
+	(-[IFPluginView IFURLHandleResourceDidFinishLoading:data:]):
+	Use this new getCarbonPath function rather than hardcoding assumptions
+	about "/tmp" being ":private:tmp".
+	(getCarbonPath): New.
+
+2002-05-16  Darin Adler  <darin@apple.com>
+
 	* Plugins.subproj/IFPluginView.mm: (-[IFPluginView mouseUp:]):
 	Fixed log statement so development builds work again.
 

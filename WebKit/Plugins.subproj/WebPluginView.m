@@ -28,7 +28,7 @@
 #import <IFPluginNullEventSender.h>
 #import "IFNullPluginView.h"
 
-static NSString* startupVolumeName(void);
+static NSString *getCarbonPath(NSString *posixPath);
 
 @implementation IFPluginView
 
@@ -606,7 +606,7 @@ static char *newCString(NSString *string)
 - (void)IFURLHandleResourceDidFinishLoading:(IFURLHandle *)sender data: (NSData *)data
 {
     NPError npErr;
-    NSMutableString *filenameClassic, *path;
+    NSMutableString *path;
     IFPluginStream *stream;
     NSFileManager *fileManager;
     uint16 transferMode;
@@ -619,16 +619,18 @@ static char *newCString(NSString *string)
     filename = [stream filename];
     
     if(transferMode == NP_ASFILE || transferMode == NP_ASFILEONLY) {
-        path = [NSString stringWithFormat:@"%@%@", @"/tmp/", filename];        
+        // FIXME: Need to use something like mkstemp?
+        path = [NSString stringWithFormat:@"/tmp/%@", @"/tmp/", filename];        
         [filesToErase addObject:path];
         
         fileManager = [NSFileManager defaultManager];
         [fileManager removeFileAtPath:path handler:nil];
         [fileManager createFileAtPath:path contents:[stream data] attributes:nil];
         
-        filenameClassic = [NSString stringWithFormat:@"%@%@%@", startupVolumeName(), @":private:tmp:", filename];
-        NPP_StreamAsFile(instance, npStream, [filenameClassic cString]);
-        WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_StreamAsFile: %s\n", [filenameClassic cString]);
+        // FIXME: Will cString use the correct character set?
+        NPP_StreamAsFile(instance, npStream, [getCarbonPath(filename) cString]);
+        
+        WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_StreamAsFile: %s\n", [getCarbonPath(filename) cString]);
     }
     npErr = NPP_DestroyStream(instance, npStream, NPRES_DONE);
     WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_DestroyStream: %d\n", npErr);
@@ -800,15 +802,50 @@ static char *newCString(NSString *string)
 
 @end
 
-NSString* startupVolumeName(void)
+static NSString *getCarbonPath(NSString *posixPath)
 {
-    NSString* rootName = nil;
-    FSRef rootRef;
-    if (FSPathMakeRef ((const UInt8 *) "/", & rootRef, NULL /*isDirectory*/) == noErr) {         
-        HFSUniStr255  nameString;
-        if (FSGetCatalogInfo (&rootRef, kFSCatInfoNone, NULL /*catalogInfo*/, &nameString, NULL /*fsSpec*/, NULL /*parentRef*/) == noErr) {
-            rootName = [NSString stringWithCharacters:nameString.unicode length:nameString.length];
-        }
+    OSStatus error;
+    FSRef ref, rootRef, parentRef;
+    FSCatalogInfo info;
+    NSMutableArray *carbonPathPieces;
+    HFSUniStr255 nameString;
+    
+    // Make an FSRef.
+    error = FSPathMakeRef((const UInt8 *)[[NSFileManager defaultManager] fileSystemRepresentationWithPath:posixPath], &ref, NULL);
+    if (error != noErr) {
+        return nil;
     }
-    return rootName;
+    
+    // Get volume refNum.
+    error = FSGetCatalogInfo(&ref, kFSCatInfoVolume, &info, NULL, NULL, NULL);
+    if (error != noErr) {
+        return nil;
+    }
+    
+    // Get root directory FSRef.
+    error = FSGetVolumeInfo(info.volume, 0, NULL, kFSVolInfoNone, NULL, NULL, &rootRef);
+    if (error != noErr) {
+        return nil;
+    }
+    
+    // Get the pieces of the path.
+    carbonPathPieces = [NSMutableArray array];
+    for (;;) {
+        error = FSGetCatalogInfo(&ref, kFSCatInfoNone, NULL, &nameString, NULL, &parentRef);
+        if (error != noErr) {
+            return nil;
+        }
+        [carbonPathPieces insertObject:[NSString stringWithCharacters:nameString.unicode length:nameString.length] atIndex:0];
+        if (FSCompareFSRefs(&ref, &rootRef) == noErr) {
+            break;
+        }
+        ref = parentRef;
+    }
+    
+    // Volume names need trailing : character.
+    if ([carbonPathPieces count] == 1) {
+        [carbonPathPieces addObject:@""];
+    }
+    
+    return [carbonPathPieces componentsJoinedByString:@":"];
 }
