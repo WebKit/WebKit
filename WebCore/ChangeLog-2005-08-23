@@ -1,3 +1,12 @@
+2003-11-06  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3308609>: 6L60 Safari URL links with line-endings converted to hex by contextual menu
+
+        Reviewed by rjw.
+
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge elementAtPoint:]): use parseURL to go from an attribute string to a URL string
+
 === Safari-113 ===
 
 2003-11-06  John Sullivan  <sullivan@apple.com>

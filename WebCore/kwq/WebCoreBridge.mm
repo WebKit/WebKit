@@ -732,7 +732,8 @@ static HTMLFormElementImpl *formElementFromDOMElement(id <WebDOMElement>element)
                     [element setObject:t.getNSString() forKey:WebCoreElementLinkLabelKey];
                 }
             }
-            [element setObject:_part->xmlDocImpl()->completeURL(link.string()).getNSString() forKey:WebCoreElementLinkURLKey];
+            QString URLString = parseURL(link).string();
+            [element setObject:_part->xmlDocImpl()->completeURL(URLString).getNSString() forKey:WebCoreElementLinkURLKey];
         }
         
         DOMString target = e->getAttribute(ATTR_TARGET);
