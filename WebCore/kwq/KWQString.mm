@@ -979,34 +979,38 @@ QString &QString::prepend(const QString &qs)
 
 QString &QString::append(const QString &qs)
 {
-    return operator+=(qs);
+    return insert(length(), qs);
 }
 
-QString &QString::insert(uint, const QString &)
+QString &QString::insert(uint index, const QString &qs)
 {
     flushCache();
-    // FIXME: not yet implemented
-    NSLog(@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__,
-            __LINE__);
+    if (qs.s) {
+        CFIndex len = CFStringGetLength(qs.s);
+        if (len) {
+            if (!s) {
+                s = CFStringCreateMutable(kCFAllocatorDefault, 0);
+            }
+            if (s) {
+                if (index < CFStringGetLength(s)) {
+                    CFStringInsert(s, index, qs.s);
+                } else {
+                    CFStringAppend(s, qs.s);
+                }
+            }
+        }
+    }
     return *this;
 }
 
-QString &QString::insert(uint, QChar)
+QString &QString::insert(uint index, QChar qc)
 {
-    flushCache();
-    // FIXME: not yet implemented
-    NSLog(@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__,
-            __LINE__);
-    return *this;
+    return insert(index, QString(qc));
 }
 
-QString &QString::insert(uint, char)
+QString &QString::insert(uint index, char ch)
 {
-    flushCache();
-    // FIXME: not yet implemented
-    NSLog(@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__,
-            __LINE__);
-    return *this;
+    return insert(index, QString(QChar(ch)));
 }
 
 QString &QString::remove(uint index, uint width)
@@ -1126,31 +1130,19 @@ QChar QString::operator[](int index) const
     return QChar(0);
 }
 
-QString &QString::operator+=(const QString &)
+QString &QString::operator+=(const QString &qs)
 {
-    flushCache();
-    // FIXME: not yet implemented
-    NSLog(@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__,
-            __LINE__);
-    return *this;
+    return insert(length(), qs);
 }
 
-QString &QString::operator+=(QChar)
+QString &QString::operator+=(QChar qc)
 {
-    flushCache();
-    // FIXME: not yet implemented
-    NSLog(@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__,
-            __LINE__);
-    return *this;
+    return insert(length(), QString(qc));
 }
 
-QString &QString::operator+=(char)
+QString &QString::operator+=(char ch)
 {
-    flushCache();
-    // FIXME: not yet implemented
-    NSLog(@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__,
-            __LINE__);
-    return *this;
+    return insert(length(), QString(QChar(ch)));
 }
 
 // private member functions ----------------------------------------------------
