@@ -301,6 +301,14 @@
     [self _defersCallbacksChanged];
 }
 
+- (void)_setData:(NSData *)data
+{
+    ASSERT(_private->resourceData == nil);
+    [data retain];
+    [_private->resourceData release];
+    _private->resourceData = data;
+}
+
 - (void)_setPrimaryLoadComplete: (BOOL)flag
 {
     _private->primaryLoadComplete = flag;
@@ -311,6 +319,7 @@
 	// there's no callback for that.
         [self _loadIcon];
 
+        [self _setData:[_private->mainClient resourceData]];
         [_private->mainClient release];
         _private->mainClient = 0; 
         [self _updateLoading];
@@ -786,14 +795,6 @@
     [[self representation] receivedData:data withDataSource:self];
     [[[[self webFrame] frameView] documentView] dataSourceUpdated:self];
     [self release];
-}
-
-- (void)_setData:(NSData *)data
-{
-    ASSERT(_private->resourceData == nil);
-    [data retain];
-    [_private->resourceData release];
-    _private->resourceData = data;
 }
 
 - (void)_finishedLoading

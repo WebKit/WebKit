@@ -1,5 +1,20 @@
 2005-01-31  Chris Blumenberg  <cblu@apple.com>
 
+	Fixed: <rdar://problem/3949806> REGRESSION: Source window fails to refresh correctly on reload
+
+	The data method was being called on WebDataSource before the data was set. This fix makes WebDataSource set the data before releasing the main client instead of waiting for the main client to set it when it is dealloced.
+
+        Reviewed by darin.
+
+        * WebView.subproj/WebDataSource.m:
+        (-[WebDataSource _setData:]): moved within file
+        (-[WebDataSource _setPrimaryLoadComplete:]): call _setData: with the data from the main client before letting go of the main client
+        * WebView.subproj/WebDataSourcePrivate.h:
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient releaseResources]): removed call to _setData: since the data source may need the data before releaseResources is called
+
+2005-01-31  Chris Blumenberg  <cblu@apple.com>
+
 	Fixed: <rdar://problem/3946285> Seed: Safari crashed by selecting all at internet-moebel.com
 
         Reviewed by john.

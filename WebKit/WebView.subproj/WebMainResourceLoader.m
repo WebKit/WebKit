@@ -64,12 +64,6 @@
     [super finalize];
 }
 
-- (void)releaseResources
-{
-    [dataSource _setData:[self resourceData]];
-    [super releaseResources];
-}
-
 - (void)receivedError:(NSError *)error
 {
     // Calling _receivedMainResourceError will likely result in a call to release, so we must retain.
