@@ -69,7 +69,6 @@ void HTMLBodyElementImpl::createLinkDecl()
     m_linkDecl = new CSSStyleDeclarationImpl(0);
     m_linkDecl->ref();
     m_linkDecl->setParent(getDocument()->elementSheet());
-    m_linkDecl->parent()->ref();
     m_linkDecl->setNode(this);
     m_linkDecl->setStrictParsing(!getDocument()->inCompatMode());
 }

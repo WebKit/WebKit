@@ -531,7 +531,6 @@ CSSStyleDeclarationImpl* HTMLTableElementImpl::additionalAttributeStyleDecl()
     if (!decl) {
         decl = new CSSMappedAttributeDeclarationImpl(0);
         decl->setParent(getDocument()->elementSheet());
-        decl->parent()->ref();
         decl->setNode(this);
         decl->setStrictParsing(false); // Mapped attributes are just always quirky.
         
@@ -558,7 +557,6 @@ CSSStyleDeclarationImpl* HTMLTableElementImpl::getSharedCellDecl()
     if (!decl) {
         decl = new CSSMappedAttributeDeclarationImpl(0);
         decl->setParent(getDocument()->elementSheet());
-        decl->parent()->ref();
         decl->setNode(this);
         decl->setStrictParsing(false); // Mapped attributes are just always quirky.
         
