@@ -100,6 +100,65 @@
     [ds _setController: [self controller]];
 }
 
+char *stateNames[6] = {
+    "zero state",
+    "IFWEBFRAMESTATE_UNINITIALIZED",
+    "IFWEBFRAMESTATE_PROVISIONAL",
+    "IFWEBFRAMESTATE_COMMITTED_PAGE",
+    "IFWEBFRAMESTATE_LAYOUT_ACCEPTABLE",
+    "IFWEBFRAMESTATE_COMPLETE" };
+
+
+- (void)_transitionProvisionalToLayoutAcceptable
+{
+    IFWebFramePrivate *data = (IFWebFramePrivate *)_framePrivate;
+
+    switch ([self _state]){
+    	case IFWEBFRAMESTATE_COMMITTED_PAGE:
+        {
+            [self _setState: IFWEBFRAMESTATE_LAYOUT_ACCEPTABLE];
+                    
+            // Start a timer to guarantee that we get an initial layout after
+            // X interval, even if the document and resources are not completely
+            // loaded.
+            BOOL timedDelayEnabled = [[IFPreferences standardPreferences] _initialTimedLayoutEnabled];
+            if (timedDelayEnabled){
+                NSTimeInterval defaultTimedDelay = [[IFPreferences standardPreferences] _initialTimedLayoutDelay];
+                double timeSinceStart;
+
+                // If the delay getting to the commited state exceeds the initial layout delay, go
+                // ahead and schedule a layout.
+                timeSinceStart = (CFAbsoluteTimeGetCurrent() - [[self dataSource] _loadingStartedTime]);
+                if (timeSinceStart > (double)defaultTimedDelay){
+                    WEBKITDEBUGLEVEL2 (WEBKIT_LOG_LOADING, "performing early layout because commit time, %f, exceeded initial layout interval %f\n", timeSinceStart, defaultTimedDelay);
+                    [self _initialLayout: nil];
+                }
+                else {
+                    NSTimeInterval timedDelay = defaultTimedDelay - timeSinceStart;
+                    
+                    WEBKITDEBUGLEVEL2 (WEBKIT_LOG_LOADING, "registering delayed layout after %f seconds, time since start %f\n", timedDelay, timeSinceStart);
+                    [NSTimer scheduledTimerWithTimeInterval:timedDelay target:self selector: @selector(_initialLayout:) userInfo: nil repeats:FALSE];
+                }
+            }
+            break;
+        }
+
+        case IFWEBFRAMESTATE_COMPLETE:
+        case IFWEBFRAMESTATE_LAYOUT_ACCEPTABLE:
+        {
+            break;
+        }
+        
+        case IFWEBFRAMESTATE_UNINITIALIZED:
+        case IFWEBFRAMESTATE_PROVISIONAL:
+        default:
+        {
+            [[NSException exceptionWithName:NSGenericException reason: [NSString stringWithFormat: @"invalid state attempting to transition to IFWEBFRAMESTATE_LAYOUT_ACCEPTABLE from %s", stateNames[data->state]] userInfo: nil] raise];
+            return;
+        }
+    }
+}
+
 
 - (void)_transitionProvisionalToCommitted
 {
@@ -139,67 +198,39 @@
             // Now that the provisional data source is committed, release it.
             [data setProvisionalDataSource: nil];
         
-            [self _setState: IFWEBFRAMESTATE_COMMITTED];
+            [self _setState: IFWEBFRAMESTATE_COMMITTED_PAGE];
         
             [[self controller] locationChangeCommittedForFrame: self];
             
-            // Start a timer to guarantee that we get an initial layout after
-            // X interval, even if the document and resources are not completely
-            // loaded.
-            BOOL timedDelayEnabled = [[IFPreferences standardPreferences] _initialTimedLayoutEnabled];
-            if (timedDelayEnabled){
-                NSTimeInterval defaultTimedDelay = [[IFPreferences standardPreferences] _initialTimedLayoutDelay];
-                double timeSinceStart;
-
-                // If the delay getting to the commited state exceeds the initial layout delay, go
-                // ahead and schedule a layout.
-                timeSinceStart = (CFAbsoluteTimeGetCurrent() - [[self dataSource] _loadingStartedTime]);
-                if (timeSinceStart > (double)defaultTimedDelay){
-                    WEBKITDEBUGLEVEL2 (WEBKIT_LOG_LOADING, "performing early layout because commit time, %f, exceeded initial layout interval %f\n", timeSinceStart, defaultTimedDelay);
-                    [self _initialLayout: nil];
-                }
-                else {
-                    NSTimeInterval timedDelay = defaultTimedDelay - timeSinceStart;
-                    
-                    WEBKITDEBUGLEVEL2 (WEBKIT_LOG_LOADING, "registering delayed layout after %f seconds, time since start %f\n", timedDelay, timeSinceStart);
-                    [NSTimer scheduledTimerWithTimeInterval:timedDelay target:self selector: @selector(_initialLayout:) userInfo: nil repeats:FALSE];
-                }
-            }
             break;
         }
         
         case IFWEBFRAMESTATE_UNINITIALIZED:
-        case IFWEBFRAMESTATE_COMMITTED:
+        case IFWEBFRAMESTATE_COMMITTED_PAGE:
+        case IFWEBFRAMESTATE_LAYOUT_ACCEPTABLE:
         case IFWEBFRAMESTATE_COMPLETE:
         default:
         {
-            [[NSException exceptionWithName:NSGenericException reason:@"invalid state attempting to transition to IFWEBFRAMESTATE_COMMITTED" userInfo: nil] raise];
+            [[NSException exceptionWithName:NSGenericException reason:[NSString stringWithFormat: @"invalid state attempting to transition to IFWEBFRAMESTATE_COMMITTED from %s", stateNames[data->state]] userInfo: nil] raise];
             return;
         }
     }
 }
-
-char *stateNames[5] = {
-    "zero state",
-    "IFWEBFRAMESTATE_UNINITIALIZED",
-    "IFWEBFRAMESTATE_PROVISIONAL",
-    "IFWEBFRAMESTATE_COMMITTED",
-    "IFWEBFRAMESTATE_COMPLETE" };
 
 
 - (void)_initialLayout: userInfo
 {
     IFWebFramePrivate *data = (IFWebFramePrivate *)_framePrivate;
 
-    WEBKITDEBUGLEVEL1 (WEBKIT_LOG_LOADING, "state = %s\n", stateNames[data->state]);
+    WEBKITDEBUGLEVEL2 (WEBKIT_LOG_LOADING, "%s:  state = %s\n", [[self name] cString], stateNames[data->state]);
     
-    if (data->state == IFWEBFRAMESTATE_COMMITTED){
-        WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "performing initial layout\n");
+    if (data->state == IFWEBFRAMESTATE_LAYOUT_ACCEPTABLE){
+        WEBKITDEBUGLEVEL1 (WEBKIT_LOG_LOADING, "%s:  performing initial layout\n", [[self name] cString]);
         [[self view] setNeedsLayout: YES];
         [[self view] setNeedsDisplay: YES];
     }
     else {
-        WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "timed initial layout not required\n");
+        WEBKITDEBUGLEVEL1 (WEBKIT_LOG_LOADING, "%s:  timed initial layout not required\n", [[self name] cString]);
     }
 }
 
@@ -263,15 +294,17 @@ char *stateNames[5] = {
             return;
         }
         
-        case IFWEBFRAMESTATE_COMMITTED:
+        case IFWEBFRAMESTATE_COMMITTED_PAGE:
+        case IFWEBFRAMESTATE_LAYOUT_ACCEPTABLE:
         {
             WEBKITDEBUGLEVEL1 (WEBKIT_LOG_LOADING, "%s:  checking complete, current state IFWEBFRAMESTATE_COMMITTED\n", [[self name] cString]);
             if (![[self dataSource] isLoading]){
-               [self _setState: IFWEBFRAMESTATE_COMPLETE];
                 id mainView = [[[self controller] mainFrame] view];
                 id thisView = [self view];
-                
+
                 WEBKIT_ASSERT ([self dataSource] != nil);
+
+                [self _setState: IFWEBFRAMESTATE_COMPLETE];
                 
                 [[self dataSource] _part]->end();
                 

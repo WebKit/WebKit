@@ -1,3 +1,19 @@
+2002-03-28  Richard Williamson  <rjw@apple.com>
+    
+        Modified the initial layout policy.
+
+	* WebView.subproj/IFBaseWebControllerPrivate.mm: (-[IFBaseWebController
+	_receivedProgress:forResource:fromDataSource:]), (-[IFBaseWebController
+	_mainReceivedProgress:forResource:fromDataSource:]):
+	* WebView.subproj/IFPreferences.mm: (+[IFPreferences load]), (-[IFPreferences
+	_initialTimedLayoutDelay]), (-[IFPreferences _initialTimedLayoutSize]):
+	* WebView.subproj/IFPreferencesPrivate.h:
+	* WebView.subproj/IFWebFramePrivate.h:
+	* WebView.subproj/IFWebFramePrivate.mm: (-[IFWebFrame
+	_transitionProvisionalToLayoutAcceptable]), (-[IFWebFrame
+	_transitionProvisionalToCommitted]), (-[IFWebFrame _initialLayout:]),
+	(-[IFWebFrame _isLoadComplete]):
+
 2002-03-28  Darin Adler  <darin@apple.com>
 
         New private interface for getting at the cache.

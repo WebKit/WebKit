@@ -6,6 +6,7 @@
 #import <WebKit/IFWebDataSourcePrivate.h>
 #import <WebKit/IFWebViewPrivate.h>
 #import <WebKit/IFWebFramePrivate.h>
+#import <WebKit/IFPreferencesPrivate.h>
 
 #include <KWQKHTMLPart.h>
 #include <rendering/render_frames.h>
@@ -44,6 +45,7 @@
 
     // This resouce has completed, so check if the load is complete for all frames.
     if (progress->bytesSoFar == progress->totalToLoad){
+        [frame _transitionProvisionalToLayoutAcceptable];
         [frame _checkLoadCompleteResource: resourceDescription error: nil isMainDocument: NO];
     }
 }
@@ -68,16 +70,19 @@
         [frame _transitionProvisionalToCommitted];
     }
 
-    // If the load is complete, make the primary load as done.  The primary load is the load
-    // of the main document.  Other resources may still be arriving.
-    if (progress->bytesSoFar == progress->totalToLoad){
-        [dataSource _setPrimaryLoadComplete: YES];
-    }
-    
     // This resouce has completed, so check if the load is complete for all frames.
     if (progress->bytesSoFar == progress->totalToLoad){
+        [dataSource _setPrimaryLoadComplete: YES];
         [frame _checkLoadCompleteResource: resourceDescription error: nil  isMainDocument: YES];
     }
+    else {
+        // If the load is complete, make the primary load as done.  The primary load is the load
+        // of the main document.  Other resources may still be arriving.
+        int timedLayoutSize = [[IFPreferences standardPreferences] _initialTimedLayoutSize];
+        if (progress->bytesSoFar > timedLayoutSize)
+            [frame _transitionProvisionalToLayoutAcceptable];
+    }
+    
 }
 
 

@@ -11,6 +11,7 @@
 @interface IFPreferences (IFPrivate)
 
 - (NSTimeInterval)_initialTimedLayoutDelay;
+- (int)_initialTimedLayoutSize;
 - (BOOL)_initialTimedLayoutEnabled;
 
 @end

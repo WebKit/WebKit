@@ -13,8 +13,17 @@
 typedef enum {
     IFWEBFRAMESTATE_UNINITIALIZED = 1,
     IFWEBFRAMESTATE_PROVISIONAL = 2,
-    IFWEBFRAMESTATE_COMMITTED = 3,
-    IFWEBFRAMESTATE_COMPLETE = 4
+    
+    // This state indicates we are ready to commit to a page,
+    // that means the view will transition to use the new
+    // datasource.
+    IFWEBFRAMESTATE_COMMITTED_PAGE = 3,
+    
+    // This state indicates that it is reasonable to perform
+    // a layout.
+    IFWEBFRAMESTATE_LAYOUT_ACCEPTABLE = 4,
+    
+    IFWEBFRAMESTATE_COMPLETE = 5
 } IFWebFrameState;
 
 @interface IFWebFramePrivate : NSObject
@@ -50,6 +59,7 @@ typedef enum {
 - (void *)_renderFramePart;
 - (void)_setDataSource: (IFWebDataSource *)d;
 - (void)_transitionProvisionalToCommitted;
+- (void)_transitionProvisionalToLayoutAcceptable;
 - (IFWebFrameState)_state;
 - (void)_setState: (IFWebFrameState)newState;
 + (void)_recursiveCheckCompleteFromFrame: (IFWebFrame *)fromFrame;

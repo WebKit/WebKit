@@ -20,6 +20,7 @@
 #define	WebKitJScriptEnabledPreferenceKey	@"WebKitJScriptEnabled"
 #define	WebKitPluginsEnabledPreferenceKey	@"WebKitPluginsEnabled"
 #define	WebKitInitialTimedLayoutDelayPreferenceKey	@"WebKitInitialTimedLayoutDelay"
+#define	WebKitInitialTimedLayoutSizePreferenceKey	@"WebKitInitialTimedLayoutSize"
 #define	WebKitInitialTimedLayoutEnabledPreferenceKey	@"WebKitInitialTimedLayoutEnabled"
 
 @implementation IFPreferences
@@ -56,6 +57,7 @@ static IFPreferences *_standardPreferences = nil;
         @"Papyrus", 		WebKitFantasyFontPreferenceKey,
         @"6", 			WebKitMinimumFontSizePreferenceKey,
         @"1.5", 		WebKitInitialTimedLayoutDelayPreferenceKey,
+        @"2048", 		WebKitInitialTimedLayoutSizePreferenceKey,
         timedLayoutEnabled,	WebKitInitialTimedLayoutEnabledPreferenceKey,
         fontSizeArray,		WebKitFontSizesPreferenceKey,
         javaEnabled,		WebKitJavaEnabledPreferenceKey,
@@ -183,6 +185,12 @@ static IFPreferences *_standardPreferences = nil;
 - (NSTimeInterval)_initialTimedLayoutDelay
 {
     return (NSTimeInterval)[[NSUserDefaults standardUserDefaults] floatForKey:WebKitInitialTimedLayoutDelayPreferenceKey];
+}
+
+- (int)_initialTimedLayoutSize
+{
+    int size = [[NSUserDefaults standardUserDefaults] integerForKey:WebKitInitialTimedLayoutDelayPreferenceKey];
+    return size;
 }
 
 - (BOOL)_initialTimedLayoutEnabled
