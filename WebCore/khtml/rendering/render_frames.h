@@ -118,7 +118,7 @@ public:
      */
     virtual bool partLoadingErrorNotify( khtml::ChildFrame *childFrame, const KURL& url, const QString& serviceType );
 
-    virtual short intrinsicWidth() const;
+    virtual int intrinsicWidth() const;
     virtual int intrinsicHeight() const;
 
 public slots:

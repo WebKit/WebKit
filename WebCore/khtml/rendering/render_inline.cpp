@@ -467,11 +467,11 @@ bool RenderInline::requiresLayer() {
     return isRoot() || isRelPositioned() || style()->opacity() < 1.0f;
 }
 
-short RenderInline::width() const
+int RenderInline::width() const
 {
     // Return the width of the minimal left side and the maximal right side.
-    short leftSide = 0;
-    short rightSide = 0;
+    int leftSide = 0;
+    int rightSide = 0;
     for (InlineRunBox* curr = firstLineBox(); curr; curr = curr->nextLineBox()) {
         if (curr == firstLineBox() || curr->xPos() < leftSide)
             leftSide = curr->xPos();

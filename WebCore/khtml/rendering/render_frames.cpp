@@ -603,7 +603,7 @@ bool RenderPart::partLoadingErrorNotify(khtml::ChildFrame *, const KURL& , const
     return false;
 }
 
-short RenderPart::intrinsicWidth() const
+int RenderPart::intrinsicWidth() const
 {
   // KDE may need a non-zero width here, although this will mess up pages (e.g., thinker.org).
 #if APPLE_CHANGES
@@ -923,7 +923,7 @@ void RenderPartObject::layout( )
     KHTMLAssert( minMaxKnown() );
 
 #if !APPLE_CHANGES
-    short m_oldwidth = m_width;
+    int m_oldwidth = m_width;
     int m_oldheight = m_height;
 #endif
 

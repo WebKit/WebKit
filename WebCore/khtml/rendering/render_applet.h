@@ -49,7 +49,7 @@ public:
 #endif
 
     virtual void layout();
-    virtual short intrinsicWidth() const;
+    virtual int intrinsicWidth() const;
     virtual int intrinsicHeight() const;
     virtual bool isApplet() const { return true; }
 
@@ -72,7 +72,7 @@ public:
 
     virtual const char *renderName() const { return "RenderEmptyApplet"; }
 
-    virtual short intrinsicWidth() const;
+    virtual int intrinsicWidth() const;
     virtual int intrinsicHeight() const;
     virtual void layout();
 };

@@ -70,7 +70,7 @@ RenderApplet::~RenderApplet()
 {
 }
 
-short RenderApplet::intrinsicWidth() const
+int RenderApplet::intrinsicWidth() const
 {
     int rval = 150;
 
@@ -192,7 +192,7 @@ RenderEmptyApplet::RenderEmptyApplet(DOM::NodeImpl* node)
 #endif
 }
 
-short RenderEmptyApplet::intrinsicWidth() const
+int RenderEmptyApplet::intrinsicWidth() const
 {
     return (m_widget ? m_widget->sizeHint().width() : 150);
 }

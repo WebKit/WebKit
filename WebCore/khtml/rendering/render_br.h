@@ -50,8 +50,8 @@ public:
     // overrides
     virtual InlineBox* createInlineBox(bool, bool, bool isOnlyRun = false);
     virtual void calcMinMaxWidth() {}
-    virtual short minWidth() const { return 0; }
-    virtual short maxWidth() const { return 0; }
+    virtual int minWidth() const { return 0; }
+    virtual int maxWidth() const { return 0; }
 
     virtual int xPos() const { return m_x; }
     virtual int yPos() const { return m_y; }

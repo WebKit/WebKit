@@ -163,13 +163,13 @@ public:
     
     int xPos() const { return m_x; }
     int yPos() const { return m_y; }
-    short width() const { return m_width; }
+    int width() const { return m_width; }
     int height() const { return m_height; }
 
-    void setWidth(short w) { m_width = w; }
+    void setWidth(int w) { m_width = w; }
     void setHeight(int h) { m_height = h; }
 
-    short scrollWidth();
+    int scrollWidth();
     int scrollHeight();
     
     void setPos( int xPos, int yPos ) {
@@ -180,7 +180,7 @@ public:
     // Scrolling methods for layers that can scroll their overflow.
     void scrollOffset(int& x, int& y);
     void subtractScrollOffset(int& x, int& y);
-    short scrollXOffset() { return m_scrollX; }
+    int scrollXOffset() { return m_scrollX; }
     int scrollYOffset() { return m_scrollY; }
     void scrollToOffset(int x, int y, bool updateScrollbars = true, bool repaint = true);
     void scrollToXOffset(int x) { scrollToOffset(x, m_scrollY); }
@@ -293,19 +293,19 @@ protected:
     int m_relY;
 
     // Our (x,y) coordinates are in our parent layer's coordinate space.
-    short m_x;
+    int m_x;
     int m_y;
 
     // The layer's width/height
-    short m_width;
+    int m_width;
     int m_height;
     
     // Our scroll offsets if the view is scrolled.
-    short m_scrollX;
+    int m_scrollX;
     int m_scrollY;
     
     // The width/height of our scrolled area.
-    short m_scrollWidth;
+    int m_scrollWidth;
     int m_scrollHeight;
     
     // For layers with overflow, we have a pair of scrollbars.

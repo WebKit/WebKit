@@ -52,7 +52,7 @@ using namespace khtml;
     1. A column element with a value other than 'auto' for the 'width'
     property sets the width for that column.
 
-    2.Otherwise, a cell in the first row with a value other than
+    2. Otherwise, a cell in the first row with a value other than
     'auto' for the 'width' property sets the width for that column. If
     the cell spans more than one column, the width is divided over the
     columns.

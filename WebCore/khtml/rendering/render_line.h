@@ -97,11 +97,11 @@ public:
 
     RootInlineBox* root();
     
-    void setWidth(short w) { m_width = w; }
-    short width() { return m_width; }
+    void setWidth(int w) { m_width = w; }
+    int width() { return m_width; }
 
-    void setXPos(short x) { m_x = x; }
-    short xPos() { return m_x; }
+    void setXPos(int x) { m_x = x; }
+    int xPos() { return m_x; }
 
     void setYPos(int y) { m_y = y; }
     int yPos() { return m_y; }
@@ -129,9 +129,9 @@ public: // FIXME: Would like to make this protected, but methods are accessing t
         // members over in the part.
     RenderObject* m_object;
 
-    short m_x;
+    int m_x;
     int m_y;
-    short m_width;
+    int m_width;
     int m_height;
     int m_baseline;
     

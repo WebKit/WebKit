@@ -209,13 +209,13 @@ void RenderTable::calcWidth()
             marginTotal += style()->marginRight().width(availableWidth);
             
         // Subtract out our margins to get the available content width.
-        int availContentWidth = KMAX(0, availableWidth - marginTotal);
+        int availContentWidth = kMax(0, availableWidth - marginTotal);
         
         // Ensure we aren't bigger than our max width or smaller than our min width.
-        m_width = KMIN(short(availContentWidth),m_maxWidth);
+        m_width = kMin(availContentWidth, m_maxWidth);
     }
     
-    m_width = KMAX(m_width, m_minWidth);
+    m_width = kMax(m_width, m_minWidth);
 
     // Finally, with our true width determined, compute our margins for real.
     m_marginRight = 0;

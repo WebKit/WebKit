@@ -585,7 +585,7 @@ RenderLayer::positionScrollbars(const QRect& absBounds)
 #define LINE_STEP   10
 #define PAGE_KEEP   40
 
-short RenderLayer::scrollWidth()
+int RenderLayer::scrollWidth()
 {
     if (m_scrollDimensionsDirty)
         computeScrollDimensions();

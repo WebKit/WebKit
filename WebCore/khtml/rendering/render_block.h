@@ -148,7 +148,7 @@ public:
     inline int leftBottom();
     inline int rightBottom();
 
-    virtual unsigned short lineWidth(int y) const;
+    virtual int lineWidth(int y) const;
     virtual int lowestPosition(bool includeOverflowInterior=true, bool includeSelf=true) const;
     virtual int rightmostPosition(bool includeOverflowInterior=true, bool includeSelf=true) const;
     virtual int leftmostPosition(bool includeOverflowInterior=true, bool includeSelf=true) const;
@@ -219,8 +219,8 @@ protected:
         RenderObject* node;
         int startY;
         int endY;
-        short left;
-        short width;
+        int left;
+        int width;
         Type type : 1; // left or right aligned
         bool noPaint : 1;
     };

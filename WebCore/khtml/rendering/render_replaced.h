@@ -44,7 +44,7 @@ public:
     bool shouldPaint(PaintInfo& i, int& _tx, int& _ty);
     virtual void paint(PaintInfo& i, int _tx, int _ty) = 0;
 
-    virtual short intrinsicWidth() const { return m_intrinsicWidth; }
+    virtual int intrinsicWidth() const { return m_intrinsicWidth; }
     virtual int intrinsicHeight() const { return m_intrinsicHeight; }
 
     void setIntrinsicWidth(int w) {  m_intrinsicWidth = w; }
@@ -56,8 +56,8 @@ public:
     virtual long caretMaxOffset() const;
 
 private:
-    short m_intrinsicWidth;
-    short m_intrinsicHeight;
+    int m_intrinsicWidth;
+    int m_intrinsicHeight;
 };
 
 

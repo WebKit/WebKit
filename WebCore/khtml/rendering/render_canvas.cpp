@@ -179,7 +179,7 @@ void RenderCanvas::layout()
 #endif
 
     layer()->setHeight(kMax(doch, m_height));
-    layer()->setWidth(kMax((short)docw, m_width));
+    layer()->setWidth(kMax(docw, m_width));
     
     setNeedsLayout(false);
 }

@@ -136,9 +136,9 @@ void RenderBox::detach()
         layer->detach(arena);
 }
 
-short RenderBox::contentWidth() const
+int RenderBox::contentWidth() const
 {
-    short w = m_width - borderLeft() - borderRight();
+    int w = m_width - borderLeft() - borderRight();
     w -= paddingLeft() + paddingRight();
 
     if (style()->scrollsOverflow() && m_layer)
@@ -167,7 +167,7 @@ void RenderBox::setPos( int xPos, int yPos )
     m_x = xPos; m_y = yPos;
 }
 
-short RenderBox::width() const
+int RenderBox::width() const
 {
     return m_width;
 }
@@ -506,7 +506,7 @@ QRect RenderBox::getClipRect(int tx, int ty)
     return cr;
 }
 
-short RenderBox::containingBlockWidth() const
+int RenderBox::containingBlockWidth() const
 {
     RenderBlock* cb = containingBlock();
     if (!cb)
@@ -958,7 +958,7 @@ void RenderBox::calcHeight()
     }
 }
 
-short RenderBox::calcReplacedWidth() const
+int RenderBox::calcReplacedWidth() const
 {
     int width = calcReplacedWidthUsing(Width);
     int minW = calcReplacedWidthUsing(MinWidth);
@@ -1081,7 +1081,7 @@ void RenderBox::calcVerticalMargins()
     m_marginBottom = bm.minWidth(cw);
 }
 
-void RenderBox::setStaticX(short staticX)
+void RenderBox::setStaticX(int staticX)
 {
     m_staticX = staticX;
 }

@@ -219,16 +219,16 @@ void RenderFlexibleBox::calcMinMaxWidth()
     if(m_maxWidth < m_minWidth) m_maxWidth = m_minWidth;
 
     if (style()->width().isFixed() && style()->width().value > 0)
-        m_minWidth = m_maxWidth = short(style()->width().value);
+        m_minWidth = m_maxWidth = style()->width().value;
    
     if (style()->minWidth().isFixed() && style()->minWidth().value > 0) {
-        m_maxWidth = KMAX(m_maxWidth, short(style()->minWidth().value));
-        m_minWidth = KMAX(m_minWidth, short(style()->minWidth().value));
+        m_maxWidth = KMAX(m_maxWidth, style()->minWidth().value);
+        m_minWidth = KMAX(m_minWidth, style()->minWidth().value);
     }
     
     if (style()->maxWidth().isFixed() && style()->maxWidth().value != UNDEFINED) {
-        m_maxWidth = KMIN(m_maxWidth, short(style()->maxWidth().value));
-        m_minWidth = KMIN(m_minWidth, short(style()->maxWidth().value));
+        m_maxWidth = KMIN(m_maxWidth, style()->maxWidth().value);
+        m_minWidth = KMIN(m_minWidth, style()->maxWidth().value);
     }
 
     int toAdd = borderLeft() + borderRight() + paddingLeft() + paddingRight();

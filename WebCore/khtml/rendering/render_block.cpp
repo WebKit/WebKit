@@ -1614,7 +1614,7 @@ RenderBlock::rightRelOffset(int y, int fixedOffset, bool applyTextIndent,
     return right;
 }
 
-unsigned short
+int
 RenderBlock::lineWidth(int y) const
 {
     //kdDebug( 6040 ) << "lineWidth(" << y << ")=" << rightOffset(y) - leftOffset(y) << endl;
@@ -2038,19 +2038,19 @@ void RenderBlock::calcMinMaxWidth()
 
     if (style()->width().isFixed() && style()->width().value > 0) {
         if (isTableCell())
-            m_maxWidth = KMAX(m_minWidth,short(style()->width().value));
+            m_maxWidth = KMAX(m_minWidth, style()->width().value);
         else
-            m_minWidth = m_maxWidth = short(style()->width().value);
+            m_minWidth = m_maxWidth = style()->width().value;
     }
     
     if (style()->minWidth().isFixed() && style()->minWidth().value > 0) {
-        m_maxWidth = KMAX(m_maxWidth, short(style()->minWidth().value));
-        m_minWidth = KMAX(m_minWidth, short(style()->minWidth().value));
+        m_maxWidth = KMAX(m_maxWidth, style()->minWidth().value);
+        m_minWidth = KMAX(m_minWidth, style()->minWidth().value);
     }
     
     if (style()->maxWidth().isFixed() && style()->maxWidth().value != UNDEFINED) {
-        m_maxWidth = KMIN(m_maxWidth, short(style()->maxWidth().value));
-        m_minWidth = KMIN(m_minWidth, short(style()->maxWidth().value));
+        m_maxWidth = KMIN(m_maxWidth, style()->maxWidth().value);
+        m_minWidth = KMIN(m_minWidth, style()->maxWidth().value);
     }
 
     int toAdd = 0;
@@ -2229,8 +2229,8 @@ void RenderBlock::calcInlineMinMaxWidth()
             // the width of the last non-breakable run and use that to start a new line
             // (unless we end in whitespace).
             RenderStyle* cstyle = child->style();
-            short childMin = 0;
-            short childMax = 0;
+            int childMin = 0;
+            int childMax = 0;
 
             if (!child->isText()) {
                 // Case (1) and (2).  Inline replaced and inline flow elements.
@@ -2311,9 +2311,9 @@ void RenderBlock::calcInlineMinMaxWidth()
                 // then they shouldn't be considered in the breakable char
                 // check.
                 bool hasBreakableChar, hasBreak;
-                short beginMin, endMin;
+                int beginMin, endMin;
                 bool beginWS, endWS;
-                short beginMax, endMax;
+                int beginMax, endMax;
                 t->trimmedMinMaxWidth(beginMin, beginWS, endMin, endWS, hasBreakableChar,
                                       hasBreak, beginMax, endMax,
                                       childMin, childMax, stripFrontSpaces);
