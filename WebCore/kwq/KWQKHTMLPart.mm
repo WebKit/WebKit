@@ -74,6 +74,12 @@ void KHTMLPart::nodeActivated(const DOM::Node &aNode)
 {
 }
 
+bool KHTMLPart::openURL(const KURL &URL)
+{
+    kwq->openURL(URL);
+    return true;
+}
+
 void KHTMLPart::onURL(const QString &)
 {
 }
@@ -100,7 +106,6 @@ KWQKHTMLPart::KWQKHTMLPart(KHTMLPart *p)
     , _completed(p, SIGNAL(completed()))
     , _completedWithBool(p, SIGNAL(completed(bool)))
     , _ownsView(false)
-    , _currentEvent(nil)
 {
     Cache::init();
     mutableInstances().prepend(this);
@@ -113,7 +118,6 @@ KWQKHTMLPart::~KWQKHTMLPart()
     if (_ownsView) {
         delete d->m_view;
     }
-    [_currentEvent release];
 }
 
 WebCoreBridge *KWQKHTMLPart::bridgeForFrameName(const QString &frameName)
@@ -154,13 +158,14 @@ void KWQKHTMLPart::openURLRequest(const KURL &url, const URLArgs &args)
 void KWQKHTMLPart::submitForm(const KURL &url, const URLArgs &args)
 {
     if (!args.doPost()) {
-        [bridgeForFrameName(args.frameName) loadURL:url.url().getNSString() reload:args.reload triggeringEvent:_currentEvent isFormSubmission:YES];
+        [bridgeForFrameName(args.frameName) loadURL:url.url().getNSString() reload:args.reload
+            triggeringEvent:[NSApp currentEvent] isFormSubmission:YES];
     } else {
         QString contentType = args.contentType();
         ASSERT(contentType.startsWith("Content-Type: "));
         [bridgeForFrameName(args.frameName) postWithURL:url.url().getNSString()
             data:[NSData dataWithBytes:args.postData.data() length:args.postData.size()]
-            contentType:contentType.mid(14).getNSString() triggeringEvent:_currentEvent];
+            contentType:contentType.mid(14).getNSString() triggeringEvent:[NSApp currentEvent]];
     }
 }
 
@@ -184,7 +189,8 @@ void KWQKHTMLPart::slotData(NSString *encoding, bool forceEncoding, const char *
 
 void KWQKHTMLPart::urlSelected(const KURL &url, int button, int state, const URLArgs &args)
 {
-    [bridgeForFrameName(args.frameName) loadURL:url.url().getNSString() reload:args.reload triggeringEvent:_currentEvent isFormSubmission:NO];
+    [bridgeForFrameName(args.frameName) loadURL:url.url().getNSString() reload:args.reload
+        triggeringEvent:[NSApp currentEvent] isFormSubmission:NO];
 }
 
 class KWQPluginPart : public ReadOnlyPart
@@ -631,18 +637,10 @@ void KWQKHTMLPart::createDummyDocument()
     }
 }
 
-void KWQKHTMLPart::setCurrentEvent(NSEvent *event)
-{
-    [event retain];
-    [_currentEvent release];
-    _currentEvent = event;
-}
-
 void KWQKHTMLPart::addMetaData(const QString &key, const QString &value)
 {
     d->m_job->addMetaData(key, value);
 }
-
 
 bool KWQKHTMLPart::keyEvent(NSEvent *event)
 {
@@ -685,4 +683,20 @@ bool KWQKHTMLPart::keyEvent(NSEvent *event)
     }
 
     return result;
+}
+
+// This does the same kind of work that KHTMLPart::openURL does, except it relies on the fact
+// that a higher level already checked that the URLs match and the scrolling is the right thing to do.
+void KWQKHTMLPart::scrollToAnchor(const KURL &URL)
+{
+    part->m_url = URL;
+    part->started(0);
+
+    if (!part->gotoAnchor(URL.encodedHtmlRef()))
+        part->gotoAnchor(URL.htmlRef());
+
+    d->m_bComplete = true;
+    d->m_doc->setParsing(false);
+
+    part->completed();
 }

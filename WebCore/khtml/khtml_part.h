@@ -1089,6 +1089,7 @@ public:
 
   void completed();
   void completed(bool);
+  bool didOpenURL(const KURL &);
   void setStatusBarText(const QString &);
   void started(KIO::Job *);
 #endif

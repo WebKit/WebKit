@@ -117,9 +117,10 @@
 				F8216299029F4FB501000131,
 				F821629A029F4FB501000131,
 				F821629B029F4FB501000131,
+				936F62C1039DF33B008635CE,
 			);
 			isa = PBXGroup;
-			name = Frameworks;
+			name = "Frameworks and Libraries";
 			refType = 4;
 		};
 		0867D69CFE84028FC02AAC07 = {
@@ -303,6 +304,7 @@
 				9316400E0379832D008635CE,
 				658CF8C103851FB5008C2A4B,
 				7082F571038EADAA00A80180,
+				936F62BF039DF0BF008635CE,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -415,6 +417,7 @@
 				9316400F0379832D008635CE,
 				BED907790389380000CA289C,
 				7082F572038EADAA00A80180,
+				936F62C0039DF0BF008635CE,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -428,6 +431,7 @@
 				F82162D8029F4FB501000131,
 				F82162D9029F4FB501000131,
 				F52BD8BA02DF4FBD018635CA,
+				936F62C2039DF33B008635CE,
 			);
 			isa = PBXFrameworksBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1578,6 +1582,8 @@
 				832E26A4036F9614005E2B4F,
 				83413E8C0375BCD3004719BE,
 				83413E8D0375BCD3004719BE,
+				936F62BD039DF0BF008635CE,
+				936F62BE039DF0BF008635CE,
 			);
 			isa = PBXGroup;
 			name = Downloads;
@@ -2098,6 +2104,42 @@
 		};
 		9367C637034E9F00008635C5 = {
 			fileRef = 9367C636034E9F00008635C5;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		936F62BD039DF0BF008635CE = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			path = WebGZipDecoder.h;
+			refType = 4;
+		};
+		936F62BE039DF0BF008635CE = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			path = WebGZipDecoder.m;
+			refType = 4;
+		};
+		936F62BF039DF0BF008635CE = {
+			fileRef = 936F62BD039DF0BF008635CE;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		936F62C0039DF0BF008635CE = {
+			fileRef = 936F62BE039DF0BF008635CE;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		936F62C1039DF33B008635CE = {
+			isa = PBXExecutableFileReference;
+			name = libz.dylib;
+			path = /usr/lib/libz.dylib;
+			refType = 0;
+		};
+		936F62C2039DF33B008635CE = {
+			fileRef = 936F62C1039DF33B008635CE;
 			isa = PBXBuildFile;
 			settings = {
 			};

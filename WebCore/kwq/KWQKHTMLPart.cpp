@@ -37,7 +37,7 @@ using DOM::NodeImpl;
 bool KWQKHTMLPart::isFrameSet()
 {
     DocumentImpl *document = d->m_doc;
-    if (!document->isHTMLDocument())
+    if (!document || !document->isHTMLDocument())
         return false;
     NodeImpl *body = static_cast<HTMLDocumentImpl *>(document)->body();
     return body && body->renderer() && body->id() == ID_FRAMESET;

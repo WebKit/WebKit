@@ -841,16 +841,19 @@ static const char * const loadTypeNames[] = {
 }
 
 // loads content into this frame, as specified by item
-- (void)_loadItem:(WebHistoryItem *)item fromItem:(WebHistoryItem *)fromItem withLoadType: (WebFrameLoadType)type
+- (void)_loadItem:(WebHistoryItem *)item fromItem:(WebHistoryItem *)fromItem withLoadType:(WebFrameLoadType)type
 {
     NSURL *itemURL = [item URL];
-    WebResourceRequest *request;
     NSURL *currentURL = [[[self dataSource] request] URL];
 
     // Are we navigating to an anchor within the page?
     // Note if we have child frames we do a real reload, since the child frames might not
     // match our current frame structure, or they might not have the right content.  We could
     // check for all that as an additional optimization.
+    
+    // FIXME: These checks don't match the ones in _loadURL:loadType:triggeringEvent:isFormSubmission:
+    // Perhaps they should.
+    
     if ([item anchor] &&
         [[itemURL _web_URLByRemovingFragment] isEqual: [currentURL _web_URLByRemovingFragment]] &&
         (!_private->children || ![_private->children count]))
@@ -859,6 +862,7 @@ static const char * const loadTypeNames[] = {
         [self _saveScrollPositionToItem:[_private currentItem]];
         // FIXME: form state might want to be saved here too
 
+        // FIXME: Perhaps we can use scrollToAnchorWithURL here instead and remove the older scrollToAnchor:?
         [[_private->dataSource _bridge] scrollToAnchor: [item anchor]];
     
         // must do this maintenance here, since we don't go through a real page reload
@@ -876,7 +880,7 @@ static const char * const loadTypeNames[] = {
             [self _loadDataSource:newDataSource withLoadType:type];            
         }
         else {
-            request = [[WebResourceRequest alloc] initWithURL:itemURL];
+            WebResourceRequest *request = [[WebResourceRequest alloc] initWithURL:itemURL];
         
             // set the request cache policy based on the type of request we have
             // however, allow any previously set value to take precendence
@@ -991,29 +995,35 @@ static const char * const loadTypeNames[] = {
 
 -(NSDictionary *)_actionInformationForNavigationType:(WebNavigationType)navigationType event:(NSEvent *)event originalURL:(NSURL *)URL
 {
-    if (event != nil) {
-        NSView *topViewInEventWindow = [[event window] contentView];
-        NSView *viewContainingPoint = [topViewInEventWindow hitTest:[topViewInEventWindow convertPoint:[event locationInWindow] fromView:nil]];
-
-        ASSERT(viewContainingPoint != nil);
-        ASSERT([viewContainingPoint isKindOfClass:[WebHTMLView class]]);
-
-        NSPoint point = [viewContainingPoint convertPoint:[event locationInWindow] fromView:nil];
-        NSDictionary *elementInfo = [(WebHTMLView *)viewContainingPoint _elementAtPoint:point];
-
-        return [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithInt:navigationType], WebActionNavigationTypeKey,
-            elementInfo, WebActionElementKey,
-            [NSNumber numberWithInt:[event type]], WebActionButtonKey,
-            [NSNumber numberWithInt:[event modifierFlags]], WebActionModifierFlagsKey,
-	    URL, WebActionOriginalURLKey,
-            nil];
+    switch ([event type]) {
+        case NSLeftMouseDown:
+        case NSRightMouseDown:
+        case NSOtherMouseDown:
+        {
+            NSView *topViewInEventWindow = [[event window] contentView];
+            NSView *viewContainingPoint = [topViewInEventWindow hitTest:[topViewInEventWindow convertPoint:[event locationInWindow] fromView:nil]];
+    
+            ASSERT(viewContainingPoint != nil);
+            ASSERT([viewContainingPoint isKindOfClass:[WebHTMLView class]]);
+    
+            NSPoint point = [viewContainingPoint convertPoint:[event locationInWindow] fromView:nil];
+            NSDictionary *elementInfo = [(WebHTMLView *)viewContainingPoint _elementAtPoint:point];
+    
+            return [NSDictionary dictionaryWithObjectsAndKeys:
+                [NSNumber numberWithInt:navigationType], WebActionNavigationTypeKey,
+                elementInfo, WebActionElementKey,
+                [NSNumber numberWithInt:[event buttonNumber]], WebActionButtonKey,
+                [NSNumber numberWithInt:[event modifierFlags]], WebActionModifierFlagsKey,
+                URL, WebActionOriginalURLKey,
+                nil];
+        }
+        
+        default:
+            return [NSDictionary dictionaryWithObjectsAndKeys:
+                [NSNumber numberWithInt:navigationType], WebActionNavigationTypeKey,
+                URL, WebActionOriginalURLKey,
+                nil];
     }
-
-    return [NSDictionary dictionaryWithObjectsAndKeys:
-	[NSNumber numberWithInt:navigationType], WebActionNavigationTypeKey,
-        URL, WebActionOriginalURLKey,
-        nil];
 }
 
 - (void) _invalidatePendingPolicyDecisionCallingDefaultAction:(BOOL)call
@@ -1152,7 +1162,7 @@ static const char * const loadTypeNames[] = {
         [self _addBackForwardItemClippedAtTarget:NO];
     }
     
-    [_private->bridge openURL:[URL absoluteString] reload:NO headers:nil lastModified:nil pageCache: nil];
+    [_private->bridge scrollToAnchorWithURL:[URL absoluteString]];
     
     if (!isRedirect) {
         // This will clear previousItem from the rest of the frame tree tree that didn't
@@ -1194,23 +1204,33 @@ static const char * const loadTypeNames[] = {
         action = [self _actionInformationForNavigationType:WebNavigationTypeLinkClicked event:event originalURL:URL];
     }
 
-    // FIXME: This logic doesn't exactly match what KHTML does in openURL, so it's possible
-    // this will screw up in some cases involving framesets.
-    if (loadType != WebFrameLoadTypeReload && [URL fragment] && [[URL _web_URLByRemovingFragment] isEqual:[[NSURL _web_URLWithString:[_private->bridge URL]] _web_URLByRemovingFragment]]) {
-        // Just do anchor navigation within the existing content.  Note we only do this if there is
-        // an anchor in the URL - otherwise this check might prevent us from reloading a document
-        // that has subframes that are different than what we're displaying (in other words, a link
-        // from within a frame is trying to reload the frameset into _top).
+    WebDataSource *oldDataSource = [[self dataSource] retain];
+    
+    if (!isFormSubmission
+            && loadType != WebFrameLoadTypeReload
+            && ![_private->bridge isFrameSet]
+            && [URL fragment]
+            && [[URL _web_URLByRemovingFragment] isEqual:[[NSURL _web_URLWithString:[_private->bridge URL]] _web_URLByRemovingFragment]]) {
 
-        WebDataSource *dataSrc = [self dataSource];
-        [dataSrc _setTriggeringAction:action];
+        // Just do anchor navigation within the existing content.
+        
+        // We don't do this if we are submitting a form, explicitly reloading,
+        // currently displaying a frameset, or if the new URL does not have a fragment.
+        // These rules are based on what KHTML was doing in KHTMLPart::openURL.
+        
+        // One reason we only do this if there is an anchor in the URL is that
+        // this might prevent us from reloading a document that has subframes that are
+        // different than what we're displaying (in other words, a link from within a
+        // frame is trying to reload the frameset into _top).
+        
+        // FIXME: What about load types other than Standard and Reload?
 
+        [oldDataSource _setTriggeringAction:action];
         [self _invalidatePendingPolicyDecisionCallingDefaultAction:YES];
-
-        [self _checkNavigationPolicyForRequest:request dataSource:dataSrc andCall:self withSelector:@selector(_continueFragmentScrollAfterNavigationPolicy:request:)];
+        [self _checkNavigationPolicyForRequest:request dataSource:oldDataSource
+            andCall:self withSelector:@selector(_continueFragmentScrollAfterNavigationPolicy:request:)];
     } else {
         WebFrameLoadType previousLoadType = [self _loadType];
-        WebDataSource *oldDataSource = [[self dataSource] retain];
 
         [self _loadRequest:request triggeringAction:action loadType:loadType];
         if (_private->quickRedirectComing) {
@@ -1228,13 +1248,13 @@ static const char * const loadTypeNames[] = {
             [newDataSource _addBackForwardItems:[oldDataSource _backForwardItems]];
         }
         [request release];
-        [oldDataSource release];
     }
+
+    [oldDataSource release];
 }
 
 - (void)_loadURL:(NSURL *)URL intoChild:(WebFrame *)childFrame
 {
-    //WebDataSource *dataSrc = [self dataSource];
     WebHistoryItem *parentItem = [_private currentItem];
     NSArray *childItems = [parentItem children];
     WebFrameLoadType loadType = [self _loadType];

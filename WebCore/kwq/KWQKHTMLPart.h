@@ -86,6 +86,8 @@ public:
     void openURLRequest(const KURL &, const KParts::URLArgs &);
     void submitForm(const KURL &, const KParts::URLArgs &);
     
+    void scrollToAnchor(const KURL &);
+    
     void slotData(NSString *, bool forceEncoding, const char *bytes, int length, bool complete = false);
 
     void setTitle(const DOM::DOMString &);
@@ -154,11 +156,9 @@ public:
     DOM::NodeImpl *selectionStart() const;
     DOM::NodeImpl *selectionEnd() const;
 
-    void setCurrentEvent(NSEvent *event);
-    
     void addMetaData(const QString &key, const QString &value);
 
-    bool KWQKHTMLPart::keyEvent(NSEvent *event);
+    bool keyEvent(NSEvent *event);
     
 private:
     void setPolicyBaseURL(const DOM::DOMString &);
@@ -181,8 +181,6 @@ private:
     KWQSignal _completedWithBool;
     
     bool _ownsView;
-
-    NSEvent *_currentEvent;
 
     static QPtrList<KWQKHTMLPart> &mutableInstances();
 

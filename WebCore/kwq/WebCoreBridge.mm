@@ -140,39 +140,34 @@ NSString *WebCoreElementStringKey = 		@"WebElementString";
     _part->setParent([parent part]);
 }
 
-- (void)openURL:(NSString *)URL reload:(BOOL)reload headers:(NSDictionary *)headers lastModified:(NSDate *)lastModified pageCache: (NSDictionary *)pageCache
+- (void)openURL:(NSString *)URL reload:(BOOL)reload headers:(NSDictionary *)headers lastModified:(NSDate *)lastModified pageCache:(NSDictionary *)pageCache
 {
+    if (pageCache) {
+        KWQPageState *state = [pageCache objectForKey:@"WebCorePageState"];
+        _part->kwq->openURLFromPageCache([state document], [state URL], [state windowProperties], [state locationProperties]);
+        return;
+    }
+
+    // arguments
     URLArgs args(_part->browserExtension()->urlArgs());
-
-    // reload
     args.reload = reload;
-
-    // Content-Type
     NSString *contentType = [headers objectForKey:@"Content-Type"];
     if (contentType) {
         args.serviceType = QString::fromNSString(contentType);
     }
-    
     _part->browserExtension()->setURLArgs(args);
 
-    // URL
-    if (pageCache){
-        KWQPageState *state = [pageCache objectForKey: @"WebCorePageState"];
-        _part->kwq->openURLFromPageCache([state document], [state URL], [state windowProperties], [state locationProperties]);
-    }
-    else
-        _part->openURL([URL cString]);
-    
-    // Refresh
+    // opening the URL
+    _part->didOpenURL([URL cString]);
+
+    // things we have to set up after calling didOpenURL
     NSString *refreshHeader = [headers objectForKey:@"Refresh"];
     if (refreshHeader) {
         _part->kwq->addMetaData("http-refresh", QString::fromNSString(refreshHeader));
     }
-
     if (lastModified) {
 	_part->kwq->addMetaData("modified", QString::fromNSString([lastModified description]));
     }
-
 }
 
 - (void)addData:(NSData *)data withEncoding:(NSString *)encoding
@@ -220,6 +215,11 @@ NSString *WebCoreElementStringKey = 		@"WebElementString";
             
         doc->setRestoreState(s);
     }
+}
+
+- (void)scrollToAnchorWithURL:(NSString *)URL
+{
+    _part->kwq->scrollToAnchor([URL cString]);
 }
 
 - (BOOL)saveDocumentToPageCache
@@ -414,6 +414,10 @@ NSString *WebCoreElementStringKey = 		@"WebElementString";
 
 - (void)mouseUp:(NSEvent *)event
 {
+    if (!_part->kwq->view()) {
+        return;
+    }
+    
     NSPoint p = [event locationInWindow];
 
     int button, state;
@@ -433,40 +437,38 @@ NSString *WebCoreElementStringKey = 		@"WebElementString";
     }
     state |= [self stateForEvent:event];
     
-    if (_part->kwq->view()) {
-        int clickCount = [event clickCount];
+    int clickCount = [event clickCount];
 
-        // Our behavior here is a little different that Qt.  Qt always sends
-        // a mouse release event, even for a double click.  To correct problems
-        // in khtml's DOM click event handling we do not send a release here
-        // for a double click.  Instead we send that event from khtmlview's
-        // viewportMouseDoubleClickEvent.
-        if (clickCount > 0 && clickCount % 2 == 0) {
-            QMouseEvent doubleClickEvent(QEvent::MouseButtonDblClick, QPoint(p), button, state, clickCount);
-	    _part->kwq->setCurrentEvent(event);
-            _part->kwq->view()->viewportMouseDoubleClickEvent(&doubleClickEvent);
-	    _part->kwq->setCurrentEvent(nil);
-        }
-        else {
-            QMouseEvent releaseEvent(QEvent::MouseButtonRelease, QPoint(p), button, state, clickCount);
-	    _part->kwq->setCurrentEvent(event);
-            _part->kwq->view()->viewportMouseReleaseEvent(&releaseEvent);
-	    _part->kwq->setCurrentEvent(nil);
-        }
+    // Our behavior here is a little different that Qt.  Qt always sends
+    // a mouse release event, even for a double click.  To correct problems
+    // in khtml's DOM click event handling we do not send a release here
+    // for a double click.  Instead we send that event from khtmlview's
+    // viewportMouseDoubleClickEvent.
+    if (clickCount > 0 && clickCount % 2 == 0) {
+        QMouseEvent doubleClickEvent(QEvent::MouseButtonDblClick, QPoint(p), button, state, clickCount);
+        _part->kwq->view()->viewportMouseDoubleClickEvent(&doubleClickEvent);
+    }
+    else {
+        QMouseEvent releaseEvent(QEvent::MouseButtonRelease, QPoint(p), button, state, clickCount);
+        _part->kwq->view()->viewportMouseReleaseEvent(&releaseEvent);
     }
 }
 
 - (void)mouseDown:(NSEvent *)event
 {
+    if (!_part->kwq->view()) {
+        return;
+    }
+    
     NSPoint p = [event locationInWindow];
     
     int button, state;     
     switch ([event type]) {
-    case NSRightMouseUp:
+    case NSRightMouseDown:
         button = Qt::RightButton;
         state = Qt::RightButton;
         break;
-    case NSOtherMouseUp:
+    case NSOtherMouseDown:
         button = Qt::MidButton;
         state = Qt::MidButton;
         break;
@@ -477,30 +479,32 @@ NSString *WebCoreElementStringKey = 		@"WebElementString";
     }
     state |= [self stateForEvent:event];
     
-    if (_part->kwq->view()) {
-        QMouseEvent kEvent(QEvent::MouseButtonPress, QPoint(p), button, state, [event clickCount]);
-        _part->kwq->view()->viewportMousePressEvent(&kEvent);
-    }
+    QMouseEvent kEvent(QEvent::MouseButtonPress, QPoint(p), button, state, [event clickCount]);
+    _part->kwq->view()->viewportMousePressEvent(&kEvent);
 }
 
 - (void)mouseMoved:(NSEvent *)event
 {
+    if (!_part->kwq->view()) {
+        return;
+    }
+    
     NSPoint p = [event locationInWindow];
     
     QMouseEvent kEvent(QEvent::MouseMove, QPoint(p), 0, [self stateForEvent:event]);
-    if (_part->kwq->view()) {
-        _part->kwq->view()->viewportMouseMoveEvent(&kEvent);
-    }
+    _part->kwq->view()->viewportMouseMoveEvent(&kEvent);
 }
 
 - (void)mouseDragged:(NSEvent *)event
 {
+    if (!_part->kwq->view()) {
+        return;
+    }
+    
     NSPoint p = [event locationInWindow];
     
     QMouseEvent kEvent(QEvent::MouseMove, QPoint(p), Qt::LeftButton, Qt::LeftButton);
-    if (_part->kwq->view()) {
-        _part->kwq->view()->viewportMouseMoveEvent(&kEvent);
-    }
+    _part->kwq->view()->viewportMouseMoveEvent(&kEvent);
 }
 
 - (NSDictionary *)elementAtPoint:(NSPoint)point

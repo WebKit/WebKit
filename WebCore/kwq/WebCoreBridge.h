@@ -97,7 +97,7 @@ enum FrameBorderStyle {
 
 - (void)setParent:(WebCoreBridge *)parent;
 
-- (void)openURL:(NSString *)URL reload:(BOOL)reload headers:(NSDictionary *)headers lastModified:(NSDate *)lastModified pageCache: (NSDictionary *)pageCache;
+- (void)openURL:(NSString *)URL reload:(BOOL)reload headers:(NSDictionary *)headers lastModified:(NSDate *)lastModified pageCache:(NSDictionary *)pageCache;
 - (void)addData:(NSData *)data withEncoding:(NSString *)encoding;
 - (void)addData:(NSData *)data withOverrideEncoding:(NSString *)encoding;
 - (void)closeURL;
@@ -116,6 +116,7 @@ enum FrameBorderStyle {
 - (void)removeFromFrame;
 
 - (void)scrollToAnchor:(NSString *)anchor;
+- (void)scrollToAnchorWithURL:(NSString *)URL;
 
 - (void)createKHTMLViewWithNSView:(NSView *)view marginWidth:(int)mw marginHeight:(int)mh;
 
@@ -238,7 +239,7 @@ enum FrameBorderStyle {
 - (NSView *)viewForPluginWithURL:(NSString *)URL attributes:(NSArray *)attributesArray baseURL:(NSString *)baseURL MIMEType:(NSString *)MIMEType;
 - (NSView *)viewForJavaAppletWithFrame:(NSRect)frame attributes:(NSDictionary *)attributes baseURL:(NSString *)baseURL;
 
-- (BOOL)saveDocumentToPageCache: documentInfo;
+- (BOOL)saveDocumentToPageCache:(id)documentInfo;
 
 @end
 

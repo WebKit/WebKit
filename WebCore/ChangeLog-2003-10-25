@@ -1,3 +1,39 @@
+2002-12-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Trey and Maciej.
+
+	- fixed 3117558 -- Assertion failure in KWQKHTMLPart::slotData after typing "amazon.com" twice
+	- got rid of the per-part NSEvent in preparation for NSView mouse event handling going through WebCore
+
+        * khtml/khtml_part.h: Added declaration for didOpenURL.
+        * khtml/khtml_part.cpp: (KHTMLPart::openURL): Changed name to didOpenURL in the APPLE_CHANGES
+	version because calls to openURL from within KHTML need to make the round trip to WebKit.
+	Also disabled the "scroll to anchor" part.
+
+        * kwq/KWQKHTMLPart.cpp: (KWQKHTMLPart::isFrameSet): Fix to return false when document is 0.
+
+        * kwq/KWQKHTMLPart.h: Add scrollToAnchor, remove setCurrentEvent and _currentEvent
+        * kwq/KWQKHTMLPart.mm:
+        (KHTMLPart::openURL): Pass the openURL call to the KWQKHTMLPart.
+        (KWQKHTMLPart::KWQKHTMLPart): Don't initialize _currentEvent.
+        (KWQKHTMLPart::~KWQKHTMLPart): Don't release _currentEvent.
+        (KWQKHTMLPart::submitForm): Pass [NSApp currentEvent] instead of _currentEvent.
+        (KWQKHTMLPart::urlSelected): Pass [NSApp currentEvent] instead of _currentEvent.
+        (KWQKHTMLPart::scrollToAnchor): Added. Contains the code from the anchor case inside
+	KHTMLPart::openURL.
+
+        * kwq/WebCoreBridge.h: Added scrollToAnchorWithURL:.
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge openURL:reload:headers:lastModified:pageCache:]): Change around so that we
+	don't do a bunch of irrelevant stuff in the page cache case. I think we might just want to
+	make a separate method for the page cache case.
+        (-[WebCoreBridge scrollToAnchorWithURL:]): Added.
+        (-[WebCoreBridge mouseUp:]): Simplify check for nil view. Remove calls to setCurrentEvent.
+        (-[WebCoreBridge mouseDown:]): Simplify check for nil view. Fix event type constants for
+	right mouse button and other mouse button.
+        (-[WebCoreBridge mouseMoved:]): Simplify check for nil view.
+        (-[WebCoreBridge mouseDragged:]): Simplify check for nil view.
+
 2002-12-04  Richard Williamson   <rjw@apple.com>
 
         Cache the NSFont in QFont after doing family based lookup.

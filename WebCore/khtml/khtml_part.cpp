@@ -340,7 +340,11 @@ bool KHTMLPart::restoreURL( const KURL &url )
 }
 
 
+#if APPLE_CHANGES
+bool KHTMLPart::didOpenURL(const KURL &url)
+#else
 bool KHTMLPart::openURL( const KURL &url )
+#endif
 {
   kdDebug( 6050 ) << "KHTMLPart(" << this << ")::openURL " << url.url() << endl;
 
@@ -377,6 +381,8 @@ bool KHTMLPart::openURL( const KURL &url )
 #endif // APPLE_CHANGES
 
   KParts::URLArgs args( d->m_extension->urlArgs() );
+
+#if !APPLE_CHANGES
   // in case we have a) no frameset (don't test m_frames.count(), iframes get in there)
   // b) the url is identical with the currently
   // displayed one (except for the htmlref!) , c) the url request is not a POST
@@ -408,6 +414,7 @@ bool KHTMLPart::openURL( const KURL &url )
         return true;
       }
   }
+#endif // APPLE_CHANGES
 
   if (!d->m_restored)
   {

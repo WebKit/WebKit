@@ -1,3 +1,33 @@
+2002-12-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Trey and Maciej.
+
+	- fixed 3117558 -- Assertion failure in KWQKHTMLPart::slotData after typing "amazon.com" twice
+	- update NSEvent handling in preparation for NSView mouse event handling going through WebCore
+
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _loadItem:fromItem:withLoadType:]): Added FIXME comments about matching the _loadURL
+	case more closely.
+        (-[WebFrame _actionInformationForNavigationType:event:originalURL:]): Only use the event if it's
+	a mouse down event. This prevents trouble when we have other kinds of events coming through.
+        (-[WebFrame _continueFragmentScrollAfterNavigationPolicy:request:]): Call the new scrollToAnchorWithURL:
+	instead of openURL:. This fixes the assertion failure in the bug above.
+        (-[WebFrame _loadURL:loadType:triggeringEvent:isFormSubmission:]): Update checks here to more closely
+	match the ones in KHTMLPart::openURL that we are replacing. Add more comments.
+
+        * WebView.subproj/WebHTMLView.m: (-[WebHTMLView hitTest:]): Function to intercept all clicks at the
+	WebHTMLView level, disabled for now because we are not yet ready.
+
+	- started a gzip download decoder, not yet hooked up
+
+        * Downloads.subproj/WebGZipDecoder.h: Added.
+        * Downloads.subproj/WebGZipDecoder.m: Added.
+        * WebKit.pbproj/project.pbxproj: Add WebGZipDecoder and zlib.
+
+	- other changes
+
+        * Panels.subproj/WebAuthenticationPanel.m: Fixed screwed-up indentation.
+
 2002-12-04  Richard Williamson   <rjw@apple.com>
 
         Cache the fallback font in the same way we cache other

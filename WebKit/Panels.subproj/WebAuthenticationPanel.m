@@ -132,9 +132,8 @@
         }
     }
 
-[mainLabel setStringValue:message];
-
-[mainLabel sizeToFitAndAdjustWindowHeight];
+    [mainLabel setStringValue:message];
+    [mainLabel sizeToFitAndAdjustWindowHeight];
 
     if ([resource receivesCredentialSecurely]) {
         [smallLabel setStringValue:
