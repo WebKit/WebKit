@@ -54,13 +54,16 @@ public:
     virtual void layout( );
     virtual void calcMinMaxWidth();
 
-    virtual short verticalPositionHint( bool firstLine ) const;
-
     virtual void setPixmap( const QPixmap &, const QRect&, CachedImage *);
 
     virtual void calcWidth();
 
+    virtual short baselinePosition(bool b) const;
+    
     virtual bool isListMarker() const { return true; }
+    
+    RenderListItem* listItem() { return m_listItem; }
+    void setListItem(RenderListItem* listItem) { m_listItem = listItem; }
     
 protected:
     friend class RenderListItem;
@@ -68,6 +71,7 @@ protected:
     QString m_item;
     CachedImage *m_listImage;
     long m_value;
+    RenderListItem* m_listItem;
 };
 
 class RenderListItem : public RenderFlow
@@ -81,8 +85,7 @@ public:
     virtual void setStyle(RenderStyle *style);
 
     virtual bool isListItem() const { return true; }
-    virtual bool containsSpecial() { return (specialObjects != 0 && specialObjects->count() > 1 ); }
-
+    
     long value() const { return m_marker->m_value; }
     void setValue( long v ) { predefVal = v; }
     void calcListValue();
