@@ -1,3 +1,23 @@
+2004-05-05  David Hyatt  <hyatt@apple.com>
+
+	A collection of fixes.
+
+	(1) Fix a regression from the style sharing landing that made visited and unvisited links accidentally share.
+	(2) Make sure 100% height divs fill the <body> in quirks mode, even if the body has no height specified.
+	(3) Make sure table cell percentage heights exclude border/padding.
+	(4) Make sure that before flexing auto height is used for the contents of the cells.
+	
+        Reviewed by darin
+
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::canShareStyleWithElement):
+        (khtml::CSSStyleSelector::locateSharedStyle):
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::calcPercentageHeight):
+        * khtml/rendering/render_table.cpp:
+        (RenderTable::layout):
+        (RenderTableSection::layoutRows):
+
 2004-05-05  Chris Blumenberg  <cblu@apple.com>
 
 	- DOM Extensions API tweaks

@@ -276,9 +276,10 @@ void RenderTable::layout()
         m_height += tCaption->height() + tCaption->marginTop() + tCaption->marginBottom();
     }
 
-    m_height += borderTop();
-    if (!collapseBorders())
-        m_height += paddingTop();
+    int bpTop = borderTop() + (collapseBorders() ? 0 : paddingTop());
+    int bpBottom = borderBottom() + (collapseBorders() ? 0 : paddingBottom());
+    
+    m_height += bpTop;
 
     int oldHeight = m_height;
     calcHeight();
@@ -287,11 +288,11 @@ void RenderTable::layout()
 
     // html tables with percent height are relative to view
     Length h = style()->height();
-    int th=0;
+    int th = -(bpTop + bpBottom); // Tables size as though CSS height includes border/padding.
     if (isPositioned())
-        th = newHeight;
+        th = newHeight; // FIXME: Leave this alone for now but investigate later.
     else if (h.isFixed())
-        th = h.value;
+        th += h.value;
     else if (h.isPercent())
     {
         RenderObject* c = containingBlock();
@@ -300,7 +301,7 @@ void RenderTable::layout()
              c = c->containingBlock()) {
             Length ch = c->style()->height();
             if (ch.isFixed()) {
-                th = h.width(ch.value);
+                th += h.width(ch.value);
                 break;
             }
         }
@@ -309,17 +310,19 @@ void RenderTable::layout()
             RenderTableCell* cell = static_cast<RenderTableCell*>(c);
             int cellHeight = cell->getCellPercentageHeight();
             if (cellHeight)
-                th = h.width(cellHeight);
+                th += h.width(cellHeight);
         }
         else  {
             Length ch = c->style()->height();
             if (ch.isFixed())
-                th = h.width(ch.value);
+                th += h.width(ch.value);
             else
-                // we need to substract out the margins of this block. -dwh
-                th = h.width(viewRect().height() - c->marginBottom() - c->marginTop());
+                // FIXME: Investigate this.  Seems wrong to always expand to fill the viewRect.
+                // We need to substract out the margins of this block. -dwh
+                th += h.width(viewRect().height() - c->marginBottom() - c->marginTop());
         }
     }
+    th = kMax(0, th);
 
     // layout rows
     if ( th > calculatedHeight ) {
@@ -355,11 +358,8 @@ void RenderTable::layout()
 	m_height += foot->height();
     }
 
-
-    m_height += borderBottom();
-    if (!collapseBorders())
-        m_height += paddingBottom();
-
+    m_height += bpBottom;
+               
     if(tCaption && tCaption->style()->captionSide()==CAPBOTTOM) {
         tCaption->setPos(tCaption->marginLeft(), m_height);
         m_height += tCaption->height() + tCaption->marginTop() + tCaption->marginBottom();
@@ -1295,7 +1295,9 @@ int RenderTableSection::layoutRows( int toAdd )
                 o = o->nextSibling();
             }
             if (cellChildrenFlex) {
-                cell->setCellPercentageHeight(rHeight);
+                cell->setCellPercentageHeight(kMax(0, 
+                                                   rHeight - cell->borderTop() - cell->paddingTop() - 
+                                                   cell->borderBottom() - cell->paddingBottom()));
                 cell->layoutIfNeeded();
            
                 // Alignment within a cell is based off the calculated

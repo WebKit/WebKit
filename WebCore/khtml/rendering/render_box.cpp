@@ -982,9 +982,17 @@ int RenderBox::calcPercentageHeight(const Length& height)
     // Table cells violate what the CSS spec says to do with heights.  Basically we
     // don't care if the cell specified a height or not.  We just always make ourselves
     // be a percentage of the cell's current content height.
-    if (cb->isTableCell())
+    if (cb->isTableCell()) {
         result = static_cast<RenderTableCell*>(cb)->getCellPercentageHeight();
-    
+        if (result == 0)
+            return -1;
+        // It is necessary to use the border-box to match WinIE's broken
+        // box model.  This is essential for sizing inside
+        // table cells using percentage heights.
+        result -= (borderTop() + paddingTop() + borderBottom() + paddingBottom());
+        result = kMax(0, result);
+    }
+
     // Otherwise we only use our percentage height if our containing block had a specified
     // height.
     else if (cb->style()->height().isFixed())
@@ -992,12 +1000,12 @@ int RenderBox::calcPercentageHeight(const Length& height)
     else if (cb->style()->height().isPercent())
         // We need to recur and compute the percentage height for our containing block.
         result = cb->calcPercentageHeight(cb->style()->height());
-    else if (cb->isCanvas()) {
+    else if (cb->isCanvas() || (cb->isBody() && style()->htmlHacks())) {
         // Don't allow this to affect the block' m_height member variable, since this
         // can get called while the block is still laying out its kids.
         int oldHeight = cb->height();
         cb->calcHeight();
-        result = cb->height();
+        result = cb->contentHeight();
         cb->setHeight(oldHeight);
     }
     if (result != -1)
