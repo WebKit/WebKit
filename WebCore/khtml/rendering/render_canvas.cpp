@@ -305,7 +305,8 @@ void RenderCanvas::absoluteRects(QValueList<QRect>& rects, int _tx, int _ty)
 
 QRect RenderCanvas::selectionRect() const
 {
-    QValueList<SelectionInfo> selectedObjects;
+    QPtrDict<SelectionInfo> selectedObjects;
+    selectedObjects.setAutoDelete(true);
     RenderObject* os = m_selectionStart;
     while (os) {
         RenderObject* no = 0;
@@ -321,29 +322,26 @@ QRect RenderCanvas::selectionRect() const
             }
         }
         
-        if ((os->canBeSelectionLeaf() || os == m_selectionStart || os == m_selectionEnd) &&
-            os->selectionState() != SelectionNone) {
+        if ((os->canBeSelectionLeaf() || os == m_selectionStart || os == m_selectionEnd) && os->selectionState() != SelectionNone) {
             // Blocks are responsible for painting line gaps and margin gaps.  They must be examined as well.
-            selectedObjects.append(SelectionInfo(os));
+            selectedObjects.insert(os, new SelectionInfo(os));
             RenderBlock* cb = os->containingBlock();
-            while (cb && !cb->hasDirtySelectionState() && cb->hasSelectedChildren()) {
-                selectedObjects.append(SelectionInfo(cb));
-                cb->setHasDirtySelectionState(true);
+            while (cb && !cb->isCanvas()) {
+                SelectionInfo* blockInfo = selectedObjects.find(cb);
+                if (blockInfo) break;
+                selectedObjects.insert(cb, new SelectionInfo(cb));
                 cb = cb->containingBlock();
             }
         }
-
+        
         os = no;
     }
 
     // Now create a single bounding box rect that encloses the whole selection.
     QRect selRect;
-    QValueListConstIterator<SelectionInfo> it;
-    for (it = selectedObjects.begin(); it != selectedObjects.end(); ++it) {
-        (*it).object()->setHasDirtySelectionState(false);
-        selRect = selRect.unite((*it).rect());
-    }
-
+    QPtrDictIterator<SelectionInfo> objects(selectedObjects);
+    for (objects.toFirst(); objects.current(); ++objects)
+        selRect = selRect.unite(objects.current()->rect());
     return selRect;
 }
 

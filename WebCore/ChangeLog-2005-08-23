@@ -1,3 +1,15 @@
+2004-10-26  David Hyatt  <hyatt@apple.com>
+
+	Convert selectionRect() from using a list to a dict and patch it to be like setSelection.  It was still trying
+	to use the old dirty bit optimization (which had been removed), and so it was pathologically slow on large documents.
+	
+        Reviewed by kocienda
+
+        * khtml/rendering/render_canvas.cpp:
+        (RenderCanvas::selectionRect):
+        * khtml/rendering/render_object.h:
+        (khtml::RenderObject::hasSelectedChildren):
+
 2004-10-26  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Hyatt

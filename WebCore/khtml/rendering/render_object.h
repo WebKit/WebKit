@@ -741,10 +741,6 @@ public:
 
     // Whether or not a block has selected children.
     virtual bool hasSelectedChildren() const { return false; }
-    
-    // A dirty bit used when determining the correct selection state of blocks.  Used to avoid repeatedly examining the same blocks.
-    virtual bool hasDirtySelectionState() const { return false; }
-    virtual void setHasDirtySelectionState(bool b) {}
 
     // Whether or not a selection can be attempted on this object.  Should only be called right before actually beginning a selection,
     // since it fires the selectstart DOM event.
