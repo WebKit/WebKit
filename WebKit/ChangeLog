@@ -1,3 +1,12 @@
+2004-01-06  Richard Williamson   <rjw@apple.com>
+
+	Fixed 3513660.  Make ATSU layout and draw with integer glyph boundaries.  This fix should be removed if/when we convert WebCore to use floats for measuring/positioning (3521781).
+
+        Reviewed by John.
+
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (-[WebTextRenderer _createATSUTextLayoutForRun:]):
+
 2004-01-05  Richard Williamson   <rjw@apple.com>
 
 	Fix for 3514454.  Work-around added for 3521759.

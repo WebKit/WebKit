@@ -1365,11 +1365,12 @@ static const char *joiningNames[] = {
         FATAL_ALWAYS ("ATSUCreateTextLayoutWithTextPtr failed(%d)", status);
 
     CGContextRef cgContext = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
-    ATSUAttributeTag tags[] = { kATSUCGContextTag};
-    ByteCount sizes[] = { sizeof(CGContextRef) };
-    ATSUAttributeValuePtr values[] = { &cgContext };
+    ATSLineLayoutOptions lineLayoutOptions = (kATSLineFractDisable | kATSLineDisableAutoAdjustDisplayPos | kATSLineUseDeviceMetrics);
+    ATSUAttributeTag tags[] = { kATSUCGContextTag, kATSULineLayoutOptionsTag };
+    ByteCount sizes[] = { sizeof(CGContextRef), sizeof(ATSLineLayoutOptions)  };
+    ATSUAttributeValuePtr values[] = { &cgContext, &lineLayoutOptions };
     
-    status = ATSUSetLayoutControls(layout, 1, tags, sizes, values);
+    status = ATSUSetLayoutControls(layout, 2, tags, sizes, values);
     if(status != noErr)
         FATAL_ALWAYS ("ATSUSetLayoutControls failed(%d)", status);
 
