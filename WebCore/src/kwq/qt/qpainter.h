@@ -63,7 +63,9 @@ public:
     void drawLine(int, int, int, int);
     void drawEllipse(int, int, int, int);
     void drawArc(int, int, int, int, int, int);
-    void drawPolygon(const QPointArray &, bool winding=FALSE, int index=0, int npoints=-1);
+    void drawPolyline(const QPointArray &, int index = 0, int npoints = -1);
+    void drawPolygon(const QPointArray &, bool winding = FALSE, int index = 0,
+            int npoints = -1);
     void drawPixmap(const QPoint &, const QPixmap &);
     void drawPixmap(const QPoint &, const QPixmap &, const QRect &);
     void drawTiledPixmap(int, int, int, int, const QPixmap &, int sx = 0, int sy = 0);
