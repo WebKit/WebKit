@@ -1,3 +1,5 @@
+=== Safari-82 ===
+
 2003-06-03  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3167792>: hang in _web_dragPromisedImage dragging 4 MB image
