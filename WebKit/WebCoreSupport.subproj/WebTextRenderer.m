@@ -242,7 +242,15 @@ static BOOL bufferTextDrawing = NO;
     substituteFont = [NSFont findFontLike:font forString:string withRange:NSMakeRange (0,[string length]) inLanguage:[NSLanguage defaultLanguage]];
 
     if ([substituteFont isEqual: font])
-        return nil;
+        substituteFont = nil;
+
+    // The character substitute font lookup is currently disabled.  I need to extend
+    // the character to glyph map to include a font, so we'll only pay the price for
+    // this lookup once, at the expense of replicating information in each WebTextRenderer. 
+#ifdef COMPLETE_SUBSTITUTE_CHECK       
+    if (substituteFont == nil && [string length] == 1)
+        substituteFont = [NSFont findFontLike:font forCharacter: [string characterAtIndex: 0] inLanguage:[NSLanguage defaultLanguage]];
+#endif
         
     return substituteFont;
 }
@@ -780,11 +788,11 @@ static const char *joiningNames[] = {
                 }
                 numGlyphs += cNumGlyphs;
             }
+
 #ifdef DEBUG_MISSING_GLYPH
             else {
-                BOOL hasFont1 = [[NSFont coveredCharacterCache] characterIsMember:c];
-                BOOL hasFont2 = [[NSFont coveredCharacterCache] characterIsMember:originalCharacters[i]];
-                printf ("Unable to find glyph for base character 0x%04x (0x%04x) in font %s(%s) hasFont1 = %d, hasFont2 = %d\n", c, originalCharacters[i], [[font displayName] cString], [[substituteFont displayName] cString], (int)hasFont1, (int)hasFont2);
+                BOOL hasFont = [[NSFont coveredCharacterCache] characterIsMember:c];
+                printf ("Unable to find glyph for base character 0x%04x in font %s(%s) hasFont1 = %d\n", c, [[font displayName] cString], [[substituteFont displayName] cString], (int)hasFont);
             }
 #endif
         }

@@ -1,3 +1,14 @@
+2002-11-08  Richard Williamson   <rjw@apple.com>
+
+        Solved missing glyph problem, but it's very slow, so
+        it's disabled for now.  I'll turn back on after extending
+        the character to glyph map in each renderer to include
+        substituted font.
+        
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (-[WebTextRenderer substituteFontForString:]):
+        (-[WebTextRenderer _floatWidthForCharacters:stringLength:fromCharacterPosition:numberOfCharacters:withPadding:applyRounding:attemptFontSubstitution:widths:fonts:glyphs:numGlyphs:]):
+
 2002-11-08  Darin Adler  <darin@apple.com>
 
 	- separate WebBaseNetscapePluginStream more cleanly from its subclasses
