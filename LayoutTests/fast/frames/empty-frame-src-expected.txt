@@ -6,15 +6,15 @@ layer at (0,0) size 800x600
       RenderFrame {FRAME} at (0,0) size 800x197
         layer at (0,0) size 783x193
           RenderCanvas at (0,0) size 783x193
-        layer at (0,0) size 783x8
-          RenderBlock {HTML} at (0,0) size 783x8
-            RenderBody {BODY} at (8,8) size 767x0 [bgcolor=#FF0000]
+        layer at (0,0) size 783x193
+          RenderBlock {HTML} at (0,0) size 783x193
+            RenderBody {BODY} at (8,8) size 767x177 [bgcolor=#FF0000]
       RenderFrame {FRAME} at (0,201) size 800x197
         layer at (0,0) size 783x193
           RenderCanvas at (0,0) size 783x193
-        layer at (0,0) size 783x8
-          RenderBlock {HTML} at (0,0) size 783x8
-            RenderBody {BODY} at (8,8) size 767x0 [bgcolor=#800080]
+        layer at (0,0) size 783x193
+          RenderBlock {HTML} at (0,0) size 783x193
+            RenderBody {BODY} at (8,8) size 767x177 [bgcolor=#800080]
       RenderFrame {FRAME} at (0,402) size 800x197
         layer at (0,0) size 783x193
           RenderCanvas at (0,0) size 783x193

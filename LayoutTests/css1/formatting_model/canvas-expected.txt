@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderCanvas at (0,0) size 800x600
-layer at (0,0) size 800x305
-  RenderBlock {HTML} at (0,0) size 800x305 [bgcolor=#00FFFF]
-    RenderBody {BODY} at (25,25) size 750x255 [bgcolor=#008000]
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600 [bgcolor=#00FFFF]
+    RenderBody {BODY} at (25,25) size 750x550 [bgcolor=#008000]
       RenderBlock {P} at (0,0) size 750x18
         RenderText {TEXT} at (0,0) size 355x18
           text run at (0,0) width 355: "The style declarations which apply to the text below are:"

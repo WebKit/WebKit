@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderCanvas at (0,0) size 800x600
-layer at (0,0) size 800x34
-  RenderBlock {HTML} at (0,0) size 800x34
-    RenderBody {BODY} at (8,8) size 784x18
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
       RenderText {TEXT} at (0,0) size 619x18
         text run at (0,0) width 619: "You should see a single green stripe below. The test has failed if you don't see a perfect rectangle. "
 layer at (8,26) size 96x370

@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderCanvas at (0,0) size 800x600
-layer at (0,0) size 800x239
-  RenderBlock {HTML} at (0,0) size 800x239
-    RenderBody {BODY} at (8,8) size 784x223 [bgcolor=#FFFFFF]
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584 [bgcolor=#FFFFFF]
       RenderBlock {H2} at (0,0) size 784x28
         RenderText {TEXT} at (0,0) size 357x28
           text run at (0,0) width 357: "Safari Whitespace/Non-ASCII Bug"

@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderCanvas at (0,0) size 800x600
-layer at (0,0) size 800x58
-  RenderBlock {HTML} at (0,0) size 800x58
-    RenderBody {BODY} at (8,8) size 784x42
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
       RenderTable {TABLE} at (0,0) size 153x42
         RenderTableSection {TBODY} at (0,0) size 0x42
           RenderTableRow {TR} at (0,0) size 0x0

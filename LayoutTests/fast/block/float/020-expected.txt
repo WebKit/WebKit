@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderCanvas at (0,0) size 800x600
-layer at (0,0) size 800x502
-  RenderBlock {HTML} at (0,0) size 800x502
-    RenderBody {BODY} at (8,8) size 784x478
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {P} at (0,0) size 784x90
         RenderText {TEXT} at (0,0) size 777x90
           text run at (0,0) width 763: "P1: This represents the header and should be flush-left. Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam"

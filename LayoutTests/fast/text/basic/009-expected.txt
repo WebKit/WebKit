@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderCanvas at (0,0) size 800x600
-layer at (0,0) size 800x44
-  RenderBlock {HTML} at (0,0) size 800x44
-    RenderBody {BODY} at (8,8) size 784x28
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
       RenderInline {SPAN} at (0,0) size 331x28
         RenderText {TEXT} at (0,0) size 177x28
           text run at (0,0) width 177: "This is some text. "

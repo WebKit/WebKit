@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderCanvas at (0,0) size 800x600
-layer at (0,0) size 800x556
-  RenderBlock {HTML} at (0,0) size 800x556
-    RenderBody {BODY} at (8,8) size 784x540
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIR} at (0,0) size 784x104
         RenderBlock (anonymous) at (40,0) size 744x18
           RenderText {TEXT} at (0,0) size 27x18

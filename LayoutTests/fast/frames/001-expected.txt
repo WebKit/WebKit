@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderCanvas at (0,0) size 800x600
-layer at (0,0) size 800x208
-  RenderBlock {HTML} at (0,0) size 800x208
-    RenderBody {BODY} at (8,8) size 784x192 [color=#FFFFFF] [bgcolor=#000000]
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584 [color=#FFFFFF] [bgcolor=#000000]
       RenderText {TEXT} at (0,0) size 522x18
         text run at (0,0) width 522: "The three red squares below should all look the same and be filled only with black."
       RenderBR {BR} at (0,0) size 0x0

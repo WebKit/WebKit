@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderCanvas at (0,0) size 800x600
-layer at (0,0) size 800x96
-  RenderBlock {HTML} at (0,0) size 800x96
-    RenderBody {BODY} at (8,8) size 784x80
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x80 [border: (5px solid #000000)]
         RenderFieldSet {FIELDSET} at (7,5) size 770x70 [border: (10px groove #FF0000)]
           RenderLegend {LEGEND} at (40,0) size 123x18
