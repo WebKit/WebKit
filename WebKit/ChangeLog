@@ -1,3 +1,15 @@
+2004-08-15  Richard Williamson   <rjw@apple.com>
+
+        More changes to np headers.
+        
+        Reviewed by Darin.
+
+        * Plugins.subproj/WebNetscapePluginPackage.m:
+        (-[WebNetscapePluginPackage load]):
+        * Plugins.subproj/npapi.h:
+        * Plugins.subproj/npfunctions.h:
+        * Plugins.subproj/npruntime.h:
+
 2004-08-13  Darin Adler  <darin@apple.com>
 
         Reviewed by Chris.

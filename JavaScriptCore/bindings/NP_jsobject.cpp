@@ -278,3 +278,60 @@ bool NPN_RemoveProperty (NPP npp, NPObject *o, NPIdentifier propertyName)
     return false;
 }
 
+bool NPN_HasProperty(NPP npp, NPObject *o, NPIdentifier propertyName)
+{
+    if (o->_class == NPScriptObjectClass) {
+        JavaScriptObject *obj = (JavaScriptObject *)o; 
+        ExecState *exec = obj->root->interpreter()->globalExec();
+
+        PrivateIdentifier *i = (PrivateIdentifier *)propertyName;
+        // String identifier?
+        if (i->isString) {
+            ExecState *exec = obj->root->interpreter()->globalExec();
+            Interpreter::lock();
+            bool result = obj->imp->hasProperty (exec, identiferFromNPIdentifier(i->value.string));
+            Interpreter::unlock();
+            return result;
+        }
+        
+        // Numeric identifer
+        Interpreter::lock();
+        bool result = obj->imp->hasProperty (exec, i->value.number);
+        Interpreter::unlock();
+        return result;
+    }
+    else if (o->_class->hasProperty) {
+        return o->_class->hasProperty (o->_class, propertyName);
+    }
+    
+    return false;
+}
+
+bool NPN_HasMethod(NPP npp, NPObject *o, NPIdentifier methodName)
+{
+    if (o->_class == NPScriptObjectClass) {
+        JavaScriptObject *obj = (JavaScriptObject *)o; 
+        
+        PrivateIdentifier *i = (PrivateIdentifier *)methodName;
+        if (!i->isString)
+            return false;
+            
+        // Lookup the function object.
+        ExecState *exec = obj->root->interpreter()->globalExec();
+        Interpreter::lock();
+        Value func = obj->imp->get (exec, identiferFromNPIdentifier(i->value.string));
+        Interpreter::unlock();
+
+        if (func.isNull() || func.type() == UndefinedType) {
+            return false;
+        }
+        
+        return true;
+    }
+    
+    else if (o->_class->hasMethod) {
+        return o->_class->hasMethod (o->_class, methodName);
+    }
+    
+    return false;
+}

@@ -102,7 +102,8 @@ extern "C" {
     header.
 
     To the extent possible the assumptions about the scripting
-    language used by the scripting environment have been minimized.*/
+    language used by the scripting environment have been minimized.
+*/
 
 
 /*

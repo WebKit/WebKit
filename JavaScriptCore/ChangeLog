@@ -1,3 +1,15 @@
+2004-08-15  Richard Williamson   <rjw@apple.com>
+
+	More updates to np headers.  Implemented new NPN functions.
+
+        Reviewed by Darin.
+
+        * bindings/NP_jsobject.cpp:
+        (NPN_HasProperty):
+        (NPN_HasMethod):
+        * bindings/npapi.h:
+        * bindings/npruntime.h:
+
 2004-08-13  Darin Adler  <darin@apple.com>
 
         - fix build so we can compile again
