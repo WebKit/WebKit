@@ -180,7 +180,7 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
     [self setPath:thePath];
     
     NSDictionary *fileInfo = [[NSFileManager defaultManager] fileAttributesAtPath:thePath traverseLink:YES];
-    UInt32 type = 0;
+    OSType type = 0;
 
     // bundle
     if ([[fileInfo objectForKey:NSFileType] isEqualToString:NSFileTypeDirectory]) {
@@ -194,11 +194,11 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
 #ifdef __ppc__
     // single-file plug-in with resource fork
     if ([[fileInfo objectForKey:NSFileType] isEqualToString:NSFileTypeRegular]) {
-        type = [[fileInfo objectForKey:NSFileHFSTypeCode] unsignedLongValue];
+        type = [fileInfo fileHFSTypeCode];
         isBundle = NO;
     }
 #endif
-
+    
     if (type != FOUR_CHAR_CODE('BRPL')) {
         [self release];
         return nil;
@@ -226,6 +226,14 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
     }
 
     if (![self getMIMEInformation]) {
+        [self release];
+        return nil;
+    }
+
+    // Reject RealPlayer because we know it doesn't work.
+    // The Real folks can workaround this by not using the same creator code as Flash.
+    if ([[self filename] rangeOfString:@"RealPlayer"].location != NSNotFound &&
+        [fileInfo fileHFSCreatorCode] == 'MOSS') {
         [self release];
         return nil;
     }

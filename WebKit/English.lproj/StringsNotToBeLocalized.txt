@@ -233,7 +233,6 @@ History.subproj/WebHistoryItem.m:"title"
 Misc.subproj/WebKitLogging.m
 Plugins.subproj/WebBasePluginPackage.m:"name: %@\npath: %@\nmimeTypes:\n%@\npluginDescription:%@"
 Plugins.subproj/WebNetscapePluginPackage.m:"main"
-Plugins.subproj/npapi.m:"Microsoft Internet Explorer"
 WebCoreSupport.subproj/WebBridge.m:"height"
 WebCoreSupport.subproj/WebBridge.m:"width"
 WebCoreSupport.subproj/WebCookieAdapter.m:"Cookie"
