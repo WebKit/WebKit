@@ -1,5 +1,5 @@
-/*	
-    WebBaseNetscapePluginView.h
+/*
+        WebBaseNetscapePluginView.h
 	Copyright 2002, Apple, Inc. All rights reserved.
 */
 

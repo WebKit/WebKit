@@ -1,10 +1,7 @@
-//
-//  WebNetscapePluginEmbeddedView.m
-//  WebKit
-//
-//  Created by Administrator on Mon Sep 30 2002.
-//  Copyright (c) 2002 __MyCompanyName__. All rights reserved.
-//
+/*
+        WebNetscapePluginEmbeddedView.m
+	Copyright 2002, Apple, Inc. All rights reserved.
+*/
 
 #import <WebKit/WebBaseNetscapePluginViewPrivate.h>
 #import <WebKit/WebController.h>
@@ -56,16 +53,11 @@
     
     if ([self window]){
         [self start];
-    }
-}
-
-- (void)start
-{
-    [super start];
-
-    if(URL){
-        WebResourceRequest *request = [WebResourceRequest requestWithURL:URL];
-        [self loadRequest:request inTarget:nil withNotifyData:nil];
+        
+        if(URL){
+            WebResourceRequest *request = [WebResourceRequest requestWithURL:URL];
+            [self loadRequest:request inTarget:nil withNotifyData:nil];
+        }
     }
 }
 

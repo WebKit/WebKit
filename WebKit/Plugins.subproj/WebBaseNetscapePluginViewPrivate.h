@@ -1,10 +1,7 @@
-//
-//  WebPluginViewPrivate.h
-//  WebKit
-//
-//  Created by Darin Adler on Tue Aug 27 2002.
-//  Copyright (c) 2002 Apple Computer, Inc. All rights reserved.
-//
+/*
+        WebBaseNetscapePluginView.h
+	Copyright 2002, Apple, Inc. All rights reserved.
+*/
 
 #import <WebBaseNetscapePluginView.h>
 

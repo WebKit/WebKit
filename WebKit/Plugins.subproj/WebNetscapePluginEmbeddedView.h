@@ -1,10 +1,7 @@
-//
-//  WebNetscapePluginEmbeddedView.h
-//  WebKit
-//
-//  Created by Administrator on Mon Sep 30 2002.
-//  Copyright (c) 2002 __MyCompanyName__. All rights reserved.
-//
+/*
+        WebNetscapePluginEmbeddedView.h
+	Copyright 2002, Apple, Inc. All rights reserved.
+*/
 
 #import <AppKit/AppKit.h>
 

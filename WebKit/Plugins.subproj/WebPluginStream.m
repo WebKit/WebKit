@@ -1,9 +1,7 @@
 /*	
-    WebPluginStream.m
+        WebPluginStream.m
 	Copyright (c) 2002, Apple, Inc. All rights reserved.
 */
-
-
 
 #import <WebKit/WebBaseNetscapePluginView.h>
 #import <WebKit/WebControllerPrivate.h>

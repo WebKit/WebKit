@@ -1,3 +1,26 @@
+2002-10-01  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed copyright comments.
+
+        * Plugins.subproj/WebBaseNetscapePluginView.h:
+        * Plugins.subproj/WebBaseNetscapePluginViewPrivate.h:
+        * Plugins.subproj/WebNetscapePluginDocumentView.h:
+        * Plugins.subproj/WebNetscapePluginDocumentView.m:
+        * Plugins.subproj/WebNetscapePluginEmbeddedView.h:
+        * Plugins.subproj/WebNetscapePluginEmbeddedView.m:
+        * Plugins.subproj/WebNullPluginView.h:
+        * Plugins.subproj/WebNullPluginView.m:
+        * Plugins.subproj/WebPlugin.h:
+        * Plugins.subproj/WebPlugin.m:
+        * Plugins.subproj/WebPluginDatabase.h:
+        * Plugins.subproj/WebPluginDatabase.m:
+        * Plugins.subproj/WebPluginNullEventSender.h:
+        * Plugins.subproj/WebPluginNullEventSender.m:
+        * Plugins.subproj/WebPluginStream.h:
+        * Plugins.subproj/WebPluginStream.m:
+        * Plugins.subproj/npapi.h:
+        * Plugins.subproj/npapi.m:
+
 2002-10-01  Ken Kocienda  <kocienda@apple.com>
 
 	Many changes to coincide with API work in WebFoundation. Most of the modifications
