@@ -1,3 +1,15 @@
+2004-04-03  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3601728, text overlaps borders at ejai.org.  Remove all the code in addForbidden for
+	dir, menu, nobr, and pre that made them too restrictive regarding what child tags they could
+	contain.
+	
+        Reviewed by kocienda
+
+        * khtml/html/dtd.cpp:
+        (DOM::addForbidden):
+        (DOM::removeForbidden):
+
 2004-04-02  Chris Blumenberg  <cblu@apple.com>
 
 	Moved the DOM extensions to their own headers

@@ -763,60 +763,6 @@ void DOM::addForbidden(int tagId, ushort *forbiddenTags)
 {
     switch(tagId)
     {
-    case ID_A:
-        // we allow nested anchors. The innermost one wil be taken...
-        //forbiddenTags[ID_A]++;
-        break;
-    case ID_NOBR:
-        forbiddenTags[ID_PRE]++;
-        // fall through
-    case ID_PRE:
-    case ID_PLAINTEXT:
-    case ID_XMP:
-        //forbiddenTags[ID_IMG]++;
-        forbiddenTags[ID_OBJECT]++;
-        forbiddenTags[ID_EMBED]++;
-        forbiddenTags[ID_APPLET]++;
-        // why forbid them. We can deal with them in PRE
-        //forbiddenTags[ID_BIG]++;
-        //forbiddenTags[ID_SMALL]++;
-        //forbiddenTags[ID_SUB]++;
-        //forbiddenTags[ID_SUP]++;
-        forbiddenTags[ID_BASEFONT]++;
-        break;
-    case ID_DIR:
-    case ID_MENU:
-        forbiddenTags[ID_P]++;
-        forbiddenTags[ID_H1]++;
-        forbiddenTags[ID_H2]++;
-        forbiddenTags[ID_H3]++;
-        forbiddenTags[ID_H4]++;
-        forbiddenTags[ID_H5]++;
-        forbiddenTags[ID_H6]++;
-        forbiddenTags[ID_UL]++;
-        forbiddenTags[ID_OL]++;
-        forbiddenTags[ID_DIR]++;
-        forbiddenTags[ID_MENU]++;
-        forbiddenTags[ID_PRE]++;
-        forbiddenTags[ID_PLAINTEXT]++;
-        forbiddenTags[ID_XMP]++;
-        forbiddenTags[ID_DL]++;
-        forbiddenTags[ID_DIV]++;
-        forbiddenTags[ID_CENTER]++;
-        forbiddenTags[ID_NOSCRIPT]++;
-        forbiddenTags[ID_NOFRAMES]++;
-        forbiddenTags[ID_BLOCKQUOTE]++;
-        forbiddenTags[ID_FORM]++;
-        forbiddenTags[ID_ISINDEX]++;
-        forbiddenTags[ID_HR]++;
-        forbiddenTags[ID_TABLE]++;
-        forbiddenTags[ID_FIELDSET]++;
-        forbiddenTags[ID_ADDRESS]++;
-        break;
-    case ID_FORM:
-        // the parser deals with them in another way. helps supporting some broken html
-        //forbiddenTags[ID_FORM]++;
-        break;
     case ID_LABEL:
         forbiddenTags[ID_LABEL]++;
         break;
@@ -841,57 +787,6 @@ void DOM::removeForbidden(int tagId, ushort *forbiddenTags)
 {
     switch(tagId)
     {
-    case ID_A:
-        //forbiddenTags[ID_A]--;
-        break;
-    case ID_NOBR:
-        forbiddenTags[ID_PRE]--;
-        // fall through
-    case ID_PRE:
-    case ID_XMP:
-    case ID_PLAINTEXT:
-        //forbiddenTags[ID_IMG]--;
-        forbiddenTags[ID_OBJECT]--;
-        forbiddenTags[ID_EMBED]--;
-        forbiddenTags[ID_APPLET]--;
-        //forbiddenTags[ID_BIG]--;
-        //forbiddenTags[ID_SMALL]--;
-        //forbiddenTags[ID_SUB]--;
-        //forbiddenTags[ID_SUP]--;
-        forbiddenTags[ID_BASEFONT]--;
-        break;
-    case ID_DIR:
-    case ID_MENU:
-        forbiddenTags[ID_P]--;
-        forbiddenTags[ID_H1]--;
-        forbiddenTags[ID_H2]--;
-        forbiddenTags[ID_H3]--;
-        forbiddenTags[ID_H4]--;
-        forbiddenTags[ID_H5]--;
-        forbiddenTags[ID_H6]--;
-        forbiddenTags[ID_UL]--;
-        forbiddenTags[ID_OL]--;
-        forbiddenTags[ID_DIR]--;
-        forbiddenTags[ID_MENU]--;
-        forbiddenTags[ID_PRE]--;
-        forbiddenTags[ID_PLAINTEXT]--;
-        forbiddenTags[ID_XMP]--;
-        forbiddenTags[ID_DL]--;
-        forbiddenTags[ID_DIV]--;
-        forbiddenTags[ID_CENTER]--;
-        forbiddenTags[ID_NOSCRIPT]--;
-        forbiddenTags[ID_NOFRAMES]--;
-        forbiddenTags[ID_BLOCKQUOTE]--;
-        forbiddenTags[ID_FORM]--;
-        forbiddenTags[ID_ISINDEX]--;
-        forbiddenTags[ID_HR]--;
-        forbiddenTags[ID_TABLE]--;
-        forbiddenTags[ID_FIELDSET]--;
-        forbiddenTags[ID_ADDRESS]--;
-        break;
-    case ID_FORM:
-        //forbiddenTags[ID_FORM]--;
-        break;
     case ID_LABEL:
         forbiddenTags[ID_LABEL]--;
         break;
