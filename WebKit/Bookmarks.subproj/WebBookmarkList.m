@@ -207,7 +207,7 @@
 
     [_list insertObject:bookmark atIndex:index];
     [bookmark _setParent:self];
-    [[self group] _addBookmark:self];
+    [[self group] _addBookmark:bookmark];
 
     [[self group] _bookmarkChildren:[NSArray arrayWithObject:bookmark] wereAddedToParent:self]; 
 }

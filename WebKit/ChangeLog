@@ -1,3 +1,16 @@
+2003-01-27  John Sullivan  <sullivan@apple.com>
+
+	- fixed 3156744 -- REGRESSION: Renaming bookmarks dragged 
+	into bookmark bar does not work at first
+
+        Reviewed by Darin
+
+        * Bookmarks.subproj/WebBookmarkList.m:
+        (-[WebBookmarkList insertChild:atIndex:]):
+	was adding self to its own group (a no-op), instead of adding
+	the new child to self's group. This was a typo from the
+	refactoring to fix 3152427.
+
 2003-01-27  Chris Blumenberg  <cblu@apple.com>
 
         * English.lproj/StringsNotToBeLocalized.txt: Updated for changes I previously made.
