@@ -1,3 +1,20 @@
+2002-07-18  Maciej Stachowiak  <mjs@apple.com>
+
+	Some refactoring in preparation for the KHTMLPart change.
+	
+        * WebView.subproj/WebDataSourcePrivate.h,
+	WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _stopLoading]): Bail early if not loading.
+        (-[WebDataSource _commit]): Method to mark when the data source is
+	committed (it now knows whether it's committed or
+	provisional). This will be useful for adding assertions later on
+	about what operations may happen only when committed, and which
+	can only happen when provisional.
+
+	* WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _transitionProvisionalToCommitted]): Call data
+	source's _commit method.
+
 2002-07-17  Richard Williamson  <rjw@apple.com>
 
         * WebView.subproj/WebHTMLView.m:
@@ -7,7 +24,7 @@
 
 	Some refactoring in preparation for the KHTMLPart change.
 	
-        * WebView.subproj/WebController.m: 
+        * WebView.subproj/WebController.m:
 	(-[WebController haveContentPolicy:andPath:forDataSource:]): Move
 	more of the work of creating and setting the representation and
 	document view into WebDataSource and WebView.

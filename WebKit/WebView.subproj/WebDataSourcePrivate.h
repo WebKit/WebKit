@@ -67,6 +67,8 @@
     WebContentPolicy contentPolicy;
 
     BOOL loading; // self and controller are retained while loading
+
+    BOOL committed; // This data source has been committed
 }
 
 @end
@@ -104,4 +106,6 @@
 // Convenience interface for getting here from an WebDataSource.
 // This returns nil if the representation is not an WebHTMLRepresentation.
 - (WebBridge *)_bridge;
+
+- (void)_commit;
 @end

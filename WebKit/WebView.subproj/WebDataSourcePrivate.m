@@ -194,6 +194,10 @@
     int i, count;
     WebResourceHandle *handle;
 
+    if (!_private->loading) {
+	return;
+    }
+
     _private->stopping = YES;
     
     [_private->mainHandle cancelLoadInBackground];
@@ -405,6 +409,11 @@
 {
     id representation = [self representation];
     return [representation respondsToSelector:@selector(_bridge)] ? [representation _bridge] : nil;
+}
+
+-(void)_commit
+{
+    _private->committed = TRUE;
 }
 
 @end

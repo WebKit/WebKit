@@ -223,11 +223,13 @@ static const char * const stateNames[6] = {
 
             // Set the committed data source on the frame.
             [self _setDataSource: _private->provisionalDataSource];
-            
+
+            [_private->provisionalDataSource _commit];
+
             // provisionalDataSourceCommitted: will reset the view and begin trying to
             // display the new new datasource.
             [documentView provisionalDataSourceCommitted: _private->provisionalDataSource];
- 
+
             // Now that the provisional data source is committed, release it.
             [_private setProvisionalDataSource: nil];
         
