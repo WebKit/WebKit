@@ -79,7 +79,8 @@ CFStringEncoding KWQCFStringEncodingFromIANACharsetName(CFStringRef charsetName)
   if (CFDictionaryGetValueIfPresent(nameToEncoding, (void *) charsetName, &value)) {
     return (CFStringEncoding) value;
   } else {
-    return kCFStringEncodingInvalidId;
+    // FIXME: This cast to CFStringEncoding is a workaround for Radar 2912404.
+    return (CFStringEncoding) kCFStringEncodingInvalidId;
   }
 }
 
@@ -95,7 +96,8 @@ CFStringEncoding KWQCFStringEncodingFromMIB(int mib)
   if (CFDictionaryGetValueIfPresent(mibToEncoding, (void *) mib,  &value)) {
     return (CFStringEncoding) value;
   } else {
-    return kCFStringEncodingInvalidId;
+    // FIXME: This cast to CFStringEncoding is a workaround for Radar 2912404.
+    return (CFStringEncoding) kCFStringEncodingInvalidId;
   }
 }
 

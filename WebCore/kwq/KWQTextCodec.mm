@@ -88,7 +88,8 @@ QTextCodec *QTextCodec::codecForMib(int mib)
 
     encoding = KWQCFStringEncodingFromMIB(mib);
 
-    if (encoding == kCFStringEncodingInvalidId) {
+    // FIXME: This cast to CFStringEncoding is a workaround for Radar 2912404.
+    if (encoding == (CFStringEncoding) kCFStringEncodingInvalidId) {
         return NULL;
     } else {
         return codecForCFStringEncoding(encoding);
@@ -106,7 +107,8 @@ QTextCodec *QTextCodec::codecForName(const char *name, int accuracy)
     encoding = KWQCFStringEncodingFromIANACharsetName(cfname);
     CFRelease(cfname);
 
-    if (encoding == kCFStringEncodingInvalidId) {
+    // FIXME: This cast to CFStringEncoding is a workaround for Radar 2912404.
+    if (encoding == (CFStringEncoding) kCFStringEncodingInvalidId) {
         return NULL;
     } else {
         return codecForCFStringEncoding(encoding);

@@ -1,4 +1,20 @@
-:RU2002-04-25  Darin Adler  <darin@apple.com>
+2002-04-25  Darin Adler  <darin@apple.com>
+
+	Add a workaround for Radar 2912404 (kCFStringEncodingInvalidId is negative even
+	though CFStringEncoding is unsigned)
+
+	* kwq/KWQCharsets.mm:
+	(KWQCFStringEncodingFromIANACharsetName):
+	(KWQCFStringEncodingFromMIB):
+	* kwq/KWQtextcodec.mm:
+	(QTextCodec::codecForMib):
+	(QTextCodec::codecForName):
+	* kwq/make-charset-table.pl:
+	Add casts to (CFStringEncoding) wherever we use kCFStringEncodingInvalidId.
+
+2002-04-25  Darin Adler  <darin@apple.com>
+
+	Rework plugin code to prepare to move more of it into WebKit.
 
 	* khtml/rendering/render_applet.cpp:
 	(RenderApplet::RenderApplet): Create a widget for the applet using

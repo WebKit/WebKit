@@ -13,7 +13,8 @@ my %used_mac_encodings;
 
 my $already_wrote_one = 0;
 
-
+# FIXME: This cast to CFStringEncoding is a workaround for Radar 2912404.
+my $invalid_encoding = "((CFStringEncoding)kCFStringEncodingInvalidId)";
 
 sub emit_prefix
 {
@@ -22,7 +23,7 @@ sub emit_prefix
 
 sub emit_suffix
 {
-    print TABLE ",\n    {NULL,\n     -1,\n     kCFStringEncodingInvalidId}\n};\n";
+    print TABLE ",\n    {NULL,\n     -1,\n     $invalid_encoding}\n};\n";
 }
 
 
@@ -35,7 +36,7 @@ sub emit_output
 	$mib_enum = "1004";
     }
 
-    my $mac_string_encoding = "kCFStringEncodingInvalidId";
+    my $mac_string_encoding = $invalid_encoding;
 
     foreach my $name ($canonical_name, @aliases) {
 	$name =~ tr/A-Z/a-z/;
@@ -45,7 +46,7 @@ sub emit_output
 	}
     }
 
-    unless ($MAC_SUPPORTED_ONLY && $mac_string_encoding eq "kCFStringEncodingInvalidId") {
+    unless ($MAC_SUPPORTED_ONLY && $mac_string_encoding eq $invalid_encoding) {
 	foreach my $name ($canonical_name, @aliases) {
 	    print TABLE ",\n" if ($already_wrote_one);
             print TABLE '    {"' . ${name} . '",' . "\n";
