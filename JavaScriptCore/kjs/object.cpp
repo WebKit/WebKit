@@ -530,6 +530,7 @@ Object Error::create(ExecState *exec, ErrorType errtype, const char *message,
   if (sourceId != -1)
     err.put(exec, "sourceId", Number(sourceId));
 
+  if(sourceURL)
    err.put(exec,"sourceURL", String(*sourceURL));
  
   return err;

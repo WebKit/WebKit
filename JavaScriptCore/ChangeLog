@@ -1,3 +1,12 @@
+2004-06-04  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by Darin
+	
+	 - fixed <rdar://problem/3680594>
+
+        * kjs/object.cpp:
+        (KJS::Error::create):
+
 === Safari-143 ===
 
 2004-06-04  Darin Adler  <darin@apple.com>
