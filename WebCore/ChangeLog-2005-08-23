@@ -1,3 +1,21 @@
+2003-04-11  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by darin
+
+        * ChangeLog:
+        * khtml/css/cssstyleselector.cpp:
+        * khtml/html/htmltokenizer.cpp:
+        (HTMLTokenizer::parseComment):
+
+2003-04-11  David Hyatt  <hyatt@apple.com>
+
+	Refine the code that sets the display of floating and positioned
+	elements to block.
+	
+        Reviewed by darin
+
+        * khtml/css/cssstyleselector.cpp:
+
 2003-04-14  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed build failure.
@@ -116,7 +134,7 @@
         if you searched for a non-ASCII character in a string that had ASCII valid and
         not Unicode valid.
         (QString::replace): Added replace(QChar, QChar).
-        
+
 === Safari-73 ===
 
 2003-04-10  Trey Matteson  <trey@apple.com>

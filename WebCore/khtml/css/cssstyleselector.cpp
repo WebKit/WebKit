@@ -474,11 +474,17 @@ RenderStyle *CSSStyleSelector::styleForElement(ElementImpl *e)
     // Mutate the display to BLOCK or TABLE for certain cases, e.g., if someone attempts to
     // position or float an inline, compact, or run-in.
     if (style->position() == ABSOLUTE || style->position() == FIXED || style->floating() != FNONE) {
-        if (style->display() == INLINE || style->display() == COMPACT ||
-            style->display() == RUN_IN) // || style->display() == INLINE_BLOCK) FIXME!!!
-            style->setDisplay(BLOCK);
-        else if (style->display() == INLINE_TABLE)
+        if (style->display() == INLINE_TABLE)
             style->setDisplay(TABLE);
+        else if (style->display() == LIST_ITEM) {
+            // It is a WinIE bug that floated list items lose their bullets, so we'll emulate the quirk,
+            // but only in quirks mode.
+            if (!strictParsing && style->floating() != FNONE)
+                style->setDisplay(BLOCK);
+        }
+        else
+            style->setDisplay(BLOCK);
+        
     }
 
     // Finally update our text decorations in effect, but don't allow text-decoration to percolate through
@@ -1734,9 +1740,7 @@ void CSSStyleSelector::applyRule( int id, DOM::CSSValueImpl *value )
         default:
             return;
         }
-        if (f!=FNONE && style->display()==LIST_ITEM)
-            style->setDisplay(BLOCK);
-
+        
         style->setFloating(f);
         break;
     }

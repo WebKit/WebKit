@@ -580,7 +580,12 @@ void HTMLTokenizer::parseComment(DOMStringIt &src)
         if (src->unicode() == '>' &&
             ( ( brokenComments && !( script || style ) ) ||
               ( scriptCodeSize > 2 && scriptCode[scriptCodeSize-3] == '-' &&
-                scriptCode[scriptCodeSize-2] == '-' ) ) ) {
+                scriptCode[scriptCodeSize-2] == '-' ) ||
+              // Other browsers will accept --!> as a close comment, even though it's
+              // not technically valid.
+              ( scriptCodeSize > 3 && scriptCode[scriptCodeSize-4] == '-' &&
+                scriptCode[scriptCodeSize-3] == '-' &&
+                scriptCode[scriptCodeSize-2] == '!' ) ) ) {
             ++src;
             if ( !( script || xmp || textarea || style) ) {
 #ifdef COMMENTS_IN_DOM
