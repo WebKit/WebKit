@@ -71,14 +71,12 @@ public:
     {
         underMouse = 0;
         reset();
-        paintBuffer=0;
         formCompletions=0;
         prevScrollbarVisible = true;
     }
     ~KHTMLViewPrivate()
     {
         delete formCompletions;
-        delete paintBuffer; paintBuffer =0;
         if (underMouse)
 	    underMouse->deref();
     }
@@ -108,6 +106,8 @@ public:
 	isDoubleClick = false;
     }
 
+    // The paintBuffer ivar is obsolete, 
+    // and should probably be removed at some point
     QPixmap  *paintBuffer;
     NodeImpl *underMouse;
 
@@ -221,8 +221,6 @@ void KHTMLView::init()
     lstViews->setAutoDelete( FALSE );
     lstViews->append( this );
 
-    if(!d->paintBuffer) d->paintBuffer = new QPixmap(PAINT_BUFFER_HEIGHT, PAINT_BUFFER_HEIGHT);
-    
     setFocusPolicy(QWidget::StrongFocus);
     viewport()->setFocusPolicy( QWidget::WheelFocus );
     viewport()->setFocusProxy(this);
@@ -309,37 +307,19 @@ void KHTMLView::drawContents( QPainter *p, int ex, int ey, int ew, int eh )
         return;
     }
 
-    //kdDebug( 6000 ) << "drawContents x=" << ex << ",y=" << ey << ",w=" << ew << ",h=" << eh << endl;
-
-    if ( d->paintBuffer->width() < visibleWidth() )
-        d->paintBuffer->resize(visibleWidth(),PAINT_BUFFER_HEIGHT);
-
-    int py=0;
-    while (py < eh) {
-        int ph = eh-py < PAINT_BUFFER_HEIGHT ? eh-py : PAINT_BUFFER_HEIGHT;
-        
-        // FIXME!
-        RenderObject *ro;
-        DOM::DocumentImpl *doc;
-        
-        doc = m_part->xmlDocImpl();
-        if (doc){
-            ro = doc->renderer();
-            if (ro){
+    // FIXME!
+    RenderObject *ro;
+    DOM::DocumentImpl *doc;
+    
+    doc = m_part->xmlDocImpl();
+    if (doc){
+        ro = doc->renderer();
+        if (ro){
 #ifdef RENDER_TREE_DEBUG
                 printRenderTree (ro, 0);
 #endif
-                ro->print(p, ex, ey+py, ew, ph, 0, 0);
-            }
+            ro->print(p, ex, ey, ew, eh, 0, 0);
         }
-#ifdef BOX_DEBUG
-	if (m_part->xmlDocImpl()->focusNode())
-	{
-	    p->setBrush(Qt::NoBrush);
-	    p->drawRect(m_part->xmlDocImpl()->focusNode()->getRect());
-	}
-#endif
-        py += PAINT_BUFFER_HEIGHT;
     }
 
     khtml::DrawContentsEvent event( p, ex, ey, ew, eh );
