@@ -42,7 +42,11 @@ static QString keyIdentifierForKeyEvent(NSEvent *event)
 
         // "Accept"
         // "AllCandidates"
+
         // "Alt"
+        case NSMenuFunctionKey:
+            return "Alt";
+
         // "Apps"
         // "BrowserBack"
         // "BrowserForward"
@@ -160,9 +164,6 @@ static QString keyIdentifierForKeyEvent(NSEvent *event)
         // "Find"
         case NSFindFunctionKey:
             return "Find";
-        // "ForwardDelete" (Non-standard)
-        case NSDeleteFunctionKey:
-            return "ForwardDelete";
 
         // "FullWidth"
         // "HalfWidth"
@@ -180,7 +181,7 @@ static QString keyIdentifierForKeyEvent(NSEvent *event)
             return "Home";
         // "Insert"
         case NSInsertFunctionKey:
-            return "Left";
+            return "Insert";
 
         // "JapaneseHiragana"
         // "JapaneseKatakana"
@@ -238,8 +239,14 @@ static QString keyIdentifierForKeyEvent(NSEvent *event)
             return "Right";
 
         // "RomanCharacters"
+
         // "Scroll"
+        case NSScrollLockFunctionKey:
+            return "Scroll";
         // "Select"
+        case NSSelectFunctionKey:
+            return "Select";
+
         // "SelectMedia"
         // "Shift"
 
@@ -259,10 +266,54 @@ static QString keyIdentifierForKeyEvent(NSEvent *event)
         // "Win"
         // "Zoom"
 
+        // More function keys, not in the key identifier specification.
+	case NSF25FunctionKey:
+            return "F25";
+	case NSF26FunctionKey:
+            return "F26";
+	case NSF27FunctionKey:
+            return "F27";
+	case NSF28FunctionKey:
+            return "F28";
+	case NSF29FunctionKey:
+            return "F29";
+	case NSF30FunctionKey:
+            return "F30";
+	case NSF31FunctionKey:
+            return "F31";
+	case NSF32FunctionKey:
+            return "F32";
+	case NSF33FunctionKey:
+            return "F33";
+	case NSF34FunctionKey:
+            return "F34";
+	case NSF35FunctionKey:
+            return "F35";
+
         // Turn 0x7F into 0x08, because backspace needs to always be 0x08.
         case 0x7F:
             return "U+000008";
+        // Standard says that DEL becomes U+00007F.
+        case NSDeleteFunctionKey:
+            return "U+00007F";
 
+	case NSBeginFunctionKey:
+	case NSBreakFunctionKey:
+	case NSClearDisplayFunctionKey:
+	case NSDeleteCharFunctionKey:
+	case NSDeleteLineFunctionKey:
+	case NSInsertCharFunctionKey:
+	case NSInsertLineFunctionKey:
+	case NSNextFunctionKey:
+	case NSPrevFunctionKey:
+	case NSPrintFunctionKey:
+	case NSRedoFunctionKey:
+	case NSResetFunctionKey:
+	case NSSysReqFunctionKey:
+	case NSSystemFunctionKey:
+	case NSUserFunctionKey:
+            // FIXME: We should use something other than the vendor-area Unicode values for the above keys.
+            // For now, just fall through to the default.
         default:
             return QString().sprintf("U+%06X", toupper(c));
     }

@@ -1,3 +1,14 @@
+2004-01-27  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - fixed <rdar://problem/3526056>: W3C says that DEL key identifier should be U+00007F, we give ForwardDelete instead
+
+        * kwq/KWQEvent.mm: (keyIdentifierForKeyEvent): Correct the key identifiers for the Delete, Insert,
+        Menu, Scroll Lock, and Select keys, as well as some obscure F25 and higher keys. Also add some
+        explicit constants for the keys defined in NSEvent.h that we map to a key identifier using the
+        vendor-area Unicode values (which are probably not appropriate).
+
 2004-01-27  David Hyatt  <hyatt@apple.com>
 
 	Make a change suggested by kocienda to add a remove() method to InlineBoxes.
