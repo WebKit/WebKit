@@ -1,5 +1,13 @@
 2002-10-20  Chris Blumenberg  <cblu@apple.com>
 
+	Fixed: 3025847 - Can't use any menu command keys after clicking on a plugin
+
+	Don't give plug-ins command-modified keys anymore because the ability wasn't worth the annoyance. If only plug-ins truthfully responded t  events! Anyway, filed 3080103 so that I can look into a way to make this work for everybody.
+
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+
+2002-10-20  Chris Blumenberg  <cblu@apple.com>
+
 	Fixed: 3025868 - Plugin context menu disappears then reappears if you click off of it
 
 	Also fixed some rare dragging weirdness in WebHTMLView. If you attempted to drag a plug-in after dragging an image, the image would drag again.

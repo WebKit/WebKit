@@ -313,6 +313,9 @@
     return NO;
 }
 
+// Stop overriding performKeyEquivalent because the gain is not worth the frustation.
+// Need to find a better way to pass command-modified keys to plug-ins. 3080103
+#if 0
 // Must subclass performKeyEquivalent: for command-modified keys to work.
 - (BOOL)performKeyEquivalent:(NSEvent *)theEvent
 {
@@ -336,6 +339,7 @@
     
     return acceptedEvent;
 }
+#endif
 
 #pragma mark WEB_NETSCAPE_PLUGIN
 
