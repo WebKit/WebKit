@@ -488,7 +488,7 @@ static void drawPattern (void * info, CGContextRef context)
     CGImageRef image = (CGImageRef)[data imageAtIndex:[data currentFrame]];
     float w = CGImageGetWidth(image);
     float h = CGImageGetHeight(image);
-    CGContextDrawImage (context, CGRectMake(0, 0, w, h), image);    
+    CGContextDrawImage (context, CGRectMake(0, [data size].height-h, w, h), image);    
 }
 
 CGPatternCallbacks patternCallbacks = { 0, drawPattern, NULL };
@@ -511,15 +511,14 @@ CGPatternCallbacks patternCallbacks = { 0, drawPattern, NULL };
         [self _fillSolidColorInRect: rect compositeOperation: kCGCompositeSover context: aContext];
         
     } else {
-        float w = CGImageGetWidth(image);
-        float h = CGImageGetHeight(image);
+        CGSize tileSize = [self size];
+        NSSize imageSize = NSMakeSize(CGImageGetWidth(image),CGImageGetHeight(image));
         
         // Check and see if a single draw of the image can cover the entire area we are supposed to tile.
         NSRect oneTileRect;
-        oneTileRect.origin.x = rect.origin.x + fmodf(fmodf(-point.x, w) - w, w);
-        oneTileRect.origin.y = rect.origin.y + fmodf(fmodf(-point.y, h) - h, h);
-        oneTileRect.size.width = w;
-        oneTileRect.size.height = h;
+        oneTileRect.origin.x = rect.origin.x + fmodf(fmodf(-point.x, tileSize.width) - tileSize.width, tileSize.width);
+        oneTileRect.origin.y = rect.origin.y + fmodf(fmodf(-point.y, tileSize.height) - tileSize.height, tileSize.height);
+        oneTileRect.size = imageSize;
 
         // If the single image draw covers the whole area, then just draw once.
         if (NSContainsRect(oneTileRect, NSMakeRect(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height))) {
@@ -544,10 +543,10 @@ CGPatternCallbacks patternCallbacks = { 0, drawPattern, NULL };
         NSPoint extraPhase = [[WebGraphicsBridge sharedBridge] additionalPatternPhase];
         originInWindow.x += extraPhase.x;
         originInWindow.y += extraPhase.y;
-        CGSize phase = CGSizeMake(fmodf(originInWindow.x, w), fmodf(originInWindow.y, h));
+        CGSize phase = CGSizeMake(fmodf(originInWindow.x, tileSize.width), fmodf(originInWindow.y, tileSize.height));
 
         // Possible optimization:  We may want to cache the CGPatternRef    
-        CGPatternRef pattern = CGPatternCreate(self, CGRectMake (0, 0, w, h), CGAffineTransformIdentity, w, h, 
+        CGPatternRef pattern = CGPatternCreate(self, CGRectMake (0, 0, imageSize.width, imageSize.height), CGAffineTransformIdentity, tileSize.width, tileSize.height, 
             kCGPatternTilingConstantSpacing, true, &patternCallbacks);
         if (pattern) {
             CGContextSaveGState (aContext);
