@@ -1,5 +1,13 @@
 2002-12-18  Maciej Stachowiak  <mjs@apple.com>
 
+	Reviewed by John.
+
+	- fixed 3131171 - Change Alex versions to satisfy both marketing and B&I requirements
+	
+        * English.lproj/InfoPlist.strings:
+
+2002-12-18  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Trey and Darin.
 
 	- fixed 3124933 - abcnews.com leads to empty window with sheet complaining about javascript: URL

@@ -1,3 +1,11 @@
+2002-12-18  Maciej Stachowiak  <mjs@apple.com>
+
+	Reviewed by John.
+
+	- fixed 3131171 - Change Alex versions to satisfy both marketing and B&I requirements
+	
+        * English.lproj/InfoPlist.strings:
+
 2002-12-18  Richard Williamson   <rjw@apple.com>
 
         Fixed 3129951.  Don't allow pages that are stopping to enter the page cache.

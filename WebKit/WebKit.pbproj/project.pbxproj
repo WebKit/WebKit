@@ -65,7 +65,6 @@
 				F58C8A07025BD3BC018635CA,
 				F531DDFF02F0C36F018635CA,
 			);
-			hasScannedForEncodings = 1;
 			isa = PBXProject;
 			knownRegions = (
 				English,
@@ -167,6 +166,8 @@
 	<string>English</string>
 	<key>CFBundleExecutable</key>
 	<string>WebKit</string>
+	<key>CFBundleGetInfoString</key>
+	<string>1.0 Beta, Copyright Apple Computer, Inc. 2001-2002</string>
 	<key>CFBundleIconFile</key>
 	<string></string>
 	<key>CFBundleIdentifier</key>
@@ -175,8 +176,12 @@
 	<string>6.0</string>
 	<key>CFBundlePackageType</key>
 	<string>FMWK</string>
+	<key>CFBundleShortVersionString</key>
+	<string>0.8</string>
 	<key>CFBundleVersion</key>
 	<string>39</string>
+	<key>NSHumanReadableCopyright</key>
+	<string>Copyright 2001-2002 Apple Computer, Inc.</string>
 	<key>NSPrincipalClass</key>
 	<string></string>
 	<key>SKIP_INSTALL</key>
@@ -184,6 +189,7 @@
 </dict>
 </plist>
 ";
+			shouldUseHeadermap = 0;
 		};
 		0867D69DFE84028FC02AAC07 = {
 			buildActionMask = 2147483647;
