@@ -25,6 +25,8 @@
 
 // FIXME: obviously many functions here can be made inline
 
+// FIXME: should QChar and QConstString be in separate source files?
+
 #include <qstring.h>
 
 // FIXME: what's the minimum capacity?
@@ -52,13 +54,11 @@ QChar::QChar()
 
 QChar::QChar(char ch)
 {
-    // FIXME: does this kind of conversion work?
     c = ch;
 }
 
 QChar::QChar(uchar uch)
 {
-    // FIXME: does this kind of conversion work?
     c = uch;
 }
 
@@ -94,92 +94,93 @@ QChar::~QChar()
 
 QChar QChar::lower() const
 {
-    // FIXME: unimplented
+    // FIXME: unimplemented
     return *this;
 }
 
 QChar QChar::upper() const
 {
-    // FIXME: unimplented
+    // FIXME: unimplemented
     return *this;
 }
 
 char QChar::latin1() const
 {
-    // FIXME: unimplented
+    // FIXME: unimplemented
     return 0;
 }
 
 bool QChar::isNull() const
 {
-    // FIXME: unimplented
+    // FIXME: unimplemented
     return FALSE;
 }
 
 bool QChar::isDigit() const
 {
-    // FIXME: unimplented
+    // FIXME: unimplemented
     return FALSE;
 }
 
 bool QChar::isSpace() const
 {
-    // FIXME: unimplented
+    // FIXME: unimplemented
     return FALSE;
 }
 
 bool QChar::isLetter() const
 {
-    // FIXME: unimplented
+    // FIXME: unimplemented
     return FALSE;
 }
 
 bool QChar::isLetterOrNumber() const
 {
-    // FIXME: unimplented
+    // FIXME: unimplemented
     return FALSE;
 }
 
 bool QChar::isPunct() const
 {
-    // FIXME: unimplented
+    // FIXME: unimplemented
     return FALSE;
 }
 
 uchar QChar::cell() const
 {
-    // FIXME: unimplented
-    return 0;
+    // return least significant byte
+    return c & 0xff;
 }
 
 uchar QChar::row() const
 {
-    // FIXME: unimplented
-    return 0;
+    // return most significant byte
+    return (c & 0xff00) >> 8;
 }
 
 QChar::Direction QChar::direction() const
 {
-    // FIXME: unimplented
+    // FIXME: unimplemented because we don't do BIDI yet
     return DirL;
 }
 
 bool QChar::mirrored() const
 {
-    // FIXME: unimplented
+    // FIXME: unimplemented because we don't do BIDI yet
+    // return whether character should be reversed if text direction is reversed
     return FALSE;
 }
 
 QChar QChar::mirroredChar() const
 {
-    // FIXME: unimplented
+    // FIXME: unimplemented because we don't do BIDI yet
+    // return mirrored character if it is mirrored else return itself
     return *this;
 }
 
 ushort QChar::unicode() const
 {
-    // FIXME: unimplented
-    return 0;
+    return c;
 }
 
 QString::QString()
