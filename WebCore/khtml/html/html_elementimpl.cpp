@@ -193,7 +193,7 @@ void HTMLElementImpl::parseAttribute(AttributeImpl *attr)
         setChanged();
         break;
     case ATTR_CONTENTEDITABLE:
-        if (attr->isNull())
+        if (!attr->isNull())
             setContentEditable(attr->value());
         else
             removeCSSProperty(CSS_PROP__KHTML_USER_MODIFY);

@@ -1,5 +1,15 @@
 2004-01-30  David Hyatt  <hyatt@apple.com>
 
+	Fix a regression I introduced in my atomicstring patch.  I meant to say !attr->isNull() in the contentedtiable
+	attribute parsing code.
+	
+        Reviewed by cblu
+
+        * khtml/html/html_elementimpl.cpp:
+        (HTMLElementImpl::parseAttribute):
+
+2004-01-30  David Hyatt  <hyatt@apple.com>
+
 	Make m_lineHeight be cached on RenderFlow instead of RenderText and avoid recomputing it so much when it
 	is not set by CSS (since calls to fontMetrics().lineSpacing() are expensive).
 
