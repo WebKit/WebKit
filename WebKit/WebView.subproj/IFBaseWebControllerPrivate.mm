@@ -62,7 +62,7 @@
 
 - (void)_receivedProgress: (IFLoadProgress *)progress forResource: (NSString *)resourceDescription fromDataSource: (IFWebDataSource *)dataSource
 {
-    IFWebFrame *frame = [dataSource frame];
+    IFWebFrame *frame = [dataSource webFrame];
     
     WEBKIT_ASSERT (dataSource != nil);
     
@@ -88,7 +88,7 @@
 
 - (void)_mainReceivedProgress: (IFLoadProgress *)progress forResource: (NSString *)resourceDescription fromDataSource: (IFWebDataSource *)dataSource
 {
-    IFWebFrame *frame = [dataSource frame];
+    IFWebFrame *frame = [dataSource webFrame];
     
     WEBKIT_ASSERT (dataSource != nil);
 
@@ -137,7 +137,7 @@
 
 - (void)_receivedError: (IFError *)error forResource: (NSString *)resourceDescription partialProgress: (IFLoadProgress *)progress fromDataSource: (IFWebDataSource *)dataSource
 {
-    IFWebFrame *frame = [dataSource frame];
+    IFWebFrame *frame = [dataSource webFrame];
 
     [self receivedError: error forResource: resourceDescription partialProgress: progress fromDataSource: dataSource];
 
@@ -152,7 +152,7 @@
 
 - (void)_mainReceivedError: (IFError *)error forResource: (NSString *)resourceDescription partialProgress: (IFLoadProgress *)progress fromDataSource: (IFWebDataSource *)dataSource
 {
-    IFWebFrame *frame = [dataSource frame];
+    IFWebFrame *frame = [dataSource webFrame];
 
     [self receivedError: error forResource: resourceDescription partialProgress: progress fromDataSource: dataSource];
     

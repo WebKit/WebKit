@@ -55,7 +55,7 @@
 @interface IFWebDataSource : NSObject
 - initWithURL: (NSURL *)url;
 - (void)setFrame: (IFWebFrame *)fName;
-- (IFWebFrame *)frame;
+- (IFWebFrame *)webFrame;
 - (id <IFWebController>)controller;
 - frameNamed: (NSString *)f;
 - (BOOL)frameExists: (NSString *)f;

@@ -157,10 +157,14 @@
     else if([dataSource _contentPolicy] == IFContentPolicySave || 
             [dataSource _contentPolicy] == IFContentPolicyOpenExternally){
             if(!downloadStarted){
+            
+                // If this is a download, detach the provisionalDataSource from the frame
+                // and have downloadHandler retain it.
                 downloadHandler = [[IFDownloadHandler alloc] initWithDataSource:dataSource];
                 frame = [dataSource webFrame];
-                // FIXME: need a cleaner way for the frame to let go of the data source
-                frame->_private->provisionalDataSource = nil; 
+                [frame->_private setProvisionalDataSource:nil];
+                
+                // go right to locationChangeDone as the data source never get committed.
                 [[dataSource _locationChangeHandler] locationChangeDone:nil];
                 downloadStarted = YES;
             }

@@ -50,9 +50,6 @@
 // returns the parent data source.
 - (IFWebDataSource *)parent;
 
-// Return the frame that represents this data source.
-- (IFWebFrame *)frame;
-
 // Return the frame that represents this data source. Same as above.
 - (IFWebFrame *)webFrame;
 

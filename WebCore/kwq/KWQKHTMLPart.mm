@@ -1025,7 +1025,7 @@ void KHTMLPart::submitForm( const char *action, const QString &url, const QByteA
     IFWebFrame *frame;
     
     oldDataSource = getDataSource();
-    frame = [oldDataSource frame];
+    frame = [oldDataSource webFrame];
     
     newDataSource = WCIFWebDataSourceMake([[[IFURLHandle alloc] initWithURL: u.getNSURL() attributes: attributes flags: 0] autorelease]);
     [newDataSource _setParent: [oldDataSource parent]];
@@ -1393,7 +1393,7 @@ void KHTMLPart::khtmlMouseReleaseEvent( khtml::MouseReleaseEvent *event )
         
         if (target.isEmpty()){
             oldDataSource = getDataSource();
-            frame = [oldDataSource frame];
+            frame = [oldDataSource webFrame];
         }
         else {
             frame = [[getDataSource() controller] frameNamed: QSTRING_TO_NSSTRING(target)];

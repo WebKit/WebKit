@@ -1,3 +1,23 @@
+2002-04-24  Chris Blumenberg  <cblu@apple.com>
+
+	Renamed [IFWebDataSource frame] to [IFWebDataSource webFrame]
+
+	* WebView.subproj/IFBaseWebControllerPrivate.mm:
+	(-[IFBaseWebController _receivedProgress:forResource:fromDataSource:]):
+	(-[IFBaseWebController _mainReceivedProgress:forResource:fromDataSource:]):
+	(-[IFBaseWebController _receivedError:forResource:partialProgress:fromDataSource:]):
+	(-[IFBaseWebController _mainReceivedError:forResource:partialProgress:fromDataSource:]):
+	* WebView.subproj/IFMainURLHandleClient.mm:
+	(-[IFMainURLHandleClient IFURLHandle:resourceDataDidBecomeAvailable:]):
+	* WebView.subproj/IFWebDataSource.h:
+	* WebView.subproj/IFWebDataSource.mm:
+	(-[IFWebDataSource webFrame]):
+	(-[IFWebDataSource frameName]):
+	(-[IFWebDataSource isLoading]):
+	* WebView.subproj/IFWebDataSourcePrivate.mm:
+	(-[IFWebDataSource _startLoading:]):
+	(-[IFWebDataSource _setTitle:]):
+
 2002-04-24  Richard Williamson  <rjw@apple.com>
 
         Changed ordering of messages so activity viewer doesn't get -1 bytesSoFar

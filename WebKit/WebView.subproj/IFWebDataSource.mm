@@ -63,22 +63,16 @@ static id IFWebDataSourceMake(void *handle)
 - initWithLoader: (IFLoader *)loader;
 #endif
 
-- (IFWebFrame *)frame
-{
-    return [_private->controller frameForDataSource: self];
-}
-
-// This was adding to avoid collision with NSView
 - (IFWebFrame *)webFrame
 {
-    return [self frame];
+    return [_private->controller frameForDataSource: self];
 }
 
 // Returns the name of the frame containing this data source, or nil
 // if the data source is not in a frame set.
 - (NSString *)frameName 
 {
-    return [[self frame] name];    
+    return [[self webFrame] name];    
 }
 
 // Returns YES if this is the main document.  The main document is the 'top'
@@ -210,7 +204,7 @@ static id IFWebDataSourceMake(void *handle)
 {
     int i, count;
     
-    WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "frame %s: primaryLoadComplete %d, [data->urlHandles count] = %d, URL = %s\n", [[[self frame] name] cString], (int)_private->primaryLoadComplete, [_private->urlHandles count], [[[self inputURL] absoluteString] cString]);
+    WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "frame %s: primaryLoadComplete %d, [data->urlHandles count] = %d, URL = %s\n", [[[self webFrame] name] cString], (int)_private->primaryLoadComplete, [_private->urlHandles count], [[[self inputURL] absoluteString] cString]);
     if (_private->primaryLoadComplete == NO)
         return YES;
         

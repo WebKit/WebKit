@@ -130,9 +130,9 @@
     
     [self _setPrimaryLoadComplete: NO];
     
-    WEBKIT_ASSERT ([self frame] != nil);
+    WEBKIT_ASSERT ([self webFrame] != nil);
     
-    [[self frame] _clearErrors];
+    [[self webFrame] _clearErrors];
     
     // FIXME [mjs]: temporary hack to make file: URLs work right
     if ([urlString hasPrefix:@"file:/"] && [urlString characterAtIndex:6] != '/') {
@@ -243,7 +243,7 @@
     
     // The title doesn't get communicated to the controller until
     // we reach the committed state for this data source's frame.
-    if ([[self frame] _state] >= IFWEBFRAMESTATE_COMMITTED_PAGE)
+    if ([[self webFrame] _state] >= IFWEBFRAMESTATE_COMMITTED_PAGE)
         [[self _locationChangeHandler] receivedPageTitle:_private->pageTitle forDataSource:self];
 }
 

@@ -1,3 +1,12 @@
+2002-04-24  Chris Blumenberg  <cblu@apple.com>
+
+	Renamed [IFWebDataSource frame] to [IFWebDataSource webFrame]
+
+	* kwq/KWQKHTMLPart.mm:
+	(KHTMLPart::submitForm):
+	(KHTMLPart::khtmlMouseReleaseEvent):
+	* kwq/external.h:
+
 === Alexander 0.3c2 (v1) ===
 
 2002-04-24  Darin Adler  <darin@apple.com>
