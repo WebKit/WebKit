@@ -1,3 +1,16 @@
+2003-01-24  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3146066, messed up lists on dictionary.com.  Make
+	sure that a marker in an anonymous box with no other line box
+	parent available just stays where it is, rather than removing
+	itself from the anonymous box (causing that box to be deleted
+	and recreated ad infinitum).
+	
+        Reviewed by darin
+
+        * khtml/rendering/render_list.cpp:
+        (RenderListItem::updateMarkerLocation):
+
 2003-01-24  Darin Adler  <darin@apple.com>
 
         Reviewed by Dave.
@@ -17,6 +30,7 @@
 
         * kwq/WebCoreBridge.h: Added incomingReferrer.
 
+>>>>>>> 1.1315
 2003-01-24  Trey Matteson  <trey@apple.com>
 
 	3155162 - cursor changes to I-beam after dragging image	

@@ -219,8 +219,16 @@ void RenderListItem::updateMarkerLocation()
     if (m_marker) {
         RenderObject* markerPar = m_marker->parent();
         RenderObject* lineBoxParent = getParentOfFirstLineBox(this, m_marker);
-        if (!lineBoxParent)
-            lineBoxParent = this;
+        if (!lineBoxParent) {
+            // If the marker is currently contained inside an anonymous box,
+            // then we are the only item in that anonymous box (since no line box
+            // parent was found).  It's ok to just leave the marker where it is
+            // in this case.
+            if (markerPar && markerPar->isAnonymousBox())
+                lineBoxParent = markerPar;
+            else
+                lineBoxParent = this;
+        }
         if (markerPar != lineBoxParent)
         {
             if (markerPar)
