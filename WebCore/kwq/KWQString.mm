@@ -651,6 +651,16 @@ void QString::setBufferFromCFString(CFStringRef cfs)
     }
 }
 
+QString QString::fromUtf8(const char *chs)
+{
+    return fromStringWithEncoding(chs, strlen(chs), kCFStringEncodingUTF8);
+}
+
+QString QString::fromUtf8(const char *chs, int len)
+{
+    return fromStringWithEncoding(chs, len, kCFStringEncodingUTF8);
+}
+
 // This function is used by the decoder.
 QString QString::fromStringWithEncoding(const char *chs, int len, CFStringEncoding encoding)
 {
@@ -1693,7 +1703,7 @@ QString QString::left(uint len) const
     if ( isEmpty() ) {
 	return QString();
     } else if ( len == 0 ) {			// ## just for 1.x compat:
-	return QString::fromLatin1("");
+	return fromLatin1("");
     } else if ( len > dataHandle[0]->_length ) {
 	return *this;
     } else {
@@ -1707,7 +1717,7 @@ QString QString::right(uint len) const
     if ( isEmpty() ) {
 	return QString();
     } else if ( len == 0 ) {			// ## just for 1.x compat:
-	return QString::fromLatin1("");
+	return fromLatin1("");
     } else {
 	uint l = dataHandle[0]->_length;
 	if ( len > l )
@@ -1723,7 +1733,7 @@ QString QString::mid(uint index, uint len) const
     if ( isEmpty() || index >= slen ) {
 	return QString();
     } else if ( len == 0 ) {			// ## just for 1.x compat:
-	return QString::fromLatin1("");
+	return fromLatin1("");
     } else {
         if (dataHandle[0]->_isAsciiValid){
             if ( len > slen-index )

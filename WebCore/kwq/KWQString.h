@@ -335,6 +335,8 @@ public:
 
     static QString fromLatin1(const char *);
     static QString fromLatin1(const char *, int len);
+    static QString fromUtf8(const char *);
+    static QString fromUtf8(const char *, int len);
     static QString fromStringWithEncoding(const char *, int, CFStringEncoding);
     static QString fromCFString(CFStringRef);
     static QString fromNSString(NSString *);

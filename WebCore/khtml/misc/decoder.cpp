@@ -480,8 +480,7 @@ QString Decoder::decode(const char *data, int len)
 
  found:
 #if APPLE_CHANGES
-    // FIXME: We'll need our own rule for when to use Japanese auto-detect.
-    if (0)
+    if (!haveEncoding)
 #else
     if (!haveEncoding && KGlobal::locale()->languageList()[0] == "ja")
 #endif

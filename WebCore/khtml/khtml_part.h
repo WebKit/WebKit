@@ -518,7 +518,7 @@ public:
   void findTextBegin();
 
   /**
-   * Finds the next occurence of the string or expression.
+   * Finds the next occurrence of the string or expression.
    * If isRegExp is true then str is converted to a QRegExp, and caseSensitive is ignored.
    */
   bool findTextNext( const QString &str, bool forward, bool caseSensitive, bool isRegExp );

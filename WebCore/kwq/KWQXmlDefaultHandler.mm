@@ -23,99 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import "KWQXml.h"
-
-#include "expat.h"
-
-#import "KWQAssertions.h"
-#import "KWQString.h"
-
-QString QXmlAttributes::value(const QString &) const
-{
-    ERROR("not yet implemented");
-    return QString();
-}
-
-int QXmlAttributes::length() const
-{
-    ERROR("not yet implemented");
-    return 0;
-}
-
-QString QXmlAttributes::localName(int index) const
-{
-    ERROR("not yet implemented");
-    return QString();
-}
-
-QString QXmlAttributes::value(int index) const
-{
-    ERROR("not yet implemented");
-    return QString();
-}
-
-QString QXmlAttributes::uri(int) const
-{
-    ERROR("not yet implemented");
-    return QString();
-}
-
-void QXmlInputSource::setData(const QString& data)
-{
-    ERROR("not yet implemented");
-}
-
-void QXmlSimpleReader::setContentHandler(QXmlContentHandler *handler)
-{
-    ERROR("not yet implemented");
-}
-
-bool QXmlSimpleReader::parse(const QXmlInputSource &input)
-{
-    XML_Parser parser = XML_ParserCreate(""); // FIXME: need encoding
-    XML_Status parseError = XML_Parse(parser, "", 0, FALSE); // string, length, isFinal
-    XML_ParserFree(parser);
-    return parseError != XML_STATUS_ERROR;
-}
-
-void QXmlSimpleReader::setLexicalHandler(QXmlLexicalHandler *handler)
-{
-    ERROR("not yet implemented");
-}
-
-void QXmlSimpleReader::setDTDHandler(QXmlDTDHandler *handler)
-{
-    ERROR("not yet implemented");
-}
-
-void QXmlSimpleReader::setDeclHandler(QXmlDeclHandler *handler)
-{
-    ERROR("not yet implemented");
-}
-
-void QXmlSimpleReader::setErrorHandler(QXmlErrorHandler *handler)
-{
-    ERROR("not yet implemented");
-}
-
-
-QString QXmlParseException::message() const
-{
-    ERROR("not yet implemented");
-    return QString();
-}
-
-int QXmlParseException::columnNumber() const
-{
-    ERROR("not yet implemented");
-    return 0;
-}
-
-int QXmlParseException::lineNumber() const
-{
-    ERROR("not yet implemented");
-    return 0;
-}
+#include "KWQXmlDefaultHandler.h"
 
 bool QXmlDefaultHandler::startDocument()
 {
@@ -244,5 +152,5 @@ bool QXmlDefaultHandler::unparsedEntityDecl(const QString& name, const QString& 
 
 QString QXmlDefaultHandler::errorString()
 {
-    return QString();
+    return QString::null;
 }

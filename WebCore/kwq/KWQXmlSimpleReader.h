@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002, 2003 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,14 +23,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef QXML_H_
-#define QXML_H_
+#ifndef KWQXMLSIMPLEREADER_H
+#define KWQXMLSIMPLEREADER_H
 
-class QString;
+#include "KWQString.h"
+
+class QXmlAttributes;
 
 class QXmlInputSource {
 public:
-    void setData(const QString &);
+    void setData(const QString &data) { _data = data; }
+    QString data() const { return _data; }
+private:
+    QString _data;
 };
 
 class QXmlParseException {
@@ -38,15 +43,6 @@ public:
     QString message() const;
     int columnNumber() const;
     int lineNumber() const;
-};
-
-class QXmlAttributes {
-public:
-    QString value(const QString &) const;
-    int length() const;
-    QString localName(int index) const;
-    QString value(int index) const;
-    QString uri(int index) const;
 };
 
 class QXmlContentHandler {
@@ -98,55 +94,27 @@ public:
     virtual QString errorString() = 0;
 };
 
-class QXmlDefaultHandler :
-    public QXmlContentHandler, 
-    public QXmlLexicalHandler, 
-    public QXmlErrorHandler, 
-    public QXmlDeclHandler, 
-    public QXmlDTDHandler
-{
-    virtual bool startDocument();
-    virtual bool endDocument();
-    virtual bool startPrefixMapping(const QString &prefix, const QString &URI);
-    virtual bool endPrefixMapping(const QString &prefix);
-    virtual bool startElement(const QString &namespaceURI, const QString &localName, const QString &qName, const QXmlAttributes &attributes);
-    virtual bool endElement(const QString &namespaceURI, const QString &localName, const QString &qName);
-    virtual bool characters(const QString &characters);
-    virtual bool ignorableWhitespace(const QString &characters);
-    virtual bool processingInstruction(const QString &target, const QString &data);
-    virtual bool skippedEntity(const QString &name);
-
-    virtual bool startDTD(const QString &name, const QString &publicId, const QString &systemId);
-    virtual bool endDTD();
-    virtual bool startEntity(const QString &name);
-    virtual bool endEntity(const QString &name);
-    virtual bool startCDATA();
-    virtual bool endCDATA();
-    virtual bool comment(const QString &characters);
-
-    virtual bool warning(const QXmlParseException &exception);
-    virtual bool error(const QXmlParseException &exception);
-    virtual bool fatalError(const QXmlParseException &exception);
-
-    virtual bool attributeDecl(const QString &entityName, const QString &attributeName, const QString &type, const QString &valueDefault, const QString &value);
-    virtual bool externalEntityDecl(const QString &name, const QString &publicId, const QString &systemId);
-    virtual bool internalEntityDecl(const QString &name, const QString &value);
-
-    virtual bool notationDecl(const QString& name, const QString& publicId, const QString& systemId);
-    virtual bool unparsedEntityDecl(const QString& name, const QString& publicId, const QString& systemId, const QString& notationName);
-
-    virtual QString errorString();
-};
-
 class QXmlSimpleReader {
 public:
-    void setContentHandler(QXmlContentHandler *handler);
-    void setLexicalHandler(QXmlLexicalHandler *handler);
-    void setDTDHandler(QXmlDTDHandler *handler);
-    void setDeclHandler(QXmlDeclHandler *handler);
-    void setErrorHandler(QXmlErrorHandler *handler);
+    QXmlSimpleReader();
+    
+    void setContentHandler(QXmlContentHandler *handler) { _contentHandler = handler; }
+    void setDeclHandler(QXmlDeclHandler *handler) { _declarationHandler= handler; }
+    void setDTDHandler(QXmlDTDHandler *handler) { _DTDHandler = handler; }
+    void setErrorHandler(QXmlErrorHandler *handler) { _errorHandler = handler; }
+    void setLexicalHandler(QXmlLexicalHandler *handler) { _lexicalHandler = handler; }
+    
+    QXmlContentHandler *contentHandler() const { return _contentHandler; }
+    QXmlLexicalHandler *lexicalHandler() const { return _lexicalHandler; }
 
     bool parse(const QXmlInputSource &input);
+
+private:
+    QXmlContentHandler *_contentHandler;
+    QXmlDeclHandler *_declarationHandler;
+    QXmlDTDHandler *_DTDHandler;
+    QXmlErrorHandler *_errorHandler;
+    QXmlLexicalHandler *_lexicalHandler;
 };
 
 #endif

@@ -1,1 +1,2 @@
-#include "KWQXml.h"
+#include "KWQXmlAttributes.h"
+#include "KWQXmlDefaultHandler.h"

@@ -1,3 +1,37 @@
+2003-01-14  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+	- first cut at XML parsing with expat
+
+        * khtml/khtml_part.cpp: (KHTMLPart::begin): Remove APPLE_CHANGES and use the XML
+	code for text/xml documents.
+
+        * WebCore.pbproj/project.pbxproj: Added the ForwardingHeaders to the project.
+	Added new QXml files, removed old ones.
+
+        * kwq/KWQXml.h: Removed.
+        * kwq/KWQXml.mm: Removed.
+
+        * kwq/KWQXmlAttributes.h: Added.
+        * kwq/KWQXmlAttributes.mm: Added.
+        * kwq/KWQXmlDefaultHandler.h: Added.
+        * kwq/KWQXmlDefaultHandler.mm: Added.
+        * kwq/KWQXmlSimpleReader.h: Added.
+        * kwq/KWQXmlSimpleReader.mm: Added.
+
+        * kwq/KWQString.h: Add fromUtf8 functions.
+        * kwq/KWQString.mm: (QString::fromUtf8): Added. Simple implementation just
+	calls fromStringWithEncoding. We may need something more efficient later,
+	at least for all-ASCII text.
+
+	- other changes
+
+        * khtml/khtml_part.h: Fix spelling of occurrence.
+
+        * khtml/misc/decoder.cpp: (Decoder::decode): Turn on Japanese auto-detect.
+	It doesn't seem to work yet, but this does no harm.
+
 2003-01-13  Richard Williamson   <rjw@apple.com>
 
         Fix for 3139120.  This patch was contributed by Mitz Pettel.  It correctly
