@@ -1,5 +1,19 @@
 2004-09-30  Chris Blumenberg  <cblu@apple.com>
 
+	Fixed: <rdar://problem/3498680> switching back and forth between tabs stops calling anything in a plug-in
+
+        Reviewed by darin.
+
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView sendEvent:]): call setWindowIfNecessary because the window may have changed
+        (-[WebBaseNetscapePluginView updateAndSetWindow]): new
+        (-[WebBaseNetscapePluginView setWindowIfNecessary]): was setWindow, this method now just sets the window
+        (-[WebBaseNetscapePluginView start]): call updateAndSetWindow
+        (-[WebBaseNetscapePluginView viewDidMoveToWindow]): ditto
+        (-[WebBaseNetscapePluginView viewHasMoved:]): ditto
+
+2004-09-30  Chris Blumenberg  <cblu@apple.com>
+
 	Fixed: <rdar://problem/3498668> switching out of tab doesn't send loseFocusEvent to plug-in
 
         Reviewed by rjw.

@@ -80,6 +80,10 @@ typedef struct {
 static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEvent, void *pluginView);
 void ConsoleConnectionChangeNotifyProc(CGSNotificationType type, CGSNotificationData data, CGSByteCount dataLength, CGSNotificationArg arg);
 
+@interface WebBaseNetscapePluginView (ForwardDeclarations)
+- (void)setWindowIfNecessary;
+@end
+
 @implementation WebBaseNetscapePluginView
 
 + (void)initialize
@@ -331,6 +335,9 @@ void ConsoleConnectionChangeNotifyProc(CGSNotificationType type, CGSNotification
     }
 
     PortState portState = [self saveAndSetPortStateForUpdate:event->what == updateEvt];
+    
+    // We may have changed the window, so inform the plug-in.
+    [self setWindowIfNecessary];
 
 #ifndef NDEBUG
     // Draw green to help debug.
@@ -753,14 +760,19 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     return YES;
 }
 
-- (void)setWindow
+- (void)updateAndSetWindow
+{    
+    PortState portState = [self saveAndSetPortState];
+    [self setWindowIfNecessary];
+    [self restorePortState:portState];
+}
+
+- (void)setWindowIfNecessary
 {
     if (!isStarted) {
         return;
     }
     
-    PortState portState = [self saveAndSetPortState];
-
     if (![self isNewWindowEqualToOldWindow]) {        
         // Make sure we don't call NPP_HandleEvent while we're inside NPP_SetWindow.
         // We probably don't want more general reentrancy protection; we are really
@@ -779,8 +791,6 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
         lastSetWindow = window;
         lastSetPort = nPort;
     }
-
-    [self restorePortState:portState];
 }
 
 - (void)removeTrackingRect
@@ -896,7 +906,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
 
     isStarted = YES;
         
-    [self setWindow];
+    [self updateAndSetWindow];
 
     if ([self window]) {
         [self addWindowObservers];
@@ -1197,7 +1207,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
         // View moved out of an actual window, but still has a host window.
         // Call setWindow to explicitly "clip out" the plug-in from sight.
         // FIXME: It would be nice to do this where we call stopNullEvents in viewWillMoveToWindow.
-        [self setWindow];
+        [self updateAndSetWindow];
     }
 }
 
@@ -1222,7 +1232,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
 - (void)viewHasMoved:(NSNotification *)notification
 {
     [self tellQuickTimeToChill];
-    [self setWindow];
+    [self updateAndSetWindow];
     [self resetTrackingRect];
 }
 
