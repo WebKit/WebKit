@@ -1375,10 +1375,14 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 - (void)_addExtraFieldsToRequest:(WebResourceRequest *)request alwaysFromRequest: (BOOL)f
 {
     [request setUserAgent:[[self controller] userAgentForURL:[request URL]]];
-    if (self == [[self controller] mainFrame] || f) {
-	[request setCookiePolicyBaseURL:[request URL]];
-    } else {
-	[request setCookiePolicyBaseURL:[[[[self controller] mainFrame] dataSource] URL]];
+    
+    // Don't set the cookie policy URL if it's already been set.
+    if ([request cookiePolicyBaseURL] == nil){
+        if (self == [[self controller] mainFrame] || f) {
+            [request setCookiePolicyBaseURL:[request URL]];
+        } else {
+            [request setCookiePolicyBaseURL:[[[[self controller] mainFrame] dataSource] URL]];
+        }
     }
 }
 

@@ -1,5 +1,14 @@
 2003-01-01  Richard Williamson   <rjw@apple.com>
 
+        Don't reset the cookie policy URL if it has already been set.  Fixes to 3109590.
+        
+        Reviewed by Maciej.
+
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _addExtraFieldsToRequest:alwaysFromRequest:]):
+
+2003-01-01  Richard Williamson   <rjw@apple.com>
+
         Don't attempt to restore page from page cache if the cache
         doesn't contain valid page state.  This may happen after a
         redirect.  Fixes 3137430.
