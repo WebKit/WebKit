@@ -1,3 +1,44 @@
+2003-02-13  Darin Adler  <darin@apple.com>
+
+        Reviewed by Trey.
+
+        - fixed 3162806 -- REGRESSION: handle == h assertion when clicking headphone link at cnn.com
+
+        * khtml/ecma/kjs_window.cpp: (HistoryFunc::tryCall): Instead of trying to actually do the
+        history navigation here, call the new KHTMLPart::scheduleHistoryNavigation.
+
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::init): Add a few more #if !APPLE_CHANGES so we can leave out more unused fields.
+        (KHTMLPart::openURL): Ditto.
+        (KHTMLPart::createJavaContext): Ditto.
+        (KHTMLPart::clear): Also initialize m_scheduledRedirection to noRedirectionScheduled.
+        (KHTMLPart::checkCompleted): Use m_scheduledRedirection rather than m_redirectURL to check
+        whether a redirection is already in progress.
+        (KHTMLPart::scheduleRedirection): Use m_scheduledRedirection rather than m_redirectURL to check
+        whether a redirection is already in progress, and set m_scheduledRedirection to redirectionScheduled.
+        (KHTMLPart::scheduleHistoryNavigation): Added. Does the same thing as scheduleRedirection,
+        but always uses a delay of 0, sets m_scheduledRedirection to historyNavigationScheduled, and
+        sets m_scheduledHistoryNavigationSteps.
+        (KHTMLPart::slotRedirect): Add an if statement that does the history navigation. The code is
+        moved here from HistoryFunc::tryCall. Also set m_scheduledRedirection to noRedirectionScheduled.
+        (KHTMLPart::urlSelected): Add a few more #if !APPLE_CHANGES so we can leave out more unused fields.
+        (KHTMLPart::requestObject): Ditto.
+        (KHTMLPart::submitForm): Ditto.
+        (KHTMLPart::slotParentCompleted): Use m_scheduledRedirection rather than m_redirectURL to check
+        whether a redirection is already in progress.
+        (KHTMLPart::setZoomFactor): Add a few more #if !APPLE_CHANGES so we can leave out more unused fields.
+
+        * khtml/khtml_part.h: Added scheduleHistoryNavigation.
+        * khtml/khtmlpart_p.h: Added RedirectionScheduled enum. Added more #if !APPLE_CHANGES to leave out
+        a bunch more fields we don't use. Added m_scheduledRedirection and m_scheduledHistoryNavigationSteps.
+        * kwq/KWQKHTMLPart.mm: (KWQKHTMLPart::redirectionTimerStartedOrStopped): Check and don't do anything
+        if the timer was being used for history redirection.
+
+        * khtml/html/html_documentimpl.cpp: (HTMLDocumentImpl::close):
+        Check m_scheduledRedirection instead of m_redirectURL to figure out if there is a redirection
+        in progress. Not strictly necessary since we really don't care about the history case here,
+        but consistent with the rest.
+
 2003-02-13  Chris Blumenberg  <cblu@apple.com>
 
         Fixed WebKit typos found by Peter Wilson.

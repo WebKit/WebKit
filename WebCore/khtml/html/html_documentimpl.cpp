@@ -332,7 +332,7 @@ void HTMLDocumentImpl::close()
     // First fire the onload.
     bool doload = !parsing() && m_tokenizer;
     
-    bool wasNotRedirecting = !view() || view()->part()->d->m_redirectURL.isEmpty();
+    bool wasNotRedirecting = !view() || view()->part()->d->m_scheduledRedirection == noRedirectionScheduled;
     
     if (body() && doload) {
         dispatchImageLoadEventsNow();
@@ -342,8 +342,9 @@ void HTMLDocumentImpl::close()
     // Make sure both the initial layout and reflow happen after the onload
     // fires. This will improve onload scores, and other browsers do it.
     // If they wanna cheat, we can too. -dwh
-    if (doload && wasNotRedirecting
-            && view() && !view()->part()->d->m_redirectURL.isEmpty() && view()->part()->d->m_delayRedirect == 0
+    if (doload && wasNotRedirecting && view()
+            && view()->part()->d->m_scheduledRedirection != noRedirectionScheduled
+            && view()->part()->d->m_delayRedirect == 0
             && m_startTime.elapsed() < 1000) {
         static int redirectCount = 0;
         if (redirectCount++ % 4) {

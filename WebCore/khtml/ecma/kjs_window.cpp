@@ -1951,20 +1951,11 @@ Value HistoryFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
     return err;
   }
   History *history = static_cast<History *>(thisObj.imp());
-  KParts::BrowserExtension *ext = history->part->browserExtension();
 
   Value v = args[0];
   Number n;
   if(!v.isNull())
     n = v.toInteger(exec);
-
-  if(!ext)
-    return Undefined();
-
-  KParts::BrowserInterface *iface = ext->browserInterface();
-
-  if ( !iface )
-    return Undefined();
 
   int steps;
   switch (id) {
@@ -1981,18 +1972,7 @@ Value HistoryFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
     return Undefined();
   }
 
-  // Special case for go(0) from a frame -> reload only the frame
-  // go(i!=0) from a frame navigates into the history of the frame only,
-  // in both IE and NS (but not in Mozilla).... we can't easily do that
-  // in Konqueror...
-  if (!steps) // add && history->part->parentPart() to get only frames, but doesn't matter
-  {
-    history->part->openURL( history->part->url() ); /// ## need args.reload=true?
-  } else
-  {
-    iface->callMethod( "goHistory(int)", steps );
-//      emit ext->goHistory(steps);
-  }
+  history->part->scheduleHistoryNavigation(steps);
   return Undefined();
 }
 

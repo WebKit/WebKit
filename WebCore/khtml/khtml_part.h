@@ -368,8 +368,15 @@ public:
 
   /**
    * Schedules a redirection after @p delay seconds.
+   * Note that this is used for JavaScript-triggered location changes as well.
    */
   void scheduleRedirection( double delay, const QString &url, bool lockHistory = true );
+
+  /**
+   * Schedules a history navigation operation (go forward, go back, etc.).
+   * This is used for JavaScript-triggered location changes.
+   */
+  void scheduleHistoryNavigation( int steps );
 
   /**
    * Clears the widget and prepares it for new content.

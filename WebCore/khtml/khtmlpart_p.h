@@ -93,6 +93,8 @@ typedef FrameList::Iterator FrameIt;
 
 static int khtml_part_dcop_counter = 0;
 
+enum RedirectionScheduled { noRedirectionScheduled, redirectionScheduled, historyNavigationScheduled };
+
 class KHTMLPartPrivate
 {
 public:
@@ -108,8 +110,8 @@ public:
     m_bLoadEventEmitted = true;
     m_bUnloadEventEmitted = true;
     m_cachePolicy = KIO::CC_Verify;
-    m_manager = 0L;
 #if !APPLE_CHANGES
+    m_manager = 0L;
     m_settings = new KHTMLSettings(*KHTMLFactory::defaultHTMLSettings());
 #endif
     m_bClearing = false;
@@ -124,8 +126,10 @@ public:
     m_jobPercent = 0;
     m_haveEncoding = false;
     m_activeFrame = 0L;
+#if !APPLE_CHANGES
     m_findDialog = 0;
     m_ssl_in_use = false;
+#endif
 #ifndef Q_WS_QWS
     m_javaContext = 0;
 #endif
@@ -150,6 +154,7 @@ public:
 
     m_bFirstData = true;
     m_submitForm = 0;
+    m_scheduledRedirection = noRedirectionScheduled;
     m_delayRedirect = 0;
 
     m_bPendingChildRedirection = false;
@@ -167,7 +172,9 @@ public:
             m_bPluginsForce = part->d->m_bPluginsForce;
             m_bPluginsOverride = part->d->m_bPluginsOverride;
             // Same for SSL settings
+#if !APPLE_CHANGES
             m_ssl_in_use = part->d->m_ssl_in_use;
+#endif
             m_onlyLocalReferences = part->d->m_onlyLocalReferences;
             m_zoomFactor = part->d->m_zoomFactor;
         }
@@ -241,6 +248,7 @@ public:
   QString m_kjsDefaultStatusBarText;
   QString m_lastModified;
 
+#if !APPLE_CHANGES
   // QStrings for SSL metadata
   // Note: When adding new variables don't forget to update ::saveState()/::restoreState()!
   bool m_ssl_in_use;
@@ -253,6 +261,7 @@ public:
           m_ssl_cipher_used_bits,
           m_ssl_cipher_bits,
           m_ssl_cert_state;
+#endif
 
   bool m_bComplete:1;
   bool m_bLoadEventEmitted:1;
@@ -267,9 +276,13 @@ public:
   KIO::CacheControl m_cachePolicy;
   QTimer m_redirectionTimer;
   QTime m_parsetime;
+
+  RedirectionScheduled m_scheduledRedirection;
   double m_delayRedirect;
   QString m_redirectURL;
+  int m_scheduledHistoryNavigationSteps;
 
+#if !APPLE_CHANGES
   KAction *m_paViewDocument;
   KAction *m_paViewFrame;
   KAction *m_paSaveBackground;
@@ -291,6 +304,7 @@ public:
 
   QString m_popupMenuXML;
   KHTMLPart::GUIProfile m_guiProfile;
+#endif
 
   int m_zoomFactor;
 
@@ -317,13 +331,13 @@ public:
   DOM::Node m_mousePressNode; //node under the mouse when the mouse was pressed (set in the mouse handler)
 
 #if APPLE_CHANGES
-    DOM::Node m_initialSelectionStart;
-    long m_initialSelectionStartOffset;
-    DOM::Node m_initialSelectionEnd;
-    long m_initialSelectionEndOffset;
-    bool m_selectionInitiatedWithDoubleClick:1;
-    bool m_selectionInitiatedWithTripleClick:1;
-    bool m_mouseMovedSinceLastMousePress;
+  DOM::Node m_initialSelectionStart;
+  long m_initialSelectionStartOffset;
+  DOM::Node m_initialSelectionEnd;
+  long m_initialSelectionEndOffset;
+  bool m_selectionInitiatedWithDoubleClick:1;
+  bool m_selectionInitiatedWithTripleClick:1;
+  bool m_mouseMovedSinceLastMousePress:1;
 #endif
   DOM::Node m_selectionStart;
   long m_startOffset;
@@ -354,6 +368,7 @@ public:
   unsigned long m_totalObjectCount;
   unsigned int m_jobPercent;
 
+#if !APPLE_CHANGES
   KHTMLFind *m_findDialog;
 
   struct findState
@@ -366,6 +381,7 @@ public:
   };
 
   findState m_lastFindState;
+#endif
 
   //QGuardedPtr<KParts::Part> m_activeFrame;
   KParts::Part * m_activeFrame;

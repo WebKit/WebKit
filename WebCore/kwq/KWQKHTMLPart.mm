@@ -384,6 +384,11 @@ void KWQKHTMLPart::jumpToSelection()
 
 void KWQKHTMLPart::redirectionTimerStartedOrStopped()
 {
+    // Don't report history navigations, just actual redirection.
+    if (d->m_scheduledRedirection == historyNavigationScheduled) {
+        return;
+    }
+    
     if (d->m_redirectionTimer.isActive()) {
         [_bridge reportClientRedirectToURL:d->m_redirectURL.getNSString()
                                      delay:d->m_delayRedirect
