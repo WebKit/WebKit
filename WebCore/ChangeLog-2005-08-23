@@ -1,3 +1,12 @@
+2004-01-29  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3543619>: copied HTML is strangely formatted, random whitespace and return characters
+
+        Reviewed by dave.
+
+        * khtml/xml/dom_nodeimpl.cpp:
+        (NodeImpl::recursive_toHTMLWithRange): remove all code that tries to format the HTML since we can rely on the existing white space to preserve the original formatting
+
 2004-01-28  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Dave.
