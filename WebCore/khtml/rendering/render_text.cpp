@@ -1060,11 +1060,12 @@ void RenderText::calcMinMaxWidth()
         if (ignoringSpaces && !isSpace)
             ignoringSpaces = false;
             
-        if (ignoringSpaces)
+        if (ignoringSpaces || (i > 0 && c.unicode() == SOFT_HYPHEN)) // Ignore spaces and soft hyphens
             continue;
         
         int wordlen = 0;
         while (i+wordlen < len && str->s[i+wordlen] != '\n' && str->s[i+wordlen] != ' ' &&
+               (i+wordlen == 0 || str->s[i+wordlen].unicode() != SOFT_HYPHEN) && // Skip soft hyphens
                (wordlen == 0 || !isBreakable( str->s, i+wordlen, str->l)))
             wordlen++;
             

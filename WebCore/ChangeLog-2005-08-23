@@ -1,3 +1,18 @@
+2004-03-29  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3604154, support soft hyphens when rendering.  This patch implements soft hyphen support that
+	matches IE6 on Windows and Opera 7.  Soft hyphens that don't break lines end up getting collapsed away.
+	Only if the hyphen breaks a line does it render.
+	
+        Reviewed by kocienda
+
+        * khtml/rendering/bidi.cpp:
+        (khtml::chopMidpointsAt):
+        (khtml::appendRunsForObject):
+        (khtml::RenderBlock::findNextLineBreak):
+        * khtml/rendering/render_text.cpp:
+        (RenderText::calcMinMaxWidth):
+
 2004-03-29  John Sullivan  <sullivan@apple.com>
 
         Made menu shortcuts work again when editing HTML

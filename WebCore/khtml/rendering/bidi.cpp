@@ -433,6 +433,19 @@ static void reverseRuns(int start, int end)
         sLastBidiRun = startRun;
 }
 
+static void chopMidpointsAt(RenderObject* obj, uint pos)
+{
+    if (!sNumMidpoints) return;
+    BidiIterator* midpoints = smidpoints->data();
+    for (uint i = 0; i < sNumMidpoints; i++) {
+        const BidiIterator& point = midpoints[i];
+        if (point.obj == obj && point.pos == pos) {
+            sNumMidpoints = i;
+            break;
+        }
+    }
+}
+
 static void checkMidpoints(BidiIterator& lBreak, BidiState &bidi)
 {
     // Check to see if our last midpoint is a start point beyond the line break.  If so,
@@ -493,7 +506,7 @@ static void appendRunsForObject(int start, int end, RenderObject* obj, BidiState
             return;
         }
         
-        // An end midpoint has been encounted within our object.  We
+        // An end midpoint has been encountered within our object.  We
         // need to go ahead and append a run with our endpoint.
         if (int(nextMidpoint.pos+1) <= end) {
             betweenMidpoints = true;
@@ -1871,6 +1884,31 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
                 if (isPre || !currentCharacterIsSpace)
                     isLineEmpty = false;
                 
+                // Check for soft hyphens.  Go ahead and ignore them.
+                if (c.unicode() == SOFT_HYPHEN && pos > 0) {
+                    if (!ignoringSpaces) {
+                        // Ignore soft hyphens
+                        BidiIterator endMid(0, o, pos-1);
+                        addMidpoint(endMid);
+                        
+                        // Add the width up to but not including the hyphen.
+                        tmpW += t->width(lastSpace, pos - lastSpace, f);
+                        
+                        // For whitespace normal only, include the hyphen.  We need to ensure it will fit
+                        // on the line if it shows when we break.
+                        if (o->style()->whiteSpace() == NORMAL)
+                            tmpW += t->width(pos, 1, f);
+                        
+                        BidiIterator startMid(0, o, pos+1);
+                        addMidpoint(startMid);
+                    }
+                    
+                    pos++;
+                    len--;
+                    lastSpace = pos; // Cheesy hack to prevent adding in widths of the run twice.
+                    continue;
+                }
+                
                 bool applyWordSpacing = false;
                 if ( (isPre && c == '\n') || (!isPre && isBreakable( str, pos, strlen )) ) {
                     if (ignoringSpaces) {
@@ -1926,8 +1964,12 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
                         }
                     }
         
-                    if (w + tmpW > width && o->style()->whiteSpace() == NORMAL){
-                        goto end;
+                    if (o->style()->whiteSpace() == NORMAL) {
+                        if (w + tmpW > width)
+                            goto end; // Didn't fit. Jump to the end.
+                        else if (pos > 1 && str[pos-1].unicode() == SOFT_HYPHEN)
+                            // Subtract the width of the soft hyphen out since we fit on a line.
+                            tmpW -= t->width(pos-1, 1, f);
                     }
 
                     if( *(str+pos) == '\n' && isPre) {
@@ -2159,6 +2201,14 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
 	lBreak.increment(bidi);
     }
 
+    if (lBreak.obj && lBreak.pos >= 2 && lBreak.obj->isText()) {
+        // For soft hyphens on line breaks, we have to chop out the midpoints that made us
+        // ignore the hyphen so that it will render at the end of the line.
+        QChar c = static_cast<RenderText*>(lBreak.obj)->text()[lBreak.pos-1];
+        if (c.unicode() == SOFT_HYPHEN)
+            chopMidpointsAt(lBreak.obj, lBreak.pos-2);
+    }
+    
     return lBreak;
 }
 
