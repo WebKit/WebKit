@@ -589,9 +589,56 @@ extern NSString * const WebViewDidChangeSelectionNotification;
 
 @interface WebView (WebViewEditingActions)
 
-    /* Selection movement and scrolling */
+- (void)copy:(id)sender;
+- (void)cut:(id)sender;
+- (void)paste:(id)sender;
+- (void)copyFont:(id)sender;
+- (void)pasteFont:(id)sender;
+- (void)delete:(id)sender;
+- (void)pasteAsPlainText:(id)sender;
+- (void)pasteAsRichText:(id)sender;
 
+- (void)changeFont:(id)sender;
+- (void)changeAttributes:(id)sender;
+- (void)changeDocumentBackgroundColor:(id)sender;
+- (void)changeColor:(id)sender;
+
+- (void)alignCenter:(id)sender;
+- (void)alignJustified:(id)sender;
+- (void)alignLeft:(id)sender;
+- (void)alignRight:(id)sender;
+
+- (void)checkSpelling:(id)sender;
+- (void)showGuessPanel:(id)sender;
+- (void)performFindPanelAction:(id)sender;
+
+- (void)startSpeaking:(id)sender;
+- (void)stopSpeaking:(id)sender;
+
+/* 
+The following methods are declared in NSResponder.h.
+WebView overrides each method in this list, providing
+a custom implementation for each.
+    
+- (void)capitalizeWord:(id)sender;
 - (void)centerSelectionInVisibleArea:(id)sender;
+- (void)changeCaseOfLetter:(id)sender;
+- (void)complete:(id)sender;
+- (void)deleteBackward:(id)sender;
+- (void)deleteBackwardByDecomposingPreviousCharacter:(id)sender;
+- (void)deleteForward:(id)sender;
+- (void)deleteToBeginningOfLine:(id)sender;
+- (void)deleteToBeginningOfParagraph:(id)sender;
+- (void)deleteToEndOfLine:(id)sender;
+- (void)deleteToEndOfParagraph:(id)sender;
+- (void)deleteWordBackward:(id)sender;
+- (void)deleteWordForward:(id)sender;
+- (void)indent:(id)sender;
+- (void)insertBacktab:(id)sender;
+- (void)insertNewline:(id)sender;
+- (void)insertParagraphSeparator:(id)sender;
+- (void)insertTab:(id)sender;
+- (void)lowercaseWord:(id)sender;
 - (void)moveBackward:(id)sender;
 - (void)moveBackwardAndModifySelection:(id)sender;
 - (void)moveDown:(id)sender;
@@ -624,85 +671,11 @@ extern NSString * const WebViewDidChangeSelectionNotification;
 - (void)scrollLineUp:(id)sender;
 - (void)scrollPageDown:(id)sender;
 - (void)scrollPageUp:(id)sender;
-
-    /* Selections */
-
 - (void)selectAll:(id)sender;
-- (void)selectParagraph:(id)sender;
 - (void)selectLine:(id)sender;
+- (void)selectParagraph:(id)sender;
 - (void)selectWord:(id)sender;
-
-    /* "Edit menu" actions */
-
-- (void)copy:(id)sender;
-- (void)cut:(id)sender;
-- (void)paste:(id)sender;
-- (void)copyFont:(id)sender;
-- (void)pasteFont:(id)sender;
-- (void)delete:(id)sender;
-- (void)pasteAsPlainText:(id)sender;
-- (void)pasteAsRichText:(id)sender;
-
-    /* Fonts */
-
-- (void)changeFont:(id)sender;
-- (void)changeAttributes:(id)sender;
-- (void)changeDocumentBackgroundColor:(id)sender;
-
-    /* Colors */
-
-- (void)changeColor:(id)sender;
-
-    /* Alignment */
-
-- (void)alignCenter:(id)sender;
-- (void)alignJustified:(id)sender;
-- (void)alignLeft:(id)sender;
-- (void)alignRight:(id)sender;
-
-    /* Insertions and Indentations */
-
-- (void)indent:(id)sender;
-- (void)insertTab:(id)sender;
-- (void)insertBacktab:(id)sender;
-- (void)insertNewline:(id)sender;
-- (void)insertParagraphSeparator:(id)sender;
-
-    /* Case changes */
-
-- (void)changeCaseOfLetter:(id)sender;
 - (void)uppercaseWord:(id)sender;
-- (void)lowercaseWord:(id)sender;
-- (void)capitalizeWord:(id)sender;
-
-    /* Deletions */
-
-- (void)deleteForward:(id)sender;
-- (void)deleteBackward:(id)sender;
-- (void)deleteBackwardByDecomposingPreviousCharacter:(id)sender;
-- (void)deleteWordForward:(id)sender;
-- (void)deleteWordBackward:(id)sender;
-- (void)deleteToBeginningOfLine:(id)sender;
-- (void)deleteToEndOfLine:(id)sender;
-- (void)deleteToBeginningOfParagraph:(id)sender;
-- (void)deleteToEndOfParagraph:(id)sender;
-
-    /* Completion */
-
-- (void)complete:(id)sender;
-
-    /* Spelling */
-
-- (void)checkSpelling:(id)sender;
-- (void)showGuessPanel:(id)sender;
-
-    /* Finding */
-    
-- (void)performFindPanelAction:(id)sender;
-
-    /* Speech */
-
-- (void)startSpeaking:(id)sender;
-- (void)stopSpeaking:(id)sender;
-
+*/
+ 
 @end

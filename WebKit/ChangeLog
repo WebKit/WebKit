@@ -1,3 +1,13 @@
+2004-06-14  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin
+        
+        Fix for this bug:
+        
+        <rdar://problem/3693202> WebView.h header unnecessarily lists NSResponder methods it overrides
+
+        * WebView.subproj/WebView.h: NSResponder overrides now gathered in a comment section.
+
 2004-06-13  Trey Matteson  <trey@apple.com>
 
 	Support for DHTML cut/copy/paste.
