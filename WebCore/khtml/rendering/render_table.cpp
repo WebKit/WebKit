@@ -319,12 +319,18 @@ void RenderTable::addColumns( int num )
     // are nulled out when a vector is grown (according to the Qt docs)
     // -dwh
     columnPos.resize(newCols+1);
+    memset( columnPos.data() + totalCols + 1, 0, num*sizeof(int));
     colMaxWidth.resize(newCols);
+    memset( colMaxWidth.data() + totalCols, 0, num*sizeof(int));
     colMinWidth.resize(newCols);
+    memset( colMinWidth.data() + totalCols, 0, num*sizeof(int));
     colValue.resize(newCols);
+    memset( colValue.data() + totalCols, 0, num*sizeof(int));
     colType.resize(newCols);
+    memset( colType.data() + totalCols, 0, num*sizeof(LengthType));
     actColWidth.resize(newCols);
-    
+    memset( actColWidth.data() + totalCols, 0, num*sizeof(LengthType));
+
     for ( unsigned int r = 0; r < allocRows; r++ )
     {
         newCells = new RenderTableCell * [newCols];
@@ -545,11 +551,8 @@ void RenderTable::addColInfo(int _startCol, int _colSpan,
 	}
     }
     
-#ifndef APPLE_CHANGES
-    // #*%^$&#@*^%*& -dwh
     if ( recalc )
         recalcColInfo( col );
-#endif
 
     if ( changed )
 	setMinMaxKnown(false);

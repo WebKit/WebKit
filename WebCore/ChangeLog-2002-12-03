@@ -1,5 +1,14 @@
 2002-07-30  David Hyatt  <hyatt@apple.com>
 
+	Ok, this time i've got it.  I hope.  I think.  Fingers crossed.
+	Putting the table recalc check back in one more time. :)
+	
+        * khtml/rendering/render_table.cpp:
+        (RenderTable::addColumns):
+        (RenderTable::addColInfo):
+
+2002-07-30  David Hyatt  <hyatt@apple.com>
+
 	Backing myself out again.  No crashes, but now pages stall.
 	#*^&*#@^%*&!!!!
 	
