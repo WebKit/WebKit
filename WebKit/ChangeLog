@@ -1,3 +1,29 @@
+2002-02-27  Kenneth Kocienda  <kocienda@apple.com>
+
+        I have changed the way that WebCore is glued to WebFoundation and WebKit. 
+        If you used or relied upon any code in the following files, you should
+        now use the IF* equivalents straight up.
+
+        - Labyrinth/WebCore/include/WCBackForwardList.h
+        - Labyrinth/WebCore/include/WCURICache.h
+        - Labyrinth/WebCore/include/WCURICacheData.h
+        - Labyrinth/WebCore/include/WCURIEntry.h
+        - Labyrinth/WebCore/include/WCURIEntry.h
+
+        All changes in this commit are related to making dependant code work with the new convention.
+
+	* History.subproj/IFURIEntry.h:
+	* History.subproj/IFURIEntry.m:
+	* Plugins.subproj/IFPluginView.mm: (-[IFPluginView
+	newStream:mimeType:notifyData:]), (-[IFPluginView
+	IFURLHandle:resourceDataDidBecomeAvailable:]), (-[IFPluginView
+	IFURLHandleResourceDidFinishLoading:data:]), (-[IFPluginView
+	IFURLHandleResourceDidBeginLoading:]), (-[IFPluginView
+	IFURLHandleResourceDidCancelLoading:]), (-[IFPluginView
+	IFURLHandle:resourceDidFailLoadingWithResult:]):
+	* WebKit.pbproj/kocienda.pbxuser:
+	* WebKit.pbproj/project.pbxproj:
+
 2002-02-26  John Sullivan  <sullivan@apple.com>
 
 	* History.subproj/IFURIEntry.m: (-[IFURIEntry dealloc]):

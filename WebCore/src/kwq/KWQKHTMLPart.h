@@ -37,10 +37,6 @@
 
 #include <kjs_proxy.h>
 
-#if (defined(__APPLE__) && defined(__OBJC__) && defined(__cplusplus))
-#import <WCURICacheData.h>
-#endif
-
 class KHTMLSettings;
 class KJavaAppletContext;
 class KJSProxy;

@@ -9,17 +9,6 @@
 #import "IFURIEntry.h"
 #import "WebKitReallyPrivate.h"
 
-#if 0
-#import "WCURIEntry.h"
-
-// *** Function to access WCURICache singleton
-
-id <WCURIEntry> WCCreateURIEntry(void)
-{
-    return [[IFURIEntry alloc] init];
-}
-#endif
-
 @implementation IFURIEntry
 
 -(id)init
@@ -175,4 +164,3 @@ id <WCURIEntry> WCCreateURIEntry(void)
 }
     
 @end
-

@@ -9,7 +9,7 @@
 
 #include <Carbon/Carbon.h> 
 #include "kwqdebug.h"
-#include <WCURLHandle.h>
+#include <WebFoundation/IFURLHandle.h>
 #import <IFWebDataSource.h>
 #import <IFBaseWebController.h>
 #include <WCPluginWidget.h>
@@ -232,6 +232,7 @@ static id IFPluginMake(NSRect rect, QWidget *widget, WCPlugin *plugin, NSString 
     NPError npErr;    
     uint16 transferMode;
     IFURLHandle *urlHandle;
+    NSDictionary *attributes;
     
     stream = malloc(sizeof(NPStream));
     cURL   = malloc([streamURL length]+1);
@@ -254,7 +255,9 @@ static id IFPluginMake(NSRect rect, QWidget *widget, WCPlugin *plugin, NSString 
     
     if(transferMode == NP_NORMAL){
         KWQDebug("Stream type: NP_NORMAL\n");
-        urlHandle = (IFURLHandle *)WCURLHandleCreate([NSURL URLWithString:streamURL], self, streamData);
+        attributes = [NSDictionary dictionaryWithObject:[NSValue valueWithPointer:streamData] forKey:IFURLHandleUserData];
+        urlHandle = [[IFURLHandle alloc] initWithURL:[NSURL URLWithString:streamURL] attributes:attributes flags:0];
+        [urlHandle addClient:self];
         [activeURLHandles addObject:urlHandle];
         [urlHandle loadInBackground];
     }else if(transferMode == NP_ASFILEONLY || transferMode == NP_ASFILE){
@@ -264,7 +267,9 @@ static id IFPluginMake(NSRect rect, QWidget *widget, WCPlugin *plugin, NSString 
         [streamData->filename retain];
         streamData->data = [NSMutableData dataWithCapacity:0];
         [streamData->data retain];
-        urlHandle = (IFURLHandle *)WCURLHandleCreate([NSURL URLWithString:streamURL], self, streamData);
+        attributes = [NSDictionary dictionaryWithObject:[NSValue valueWithPointer:streamData] forKey:IFURLHandleUserData];
+        urlHandle = [[IFURLHandle alloc] initWithURL:[NSURL URLWithString:streamURL] attributes:attributes flags:0];
+        [urlHandle addClient:self];
         if(urlHandle!=nil){
             [activeURLHandles addObject:urlHandle];
             [urlHandle loadInBackground];
@@ -276,12 +281,12 @@ static id IFPluginMake(NSRect rect, QWidget *widget, WCPlugin *plugin, NSString 
 
 // cache methods
 
-- (void)WCURLHandle:(id)sender resourceDataDidBecomeAvailable:(NSData *)data userData:(void *)userData
+- (void)IFURLHandle:(IFURLHandle *)sender resourceDataDidBecomeAvailable:(NSData *)data
 {
     int32 bytes;
     StreamData *streamData;
     
-    streamData = userData;
+    streamData = [[[sender attributes] objectForKey:IFURLHandleUserData] pointerValue];
     if(streamData->transferMode != NP_ASFILEONLY){
         bytes = NPP_WriteReady(instance, streamData->stream);
         //KWQDebug("NPP_WriteReady bytes=%u\n", bytes);
@@ -294,15 +299,15 @@ static id IFPluginMake(NSRect rect, QWidget *widget, WCPlugin *plugin, NSString 
     }
 }
 
-- (void)WCURLHandleResourceDidFinishLoading:(id)sender data: (NSData *)data userData:(void *)userData
+- (void)IFURLHandleResourceDidFinishLoading:(IFURLHandle *)sender data: (NSData *)data
 {
     NPError npErr;
     char *cFilename;
     NSMutableString *filenameClassic, *filename;
     StreamData *streamData;
     NSFileManager *fileManager;
-        
-    streamData = userData;
+    
+    streamData = [[[sender attributes] objectForKey:IFURLHandleUserData] pointerValue];
     if(streamData->transferMode == NP_ASFILE || streamData->transferMode == NP_ASFILEONLY){
         filenameClassic = [NSMutableString stringWithCapacity:200];
         filename = [NSMutableString stringWithCapacity:200];
@@ -333,15 +338,15 @@ static id IFPluginMake(NSRect rect, QWidget *widget, WCPlugin *plugin, NSString 
     [activeURLHandles removeObject:sender];
 }
 
-- (void)WCURLHandleResourceDidBeginLoading:(id)sender userData:(void *)userData
+- (void)IFURLHandleResourceDidBeginLoading:(IFURLHandle *)sender
 {
 }
 
-- (void)WCURLHandleResourceDidCancelLoading:(id)sender userData:(void *)userData
+- (void)IFURLHandleResourceDidCancelLoading:(IFURLHandle *)sender
 {
 }
 
-- (void)WCURLHandle:(id)sender resourceDidFailLoadingWithResult:(int)result userData:(void *)userData
+- (void)IFURLHandle:(IFURLHandle *)sender resourceDidFailLoadingWithResult:(int)result
 {
 }
 

@@ -29,8 +29,8 @@
 #include <jobclasses.h>
 
 #include <Foundation/Foundation.h>
-#include <WCURICache.h>
-#include <WCURLHandle.h>
+
+#include <WebFoundation/IFURLHandleClient.h>
 
 static const QString *DEFAULT_ERROR_TEXT = NULL;
 
@@ -116,7 +116,7 @@ private:
     NSMutableDictionary *metaData;
     NSURL *url;
     id handle;
-    id <WCURLHandleClient> client;
+    id <IFURLHandleClient> client;
 };
 
 // class TransferJob ===========================================================
@@ -174,10 +174,14 @@ void TransferJob::kill(bool quietly=TRUE)
     [d->handle cancelLoadInBackground];
 }
 
-void TransferJob::begin(id <WCURLHandleClient> client, void *userData)
+void TransferJob::begin(id <IFURLHandleClient> client, void *userData)
 {
+    NSDictionary *attributes;
+    
     d->client = client;
-    d->handle = WCURLHandleCreate(d->url, client, userData);
+    attributes = [NSDictionary dictionaryWithObject:[NSValue valueWithPointer:userData] forKey:IFURLHandleUserData];
+    d->handle = [[IFURLHandle alloc] initWithURL:d->url attributes:attributes flags:0];
+    [d->handle addClient:client];
     [d->handle loadInBackground];
 }
 

@@ -29,7 +29,6 @@
 #include <kwqdebug.h>
 #include <loader.h>
 
-#include <WCURLHandle.h>
 #include <WCLoadProgress.h>
 
 // up to which size is a picture for sure cacheable
@@ -913,7 +912,7 @@ void DocLoader::removeCachedObject( CachedObject* o ) const
 
 // Class URLLoadClient ======================================================================
 
-@interface URLLoadClient : NSObject <WCURLHandleClient>
+@interface URLLoadClient : NSObject <IFURLHandleClient>
 {
     @public
     Loader *m_loader;
@@ -970,14 +969,22 @@ typedef enum {
     return nil;
 }
 
-- (void)WCURLHandleResourceDidBeginLoading:(id)sender userData:(void *)userData
+- (void)IFURLHandleResourceDidBeginLoading:(IFURLHandle *)sender
 {
+    void *userData;
+    
+    userData = [[[sender attributes] objectForKey:IFURLHandleUserData] pointerValue];
+    
     KIO::TransferJob *job = static_cast<KIO::TransferJob *>(userData);
     KWQDEBUGLEVEL2 (0x2000, "dataSource = 0x%08x for URL %s\n", m_dataSource, job->url().url().latin1());
 }
 
-- (void)WCURLHandleResourceDidCancelLoading:(id)sender userData:(void *)userData
+- (void)IFURLHandleResourceDidCancelLoading:(IFURLHandle *)sender
 {
+    void *userData;
+    
+    userData = [[[sender attributes] objectForKey:IFURLHandleUserData] pointerValue];
+    
     KIO::TransferJob *job = static_cast<KIO::TransferJob *>(userData);
     KWQDEBUGLEVEL2 (0x2000, "dataSource = 0x%08x for URL %s\n", m_dataSource, job->url().url().latin1());
 
@@ -985,8 +992,12 @@ typedef enum {
     [sender autorelease];
 }
 
-- (void)WCURLHandleResourceDidFinishLoading:(id)sender data: (NSData *)data userData:(void *)userData
+- (void)IFURLHandleResourceDidFinishLoading:(IFURLHandle *)sender data: (NSData *)data
 {
+    void *userData;
+    
+    userData = [[[sender attributes] objectForKey:IFURLHandleUserData] pointerValue];
+    
     KIO::TransferJob *job = static_cast<KIO::TransferJob *>(userData);
     QString urlString = job->url().url();
 
@@ -1007,8 +1018,12 @@ typedef enum {
     [sender autorelease];
 }
 
-- (void)WCURLHandle:(id)sender resourceDataDidBecomeAvailable:(NSData *)data userData:(void *)userData
+- (void)IFURLHandle:(IFURLHandle *)sender resourceDataDidBecomeAvailable:(NSData *)data
 {
+    void *userData;
+    
+    userData = [[[sender attributes] objectForKey:IFURLHandleUserData] pointerValue];
+    
     KIO::TransferJob *job = static_cast<KIO::TransferJob *>(userData);
     QString urlString = job->url().url();
     
@@ -1025,8 +1040,12 @@ typedef enum {
     [controller receivedProgress: (IFLoadProgress *)loadProgress forResource: QSTRING_TO_NSSTRING(urlString) fromDataSource: m_dataSource];
 }
 
-- (void)WCURLHandle:(id)sender resourceDidFailLoadingWithResult:(int)result userData:(void *)userData
+- (void)IFURLHandle:(IFURLHandle *)sender resourceDidFailLoadingWithResult:(int)result
 {
+    void *userData;
+    
+    userData = [[[sender attributes] objectForKey:IFURLHandleUserData] pointerValue];
+    
     KIO::TransferJob *job = static_cast<KIO::TransferJob *>(userData);
     KWQDEBUGLEVEL2 (0x2000, "dataSource = 0x%08x for URL %s\n", m_dataSource, job->url().url().latin1());
 
@@ -1627,3 +1646,4 @@ void Cache::removeCacheEntry( CachedObject *object )
   if ( object->canDelete() )
      delete object;
 }
+

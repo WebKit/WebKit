@@ -8,9 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
-//#import <WCURIEntry.h>
 
-//@interface IFURIEntry : NSObject <WCURIEntry>
 @interface IFURIEntry : NSObject
 {
     NSURL *_url;
@@ -46,4 +44,3 @@
 -(BOOL)isEqual:(id)anObject;
 
 @end
-

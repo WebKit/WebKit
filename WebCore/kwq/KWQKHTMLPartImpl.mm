@@ -29,6 +29,7 @@
 #include <qtextcodec.h>
 
 #import <Foundation/Foundation.h>
+#import <WebFoundation/WebFoundation.h>
 
 #include <job.h>
 #include <jobclasses.h>
@@ -49,8 +50,6 @@
 #include <kurl.h>
 
 #include <KWQKHTMLPart.h>
-
-#import <WCURLHandle.h>
 
 #import <WCPluginWidget.h>
 
@@ -101,7 +100,6 @@
 - (void *)_renderFramePart;
 @end
 
-
 static bool cache_init = false;
 
 static void recursive(const DOM::Node &pNode, const DOM::Node &node)
@@ -119,7 +117,7 @@ static void recursive(const DOM::Node &pNode, const DOM::Node &node)
 
 // Class KHTMLPartLoadClient ==============================================================
 
-@interface KHTMLPartLoadClient : NSObject <WCURLHandleClient>
+@interface KHTMLPartLoadClient : NSObject <IFURLHandleClient>
 {
     @public
     KHTMLPart *m_part;
@@ -140,26 +138,42 @@ static void recursive(const DOM::Node &pNode, const DOM::Node &node)
     return nil;
 }
 
-- (void)WCURLHandleResourceDidBeginLoading:(id)sender userData:(void *)userData
+- (void)IFURLHandleResourceDidBeginLoading:(IFURLHandle *)sender
 {
+    void *userData;
+    
+    userData = [[[sender attributes] objectForKey:IFURLHandleUserData] pointerValue];
+    
     KWQDEBUGLEVEL1 (0x2000, "userData = 0x%08x\n", userData);
 }
 
-- (void)WCURLHandleResourceDidCancelLoading:(id)sender userData:(void *)userData
+- (void)IFURLHandleResourceDidCancelLoading:(IFURLHandle *)sender
 {
+    void *userData;
+    
+    userData = [[[sender attributes] objectForKey:IFURLHandleUserData] pointerValue];
+
     KWQDEBUGLEVEL1 (0x2000, "userData = 0x%08x\n", userData);
     [sender autorelease];
 }
 
-- (void)WCURLHandleResourceDidFinishLoading:(id)sender data: (NSData *)data userData:(void *)userData
+- (void)IFURLHandleResourceDidFinishLoading:(IFURLHandle *)sender data: (NSData *)data
 {
+    void *userData;
+    
+    userData = [[[sender attributes] objectForKey:IFURLHandleUserData] pointerValue];
+
     KWQDEBUGLEVEL1 (0x2000, "userData = 0x%08x\n", userData);
     m_part->closeURL();
     [sender autorelease];
 }
 
-- (void)WCURLHandle:(id)sender resourceDataDidBecomeAvailable:(NSData *)data userData:(void *)userData
+- (void)IFURLHandle:(IFURLHandle *)sender resourceDataDidBecomeAvailable:(NSData *)data
 {
+    void *userData;
+    
+    userData = [[[sender attributes] objectForKey:IFURLHandleUserData] pointerValue];
+
     KWQDEBUGLEVEL3 (0x2000, "userData = 0x%08x, data = 0x%08x, length %d\n", userData, data, [data length]);
     if (!m_data) {
         m_data = [data retain];
@@ -167,8 +181,12 @@ static void recursive(const DOM::Node &pNode, const DOM::Node &node)
     m_part->slotData(sender, (const char *)[data bytes], [data length]);
 }
 
-- (void)WCURLHandle:(id)sender resourceDidFailLoadingWithResult:(int)result userData:(void *)userData
+- (void)IFURLHandle:(IFURLHandle *)sender resourceDidFailLoadingWithResult:(int)result
 {
+    void *userData;
+    
+    userData = [[[sender attributes] objectForKey:IFURLHandleUserData] pointerValue];
+
     KWQDEBUGLEVEL2 (0x2000, "result = %d, userData = 0x%08x\n", result, userData);
     [sender autorelease];
 }
@@ -355,8 +373,8 @@ void KHTMLPart::slotData(id handle, const char *bytes, int length)
         d->m_workingURL = KURL();
     }
 
-    if (!d->m_encoding && [handle respondsToSelector:@selector(responseHeaderForKey:)]) {
-        encoding = encodingFromContentType([handle responseHeaderForKey:@"Content-Type"]);
+    if (!d->m_encoding && [handle respondsToSelector:@selector(responseHeaders:)]) {
+        encoding = encodingFromContentType([[handle responseHeaders] objectForKey:@"Content-Type"]);
         if (encoding != NULL) {
             enc = QString::fromCFString((CFStringRef) encoding);
             setEncoding (enc, true);
@@ -413,7 +431,8 @@ bool KHTMLPart::openURL( const KURL &url )
     }
     theURL = [NSURL URLWithString:urlString];
     
-    d->m_handle = WCURLHandleCreate(theURL, d->m_recv, NULL);
+    d->m_handle = [[IFURLHandle alloc] initWithURL:theURL];
+    [d->m_handle addClient:d->m_recv];
     [d->m_handle loadInBackground];
     
     [[NSNotificationCenter defaultCenter] addObserver:d->m_recv

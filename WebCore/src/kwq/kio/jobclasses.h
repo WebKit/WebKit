@@ -36,7 +36,7 @@
 
 #ifdef _KWQ_
 #if (defined(__APPLE__) && defined(__OBJC__) && defined(__cplusplus))
-#include <WCURLHandle.h>
+#import <WebFoundation/WebFoundation.h>
 #endif
 #endif
 
@@ -168,7 +168,7 @@ public:
 
 #ifdef _KWQ_
 #if (defined(__APPLE__) && defined(__OBJC__) && defined(__cplusplus))
-    void begin(id <WCURLHandleClient> client, void *userData);
+    void begin(id <IFURLHandleClient> client, void *userData);
     id handle();
 #else
     void begin(void *requestor, void *userData);

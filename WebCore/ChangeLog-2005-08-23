@@ -1,3 +1,39 @@
+2002-02-27  Kenneth Kocienda  <kocienda@apple.com>
+
+	I have changed the way that WebCore is glued to WebFoundation and WebKit. 
+	If you used or relied upon any code in the following files, you should 
+	now use the IF* equivalents straight up. 
+
+	- Labyrinth/WebCore/include/WCBackForwardList.h
+	- Labyrinth/WebCore/include/WCURICache.h
+	- Labyrinth/WebCore/include/WCURICacheData.h
+	- Labyrinth/WebCore/include/WCURIEntry.h
+	- Labyrinth/WebCore/include/WCURIEntry.h
+
+	All changes in this commit are related to making dependant code work with the new convention.
+
+	* include/WCBackForwardList.h:
+	* include/WCURICache.h:
+	* include/WCURICacheData.h:
+	* include/WCURIEntry.h:
+	* include/WCURLHandle.h:
+	* src/kwq/KWQKHTMLPart.h:
+	* src/kwq/KWQKHTMLPart.mm: (-[KHTMLPartLoadClient
+	IFURLHandleResourceDidBeginLoading:]), (-[KHTMLPartLoadClient
+	IFURLHandleResourceDidCancelLoading:]), (-[KHTMLPartLoadClient
+	IFURLHandleResourceDidFinishLoading:data:]), (-[KHTMLPartLoadClient
+	IFURLHandle:resourceDataDidBecomeAvailable:]), (-[KHTMLPartLoadClient
+	IFURLHandle:resourceDidFailLoadingWithResult:]), (KHTMLPart::slotData),
+	(KHTMLPart::openURL):
+	* src/kwq/KWQKjobclasses.mm:
+	* src/kwq/KWQKloader.mm: (-[URLLoadClient IFURLHandleResourceDidBeginLoading:]),
+	(-[URLLoadClient IFURLHandleResourceDidCancelLoading:]), (-[URLLoadClient
+	IFURLHandleResourceDidFinishLoading:data:]), (-[URLLoadClient
+	IFURLHandle:resourceDataDidBecomeAvailable:]), (-[URLLoadClient
+	IFURLHandle:resourceDidFailLoadingWithResult:]):
+	* src/kwq/Makefile.am:
+	* src/kwq/kio/jobclasses.h:
+
 2002-02-27  Maciej Stachowiak  <mjs@apple.com>
 
 	Replace QDir and QFile with clean-room implementations. Add glob
