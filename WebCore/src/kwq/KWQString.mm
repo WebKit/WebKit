@@ -1560,12 +1560,11 @@ QConstString::QConstString(QChar *qcs, uint len)
         // guarantee backing store is not copied even though string is mutable
         s = CFStringCreateMutableWithExternalCharactersNoCopy(
                 kCFAllocatorDefault, &qcs->c, len, len, kCFAllocatorNull);
-// When is the memory freed?  Can we safely use the bytes???
-//        s = CFStringCreateMutable(kCFAllocatorDefault, 0);
-//        CFStringAppendCharacters (s, &qcs->c, len);
     } else {
         s = NULL;
     }
+    cache = NULL;
+    cacheType = CacheInvalid;
 }
 
 // member functions ------------------------------------------------------------
