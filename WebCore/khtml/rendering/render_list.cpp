@@ -327,13 +327,25 @@ void RenderListMarker::paintObject(QPainter *p, int, int _y,
     int xoff = 0;
     int yoff = fm.ascent() - offset;
 
-    if(style()->listStylePosition() != INSIDE) {
+    if(style()->listStylePosition() == OUTSIDE) {
         xoff = -7 - offset;
         if(style()->direction() == RTL)
             xoff = -xoff + parent()->width();
     }
 
     if ( m_listImage && !m_listImage->isErrorImage()) {
+        // For OUTSIDE bullets shrink back to only a 0.3em margin. 0.67 em is too
+        // much.  This brings the margin back to MacIE/Gecko/WinIE levels.  
+        // For LTR don't forget to add in the width of the image to the offset as
+        // well (you are moving the image left, so you have to also add in the width
+        // of the image's border box as well). -dwh
+        if (style()->listStylePosition() == OUTSIDE) {
+            if (style()->direction() == LTR)
+                xoff -= m_listImage->pixmap().width() - fm.ascent()*1/3;
+            else
+                xoff -= fm.ascent()*1/3;
+        }
+        
         p->drawPixmap( QPoint( _tx + xoff, _ty ), m_listImage->pixmap());
         return;
     }

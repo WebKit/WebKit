@@ -1,3 +1,15 @@
+2002-12-08  David Hyatt  <hyatt@apple.com>
+
+	Fix for image bullets.  They were neglecting to offset
+	themselves by their own width, and were just relying on
+	sheer luck (the default margin) to accommodate their
+	size.  The bug is 3007040 (borkware.com).
+	
+        Reviewed by: gramps
+
+        * khtml/rendering/render_list.cpp:
+        (RenderListMarker::paintObject):
+
 2002-12-07  David Hyatt  <hyatt@apple.com>
 
 	This change fixes three bugs in list items.  
