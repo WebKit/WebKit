@@ -28,8 +28,6 @@
     
     WebController *controller;
     
-    // The original URL as requested during initialization.
-    WebResourceRequest *originalRequest;
     WebResourceRequest *request;
     WebResourceResponse *response;
 
@@ -101,7 +99,6 @@
 - (void)_loadIcon;
 - (void)_setIconURL:(NSURL *)URL;
 - (void)_setIconURL:(NSURL *)URL withType:(NSString *)iconType;
-- (WebResourceHandle *)_mainHandle;
 - (void)_setOverrideEncoding:(NSString *)overrideEncoding;
 - (NSString *)_overrideEncoding;
 

@@ -488,11 +488,6 @@
     _private->iconURL = [URL retain];
 }
 
-- (WebResourceHandle*)_mainHandle
-{
-    return _private->mainHandle;
-}
-
 - (void)_defersCallbacksChanged
 {
     BOOL defers = [_private->controller _defersCallbacks];
