@@ -1,3 +1,11 @@
+2003-05-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fixed a storage leak
+
+        * WebView.subproj/WebFramePrivate.m: (-[WebFrame _setState:]): Release the timer before setting to nil.
+
 2003-05-03  David Hyatt  <hyatt@apple.com>
 
 	Add smallCaps boolean to the string measuring and drawing

@@ -830,7 +830,8 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         // WebCore based on whether the page's contents are dynamic or not.
         [[sv contentView] setCopiesOnScroll:YES];
         [_private->scheduledLayoutTimer invalidate];
-        _private->scheduledLayoutTimer = 0;
+        [_private->scheduledLayoutTimer release];
+        _private->scheduledLayoutTimer = nil;
         [_private setPreviousItem:nil];
         _timeOfLastCompletedLoad = CFAbsoluteTimeGetCurrent();
     }
