@@ -193,6 +193,8 @@
 	}
 
         _private->mainHandle = [[WebResourceHandle alloc] initWithRequest:_private->request delegate:_private->mainClient];
+        
+        ASSERT(_private->mainHandle);
     }
     [_private->mainClient didStartLoadingWithURL:[_private->mainHandle URL]];
 }

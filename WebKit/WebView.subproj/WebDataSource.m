@@ -41,6 +41,10 @@
 
 -(id)initWithRequest:(WebResourceRequest *)request
 {
+    if (![WebResourceHandle canInitWithRequest:request]) {
+        return nil;
+    }
+    
     self = [super init];
     if (!self) {
         return nil;

@@ -1,13 +1,23 @@
+2002-09-28  Darin Adler  <darin@apple.com>
+
+        * WebView.subproj/WebDataSource.m: (-[WebDataSource initWithRequest:]):
+	Catch a request that we can't use here instead of failing later.
+
+        * WebView.subproj/WebDataSourcePrivate.m: (-[WebDataSource _startLoading]):
+	Added an assert so the failure was less confusing; good idea to leave it in.
+
 2002-09-28  Chris Blumenberg  <cblu@apple.com>
 
-	Support for latest Flash plug-in. It requests a javascript URL for every plug-in instance. Until javascript URLs work, we return an error to the plug-in. 
+	Support for latest Flash plug-in. It requests a javascript URL for every plug-in instance.
+	Until javascript URLs work, we return an error to the plug-in. 
 
 	Fixed: 3035582 - flash animations don't work after upgrading flash
 	Fixed: 3021936 - links in flash at foggypetronasracing.com doesn't work
 
         * Plugins.subproj/WebPluginStream.h:
         * Plugins.subproj/WebPluginStream.m:
-        (-[WebNetscapePluginStream initWithURL:pluginPointer:notifyData:]): Make the request here and return nil if we can't create a handle with it.
+        (-[WebNetscapePluginStream initWithURL:pluginPointer:notifyData:]):
+	Make the request here and return nil if we can't create a handle with it.
         (-[WebNetscapePluginStream dealloc]): release the request
         (-[WebNetscapePluginStream startLoad]): use the request when creating the handle
 
