@@ -169,6 +169,8 @@
 				25BECC9D017E0A0D0ECA149E,
 				9C7CABC00190A3E10ECA16EA,
 				9C7CABC10190A3E10ECA16EA,
+				9C93A48601920D0C0ECA16EA,
+				9C93A48A01920D3D0ECA16EA,
 			);
 			isa = PBXHeadersBuildPhase;
 			name = Headers;
@@ -190,8 +192,8 @@
 				25BECC9E017E0A0D0ECA149E,
 				25BECC9F017E0A0D0ECA149E,
 				25BECCA0017E0A0D0ECA149E,
-				9C7CABC20190A3E10ECA16EA,
-				9C7CABC30190A3E10ECA16EA,
+				9C93A48701920D0C0ECA16EA,
+				9C93A48B01920D3D0ECA16EA,
 			);
 			isa = PBXSourcesBuildPhase;
 			name = Sources;
@@ -519,9 +521,11 @@
 		9C7CABBB0190A37C0ECA16EA = {
 			children = (
 				9C7CABBC0190A3E10ECA16EA,
-				9C7CABBD0190A3E10ECA16EA,
 				9C7CABBE0190A3E10ECA16EA,
-				9C7CABBF0190A3E10ECA16EA,
+				9C93A48401920D0C0ECA16EA,
+				9C93A48501920D0C0ECA16EA,
+				9C93A48801920D3D0ECA16EA,
+				9C93A48901920D3D0ECA16EA,
 			);
 			isa = PBXGroup;
 			name = WebView;
@@ -533,22 +537,10 @@
 			path = WebView.subproj/NSWebPageDataSource.h;
 			refType = 2;
 		};
-		9C7CABBD0190A3E10ECA16EA = {
-			isa = PBXFileReference;
-			name = NSWebPageDataSource.m;
-			path = WebView.subproj/NSWebPageDataSource.m;
-			refType = 2;
-		};
 		9C7CABBE0190A3E10ECA16EA = {
 			isa = PBXFileReference;
 			name = NSWebPageView.h;
 			path = WebView.subproj/NSWebPageView.h;
-			refType = 2;
-		};
-		9C7CABBF0190A3E10ECA16EA = {
-			isa = PBXFileReference;
-			name = NSWebPageView.m;
-			path = WebView.subproj/NSWebPageView.m;
 			refType = 2;
 		};
 		9C7CABC00190A3E10ECA16EA = {
@@ -563,14 +555,50 @@
 			settings = {
 			};
 		};
-		9C7CABC20190A3E10ECA16EA = {
-			fileRef = 9C7CABBD0190A3E10ECA16EA;
+		9C93A48401920D0C0ECA16EA = {
+			isa = PBXFileReference;
+			name = NSWebPageView.mm;
+			path = WebView.subproj/NSWebPageView.mm;
+			refType = 2;
+		};
+		9C93A48501920D0C0ECA16EA = {
+			isa = PBXFileReference;
+			name = NSWebPageDataSourcePrivate.h;
+			path = WebView.subproj/NSWebPageDataSourcePrivate.h;
+			refType = 2;
+		};
+		9C93A48601920D0C0ECA16EA = {
+			fileRef = 9C93A48501920D0C0ECA16EA;
 			isa = PBXBuildFile;
 			settings = {
 			};
 		};
-		9C7CABC30190A3E10ECA16EA = {
-			fileRef = 9C7CABBF0190A3E10ECA16EA;
+		9C93A48701920D0C0ECA16EA = {
+			fileRef = 9C93A48401920D0C0ECA16EA;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		9C93A48801920D3D0ECA16EA = {
+			isa = PBXFileReference;
+			name = NSWebPageDataSource.mm;
+			path = WebView.subproj/NSWebPageDataSource.mm;
+			refType = 2;
+		};
+		9C93A48901920D3D0ECA16EA = {
+			isa = PBXFileReference;
+			name = NSWebPageViewPrivate.h;
+			path = WebView.subproj/NSWebPageViewPrivate.h;
+			refType = 2;
+		};
+		9C93A48A01920D3D0ECA16EA = {
+			fileRef = 9C93A48901920D3D0ECA16EA;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		9C93A48B01920D3D0ECA16EA = {
+			fileRef = 9C93A48801920D3D0ECA16EA;
 			isa = PBXBuildFile;
 			settings = {
 			};
