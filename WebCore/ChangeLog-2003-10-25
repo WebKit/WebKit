@@ -1,3 +1,10 @@
+2002-09-25  Darin Adler  <darin@apple.com>
+
+	Fix error with the color "indigo".
+
+        * kwq/KWQColor.mm: (getNamedColors): There were some spaces in our
+	color table so we wouldn't handle indianred or indigo.
+
 2002-09-25  Maciej Stachowiak  <mjs@apple.com>
 
 	- fixed 2854536 - New cookie policy: "accept cookies only from the
