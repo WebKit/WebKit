@@ -15,6 +15,7 @@
 #import <WebKit/IFImageRendererFactory.h>
 
 #import <WebFoundation/IFNSStringExtensions.h>
+#import <WebFoundation/IFNSURLExtensions.h>
 
 @implementation IFWebView
 
@@ -131,9 +132,9 @@
         URL = [NSURL fileURLWithPath:file];
     }else if([dragType isEqualToString:@"NSURLPboardType"]){
         // FIXME: Is this the right way to get the URL? How to test?
-        URL = [NSURL URLWithString:[[sender draggingPasteboard] stringForType:@"NSURLPboardType"]];
+        URL = [NSURL _IF_URLWithString:[[sender draggingPasteboard] stringForType:@"NSURLPboardType"]];
     }else if([dragType isEqualToString:@"NSStringPboardType"]){
-        URL = [NSURL URLWithString:[[sender draggingPasteboard] stringForType:@"NSStringPboardType"]];
+        URL = [NSURL _IF_URLWithString:[[sender draggingPasteboard] stringForType:@"NSStringPboardType"]];
     }
     
     if(!URL)

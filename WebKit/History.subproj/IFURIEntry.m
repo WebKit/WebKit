@@ -9,6 +9,8 @@
 #import "IFURIEntry.h"
 #import "WebKitReallyPrivate.h"
 
+#import <WebFoundation/IFNSURLExtensions.h>
+
 @implementation IFURIEntry
 
 -(id)init
@@ -184,7 +186,7 @@
     // FIXME: doesn't save/restore images yet
     storedURLString = [dict objectForKey: @"url"];
     if (storedURLString != nil) {
-        _url = [[NSURL URLWithString:storedURLString] retain];
+        _url = [[NSURL _IF_URLWithString:storedURLString] retain];
     }
     _title = [[dict objectForKey: @"title"] retain];
     _displayTitle = [[dict objectForKey: @"displayTitle"] retain];

@@ -21,6 +21,7 @@
 
 #import <WebFoundation/IFError.h>
 #import <WebFoundation/IFNSStringExtensions.h>
+#import <WebFoundation/IFNSURLExtensions.h>
 #import <WebFoundation/IFURLHandle.h>
 
 #import <kurl.h>
@@ -163,7 +164,7 @@ static NSMutableDictionary *_repTypes=nil;
     if ([urlString hasSuffix:@"/"]) {
         urlString = [urlString substringToIndex:([urlString length] - 1)];
     }
-    theURL = [NSURL URLWithString:urlString];
+    theURL = [NSURL _IF_URLWithString:urlString];
 
     _private->mainURLHandleClient = [[IFMainURLHandleClient alloc] initWithDataSource: self];
     [_private->mainHandle addClient: _private->mainURLHandleClient];

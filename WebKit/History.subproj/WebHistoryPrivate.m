@@ -9,6 +9,7 @@
 #import "IFWebHistoryPrivate.h"
 
 #import <WebFoundation/IFNSCalendarDateExtensions.h>
+#import <WebFoundation/IFNSURLExtensions.h>
 #import <WebKit/WebKitDebug.h>
 #import "IFURIEntry.h"
 
@@ -236,7 +237,7 @@
     }
 
     if (newURLString != nil) {
-        [entry setURL:[NSURL URLWithString:newURLString]];
+        [entry setURL:[NSURL _IF_URLWithString:newURLString]];
     }
 
     if (newTitle != nil) {

@@ -9,6 +9,8 @@
 #import <WebKit/IFWebController.h>
 #import <WebKit/IFNSViewExtras.h>
 
+#import <WebFoundation/IFNSURLExtensions.h>
+
 static NSImage *image = nil;
 
 @implementation IFNullPluginView
@@ -30,7 +32,7 @@ static NSImage *image = nil;
         
         pluginPageString = [arguments objectForKey:@"pluginspage"];
         if(pluginPageString)
-            pluginPage = [[NSURL URLWithString:pluginPageString] retain];
+            pluginPage = [[NSURL _IF_URLWithString:pluginPageString] retain];
         if(mime)
             mimeType = [mime retain];
         

@@ -9,6 +9,8 @@
 #import "IFURLsWithTitles.h"
 #import <WebKit/WebKitDebug.h>
 
+#import <WebFoundation/IFNSURLExtensions.h>
+
 @implementation IFURLsWithTitles
 
 + (NSArray *)arrayWithIFURLsWithTitlesPboardType
@@ -76,7 +78,7 @@
     count = [URLStrings count];
     URLs = [NSMutableArray arrayWithCapacity:count];
     for (index = 0; index < count; ++index) {
-        [URLs addObject:[NSURL URLWithString:[URLStrings objectAtIndex:index]]];
+        [URLs addObject:[NSURL _IF_URLWithString:[URLStrings objectAtIndex:index]]];
     }
 
     return URLs;

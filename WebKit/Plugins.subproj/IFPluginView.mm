@@ -21,6 +21,7 @@
 
 #import <WebFoundation/IFError.h>
 #import <WebFoundation/IFNSStringExtensions.h>
+#import <WebFoundation/IFNSURLExtensions.h>
 
 #import <AppKit/NSWindow_Private.h>
 #import <Carbon/Carbon.h>
@@ -295,7 +296,7 @@ static char *newCString(NSString *string)
     // get base URL which was added in the args in the part
     baseURLString = [arguments objectForKey:@"WebKitBaseURL"];
     if (baseURLString)
-        baseURL = [[NSURL URLWithString:baseURLString] retain];
+        baseURL = [[NSURL _IF_URLWithString:baseURLString] retain];
             
     isHidden = [arguments objectForKey:@"hidden"] != nil;
     
@@ -649,9 +650,9 @@ static char *newCString(NSString *string)
     NSURL *url;
     
     if([URLString _IF_looksLikeAbsoluteURL])
-        url = [NSURL URLWithString:URLString];
+        url = [NSURL _IF_URLWithString:URLString];
     else
-        url = [NSURL URLWithString:URLString relativeToURL:baseURL];
+        url = [NSURL _IF_URLWithString:URLString relativeToURL:baseURL];
     
     if(!url)
         return NPERR_INVALID_URL;

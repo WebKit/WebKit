@@ -14,6 +14,8 @@
 #import <WebKit/IFWebCoreViewFactory.h>
 #import <WebKit/WebKitDebug.h>
 
+#import <WebFoundation/IFNSURLExtensions.h>
+
 @implementation IFWebCoreViewFactory
 
 + (void)createSharedFactory;
@@ -59,7 +61,7 @@
     if (plugin == nil) {
         return [[[IFNullPluginView alloc] initWithFrame:NSMakeRect(0,0,0,0) mimeType:mimeType arguments:arguments] autorelease];
     }
-    return [[[IFPluginView alloc] initWithFrame:NSMakeRect(0,0,0,0) plugin:plugin url:[NSURL URLWithString:pluginURL] mime:mimeType arguments:arguments] autorelease];
+    return [[[IFPluginView alloc] initWithFrame:NSMakeRect(0,0,0,0) plugin:plugin url:[NSURL _IF_URLWithString:pluginURL] mime:mimeType arguments:arguments] autorelease];
 }
 
 - (NSArray *)pluginsInfo

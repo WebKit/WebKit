@@ -1,3 +1,32 @@
+2002-06-20  Kenneth Kocienda  <kocienda@apple.com>
+
+        A more complete fix for this bug:
+
+        Radar 2942728 (Link to Yahoo! Finance stocks page fails, says URL is "not a valid location")
+
+        I added a new +(NSURL)_IF_URLWithString: method to IFNSURLExtensions.
+        This is now the suggested way to create a URL from a string.
+
+	* History.subproj/IFURIEntry.m:
+	(-[IFURIEntry initFromDictionaryRepresentation:])
+	* History.subproj/IFURLsWithTitles.m:
+	(+[IFURLsWithTitles URLsFromPasteboard:])
+	* History.subproj/IFWebHistoryPrivate.m:
+	(-[IFWebHistoryPrivate updateURL:title:displayTitle:forURL:])
+	* Plugins.subproj/IFNullPluginView.mm:
+	(-[IFNullPluginView initWithFrame:mimeType:arguments:])
+	* Plugins.subproj/IFPluginView.mm:
+	(-[IFPluginView initWithFrame:plugin:url:mime:arguments:])
+	(-[IFPluginView loadURL:inTarget:withNotifyData:andHandleAttributes:])
+	* WebCoreSupport.subproj/IFWebCoreViewFactory.m:
+	(-[IFWebCoreViewFactory viewForPluginWithURL:serviceType:arguments:baseURL:])
+	* WebKit.pbproj/project.pbxproj:
+	* WebView.subproj/IFWebDataSource.h:
+	* WebView.subproj/IFWebDataSourcePrivate.mm:
+	(-[IFWebDataSource _startLoading:])
+	* WebView.subproj/IFWebView.mm:
+	(-[IFWebView performDragOperation:])
+
 === Alexander-9 ===
 
 2002-06-19  Richard Williamson (local)  <rjw@apple.com>
