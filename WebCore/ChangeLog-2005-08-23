@@ -4,7 +4,7 @@
 	Make :active fully hierarchical so that e.g., <a><b>Foo</b></a>
 	gets an outline when clicked.
 	
-        Reviewed by ???
+        Reviewed by trey
 
         * khtml/rendering/render_object.cpp:
         (RenderObject::setHoverAndActive):
