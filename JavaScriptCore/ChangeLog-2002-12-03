@@ -1,3 +1,13 @@
+2002-09-25  David Hyatt  <hyatt@apple.com>
+
+	Fix the impls of min/max to not use +inf/-inf when you have
+	arguments.  Technically there's still a bug here for the no
+	argument case, probably caused by a screwup when +inf/-inf are
+	converted to doubles.
+	
+        * kjs/math_object.cpp:
+        (MathFuncImp::call):
+
 2002-09-25  Darin Adler  <darin@apple.com>
 
 	- fixed 3057964 -- JS problem performing MD5 script embedded in yahoo login page
