@@ -17,7 +17,7 @@
     NSURL *url = [NSURL URLWithString: @"http://www.apple.com"];
     WKWebDataSource *dataSource = [[WKWebDataSource alloc] initWithURL: url];
     WKWebView *view = [[WKWebView alloc] initWithFrame: myFrame];
-    WKConcreteWebController *controller = [[WKConcreteWebController alloc] initWithView: view dataSource: dataSource];
+    WKDefaultWebController *controller = [[WKDefaultWebController alloc] initWithView: view dataSource: dataSource];
 
     [[[view controller] dataSource] startLoading];
 

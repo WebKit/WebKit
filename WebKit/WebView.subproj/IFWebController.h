@@ -41,7 +41,7 @@
     implementation of WKWebController.  It is also possible that a web crawler
     may implement a WKWebController with no corresponding view.
     
-    WKConcreteWebController may be subclassed to modify the behavior of the standard
+    WKDefaultWebController may be subclassed to modify the behavior of the standard
     WKWebView and WKWebDataSource.
 
    ============================================================================= 
