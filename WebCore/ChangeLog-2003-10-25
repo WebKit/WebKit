@@ -1,3 +1,15 @@
+2003-08-12  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - fixed 3226083 -- REGRESSION (Panther): white box overlaying select lists at nvidia.com drivers page
+
+        * kwq/KWQListBox.mm: (QListBox::QListBox): Call releaseGState on the clip view
+        that we make for the list box. This prevents the incorrect graphics state caching
+        that causes the problem, although it's not entirely clear why this is necessary.
+        This may ultimately turn out to be an AppKit bug, and if so we can roll out this change
+        when the AppKit itself is fixed.
+
 2003-08-12  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3373462, XML shows up as blank because the root is inline.  The fix is

@@ -68,7 +68,15 @@ QListBox::QListBox(QWidget *parent)
     [scrollView setVerticalLineScroll:[tableView rowHeight]];
     
     [tableView release];
-    
+
+    // Something about the way we use the scroll view tickles what seems to be a bug
+    // in NSView's graphics state caching. In Panther, this led to a regression
+    // where list boxes would not update properly. Telling the clip view inside the
+    // scroll view we create not to cache the graphics state works around the problem.
+    // Eventually the AppKit team will pinpoint the problem and find a better fix.
+    // See Radar 3226083 for more details.
+    [[scrollView contentView] releaseGState];
+
     setView(scrollView);
     
     [scrollView release];
