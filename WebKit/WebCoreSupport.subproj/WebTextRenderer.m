@@ -85,11 +85,6 @@ struct UnicodeGlyphMap {
     GlyphEntry *glyphs;
 };
 
-struct SubstituteFontWidthMap {
-    NSFont *font;
-    WidthMap *map;
-};
-
 
 @interface NSLanguage : NSObject 
 {
@@ -126,7 +121,7 @@ static CFCharacterSetRef nonBaseChars = NULL;
 
 
 @interface WebTextRenderer (WebPrivate)
-- (WidthMap *)extendGlyphToWidthMapToInclude:(ATSGlyphRef)glyphID font:(NSFont *)font;
+- (WidthMap *)extendGlyphToWidthMapToInclude:(ATSGlyphRef)glyphID;
 - (ATSGlyphRef)extendCharacterToGlyphMapToInclude:(UniChar) c;
 - (ATSGlyphRef)extendUnicodeCharacterToGlyphMapToInclude: (UnicodeChar)c;
 - (void)updateGlyphEntryForCharacter: (UniChar)c glyphID: (ATSGlyphRef)glyphID font: (NSFont *)substituteFont;
@@ -185,93 +180,60 @@ static inline ATSGlyphRef glyphForUnicodeCharacter (UnicodeGlyphMap *map, Unicod
 static double totalCGGetAdvancesTime = 0;
 #endif
 
-static inline SubstituteFontWidthMap *mapForSubstituteFont(WebTextRenderer *renderer, NSFont *font)
-{
-    int i;
-    
-    for (i = 0; i < renderer->numSubstituteFontWidthMaps; i++){
-        if (font == renderer->substituteFontWidthMaps[i].font)
-            return &renderer->substituteFontWidthMaps[i];
-    }
-    
-    if (renderer->numSubstituteFontWidthMaps+1 == renderer->maxSubstituteFontWidthMaps){
-        renderer->maxSubstituteFontWidthMaps = renderer->maxSubstituteFontWidthMaps * 2;
-        renderer->substituteFontWidthMaps = realloc (renderer->substituteFontWidthMaps, renderer->maxSubstituteFontWidthMaps);
-    }
-    
-    renderer->substituteFontWidthMaps[renderer->numSubstituteFontWidthMaps].font = font;
-    return &renderer->substituteFontWidthMaps[renderer->numSubstituteFontWidthMaps++];
-}
-
-static inline WebGlyphWidth widthFromMap (WebTextRenderer *renderer, WidthMap *map, ATSGlyphRef glyph, NSFont *font)
+static inline WebGlyphWidth widthForGlyph (WebTextRenderer *renderer, WidthMap *map, ATSGlyphRef glyph, NSFont *font)
 {
     WebGlyphWidth width = UNINITIALIZED_GLYPH_WIDTH;
     BOOL errorResult;
     
-    while (1){
-        if (map == 0)
-            map = [renderer extendGlyphToWidthMapToInclude: glyph font:font];
-
-        if (glyph >= map->startRange && glyph <= map->endRange){
-            width = map->widths[glyph-map->startRange].width;
-            if (width == UNINITIALIZED_GLYPH_WIDTH){
-
-#ifdef _TIMING
-                double startTime = CFAbsoluteTimeGetCurrent();
-#endif
-                if (font)
-                    errorResult = CGFontGetGlyphScaledAdvances ([font _backingCGSFont], &glyph, 1, &map->widths[glyph-map->startRange].width, [renderer->font pointSize]);
-                else
-                    errorResult = CGFontGetGlyphScaledAdvances ([renderer->font _backingCGSFont], &glyph, 1, &map->widths[glyph-map->startRange].width, [renderer->font pointSize]);
-                if (errorResult == 0)
-                    [NSException raise:NSInternalInconsistencyException format:@"Optimization assumption violation:  unable to cache glyph widths - for %@ %f",  [renderer->font displayName], [renderer->font pointSize]];
-
-#ifdef _TIMING
-                double thisTime = CFAbsoluteTimeGetCurrent() - startTime;
-                totalCGGetAdvancesTime += thisTime;
-#endif
-                width = map->widths[glyph-map->startRange].width;
-            }
-        }
-
-        if (width == UNINITIALIZED_GLYPH_WIDTH){
-            map = map->next;
-            continue;
-        }
-        
-        // Hack to ensure that characters that match the width of the space character
-        // have the same integer width as the space character.  This is necessary so
-        // glyphs in fixed pitch fonts all have the same integer width.  We can't depend
-        // on the fixed pitch property of NSFont because that isn't set for all
-        // monospaced fonts, in particular Courier!  This has the downside of inappropriately
-        // adjusting the widths of characters in non-monospaced fonts that are coincidentally
-        // the same width as a space in that font.  In practice this is not an issue as the
-        // adjustment is always as the sub-pixel level.
-        if (width == renderer->spaceWidth)
-            return renderer->ceiledSpaceWidth;
-
-        return width;
+    if (map == 0){
+        map = [renderer extendGlyphToWidthMapToInclude: glyph];
+        return widthForGlyph (renderer, map, glyph, font);
     }
-    // never get here.
-    return 0;
-}    
+        
+    if (glyph >= map->startRange && glyph <= map->endRange){
+        width = map->widths[glyph-map->startRange].width;
+        if (width == UNINITIALIZED_GLYPH_WIDTH){
 
-static inline WebGlyphWidth widthForGlyph (WebTextRenderer *renderer, ATSGlyphRef glyph, NSFont *font)
-{
-    WidthMap *map;
+#ifdef _TIMING        
+            double startTime = CFAbsoluteTimeGetCurrent();
+#endif
+            if (font)
+                errorResult = CGFontGetGlyphScaledAdvances ([font _backingCGSFont], &glyph, 1, &map->widths[glyph-map->startRange].width, [renderer->font pointSize]);
+            else
+                errorResult = CGFontGetGlyphScaledAdvances ([renderer->font _backingCGSFont], &glyph, 1, &map->widths[glyph-map->startRange].width, [renderer->font pointSize]);
+            if (errorResult == 0)
+                [NSException raise:NSInternalInconsistencyException format:@"Optimization assumption violation:  unable to cache glyph widths - for %@ %f",  [renderer->font displayName], [renderer->font pointSize]];
+    
+#ifdef _TIMING        
+            double thisTime = CFAbsoluteTimeGetCurrent() - startTime;
+            totalCGGetAdvancesTime += thisTime;
+#endif
+            width = map->widths[glyph-map->startRange].width;
+        }
+    }
 
-    if (font && font != renderer->font)
-        map = mapForSubstituteFont(renderer, font)->map;
-    else
-        map = renderer->glyphToWidthMap;
+    if (width == UNINITIALIZED_GLYPH_WIDTH)
+        width = widthForGlyph (renderer, map->next, glyph, font);
+    
+    // Hack to ensure that characters that match the width of the space character
+    // have the same integer width as the space character.  This is necessary so
+    // glyphs in fixed pitch fonts all have the same integer width.  We can't depend
+    // on the fixed pitch property of NSFont because that isn't set for all
+    // monospaced fonts, in particular Courier!  This has the downside of inappropriately
+    // adjusting the widths of characters in non-monospaced fonts that are coincidentally
+    // the same width as a space in that font.  In practice this is not an issue as the
+    // adjustment is always as the sub-pixel level.
+    if (width == renderer->spaceWidth)
+        return renderer->ceiledSpaceWidth;
 
-    return widthFromMap (renderer, map, glyph, font);
+    return width;
 }
+
 
 static inline  WebGlyphWidth widthForCharacter (WebTextRenderer *renderer, UniChar c, NSFont **font)
 {
     ATSGlyphRef glyphID = glyphForCharacter(renderer->characterToGlyphMap, c, font);
-    return widthForGlyph (renderer, glyphID, *font);
+    return widthForGlyph (renderer, renderer->glyphToWidthMap, glyphID, *font);
 }
 
 
@@ -470,7 +432,7 @@ static inline BOOL _fontContainsString (NSFont *font, NSString *string)
     float _spaceWidth;
 
     spaceGlyph = [self extendCharacterToGlyphMapToInclude: c];
-    _spaceWidth = widthForGlyph(self, spaceGlyph, 0);
+    _spaceWidth = widthForGlyph(self, glyphToWidthMap, spaceGlyph, 0);
     ceiledSpaceWidth = (float)CEIL_TO_INT(_spaceWidth);
     roundedSpaceWidth = (float)ROUND_TO_INT(_spaceWidth);
     if ([font isFixedPitch] || [font _isFakeFixedPitch]){
@@ -490,9 +452,6 @@ static inline BOOL _fontContainsString (NSFont *font, NSString *string)
         [NSException raise:NSInternalInconsistencyException format:@"%@: Don't know how to pack glyphs for font %@ %f", self, [f displayName], [f pointSize]];
         
     [super init];
-
-    maxSubstituteFontWidthMaps = NUM_SUBSTITUTE_FONT_MAPS;
-    substituteFontWidthMaps = calloc (1, maxSubstituteFontWidthMaps * sizeof(SubstituteFontWidthMap));
     
     font = [(p ? [f printerFont] : [f screenFont]) retain];
     usingPrinterFont = p;
@@ -993,7 +952,7 @@ static const char *joiningNames[] = {
         // determine the characters cluster from this base character.
 #ifdef DEBUG_DIACRITICAL
         if (IsNonBaseChar(c)){
-            printf ("NonBaseCharacter 0x%04x, joining attribute %d(%s), combining class %d, direction %d, glyph %d, width %f\n", c, WebCoreUnicodeJoiningFunction(c), joiningNames(WebCoreUnicodeJoiningFunction(c)), WebCoreUnicodeCombiningClassFunction(c), WebCoreUnicodeDirectionFunction(c), glyphID, widthForGlyph(self, glyphID));
+            printf ("NonBaseCharacter 0x%04x, joining attribute %d(%s), combining class %d, direction %d, glyph %d, width %f\n", c, WebCoreUnicodeJoiningFunction(c), joiningNames(WebCoreUnicodeJoiningFunction(c)), WebCoreUnicodeCombiningClassFunction(c), WebCoreUnicodeDirectionFunction(c), glyphID, widthForGlyph(self, glyphToWidthMap, glyphID));
         }
 #endif
         
@@ -1084,7 +1043,7 @@ static const char *joiningNames[] = {
                 }
             }
             else
-                lastWidth = widthForGlyph(self, glyphID, substituteFont);
+                lastWidth = widthForGlyph(self, glyphToWidthMap, glyphID, substituteFont);
             
             if (fontBuffer){
                 fontBuffer[numGlyphs] = (substituteFont ? substituteFont: font);
@@ -1283,21 +1242,16 @@ static const char *joiningNames[] = {
 }
 
 
-- (WidthMap *)extendGlyphToWidthMapToInclude:(ATSGlyphRef)glyphID font:(NSFont *)subFont
+- (WidthMap *)extendGlyphToWidthMapToInclude:(ATSGlyphRef)glyphID
 {
-    WidthMap *map = (WidthMap *)calloc (1, sizeof(WidthMap)), **rootMap;
+    WidthMap *map = (WidthMap *)calloc (1, sizeof(WidthMap));
     unsigned int end;
     ATSGlyphRef start;
     unsigned int blockSize;
     unsigned int i, count;
     
-    if (subFont && subFont != font)
-        rootMap = &mapForSubstituteFont(self,subFont)->map;
-    else
-        rootMap = &glyphToWidthMap;
-        
-    if (*rootMap == 0){
-        if ([(subFont ? subFont : font) numberOfGlyphs] < INITIAL_BLOCK_SIZE)
+    if (glyphToWidthMap == 0){
+        if ([font numberOfGlyphs] < INITIAL_BLOCK_SIZE)
             blockSize = [font numberOfGlyphs];
          else
             blockSize = INITIAL_BLOCK_SIZE;
@@ -1321,10 +1275,10 @@ static const char *joiningNames[] = {
         map->widths[i].width = UNINITIALIZED_GLYPH_WIDTH;
     }
 
-    if (*rootMap == 0)
-        *rootMap = map;
+    if (glyphToWidthMap == 0)
+        glyphToWidthMap = map;
     else {
-        WidthMap *lastMap = *rootMap;
+        WidthMap *lastMap = glyphToWidthMap;
         while (lastMap->next != 0)
             lastMap = lastMap->next;
         lastMap->next = map;
