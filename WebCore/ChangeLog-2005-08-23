@@ -1,3 +1,14 @@
+2003-10-01  David Hyatt  <hyatt@apple.com>
+
+	Avoid doing extra work when tearing down the document by checking to see if
+	we're in the destruction of the document.
+	
+        Reviewed by darin
+
+        * khtml/rendering/render_block.cpp:
+        * khtml/rendering/render_container.cpp:
+        (RenderContainer::removeChildNode):
+
 2003-10-01  Richard Williamson   <rjw@apple.com>
 
 	Fixed 3438441.  Pass extra info up to WebKit about load type, specifically is a load is triggered by JS running in an onLoad handler.
