@@ -34,6 +34,8 @@
     
     id _PDFDoc;
     BOOL isPDF;
+    
+    BOOL imageDataUpdated;
 }
 
 - (size_t)numberOfImages;

@@ -1,3 +1,16 @@
+2004-12-17  Richard Williamson   <rjw@apple.com>
+
+	Make image decoding as lazy as possible for non threaded case; in some cases
+	can avoid unnecessary decoding work.
+
+        Reviewed by Chris.
+
+        * WebCoreSupport.subproj/WebImageData.h:
+        * WebCoreSupport.subproj/WebImageData.m:
+        (-[WebImageData imageAtIndex:]):
+        (-[WebImageData propertiesAtIndex:]):
+        (-[WebImageData incrementalLoadWithBytes:length:complete:callback:]):
+
 2004-12-16  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Chris.

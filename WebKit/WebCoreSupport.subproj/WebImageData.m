@@ -32,6 +32,7 @@ static CFDictionaryRef imageSourceOptions;
 -(void)_createPDFWithData:(NSData *)data;
 - (CGPDFDocumentRef)_PDFDocumentRef;
 - (BOOL)_PDFDrawFromRect:(NSRect)srcRect toRect:(NSRect)dstRect operation:(CGCompositeOperation)op alpha:(float)alpha flipped:(BOOL)flipped context:(CGContextRef)context;
+- (void)_createImages;
 @end
 
 
@@ -173,6 +174,11 @@ static CFDictionaryRef imageSourceOptions;
 	    
 - (CGImageRef)imageAtIndex:(size_t)index
 {
+    if (imageDataUpdated) {
+	imageDataUpdated = NO;
+	[self _createImages];
+    }
+
     if (index >= imagesSize)
         return 0;
 
@@ -181,6 +187,11 @@ static CFDictionaryRef imageSourceOptions;
 
 - (CFDictionaryRef)propertiesAtIndex:(size_t)index
 {
+    if (imageDataUpdated) {
+	imageDataUpdated = NO;
+	[self _createImages];
+    }
+
     if (index >= imagesSize)
         return 0;
 
@@ -273,7 +284,7 @@ static CFDictionaryRef imageSourceOptions;
         }
         else {
             CGImageSourceUpdateData (imageSource, data, isComplete);
-            [self _createImages];
+	    imageDataUpdated = YES;
         }
     }
     
