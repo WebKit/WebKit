@@ -1,3 +1,5 @@
+=== WebKit-103 ===
+
 2003-09-12  Richard Williamson   <rjw@apple.com>
 
 	Fixed 3412062.  Don't allow pages with the same URL as the current URL to enter b/f or history.
