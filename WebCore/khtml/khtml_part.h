@@ -620,7 +620,7 @@ public:
   /**
    * Applies the give edit command.
    */
-  int applyCommand(khtml::EditCommand *);
+  void applyCommand(khtml::EditCommand *);
 
 #if APPLE_CHANGES
   /**
@@ -629,18 +629,18 @@ public:
    * matching the top item against the cookie passed in.
    * A hack, but it helps us to hook into Cocoa undo/redo.
    */
-  int undoRedoEditing(int cookie);
+  void undoRedoEditing(int cookie);
 #endif
 
   /**
    * Performs an undo of the edit.
    */
-  int undoEditing();
+  void undoEditing();
 
   /**
    * Performs a redo of the edit.
    */
-  int redoEditing();
+  void redoEditing();
 
   /**
    * Convenience method to show the document's view.

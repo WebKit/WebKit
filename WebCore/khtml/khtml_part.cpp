@@ -5049,12 +5049,9 @@ bool KHTMLPart::isEditingAtCaret() const
     return false;
 }
 
-int KHTMLPart::applyCommand(EditCommand *cmd)
+void KHTMLPart::applyCommand(EditCommand *cmd)
 {
-    int result = cmd->apply();
-    if (result) {
-        return result;
-    }
+    cmd->apply();
     
     // clear redo commands
     QPtrListIterator<EditCommand> it(d->m_redoEditCommands);
@@ -5067,36 +5064,33 @@ int KHTMLPart::applyCommand(EditCommand *cmd)
 #if APPLE_CHANGES
     KWQ(this)->registerCommandForUndo(cmd->cookie());
 #endif
-
-    return khtml::EditResultOK;
 }
 
 #if APPLE_CHANGES
-int KHTMLPart::undoRedoEditing(int cookie)
+void KHTMLPart::undoRedoEditing(int cookie)
 {
     EditCommand *undoCommand = d->m_undoEditCommands.last();
-    if (undoCommand && undoCommand->cookie() == cookie)
-        return undoEditing();
+    if (undoCommand && undoCommand->cookie() == cookie) {
+        undoEditing();
+        return;
+    }
     
     EditCommand *redoCommand = d->m_redoEditCommands.last();
-    if (redoCommand && redoCommand->cookie() == cookie)
-        return redoEditing();
+    if (redoCommand && redoCommand->cookie() == cookie) {
+        redoEditing();
+        return;
+    }
 
-    return khtml::EditResultFailed;
+    // should not reach this code
+    assert(0);
 }
 #endif
 
-int KHTMLPart::undoEditing()
+void KHTMLPart::undoEditing()
 {
     EditCommand *cmd = d->m_undoEditCommands.last();
-    if (!cmd) {
-        return khtml::EditResultFailed;
-    }
 
-    int result = cmd->unapply();
-    if (result) {
-        return result;
-    }
+    cmd->unapply();
 
     d->m_undoEditCommands.removeLast();
     d->m_redoEditCommands.append(cmd);
@@ -5104,21 +5098,13 @@ int KHTMLPart::undoEditing()
 #if APPLE_CHANGES
     KWQ(this)->registerCommandForUndo(cmd->cookie());
 #endif
-
-    return khtml::EditResultOK;
 }
 
-int KHTMLPart::redoEditing()
+void KHTMLPart::redoEditing()
 {
     EditCommand *cmd = d->m_redoEditCommands.last();
-    if (!cmd) {
-        return khtml::EditResultFailed;
-    }
 
-    int result = cmd->reapply();
-    if (result) {
-        return result;
-    }
+    cmd->reapply();
 
     d->m_redoEditCommands.removeLast();
     d->m_undoEditCommands.append(cmd);
@@ -5126,8 +5112,6 @@ int KHTMLPart::redoEditing()
 #if APPLE_CHANGES
     KWQ(this)->registerCommandForUndo(cmd->cookie());
 #endif
-
-    return khtml::EditResultOK;
 }
 
 

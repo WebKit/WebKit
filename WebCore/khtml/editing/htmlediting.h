@@ -27,7 +27,6 @@
 #define __htmlediting_h__
 
 #include <khtml_selection.h>
-#include <dom_doc.h>
 #include <dom_position.h>
 #include <dom_string.h>
 
@@ -36,7 +35,6 @@
 class KHTMLSelection;
 
 namespace DOM {
-    class DocumentFragment;
     class DocumentImpl;
     class DOMPosition;
     class DOMString;
@@ -66,17 +64,24 @@ public:
 	
     enum EditStepState { NOT_APPLIED, APPLIED };
     
-	virtual int apply();	
-	virtual int unapply();
-	virtual int reapply();
-    
+	virtual void apply() = 0;	
+	virtual void unapply() = 0;
+	virtual void reapply();  // calls apply()
+        
     DOM::DocumentImpl * const document() const { return m_document; }
     EditStepState state() const { return m_state; }
 
     const KHTMLSelection &startingSelection() const { return m_startingSelection; }
     const KHTMLSelection &endingSelection() const { return m_endingSelection; }
-
+    
 protected:
+    void beginApply();
+    void endApply();
+    void beginUnapply();
+    void endUnapply();
+    void beginReapply();
+    void endReapply();
+
     void setStartingSelection(const KHTMLSelection &s) { m_startingSelection = s; }
     void setEndingSelection(const KHTMLSelection &s) { m_endingSelection = s; }
 
@@ -93,10 +98,29 @@ public:
 	CompositeEditStep(DOM::DocumentImpl *);
 	virtual ~CompositeEditStep();
 	
-	virtual int unapply();
-	virtual int reapply();
+	virtual void apply() = 0;	
+	virtual void unapply();
+	virtual void reapply();
     
 protected:
+    //
+    // sugary-sweet convenience functions to help create and apply edit steps
+    //
+    void applyStep(EditStep *step);
+    void insertNodeBefore(DOM::NodeImpl *insertChild, DOM::NodeImpl *refChild);
+    void insertNodeAfter(DOM::NodeImpl *insertChild, DOM::NodeImpl *refChild);
+    void appendNode(DOM::NodeImpl *parent, DOM::NodeImpl *appendChild);
+    void removeNode(DOM::NodeImpl *removeChild);
+    void splitTextNode(DOM::TextImpl *text, long offset);
+    void joinTextNodes(DOM::TextImpl *text1, DOM::TextImpl *text2);
+    void insertText(DOM::TextImpl *node, long offset, const DOM::DOMString &text);
+    void deleteText(DOM::TextImpl *node, long offset, long count);
+    void moveSelectionTo(const KHTMLSelection &selection);
+	void moveSelectionTo(DOM::NodeImpl *, long);
+	void moveSelectionTo(const DOM::DOMPosition &);
+    void deleteSelection();
+    void deleteSelection(const KHTMLSelection &selection);
+
     QPtrList<EditStep> m_steps;
 };
 
@@ -106,8 +130,8 @@ public:
     InsertNodeBeforeStep(DOM::DocumentImpl *, DOM::NodeImpl *insertChild, DOM::NodeImpl *refChild);
 	virtual ~InsertNodeBeforeStep();
 
-	virtual int apply();
-	virtual int unapply();
+	virtual void apply();
+	virtual void unapply();
 
 private:
     DOM::NodeImpl *m_insertChild;
@@ -120,8 +144,8 @@ public:
     AppendNodeStep(DOM::DocumentImpl *, DOM::NodeImpl *parent, DOM::NodeImpl *appendChild);
 	virtual ~AppendNodeStep();
 
-	virtual int apply();
-	virtual int unapply();
+	virtual void apply();
+	virtual void unapply();
 
 private:
     DOM::NodeImpl *m_parent;    
@@ -134,8 +158,8 @@ public:
 	RemoveNodeStep(DOM::DocumentImpl *, DOM::NodeImpl *);
 	virtual ~RemoveNodeStep();
 	
-	virtual int apply();
-	virtual int unapply();
+	virtual void apply();
+	virtual void unapply();
 
 private:
     DOM::NodeImpl *m_parent;    
@@ -153,8 +177,8 @@ public:
 	virtual ~ModifyTextNodeStep();
 	
 protected:
-    int splitTextNode();
-    int joinTextNodes();
+    void splitTextNode();
+    void joinTextNodes();
 
     virtual EditStepState joinState() = 0;
     virtual EditStepState splitState() = 0;
@@ -170,8 +194,8 @@ public:
 	SplitTextNodeStep(DOM::DocumentImpl *, DOM::TextImpl *, long);
 	virtual ~SplitTextNodeStep();
 	
-	virtual int apply();
-	virtual int unapply();
+	virtual void apply();
+	virtual void unapply();
 
     virtual EditStepState joinState() { return APPLIED; }
     virtual EditStepState splitState() { return NOT_APPLIED; }
@@ -183,8 +207,8 @@ public:
 	JoinTextNodesStep(DOM::DocumentImpl *, DOM::TextImpl *, DOM::TextImpl *);
 	virtual ~JoinTextNodesStep();
 	
-	virtual int apply();
-	virtual int unapply();
+	virtual void apply();
+	virtual void unapply();
 
     virtual EditStepState joinState() { return NOT_APPLIED; }
     virtual EditStepState splitState() { return APPLIED; }
@@ -196,8 +220,8 @@ public:
 	InsertTextStep(DOM::DocumentImpl *document, DOM::TextImpl *, long, const DOM::DOMString &);
 	virtual ~InsertTextStep();
 	
-	virtual int apply();
-	virtual int unapply();
+	virtual void apply();
+	virtual void unapply();
 
 private:
     DOM::TextImpl *m_node;
@@ -211,8 +235,8 @@ public:
 	DeleteTextStep(DOM::DocumentImpl *document, DOM::TextImpl *, long offset, long count);
 	virtual ~DeleteTextStep();
 	
-	virtual int apply();
-	virtual int unapply();
+	virtual void apply();
+	virtual void unapply();
 
 private:
     DOM::TextImpl *m_node;
@@ -221,16 +245,16 @@ private:
     DOM::DOMString m_text;
 };
 
-class SetSelectionStep : public EditStep
+class MoveSelectionToStep : public EditStep
 {
 public:
-	SetSelectionStep(DOM::DocumentImpl *document, const KHTMLSelection &selection);
-	SetSelectionStep(DOM::DocumentImpl *document, DOM::NodeImpl *, long);
-	SetSelectionStep(DOM::DocumentImpl *document, const DOM::DOMPosition &);
-	virtual ~SetSelectionStep() {};
+	MoveSelectionToStep(DOM::DocumentImpl *document, const KHTMLSelection &selection);
+	MoveSelectionToStep(DOM::DocumentImpl *document, DOM::NodeImpl *, long);
+	MoveSelectionToStep(DOM::DocumentImpl *document, const DOM::DOMPosition &);
+	virtual ~MoveSelectionToStep() {};
 	
-	virtual int apply();
-	virtual int unapply();
+	virtual void apply();
+	virtual void unapply();
 };
 
 class DeleteSelectionStep : public CompositeEditStep
@@ -240,49 +264,27 @@ public:
 	DeleteSelectionStep(DOM::DocumentImpl *document, const KHTMLSelection &);
 	virtual ~DeleteSelectionStep();
 	
-	virtual int apply();
+	virtual void apply();
 };
-
-#if 0
-
-class ClearSelectionStep : public EditStep
-{
-public:
-	ClearSelectionStep(DOM::DocumentImpl *document) : EditStep(document) {};
-	virtual ~ClearSelectionStep() {};
-	
-	virtual int apply() { return EditResultOK; }	
-	virtual int unapply() { return EditResultOK; }
-};
-
-#endif
 
 //------------------------------------------------------------------------------------------
 // EditCommand
 
-class EditCommand
+class EditCommand : public CompositeEditStep
 {
 public:    
     EditCommand(DOM::DocumentImpl *document);
     virtual ~EditCommand();
 
-    DOM::DocumentImpl *document() const { return m_document; }
-    const KHTMLSelection &selection() const;
+    const KHTMLSelection &currentSelection() const;
 
-    virtual int apply() = 0;
-    int unapply();
-    int reapply();
+    virtual void apply() = 0;
 
     int cookie() const { return m_cookie; }
-
-protected:
-    QPtrList<EditStep> m_steps;
     
 private:
     int m_cookie;
-    DOM::DocumentImpl *m_document;
 };
-
 
 class InputTextCommand : public EditCommand
 {
@@ -290,7 +292,7 @@ public:
     InputTextCommand(DOM::DocumentImpl *document, const DOM::DOMString &text);
     virtual ~InputTextCommand() {};
     
-    virtual int apply();
+    virtual void apply();
 
     DOM::DOMString text() const { return m_text; }
     bool isLineBreak() const;
@@ -306,7 +308,7 @@ public:
     DeleteTextCommand(DOM::DocumentImpl *document);
     virtual ~DeleteTextCommand() {};
     
-    virtual int apply();
+    virtual void apply();
 };
 
 }; // end namespace khtml

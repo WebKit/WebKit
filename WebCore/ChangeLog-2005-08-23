@@ -1,3 +1,86 @@
+2004-02-06  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Chris
+
+	Steps no longer return int error codes. Steps are operations
+	that should succeed. (When was the last time that typing in
+	a text editor failed for reasons which could not have been
+	figured out ahead of time...like file permissions?).
+	If this does not work for the future, perhaps we can change 
+	some or all of the many asserts in the code to throw C++ 
+	exceptions instead, which can be caught and handled at a
+	suitable level.
+
+	I also made some nice convenience functions to create and apply
+	EditStep objects, and moved the command code to use the new
+	functions.
+
+        * khtml/editing/htmlediting.cpp:
+        (EditStep::EditStep):
+        (EditStep::~EditStep):
+        (EditStep::reapply):
+        (EditStep::beginApply):
+        (EditStep::endApply):
+        (EditStep::beginUnapply):
+        (EditStep::endUnapply):
+        (EditStep::beginReapply):
+        (EditStep::endReapply):
+        (CompositeEditStep::unapply):
+        (CompositeEditStep::reapply):
+        (CompositeEditStep::applyStep):
+        (CompositeEditStep::insertNodeBefore):
+        (CompositeEditStep::insertNodeAfter):
+        (CompositeEditStep::appendNode):
+        (CompositeEditStep::removeNode):
+        (CompositeEditStep::splitTextNode):
+        (CompositeEditStep::joinTextNodes):
+        (CompositeEditStep::insertText):
+        (CompositeEditStep::deleteText):
+        (CompositeEditStep::moveSelectionTo):
+        (CompositeEditStep::deleteSelection):
+        (InsertNodeBeforeStep::InsertNodeBeforeStep):
+        (InsertNodeBeforeStep::apply):
+        (InsertNodeBeforeStep::unapply):
+        (AppendNodeStep::AppendNodeStep):
+        (AppendNodeStep::apply):
+        (AppendNodeStep::unapply):
+        (RemoveNodeStep::RemoveNodeStep):
+        (RemoveNodeStep::apply):
+        (RemoveNodeStep::unapply):
+        (ModifyTextNodeStep::ModifyTextNodeStep):
+        (ModifyTextNodeStep::splitTextNode):
+        (ModifyTextNodeStep::joinTextNodes):
+        (SplitTextNodeStep::apply):
+        (SplitTextNodeStep::unapply):
+        (JoinTextNodesStep::apply):
+        (JoinTextNodesStep::unapply):
+        (InsertTextStep::InsertTextStep):
+        (InsertTextStep::apply):
+        (InsertTextStep::unapply):
+        (DeleteTextStep::DeleteTextStep):
+        (DeleteTextStep::apply):
+        (DeleteTextStep::unapply):
+        (MoveSelectionToStep::MoveSelectionToStep):
+        (MoveSelectionToStep::apply):
+        (MoveSelectionToStep::unapply):
+        (DeleteSelectionStep::apply):
+        (EditCommand::EditCommand):
+        (EditCommand::~EditCommand):
+        (EditCommand::currentSelection):
+        (InputTextCommand::apply):
+        (DeleteTextCommand::apply):
+        * khtml/editing/htmlediting.h:
+        (khtml::MoveSelectionToStep::~MoveSelectionToStep):
+        (khtml::EditCommand::cookie):
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::applyCommand):
+        (KHTMLPart::undoRedoEditing):
+        (KHTMLPart::undoEditing):
+        (KHTMLPart::redoEditing):
+        * khtml/khtml_part.h:
+        * khtml/xml/dom_elementimpl.cpp:
+        (ElementImpl::defaultEventHandler):
+
 2004-02-05  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Hyatt

@@ -410,11 +410,10 @@ void ElementImpl::defaultEventHandler(EventImpl *evt)
         }
         if (cmd) {
             KHTMLPart *part = getDocument()->part();
-            int result = EditResultNoActionTaken;
-            if (part)
-                result = part->applyCommand(cmd);
-            if (result == EditResultOK)
+            if (part) {
+                part->applyCommand(cmd);
                 evt->setDefaultHandled();
+            }
         }
     }
     NodeBaseImpl::defaultEventHandler(evt);
