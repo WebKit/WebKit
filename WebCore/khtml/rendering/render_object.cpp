@@ -904,6 +904,23 @@ void RenderObject::paintBorder(QPainter *p, int _tx, int _ty, int w, int h, cons
     }
 }
 
+void RenderObject::absoluteRects(QPtrList<QRect>& rects, int _tx, int _ty)
+{
+    // For blocks inside inlines, we go ahead and include margins so that we run right up to the
+    // inline boxes above and below us (thus getting merged with them to form a single irregular
+    // shape).
+    if (continuation()) {
+        rects.append(new QRect(_tx, _ty - collapsedMarginTop(), 
+                               width(), height()+collapsedMarginTop()+collapsedMarginBottom()));
+        continuation()->absoluteRects(rects, 
+                                      _tx - xPos() + continuation()->containingBlock()->xPos(),
+                                      _ty - yPos() + continuation()->containingBlock()->yPos());
+    }
+    else
+        rects.append(new QRect(_tx, _ty, width(), height()));
+}
+
+#if APPLE_CHANGES
 void RenderObject::addFocusRingRects(QPainter *p, int _tx, int _ty)
 {
     // For blocks inside inlines, we go ahead and include margins so that we run right up to the
@@ -918,6 +935,7 @@ void RenderObject::addFocusRingRects(QPainter *p, int _tx, int _ty)
     else
         p->addFocusRingRect(_tx, _ty, width(), height());
 }
+#endif
 
 void RenderObject::paintOutline(QPainter *p, int _tx, int _ty, int w, int h, const RenderStyle* style)
 {

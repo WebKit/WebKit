@@ -90,14 +90,20 @@ using khtml::RenderCanvas;
 -(HTMLAnchorElementImpl*)anchorElement
 {
     RenderObject* currRenderer;
-    for (currRenderer = m_renderer; 
-         currRenderer && (!currRenderer->element() || !currRenderer->element()->hasAnchor());
-         currRenderer = currRenderer->parent());
+    for (currRenderer = m_renderer; currRenderer && !currRenderer->element(); currRenderer = currRenderer->parent())
+        if (currRenderer->continuation())
+            return [currRenderer->document()->getOrCreateAccObjectCache()->accObject(currRenderer->continuation()) anchorElement];
     
-    if (!currRenderer)
+    if (!currRenderer || !currRenderer->element())
         return 0;
     
-    return static_cast<HTMLAnchorElementImpl*>(currRenderer->element());
+    NodeImpl* elt = currRenderer->element();
+    for ( ; elt; elt = elt->parentNode()) {
+        if (elt->hasAnchor())
+            return static_cast<HTMLAnchorElementImpl*>(elt);
+    }
+  
+    return 0;
 }
 
 -(KWQAccObject*)firstChild
@@ -271,15 +277,32 @@ using khtml::RenderCanvas;
     return nil;
 }
 
+static QRect boundingBoxRect(RenderObject* obj)
+{
+    QRect rect(0,0,0,0);
+    if (obj) {
+        if (obj->isInlineContinuation())
+            obj = obj->element()->renderer();
+        QPtrList<QRect> rects;
+        int x = 0, y = 0;
+        obj->absolutePosition(x, y);
+        obj->absoluteRects(rects, x, y);
+        for (QRect* curr = rects.first(); curr; curr = rects.next()) {
+            if (rect.isEmpty())
+                rect = *curr;
+            else if (!curr->isEmpty())
+                rect = rect.unite(*curr);
+        }
+    }
+    return rect;
+}
+
 -(NSValue*)position
 {
-    int x = 0;
-    int y = 0;
-    if (m_renderer) {
-        m_renderer->absolutePosition(x, y);
-        y += m_renderer->height(); // The API wants the lower-left corner, not the upper-left.
-    }
-    NSPoint point = NSMakePoint(x, y);
+    QRect rect = boundingBoxRect(m_renderer);
+    
+    // The Cocoa accessibility API wants the lower-left corner, not the upper-left, so we add in our height.
+    NSPoint point = NSMakePoint(rect.x(), rect.y() + rect.height());
     if (m_renderer && m_renderer->canvas() && m_renderer->canvas()->view()) {
         NSView* view = m_renderer->canvas()->view()->getDocumentView();
         point = [[view window] convertBaseToScreen: [view convertPoint: point toView:nil]];
@@ -289,12 +312,8 @@ using khtml::RenderCanvas;
 
 -(NSValue*)size
 {
-    long width = 0, height = 0;
-    if (m_renderer) {
-        width = m_renderer->width();
-        height = m_renderer->height();
-    }
-    return [NSValue valueWithSize: NSMakeSize(width, height)];
+    QRect rect = boundingBoxRect(m_renderer);
+    return [NSValue valueWithSize: NSMakeSize(rect.width(), rect.height())];
 }
 
 -(BOOL)accessibilityIsIgnored

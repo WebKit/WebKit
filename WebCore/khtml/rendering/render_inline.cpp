@@ -304,6 +304,24 @@ void RenderInline::paintObject(QPainter *p, int _x, int _y,
     }
 }
 
+void RenderInline::absoluteRects(QPtrList<QRect>& rects, int _tx, int _ty)
+{
+    for (InlineRunBox* curr = firstLineBox(); curr; curr = curr->nextLineBox())
+        rects.append(new QRect(_tx + curr->xPos(), 
+                               _ty + curr->yPos(), 
+                               curr->width(), 
+                               curr->height()));
+    
+    for (RenderObject* curr = firstChild(); curr; curr = curr->nextSibling())
+        if (!curr->isText())
+            curr->absoluteRects(rects, _tx + curr->xPos(), _ty + curr->yPos());
+    
+    if (continuation())
+        continuation()->absoluteRects(rects, 
+                                      _tx - containingBlock()->xPos() + continuation()->xPos(),
+                                      _ty - containingBlock()->yPos() + continuation()->yPos());
+}
+
 #if APPLE_CHANGES
 void RenderInline::addFocusRingRects(QPainter *p, int _tx, int _ty)
 {
