@@ -4458,9 +4458,11 @@ void KHTMLPart::selectClosestWordFromMouseEvent(QMouseEvent *mouse, DOM::Node &i
     Selection selection;
 
     if (!innerNode.isNull() && innerNode.handle()->renderer() && innerNode.handle()->renderer()->shouldSelect()) {
-        Position pos(innerNode.handle()->renderer()->positionForCoordinates(x, y));
+        EAffinity affinity;
+        Position pos(innerNode.handle()->renderer()->positionForCoordinates(x, y, &affinity));
         if (pos.isNotNull()) {
             selection.moveTo(pos);
+            selection.setAffinity(affinity);
             selection.expandUsingGranularity(WORD);
         }
     }
@@ -4491,9 +4493,11 @@ void KHTMLPart::handleMousePressEventTripleClick(khtml::MousePressEvent *event)
     
     if (mouse->button() == LeftButton && !innerNode.isNull() && innerNode.handle()->renderer() &&
         innerNode.handle()->renderer()->shouldSelect()) {
-        Position pos(innerNode.handle()->renderer()->positionForCoordinates(event->x(), event->y()));
+        EAffinity affinity;
+        Position pos(innerNode.handle()->renderer()->positionForCoordinates(event->x(), event->y(), &affinity));
         if (pos.isNotNull()) {
             selection.moveTo(pos);
+            selection.setAffinity(affinity);
             selection.expandUsingGranularity(PARAGRAPH);
         }
     }
@@ -4747,7 +4751,8 @@ void KHTMLPart::handleMouseMoveEventSelection(khtml::MouseMoveEvent *event)
     	return;
 
     // handle making selection
-    Position pos(innerNode.handle()->renderer()->positionForCoordinates(event->x(), event->y()));
+    EAffinity affinity;
+    Position pos(innerNode.handle()->renderer()->positionForCoordinates(event->x(), event->y(), &affinity));
 
     // Don't modify the selection if we're not on a node.
     if (pos.isNull())
@@ -4760,6 +4765,7 @@ void KHTMLPart::handleMouseMoveEventSelection(khtml::MouseMoveEvent *event)
     if (!d->m_beganSelectingText) {
         d->m_beganSelectingText = true;
         sel.moveTo(pos);
+        sel.setAffinity(affinity);
     }
 
     sel.setExtent(pos);
@@ -4833,8 +4839,12 @@ void KHTMLPart::khtmlMouseReleaseEvent( khtml::MouseReleaseEvent *event )
             && d->m_selection.isRange()) {
         Selection selection;
         NodeImpl *node = d->m_selection.base().node();
-        if (node->isContentEditable() && node->renderer())
-            selection.moveTo(node->renderer()->positionForCoordinates(event->x(), event->y()));
+        if (node->isContentEditable() && node->renderer()) {
+            EAffinity affinity;
+            Position pos = node->renderer()->positionForCoordinates(event->x(), event->y(), &affinity);
+            selection.moveTo(pos);
+            selection.setAffinity(affinity);
+        }
         setSelection(selection);
     }
 

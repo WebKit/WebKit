@@ -65,8 +65,6 @@ using DOM::StayInBlock;
 
 namespace khtml {
 
-static Selection selectionForLine(const Position &position, EAffinity affinity);
-
 Selection::Selection()
 {
     init();
@@ -273,16 +271,14 @@ VisiblePosition Selection::modifyExtendingRightForward(ETextGranularity granular
             pos = nextLinePosition(pos, m_affinity, xPosForVerticalArrowNavigation(EXTENT));
             break;
         case LINE_BOUNDARY:
-            pos = VisiblePosition(selectionForLine(m_end, m_affinity).end());
+            pos = endOfLine(VisiblePosition(m_end), m_affinity);
             break;
         case PARAGRAPH_BOUNDARY:
             pos = endOfParagraph(VisiblePosition(m_end));
             break;
-        case DOCUMENT_BOUNDARY: {
-            NodeImpl *de = m_start.node()->getDocument()->documentElement();
-            pos = VisiblePosition(de, de ? de->childNodeCount() : 0);
+        case DOCUMENT_BOUNDARY:
+            pos = endOfDocument(pos);
             break;
-        }
     }
     return pos;
 }
@@ -326,16 +322,14 @@ VisiblePosition Selection::modifyMovingRightForward(ETextGranularity granularity
             break;
         }
         case LINE_BOUNDARY:
-            pos = VisiblePosition(selectionForLine(m_end, m_affinity).end());
+            pos = endOfLine(VisiblePosition(m_end), m_affinity);
             break;
         case PARAGRAPH_BOUNDARY:
             pos = endOfParagraph(VisiblePosition(m_end));
             break;
-        case DOCUMENT_BOUNDARY: {
-            NodeImpl *de = m_start.node()->getDocument()->documentElement();
-            pos = VisiblePosition(de, de ? de->childNodeCount() : 0);
+        case DOCUMENT_BOUNDARY:
+            pos = endOfDocument(VisiblePosition(m_end));
             break;
-        }
     }
     return pos;
 }
@@ -357,13 +351,13 @@ VisiblePosition Selection::modifyExtendingLeftBackward(ETextGranularity granular
             pos = previousLinePosition(pos, m_affinity, xPosForVerticalArrowNavigation(EXTENT));
             break;
         case LINE_BOUNDARY:
-            pos = VisiblePosition(selectionForLine(m_start, m_affinity).start());
+            pos = startOfLine(VisiblePosition(m_start), m_affinity);
             break;
         case PARAGRAPH_BOUNDARY:
             pos = startOfParagraph(VisiblePosition(m_start));
             break;
         case DOCUMENT_BOUNDARY:
-            pos = VisiblePosition(m_start.node()->getDocument()->documentElement(), 0);
+            pos = startOfDocument(pos);
             break;
     }
     return pos;
@@ -389,13 +383,13 @@ VisiblePosition Selection::modifyMovingLeftBackward(ETextGranularity granularity
             pos = previousLinePosition(VisiblePosition(m_start), m_affinity, xPosForVerticalArrowNavigation(START, isRange()));
             break;
         case LINE_BOUNDARY:
-            pos = VisiblePosition(selectionForLine(m_start, m_affinity).start());
+            pos = startOfLine(VisiblePosition(m_start), m_affinity);
             break;
         case PARAGRAPH_BOUNDARY:
             pos = startOfParagraph(VisiblePosition(m_start));
             break;
         case DOCUMENT_BOUNDARY:
-            pos = VisiblePosition(m_start.node()->getDocument()->documentElement(), 0);
+            pos = startOfDocument(VisiblePosition(m_start));
             break;
     }
     return pos;
@@ -870,53 +864,36 @@ void Selection::validate(ETextGranularity granularity)
             }
             break;
         case WORD:
-            if (m_baseIsStart) {
-                // When double clicking (i.e. isCaret() == true), generally select the previous word.  The only time to select the other 
-                // direction is when double-clicking after a hard line break.  The check for a hard line break is "end of paragraph".
-                if (isCaret()) {
-                    VisiblePosition extent = VisiblePosition(m_extent);
-                    bool atEndOfParagraph = isLastVisiblePositionInParagraph(extent);
-                    
-                    EWordSide endSide = !atEndOfParagraph ? LeftWordIfOnBoundary : RightWordIfOnBoundary;
-                    VisiblePosition wordEnd = endOfWord(extent, endSide);
-                    m_end = wordEnd.deepEquivalent();
-
-                    EWordSide startSide = !atEndOfParagraph ? LeftWordIfOnBoundary : RightWordIfOnBoundary;
-
-                    // atEndOfParagraph reflects hard line break well, except at end-of-document, so we are more careful there
-                    if (startSide == RightWordIfOnBoundary && wordEnd.next().isNull() && !isFirstVisiblePositionOnLine(wordEnd))
-                        startSide = LeftWordIfOnBoundary;
-                    m_start = startOfWord(VisiblePosition(m_base), startSide).deepEquivalent();
-                } else {
-                    m_start = startOfWord(VisiblePosition(m_base)).deepEquivalent();
-                    m_end = endOfWord(VisiblePosition(m_extent)).deepEquivalent();
-                }
+            if (isCaret()) {
+                // When double clicking (i.e. selection is a caret), generally select the previous word.
+                // One exception is double-clicking after a hard line break. The check for a hard line break is "end of paragraph".
+                // Another exception is when double-clicking at the start of a line.
+                // However, the end of the document is an exception and always selects the previous word even though it could be
+                // both the start of a line and after a hard line break.
+                VisiblePosition pos(m_base);
+                EWordSide side = LeftWordIfOnBoundary;
+                if ((isEndOfParagraph(pos) || isStartOfLine(pos, m_affinity)) && !isEndOfDocument(pos))
+                    side = RightWordIfOnBoundary;
+                m_start = startOfWord(pos, side).deepEquivalent();
+                m_end = endOfWord(pos, side).deepEquivalent();
+            } else if (m_baseIsStart) {
+                m_start = startOfWord(VisiblePosition(m_base)).deepEquivalent();
+                m_end = endOfWord(VisiblePosition(m_extent)).deepEquivalent();
             } else {
                 m_start = startOfWord(VisiblePosition(m_extent)).deepEquivalent();
                 m_end = endOfWord(VisiblePosition(m_base)).deepEquivalent();
             }
             break;
         case LINE:
-        case LINE_BOUNDARY: {
-            Selection baseSelection = *this;
-            Selection extentSelection = *this;
-            Selection baseLine = selectionForLine(m_base, m_affinity);
-            if (baseLine.isCaretOrRange()) {
-                baseSelection = baseLine;
-            }
-            Selection extentLine = selectionForLine(m_extent, m_affinity);
-            if (extentLine.isCaretOrRange()) {
-                extentSelection = extentLine;
-            }
+        case LINE_BOUNDARY:
             if (m_baseIsStart) {
-                m_start = baseSelection.m_start;
-                m_end = extentSelection.m_end;
+                m_start = startOfLine(VisiblePosition(m_base), m_affinity).deepEquivalent();
+                m_end = endOfLine(VisiblePosition(m_extent), m_affinity, IncludeLineBreak).deepEquivalent();
             } else {
-                m_start = extentSelection.m_start;
-                m_end = baseSelection.m_end;
+                m_start = startOfLine(VisiblePosition(m_extent), m_affinity).deepEquivalent();
+                m_end = endOfLine(VisiblePosition(m_base), m_affinity, IncludeLineBreak).deepEquivalent();
             }
             break;
-        }
         case PARAGRAPH:
             if (m_baseIsStart) {
                 m_start = startOfParagraph(VisiblePosition(m_base)).deepEquivalent();
@@ -926,12 +903,10 @@ void Selection::validate(ETextGranularity granularity)
                 m_end = endOfParagraph(VisiblePosition(m_base), IncludeLineBreak).deepEquivalent();
             }
             break;
-        case DOCUMENT_BOUNDARY: {
-            NodeImpl *de = m_start.node()->getDocument()->documentElement();
-            m_start = VisiblePosition(de, 0).deepEquivalent();
-            m_end = VisiblePosition(de, de ? de->childNodeCount() : 0).deepEquivalent();
+        case DOCUMENT_BOUNDARY:
+            m_start = startOfDocument(VisiblePosition(m_base)).deepEquivalent();
+            m_end = endOfDocument(VisiblePosition(m_base)).deepEquivalent();
             break;
-        }
         case PARAGRAPH_BOUNDARY:
             if (m_baseIsStart) {
                 m_start = startOfParagraph(VisiblePosition(m_base)).deepEquivalent();
@@ -968,57 +943,6 @@ void Selection::validate(ETextGranularity granularity)
 #if EDIT_DEBUG
     debugPosition();
 #endif
-}
-
-static NodeImpl *nodeForInlineBox(const InlineBox *box)
-{
-    if (!box || !box->object())
-        return 0;
-    return box->object()->element();
-}
-
-static Selection selectionForLine(const Position &pos, EAffinity affinity)
-{
-    if (pos.isNull())
-        return Selection();
-
-    RenderObject *renderer = pos.node()->renderer();
-    if (!renderer)
-        return Selection();
-    
-    InlineBox *box = renderer->inlineBox(pos.offset(), affinity);
-    if (!box)
-        return Selection();
-    
-    RootInlineBox *rootBox = box->root();
-    if (!rootBox)
-        return Selection();
-    
-    // Find the start position for this line.
-    InlineBox *startBox = rootBox->firstChild();
-    NodeImpl *startNode = nodeForInlineBox(startBox);
-    if (!startNode)
-        return Selection();
-    long startOffset = 0;
-    if (startBox->isInlineTextBox()) {
-        InlineTextBox *startTextBox = static_cast<InlineTextBox *>(startBox);
-        startOffset = startTextBox->m_start;
-    }
-    Position start(startNode, startOffset);
-    
-    // Find the end position for this line.
-    InlineBox *endBox = rootBox->lastChild();
-    NodeImpl *endNode = nodeForInlineBox(endBox);
-    if (!endNode)
-        return Selection();
-    long endOffset = 1;
-    if (endBox->isInlineTextBox()) {
-        InlineTextBox *endTextBox = static_cast<InlineTextBox *>(endBox);
-        endOffset = endTextBox->m_start + endTextBox->m_len;
-    }
-    Position end(endNode, endOffset);
-    
-    return Selection(start, end);
 }
 
 void Selection::debugRenderer(RenderObject *r, bool selected) const

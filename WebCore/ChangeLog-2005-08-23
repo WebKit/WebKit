@@ -2,6 +2,28 @@
 
         Reviewed by Harrison.
 
+        - fixed <rdar://problem/3980066> Double-click on single character moves insertion point to previous line
+
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::selectClosestWordFromMouseEvent): Set affinity too.
+        (KHTMLPart::handleMousePressEventTripleClick): Ditto.
+        (KHTMLPart::handleMouseMoveEventSelection): Ditto.
+        (KHTMLPart::khtmlMouseReleaseEvent): Ditto.
+
+        * khtml/editing/selection.cpp:
+        (khtml::Selection::modifyExtendingRightForward): Use endOfLine and endOfDocument.
+        (khtml::Selection::modifyMovingRightForward): Ditto.
+        (khtml::Selection::modifyExtendingLeftBackward): Use startOfLine and startOfDocument.
+        (khtml::Selection::modifyMovingLeftBackward): Ditto.
+        (khtml::Selection::validate): Rewrote the section that handles double-click. Two main fixes: 1) use isStartOfLine to
+        check for another case where we want to select the word to the right, and 2) use isEndOfParagraph, which seems
+        to work correctly in cases where isLastVisiblePositionInParagraph is giving the wrong answer. Also changed the line
+        code to use startOfLine/endOfLine and the document code to use startOfDocument/endOfDocument.
+
+2005-01-31  Darin Adler  <darin@apple.com>
+
+        Reviewed by Harrison.
+
         - fixed <rdar://problem/3935275> unexpected quit scrolling over link; last.fm (works in IE and Firefox)
 
         * kwq/WebCoreBridge.mm: (-[WebCoreBridge elementAtPoint:]): By using the correct document, fix the crash reported here.
