@@ -9,6 +9,9 @@
 #import <WebKit/IFWebFrame.h>
 #import <WebKit/IFException.h>
 
+#include <KWQKHTMLPart.h>
+#include <rendering/render_frames.h>
+
 
 // IFObjectHolder holds objects as keys in dictionaries without
 // copying.
@@ -103,10 +106,20 @@
 }
 
 
-- (void)setMainView: (IFWebView *)view andMainDataSource: (IFWebDataSource *)dataSource
+
+// This is the designated method to change the main view and/or main data source.
+// The main view and data source are held in the main frame.
+- (BOOL)setMainView: (IFWebView *)view andMainDataSource: (IFWebDataSource *)dataSource
 {
     IFBaseWebControllerPrivate *data = ((IFBaseWebControllerPrivate *)_controllerPrivate);
         
+    if (dataSource != nil && dataSource != [data->mainFrame dataSource]){
+        if (![self locationWillChangeTo: [dataSource inputURL] forFrame: data->mainFrame])
+            return NO;
+    }
+    
+    // Required to break retain cycle between frame and datasource.
+    [data->mainFrame reset];
     [data->mainFrame autorelease];
     
     data->mainFrame = [[IFWebFrame alloc] init];
@@ -116,9 +129,13 @@
     [data->mainFrame setDataSource: dataSource];
     [dataSource _setController: self];
     
-    if (dataSource != nil)
-        [view dataSourceChanged: dataSource];
+    if (dataSource != nil){
+        [self _changeFrame: data->mainFrame dataSource: dataSource];
+    }
+    return YES;
 }
+
+
 
 - (IFWebFrame *)createFrameNamed: (NSString *)fname for: (IFWebDataSource *)childDataSource inParent: (IFWebDataSource *)parentDataSource
 {
@@ -162,10 +179,10 @@
 }
 
 
-- (void)setMainDataSource: (IFWebDataSource *)dataSource;
+- (BOOL)setMainDataSource: (IFWebDataSource *)dataSource;
 {
     IFBaseWebControllerPrivate *data = ((IFBaseWebControllerPrivate *)_controllerPrivate);
-    [self setMainView: [data->mainFrame view] andMainDataSource: dataSource];
+    return [self setMainView: [data->mainFrame view] andMainDataSource: dataSource];
 }
 
 - (IFWebDataSource *)mainDataSource
@@ -227,19 +244,40 @@
     return YES;
 }
 
-- (void)changeLocationTo: (NSURL *)url forFrame: (IFWebFrame *)frame
+
+- (BOOL)_changeLocationTo: (NSURL *)url forFrame: (IFWebFrame *)frame parent: (IFWebDataSource *)parent
 {
-    IFWebDataSource *dataSource = [[[IFWebDataSource alloc] initWithURL: url] autorelease];
+    if ([self locationWillChangeTo: url forFrame: frame]){
+        IFWebDataSource *dataSource = [[[IFWebDataSource alloc] initWithURL: url] autorelease];
+        
+        [dataSource _setParent: parent];
+        [self _changeFrame: frame dataSource: dataSource];
+        return YES;
+    }
+    return NO;
+}
+
+
+- (void)_changeFrame: (IFWebFrame *)frame dataSource: (IFWebDataSource *)newDataSource
+{
+    IFBaseWebControllerPrivate *data = ((IFBaseWebControllerPrivate *)_controllerPrivate);
     IFWebDataSource *oldDataSource;
-    
+
     oldDataSource = [frame dataSource];
-    [dataSource _setParent: [oldDataSource parent]];
-    [dataSource _setController: self];
-    [frame setDataSource: dataSource];
+    if (frame == data->mainFrame)
+        [newDataSource _setParent: nil];
+    else if (oldDataSource && oldDataSource != newDataSource)
+        [newDataSource _setParent: [oldDataSource parent]];
+    [newDataSource _setController: self];
+    [frame setDataSource: newDataSource];
     
-    [[frame view] dataSourceChanged: dataSource];
-    
-    //[dataSource startLoading: YES];
+    [[frame view] dataSourceChanged: newDataSource];
+
+    // This introduces a nasty dependency on the view.
+    khtml::RenderPart *renderPartFrame = [frame _renderFramePart];
+    id view = [frame view];
+    if (renderPartFrame && [view isKindOfClass: NSClassFromString(@"IFWebView")])
+        renderPartFrame->setWidget ([[frame view] _widget]);
 }
 
 
@@ -249,7 +287,7 @@
 }
 
 
-- (void)locationChangeInProgressForFrame: (IFWebFrame *)frame
+- (void)locationChangeCommittedForFrame: (IFWebFrame *)frame
 {
     [NSException raise:IFMethodNotYetImplemented format:@"IFBaseWebController::locationChangeInProgressForDataSource:forDataSource: is not implemented"];
 }

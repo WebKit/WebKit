@@ -1,3 +1,21 @@
+2002-02-07  Richard Williamson  <rjw@apple.com>
+
+    Update IFLocationChangeHandler API.  Added factored code for
+    URL loading.
+    
+	* ChangeLog:
+	* WebView.subproj/IFBaseWebController.h:
+	* WebView.subproj/IFBaseWebController.mm: (-[IFBaseWebController
+	setMainView:andMainDataSource:]), (-[IFBaseWebController
+	_changeLocationTo:forFrame:parent:]), (-[IFBaseWebController
+	_changeFrame:dataSource:]), (-[IFBaseWebController
+	locationChangeCommittedForFrame:]):
+	* WebView.subproj/IFBaseWebControllerPrivate.h:
+	* WebView.subproj/IFWebController.h:
+	* WebView.subproj/IFWebDataSource.mm: (-[IFWebDataSource startLoading:]):
+	* WebView.subproj/IFWebFrame.h:
+	* WebView.subproj/IFWebFrame.m: (-[IFWebFrame reset]):
+
 2002-02-06  Richard Williamson  <rjw@apple.com>
 
     Fixed allocation problems.  Implemented parent->child management

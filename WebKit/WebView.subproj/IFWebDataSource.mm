@@ -218,6 +218,8 @@
     
     WEBKITDEBUG1 ("url = %s\n", [[[self inputURL] absoluteString] cString]);
     [self _part]->openURL (url);
+    
+    [[self controller] locationChangeStartedForFrame: [self frame]];
 }
 
 

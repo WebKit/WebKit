@@ -64,7 +64,7 @@
 @protocol IFWebController
 - (IFWebFrame *)createFrameNamed: (NSString *)name for: (IFWebDataSource *)dataSource inParent: (IFWebDataSource *)dataSource;
 - (BOOL)locationWillChangeTo: (NSURL *)url forFrame: (IFWebFrame *)frame;
-- (void)changeLocationTo: (NSURL *)url forFrame: (IFWebFrame *)frame;
+- (BOOL)_changeLocationTo: (NSURL *)url forFrame: (IFWebFrame *)frame parent: (IFWebDataSource *)parent;
 - (void)locationChangeStartedForFrame: (IFWebFrame *)frame;
 - (void)locationChangeDone: (IFError *)error forFrame: (IFWebFrame *)frame;
 @end
@@ -81,6 +81,7 @@
 - (void)startLoading: (BOOL)forceRefresh;
 - frameNamed: (NSString *)f;
 - (void)_setParent: (IFWebDataSource *)p;
+- (IFWebDataSource *)parent;
 @end
 
 // This should not be allowed here.  data source should not reference view
@@ -1302,18 +1303,8 @@ void KHTMLPart::khtmlMouseReleaseEvent( khtml::MouseReleaseEvent *event )
         frame = [dataSource frame];
         controller = [dataSource controller];
         
-        // FIXME:  Factor this into a function.
-        if ([controller locationWillChangeTo: url forFrame: frame]){
-            [controller changeLocationTo: url forFrame: frame];
-
-            // This introduces a nasty dependency on the view.
-            khtml::RenderPart *renderPartFrame = [frame _renderFramePart];
-            if (renderPartFrame)
-                renderPartFrame->setWidget ([[frame view] _widget]);
-
+        if ([controller _changeLocationTo: url forFrame: frame parent: [[frame dataSource] parent]]){
             [[frame dataSource] startLoading: YES];
-
-            [controller locationChangeStartedForFrame: frame];
         }
 
 /*
@@ -1584,18 +1575,8 @@ bool KHTMLPart::requestFrame( khtml::RenderPart *frame, const QString &url, cons
         newFrame = [controller createFrameNamed: nsframeName for: nil inParent: dataSource];
         [newFrame _setRenderFramePart: frame];
     
-
-        if ([controller locationWillChangeTo: childURL forFrame: newFrame]){
-            [controller changeLocationTo: childURL forFrame: newFrame];
-
-            // This introduces a nasty dependency on the view.
-            frame->setWidget ([[newFrame view] _widget]);
-
-            [[newFrame dataSource] _setParent: dataSource];
-            
+        if ([controller _changeLocationTo: childURL forFrame: newFrame parent: dataSource]){            
             [[newFrame dataSource] startLoading: YES];
-            
-            [controller locationChangeStartedForFrame: newFrame];
         }
     }
 

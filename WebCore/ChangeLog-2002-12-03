@@ -1,3 +1,11 @@
+2002-02-07  Richard Williamson  <rjw@apple.com>
+
+    Factored URL loading code out and moved to IFBaseWebController.
+    
+	* ChangeLog:
+	* src/kwq/KWQKHTMLPart.mm: (KHTMLPart::khtmlMouseReleaseEvent),
+	(KHTMLPart::requestFrame):
+
 2002-02-06  Richard Williamson  <rjw@apple.com>
 
     Fixed allocation problems.

@@ -62,6 +62,16 @@
     [dataSource setFrame: self];
 }
 
+// Required to break retain cycle between frame and data source.
+- (void)reset
+{
+    [dataSource autorelease];
+    dataSource = nil;
+    [view autorelease];
+    view = nil;
+}
+
+// renderFramePart is a pointer to a RenderPart
 - (void)_setRenderFramePart: (void *)p
 {
     renderFramePart = p;
