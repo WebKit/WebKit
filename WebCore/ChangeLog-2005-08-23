@@ -1,5 +1,30 @@
 2005-02-25  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by me
+
+        Roll out Chris' change to fix this bug:
+        
+        <rdar://problem/4023566> Stickies: Crash in ReplacementFragment::insertFragmentForTestRendering on paste
+        
+        That code change is responsible for all these new crashers:
+        
+        <rdar://problem/4025177> crash copying safari.apple.com into Blot document
+        <rdar://problem/4025184> crash in DOM::NodeImpl::parentNode copying "New!" from google.com to Blot
+        <rdar://problem/4025214> crash in DOM::NodeImpl::getRect loading paste-match-style-001.html
+
+        Since we wish to close the tree for a build right now, I am rolling out rather than investigating.
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::ApplyStyleCommand::addInlineStyleIfNeeded)
+        (khtml::ReplacementFragment::insertFragmentForTestRendering)
+        (khtml::createDefaultParagraphElement)
+        (khtml::createBlockPlaceholderElement)
+        (khtml::createFontElement)
+        (khtml::createStyleSpanElement)
+        * khtml/editing/htmlediting.h
+
+2005-02-25  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by John
 
         Fix for this bug:

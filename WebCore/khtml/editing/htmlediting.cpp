@@ -2179,10 +2179,8 @@ void ApplyStyleCommand::addInlineStyleIfNeeded(CSSMutableStyleDeclarationImpl *s
 
     if (styleChange.cssStyle().length() > 0) {
         ElementImpl *styleElement = createStyleSpanElement(document());
-        styleElement->ref();
         styleElement->setAttribute(ATTR_STYLE, styleChange.cssStyle());
         insertNodeBefore(styleElement, startNode);
-        styleElement->deref();
         surroundNodeRangeWithElement(startNode, endNode, styleElement);
     }
 
@@ -3111,7 +3109,6 @@ bool InsertParagraphSeparatorCommand::preservesTypingStyle() const
     return true;
 }
 
-// FIXME: callers of createParagraphElement are not properly deref'ing the returned ref'd element. 
 ElementImpl *InsertParagraphSeparatorCommand::createParagraphElement()
 {
     ElementImpl *element = createDefaultParagraphElement(document());
@@ -4253,7 +4250,6 @@ NodeImpl *ReplacementFragment::insertFragmentForTestRendering()
         return 0;
 
     ElementImpl *holder = createDefaultParagraphElement(m_document);
-    holder->ref();
     
     int exceptionCode = 0;
     holder->appendChild(m_fragment, exceptionCode);
@@ -4264,7 +4260,7 @@ NodeImpl *ReplacementFragment::insertFragmentForTestRendering()
     
     m_document->updateLayout();
     
-    return floatRefdElement(holder);
+    return holder;
 }
 
 void ReplacementFragment::restoreTestRenderingNodesToFragment(NodeImpl *holder)
@@ -5552,19 +5548,15 @@ bool TypingCommand::isTypingCommand() const
     return true;
 }
 
-ElementImpl *floatRefdElement(ElementImpl *node)
-{
-    node->setParent(node->getDocument());
-    node->deref();
-    node->setParent(0);
-    return node;
-}
-
 ElementImpl *createDefaultParagraphElement(DocumentImpl *document)
 {
+    // We would need this margin-zeroing and attribute-setter code back if we ever 
+    // return to using <p> elements for default paragraphs.
+    //static const DOMString defaultParagraphStyle("margin-top: 0; margin-bottom: 0");
     int exceptionCode = 0;
     ElementImpl *element = document->createHTMLElement("div", exceptionCode);
     ASSERT(exceptionCode == 0);
+    //element->setAttribute(ATTR_STYLE, defaultParagraphStyle);
     return element;
 }
 
@@ -5572,10 +5564,9 @@ ElementImpl *createBlockPlaceholderElement(DocumentImpl *document)
 {
     int exceptionCode = 0;
     ElementImpl *breakNode = document->createHTMLElement("br", exceptionCode);
-    breakNode->ref();
     ASSERT(exceptionCode == 0);
     breakNode->setAttribute(ATTR_CLASS, blockPlaceholderClassString());
-    return floatRefdElement(breakNode);
+    return breakNode;
 }
 
 ElementImpl *createBreakElement(DocumentImpl *document)
@@ -5590,20 +5581,18 @@ ElementImpl *createFontElement(DocumentImpl *document)
 {
     int exceptionCode = 0;
     ElementImpl *fontNode = document->createHTMLElement("font", exceptionCode);
-    fontNode->ref();
     ASSERT(exceptionCode == 0);
     fontNode->setAttribute(ATTR_CLASS, styleSpanClassString());
-    return floatRefdElement(fontNode);
+    return fontNode;
 }
 
 ElementImpl *createStyleSpanElement(DocumentImpl *document)
 {
     int exceptionCode = 0;
     ElementImpl *styleElement = document->createHTMLElement("SPAN", exceptionCode);
-    styleElement->ref();
     ASSERT(exceptionCode == 0);
     styleElement->setAttribute(ATTR_CLASS, styleSpanClassString());
-    return floatRefdElement(styleElement);
+    return styleElement;
 }
 
 bool isNodeRendered(const NodeImpl *node)
