@@ -264,6 +264,17 @@ typedef enum {
                                        inFrame:(WebFrame *)frame
                              withContentPolicy:(WebContentPolicy *)contentPolicy;
 
+
+/*!
+    @method saveFilenameForResponse:andRequest:
+    @discussion Returns the filename to use to for a load that's being saved.
+    @param response The response for the partially loaded content.
+    @param request A WebResourceRequest for the partially loaded content.
+*/
+- (NSString *)saveFilenameForResponse:(WebResourceResponse *)response
+                           andRequest:(WebResourceRequest *)request;
+
+
 /*!
     @method unableToImplementPolicy:error:forURL:inFrame:
     @discussion Called when a WebPolicy could not be implemented. It is up to the client to display appropriate feedback.
@@ -274,3 +285,5 @@ typedef enum {
 - (void)unableToImplementPolicy:(WebPolicy *)policy error:(WebError *)error forURL:(NSURL *)URL inFrame:(WebFrame *)frame;
 
 @end
+
+

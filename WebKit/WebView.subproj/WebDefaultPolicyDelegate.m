@@ -67,9 +67,10 @@
     }
 }
 
-- (void)pluginNotFoundForMIMEType:(NSString *)mime pluginPageURL:(NSURL *)URL
+- (NSString *)saveFilenameForResponse:(WebResourceResponse *)response
+                           andRequest:(WebResourceRequest *)request
 {
-    NSLog (@"pluginNotFoundForMIMEType:pluginPageURL: - MIME %@, URL ", mime, URL);
+    return nil;
 }
 
 - (WebClickPolicy *)clickPolicyForAction:(NSDictionary *)actionInformation 

@@ -1,3 +1,14 @@
+2002-11-11  Maciej Stachowiak  <mjs@apple.com>
+
+	Added new policy delegate callback to get the filename - this
+	won't be up to the content policy any more.
+	
+        * WebView.subproj/WebControllerPolicyDelegate.h:
+        * WebView.subproj/WebDefaultPolicyDelegate.m:
+        (-[WebDefaultPolicyDelegate saveFilenameForResponse:andRequest:]):
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient handle:didReceiveResponse:]):
+
 2002-11-11  Darin Adler  <darin@apple.com>
 
 	- made some improvements to cursor setting for greater speed and correctness

@@ -16,6 +16,7 @@
 #import <WebKit/WebBridge.h>
 #import <WebKit/WebController.h>
 #import <WebKit/WebControllerPrivate.h>
+#import <WebKit/WebControllerPolicyDelegatePrivate.h>
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDocument.h>
@@ -147,6 +148,9 @@
                                                                             andRequest:[dataSource request]
                                                                                inFrame:[dataSource webFrame]
                                                                      withContentPolicy:contentPolicy];
+    NSString *saveFilename = [[[dataSource controller] policyDelegate] saveFilenameForResponse:r andRequest:[dataSource request]];
+    [contentPolicy _setPath:saveFilename];
+
     [dataSource _setContentPolicy:contentPolicy];
 
     policyAction = [contentPolicy policyAction];
