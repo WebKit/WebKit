@@ -211,6 +211,15 @@ BOOL _modifierTrackingEnabled = FALSE;
     }
 }
 
+- (NSRect)visibleRect
+{
+    NSRect rect = [super visibleRect];
+    if (_private->inDrawRect) {
+        rect = NSIntersectionRect(rect, _private->drawRect);
+    }
+    return rect;
+}
+
 @end
 
 @implementation NSView (WebHTMLViewPrivate)
@@ -235,7 +244,7 @@ BOOL _modifierTrackingEnabled = FALSE;
 
 @implementation WebNSTextView
 
-static BOOL inDrawRect;
+static BOOL inNSTextViewDrawRect;
 
 // This code is here to make insertion point drawing work in a way that respects the
 // HTML view layering. If we can find a way to make it work without poseAsClass, we
@@ -279,7 +288,7 @@ static BOOL inDrawRect;
     }
     
     // Use the display mechanism to do all insertion point drawing in the web view.
-    if (inDrawRect) {
+    if (inNSTextViewDrawRect) {
         [super drawInsertionPointInRect:rect color:color turnedOn:turnedOn];
         return;
     }
@@ -292,9 +301,10 @@ static BOOL inDrawRect;
 
 - (void)_drawRect:(NSRect)rect clip:(BOOL)clip
 {
-    inDrawRect = YES;
+    ASSERT(!inNSTextViewDrawRect);
+    inNSTextViewDrawRect = YES;
     [super _drawRect:rect clip:clip];
-    inDrawRect = NO;
+    inNSTextViewDrawRect = NO;
 }
 
 @end

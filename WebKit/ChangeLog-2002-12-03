@@ -1,3 +1,22 @@
+2002-09-24  Darin Adler  <darin@apple.com>
+
+	- fixed 3057383 -- focus rectangles are being drawn multiple times
+	- fixed 3051025 -- focus ring on password field gets darker and darker
+
+	To make focus rings clip too, we have to do more than just set the clip.
+	We also have to set the visible rectangle to make clipping happen, and we
+	need to be a subclass of NSClipView so that the focus ring drawing code will
+	consult us rather than one of our superviews.
+
+        * WebView.subproj/WebHTMLView.h: Be a subclass of NSClipView.
+        * WebView.subproj/WebHTMLView.m: (-[WebHTMLView drawRect:]): Set a inDrawRect
+	flag, and a drawRect rectangle. This tells us to clip to this rectangle.
+	what we need to clip to.
+        * WebView.subproj/WebHTMLViewPrivate.h: Added inDrawRect and drawRect.
+        * WebView.subproj/WebHTMLViewPrivate.m:
+        (-[WebHTMLView visibleRect]): Clip the visible rect based on the drawRect while
+	inDrawRect is set.
+
 2002-09-23  Chris Blumenberg  <cblu@apple.com>
 
 	Factored URL pasteboard initialization to 1 place.

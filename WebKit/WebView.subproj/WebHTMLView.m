@@ -337,19 +337,23 @@
 - (void)drawRect:(NSRect)rect
 {
     LOG(View, "%@ drawing", self);
-
+    
     if (_private->savedSubviews) {
         ASSERT(_subviews == nil);
         _subviews = _private->savedSubviews;
         _private->savedSubviews = nil;
     }
     
-    if ([self inLiveResize]){
-        if (!NSEqualRects(rect, [self visibleRect])){
+    if ([self inLiveResize]) {
+        if (!NSEqualRects(rect, [self visibleRect])) {
             rect = [self visibleRect];
-            [self setNeedsLayout: YES];
+            [self setNeedsLayout:YES];
         }
     }
+    
+    ASSERT(!_private->inDrawRect);
+    _private->inDrawRect = YES;
+    _private->drawRect = rect;
 
     [self reapplyStyles];
 
@@ -397,6 +401,9 @@
     double thisTime = CFAbsoluteTimeGetCurrent() - start;
     LOG(Timing, "%s draw seconds = %f", widget->part()->baseURL().URL().latin1(), thisTime);
 #endif
+
+    ASSERT(_private->inDrawRect);
+    _private->inDrawRect = NO;
 
     if (_private->subviewsSetAside) {
         ASSERT(_private->savedSubviews == nil);
