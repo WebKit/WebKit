@@ -330,6 +330,7 @@
 - (CGImageRef)imageRef;
 
 + (void)stopAnimationsInView:(NSView *)aView;
+- (void)resetAnimation;
 
 - (void)startAnimationIfNecessary;
 - (NSGraphicsContext *)_beginRedirectContext:(CGContextRef)aContext;
@@ -964,7 +965,7 @@ static NSMutableSet *activeImageRenderers;
 - (void)resetAnimation
 {
     [self stopAnimation];
-    currentFrame = 0;
+    [self setCurrentFrame:0];
     repetitionsComplete = 0;
     animationFinished = NO;
 }
