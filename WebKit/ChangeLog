@@ -1,3 +1,7 @@
+2002-03-06  John Sullivan  <sullivan@apple.com>
+
+	* Misc.subproj/IFError.h: Removed stray but evil import.
+
 2002-03-06  Maciej Stachowiak  <mjs@apple.com>
 
 	* WebKit.pbproj/project.pbxproj: Turn on -Werror.

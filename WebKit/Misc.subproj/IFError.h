@@ -6,8 +6,6 @@
 */
 #import <Foundation/Foundation.h>
 
-#import <IFError.h>
-
 @interface IFError : NSObject
 {
     int errorCode;
