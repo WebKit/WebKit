@@ -176,11 +176,6 @@ DOMString HTMLElement::contentEditable() const {
 void HTMLElement::setContentEditable(const DOMString &enabled) {
     if(!impl)
         throw DOMException(DOMException::INVALID_STATE_ERR);
-    if (enabled == "inherit") {
-        int exceptionCode;
-        static_cast<HTMLElementImpl *>(impl)->removeAttribute(ATTR_CONTENTEDITABLE, exceptionCode);
-    }
-    else
-        static_cast<HTMLElementImpl *>(impl)->setAttribute(ATTR_CONTENTEDITABLE, enabled.isEmpty() ? "true" : enabled);
+    static_cast<HTMLElementImpl *>(impl)->setContentEditable(enabled);
 }
 

@@ -1,3 +1,90 @@
+2004-04-28  Chris Blumenberg  <cblu@apple.com>
+
+	- Implemented DOMHTMLElementExtensions.
+	- Added stubs for the rest of the DOM API.
+
+        Reviewed by dave.
+
+        * WebCore.pbproj/project.pbxproj:
+        * khtml/dom/html_element.cpp:
+        (HTMLElement::setContentEditable): moved implementation from here to HTMLElementImpl
+        * khtml/html/html_elementimpl.cpp:
+        (HTMLElementImpl::setContentEditable): new, moved from HTMLElement
+        * khtml/html/html_elementimpl.h:
+        * kwq/DOM-CSS.mm:
+        (-[DOMObject sheet]):
+        (-[DOMDocument getComputedStyle::]):
+        * kwq/DOM.mm:
+        (-[DOMAbstractView document]):
+        (-[DOMDocumentView defaultView]):
+        (-[DOMDocument createNodeIterator::::]):
+        (-[DOMDocument createTreeWalker::::]):
+        (-[DOMNodeFilter acceptNode:]):
+        (-[DOMNodeIterator root]):
+        (-[DOMNodeIterator whatToShow]):
+        (-[DOMNodeIterator filter]):
+        (-[DOMNodeIterator expandEntityReferences]):
+        (-[DOMNodeIterator nextNode]):
+        (-[DOMNodeIterator previousNode]):
+        (-[DOMNodeIterator detach]):
+        (-[DOMTreeWalker root]):
+        (-[DOMTreeWalker whatToShow]):
+        (-[DOMTreeWalker filter]):
+        (-[DOMTreeWalker expandEntityReferences]):
+        (-[DOMTreeWalker currentNode]):
+        (-[DOMTreeWalker setCurrentNode:]):
+        (-[DOMTreeWalker parentNode]):
+        (-[DOMTreeWalker firstChild]):
+        (-[DOMTreeWalker lastChild]):
+        (-[DOMTreeWalker previousSibling]):
+        (-[DOMTreeWalker nextSibling]):
+        (-[DOMTreeWalker previousNode]):
+        (-[DOMTreeWalker nextNode]):
+        * kwq/DOMEvents.mm: Added.
+        (-[DOMEvent type]):
+        (-[DOMEvent target]):
+        (-[DOMEvent currentTarget]):
+        (-[DOMEvent eventPhase]):
+        (-[DOMEvent bubbles]):
+        (-[DOMEvent cancelable]):
+        (-[DOMEvent timeStamp]):
+        (-[DOMEvent stopPropagation]):
+        (-[DOMEvent preventDefault]):
+        (-[DOMEvent initEvent:::]):
+        (-[DOMEventTarget addEventListener:::]):
+        (-[DOMEventTarget removeEventListener:::]):
+        (-[DOMEventTarget dispatchEvent:]):
+        (-[DOMMouseEvent screenX]):
+        (-[DOMMouseEvent screenY]):
+        (-[DOMMouseEvent clientX]):
+        (-[DOMMouseEvent clientY]):
+        (-[DOMMouseEvent ctrlKey]):
+        (-[DOMMouseEvent shiftKey]):
+        (-[DOMMouseEvent altKey]):
+        (-[DOMMouseEvent metaKey]):
+        (-[DOMMouseEvent button]):
+        (-[DOMMouseEvent relatedTarget]):
+        (-[DOMMouseEvent initMouseEvent:::::::::::::::]):
+        (-[DOMMutationEvent relatedNode]):
+        (-[DOMMutationEvent prevValue]):
+        (-[DOMMutationEvent newValue]):
+        (-[DOMMutationEvent attrName]):
+        (-[DOMMutationEvent attrChange]):
+        (-[DOMMutationEvent initMutationEvent::::::::]):
+        (-[DOMUIEvent view]):
+        (-[DOMUIEvent detail]):
+        (-[DOMUIEvent initUIEvent:::::]):
+        (-[DOMDocument createEvent:]):
+        * kwq/DOMHTML.mm:
+        (-[DOMHTMLElement innerHTML]): implemented
+        (-[DOMHTMLElement setInnerHTML:]): implemented
+        (-[DOMHTMLElement innerText]): implemented
+        (-[DOMHTMLElement setInnerText:]): implemented
+        (-[DOMHTMLElement children]): implemented
+        (-[DOMHTMLElement contentEditable]): implemented
+        (-[DOMHTMLElement setContentEditable:]): implemented
+        (-[DOMHTMLElement isContentEditable]): implemented
+
 2004-04-27  David Hyatt  <hyatt@apple.com>
 
 	Implement sharing of similar style objects. Cuts the # of style objects allocated on the PLT by more

@@ -839,7 +839,7 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 
 @end
  
-@implementation DOMImplementation (WebInternal)
+@implementation DOMImplementation (WebCoreInternal)
 
 - (id)_initWithDOMImplementationImpl:(DOMImplementationImpl *)impl
 {
@@ -1420,7 +1420,7 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 
 @end
 
-@implementation DOMElement (DOMElementCSS)
+@implementation DOMElement (DOMElementCSSInlineStyle)
 
 - (DOMCSSStyleDeclaration *)style
 {
@@ -1837,3 +1837,176 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 @end
 
 //------------------------------------------------------------------------------------------
+
+@implementation DOMAbstractView
+
+- (DOMDocumentView *)document
+{
+    ERROR("unimplemented");
+    return nil;
+}
+
+@end
+
+@implementation DOMDocumentView
+
+- (DOMAbstractView *)defaultView
+{
+    ERROR("unimplemented");
+    return nil;
+}
+
+@end
+
+@implementation DOMDocument (DOMDocumentTraversal)
+
+- (DOMNodeIterator *)createNodeIterator:(DOMNode *)root :(unsigned long)whatToShow :(DOMNodeFilter *)filter :(BOOL)entityReferenceExpansion
+{
+    ERROR("unimplemented");
+    return nil;
+}
+
+- (DOMTreeWalker *)createTreeWalker:(DOMNode *)root :(unsigned long)whatToShow :(DOMNodeFilter *)filter :(BOOL)entityReferenceExpansion
+{
+    ERROR("unimplemented");
+    return nil;
+}
+
+@end
+
+@implementation DOMNodeFilter
+
+- (short)acceptNode:(DOMNode *)n
+{
+    ERROR("unimplemented");
+    return 0;
+}
+
+@end
+
+@implementation DOMNodeIterator
+
+- (DOMNode *)root
+{
+    ERROR("unimplemented");
+    return nil;
+}
+
+- (unsigned long)whatToShow
+{
+    ERROR("unimplemented");
+    return 0;
+}
+
+- (DOMNodeFilter *)filter
+{
+    ERROR("unimplemented");
+    return nil;
+}
+
+- (BOOL)expandEntityReferences
+{
+    ERROR("unimplemented");
+    return NO;
+}
+
+- (DOMNode *)nextNode
+{
+    ERROR("unimplemented");
+    return nil;
+}
+
+- (DOMNode *)previousNode
+{
+    ERROR("unimplemented");
+    return nil;
+}
+
+- (void)detach
+{
+    ERROR("unimplemented");
+}
+
+@end
+
+@implementation DOMTreeWalker
+
+- (DOMNode *)root
+{
+    ERROR("unimplemented");
+    return nil;
+}
+
+- (unsigned long)whatToShow
+{
+    ERROR("unimplemented");
+    return 0;
+}
+
+- (DOMNodeFilter *)filter
+{
+    ERROR("unimplemented");
+    return nil;
+}
+
+- (BOOL)expandEntityReferences
+{
+    ERROR("unimplemented");
+    return NO;
+}
+
+- (DOMNode *)currentNode
+{
+    ERROR("unimplemented");
+    return nil;
+}
+
+- (void)setCurrentNode:(DOMNode *)currentNode
+{
+    ERROR("unimplemented");
+}
+
+- (DOMNode *)parentNode
+{
+    ERROR("unimplemented");
+    return nil;
+}
+
+- (DOMNode *)firstChild
+{
+    ERROR("unimplemented");
+    return nil;
+}
+
+- (DOMNode *)lastChild
+{
+    ERROR("unimplemented");
+    return nil;
+}
+
+- (DOMNode *)previousSibling
+{
+    ERROR("unimplemented");
+    return nil;
+}
+
+- (DOMNode *)nextSibling
+{
+    ERROR("unimplemented");
+    return nil;
+}
+
+- (DOMNode *)previousNode
+{
+    ERROR("unimplemented");
+    return nil;
+}
+
+- (DOMNode *)nextNode
+{
+    ERROR("unimplemented");
+    return nil;
+}
+
+@end
+

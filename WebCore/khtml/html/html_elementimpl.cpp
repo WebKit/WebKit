@@ -891,6 +891,15 @@ void HTMLElementImpl::setContentEditable(HTMLAttributeImpl* attr)
         addCSSProperty(attr, CSS_PROP__KHTML_USER_MODIFY, CSS_VAL_INHERIT);
 }
 
+void HTMLElementImpl::setContentEditable(const DOMString &enabled) {
+    if (enabled == "inherit") {
+        int exceptionCode;
+        removeAttribute(ATTR_CONTENTEDITABLE, exceptionCode);
+    }
+    else
+        setAttribute(ATTR_CONTENTEDITABLE, enabled.isEmpty() ? "true" : enabled);
+}
+
 void HTMLElementImpl::click()
 {
     int x = 0;

@@ -350,6 +350,51 @@ using DOM::NodeImpl;
 
 @end
 
+@implementation DOMHTMLElement (DOMHTMLElementExtensions)
+
+- (NSString *)innerHTML
+{
+    return [self _HTMLElementImpl]->innerHTML();
+}
+
+- (void)setInnerHTML:(NSString *)innerHTML
+{
+    [self _HTMLElementImpl]->setInnerHTML(innerHTML);
+}
+
+- (NSString *)innerText
+{
+    return [self _HTMLElementImpl]->innerText();
+}
+
+- (void)setInnerText:(NSString *)innerText
+{
+    [self _HTMLElementImpl]->setInnerText(innerText);
+}
+
+- (DOMHTMLCollection *)children
+{
+    HTMLCollectionImpl *collection = new HTMLCollectionImpl([self _HTMLElementImpl], HTMLCollectionImpl::NODE_CHILDREN);
+    return [DOMHTMLCollection _collectionWithImpl:collection];
+}
+
+- (NSString *)contentEditable
+{
+    return [self _HTMLElementImpl]->contentEditable();
+}
+
+- (void)setContentEditable:(NSString *)contentEditable
+{
+    [self _HTMLElementImpl]->setContentEditable(contentEditable);
+}
+
+- (BOOL)isContentEditable
+{
+    return [self _HTMLElementImpl]->isContentEditable();
+}
+
+@end
+
 @implementation DOMHTMLDocument
 
 - (HTMLDocumentImpl *)_HTMLDocumentImpl

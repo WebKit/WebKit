@@ -815,6 +815,7 @@
 				BC86FB90061F5C23006BB822,
 				BE8BD8F406359F6000D3F20B,
 				BE8BD90A0635CC2F00D3F20B,
+				842F72DD06405FDF00CC271B,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1239,6 +1240,20 @@
 //842
 //843
 //844
+		842F72DC06405FDF00CC271B = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
+			path = DOMEvents.mm;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		842F72DD06405FDF00CC271B = {
+			fileRef = 842F72DC06405FDF00CC271B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		848A320F057E688B001A2362 = {
 			isa = PBXFileReference;
 			lastKnownFileType = wrapper.framework;
@@ -6542,6 +6557,7 @@
 				932127550606724900B62302,
 				BE9CB65805F9546800514D9C,
 				932127500606724900B62302,
+				842F72DC06405FDF00CC271B,
 				832556E4061DF155007B8054,
 				9321274E0606724900B62302,
 				832556E6061DF161007B8054,

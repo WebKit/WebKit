@@ -2412,3 +2412,24 @@ void removeWrapperForRGB(QRgb value)
 @end
 
 //------------------------------------------------------------------------------------------
+
+
+@implementation DOMObject (DOMLinkStyle)
+
+- (DOMStyleSheet *)sheet
+{
+    ERROR("unimplemented");
+    return nil;
+}
+
+@end
+
+@implementation DOMDocument (DOMViewCSS)
+
+- (DOMCSSStyleDeclaration *)getComputedStyle:(DOMElement *)elt :(NSString *)pseudoElt
+{
+    ERROR("unimplemented");
+    return nil;
+}
+
+@end
