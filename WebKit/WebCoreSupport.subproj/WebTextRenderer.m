@@ -750,49 +750,11 @@ static void _drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *a
 }
 
 
-- (void)drawLineForCharacters:(const UniChar *)characters stringLength:(unsigned)length fromCharacterPosition:(int)from toCharacterPosition:(int)to atPoint:(NSPoint)point yOffset:(float)yOffset withPadding: (int)padding withColor:(NSColor *)color rightToLeft: (BOOL)rtl letterSpacing: (int)letterSpacing wordSpacing: (int)wordSpacing fontFamilies: (NSString **)families;
+- (void)drawLineForCharacters:(NSPoint)point yOffset:(float)yOffset withWidth: (int)width withColor:(NSColor *)color
 {
     NSGraphicsContext *graphicsContext = [NSGraphicsContext currentContext];
-    int width;
     CGContextRef cgContext;
     float lineWidth;
-
-    if (from > 0) {
-        point.x += [self _floatWidthForCharacters:characters
-                                     stringLength:length
-                            fromCharacterPosition: 0
-                               numberOfCharacters: from
-                                      withPadding: padding
-                                    applyRounding: YES
-                          attemptFontSubstitution: YES
-                                           widths: 0
-                                            fonts: 0
-                                           glyphs: 0
-                                        numGlyphs: 0
-                                    letterSpacing: letterSpacing
-                                      wordSpacing: wordSpacing
-                                     fontFamilies: families];
-    } else if (from == -1) {
-        from = 0;
-    }
-    if (to == -1) {
-        to = length;
-    }
-    
-    width = ROUND_TO_INT([self _floatWidthForCharacters:characters
-                      stringLength:length
-             fromCharacterPosition: from
-                numberOfCharacters: to-from
-                       withPadding: padding
-                     applyRounding: YES
-           attemptFontSubstitution: YES
-                            widths: 0
-                             fonts: 0
-                            glyphs: 0
-                         numGlyphs: 0
-                     letterSpacing: letterSpacing
-                       wordSpacing: wordSpacing
-                      fontFamilies: families]);
 
     // This will draw the text from the top of the bounding box down.
     // Qt expects to draw from the baseline.

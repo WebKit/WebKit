@@ -1,3 +1,11 @@
+2003-02-14  David Hyatt  <hyatt@apple.com>
+
+	Patch to the drawLine function for the inline box model landing.
+	
+        Reviewed by kocienda
+
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+
 
 2003-02-13  Trey Matteson  <trey@apple.com>
 
