@@ -26,10 +26,11 @@
 #import "KWQListBox.h"
 
 #import "KWQAssertions.h"
+#import "WebCoreScrollView.h"
 
 #define MIN_LINES 4 /* ensures we have a scroll bar */
 
-@interface KWQListBoxScrollView : NSScrollView
+@interface KWQListBoxScrollView : WebCoreScrollView
 {
 }
 @end

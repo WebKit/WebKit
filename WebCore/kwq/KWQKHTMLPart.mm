@@ -167,13 +167,25 @@ bool KWQKHTMLPart::openURL(const KURL &url)
     // FIXME: The lack of args here to get the reload flag from
     // indicates a problem in how we use KHTMLPart::processObjectRequest,
     // where we are opening the URL before the args are set up.
-    [_bridge loadURL:url.url().getNSString() referrer:[_bridge referrer] reload:NO target:nil triggeringEvent:nil form:nil formValues:nil];
+    [_bridge loadURL:url.url().getNSString()
+            referrer:[_bridge referrer]
+              reload:NO
+              target:nil
+     triggeringEvent:nil
+                form:nil
+          formValues:nil];
     return true;
 }
 
 void KWQKHTMLPart::openURLRequest(const KURL &url, const URLArgs &args)
 {
-    [_bridge loadURL:url.url().getNSString() referrer:[_bridge referrer] reload:args.reload target:args.frameName.getNSString() triggeringEvent:nil form:nil formValues:nil];
+    [_bridge loadURL:url.url().getNSString()
+            referrer:[_bridge referrer]
+              reload:args.reload
+              target:args.frameName.getNSString()
+     triggeringEvent:nil
+                form:nil
+          formValues:nil];
 }
 
 void KWQKHTMLPart::didNotOpenURL(const QString &URL)
@@ -384,11 +396,11 @@ void KWQKHTMLPart::recordFormValue(const QString &name, const QString &value, HT
 void KWQKHTMLPart::submitForm(const KURL &url, const URLArgs &args)
 {
     QString URLString = url.url();    
-    WebCoreBridge *target = args.frameName.length() == 0 ? _bridge : [_bridge findFrameNamed:args.frameName.getNSString()];
-    KHTMLPart *targetPart = [target part];
     
     // The form multi-submit logic here is only right when we are submitting a form that affects this frame.
     // Eventually when we find a better fix we can remove this altogether.
+    WebCoreBridge *target = args.frameName.isEmpty() ? _bridge : [_bridge findFrameNamed:args.frameName.getNSString()];
+    KHTMLPart *targetPart = [target part];
     bool willReplaceThisFrame = false;
     for (KHTMLPart *p = this; p; p = p->parentPart()) {
         if (p == targetPart) {
@@ -410,23 +422,22 @@ void KWQKHTMLPart::submitForm(const KURL &url, const URLArgs &args)
 
     if (!args.doPost()) {
         [_bridge loadURL:URLString.getNSString()
-	       referrer:[_bridge referrer] 
-                 reload:args.reload
-  	         target:args.frameName.getNSString()
-        triggeringEvent:_currentEvent
-                   form:_formAboutToBeSubmitted
-             formValues:_formValuesAboutToBeSubmitted];
+	        referrer:[_bridge referrer] 
+                  reload:args.reload
+  	          target:args.frameName.getNSString()
+         triggeringEvent:_currentEvent
+                    form:_formAboutToBeSubmitted
+              formValues:_formValuesAboutToBeSubmitted];
     } else {
-        QString contentType = args.contentType();
-        ASSERT(contentType.startsWith("Content-Type: "));
+        ASSERT(args.contentType().startsWith("Content-Type: "));
         [_bridge postWithURL:URLString.getNSString()
-	           referrer:[_bridge referrer] 
-	             target:args.frameName.getNSString()
-                       data:[NSData dataWithBytes:args.postData.data() length:args.postData.size()]
-                contentType:contentType.mid(14).getNSString()
-            triggeringEvent:_currentEvent
-                       form:_formAboutToBeSubmitted
-                 formValues:_formValuesAboutToBeSubmitted];
+	            referrer:[_bridge referrer] 
+                      target:args.frameName.getNSString()
+                        data:[NSData dataWithBytes:args.postData.data() length:args.postData.size()]
+                 contentType:args.contentType().mid(14).getNSString()
+             triggeringEvent:_currentEvent
+                        form:_formAboutToBeSubmitted
+                  formValues:_formValuesAboutToBeSubmitted];
     }
     clearRecordedFormValues();
 }
@@ -451,7 +462,13 @@ void KWQKHTMLPart::slotData(NSString *encoding, bool forceEncoding, const char *
 
 void KWQKHTMLPart::urlSelected(const KURL &url, int button, int state, const URLArgs &args)
 {
-    [_bridge loadURL:url.url().getNSString() referrer:[_bridge referrer] reload:args.reload target:args.frameName.getNSString() triggeringEvent:_currentEvent form:nil formValues:nil];
+    [_bridge loadURL:url.url().getNSString()
+            referrer:[_bridge referrer]
+              reload:args.reload
+              target:args.frameName.getNSString()
+     triggeringEvent:_currentEvent
+                form:nil
+          formValues:nil];
 }
 
 class KWQPluginPart : public ReadOnlyPart

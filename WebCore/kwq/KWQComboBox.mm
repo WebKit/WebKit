@@ -40,7 +40,11 @@ using khtml::RenderWidget;
 #define LEFT_MARGIN 3
 #define RIGHT_MARGIN 3
 
+#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_2
 #define TEXT_VERTICAL_NUDGE 1
+#else
+#define TEXT_VERTICAL_NUDGE 0
+#endif
 
 // This is the 2-pixel CELLOFFSET for bordered cells from NSCell.
 #define VERTICAL_FUDGE_FACTOR 2
@@ -236,12 +240,16 @@ int QComboBox::currentItem() const
     return result;
 }
 
+#if TEXT_VERTICAL_NUDGE
+
 - (void)drawInteriorWithFrame:(NSRect)cellFrame inView:(NSView *)controlView
 {
     cellFrame.origin.y += TEXT_VERTICAL_NUDGE;
     cellFrame.size.height -= TEXT_VERTICAL_NUDGE;
     [super drawInteriorWithFrame:cellFrame inView:controlView];
 }
+
+#endif
 
 - (QWidget *)widget
 {

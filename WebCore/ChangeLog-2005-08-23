@@ -1,3 +1,26 @@
+2003-03-10  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fixed 3010915 -- mouse wheel won't scroll the main document when you are over [i]frame
+
+        * kwq/WebCoreScrollView.h: Added.
+        * kwq/WebCoreScrollView.m: Added. Overrides scrollWheel to "do the right thing".
+        * WebCore.pbproj/project.pbxproj: Added WebCoreScrollView, and made it SPI so WebKit can use it.
+        * WebCore.exp: Exported WebCoreScrollView so WebKit can use it.
+        * WebCore-combined.exp: Regenerated.
+
+        * kwq/KWQListBox.mm: Made KWQListBoxScrollView a subclass of WebCoreScrollView instead of NSScrollView.
+        * kwq/KWQTextArea.h: Made KWQTextArea a subclass of WebCoreScrollView instead of NSScrollView.
+
+        - other changes
+
+        * kwq/KWQComboBox.mm: Make the workaround for the position of text in the pop-up
+        compile only when we build on Jaguar. That way a Jaguar-built Safari looks perfect on
+        Jaguar and a Panther built one looks perfect on Panther.
+
+        * kwq/KWQKHTMLPart.mm: Reformatted some method calls.
+
 2003-03-09  David Hyatt  <hyatt@apple.com>
 
 	Fix compacts and run-ins to work a lot better than they did

@@ -22,41 +22,10 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
- 
-#import <WebCore/WebCoreScrollView.h>
 
-@class KWQTextAreaTextView;
-class QTextEdit;
-@protocol KWQWidgetHolder;
+#import <AppKit/AppKit.h>
 
-@interface KWQTextArea : WebCoreScrollView <KWQWidgetHolder>
+@interface WebCoreScrollView : NSScrollView
 {
-    KWQTextAreaTextView *textView;
-    QTextEdit *widget;
-    BOOL wrap;
-    BOOL inNextValidKeyView;
 }
-
-- initWithQTextEdit:(QTextEdit *)w; 
-
-// The following methods corresponds to methods required by KDE.
-- (void)setWordWrap:(BOOL)wrap;
-- (BOOL)wordWrap;
-- (void)setText:(NSString *)text;
-- (NSString *)text;
-- (int)numLines;
-- (NSString *)textForLine:(int)line;
-- (void)selectAll;
-- (void)setEditable:(BOOL)flag;
-- (BOOL)isEditable;
-- (void)setFont:(NSFont *)font;
-
-// paragraph-oriented functions for the benefit of QTextEdit
-- (int)paragraphs;
-- (int)paragraphLength:(int)paragraph;
-- (NSString *)textForParagraph:(int)paragraph;
-- (int)lineOfCharAtIndex:(int)index inParagraph:(int)paragraph;
-- (void)getCursorPositionAsIndex:(int *)index inParagraph:(int *)paragraph;
-- (void)setCursorPositionToIndex:(int)index inParagraph:(int)paragraph;
-
 @end

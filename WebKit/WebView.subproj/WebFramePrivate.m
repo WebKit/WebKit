@@ -1232,7 +1232,13 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         {
             NSView *topViewInEventWindow = [[event window] contentView];
             NSView *viewContainingPoint = [topViewInEventWindow hitTest:[topViewInEventWindow convertPoint:[event locationInWindow] fromView:nil]];
-            if ([viewContainingPoint isKindOfClass:[WebHTMLView class]]) {
+            while (viewContainingPoint != nil) {
+                if ([viewContainingPoint isKindOfClass:[WebHTMLView class]]) {
+                    break;
+                }
+                viewContainingPoint = [viewContainingPoint superview];
+            }
+            if (viewContainingPoint != nil) {
                 NSPoint point = [viewContainingPoint convertPoint:[event locationInWindow] fromView:nil];
                 NSDictionary *elementInfo = [(WebHTMLView *)viewContainingPoint _elementAtPoint:point];
         

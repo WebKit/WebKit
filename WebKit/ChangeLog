@@ -1,3 +1,18 @@
+2003-03-10  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fixed 3010915 -- mouse wheel won't scroll the main document when you are over [i]frame
+
+        * WebView.subproj/WebDynamicScrollBarsView.h: Made WebDynamicScrollBarsView a subclass of
+        WebCoreScrollView instead of NSScrollView.
+        
+        - other changes
+        
+        * WebView.subproj/WebFramePrivate.m: (-[WebFrame _actionInformationForNavigationType:event:originalURL:):
+        Fix problem where you would not get any information if the click was on a subview of the
+        WebHTMLView, like a form control.
+
 2003-03-10  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed some download-related leaks. Primarily, we were leaking the data source that started the download. The data source is now immediately released when it becomes a download.
