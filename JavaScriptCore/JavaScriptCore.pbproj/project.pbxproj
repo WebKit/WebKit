@@ -498,7 +498,7 @@
 			isa = PBXBuildFile;
 			settings = {
 				ATTRIBUTES = (
-					Public,
+					Private,
 				);
 			};
 		};
@@ -1005,7 +1005,7 @@
 			isa = PBXBuildFile;
 			settings = {
 				ATTRIBUTES = (
-					Public,
+					Private,
 				);
 			};
 		};
@@ -1037,6 +1037,9 @@
 			fileRef = F692A8690255597D01FF60F7;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Private,
+				);
 			};
 		};
 		F692A8A60255597D01FF60F7 = {
@@ -1119,7 +1122,7 @@
 			isa = PBXBuildFile;
 			settings = {
 				ATTRIBUTES = (
-					Public,
+					Private,
 				);
 			};
 		};
@@ -1209,7 +1212,7 @@
 			isa = PBXBuildFile;
 			settings = {
 				ATTRIBUTES = (
-					Public,
+					Private,
 				);
 			};
 		};
@@ -1224,7 +1227,7 @@
 			isa = PBXBuildFile;
 			settings = {
 				ATTRIBUTES = (
-					Public,
+					Private,
 				);
 			};
 		};
@@ -1239,7 +1242,7 @@
 			isa = PBXBuildFile;
 			settings = {
 				ATTRIBUTES = (
-					Public,
+					Private,
 				);
 			};
 		};
