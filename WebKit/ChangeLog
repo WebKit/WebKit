@@ -1,3 +1,28 @@
+2003-09-30  David Hyatt  <hyatt@apple.com>
+
+	Improvements to scrolling and layout.  Also fixing 3264346, body overflow should
+	apply to document's scrollbars.
+	
+        Reviewed by darin
+
+        * WebView.subproj/WebDynamicScrollBarsView.h:
+        * WebView.subproj/WebDynamicScrollBarsView.m:
+        (-[WebDynamicScrollBarsView initWithFrame:]):
+        (-[WebDynamicScrollBarsView setScrollBarsSuppressed:repaintOnUnsuppress:]):
+        (-[WebDynamicScrollBarsView updateScrollers]):
+        (-[WebDynamicScrollBarsView reflectScrolledClipView:]):
+        (-[WebDynamicScrollBarsView setAllowsScrolling:]):
+        (-[WebDynamicScrollBarsView allowsScrolling]):
+        (-[WebDynamicScrollBarsView setAllowsHorizontalScrolling:]):
+        (-[WebDynamicScrollBarsView setAllowsVerticalScrolling:]):
+        (-[WebDynamicScrollBarsView allowsHorizontalScrolling]):
+        (-[WebDynamicScrollBarsView allowsVerticalScrolling]):
+        (-[WebDynamicScrollBarsView horizontalScrollingMode]):
+        (-[WebDynamicScrollBarsView verticalScrollingMode]):
+        (-[WebDynamicScrollBarsView setHorizontalScrollingMode:]):
+        (-[WebDynamicScrollBarsView setVerticalScrollingMode:]):
+        (-[WebDynamicScrollBarsView setScrollingMode:]):
+
 2003-09-29  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3422739>: Plug-in streams not cancelled when plug-in returns error from NPP_NewStream

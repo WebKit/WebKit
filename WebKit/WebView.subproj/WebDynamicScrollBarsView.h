@@ -14,9 +14,10 @@
 
 @interface WebDynamicScrollBarsView : WebCoreScrollView <WebCoreFrameView>
 {
-    BOOL disallowsHorizontalScrolling;
-    BOOL disallowsVerticalScrolling;
+    WebCoreScrollBarMode hScroll;
+    WebCoreScrollBarMode vScroll;
     BOOL suppressLayout;
+    BOOL suppressScrollers;
 }
 
 - (void)setAllowsHorizontalScrolling:(BOOL)flag;
