@@ -50,14 +50,16 @@ namespace KJS {
 
   class JSLazyEventListener : public JSEventListener {
   public:
-    JSLazyEventListener(QString _code, const Object &_win, bool _html = false);
+    JSLazyEventListener(QString _code, const Object &_win, bool _html = false, int lineno = 0);
     virtual void handleEvent(DOM::Event &evt, bool isWindowEvent);
     Object listenerObj() const;
+    
   private:
     void parseCode() const;
     
     mutable QString code;
     mutable bool parsed;
+    int lineNumber;
   };
 
 

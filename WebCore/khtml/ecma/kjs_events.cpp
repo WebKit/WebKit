@@ -154,11 +154,12 @@ Object JSEventListener::listenerObj() const
   return listener; 
 }
 
-JSLazyEventListener::JSLazyEventListener(QString _code, const Object &_win, bool _html)
+JSLazyEventListener::JSLazyEventListener(QString _code, const Object &_win, bool _html, int lineno)
   : JSEventListener(Object(), _win, _html),
     code(_code),
     parsed(false)
 {
+        lineNumber = lineno;
 }
 
 void JSLazyEventListener::handleEvent(DOM::Event &evt, bool isWindowEvent)
@@ -188,18 +189,16 @@ void JSLazyEventListener::parseCode() const
       KJS::ScriptInterpreter *interpreter = static_cast<KJS::ScriptInterpreter *>(proxy->interpreter());
       ExecState *exec = interpreter->globalExec();
 
-
       KJS::Interpreter::lock();
-
       //KJS::Constructor constr(KJS::Global::current().get("Function").imp());
       KJS::Object constr = interpreter->builtinFunction();
       KJS::List args;
 
       static ProtectedValue eventString = KJS::String("event");
-
+      UString sourceURL(part->m_url.url());
       args.append(eventString);
       args.append(KJS::String(code));
-      listener = constr.construct(exec, args); // ### is globalExec ok ?
+      listener = constr.construct(exec, args, sourceURL, lineNumber); // ### is globalExec ok ?
 
       KJS::Interpreter::unlock();
       

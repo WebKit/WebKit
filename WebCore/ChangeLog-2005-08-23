@@ -1,3 +1,19 @@
+2004-07-22  Kevin Decker  <kdecker@apple.com>
+
+	Reviewed by Darin
+
+	Fixed <rdar://problem/3682340> (error console does not include source urls or line numbers of event exceptions).
+
+        * khtml/ecma/kjs_events.cpp:
+        (JSLazyEventListener::JSLazyEventListener):
+        (JSLazyEventListener::parseCode):
+        * khtml/ecma/kjs_events.h:
+        * khtml/ecma/kjs_proxy.cpp:
+        (KJSProxyImpl::createHTMLEventHandler):
+        * khtml/ecma/kjs_window.cpp:
+        (Window::getJSLazyEventListener):
+        * khtml/ecma/kjs_window.h:
+
 2004-07-22  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Hyatt
