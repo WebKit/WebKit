@@ -1,5 +1,19 @@
 2002-09-24  Darin Adler  <darin@apple.com>
 
+	- fixed 3056579 -- various crashes at http://www.auspost.com.au/
+
+	Apparently the strings at this site were just the right length to expose a bug
+	in our QString implementation, one that I probably introduced when fixing 3032072.
+	One nice thing about this is that getting this correct could also result in a
+	little bit of a speedup, as the internal buffer is used more.
+
+        * kwq/KWQString.mm:
+        (QStringData::makeAscii): Set _maxAscii to QS_INTERNAL_BUFFER_CHARS when using
+	the internal buffer instead of leaving it uninitialized.
+        (QStringData::makeUnicode): Same for _maxUnicode.
+
+2002-09-24  Darin Adler  <darin@apple.com>
+
 	Remove the focus border hack, which was no longer doing us any good.
 
         * kwq/KWQNSTextField.h: Don't define FOCUS_BORDER_SIZE.

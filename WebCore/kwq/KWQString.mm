@@ -313,6 +313,7 @@ void QStringData::initialize()
 QStringData::QStringData(QChar *u, uint l, uint m) :
 	refCount(1), _length(l), _unicode(u), _ascii(0), _maxUnicode(m), _isUnicodeInternal(0), _isUnicodeValid(1), _isHeapAllocated(0), _maxAscii(QS_INTERNAL_BUFFER_CHARS), _isAsciiInternal(0), _isAsciiValid(0)
 {
+    ASSERT(m >= l);
 #ifdef QSTRING_DEBUG_ALLOCATIONS
     stringDataInstances++;
 #endif
@@ -321,6 +322,7 @@ QStringData::QStringData(QChar *u, uint l, uint m) :
 // Don't copy data.
 void QStringData::initialize(QChar *u, uint l, uint m)
 {
+    ASSERT(m >= l);
     refCount = 1;
     _length = l;
     _unicode = u;
@@ -528,6 +530,7 @@ inline QChar *QStringData::unicode()
 
 void QStringData::increaseUnicodeSize(uint size)
 {
+    ASSERT(size > _length);
     ASSERT(this != QString::shared_null);
         
     uint newSize = (uint)ALLOC_QCHAR_GOOD_SIZE(size);
@@ -587,6 +590,7 @@ char *QStringData::makeAscii()
             else
                 str = _unicode;
             _ascii = (char *)&_internalBuffer[0];
+            _maxAscii = QS_INTERNAL_BUFFER_CHARS;
             _isAsciiInternal = 1;
         }
         else {
@@ -635,6 +639,7 @@ QChar *QStringData::makeUnicode()
             else
                 str = _ascii;
             _unicode = (QChar *)&_internalBuffer[0];
+            _maxUnicode = QS_INTERNAL_BUFFER_UCHARS;
             _isUnicodeInternal = 1;
         }
         else {
