@@ -154,6 +154,8 @@ inline static QCString fixUpfromUnicode(const QTextCodec* codec, const QString& 
     return str;
 }
 
+#if !APPLE_CHANGES
+
 void HTMLFormElementImpl::i18nData()
 {
     QString foo1 = i18n( "You're about to send data to the Internet "
@@ -171,6 +173,7 @@ void HTMLFormElementImpl::i18nData()
                         "data by using <a href=\"javascript:go(0);\">Reload</a>");
 }
 
+#endif
 
 QByteArray HTMLFormElementImpl::formData(bool& ok)
 {
@@ -1108,7 +1111,11 @@ DOMString HTMLInputElementImpl::altText() const
     if ( alt.isNull() )
         alt = getAttribute( ATTR_VALUE );
     if ( alt.isEmpty() )
+#if APPLE_CHANGES
+        alt = inputElementAltText();
+#else
         alt = i18n( "Submit" );
+#endif
 
     return alt;
 }

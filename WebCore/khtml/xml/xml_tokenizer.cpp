@@ -202,13 +202,23 @@ bool XMLHandler::processingInstruction(const QString &target, const QString &dat
 
 QString XMLHandler::errorString()
 {
+#if APPLE_CHANGES
+    // FIXME: Does the user ever see this?
+    return "error";
+#else
     return i18n("the document is not in the correct file format");
+#endif
 }
 
 
 bool XMLHandler::fatalError( const QXmlParseException& exception )
 {
+#if APPLE_CHANGES
+    // FIXME: Does the user ever see this?
+    errorProt += QString("fatal parsing error: %1 in line %2, column %3")
+#else
     errorProt += i18n( "fatal parsing error: %1 in line %2, column %3" )
+#endif
         .arg( exception.message() )
         .arg( exception.lineNumber() )
         .arg( exception.columnNumber() );
@@ -362,7 +372,12 @@ void XMLTokenizer::finish()
         NodeImpl *html = doc->createElementNS(XHTML_NAMESPACE,"html");
         NodeImpl   *body = doc->createElementNS(XHTML_NAMESPACE,"body");
         NodeImpl     *h1 = doc->createElementNS(XHTML_NAMESPACE,"h1");
+#if APPLE_CHANGES
+        // FIXME: Is there some alternative to having this text hardcoded here?
+        NodeImpl       *headingText = doc->createTextNode("XML parsing error");
+#else
         NodeImpl       *headingText = doc->createTextNode(i18n("XML parsing error"));
+#endif
         NodeImpl     *errorText = doc->createTextNode(handler.errorProtocol());
         NodeImpl     *hr = doc->createElementNS(XHTML_NAMESPACE,"hr");
         NodeImpl     *pre = doc->createElementNS(XHTML_NAMESPACE,"pre");

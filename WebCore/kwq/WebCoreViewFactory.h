@@ -40,6 +40,13 @@
 
 - (NSArray *)pluginsInfo; // array of id <WebCorePluginInfo>
 
+- (NSString *)inputElementAltText;
+- (NSString *)resetButtonDefaultLabel;
+- (NSString *)searchableIndexIntroduction;
+- (NSString *)submitButtonDefaultLabel;
+
+- (NSString *)defaultLanguageCode;
+
 @end
 
 @interface WebCoreViewFactory : NSObject

@@ -1,3 +1,56 @@
+2002-10-26  Darin Adler  <darin@apple.com>
+
+	- fixed 3068404 -- eliminate all user-visible messages from WebCore
+
+        * khtml/ecma/kjs_window.cpp: (WindowFunc::tryCall): Use runJavaScriptPrompt
+	function instead of the more generic QInputDialog.
+
+        * khtml/html/html_formimpl.cpp: (HTMLInputElementImpl::altText): Get
+	submit alt text for input element from the view factory, rather than using
+	i18n, since we don't support that.
+        * khtml/html/htmlparser.cpp: (KHTMLParser::handleIsindex): Ditto, for the
+	intro that says "This is a searchable index".
+        * khtml/rendering/render_form.cpp:
+        (RenderSubmitButton::defaultLabel): Ditto, for "Submit".
+        (RenderResetButton::defaultLabel): Ditto, for "Reset".
+        (RenderFileButton::slotClicked): Ifdef'd out this unused code that had i18n text in it.
+
+        * khtml/xml/xml_tokenizer.cpp:
+        (XMLHandler::errorString): Put in an ifdef and a FIXME to avoid i18n.
+        (XMLHandler::fatalError): Ditto.
+        (XMLTokenizer::finish): Ditto.
+
+        * khtml/misc/decoder.cpp: (Decoder::decode): Ifdef'd the check for the first
+	language being "ja", since that's not how we're going to trigger Japanese
+	auto-detect.
+
+        * khtml/rendering/render_applet.cpp: (RenderEmptyApplet::RenderEmptyApplet):
+	Turned off the code that does the empty applet label. I don't think it worked,
+	and it used i18n. We'll have to tackle this eventually.
+
+        * kwq/KWQKHTMLPartImpl.h: Added runJavaScriptPrompt.
+        * kwq/KWQKHTMLPartImpl.mm: (KWQKHTMLPartImpl::runJavaScriptPrompt): Moved the code
+	here that used to be in KWQInputDialog.
+
+        * kwq/kdecore/klocale.h: Remove i18n() and KLocale::languageList(), added the functions
+	that are listed below.
+        * kwq/KWQKLocale.mm:
+        (inputElementAltText): Added specific function for getting one of the very few
+	translated strings that we need in WebCore.
+        (resetButtonDefaultLabel): Ditto.
+        (searchableIndexIntroduction): Ditto.
+        (submitButtonDefaultLabel): Ditto.
+        (KLocale::language): Use the view factory to ask for the language code, since there's no
+	public API to get it that WebCore can use.
+
+        * kwq/WebCoreViewFactory.h: Add new API for above.
+
+        * ForwardingHeaders/qinputdialog.h: Added empty file.
+
+        * kwq/qt/qinputdialog.h: Removed.
+        * kwq/KWQInputDialog.mm: Removed.
+        * WebCore.pbproj/project.pbxproj: Removed QInputDialog files.
+
 2002-10-25  Darin Adler  <darin@apple.com>
 
 	Remove some user-visible strings. We can't have any strings that need

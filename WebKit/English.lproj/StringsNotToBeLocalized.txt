@@ -143,6 +143,7 @@
 "application/x-javascript"
 "com.apple.WebKit"
 "displayTitle"
+"en"
 "getFountCount = %d, family = %s, traits = 0x%08x, size = %f\n"
 "htm"
 "html"

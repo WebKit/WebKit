@@ -1004,6 +1004,9 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
   case Window::Prompt:
     part->xmlDocImpl()->updateRendering();
     bool ok;
+#if APPLE_CHANGES
+    ok = part->impl->runJavaScriptPrompt(str, args.size() >= 2 ? args[1].toString(exec).qstring() : QString::null, str2);
+#else
     if (args.size() >= 2)
       str2 = QInputDialog::getText(i18n("Konqueror: Prompt"),
                                    QStyleSheet::convertFromPlainText(str),
@@ -1014,6 +1017,7 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
                                    QStyleSheet::convertFromPlainText(str),
                                    QLineEdit::Normal,
                                    QString::null, &ok);
+#endif
     if ( ok )
         return String(str2);
     else

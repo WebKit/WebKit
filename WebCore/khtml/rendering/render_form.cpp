@@ -369,8 +369,13 @@ void RenderSubmitButton::updateFromElement()
     RenderFormElement::updateFromElement();
 }
 
-QString RenderSubmitButton::defaultLabel() {
+QString RenderSubmitButton::defaultLabel()
+{
+#if APPLE_CHANGES
+    return submitButtonDefaultLabel();
+#else
     return i18n("Submit");
+#endif
 }
 
 short RenderSubmitButton::baselinePosition( bool f ) const
@@ -393,8 +398,13 @@ RenderResetButton::RenderResetButton(HTMLInputElementImpl *element)
 {
 }
 
-QString RenderResetButton::defaultLabel() {
+QString RenderResetButton::defaultLabel()
+{
+#if APPLE_CHANGES
+    return resetButtonDefaultLabel();
+#else
     return i18n("Reset");
+#endif
 }
 
 
@@ -622,11 +632,13 @@ void RenderFileButton::handleFocusOut()
 
 void RenderFileButton::slotClicked()
 {
+#if !APPLE_CHANGES
     QString file_name = KFileDialog::getOpenFileName(QString::null, QString::null, 0, i18n("Browse..."));
     if (!file_name.isNull()) {
         element()->m_value = DOMString(file_name);
         m_edit->setText(file_name);
     }
+#endif
 }
 
 void RenderFileButton::updateFromElement()

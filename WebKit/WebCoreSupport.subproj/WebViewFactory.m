@@ -58,4 +58,31 @@
     return [[WebPluginDatabase installedPlugins] plugins];
 }
 
+- (NSString *)inputElementAltText
+{
+    return UI_STRING_KEY("Submit", "Submit (input element)", "alt text for <input> elements with no alt, title, or value");
+}
+
+- (NSString *)resetButtonDefaultLabel
+{
+    return UI_STRING("Reset", "default label for Reset buttons in forms on web pages");
+}
+
+- (NSString *)searchableIndexIntroduction
+{
+    return UI_STRING("This is a searchable index. Enter search keywords: ",
+        "text that appears at the start of nearly-obsolete web pages in the form of a 'searchable index'");
+}
+
+- (NSString *)submitButtonDefaultLabel
+{
+    return UI_STRING("Submit", "default label for Submit buttons in forms on web pages");
+}
+
+- (NSString *)defaultLanguageCode
+{
+    // FIXME: Need implementation. Defaults gives us a list of languages, but by name, not code.
+    return @"en";
+}
+
 @end

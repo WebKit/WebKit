@@ -28,12 +28,14 @@
 
 #include <qstringlist.h>
 
-QString i18n(const char* text);
+QString inputElementAltText();
+QString resetButtonDefaultLabel();
+QString searchableIndexIntroduction();
+QString submitButtonDefaultLabel();
 
 class KLocale {
 public:
-    QString language() const;
-    QStringList languageList() const;
+    static QString language();
 };
 
 #endif

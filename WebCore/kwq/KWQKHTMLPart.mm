@@ -499,3 +499,13 @@ bool KWQKHTMLPartImpl::runJavaScriptConfirm(const QString &message)
 {
     return [[WebCoreViewFactory sharedFactory] runJavaScriptConfirmPanelWithMessage:message.getNSString()];
 }
+
+bool KWQKHTMLPartImpl::runJavaScriptPrompt(const QString &prompt, const QString &defaultValue, QString &result)
+{
+    NSString *returnedText;
+    bool ok = [[WebCoreViewFactory sharedFactory] runJavaScriptTextInputPanelWithPrompt:prompt.getNSString()
+        defaultText:defaultValue.getNSString() returningText:&returnedText];
+    if (ok)
+        result = QString::fromNSString(returnedText);
+    return ok;
+}

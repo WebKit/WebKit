@@ -23,23 +23,33 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <klocale.h>
-#import <KWQLogging.h>
-#import <qstring.h>
+#import "klocale.h"
 
-QString i18n(const char *text)
+#import "KWQLogging.h"
+#import "qstring.h"
+#import "WebCoreViewFactory.h"
+
+QString inputElementAltText()
 {
-    return QString("not localized: ") + text;
+    return QString::fromNSString([[WebCoreViewFactory sharedFactory] inputElementAltText]);
 }
 
-QString KLocale::language() const
+QString resetButtonDefaultLabel()
 {
-    LOG(NotYetImplemented, "not yet implemented");
-    return "en_US";
+    return QString::fromNSString([[WebCoreViewFactory sharedFactory] resetButtonDefaultLabel]);
 }
 
-QStringList KLocale::languageList() const
+QString searchableIndexIntroduction()
 {
-    LOG(NotYetImplemented, "not yet implemented");
-    return QStringList::split(",", "us");
+    return QString::fromNSString([[WebCoreViewFactory sharedFactory] searchableIndexIntroduction]);
+}
+
+QString submitButtonDefaultLabel()
+{
+    return QString::fromNSString([[WebCoreViewFactory sharedFactory] submitButtonDefaultLabel]);
+}
+
+QString KLocale::language()
+{
+    return QString::fromNSString([[WebCoreViewFactory sharedFactory] defaultLanguageCode]);
 }

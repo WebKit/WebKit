@@ -152,9 +152,13 @@ RenderEmptyApplet::RenderEmptyApplet(DOM::NodeImpl* node)
     // init RenderObject attributes
     setInline(true);
 
+#if APPLE_CHANGES
+    // FIXME: Figure out how to handle this.
+#else
     QLabel* label = new QLabel(i18n("Java Applet is not loaded. (Java interpreter disabled)"), node->getDocument()->view()->viewport());
     label->setAlignment( Qt::AlignCenter | Qt::WordBreak );
     setQWidget(label);
+#endif
 }
 
 short RenderEmptyApplet::intrinsicWidth() const
