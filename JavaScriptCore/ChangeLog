@@ -1,3 +1,17 @@
+2002-11-14  Darin Adler  <darin@apple.com>
+
+	- fixed 3101191 -- REGRESSION: Hang loading excite.com
+
+        * kjs/date_object.cpp:
+        (mktimeUsingCF): Pick an arbitrary cutoff of 3000, and return -1 if the
+	year passed in is that big so we don't infinite loop. Also validate the
+	rest of the date with CFGregorianDateIsValid. 
+        (DateProtoFuncImp::call): Handle a -1 result from mktime.
+        (DateObjectImp::construct): Check for NaN before calling mktime, and also
+	handle a -1 result from mktime.
+        (DateObjectFuncImp::call): Check for NaN before calling mktime, and also
+	handle a -1 result from mktime.
+
 2002-11-13  Darin Adler  <darin@apple.com>
 
 	- fixed 3099930 -- dates/times without time zones are parsed as UTC by kjs,

@@ -121,8 +121,6 @@ static struct tm *localtimeUsingCF(const time_t *clock)
 
 static time_t mktimeUsingCF(struct tm *tm)
 {
-    CFTimeZoneRef timeZone = CFTimeZoneCopyDefault();
-
     CFGregorianDate date;
     date.second = tm->tm_sec;
     date.minute = tm->tm_min;
@@ -131,8 +129,14 @@ static time_t mktimeUsingCF(struct tm *tm)
     date.month = tm->tm_mon + 1;
     date.year = tm->tm_year + 1900;
 
-    CFAbsoluteTime absoluteTime = CFGregorianDateGetAbsoluteTime(date, timeZone);
+    // CFGregorianDateGetAbsoluteTime will go nuts if the year is too large,
+    // so we pick an arbitrary cutoff.
+    if (!CFGregorianDateIsValid(date, kCFGregorianAllUnits) || date.year > 2500) {
+        return -1;
+    }
 
+    CFTimeZoneRef timeZone = CFTimeZoneCopyDefault();
+    CFAbsoluteTime absoluteTime = CFGregorianDateGetAbsoluteTime(date, timeZone);
     CFRelease(timeZone);
 
     return (time_t)(absoluteTime + kCFAbsoluteTimeIntervalSince1970);
@@ -498,7 +502,11 @@ Value DateProtoFuncImp::call(ExecState *exec, Object &thisObj, const List &args)
   if (id == SetYear || id == SetMilliSeconds || id == SetSeconds ||
       id == SetMinutes || id == SetHours || id == SetDate ||
       id == SetMonth || id == SetFullYear ) {
-    result = Number(mktime(t) * 1000.0 + ms);
+    time_t mktimeResult = mktime(t);
+    if (mktimeResult < 0)
+      result = Number(NaN);
+    else
+      result = Number(mktimeResult * 1000.0 + ms);
     thisObj.setInternalValue(result);
   }
 
@@ -566,18 +574,30 @@ Object DateObjectImp::construct(ExecState *exec, const List &args)
   } else {
     struct tm t;
     memset(&t, 0, sizeof(t));
-    Number y = args[0].toNumber(exec);
-    // TODO: check for NaN
-    int year = y.toInt32(exec);
-    t.tm_year = (year >= 0 && year <= 99) ? year : year - 1900;
-    t.tm_mon = args[1].toInt32(exec);
-    t.tm_mday = (numArgs >= 3) ? args[2].toInt32(exec) : 1;
-    t.tm_hour = (numArgs >= 4) ? args[3].toInt32(exec) : 0;
-    t.tm_min = (numArgs >= 5) ? args[4].toInt32(exec) : 0;
-    t.tm_sec = (numArgs >= 6) ? args[5].toInt32(exec) : 0;
-    t.tm_isdst = -1;
-    int ms = (numArgs >= 7) ? args[6].toInt32(exec) : 0;
-    value = Number(mktime(&t) * 1000.0 + ms);
+    if (isNaN(args[0].toNumber(exec))
+        || isNaN(args[1].toNumber(exec))
+        || (numArgs >= 3 && isNaN(args[2].toNumber(exec)))
+        || (numArgs >= 4 && isNaN(args[3].toNumber(exec)))
+        || (numArgs >= 5 && isNaN(args[4].toNumber(exec)))
+        || (numArgs >= 6 && isNaN(args[5].toNumber(exec)))
+        || (numArgs >= 7 && isNaN(args[6].toNumber(exec)))) {
+      value = Number(NaN);
+    } else {
+      int year = args[0].toInt32(exec);
+      t.tm_year = (year >= 0 && year <= 99) ? year : year - 1900;
+      t.tm_mon = args[1].toInt32(exec);
+      t.tm_mday = (numArgs >= 3) ? args[2].toInt32(exec) : 1;
+      t.tm_hour = (numArgs >= 4) ? args[3].toInt32(exec) : 0;
+      t.tm_min = (numArgs >= 5) ? args[4].toInt32(exec) : 0;
+      t.tm_sec = (numArgs >= 6) ? args[5].toInt32(exec) : 0;
+      t.tm_isdst = -1;
+      int ms = (numArgs >= 7) ? args[6].toInt32(exec) : 0;
+      time_t mktimeResult = mktime(&t);
+      if (mktimeResult < 0)
+        value = Number(NaN);
+      else
+        value = Number(mktimeResult * 1000.0 + ms);
+    }
   }
 
   Object proto = exec->interpreter()->builtinDatePrototype();
@@ -637,9 +657,16 @@ Value DateObjectFuncImp::call(ExecState *exec, Object &/*thisObj*/, const List &
     struct tm t;
     memset(&t, 0, sizeof(t));
     int n = args.size();
-    Number y = args[0].toNumber(exec);
-    // TODO: check for NaN
-    int year = y.toInt32(exec);
+    if (isNaN(args[0].toNumber(exec))
+        || isNaN(args[1].toNumber(exec))
+        || (n >= 3 && isNaN(args[2].toNumber(exec)))
+        || (n >= 4 && isNaN(args[3].toNumber(exec)))
+        || (n >= 5 && isNaN(args[4].toNumber(exec)))
+        || (n >= 6 && isNaN(args[5].toNumber(exec)))
+        || (n >= 7 && isNaN(args[6].toNumber(exec)))) {
+      return Number(NaN);
+    }
+    int year = args[0].toInt32(exec);
     t.tm_year = (year >= 0 && year <= 99) ? year : year - 1900;
     t.tm_mon = args[1].toInt32(exec);
     t.tm_mday = (n >= 3) ? args[2].toInt32(exec) : 1;
@@ -647,7 +674,10 @@ Value DateObjectFuncImp::call(ExecState *exec, Object &/*thisObj*/, const List &
     t.tm_min = (n >= 5) ? args[4].toInt32(exec) : 0;
     t.tm_sec = (n >= 6) ? args[5].toInt32(exec) : 0;
     int ms = (n >= 7) ? args[6].toInt32(exec) : 0;
-    return Number(mktime(&t) * 1000.0 + ms);
+    time_t mktimeResult = mktime(&t);
+    if (mktimeResult < 0)
+      return Number(NaN);
+    return Number(mktimeResult * 1000.0 + ms);
   }
 }
 
