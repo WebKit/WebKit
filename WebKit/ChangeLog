@@ -1,3 +1,15 @@
+2004-11-17  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Richard.
+
+	<rdar://problem/3885076> Don't make IDN calls for all-ascii URLs to save about 3 pages
+	at Safari startup.
+	
+        * Misc.subproj/WebNSURLExtras.m:
+        (mapHostNames): If encoding and not decoding, then bail early if the URL is all ascii.
+        (-[NSString _web_mapHostNameWithRange:encode:makeString:]): Remove earlier special-case
+	check for localhost, no longer needed.
+
 2004-11-17  Richard Williamson   <rjw@apple.com>
 
 	Fixed <rdar://problem/3863601> Legacy font cache code in [WebTextRendererFactory createSharedFactory] may be unnecesary

@@ -231,6 +231,9 @@ static NSString *mapHostNames(NSString *string, BOOL encode)
 {
     // Generally, we want to optimize for the case where there is one host name that does not need mapping.
     
+    if (encode && [string canBeConvertedToEncoding:NSASCIIStringEncoding])
+        return string;
+
     // Make a list of ranges that actually need mapping.
     NSMutableArray *hostNameRanges = nil;
     StringRangeApplierFunction f = encode
@@ -748,13 +751,6 @@ static NSString *mapHostNames(NSString *string, BOOL encode)
     int length = range.length;
     [string getCharacters:sourceBuffer range:range];
 
-    // Avoid expensive calls to uidna_IDNToASCII or uidna_IDNToUnicode for localhost
-    UChar firstChar = sourceBuffer[0];
-    if (firstChar == 'l' || firstChar == 'L') {
-        if ([self rangeOfString:@"localhost" options:NSCaseInsensitiveSearch range:range].location != NSNotFound)
-            return nil;
-    }
-    
     UErrorCode error = U_ZERO_ERROR;
     int32_t numCharactersConverted = (encode ? uidna_IDNToASCII : uidna_IDNToUnicode)
         (sourceBuffer, length, destinationBuffer, HOST_NAME_BUFFER_LENGTH, UIDNA_ALLOW_UNASSIGNED, NULL, &error);
