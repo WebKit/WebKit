@@ -1,3 +1,37 @@
+2002-06-19  Darin Adler  <darin@apple.com>
+
+	- fixed 2956444 -- mac os x feedback form missing textarea
+
+	* kwq/WebCoreFrameView.h: Added.
+
+	* kwq/KWQWidget.mm:
+	(QWidget::setCursor): Checked for cursor-setting call based on the
+	WebCoreFrameView protocol instead of using an informal protocol.
+	Also walk up the view chain so the cursor actually gets set.
+	(QWidget::internalSetGeometry): Changed the special case in here to use the new
+	WebCoreFrameView protocol, so it won't happen for all NSScrollView objects.
+	Also add comments to explain the hack better and mention the code in QScrollView.
+
+	* kwq/KWQScrollView.mm:
+	(-[NSView _KWQ_isScrollView]): Gave these KWQ names instead of IF names.
+	(-[NSView _KWQ_getDocumentView]): Gave these KWQ names instead of IF names.
+	(QScrollView::addChild): Changed the special case in here to use the new
+	WebCoreFrameView protocol, so it won't happen for all NSScrollView objects.
+	Also add comments to explain the hack better and mention the code in QWidget.
+
+	Other changes:
+
+	* kwq/kwqdebug.h: Cloned improved assert code from WebFoundation.
+
+	* kwq/KWQTextArea.h: Removed unused isReadOnly/setReadOnly.
+	* kwq/KWQTextArea.mm: Removed unused isReadOnly/setReadOnly.
+
+	* kwq/WebCoreViewFactory.h: Removed extraneous import and WebCoreCursorSetting
+	API from here.
+
+	* kwq/KWQTextEdit.mm: Tweaked.
+	* kwq/kparts/part.h: Tweaked.
+
 2002-06-18  Kenneth Kocienda  <kocienda@apple.com>
 
         Fix for this bug:

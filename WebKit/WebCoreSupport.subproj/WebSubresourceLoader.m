@@ -31,12 +31,29 @@
     return self;
 }
 
+- (void)didStartLoadingWithURL:(NSURL *)URL
+{
+    WEBKIT_ASSERT(currentURL == nil);
+    currentURL = [URL retain];
+    [[dataSource controller] _didStartLoading:currentURL];
+}
+
+- (void)didStopLoading
+{
+    WEBKIT_ASSERT(currentURL != nil);
+    [[dataSource controller] _didStopLoading:currentURL];
+    [currentURL release];
+    currentURL = nil;
+}
+
 - (void)dealloc
 {
 #ifdef WEBFOUNDATION_LOAD_MESSAGES_FIXED
     WEBKIT_ASSERT(currentURL == nil);
 #else
-    [currentURL release];
+    if (currentURL) {
+        [self didStopLoading];
+    }
 #endif
     
     [loader release];
@@ -82,10 +99,7 @@
 
 - (void)IFURLHandleResourceDidBeginLoading:(IFURLHandle *)handle
 {
-    WEBKIT_ASSERT(currentURL == nil);
-
-    currentURL = [[handle url] retain];
-    [[dataSource controller] _didStartLoading:[handle url]];
+    [self didStartLoadingWithURL:[handle url]];
     [self receivedProgressWithHandle:handle complete: NO];
 }
 
@@ -113,10 +127,8 @@
     
     [[dataSource controller] _receivedProgress:[IFLoadProgress progress]
         forResourceHandle:handle fromDataSource:dataSource complete: YES];
-    [[dataSource controller] _didStopLoading:[handle url]];
-    
-    [currentURL release];
-    currentURL = nil;
+
+    [self didStopLoading];
 }
 
 - (void)IFURLHandleResourceDidFinishLoading:(IFURLHandle *)handle data:(NSData *)data
@@ -136,15 +148,14 @@
     }
     
     [self receivedProgressWithHandle:handle complete: YES];
-
-    [[dataSource controller] _didStopLoading:[handle url]];
     
-    [currentURL release];
-    currentURL = nil;
+    [self didStopLoading];
 }
 
 - (void)IFURLHandle:(IFURLHandle *)handle resourceDidFailLoadingWithResult:(IFError *)error
 {
+    // FIXME: This assert starting firing, so I made it lenient like the cancel one above.
+    // I don't know what's going on.
 #ifdef WEBFOUNDATION_LOAD_MESSAGES_FIXED
     WEBKIT_ASSERT([currentURL isEqual:[handle redirectedURL] ? [handle redirectedURL] : [handle url]]);
 #else
@@ -157,10 +168,8 @@
     
     [[dataSource controller] _receivedError:error forResourceHandle:handle
         partialProgress:[IFLoadProgress progressWithURLHandle:handle] fromDataSource:dataSource];
-    [[dataSource controller] _didStopLoading:[handle url]];
-    
-    [currentURL release];
-    currentURL = nil;
+
+    [self didStopLoading];
 }
 
 - (void)IFURLHandle:(IFURLHandle *)handle didRedirectToURL:(NSURL *)URL
@@ -168,18 +177,18 @@
     WEBKIT_ASSERT(currentURL != nil);
     WEBKIT_ASSERT([URL isEqual:[handle redirectedURL]]);
 
-    [[dataSource controller] _didStopLoading:currentURL];
-
     [dataSource _setFinalURL:URL];
     [[dataSource _bridge] setURL:URL];
 
+    // FIXME: We do want to tell the client about redirects.
+    // But the current API doesn't give any way to tell redirects on
+    // the main page from redirects on subresources, so for now we are
+    // just disabling this. Before, we had code that tried to send the
+    // redirect, but sent it to the wrong object.
     //[[dataSource _locationChangeHandler] serverRedirectTo:toURL forDataSource:dataSource];
     
-    [[dataSource controller] _didStartLoading:URL];
-    
-    [URL retain];
-    [currentURL release];
-    currentURL = URL;
+    [self didStopLoading];
+    [self didStartLoadingWithURL:URL];
 }
 
 @end

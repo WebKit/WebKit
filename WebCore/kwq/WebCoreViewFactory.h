@@ -23,9 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <Cocoa/Cocoa.h>
-
 @class NSArray;
+@class NSDictionary;
 @class NSString;
 @class NSView;
 
@@ -50,8 +49,4 @@
 - (NSString *)pluginDescription;
 - (NSArray *)mimeTypes; // array of NSArrays with 3 parts of MIME type in each
 
-@end
-
-@protocol WebCoreCursorSetting
-- (void)setCursor:(NSCursor *)cursor;
 @end

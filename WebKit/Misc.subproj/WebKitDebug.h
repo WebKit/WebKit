@@ -1,5 +1,5 @@
 /*	WebKitDebug.h
-	Copyright 2001, Apple, Inc. All rights reserved.
+	Copyright 2001, 2002, Apple, Inc. All rights reserved.
 */
 
 #import <Foundation/Foundation.h>
@@ -79,32 +79,32 @@ void WebKitLog(unsigned int level, const char *file, int line, const char *funct
 #import <sys/time.h>
 #import <sys/resource.h>
 
-#define WEBKIT_ASSERTION_FAILURE \
+#define WEBKIT_ASSERTION_FAILURE(str_expr) \
     do { \
         struct rlimit _rlimit = {RLIM_INFINITY, RLIM_INFINITY}; \
         setrlimit(RLIMIT_CORE, &_rlimit); \
-        fprintf(stderr, "=================\nASSERTION FAILURE at %s:%d %s\n=================\n", __FILE__, __LINE__, __PRETTY_FUNCTION__); \
+            fprintf(stderr, "=================\nASSERTION FAILED: %s (%s:%d %s)\n=================\n", str_expr, __FILE__, __LINE__, __PRETTY_FUNCTION__); \
         raise(SIGQUIT); \
     } while (0)
 
 #define WEBKIT_ASSERT(expr) \
     do { \
         if (!(expr)) { \
-            WEBKIT_ASSERTION_FAILURE; \
+            WEBKIT_ASSERTION_FAILURE(#expr); \
         } \
     } while (0)
 
-#define WEBKIT_ASSERT_VALID_ARG(arg,expr) \
+#define WEBKIT_ASSERT_VALID_ARG(arg, expr) \
     do { \
         if (!(expr)) { \
-            WEBKIT_ASSERTION_FAILURE; \
+            WEBKIT_ASSERTION_FAILURE("bad arg " #arg " (" #expr ")"); \
         } \
     } while (0)
     
 #define WEBKIT_ASSERT_NOT_NIL(arg) \
     do { \
         if ((arg) == nil) { \
-            WEBKIT_ASSERTION_FAILURE; \
+            WEBKIT_ASSERTION_FAILURE("bad arg " #arg " (" #arg " not nil )"); \
         } \
     } while (0)
 

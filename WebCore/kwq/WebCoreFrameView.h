@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,58 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef PART_H_
-#define PART_H_
+@class NSCursor;
 
-#include <kinstance.h>
-#include <kurl.h>
-#include <qobject.h>
-#include <qvariant.h>
-#include <qlist.h>
-#include <qstringlist.h>
-#include <qvaluelist.h>
+// Among other things, this protocol is a way for an NSScrollView to detect
+// that the view it's embedded in is one that should be resized when the
+// scroll view is resized.
 
-class QWidget;
-
-namespace KIO {
-    class Job;
-}
-
-namespace KParts {
-
-class Part : public QObject {
-public:
-    Part() : m_widget(0), m_ref(1) { }
-    
-    QWidget *widget() const { return m_widget; }
-    void setWidget(QWidget *widget) { m_widget = widget; }
-    
-    void ref() { ++m_ref; }
-    void deref() { if (!--m_ref) delete this; }
-    
-    bool event(QEvent *event) { customEvent((QCustomEvent *)event); return true; }
-    virtual void customEvent(QCustomEvent *) { }
-    
-private:
-    QWidget *m_widget;
-    unsigned int m_ref;
-};
-
-class ReadOnlyPart : public Part {
-public:
-    ReadOnlyPart(QObject * = 0, const char * = 0) { }
-    
-    KURL url() const { return m_url; }
-    KURL m_url;
-    
-    void setXMLFile(const char *) { }
-    QObject *parent() const { return 0; }
-    void setInstance(KInstance *, bool) { }
-    void setStatusBarText(const QString &) { }
-};
-
-class GUIActivateEvent { };
-
-} // namespace KParts
-
-#endif
+@protocol WebCoreFrameView
+- (void)setCursor:(NSCursor *)cursor;
+@end

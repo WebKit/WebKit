@@ -25,6 +25,8 @@
 
 #import <qscrollview.h>
 
+#import <WebCoreFrameView.h>
+
 #import <kwqdebug.h>
 
 /*
@@ -34,61 +36,56 @@
 
     QScrollView's view is a NSScrollView (or subclass of NSScrollView) in most
     cases (except for provisional widgets).  That scrollview is a subview of an
-    IFWebView.  The IFWebView's documentView will also be the scroll view's 
+    WebCoreFrameView.  The WebCoreFrameView's documentView will also be the scroll view's 
     documentView.
     
-    The IFWebView's size is the frame size.  The IFWebView's documentView
+    The WebCoreFrameView's size is the frame size.  The WebCoreFrameView's documentView
     corresponds to the frame content size.  The scrollview itself is autosized to the
-    IFWebView's size (see QWidget::resize).
+    WebCoreFrameView's size (see QWidget::resize).
 */
 
-@interface NSView (IFExtensions)
-- (BOOL)_IF_isScrollView;
-- (NSView *)_IF_getDocumentView;
+@interface NSView (KWQExtensions)
+- (BOOL)_KWQ_isScrollView;
+- (NSView *)_KWQ_getDocumentView;
 @end
 
+@implementation NSView (KWQExtensions)
 
-@implementation NSView (IFExtensions)
-- (NSView *)_IF_getDocumentView
+- (BOOL)_KWQ_isScrollView
 {
-    if ([self respondsToSelector: @selector(documentView)]){
-        NSScrollView *sv = (NSScrollView *)self; // Compile complains about in-line cast.
+    return [self isKindOfClass:[NSScrollView class]];
+}
+
+- (NSView *)_KWQ_getDocumentView
+{
+    if ([self respondsToSelector: @selector(documentView)]) {
+        NSScrollView *sv = (NSScrollView *)self; // Compiler complains about in-line cast.
         return [sv documentView];
     }
     return nil;
 }
 
-
-- (BOOL)_IF_isScrollView
-{
-    if([self isKindOfClass: [NSScrollView class]])
-        return YES;
-    return NO;
-}
 @end
-
 
 QScrollView::QScrollView(QWidget *parent, const char *name, int f)
     : QFrame(parent)
 {
 }
 
-
 QWidget* QScrollView::viewport() const
 {
     return const_cast<QScrollView *>(this);
 }
 
-
 int QScrollView::visibleWidth() const
 {
     NSScrollView *view = (NSScrollView *)getView();
     int visibleWidth;
-    if ([view _IF_isScrollView]){
+    if ([view _KWQ_isScrollView]) {
         visibleWidth = (int)[view documentVisibleRect].size.width;
-    }
-    else
+    } else {
         visibleWidth = (int)[view bounds].size.width;
+    }
 
     return visibleWidth;
 }
@@ -99,11 +96,11 @@ int QScrollView::visibleHeight() const
     NSScrollView *view = (NSScrollView *)getView();
     int visibleHeight;
     
-    if ([view _IF_isScrollView]){
+    if ([view _KWQ_isScrollView]) {
         visibleHeight = (int)[view documentVisibleRect].size.height;
-    }
-    else
+    } else {
         visibleHeight = (int)[view bounds].size.height;
+    }
         
     return visibleHeight;
 }
@@ -112,7 +109,7 @@ int QScrollView::visibleHeight() const
 int QScrollView::contentsWidth() const
 {
     NSView *docView, *view = getView();
-    docView = [view _IF_getDocumentView];
+    docView = [view _KWQ_getDocumentView];
     if (docView)
         return (int)[docView bounds].size.width;
     return (int)[view bounds].size.width;
@@ -122,7 +119,7 @@ int QScrollView::contentsWidth() const
 int QScrollView::contentsHeight() const
 {
     NSView *docView, *view = getView();
-    docView = [view _IF_getDocumentView];
+    docView = [view _KWQ_getDocumentView];
     if (docView)
         return (int)[docView bounds].size.height;
     return (int)[view bounds].size.height;
@@ -131,7 +128,7 @@ int QScrollView::contentsHeight() const
 int QScrollView::contentsX() const
 {
     NSView *docView, *view = getView();
-    docView = [view _IF_getDocumentView];
+    docView = [view _KWQ_getDocumentView];
     if (docView)
         return (int)[docView bounds].origin.x;
     return 0;
@@ -140,7 +137,7 @@ int QScrollView::contentsX() const
 int QScrollView::contentsY() const
 {
     NSView *docView, *view = getView();
-    docView = [view _IF_getDocumentView];
+    docView = [view _KWQ_getDocumentView];
     if (docView)
         return (int)[docView bounds].origin.y;
     return 0;
@@ -164,7 +161,7 @@ void QScrollView::scrollBy(int dx, int dy)
 void QScrollView::setContentsPos(int x, int y)
 {
     NSView *docView, *view = getView();    
-    docView = [view _IF_getDocumentView];
+    docView = [view _KWQ_getDocumentView];
     if (docView)
         view = docView;
         
@@ -187,7 +184,7 @@ void QScrollView::setHScrollBarMode(ScrollBarMode)
 
 void QScrollView::addChild(QWidget* child, int x, int y)
 {
-    NSView *thisView, *thisDocView, *subView;
+    NSView *thisView, *thisDocView, *subview;
 
     KWQ_ASSERT(child != this);
 
@@ -195,25 +192,29 @@ void QScrollView::addChild(QWidget* child, int x, int y)
         child->move(x, y);
     
     thisView = getView();
-    thisDocView = [thisView _IF_getDocumentView];
+    thisDocView = [thisView _KWQ_getDocumentView];
     if (thisDocView)
         thisView = thisDocView;
 
-    subView = child->getView();
-    if ([subView _IF_isScrollView]) {
-        subView = [subView superview];
+    subview = child->getView();
+
+    // It's a bit of a hack, but when we are asked to add the widget for the top level of
+    // a frame, we need to instead add the containing frame widget. See also the similar
+    // code in QWidget::internalSetGeometry.
+    if ([[subview superview] conformsToProtocol:@protocol(WebCoreFrameView)]) {
+        subview = [subview superview];
     }
     
-    KWQ_ASSERT(subView != thisView);
+    KWQ_ASSERT(subview != thisView);
 
-    if ([subView superview] == thisView) {
+    if ([subview superview] == thisView) {
         return;
     }
     
-    [subView removeFromSuperview];
+    [subview removeFromSuperview];
     
-    KWQDEBUGLEVEL (KWQ_LOG_FRAMES, "Adding %p %s at (%d,%d) w %d h %d\n", subView, [[[subView class] className] cString], x, y, (int)[subView frame].size.width, (int)[subView frame].size.height);
-    [thisView addSubview: subView];
+    KWQDEBUGLEVEL (KWQ_LOG_FRAMES, "Adding %p %s at (%d,%d) w %d h %d\n", subview, [[[subview class] className] cString], x, y, (int)[subview frame].size.width, (int)[subview frame].size.height);
+    [thisView addSubview:subview];
 }
 
 void QScrollView::removeChild(QWidget* child)
@@ -225,8 +226,8 @@ void QScrollView::resizeContents(int w, int h)
 {
     KWQDEBUGLEVEL (KWQ_LOG_FRAMES, "%p %s at w %d h %d\n", getView(), [[[getView() class] className] cString], w, h);
     NSView *view = getView();
-    if ([view _IF_isScrollView]){
-        view = [view _IF_getDocumentView];
+    if ([view _KWQ_isScrollView]){
+        view = [view _KWQ_getDocumentView];
         
         KWQDEBUGLEVEL (KWQ_LOG_FRAMES, "%p %s at w %d h %d\n", view, [[[view class] className] cString], w, h);
         if (w < 0)
@@ -244,8 +245,8 @@ void QScrollView::updateContents(int x, int y, int w, int h)
 {
     NSView *view = getView();
 
-    if ([view _IF_isScrollView])
-        view = [view _IF_getDocumentView];
+    if ([view _KWQ_isScrollView])
+        view = [view _KWQ_getDocumentView];
 
     [view displayRect: NSMakeRect (x, y, w, h)];
 }
@@ -254,7 +255,6 @@ void QScrollView::updateContents(const QRect &rect)
 {
     return updateContents(rect.x(), rect.y(), rect.width(), rect.height());
 }
-
 
 void QScrollView::repaintContents(int x, int y, int w, int h, bool erase)
 {
@@ -272,7 +272,7 @@ void QScrollView::contentsToViewport(int x, int y, int& vx, int& vy)
 {
     NSView *docView, *view = getView();    
      
-    docView = [view _IF_getDocumentView];
+    docView = [view _KWQ_getDocumentView];
     if (docView)
         view = docView;
         
@@ -286,7 +286,7 @@ void QScrollView::viewportToContents(int vx, int vy, int& x, int& y)
 {
     NSView *docView, *view = getView();    
 
-    docView = [view _IF_getDocumentView];
+    docView = [view _KWQ_getDocumentView];
     if (docView)
         view = docView;
         

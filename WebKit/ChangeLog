@@ -1,3 +1,27 @@
+2002-06-19  Darin Adler  <darin@apple.com>
+
+	Fixed a storage leak and made some other changes to go along with
+	corresponding WebCore changes.
+
+	* WebCoreSupport.subproj/IFResourceURLHandleClient.m:
+	(-[IFResourceURLHandleClient didStartLoadingWithURL:]): Added.
+	(-[IFResourceURLHandleClient didStopLoading]): Added.
+	(-[IFResourceURLHandleClient dealloc]):
+	(-[IFResourceURLHandleClient IFURLHandleResourceDidBeginLoading:]):
+	(-[IFResourceURLHandleClient IFURLHandleResourceDidCancelLoading:]):
+	(-[IFResourceURLHandleClient IFURLHandleResourceDidFinishLoading:data:]):
+	(-[IFResourceURLHandleClient IFURLHandle:resourceDidFailLoadingWithResult:]):
+	(-[IFResourceURLHandleClient IFURLHandle:didRedirectToURL:]):
+	Use didStartLoadingWithURL and didStopLoading to cure problems where the
+	handle would be left in the data sources list of loading handles.
+
+	* WebView.subproj/IFDynamicScrollBarsView.h: Changed to conform to the
+	WebCoreFrameView protocol.
+
+	* Misc.subproj/WebKitDebug.h: Cloned improved assert code from WebFoundation.
+
+	* WebView.subproj/IFDynamicScrollBarsView.m: Fixed comment.
+
 2002-06-19  Chris Blumenberg  <cblu@apple.com>
 
 	Call setWindow in layout so that plug-in content is drawn without 

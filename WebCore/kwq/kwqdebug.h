@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -89,32 +89,32 @@ void KWQLog(unsigned int level, const char *file, int line, const char *function
 #import <sys/time.h>
 #import <sys/resource.h>
 
-#define KWQ_ASSERTION_FAILURE \
+#define KWQ_ASSERTION_FAILURE(str_expr) \
     do { \
         struct rlimit _rlimit = {RLIM_INFINITY, RLIM_INFINITY}; \
         setrlimit(RLIMIT_CORE, &_rlimit); \
-        fprintf(stderr, "=================\nASSERTION FAILURE at %s:%d %s\n=================\n", __FILE__, __LINE__, __PRETTY_FUNCTION__); \
+            fprintf(stderr, "=================\nASSERTION FAILED: %s (%s:%d %s)\n=================\n", str_expr, __FILE__, __LINE__, __PRETTY_FUNCTION__); \
         raise(SIGQUIT); \
     } while (0)
 
 #define KWQ_ASSERT(expr) \
     do { \
         if (!(expr)) { \
-            KWQ_ASSERTION_FAILURE; \
+            KWQ_ASSERTION_FAILURE(#expr); \
         } \
     } while (0)
 
-#define KWQ_ASSERT_VALID_ARG(arg,expr) \
+#define KWQ_ASSERT_VALID_ARG(arg, expr) \
     do { \
         if (!(expr)) { \
-            KWQ_ASSERTION_FAILURE; \
+            KWQ_ASSERTION_FAILURE("bad arg " #arg " (" #expr ")"); \
         } \
     } while (0)
-
+    
 #define KWQ_ASSERT_NOT_NIL(arg) \
     do { \
         if ((arg) == nil) { \
-            KWQ_ASSERTION_FAILURE; \
+            KWQ_ASSERTION_FAILURE("bad arg " #arg " (" #arg " not nil )"); \
         } \
     } while (0)
 

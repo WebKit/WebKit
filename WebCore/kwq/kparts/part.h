@@ -49,8 +49,8 @@ public:
     QWidget *widget() const { return m_widget; }
     void setWidget(QWidget *widget) { m_widget = widget; }
     
-    void ref() { m_ref++; }
-    void deref() { if(m_ref) m_ref--; if (!m_ref) delete this; }
+    void ref() { ++m_ref; }
+    void deref() { if (!--m_ref) delete this; }
     
     bool event(QEvent *event) { customEvent((QCustomEvent *)event); return true; }
     virtual void customEvent(QCustomEvent *) { }

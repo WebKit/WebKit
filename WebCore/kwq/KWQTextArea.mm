@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,9 +22,10 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-#import <qwidget.h>
 
 #import <KWQTextArea.h>
+
+#import <qwidget.h>
 
 /*
     This widget is used to implement the <TEXTAREA> element.
@@ -37,24 +38,23 @@
               OFF - Text is not wrapped.  It is kept to single line, although if
                     the user enters a return the line IS broken.  This emulates
                     Mac IE 5.1.
-     SOFT|VIRUTAL - Text is wrapped, but not actually broken.  
+     SOFT|VIRTUAL - Text is wrapped, but not actually broken.  
     HARD|PHYSICAL - Text is wrapped, and text is broken into seperate lines.
                          
-    kde expects a line based widget.  It uses a line API to convert text into multiple lines
-    when wrapping is set to HARD.  To support kde with implement [textLine] and [numLines].
+    KDE expects a line based widget.  It uses a line API to convert text into multiple lines
+    when wrapping is set to HARD.  To support KDE we implement [textLine] and [numLines].
     
-    If the wrap mode HARD kde will repeatedly call textForLine: (via emulated API in KWQTextEdit)
+    If the wrap mode HARD KDE will repeatedly call textForLine: (via emulated API in KWQTextEdit)
     to construct the text with inserted \n.
 */
-
 
 @implementation KWQTextArea
 
 const float LargeNumberForText = 1.0e7;
 
-- initWithFrame: (NSRect)r
+- initWithFrame:(NSRect)r
 {
-    return [self initWithFrame: r widget: 0];
+    return [self initWithFrame:r widget:0];
 }
 
 - (void)_createTextView
@@ -67,35 +67,35 @@ const float LargeNumberForText = 1.0e7;
     
     textFrame.origin.x = textFrame.origin.y = 0;
     if (frame.size.width > 0 && frame.size.height > 0)
-        textFrame.size = [NSScrollView contentSizeForFrameSize:frame.size hasHorizontalScroller:NO hasVerticalScroller:YES borderType: [self borderType]];
+        textFrame.size = [NSScrollView contentSizeForFrameSize:frame.size hasHorizontalScroller:NO hasVerticalScroller:YES borderType:[self borderType]];
     else {
         textFrame.size.width = LargeNumberForText;
         textFrame.size.height = LargeNumberForText;
     }
         
-    textView = [[NSTextView alloc] initWithFrame: textFrame];
-    [[textView textContainer] setWidthTracksTextView: YES];
+    textView = [[NSTextView alloc] initWithFrame:textFrame];
+    [[textView textContainer] setWidthTracksTextView:YES];
     
     // Setup attributes for default cases WRAP=SOFT|VIRTUAL and WRAP=HARD|PHYSICAL.
     // If WRAP=OFF we reset many of these attributes.
-    [style setLineBreakMode: NSLineBreakByWordWrapping];
-    [style setAlignment: NSLeftTextAlignment];
-    attr = [NSDictionary dictionaryWithObjectsAndKeys: style, NSParagraphStyleAttributeName, nil];
-    [textView setTypingAttributes: attr];
-    [textView setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
+    [style setLineBreakMode:NSLineBreakByWordWrapping];
+    [style setAlignment:NSLeftTextAlignment];
+    attr = [NSDictionary dictionaryWithObjectsAndKeys:style, NSParagraphStyleAttributeName, nil];
+    [textView setTypingAttributes:attr];
+    [textView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
 
-    [textView setDelegate: self];
+    [textView setDelegate:self];
     
-    [self setDocumentView: textView];
+    [self setDocumentView:textView];
 }
 
-- initWithFrame: (NSRect) r widget: (QWidget *)w 
+- initWithFrame:(NSRect)r widget:(QWidget *)w 
 {
-    [super initWithFrame: r];
+    [super initWithFrame:r];
 
-    [self setHasVerticalScroller: YES];
-    [self setHasHorizontalScroller: NO];
-    [self setBorderType: NSLineBorder];
+    [self setHasVerticalScroller:YES];
+    [self setHasHorizontalScroller:NO];
+    [self setBorderType:NSLineBorder];
 
     //if (r.size.width > 0 && r.size.height > 0)
         [self _createTextView];
@@ -112,7 +112,7 @@ const float LargeNumberForText = 1.0e7;
 }
 
 
-- (void) setWordWrap: (BOOL)f
+- (void)setWordWrap:(BOOL)f
 {
     if (f == wrap)
         return;
@@ -122,67 +122,53 @@ const float LargeNumberForText = 1.0e7;
     NSMutableParagraphStyle *style = [[[NSMutableParagraphStyle alloc] init] autorelease];
     
     if (f){
-        [self setHasHorizontalScroller: NO];
-        [textView setHorizontallyResizable: NO];
-        [[textView textContainer] setWidthTracksTextView: NO];
-        [style setLineBreakMode: NSLineBreakByWordWrapping];
+        [self setHasHorizontalScroller:NO];
+        [textView setHorizontallyResizable:NO];
+        [[textView textContainer] setWidthTracksTextView:NO];
+        [style setLineBreakMode:NSLineBreakByWordWrapping];
     }
     else {
         [self setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
         [[self contentView] setAutoresizesSubviews:YES];
-        [self setHasHorizontalScroller: YES];
+        [self setHasHorizontalScroller:YES];
 
         [[textView textContainer] setContainerSize:NSMakeSize(LargeNumberForText, LargeNumberForText)];
         [[textView textContainer] setWidthTracksTextView:NO];
         [[textView textContainer] setHeightTracksTextView:NO];
 
-        [textView setMinSize: [textView frame].size];
+        [textView setMinSize:[textView frame].size];
         [textView setMaxSize:NSMakeSize(LargeNumberForText, LargeNumberForText)];
-        [textView setHorizontallyResizable: YES];
+        [textView setHorizontallyResizable:YES];
 
-        [style setLineBreakMode: NSLineBreakByClipping];
+        [style setLineBreakMode:NSLineBreakByClipping];
     }
     
-    [style setAlignment: NSLeftTextAlignment];
-    attr = [NSDictionary dictionaryWithObjectsAndKeys: style, NSParagraphStyleAttributeName, nil];
+    [style setAlignment:NSLeftTextAlignment];
+    attr = [NSDictionary dictionaryWithObjectsAndKeys:style, NSParagraphStyleAttributeName, nil];
     
     [textView setMaxSize:NSMakeSize(LargeNumberForText, LargeNumberForText)];
-    [textView setTypingAttributes: attr];
+    [textView setTypingAttributes:attr];
     
     wrap = f;
 }
 
 
-- (BOOL) wordWrap
+- (BOOL)wordWrap
 {
     return wrap;
 }
 
-
-- (BOOL) isReadOnly
+- (void)setText:(NSString *)s
 {
-    return [textView isEditable] ? NO : YES;
+    [textView setString:s];
 }
-
-
-- (void) setReadOnly: (BOOL)flag
-{
-    return [textView setEditable: flag?NO:YES];
-}
-
-- (void) setText: (NSString *)s
-{
-    [textView setString: s];
-}
-
 
 - (NSString *)text
 {
     return [textView string];
 }
 
-
-- (NSString *)textForLine: (int)line
+- (NSString *)textForLine:(int)line
 {
     NSRange glyphRange = NSMakeRange(0,0), characterRange;
     int lineCount = 0;
@@ -195,8 +181,8 @@ const float LargeNumberForText = 1.0e7;
         characterRange = [layoutManager characterRangeForGlyphRange:glyphRange actualGlyphRange:NULL];
         if (line == lineCount){
             // I hope this works, the alternative is
-            // [[view string] substringWithRange: characterRange]
-            stringLine = [[[textView textStorage] attributedSubstringFromRange: characterRange] string];
+            // [[view string] substringWithRange:characterRange]
+            stringLine = [[[textView textStorage] attributedSubstringFromRange:characterRange] string];
             return stringLine;
         }
         lineCount++;
@@ -220,17 +206,16 @@ const float LargeNumberForText = 1.0e7;
 }
 
 
-- (void) selectAll
+- (void)selectAll
 {
-    [textView setSelectedRange: NSMakeRange(0, [[textView textStorage] length])];
+    [textView setSelectedRange:NSMakeRange(0, [[textView textStorage] length])];
 }
 
 
-- (void) setEditable: (BOOL)flag
+- (void)setEditable:(BOOL)flag
 {
     [textView setEditable: flag];
 }
-
 
 - (BOOL)isEditable
 {
@@ -400,7 +385,6 @@ static NSRange RangeOfParagraph(NSString *text, int paragraph)
     // FIXME: is this right? Cocoa text view docs are impenetrable
     NSString *text = [textView string];
     NSRange range = RangeOfParagraph(text, paragraph);
-
     if (range.location == NSNotFound) {
 	[textView setMarkedText:@"" selectedRange:NSMakeRange([text length], 0)];
     } else {
@@ -409,6 +393,3 @@ static NSRange RangeOfParagraph(NSString *text, int paragraph)
 }
 
 @end
-
-
-

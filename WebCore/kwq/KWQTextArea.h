@@ -25,9 +25,7 @@
  
 #import <Cocoa/Cocoa.h>
 
-
 class QWidget;
-
 
 @interface KWQTextArea : NSScrollView
 {
@@ -35,19 +33,17 @@ class QWidget;
     QWidget *widget;
     BOOL wrap;
 }
-- initWithFrame: (NSRect)r widget: (QWidget *)w; 
+- initWithFrame:(NSRect)r widget:(QWidget *)w; 
 
 // The following methods corresponds to methods required by KDE.
-- (void) setWordWrap: (BOOL)f;
-- (BOOL) wordWrap;
-- (BOOL) isReadOnly;
-- (void) setReadOnly: (BOOL)flag;
-- (void) setText: (NSString *)s;
+- (void)setWordWrap:(BOOL)wrap;
+- (BOOL)wordWrap;
+- (void)setText:(NSString *)s;
 - (NSString *)text;
-- (NSString *)textForLine: (int)line;
-- (int) numLines;
-- (void) selectAll;
-- (void) setEditable: (BOOL)flag;
+- (int)numLines;
+- (NSString *)textForLine:(int)line;
+- (void)selectAll;
+- (void)setEditable:(BOOL)flag;
 - (BOOL)isEditable;
 
 // paragraph-oriented functions for the benefit of QTextEdit

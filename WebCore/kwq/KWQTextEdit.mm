@@ -27,28 +27,23 @@
 
 #import <KWQTextArea.h>
 
-#import <kwqdebug.h>
-
 QTextEdit::QTextEdit(QWidget *parent)
 {
-    KWQTextArea *textView;
-    
-    textView = [[KWQTextArea alloc] initWithFrame:NSMakeRect(0,0,0,0) widget: this];
-    setView (textView);
+    KWQTextArea *textView = [[KWQTextArea alloc] initWithFrame:NSMakeRect(0,0,0,0) widget:this];
+    setView(textView);
     [textView release];
 }
 
 void QTextEdit::setText(const QString &string)
 {
     KWQTextArea *textView = (KWQTextArea *)getView();
-    
-    [textView setText:QSTRING_TO_NSSTRING (string)];
+    [textView setText:string.getNSString()];
 }
 
 QString QTextEdit::text()
 {
     KWQTextArea *textView = (KWQTextArea *)getView();
-    return NSSTRING_TO_QSTRING ([textView text]);
+    return QString::fromNSString([textView text]);
 }
 
 int QTextEdit::paragraphs() const
@@ -66,7 +61,7 @@ int QTextEdit::paragraphLength(int paragraph) const
 QString QTextEdit::text(int paragraph)
 {
     KWQTextArea *textView = (KWQTextArea *)getView();
-    return NSSTRING_TO_QSTRING([textView textForParagraph:paragraph]);
+    return QString::fromNSString([textView textForParagraph:paragraph]);
 }
 
 int QTextEdit::lineOfChar(int paragraph, int index)
@@ -90,47 +85,33 @@ void QTextEdit::setCursorPosition(int paragraph, int index)
 QTextEdit::WrapStyle QTextEdit::wordWrap() const
 {
     KWQTextArea *textView = (KWQTextArea *)getView();
-    
-    if ([textView wordWrap]) {
-        return QTextEdit::WidgetWidth;
-    } else {
-	return QTextEdit::NoWrap;
-    }
+    return [textView wordWrap] ? WidgetWidth : NoWrap;
 }
 
-void QTextEdit::setWordWrap(WrapStyle f)
+void QTextEdit::setWordWrap(WrapStyle style)
 {
     KWQTextArea *textView = (KWQTextArea *)getView();
-
-    if (f == QTextEdit::WidgetWidth) {
-        [textView setWordWrap: TRUE];
-    } else {
-        [textView setWordWrap: FALSE];
-    }
+    [textView setWordWrap:style == WidgetWidth];
 }
 
-void QTextEdit::setTextFormat(TextFormat f)
+void QTextEdit::setTextFormat(TextFormat)
 {
-    if (f != PlainText) {
-	_logNotYetImplemented();
-    }
 }
 
 void QTextEdit::setTabStopWidth(int)
 {
-	_logNotYetImplemented();
 }
 
-bool QTextEdit::isReadOnly () const
+bool QTextEdit::isReadOnly() const
 {
     KWQTextArea *textView = (KWQTextArea *)getView();
-    return [textView isEditable] ? NO : YES;
+    return ![textView isEditable];
 }
 
-void QTextEdit::setReadOnly (bool flag)
+void QTextEdit::setReadOnly(bool flag)
 {
     KWQTextArea *textView = (KWQTextArea *)getView();
-    [textView setEditable: (BOOL)flag ? NO : YES];
+    [textView setEditable:!flag];
 }
 
 void QTextEdit::selectAll()
@@ -142,11 +123,11 @@ void QTextEdit::selectAll()
 int QTextEdit::verticalScrollBarWidth() const
 {
     KWQTextArea *textView = (KWQTextArea *)getView();
-    return (int) [[textView verticalScroller] frame].size.width;
+    return (int)[[textView verticalScroller] frame].size.width;
 }
 
 int QTextEdit::horizontalScrollBarHeight() const
 {
     KWQTextArea *textView = (KWQTextArea *)getView();
-    return (int) [[textView horizontalScroller] frame].size.height;
+    return (int)[[textView horizontalScroller] frame].size.height;
 }

@@ -25,11 +25,11 @@
 
 #import <qwidget.h>
 
-#import <WebCoreViewFactory.h>
-
-#import <kwqdebug.h>
+#import <WebCoreFrameView.h>
 
 #import <KWQView.h>
+
+#import <kwqdebug.h>
 
 /*
     A QWidget rougly corresponds to an NSView.  In Qt a QFrame and QMainWindow inherit
@@ -267,9 +267,12 @@ void QWidget::setCursor(const QCursor &cur)
 {
     data->cursor = cur;
     
-    id view = data->view;
-    if ([view respondsToSelector:@selector(setCursor:)]) { 
-        [view setCursor:data->cursor.handle()];
+    NSView *view = data->view;
+    while (view) {
+        if ([view conformsToProtocol:@protocol(WebCoreFrameView)]) { 
+            [view setCursor:data->cursor.handle()];
+        }
+        view = [view superview];
     }
 }
 
@@ -309,11 +312,15 @@ void QWidget::hide()
 
 void QWidget::internalSetGeometry(int x, int y, int w, int h)
 {
-    id view = getView();
-    // If we're an scroll view, that means we're a khtmlview, so get
-    // the IFWebView and resize that.
-    if ([view isKindOfClass: [NSScrollView class]])
-       view = [view superview];
+    NSView *view = getView();
+    
+    // It's a bit of a hack, but when we resize the widget for the top level of
+    // a frame, we need to resize the containing frame widget also. See also
+    // the similar code in QScrollView::addChild.
+    if ([[view superview] conformsToProtocol:@protocol(WebCoreFrameView)]) {
+        view = [view superview];
+    }
+    
     [view setFrame:NSMakeRect(x, y, w, h)];
 }
 

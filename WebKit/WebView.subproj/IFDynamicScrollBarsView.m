@@ -1,9 +1,9 @@
 //
-//  DynamicScrollBarsView.m
-//  WebBrowser
+//  IFDynamicScrollBarsView.m
+//  WebKit
 //
 //  Created by John Sullivan on Tue Jan 22 2002.
-//  Copyright (c) 2001 Apple Computer, Inc. All rights reserved.
+//  Copyright (c) 2001, 2002 Apple Computer, Inc. All rights reserved.
 //
 
 #import <WebKit/IFDynamicScrollBarsView.h>
