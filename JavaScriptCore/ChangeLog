@@ -1,3 +1,8 @@
+2002-06-06  Darin Adler  <darin@apple.com>
+
+	* JavaScriptCore.pbproj/project.pbxproj: Update warning flags for compatibility
+	with new C++.
+
 2002-06-05  Darin Adler  <darin@apple.com>
 
 	Fix problem seen as build failure on Jersey.

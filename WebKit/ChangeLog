@@ -1,3 +1,12 @@
+2002-06-06  Darin Adler  <darin@apple.com>
+
+	* WebKit.pbproj/project.pbxproj: Update warning flags for compatibility
+	with new C++.
+
+	* WebCoreSupport.subproj/IFTextRenderer.m: (FillStyleWithAttributes):
+	Remove workaround we copied from AppKit, because it's a workaround for
+	a bug that was fixed in Puma.
+
 2002-06-06  Chris Blumenberg  <cblu@apple.com>
 
 	Added support for key codes and other encodings.

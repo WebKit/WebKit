@@ -182,15 +182,6 @@ static void FillStyleWithAttributes(ATSUStyle style, NSFont *theFont)
         if (fontId) {
             if (ATSUSetAttributes(style, 1, &tag, &size, (void **)valueArray) != noErr)
                 [NSException raise:NSInternalInconsistencyException format:@"Failed to set font (%@) ATSUStyle 0x%X", theFont, style];
-
-#if 1
-//#warning Aki 7/20/2000 This code should be disabled once the brain dead bug 2499383 is fixed
-            {
-                ATSUFontFeatureType types[8] = {kDiacriticsType, kTypographicExtrasType, kFractionsType, kSmartSwashType, kSmartSwashType, kSmartSwashType, kSmartSwashType, kSmartSwashType};
-                ATSUFontFeatureSelector selectors[8] = {kDecomposeDiacriticsSelector, kSmartQuotesOffSelector, kNoFractionsSelector, kWordInitialSwashesOffSelector, kWordFinalSwashesOffSelector, kLineInitialSwashesOffSelector, kLineFinalSwashesOffSelector, kNonFinalSwashesOffSelector};
-                ATSUSetFontFeatures(style, 8, types, selectors);
-            }
-#endif
         }
     }
 }
