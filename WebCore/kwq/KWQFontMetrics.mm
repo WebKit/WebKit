@@ -197,7 +197,7 @@ static void __IFFillStyleWithAttributes(ATSUStyle style, NSFont *theFont) {
         ATSUFontID *valueArray[1] = {&fontId};
 
         if (fontId) {
-            if (ATSUSetAttributes(style, 1, &tag, &size, (const ATSUAttributeValuePtr)valueArray) != noErr)
+            if (ATSUSetAttributes(style, 1, &tag, &size, (void **)valueArray) != noErr)
                 [NSException raise:NSInternalInconsistencyException format:@"Failed to set font (%@) ATSUStyle 0x%X", theFont, style];
 
 #if 1
@@ -244,7 +244,7 @@ static void __IFFillStyleWithAttributes(ATSUStyle style, NSFont *theFont) {
         int i, numGlyphs = _glyphVector.numGlyphs;
         char localGlyphBuf[LOCAL_GLYPH_BUFFER_SIZE];
         char *usedGlyphBuf, *glyphBufPtr, *glyphBuf = 0;
-        ATSLayoutRecord *glyphRecords = _glyphVector.firstRecord;
+        ATSLayoutRecord *glyphRecords = (ATSLayoutRecord *)_glyphVector.firstRecord;
         
         if (numGlyphs > LOCAL_GLYPH_BUFFER_SIZE/2)
             usedGlyphBuf = glyphBufPtr = glyphBuf = (char *)malloc (numGlyphs * 2);
@@ -509,7 +509,7 @@ static void __IFFillStyleWithAttributes(ATSUStyle style, NSFont *theFont) {
         
     unsigned int numGlyphs = latinGlyphVector.numGlyphs;
     characterToGlyph = (ATSGlyphRef *)calloc (1, latinGlyphVector.numGlyphs * sizeof(ATSGlyphRef));
-    glyphRecords = latinGlyphVector.firstRecord;
+    glyphRecords = (ATSLayoutRecord *)latinGlyphVector.firstRecord;
     for (i = 0; i < numGlyphs; i++){
         characterToGlyph[i] = glyphRecords[i].glyphID;
     }
@@ -580,7 +580,7 @@ static NSRect _rectForString (KWQLayoutInfo *self, const UniChar *internalBuffer
         KWQDEBUGLEVEL(KWQ_LOG_FONTCACHECHARMISS, "character-to-glyph cache miss for character 0x%04x in %s, %.0f\n", internalBuffer[i], [[font displayName] lossyCString], [font pointSize]);
         __IFInitATSGlyphVector(&self->_glyphVector, stringLength);
         (void)ATSUConvertCharToGlyphs(self->_styleGroup, internalBuffer, 0, stringLength, 0, &self->_glyphVector);
-        glyphRecords = self->_glyphVector.firstRecord;
+        glyphRecords = (ATSLayoutRecord *)self->_glyphVector.firstRecord;
         numGlyphs = self->_glyphVector.numGlyphs;
 
         if (numGlyphs > LOCAL_GLYPH_BUFFER_SIZE)

@@ -73,7 +73,7 @@ public:
 
 #ifdef _KWQ_IOSTREAM_
 template<class T>
-inline ostream &operator<<(ostream &stream, const QPtrStack<T>&s)
+inline std::ostream &operator<<(std::ostream &stream, const QPtrStack<T>&s)
 {
     stream << "QPtrStack: [size: " << s.count() << "; items: ";
 

@@ -65,7 +65,7 @@
     if(handlerType == IFMIMEHANDLERTYPE_APPLICATION){
         [[dataSource controller] receivedProgress:loadProgress forDownloadHandler:downloadHandler];
     }else{
-        [[dataSource controller] _mainReceivedProgress: (IFLoadProgress *)loadProgress 
+        [(IFBaseWebController *)[dataSource controller] _mainReceivedProgress: (IFLoadProgress *)loadProgress 
             forResource: [[sender url] absoluteString] fromDataSource: dataSource];
     }
     [loadProgress release];
@@ -94,7 +94,7 @@
         [[dataSource controller] receivedProgress:loadProgress forDownloadHandler:downloadHandler];
         [downloadHandler _finishedDownload];
     }else{
-        [[dataSource controller] _mainReceivedProgress: (IFLoadProgress *)loadProgress 
+        [(IFBaseWebController *)[dataSource controller] _mainReceivedProgress: (IFLoadProgress *)loadProgress 
             forResource: [[sender url] absoluteString] fromDataSource: dataSource];
     }
     [loadProgress release];
@@ -162,7 +162,7 @@
         [[dataSource controller] receivedProgress:loadProgress forDownloadHandler:downloadHandler];
         WEBKITDEBUGLEVEL(WEBKIT_LOG_DOWNLOAD, "Download progress: %d of %d", loadProgress->bytesSoFar, loadProgress->totalToLoad);
     }else{
-        [[dataSource controller] _mainReceivedProgress: (IFLoadProgress *)loadProgress 
+        [(IFBaseWebController *)[dataSource controller] _mainReceivedProgress: (IFLoadProgress *)loadProgress 
             forResource: [[sender url] absoluteString] fromDataSource: dataSource];
     }
     [loadProgress release];
@@ -180,7 +180,7 @@
         [[dataSource controller] receivedError: result forDownloadHandler:downloadHandler 
             partialProgress: loadProgress];
     }else{
-        [[dataSource controller] _mainReceivedError: result forResource: [[sender url] absoluteString] 
+        [(IFBaseWebController *)[dataSource controller] _mainReceivedError: result forResource: [[sender url] absoluteString] 
             partialProgress: loadProgress fromDataSource: dataSource];
     }
 }

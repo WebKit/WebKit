@@ -38,7 +38,6 @@
 
 #include <KWQDef.h>
 #include <KWQArrayImpl.h>
-#include <iostream>
 
 // class QMemArray ================================================================
 
@@ -87,8 +86,11 @@ public:
 }; // class QMemArray =============================================================
 
 #ifdef _KWQ_IOSTREAM_
+
+#include <iostream>
+
 template<class T>
-inline ostream &operator<<(ostream &stream, const QMemArray<T>&a)
+inline std::ostream &operator<<(std::ostream &stream, const QMemArray<T>&a)
 {
     stream << "QMemArray: [size: " << a.size() << "; items: ";
     for (unsigned i = 0; i < a.size(); i++) {
@@ -101,6 +103,7 @@ inline ostream &operator<<(ostream &stream, const QMemArray<T>&a)
 
     return stream;
 }
+
 #endif
 
 #endif // USING_BORROWED_QARRAY

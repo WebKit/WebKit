@@ -70,7 +70,7 @@ KURL::KWQKURLPrivate::KWQKURLPrivate(const QString &url) :
 }
 
 KURL::KWQKURLPrivate::KWQKURLPrivate(const KWQKURLPrivate &other) :
-    urlRef(other.urlRef != NULL ? CFRetain(other.urlRef) : NULL),
+    urlRef(other.urlRef != NULL ? (CFURLRef)CFRetain(other.urlRef) : NULL),
     sURL(other.sURL),
     sProtocol(other.sProtocol),
     sHost(other.sHost),
@@ -294,7 +294,7 @@ struct RelativeURLKey {
 
 static const void *RelativeURLKeyRetainCallBack(CFAllocatorRef allocator, const void *value)
 {
-    RelativeURLKey *key = value;
+    RelativeURLKey *key = (RelativeURLKey *)value;
     CFRetain(key->base);
     CFRetain(key->relative);
     return key;
@@ -302,7 +302,7 @@ static const void *RelativeURLKeyRetainCallBack(CFAllocatorRef allocator, const 
 
 static void RelativeURLKeyReleaseCallBack(CFAllocatorRef allocator, const void *value)
 {
-    RelativeURLKey *key = value;
+    RelativeURLKey *key = (RelativeURLKey *)value;
     CFRelease(key->base);
     CFRelease(key->relative);
     delete key;
@@ -315,15 +315,15 @@ static CFStringRef RelativeURLKeyCopyDescriptionCallBack(const void *value)
 
 static unsigned char RelativeURLKeyEqualCallBack(const void *value1, const void *value2)
 {
-    RelativeURLKey *key1 = value1;
-    RelativeURLKey *key2 = value2;
+    RelativeURLKey *key1 = (RelativeURLKey *)value1;
+    RelativeURLKey *key2 = (RelativeURLKey *)value2;
     
     return CFEqual(key1->base, key2->base) && CFEqual(key1->relative, key2->relative);
 }
 
 static CFHashCode RelativeURLKeyHashCallBack(const void *value)
 {
-    RelativeURLKey *key = value;
+    RelativeURLKey *key = (RelativeURLKey *)value;
     return CFHash(key->base) ^ CFHash(key->relative);
 }
 
@@ -358,7 +358,7 @@ QString KURL::normalizeURLString(const QString &s)
 	NormalizedURLCache = CFDictionaryCreateMutable(NULL, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks); 
     }
 
-    result = CFDictionaryGetValue(NormalizedURLCache, s.getCFMutableString());
+    result = (CFMutableStringRef)CFDictionaryGetValue(NormalizedURLCache, s.getCFMutableString());
 
     if (result != NULL) {
 	return QString::fromCFMutableString(result);
@@ -436,7 +436,7 @@ QString KURL::normalizeRelativeURLString(const KURL &base, const QString &relati
 	NormalizedRelativeURLCache = CFDictionaryCreateMutable(NULL, 0, &RelativeURLKeyCallBacks, &kCFTypeDictionaryValueCallBacks); 
     }
 
-    result = CFDictionaryGetValue(NormalizedRelativeURLCache, &key);
+    result = (CFMutableStringRef)CFDictionaryGetValue(NormalizedRelativeURLCache, &key);
 
     if (result != NULL) {
 	return QString::fromCFMutableString(result);

@@ -63,7 +63,7 @@ QPoint operator-(const QPoint &a, const QPoint &b)
 }
 
 #ifdef _KWQ_IOSTREAM_
-ostream &operator<<(ostream &o, const QPoint &p)
+std::ostream &operator<<(std::ostream &o, const QPoint &p)
 {
 	return o << "QPoint: [x: " << p.x() << "; h: " << p.y() << "]";
 }

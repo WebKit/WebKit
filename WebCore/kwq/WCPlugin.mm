@@ -165,11 +165,11 @@
             return;
         }
         if(isCFM){
-            pluginMainFunc = (void*)CFBundleGetFunctionPointerForName(bundle, CFSTR("main") );
+            pluginMainFunc = (mainFuncPtr)CFBundleGetFunctionPointerForName(bundle, CFSTR("main") );
         }else{
-            NPP_Initialize = (void*)CFBundleGetFunctionPointerForName(bundle, CFSTR("NPP_Initialize") );
-            NPP_GetEntryPoints = (void*)CFBundleGetFunctionPointerForName(bundle, CFSTR("NPP_GetEntryPoints") );
-            NPP_Shutdown = (void*)CFBundleGetFunctionPointerForName(bundle, CFSTR("NPP_Shutdown") );
+            NPP_Initialize = (initializeFuncPtr)CFBundleGetFunctionPointerForName(bundle, CFSTR("NPP_Initialize") );
+            NPP_GetEntryPoints = (getEntryPointsFuncPtr)CFBundleGetFunctionPointerForName(bundle, CFSTR("NPP_GetEntryPoints") );
+            NPP_Shutdown = (NPP_ShutdownProcPtr)CFBundleGetFunctionPointerForName(bundle, CFSTR("NPP_Shutdown") );
         }
     }else{ // single CFM file
         err = FSPathMakeRef((UInt8 *)[path cString], &fref, NULL);
@@ -187,34 +187,33 @@
             KWQDEBUG("WCPlugin: load: GetDiskFragment failed. Error=%d\n", err);
             return;
         }
-        pluginMainFunc = functionPointerForTVector(pluginMainFunc);
+        pluginMainFunc = (mainFuncPtr)functionPointerForTVector((TransitionVector)pluginMainFunc);
         isCFM = TRUE;
     }
     if(isCFM){
         browserFuncs.version = 11;
         browserFuncs.size = sizeof(NPNetscapeFuncs);
-        browserFuncs.geturl = tVectorForFunctionPointer(NPN_GetURL);
-        browserFuncs.posturl = tVectorForFunctionPointer(NPN_PostURL);
-        browserFuncs.requestread = tVectorForFunctionPointer(NPN_RequestRead);
-        browserFuncs.newstream = tVectorForFunctionPointer(NPN_NewStream);
-        browserFuncs.write = tVectorForFunctionPointer(NPN_Write);
-        browserFuncs.destroystream = tVectorForFunctionPointer(NPN_DestroyStream);
-        browserFuncs.status = tVectorForFunctionPointer(NPN_Status);
-        browserFuncs.uagent = tVectorForFunctionPointer(NPN_UserAgent);
-        browserFuncs.memalloc = tVectorForFunctionPointer(NPN_MemAlloc);
-        browserFuncs.memfree = tVectorForFunctionPointer(NPN_MemFree);
-        browserFuncs.memflush = tVectorForFunctionPointer(NPN_MemFlush);
-        browserFuncs.reloadplugins = tVectorForFunctionPointer(NPN_ReloadPlugins);
-        browserFuncs.geturlnotify = tVectorForFunctionPointer(NPN_GetURLNotify);
-        browserFuncs.posturlnotify = tVectorForFunctionPointer(NPN_PostURLNotify);
-        browserFuncs.getvalue = tVectorForFunctionPointer(NPN_GetValue);
-        browserFuncs.setvalue = tVectorForFunctionPointer(NPN_SetValue);
-        browserFuncs.invalidaterect = tVectorForFunctionPointer(NPN_InvalidateRect);
-        browserFuncs.invalidateregion = tVectorForFunctionPointer(NPN_InvalidateRegion);
-        browserFuncs.forceredraw = tVectorForFunctionPointer(NPN_ForceRedraw);
-        browserFuncs.getJavaEnv = tVectorForFunctionPointer(NPN_GetJavaEnv);
-        browserFuncs.getJavaPeer = tVectorForFunctionPointer(NPN_GetJavaPeer);
-        
+        browserFuncs.geturl = (NPN_GetURLProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_GetURL);
+        browserFuncs.posturl = (NPN_PostURLProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_PostURL);
+        browserFuncs.requestread = (NPN_RequestReadProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_RequestRead);
+        browserFuncs.newstream = (NPN_NewStreamProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_NewStream);
+        browserFuncs.write = (NPN_WriteProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_Write);
+        browserFuncs.destroystream = (NPN_DestroyStreamProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_DestroyStream);
+        browserFuncs.status = (NPN_StatusProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_Status);
+        browserFuncs.uagent = (NPN_UserAgentProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_UserAgent);
+        browserFuncs.memalloc = (NPN_MemAllocProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_MemAlloc);
+        browserFuncs.memfree = (NPN_MemFreeProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_MemFree);
+        browserFuncs.memflush = (NPN_MemFlushProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_MemFlush);
+        browserFuncs.reloadplugins = (NPN_ReloadPluginsProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_ReloadPlugins);
+        browserFuncs.geturlnotify = (NPN_GetURLNotifyProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_GetURLNotify);
+        browserFuncs.posturlnotify = (NPN_PostURLNotifyProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_PostURLNotify);
+        browserFuncs.getvalue = (NPN_GetValueProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_GetValue);
+        browserFuncs.setvalue = (NPN_SetValueProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_SetValue);
+        browserFuncs.invalidaterect = (NPN_InvalidateRectProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_InvalidateRect);
+        browserFuncs.invalidateregion = (NPN_InvalidateRegionProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_InvalidateRegion);
+        browserFuncs.forceredraw = (NPN_ForceRedrawProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_ForceRedraw);
+        browserFuncs.getJavaEnv = (NPN_GetJavaEnvProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_GetJavaEnv);
+        browserFuncs.getJavaPeer = (NPN_GetJavaPeerProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_GetJavaPeer);
         
         npErr = pluginMainFunc(&browserFuncs, &pluginFuncs, &NPP_Shutdown);
         
@@ -222,19 +221,19 @@
         pluginVersion = pluginFuncs.version;
         KWQDEBUG("pluginMainFunc: %d, size=%d, version=%d\n", npErr, pluginSize, pluginVersion);
         
-        NPP_New = functionPointerForTVector(pluginFuncs.newp);
-        NPP_Destroy = functionPointerForTVector(pluginFuncs.destroy);
-        NPP_SetWindow = functionPointerForTVector(pluginFuncs.setwindow);
-        NPP_NewStream = functionPointerForTVector(pluginFuncs.newstream);
-        NPP_DestroyStream = functionPointerForTVector(pluginFuncs.destroystream);
-        NPP_StreamAsFile = functionPointerForTVector(pluginFuncs.asfile);
-        NPP_WriteReady = functionPointerForTVector(pluginFuncs.writeready);
-        NPP_Write = functionPointerForTVector(pluginFuncs.write);
-        NPP_Print = functionPointerForTVector(pluginFuncs.print);
-        NPP_HandleEvent = functionPointerForTVector(pluginFuncs.event);
-        NPP_URLNotify = functionPointerForTVector(pluginFuncs.urlnotify);
-        NPP_GetValue = functionPointerForTVector(pluginFuncs.getvalue);
-        NPP_SetValue = functionPointerForTVector(pluginFuncs.setvalue);
+        NPP_New = (NPP_NewProcPtr)functionPointerForTVector((TransitionVector)pluginFuncs.newp);
+        NPP_Destroy = (NPP_DestroyProcPtr)functionPointerForTVector((TransitionVector)pluginFuncs.destroy);
+        NPP_SetWindow = (NPP_SetWindowProcPtr)functionPointerForTVector((TransitionVector)pluginFuncs.setwindow);
+        NPP_NewStream = (NPP_NewStreamProcPtr)functionPointerForTVector((TransitionVector)pluginFuncs.newstream);
+        NPP_DestroyStream = (NPP_DestroyStreamProcPtr)functionPointerForTVector((TransitionVector)pluginFuncs.destroystream);
+        NPP_StreamAsFile = (NPP_StreamAsFileProcPtr)functionPointerForTVector((TransitionVector)pluginFuncs.asfile);
+        NPP_WriteReady = (NPP_WriteReadyProcPtr)functionPointerForTVector((TransitionVector)pluginFuncs.writeready);
+        NPP_Write = (NPP_WriteProcPtr)functionPointerForTVector((TransitionVector)pluginFuncs.write);
+        NPP_Print = (NPP_PrintProcPtr)functionPointerForTVector((TransitionVector)pluginFuncs.print);
+        NPP_HandleEvent = (NPP_HandleEventProcPtr)functionPointerForTVector((TransitionVector)pluginFuncs.event);
+        NPP_URLNotify = (NPP_URLNotifyProcPtr)functionPointerForTVector((TransitionVector)pluginFuncs.urlnotify);
+        NPP_GetValue = (NPP_GetValueProcPtr)functionPointerForTVector((TransitionVector)pluginFuncs.getvalue);
+        NPP_SetValue = (NPP_SetValueProcPtr)functionPointerForTVector((TransitionVector)pluginFuncs.setvalue);
     }else{ // no function pointer conversion necessary for mach-o
         browserFuncs.version = 11;
         browserFuncs.size = sizeof(NPNetscapeFuncs);

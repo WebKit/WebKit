@@ -341,8 +341,10 @@ typedef NPError (* mainFuncPtr)(NPNetscapeFuncs*, NPPluginFuncs*, NPP_ShutdownPr
 typedef NPError (* initializeFuncPtr)(NPNetscapeFuncs*);
 typedef NPError (* getEntryPointsFuncPtr)(NPPluginFuncs*);
 
-void *functionPointerForTVector(void *);
-void *tVectorForFunctionPointer(void *);
+typedef void (* FunctionPointer) (void);
+typedef void (* TransitionVector) (void);
+FunctionPointer functionPointerForTVector(TransitionVector);
+TransitionVector tVectorForFunctionPointer(FunctionPointer);
 
 /*
  * NPN_* functions are provided by the navigator and called by the plugin.

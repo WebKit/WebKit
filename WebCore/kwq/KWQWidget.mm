@@ -199,7 +199,7 @@ void QWidget::move(const QPoint &p)
 QRect QWidget::frameGeometry() const
 {
     NSRect vFrame = [getView() frame];
-    return QRect (vFrame.origin.x, vFrame.origin.y, vFrame.size.width, vFrame.size.height);
+    return QRect((int)vFrame.origin.x, (int)vFrame.origin.y, (int)vFrame.size.width, (int)vFrame.size.height);
 }
 
 
@@ -221,8 +221,8 @@ QPoint QWidget::mapToGlobal(const QPoint &p) const
     // This is only used by JavaScript to implement the getting
     // the screenX and screen Y coordinates.
     NSPoint sp;
-    sp = [[data->view window] convertBaseToScreen: [data->view convertPoint: NSMakePoint ((float)p.x(), (float)p.y()) toView: nil]];
-    return QPoint (sp.x, sp.y);
+    sp = [[data->view window] convertBaseToScreen: [data->view convertPoint: NSMakePoint((float)p.x(), (float)p.y()) toView: nil]];
+    return QPoint((int)sp.x, (int)sp.y);
 }
 
 
@@ -317,13 +317,14 @@ QSize QWidget::minimumSizeHint() const
 {
     NSView *view = getView();
     
-    if ([view isKindOfClass: [NSControl class]]){
-        [(NSControl *)getView() sizeToFit];
-        NSRect frame = [getView() frame];
-        return QSize ((int)frame.size.width, (int)frame.size.height);
+    if ([view isKindOfClass: [NSControl class]]) {
+        NSControl *control = (NSControl *)view;
+        [control sizeToFit];
+        NSRect frame = [view frame];
+        return QSize((int)frame.size.width, (int)frame.size.height);
     }
 
-    return QSize (0,0);
+    return QSize(0,0);
 }
 
 

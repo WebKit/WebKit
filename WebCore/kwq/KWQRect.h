@@ -36,7 +36,9 @@
 #include <config.h>
 #endif
 
+#ifdef _KWQ_IOSTREAM_
 #include <iostream>
+#endif
 
 #include <KWQDef.h>
 
@@ -98,7 +100,7 @@ public:
     QRect operator&(const QRect &) const;
 
 #ifdef _KWQ_IOSTREAM_
-    friend ostream &operator<<(ostream &, const QRect &);
+    friend std::ostream &operator<<(std::ostream &, const QRect &);
 #endif
 
 // protected -------------------------------------------------------------------

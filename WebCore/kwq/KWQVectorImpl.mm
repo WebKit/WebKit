@@ -62,7 +62,7 @@ KWQVectorImpl::KWQVectorPrivate::KWQVectorPrivate(int sz, void (*deleteFunc)(voi
     deleteItem(deleteFunc)
 {
     if (cfarray == NULL) {
-	throw bad_alloc();
+	throw std::bad_alloc();
     }
 }
 
@@ -74,7 +74,7 @@ KWQVectorImpl::KWQVectorPrivate::KWQVectorPrivate(KWQVectorPrivate &vp) :
     deleteItem(vp.deleteItem)
 {
     if (cfarray == NULL) {
-	throw bad_alloc();
+	throw std::bad_alloc();
     }
 }
 
@@ -216,14 +216,12 @@ void *KWQVectorImpl::at(int n) const
 
 void **KWQVectorImpl::data()
 {
-    void **values;
-    unsigned length = CFArrayGetCount(d->cfarray);
+    int length = CFArrayGetCount(d->cfarray);
 
-    // allocate some memory and set it up to be autoreleased. this is pure evil.
-    values = malloc(length * sizeof(void *));
-    [[[NSData alloc] initWithBytesNoCopy:values length:length] autorelease];
+    // Use an autoreleased NSMutableData object. This is pure evil.
+    void ** values = (void **) [[[[NSMutableData alloc] initWithLength:length] autorelease] mutableBytes];
 
-    CFArrayGetValues(d->cfarray, CFRangeMake(0, CFArrayGetCount(d->cfarray)), (const void **)values);
+    CFArrayGetValues(d->cfarray, CFRangeMake(0, length), (const void **)values);
     return values;
 }
 

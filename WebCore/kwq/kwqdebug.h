@@ -42,7 +42,7 @@
 #define KWQ_ASSERT_VALID_ARG(arg,expr) ((void)0)
 #define KWQ_ASSERT_NOT_NIL(arg) ((void)0)
 
-#else /* xNDEBUG */
+#else /* NDEBUG */
 
 /*
 */

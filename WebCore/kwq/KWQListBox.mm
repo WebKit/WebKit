@@ -49,7 +49,8 @@
 // ==========================================================
 
 // Use lazy initialization, since we don't want to touch the file system too much.
-- (int)browser:(NSBrowser *)sender numberOfRowsInColumn:(int)column {
+- (int)browser:(NSBrowser *)sender numberOfRowsInColumn:(int)column
+{
     return box->count();
 }
 
@@ -77,12 +78,15 @@
 // Browser Target / Action Methods.
 // ==========================================================
 
-- (IBAction)browserSingleClick:(id)browser {
+- (IBAction)browserSingleClick:(id)browser
+{
     box->emitAction(QObject::ACTION_LISTBOX_CLICKED);
 }
 
-- (IBAction)browserDoubleClick:(id)browser {
+- (IBAction)browserDoubleClick:(id)browser
+{
 }
+
 @end
 
 
@@ -108,9 +112,9 @@ QListBox::QListBox()
 
 QListBox::~QListBox()
 {
-    KWQBrowserDelegate *delegate = [(NSBrowser *)getView() delegate];
-    
-    [(NSBrowser *)getView() setDelegate: nil];
+    NSBrowser *browser = (NSBrowser *)getView();
+    KWQBrowserDelegate *delegate = [browser delegate];
+    [browser setDelegate: nil];
     [delegate release];
 }
 
@@ -136,20 +140,24 @@ int QListBox::scrollBarWidth() const
 
 void QListBox::clear()
 {
+    NSBrowser *browser = (NSBrowser *)getView();
+
     // Do we need to delete previous head?
     head = 0;
     
-    [(NSBrowser *)getView() loadColumnZero];
+    [browser loadColumnZero];
 }
 
 
 void QListBox::setSelectionMode(SelectionMode mode)
 {
+    NSBrowser *browser = (NSBrowser *)getView();
+
     if (mode == QListBox::Extended){
-        [(NSBrowser *)getView() setAllowsMultipleSelection: YES];
+        [browser setAllowsMultipleSelection: YES];
     }
     else {
-        [(NSBrowser *)getView() setAllowsMultipleSelection: NO];
+        [browser setAllowsMultipleSelection: NO];
     }
 }
 
@@ -162,7 +170,8 @@ QListBoxItem *QListBox::firstItem() const
 
 int QListBox::currentItem() const
 {
-    return [(NSBrowser *)getView() selectedRowInColumn:0];
+    NSBrowser *browser = (NSBrowser *)getView();
+    return [browser selectedRowInColumn:0];
 }
 
 
@@ -208,20 +217,24 @@ void QListBox::insertItem(const QListBoxItem *newItem, int _index)
         }
     }
 
-    [(NSBrowser *)getView() loadColumnZero];
-    [(NSBrowser *)getView() tile];
+    NSBrowser *browser = (NSBrowser *)getView();
+    [browser loadColumnZero];
+    [browser tile];
 }
 
 void QListBox::setSelected(int index, bool selectIt)
 {
-    if (selectIt)
-        [(NSBrowser *)getView() selectRow: index inColumn: 0];
+    if (selectIt) {
+        NSBrowser *browser = (NSBrowser *)getView();
+        [browser selectRow: index inColumn: 0];
+    }
 }
 
 
 bool QListBox::isSelected(int index)
 {
-    return [[(NSBrowser *)getView() loadedCellAtRow: index column:0] state] == NSOnState; 
+    NSBrowser *browser = (NSBrowser *)getView();
+    return [[browser loadedCellAtRow: index column:0] state] == NSOnState; 
 }
 
 
@@ -252,7 +265,8 @@ QListBox *QListBoxItem::listBox() const
 int QListBoxItem::width(const QListBox *) const
 {
     // Is this right?
-    NSSize cellSize = [[(NSBrowser *)box->getView() loadedCellAtRow: 0 column: 0] cellSizeForBounds: NSMakeRect (0,0,10000,10000)];
+    NSBrowser *browser = (NSBrowser *)box->getView();
+    NSSize cellSize = [[browser loadedCellAtRow: 0 column: 0] cellSizeForBounds: NSMakeRect (0,0,10000,10000)];
     NSSize frameSize = [NSScrollView frameSizeForContentSize:cellSize hasHorizontalScroller:NO hasVerticalScroller:YES borderType:NSLineBorder];
     return (int)frameSize.width;
 }
@@ -261,7 +275,8 @@ int QListBoxItem::width(const QListBox *) const
 int QListBoxItem::height(const QListBox *) const
 {
     // Is this right?
-    NSSize size = [[(NSBrowser *)box->getView() loadedCellAtRow: 0 column: 0] cellSizeForBounds: NSMakeRect (0,0,10000,10000)];
+    NSBrowser *browser = (NSBrowser *)box->getView();
+    NSSize size = [[browser loadedCellAtRow: 0 column: 0] cellSizeForBounds: NSMakeRect (0,0,10000,10000)];
     return (int)size.height;
 }
 

@@ -100,6 +100,7 @@ QPixmap::QPixmap(int w, int h)
 
 
 QPixmap::QPixmap(const QPixmap &copyFrom)
+    : QPaintDevice()
 {
     if (copyFrom.nsimage != nil){
         // Do a deep copy of the image.  This is required because the image
@@ -149,14 +150,14 @@ bool QPixmap::isNull() const
 QSize QPixmap::size() const
 {
     NSSize sz = [nsimage size];
-    return QSize (sz.width, sz.height);
+    return QSize((int)sz.width, (int)sz.height);
 }
 
 
 QRect QPixmap::rect() const
 {
     NSSize sz = [nsimage size];
-    return QRect (0,0,sz.width, sz.height);
+    return QRect(0, 0, (int)sz.width, (int)sz.height);
 }
 
 
@@ -178,8 +179,9 @@ void QPixmap::resize(const QSize &sz)
 }
 
 
-void QPixmap::resize(int w, int h) {
-    [nsimage setSize: NSMakeSize ((float)(w), (float)(h))];
+void QPixmap::resize(int w, int h)
+{
+    [nsimage setSize: NSMakeSize((float)w, (float)h)];
 }
 
 

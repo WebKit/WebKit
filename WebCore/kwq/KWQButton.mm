@@ -41,7 +41,8 @@ QButton::~QButton()
 
 void QButton::setText(const QString &s)
 {
-    [(KWQNSButton *)getView() setTitle: QSTRING_TO_NSSTRING (s)];
+    KWQNSButton *button = (KWQNSButton *)getView();
+    [button setTitle: QSTRING_TO_NSSTRING (s)];
 }
 
 

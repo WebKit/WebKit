@@ -25,9 +25,8 @@
 
 #include <KWQArrayImpl.h>
 
-#ifndef USING_BORROWED_QARRAY
-
 #include <new>
+#include <string.h>
 
 #define	MIN(a,b) (((a)<(b))?(a):(b))
 
@@ -164,5 +163,3 @@ bool KWQArrayImpl::operator==(const KWQArrayImpl &a) const
 {
     return d->numItems == a.d->numItems && d->itemSize == d->itemSize && (d->data == a.d->data || memcmp(d->data, a.d->data, d->itemSize*d->numItems) == 0);
 }
-
-#endif

@@ -168,7 +168,7 @@ QRect QPainter::xForm(const QRect &) const
 
 void QPainter::save()
 {
-    QPStateStack *pss = data->ps_stack;
+    QPStateStack *pss = (QPStateStack *)data->ps_stack;
     if ( pss == 0 ) {
 	pss = new QPStateStack;
 	data->ps_stack = pss;

@@ -119,7 +119,7 @@ QString QString::fromStringWithEncoding(const char *chs, int len,
             } else {
                 // append length-specified string
                 // FIXME: can we find some way of not using this temporary?
-                char *buf = CFAllocatorAllocate(kCFAllocatorDefault, len + 1, 0);
+                char *buf = (char *)CFAllocatorAllocate(kCFAllocatorDefault, len + 1, 0);
                 strncpy(buf, chs, len);
                 *(buf + len) = '\0';
                 CFStringAppendCString(qs.s, buf, encoding);
@@ -884,7 +884,7 @@ QString &QString::setNum(long n)
 {
     const int capacity = 64;
     char buf[capacity];
-    buf[snprintf(buf, capacity - 1, "%D", n)] = '\0';
+    buf[snprintf(buf, capacity - 1, "%ld", n)] = '\0';
     return setLatin1(buf);
 }
 
@@ -892,7 +892,7 @@ QString &QString::setNum(ulong n)
 {
     const int capacity = 64;
     char buf[capacity];
-    buf[snprintf(buf, capacity - 1, "%U", n)] = '\0';
+    buf[snprintf(buf, capacity - 1, "%lu", n)] = '\0';
     return setLatin1(buf);
 }
 
@@ -1044,7 +1044,7 @@ void QString::fill(QChar qc, int len)
     if (len <= 0)
         s = getNullCFString();
     else {
-        UniChar *ucs = CFAllocatorAllocate(kCFAllocatorDefault, len * sizeof (UniChar), 0);
+        UniChar *ucs = (UniChar *)CFAllocatorAllocate(kCFAllocatorDefault, len * sizeof (UniChar), 0);
         for (int i = 0; i < len; i++)
             ucs[i] = qc.c;
         s = CFStringCreateMutable(kCFAllocatorDefault, 0);
@@ -1097,7 +1097,7 @@ QCString QString::convertToQCString(CFStringEncoding enc) const
 {
     uint len = length();
     if (len) {
-        char *chs = CFAllocatorAllocate(kCFAllocatorDefault, len + 1, 0);
+        char *chs = (char *)CFAllocatorAllocate(kCFAllocatorDefault, len + 1, 0);
         if (chs) {
             if (!CFStringGetCString(s, chs, len + 1, enc)) {
                 *reinterpret_cast<char *>(chs) = '\0';

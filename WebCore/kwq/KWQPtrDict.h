@@ -56,7 +56,7 @@ public:
     // constructors, copy constructors, and destructors ------------------------
 
     QPtrDict(int size=17) : impl(size, deleteFunc) {}
-    QPtrDict(const QPtrDict<T> &pd) : impl(pd.impl) {}
+    QPtrDict(const QPtrDict<T> &pd) : QPtrCollection(pd), impl(pd.impl) {}
     virtual ~QPtrDict() { impl.clear(del_item); }
 
     // member functions --------------------------------------------------------

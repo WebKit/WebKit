@@ -63,7 +63,7 @@ public:
 
     int refCount;
 
-    friend KWQRefPtr<QVariantPrivate>;
+    friend class KWQRefPtr<QVariantPrivate>;
 };
 
 QVariant::QVariant() : d(new QVariantPrivate())

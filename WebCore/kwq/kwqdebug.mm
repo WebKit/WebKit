@@ -25,6 +25,8 @@
 
 #include <kwqdebug.h>
 
+#ifndef xNDEBUG
+
 unsigned int KWQ_LOG_LEVEL = 0;
 
 void KWQSetLogLevel(int mask) {
@@ -72,3 +74,4 @@ void KWQLog(unsigned int level, const char *file, int line, const char *function
     }
 }
 
+#endif

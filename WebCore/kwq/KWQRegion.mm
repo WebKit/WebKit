@@ -29,9 +29,11 @@
 
 const QRegion QRegion::null;
 
-void QRegion::_initialize() {
-    data = calloc(1, sizeof(struct KWQRegionData));
+void QRegion::_initialize()
+{
+    data = new KWQRegionData;
     data->type = Rectangle;
+    data->path = nil;
 }
 
 QRegion::QRegion()
@@ -85,9 +87,8 @@ QRegion::QRegion(const QRegion &other)
 
 QRegion::~QRegion()
 {
-    if (data->path)
-        [data->path release];
-    free(data);
+    [data->path release];
+    delete data;
 }
 
 QRegion QRegion::intersect(const QRegion &region) const
@@ -147,5 +148,5 @@ QRect QRegion::boundingRect() const
 
     NSRect bounds = [data->path bounds];
 
-    return QRect(bounds.origin.x, bounds.origin.y, bounds.size.width, bounds.size.height);
+    return QRect((int)bounds.origin.x, (int)bounds.origin.y, (int)bounds.size.width, (int)bounds.size.height);
 }

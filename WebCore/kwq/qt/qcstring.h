@@ -41,7 +41,10 @@
 
 #include "qarray.h"
 
+#ifdef _KWQ_IOSTREAM_
 #include <iostream>
+#endif
+
 #include <string.h>
 
 typedef QMemArray<char> QByteArray;
@@ -89,7 +92,7 @@ public:
     QCString &operator+=(char);
 
 #ifdef _KWQ_IOSTREAM_
-    friend ostream &operator<<(ostream &, const QCString &);
+    friend std::ostream &operator<<(std::ostream &, const QCString &);
 #endif
 
 // protected -------------------------------------------------------------------

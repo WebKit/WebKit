@@ -1,3 +1,10 @@
+2002-04-18  Darin Adler  <darin@apple.com>
+
+	Reviewed by Maciej
+
+	* JavaScriptCore.pbproj/project.pbxproj: Turn on gcc3 and the same set of warnings
+	as in the rest of Labyrinth (see top level ChangeLog for details).
+
 2002-04-17  Maciej Stachowiak  <mjs@apple.com>
 
 	Reviewed by: Darin Adler  <darin@apple.com>

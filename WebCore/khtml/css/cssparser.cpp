@@ -59,6 +59,11 @@ using namespace DOM;
 //
 // with 'props->id' a CSS property in the range from CSS_PROP_MIN to
 // (and including) CSS_PROP_TOTAL-1
+#ifdef APPLE_CHANGES
+// work around Radar 2905890
+#undef __inline
+#define __inline
+#endif
 #include "cssproperties.c"
 #include "cssvalues.c"
 

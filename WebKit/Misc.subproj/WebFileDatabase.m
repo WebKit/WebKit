@@ -55,9 +55,11 @@ enum
 
 static NSMutableSet *notMappableFileNameSet = nil;
 static NSLock *mutex;
-static pthread_once_t cacheFileReaderControl = PTHREAD_ONCE_INIT;
 
-static void URLFileReaderInit()
+// The next line is a workaround for Radar 2905545. Once that's fixed, it can use PTHREAD_ONCE_INIT.
+static pthread_once_t cacheFileReaderControl = {_PTHREAD_ONCE_SIG_init, {}};
+
+static void URLFileReaderInit(void)
 {
     mutex = [[NSLock alloc] init];
     notMappableFileNameSet = [[NSMutableSet alloc] init];    
@@ -74,7 +76,7 @@ static void URLFileReaderInit()
 
     pthread_once(&cacheFileReaderControl, URLFileReaderInit);
 
-    self = [super init];
+    [super init];
     
     data = nil;
     mappedBytes = NULL;
@@ -372,15 +374,14 @@ static void URLFileReaderInit()
 
 -(id)objectForKey:(id)key
 {
-    id result;
+    volatile id result;
     id fileKey;
     id object;
     NSString *filePath;
-    IFURLFileReader *fileReader;
+    IFURLFileReader * volatile fileReader;
     NSData *data;
-    NSUnarchiver *unarchiver;
+    NSUnarchiver * volatile unarchiver;
         
-    result = nil;
     fileKey = nil;
     fileReader = nil;
     data = nil;

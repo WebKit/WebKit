@@ -36,12 +36,9 @@ extern "C" {
 
 #pragma mark IFPLUGINVIEW
 
-- initWithFrame:(NSRect)r plugin:(WCPlugin *)plug url:(NSString *)location mime:(NSString *)mimeType arguments:(NSDictionary *)arguments mode:(uint16)mode
+- initWithFrame:(NSRect)r plugin:(WCPlugin *)plug url:(NSString *)location mime:(NSString *)mimeType arguments:(NSDictionary *)args mode:(uint16)mode
 {
-    NSString *baseURLString, *attributeString;
-    NSArray *attributes, *values;
-    char *s;
-    uint i;
+    NSString *baseURLString;
     
     [super initWithFrame: r];
     
@@ -53,6 +50,7 @@ extern "C" {
     mime = [mimeType retain];
     URL = [location retain];
     plugin = [plug retain];
+    arguments = [args copy];
     
     // load the plug-in if it is not already loaded
     [plugin load];
@@ -75,49 +73,16 @@ extern "C" {
 
     // get base URL which was added in the args in the part
     baseURLString = [arguments objectForKey:@"WebKitBaseURL"];
-    if(baseURLString)
+    if (baseURLString)
         baseURL = [[NSURL URLWithString:baseURLString] retain];
             
-    cMime = malloc([mime length]+1);
-    [mime getCString:cMime];
-
-    attributes = [arguments allKeys];
-    values = 	 [arguments allValues];
-        
-    if([attributes containsObject:@"hidden"])
-        isHidden = YES;
-    else
-        isHidden = NO;
-    
-    if(![attributes containsObject:@"wkfullmode"]){
-        // convert arugments dictionary to 2 string arrays
-        
-        WKFullMode = YES;
-        
-        cAttributes = malloc(sizeof(char *) * [arguments count]);
-        cValues = malloc(sizeof(char *) * [arguments count]);
-        
-        for(i=0; i<[arguments count]; i++){ 
-            attributeString = [attributes objectAtIndex:i];
-            s = malloc([attributeString length]+1);
-            [attributeString getCString:s];
-            cAttributes[i] = s;
-            
-            attributeString = [values objectAtIndex:i];
-            s = malloc([attributeString length]+1);
-            [attributeString getCString:s];
-            cValues[i] = s;
-        }
-        argsCount = [arguments count];
-    }else{
-        WKFullMode = NO;
-    }
+    isHidden = [arguments objectForKey:@"hidden"] != nil;
     
     // Initialize globals
     transferred = NO;
     stopped = NO;
-    filesToErase = [[NSMutableArray arrayWithCapacity:2] retain];
-    activeURLHandles = [[NSMutableArray arrayWithCapacity:1] retain];
+    filesToErase = [[NSMutableArray alloc] init];
+    activeURLHandles = [[NSMutableArray alloc] init];
     
     return self;
 }
@@ -140,9 +105,7 @@ extern "C" {
     [mime release];
     [URL release];
     [plugin release];
-    free(cMime);
-    free(cAttributes);
-    free(cValues);
+    [arguments release];
     [super dealloc];
 }
 
@@ -187,17 +150,12 @@ extern "C" {
     uint16 transferMode;
     IFURLHandle *urlHandle;
     NSDictionary *attributes;
-    char *mType;
     
     stream = [[IFPluginStream alloc] initWithURL:streamURL mimeType:mimeType notifyData:notifyData];
     npStream = [stream npStream];
     
-    mType = malloc([mimeType length]+1);
-    [mimeType getCString:mType];
-    
-    npErr = NPP_NewStream(instance, mType, npStream, NO, &transferMode);
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_NewStream: %d %s\n", npErr, cMime);
-    free(mType);
+    npErr = NPP_NewStream(instance, (char *)[mimeType cString], npStream, NO, &transferMode);
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_NewStream: %d %s\n", npErr, [mimeType cString]);
     
     if(npErr != NPERR_NO_ERROR){
         [stream release];
@@ -232,10 +190,29 @@ extern "C" {
     NPSavedData saved;
     NPError npErr;
     
-    if(WKFullMode){
-        npErr = NPP_New(cMime, instance, NP_EMBED, argsCount, cAttributes, cValues, &saved);
-    }else{
-        npErr = NPP_New(cMime, instance, NP_FULL, 0, NULL, NULL, &saved);
+    if ([arguments objectForKey:@"wkfullmode"]) {
+        // convert arguments dictionary to 2 string arrays
+        
+        int argsCount = [arguments count];
+        
+        char **cAttributes = new char * [argsCount];
+        char **cValues = new char * [argsCount];
+        
+        NSEnumerator *e = [arguments keyEnumerator];
+        NSString *key;
+        int i = 0;
+        while ((key = [e nextObject])) {
+            cAttributes[i] = (char *)[key cString];
+            cValues[i] = (char *)[[arguments objectForKey:key] cString];
+            i++;
+        }
+        
+        npErr = NPP_New((char *)[mime cString], instance, NP_EMBED, argsCount, cAttributes, cValues, &saved);
+        
+        delete [] cAttributes;
+        delete [] cValues;
+    } else {
+        npErr = NPP_New((char *)[mime cString], instance, NP_FULL, 0, NULL, NULL, &saved);
     }
 
     WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_New: %d\n", npErr);
@@ -528,7 +505,6 @@ extern "C" {
 - (void)IFURLHandleResourceDidFinishLoading:(IFURLHandle *)sender data: (NSData *)data
 {
     NPError npErr;
-    char *cFilename;
     NSMutableString *filenameClassic, *path;
     IFPluginStream *stream;
     NSFileManager *fileManager;
@@ -541,7 +517,7 @@ extern "C" {
     npStream = [stream npStream];
     filename = [stream filename];
     
-    if(transferMode == NP_ASFILE || transferMode == NP_ASFILEONLY){
+    if(transferMode == NP_ASFILE || transferMode == NP_ASFILEONLY) {
         path = [NSString stringWithFormat:@"%@%@", @"/tmp/", filename];        
         [filesToErase addObject:path];
         
@@ -550,11 +526,8 @@ extern "C" {
         [fileManager createFileAtPath:path contents:[stream data] attributes:nil];
         
         filenameClassic = [NSString stringWithFormat:@"%@%@%@", startupVolumeName(), @":private:tmp:", filename];
-        cFilename = malloc([filenameClassic length]+1);
-        [filenameClassic getCString:cFilename];
-        
-        NPP_StreamAsFile(instance, npStream, cFilename);
-        WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_StreamAsFile: %s\n", cFilename);
+        NPP_StreamAsFile(instance, npStream, [filenameClassic cString]);
+        WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_StreamAsFile: %s\n", [filenameClassic cString]);
     }
     npErr = NPP_DestroyStream(instance, npStream, NPRES_DONE);
     WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_DestroyStream: %d\n", npErr);

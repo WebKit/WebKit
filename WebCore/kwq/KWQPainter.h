@@ -49,8 +49,8 @@ class QPainterPrivate;
 // class QWMatrix ==============================================================
 
 class QWMatrix {
-friend QPainter;
-friend QPixmap;
+friend class QPainter;
+friend class QPixmap;
 public:
 
     // typedefs ----------------------------------------------------------------

@@ -53,7 +53,7 @@ int QDesktopWidget::screenNumber(QWidget *) const
 QRect QDesktopWidget::screenGeometry(int screenNumber)
 {
     NSRect rect = [[NSScreen mainScreen] frame];
-    return QRect(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
+    return QRect((int)rect.origin.x, (int)rect.origin.y, (int)rect.size.width, (int)rect.size.height);
 }
 
 QDesktopWidget *QApplication::desktop()

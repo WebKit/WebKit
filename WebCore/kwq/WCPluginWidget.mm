@@ -98,15 +98,12 @@ WCPluginWidget::~WCPluginWidget()
 
 }
 
-void * WCIFPluginMakeFunction()
+WCIFPluginMakeFunc WCIFPluginMakeFunction()
 {
     return WCIFPluginMake;
 }
 
-void * WCIFNullPluginMakeFunction()
+WCIFNullPluginMakeFunc WCIFNullPluginMakeFunction()
 {
-    return WCIFPluginMake;
+    return WCIFNullPluginMake;
 }
-
-
-

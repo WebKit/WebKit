@@ -36,7 +36,9 @@
 
 #else /* !USING_BORROWED_QPOINT */
 
+#ifdef _KWQ_IOSTREAM_
 #include <iostream>
+#endif
 
 #include <KWQDef.h>
 
@@ -123,7 +125,7 @@ public:
 	{ return (QPointArray&)assign( a ); }
 
 #ifdef _KWQ_IOSTREAM_
-    friend ostream &operator<<(ostream &, const QPoint &);
+    friend std::ostream &operator<<(std::ostream &, const QPoint &);
 #endif
 
 // protected -------------------------------------------------------------------

@@ -19,6 +19,12 @@
     Boston, MA 02111-1307, USA.
 */
 #include "htmlhashes.h"
+
+#ifdef APPLE_CHANGES
+// work around Radar 2905890
+#undef __inline
+#define __inline
+#endif
 #include "htmltags.c"
 #include "htmlattrs.c"
 

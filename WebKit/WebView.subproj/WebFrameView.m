@@ -85,7 +85,7 @@
     _private->provisionalWidget->setView (provisionalView);
     [provisionalView release];
 
-    _private->provisionalWidget->resize (r.size.width,r.size.height);
+    _private->provisionalWidget->resize ((int)r.size.width, (int)r.size.height);
 }
 
 - (void)dataSourceChanged: (IFWebDataSource *)dataSource 
@@ -395,7 +395,7 @@
     }
     NSPoint p = [event locationInWindow];
     
-    QMouseEvent *kEvent = new QMouseEvent(QEvent::MouseButtonPress, QPoint(p.x, p.y), button, state);
+    QMouseEvent *kEvent = new QMouseEvent(QEvent::MouseButtonPress, QPoint((int)p.x, (int)p.y), button, state);
     KHTMLView *widget = _private->widget;
     if (widget != 0l) {
         widget->viewportMouseReleaseEvent(kEvent);
@@ -424,7 +424,7 @@
     }
     NSPoint p = [event locationInWindow];
     
-    QMouseEvent *kEvent = new QMouseEvent(QEvent::MouseButtonPress, QPoint(p.x, p.y), button, state);
+    QMouseEvent *kEvent = new QMouseEvent(QEvent::MouseButtonPress, QPoint((int)p.x, (int)p.y), button, state);
     KHTMLView *widget = _private->widget;
     if (widget != 0l) {
         widget->viewportMousePressEvent(kEvent);

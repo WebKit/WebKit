@@ -87,11 +87,13 @@ int QTime::msec() const
 
 int QTime::elapsed()
 {
-    uint currentTime, elapsedTime;
+    int currentTime, elapsedTime;
     
     currentTime = getCurrentTime();
     elapsedTime = currentTime - timeMS;
-    if(elapsedTime < 0) elapsedTime = elapsedTime + 86400000; // watch out for the next day
+    while (elapsedTime < 0) {
+        elapsedTime = elapsedTime + 86400000; // watch out for the next day
+    }
     
     return elapsedTime;
 }
@@ -99,11 +101,11 @@ int QTime::elapsed()
 
 int QTime::restart()
 {
-    uint currentTime, elapsedTime;
+    int currentTime, elapsedTime;
     
     currentTime = getCurrentTime();
     elapsedTime = currentTime - timeMS;
-    if(elapsedTime < 0){
+    while (elapsedTime < 0) {
         elapsedTime = elapsedTime + 86400000; // watch out for the next day
     }
     timeMS = currentTime;
@@ -317,7 +319,7 @@ void QDateTime::setTime_t( uint secsSince1Jan1970UTC )
 }
 
 
-ostream &operator<<(ostream &o, const QDate &date)
+std::ostream &operator<<(std::ostream &o, const QDate &date)
 {
     return o <<
         "QDate: [yy/mm/dd: " <<
@@ -329,7 +331,7 @@ ostream &operator<<(ostream &o, const QDate &date)
         ']';
 }
 
-ostream &operator<<(ostream &o, const QTime &time)
+std::ostream &operator<<(std::ostream &o, const QTime &time)
 {
     return o <<
         "QTime: [hh:mm:ss:ms = " <<
@@ -343,7 +345,7 @@ ostream &operator<<(ostream &o, const QTime &time)
         ']';
 }
 
-ostream &operator<<(ostream &o, const QDateTime &dateTime)
+std::ostream &operator<<(std::ostream &o, const QDateTime &dateTime)
 {
     return o <<
         "QDateTime: [yy/mm/dd hh:mm:ss:ms = " <<

@@ -49,7 +49,7 @@ public:
 };
 
 
-QFile::KWQFilePrivate::KWQFilePrivate(const QString &qname) : name(malloc(sizeof(char) * MAXPATHLEN)), fd(-1)
+QFile::KWQFilePrivate::KWQFilePrivate(const QString &qname) : name(new char[MAXPATHLEN + 1]), fd(-1)
 {
     NSString *nsname = (NSString *)qname.getCFMutableString();
 
@@ -58,7 +58,7 @@ QFile::KWQFilePrivate::KWQFilePrivate(const QString &qname) : name(malloc(sizeof
 
 QFile::KWQFilePrivate::~KWQFilePrivate()
 {
-    free(name);
+    delete [] name;
 }
 
 

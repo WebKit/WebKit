@@ -36,7 +36,10 @@
 #include <_qmap.h>
 #else
 
+#ifdef _KWQ_IOSTREAM_
 #include <iostream>
+#endif
+
 #include <KWQDef.h>
 
 #include <KWQMapImpl.h>
@@ -382,7 +385,7 @@ protected:
 
 #ifdef _KWQ_IOSTREAM_
 template<class K, class V>
-inline ostream &operator<<(ostream &stream, const QMap<K,V> &m) 
+inline std::ostream &operator<<(std::ostream &stream, const QMap<K,V> &m) 
 {
     uint count = m.count();
     stream << "QMap: [size: " << count << "; items: ";

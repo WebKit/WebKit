@@ -49,17 +49,3 @@ int QFrame::frameWidth() const
     _logNeverImplemented();
     return 0;
 }
-
-
-QFrame::QFrame(const QFrame &)
-{
-    _logNeverImplemented();
-}
-
-
-QFrame &QFrame::operator=(const QFrame &)
-{
-    _logNeverImplemented();
-    return *this;
-}
-

@@ -271,7 +271,7 @@
     }
     NSPoint p = [event locationInWindow];
     
-    QMouseEvent *kEvent = new QMouseEvent(QEvent::MouseButtonPress, QPoint(p.x, p.y), button, state);
+    QMouseEvent *kEvent = new QMouseEvent(QEvent::MouseButtonPress, QPoint((int)p.x, (int)p.y), button, state);
     ((KHTMLView *)widget)->viewportMouseReleaseEvent(kEvent);
 }
 
@@ -295,7 +295,7 @@
     }
     NSPoint p = [event locationInWindow];
     
-    QMouseEvent *kEvent = new QMouseEvent(QEvent::MouseButtonPress, QPoint(p.x, p.y), button, state);
+    QMouseEvent *kEvent = new QMouseEvent(QEvent::MouseButtonPress, QPoint((int)p.x, (int)p.y), button, state);
     ((KHTMLView *)widget)->viewportMousePressEvent(kEvent);
 }
 

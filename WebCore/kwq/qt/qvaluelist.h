@@ -165,7 +165,7 @@ private:
 
 
 template<class T>
-inline ostream &operator<<(ostream &o, const QValueList<T>&p)
+inline std::ostream &operator<<(std::ostream &o, const QValueList<T>&p)
 {
     o <<
         "QValueList: [size: " <<

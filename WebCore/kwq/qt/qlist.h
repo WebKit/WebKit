@@ -53,7 +53,7 @@ public:
     // constructors, copy constructors, and destructors ------------------------
     
     QPtrList() : impl(deleteFunc) {}
-    QPtrList(const QPtrList<T> &l) : impl(l.impl) {}
+    QPtrList(const QPtrList<T> &l) : QPtrCollection(l), impl(l.impl) {}
     ~QPtrList() { if (del_item) { impl.clear(del_item); } }
      
     // member functions --------------------------------------------------------
@@ -145,7 +145,7 @@ private:
 
 
 template<class T>
-inline ostream &operator<<(ostream &stream, const QPtrList<T> &l)
+inline std::ostream &operator<<(std::ostream &stream, const QPtrList<T> &l)
 {
     QPtrListIterator<T> iter(l);
     unsigned count = l.count();

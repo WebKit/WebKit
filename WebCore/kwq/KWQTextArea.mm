@@ -267,8 +267,9 @@ static NSRange RangeOfParagraph(NSString *text, int paragraph)
     int paragraphSoFar = 0;
     NSRange searchRange = NSMakeRange(0, [text length]);
     NSRange newlineRange;
+    int advance;
 
-    do {
+    while (true) {
 	newlineRange = [text rangeOfString:@"\n" options:NSLiteralSearch range:searchRange];
 	if (newlineRange.location == NSNotFound) {
 	    break;
@@ -280,14 +281,16 @@ static NSRange RangeOfParagraph(NSString *text, int paragraph)
 
 	paragraphSoFar++;
 
-	searchRange.length -= (newlineRange.location + 1 - searchRange.location);
-	searchRange.location = newlineRange.location + 1;
-	if (searchRange.length < 0) {
+        advance = newlineRange.location + 1 - searchRange.location;
+	if ((int)searchRange.length <= advance) {
 	    searchRange.location = NSNotFound;
 	    searchRange.length = 0;
 	    break;
 	}
-    } while (true);
+        
+	searchRange.length -= advance;
+	searchRange.location += advance;
+    }
 
     if (paragraphSoFar < paragraph) {
 	return NSMakeRange(NSNotFound, 0);

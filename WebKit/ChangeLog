@@ -1,3 +1,39 @@
+2002-04-18  Darin Adler  <darin@apple.com>
+
+	Fixes for compiling with gcc3 and more warnings.
+
+	* WebKit.pbproj/project.pbxproj: Turn on gcc3 and the same set of warnings
+	as in the rest of Labyrinth (see top level ChangeLog for details).
+
+	* Plugins.subproj/IFPluginView.mm:
+	Avoid warnings about malloc by not using it.
+	(-[IFPluginView initWithFrame:plugin:url:mime:arguments:mode:]): Keep the arguments
+	dictionary around instead of keeping the C format version of it around. Also don't
+	bother keeping the C string form of the MIME type around, and simplify some other
+	stuff in here.
+	(-[IFPluginView dealloc]): Corresponding changes since we keep a different set of things.
+	(-[IFPluginView newStream:mimeType:notifyData:]): Use [mimeType cString].
+	(-[IFPluginView start]): Build the lists of attributes and values in here. Do it using
+	[NSString cString] for simplicity and don't keep the lists around after we're done with
+	them.
+	(-[IFPluginView IFURLHandleResourceDidFinishLoading:data:]): Use [filenameClassic cString].
+
+	* WebView.subproj/IFMainURLHandleClient.mm:
+	(-[IFMainURLHandleClient IFURLHandleResourceDidCancelLoading:]),
+	(-[IFMainURLHandleClient IFURLHandleResourceDidFinishLoading:data:]),
+	(-[IFMainURLHandleClient IFURLHandle:resourceDataDidBecomeAvailable:]),
+	(-[IFMainURLHandleClient IFURLHandle:resourceDidFailLoadingWithResult:]):
+	* WebView.subproj/IFWebDataSourcePrivate.mm: (-[IFWebDataSourcePrivate dealloc]),
+	(-[IFWebDataSource _setLoading:]), (-[IFWebDataSource _setController:]),
+	(-[IFWebDataSource _setLocationChangeHandler:]):
+	* WebView.subproj/IFWebView.mm: (-[IFWebView provisionalDataSourceChanged:]),
+	(-[IFWebView mouseUp:]), (-[IFWebView mouseDown:]):
+	Add type casts required by pickier gcc3.
+
+	* WebView.subproj/IFWebViewPrivate.mm: (-[IFWebViewPrivate dealloc]):
+	Add type cast required by pickier gcc3.
+	(-[IFWebView _stopPlugins]): Use local variable to work around Radar 2905835.
+
 2002-04-18  Chris Blumenberg  <cblu@apple.com>
 
 	Moved plugin instance creation to the start method in IFPluginView.

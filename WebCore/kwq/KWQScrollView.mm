@@ -127,8 +127,10 @@ void QScrollView::scrollBy(int dx, int dy)
 void QScrollView::setContentsPos(int x, int y)
 {
     NSView *view = getView();    
-    if ([view isKindOfClass: [NSScrollView class]])
-        view = [(NSScrollView *)view documentView];
+    if ([view isKindOfClass: [NSScrollView class]]) {
+        NSScrollView *scrollView = (NSScrollView *)view;
+        view = [scrollView documentView];
+    }
 
     if (x < 0)
         x = 0;
@@ -157,17 +159,16 @@ void QScrollView::addChild(QWidget* child, int x, int y)
     if (child->x() != x || child->y() != y)
         child->move (x, y);
         
-    if ([getView() isKindOfClass: NSClassFromString(@"NSScrollView")]){
-        thisView = [(NSScrollView *)getView() documentView];
-    }
-    else {
-        thisView = getView();
+    thisView = getView();
+    if ([thisView isKindOfClass: NSClassFromString(@"NSScrollView")]) {
+        NSScrollView *scrollView = thisView;
+        thisView = [scrollView documentView];
     }
 
     subView = child->getView();
     NSRect wFrame = [subView frame];
 
-    if ([subView superview] == thisView){
+    if ([subView superview] == thisView) {
         return;
     }
     
@@ -196,7 +197,8 @@ void QScrollView::resizeContents(int w, int h)
     KWQDEBUGLEVEL (KWQ_LOG_FRAMES, "%p %s at w %d h %d\n", getView(), [[[getView() class] className] cString], w, h);
     //if ([nsview isKindOfClass: NSClassFromString(@"IFDynamicScrollBarsView")])
     if ([getView() isKindOfClass: NSClassFromString(@"NSScrollView")]){
-        IFWebView *wview = [(NSScrollView *)getView() documentView];
+        NSScrollView *scrollView = (NSScrollView *)getView();
+        IFWebView *wview = [scrollView documentView];
         
         KWQDEBUGLEVEL (KWQ_LOG_FRAMES, "%p %s at w %d h %d\n", wview, [[[wview class] className] cString], w, h);
         //w -= (int)[NSScroller scrollerWidth];
@@ -242,8 +244,10 @@ QPoint QScrollView::contentsToViewport(const QPoint &)
 void QScrollView::viewportToContents(int vx, int vy, int& x, int& y)
 {
     NSView *view = getView();    
-    if ([view isKindOfClass: [NSScrollView class]])
-        view = [(NSScrollView *)view documentView];
+    if ([view isKindOfClass: [NSScrollView class]]) {
+        NSScrollView *scrollView = (NSScrollView *)view;
+        view = [scrollView documentView];
+    }
         
     NSPoint np = [view convertPoint: NSMakePoint (vx, vy) fromView: nil];
 
@@ -294,17 +298,3 @@ void QScrollView::ensureVisible(int,int,int,int)
 {
     _logNeverImplemented();
 }
-
-
-QScrollView::QScrollView(const QScrollView &)
-{
-    _logNeverImplemented();
-}
-
-
-QScrollView &QScrollView::operator=(const QScrollView &)
-{
-    _logNeverImplemented();
-    return *this;
-}
-

@@ -1,3 +1,162 @@
+2002-04-18  Darin Adler  <darin@apple.com>
+
+	Fixes for compiling with gcc3 and more warnings.
+
+	* khtml/html/.cvsignore: Add kentities.c; I could have sworn I did this
+	already.
+	* khtml/html/Makefile.am: Remove erroneous duplicate definition of
+	CLEAN_FILES.
+
+	* libwebcore.exp:
+	* libwebcoretests.exp:
+	Rebuilt these lists from scratch. Almost everything in here is different
+	since the C++ name mangling rules changed.
+
+	* khtml/css/cssparser.cpp:
+	* khtml/misc/htmlhashes.cpp:
+	Disable inlining in part of this file as a workaround for Radar 2905890.
+
+	* kwq/KWQApplication.mm: (QDesktopWidget::screenGeometry):
+	Add casts to int needed to make gcc3 happy.
+	* kwq/KWQArrayImpl.mm: Add missing #include of <string.h>.
+
+	* kwq/KWQBitmap.mm:
+	* kwq/KWQFrame.mm:
+	* kwq/KWQLineEdit.mm:
+	Removed some unused copy constructors and assignment operators to avoid
+	warnings in them.
+
+	* kwq/KWQButton.mm: (QButton::setText):
+	* kwq/KWQListBox.mm: (QListBox::~QListBox), (QListBox::clear),
+	(QListBox::setSelectionMode), (QListBox::currentItem), (QListBox::insertItem),
+	(QListBox::setSelected), (QListBox::isSelected), (QListBoxItem::width),
+	(QListBoxItem::height):
+	* kwq/KWQScrollView.mm: (QScrollView::setContentsPos), (QScrollView::addChild),
+	(QScrollView::resizeContents), (QScrollView::viewportToContents),
+	Use local variables to work around Radar 2905835.
+
+	* kwq/KWQCString.mm: (operator<<):
+	* kwq/KWQPoint.mm: (operator<<):
+	* kwq/KWQRect.mm: (operator<<):
+	* kwq/KWQSize.mm: (operator<<):
+	* kwq/qt/qarray.h:
+	* kwq/qt/qcstring.h:
+	* kwq/qt/qdatetime.h:
+	* kwq/qt/qdict.h:
+	* kwq/qt/qlist.h:
+	* kwq/qt/qmap.h:
+	* kwq/qt/qpainter.h:
+	* kwq/qt/qpoint.h:
+	* kwq/qt/qptrdict.h:
+	* kwq/qt/qrect.h:
+	* kwq/qt/qsize.h:
+	* kwq/qt/qstack.h:
+	* kwq/qt/qvaluelist.h:
+	* kwq/qt/qvector.h:
+	Say std::ostream instead of just ostream.
+
+	* kwq/KWQCharsets.mm: Fix a const problem.
+
+	* kwq/KWQDateTime.mm: (QTime::elapsed), (QTime::restart): Use int instead
+	of uint, since these functions try to handle values that are less than 0.
+	(operator<<): Say std::ostream instead of just ostream.
+	* kwq/KWQTextArea.mm: (RangeOfParagraph): Fix an int/uint issue.
+
+	* kwq/KWQFile.mm: (QFile::KWQFilePrivate::KWQFilePrivate),
+	(QFile::KWQFilePrivate::~KWQFilePrivate): Use new/delete instead of
+	malloc/free so we don't get void * warnings.
+
+	* kwq/KWQFontMetrics.mm: (__IFFillStyleWithAttributes),
+	(-[KWQLayoutInfo drawString:atPoint:withFont:color:]),
+	(-[KWQLayoutInfo _initializeCaches]),
+	(_rectForString):
+	* kwq/KWQKURL.mm: (KURL::KWQKURLPrivate::KWQKURLPrivate),
+	(RelativeURLKeyRetainCallBack), (RelativeURLKeyReleaseCallBack),
+	(RelativeURLKeyEqualCallBack), (RelativeURLKeyHashCallBack),
+	(KURL::normalizeURLString), (KURL::normalizeRelativeURLString):
+	* kwq/KWQPainter.mm: (QPainter::save):
+	* kwq/KWQKloader.mm:
+	(-[URLLoadClient IFURLHandle:resourceDidFailLoadingWithResult:]),
+	(-[URLLoadClient IFURLHandle:didRedirectToURL:]):
+	Add type casts where necessary to make the stricter gcc3 happy.
+
+	* kwq/KWQPixmap.mm: (QPixmap::QPixmap): Explicitly initialize the underlying
+	QPaintDevice.
+	(QPixmap::size), (QPixmap::rect): Add type casts where necessary to make
+	the stricter gcc3 happy.
+	
+	* kwq/KWQPtrDictImpl.mm: (KWQPtrDictImpl::KWQPtrDictPrivate::KWQPtrDictPrivate):
+	Say std::bad_alloc instead of just bad_alloc.
+	(invokeDeleteFuncOnValue), (KWQPtrDictImpl::clear): Pass a pointer to a function
+	pointer rather than a function pointer to avoid a warning about turning function
+	pointers into void *.
+
+	* kwq/KWQRegion.mm: (QRegion::_initialize), (QRegion::~QRegion): Use new/delete
+	rather than calloc/free so we don't get void * warnings.
+	(QRegion::boundingRect): Add type casts.
+
+	* kwq/KWQString.mm: (QString::fromStringWithEncoding): Add cast.
+	(QString::setNum): use %ld and %lu rather than %D and %U.
+	(QString::fill), (QString::convertToQCString): Add casts.
+
+	* kwq/KWQTextStorage.mm: (-[KWQTextStorage _buildFragmentForString:]):
+	Add a cast to make gcc3 happy.
+
+	* kwq/KWQVariant.mm: Say "friend class" instead of "friend".
+
+	* kwq/KWQVectorImpl.mm: (KWQVectorImpl::KWQVectorPrivate::KWQVectorPrivate):
+	Say std::bad_alloc instead of just bad_alloc.
+	(KWQVectorImpl::data): Replace the old autorelease trick with a new one that
+	doesn't require mixing malloc with NSData.
+
+	* kwq/KWQView.mm: (-[KWQHTMLView mouseUp:]), (-[KWQHTMLView mouseDown:]):
+	Add casts to make gcc3 happy.
+
+	* kwq/KWQWidget.mm: (QWidget::frameGeometry), (QWidget::mapToGlobal),
+	(QWidget::minimumSizeHint): Add casts to make gcc3 happy. Also another
+	workaround for Radar 2905835.
+
+	* kwq/WCPlugin.mm: (-[WCPlugin load]): Add tons of type casts so we don't have
+	to mix void * with function pointer types.
+
+	* kwq/WCPluginWidget.h:
+	* kwq/WCPluginWidget.mm: (WCIFPluginMakeFunction), (WCIFNullPluginMakeFunction):
+	Change types so we don't have to mix void * with function pointer types.
+	This caught a mistake where WCIFNullPluginMakeFunction was returning the wrong
+	function pointer.
+
+	* kwq/external.h: Add some missing interfaces that the pickier gcc3 needed to see.
+
+	* kwq/kwqdebug.mm: Don't compile the file if xNDEBUG is set. Otherwise we get
+	a warning in here.
+
+	* kwq/npapi.h: Use function pointer types for function pointers and transition
+	vectors so we don't have to mix void * with function pointer types.
+
+	* kwq/npapi.mm: (NPN_GetURLNotify), (NPN_GetURL),
+	(NPN_PostURLNotify), (NPN_PostURL), (NPN_NewStream), (NPN_Write),
+	(NPN_DestroyStream), (NPN_Status), (NPN_GetValue), (NPN_SetValue),
+	(NPN_InvalidateRect), (NPN_InvalidateRegion), (NPN_ForceRedraw):
+	Use local variables to work around Radar 2905835.
+	(functionPointerForTVector), (tVectorForFunctionPointer):
+	Change types around so we don't have to mix void * with function pointer types.
+
+2002-04-17  Darin Adler  <darin@apple.com>
+
+	Fix some std:: things as a first step in compiling with gcc 3.
+	These fixes are all needed to compile WebBrowser with gcc 3.
+
+	* kwq/qt/qarray.h:
+	* kwq/qt/qcstring.h:
+	* kwq/qt/qlist.h:
+	* kwq/qt/qmap.h:
+	* kwq/qt/qpainter.h:
+	* kwq/qt/qpoint.h:
+	* kwq/qt/qrect.h:
+	* kwq/qt/qsize.h:
+	* kwq/qt/qvaluelist.h:
+	Call it std::ostream instead of ostream.
+
 2002-04-17  Darin Adler  <darin@apple.com>
 
 	Fix build problem.

@@ -27,7 +27,7 @@
 #include <CoreFoundation/CoreFoundation.h>
 
 typedef struct CharsetEntry {
-  char *name;
+  const char *name;
   int mib;
   CFStringEncoding encoding;;
 } CharsetEntry;

@@ -130,18 +130,6 @@ void QLineEdit::selectAll()
 }
 
 
-QLineEdit::QLineEdit(const QLineEdit &)
-{
-    _logNeverImplemented();
-}
-
-QLineEdit &QLineEdit::operator=(const QLineEdit &)
-{
-    _logNeverImplemented();
-    return *this;
-}
-
-
 bool QLineEdit::edited() const
 {
     KWQNSTextField *field = (KWQNSTextField *)getView();

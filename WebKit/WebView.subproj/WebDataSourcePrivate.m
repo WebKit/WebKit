@@ -52,7 +52,7 @@
     [mainHandle release];
     [mainURLHandleClient release];
     [pageTitle autorelease];
-    [locationChangeHandler release];
+    [(NSObject *)locationChangeHandler release];
     
     part->deref();
 
@@ -73,9 +73,9 @@
     
     if (loading) {
         [self retain];
-        [_private->controller retain];
+        [(NSObject *)_private->controller retain];
     } else {
-        [_private->controller release];
+        [(NSObject *)_private->controller release];
         [self release];
     }
 }
@@ -90,8 +90,8 @@
     WEBKIT_ASSERT(_private->part != nil);
     
     if (_private->loading) {
-        [controller retain];
-        [_private->controller release];
+        [(NSObject *)controller retain];
+        [(NSObject *)_private->controller release];
     }
     _private->controller = controller;
     _private->part->setDataSource(self);
@@ -263,8 +263,8 @@
 
 - (void)_setLocationChangeHandler: (id <IFLocationChangeHandler>)l
 {
-    [l retain];
-    [_private->locationChangeHandler release];
+    [(NSObject *)l retain];
+    [(NSObject *)_private->locationChangeHandler release];
     _private->locationChangeHandler = l;
 }
 

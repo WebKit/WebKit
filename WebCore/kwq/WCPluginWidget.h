@@ -70,7 +70,7 @@ private:
 
 }; // class WCPluginWidget ============================================================
 
-void * WCIFPluginMakeFunction();
-void * WCIFNullPluginMakeFunction();
+WCIFPluginMakeFunc WCIFPluginMakeFunction();
+WCIFNullPluginMakeFunc WCIFNullPluginMakeFunction();
 
 #endif

@@ -45,128 +45,120 @@
 
 // general plug-in to browser functions
 
-const char* NPN_UserAgent(NPP instance){
+const char* NPN_UserAgent(NPP instance)
+{
     KWQDEBUG("NPN_UserAgent\n");
     return "IE";
 }
 
-void* NPN_MemAlloc(UInt32 size){
+void* NPN_MemAlloc(UInt32 size)
+{
     //KWQDEBUG("NPN_MemAlloc\n");
     return malloc(size);
 
 }
 
-void NPN_MemFree(void* ptr){
+void NPN_MemFree(void* ptr)
+{
     //KWQDEBUG("NPN_MemFree\n");
     free(ptr);
 
 }
 
-UInt32 NPN_MemFlush(UInt32 size){
+UInt32 NPN_MemFlush(UInt32 size)
+{
     KWQDEBUG("NPN_MemFlush\n");
     return 0;
 }
 
-void NPN_ReloadPlugins(NPBool reloadPages){
+void NPN_ReloadPlugins(NPBool reloadPages)
+{
     KWQDEBUG("NPN_ReloadPlugins\n");
 
 }
 
-NPError NPN_RequestRead(NPStream* stream, NPByteRange* rangeList){
+NPError NPN_RequestRead(NPStream* stream, NPByteRange* rangeList)
+{
     return NPERR_GENERIC_ERROR;
 }
 
 // instance-specific functions
 
-NPError NPN_GetURLNotify(NPP instance, const char* url, const char* target, void* notifyData){
-    IFPluginView *plugin;
-    plugin = instance->ndata;
-    
+NPError NPN_GetURLNotify(NPP instance, const char* url, const char* target, void* notifyData)
+{
+    IFPluginView *plugin = (IFPluginView *)instance->ndata;
     return [plugin getURLNotify:url target:target notifyData:notifyData];
 }
 
-NPError NPN_GetURL(NPP instance, const char* url, const char* target){
-    IFPluginView *plugin;
-    plugin = instance->ndata;
-    
+NPError NPN_GetURL(NPP instance, const char* url, const char* target)
+{
+    IFPluginView *plugin = (IFPluginView *)instance->ndata;
     return [plugin getURL:url target:target];
 }
 
-NPError NPN_PostURLNotify(NPP instance, const char* url, const char* target, UInt32 len, const char* buf, NPBool file, void* notifyData){
-    IFPluginView *plugin;
-    plugin = instance->ndata;
-    
+NPError NPN_PostURLNotify(NPP instance, const char* url, const char* target, UInt32 len, const char* buf, NPBool file, void* notifyData)
+{
+    IFPluginView *plugin = (IFPluginView *)instance->ndata;
     return [plugin postURLNotify:url target:target len:len buf:buf file:file notifyData:notifyData];
 }
 
-NPError NPN_PostURL(NPP instance, const char* url, const char* target, UInt32 len, const char* buf, NPBool file){
-    IFPluginView *plugin;
-    plugin = instance->ndata;
-    
+NPError NPN_PostURL(NPP instance, const char* url, const char* target, UInt32 len, const char* buf, NPBool file)
+{
+    IFPluginView *plugin = (IFPluginView *)instance->ndata;
     return [plugin postURL:url target:target len:len buf:buf file:file];
 }
 
-NPError NPN_NewStream(NPP instance, NPMIMEType type, const char* target, NPStream** stream){
-    IFPluginView *plugin;
-    plugin = instance->ndata;
-    
+NPError NPN_NewStream(NPP instance, NPMIMEType type, const char* target, NPStream** stream)
+{
+    IFPluginView *plugin = (IFPluginView *)instance->ndata;
     return [plugin newStream:type target:target stream:stream];
 }
 
-SInt32	NPN_Write(NPP instance, NPStream* stream, SInt32 len, void* buffer){
-    IFPluginView *plugin;
-    plugin = instance->ndata;
-    
+SInt32	NPN_Write(NPP instance, NPStream* stream, SInt32 len, void* buffer)
+{
+    IFPluginView *plugin = (IFPluginView *)instance->ndata;
     return [plugin write:stream len:len buffer:buffer];
 }
 
-NPError NPN_DestroyStream(NPP instance, NPStream* stream, NPReason reason){
-    IFPluginView *plugin;
-    plugin = instance->ndata;
-    
+NPError NPN_DestroyStream(NPP instance, NPStream* stream, NPReason reason)
+{
+    IFPluginView *plugin = (IFPluginView *)instance->ndata;
     return [plugin destroyStream:stream reason:reason];
 }
 
-void NPN_Status(NPP instance, const char* message){
-    IFPluginView *plugin;
-    plugin = instance->ndata;
-    
+void NPN_Status(NPP instance, const char* message)
+{
+    IFPluginView *plugin = (IFPluginView *)instance->ndata;
     [plugin status:message];
 }
 
-NPError NPN_GetValue(NPP instance, NPNVariable variable, void *value){
-    IFPluginView *plugin;
-    plugin = instance->ndata;
-    
+NPError NPN_GetValue(NPP instance, NPNVariable variable, void *value)
+{
+    IFPluginView *plugin = (IFPluginView *)instance->ndata;
     return [plugin getValue:variable value:value];
 }
 
-NPError NPN_SetValue(NPP instance, NPPVariable variable, void *value){
-    IFPluginView *plugin;
-    plugin = instance->ndata;
-    
+NPError NPN_SetValue(NPP instance, NPPVariable variable, void *value)
+{
+    IFPluginView *plugin = (IFPluginView *)instance->ndata;
     return [plugin setValue:variable value:value];
 }	
 
-void NPN_InvalidateRect(NPP instance, NPRect *invalidRect){
-    IFPluginView *plugin;
-    plugin = instance->ndata;
-    
+void NPN_InvalidateRect(NPP instance, NPRect *invalidRect)
+{
+    IFPluginView *plugin = (IFPluginView *)instance->ndata;
     [plugin invalidateRect:invalidRect];
 }
 
-void NPN_InvalidateRegion(NPP instance, NPRegion invalidRegion){
-    IFPluginView *plugin;
-    plugin = instance->ndata;
-    
+void NPN_InvalidateRegion(NPP instance, NPRegion invalidRegion)
+{
+    IFPluginView *plugin = (IFPluginView *)instance->ndata;
     [plugin invalidateRegion:invalidRegion];
-
 }
 
-void NPN_ForceRedraw(NPP instance){
-    IFPluginView *plugin;
-    plugin = instance->ndata;
-    
+void NPN_ForceRedraw(NPP instance)
+{
+    IFPluginView *plugin = (IFPluginView *)instance->ndata;
     [plugin forceRedraw];
 }
 
@@ -182,12 +174,13 @@ void* NPN_GetJavaPeer(NPP instance)
 
 // function pointer converters
 
-void *functionPointerForTVector(void *tvp) {
+FunctionPointer functionPointerForTVector(TransitionVector tvp)
+{
     uint32 temp[6] = {0x3D800000, 0x618C0000, 0x800C0000, 0x804C0004, 0x7C0903A6, 0x4E800420};
     uint32 *newGlue = NULL;
 
     if (tvp != NULL) {
-        newGlue = malloc(sizeof(temp));
+        newGlue = (uint32 *)malloc(sizeof(temp));
         if (newGlue != NULL) {
             unsigned i;
             for (i = 0; i < 6; i++) newGlue[i] = temp[i];
@@ -196,18 +189,19 @@ void *functionPointerForTVector(void *tvp) {
             MakeDataExecutable(newGlue, sizeof(temp));
         }
     }
-    return newGlue;
+    
+    return (FunctionPointer)newGlue;
 }
 
-void *tVectorForFunctionPointer(void *fp) {
-    void **newGlue = NULL;
+TransitionVector tVectorForFunctionPointer(FunctionPointer fp)
+{
+    FunctionPointer *newGlue = NULL;
     if (fp != NULL) {
-        newGlue = malloc(2 * sizeof(void *));
+        newGlue = (FunctionPointer *)malloc(2 * sizeof(FunctionPointer));
         if (newGlue != NULL) {
             newGlue[0] = fp;
             newGlue[1] = NULL;
         }
     }
-    return newGlue;
+    return (TransitionVector)newGlue;
 }
-

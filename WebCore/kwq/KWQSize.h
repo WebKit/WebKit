@@ -82,7 +82,7 @@ public:
 
 
 #ifdef _KWQ_IOSTREAM_
-    friend ostream &operator<<(ostream &, const QSize &);
+    friend std::ostream &operator<<(std::ostream &, const QSize &);
 #endif
 
 // protected -------------------------------------------------------------------

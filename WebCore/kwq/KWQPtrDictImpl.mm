@@ -29,23 +29,25 @@
 
 #include <new>
 
+typedef void (* DeleteFunction) (void *);
+
 class KWQPtrDictImpl::KWQPtrDictPrivate
 {
 public:
-    KWQPtrDictPrivate(int size, void (*deleteFunc)(void *), const CFDictionaryKeyCallBacks *cfdkcb);
+    KWQPtrDictPrivate(int size, DeleteFunction, const CFDictionaryKeyCallBacks *cfdkcb);
     KWQPtrDictPrivate(KWQPtrDictPrivate &dp);
     ~KWQPtrDictPrivate();
     
     CFMutableDictionaryRef cfdict;
-    void (*del)(void *);
+    DeleteFunction del;
 };
 
-KWQPtrDictImpl::KWQPtrDictPrivate::KWQPtrDictPrivate(int size, void (*deleteFunc)(void *), const CFDictionaryKeyCallBacks *cfdkcb) :
+KWQPtrDictImpl::KWQPtrDictPrivate::KWQPtrDictPrivate(int size, DeleteFunction deleteFunc, const CFDictionaryKeyCallBacks *cfdkcb) :
     cfdict(CFDictionaryCreateMutable(NULL, 0, cfdkcb, NULL)),
     del(deleteFunc)
 {
     if (cfdict == NULL) {
-	throw bad_alloc();
+	throw std::bad_alloc();
     }
 }
 
@@ -54,7 +56,7 @@ KWQPtrDictImpl::KWQPtrDictPrivate::KWQPtrDictPrivate(KWQPtrDictPrivate &dp) :
     del(dp.del)
 {
     if (cfdict == NULL) {
-	throw bad_alloc();
+	throw std::bad_alloc();
     }
 }
 
@@ -63,7 +65,7 @@ KWQPtrDictImpl::KWQPtrDictPrivate::~KWQPtrDictPrivate()
     CFRelease(cfdict);
 }
 
-KWQPtrDictImpl::KWQPtrDictImpl(int size, void (*deleteFunc)(void *), const CFDictionaryKeyCallBacks *cfdkcb) :
+KWQPtrDictImpl::KWQPtrDictImpl(int size, DeleteFunction deleteFunc, const CFDictionaryKeyCallBacks *cfdkcb) :
     d(new KWQPtrDictPrivate(size, deleteFunc, cfdkcb))
 {
 }
@@ -79,17 +81,17 @@ KWQPtrDictImpl::~KWQPtrDictImpl()
     delete d;
 }
 
-static void invokeDeleteFuncOnValue (const void *key, const void *value, void *deleteFunc)
+static void invokeDeleteFuncOnValue (const void *key, const void *value, void *context)
 {
-    void (*del)(void *) = (void (*)(void *))deleteFunc;
-
-    del((void *)value);
+    DeleteFunction *deleteFunc = (DeleteFunction *)context;
+    (*deleteFunc)((void *)value);
 }
 
 void KWQPtrDictImpl::clear(bool deleteItems)
 {
     if (deleteItems) {
-	CFDictionaryApplyFunction(d->cfdict, invokeDeleteFuncOnValue, d->del);
+        DeleteFunction deleteFunc = d->del;
+	CFDictionaryApplyFunction(d->cfdict, invokeDeleteFuncOnValue, &deleteFunc);
     }
 
     CFDictionaryRemoveAllValues(d->cfdict);
@@ -102,19 +104,19 @@ uint KWQPtrDictImpl::count() const
 
 void KWQPtrDictImpl::insert(void *key, const void *value)
 {
-    CFDictionarySetValue(d->cfdict, key /* DIFF: key.getCFMutableString() */, value);
+    CFDictionarySetValue(d->cfdict, key, value);
 
 }
 
 bool KWQPtrDictImpl::remove(void *key, bool deleteItem)
 {
-    void *value = (void *)CFDictionaryGetValue(d->cfdict, key /* DIFF: key.getCFMutableString() */);
+    void *value = (void *)CFDictionaryGetValue(d->cfdict, key);
 
     if (value == nil) {
 	return false;
     }
 
-    CFDictionaryRemoveValue(d->cfdict, key /* DIFF: key.getCFMutableString() */);
+    CFDictionaryRemoveValue(d->cfdict, key);
 	
     if (deleteItem) {
 	d->del(value);
@@ -125,7 +127,7 @@ bool KWQPtrDictImpl::remove(void *key, bool deleteItem)
 
 void *KWQPtrDictImpl::find(void *key) const
 {
-    return (void *)CFDictionaryGetValue(d->cfdict, key /* key.getCFMutableString() */);
+    return (void *)CFDictionaryGetValue(d->cfdict, key);
 }
 
 void KWQPtrDictImpl::swap(KWQPtrDictImpl &di)
@@ -213,12 +215,12 @@ void *KWQPtrDictIteratorImpl::current() const
     return d->values[d->pos];
 }
 
-void * /* DIFF: QString */ KWQPtrDictIteratorImpl::currentKey() const
+void * KWQPtrDictIteratorImpl::currentKey() const
 {
     if (d->pos >= d->count) {
-	return NULL; /* DIFF: QString(); */
+	return NULL;
     }
-    return d->keys[d->pos]; /* DIFF: QString::fromCFString((CFStringRef)d->keys[d->pos]); */
+    return d->keys[d->pos];
 }
 
 void *KWQPtrDictIteratorImpl::toFirst()

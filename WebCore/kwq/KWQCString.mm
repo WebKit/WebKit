@@ -368,7 +368,7 @@ bool operator!=(const QCString &s1, const char *s2)
 }
 
 #ifdef _KWQ_IOSTREAM_
-ostream &operator<<(ostream &o, const QCString &s)
+std::ostream &operator<<(std::ostream &o, const QCString &s)
 {
     return o << (const char *)s.data();
 }

@@ -1122,7 +1122,7 @@ void DocLoader::removeCachedObject( CachedObject* o ) const
     job->setError(1);
     m_loader->slotFinished(job);
 
-    [controller _receivedError: result forResource: QSTRING_TO_NSSTRING(job->url().url()) partialProgress: loadProgress fromDataSource: m_dataSource];
+    [(IFBaseWebController *)controller _receivedError: result forResource: QSTRING_TO_NSSTRING(job->url().url()) partialProgress: loadProgress fromDataSource: m_dataSource];
 
     delete job;
 }
@@ -1134,7 +1134,7 @@ void DocLoader::removeCachedObject( CachedObject* o ) const
     
     [m_dataSource _setFinalURL: url];
     
-    [[m_dataSource controller] serverRedirectTo: url forDataSource: m_dataSource];
+    [(id <IFLocationChangeHandler>)[m_dataSource controller] serverRedirectTo: url forDataSource: m_dataSource];
 }
 
 @end

@@ -183,7 +183,7 @@ bool operator!=(const QRect &a, const QRect &b)
 }
 
 #ifdef _KWQ_IOSTREAM_
-ostream &operator<<(ostream &o, const QRect &r)
+std::ostream &operator<<(std::ostream &o, const QRect &r)
 {
     return o << "QRect: [left: " << r.left () << "; top: " << r.top() << "; right: " << r.right() << "; bottom: " << r.bottom() << "]";
 }

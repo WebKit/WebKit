@@ -18,7 +18,7 @@
 
 - (void)dealloc
 {
-    [controller release];
+    [(NSObject *)controller release];
     [frameScrollView release];
 
     //if (widget)
@@ -43,8 +43,10 @@
     int count = [views count];
     while (count--) {
         id view = [views objectAtIndex: count];
-        if ([view isKindOfClass: NSClassFromString (@"IFPluginView")])
-            [(IFPluginView *)view stop];
+        if ([view isKindOfClass: NSClassFromString (@"IFPluginView")]) {
+            IFPluginView *pluginView = (IFPluginView *)view;
+            [pluginView stop];
+        }
     }
 }
 

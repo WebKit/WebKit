@@ -83,7 +83,7 @@ private:
     uint timeMS;  // time is stored in milliseconds 
     
     friend class QDateTime;
-    friend ostream &operator<<( ostream &, const QTime & );
+    friend std::ostream &operator<<( std::ostream &, const QTime & );
     
 // add copy constructor
 // this private declaration prevents copying
@@ -140,7 +140,7 @@ private:
     void setCurrentDate();
     
     friend class QDateTime;
-    friend ostream &operator<<( ostream &, const QDate & );
+    friend std::ostream &operator<<( std::ostream &, const QDate & );
     
 // add copy constructor
 // this private declaration prevents copying
@@ -194,7 +194,7 @@ private:
     QDate dateDT;
 
 
-    friend ostream &operator<<( ostream &, const QDateTime & );
+    friend std::ostream &operator<<( std::ostream &, const QDateTime & );
 }; // class QDateTime ==========================================================
 
 #endif // USING_BORROWED_QDATETIME
