@@ -3419,11 +3419,11 @@ static WebHTMLView *lastHitView = nil;
     int underlineInt = [[dictionary objectForKey:NSUnderlineStyleAttributeName] intValue];
     // FIXME: Underline wins here if we have both (see bug 3790443).
     if (strikethroughInt == NSUnderlineStyleNone && underlineInt == NSUnderlineStyleNone)
-        [style setTextDecoration:@"none"];
+        [style setProperty:@"-khtml-text-decorations-in-effect" :@"none" :@""];
     else if (underlineInt == NSUnderlineStyleNone)
-        [style setTextDecoration:@"line-through"];
+        [style setProperty:@"-khtml-text-decorations-in-effect" :@"line-through" :@""];
     else
-        [style setTextDecoration:@"underline"];
+        [style setProperty:@"-khtml-text-decorations-in-effect" :@"underline" :@""];
 
     return style;
 }
@@ -3681,9 +3681,11 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
     int sb = [[b objectForKey:NSStrikethroughStyleAttributeName] intValue];
     if (sa == sb) {
         if (sa == NSUnderlineStyleNone)
-            [style setTextDecoration:@"none"]; // we really mean "no line-through" rather than "none"
+            [style setProperty:@"-khtml-text-decorations-in-effect" :@"none" :@""]; 
+            // we really mean "no line-through" rather than "none"
         else
-            [style setTextDecoration:@"line-through"]; // we really mean "add line-through" rather than "line-through"
+            [style setProperty:@"-khtml-text-decorations-in-effect" :@"line-through" :@""];
+            // we really mean "add line-through" rather than "line-through"
     }
 
     sa = [[a objectForKey:NSSuperscriptAttributeName] intValue];
@@ -3701,9 +3703,11 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
     int ub = [[b objectForKey:NSUnderlineStyleAttributeName] intValue];
     if (ua == ub) {
         if (ua == NSUnderlineStyleNone)
-            [style setTextDecoration:@"none"]; // we really mean "no underline" rather than "none"
+            [style setProperty:@"-khtml-text-decorations-in-effect" :@"none" :@""];
+            // we really mean "no underline" rather than "none"
         else
-            [style setTextDecoration:@"underline"]; // we really mean "add underline" rather than "underline"
+            [style setProperty:@"-khtml-text-decorations-in-effect" :@"underline" :@""];
+            // we really mean "add underline" rather than "underline"
     }
 
     return style;
@@ -4106,9 +4110,9 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
     // Despite the name, this method is actually supposed to toggle underline.
     // FIXME: This currently clears overline, line-through, and blink as an unwanted side effect.
     DOMCSSStyleDeclaration *style = [self _emptyStyle];
-    [style setTextDecoration:@"underline"];
+    [style setProperty:@"-khtml-text-decorations-in-effect" :@"underline" :@""];
     if ([[self _bridge] selectionStartHasStyle:style])
-        [style setTextDecoration:@"none"];
+        [style setProperty:@"-khtml-text-decorations-in-effect" :@"none" :@""];
     [self _applyStyleToSelection:style withUndoAction:WebUndoActionUnderline];
 }
 

@@ -204,6 +204,21 @@ function boldCommand() {
 
 //-------------------------------------------------------------------------------------------------------
 
+function execUnderlineCommand() {
+    document.execCommand("Underline");
+}
+function underlineCommand() {
+    if (commandDelay > 0) {
+        window.setTimeout(execUnderlineCommand, commandCount * commandDelay);
+        commandCount++;
+    }
+    else {
+        execUnderlineCommand();
+    }
+}
+
+//-------------------------------------------------------------------------------------------------------
+
 function execFontNameCommand() {
     document.execCommand("FontName", false, "Courier");
 }

@@ -275,7 +275,13 @@ private:
     void removeBlockStyle(DOM::CSSMutableStyleDeclarationImpl *, const DOM::Position &start, const DOM::Position &end);
     void removeInlineStyle(DOM::CSSMutableStyleDeclarationImpl *, const DOM::Position &start, const DOM::Position &end);
     bool nodeFullySelected(DOM::NodeImpl *, const DOM::Position &start, const DOM::Position &end) const;
-
+    bool nodeFullyUnselected(DOM::NodeImpl *node, const DOM::Position &start, const DOM::Position &end) const;
+    DOM::CSSMutableStyleDeclarationImpl *extractTextDecorationStyle(DOM::NodeImpl *node);
+    DOM::CSSMutableStyleDeclarationImpl *extractAndNegateTextDecorationStyle(DOM::NodeImpl *node);
+    void applyTextDecorationStyle(DOM::NodeImpl *node, DOM::CSSMutableStyleDeclarationImpl *style);
+    void pushDownTextDecorationStyleAroundNode(DOM::NodeImpl *node, const DOM::Position &start, const DOM::Position &end, bool force);
+    void pushDownTextDecorationStyleAtBoundaries(const DOM::Position &start, const DOM::Position &end);
+    
     // style-application helpers
     void applyBlockStyle(DOM::CSSMutableStyleDeclarationImpl *);
     void applyRelativeFontStyleChange(DOM::CSSMutableStyleDeclarationImpl *);

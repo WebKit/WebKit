@@ -1,3 +1,87 @@
+2005-01-26  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin, Hyatt and Ken.
+
+	<rdar://problem/3790449> REGRESSION (Mail): underline behavior is flaky because of how CSS handles text-decoration
+	
+        * khtml/css/css_computedstyle.cpp:
+        (DOM::CSSComputedStyleDeclarationImpl::getPropertyCSSValue): Add support
+	for -khtml-text-decorations-in-effect property. This works like text-docration
+	but follows proper inline semantics, that is, if a parent is causing text
+	decoration then -khtml-text-decorations-in-effect on this element will reflect that.
+        * khtml/css/cssproperties.in: Add -khtml-text-decorations-in-effect property.
+        * khtml/css/cssproperties.h: regenerated
+        * khtml/css/cssvalues.c: regenerated
+        * khtml/css/cssparser.cpp: regenerated
+        * khtml/css/cssproperties.c: regenerated
+
+        * khtml/css/css_valueimpl.h: Made copyPropertiesInSet public.
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::StyleChange::init): Handle -khtml-text-decorations-in-effect
+	specially, translate to text-decoration
+        (khtml::ApplyStyleCommand::applyInlineStyle): Fix a comment.
+        (khtml::ApplyStyleCommand::removeInlineStyle): Add new way of pushing down
+	text-decoration styles around the edges of the selected range.
+        (khtml::ApplyStyleCommand::pushDownTextDecorationStyleAroundNode): Helper for this.
+        (khtml::ApplyStyleCommand::pushDownTextDecorationStyleAtBoundaries): ditto
+        (khtml::ApplyStyleCommand::nodeFullyUnselected): ditto
+        (khtml::hasTextDecorationProperty): ditto
+        (khtml::highestAncestorWithTextDecoration): ditto
+        (khtml::ApplyStyleCommand::extractTextDecorationStyle): ditto
+        (khtml::ApplyStyleCommand::extractAndNegateTextDecorationStyle): ditto
+        (khtml::ApplyStyleCommand::applyTextDecorationStyle): ditto
+        * khtml/editing/htmlediting.h: Prototype new methods.
+        * khtml/editing/jsediting.cpp: Make underline execCommand use the new CSS property.
+
+	- as a necessary part of the fix, fixed the longstanding problem
+	that mutating an element's inlineStyleDecl would not property
+	update its style attribute. now it does.
+	
+        * khtml/css/css_valueimpl.cpp:
+        (DOM::CSSMutableStyleDeclarationImpl::setChanged): If this is an inline style
+	declaration, tell the element it's style attribute needs updating.
+        * khtml/html/html_elementimpl.cpp:
+        (HTMLElementImpl::invalidateStyleAttribute): New method, just calls down
+	to the dom element.
+        (HTMLElementImpl::updateStyleAttribute): Regenerate style attribute from
+	inline style declaration.
+        * khtml/html/html_elementimpl.h: Prototype new stuff.
+        * khtml/xml/dom_elementimpl.cpp:
+        (ElementImpl::ElementImpl): Initialize new attribute.
+        (ElementImpl::updateStyleAttributeIfNeeded): New method to check if the style
+	is dirty and this is an html element, and if so call the html element to
+	regenerate the style attribute.
+        (ElementImpl::attributes): update style if needed
+        (ElementImpl::getAttribute): ditto
+        (ElementImpl::hasAttributes): ditto
+        (ElementImpl::dump): ditto
+        (XMLElementImpl::cloneNode): ditto
+        * khtml/xml/dom_elementimpl.h:
+        (DOM::ElementImpl::isStyleAttributeValid): new method to manage style attr
+	dirty bit
+        (DOM::ElementImpl::setStyleAttributeValid): ditto
+
+	- added new layout tests for underlining:
+	
+        * layout-tests/editing/editing.js:
+        * layout-tests/editing/style/remove-underline-across-paragraph-expected.txt: Added.
+        * layout-tests/editing/style/remove-underline-across-paragraph-in-bold-expected.txt: Added.
+        * layout-tests/editing/style/remove-underline-across-paragraph-in-bold.html: Added.
+        * layout-tests/editing/style/remove-underline-across-paragraph.html: Added.
+        * layout-tests/editing/style/remove-underline-after-paragraph-expected.txt: Added.
+        * layout-tests/editing/style/remove-underline-after-paragraph-in-bold-expected.txt: Added.
+        * layout-tests/editing/style/remove-underline-after-paragraph-in-bold.html: Added.
+        * layout-tests/editing/style/remove-underline-after-paragraph.html: Added.
+        * layout-tests/editing/style/remove-underline-expected.txt: Added.
+        * layout-tests/editing/style/remove-underline-from-stylesheet-expected.txt: Added.
+        * layout-tests/editing/style/remove-underline-from-stylesheet.html: Added.
+        * layout-tests/editing/style/remove-underline-in-bold-expected.txt: Added.
+        * layout-tests/editing/style/remove-underline-in-bold.html: Added.
+        * layout-tests/editing/style/remove-underline.html: Added.
+        * layout-tests/editing/style/underline-expected.txt: Added.
+        * layout-tests/editing/style/underline.html: Added.
+
 2005-01-27  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3875199, search field needs to be able to  show a magnifying  glass without a dropdown menu.

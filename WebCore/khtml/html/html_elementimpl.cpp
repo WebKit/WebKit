@@ -113,6 +113,19 @@ void HTMLElementImpl::removeMappedAttributeDecl(MappedAttributeEntry entryType, 
     attrValueDict->remove(attrValue.implementation());
 }
 
+void HTMLElementImpl::invalidateStyleAttribute()
+{
+    setStyleAttributeValid(false);
+}
+
+void HTMLElementImpl::updateStyleAttribute()
+{
+    // we need to say teh attribute is valid before setting it to avoid the
+    // possibility of an infinite loop
+    setStyleAttributeValid(true);
+    setAttribute(ATTR_STYLE, getInlineStyleDecl()->cssText());
+}
+
 HTMLAttributeImpl::~HTMLAttributeImpl()
 {
     if (m_styleDecl)

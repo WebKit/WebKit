@@ -64,10 +64,11 @@ public:
  
     void diff(CSSMutableStyleDeclarationImpl *) const;
 
+    CSSMutableStyleDeclarationImpl *copyPropertiesInSet(const int *set, unsigned length) const;
+
 protected:
     CSSStyleDeclarationImpl(CSSRuleImpl *parentRule = 0);
 
-    CSSMutableStyleDeclarationImpl *copyPropertiesInSet(const int *set, unsigned length) const;
 
 private:
     CSSStyleDeclarationImpl(const CSSStyleDeclarationImpl &);

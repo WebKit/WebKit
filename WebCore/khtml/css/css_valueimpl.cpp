@@ -34,6 +34,7 @@
 
 #include "xml/dom_stringimpl.h"
 #include "xml/dom_docimpl.h"
+#include "html/html_elementimpl.h"
 
 #include "misc/loader.h"
 
@@ -267,6 +268,13 @@ void CSSMutableStyleDeclarationImpl::setChanged()
 {
     if (m_node) {
         m_node->setChanged();
+        // FIXME: Ideally, this should be factored better and there
+        // should be a subclass of CSSMutableStyleDeclarationImpl just
+        // for inline style declarations that handles this
+        if (m_node->isHTMLElement() && this == static_cast<HTMLElementImpl *>(m_node)->inlineStyleDecl()) {
+            static_cast<HTMLElementImpl *>(m_node)->invalidateStyleAttribute();
+        }
+
         return;
     }
 

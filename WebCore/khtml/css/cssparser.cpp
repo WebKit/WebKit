@@ -900,6 +900,7 @@ bool CSSParser::parseValue( int propId, bool important )
     }
 
     case CSS_PROP_TEXT_DECORATION:
+    case CSS_PROP__KHTML_TEXT_DECORATIONS_IN_EFFECT:
     	// none | [ underline || overline || line-through || blink ] | inherit
 	if (id == CSS_VAL_NONE) {
 	    valid_primitive = true;

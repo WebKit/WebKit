@@ -185,7 +185,10 @@ public:
     static void removeMappedAttributeDecl(MappedAttributeEntry type, NodeImpl::Id attrName, const AtomicString& attrValue);
     static QPtrDict<QPtrDict<QPtrDict<CSSMappedAttributeDeclarationImpl> > >* m_mappedAttributeDecls;
 
+    void invalidateStyleAttribute();
+    void updateStyleAttribute();
 protected:
+
     // for IMG, OBJECT and APPLET
     void addHTMLAlignment(HTMLAttributeImpl* htmlAttr);
 

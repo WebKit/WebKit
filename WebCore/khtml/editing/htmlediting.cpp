@@ -387,7 +387,14 @@ void StyleChange::init(CSSStyleDeclarationImpl *style, const Position &position)
             continue;
 
         // Add this property
-        styleText += property->cssText().string();
+
+        if (property->id() == CSS_PROP__KHTML_TEXT_DECORATIONS_IN_EFFECT) {
+            // we have to special-case text decorations
+            CSSProperty alteredProperty = CSSProperty(CSS_PROP_TEXT_DECORATION, property->value(), property->isImportant());
+            styleText += alteredProperty.cssText().string();
+        } else {
+            styleText += property->cssText().string();
+        }
     }
 
     mutableStyle->deref();
@@ -1340,7 +1347,7 @@ void ApplyStyleCommand::applyInlineStyle(CSSMutableStyleDeclarationImpl *style)
     // to check a computed style
     document()->updateLayout();
 
-    // split the start node and containingelement if the selection starts inside of it
+    // split the start node and containing element if the selection starts inside of it
     bool splitStart = splitTextElementAtStartIfNeeded(start, end); 
     if (splitStart) {
         start = endingSelection().start();
@@ -1487,14 +1494,200 @@ void ApplyStyleCommand::removeBlockStyle(CSSMutableStyleDeclarationImpl *style, 
     
 }
 
+static bool hasTextDecorationProperty(NodeImpl *node)
+{
+    if (!node->isElementNode())
+        return false;
+
+    ElementImpl *element = static_cast<ElementImpl *>(node);
+    CSSComputedStyleDeclarationImpl style(element);
+
+    CSSValueImpl *value = style.getPropertyCSSValue(CSS_PROP_TEXT_DECORATION, DoNotUpdateLayout);
+
+    if (value) {
+        value->ref();
+        DOMString valueText(value->cssText());
+        value->deref();
+        if (strcasecmp(valueText,"none") != 0)
+            return true;
+    }
+
+    return false;
+}
+
+static NodeImpl* highestAncestorWithTextDecoration(NodeImpl *node)
+{
+    NodeImpl *result = NULL;
+
+    for (NodeImpl *n = node; n; n = n->parentNode()) {
+        if (hasTextDecorationProperty(n))
+            result = n;
+    }
+
+    return result;
+}
+
+CSSMutableStyleDeclarationImpl *ApplyStyleCommand::extractTextDecorationStyle(NodeImpl *node)
+{
+    ASSERT(node);
+    ASSERT(node->isElementNode());
+    
+    // non-html elements not handled yet
+    if (!node->isHTMLElement())
+        return 0;
+
+    HTMLElementImpl *element = static_cast<HTMLElementImpl *>(node);
+    CSSMutableStyleDeclarationImpl *style = element->inlineStyleDecl();
+    if (!style)
+        return 0;
+
+    style->ref();
+    int properties[1] = { CSS_PROP_TEXT_DECORATION };
+    CSSMutableStyleDeclarationImpl *textDecorationStyle = style->copyPropertiesInSet(properties, 1);
+
+    CSSValueImpl *property = style->getPropertyCSSValue(CSS_PROP_TEXT_DECORATION);
+    if (property && strcasecmp(property->cssText(), "none") != 0) {
+        removeCSSProperty(style, CSS_PROP_TEXT_DECORATION);
+    }
+
+    style->deref();
+
+    return textDecorationStyle;
+}
+
+CSSMutableStyleDeclarationImpl *ApplyStyleCommand::extractAndNegateTextDecorationStyle(NodeImpl *node)
+{
+    ASSERT(node);
+    ASSERT(node->isElementNode());
+    
+    // non-html elements not handled yet
+    if (!node->isHTMLElement())
+        return 0;
+
+    HTMLElementImpl *element = static_cast<HTMLElementImpl *>(node);
+    CSSComputedStyleDeclarationImpl *computedStyle = new CSSComputedStyleDeclarationImpl(element);
+    ASSERT(computedStyle);
+
+    computedStyle->ref();
+
+    int properties[1] = { CSS_PROP_TEXT_DECORATION };
+    CSSMutableStyleDeclarationImpl *textDecorationStyle = computedStyle->copyPropertiesInSet(properties, 1);
+    
+
+    CSSValueImpl *property = computedStyle->getPropertyCSSValue(CSS_PROP_TEXT_DECORATION);
+    if (property && strcasecmp(property->cssText(), "none") != 0) {
+        property->ref();
+        CSSMutableStyleDeclarationImpl *newStyle = textDecorationStyle->copy();
+
+        newStyle->ref();
+        newStyle->setProperty(CSS_PROP_TEXT_DECORATION, "none");
+        applyTextDecorationStyle(node, newStyle);
+        newStyle->deref();
+
+        property->deref();
+    }
+
+    computedStyle->deref();
+
+    return textDecorationStyle;
+}
+
+void ApplyStyleCommand::applyTextDecorationStyle(NodeImpl *node, CSSMutableStyleDeclarationImpl *style)
+{
+    ASSERT(node);
+
+    if (!style || !style->cssText().length())
+        return;
+
+    if (node->isTextNode()) {
+        HTMLElementImpl *styleSpan = static_cast<HTMLElementImpl *>(createStyleSpanElement(document()));
+        insertNodeBefore(styleSpan, node);
+        surroundNodeRangeWithElement(node, node, styleSpan);
+        node = styleSpan;
+    }
+
+    if (!node->isElementNode())
+        return;
+
+    HTMLElementImpl *element = static_cast<HTMLElementImpl *>(node);
+        
+    StyleChange styleChange(style, Position(element, 0), StyleChange::DoNotUseLegacyHTMLStyles);
+    if (styleChange.cssStyle().length() > 0) {
+        DOMString cssText = styleChange.cssStyle();
+        CSSMutableStyleDeclarationImpl *decl = element->inlineStyleDecl();
+        if (decl)
+            cssText += decl->cssText();
+        setNodeAttribute(element, ATTR_STYLE, cssText);
+    }
+}
+
+void ApplyStyleCommand::pushDownTextDecorationStyleAroundNode(NodeImpl *node, const Position &start, const Position &end, bool force)
+{
+    NodeImpl *highestAncestor = highestAncestorWithTextDecoration(node);
+    
+    if (highestAncestor) {
+        NodeImpl *nextCurrent;
+        NodeImpl *nextChild;
+        for (NodeImpl *current = highestAncestor; current != node; current = nextCurrent) {
+            ASSERT(current);
+            
+            nextCurrent = NULL;
+            
+            CSSMutableStyleDeclarationImpl *decoration = force ? extractAndNegateTextDecorationStyle(current) : extractTextDecorationStyle(current);
+            if (decoration)
+                decoration->ref();
+
+            for (NodeImpl *child = current->firstChild(); child; child = nextChild) {
+                nextChild = child->nextSibling();
+
+                if (node == child) {
+                    nextCurrent = child;
+                } else if (node->isAncestor(child)) {
+                    applyTextDecorationStyle(child, decoration);
+                    nextCurrent = child;
+                } else {
+                    applyTextDecorationStyle(child, decoration);
+                }
+            }
+
+            if (decoration)
+                decoration->deref();
+        }
+    }
+}
+
+void ApplyStyleCommand::pushDownTextDecorationStyleAtBoundaries(const Position &start, const Position &end)
+{
+    // We need to work in two passes. First we push down any inline
+    // styles that set text decoration. Then we look for any remaining
+    // styles (caused by stylesheets) and explicitly negate text
+    // decoration while pushing down.
+
+    pushDownTextDecorationStyleAroundNode(start.node(), start, end, false);
+    document()->updateLayout();
+    pushDownTextDecorationStyleAroundNode(start.node(), start, end, true);
+
+    pushDownTextDecorationStyleAroundNode(end.node(), start, end, false);
+    document()->updateLayout();
+    pushDownTextDecorationStyleAroundNode(end.node(), start, end, true);
+}
+
 void ApplyStyleCommand::removeInlineStyle(CSSMutableStyleDeclarationImpl *style, const Position &start, const Position &end)
 {
     ASSERT(start.isNotNull());
     ASSERT(end.isNotNull());
     ASSERT(start.node()->inDocument());
     ASSERT(end.node()->inDocument());
-    ASSERT(RangeImpl::compareBoundaryPoints(start, end) <= 0);
+    ASSERT(RangeImpl::compareBoundaryPoints(start, end) < 0);
     
+    CSSValueImpl *textDecorationSpecialProperty = style->getPropertyCSSValue(CSS_PROP__KHTML_TEXT_DECORATIONS_IN_EFFECT);
+
+    if (textDecorationSpecialProperty) {
+        pushDownTextDecorationStyleAtBoundaries(start.downstream(), end.upstream());
+        style = style->copy();
+        style->setProperty(CSS_PROP_TEXT_DECORATION, textDecorationSpecialProperty->cssText(), style->getPropertyPriority(CSS_PROP__KHTML_TEXT_DECORATIONS_IN_EFFECT));
+    }
+
     NodeImpl *node = start.node();
     while (node) {
         NodeImpl *next = node->traverseNextNode();
@@ -1509,6 +1702,11 @@ void ApplyStyleCommand::removeInlineStyle(CSSMutableStyleDeclarationImpl *style,
             break;
         node = next;
     }
+
+
+    if (textDecorationSpecialProperty) {
+        style->deref();
+    }
 }
 
 bool ApplyStyleCommand::nodeFullySelected(NodeImpl *node, const Position &start, const Position &end) const
@@ -1519,6 +1717,18 @@ bool ApplyStyleCommand::nodeFullySelected(NodeImpl *node, const Position &start,
     return RangeImpl::compareBoundaryPoints(node, 0, start.node(), start.offset()) >= 0 &&
         RangeImpl::compareBoundaryPoints(pos, end) <= 0;
 }
+
+bool ApplyStyleCommand::nodeFullyUnselected(NodeImpl *node, const Position &start, const Position &end) const
+{
+    ASSERT(node);
+
+    Position pos = Position(node, node->childNodeCount()).upstream();
+    bool isFullyBeforeStart = RangeImpl::compareBoundaryPoints(pos, start) < 0;
+    bool isFullyAfterEnd = RangeImpl::compareBoundaryPoints(node, 0, end.node(), end.offset()) > 0;
+
+    return isFullyBeforeStart || isFullyAfterEnd;
+}
+
 
 //------------------------------------------------------------------------------------------
 // ApplyStyleCommand: style-application helpers

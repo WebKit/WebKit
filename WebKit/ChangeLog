@@ -1,3 +1,15 @@
+2005-01-26  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin, Hyatt and Ken.
+
+	<rdar://problem/3790449> REGRESSION (Mail): underline behavior is flaky because of how CSS handles text-decoration
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _styleFromFontAttributes:]): Use new -khtml-text-decorations-in-effect
+	property
+        (-[WebHTMLView _styleForAttributeChange:]): likewise
+        (-[WebHTMLView underline:]): likewise
+
 2005-01-27  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Maciej

@@ -194,6 +194,7 @@ ElementImpl::ElementImpl(DocumentPtr *doc)
 {
     namedAttrMap = 0;
     m_prefix = 0;
+    m_isStyleAttributeValid = true;
 }
 
 ElementImpl::~ElementImpl()
@@ -223,6 +224,21 @@ void ElementImpl::setAttribute(NodeImpl::Id id, const DOMString &value)
     setAttribute(id,value.implementation(),exceptioncode);
 }
 
+void ElementImpl::updateStyleAttributeIfNeeded() const
+{
+    if (!m_isStyleAttributeValid && isHTMLElement()) {
+        static_cast<HTMLElementImpl *>(const_cast<ElementImpl *>(this))->updateStyleAttribute();
+    }
+}
+
+NamedAttrMapImpl* ElementImpl::attributes(bool readonly) const
+{
+    updateStyleAttributeIfNeeded();
+
+    if (!readonly && !namedAttrMap) createAttributeMap();
+    return namedAttrMap;
+}
+
 unsigned short ElementImpl::nodeType() const
 {
     return Node::ELEMENT_NODE;
@@ -240,6 +256,9 @@ const AtomicString& ElementImpl::getIDAttribute() const
 
 const AtomicString& ElementImpl::getAttribute(NodeImpl::Id id) const
 {
+    if (id == ATTR_STYLE)
+        updateStyleAttributeIfNeeded();
+
     if (namedAttrMap) {
         AttributeImpl* a = namedAttrMap->getAttributeItem(id);
         if (a) return a->value();
@@ -320,6 +339,8 @@ void ElementImpl::setAttributeMap( NamedAttrMapImpl* list )
 
 bool ElementImpl::hasAttributes() const
 {
+    updateStyleAttributeIfNeeded();
+
     return namedAttrMap && namedAttrMap->length() > 0;
 }
 
@@ -614,6 +635,7 @@ void ElementImpl::updateId(const AtomicString& oldId, const AtomicString& newId)
 #ifndef NDEBUG
 void ElementImpl::dump(QTextStream *stream, QString ind) const
 {
+    updateStyleAttributeIfNeeded();
     if (namedAttrMap) {
         for (uint i = 0; i < namedAttrMap->length(); i++) {
             AttributeImpl *attr = namedAttrMap->attributeItem(i);
