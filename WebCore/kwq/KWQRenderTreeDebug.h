@@ -23,6 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#ifdef __cplusplus
+
 #include "KWQString.h"
 
 namespace khtml {
@@ -30,3 +32,16 @@ namespace khtml {
 }
 
 QString externalRepresentation(khtml::RenderObject *);
+
+#endif
+
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+bool debuggingRenderTree();
+
+#ifdef __cplusplus
+}
+#endif

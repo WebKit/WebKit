@@ -1,3 +1,24 @@
+2004-12-09  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+        
+        Fix for this bug:
+        
+        <rdar://problem/3912841> REGRESSION (173-TOT): Some images report 0x0 dimensions on layout tests, causes spurious test failures
+
+        The new threaded image decoding capability can throw off layout tests. The issue is that the decoding
+        callback may not be delivered before the program asks for the dimensions of an image in order to
+        wrote the layout dimensions. More generally, I think we need to ensure that there are no races in
+        layout tests, so I have added a flag to the render tree debug code that we can set when debugging.
+
+        * kwq/KWQRenderTreeDebug.cpp:
+        (debuggingRenderTree): New function. Returns flag which tells whether the program is debugging the render tree.
+        (externalRepresentation): Sets debuggingRenderTree flag to true;
+        * kwq/KWQRenderTreeDebug.h:
+        * kwq/WebCoreImageRendererFactory.m:
+        (+[WebCoreImageRendererFactory shouldUseThreadedDecoding]): Checks debuggingRenderTree flag and will not
+        do threaded decoding in any case if the flag is set.
+
 2004-12-09  Chris Blumenberg  <cblu@apple.com>
 
 	Fix for busting XMLHTTPRequest.

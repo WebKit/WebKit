@@ -25,6 +25,7 @@
 
 #import "WebCoreImageRendererFactory.h"
 #import "KWQAssertions.h"
+#import "KWQRenderTreeDebug.h"
 
 @implementation WebCoreImageRendererFactory
 
@@ -39,7 +40,7 @@ static BOOL shouldUseThreadedDecoding = NO;
 
 + (BOOL)shouldUseThreadedDecoding
 {
-    return shouldUseThreadedDecoding;
+    return !debuggingRenderTree && shouldUseThreadedDecoding;
 }
 
 + (void)setShouldUseThreadedDecoding:(BOOL)flag
