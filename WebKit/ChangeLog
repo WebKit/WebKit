@@ -1,3 +1,20 @@
+2004-10-14  Richard Williamson   <rjw@apple.com>
+
+        Fixed <rdar://problem/3823026> making isRoundingHackCharacter use -O3 and an 8-bit lookup-table will speed "XBS" test up by 3% (actually < 1%)
+
+        Careful testing shows a small performance gain on very large text files.  
+        I saw large variations in timings, but taking the lowest PLT timing 
+        with and without this change showed a 0.9% gain.  Note the cvs-base showed
+        no improvement.  The improvement was for the large page attached to the
+        bug.
+
+        Reviewed by Ken.
+
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (setupRoundingHackCharacterTable):
+        (isRoundingHackCharacter):
+        (+[WebTextRenderer initialize]):
+
 2004-10-14  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by me

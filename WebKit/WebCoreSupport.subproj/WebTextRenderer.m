@@ -181,9 +181,21 @@ static inline BOOL isSpace(UniChar c)
     return c == SPACE || isAlternateSpace(c);
 }
 
+static bool isRoundingHackCharacterTable[0xff];
+
+static void setupRoundingHackCharacterTable()
+{
+    bzero (isRoundingHackCharacterTable, 0xff);
+    isRoundingHackCharacterTable[0xA0] = 1;
+    isRoundingHackCharacterTable['\n'] = 1;
+    isRoundingHackCharacterTable[SPACE] = 1;
+    isRoundingHackCharacterTable['-'] = 1;
+    isRoundingHackCharacterTable['?'] = 1;
+}
+
 static inline BOOL isRoundingHackCharacter(UniChar c)
 {
-    return isSpace(c) || c == '-' || c == '?';
+    return (c & 0xFF00) != 0 && isRoundingHackCharacterTable[c] == 1;
 }
 
 
@@ -278,6 +290,7 @@ static BOOL alwaysUseATSU = NO;
 {
     nonBaseChars = CFCharacterSetGetPredefined(kCFCharacterSetNonBase);
     bufferTextDrawing = [[[NSUserDefaults standardUserDefaults] stringForKey:@"BufferTextDrawing"] isEqual: @"YES"];
+    setupRoundingHackCharacterTable();
 }
 
 - initWithFont:(NSFont *)f usingPrinterFont:(BOOL)p
