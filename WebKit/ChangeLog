@@ -1,3 +1,19 @@
+2003-11-20  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+	Fix for this bug:
+
+	<rdar://problem/3482159>: Tabbing to links gets "stuck" in "style switcher" on zeldman.com
+
+        * Misc.subproj/WebNSEventExtras.h: Added.
+        * Misc.subproj/WebNSEventExtras.m: Added.
+        (-[NSEvent _isTabKeyEvent]): New helper.
+        * WebKit.pbproj/project.pbxproj:
+        * WebView.subproj/WebHTMLView.m: 
+        (-[WebHTMLView keyDown:]): Pass the key event to super unconditionally
+	if it is a tab key. This fixes the bug.
+
 2003-11-19  John Sullivan  <sullivan@apple.com>
 
         - WebKit part of fix for:

@@ -33,6 +33,7 @@
 
 #import <WebKit/WebImageRenderer.h>
 #import <WebKit/WebKitNSStringExtras.h>
+#import <WebKit/WebNSEventExtras.h>
 #import <WebKit/WebNSImageExtras.h>
 #import <WebKit/WebNSURLExtras.h>
 #import <WebKit/WebPreferences.h>
@@ -1708,7 +1709,8 @@ static WebHTMLView *lastHitView = nil;
 
 - (void)keyDown:(NSEvent *)event
 {
-    if (![[self _bridge] interceptKeyEvent:event toView:self]) {
+    BOOL intercepted = [[self _bridge] interceptKeyEvent:event toView:self];
+    if (!intercepted || [event _isTabKeyEvent]) {
 	[super keyDown:event];
     }
 }
