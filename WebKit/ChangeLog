@@ -1,3 +1,13 @@
+2004-05-13  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Chris
+
+        Moved -DOMDocument convenience back to private header.
+        I mistakenly moved it to the public header earlier today.
+
+        * WebView.subproj/WebView.h: Removed
+        * WebView.subproj/WebViewPrivate.h: Re-added
+
 2004-05-13  Richard Williamson   <rjw@apple.com>
 
 	Updated to implementation to reflect new API.  Left old SPI
