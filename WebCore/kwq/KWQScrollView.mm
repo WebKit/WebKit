@@ -30,7 +30,7 @@
 /*
     This class implementation does NOT actually emulate the Qt QScrollView.
     It does provide an implementation that khtml will use to interact with
-    WebKit's WebView documentView and our NSScrollView subclass.
+    WebKit's WebFrameView documentView and our NSScrollView subclass.
 
     QScrollView's view is a NSScrollView (or subclass of NSScrollView)
     in most cases. That scrollview is a subview of an

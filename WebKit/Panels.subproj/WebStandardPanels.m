@@ -215,7 +215,7 @@ static BOOL WindowInFront(NSWindow *a, NSWindow *b)
 	if ([object isKindOfClass:[NSWindow class]]) {
 	    window = object;
 	} else {
-	    window = [[[object mainFrame] webView] window];
+	    window = [[[object mainFrame] view] window];
 	}
 
 	if (window != nil && [window isVisible] && (frontmostWindow == nil || WindowInFront(window, frontmostWindow))) {

@@ -15,7 +15,7 @@
 
 /*!
     @class WebHTMLView
-    @discussion A document view of WebView that displays HTML content.
+    @discussion A document view of WebFrameView that displays HTML content.
 */
 @interface WebHTMLView : NSView <WebDocumentView, WebDocumentSearching, WebDocumentText>
 {

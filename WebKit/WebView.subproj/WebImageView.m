@@ -1,6 +1,6 @@
 /*	
     WebImageView.m
-	Copyright 2002, Apple, Inc. All rights reserved.
+    Copyright 2002, Apple, Inc. All rights reserved.
 */
 
 #import <WebKit/WebImageView.h>
@@ -82,7 +82,7 @@
 
 - (WebController *)controller
 {
-    return [[self _web_parentWebView] _controller];
+    return [[self _web_parentWebFrameView] _controller];
 }
 
 - (BOOL)validateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)item
@@ -126,9 +126,9 @@
 
 - (NSMenu *)menuForEvent:(NSEvent *)theEvent
 {
-    WebView *webView = [self _web_parentWebView];
-    WebController *controller = [webView _controller];
-    WebFrame *frame = [webView webFrame];
+    WebFrameView *webFrameView = [self _web_parentWebFrameView];
+    WebController *controller = [webFrameView _controller];
+    WebFrame *frame = [webFrameView webFrame];
 
     ASSERT(frame);
     ASSERT(controller);
@@ -145,8 +145,8 @@
 
 - (void)mouseDragged:(NSEvent *)event
 {
-    // Don't allow drags to be accepted by this WebView.
-    [[self _web_parentWebView] unregisterDraggedTypes];
+    // Don't allow drags to be accepted by this WebFrameView.
+    [[self _web_parentWebFrameView] unregisterDraggedTypes];
 
     // Retain this view during the drag because it may be released before the drag ends.
     [self retain];
@@ -176,7 +176,7 @@
 - (void)draggedImage:(NSImage *)anImage endedAt:(NSPoint)aPoint operation:(NSDragOperation)operation
 {
     // Reregister for drag types because they were unregistered before the drag.
-    [[self _web_parentWebView] _reregisterDraggedTypes];
+    [[self _web_parentWebFrameView] _reregisterDraggedTypes];
 
     // Balance the previous retain from when the drag started.
     [self release];

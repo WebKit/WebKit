@@ -7,7 +7,7 @@
 
 #define WebDragImageAlpha    0.75
 
-@class WebView;
+@class WebFrameView;
 
 @interface NSView (WebExtras)
 
@@ -18,8 +18,8 @@
 // Stops searching and returns nil when limitClass is encountered
 - (NSView *)_web_superviewOfClass:(Class)class stoppingAtClass:(Class)limitClass;
 
-// Returns the first WebView superview. Only works if self is the WebView's document view.
-- (WebView *)_web_parentWebView;
+// Returns the first WebFrameView superview. Only works if self is the WebFrameView's document view.
+- (WebFrameView *)_web_parentWebFrameView;
 
 // returns whether a drag should begin starting with mouseDownEvent; if the time
 // passes expiration or the mouse moves less than the hysteresis before the mouseUp event,

@@ -150,8 +150,8 @@ enum FrameBorderStyle {
 - (NSView *)nextKeyView;
 - (NSView *)previousKeyView;
 
-- (NSView *)nextKeyViewInsideWebViews;
-- (NSView *)previousKeyViewInsideWebViews;
+- (NSView *)nextKeyViewInsideWebFrameViews;
+- (NSView *)previousKeyViewInsideWebFrameViews;
 
 - (NSObject *)copyDOMTree:(id <WebCoreDOMTreeCopier>)copier;
 - (NSObject *)copyRenderTree:(id <WebCoreRenderTreeCopier>)copier;
@@ -255,8 +255,8 @@ enum FrameBorderStyle {
 
 - (void)unfocusWindow;
 
-- (NSView *)nextKeyViewOutsideWebViews;
-- (NSView *)previousKeyViewOutsideWebViews;
+- (NSView *)nextKeyViewOutsideWebFrameViews;
+- (NSView *)previousKeyViewOutsideWebFrameViews;
 
 - (BOOL)defersLoading;
 - (void)setDefersLoading:(BOOL)loading;

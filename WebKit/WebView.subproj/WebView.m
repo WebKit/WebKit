@@ -59,12 +59,12 @@ NSString *WebElementLinkTitleKey = 		@"WebElementLinkTitle";
 
 + (BOOL)canShowMIMEType:(NSString *)MIMEType
 {
-    if([WebView _canShowMIMEType:MIMEType] && [WebDataSource _canShowMIMEType:MIMEType]){
+    if([WebFrameView _canShowMIMEType:MIMEType] && [WebDataSource _canShowMIMEType:MIMEType]){
         return YES;
     }else{
         // Have the plug-ins register views and representations
         [WebPluginDatabase installedPlugins];
-        if([WebView _canShowMIMEType:MIMEType] && [WebDataSource _canShowMIMEType:MIMEType])
+        if([WebFrameView _canShowMIMEType:MIMEType] && [WebDataSource _canShowMIMEType:MIMEType])
             return YES;
     }
     return NO;
@@ -87,36 +87,50 @@ NSString *WebElementLinkTitleKey = 		@"WebElementLinkTitle";
 
 @implementation WebController
 
-- init
+- (void)_commonInitialization: (WebFrameView *)wv frameName:(NSString *)frameName groupName:(NSString *)groupName
 {
-    return [self initWithView: nil frameName: nil setName: nil];
-}
-
-- initWithView: (WebView *)view
-{
-    return [self initWithView: view frameName: nil setName: nil];
-}
-
-
-- initWithView: (WebView *)view frameName: (NSString *)frameName setName: (NSString *)setName;
-{
-    [super init];
-    
     _private = [[WebControllerPrivate alloc] init];
-    _private->mainFrame = [[WebFrame alloc] initWithName: frameName webView: view  controller: self];
-    _private->controllerSetName = [setName retain];
+    _private->mainFrame = [[WebFrame alloc] initWithName: frameName webFrameView: wv  controller: self];
+    _private->controllerSetName = [groupName retain];
     if (_private->controllerSetName != nil) {
-	[WebControllerSets addController:self toSetNamed:_private->controllerSetName];
+        [WebControllerSets addController:self toSetNamed:_private->controllerSetName];
     }
 
     [self setUsesBackForwardList: YES];
-    
+
     ++WebControllerCount;
 
     [self _updateWebCoreSettingsFromPreferences: [WebPreferences standardPreferences]];
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_preferencesChangedNotification:)
                                                  name:WebPreferencesChangedNotification object:[self preferences]];
+}
+
+- init
+{
+    return [self initWithView: nil frameName: nil groupName: nil];
+}
+
+- initWithFrame: (NSRect)f
+{
+    [super initWithFrame: f];
+    WebFrameView *wv = [[WebFrameView alloc] initWithFrame: f];
+    [wv setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
+    [self addSubview: wv];
+    [self _commonInitialization: wv frameName:nil groupName:nil];
+    return self;
+}
+
+- initWithView: (WebFrameView *)view
+{
+    return [self initWithView: view frameName: nil groupName: nil];
+}
+
+
+- initWithView: (WebFrameView *)view frameName: (NSString *)frameName groupName: (NSString *)groupName;
+{
+    [super init];
+    [self _commonInitialization: view frameName:frameName groupName:groupName];
     return self;
 }
 
@@ -313,7 +327,7 @@ NSString *WebElementLinkTitleKey = 		@"WebElementLinkTitle";
 
 - (BOOL)supportsTextEncoding
 {
-    id documentView = [[[self mainFrame] webView] documentView];
+    id documentView = [[[self mainFrame] view] documentView];
     return [documentView conformsToProtocol:@protocol(WebDocumentText)]
         && [documentView supportsTextEncoding];
 }
@@ -446,3 +460,32 @@ NSString *WebElementLinkTitleKey = 		@"WebElementLinkTitle";
 }
 
 @end
+
+
+@implementation WebController (WebIBActions)
+
+- (IBAction)takeStringURLFrom: sender
+{
+    NSString *URLString = [sender stringValue];
+    
+    [[self mainFrame] loadRequest: [WebRequest requestWithURL: [NSURL URLWithString: URLString]]];
+}
+
+- (IBAction)goBack:(id)sender
+{
+    [self goBack];
+}
+
+- (IBAction)goForward:(id)sender
+{
+    [self goForward];
+}
+
+- (IBAction)stopLoading:(id)sender
+{
+    [[self mainFrame] stopLoading];
+}
+
+
+@end
+

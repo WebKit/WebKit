@@ -18,7 +18,7 @@
 extern "C" {
 #endif
 
-extern NSView*		HIWebViewGetNSView( HIViewRef inView );
+extern NSView*		HIWebFrameViewGetNSView( HIViewRef inView );
 
 #ifdef __cplusplus
 }

@@ -149,13 +149,13 @@
 - (BOOL)areScrollbarsVisible
 {
     ASSERT(frame != nil);
-    return [[frame webView] allowsScrolling];
+    return [[frame view] allowsScrolling];
 }
 
 - (void)setScrollbarsVisible:(BOOL)visible
 {
     ASSERT(frame != nil);
-    return [[frame webView] setAllowsScrolling:visible];
+    return [[frame view] setAllowsScrolling:visible];
 }
 
 - (BOOL)isStatusBarVisible
@@ -185,7 +185,7 @@
 - (NSWindow *)window
 {
     ASSERT(frame != nil);
-    return [[frame webView] window];
+    return [[frame view] window];
 }
 
 - (void)runJavaScriptAlertPanelWithMessage:(NSString *)message
@@ -380,8 +380,8 @@
     
     [[newFrame _bridge] setRenderPart:childRenderPart];
 
-    [[newFrame webView] _setMarginWidth:width];
-    [[newFrame webView] _setMarginHeight:height];
+    [[newFrame view] _setMarginWidth:width];
+    [[newFrame view] _setMarginHeight:height];
 
     [frame _loadURL:[NSURL _web_URLWithString:URL] intoChild:newFrame];
 
@@ -421,14 +421,14 @@
     return [[frame controller] userAgentForURL:[NSURL _web_URLWithString:URL]];
 }
 
-- (NSView *)nextKeyViewOutsideWebViews
+- (NSView *)nextKeyViewOutsideWebFrameViews
 {
-    return [[[[frame controller] mainFrame] webView] nextKeyView];
+    return [[[[frame controller] mainFrame] view] nextKeyView];
 }
 
-- (NSView *)previousKeyViewOutsideWebViews
+- (NSView *)previousKeyViewOutsideWebFrameViews
 {
-    return [[[[frame controller] mainFrame] webView] previousKeyView];
+    return [[[[frame controller] mainFrame] view] previousKeyView];
 }
 
 - (BOOL)defersLoading
@@ -443,7 +443,7 @@
 
 - (void)setNeedsReapplyStyles
 {
-    NSView <WebDocumentView> *view = [[frame webView] documentView];
+    NSView <WebDocumentView> *view = [[frame view] documentView];
     if ([view isKindOfClass:[WebHTMLView class]]) {
         [(WebHTMLView *)view setNeedsToApplyStyles:YES];
         [view setNeedsLayout:YES];
@@ -453,7 +453,7 @@
 
 - (void)setNeedsLayout
 {
-    NSView <WebDocumentView> *view = [[frame webView] documentView];
+    NSView <WebDocumentView> *view = [[frame view] documentView];
     [view setNeedsLayout:YES];
     [view setNeedsDisplay:YES];
 }
@@ -472,7 +472,7 @@
                                    attributes:(NSDictionary *)attributes
                                       baseURL:(NSURL *)baseURL
 {
-    WebHTMLView *docView = (WebHTMLView *)[[frame webView] documentView];
+    WebHTMLView *docView = (WebHTMLView *)[[frame view] documentView];
 
     ASSERT ([docView isKindOfClass:[WebHTMLView class]]);
     
@@ -639,7 +639,7 @@ static BOOL loggedObjectCacheSize = NO;
     if ([mimeType length] == 0)
         return NO;
     
-    Class result = [[WebView _viewTypes] _web_objectForMIMEType: mimeType];
+    Class result = [[WebFrameView _viewTypes] _web_objectForMIMEType: mimeType];
     if (!result)
         return NO;  // Want to display a "plugin not found" dialog/image, so let a plugin get made.
         
@@ -668,7 +668,7 @@ static BOOL loggedObjectCacheSize = NO;
 
 - (void)handleMouseDragged:(NSEvent *)event
 {
-    WebHTMLView *docView = (WebHTMLView *)[[frame webView] documentView];
+    WebHTMLView *docView = (WebHTMLView *)[[frame view] documentView];
 
     ASSERT ([docView isKindOfClass:[WebHTMLView class]]);
 
@@ -677,7 +677,7 @@ static BOOL loggedObjectCacheSize = NO;
 
 - (void)handleAutoscrollForMouseDragged:(NSEvent *)event;
 {
-    WebHTMLView *docView = (WebHTMLView *)[[frame webView] documentView];
+    WebHTMLView *docView = (WebHTMLView *)[[frame view] documentView];
 
     ASSERT ([docView isKindOfClass:[WebHTMLView class]]);
 
@@ -686,7 +686,7 @@ static BOOL loggedObjectCacheSize = NO;
 
 - (BOOL)mayStartDragWithMouseDragged:(NSEvent *)event
 {
-    WebHTMLView *docView = (WebHTMLView *)[[frame webView] documentView];
+    WebHTMLView *docView = (WebHTMLView *)[[frame view] documentView];
 
     ASSERT ([docView isKindOfClass:[WebHTMLView class]]);
 

@@ -23,7 +23,7 @@
 .objc_class_name_WebStringTruncator
 .objc_class_name_WebTextView
 .objc_class_name_WebURLsWithTitles
-.objc_class_name_WebView
+.objc_class_name_WebFrameView
 _WebActionButtonKey
 _WebActionButtonKey
 _WebActionElementKey
@@ -60,8 +60,8 @@ _WebURLPboardType
 ##
 
 _WebControllerCreateWithHIView
-_HIWebViewGetController
-_HIWebViewCreate
+_HIWebFrameViewGetController
+_HIWebFrameViewCreate
 _ConvertNSImageToCGImageRef
 _InitWebKitForCarbon
 

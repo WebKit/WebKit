@@ -1,3 +1,21 @@
+2003-03-13  Richard Williamson   <rjw@apple.com>
+
+        First stage of the WebController -> WebView, WebView -> WebFrameView.
+        This change does the WebView -> WebFrameView part of the change.  Also
+        changes WebController's inheritance.  It now inherits from NSView.
+        
+        Reviewed by Maciej.
+
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::nextKeyView):
+        * kwq/KWQScrollView.mm:
+        * kwq/KWQWidget.mm:
+        (QWidget::getOuterView):
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge nextKeyViewInsideWebFrameViews]):
+        (-[WebCoreBridge previousKeyViewInsideWebFrameViews]):
+
 2003-03-13  Darin Adler  <darin@apple.com>
 
         - remove mistaken inlining to fix build with newer versions of gcc

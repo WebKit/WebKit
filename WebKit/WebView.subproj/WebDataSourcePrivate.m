@@ -426,8 +426,8 @@
         id dview;
         for (i = 0; i < [subFrames count]; i++){
             subFrame = [subFrames objectAtIndex: i];
-            dview = [[subFrame webView] documentView];
-            if ([[subFrame webView] isDocumentHTML])
+            dview = [[subFrame view] documentView];
+            if ([[subFrame view] isDocumentHTML])
                 [dview _adjustFrames];
             [dview setNeedsDisplay: YES];
             [[subFrame dataSource] _layoutChildren];
@@ -538,7 +538,7 @@
     [self _commitIfReady];
 
     [[self representation] receivedData:data withDataSource:self];
-    [[[[self webFrame] webView] documentView] dataSourceUpdated:self];
+    [[[[self webFrame] view] documentView] dataSourceUpdated:self];
 }
 
 - (void)_finishedLoading

@@ -682,12 +682,12 @@ static HTMLFormElementImpl *formElementFromDOMElement(id <WebDOMElement>element)
     return _part->nextKeyView(0, KWQSelectingPrevious);
 }
 
-- (NSView *)nextKeyViewInsideWebViews
+- (NSView *)nextKeyViewInsideWebFrameViews
 {
     return _part->nextKeyViewInFrameHierarchy(0, KWQSelectingNext);
 }
 
-- (NSView *)previousKeyViewInsideWebViews
+- (NSView *)previousKeyViewInsideWebFrameViews
 {
     return _part->nextKeyViewInFrameHierarchy(0, KWQSelectingPrevious);
 }

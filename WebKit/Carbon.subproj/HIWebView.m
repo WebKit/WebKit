@@ -1,5 +1,5 @@
 /*
- *  HIWebView.c
+ *  HIWebFrameView.c
  *  Synergy
  *
  *  Created by Ed Voas on Tue Feb 11 2003.
@@ -19,15 +19,15 @@
 
 extern Boolean GetEventPlatformEventRecord( EventRef inEvent, void * eventRec );
 
-struct HIWebView
+struct HIWebFrameView
 {
     HIViewRef							fViewRef;
 
-    WebView*							fWebView;
+    WebFrameView*							fWebFrameView;
     NSView*								fFirstResponder;
     CarbonWindowAdapter	*				fKitWindow;
 };
-typedef struct HIWebView HIWebView;
+typedef struct HIWebFrameView HIWebFrameView;
 
 @interface NSGraphicsContext (Secret)
 - (void)setCGContext:(CGContextRef)cgContext;
@@ -133,101 +133,101 @@ static const EventTypeSpec kEvents[] = {
 };
 
 #define kHIViewBaseClassID		CFSTR( "com.apple.hiview" )
-#define kHIWebViewClassID		CFSTR( "com.apple.hiwebview" )
+#define kHIWebFrameViewClassID		CFSTR( "com.apple.HIWebFrameView" )
 
-static HIWebView*		HIWebViewConstructor( HIViewRef inView );
-static void				HIWebViewDestructor( HIWebView* view );
-static void				HIWebViewRegisterClass( void );
+static HIWebFrameView*		HIWebFrameViewConstructor( HIViewRef inView );
+static void				HIWebFrameViewDestructor( HIWebFrameView* view );
+static void				HIWebFrameViewRegisterClass( void );
 
-static OSStatus			HIWebViewEventHandler(
+static OSStatus			HIWebFrameViewEventHandler(
 								EventHandlerCallRef	inCallRef,
 								EventRef			inEvent,
 								void *				inUserData );
 
 static UInt32			GetBehaviors();
 static ControlKind		GetKind();
-static void				Draw( HIWebView* inView, RgnHandle limitRgn, CGContextRef inContext );
-static ControlPartCode	HitTest( HIWebView* view, const HIPoint* where );
-static OSStatus			GetRegion( HIWebView* view, ControlPartCode inPart, RgnHandle outRgn );
+static void				Draw( HIWebFrameView* inView, RgnHandle limitRgn, CGContextRef inContext );
+static ControlPartCode	HitTest( HIWebFrameView* view, const HIPoint* where );
+static OSStatus			GetRegion( HIWebFrameView* view, ControlPartCode inPart, RgnHandle outRgn );
 static void				BoundsChanged(
-								HIWebView*			inView,
+								HIWebFrameView*			inView,
 								UInt32				inOptions,
 								const HIRect*		inOriginalBounds,
 								const HIRect*		inCurrentBounds );
 static void				OwningWindowChanged(
-								HIWebView*			view,
+								HIWebFrameView*			view,
 								WindowRef			oldWindow,
 								WindowRef			newWindow );
-static void				ActiveStateChanged( HIWebView* view );
+static void				ActiveStateChanged( HIWebFrameView* view );
 
-static OSStatus			Click( HIWebView* inView, EventRef inEvent );
-static OSStatus			ContextMenuClick( HIWebView* inView, EventRef inEvent );
-static OSStatus			MouseUp( HIWebView* inView, EventRef inEvent );
-static OSStatus			MouseMoved( HIWebView* inView, EventRef inEvent );
-static OSStatus			MouseDragged( HIWebView* inView, EventRef inEvent );
-static OSStatus			MouseWheelMoved( HIWebView* inView, EventRef inEvent );
+static OSStatus			Click( HIWebFrameView* inView, EventRef inEvent );
+static OSStatus			ContextMenuClick( HIWebFrameView* inView, EventRef inEvent );
+static OSStatus			MouseUp( HIWebFrameView* inView, EventRef inEvent );
+static OSStatus			MouseMoved( HIWebFrameView* inView, EventRef inEvent );
+static OSStatus			MouseDragged( HIWebFrameView* inView, EventRef inEvent );
+static OSStatus			MouseWheelMoved( HIWebFrameView* inView, EventRef inEvent );
 
-static OSStatus			ProcessCommand( HIWebView* inView, const HICommand* inCommand );
-static OSStatus			UpdateCommandStatus( HIWebView* inView, const HICommand* inCommand );
+static OSStatus			ProcessCommand( HIWebFrameView* inView, const HICommand* inCommand );
+static OSStatus			UpdateCommandStatus( HIWebFrameView* inView, const HICommand* inCommand );
 
 static OSStatus			SetFocusPart(
-								HIWebView*				view,
+								HIWebFrameView*				view,
 								ControlPartCode 		desiredFocus,
 								RgnHandle 				invalidRgn,
 								Boolean 				focusEverything,
 								ControlPartCode* 		actualFocus );
-static NSView*			AdvanceFocus( HIWebView* view, bool forward );
-static void				RelinquishFocus( HIWebView* view, bool inAutodisplay );
+static NSView*			AdvanceFocus( HIWebFrameView* view, bool forward );
+static void				RelinquishFocus( HIWebFrameView* view, bool inAutodisplay );
 
-static WindowRef		GetWindowRef( HIWebView* inView );
-static void				SyncFrame( HIWebView* inView );
+static WindowRef		GetWindowRef( HIWebFrameView* inView );
+static void				SyncFrame( HIWebFrameView* inView );
 
 static OSStatus			WindowCloseHandler( EventHandlerCallRef inCallRef, EventRef inEvent, void* inUserData );
 
 //----------------------------------------------------------------------------------
-// HIWebViewCreate
+// HIWebFrameViewCreate
 //----------------------------------------------------------------------------------
 //
 OSStatus
-HIWebViewCreate( HIViewRef* outControl )
+HIWebFrameViewCreate( HIViewRef* outControl )
 {
 	OSStatus			err;
     
-	HIWebViewRegisterClass();
+	HIWebFrameViewRegisterClass();
 
-	err = HIObjectCreate( kHIWebViewClassID, NULL, (HIObjectRef*)outControl );
+	err = HIObjectCreate( kHIWebFrameViewClassID, NULL, (HIObjectRef*)outControl );
 
 	return err;
 }
 
 //----------------------------------------------------------------------------------
-// HIWebViewGetNSView
+// HIWebFrameViewGetNSView
 //----------------------------------------------------------------------------------
 //
 NSView*
-HIWebViewGetNSView( HIViewRef inView )
+HIWebFrameViewGetNSView( HIViewRef inView )
 {
-	HIWebView* 	view = (HIWebView*)HIObjectDynamicCast( (HIObjectRef)inView, kHIWebViewClassID );
+	HIWebFrameView* 	view = (HIWebFrameView*)HIObjectDynamicCast( (HIObjectRef)inView, kHIWebFrameViewClassID );
 	NSView*		result = NULL;
 	
 	if ( view )
-		result = view->fWebView;
+		result = view->fWebFrameView;
 	
 	return result;
 }
 
 //----------------------------------------------------------------------------------
-// HIWebViewGetController
+// HIWebFrameViewGetController
 //----------------------------------------------------------------------------------
 //
 WebController*
-HIWebViewGetController( HIViewRef inControl )
+HIWebFrameViewGetController( HIViewRef inControl )
 {
-	HIWebView* 			view = (HIWebView*)HIObjectDynamicCast( (HIObjectRef)inControl, kHIWebViewClassID );
+	HIWebFrameView* 			view = (HIWebFrameView*)HIObjectDynamicCast( (HIObjectRef)inControl, kHIWebFrameViewClassID );
 	WebController*		result = NULL;
 	
 	if ( view )
-		result = [[view->fWebView webFrame] controller];
+		result = [[view->fWebFrameView webFrame] controller];
 	
 	return result;
 }
@@ -235,23 +235,23 @@ HIWebViewGetController( HIViewRef inControl )
 extern WebController*
 WebControllerCreateWithHIView( HIViewRef inView, CFStringRef inName )
 {
-	NSView*			view = HIWebViewGetNSView( inView );
+	NSView*			view = HIWebFrameViewGetNSView( inView );
 	WebController*	result = NULL;
 	
 	if ( view )
-		result = [[WebController alloc] initWithView: (WebView*)view frameName:nil setName:(NSString*)inName];
+		result = [[WebController alloc] initWithView: (WebFrameView*)view frameName:nil groupName:(NSString*)inName];
 
 	return result;
 }
 
 //----------------------------------------------------------------------------------
-// HIWebViewConstructor
+// HIWebFrameViewConstructor
 //----------------------------------------------------------------------------------
 //
-static HIWebView*
-HIWebViewConstructor( HIViewRef inView )
+static HIWebFrameView*
+HIWebFrameViewConstructor( HIViewRef inView )
 {
-	HIWebView*		view = (HIWebView*)malloc( sizeof( HIWebView ) );
+	HIWebFrameView*		view = (HIWebFrameView*)malloc( sizeof( HIWebFrameView ) );
 	
 	if ( view )
 	{
@@ -259,8 +259,8 @@ HIWebViewConstructor( HIViewRef inView )
 	
 		view->fViewRef = inView;
 
-		view->fWebView = [[WebView alloc] initWithFrame: frame];
-		[HIViewAdapter bindHIViewToNSView:inView nsView:view->fWebView];
+		view->fWebFrameView = [[WebFrameView alloc] initWithFrame: frame];
+		[HIViewAdapter bindHIViewToNSView:inView nsView:view->fWebFrameView];
 		
 		view->fFirstResponder = NULL;
 		view->fKitWindow = NULL;
@@ -270,30 +270,30 @@ HIWebViewConstructor( HIViewRef inView )
 }
 
 //----------------------------------------------------------------------------------
-// HIWebViewDestructor
+// HIWebFrameViewDestructor
 //----------------------------------------------------------------------------------
 //
 static void
-HIWebViewDestructor( HIWebView* inView )
+HIWebFrameViewDestructor( HIWebFrameView* inView )
 {
-	[HIViewAdapter unbindNSView:inView->fWebView];
-	[inView->fWebView release];
+	[HIViewAdapter unbindNSView:inView->fWebFrameView];
+	[inView->fWebFrameView release];
 	
 	free( inView );
 }
 
 //----------------------------------------------------------------------------------
-// HIWebViewRegisterClass
+// HIWebFrameViewRegisterClass
 //----------------------------------------------------------------------------------
 //
 static void
-HIWebViewRegisterClass()
+HIWebFrameViewRegisterClass()
 {
 	static bool sRegistered;
 	
 	if ( !sRegistered )
 	{
-		HIObjectRegisterSubclass( kHIWebViewClassID, kHIViewBaseClassID, 0, HIWebViewEventHandler,
+		HIObjectRegisterSubclass( kHIWebFrameViewClassID, kHIViewBaseClassID, 0, HIWebFrameViewEventHandler,
 			GetEventTypeCount( kEvents ), kEvents, 0, NULL );
 		sRegistered = true;
 	}
@@ -314,7 +314,7 @@ GetBehaviors()
 //----------------------------------------------------------------------------------
 //
 static void
-Draw( HIWebView* inView, RgnHandle limitRgn, CGContextRef inContext )
+Draw( HIWebFrameView* inView, RgnHandle limitRgn, CGContextRef inContext )
 {
 	HIRect		bounds;
 	CGContextRef		temp;
@@ -336,7 +336,7 @@ Draw( HIWebView* inView, RgnHandle limitRgn, CGContextRef inContext )
 	hiRect.size.width = drawRect.right - drawRect.left;
 	hiRect.size.height = drawRect.bottom - drawRect.top;
 
-	[inView->fWebView displayIfNeededInRect: *(NSRect*)&hiRect];
+	[inView->fWebFrameView displayIfNeededInRect: *(NSRect*)&hiRect];
 
 	[[inView->fKitWindow _threadContext] setCGContext: temp];
 
@@ -348,7 +348,7 @@ Draw( HIWebView* inView, RgnHandle limitRgn, CGContextRef inContext )
 //----------------------------------------------------------------------------------
 //
 static ControlPartCode
-HitTest( HIWebView* view, const HIPoint* where )
+HitTest( HIWebFrameView* view, const HIPoint* where )
 {
 	HIRect		bounds;
 	
@@ -366,7 +366,7 @@ HitTest( HIWebView* view, const HIPoint* where )
 //
 static OSStatus
 GetRegion(
-	HIWebView*			inView,
+	HIWebFrameView*			inView,
 	ControlPartCode		inPart,
 	RgnHandle			outRgn )
 {
@@ -374,7 +374,7 @@ GetRegion(
 	
 	if ( inPart == -3 ) // kControlOpaqueMetaPart:
 	{
-		if ( [inView->fWebView isOpaque] )
+		if ( [inView->fWebFrameView isOpaque] )
 		{
 			HIRect	bounds;
 			Rect	temp;
@@ -399,7 +399,7 @@ GetRegion(
 //----------------------------------------------------------------------------------
 //
 static WindowRef
-GetWindowRef( HIWebView* inView )
+GetWindowRef( HIWebFrameView* inView )
 {
 	return GetControlOwner( inView->fViewRef );
 }
@@ -409,7 +409,7 @@ GetWindowRef( HIWebView* inView )
 //----------------------------------------------------------------------------------
 //
 static OSStatus
-Click( HIWebView* inView, EventRef inEvent )
+Click( HIWebFrameView* inView, EventRef inEvent )
 {
 	CGSEventRecord			eventRec;
 	NSEvent*				kitEvent;
@@ -468,7 +468,7 @@ CantAllocNewEvent:
 //----------------------------------------------------------------------------------
 //
 static OSStatus
-MouseUp( HIWebView* inView, EventRef inEvent )
+MouseUp( HIWebFrameView* inView, EventRef inEvent )
 {
 	CGSEventRecord			eventRec;
 	NSEvent*				kitEvent;
@@ -494,7 +494,7 @@ MouseUp( HIWebView* inView, EventRef inEvent )
 //----------------------------------------------------------------------------------
 //
 static OSStatus
-MouseMoved( HIWebView* inView, EventRef inEvent )
+MouseMoved( HIWebFrameView* inView, EventRef inEvent )
 {
 	CGSEventRecord			eventRec;
 	NSEvent*				kitEvent;
@@ -519,7 +519,7 @@ MouseMoved( HIWebView* inView, EventRef inEvent )
 //----------------------------------------------------------------------------------
 //
 static OSStatus
-MouseDragged( HIWebView* inView, EventRef inEvent )
+MouseDragged( HIWebFrameView* inView, EventRef inEvent )
 {
 	CGSEventRecord			eventRec;
 	NSEvent*				kitEvent;
@@ -544,7 +544,7 @@ MouseDragged( HIWebView* inView, EventRef inEvent )
 //----------------------------------------------------------------------------------
 //
 static OSStatus
-MouseWheelMoved( HIWebView* inView, EventRef inEvent )
+MouseWheelMoved( HIWebFrameView* inView, EventRef inEvent )
 {
 	CGSEventRecord			eventRec;
 	NSEvent*				kitEvent;
@@ -569,7 +569,7 @@ MouseWheelMoved( HIWebView* inView, EventRef inEvent )
 //----------------------------------------------------------------------------------
 //
 static OSStatus
-ContextMenuClick( HIWebView* inView, EventRef inEvent )
+ContextMenuClick( HIWebFrameView* inView, EventRef inEvent )
 {
 	CGSEventRecord			eventRec;
 	NSEvent*				kitEvent;
@@ -616,12 +616,12 @@ GetKind()
 //
 static void
 BoundsChanged(
-	HIWebView*			inView,
+	HIWebFrameView*			inView,
 	UInt32				inOptions,
 	const HIRect*		inOriginalBounds,
 	const HIRect*		inCurrentBounds )
 {
-	if ( inView->fWebView )
+	if ( inView->fWebFrameView )
 	{
 		SyncFrame( inView );
 	}
@@ -633,7 +633,7 @@ BoundsChanged(
 //
 static void
 OwningWindowChanged(
-	HIWebView*			view,
+	HIWebFrameView*			view,
 	WindowRef			oldWindow,
 	WindowRef			newWindow )
 {
@@ -650,7 +650,7 @@ OwningWindowChanged(
 			InstallWindowEventHandler( newWindow, WindowCloseHandler, GetEventTypeCount( kWindowEvents ), kWindowEvents, newWindow, NULL );
 		}
 		
-		[[view->fKitWindow contentView] addSubview:view->fWebView];
+		[[view->fKitWindow contentView] addSubview:view->fWebFrameView];
 		SyncFrame( view );
 	}
 }
@@ -682,7 +682,7 @@ WindowCloseHandler( EventHandlerCallRef inCallRef, EventRef inEvent, void* inUse
 //----------------------------------------------------------------------------------
 //
 static void
-SyncFrame( HIWebView* inView )
+SyncFrame( HIWebFrameView* inView )
 {
 	HIViewRef	parent = HIViewGetSuperview( inView->fViewRef );
 	
@@ -698,8 +698,8 @@ SyncFrame( HIWebView* inView )
 		origin.x = frame.origin.x;
 		origin.y = parentBounds.size.height - CGRectGetMaxY( frame );
 
-		[inView->fWebView setFrameOrigin: origin];
-		[inView->fWebView setFrameSize: *(NSSize*)&frame.size];
+		[inView->fWebFrameView setFrameOrigin: origin];
+		[inView->fWebFrameView setFrameSize: *(NSSize*)&frame.size];
 	}
 }
 
@@ -709,7 +709,7 @@ SyncFrame( HIWebView* inView )
 //
 static OSStatus
 SetFocusPart(
-	HIWebView*				view,
+	HIWebFrameView*				view,
 	ControlPartCode 		desiredFocus,
 	RgnHandle 				invalidRgn,
 	Boolean 				focusEverything,
@@ -757,7 +757,7 @@ SetFocusPart(
 //----------------------------------------------------------------------------------
 //
 static NSView*
-AdvanceFocus( HIWebView* view, bool forward )
+AdvanceFocus( HIWebFrameView* view, bool forward )
 {
     NSResponder*		oldFirstResponder;
     NSView*				currentKeyView;
@@ -783,7 +783,7 @@ AdvanceFocus( HIWebView* view, bool forward )
 
         // Some view in this window already has the keyboard focus.  It better at least be a subview of this one.
         NSView*	oldFirstResponderView = (NSView *)oldFirstResponder;
-        check( [oldFirstResponderView isDescendantOf:view->fWebView] );
+        check( [oldFirstResponderView isDescendantOf:view->fWebFrameView] );
 
 		if ( oldFirstResponderView != view->fFirstResponder
 			&& ![oldFirstResponderView isDescendantOf:view->fFirstResponder] )
@@ -799,7 +799,7 @@ AdvanceFocus( HIWebView* view, bool forward )
 			NSView *viewBeingTested;
 			currentKeyView = oldFirstResponderView;
 			viewBeingTested = currentKeyView;
-			while ( viewBeingTested != view->fWebView )
+			while ( viewBeingTested != view->fWebFrameView )
 			{
 				if ( [viewBeingTested isKindOfClass:[NSTextField class]] )
 				{
@@ -831,7 +831,7 @@ AdvanceFocus( HIWebView* view, bool forward )
 		// Stuff like this would break.  M.P. Notice - 12/2/00
 
         tentativeNewKeyView = forward ? [currentKeyView nextValidKeyView] : [currentKeyView previousValidKeyView];
-        if ( tentativeNewKeyView && [tentativeNewKeyView isDescendantOf:view->fWebView] )
+        if ( tentativeNewKeyView && [tentativeNewKeyView isDescendantOf:view->fWebFrameView] )
 		{
             // The user has tabbed to another subview of this control view.  Change the keyboard focus.
             //NSLog(@"Tabbed to the next or previous key view.");
@@ -857,11 +857,11 @@ AdvanceFocus( HIWebView* view, bool forward )
 
 		NSView *tentativeNewKeyView;
 		check(oldFirstResponder==fKitWindow);
-		if ( [view->fWebView acceptsFirstResponder] )
-			tentativeNewKeyView = view->fWebView;
+		if ( [view->fWebFrameView acceptsFirstResponder] )
+			tentativeNewKeyView = view->fWebFrameView;
 		else
-			tentativeNewKeyView = [view->fWebView nextValidKeyView];
-        if ( tentativeNewKeyView && [tentativeNewKeyView isDescendantOf:view->fWebView] )
+			tentativeNewKeyView = [view->fWebFrameView nextValidKeyView];
+        if ( tentativeNewKeyView && [tentativeNewKeyView isDescendantOf:view->fWebFrameView] )
 		{
             // This control view has at least one subview that can take the keyboard focus.
             if ( !forward )
@@ -873,7 +873,7 @@ AdvanceFocus( HIWebView* view, bool forward )
                 NSView *firstTentativeNewKeyView = tentativeNewKeyView;
                 NSView *nextTentativeNewKeyView = [tentativeNewKeyView nextValidKeyView];
                 while ( nextTentativeNewKeyView 
-						&& [nextTentativeNewKeyView isDescendantOf:view->fWebView] 
+						&& [nextTentativeNewKeyView isDescendantOf:view->fWebFrameView] 
 						&& nextTentativeNewKeyView!=firstTentativeNewKeyView)
 				{
                     tentativeNewKeyView = nextTentativeNewKeyView;
@@ -905,7 +905,7 @@ AdvanceFocus( HIWebView* view, bool forward )
 //----------------------------------------------------------------------------------
 //
 static void
-RelinquishFocus( HIWebView* view, bool inAutodisplay )
+RelinquishFocus( HIWebFrameView* view, bool inAutodisplay )
 {
     NSResponder*  firstResponder;
 
@@ -916,7 +916,7 @@ RelinquishFocus( HIWebView* view, bool inAutodisplay )
 	if ( [firstResponder isKindOfClass:[NSView class]] )
 	{
 		// Some subview of this control view really is the first responder right now.
-		check( [(NSView *)firstResponder isDescendantOf:view->fWebView] );
+		check( [(NSView *)firstResponder isDescendantOf:view->fWebFrameView] );
 
 		// Make the window the first responder, so that no view is the key view.
         [view->fKitWindow makeFirstResponder:view->fKitWindow];
@@ -930,7 +930,7 @@ RelinquishFocus( HIWebView* view, bool inAutodisplay )
 		//	is doing when invoked indirectly from -makeFirstResponder up above.  M.P. Notice - 12/4/00
 
 		if ( !inAutodisplay )
-			[[view->fWebView opaqueAncestor] _clearDirtyRectsForTree];
+			[[view->fWebFrameView opaqueAncestor] _clearDirtyRectsForTree];
     }
 	else
 	{
@@ -950,11 +950,11 @@ RelinquishFocus( HIWebView* view, bool inAutodisplay )
 //----------------------------------------------------------------------------------
 //
 static void
-ActiveStateChanged( HIWebView* view )
+ActiveStateChanged( HIWebFrameView* view )
 {
-	if ( [view->fWebView respondsToSelector:@selector(setEnabled)] )
+	if ( [view->fWebFrameView respondsToSelector:@selector(setEnabled)] )
 	{
-		[(NSControl*)view->fWebView setEnabled: IsControlEnabled( view->fViewRef )];
+		[(NSControl*)view->fWebFrameView setEnabled: IsControlEnabled( view->fViewRef )];
 		HIViewSetNeedsDisplay( view->fViewRef, true );
 	}
 }
@@ -965,7 +965,7 @@ ActiveStateChanged( HIWebView* view )
 //----------------------------------------------------------------------------------
 //
 static OSStatus
-ProcessCommand( HIWebView* inView, const HICommand* inCommand )
+ProcessCommand( HIWebFrameView* inView, const HICommand* inCommand )
 {
 	OSStatus		result = eventNotHandledErr;
 	NSResponder*	resp;
@@ -976,8 +976,8 @@ ProcessCommand( HIWebView* inView, const HICommand* inCommand )
 	{
 		NSView*	respView = (NSView*)resp;
 
-		if ( respView == inView->fWebView
-			|| [respView isDescendantOf: inView->fWebView] )
+		if ( respView == inView->fWebFrameView
+			|| [respView isDescendantOf: inView->fWebFrameView] )
 		{
 			switch ( inCommand->commandID )
 			{
@@ -1007,7 +1007,7 @@ ProcessCommand( HIWebView* inView, const HICommand* inCommand )
 //----------------------------------------------------------------------------------
 //
 static OSStatus
-UpdateCommandStatus( HIWebView* inView, const HICommand* inCommand )
+UpdateCommandStatus( HIWebFrameView* inView, const HICommand* inCommand )
 {
 	OSStatus		result = eventNotHandledErr;
 	MenuItemProxy* 	proxy = NULL;
@@ -1019,8 +1019,8 @@ UpdateCommandStatus( HIWebView* inView, const HICommand* inCommand )
 	{
 		NSView*	respView = (NSView*)resp;
 
-		if ( respView == inView->fWebView
-			|| [respView isDescendantOf: inView->fWebView] )
+		if ( respView == inView->fWebFrameView
+			|| [respView isDescendantOf: inView->fWebFrameView] )
 		{
 			if ( inCommand->attributes & kHICommandFromMenu )
 			{
@@ -1076,13 +1076,13 @@ _NSSelectorForHICommand( const HICommand* inCommand )
 
 
 //-----------------------------------------------------------------------------------
-//	HIWebViewEventHandler
+//	HIWebFrameViewEventHandler
 //-----------------------------------------------------------------------------------
 //	Our object's virtual event handler method. I'm not sure if we need this these days.
 //	We used to do various things with it, but those days are long gone...
 //
 static OSStatus
-HIWebViewEventHandler(
+HIWebFrameViewEventHandler(
 	EventHandlerCallRef	inCallRef,
 	EventRef			inEvent,
 	void *				inUserData )
@@ -1095,7 +1095,7 @@ HIWebViewEventHandler(
 	UInt32				features;
 	RgnHandle			region = NULL;
 	ControlPartCode		part;
-	HIWebView*			view = (HIWebView*)inUserData;
+	HIWebFrameView*			view = (HIWebFrameView*)inUserData;
 
 	switch ( GetEventClass( inEvent ) )
 	{
@@ -1116,7 +1116,7 @@ HIWebViewEventHandler(
 						// replace the instance parameter data with said instance
 						// as type void.
 
-						view = HIWebViewConstructor( (HIViewRef)object );
+						view = HIWebFrameViewConstructor( (HIViewRef)object );
 
 						if ( view )
 						{
@@ -1127,7 +1127,7 @@ HIWebViewEventHandler(
 					break;
 				
 				case kEventHIObjectDestruct:
-					HIWebViewDestructor( view );
+					HIWebFrameViewDestructor( view );
 					// result is unimportant
 					break;
 			}

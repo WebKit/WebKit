@@ -1,9 +1,5 @@
-/*	WebViewPrivate.h
+/*	WebFrameViewPrivate.h
 	Copyright 2001, Apple, Inc. All rights reserved.
-        
-        Private header file.  This file may reference classes (both ObjectiveC and C++)
-        in WebCore.  Instances of this class are referenced by _private in 
-        NSWebPageView.
 */
 
 #import <WebKit/WebView.h>
@@ -11,7 +7,7 @@
 @class WebDynamicScrollBarsView;
 @class WebController;
 
-@interface WebViewPrivate : NSObject
+@interface WebFrameViewPrivate : NSObject
 {
 @public
     WebController *controller;
@@ -28,7 +24,7 @@
 
 @end
 
-@interface WebView (WebPrivate)
+@interface WebFrameView (WebPrivate)
 - (WebController *)_controller;
 - (void)_setDocumentView:(NSView <WebDocumentView> *)view;
 - (NSView <WebDocumentView> *)_makeDocumentViewForDataSource:(WebDataSource *)dataSource;

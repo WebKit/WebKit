@@ -20,7 +20,7 @@
 - (void)receivedData:(NSData *)data withDataSource:(WebDataSource *)ds
 {
     if(!instance){
-        NSView *view = [[[ds webFrame] webView] documentView];
+        NSView *view = [[[ds webFrame] view] documentView];
         if([view isKindOfClass:[WebNetscapePluginDocumentView class]]){
             [self setPluginPointer:[(WebNetscapePluginDocumentView *)view pluginPointer]];
             [self setResponse:[ds response]];

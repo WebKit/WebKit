@@ -701,8 +701,8 @@ NSView *KWQKHTMLPart::nextKeyView(NodeImpl *node, KWQSelectionDirection directio
 
     // Look at views from the top level part up, looking for a next key view that we can use.
     next = direction == KWQSelectingNext
-        ? [_bridge nextKeyViewOutsideWebViews]
-        : [_bridge previousKeyViewOutsideWebViews];
+        ? [_bridge nextKeyViewOutsideWebFrameViews]
+        : [_bridge previousKeyViewOutsideWebFrameViews];
     if (next) {
         return next;
     }

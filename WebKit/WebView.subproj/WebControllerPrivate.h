@@ -71,7 +71,7 @@ enum { NumUserAgentStringTypes = WinIE + 1 };
      @param aView The view to match against each frame.
      @result The frame that has the associated view.
      */
-- (WebFrame *)_frameForView: (WebView *)aView;
+- (WebFrame *)_frameForView: (WebFrameView *)aView;
 
 
 - (WebFrame *)_createFrameNamed:(NSString *)name inParent:(WebFrame *)parent allowsScrolling:(BOOL)allowsScrolling;

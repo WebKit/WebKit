@@ -605,8 +605,8 @@
            source:(id)source
         slideBack:(BOOL)slideBack
 {    
-    // Don't allow drags to be accepted by this WebView.
-    [[self _web_parentWebView] unregisterDraggedTypes];
+    // Don't allow drags to be accepted by this WebFrameView.
+    [[self _web_parentWebFrameView] unregisterDraggedTypes];
     
     // Retain this view during the drag because it may be released before the drag ends.
     [self retain];
@@ -643,7 +643,7 @@
     [self mouseUp:fakeEvent];	    // This will also update the mouseover state.
 
     // Reregister for drag types because they were unregistered before the drag.
-    [[self _web_parentWebView] _reregisterDraggedTypes];
+    [[self _web_parentWebFrameView] _reregisterDraggedTypes];
     
     // Balance the previous retain from when the drag started.
     [self release];
@@ -719,10 +719,10 @@
     case NSDirectSelection:
         break;
     case NSSelectingNext:
-        view = [[self _bridge] nextKeyViewInsideWebViews];
+        view = [[self _bridge] nextKeyViewInsideWebFrameViews];
         break;
     case NSSelectingPrevious:
-        view = [[self _bridge] previousKeyViewInsideWebViews];
+        view = [[self _bridge] previousKeyViewInsideWebFrameViews];
         break;
     }
     if (view) {

@@ -33,9 +33,9 @@
         NSScrollView *scrollView = (NSScrollView *)view;
         view = [scrollView superview];
     }
-    if ([view isKindOfClass:[WebView class]]) {
-        WebView *webView = (WebView *)view;
-        WebRenderNode *node = [[WebRenderNode alloc] initWithWebView:webView];
+    if ([view isKindOfClass:[WebFrameView class]]) {
+        WebFrameView *webFrameView = (WebFrameView *)view;
+        WebRenderNode *node = [[WebRenderNode alloc] initWithWebFrameView:webFrameView];
         [collectChildren addObject:node];
         [node release];
     }
@@ -46,7 +46,7 @@
     return self;
 }
 
-- initWithWebView:(WebView *)view
+- initWithWebFrameView:(WebFrameView *)view
 {
     WebKitRenderTreeCopier *copier;
     

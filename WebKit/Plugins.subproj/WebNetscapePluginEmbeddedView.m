@@ -60,8 +60,8 @@
 
 - (WebDataSource *)dataSource
 {
-    WebView *webView = (WebView *)[self _web_superviewOfClass:[WebView class]];
-    WebFrame *webFrame = [webView webFrame];
+    WebFrameView *webFrameView = (WebFrameView *)[self _web_superviewOfClass:[WebFrameView class]];
+    WebFrame *webFrame = [webFrameView webFrame];
 
     return [webFrame dataSource];
 }

@@ -174,7 +174,7 @@ static NSArray *pluginLocations(void)
     plugins = [pluginArray copy];
 
     // Register plug-in WebDocumentViews and WebDocumentRepresentations
-    NSArray *viewTypes = [[WebView _viewTypes] allKeys];
+    NSArray *viewTypes = [[WebFrameView _viewTypes] allKeys];
     NSArray *mimes = [self MIMETypes];
     NSString *mime;
     

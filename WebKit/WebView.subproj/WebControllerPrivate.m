@@ -54,7 +54,7 @@
     int i, count;
         
     [[aFrame dataSource] _setController: nil];
-    [[aFrame webView] _setController: nil];
+    [[aFrame view] _setController: nil];
     [aFrame _setController: nil];
 
     // Walk the frame tree, niling the controller.
@@ -96,12 +96,12 @@
 
 - (WebFrame *)_createFrameNamed:(NSString *)fname inParent:(WebFrame *)parent allowsScrolling:(BOOL)allowsScrolling
 {
-    WebView *childView = [[WebView alloc] initWithFrame:NSMakeRect(0,0,0,0)];
+    WebFrameView *childView = [[WebFrameView alloc] initWithFrame:NSMakeRect(0,0,0,0)];
 
     [childView _setController:self];
     [childView setAllowsScrolling:allowsScrolling];
     
-    WebFrame *newFrame = [[WebFrame alloc] initWithName:fname webView:childView controller:self];
+    WebFrame *newFrame = [[WebFrame alloc] initWithName:fname webFrameView:childView controller:self];
 
     [childView release];
 
@@ -467,13 +467,13 @@
 }
 
 
-- (WebFrame *)_frameForView: (WebView *)aView fromFrame: (WebFrame *)frame
+- (WebFrame *)_frameForView: (WebFrameView *)aView fromFrame: (WebFrame *)frame
 {
     NSArray *frames;
     int i, count;
     WebFrame *result, *aFrame;
 
-    if ([frame webView] == aView)
+    if ([frame view] == aView)
         return frame;
 
     frames = [frame children];
@@ -488,7 +488,7 @@
     return nil;
 }
 
-- (WebFrame *)_frameForView: (WebView *)aView
+- (WebFrame *)_frameForView: (WebFrameView *)aView
 {
     WebFrame *frame = [self mainFrame];
 

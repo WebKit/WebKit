@@ -1,4 +1,4 @@
-/*	WebView.m
+/*	WebFrameView.m
 	Copyright 2001, 2002, Apple Computer, Inc. All rights reserved.
 */
 
@@ -34,7 +34,7 @@ enum {
     SpaceKey = 0x0020
 };
 
-@implementation WebView
+@implementation WebFrameView
 
 - initWithFrame: (NSRect) frame
 {
@@ -45,7 +45,7 @@ enum {
     [WebImageRendererFactory createSharedFactory];
     [WebCookieAdapter createSharedAdapter];
     
-    _private = [[WebViewPrivate alloc] init];
+    _private = [[WebFrameViewPrivate alloc] init];
 
     WebDynamicScrollBarsView *scrollView  = [[WebDynamicScrollBarsView alloc] initWithFrame: NSMakeRect(0,0,frame.size.width,frame.size.height)];
     _private->frameScrollView = scrollView;
@@ -58,14 +58,14 @@ enum {
 
     [self _reregisterDraggedTypes];
     
-    ++WebViewCount;
+    ++WebFrameViewCount;
     
     return self;
 }
 
 - (void)dealloc 
 {
-    --WebViewCount;
+    --WebFrameViewCount;
     
     [_private release];
     

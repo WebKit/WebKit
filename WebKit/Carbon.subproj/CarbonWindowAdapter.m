@@ -98,7 +98,7 @@ extern const OSType NSAppKitPropertyCreator;
 extern const OSType NSViewCarbonControlViewPropertyTag;
 extern const OSType NSCarbonWindowPropertyTag;
 
-@interface NSWindow(HIWebView)
+@interface NSWindow(HIWebFrameView)
 - _initContent:(const NSRect *)contentRect styleMask:(unsigned int)aStyle backing:(NSBackingStoreType)bufferingType defer:(BOOL)flag contentView:aView;
 - (void)_oldPlaceWindow:(NSRect)frameRect;
 - (void)_windowMovedToRect:(NSRect)actualFrame;
@@ -108,7 +108,7 @@ extern const OSType NSCarbonWindowPropertyTag;
 - (void)_setVisible:(BOOL)flag;
 @end
 
-@interface NSApplication(HIWebView)
+@interface NSApplication(HIWebFrameView)
 - (void)setIsActive:(BOOL)aFlag;
 - (id)_setMouseActivationInProgress:(BOOL)flag;
 @end

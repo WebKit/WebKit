@@ -100,7 +100,7 @@
 
 - (void)layout
 {
-    NSRect superFrame = [[self _web_superviewOfClass:[WebView class]] frame];
+    NSRect superFrame = [[self _web_superviewOfClass:[WebFrameView class]] frame];
 
     [self setFrame:NSMakeRect(0, 0, superFrame.size.width, superFrame.size.height)];
     [self setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];

@@ -26,7 +26,7 @@
     return self;
 }
 
-- initWithWebView:(WebView *)view
+- initWithWebFrameView:(WebFrameView *)view
 {
     WebKitDOMTreeCopier *copier;
     

@@ -12,13 +12,13 @@
 @class WebDataSource;
 @class WebError;
 @class WebFramePrivate;
-@class WebView;
+@class WebFrameView;
 @class WebRequest;
 
 /*!
     @class WebFrame
     @discussion Every web page is represented by at least one WebFrame.  A WebFrame
-    has a WebView and a WebDataSource.
+    has a WebFrameView and a WebDataSource.
 */
 @interface WebFrame : NSObject
 {
@@ -27,14 +27,14 @@
 }
 
 /*!
-    @method initWithName:webView:controller:
+    @method initWithName:webFrameView:controller:
     @abstract The designated initializer of WebFrame.
     @param name The name of the frame.
     @param view The view for the frame.
     @param controller The controller that manages the frame.
     @result Returns an initialized WebFrame.
 */
-- (id)initWithName: (NSString *)name webView: (WebView *)view controller: (WebController *)controller;
+- (id)initWithName: (NSString *)name webFrameView: (WebFrameView *)view controller: (WebController *)controller;
 
 /*!
     @method name
@@ -49,10 +49,10 @@
 - (WebController *)controller;
 
 /*!
-    @method webView
-    @result The WebView for this frame.
+    @method webFrameView
+    @result The WebFrameView for this frame.
 */
-- (WebView *)webView;
+- (WebFrameView *)view;
 
 /*!
     @method loadRequest:

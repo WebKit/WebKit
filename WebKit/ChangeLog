@@ -1,3 +1,148 @@
+2003-03-13  Richard Williamson   <rjw@apple.com>
+
+        First stage of the WebController -> WebView, WebView -> WebFrameView.
+        This change does the WebView -> WebFrameView part of the change.  Also
+        changes WebController's inheritance.  It now inherits from NSView.  Also
+        added some simple action methods to WebController (soon to be WebView)
+        to facilitate IB hookup.
+        
+        Reviewed by Maciej.
+
+        * Carbon.subproj/CarbonWindowAdapter.m:
+        * Carbon.subproj/HIWebView.h:
+        * Carbon.subproj/HIWebView.m:
+        (if):
+        (switch):
+        * Carbon.subproj/HIWebViewPriv.h:
+        * Misc.subproj/WebKitStatistics.m:
+        (+[WebKitStatistics viewCount]):
+        * Misc.subproj/WebKitStatisticsPrivate.h:
+        * Misc.subproj/WebNSViewExtras.h:
+        * Misc.subproj/WebNSViewExtras.m:
+        (-[NSView _web_parentWebFrameView]):
+        * Panels.subproj/WebStandardPanels.m:
+        (-[WebStandardPanels frontmostWindowLoadingURL:]):
+        * Plugins.subproj/WebNetscapePluginDocumentView.m:
+        (-[WebNetscapePluginDocumentView layout]):
+        * Plugins.subproj/WebNetscapePluginEmbeddedView.m:
+        (-[WebNetscapePluginEmbeddedView dataSource]):
+        * Plugins.subproj/WebNetscapePluginRepresentation.m:
+        (-[WebNetscapePluginRepresentation receivedData:withDataSource:]):
+        * Plugins.subproj/WebNullPluginView.m:
+        (-[WebNullPluginView viewDidMoveToWindow]):
+        * Plugins.subproj/WebPluginDatabase.m:
+        (-[WebPluginDatabase init]):
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge areScrollbarsVisible]):
+        (-[WebBridge setScrollbarsVisible:]):
+        (-[WebBridge window]):
+        (-[WebBridge createChildFrameNamed:withURL:renderPart:allowsScrolling:marginWidth:marginHeight:]):
+        (-[WebBridge nextKeyViewOutsideWebFrameViews]):
+        (-[WebBridge previousKeyViewOutsideWebFrameViews]):
+        (-[WebBridge setNeedsReapplyStyles]):
+        (-[WebBridge setNeedsLayout]):
+        (-[WebBridge pluginViewWithPackage:attributes:baseURL:]):
+        (-[WebBridge frameRequiredForMIMEType:]):
+        (-[WebBridge handleMouseDragged:]):
+        (-[WebBridge mayStartDragWithMouseDragged:]):
+        * WebKit.exp:
+        * WebKit.pbproj/project.pbxproj:
+        * WebView.subproj/WebController.h:
+        * WebView.subproj/WebController.m:
+        (+[WebContentTypes canShowMIMEType:]):
+        (-[WebController _commonInitialization:frameName:groupName:]):
+        (-[WebController init]):
+        (-[WebController initWithFrame:]):
+        (-[WebController initWithView:]):
+        (-[WebController supportsTextEncoding]):
+        (-[WebController takeStringURLFrom:]):
+        (-[WebController goBack:]):
+        (-[WebController goForward:]):
+        (-[WebController stopLoading:]):
+        * WebView.subproj/WebControllerPrivate.h:
+        * WebView.subproj/WebControllerPrivate.m:
+        (-[WebControllerPrivate _clearControllerReferences:]):
+        (-[WebController _createFrameNamed:inParent:allowsScrolling:]):
+        (-[WebController _frameForView:fromFrame:]):
+        (-[WebController _frameForView:]):
+        * WebView.subproj/WebDataSource.m:
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _layoutChildren]):
+        (-[WebDataSource _receivedData:]):
+        * WebView.subproj/WebDebugDOMNode.h:
+        * WebView.subproj/WebDebugDOMNode.m:
+        (-[WebDebugDOMNode initWithWebFrameView:]):
+        * WebView.subproj/WebDefaultContextMenuDelegate.m:
+        (-[WebDefaultContextMenuDelegate controller:contextMenuItemsForElement:defaultMenuItems:]):
+        * WebView.subproj/WebDefaultLocationChangeDelegate.m:
+        (-[WebDefaultLocationChangeDelegate controller:locationChangeStartedForDataSource:]):
+        (-[WebDefaultLocationChangeDelegate controller:serverRedirectedForDataSource:]):
+        (-[WebDefaultLocationChangeDelegate controller:locationChangeCommittedForDataSource:]):
+        (-[WebDefaultLocationChangeDelegate controller:receivedPageTitle:forDataSource:]):
+        (-[WebDefaultLocationChangeDelegate controller:receivedPageIcon:forDataSource:]):
+        (-[WebDefaultLocationChangeDelegate controller:locationChangeDone:forDataSource:]):
+        (-[WebDefaultLocationChangeDelegate controller:willCloseLocationForDataSource:]):
+        (-[WebDefaultLocationChangeDelegate controller:locationChangedWithinPageForDataSource:]):
+        (-[WebDefaultLocationChangeDelegate controller:clientWillRedirectTo:delay:fireDate:forFrame:]):
+        (-[WebDefaultLocationChangeDelegate controller:clientRedirectCancelledForFrame:]):
+        * WebView.subproj/WebDefaultPolicyDelegate.m:
+        (-[WebDefaultPolicyDelegate controller:unableToImplementPolicyWithError:inFrame:]):
+        (-[WebDefaultPolicyDelegate controller:decideNavigationPolicyForAction:andRequest:inFrame:decisionListener:]):
+        (-[WebDefaultPolicyDelegate controller:decideNewWindowPolicyForAction:andRequest:newFrameName:decisionListener:]):
+        * WebView.subproj/WebDefaultResourceLoadDelegate.m:
+        (-[WebDefaultResourceLoadDelegate controller:identifierForInitialRequest:fromDataSource:]):
+        (-[WebDefaultResourceLoadDelegate controller:resource:willSendRequest:fromDataSource:]):
+        (-[WebDefaultResourceLoadDelegate controller:resource:didReceiveResponse:fromDataSource:]):
+        (-[WebDefaultResourceLoadDelegate controller:resource:didReceiveContentLength:fromDataSource:]):
+        (-[WebDefaultResourceLoadDelegate controller:resource:didFinishLoadingFromDataSource:]):
+        (-[WebDefaultResourceLoadDelegate controller:resource:didFailLoadingWithError:fromDataSource:]):
+        (-[WebDefaultResourceLoadDelegate controller:pluginFailedWithError:dataSource:]):
+        * WebView.subproj/WebDefaultWindowOperationsDelegate.m:
+        (-[WebDefaultWindowOperationsDelegate controller:runJavaScriptConfirmPanelWithMessage:]):
+        (-[WebDefaultWindowOperationsDelegate controller:runJavaScriptTextInputPanelWithPrompt:defaultText:]):
+        (-[WebDefaultWindowOperationsDelegate controller:runOpenPanelForFileButtonWithResultListener:]):
+        * WebView.subproj/WebDocument.h:
+        * WebView.subproj/WebDynamicScrollBarsView.m:
+        * WebView.subproj/WebFrame.h:
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame init]):
+        (-[WebFrame initWithName:webFrameView:controller:]):
+        (-[WebFrame view]):
+        (+[WebFrame registerViewClass:representationClass:forMIMEType:]):
+        * WebView.subproj/WebFramePrivate.h:
+        * WebView.subproj/WebFramePrivate.m:
+        (if):
+        (switch):
+        * WebView.subproj/WebHTMLView.h:
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView dragImage:at:offset:event:pasteboard:source:slideBack:]):
+        (-[WebHTMLView draggedImage:endedAt:operation:]):
+        (-[WebHTMLView becomeFirstResponder]):
+        * WebView.subproj/WebHTMLViewPrivate.m:
+        (-[WebHTMLView _controller]):
+        (-[WebHTMLView _frame]):
+        (-[WebHTMLView _elementAtPoint:]):
+        * WebView.subproj/WebImageView.m:
+        (-[WebImageView controller]):
+        (-[WebImageView menuForEvent:]):
+        (-[WebImageView mouseDragged:]):
+        (-[WebImageView draggedImage:endedAt:operation:]):
+        * WebView.subproj/WebLocationChangeDelegate.h:
+        * WebView.subproj/WebRenderNode.h:
+        * WebView.subproj/WebRenderNode.m:
+        (-[WebRenderNode initWithName:position:rect:view:children:]):
+        (-[WebRenderNode initWithWebFrameView:]):
+        * WebView.subproj/WebResourceLoadDelegate.h:
+        * WebView.subproj/WebTextView.m:
+        (-[WebTextView menuForEvent:]):
+        * WebView.subproj/WebView.h:
+        * WebView.subproj/WebView.m:
+        (-[WebFrameView initWithFrame:]):
+        (-[WebFrameView dealloc]):
+        * WebView.subproj/WebViewPrivate.h:
+        * WebView.subproj/WebViewPrivate.m:
+        * WebView.subproj/WebWindowOperationsDelegate.h:
+
 2003-03-13  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Trey.

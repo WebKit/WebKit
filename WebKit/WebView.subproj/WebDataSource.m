@@ -12,7 +12,6 @@
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebController.h>
 #import <WebKit/WebFramePrivate.h>
-#import <WebKit/WebView.h>
 #import <WebKit/WebKitStatisticsPrivate.h>
 
 #import <WebFoundation/WebAssertions.h>

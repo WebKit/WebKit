@@ -49,11 +49,11 @@
     return [self _web_superviewOfClass:class stoppingAtClass:nil];
 }
 
-- (WebView *)_web_parentWebView
+- (WebFrameView *)_web_parentWebFrameView
 {
-    WebView *view = (WebView *)[[[self superview] superview] superview];
+    WebFrameView *view = (WebFrameView *)[[[self superview] superview] superview];
     
-    if ([view isKindOfClass: [WebView class]])
+    if ([view isKindOfClass: [WebFrameView class]])
         return view;
     return nil;
 }

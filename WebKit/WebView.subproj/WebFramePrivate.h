@@ -12,7 +12,7 @@
 @class WebBridge;
 @class WebFrameBridge;
 @class WebHistoryItem;
-@class WebView;
+@class WebFrameView;
 @class WebRequest;
 @class WebFormState;
 @class WebPolicyDecisionListener;
@@ -51,7 +51,7 @@ typedef enum {
 {
 @public
     NSString *name;
-    WebView *webView;
+    WebFrameView *webFrameView;
     WebDataSource *dataSource;
     WebDataSource *provisionalDataSource;
     WebBridge *bridge;
@@ -82,8 +82,8 @@ typedef enum {
 - (NSString *)name;
 - (void)setController:(WebController *)c;
 - (WebController *)controller;
-- (void)setWebView:(WebView *)v;
-- (WebView *)webView;
+- (void)setWebFrameView:(WebFrameView *)v;
+- (WebFrameView *)webFrameView;
 - (void)setDataSource:(WebDataSource *)d;
 - (WebDataSource *)dataSource;
 - (void)setProvisionalDataSource:(WebDataSource *)d;

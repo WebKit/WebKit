@@ -152,12 +152,12 @@ Repeat load of the same URL (by any other means of navigation other than the rel
 
 - (void)dealloc
 {
-    [webView _setController:nil];
+    [webFrameView _setController:nil];
     [dataSource _setController:nil];
     [provisionalDataSource _setController:nil];
 
     [name release];
-    [webView release];
+    [webFrameView release];
     [dataSource release];
     [provisionalDataSource release];
     [bridge release];
@@ -185,12 +185,12 @@ Repeat load of the same URL (by any other means of navigation other than the rel
     name = newName;
 }
 
-- (WebView *)webView { return webView; }
-- (void)setWebView: (WebView *)v 
+- (WebFrameView *)webFrameView { return webFrameView; }
+- (void)setWebFrameView: (WebFrameView *)v 
 { 
     [v retain];
-    [webView release];
-    webView = v;
+    [webFrameView release];
+    webFrameView = v;
 }
 
 - (WebDataSource *)dataSource { return dataSource; }
@@ -406,12 +406,12 @@ Repeat load of the same URL (by any other means of navigation other than the rel
     [self _detachChildren];
 
     [_private setController:nil];
-    [_private->webView _setController:nil];
+    [_private->webFrameView _setController:nil];
     [_private->dataSource _setController:nil];
     [_private->provisionalDataSource _setController:nil];
 
     [self _setDataSource:nil];
-    [_private setWebView:nil];
+    [_private setWebFrameView:nil];
 
     [_private->scheduledLayoutTimer invalidate];
     [_private->scheduledLayoutTimer release];
@@ -472,7 +472,7 @@ Repeat load of the same URL (by any other means of navigation other than the rel
     _private->scheduledLayoutTimer = nil;
     
     if (_private->state == WebFrameStateLayoutAcceptable) {
-        NSView <WebDocumentView> *documentView = [[self webView] documentView];
+        NSView <WebDocumentView> *documentView = [[self view] documentView];
         
         if ([self controller])
             LOG(Timing, "%@:  performing timed layout, %f seconds since start of document load", [self name], CFAbsoluteTimeGetCurrent() - [[[[self controller] mainFrame] dataSource] _loadingStartedTime]);
@@ -549,16 +549,15 @@ Repeat load of the same URL (by any other means of navigation other than the rel
 
 - (void)_makeDocumentView
 {
-    NSView <WebDocumentView> *documentView = [_private->webView _makeDocumentViewForDataSource:_private->dataSource];
+    NSView <WebDocumentView> *documentView = [_private->webFrameView _makeDocumentViewForDataSource:_private->dataSource];
     if (!documentView) {
         return;
     }
 
     // FIXME: We could save work and not do this for a top-level view that is not a WebHTMLView.
-    [_private->bridge createKHTMLViewWithNSView:documentView
-        marginWidth:[_private->webView _marginWidth]
-        marginHeight:[_private->webView _marginHeight]];
-    [_private->bridge installInFrame:[_private->webView frameScrollView]];
+    WebFrameView *v = _private->webFrameView;
+    [_private->bridge createKHTMLViewWithNSView:documentView marginWidth:[v _marginWidth] marginHeight:[v _marginHeight]];
+    [_private->bridge installInFrame:[v frameScrollView]];
 
     // Call setDataSource on the document view after it has been placed in the view hierarchy.
     // This what we for the top-level view, so should do this for views in subframes as well.
@@ -611,7 +610,7 @@ Repeat load of the same URL (by any other means of navigation other than the rel
                     if (pageCache){
                         NSView <WebDocumentView> *cachedView = [pageCache objectForKey: @"WebKitDocumentView"];
                         ASSERT (cachedView != nil);
-                        [[self webView] _setDocumentView: cachedView];
+                        [[self view] _setDocumentView: cachedView];
                     }
                     else
                         [self _makeDocumentView];
@@ -679,7 +678,7 @@ Repeat load of the same URL (by any other means of navigation other than the rel
 
             
             // Tell the client we've committed this URL.
-            ASSERT([[self webView] documentView] != nil);
+            ASSERT([[self view] documentView] != nil);
             [[[self controller] _locationChangeDelegateForwarder] controller: _private->controller locationChangeCommittedForDataSource:ds];
             
             // If we have a title let the controller know about it.
@@ -770,7 +769,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         // FIXME: This is OK as long as no one resizes the window,
         // but in the case where someone does, it means garbage outside
         // the occupied part of the scroll view.
-        [[[self webView] frameScrollView] setDrawsBackground:NO];
+        [[[self view] frameScrollView] setDrawsBackground:NO];
 
         // Cache the page, if possible.
         // Don't write to the cache if in the middle of a redirect, since we will want to
@@ -795,7 +794,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
                 [item setHasPageCache: YES];
                 [[self dataSource] _setStoredInPageCache: YES];
                 [[item pageCache] setObject: [self dataSource] forKey: @"WebKitDataSource"];
-                [[item pageCache] setObject: [[self webView] documentView] forKey: @"WebKitDocumentView"];
+                [[item pageCache] setObject: [[self view] documentView] forKey: @"WebKitDocumentView"];
                 [_private->bridge saveDocumentToPageCache];
                 [self _purgePageCache];
             }
@@ -803,7 +802,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     }
     
     if (_private->state == WebFrameStateComplete) {
-        NSScrollView *sv = [[self webView] frameScrollView];
+        NSScrollView *sv = [[self view] frameScrollView];
         [sv setDrawsBackground:YES];
         // FIXME: This overrides the setCopiesOnScroll setting done by
         // WebCore based on whether the page's contents are dynamic or not.
@@ -822,8 +821,8 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         // Force a layout to update view size and thereby
         // update scrollbars.
         [_private->bridge reapplyStyles];
-        [[[self webView] documentView] setNeedsLayout: YES];
-        [[[self webView] documentView] layout];
+        [[[self view] documentView] setNeedsLayout: YES];
+        [[[self view] documentView] layout];
         [self _restoreScrollPosition];
         
         NSArray *responses = [[self dataSource] _responses];
@@ -882,7 +881,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
             
             //LOG(Loading, "%@:  checking complete, current state WEBFRAMESTATE_COMMITTED", [self name]);
             if (![ds isLoading]) {
-                WebView *thisView = [self webView];
+                WebFrameView *thisView = [self view];
                 NSView <WebDocumentView> *thisDocumentView = [thisView documentView];
                 ASSERT(thisDocumentView != nil);
 
@@ -904,14 +903,14 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
                 // be a reasonably inexpensive operation.
                 WebDataSource *parentDS = [[self parent] dataSource];
                 if ([[parentDS _bridge] isFrameSet]){
-                    WebView *parentWebView = [[self parent] webView];
-                    if ([parentWebView isDocumentHTML])
-                        [(WebHTMLView *)[parentWebView documentView] _adjustFrames];
+                    WebFrameView *parentWebFrameView = [[self parent] view];
+                    if ([parentWebFrameView isDocumentHTML])
+                        [(WebHTMLView *)[parentWebFrameView documentView] _adjustFrames];
                 }
 
                 // Tell the just loaded document to layout.  This may be necessary
                 // for non-html content that needs a layout message.
-                if (!([[self webView] isDocumentHTML])) {
+                if (!([[self view] isDocumentHTML])) {
                     [thisDocumentView setNeedsLayout:YES];
                     [thisDocumentView layout];
                     [thisDocumentView setNeedsDisplay:YES];
@@ -1706,7 +1705,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 - (void)_saveScrollPositionToItem:(WebHistoryItem *)item
 {
     if (item) {
-        NSView *clipView = [[[self webView] documentView] superview];
+        NSView *clipView = [[[self view] documentView] superview];
         // we might already be detached when this is called from detachFromParent, in which
         // case we don't want to override real data earlier gathered with (0,0)
         if (clipView) {
@@ -1718,12 +1717,12 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 - (void)_restoreScrollPosition
 {
     ASSERT([_private currentItem]);
-    [[[self webView] documentView] scrollPoint:[[_private currentItem] scrollPoint]];
+    [[[self view] documentView] scrollPoint:[[_private currentItem] scrollPoint]];
 }
 
 - (void)_scrollToTop
 {
-    [[[self webView] documentView] scrollPoint: NSZeroPoint];
+    [[[self view] documentView] scrollPoint: NSZeroPoint];
 }
 
 - (void)_textSizeMultiplierChanged
@@ -1894,7 +1893,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     // to KDE parser requiring a KHTMLView.  Once we settle on a final
     // KDE drop we should fix this dependency.
 
-    ASSERT([self webView] != nil);
+    ASSERT([self view] != nil);
 
     [self stopLoading];
 

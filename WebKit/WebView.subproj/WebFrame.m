@@ -30,10 +30,10 @@
 
 - init
 {
-    return [self initWithName: nil webView: nil controller: nil];
+    return [self initWithName: nil webFrameView: nil controller: nil];
 }
 
-- initWithName: (NSString *)n webView: (WebView *)v controller: (WebController *)c
+- initWithName: (NSString *)n webFrameView: (WebFrameView *)v controller: (WebController *)c
 {
     [super init];
 
@@ -49,7 +49,7 @@
     [self _setName:n];
     
     if (v) {
-        [_private setWebView: v];
+        [_private setWebFrameView: v];
         [v _setController: [self controller]];
     }
     
@@ -72,9 +72,9 @@
     return [_private name];
 }
 
-- (WebView *)webView
+- (WebFrameView *)view
 {
-    return [_private webView];
+    return [_private webFrameView];
 }
 
 - (WebController *)controller
@@ -196,7 +196,7 @@
 
 + (void) registerViewClass:(Class)viewClass representationClass: (Class)representationClass forMIMEType:(NSString *)MIMEType
 {
-    [[WebView _viewTypes] setObject:viewClass forKey:MIMEType];
+    [[WebFrameView _viewTypes] setObject:viewClass forKey:MIMEType];
     [[WebDataSource _repTypes] setObject:representationClass forKey:MIMEType];
 }
 

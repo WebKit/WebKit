@@ -22,22 +22,22 @@ static WebDefaultLocationChangeDelegate *sharedDelegate = nil;
     return sharedDelegate;
 }
 
-- (void)controller: (WebController *)controller locationChangeStartedForDataSource:(WebDataSource *)dataSource { }
+- (void)controller: (WebController *)wv locationChangeStartedForDataSource:(WebDataSource *)dataSource { }
 
-- (void)controller: (WebController *)controller serverRedirectedForDataSource:(WebDataSource *)dataSource { }
+- (void)controller: (WebController *)wv serverRedirectedForDataSource:(WebDataSource *)dataSource { }
 
-- (void)controller: (WebController *)controller locationChangeCommittedForDataSource:(WebDataSource *)dataSource { }
+- (void)controller: (WebController *)wv locationChangeCommittedForDataSource:(WebDataSource *)dataSource { }
 
-- (void)controller: (WebController *)controller receivedPageTitle:(NSString *)title forDataSource:(WebDataSource *)dataSource { }
-- (void)controller: (WebController *)controller receivedPageIcon:(NSImage *)image forDataSource:(WebDataSource *)dataSource { }
+- (void)controller: (WebController *)wv receivedPageTitle:(NSString *)title forDataSource:(WebDataSource *)dataSource { }
+- (void)controller: (WebController *)wv receivedPageIcon:(NSImage *)image forDataSource:(WebDataSource *)dataSource { }
 
-- (void)controller: (WebController *)controller locationChangeDone:(WebError *)error forDataSource:(WebDataSource *)dataSource { }
+- (void)controller: (WebController *)wv locationChangeDone:(WebError *)error forDataSource:(WebDataSource *)dataSource { }
 
-- (void)controller: (WebController *)controller willCloseLocationForDataSource:(WebDataSource *)dataSource { }
+- (void)controller: (WebController *)wv willCloseLocationForDataSource:(WebDataSource *)dataSource { }
 
-- (void)controller: (WebController *)controller locationChangedWithinPageForDataSource:(WebDataSource *)dataSource { }
+- (void)controller: (WebController *)wv locationChangedWithinPageForDataSource:(WebDataSource *)dataSource { }
 
-- (void)controller: (WebController *)controller clientWillRedirectTo:(NSURL *)URL delay:(NSTimeInterval)seconds fireDate:(NSDate *)date forFrame:(WebFrame *)frame { }
-- (void)controller: (WebController *)controller clientRedirectCancelledForFrame:(WebFrame *)frame { }
+- (void)controller: (WebController *)wv clientWillRedirectTo:(NSURL *)URL delay:(NSTimeInterval)seconds fireDate:(NSDate *)date forFrame:(WebFrame *)frame { }
+- (void)controller: (WebController *)wv clientRedirectCancelledForFrame:(WebFrame *)frame { }
 
 @end

@@ -9,7 +9,6 @@
 #import <WebKit/WebDynamicScrollBarsView.h>
 
 #import <WebKit/WebDocument.h>
-#import <WebKit/WebView.h>
 
 @implementation WebDynamicScrollBarsView
 

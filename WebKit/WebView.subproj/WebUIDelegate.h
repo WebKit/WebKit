@@ -108,7 +108,7 @@
     hierarchy, it may be desirable to save the first responder
     elsewhere, or possibly ignore this call.
 */
-- (void)controller: (WebController *)controller makeFirstResponderInWindow:(NSResponder *)responder;
+- (void)controller: (WebController *)wv makeFirstResponderInWindow:(NSResponder *)responder;
 
 
 /*!
@@ -116,7 +116,7 @@
     @abstract Set the window's status display, if any, to the specified string.
     @param text The status text to set
 */
-- (void)controller: (WebController *)controller setStatusText:(NSString *)text;
+- (void)controller: (WebController *)wv setStatusText:(NSString *)text;
 
 /*!
     @method statusText
@@ -132,7 +132,7 @@
     @param elementInformation Dictionary that describes the element that the mouse is over, or nil.
     @param modifierFlags The modifier flags as in NSEvent.
 */
-- (void)controller: (WebController *)controller mouseDidMoveOverElement:(NSDictionary *)elementInformation modifierFlags:(unsigned int)modifierFlags;
+- (void)controller: (WebController *)wv mouseDidMoveOverElement:(NSDictionary *)elementInformation modifierFlags:(unsigned int)modifierFlags;
 
 /*!
     @method areToolbarsVisible
@@ -144,7 +144,7 @@
     this method if at least one is on.
     @result YES if at least one toolbar is visible, otherwise NO.
 */
-- (BOOL)controllerAreToolbarsVisible: (WebController *)controller;
+- (BOOL)controllerAreToolbarsVisible: (WebController *)webView;
 
 /*!
     @method setToolbarsVisible:
@@ -154,14 +154,14 @@
     (except for a possible status bar). Setting it to NO should turn
     off all toolbars (with the same exception).
 */
-- (void)controller: (WebController *)controller setToolbarsVisible:(BOOL)visible;
+- (void)controller: (WebController *)wv setToolbarsVisible:(BOOL)visible;
 
 /*!
     @method isStatusBarVisible
     @abstract Determine whether the status bar is visible.
     @result YES if the status bar is visible, otherwise NO.
 */
-- (BOOL)controllerIsStatusBarVisible: (WebController *)controller;
+- (BOOL)controllerIsStatusBarVisible: (WebController *)webView;
 
 /*!
     @method setStatusBarVisible:
@@ -170,7 +170,7 @@
     @discussion Setting this to YES should show the status bar,
     setting it to NO should hide it.
 */
-- (void)controller: (WebController *)controller setStatusBarVisible:(BOOL)visible;
+- (void)controller: (WebController *)wv setStatusBarVisible:(BOOL)visible;
 
 /*!
     @method isResizable
@@ -180,7 +180,7 @@
     have have their own separate resize controls and this may need to
     be handled specially.
 */
-- (BOOL)controllerIsResizable: (WebController *)controller;
+- (BOOL)controllerIsResizable: (WebController *)webView;
 
 /*!
     @method setResizable:
@@ -190,7 +190,7 @@
     have have their own separate resize controls and this may need to
     be handled specially.
 */
-- (void)controller: (WebController *)controller setResizable:(BOOL)resizable;
+- (void)controller: (WebController *)wv setResizable:(BOOL)resizable;
 
 /*!
     @method setFrame:
@@ -200,14 +200,14 @@
     this method is provided so implementors of this protocol can do special
     things on programmatic move/resize, like avoiding autosaving of the size.
 */
-- (void)controller: (WebController *)controller setFrame:(NSRect)frame;
+- (void)controller: (WebController *)wv setFrame:(NSRect)frame;
 
 /*!
     @method frame
     @abstract REturn the window's frame rect
     @discussion 
 */
-- (NSRect)controllerFrame: (WebController *)controller;
+- (NSRect)controllerFrame: (WebController *)webView;
 
 /*!
     @method runJavaScriptAlertPanelWithMessage:
@@ -216,7 +216,7 @@
     @discussion Clients should visually indicate that this panel comes
     from JavaScript. The panel should have a single OK button.
 */
-- (void)controller: (WebController *)controller runJavaScriptAlertPanelWithMessage:(NSString *)message;
+- (void)controller: (WebController *)wv runJavaScriptAlertPanelWithMessage:(NSString *)message;
 
 /*!
     @method runJavaScriptAlertPanelWithMessage:
@@ -227,7 +227,7 @@
     from JavaScript. The panel should have two buttons, e.g. "OK" and
     "Cancel".
 */
-- (BOOL)controller: (WebController *)controller runJavaScriptConfirmPanelWithMessage:(NSString *)message;
+- (BOOL)controller: (WebController *)wv runJavaScriptConfirmPanelWithMessage:(NSString *)message;
 
 /*!
     @method runJavaScriptTextInputPanelWithPrompt:defaultText:
@@ -239,7 +239,7 @@
     from JavaScript. The panel should have two buttons, e.g. "OK" and
     "Cancel", and an area to type text.
 */
-- (NSString *)controller: (WebController *)controller runJavaScriptTextInputPanelWithPrompt:(NSString *)prompt defaultText:(NSString *)defaultText;
+- (NSString *)controller: (WebController *)wv runJavaScriptTextInputPanelWithPrompt:(NSString *)prompt defaultText:(NSString *)defaultText;
 
 /*!
     @message runOpenPanelForFileButtonWithResultListener:
@@ -248,6 +248,6 @@
     @discussion This method is passed a callback object instead of giving a return
     value so that it can be handled with a sheet.
 */
-- (void)controller: (WebController *)controller runOpenPanelForFileButtonWithResultListener:(id<WebOpenPanelResultListener>)resultListener;
+- (void)controller: (WebController *)wv runOpenPanelForFileButtonWithResultListener:(id<WebOpenPanelResultListener>)resultListener;
    
 @end

@@ -157,9 +157,9 @@
     // Calling super causes unselected clicked text to be selected.
     [super menuForEvent:theEvent];
     
-    WebView *webView = [self _web_parentWebView];
-    WebController *controller = [webView _controller];
-    WebFrame *frame = [webView webFrame];
+    WebFrameView *webFrameView = [self _web_parentWebFrameView];
+    WebController *controller = [webFrameView _controller];
+    WebFrame *frame = [webFrameView webFrame];
 
     ASSERT(frame);
     ASSERT(controller);

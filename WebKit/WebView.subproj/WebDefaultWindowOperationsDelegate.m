@@ -29,104 +29,104 @@ static WebDefaultWindowOperationsDelegate *sharedDelegate = nil;
 }
 
 
-- (WebController *)controller:(WebController *)c createWindowWithRequest:(WebRequest *)request;
+- (WebController *)controller: (WebController *)wv createWindowWithRequest:(WebRequest *)request;
 {
     return nil;
 }
 
-- (void)controllerShowWindow:(WebController *)c;
+- (void)webViewShowWindow: (WebController *)wv;
 {
 }
 
-- (void)controllerShowWindowBehindFrontmost:(WebController *)c;
+- (void)webViewShowWindowBehindFrontmost: (WebController *)wv;
 {
 }
 
-- (void)controllerCloseWindow:(WebController *)c;
+- (void)webViewCloseWindow: (WebController *)wv;
 {
 }
 
-- (void)controllerFocusWindow:(WebController *)c;
+- (void)webViewFocusWindow: (WebController *)wv;
 {
 }
 
-- (void)controllerUnfocusWindow:(WebController *)c;
+- (void)webViewUnfocusWindow: (WebController *)wv;
 {
 }
 
-- (NSResponder *)controllerFirstResponderInWindow:(WebController *)c;
-{
-    return nil;
-}
-
-- (void)controller:(WebController *)c makeFirstResponderInWindow:(NSResponder *)responder;
-{
-}
-
-- (void)controller:(WebController *)c setStatusText:(NSString *)text;
-{
-}
-
-- (NSString *)controllerStatusText:(WebController *)c;
+- (NSResponder *)webViewFirstResponderInWindow: (WebController *)wv;
 {
     return nil;
 }
 
-- (void)controller:(WebController *)c mouseDidMoveOverElement:(NSDictionary *)elementInformation modifierFlags:(unsigned int)modifierFlags;
+- (void)controller: (WebController *)wv makeFirstResponderInWindow:(NSResponder *)responder;
 {
 }
 
-- (BOOL)controllerAreToolbarsVisible:(WebController *)c;
-{
-    return NO;
-}
-
-- (void)controller:(WebController *)c setToolbarsVisible:(BOOL)visible;
+- (void)controller: (WebController *)wv setStatusText:(NSString *)text;
 {
 }
 
-- (BOOL)controllerIsStatusBarVisible:(WebController *)c;
+- (NSString *)webViewStatusText: (WebController *)wv;
 {
-    return NO;
+    return nil;
 }
 
-- (void)controller:(WebController *)c setStatusBarVisible:(BOOL)visible;
+- (void)controller: (WebController *)wv mouseDidMoveOverElement:(NSDictionary *)elementInformation modifierFlags:(unsigned int)modifierFlags;
 {
 }
 
-- (BOOL)controllerIsResizable:(WebController *)c;
+- (BOOL)webViewAreToolbarsVisible: (WebController *)wv;
 {
     return NO;
 }
 
-- (void)controller:(WebController *)c setResizable:(BOOL)resizable;
+- (void)controller: (WebController *)wv setToolbarsVisible:(BOOL)visible;
 {
 }
 
-- (void)controller:(WebController *)c setFrame:(NSRect)frame;
+- (BOOL)webViewIsStatusBarVisible: (WebController *)wv;
+{
+    return NO;
+}
+
+- (void)controller: (WebController *)wv setStatusBarVisible:(BOOL)visible;
 {
 }
 
-- (NSRect)controllerFrame:(WebController *)c;
+- (BOOL)webViewIsResizable: (WebController *)wv;
+{
+    return NO;
+}
+
+- (void)controller: (WebController *)wv setResizable:(BOOL)resizable;
+{
+}
+
+- (void)controller: (WebController *)wv setFrame:(NSRect)frame;
+{
+}
+
+- (NSRect)webViewFrame: (WebController *)wv;
 {
     return NSMakeRect (0,0,0,0);
 }
 
-- (void)controller:(WebController *)c runJavaScriptAlertPanelWithMessage:(NSString *)message;
+- (void)controller: (WebController *)wv runJavaScriptAlertPanelWithMessage:(NSString *)message;
 {
 }
 
-- (BOOL)controller:(WebController *)c runJavaScriptConfirmPanelWithMessage:(NSString *)message
+- (BOOL)controller: (WebController *)wv runJavaScriptConfirmPanelWithMessage:(NSString *)message
 {
     return NO;
 }
 
-- (NSString *)controller:(WebController *)c runJavaScriptTextInputPanelWithPrompt:(NSString *)prompt defaultText:(NSString *)defaultText
+- (NSString *)controller: (WebController *)wv runJavaScriptTextInputPanelWithPrompt:(NSString *)prompt defaultText:(NSString *)defaultText
 {
     return nil;
 }
 
-- (void)controller:(WebController *)c runOpenPanelForFileButtonWithResultListener:(id<WebOpenPanelResultListener>)resultListener
+- (void)controller: (WebController *)wv runOpenPanelForFileButtonWithResultListener:(id<WebOpenPanelResultListener>)resultListener
 {
 }
 

@@ -46,7 +46,7 @@ static NSImage *image = nil;
 {
     if(!didSendError && _window && error){
         didSendError = YES;
-        WebView *view = (WebView *)[self _web_superviewOfClass:[WebView class]];
+        WebFrameView *view = (WebFrameView *)[self _web_superviewOfClass:[WebFrameView class]];
         WebFrame *webFrame = [view webFrame];
         WebController *controller = [webFrame controller];
         WebDataSource *dataSource = [webFrame dataSource];

@@ -1,5 +1,5 @@
-#ifndef __HIWEBVIEW__
-#define __HIWEBVIEW__
+#ifndef __HIWebFrameView__
+#define __HIWebFrameView__
 
 #ifndef __HIWEBCONTROLLER__
 #include <WebKit/WebController.h>
@@ -18,7 +18,7 @@ extern "C" {
 #endif
 
 /*
- *  HIWebViewCreate()
+ *  HIWebFrameViewCreate()
  *  
  *  Summary:
  *    Creates a new web view.
@@ -37,11 +37,11 @@ extern "C" {
  *    Non-Carbon CFM:   not available
  */
 extern OSStatus 
-HIWebViewCreate(HIViewRef * outControl);
+HIWebFrameViewCreate(HIViewRef * outControl);
 
 
 /*
- *  HIWebViewGetController()
+ *  HIWebFrameViewGetController()
  *  
  *  Summary:
  *    Returns the web controller for a given web view, or NULL if not
@@ -61,7 +61,7 @@ HIWebViewCreate(HIViewRef * outControl);
  *    Non-Carbon CFM:   not available
  */
 extern WebController* 
-HIWebViewGetController(HIViewRef inView);
+HIWebFrameViewGetController(HIViewRef inView);
 
 extern WebController*
 WebControllerCreateWithHIView( HIViewRef inView, CFStringRef inName );
@@ -70,5 +70,5 @@ WebControllerCreateWithHIView( HIViewRef inView, CFStringRef inName );
 }
 #endif
 
-#endif /* __HIWEBVIEW__ */
+#endif /* __HIWebFrameView__ */
 

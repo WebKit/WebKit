@@ -26,7 +26,7 @@
     @discussion You can find out the URL and other parameters of the location change
     from the data source object.
 */
-- (void)controller: (WebController *)controller locationChangeStartedForDataSource:(WebDataSource *)dataSource;
+- (void)controller: (WebController *)wv locationChangeStartedForDataSource:(WebDataSource *)dataSource;
 
 /*!
     @method serverRedirectedTo:forDataSource:
@@ -34,7 +34,7 @@
     @param dataSource The data source for which the redirect occurred
     @discussion You can find the new URL from the data source object.
 */
-- (void)controller: (WebController *)controller serverRedirectedForDataSource:(WebDataSource *)dataSource;
+- (void)controller: (WebController *)wv serverRedirectedForDataSource:(WebDataSource *)dataSource;
 
 /*!
     @method locationChangeCommittedForDataSource:
@@ -47,7 +47,7 @@
     page fails to load completely.
 
 */
-- (void)controller: (WebController *)controller locationChangeCommittedForDataSource:(WebDataSource *)dataSource;
+- (void)controller: (WebController *)wv locationChangeCommittedForDataSource:(WebDataSource *)dataSource;
 
 /*!
     @method receivedPageTitle:forDataSource:
@@ -56,7 +56,7 @@
     @param dataSource The data source for which the title changed
     @discussion The title may update during loading; clients should be prepared for this.
 */
-- (void)controller: (WebController *)controller receivedPageTitle:(NSString *)title forDataSource:(WebDataSource *)dataSource;
+- (void)controller: (WebController *)wv receivedPageTitle:(NSString *)title forDataSource:(WebDataSource *)dataSource;
 
 /*!
     @method receivedPageIcon:forDataSource:
@@ -68,7 +68,7 @@
     default or stored image and changing on a refresh.
 
 */
-- (void)controller: (WebController *)controller receivedPageIcon:(NSImage *)image forDataSource:(WebDataSource *)dataSource;
+- (void)controller: (WebController *)wv receivedPageIcon:(NSImage *)image forDataSource:(WebDataSource *)dataSource;
 
 /*!
     @method locationChangeDone:forDataSource:
@@ -79,7 +79,7 @@
     @discussion This callback will only be received when all
     subresources are done loading.
 */
-- (void)controller: (WebController *)controller locationChangeDone:(WebError *)error forDataSource:(WebDataSource *)dataSource;
+- (void)controller: (WebController *)wv locationChangeDone:(WebError *)error forDataSource:(WebDataSource *)dataSource;
 
 /*!
     @method willCloseLocationForDataSource:
@@ -89,7 +89,7 @@
     @discussion This callback happens right before WebKit is done with the data source
     and the document representation that it contains.
  */
-- (void)controller: (WebController *)controller willCloseLocationForDataSource:(WebDataSource *)dataSource;
+- (void)controller: (WebController *)wv willCloseLocationForDataSource:(WebDataSource *)dataSource;
 
 /*!
     @method locationChangedWithinPageForDataSource:
@@ -100,7 +100,7 @@
     @discussion This is normally used for clicks on anchors within a page
     that is already displayed. You can find the new URL from the data source object.
 */
-- (void)controller: (WebController *)controller locationChangedWithinPageForDataSource:(WebDataSource *)dataSource;
+- (void)controller: (WebController *)wv locationChangedWithinPageForDataSource:(WebDataSource *)dataSource;
 
 /*!
     @method clientWillRedirectTo:delay:fireDate:forFrame:
@@ -114,7 +114,7 @@
     going while a client redirect is pending. A client redirect might
     be cancelled before it fires - see clientRedirectCancelledForFrame.
 */
-- (void)controller: (WebController *)controller clientWillRedirectTo:(NSURL *)URL delay:(NSTimeInterval)seconds fireDate:(NSDate *)date forFrame:(WebFrame *)frame;
+- (void)controller: (WebController *)wv clientWillRedirectTo:(NSURL *)URL delay:(NSTimeInterval)seconds fireDate:(NSDate *)date forFrame:(WebFrame *)frame;
 
 /*!
     @method clientRedirectCancelledForFrame:
@@ -124,7 +124,7 @@
     @discussion A client redirect can be cancelled if the frame
     changes locations before the timeout.
 */
-- (void)controller: (WebController *)controller clientRedirectCancelledForFrame:(WebFrame *)frame;
+- (void)controller: (WebController *)wv clientRedirectCancelledForFrame:(WebFrame *)frame;
 
 @end
 

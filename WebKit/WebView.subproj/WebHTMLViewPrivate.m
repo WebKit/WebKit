@@ -136,13 +136,13 @@ static BOOL forceRealHitTest = NO;
 
 - (WebController *)_controller
 {
-    return [[self _web_parentWebView] _controller];
+    return [[self _web_parentWebFrameView] _controller];
 }
 
 - (WebFrame *)_frame
 {
-    WebView *webView = [self _web_parentWebView];
-    return [webView webFrame];
+    WebFrameView *webFrameView = [self _web_parentWebFrameView];
+    return [webFrameView webFrame];
 }
 
 // Required so view can access the part's selection.
@@ -201,9 +201,9 @@ static BOOL forceRealHitTest = NO;
     [elementInfo _web_setObjectIfNotNil:[NSURL _web_URLWithString:[elementInfoWC objectForKey:WebElementLinkURLKey]] forKey:WebElementLinkURLKey];
     [elementInfo _web_setObjectIfNotNil:[NSURL _web_URLWithString:[elementInfoWC objectForKey:WebElementImageURLKey]] forKey:WebElementImageURLKey];
     
-    WebView *webView = [self _web_parentWebView];
-    ASSERT(webView);
-    WebFrame *webFrame = [webView webFrame];
+    WebFrameView *webFrameView = [self _web_parentWebFrameView];
+    ASSERT(webFrameView);
+    WebFrame *webFrame = [webFrameView webFrame];
     
     if (webFrame) {
         NSString *frameName = [elementInfoWC objectForKey:WebElementLinkTargetFrameKey];

@@ -1,9 +1,5 @@
-/*	WebViewPrivate.m
+/*	WebFrameViewPrivate.m
 	Copyright 2001, Apple, Inc. All rights reserved.
-        
-        Private header file.  This file may reference classes (both ObjectiveC and C++)
-        in WebCore.  Instances of this class are referenced by _private in 
-        NSWebPageView.
 */
 
 #import <WebKit/WebViewPrivate.h>
@@ -21,7 +17,7 @@
 #import <WebFoundation/WebNSDictionaryExtras.h>
 #import <WebFoundation/WebResponse.h>
 
-@implementation WebViewPrivate
+@implementation WebFrameViewPrivate
 
 - init
 {
@@ -42,7 +38,7 @@
 
 @end
 
-@implementation WebView (WebPrivate)
+@implementation WebFrameView (WebPrivate)
 
 // Note that the controller is not retained.
 - (WebController *)_controller

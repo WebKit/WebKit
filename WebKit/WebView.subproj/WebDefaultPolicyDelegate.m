@@ -27,13 +27,13 @@ static WebDefaultPolicyDelegate *sharedDelegate = nil;
     return sharedDelegate;
 }
 
-- (void)controller:(WebController *)c unableToImplementPolicyWithError:(WebError *)error inFrame:(WebFrame *)frame
+- (void)controller: (WebController *)wv unableToImplementPolicyWithError:(WebError *)error inFrame:(WebFrame *)frame
 {
     ERROR("called unableToImplementPolicyWithError:%@ inFrame:%@", error, frame);
 }
 
 
-- (void)controller:(WebController *)c decideContentPolicyForMIMEType:(NSString *)type
+- (void)controller: (WebController *)wv decideContentPolicyForMIMEType:(NSString *)type
 				 andRequest:(WebRequest *)request
 				    inFrame:(WebFrame *)frame
 		           decisionListener:(WebPolicyDecisionListener *)listener;
@@ -56,7 +56,7 @@ static WebDefaultPolicyDelegate *sharedDelegate = nil;
     }
 }
 
-- (void)controller:(WebController *)c decideNavigationPolicyForAction:(NSDictionary *)actionInformation 
+- (void)controller: (WebController *)wv decideNavigationPolicyForAction:(NSDictionary *)actionInformation 
 			     andRequest:(WebRequest *)request
 				inFrame:(WebFrame *)frame
 		       decisionListener:(WebPolicyDecisionListener *)listener
@@ -73,7 +73,7 @@ static WebDefaultPolicyDelegate *sharedDelegate = nil;
     }
 }
 
-- (void)controller:(WebController *)c decideNewWindowPolicyForAction:(NSDictionary *)actionInformation 
+- (void)controller: (WebController *)wv decideNewWindowPolicyForAction:(NSDictionary *)actionInformation 
 			     andRequest:(WebRequest *)request
 			   newFrameName:(NSString *)frameName
 		       decisionListener:(WebPolicyDecisionListener *)listener

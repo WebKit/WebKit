@@ -36,7 +36,7 @@
     @result An identifier that will be passed back to the implementor for each callback.
     The identifier will be retained.
 */
-- controller: (WebController *)controller identifierForInitialRequest: (WebRequest *)request fromDataSource: (WebDataSource *)dataSource;
+- controller: (WebController *)wv identifierForInitialRequest: (WebRequest *)request fromDataSource: (WebDataSource *)dataSource;
 
 /*!
     @method resource:willSendRequest:fromDataSource:
@@ -50,7 +50,7 @@
     @result Returns the request, which may be mutated by the implementor, although typically
     will be request.
 */
--(WebRequest *)controller: (WebController *)controller resource:identifier willSendRequest: (WebRequest *)request fromDataSource:(WebDataSource *)dataSource;
+-(WebRequest *)controller: (WebController *)wv resource:identifier willSendRequest: (WebRequest *)request fromDataSource:(WebDataSource *)dataSource;
 
 /*!
     @method resource:didReceiveResponse:fromDataSource:
@@ -61,7 +61,7 @@
     @param response The response for the request.
     @param dataSource The dataSource that initiated the load.
 */
--(void)controller: (WebController *)controller resource:identifier didReceiveResponse: (WebResponse *)response fromDataSource:(WebDataSource *)dataSource;
+-(void)controller: (WebController *)wv resource:identifier didReceiveResponse: (WebResponse *)response fromDataSource:(WebDataSource *)dataSource;
 
 /*!
     @method resource:didReceiveContentLength:fromDataSource:
@@ -72,7 +72,7 @@
     @param length The amount of new data received.  This is not the total amount, just the new amount received.
     @param dataSource The dataSource that initiated the load.
 */
--(void)controller: (WebController *)controller resource:identifier didReceiveContentLength: (unsigned)length fromDataSource:(WebDataSource *)dataSource;
+-(void)controller: (WebController *)wv resource:identifier didReceiveContentLength: (unsigned)length fromDataSource:(WebDataSource *)dataSource;
 
 /*!
     @method resource:didFinishLoadingFromDataSource:
@@ -82,7 +82,7 @@
     multiple call backs.
     @param dataSource The dataSource that initiated the load.
 */
--(void)controller: (WebController *)controller resource:identifier didFinishLoadingFromDataSource:(WebDataSource *)dataSource;
+-(void)controller: (WebController *)wv resource:identifier didFinishLoadingFromDataSource:(WebDataSource *)dataSource;
 
 /*!
     @method resource:didFailLoadingWithError:fromDataSource:
@@ -93,7 +93,7 @@
     @param error The error associated with this load.
     @param dataSource The dataSource that initiated the load.
 */
--(void)controller: (WebController *)controller resource:identifier didFailLoadingWithError:(WebError *)error fromDataSource:(WebDataSource *)dataSource;
+-(void)controller: (WebController *)wv resource:identifier didFailLoadingWithError:(WebError *)error fromDataSource:(WebDataSource *)dataSource;
 
 /*!
      @method pluginFailedWithError:dataSource:
@@ -102,7 +102,7 @@
      @param error The plug-in error.
      @param dataSource The dataSource that contains the plug-in.
 */
-- (void)controller: (WebController *)controller pluginFailedWithError:(WebPluginError *)error dataSource:(WebDataSource *)dataSource;
+- (void)controller: (WebController *)wv pluginFailedWithError:(WebPluginError *)error dataSource:(WebDataSource *)dataSource;
 
 @end
 

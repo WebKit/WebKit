@@ -10,7 +10,7 @@
 
 /*!
     @protocol WebDocumentView
-    @discussion Protocol implemented by the document view of WebView
+    @discussion Protocol implemented by the document view of WebFrameView
 */
 @protocol WebDocumentView <NSObject>
 
@@ -47,7 +47,7 @@
 
 /*!
     @protocol WebDocumentSearching
-    @discussion Optional protocol for searching document view of WebView. 
+    @discussion Optional protocol for searching document view of WebFrameView. 
 */
 @protocol WebDocumentSearching <NSObject>
 /*!
