@@ -1,3 +1,54 @@
+2005-03-11  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Kevin.
+
+	<rdar://problem/4026787> text typed after a link (pasted or Mail Link to this Page) is part of the link, underlined and colored blue
+        
+	The concept of this change is every time you type at the very
+	start or very end of a link (even if nested in further inner
+	elements), the typed text goes outside the link instead of inside.
+	
+	* khtml/editing/htmlediting.cpp:
+        (khtml::InsertTextCommand::prepareForTextInsertion): Check whether
+	we are at the first visible position or last visible position of a
+	special element. For now this only includes HTML A elements that
+	are links (i.e. they have an href).
+	(khtml::isSpecialElement): Helper function that identifies special
+	elements (for now only links).
+        (khtml::isFirstVisiblePositionInSpecialElement): Checks if a given DOM
+	position is equivalent to the first visible position in some containing 
+	editable special element.
+        (khtml::positionBeforeNode): Returns the DOM position immediately
+	before a node.
+        (khtml::positionBeforeContainingSpecialElement): Gives a DOM
+	position immediately before the outermost editable containing
+	special element where the passed-in position is equivalent to the
+	first visible position.
+        (khtml::maxRangeOffset): Helper to get the maximum allowed
+	range/position offset for a node, does the right thing based on
+	whether the node would use a character offset or child offset.
+        (khtml::isLastVisiblePositionInSpecialElement): Similar to above,
+	but for end of node instead of start.
+        (khtml::positionAfterNode): Ditto.
+        (khtml::positionAfterContainingSpecialElement): Ditto.
+
+	Some layout tests changed - I looked over all the diffs and found
+	that the only changes were "junk nodes" like empty spans and text
+	nodes moving from one spot in the tree to another. These changes
+	are all harmless and do not affect layout or future editing.
+
+        * layout-tests/editing/inserting/typing-003-expected.txt:
+        * layout-tests/editing/style/remove-underline-across-paragraph-expected.txt:
+        * layout-tests/editing/style/remove-underline-across-paragraph-in-bold-expected.txt:
+        * layout-tests/editing/style/remove-underline-after-paragraph-expected.txt:
+        * layout-tests/editing/style/remove-underline-after-paragraph-in-bold-expected.txt:
+        * layout-tests/editing/style/remove-underline-expected.txt:
+        * layout-tests/editing/style/remove-underline-from-stylesheet-expected.txt:
+        * layout-tests/editing/style/remove-underline-in-bold-expected.txt:
+        * layout-tests/editing/style/typing-style-003-expected.txt:
+        * layout-tests/editing/style/unbold-in-bold-expected.txt:
+        * layout-tests/editing/style/underline-expected.txt:
+
 2005-03-11  Adele Amchan  <adele@apple.com>
 
         backing out fix for <rdar://problem/4021711> REGRESSION (125-188): blank pages when browsing forum at cooperativeresearch.org - cached external script problem

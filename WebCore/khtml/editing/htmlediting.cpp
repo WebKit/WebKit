@@ -38,6 +38,7 @@
 #include "dom_positioniterator.h"
 #include "dom_stringimpl.h"
 #include "dom_textimpl.h"
+#include "dom2_range.h"
 #include "dom2_rangeimpl.h"
 #include "html_elementimpl.h"
 #include "html_imageimpl.h"
@@ -3546,6 +3547,120 @@ void InsertTextCommand::doApply()
 {
 }
 
+static bool isSpecialElement(NodeImpl *n)
+{
+    if (!n->isHTMLElement())
+        return false;
+
+    if (n->id() == ID_A && n->hasAnchor())
+        return true;
+
+    return false;
+}
+
+static bool isFirstVisiblePositionInSpecialElement(const Position& pos)
+{
+    VisiblePosition vPos = VisiblePosition(pos, DOWNSTREAM);
+
+    for (NodeImpl *n = pos.node(); n; n = n->parentNode()) {
+        if (VisiblePosition(n, 0, DOWNSTREAM) != vPos)
+            return false;
+        if (n->rootEditableElement() == NULL)
+            return false;
+        if (isSpecialElement(n))
+            return true;
+    }
+
+    return false;
+}
+
+Position positionBeforeNode(NodeImpl *node)
+{
+    return Position(node->parentNode(), node->nodeIndex());
+}
+
+Position positionBeforeContainingSpecialElement(const Position& pos)
+{
+    ASSERT(isFirstVisiblePositionInSpecialElement(pos));
+
+    VisiblePosition vPos = VisiblePosition(pos, DOWNSTREAM);
+    
+    NodeImpl *outermostSpecialElement = NULL;
+
+    for (NodeImpl *n = pos.node(); n; n = n->parentNode()) {
+        if (VisiblePosition(n, 0, DOWNSTREAM) != vPos)
+            break;
+        if (n->rootEditableElement() == NULL)
+            break;
+        if (isSpecialElement(n))
+            outermostSpecialElement = n;
+    }
+    
+    ASSERT(outermostSpecialElement);
+
+    return positionBeforeNode(outermostSpecialElement);
+}
+
+static int maxRangeOffset(NodeImpl *n)
+{
+    if (DOM::offsetInCharacters(n->nodeType()))
+        return n->maxOffset();
+
+    if (n->isElementNode())
+        return n->childNodeCount();
+
+    return 1;
+}
+
+static bool isLastVisiblePositionInSpecialElement(const Position& pos)
+{
+    // make sure to get a range-compliant version of the position
+    Position rangePos = VisiblePosition(pos, DOWNSTREAM).position();
+
+    VisiblePosition vPos = VisiblePosition(rangePos, DOWNSTREAM);
+
+    for (NodeImpl *n = rangePos.node(); n; n = n->parentNode()) {
+        if (VisiblePosition(n, maxRangeOffset(n), DOWNSTREAM) != vPos)
+            return false;
+        if (n->rootEditableElement() == NULL)
+            return false;
+        if (isSpecialElement(n))
+            return true;
+    }
+
+    return false;
+}
+
+Position positionAfterNode(NodeImpl *node)
+{
+    return Position(node->parentNode(), node->nodeIndex() + 1);
+}
+
+Position positionAfterContainingSpecialElement(const Position& pos)
+{
+    ASSERT(isLastVisiblePositionInSpecialElement(pos));
+
+    // make sure to get a range-compliant version of the position
+    Position rangePos = VisiblePosition(pos, DOWNSTREAM).position();
+
+    VisiblePosition vPos = VisiblePosition(rangePos, DOWNSTREAM);
+
+    NodeImpl *outermostSpecialElement = NULL;
+
+    for (NodeImpl *n = rangePos.node(); n; n = n->parentNode()) {
+        if (VisiblePosition(n, maxRangeOffset(n), DOWNSTREAM) != vPos)
+            break;
+        if (n->rootEditableElement() == NULL)
+            break;
+        if (isSpecialElement(n))
+            outermostSpecialElement = n;
+    }
+    
+    ASSERT(outermostSpecialElement);
+
+    return positionAfterNode(outermostSpecialElement);
+}
+
 Position InsertTextCommand::prepareForTextInsertion(bool adjustDownstream)
 {
     // Prepare for text input by looking at the current position.
@@ -3561,14 +3676,20 @@ Position InsertTextCommand::prepareForTextInsertion(bool adjustDownstream)
     
     Selection typingStyleRange;
 
+    if (isFirstVisiblePositionInSpecialElement(pos)) {
+        pos = positionBeforeContainingSpecialElement(pos);
+    } else if (isLastVisiblePositionInSpecialElement(pos)) {
+        pos = positionAfterContainingSpecialElement(pos);
+    }
+
     if (!pos.node()->isTextNode()) {
         NodeImpl *textNode = document()->createEditingTextNode("");
         NodeImpl *nodeToInsert = textNode;
 
         // Now insert the node in the right place
-        if (pos.node()->isEditableBlock()) {
+        if (pos.node()->rootEditableElement() != NULL) {
             LOG(Editing, "prepareForTextInsertion case 1");
-            appendNode(nodeToInsert, pos.node());
+            insertNodeAt(nodeToInsert, pos.node(), pos.offset());
         }
         else if (pos.node()->caretMinOffset() == pos.offset()) {
             LOG(Editing, "prepareForTextInsertion case 2");
