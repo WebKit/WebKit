@@ -95,7 +95,8 @@ public:
 
     void drawText(int x, int y, int, int, int alignmentFlags, const QString &);
     void drawText(int x, int y, const QChar *, int length, int from, int to, int toAdd,
-                  const QColor& backgroundColor, QPainter::TextDirection d, int letterSpacing, int wordSpacing);
+                  const QColor& backgroundColor, QPainter::TextDirection d,
+                  int letterSpacing, int wordSpacing, bool smallCaps);
     void drawLineForText(int x, int y, int yOffset, int width);
     static QColor selectedTextBackgroundColor();
     

@@ -43,7 +43,8 @@ void Font::drawText( QPainter *p, int x, int y, QChar *str, int slen, int pos, i
                      int toAdd, QPainter::TextDirection d, int from, int to, QColor bg ) const
 {
 #if APPLE_CHANGES
-    p->drawText(x, y, str + pos, std::min(slen - pos, len), from, to, toAdd, bg, d, letterSpacing, wordSpacing);
+    p->drawText(x, y, str + pos, std::min(slen - pos, len), from, to, toAdd, bg, d,
+                letterSpacing, wordSpacing, fontDef.smallCaps);
 #else
     QString qstr = QConstString(str, slen).string();
 
@@ -106,13 +107,13 @@ void Font::drawText( QPainter *p, int x, int y, QChar *str, int slen, int pos, i
 
 float Font::floatWidth( QChar *chs, int slen, int pos, int len ) const
 {
-    return fm.floatWidth(chs, slen, pos, len, letterSpacing, wordSpacing);
+    return fm.floatWidth(chs, slen, pos, len, letterSpacing, wordSpacing, fontDef.smallCaps);
 }
 
 
 void Font::floatCharacterWidths( QChar *str, int slen, int pos, int len, int toAdd, float *buffer) const
 {
-    fm.floatCharacterWidths(str, slen, pos, len, toAdd, buffer, letterSpacing, wordSpacing);
+    fm.floatCharacterWidths(str, slen, pos, len, toAdd, buffer, letterSpacing, wordSpacing, fontDef.smallCaps);
 }
 
 #endif
@@ -123,7 +124,7 @@ int Font::width( QChar *chs, int slen, int pos, int len ) const
 #ifndef ROUND_TO_INT
 #define ROUND_TO_INT(x) (unsigned int)((x)+.5)
 #endif
-    return ROUND_TO_INT(fm.floatWidth(chs+pos, slen-pos, 0, len, letterSpacing, wordSpacing));
+    return ROUND_TO_INT(fm.floatWidth(chs+pos, slen-pos, 0, len, letterSpacing, wordSpacing, fontDef.smallCaps));
 //    return fm.width(chs + pos, len);
 #else
     QString qstr = QConstString(chs+pos, len).string();

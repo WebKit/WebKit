@@ -1,5 +1,28 @@
 2003-05-03  David Hyatt  <hyatt@apple.com>
 
+	Add smallCaps boolean to the string drawing and measuring
+	routines.  WebCore should be done after this patch, with
+	the rest of the work being done entirely in WebKit.
+	
+        Reviewed by darin
+
+        * khtml/rendering/font.cpp:
+        (Font::drawText):
+        (Font::floatWidth):
+        (Font::floatCharacterWidths):
+        (Font::width):
+        * kwq/KWQFontMetrics.h:
+        * kwq/KWQFontMetrics.mm:
+        (QFontMetrics::width):
+        (QFontMetrics::floatWidth):
+        (QFontMetrics::floatCharacterWidths):
+        * kwq/KWQPainter.h:
+        * kwq/KWQPainter.mm:
+        (QPainter::drawText):
+        * kwq/WebCoreTextRenderer.h:
+
+2003-05-03  David Hyatt  <hyatt@apple.com>
+
 	Rename layouted to needsLayout.  Add a layoutIfNeeded method
 	and start using it in places that do if (needsLayout()) layout();
 	
