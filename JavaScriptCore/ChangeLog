@@ -1,3 +1,14 @@
+2004-10-09  Darin Adler  <darin@apple.com>
+
+        Reviewed by Kevin.
+
+        - fixed <rdar://problem/3822618> REGRESSION (164-165): expedia.com's popup help doesn't work
+
+        * kjs/reference.cpp: (Reference::putValue): Change so that references not found in any object
+        work with the window object of the page the function is in, not the page of the caller. This
+        is what all other browsers do. This code was hidden before by the "everything is defined on
+        window object" hack in WebCore.
+
 2004-10-07  Richard Williamson   <rjw@apple.com>
 
 	Added simple JavaScript call tracing.  Very useful for

@@ -1,7 +1,7 @@
 // -*- c-basic-offset: 2 -*-
 /*
  *  This file is part of the KDE libraries
- *  Copyright (C) 2003 Apple Computer, Inc
+ *  Copyright (C) 2004 Apple Computer, Inc
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -152,7 +152,7 @@ void Reference::putValue(ExecState *exec, const Value &w)
 #endif
   Value o = getBase(exec);
   if (o.type() == NullType)
-    o = exec->dynamicInterpreter()->globalObject();
+    o = exec->lexicalInterpreter()->globalObject();
 
   if (propertyNameIsNumber)
     return static_cast<ObjectImp*>(o.imp())->put(exec,propertyNameAsNumber, w);
