@@ -312,13 +312,18 @@ void RenderInline::addFocusRingRects(QPainter *p, int _tx, int _ty)
     for (RenderObject* curr = firstChild(); curr; curr = curr->nextSibling()) {
         if (!curr->isText())
             curr->addFocusRingRects(p, _tx + curr->xPos(), _ty + curr->yPos());
-    }    
+    }
+    
+    if (continuation())
+        continuation()->addFocusRingRects(p, 
+                                          _tx - containingBlock()->xPos() + continuation()->xPos(),
+                                          _ty - containingBlock()->yPos() + continuation()->yPos());
 }
 
 void RenderInline::paintOutline(QPainter *p, int tx, int ty, const QRect &lastline, const QRect &thisline, const QRect &nextline)
 {
     int ow = style()->outlineWidth();
-    if (ow == 0)
+    if (ow == 0 || m_isContinuation) // Continuations get painted by the original inline.
         return;
     
     EBorderStyle os = style()->outlineStyle();

@@ -904,7 +904,17 @@ void RenderObject::paintBorder(QPainter *p, int _tx, int _ty, int w, int h, cons
 
 void RenderObject::addFocusRingRects(QPainter *p, int _tx, int _ty)
 {
-    p->addFocusRingRect(_tx, _ty, width(), height());
+    // For blocks inside inlines, we go ahead and include margins so that we run right up to the
+    // inline boxes above and below us (thus getting merged with them to form a single irregular
+    // shape).
+    if (continuation()) {
+        p->addFocusRingRect(_tx, _ty - collapsedMarginTop(), width(), height()+collapsedMarginTop()+collapsedMarginBottom());
+        continuation()->addFocusRingRects(p, 
+                                          _tx - xPos() + continuation()->containingBlock()->xPos(),
+                                          _ty - yPos() + continuation()->containingBlock()->yPos());
+    }
+    else
+        p->addFocusRingRect(_tx, _ty, width(), height());
 }
 
 void RenderObject::paintOutline(QPainter *p, int _tx, int _ty, int w, int h, const RenderStyle* style)
@@ -1040,6 +1050,9 @@ QRect RenderObject::getAbsoluteRepaintRectWithOutline(int ow)
     QRect r(getAbsoluteRepaintRect());
     r.setRect(r.x()-eow, r.y()-eow, r.width()+eow*2, r.height()+eow*2);
 
+    if (continuation() && !isInline())
+        r.setRect(r.x(), r.y()-collapsedMarginTop(), r.width(), r.height()+collapsedMarginTop()+collapsedMarginBottom());
+    
     if (isInlineFlow()) {
         for (RenderObject* curr = firstChild(); curr; curr = curr->nextSibling()) {
             if (!curr->isText()) {

@@ -265,6 +265,11 @@ QRect RenderFlow::getAbsoluteRepaintRect()
                     r = r.unite(childRect);
                 }
             }
+            
+            if (continuation() && !continuation()->isInline()) {
+                QRect contRect = continuation()->getAbsoluteRepaintRectWithOutline(ow);
+                r = r.unite(contRect);
+            }
         }
 
         return r;

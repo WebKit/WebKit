@@ -1,3 +1,23 @@
+2003-10-30  David Hyatt  <hyatt@apple.com>
+
+	Fixes for 3469057, outlines not drawn on aintitcool.com and also for 3469178, objects with width/height of 0
+	incorrectly excluded from tabbing.
+	
+        Reviewed by darin
+
+        * khtml/html/html_formimpl.cpp:
+        (HTMLGenericFormElementImpl::isSelectable):
+        * khtml/html/html_inlineimpl.cpp:
+        (HTMLAnchorElementImpl::isSelectable):
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::getAbsoluteRepaintRect):
+        * khtml/rendering/render_inline.cpp:
+        (RenderInline::addFocusRingRects):
+        (RenderInline::paintOutline):
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::addFocusRingRects):
+        (RenderObject::getAbsoluteRepaintRectWithOutline):
+
 2003-10-30  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
