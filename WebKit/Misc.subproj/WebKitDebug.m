@@ -79,67 +79,6 @@ void (*oldFree)(struct _malloc_zone_t *zone, void *ptr);
 size_t (*oldSize)(struct _malloc_zone_t *zone, const void *ptr);
 void *(*oldValloc)(struct _malloc_zone_t *zone, size_t size);
 
-#ifdef IF_CHECK_FUNC
-int if_check_zone (const void *ptr);
-int if_check_zone (const void *ptr)
-{
-    if (*((size_t *)ptr-2) == IF_MALLOC_MAGIC)
-        return 1;
-    return 0;
-}
-#endif
-
-#define if_check_zone(ptr)  ((*((size_t *)ptr-2) == IF_MALLOC_MAGIC) ? 1 : 0)
-
-void *_debugAllocate(struct _malloc_zone_t *zone, size_t size);
-
-#define IF_ALIGN_SIZE	16
-#define IF_PAD_SIZE	0
-#define IF_HEADER_SIZE	8
-
-void *_debugAllocate(struct _malloc_zone_t *zone, size_t _size)
-{
-    void *memory;
-    size_t size = _size;
-
-    size = ((size+IF_ALIGN_SIZE-1)/IF_ALIGN_SIZE * IF_ALIGN_SIZE) + IF_ALIGN_SIZE + IF_PAD_SIZE;
-    if (size > BLOCK_SIZE){
-        memory = oldMalloc(zone, _size);
-        fprintf (stdout, "using old malloc to handle size %ld, memory %p\n", size, memory);
-        return memory;
-    }
-    else {
-        if (currentPtr + size > currentBlock + BLOCK_SIZE){
-            kern_return_t	err;
-            vm_address_t	addr;
-
-            blockIndex++;
-            err = vm_allocate(mach_task_self(), &addr,  BLOCK_SIZE, VM_MAKE_TAG(VM_MEMORY_MALLOC_HUGE) | 1);
-            currentPtr = currentBlock = (char *)blocks[blockIndex] = (void *)addr;
-        }
-        memory = (void *)currentPtr;
-        currentPtr += size;
-    }
-    
-    *((size_t *)memory)++ = IF_MALLOC_MAGIC;
-    *((size_t *)memory)++ = size - 8;
-    
-    return memory;
-}
-
-void _debugAllocatorInitialize(void);
-
-void _debugAllocatorInitialize(void)
-{
-    int i;
-    for (i = 0; i < NUM_BLOCKS; i++)
-        blocks[i] = 0;
-    currentPtr = currentBlock = (char *)blocks[0] = malloc (BLOCK_SIZE);
-    fprintf (stdout, "allocated block at %p\n", currentBlock);
-    blockIndex = 0;
-}
-
-
 void *if_valloc(struct _malloc_zone_t *zone, size_t size);
 
 
@@ -220,7 +159,6 @@ void setupDebugMalloc(void)
 
     if_zone = malloc_default_zone();
     if (if_zone->malloc != if_malloc){
-        //_debugAllocatorInitialize();
         oldMalloc = if_zone->malloc;
         oldCalloc = if_zone->calloc;
         oldValloc = if_zone->valloc;
@@ -5234,12 +5172,10 @@ size_t if_size(struct _malloc_zone_t *zone, const void *ptr)
         result = oldSize (zone, ptr);
     else
         result = dlmalloc_usable_size((void *)ptr);
-    //result = *(((size_t *)ptr)-1);
     return result;
 }
 void *if_valloc(struct _malloc_zone_t *zone, size_t size)
 {
-    //return oldValloc (zone, size);
     return dlvalloc (size);
 }
 void *if_malloc (struct _malloc_zone_t *zone, size_t size)
@@ -5247,11 +5183,7 @@ void *if_malloc (struct _malloc_zone_t *zone, size_t size)
     void *memory;
 
     if_malloc_counter++;
-    //memory = oldMalloc (zone, size);
-    //memory = _debugAllocate(zone, size);
     memory = dlmalloc(size);
-    //space_wastage += (malloc_size(memory) - size);
-    //total_space += size;
     return memory;
 }
 void *if_realloc (struct _malloc_zone_t *zone, void *ptr, size_t size)
@@ -5262,11 +5194,6 @@ void *if_realloc (struct _malloc_zone_t *zone, void *ptr, size_t size)
         return oldRealloc (zone, ptr, size);
         
     if_realloc_counter++;
-    //memory = oldRealloc (zone, ptr, size);
-    //space_wastage += (malloc_size(memory) - size);
-    //total_space += size;
-    //memory = _debugAllocate(zone, size);
-    //memcpy (memory, ptr, if_size(zone, ptr));
     memory = dlrealloc (ptr, size);
     
     return memory;
@@ -5275,11 +5202,7 @@ void *if_calloc (struct _malloc_zone_t *zone, size_t num_items, size_t size)
 {
     void *memory;
     if_calloc_counter++;
-    //memory = oldCalloc (zone, num_items, size);
-    //space_wastage += (malloc_size(memory) - size);
-    //memory = _debugAllocate(zone, size*num_items);
     memory = dlcalloc(num_items, size);
-    //total_space += size;
     return memory;
 }
 void if_free (struct _malloc_zone_t *zone, void *ptr)
