@@ -48,7 +48,7 @@
     
     _private = [[WebDataSourcePrivate alloc] init];
     _private->request = [request retain];
-    _private->inputURL = [[request canonicalURL] retain];
+    _private->inputURL = [[request URL] retain];
 
     ++WebDataSourceCount;
     
@@ -153,13 +153,6 @@
 - (NSURL *)URL
 {
     return _private->finalURL ? _private->finalURL : _private->inputURL;
-}
-
-
-// May return nil if not initialized with a URL.
-- (NSURL *)originalURL
-{
-    return _private->inputURL;
 }
 
 

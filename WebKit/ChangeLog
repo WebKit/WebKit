@@ -1,3 +1,16 @@
+2002-10-02  Darin Adler  <darin@apple.com>
+
+	Get rid of uses of canonicalURL.
+
+        * WebCoreSupport.subproj/WebSubresourceClient.m:
+        (+[WebSubresourceClient startLoadingResource:withURL:referrer:forDataSource:]):
+	Start with normal URL. The change to the canonical URL will come in as a redirect.
+        (-[WebSubresourceClient handle:didReceiveData:]): Remove assert.
+        (-[WebSubresourceClient handleDidFinishLoading:]): Ditto.
+        * WebView.subproj/WebDataSource.m:
+        (-[WebDataSource initWithRequest:]):Start with normal URL. The change to the
+	canonical URL will come in as a redirect.
+
 2002-10-02  Ken Kocienda  <kocienda@apple.com>
 
 	Added import of WebHTTPResourceRequest.h to get access to methods

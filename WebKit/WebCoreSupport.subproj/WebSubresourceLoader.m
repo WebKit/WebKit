@@ -95,10 +95,10 @@
     
     WebResourceHandle *h = [[WebResourceHandle alloc] initWithRequest:request];
     client->handle = h;
-    [h loadWithDelegate:client];
     [source _addSubresourceClient:client];
-    [client didStartLoadingWithURL:[request canonicalURL]];
+    [client didStartLoadingWithURL:[request URL]];
     [client receivedProgressWithComplete:NO];
+    [h loadWithDelegate:client];
     [request release];
         
     return [client autorelease];
@@ -144,7 +144,6 @@
 - (void)handle:(WebResourceHandle *)h didReceiveData:(NSData *)data
 {
     ASSERT(handle == h);
-    ASSERT([currentURL isEqual:[[handle _request] canonicalURL]]);
 
     [self receivedProgressWithComplete:NO];
     [loader addData:data];
@@ -153,7 +152,6 @@
 - (void)handleDidFinishLoading:(WebResourceHandle *)h
 {
     ASSERT(handle == h);
-    ASSERT([currentURL isEqual:[[handle _request] canonicalURL]]);
     ASSERT([h _statusCode] == WebResourceHandleStatusLoadComplete);
 
     // Calling _removeSubresourceClient will likely result in a call to release, so we must retain.
