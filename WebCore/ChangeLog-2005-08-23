@@ -1,3 +1,19 @@
+2004-10-05  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin
+
+        Recent checkin adding upstreamDeepEquivalent had it backwards. The helper
+        we want is downstreamDeepEquivalent, as the deepEquivalent function returns
+        an upstream position.
+
+        * khtml/editing/selection.cpp:
+        (khtml::Selection::layout): DOWNSTREAM case now uses downstreamDeepEquivalent.
+        UPSTREAM uses deepEquivalent.
+        * khtml/editing/visible_position.cpp:
+        (khtml::VisiblePosition::downstreamDeepEquivalent): New helper, replacing 
+        upstreamDeepEquivalent.
+        * khtml/editing/visible_position.h
+
 2004-10-05  David Hyatt  <hyatt@apple.com>
 
 	New selection gap-filling architecture.  Makes the gap-filling much more like NSTextView and puts the responsibility

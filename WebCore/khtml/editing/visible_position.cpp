@@ -349,18 +349,18 @@ Position VisiblePosition::deepEquivalent(const Position &pos)
     return Position(node, 0);
 }
 
-Position VisiblePosition::upstreamDeepEquivalent() const
+Position VisiblePosition::downstreamDeepEquivalent() const
 {
     Position pos = m_deepPosition;
     
-    if (pos.isNull() || atStart(pos))
+    if (pos.isNull() || atEnd(pos))
         return pos;
 
     Position downstreamTest = pos.downstream(StayInBlock);
 
     Position current = pos;
-    while (!atStart(current)) {
-        current = previousPosition(current);
+    while (!atEnd(current)) {
+        current = nextPosition(current);
         if (isCandidate(current)) {
             if (downstreamTest != current.downstream(StayInBlock))
                 break;

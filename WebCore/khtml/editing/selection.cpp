@@ -622,10 +622,10 @@ void Selection::layout()
         pos.node()->getDocument()->updateRendering();
         switch (m_affinity) {
             case DOWNSTREAM:
-                pos = VisiblePosition(m_start).deepEquivalent();
+                pos = VisiblePosition(m_start).downstreamDeepEquivalent();
                 break;
             case UPSTREAM:
-                pos = VisiblePosition(m_start).upstreamDeepEquivalent();
+                pos = VisiblePosition(m_start).deepEquivalent();
                 break;
         }
         m_caretRect = pos.node()->renderer()->caretRect(pos.offset(), false);
