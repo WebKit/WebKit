@@ -32,44 +32,41 @@
 @interface KWQButton : NSButton
 {
     QButton *button;
-    BOOL processingMouseEvent;
-    BOOL clickedDuringMouseEvent;
+    BOOL needToSendConsumedMouseUp;
 }
 
-- initWithQButton:(QButton *)b;
-- (void)action:(id)sender;
+- (id)initWithQButton:(QButton *)b;
+- (void)sendConsumedMouseUpIfNeeded;
+
 @end
 
 @implementation KWQButton
 
 
-- initWithQButton:(QButton *)b
+- (id)initWithQButton:(QButton *)b
 {
     button = b;
-    return [super init];
+    return [self init];
 }
 
 - (void)action:(id)sender
 {
-    if (processingMouseEvent) {
-	clickedDuringMouseEvent = true;
+    button->clicked();
+}
+
+- (void)sendConsumedMouseUpIfNeeded
+{
+    if (needToSendConsumedMouseUp) {
+	needToSendConsumedMouseUp = NO;
 	button->sendConsumedMouseUp();
     } 
-
-    button->clicked();
 }
 
 -(void)mouseDown:(NSEvent *)event
 {
-    processingMouseEvent = true;
+    needToSendConsumedMouseUp = YES;
     [super mouseDown:event];
-    processingMouseEvent = false;
-
-    if (clickedDuringMouseEvent) {
-	clickedDuringMouseEvent = false;
-    } else {
-	button->sendConsumedMouseUp();
-    }
+    [self sendConsumedMouseUpIfNeeded];
 }
 
 
@@ -112,7 +109,13 @@ QString QButton::text() const
 
 void QButton::clicked()
 {
+    // Order of signals is:
+    //   1) signals in subclasses (stateChanged, not sure if there are any others)
+    //   2) mouse up
+    //   3) clicked
+    // Proper behavior of check boxes, at least, depends on this order.
+    
+    KWQButton *button = (KWQButton *)getView();
+    [button sendConsumedMouseUpIfNeeded];
     m_clicked.call();
 }
-
-

@@ -1,3 +1,23 @@
+2003-03-26  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - fixed 3208468 -- REGRESSION: checkbox immediately unchecks the first time you check it
+
+        The stateChanged signal must be delivered before the mouse up event is handled.
+
+        * kwq/KWQButton.mm:
+        (-[KWQButton initWithQButton:]): Use [self init] instead of [super init]; no real difference,
+        just makes more logical sense.
+        (-[KWQButton action:]): Don't send the mouse up event here.
+        (-[KWQButton sendConsumedMouseUpIfNeeded]): Added. New method that sends the consumed mouse
+        up event.
+        (-[KWQButton mouseDown:]): Use a simplified scheme that uses only a single boolean to control
+        sending the consumed mouse up event. Call sendConsumedMouseUpIfNeeded to do the deed.
+        (QButton::clicked): Added comment to explain why it's important to send the consumed mouse
+        up event here. Added a call to the new sendConsumedMouseUpIfNeeded method, replacing the
+        code that was formerly in -[KWQButton action:].
+
 2003-03-25  David Hyatt  <hyatt@apple.com>
 
 	Fix font-family parsing to match the spec (and other browsers).
