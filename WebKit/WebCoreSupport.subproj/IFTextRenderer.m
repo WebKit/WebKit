@@ -239,16 +239,16 @@ static unsigned int findLengthOfCharacterCluster(const UniChar *characters, unsi
 }
 
 
-/* Convert non-breaking spaces into spaces. */
-- (void)convertCharacters: (const UniChar *)characters length: (unsigned)numCharacters toGlyphs: (ATSGlyphVector *)glyphs
+/* Convert non-breaking spaces into spaces, and skip control characters. */
+- (void)convertCharacters: (const UniChar *)characters length: (unsigned)numCharacters toGlyphs: (ATSGlyphVector *)glyphs skipControlCharacters:(BOOL)skipControlCharacters
 {
-    unsigned i;
+    unsigned i, numCharactersInBuffer;
     UniChar localBuffer[LOCAL_BUFFER_SIZE];
     UniChar *buffer = localBuffer;
     OSStatus status;
     
     for (i = 0; i < numCharacters; i++) {
-        if (characters[i] == NON_BREAKING_SPACE) {
+        if ((skipControlCharacters && characters[i] < 0x0020) || characters[i] == NON_BREAKING_SPACE) {
             break;
         }
     }
@@ -258,15 +258,17 @@ static unsigned int findLengthOfCharacterCluster(const UniChar *characters, unsi
             buffer = (UniChar *)malloc(sizeof(UniChar) * numCharacters);
         }
         
+        numCharactersInBuffer = 0;
         for (i = 0; i < numCharacters; i++) {
             if (characters[i] == NON_BREAKING_SPACE) {
-                buffer[i] = SPACE;
-            } else {
-                buffer[i] = characters[i];
+                buffer[numCharactersInBuffer++] = SPACE;
+            } else if (!(skipControlCharacters && characters[i] < 0x0020)) {
+                buffer[numCharactersInBuffer++] = characters[i];
             }
         }
         
         characters = buffer;
+        numCharacters = numCharactersInBuffer;
     }
     
     status = ATSUConvertCharToGlyphs(styleGroup, characters, 0, numCharacters, 0, glyphs);
@@ -385,7 +387,7 @@ static unsigned int findLengthOfCharacterCluster(const UniChar *characters, unsi
     ATSLayoutRecord *glyphRecord;
 
     ATSInitializeGlyphVector(numCharacters, 0, &glyphVector);
-    [self convertCharacters: characters length: numCharacters toGlyphs: &glyphVector];
+    [self convertCharacters: characters length: numCharacters toGlyphs: &glyphVector skipControlCharacters: YES];
 
     *numGlyphs = glyphVector.numGlyphs;
     *glyphBuffer = glyphBufPtr = (CGGlyph *)malloc (*numGlyphs * sizeof(CGGlyph));
@@ -564,7 +566,7 @@ typedef enum {
 
 - (_IFFailedDrawReason)_drawCharacters:(const UniChar *)characters length: (unsigned int)length fromCharacterPosition: (int)from toCharacterPosition:(int)to atPoint:(NSPoint)point withTextColor:(NSColor *)textColor backgroundColor: (NSColor *)backgroundColor
 {
-    uint i;
+    uint i, numGlyphs;
     CGGlyph *glyphs, localGlyphBuffer[LOCAL_BUFFER_SIZE];
     ATSGlyphRef glyphID;
     _IFFailedDrawReason result = _IFDrawSucceeded;
@@ -584,8 +586,14 @@ typedef enum {
     // Pack the glyph buffer and ensure that we have glyphs for all the
     // characters.  If we're missing a glyph or have a non-base character
     // stop drawing and return a failure code.
+    numGlyphs = 0;
     for (i = 0; i < length; i++) {
         UniChar c = characters[i];
+        
+        // Skip control characters.
+        if (c < 0x0020) {
+            continue;
+        }
 
         // Icky.  Deal w/ non breaking spaces.
         if (c == NON_BREAKING_SPACE)
@@ -608,15 +616,15 @@ typedef enum {
             goto cleanup;
         }
             
-        glyphs[i] = glyphID;
+        glyphs[numGlyphs++] = glyphID;
     }
 
     if (from == -1)
         from = 0;
     if (to == -1)
-        to = length;
-        
-    [self drawGlyphs: glyphs numGlyphs: length fromGlyphPosition: from toGlyphPosition:to atPoint: point withTextColor: textColor backgroundColor: backgroundColor];
+        to = numGlyphs;
+    
+    [self drawGlyphs:glyphs numGlyphs:numGlyphs fromGlyphPosition:from toGlyphPosition:to atPoint:point withTextColor:textColor backgroundColor:backgroundColor];
 
 cleanup:
     if (glyphs != localGlyphBuffer) {
@@ -699,7 +707,7 @@ cleanup:
     float lastWidth = 0;
     
     ATSInitializeGlyphVector(length, 0, &glyphVector);
-    [self convertCharacters: characters length: length toGlyphs: &glyphVector];
+    [self convertCharacters: characters length: length toGlyphs: &glyphVector skipControlCharacters: YES];
     numGlyphs = glyphVector.numGlyphs;
     glyphRecord = (ATSLayoutRecord *)glyphVector.firstRecord;
     for (i = 0; i < numGlyphs; i++){
@@ -770,22 +778,27 @@ cleanup:
     for (i = pos; i < stringLength; i++) {
         UniChar c = characters[i];
         
+        // Skip control characters.
+        if (c < 0x0020) {
+            continue;
+        }
+        
         if (c == NON_BREAKING_SPACE) {
             c = SPACE;
         }
         
         // Drop out early if we've measured to the end of the requested
         // fragment.
-        if ((int)i - pos >= len){
-            // Check if next character is a space, if so we have to apply rounding.
-            if (c == SPACE){
+        if ((int)i - pos >= len) {
+            // Check if next character is a space. If so, we have to apply rounding.
+            if (c == SPACE) {
                 totalWidth -= lastWidth;
                 totalWidth += ROUND_TO_INT(lastWidth);
             }
             break;
         }
 
-        if (IsNonBaseChar(c)){
+        if (IsNonBaseChar(c)) {
             return [self slowFloatWidthForCharacters: &characters[pos] stringLength: stringLength-pos fromCharacterPostion: 0 numberOfCharacters: len applyRounding: applyRounding];
         }
 
@@ -879,7 +892,7 @@ cleanup:
     }
 
     ATSInitializeGlyphVector(count, 0, &glyphVector);
-    [self convertCharacters: &buffer[0] length: count toGlyphs: &glyphVector];
+    [self convertCharacters: &buffer[0] length: count toGlyphs: &glyphVector skipControlCharacters: NO];
     if (glyphVector.numGlyphs != count)
         [NSException raise:NSInternalInconsistencyException format:@"Optimization assumption violation:  count and glyphID count not equal - for %@ %f", self, [font displayName], [font pointSize]];
             

@@ -1,5 +1,26 @@
 2002-07-10  Darin Adler  <darin@apple.com>
 
+	- fixed 2973738 -- box characters
+
+	To be consistent with other browsers, we need to draw nothing for 0000-001F.
+	We were drawing boxes.
+
+        * WebCoreSupport.subproj/IFTextRenderer.m:
+        (-[IFTextRenderer convertCharacters:length:toGlyphs:skipControlCharacters:]):
+	Add the skipControlCharacters parameter. If YES, don't include glyphs for characters
+	in the 0000-001F range.
+        (-[IFTextRenderer slowPackGlyphsForCharacters:numCharacters:glyphBuffer:numGlyphs:]):
+	Pass skipControlCharacters:YES.
+        (-[IFTextRenderer _drawCharacters:length:fromCharacterPosition:toCharacterPosition:atPoint:withTextColor:backgroundColor:]):
+	Skip control characters when creating the glyph array.
+        (-[IFTextRenderer slowFloatWidthForCharacters:stringLength:fromCharacterPostion:numberOfCharacters:applyRounding:]):
+	Pass skipControlCharacters:YES.
+        (-[IFTextRenderer floatWidthForCharacters:stringLength:fromCharacterPosition:numberOfCharacters:applyRounding:attemptFontSubstitution:]):
+	Skip control characters when computing the width.
+        (-[IFTextRenderer extendCharacterToGlyphMapToInclude:]): Pass skipControlCharacters:NO.
+
+2002-07-10  Darin Adler  <darin@apple.com>
+
 	- fixed 2986273 -- assert currentURL isEqual:[handle redirectedURL] ? [handle redirectedURL] : [handle url]
 
 	Since cancel prevents further notification from getting through, currentURL can get
