@@ -44,6 +44,7 @@ void TokenizerString::clear()
 {
     m_pushedChar1 = 0;
     m_pushedChar2 = 0;
+    m_currentChar = 0;
     m_currentString.clear();
     m_substrings.clear();
     m_lines = 0;
@@ -53,9 +54,9 @@ void TokenizerString::clear()
 void TokenizerString::append(const TokenizerSubstring &s)
 {
     if (s.m_length) {
-        if (!m_currentString.m_length)
+        if (!m_currentString.m_length) {
             m_currentString = s;
-        else {
+	} else {
             m_substrings.append(s);
             m_composite = true;
         }
@@ -87,6 +88,7 @@ void TokenizerString::append(const TokenizerString &s)
         for (; i != e; ++i)
             append(*i);
     }
+    m_currentChar = m_pushedChar1.isNull() ? m_currentString.m_current : &m_pushedChar1;
 }
 
 void TokenizerString::prepend(const TokenizerString &s)
@@ -100,6 +102,7 @@ void TokenizerString::prepend(const TokenizerString &s)
             prepend(*i);
     }
     prepend(s.m_currentString);
+    m_currentChar = m_pushedChar1.isNull() ? m_currentString.m_current : &m_pushedChar1;
 }
 
 void TokenizerString::advanceSubstring()

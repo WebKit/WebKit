@@ -1,3 +1,21 @@
+2004-05-07  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Dave.
+
+	- change things around so extremely hot TokenizerString::current()
+	method doesn't have to do any work. It's cheaper to maintain the
+	relevant state than to always compute it.
+	
+        * khtml/misc/stringit.h:
+        (khtml::TokenizerString::TokenizerString): Initialize m_currentChar
+        (khtml::TokenizerString::push): update m_currentChar
+        (khtml::TokenizerString::advance): ditto
+        (khtml::TokenizerString::current): return m_currentChar
+        * khtml/misc/stringit.cpp:
+        (khtml::TokenizerString::clear): update m_currentChar
+        (khtml::TokenizerString::append): update m_currentChar
+        (khtml::TokenizerString::prepend): update m_currentChar
+
 2004-05-07  Don Melton  <gramps@apple.com>
 
         Reviewed by Dave.
