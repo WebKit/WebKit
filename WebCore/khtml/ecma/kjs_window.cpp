@@ -1035,7 +1035,7 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
       // scan feature argument
       v = args[2];
       QString features;
-      if (!v.isNull()) {
+      if (!v.isNull() && v.type() != UndefinedType) {
         features = v.toString(exec).qstring();
         // specifying window params means false defaults
         winargs.menuBarVisible = false;
@@ -1128,7 +1128,7 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
       }
 
       KParts::URLArgs uargs;
-      uargs.frameName = !args[1].isNull() ?
+      uargs.frameName = !args[1].isNull() && args[1].type() != UndefinedType ?
                         args[1].toString(exec).qstring()
                         : QString("_blank");
       if ( uargs.frameName == "_top" )
