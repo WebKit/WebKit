@@ -1,5 +1,13 @@
 2002-11-08  Darin Adler  <darin@apple.com>
 
+        * History.subproj/WebHistoryItem.m:
+        (-[WebHistoryItem setTitle:]): Use display title if it matches, so
+	we don't end up with two identical strings, as when reading from
+	the property list.
+        (-[WebHistoryItem setDisplayTitle:]): The same thing, the other way round.
+
+2002-11-08  Darin Adler  <darin@apple.com>
+
 	- fixed 3095078 -- image loop counts still not handled right
 
         * WebCoreSupport.subproj/WebImageRenderer.m:

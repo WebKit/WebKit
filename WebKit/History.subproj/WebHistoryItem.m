@@ -139,9 +139,14 @@
 
 - (void)setTitle:(NSString *)title
 {
-    NSString *copy = [title copy];
+    NSString *newTitle;
+    if (title && [title isEqualToString:_displayTitle]) {
+        newTitle = [_displayTitle retain];
+    } else {
+        newTitle = [title copy];
+    }
     [_title release];
-    _title = copy;
+    _title = newTitle;
 }
 
 - (void)setTarget:(NSString *)target
@@ -160,9 +165,14 @@
 
 - (void)setDisplayTitle:(NSString *)displayTitle
 {
-    NSString *copy = [displayTitle copy];
+    NSString *newDisplayTitle;
+    if (displayTitle && [displayTitle isEqualToString:_title]) {
+        newDisplayTitle = [_title retain];
+    } else {
+        newDisplayTitle = [displayTitle copy];
+    }
     [_displayTitle release];
-    _displayTitle = copy;
+    _displayTitle = newDisplayTitle;
 }
 
 - (void)setLastVisitedDate:(NSCalendarDate *)date
