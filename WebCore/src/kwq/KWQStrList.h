@@ -63,9 +63,6 @@ public:
 
 }; // class QStrList ===========================================================
 
-#else // USING_BORROWED_QSTRINGLIST
-// This will help to keep the linker from complaining about empty archives
-void KWQStrList_Dummy() {}
-#endif
+#endif // USING_BORROWED_QSTRINGLIST
 
 #endif

@@ -52,11 +52,10 @@
 #include "qvaluelist.h"
 #include "qstring.h"
 #include "qregexp.h"
+#include "_qstrlist.h"
 #endif // QT_H
 
 #ifndef QT_NO_STRINGLIST
-
-class QStrList;
 
 class Q_EXPORT QStringList : public QValueList<QString>
 {

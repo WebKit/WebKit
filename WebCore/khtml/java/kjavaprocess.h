@@ -26,6 +26,7 @@
 
 #include <kprocess.h>
 #include <qcstring.h>
+#include <qlist.h>
 
 /**
  * @short A class for invoking a Java VM
