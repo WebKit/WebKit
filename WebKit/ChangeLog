@@ -1,3 +1,14 @@
+2004-11-19  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by NOBODY (OOPS!).
+
+	<rdar://problem/3190977> closing window with many tabs in it can be quite slow
+        
+	* WebView.subproj/WebFrame.m:
+        (-[WebFrame _detachFromParent]): autorelease bridge instead of releasing it,
+	to make window and tab closing more responsive - this way the deallocation happens
+	after the windoow or tab appears to close.
+
 === Safari-172 ===
 
 2004-11-19  Chris Blumenberg  <cblu@apple.com>
