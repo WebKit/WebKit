@@ -1,5 +1,11 @@
 2003-10-22  Maciej Stachowiak  <mjs@apple.com>
 
+        Fix broken build.
+
+        * kjs/simple_number.h:
+
+2003-10-22  Maciej Stachowiak  <mjs@apple.com>
+
 	Merged 64-bit compilation fixes, and fixes for handling negative 0
 	from upstream kjs.
 	

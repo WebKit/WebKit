@@ -46,6 +46,8 @@ namespace KJS {
 	static inline bool fits(double d) { return d <= max && d >= min && d == (double)(long)d &&
 					    !IS_NEGATIVE_ZERO(d); }
 	static inline ValueImp *make(long i) { return (ValueImp *)((i << shift) | tag); }
+
+	static double negZero;
     };
 }
 
