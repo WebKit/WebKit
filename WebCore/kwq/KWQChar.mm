@@ -41,16 +41,6 @@ static CFMutableStringRef GetScratchUniCharString()
 
 const QChar QChar::null;
 
-bool QChar::isSpace() const
-{
-    // Use isspace() for basic latin1.  This will include newlines, which
-    // aren't included in unicode DirWS.
-    if (c <= 0x7F) {
-        return isspace(c);
-    }
-    return direction() == DirWS;
-}
-
 bool QChar::isDigit() const
 {
     static CFCharacterSetRef set = CFCharacterSetGetPredefined(kCFCharacterSetDecimalDigit);
@@ -100,11 +90,6 @@ QChar QChar::upper() const
     scratchUniChar = c;
     CFStringUppercase(GetScratchUniCharString(), NULL);
     return scratchUniChar;
-}
-
-QChar::Direction QChar::direction() const
-{
-    return (QChar::Direction)WebCoreUnicodeDirectionFunction(c);
 }
 
 bool QChar::mirrored() const

@@ -586,17 +586,12 @@ void RenderListMarker::calcWidth()
 
 short RenderListMarker::lineHeight(bool b) const
 {
-    if (m_listImage)
-        return height()+marginTop()+marginBottom();
-    return RenderBox::lineHeight(b);
+    return height();
 }
 
 short RenderListMarker::baselinePosition(bool b) const
 {
-    if (m_listImage)
-        return height()+marginTop()+marginBottom();
-    // FIXME: This should one day really align.
-    return RenderBox::baselinePosition(b);
+    return height();
 }
 
 bool RenderListMarker::isInside() const

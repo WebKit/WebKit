@@ -32,7 +32,13 @@
 
 QString locate(const char *type, const QString &filename, const KInstance *instance)
 {
+    // FIXME: Eliminate this hard-coding at some point?
+    bool quirk = true;
+    if (filename.contains("html4"))
+        quirk = false;
     NSBundle *bundle = [NSBundle bundleForClass:[KWQKStandardDirsBundleDummy class]];
+    if (quirk)
+        return QString::fromNSString([bundle pathForResource:@"quirks" ofType:@"css"]);
     return QString::fromNSString([bundle pathForResource:@"html4" ofType:@"css"]);
 }
 

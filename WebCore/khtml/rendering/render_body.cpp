@@ -47,7 +47,7 @@ void RenderBody::setStyle(RenderStyle* style)
 //     qDebug("RenderBody::setStyle()");
     style->setDisplay(BLOCK); // Don't allow RenderBody to be inline at the moment.
     RenderBlock::setStyle(style);
-    element()->getDocument()->setTextColor( DOMString( style->color().name() ) );
+    element()->getDocument()->setTextColor( style->color() );
     scrollbarsStyled = false;
 }
 

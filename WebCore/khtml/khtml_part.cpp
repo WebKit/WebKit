@@ -1955,6 +1955,8 @@ bool KHTMLPart::gotoAnchor( const QString &name )
   NodeImpl *n = anchors->namedItem(name, !d->m_doc->inQuirksMode());
   anchors->deref();
 
+  d->m_doc->setCSSTarget(n); // Setting to null will clear the current target.
+  
   if(!n) {
       kdDebug(6050) << "KHTMLPart::gotoAnchor node '" << name << "' not found" << endl;
       return false;

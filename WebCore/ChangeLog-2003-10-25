@@ -1,3 +1,165 @@
+<<<<<<< ChangeLog
+2003-02-24  David Hyatt  <hyatt@apple.com>
+
+	The new CSS1 parser, implementation of attr(), improvement of
+	the content property, impl of the :target selector, and new
+	dotted/dashed line drawing code for borders.
+	
+        Reviewed by darin/gramps
+
+        * ForwardingHeaders/css/css_base.h: Added.
+        * WebCore.pbproj/project.pbxproj:
+        * khtml/css/Makefile.am:
+        * khtml/css/css_base.cpp: Added.
+        (StyleBaseImpl::checkLoaded):
+        (StyleBaseImpl::stylesheet):
+        (StyleBaseImpl::baseURL):
+        (StyleBaseImpl::setParsedValue):
+        (StyleListImpl::~StyleListImpl):
+        (CSSSelector::print):
+        (CSSSelector::specificity):
+        (CSSSelector::extractPseudoType):
+        (CSSSelector::operator == ):
+        (CSSSelector::selectorText):
+        * khtml/css/css_base.h: Added.
+        * khtml/css/css_ruleimpl.cpp:
+        (CSSRuleImpl::parentRule):
+        (CSSImportRuleImpl::CSSImportRuleImpl):
+        (CSSImportRuleImpl::~CSSImportRuleImpl):
+        (CSSImportRuleImpl::setStyleSheet):
+        (CSSImportRuleImpl::init):
+        (CSSMediaRuleImpl::CSSMediaRuleImpl):
+        (CSSMediaRuleImpl::append):
+        (CSSMediaRuleImpl::insertRule):
+        (CSSStyleRuleImpl::setDeclaration):
+        (CSSStyleRuleImpl::setNonCSSHints):
+        * khtml/css/css_ruleimpl.h:
+        * khtml/css/css_stylesheetimpl.cpp:
+        (CSSStyleSheetImpl::CSSStyleSheetImpl):
+        (CSSStyleSheetImpl::insertRule):
+        (CSSStyleSheetImpl::cssRules):
+        (CSSStyleSheetImpl::parseString):
+        (MediaListImpl::deleteMedium):
+        * khtml/css/css_stylesheetimpl.h:
+        * khtml/css/css_valueimpl.cpp:
+        (CSSStyleDeclarationImpl::getPropertyValue):
+        (CSSStyleDeclarationImpl::get4Values):
+        (CSSStyleDeclarationImpl::getShortHandValue):
+        (CSSStyleDeclarationImpl::getPropertyCSSValue):
+        (CSSStyleDeclarationImpl::removeProperty):
+        (CSSStyleDeclarationImpl::getPropertyPriority):
+        (CSSStyleDeclarationImpl::setProperty):
+        (CSSStyleDeclarationImpl::setLengthProperty):
+        (CSSPrimitiveValueImpl::CSSPrimitiveValueImpl):
+        (CSSPrimitiveValueImpl::cleanup):
+        (CSSPrimitiveValueImpl::computeLength):
+        (CSSPrimitiveValueImpl::computeLengthFloat):
+        (CSSPrimitiveValueImpl::setFloatValue):
+        (CSSPrimitiveValueImpl::cssText):
+        (FontFamilyValueImpl::FontFamilyValueImpl):
+        (FontValueImpl::FontValueImpl):
+        (FontValueImpl::~FontValueImpl):
+        * khtml/css/css_valueimpl.h:
+        * khtml/css/cssparser.cpp:
+        (qFatal):
+        (ValueList::ValueList):
+        (ValueList::~ValueList):
+        (ValueList::addValue):
+        (CSSParser::CSSParser):
+        (CSSParser::~CSSParser):
+        (CSSParser::parseSheet):
+        (CSSParser::parseRule):
+        (CSSParser::parseValue):
+        (CSSParser::parseDeclaration):
+        (CSSParser::addProperty):
+        (CSSParser::createStyleDeclaration):
+        (CSSParser::clearProperties):
+        (CSSParser::document):
+        (validUnit):
+        (CSSParser::parseShortHand):
+        (CSSParser::parse4Values):
+        (CSSParser::parseContent):
+        (CSSParser::parseShape):
+        (CSSParser::parseFont):
+        (CSSParser::parseFontFamily):
+        (parseColor):
+        (CSSParser::parseColor):
+        (yyerror):
+        (DOM::CSSParser::lex):
+        (toHex):
+        (DOM::CSSParser::text):
+        * khtml/css/cssparser.h:
+        * khtml/css/cssproperties.c:
+        (findProp):
+        * khtml/css/cssproperties.h:
+        * khtml/css/cssproperties.in:
+        * khtml/css/cssstyleselector.cpp:
+        * khtml/css/cssstyleselector.h:
+        * khtml/css/cssvalues.c:
+        (hash_val):
+        (findValue):
+        * khtml/css/cssvalues.h:
+        * khtml/css/cssvalues.in:
+        * khtml/css/html4.css:
+        * khtml/css/parser.cpp: Added.
+        (DOM::getPropertyID):
+        (getValueID):
+        (cssyyerror):
+        (cssyylex):
+        (__yy_memcpy):
+        * khtml/css/parser.h: Added.
+        * khtml/css/parser.y: Added.
+        * khtml/css/quirks.css: Added.
+        * khtml/css/tokenizer.cpp: Added.
+        * khtml/css/tokenizer.flex: Added.
+        * khtml/dom/css_value.h:
+        * khtml/dom/html_element.cpp:
+        * khtml/ecma/kjs_css.cpp:
+        * khtml/html/html_baseimpl.cpp:
+        (HTMLBodyElementImpl::parseAttribute):
+        * khtml/html/html_blockimpl.cpp:
+        (HTMLDivElementImpl::parseAttribute):
+        (HTMLHRElementImpl::attach):
+        (HTMLParagraphElementImpl::parseAttribute):
+        * khtml/html/html_elementimpl.cpp:
+        (isHexDigit):
+        (toHex):
+        (HTMLElementImpl::addHTMLColor):
+        * khtml/html/html_elementimpl.h:
+        * khtml/html/html_inlineimpl.cpp:
+        (HTMLFontElementImpl::parseAttribute):
+        * khtml/html/html_tableimpl.cpp:
+        (HTMLTableElementImpl::parseAttribute):
+        (HTMLTableElementImpl::attach):
+        (HTMLTablePartElementImpl::parseAttribute):
+        (HTMLTableCellElementImpl::parseAttribute):
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::gotoAnchor):
+        * khtml/misc/helper.h:
+        * khtml/rendering/render_body.cpp:
+        (RenderBody::setStyle):
+        * khtml/rendering/render_list.cpp:
+        (RenderListMarker::lineHeight):
+        (RenderListMarker::baselinePosition):
+        * khtml/rendering/render_style.cpp:
+        (RenderStyle::setContent):
+        * khtml/rendering/render_style.h:
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::DocumentImpl):
+        (DocumentImpl::setFocusNode):
+        (DocumentImpl::setCSSTarget):
+        (DocumentImpl::getCSSTarget):
+        * khtml/xml/dom_docimpl.h:
+        * kwq/KWQChar.mm:
+        (QChar::upper):
+        * kwq/KWQColor.h:
+        * kwq/KWQKStandardDirs.mm:
+        (locate):
+        * kwq/KWQPainter.mm:
+        (QPainter::drawLine):
+        * kwq/KWQString.h:
+
+=======
 2003-02-24  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by John.
@@ -9,6 +171,7 @@
         (HTMLDocumentImpl::HTMLDocumentImpl): Added new processingLoadEvent bool.
         (HTMLDocumentImpl::close): Guard against re-entering the load event handler.
 
+>>>>>>> 1.1437
 2003-02-24  Darin Adler  <darin@apple.com>
 
         Reviewed by Ken.

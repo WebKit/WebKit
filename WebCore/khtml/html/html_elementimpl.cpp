@@ -247,6 +247,101 @@ void HTMLElementImpl::addCSSLength(int id, const DOMString &value)
     setChanged();
 }
 
+static inline bool isHexDigit( const QChar &c ) {
+    return ( c >= '0' && c <= '9' ) ||
+	   ( c >= 'a' && c <= 'f' ) ||
+	   ( c >= 'A' && c <= 'F' );
+}
+
+static inline int toHex( const QChar &c ) {
+    return ( (c >= '0' && c <= '9')
+             ? (c.unicode() - '0')
+             : ( ( c >= 'a' && c <= 'f' )
+                 ? (c.unicode() - 'a' + 10)
+                 : ( ( c >= 'A' && c <= 'F' )
+                     ? (c.unicode() - 'A' + 10)
+                     : -1 ) ) );
+}
+
+/* color parsing that tries to match as close as possible IE 6. */
+void HTMLElementImpl::addHTMLColor( int id, const DOMString &c )
+{
+    if(!m_styleDecls) createDecl();
+
+    // this is the only case no color gets applied in IE.
+    if ( !c.length() )
+        return;
+
+    if ( m_styleDecls->setProperty(id, c, false, true) )
+        return;
+
+    QString color = c.string();
+    // not something that fits the specs.
+
+    // we're emulating IEs color parser here. It maps transparent to black, otherwise it tries to build a rgb value
+    // out of everyhting you put in. The algorithm is experimentally determined, but seems to work for all test cases I have.
+
+    // the length of the color value is rounded up to the next
+    // multiple of 3. each part of the rgb triple then gets one third
+    // of the length.
+    //
+    // Each triplet is parsed byte by byte, mapping
+    // each number to a hex value (0-9a-fA-F to their values
+    // everything else to 0).
+    //
+    // The highest non zero digit in all triplets is remembered, and
+    // used as a normalization point to normalize to values between 0
+    // and 255.
+
+    if ( color.lower() != "transparent" ) {
+        if ( color[0] == '#' )
+            color.remove( 0,  1 );
+        int basicLength = (color.length() + 2) / 3;
+        if ( basicLength > 1 ) {
+            // IE ignores colors with three digits or less
+            // 	    qDebug("trying to fix up color '%s'. basicLength=%d, length=%d",
+            // 		   color.latin1(), basicLength, color.length() );
+            int colors[3] = { 0, 0, 0 };
+            int component = 0;
+            int pos = 0;
+            int maxDigit = basicLength-1;
+            while ( component < 3 ) {
+                // search forward for digits in the string
+                int numDigits = 0;
+                while ( pos < (int)color.length() && numDigits < basicLength ) {
+                    int hex = toHex( color[pos] );
+                    colors[component] = (colors[component] << 4);
+                    if ( hex > 0 ) {
+                        colors[component] += hex;
+                        maxDigit = QMIN( maxDigit, numDigits );
+                    }
+                    numDigits++;
+                    pos++;
+                }
+                while ( numDigits++ < basicLength )
+                    colors[component] <<= 4;
+                component++;
+            }
+            maxDigit = basicLength - maxDigit;
+            // 	    qDebug("color is %x %x %x, maxDigit=%d",  colors[0], colors[1], colors[2], maxDigit );
+
+            // normalize to 00-ff. The highest filled digit counts, minimum is 2 digits
+            maxDigit -= 2;
+            colors[0] >>= 4*maxDigit;
+            colors[1] >>= 4*maxDigit;
+            colors[2] >>= 4*maxDigit;
+            // 	    qDebug("normalized color is %x %x %x",  colors[0], colors[1], colors[2] );
+            // 	assert( colors[0] < 0x100 && colors[1] < 0x100 && colors[2] < 0x100 );
+
+            color.sprintf("#%02x%02x%02x", colors[0], colors[1], colors[2] );
+            // 	    qDebug( "trying to add fixed color string '%s'", color.latin1() );
+            if ( m_styleDecls->setProperty(id, DOMString(color), false, true) )
+                return;
+        }
+    }
+    m_styleDecls->setProperty(id, CSS_VAL_BLACK, false, true);
+}
+
 void HTMLElementImpl::removeCSSProperty(int id)
 {
     if(!m_styleDecls)

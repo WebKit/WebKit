@@ -911,7 +911,7 @@ public:
 	    return 0;
     }
 
-    void setContent(DOM::DOMStringImpl* s);
+    void setContent(DOM::DOMStringImpl* s, bool add = false);
     void setContent(CachedObject* o);
 
     bool inheritedNotEqual( RenderStyle *other ) const;

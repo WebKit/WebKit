@@ -164,7 +164,7 @@ void QPainter::_setColorFromPen()
     [data->state.pen.color().getNSColor() set];
 }
 
-// This is only used to draw borders around text, and lines over text.
+// This is only used to draw borders.
 void QPainter::drawLine(int x1, int y1, int x2, int y2)
 {
     if (data->state.paintingDisabled)
@@ -176,45 +176,113 @@ void QPainter::drawLine(int x1, int y1, int x2, int y2)
     float width = data->state.pen.width();
     if (width < 1)
         width = 1;
+
+    NSPoint p1 = NSMakePoint(x1, y1);
+    NSPoint p2 = NSMakePoint(x2, y2);
     
-    NSPoint p1 = NSMakePoint(x1 + width/2, y1 + width/2);
-    NSPoint p2 = NSMakePoint(x2 + width/2, y2 + width/2);
+    // For odd widths, we add in 0.5 to the appropriate x/y so that the float arithmetic
+    // works out.  For example, with a border width of 3, KHTML will pass us (y1+y2)/2, e.g.,
+    // (50+53)/2 = 103/2 = 51 when we want 51.5.  It is always true that an even width gave
+    // us a perfect position, but an odd width gave us a position that is off by exactly 0.5.
+    if (penStyle == DotLine || penStyle == DashLine) {
+        if (x1 == x2) {
+            p1.y += width;
+            p2.y -= width;
+        }
+        else {
+            p1.x += width;
+            p2.x -= width;
+        }
+    }
     
-    // This hack makes sure we don't end up with lines hanging off the ends, while
-    // keeping lines horizontal or vertical.
-    if (x1 != x2)
-        p2.x -= width;
-    if (y1 != y2)
-        p2.y -= width;
+    if (((int)width)%2) {
+        if (x1 == x2) {
+            // We're a vertical line.  Adjust our x.
+            p1.x += 0.5;
+            p2.x += 0.5;
+        }
+        else {
+            // We're a horizontal line. Adjust our y.
+            p1.y += 0.5;
+            p2.y += 0.5;
+        }
+    }
     
     NSBezierPath *path = [[NSBezierPath alloc] init];
     [path setLineWidth:width];
 
+    int patWidth = 0;
     switch (penStyle) {
     case NoPen:
     case SolidLine:
         break;
     case DotLine:
-        {
-            const float dottedLine[2] = { 3, 3 };
-            [path setLineDash:dottedLine count:2 phase:0];
-        }
+        patWidth = (int)width;
         break;
     case DashLine:
-        {
-            const float dashedLine[2] = { 4, 2 };
-            [path setLineDash:dashedLine count:2 phase:0];
-        }
+        patWidth = 3*(int)width;
         break;
     }
 
+    _setColorFromPen();
+    NSGraphicsContext *graphicsContext = [NSGraphicsContext currentContext];
+    BOOL flag = [graphicsContext shouldAntialias];
+    [graphicsContext setShouldAntialias: NO];
+    
+    if (patWidth) {
+        // Do a rect fill of our endpoints.  This ensures we always have the
+        // appearance of being a border.  We then draw the actual dotted/dashed line.
+        if (x1 == x2) {
+            NSRectFill(NSMakeRect(p1.x-width/2, p1.y-width, width, width));
+            NSRectFill(NSMakeRect(p2.x-width/2, p2.y, width, width));
+        }
+        else {
+            NSRectFill(NSMakeRect(p1.x-width, p1.y-width/2, width, width));
+            NSRectFill(NSMakeRect(p2.x, p2.y-width/2, width, width));
+        }
+        
+        // Example: 80 pixels with a width of 30 pixels.
+        // Remainder is 20.  The maximum pixels of line we could paint
+        // will be 50 pixels.
+        int distance = ((x1 == x2) ? (y2 - y1) : (x2 - x1)) - 2*(int)width;
+        int remainder = distance%patWidth;
+        int coverage = distance-remainder;
+        int numSegments = coverage/patWidth;
+
+        float patternOffset = 0;
+        // Special case 1px dotted borders for speed.
+        if (patWidth == 1)
+            patternOffset = 1.0;
+        else {
+            bool evenNumberOfSegments = numSegments%2 == 0;
+            if (remainder)
+                evenNumberOfSegments = !evenNumberOfSegments;
+            if (evenNumberOfSegments) {
+                if (remainder) {
+                    patternOffset += patWidth - remainder;
+                    patternOffset += remainder/2;
+                }
+                else
+                    patternOffset = patWidth/2;
+            }
+            else if (!evenNumberOfSegments) {
+                if (remainder)
+                    patternOffset = (patWidth - remainder)/2;
+            }
+        }
+        
+        const float dottedLine[2] = { patWidth, patWidth };
+        [path setLineDash:dottedLine count:2 phase:patternOffset];
+    }
+    
     [path moveToPoint:p1];
     [path lineToPoint:p2];
 
-    _setColorFromPen();
     [path stroke];
     
     [path release];
+
+    [graphicsContext setShouldAntialias: flag];
 }
 
 

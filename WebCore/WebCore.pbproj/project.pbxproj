@@ -489,6 +489,8 @@
 				BC7C965303E9EE7000A80004,
 				BC7C965503E9EE7000A80004,
 				BCC60E5903F5055A00A80004,
+				BC8F618D040594BA00A80004,
+				BC8F618E040594BA00A80004,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -499,6 +501,7 @@
 				089C1668FE841158C02AAC07,
 				F5A1B04A02DE8ABA018635CA,
 				F5A1B05402DE8B46018635CA,
+				BC8F629A0405F45600A80004,
 			);
 			isa = PBXResourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -733,6 +736,8 @@
 				BC7C965203E9EE7000A80004,
 				BC7C965403E9EE7000A80004,
 				BCC60E5803F5055A00A80004,
+				BC8F61880405949900A80004,
+				BC8F61890405949900A80004,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -753,6 +758,7 @@
 				089C1666FE841158C02AAC07,
 				F5A1B04902DE8ABA018635CA,
 				F5A1B05302DE8B46018635CA,
+				BC8F62990405F45600A80004,
 			);
 			isa = PBXGroup;
 			name = Resources;
@@ -1530,6 +1536,73 @@
 			settings = {
 			};
 		};
+		BC8F61850405949900A80004 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = css_base.cpp;
+			refType = 4;
+		};
+		BC8F61860405949900A80004 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = parser.cpp;
+			refType = 4;
+		};
+		BC8F61870405949900A80004 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = tokenizer.cpp;
+			refType = 4;
+		};
+		BC8F61880405949900A80004 = {
+			fileRef = BC8F61850405949900A80004;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		BC8F61890405949900A80004 = {
+			fileRef = BC8F61860405949900A80004;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		BC8F618B040594BA00A80004 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = css_base.h;
+			refType = 4;
+		};
+		BC8F618C040594BA00A80004 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = parser.h;
+			refType = 4;
+		};
+		BC8F618D040594BA00A80004 = {
+			fileRef = BC8F618B040594BA00A80004;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		BC8F618E040594BA00A80004 = {
+			fileRef = BC8F618C040594BA00A80004;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		BC8F62990405F45600A80004 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = quirks.css;
+			path = khtml/css/quirks.css;
+			refType = 4;
+		};
+		BC8F629A0405F45600A80004 = {
+			fileRef = BC8F62990405F45600A80004;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		BCC60E5603F5055A00A80004 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
@@ -1970,6 +2043,11 @@
 		};
 		F523D18402DE42E8018635CA = {
 			children = (
+				BC8F61850405949900A80004,
+				BC8F61860405949900A80004,
+				BC8F61870405949900A80004,
+				BC8F618B040594BA00A80004,
+				BC8F618C040594BA00A80004,
 				F523D16402DE42E6018635CA,
 				F523D16502DE42E6018635CA,
 				F523D16602DE42E6018635CA,

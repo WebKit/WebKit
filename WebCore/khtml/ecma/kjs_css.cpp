@@ -25,7 +25,7 @@
 
 #include <dom/html_head.h> // for HTMLStyleElement
 
-#include <css/cssparser.h>
+#include <css/css_base.h>
 #include "kjs_dom.h"
 
 using namespace KJS;

@@ -406,7 +406,8 @@ public:
         CSS_ATTR = 22,
         CSS_COUNTER = 23,
         CSS_RECT = 24,
-        CSS_RGBCOLOR = 25
+        CSS_RGBCOLOR = 25,
+        CSS_HTML_RELATIVE = 255
     };
 
     /**

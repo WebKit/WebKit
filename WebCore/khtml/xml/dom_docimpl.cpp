@@ -269,7 +269,7 @@ DocumentImpl::DocumentImpl(DOMImplementationImpl *_implementation, KHTMLView *v)
     m_implementation->ref();
     pMode = Strict;
     hMode = XHtml;
-    m_textColor = "#000000";
+    m_textColor = Qt::black;
     m_elementNames = 0;
     m_elementNameAlloc = 0;
     m_elementNameCount = 0;
@@ -297,6 +297,8 @@ DocumentImpl::DocumentImpl(DOMImplementationImpl *_implementation, KHTMLView *v)
                                             !inQuirksMode() );
     m_windowEventListeners.setAutoDelete(true);
     m_pendingStylesheets = 0;
+
+    m_cssTarget = 0;
 }
 
 DocumentImpl::~DocumentImpl()
@@ -2044,6 +2046,20 @@ void DocumentImpl::setFocusNode(NodeImpl *newFocusNode)
 
         updateRendering();
     }
+}
+
+void DocumentImpl::setCSSTarget(NodeImpl* n)
+{
+    if (m_cssTarget)
+        m_cssTarget->setChanged();
+    m_cssTarget = n;
+    if (n)
+        n->setChanged();
+}
+
+NodeImpl* DocumentImpl::getCSSTarget()
+{
+    return m_cssTarget;
 }
 
 void DocumentImpl::attachNodeIterator(NodeIteratorImpl *ni)

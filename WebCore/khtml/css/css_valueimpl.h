@@ -1,8 +1,8 @@
 /*
  * This file is part of the DOM implementation for KDE.
  *
- * (C) 1999 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2003 Apple Computer, Inc.
+ * (C) 1999-2003 Lars Knoll (knoll@kde.org)
+ * Copyright (C) 2002 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -19,13 +19,14 @@
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  *
+ * $Id$
  */
 #ifndef _CSS_css_valueimpl_h_
 #define _CSS_css_valueimpl_h_
 
 #include "dom/css_value.h"
 #include "dom/dom_string.h"
-#include "css/cssparser.h"
+#include "css/css_base.h"
 #include "misc/loader_client.h"
 #include "misc/shared.h"
 
@@ -34,7 +35,7 @@
 namespace khtml {
     class RenderStyle;
     class CachedImage;
-};
+}
 
 namespace DOM {
 
@@ -56,11 +57,11 @@ public:
     unsigned long length() const;
     CSSRuleImpl *parentRule() const;
     DOM::DOMString removeProperty( int propertyID, bool NonCSSHints = false );
-    void setProperty ( int propertyId, const DOM::DOMString &value, bool important = false, bool nonCSSHint = false);
+    bool setProperty ( int propertyId, const DOM::DOMString &value, bool important = false, bool nonCSSHint = false);
     void setProperty ( int propertyId, int value, bool important = false, bool nonCSSHint = false);
     // this treats integers as pixels!
     // needed for conversion of html attributes
-    void setLengthProperty(int id, const DOM::DOMString &value, bool important, bool nonCSSHint = true);
+    void setLengthProperty(int id, const DOM::DOMString &value, bool important, bool nonCSSHint = true, bool multiLength = false);
 
     // add a whole, unparsed property
     void setProperty ( const DOMString &propertyString);
@@ -73,8 +74,9 @@ public:
 
     virtual bool parseString( const DOMString &string, bool = false );
 
-    CSSValueImpl *getPropertyCSSValue( int propertyID );
-    bool getPropertyPriority( int propertyID );
+    CSSValueImpl *getPropertyCSSValue( int propertyID ) const;
+    DOMString getPropertyValue( int propertyID ) const;
+    bool getPropertyPriority( int propertyID ) const;
 
     QPtrList<CSSProperty> *values() { return m_lstValues; }
     void setNode(NodeImpl *_node) { m_node = _node; }
@@ -82,6 +84,9 @@ public:
     void setChanged();
 
 protected:
+    DOMString getShortHandValue( const int* properties, int number ) const;
+    DOMString get4Values( const int* properties ) const;
+
     QPtrList<CSSProperty> *m_lstValues;
     NodeImpl *m_node;
 
@@ -103,6 +108,7 @@ public:
     void setCssText(DOM::DOMString str);
 
     virtual bool isValue() { return true; }
+    virtual bool isFontValue() { return false; }
 };
 
 class CSSInheritedValueImpl : public CSSValueImpl
@@ -147,12 +153,11 @@ class CSSPrimitiveValueImpl : public CSSValueImpl
 public:
     CSSPrimitiveValueImpl();
     CSSPrimitiveValueImpl(int ident);
-    CSSPrimitiveValueImpl(float num, CSSPrimitiveValue::UnitTypes type);
+    CSSPrimitiveValueImpl(double num, CSSPrimitiveValue::UnitTypes type);
     CSSPrimitiveValueImpl(const DOMString &str, CSSPrimitiveValue::UnitTypes type);
     CSSPrimitiveValueImpl(const Counter &c);
     CSSPrimitiveValueImpl( RectImpl *r);
-    CSSPrimitiveValueImpl(const RGBColor &rgb);
-    CSSPrimitiveValueImpl(const QColor &color);
+    CSSPrimitiveValueImpl(QRgb color);
 
     virtual ~CSSPrimitiveValueImpl();
 
@@ -174,13 +179,12 @@ public:
      */
     int computeLength( khtml::RenderStyle *style, QPaintDeviceMetrics *devMetrics );
 
-    float computeLengthFloat( khtml::RenderStyle *style, QPaintDeviceMetrics *devMetrics );
-
+    double computeLengthFloat( khtml::RenderStyle *style, QPaintDeviceMetrics *devMetrics );
 
     // use with care!!!
     void setPrimitiveType(unsigned short type) { m_type = type; }
-    void setFloatValue ( unsigned short unitType, float floatValue, int &exceptioncode );
-    float getFloatValue ( unsigned short/* unitType */) const {
+    void setFloatValue ( unsigned short unitType, double floatValue, int &exceptioncode );
+    double getFloatValue ( unsigned short/* unitType */) const {
 	return m_value.num;
     }
 
@@ -199,7 +203,7 @@ public:
 	return ( m_type != CSSPrimitiveValue::CSS_RECT ? 0 : m_value.rect );
     }
 
-    RGBColor *getRGBColorValue () const {
+    QRgb getRGBColorValue () const {
 	return ( m_type != CSSPrimitiveValue::CSS_RGBCOLOR ? 0 : m_value.rgbcolor );
     }
 
@@ -212,31 +216,31 @@ public:
     virtual DOM::DOMString cssText() const;
 
     virtual bool isQuirkValue() { return false; }
-    
+
 protected:
     int m_type;
     union {
 	int ident;
-	float num;
+	double num;
 	DOM::DOMStringImpl *string;
 	CounterImpl *counter;
 	RectImpl *rect;
-	RGBColor *rgbcolor;
+        QRgb rgbcolor;
     } m_value;
 };
 
 // This value is used to handle quirky margins in reflow roots (body, td, and th) like WinIE.
-// The basic idea is that a stylesheet can use the value _qem (for quirky em) instead of em
+// The basic idea is that a stylesheet can use the value __qem (for quirky em) instead of em
 // in a stylesheet.  When the quirky value is used, if you're in quirks mode, the margin will
 // collapse away inside a table cell.
 class CSSQuirkPrimitiveValueImpl : public CSSPrimitiveValueImpl
 {
 public:
-    CSSQuirkPrimitiveValueImpl(float num, CSSPrimitiveValue::UnitTypes type)
+    CSSQuirkPrimitiveValueImpl(double num, CSSPrimitiveValue::UnitTypes type)
       :CSSPrimitiveValueImpl(num, type) {}
-    
+
     virtual ~CSSQuirkPrimitiveValueImpl() {}
-    
+
     virtual bool isQuirkValue() { return true; }
 };
 
@@ -291,12 +295,28 @@ public:
     FontFamilyValueImpl( const QString &string);
     const QString &fontName() const { return parsedFontName; }
     int genericFamilyType() const { return _genericFamilyType; }
-    bool isKonqBody() const { return _isKonqBody; }
 protected:
     QString parsedFontName;
 private:
     int _genericFamilyType;
-    bool _isKonqBody;
+};
+
+class FontValueImpl : public CSSValueImpl
+{
+public:
+    FontValueImpl();
+    virtual ~FontValueImpl();
+
+    virtual unsigned short cssValueType() const { return CSSValue::CSS_CUSTOM; }
+
+    virtual bool isFontValue() { return true; }
+
+    CSSPrimitiveValueImpl *style;
+    CSSPrimitiveValueImpl *variant;
+    CSSPrimitiveValueImpl *weight;
+    CSSPrimitiveValueImpl *size;
+    CSSPrimitiveValueImpl *lineHeight;
+    CSSValueListImpl *family;
 };
 
 // ------------------------------------------------------------------------------
@@ -343,6 +363,6 @@ protected:
 };
 
 
-}; // namespace
+} // namespace
 
 #endif

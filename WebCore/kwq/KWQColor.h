@@ -44,10 +44,11 @@ const QRgb KWQInvalidColor = 0x40000000;
 class QColor {
 public:
     QColor() : color(KWQInvalidColor) { }
+    QColor(QRgb col) :color(col) {}
     QColor(int r, int g, int b) : color(qRgb(r, g, b)) { }
     explicit QColor(const QString &);
     QColor(const char *); // can't be explicit because of helper.cpp
-
+    
     QString name() const;
     void setNamedColor(const QString&);
 

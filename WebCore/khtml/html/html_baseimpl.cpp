@@ -97,11 +97,11 @@ void HTMLBodyElementImpl::parseAttribute(AttributeImpl *attr)
         addCSSLength(CSS_PROP_MARGIN_TOP, attr->value());
         break;
     case ATTR_BGCOLOR:
-        addCSSProperty(CSS_PROP_BACKGROUND_COLOR, attr->value());
+        addHTMLColor(CSS_PROP_BACKGROUND_COLOR, attr->value());
         m_bgSet = !attr->value().isNull();
         break;
     case ATTR_TEXT:
-        addCSSProperty(CSS_PROP_COLOR, attr->value());
+        addHTMLColor(CSS_PROP_COLOR, attr->value());
         m_fgSet = !attr->value().isNull();
         break;
     case ATTR_BGPROPERTIES:

@@ -44,6 +44,7 @@ namespace DOM {
     class CSSStyleDeclarationImpl;
     class CSSProperty;
     class StyleSheetListImpl;
+    class CSSValueImpl;
 }
 
 namespace khtml
@@ -61,8 +62,8 @@ namespace khtml
      */
     enum Source {
 	Default = 0,
-	User = 1,
-	NonCSSHint = 2,
+	NonCSSHint = 1,
+        User = 2,
 	Author = 3,
 	Inline = 4,
 	AuthorImportant = 5,
@@ -159,8 +160,9 @@ namespace khtml
 				   unsigned int numProps);
 
 	static DOM::CSSStyleSheetImpl *defaultSheet;
+        static DOM::CSSStyleSheetImpl *quirksSheet;
 	static CSSStyleSelectorList *defaultStyle;
-    static CSSStyleSelectorList *defaultQuirksStyle;
+        static CSSStyleSelectorList *defaultQuirksStyle;
 	static CSSStyleSelectorList *defaultPrintStyle;
 	CSSStyleSelectorList *authorStyle;
         CSSStyleSelectorList *userStyle;
@@ -227,7 +229,7 @@ public:
 
 	bool fontDirty;
 	
-	void applyRule(DOM::CSSProperty *prop);
+	void applyRule(int id, DOM::CSSValueImpl *value);
     };
 
     /*
@@ -295,8 +297,7 @@ public:
 	virtual ~CSSStyleSelectorList();
 
 	void append( DOM::CSSStyleSheetImpl *sheet,
-                 const DOM::DOMString &medium = "screen",
-                 int quirksMode = 0 );
+                 const DOM::DOMString &medium = "screen" );
 
 	void collect( QPtrList<DOM::CSSSelector> *selectorList, CSSOrderedPropertyList *propList,
 		      Source regular, Source important );

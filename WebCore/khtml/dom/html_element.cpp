@@ -21,7 +21,7 @@
  */
 #include "dom/dom_exception.h"
 #include "dom/html_misc.h"
-#include "css/cssparser.h"
+#include "css/css_base.h"
 #include "html/html_miscimpl.h" // HTMLCollectionImpl
 
 #include "misc/htmlhashes.h"

@@ -29,6 +29,7 @@
 #include <CoreFoundation/CoreFoundation.h>
 
 #include "KWQCString.h"
+#include "WebCoreUnicode.h"
 
 // Make htmltokenizer.cpp happy
 #define QT_VERSION 300
@@ -64,7 +65,15 @@ public:
     uchar row() const;
     char latin1() const;
     bool isNull() const;
-    bool isSpace() const;
+    bool isSpace() const
+    {
+        // Use isspace() for basic latin1.  This will include newlines, which
+        // aren't included in unicode DirWS.
+        if (c <= 0x7F) {
+            return isspace(c);
+        }
+        return direction() == DirWS;
+    }
     bool isDigit() const;
     bool isLetter() const;
     bool isNumber() const;
@@ -73,7 +82,11 @@ public:
     int digitValue() const;
     QChar lower() const;
     QChar upper() const;
-    Direction direction() const;
+    Direction direction() const
+    {
+        return (QChar::Direction)WebCoreUnicodeDirectionFunction(c);
+    }
+    
     bool mirrored() const;
     QChar mirroredChar() const;
 

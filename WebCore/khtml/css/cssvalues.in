@@ -11,10 +11,10 @@
 #
 inherit
 #
-# CSS_PROP_OUTLINE_STYLE 
-# CSS_PROP_BORDER_TOP_STYLE  
-# CSS_PROP_BORDER_BOTTOM_STYLE  
-# CSS_PROP_BORDER_LEFT_STYLE  
+# CSS_PROP_OUTLINE_STYLE
+# CSS_PROP_BORDER_TOP_STYLE
+# CSS_PROP_BORDER_BOTTOM_STYLE
+# CSS_PROP_BORDER_LEFT_STYLE
 none
 hidden
 dotted
@@ -62,7 +62,7 @@ lighter
 800
 900
 #
-# CSS_PROP_FONT_SIZE: 
+# CSS_PROP_FONT_SIZE:
 #
 xx-small
 x-small
@@ -96,20 +96,73 @@ sans-serif
 cursive
 fantasy
 monospace
+-konq-body
 #
 #
 # CSS_PROP_BACKGROUND_COLOR:
 #
 transparent
 #
-# CSS_PROP_BACKGROUND_REPEAT:  
+#
+# CSS_PROP_*_COLOR
+#
+aqua
+black
+blue
+fuchsia
+gray
+green
+lime
+maroon
+navy
+olive
+orange
+purple
+red
+silver
+teal
+white
+yellow
+activeborder
+activecaption
+appworkspace
+background
+buttonface
+buttonhighlight
+buttonshadow
+buttontext
+captiontext
+graytext
+highlight
+highlighttext
+inactiveborder
+inactivecaption
+inactivecaptiontext
+infobackground
+infotext
+menutext
+scrollbar
+threeddarkshadow
+threedface
+threedhighlight
+threedlightshadow
+threedshadow
+window
+windowframe
+windowtext
+#
+# colors in non strict mode
+grey
+-konq-text
+#
+# CSS_PROP_BACKGROUND_REPEAT:
 #
 repeat
 repeat-x
 repeat-y
 no-repeat
 #
-# CSS_PROP_VERTICAL_ALIGN: 
+# CSS_PROP_VERTICAL_ALIGN:
 #
 baseline
 middle
@@ -122,7 +175,7 @@ bottom
 # HTML alignment MIDDLE has no corresponding CSS alignment
 -konq-baseline-middle
 #
-# CSS_PROP_TEXT_ALIGN: 
+# CSS_PROP_TEXT_ALIGN:
 #
 -konq-auto
 left
@@ -131,7 +184,7 @@ center
 justify
 -konq-center
 #
-# CSS_PROP_LIST_STYLE_POSITION: 
+# CSS_PROP_LIST_STYLE_POSITION:
 #
 outside
 inside
@@ -167,7 +220,7 @@ block
 list-item
 run-in
 compact
-marker
+inline-block
 table
 inline-table
 table-row-group
@@ -186,6 +239,7 @@ auto
 crosshair
 default
 pointer
+progress
 move
 e-resize
 ne-resize
@@ -199,12 +253,12 @@ text
 wait
 help
 #
-# CSS_PROP_DIRECTION:  
+# CSS_PROP_DIRECTION:
 #
 ltr
 rtl
 #
-# CSS_PROP_TEXT_TRANSFORM:  
+# CSS_PROP_TEXT_TRANSFORM:
 #
 capitalize
 uppercase
@@ -254,7 +308,6 @@ scroll
 separate
 show
 static
-static-position
 thick
 thin
 underline
@@ -265,7 +318,7 @@ underline
 #
 # Not supported CSS 2 Aural values
 #
-# CSS_PROP_AZIMUTH:  
+# CSS_PROP_AZIMUTH:
 #
 #A left-side
 #A far-left
@@ -280,7 +333,7 @@ underline
 #A leftwards
 #A rightwards
 #
-# CSS_PROP_SPEECH_RATE:   
+# CSS_PROP_SPEECH_RATE:
 #
 #A x-slow
 #A slow
@@ -300,7 +353,7 @@ underline
 #A x-high
 #A x-loud
 #
-# CSS_PROP_PITCH: 
+# CSS_PROP_PITCH:
 #
 #A x-low
 #A low
@@ -308,13 +361,13 @@ underline
 #A #high
 #A #x-high
 #
-# CSS_PROP_SPEAK:  
+# CSS_PROP_SPEAK:
 #
 #A #normal
 #A #none
 #A spell-out
 #
-# CSS_PROP_SPEAK_HEADER:  
+# CSS_PROP_SPEAK_HEADER:
 #
 #A #once
 #A always

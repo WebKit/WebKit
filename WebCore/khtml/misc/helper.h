@@ -29,6 +29,11 @@ class QPainter;
 
 namespace khtml
 {
+    const QRgb transparentColor = 0x00000000;
+    const QRgb invalidColor     = 0x00000001;
+    const QRgb invertedColor    = 0x00000002;
+    const QRgb defaultTextColor = 0x00000003;
+    
     void setNamedColor(QColor &color, const QString &name);
 
     extern QPainter *printpainter;

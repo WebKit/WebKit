@@ -468,16 +468,24 @@ void RenderStyle::setClip( Length top, Length right, Length bottom, Length left 
     data->clip.left = left;
 }
 
-void RenderStyle::setContent(DOM::DOMStringImpl* s)
+void RenderStyle::setContent(DOM::DOMStringImpl* s, bool add)
 {
     if ( !content )
 	content = new ContentData;
-    else
+    else if (!add)
 	content->clearContent();
     
     if (!s)
         s = new DOM::DOMStringImpl("");
-    content->_content.text = s;
+
+    if (add) {
+        DOM::DOMStringImpl* oldStr = content->_content.text;
+        content->_content.text = oldStr->copy();
+        content->_content.text->append(s);
+        oldStr->deref();
+    }
+    else
+        content->_content.text = s;
     content->_content.text->ref();
         
     content->_contentType = CONTENT_TEXT;

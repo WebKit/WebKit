@@ -74,6 +74,7 @@ CSSStyleSelectorList *CSSStyleSelector::defaultQuirksStyle = 0;
 CSSStyleSelectorList *CSSStyleSelector::defaultPrintStyle = 0;
 CSSStyleSheetImpl *CSSStyleSelector::defaultSheet = 0;
 RenderStyle* CSSStyleSelector::styleNotYetAvailable = 0;
+CSSStyleSheetImpl *CSSStyleSelector::quirksSheet = 0;
 
 static CSSStyleSelector::Encodedurl *encodedurl = 0;
 
@@ -107,7 +108,7 @@ CSSStyleSelector::CSSStyleSelector( DocumentImpl* doc, QString userStyleSheet, S
         userSheet->parseString( DOMString( userStyleSheet ) );
 
         userStyle = new CSSStyleSelectorList();
-        userStyle->append( userSheet, m_medium, strictParsing );
+        userStyle->append( userSheet, m_medium );
     }
 
     // add stylesheets from document
@@ -117,8 +118,7 @@ CSSStyleSelector::CSSStyleSelector( DocumentImpl* doc, QString userStyleSheet, S
     QPtrListIterator<StyleSheetImpl> it( styleSheets->styleSheets );
     for ( ; it.current(); ++it ) {
         if ( it.current()->isCSSStyleSheet() ) {
-            authorStyle->append( static_cast<CSSStyleSheetImpl*>( it.current() ),
-                                 m_medium, strictParsing );
+            authorStyle->append( static_cast<CSSStyleSheetImpl*>( it.current() ), m_medium );
         }
     }
 
@@ -152,7 +152,7 @@ CSSStyleSelector::CSSStyleSelector( CSSStyleSheetImpl *sheet )
     m_medium = sheet->doc()->view()->mediaType();
 
     authorStyle = new CSSStyleSelectorList();
-    authorStyle->append( sheet, m_medium, strictParsing );
+    authorStyle->append( sheet, m_medium );
 }
 
 void CSSStyleSelector::init()
@@ -179,40 +179,59 @@ CSSStyleSelector::~CSSStyleSelector()
 void CSSStyleSelector::addSheet( CSSStyleSheetImpl *sheet )
 {
     m_medium = sheet->doc()->view()->mediaType();
-    authorStyle->append( sheet, m_medium, strictParsing );
+    authorStyle->append( sheet, m_medium );
 }
 
 void CSSStyleSelector::loadDefaultStyle(const KHTMLSettings *s)
 {
     if(defaultStyle) return;
 
-    QFile f(locate( "data", "khtml/css/html4.css" ) );
-    f.open(IO_ReadOnly);
+    {
+        QFile f(locate( "data", "khtml/css/html4.css" ) );
+        f.open(IO_ReadOnly);
 
-    QCString file( f.size()+1 );
-    int readbytes = f.readBlock( file.data(), f.size() );
-    f.close();
-    if ( readbytes >= 0 )
-        file[readbytes] = '\0';
+        QCString file( f.size()+1 );
+        int readbytes = f.readBlock( file.data(), f.size() );
+        f.close();
+        if ( readbytes >= 0 )
+            file[readbytes] = '\0';
 
-    QString style = QString::fromLatin1( file.data() );
-    if(s)
-        style += s->settingsToCSS();
-    DOMString str(style);
+        QString style = QString::fromLatin1( file.data() );
+        if(s)
+            style += s->settingsToCSS();
+        DOMString str(style);
 
-    defaultSheet = new DOM::CSSStyleSheetImpl((DOM::CSSStyleSheetImpl * ) 0);
-    defaultSheet->parseString( str );
+        defaultSheet = new DOM::CSSStyleSheetImpl((DOM::CSSStyleSheetImpl * ) 0);
+        defaultSheet->parseString( str );
 
-    // Collect only strict-mode rules.
-    defaultStyle = new CSSStyleSelectorList();
-    defaultStyle->append( defaultSheet, "screen", 1 );
+        // Collect only strict-mode rules.
+        defaultStyle = new CSSStyleSelectorList();
+        defaultStyle->append( defaultSheet, "screen" );
 
-    // Collect only quirks-mode rules.
-    defaultQuirksStyle = new CSSStyleSelectorList();
-    defaultQuirksStyle->append( defaultSheet, "screen", 2 );
-    
-    defaultPrintStyle = new CSSStyleSelectorList();
-    defaultPrintStyle->append( defaultSheet, "print" );
+        defaultPrintStyle = new CSSStyleSelectorList();
+        defaultPrintStyle->append( defaultSheet, "print" );
+    }
+    {
+        QFile f(locate( "data", "khtml/css/quirks.css" ) );
+        f.open(IO_ReadOnly);
+
+        QCString file( f.size()+1 );
+        int readbytes = f.readBlock( file.data(), f.size() );
+        f.close();
+        if ( readbytes >= 0 )
+            file[readbytes] = '\0';
+
+        QString style = QString::fromLatin1( file.data() );
+        DOMString str(style);
+
+        quirksSheet = new DOM::CSSStyleSheetImpl((DOM::CSSStyleSheetImpl * ) 0);
+        quirksSheet->parseString( str );
+
+        // Collect only quirks-mode rules.
+        defaultQuirksStyle = new CSSStyleSelectorList();
+        defaultQuirksStyle->append( quirksSheet, "screen" );
+    }
+
     //kdDebug() << "CSSStyleSelector: default style has " << defaultStyle->count() << " elements"<< endl;
 }
 
@@ -282,7 +301,7 @@ static inline void bubbleSort( CSSOrderedProperty **b, CSSOrderedProperty **e )
 	bool swapped = FALSE;
         CSSOrderedProperty **y = e+1;
 	CSSOrderedProperty **x = e;
-        CSSOrderedProperty **swappedPos = 0; // quiet gcc warning
+        CSSOrderedProperty **swappedPos = 0;
 	do {
 	    if ( !((**(--x)) < (**(--y))) ) {
 		swapped = TRUE;
@@ -399,7 +418,8 @@ RenderStyle *CSSStyleSelector::styleForElement(ElementImpl *e)
 		    CSSStyleSelector::style->htmlFont().update( paintDeviceMetrics );
 		    fontDirty = false;
 		}
-                applyRule( propsToApply[i]->prop );
+                DOM::CSSProperty *prop = propsToApply[i]->prop;
+                applyRule( prop->m_id, prop->value() );
 	    }
 	    if ( fontDirty ) {
 	        checkForGenericFamilyChange(style, parentStyle);
@@ -434,8 +454,10 @@ RenderStyle *CSSStyleSelector::styleForElement(ElementImpl *e)
 
                 RenderStyle* oldStyle = style;
 		style = pseudoStyle;
-                if ( pseudoStyle )
-                    applyRule( pseudoProps[i]->prop );
+                if ( pseudoStyle ) {
+                    DOM::CSSProperty *prop = pseudoProps[i]->prop;
+                    applyRule( prop->m_id, prop->value() );
+                }
                 style = oldStyle;
             }
 
@@ -575,8 +597,10 @@ void CSSStyleSelector::checkSelector(int selIndex, DOM::ElementImpl *e)
         }
         case CSSSelector::Child:
         {
-		subject = false;
+            subject = false;
             n = n->parentNode();
+            if (!strictParsing)
+                while (n && n->implicitNode()) n = n->parentNode();
             if(!n || !n->isElementNode()) return;
             ElementImpl *elem = static_cast<ElementImpl *>(n);
             if(!checkOneSelector(sel, elem)) return;
@@ -705,6 +729,7 @@ bool CSSStyleSelector::checkOneSelector(DOM::CSSSelector *sel, DOM::ElementImpl 
         switch(sel->match)
         {
         case CSSSelector::Exact:
+        case CSSSelector::Id:
 	    if( (strictParsing && strcmp(sel->value, value) ) ||
                 (!strictParsing && strcasecmp(sel->value, value)))
                 return false;
@@ -812,6 +837,10 @@ bool CSSStyleSelector::checkOneSelector(DOM::CSSSelector *sel, DOM::ElementImpl 
                     return true;
                 }
                 break;
+            case CSSSelector::PseudoTarget:
+                if (e && e == e->getDocument()->getCSSTarget())
+                    return true;
+                break;
             case CSSSelector::PseudoLink:
                 if ( pseudoState == PseudoUnknown )
                     checkPseudoState( e );
@@ -865,6 +894,8 @@ bool CSSStyleSelector::checkOneSelector(DOM::CSSSelector *sel, DOM::ElementImpl 
             case CSSSelector::PseudoNotParsed:
                 assert(false);
                 break;
+            case CSSSelector::PseudoFunction:
+                /* not supported for now */
             case CSSSelector::PseudoOther:
                 break;
         }
@@ -1034,8 +1065,7 @@ CSSStyleSelectorList::~CSSStyleSelectorList()
 }
 
 void CSSStyleSelectorList::append( CSSStyleSheetImpl *sheet,
-                                   const DOMString &medium,
-                                   int quirksMode )
+                                   const DOMString &medium )
 {
     if(!sheet || !sheet->isCSSStyleSheet()) return;
 
@@ -1049,7 +1079,7 @@ void CSSStyleSelectorList::append( CSSStyleSheetImpl *sheet,
     for(int i = 0; i< len; i++)
     {
         StyleBaseImpl *item = sheet->item(i);
-        if(item->isStyleRule() && quirksMode != 2)
+        if(item->isStyleRule())
         {
             CSSStyleRuleImpl *r = static_cast<CSSStyleRuleImpl *>(item);
             QPtrList<CSSSelector> *s = r->selector();
@@ -1072,31 +1102,6 @@ void CSSStyleSelectorList::append( CSSStyleSheetImpl *sheet,
                 CSSStyleSheetImpl *importedSheet = import->styleSheet();
                 append( importedSheet, medium );
             }
-        }
-        else if (item->isQuirksRule() && quirksMode != 1) {
-            CSSQuirksRuleImpl *r = static_cast<CSSQuirksRuleImpl *>( item );
-            CSSRuleListImpl *rules = r->cssRules();
-
-            for( unsigned j = 0; j < rules->length(); j++ )
-            {
-                //kdDebug( 6080 ) << "*** Rule #" << j << endl;
-
-                CSSRuleImpl *childItem = rules->item( j );
-                if( childItem->isStyleRule() )
-                {
-                    // It is a StyleRule, so append it to our list
-                    CSSStyleRuleImpl *styleRule =
-                            static_cast<CSSStyleRuleImpl *>( childItem );
-
-                    QPtrList<CSSSelector> *s = styleRule->selector();
-                    for( int j = 0; j < ( int ) s->count(); j++ )
-                    {
-                        CSSOrderedRule *orderedRule = new CSSOrderedRule(
-                                        styleRule, s->at( j ), count() );
-                        QPtrList<CSSOrderedRule>::append( orderedRule );
-                    }
-                }
-            }   // for rules
         }
         else if( item->isMediaRule() )
         {
@@ -1238,16 +1243,163 @@ static Length convertToLength( CSSPrimitiveValueImpl *primitiveValue, RenderStyl
 	    l = Length(int(primitiveValue->getFloatValue(CSSPrimitiveValue::CSS_PERCENTAGE)), Percent);
 	else if(type == CSSPrimitiveValue::CSS_NUMBER)
 	    l = Length(int(primitiveValue->getFloatValue(CSSPrimitiveValue::CSS_NUMBER)*100), Percent);
+        else if (type == CSSPrimitiveValue::CSS_HTML_RELATIVE)
+            l = Length(int(primitiveValue->getFloatValue(CSSPrimitiveValue::CSS_HTML_RELATIVE)), Relative);
 	else if ( ok )
 	    *ok = false;
     }
     return l;
 }
 
-void CSSStyleSelector::applyRule( DOM::CSSProperty *prop )
-{
-    CSSValueImpl *value = prop->value();
 
+// color mapping code
+struct colorMap {
+    int css_value;
+    QRgb color;
+};
+
+static const colorMap cmap[] = {
+    { CSS_VAL_AQUA, 0xFF00FFFF },
+    { CSS_VAL_BLACK, 0xFF000000 },
+    { CSS_VAL_BLUE, 0xFF0000FF },
+    { CSS_VAL_FUCHSIA, 0xFFFF00FF },
+    { CSS_VAL_GRAY, 0xFF808080 },
+    { CSS_VAL_GREEN, 0xFF008000  },
+    { CSS_VAL_LIME, 0xFF00FF00 },
+    { CSS_VAL_MAROON, 0xFF800000 },
+    { CSS_VAL_NAVY, 0xFF000080 },
+    { CSS_VAL_OLIVE, 0xFF808000  },
+    { CSS_VAL_ORANGE, 0xFFFFA500 },
+    { CSS_VAL_PURPLE, 0xFF800080 },
+    { CSS_VAL_RED, 0xFFFF0000 },
+    { CSS_VAL_SILVER, 0xFFC0C0C0 },
+    { CSS_VAL_TEAL, 0xFF008080  },
+    { CSS_VAL_WHITE, 0xFFFFFFFF },
+    { CSS_VAL_YELLOW, 0xFFFFFF00 },
+    { CSS_VAL_INVERT, invertedColor },
+    { CSS_VAL_GREY, 0xff808080 },
+    { 0, 0 }
+};
+
+struct uiColors {
+    int css_value;
+    const char * configGroup;
+    const char * configEntry;
+QPalette::ColorGroup group;
+QColorGroup::ColorRole role;
+};
+
+const char * const wmgroup = "WM";
+const char * const generalgroup = "General";
+
+/* Mapping system settings to CSS 2
+* Tried hard to get an appropriate mapping - schlpbch
+*/
+static const uiColors uimap[] = {
+    // Active window border.
+    { CSS_VAL_ACTIVEBORDER, wmgroup, "background", QPalette::Active, QColorGroup::Light },
+    // Active window caption.
+    { CSS_VAL_ACTIVECAPTION, wmgroup, "background", QPalette::Active, QColorGroup::Text },
+    // Text in caption, size box, and scrollbar arrow box.
+    { CSS_VAL_CAPTIONTEXT, wmgroup, "activeForeground", QPalette::Active, QColorGroup::Text },
+    // Face color for three-dimensional display elements.
+    { CSS_VAL_BUTTONFACE, wmgroup, 0, QPalette::Inactive, QColorGroup::Button },
+    // Dark shadow for three-dimensional display elements (for edges facing away from the light source).
+    { CSS_VAL_BUTTONHIGHLIGHT, wmgroup, 0, QPalette::Inactive, QColorGroup::Light },
+    // Shadow color for three-dimensional display elements.
+    { CSS_VAL_BUTTONSHADOW, wmgroup, 0, QPalette::Inactive, QColorGroup::Shadow },
+    // Text on push buttons.
+    { CSS_VAL_BUTTONTEXT, wmgroup, "buttonForeground", QPalette::Inactive, QColorGroup::ButtonText },
+    // Dark shadow for three-dimensional display elements.
+    { CSS_VAL_THREEDDARKSHADOW, wmgroup, 0, QPalette::Inactive, QColorGroup::Dark },
+    // Face color for three-dimensional display elements.
+    { CSS_VAL_THREEDFACE, wmgroup, 0, QPalette::Inactive, QColorGroup::Button },
+    // Highlight color for three-dimensional display elements.
+    { CSS_VAL_THREEDHIGHLIGHT, wmgroup, 0, QPalette::Inactive, QColorGroup::Light },
+    // Light color for three-dimensional display elements (for edges facing the light source).
+    { CSS_VAL_THREEDLIGHTSHADOW, wmgroup, 0, QPalette::Inactive, QColorGroup::Midlight },
+    // Dark shadow for three-dimensional display elements.
+    { CSS_VAL_THREEDSHADOW, wmgroup, 0, QPalette::Inactive, QColorGroup::Shadow },
+
+    // Inactive window border.
+    { CSS_VAL_INACTIVEBORDER, wmgroup, "background", QPalette::Disabled, QColorGroup::Background },
+    // Inactive window caption.
+    { CSS_VAL_INACTIVECAPTION, wmgroup, "inactiveBackground", QPalette::Disabled, QColorGroup::Background },
+    // Color of text in an inactive caption.
+    { CSS_VAL_INACTIVECAPTIONTEXT, wmgroup, "inactiveForeground", QPalette::Disabled, QColorGroup::Text },
+    { CSS_VAL_GRAYTEXT, wmgroup, 0, QPalette::Disabled, QColorGroup::Text },
+
+    // Menu background
+    { CSS_VAL_MENU, generalgroup, "background", QPalette::Inactive, QColorGroup::Background },
+    // Text in menus
+    { CSS_VAL_MENUTEXT, generalgroup, "foreground", QPalette::Inactive, QColorGroup::Background },
+
+    // Text of item(s) selected in a control.
+    { CSS_VAL_HIGHLIGHT, generalgroup, "selectBackground", QPalette::Inactive, QColorGroup::Background },
+
+    // Text of item(s) selected in a control.
+    { CSS_VAL_HIGHLIGHTTEXT, generalgroup, "selectForeground", QPalette::Inactive, QColorGroup::Background },
+
+    // Background color of multiple document interface.
+    { CSS_VAL_APPWORKSPACE, generalgroup, "background", QPalette::Inactive, QColorGroup::Text },
+
+    // Scroll bar gray area.
+    { CSS_VAL_SCROLLBAR, generalgroup, "background", QPalette::Inactive, QColorGroup::Background },
+
+    // Window background.
+    { CSS_VAL_WINDOW, generalgroup, "windowBackground", QPalette::Inactive, QColorGroup::Background },
+    // Window frame.
+    { CSS_VAL_WINDOWFRAME, generalgroup, "windowBackground", QPalette::Inactive, QColorGroup::Background },
+    // WindowText
+    { CSS_VAL_WINDOWTEXT, generalgroup, "windowForeground", QPalette::Inactive, QColorGroup::Text },
+    { CSS_VAL_TEXT, generalgroup, 0, QPalette::Inactive, QColorGroup::Text },
+    { 0, 0, 0, QPalette::NColorGroups, QColorGroup::NColorRoles }
+};
+
+static QColor colorForCSSValue( int css_value )
+{
+    // try the regular ones first
+    const colorMap *col = cmap;
+    while ( col->css_value && col->css_value != css_value )
+        ++col;
+    if ( col->css_value )
+        return col->color;
+
+    const uiColors *uicol = uimap;
+    while ( uicol->css_value && uicol->css_value != css_value )
+        ++uicol;
+#if !APPLE_CHANGES
+    if ( !uicol->css_value ) {
+        if ( css_value == CSS_VAL_INFOBACKGROUND )
+            return QToolTip::palette().inactive().background();
+        else if ( css_value == CSS_VAL_INFOTEXT )
+            return QToolTip::palette().inactive().foreground();
+        else if ( css_value == CSS_VAL_BACKGROUND ) {
+            KConfig bckgrConfig("kdesktoprc", true, false); // No multi-screen support
+            bckgrConfig.setGroup("Desktop0");
+            // Desktop background.
+            return bckgrConfig.readColorEntry("Color1", &qApp->palette().disabled().background());
+        }
+        return khtml::invalidColor;
+    }
+#endif
+    
+    const QPalette &pal = qApp->palette();
+    QColor c = pal.color( uicol->group, uicol->role );
+#if !APPLE_CHANGES
+    if ( uicol->configEntry ) {
+        KConfig *globalConfig = KGlobal::config();
+        globalConfig->setGroup( uicol->configGroup );
+        c = globalConfig->readColorEntry( uicol->configEntry, &c );
+    }
+#endif
+    
+    return c;
+};
+
+
+void CSSStyleSelector::applyRule( int id, DOM::CSSValueImpl *value )
+{
     //kdDebug( 6080 ) << "applying property " << prop->m_id << endl;
 
     CSSPrimitiveValueImpl *primitiveValue = 0;
@@ -1258,7 +1410,7 @@ void CSSStyleSelector::applyRule( DOM::CSSProperty *prop )
 
     // here follows a long list, defining how to aplly certain properties to the style object.
     // rather boring stuff...
-    switch(prop->m_id)
+    switch(id)
     {
 // ident only properties
     case CSS_PROP_BACKGROUND_ATTACHMENT:
@@ -1341,7 +1493,7 @@ void CSSStyleSelector::applyRule( DOM::CSSProperty *prop )
         if(value->cssValueType() == CSSValue::CSS_INHERIT)
         {
             if(!parentNode) return;
-            switch(prop->m_id)
+            switch(id)
             {
             case CSS_PROP_BORDER_TOP_STYLE:
                 s = parentStyle->borderTopStyle();
@@ -1365,7 +1517,7 @@ void CSSStyleSelector::applyRule( DOM::CSSProperty *prop )
 	    if(!primitiveValue) return;
 	    s = (EBorderStyle) (primitiveValue->getIdent() - CSS_VAL_NONE);
 	}
-        switch(prop->m_id)
+        switch(id)
         {
         case CSS_PROP_BORDER_TOP_STYLE:
             style->setBorderTopStyle(s); return;
@@ -1457,8 +1609,8 @@ void CSSStyleSelector::applyRule( DOM::CSSProperty *prop )
 	EDisplay d;
 	if ( id == CSS_VAL_NONE) {
 	    d = NONE;
-	} else if ( id == CSS_VAL_MARKER ) {
-	    // marker is not supported at the moment, so we just ignore it.
+	} else if ( id == CSS_VAL_INLINE_BLOCK ) {
+	    // inline-block is not supported at the moment, so we just ignore it.
 	    return;
 	} else {
 	    d = EDisplay(primitiveValue->getIdent() - CSS_VAL_INLINE);
@@ -1534,21 +1686,23 @@ void CSSStyleSelector::applyRule( DOM::CSSProperty *prop )
 
     case CSS_PROP_FONT_VARIANT:
     {
+        FontDef fontDef = style->htmlFont().fontDef;
         if(value->cssValueType() == CSSValue::CSS_INHERIT) {
             if(!parentNode) return;
-            style->setFontVariant(parentStyle->fontVariant());
-            return;
+            fontDef.smallCaps = parentStyle->htmlFont().fontDef.weight;
+        } else {
+            if(!primitiveValue) return;
+            int id = primitiveValue->getIdent();
+            if ( id == CSS_VAL_NORMAL )
+                fontDef.smallCaps = false;
+            else if ( id == CSS_VAL_SMALL_CAPS )
+                fontDef.smallCaps = true;
+            else
+                return;
         }
-        if(!primitiveValue) return;
-        switch(primitiveValue->getIdent()) {
-	    case CSS_VAL_NORMAL:
-		style->setFontVariant( FVNORMAL ); break;
-	    case CSS_VAL_SMALL_CAPS:
-		style->setFontVariant( SMALL_CAPS ); break;
-	    default:
-            return;
-        }
-	break;
+        if (style->setFontDef( fontDef ))
+            fontDirty = true;
+        break;        
     }
 
     case CSS_PROP_FONT_WEIGHT:
@@ -1558,35 +1712,43 @@ void CSSStyleSelector::applyRule( DOM::CSSProperty *prop )
             if(!parentNode) return;
             fontDef.weight = parentStyle->htmlFont().fontDef.weight;
         } else {
-	    if(!primitiveValue) return;
-	    if(primitiveValue->getIdent())
-	    {
-		switch(primitiveValue->getIdent())
-		{
-		    // ### we just support normal and bold fonts at the moment...
-		    // setWeight can actually accept values between 0 and 99...
-		    case CSS_VAL_BOLD:
-		    case CSS_VAL_BOLDER:
-			fontDef.weight = QFont::Bold;
-			break;
-		    case CSS_VAL_NORMAL:
-		    case CSS_VAL_LIGHTER:
-			fontDef.weight = QFont::Normal;
-			break;
-		    default:
-			return;
-		}
-	    }
-	    else
-	    {
-		// ### fix parsing of 100-900 values in parser, apply them here
-	    }
-	}
+            if(!primitiveValue) return;
+            if(primitiveValue->getIdent())
+            {
+                switch(primitiveValue->getIdent()) {
+                    // ### we just support normal and bold fonts at the moment...
+                    // setWeight can actually accept values between 0 and 99...
+                    case CSS_VAL_BOLD:
+                    case CSS_VAL_BOLDER:
+                    case CSS_VAL_600:
+                    case CSS_VAL_700:
+                    case CSS_VAL_800:
+                    case CSS_VAL_900:
+                        fontDef.weight = QFont::Bold;
+                        break;
+                    case CSS_VAL_NORMAL:
+                    case CSS_VAL_LIGHTER:
+                    case CSS_VAL_100:
+                    case CSS_VAL_200:
+                    case CSS_VAL_300:
+                    case CSS_VAL_400:
+                    case CSS_VAL_500:
+                        fontDef.weight = QFont::Normal;
+                        break;
+                    default:
+                        return;
+                }
+            }
+            else
+            {
+                // ### fix parsing of 100-900 values in parser, apply them here
+            }
+        }
         if (style->setFontDef( fontDef ))
-	fontDirty = true;
+            fontDirty = true;
         break;
     }
-
+        
     case CSS_PROP_LIST_STYLE_POSITION:
     {
         if(value->cssValueType() == CSSValue::CSS_INHERIT)
@@ -1695,8 +1857,23 @@ void CSSStyleSelector::applyRule( DOM::CSSProperty *prop )
 //     case CSS_PROP_SPEAK_HEADER:
 //     case CSS_PROP_SPEAK_NUMERAL:
 //     case CSS_PROP_SPEAK_PUNCTUATION:
-    case CSS_PROP_TABLE_LAYOUT:
-	break;
+     case CSS_PROP_TABLE_LAYOUT: {
+        if ( !primitiveValue->getIdent() )
+            return;
+
+        ETableLayout l = TAUTO;
+        switch( primitiveValue->getIdent() ) {
+            case CSS_VAL_FIXED:
+                l = TFIXED;
+                // fall through
+            case CSS_VAL_AUTO:
+                style->setTableLayout( l );
+            default:
+                break;
+        }
+        break;
+    }
+        
     case CSS_PROP_UNICODE_BIDI: {
 	EUnicodeBidi b = UBNormal;
         if(value->cssValueType() == CSSValue::CSS_INHERIT) {
@@ -1838,24 +2015,13 @@ void CSSStyleSelector::applyRule( DOM::CSSProperty *prop )
         if(value->cssValueType() == CSSValue::CSS_INHERIT) {
             if(!parentNode) return;
             style->setCursor(parentStyle->cursor());
-            style->setCursorImage(parentStyle->cursorImage());
             return;
         } else if(primitiveValue) {
-	    if(primitiveValue->primitiveType() == CSSPrimitiveValue::CSS_URI) {
-            	CSSImageValueImpl *image = static_cast<CSSImageValueImpl *>(primitiveValue);
-            	//kdDebug( 6080 ) << "setting cursor image to " << image->cssText().string() << endl;
-            	style->setCursorImage(image->image());
-            } else {
-		style->setCursor( (ECursor) (primitiveValue->getIdent() - CSS_VAL_AUTO) );
-	    }
+            style->setCursor( (ECursor) (primitiveValue->getIdent() - CSS_VAL_AUTO) );
         }
-        break;
+        break;        
 //    case CSS_PROP_PLAY_DURING:
         // CSS2PlayDuring
-    case CSS_PROP_TEXT_SHADOW:
-        // list of CSS2TextShadow
-        break;
-
 // colors || inherit
     case CSS_PROP_BACKGROUND_COLOR:
     case CSS_PROP_BORDER_TOP_COLOR:
@@ -1879,7 +2045,7 @@ void CSSStyleSelector::applyRule( DOM::CSSProperty *prop )
         QColor col;
         if(value->cssValueType() == CSSValue::CSS_INHERIT)
         {
-            switch(prop->m_id)
+            switch(id)
             {
             case CSS_PROP_BACKGROUND_COLOR:
                 col = parentStyle->backgroundColor(); break;
@@ -1899,14 +2065,27 @@ void CSSStyleSelector::applyRule( DOM::CSSProperty *prop )
             return;
         }
         } else {
-        if(!primitiveValue) return;
-        if(primitiveValue->primitiveType() == CSSPrimitiveValue::CSS_RGBCOLOR)
-            col = primitiveValue->getRGBColorValue()->color();
-        else
-            return;
-	}
+            if(!primitiveValue )
+                return;
+            int ident = primitiveValue->getIdent();
+            if ( ident ) {
+                if ( ident == CSS_VAL__KONQ_TEXT )
+                    col = element->getDocument()->textColor();
+                else if ( ident == CSS_VAL_TRANSPARENT )
+                    col = QColor();
+                else
+                    col = colorForCSSValue( ident );
+            } else if ( primitiveValue->primitiveType() == CSSPrimitiveValue::CSS_RGBCOLOR ) {
+#if !APPLE_CHANGES
+                if(qAlpha(primitiveValue->getRGBColorValue()))
+#endif
+                    col.setRgb(primitiveValue->getRGBColorValue());
+            } else {
+                return;
+            }
+        }
         //kdDebug( 6080 ) << "applying color " << col.isValid() << endl;
-        switch(prop->m_id)
+        switch(id)
         {
         case CSS_PROP_BACKGROUND_COLOR:
             style->setBackgroundColor(col); break;
@@ -2003,7 +2182,7 @@ void CSSStyleSelector::applyRule( DOM::CSSProperty *prop )
 	short width = 3;
         if(value->cssValueType() == CSSValue::CSS_INHERIT)
         {
-            switch(prop->m_id)
+            switch(id)
             {
             case CSS_PROP_BORDER_TOP_WIDTH:
 		    width = parentStyle->borderTopWidth(); break;
@@ -2040,7 +2219,7 @@ void CSSStyleSelector::applyRule( DOM::CSSProperty *prop )
         }
 	}
         if(width < 0) return;
-        switch(prop->m_id)
+        switch(id)
         {
         case CSS_PROP_BORDER_TOP_WIDTH:
             style->setBorderTopWidth(width);
@@ -2072,7 +2251,7 @@ void CSSStyleSelector::applyRule( DOM::CSSProperty *prop )
         if(value->cssValueType() == CSSValue::CSS_INHERIT)
         {
             if(!parentNode) return;
-            switch(prop->m_id)
+            switch(id)
             {
             case CSS_PROP_MARKER_OFFSET:
                 // ###
@@ -2090,7 +2269,7 @@ void CSSStyleSelector::applyRule( DOM::CSSProperty *prop )
 	    if(!primitiveValue) return;
 	    width = primitiveValue->computeLength(style, paintDeviceMetrics);
 	}
-        switch(prop->m_id)
+        switch(id)
         {
         case CSS_PROP_LETTER_SPACING:
             style->setLetterSpacing(width);
@@ -2105,7 +2284,7 @@ void CSSStyleSelector::applyRule( DOM::CSSProperty *prop )
         return;
     }
 
-// length, percent
+        // length, percent
     case CSS_PROP_MAX_WIDTH:
         // +none +inherit
         if(primitiveValue && primitiveValue->getIdent() == CSS_VAL_NONE)
@@ -2113,15 +2292,6 @@ void CSSStyleSelector::applyRule( DOM::CSSProperty *prop )
     case CSS_PROP_TOP:
     case CSS_PROP_LEFT:
     case CSS_PROP_RIGHT:
-        // http://www.w3.org/Style/css2-updates/REC-CSS2-19980512-errata
-        // introduces static-position value for top, left & right
-        if(prop->m_id != CSS_PROP_MAX_WIDTH && primitiveValue &&
-           primitiveValue->getIdent() == CSS_VAL_STATIC_POSITION)
-        {
-            //kdDebug( 6080 ) << "found value=static-position" << endl;
-            l = Length ( 0, Static );
-            apply = true;
-        }
     case CSS_PROP_BOTTOM:
     case CSS_PROP_WIDTH:
     case CSS_PROP_MIN_WIDTH:
@@ -2130,7 +2300,7 @@ void CSSStyleSelector::applyRule( DOM::CSSProperty *prop )
     case CSS_PROP_MARGIN_BOTTOM:
     case CSS_PROP_MARGIN_LEFT:
         // +inherit +auto
-        if(prop->m_id != CSS_PROP_MAX_WIDTH && primitiveValue &&
+        if(id != CSS_PROP_MAX_WIDTH && primitiveValue &&
            primitiveValue->getIdent() == CSS_VAL_AUTO)
         {
             //kdDebug( 6080 ) << "found value=auto" << endl;
@@ -2146,7 +2316,7 @@ void CSSStyleSelector::applyRule( DOM::CSSProperty *prop )
         if(value->cssValueType() == CSSValue::CSS_INHERIT) {
             if(!parentNode) return;
 	    apply = true;
-            switch(prop->m_id)
+            switch(id)
                 {
                 case CSS_PROP_MAX_WIDTH:
                     l = parentStyle->maxWidth(); break;
@@ -2191,12 +2361,14 @@ void CSSStyleSelector::applyRule( DOM::CSSProperty *prop )
                            primitiveValue->isQuirkValue());
             else if(type == CSSPrimitiveValue::CSS_PERCENTAGE)
                 l = Length((int)primitiveValue->getFloatValue(CSSPrimitiveValue::CSS_PERCENTAGE), Percent);
+            else if (type == CSSPrimitiveValue::CSS_HTML_RELATIVE)
+                l = Length(int(primitiveValue->getFloatValue(CSSPrimitiveValue::CSS_HTML_RELATIVE)), Relative);
             else
                 return;
             apply = true;
         }
         if(!apply) return;
-        switch(prop->m_id)
+        switch(id)
             {
             case CSS_PROP_MAX_WIDTH:
                 style->setMaxWidth(l); break;
@@ -2242,14 +2414,14 @@ void CSSStyleSelector::applyRule( DOM::CSSProperty *prop )
     case CSS_PROP_HEIGHT:
     case CSS_PROP_MIN_HEIGHT:
         // +inherit +auto !can be calculted directly!
-        if(prop->m_id != CSS_PROP_MAX_HEIGHT && primitiveValue &&
+        if(id != CSS_PROP_MAX_HEIGHT && primitiveValue &&
            primitiveValue->getIdent() == CSS_VAL_AUTO)
             apply = true;
         if(value->cssValueType() == CSSValue::CSS_INHERIT)
         {
             if(!parentNode) return;
 	    apply = true;
-            switch(prop->m_id)
+            switch(id)
                 {
                 case CSS_PROP_MAX_HEIGHT:
                     l = parentStyle->maxHeight(); break;
@@ -2277,7 +2449,7 @@ void CSSStyleSelector::applyRule( DOM::CSSProperty *prop )
             apply = true;
         }
         if(!apply) return;
-        switch(prop->m_id)
+        switch(id)
         {
         case CSS_PROP_MAX_HEIGHT:
             style->setMaxHeight(l); break;
@@ -2550,7 +2722,16 @@ void CSSStyleSelector::applyRule( DOM::CSSProperty *prop )
             CSSPrimitiveValueImpl *val = static_cast<CSSPrimitiveValueImpl *>(item);
             if(val->primitiveType()==CSSPrimitiveValue::CSS_STRING)
             {
-                style->setContent(val->getStringValue());
+                style->setContent(val->getStringValue(), i != 0);
+            }
+            else if (val->primitiveType()==CSSPrimitiveValue::CSS_ATTR)
+            {
+                // FIXME: Should work with generic XML attributes also, and not
+                // just the hardcoded HTML set.  Can a namespace be specified for
+                // an attr(foo)?
+                int attrID = element->getDocument()->attrId(0, val->getStringValue(), false);
+                if (attrID)
+                    style->setContent(element->getAttribute(attrID).implementation(), i != 0);
             }
             else if (val->primitiveType()==CSSPrimitiveValue::CSS_URI)
             {
@@ -2582,61 +2763,33 @@ void CSSStyleSelector::applyRule( DOM::CSSProperty *prop )
             CSSValueImpl *item = list->item(i);
             if(!item->isPrimitiveValue()) continue;
             CSSPrimitiveValueImpl *val = static_cast<CSSPrimitiveValueImpl *>(item);
-            if(val->primitiveType() != CSSPrimitiveValue::CSS_STRING) return;
             QString face;
-            FontFamilyValueImpl *familyVal = static_cast<FontFamilyValueImpl *>(val);
-            if (familyVal->isKonqBody()) {
-                // Obtain the <body> element's font information,
-                // and use its family list.
-                DOM::DocumentImpl* doc = element->getDocument();
-                if (doc && doc->isHTMLDocument()) {
-                    DOM::HTMLDocumentImpl* htmldoc = static_cast<DOM::HTMLDocumentImpl*>(doc);
-                    DOM::HTMLElementImpl* body = htmldoc->body();
-                    if (body && body->renderer()) {
-                        FontDef& bodyFontDef = const_cast<FontDef &>(body->renderer()->style()->htmlFont().fontDef);
-                        fontDef.family = bodyFontDef.firstFamily();
-                        fontDef.genericFamily = bodyFontDef.genericFamily;
-                        if (style->setFontDef( fontDef )) {
-                            fontDirty = true;
-                        }
+            if( val->primitiveType() == CSSPrimitiveValue::CSS_STRING )
+                face = static_cast<FontFamilyValueImpl *>(val)->fontName();
+            else if (val->primitiveType() == CSSPrimitiveValue::CSS_IDENT) {
+                switch (val->getIdent()) {
+                    case CSS_VAL__KONQ_BODY:
+                        face = settings->stdFontName();
                         break;
-                    }
-                }
-                
-                face = settings->stdFontName();
-            } else {
-            	FontDef::GenericFamilyType type = static_cast<FontDef::GenericFamilyType>(familyVal->genericFamilyType());
-                switch (type) {
-                    case FontDef::eNone:
-                        face = familyVal->fontName();
-                        break;
-                    case FontDef::eSerif:
+                    case CSS_VAL_SERIF:
                         face = settings->serifFontName();
                         fontDef.setGenericFamily(FontDef::eSerif);
                         break;
-                    case FontDef::eSansSerif:
+                    case CSS_VAL_SANS_SERIF:
                         face = settings->sansSerifFontName();
                         fontDef.setGenericFamily(FontDef::eSansSerif);
                         break;
-                    case FontDef::eCursive:
+                    case CSS_VAL_CURSIVE:
                         face = settings->cursiveFontName();
                         fontDef.setGenericFamily(FontDef::eCursive);
                         break;
-                    case FontDef::eFantasy:
+                    case CSS_VAL_FANTASY:
                         face = settings->fantasyFontName();
                         fontDef.setGenericFamily(FontDef::eFantasy);
                         break;
-                    case FontDef::eMonospace:
+                    case CSS_VAL_MONOSPACE:
                         face = settings->fixedFontName();
                         fontDef.setGenericFamily(FontDef::eMonospace);
-                        break;
-                    case FontDef::eStandard:
-                        // Actually "konq_default".
-                        // Treat this as though it's a generic family, since we will want
-                        // to reset to default sizes when we encounter this (and inherit
-                        // from an enclosing different family like monospace).
-                        face = settings->stdFontName();
-                        fontDef.setGenericFamily(FontDef::eStandard);
                         break;
                 }
             }
@@ -2753,21 +2906,21 @@ void CSSStyleSelector::applyRule( DOM::CSSProperty *prop )
     case CSS_PROP_BORDER_WIDTH:
         if(value->cssValueType() != CSSValue::CSS_INHERIT || !parentNode) return;
 
-        if(prop->m_id == CSS_PROP_BORDER || prop->m_id == CSS_PROP_BORDER_COLOR)
+        if(id == CSS_PROP_BORDER || id == CSS_PROP_BORDER_COLOR)
         {
             style->setBorderTopColor(parentStyle->borderTopColor());
             style->setBorderBottomColor(parentStyle->borderBottomColor());
             style->setBorderLeftColor(parentStyle->borderLeftColor());
             style->setBorderRightColor(parentStyle->borderRightColor());
         }
-        if(prop->m_id == CSS_PROP_BORDER || prop->m_id == CSS_PROP_BORDER_STYLE)
+        if(id == CSS_PROP_BORDER || id == CSS_PROP_BORDER_STYLE)
         {
             style->setBorderTopStyle(parentStyle->borderTopStyle());
             style->setBorderBottomStyle(parentStyle->borderBottomStyle());
             style->setBorderLeftStyle(parentStyle->borderLeftStyle());
             style->setBorderRightStyle(parentStyle->borderRightStyle());
         }
-        if(prop->m_id == CSS_PROP_BORDER || prop->m_id == CSS_PROP_BORDER_WIDTH)
+        if(id == CSS_PROP_BORDER || id == CSS_PROP_BORDER_WIDTH)
         {
             style->setBorderTopWidth(parentStyle->borderTopWidth());
             style->setBorderBottomWidth(parentStyle->borderBottomWidth());
@@ -2816,6 +2969,34 @@ void CSSStyleSelector::applyRule( DOM::CSSProperty *prop )
 
 //     case CSS_PROP_CUE:
     case CSS_PROP_FONT:
+        if ( value->cssValueType() == CSSValue::CSS_INHERIT ) {
+            if ( !parentNode )
+                return;
+            FontDef fontDef = parentStyle->htmlFont().fontDef;
+            style->setLineHeight( parentStyle->lineHeight() );
+            if (style->setFontDef( fontDef ))
+                fontDirty = true;
+        } else if ( value->isFontValue() ) {
+            FontValueImpl *font = static_cast<FontValueImpl *>(value);
+            if ( !font->style || !font->variant || !font->weight ||
+                 !font->size || !font->lineHeight || !font->family )
+                return;
+            applyRule( CSS_PROP_FONT_STYLE, font->style );
+            applyRule( CSS_PROP_FONT_VARIANT, font->variant );
+            applyRule( CSS_PROP_FONT_WEIGHT, font->weight );
+            applyRule( CSS_PROP_FONT_SIZE, font->size );
+
+            // Line-height can depend on font().pixelSize(), so we have to update the font
+            // before we evaluate line-height, e.g., font: 1em/1em.  FIXME: Still not
+            // good enough: style="font:1em/1em; font-size:36px" should have a line-height of 36px.
+            if (fontDirty)
+                CSSStyleSelector::style->htmlFont().update( paintDeviceMetrics );
+            
+            applyRule( CSS_PROP_LINE_HEIGHT, font->lineHeight );
+            applyRule( CSS_PROP_FONT_FAMILY, font->family );
+        }
+        return;
+        
     case CSS_PROP_LIST_STYLE:
     case CSS_PROP_OUTLINE:
 //    case CSS_PROP_PAUSE:

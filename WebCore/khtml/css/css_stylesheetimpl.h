@@ -1,7 +1,7 @@
 /*
  * This file is part of the DOM implementation for KDE.
  *
- * (C) 1999 Lars Knoll (knoll@kde.org)
+ * (C) 1999-2003 Lars Knoll (knoll@kde.org)
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -18,6 +18,7 @@
  * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  *
+ * $Id$
  */
 #ifndef _CSS_css_stylesheetimpl_h_
 #define _CSS_css_stylesheetimpl_h_
@@ -26,7 +27,7 @@
 #include <qptrlist.h>
 
 #include "dom/dom_string.h"
-#include "css/cssparser.h"
+#include "css/css_base.h"
 #include "misc/loader_client.h"
 
 namespace khtml {
@@ -53,21 +54,20 @@ public:
     StyleSheetImpl(StyleSheetImpl *parentSheet, DOM::DOMString href = DOMString());
     StyleSheetImpl(StyleBaseImpl *owner, DOM::DOMString href  = DOMString());
     StyleSheetImpl(khtml::CachedCSSStyleSheet *cached, DOM::DOMString href  = DOMString());
-
     virtual ~StyleSheetImpl();
 
     virtual bool isStyleSheet() const { return true; }
 
     virtual DOM::DOMString type() const { return DOMString(); }
 
-    bool disabled() const;
-    void setDisabled( bool );
+    bool disabled() const { return m_disabled; }
+    void setDisabled( bool disabled ) { m_disabled = disabled; }
 
-    DOM::NodeImpl *ownerNode() const;
+    DOM::NodeImpl *ownerNode() const { return m_parentNode; }
     StyleSheetImpl *parentStyleSheet() const;
-    DOM::DOMString href() const;
-    DOM::DOMString title() const;
-    MediaListImpl *media() const;
+    DOM::DOMString href() const { return m_strHref; }
+    DOM::DOMString title() const { return m_strTitle; }
+    MediaListImpl *media() const { return m_media; }
     void setMedia( MediaListImpl *media );
 
 protected:
@@ -87,8 +87,6 @@ public:
     // clone from a cached version of the sheet
     CSSStyleSheetImpl(DOM::NodeImpl *parentNode, CSSStyleSheetImpl *orig);
     CSSStyleSheetImpl(CSSRuleImpl *ownerRule, CSSStyleSheetImpl *orig);
-
-    virtual ~CSSStyleSheetImpl();
 
     virtual bool isCSSStyleSheet() const { return true; }
 
@@ -118,7 +116,7 @@ protected:
 class StyleSheetListImpl : public khtml::Shared<StyleSheetListImpl>
 {
 public:
-    StyleSheetListImpl();
+    StyleSheetListImpl() {}
     ~StyleSheetListImpl();
 
     // the following two ignore implicit stylesheets
@@ -136,22 +134,23 @@ public:
 class MediaListImpl : public StyleBaseImpl
 {
 public:
-    MediaListImpl( CSSStyleSheetImpl *parentSheet );
+    MediaListImpl()
+	: StyleBaseImpl( 0 ) {}
+    MediaListImpl( CSSStyleSheetImpl *parentSheet )
+        : StyleBaseImpl(parentSheet) {}
     MediaListImpl( CSSStyleSheetImpl *parentSheet,
                    const DOM::DOMString &media );
-    MediaListImpl( CSSRuleImpl *parentRule );
+    //MediaListImpl( CSSRuleImpl *parentRule );
     MediaListImpl( CSSRuleImpl *parentRule, const DOM::DOMString &media );
-
-    virtual ~MediaListImpl();
 
     virtual bool isMediaList() { return true; }
 
     CSSStyleSheetImpl *parentStyleSheet() const;
     CSSRuleImpl *parentRule() const;
-    unsigned long length() const;
-    DOM::DOMString item ( unsigned long index ) const;
+    unsigned long length() const { return m_lstMedia.count(); }
+    DOM::DOMString item ( unsigned long index ) const { return m_lstMedia[index]; }
     void deleteMedium ( const DOM::DOMString &oldMedium );
-    void appendMedium ( const DOM::DOMString &newMedium );
+    void appendMedium ( const DOM::DOMString &newMedium ) { m_lstMedia.append(newMedium); }
 
     DOM::DOMString mediaText() const;
     void setMediaText(const DOM::DOMString &value);

@@ -307,8 +307,8 @@ public:
     void setParsing(bool b) { m_bParsing = b; }
     bool parsing() const { return m_bParsing; }
 
-    void setTextColor( DOMString color ) { m_textColor = color; }
-    DOMString textColor() const { return m_textColor; }
+    void setTextColor( QColor color ) { m_textColor = color; }
+    QColor textColor() const { return m_textColor; }
 
     // internal
     NodeImpl *findElement( Id id );
@@ -346,6 +346,10 @@ public:
     NodeImpl *focusNode() const { return m_focusNode; }
     void setFocusNode(NodeImpl *newFocusNode);
 
+    // Updates for :target (CSS3 selector).
+    void setCSSTarget(NodeImpl* n);
+    NodeImpl* getCSSTarget();
+    
     bool isDocumentChanged()	{ return m_docChanged; }
     virtual void setDocumentChanged(bool);
     void attachNodeIterator(NodeIteratorImpl *ni);
@@ -460,7 +464,7 @@ protected:
     ParseMode pMode;
     HTMLMode hMode;
 
-    DOMString m_textColor;
+    QColor m_textColor;
     NodeImpl *m_focusNode;
 
     // ### replace me with something more efficient
@@ -504,6 +508,8 @@ protected:
     QPtrList<khtml::RenderImage> m_imageLoadEventDispatchingList;
     int m_imageLoadEventTimer;
 
+    NodeImpl* m_cssTarget;
+    
 #if APPLE_CHANGES
 public:
     KWQSignal m_finishedParsing;

@@ -2,18 +2,17 @@
  * The default style sheet used by khtml to render HTML pages
  * (C) Lars Knoll (knoll@kde.org) 2000
  *
- * Konqueror/khtml relies on the existance of this style sheet for
+ * Konqueror/khtml relies on the existence of this style sheet for
  * rendering. Do not remove or modify this file unless you know
  * what you are doing.
  */
 
 html {
 	display: block;
-	color: text;        
 } 
 
 /*
- * head and it's children all have display=none
+ * head and its children all have display=none
  */
 
 head { 
@@ -60,7 +59,7 @@ script {
 
 p {
 	display: block;
-	margin: 1.0_qem 0px;
+	margin: 1.0__qem 0px;
 }
 
 div {
@@ -77,7 +76,7 @@ address {
       
 blockquote {
 	display: block;
-	margin: 1_qem 40px 1em 40px;
+	margin: 1__qem 40px 1em 40px;
 }
 
 Q        {
@@ -114,7 +113,7 @@ APPLET {
 CENTER { 
 	display: block;
 	/* special centering to be able to emulate the html4/netscape behaviour */
-	text-align: -konq-center;
+	text-align: \2d konq-center;
 }  
       
 HR  { 
@@ -125,7 +124,7 @@ HR  {
         border-width: 1px;
         margin-left: 1px; /* will be overwritten by ALIGN */ 
         margin-right: 1px; /* will be overwritten by ALIGN */
-        -konq-flow-mode: -konq-around-floats
+        \2d konq-flow-mode: \2d konq-around-floats;
 } 
  
 MAP { 
@@ -140,41 +139,41 @@ MAP {
 H1 { 
 	display: block;
 	font-size: 2em; 
-	margin: .67_qem auto .67em auto;
+	margin: .67__qem auto .67em auto;
 	font-weight: bolder;
 }
       
 H2 { 
 	display: block;
 	font-size: 1.5em; 
-	margin: .83_qem auto .83em auto;
+	margin: .83__qem auto .83em auto;
 	font-weight: bolder;
 }
       
 H3 { 
 	display: block;
 	font-size: 1.17em; 
-	margin: 1_qem auto 1em auto;
+	margin: 1__qem auto 1em auto;
 	font-weight: bolder;
 }
       
 H4 {
 	display: block;
-	margin: 1.33_qem auto 1.33em auto;
+	margin: 1.33__qem auto 1.33em auto;
 	font-weight: bolder;
 }
 
 H5 { 
 	display: block;
 	font-size: .83em; 
-	margin: 1.67_qem auto 1.67em auto;
+	margin: 1.67__qem auto 1.67em auto;
 	font-weight: bolder;
 }
 
 H6 { 
 	display: block;
 	font-size: .67em; 
-	margin: 2.33_qem auto 2.33em auto;
+	margin: 2.33__qem auto 2.33em auto;
 	font-weight: bolder;
 }
 
@@ -185,10 +184,10 @@ H6 {
 TABLE { 
 	display: table;
 	border-collapse: separate;
-	text-align: -konq-auto;
+	text-align: \2d konq-auto;
 	border-spacing: 2px;
 	border-color: gray;
-    -konq-flow-mode: -konq-around-floats;
+        \2d konq-flow-mode: \2d konq-around-floats;
 }
 
 TD[align=left] > TABLE {
@@ -249,7 +248,7 @@ TH {
 
 CAPTION { 
 	display: table-caption;  
-	text-align: -konq-center; 
+	text-align: \2d konq-center; 
 }
 
 /* rules to deal with right-aligned divs. -dwh */
@@ -265,14 +264,14 @@ DIV[align="right"] > DIV
 UL, MENU, DIR {
         display: block;
         list-style-type: disc;
-        margin: 1_qem 0 1em 0;
+        margin: 1__qem 0 1em 0;
         padding-left: 40px;
 }
 
 OL {
         display: block;
         list-style-type: decimal;
-        margin: 1_qem 0 1em 0;
+        margin: 1__qem 0 1em 0;
         padding-left: 40px;
 }
 
@@ -301,7 +300,7 @@ DD {
 
 DL {
 	display: block;
-	margin: 1_qem 0 1em 0;
+	margin: 1__qem 0 1em 0;
 } 
 
 DT {
@@ -333,7 +332,7 @@ OL OL {
 
 FORM {
 	display: block;
-    margin: 0_qem 0 1em 0;
+    margin: 0__qem 0 1em 0;
 }
 
 FIELDSET {
@@ -422,7 +421,7 @@ PLAINTEXT {
 	display: block;
 	font-family: monospace; 
 	white-space: pre; 
-	margin: 1_qem 0;
+	margin: 1__qem 0;
 }
       
 BIG { 
@@ -526,23 +525,6 @@ wbr {
 
 marquee {
         display: none;
-}
-
-@konq-quirks
-{
-    /* Give floated images margins of 3px */
-    img[align="left"] {
-        margin-right: 3px;
-    }
-    
-    img[align="right"] {
-        margin-left: 3px;
-    }
-    
-    /* Make lists flow around floats. */
-    UL, OL, MENU, DIR {
-        -konq-flow-mode: -konq-around-floats;
-    }
 }
 
 /* noscript is handled internally, as it depends on the html settings */
