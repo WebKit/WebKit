@@ -7,9 +7,9 @@
 
 #import <Foundation/Foundation.h>
 
+@class NSError;
 @class WebView;
 @class WebDataSource;
-@class WebError;
 @class WebFrame;
 
 /*!
@@ -83,7 +83,7 @@
     @discussion This callback will only be received when all
     subresources are done loading.
 */
-- (void)webView:(WebView *)sender locationChangeDone:(WebError *)error forDataSource:(WebDataSource *)dataSource;
+- (void)webView:(WebView *)sender locationChangeDone:(NSError *)error forDataSource:(WebDataSource *)dataSource;
 
 /*!
     @method willCloseLocationForDataSource:

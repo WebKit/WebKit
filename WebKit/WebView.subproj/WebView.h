@@ -12,7 +12,6 @@
 @class WebViewPrivate;
 @class WebDataSource;
 @class WebDownload;
-@class WebError;
 @class WebFrame;
 @class NSURLConnection;
 @class WebPreferences;

@@ -7,9 +7,9 @@
 
 #import <WebKit/WebViewPrivate.h>
 
+@class NSError;
 @class WebView;
 @class WebDataSource;
-@class WebError;
 @class NSURLConnection;
 @class NSURLRequest;
 @class NSURLResponse;
@@ -41,12 +41,12 @@
 - downloadDelegate;
 
 - (void)cancel;
-- (void)cancelWithError:(WebError *)error;
+- (void)cancelWithError:(NSError *)error;
 
 - (void)setDefersCallbacks:(BOOL)defers;
 - (BOOL)defersCallbacks;
 
-- (WebError *)cancelledError;
+- (NSError *)cancelledError;
 
 - (void)setIdentifier: ident;
 

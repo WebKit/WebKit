@@ -10,13 +10,16 @@
 #import <WebKit/WebFrame.h>
 #import <WebKit/WebViewPrivate.h>
 
-#import <WebFoundation/WebAssertions.h>
-#import <WebFoundation/WebError.h>
 #import <WebFoundation/NSURLConnection.h>
 #import <WebFoundation/NSURLRequest.h>
 #import <WebFoundation/NSURLRequestPrivate.h>
-
 #import <WebFoundation/NSURLResponse.h>
+#import <WebFoundation/WebAssertions.h>
+#import <WebFoundation/WebNSErrorExtras.h>
+
+#if !defined(MAC_OS_X_VERSION_10_3) || (MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_3)
+#import <WebFoundation/NSError.h>
+#endif
 
 #import <WebCore/WebCoreResourceLoader.h>
 
@@ -62,8 +65,8 @@
 
         [rLoader reportError];
 
-        WebError *badURLError = [[WebError alloc] initWithErrorCode:WebFoundationErrorBadURL
-                                                           inDomain:WebErrorDomainWebFoundation
+        NSError *badURLError = [[NSError alloc] _web_initWithDomain:WebFoundationErrorDomain 
+                                                               code:WebFoundationErrorBadURL
                                                          failingURL:[URL absoluteString]];
         [_controller _receivedError:badURLError fromDataSource:source];
         [badURLError release];
@@ -73,7 +76,7 @@
     return client;
 }
 
-- (void)receivedError:(WebError *)error
+- (void)receivedError:(NSError *)error
 {
     [[dataSource _controller] _receivedError:error fromDataSource:dataSource];
 }
@@ -120,7 +123,7 @@
     [super connectionDidFinishLoading:con];
 }
 
-- (void)connection:(NSURLConnection *)con didFailLoadingWithError:(WebError *)error
+- (void)connection:(NSURLConnection *)con didFailLoadingWithError:(NSError *)error
 {
     // Calling _removeSubresourceClient will likely result in a call to release, so we must retain.
     [self retain];

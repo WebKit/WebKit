@@ -42,7 +42,7 @@ _WebElementLinkLabelKey
 _WebElementLinkTargetFrameKey
 _WebElementLinkTitleKey
 _WebElementLinkURLKey
-_WebErrorDomainWebKit
+_WebKitErrorDomain
 _WebHistoryAllItemsRemovedNotification
 _WebHistoryItemsAddedNotification
 _WebHistoryItemsKey

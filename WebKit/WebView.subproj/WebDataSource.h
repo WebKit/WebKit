@@ -8,7 +8,6 @@
 #import <Cocoa/Cocoa.h>
 
 @class WebDataSourcePrivate;
-@class WebError;
 @class WebFrame;
 @class NSURLConnection;
 @class NSURLRequest;

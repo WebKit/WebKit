@@ -6,7 +6,7 @@
 
 #import <WebFoundation/NSURLResponse.h>
 #import <WebFoundation/NSURLResponsePrivate.h>
-#import <WebFoundation/WebError.h>
+#import <WebFoundation/WebNSErrorExtras.h>
 #import <WebFoundation/WebNSStringExtras.h>
 #import <WebFoundation/WebAssertions.h>
 
@@ -179,7 +179,7 @@ static NSString *WebDataRequestPropertyKey = @"WebDataRequest";
 
         resultCode = WebFoundationErrorResourceUnavailable;
 
-        [client URLProtocol:self didFailWithError:[WebError errorWithCode:resultCode inDomain:WebErrorDomainWebFoundation failingURL:[[request URL] absoluteString]]];
+        [client URLProtocol:self didFailWithError:[NSError _web_errorWithDomain:WebFoundationErrorDomain code:resultCode failingURL:[[request URL] absoluteString]]];
     }
 }
 

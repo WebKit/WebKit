@@ -5,15 +5,14 @@
 
 #import <WebKit/WebBaseResourceHandleDelegate.h>
 
-#import <WebFoundation/WebAssertions.h>
-#import <WebFoundation/WebError.h>
-
 #import <WebFoundation/NSURLConnection.h>
 #import <WebFoundation/NSURLConnectionPrivate.h>
 #import <WebFoundation/NSURLRequest.h>
 #import <WebFoundation/NSURLRequestPrivate.h>
 #import <WebFoundation/NSURLResponse.h>
 #import <WebFoundation/NSURLResponsePrivate.h>
+#import <WebFoundation/WebAssertions.h>
+#import <WebFoundation/WebNSErrorExtras.h>
 
 #import <WebKit/WebDataProtocol.h>
 #import <WebKit/WebDataSourcePrivate.h>
@@ -244,7 +243,7 @@
     [self _releaseResources];
 }
 
-- (void)connection:(NSURLConnection *)con didFailLoadingWithError:(WebError *)result
+- (void)connection:(NSURLConnection *)con didFailLoadingWithError:(NSError *)result
 {
     ASSERT(con == connection);
     ASSERT(!reachedTerminalState);
@@ -258,7 +257,7 @@
     [self _releaseResources];
 }
 
-- (void)cancelWithError:(WebError *)error
+- (void)cancelWithError:(NSError *)error
 {
     ASSERT(!reachedTerminalState);
 
@@ -282,11 +281,11 @@
     }
 }
 
-- (WebError *)cancelledError
+- (NSError *)cancelledError
 {
-    return [WebError errorWithCode:WebFoundationErrorCancelled
-                          inDomain:WebErrorDomainWebFoundation
-                        failingURL:[[request URL] absoluteString]];
+    return [NSError _web_errorWithDomain:WebFoundationErrorDomain
+                                    code:WebFoundationErrorCancelled
+                              failingURL:[[request URL] absoluteString]];
 }
 
 - (void)setIdentifier: ident

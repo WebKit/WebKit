@@ -9,12 +9,12 @@
 
 #import <WebKit/WebKitErrors.h>
 
-#import <WebFoundation/WebError.h>
 #import <WebFoundation/WebLocalizableStrings.h>
+#import <WebFoundation/WebNSErrorExtras.h>
 
 #import <pthread.h>
 
-NSString *WebErrorDomainWebKit = @"WebErrorDomainWebKit";
+NSString *WebKitErrorDomain = @"WebKitErrorDomain";
 
 // Download and file I/O errors
 #define WebKitErrorDescriptionCannotCreateFile UI_STRING("Cannot create file", "WebKitErrorCannotCreateFile description")
@@ -35,26 +35,26 @@ NSString *WebErrorDomainWebKit = @"WebErrorDomainWebKit";
 #define WebKitErrorDescriptionResourceLoadInterruptedByPolicyChange UI_STRING("Resource load interrupted", "WebKitErrorResourceLoadInterruptedByPolicyChange description")
 
 // Plug-in and java errors
-#define WebKitErrorDescriptionWebErrorCannotFindPlugin UI_STRING("Cannot find plug-in", "WebKitErrorCannotFindPlugin description")
-#define WebKitErrorDescriptionWebErrorCannotLoadPlugin UI_STRING("Cannot load plug-in", "WebKitErrorCannotLoadPlugin description")
-#define WebKitErrorDescriptionWebErrorJavaUnavailable UI_STRING("Java is unavailable", "WebKitErrorJavaUnavailable description")
+#define WebKitErrorDescriptionCannotFindPlugin UI_STRING("Cannot find plug-in", "WebKitErrorCannotFindPlugin description")
+#define WebKitErrorDescriptionCannotLoadPlugin UI_STRING("Cannot load plug-in", "WebKitErrorCannotLoadPlugin description")
+#define WebKitErrorDescriptionJavaUnavailable UI_STRING("Java is unavailable", "WebKitErrorJavaUnavailable description")
 
 
 static pthread_once_t registerErrorsControl = PTHREAD_ONCE_INIT;
 static void registerErrors(void);
 
-@implementation WebError (WebExtras)
+@implementation NSError (WebKitExtras)
 
 + (void)_registerWebKitErrors
 {
     pthread_once(&registerErrorsControl, registerErrors);
 }
 
-+ (WebError *)_webKitErrorWithCode:(int)code failingURL:(NSString *)URL
++ (NSError *)_webKitErrorWithCode:(int)code failingURL:(NSString *)URL
 {
     [self _registerWebKitErrors];
 
-    return [self errorWithCode:code inDomain:WebErrorDomainWebKit failingURL:URL];
+    return [self _web_errorWithDomain:WebKitErrorDomain code:code failingURL:URL];
 }
 
 
@@ -83,12 +83,12 @@ static void registerErrors()
         WebKitErrorDescriptionLocationChangeInterruptedByPolicyChange, 	[NSNumber numberWithInt: WebKitErrorLocationChangeInterruptedByPolicyChange],
 
         // Plug-in and java errors
-        WebKitErrorDescriptionWebErrorCannotFindPlugin,		[NSNumber numberWithInt: WebKitErrorCannotFindPlugin],
-        WebKitErrorDescriptionWebErrorCannotLoadPlugin,		[NSNumber numberWithInt: WebKitErrorCannotLoadPlugin],
-        WebKitErrorDescriptionWebErrorJavaUnavailable,		[NSNumber numberWithInt: WebKitErrorJavaUnavailable],
+        WebKitErrorDescriptionCannotFindPlugin,		[NSNumber numberWithInt: WebKitErrorCannotFindPlugin],
+        WebKitErrorDescriptionCannotLoadPlugin,		[NSNumber numberWithInt: WebKitErrorCannotLoadPlugin],
+        WebKitErrorDescriptionJavaUnavailable,		[NSNumber numberWithInt: WebKitErrorJavaUnavailable],
         nil];
 
-    [WebError addErrorsWithCodesAndDescriptions:dict inDomain:WebErrorDomainWebKit];
+    [NSError _web_addErrorsWithCodesAndDescriptions:dict inDomain:WebKitErrorDomain];
 
     [pool release];
 }

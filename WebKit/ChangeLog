@@ -1,3 +1,88 @@
+2003-04-24  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin
+
+	Changed WebError to NSError
+
+        * Downloads.subproj/WebDownload.h:
+        * Downloads.subproj/WebDownload.m:
+        (-[WebDownload connection:didReceiveData:]):
+        (-[WebDownload connectionDidFinishLoading:]):
+        (-[WebDownload connection:didFailLoadingWithError:]):
+        (-[WebDownload _decodeData:]):
+        (-[WebDownload _writeDataForkData:resourceForkData:]):
+        (-[WebDownload _didCloseFile:]):
+        (-[WebDownload _cancelWithError:]):
+        (-[WebDownload _errorWithCode:]):
+        (CloseCompletionCallback):
+        * English.lproj/StringsNotToBeLocalized.txt:
+        * Misc.subproj/WebIconLoader.m:
+        (-[WebIconLoader connection:didFailLoadingWithError:]):
+        * Misc.subproj/WebKitErrors.h:
+        * Misc.subproj/WebKitErrors.m:
+        (+[NSError _webKitErrorWithCode:failingURL:]):
+        (registerErrors):
+        * Misc.subproj/WebKitErrorsPrivate.h:
+        * Plugins.subproj/WebNetscapePluginRepresentation.h:
+        * Plugins.subproj/WebNetscapePluginRepresentation.m:
+        (-[WebNetscapePluginRepresentation receivedError:withDataSource:]):
+        * Plugins.subproj/WebNetscapePluginStream.m:
+        (-[WebNetscapePluginStream connection:didFailLoadingWithError:]):
+        * Plugins.subproj/WebPlugInError.h:
+        * Plugins.subproj/WebPlugInError.m:
+        * WebCoreSupport.subproj/WebBridge.m:
+        * WebCoreSupport.subproj/WebSubresourceClient.m:
+        (+[WebSubresourceClient startLoadingResource:withURL:referrer:forDataSource:]):
+        (-[WebSubresourceClient receivedError:]):
+        (-[WebSubresourceClient connection:didFailLoadingWithError:]):
+        * WebKit.exp:
+        * WebView.subproj/WebBaseResourceHandleDelegate.h:
+        * WebView.subproj/WebBaseResourceHandleDelegate.m:
+        (-[WebBaseResourceHandleDelegate connection:didFailLoadingWithError:]):
+        (-[WebBaseResourceHandleDelegate cancelWithError:]):
+        (-[WebBaseResourceHandleDelegate cancelledError]):
+        * WebView.subproj/WebDataProtocol.m:
+        (-[WebDataProtocol startLoading]):
+        * WebView.subproj/WebDataSource.h:
+        * WebView.subproj/WebDataSourcePrivate.h:
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _stopLoadingInternal]):
+        (-[WebDataSource _setMainDocumentError:]):
+        (-[WebDataSource _receivedError:complete:]):
+        (-[WebDataSource _stopLoadingWithError:]):
+        (-[WebDataSource _mainDocumentError]):
+        * WebView.subproj/WebDefaultLocationChangeDelegate.m:
+        (-[WebDefaultLocationChangeDelegate webView:locationChangeDone:forDataSource:]):
+        * WebView.subproj/WebDefaultPolicyDelegate.m:
+        (-[WebDefaultPolicyDelegate webView:unableToImplementPolicyWithError:frame:]):
+        * WebView.subproj/WebDefaultResourceLoadDelegate.m:
+        (-[WebDefaultResourceLoadDelegate webView:resource:didFailLoadingWithError:fromDataSource:]):
+        * WebView.subproj/WebDocument.h:
+        * WebView.subproj/WebFrame.h:
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _handleUnimplementablePolicyWithErrorCode:forURL:]):
+        * WebView.subproj/WebFrameView.m:
+        * WebView.subproj/WebHTMLRepresentation.m:
+        (-[WebHTMLRepresentation receivedError:withDataSource:]):
+        * WebView.subproj/WebImageRepresentation.m:
+        (-[WebImageRepresentation receivedError:withDataSource:]):
+        * WebView.subproj/WebLocationChangeDelegate.h:
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient receivedError:]):
+        (-[WebMainResourceClient cancelWithError:]):
+        (-[WebMainResourceClient interruptForPolicyChangeError]):
+        (-[WebMainResourceClient connection:didFailLoadingWithError:]):
+        (-[WebResourceDelegateProxy connection:didFailLoadingWithError:]):
+        * WebView.subproj/WebPolicyDelegate.h:
+        * WebView.subproj/WebResourceLoadDelegate.h:
+        * WebView.subproj/WebTextRepresentation.m:
+        (-[WebTextRepresentation receivedError:withDataSource:]):
+        * WebView.subproj/WebView.h:
+        * WebView.subproj/WebViewPrivate.h:
+        * WebView.subproj/WebViewPrivate.m:
+        (-[WebView _receivedError:fromDataSource:]):
+        (-[WebView _mainReceivedError:fromDataSource:complete:]):
+
 2003-04-24  Darin Adler  <darin@apple.com>
 
         Reviewed by John.

@@ -7,9 +7,11 @@
 
 #import <WebKit/WebKitErrors.h>
 
-#import <WebFoundation/WebError.h>
+#if !defined(MAC_OS_X_VERSION_10_3) || (MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_3)
+#import <WebFoundation/NSError.h>
+#endif
 
-@interface WebError (WebExtras)
-+ (WebError *)_webKitErrorWithCode:(int)code failingURL:(NSString *)URL;
+@interface NSError (WebKitExtras)
++ (NSError *)_webKitErrorWithCode:(int)code failingURL:(NSString *)URL;
 @end
 

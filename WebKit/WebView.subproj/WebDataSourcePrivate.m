@@ -30,8 +30,8 @@
 #import <WebKit/WebTextRepresentation.h>
 #import <WebKit/WebViewPrivate.h>
 
-#import <WebFoundation/WebError.h>
 #import <WebFoundation/WebNSDictionaryExtras.h>
+#import <WebFoundation/WebNSErrorExtras.h>
 #import <WebFoundation/WebNSStringExtras.h>
 #import <WebFoundation/WebNSURLExtras.h>
 #import <WebFoundation/NSURLConnection.h>
@@ -238,9 +238,9 @@
         [_private->mainClient cancel];
     }else{
         // Main handle is already done. Set the cancelled error.
-        WebError *cancelledError = [WebError errorWithCode:WebFoundationErrorCancelled
-                                                  inDomain:WebErrorDomainWebFoundation
-                                                failingURL:[[self _URL] absoluteString]];
+        NSError *cancelledError = [NSError _web_errorWithDomain:WebFoundationErrorDomain
+                                                           code:WebFoundationErrorCancelled
+                                                     failingURL:[[self _URL] absoluteString]];
         [self _setMainDocumentError:cancelledError];
     }
     
@@ -404,7 +404,7 @@
     return _private->ourBackForwardItems;
 }
 
-- (void)_setMainDocumentError: (WebError *)error
+- (void)_setMainDocumentError: (NSError *)error
 {
     [error retain];
     [_private->mainDocumentError release];
@@ -576,7 +576,7 @@
     [[self representation] finishedLoadingWithDataSource:self];
 }
 
-- (void)_receivedError:(WebError *)error complete:(BOOL)isComplete
+- (void)_receivedError:(NSError *)error complete:(BOOL)isComplete
 {
     if (!_private->committed) {
         [[[self webFrame] _bridge] didNotOpenURL:[[_private->originalRequestCopy URL] absoluteString]];
@@ -736,7 +736,7 @@
     return _private->responses;
 }
 
-- (void)_stopLoadingWithError:(WebError *)error
+- (void)_stopLoadingWithError:(NSError *)error
 {
     [_private->mainClient cancelWithError:error];
 }
@@ -769,7 +769,7 @@
     }
 }
 
-- (WebError *)_mainDocumentError
+- (NSError *)_mainDocumentError
 {
     return _private->mainDocumentError;
 }

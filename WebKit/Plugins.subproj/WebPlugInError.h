@@ -7,15 +7,17 @@
 
 #import <Foundation/Foundation.h>
 
-#import <WebFoundation/WebError.h>
+#if !defined(MAC_OS_X_VERSION_10_3) || (MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_3)
+#import <WebFoundation/NSError.h>
+#endif
 
 @class WebPlugInErrorPrivate;
 
 /*!
     @class WebPlugInError
-    @discussion WebPlugInError is a subclass of WebError that is specific to plug-in related errors.
+    @discussion WebPlugInError is a subclass of NSError that is specific to plug-in related errors.
 */
-@interface WebPlugInError : WebError
+@interface WebPlugInError : NSError
 {
 @private
     WebPlugInErrorPrivate *_private;

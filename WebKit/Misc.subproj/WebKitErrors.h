@@ -5,7 +5,7 @@
         Public header file.
 */
 
-extern NSString *WebErrorDomainWebKit;
+extern NSString *WebKitErrorDomain;
 
 /*!
     @enum

@@ -7,15 +7,15 @@
 
 #import <WebKit/WebBaseNetscapePluginStream.h>
 
+@class NSError;
 @class WebDataSource;
-@class WebError;
 @protocol WebDocumentRepresentation;
 
 @interface WebNetscapePluginRepresentation : WebBaseNetscapePluginStream <WebDocumentRepresentation>
 {
     unsigned _dataLengthReceived;
     WebDataSource *_dataSource;
-    WebError *_error;
+    NSError *_error;
 }
 
 - (void)redeliverStream;

@@ -3,10 +3,10 @@
      Copyright 2003, Apple, Inc. All rights reserved.
 */
 
-#import <WebFoundation/WebError.h>
 #import <WebFoundation/NSURLRequest.h>
 #import <WebFoundation/NSURLConnection.h>
 #import <WebFoundation/NSURLResponse.h>
+#import <WebFoundation/WebNSErrorExtras.h>
 
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebDefaultResourceLoadDelegate.h>
@@ -50,7 +50,7 @@ static WebDefaultResourceLoadDelegate *sharedDelegate = nil;
 {
 }
 
--(void)webView: (WebView *)wv resource:identifier didFailLoadingWithError:(WebError *)error fromDataSource:(WebDataSource *)dataSource
+-(void)webView: (WebView *)wv resource:identifier didFailLoadingWithError:(NSError *)error fromDataSource:(WebDataSource *)dataSource
 {
 }
 

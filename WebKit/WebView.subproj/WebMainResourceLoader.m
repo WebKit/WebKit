@@ -6,7 +6,7 @@
 #import <WebKit/WebMainResourceClient.h>
 
 #import <WebFoundation/WebCookieConstants.h>
-#import <WebFoundation/WebError.h>
+#import <WebFoundation/WebNSErrorExtras.h>
 
 #import <WebFoundation/WebFileTypeMappings.h>
 #import <WebFoundation/WebNSURLExtras.h>
@@ -58,7 +58,7 @@
     [super dealloc];
 }
 
-- (void)receivedError:(WebError *)error
+- (void)receivedError:(NSError *)error
 {
     // Calling _receivedError will likely result in a call to release, so we must retain.
     [self retain];
@@ -76,17 +76,17 @@
     policyResponse = nil;
 }
 
--(void)cancelWithError:(WebError *)error
+-(void)cancelWithError:(NSError *)error
 {
     [self cancelContentPolicy];
     [connection cancel];
     [self receivedError:error];
 }
 
-- (WebError *)interruptForPolicyChangeError
+- (NSError *)interruptForPolicyChangeError
 {
-    return [WebError _webKitErrorWithCode:WebKitErrorLocationChangeInterruptedByPolicyChange
-		               failingURL:[[request URL] absoluteString]];
+    return [NSError _webKitErrorWithCode:WebKitErrorLocationChangeInterruptedByPolicyChange
+                              failingURL:[[request URL] absoluteString]];
 }
 
 -(void)stopLoadingForPolicyChange
@@ -276,13 +276,13 @@
     [self release];
 }
 
-- (void)connection:(NSURLConnection *)con didFailLoadingWithError:(WebError *)error
+- (void)connection:(NSURLConnection *)con didFailLoadingWithError:(NSError *)error
 {
     ASSERT(![con defersCallbacks]);
     ASSERT(![self defersCallbacks]);
     ASSERT(![[dataSource _controller] defersCallbacks]);
 
-    LOG(Loading, "URL = %@, error = %@", [error failingURL], [error errorDescription]);
+    LOG(Loading, "URL = %@, error = %@", [error _web_failingURL], [error _web_localizedDescription]);
 
     [self receivedError:error];
 }
@@ -357,7 +357,7 @@
     [delegate connectionDidFinishLoading:connection];
 }
 
-- (void)connection:(NSURLConnection *)connection didFailLoadingWithError:(WebError *)error
+- (void)connection:(NSURLConnection *)connection didFailLoadingWithError:(NSError *)error
 {
     ASSERT(delegate);
     [delegate connection:connection didFailLoadingWithError:error];

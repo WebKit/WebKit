@@ -5,8 +5,8 @@
 
 #import <Cocoa/Cocoa.h>
 
+@class NSError;
 @class WebDataSource;
-@class WebError;
 
 /*!
     @protocol WebDocumentView
@@ -154,7 +154,7 @@
     @param error The error that the data source has received.
     @param dataSource The data source that has received the error.
 */
-- (void)receivedError: (WebError *)error withDataSource: (WebDataSource *)dataSource;
+- (void)receivedError: (NSError *)error withDataSource: (WebDataSource *)dataSource;
 
 /*!
     @method finishedLoadingWithDataSource:

@@ -29,7 +29,7 @@
 #import <WebKit/WebPreferencesPrivate.h>
 #import <WebKit/WebViewPrivate.h>
 
-#import <WebFoundation/WebError.h>
+#import <WebFoundation/WebNSErrorExtras.h>
 #import <WebFoundation/WebNSURLExtras.h>
 #import <WebFoundation/WebNSStringExtras.h>
 #import <WebFoundation/NSURLConnection.h>
@@ -1039,8 +1039,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (void)_handleUnimplementablePolicyWithErrorCode:(int)code forURL:(NSURL *)URL
 {
-    WebError *error = [WebError _webKitErrorWithCode:code
-				          failingURL:[URL absoluteString]];
+    NSError *error = [NSError _webKitErrorWithCode:code failingURL:[URL absoluteString]];
     WebView *c = [self webView];
     [[c _policyDelegateForwarder] webView:c unableToImplementPolicyWithError:error frame:self];    
 }

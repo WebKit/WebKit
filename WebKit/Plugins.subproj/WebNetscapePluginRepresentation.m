@@ -10,7 +10,11 @@
 #import <WebKit/WebNetscapePluginRepresentation.h>
 
 #import <WebFoundation/WebAssertions.h>
-#import <WebFoundation/WebError.h>
+#import <WebFoundation/WebNSErrorExtras.h>
+
+#if !defined(MAC_OS_X_VERSION_10_3) || (MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_3)
+#import <WebFoundation/NSError.h>
+#endif
 
 @implementation WebNetscapePluginRepresentation
 
@@ -55,7 +59,7 @@
     [self receivedData:data];
 }
 
-- (void)receivedError:(WebError *)error withDataSource:(WebDataSource *)ds
+- (void)receivedError:(NSError *)error withDataSource:(WebDataSource *)ds
 {
     [error retain];
     [_error release];
@@ -65,7 +69,7 @@
         return;
     }
     
-    if ([error errorCode] == WebFoundationErrorCancelled) {
+    if ([error code] == WebFoundationErrorCancelled) {
         [self receivedError:NPRES_USER_BREAK];
     } else {
         [self receivedError:NPRES_NETWORK_ERR];

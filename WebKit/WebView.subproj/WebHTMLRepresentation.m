@@ -63,7 +63,7 @@
         [_private->bridge receivedData:data withDataSource:dataSource];
 }
 
-- (void)receivedError:(WebError *)error withDataSource:(WebDataSource *)dataSource
+- (void)receivedError:(NSError *)error withDataSource:(WebDataSource *)dataSource
 {
 }
 

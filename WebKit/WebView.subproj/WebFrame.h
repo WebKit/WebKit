@@ -10,7 +10,6 @@
 
 @class WebView;
 @class WebDataSource;
-@class WebError;
 @class WebFramePrivate;
 @class WebFrameView;
 @class NSURLRequest;

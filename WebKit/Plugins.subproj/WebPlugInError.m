@@ -9,6 +9,7 @@
 #import <WebKit/WebKitErrors.h>
 #import <WebKit/WebPlugInErrorPrivate.h>
 
+#import <WebFoundation/WebNSErrorExtras.h>
 
 @interface WebPlugInErrorPrivate : NSObject
 {
@@ -86,7 +87,7 @@
              pluginName:(NSString *)pluginName
                MIMEType:(NSString *)MIMEType;
 {
-    [super initWithErrorCode:code inDomain:WebErrorDomainWebKit failingURL:contentURL];
+    [super _web_initWithDomain:WebKitErrorDomain code:code failingURL:contentURL];
 
     _private = [[WebPlugInErrorPrivate alloc] init];
     _private->contentURL = [contentURL retain];

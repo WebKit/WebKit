@@ -8,6 +8,7 @@
 
 #import <WebKit/WebDataSource.h>
 
+@class NSError;
 @class WebBridge;
 @class WebHistoryItem;
 @class WebIconLoader;
@@ -69,7 +70,7 @@
     NSMutableDictionary *errors;
 
     // Error associated with main document.
-    WebError *mainDocumentError;
+    NSError *mainDocumentError;
 
     BOOL loading; // self and controller are retained while loading
 
@@ -114,7 +115,7 @@
 
 @interface WebDataSource (WebPrivate)
 
-- (WebError *)_mainDocumentError;
+- (NSError *)_mainDocumentError;
 - (NSString *)_stringWithData:(NSData *)data;
 - (void)_startLoading;
 - (void)_stopLoading;
@@ -138,7 +139,7 @@
 - (void)_setResponse:(NSURLResponse *)response;
 - (void)_layoutChildren;
 - (void)_clearErrors;
-- (void)_setMainDocumentError:(WebError *)error;
+- (void)_setMainDocumentError:(NSError *)error;
 + (NSMutableDictionary *)_repTypes;
 + (Class)_representationClassForMIMEType:(NSString *)MIMEType;
 - (void)_loadIcon;
@@ -161,7 +162,7 @@
 - (void)_makeRepresentation;
 - (void)_receivedData:(NSData *)data;
 - (void)_finishedLoading;
-- (void)_receivedError:(WebError *)error complete:(BOOL)isComplete;
+- (void)_receivedError:(NSError *)error complete:(BOOL)isComplete;
 - (void)_defersCallbacksChanged;
 - (NSURLRequest *)_originalRequest;
 - (NSDictionary *)_triggeringAction;
@@ -177,7 +178,7 @@
 - (void)_addResponse: (NSURLResponse *)r;
 - (NSArray *)_responses;
 
-- (void)_stopLoadingWithError:(WebError *)error;
+- (void)_stopLoadingWithError:(NSError *)error;
 
 - (void)_setWebFrame:(WebFrame *)frame;
 

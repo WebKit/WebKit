@@ -7,12 +7,12 @@
 
 #import <Cocoa/Cocoa.h>
 
-@class WebView;
-@class WebError;
-@class WebFrame;
-@class WebPolicyPrivate;
+@class NSError;
 @class NSURLResponse;
 @class NSURLRequest;
+@class WebView;
+@class WebFrame;
+@class WebPolicyPrivate;
 
 
 /*!
@@ -174,6 +174,6 @@ extern NSString *WebActionOriginalURLKey; // NSURL
     @param URL The URL of the resource for which a particular action was requested but failed.
     @param frame The frame in which the policy could not be implemented.
 */
-- (void)webView:(WebView *)webView unableToImplementPolicyWithError:(WebError *)error frame:(WebFrame *)frame;
+- (void)webView:(WebView *)webView unableToImplementPolicyWithError:(NSError *)error frame:(WebFrame *)frame;
 
 @end

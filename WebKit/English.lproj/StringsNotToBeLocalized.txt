@@ -113,7 +113,7 @@
 "WebElementLinkTitle"
 "WebElementLinkURL"
 "WebElementTargetFrame"
-"WebErrorDomainWebKit"
+"WebKitErrorDomain"
 "WebFrameLoadTypeBack"
 "WebFrameLoadTypeForward"
 "WebFrameLoadTypeIndexedBackForward"

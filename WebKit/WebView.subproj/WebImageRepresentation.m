@@ -12,6 +12,10 @@
 
 #import <WebFoundation/NSURLRequest.h>
 
+#if !defined(MAC_OS_X_VERSION_10_3) || (MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_3)
+#import <WebFoundation/NSError.h>
+#endif
+
 @implementation WebImageRepresentation
 
 - init
@@ -51,7 +55,7 @@
     //[image incrementalLoadWithBytes:[data bytes] length:[data length] complete:isComplete];
 }
 
-- (void)receivedError:(WebError *)error withDataSource:(WebDataSource *)dataSource
+- (void)receivedError:(NSError *)error withDataSource:(WebDataSource *)dataSource
 {
 
 }

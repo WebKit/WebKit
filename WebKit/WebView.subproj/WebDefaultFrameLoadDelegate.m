@@ -2,11 +2,13 @@
         WebLocationChangeDelegate.m
 	Copyright 2002, Apple, Inc. All rights reserved.
 */
-#import <WebFoundation/WebError.h>
-
 #import <WebKit/WebDefaultLocationChangeDelegate.h>
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebFrame.h>
+
+#if !defined(MAC_OS_X_VERSION_10_3) || (MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_3)
+#import <WebFoundation/NSError.h>
+#endif
 
 @implementation WebDefaultLocationChangeDelegate
 
@@ -31,7 +33,7 @@ static WebDefaultLocationChangeDelegate *sharedDelegate = nil;
 - (void)webView: (WebView *)wv receivedPageTitle:(NSString *)title forDataSource:(WebDataSource *)dataSource { }
 - (void)webView: (WebView *)wv receivedPageIcon:(NSImage *)image forDataSource:(WebDataSource *)dataSource { }
 
-- (void)webView: (WebView *)wv locationChangeDone:(WebError *)error forDataSource:(WebDataSource *)dataSource { }
+- (void)webView: (WebView *)wv locationChangeDone:(NSError *)error forDataSource:(WebDataSource *)dataSource { }
 
 - (void)webView: (WebView *)wv willCloseLocationForDataSource:(WebDataSource *)dataSource { }
 

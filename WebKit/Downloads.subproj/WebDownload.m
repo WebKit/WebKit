@@ -18,7 +18,7 @@
 #import <WebKit/WebNSWorkspaceExtras.h>
 #import <WebKit/WebNSURLResponseExtras.h>
 
-#import <WebFoundation/WebError.h>
+#import <WebFoundation/WebNSErrorExtras.h>
 #import <WebFoundation/WebNSFileManagerExtras.h>
 #import <WebFoundation/WebNSStringExtras.h>
 #import <WebFoundation/NSURLRequest.h>
@@ -87,15 +87,15 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
 #pragma mark DECODING
 - (void)_decodeHeaderData:(NSData *)headerData dataForkData:(NSData **)dataForkData resourceForkData:(NSData **)resourceForkData;
 - (BOOL)_decodeData:(NSData *)data dataForkData:(NSData **)dataForkData resourceForkData:(NSData **)resourceForkData;
-- (WebError *)_decodeData:(NSData *)data;
+- (NSError *)_decodeData:(NSData *)data;
 - (NSData *)_dataIfDoneBufferingData:(NSData *)data;
 - (BOOL)_finishDecoding;
 #pragma mark WRITING
 - (BOOL)_writeForkData:(NSData *)data isDataFork:(BOOL)isDataFork;
-- (WebError *)_writeDataForkData:(NSData *)dataForkData resourceForkData:(NSData *)resourceForkData;
+- (NSError *)_writeDataForkData:(NSData *)dataForkData resourceForkData:(NSData *)resourceForkData;
 #pragma mark CLOSING;
 - (BOOL)_isFileClosed;
-- (void)_didCloseFile:(WebError *)error;
+- (void)_didCloseFile:(NSError *)error;
 - (void)_closeForkAsync:(SInt16)forkRefNum;
 - (BOOL)_closeForkSync:(SInt16)forkRefNum;
 - (void)_closeFileAsync;
@@ -104,13 +104,13 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
 - (void)_didDeleteFile;
 - (void)_deleteFileAsnyc;
 - (void)_closeAndDeleteFileAsync;
-- (void)_cancelWithError:(WebError *)error;
+- (void)_cancelWithError:(NSError *)error;
 - (void)_cancelWithErrorCode:(int)code;
 #pragma mark MISC
 - (void)_setDelegate:(id)delegate;
 - (void)_setPath:(NSString *)path;
 - (NSString *)_currentPath;
-- (WebError *)_errorWithCode:(int)code;
+- (NSError *)_errorWithCode:(int)code;
 - (SInt16)_dataForkReferenceNumber;
 - (void)_setDataForkReferenceNumber:(SInt16)forkRefNum;
 - (SInt16)_resourceForkReferenceNumber;
@@ -344,7 +344,7 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
         [_private->delegate download:self didReceiveDataOfLength:[data length]];
     }
     
-    WebError *error = [self _decodeData:[self _dataIfDoneBufferingData:data]];
+    NSError *error = [self _decodeData:[self _dataIfDoneBufferingData:data]];
     if (error) {
         [self _cancelWithError:error];
     }
@@ -352,7 +352,7 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection
 {    
-    WebError *error = [self _decodeData:_private->bufferedData];
+    NSError *error = [self _decodeData:_private->bufferedData];
     [_private->bufferedData release];
     _private->bufferedData = nil;
     if (error) {
@@ -369,7 +369,7 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
     [self _closeFileAsync];
 }
 
-- (void)connection:(NSURLConnection *)connection didFailLoadingWithError:(WebError *)error
+- (void)connection:(NSURLConnection *)connection didFailLoadingWithError:(NSError *)error
 {    
     [self _cancelWithError:error];
 }
@@ -574,7 +574,7 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
     return YES;
 }
 
-- (WebError *)_decodeData:(NSData *)data
+- (NSError *)_decodeData:(NSData *)data
 {
     if ([data length] == 0) {
         return nil;
@@ -588,7 +588,7 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
         return [self _errorWithCode:WebKitErrorDownloadDecodingFailedMidStream];
     }
 
-    WebError *error = [self _writeDataForkData:dataForkData resourceForkData:resourceForkData];
+    NSError *error = [self _writeDataForkData:dataForkData resourceForkData:resourceForkData];
     if (error) {
         return error;
     }
@@ -674,7 +674,7 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
     return YES;
 }
 
-- (WebError *)_writeDataForkData:(NSData *)dataForkData resourceForkData:(NSData *)resourceForkData
+- (NSError *)_writeDataForkData:(NSData *)dataForkData resourceForkData:(NSData *)resourceForkData
 {
     if (![self _createFileIfNecessary]) {
         return [self _errorWithCode:WebKitErrorCannotCreateFile];
@@ -705,7 +705,7 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
     return (_private->dataForkRefNum == 0 && _private->resourceForkRefNum == 0);
 }
 
-- (void)_didCloseFile:(WebError *)error
+- (void)_didCloseFile:(NSError *)error
 {        
     if (_private->deleteFile) {
         [self _deleteFileAsnyc];
@@ -798,7 +798,7 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
     }
 }
 
-- (void)_cancelWithError:(WebError *)error
+- (void)_cancelWithError:(NSError *)error
 {
     [_private->connection cancel];
     
@@ -882,10 +882,9 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
     return _private->path ? _private->path : _private->tempPath;
 }
 
-- (WebError *)_errorWithCode:(int)code
+- (NSError *)_errorWithCode:(int)code
 {
-    return [WebError _webKitErrorWithCode:code
-                               failingURL:[[_private->request URL] absoluteString]];
+    return [NSError _webKitErrorWithCode:code failingURL:[[_private->request URL] absoluteString]];
 }
 
 - (SInt16)_dataForkReferenceNumber
@@ -969,8 +968,7 @@ static void CloseCompletionCallback(ParmBlkPtr paramBlock)
     }
 
     if ([download _isFileClosed]) {
-        WebError *error = [download _encounteredCloseError] ?
-                          [download _errorWithCode:WebKitErrorCannotCloseFile] : nil;
+        NSError *error = [download _encounteredCloseError] ? [download _errorWithCode:WebKitErrorCannotCloseFile] : nil;
         [download performSelectorOnMainThread:@selector(_didCloseFile:) withObject:error waitUntilDone:NO];
     }
     

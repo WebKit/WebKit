@@ -99,7 +99,7 @@
     @param error The error associated with this load.
     @param dataSource The dataSource that initiated the load.
 */
--(void)webView:(WebView *)sender resource:identifier didFailLoadingWithError:(WebError *)error fromDataSource:(WebDataSource *)dataSource;
+-(void)webView:(WebView *)sender resource:identifier didFailLoadingWithError:(NSError *)error fromDataSource:(WebDataSource *)dataSource;
 
 /*!
      @method pluginFailedWithError:dataSource:

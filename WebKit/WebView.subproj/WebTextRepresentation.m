@@ -45,7 +45,7 @@
     }
 }
 
-- (void)receivedError:(WebError *)error withDataSource:(WebDataSource *)dataSource
+- (void)receivedError:(NSError *)error withDataSource:(WebDataSource *)dataSource
 {
 
 }

@@ -27,7 +27,6 @@
 
 #import <WebFoundation/WebAssertions.h>
 
-#import <WebFoundation/WebError.h>
 #import <WebFoundation/WebFileTypeMappings.h>
 #import <WebFoundation/WebNSDataExtras.h>
 #import <WebFoundation/WebNSStringExtras.h>
@@ -176,7 +175,7 @@
 }
 
 
-- (void)_receivedError: (WebError *)error fromDataSource: (WebDataSource *)dataSource
+- (void)_receivedError: (NSError *)error fromDataSource: (WebDataSource *)dataSource
 {
     WebFrame *frame = [dataSource webFrame];
 
@@ -184,7 +183,7 @@
 }
 
 
-- (void)_mainReceivedError:(WebError *)error fromDataSource:(WebDataSource *)dataSource complete:(BOOL)isComplete
+- (void)_mainReceivedError:(NSError *)error fromDataSource:(WebDataSource *)dataSource complete:(BOOL)isComplete
 {
     ASSERT(dataSource);
 #ifndef NDEBUG

@@ -28,7 +28,7 @@ static WebDefaultPolicyDelegate *sharedDelegate = nil;
     return sharedDelegate;
 }
 
-- (void)webView: (WebView *)wv unableToImplementPolicyWithError:(WebError *)error frame:(WebFrame *)frame
+- (void)webView: (WebView *)wv unableToImplementPolicyWithError:(NSError *)error frame:(WebFrame *)frame
 {
     ERROR("called unableToImplementPolicyWithError:%@ inFrame:%@", error, frame);
 }
