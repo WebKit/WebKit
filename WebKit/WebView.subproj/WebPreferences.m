@@ -580,6 +580,27 @@ static NSMutableDictionary *webPreferencesInstances = nil;
                     userInfo:nil];
 }
 
+- (void)_setInitialDefaultTextEncodingToSystemEncoding
+{
+    CFStringEncoding encoding = CFStringGetSystemEncoding();
+    
+    // MacRoman is a special case; maybe we will learn that there should be other special cases later.
+    if (encoding == kCFStringEncodingMacRoman) {
+        encoding = kCFStringEncodingISOLatin1;
+    }
+    
+    NSString *name = (NSString *)CFStringConvertEncodingToIANACharSetName(encoding);
+    
+    // fall back to latin1 if necessary
+    if (name == nil) {
+        name = (NSString *)CFStringConvertEncodingToIANACharSetName(kCFStringEncodingISOLatin1);
+    }
+    
+    [[NSUserDefaults standardUserDefaults] registerDefaults:
+        [NSDictionary dictionaryWithObject:name
+                                    forKey:WebKitDefaultTextEncodingNamePreferenceKey]];
+}
+
 static NSString *classIBCreatorID = nil;
 
 + (void)_setIBCreatorID:(NSString *)string

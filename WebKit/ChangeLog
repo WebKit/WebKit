@@ -1,3 +1,19 @@
+2004-09-23  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Chris.
+        
+        - WebKit part of fix for <rdar://problem/3415264> 
+        Default encoding should initially be set to current system encoding
+
+        * WebView.subproj/WebPreferences.m:
+        (-[WebPreferences _setInitialDefaultTextEncodingToSystemEncoding]):
+        new SPI that sets the initial value of the default text encoding to
+        be the system encoding, with a special-case conversion of MacRoman->Latin1.
+        This is not done automatically for WebKit clients for fear of breaking them.
+        
+        * WebView.subproj/WebPreferencesPrivate.h:
+        declare new SPI
+
 2004-09-23  Darin Adler  <darin@apple.com>
 
         Reviewed by Ken.
