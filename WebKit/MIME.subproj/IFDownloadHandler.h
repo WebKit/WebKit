@@ -7,20 +7,12 @@
 //
 
 #import <Foundation/Foundation.h>
-
-@class IFMIMEHandler;
-
-@class IFDownloadHandlerPrivate;
+#import <WebKit/IFWebDataSource.h>
 
 @interface IFDownloadHandler : NSObject {
-@private
-    IFDownloadHandlerPrivate *_private;
+    IFWebDataSource *dataSource;
 }
 
-- (NSURL *) url;
-- (IFMIMEHandler *) mimeHandler;
-- (NSString *) suggestedFilename;
-- (void) cancelDownload;
-- (void) storeAtPath:(NSString *)path;
-- (void) openAfterDownload:(BOOL)open;
+- initWithDataSource:(IFWebDataSource *)dSource;
+- (void)downloadCompletedWithData:(NSData *)data;
 @end

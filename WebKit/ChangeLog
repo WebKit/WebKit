@@ -1,3 +1,42 @@
+2002-04-23  Chris Blumenberg  <cblu@apple.com>
+
+	* MIME.subproj/IFDownloadHandler.h:
+	* MIME.subproj/IFDownloadHandler.m: Removed.
+	* MIME.subproj/IFDownloadHandler.mm: Added.
+	(-[IFDownloadHandler initWithDataSource:]):
+	(-[IFDownloadHandler dealloc]):
+	* MIME.subproj/IFDownloadHandlerPrivate.h: Removed.
+	* MIME.subproj/IFDownloadHandlerPrivate.m: Removed.
+
+	Made IFDownloadHandler a private class that retains the data source
+	and saves the data to disk.
+
+	* WebKit.pbproj/project.pbxproj:
+
+	Removed IFDownloadHandlerPrivate
+
+	* WebView.subproj/IFBaseWebControllerPrivate.mm:
+	(-[IFBaseWebController _mainReceivedProgress:forResource:fromDataSource:]):
+
+	Only send locationChangeCommitted if its shown inline.
+
+	* WebView.subproj/IFMainURLHandleClient.mm:
+	(-[IFMainURLHandleClient IFURLHandleResourceDidFinishLoading:data:]):
+	
+	Save data with IFDownloadHandler
+
+	(-[IFMainURLHandleClient IFURLHandle:resourceDataDidBecomeAvailable:]):
+	
+	If its a download, set the provisionalDataSource on the frame to nil.	
+
+	* WebView.subproj/IFWebDataSource.h:
+	* WebView.subproj/IFWebDataSource.mm:
+	(-[IFWebDataSource webFrame]):
+	(-[IFWebDataSource pageTitle]):
+	(-[IFWebDataSource contentPolicy]):
+
+	Added some accessor methods. Spelling fix pageTitle.
+
 2002-04-23  Kenneth Kocienda  <kocienda@apple.com>
 
         Reviewed by: Darin Adler

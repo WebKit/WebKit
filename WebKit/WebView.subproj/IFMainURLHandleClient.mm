@@ -13,10 +13,13 @@
 #import <WebKit/IFMIMEDatabase.h>
 #import <WebKit/WebKitDebug.h>
 #import <WebKit/IFContentHandler.h>
-#import <WebKit/IFDownloadHandlerPrivate.h>
+#import <WebKit/IFDownloadHandler.h>
+#import <WebKit/IFWebDataSource.h>
 #import <WebKit/IFWebDataSourcePrivate.h>
 #import <WebKit/IFWebController.h>
 #import <WebKit/IFLocationChangeHandler.h>
+#import <WebKit/IFWebFrame.h>
+#import <WebKit/IFWebFramePrivate.h>
 
 #import <WebFoundation/IFError.h>
 #import <WebFoundation/IFURLHandle.h>
@@ -85,11 +88,13 @@
         }
     }
     
-    else if([dataSource _contentPolicy] == IFContentPolicySave) 
-        [IFMIMEHandler saveFileWithPath:[dataSource _downloadPath] andData:[sender resourceData]];
-               
-    else if([dataSource _contentPolicy] == IFContentPolicyOpenExternally)
-        [IFMIMEHandler saveAndOpenFileWithPath:[dataSource _downloadPath] andData:[sender resourceData]];
+    else if([dataSource _contentPolicy] == IFContentPolicySave || 
+            [dataSource _contentPolicy] == IFContentPolicyOpenExternally){
+        // FIXME [cblu]: We shouldn't wait for the download to end to write to the disk.
+        // Will fix once we there is an IFURLHandle flag to not memory cache 
+        [downloadHandler downloadCompletedWithData:[sender resourceData]];
+        [downloadHandler release];
+    }
 
     IFLoadProgress *loadProgress = [[IFLoadProgress alloc] init];
     loadProgress->totalToLoad = [data length];
@@ -104,12 +109,13 @@
     NSString *fakeHTMLDocument;
     const char *fakeHTMLDocumentBytes;
     IFContentHandler *contentHandler;
+    IFWebFrame *frame;
     
     WEBKITDEBUGLEVEL(WEBKIT_LOG_LOADING, "url = %s, data = %p, length %d\n", [[[sender url] absoluteString] cString], data, [data length]);
     
     // check the mime type
     if(!typeChecked){
-        WEBKITDEBUGLEVEL(WEBKIT_LOG_DOWNLOAD, "Main URL's contentType: %s", [[sender contentType] cString]);
+        WEBKITDEBUGLEVEL(WEBKIT_LOG_DOWNLOAD, "main content type: %s", [[sender contentType] cString]);
         [[dataSource _locationChangeHandler] requestContentPolicyForMIMEType:[sender contentType]];
         mimeHandler = [[[IFMIMEDatabase sharedMIMEDatabase] MIMEHandlerForMIMEType:[sender contentType]] retain];
         handlerType = [mimeHandler handlerType];
@@ -150,7 +156,15 @@
     
     else if([dataSource _contentPolicy] == IFContentPolicySave || 
             [dataSource _contentPolicy] == IFContentPolicyOpenExternally){
-        
+            if(!downloadStarted){
+                downloadHandler = [[IFDownloadHandler alloc] initWithDataSource:dataSource];
+                frame = [dataSource webFrame];
+                // FIXME: need a cleaner way for the frame to let go of the data source
+                frame->_private->provisionalDataSource = nil; 
+                [[dataSource _locationChangeHandler] locationChangeDone:nil];
+                downloadStarted = YES;
+            }
+            WEBKITDEBUGLEVEL(WEBKIT_LOG_DOWNLOAD, "%d of %d", [sender contentLengthReceived], [sender contentLength]);
     }
     
     // update progress

@@ -68,6 +68,12 @@ static id IFWebDataSourceMake(void *handle)
     return [_private->controller frameForDataSource: self];
 }
 
+// This was adding to avoid collision with NSView
+- (IFWebFrame *)webFrame
+{
+    return [self frame];
+}
+
 // Returns the name of the frame containing this data source, or nil
 // if the data source is not in a frame set.
 - (NSString *)frameName 
@@ -311,6 +317,11 @@ static id IFWebDataSourceMake(void *handle)
 - (NSString *)pageTitle
 {
     return _private->pageTitle;
+}
+
+- (IFContentPolicy) contentPolicy
+{
+    return _private->contentPolicy;
 }
 
 @end
