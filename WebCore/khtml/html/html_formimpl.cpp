@@ -2016,10 +2016,12 @@ void HTMLSelectElementImpl::recalcListItems()
         if (current->id() == ID_OPTION) {
             m_listItems.resize(m_listItems.size()+1);
             m_listItems[m_listItems.size()-1] = static_cast<HTMLGenericFormElementImpl*>(current);
-            if (!m_multiple && static_cast<HTMLOptionElementImpl*>(current)->selected()) {
-                if (foundSelected) {
-                    foundSelected->m_selected = false;
-                }
+            if (!foundSelected && !m_multiple && m_size <= 1) {
+                foundSelected = static_cast<HTMLOptionElementImpl*>(current);
+                foundSelected->m_selected = true;
+            }
+            else if (foundSelected && !m_multiple && static_cast<HTMLOptionElementImpl*>(current)->selected()) {
+                foundSelected->m_selected = false;
                 foundSelected = static_cast<HTMLOptionElementImpl*>(current);
             }
         }

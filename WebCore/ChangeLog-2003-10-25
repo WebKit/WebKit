@@ -1,3 +1,18 @@
+2003-01-30  Trey Matteson  <trey@apple.com>
+
+	3160565 - REGRESSION: Can't log in to etrade
+
+	Fix regression caused by fixed to 3058229.  We auto-select an item of a select element
+	if it is size=1 or size is unset (m_size==0 in the code).
+
+	This gives us conformance with WinIE.  The test at dbaron.org fails us for the
+	case of a disabled list with no size and no initial selection.
+
+        Reviewed by Darin.
+
+        * khtml/html/html_formimpl.cpp:
+        (HTMLSelectElementImpl::recalcListItems):  Auto-select an item if size==1 or is unset.
+
 2003-01-30  David Hyatt  <hyatt@apple.com>
 
 	Make quirk bits part of the bitfield to shrink RenderFlows.
