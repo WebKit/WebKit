@@ -1,3 +1,41 @@
+2003-12-09  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Richard.
+
+	<rdar://problem/3504049>: XMLSerializer object and serializeToString method needed for XMLHttpRequest testing
+
+	Also fixed some lasst-minute mistakes in the DOM serialization
+	code that was already there.
+	
+        * WebCore.pbproj/project.pbxproj:
+        * khtml/dom/dom_doc.h:
+        * khtml/ecma/Makefile.am:
+        * khtml/ecma/kjs_window.cpp:
+        (Window::get):
+        * khtml/ecma/kjs_window.h:
+        (KJS::Window::):
+        * khtml/ecma/kjs_window.lut.h:
+        (KJS::):
+        * khtml/ecma/xmlserializer.cpp: Added.
+        (KJS::XMLSerializerConstructorImp::XMLSerializerConstructorImp):
+        (KJS::XMLSerializerConstructorImp::implementsConstruct):
+        (KJS::XMLSerializerConstructorImp::construct):
+        (KJS::):
+        (KJS::XMLSerializer::XMLSerializer):
+        (KJS::XMLSerializerProtoFunc::tryCall):
+        * khtml/ecma/xmlserializer.h: Added.
+        (KJS::XMLSerializer::toBoolean):
+        (KJS::XMLSerializer::classInfo):
+        (KJS::XMLSerializer::):
+        * khtml/ecma/xmlserializer.lut.h: Added.
+        (KJS::):
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::toString):
+        (DocumentFragmentImpl::toString):
+        * khtml/xml/dom_elementimpl.cpp:
+        (AttrImpl::toString):
+        (ElementImpl::toString):
+
 2003-12-09  David Hyatt  <hyatt@apple.com>
 
 	Implement start() and stop() for marquees.

@@ -790,9 +790,10 @@ public:
     DOMString completeURL(const DOMString& url);
 
     DOMString toString() const;
-protected:
+
     Document( DocumentImpl *i);
 
+protected:
     friend class Node;
 };
 

@@ -521,6 +521,8 @@
 				654E7EE40569FD4600358BD2,
 				654E7EE50569FD4600358BD2,
 				84B2B1F9056BEF3A00D2B771,
+				65912B110586921000123A69,
+				65912B120586921000123A69,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -786,6 +788,7 @@
 				654E7EE30569FD4600358BD2,
 				84B2B1FA056BEF3A00D2B771,
 				84B2B250056BF15F00D2B771,
+				65912B100586921000123A69,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1079,6 +1082,48 @@
 		};
 		65732B69054EF483007B42F8 = {
 			fileRef = 65732B68054EF483007B42F8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		65912B0D0586921000123A69 = {
+			expectedFileType = sourcecode.cpp.cpp;
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = xmlserializer.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		65912B0E0586921000123A69 = {
+			expectedFileType = sourcecode.c.h;
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = xmlserializer.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		65912B0F0586921000123A69 = {
+			expectedFileType = sourcecode.c.h;
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = xmlserializer.lut.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		65912B100586921000123A69 = {
+			fileRef = 65912B0D0586921000123A69;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		65912B110586921000123A69 = {
+			fileRef = 65912B0E0586921000123A69;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		65912B120586921000123A69 = {
+			fileRef = 65912B0F0586921000123A69;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -4202,6 +4247,9 @@
 				654E7EE00569FD4600358BD2,
 				654E7EE10569FD4600358BD2,
 				654E7EE20569FD4600358BD2,
+				65912B0D0586921000123A69,
+				65912B0E0586921000123A69,
+				65912B0F0586921000123A69,
 			);
 			isa = PBXGroup;
 			path = ecma;
