@@ -1,3 +1,14 @@
+2003-03-06  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - fixed 3177862 -- REGRESSION: can't upload widget at www.konfabulator.com
+
+        * khtml/html/html_formimpl.cpp:
+        (fixUpfromUnicode): Add a call to fixLineBreaks here (and move this down below that function).
+        (HTMLFormElementImpl::formData): Remove the call to fixLineBreaks here, which was being used
+        on non-text form data, like files being uploaded.
+
 2003-03-05  Trey Matteson  <trey@apple.com>
 
 	Autofill tweak.  In field names, replace all digits with spaces before matching
@@ -205,7 +216,6 @@
         a bit of overhead.
         (WindowQObject::installTimeout): Change parameter to UString, not Identifier.
 
->>>>>>> 1.1469
 2003-03-03  David Hyatt  <hyatt@apple.com>
 
 	I messed up when i merged Lars' quirks color patch for CSS with
