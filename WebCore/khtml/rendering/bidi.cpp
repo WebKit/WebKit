@@ -1459,7 +1459,7 @@ QRect RenderBlock::layoutInlineChildren(bool relayoutChildren)
                     }
                 }
                 
-                if (end == start || (end.obj && end.obj->style()->whiteSpace() == PRE && end.current() == QChar('\n'))) {
+                if (end == start || (!previousLineBrokeCleanly && end.obj && end.obj->style()->whiteSpace() == PRE && end.current() == QChar('\n'))) {
                     adjustEmbedding = true;
                     end.increment(bidi);
                     adjustEmbedding = false;
@@ -1981,8 +1981,7 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
                     if( *(str+pos) == '\n' && isPre) {
                         lBreak.obj = o;
                         lBreak.pos = pos;
-                        previousLineBrokeCleanly = true;
-                        
+
 #ifdef DEBUG_LINEBREAKS
                         kdDebug(6041) << "forced break sol: " << start.obj << " " << start.pos << "   end: " << lBreak.obj << " " << lBreak.pos << "   width=" << w << endl;
 #endif
