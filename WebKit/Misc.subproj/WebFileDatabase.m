@@ -31,8 +31,7 @@ typedef enum
 enum
 {
     MAX_UNSIGNED_LENGTH = 20, // long enough to hold the string representation of a 64-bit unsigned number
-    SYNC_INTERVAL = 5,
-    SYNC_IDLE_THRESHOLD = 5,
+    SYNC_IDLE_THRESHOLD = 1,
 };
 
 // support for expiring cache files using file system access times --------------------------------------------
@@ -487,9 +486,12 @@ static void databaseInit()
 
 -(void)dealloc
 {
+    [mutex lock];
+    // this locking gives time for writes that are happening now to finish
+    [mutex unlock];
     [self close];
-    [self sync];
-    
+    [timer invalidate];
+    [timer release];
     [ops release];
     [setCache release];
     [removeCache release];
@@ -501,7 +503,7 @@ static void databaseInit()
 -(void)setTimer
 {
     if (timer == nil) {
-        timer = [[NSTimer scheduledTimerWithTimeInterval:SYNC_INTERVAL target:self selector:@selector(lazySync:) userInfo:nil repeats:YES] retain];
+        timer = [[NSTimer scheduledTimerWithTimeInterval:SYNC_IDLE_THRESHOLD target:self selector:@selector(lazySync:) userInfo:nil repeats:YES] retain];
     }
 }
 
