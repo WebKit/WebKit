@@ -243,7 +243,7 @@ private:
     void deleteDownstreamWS(const DOM::Position &start);
     bool containsOnlyWhitespace(const DOM::Position &start, const DOM::Position &end);
     DOM::CSSStyleDeclarationImpl *computeTypingStyle(const DOM::Position &pos) const;
-    void moveNodesToBlock(DOM::NodeImpl *startNode, DOM::NodeImpl *dstBlock);
+    void moveNodesAfterNode(DOM::NodeImpl *startNode, DOM::NodeImpl *dstNode);
 
     DOM::Selection m_selectionToDelete;
     bool m_hasSelectionToDelete;

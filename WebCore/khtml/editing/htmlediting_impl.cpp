@@ -1010,30 +1010,19 @@ CSSStyleDeclarationImpl *DeleteSelectionCommandImpl::computeTypingStyle(const Po
 // startNode that appear in document order before startNode are not moved.
 // This function is an important helper for deleting selections that cross block
 // boundaries.
-void DeleteSelectionCommandImpl::moveNodesToBlock(NodeImpl *startNode, NodeImpl *dstBlock)
+void DeleteSelectionCommandImpl::moveNodesAfterNode(NodeImpl *startNode, NodeImpl *dstNode)
 {
-    ASSERT(!dstBlock->isAncestor(startNode));
-
     NodeImpl *startBlock = startNode->enclosingBlockFlowElement();
-    unsigned long index = dstBlock->childNodeCount();
     
-    // Fix the right index to use for inserting content in dstBlock, based on the
-    // position of startNode relative to dstBlock.
-    if (startNode->isAncestor(dstBlock)) {
-        NodeImpl *n = startNode;
-        while (n->parentNode() != dstBlock)
-            n = n->parentNode();
-        index = n->nodeIndex();
-    }
-
     // Do the move.
     NodeImpl *node = startNode == startBlock ? startBlock->firstChild() : startNode;
-    while (node && (node == startBlock || node->isAncestor(startBlock))) {
+    NodeImpl *refNode = dstNode;
+    while (node && node->isAncestor(startBlock)) {
         NodeImpl *moveNode = node;
         node = node->nextSibling();
         removeNode(moveNode);
-        insertNodeAt(moveNode, dstBlock, index);
-        index++;
+        insertNodeAfter(moveNode, refNode);
+        refNode = moveNode;
     }
 
     // If the startBlock no longer has any kids, we may need to deal with adding a BR
@@ -1051,14 +1040,11 @@ void DeleteSelectionCommandImpl::moveNodesToBlock(NodeImpl *startNode, NodeImpl 
     if (!startBlock->firstChild()) {
         removeNode(startBlock);
         document()->updateLayout();
-        if (index != dstBlock->childNodeCount()) {
-            NodeImpl *node = dstBlock->childNode(index);
-            if (node->renderer() && node->renderer()->inlineBox() && node->renderer()->inlineBox()->prevOnLineExists()) {
-                int exceptionCode = 0;
-                ElementImpl *breakNode = document()->createHTMLElement("BR", exceptionCode);
-                ASSERT(exceptionCode == 0);
-                insertNodeBefore(breakNode, node);
-            }
+        if (refNode->renderer() && refNode->renderer()->inlineBox() && refNode->renderer()->inlineBox()->nextOnLineExists()) {
+            int exceptionCode = 0;
+            ElementImpl *breakNode = document()->createHTMLElement("BR", exceptionCode);
+            ASSERT(exceptionCode == 0);
+            insertNodeAfter(breakNode, refNode);
         }
     }
 }
@@ -1118,18 +1104,7 @@ void DeleteSelectionCommandImpl::doApply()
         startOffset = 0;
     }
 
-    if (upstreamStart == upstreamEnd && downstreamStart == downstreamEnd && upstreamStart.node()->isBlockFlow()) {
-        // handle a delete when the selection is a caret placed at the start of a block.
-        ASSERT(startBlock == endBlock);
-        NodeImpl *block = upstreamStart.node()->traversePreviousNode()->enclosingBlockFlowElement();
-        while (block && !block->isContentEditable())
-            block = block->traversePreviousNode()->enclosingBlockFlowElement();
-        if (block && block->rootEditableElement() == upstreamStart.node()->rootEditableElement())
-            startBlock = block;
-        else
-            return; // nothing to do; at the start of a root editable block.
-    }
-    else if (startNode == downstreamEnd.node()) {
+    if (startNode == downstreamEnd.node()) {
         // handle delete in one node
         if (!startNode->renderer() || 
             (startOffset <= startNode->caretMinOffset() && downstreamEnd.offset() >= startNode->caretMaxOffset())) {
@@ -1204,7 +1179,7 @@ void DeleteSelectionCommandImpl::doApply()
         deleteUnrenderedText(upstreamStart);
         // move the downstream end position's node, and all other nodes in its
         // block to the start block.
-        moveNodesToBlock(downstreamEnd.node(), startBlock);
+        moveNodesAfterNode(downstreamEnd.node(), upstreamStart.node());
     }
       
     // Figure out where the end position should be

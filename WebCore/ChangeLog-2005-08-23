@@ -1,3 +1,14 @@
+2004-09-15  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+
+        * khtml/editing/htmlediting_impl.cpp:
+        (khtml::DeleteSelectionCommandImpl::moveNodesAfterNode): Renamed from moveNodesToBlock.
+        Just some simplification and cleanup in this function.
+        (khtml::DeleteSelectionCommandImpl::doApply): Remove a hunk of start-of-block code I thought
+        I was going to get around to improving and refining. However, I no longer need this case.
+        * khtml/editing/htmlediting_impl.h: Function name change.
+
 2004-09-14  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
