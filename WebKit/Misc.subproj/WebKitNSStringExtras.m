@@ -91,4 +91,19 @@ static BOOL canUseFastRenderer (const UniChar *buffer, unsigned length)
     return width;
 }
 
+- (NSString *)_web_stringByAbbreviatingWithTildeInPath
+{
+    NSString *resolvedHomeDirectory = [NSHomeDirectory() stringByResolvingSymlinksInPath];
+    NSString *path;
+    
+    if ([self hasPrefix:resolvedHomeDirectory]) {
+        NSString *relativePath = [self substringFromIndex:[resolvedHomeDirectory length]];
+        path = [NSHomeDirectory() stringByAppendingPathComponent:relativePath];
+    } else {
+        path = self;
+    }
+        
+    return [path stringByAbbreviatingWithTildeInPath];
+}
+
 @end

@@ -1,3 +1,16 @@
+2003-07-09  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3229364>: user stylesheet path should be stored relative to home directory
+
+        Reviewed by john.
+
+        * Misc.subproj/WebKitNSStringExtras.h:
+        * Misc.subproj/WebKitNSStringExtras.m:
+        (-[NSString _web_stringByAbbreviatingWithTildeInPath]): new, handles home directories that have symlinks in path
+        * WebView.subproj/WebPreferences.m:
+        (-[WebPreferences userStyleSheetLocation]): converts path string or URL string to URL
+        (-[WebPreferences setUserStyleSheetLocation:]): converts URL to path string or URL string
+
 2003-07-08  Darin Adler  <darin@apple.com>
 
         Reviewed by John.

@@ -5,7 +5,10 @@
 
 #import <WebKit/WebPreferencesPrivate.h>
 
+#import <WebKit/WebKitNSStringExtras.h>
+
 #import <Foundation/NSDictionary_NSURLExtras.h>
+#import <Foundation/NSString_NSURLExtras.h>
 
 #import <WebCore/WebCoreSettings.h>
 
@@ -387,12 +390,27 @@ NS_ENDHANDLER
 
 - (NSURL *)userStyleSheetLocation
 {
-    return [NSURL URLWithString:[self _stringValueForKey: WebKitUserStyleSheetLocationPreferenceKey]];
+    NSString *locationString = [self _stringValueForKey: WebKitUserStyleSheetLocationPreferenceKey];
+    
+    if ([locationString _web_looksLikeAbsoluteURL]) {
+        return [NSURL URLWithString:locationString];
+    } else {
+        locationString = [locationString stringByExpandingTildeInPath];
+        return [NSURL fileURLWithPath:locationString];
+    }
 }
 
 - (void)setUserStyleSheetLocation:(NSURL *)URL
 {
-    [self _setStringValue: [URL absoluteString] forKey: WebKitUserStyleSheetLocationPreferenceKey];
+    NSString *locationString;
+    
+    if ([URL isFileURL]) {
+        locationString = [[URL path] _web_stringByAbbreviatingWithTildeInPath];
+    } else {
+        locationString = [URL absoluteString];
+    }
+    
+    [self _setStringValue:locationString forKey: WebKitUserStyleSheetLocationPreferenceKey];
 }
 
 - (BOOL)isJavaEnabled
