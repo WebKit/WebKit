@@ -7,6 +7,10 @@
 
 extern NSString *WebKitErrorDomain;
 
+extern NSString * const WebKitErrorMIMETypeKey;
+extern NSString * const WebKitErrorPlugInNameKey;
+extern NSString * const WebKitErrorPlugInPageURLStringKey;
+
 /*!
     @enum
     @description Download and file I/O errors

@@ -53,6 +53,9 @@ _WebIconLargeSize
 _WebIconMediumSize
 _WebIconNotificationUserInfoURLKey
 _WebIconSmallSize
+_WebKitErrorMIMETypeKey
+_WebKitErrorPlugInNameKey
+_WebKitErrorPlugInPageURLStringKey
 _WebURLNamePboardType
 _WebURLPboardType
 

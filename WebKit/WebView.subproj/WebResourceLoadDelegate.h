@@ -6,7 +6,6 @@
 */
 @class WebView;
 @class WebDataSource;
-@class WebPlugInError;
 @class NSURLResponse;
 @class NSURLRequest;
 
@@ -105,10 +104,15 @@
      @method pluginFailedWithError:dataSource:
      @discussion Called when a plug-in is not found, fails to load or is not available for some reason.
      @param webView The WebView sending the message.
-     @param error The plug-in error.
+     @param error The plug-in error. In the userInfo dictionary of the error, the object for the
+     NSErrorFailingURLKey key is a URL string of the SRC attribute, the object for the WebKitErrorPlugInNameKey
+     key is a string of the plug-in's name, the object for the WebKitErrorPlugInPageURLStringKey key is a URL string
+     of the PLUGINSPAGE attribute and the object for the WebKitErrorMIMETypeKey key is a string of the TYPE attribute.
+     Some, none or all of the mentioned attributes can be present in the userInfo. The error returns nil for userInfo
+     when none are present.
      @param dataSource The dataSource that contains the plug-in.
 */
-- (void)webView:(WebView *)sender plugInFailedWithError:(WebPlugInError *)error dataSource:(WebDataSource *)dataSource;
+- (void)webView:(WebView *)sender plugInFailedWithError:(NSError *)error dataSource:(WebDataSource *)dataSource;
 
 @end
 

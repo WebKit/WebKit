@@ -13,5 +13,11 @@
 
 @interface NSError (WebKitExtras)
 + (NSError *)_webKitErrorWithCode:(int)code failingURL:(NSString *)URL;
+
+- (id)_initWithPluginErrorCode:(int)code
+              contentURLString:(NSString *)contentURL
+           pluginPageURLString:(NSString *)pluginPageURL
+                    pluginName:(NSString *)pluginName
+                      MIMEType:(NSString *)MIMEType;
 @end
 

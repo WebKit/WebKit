@@ -5,14 +5,14 @@
 
 #import <AppKit/AppKit.h>
 
-@class WebPlugInError;
+@class NSError;
 
 @interface WebNullPluginView : NSImageView
 {
     BOOL didSendError;
-    WebPlugInError *error;
+    NSError *error;
 }
 
-- initWithFrame:(NSRect)frame error:(WebPlugInError *)pluginError;
+- initWithFrame:(NSRect)frame error:(NSError *)pluginError;
 
 @end

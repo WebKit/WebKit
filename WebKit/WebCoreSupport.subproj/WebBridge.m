@@ -20,7 +20,7 @@
 #import <WebKit/WebHTMLRepresentationPrivate.h>
 #import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebJavaScriptTextInputPanel.h>
-#import <WebKit/WebKitErrors.h>
+#import <WebKit/WebKitErrorsPrivate.h>
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebKitStatisticsPrivate.h>
 #import <WebKit/WebLocationChangeDelegate.h>
@@ -30,7 +30,6 @@
 #import <WebKit/WebPlugin.h>
 #import <WebKit/WebPluginController.h>
 #import <WebKit/WebPluginDatabase.h>
-#import <WebKit/WebPluginErrorPrivate.h>
 #import <WebKit/WebPluginPackage.h>
 #import <WebKit/WebPluginViewFactory.h>
 #import <WebKit/WebNetscapePluginDocumentView.h>
@@ -667,13 +666,13 @@
     }
 
     if (errorCode) {
-        WebPlugInError *error = [WebPlugInError pluginErrorWithCode:errorCode
-                                                         contentURL:URLString
-                                                      pluginPageURL:[attributes objectForKey:@"pluginspage"]
-                                                         pluginName:[pluginPackage name]
-                                                           MIMEType:MIMEType];
-        
+        NSError *error = [[NSError alloc] _initWithPluginErrorCode:errorCode
+                                                  contentURLString:URLString
+                                               pluginPageURLString:[attributes objectForKey:@"pluginspage"]
+                                                        pluginName:[pluginPackage name]
+                                                          MIMEType:MIMEType];
         view = [[[WebNullPluginView alloc] initWithFrame:NSZeroRect error:error] autorelease];
+        [error release];
     }
 
     ASSERT(view);
@@ -732,12 +731,13 @@
     }
 
     if (!view) {
-        WebPlugInError *error = [WebPlugInError pluginErrorWithCode:WebKitErrorJavaUnavailable
-                                                         contentURL:nil
-                                                      pluginPageURL:nil
-                                                         pluginName:[pluginPackage name]
-                                                           MIMEType:MIMEType];
+        NSError *error = [[NSError alloc] _initWithPluginErrorCode:WebKitErrorJavaUnavailable
+                                                  contentURLString:nil
+                                               pluginPageURLString:nil
+                                                        pluginName:[pluginPackage name]
+                                                          MIMEType:MIMEType];
         view = [[[WebNullPluginView alloc] initWithFrame:theFrame error:error] autorelease];
+        [error release];
     }
 
     ASSERT(view);

@@ -1,3 +1,30 @@
+2003-04-24  Chris Blumenberg  <cblu@apple.com>
+
+	Removed WebPluginError and instead added fields to the userInfo of NSError for plug-in specific errors.
+
+        Reviewed by rjw.
+
+        * Misc.subproj/WebKitErrors.h:
+        * Misc.subproj/WebKitErrors.m:
+        (+[NSError _webKitErrorWithCode:failingURL:]):
+        (-[NSError _initWithPluginErrorCode:contentURLString:pluginPageURLString:pluginName:MIMEType:]):
+        * Misc.subproj/WebKitErrorsPrivate.h:
+        * Plugins.subproj/WebNetscapePluginDocumentView.m:
+        (-[WebNetscapePluginDocumentView setDataSource:]):
+        * Plugins.subproj/WebNullPluginView.h:
+        * Plugins.subproj/WebNullPluginView.m:
+        * Plugins.subproj/WebPlugInError.h: Removed.
+        * Plugins.subproj/WebPlugInError.m: Removed.
+        * Plugins.subproj/WebPluginErrorPrivate.h: Removed.
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge viewForPluginWithURLString:attributes:baseURLString:MIMEType:]):
+        (-[WebBridge viewForJavaAppletWithFrame:attributes:baseURLString:]):
+        * WebKit.exp:
+        * WebKit.pbproj/project.pbxproj:
+        * WebView.subproj/WebDefaultResourceLoadDelegate.m:
+        (-[WebDefaultResourceLoadDelegate webView:plugInFailedWithError:dataSource:]):
+        * WebView.subproj/WebResourceLoadDelegate.h:
+
 2003-04-24  Darin Adler  <darin@apple.com>
 
         Reviewed by Chris.

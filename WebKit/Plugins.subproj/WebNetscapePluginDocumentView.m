@@ -7,13 +7,12 @@
 #import <WebKit/WebDocument.h>
 #import <WebKit/WebFrame.h>
 #import <WebKit/WebFrameView.h>
-#import <WebKit/WebKitErrors.h>
+#import <WebKit/WebKitErrorsPrivate.h>
 #import <WebKit/WebNetscapePluginDocumentView.h>
 #import <WebKit/WebNetscapePluginRepresentation.h>
 #import <WebKit/WebNSViewExtras.h>
 #import <WebKit/WebNetscapePluginPackage.h>
 #import <WebKit/WebPluginDatabase.h>
-#import <WebKit/WebPluginErrorPrivate.h>
 #import <WebKit/WebResourceLoadDelegate.h>
 #import <WebKit/WebViewPrivate.h>
 
@@ -81,15 +80,16 @@
 
     if (![thePlugin load]){
         // FIXME: It would be nice to stop the load here.
-        WebPlugInError *error = [WebPlugInError pluginErrorWithCode:WebKitErrorCannotLoadPlugin
-                                                         contentURL:[[[theDataSource request] URL] absoluteString]
-                                                      pluginPageURL:nil
-                                                         pluginName:[thePlugin name]
-                                                           MIMEType:MIME];
+        NSError *error = [[NSError alloc] _initWithPluginErrorCode:WebKitErrorCannotLoadPlugin
+                                                  contentURLString:[[[theDataSource request] URL] absoluteString]
+                                               pluginPageURLString:nil
+                                                        pluginName:[thePlugin name]
+                                                          MIMEType:MIME];
         WebView *webView = [[theDataSource webFrame] webView];
         [[webView _resourceLoadDelegateForwarder] webView:webView
                                     plugInFailedWithError:error
                                                dataSource:theDataSource];
+        [error release];
         return;
     }
 

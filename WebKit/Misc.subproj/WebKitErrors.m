@@ -16,6 +16,10 @@
 
 NSString *WebKitErrorDomain = @"WebKitErrorDomain";
 
+NSString * const WebKitErrorMIMETypeKey = 		@"WebKitErrorMIMETypeKey";
+NSString * const WebKitErrorPlugInNameKey = 		@"WebKitErrorPlugInNameKey";
+NSString * const WebKitErrorPlugInPageURLStringKey = 	@"WebKitErrorPlugInPageURLStringKey";
+
 // Download and file I/O errors
 #define WebKitErrorDescriptionCannotCreateFile UI_STRING("Cannot create file", "WebKitErrorCannotCreateFile description")
 #define WebKitErrorDescriptionCannotOpenFile UI_STRING("Cannot open file", "WebKitErrorCannotOpenFile description")
@@ -55,6 +59,34 @@ static void registerErrors(void);
     [self _registerWebKitErrors];
 
     return [self _web_errorWithDomain:WebKitErrorDomain code:code failingURL:URL];
+}
+
+- (id)_initWithPluginErrorCode:(int)code
+              contentURLString:(NSString *)contentURLString
+           pluginPageURLString:(NSString *)pluginPageURLString
+                    pluginName:(NSString *)pluginName
+                      MIMEType:(NSString *)MIMEType
+{
+    NSMutableDictionary *userInfo = [[NSMutableDictionary alloc] init];
+    if (contentURLString) {
+        [userInfo setObject:contentURLString forKey:NSErrorFailingURLKey];
+    }
+    if (pluginPageURLString) {
+        [userInfo setObject:pluginPageURLString forKey:WebKitErrorPlugInPageURLStringKey];
+    }	
+    if (pluginName) {
+        [userInfo setObject:pluginName forKey:WebKitErrorPlugInNameKey];
+    }
+    if (MIMEType) {
+        [userInfo setObject:MIMEType forKey:WebKitErrorMIMETypeKey];
+    }
+
+    NSDictionary *userInfoCopy = [userInfo count] > 0  ? [[NSDictionary alloc] initWithDictionary:userInfo] : nil;
+    [userInfo release];
+    NSError *error = [self initWithDomain:WebKitErrorDomain code:code userInfo:userInfoCopy];
+    [userInfoCopy release];
+    
+    return error;
 }
 
 

@@ -18,7 +18,7 @@ static NSImage *image = nil;
 
 @implementation WebNullPluginView
 
-- initWithFrame:(NSRect)frame error:(WebPlugInError *)pluginError;
+- initWithFrame:(NSRect)frame error:(NSError *)pluginError;
 {    
     self = [super initWithFrame:frame];
     if (self) {
