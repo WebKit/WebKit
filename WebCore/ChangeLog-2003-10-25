@@ -1,3 +1,16 @@
+2003-03-28  David Hyatt  <hyatt@apple.com>
+
+	Fix a regression caused by my addition of nearestFloatBottom
+	to the code.  I needed to make that a loop rather than just call
+	it once, since the nearestFloatBottom could be a bad position
+	for the next line.
+
+	This fixes the overlapping text problem at CNN: 3186593.
+	
+        Reviewed by john
+
+        * khtml/rendering/bidi.cpp:
+
 2003-03-28  Darin Adler  <darin@apple.com>
 
         Reviewed by Ken.
