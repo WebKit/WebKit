@@ -24,8 +24,8 @@
  */
 
 #import <qpixmap.h>
-#import <kwqdebug.h>
 
+#import <kwqdebug.h>
 #import <WebCoreImageRenderer.h>
 #import <WebCoreImageRendererFactory.h>
 
@@ -128,7 +128,7 @@ QPixmap QPixmap::xForm(const QWMatrix &xmatrix) const
     // We can depend on render_image.cpp to call resize AFTER
     // creating a copy of the image to be scaled. So, this
     // implementation simply returns a copy of the image. Note,
-    // this implementation depends on the implementation of
+    // this assumption depends on the implementation of
     // RenderImage::printObject.   
     return *this;
 }

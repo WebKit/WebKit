@@ -1,5 +1,13 @@
 2002-07-14  Darin Adler  <darin@apple.com>
 
+        * WebCore-tests.exp: Tests needed access to QPoint, QString, and KURL symbols
+	that were formerly exported for the benefit of WebKit.
+
+        * kwq/KWQPixmap.mm: I needed to touch something since .exp files don't cause
+	a rebuild, so I fixed a comment in here.
+
+2002-07-14  Darin Adler  <darin@apple.com>
+
 	Changes to WebCore that allow WebKit to work through Objective C without going
 	straight to the KHTML headers. Also remove a bunch of unused stuff, especially
 	in QPainter.
