@@ -1,3 +1,14 @@
+2003-01-22  Trey Matteson  <trey@apple.com>
+
+	3153313 cursor changes during text selection when we cross links
+
+        Reviewed by Dave.
+
+        * khtml/khtmlview.cpp:
+        (KHTMLView::viewportMousePressEvent):  Remember mouse is down.
+        (KHTMLView::viewportMouseMoveEvent):  Use ibeam while mouse down.
+        (KHTMLView::viewportMouseReleaseEvent):  Remember that it's up.
+
 2003-01-22  David Hyatt  <hyatt@apple.com>
 
 	Fix first-line regression caused by my removal of a local variable.
