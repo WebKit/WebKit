@@ -157,6 +157,18 @@ void EditCommand::setEndingSelection(const Selection &s)
     get()->setEndingSelection(s);
 }
 
+CSSStyleDeclarationImpl *EditCommand::typingStyle() const
+{
+    IF_IMPL_NULL_RETURN_ARG(0);
+    return get()->typingStyle();
+}
+
+void EditCommand::setTypingStyle(CSSStyleDeclarationImpl *style)
+{
+    IF_IMPL_NULL_RETURN;
+    get()->setTypingStyle(style);
+}
+
 EditCommand EditCommand::parent() const
 {
     IF_IMPL_NULL_RETURN_ARG(0);

@@ -423,19 +423,6 @@ void CSSStyleDeclarationImpl::merge(CSSStyleDeclarationImpl *other, bool argOver
     }
 }
 
-CSSStyleDeclarationImpl *CSSStyleDeclarationImpl::copy() const
-{
-    QPtrList<CSSProperty> *list = new QPtrList<CSSProperty>;
-    list->setAutoDelete(true);
-    for (QPtrListIterator<CSSProperty> it(*values()); it.current(); ++it) {
-        CSSProperty *property = it.current();
-        if (getPropertyCSSValue(property->id())) {
-            list->append(new CSSProperty(*property));
-        }
-    }
-    return new CSSStyleDeclarationImpl(0, list);
-}
-
 // --------------------------------------------------------------------------------------
 
 CSSValueImpl::CSSValueImpl()

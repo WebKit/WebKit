@@ -26,6 +26,7 @@
 #include "htmlediting_impl.h"
 
 #include "cssproperties.h"
+#include "css/css_computedstyle.h"
 #include "css/css_valueimpl.h"
 #include "dom/css_value.h"
 #include "dom/dom_position.h"
@@ -55,6 +56,7 @@
 #endif
 
 using DOM::AttrImpl;
+using DOM::CSSComputedStyleDeclarationImpl;
 using DOM::CSSPrimitiveValue;
 using DOM::CSSPrimitiveValueImpl;
 using DOM::CSSProperty;
@@ -198,9 +200,11 @@ void StyleChange::init(CSSStyleDeclarationImpl *style, const Position &position)
 bool StyleChange::currentlyHasStyle(const Position &pos, const CSSProperty *property)
 {
     ASSERT(pos.notEmpty());
-    CSSStyleDeclarationImpl *style = pos.computedStyle();
+    CSSComputedStyleDeclarationImpl *style = pos.computedStyle();
     ASSERT(style);
+    style->ref();
     CSSValueImpl *value = style->getPropertyCSSValue(property->id());
+    style->deref();
     return strcasecmp(value->cssText(), property->value()->cssText()) == 0;
 }
 
@@ -208,7 +212,7 @@ bool StyleChange::currentlyHasStyle(const Position &pos, const CSSProperty *prop
 // EditCommandImpl
 
 EditCommandImpl::EditCommandImpl(DocumentImpl *document) 
-    : SharedCommandImpl(), m_document(document), m_state(NotApplied), m_parent(0)
+    : SharedCommandImpl(), m_document(document), m_state(NotApplied), m_typingStyle(0), m_parent(0)
 {
     ASSERT(m_document);
     ASSERT(m_document->part());
@@ -221,6 +225,8 @@ EditCommandImpl::~EditCommandImpl()
 {
     ASSERT(m_document);
     m_document->deref();
+    if (m_typingStyle)
+        m_typingStyle->deref();
 }
 
 int EditCommandImpl::commandID() const
@@ -237,6 +243,14 @@ void EditCommandImpl::apply()
     doApply();
     
     m_state = Applied;
+
+    // The delete selection command is a special case where we want the  
+    // typing style retained. For all other commands, clear it after
+    // applying.
+    // FIXME: Improve typing style.
+    // See this bug: <rdar://problem/3769899> Implementation of typing style needs improvement
+    if (commandID() != DeleteSelectionCommandID)
+        setTypingStyle(0);
 
     if (!isCompositeStep()) {
         EditCommand cmd(this);
@@ -297,6 +311,28 @@ void EditCommandImpl::setEndingSelection(const Selection &s)
     EditCommand cmd = parent();
     while (cmd.notNull()) {
         cmd.handle()->m_endingSelection = s;
+        cmd = cmd.parent();
+    }
+}
+
+void EditCommandImpl::assignTypingStyle(DOM::CSSStyleDeclarationImpl *style)
+{
+    CSSStyleDeclarationImpl *old = m_typingStyle;
+    m_typingStyle = style;
+    if (m_typingStyle)
+        m_typingStyle->ref();
+    if (old)
+        old->deref();
+}
+
+void EditCommandImpl::setTypingStyle(CSSStyleDeclarationImpl *style)
+{
+    // FIXME: Improve typing style.
+    // See this bug: <rdar://problem/3769899> Implementation of typing style needs improvement
+    assignTypingStyle(style);
+    EditCommand cmd = parent();
+    while (cmd.notNull()) {
+        cmd.handle()->assignTypingStyle(style);
         cmd = cmd.parent();
     }
 }
@@ -506,6 +542,8 @@ ElementImpl *CompositeEditCommandImpl::applyTypingStyle(NodeImpl *child) const
     // and ApplyStyleCommandImpl::computeStyleChange.
     // Both function do similar work, and the common parts could be factored out.
 
+    // FIXME: Improve typing style.
+    // See this bug: <rdar://problem/3769899> Implementation of typing style needs improvement
     StyleChange styleChange(document()->part()->typingStyle());
 
     NodeImpl *childToAppend = child;
@@ -1022,14 +1060,14 @@ void DeleteSelectionCommandImpl::doApply()
         // be nice to be able to deal with this, but for now, bail.
         return;
 
-    //
-    // Figure out the typing style and set it on the part.
-    // This point in the code is a "bottleneck" that takes care
-    // of updating the typing style for the delete key, the return
-    // key, typed characters, and other deleting functions like the
-    // cut command.
-    //
-    document()->part()->setTypingStyle(computeTypingStyle(downstreamStart));
+    // Figure out the typing style in effect before the delete is done.
+    // FIXME: Improve typing style.
+    // See this bug: <rdar://problem/3769899> Implementation of typing style needs improvement
+    CSSComputedStyleDeclarationImpl *computedStyle = downstreamStart.computedStyle();
+    computedStyle->ref();
+    CSSStyleDeclarationImpl *style = computedStyle->copyInheritableProperties();
+    style->ref();
+    computedStyle->deref();
     
     NodeImpl *startNode = upstreamStart.node();
     int startOffset = upstreamStart.offset();
@@ -1169,6 +1207,19 @@ void DeleteSelectionCommandImpl::doApply()
         }
     }
 
+    // Compute the difference between the style before the delete and the style now
+    // after the delete has been done. Set this style on the part, so other editing
+    // commands being composed with this one will work, and also cache it on the command,
+    // so the KHTMLPart::appliedEditing can set it after the whole composite command 
+    // has completed.
+    // FIXME: Improve typing style.
+    // See this bug: <rdar://problem/3769899> Implementation of typing style needs improvement
+    CSSComputedStyleDeclarationImpl endingStyle(endingPosition.node());
+    endingStyle.diff(style);
+    document()->part()->setTypingStyle(style);
+    setTypingStyle(style);
+    style->deref();
+
     setEndingSelection(endingPosition);
 }
 
@@ -1276,6 +1327,8 @@ void InputNewlineCommandImpl::doApply()
     NodeImpl *nodeToInsert = breakNode;
     
     // Handle the case where there is a typing style.
+    // FIXME: Improve typing style.
+    // See this bug: <rdar://problem/3769899> Implementation of typing style needs improvement
     CSSStyleDeclarationImpl *typingStyle = document()->part()->typingStyle();
     if (typingStyle && typingStyle->length() > 0)
         nodeToInsert = applyTypingStyle(breakNode);
@@ -1407,6 +1460,8 @@ Position InputTextCommandImpl::prepareForTextInsertion(bool adjustDownstream)
         NodeImpl *nodeToInsert = textNode;
 
         // Handle the case where there is a typing style.
+        // FIXME: Improve typing style.
+        // See this bug: <rdar://problem/3769899> Implementation of typing style needs improvement
         CSSStyleDeclarationImpl *typingStyle = document()->part()->typingStyle();
         if (typingStyle && typingStyle->length() > 0)
             nodeToInsert = applyTypingStyle(textNode);
@@ -1435,6 +1490,8 @@ Position InputTextCommandImpl::prepareForTextInsertion(bool adjustDownstream)
     }
     else {
         // Handle the case where there is a typing style.
+        // FIXME: Improve typing style.
+        // See this bug: <rdar://problem/3769899> Implementation of typing style needs improvement
         CSSStyleDeclarationImpl *typingStyle = document()->part()->typingStyle();
         if (typingStyle && typingStyle->length() > 0) {
             if (pos.node()->isTextNode() && pos.offset() > pos.node()->caretMinOffset() && pos.offset() < pos.node()->caretMaxOffset()) {
@@ -1725,6 +1782,13 @@ void ReplaceSelectionCommandImpl::doApply()
     // Delete the current selection, or collapse whitespace, as needed
     if (selection.state() == Selection::RANGE)
         deleteSelection();
+    
+    // This command does not use any typing style that is set as a residual effect of
+    // a delete.
+    // FIXME: Improve typing style.
+    // See this bug: <rdar://problem/3769899> Implementation of typing style needs improvement
+    document()->part()->clearTypingStyle();
+    setTypingStyle(0);
     
     selection = endingSelection();
     ASSERT(!selection.isEmpty());
@@ -2133,7 +2197,7 @@ void SplitTextNodeCommandImpl::doUnapply()
 // TypingCommandImpl
 
 TypingCommandImpl::TypingCommandImpl(DocumentImpl *document, TypingCommand::ETypingCommand commandType, const DOM::DOMString &textToInsert)
-    : CompositeEditCommandImpl(document), m_commandType(commandType), m_textToInsert(textToInsert), m_openForMoreTyping(true)
+    : CompositeEditCommandImpl(document), m_commandType(commandType), m_textToInsert(textToInsert), m_openForMoreTyping(true), m_applyEditing(false)
 {
 }
 
@@ -2176,15 +2240,22 @@ void TypingCommandImpl::markMisspellingsAfterTyping()
 
 void TypingCommandImpl::typingAddedToOpenCommand()
 {
-    ASSERT(document());
-    ASSERT(document()->part());
     markMisspellingsAfterTyping();
-    EditCommand cmd(this);
-    document()->part()->appliedEditing(cmd);
+    // Do not apply editing to the part on the first time through.
+    // The part will get told in the same way as all other commands.
+    // But since this command stays open and is used for additional typing, 
+    // we need to tell the part here as other commands are added.
+    if (m_applyEditing) {
+        EditCommand cmd(this);
+        document()->part()->appliedEditing(cmd);
+    }
+    m_applyEditing = true;
 }
 
 void TypingCommandImpl::insertText(const DOMString &text)
 {
+    // FIXME: Improve typing style.
+    // See this bug: <rdar://problem/3769899> Implementation of typing style needs improvement
     if (document()->part()->typingStyle() || m_cmds.count() == 0) {
         InputTextCommand cmd(document());
         applyCommandToComposite(cmd);

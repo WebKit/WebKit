@@ -1,3 +1,39 @@
+2004-08-19  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin
+
+        * khtml/css/css_computedstyle.cpp:
+        (DOM::): Changed CopyProperties constant to InheritableProperties. This reflects the
+        name change of copy() to copyInheritableProperties()
+        (DOM::CSSComputedStyleDeclarationImpl::copyInheritableProperties: Renamed from copy().
+        Now just copies those properties which can be inherited.
+        (DOM::CSSComputedStyleDeclarationImpl::diff): Add a couple null checks.
+        * khtml/css/css_computedstyle.h: copyInheritableProperties name change. No longer needs to be virtual.
+        * khtml/css/css_valueimpl.cpp: Removed unneeded copy() function from CSSStyleDeclarationImpl.
+        * khtml/css/css_valueimpl.h: Ditto.
+        * khtml/editing/htmlediting.cpp:
+        (khtml::EditCommand::typingStyle): Added.
+        (khtml::EditCommand::setTypingStyle): Added.
+        * khtml/editing/htmlediting.h:
+        * khtml/editing/htmlediting_impl.cpp:
+        (khtml::StyleChange::currentlyHasStyle): Fix leak of computed style used in this function.
+        (khtml::EditCommandImpl::EditCommandImpl): Initialize m_typingStyle.
+        (khtml::EditCommandImpl::~EditCommandImpl): Deref m_typingStyle.
+        (khtml::EditCommandImpl::assignTypingStyle): New helper used in setting typing style.
+        (khtml::EditCommandImpl::setTypingStyle): New setter.
+        (khtml::DeleteSelectionCommandImpl::doApply): Use new method for managing typing style.
+        * khtml/editing/htmlediting_impl.h:
+        (khtml::EditCommandImpl::typingStyle): New accessor.
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::appliedEditing): Restores typing style from command after setting selection.
+        (KHTMLPart::applyStyle): Does a diff between the current style and the style of the caret.
+        * khtml/khtml_part.h:
+        * khtml/xml/dom_position.cpp:
+        (DOM::Position::computedStyle): Now returns a CSSComputedStyleDeclarationImpl instead of a plain
+        CSSStyleDeclarationImpl.
+        * khtml/xml/dom_position.h:
+        * layout-tests/editing/style/style-3681552-fix-002-expected.txt:
+
 2004-08-20  Trey Matteson  <trey@apple.com>
 
 	3655407 - Editing: -complete: method unimplemented (WebKit editing API)
@@ -149,6 +185,7 @@
         (DOM::XSLTProcessorImpl::transformDocument):
         * khtml/xsl/xslt_processorimpl.h:
 
+>>>>>>> 1.3109
 === Safari-158 ===
 
 2004-08-18  Trey Matteson  <trey@apple.com>
@@ -179,11 +216,20 @@
 
 2004-08-18  Richard Williamson   <rjw@apple.com>
 
+<<<<<<< ChangeLog
         Replace horrible pollForAppletInView: with new
         webPlugInGetApplet.  The details of how the applet instance
         is provided now belong to the Java team.  Yeh.
 		
         Reviewed by Chris.
+
+=======
+        Replace horrible pollForAppletInView: with new
+        webPlugInGetApplet.  The details of how the applet instance
+        is provided now belong to the Java team.  Yeh.
+		
+        Reviewed by Chris.
+>>>>>>> 1.3109
         * kwq/KWQKHTMLPart.mm:
         (KWQKHTMLPart::getAppletInstanceForView):
         * kwq/WebCoreBridge.h:

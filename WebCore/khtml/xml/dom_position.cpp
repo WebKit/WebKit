@@ -25,6 +25,7 @@
 
 #include "dom_position.h"
 
+#include "css_computedstyle.h"
 #include "css_valueimpl.h"
 #include "dom2_viewsimpl.h"
 #include "helper.h"
@@ -147,16 +148,16 @@ ElementImpl *Position::element() const
     return static_cast<ElementImpl *>(n);
 }
 
-CSSStyleDeclarationImpl *Position::computedStyle() const
+CSSComputedStyleDeclarationImpl *Position::computedStyle() const
 {
     if (isEmpty())
         return 0;
-        
+    
     ElementImpl *elem = element();
     if (!elem)
         return 0;
         
-    return elem->getDocument()->defaultView()->getComputedStyle(elem, 0);
+    return new CSSComputedStyleDeclarationImpl(elem);
 }
 
 long Position::renderedOffset() const

@@ -110,14 +110,20 @@ public:
 
     void setStartingSelection(const DOM::Selection &s);
     void setEndingSelection(const DOM::Selection &s);
+
+    DOM::CSSStyleDeclarationImpl *typingStyle() const { return m_typingStyle; };
+    void setTypingStyle(DOM::CSSStyleDeclarationImpl *);
     
     void markMisspellingsInSelection(const DOM::Selection &s);
 
 private:
+    void assignTypingStyle(DOM::CSSStyleDeclarationImpl *);
+
     DOM::DocumentImpl *m_document;
     ECommandState m_state;
     DOM::Selection m_startingSelection;
     DOM::Selection m_endingSelection;
+    DOM::CSSStyleDeclarationImpl *m_typingStyle;
     EditCommand m_parent;
 };
 
@@ -586,6 +592,7 @@ private:
     TypingCommand::ETypingCommand m_commandType;
     DOM::DOMString m_textToInsert;
     bool m_openForMoreTyping;
+    bool m_applyEditing;
 };
 
 //------------------------------------------------------------------------------------------

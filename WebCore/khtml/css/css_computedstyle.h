@@ -58,7 +58,7 @@ public:
     virtual void setProperty(const DOMString &propertyString);
     virtual DOMString item(unsigned long index) const;
 
-    virtual CSSStyleDeclarationImpl *copy() const;
+    CSSStyleDeclarationImpl *copyInheritableProperties() const;
     void diff(CSSStyleDeclarationImpl *) const;
 
 private:

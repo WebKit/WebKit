@@ -51,6 +51,7 @@
 #include "xml/dom_selection.h"
 #include "xml/dom2_eventsimpl.h"
 #include "xml/xml_tokenizer.h"
+#include "css/css_computedstyle.h"
 #include "css/cssstyleselector.h"
 #include "css/csshelper.h"
 #include "misc/khtml_text_operations.h"
@@ -4988,6 +4989,18 @@ EditCommand KHTMLPart::lastEditCommand()
 void KHTMLPart::appliedEditing(EditCommand &cmd)
 {
     setSelection(cmd.endingSelection(), false);
+
+    // Now set the typing style from the command. Clear it when done.
+    // This helps make the case work where you completely delete a piece
+    // of styled text and then type a character immediately after.
+    // That new character needs to take on the style of the just-deleted text.
+    // FIXME: Improve typing style.
+    // See this bug: <rdar://problem/3769899> Implementation of typing style needs improvement
+    if (cmd.typingStyle()) {
+        setTypingStyle(cmd.typingStyle());
+        cmd.setTypingStyle(0);
+    }
+
     // Command will be equal to last edit command only in the case of typing
     if (d->m_lastEditCommand == cmd) {
         assert(cmd.commandID() == khtml::TypingCommandID);
@@ -5315,12 +5328,16 @@ void KHTMLPart::applyStyle(CSSStyleDeclarationImpl *style)
         case Selection::NONE:
             // do nothing
             break;
-        case Selection::CARET:
-            if (typingStyle())
+        case Selection::CARET: {
+            if (typingStyle()) {
                 typingStyle()->merge(style);
-            else
-                setTypingStyle(style);
+                style = typingStyle();
+            }
+            CSSComputedStyleDeclarationImpl diff(selection().start().upstream(StayInBlock).node());
+            diff.diff(style);
+            setTypingStyle(style);
             break;
+        }
         case Selection::RANGE:
             if (xmlDocImpl() && style) {
                 ApplyStyleCommand cmd(xmlDocImpl(), style);

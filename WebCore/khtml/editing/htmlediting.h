@@ -118,6 +118,9 @@ public:
     virtual void setStartingSelection(const DOM::Selection &s) = 0;
     virtual void setEndingSelection(const DOM::Selection &s) = 0;
 
+    virtual DOM::CSSStyleDeclarationImpl *typingStyle() const = 0;
+    virtual void setTypingStyle(DOM::CSSStyleDeclarationImpl *) = 0;
+
     virtual EditCommand parent() const = 0;
     virtual void setParent(const EditCommand &) = 0;
 };
@@ -149,6 +152,9 @@ public:
 
     void setStartingSelection(const DOM::Selection &s);
     void setEndingSelection(const DOM::Selection &s);
+
+    DOM::CSSStyleDeclarationImpl *typingStyle() const;
+    void setTypingStyle(DOM::CSSStyleDeclarationImpl *);
 
     EditCommand parent() const;
     void setParent(const EditCommand &);

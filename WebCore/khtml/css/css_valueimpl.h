@@ -87,8 +87,6 @@ public:
     
     void merge(CSSStyleDeclarationImpl *, bool argOverridesOnConflict=true);
 
-    virtual CSSStyleDeclarationImpl *copy() const;
-
     void setChanged();
 
 protected:
