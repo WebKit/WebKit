@@ -1,3 +1,10 @@
+2002-10-24  David Hyatt  <hyatt@apple.com>
+
+	<pre>, <xmp> and <plaintext> should all have a top margin of 1em.
+	Fixes a bunch of sites that use <pre>.
+	
+        * khtml/css/html4.css:
+
 2002-10-24  Chris Blumenberg  <cblu@apple.com>
 
 	Removed didAddSubview calls because that can easily be done in WebKit. Duh!
