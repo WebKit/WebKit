@@ -26,7 +26,9 @@
 #ifndef QSTRING_H_
 #define QSTRING_H_
 
+#define Fixed MacFixed
 #include <CoreFoundation/CFString.h>
+#undef Fixed
 #include "qcstring.h"
 
 class QString;
