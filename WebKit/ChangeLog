@@ -1,3 +1,14 @@
+2004-11-05  Richard Williamson   <rjw@apple.com>
+
+	Fixed <rdar://problem/3845307> WebKit needs to export _HIWebViewRegisterClass so HIWebViews can work in Carbon nib files
+
+        Reviewed by Chris.
+
+        * Carbon.subproj/CarbonUtils.m:
+        (WebInitForCarbon):
+        * Carbon.subproj/HIWebView.m:
+        * WebKit.pbproj/project.pbxproj:
+
 2004-11-05  Darin Adler  <darin@apple.com>
 
         Reviewed by Chris.

@@ -27,6 +27,7 @@ static unsigned getNumPools()
     return numPools;
 }
 
+void                    HIWebViewRegisterClass( void );
 
 void
 WebInitForCarbon()
@@ -52,6 +53,8 @@ WebInitForCarbon()
         sAppKitLoaded = true;     
 
         [NSBitmapImageRep _setEnableFlippedImageFix:YES];
+        
+        HIWebViewRegisterClass();
     }
 }
 
