@@ -1,3 +1,12 @@
+2004-07-28  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3737864> Can not download image from web by using drag and drop
+
+        Reviewed by john.
+
+        * Misc.subproj/WebNSPasteboardExtras.m:
+        (-[NSPasteboard _web_declareAndWriteDragImage:URL:title:archive:source:]): On Tiger, to use NSFilesPromisePboardType with other pasteboard types, set the file types of the promise on the pasteboard as a property list instead of mucking with the NSFilePromiseDragSource class
+
 2004-07-28  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by John.

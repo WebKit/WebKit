@@ -23,6 +23,10 @@
 
 #import <HIServices/CoreTranslationFlavorTypeNames.h>
 
+#if MAC_OS_X_VERSION_MAX_ALLOWED > MAC_OS_X_VERSION_10_3
+#define BUILT_ON_TIGER_OR_LATER
+#endif
+
 NSString *WebURLPboardType = nil;
 NSString *WebURLNamePboardType = nil;
 
@@ -225,10 +229,16 @@ NSString *WebURLNamePboardType = nil;
     if (extension == nil) {
         extension = @"";
     }
-    id dragSource = [[NSFilePromiseDragSource alloc] initWithSource:source];
-    [dragSource setTypes:[NSArray arrayWithObject:extension] onPasteboard:self];
+    NSArray *extensions = [NSArray arrayWithObject:extension];
     
+#ifdef BUILT_ON_TIGER_OR_LATER
+    [self setPropertyList:extensions forType:NSFilesPromisePboardType];
+    return source;
+#else
+    id dragSource = [[NSFilePromiseDragSource alloc] initWithSource:source];
+    [dragSource setTypes:extensions onPasteboard:self];
     return dragSource;
+#endif
 }
 
 @end
