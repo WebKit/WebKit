@@ -1,3 +1,16 @@
+2002-07-03  Maciej Stachowiak  <mjs@apple.com>
+
+        WebCore part of fix for:
+
+	Radar 2943465 - JavaScript window.defaultStatus property not implemented
+	Radar 2943464 - JavaScript window.status property is not implemented
+	Radar 2926213 - show url of moused-over link in status bar
+
+	* WebCoreSupport.subproj/IFWebCoreBridge.mm:
+	(-[IFWebCoreBridge setStatusText:]): Connect bridge status text
+	setting to window context.
+        * WebView.subproj/IFWebController.h:
+
 2002-07-02  Chris Blumenberg  <cblu@apple.com>
 
 	Added IFFileURLPolicyReveal. This makes things a little clearer for the client.

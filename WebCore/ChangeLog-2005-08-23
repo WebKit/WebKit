@@ -1,3 +1,28 @@
+2002-07-03  Maciej Stachowiak  <mjs@apple.com>
+
+	WebKit part of fix for:
+
+	Radar 2943465 - JavaScript window.defaultStatus property not implemented
+	Radar 2943464 - JavaScript window.status property is not implemented
+	Radar 2926213 - show url of moused-over link in status bar
+
+	Also fixed:
+
+	Radar 2980091 - KHTMLPart::findFrame() and KHTML::frameExists()
+	should search all frames, not just child frames
+	
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::overURL): Unifdef most of this, but adjust the wording.
+        (KHTMLPart::setStatusBarText): Implement by calling KWQKHTMLPartImpl.
+        * khtml/khtml_part.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPartImpl::frameExists): Search all frames, not just child frames.
+        (KWQKHTMLPartImpl::findFrame): Search all frames, not just child frames.
+        (KWQKHTMLPartImpl::setStatusBarText): Implemented by calling WebCoreBridge.
+        * kwq/KWQKHTMLPartImpl.h:
+        * kwq/WebCoreBridge.h: Declare new setStatusText method
+        * kwq/kparts/part.h: Remove setStatusBarText method.
+
 2002-07-02  Darin Adler  <darin@apple.com>
 
 	- fixed 2978806 -- Crash going to ebay home page

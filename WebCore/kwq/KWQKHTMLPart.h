@@ -60,7 +60,8 @@ public:
     void setBaseURL(const KURL &);
 
     void setTitle(const DOM::DOMString &);
-    
+    void setStatusBarText(const QString &status);
+
     QString documentSource() const;
 
     IFWebDataSource *getDataSource();

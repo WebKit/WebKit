@@ -70,7 +70,6 @@ public:
     void setXMLFile(const char *) { }
     QObject *parent() const { return 0; }
     void setInstance(KInstance *, bool) { }
-    void setStatusBarText(const QString &) { }
 };
 
 class GUIActivateEvent { };

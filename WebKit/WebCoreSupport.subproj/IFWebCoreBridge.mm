@@ -146,6 +146,12 @@
     [dataSource _setTitle:title];
 }
 
+- (void)setStatusText:(NSString *)status
+{
+    WEBKIT_ASSERT(dataSource);
+    [[[dataSource controller] windowContext] setStatusText:status];
+}
+
 - (id <WebCoreFrame>)mainFrame
 {
     return [[[dataSource controller] mainFrame] _bridgeFrame];

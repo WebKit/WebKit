@@ -587,12 +587,12 @@ void KWQKHTMLPartImpl::submitForm( const char *action, const QString &url, const
 
 bool KWQKHTMLPartImpl::frameExists( const QString &frameName )
 {
-    return [bridge childFrameNamed:frameName.getNSString()];
+    return [bridge frameNamed:frameName.getNSString()] != nil;
 }
 
 KHTMLPart *KWQKHTMLPartImpl::findFrame(const QString &frameName)
 {
-    return [[[bridge childFrameNamed:frameName.getNSString()] bridge] part];
+    return [[[bridge frameNamed:frameName.getNSString()] bridge] part];
 }
 
 QPtrList<KParts::ReadOnlyPart> KWQKHTMLPartImpl::frames() const
@@ -634,6 +634,12 @@ void KWQKHTMLPartImpl::setTitle(const DOMString &title)
 {
     [bridge setTitle:title.string().getNSString()];
 }
+
+void KWQKHTMLPartImpl::setStatusBarText(const QString &status)
+{
+    [bridge setStatusText:status.getNSString()];
+}
+
 
 KHTMLPart *KWQKHTMLPartImpl::parentPart()
 {

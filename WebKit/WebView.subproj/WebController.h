@@ -80,8 +80,8 @@
 
 - (IFWebController *)openNewWindowWithURL:(NSURL *)url;
 
-- (void)setStatusText: (NSString *)text forDataSource: (IFWebDataSource *)dataSource;
-- (NSString *)statusTextForDataSource: (IFWebDataSource *)dataSource;
+- (void)setStatusText: (NSString *)text;
+- (NSString *)statusText;
 
 - (BOOL)areToolbarsVisible;
 - (void)setToolbarsVisible:(BOOL)visible;

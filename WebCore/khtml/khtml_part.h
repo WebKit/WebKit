@@ -1088,8 +1088,9 @@ private:
 #ifdef APPLE_CHANGES
 public:
   void setTitle(const DOM::DOMString &);
-  void detachView();
-  
+  void detachView(); 
+  void setStatusBarText(const QString &);
+ 
   KWQKHTMLPartImpl *impl;
   friend class KWQKHTMLPartImpl;
 #endif
