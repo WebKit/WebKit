@@ -1,3 +1,21 @@
+2004-06-29  Trey Matteson  <trey@apple.com>
+
+	DHTML dragging - source should have access to the operation chosen
+	by the destination.
+
+        Reviewed by John
+
+        * kwq/KWQKHTMLPart.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::dragSourceEndedAt):  Set the destination's operation
+	on the clipboard.
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge dragExitedWithDraggingInfo:]):  For completeness
+	we set the source op for the ondragexit event.
+        (-[WebCoreBridge concludeDragForDraggingInfo:]):  Ditto for the
+	drop event.
+        (-[WebCoreBridge dragSourceEndedAt:operation:]):  Pass through of operation.
+
 2004-06-24  Trey Matteson  <trey@apple.com>
 
 	3710422 - REGRESSION: Safari crashes trying to send onbeforecut event at about://blank

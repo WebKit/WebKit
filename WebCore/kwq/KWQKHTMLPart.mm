@@ -2086,9 +2086,10 @@ void KWQKHTMLPart::dragSourceMovedTo(const QPoint &loc)
     }
 }
 
-void KWQKHTMLPart::dragSourceEndedAt(const QPoint &loc)
+void KWQKHTMLPart::dragSourceEndedAt(const QPoint &loc, NSDragOperation operation)
 {
     if (!_dragSrc.isNull() && _dragSrcMayBeDHTML) {
+        _dragClipboard->setDestinationOperation(operation);
         // for now we don't care if event handler cancels default behavior, since there is none
         dispatchDragSrcEvent(EventImpl::DRAGEND_EVENT, loc);
     }

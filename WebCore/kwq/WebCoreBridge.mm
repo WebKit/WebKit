@@ -1626,6 +1626,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
             KWQClipboard::AccessPolicy policy = _part->baseURL().isLocalFile() ? KWQClipboard::Readable : KWQClipboard::TypesReadable;
             KWQClipboard *clipboard = new KWQClipboard(true, [info draggingPasteboard], policy);
             clipboard->ref();
+            clipboard->setSourceOperation([info draggingSourceOperationMask]);
             
             v->cancelDragAndDrop(QPoint([info draggingLocation]), clipboard);
             clipboard->setAccessPolicy(KWQClipboard::Numb);    // invalidate clipboard here for security
@@ -1646,6 +1647,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
             KWQClipboard *clipboard = new KWQClipboard(true, [info draggingPasteboard], KWQClipboard::Readable);
             clipboard->ref();
+            clipboard->setSourceOperation([info draggingSourceOperationMask]);
 
             BOOL result = v->performDragAndDrop(QPoint([info draggingLocation]), clipboard);
             clipboard->setAccessPolicy(KWQClipboard::Numb);    // invalidate clipboard here for security
@@ -1669,8 +1671,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 - (void)dragSourceEndedAt:(NSPoint)windowLoc operation:(NSDragOperation)operation
 {
     if (_part) {
-        // FIXME must handle operation
-        _part->dragSourceEndedAt(QPoint(windowLoc));
+        _part->dragSourceEndedAt(QPoint(windowLoc), operation);
     }
 }
 
