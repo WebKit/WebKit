@@ -1,5 +1,11 @@
 2002-08-05  Maciej Stachowiak  <mjs@apple.com>
 
+        * Misc.subproj/WebKitDebug.h: Put WEBKIT_ASSERT_NOT_REACHED()
+	inside the appropriate #ifdef, and remove the various _log macros,
+	which are onsolete in WebKit.
+
+2002-08-05  Maciej Stachowiak  <mjs@apple.com>
+
         Some changes related to re-merging the KHTMLPart end() method:
 
 	* Misc.subproj/WebKitDebug.h: Added WEBKIT_ASSERT_NOT_REACHED().
