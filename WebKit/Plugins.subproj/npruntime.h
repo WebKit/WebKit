@@ -1,27 +1,6 @@
 /*
  * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- *
- * THIS SOFTWARE IS PROVIDED BY APPLE COMPUTER, INC. ``AS IS'' AND ANY
- * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR
- * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
- * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
- * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
- * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
- * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
- *
  * Revision 1 (March 4, 2004):
  * Initial proposal.
  *
@@ -215,7 +194,7 @@ void NPN_InitializeVariantWithVariant (NPVariant *destination, const NPVariant *
 
 */
 
-typedef void *NPIdentifier;
+typedef const void *NPIdentifier;
 
 /*
     NPObjects have methods and properties.  Methods and properties are named with NPIdentifiers.
@@ -228,9 +207,10 @@ NPIdentifier NPN_GetIdentifier (const NPUTF8 *name);
 void NPN_GetIdentifiers (const NPUTF8 **names, int nameCount, NPIdentifier *identifiers);
 
 /*
-    The NPUTF8 returned from NPN_UTF8FromIdentifier should NOT be freed.
+    The NPUTF8 returned from NPN_UTF8FromIdentifier should be freed.
 */
-const NPUTF8 *NPN_UTF8FromIdentifier (NPIdentifier identifier);
+NPUTF8 *NPN_UTF8FromIdentifier (NPIdentifier identifier);
+void NPN_ReleaseUTF8 (NPUTF8 *string);
 
 /*
     NPObject behavior is implemented using the following set of callback functions.
@@ -242,19 +222,20 @@ const NPUTF8 *NPN_UTF8FromIdentifier (NPIdentifier identifier);
 typedef NPObject *(*NPAllocateFunctionPtr)();
 typedef void (*NPDeallocateFunctionPtr)(NPObject *obj);
 typedef void (*NPInvalidateFunctionPtr)(NPObject *obj);
-typedef bool (*NPHasMethodFunctionPtr)(NPClass *theClass, NPIdentifier name);
-typedef void (*NPInvokeFunctionPtr)(NPObject *obj, NPIdentifier name, NPVariant *args, unsigned argCount, NPVariant *result);
-typedef bool (*NPHasPropertyFunctionPtr)(NPClass *theClass, NPIdentifier name);
-typedef void (*NPGetPropertyFunctionPtr)(NPObject *obj, NPIdentifier name, NPVariant *result);
-typedef void (*NPSetPropertyFunctionPtr)(NPObject *obj, NPIdentifier name, const NPVariant *value);
+typedef NPBool (*NPHasMethodFunctionPtr)(NPClass *theClass, NPIdentifier name);
+typedef NPBool (*NPInvokeFunctionPtr)(NPObject *obj, NPIdentifier name, const NPVariant *args, unsigned argCount, NPVariant *result);
+typedef NPBool (*NPHasPropertyFunctionPtr)(NPClass *theClass, NPIdentifier name);
+typedef NPBool (*NPGetPropertyFunctionPtr)(NPObject *obj, NPIdentifier name, NPVariant *result);
+typedef NPBool (*NPSetPropertyFunctionPtr)(NPObject *obj, NPIdentifier name, const NPVariant *value);
 
 /*
-    NPObjects returned by create, retain, invoke, and getProperty 
-    pass a reference count to the caller.  That is, the callee adds a reference
-    count which passes to the caller.  It is the caller's responsibility
+    NPObjects returned by create have a reference count of one.  It is the caller's responsibility
     to release the returned object.
 
-    NPInvokeFunctionPtr function may return 0 to indicate a void result.
+    NPInvokeFunctionPtr function may return false to indicate a the method could not be invoked.
+    
+    NPGetPropertyFunctionPtr and NPSetPropertyFunctionPtr may return false to indicate a property doesn't
+    exist.
     
     NPInvalidateFunctionPtr is called by the scripting environment when the native code is
     shutdown.  Any attempt to message a NPScriptObject instance after the invalidate
@@ -347,11 +328,13 @@ void NPN_SetPropertyAtIndex (NPScriptObject *obj, unsigned index, const NPVarian
 NPArray *NPN_CreateArray (NPVariant **, int32_t count);
 NPArray *NPN_CreateArrayV (int32_t count, ...);
 
+#if 0
 /*
     Objects returned by NPN_ObjectAtIndex pass a reference count
     to the caller.  The caller must release the object.
 */
-NPObject *NPN_ObjectAtIndex (NPArray *array, int32_t index);
+const NPVariant *NPN_ObjectAtIndex (NPArray *array, int32_t index);
+#endif
 
 /*
     Returns true if the object is a kind of class as specified by
@@ -361,168 +344,13 @@ bool NPN_IsKindOfClass (const NPObject *obj, const NPClass *aClass);
 
 /*
     NPN_SetException may be called to trigger a script exception upon return
-    from entry points into NPObjects.  A reference count of the message passes
-    to the callee.  Typical usage:
-
-    NPString *message = NPN_CreateStringWithUTF8("invalid type", -1);
-    NPN_SetException (obj, mesage);
-    NPN_ReleaseObject (message);
-    
-    NPN_SetExceptionWithUTF8() take an UTF8 string and a length.  -1 may be passed for
+    from entry points into NPObjects.
+        
+    NPN_SetExceptionWithUTF8() takes an UTF8 string and a length.  -1 may be passed for
     the length if the string is null terminated.
 */
 void NPN_SetExceptionWithUTF8 (NPObject *obj, const NPUTF8 *message, int32_t length);
 void NPN_SetException (NPObject *obj, NPString *message);
-
-/*
-    Example usage:
-    
-    typedef NPObject MyObject;
-
-    typedef struct
-    {
-        NPObject object;
-        // Properties needed by MyObject are added here.
-        int numChapters;
-        ...
-    } MyObject
-
-    void stop(MyObject *obj)
-    {
-        ...
-    }
-
-    void start(MyObject *obj)
-    {
-        ...
-    }
-
-    void setChapter(MyObject *obj, int chapter)
-    {
-        ...
-    }
-
-    int getChapter(MyObject *obj)
-    {
-        ...
-    }
-
-    static NPIdentifier stopIdentifier;
-    static NPIdentifier startIdentifier;
-    static NPIdentifier setChapterIdentifier;
-    static NPIdentifier getChapterIdentifier;
-    static NPIdentifier numChaptersIdentifier;
-
-    static void initializeIdentifiers()
-    {
-        stopIdentifier = NPIdentifierFromUTF8 ("stop");
-        startIdentifier = NPIdentifierFromUTF8 ("start");
-        setChapterIdentifier = NPIdentifierFromUTF8 ("setChapter");
-        getChapterIdentifier = NPIdentifierFromUTF8 ("getChapter");
-        numChaptersIdentifier = NPIdentifierFromUTF8 ("numChapters");
-    }
-
-    bool myProperty (MyObject *obj, NPIdentifier name)
-    {
-        if (name == numChaptersIdentifier){
-            return true;
-        }
-        return false;
-    }
-
-    bool myHasMethod (MyObject *obj, NPIdentifier name)
-    {
-        if (name == stopIdentifier ||
-            name == startIdentifier ||
-            name == setChapterIdentifier ||
-            name == getChapterIdentifier) {
-            return true;
-        }
-        return false;
-    }
-
-    NPObject *myGetProperty (MyObject *obj, NPIdentifier name)
-    {
-        if (name == numChaptersIdentifier){
-            return NPN_CreateNumberWithInt(obj->numChapters); 
-        }
-        return 0;
-    }
-
-    void mySetProperty (MyObject *obj, NPIdentifier name, NPObject *value)
-    {
-        if (name == numChaptersIdentifier){
-            obj->numChapters = NPN_IntFromNumber(obj)
-        }
-    }
-
-    NPObject *myInvoke (MyObject *obj, NPIdentifier name, NPObject **args, unsigned argCount)
-    {
-
-        if (name == stopIdentifier){
-            stop(obj);
-        }
-        else if (name == startIdentifier){
-            start(obj);
-        }
-        else if (name == setChapterIdentifier){
-            if (NPN_IsKindOfClass (args[0], NPNumberClass)) {
-                setChapter (obj, NPN_IntFromNumber(args[0]));
-            }
-            else {
-                NPN_SetException (obj, NPN_CreateStringWithUTF8 ("invalid type"));
-            }
-        }
-        else if (name == getChapterIdentifier){
-            return NPN_CreateNumberWithInt (getChapter (obj));
-        }
-        return 0;
-    }
-
-    NPObject *myAllocate ()
-    {
-        MyFunctionPtrObject *newInstance = (MyFunctionPtrObject *)malloc (sizeof(MyFunctionPtrObject));
-        
-        if (stopIdentifier == 0)
-            initializeIdentifiers();
-            
-        return (NPObject *)newInstance;
-    }
-
-    void myInvalidate ()
-    {
-        // Make sure we've released any remaining references to script
-        // objects.
-    }
-    
-    void myDeallocate (MyObject *obj) 
-    {
-        free ((void *)obj);
-    }
-    
-    static NPClass _myFunctionPtrs = { 
-        (NPAllocateFunctionPtr) myAllocate, 
-        (NPDeallocateFunctionPtr) myDeallocate, 
-        (NPInvalidateFunctionPtr) myInvalidate,
-        (NPHasMethodFunctionPtr) myHasMethod,
-        (NPInvokeFunctionPtr) myInvoke,
-        (NPHasPropertyFunctionPtr) myHasProperty,
-        (NPGetPropertyFunctionPtr) myGetProperty,
-        (NPSetPropertyFunctionPtr) mySetProperty,
-    };
-    static NPClass *myFunctionPtrs = &_myFunctionPtrs;
-
-    // myGetNativeObjectForScript would be set as the entry point for
-    // the plugin's NPP_GetNativeObjectForScript function.
-    // It is invoked by the plugin container, i.e. the browser.
-    NPObject *myGetNativeObjectForScript(NPP instance)
-    {
-        NPObject *myObject = NPN_CreateObject (myFunctionPtrs);
-        return myObject;
-    }
-
-*/
-
 
 #ifdef __cplusplus
 }
