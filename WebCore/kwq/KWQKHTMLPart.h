@@ -32,6 +32,8 @@
 #include "html_formimpl.h"
 #include "html_tableimpl.h"
 
+#import "WebCoreKeyboardAccess.h"
+
 #include <CoreFoundation/CoreFoundation.h>
 
 class KHTMLPartPrivate;
@@ -223,6 +225,8 @@ public:
     QChar backslashAsCurrencySymbol() const;
 
     NSColor *bodyBackgroundColor() const;
+    
+    WebCoreKeyboardUIMode keyboardUIMode() const;
 
 private:
     virtual void khtmlMousePressEvent(khtml::MousePressEvent *);

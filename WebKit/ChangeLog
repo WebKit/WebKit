@@ -1,3 +1,20 @@
+2003-09-30  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Maciej
+        
+        Fix for this bug:
+        
+        <rdar://problem/3439688>: WebKit needs to retrieve full keyboard access preference
+        
+        * WebCoreSupport.subproj/WebBridge.h: Add two ivars: one to track the keyboard
+        UI mode, the other a flag we use to register for notifications.
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge dealloc]): Remove the notification observer to keyboard UI mode changes.
+        (-[WebBridge _retrieveKeyboardUIModeFromPreferences:]): New method. Accesses the
+        preferences to get the current keyboard UI mode.
+        (-[WebBridge keyboardUIMode]): Returns the current keyboard UI mode. Registers for
+        notifications of keyboard UI mode changes when called the first time.
+        
 2003-09-30  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Ken.

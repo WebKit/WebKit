@@ -508,6 +508,7 @@
 				BC7B2AFA0450824100A8000F,
 				BC80A6960468B78100DBCC9C,
 				BC32C2EF048BF95C00A8000B,
+				BE983D96052A2E0A00892D85,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1882,6 +1883,30 @@
 //BC2
 //BC3
 //BC4
+//BE0
+//BE1
+//BE2
+//BE3
+//BE4
+		BE983D95052A2E0A00892D85 = {
+			expectedFileType = sourcecode.c.h;
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = WebCoreKeyboardAccess.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		BE983D96052A2E0A00892D85 = {
+			fileRef = BE983D95052A2E0A00892D85;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+//BE0
+//BE1
+//BE2
+//BE3
+//BE4
 //F50
 //F51
 //F52
@@ -7257,6 +7282,7 @@
 				F587854F02DE375901EA4122,
 				F5B2A52B02E22573018635CB,
 				F5B2A52C02E22573018635CB,
+				BE983D95052A2E0A00892D85,
 				F587855002DE375901EA4122,
 				9325AAB7041D0E9A00A9CAC5,
 				9325AAB8041D0E9A00A9CAC5,

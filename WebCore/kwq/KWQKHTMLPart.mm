@@ -2399,4 +2399,7 @@ NSColor *KWQKHTMLPart::bodyBackgroundColor(void) const
     return nil;
 }
 
-
+WebCoreKeyboardUIMode KWQKHTMLPart::keyboardUIMode() const
+{
+    return [_bridge keyboardUIMode];
+}

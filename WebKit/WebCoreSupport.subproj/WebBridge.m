@@ -50,6 +50,9 @@
 #import <Foundation/NSURLFileTypeMappings.h>
 #import <WebKit/WebLocalizableStrings.h>
 
+#define KeyboardUIModeDidChangeNotification @"com.apple.KeyboardUIModeDidChange"
+#define AppleKeyboardUIMode CFSTR("AppleKeyboardUIMode")
+#define UniversalAccessDomain CFSTR("com.apple.universalaccess")
 
 @interface NSApplication (DeclarationStolenFromAppKit)
 - (void)_cycleWindowsReversed:(BOOL)reversed;
@@ -84,6 +87,11 @@
 - (void)dealloc
 {
     ASSERT(_frame == nil);
+
+    if (_keyboardUIModeAccessed) {
+        [[NSDistributedNotificationCenter defaultCenter] 
+            removeObserver:self name:KeyboardUIModeDidChangeNotification object:nil];
+    }
     
     --WebBridgeCount;
     
@@ -948,6 +956,37 @@ static id <WebFormDelegate> formDelegate(WebBridge *self)
 - (void)setHasBorder:(BOOL)hasBorder
 {
     [[_frame frameView] _setHasBorder:hasBorder];
+}
+
+- (void)_retrieveKeyboardUIModeFromPreferences:(NSNotification *)notification
+{
+    CFPreferencesAppSynchronize(UniversalAccessDomain);
+
+    BOOL sanityCheck;
+    int mode = CFPreferencesGetAppIntegerValue(AppleKeyboardUIMode, UniversalAccessDomain, &sanityCheck);
+    ASSERT(sanityCheck);
+    
+    // The keyboard access mode is reported by two bits:
+    // Bit 0 is set if feature is on
+    // Bit 1 is set if full keyboard access works for any control, not just text boxes and lists
+    // We require both bits to be on.
+    // I do not know that we would ever get one bit on and the other off since
+    // checking the checkbox in system preferences which is marked as "Turn on full keyboard access"
+    // turns on both bits.
+    _keyboardUIMode = (mode & 0x2) ? WebCoreFullKeyboardAccess : WebCoreDefaultKeyboardAccess;
+}
+
+- (WebCoreKeyboardUIMode)keyboardUIMode
+{
+    if (!_keyboardUIModeAccessed) {
+        _keyboardUIModeAccessed = YES;
+        [self _retrieveKeyboardUIModeFromPreferences:nil];
+        
+        [[NSDistributedNotificationCenter defaultCenter] 
+            addObserver:self selector:@selector(_retrieveKeyboardUIModeFromPreferences:) 
+            name:KeyboardUIModeDidChangeNotification object:nil];
+    }
+    return _keyboardUIMode;
 }
 
 @end

@@ -1,3 +1,18 @@
+2003-09-30  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Maciej
+        
+        Fix for this bug:
+        
+        <rdar://problem/3439688>: WebKit needs to retrieve full keyboard access preference
+        
+        * WebCore.pbproj/project.pbxproj:
+        * kwq/KWQKHTMLPart.h: Declare keyboardUIMode accessor.
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::keyboardUIMode): Implement keyboardUIMode accessor (calls through the bridge).
+        * kwq/WebCoreBridge.h: Declare the bridge accessor.
+        * kwq/WebCoreKeyboardAccess.h: Added. Header defines keyboard UI mode constants.
+        
 2003-09-30  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Ken.
