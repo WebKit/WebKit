@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,14 +22,12 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-#include <kwqdebug.h>
 
 #include <qtextedit.h>
 
 #import <KWQTextArea.h>
 
-
-// class QTextEdit
+#include <kwqdebug.h>
 
 QTextEdit::QTextEdit(QWidget *parent)
 {
@@ -118,6 +116,11 @@ void QTextEdit::setTextFormat(TextFormat f)
     }
 }
 
+void QTextEdit::setTabStopWidth(int)
+{
+	_logNotYetImplemented();
+}
+
 bool QTextEdit::isReadOnly () const
 {
     KWQTextArea *textView = (KWQTextArea *)getView();
@@ -147,4 +150,3 @@ int QTextEdit::horizontalScrollBarHeight() const
     KWQTextArea *textView = (KWQTextArea *)getView();
     return (int) [[textView horizontalScroller] frame].size.height;
 }
-

@@ -285,8 +285,8 @@ KHTMLPart::~KHTMLPart()
   if ( d->m_job )
     d->m_job->kill();
 
-  if ( d->m_doc && d->m_doc->docLoader() )
-    khtml::Cache::loader()->cancelRequests( d->m_doc->docLoader() );
+  if (!d->m_bComplete)
+    closeURL();
 
   disconnect( khtml::Cache::loader(), SIGNAL( requestStarted( khtml::DocLoader*, khtml::CachedObject* ) ),
            this, SLOT( slotLoaderRequestStarted( khtml::DocLoader*, khtml::CachedObject* ) ) );
@@ -333,8 +333,6 @@ bool KHTMLPart::restoreURL( const KURL &url )
   d->m_bComplete = false;
   d->m_bLoadEventEmitted = false;
   d->m_workingURL = url;
-
-  d->m_restored = true;
 
   // set the java(script) flags according to the current host.
   d->m_bJScriptEnabled = KHTMLFactory::defaultHTMLSettings()->isJavaScriptEnabled(url.host());
@@ -423,13 +421,21 @@ bool KHTMLPart::openURL( const KURL &url )
     return true;
   }
 
-  kdDebug( 6050 ) << "closing old URL" << endl;
-  closeURL();
+  if (!d->m_restored)
+  {
+    kdDebug( 6050 ) << "closing old URL" << endl;
+    closeURL();
+  }
 
   args.metaData().insert("main_frame_request", parentPart() == 0 ? "TRUE" : "FALSE" );
   args.metaData().insert("ssl_was_in_use", d->m_ssl_in_use ? "TRUE" : "FALSE" );
   args.metaData().insert("ssl_activate_warnings", "TRUE" );
-  d->m_bReloading = args.reload;
+  if (d->m_restored)
+     d->m_cachePolicy = KIO::CC_Cache;
+  else if (args.reload)
+     d->m_cachePolicy = KIO::CC_Refresh;
+  else
+     d->m_cachePolicy = KIO::CC_Verify;
 
   if ( args.doPost() && (url.protocol().startsWith("http")) )
   {
@@ -437,7 +443,10 @@ bool KHTMLPart::openURL( const KURL &url )
       d->m_job->addMetaData("content-type", args.contentType() );
   }
   else
-      d->m_job = KIO::get( url, args.reload, false );
+  {
+      d->m_job = KIO::get( url, false, false );
+      d->m_job->addMetaData("cache", KIO::getCacheControlString(d->m_cachePolicy));
+  }
 
   d->m_job->addMetaData(args.metaData());
 
@@ -451,7 +460,6 @@ bool KHTMLPart::openURL( const KURL &url )
 
   d->m_bComplete = false;
   d->m_bLoadEventEmitted = false;
-  d->m_restored = false;
 
   // delete old status bar msg's from kjs (if it _was_ activated on last URL)
   if( d->m_bJScriptEnabled )
@@ -514,7 +522,7 @@ bool KHTMLPart::closeURL()
 
   d->m_bComplete = true; // to avoid emitting completed() in slotFinishedParsing() (David)
   d->m_bLoadEventEmitted = true; // don't want that one either
-  d->m_bReloading = false;
+  d->m_cachePolicy = KIO::CC_Verify; // Why here?
 
   KHTMLPageCache::self()->cancelFetch(this);
   if ( d->m_doc && d->m_doc->parsing() )
@@ -739,7 +747,7 @@ KJavaAppletContext *KHTMLPart::createJavaContext()
 {
 #ifndef Q_WS_QWS
   if ( !d->m_javaContext ) {
-      d->m_javaContext = new KJavaAppletContext();
+      d->m_javaContext = new KJavaAppletContext(d->m_dcopobject);
       connect( d->m_javaContext, SIGNAL(showStatus(const QString&)),
                this, SIGNAL(setStatusBarText(const QString&)) );
       connect( d->m_javaContext, SIGNAL(showDocument(const QString&, const QString&)),
@@ -878,7 +886,6 @@ bool KHTMLPart::autoloadImages() const
 
 void KHTMLPart::clear()
 {
-    kdDebug( 6090 ) << "KHTMLPart::clear() this = " << this << endl;
   if ( d->m_bCleared )
     return;
   d->m_bCleared = true;
@@ -916,10 +923,7 @@ void KHTMLPart::clear()
 
 
   if ( d->m_doc )
-  {
-    kdDebug( 6090 ) << "KHTMLPart::clear(): detaching the document " << d->m_doc << endl;
     d->m_doc->detach();
-  }
 
   // Moving past doc so that onUnload works.
   if ( d->m_jscript )
@@ -931,14 +935,10 @@ void KHTMLPart::clear()
   // do not dereference the document before the jscript and view are cleared, as some destructors
   // might still try to access the document.
   if ( d->m_doc )
-  {
-    kdDebug( 6090 ) << "KHTMLPart::clear(): dereferencing the document " << d->m_doc << endl;
     d->m_doc->deref();
-  }
   d->m_doc = 0;
 
   delete d->m_decoder;
-
   d->m_decoder = 0;
 
 #ifndef APPLE_CHANGES
@@ -966,6 +966,7 @@ void KHTMLPart::clear()
 
   d->m_delayRedirect = 0;
   d->m_redirectURL = QString::null;
+  d->m_redirectLockHistory = true;
   d->m_bHTTPRefresh = false;
   d->m_bClearing = false;
   d->m_frameNameId = 1;
@@ -1028,7 +1029,8 @@ void KHTMLPart::slotData( KIO::Job* kio_job, const QByteArray &data )
 
     begin( d->m_workingURL, d->m_extension->urlArgs().xOffset, d->m_extension->urlArgs().yOffset );
 
-    d->m_doc->docLoader()->setReloading(d->m_bReloading);
+
+    d->m_doc->docLoader()->setCachePolicy(d->m_cachePolicy);
     d->m_workingURL = KURL();
 
     d->m_cacheId = KHTMLPageCache::self()->createCacheEntry();
@@ -1178,15 +1180,21 @@ void KHTMLPart::htmlError( int errorCode, const QString& text, const KURL& reqUr
   d->m_bJScriptOverride = true;
   begin();
   QString errText = QString::fromLatin1( "<HTML><HEAD><TITLE>" );
-  errText += i18n( "Error while loading %1" ).arg( reqUrl.prettyURL() );
+  errText += i18n( "Error while loading %1" ).arg( reqUrl.htmlURL() );
   errText += QString::fromLatin1( "</TITLE></HEAD><BODY><P>" );
-  errText += i18n( "An error occured while loading <B>%1</B>:" ).arg( reqUrl.prettyURL() );
+  errText += i18n( "An error occured while loading <B>%1</B>:" ).arg( reqUrl.htmlURL() );
   errText += QString::fromLatin1( "</P><P>" );
   QString kioErrString = KIO::buildErrorString( errorCode, text );
+
+  kioErrString.replace(QRegExp("&"), QString("&amp;"));
+  kioErrString.replace(QRegExp("<"), QString("&lt;"));
+  kioErrString.replace(QRegExp(">"), QString("&gt;"));
+
   // In case the error string has '\n' in it, replace with <BR/>
   kioErrString.replace( QRegExp("\n"), "<BR/>" );
+
   errText += kioErrString;
-  errText += QString::fromLatin1( "</PRE></P></BODY></HTML>" );
+  errText += QString::fromLatin1( "</P></BODY></HTML>" );
   write(errText);
   end();
 
@@ -1700,18 +1708,17 @@ KURL KHTMLPart::completeURL( const QString &url )
   return KURL( d->m_doc->completeURL( url ) );
 }
 
-// ### implement lockhistory being optional (sometimes javascript wants
-// to do redirection that end up in the history!)
-void KHTMLPart::scheduleRedirection( int delay, const QString &url, bool /* doLockHistory*/ )
+void KHTMLPart::scheduleRedirection( int delay, const QString &url, bool doLockHistory )
 {
 #ifdef APPLE_CHANGES
   impl->scheduleRedirection(delay, url);
 #else
-  //kdDebug(6050) << "KHTMLPart::scheduleRedirection delay=" << delay << " url=" << url << endl;
+    kdDebug(6050) << "KHTMLPart::scheduleRedirection delay=" << delay << " url=" << url << endl;
     if( d->m_redirectURL.isEmpty() || delay < d->m_delayRedirect )
     {
        d->m_delayRedirect = delay;
        d->m_redirectURL = url;
+       d->m_redirectLockHistory = doLockHistory;
        if ( d->m_bComplete ) {
          d->m_redirectionTimer.stop();
          d->m_redirectionTimer.start( 1000 * d->m_delayRedirect, true );
@@ -1744,7 +1751,7 @@ void KHTMLPart::slotRedirect()
   if ( urlcmp( u, m_url.url(), true, true ) )
     args.reload = true;
 
-  args.setLockHistory( true );
+  args.setLockHistory( d->m_redirectLockHistory );
   urlSelected( u, 0, 0, QString::null, args );
 #endif
 }
@@ -1768,7 +1775,9 @@ bool KHTMLPart::setEncoding( const QString &name, bool override )
         closeURL();
         KURL url = m_url;
         m_url = 0;
+        d->m_restored = true;
         openURL(url);
+        d->m_restored = false;
     }
 #endif
 
@@ -1965,11 +1974,13 @@ bool KHTMLPart::findTextNext( const QString &str, bool forward, bool caseSensiti
 
 QString KHTMLPart::selectedText() const
 {
+  bool hasNewLine = true;
   QString text;
   DOM::Node n = d->m_selectionStart;
   while(!n.isNull()) {
       if(n.nodeType() == DOM::Node::TEXT_NODE) {
         QString str = n.nodeValue().string();
+        hasNewLine = false;
         if(n == d->m_selectionStart && n == d->m_selectionEnd)
           text = str.mid(d->m_startOffset, d->m_endOffset - d->m_startOffset);
         else if(n == d->m_selectionStart)
@@ -1983,9 +1994,13 @@ QString KHTMLPart::selectedText() const
         // This is our simple HTML -> ASCII transformation:
         unsigned short id = n.elementId();
         switch(id) {
+          case ID_BR:
+            text += "\n";
+            hasNewLine = true;
+            break;
+
           case ID_TD:
           case ID_TH:
-          case ID_BR:
           case ID_HR:
           case ID_OL:
           case ID_UL:
@@ -1995,7 +2010,10 @@ QString KHTMLPart::selectedText() const
           case ID_DT:
           case ID_PRE:
           case ID_BLOCKQUOTE:
-            text += "\n";
+          case ID_DIV:
+            if (!hasNewLine)
+               text += "\n";
+            hasNewLine = true;
             break;
           case ID_P:
           case ID_TR:
@@ -2005,7 +2023,10 @@ QString KHTMLPart::selectedText() const
           case ID_H4:
           case ID_H5:
           case ID_H6:
-            text += "\n\n";
+            if (!hasNewLine)
+               text += "\n";
+            text += "\n";
+            hasNewLine = true;
             break;
         }
       }
@@ -2015,11 +2036,54 @@ QString KHTMLPart::selectedText() const
       while( next.isNull() && !n.parentNode().isNull() ) {
         n = n.parentNode();
         next = n.nextSibling();
+        unsigned short id = n.elementId();
+        switch(id) {
+          case ID_TD:
+          case ID_TH:
+          case ID_HR:
+          case ID_OL:
+          case ID_UL:
+          case ID_LI:
+          case ID_DD:
+          case ID_DL:
+          case ID_DT:
+          case ID_PRE:
+          case ID_BLOCKQUOTE:
+          case ID_DIV:
+            if (!hasNewLine)
+               text += "\n";
+            hasNewLine = true;
+            break;
+          case ID_P:
+          case ID_TR:
+          case ID_H1:
+          case ID_H2:
+          case ID_H3:
+          case ID_H4:
+          case ID_H5:
+          case ID_H6:
+            if (!hasNewLine)
+               text += "\n";
+            text += "\n";
+            hasNewLine = true;
+            break;
+        }
       }
 
       n = next;
     }
-    return text;
+    int start = 0;
+    int end = text.length();
+
+    // Strip leading LFs
+    while ((start < end) && (text[start] == '\n'))
+       start++;
+
+    // Strip excessive trailing LFs
+    while ((start < (end-1)) && (text[end-1] == '\n') && (text[end-2] == '\n'))
+       end--;
+       
+    return text.mid(start, end-start);
 }
 
 bool KHTMLPart::hasSelection() const
@@ -2188,7 +2252,7 @@ void KHTMLPart::overURL( const QString &url, const QString &target, bool shiftPr
           mailtoMsg += i18n(" - CC: ") + KURL::decode_string((*it).mid(3));
         else if ((*it).startsWith(QString::fromLatin1("bcc=")))
           mailtoMsg += i18n(" - BCC: ") + KURL::decode_string((*it).mid(4));
-      emit setStatusBarText(mailtoMsg);
+      emit setStatusBarText(mailtoMsg.replace(QRegExp("([\n\r\t]|[ ]{10})"), ""));
 			return;
     }
    // Is this check neccessary at all? (Frerich)
@@ -2265,15 +2329,10 @@ void KHTMLPart::urlSelected( const QString &url, int button, int state, const QS
 
   args.frameName = target;
 
-  // For http-refresh, force the io-slave to re-get the page
-  // as needed instead of loading from cache. NOTE: I would
-  // have done a "verify" instead, but I am not sure that servers
-  // will include the correct response (specfically "Refresh:") on
-  // a "HEAD" request which is what a "verify" setting results in.(DA)
   if ( d->m_bHTTPRefresh )
   {
     d->m_bHTTPRefresh = false;
-        args.metaData()["cache"]="reload"; //"verify";
+    args.metaData()["cache"] = "refresh";
   }
 
   args.metaData().insert("main_frame_request",
@@ -2620,7 +2679,7 @@ bool KHTMLPart::requestObject( khtml::ChildFrame *child, const KURL &url, const 
     args.serviceType = child->m_serviceType;
 
   child->m_args = args;
-  child->m_args.reload = d->m_bReloading;
+  child->m_args.reload = (d->m_cachePolicy == KIO::CC_Reload) || (d->m_cachePolicy == KIO::CC_Refresh);
   child->m_serviceName = QString::null;
   if (!d->m_referrer.isEmpty() && !child->m_args.metaData().contains( "referrer" ))
     child->m_args.metaData()["referrer"] = d->m_referrer;
@@ -2766,7 +2825,7 @@ bool KHTMLPart::processObjectRequest( khtml::ChildFrame *child, const KURL &_url
     return true;
   }
 
-  child->m_args.reload = d->m_bReloading;
+  child->m_args.reload = (d->m_cachePolicy == KIO::CC_Reload) || (d->m_cachePolicy == KIO::CC_Refresh);
 
   // make sure the part has a way to find out about the mimetype.
   // we actually set it in child->m_args in requestObject already,
@@ -2895,7 +2954,7 @@ void KHTMLPart::submitForm( const char *action, const QString &url, const QByteA
    */
 
   // This causes crashes... needs to be fixed.
-  if (u.protocol() != "https") {
+  if (u.protocol() != "https" && u.protocol() != "mailto") {
 	if (d->m_ssl_in_use) {    // Going from SSL -> nonSSL
 		int rc = KMessageBox::warningContinueCancel(NULL, i18n("Warning:  This is a secure form but it is attempting to send your data back unencrypted."
 					"\nA third party may be able to intercept and view this information."
@@ -2929,6 +2988,18 @@ void KHTMLPart::submitForm( const char *action, const QString &url, const QByteA
     }
   }
 
+  if (u.protocol() == "mailto") {
+     int rc = KMessageBox::warningContinueCancel(NULL, 
+                 i18n("This site is attempting to submit form data via email."),
+                 i18n("KDE"), 
+                 QString::null, 
+                 "WarnTriedEmailSubmit");
+
+     if (rc == KMessageBox::Cancel) {
+         return;
+     }
+  }
+
   // End form security checks
   //
 
@@ -2956,8 +3027,53 @@ void KHTMLPart::submitForm( const char *action, const QString &url, const QByteA
   args.metaData().insert("ssl_activate_warnings", "TRUE");
   args.frameName = _target.isEmpty() ? d->m_doc->baseTarget() : _target ;
 
+  // Handle mailto: forms
+  if (u.protocol() == "mailto") {
+      // 1)  Check for attach= and strip it
+      QString q = u.query().mid(1);
+      QStringList nvps = QStringList::split("&", q);
+      bool triedToAttach = false;
+
+      for (QStringList::Iterator nvp = nvps.begin(); nvp != nvps.end(); ++nvp) {
+         QStringList pair = QStringList::split("=", *nvp);
+         if (pair.count() >= 2) {
+            if (pair.first().lower() == "attach") {
+               nvp = nvps.remove(nvp);
+               triedToAttach = true;
+            }
+         }
+      }
+
+      if (triedToAttach)
+         KMessageBox::information(NULL, i18n("This site attempted to attach a file from your computer in the form submission. The attachment was removed for your protection."), i18n("KDE"), "WarnTriedAttach");
+
+      // 2)  Append body=
+      QString bodyEnc;
+      if (contentType.lower() == "multipart/form-data") {
+         // FIXME: is this correct?  I suspect not
+         bodyEnc = KURL::encode_string(QString::fromLatin1(formData.data(), 
+                                                           formData.size()));
+      } else if (contentType.lower() == "text/plain") {
+         // Convention seems to be to decode, and s/&/\n/
+         QString tmpbody = QString::fromLatin1(formData.data(), 
+                                               formData.size());
+         tmpbody.replace(QRegExp("[&]"), "\n");
+         tmpbody.replace(QRegExp("[+]"), " ");
+         tmpbody = KURL::decode_string(tmpbody);  // Decode the rest of it
+         bodyEnc = KURL::encode_string(tmpbody);  // Recode for the URL
+      } else {
+         bodyEnc = KURL::encode_string(QString::fromLatin1(formData.data(), 
+                                                           formData.size()));
+      }
+
+      nvps.append(QString("body=%1").arg(bodyEnc));
+      q = nvps.join("&");
+      u.setQuery(q);
+  } 
+
   if ( strcmp( action, "get" ) == 0 ) {
-    u.setQuery( QString::fromLatin1( formData.data(), formData.size() ) );
+    if (u.protocol() != "mailto")
+       u.setQuery( QString::fromLatin1( formData.data(), formData.size() ) );
     args.setDoPost( false );
   }
   else {
@@ -3506,14 +3622,17 @@ void KHTMLPart::restoreState( QDataStream &stream )
     args.yOffset = yOffset;
     args.docState = docState;
     d->m_extension->setURLArgs( args );
-//    kdDebug( 6050 ) << "in restoreState : calling openURL for " << u.url() << endl;
     if (!KHTMLPageCache::self()->isValid(d->m_cacheId))
+    {
+       d->m_restored = true;
        openURL( u );
+       d->m_restored = false;
+    }
     else
+    {
        restoreURL( u );
+    }
   }
-
-  d->m_restored = true;
 
 }
 
@@ -4343,7 +4462,7 @@ bool KHTMLPart::checkLinkSecurity(const KURL &linkURL,const QString &message, co
     }
 
     if (tokenizer)
-      tokenizer->setOnHold(false);
+       tokenizer->setOnHold(false);
     return (response==KMessageBox::Continue);
   }
   return true;

@@ -41,7 +41,7 @@
 using namespace khtml;
 using namespace DOM;
 
-RenderApplet::RenderApplet(HTMLElementImpl *applet, QMap<QString, QString> args )
+RenderApplet::RenderApplet(HTMLElementImpl *applet, const QMap<QString, QString> &args )
     : RenderWidget(applet)
 {
     // init RenderObject attributes
@@ -49,10 +49,11 @@ RenderApplet::RenderApplet(HTMLElementImpl *applet, QMap<QString, QString> args 
 
 #ifdef APPLE_CHANGES
     // FIXME: Can we find a way to do this in layout below instead of here?
+    QMap<QString, QString> argsToPassToWidget(args);
     for (NodeImpl *child = element()->firstChild(); child; child = child->nextSibling()) {
         if (child->id() == ID_PARAM) {
             HTMLParamElementImpl *p = static_cast<HTMLParamElementImpl *>(child);
-            args.insert(p->name(), p->value());
+            argsToPassToWidget.insert(p->name(), p->value());
         }
     }
 #endif // APPLE_CHANGES
@@ -66,7 +67,7 @@ RenderApplet::RenderApplet(HTMLElementImpl *applet, QMap<QString, QString> args 
     if ( context ) {
         //kdDebug(6100) << "RenderApplet::RenderApplet, setting QWidget" << endl;
 #ifdef APPLE_CHANGES
-        setQWidget( new KJavaAppletWidget(args) );
+        setQWidget( new KJavaAppletWidget(argsToPassToWidget) );
 #else
         setQWidget( new KJavaAppletWidget(context, _view->viewport()) );
         processArguments(args);
@@ -134,7 +135,7 @@ void RenderApplet::layout()
 
 #ifndef APPLE_CHANGES
 
-void RenderApplet::processArguments(QMap<QString, QString> args)
+void RenderApplet::processArguments(const QMap<QString, QString> &args)
 {
     KJavaAppletWidget *w = static_cast<KJavaAppletWidget*>(m_widget);
     KJavaApplet* applet = w ? w->applet() : 0;
@@ -143,15 +144,18 @@ void RenderApplet::processArguments(QMap<QString, QString> args)
         applet->setBaseURL( args[QString::fromLatin1("baseURL") ] );
         applet->setAppletClass( args[QString::fromLatin1("code") ] );
 
-        if( !args[QString::fromLatin1("codeBase") ].isEmpty() )
-            applet->setCodeBase( args[QString::fromLatin1("codeBase") ] );
+	QString str = args[QString::fromLatin1("codeBase") ];
+        if( !str.isEmpty() )
+            applet->setCodeBase( str );
 
-        if( !args[QString::fromLatin1("name") ].isNull() )
-            applet->setAppletName( args[QString::fromLatin1("name") ] );
+	str = args[QString::fromLatin1("name") ];
+        if( !str.isNull() )
+            applet->setAppletName( str );
         else
             applet->setAppletName( args[QString::fromLatin1("code") ] );
 
-        if( !args[QString::fromLatin1("archive") ].isEmpty() )
+	str = args[QString::fromLatin1("archive") ];
+        if( !str.isEmpty() ) 
             applet->setArchives( args[QString::fromLatin1("archive") ] );
     }
 }

@@ -40,14 +40,17 @@ CharacterData::CharacterData(const CharacterData &other) : Node(other)
 CharacterData &CharacterData::operator = (const Node &other)
 {
     NodeImpl* ohandle = other.handle();
+    if ( impl != ohandle ) {
     if (!ohandle ||
         ( ohandle->nodeType() != CDATA_SECTION_NODE &&
           ohandle->nodeType() != TEXT_NODE &&
           ohandle->nodeType() != COMMENT_NODE )) {
+	    if ( impl ) impl->deref();
 	impl = 0;
-	return *this;
-    }
+	} else {
     Node::operator =(other);
+	}
+    }
     return *this;
 }
 
@@ -159,11 +162,14 @@ Comment::Comment(const Comment &other) : CharacterData(other)
 Comment &Comment::operator = (const Node &other)
 {
     NodeImpl* ohandle = other.handle();
+    if ( impl != ohandle ) {
     if (!ohandle || ohandle->nodeType() != COMMENT_NODE) {
+	    if ( impl ) impl->deref();
 	impl = 0;
-	return *this;
-    }
+	} else {
     Node::operator =(other);
+	}
+    }
     return *this;
 }
 
@@ -194,13 +200,16 @@ Text::Text(const Text &other) : CharacterData(other)
 Text &Text::operator = (const Node &other)
 {
     NodeImpl* ohandle = other.handle();
+    if ( impl != ohandle ) {
     if (!ohandle ||
         (ohandle->nodeType() != TEXT_NODE &&
          ohandle->nodeType() != CDATA_SECTION_NODE)) {
+	    if ( impl ) impl->deref();
 	impl = 0;
-	return *this;
-    }
+	} else {
     Node::operator =(other);
+	}
+    }
     return *this;
 }
 

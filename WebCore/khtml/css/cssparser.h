@@ -25,6 +25,7 @@
 
 #include "dom/dom_string.h"
 #include "dom/dom_misc.h"
+#include "misc/shared.h"
 #include <qdatetime.h>
 #include <qptrlist.h>
 
@@ -111,20 +112,16 @@ public:
 };
 
     // a style class which has a parent (almost all have)
-    class StyleBaseImpl : public DomShared
+    class StyleBaseImpl : public khtml::TreeShared<StyleBaseImpl>
     {
     public:
-	StyleBaseImpl() : DOM::DomShared() { m_parent = 0; hasInlinedDecl = false; strictParsing = true; }
-	StyleBaseImpl(StyleBaseImpl *p) : DOM::DomShared() { m_parent = p; hasInlinedDecl = false; strictParsing = true; }
+	StyleBaseImpl()  { m_parent = 0; hasInlinedDecl = false; strictParsing = true; }
+	StyleBaseImpl(StyleBaseImpl *p) { m_parent = p; hasInlinedDecl = false; strictParsing = true; }
 
 	virtual ~StyleBaseImpl() {}
 
-	virtual bool deleteMe();
-
 	// returns the url of the style sheet this object belongs to
 	DOMString baseURL();
-
-	StyleBaseImpl *parent() { return m_parent; }
 
 	virtual bool isStyleSheet() const { return false; }
 	virtual bool isCSSStyleSheet() const { return false; }
@@ -177,7 +174,6 @@ public:
 	bool parseAuralValue(const QChar *curP, const QChar *endP, int propId);
 
         CSSValueImpl* parseContent(const QChar *curP, const QChar *endP);
-        QPtrList<QChar> splitContent(const QChar *curP, const QChar *endP);
 
 	// defines units allowed for a certain property, used in parseUnit
 	enum Units
@@ -210,12 +206,8 @@ public:
 	bool useStrictParsing() const { return strictParsing; }
 
     protected:
-	StyleBaseImpl *m_parent;
 	bool hasInlinedDecl : 1;
 	bool strictParsing : 1;
-    private:
-// 	bool m_bImportant : 1;
-//         bool m_bnonCSSHint : 1;
     };
 
     // a style class which has a list of children (StyleSheets for example)

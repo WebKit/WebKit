@@ -220,8 +220,10 @@ int KJS::minInt(int d1, int d2)
 // ECMA 11.6
 Value KJS::add(ExecState *exec, const Value &v1, const Value &v2, char oper)
 {
-  Value p1 = v1.toPrimitive(exec);
-  Value p2 = v2.toPrimitive(exec);
+  // exception for the Date exception in defaultValue()
+  Type preferred = oper == '+' ? UnspecifiedType : NumberType;
+  Value p1 = v1.toPrimitive(exec, preferred);
+  Value p2 = v2.toPrimitive(exec, preferred);
 
   if ((p1.type() == StringType || p2.type() == StringType) && oper == '+') {
     UString s1 = p1.toString(exec);

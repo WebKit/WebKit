@@ -917,9 +917,9 @@ void InterpreterImp::initGlobalObject()
   b_uriErrorPrototype.put(globExec, "constructor", b_uriError, DontEnum | DontDelete | ReadOnly);
 
   // built-in values
-  global.put(globExec,"NaN",        Number(NaN), DontEnum);
-  global.put(globExec,"Infinity",   Number(Inf), DontEnum);
-  global.put(globExec,"undefined",  Undefined(), DontEnum);
+  global.put(globExec, "NaN",        Number(NaN), DontEnum|DontDelete);
+  global.put(globExec, "Infinity",   Number(Inf), DontEnum|DontDelete);
+  global.put(globExec, "undefined",  Undefined(), DontEnum|DontDelete);
 
   // built-in functions
   global.put(globExec,"eval",       Object(new GlobalFuncImp(globExec,funcProto,GlobalFuncImp::Eval,       1)), DontEnum);

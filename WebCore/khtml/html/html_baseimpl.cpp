@@ -296,13 +296,17 @@ void HTMLFrameElementImpl::attach()
 
     // ignore display: none for this element!
     KHTMLView* w = getDocument()->view();
-    // limit to how deep we can nest frames
-    KHTMLPart *part = w->part();
-    int depth = 0;
-    while ((part = part->parentPart()))
-        depth++;
+    // avoid endless recursion
+    KURL u;
+    if (!url.isEmpty()) u = getDocument()->completeURL( url.string() );
+    bool selfreference = false;
+    for (KHTMLPart* part = w->part(); part; part = part->parentPart())
+        if (part->url() == u) {
+            selfreference = true;
+            break;
+        }
 
-    if (depth < 5)  {
+    if (!selfreference)  {
         m_render = new RenderFrame(this);
         m_render->setStyle(getDocument()->styleSelector()->styleForElement(this));
         parentNode()->renderer()->addChild(m_render, nextRenderer());
@@ -318,7 +322,7 @@ void HTMLFrameElementImpl::attach()
       name = DOMString(w->part()->requestFrameName());
 
     // load the frame contents
-    if (!url.isEmpty())
+    if ( !url.isEmpty() && !(w->part()->onlyLocalReferences() && u.protocol() != "file"))
         w->part()->requestFrame( static_cast<RenderFrame*>(m_render), url.string(), name.string() );
 }
 
@@ -596,7 +600,16 @@ void HTMLIFrameElementImpl::attach()
     assert(parentNode());
 
     KHTMLView* w = getDocument()->view();
-    // limit to how deep we can nest frames
+    // avoid endless recursion
+    KURL u;
+    if (!url.isEmpty()) u = getDocument()->completeURL( url.string() );
+    bool selfreference = false;
+    for (KHTMLPart* part = w->part(); part; part = part->parentPart())
+        if (part->url() == u) {
+            selfreference = true;
+            break;
+        }
+
     KHTMLPart *part = w->part();
     int depth = 0;
     while ((part = part->parentPart()))
@@ -604,7 +617,8 @@ void HTMLIFrameElementImpl::attach()
 
     RenderStyle* _style = getDocument()->styleSelector()->styleForElement(this);
     _style->ref();
-    if (depth < 7 && parentNode()->renderer() && _style->display() != NONE) {
+    if (!selfreference && !(w->part()->onlyLocalReferences() && u.protocol() != "file") &&
+        parentNode()->renderer() && _style->display() != NONE) {
         m_render = new RenderPartObject(this);
         m_render->setStyle(_style);
         parentNode()->renderer()->addChild(m_render, nextRenderer());

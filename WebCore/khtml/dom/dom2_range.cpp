@@ -74,10 +74,11 @@ Range::Range(RangeImpl *i)
 
 Range &Range::operator = (const Range &other)
 {
+    if ( impl != other.impl ) {
     if (impl) impl->deref();
     impl = other.impl;
     if (impl) impl->ref();
-
+    }
     return *this;
 }
 

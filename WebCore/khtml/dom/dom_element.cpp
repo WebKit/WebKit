@@ -43,11 +43,13 @@ Attr::Attr( AttrImpl *_impl )
 Attr &Attr::operator = (const Node &other)
 {
     NodeImpl* ohandle = other.handle();
+    if ( impl != ohandle ) {
     if (!ohandle || !ohandle->isAttributeNode()) {
 	impl = 0;
-	return *this;
-    }
+	} else {
     Node::operator =(other);
+	}
+    }
     return *this;
 }
 
@@ -115,11 +117,13 @@ Element::Element(ElementImpl *impl) : Node(impl)
 Element &Element::operator = (const Node &other)
 {
     NodeImpl* ohandle = other.handle();
+    if ( impl != ohandle ) {
     if (!ohandle || !ohandle->isElementNode()) {
 	impl = 0;
-	return *this;
-    }
+	} else {
     Node::operator =(other);
+	}
+    }
     return *this;
 }
 

@@ -41,12 +41,7 @@ HTMLBaseElement::HTMLBaseElement(HTMLBaseElementImpl *impl) : HTMLElement(impl)
 
 HTMLBaseElement &HTMLBaseElement::operator = (const Node &other)
 {
-    if(other.elementId() != ID_BASE)
-    {
-	impl = 0;
-	return *this;
-    }
-    Node::operator = (other);
+    assignOther( other, ID_BASE );
     return *this;
 }
 
@@ -98,12 +93,7 @@ HTMLLinkElement::HTMLLinkElement(HTMLLinkElementImpl *impl) : HTMLElement(impl)
 
 HTMLLinkElement &HTMLLinkElement::operator = (const Node &other)
 {
-    if(other.elementId() != ID_LINK)
-    {
-	impl = 0;
-	return *this;
-    }
-    Node::operator = (other);
+    assignOther( other, ID_LINK );
     return *this;
 }
 
@@ -239,12 +229,7 @@ HTMLMetaElement::HTMLMetaElement(HTMLMetaElementImpl *impl) : HTMLElement(impl)
 
 HTMLMetaElement &HTMLMetaElement::operator = (const Node &other)
 {
-    if(other.elementId() != ID_META)
-    {
-	impl = 0;
-	return *this;
-    }
-    Node::operator = (other);
+    assignOther( other, ID_META );
     return *this;
 }
 
@@ -318,12 +303,7 @@ HTMLScriptElement::HTMLScriptElement(HTMLScriptElementImpl *impl) : HTMLElement(
 
 HTMLScriptElement &HTMLScriptElement::operator = (const Node &other)
 {
-    if(other.elementId() != ID_SCRIPT)
-    {
-	impl = 0;
-	return *this;
-    }
-    Node::operator = (other);
+    assignOther( other, ID_SCRIPT );
     return *this;
 }
 
@@ -432,12 +412,7 @@ HTMLStyleElement::HTMLStyleElement(HTMLStyleElementImpl *impl) : HTMLElement(imp
 
 HTMLStyleElement &HTMLStyleElement::operator = (const Node &other)
 {
-    if(other.elementId() != ID_STYLE)
-    {
-	impl = 0;
-	return *this;
-    }
-    Node::operator = (other);
+    assignOther( other, ID_STYLE );
     return *this;
 }
 
@@ -509,12 +484,7 @@ HTMLTitleElement::HTMLTitleElement(HTMLTitleElementImpl *impl) : HTMLElement(imp
 
 HTMLTitleElement &HTMLTitleElement::operator = (const Node &other)
 {
-    if(other.elementId() != ID_TITLE)
-    {
-	impl = 0;
-	return *this;
-    }
-    Node::operator = (other);
+    assignOther( other, ID_TITLE );
     return *this;
 }
 

@@ -23,7 +23,6 @@
 #define render_replaced_h
 
 #include "render_box.h"
-
 #include <qobject.h>
 class KHTMLView;
 class QWidget;
@@ -34,7 +33,6 @@ class RenderReplaced : public RenderBox
 {
 public:
     RenderReplaced(DOM::NodeImpl* node);
-    virtual ~RenderReplaced() {}
 
     virtual const char *renderName() const { return "RenderReplaced"; }
 
@@ -63,7 +61,7 @@ private:
 };
 
 
-class RenderWidget : public QObject, public RenderReplaced, public DOM::DomShared
+class RenderWidget : public QObject, public RenderReplaced, public khtml::Shared<RenderWidget>
 {
     Q_OBJECT
 public:
@@ -89,6 +87,8 @@ public slots:
 protected:
     bool eventFilter(QObject* /*o*/, QEvent* e);
     void setQWidget(QWidget *widget);
+    void resizeWidget( QWidget *widget, int w, int h );
+
     QWidget *m_widget;
     KHTMLView* m_view;
 };

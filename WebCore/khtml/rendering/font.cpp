@@ -49,10 +49,10 @@ void Font::drawText( QPainter *p, int x, int y, QChar *str, int slen, int pos, i
 	qstr.setLength( slen );
 	QChar *uc = (QChar *)qstr.unicode();
 	for( int i = 0; i < slen; i++ )
-	    if ( uc->unicode() == 0xa0 )
-		*uc = ' ';
+	    if ( (uc+i)->unicode() == 0xa0 )
+		*(uc+i) = ' ';
     }
-    
+
     // ### fixme for RTL
     if ( !letterSpacing && !wordSpacing && !toAdd && from==-1 ) {
 	// simply draw it
@@ -101,33 +101,32 @@ void Font::drawText( QPainter *p, int x, int y, QChar *str, int slen, int pos, i
 int Font::width( QChar *chs, int slen, int pos, int len ) const
 {
 #ifdef APPLE_CHANGES
-    return fm.width(chs + pos, kMin(len, slen - pos));
+    return fm.width(chs + pos, len);
 #else
-    QString qstr = QConstString(chs+pos, slen-pos).string();
-
+    QString qstr = QConstString(chs+pos, len).string();
     // hack for fonts that don't have a welldefined nbsp
     if ( !fontDef.hasNbsp ) {
 	// str.setLength() always does a deep copy, so the replacement code below is safe.
-	qstr.setLength( slen );
+	qstr.setLength( len );
 	QChar *uc = (QChar *)qstr.unicode();
-	for( int i = 0; i < slen; i++ )
-	    if ( uc->unicode() == 0xa0 )
-		*uc = ' ';
+	for( int i = 0; i < len; i++ )
+	    if ( (uc+i)->unicode() == 0xa0 )
+		*(uc+i) = ' ';
     }
 
     // ### might be a little inaccurate
-    int w = fm.width( qstr, len );
+    int w = fm.width( qstr );
 
     if ( letterSpacing )
 	w += len*letterSpacing;
 
-    if ( wordSpacing ) {
+    if ( wordSpacing )
 	// add amount
 	for( int i = 0; i < len; i++ ) {
 	    if( chs[i+pos].isSpace() )
 		w += wordSpacing;
 	}
-    }
+
     return w;
 #endif
 }

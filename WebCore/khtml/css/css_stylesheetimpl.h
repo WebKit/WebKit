@@ -58,8 +58,6 @@ public:
 
     virtual bool isStyleSheet() const { return true; }
 
-    virtual bool deleteMe();
-
     virtual DOM::DOMString type() const { return DOMString(); }
 
     bool disabled() const;
@@ -117,11 +115,11 @@ protected:
 
 // ----------------------------------------------------------------------------
 
-class StyleSheetListImpl : public DomShared
+class StyleSheetListImpl : public khtml::Shared<StyleSheetListImpl>
 {
 public:
     StyleSheetListImpl();
-    virtual ~StyleSheetListImpl();
+    ~StyleSheetListImpl();
 
     // the following two ignore implicit stylesheets
     unsigned long length() const;

@@ -398,10 +398,6 @@ class TextAreaWidget : public QTextEdit
 public:
     TextAreaWidget(int wrap, QWidget* parent);
 
-//     using QMultiLineEdit::verticalScrollBar;
-//     using QMultiLineEdit::horizontalScrollBar;
-//     using QMultiLineEdit::hasMarkedText;
-
 protected:
     virtual bool event (QEvent *e );
 };

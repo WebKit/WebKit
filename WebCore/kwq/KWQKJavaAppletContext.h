@@ -23,8 +23,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#ifndef KJAVAAPPLETCONTEXT_H
+#define KJAVAAPPLETCONTEXT_H
+
 #include <qobject.h>
+
+class DCOPObject;
+
+typedef enum { } JType;
 
 class KJavaAppletContext : public QObject
 {
+public:
+    KJavaAppletContext(DCOPObject* = 0) { }
 };
+
+#endif

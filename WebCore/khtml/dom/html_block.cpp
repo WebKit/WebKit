@@ -43,12 +43,7 @@ HTMLBlockquoteElement::HTMLBlockquoteElement(HTMLBlockquoteElementImpl *impl) : 
 
 HTMLBlockquoteElement &HTMLBlockquoteElement::operator = (const Node &other)
 {
-    if(other.elementId() != ID_BLOCKQUOTE)
-    {
-	impl = 0;
-	return *this;
-    }
-    Node::operator = (other);
+    assignOther( other, ID_BLOCKQUOTE );
     return *this;
 }
 
@@ -89,12 +84,7 @@ HTMLDivElement::HTMLDivElement(HTMLDivElementImpl *impl) : HTMLElement(impl)
 
 HTMLDivElement &HTMLDivElement::operator = (const Node &other)
 {
-    if(other.elementId() != ID_DIV)
-    {
-	impl = 0;
-	return *this;
-    }
-    Node::operator = (other);
+    assignOther( other, ID_DIV );
     return *this;
 }
 
@@ -135,12 +125,7 @@ HTMLHRElement::HTMLHRElement(HTMLHRElementImpl *impl) : HTMLElement(impl)
 
 HTMLHRElement &HTMLHRElement::operator = (const Node &other)
 {
-    if(other.elementId() != ID_HR)
-    {
-	impl = 0;
-	return *this;
-    }
-    Node::operator = (other);
+    assignOther( other, ID_HR );
     return *this;
 }
 
@@ -227,10 +212,11 @@ HTMLHeadingElement &HTMLHeadingElement::operator = (const Node &other)
        other.elementId() != ID_H5 ||
        other.elementId() != ID_H6 )
     {
+	if ( impl ) impl->deref();
 	impl = 0;
-	return *this;
-    }
+    } else {
     Node::operator = (other);
+    }
     return *this;
 }
 
@@ -271,12 +257,7 @@ HTMLParagraphElement::HTMLParagraphElement(HTMLParagraphElementImpl *impl) : HTM
 
 HTMLParagraphElement &HTMLParagraphElement::operator = (const Node &other)
 {
-    if(other.elementId() != ID_P)
-    {
-	impl = 0;
-	return *this;
-    }
-    Node::operator = (other);
+    assignOther( other, ID_P );
     return *this;
 }
 
@@ -317,12 +298,7 @@ HTMLPreElement::HTMLPreElement(HTMLPreElementImpl *impl) : HTMLElement(impl)
 
 HTMLPreElement &HTMLPreElement::operator = (const Node &other)
 {
-    if(other.elementId() != ID_PRE)
-    {
-	impl = 0;
-	return *this;
-    }
-    Node::operator = (other);
+    assignOther( other, ID_PRE );
     return *this;
 }
 

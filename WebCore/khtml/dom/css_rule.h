@@ -133,6 +133,8 @@ public:
 
 protected:
     CSSRuleImpl *impl;
+
+    void assignOther( const CSSRule &other, RuleType thisType );
 };
 
 class CSSCharsetRuleImpl;

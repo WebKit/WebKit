@@ -27,10 +27,11 @@
 #define _DOM2_RangeImpl_h_
 
 #include "dom/dom2_range.h"
+#include "misc/shared.h"
 
 namespace DOM {
 
-class RangeImpl : public DomShared
+class RangeImpl : public khtml::Shared<RangeImpl>
 {
     friend class DocumentImpl;
 public:

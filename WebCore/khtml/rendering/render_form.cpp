@@ -40,7 +40,7 @@
 
 #include "khtmlview.h"
 #include "khtml_ext.h"
-#include "xml/dom_docimpl.h" // ### remove dependency
+#include "xml/dom_docimpl.h"
 
 #include <kdebug.h>
 
@@ -70,9 +70,9 @@ RenderFormElement::~RenderFormElement()
 short RenderFormElement::baselinePosition( bool f ) const
 {
 #ifdef APPLE_CHANGES
-    return RenderWidget::baselinePosition( f ) - 6 - QFontMetrics( style()->font() ).descent();
+    return RenderWidget::baselinePosition( f ) - 6 - style()->fontMetrics().descent();
 #else
-    return RenderWidget::baselinePosition( f ) - 2 - QFontMetrics( style()->font() ).descent();
+    return RenderWidget::baselinePosition( f ) - 2 - style()->fontMetrics().descent();
 #endif
 }
 
@@ -109,36 +109,36 @@ void RenderFormElement::updateFromElement()
         int lowlightVal = 100 + (2*contrast_+4)*10;
 
         if (backgroundColor.isValid()) {
-            pal.setColor(QPalette::Active,QColorGroup::Background,backgroundColor);
-            pal.setColor(QPalette::Active,QColorGroup::Light,backgroundColor.light(highlightVal));
-            pal.setColor(QPalette::Active,QColorGroup::Dark,backgroundColor.dark(lowlightVal));
-            pal.setColor(QPalette::Active,QColorGroup::Mid,backgroundColor.dark(120));
-            pal.setColor(QPalette::Active,QColorGroup::Midlight, backgroundColor.light(110));
-            pal.setColor(QPalette::Active,QColorGroup::Button,backgroundColor);
-            pal.setColor(QPalette::Active,QColorGroup::Base,backgroundColor);
-            pal.setColor(QPalette::Inactive,QColorGroup::Background,backgroundColor);
-            pal.setColor(QPalette::Inactive,QColorGroup::Light,backgroundColor.light(highlightVal));
-            pal.setColor(QPalette::Inactive,QColorGroup::Dark,backgroundColor.dark(lowlightVal));
-            pal.setColor(QPalette::Inactive,QColorGroup::Mid,backgroundColor.dark(120));
-            pal.setColor(QPalette::Inactive,QColorGroup::Midlight, backgroundColor.light(110));
-            pal.setColor(QPalette::Inactive,QColorGroup::Button,backgroundColor);
-            pal.setColor(QPalette::Inactive,QColorGroup::Base,backgroundColor);
-            pal.setColor(QPalette::Disabled,QColorGroup::Background,backgroundColor);
-            pal.setColor(QPalette::Disabled,QColorGroup::Light,backgroundColor.light(highlightVal));
-            pal.setColor(QPalette::Disabled,QColorGroup::Dark,backgroundColor.dark(lowlightVal));
-            pal.setColor(QPalette::Disabled,QColorGroup::Mid,backgroundColor.dark(120));
-            pal.setColor(QPalette::Disabled,QColorGroup::Text,backgroundColor.dark(120));
-            pal.setColor(QPalette::Disabled,QColorGroup::Midlight, backgroundColor.light(110));
-            pal.setColor(QPalette::Disabled,QColorGroup::Button, backgroundColor);
-            pal.setColor(QPalette::Disabled,QColorGroup::Base,backgroundColor);
+	    for ( int i = 0; i < QPalette::NColorGroups; i++ ) {
+		pal.setColor( (QPalette::ColorGroup)i, QColorGroup::Background, backgroundColor );
+		pal.setColor( (QPalette::ColorGroup)i, QColorGroup::Light, backgroundColor.light(highlightVal) );
+		pal.setColor( (QPalette::ColorGroup)i, QColorGroup::Dark, backgroundColor.dark(lowlightVal) );
+		pal.setColor( (QPalette::ColorGroup)i, QColorGroup::Mid, backgroundColor.dark(120) );
+		pal.setColor( (QPalette::ColorGroup)i, QColorGroup::Midlight, backgroundColor.light(110) );
+		pal.setColor( (QPalette::ColorGroup)i, QColorGroup::Button, backgroundColor );
+		pal.setColor( (QPalette::ColorGroup)i, QColorGroup::Base, backgroundColor );
+	    }
         }
         if ( color.isValid() ) {
-            pal.setColor(QPalette::Active,QColorGroup::Foreground,color);
-            pal.setColor(QPalette::Active,QColorGroup::ButtonText,color);
-            pal.setColor(QPalette::Active,QColorGroup::Text,color);
-            pal.setColor(QPalette::Inactive,QColorGroup::Foreground,color);
-            pal.setColor(QPalette::Inactive,QColorGroup::ButtonText,color);
-            pal.setColor(QPalette::Inactive,QColorGroup::Text,color);
+	    struct ColorSet {
+		QPalette::ColorGroup cg;
+		QColorGroup::ColorRole cr;
+	    };
+	    const struct ColorSet toSet [] = {
+		{ QPalette::Active, QColorGroup::Foreground },
+		{ QPalette::Active, QColorGroup::ButtonText },
+		{ QPalette::Active, QColorGroup::Text },
+		{ QPalette::Inactive, QColorGroup::Foreground },
+		{ QPalette::Inactive, QColorGroup::ButtonText },
+		{ QPalette::Inactive, QColorGroup::Text },
+		{ QPalette::Disabled,QColorGroup::ButtonText },
+		{ QPalette::NColorGroups, QColorGroup::NColorRoles },
+	    };
+	    const ColorSet *set = toSet;
+	    while( set->cg != QPalette::NColorGroups ) {
+		pal.setColor( set->cg, set->cr, color );
+		++set;
+	    }
 
             QColor disfg = color;
             int h, s, v;
@@ -146,14 +146,13 @@ void RenderFormElement::updateFromElement()
             if (v > 128)
                 // dark bg, light fg - need a darker disabled fg
                 disfg = disfg.dark(lowlightVal);
-            else if (disfg != black)
+            else if (disfg != Qt::black)
                 // light bg, dark fg - need a lighter disabled fg - but only if !black
                 disfg = disfg.light(highlightVal);
             else
                 // black fg - use darkgrey disabled fg
                 disfg = Qt::darkGray;
             pal.setColor(QPalette::Disabled,QColorGroup::Foreground,disfg);
-            pal.setColor(QPalette::Disabled,QColorGroup::ButtonText, color);
         }
 
         m_widget->setPalette(pal);
@@ -194,14 +193,12 @@ void RenderFormElement::performAction(QObject::Actions action)
 
 void RenderFormElement::slotClicked()
 {
-    if(isRenderButton()) {
-        ref();
-        QMouseEvent e2( QEvent::MouseButtonRelease, m_mousePos, m_button, m_state);
+    ref();
+    QMouseEvent e2( QEvent::MouseButtonRelease, m_mousePos, m_button, m_state);
 
-        element()->dispatchMouseEvent(&e2, m_isDoubleClick ? EventImpl::KHTML_DBLCLICK_EVENT : EventImpl::KHTML_CLICK_EVENT, m_clickCount);
-        m_isDoubleClick = false;
-        deref();
-    }
+    element()->dispatchMouseEvent(&e2, m_isDoubleClick ? EventImpl::KHTML_DBLCLICK_EVENT : EventImpl::KHTML_CLICK_EVENT, m_clickCount);
+    m_isDoubleClick = false;
+    deref();
 }
 
 // -------------------------------------------------------------------------
@@ -288,7 +285,7 @@ void RenderRadioButton::updateFromElement()
 
 void RenderRadioButton::slotClicked()
 {
-    element()->setChecked(widget()->isChecked());
+    element()->setChecked(true);
 
     // emit mouseClick event etc
     RenderButton::slotClicked();
@@ -558,16 +555,17 @@ void RenderLineEdit::calcMinMaxWidth()
 
 void RenderLineEdit::updateFromElement()
 {
+    int ml = element()->maxLength();
+    if ( ml < 0 || ml > 1024 )
+        ml = 1024;
+    if ( widget()->maxLength() != ml )
+        widget()->setMaxLength( ml );
+
     if (element()->value().string() != widget()->text()) {
         widget()->blockSignals(true);
         int pos = widget()->cursorPosition();
         widget()->setText(element()->value().string());
 
-        int ml = element()->maxLength();
-        if ( ml < 0 || ml > 1024 )
-            ml = 1024;
-        if ( widget()->maxLength() != ml )
-            widget()->setMaxLength( ml );
         widget()->setEdited( false );
 
         widget()->setCursorPosition(pos);
@@ -1068,6 +1066,7 @@ KListBox* RenderSelect::createListBox()
     // ### looks broken
     //lb->setAutoMask(true);
     connect( lb, SIGNAL( selectionChanged() ), this, SLOT( slotSelectionChanged() ) );
+    connect( lb, SIGNAL( clicked( QListBoxItem * ) ), this, SLOT( slotClicked() ) );
     m_ignoreSelectEvents = false;
     lb->setMouseTracking(true);
 
@@ -1094,19 +1093,20 @@ void RenderSelect::updateSelection()
     }
     else {
         bool found = false;
-        for (i = 0; i < int(listItems.size()); i++)
-            if (listItems[i]->id() == ID_OPTION && static_cast<HTMLOptionElementImpl*>(listItems[i])->selected()) {
-                static_cast<KComboBox*>(m_widget)->setCurrentItem(i);
-                found = true;
-                break;
+        int firstOption = listItems.size();
+        i = listItems.size();
+        while (i--)
+            if (listItems[i]->id() == ID_OPTION) {
+                if (found)
+                    static_cast<HTMLOptionElementImpl*>(listItems[i])->m_selected = false;
+                else if (static_cast<HTMLOptionElementImpl*>(listItems[i])->selected()) {
+                    static_cast<KComboBox*>( m_widget )->setCurrentItem(i);
+                    found = true;
+                }
+                firstOption = i;
             }
-        // ok, nothing was selected, select the first one..
-        for (i = 0; !found && i < int(listItems.size()); i++)
-            if ( listItems[i]->id() == ID_OPTION ) {
-//                static_cast<HTMLOptionElementImpl*>( listItems[i] )->m_selected = true;
-                static_cast<KComboBox*>( m_widget )->setCurrentItem( i );
-                break;
-            }
+
+        Q_ASSERT(firstOption == listItems.size() || found);
     }
 
     m_selectionChanged = false;
@@ -1128,7 +1128,7 @@ TextAreaWidget::TextAreaWidget(int wrap, QWidget* parent)
         setHScrollBarMode( Auto );
         setVScrollBarMode( Auto );
     }
-    KCursor::setAutoHideCursor(this, true);
+    KCursor::setAutoHideCursor(viewport(), true);
     setTextFormat(QTextEdit::PlainText);
     setAutoMask(true);
     setMouseTracking(true);
@@ -1190,6 +1190,7 @@ void RenderTextArea::calcMinMaxWidth()
 
     TextAreaWidget* w = static_cast<TextAreaWidget*>(m_widget);
     const QFontMetrics &m = style()->fontMetrics();
+    w->setTabStopWidth(8 * m.width(" "));
 #ifdef APPLE_CHANGES
     QSize size( QMAX(element()->cols(), 1)*m.width('x') + w->frameWidth() +
                 w->verticalScrollBarWidth(),

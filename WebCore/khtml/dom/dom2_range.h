@@ -31,6 +31,7 @@
 #define _dom2_range_h_
 
 #include <dom/dom_doc.h>
+#include <dom/dom_misc.h>
 
 namespace DOM {
 

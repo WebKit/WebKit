@@ -117,9 +117,9 @@ public:
 
     T& operator[] (uint index) { return ((QValueListNode<T> *)impl.nodeAt(index))->value; }
     const T& operator[] (uint index) const { return ((const QValueListNode<T> *)impl.nodeAt(index))->value; }
-    QValueList<T> &operator+=(const T &value) { impl.appendNode(new QValueListNode<T>(value)); return *this; } 
-    QValueList<T> &operator<<(const T &value) { impl.appendNode(new QValueListNode<T>(value)); return *this; } 
-
+    QValueList &operator+=(const T &value) { impl.appendNode(new QValueListNode<T>(value)); return *this; } 
+    QValueList &operator<<(const T &value) { impl.appendNode(new QValueListNode<T>(value)); return *this; } 
+    
 private:
     KWQValueListImpl impl;
 

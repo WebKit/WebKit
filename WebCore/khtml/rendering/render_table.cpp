@@ -203,7 +203,7 @@ void RenderTable::addChild(RenderObject *child, RenderObject *beforeChild)
             o = beforeChild;
         else {
 	    RenderObject *lastBox = beforeChild;
-	    while ( lastBox && lastBox->parent()->isAnonymousBox() && 
+	    while ( lastBox && lastBox->parent()->isAnonymousBox() &&
 		    !lastBox->isTableSection() && lastBox->style()->display() != TABLE_CAPTION )
 		lastBox = lastBox->parent();
 	    if ( lastBox && lastBox->isAnonymousBox() ) {
@@ -419,7 +419,7 @@ void RenderTable::addColInfo(RenderTableCol *colel)
     int span = colel->span();
     int _minSize=0;
     int _maxSize=0;
-    Length _width = colel->width();
+    Length _width = colel->style()->width();
     if (_width.type==Fixed) {
         _maxSize=_width.value;
 	_minSize=_width.value;
@@ -580,60 +580,22 @@ void RenderTable::spreadSpanMinMax(int col, int span, int distmin,
         }
     }
 
-    if (hasUsableCols)
-    {
+    if (hasUsableCols) {
         // spread span maxWidth
-        LengthType tt = Undefined;
-        bool out=false;
-        while (tt<=type && !out && tmax)
-        {
-            tmax = distributeMaxWidth(tmax,type,tt,col,span);
-            switch (tt)
-            {
-            case Undefined: tt=Variable; break;
-            case Variable: tt=Relative; break;
-            case Relative: tt=Percent; break;
-            case Percent: tt=Fixed; break;
-            default: out=true; break;
-            }
-        }
+        for (int i = LengthType(Variable); i <= int(Fixed) && i <= type && tmax; ++i)
+            tmax = distributeMaxWidth(tmax,type,LengthType(i),col,span);
 
 
         // spread span minWidth
-        tt = Undefined;
-        out=false;
-        while (tt<=type && !out && tmin)
-        {
-            tmin = distributeMinWidth(tmin,type,tt,col,span,true);
-            switch (tt)
-            {
-            case Undefined: tt=Variable; break;
-            case Variable: tt=Relative; break;
-            case Relative: tt=Percent; break;
-            case Percent: tt=Fixed; break;
-            default: out=true; break;
-            }
-        }
+        for (int i = LengthType(Variable); i <= int(Fixed) && i <= type && tmin; ++i)
+            tmin = distributeMinWidth(tmin,type,LengthType(i),col,span,true);
 
         // force spread rest of the minWidth
-        tt = Undefined;
-        out=false;
-        while (!out && tmin)
-        {
-            tmin = distributeMinWidth(tmin,type,tt,col,span,false);
-            switch (tt)
-            {
-            case Undefined: tt=Variable; break;
-            case Variable: tt=Relative; break;
-            case Relative: tt=Percent; break;
-            case Percent: tt=Fixed; break;
-            default: out=true; break;
-            }
-        }
+        for (int i = LengthType(Variable); i <= int(Fixed) && tmin; ++i)
+            tmin = distributeMinWidth(tmin,type,LengthType(i),col,span,false);
 
         for (int c=col; c < col+span ; ++c)
             colMaxWidth[c]=KMAX(colMinWidth[c],colMaxWidth[c]);
-
     }
 }
 
@@ -924,8 +886,8 @@ void RenderTable::calcColMinMax()
     hasPercent=false;
     bool hasRel=false;
     bool hasVar=false;
-    
-    int maxPercentColumn=0;    
+
+    int maxPercentColumn=0;
     int maxTentativePercentWidth=0;
 
     m_minWidth = spacing;
@@ -944,13 +906,13 @@ void RenderTable::calcColMinMax()
                 minPercent=maxPercent=spacing;
             }
             totalPercent += colValue[i];
-            
+
             maxPercentColumn = KMAX(colValue[i],maxPercentColumn);
-            
+
             minPercent += colMinWidth[i] + spacing;
             maxPercent += colMaxWidth[i] + spacing;
-            
-            maxTentativePercentWidth = KMAX(colValue[i]==0?0:colMaxWidth[i]*100/colValue[i], 
+
+            maxTentativePercentWidth = KMAX(colValue[i]==0?0:colMaxWidth[i]*100/colValue[i],
                     maxTentativePercentWidth);
             break;
         case Relative:
@@ -962,7 +924,6 @@ void RenderTable::calcColMinMax()
             minRel += colMinWidth[i] + spacing;
             maxRel += colMaxWidth[i] + spacing;
             break;
-        case Undefined:
         case Variable:
         case Fixed:
         default:
@@ -988,8 +949,8 @@ void RenderTable::calcColMinMax()
 	int tot = KMIN(100u, totalPercent );
 
         if (tot>0)
-    	    m_maxWidth = maxPercent*100/tot;        
-  
+    	    m_maxWidth = maxPercent*100/tot;
+
         if (tot<100)
             m_maxWidth = KMAX( short((maxVar+maxRel)*100/(100-tot)), m_maxWidth );
         else if (hasRel || hasVar || ((int)totalPercent>maxPercentColumn && maxPercentColumn>=100))
@@ -1051,7 +1012,7 @@ void RenderTable::calcWidth()
     // restrict width to what we really have in case we flow around floats
     if ( style()->flowAroundFloats() && cb->isFlow() )
 	m_width = QMIN( static_cast<RenderFlow *>(cb)->lineWidth( m_y ) - borderWidth, m_width );
-    
+
     m_width = KMAX (m_width, m_minWidth);
 
     m_marginRight=0;
@@ -1141,7 +1102,6 @@ void RenderTable::calcColWidth(void)
             maxRel += colMaxWidth[i];
             numRel++;
             break;
-        case Undefined:
         case Variable:
         default:
             minVar += colMinWidth[i];
@@ -2279,16 +2239,6 @@ void RenderTableCol::addChild(RenderObject *child, RenderObject *beforeChild)
         table->addColInfo(colel);
         _currentCol++;
     }
-}
-
-Length RenderTableCol::width()
-{
-    if (style()->width().type == Undefined
-        && parent() &&
-            parent()->style()->display()==TABLE_COLUMN_GROUP)
-        return static_cast<RenderTableCol*>(parent())->width();
-    else
-        return style()->width();
 }
 
 #ifndef NDEBUG

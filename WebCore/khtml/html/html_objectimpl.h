@@ -25,6 +25,7 @@
 
 #include "html_elementimpl.h"
 #include "xml/dom_stringimpl.h"
+#include "java/kjavaappletcontext.h"
 
 #include <qstringlist.h>
 
@@ -48,6 +49,8 @@ public:
     virtual void parseAttribute(AttributeImpl *token);
     virtual void attach();
 
+    bool getMember(const QString &, JType &, QString &);
+    bool callMember(const QString &, const QStringList &, JType &, QString &);
 protected:
     khtml::VAlign valign;
 };

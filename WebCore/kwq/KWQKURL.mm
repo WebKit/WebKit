@@ -755,3 +755,8 @@ QString KURL::htmlRef() const
     _logNotYetImplemented();
     return 0;
 }
+
+bool operator==(const KURL &a, const KURL &b)
+{
+    return [a.getNSURL() isEqual:b.getNSURL()];
+}

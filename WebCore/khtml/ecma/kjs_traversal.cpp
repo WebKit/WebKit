@@ -297,9 +297,8 @@ DOM::NodeFilter KJS::toNodeFilter(const Value& val)
 
 // -------------------------------------------------------------------------
 
-JSNodeFilter::JSNodeFilter(Object & _filter) : DOM::CustomNodeFilter()
+JSNodeFilter::JSNodeFilter(Object & _filter) : DOM::CustomNodeFilter(), filter( _filter )
 {
-    filter = _filter;
 }
 
 JSNodeFilter::~JSNodeFilter()

@@ -41,12 +41,7 @@ HTMLBodyElement::HTMLBodyElement(HTMLBodyElementImpl *impl) : HTMLElement(impl)
 
 HTMLBodyElement &HTMLBodyElement::operator = (const Node &other)
 {
-    if(other.elementId() != ID_BODY)
-    {
-	impl = 0;
-	return *this;
-    }
-    Node::operator = (other);
+    assignOther( other, ID_BODY );
     return *this;
 }
 
@@ -62,8 +57,7 @@ HTMLBodyElement::~HTMLBodyElement()
 
 DOMString HTMLBodyElement::aLink() const
 {
-    if(!impl) return DOMString();
-    return ((ElementImpl *)impl)->getAttribute(ATTR_ALINK);
+    return impl ? ((ElementImpl *)impl)->getAttribute(ATTR_ALINK) : DOMString();
 }
 
 void HTMLBodyElement::setALink( const DOMString &value )
@@ -73,8 +67,7 @@ void HTMLBodyElement::setALink( const DOMString &value )
 
 DOMString HTMLBodyElement::background() const
 {
-    if(!impl) return DOMString();
-    return ((ElementImpl *)impl)->getAttribute(ATTR_BACKGROUND);
+    return impl ? ((ElementImpl *)impl)->getAttribute(ATTR_BACKGROUND) : DOMString();
 }
 
 void HTMLBodyElement::setBackground( const DOMString &value )
@@ -142,12 +135,7 @@ HTMLFrameElement::HTMLFrameElement(HTMLFrameElementImpl *impl) : HTMLElement(imp
 
 HTMLFrameElement &HTMLFrameElement::operator = (const Node &other)
 {
-    if(other.elementId() != ID_FRAME)
-    {
-	impl = 0;
-	return *this;
-    }
-    Node::operator = (other);
+    assignOther( other, ID_FRAME );
     return *this;
 }
 
@@ -277,12 +265,7 @@ HTMLIFrameElement::HTMLIFrameElement(HTMLIFrameElementImpl *impl) : HTMLElement(
 
 HTMLIFrameElement &HTMLIFrameElement::operator = (const Node &other)
 {
-    if(other.elementId() != ID_IFRAME)
-    {
-	impl = 0;
-	return *this;
-    }
-    Node::operator = (other);
+    assignOther( other, ID_IFRAME );
     return *this;
 }
 
@@ -428,12 +411,7 @@ HTMLFrameSetElement::HTMLFrameSetElement(HTMLFrameSetElementImpl *impl) : HTMLEl
 
 HTMLFrameSetElement &HTMLFrameSetElement::operator = (const Node &other)
 {
-    if(other.elementId() != ID_FRAMESET)
-    {
-	impl = 0;
-	return *this;
-    }
-    Node::operator = (other);
+    assignOther( other, ID_FRAMESET );
     return *this;
 }
 
@@ -485,12 +463,7 @@ HTMLHeadElement::HTMLHeadElement(HTMLHeadElementImpl *impl) : HTMLElement(impl)
 
 HTMLHeadElement &HTMLHeadElement::operator = (const Node &other)
 {
-    if(other.elementId() != ID_HEAD)
-    {
-	impl = 0;
-	return *this;
-    }
-    Node::operator = (other);
+    assignOther( other, ID_HEAD );
     return *this;
 }
 
@@ -531,12 +504,7 @@ HTMLHtmlElement::HTMLHtmlElement(HTMLHtmlElementImpl *impl) : HTMLElement(impl)
 
 HTMLHtmlElement &HTMLHtmlElement::operator = (const Node &other)
 {
-    if(other.elementId() != ID_HTML)
-    {
-	impl = 0;
-	return *this;
-    }
-    Node::operator = (other);
+    assignOther( other, ID_HTML );
     return *this;
 }
 

@@ -19,18 +19,17 @@
  *
  */
 
+#include "regexp.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-#include "regexp.h"
 
 using namespace KJS;
 
 RegExp::RegExp(const UString &p, int f)
   : pattern(p), flags(f)
 {
-
 #ifdef HAVE_PCREPOSIX
   int pcreflags = 0;
   const char *perrormsg;
@@ -44,6 +43,10 @@ RegExp::RegExp(const UString &p, int f)
 
   pcregex = pcre_compile(p.ascii(), pcreflags,
 			 &perrormsg, &errorOffset, NULL);
+#ifndef NDEBUG
+  if (!pcregex)
+    fprintf(stderr, "KJS: pcre_compile() failed with '%s'\n", perrormsg);
+#endif
 
 #ifdef PCRE_INFO_CAPTURECOUNT
   // Get number of subpatterns that will be returned
@@ -54,7 +57,7 @@ RegExp::RegExp(const UString &p, int f)
 
 #else /* HAVE_PCREPOSIX */
 
-  nrSubPatterns = 0; // not implemented with POSIX regex.
+  nrSubPatterns = 0; // determined in match() with POSIX regex.
   int regflags = 0;
 #ifdef REG_EXTENDED
   regflags |= REG_EXTENDED;
@@ -78,8 +81,8 @@ RegExp::RegExp(const UString &p, int f)
 RegExp::~RegExp()
 {
 #ifdef HAVE_PCREPOSIX
-  pcre_free(pcregex);
-
+  if (pcregex)
+    pcre_free(pcregex);
 #else
   /* TODO: is this really okay after an error ? */
   regfree(&preg);
@@ -88,50 +91,76 @@ RegExp::~RegExp()
 
 UString RegExp::match(const UString &s, int i, int *pos, int **ovector)
 {
+  if (i < 0)
+    i = 0;
+  if (ovector)
+    *ovector = 0L;
+  int dummyPos;
+  if (!pos)
+    pos = &dummyPos;
+  *pos = -1;
+  if (i > s.size() || s.isNull())
+    return UString::null;
 
 #ifdef HAVE_PCREPOSIX
   CString buffer(s.cstring());
   int ovecsize = (nrSubPatterns+1)*3; // see pcre docu
   if (ovector) *ovector = new int[ovecsize];
 
-  if (i < 0)
-    i = 0;
-
-  if (i > s.size() || s.isNull() ||
-      pcre_exec(pcregex, NULL, buffer.c_str(), buffer.size(), i,
-		0, ovector ? *ovector : 0L, ovecsize) == PCRE_ERROR_NOMATCH) {
-
-    if (pos)
-       *pos = -1;
+  if (!pcregex || pcre_exec(pcregex, NULL, buffer.c_str(), buffer.size(), i,
+		  0, ovector ? *ovector : 0L, ovecsize) == PCRE_ERROR_NOMATCH)
     return UString::null;
-  }
 
   if (!ovector)
     return UString::null; // don't rely on the return value if you pass ovector==0
-  if (pos)
-     *pos = (*ovector)[0];
-  return s.substr((*ovector)[0], (*ovector)[1] - (*ovector)[0]);
-
 #else
-  regmatch_t rmatch[10];
+#ifdef APPLE_CHANGES
+  const uint maxMatch = 10;
+#else
+  const int maxMatch = 10;
+#endif
+  regmatch_t rmatch[maxMatch];
 
-  if (i < 0)
-    i = 0;
-
-  char *str = strdup(s.ascii());
-  if (i > s.size() || s.isNull() ||
-      regexec(&preg, str + i, 10, rmatch, 0)) {
-    if (pos)
-       *pos = -1;
+  char *str = strdup(s.ascii()); // TODO: why ???
+  if (regexec(&preg, str + i, maxMatch, rmatch, 0)) {
+    free(str);
     return UString::null;
   }
   free(str);
 
-  if (pos)
-     *pos = rmatch[0].rm_so + i;
-  // TODO copy from rmatch to ovector
-  return s.substr(rmatch[0].rm_so + i, rmatch[0].rm_eo - rmatch[0].rm_so);
+  if (!ovector) {
+    *pos = rmatch[0].rm_so + i;
+    return s.substr(rmatch[0].rm_so + i, rmatch[0].rm_eo - rmatch[0].rm_so);
+  }
+
+  // map rmatch array to ovector used in PCRE case
+  nrSubPatterns = 0;
+#ifdef APPLE_CHANGES
+  for(uint j = 1; j < maxMatch && rmatch[j].rm_so >= 0 ; j++)
+#else
+  for(int j = 1; j < maxMatch && rmatch[j].rm_so >= 0 ; j++)
 #endif
+      nrSubPatterns++;
+  int ovecsize = (nrSubPatterns+1)*3; // see above
+  *ovector = new int[ovecsize];
+#ifdef APPLE_CHANGES
+  for (uint j = 0; j < nrSubPatterns + 1; j++) {
+#else
+  for (int j = 0; j < nrSubPatterns + 1; j++) {
+#endif
+    if (j>maxMatch)
+      break;
+    (*ovector)[2*j] = rmatch[j].rm_so + i;
+    (*ovector)[2*j+1] = rmatch[j].rm_eo + i;
+#ifdef APPLE_CHANGES
+  } // balance extra { so we don't confuse prepare-ChangeLog
+#else
+  }
+#endif
+#endif
+
+  *pos = (*ovector)[0];
+  return s.substr((*ovector)[0], (*ovector)[1] - (*ovector)[0]);
 }
 
 #if 0 // unused

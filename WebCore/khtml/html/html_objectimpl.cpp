@@ -39,6 +39,11 @@
 #include "rendering/render_frames.h"
 #include "xml/dom2_eventsimpl.h"
 
+#ifndef Q_WS_QWS // We don't have Java in Qt Embedded
+#include "java/kjavaappletwidget.h"
+#include "java/kjavaappletcontext.h"
+#endif
+
 using namespace DOM;
 using namespace khtml;
 
@@ -127,6 +132,35 @@ void HTMLAppletElementImpl::attach()
     NodeBaseImpl::attach();
 }
 
+bool HTMLAppletElementImpl::getMember(const QString & name, JType & type, QString & val) {
+#ifdef APPLE_CHANGES
+    return false;
+#else
+#ifndef Q_WS_QWS // We don't have Java in Qt Embedded
+    if ( !m_render || !m_render->isApplet() )
+        return false;
+    KJavaAppletWidget *w = static_cast<KJavaAppletWidget*>(static_cast<RenderApplet*>(m_render)->widget());
+    return (w && w->applet() && w->applet()->getMember(name, type, val));
+#else
+    return false;
+#endif
+#endif
+}
+
+bool HTMLAppletElementImpl::callMember(const QString & name, const QStringList & args, JType & type, QString & val) {
+#ifdef APPLE_CHANGES
+    return false;
+#else
+#ifndef Q_WS_QWS // We don't have Java in Qt Embedded
+    if ( !m_render || !m_render->isApplet() )
+        return false;
+    KJavaAppletWidget *w = static_cast<KJavaAppletWidget*>(static_cast<RenderApplet*>(m_render)->widget());
+    return (w && w->applet() && w->applet()->callMember(name, args, type, val));
+#else
+    return false;
+#endif
+#endif
+}
 // -------------------------------------------------------------------------
 
 HTMLEmbedElementImpl::HTMLEmbedElementImpl(DocumentPtr *doc)
@@ -299,7 +333,15 @@ void HTMLObjectElementImpl::attach()
     assert(!m_render);
 
     KHTMLView* w = getDocument()->view();
-    if (w->part()->pluginsEnabled() && parentNode()->renderer()) {
+    bool loadplugin = w->part()->pluginsEnabled();
+    KURL u = getDocument()->completeURL(url);
+    for (KHTMLPart* part = w->part(); part; part = part->parentPart())
+        if (part->url() == u) {
+            loadplugin = false;
+            break;
+        }
+
+    if (loadplugin && parentNode()->renderer()) {
         needWidgetUpdate = false;
         m_render = new RenderPartObject(this);
         m_render->setStyle(getDocument()->styleSelector()->styleForElement(this));

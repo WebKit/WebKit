@@ -196,7 +196,7 @@ void RenderContainer::insertPseudoChild(RenderStyle::PseudoId type, RenderObject
 
     if (pseudo)
     {
-        if (pseudo->contentType()==RenderStyle::CONTENT_TEXT)
+        if (pseudo->contentType()==CONTENT_TEXT)
         {
             RenderObject* po = new RenderFlow(0 /* anonymous box */);
             po->setStyle(pseudo);
@@ -213,7 +213,7 @@ void RenderContainer::insertPseudoChild(RenderStyle::PseudoId type, RenderObject
             t->close();
             po->close();
         }
-        else if (pseudo->contentType()==RenderStyle::CONTENT_OBJECT)
+        else if (pseudo->contentType()==CONTENT_OBJECT)
         {
             RenderObject* po = new RenderImage(0);
             po->setStyle(pseudo);

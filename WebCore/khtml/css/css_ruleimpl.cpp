@@ -54,16 +54,14 @@ unsigned short CSSRuleImpl::type() const
 
 CSSStyleSheetImpl *CSSRuleImpl::parentStyleSheet() const
 {
-    if( !m_parent ) return 0;
-    if( m_parent->isCSSStyleSheet() ) return static_cast<CSSStyleSheetImpl *>(m_parent);
-    return 0;
+    return ( m_parent && m_parent->isCSSStyleSheet() )  ?
+	static_cast<CSSStyleSheetImpl *>(m_parent) : 0;
 }
 
 CSSRuleImpl *CSSRuleImpl::parentRule() const
 {
-    if( !m_parent ) return 0;
-    if( m_parent->isRule() ) return static_cast<CSSRuleImpl *>(m_parent);
-    return 0;
+    return ( m_parent && m_parent->isRule() )  ? 
+	static_cast<CSSRuleImpl *>(m_parent) : 0;
 }
 
 DOM::DOMString CSSRuleImpl::cssText() const
@@ -154,9 +152,12 @@ void CSSImportRuleImpl::setStyleSheet(const DOM::DOMString &url, const DOM::DOMS
 {
     kdDebug( 6080 ) << "CSSImportRule::setStyleSheet()" << endl;
 
+    if ( m_styleSheet ) m_styleSheet->deref();
     m_styleSheet = new CSSStyleSheetImpl(this, url);
     m_styleSheet->ref();
-    m_styleSheet->parseString( sheet, parentStyleSheet() ? parentStyleSheet()->useStrictParsing() : true );
+
+    CSSStyleSheetImpl *parent = parentStyleSheet();
+    m_styleSheet->parseString( sheet, parent ? parent->useStrictParsing() : true );
     m_loading = false;
 
     checkLoaded();
@@ -164,24 +165,24 @@ void CSSImportRuleImpl::setStyleSheet(const DOM::DOMString &url, const DOM::DOMS
 
 bool CSSImportRuleImpl::isLoading()
 {
-    if(m_loading) return true;
-    if(m_styleSheet->isLoading()) return true;
-    return false;
+    return ( m_loading || (m_styleSheet && m_styleSheet->isLoading()) );
 }
 
 void CSSImportRuleImpl::init()
 {
     khtml::DocLoader *docLoader = 0;
     StyleBaseImpl *root = this;
-    while (root->parent())
-	root = root->parent();
+    StyleBaseImpl *parent;
+    while ( ( parent = root->parent()) )
+	root = parent;
     if (root->isCSSStyleSheet())
 	docLoader = static_cast<CSSStyleSheetImpl*>(root)->docLoader();
 
     DOMString absHref = m_strHref;
-    if (!parentStyleSheet()->href().isNull()) {
+    CSSStyleSheetImpl *parentSheet = parentStyleSheet();
+    if (!parentSheet->href().isNull()) {
       // use parent styleheet's URL as the base URL
-      absHref = KURL(parentStyleSheet()->href().string(),m_strHref.string()).url();
+      absHref = KURL(parentSheet->href().string(),m_strHref.string()).url();
     }
 /*
     else {
@@ -263,10 +264,7 @@ CSSRuleListImpl *CSSMediaRuleImpl::cssRules()
 
 unsigned long CSSMediaRuleImpl::appendRule( CSSRuleImpl *rule )
 {
-    if( rule )
-        return m_lstCSSRules->insertRule( rule, m_lstCSSRules->length() );
-    else
-        return 0;
+    return rule ? m_lstCSSRules->insertRule( rule, m_lstCSSRules->length() ) : 0;
 }
 
 unsigned long CSSMediaRuleImpl::insertRule( const DOMString &rule,
@@ -275,10 +273,7 @@ unsigned long CSSMediaRuleImpl::insertRule( const DOMString &rule,
     const QChar *curP = rule.unicode();
     CSSRuleImpl *newRule = parseRule( curP, curP + rule.length() );
 
-    if( newRule )
-        return m_lstCSSRules->insertRule( newRule, index );
-
-    return 0;
+    return newRule ? m_lstCSSRules->insertRule( newRule, index ) : 0;
 }
 
 void CSSMediaRuleImpl::deleteRule( unsigned long index )
@@ -352,9 +347,8 @@ DOM::DOMString CSSStyleRuleImpl::selectorText() const
     if ( m_selector && m_selector->first() ) {
         // ### m_selector will be a single selector hopefully. so ->first() will disappear
         CSSSelector* cs = m_selector->first();
-        cs->print(); // debug
-        DOMString str = cs->selectorText();
-        return str;
+        //cs->print(); // debug
+        return cs->selectorText();
     }
     return DOMString();
 }
@@ -377,9 +371,11 @@ void CSSStyleRuleImpl::setSelector( QPtrList<CSSSelector> *selector)
 
 void CSSStyleRuleImpl::setDeclaration( CSSStyleDeclarationImpl *style)
 {
+    if ( m_style != style ) {
     if(m_style) m_style->deref();
     m_style = style;
     if(m_style) m_style->ref();
+    }
 }
 
 void CSSStyleRuleImpl::setNonCSSHints()

@@ -140,7 +140,6 @@ KHTMLParser::KHTMLParser( DOM::DocumentFragmentImpl *i, DocumentPtr *doc )
     reset();
     current = i;
     inBody = true;
-    inSelect = false;
 }
 
 KHTMLParser::~KHTMLParser()
@@ -167,8 +166,8 @@ void KHTMLParser::reset()
     memset(forbiddenTag, 0, (ID_CLOSE_TAG+1)*sizeof(ushort));
 
     inBody = false;
-    noRealBody = true;
     haveFrameSet = false;
+    haveContent = false;
     inSelect = false;
     _inline = false;
 
@@ -202,7 +201,7 @@ void KHTMLParser::parseToken(Token *t)
 #ifdef PARSER_DEBUG
     kdDebug( 6035 ) << "\n\n==> parser: processing token " << getTagName(t->id).string() << "(" << t->id << ")"
                     << " current = " << getTagName(current->id()).string() << "(" << current->id() << ")" << endl;
-    kdDebug(6035) << "inline=" << _inline << " inBody=" << inBody << " noRealBody=" << noRealBody << " haveFrameSet=" << haveFrameSet << endl;
+    kdDebug(6035) << "inline=" << _inline << " inBody=" << inBody << " haveFrameSet=" << haveFrameSet << endl;
 #endif
 
     // holy shit. apparently some sites use </br> instead of <br>
@@ -219,13 +218,11 @@ void KHTMLParser::parseToken(Token *t)
     }
 
     // ignore spaces, if we're not inside a paragraph or other inline code
-    if( t->id == ID_TEXT ) {
+    if( t->id == ID_TEXT && t->text ) {
+        if(inBody && !skipMode() && t->text->l > 2) haveContent = true;
 #ifdef PARSER_DEBUG
-        if(t->text)
-            kdDebug(6035) << "length="<< t->text->l << " text='" << QConstString(t->text->s, t->text->l).string() << "'" << endl;
+        kdDebug(6035) << "length="<< t->text->l << " text='" << QConstString(t->text->s, t->text->l).string() << "'" << endl;
 #endif
-
-        if ( inBody ) noRealBody = false;
     }
 
     NodeImpl *n = getElement(t);
@@ -390,7 +387,6 @@ bool KHTMLParser::insertNode(NodeImpl *n)
 		    }
 		    if ( changed )
 			doc()->recalcStyle( NodeImpl::Inherit );
-		    noRealBody = false;
 		}
                 return false;
 	    }
@@ -440,7 +436,6 @@ bool KHTMLParser::insertNode(NodeImpl *n)
                 }
                 if ( changed )
                     doc()->recalcStyle( NodeImpl::Inherit );
-                noRealBody = false;
             } else if ( current->isDocumentNode() )
                 break;
             return false;
@@ -757,7 +752,6 @@ NodeImpl *KHTMLParser::getElement(Token* t)
         popBlock(ID_HEAD);
         n = new HTMLBodyElementImpl(document);
         startBody();
-        noRealBody = false;
         break;
 
 // head elements
@@ -783,7 +777,7 @@ NodeImpl *KHTMLParser::getElement(Token* t)
         break;
     case ID_FRAMESET:
         popBlock(ID_HEAD);
-        if ( inBody && !haveFrameSet) {
+        if ( inBody && !haveFrameSet && !haveContent) {
             popBlock( ID_BODY );
             // ### actually for IE document.body returns the now hidden "body" element
             // we can't implement that behaviour now because it could cause too many
@@ -793,14 +787,12 @@ NodeImpl *KHTMLParser::getElement(Token* t)
                 static_cast<HTMLDocumentImpl*>(document->document())->body()
                     ->addCSSProperty(CSS_PROP_DISPLAY, "none");
             inBody = false;
-            noRealBody = true;
         }
-        if ( haveFrameSet && current->id() == ID_HTML )
+        if ( (haveContent || haveFrameSet) && current->id() == ID_HTML) 
             break;
         n = new HTMLFrameSetElementImpl(document);
         haveFrameSet = true;
         startBody();
-        noRealBody = false;
         break;
         // a bit a special case, since the frame is inlined...
     case ID_IFRAME:

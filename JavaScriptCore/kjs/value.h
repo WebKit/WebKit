@@ -160,7 +160,8 @@ namespace KJS {
     enum {
       VI_MARKED = 1,
       VI_GCALLOWED = 2,
-      VI_CREATED = 4
+      VI_CREATED = 4,
+      VI_DESTRUCTED = 8
     }; // VI means VALUEIMPL
 
     ValueImpPrivate *_vd;

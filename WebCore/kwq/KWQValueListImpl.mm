@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,28 +35,9 @@ KWQValueListNodeImpl::KWQValueListNodeImpl() :
 {
 }
 
-KWQValueListNodeImpl::~KWQValueListNodeImpl()
-{
-}
-
 KWQValueListIteratorImpl::KWQValueListIteratorImpl() : 
     nodeImpl(NULL)
 {
-}
-
-KWQValueListIteratorImpl::KWQValueListIteratorImpl(const KWQValueListIteratorImpl &other) :
-    nodeImpl(other.nodeImpl)
-{
-}
-
-KWQValueListIteratorImpl::~KWQValueListIteratorImpl()
-{
-}
-
-KWQValueListIteratorImpl &KWQValueListIteratorImpl::operator=(const KWQValueListIteratorImpl &other)
-{
-    nodeImpl = other.nodeImpl;
-    return *this;
 }
 
 bool KWQValueListIteratorImpl::operator==(const KWQValueListIteratorImpl &other)
@@ -195,7 +176,7 @@ void KWQValueListImpl::KWQValueListPrivate::deleteList(KWQValueListNodeImpl *l)
 
 
 KWQValueListImpl::KWQValueListImpl(void (*deleteFunc)(KWQValueListNodeImpl *), KWQValueListNodeImpl *(*copyFunc)(KWQValueListNodeImpl *)) :
-    d(new KWQValueListImpl::KWQValueListPrivate(deleteFunc, copyFunc))
+    d(new KWQValueListPrivate(deleteFunc, copyFunc))
 {
 }
 
@@ -426,7 +407,7 @@ KWQValueListNodeImpl *KWQValueListImpl::nodeAt(uint index) const
     return p;
 }
 
-KWQValueListImpl KWQValueListImpl::operator=(const KWQValueListImpl &other)
+KWQValueListImpl& KWQValueListImpl::operator=(const KWQValueListImpl &other)
 {
     KWQValueListImpl tmp(other);
     KWQRefPtr<KWQValueListImpl::KWQValueListPrivate> tmpD = tmp.d;
@@ -440,7 +421,7 @@ KWQValueListImpl KWQValueListImpl::operator=(const KWQValueListImpl &other)
 void KWQValueListImpl::copyOnWrite()
 {
     if (d->refCount > 1) {
-	d = KWQRefPtr<KWQValueListImpl::KWQValueListPrivate>(new KWQValueListImpl::KWQValueListPrivate(*d));
+	d = KWQRefPtr<KWQValueListImpl::KWQValueListPrivate>(new KWQValueListPrivate(*d));
     }
 }
 

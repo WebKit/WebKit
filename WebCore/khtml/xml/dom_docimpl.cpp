@@ -384,11 +384,13 @@ NodeImpl *DocumentImpl::importNode( NodeImpl */*importedNode*/, bool /*deep*/,
 ElementImpl *DocumentImpl::createElementNS( const DOMString &_namespaceURI, const DOMString &_qualifiedName )
 {
     ElementImpl *e = 0;
-    if (_namespaceURI == XHTML_NAMESPACE) {
+    QString qName = _qualifiedName.string();
+    int colonPos = qName.find(':',0);
+
+    if ((_namespaceURI.isNull() && colonPos < 0) ||
+        _namespaceURI == XHTML_NAMESPACE) {
         // User requested an element in the XHTML namespace - this means we create a HTML element
         // (elements not in this namespace are treated as normal XML elements)
-        QString qName = _qualifiedName.string();
-        int colonPos = qName.find(':',0);
         e = createHTMLElement(qName.mid(colonPos+1));
         int exceptioncode = 0;
         if (colonPos >= 0)
@@ -447,6 +449,9 @@ void DocumentImpl::setTitle(DOMString _title)
     view()->part()->setTitle(_title);
 #else
     QString titleStr = m_title.string();
+    for (int i = 0; i < titleStr.length(); ++i)
+        if (titleStr[i] < ' ')
+            titleStr[i] = ' ';
     titleStr.compose();
     if ( !view()->part()->parentPart() ) {
 	if (titleStr.isNull() || titleStr.isEmpty()) {
@@ -1375,11 +1380,11 @@ void DocumentImpl::processHttpEquiv(const DOMString &equiv, const DOMString &con
     }
 }
 
-bool DocumentImpl::prepareMouseEvent( int _x, int _y, MouseEvent *ev )
+bool DocumentImpl::prepareMouseEvent( bool readonly, int _x, int _y, MouseEvent *ev )
 {
     if ( m_render ) {
         assert(m_render->isRoot());
-        RenderObject::NodeInfo renderInfo(false, ev->type == MousePress);
+        RenderObject::NodeInfo renderInfo(readonly, ev->type == MousePress);
         bool isInside = m_render->nodeAtPoint(renderInfo, _x, _y, 0, 0);
         ev->innerNode = renderInfo.innerNode();
 
@@ -1398,7 +1403,8 @@ bool DocumentImpl::prepareMouseEvent( int _x, int _y, MouseEvent *ev )
 //            qDebug("url: *%s*", ev->url.string().latin1());
         }
 
-        updateRendering();
+        if (!readonly)
+            updateRendering();
 
         return isInside;
     }
@@ -1808,17 +1814,17 @@ void DocumentImpl::setFocusNode(NodeImpl *newFocusNode)
         if (m_focusNode) {
             m_focusNode->ref();
             m_focusNode->dispatchHTMLEvent(EventImpl::FOCUS_EVENT,false,false);
+            if (m_focusNode != newFocusNode) return;
             m_focusNode->dispatchUIEvent(EventImpl::DOMFOCUSIN_EVENT);
-            if (m_focusNode == newFocusNode) {
-                m_focusNode->setFocus();
-                // eww, I suck. set the qt focus correctly
-                // ### find a better place in the code for this
-                if (getDocument()->view()) {
-                    if (!m_focusNode->renderer() || !m_focusNode->renderer()->isWidget())
-                        getDocument()->view()->setFocus();
-                    else if (static_cast<RenderWidget*>(m_focusNode->renderer())->widget())
-                            static_cast<RenderWidget*>(m_focusNode->renderer())->widget()->setFocus();
-                }
+            if (m_focusNode != newFocusNode) return;
+            m_focusNode->setFocus();
+            // eww, I suck. set the qt focus correctly
+            // ### find a better place in the code for this
+            if (getDocument()->view()) {
+                if (!m_focusNode->renderer() || !m_focusNode->renderer()->isWidget())
+                    getDocument()->view()->setFocus();
+                else if (static_cast<RenderWidget*>(m_focusNode->renderer())->widget())
+                    static_cast<RenderWidget*>(m_focusNode->renderer())->widget()->setFocus();
             }
         }
 

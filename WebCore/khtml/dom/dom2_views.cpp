@@ -56,10 +56,11 @@ AbstractView::~AbstractView()
 
 AbstractView &AbstractView::operator = (const AbstractView &other)
 {
+    if ( impl != other.impl ) {
     if(impl) impl->deref();
     impl = other.impl;
     if(impl) impl->ref();
-
+    }
     return *this;
 }
 

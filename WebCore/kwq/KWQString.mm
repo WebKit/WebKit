@@ -1331,7 +1331,7 @@ QString operator+(char ch, const QString &qs)
 
 // constructors, copy constructors, and destructors ----------------------------
 
-QConstString::QConstString(QChar *qcs, uint len)
+QConstString::QConstString(const QChar *qcs, uint len)
 {
     if (qcs || len) {
         // NOTE: use instead of CFStringCreateWithCharactersNoCopy function to

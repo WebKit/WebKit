@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,97 +25,37 @@
 
 #include <qpalette.h>
 
-
-class QPalettePrivate
+const QColor& QPalette::color(ColorGroup cg, QColorGroup::ColorRole role) const
 {
-friend class QPalette;
-public:
-    QPalettePrivate() : active(), inactive(), disabled() 
-    {
+    switch (cg) {
+    default: // keep GCC from complaining about NColorGroups
+    case Active:
+        return m_active.color(role);
+    case Inactive:
+        return m_inactive.color(role);
+    case Disabled:
+        return m_disabled.color(role);
     }
-
-    QPalettePrivate(const QPalettePrivate *other) :
-        active(other->active),
-        inactive(other->inactive),
-        disabled(other->disabled)
-    {
-    }
-
-private:
-    QColorGroup active;  
-    QColorGroup inactive;  
-    QColorGroup disabled;  
-};
-
-#include <kwqdebug.h>
-
-QPalette::QPalette()
-{
-    d = new QPalettePrivate(); 
 }
-
-
-QPalette::QPalette(const QPalette &other)
-{
-    d = new QPalettePrivate(other.d); 
-}
-
-
-QPalette::~QPalette()
-{
-    delete d;
-}
-
 
 void QPalette::setColor(ColorGroup cg, QColorGroup::ColorRole role, const QColor &color)
 {
     switch (cg) {
-        case Active:
-            d->active.setColor(role, color);
-            break;
-        case Inactive:
-            d->inactive.setColor(role, color);
-            break;
-        case Disabled:
-            d->disabled.setColor(role, color);
-            break;
+    case Active:
+        m_active.setColor(role, color);
+        break;
+    case Inactive:
+        m_inactive.setColor(role, color);
+        break;
+    case Disabled:
+        m_disabled.setColor(role, color);
+        break;
+    default: // keep GCC from complaining about NColorGroups
+        break;
     }
-}
-
-
-const QColorGroup &QPalette::active() const
-{
-    return d->active;
-}
-
-
-const QColorGroup &QPalette::inactive() const
-{
-    return d->inactive;
-}
-
-
-const QColorGroup &QPalette::disabled() const
-{
-    return d->disabled;
-}
-
-
-const QColorGroup &QPalette::normal() const
-{
-    return d->active;
-}
-
-
-QPalette &QPalette::operator=(const QPalette &other)
-{
-    d->active = other.d->active;
-    d->inactive = other.d->inactive;
-    d->disabled = other.d->disabled;
-    return *this;
 }
 
 bool QPalette::operator==(QPalette const &other) const
 {
-    return d->active == other.d->active && d->inactive == other.d->inactive && d->disabled == other.d->disabled;
+    return m_active == other.m_active && m_inactive == other.m_inactive && m_disabled == other.m_disabled;
 }

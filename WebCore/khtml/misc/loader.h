@@ -29,6 +29,8 @@
 #include <config.h>
 #endif
 
+#include <time.h>
+
 #include "loader_client.h"
 #ifdef HAVE_LIBJPEG
 #include "loader_jpeg.h"
@@ -45,7 +47,7 @@
 #include <qtextcodec.h>
 
 #include <kurl.h>
-
+#include <kio/global.h>
 
 #include <khtml_settings.h>
 #include <dom/dom_string.h>
@@ -102,9 +104,9 @@ namespace khtml
 	};  	          // will be destroyed as soon as possible
 
 #ifdef APPLE_CHANGES
-	CachedObject(const DocLoader *loader, const DOM::DOMString &url, Type type, bool _reload, int _expireDate)
+	CachedObject(const DocLoader *loader, const DOM::DOMString &url, Type type, KIO::CacheControl _cachePolicy, time_t _expireDate)
 #else
-	CachedObject(const DOM::DOMString &url, Type type, bool _reload, int _expireDate)
+	CachedObject(const DOM::DOMString &url, Type type, KIO::CacheControl _cachePolicy, time_t _expireDate)
 #endif
 	{
 #ifdef APPLE_CHANGES
@@ -115,10 +117,11 @@ namespace khtml
 	    m_status = Pending;
 	    m_size = 0;
 	    m_free = false;
-	    m_reload = _reload;
+	    m_cachePolicy = _cachePolicy;
 	    m_request = 0;
 	    m_expireDate = _expireDate;
             m_deleted = false;
+            m_expireDateChanged = false;
 	}
 	virtual ~CachedObject() {
             if(m_deleted) abort();
@@ -155,13 +158,15 @@ namespace khtml
          */
         void setFree( bool b ) { m_free = b; }
 
-        bool reload() const { return m_reload; }
+        KIO::CacheControl cachePolicy() const { return m_cachePolicy; }
 
         void setRequest(Request *_request);
 
         bool canDelete() const { return (m_clients.count() == 0 && !m_request); }
 
-	void setExpireDate(int _expireDate);
+	void setExpireDate(time_t _expireDate, bool changeHttpCache);
+	
+	bool isExpired() const;
 
         virtual bool schedule() const { return false; }
 
@@ -187,11 +192,12 @@ namespace khtml
 	Type m_type;
 	Status m_status;
 	int m_size;
-	int m_expireDate;
+	time_t m_expireDate;
+	KIO::CacheControl m_cachePolicy;
         bool m_free : 1;
-        bool m_reload : 1;
         bool m_deleted : 1;
         bool m_loading : 1;
+        bool m_expireDateChanged : 1;
     };
 
 
@@ -201,7 +207,7 @@ namespace khtml
     class CachedCSSStyleSheet : public CachedObject
     {
     public:
-	CachedCSSStyleSheet(DocLoader* dl, const DOM::DOMString &url, bool reload, int _expireDate, const QString& charset);
+	CachedCSSStyleSheet(DocLoader* dl, const DOM::DOMString &url, KIO::CacheControl cachePolicy, time_t _expireDate, const QString& charset);
 	CachedCSSStyleSheet(const DOM::DOMString &url, const QString &stylesheet_data);
 	virtual ~CachedCSSStyleSheet();
 
@@ -228,7 +234,7 @@ namespace khtml
     class CachedScript : public CachedObject
     {
     public:
-	CachedScript(DocLoader* dl, const DOM::DOMString &url, bool reload, int _expireDate, const QString& charset);
+	CachedScript(DocLoader* dl, const DOM::DOMString &url, KIO::CacheControl cachePolicy, time_t _expireDate, const QString& charset);
 	CachedScript(const DOM::DOMString &url, const QString &script_data);
 	virtual ~CachedScript();
 
@@ -260,7 +266,7 @@ namespace khtml
     {
 	Q_OBJECT
     public:
-	CachedImage(DocLoader* dl, const DOM::DOMString &url, bool reload, int _expireDate);
+	CachedImage(DocLoader* dl, const DOM::DOMString &url, KIO::CacheControl cachePolicy, time_t _expireDate);
 	virtual ~CachedImage();
 
 	const QPixmap &pixmap() const;
@@ -335,26 +341,28 @@ namespace khtml
         CachedScript *requestScript( const DOM::DOMString &url, const QString& charset);
 
 	bool autoloadImages() const { return m_bautoloadImages; }
-        bool reloading() const { return m_reloading; }
+        KIO::CacheControl cachePolicy() const { return m_cachePolicy; }
         KHTMLSettings::KAnimationAdvice showAnimations() const { return m_showAnimations; }
-        int expireDate() const { return m_expireDate; }
+        time_t expireDate() const { return m_expireDate; }
         KHTMLPart* part() const { return m_part; }
         DOM::DocumentImpl* doc() const { return m_doc; }
 
-        void setExpireDate( int );
+        void setExpireDate( time_t );
         void setAutoloadImages( bool );
-        void setReloading( bool );
+        void setCachePolicy( KIO::CacheControl cachePolicy );
         void setShowAnimations( KHTMLSettings::KAnimationAdvice );
         void removeCachedObject( CachedObject*) const;
 
     private:
+        bool needReload(const KURL &fullUrl);
+
         friend class Cache;
         friend class DOM::DocumentImpl;
 
         QStringList m_reloadedURLs;
         mutable QPtrList<CachedObject> m_docObjects;
-	int m_expireDate;
-	bool m_reloading : 1;
+	time_t m_expireDate;
+	KIO::CacheControl m_cachePolicy;
         bool m_bautoloadImages : 1;
         KHTMLSettings::KAnimationAdvice m_showAnimations : 2;
         KHTMLPart* m_part;
@@ -447,13 +455,13 @@ namespace khtml
          * if the DocLoader is zero, the url must be full-qualified.
          * Otherwise, it is automatically base-url expanded
 	 */
-	static CachedImage *requestImage( DocLoader* l, const DOM::DOMString &url, bool reload=false, int _expireDate=0);
+	static CachedImage *requestImage( DocLoader* l, const DOM::DOMString &url, bool reload=false, time_t _expireDate=0);
 
 	/**
 	 * Ask the cache for some url. Will return a cachedObject, and
 	 * load the requested data in case it's not cached
 	 */
-	static CachedCSSStyleSheet *requestStyleSheet( DocLoader* l, const DOM::DOMString &url, bool reload=false, int _expireDate=0, const QString& charset = QString::null);
+	static CachedCSSStyleSheet *requestStyleSheet( DocLoader* l, const DOM::DOMString &url, bool reload=false, time_t _expireDate=0, const QString& charset = QString::null);
 
         /**
          * Pre-loads a stylesheet into the cache.
@@ -464,7 +472,7 @@ namespace khtml
 	 * Ask the cache for some url. Will return a cachedObject, and
 	 * load the requested data in case it's not cahced
 	 */
-	static CachedScript *requestScript( DocLoader* l, const DOM::DOMString &url, bool reload=false, int _expireDate=0, const QString& charset=QString::null);
+	static CachedScript *requestScript( DocLoader* l, const DOM::DOMString &url, bool reload=false, time_t _expireDate=0, const QString& charset=QString::null);
 
         /**
          * Pre-loads a script into the cache.

@@ -34,121 +34,163 @@
 using namespace DOM;
 using namespace khtml;
 
-// ### make it const if possible...
- struct HTMLColors {
+struct HTMLColors {
     QMap<QString,QColor> map;
-    HTMLColors()
-    {
-        map["black"] = "#000000";
-        map["green"] = "#008000";
-        map["silver"] = "#c0c0c0";
-        map["lime"] = "#00ff00";
-        map["gray"] = "#808080";
-        map["olive"] = "#808000";
-        map["white"] = "#ffffff";
-        map["yellow"] = "#ffff00";
-        map["maroon"] = "#800000";
-        map["navy"] = "#000080";
-        map["red"] = "#ff0000";
-        map["blue"] = "#0000ff";
-        map["purple"] = "#800080";
-        map["teal"] = "#008080";
-        map["fuchsia"] = "#ff00ff";
-        map["aqua"] = "#00ffff";
-	map["crimson"] = "#dc143c";
-	map["indigo"] = "#4b0082";
-        // ### react to style changes
-        // see http://www.richinstyle.com for details
+    HTMLColors();
+};
 
-	/* Mapping system settings to CSS 2
-	 * Tried hard to get an appropriate mapping - schlpbch
-	 */
+struct colorMap {
+    const char * name;
+    const char * value;
+};
 
-	KConfig *globalConfig = KGlobal::config();
-	globalConfig->setGroup("WM");
+static const colorMap cmap[] = {
+   { "black", "#000000" },
+   { "green", "#008000" },
+   { "silver", "#c0c0c0" },
+   { "lime", "#00ff00" },
+   { "gray", "#808080" },
+   { "olive", "#808000" },
+   { "white", "#ffffff" },
+   { "yellow", "#ffff00" },
+   { "maroon", "#800000" },
+   { "navy", "#000080" },
+   { "red", "#ff0000" },
+   { "blue", "#0000ff" },
+   { "purple", "#800080" },
+   { "teal", "#008080" },
+   { "fuchsia", "#ff00ff" },
+   { "aqua", "#00ffff" },
+   { "crimson", "#dc143c" },
+   { "indigo", "#4b0082" },
+   { 0, 0 }
+};
 
-	QColorGroup cg = kapp->palette().active();
-
-	// Active window border.
-        map["activeborder"] = globalConfig->readColorEntry( "background", &cg.light());
-	// Active window caption.
-        map["activecaption"] = globalConfig->readColorEntry( "activeBackground", &cg.text());
-        // Text in caption, size box, and scrollbar arrow box.
-	map["captiontext"] = globalConfig->readColorEntry( "activeForeground", &cg.text());
-
-        cg = kapp->palette().inactive();
-
-	/* Don't know how to deal with buttons correctly */
-
-	// Face color for three-dimensional display elements.
-        map["buttonface"] = cg.button();
-	// Dark shadow for three-dimensional display elements (for edges facing away from the light source).
-        map["buttonhighlight"] = cg.light();
-	// Shadow color for three-dimensional display elements.
-        map["buttonshadow"] = cg.shadow();
-	// Text on push buttons.
-        map["buttontext"] = globalConfig->readColorEntry( "buttonForeground", &cg.buttonText());
-
-	// Dark shadow for three-dimensional display elements.
-        map["threeddarkshadow"] = cg.dark();
-	// Face color for three-dimensional display elements.
-        map["threedface"] = cg.button();
-	// Highlight color for three-dimensional display elements.
-        map["threedhighlight"] = cg.light();
-	// Light color for three-dimensional display elements (for edges facing the light source).
-        map["threedlightshadow"] = cg.midlight();
-	// Dark shadow for three-dimensional display elements.
-        map["threedshadow"] = cg.shadow();
-
-	// InfoBackground
-#ifndef QT_NO_TOOLTIP
-        map["infobackground"] = QToolTip::palette().inactive().background();
-	// InfoText
-        map["infotext"] = QToolTip::palette().inactive().foreground();
+struct uiColors {
+#ifdef APPLE_CHANGES
+    const char * name;
+    const char * configGroup;
+    const char * configEntry;
+    QPalette::ColorGroup group;
+    QColorGroup::ColorRole role;
+#else
+    const char * const name;
+    const char * const configGroup;
+    const char * const configEntry;
+    const QPalette::ColorGroup group;
+    const QColorGroup::ColorRole role;
 #endif
+};
 
-	globalConfig->setGroup("General");
+const char * const wmgroup = "WM";
+const char * const generalgroup = "General";
+
+static const uiColors uimap[] = {
+	// Active window border.
+    { "activeborder", wmgroup, "background", QPalette::Active, QColorGroup::Light },
+	// Active window caption.
+    { "activecaption", wmgroup, "background", QPalette::Active, QColorGroup::Text },
+        // Text in caption, size box, and scrollbar arrow box.
+    { "captiontext", wmgroup, "activeForeground", QPalette::Active, QColorGroup::Text },
+	// Face color for three-dimensional display elements.
+    { "buttonface", wmgroup, 0, QPalette::Inactive, QColorGroup::Button },
+	// Dark shadow for three-dimensional display elements (for edges facing away from the light source).
+    { "buttonhighlight", wmgroup, 0, QPalette::Inactive, QColorGroup::Light },
+	// Shadow color for three-dimensional display elements.
+    { "buttonshadow", wmgroup, 0, QPalette::Inactive, QColorGroup::Shadow },
+	// Text on push buttons.
+    { "buttontext", wmgroup, "buttonForeground", QPalette::Inactive, QColorGroup::ButtonText },
+	// Dark shadow for three-dimensional display elements.
+    { "threeddarkshadow", wmgroup, 0, QPalette::Inactive, QColorGroup::Dark },
+	// Face color for three-dimensional display elements.
+    { "threedface", wmgroup, 0, QPalette::Inactive, QColorGroup::Button },
+	// Highlight color for three-dimensional display elements.
+    { "threedhighlight", wmgroup, 0, QPalette::Inactive, QColorGroup::Light },
+	// Light color for three-dimensional display elements (for edges facing the light source).
+    { "threedlightshadow", wmgroup, 0, QPalette::Inactive, QColorGroup::Midlight },
+	// Dark shadow for three-dimensional display elements.
+    { "threedshadow", wmgroup, 0, QPalette::Inactive, QColorGroup::Shadow },
+
+    // Inactive window border.
+    { "inactiveborder", wmgroup, "background", QPalette::Disabled, QColorGroup::Background },
+    // Inactive window caption.
+    { "inactivecaption", wmgroup, "inactiveBackground", QPalette::Disabled, QColorGroup::Background },
+    // Color of text in an inactive caption.
+    { "inactivecaptiontext", wmgroup, "inactiveForeground", QPalette::Disabled, QColorGroup::Text },
+    { "graytext", wmgroup, 0, QPalette::Disabled, QColorGroup::Text },
+
 	// Menu background
-        map["menu"] = globalConfig->readColorEntry( "background", &cg.background());
+    { "menu", generalgroup, "background", QPalette::Inactive, QColorGroup::Background },
 	// Text in menus
-        map["menutext"] = globalConfig->readColorEntry( "foreground", &cg.background());
+    { "menutext", generalgroup, "foreground", QPalette::Inactive, QColorGroup::Background },
 
-	// Item(s) selected in a control.
-        map["highlight"] = globalConfig->readColorEntry( "selectBackground", &cg.highlight());
         // Text of item(s) selected in a control.
-	map["highlighttext"] = globalConfig->readColorEntry( "selectForeground", &cg.highlightedText());
+    { "highlight", generalgroup, "selectBackground", QPalette::Inactive, QColorGroup::Background },
+
+    // Text of item(s) selected in a control.
+    { "highlighttext", generalgroup, "selectForeground", QPalette::Inactive, QColorGroup::Background },
 
 	// Background color of multiple document interface.
-        map["appworkspace"] = globalConfig->readColorEntry( "background", &cg.text());
+    { "appworkspace", generalgroup, "background", QPalette::Inactive, QColorGroup::Text },
 
 	// Scroll bar gray area.
-        map["scrollbar"] = globalConfig->readColorEntry( "background", &cg.background());
+    { "scrollbar", generalgroup, "background", QPalette::Inactive, QColorGroup::Background },
 
 	// Window background.
-        map["window"] = globalConfig->readColorEntry( "windowBackground", &cg.background());
+    { "window", generalgroup, "windowBackground", QPalette::Inactive, QColorGroup::Background },
 	// Window frame.
-        map["windowframe"] = globalConfig->readColorEntry( "windowBackground",&cg.background());
+    { "windowframe", generalgroup, "windowBackground", QPalette::Inactive, QColorGroup::Background },
         // WindowText
-	map["windowtext"] = globalConfig->readColorEntry( "windowForeground", &cg.text());
-        map["text"] = cg.text();
-
-        cg = kapp->palette().disabled();
-	globalConfig->setGroup("WM");
-	// Inactive window border.
-        map["inactiveborder"] = globalConfig->readColorEntry( "background", &cg.background());
-	// Inactive window caption.
-        map["inactivecaption"] = globalConfig->readColorEntry( "inactiveBackground", &cg.background());
-	// Color of text in an inactive caption.
-        map["inactivecaptiontext"] = globalConfig->readColorEntry( "inactiveForeground", &cg.text());
-        map["graytext"] = cg.text();
-
-	KConfig *bckgrConfig = new KConfig("kdesktoprc", true, false); // No multi-screen support
-	bckgrConfig->setGroup("Desktop0");
-        // Desktop background.
-	map["background"] = bckgrConfig->readColorEntry("Color1", &cg.background());
-	delete bckgrConfig;
-    };
+    { "windowtext", generalgroup, "windowForeground", QPalette::Inactive, QColorGroup::Text },
+    { "text", generalgroup, 0, QPalette::Inactive, QColorGroup::Text },
+    { 0, 0, 0, QPalette::NColorGroups, QColorGroup::NColorRoles }
 };
+
+HTMLColors::HTMLColors()
+{
+    const colorMap *color = cmap;
+    while ( color->name ) {
+	map[color->name] = color->value;
+	++color;
+    }
+    // ### react to style changes
+    // see http://www.richinstyle.com for details
+
+    /* Mapping system settings to CSS 2
+     * Tried hard to get an appropriate mapping - schlpbch
+     */
+
+    KConfig *globalConfig = KGlobal::config();
+    const QPalette &pal = kapp->palette();
+
+    const uiColors *uicol = uimap;
+    const char *lastConfigGroup = 0;
+    while( uicol->name ) {
+	if ( lastConfigGroup != uicol->configGroup ) {
+	    lastConfigGroup = uicol->configGroup;
+	    globalConfig->setGroup( lastConfigGroup );
+	}
+	QColor c = pal.color( uicol->group, uicol->role );
+	if ( uicol->configEntry )
+	    c = globalConfig->readColorEntry( uicol->configEntry, &c );
+	map[uicol->name] = c;
+	++uicol;
+    }
+
+#ifndef QT_NO_TOOLTIP
+    // InfoBackground
+    map["infobackground"] = QToolTip::palette().inactive().background();
+    // InfoText
+    map["infotext"] = QToolTip::palette().inactive().foreground();
+#endif
+
+    KConfig bckgrConfig("kdesktoprc", true, false); // No multi-screen support
+    bckgrConfig.setGroup("Desktop0");
+        // Desktop background.
+    map["background"] = bckgrConfig.readColorEntry("Color1", &pal.disabled().background());
+};
+
+
 
 static HTMLColors *htmlColors = 0L;
 

@@ -55,16 +55,18 @@ HTMLDocument::HTMLDocument(HTMLDocumentImpl *impl) : Document(impl)
 
 HTMLDocument &HTMLDocument::operator = (const Node &other)
 {
-    if(other.nodeType() != DOCUMENT_NODE)
-    {
+    if(other.nodeType() != DOCUMENT_NODE) {
+	if ( impl ) impl->deref();
 	impl = 0;
-	return *this;
-    }
-    Document d(other);
-    if(!d.isHTMLDocument())
+    } else {
+	DocumentImpl *d = static_cast<DocumentImpl *>(other.handle());
+	if(!d->isHTMLDocument()) {
+	    if ( impl ) impl->deref();
 	impl = 0;
-    else
+	} else {
 	Node::operator =(other);
+	}
+    }
     return *this;
 }
 

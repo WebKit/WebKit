@@ -369,7 +369,8 @@ Value GlobalFuncImp::call(ExecState *exec, Object &/*thisObj*/, const List &args
 				   "abcdefghijklmnopqrstuvwxyz"
 				   "0123456789@*_+-./";
 
-  if (id == Eval) { // eval()
+  switch (id) {
+  case Eval: { // eval()
     Value x = args[0];
     if (x.type() != StringType)
       return x;
@@ -422,10 +423,13 @@ Value GlobalFuncImp::call(ExecState *exec, Object &/*thisObj*/, const List &args
 	      return c.value();
 	  else
 	      return Undefined();
-      } else
+      } else {
 	  return c;
+      }
     }
-  } else if (id == ParseInt) {
+    break;
+  }
+  case ParseInt: {
     String str = args[0].toString(exec);
     int radix = args[1].toInt32(exec);
     if (radix == 0)
@@ -441,15 +445,22 @@ Value GlobalFuncImp::call(ExecState *exec, Object &/*thisObj*/, const List &args
         res = Number(NaN);
     else
         res = Number(static_cast<long>(value)); // remove floating-point part
-  } else if (id == ParseFloat) {
+    break;
+  }
+  case ParseFloat: {
     String str = args[0].toString(exec);
     res = Number(str.value().toDouble( true /*tolerant*/ ));
-  } else if (id == IsNaN) {
+    break;
+  }
+  case IsNaN:
     res = Boolean(isNaN(args[0].toNumber(exec)));
-  } else if (id == IsFinite) {
+    break;
+  case IsFinite: {
     Number n = args[0].toNumber(exec);
     res = Boolean(!n.isNaN() && !n.isInf());
-  } else if (id == Escape) {
+    break;
+  }
+  case Escape: {
     UString r = "", s, str = args[0].toString(exec);
     const UChar *c = str.data();
     for (int k = 0; k < str.size(); k++, c++) {
@@ -468,7 +479,9 @@ Value GlobalFuncImp::call(ExecState *exec, Object &/*thisObj*/, const List &args
       r += s;
     }
     res = String(r);
-  } else if (id == UnEscape) {
+    break;
+  }
+  case UnEscape: {
     UString s, str = args[0].toString(exec);
     int k = 0, len = str.size();
     while (k < len) {
@@ -488,6 +501,8 @@ Value GlobalFuncImp::call(ExecState *exec, Object &/*thisObj*/, const List &args
       s += UString(c, 1);
     }
     res = String(s);
+    break;
+  }
   }
 
   return res;

@@ -105,7 +105,7 @@ public:
     m_job = 0L;
     m_bComplete = true;
     m_bLoadEventEmitted = true;
-    m_bReloading = false;
+    m_cachePolicy = KIO::CC_Verify;
     m_manager = 0L;
     m_settings = new KHTMLSettings(*KHTMLFactory::defaultHTMLSettings());
     m_bClearing = false;
@@ -254,13 +254,14 @@ public:
 
   bool m_bComplete:1;
   bool m_bLoadEventEmitted:1;
-  bool m_bReloading:1;
   bool m_haveEncoding:1;
   bool m_bHTTPRefresh:1;
   bool m_onlyLocalReferences :1;
+  bool m_redirectLockHistory:1;
 
   KURL m_workingURL;
 
+  KIO::CacheControl m_cachePolicy;
   QTimer m_redirectionTimer;
   QTime m_parsetime;
   int m_delayRedirect;

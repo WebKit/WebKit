@@ -21,9 +21,6 @@
  */
 
 #include <stdio.h>
-#if !APPLE_CHANGES
-#include <iostream.h>
-#endif
 
 #include "value.h"
 #include "object.h"

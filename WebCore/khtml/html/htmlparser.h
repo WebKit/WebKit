@@ -82,8 +82,6 @@ public:
      */
     void reset();
 
-    bool parsingBody() const { return inBody; }
-
     bool skipMode() const { return (discard_until != 0); }
     bool noSpaces() const { return (!_inline  || !inBody); }
     bool selectMode() const { return inSelect; }
@@ -152,16 +150,14 @@ protected:
     void startBody();
 
     bool inBody;
-    // in case we haven't found an explicit body element up to now, this is true.
-    // needed for broken HTML as: <center><frameset>... as the center element creates an implicit body
-    bool noRealBody;
+    bool haveContent;
     bool haveFrameSet;
     bool _inline;
     bool end;
     bool flat;
     bool haveKonqBlock;
     bool inSelect;
-    
+
     /*
      * tells the parser to discard all tags, until it reaches the one specified
      */

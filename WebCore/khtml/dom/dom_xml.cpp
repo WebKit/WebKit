@@ -39,11 +39,14 @@ CDATASection::CDATASection(const CDATASection &) : Text()
 CDATASection &CDATASection::operator = (const Node &other)
 {
     NodeImpl* ohandle = other.handle();
+    if ( impl != ohandle ) {
     if (!ohandle || ohandle->nodeType() != CDATA_SECTION_NODE) {
+	    if ( impl ) impl->deref();
 	impl = 0;
-	return *this;
-    }
+	} else {
     Node::operator =(other);
+	}
+    }
     return *this;
 }
 
@@ -73,11 +76,14 @@ Entity::Entity(const Entity &) : Node()
 Entity &Entity::operator = (const Node &other)
 {
     NodeImpl* ohandle = other.handle();
+    if ( impl != ohandle ) {
     if (!ohandle || ohandle->nodeType() != ENTITY_NODE) {
+	    if ( impl ) impl->deref();
 	impl = 0;
-	return *this;
-    }
+	} else {
     Node::operator =(other);
+	}
+    }
     return *this;
 }
 
@@ -132,11 +138,14 @@ EntityReference::EntityReference(const EntityReference &) : Node()
 EntityReference &EntityReference::operator = (const Node &other)
 {
     NodeImpl* ohandle = other.handle();
+    if ( impl != ohandle ) {
     if (!ohandle || ohandle->nodeType() != ENTITY_REFERENCE_NODE) {
+	    if ( impl ) impl->deref();
 	impl = 0;
-	return *this;
-    }
+	} else {
     Node::operator =(other);
+	}
+    }
     return *this;
 }
 
@@ -167,11 +176,14 @@ Notation::Notation(const Notation &) : Node()
 Notation &Notation::operator = (const Node &other)
 {
     NodeImpl* ohandle = other.handle();
+    if ( impl != ohandle ) {
     if (!ohandle || ohandle->nodeType() != NOTATION_NODE) {
+	    if ( impl ) impl->deref();
 	impl = 0;
-	return *this;
-    }
+	} else {
     Node::operator =(other);
+	}
+    }
     return *this;
 }
 
@@ -220,11 +232,14 @@ ProcessingInstruction::ProcessingInstruction(const ProcessingInstruction &)
 ProcessingInstruction &ProcessingInstruction::operator = (const Node &other)
 {
     NodeImpl* ohandle = other.handle();
+    if ( impl != ohandle ) {
     if (!ohandle || ohandle->nodeType() != PROCESSING_INSTRUCTION_NODE) {
+	    if ( impl ) impl->deref();
 	impl = 0;
-	return *this;
-    }
+	} else {
     Node::operator =(other);
+	}
+    }
     return *this;
 }
 

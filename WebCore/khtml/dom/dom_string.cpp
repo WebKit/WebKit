@@ -78,9 +78,11 @@ DOMString::~DOMString()
 
 DOMString &DOMString::operator =(const DOMString &other)
 {
+    if ( impl != other.impl ) {
     if(impl) impl->deref();
     impl = other.impl;
     if(impl) impl->ref();
+    }
     return *this;
 }
 
@@ -203,7 +205,7 @@ QChar *DOMString::unicode() const
 
 QString DOMString::string() const
 {
-    if(!impl) return QConstString(0, 0).string();
+    if(!impl) return QString::null;
 
     return QConstString(impl->s, impl->l).string();
 }
@@ -256,8 +258,7 @@ bool DOM::strcasecmp( const DOMString &as, const char* bs )
 
 bool DOMString::isEmpty() const
 {
-    if (impl == 0) return true;
-    return (impl->l == 0);
+    return (!impl || impl->l == 0);
 }
 
 //-----------------------------------------------------------------------------

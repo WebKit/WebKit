@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,7 +28,7 @@
 
 #include <CoreFoundation/CoreFoundation.h>
 
-#include "qcstring.h"
+#include <qcstring.h>
 
 // Make htmltokenizer.cpp happy
 #define QT_VERSION 300
@@ -47,15 +47,8 @@ class QRegExp;
 class NSString;
 #endif
 
-// QChar class =================================================================
-
 class QChar {
 public:
-
-    // typedefs ----------------------------------------------------------------
-
-    // enums -------------------------------------------------------------------
-
     enum Direction {
         // NOTE: alphabetical order
         //DirAL, DirAN, DirB, DirBN, DirCS, DirEN, DirES, DirET, DirL, DirLRE,
@@ -67,13 +60,7 @@ public:
         DirLRE, DirLRO, DirAL, DirRLE, DirRLO, DirPDF, DirNSM, DirBN
     };
 
-    // constants ---------------------------------------------------------------
-
     static const QChar null;
-
-    // static member functions -------------------------------------------------
-
-    // constructors, copy constructors, and destructors ------------------------
 
     QChar();
     QChar(char);
@@ -82,8 +69,6 @@ public:
     QChar(ushort);
     QChar(int);
     QChar(uint);
-
-    // member functions --------------------------------------------------------
 
     ushort unicode() const;
     uchar cell() const;
@@ -102,8 +87,6 @@ public:
     Direction direction() const;
     bool mirrored() const;
     QChar mirroredChar() const;
-
-    // operators ---------------------------------------------------------------
 
     operator char() const;
 
@@ -131,20 +114,13 @@ public:
     friend bool operator<=(QChar, char);
     friend bool operator<=(char, QChar);
 
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
-    
 private:
-    // data members ------------------------------------------------------------
-
     UniChar c;
-
-    // friends -----------------------------------------------------------------
 
     friend class QString;
     friend class QConstString;
 
-}; // class QChar ==============================================================
+};
 
 inline QChar::QChar() : c(0)
 {
@@ -294,35 +270,9 @@ inline bool operator<(char ch, QChar qc)
     return (uchar) ch < qc.c;
 }
 
-// QString class ===============================================================
-
 class QString {
 public:
-
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-
     static const QString null;
-
-    // static member functions -------------------------------------------------
-
-    static QString number(int /* NOTE: base NOT used */ );
-    static QString number(uint /* NOTE: base NOT used */ );
-    static QString number(long /* NOTE: base NOT used */ );
-    static QString number(ulong /* NOTE: base NOT used */ );
-    static QString number(double);
-
-    static QString fromLatin1(const char * /* NOTE: len NOT used */ );
-    static QString fromStringWithEncoding(const char *, int, CFStringEncoding);
-    static QString fromCFMutableString(CFMutableStringRef);
-    static QString fromCFString(CFStringRef);
-    static QString fromNSString(NSString *);
-    
-    static QString gstring_toQString(CFMutableStringRef *ref, UniChar *uchars, int len);
-    static CFMutableStringRef gstring_toCFString(CFMutableStringRef *ref, UniChar *uchars, int len);
-
-    // constructors, copy constructors, and destructors ------------------------
 
     QString();
     QString(QChar);
@@ -335,15 +285,20 @@ public:
 
     ~QString();
 
-    // assignment operators ----------------------------------------------------
+    static QString fromLatin1(const char * /* NOTE: len NOT used */ );
+    static QString fromStringWithEncoding(const char *, int, CFStringEncoding);
+    static QString fromCFMutableString(CFMutableStringRef);
+    static QString fromCFString(CFStringRef);
+    static QString fromNSString(NSString *);
+    
+    static QString gstring_toQString(CFMutableStringRef *ref, UniChar *uchars, int len);
+    static CFMutableStringRef gstring_toCFString(CFMutableStringRef *ref, UniChar *uchars, int len);
 
     QString &operator=(const QString &);
     QString &operator=(const QCString &);
     QString &operator=(const char *);
     QString &operator=(QChar);
     QString &operator=(char);
-
-    // member functions --------------------------------------------------------
 
     uint length() const;
 
@@ -390,20 +345,25 @@ public:
     float toFloat(bool *ok=NULL) const;
     double toDouble(bool *ok=NULL) const;
 
+    static QString number(int);
+    static QString number(uint);
+    static QString number(long);
+    static QString number(ulong);
+    static QString number(double);
+
     QString arg(const QString &, int width=0) const;
-    QString arg(short, int width=0 /* NOTE: base NOT used */ ) const;
-    QString arg(ushort, int width=0 /* NOTE: base NOT used */ ) const;
-    QString arg(int, int width=0 /* NOTE: base NOT used */ ) const;
-    QString arg(uint, int width=0 /* NOTE: base NOT used */ ) const;
-    QString arg(long, int width=0 /* NOTE: base NOT used */ ) const;
-    QString arg(ulong, int width=0 /* NOTE: base NOT used */ ) const;
+    QString arg(short, int width=0) const;
+    QString arg(ushort, int width=0) const;
+    QString arg(int, int width=0) const;
+    QString arg(uint, int width=0) const;
+    QString arg(long, int width=0) const;
+    QString arg(ulong, int width=0) const;
     QString arg(double, int width=0) const;
 
     QString left(uint) const;
     QString right(uint) const;
     QString mid(uint, uint len=0xffffffff) const;
 
-    // NOTE: copy is simple enough to keep for completeness
     QString copy() const;
 
     QString lower() const;
@@ -413,12 +373,12 @@ public:
     QString &setUnicode(const QChar *, uint);
     QString &setLatin1(const char *);
 
-    QString &setNum(short /* NOTE: base NOT used */ );
-    QString &setNum(ushort /* NOTE: base NOT used */ );
-    QString &setNum(int /* NOTE: base NOT used */ );
-    QString &setNum(uint /* NOTE: base NOT used */ );
-    QString &setNum(long /* NOTE: base NOT used */ );
-    QString &setNum(ulong /* NOTE: base NOT used */ );
+    QString &setNum(short);
+    QString &setNum(ushort);
+    QString &setNum(int);
+    QString &setNum(uint);
+    QString &setNum(long);
+    QString &setNum(ulong);
     QString &setNum(double);
 
     QString &sprintf(const char *, ...);
@@ -440,8 +400,6 @@ public:
     CFMutableStringRef getCFMutableString() const;
     NSString *getNSString() const;
 
-    // operators ---------------------------------------------------------------
-
     bool operator!() const;
 
     operator const char *() const;
@@ -452,16 +410,8 @@ public:
     QString &operator+=(QChar);
     QString &operator+=(char);
 
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
-
 private:
-
-    // private enums -----------------------------------------------------------
-
     enum CacheType { CacheInvalid, CacheUnicode, CacheLatin1 };
-
-    // private member functions ------------------------------------------------
 
     void flushCache() const;
     QCString convertToQCString(CFStringEncoding) const;
@@ -469,12 +419,8 @@ private:
     QString leftRight(uint width, bool left) const;
     int compareToLatin1(const char *chs) const;
 
-    // data members ------------------------------------------------------------
-
     CFMutableStringRef s;
     mutable void *cache;
-
-    // friends -----------------------------------------------------------------
 
     friend bool operator==(const QString &, const QString &);
     friend bool operator==(const QString &, const char *);
@@ -505,10 +451,7 @@ private:
 
     void _copyIfNeededInternalString();
 
-}; // class QString ============================================================
-
-
-// operators associated with QString ===========================================
+};
 
 QString operator+(const QString &, const QString &);
 QString operator+(const QString &, const char *);
@@ -663,14 +606,10 @@ inline bool operator>=(const char *chs, const QString &qs)
     return qs.compareToLatin1(chs) <= 0;
 }
 
-// class QConstString ==========================================================
-
 class QConstString : private QString {
 public:
-
-    QConstString(QChar *, uint);
+    QConstString(const QChar *, uint);
     const QString &string() const { return *this; }
-
-}; // class QConstString =======================================================
+};
 
 #endif

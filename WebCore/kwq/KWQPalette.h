@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,49 +26,32 @@
 #ifndef QPALETTE_H_
 #define QPALETTE_H_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
 #include <qcolor.h>
 #include <qbrush.h>
 
 class QColorGroupPrivate;
 class QPalettePrivate;
 
-// class QColorGroup ===========================================================
-
 class QColorGroup {
 public:
-
-    // typedefs ----------------------------------------------------------------
-
     enum ColorRole { 
-        Foreground = 0, 
-        Shadow = 1, 
-        Light = 2, 
-        Midlight = 3, 
-        Mid = 4, 
-        Dark = 5, 
-        Base = 6, 
-        ButtonText = 7, 
-        Button = 8, 
-        Background = 9, 
-        Text = 10,
-        Highlight = 11,
-        HighlightedText = 12
+        Foreground, 
+        Shadow, 
+        Light, 
+        Midlight, 
+        Mid, 
+        Dark, 
+        Base, 
+        ButtonText, 
+        Button, 
+        Background, 
+        Text,
+        Highlight,
+        HighlightedText,
+        NColorRoles
     };
 
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-    // static member functions -------------------------------------------------
-    // constructors, copy constructors, and destructors ------------------------
-
     QColorGroup();
-    QColorGroup(const QColorGroup &);
-    ~QColorGroup();
-
-    // member functions --------------------------------------------------------
 
     const QBrush &brush(ColorRole) const;
 
@@ -88,65 +71,36 @@ public:
     const QColor &highlight() const;
     const QColor &highlightedText() const;
 
-    // operators ---------------------------------------------------------------
+    bool operator==(const QColorGroup &) const;
 
-    QColorGroup &operator=(const QColorGroup &);
-
-    bool operator==(const QColorGroup &);
-
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
 private:
-    QColorGroupPrivate *d;
+    QBrush brushes[NColorRoles];
+};
 
-}; // class QColorGroup ========================================================
-
-
-// class QPalette ==============================================================
 
 class QPalette {
 public:
-
-    // typedefs ----------------------------------------------------------------
- 
-    // enums -------------------------------------------------------------------
-
     enum ColorGroup { 
-        Active = 0, 
-        Inactive = 1, 
-        Disabled = 2, 
+        Active, 
+        Inactive, 
+        Disabled,
+        NColorGroups
     };
 
-    // constants ---------------------------------------------------------------
-    // static member functions -------------------------------------------------
-    
-    // constructors, copy constructors, and destructors ------------------------
+    const QColor &color(ColorGroup, QColorGroup::ColorRole) const;
+    void setColor(ColorGroup, QColorGroup::ColorRole, const QColor &);
 
-    QPalette();
-    QPalette(const QPalette &);
-    ~QPalette();
-
-    // member functions --------------------------------------------------------
-
-    void setColor(ColorGroup, QColorGroup::ColorRole role, const QColor &color);
-
-    const QColorGroup &active() const;
-    const QColorGroup &inactive() const;
-    const QColorGroup &disabled() const;
-    const QColorGroup &normal() const;
-
-    // operators ---------------------------------------------------------------
-
-    QPalette &operator=(const QPalette &);
+    const QColorGroup &active() const { return m_active; }
+    const QColorGroup &inactive() const { return m_inactive; }
+    const QColorGroup &disabled() const { return m_disabled; }
+    const QColorGroup &normal() const { return m_active; }
 
     bool operator==(const QPalette &) const;
 
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
-
 private:
-    QPalettePrivate *d;
-
-}; // class QPalette ===========================================================
+    QColorGroup m_active;  
+    QColorGroup m_inactive;  
+    QColorGroup m_disabled;  
+};
 
 #endif

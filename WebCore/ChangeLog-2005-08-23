@@ -1,3 +1,133 @@
+2002-06-10  Darin Adler  <darin@apple.com>
+
+	Merged in changes from KDE 3.0.1.
+
+	* kwq/kdecore/kurl.h:
+	* kwq/KWQKURL.mm: (operator==): New, needed by some 3.0.1 code.
+
+	* kwq/qt/qpalette.h: Add QPalette::NColorGroups and QColorGroup::NColorRoles.
+	* kwq/KWQPalette.mm: Simplify by getting rid of "private" indirection.
+	(QPalette::color): New, needed by some 3.0.1 code.
+	* kwq/KWQColorGroup.mm: Simplify by getting rid of "private" indirection.
+
+	* kwq/qt/qstring.h:
+	* kwq/KWQString.mm: (QConstString::QConstString): Change parameter to const QChar *
+	to match Qt so we compile.
+
+	* kwq/qt/qtextedit.h:
+	* kwq/KWQTextEdit.mm: (QTextEdit::setTabStopWidth): Add unimplemented placeholder,
+	needed by some 3.0.1 code.
+
+	* kwq/qt/qvaluelist.h:
+	* kwq/KWQValueListImpl.h:
+	* kwq/KWQValueListImpl.mm: Simplify implementation.
+
+	* WebCore-tests.exp: Update for changes in QValueList implementation.
+
+	* kwq/kdecore/klibloader.h: Add include of <kio/global.h> to make something compile.
+
+	* kwq/khtml/java/kjavaappletcontext.h: Add JType and constructor that takes DCOPObject*.
+
+	* kwq/kio/global.h: Add KIO::CacheControl.
+
+	* khtml/css/css_ruleimpl.cpp:
+	* khtml/css/css_ruleimpl.h:
+	* khtml/css/css_stylesheetimpl.cpp:
+	* khtml/css/css_stylesheetimpl.h:
+	* khtml/css/css_valueimpl.cpp:
+	* khtml/css/css_valueimpl.h:
+	* khtml/css/cssparser.cpp:
+	* khtml/css/cssparser.h:
+	* khtml/css/cssstyleselector.cpp:
+	* khtml/css/cssstyleselector.h:
+	* khtml/css/html4.css:
+	* khtml/dom/css_rule.cpp:
+	* khtml/dom/css_rule.h:
+	* khtml/dom/css_stylesheet.cpp:
+	* khtml/dom/css_stylesheet.h:
+	* khtml/dom/css_value.cpp:
+	* khtml/dom/dom2_events.cpp:
+	* khtml/dom/dom2_range.cpp:
+	* khtml/dom/dom2_range.h:
+	* khtml/dom/dom2_views.cpp:
+	* khtml/dom/dom_doc.cpp:
+	* khtml/dom/dom_element.cpp:
+	* khtml/dom/dom_exception.h:
+	* khtml/dom/dom_node.cpp:
+	* khtml/dom/dom_string.cpp:
+	* khtml/dom/dom_text.cpp:
+	* khtml/dom/dom_xml.cpp:
+	* khtml/dom/html_base.cpp:
+	* khtml/dom/html_block.cpp:
+	* khtml/dom/html_document.cpp:
+	* khtml/dom/html_element.cpp:
+	* khtml/dom/html_element.h:
+	* khtml/dom/html_form.cpp:
+	* khtml/dom/html_head.cpp:
+	* khtml/dom/html_image.cpp:
+	* khtml/dom/html_inline.cpp:
+	* khtml/dom/html_list.cpp:
+	* khtml/dom/html_misc.cpp:
+	* khtml/dom/html_object.cpp:
+	* khtml/dom/html_table.cpp:
+	* khtml/ecma/kjs_html.cpp:
+	* khtml/ecma/kjs_proxy.cpp:
+	* khtml/ecma/kjs_traversal.cpp:
+	* khtml/ecma/kjs_window.cpp:
+	* khtml/html/html_baseimpl.cpp:
+	* khtml/html/html_formimpl.cpp:
+	* khtml/html/html_miscimpl.h:
+	* khtml/html/html_objectimpl.cpp:
+	* khtml/html/html_objectimpl.h:
+	* khtml/html/htmlparser.cpp:
+	* khtml/html/htmlparser.h:
+	* khtml/html/htmltokenizer.cpp:
+	* khtml/html/htmltokenizer.h:
+	* khtml/khtml_part.cpp:
+	* khtml/khtmlpart_p.h:
+	* khtml/khtmlview.cpp:
+	* khtml/misc/helper.cpp:
+	* khtml/misc/khtmllayout.h:
+	* khtml/misc/loader.cpp:
+	* khtml/misc/loader.h:
+	* khtml/misc/loader_client.h:
+	* khtml/misc/shared.h: Added.
+	* khtml/rendering/bidi.cpp:
+	* khtml/rendering/break_lines.cpp:
+	* khtml/rendering/font.cpp:
+	* khtml/rendering/render_applet.cpp:
+	* khtml/rendering/render_applet.h:
+	* khtml/rendering/render_container.cpp:
+	* khtml/rendering/render_form.cpp:
+	* khtml/rendering/render_form.h:
+	* khtml/rendering/render_frames.cpp:
+	* khtml/rendering/render_image.cpp:
+	* khtml/rendering/render_object.cpp:
+	* khtml/rendering/render_object.h:
+	* khtml/rendering/render_replaced.cpp:
+	* khtml/rendering/render_replaced.h:
+	* khtml/rendering/render_root.cpp:
+	* khtml/rendering/render_style.cpp:
+	* khtml/rendering/render_style.h:
+	* khtml/rendering/render_table.cpp:
+	* khtml/rendering/render_table.h:
+	* khtml/rendering/render_text.cpp:
+	* khtml/rendering/render_text.h:
+	* khtml/xml/dom2_eventsimpl.h:
+	* khtml/xml/dom2_rangeimpl.h:
+	* khtml/xml/dom2_traversalimpl.cpp:
+	* khtml/xml/dom2_traversalimpl.h:
+	* khtml/xml/dom2_viewsimpl.h:
+	* khtml/xml/dom_docimpl.cpp:
+	* khtml/xml/dom_docimpl.h:
+	* khtml/xml/dom_elementimpl.h:
+	* khtml/xml/dom_nodeimpl.cpp:
+	* khtml/xml/dom_nodeimpl.h:
+	* khtml/xml/dom_stringimpl.cpp:
+	* khtml/xml/dom_stringimpl.h:
+	* khtml/xml/xml_tokenizer.h:
+	Merge in 3.0.1 changes and add APPLE_CHANGES as necessary to get it to compile.
+
 2002-06-07  Darin Adler  <darin@apple.com>
 
 	* Makefile.am: Use new shared "embed.am" file so we don't need four copies of

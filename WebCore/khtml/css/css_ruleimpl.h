@@ -26,6 +26,7 @@
 #include "dom/css_rule.h"
 #include "css/cssparser.h"
 #include "misc/loader_client.h"
+#include "misc/shared.h"
 
 namespace khtml {
     class CachedCSSStyleSheet;
@@ -211,7 +212,7 @@ public:
 };
 
 
-class CSSRuleListImpl : public DomShared
+class CSSRuleListImpl : public khtml::Shared<CSSRuleListImpl>
 {
 public:
     CSSRuleListImpl();

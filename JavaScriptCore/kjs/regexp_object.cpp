@@ -92,12 +92,16 @@ Value RegExpProtoFuncImp::call(ExecState *exec, Object &thisObj, const List &arg
       i = 0;
     if (i < 0 || i > length) {
       thisObj.put(exec,"lastIndex", Number(0), DontDelete | DontEnum);
-      return Null();
+      if (id == Test)
+        return Boolean(false);
+      else
+        Null();
     }
     RegExpObjectImp* regExpObj = static_cast<RegExpObjectImp*>(exec->interpreter()->builtinRegExp().imp());
     int **ovector = regExpObj->registerRegexp( re, s.value() );
 
     str = re->match(s.value(), i, 0L, ovector);
+    regExpObj->setSubPatterns(re->subPatterns());
 
     if (id == Test)
       return Boolean(!str.isNull());
@@ -159,15 +163,13 @@ RegExpObjectImp::RegExpObjectImp(ExecState *exec,
 
 RegExpObjectImp::~RegExpObjectImp()
 {
-  if (lastOvector)
-    delete [] lastOvector;
+  delete [] lastOvector;
 }
 
 int **RegExpObjectImp::registerRegexp( const RegExp* re, const UString& s )
 {
   lastString = s;
-  if (lastOvector)
-    delete [] lastOvector;
+  delete [] lastOvector;
   lastOvector = 0;
   lastNrSubPatterns = re->subPatterns();
   return &lastOvector;

@@ -31,8 +31,8 @@ bool isBreakable( const QChar *s, int pos, int )
 #endif    
 {
     const QChar *c = s+pos;
-    char ch = c->latin1();
-    if ( !ch ) {
+    unsigned short ch = c->unicode();
+    if ( ch > 0xff ) {
 	// not latin1, need to do more sophisticated checks for asian fonts
 	unsigned char row = c->row();
 	if ( row == 0x0e ) {
@@ -65,12 +65,12 @@ bool isBreakable( const QChar *s, int pos, int )
 	    } else 
 		return false;
 	}
-	if ( row < 0x11 ) // no asian font
-	    return false;
 	if ( row > 0x2d && row < 0xfb || row == 0x11 )
 	    // asian line breaking. Everywhere allowed except directly
 	    // in front of a punctuation character.
 	    return true;
+	else // no asian font
+	    return c->isSpace();
     } else {
 	if ( ch == ' ' || ch == '\n' )
 	    return true;

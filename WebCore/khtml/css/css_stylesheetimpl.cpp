@@ -78,12 +78,6 @@ StyleSheetImpl::~StyleSheetImpl()
     }
 }
 
-bool StyleSheetImpl::deleteMe()
-{
-    if(!m_parent && _ref <= 0) return true;
-    return false;
-}
-
 bool StyleSheetImpl::disabled() const
 {
     return m_disabled;

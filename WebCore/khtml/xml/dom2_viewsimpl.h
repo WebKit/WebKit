@@ -25,6 +25,7 @@
 
 #include "dom/dom_misc.h"
 #include "css/css_valueimpl.h"
+#include "misc/shared.h"
 
 namespace DOM {
 
@@ -34,7 +35,7 @@ class ElementImpl;
 class DOMStringImpl;
 
 // Introduced in DOM Level 2:
-class AbstractViewImpl : public DomShared
+class AbstractViewImpl : public khtml::Shared<AbstractViewImpl>
 {
 public:
     AbstractViewImpl(DocumentImpl *_document);

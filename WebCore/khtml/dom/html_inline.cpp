@@ -45,12 +45,7 @@ HTMLAnchorElement::HTMLAnchorElement(HTMLAnchorElementImpl *impl) : HTMLElement(
 
 HTMLAnchorElement &HTMLAnchorElement::operator = (const Node &other)
 {
-    if(other.elementId() != ID_A)
-    {
-	impl = 0;
-	return *this;
-    }
-    Node::operator = (other);
+    assignOther( other, ID_A );
     return *this;
 }
 
@@ -227,12 +222,7 @@ HTMLBRElement::HTMLBRElement(HTMLBRElementImpl *impl) : HTMLElement(impl)
 
 HTMLBRElement &HTMLBRElement::operator = (const Node &other)
 {
-    if(other.elementId() != ID_BR)
-    {
-	impl = 0;
-	return *this;
-    }
-    Node::operator = (other);
+    assignOther( other, ID_BR );
     return *this;
 }
 
@@ -273,12 +263,7 @@ HTMLFontElement::HTMLFontElement(HTMLFontElementImpl *impl) : HTMLElement(impl)
 
 HTMLFontElement &HTMLFontElement::operator = (const Node &other)
 {
-    if(other.elementId() != ID_FONT)
-    {
-	impl = 0;
-	return *this;
-    }
-    Node::operator = (other);
+    assignOther( other, ID_FONT );
     return *this;
 }
 
@@ -343,6 +328,7 @@ HTMLModElement::HTMLModElement(HTMLElementImpl *_impl)
         impl = _impl;
     else
         impl = 0;
+    if ( impl ) impl->ref();
 }
 
 HTMLModElement &HTMLModElement::operator = (const Node &other)
@@ -350,10 +336,11 @@ HTMLModElement &HTMLModElement::operator = (const Node &other)
     if( other.elementId() != ID_INS &&
 	other.elementId() != ID_DEL )
     {
+	if ( impl ) impl->deref();
 	impl = 0;
-	return *this;
-    }
+    } else {
     Node::operator = (other);
+    }
     return *this;
 }
 
@@ -406,16 +393,12 @@ HTMLQuoteElement::HTMLQuoteElement(HTMLGenericElementImpl *_impl)
         impl = _impl;
     else
         impl = 0;
+    if ( impl ) impl->ref();
 }
 
 HTMLQuoteElement &HTMLQuoteElement::operator = (const Node &other)
 {
-    if(other.elementId() != ID_Q)
-    {
-	impl = 0;
-	return *this;
-    }
-    Node::operator = (other);
+    assignOther( other, ID_Q );
     return *this;
 }
 

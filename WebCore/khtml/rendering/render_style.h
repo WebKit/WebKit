@@ -1,7 +1,9 @@
 /*
  * This file is part of the DOM implementation for KDE.
  *
- * Copyright (C) 1999 Antti Koivisto (koivisto@kde.org)
+ * Copyright (C) 2000 Lars Knoll (knoll@kde.org)
+ *           (C) 2000 Antti Koivisto (koivisto@kde.org)
+ *           (C) 2000 Dirk Mueller (mueller@kde.org)
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -40,6 +42,7 @@
 
 #include "dom/dom_misc.h"
 #include "misc/khtmllayout.h"
+#include "misc/shared.h"
 #include "rendering/font.h"
 
 #include <assert.h>
@@ -66,8 +69,13 @@ public:
     {
 	data=0;
     }
+    DataRef( const DataRef<DATA> &d )
+    {
+    	data = d.data;
+	data->ref();
+    }
 
-    virtual ~DataRef()
+    ~DataRef()
     {
     	if(data) data->deref();
     }
@@ -96,8 +104,6 @@ public:
 
     void init()
     {
-    	if (data)
-    	    data->deref();
     	data = new DATA;
 	data->ref();
     }
@@ -115,25 +121,15 @@ public:
 	return *this;
     }
 
+    bool operator == ( const DataRef<DATA> &o ) const {
+	return (*data == *(o.data) );
+    }
+    bool operator != ( const DataRef<DATA> &o ) const {
+	return (*data != *(o.data) );
+    }
+
 private:
     DATA* data;
-};
-
-
-class SharedData
-{
-public:
-    SharedData() { _ref=0; /*counter++;*/ }
-    virtual ~SharedData() { /*counter--;*/ }
-
-    void ref() { _ref++;  }
-    void deref() { if(_ref) _ref--; if(_ref<=0) delete this; }
-    bool hasOneRef() { //kdDebug(300) << "ref=" << _ref << endl;
-    	return _ref==1; }
-
-//    static int counter;
-protected:
-    unsigned int _ref;
 };
 
 
@@ -147,6 +143,8 @@ struct LengthBox
     LengthBox()
     {
     }
+    LengthBox( LengthType t )
+	: left( t ), right ( t ), top( t ), bottom( t ) {}
 
     Length left;
     Length right;
@@ -216,7 +214,7 @@ public:
 
 };
 
-class BorderData : public SharedData
+class BorderData : public Shared<BorderData>
 {
 public:
     BorderValue left;
@@ -236,7 +234,7 @@ public:
 
 };
 
-class StyleSurroundData : public SharedData
+class StyleSurroundData : public Shared<StyleSurroundData>
 {
 public:
     StyleSurroundData();
@@ -260,7 +258,7 @@ public:
 
 const int ZAUTO=0;
 
-class StyleBoxData : public SharedData
+class StyleBoxData : public Shared<StyleBoxData>
 {
 public:
     StyleBoxData();
@@ -271,11 +269,6 @@ public:
     // copy and assignment
 //    StyleBoxData(const StyleBoxData &other);
 //    const StyleBoxData &operator = (const StyleBoxData &other);
-
-    void setDefaultValues()
-    {
-    	z_index = ZAUTO;
-    }
 
     bool operator==(const StyleBoxData& o) const;
     bool operator!=(const StyleBoxData& o) const {
@@ -320,12 +313,12 @@ enum EUnicodeBidi {
     UBNormal, Embed, Override
 };
 
-class StyleVisualData : public SharedData
+class StyleVisualData : public Shared<StyleVisualData>
 {
 public:
     StyleVisualData();
 
-    virtual ~StyleVisualData();
+    ~StyleVisualData();
 
     StyleVisualData(const StyleVisualData& o );
 
@@ -358,40 +351,16 @@ enum EBackgroundRepeat {
 
 
 
-class StyleBackgroundData : public SharedData
+class StyleBackgroundData : public Shared<StyleBackgroundData>
 {
 public:
-    StyleBackgroundData()
-    {
-	image = 0;
-    }
+    StyleBackgroundData();
+    ~StyleBackgroundData() {}
+    StyleBackgroundData(const StyleBackgroundData& o );
 
-    virtual ~StyleBackgroundData()
-    {
-    }
-
-    StyleBackgroundData(const StyleBackgroundData& o ) : SharedData()
-    {
-    	color = o.color;
-	image = o.image;
-	x_position = o.x_position;
-	y_position = o.y_position;
-        outline = o.outline;
-    }
-
-    bool operator==(const StyleBackgroundData& o) const
-    {
-    	return
-	    color == o.color &&
-	    image == o.image &&
-	    x_position == o.x_position &&
-	    y_position == o.y_position &&
-            outline == o.outline;
-    }
-
-    bool operator!=(const StyleBackgroundData &o) const
-    {
-	return !(operator==(o));
+    bool operator==(const StyleBackgroundData& o) const;
+    bool operator!=(const StyleBackgroundData &o) const {
+	return !(*this == o);
     }
 
     QColor color;
@@ -432,48 +401,16 @@ enum ETextDecoration {
     TDNONE = 0x0 , UNDERLINE = 0x1, OVERLINE = 0x2, LINE_THROUGH= 0x4, BLINK = 0x8
 };
 
-class StyleInheritedData : public SharedData
+class StyleInheritedData : public Shared<StyleInheritedData>
 {
 public:
-    void setDefaultValues()
-    {
-        line_height = Length( -100, Percent );
-	indent = Length(0, Fixed);
-	border_spacing = 0;
-	style_image = 0;
-	cursor_image = 0;
-    }
+    StyleInheritedData();
+    ~StyleInheritedData();
+    StyleInheritedData(const StyleInheritedData& o );
 
-    StyleInheritedData() : SharedData(), font() { setDefaultValues(); }
-    virtual ~StyleInheritedData() { }
-
-    StyleInheritedData(const StyleInheritedData& o )
-	: SharedData(), font( o.font ), color( o.color ), decoration_color( o.decoration_color )
-    {
-	indent = o.indent;
-	line_height = o.line_height;
-	border_spacing = o.border_spacing;
-	style_image = o.style_image;
-	cursor_image = o.cursor_image;
-    }
-
-    bool operator==(const StyleInheritedData& o) const
-    {
-        return indent == o.indent &&
-               line_height == o.line_height &&
-               border_spacing == o.border_spacing &&
-               style_image == o.style_image &&
-	 cursor_image == o.cursor_image &&
-               font == o.font &&
-               color == o.color &&
-               decoration_color == o.decoration_color;
-
-        // doesn't work because structs are not packed
-    	//return memcmp(this, &o, sizeof(*this))==0;
-    }
-    bool operator != ( const StyleInheritedData &o ) const
-    {
-	return !(operator==( o ) );
+    bool operator==(const StyleInheritedData& o) const;
+    bool operator != ( const StyleInheritedData &o ) const {
+	return !(*this == o);
     }
 
     Length indent;
@@ -524,6 +461,23 @@ enum EFontVariant {
     FVNORMAL, SMALL_CAPS
 };
 
+enum ContentType {
+    CONTENT_NONE, CONTENT_OBJECT, CONTENT_TEXT, CONTENT_COUNTER
+};
+
+struct ContentData {
+    ~ContentData();
+    void clearContent();
+
+    ContentType _contentType;
+
+    union {
+        CachedObject* object;
+        DOM::DOMStringImpl* text;
+        // counters...
+    } _content ;
+};
+
 //------------------------------------------------
 
 enum EDisplay {
@@ -534,7 +488,7 @@ enum EDisplay {
     TABLE_CAPTION, NONE
 };
 
-class RenderStyle : public DOM::DomShared
+class RenderStyle : public Shared<RenderStyle>
 {
     friend class CSSStyleSelector;
 public:
@@ -544,7 +498,6 @@ public:
     enum PseudoId { NOPSEUDO, FIRST_LINE, FIRST_LETTER, BEFORE, AFTER };
 
 protected:
-    void setBitDefaults();
 
 // !START SYNC!: Keep this in sync with the copy constructor in render_style.cpp
 
@@ -558,7 +511,6 @@ protected:
 	    return *((Q_UINT32 *)this) != *((Q_UINT32 *)&other);
 	}
 
-	bool _border_collapse : 1 ;
 	EEmptyCell _empty_cells : 1 ;
 	ECaptionSide _caption_side : 2;
 	EListStyleType _list_style_type : 5 ;
@@ -566,10 +518,11 @@ protected:
 	EVisibility _visibility : 2;
 	ETextAlign _text_align : 3;
 	ETextTransform _text_transform : 2;
-	EDirection _direction : 1;
-	EWhiteSpace _white_space : 2;
 	int _text_decoration : 4;
 	ECursor _cursor_style : 4;
+	EDirection _direction : 1;
+	bool _border_collapse : 1 ;
+	EWhiteSpace _white_space : 2;
 	EFontVariant _font_variant : 1;
               // non CSS2 inherited
               bool _visuallyOrdered : 1;
@@ -588,14 +541,14 @@ protected:
 	}
 
         EDisplay _display : 5;
+        EBackgroundRepeat _bg_repeat : 2;
+        bool _bg_attachment : 1;
         EOverflow _overflow : 4 ;
         EVerticalAlign _vertical_align : 4;
         EClear _clear : 2;
-        ETableLayout _table_layout : 1;
-        EBackgroundRepeat _bg_repeat : 2;
-        bool _bg_attachment : 1;
         EPosition _position : 2;
         EFloat _floating : 2;
+        ETableLayout _table_layout : 1;
         bool _flowAroundFloats :1;
 
         PseudoId _styleType : 3;
@@ -617,6 +570,9 @@ protected:
 // list of associated pseudo styles
     RenderStyle* pseudoStyle;
 
+    // added this here, so we can get rid of the vptr in this class.
+    // makes up for the same size.
+    ContentData *content;
 // !END SYNC!
 
 // static default style
@@ -625,6 +581,43 @@ protected:
 private:
     RenderStyle(const RenderStyle*) {}
 
+protected:
+    void setBitDefaults()
+    {
+	inherited_flags._empty_cells = SHOW;
+	inherited_flags._caption_side = CAPTOP;
+	inherited_flags._list_style_type = DISC;
+	inherited_flags._list_style_position = OUTSIDE;
+	inherited_flags._visibility = VISIBLE;
+	inherited_flags._text_align = TAAUTO;
+	inherited_flags._text_transform = TTNONE;
+	inherited_flags._text_decoration = TDNONE;
+	inherited_flags._cursor_style = CURSOR_AUTO;
+	inherited_flags._direction = LTR;
+	inherited_flags._border_collapse = true;
+	inherited_flags._white_space = NORMAL;
+	inherited_flags._font_variant = FVNORMAL;
+	inherited_flags._visuallyOrdered = false;
+	inherited_flags._htmlHacks=false;
+	inherited_flags._unused = 0;
+
+	noninherited_flags._display = INLINE;
+	noninherited_flags._bg_repeat = REPEAT;
+	noninherited_flags._bg_attachment = SCROLL;
+	noninherited_flags._overflow = OVISIBLE;
+	noninherited_flags._vertical_align = BASELINE;
+	noninherited_flags._clear = CNONE;
+	noninherited_flags._position = STATIC;
+	noninherited_flags._floating = FNONE;
+	noninherited_flags._table_layout = TAUTO;
+	noninherited_flags._flowAroundFloats=false;
+	noninherited_flags._styleType = NOPSEUDO;
+	noninherited_flags._hasHover = false;
+	noninherited_flags._hasActive = false;
+	noninherited_flags._jsClipMode = false;
+	noninherited_flags._unicodeBidi = UBNormal;
+    }
+
 public:
 
     RenderStyle();
@@ -632,7 +625,7 @@ public:
     RenderStyle(bool);
     RenderStyle(const RenderStyle&);
 
-    virtual ~RenderStyle();
+    ~RenderStyle();
 
     void inheritFrom(const RenderStyle* inheritParent);
 
@@ -818,6 +811,7 @@ public:
     void setClipRight(Length v) { SET_VAR(visual,clip.right,v) }
     void setClipTop(Length v) { SET_VAR(visual,clip.top,v) }
     void setClipBottom(Length v) { SET_VAR(visual,clip.bottom,v) }
+    void setClip( Length top, Length right, Length bottom, Length left );
     void setJsClipMode( bool b ) { noninherited_flags._jsClipMode = b; }
 
     void setUnicodeBidi( EUnicodeBidi b ) { noninherited_flags._unicodeBidi = b; }
@@ -893,67 +887,38 @@ public:
     void setZIndex(int v) { SET_VAR(box,z_index,v) }
 
     QPalette palette() const { return visual->palette; }
-    void setPaletteColor(QPalette::ColorGroup g, QColorGroup::ColorRole r, const QColor& c)
-    {
-        visual.access()->palette.setColor(g,r,c);
-    }
+    void setPaletteColor(QPalette::ColorGroup g, QColorGroup::ColorRole r, const QColor& c);
     void resetPalette() // Called when the desktop color scheme changes.
     {
         const_cast<StyleVisualData *>(visual.get())->palette = QApplication::palette();
     }
 
 
-    enum ContentType
+    ContentType contentType() { return content ? content->_contentType : CONTENT_NONE; }
+
+    DOM::DOMStringImpl* contentText()
     {
-        CONTENT_NONE, CONTENT_OBJECT, CONTENT_TEXT, CONTENT_COUNTER
-    };
+	if (content && content->_contentType==CONTENT_TEXT)
+	    return content->_content.text;
+	else
+	    return 0;
+    }
 
-    virtual ContentType contentType() { return CONTENT_NONE; }
+    CachedObject* contentObject()
+    {
+	if (content && content->_contentType==CONTENT_OBJECT)
+	    return content->_content.object;
+	else
+	    return 0;
+    }
 
-    virtual void setContent(DOM::DOMStringImpl* /*s*/) { assert(false); }
-    virtual void setContent(CachedObject* /*o*/) { assert(false); }
-
-    virtual DOM::DOMStringImpl* contentText() { return 0; }
-    virtual CachedObject* contentObject() { return 0; }
+    void setContent(DOM::DOMStringImpl* s);
+    void setContent(CachedObject* o);
 
     bool inheritedNotEqual( RenderStyle *other ) const;
 
     enum Diff { Equal, NonVisible = Equal, Visible, Position, Layout, CbLayout };
     Diff diff( const RenderStyle *other ) const;
-};
-
-
-class RenderPseudoElementStyle : public RenderStyle
-{
-public:
-
-    RenderPseudoElementStyle();
-    RenderPseudoElementStyle(bool b);
-    RenderPseudoElementStyle(const RenderStyle& r);
-
-    virtual ~RenderPseudoElementStyle();
-
-    ContentType contentType() { return _contentType; }
-
-    void setContent(DOM::DOMStringImpl* s);
-    void setContent(CachedObject* o);
-
-    DOM::DOMStringImpl* contentText();
-    CachedObject* contentObject();
-
-
-private:
-
-    void clearContent();
-
-    ContentType _contentType;
-
-    union {
-        CachedObject* object;
-        DOM::DOMStringImpl* text;
-        // counters...
-    } _content ;
-
 };
 
 

@@ -1,3 +1,26 @@
+2002-06-10  Darin Adler  <darin@apple.com>
+
+	Merged in changes from KDE 3.0.1.
+
+	* kjs/collector.cpp:
+	* kjs/date_object.cpp:
+	* kjs/function.cpp:
+	* kjs/internal.cpp:
+	* kjs/lookup.h:
+	* kjs/object.cpp:
+	* kjs/operations.cpp:
+	* kjs/regexp.cpp:
+	* kjs/regexp_object.cpp:
+	* kjs/regexp_object.h:
+	* kjs/string_object.cpp:
+	* kjs/testkjs.cpp:
+	* kjs/ustring.cpp:
+	* kjs/value.cpp:
+	* kjs/value.h:
+	Do the merge, and add APPLE_CHANGES as needed to make things compile.
+
+	* kjs/date_object.lut.h: Re-generated.
+
 2002-06-07  Darin Adler  <darin@apple.com>
 
 	* Makefile.am: Use new shared "embed.am" file so we don't need four copies of

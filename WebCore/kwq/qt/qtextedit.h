@@ -54,6 +54,7 @@ class QTextEdit : public QScrollView
     WrapStyle wordWrap() const;
     void setWordWrap(WrapStyle);
     void setTextFormat(TextFormat);
+    void setTabStopWidth(int);
     bool isReadOnly () const;
     void setReadOnly (bool);
     void getCursorPosition(int *, int *) const;

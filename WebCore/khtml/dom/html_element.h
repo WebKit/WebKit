@@ -200,6 +200,11 @@ public:
      */
     void addCSSProperty( const DOMString &property, const DOMString &value );
 
+protected:
+    /*
+     * @internal
+     */
+    void assignOther( const Node &other, int elementId );
 };
 
 }; //namespace

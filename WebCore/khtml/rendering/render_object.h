@@ -129,6 +129,7 @@ public:
     virtual bool isBody() const { return false; }
     virtual bool isFormElement() const { return false; }
     virtual bool isFrameSet() const { return false; }
+    virtual bool isApplet() const { return false; }
 
     bool isAnonymousBox() const { return m_isAnonymous; }
     void setIsAnonymousBox(bool b) { m_isAnonymous = b; }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,10 +26,6 @@
 #ifndef KWQVALUELIST_H_
 #define KWQVALUELIST_H_
 
-#include <config.h>
-
-#ifndef USING_BORROWED_QVALUELIST
-
 #include <KWQRefPtr.h>
 #include <KWQDef.h>
 
@@ -39,12 +35,7 @@ class KWQValueListIteratorImpl
 {
 public: 
     KWQValueListIteratorImpl();
-    KWQValueListIteratorImpl(const KWQValueListIteratorImpl &other);
-     
-    ~KWQValueListIteratorImpl();
     
-    KWQValueListIteratorImpl &operator=(const KWQValueListIteratorImpl &other);
-
     bool operator==(const KWQValueListIteratorImpl &other);
     bool operator!=(const KWQValueListIteratorImpl &other);
 
@@ -58,7 +49,6 @@ public:
 private:
     KWQValueListIteratorImpl(const KWQValueListNodeImpl *n);
 
-
     KWQValueListNodeImpl *nodeImpl;
 
     friend class KWQValueListImpl;
@@ -69,9 +59,10 @@ class KWQValueListImpl
 {
 public:
     KWQValueListImpl(void (*deleteFunc)(KWQValueListNodeImpl *), KWQValueListNodeImpl *(*copyNode)(KWQValueListNodeImpl *));
-    KWQValueListImpl(const KWQValueListImpl &other);
-    
     ~KWQValueListImpl();
+    
+    KWQValueListImpl(const KWQValueListImpl&);
+    KWQValueListImpl& operator=(const KWQValueListImpl&);
         
     void clear();
     uint count() const;
@@ -99,9 +90,7 @@ public:
 
     KWQValueListNodeImpl *nodeAt(uint index);
     KWQValueListNodeImpl *nodeAt(uint index) const;
-
-    KWQValueListImpl operator=(const KWQValueListImpl &other);
-
+    
 private:
     void copyOnWrite();
 
@@ -116,7 +105,6 @@ class KWQValueListNodeImpl
 {
 protected:
     KWQValueListNodeImpl();
-    ~KWQValueListNodeImpl();
 
 private:
     KWQValueListNodeImpl *prev;
@@ -126,7 +114,5 @@ private:
     friend class KWQValueListIteratorImpl;
     friend class KWQValueListImpl::KWQValueListPrivate;
 };
-
-#endif
 
 #endif

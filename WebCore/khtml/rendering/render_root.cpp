@@ -228,7 +228,9 @@ void RenderRoot::repaintRectangle(int x, int y, int w, int h, bool f)
 
 void RenderRoot::repaint()
 {
-    if (m_view && !m_printingMode) m_view->scheduleRepaint(0, 0, docWidth(), docHeight());
+    if (m_view && !m_printingMode)
+        m_view->scheduleRepaint(m_view->contentsX(), m_view->contentsY(),
+                                m_view->visibleWidth(), m_view->visibleHeight());
 }
 
 void RenderRoot::close()
