@@ -1,3 +1,16 @@
+2003-03-11  David Hyatt  <hyatt@apple.com>
+
+	Fix for tantek's slides, this is an issue on diveintomark's
+	list as well.  <style> was not honoring any media attributes
+	set on it, so print stylesheets were being applied to the screen,
+	etc.!
+	
+        Reviewed by rjw
+
+        * khtml/html/html_headimpl.cpp:
+        (HTMLStyleElementImpl::childrenChanged):
+        * khtml/html/html_headimpl.h:
+
 === Safari-66 ===
 
 2003-03-11  Darin Adler  <darin@apple.com>
