@@ -194,7 +194,6 @@ static void URLFileReaderInit(void)
 -(id)initWithCode:(IFURLFileDatabaseOpCode)theOpcode key:(id)theKey object:(id)theObject
 {
     WEBFOUNDATION_ASSERT_NOT_NIL(theKey);
-    WEBFOUNDATION_ASSERT_NOT_NIL(theObject);
 
     if ((self = [super init])) {
         
