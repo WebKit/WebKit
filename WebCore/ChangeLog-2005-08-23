@@ -1,5 +1,20 @@
 2003-05-10  David Hyatt  <hyatt@apple.com>
 
+	Fix the misrendering at the top of cnn.com (the extra tearing
+	by the Google logo on the front page of cnn).  
+
+	I am reducing the intrinsic margins of text fields down to 2px 
+	to match buttons and selects.
+
+	This is easily sufficient distance to avoid focus ring overlap and
+	still looks nice, e.g., on www.google.com and amazon.com.
+	
+        Reviewed by mjs
+
+        * khtml/rendering/render_form.h:
+
+2003-05-10  David Hyatt  <hyatt@apple.com>
+
 	A refinement of our intrinsic margin rules for form controls.
 	Rather than always applying the intrinsic margin to form controls,
 	this patch makes the application conditional.
