@@ -371,6 +371,16 @@ static CFDictionaryRef imageSourceOptions;
 
 - (BOOL)incrementalLoadWithBytes:(const void *)bytes length:(unsigned)length complete:(BOOL)isComplete callback:(id)callback
 {
+#ifdef kImageBytesCutoff
+    // This is a hack to help with testing display of partially-loaded images.
+    // To enable it, define kImageBytesCutoff to be a size smaller than that of the image files
+    // being loaded. They'll never finish loading.
+    if( length > kImageBytesCutoff ) {
+        length = kImageBytesCutoff;
+        isComplete = NO;
+    }
+#endif
+    
     CFDataRef data = CFDataCreate (NULL, bytes, length);
     
     if (callback) {
@@ -431,20 +441,26 @@ static CFDictionaryRef imageSourceOptions;
 
         } else {
             CGContextSaveGState (aContext);
+            
+            // Get the height (in adjusted, i.e. scaled, coords) of the portion of the image
+            // that is currently decoded.  This could be less that the actual height.
+            CGSize selfSize = [self size];                          // full image size, in pixels
+            float curHeight = CGImageGetHeight(image);              // height of loaded portion, in pixels
+            
+            if( curHeight < selfSize.height ) {
+                adjustedSize.height *= curHeight / selfSize.height;
 
-            // Get the height of the portion of the image that is currently decoded.  This
-            // could be less that the actual height.
-            float h = CGImageGetHeight(image);
-
-            // Is the amount of available bands less than what we need to draw?  If so,
-            // clip.
-            BOOL clipped = NO;
-            CGSize actualSize = [self size];
-            if (h != actualSize.height) {
-                float proportionLoaded = h/actualSize.height;
-                fr.size.height = fr.size.height * proportionLoaded;
-                ir.size.height = ir.size.height * proportionLoaded;
-                clipped = YES;
+                // Is the amount of available bands less than what we need to draw?  If so,
+                // we may have to clip 'fr' if it goes outside the available bounds.
+                if( CGRectGetMaxY(fr) > adjustedSize.height ) {
+                    float frHeight = adjustedSize.height - fr.origin.y; // clip fr to available bounds
+                    if( frHeight <= 0 ) {
+                        [decodeLock unlock];
+                        return;                                             // clipped out entirely
+                    }
+                    ir.size.height *= (frHeight / fr.size.height);    // scale ir proportionally to fr
+                    fr.size.height = frHeight;
+                }
             }
             
             // Flip the coords.
@@ -459,11 +475,19 @@ static CFDictionaryRef imageSourceOptions;
             // If we're drawing a sub portion of the image then create
             // a image for the sub portion and draw that.
             // Test using example site at http://www.meyerweb.com/eric/css/edge/complexspiral/demo.html
-            if (clipped == NO && (fr.size.width != adjustedSize.width || fr.size.height != adjustedSize.height)) {
+            if (fr.size.width != adjustedSize.width || fr.size.height != adjustedSize.height) {
+                // Convert ft to image pixel coords:
+                float xscale = adjustedSize.width / selfSize.width;
+                float yscale = adjustedSize.height / curHeight;     // yes, curHeight, not selfSize.height!
+                fr.origin.x /= xscale;
+                fr.origin.y /= yscale;
+                fr.size.width /= xscale;
+                fr.size.height /= yscale;
+                
                 image = CGImageCreateWithImageInRect (image, fr);
                 if (image) {
-                CGContextDrawImage (aContext, ir, image);
-                CFRelease (image);
+                    CGContextDrawImage (aContext, ir, image);
+                    CFRelease (image);
                 }
             }
             // otherwise draw the whole image.

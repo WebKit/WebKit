@@ -1,3 +1,13 @@
+2005-03-03  Jens Alfke  <jens@apple.com>
+
+        Reviewed by rjw.
+
+	<rdar://problem/3991818> REGRESSION: Images scale while loading
+	The code could crop an image when not all the scanlines were available yet, and it could crop when only a sub-rect of the image was to be drawn; but if it had to do both at once, it got the coordinates wrong. Fixed that.
+
+        * WebCoreSupport.subproj/WebImageData.m:
+        (-[WebImageData incrementalLoadWithBytes:length:complete:callback:]):
+
 2005-03-01  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3841186, scrollbar shows up disabled when it should not appear at all.  Make sure updateScrollers
