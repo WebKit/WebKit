@@ -1299,7 +1299,7 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren)
             if(o->isReplaced() || o->isFloating() || o->isPositioned()) {
                 //kdDebug(6041) << "layouting replaced or floating child" << endl;
                 if (relayoutChildren || o->style()->width().isPercent() || o->style()->height().isPercent())
-                    o->setNeedsLayout(true);
+                    o->setChildNeedsLayout(true, false);
                 if (o->isPositioned())
                     o->containingBlock()->insertPositionedObject(o);
                 else

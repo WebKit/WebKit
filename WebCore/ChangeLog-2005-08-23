@@ -1,3 +1,13 @@
+2003-11-18  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3487424, images not painting because of dropped layouts.  When replaced elements dirtied
+	themselves during line layout, they only needed to do a local dirty and not walk up the parent chain.
+	
+        Reviewed by mjs
+
+        * khtml/rendering/bidi.cpp:
+        (khtml::RenderBlock::layoutInlineChildren):
+
 2003-11-17  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Dave.
