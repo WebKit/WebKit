@@ -1,4 +1,14 @@
 2002-05-22  Chris Blumenberg  <cblu@apple.com>
+	
+	Fixed download data source leaks when downloads are cancelled.
+
+	* WebView.subproj/IFBaseWebControllerPrivate.mm:
+	(-[IFBaseWebController _mainReceivedProgress:forResource:fromDataSource:]):
+	* WebView.subproj/IFMainURLHandleClient.mm:
+	(-[IFMainURLHandleClient IFURLHandleResourceDidCancelLoading:]):
+	(-[IFMainURLHandleClient IFURLHandle:resourceDidFailLoadingWithResult:]):
+
+2002-05-22  Chris Blumenberg  <cblu@apple.com>
 
 	Removed activate events as this was causing problems
 	for the QT plug-in.

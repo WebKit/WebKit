@@ -75,7 +75,9 @@
 - (void)IFURLHandleResourceDidCancelLoading:(IFURLHandle *)sender
 {
     WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "url = %s\n", [[[sender url] absoluteString] cString]);
-
+    
+    [downloadHandler release];
+    
     IFLoadProgress *loadProgress = [[IFLoadProgress alloc] init];
     loadProgress->totalToLoad = -1;
     loadProgress->bytesSoFar = -1;
@@ -166,6 +168,8 @@
 - (void)IFURLHandle:(IFURLHandle *)sender resourceDidFailLoadingWithResult:(IFError *)result
 {
     WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "url = %s, result = %s\n", [[[sender url] absoluteString] cString], [[result errorDescription] lossyCString]);
+
+    [downloadHandler release];
 
     IFLoadProgress *loadProgress = [[IFLoadProgress alloc] init];
     loadProgress->totalToLoad = [sender contentLength];

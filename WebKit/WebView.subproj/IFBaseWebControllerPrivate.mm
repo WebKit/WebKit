@@ -92,6 +92,7 @@
 - (void)_mainReceivedProgress: (IFLoadProgress *)progress forResource: (NSString *)resourceDescription fromDataSource: (IFWebDataSource *)dataSource
 {
     IFWebFrame *frame = [dataSource webFrame];
+    IFContentPolicy contentPolicy = [dataSource contentPolicy];
     
     WEBKIT_ASSERT (dataSource != nil);
 
@@ -108,6 +109,11 @@
 
     [self receivedProgress: progress forResource: resourceDescription fromDataSource: dataSource];
 
+    if(progress->bytesSoFar == progress->totalToLoad){
+        if(contentPolicy == IFContentPolicyOpenExternally || contentPolicy == IFContentPolicySave)
+            [dataSource _setPrimaryLoadComplete: YES];
+    }
+    
     // The frame may be nil if a previously cancelled load is still making progress callbacks.
     if (frame == nil)
         return;
