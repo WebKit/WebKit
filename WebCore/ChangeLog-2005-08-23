@@ -1,5 +1,38 @@
 2002-11-27  David Hyatt  <hyatt@apple.com>
 
+        Numerous overflow: hidden improvements to fix espn.com.
+
+	First stop absolute positioned overflow hidden elements
+	from growing to accommodate their overflow.  (Actually
+	absolute positioned elements should never grow to do this,
+	but fixing it for non-overflow hidden elements is hard,
+	so later.)
+
+	Second fix the render layer code to not allow background/borders
+	of the object with overflow: hidden from being clipped.  This
+	involves an extra paint step where the object paints its
+	background and borders prior to establishing the clip rect
+	for the children.  (This will also be necessary for overflow:auto
+	and overflow:scroll).
+	
+        * ChangeLog:
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::getClipRect):
+        (RenderBox::calcAbsoluteVertical):
+        * khtml/rendering/render_layer.cpp:
+        (RenderLayer::paint):
+        * khtml/rendering/render_object.h:
+
+2002-11-27  David Hyatt  <hyatt@apple.com>
+
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::getClipRect):
+        (RenderBox::calcAbsoluteVertical):
+        * khtml/rendering/render_layer.cpp:
+        (RenderLayer::paint):
+
+2002-11-27  David Hyatt  <hyatt@apple.com>
+
 	Fix for 3105502.  drop-downs wrapping to next line.
 	
         * khtml/css/html4.css:

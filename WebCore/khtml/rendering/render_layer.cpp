@@ -199,8 +199,17 @@ RenderLayer::paint(QPainter *p, int x, int y, int w, int h)
         if (elt->clipRect != currRect) {
             if (currRect != paintRect)
                 p->restore(); // Pop the clip.
+                
             currRect = elt->clipRect;
             if (currRect != paintRect) {
+                // A clip is in effect.  The clip is never allowed to clip our render object's
+                // background or borders.  Go ahead and draw those now without the clip in
+                // effect.
+                elt->layer->renderer()->paintBoxDecorations(p, x, y, w, h,
+                                      elt->absBounds.x(),
+                                      elt->absBounds.y());
+                
+                // Now apply the clip rect.
                 QRect clippedRect = p->xForm(currRect);
 #if APPLE_CHANGES
                 p->save();

@@ -256,6 +256,9 @@ public:
     void paintBorder(QPainter *p, int _tx, int _ty, int w, int h, const RenderStyle* style, bool begin=true, bool end=true);
     void paintOutline(QPainter *p, int _tx, int _ty, int w, int h, const RenderStyle* style);
 
+    // RenderBox implements this.
+    virtual void paintBoxDecorations(QPainter *p,int _x, int _y,
+                                     int _w, int _h, int _tx, int _ty) {};
 
     /*
      * This function calculates the minimum & maximum width that the object

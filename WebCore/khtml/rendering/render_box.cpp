@@ -357,11 +357,13 @@ QRect RenderBox::getClipRect(int tx, int ty)
         clipx+=c;
         clipw-=c;
     }
+        
     if (!style()->clipRight().isVariable())
     {
         int w = style()->clipRight().width(m_width-bl-br);
         clipw -= m_width - bl - br - w;
     }
+    
     if (!style()->clipTop().isVariable())
     {
         int c=style()->clipTop().width(m_height-bt-bb);
@@ -958,7 +960,11 @@ void RenderBox::calcAbsoluteVertical()
     if(!style()->height().isVariable())
     {
         h = style()->height().width(ch);
-        if (m_height-pab>h)
+        
+        // This is actually totally wrong, since it grows the positioned element to
+        // wrap its content, when the content should instead overflow out just like
+        // non-positioned blocks do.  For now at least handle overflow: hidden.
+        if (style()->overflow() != OHIDDEN && m_height-pab>h)
             h=m_height-pab;
     }
     else if (isReplaced())
@@ -1063,10 +1069,14 @@ void RenderBox::calcAbsoluteVertical()
             b = ch - ( h+t+mt+mb+pab);
     }
 
-
     if (m_height<h+pab) //content must still fit
         m_height = h+pab;
 
+    // This is a hack. The block shouldn't be getting stretched anyway.
+    // At least make overflow: hidden work. -dwh
+    if (style()->overflow() == OHIDDEN && m_height > h+pab)
+        m_height = h+pab;
+    
     m_marginTop = mt;
     m_marginBottom = mb;
     m_y = t + mt + containingBlock()->borderTop();
