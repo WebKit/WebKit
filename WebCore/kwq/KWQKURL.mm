@@ -120,11 +120,11 @@ static const unsigned char characterClassTable[256] = {
     /* 88  X */ SchemeFirstChar | SchemeChar | UserInfoChar | HostnameChar, 
     /* 89  Y */ SchemeFirstChar | SchemeChar | UserInfoChar | HostnameChar,
     /* 90  Z */ SchemeFirstChar | SchemeChar | UserInfoChar | HostnameChar,
-    /* 91  [ */ BadChar,
-    /* 92  \ */ BadChar,    /* 93  ] */ BadChar,
-    /* 94  ^ */ BadChar,
+    /* 91  [ */ 0,
+    /* 92  \ */ 0,    /* 93  ] */ 0,
+    /* 94  ^ */ 0,
     /* 95  _ */ UserInfoChar | HostnameChar,
-    /* 96  ` */ BadChar,
+    /* 96  ` */ 0,
     /* 97  a */ SchemeFirstChar | SchemeChar | UserInfoChar | HostnameChar | HexDigitChar | IPv6Char,
     /* 98  b */ SchemeFirstChar | SchemeChar | UserInfoChar | HostnameChar | HexDigitChar | IPv6Char, 
     /* 99  c */ SchemeFirstChar | SchemeChar | UserInfoChar | HostnameChar | HexDigitChar | IPv6Char,
@@ -151,8 +151,8 @@ static const unsigned char characterClassTable[256] = {
     /* 120  x */ SchemeFirstChar | SchemeChar | UserInfoChar | HostnameChar, 
     /* 121  y */ SchemeFirstChar | SchemeChar | UserInfoChar | HostnameChar,
     /* 122  z */ SchemeFirstChar | SchemeChar | UserInfoChar | HostnameChar, 
-    /* 123  { */ BadChar,
-    /* 124  | */ BadChar,   /* 125  } */ BadChar,   /* 126  ~ */ UserInfoChar,   /* 127 del */ BadChar,
+    /* 123  { */ 0,
+    /* 124  | */ 0,   /* 125  } */ 0,   /* 126  ~ */ UserInfoChar,   /* 127 del */ BadChar,
     /* 128 */ BadChar, /* 129 */ BadChar, /* 130 */ BadChar, /* 131 */ BadChar,
     /* 132 */ BadChar, /* 133 */ BadChar, /* 134 */ BadChar, /* 135 */ BadChar,
     /* 136 */ BadChar, /* 137 */ BadChar, /* 138 */ BadChar, /* 139 */ BadChar,
@@ -1065,7 +1065,20 @@ NSURL *KURL::getNSURL() const
         string = [NSString stringWithFormat:@"file://%@", [string substringFromIndex:5]];
     }
     
-    return [NSURL URLWithString:string];
+    NSURL *URL = [NSURL URLWithString:string];
+    if (!URL) {
+        // Try to create URL again, but this time do some more string escaping first.
+        // Eventually, we would prefer not to have to take this extra step, as the extra
+        // escaping causes bugs like 3064743.
+        // Note the set of unescaped characters contains the square brackets.
+        // This is a bit of license we take with CFURL and its code to detect characters
+        // it considers illegal. See 3102332 for more information.
+        CFStringRef stricterString = CFURLCreateStringByAddingPercentEscapes(NULL, (CFStringRef)string, CFSTR("[]%"), NULL, kCFStringEncodingUTF8);
+        URL = [NSURL URLWithString:(NSString *)stricterString];
+        CFRelease(stricterString);
+    }
+    
+    return URL;
 }
 
 QString KURL::encodedHtmlRef() const

@@ -1,3 +1,21 @@
+2002-11-15  Ken Kocienda  <kocienda@apple.com>
+
+	Remove characters RFC 2396 describes as "unwise" from the
+	BadChar character class. This causes them to remain unescaped
+	in KURL objects. As a result, some extra escaping needed to 
+	be added into the getNSURL() function to enable NSURL 
+	objects to be created using a KURL.
+
+	This enables me to fix this bug:
+	Radar 3050437 (Clicking link leads to page with garbled content)
+
+	Note, however, that my fix for 3050437 relies on this bug remaining unfixed:
+
+	Radar 3102332 (Square bracket characters "sneak through" CFURL illegal character checks)
+
+        * kwq/KWQKURL.mm:
+        (KURL::getNSURL)
+
 2002-11-15  Darin Adler  <darin@apple.com>
 
 	- fixed 3027460 -- text areas don't have focus rectangles
