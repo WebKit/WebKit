@@ -336,6 +336,7 @@ public:
     void issueCutCommand();
     void issueCopyCommand();
     void issuePasteCommand();
+    void issuePasteAndMatchStyleCommand();
     void respondToChangedSelection(const khtml::Selection &oldSelection, bool closeTyping);
     void respondToChangedContents();
     virtual bool isContentEditable() const;

@@ -484,6 +484,21 @@ function pasteCommand() {
 
 //-------------------------------------------------------------------------------------------------------
 
+function execPasteAndMatchStyleCommand() {
+    document.execCommand("PasteAndMatchStyle");
+}
+function pasteAndMatchStyleCommand() {
+    if (commandDelay > 0) {
+        window.setTimeout(execPasteAndMatchStyleCommand, commandCount * commandDelay);
+        commandCount++;
+    }
+    else {
+        execPasteAndMatchStyleCommand();
+    }
+}
+
+//-------------------------------------------------------------------------------------------------------
+
 function execDeleteCommand() {
     document.execCommand("Delete");
 }

@@ -1347,6 +1347,11 @@ static id <WebFormDelegate> formDelegate(WebBridge *self)
     [[_frame webView] paste:nil];
 }
 
+- (void)issuePasteAndMatchStyleCommand
+{
+    [[_frame webView] pasteAsPlainText:nil];
+}
+
 - (BOOL)canPaste
 {
     return [[_frame webView] _canPaste];

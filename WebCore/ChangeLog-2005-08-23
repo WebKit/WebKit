@@ -1,3 +1,22 @@
+2005-02-22  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3976872> Pasted plain text doesn't get the proper style if pasted into newlines
+
+        Reviewed by mjs.
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::ReplaceSelectionCommand::doApply): don't clear the typing style when matching style
+        (khtml::ReplaceSelectionCommand::completeHTMLReplacement): apply the typing style when matching style
+        * khtml/editing/jsediting.cpp:
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::pasteAndMatchStyle): new
+        * khtml/khtml_part.h:
+        * kwq/KWQKHTMLPart.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::issuePasteAndMatchStyleCommand): new
+        * kwq/WebCoreBridge.h:
+        * layout-tests/editing/editing.js:
+
 2005-02-22  Darin Adler  <darin@apple.com>
 
         Reviewed by Adele.

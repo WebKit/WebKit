@@ -3934,6 +3934,11 @@ void KWQKHTMLPart::issuePasteCommand()
     [_bridge issuePasteCommand];
 }
 
+void KWQKHTMLPart::issuePasteAndMatchStyleCommand()
+{
+    [_bridge issuePasteAndMatchStyleCommand];
+}
+
 bool KHTMLPart::canUndo() const
 {
     return [[KWQ(this)->_bridge undoManager] canUndo];

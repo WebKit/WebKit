@@ -1,3 +1,10 @@
+2005-02-22  Chris Blumenberg  <cblu@apple.com>
+
+        Reviewed by mjs.
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge issuePasteAndMatchStyleCommand]): support for new "PasteAndMatchStyle" exec command
+
 === Safari-188 ===
 
 2005-02-21  David Harrison  <harrison@apple.com>

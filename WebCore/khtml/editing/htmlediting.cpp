@@ -4495,12 +4495,14 @@ void ReplaceSelectionCommand::doApply()
     }
     endPos = selection.end().downstream(); 
     
-    // replacement command does not use any typing style that is set as a residual effect of the pre-delete
+    // If not matching style, clear typing style.
     // FIXME: Improve typing style.
     // See this bug: <rdar://problem/3769899> Implementation of typing style needs improvement
     KHTMLPart *part = document()->part();
-    part->clearTypingStyle();
-    setTypingStyle(0);    
+    if (!m_matchStyle) {
+        part->clearTypingStyle();
+        setTypingStyle(0);    
+    }
     
     // done if there is nothing to add
     if (!m_fragment.firstChild())
@@ -4710,10 +4712,18 @@ void ReplaceSelectionCommand::completeHTMLReplacement(const Position &start, con
  {
     if (start.isNull() || !start.node()->inDocument() || end.isNull() || !end.node()->inDocument())
         return;
-    if (m_selectReplacement)
-        setEndingSelection(Selection(start, SEL_DEFAULT_AFFINITY, end, SEL_DEFAULT_AFFINITY));
-    else
+    
+    Selection replacementSelection(start, SEL_DEFAULT_AFFINITY, end, SEL_DEFAULT_AFFINITY);
+    setEndingSelection(replacementSelection);
+    
+    CSSMutableStyleDeclarationImpl *typingStyle = document()->part()->typingStyle();
+    if (m_matchStyle && typingStyle) {
+        applyStyle(typingStyle);
+    }    
+    
+    if (!m_selectReplacement)
         setEndingSelection(end, SEL_DEFAULT_AFFINITY);
+    
     rebalanceWhitespace();
 }
 
@@ -4743,16 +4753,7 @@ void ReplaceSelectionCommand::completeHTMLReplacement()
     
     Position start(firstLeaf, firstLeaf->caretMinOffset());
     Position end(lastLeaf, lastLeaf->caretMaxOffset());
-    Selection replacementSelection(start, SEL_DEFAULT_AFFINITY, end, SEL_DEFAULT_AFFINITY);
-    if (m_selectReplacement) {
-        // Select what was inserted.
-        setEndingSelection(replacementSelection);
-    } 
-    else {
-        // Place the cursor after what was inserted, and mark misspellings in the inserted content.
-        setEndingSelection(end, SEL_DEFAULT_AFFINITY);
-    }
-    rebalanceWhitespace();
+    completeHTMLReplacement(start, end);
 }
 
 EditAction ReplaceSelectionCommand::editingAction() const

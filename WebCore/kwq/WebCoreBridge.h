@@ -581,6 +581,7 @@ typedef enum {
 - (void)issueCutCommand;
 - (void)issueCopyCommand;
 - (void)issuePasteCommand;
+- (void)issuePasteAndMatchStyleCommand;
 - (void)respondToChangedSelection;
 - (void)respondToChangedContents;
 - (void)setIsSelected:(BOOL)isSelected forView:(NSView *)view;

@@ -895,6 +895,7 @@ public:
   void copyToPasteboard();
   void cutToPasteboard();
   void pasteFromPasteboard();
+  void pasteAndMatchStyle();
   bool canPaste() const;
   void redo();
   void undo();

@@ -302,6 +302,12 @@ bool execPaste(KHTMLPart *part, bool userInterface, const DOMString &value)
     return true;
 }
 
+bool execPasteAndMatchStyle(KHTMLPart *part, bool userInterface, const DOMString &value)
+{
+    part->pasteAndMatchStyle();
+    return true;
+}
+
 bool execPrint(KHTMLPart *part, bool userInterface, const DOMString &value)
 {
     part->print();
@@ -369,6 +375,11 @@ bool enabledAnySelection(KHTMLPart *part)
 }
 
 bool enabledPaste(KHTMLPart *part)
+{
+    return supportsPasteCommand && part->canPaste();
+}
+
+bool enabledPasteAndMatchStyle(KHTMLPart *part)
 {
     return supportsPasteCommand && part->canPaste();
 }
@@ -500,6 +511,7 @@ QDict<CommandImp> createCommandDictionary()
         { "JustifyRight", { execJustifyRight, enabledAnySelection, stateNone, valueNull } },
         { "Outdent", { execOutdent, enabledAnySelection, stateNone, valueNull } },
         { "Paste", { execPaste, enabledPaste, stateNone, valueNull } },
+        { "PasteAndMatchStyle", { execPasteAndMatchStyle, enabledPasteAndMatchStyle, stateNone, valueNull } },
         { "Print", { execPrint, enabled, stateNone, valueNull } },
         { "Redo", { execRedo, enabledRedo, stateNone, valueNull } },
         { "SelectAll", { execSelectAll, enabled, stateNone, valueNull } },
