@@ -525,9 +525,8 @@ void HTMLTokenizer::scriptHandler()
 	// kdDebug( 6036 ) << "adding pending Output to parsed string" << endl;
 	src.append(pendingSrc);
 	pendingSrc.clear();
-    } else {
+    } else if (!prependingSrc.isEmpty())
         write(prependingSrc, false);
-    }
 }
 
 void HTMLTokenizer::scriptExecution( const QString& str, QString scriptURL,
