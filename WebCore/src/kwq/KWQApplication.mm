@@ -107,7 +107,7 @@ void QApplication::_initialize(){
 	if (principalClass) {
             application = [principalClass sharedApplication];
 	    if (![NSBundle loadNibNamed: mainNibFile owner: application]) {
-                NSLog (@"ERROR:  QApplication::_initialize() unable to load %@\n", mainNibFile, nil);
+                KWQDEBUGLEVEL2(KWQ_LOG_ERROR, "ERROR:  QApplication::_initialize() unable to load %s\n", DEBUG_OBJECT(mainNibFile));
             }
         }
     }	
@@ -128,11 +128,11 @@ void QApplication::setMainWidget(QWidget *w)
     NSRect b = [((_KWQOwner *)application)->containerView bounds];
     
     if (application == nil){
-        NSLog (@"ERROR: QApplication::setMainWidget() application not set.\n");
+        KWQDEBUGLEVEL(KWQ_LOG_ERROR, "ERROR: QApplication::setMainWidget() application not set.\n");
         return;
     }
     if (w == 0){
-        NSLog (@"ERROR: QApplication::setMainWidget() widget not valid.\n");
+        KWQDEBUGLEVEL(KWQ_LOG_ERROR, "ERROR: QApplication::setMainWidget() widget not valid.\n");
         return;
     }
     
@@ -156,7 +156,7 @@ void QApplication::setMainWidget(QWidget *w)
 int QApplication::exec()
 {
     if (application == nil){
-        NSLog (@"ERROR: QApplication::exec() application not set.\n");
+        KWQDEBUGLEVEL(KWQ_LOG_ERROR, "ERROR: QApplication::exec() application not set.\n");
         return 0;
     }
     [application run];

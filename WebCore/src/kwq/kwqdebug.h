@@ -34,6 +34,10 @@
 #undef Rect
 #undef Boolean
 
+/*-----------------------------------------------------------------------------
+ * Logging macros
+ */
+
 #define KWQ_LOG_NEVER_IMPLEMENTED	0x1
 #define KWQ_LOG_PARTIALLY_IMPLEMENTED	0x2
 #define KWQ_LOG_NOT_YET_IMPLEMENTED	0x4
@@ -99,6 +103,33 @@ void KWQLogAtLevel(unsigned int level, NSString *format, ...);
             
 #define DEBUG_OBJECT(object) [[object description] cString]
 
+/*-----------------------------------------------------------------------------
+ * Assertion macros
+ */
+
+#define KWQ_ASSERT(expr) \
+    do { \
+        if (!(expr)) { \
+            NSString *reason = [NSString stringWithFormat:@"assertion failed: '%s'", #expr]; \
+            [[NSException exceptionWithName:NSGenericException reason:reason userInfo: nil] raise]; \
+        } \
+    } while (0)
+
+#define KWQ_ASSERT_VALID_ARG(arg,expr) \
+    do { \
+        if (!(expr)) { \
+            NSString *reason = [NSString stringWithFormat:@"'%s' fails check: '%s'", #arg, #expr]; \
+            [[NSException exceptionWithName:NSInvalidArgumentException reason:reason userInfo: nil] raise]; \
+        } \
+    } while (0)
+
+#define WEBKIT_ASSERT_NOT_NIL(arg) \
+    do { \
+        if ((arg) == nil) { \
+            NSString *reason = [NSString stringWithFormat:@"'%s' is nil", #arg]; \
+            [[NSException exceptionWithName:NSInvalidArgumentException reason:reason userInfo: nil] raise]; \
+        } \
+    } while (0)
 
 
 #endif KWQDEBUG_H_

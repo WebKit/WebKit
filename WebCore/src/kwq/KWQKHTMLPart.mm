@@ -55,7 +55,7 @@ static void recursive(const DOM::Node &pNode, const DOM::Node &node)
 {
     DOM::Node cur_child = node.lastChild();
 
-    NSLog(@"cur_child: %s = %s", cur_child.nodeName().string().latin1(), cur_child.nodeValue().string().latin1());
+    KWQDEBUG2("cur_child: %s = %s", cur_child.nodeName().string().latin1(), cur_child.nodeValue().string().latin1());
 
     while(!cur_child.isNull())
     {

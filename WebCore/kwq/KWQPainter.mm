@@ -196,7 +196,7 @@ void QPainter::restore()
 {
     QPStateStack *pss = (QPStateStack *)data->ps_stack;
     if ( pss == 0 || pss->isEmpty() ) {
-        NSLog (@"ERROR void QPainter::restore() stack is empty\n");
+        KWQDEBUG("ERROR void QPainter::restore() stack is empty\n");
 	return;
     }
     QPState *ps = pss->pop();
@@ -299,7 +299,7 @@ void QPainter::drawArc (int x, int y, int w, int h, int a, int alen)
         float fa, falen;
     
         if (w != h){
-            NSLog (@"ERROR (INCOMPLETE IMPLEMENTATION) void QPainter::drawArc (int x, int y, int w, int h, int a, int alen)\nOnly supports drawing arcs on a circle.\n");
+            KWQDEBUG("ERROR (INCOMPLETE IMPLEMENTATION) void QPainter::drawArc (int x, int y, int w, int h, int a, int alen)\nOnly supports drawing arcs on a circle.\n");
         }
         
         path = [[[NSBezierPath alloc] init] autorelease];
@@ -592,19 +592,19 @@ void QPainter::setRasterOp(RasterOp op)
     else
         data->compositingOperation = NSCompositeCopy;
 #else
-     NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+     _logNotYetImplemented()
 #endif
 }
 
 void QPainter::translate(double dx, double dy)
 {
-     NSLog (@"ERROR %s:%d %s (NOT IMPLEMENTED) (%d, %d)\n", __FILE__, __LINE__, __FUNCTION__, (int)dx, (int) dy);
+     _logNotYetImplemented()
 }
 
 
 void QPainter::scale(double dx, double dy)
 {
-     NSLog (@"ERROR %s:%d %s (NOT IMPLEMENTED) (%d, %d)\n", __FILE__, __LINE__, __FUNCTION__, (int)dx, (int) dy);
+     _logNotYetImplemented()
 }
 
 

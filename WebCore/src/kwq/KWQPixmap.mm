@@ -67,9 +67,9 @@ QPixmap::QPixmap(const QByteArray&bytes)
     NSData *nsdata = [[[NSData alloc] initWithBytes: bytes.data() length: bytes.size() copy:NO freeWhenDone:NO bytesAreVM:NO] autorelease];
     nsimage = [[NSImage alloc] initWithData: nsdata];
     if (nsimage == nil){
-        NSLog (@"unable to create image");
+        KWQDEBUG("unable to create image\n");
     } else {
-        NSLog (@"image created");
+        KWQDEBUG("image created\n");
     }
     [nsimage setFlipped: YES];
     [nsimage setScalesWhenResized: YES];
@@ -177,7 +177,7 @@ QPixmap QPixmap::xForm(const QWMatrix &xmatrix) const
 
 QImage QPixmap::convertToImage() const
 {
-    NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    _logNotYetImplemented();
 }
 
 

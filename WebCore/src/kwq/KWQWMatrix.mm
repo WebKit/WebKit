@@ -23,6 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include <kwqdebug.h>
 #include <qpainter.h>
 
 
@@ -37,7 +38,7 @@ QWMatrix::QWMatrix()
 QWMatrix &QWMatrix::scale(double _sx, double _sy)
 {
     if (empty != TRUE){
-        NSLog (@"ERROR (INCOMPLETE IMPLEMENTATION) QWMatrix &QWMatrix::scale(double _sx, double _sy) scale may only be called once.\n");
+        KWQDEBUG("ERROR (INCOMPLETE IMPLEMENTATION) QWMatrix &QWMatrix::scale(double _sx, double _sy) scale may only be called once.\n");
     }
     empty = FALSE;
     sx = _sx;

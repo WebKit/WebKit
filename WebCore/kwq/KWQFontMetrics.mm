@@ -276,10 +276,10 @@ QSize QFontMetrics::size(int, const QString &qstring, int len, int tabstops,
     int *tabarray, char **intern ) const
 {
     if (tabstops != 0){
-        NSLog (@"ERROR:  QFontMetrics::size() tabs not supported.\n");
+        KWQDEBUGLEVEL(KWQ_LOG_ERROR, "ERROR:  QFontMetrics::size() tabs not supported.\n");
     }
     
-    NSLog (@"string = %@\n", QSTRING_TO_NSSTRING(qstring));
+    KWQDEBUG1("string = %s\n", DEBUG_OBJECT(QSTRING_TO_NSSTRING(qstring)));
     NSString *string;
 
     if (len != -1)

@@ -292,9 +292,8 @@ const QChar *QString::unicode() const
     if (len) {
         ucs = const_cast<UniChar *>(CFStringGetCharactersPtr(s));
         if (!ucs) {
-#ifdef _KWQ_DEBUG_
-            NSLog(@"WARNING %s:%s:%d (CFStringGetCharactersPtr failed)\n",
-                    __FILE__, __FUNCTION__, __LINE__);
+#if _KWQ_DEBUG_
+            KWQDEBUG3("WARNING %s:%s:%d (CFStringGetCharactersPtr failed)\n", __FUNCTION__, __FILE__, __LINE__);
 #endif
             if (cacheType != CacheUnicode) {
                 flushCache();
@@ -321,9 +320,8 @@ const char *QString::latin1() const
         chs = const_cast<char *>(CFStringGetCStringPtr(s,
                     kCFStringEncodingISOLatin1));
         if (!chs) {
-#ifdef _KWQ_DEBUG_
-            NSLog(@"WARNING %s:%s:%d (CFStringGetCharactersPtr failed)\n",
-                    __FILE__, __FUNCTION__, __LINE__);
+#if _KWQ_DEBUG_
+            KWQDEBUG3("WARNING %s:%s:%d (CFStringGetCharactersPtr failed)\n", __FUNCTION__, __FILE__, __LINE__);
 #endif
             if (cacheType != CacheLatin1) {
                 flushCache();
@@ -331,9 +329,8 @@ const char *QString::latin1() const
                 if (cache) {
                     if (!CFStringGetCString(s, cache, len + 1,
                                 kCFStringEncodingISOLatin1)) {
-#ifdef _KWQ_DEBUG_
-                        NSLog(@"WARNING %s:%s:%d (CFStringGetCString failed)\n",
-                                __FILE__, __FUNCTION__, __LINE__);
+#if _KWQ_DEBUG_
+                        KWQDEBUG3("WARNING %s:%s:%d (CFStringGetCString failed)\n", __FUNCTION__, __FILE__, __LINE__);
 #endif
                         *reinterpret_cast<char *>(cache) = '\0';
                     }

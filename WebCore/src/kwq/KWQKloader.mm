@@ -26,6 +26,7 @@
 #undef CACHE_DEBUG
 //#define CACHE_DEBUG
 
+#include <kwqdebug.h>
 #include <loader.h>
 
 // up to which size is a picture for sure cacheable
@@ -920,10 +921,10 @@ void DocLoader::removeCachedObject( CachedObject* o ) const
 {
     NSString *notificationName = [notification name];
     if ([notificationName rangeOfString: @"uri"].location != 0){
-        NSLog (@"cacheDataAvailable: Received invalid notication, %@", notificationName);
+        KWQDEBUG1("cacheDataAvailable: Received invalid notication, %s\n", DEBUG_OBJECT(notificationName));
     }
     else {
-        NSLog (@"cacheDataAvailable: Received notication, %@", notificationName);
+        KWQDEBUG1("cacheDataAvailable: Received notication, %s\n", DEBUG_OBJECT(notificationName));
         id <WCURICacheData> data = [notification object];
         KIO::Job *job = static_cast<KIO::Job *>([data userData]);
         m_loader->slotData(job, (const char *)[data cacheData], [data cacheDataSize]);
@@ -934,10 +935,10 @@ void DocLoader::removeCachedObject( CachedObject* o ) const
 {
     NSString *notificationName = [notification name];
     if ([notificationName rangeOfString: @"uri"].location != 0){
-        NSLog (@"cacheFinished: Received invalid notication, %@", notificationName);
+        KWQDEBUG1 ("cacheFinished: Received invalid notication, %s\n", DEBUG_OBJECT(notificationName));
     }
     else {
-        NSLog (@"cacheFinished: Received notication, %@", notificationName);
+        KWQDEBUG1 ("cacheFinished: Received notication, %s\n", DEBUG_OBJECT(notificationName));
         // FIXME: need an implementation for this
         id <WCURICacheData> data = [notification object];
         KIO::Job *job = static_cast<KIO::Job *>([data userData]);

@@ -124,7 +124,6 @@
 				INSTALL_PATH = "$(HOME)/Library/Frameworks";
 				LIBRARY_SEARCH_PATHS = "";
 				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = WebKit;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
@@ -179,6 +178,7 @@
 				9C93A48601920D0C0ECA16EA,
 				9C93A48A01920D3D0ECA16EA,
 				251E877A01A1EE570ECA149E,
+				25A5593301A5996D0ECA149E,
 			);
 			isa = PBXHeadersBuildPhase;
 			name = Headers;
@@ -203,6 +203,7 @@
 				9C93A48701920D0C0ECA16EA,
 				9C93A48B01920D3D0ECA16EA,
 				251E877B01A1EE570ECA149E,
+				25A5593401A5996D0ECA149E,
 			);
 			isa = PBXSourcesBuildPhase;
 			name = Sources;
@@ -342,6 +343,8 @@
 				25C29825016E29620ECA149E,
 				2568C729017490CF0ECA149E,
 				2568C72B017491070ECA149E,
+				25A5593101A5996D0ECA149E,
+				25A5593201A5996D0ECA149E,
 			);
 			isa = PBXGroup;
 			name = Misc;
@@ -432,6 +435,30 @@
 				ATTRIBUTES = (
 					Public,
 				);
+			};
+		};
+		25A5593101A5996D0ECA149E = {
+			isa = PBXFileReference;
+			name = WebKitDebug.h;
+			path = Misc.subproj/WebKitDebug.h;
+			refType = 4;
+		};
+		25A5593201A5996D0ECA149E = {
+			isa = PBXFileReference;
+			name = WebKitDebug.m;
+			path = Misc.subproj/WebKitDebug.m;
+			refType = 4;
+		};
+		25A5593301A5996D0ECA149E = {
+			fileRef = 25A5593101A5996D0ECA149E;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		25A5593401A5996D0ECA149E = {
+			fileRef = 25A5593201A5996D0ECA149E;
+			isa = PBXBuildFile;
+			settings = {
 			};
 		};
 		25BECC93017E0A0D0ECA149E = {
