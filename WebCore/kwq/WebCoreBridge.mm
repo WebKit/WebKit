@@ -160,6 +160,12 @@ static bool initializedObjectCacheSize = FALSE;
     _part->setParent([parent part]);
 }
 
+- (void)provisionalLoadStarted
+{
+    _part->provisionalLoadStarted();
+}
+
+
 - (void)openURL:(NSURL *)URL reload:(BOOL)reload contentType:(NSString *)contentType refresh:(NSString *)refresh lastModified:(NSDate *)lastModified pageCache:(NSDictionary *)pageCache
 {
     if (pageCache) {

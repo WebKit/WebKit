@@ -816,6 +816,8 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     _private->state = newState;
     
     if (_private->state == WebFrameStateProvisional) {
+	[_private->bridge provisionalLoadStarted];
+    
         // FIXME: This is OK as long as no one resizes the window,
         // but in the case where someone does, it means garbage outside
         // the occupied part of the scroll view.
@@ -1601,7 +1603,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         // but it's not an obvious case.
         [self _addBackForwardItemClippedAtTarget:NO];
     }
-    
+
     [_private->bridge scrollToAnchorWithURL:URL];
     
     if (!isRedirect) {

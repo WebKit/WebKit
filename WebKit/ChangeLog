@@ -1,3 +1,13 @@
+2003-08-01  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	- fixed 3339255 - REGRESSION (73-85): javascript failure at gia.apple.com
+
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _setState:]): When going to provisional state, tell the bridge that
+	a provisional load started, so it can cancel any pending redirects.
+
 === Safari-91 ===
 
 2003-07-31  Richard Williamson   <rjw@apple.com>

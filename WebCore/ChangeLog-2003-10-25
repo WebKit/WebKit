@@ -1,3 +1,22 @@
+2003-08-01  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	- fixed 3339255 - REGRESSION (73-85): javascript failure at gia.apple.com
+
+	I fixed this by making sure to cancel any pending redirects before
+	telling the bridge to load a URL. We don't want a race between
+	getting back a response and the redirect timer.
+
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge provisionalLoadStarted]): New method - call equivalent part method.
+	We count on the other side of the bridge to call this once it knows a load will
+	really happen (not cancelled by policy, etc).
+        * kwq/KWQKHTMLPart.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::provisionalLoadStarted): cancel pending redirects.
+
 === Safari-91 ===
 
 2003-07-31  Dave Hyatt  <hyatt@apple.com>

@@ -177,6 +177,14 @@ QString KWQKHTMLPart::generateFrameName()
     return QString::fromNSString([_bridge generateFrameName]);
 }
 
+void KWQKHTMLPart::provisionalLoadStarted()
+{
+    // we don't want to wait until we get an actual http response back
+    // to cancel pending redirects, otherwise they might fire before
+    // that happens.
+    cancelRedirection();
+}
+
 bool KWQKHTMLPart::openURL(const KURL &url)
 {
     // FIXME: The lack of args here to get the reload flag from

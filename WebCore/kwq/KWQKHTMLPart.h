@@ -89,6 +89,8 @@ public:
     void setView(KHTMLView *view);
     KHTMLView *view() const;
 
+    void provisionalLoadStarted();
+
     virtual bool openURL(const KURL &);
     virtual bool closeURL();
     void didNotOpenURL(const KURL &);
