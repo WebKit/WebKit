@@ -11,5 +11,8 @@
     NSView *frameView;
     NSRect imageRect;
     NSRect targetRect;
+    int lastStatus;
+    unsigned lastLength;
+    BOOL lastReturn;
 }
 @end

@@ -22,11 +22,10 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+#import <Cocoa/Cocoa.h>
 
 #import <WebKit/IFImageRendererFactory.h>
-
 #import <WebKit/IFImageRenderer.h>
-
 #import <WebKit/WebKitDebug.h>
 
 @implementation IFImageRendererFactory
@@ -44,9 +43,21 @@
     return (IFImageRendererFactory *)[super sharedFactory];
 }
 
+- (id <WebCoreImageRenderer>)imageRenderer
+{
+    NSImage *imageRenderer = [[IFImageRenderer alloc] init];
+    NSBitmapImageRep *rep = [[NSBitmapImageRep alloc] initForIncrementalLoad];
+    [imageRenderer addRepresentation: rep];
+    [imageRenderer setFlipped: YES];
+    return [imageRenderer autorelease];
+}
+
+
 - (id <WebCoreImageRenderer>)imageRendererWithBytes: (const void *)bytes length:(unsigned)length
 {
-    NSData *data = [[NSData alloc] initWithBytes: bytes length: length];
+    // FIXME:  Why must we copy the data here?
+    //NSData *data = [[NSData alloc] initWithBytesNoCopy: (void *)bytes length: length freeWhenDone: NO];
+    NSData *data = [[NSData alloc] initWithBytes: (void *)bytes length: length];
     IFImageRenderer *imageRenderer = [[IFImageRenderer alloc] initWithData: data];
     NSArray *reps = [imageRenderer representations];
     NSImageRep *rep = [reps objectAtIndex: 0];

@@ -452,7 +452,9 @@ CachedImage::CachedImage(DocLoader* dl, const DOMString &url, bool reload, int _
     pixPart = 0;
     bg = 0;
     bgColor = qRgba( 0, 0, 0, 0xFF );
+#ifndef APPLE_CHANGES
     typeChecked = false;
+#endif
     isFullyTransparent = false;
     errorOccured = false;
     monochrome = false;
@@ -786,7 +788,9 @@ void CachedImage::clear()
 
     formatType = 0;
 
+#ifndef APPLE_CHANGES
     typeChecked = false;
+#endif
     m_size = 0;
 
     // No need to delete imageSource - QMovie does it for us
@@ -794,18 +798,18 @@ void CachedImage::clear()
 }
 
 void CachedImage::data ( QBuffer &_buffer, bool eof )
-{
+{    
 #ifdef CACHE_DEBUG
     kdDebug( 6060 ) << this << "in CachedImage::data(buffersize " << _buffer.buffer().size() <<", eof=" << eof << endl;
 #endif
-    if ( !typeChecked )
-    {
-#ifndef APPLE_CHANGES
-        formatType = QImageDecoder::formatName( (const uchar*)_buffer.buffer().data(), _buffer.size());
-#endif
-        typeChecked = true;
 
 #ifndef APPLE_CHANGES
+    if ( !typeChecked )
+    {
+        formatType = QImageDecoder::formatName( (const uchar*)_buffer.buffer().data(), _buffer.size());
+
+        typeChecked = true;
+
         if ( formatType )  // movie format exists
         {
             imgSource = new ImageSource( _buffer.buffer());
@@ -814,16 +818,13 @@ void CachedImage::data ( QBuffer &_buffer, bool eof )
             m->connectStatus( this, SLOT( movieStatus(int)));
             m->connectResize( this, SLOT( movieResize( const QSize& ) ) );
         }
-#endif
     }
 
-#ifndef APPLE_CHANGES
     if ( imgSource )
     {
         imgSource->setEOF(eof);
         imgSource->maybeReady();
     }
-#endif
 
     if(eof)
     {
@@ -852,6 +853,48 @@ void CachedImage::data ( QBuffer &_buffer, bool eof )
         QSize s = pixmap_size();
         m_size = s.width() * s.height() * 2;
     }
+#endif // !APPLE_CHANGES
+
+#ifdef APPLE_CHANGES
+
+    bool canDraw = false;
+#ifdef APPLE_PROGRESSIVE_LOADING_WORKS
+    if (!eof) {
+        // If we didn't get all the data for the image we will always
+        // attempt to load the image incrementally.  If the AppKit is
+        // unable to decode incrementally this pixmap will not be
+        // renderable until all the data has been received.
+        if (!p)
+            p = new QPixmap();
+    }
+
+    if (p)
+        canDraw = p->receivedData (_buffer.buffer(), eof);
+        
+#endif
+
+    // If we're at eof and don't have a pixmap yet, the data
+    // must have arrived in one chunk.  This avoids the attempt
+    // to perform incremental decoding.
+    if (eof && !p){
+        p = new QPixmap( _buffer.buffer() );
+        canDraw = true;
+    }
+
+    if (canDraw || eof){
+        if(p->isNull())
+        {
+            errorOccured = true;
+            do_notify(pixmap(), QRect(0, 0, 16, 16)); // load "broken image" icon
+        }
+        else {
+            // May schedule a redraw.
+            do_notify(*p, p->rect());
+        }
+        QSize s = pixmap_size();
+        m_size = s.width() * s.height() * 2;
+    }
+#endif // APPLE_CHANGES
 }
 
 void CachedImage::error( int /*err*/, const char */*text*/ )
@@ -861,7 +904,9 @@ void CachedImage::error( int /*err*/, const char */*text*/ )
 #endif
 
     clear();
+#ifndef APPLE_CHANGES
     typeChecked = true;
+#endif
     errorOccured = true;
     do_notify(pixmap(), QRect(0, 0, 16, 16));
 }

@@ -55,4 +55,9 @@ static WebCoreImageRendererFactory *sharedFactory;
     return nil;
 }
 
+- (id <WebCoreImageRenderer>)imageRenderer
+{
+    return nil;
+}
+
 @end

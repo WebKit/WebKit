@@ -32,7 +32,7 @@
 
 QPixmap::QPixmap()
 {
-    imageRenderer = nil;
+    imageRenderer = [[[WebCoreImageRendererFactory sharedFactory] imageRenderer] retain];
     needCopyOnWrite = false;
 }
 
@@ -65,6 +65,11 @@ QPixmap::~QPixmap()
 {
     [imageRenderer stopAnimation];
     [imageRenderer release];
+}
+
+bool QPixmap::receivedData(const QByteArray &bytes, bool isComplete)
+{
+    return [imageRenderer incrementalLoadWithBytes: bytes.data() length: bytes.size() complete: isComplete];
 }
 
 bool QPixmap::mask() const

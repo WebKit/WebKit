@@ -1,3 +1,12 @@
+2002-06-04  Richard Williamson  <rjw@apple.com>
+
+    Changes to support progressive image loading.  Currently disabled
+    until 2945218 is fixed.
+
+	* WebCoreSupport.subproj/IFImageRenderer.h:
+	* WebCoreSupport.subproj/IFImageRenderer.m:
+	* WebCoreSupport.subproj/IFImageRendererFactory.m:
+
 ut 2002-06-04  Darin Adler  <darin@apple.com>
 
 	- fixed 2932862 -- exception -[NSCFArray getObjects:range:]: index (137)

@@ -1,3 +1,16 @@
+2002-06-04  Richard Williamson  <rjw@apple.com>
+
+    Changes to support progressive image loading.  Currently disabled
+    until 2945218 is fixed.
+    
+	* khtml/misc/loader.cpp:
+	* kwq/KWQKloader.mm:
+	* kwq/KWQPixmap.mm:
+	* kwq/WebCoreImageRenderer.h:
+	* kwq/WebCoreImageRendererFactory.h:
+	* kwq/WebCoreImageRendererFactory.m:
+	* kwq/qt/qpixmap.h:
+
 2002-06-04  Darin Adler  <darin@apple.com>
 
 	- fixed 2943897 -- Initial uncached load of amazon.com renders partial page.

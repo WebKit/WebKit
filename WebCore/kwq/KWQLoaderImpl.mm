@@ -151,7 +151,7 @@ void WCSetIFLoadProgressMakeFunc(WCIFLoadProgressMakeFunc func)
     
     KIO::TransferJob *job = static_cast<KIO::TransferJob *>(userData);
     
-    KWQDEBUGLEVEL (KWQ_LOG_LOADING, "dataSource = %p for URL %s data at %p, length %d\n", m_dataSource, DEBUG_OBJECT(job->url()), data, [data length]);
+    KWQDEBUGLEVEL (KWQ_LOG_LOADING, "dataSource = %p for URL %s data at %p, length %d, contentLength %d, contentLengthReceived %d\n", m_dataSource, DEBUG_OBJECT(job->url()), data, [data length], contentLength, contentLengthReceived);
 
     m_loader->slotData(job, (const char *)[data bytes], [data length]);    
 
