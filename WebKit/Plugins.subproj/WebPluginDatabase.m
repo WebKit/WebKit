@@ -10,6 +10,7 @@
 #import <WebKit/WebPluginDatabase.h>
 #import <WebKit/WebPluginStream.h>
 #import <WebKit/WebView.h>
+#import <WebKit/WebViewPrivate.h>
 
 
 @implementation WebNetscapePluginDatabase
@@ -104,26 +105,22 @@ static NSArray *pluginLocations(void)
 
 - init
 {
-    NSFileManager *fileManager;
-    NSArray *pluginDirectories, *files;
-    NSString *file;
-    NSMutableArray *pluginPaths, *pluginArray;
-    NSMutableSet *filenames;
-    WebNetscapePlugin *plugin;
-    uint i, n;
-    
     self = [super init];
     if (self == nil) {
         return nil;
     }
     
-    pluginDirectories = pluginLocations();
+    NSArray *pluginDirectories = pluginLocations();
     
-    fileManager = [NSFileManager defaultManager];
+    NSFileManager *fileManager = [NSFileManager defaultManager];
 
-    pluginPaths = [NSMutableArray arrayWithCapacity:10];
-    filenames = [NSMutableSet setWithCapacity:10];
+    NSMutableArray *pluginPaths = [NSMutableArray arrayWithCapacity:10];
+    NSMutableSet *filenames = [NSMutableSet setWithCapacity:10];
 
+    NSArray *files;
+    NSString *file;
+    uint i, n;
+    
     for (i = 0; i < [pluginDirectories count]; i++) {
         files = [fileManager directoryContentsAtPath:[pluginDirectories objectAtIndex:i]];
         for (n = 0; n < [files count]; n++) {
@@ -135,7 +132,8 @@ static NSArray *pluginLocations(void)
         }
     }
     
-    pluginArray = [NSMutableArray arrayWithCapacity:[pluginPaths count]];
+    NSMutableArray *pluginArray = [NSMutableArray arrayWithCapacity:[pluginPaths count]];
+    WebNetscapePlugin *plugin;
     
     for (i = 0; i < [pluginPaths count]; i++) {
         plugin = [[WebNetscapePlugin alloc] initWithPath:[pluginPaths objectAtIndex:i]];
@@ -149,11 +147,21 @@ static NSArray *pluginLocations(void)
 
     plugins = [pluginArray copy];
 
-    // register plug-in WebDocumentViews and WebDocumentRepresentations
+    // Register plug-in WebDocumentViews and WebDocumentRepresentations
+    
+    
+    NSArray *viewTypes = [[WebView _viewTypes] allKeys];
     NSArray *mimes = [self MIMETypes];
+    NSString *mime;
+    
     for (i = 0; i < [mimes count]; i++) {
-        [WebView registerViewClass:[WebNetscapePluginDocumentView class] forMIMEType:[mimes objectAtIndex:i]];
-        [WebDataSource registerRepresentationClass:[WebNetscapePluginStream class] forMIMEType:[mimes objectAtIndex:i]];
+        mime = [mimes objectAtIndex:i];
+        
+        // Don't override previously registered types.
+        if(![viewTypes containsObject:mime]){
+            [WebView registerViewClass:[WebNetscapePluginDocumentView class] forMIMEType:mime];
+            [WebDataSource registerRepresentationClass:[WebNetscapePluginStream class] forMIMEType:mime];
+        }
     }
 
     return self;
