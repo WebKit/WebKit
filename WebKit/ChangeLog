@@ -1,3 +1,12 @@
+2003-03-14  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Don.
+
+	- revert premature controller --> webView renaming, it's causing
+	problems with window opening and such.
+	
+        * WebView.subproj/WebDefaultWindowOperationsDelegate.m:
+
 2003-03-14  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: 3197872 - Standalone plug-in content isn't restarted when switching tabs

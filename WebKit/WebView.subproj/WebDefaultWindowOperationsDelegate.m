@@ -34,27 +34,27 @@ static WebDefaultWindowOperationsDelegate *sharedDelegate = nil;
     return nil;
 }
 
-- (void)webViewShowWindow: (WebController *)wv;
+- (void)controllerShowWindow: (WebController *)wv;
 {
 }
 
-- (void)webViewShowWindowBehindFrontmost: (WebController *)wv;
+- (void)controllerShowWindowBehindFrontmost: (WebController *)wv;
 {
 }
 
-- (void)webViewCloseWindow: (WebController *)wv;
+- (void)controllerCloseWindow: (WebController *)wv;
 {
 }
 
-- (void)webViewFocusWindow: (WebController *)wv;
+- (void)controllerFocusWindow: (WebController *)wv;
 {
 }
 
-- (void)webViewUnfocusWindow: (WebController *)wv;
+- (void)controllerUnfocusWindow: (WebController *)wv;
 {
 }
 
-- (NSResponder *)webViewFirstResponderInWindow: (WebController *)wv;
+- (NSResponder *)controllerFirstResponderInWindow: (WebController *)wv;
 {
     return nil;
 }
@@ -67,7 +67,7 @@ static WebDefaultWindowOperationsDelegate *sharedDelegate = nil;
 {
 }
 
-- (NSString *)webViewStatusText: (WebController *)wv;
+- (NSString *)controllerStatusText: (WebController *)wv;
 {
     return nil;
 }
@@ -76,7 +76,7 @@ static WebDefaultWindowOperationsDelegate *sharedDelegate = nil;
 {
 }
 
-- (BOOL)webViewAreToolbarsVisible: (WebController *)wv;
+- (BOOL)controllerAreToolbarsVisible: (WebController *)wv;
 {
     return NO;
 }
@@ -85,7 +85,7 @@ static WebDefaultWindowOperationsDelegate *sharedDelegate = nil;
 {
 }
 
-- (BOOL)webViewIsStatusBarVisible: (WebController *)wv;
+- (BOOL)controllerIsStatusBarVisible: (WebController *)wv;
 {
     return NO;
 }
@@ -94,7 +94,7 @@ static WebDefaultWindowOperationsDelegate *sharedDelegate = nil;
 {
 }
 
-- (BOOL)webViewIsResizable: (WebController *)wv;
+- (BOOL)controllerIsResizable: (WebController *)wv;
 {
     return NO;
 }
@@ -107,7 +107,7 @@ static WebDefaultWindowOperationsDelegate *sharedDelegate = nil;
 {
 }
 
-- (NSRect)webViewFrame: (WebController *)wv;
+- (NSRect)controllerFrame: (WebController *)wv;
 {
     return NSMakeRect (0,0,0,0);
 }
