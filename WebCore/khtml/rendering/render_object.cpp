@@ -1378,6 +1378,9 @@ void RenderObject::setStyle(RenderStyle *style)
         // having an outline to not having an outline.
         repaint();
 
+    if (m_style && m_style->position() != style->position() && layer())
+        layer()->repaintIncludingDescendants();
+
     if (m_style && isFloating() && (m_style->floating() != style->floating()))
         // For changes in float styles, we need to conceivably remove ourselves
         // from the floating objects list.

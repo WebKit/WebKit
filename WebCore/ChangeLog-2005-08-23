@@ -1,3 +1,16 @@
+2004-04-12  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3556036, make sure that when the position changes via style that all render layer
+	descendants simply immediately repaint.
+	
+        Reviewed by kocienda
+	
+        * khtml/rendering/render_layer.cpp:
+        (RenderLayer::repaintIncludingDescendants):
+        * khtml/rendering/render_layer.h:
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::setStyle):
+
 2004-04-12  Chris Blumenberg  <cblu@apple.com>
 
 	- Fixed build failure by removing references to WebArchive in WebCore.
