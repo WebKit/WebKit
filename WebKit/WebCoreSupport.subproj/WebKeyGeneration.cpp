@@ -312,7 +312,7 @@ CFStringRef signedPublicKeyAndChallengeString(unsigned keySize, CFStringRef chal
      * First, DER-decode the key's SubjectPublicKeyInfo.
      */
     memset(&spkc, 0, sizeof(spkc));
-    perr = coder.decodeItem(subjectPubKey.KeyData, SS_SubjectPublicKeyInfoTemplate, &pkc->spki);
+    perr = coder.decodeItem(subjectPubKey.KeyData, NSS_SubjectPublicKeyInfoTemplate, &pkc->spki);
     if (perr) {
         /* should never happen */
         ERROR("***Error decoding subject public key info\n");

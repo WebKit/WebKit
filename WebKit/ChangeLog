@@ -1,3 +1,10 @@
+2003-12-12  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by me
+
+        * WebCoreSupport.subproj/WebKeyGeneration.cpp:
+        (signedPublicKeyAndChallengeString): Fix build-bustin' typo.
+
 2003-12-12  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed:
