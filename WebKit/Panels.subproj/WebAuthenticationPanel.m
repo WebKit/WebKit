@@ -6,9 +6,11 @@
 
 
 #import <WebKit/WebAuthenticationPanel.h>
-#import <WebKit/WebStandardPanelsPrivate.h>
-#import <WebFoundation/WebAssertions.h>
 
+#import <WebFoundation/WebAssertions.h>
+#import <WebFoundation/WebLocalizableStrings.h>
+
+#import <WebKit/WebStandardPanelsPrivate.h>
 
 #define WebAuthenticationPanelNibName @"WebAuthenticationPanel"
 
@@ -75,8 +77,7 @@
             nibLoaded = YES;
             [imageView setImage:[NSImage imageNamed:@"NSApplicationIcon"]];
         } else {
-            NSLog(@"%s:%d  %s: couldn't load nib named '%@'",
-                  __FILE__, __LINE__, __FUNCTION__,WebAuthenticationPanelNibName);
+            ERROR("couldn't load nib named '%@'", WebAuthenticationPanelNibName);
             return FALSE;
         }
     }
@@ -84,7 +85,6 @@
 }
 
 // Methods related to displaying the panel
-
 
 -(void)setUpForRequest:(WebAuthenticationRequest *)req
 {
@@ -96,11 +96,18 @@
     // failure count (if the user tried and failed, the dialog should
     // explain possible reasons)
     // FIXME Radar 2876446: need to automatically adjust height of main label
-    [mainLabel setStringValue:[NSString stringWithFormat:@"To view this page, you need to log in to area \"%@\" on %@.", [resource realm], [[resource URL] host]]];
+    [mainLabel setStringValue:[NSString stringWithFormat:
+        UI_STRING("To view this page, you need to log in to area “%@” on %@.",
+            "prompt string in authentication panel"),
+        [resource realm], [[resource URL] host]]];
     if ([resource receivesCredentialSecurely]) {
-        [smallLabel setStringValue:@"Your log-in information will be sent securely."];
+        [smallLabel setStringValue:
+            UI_STRING("Your log-in information will be sent securely.",
+                "message in authentication panel")];
     } else {
-        [smallLabel setStringValue:@"Your password will be sent in the clear."];
+        [smallLabel setStringValue:
+            UI_STRING("Your password will be sent in the clear.",
+                "message in authentication panel")];
     }
 
     if ([resource username] != nil) {

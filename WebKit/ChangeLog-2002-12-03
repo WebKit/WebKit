@@ -1,3 +1,14 @@
+2002-10-04  Darin Adler  <darin@apple.com>
+
+        * Panels.subproj/WebAuthenticationPanel.m:
+        (-[WebAuthenticationPanel loadNib]): Use ERROR instead of NSLog here.
+        (-[WebAuthenticationPanel setUpForRequest:]): Mark some strings for localization.
+
+        * WebKit.pbproj/project.pbxproj: Change the encoding on a lot more files to UTF-8.
+
+        * English.lproj/StringsNotToBeLocalized.txt: Added some new exceptions.
+        * English.lproj/Localizable.strings: Re-generated.
+
 2002-10-04  Richard Williamson   <rjw@apple.com>
 
         Changed WebDOMNode name to WebDebugDOMNode to make room for

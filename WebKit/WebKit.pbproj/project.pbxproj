@@ -474,7 +474,7 @@
 			shellScript = "if [ -f ../Tools/Scripts/embed-into-alex ]; then sh ../Tools/Scripts/embed-into-alex; fi";
 		};
 		2568C72C0174912D0ECA149E = {
-			fileEncoding = 30;
+			fileEncoding = 4;
 			isa = PBXFileReference;
 			path = WebKit.h;
 			refType = 4;
@@ -842,13 +842,13 @@
 			refType = 4;
 		};
 		3944607A020F50ED0ECA1767 = {
-			fileEncoding = 30;
+			fileEncoding = 4;
 			isa = PBXFileReference;
 			path = WebException.h;
 			refType = 4;
 		};
 		3944607B020F50ED0ECA1767 = {
-			fileEncoding = 30;
+			fileEncoding = 4;
 			isa = PBXFileReference;
 			path = WebException.m;
 			refType = 4;
@@ -1387,7 +1387,7 @@
 //933
 //934
 		931A72D203265920008635CE = {
-			fileEncoding = 30;
+			fileEncoding = 4;
 			isa = PBXFileReference;
 			path = WebBaseNetscapePluginViewPrivate.h;
 			refType = 4;
@@ -1660,13 +1660,13 @@
 //F53
 //F54
 		F501251B0302EA04018635CE = {
-			fileEncoding = 30;
+			fileEncoding = 4;
 			isa = PBXFileReference;
 			path = WebTestController.h;
 			refType = 4;
 		};
 		F501251C0302EA04018635CE = {
-			fileEncoding = 30;
+			fileEncoding = 4;
 			isa = PBXFileReference;
 			path = WebTestController.m;
 			refType = 4;
@@ -1821,13 +1821,13 @@
 			};
 		};
 		F508946902B71D59018A9CD4 = {
-			fileEncoding = 30;
+			fileEncoding = 4;
 			isa = PBXFileReference;
 			path = WebNSViewExtras.h;
 			refType = 4;
 		};
 		F508946A02B71D59018A9CD4 = {
-			fileEncoding = 30;
+			fileEncoding = 4;
 			isa = PBXFileReference;
 			path = WebNSViewExtras.m;
 			refType = 4;
@@ -1899,19 +1899,19 @@
 			};
 		};
 		F528E3E9031E91AD01CA2ACA = {
-			fileEncoding = 30;
+			fileEncoding = 4;
 			isa = PBXFileReference;
 			path = WebIconDatabase.h;
 			refType = 4;
 		};
 		F528E3EA031E91AD01CA2ACA = {
-			fileEncoding = 30;
+			fileEncoding = 4;
 			isa = PBXFileReference;
 			path = WebIconDatabase.m;
 			refType = 4;
 		};
 		F528E3EB031E91AD01CA2ACA = {
-			fileEncoding = 30;
+			fileEncoding = 4;
 			isa = PBXFileReference;
 			path = WebIconDatabasePrivate.h;
 			refType = 4;
@@ -2018,13 +2018,13 @@
 			name = DeploymentFat;
 		};
 		F53444CE02E87CBA018635CA = {
-			fileEncoding = 30;
+			fileEncoding = 4;
 			isa = PBXFileReference;
 			path = WebKitStatistics.h;
 			refType = 4;
 		};
 		F53444CF02E87CBA018635CA = {
-			fileEncoding = 30;
+			fileEncoding = 4;
 			isa = PBXFileReference;
 			path = WebKitStatistics.m;
 			refType = 4;
@@ -2045,7 +2045,7 @@
 			};
 		};
 		F53444D202E87D4B018635CA = {
-			fileEncoding = 30;
+			fileEncoding = 4;
 			isa = PBXFileReference;
 			path = WebKitStatisticsPrivate.h;
 			refType = 4;
@@ -2081,13 +2081,13 @@
 			};
 		};
 		F560BEBC030DAF4401C1A526 = {
-			fileEncoding = 30;
+			fileEncoding = 4;
 			isa = PBXFileReference;
 			path = WebSearchableTextView.h;
 			refType = 4;
 		};
 		F560BEBD030DAF4401C1A526 = {
-			fileEncoding = 30;
+			fileEncoding = 4;
 			isa = PBXFileReference;
 			path = WebSearchableTextView.m;
 			refType = 4;
@@ -2147,13 +2147,13 @@
 			};
 		};
 		F5883BE0025E5E9D01000102 = {
-			fileEncoding = 30;
+			fileEncoding = 4;
 			isa = PBXFileReference;
 			path = WebNullPluginView.h;
 			refType = 4;
 		};
 		F5883BE1025E5E9D01000102 = {
-			fileEncoding = 30;
+			fileEncoding = 4;
 			isa = PBXFileReference;
 			path = WebNullPluginView.m;
 			refType = 4;
@@ -2187,7 +2187,7 @@
 			name = Mixed;
 		};
 		F5927D4E02D26C5E01CA2DBB = {
-			fileEncoding = 30;
+			fileEncoding = 4;
 			isa = PBXFileReference;
 			path = WebKitErrors.h;
 			refType = 4;
@@ -2202,13 +2202,13 @@
 			};
 		};
 		F5934C8802E894F50197FBCF = {
-			fileEncoding = 30;
+			fileEncoding = 4;
 			isa = PBXFileReference;
 			path = WebIconLoader.h;
 			refType = 4;
 		};
 		F5934C8902E894F50197FBCF = {
-			fileEncoding = 30;
+			fileEncoding = 4;
 			isa = PBXFileReference;
 			path = WebIconLoader.m;
 			refType = 4;
@@ -2229,13 +2229,13 @@
 			};
 		};
 		F59668C802AD2923018635CA = {
-			fileEncoding = 30;
+			fileEncoding = 4;
 			isa = PBXFileReference;
 			path = WebStringTruncator.h;
 			refType = 4;
 		};
 		F59668C902AD2923018635CA = {
-			fileEncoding = 30;
+			fileEncoding = 4;
 			isa = PBXFileReference;
 			path = WebStringTruncator.m;
 			refType = 4;
@@ -2256,7 +2256,7 @@
 			};
 		};
 		F59EAE3E0253C7EE018635CA = {
-			fileEncoding = 30;
+			fileEncoding = 4;
 			isa = PBXFileReference;
 			path = WebCoreStatistics.h;
 			refType = 4;
@@ -2271,7 +2271,7 @@
 			};
 		};
 		F59EAE410253C8DE018635CA = {
-			fileEncoding = 30;
+			fileEncoding = 4;
 			isa = PBXFileReference;
 			path = WebCoreStatistics.m;
 			refType = 4;
@@ -2295,25 +2295,25 @@
 			};
 		};
 		F5A672B70263866E01000102 = {
-			fileEncoding = 30;
+			fileEncoding = 4;
 			isa = PBXFileReference;
 			path = WebPluginNullEventSender.h;
 			refType = 4;
 		};
 		F5A672B80263866E01000102 = {
-			fileEncoding = 30;
+			fileEncoding = 4;
 			isa = PBXFileReference;
 			path = WebPluginNullEventSender.m;
 			refType = 4;
 		};
 		F5A672B90263866E01000102 = {
-			fileEncoding = 30;
+			fileEncoding = 4;
 			isa = PBXFileReference;
 			path = WebPluginStream.h;
 			refType = 4;
 		};
 		F5A672BA0263866E01000102 = {
-			fileEncoding = 30;
+			fileEncoding = 4;
 			isa = PBXFileReference;
 			path = WebPluginStream.m;
 			refType = 4;
@@ -2485,7 +2485,7 @@
 			};
 		};
 		F5C283730284676D018635CA = {
-			fileEncoding = 30;
+			fileEncoding = 4;
 			isa = PBXFileReference;
 			name = WebKitPrefix.h;
 			path = ../WebKitPrefix.h;
@@ -2686,13 +2686,13 @@
 			refType = 4;
 		};
 		F5EBC45502134BC301CA1520 = {
-			fileEncoding = 30;
+			fileEncoding = 4;
 			isa = PBXFileReference;
 			path = WebBaseNetscapePluginView.h;
 			refType = 4;
 		};
 		F5EBC45602134BC301CA1520 = {
-			fileEncoding = 30;
+			fileEncoding = 4;
 			isa = PBXFileReference;
 			path = WebBaseNetscapePluginView.m;
 			refType = 4;
@@ -2710,37 +2710,37 @@
 			};
 		};
 		F5F7171E0288493C018635CA = {
-			fileEncoding = 30;
+			fileEncoding = 4;
 			isa = PBXFileReference;
 			path = WebPlugin.h;
 			refType = 4;
 		};
 		F5F7171F0288493C018635CA = {
-			fileEncoding = 30;
+			fileEncoding = 4;
 			isa = PBXFileReference;
 			path = WebPlugin.m;
 			refType = 4;
 		};
 		F5F717200288493C018635CA = {
-			fileEncoding = 30;
+			fileEncoding = 4;
 			isa = PBXFileReference;
 			path = WebPluginDatabase.h;
 			refType = 4;
 		};
 		F5F717210288493C018635CA = {
-			fileEncoding = 30;
+			fileEncoding = 4;
 			isa = PBXFileReference;
 			path = WebPluginDatabase.m;
 			refType = 4;
 		};
 		F5F717220288493C018635CA = {
-			fileEncoding = 30;
+			fileEncoding = 4;
 			isa = PBXFileReference;
 			path = npapi.h;
 			refType = 4;
 		};
 		F5F717230288493C018635CA = {
-			fileEncoding = 30;
+			fileEncoding = 4;
 			isa = PBXFileReference;
 			path = npapi.m;
 			refType = 4;
@@ -2826,14 +2826,14 @@
 			};
 		};
 		F5F81C3902B67C26018635CA = {
-			fileEncoding = 30;
+			fileEncoding = 4;
 			isa = PBXFileReference;
 			name = WebRenderNode.h;
 			path = ../WebView.subproj/WebRenderNode.h;
 			refType = 4;
 		};
 		F5F81C3A02B67C26018635CA = {
-			fileEncoding = 30;
+			fileEncoding = 4;
 			isa = PBXFileReference;
 			name = WebRenderNode.m;
 			path = ../WebView.subproj/WebRenderNode.m;
@@ -2855,13 +2855,13 @@
 			};
 		};
 		F5FBAB8F02B88CBF01FF6074 = {
-			fileEncoding = 30;
+			fileEncoding = 4;
 			isa = PBXFileReference;
 			path = WebDownloadHandler.h;
 			refType = 4;
 		};
 		F5FBAB9002B88CBF01FF6074 = {
-			fileEncoding = 30;
+			fileEncoding = 4;
 			isa = PBXFileReference;
 			path = WebDownloadHandler.m;
 			refType = 4;
@@ -2965,7 +2965,7 @@
 			refType = 4;
 		};
 		F8CA15B6029A39D901000122 = {
-			fileEncoding = 30;
+			fileEncoding = 4;
 			isa = PBXFileReference;
 			path = WebAuthenticationPanel.m;
 			refType = 4;

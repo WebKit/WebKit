@@ -194,15 +194,15 @@ static void URLFileReaderInit(void)
     
     if (data) {
         if (mappedBytes) {
-            LOG(DiskCacheActivity, "mmaped disk cache file - %s", [path lossyCString]);
+            LOG(DiskCacheActivity, "mmaped disk cache file - %@", path);
         }
         else {
-            LOG(DiskCacheActivity, "fs read disk cache file - %s", [path lossyCString]);
+            LOG(DiskCacheActivity, "fs read disk cache file - %@", path);
         }
         return self;
     }
     else {
-        LOG(DiskCacheActivity, "no disk cache file - %s", [path lossyCString]);
+        LOG(DiskCacheActivity, "no disk cache file - %@", path);
         [self dealloc];
         return nil;
     }
