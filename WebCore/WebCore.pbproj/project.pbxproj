@@ -524,6 +524,7 @@
 				BE9970C305F7DD1C00611115,
 				BE9CB65905F9546800514D9C,
 				BEF7EEA205FF8F0D009717EE,
+				845563E506014A9800609194,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -802,6 +803,7 @@
 				BE9CB64E05F942CB00514D9C,
 				BE9CB65A05F9546800514D9C,
 				BEF7EEA305FF8F0D009717EE,
+				845563E606014A9800609194,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1194,6 +1196,34 @@
 //842
 //843
 //844
+		845563E306014A9800609194 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = HTMLDOM.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		845563E406014A9800609194 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
+			path = HTMLDOM.mm;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		845563E506014A9800609194 = {
+			fileRef = 845563E306014A9800609194;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		845563E606014A9800609194 = {
+			fileRef = 845563E406014A9800609194;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		848A320F057E688B001A2362 = {
 			isa = PBXFileReference;
 			lastKnownFileType = wrapper.framework;
@@ -6328,6 +6358,8 @@
 				BE9CB65805F9546800514D9C,
 				BE94EB6405EFFE6B0032DCB5,
 				BE9CB64D05F942CB00514D9C,
+				845563E306014A9800609194,
+				845563E406014A9800609194,
 			);
 			isa = PBXGroup;
 			name = DOM;
