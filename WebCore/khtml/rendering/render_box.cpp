@@ -56,6 +56,7 @@ RenderBox::RenderBox(DOM::NodeImpl* node)
     m_marginBottom = 0;
     m_marginLeft = 0;
     m_marginRight = 0;
+    m_layer = 0;
 }
 
 void RenderBox::setStyle(RenderStyle *_style)

@@ -28,7 +28,8 @@
 
 namespace khtml {
     class CachedObject;
-
+    class RenderLayer;
+    
 class RenderBox : public RenderContainer
 {
 
@@ -100,6 +101,8 @@ public:
 
     void relativePositionOffset(int &tx, int &ty);
 
+    RenderLayer* layer() { return m_layer; }
+    
 protected:
     virtual void printBoxDecorations(QPainter *p,int _x, int _y,
                                        int _w, int _h, int _tx, int _ty);
@@ -137,6 +140,10 @@ protected:
      * ( = the width of the element with line breaking disabled)
      */
     short m_maxWidth;
+    
+    // A pointer to our layer if we have one.  Currently only positioned elements
+    // and floaters have layers.
+    RenderLayer* m_layer;
 };
 
 

@@ -1,3 +1,39 @@
+2002-08-27  David Hyatt  <hyatt@apple.com>
+
+	Change relative positioned blocks so that they are treated as special objects and
+	painted last along with absolutely positioned blocks and floaters.  Note that the
+	entire special object system is fundamentally flawed, and it needs to be replaced
+	with a real layering subsystem.
+
+	This checkin at least gets relatively positioned divs painting correctly some of
+	the time (in the cases where the containing blocks of absolute and relative positioned
+	divs happen to be the same).  It does not, however, deal with the problem of ensuring
+	correct stacking of positioned elements with different containing blocks.
+
+	render_layer.h and .cpp include a new implementation (not used yet, just the beginnings)
+	of a layering subsystem that I am going to be working on over the next few days
+	that will eventually be responsible for handling event dispatching and painting and that
+	will also understand how to deal with form controls and other objects that have Cocoa
+	views.
+	
+        * WebCore.pbproj/project.pbxproj:
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::RenderBox):
+        * khtml/rendering/render_box.h:
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::printObject):
+        (RenderFlow::printSpecialObjects):
+        (RenderFlow::layoutSpecialObjects):
+        (RenderFlow::layoutBlockChildren):
+        (RenderFlow::insertSpecialObject):
+        * khtml/rendering/render_flow.h:
+        * khtml/rendering/render_layer.cpp: Added.
+        (RenderLayer::RenderLayer):
+        (RenderLayer::~RenderLayer):
+        (RenderLayer::addChild):
+        (RenderLayer::removeChild):
+        * khtml/rendering/render_layer.h: Added.
+
 2002-08-27  Darin Adler  <darin@apple.com>
 
 	- fixed 3031952 -- null-dereference in dispatchToUInt32 closing window

@@ -492,6 +492,7 @@
 				F593F87D0302BE00018635CE,
 				F583D50303140623018635CE,
 				F5517DC4031AB56301A80180,
+				F690CFEC031C47F401CA2AC4,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -721,6 +722,7 @@
 				F593F87E0302BE00018635CE,
 				F583D50403140623018635CE,
 				F5517DC5031AB56301A80180,
+				F690CFED031C47F401CA2AC4,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3340,6 +3342,8 @@
 				F523D2B602DE4438018635CA,
 				F523D2B702DE4438018635CA,
 				F523D2B802DE4438018635CA,
+				F690CFEA031C47F401CA2AC4,
+				F690CFEB031C47F401CA2AC4,
 				F523D2B902DE4438018635CA,
 				F523D2BA02DE4438018635CA,
 				F523D2BC02DE4438018635CA,
@@ -7581,6 +7585,38 @@
 //F52
 //F53
 //F54
+//F60
+//F61
+//F62
+//F63
+//F64
+		F690CFEA031C47F401CA2AC4 = {
+			isa = PBXFileReference;
+			path = render_layer.h;
+			refType = 4;
+		};
+		F690CFEB031C47F401CA2AC4 = {
+			isa = PBXFileReference;
+			path = render_layer.cpp;
+			refType = 4;
+		};
+		F690CFEC031C47F401CA2AC4 = {
+			fileRef = F690CFEA031C47F401CA2AC4;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F690CFED031C47F401CA2AC4 = {
+			fileRef = F690CFEB031C47F401CA2AC4;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+//F60
+//F61
+//F62
+//F63
+//F64
 //F80
 //F81
 //F82

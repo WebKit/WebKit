@@ -164,7 +164,7 @@ void RenderFlow::printObject(QPainter *p, int _x, int _y,
     RenderObject *child = firstChild();
     while(child != 0)
     {
-        if(!child->isFloating() && !child->isPositioned())
+        if(!child->isFloating() && !child->isPositioned() && !child->isRelPositioned())
             child->print(p, _x, _y, _w, _h, _tx, _ty);
         child = child->nextSibling();
     }
@@ -202,9 +202,9 @@ void RenderFlow::printSpecialObjects( QPainter *p, int x, int y, int w, int h, i
     for ( ; (r = it.current()); ++it ) {
         // A special object may be registered with several different objects... so we only print the
         // object if we are its containing block
-       if (r->node->isPositioned() && r->node->containingBlock() == this) {
+       if ((r->node->isPositioned() || r->node->isRelPositioned()) && r->node->containingBlock() == this)
            r->node->print(p, x, y, w, h, tx , ty);
-       } else if ( ( r->node->isFloating() && !r->noPaint ) ) {
+       else if ( ( r->node->isFloating() && !r->noPaint ) ) {
 	    r->node->print(p, x, y, w, h, tx + r->left - r->node->xPos() + r->node->marginLeft(),
 			   ty + r->startY - r->node->yPos() + r->node->marginTop() );
  	}
@@ -320,6 +320,7 @@ void RenderFlow::layoutSpecialObjects( bool relayoutChildren )
 		if ( !r->node->layouted() )
 		    r->node->layout();
 	    }
+            // We don't lay out relative positioned objects here.  They get a layout during the normal flow - dwh
         }
         specialObjects->sort();
     }
@@ -394,12 +395,27 @@ void RenderFlow::layoutBlockChildren( bool relayoutChildren )
 //         kdDebug( 6040 ) << t.elapsed() << endl;
         // ### might be some layouts are done two times... FIX that.
 
-        if (child->isPositioned())
+        if (child->isPositioned() || child->isRelPositioned())
         {
             static_cast<RenderFlow*>(child->containingBlock())->insertSpecialObject(child);
 	    //kdDebug() << "RenderFlow::layoutBlockChildren inserting positioned into " << child->containingBlock()->renderName() << endl;
-            child = child->nextSibling();
-            continue;
+            
+            // Absolute positioned objects aren't part of the flow, but relative objects are.
+            // Both types of positioned objects have to be painted after all normal flow objects though,
+            // and relative objects can even paint on top of absolute positioned objects if they occur later in
+            // the content model (or have a higher z-index). -dwh
+            //
+            // A simple example:
+            /* <div style="width:317px;height:381px;background-color:red;position: absolute;"></div>
+               <div style="background-color: green; color: white; position: relative; height: 30px;">
+                    This text should be clearly visible.
+               </div> 
+               </div>
+            */
+            if (child->isPositioned()) {
+                child = child->nextSibling();
+                continue;
+            }
         } else if ( child->isReplaced() ) {
             if ( !child->layouted() )
                 child->layout();
@@ -544,6 +560,10 @@ void RenderFlow::insertSpecialObject(RenderObject *o)
 	// positioned object
 	newObj = new SpecialObject(SpecialObject::Positioned);
         setOverhangingContents();
+    }
+    else if (o->isRelPositioned()) {
+        // relative positioned object.
+        newObj = new SpecialObject(SpecialObject::RelPositioned);
     }
     else if (o->isFloating()) {
 	// floating object
