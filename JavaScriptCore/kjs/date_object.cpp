@@ -241,15 +241,55 @@ static UString formatTime(struct tm &tm)
     return UString(buffer);
 }
 
-static UString formatLocaleDate(time_t tv, bool includeDate, bool includeTime)
+static CFDateFormatterStyle styleFromArgString(const UString& string,CFDateFormatterStyle defaultStyle)
+{
+    CFDateFormatterStyle retVal = defaultStyle;
+    if (string == "short")
+	retVal = kCFDateFormatterShortStyle;
+    else if (string == "medium")
+	retVal = kCFDateFormatterMediumStyle;
+    else if (string == "long")
+	retVal = kCFDateFormatterLongStyle;
+    else if (string == "full")
+	retVal = kCFDateFormatterFullStyle;
+    return retVal;
+}
+
+static UString formatLocaleDate(KJS::ExecState *exec,time_t tv, bool includeDate, bool includeTime, const KJS::List &args)
 {
     LongDateTime longDateTime;
     UCConvertCFAbsoluteTimeToLongDateTime(tv - kCFAbsoluteTimeIntervalSince1970, &longDateTime);
 
     CFLocaleRef locale = CFLocaleCopyCurrent();
-    CFDateFormatterRef formatter = CFDateFormatterCreate(NULL, locale,
-        includeDate ? kCFDateFormatterLongStyle : kCFDateFormatterNoStyle,
-        includeTime ? kCFDateFormatterLongStyle : kCFDateFormatterNoStyle);
+    
+    int argCount = args.size();
+    
+    CFDateFormatterStyle    dateStyle = (includeDate ? kCFDateFormatterLongStyle : kCFDateFormatterNoStyle);
+    CFDateFormatterStyle    timeStyle = (includeTime ? kCFDateFormatterLongStyle : kCFDateFormatterNoStyle);
+
+    UString	arg0String;
+    UString	arg1String;
+    bool	useCustomFormat = false;
+    UString	customFormatString;
+    arg0String = args[0].toString(exec);
+    if ((arg0String == "custom") && (argCount >= 2)) {
+	useCustomFormat = true;
+	customFormatString = args[1].toString(exec);
+    } else if (includeDate && includeTime && (argCount >= 2)) {
+	arg1String = args[1].toString(exec);
+	dateStyle = styleFromArgString(arg0String,dateStyle);
+	timeStyle = styleFromArgString(arg1String,timeStyle);
+    } else if (includeDate && (argCount >= 1)) {
+	dateStyle = styleFromArgString(arg0String,dateStyle);
+    } else if (includeTime && (argCount >= 1)) {
+	timeStyle = styleFromArgString(arg0String,timeStyle);
+    }
+    CFDateFormatterRef formatter = CFDateFormatterCreate(NULL, locale, dateStyle, timeStyle);
+    if (useCustomFormat) {
+	CFStringRef	customFormatCFString = CFStringCreateWithCharacters(NULL,(UniChar*)customFormatString.data(),customFormatString.size());
+	CFDateFormatterSetFormat(formatter,customFormatCFString);
+	CFRelease(customFormatCFString);
+    }
     CFStringRef string = CFDateFormatterCreateStringWithAbsoluteTime(NULL, formatter, tv - kCFAbsoluteTimeIntervalSince1970);
 
     // We truncate the string returned from CFDateFormatter if it's absurdly long (> 200 characters).
@@ -446,13 +486,13 @@ Value DateProtoFuncImp::call(ExecState *exec, Object &thisObj, const List &args)
     result = String(formatDateUTCVariant(*t) + " " + formatTime(*t));
     break;
   case ToLocaleString:
-    result = String(formatLocaleDate(tv, true, true));
+    result = String(formatLocaleDate(exec,tv, true, true,args));
     break;
   case ToLocaleDateString:
-    result = String(formatLocaleDate(tv, true, false));
+    result = String(formatLocaleDate(exec,tv, true, false,args));
     break;
   case ToLocaleTimeString:
-    result = String(formatLocaleDate(tv, false, true));
+    result = String(formatLocaleDate(exec,tv, false, true,args));
     break;
 #else
   case ToString:
