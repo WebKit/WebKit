@@ -578,8 +578,13 @@
     _private->gotFirstByte = YES;
     [self _commitIfReady];
 
+    // parsing some of the page can result in running a script which
+    // could possibly destroy the frame and data source. So retain
+    // self temporarily.
+    [self retain];
     [[self representation] receivedData:data withDataSource:self];
     [[[[self webFrame] frameView] documentView] dataSourceUpdated:self];
+    [self release];
 }
 
 - (void)_finishedLoading

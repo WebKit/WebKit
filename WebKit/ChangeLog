@@ -1,3 +1,14 @@
+2003-08-12  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Ken.
+
+	- fixed 3365242 - non-repro abort in HTMLTokenizer at ajc.com
+	
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _receivedData:]): ref the data source around
+	processing the data and afterwards, to avoid crashing if a script
+	in this chunk of data made the frame go away.
+
 2003-08-13  Richard Williamson   <rjw@apple.com>
 
 	Fixed 3376077.  Override automaticallyNotifiesObserversForKey: to
