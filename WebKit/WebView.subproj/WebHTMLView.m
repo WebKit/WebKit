@@ -343,6 +343,13 @@
 {
     WEBKITDEBUGLEVEL (WEBKIT_LOG_VIEW, "%s drawing\n", DEBUG_OBJECT(self));
 
+    if ([self inLiveResize]){
+        if (!NSEqualRects(rect, [self visibleRect])){
+            rect = [self visibleRect];
+            [self setNeedsLayout: YES];
+        }
+    }
+
     [self reapplyStyles];
 
     [self layout];

@@ -84,21 +84,26 @@ enum {
     [super dealloc];
 }
 
-- (void)setFrame: (NSRect)f
-{
-    if ([self isDocumentHTML] && !NSEqualRects(f, [self frame]))
-        [(WebHTMLView *)[self documentView] setNeedsLayout: YES];
-    [super setFrame: f];
-}
-
-
 - (void)viewWillStartLiveResize
 {
 }
 
+
+- (void)setFrame: (NSRect)f
+{
+    if ([self isDocumentHTML] && !NSEqualRects(f, [self frame]))
+        [(WebHTMLView *)[self documentView] setNeedsLayout: YES];
+        
+    [super setFrame: f];
+    
+    // We have to force a display now, rather than depend on
+    // setNeedsDisplay: or we will get drawing turds under the
+    // scrollbar frames.
+    [[self frameScrollView] display];
+}
+
 - (void)viewDidEndLiveResize
 {
-    [self display];
 }
 
 - (void)setAllowsScrolling: (BOOL)flag

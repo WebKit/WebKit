@@ -35,7 +35,6 @@ QFrame::QFrame(QWidget *parent)
 void QFrame::setFrameStyle(int s)
 {
     _frameStyle = s;
-    NSLog (@"framesStyle = %d\n", s);
 }
 
 int QFrame::frameStyle()
