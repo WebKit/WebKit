@@ -1,3 +1,14 @@
+2002-12-20  Richard Williamson   <rjw@apple.com>
+
+        Fix for 3133601.  Play the same trick we do in
+        KHTMLPartBrowserExtension::openURLRequest to create an empty
+        document if necessary.
+        
+        Reviewed by darin.
+
+        * khtml/ecma/kjs_window.cpp:
+        (Window::get):
+
 2002-12-19  David Hyatt  <hyatt@apple.com>
 
 	Remove the clip hack from setLayout and make it

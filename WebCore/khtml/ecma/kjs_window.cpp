@@ -392,6 +392,9 @@ Value Window::get(ExecState *exec, const Identifier &p) const
       if (isSafeScript(exec))
       {
         if (m_part->document().isNull()) {
+#if APPLE_CHANGES
+          KWQ(m_part)->createEmptyDocument();
+#endif
           kdDebug(6070) << "Document.write: adding <HTML><BODY> to create document" << endl;
           m_part->begin();
           m_part->write("<HTML><BODY>");
