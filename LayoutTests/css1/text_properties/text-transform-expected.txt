@@ -1,0 +1,452 @@
+layer at (0,0) size 800x2962
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x2962
+  RenderBlock {HTML} at (0,0) size 800x2962
+    RenderBody {BODY} at (8,21) size 784x2925 [bgcolor=#FFFFFF]
+      RenderBlock {H1} at (0,0) size 784x37 [bgcolor=#000000]
+        RenderText {TEXT} at (0,0) size 431x37
+          text run at (0,0) width 431: "Tests for text-transform in CSS"
+      RenderBlock {P} at (0,58) size 784x72 [color=#808080] [bgcolor=#000000]
+        RenderText {TEXT} at (0,0) size 772x54
+          text run at (0,0) width 772: "In the following, the source contains pairs of characters, an uppercase character followed by a lowercase character. If the"
+          text run at (0,18) width 753: "transform works correctly both characters should look the same. Where differences occur, view the source to see which"
+          text run at (0,36) width 565: "characters are involved. (Tip: copy and paste the sequence into a plain text editor, or into"
+        RenderInline {A} at (0,0) size 375x18 [color=#0000EE]
+          RenderText {TEXT} at (0,54) size 375x18
+            text run at (0,54) width 375: "http://people.w3.org/rishida/scripts/uniview/conversion.htm"
+        RenderText {TEXT} at (375,54) size 22x18
+          text run at (375,54) width 22: " or "
+        RenderInline {A} at (0,0) size 359x18 [color=#0000EE]
+          RenderText {TEXT} at (397,54) size 359x18
+            text run at (397,54) width 359: "http://people.w3.org/rishida/scripts/uniview/uniview.html"
+        RenderText {TEXT} at (756,54) size 5x18
+          text run at (756,54) width 5: ")"
+      RenderBlock {P} at (0,146) size 784x51 [color=#808080] [bgcolor=#000000]
+        RenderText {TEXT} at (0,0) size 742x48
+          text run at (0,0) width 482: "On some user agents you will only see glyphs supported by the current font. "
+          text run at (482,0) width 260: "To help with this situation, you can apply"
+          text run at (0,30) width 437: "different fonts by typing in a different font name in the following box: "
+        RenderLineEdit {INPUT} at (439,30) size 128x19
+        RenderText {TEXT} at (569,30) size 4x18
+          text run at (569,30) width 4: " "
+        RenderBlock {BUTTON} at (573,18) size 45x26 [bgcolor=#C0C0C0]
+          RenderText {TEXT} at (4,4) size 37x18
+            text run at (4,4) width 37: "Apply"
+      RenderBlock {HR} at (1,213) size 782x2 [bgcolor=#000000]
+      RenderBlock {H2} at (0,234) size 784x28 [color=#808080] [bgcolor=#000000]
+        RenderText {TEXT} at (0,0) size 197x28
+          text run at (0,0) width 197: "General case: Latin"
+      RenderBlock {P} at (0,281) size 784x18 [color=#808080] [bgcolor=#000000]
+        RenderText {TEXT} at (0,0) size 621x18
+          text run at (0,0) width 621: "The css says: text-transform: uppercase. The right-hand character should match the left-hand one."
+      RenderBlock {P} at (0,315) size 784x306 [bgcolor=#000000]
+        RenderText {TEXT} at (0,0) size 784x306
+          text run at (0,0) width 220: "| A A | B B | C C | D D | E E | F F "
+          text run at (220,0) width 204: "| G G | H H | I I | J J | K K | L L "
+          text run at (424,0) width 230: "| M M | N N | O O | P P | Q Q | R R "
+          text run at (654,0) width 126: "| S S | T T | U U | V"
+          text run at (0,18) width 100: "V | W W | X X "
+          text run at (100,18) width 230: "| Y Y | Z Z | \x{C0} \x{C0} | \x{C1} \x{C1} | \x{C2} \x{C2} | \x{C3} \x{C3} "
+          text run at (330,18) width 228: "| \x{C4} \x{C4} | \x{C5} \x{C5} | \x{C6} \x{C6} | \x{C7} \x{C7} | \x{C8} \x{C8} | \x{C9} \x{C9} "
+          text run at (558,18) width 170: "| \x{CA} \x{CA} | \x{CB} \x{CB} | \x{CC} \x{CC} | \x{CD} \x{CD} | \x{CE} \x{CE} | \x{CF} \x{CF} "
+          text run at (728,18) width 46: "| \x{D0} \x{D0} | "
+          text run at (0,36) width 188: "\x{D1} \x{D1} | \x{D2} \x{D2} | \x{D3} \x{D3} | \x{D4} \x{D4} | \x{D5} \x{D5} "
+          text run at (188,36) width 234: "| \x{D6} \x{D6} | \x{D8} \x{D8} | \x{D9} \x{D9} | \x{DA} \x{DA} | \x{DB} \x{DB} | \x{DC} \x{DC} "
+          text run at (422,36) width 228: "| \x{DD} \x{DD} | \x{DE} \x{DE} | \x{178} \x{178} | \x{100} \x{100} | \x{102} \x{102} | \x{104} \x{104} "
+          text run at (650,36) width 133: "| \x{106} \x{106} | \x{108} \x{108} | \x{10A} \x{10A} | \x{10C} "
+          text run at (0,54) width 93: "\x{10C} | \x{10E} \x{10E} | \x{110} \x{110} "
+          text run at (93,54) width 214: "| \x{112} \x{112} | \x{114} \x{114} | \x{116} \x{116} | \x{118} \x{118} | \x{11A} \x{11A} | \x{11C} \x{11C} "
+          text run at (307,54) width 220: "| \x{11E} \x{11E} | \x{120} \x{120} | \x{122} \x{122} | \x{124} \x{124} | \x{126} \x{126} | \x{128} \x{128} "
+          text run at (527,54) width 166: "| \x{12A} \x{12A} | \x{12C} \x{12C} | \x{12E} \x{12E} | I I | \x{132} \x{132} | \x{134} \x{134} "
+          text run at (693,54) width 91: "| \x{136} \x{136} | \x{139} \x{139} | \x{13B}"
+          text run at (0,72) width 119: "\x{13B} | \x{13D} \x{13D} | \x{13F} \x{13F} | \x{141} \x{141} "
+          text run at (119,72) width 234: "| \x{143} \x{143} | \x{145} \x{145} | \x{147} \x{147} | \x{14A} \x{14A} | \x{14C} \x{14C} | \x{14E} \x{14E} "
+          text run at (353,72) width 226: "| \x{150} \x{150} | \x{152} \x{152} | \x{154} \x{154} | \x{156} \x{156} | \x{158} \x{158} | \x{15A} \x{15A} "
+          text run at (579,72) width 200: "| \x{15C} \x{15C} | \x{15E} \x{15E} | \x{160} \x{160} | \x{162} \x{162} | \x{164} \x{164} | \x{166} \x{166}"
+          text run at (0,90) width 234: "| \x{168} \x{168} | \x{16A} \x{16A} | \x{16C} \x{16C} | \x{16E} \x{16E} | \x{170} \x{170} | \x{172} \x{172} "
+          text run at (234,90) width 222: "| \x{174} \x{174} | \x{176} \x{176} | \x{179} \x{179} | \x{17B} \x{17B} | \x{17D} \x{17D} | S S "
+          text run at (456,90) width 226: "| \x{182} \x{182} | \x{184} \x{184} | \x{187} \x{187} | \x{18B} \x{18B} | \x{191} \x{191} | \x{1F6} \x{1F6} "
+          text run at (682,90) width 100: "| \x{198} \x{198} | \x{220} \x{220} | \x{1A0} "
+          text run at (0,108) width 134: "\x{1A0} | \x{1A2} \x{1A2} | \x{1A4} \x{1A4} | \x{1A7} \x{1A7} "
+          text run at (134,108) width 224: "| \x{1AC} \x{1AC} | \x{1AF} \x{1AF} | \x{1B3} \x{1B3} | \x{1B5} \x{1B5} | \x{1B8} \x{1B8} | \x{1BC} \x{1BC} "
+          text run at (358,108) width 290: "| \x{1F7} \x{1F7} | \x{1C4} \x{1C4} | \x{1C4} \x{1C4} | \x{1C7} \x{1C7} | \x{1C7} \x{1C7} | \x{1CA} \x{1CA} "
+          text run at (648,108) width 133: "| \x{1CA} \x{1CA} | \x{1CD} \x{1CD} | \x{1CF} \x{1CF} | \x{1D1}"
+          text run at (0,126) width 95: "\x{1D1} | \x{1D3} \x{1D3} | \x{1D5} \x{1D5} "
+          text run at (95,126) width 228: "| \x{1D7} \x{1D7} | \x{1D9} \x{1D9} | \x{1DB} \x{1DB} | \x{18E} \x{18E} | \x{1DE} \x{1DE} | \x{1E0} \x{1E0} "
+          text run at (323,126) width 246: "| \x{1E2} \x{1E2} | \x{1E4} \x{1E4} | \x{1E6} \x{1E6} | \x{1E8} \x{1E8} | \x{1EA} \x{1EA} | \x{1EC} \x{1EC} "
+          text run at (569,126) width 215: "| \x{1EE} \x{1EE} | \x{1F1} \x{1F1} | \x{1F1} \x{1F1} | \x{1F4} \x{1F4} | \x{1F8} "
+          text run at (0,144) width 55: "\x{1F8} | \x{1FA} \x{1FA} "
+          text run at (55,144) width 230: "| \x{1FC} \x{1FC} | \x{1FE} \x{1FE} | \x{200} \x{200} | \x{202} \x{202} | \x{204} \x{204} | \x{206} \x{206} "
+          text run at (285,144) width 206: "| \x{208} \x{208} | \x{20A} \x{20A} | \x{20C} \x{20C} | \x{20E} \x{20E} | \x{210} \x{210} | \x{212} \x{212} "
+          text run at (491,144) width 222: "| \x{214} \x{214} | \x{216} \x{216} | \x{218} \x{218} | \x{21A} \x{21A} | \x{21C} \x{21C} | \x{21E} \x{21E} "
+          text run at (713,144) width 68: "| \x{222} \x{222} | \x{224} \x{224}"
+          text run at (0,162) width 154: "| \x{226} \x{226} | \x{228} \x{228} | \x{22A} \x{22A} | \x{22C} \x{22C} "
+          text run at (154,162) width 232: "| \x{22E} \x{22E} | \x{230} \x{230} | \x{232} \x{232} | \x{181} \x{181} | \x{186} \x{186} | \x{189} \x{189} "
+          text run at (386,162) width 224: "| \x{18A} \x{18A} | \x{18F} \x{18F} | \x{190} \x{190} | \x{193} \x{193} | \x{194} \x{194} | \x{197} \x{197} "
+          text run at (610,162) width 174: "| \x{196} \x{196} | \x{19C} \x{19C} | \x{19D} \x{19D} | \x{19F} \x{19F} | \x{1A6} "
+          text run at (0,180) width 50: "\x{1A6} | \x{1A9} \x{1A9} "
+          text run at (50,180) width 224: "| \x{1AE} \x{1AE} | \x{1B1} \x{1B1} | \x{1B2} \x{1B2} | \x{1B7} \x{1B7} | \x{1E00} \x{1E00} | \x{1E02} \x{1E02} "
+          text run at (274,180) width 226: "| \x{1E04} \x{1E04} | \x{1E06} \x{1E06} | \x{1E08} \x{1E08} | \x{1E0A} \x{1E0A} | \x{1E0C} \x{1E0C} | \x{1E0E} \x{1E0E} "
+          text run at (500,180) width 210: "| \x{1E10} \x{1E10} | \x{1E12} \x{1E12} | \x{1E14} \x{1E14} | \x{1E16} \x{1E16} | \x{1E18} \x{1E18} | \x{1E1A} \x{1E1A} "
+          text run at (710,180) width 73: "| \x{1E1C} \x{1E1C} | \x{1E1E} \x{1E1E} | "
+          text run at (0,198) width 149: "\x{1E20} \x{1E20} | \x{1E22} \x{1E22} | \x{1E24} \x{1E24} | \x{1E26} \x{1E26} "
+          text run at (149,198) width 202: "| \x{1E28} \x{1E28} | \x{1E2A} \x{1E2A} | \x{1E2C} \x{1E2C} | \x{1E2E} \x{1E2E} | \x{1E30} \x{1E30} | \x{1E32} \x{1E32} "
+          text run at (351,198) width 212: "| \x{1E34} \x{1E34} | \x{1E36} \x{1E36} | \x{1E38} \x{1E38} | \x{1E3A} \x{1E3A} | \x{1E3C} \x{1E3C} | \x{1E3E} \x{1E3E} "
+          text run at (563,198) width 210: "| \x{1E40} \x{1E40} | \x{1E42} \x{1E42} | \x{1E44} \x{1E44} | \x{1E46} \x{1E46} | \x{1E48} \x{1E48} | "
+          text run at (0,216) width 32: "\x{1E4A} \x{1E4A} "
+          text run at (32,216) width 230: "| \x{1E4C} \x{1E4C} | \x{1E4E} \x{1E4E} | \x{1E50} \x{1E50} | \x{1E52} \x{1E52} | \x{1E54} \x{1E54} | \x{1E56} \x{1E56} "
+          text run at (262,216) width 214: "| \x{1E58} \x{1E58} | \x{1E5A} \x{1E5A} | \x{1E5C} \x{1E5C} | \x{1E5E} \x{1E5E} | \x{1E60} \x{1E60} | \x{1E62} \x{1E62} "
+          text run at (476,216) width 210: "| \x{1E64} \x{1E64} | \x{1E66} \x{1E66} | \x{1E68} \x{1E68} | \x{1E6A} \x{1E6A} | \x{1E6C} \x{1E6C} | \x{1E6E} \x{1E6E} "
+          text run at (686,216) width 95: "| \x{1E70} \x{1E70} | \x{1E72} \x{1E72} | \x{1E74}"
+          text run at (0,234) width 133: "\x{1E74} | \x{1E76} \x{1E76} | \x{1E78} \x{1E78} | \x{1E7A} \x{1E7A} "
+          text run at (133,234) width 246: "| \x{1E7C} \x{1E7C} | \x{1E7E} \x{1E7E} | \x{1E80} \x{1E80} | \x{1E82} \x{1E82} | \x{1E84} \x{1E84} | \x{1E86} \x{1E86} "
+          text run at (379,234) width 222: "| \x{1E88} \x{1E88} | \x{1E8A} \x{1E8A} | \x{1E8C} \x{1E8C} | \x{1E8E} \x{1E8E} | \x{1E90} \x{1E90} | \x{1E92} \x{1E92} "
+          text run at (601,234) width 181: "| \x{1E94} \x{1E94} | \x{1E60} \x{1E60} | \x{1EA0} \x{1EA0} | \x{1EA2} \x{1EA2} | \x{1EA4} \x{1EA4}"
+          text run at (0,252) width 39: "| \x{1EA6} \x{1EA6} "
+          text run at (39,252) width 234: "| \x{1EA8} \x{1EA8} | \x{1EAA} \x{1EAA} | \x{1EAC} \x{1EAC} | \x{1EAE} \x{1EAE} | \x{1EB0} \x{1EB0} | \x{1EB2} \x{1EB2} "
+          text run at (273,252) width 210: "| \x{1EB4} \x{1EB4} | \x{1EB6} \x{1EB6} | \x{1EB8} \x{1EB8} | \x{1EBA} \x{1EBA} | \x{1EBC} \x{1EBC} | \x{1EBE} \x{1EBE} "
+          text run at (483,252) width 182: "| \x{1EC0} \x{1EC0} | \x{1EC2} \x{1EC2} | \x{1EC4} \x{1EC4} | \x{1EC6} \x{1EC6} | \x{1EC8} \x{1EC8} | \x{1ECA} \x{1ECA} "
+          text run at (665,252) width 119: "| \x{1ECC} \x{1ECC} | \x{1ECE} \x{1ECE} | \x{1ED0} \x{1ED0}"
+          text run at (0,270) width 123: "| \x{1ED2} \x{1ED2} | \x{1ED4} \x{1ED4} | \x{1ED6} \x{1ED6} "
+          text run at (123,270) width 246: "| \x{1ED8} \x{1ED8} | \x{1EDA} \x{1EDA} | \x{1EDC} \x{1EDC} | \x{1EDE} \x{1EDE} | \x{1EE0} \x{1EE0} | \x{1EE2} \x{1EE2} "
+          text run at (369,270) width 242: "| \x{1EE4} \x{1EE4} | \x{1EE6} \x{1EE6} | \x{1EE8} \x{1EE8} | \x{1EEA} \x{1EEA} | \x{1EEC} \x{1EEC} | \x{1EEE} \x{1EEE} "
+          text run at (611,270) width 167: "| \x{1EF0} \x{1EF0} | \x{1EF2} \x{1EF2} | \x{1EF4} \x{1EF4} | \x{1EF6} \x{1EF6} | \x{1EF8} "
+          text run at (0,288) width 17: "\x{1EF8} |"
+      RenderBlock {P} at (0,637) size 784x18 [color=#808080] [bgcolor=#000000]
+        RenderText {TEXT} at (0,0) size 620x18
+          text run at (0,0) width 620: "The css says: text-transform: lowercase. The left-hand character should match the right-hand one."
+      RenderBlock {P} at (0,671) size 784x252 [bgcolor=#000000]
+        RenderText {TEXT} at (0,0) size 784x252
+          text run at (0,0) width 149: "| a a | b b | c c | d d | e e "
+          text run at (149,0) width 164: "| f f | g g | h h | i i | j j | k k "
+          text run at (313,0) width 186: "| l l | m m | n n | o o | p p | q q "
+          text run at (499,0) width 176: "| r r | s s | t t | u u | v v | w w "
+          text run at (675,0) width 109: "| x x | y y | z z | \x{E0} "
+          text run at (0,18) width 69: "\x{E0} | \x{E1} \x{E1} | \x{E2} \x{E2} "
+          text run at (69,18) width 182: "| \x{E3} \x{E3} | \x{E4} \x{E4} | \x{E5} \x{E5} | \x{E6} \x{E6} | \x{E7} \x{E7} | \x{E8} \x{E8} "
+          text run at (251,18) width 156: "| \x{E9} \x{E9} | \x{EA} \x{EA} | \x{EB} \x{EB} | \x{EC} \x{EC} | \x{ED} \x{ED} | \x{EE} \x{EE} "
+          text run at (407,18) width 178: "| \x{EF} \x{EF} | \x{F0} \x{F0} | \x{F1} \x{F1} | \x{F2} \x{F2} | \x{F3} \x{F3} | \x{F4} \x{F4} "
+          text run at (585,18) width 186: "| \x{F5} \x{F5} | \x{F6} \x{F6} | \x{F8} \x{F8} | \x{F9} \x{F9} | \x{FA} \x{FA} | \x{FB} \x{FB} "
+          text run at (771,18) width 7: "| "
+          text run at (0,36) width 173: "\x{FC} \x{FC} | \x{FD} \x{FD} | \x{FE} \x{FE} | \x{101} \x{101} | \x{103} \x{103} | \x{105} \x{105} "
+          text run at (173,36) width 182: "| \x{107} \x{107} | \x{109} \x{109} | \x{10B} \x{10B} | \x{10D} \x{10D} | \x{10F} \x{10F} | \x{111} \x{111} "
+          text run at (355,36) width 176: "| \x{113} \x{113} | \x{115} \x{115} | \x{117} \x{117} | \x{119} \x{119} | \x{11B} \x{11B} | \x{11D} \x{11D} "
+          text run at (531,36) width 178: "| \x{11F} \x{11F} | \x{121} \x{121} | \x{123} \x{123} | \x{125} \x{125} | \x{127} \x{127} | \x{129} \x{129} "
+          text run at (709,36) width 74: "| \x{12B} \x{12B} | \x{12D} \x{12D} | \x{12F} \x{12F} |"
+          text run at (0,54) width 72: "i i | \x{133} \x{133} | \x{135} \x{135} "
+          text run at (72,54) width 154: "| \x{137} \x{137} | \x{13A} \x{13A} | \x{13C} \x{13C} | \x{13E} \x{13E} | \x{140} \x{140} | \x{142} \x{142} "
+          text run at (226,54) width 190: "| \x{144} \x{144} | \x{146} \x{146} | \x{148} \x{148} | \x{14B} \x{14B} | \x{14D} \x{14D} | \x{14F} \x{14F} "
+          text run at (416,54) width 172: "| \x{151} \x{151} | \x{153} \x{153} | \x{155} \x{155} | \x{157} \x{157} | \x{159} \x{159} | \x{15B} \x{15B} "
+          text run at (588,54) width 156: "| \x{15D} \x{15D} | \x{15F} \x{15F} | \x{161} \x{161} | \x{163} \x{163} | \x{165} \x{165} | \x{167} \x{167} "
+          text run at (744,54) width 38: "| \x{169} \x{169} | "
+          text run at (0,72) width 148: "\x{16B} \x{16B} | \x{16D} \x{16D} | \x{16F} \x{16F} | \x{171} \x{171} | \x{173} \x{173} "
+          text run at (148,72) width 188: "| \x{175} \x{175} | \x{177} \x{177} | \x{FF} \x{FF} | \x{17A} \x{17A} | \x{17C} \x{17C} | \x{17E} \x{17E} "
+          text run at (336,72) width 214: "| \x{253} \x{253} | \x{183} \x{183} | \x{185} \x{185} | \x{254} \x{254} | \x{188} \x{188} | \x{256} \x{256} "
+          text run at (550,72) width 206: "| \x{257} \x{257} | \x{18C} \x{18C} | \x{1DD} \x{1DD} | \x{259} \x{259} | \x{25B} \x{25B} | \x{192} \x{192} "
+          text run at (756,72) width 21: "| \x{260} "
+          text run at (0,90) width 185: "\x{260} | \x{263} \x{263} | \x{269} \x{269} | \x{268} \x{268} | \x{199} \x{199} | \x{26F} \x{26F} "
+          text run at (185,90) width 224: "| \x{272} \x{272} | \x{275} \x{275} | \x{1A1} \x{1A1} | \x{1A3} \x{1A3} | \x{1A5} \x{1A5} | \x{280} \x{280} "
+          text run at (409,90) width 188: "| \x{1A8} \x{1A8} | \x{283} \x{283} | \x{1AD} \x{1AD} | \x{288} \x{288} | \x{1B0} \x{1B0} | \x{28A} \x{28A} "
+          text run at (597,90) width 186: "| \x{28B} \x{28B} | \x{1B4} \x{1B4} | \x{1B6} \x{1B6} | \x{292} \x{292} | \x{1B9} \x{1B9} | "
+          text run at (0,108) width 24: "\x{1BD} \x{1BD} "
+          text run at (24,108) width 228: "| \x{1C6} \x{1C6} | \x{1C9} \x{1C9} | \x{1CC} \x{1CC} | \x{1CE} \x{1CE} | \x{1D0} \x{1D0} | \x{1D2} \x{1D2} "
+          text run at (252,108) width 208: "| \x{1D4} \x{1D4} | \x{1D6} \x{1D6} | \x{1D8} \x{1D8} | \x{1DA} \x{1DA} | \x{1DC} \x{1DC} | \x{1DF} \x{1DF} "
+          text run at (460,108) width 222: "| \x{1E1} \x{1E1} | \x{1E3} \x{1E3} | \x{1E5} \x{1E5} | \x{1E7} \x{1E7} | \x{1E9} \x{1E9} | \x{1EB} \x{1EB} "
+          text run at (682,108) width 101: "| \x{1ED} \x{1ED} | \x{1EF} \x{1EF} | \x{1F3} "
+          text run at (0,126) width 137: "\x{1F3} | \x{1F5} \x{1F5} | \x{195} \x{195} | \x{1BF} \x{1BF} "
+          text run at (137,126) width 212: "| \x{1F9} \x{1F9} | \x{1FB} \x{1FB} | \x{1FD} \x{1FD} | \x{1FF} \x{1FF} | \x{201} \x{201} | \x{203} \x{203} "
+          text run at (349,126) width 186: "| \x{205} \x{205} | \x{207} \x{207} | \x{209} \x{209} | \x{20B} \x{20B} | \x{20D} \x{20D} | \x{20F} \x{20F} "
+          text run at (535,126) width 178: "| \x{211} \x{211} | \x{213} \x{213} | \x{215} \x{215} | \x{217} \x{217} | \x{219} \x{219} | \x{21B} \x{21B} "
+          text run at (713,126) width 66: "| \x{21D} \x{21D} | \x{21F} \x{21F}"
+          text run at (0,144) width 138: "| \x{19E} \x{19E} | \x{223} \x{223} | \x{225} \x{225} | \x{227} \x{227} "
+          text run at (138,144) width 206: "| \x{229} \x{229} | \x{22B} \x{22B} | \x{22D} \x{22D} | \x{22F} \x{22F} | \x{231} \x{231} | \x{233} \x{233} "
+          text run at (344,144) width 214: "| \x{1E01} \x{1E01} | \x{1E03} \x{1E03} | \x{1E05} \x{1E05} | \x{1E07} \x{1E07} | \x{1E09} \x{1E09} | \x{1E0B} \x{1E0B} "
+          text run at (558,144) width 214: "| \x{1E0D} \x{1E0D} | \x{1E0F} \x{1E0F} | \x{1E11} \x{1E11} | \x{1E13} \x{1E13} | \x{1E15} \x{1E15} | \x{1E17} \x{1E17} "
+          text run at (772,144) width 7: "| "
+          text run at (0,162) width 189: "\x{1E19} \x{1E19} | \x{1E1B} \x{1E1B} | \x{1E1D} \x{1E1D} | \x{1E1F} \x{1E1F} | \x{1E21} \x{1E21} | \x{1E23} \x{1E23} "
+          text run at (189,162) width 190: "| \x{1E25} \x{1E25} | \x{1E27} \x{1E27} | \x{1E29} \x{1E29} | \x{1E2B} \x{1E2B} | \x{1E2D} \x{1E2D} | \x{1E2F} \x{1E2F} "
+          text run at (379,162) width 180: "| \x{1E31} \x{1E31} | \x{1E33} \x{1E33} | \x{1E35} \x{1E35} | \x{1E37} \x{1E37} | \x{1E39} \x{1E39} | \x{1E3B} \x{1E3B} "
+          text run at (559,162) width 216: "| \x{1E3D} \x{1E3D} | \x{1E3F} \x{1E3F} | \x{1E41} \x{1E41} | \x{1E43} \x{1E43} | \x{1E45} \x{1E45} | \x{1E47} "
+          text run at (0,180) width 14: "\x{1E47} "
+          text run at (14,180) width 210: "| \x{1E49} \x{1E49} | \x{1E4B} \x{1E4B} | \x{1E4D} \x{1E4D} | \x{1E4F} \x{1E4F} | \x{1E51} \x{1E51} | \x{1E53} \x{1E53} "
+          text run at (224,180) width 190: "| \x{1E55} \x{1E55} | \x{1E57} \x{1E57} | \x{1E59} \x{1E59} | \x{1E5B} \x{1E5B} | \x{1E5D} \x{1E5D} | \x{1E5F} \x{1E5F} "
+          text run at (414,180) width 192: "| \x{1E61} \x{1E61} | \x{1E63} \x{1E63} | \x{1E65} \x{1E65} | \x{1E67} \x{1E67} | \x{1E69} \x{1E69} | \x{1E6B} \x{1E6B} "
+          text run at (606,180) width 172: "| \x{1E6D} \x{1E6D} | \x{1E6F} \x{1E6F} | \x{1E71} \x{1E71} | \x{1E73} \x{1E73} | \x{1E75} \x{1E75} | \x{1E77} "
+          text run at (0,198) width 14: "\x{1E77} "
+          text run at (14,198) width 218: "| \x{1E79} \x{1E79} | \x{1E7B} \x{1E7B} | \x{1E7D} \x{1E7D} | \x{1E7F} \x{1E7F} | \x{1E81} \x{1E81} | \x{1E83} \x{1E83} "
+          text run at (232,198) width 226: "| \x{1E85} \x{1E85} | \x{1E87} \x{1E87} | \x{1E89} \x{1E89} | \x{1E8B} \x{1E8B} | \x{1E8D} \x{1E8D} | \x{1E8F} \x{1E8F} "
+          text run at (458,198) width 204: "| \x{1E91} \x{1E91} | \x{1E93} \x{1E93} | \x{1E95} \x{1E95} | \x{1EA1} \x{1EA1} | \x{1EA3} \x{1EA3} | \x{1EA5} \x{1EA5} "
+          text run at (662,198) width 119: "| \x{1EA7} \x{1EA7} | \x{1EA9} \x{1EA9} | \x{1EAB} \x{1EAB} | \x{1EAD} "
+          text run at (0,216) width 79: "\x{1EAD} | \x{1EAF} \x{1EAF} | \x{1EB1} \x{1EB1} "
+          text run at (79,216) width 198: "| \x{1EB3} \x{1EB3} | \x{1EB5} \x{1EB5} | \x{1EB7} \x{1EB7} | \x{1EB9} \x{1EB9} | \x{1EBB} \x{1EBB} | \x{1EBD} \x{1EBD} "
+          text run at (277,216) width 190: "| \x{1EBF} \x{1EBF} | \x{1EC1} \x{1EC1} | \x{1EC3} \x{1EC3} | \x{1EC5} \x{1EC5} | \x{1EC7} \x{1EC7} | \x{1EC9} \x{1EC9} "
+          text run at (467,216) width 200: "| \x{1ECB} \x{1ECB} | \x{1ECD} \x{1ECD} | \x{1ECF} \x{1ECF} | \x{1ED1} \x{1ED1} | \x{1ED3} \x{1ED3} | \x{1ED5} \x{1ED5} "
+          text run at (667,216) width 114: "| \x{1ED7} \x{1ED7} | \x{1ED9} \x{1ED9} | \x{1EDB} \x{1EDB} | "
+          text run at (0,234) width 104: "\x{1EDD} \x{1EDD} | \x{1EDF} \x{1EDF} | \x{1EE1} \x{1EE1} "
+          text run at (104,234) width 218: "| \x{1EE3} \x{1EE3} | \x{1EE5} \x{1EE5} | \x{1EE7} \x{1EE7} | \x{1EE9} \x{1EE9} | \x{1EEB} \x{1EEB} | \x{1EED} \x{1EED} "
+          text run at (322,234) width 206: "| \x{1EEF} \x{1EEF} | \x{1EF1} \x{1EF1} | \x{1EF3} \x{1EF3} | \x{1EF5} \x{1EF5} | \x{1EF7} \x{1EF7} | \x{1EF9} \x{1EF9} "
+          text run at (528,234) width 3: "|"
+      RenderBlock {HR} at (1,939) size 782x2 [bgcolor=#000000]
+      RenderBlock {H2} at (0,960) size 784x28 [color=#808080] [bgcolor=#000000]
+        RenderText {TEXT} at (0,0) size 203x28
+          text run at (0,0) width 203: "General case: Greek"
+      RenderBlock {P} at (0,1007) size 784x18 [color=#808080] [bgcolor=#000000]
+        RenderText {TEXT} at (0,0) size 621x18
+          text run at (0,0) width 621: "The css says: text-transform: uppercase. The right-hand character should match the left-hand one."
+      RenderBlock {P} at (0,1041) size 784x162 [bgcolor=#000000]
+        RenderText {TEXT} at (0,0) size 782x162
+          text run at (0,0) width 119: "| \x{386} \x{386} | \x{388} \x{388} | \x{389} \x{389} "
+          text run at (119,0) width 210: "| \x{38A} \x{38A} | \x{391} \x{391} | \x{392} \x{392} | \x{393} \x{393} | \x{394} \x{394} | \x{395} \x{395} "
+          text run at (329,0) width 214: "| \x{396} \x{396} | \x{397} \x{397} | \x{398} \x{398} | \x{399} \x{399} | \x{39A} \x{39A} | \x{39B} \x{39B} "
+          text run at (543,0) width 228: "| \x{39C} \x{39C} | \x{39D} \x{39D} | \x{39E} \x{39E} | \x{39F} \x{39F} | \x{3A0} \x{3A0} | \x{3A1} \x{3A1} "
+          text run at (771,0) width 7: "| "
+          text run at (0,18) width 209: "\x{3A3} \x{3A3} | \x{3A3} \x{3A3} | \x{3A4} \x{3A4} | \x{3A5} \x{3A5} | \x{3A6} \x{3A6} | \x{3A7} \x{3A7} "
+          text run at (209,18) width 226: "| \x{3A8} \x{3A8} | \x{3A9} \x{3A9} | \x{3AA} \x{3AA} | \x{3AB} \x{3AB} | \x{38C} \x{38C} | \x{38E} \x{38E} "
+          text run at (435,18) width 238: "| \x{38F} \x{38F} | \x{392} \x{392} | \x{398} \x{398} | \x{3A6} \x{3A6} | \x{3A0} \x{3A0} | \x{3D8} \x{3D8} "
+          text run at (673,18) width 107: "| \x{3DA} \x{3DA} | \x{3DC} \x{3DC} | \x{3DE} \x{3DE}"
+          text run at (0,36) width 115: "| \x{3E0} \x{3E0} | \x{39A} \x{39A} | \x{3A1} \x{3A1} "
+          text run at (115,36) width 230: "| \x{3F9} \x{3F9} | \x{395} \x{395} | \x{3F7} \x{3F7} | \x{3FA} \x{3FA} | \x{1F08} \x{1F08} | \x{1F09} \x{1F09} "
+          text run at (345,36) width 268: "| \x{1F0A} \x{1F0A} | \x{1F0B} \x{1F0B} | \x{1F0C} \x{1F0C} | \x{1F0D} \x{1F0D} | \x{1F0E} \x{1F0E} | \x{1F0F} \x{1F0F} "
+          text run at (613,36) width 159: "| \x{1F18} \x{1F18} | \x{1F19} \x{1F19} | \x{1F1A} \x{1F1A} | \x{1F1B} "
+          text run at (0,54) width 113: "\x{1F1B} | \x{1F1C} \x{1F1C} | \x{1F1D} \x{1F1D} "
+          text run at (113,54) width 304: "| \x{1F28} \x{1F28} | \x{1F29} \x{1F29} | \x{1F2A} \x{1F2A} | \x{1F2B} \x{1F2B} | \x{1F2C} \x{1F2C} | \x{1F2D} \x{1F2D} "
+          text run at (417,54) width 254: "| \x{1F2E} \x{1F2E} | \x{1F2F} \x{1F2F} | \x{1F38} \x{1F38} | \x{1F39} \x{1F39} | \x{1F3A} \x{1F3A} | \x{1F3B} \x{1F3B} "
+          text run at (671,54) width 111: "| \x{1F3C} \x{1F3C} | \x{1F3D} \x{1F3D} | \x{1F3E} \x{1F3E}"
+          text run at (0,72) width 137: "| \x{1F3F} \x{1F3F} | \x{1F48} \x{1F48} | \x{1F49} \x{1F49} "
+          text run at (137,72) width 324: "| \x{1F4A} \x{1F4A} | \x{1F4B} \x{1F4B} | \x{1F4C} \x{1F4C} | \x{1F4D} \x{1F4D} | \x{1F59} \x{1F59} | \x{1F5B} \x{1F5B} "
+          text run at (461,72) width 302: "| \x{1F5D} \x{1F5D} | \x{1F5F} \x{1F5F} | \x{1F68} \x{1F68} | \x{1F69} \x{1F69} | \x{1F6A} \x{1F6A} | \x{1F6B} \x{1F6B} "
+          text run at (763,72) width 7: "| "
+          text run at (0,90) width 271: "\x{1F6C} \x{1F6C} | \x{1F6D} \x{1F6D} | \x{1F6E} \x{1F6E} | \x{1F6F} \x{1F6F} | \x{1FBA} \x{1FBA} | \x{1FBB} \x{1FBB} "
+          text run at (271,90) width 228: "| \x{1FC8} \x{1FC8} | \x{1FC9} \x{1FC9} | \x{1FCA} \x{1FCA} | \x{1FCB} \x{1FCB} | \x{1FDA} \x{1FDA} | \x{1FDB} \x{1FDB} "
+          text run at (499,90) width 270: "| \x{1FF8} \x{1FF8} | \x{1FF9} \x{1FF9} | \x{1FEA} \x{1FEA} | \x{1FEB} \x{1FEB} | \x{1FFA} \x{1FFA} | \x{1FFB} \x{1FFB} "
+          text run at (769,90) width 7: "| "
+          text run at (0,108) width 301: "\x{1F88} \x{1F88} | \x{1F89} \x{1F89} | \x{1F8A} \x{1F8A} | \x{1F8B} \x{1F8B} | \x{1F8C} \x{1F8C} | \x{1F8D} \x{1F8D} "
+          text run at (301,108) width 318: "| \x{1F8E} \x{1F8E} | \x{1F8F} \x{1F8F} | \x{1F98} \x{1F98} | \x{1F99} \x{1F99} | \x{1F9A} \x{1F9A} | \x{1F9B} \x{1F9B} "
+          text run at (619,108) width 148: "| \x{1F9C} \x{1F9C} | \x{1F9D} \x{1F9D} | \x{1F9E} "
+          text run at (0,126) width 184: "\x{1F9E} | \x{1F9F} \x{1F9F} | \x{1FA8} \x{1FA8} | \x{1FA9} \x{1FA9} "
+          text run at (184,126) width 346: "| \x{1FAA} \x{1FAA} | \x{1FAB} \x{1FAB} | \x{1FAC} \x{1FAC} | \x{1FAD} \x{1FAD} | \x{1FAE} \x{1FAE} | \x{1FAF} \x{1FAF} "
+          text run at (530,126) width 228: "| \x{1FB8} \x{1FB8} | \x{1FB9} \x{1FB9} | \x{1FBC} \x{1FBC} | \x{399} \x{399} | \x{1FCC} \x{1FCC} | \x{1FD8} \x{1FD8} "
+          text run at (758,126) width 21: "| \x{1FD9} \x{1FD9}"
+          text run at (0,144) width 173: "| \x{1FE8} \x{1FE8} | \x{1FE9} \x{1FE9} | \x{1FEC} \x{1FEC} | \x{1FFC} \x{1FFC} |"
+      RenderBlock {P} at (0,1219) size 784x18 [color=#808080] [bgcolor=#000000]
+        RenderText {TEXT} at (0,0) size 620x18
+          text run at (0,0) width 620: "The css says: text-transform: lowercase. The left-hand character should match the right-hand one."
+      RenderBlock {P} at (0,1253) size 784x90 [bgcolor=#000000]
+        RenderText {TEXT} at (0,0) size 784x90
+          text run at (0,0) width 169: "| \x{3AC} \x{3AC} | \x{3AD} \x{3AD} | \x{3AE} \x{3AE} | \x{3AF} \x{3AF} | \x{3CC} \x{3CC} "
+          text run at (169,0) width 208: "| \x{3CD} \x{3CD} | \x{3CE} \x{3CE} | \x{3B1} \x{3B1} | \x{3B2} \x{3B2} | \x{3B3} \x{3B3} | \x{3B4} \x{3B4} "
+          text run at (377,0) width 184: "| \x{3B5} \x{3B5} | \x{3B6} \x{3B6} | \x{3B7} \x{3B7} | \x{3B8} \x{3B8} | \x{3B9} \x{3B9} | \x{3BA} \x{3BA} "
+          text run at (561,0) width 194: "| \x{3BB} \x{3BB} | \x{3BC} \x{3BC} | \x{3BD} \x{3BD} | \x{3BE} \x{3BE} | \x{3BF} \x{3BF} | \x{3C0} \x{3C0} "
+          text run at (755,0) width 29: "| \x{3C1} \x{3C1}"
+          text run at (0,18) width 161: "| \x{3C3} \x{3C3} | \x{3C4} \x{3C4} | \x{3C5} \x{3C5} | \x{3C6} \x{3C6} | \x{3C7} \x{3C7} "
+          text run at (161,18) width 208: "| \x{3C8} \x{3C8} | \x{3C9} \x{3C9} | \x{3CA} \x{3CA} | \x{3CB} \x{3CB} | \x{3D9} \x{3D9} | \x{3DB} \x{3DB} "
+          text run at (369,18) width 206: "| \x{3DD} \x{3DD} | \x{3DF} \x{3DF} | \x{3E1} \x{3E1} | \x{3B8} \x{3B8} | \x{3F8} \x{3F8} | \x{3F2} \x{3F2} "
+          text run at (575,18) width 202: "| \x{3FB} \x{3FB} | \x{1F00} \x{1F00} | \x{1F01} \x{1F01} | \x{1F02} \x{1F02} | \x{1F03} \x{1F03} | "
+          text run at (0,36) width 32: "\x{1F04} \x{1F04} "
+          text run at (32,36) width 216: "| \x{1F05} \x{1F05} | \x{1F06} \x{1F06} | \x{1F07} \x{1F07} | \x{1F10} \x{1F10} | \x{1F11} \x{1F11} | \x{1F12} \x{1F12} "
+          text run at (248,36) width 204: "| \x{1F13} \x{1F13} | \x{1F14} \x{1F14} | \x{1F15} \x{1F15} | \x{1F20} \x{1F20} | \x{1F21} \x{1F21} | \x{1F22} \x{1F22} "
+          text run at (452,36) width 202: "| \x{1F23} \x{1F23} | \x{1F24} \x{1F24} | \x{1F25} \x{1F25} | \x{1F26} \x{1F26} | \x{1F27} \x{1F27} | \x{1F30} \x{1F30} "
+          text run at (654,36) width 125: "| \x{1F31} \x{1F31} | \x{1F32} \x{1F32} | \x{1F33} \x{1F33} | \x{1F34} \x{1F34} | \x{1F35} "
+          text run at (0,54) width 37: "\x{1F35} | \x{1F36} \x{1F36} "
+          text run at (37,54) width 202: "| \x{1F37} \x{1F37} | \x{1F40} \x{1F40} | \x{1F41} \x{1F41} | \x{1F42} \x{1F42} | \x{1F43} \x{1F43} | \x{1F44} \x{1F44} "
+          text run at (239,54) width 220: "| \x{1F45} \x{1F45} | \x{1F51} \x{1F51} | \x{1F53} \x{1F53} | \x{1F55} \x{1F55} | \x{1F57} \x{1F57} | \x{1F60} \x{1F60} "
+          text run at (459,54) width 270: "| \x{1F61} \x{1F61} | \x{1F62} \x{1F62} | \x{1F63} \x{1F63} | \x{1F64} \x{1F64} | \x{1F65} \x{1F65} | \x{1F66} \x{1F66} "
+          text run at (729,54) width 52: "| \x{1F67} \x{1F67} | "
+          text run at (0,72) width 182: "\x{1FB0} \x{1FB0} | \x{1FB1} \x{1FB1} | \x{1F70} \x{1F70} | \x{1F71} \x{1F71} | \x{1F72} \x{1F72} "
+          text run at (182,72) width 184: "| \x{1F73} \x{1F73} | \x{1F74} \x{1F74} | \x{1F75} \x{1F75} | \x{1FD0} \x{1FD0} | \x{1FD1} \x{1FD1} | \x{1F76} \x{1F76} "
+          text run at (366,72) width 202: "| \x{1F77} \x{1F77} | \x{1FE0} \x{1FE0} | \x{1FE1} \x{1FE1} | \x{1F7A} \x{1F7A} | \x{1F7B} \x{1F7B} | \x{1FE5} \x{1FE5} "
+          text run at (568,72) width 163: "| \x{1F78} \x{1F78} | \x{1F79} \x{1F79} | \x{1F7C} \x{1F7C} | \x{1F7D} \x{1F7D} |"
+      RenderBlock {HR} at (1,1359) size 782x2 [bgcolor=#000000]
+      RenderBlock {H2} at (0,1380) size 784x28 [color=#808080] [bgcolor=#000000]
+        RenderText {TEXT} at (0,0) size 208x28
+          text run at (0,0) width 208: "General case: Coptic"
+      RenderBlock {P} at (0,1427) size 784x18 [color=#808080] [bgcolor=#000000]
+        RenderText {TEXT} at (0,0) size 621x18
+          text run at (0,0) width 621: "The css says: text-transform: uppercase. The right-hand character should match the left-hand one."
+      RenderBlock {P} at (0,1461) size 784x18 [bgcolor=#000000]
+        RenderText {TEXT} at (0,0) size 360x18
+          text run at (0,0) width 255: "| \x{3E2} \x{3E2} | \x{3E4} \x{3E4} | \x{3E6} \x{3E6} | \x{3E8} \x{3E8} | \x{3EA} \x{3EA} "
+          text run at (255,0) width 105: "| \x{3EC} \x{3EC} | \x{3EE} \x{3EE} |"
+      RenderBlock {P} at (0,1495) size 784x18 [color=#808080] [bgcolor=#000000]
+        RenderText {TEXT} at (0,0) size 620x18
+          text run at (0,0) width 620: "The css says: text-transform: lowercase. The left-hand character should match the right-hand one."
+      RenderBlock {P} at (0,1529) size 784x18 [bgcolor=#000000]
+        RenderText {TEXT} at (0,0) size 360x18
+          text run at (0,0) width 102: "| \x{3E3} \x{3E3} | \x{3E5} \x{3E5} "
+          text run at (102,0) width 258: "| \x{3E7} \x{3E7} | \x{3E9} \x{3E9} | \x{3EB} \x{3EB} | \x{3ED} \x{3ED} | \x{3EF} \x{3EF} |"
+      RenderBlock {HR} at (1,1563) size 782x2 [bgcolor=#000000]
+      RenderBlock {H2} at (0,1584) size 784x28 [color=#808080] [bgcolor=#000000]
+        RenderText {TEXT} at (0,0) size 218x28
+          text run at (0,0) width 218: "General case: Cyrillic"
+      RenderBlock {P} at (0,1631) size 784x18 [color=#808080] [bgcolor=#000000]
+        RenderText {TEXT} at (0,0) size 621x18
+          text run at (0,0) width 621: "The css says: text-transform: uppercase. The right-hand character should match the left-hand one."
+      RenderBlock {P} at (0,1665) size 784x126 [bgcolor=#000000]
+        RenderText {TEXT} at (0,0) size 783x126
+          text run at (0,0) width 109: "| \x{410} \x{410} | \x{411} \x{411} | \x{412} \x{412} "
+          text run at (109,0) width 222: "| \x{413} \x{413} | \x{414} \x{414} | \x{415} \x{415} | \x{416} \x{416} | \x{417} \x{417} | \x{418} \x{418} "
+          text run at (331,0) width 238: "| \x{419} \x{419} | \x{41A} \x{41A} | \x{41B} \x{41B} | \x{41C} \x{41C} | \x{41D} \x{41D} | \x{41E} \x{41E} "
+          text run at (569,0) width 208: "| \x{41F} \x{41F} | \x{420} \x{420} | \x{421} \x{421} | \x{422} \x{422} | \x{423} \x{423} | \x{424} "
+          text run at (0,18) width 16: "\x{424} "
+          text run at (16,18) width 246: "| \x{425} \x{425} | \x{426} \x{426} | \x{427} \x{427} | \x{428} \x{428} | \x{429} \x{429} | \x{42A} \x{42A} "
+          text run at (262,18) width 230: "| \x{42B} \x{42B} | \x{42C} \x{42C} | \x{42D} \x{42D} | \x{42E} \x{42E} | \x{42F} \x{42F} | \x{400} \x{400} "
+          text run at (492,18) width 204: "| \x{401} \x{401} | \x{402} \x{402} | \x{403} \x{403} | \x{404} \x{404} | \x{405} \x{405} | \x{406} \x{406} "
+          text run at (696,18) width 79: "| \x{407} \x{407} | \x{408} \x{408} | \x{409} "
+          text run at (0,36) width 145: "\x{409} | \x{40A} \x{40A} | \x{40B} \x{40B} | \x{40C} \x{40C} "
+          text run at (145,36) width 244: "| \x{40D} \x{40D} | \x{40E} \x{40E} | \x{40F} \x{40F} | \x{460} \x{460} | \x{462} \x{462} | \x{464} \x{464} "
+          text run at (389,36) width 252: "| \x{466} \x{466} | \x{468} \x{468} | \x{46A} \x{46A} | \x{46C} \x{46C} | \x{46E} \x{46E} | \x{470} \x{470} "
+          text run at (641,36) width 141: "| \x{472} \x{472} | \x{474} \x{474} | \x{476} \x{476} | \x{478}"
+          text run at (0,54) width 107: "\x{478} | \x{47A} \x{47A} | \x{47C} \x{47C} "
+          text run at (107,54) width 228: "| \x{47E} \x{47E} | \x{480} \x{480} | \x{48A} \x{48A} | \x{48C} \x{48C} | \x{48E} \x{48E} | \x{490} \x{490} "
+          text run at (335,54) width 228: "| \x{492} \x{492} | \x{494} \x{494} | \x{496} \x{496} | \x{498} \x{498} | \x{49A} \x{49A} | \x{49C} \x{49C} "
+          text run at (563,54) width 205: "| \x{49E} \x{49E} | \x{4A0} \x{4A0} | \x{4A2} \x{4A2} | \x{4A4} \x{4A4} | \x{4A6} "
+          text run at (0,72) width 73: "\x{4A6} | \x{4A8} \x{4A8} "
+          text run at (73,72) width 230: "| \x{4AA} \x{4AA} | \x{4AC} \x{4AC} | \x{4AE} \x{4AE} | \x{4B0} \x{4B0} | \x{4B2} \x{4B2} | \x{4B4} \x{4B4} "
+          text run at (303,72) width 250: "| \x{4B6} \x{4B6} | \x{4B8} \x{4B8} | \x{4BA} \x{4BA} | \x{4BC} \x{4BC} | \x{4BE} \x{4BE} | \x{4C1} \x{4C1} "
+          text run at (553,72) width 230: "| \x{4C3} \x{4C3} | \x{4C5} \x{4C5} | \x{4C7} \x{4C7} | \x{4C9} \x{4C9} | \x{4CB} \x{4CB} | \x{4CD} \x{4CD}"
+          text run at (0,90) width 242: "| \x{4D0} \x{4D0} | \x{4D2} \x{4D2} | \x{4D4} \x{4D4} | \x{4D6} \x{4D6} | \x{4D8} \x{4D8} | \x{4DA} \x{4DA} "
+          text run at (242,90) width 230: "| \x{4DC} \x{4DC} | \x{4DE} \x{4DE} | \x{4E0} \x{4E0} | \x{4E2} \x{4E2} | \x{4E4} \x{4E4} | \x{4E6} \x{4E6} "
+          text run at (472,90) width 232: "| \x{4E8} \x{4E8} | \x{4EA} \x{4EA} | \x{4EC} \x{4EC} | \x{4EE} \x{4EE} | \x{4F0} \x{4F0} | \x{4F2} \x{4F2} "
+          text run at (704,90) width 74: "| \x{4F4} \x{4F4} | \x{4F8} \x{4F8}"
+          text run at (0,108) width 152: "| \x{500} \x{500} | \x{502} \x{502} | \x{504} \x{504} | \x{506} \x{506} "
+          text run at (152,108) width 167: "| \x{508} \x{508} | \x{50A} \x{50A} | \x{50C} \x{50C} | \x{50E} \x{50E} |"
+      RenderBlock {P} at (0,1807) size 784x18 [color=#808080] [bgcolor=#000000]
+        RenderText {TEXT} at (0,0) size 620x18
+          text run at (0,0) width 620: "The css says: text-transform: lowercase. The left-hand character should match the right-hand one."
+      RenderBlock {P} at (0,1841) size 784x108 [bgcolor=#000000]
+        RenderText {TEXT} at (0,0) size 784x108
+          text run at (0,0) width 200: "| \x{450} \x{450} | \x{451} \x{451} | \x{452} \x{452} | \x{453} \x{453} | \x{454} \x{454} | \x{455} \x{455} "
+          text run at (200,0) width 198: "| \x{456} \x{456} | \x{457} \x{457} | \x{458} \x{458} | \x{459} \x{459} | \x{45A} \x{45A} | \x{45B} \x{45B} "
+          text run at (398,0) width 208: "| \x{45C} \x{45C} | \x{45D} \x{45D} | \x{45E} \x{45E} | \x{45F} \x{45F} | \x{430} \x{430} | \x{431} \x{431} "
+          text run at (606,0) width 176: "| \x{432} \x{432} | \x{433} \x{433} | \x{434} \x{434} | \x{435} \x{435} | \x{436} \x{436} |"
+          text run at (0,18) width 24: "\x{437} \x{437} "
+          text run at (24,18) width 218: "| \x{438} \x{438} | \x{439} \x{439} | \x{43A} \x{43A} | \x{43B} \x{43B} | \x{43C} \x{43C} | \x{43D} \x{43D} "
+          text run at (242,18) width 206: "| \x{43E} \x{43E} | \x{43F} \x{43F} | \x{440} \x{440} | \x{441} \x{441} | \x{442} \x{442} | \x{443} \x{443} "
+          text run at (448,18) width 232: "| \x{444} \x{444} | \x{445} \x{445} | \x{446} \x{446} | \x{447} \x{447} | \x{448} \x{448} | \x{449} \x{449} "
+          text run at (680,18) width 99: "| \x{44A} \x{44A} | \x{44B} \x{44B} | \x{44C} \x{44C}"
+          text run at (0,36) width 109: "| \x{44D} \x{44D} | \x{44E} \x{44E} | \x{44F} \x{44F} "
+          text run at (109,36) width 234: "| \x{461} \x{461} | \x{463} \x{463} | \x{465} \x{465} | \x{467} \x{467} | \x{469} \x{469} | \x{46B} \x{46B} "
+          text run at (343,36) width 224: "| \x{46D} \x{46D} | \x{46F} \x{46F} | \x{471} \x{471} | \x{473} \x{473} | \x{475} \x{475} | \x{477} \x{477} "
+          text run at (567,36) width 208: "| \x{479} \x{479} | \x{47B} \x{47B} | \x{47D} \x{47D} | \x{47F} \x{47F} | \x{481} \x{481} | "
+          text run at (0,54) width 30: "\x{48B} \x{48B} "
+          text run at (30,54) width 218: "| \x{48D} \x{48D} | \x{48F} \x{48F} | \x{491} \x{491} | \x{493} \x{493} | \x{495} \x{495} | \x{497} \x{497} "
+          text run at (248,54) width 220: "| \x{499} \x{499} | \x{49B} \x{49B} | \x{49D} \x{49D} | \x{49F} \x{49F} | \x{4A1} \x{4A1} | \x{4A3} \x{4A3} "
+          text run at (468,54) width 230: "| \x{4A5} \x{4A5} | \x{4A7} \x{4A7} | \x{4A9} \x{4A9} | \x{4AB} \x{4AB} | \x{4AD} \x{4AD} | \x{4AF} \x{4AF} "
+          text run at (698,54) width 77: "| \x{4B1} \x{4B1} | \x{4B3} \x{4B3} | "
+          text run at (0,72) width 133: "\x{4B5} \x{4B5} | \x{4B7} \x{4B7} | \x{4B9} \x{4B9} | \x{4BB} \x{4BB} "
+          text run at (133,72) width 226: "| \x{4BD} \x{4BD} | \x{4BF} \x{4BF} | \x{4C2} \x{4C2} | \x{4C4} \x{4C4} | \x{4C6} \x{4C6} | \x{4C8} \x{4C8} "
+          text run at (359,72) width 218: "| \x{4CA} \x{4CA} | \x{4CC} \x{4CC} | \x{4CE} \x{4CE} | \x{4D1} \x{4D1} | \x{4D3} \x{4D3} | \x{4D5} \x{4D5} "
+          text run at (577,72) width 204: "| \x{4D7} \x{4D7} | \x{4D9} \x{4D9} | \x{4DB} \x{4DB} | \x{4DD} \x{4DD} | \x{4DF} \x{4DF} | \x{4E1} \x{4E1} "
+          text run at (781,72) width 3: "|"
+          text run at (0,90) width 205: "\x{4E3} \x{4E3} | \x{4E5} \x{4E5} | \x{4E7} \x{4E7} | \x{4E9} \x{4E9} | \x{4EB} \x{4EB} | \x{4ED} \x{4ED} "
+          text run at (205,90) width 208: "| \x{4EF} \x{4EF} | \x{4F1} \x{4F1} | \x{4F3} \x{4F3} | \x{4F5} \x{4F5} | \x{4F9} \x{4F9} | \x{501} \x{501} "
+          text run at (413,90) width 222: "| \x{503} \x{503} | \x{505} \x{505} | \x{507} \x{507} | \x{509} \x{509} | \x{50B} \x{50B} | \x{50D} \x{50D} "
+          text run at (635,90) width 36: "| \x{50F} \x{50F} |"
+      RenderBlock {HR} at (1,1965) size 782x2 [bgcolor=#000000]
+      RenderBlock {H2} at (0,1986) size 784x28 [color=#808080] [bgcolor=#000000]
+        RenderText {TEXT} at (0,0) size 243x28
+          text run at (0,0) width 243: "General case: Armenian"
+      RenderBlock {P} at (0,2033) size 784x18 [color=#808080] [bgcolor=#000000]
+        RenderText {TEXT} at (0,0) size 621x18
+          text run at (0,0) width 621: "The css says: text-transform: uppercase. The right-hand character should match the left-hand one."
+      RenderBlock {P} at (0,2067) size 784x36 [bgcolor=#000000]
+        RenderText {TEXT} at (0,0) size 776x36
+          text run at (0,0) width 72: "| \x{531} \x{531} | \x{532} \x{532} "
+          text run at (72,0) width 214: "| \x{533} \x{533} | \x{534} \x{534} | \x{535} \x{535} | \x{536} \x{536} | \x{537} \x{537} | \x{538} \x{538} "
+          text run at (286,0) width 216: "| \x{539} \x{539} | \x{53A} \x{53A} | \x{53B} \x{53B} | \x{53C} \x{53C} | \x{53D} \x{53D} | \x{53E} \x{53E} "
+          text run at (502,0) width 218: "| \x{53F} \x{53F} | \x{540} \x{540} | \x{541} \x{541} | \x{542} \x{542} | \x{543} \x{543} | \x{544} \x{544} "
+          text run at (720,0) width 56: "| \x{545} \x{545} | \x{546} "
+          text run at (0,18) width 156: "\x{546} | \x{547} \x{547} | \x{548} \x{548} | \x{549} \x{549} | \x{54A} \x{54A} "
+          text run at (156,18) width 212: "| \x{54B} \x{54B} | \x{54C} \x{54C} | \x{54D} \x{54D} | \x{54E} \x{54E} | \x{54F} \x{54F} | \x{550} \x{550} "
+          text run at (368,18) width 210: "| \x{551} \x{551} | \x{552} \x{552} | \x{553} \x{553} | \x{554} \x{554} | \x{555} \x{555} | \x{556} \x{556} "
+          text run at (578,18) width 3: "|"
+      RenderBlock {P} at (0,2119) size 784x18 [color=#808080] [bgcolor=#000000]
+        RenderText {TEXT} at (0,0) size 620x18
+          text run at (0,0) width 620: "The css says: text-transform: lowercase. The left-hand character should match the right-hand one."
+      RenderBlock {P} at (0,2153) size 784x36 [bgcolor=#000000]
+        RenderText {TEXT} at (0,0) size 784x36
+          text run at (0,0) width 140: "| \x{561} \x{561} | \x{562} \x{562} | \x{563} \x{563} | \x{564} \x{564} "
+          text run at (140,0) width 190: "| \x{565} \x{565} | \x{566} \x{566} | \x{567} \x{567} | \x{568} \x{568} | \x{569} \x{569} | \x{56A} \x{56A} "
+          text run at (330,0) width 186: "| \x{56B} \x{56B} | \x{56C} \x{56C} | \x{56D} \x{56D} | \x{56E} \x{56E} | \x{56F} \x{56F} | \x{570} \x{570} "
+          text run at (516,0) width 176: "| \x{571} \x{571} | \x{572} \x{572} | \x{573} \x{573} | \x{574} \x{574} | \x{575} \x{575} | \x{576} \x{576} "
+          text run at (692,0) width 92: "| \x{577} \x{577} | \x{578} \x{578} | \x{579} \x{579} |"
+          text run at (0,18) width 96: "\x{57A} \x{57A} | \x{57B} \x{57B} | \x{57C} \x{57C} "
+          text run at (96,18) width 190: "| \x{57D} \x{57D} | \x{57E} \x{57E} | \x{57F} \x{57F} | \x{580} \x{580} | \x{581} \x{581} | \x{582} \x{582} "
+          text run at (286,18) width 141: "| \x{583} \x{583} | \x{584} \x{584} | \x{585} \x{585} | \x{586} \x{586} |"
+      RenderBlock {HR} at (1,2205) size 782x2 [bgcolor=#000000]
+      RenderBlock {H2} at (0,2226) size 784x28 [color=#808080] [bgcolor=#000000]
+        RenderText {TEXT} at (0,0) size 215x28
+          text run at (0,0) width 215: "General case: Roman"
+      RenderBlock {P} at (0,2273) size 784x18 [color=#808080] [bgcolor=#000000]
+        RenderText {TEXT} at (0,0) size 621x18
+          text run at (0,0) width 621: "The css says: text-transform: uppercase. The right-hand character should match the left-hand one."
+      RenderBlock {P} at (0,2307) size 784x18 [bgcolor=#000000]
+        RenderText {TEXT} at (0,0) size 667x18
+          text run at (0,0) width 177: "| \x{2160} \x{2160} | \x{2161} \x{2161} | \x{2162} \x{2162} | \x{2163} \x{2163} | \x{2164} \x{2164} "
+          text run at (177,0) width 282: "| \x{2165} \x{2165} | \x{2166} \x{2166} | \x{2167} \x{2167} | \x{2168} \x{2168} | \x{2169} \x{2169} | \x{216A} \x{216A} "
+          text run at (459,0) width 208: "| \x{216B} \x{216B} | \x{216C} \x{216C} | \x{216D} \x{216D} | \x{216E} \x{216E} | \x{216F} \x{216F} |"
+      RenderBlock {P} at (0,2341) size 784x18 [color=#808080] [bgcolor=#000000]
+        RenderText {TEXT} at (0,0) size 620x18
+          text run at (0,0) width 620: "The css says: text-transform: lowercase. The left-hand character should match the right-hand one."
+      RenderBlock {P} at (0,2375) size 784x18 [bgcolor=#000000]
+        RenderText {TEXT} at (0,0) size 615x18
+          text run at (0,0) width 167: "| \x{2170} \x{2170} | \x{2171} \x{2171} | \x{2172} \x{2172} | \x{2173} \x{2173} | \x{2174} \x{2174} "
+          text run at (167,0) width 258: "| \x{2175} \x{2175} | \x{2176} \x{2176} | \x{2177} \x{2177} | \x{2178} \x{2178} | \x{2179} \x{2179} | \x{217A} \x{217A} "
+          text run at (425,0) width 190: "| \x{217B} \x{217B} | \x{217C} \x{217C} | \x{217D} \x{217D} | \x{217E} \x{217E} | \x{217F} \x{217F} |"
+      RenderBlock {HR} at (1,2409) size 782x2 [bgcolor=#000000]
+      RenderBlock {H2} at (0,2430) size 784x28 [color=#808080] [bgcolor=#000000]
+        RenderText {TEXT} at (0,0) size 276x28
+          text run at (0,0) width 276: "General case: Circled Latin"
+      RenderBlock {P} at (0,2477) size 784x18 [color=#808080] [bgcolor=#000000]
+        RenderText {TEXT} at (0,0) size 621x18
+          text run at (0,0) width 621: "The css says: text-transform: uppercase. The right-hand character should match the left-hand one."
+      RenderBlock {P} at (0,2511) size 784x36 [bgcolor=#000000]
+        RenderText {TEXT} at (0,0) size 775x36
+          text run at (0,0) width 141: "| \x{24B6} \x{24B6} | \x{24B7} \x{24B7} | \x{24B8} \x{24B8} "
+          text run at (141,0) width 282: "| \x{24B9} \x{24B9} | \x{24BA} \x{24BA} | \x{24BB} \x{24BB} | \x{24BC} \x{24BC} | \x{24BD} \x{24BD} | \x{24BE} \x{24BE} "
+          text run at (423,0) width 282: "| \x{24BF} \x{24BF} | \x{24C0} \x{24C0} | \x{24C1} \x{24C1} | \x{24C2} \x{24C2} | \x{24C3} \x{24C3} | \x{24C4} \x{24C4} "
+          text run at (705,0) width 70: "| \x{24C5} \x{24C5} | \x{24C6} "
+          text run at (0,18) width 208: "\x{24C6} | \x{24C7} \x{24C7} | \x{24C8} \x{24C8} | \x{24C9} \x{24C9} | \x{24CA} \x{24CA} "
+          text run at (208,18) width 238: "| \x{24CB} \x{24CB} | \x{24CC} \x{24CC} | \x{24CD} \x{24CD} | \x{24CE} \x{24CE} | \x{24CF} \x{24CF} |"
+      RenderBlock {P} at (0,2563) size 784x18 [color=#808080] [bgcolor=#000000]
+        RenderText {TEXT} at (0,0) size 620x18
+          text run at (0,0) width 620: "The css says: text-transform: lowercase. The left-hand character should match the right-hand one."
+      RenderBlock {P} at (0,2597) size 784x36 [bgcolor=#000000]
+        RenderText {TEXT} at (0,0) size 779x36
+          text run at (0,0) width 235: "| \x{24D0} \x{24D0} | \x{24D1} \x{24D1} | \x{24D2} \x{24D2} | \x{24D3} \x{24D3} | \x{24D4} \x{24D4} "
+          text run at (235,0) width 282: "| \x{24D5} \x{24D5} | \x{24D6} \x{24D6} | \x{24D7} \x{24D7} | \x{24D8} \x{24D8} | \x{24D9} \x{24D9} | \x{24DA} \x{24DA} "
+          text run at (517,0) width 262: "| \x{24DB} \x{24DB} | \x{24DC} \x{24DC} | \x{24DD} \x{24DD} | \x{24DE} \x{24DE} | \x{24DF} \x{24DF} | \x{24E0} "
+          text run at (0,18) width 20: "\x{24E0} "
+          text run at (20,18) width 282: "| \x{24E1} \x{24E1} | \x{24E2} \x{24E2} | \x{24E3} \x{24E3} | \x{24E4} \x{24E4} | \x{24E5} \x{24E5} | \x{24E6} \x{24E6} "
+          text run at (302,18) width 144: "| \x{24E7} \x{24E7} | \x{24E8} \x{24E8} | \x{24E9} \x{24E9} |"
+      RenderBlock {HR} at (1,2649) size 782x2 [bgcolor=#000000]
+      RenderBlock {H2} at (0,2670) size 784x28 [color=#808080] [bgcolor=#000000]
+        RenderText {TEXT} at (0,0) size 301x28
+          text run at (0,0) width 301: "General case: Fullwidth Latin"
+      RenderBlock {P} at (0,2717) size 784x18 [color=#808080] [bgcolor=#000000]
+        RenderText {TEXT} at (0,0) size 621x18
+          text run at (0,0) width 621: "The css says: text-transform: uppercase. The right-hand character should match the left-hand one."
+      RenderBlock {P} at (0,2751) size 784x36 [bgcolor=#000000]
+        RenderText {TEXT} at (0,0) size 779x36
+          text run at (0,0) width 282: "| \x{FF21} \x{FF21} | \x{FF22} \x{FF22} | \x{FF23} \x{FF23} | \x{FF24} \x{FF24} | \x{FF25} \x{FF25} | \x{FF26} \x{FF26} "
+          text run at (282,0) width 282: "| \x{FF27} \x{FF27} | \x{FF28} \x{FF28} | \x{FF29} \x{FF29} | \x{FF2A} \x{FF2A} | \x{FF2B} \x{FF2B} | \x{FF2C} \x{FF2C} "
+          text run at (564,0) width 215: "| \x{FF2D} \x{FF2D} | \x{FF2E} \x{FF2E} | \x{FF2F} \x{FF2F} | \x{FF30} \x{FF30} | \x{FF31} "
+          text run at (0,18) width 67: "\x{FF31} | \x{FF32} \x{FF32} "
+          text run at (67,18) width 282: "| \x{FF33} \x{FF33} | \x{FF34} \x{FF34} | \x{FF35} \x{FF35} | \x{FF36} \x{FF36} | \x{FF37} \x{FF37} | \x{FF38} \x{FF38} "
+          text run at (349,18) width 97: "| \x{FF39} \x{FF39} | \x{FF3A} \x{FF3A} |"
+      RenderBlock {P} at (0,2803) size 784x18 [color=#808080] [bgcolor=#000000]
+        RenderText {TEXT} at (0,0) size 620x18
+          text run at (0,0) width 620: "The css says: text-transform: lowercase. The left-hand character should match the right-hand one."
+      RenderBlock {P} at (0,2837) size 784x36 [bgcolor=#000000]
+        RenderText {TEXT} at (0,0) size 779x36
+          text run at (0,0) width 94: "| \x{FF41} \x{FF41} | \x{FF42} \x{FF42} "
+          text run at (94,0) width 282: "| \x{FF43} \x{FF43} | \x{FF44} \x{FF44} | \x{FF45} \x{FF45} | \x{FF46} \x{FF46} | \x{FF47} \x{FF47} | \x{FF48} \x{FF48} "
+          text run at (376,0) width 282: "| \x{FF49} \x{FF49} | \x{FF4A} \x{FF4A} | \x{FF4B} \x{FF4B} | \x{FF4C} \x{FF4C} | \x{FF4D} \x{FF4D} | \x{FF4E} \x{FF4E} "
+          text run at (658,0) width 121: "| \x{FF4F} \x{FF4F} | \x{FF50} \x{FF50} | \x{FF51} "
+          text run at (0,18) width 161: "\x{FF51} | \x{FF52} \x{FF52} | \x{FF53} \x{FF53} | \x{FF54} \x{FF54} "
+          text run at (161,18) width 282: "| \x{FF55} \x{FF55} | \x{FF56} \x{FF56} | \x{FF57} \x{FF57} | \x{FF58} \x{FF58} | \x{FF59} \x{FF59} | \x{FF5A} \x{FF5A} "
+          text run at (443,18) width 3: "|"
+      RenderBlock {HR} at (1,2889) size 782x2 [bgcolor=#000000]
+      RenderBlock {P} at (0,2907) size 784x18 [color=#808080] [bgcolor=#000000]
+        RenderText {TEXT} at (0,0) size 416x18
+          text run at (0,0) width 416: "Thanks to John Cowan for assistance in developing this test page."
