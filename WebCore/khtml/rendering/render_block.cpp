@@ -1985,7 +1985,8 @@ void RenderBlock::calcMinMaxWidth()
         else
             m_minWidth = m_maxWidth = short(style()->width().value);
     }
-    
+    // FIXME: also compare with min/max width CSS properties...
+
     int toAdd = 0;
     toAdd = borderLeft() + borderRight() + paddingLeft() + paddingRight();
 
