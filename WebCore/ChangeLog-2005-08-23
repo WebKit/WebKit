@@ -33,7 +33,7 @@
 	isn't really WinIE compatible, but is close.  WinIE uses these to enable cut/paste
 	menu items in its UI.  DB doesn't need this for now.
 
-        Reviewed by NOBODY (OOPS!).
+        Reviewed by Chris
 
         * khtml/ecma/kjs_dom.cpp:
         (DOMNode::getValueProperty):  Boilerplate for new events
