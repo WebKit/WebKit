@@ -1,3 +1,13 @@
+2005-03-10  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Vicki.
+
+	<rdar://problem/4046018> REGRESSION (TOT): RSS pages don't display anything
+        
+	* kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge canLoadURL:fromReferrer:hideReferrer:]): Exempt
+	feed: and feeds: pages from the local file security check.
+
 2005-03-10  Darin Adler  <darin@apple.com>
 
         Change written by Steve Peters, reviewed by me.
