@@ -1,3 +1,12 @@
+2004-08-13  Trey Matteson  <trey@apple.com>
+
+        3761098 - red dotted underline for misspelled words shows up in drag image
+
+        Reviewed by Ken
+
+        * khtml/rendering/render_text.cpp:
+        (RenderText::paint):  Don't draw misspelling when creating selection image.
+
 2004-08-12  Richard Williamson   <rjw@apple.com>
 
 	Bring npruntime.h and friends closer to compliance with

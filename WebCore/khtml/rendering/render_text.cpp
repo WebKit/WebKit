@@ -961,25 +961,27 @@ void RenderText::paint(PaintInfo& i, int tx, int ty)
         // Draw any doc markers that touch this run
         // Note s->end() points at the last char, not one past it like endOffset and ranges do
         
-        for ( ; markerIt != markers.end(); markerIt++) {
-            DocumentMarker marker = *markerIt;
+        if (i.phase != PaintActionSelection) {
+            for ( ; markerIt != markers.end(); markerIt++) {
+                DocumentMarker marker = *markerIt;
 
-            if (marker.endOffset <= s->start()) {
-                // marker is completely before this run.  This might be a marker that sits before the
-                // first run we draw, or markers that were within runs we skipped due to truncation.
-                continue;
-            }
-            
-            if (marker.startOffset <= s->end()) {
-                // marker intersects this run.  Paint it.
-                s->paintMarker(p, tx, ty, marker);
-                if (marker.endOffset > s->end()+1) {
-                    // marker also runs into the next run. Bail now, no more marker advancement.
+                if (marker.endOffset <= s->start()) {
+                    // marker is completely before this run.  This might be a marker that sits before the
+                    // first run we draw, or markers that were within runs we skipped due to truncation.
+                    continue;
+                }
+                
+                if (marker.startOffset <= s->end()) {
+                    // marker intersects this run.  Paint it.
+                    s->paintMarker(p, tx, ty, marker);
+                    if (marker.endOffset > s->end()+1) {
+                        // marker also runs into the next run. Bail now, no more marker advancement.
+                        break;
+                    }
+                } else {
+                    // marker is completely after this run, bail.  A later run will paint it.
                     break;
                 }
-            } else {
-                // marker is completely after this run, bail.  A later run will paint it.
-                break;
             }
         }
 
