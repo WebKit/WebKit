@@ -1,3 +1,12 @@
+2002-12-13  Chris Blumenberg  <cblu@apple.com>
+
+	Catch NULL status strings passed to NPN_Status.
+	
+        Reviewed by darin.
+
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView status:]): check the incoming string before calling [NSString stringWithCString]
+
 2002-12-12  Trey Matteson  <trey@apple.com>
 
 	3117101 - PLT slows down as history fills up

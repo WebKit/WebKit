@@ -984,11 +984,16 @@
 }
 
 -(void)status:(const char *)message
-{
-    LOG(Plugins, "NPN_Status: %s", message);
-    if([self controller]){
-        [[[self controller] windowOperationsDelegate] setStatusText:[NSString stringWithCString:message]];
+{    
+    if (!message) {
+        ERROR("NPN_Status passed a NULL status message");
+        return;
     }
+
+    NSString *status = (NSString *)CFStringCreateWithCString(NULL, message, kCFStringEncodingMacRoman);
+    LOG(Plugins, "NPN_Status: %@", status);
+    [[[self controller] windowOperationsDelegate] setStatusText:status];
+    [status release];
 }
 
 -(void)invalidateRect:(NPRect *)invalidRect
