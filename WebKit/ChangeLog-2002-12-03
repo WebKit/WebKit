@@ -1,3 +1,24 @@
+2002-07-21  Maciej Stachowiak  <mjs@apple.com>
+
+        Fix a regression in my recent refactoring that broke JavaScript
+	window opening, by doing some trickery to make a frame's initial
+	dummy data source committed.
+
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame initWithName:webView:provisionalDataSource:controller:]):
+	Create dummy data source as committed, not provisional.
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _transitionToCommitted]): Allow the documentView to be nil
+	if there is no webView either; this is temporarily needed to handle
+	the special initial dummy data source, which will be going away soon.
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _receivedData:]): Add temporary special case to
+	avoid sending empty NSData to the representation, to avoid
+	triggering WebCore assertions.
+	* WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge openNewWindowWithURL:]): Get the committed data
+	source, not the provisional one.
+
 2002-07-21  Chris Blumenberg  <cblu@apple.com>
 	Used darin-inspired code factoring to fix 3000801 (alex doesn't accept drag of webloc file) in 3 places where we accept drags.
      

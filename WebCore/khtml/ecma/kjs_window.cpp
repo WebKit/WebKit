@@ -850,7 +850,7 @@ void Window::scheduleClose()
   kdDebug(6070) << "Window::scheduleClose window.close() " << m_part << endl;
   Q_ASSERT(winq);
 #ifdef APPLE_CHANGES
-  m_part->impl->close();
+  m_part->impl->scheduleClose();
 #else
   QTimer::singleShot( 0, winq, SLOT( timeoutClose() ) );
 #endif

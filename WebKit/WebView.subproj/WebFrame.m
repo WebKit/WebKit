@@ -37,31 +37,37 @@
 
     [self setController: c];
 
-    if (d == nil) {
-        // set a dummy data source so that the main from for a
-        // newly-created empty window has a KHTMLPart. JavaScript
-        // always creates new windows initially empty, and then wants
-        // to use the main frame's part to make the new window load
-        // it's URL, so we need to make sure empty frames have a part.
-        // However, we don't want to do the spinner, so we do this
-        // weird thing:
-
-        // FIXME: HACK ALERT!!!
-        // We need to keep a shadow part for all frames, even in the case
-        // of a non HTML representation.  This is required khtml
-        // can reference the frame (window.frames, targeting, etc.).
+    // set a dummy data source so that the main from for a
+    // newly-created empty window has a KHTMLPart. JavaScript
+    // always creates new windows initially empty, and then wants
+    // to use the main frame's part to make the new window load
+    // it's URL, so we need to make sure empty frames have a part.
+    // However, we don't want to do the spinner, so we do this
+    // weird thing:
     
-        WebDataSource *dummyDataSource = [[WebDataSource alloc] initWithURL:nil];
-        WebHTMLRepresentation *dummyRep = [[WebHTMLRepresentation alloc] init];
-        [[dummyRep _bridge] setDataSource: dummyDataSource];
-        [dummyDataSource _setRepresentation: dummyRep];
-        [dummyRep release];
+    // FIXME: HACK ALERT!!!
+    // We need to keep a shadow part for all frames, even in the case
+    // of a non HTML representation.  This is required khtml
+    // can reference the frame (window.frames, targeting, etc.).
+    
+    WebDataSource *dummyDataSource = [[WebDataSource alloc] initWithURL:nil];
+    [dummyDataSource _setController: [self controller]];
+    [_private setProvisionalDataSource: dummyDataSource];
+    [self _setState: WebFrameStateProvisional];
+     
+    [dummyDataSource _setContentType:@"text/html"];
+    [dummyDataSource _setContentPolicy:WebContentPolicyShow];
+    [dummyDataSource _receivedData:[NSData data]];
 
-        [dummyDataSource _setController: [self controller]];
-        [_private setProvisionalDataSource: dummyDataSource];
-        [dummyDataSource release];
+    // We have to do the next two steps manually, because the above
+    // data source won't be hooked up to its frame yet. Fortunately,
+    // this is only needed temporarily...
+
+    [self _transitionToCommitted];
+
+    [dummyDataSource release];
         
-    } else if ([self setProvisionalDataSource: d] == NO){
+    if (d != nil && [self setProvisionalDataSource: d] == NO){
         [self release];
         return nil;
     }

@@ -1,3 +1,25 @@
+2002-07-21  Maciej Stachowiak  <mjs@apple.com>
+
+	Fix a recent regression that made JavaScript window closing
+	crash. Window closing was counting on delayed dealloc/destruction
+	of things associated with the window, but now that we have made
+	deallocs more synchronous, we need to add an explicit delay in
+	this case.
+
+	Also, change some fprintf diagnostics of things that should never
+	happen into assertions, since I actually ran into one.
+	
+        * kwq/KWQKHTMLPartImpl.h:
+        * kwq/KWQKHTMLPartImpl.mm:
+        (KWQKHTMLPartImpl::slotData): Change fprintf diagnostic to assertion,
+	remove comment that the diagnostic should be removed.
+        (KWQKHTMLPartImpl::end): Change fprintf diagnostic to assertion,
+	remove comment that the diagnostic should be removed.
+        (KWQKHTMLPartImpl::scheduleClose): Renamed from close, changed to schedule
+	window closing from the run loop rather than doing it immediately.
+        * khtml/ecma/kjs_window.cpp:
+        (Window::scheduleClose): Adjusted for above rename.
+
 2002-07-21  David Hyatt  <hyatt@apple.com>
 
         * khtml/html/html_headimpl.cpp:

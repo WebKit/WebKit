@@ -77,7 +77,7 @@ public:
     bool openedByJS();
     void setOpenedByJS(bool _openedByJS);
 
-    void close();
+    void scheduleClose();
 
     void unfocusWindow();
 

@@ -225,7 +225,11 @@ static const char * const stateNames[6] = {
     switch ([self _state]) {
     	case WebFrameStateProvisional:
         {
-            WEBKIT_ASSERT (documentView != nil);
+	    // FIXME: allow documentView to be nil for now if webView is,
+	    // to handle the case of the special data source in a just created
+	    // frame. This is temporary, eventually the frame will hang on to
+	    // a bridge without the need for a dummy data source
+            WEBKIT_ASSERT (documentView != nil || [self webView] == nil);
 
             // Set the committed data source on the frame.
             [self _setDataSource: _private->provisionalDataSource];

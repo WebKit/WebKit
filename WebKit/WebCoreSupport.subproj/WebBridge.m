@@ -97,7 +97,7 @@
     WebController *newController = [[[[self dataSource] controller] windowContext] openNewWindowWithURL:url];
     WebDataSource *newDataSource;
     
-    newDataSource = [[newController mainFrame] provisionalDataSource];
+    newDataSource = [[newController mainFrame] dataSource];
     if ([newDataSource isDocumentHTML])
         return [(WebHTMLRepresentation *)[newDataSource representation] _bridge];
         

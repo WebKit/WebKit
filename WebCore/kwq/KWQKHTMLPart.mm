@@ -118,12 +118,7 @@ void KWQKHTMLPartImpl::slotData(NSString *encoding, const char *bytes, int lengt
         part->setEncoding(enc, true);
     }
     
-    // FIXME [rjw]:  Remove this log eventually.  Should never happen.  For debugging
-    // purposes only.
-    if (d->m_doc == 0){
-        fprintf (stderr, "ERROR:  KHTMLPart::slotData m_doc == 0 IGNORING DATA, url = %s\n", part->m_url.url().latin1());
-        return;
-    }
+    KWQ_ASSERT(d->m_doc != NULL);
 
     part->write(bytes, length);
 }
@@ -300,12 +295,7 @@ void KWQKHTMLPartImpl::write( const char *str, int len )
 // FIXME: Need to remerge this with code in khtml_part.cpp?
 void KWQKHTMLPartImpl::end()
 {
-    // FIXME [rjw]:  Remove this log eventually.  Should never happen.  For debugging
-    // purposes only.
-    if (d->m_doc == 0){
-        fprintf (stderr, "ERROR:  KHTMLPart::end  m_doc == 0\n");
-        return;
-    }
+    KWQ_ASSERT(d->m_doc != NULL);
 
     d->m_doc->setParsing(false);
 
@@ -652,9 +642,9 @@ void KWQKHTMLPartImpl::setOpenedByJS(bool _openedByJS)
     [bridge setOpenedByScript:_openedByJS];
 }
 
-void KWQKHTMLPartImpl::close()
+void KWQKHTMLPartImpl::scheduleClose()
 {
-    [[bridge window] close];
+    [[bridge window] performSelector:@selector(close) withObject:nil afterDelay:0.0];
 }
 
 void KWQKHTMLPartImpl::unfocusWindow()
