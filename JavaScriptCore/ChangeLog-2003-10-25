@@ -1,3 +1,35 @@
+2002-08-15  Darin Adler  <darin@apple.com>
+
+	Tweaks and small bug fixes to Maciej's excellent new fixnum optimization.
+	Also updated or removed comments that call it "fixnum" instead of "simple number".
+
+        * kjs/simple_number.h: Change constant names so they don't SHOUT the way macro
+	names do. Added constants for shift, min, and max. Fixed off-by-1 error that
+	prevented us from using the extreme values on either end. Base the range of
+	numbers on a fixed 32 bits constant rather than the size of a long, because
+	code elsewhere depends on positive numbers fitting into both "unsigned" and
+	"UInt32" while assuming it doesn't need to check; we can easily change this
+	later. Used int types rather than long for essentially the same reason.
+	Fixed the value-extraction function so it will work for negative numbers even
+        if the shift is logical, not arithmetic, by using division instead.
+	Renamed functions to be quite terse since they are inside a class.
+
+        * kjs/value.h:
+        * kjs/value.cpp:
+        (ValueImp::dispatchToObject): Call NumberImp::toObject in a "non-virtual"
+	way rather than repeating the code here.
+        (ValueImp::dispatchToUInt32): Handle the negative number case correctly.
+        (ValueImp::dispatchGetBase): Call ValueImp::getBase in a "non-virtual"
+	way rather than repeating the code here.
+        (ValueImp::dispatchGetPropertyName): Call ValueImp::getPropertyName in a
+	"non-virtual" way rather than repeating the code here.
+        (ValueImp::dispatchPutValue): Call ValueImp::putValue in a "non-virtual"
+	way rather than repeating the code here.
+        (ValueImp::dispatchDeleteValue): Call ValueImp::deleteValue in a "non-virtual"
+	way rather than repeating the code here.
+        (Number::Number): Fixed a bug where the double-based constructor was casting
+	to long, so wouldn't do the "remainder" check.
+
 === Alexander-19 ===
 
 === Alexander-18 ===

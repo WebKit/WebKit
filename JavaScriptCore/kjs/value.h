@@ -96,9 +96,8 @@ namespace KJS {
     ValueImp();
     virtual ~ValueImp();
 
-    inline ValueImp* ref() { if (!SimpleNumber::isSimpleNumber(this)) refcount++; return this; }
-    // FIXNUM: need special case for fixnums below (should be no-op)
-    inline bool deref() { if (SimpleNumber::isSimpleNumber(this)) return false; else return (!--refcount); }
+    ValueImp* ref() { if (!SimpleNumber::is(this)) refcount++; return this; }
+    bool deref() { if (SimpleNumber::is(this)) return false; else return (!--refcount); }
     unsigned int refcount;
 
     virtual void mark();
@@ -118,7 +117,7 @@ namespace KJS {
     unsigned int toUInt32(ExecState *exec) const;
     unsigned short toUInt16(ExecState *exec) const;
 
-    // Dispatch wrappers that handle the special fixnum case
+    // Dispatch wrappers that handle the special small number case
 
     Type dispatchType() const;
     Value dispatchToPrimitive(ExecState *exec, Type preferredType = UnspecifiedType) const;
@@ -430,12 +429,11 @@ namespace KJS {
     explicit Number(NumberImp *v);
   };
 
-  inline Value ValueImp::dispatchGetValue(ExecState *exec) const {
-    if (SimpleNumber::isSimpleNumber(this)) {
+  inline Value ValueImp::dispatchGetValue(ExecState *exec) const
+  {
+    if (SimpleNumber::is(this))
         return Value(const_cast<ValueImp*>(this));
-    } else {
-      return this->getValue(exec);
-    }
+    return getValue(exec);
   }
 
 }; // namespace

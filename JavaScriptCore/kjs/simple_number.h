@@ -31,18 +31,17 @@ namespace KJS {
 
     class SimpleNumber {
     public:
-	enum { TAG = 1, MASK = (1 + 2) };
+	enum { tag = 1, shift = 2, mask = (1 << shift) - 1, max = (1 << (31 - shift)) - 1, min = -max - 1 };
 
-	static inline bool isSimpleNumber(const ValueImp *imp) { return ((long)imp & MASK) == TAG; }
-	static inline long longValue(const ValueImp *imp) { return ((long)imp & ~MASK) >> 2; } 
-	static inline bool fitsInSimpleNumber(int i) { return i < (LONG_MAX >> 2) && i > (LONG_MIN >> 2); }
-	static inline bool fitsInSimpleNumber(unsigned i) { return i < (unsigned)(LONG_MAX >> 2); }
-	static inline bool fitsInSimpleNumber(double d) { return d < (LONG_MAX >> 2) && d > (LONG_MIN >> 2) && remainder(d, 1) == 0; }
+	static inline bool is(const ValueImp *imp) { return ((int)imp & mask) == tag; }
+	static inline int value(const ValueImp *imp) { return (int)imp / (1 << shift); }
 
-	static inline bool fitsInSimpleNumber(long i) { return i < (LONG_MAX >> 2) && i > (LONG_MIN >> 2); }
-	static inline bool fitsInSimpleNumber(unsigned long i) { return i < (unsigned)(LONG_MAX >> 2); }
-
-	static inline ValueImp *makeSimpleNumber(long i) { return (ValueImp *)((i << 2) | TAG); }
+	static inline bool fits(int i) { return i <= max && i >= min; }
+	static inline bool fits(unsigned i) { return i <= (unsigned)max; }
+	static inline bool fits(long i) { return i <= max && i >= min; }
+	static inline bool fits(unsigned long i) { return i <= (unsigned)max; }
+	static inline bool fits(double d) { return d <= max && d >= min && remainder(d, 1) == 0; }
+	static inline ValueImp *make(int i) { return (ValueImp *)((i << shift) | tag); }
     };
 }
 

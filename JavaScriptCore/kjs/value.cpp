@@ -64,18 +64,17 @@ void ValueImp::mark()
 
 bool ValueImp::marked() const
 {
-  // simple numbers are always considered marked
-  return SimpleNumber::isSimpleNumber(this) || (_flags & VI_MARKED);
+  // Simple numbers are always considered marked.
+  return SimpleNumber::is(this) || (_flags & VI_MARKED);
 }
 
 void ValueImp::setGcAllowed()
 {
+  //fprintf(stderr,"ValueImp::setGcAllowed %p\n",(void*)this);
   // simple numbers are never seen by the collector so setting this
   // flag is irrelevant
-  if (!SimpleNumber::isSimpleNumber(this)) {
-    //fprintf(stderr,"ValueImp::setGcAllowed %p\n",(void*)this);
+  if (!SimpleNumber::is(this))
     _flags |= VI_GCALLOWED;
-  }
 }
 
 void* ValueImp::operator new(size_t s)
@@ -177,115 +176,89 @@ bool ValueImp::deleteValue(ExecState *exec)
   return false;
 }
 
-
-// Dispatchers for virtual functions, to special-case fixnums which
-// won't be real pointers
+// Dispatchers for virtual functions, to special-case simple numbers which
+// won't be real pointers.
 
 Type ValueImp::dispatchType() const
 {
-  if (SimpleNumber::isSimpleNumber(this)) {
+  if (SimpleNumber::is(this))
     return NumberType;
-  } else {
-    return this->type();
-  }
+  return type();
 }
 
 Value ValueImp::dispatchToPrimitive(ExecState *exec, Type preferredType) const
 {
-  if (SimpleNumber::isSimpleNumber(this)) {
-    return Number((NumberImp*)this);
-  } else {
-    return this->toPrimitive(exec, preferredType);
-  }
+  if (SimpleNumber::is(this))
+    return Value(const_cast<ValueImp *>(this));
+  return toPrimitive(exec, preferredType);
 }
 
 bool ValueImp::dispatchToBoolean(ExecState *exec) const
 {
-  if (SimpleNumber::isSimpleNumber(this)) {
-    return SimpleNumber::longValue(this);
-  } else {
-    return this->toBoolean(exec);
-  }
+  if (SimpleNumber::is(this))
+    return SimpleNumber::value(this);
+  return toBoolean(exec);
 }
 
 double ValueImp::dispatchToNumber(ExecState *exec) const
 {
-  if (SimpleNumber::isSimpleNumber(this)) {
-    return SimpleNumber::longValue(this);
-  } else {
-    return this->toNumber(exec);
-  }
+  if (SimpleNumber::is(this))
+    return SimpleNumber::value(this);
+  return toNumber(exec);
 }
 
 UString ValueImp::dispatchToString(ExecState *exec) const
 {
-  if (SimpleNumber::isSimpleNumber(this)) {
-    return UString::from(SimpleNumber::longValue(this));
-  } else {
-    return this->toString(exec);
-  }
+  if (SimpleNumber::is(this))
+    return UString::from(SimpleNumber::value(this));
+  return toString(exec);
 }
 
 Object ValueImp::dispatchToObject(ExecState *exec) const
 {
-  if (SimpleNumber::isSimpleNumber(this)) {
-      List args;
-      args.append(Number(static_cast<NumberImp*>(const_cast<ValueImp *>(this))));
-      return Object::dynamicCast(exec->interpreter()->builtinNumber().construct(exec,args));
-  } else {
-    return this->toObject(exec);
-  }
+  if (SimpleNumber::is(this))
+    return static_cast<const NumberImp *>(this)->NumberImp::toObject(exec);
+  return toObject(exec);
 }
 
 bool ValueImp::dispatchToUInt32(unsigned& result) const
 {
-  if (SimpleNumber::isSimpleNumber(this)) {
-    result = SimpleNumber::longValue(this);
+  if (SimpleNumber::is(this)) {
+    long i = SimpleNumber::value(this);
+    if (i < 0)
+      return false;
+    result = (unsigned)i;
     return true;
-  } else {
-    return this->toUInt32(result);
   }
+  return toUInt32(result);
 }
 
 Value ValueImp::dispatchGetBase(ExecState *exec) const
 {
-  if (SimpleNumber::isSimpleNumber(this)) {
-    Object err = Error::create(exec, ReferenceError, I18N_NOOP("Invalid reference base"));
-    exec->setException(err);
-    return err;
-  } else {
-    return this->getBase(exec);
-  }
+  if (SimpleNumber::is(this))
+    return ValueImp::getBase(exec);
+  return getBase(exec);
 }
 
 UString ValueImp::dispatchGetPropertyName(ExecState *exec) const
 {
-  if (SimpleNumber::isSimpleNumber(this)) {
-    return UString();
-  } else {
-    return this->getPropertyName(exec);
-  }
+  if (SimpleNumber::is(this))
+    return ValueImp::getPropertyName(exec);
+  return getPropertyName(exec);
 }
 
 void ValueImp::dispatchPutValue(ExecState *exec, const Value& w)
 {
-  if (SimpleNumber::isSimpleNumber(this)) {
-    Object err = Error::create(exec,ReferenceError);
-    exec->setException(err);
-  } else {
-    return this->putValue(exec, w);
-  }
+  if (SimpleNumber::is(this))
+    ValueImp::putValue(exec, w);
+  putValue(exec, w);
 }
 
 bool ValueImp::dispatchDeleteValue(ExecState *exec)
 {
-  if (SimpleNumber::isSimpleNumber(this)) {
-    Object err = Error::create(exec,ReferenceError);
-    exec->setException(err);
-    return false;
-  } else {
-    return this->deleteValue(exec);
-  }
+  if (SimpleNumber::is(this))
+    return ValueImp::deleteValue(exec);
+  return deleteValue(exec);
 }
 
 
@@ -408,19 +381,19 @@ String String::dynamicCast(const Value &v)
 // ------------------------------ Number ---------------------------------------
 
 Number::Number(int i)
-  : Value(SimpleNumber::fitsInSimpleNumber(i) ? SimpleNumber::makeSimpleNumber(i) : new NumberImp(static_cast<double>(i))) { }
+  : Value(SimpleNumber::fits(i) ? SimpleNumber::make(i) : new NumberImp(static_cast<double>(i))) { }
 
 Number::Number(unsigned int u)
-  : Value(SimpleNumber::fitsInSimpleNumber(u) ? SimpleNumber::makeSimpleNumber(u) : new NumberImp(static_cast<double>(u))) { }
+  : Value(SimpleNumber::fits(u) ? SimpleNumber::make(u) : new NumberImp(static_cast<double>(u))) { }
 
 Number::Number(double d)
-  : Value(SimpleNumber::fitsInSimpleNumber((long)d) ? SimpleNumber::makeSimpleNumber((long)d) : new NumberImp(d)) { }
+  : Value(SimpleNumber::fits(d) ? SimpleNumber::make((long)d) : new NumberImp(d)) { }
 
 Number::Number(long int l)
-  : Value(SimpleNumber::fitsInSimpleNumber(l) ? SimpleNumber::makeSimpleNumber(l) : new NumberImp(static_cast<double>(l))) { }
+  : Value(SimpleNumber::fits(l) ? SimpleNumber::make(l) : new NumberImp(static_cast<double>(l))) { }
 
 Number::Number(long unsigned int l)
-  : Value(SimpleNumber::fitsInSimpleNumber(l) ? SimpleNumber::makeSimpleNumber(l) : new NumberImp(static_cast<double>(l))) { }
+  : Value(SimpleNumber::fits(l) ? SimpleNumber::make(l) : new NumberImp(static_cast<double>(l))) { }
 
 Number Number::dynamicCast(const Value &v)
 {
@@ -432,12 +405,10 @@ Number Number::dynamicCast(const Value &v)
 
 double Number::value() const
 {
-  if (SimpleNumber::isSimpleNumber(rep)) {
-    return (double)SimpleNumber::longValue(rep);
-  } else {
-    assert(rep);
-    return ((NumberImp*)rep)->value();
-  }
+  if (SimpleNumber::is(rep))
+    return (double)SimpleNumber::value(rep);
+  assert(rep);
+  return ((NumberImp*)rep)->value();
 }
 
 int Number::intValue() const
