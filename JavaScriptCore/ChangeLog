@@ -1,3 +1,20 @@
+2003-12-16  Richard Williamson   <rjw@apple.com>
+
+	Ack!  More assertions.  Lock ALL entry points into the interpreter!
+	(3511733).
+
+        Reviewed by Ken.
+
+        * bindings/jni_jsobject.cpp:
+        (Bindings::JSObject::call):
+        (Bindings::JSObject::eval):
+        (Bindings::JSObject::getMember):
+        (Bindings::JSObject::setMember):
+        (Bindings::JSObject::removeMember):
+        (Bindings::JSObject::getSlot):
+        (Bindings::JSObject::setSlot):
+        (Bindings::JSObject::convertJObjectToValue):
+
 2003-12-15  Richard Williamson   <rjw@apple.com>
 
 	Fixed a couple of snafus and removed some logging.
