@@ -859,6 +859,7 @@ void NodeImpl::notifyLocalNodeListsSubtreeModified()
 
     while (NodeListImpl *list = i.current()) {
         list->rootNodeSubtreeModified();
+        ++i;
     }
 }
 
