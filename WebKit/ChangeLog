@@ -1,5 +1,19 @@
 2004-11-15  Richard Williamson   <rjw@apple.com>
 
+	Fixed missing retain of image property data.
+
+        Reviewed by John.
+
+        * WebCoreSupport.subproj/WebImageData.h:
+        * WebCoreSupport.subproj/WebImageData.m:
+        (-[WebImageData dealloc]):
+        (-[WebImageData _invalidateImages]):
+        (-[WebImageData imageAtIndex:]):
+        (-[WebImageData propertiesAtIndex:]):
+        (-[WebImageData _frameDuration]):
+
+2004-11-15  Richard Williamson   <rjw@apple.com>
+
 	Cache image properties and frame durations.
 	Create NSImage and TIFF representations from CGImage, lazily, as needed for
 	dragging and element info dictionary.

@@ -48,7 +48,7 @@ static CFDictionaryRef imageSourceOptions;
     size_t i, num;
     
     num = [self numberOfImages];
-    for (i = 0; i < num; i++) {
+    for (i = 0; i < imagePropertiesSize; i++) {
         CFRelease (imageProperties[i]);
     }
     free (imageProperties);
@@ -93,8 +93,8 @@ static CFDictionaryRef imageSourceOptions;
 - (void)_invalidateImages
 {
     if (images) {
-        size_t i, count = [self numberOfImages];
-        for (i = 0; i < count; i++) {
+        size_t i;
+        for (i = 0; i < imagesSize; i++) {
             if (images[i])
                 CFRelease (images[i]);
         }
@@ -105,6 +105,11 @@ static CFDictionaryRef imageSourceOptions;
 
 - (CGImageRef)imageAtIndex:(size_t)index
 {
+    size_t num = [self numberOfImages];
+    
+    if (imagesSize && num > imagesSize)
+        [self _invalidateImages];
+        
     if (imageSource) {
         if (index > [self numberOfImages])
             return 0;
@@ -125,6 +130,7 @@ static CFDictionaryRef imageSourceOptions;
         //if (imageStatus < kCGImageStatusIncomplete)
         //    return 0;
 
+        imagesSize = [self numberOfImages];
         if (!images) {
             images = (CGImageRef *)calloc ([self numberOfImages], sizeof(CGImageRef *));
         }
@@ -323,12 +329,27 @@ CGPatternCallbacks patternCallbacks = { 0, drawPattern, NULL };
 {
     size_t num = [self numberOfImages];
     
+    // Number of images changed!
+    if (imagePropertiesSize && num > imagePropertiesSize) {
+        // Clear cache.
+        size_t i;
+        for (i = 0; i < imagePropertiesSize; i++) {
+            CFRelease (imageProperties[i]);
+        }
+        free (imageProperties);
+        imageProperties = 0;
+        imagePropertiesSize = 0;
+    }
+    
     if (imageProperties == 0 && num) {
         imageProperties = (CFDictionaryRef *)malloc (num * sizeof(CFDictionaryRef));
         size_t i;
         for (i = 0; i < num; i++) {
             imageProperties[i] = CGImageSourceGetPropertiesAtIndex (imageSource, i, 0);
+            if (imageProperties[i])
+                CFRetain (imageProperties[i]);
         }
+        imagePropertiesSize = num;
     }
     
     if (index < num) {
@@ -336,6 +357,8 @@ CGPatternCallbacks patternCallbacks = { 0, drawPattern, NULL };
         // get them before enough data was available in the header.
         if (imageProperties[index] == 0) {
             imageProperties[index] = CGImageSourceGetPropertiesAtIndex (imageSource, index, 0);
+            if (imageProperties[index])
+                CFRetain (imageProperties[index]);
         }
         
         return imageProperties[index];
@@ -386,6 +409,13 @@ CGPatternCallbacks patternCallbacks = { 0, drawPattern, NULL };
 
 - (float)_frameDuration
 {
+    size_t num = [self numberOfImages];
+    if (frameDurationsSize && num > frameDurationsSize) {
+        free (frameDurations);
+        frameDurations = 0;
+        frameDurationsSize = 0;
+    }
+    
     if (!frameDurations) {
         size_t i, num = [self numberOfImages];
 
@@ -393,6 +423,7 @@ CGPatternCallbacks patternCallbacks = { 0, drawPattern, NULL };
         for (i = 0; i < num; i++) {
             frameDurations[i] = [self _frameDurationAt:i];
         }
+        frameDurationsSize = num;
     }
     else if (frameDurations[currentFrame] == 0.f) {
             frameDurations[currentFrame] = [self _frameDurationAt:currentFrame];
