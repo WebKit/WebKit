@@ -1,3 +1,17 @@
+2003-03-19  Ed Voas  voas@apple.com
+
+        Reviewed by Richard.
+
+	React to WebView API changes. Redo HIWebView API.
+
+        * Carbon.subproj/HIWebView.h:
+        * Carbon.subproj/HIWebView.m:
+        (if):
+        (switch):
+        * Carbon.subproj/HIWebViewPriv.h: Removed.
+        * WebKit.exp:
+        * WebKit.pbproj/project.pbxproj:
+
 2003-03-19  Richard Williamson   <rjw@apple.com>
 
         Removed initWithView:* constructors from WebView.

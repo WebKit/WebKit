@@ -18,7 +18,7 @@ extern "C" {
 #endif
 
 /*
- *  HIWebFrameViewCreate()
+ *  HIWebViewCreate()
  *  
  *  Summary:
  *    Creates a new web view.
@@ -37,15 +37,14 @@ extern "C" {
  *    Non-Carbon CFM:   not available
  */
 extern OSStatus 
-HIWebFrameViewCreate(HIViewRef * outControl);
+HIWebViewCreate(HIViewRef * outControl);
 
 
 /*
- *  HIWebFrameViewGetController()
+ *  HIWebViewGetNSView()
  *  
  *  Summary:
- *    Returns the web controller for a given web view, or NULL if not
- *    bound to one.
+ *    Returns the WebKit WebFrameView for a given HIWebFrameView.
  *  
  *  Parameters:
  *    
@@ -53,18 +52,15 @@ HIWebFrameViewCreate(HIViewRef * outControl);
  *      The view to inspect.
  *  
  *  Result:
- *    A web controller, or NULL.
+ *    A pointer to aweb frame view object, or NULL.
  *  
  *  Availability:
  *    Mac OS X:         in version 10.2 and later
  *    CarbonLib:        not available
  *    Non-Carbon CFM:   not available
  */
-extern WebView* 
-HIWebFrameViewGetController(HIViewRef inView);
-
 extern WebView*
-WebControllerCreateWithHIView( HIViewRef inView, CFStringRef inName );
+HIWebViewGetNSView( HIViewRef inView );
 
 #ifdef __cplusplus
 }

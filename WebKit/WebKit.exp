@@ -58,9 +58,8 @@ _WebURLPboardType
 ## Carbon Support
 ##
 
-_WebControllerCreateWithHIView
-_HIWebFrameViewGetController
-_HIWebFrameViewCreate
+_HIWebViewGetNSView
+_HIWebViewCreate
 _ConvertNSImageToCGImageRef
 _InitWebKitForCarbon
 
