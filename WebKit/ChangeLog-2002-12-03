@@ -1,3 +1,21 @@
+2002-09-04  Ken Kocienda  <kocienda@apple.com>
+
+	Changed WebKit so that it no longer relies on WebResourceHandle to buffer
+	resource data as it is loaded. Instead, this buffering task has been moved
+	out to the WebResourceClient, WebMainResourceClient in this case. This
+	change is a "proof of concept" for the upcoming change where the API in
+	WebFoundation for buffering resource data in WebResourceHandle will be
+	removed altogether.
+
+        * WebView.subproj/WebDataSource.m:
+        (-[WebDataSource data]): Changed to call WebMainResourceClient when resource data is needed.
+        * WebView.subproj/WebMainResourceClient.h: Added mutable data ivar.
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient initWithDataSource:]): Added mutable data ivar.
+        (-[WebMainResourceClient dealloc]): Release new mutable data ivar.
+        (-[WebMainResourceClient resourceData]): Added accessor method.
+        (-[WebMainResourceClient handleDidReceiveData:data:]): Append received data to the new mutable data object.
+
 2002-09-03  John Sullivan  <sullivan@apple.com>
 
         * Resources/url_icon.tiff: New image (still a placeholder)

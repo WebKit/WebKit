@@ -32,6 +32,7 @@
     
     if (self) {
         dataSource = [ds retain];
+        resourceData = [[NSMutableData alloc] init];
         isFirstChunk = YES;
     }
 
@@ -59,9 +60,15 @@
     WEBKIT_ASSERT(downloadHandler == nil);
     
     [downloadProgressHandler release];
+    [resourceData release];
     [dataSource release];
     
     [super dealloc];
+}
+
+- (NSData *)resourceData
+{
+    return resourceData;
 }
 
 - (WebDownloadHandler *)downloadHandler
@@ -202,6 +209,8 @@
         
         WEBKITDEBUGLEVEL(WEBKIT_LOG_DOWNLOAD, "main content type: %s", DEBUG_OBJECT(contentType));
     }
+
+    [resourceData appendData:data];
 
     switch (policyAction) {
     case WebContentPolicyShow:

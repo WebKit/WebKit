@@ -23,7 +23,9 @@
     WebDownloadHandler *downloadHandler;
     id <WebResourceProgressHandler> downloadProgressHandler;
     WebContentAction policyAction;
+    NSMutableData *resourceData;
 }
 - initWithDataSource:(WebDataSource *)dataSource;
 - (WebDownloadHandler *)downloadHandler;
+- (NSData *)resourceData;
 @end

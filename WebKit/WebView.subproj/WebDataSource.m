@@ -71,7 +71,7 @@
 - (NSData *)data
 {
     if(!_private->resourceData){
-        return [_private->mainHandle resourceData];
+        return [_private->mainHandleClient resourceData];
     }else{
         return _private->resourceData;
     }
