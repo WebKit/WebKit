@@ -57,6 +57,8 @@ QButton::QButton()
 
 QButton::~QButton()
 {
+    NSButton *button = (NSButton *)getView();
+    [button setTarget:nil];
     [m_adapter release];
 }
 

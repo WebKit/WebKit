@@ -88,6 +88,8 @@ QComboBox::QComboBox()
 
 QComboBox::~QComboBox()
 {
+    NSPopUpButton *button = (NSPopUpButton *)getView();
+    [button setTarget:nil];
     [m_adapter release];
 }
 
