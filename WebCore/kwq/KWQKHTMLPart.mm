@@ -605,6 +605,7 @@ void KHTMLPart::frameDetached()
     for (FrameIt it = parentFrames.begin(); it != end; ++it) {
         if ((*it).m_part == this) {
             parentFrames.remove(it);
+            deref();
             break;
         }
     }
