@@ -4425,7 +4425,7 @@ static void findWordBoundary(QChar *chars, int len, int position, int *start, in
         UniCharArrayOffset startOffset, endOffset;
         status = UCFindTextBreak(breakLocator, kUCTextBreakWordMask, 0, (const UniChar *)chars, len, position, &endOffset);
         if (status == noErr) {
-            status = UCFindTextBreak(breakLocator, kUCTextBreakWordMask, kUCTextBreakGoBackwardsMask, (const UniChar *)chars, len, position, (UniCharArrayOffset *)start);
+            status = UCFindTextBreak(breakLocator, kUCTextBreakWordMask, kUCTextBreakGoBackwardsMask, (const UniChar *)chars, len, position, &startOffset);
         }
         UCDisposeTextBreakLocator(&breakLocator);
         if (status == noErr) {
