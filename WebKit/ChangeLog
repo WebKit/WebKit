@@ -1,3 +1,12 @@
+2004-08-12  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3760898> error pages in subframes attempt to load appledata URLs when reloaded
+
+        Reviewed by darin.
+
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame _createItem:]): when setting the original URL of the history item, use the unreachable URL
+
 === Safari-156 ===
 
 2004-08-11  Adele Amchan  <adele@apple.com>

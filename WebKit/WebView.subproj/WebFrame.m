@@ -364,18 +364,23 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
 {
     WebDataSource *dataSrc = [self dataSource];
     NSURLRequest *request;
+    NSURL *unreachableURL = [dataSrc unreachableURL];
     NSURL *URL;
+    NSURL *originalURL;
     WebHistoryItem *bfItem;
 
     if (useOriginal) {
         request = [dataSrc _originalRequest];
-    }
-    else {
+    } else {
         request = [dataSrc request];
     }
-    URL = [dataSrc unreachableURL];
-    if (URL == nil) {
+
+    if (unreachableURL != nil) {
+        URL = unreachableURL;
+        originalURL = unreachableURL;
+    } else {
         URL = [request URL];
+        originalURL = [[dataSrc _originalRequest] URL];
     }
 
     LOG (History, "creating item for %@", request);
@@ -388,10 +393,13 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
     if (URL == nil) {
         URL = [NSURL URLWithString:@"about:blank"];
     }
-
+    if (originalURL == nil) {
+        originalURL = [NSURL URLWithString:@"about:blank"];
+    }
+    
     bfItem = [[[WebHistoryItem alloc] initWithURL:URL target:[self name] parent:[[self parentFrame] name] title:[dataSrc pageTitle]] autorelease];
     [dataSrc _addBackForwardItem:bfItem];
-    [bfItem setOriginalURLString:[[[dataSrc _originalRequest] URL] _web_originalDataAsString]];
+    [bfItem setOriginalURLString:[originalURL _web_originalDataAsString]];
 
     // save form state if this is a POST
     [bfItem _setFormInfoFromRequest:request];
