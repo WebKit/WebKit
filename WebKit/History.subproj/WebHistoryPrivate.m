@@ -15,6 +15,10 @@
 #import <WebFoundation/WebNSCalendarDateExtras.h>
 #import <WebFoundation/WebNSURLExtras.h>
 
+NSString *FileVersionKey = @"WebHistoryFileVersion";
+NSString *DatesArrayKey = @"WebHistoryDates";
+
+#define currentFileVersion	1
 
 @implementation WebHistoryPrivate
 
@@ -344,9 +348,7 @@
 
 - (BOOL)_loadHistoryGuts: (int *)numberOfItemsLoaded
 {
-    NSArray *array;
     NSEnumerator *enumerator;
-    NSDictionary *dictionary;
     int index;
     int limit;
     NSCalendarDate *ageLimitDate;
@@ -354,12 +356,32 @@
 
     *numberOfItemsLoaded = 0;
 
-    array = [NSArray arrayWithContentsOfURL: [self URL]];
-    if (array == nil) {
-        ERROR("attempt to read history from %@ failed; perhaps contents are corrupted", [[self URL] absoluteString]);
+    NSDictionary *fileAsDictionary = [NSDictionary dictionaryWithContentsOfURL: [self URL]];
+    if (fileAsDictionary == nil) {
+#if !ERROR_DISABLED
+        if ([[self URL] isFileURL] && [[NSFileManager defaultManager] fileExistsAtPath: [[self URL] path]]) {
+            ERROR("unable to read history from file %@; perhaps contents are corrupted", [[self URL] path]);
+        }
+#endif
         return NO;
     }
 
+    NSNumber *fileVersionObject = [fileAsDictionary objectForKey:FileVersionKey];
+    int fileVersion;
+    // we don't trust data read from disk, so double-check
+    if (fileVersionObject != nil && [fileVersionObject isKindOfClass:[NSNumber class]]) {
+        fileVersion = [fileVersionObject intValue];
+    } else {
+        ERROR("history file version can't be determined, therefore not loading");
+        return NO;
+    }
+    if (fileVersion > currentFileVersion) {
+        ERROR("history file version is %d, newer than newest known version %d, therefore not loading", fileVersion, currentFileVersion);
+        return NO;
+    }    
+
+    NSArray *array = [fileAsDictionary objectForKey:DatesArrayKey];
+        
     limit = [[NSUserDefaults standardUserDefaults] integerForKey: @"WebKitHistoryItemLimit"];
     ageLimitDate = [self _ageLimitDate];
     index = 0;
@@ -367,10 +389,11 @@
     enumerator = [array reverseObjectEnumerator];
     ageLimitPassed = NO;
 
-    while ((dictionary = [enumerator nextObject]) != nil) {
+    NSDictionary *itemAsDictionary;
+    while ((itemAsDictionary = [enumerator nextObject]) != nil) {
         WebHistoryItem *entry;
 
-        entry = [[[WebHistoryItem alloc] initFromDictionaryRepresentation: dictionary] autorelease];
+        entry = [[[WebHistoryItem alloc] initFromDictionaryRepresentation:itemAsDictionary] autorelease];
 
         if ([entry URL] == nil || [entry lastVisitedDate] == nil) {
             // entry without URL is useless; data on disk must have been bad; ignore this one
@@ -417,12 +440,15 @@
 
 - (BOOL)_saveHistoryGuts: (int *)numberOfItemsSaved
 {
-    NSArray *array;
     *numberOfItemsSaved = 0;
 
-    array = [self arrayRepresentation];
-    if (![array writeToURL:[self URL] atomically:YES]) {
-        ERROR("attempt to save %@ to %@ failed", array, [[self URL] absoluteString]);
+    NSArray *array = [self arrayRepresentation];
+    NSDictionary *dictionary = [NSDictionary dictionaryWithObjectsAndKeys:
+        array, DatesArrayKey,
+        [NSNumber numberWithInt:currentFileVersion], FileVersionKey,
+        nil];
+    if (![dictionary writeToURL:[self URL] atomically:YES]) {
+        ERROR("attempt to save %@ to %@ failed", dictionary, [[self URL] absoluteString]);
         return NO;
     }
     

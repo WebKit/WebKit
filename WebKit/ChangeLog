@@ -1,3 +1,26 @@
+2003-04-17  John Sullivan  <sullivan@apple.com>
+
+	- fixed 3232332 -- History file should be versioned since 
+	we might change it in the future
+	- fixed 3220355 -- Console error message at launch when 
+	there's no history file
+
+	Note: a downside of this change is that the history formats
+	before and after this change are not compatible. You will
+	get no history each time you cross that boundary by running
+	different Safaris.
+
+        Reviewed by Maciej.
+
+        * History.subproj/WebHistoryPrivate.m:
+        (-[WebHistoryPrivate _loadHistoryGuts:]):
+	check for file-doesn't-exist case before complaining about
+	being unable to read existing file; expect to read dictionary
+	rather than array, and check version in dictionary.
+        (-[WebHistoryPrivate _saveHistoryGuts:]):
+	save dictionary that includes version as well as array of
+	items by date.
+
 2003-04-17  Richard Williamson   <rjw@apple.com>
 
         Fixed typos in headerdoc comments.
