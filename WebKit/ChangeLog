@@ -1,3 +1,13 @@
+2004-01-08  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by John.
+
+	<rdar://problem/3522298>: Error on MIT's x509 certificate site
+
+        * WebCoreSupport.subproj/WebKeyGeneration.cpp:
+        (addCertificatesToKeychainFromData): Sign the freshly minted public key
+	using RSA/MD5 instead of RSA/SHA-1, because MIT only supports MD5.
+
 2004-01-08  Richard Williamson   <rjw@apple.com>
 
 	Fixed 3524430.  This was a regression introduced when we added '-' and '?' to the word boundary detection.

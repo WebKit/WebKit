@@ -21,8 +21,8 @@
 
 /* hard coded params, some of which may come from the user in real life */
 #define GNR_KEY_ALG			CSSM_ALGID_RSA
-#define GNR_SIG_ALG			CSSM_ALGID_SHA1WithRSA
-#define GNR_SIG_ALGOID                  CSSMOID_SHA1WithRSA
+#define GNR_SIG_ALG			CSSM_ALGID_MD5WithRSA
+#define GNR_SIG_ALGOID                  CSSMOID_MD5WithRSA
 
 const SEC_ASN1Template NetscapeCertSequenceTemplate[] = {
 { SEC_ASN1_SEQUENCE,
