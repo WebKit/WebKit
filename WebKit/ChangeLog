@@ -1,3 +1,14 @@
+2003-10-28  John Sullivan  <sullivan@apple.com>
+
+	- fixed 3465613 -- REGRESSION (111): Crash creating nib that 
+	contains WebView
+
+        Reviewed by Chris.
+
+        * WebView.subproj/WebView.m:
+        (-[WebView mainFrame]):
+	check for nil _private before dereferencing.
+
 2003-10-28  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3465591>: Security: Netscape plug-ins can execute JavaScript in other frames

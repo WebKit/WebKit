@@ -1324,7 +1324,11 @@ NS_ENDHANDLER
 
 - (WebFrame *)mainFrame
 {
-    return _private->mainFrame;
+    // This can be called in intialization, before _private has been set up (3465613)
+    if (_private != nil) {
+        return _private->mainFrame;
+    }
+    return nil;
 }
 
 - (WebBackForwardList *)backForwardList
