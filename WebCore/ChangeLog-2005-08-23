@@ -1,3 +1,5 @@
+=== Safari-117 ===
+
 2003-12-11  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3507164, scrolling really slow on hixie's web forms spec page.  Hixie has 12 little transparent layers
