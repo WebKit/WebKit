@@ -2267,19 +2267,19 @@ void CSSStyleSelector::applyRule( DOM::CSSProperty *prop )
         } else if(primitiveValue->getIdent()) {
 	    // keywords are being used.  Pick the correct default
 	    // based off the font family.
-	    QValueList<int>* fontSizes = (fontDef.genericFamily == FontDef::eMonospace) ?
-					 &m_fixedFontSizes : &m_fontSizes;
+	    QValueList<int>& fontSizes = (fontDef.genericFamily == FontDef::eMonospace) ?
+					 m_fixedFontSizes : m_fontSizes;
 	   
             switch(primitiveValue->getIdent())
             {
-            case CSS_VAL_XX_SMALL: size = m_fontSizes[0]; break;
-            case CSS_VAL_X_SMALL:  size = m_fontSizes[1]; break;
-            case CSS_VAL_SMALL:    size = m_fontSizes[2]; break;
-            case CSS_VAL_MEDIUM:   size = m_fontSizes[3]; break;
-            case CSS_VAL_LARGE:    size = m_fontSizes[4]; break;
-            case CSS_VAL_X_LARGE:  size = m_fontSizes[5]; break;
-            case CSS_VAL_XX_LARGE: size = m_fontSizes[6]; break;
-            case CSS_VAL__KONQ_XXX_LARGE:  size = ( m_fontSizes[6]*5 )/3; break;
+            case CSS_VAL_XX_SMALL: size = fontSizes[0]; break;
+            case CSS_VAL_X_SMALL:  size = fontSizes[1]; break;
+            case CSS_VAL_SMALL:    size = fontSizes[2]; break;
+            case CSS_VAL_MEDIUM:   size = fontSizes[3]; break;
+            case CSS_VAL_LARGE:    size = fontSizes[4]; break;
+            case CSS_VAL_X_LARGE:  size = fontSizes[5]; break;
+            case CSS_VAL_XX_LARGE: size = fontSizes[6]; break;
+            case CSS_VAL__KONQ_XXX_LARGE:  size = ( fontSizes[6]*5 )/3; break;
             case CSS_VAL_LARGER:
                 // ### use the next bigger standardSize!!!
                 size = oldSize * 1.2;
