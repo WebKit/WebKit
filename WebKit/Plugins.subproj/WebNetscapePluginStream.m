@@ -127,16 +127,16 @@
         [resourceData appendData:data];
     }
 
-    [stream receivedData:data];
     [super connection:con didReceiveData:data lengthReceived:lengthReceived];
+    [stream receivedData:data];
     [self release];
 }
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)con
 {
     [[view webView] _finishedLoadingResourceFromDataSource:[view dataSource]];
-    [stream finishedLoadingWithData:resourceData];
     [super connectionDidFinishLoading:con];
+    [stream finishedLoadingWithData:resourceData];
 }
 
 - (void)connection:(NSURLConnection *)con didFailWithError:(NSError *)result
@@ -145,8 +145,8 @@
     // anything including possibly releasing self; one example of this is 3266216
     [self retain];
     [[view webView] _receivedError:result fromDataSource:[view dataSource]];
-    [stream cancelWithReason:NPRES_NETWORK_ERR];
     [super connection:con didFailWithError:result];
+    [stream cancelWithReason:NPRES_NETWORK_ERR];
     [self release];
 }
 
