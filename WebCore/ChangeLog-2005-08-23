@@ -1,3 +1,14 @@
+2004-09-14  Chris Blumenberg  <cblu@apple.com>
+
+	Backed out my changes to these files. They were not meant to be checked. (I'm having a bad CVS day)
+
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge replaceSelectionWithFragment:selectReplacement:]):
+        (-[WebCoreBridge replaceSelectionWithNode:selectReplacement:]):
+        (-[WebCoreBridge replaceSelectionWithMarkupString:baseURLString:selectReplacement:]):
+        (-[WebCoreBridge replaceSelectionWithText:selectReplacement:]):
+
 2004-09-14  David Hyatt  <hyatt@apple.com>
 
 	Fix the crash in the layout tests caused by my recent selection changes.  Simply eliminate the buggy
