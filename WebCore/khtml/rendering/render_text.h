@@ -181,6 +181,8 @@ public:
                                     short& beginMaxW, short& endMaxW,
                                     short& minW, short& maxW, bool& stripFrontSpaces);
     
+    bool containsOnlyWhitespace(unsigned int from, unsigned int len) const;
+    
     // returns the minimum x position of all slaves relative to the parent.
     // defaults to 0.
     int minXPos() const;

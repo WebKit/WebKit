@@ -1,3 +1,18 @@
+2003-01-22  David Hyatt  <hyatt@apple.com>
+
+	Fix word-spacing bugs in text measurement calculations.  This
+	fixes our issues on the CSS1 test suite.  Regression tests have
+	been added for both positive and negative word-spacing.
+	
+        Reviewed by rjw
+
+        * khtml/rendering/bidi.cpp:
+        (RenderFlow::findNextLineBreak):
+        * khtml/rendering/render_text.cpp:
+        (RenderText::calcMinMaxWidth):
+        (RenderText::containsOnlyWhitespace):
+        * khtml/rendering/render_text.h:
+
 2003-01-22  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: 3153969 - Should not be able drag text while double or triple-click selecting it
