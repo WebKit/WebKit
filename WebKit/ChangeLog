@@ -1,3 +1,17 @@
+2002-12-12  Trey Matteson  <trey@apple.com>
+
+	Fixed 3094525 - Need to use SPI to fix flipped drag image problem
+
+	We call the new SPI.  I also had to rework the dissolve steps to get it
+	to non flip the image in Panther in millions (but leave the old code for
+	the Jaguar case).
+
+        Reviewed by cblu
+
+        * Misc.subproj/WebNSImageExtras.m:
+        (+[NSImage load]):  Call the SPI.
+        (-[NSImage _web_dissolveToFraction:]):  Add new way of building the image for Panther.
+
 2002-12-12  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
