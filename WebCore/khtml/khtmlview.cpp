@@ -1663,17 +1663,12 @@ bool KHTMLView::dispatchMouseEvent(int eventId, DOM::NodeImpl *targetNode, bool 
         }
         else if (eventId == EventImpl::MOUSEDOWN_EVENT) {
             // Focus should be shifted on mouse down, not on a click.  -dwh
-            if (targetNode->isSelectable())
-                m_part->xmlDocImpl()->setFocusNode(targetNode);
-#if !APPLE_CHANGES
-            // In Safari we don't want to take the focus away from a text field
-            // when we click on, say, a form button. But I suspect this could be
-            // something specific to Macintosh, so I am leaving this code here inside
-            // !APPLE_CHANGES. This will probably change when we do more of the keyboard
-            // navigation work.
-            else
+	    DOM::NodeImpl* nodeImpl = targetNode;
+	    for ( ; nodeImpl && !nodeImpl->isFocusable(); nodeImpl = nodeImpl->parentNode());
+            if (nodeImpl && nodeImpl->isMouseFocusable())
+                m_part->xmlDocImpl()->setFocusNode(nodeImpl);
+            else if (!nodeImpl || !nodeImpl->isKeyboardFocusable())
                 m_part->xmlDocImpl()->setFocusNode(0);
-#endif
         }
     }
 

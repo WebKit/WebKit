@@ -432,9 +432,9 @@ acronym {
 
 :focus          { outline: -apple-aqua 5px }
 a:link          { color: #0000EE; text-decoration: underline; }
-a:link:active          { color: red; outline: -apple-aqua 5px; }
+a:link:active          { color: red; }
 a:visited              { color: #551A8B; text-decoration: underline; }
-a:visited:active       { color: red; outline: -apple-aqua 5px; }
+a:visited:active       { color: red; }
 
 /* ### :before is now supported, but we haven't tried reinstating this
    ### rule that was comment out long ago.

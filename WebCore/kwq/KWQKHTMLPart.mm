@@ -1532,11 +1532,6 @@ void KWQKHTMLPart::khtmlMousePressEvent(MousePressEvent *event)
         }
 	KWQ_UNBLOCK_EXCEPTIONS;
 
-        // remove focus from links
-        DocumentImpl *doc = xmlDocImpl();
-        if (doc)
-            doc->setFocusNode(0);
-        
         KHTMLPart::khtmlMousePressEvent(event);
     }
 }

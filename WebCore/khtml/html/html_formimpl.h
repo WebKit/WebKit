@@ -148,7 +148,9 @@ public:
     virtual bool disabled() const;
     void setDisabled(bool _disabled);
 
-    virtual bool isSelectable() const;
+    virtual bool isFocusable() const;
+    virtual bool isKeyboardFocusable() const;
+    virtual bool isMouseFocusable() const;
     virtual bool isEnumeratable() const { return false; }
 
     bool readOnly() const { return m_readOnly; }

@@ -433,7 +433,7 @@ void HTMLFrameElementImpl::setLocation( const DOMString& str )
     updateForNewURL();
 }
 
-bool HTMLFrameElementImpl::isSelectable() const
+bool HTMLFrameElementImpl::isFocusable() const
 {
     return m_render!=0;
 }

@@ -90,7 +90,7 @@ public:
     bool noResize() { return noresize; }
     void setLocation( const DOMString& str );
 
-    virtual bool isSelectable() const;
+    virtual bool isFocusable() const;
     virtual void setFocus(bool);
 
     DocumentImpl* contentDocument() const;

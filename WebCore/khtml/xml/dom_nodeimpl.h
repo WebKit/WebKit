@@ -202,8 +202,10 @@ public:
     /**
         * whether this node can receive the keyboard focus.
      */
-    virtual bool isSelectable() const;
-
+    virtual bool isFocusable() const;
+    virtual bool isKeyboardFocusable() const;
+    virtual bool isMouseFocusable() const;
+    
     virtual bool isInline() const;
     virtual QString toHTML() const;
     QString recursive_toHTML(bool start = false) const;

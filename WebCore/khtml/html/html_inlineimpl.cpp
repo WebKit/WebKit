@@ -53,7 +53,7 @@ HTMLAnchorElementImpl::~HTMLAnchorElementImpl()
 {
 }
 
-bool HTMLAnchorElementImpl::isSelectable() const
+bool HTMLAnchorElementImpl::isFocusable() const
 {
     return m_hasAnchor && 
         m_render && 

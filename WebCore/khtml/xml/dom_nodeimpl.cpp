@@ -358,9 +358,19 @@ bool NodeImpl::isInline() const
     return !isElementNode();
 }
 
-bool NodeImpl::isSelectable() const
+bool NodeImpl::isFocusable() const
 {
     return false;
+}
+
+bool NodeImpl::isKeyboardFocusable() const
+{
+    return isFocusable();
+}
+
+bool NodeImpl::isMouseFocusable() const
+{
+    return isFocusable();
 }
 
 unsigned long NodeImpl::nodeIndex() const
