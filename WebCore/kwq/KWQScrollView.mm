@@ -339,12 +339,12 @@ void QScrollView::removeChild(QWidget* child)
 
 void QScrollView::resizeContents(int w, int h)
 {
-    volatile int _w = w;
-    volatile int _h = h;
+    KWQ_BLOCK_NS_EXCEPTIONS;
+    int _w = w;
+    int _h = h;
 
     LOG(Frames, "%p %@ at w %d h %d\n", getView(), [(id)[getView() class] className], w, h);
     NSView *view = getView();
-    KWQ_BLOCK_NS_EXCEPTIONS;
     if ([view _KWQ_isScrollView]){
         view = getDocumentView();
         

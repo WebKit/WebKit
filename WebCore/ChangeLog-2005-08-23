@@ -1,3 +1,12 @@
+2003-10-16  Darin Adler <darin@apple.com>
+
+        Reviewed by vicki. 
+
+	- fix buildit build failure 
+
+        * kwq/KWQScrollView.mm: 
+        (QScrollView::resizeContents):
+
 === Safari-110 ===
 
 2003-10-15  Darin Adler  <darin@apple.com>
