@@ -1,3 +1,10 @@
+2002-09-12  Richard Williamson (Home)  <rjw@apple.com>
+
+        Don't initiate a drag if an autoscroll happened.
+        
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView mouseDragged:]):
+
 2002-09-12  Richard Williamson (Local)  <rjw@apple.com>
 
         Added absolute position column to render node for 

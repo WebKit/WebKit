@@ -423,13 +423,18 @@
 - (void)mouseDragged:(NSEvent *)event
 {
     // Ensure that we're visible wrt the event location.
-    [self autoscroll:event];
+    BOOL didScroll = [self autoscroll:event];
+    
+    if (didScroll){
+        _private->mouseDownPoint.x = -FLT_MAX;
+        _private->mouseDownPoint.y = -FLT_MAX;
+    }
     
     // Now do WebKit dragging.
     float deltaX = ABS([event locationInWindow].x - _private->mouseDownPoint.x);
     float deltaY = ABS([event locationInWindow].y - _private->mouseDownPoint.y);
 
-    if (deltaX >= DragStartXHysteresis || deltaY >= DragStartYHysteresis){
+    if ((deltaX >= DragStartXHysteresis || deltaY >= DragStartYHysteresis) && !didScroll){
         NSPoint point = [self convertPoint:_private->mouseDownPoint fromView:nil];
         NSDictionary *element = [self _elementAtPoint: point];
         NSURL *linkURL = [element objectForKey: WebContextMenuElementLinkURLKey];
