@@ -1,5 +1,16 @@
 2003-08-06  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Chris Blumenberg.
+
+	- fixed 3366173 - crash in DOM::DomShared::ref loading www.berkheiser.net
+	
+        * khtml/ecma/kjs_html.cpp:
+        (Image::putValue): Check for NULL before refing, because we set
+	onLoadListener with a function that returns NULL if passed a value
+	that's not a function.
+
+2003-08-06  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Darin and Dave.
 
 	- fixed 3364433 - repro crash in khtml::RenderBlock::nodeAtPoint

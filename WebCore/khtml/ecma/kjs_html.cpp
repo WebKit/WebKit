@@ -3200,7 +3200,7 @@ void Image::putValue(ExecState *exec, int token, const Value& value, int /*attr*
   }
   case OnLoad:
     onLoadListener = Window::retrieveActive(exec)->getJSEventListener(value, true);
-    onLoadListener->ref();
+    if (onLoadListener) onLoadListener->ref();
     break;
   default:
     kdWarning() << "HTMLDocument::putValue unhandled token " << token << endl;
