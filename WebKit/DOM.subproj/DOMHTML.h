@@ -39,6 +39,7 @@
 #import "DOMCore.h"
 
 @class DOMHTMLElement;
+@class DOMHTMLFormElement;
 @class DOMHTMLTableCaptionElement;
 @class DOMHTMLTableSectionElement;
 
@@ -146,7 +147,7 @@
 @end
 
 @interface DOMHTMLIsIndexElement : DOMHTMLElement
-- (NSString *)form;
+- (DOMHTMLFormElement *)form;
 - (NSString *)prompt;
 - (void)setPrompt:(NSString *)prompt;
 @end
@@ -487,10 +488,10 @@
 - (void)setAlt:(NSString *)alt;
 - (NSString *)border;
 - (void)setBorder:(NSString *)border;
-- (NSString *)height;
-- (void)setHeight:(NSString *)height;
-- (NSString *)hspace;
-- (void)setHspace:(NSString *)hspace;
+- (long)height;
+- (void)setHeight:(long)height;
+- (long)hspace;
+- (void)setHspace:(long)hspace;
 - (BOOL)isMap;
 - (void)setIsMap:(BOOL)isMap;
 - (NSString *)longDesc;
@@ -499,10 +500,10 @@
 - (void)setSrc:(NSString *)src;
 - (NSString *)useMap;
 - (void)setUseMap:(NSString *)useMap;
-- (NSString *)vspace;
-- (void)setVspace:(NSString *)vspace;
-- (NSString *)width;
-- (void)setWidth:(NSString *)width;
+- (long)vspace;
+- (void)setVspace:(long)vspace;
+- (long)width;
+- (void)setWidth:(long)width;
 @end
 
 @interface DOMHTMLObjectElement : DOMHTMLElement
@@ -566,8 +567,6 @@
 - (void)setCode:(NSString *)code;
 - (NSString *)codeBase;
 - (void)setCodeBase:(NSString *)codeBase;
-- (NSString *)codeType;
-- (void)setCodeType:(NSString *)codeType;
 - (NSString *)height;
 - (void)setHeight:(NSString *)height;
 - (long)hspace;
