@@ -242,7 +242,7 @@
 				517D534A056BFB5D003851BD,
 				51A58A90057D3A6A00A3E942,
 				7073BE3F0581291E005EE2C9,
-				513589F00586989000813311,
+				513DF74305C0861F00F89391,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -303,7 +303,7 @@
 				517D5349056BFB5D003851BD,
 				51A58A8F057D3A6A00A3E942,
 				7073BE3E0581291E005EE2C9,
-				513589EF0586989000813311,
+				513DF74205C0861F00F89391,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -486,37 +486,34 @@
 			settings = {
 			};
 		};
-		513589ED0586989000813311 = {
+		513DF74005C0861F00F89391 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.cpp.cpp;
 			name = jni_jsobject.cpp;
-			path = bindings/jni_jsobject.cpp;
+			path = bindings/jni/jni_jsobject.cpp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
-		513589EE0586989000813311 = {
+		513DF74105C0861F00F89391 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.h;
 			name = jni_jsobject.h;
-			path = bindings/jni_jsobject.h;
+			path = bindings/jni/jni_jsobject.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
-		513589EF0586989000813311 = {
-			fileRef = 513589ED0586989000813311;
+		513DF74205C0861F00F89391 = {
+			fileRef = 513DF74005C0861F00F89391;
 			isa = PBXBuildFile;
 			settings = {
 			};
 		};
-		513589F00586989000813311 = {
-			fileRef = 513589EE0586989000813311;
+		513DF74305C0861F00F89391 = {
+			fileRef = 513DF74105C0861F00F89391;
 			isa = PBXBuildFile;
 			settings = {
-				ATTRIBUTES = (
-					Private,
-				);
 			};
 		};
 		517D52DC056BF2F5003851BD = {
@@ -617,8 +614,8 @@
 				517D52DD056BF2F6003851BD,
 				517D5347056BFB5D003851BD,
 				517D5348056BFB5D003851BD,
-				513589ED0586989000813311,
-				513589EE0586989000813311,
+				513DF74005C0861F00F89391,
+				513DF74105C0861F00F89391,
 				511B0877056468BB0080E486,
 				511B0876056468BB0080E486,
 				51856D8F0562EE95008B9D83,
