@@ -415,11 +415,12 @@ void CSSStyleDeclarationImpl::merge(CSSStyleDeclarationImpl *other, bool argOver
             if (!argOverridesOnConflict)
                 continue;
             removeProperty(property->id());
-            m_lstValues->append(new CSSProperty(*property));
         }
-        else {
-            m_lstValues->append(new CSSProperty(*property));
+        if (!m_lstValues) {
+            m_lstValues = new QPtrList<CSSProperty>;
+            m_lstValues->setAutoDelete(true);
         }
+        m_lstValues->append(new CSSProperty(*property));
     }
 }
 

@@ -1,5 +1,13 @@
 2004-10-13  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by Hyatt
+
+        * khtml/css/css_valueimpl.cpp:
+        (CSSStyleDeclarationImpl::merge): A little cleanup. Also, make sure m_lstValues
+        is non-null before appending.
+
+2004-10-13  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by me
 
         Update expected results for improved behavior as a result of fix to 3816768.
