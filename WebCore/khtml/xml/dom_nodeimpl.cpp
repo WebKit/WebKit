@@ -1407,7 +1407,7 @@ void NodeImpl::displayTree()
         NodeImpl *tmpNode;
         if (node == this)
             fprintf(stderr, "*");
-        for (tmpNode = node; tmpNode != rootNode; tmpNode = tmpNode->parentNode())
+        for (tmpNode = node; tmpNode && tmpNode != rootNode; tmpNode = tmpNode->parentNode())
             fprintf(stderr, "\t");
         node->displayNode(0);
     }

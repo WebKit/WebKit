@@ -1,3 +1,11 @@
+2005-01-31  David Harrison  <harrison@apple.com>
+
+        Prevent nil dereference in debug code.
+
+        * khtml/xml/dom_nodeimpl.cpp:
+        (NodeImpl::displayTree):
+        Stop when parent is 0, too.
+
 2005-01-31  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Dave Hyatt.
