@@ -40,12 +40,7 @@
 
 - (void)dealloc
 {
-    // FIXME Radar 2954901: Changed this not to leak because cancel messages are sometimes sent before begin.
-#ifdef WEBFOUNDATION_LOAD_MESSAGES_FIXED    
     WEBKIT_ASSERT(url == nil);
-#else
-    [url release];
-#endif    
     [dataSource release];
     [super dealloc];
 }
@@ -70,13 +65,7 @@
 {
     WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "url = %s\n", DEBUG_OBJECT([sender url]));
 
-    // FIXME Radar 2954901: I replaced the assertion below with a more lenient one,
-    // since cancel messages are sometimes sent before begin.
-#ifdef WEBFOUNDATION_LOAD_MESSAGES_FIXED    
     WEBKIT_ASSERT([url isEqual:[sender redirectedURL] ? [sender redirectedURL] : [sender url]]);
-#else
-    WEBKIT_ASSERT(url == nil || [url isEqual:[sender redirectedURL] ? [sender redirectedURL] : [sender url]]);
-#endif    
     
     [[dataSource controller] _mainReceivedProgress:[IFLoadProgress progress]
         forResourceHandle:sender fromDataSource: dataSource complete: YES];

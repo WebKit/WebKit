@@ -1,5 +1,19 @@
 2002-07-01  Darin Adler  <darin@apple.com>
 
+	Ken fixed the load message sequencing problem in WebFoundation, so now we can
+	go back to the original versions of the asserts.
+
+        * WebCoreSupport.subproj/IFResourceURLHandleClient.m:
+        (-[IFResourceURLHandleClient dealloc]):
+        (-[IFResourceURLHandleClient IFURLHandleResourceDidCancelLoading:]):
+        (-[IFResourceURLHandleClient IFURLHandle:resourceDidFailLoadingWithResult:]):
+        * WebView.subproj/IFMainURLHandleClient.mm:
+        (-[IFMainURLHandleClient dealloc]):
+        (-[IFMainURLHandleClient IFURLHandleResourceDidCancelLoading:]):
+	Roll out the stuff that's ifdef'd and marked with bug 2954901.
+
+2002-07-01  Darin Adler  <darin@apple.com>
+
         * WebView.subproj/IFDynamicScrollBarsView.m:
         (-[IFDynamicScrollBarsView updateScrollers]): After a closer reading of
 	the NSScrollView source code, I see that we don't need to explicitly do

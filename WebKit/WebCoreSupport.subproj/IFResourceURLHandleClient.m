@@ -48,13 +48,7 @@
 
 - (void)dealloc
 {
-#ifdef WEBFOUNDATION_LOAD_MESSAGES_FIXED
     WEBKIT_ASSERT(currentURL == nil);
-#else
-    if (currentURL) {
-        [self didStopLoading];
-    }
-#endif
     
     [loader release];
     [dataSource release];
@@ -115,13 +109,7 @@
 
 - (void)IFURLHandleResourceDidCancelLoading:(IFURLHandle *)handle
 {
-    // FIXME Radar 2954901: Replaced the assertion below with a more lenient one,
-    // since cancel messages are sometimes sent before begin.
-#ifdef WEBFOUNDATION_LOAD_MESSAGES_FIXED    
     WEBKIT_ASSERT([currentURL isEqual:[handle redirectedURL] ? [handle redirectedURL] : [handle url]]);
-#else
-    WEBKIT_ASSERT(currentURL == nil || [currentURL isEqual:[handle redirectedURL] ? [handle redirectedURL] : [handle url]]);
-#endif    
 
     [loader cancel];
     
@@ -156,13 +144,7 @@
 
 - (void)IFURLHandle:(IFURLHandle *)handle resourceDidFailLoadingWithResult:(IFError *)error
 {
-    // FIXME: This assert starting firing, so I made it lenient like the cancel one above.
-    // I don't know what's going on.
-#ifdef WEBFOUNDATION_LOAD_MESSAGES_FIXED
     WEBKIT_ASSERT([currentURL isEqual:[handle redirectedURL] ? [handle redirectedURL] : [handle url]]);
-#else
-    WEBKIT_ASSERT(currentURL == nil || [currentURL isEqual:[handle redirectedURL] ? [handle redirectedURL] : [handle url]]);
-#endif    
 
     [loader cancel];
     
