@@ -599,7 +599,7 @@ static NSAttributedString *attributedString(DOM::NodeImpl *_startNode, int start
                 text = str;
                 
             if (font)
-                partialString = [[NSAttributedString alloc] initWithString: text.getNSString() attributes: [NSDictionary dictionaryWithObjectsAndKeys: font, NSFontAttributeName, NSForegroundColorAttributeName, color, 0]];
+                partialString = [[NSAttributedString alloc] initWithString: text.getNSString() attributes: [NSDictionary dictionaryWithObjectsAndKeys: font, NSFontAttributeName, color, NSForegroundColorAttributeName, 0]];
             else
                 partialString = [[NSAttributedString alloc] initWithString: text.getNSString() attributes: nil];
                 

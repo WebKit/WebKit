@@ -1,5 +1,12 @@
 2002-10-15  Richard Williamson  <rjw@apple.com>
 
+        Added text color to attributed string conversion.
+        
+        * kwq/WebCoreBridge.mm:
+        (attributedString):
+
+2002-10-15  Richard Williamson  <rjw@apple.com>
+
         Added API to get attributed string from bridge.
         Added API to get selection in terms of the DOM API
         from the bridge.
