@@ -812,4 +812,64 @@ bool isEndOfDocument(const VisiblePosition &p)
     return p.isNotNull() && p.next().isNull();
 }
 
+// ---------
+
+VisiblePosition startOfEditableContent(const VisiblePosition &c)
+{
+    Position p = c.deepEquivalent();
+    NodeImpl *node = p.node();
+    if (!node)
+        return VisiblePosition();
+
+    if (!node->isContentEditable())
+        return VisiblePosition();
+
+    return VisiblePosition(node->rootEditableElement(), 0, DOWNSTREAM);
+}
+
+VisiblePosition endOfEditableContent(const VisiblePosition &c)
+{
+    Position p = c.deepEquivalent();
+    NodeImpl *node = p.node();
+    if (!node)
+        return VisiblePosition();
+
+    if (!node->isContentEditable())
+        return VisiblePosition();
+
+    node = node->rootEditableElement();
+    if (!node)
+        return VisiblePosition();
+
+    return VisiblePosition(node, node->childNodeCount(), DOWNSTREAM);
+}
+
+bool inSameEditableContent(const VisiblePosition &a, const VisiblePosition &b)
+{
+    Position ap = a.deepEquivalent();
+    NodeImpl *an = ap.node();
+    if (!an)
+        return false;
+        
+    Position bp = b.deepEquivalent();
+    NodeImpl *bn = bp.node();
+    if (!bn)
+        return false;
+    
+    if (!an->isContentEditable() || !bn->isContentEditable())
+        return false;
+
+    return an->rootEditableElement() == bn->rootEditableElement();
+}
+
+bool isStartOfEditableContent(const VisiblePosition &p)
+{
+    return inSameEditableContent(p, p.previous());
+}
+
+bool isEndOfEditableContent(const VisiblePosition &p)
+{
+    return inSameEditableContent(p, p.next());
+}
+
 } // namespace khtml

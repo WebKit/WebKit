@@ -56,6 +56,7 @@
 #import "render_style.h"
 #import "selection.h"
 #import "visible_position.h"
+#import "visible_units.h"
 #import "xml_tokenizer.h"
 
 #import <JavaScriptCore/npruntime.h>
@@ -1668,6 +1669,25 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
         TypingCommand::insertText(_part->xmlDocImpl(), text, YES);
     
     [self ensureSelectionVisible];
+}
+
+- (BOOL)canDeleteRange:(DOMRange *)range
+{
+    NodeImpl *startContainer = [[range startContainer] _nodeImpl];
+    NodeImpl *endContainer = [[range endContainer] _nodeImpl];
+    if (startContainer == nil || endContainer == nil)
+        return NO;
+    
+    if (!startContainer->isContentEditable() || !endContainer->isContentEditable())
+        return NO;
+    
+    if ([range collapsed]) {
+        VisiblePosition start(startContainer, [range startOffset], DOWNSTREAM);
+        if (isStartOfEditableContent(start))
+            return NO;
+    }
+    
+    return YES;
 }
 
 // Given proposedRange, returns an extended range that includes adjacent whitespace that should

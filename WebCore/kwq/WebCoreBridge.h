@@ -373,6 +373,7 @@ typedef enum {
 - (WebSelectionGranularity)selectionGranularity;
 - (DOMRange *)smartDeleteRangeForProposedRange:(DOMRange *)proposedCharRange;
 - (void)smartInsertForString:(NSString *)pasteString replacingRange:(DOMRange *)charRangeToReplace beforeString:(NSString **)beforeString afterString:(NSString **)afterString;
+- (BOOL)canDeleteRange:(DOMRange *)range;
 
 - (DOMDocumentFragment *)documentFragmentWithMarkupString:(NSString *)markupString baseURLString:(NSString *)baseURLString;
 - (DOMDocumentFragment *)documentFragmentWithText:(NSString *)text;
