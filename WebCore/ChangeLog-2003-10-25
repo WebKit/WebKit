@@ -1,3 +1,12 @@
+2002-11-27  Maciej Stachowiak  <mjs@apple.com>
+
+	- avoid doing any work when setting the document's link colors if
+	there is no change. This avoids superfluous style updates and
+	results in a 20% improvment on the JavaScript iBench.
+	
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::HTMLDocument::putValue):
+
 2002-11-27  David Hyatt  <hyatt@apple.com>
 
 	Fix <br clear=""> and <br clear> to just behave like <br>

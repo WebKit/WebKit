@@ -336,13 +336,37 @@ void KJS::HTMLDocument::putValue(ExecState *exec, int token, const Value& value,
     body.setText(value.toString(exec).string());
     break;
   case AlinkColor:
-    body.setALink(value.toString(exec).string());
+    // this check is a bit silly, but some benchmarks like to set the
+    // document's link colors over and over to the same value and we
+    // don't want to incur a style update each time.
+    {
+      DOM::DOMString newColor = value.toString(exec).string();
+      if (body.aLink() != newColor) {
+	body.setALink(newColor);
+      }
+    }
     break;
   case LinkColor:
-    body.setLink(value.toString(exec).string());
+    // this check is a bit silly, but some benchmarks like to set the
+    // document's link colors over and over to the same value and we
+    // don't want to incur a style update each time.
+    {
+      DOM::DOMString newColor = value.toString(exec).string();
+      if (body.link() != newColor) {
+	body.setLink(newColor);
+      }
+    }
     break;
   case VlinkColor:
-    body.setVLink(value.toString(exec).string());
+    // this check is a bit silly, but some benchmarks like to set the
+    // document's link colors over and over to the same value and we
+    // don't want to incur a style update each time.
+    {
+      DOM::DOMString newColor = value.toString(exec).string();
+      if (body.vLink() != newColor) {
+	body.setVLink(newColor);
+      }
+    }
     break;
   case Dir:
     body.setDir(value.toString(exec).string());
