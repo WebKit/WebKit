@@ -218,6 +218,7 @@
 				F68EBB8E0255D4C601FF60F7,
 				F5C290E70284F98E018635CA,
 				F50888B7030BB74C012A967E,
+				F54F0801030CD22001B5C2EB,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -370,6 +371,7 @@
 				F692A8870255597D01FF60F7,
 				F692A8880255597D01FF60F7,
 				F50888B6030BB74C012A967E,
+				F54F0800030CD22001B5C2EB,
 			);
 			isa = PBXGroup;
 			name = Classes;
@@ -449,6 +451,18 @@
 			};
 			isa = PBXBuildStyle;
 			name = DeploymentFat;
+		};
+		F54F0800030CD22001B5C2EB = {
+			isa = PBXFileReference;
+			name = reference_list.h;
+			path = kjs/reference_list.h;
+			refType = 4;
+		};
+		F54F0801030CD22001B5C2EB = {
+			fileRef = F54F0800030CD22001B5C2EB;
+			isa = PBXBuildFile;
+			settings = {
+			};
 		};
 		F58C8A1D025BD408018635CA = {
 			buildRules = (

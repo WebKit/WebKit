@@ -26,6 +26,7 @@
 #include "types.h"
 #include "interpreter.h"
 #include "lookup.h"
+#include "reference_list.h"
 
 #include <assert.h>
 #include <math.h>
@@ -403,9 +404,9 @@ void ObjectImp::setScope(const List &s)
   _scope = static_cast<ListImp*>(s.imp());
 }
 
-List ObjectImp::propList(ExecState *exec, bool recursive)
+ReferenceList ObjectImp::propList(ExecState *exec, bool recursive)
 {
-  List list;
+  ReferenceList list;
   if (_proto && _proto->dispatchType() == ObjectType && recursive)
     list = static_cast<ObjectImp*>(_proto)->propList(exec,recursive);
 

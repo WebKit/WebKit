@@ -75,6 +75,7 @@ namespace KJS {
     Node();
     virtual ~Node();
     virtual Value evaluate(ExecState *exec) = 0;
+    virtual Reference evaluateReference(ExecState *exec);
     UString toString() const;
     virtual void streamTo(SourceStream &s) const = 0;
     virtual void processVarDecls(ExecState */*exec*/) {}
@@ -185,6 +186,7 @@ namespace KJS {
   public:
     ResolveNode(const UString *s) : ident(*s) { }
     Value evaluate(ExecState *exec);
+    virtual Reference evaluateReference(ExecState *exec);
     virtual void streamTo(SourceStream &s) const;
   private:
     UString ident;
@@ -284,6 +286,7 @@ namespace KJS {
     virtual void ref();
     virtual bool deref();
     Value evaluate(ExecState *exec);
+    virtual Reference evaluateReference(ExecState *exec);
     virtual void streamTo(SourceStream &s) const;
   private:
     Node *expr1;
@@ -296,6 +299,7 @@ namespace KJS {
     virtual void ref();
     virtual bool deref();
     Value evaluate(ExecState *exec);
+    virtual Reference evaluateReference(ExecState *exec);
     virtual void streamTo(SourceStream &s) const;
   private:
     Node *expr;

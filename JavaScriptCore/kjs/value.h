@@ -259,33 +259,6 @@ namespace KJS {
     Object toObject(ExecState *exec) const;
 
     /**
-     * Performs the GetBase type conversion operation on this value (ECMA 8.7)
-     *
-     * Since references are supposed to have an Object or null as their base,
-     * this method is guaranteed to return either Null() or an Object value.
-     */
-    Value getBase(ExecState *exec) const { return rep->dispatchGetBase(exec); }
-
-    /**
-     * Performs the GetPropertyName type conversion operation on this value
-     * (ECMA 8.7)
-     */
-    UString getPropertyName(ExecState *exec) const { return rep->dispatchGetPropertyName(exec); }
-
-    /**
-     * Performs the GetValue type conversion operation on this value
-     * (ECMA 8.7.1)
-     */
-    Value getValue(ExecState *exec) const { return rep->dispatchGetValue(exec); }
-
-    /**
-     * Performs the PutValue type conversion operation on this value
-     * (ECMA 8.7.1)
-     */
-    void putValue(ExecState *exec, const Value &w) { rep->dispatchPutValue(exec, w); }
-    bool deleteValue(ExecState *exec) { return rep->dispatchDeleteValue(exec); }
-
-    /**
      * Checks if we can do a lossless conversion to UInt32.
      */
     bool toUInt32(unsigned& i) const { return rep->dispatchToUInt32(i); }

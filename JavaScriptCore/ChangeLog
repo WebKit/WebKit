@@ -1,3 +1,72 @@
+2002-08-15  Maciej Stachowiak  <mjs@apple.com>
+
+	Phase 1 of optimization to stop allocating references through the
+	collector. This step clearly splits evaluating to a reference and
+	evaluating to a value, and moves all of the reference-specific
+	operations from Value to Reference. A special ConstReference class
+	helps out for the one case where you need special reference
+	operations if the result is a reference, and not otherwise.
+
+	Also, Reference now inherits privately from Value, and there is a
+	new ReferenceList class that inherits privately from List, so the
+	uses of Reference and Value are now completely orthogonal. This
+	means that as the next step, their implementations can be
+	completely disentangled.
+	
+	This step has no actual performance impact.
+	
+        * kjs/collector.cpp:
+        (Collector::collect):
+        * kjs/nodes.cpp:
+        (Node::evaluateReference):
+        (ResolveNode::evaluate):
+        (ResolveNode::evaluateReference):
+        (ElementNode::evaluate):
+        (PropertyValueNode::evaluate):
+        (AccessorNode1::evaluate):
+        (AccessorNode1::evaluateReference):
+        (AccessorNode2::evaluate):
+        (AccessorNode2::evaluateReference):
+        (ArgumentListNode::evaluateList):
+        (NewExprNode::evaluate):
+        (FunctionCallNode::evaluate):
+        (PostfixNode::evaluate):
+        (DeleteNode::evaluate):
+        (VoidNode::evaluate):
+        (TypeOfNode::evaluate):
+        (PrefixNode::evaluate):
+        (UnaryPlusNode::evaluate):
+        (NegateNode::evaluate):
+        (BitwiseNotNode::evaluate):
+        (LogicalNotNode::evaluate):
+        (MultNode::evaluate):
+        (AddNode::evaluate):
+        (ShiftNode::evaluate):
+        (RelationalNode::evaluate):
+        (EqualNode::evaluate):
+        (BitOperNode::evaluate):
+        (BinaryLogicalNode::evaluate):
+        (ConditionalNode::evaluate):
+        (AssignNode::evaluate):
+        (CommaNode::evaluate):
+        (VarDeclNode::evaluate):
+        (ExprStatementNode::execute):
+        (IfNode::execute):
+        (DoWhileNode::execute):
+        (WhileNode::execute):
+        (ForNode::execute):
+        (ForInNode::execute):
+        (ReturnNode::execute):
+        (WithNode::execute):
+        (CaseClauseNode::evaluate):
+        (SwitchNode::execute):
+        (ThrowNode::execute):
+        * kjs/nodes.h:
+        * kjs/types.cpp:
+        (ConstReference::ConstReference):
+        * kjs/types.h:
+        * kjs/value.h:
+
 2002-08-15  Darin Adler  <darin@apple.com>
 
 	Tweaks and small bug fixes to Maciej's excellent new fixnum optimization.

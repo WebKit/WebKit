@@ -68,6 +68,11 @@ Reference Reference::dynamicCast(const Value &v)
   return static_cast<ReferenceImp*>(v.imp());
 }
 
+ConstReference::ConstReference(ValueImp *v) : 
+  Reference((ReferenceImp *)v) 
+{
+}
+
 // ------------------------------ ListIterator ---------------------------------
 
 //d  dont add   ListIterator();

@@ -30,7 +30,11 @@
 
 namespace KJS {
 
-  class Reference : public Value {
+  class ReferenceList;
+
+  class Reference : private Value {
+    friend class ReferenceList;
+    friend class ReferenceListIterator;
   public:
     Reference(const Object& b, const UString& p);
     Reference(const Object& b, unsigned p);
@@ -48,6 +52,39 @@ namespace KJS {
      * @return The value converted to an Reference
      */
     static Reference dynamicCast(const Value &v);
+
+    /**
+     * Performs the GetBase type conversion operation on this value (ECMA 8.7)
+     *
+     * Since references are supposed to have an Object or null as their base,
+     * this method is guaranteed to return either Null() or an Object value.
+     */
+    Value getBase(ExecState *exec) const { return rep->dispatchGetBase(exec); }
+
+    /**
+     * Performs the GetPropertyName type conversion operation on this value
+     * (ECMA 8.7)
+     */
+    UString getPropertyName(ExecState *exec) const { return rep->dispatchGetPropertyName(exec); }
+
+    /**
+     * Performs the GetValue type conversion operation on this value
+     * (ECMA 8.7.1)
+     */
+    Value getValue(ExecState *exec) const { return rep->dispatchGetValue(exec); }
+
+    /**
+     * Performs the PutValue type conversion operation on this value
+     * (ECMA 8.7.1)
+     */
+    void putValue(ExecState *exec, const Value &w) { rep->dispatchPutValue(exec, w); }
+    bool deleteValue(ExecState *exec) { return rep->dispatchDeleteValue(exec); }
+    bool isMutable() { return type() == ReferenceType; }
+  };
+
+  class ConstReference : public Reference {
+  public:
+    ConstReference(ValueImp *v);
   };
 
   class List;
