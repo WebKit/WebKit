@@ -1,5 +1,16 @@
 2003-04-30  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Ken.
+
+	Minor header tweaks.
+
+        * Misc.subproj/WebDownload.h: Fix copyright notice.
+        * Panels.subproj/WebAuthenticationPanel.h: Added 2003 to copyright.
+        * WebView.subproj/WebAuthenticationChallenge.h: Fix copyright notice, add docs.
+        * WebView.subproj/WebAuthenticationChallengeInternal.h: Fix copyright notice.
+
+2003-04-30  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Darin.
 
 	Fixed imports and @class directives for WebFoundation changes.

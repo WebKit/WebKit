@@ -1,6 +1,6 @@
 /*	
-    WebAuthenticationChallengeInternal.h
-    Copyright 2003 Apple, Inc. All rights reserved.
+    WebAuthenticationChallenge.h
+    Copyright (C) 2003 Apple Computer, Inc. All rights reserved.    
 */
 
 #import <WebKit/WebAuthenticationChallenge.h>

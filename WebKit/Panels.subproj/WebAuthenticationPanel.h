@@ -1,7 +1,7 @@
 /*	
     WebAuthenticationPanel.h
     
-    Copyright 2002 Apple, Inc. All rights reserved.
+    Copyright 2002-2003 Apple, Inc. All rights reserved.
 */
 
 #import <Cocoa/Cocoa.h>
