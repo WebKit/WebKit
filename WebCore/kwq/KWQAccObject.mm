@@ -199,8 +199,29 @@ using khtml::RenderCanvas;
 {
     if (!m_renderer)
         return nil;
-
-    return UI_STRING("Testing role description", "not real yet");
+    
+    // FIXME 3517227: These need to be localized (UI_STRING here is a dummy macro)
+    // FIXME 3447564: It would be better to call some AppKit API to get these strings
+    // (which would be the best way to localize them)
+    
+    NSString *role = [self role];
+    if ([role isEqualToString:NSAccessibilityButtonRole]) {
+        return UI_STRING("button", "accessibility role description for button");
+    }
+    
+    if ([role isEqualToString:NSAccessibilityStaticTextRole]) {
+        return UI_STRING("text", "accessibility role description for static text");
+    }
+    
+    if ([role isEqualToString:NSAccessibilityImageRole]) {
+        return UI_STRING("image", "accessibility role description for image");
+    }
+    
+    if ([role isEqualToString:NSAccessibilityGroupRole]) {
+        return UI_STRING("group", "accessibility role description for group");
+    }
+    
+    return UI_STRING("unknown", "accessibility role description for unknown role");
 }
 
 -(NSString*)helpText
@@ -254,7 +275,11 @@ using khtml::RenderCanvas;
     if (m_renderer->isText())
         return [self textUnderElement];
     
-    return UI_STRING("Value not implemented yet.", "not real yet");
+    // FIXME: We might need to implement a value here for more types
+    // FIXME: It would be better not to advertise a value at all for the types for which we don't implement one;
+    // this would require subclassing or making accessibilityAttributeNames do something other than return a
+    // single static array.
+    return nil;
 }
 
 -(NSString*)title
@@ -368,7 +393,7 @@ static QRect boundingBoxRect(RenderObject* obj)
 - (NSString *)accessibilityActionDescription:(NSString *)action
 {
     // We only have the one action (press).
-    return UI_STRING("press link", "not real string value yet");
+    return UI_STRING("press link", "accessibility action description");
 }
 
 - (void)accessibilityPerformAction:(NSString *)action

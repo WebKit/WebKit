@@ -1,5 +1,20 @@
 2003-12-22  John Sullivan  <sullivan@apple.com>
 
+        - fixed <rdar://problem/3508798>: ACCESSIBILITY: role/description/value strings not defined
+
+        Reviewed by Darin.
+
+        * kwq/KWQAccObject.mm:
+        (-[KWQAccObject roleDescription]):
+        provide not-yet-localized strings for all the role descriptions that this class uses.
+        (-[KWQAccObject value]):
+        return nil string rather than dummy string for the cases where we don't have a value attribute.
+        (-[KWQAccObject accessibilityActionDescription:]):
+        changed comment passed to UI_STRING bogus macro so it won't have to change if/when macro
+        loses its bogosity
+
+2003-12-22  John Sullivan  <sullivan@apple.com>
+
 	- WebCore part of fix for <rdar://problem/3515706>: 
 	REGRESSION (100-118): Web Kit printing does not honor Page Setup scale factor
 
