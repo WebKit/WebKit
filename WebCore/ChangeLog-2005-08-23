@@ -1,5 +1,20 @@
 2004-08-12  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by Chris
+
+        Fix for this bug:
+        
+        <rdar://problem/3761014> command-down-arrow takes you to start of document instead of end of document
+
+        * khtml/xml/dom_selection.cpp:
+        (DOM::Selection::modifyExtendingRightForward): Code used to assume, incorrectly, that index 1 of the
+        document element was beyond the last node in the document. But this is not true, since the document
+        element is the HTML element (generally). Instead, move to the index equal to the number of children
+        of the document element. This puts us past everything.
+        (DOM::Selection::modifyMovingRightForward): Ditto.
+
+2004-08-12  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by Trey
 
         Fix for this bug:

@@ -214,9 +214,11 @@ Position Selection::modifyExtendingRightForward(ETextGranularity granularity)
         case PARAGRAPH:
             // not implemented
             break;
-        case DOCUMENT:
-            pos = Position(start().node()->getDocument()->documentElement(), 1);
+        case DOCUMENT: {
+            ElementImpl *elem = start().node()->getDocument()->documentElement();
+            pos = Position(elem, elem->childNodeCount());
             break;
+        }
         case LINE_BOUNDARY: {
             Selection selection;
             startAndEndLineNodesIncludingNode(end().node(), end().offset(), selection);
@@ -247,9 +249,11 @@ Position Selection::modifyMovingRightForward(ETextGranularity granularity)
         case PARAGRAPH:
             // not implemented
             break;
-        case DOCUMENT:
-            pos = Position(start().node()->getDocument()->documentElement(), 1);
+        case DOCUMENT: {
+            ElementImpl *elem = start().node()->getDocument()->documentElement();
+            pos = Position(elem, elem->childNodeCount());
             break;
+        }
         case LINE_BOUNDARY: {
             Selection selection;
             startAndEndLineNodesIncludingNode(end().node(), end().offset(), selection);
