@@ -1,3 +1,5 @@
+=== Safari-136 ===
+
 2004-04-08  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3608430 and 3608462, crashes in findNextLineBreak when deleting.  Make sure that the removal of line boxes

@@ -1,3 +1,5 @@
+=== Safari-136 ===
+
 2004-04-08  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3548274>: API: DOM API for WebKit clients
