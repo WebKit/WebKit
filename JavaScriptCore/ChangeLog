@@ -1,3 +1,13 @@
+2003-12-09  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by John.
+
+	<rdar://problem/3505183>: JavaScriptCore should assert that interpreter is locked in collector
+
+        * kjs/collector.cpp:
+        (KJS::Collector::allocate): Assert that interpreter lock count is not 0.
+        (KJS::Collector::collect): likewise
+
 2003-12-08  Richard Williamson   <rjw@apple.com>
 
 	LiveConnect:  The last piece of the JavaScript side of the

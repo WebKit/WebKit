@@ -88,6 +88,8 @@ bool Collector::memoryFull = false;
 
 void* Collector::allocate(size_t s)
 {
+  assert(Interpreter::lockCount() > 0);
+
   if (s == 0)
     return 0L;
   
@@ -162,6 +164,8 @@ void* Collector::allocate(size_t s)
 
 bool Collector::collect()
 {
+  assert(Interpreter::lockCount() > 0);
+
   bool deleted = false;
 
   // MARK: first mark all referenced objects recursively
