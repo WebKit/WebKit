@@ -35,15 +35,23 @@
 // Returns NSDragOperationNone otherwise.
 - (NSDragOperation)_web_dragOperationForDraggingInfo:(id <NSDraggingInfo>)sender;
 
-// Resizes and applies alpha to image, extends pboard and sets drag origins for dragging promised images.
-// Only call from within your overidden dragImage:at:offset:event:pasteboard:source:slideBack: method
-// after calling dragPromisedFilesOfTypes:fromRect:source:slideBack:event:
-// Only really needed by WebImageView and WebHTMLView.
-- (void)_web_setPromisedImageDragImage:(NSImage **)dragImage
-                                    at:(NSPoint *)imageLoc
-                                offset:(NSSize *)mouseOffset
-                         andPasteboard:(NSPasteboard *)pboard
-                             withImage:(NSImage *)image
-                              andEvent:(NSEvent *)theEvent;
+// Resizes and applies alpha to image, extends pboard and sets drag origins for dragging promised image files.
+- (void)_web_dragPromisedImage:(NSImage *)image
+                    fromOrigin:(NSPoint)origin
+                       withURL:(NSURL *)URL
+                         title:(NSString *)title
+                         event:(NSEvent *)event;
 
 @end
+
+@interface NSFilePromiseDragSource : NSObject
+- initWithSource:(id)draggingSource;
+- (void)setTypes:(NSArray *)types onPasteboard:(NSPasteboard *)pboard;
+@end
+
+@interface WebFilePromiseDragSource : NSFilePromiseDragSource
+{
+    id _draggingSource;
+}
+- (id)draggingSource;
+@end;

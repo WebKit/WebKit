@@ -598,41 +598,6 @@
     [[self _bridge] mouseDown:event];
 }
 
-- (void)dragImage:(NSImage *)anImage
-               at:(NSPoint)imageLoc
-           offset:(NSSize)mouseOffset
-            event:(NSEvent *)theEvent
-       pasteboard:(NSPasteboard *)pboard
-           source:(id)sourceObject
-        slideBack:(BOOL)slideBack
-{
-    if (_private->draggingImageElement) {
-        // Subclassing dragImage for image drags let's us change aspects of the drag that the
-        // promised file API doesn't provide such as a different drag image, other pboard types etc.
-
-        imageLoc = [[_private->draggingImageElement objectForKey:WebElementImageLocationKey] pointValue];
-
-        [self _web_setPromisedImageDragImage:&anImage
-                                          at:&imageLoc
-                                      offset:&mouseOffset
-                               andPasteboard:pboard
-                                   withImage:[_private->draggingImageElement objectForKey:WebElementImageKey]
-                                    andEvent:theEvent];
-    }
-
-    [super dragImage:anImage
-                  at:imageLoc
-              offset:mouseOffset
-               event:theEvent
-          pasteboard:pboard
-              source:sourceObject
-           slideBack:slideBack];
-    
-    // During a drag, we don't get any mouseMoved or flagsChanged events.
-    // So after the drag we need to explicitly update the mouseover state.
-    [self _updateMouseoverWithEvent:[NSApp currentEvent]];
-}
-
 - (void)mouseDragged:(NSEvent *)event
 {
     // If the frame has a provisional data source, this view may be released.
@@ -668,13 +633,14 @@
             if (imageURL){
                 _private->draggingImageElement = [element retain];
 
-                // FIXME: Getting the file type this way doesn't always work
-                [self dragPromisedFilesOfTypes:[NSArray arrayWithObject:[[imageURL path] pathExtension]]
-                                      fromRect:NSZeroRect
-                                        source:self
-                                     slideBack:YES
-                                         event:_private->mouseDownEvent];
+                // Retain this view during the drag because it may be released before the drag ends.
+                [self retain];
                 
+                [self _web_dragPromisedImage:[element objectForKey:WebElementImageKey]
+                                  fromOrigin:[[element objectForKey:WebElementImageLocationKey] pointValue]
+                                     withURL:linkURL ? linkURL : imageURL
+                                       title:[element objectForKey:WebElementImageAltStringKey]
+                                       event:_private->mouseDownEvent];
             }else if (linkURL) {
                 BOOL drawURLString = YES;
                 BOOL clipURLString = NO;
@@ -687,6 +653,7 @@
                     label = urlString;
                 }
                 
+                // FIXME: This mega-block of code needs to be cleaned-up or put into another method.
                 NSFont *labelFont = [NSFont systemFontOfSize: 12.0];
                 NSFont *urlFont = [NSFont systemFontOfSize: 8.0];
                 NSDictionary *labelAttributes = [NSDictionary dictionaryWithObjectsAndKeys: labelFont, NSFontAttributeName, [NSColor whiteColor], NSForegroundColorAttributeName, nil];
@@ -757,7 +724,7 @@
                 NSPoint mousePoint = [self convertPoint:[event locationInWindow] fromView:nil];
                 NSSize centerOffset = NSMakeSize(imageSize.width / 2, -DRAG_LABEL_BORDER_Y);
                 NSPoint imagePoint = NSMakePoint(mousePoint.x - centerOffset.width, mousePoint.y - centerOffset.height);
-
+                
                 [self dragImage:dragImage
                              at:imagePoint
                          offset:centerOffset
@@ -781,6 +748,16 @@
 - (unsigned)draggingSourceOperationMaskForLocal:(BOOL)isLocal
 {
     return NSDragOperationCopy;
+}
+
+- (void)draggedImage:(NSImage *)anImage endedAt:(NSPoint)aPoint operation:(NSDragOperation)operation
+{
+    // During a drag, we don't get any mouseMoved or flagsChanged events.
+    // So after the drag we need to explicitly update the mouseover state.
+    [self _updateMouseoverWithEvent:[NSApp currentEvent]];
+
+    // Balance the previous retain from when the drag started.
+    [self release];
 }
 
 - (NSArray *)namesOfPromisedFilesDroppedAtDestination:(NSURL *)dropDestination

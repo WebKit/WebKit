@@ -161,38 +161,15 @@
 - (void)mouseDragged:(NSEvent *)event
 {
     if(acceptsDrags){
-        [self dragPromisedFilesOfTypes:[NSArray arrayWithObject:[[[representation URL] path] pathExtension]]
-                              fromRect:NSZeroRect
-                                source:self
-                             slideBack:YES
-                                 event:event];
+        // Retain this view during the drag because it may be released before the drag ends.
+        [self retain];
+        
+        [self _web_dragPromisedImage:[representation image]
+                          fromOrigin:NSZeroPoint
+                             withURL:[representation URL]
+                               title:nil
+                               event:event];
     }
-}
-
-// Subclassing dragImage for image drags let's us change aspects of the drag that the
-// promised file API doesn't provide such as a different drag image, other pboard types etc.
-- (void)dragImage:(NSImage *)anImage
-               at:(NSPoint)imageLoc
-           offset:(NSSize)mouseOffset
-            event:(NSEvent *)theEvent
-       pasteboard:(NSPasteboard *)pboard
-           source:(id)sourceObject
-        slideBack:(BOOL)slideBack
-{
-    [self _web_setPromisedImageDragImage:&anImage
-                                      at:&imageLoc
-                                  offset:&mouseOffset
-                           andPasteboard:pboard
-                               withImage:[representation image]
-                                andEvent:theEvent];
-    
-    [super dragImage:anImage
-                  at:imageLoc
-              offset:mouseOffset
-               event:theEvent
-          pasteboard:pboard
-              source:sourceObject
-           slideBack:slideBack];
 }
 
 - (NSArray *)namesOfPromisedFilesDroppedAtDestination:(NSURL *)dropDestination
@@ -200,10 +177,16 @@
     NSURL *URL = [representation URL];
     NSString *filename = [[URL path] lastPathComponent];
     NSString *path = [[dropDestination path] stringByAppendingPathComponent:filename];
-
+    
     [[self controller] _downloadURL:URL toPath:path];
 
     return [NSArray arrayWithObject:filename];
+}
+
+- (void)draggedImage:(NSImage *)anImage endedAt:(NSPoint)aPoint operation:(NSDragOperation)operation
+{
+    // Balance the previous retain from when the drag started.
+    [self release];
 }
 
 @end

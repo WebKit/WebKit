@@ -143,18 +143,22 @@ NSString *WebErrorDomainWebKit = @"WebErrorDomainWebKit";
 
 - (BOOL)isDocumentHTML
 {
-    return [[[self documentView] className] isEqualToString:@"WebHTMLView"];
+    return [[self documentView] isKindOfClass:[WebHTMLView class]];
 }
-
 
 - (NSDragOperation)draggingEntered:(id <NSDraggingInfo>)sender
 {
-    if((![self documentView] || ([sender draggingSource] != [self documentView])) &&
-       [[sender draggingPasteboard] _web_bestURL]) {
-        return NSDragOperationCopy;
-    } else {
-        return NSDragOperationNone;
+    id draggingSource = [sender draggingSource];
+    if([draggingSource isKindOfClass:[WebFilePromiseDragSource class]]){
+        draggingSource = [draggingSource draggingSource];
     }
+    
+    if([[sender draggingPasteboard] _web_bestURL] &&
+       (![self documentView] || (draggingSource != [self documentView]))){
+        return NSDragOperationCopy;
+    }
+
+    return NSDragOperationNone;
 }
 
 - (BOOL)prepareForDragOperation:(id <NSDraggingInfo>)sender

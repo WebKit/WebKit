@@ -1,3 +1,23 @@
+2002-11-25  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: 3084350 - No URL flavors provided for images
+
+        * Misc.subproj/WebNSViewExtras.h:
+        * Misc.subproj/WebNSViewExtras.m:
+        (-[NSView _web_dragPromisedImage:fromOrigin:withURL:title:event:]): renamed, simplifies dragging an image
+        (-[WebFilePromiseDragSource initWithSource:]): subclass of NSFilePromiseDragSource, to be used later
+        (-[WebFilePromiseDragSource draggingSource]):
+        (-[WebFilePromiseDragSource dealloc]):
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView mouseDragged:]): call _web_dragPromisedImage:fromOrigin:withURL:title:event:, retain self
+        (-[WebHTMLView draggedImage:endedAt:operation:]): added, release self
+        * WebView.subproj/WebImageView.m:
+        (-[WebImageView mouseDragged:]): call _web_dragPromisedImage:fromOrigin:withURL:title:event:, retain self
+        (-[WebImageView draggedImage:endedAt:operation:]): added, release self
+        * WebView.subproj/WebView.m:
+        (-[WebView isDocumentHTML]): call isKindOfClass instead of className
+        (-[WebView draggingEntered:]): check for WebFilePromiseDragSource
+
 2002-11-24  Trey Matteson  <trey@apple.com>
 
 	Added URLString method to WebHistoryItem to avoid silly conversions between

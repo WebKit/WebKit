@@ -158,34 +158,63 @@
 }
 #endif
 
-- (void)_web_setPromisedImageDragImage:(NSImage **)dragImage
-                                    at:(NSPoint *)imageLoc
-                                offset:(NSSize *)mouseOffset
-                         andPasteboard:(NSPasteboard *)pboard
-                             withImage:(NSImage *)image
-                              andEvent:(NSEvent *)theEvent;
+- (void)_web_dragPromisedImage:(NSImage *)image
+                    fromOrigin:(NSPoint)origin
+                       withURL:(NSURL *)URL
+                         title:(NSString *)title
+                         event:(NSEvent *)event
 {
-    *dragImage = [[image copy] autorelease];
+    image = [[image copy] autorelease];
     
-    NSSize originalSize = [*dragImage size];
-    [*dragImage _web_scaleToMaxSize:WebMaxDragImageSize];
-    NSSize newSize = [*dragImage size];
+    NSSize originalSize = [image size];
+    [image _web_scaleToMaxSize:WebMaxDragImageSize];
+    NSSize newSize = [image size];
 
-    [*dragImage _web_dissolveToFraction:WebDragImageAlpha];
+    [image _web_dissolveToFraction:WebDragImageAlpha];
 
-    NSPoint mouseDownPoint = [self convertPoint:[theEvent locationInWindow] fromView:nil];
+    NSPoint mouseDownPoint = [self convertPoint:[event locationInWindow] fromView:nil];
     NSPoint currentPoint = [self convertPoint:[[_window currentEvent] locationInWindow] fromView:nil];
 
     // Properly orient the drag image and orient it differently if it's smaller than the original
-    imageLoc->x = mouseDownPoint.x - (((mouseDownPoint.x - imageLoc->x) / originalSize.width) * newSize.width);
-    imageLoc->y = imageLoc->y + originalSize.height;
-    imageLoc->y = mouseDownPoint.y - (((mouseDownPoint.y - imageLoc->y) / originalSize.height) * newSize.height);
+    origin.x = mouseDownPoint.x - (((mouseDownPoint.x - origin.x) / originalSize.width) * newSize.width);
+    origin.y = origin.y + originalSize.height;
+    origin.y = mouseDownPoint.y - (((mouseDownPoint.y - origin.y) / originalSize.height) * newSize.height);
 
     NSSize offset = NSMakeSize(currentPoint.x - mouseDownPoint.x, currentPoint.y - mouseDownPoint.y);
-    mouseOffset = &offset;
+
+    NSArray *filesTypes = [NSArray arrayWithObject:[[URL path] pathExtension]];
     
-    [pboard addTypes:[NSArray arrayWithObject:NSTIFFPboardType] owner:self];
+    NSPasteboard *pboard = [NSPasteboard pasteboardWithName:NSDragPboard];
+    [pboard declareTypes:[NSArray arrayWithObjects:NSFilesPromisePboardType, NSTIFFPboardType] owner:self];
+    [pboard setPropertyList:filesTypes forType:NSFilesPromisePboardType];
     [pboard setData:[image TIFFRepresentation] forType:NSTIFFPboardType];
+    [pboard _web_writeURL:URL andTitle:title withOwner:self];
+
+    id source = [[NSFilePromiseDragSource alloc] initWithSource:(id)self];
+    [source setTypes:filesTypes onPasteboard:pboard];
+    
+    [self dragImage:image at:origin offset:offset event:event pasteboard:pboard source:source slideBack:YES];
 }
 
 @end
+
+@implementation WebFilePromiseDragSource
+
+- initWithSource:(id)draggingSource
+{
+    [super initWithSource:draggingSource];
+    _draggingSource = draggingSource;
+    return self;
+}
+
+- (id)draggingSource
+{
+    return _draggingSource;
+}
+
+- (void)dealloc
+{
+    //[super dealloc];
+}
+
+@end;
