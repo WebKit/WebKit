@@ -1,3 +1,12 @@
+2003-10-16  Richard Williamson   <rjw@apple.com>
+
+	Fixed 3455306.  Ensure that progress is correctly ended when a load is interupted (i.e. becomes a download).
+
+        Reviewed by mjs.
+
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame _isLoadComplete]):
+
 2003-10-16  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3455176>: Assertion failure when loading non-existant plug-in content

@@ -943,6 +943,8 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
                     [_private->provisionalDataSource _stopLoading];
                     [self _setProvisionalDataSource:nil];
                     
+                    [[self webView] _progressCompleted: self];
+    
                     [self _setState:WebFrameStateComplete];
                     return;
                 }
