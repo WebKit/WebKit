@@ -43,9 +43,30 @@ QPalette QApplication::palette(const QWidget *p)
 
 static QWidget *mainWidget = 0;
 
+// Do we need to worry about multiple screens?
+class KWQDesktopWidget : public QWidget
+{
+public:
+    int width() const;
+    int height() const;
+};
+
+int KWQDesktopWidget::width() const
+{
+    return (int)[[NSScreen mainScreen] frame].size.width;
+}
+    
+int KWQDesktopWidget::height() const
+{
+    return (int)[[NSScreen mainScreen] frame].size.height;
+}
+
+
 QWidget *QApplication::desktop()
 {
-    // FIXME!  This should return a widget that represents the geometry of the desktop.
+    if (mainWidget == 0){
+        mainWidget = new KWQDesktopWidget();
+    }
     return mainWidget;
 }
 
