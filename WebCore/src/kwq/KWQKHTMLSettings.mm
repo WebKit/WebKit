@@ -23,71 +23,59 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 #include <kwqdebug.h>
-
-
 #include <khtml_settings.h>
 
 KHTMLSettings::KHTMLSettings()
-{
-    m_fontSizes.clear();
-    m_fontSizes << 6;
-    m_fontSizes << 8;
-    m_fontSizes << 10;
-    m_fontSizes << 12;
-    m_fontSizes << 14;
-    m_fontSizes << 16;
-    m_fontSizes << 18;
-    m_fontSizes << 20;
-    
+{    
     // set available font families...ask the system
-    
     NSFontManager *sharedFontManager;
-    NSArray *array;
-    
+    NSArray *array, *fontSizeArray;
+    int i;
+        
     sharedFontManager = [NSFontManager sharedFontManager];
     array = [sharedFontManager availableFontFamilies];
     m_fontFamilies = NSSTRING_TO_QSTRING([array componentsJoinedByString:@","]);
+    
+    m_fontSizes.clear();
+    fontSizeArray = [[NSUserDefaults standardUserDefaults] arrayForKey:@"fontSizes"];
+    for(i=0; i<[fontSizeArray count]; i++){
+        m_fontSizes << [[fontSizeArray objectAtIndex:i] intValue];
+    }
 }
 
 QString KHTMLSettings::stdFontName() const
 {
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    return NSSTRING_TO_QSTRING([defaults objectForKey:@"stdFontName"]);
+    return NSSTRING_TO_QSTRING([[NSUserDefaults standardUserDefaults] objectForKey:@"stdFontName"]);
 }
 
 
 QString KHTMLSettings::fixedFontName() const
 {
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    return NSSTRING_TO_QSTRING([defaults objectForKey:@"fixedFontName"]);
+    return NSSTRING_TO_QSTRING([[NSUserDefaults standardUserDefaults] objectForKey:@"fixedFontName"]);
 }
 
 
 QString KHTMLSettings::serifFontName() const
 {
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    return NSSTRING_TO_QSTRING([defaults objectForKey:@"serifFontName"]);
+    return NSSTRING_TO_QSTRING([[NSUserDefaults standardUserDefaults] objectForKey:@"serifFontName"]);
 }
 
 
 QString KHTMLSettings::sansSerifFontName() const
 {
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    return NSSTRING_TO_QSTRING([defaults objectForKey:@"sansSerifFontName"]);
+    return NSSTRING_TO_QSTRING([[NSUserDefaults standardUserDefaults] objectForKey:@"sansSerifFontName"]);
 }
 
 
 QString KHTMLSettings::cursiveFontName() const
 {
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    return NSSTRING_TO_QSTRING([defaults objectForKey:@"cursiveFontName"]);
+    return NSSTRING_TO_QSTRING([[NSUserDefaults standardUserDefaults] objectForKey:@"cursiveFontName"]);
 }
 
 
 QString KHTMLSettings::fantasyFontName() const
 {
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    return NSSTRING_TO_QSTRING([defaults objectForKey:@"fantasyFontName"]);
+    return NSSTRING_TO_QSTRING([[NSUserDefaults standardUserDefaults] objectForKey:@"fantasyFontName"]);
 }
 
 
@@ -117,7 +105,7 @@ const QString &KHTMLSettings::encoding() const
 
 int KHTMLSettings::minFontSize() const
 {
-    return 6;
+    return [[NSUserDefaults standardUserDefaults] integerForKey:@"minFontSize"];
 }
 
 
@@ -141,6 +129,7 @@ void KHTMLSettings::setScript( QFont::CharSet c )
 
 const QValueList<int> &KHTMLSettings::fontSizes() const
 {
+    //may want to re-fetch font sizes from defaults here
     return m_fontSizes;
 }
 
