@@ -41,6 +41,10 @@ s19: 221545
 s19: 221545
 s19: 221545
 s19: 221545
+221545
+24937
+221545
+24937
 s20: This is a test. 44, 56.780000
 s21: Apple Computer Inc.
 s22: Apple
@@ -55,6 +59,8 @@ s24 append s22: The answer is: 22Apple
 s24 prepend c2: 2The answer is: 22Apple
 s24 prepend s22: Apple2The answer is: 22Apple
 s24 remove 0-7: he answer is: 22Apple
+he answer is: 2Apple2Apple
+he answer is: 2cApple2Apple
 s25 replace RegExp "a" with "e": There ere e lot of e's in e sentence such es this one
 s27: 22.45
 s27: 356
@@ -79,7 +85,17 @@ s34: This is a longer string
 ch3: This is an even longer string
 c4: T
 s33 == ch3: 0
+c3 == s33: 0
 s33 == s34: 0
+s33 == c4: 0
 s33 != ch3: 1
+c3 != s33: 1
 s33 != s34: 1
+s33 != c4: 1
+ch3 + s33: This is an even longer stringThis is a string
+c4 + s33: TThis is a string
 'a' + s33: aThis is a string
+0
+1
+0
+1

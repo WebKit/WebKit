@@ -116,10 +116,10 @@ int main() {
     cout << "s19: " << s19.toInt() << endl;
     cout << "s19: " << s19.toLong() << endl;
     cout << "s19: " << s19.toUInt() << endl;
-    //cout << s19.toDouble() << endl;   //Am I properly testing this?
-    //cout << s19.toShort() << endl;
-    //cout << s19.toULong() << endl;
-    //cout << s19.toUShort() << endl;
+    cout << s19.toDouble() << endl;   //Am I properly testing this?
+    cout << s19.toShort() << endl;
+    cout << s19.toULong() << endl;
+    cout << s19.toUShort() << endl;
     
     QString s20;
     cout << "s20: " << s20.sprintf("This is a %s. %d, %f", "test", 44, 56.78) << endl;
@@ -144,8 +144,8 @@ int main() {
     cout << "s24 prepend s22: " << s24.prepend(s22) << endl;
     cout << "s24 remove 0-7: " << s24.remove(0, 7) << endl;
     //cout << s24.insert(15, c, 4) << endl;
-    //cout << s24.insert(15, s22) << endl;
-    //cout << s24.insert(15, 'c') << endl;
+    cout << s24.insert(15, s22) << endl;
+    cout << s24.insert(15, 'c') << endl;
     //cout << s24.append('c') << endl;
     //cout << s24.prepend('c') << endl;
     
@@ -195,29 +195,29 @@ int main() {
     cout << "ch3: " << ch3 << endl;
     cout << "c4: " << c4 << endl;
     cout << "s33 == ch3: " << (s33 == ch3) << endl;   // I should test strings that are equal as well
-    //cout << "c3 == s33: "<< (c4 == s33) << endl;
+    cout << "c3 == s33: "<< (c4 == s33) << endl;
     cout << "s33 == s34: "<< (s33 == s34) << endl;
-    //cout << "s33 == c4: "<< (s33 == c4) << endl;
+    cout << "s33 == c4: "<< (s33 == c4) << endl;
     cout << "s33 != ch3: " << (s33 != ch3) << endl;
-    //cout << "c3 != s33: "<< (c4 != s33) << endl;
+    cout << "c3 != s33: "<< (c4 != s33) << endl;
     cout << "s33 != s34: "<< (s33 != s34) << endl;
-    //cout << "s33 != c4: "<< (s33 != c4) << endl; 
-    //cout << "ch3 + s33: " << (ch3 + s33) << endl;
-    //cout << "c4 + s33: " << (c4 + s33) << endl;
+    cout << "s33 != c4: "<< (s33 != c4) << endl; 
+    cout << "ch3 + s33: " << (ch3 + s33) << endl;
+    cout << "c4 + s33: " << (c4 + s33) << endl;
     cout << "\'a\' + s33: " << ('a' + s33) << endl;
     
     //cout << (s33 < c4) << endl;
     //cout << (c4 < s33) << endl;
-    //cout << (s33 < s34) << endl;
+    cout << (s33 < s34) << endl;
     //cout << (s33 > c4) << endl;
     //cout << (c4 > s33) << endl;
-    //cout << (s33 > s34) << endl;   
+    cout << (s33 > s34) << endl;   
     //cout << (s33 <= c4) << endl;
     //cout << (c4 <= s33) << endl;
-    //cout << (s33 <= s34) << endl;
+    cout << (s33 <= s34) << endl;
     //cout << (s33 >= c4) << endl;
     //cout << (c4 >= s33) << endl;
-    //cout << (s33 >= s34) << endl;
+    cout << (s33 >= s34) << endl;
     
     
         
