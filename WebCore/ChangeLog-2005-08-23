@@ -1,3 +1,30 @@
+2004-04-08  Chris Blumenberg  <cblu@apple.com>
+
+	Renamed the PasteHTMLCommand to PasteMarkupCommand. Removed PasteImageCommand because we will use PasteMarkupCommand for pasting images.
+
+        Reviewed by kocienda.
+
+        * khtml/editing/htmlediting.cpp:
+        (PasteMarkupCommand::PasteMarkupCommand):
+        (PasteMarkupCommand::~PasteMarkupCommand):
+        (PasteMarkupCommand::impl):
+        (PasteMarkupCommand::markupString):
+        * khtml/editing/htmlediting.h:
+        (khtml::):
+        * khtml/editing/htmlediting_impl.cpp:
+        (PasteMarkupCommandImpl::PasteMarkupCommandImpl):
+        (PasteMarkupCommandImpl::~PasteMarkupCommandImpl):
+        (PasteMarkupCommandImpl::commandID):
+        (PasteMarkupCommandImpl::doApply):
+        * khtml/editing/htmlediting_impl.h:
+        (khtml::PasteMarkupCommandImpl::markupString):
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::pasteMarkupString):
+        * khtml/khtml_part.h:
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge pasteMarkupString:]):
+
 2004-04-08  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3608430 and 3608462, crashes in findNextLineBreak when deleting.  Make sure that the removal of line boxes

@@ -55,8 +55,7 @@ class InputTextCommandImpl;
 class InsertNodeBeforeCommandImpl;
 class InsertTextCommandImpl;
 class JoinTextNodesCommandImpl;
-class PasteHTMLCommandImpl;
-class PasteImageCommandImpl;
+class PasteMarkupCommandImpl;
 class RemoveNodeCommandImpl;
 class RemoveNodeAndPruneCommandImpl;
 class SplitTextNodeCommandImpl;
@@ -77,8 +76,7 @@ enum ECommandID {
     InsertNodeBeforeCommandID,
     InsertTextCommandID,
     JoinTextNodesCommandID,
-    PasteHTMLCommandID,
-    PasteImageCommandID,
+    PasteMarkupCommandID,
     RemoveNodeCommandID,
     RemoveNodeAndPruneCommandID,
     SplitTextNodeCommandID,
@@ -318,31 +316,18 @@ private:
 };
 
 //------------------------------------------------------------------------------------------
-// PasteHTMLCommand
+// PasteMarkupCommand
 
-class PasteHTMLCommand : public CompositeEditCommand
+class PasteMarkupCommand : public CompositeEditCommand
 {
 public:
-    PasteHTMLCommand(DOM::DocumentImpl *document, const DOM::DOMString &HTMLString);
-    virtual ~PasteHTMLCommand();
+    PasteMarkupCommand(DOM::DocumentImpl *document, const DOM::DOMString &markupString);
+    virtual ~PasteMarkupCommand();
 
-    DOM::DOMString HTMLString() const;
+    DOM::DOMString markupString() const;
 
 private:
-    inline PasteHTMLCommandImpl *impl() const;
-};
-
-//------------------------------------------------------------------------------------------
-// PasteImageCommand
-
-class PasteImageCommand : public CompositeEditCommand
-{
-public:
-    PasteImageCommand(DOM::DocumentImpl *document, const DOM::DOMString &src);
-    virtual ~PasteImageCommand();
-        
-private:
-    inline PasteImageCommandImpl *impl() const;
+    inline PasteMarkupCommandImpl *impl() const;
 };
 
 //------------------------------------------------------------------------------------------
