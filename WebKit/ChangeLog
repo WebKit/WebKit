@@ -1,3 +1,20 @@
+2004-07-20  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Richard
+
+        * Misc.subproj/WebNSEventExtras.h: Added helper that returns whether
+        a key event has a binding in the key binding manager.
+        * Misc.subproj/WebNSEventExtras.m: 
+        (-[NSEvent _web_keyBindingManagerHasBinding]): New helper mentioned above.
+        * Plugins.subproj/npruntime.h:
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView performKeyEquivalent:]): Add a check of whether the key event 
+        has a binding in the key binding manager. This works around the fact that
+        NSResponder's interpretKeyEvents does not return a value telling whether
+        or not the key was handled. This now makes it possible for us to trap
+        modified key events we know we can handle (like those command-key + arrow events 
+        used for text navigation), while letting all others pass.
+
 2004-07-20  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed:

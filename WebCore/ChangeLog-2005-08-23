@@ -1,3 +1,14 @@
+2004-07-20  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Richard
+
+        * khtml/xml/dom_elementimpl.cpp:
+        (ElementImpl::defaultEventHandler): No longer check whether
+        the command key is modifying the key event. This check is
+        now done elsewhere in the code. See the WebKit checkin that
+        added the _web_keyBindingManagerHasBinding method to 
+        WebNSEventExtras.
+
 2004-07-20  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed:

@@ -5,6 +5,8 @@
 
 #import <WebKit/WebNSEventExtras.h>
 
+#import <AppKit/NSKeyBindingManager.h>
+
 @implementation NSEvent (WebExtras)
 
 -(BOOL)_web_isKeyEvent:(unichar)key
@@ -54,6 +56,12 @@
     const unichar tabKey = 0x0009;
     const unichar shiftTabKey = 0x0019;
     return [self _web_isKeyEvent:tabKey] || [self _web_isKeyEvent:shiftTabKey];
+}
+
+- (BOOL)_web_keyBindingManagerHasBinding
+{
+    NSDictionary *keyBindings = [[NSKeyBindingManager sharedKeyBindingManager] dictionary];
+    return [keyBindings objectForKey:[self characters]] != nil;
 }
 
 @end

@@ -378,8 +378,7 @@ void ElementImpl::defaultEventHandler(EventImpl *evt)
 #if APPLE_CHANGES
     if (evt->id() == EventImpl::KEYPRESS_EVENT && isContentEditable()) {
         KHTMLPart *part = getDocument()->part();
-        // Don't treat command-key combos as editing key events
-        if (part && !static_cast<KeyboardEventImpl*>(evt)->metaKey() && KWQ(part)->interceptEditingKeyEvent())
+        if (part && KWQ(part)->interceptEditingKeyEvent())
             evt->setDefaultHandled();
     }
 #endif
