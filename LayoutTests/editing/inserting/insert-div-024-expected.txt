@@ -19,10 +19,13 @@ layer at (0,0) size 800x600
           RenderText {TEXT} at (14,14) size 56x28
             text run at (14,14) width 56: "line 1"
       RenderBlock {P} at (0,228) size 784x56 [border: (2px solid #0000FF)]
-        RenderText {TEXT} at (14,14) size 36x28
-          text run at (14,14) width 36: "xxx"
-      RenderBlock {P} at (0,308) size 784x28 [border: (2px solid #0000FF)]
-      RenderBlock {P} at (0,360) size 784x56 [border: (2px solid #0000FF)]
+        RenderInline {B} at (0,0) size 36x28
+          RenderInline {SPAN} at (0,0) size 36x28
+            RenderText {TEXT} at (14,14) size 36x28
+              text run at (14,14) width 36: "xxx"
+      RenderBlock {P} at (0,308) size 784x56 [border: (2px solid #0000FF)]
+        RenderBR {BR} at (14,14) size 0x28
+      RenderBlock {P} at (0,388) size 784x56 [border: (2px solid #0000FF)]
         RenderText {TEXT} at (14,14) size 36x28
           text run at (14,14) width 36: "xxx"
 selection is CARET:

@@ -1,8 +1,8 @@
-layer at (0,0) size 800x660
+layer at (0,0) size 800x688
   RenderCanvas at (0,0) size 800x600
-layer at (0,0) size 800x660
-  RenderBlock {HTML} at (0,0) size 800x660
-    RenderBody {BODY} at (8,8) size 784x628
+layer at (0,0) size 800x688
+  RenderBlock {HTML} at (0,0) size 800x688
+    RenderBody {BODY} at (8,8) size 784x656
       RenderBlock (anonymous) at (0,0) size 784x84
         RenderText {TEXT} at (0,0) size 766x56
           text run at (0,0) width 766: "Test inserting paragraphs and managing typing style correctly: \"x\" under \"line "
@@ -23,14 +23,16 @@ layer at (0,0) size 800x660
         RenderInline {B} at (0,0) size 56x28
           RenderText {TEXT} at (14,14) size 56x28
             text run at (14,14) width 56: "line 2"
-      RenderBlock {P} at (0,360) size 784x28 [border: (2px solid #0000FF)]
-      RenderBlock {P} at (0,412) size 784x56 [border: (2px solid #0000FF)]
+      RenderBlock {P} at (0,360) size 784x56 [border: (2px solid #0000FF)]
+        RenderInline {B} at (0,0) size 0x28
+          RenderBR {BR} at (14,14) size 0x28
+      RenderBlock {P} at (0,440) size 784x56 [border: (2px solid #0000FF)]
         RenderInline {B} at (0,0) size 12x28
           RenderText {TEXT} at (14,14) size 12x28
             text run at (14,14) width 12: "x"
-      RenderBlock {P} at (0,492) size 784x56 [border: (2px solid #0000FF)]
+      RenderBlock {P} at (0,520) size 784x56 [border: (2px solid #0000FF)]
         RenderBR {BR} at (14,14) size 0x28
-      RenderBlock {P} at (0,572) size 784x56 [border: (2px solid #0000FF)]
+      RenderBlock {P} at (0,600) size 784x56 [border: (2px solid #0000FF)]
         RenderText {TEXT} at (14,14) size 55x28
           text run at (14,14) width 55: "line 3"
 selection is CARET:

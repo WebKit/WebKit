@@ -635,6 +635,12 @@ void CompositeEditCommand::applyCommandToComposite(EditCommandPtr &cmd)
     m_cmds.append(cmd);
 }
 
+void CompositeEditCommand::applyStyle(CSSStyleDeclarationImpl *style, EditAction editingAction)
+{
+    EditCommandPtr cmd(new ApplyStyleCommand(document(), style, editingAction));
+    applyCommandToComposite(cmd);
+}
+
 void CompositeEditCommand::insertParagraphSeparator()
 {
     EditCommandPtr cmd(new InsertParagraphSeparatorCommand(document()));
@@ -952,21 +958,32 @@ void CompositeEditCommand::deleteInsignificantTextDownstream(const DOM::Position
     deleteInsignificantText(pos, end);
 }
 
-void CompositeEditCommand::insertBlockPlaceholderIfNeeded(NodeImpl *node)
+void CompositeEditCommand::insertBlockPlaceholder(NodeImpl *node)
 {
     if (!node)
         return;
+
+    ASSERT(node->renderer() && node->renderer()->isBlockFlow());
+
+    appendNode(createBlockPlaceholderElement(document()), node);
+}
+
+bool CompositeEditCommand::insertBlockPlaceholderIfNeeded(NodeImpl *node)
+{
+    if (!node)
+        return false;
 
     document()->updateLayout();
 
     RenderObject *renderer = node->renderer();
     if (!renderer || !renderer->isBlockFlow())
-        return;
+        return false;
     
     if (renderer->height() > 0)
-        return;
+        return false;
 
-    appendNode(createBlockPlaceholderElement(document()), node);
+    insertBlockPlaceholder(node);
+    return true;
 }
 
 bool CompositeEditCommand::removeBlockPlaceholderIfNeeded(NodeImpl *node)
@@ -980,18 +997,16 @@ bool CompositeEditCommand::removeBlockPlaceholderIfNeeded(NodeImpl *node)
     if (!renderer || !renderer->isBlockFlow())
         return false;
 
-    // This code will remove a block placeholder if it still is at the end
-    // of a block, where we placed it in insertBlockPlaceholderIfNeeded().
-    // Of course, a person who hand-edits an HTML file could move a 
-    // placeholder around, but it seems OK to be unconcerned about that case.
-    NodeImpl *last = node->lastChild();
-    if (last && last->isHTMLElement()) {
-        ElementImpl *element = static_cast<ElementImpl *>(last);
-        if (element->getAttribute(ATTR_CLASS) == blockPlaceholderClassString()) {
-            removeNode(element);
-            return true;
+    for (NodeImpl *checkMe = node; checkMe; checkMe = checkMe->traverseNextNode(node)) {
+        if (checkMe->isElementNode()) {
+            ElementImpl *element = static_cast<ElementImpl *>(checkMe);
+            if (element->getAttribute(ATTR_CLASS) == blockPlaceholderClassString()) {
+                removeNode(element);
+                return true;
+            }
         }
     }
+    
     return false;
 }
 
@@ -2192,7 +2207,7 @@ void DeleteSelectionCommand::calculateEndingPosition()
     m_endingPosition = Position(document()->documentElement(), 0);
 }
 
-void DeleteSelectionCommand::calculateTypingStyleAfterDelete()
+void DeleteSelectionCommand::calculateTypingStyleAfterDelete(bool insertedPlaceholder)
 {
     // Compute the difference between the style before the delete and the style now
     // after the delete has been done. Set this style on the part, so other editing
@@ -2207,6 +2222,20 @@ void DeleteSelectionCommand::calculateTypingStyleAfterDelete()
         m_typingStyle->deref();
         m_typingStyle = 0;
     }
+    if (insertedPlaceholder && m_typingStyle) {
+        // Apply style to the placeholder. This makes sure that the single line in the
+        // paragraph has the right height, and that the paragraph takes on the style
+        // of the preceding line and retains it even if you click away, click back, and
+        // then start typing. In this case, the typing style is applied right now, and
+        // is not retained until the next typing action.
+        Position pastPlaceholder = endOfParagraph(VisiblePosition(m_endingPosition)).deepEquivalent();
+        setEndingSelection(Selection(m_endingPosition, pastPlaceholder));
+        applyStyle(m_typingStyle, EditActionUnspecified);
+        m_typingStyle->deref();
+        m_typingStyle = 0;
+    }
+    // Set m_typingStyle as the typing style.
+    // It's perfectly OK for m_typingStyle to be null.
     document()->part()->setTypingStyle(m_typingStyle);
     setTypingStyle(m_typingStyle);
 }
@@ -2280,10 +2309,10 @@ void DeleteSelectionCommand::doApply()
 
     // If the delete emptied a block, add in a placeholder so the block does not
     // seem to disappear.
-    insertBlockPlaceholderIfNeeded(m_endingPosition.node());
-    calculateTypingStyleAfterDelete();
-    setEndingSelection(m_endingPosition);
+    bool insertedPlaceholder = insertBlockPlaceholderIfNeeded(m_endingPosition.node());
+    calculateTypingStyleAfterDelete(insertedPlaceholder);
     debugPosition("endingPosition   ", m_endingPosition);
+    setEndingSelection(m_endingPosition);
     clearTransientState();
     rebalanceWhitespace();
 }
@@ -2517,15 +2546,15 @@ void InsertNodeBeforeCommand::doUnapply()
 // InsertParagraphSeparatorCommand
 
 InsertParagraphSeparatorCommand::InsertParagraphSeparatorCommand(DocumentImpl *document) 
-    : CompositeEditCommand(document), m_fullTypingStyle(0)
+    : CompositeEditCommand(document), m_style(0)
 {
 }
 
 InsertParagraphSeparatorCommand::~InsertParagraphSeparatorCommand() 
 {
     derefNodesInList(clonedNodes);
-    if (m_fullTypingStyle)
-        m_fullTypingStyle->deref();
+    if (m_style)
+        m_style->deref();
 }
 
 bool InsertParagraphSeparatorCommand::preservesTypingStyle() const
@@ -2541,38 +2570,39 @@ ElementImpl *InsertParagraphSeparatorCommand::createParagraphElement()
     return element;
 }
 
-void InsertParagraphSeparatorCommand::setFullTypingStyleBeforeInsertion(const Position &pos)
+void InsertParagraphSeparatorCommand::calculateStyleBeforeInsertion(const Position &pos)
 {
     // FIXME: Improve typing style.
     // See this bug: <rdar://problem/3769899> Implementation of typing style needs improvement
     CSSComputedStyleDeclarationImpl *computedStyle = pos.computedStyle();
     computedStyle->ref();
-    if (m_fullTypingStyle)
-        m_fullTypingStyle->deref();
-    m_fullTypingStyle = computedStyle->copyInheritableProperties();
-    m_fullTypingStyle->ref();
+    if (m_style)
+        m_style->deref();
+    m_style = computedStyle->copyInheritableProperties();
+    m_style->ref();
     computedStyle->deref();
     
     CSSMutableStyleDeclarationImpl *typingStyle = document()->part()->typingStyle();
     if (typingStyle)
-        m_fullTypingStyle->merge(typingStyle);
+        m_style->merge(typingStyle);
 }
 
-void InsertParagraphSeparatorCommand::calculateAndSetTypingStyleAfterInsertion()
+void InsertParagraphSeparatorCommand::applyStyleAfterInsertion()
 {
     // FIXME: Improve typing style.
     // See this bug: <rdar://problem/3769899> Implementation of typing style needs improvement
-    if (!m_fullTypingStyle)
+    if (!m_style)
         return;
 
     CSSComputedStyleDeclarationImpl endingStyle(endingSelection().start().node());
-    endingStyle.diff(m_fullTypingStyle);
-    if (!m_fullTypingStyle->length()) {
-        m_fullTypingStyle->deref();
-        m_fullTypingStyle = 0;
+    endingStyle.diff(m_style);
+    if (!m_style->length()) {
+        m_style->deref();
+        m_style = 0;
     }
-    document()->part()->setTypingStyle(m_fullTypingStyle);
-    setTypingStyle(m_fullTypingStyle);
+    else {
+        applyStyle(m_style);
+    }
 }
 
 void InsertParagraphSeparatorCommand::doApply()
@@ -2593,19 +2623,19 @@ void InsertParagraphSeparatorCommand::doApply()
         NodeImpl *startBlockBeforeDelete = selection.start().node()->enclosingBlockFlowElement();
         NodeImpl *endBlockBeforeDelete = selection.end().node()->enclosingBlockFlowElement();
         bool doneAfterDelete = startBlockBeforeDelete != endBlockBeforeDelete;
-        setFullTypingStyleBeforeInsertion(pos);
+        calculateStyleBeforeInsertion(pos);
         deleteSelection(false, false);
         if (doneAfterDelete) {
             document()->updateLayout();
             setEndingSelection(endingSelection().start().downstream());
             rebalanceWhitespace();
-            calculateAndSetTypingStyleAfterInsertion();
+            applyStyleAfterInsertion();
             return;
         }
         pos = endingSelection().start();
     }
 
-    setFullTypingStyleBeforeInsertion(pos);
+    calculateStyleBeforeInsertion(pos);
 
     // Find the start block.
     NodeImpl *startNode = pos.node();
@@ -2628,15 +2658,15 @@ void InsertParagraphSeparatorCommand::doApply()
         if (startBlockIsRoot) {
             NodeImpl *extraBlock = createParagraphElement();
             appendNode(extraBlock, startBlock);
-            insertBlockPlaceholderIfNeeded(extraBlock);
+            insertBlockPlaceholder(extraBlock);
             appendNode(blockToInsert, startBlock);
         }
         else {
             insertNodeAfter(blockToInsert, startBlock);
         }
-        insertBlockPlaceholderIfNeeded(blockToInsert);
+        insertBlockPlaceholder(blockToInsert);
         setEndingSelection(Position(blockToInsert, 0));
-        calculateAndSetTypingStyleAfterInsertion();
+        applyStyleAfterInsertion();
         return;
     }
 
@@ -2649,9 +2679,10 @@ void InsertParagraphSeparatorCommand::doApply()
         pos = pos.downstream(StayInBlock);
         NodeImpl *refNode = isFirstInBlock && !startBlockIsRoot ? startBlock : pos.node();
         insertNodeBefore(blockToInsert, refNode);
-        insertBlockPlaceholderIfNeeded(blockToInsert);
+        insertBlockPlaceholder(blockToInsert);
+        setEndingSelection(Position(blockToInsert, 0));
+        applyStyleAfterInsertion();
         setEndingSelection(pos);
-        calculateAndSetTypingStyleAfterInsertion();
         return;
     }
 
@@ -2663,9 +2694,9 @@ void InsertParagraphSeparatorCommand::doApply()
         LOG(Editing, "insert paragraph separator: last in block case");
         NodeImpl *refNode = isLastInBlock && !startBlockIsRoot ? startBlock : pos.node();
         insertNodeAfter(blockToInsert, refNode);
-        insertBlockPlaceholderIfNeeded(blockToInsert);
+        insertBlockPlaceholder(blockToInsert);
         setEndingSelection(Position(blockToInsert, 0));
-        calculateAndSetTypingStyleAfterInsertion();
+        applyStyleAfterInsertion();
         return;
     }
 
@@ -2767,7 +2798,7 @@ void InsertParagraphSeparatorCommand::doApply()
 
     setEndingSelection(Position(blockToInsert, 0));
     rebalanceWhitespace();
-    calculateAndSetTypingStyleAfterInsertion();
+    applyStyleAfterInsertion();
 }
 
 //------------------------------------------------------------------------------------------
@@ -3965,8 +3996,10 @@ void ReplaceSelectionCommand::doApply()
         completeHTMLReplacement(firstNodeInserted, lastNodeInserted);
     }
     
-    if (placeholderBlock && placeholderBlock->childNodeCount() == 0) {
-        removeNode(placeholderBlock);
+    if (placeholderBlock) {
+        document()->updateLayout();
+        if (!placeholderBlock->renderer() || placeholderBlock->renderer()->height() == 0)
+            removeNode(placeholderBlock);
     }
 }
 

@@ -1,3 +1,70 @@
+2005-01-19  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+        Fix for this bug:
+        
+        <rdar://problem/3959727> REGRESSION (Mail): Style not preserved on blank lines
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::CompositeEditCommand::applyStyle):
+        (khtml::CompositeEditCommand::insertBlockPlaceholder): New function that unconditionally adds a block placeholder.
+        (khtml::CompositeEditCommand::insertBlockPlaceholderIfNeeded): Now returns bool based on whether
+        placeholder was added or not.
+        (khtml::CompositeEditCommand::removeBlockPlaceholderIfNeeded): Now searches all the descendents of a block
+        looking for a placeholder. The old code, which just looked at the last child of a node, started missing
+        once block placeholders became styled (which started happening with this patch).
+        (khtml::DeleteSelectionCommand::calculateTypingStyleAfterDelete): Now handles applying typing style
+        to a block placeholder at call time, rather than setting the typing style as a latent style that
+        might be applied later. This is an important part of the bug fix.
+        (khtml::DeleteSelectionCommand::doApply): Now uses bool return value from insertBlockPlaceholderIfNeeded()
+        and passes it along to calculateStyleBeforeInsertion, so the case where a block placeholder needs to
+        be styled can be detected.
+        (khtml::InsertParagraphSeparatorCommand::InsertParagraphSeparatorCommand): Changed the way this class
+        managed style. Before it would calculate and set typing style for the block added. This is not
+        sufficient. Added blocks need to styled immediately. Some name changes to instance variables in 
+        this class due to the change to accommodate this change.
+        (khtml::InsertParagraphSeparatorCommand::~InsertParagraphSeparatorCommand): Name changes, as above.
+        (khtml::InsertParagraphSeparatorCommand::calculateStyleBeforeInsertion): Ditto.
+        (khtml::InsertParagraphSeparatorCommand::applyStyleAfterInsertion): Ditto.
+        (khtml::InsertParagraphSeparatorCommand::doApply): Ditto.
+        (khtml::ReplaceSelectionCommand::doApply): Improve check for testing when a placeholder
+        block can be removed in its entirety after the insertion.
+        * khtml/editing/htmlediting.h: Update header accordingly.
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::selectionComputedStyle): Move position for computed style check downstream before
+        doing check when the position is in an empty block (this makes sure any style on any block
+        placeholder is accounted for).
+
+        New layout tests to check bug fix.
+
+        * layout-tests/editing/style/block-style-004-expected.txt: Added.
+        * layout-tests/editing/style/block-style-004.html: Added.
+        * layout-tests/editing/style/block-style-005-expected.txt: Added.
+        * layout-tests/editing/style/block-style-005.html: Added.
+        * layout-tests/editing/style/block-style-006-expected.txt: Added.
+        * layout-tests/editing/style/block-style-006.html: Added.
+
+        Results updated to reflect new block placeholder code.
+
+        * layout-tests/editing/inserting/insert-div-004-expected.txt 
+        * layout-tests/editing/inserting/insert-div-005-expected.txt
+        * layout-tests/editing/inserting/insert-div-006-expected.txt
+        * layout-tests/editing/inserting/insert-div-008-expected.txt
+        * layout-tests/editing/inserting/insert-div-011-expected.txt
+        * layout-tests/editing/inserting/insert-div-012-expected.txt
+        * layout-tests/editing/inserting/insert-div-013-expected.txt
+        * layout-tests/editing/inserting/insert-div-014-expected.txt
+        * layout-tests/editing/inserting/insert-div-015-expected.txt
+        * layout-tests/editing/inserting/insert-div-016-expected.txt
+        * layout-tests/editing/inserting/insert-div-017-expected.txt
+        * layout-tests/editing/inserting/insert-div-018-expected.txt
+        * layout-tests/editing/inserting/insert-div-019-expected.txt
+        * layout-tests/editing/inserting/insert-div-021-expected.txt
+        * layout-tests/editing/inserting/insert-div-022-expected.txt
+        * layout-tests/editing/inserting/insert-div-023-expected.txt
+        * layout-tests/editing/inserting/insert-div-024-expected.txt
+
 2005-01-19  David Hyatt  <hyatt@apple.com>
 
 	Dont null-check the renderer before submitting, since a script can set it to display:none and still expect the
