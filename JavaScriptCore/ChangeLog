@@ -1,3 +1,14 @@
+2004-12-16  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fixed <rdar://problem/3920764> Unimplemented String methods toLocaleLowerCase and toLocaleUpperCase
+
+        * kjs/string_object.h: Added toLocaleLowerCase and toLocaleUpperCase.
+        * kjs/string_object.cpp: (StringProtoFuncImp::call): Made locale versions be synonmyms for the
+        non-locale-specific versions.
+        * kjs/string_object.lut.h: Regenerated.
+
 2004-12-14  Richard Williamson   <rjw@apple.com>
 
 	Pass URL of plugin view when call into JNI.
