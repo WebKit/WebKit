@@ -33,7 +33,7 @@ sub emit_output
     my $mac_string_encoding = $invalid_encoding;
 
     foreach my $name ($canonical_name, @aliases) {
-	$name =~ tr/A-Z/a-z/;
+	$name = lc $name;
 	if ($name_to_mac_encoding{$name}) {
 	    $mac_string_encoding = $name_to_mac_encoding{$name};
 	    $used_mac_encodings{$name} = $name;
@@ -56,10 +56,14 @@ sub process_mac_encodings {
     while (<MAC_ENCODINGS>) {
 	chomp;
 	if (my ($id, $name) = /([0-9]*):(.*)/) {
-	    $name =~ tr/A-Z/a-z/;
-	    $name_to_mac_encoding{$name} = $id;
+	    $name_to_mac_encoding{lc $name} = $id;
 	}
     }
+    
+    # Hack, treat -E and -I same as non-suffix case.
+    # Not sure if this does the right thing or not.
+    $name_to_mac_encoding{"iso-8859-8-e"} = $name_to_mac_encoding{"iso-8859-8"};
+    $name_to_mac_encoding{"iso-8859-8-i"} = $name_to_mac_encoding{"iso-8859-8"};
 }
 
 sub process_iana_charsets {

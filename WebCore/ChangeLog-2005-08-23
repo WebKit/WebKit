@@ -1,3 +1,11 @@
+2002-08-05  Darin Adler  <darin@apple.com>
+
+        - fixed 3016795 -- http://www.google.co.il/ fails to decode
+
+        * kwq/make-charset-table.pl: Added a hack that makes us treat for
+	iso-8859-8-e and iso-8859-8-i the same as iso-8859-8; may not be exactly
+	right, but it's probably OK modulo the actual bidi support.
+
 2002-08-05  Maciej Stachowiak  <mjs@apple.com>
 
         * kwq/KWQKHTMLPartImpl.mm:
