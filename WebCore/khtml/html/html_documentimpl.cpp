@@ -384,10 +384,10 @@ void HTMLDocumentImpl::determineParseMode( const QString &str )
             }
         }
 
-        if( systemId == publicId )
+        // e.g.,<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN"> should be strict.
+        // Just because it's HTML4 doesn't mean it should be treated as Compat. -dwh
+        if( systemId == publicId || systemId == Unknown )
             pMode = publicId;
-        else if ( systemId == Unknown )
-            pMode = hMode == Html4 ? Compat : publicId;
         else if ( publicId == Transitional && systemId == Strict ) {
             pMode = hMode == Html3 ? Compat : Strict;
         } else

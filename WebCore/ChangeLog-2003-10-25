@@ -1,3 +1,17 @@
+2002-10-18  David Hyatt  <hyatt@apple.com>
+
+	The collapsing margin rewrite. Also fixes a bug where
+	we stay in quirks mode for strict HTML4 dtds when we
+	shouldn't.
+	
+        * khtml/html/html_documentimpl.cpp:
+        (HTMLDocumentImpl::determineParseMode):
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::layout):
+        (RenderFlow::layoutBlockChildren):
+        * khtml/rendering/render_flow.h:
+        * khtml/rendering/render_object.h:
+
 2002-10-18  Darin Adler  <darin@apple.com>
 
         * Makefile.am: Move dependency so clean happens before build.

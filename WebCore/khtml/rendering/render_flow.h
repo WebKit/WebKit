@@ -132,6 +132,8 @@ public:
     void bidiReorderLine(const BidiIterator &start, const BidiIterator &end);
     BidiIterator findNextLineBreak(BidiIterator &start);
 
+    virtual bool isSelfCollapsingBlock() const { return m_height == 0; }
+    
     virtual short maxTopMargin(bool positive) const {
         if (positive)
             return m_maxTopPosMargin;

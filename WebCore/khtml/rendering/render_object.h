@@ -367,6 +367,7 @@ public:
     // For a non-collapsing, e.g., a leaf element, this formula will simply return
     // the margin of the element.  Blocks override the maxTopMargin and maxBottomMargin
     // methods.
+    virtual bool isSelfCollapsingBlock() const { return false; }
     virtual short collapsedMarginTop() const 
         { return maxTopMargin(true)-maxTopMargin(false); }
     virtual short collapsedMarginBottom() const 
