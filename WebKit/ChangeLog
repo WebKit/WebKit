@@ -1,3 +1,15 @@
+2003-01-09  Trey Matteson  <trey@apple.com>
+
+	3143294 - need short-term bulletproofing of download code against bad filenames
+
+	We protect against a download location that is not an absolute path.
+
+        Reviewed by Darin
+
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient continueAfterContentPolicy:response:]):
+	Bail on download if we don't have a abs path to write to.
+
 2003-01-08  Trey Matteson  <trey@apple.com>
 
 	3142201 - home directory nuked during power download session
