@@ -1,3 +1,17 @@
+2005-01-18  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+        Fix for this bug:
+        
+        <rdar://problem/3952877> REGRESSION (Mail): Command-left/right-arrows don't work with file attachment
+
+        * khtml/editing/selection.cpp:
+        (khtml::nodeForInlineBox): New helper function used in reimplementation of function below.
+        (khtml::selectionForLine): Reimplemented using line box smarts. I originally wrote this code when
+        I had a less than full understanding of line layout. I can do better now, and my new version no
+        longer fails to notice attachments when doing the kind of navigation mentioned in the bug.
+
 2005-01-17  David Harrison  <harrison@apple.com>
 
         Reviewed by John Sullivan.

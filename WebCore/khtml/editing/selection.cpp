@@ -973,85 +973,53 @@ void Selection::validate(ETextGranularity granularity)
 #endif
 }
 
-static Position startOfFirstRunAt(RenderObject *renderNode, int y)
+static NodeImpl *nodeForInlineBox(const InlineBox *box)
 {
-    for (RenderObject *n = renderNode; n; n = n->nextSibling()) {
-        if (n->isText()) {
-            RenderText *textRenderer = static_cast<RenderText *>(n);
-            for (InlineTextBox* box = textRenderer->firstTextBox(); box; box = box->nextTextBox()) {
-                int absx, absy;
-                n->absolutePosition(absx, absy);
-                int top = absy + box->root()->topOverflow();
-                if (top == y)
-                    return Position(textRenderer->element(), box->m_start);
-            }
-        }
-        
-        Position position = startOfFirstRunAt(n->firstChild(), y);
-        if (position.isNotNull())
-            return position;
-    }
-    
-    return Position();
+    if (!box || !box->object())
+        return 0;
+    return box->object()->element();
 }
 
-static Position endOfLastRunAt(RenderObject *renderNode, int y)
+static Selection selectionForLine(const Position &pos, EAffinity affinity)
 {
-    RenderObject *n = renderNode;
-    if (!n)
-        return Position();
-    if (RenderObject *parent = n->parent())
-        n = parent->lastChild();
+    if (pos.isNull())
+        return Selection();
+
+    RenderObject *renderer = pos.node()->renderer();
+    if (!renderer)
+        return Selection();
     
-    while (1) {
-        Position position = endOfLastRunAt(n->firstChild(), y);
-        if (position.isNotNull())
-            return position;
-        
-        if (n->isText() && !n->isBR()) {
-            RenderText *textRenderer = static_cast<RenderText *>(n);
-            for (InlineTextBox* box = textRenderer->lastTextBox(); box; box = box->prevTextBox()) {
-                int absx, absy;
-                n->absolutePosition(absx, absy);
-                int top = absy + box->root()->topOverflow();
-                if (top == y)
-                    return Position(textRenderer->element(), box->m_start + box->m_len);
-            }
-        }
-        
-        if (n == renderNode)
-            return Position();
-        
-        n = n->previousSibling();
+    InlineBox *box = renderer->inlineBox(pos.offset(), affinity);
+    if (!box)
+        return Selection();
+    
+    RootInlineBox *rootBox = box->root();
+    if (!rootBox)
+        return Selection();
+    
+    // Find the start position for this line.
+    InlineBox *startBox = rootBox->firstChild();
+    NodeImpl *startNode = nodeForInlineBox(startBox);
+    if (!startNode)
+        return Selection();
+    long startOffset = 0;
+    if (startBox->isInlineTextBox()) {
+        InlineTextBox *startTextBox = static_cast<InlineTextBox *>(startBox);
+        startOffset = startTextBox->m_start;
     }
-}
-
-static Selection selectionForLine(const Position &position, EAffinity affinity)
-{
-    NodeImpl *node = position.node();
-    if (!node || !node->renderer())
-        return Selection();
+    Position start(startNode, startOffset);
     
-    QRect rect = node->renderer()->caretRect(position.offset(), affinity);
-    int selectionPointY = rect.y();
-    
-    // Go up to first non-inline element.
-    RenderObject *renderNode = node->renderer();
-    while (renderNode && renderNode->isInline())
-        renderNode = renderNode->parent();
-    renderNode = renderNode->firstChild();
-    
-    // Look for all the first child in the block that is on the same line
-    // as the selection point.
-    Position start = startOfFirstRunAt(renderNode, selectionPointY);
-    if (start.isNull())
+    // Find the end position for this line.
+    InlineBox *endBox = rootBox->lastChild();
+    NodeImpl *endNode = nodeForInlineBox(endBox);
+    if (!endNode)
         return Selection();
-
-    // Look for all the last child in the block that is on the same line
-    // as the selection point.
-    Position end = endOfLastRunAt(renderNode, selectionPointY);
-    if (end.isNull())
-        return Selection();
+    long endOffset = 1;
+    if (endBox->isInlineTextBox()) {
+        InlineTextBox *endTextBox = static_cast<InlineTextBox *>(endBox);
+        endOffset = endTextBox->m_start + endTextBox->m_len;
+    }
+    Position end(endNode, endOffset);
     
     return Selection(start, end);
 }
