@@ -96,10 +96,16 @@ namespace KJS {
     bool deleteDOMObject( void* objectHandle ) {
       return m_domObjects.remove( objectHandle );
     }
+
+    DOMObject* getDOMObjectForDocument( void* documentHandle, void *objectHandle ) const;
+    void putDOMObjectForDocument( void* documentHandle, void *objectHandle, DOMObject *obj );
+    bool deleteDOMObjectsForDocument( void* documentHandle );
+
     /**
      * Static method. Makes all interpreters forget about the object
      */
     static void forgetDOMObject( void* objectHandle );
+    static void forgetDOMObjectsForDocument( void* documentHandle );
 
     KHTMLPart* part() const { return m_part; }
 
@@ -116,9 +122,12 @@ namespace KJS {
      */
     bool isWindowOpenAllowed() const;
 
+    virtual void mark();
   private:
     KHTMLPart* m_part;
     QPtrDict<DOMObject> m_domObjects;
+    QPtrDict<QPtrDict<DOMObject> > m_domObjectsPerDocument;
+
     DOM::Event *m_evt;
     bool m_inlineCode;
     bool m_timerCallback;

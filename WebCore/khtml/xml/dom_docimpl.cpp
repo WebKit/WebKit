@@ -35,6 +35,7 @@
 #include "misc/htmlhashes.h"
 #include "misc/helper.h"
 #include "ecma/kjs_proxy.h"
+#include "ecma/kjs_binding.h"
 
 #include <qptrstack.h>
 #include <qpaintdevicemetrics.h>
@@ -294,6 +295,8 @@ DocumentImpl::DocumentImpl(DOMImplementationImpl *_implementation, KHTMLView *v)
 
 DocumentImpl::~DocumentImpl()
 {
+    KJS::ScriptInterpreter::forgetDOMObjectsForDocument(this);
+
     if (changedDocuments && m_docChanged)
         changedDocuments->remove(this);
     delete m_tokenizer;

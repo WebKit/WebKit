@@ -141,6 +141,7 @@ ScriptInterpreter::ScriptInterpreter( const Object &global, KHTMLPart* part )
 #ifdef KJS_VERBOSE
   kdDebug(6070) << "ScriptInterpreter::ScriptInterpreter " << this << " for part=" << m_part << endl;
 #endif
+  m_domObjectsPerDocument.setAutoDelete(true);
 }
 
 ScriptInterpreter::~ScriptInterpreter()
@@ -162,6 +163,65 @@ void ScriptInterpreter::forgetDOMObject( void* objectHandle )
     } while (scr != first);
   }
 }
+
+DOMObject* ScriptInterpreter::getDOMObjectForDocument( void* documentHandle, void *objectHandle ) const
+{
+  QPtrDict<DOMObject> *documentDict = (QPtrDict<DOMObject> *)m_domObjectsPerDocument[documentHandle];
+  if (documentDict) {
+    return (*documentDict)[objectHandle];
+  }
+
+  return NULL;
+}
+
+void ScriptInterpreter::putDOMObjectForDocument( void* documentHandle, void *objectHandle, DOMObject *obj )
+{
+  QPtrDict<DOMObject> *documentDict = (QPtrDict<DOMObject> *)m_domObjectsPerDocument[documentHandle];
+  if (!documentDict) {
+    documentDict = new QPtrDict<DOMObject>();
+    m_domObjectsPerDocument.insert(documentHandle, documentDict);
+  }
+
+  documentDict->insert( objectHandle, obj );
+}
+
+bool ScriptInterpreter::deleteDOMObjectsForDocument( void* documentHandle )
+{
+  return m_domObjectsPerDocument.remove( documentHandle );
+}
+
+void ScriptInterpreter::mark()
+{
+  QPtrDictIterator<QPtrDict<DOMObject> > dictIterator(m_domObjectsPerDocument);
+
+  QPtrDict<DOMObject> *objectDict;
+  while ((objectDict = dictIterator.current())) {
+    QPtrDictIterator<DOMObject> objectIterator(*objectDict);
+
+    DOMObject *obj;
+    while ((obj = objectIterator.current())) {
+      if (!obj->marked()) {
+	obj->mark();
+      }
+      ++objectIterator;
+    }
+    ++dictIterator;
+  }
+}
+
+void ScriptInterpreter::forgetDOMObjectsForDocument( void* documentHandle )
+{
+ InterpreterImp *first = InterpreterImp::firstInterpreter();
+  if (first) {
+    InterpreterImp *scr = first;
+    do {
+      if ( scr->interpreter()->rtti() == 1 )
+        static_cast<ScriptInterpreter *>(scr->interpreter())->deleteDOMObjectsForDocument( documentHandle );
+      scr = scr->nextInterpreter();
+    } while (scr != first);
+  }
+}
+
 
 bool ScriptInterpreter::isWindowOpenAllowed() const
 {

@@ -1,3 +1,29 @@
+2002-12-15  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	- fixed 3128383 - DOM nodes should always use the same JS object
+	
+        * khtml/ecma/kjs_binding.h:
+        * khtml/ecma/kjs_binding.cpp:
+        (ScriptInterpreter::ScriptInterpreter): Set auto-delete to true on
+	document dictionary.
+        (ScriptInterpreter::getDOMObjectForDocument): New function - gets
+	DOM object from per-document dictionary.
+        (ScriptInterpreter::putDOMObjectForDocument): New function - put
+	DOM object into per-document dictionary.
+        (ScriptInterpreter::deleteDOMObjectsForDocument): Clear all
+	objects from specific per-document dictionary.
+        (ScriptInterpreter::mark): Mark per-document objects.
+	(ScriptInterpreter::forgetDOMObjectsForDocument): Clear objects
+	for this document from all interpreters.
+        * khtml/ecma/kjs_dom.h:
+        * khtml/ecma/kjs_dom.cpp:
+        (KJS::getDOMNode): Use per-document rather than general DOM object
+	dictionary.
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::~DocumentImpl): Call forgetDOMObjectsForDocument.
+
 2002-12-15  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3057974 and 3128713.  I needed to make frames check to
@@ -11,6 +37,7 @@
 
 2002-12-15  David Hyatt  <hyatt@apple.com>
 
+>>>>>>> 1.1128
 	Fix for 3109226, epinions page is mostly blank.  Add a hack
 	to disallow > but only inside attribute values for which there
 	is no corresponding attribute name.

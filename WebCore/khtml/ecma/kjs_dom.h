@@ -36,7 +36,6 @@ namespace KJS {
     DOMNode(ExecState *exec, const DOM::Node &n);
     // Constructor for inherited classes
     DOMNode(const Object &proto, const DOM::Node &n);
-    ~DOMNode();
     virtual bool toBoolean(ExecState *) const;
     virtual Value tryGet(ExecState *exec, const Identifier &propertyName) const;
     Value getValueProperty(ExecState *exec, int token) const;

@@ -76,11 +76,6 @@ DOMNode::DOMNode(const Object &proto, const DOM::Node &n)
 {
 }
 
-DOMNode::~DOMNode()
-{
-  ScriptInterpreter::forgetDOMObject(node.handle());
-}
-
 bool DOMNode::toBoolean(ExecState *) const
 {
     return !node.isNull();
@@ -1255,7 +1250,9 @@ Value KJS::getDOMNode(ExecState *exec, const DOM::Node &n)
   if (n.isNull())
     return Null();
   ScriptInterpreter* interp = static_cast<ScriptInterpreter *>(exec->interpreter());
-  if ((ret = interp->getDOMObject(n.handle())))
+  DOM::NodeImpl *doc = n.ownerDocument().handle();
+
+  if ((ret = interp->getDOMObjectForDocument(doc, n.handle())))
     return Value(ret);
 
   switch (n.nodeType()) {
@@ -1289,6 +1286,7 @@ Value KJS::getDOMNode(ExecState *exec, const DOM::Node &n)
         ret = new HTMLDocument(exec, static_cast<DOM::HTMLDocument>(n));
       else
         ret = new DOMDocument(exec, static_cast<DOM::Document>(n));
+      doc = n.handle();
       break;
     case DOM::Node::DOCUMENT_TYPE_NODE:
       ret = new DOMDocumentType(exec, static_cast<DOM::DocumentType>(n));
@@ -1302,7 +1300,8 @@ Value KJS::getDOMNode(ExecState *exec, const DOM::Node &n)
     default:
       ret = new DOMNode(exec, n);
   }
-  interp->putDOMObject(n.handle(),ret);
+
+  interp->putDOMObjectForDocument(doc, n.handle(), ret);
 
   return Value(ret);
 }
