@@ -83,7 +83,6 @@ const float LargeNumberForText = 1.0e7;
     textView = [[KWQTextAreaTextView alloc] initWithFrame:textFrame];
     [[textView textContainer] setWidthTracksTextView:YES];
     [textView setRichText:NO];
-    [textView setWidget:widget];
 
     // Setup attributes for default cases WRAP=SOFT|VIRTUAL and WRAP=HARD|PHYSICAL.
     // If WRAP=OFF we reset many of these attributes.
@@ -114,7 +113,10 @@ const float LargeNumberForText = 1.0e7;
 - initWithQTextEdit:(QTextEdit *)w 
 {
     [super init];
+
     widget = w;
+    [textView setWidget:widget];
+
     return self;
 }
 
@@ -497,7 +499,6 @@ static NSRange RangeOfParagraph(NSString *text, int paragraph)
     }
 }
 
-
 - (BOOL)becomeFirstResponder
 {
     BOOL become = [super becomeFirstResponder];
@@ -506,7 +507,7 @@ static NSRange RangeOfParagraph(NSString *text, int paragraph)
 	[self selectAll:nil];
 	[self _KWQ_setKeyboardFocusRingNeedsDisplay];
 	QFocusEvent event(QEvent::FocusIn);
-	(const_cast<QObject *>(widget->eventFilterObject()))->eventFilter(widget, &event);
+	const_cast<QObject *>(widget->eventFilterObject())->eventFilter(widget, &event);
     }
        
     return become;
@@ -519,7 +520,7 @@ static NSRange RangeOfParagraph(NSString *text, int paragraph)
     if (resign) {
 	[self _KWQ_setKeyboardFocusRingNeedsDisplay];
 	QFocusEvent event(QEvent::FocusOut);
-	(const_cast<QObject *>(widget->eventFilterObject()))->eventFilter(widget, &event);
+	const_cast<QObject *>(widget->eventFilterObject())->eventFilter(widget, &event);
     }
 
     return resign;

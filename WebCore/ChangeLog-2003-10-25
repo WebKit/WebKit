@@ -1,3 +1,13 @@
+2003-01-22  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+	- fixed two-day-old regression where we get nil-dereferences with text areas
+
+        * kwq/KWQTextArea.mm:
+        (-[KWQTextArea _createTextView]): Don't do the setWidget: here because widget is always nil at this point.
+        (-[KWQTextArea initWithQTextEdit:]): Do it here instead.
+
 2003-01-22  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3126927, don't let absolute positioned blocks grow
