@@ -1,3 +1,13 @@
+2004-08-16  Maciej Stachowiak  <mjs@apple.com>
+
+        Code change by Eric Albert, reviewd by me.
+
+	<rdar://problem/3571960> washingtonpost.com claims I don't have cookies enabled and won't let me read articles
+
+        * kjs/date_object.cpp:
+        (timetUsingCF): Clamp time to LONG_MAX (getting rid of time_t
+	entirely would be even better, but is not required to fix this bug.
+
 === Safari-157 ===
 
 2004-08-16  Richard Williamson   <rjw@apple.com>
