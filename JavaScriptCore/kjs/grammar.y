@@ -72,8 +72,9 @@ using namespace KJS;
   ClauseListNode      *clist;
   CaseClauseNode      *ccl;
   ElementNode         *elm;
-  ElisionNode         *eli;
   Operator            op;
+  PropertyValueNode   *plist;
+  PropertyNode        *pnode;
 }
 
 %start Program
@@ -118,7 +119,7 @@ using namespace KJS;
 
 /* non-terminal types */
 %type <node>  Literal PrimaryExpr Expr MemberExpr FunctionExpr NewExpr CallExpr
-%type <node>  ArrayLiteral PropertyName PropertyNameAndValueList
+%type <node>  ArrayLiteral
 %type <node>  LeftHandSideExpr PostfixExpr UnaryExpr
 %type <node>  MultiplicativeExpr AdditiveExpr
 %type <node>  ShiftExpr RelationalExpr EqualityExpr
@@ -152,8 +153,10 @@ using namespace KJS;
 %type <cblk>  CaseBlock
 %type <ccl>   CaseClause DefaultClause
 %type <clist> CaseClauses  CaseClausesOpt
-%type <eli>   Elision ElisionOpt
+%type <ival>  Elision ElisionOpt
 %type <elm>   ElementList
+%type <plist> PropertyNameAndValueList
+%type <pnode> PropertyName
 
 %%
 
@@ -196,13 +199,13 @@ ElementList:
 ;
 
 ElisionOpt:
-    /* nothing */                  { $$ = 0L; }
+    /* nothing */                  { $$ = 0; }
   | Elision
 ;
 
 Elision:
-    ','                            { $$ = new ElisionNode(0L); }
-  | Elision ','                    { $$ = new ElisionNode($1); }
+    ','                            { $$ = 1; }
+  | Elision ','                    { $$ = $1 + 1; }
 ;
 
 PropertyNameAndValueList:

@@ -1,3 +1,65 @@
+2002-12-23  Darin Adler  <darin@apple.com>
+
+        Reviewed by Gramps and Ken.
+	Checked in by Ken.
+
+	- fixed 3134693 -- carsdirect.com crash on used car search, due to large JavaScript array
+
+	The parser was using recursion to handle many types of lists.
+	This meant that we crashed out of stack space when any of the lists were extra big.
+	I applied the same sort of fix we had already applied a while back for argument lists for
+	all the other types of lists, including the list of ElementNode that was the reason for
+	the crash reported here.
+
+        * kjs/grammar.y: Removed ElisionNode altogether and just use a count.
+	Use specific node types for PropertyNameAndValueList and PropertyName.
+
+        * kjs/grammar.cpp: Regenerated.
+        * kjs/grammar.cpp.h: Regenerated.
+        * kjs/grammar.h: Regenerated.
+
+        * kjs/nodes.h: Elide "ElisionNode", changing objects to keep elision counts instead.
+	Make the ObjectLiteralNode list field be PropertyValueNode, not just Node.
+	Make PropertyValueNode fields have specific types. Add new reverse list functions, calls
+	to those functions in the constructors, and friend declarations as needed so the class
+	that holds the head of a list can reverse the list during parsing.
+        * kjs/nodes.cpp:
+        (ElementNode::ref): Use iteration instead of recursion. Also elide "elision".
+        (ElementNode::deref): Ditto.
+        (ElementNode::evaluate): Use iteration instead of recursion, taking advantage of
+	the fact that the linked list is reversed. Also use the elision count rather than
+	an elision list.
+        (ArrayNode::reverseElementList): Reverse the list so we can iterate normally.
+        (ArrayNode::ref): Elide "elision".
+        (ArrayNode::deref): Ditto.
+        (ArrayNode::evaluate): Use elision count instead of elision list.
+        (ObjectLiteralNode::reverseList): Reverse the list so we can iterate normally.
+        (PropertyValueNode::ref): Use iteration instead of recursion.
+        (PropertyValueNode::deref): Use iteration instead of recursion.
+        (PropertyValueNode::evaluate): Use iteration instead of recursion, taking advantage
+	of the fact that the linked list is reversed.
+        (ArgumentListNode::ref): Change code to match the other similar cases we had to revise.
+        (ArgumentListNode::deref): Ditto.
+        (ArgumentListNode::evaluateList): Ditto.
+        (ArgumentsNode::reverseList): Ditto.
+        (VarDeclListNode::ref): Use iteration instead of recursion.
+        (VarDeclListNode::deref): Ditto.
+        (VarDeclListNode::evaluate): Use iteration instead of recursion, taking advantage
+	of the fact that the linked list is reversed.
+        (VarDeclListNode::processVarDecls): Ditto.
+        (VarStatementNode::reverseList): Reverse the list so we can iterate normally.
+        (FunctionBodyNode::FunctionBodyNode): Use BlockNode as the base class, removing
+	most of the FunctionBodyNode class.
+
+        * kjs/nodes2string.cpp:
+        (ElementNode::streamTo): Update for using a count for elision, and reverse linking.
+        (ArrayNode::streamTo): Update for using a count for elision.
+        (PropertyValueNode::streamTo): Update for reverse linking.
+        (ArgumentListNode::streamTo): Update for reverse linking. This has been wrong for
+	a while, since we added the reverse a long time ago.
+        (VarDeclListNode::streamTo): Update for reverse linking.
+        (ParameterNode::streamTo): Update for reverse linking.
+
 === Alexander-45 ===
 
 2002-12-22  Darin Adler  <darin@apple.com>
