@@ -369,12 +369,18 @@ void RenderImage::layout()
 	m_width = intrinsicWidth();
     if ( m_height > 2048 && !style()->height().isFixed() )
 	m_height = intrinsicHeight();
+
+// We don't want to impose a constraint on image size here. But there also
+// is a bug somewhere that causes the scaled height to be used with the
+// original width, causing the image to be compressed vertically.
+#if !APPLE_CHANGES
     // limit total size to not run out of memory when doing the xform call.
     if ( m_width * m_height > 2048*2048 ) {
 	float scale = sqrt( m_width*m_height / ( 2048.*2048. ) );
 	m_width = (int) (m_width/scale);
 	m_height = (int) (m_height/scale);
     }
+#endif
     
     if ( m_width != oldwidth || m_height != oldheight )
         resizeCache = QPixmap();

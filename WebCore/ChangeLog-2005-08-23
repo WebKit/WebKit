@@ -1,5 +1,18 @@
 2003-07-30  John Sullivan  <sullivan@apple.com>
 
+	- fixed 3346460 -- images > area (2048x2048) are compressed vertically 
+	when displayed as src of img tag
+
+        Reviewed by Darin
+
+        * khtml/rendering/render_image.cpp:
+        (RenderImage::layout):
+	Just comment out the code that imposes a maximum image size (incorrectly);
+	maybe KDE folks want to make this work, but we don't need to try to
+	prevent large images.
+
+2003-07-30  John Sullivan  <sullivan@apple.com>
+
 	- WebCore part of fix for 3284525 -- AutoFill fills in 
 	only e-mail address field of New Account form on Apple Store Japan
 
