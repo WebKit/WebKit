@@ -34,7 +34,7 @@ namespace khtml {
  * all geometry managing stuff is only in the block elements.
  *
  * Inline elements don't layout themselves, but the whole paragraph
- * gets layouted by the surrounding block element. This is, because
+ * gets flowed by the surrounding block element. This is, because
  * one needs to know the whole paragraph to calculate bidirectional
  * behaviour of text, so putting the layouting routines in the inline
  * elements is impossible.

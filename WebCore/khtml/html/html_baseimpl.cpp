@@ -598,7 +598,7 @@ void HTMLFrameSetElementImpl::detach()
 void HTMLFrameSetElementImpl::recalcStyle( StyleChange ch )
 {
     if (changed() && m_render) {
-        m_render->setLayouted(false);
+        m_render->setNeedsLayout(true);
 //         m_render->layout();
         setChanged(false);
     }

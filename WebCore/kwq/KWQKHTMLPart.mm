@@ -1148,8 +1148,7 @@ void KWQKHTMLPart::forceLayoutForPageWidth(float pageWidth)
     if (root) {
         // This magic is basically copied from khtmlview::print
         root->setWidth((int)ceil(pageWidth));
-        root->setLayouted(false);
-        root->setMinMaxKnown(false);
+        root->setNeedsLayoutAndMinMaxRecalc();
         forceLayout();
     }
 }

@@ -96,7 +96,7 @@ void RenderBlock::setStyle(RenderStyle* _style)
 
 void RenderBlock::addChildToFlow(RenderObject* newChild, RenderObject* beforeChild)
 {
-    setLayouted( false );
+    setNeedsLayout(true);
 
     bool madeBoxesNonInline = FALSE;
 
@@ -156,8 +156,7 @@ void RenderBlock::addChildToFlow(RenderObject* newChild, RenderObject* beforeChi
 
         if (newChild->isInline()) {
             beforeChild->parent()->addChild(newChild,beforeChild);
-            newChild->setLayouted( false );
-            newChild->setMinMaxKnown( false );
+            newChild->setNeedsLayoutAndMinMaxRecalc();
             return;
         }
         else if (beforeChild->parent()->firstChild() != beforeChild)
@@ -166,8 +165,8 @@ void RenderBlock::addChildToFlow(RenderObject* newChild, RenderObject* beforeChi
             return addChildToFlow(newChild, beforeChild->parent());
     }
 
-    // prevent non-layouted elements from getting painted by pushing them far above the top of the
-    // page
+    // prevent elements that haven't received a layout yet from getting painted by pushing
+    // them far above the top of the page
     if (!newChild->isInline())
         newChild->setPos(newChild->xPos(), -500000);
 
@@ -198,16 +197,14 @@ void RenderBlock::addChildToFlow(RenderObject* newChild, RenderObject* beforeChi
             if (beforeChild) {
                 if (beforeChild->previousSibling() && beforeChild->previousSibling()->isAnonymousBox()) {
                     beforeChild->previousSibling()->addChild(newChild);
-                    newChild->setLayouted( false );
-                    newChild->setMinMaxKnown( false );
+                    newChild->setNeedsLayoutAndMinMaxRecalc();
                     return;
                 }
             }
             else {
                 if (m_last && m_last->isAnonymousBox()) {
                     m_last->addChild(newChild);
-                    newChild->setLayouted( false );
-                    newChild->setMinMaxKnown( false );
+                    newChild->setNeedsLayoutAndMinMaxRecalc();
                     return;
                 }
             }
@@ -225,8 +222,7 @@ void RenderBlock::addChildToFlow(RenderObject* newChild, RenderObject* beforeChi
             newBox->addChild(newChild);
             newBox->setPos(newBox->xPos(), -500000);
 
-            newChild->setLayouted( false );
-            newChild->setMinMaxKnown( false );
+            newChild->setNeedsLayoutAndMinMaxRecalc();
             return;
         }
         else {
@@ -242,8 +238,7 @@ void RenderBlock::addChildToFlow(RenderObject* newChild, RenderObject* beforeChi
     RenderBox::addChild(newChild,beforeChild);
     // ### care about aligned stuff
 
-    newChild->setLayouted( false );
-    newChild->setMinMaxKnown( false );
+    newChild->setNeedsLayoutAndMinMaxRecalc();
     
     if ( madeBoxesNonInline )
         removeLeftoverAnonymousBoxes();
@@ -327,10 +322,10 @@ void RenderBlock::makeChildrenNonInline(RenderObject *insertionPoint)
         box->appendChildNode(removeChildNode(inlineRunEnd));
         box->close();
         box->setPos(box->xPos(), -500000);
-        box->setLayouted(false);
+        box->setNeedsLayout(true);
     }
 
-    setLayouted(false);
+    setNeedsLayout(true);
 }
 
 void RenderBlock::removeChild(RenderObject *oldChild)
@@ -351,11 +346,9 @@ void RenderBlock::removeChild(RenderObject *oldChild)
             RenderObject* no = o;
             o = no->nextSibling();
             prev->appendChildNode(next->removeChildNode(no));
-            no->setLayouted(false);
-            no->setMinMaxKnown(false);
+            no->setNeedsLayoutAndMinMaxRecalc();
         }
-        prev->setLayouted(false);
-        prev->setMinMaxKnown(false);
+        prev->setNeedsLayoutAndMinMaxRecalc();
 
         // Nuke the now-empty block.
         next->detach(renderArena());
@@ -376,12 +369,10 @@ void RenderBlock::removeChild(RenderObject *oldChild)
             RenderObject* no = o;
             o = no->nextSibling();
             appendChildNode(anonBlock->removeChildNode(no));
-            no->setLayouted(false);
-            no->setMinMaxKnown(false);
+            no->setNeedsLayoutAndMinMaxRecalc();
         }
-        setLayouted(false);
-        setMinMaxKnown(false);
-
+        setNeedsLayoutAndMinMaxRecalc();
+        
         // Nuke the now-empty block.
         anonBlock->detach(renderArena());
     }
@@ -399,7 +390,7 @@ void RenderBlock::layoutBlock(bool relayoutChildren)
     //    kdDebug( 6040 ) << renderName() << " " << this << "::layoutBlock() start" << endl;
     //     QTime t;
     //     t.start();
-    KHTMLAssert( !layouted() );
+    KHTMLAssert( needsLayout() );
     KHTMLAssert( minMaxKnown() );
     
     if (isInline()) // Inline <form>s inside various table elements can cause us to
@@ -414,11 +405,11 @@ void RenderBlock::layoutBlock(bool relayoutChildren)
         relayoutChildren = true;
 
     //     kdDebug( 6040 ) << floatingObjects << "," << oldWidth << ","
-    //                     << m_width << ","<< layouted() << "," << isAnonymousBox() << ","
+    //                     << m_width << ","<< needsLayout() << "," << isAnonymousBox() << ","
     //                     << overhangingContents() << "," << isPositioned() << endl;
 
 #ifdef DEBUG_LAYOUT
-    kdDebug( 6040 ) << renderName() << "(RenderBlock) " << this << " ::layout() width=" << m_width << ", layouted=" << layouted() << endl;
+    kdDebug( 6040 ) << renderName() << "(RenderBlock) " << this << " ::layout() width=" << m_width << ", needsLayout=" << needsLayout() << endl;
     if(containingBlock() == static_cast<RenderObject *>(this))
         kdDebug( 6040 ) << renderName() << ": containingBlock == this" << endl;
 #endif
@@ -538,7 +529,7 @@ void RenderBlock::layoutBlock(bool relayoutChildren)
     if (style()->scrollsOverflow() && m_layer)
         m_layer->checkScrollbarsAfterLayout();
     
-    setLayouted();
+    setNeedsLayout(false);
 }
 
 void RenderBlock::layoutBlockChildren( bool relayoutChildren )
@@ -616,7 +607,7 @@ void RenderBlock::layoutBlockChildren( bool relayoutChildren )
 
     // take care in case we inherited floats
     if (child && floatBottom() > m_height)
-        child->setLayouted(false);
+        child->setNeedsLayout(true);
 
     //     QTime t;
     //     t.start();
@@ -626,9 +617,9 @@ void RenderBlock::layoutBlockChildren( bool relayoutChildren )
         // make sure we relayout children if we need it.
         if ( relayoutChildren || floatBottom() > m_y ||
              (child->isReplaced() && (child->style()->width().isPercent() || child->style()->height().isPercent())))
-            child->setLayouted(false);
+            child->setNeedsLayout(true);
 
-        //         kdDebug( 6040 ) << "   " << child->renderName() << " loop " << child << ", " << child->isInline() << ", " << child->layouted() << endl;
+        //         kdDebug( 6040 ) << "   " << child->renderName() << " loop " << child << ", " << child->isInline() << ", " << child->needsLayout() << endl;
         //         kdDebug( 6040 ) << t.elapsed() << endl;
         // ### might be some layouts are done two times... FIX that.
 
@@ -637,11 +628,9 @@ void RenderBlock::layoutBlockChildren( bool relayoutChildren )
             child->containingBlock()->insertPositionedObject(child);
             child = child->nextSibling();
             continue;
-        } else if ( child->isReplaced() ) {
-            if ( !child->layouted() )
-                child->layout();
-        }
-
+        } else if (child->isReplaced())
+            child->layoutIfNeeded();
+        
         if ( child->isFloating() ) {
             insertFloatingObject( child );
 
@@ -758,7 +747,7 @@ void RenderBlock::layoutBlockChildren( bool relayoutChildren )
         {
             yPosEstimate += QMAX(prevFlow->collapsedMarginBottom(), child->marginTop());
             if (prevFlow->yPos()+prevFlow->floatBottom() > yPosEstimate)
-                child->setLayouted(false);
+                child->setNeedsLayout(true);
             else
                 prevFlow=0;
         }
@@ -767,8 +756,7 @@ void RenderBlock::layoutBlockChildren( bool relayoutChildren )
 
         // Go ahead and position the child as though it didn't collapse with the top.
         child->setPos(child->xPos(), yPosEstimate);
-        if ( !child->layouted() )
-            child->layout();
+        child->layoutIfNeeded();
 
         // Now determine the correct ypos based off examination of collapsing margin
         // values.
@@ -860,14 +848,13 @@ void RenderBlock::layoutBlockChildren( bool relayoutChildren )
                     // property set, when the child shifts to clear an item, its width can
                     // change (because it has more available line width).
                     // So go ahead an mark the item as dirty.
-                    child->setLayouted(false);
+                    child->setNeedsLayout(true);
 
                 if (child->containsFloats() || containsFloats())
                     child->markAllDescendantsWithFloatsForLayout();
 
                 // Our guess was wrong. Make the child lay itself out again.
-                if (!child->layouted())
-                    child->layout();
+                child->layoutIfNeeded();
             }
         }
 
@@ -897,11 +884,10 @@ void RenderBlock::layoutBlockChildren( bool relayoutChildren )
                 // property set, when the child shifts to clear an item, its width can
                 // change (because it has more available line width).
                 // So go ahead an mark the item as dirty.
-                child->setLayouted(false);
+                child->setNeedsLayout(true);
             if (child->containsFloats())
                 child->markAllDescendantsWithFloatsForLayout();
-            if (!child->layouted())
-                child->layout();
+            child->layoutIfNeeded();
         }
 
         // Reset the top margin contributor to false if we encountered
@@ -1029,9 +1015,9 @@ void RenderBlock::layoutBlockChildren( bool relayoutChildren )
             m_bottomMarginQuirk = true;
     }
 
-    setLayouted();
+    setNeedsLayout(false);
 
-    // kdDebug( 6040 ) << "layouted = " << layouted_ << endl;
+    // kdDebug( 6040 ) << "needsLayout = " << needsLayout_ << endl;
 }
 
 void RenderBlock::layoutPositionedObjects(bool relayoutChildren)
@@ -1043,9 +1029,8 @@ void RenderBlock::layoutPositionedObjects(bool relayoutChildren)
         for ( ; (r = it.current()); ++it ) {
             //kdDebug(6040) << "   have a positioned object" << endl;
             if ( relayoutChildren )
-                r->setLayouted( false );
-            if ( !r->layouted() )
-                r->layout();
+                r->setNeedsLayout(true);
+            r->layoutIfNeeded();
         }
     }
 }
@@ -1219,8 +1204,7 @@ void RenderBlock::insertFloatingObject(RenderObject *o)
     FloatingObject *newObj;
     if (o->isFloating()) {
         // floating object
-        if ( !o->layouted() )
-            o->layout();
+        o->layoutIfNeeded();
 
         if(o->style()->floating() == FLEFT)
             newObj = new FloatingObject(FloatingObject::FloatLeft);
@@ -1712,7 +1696,7 @@ bool RenderBlock::containsFloat(RenderObject* o)
 
 void RenderBlock::markAllDescendantsWithFloatsForLayout(RenderObject* floatToRemove)
 {
-    setLayouted(false);
+    setNeedsLayout(true);
 
     if (floatToRemove)
         removeFloatingObject(floatToRemove);

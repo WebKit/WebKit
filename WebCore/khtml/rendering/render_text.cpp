@@ -1134,7 +1134,8 @@ void RenderText::setText(DOMStringImpl *text, bool force)
     KHTMLAssert(!isBR() || (str->l == 1 && (*str->s) == '\n'));
     KHTMLAssert(!str->l || str->s);
 
-    setLayouted(false);
+    setNeedsLayout(true);
+    
 #ifdef BIDI_DEBUG
     QConstString cstr(str->s, str->l);
     kdDebug( 6040 ) << "RenderText::setText( " << cstr.string().length() << " ) '" << cstr.string() << "'" << endl;

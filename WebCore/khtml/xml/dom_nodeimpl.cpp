@@ -1186,7 +1186,7 @@ NodeImpl *NodeBaseImpl::insertBefore ( NodeImpl *newChild, NodeImpl *refChild, i
             // isn't scheduled, and you end up with stale data (especially
             // with inline runs of text). -dwh
             if (child->renderer())
-                child->renderer()->setLayouted(false);
+                child->renderer()->setNeedsLayout(true);
         }
 
         // Dispatch the mutation events
@@ -1260,7 +1260,7 @@ NodeImpl *NodeBaseImpl::replaceChild ( NodeImpl *newChild, NodeImpl *oldChild, i
             // isn't scheduled, and you end up with stale data (especially
             // with inline runs of text). -dwh
             if (child->renderer())
-                child->renderer()->setLayouted(false);
+                child->renderer()->setNeedsLayout(true);
         }
 
         // Dispatch the mutation events
@@ -1413,7 +1413,7 @@ NodeImpl *NodeBaseImpl::appendChild ( NodeImpl *newChild, int &exceptioncode )
             // isn't scheduled, and you end up with stale data (especially
             // with inline runs of text). -dwh
             if (child->renderer())
-                child->renderer()->setLayouted(false);
+                child->renderer()->setNeedsLayout(true);
         }
           
         // Dispatch the mutation events

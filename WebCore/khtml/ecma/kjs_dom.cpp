@@ -236,7 +236,7 @@ Value DOMNode::getValueProperty(ExecState *exec, int token) const
       v = docimpl->view();
       docimpl->updateRendering();
       // Only do a layout if changes have occurred that make it necessary.
-      if ( v && docimpl->renderer() && !docimpl->renderer()->layouted() )
+      if ( v && docimpl->renderer() && docimpl->renderer()->needsLayout() )
         docimpl->view()->layout();
     }
 

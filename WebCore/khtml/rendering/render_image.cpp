@@ -155,7 +155,7 @@ void RenderImage::setPixmap( const QPixmap &p, const QRect& r, CachedImage *o)
 
     if(needlayout)
     {
-        setLayouted(false);
+        setNeedsLayout(true);
         setMinMaxKnown(false);
 
 //         kdDebug( 6040 ) << "m_width: : " << m_width << " height: " << m_height << endl;
@@ -307,7 +307,7 @@ void RenderImage::paintObject(QPainter *p, int /*_x*/, int /*_y*/, int /*_w*/, i
 
 void RenderImage::layout()
 {
-    KHTMLAssert(!layouted());
+    KHTMLAssert(needsLayout());
     KHTMLAssert( minMaxKnown() );
 
     short oldwidth = m_width;
@@ -335,7 +335,7 @@ void RenderImage::layout()
     if ( m_width != oldwidth || m_height != oldheight )
         resizeCache = QPixmap();
 
-    setLayouted();
+    setNeedsLayout(false);
 }
 
 void RenderImage::notifyFinished(CachedObject *finishedObj)

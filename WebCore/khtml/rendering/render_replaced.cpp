@@ -59,7 +59,7 @@ void RenderReplaced::paint(QPainter *p, int _x, int _y, int _w, int _h,
     if (paintAction != PaintActionForeground)
         return;
         
-    // not visible or nont even once layouted?
+    // if we're invisible or haven't received a layout yet, then just bail.
     if (style()->visibility() != VISIBLE || m_y <=  -500000)  return;
 
     _tx += m_x;
@@ -182,9 +182,9 @@ void RenderWidget::setQWidget(QWidget *widget)
         if (m_widget) {
             connect( m_widget, SIGNAL( destroyed()), this, SLOT( slotWidgetDestructed()));
             m_widget->installEventFilter(this);
-            // if we're already layouted, apply the calculated space to the
+            // if we've already received a layout, apply the calculated space to the
             // widget immediately
-            if (layouted()) {
+            if (!needsLayout()) {
 		resizeWidget( m_widget,
 			      m_width-borderLeft()-borderRight()-paddingLeft()-paddingRight(),
 			      m_height-borderLeft()-borderRight()-paddingLeft()-paddingRight() );
@@ -198,7 +198,7 @@ void RenderWidget::setQWidget(QWidget *widget)
 
 void RenderWidget::layout( )
 {
-    KHTMLAssert( !layouted() );
+    KHTMLAssert( needsLayout() );
     KHTMLAssert( minMaxKnown() );
     if ( m_widget ) {
 	resizeWidget( m_widget,
@@ -206,7 +206,7 @@ void RenderWidget::layout( )
 		      m_height-borderLeft()-borderRight()-paddingLeft()-paddingRight() );
     }
 
-    setLayouted();
+    setNeedsLayout(false);
 }
 
 #if APPLE_CHANGES

@@ -263,7 +263,7 @@ void RenderListItem::calcMinMaxWidth()
 
 void RenderListItem::layout( )
 {
-    KHTMLAssert( !layouted() );
+    KHTMLAssert( needsLayout() );
     KHTMLAssert( minMaxKnown() );
 
     updateMarkerLocation();    
@@ -310,10 +310,9 @@ RenderListMarker::~RenderListMarker()
 
 void RenderListMarker::setStyle(RenderStyle *s)
 {
-    if ( s && style() && s->listStylePosition() != style()->listStylePosition() ) {
-	setLayouted( false );
-	setMinMaxKnown( false );
-    }
+    if ( s && style() && s->listStylePosition() != style()->listStylePosition() )
+        setNeedsLayoutAndMinMaxRecalc();
+    
     RenderBox::setStyle(s);
 
     if ( m_listImage != style()->listStyleImage() ) {
@@ -483,11 +482,11 @@ void RenderListMarker::paintObject(QPainter *p, int, int _y,
 
 void RenderListMarker::layout()
 {
-    KHTMLAssert( !layouted() );
+    KHTMLAssert( needsLayout() );
     // ### KHTMLAssert( minMaxKnown() );
     if ( !minMaxKnown() )
 	calcMinMaxWidth();
-    setLayouted();
+    setNeedsLayout(false);
 }
 
 void RenderListMarker::setPixmap( const QPixmap &p, const QRect& r, CachedImage *o)
@@ -498,10 +497,7 @@ void RenderListMarker::setPixmap( const QPixmap &p, const QRect& r, CachedImage 
     }
 
     if(m_width != m_listImage->pixmap_size().width() || m_height != m_listImage->pixmap_size().height())
-    {
-        setLayouted(false);
-        setMinMaxKnown(false);
-    }
+        setNeedsLayoutAndMinMaxRecalc();
     else
         repaintRectangle(0, 0, m_width, m_height);
 }

@@ -406,7 +406,7 @@ void KHTMLView::layout()
              if(body && body->renderer() && body->id() == ID_FRAMESET) {
                  QScrollView::setVScrollBarMode(AlwaysOff);
                  QScrollView::setHScrollBarMode(AlwaysOff);
-                 body->renderer()->setLayouted(false);
+                 body->renderer()->setNeedsLayout(true);
              }
          }
 
@@ -415,8 +415,7 @@ void KHTMLView::layout()
 
         //QTime qt;
         //qt.start();
-        root->setMinMaxKnown(false);
-        root->setLayouted(false);
+        root->setNeedsLayoutAndMinMaxRecalc();
         // avoid recursing into relayouts because of scrollbar-flicker
 
         root->layout();
@@ -1122,8 +1121,7 @@ void KHTMLView::print()
         m_part->xmlDocImpl()->styleSelector()->computeFontSizes(&metrics, 100);
         m_part->xmlDocImpl()->updateStyleSelector();
         root->setPrintImages( printer->option("kde-khtml-printimages") == "true");
-        root->setLayouted( false );
-        root->setMinMaxKnown( false );
+        root->setNeedsLayoutAndMinMaxRecalc();
         root->layout();
 
         // ok. now print the pages.
@@ -1539,10 +1537,10 @@ void KHTMLView::timerEvent ( QTimerEvent *e )
         khtml::RenderRoot* root = static_cast<khtml::RenderRoot *>(document->renderer());
         if (root){
             // Do not allow a full layout if we had a clip object set.
-            if ( !root->layouted() && !m_layoutObject) {
+            if ( root->needsLayout() && !m_layoutObject) {
                 killTimer(d->repaintTimerId);
                 d->repaintTimerId = 0;
-                //qDebug("not layouted, delaying repaint");
+                //qDebug("needs layout, delaying repaint");
                 scheduleRelayout();
                 return;
             }

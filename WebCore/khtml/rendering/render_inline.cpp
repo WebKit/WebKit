@@ -66,7 +66,7 @@ void RenderInline::setStyle(RenderStyle* _style)
 
 void RenderInline::addChildToFlow(RenderObject* newChild, RenderObject* beforeChild)
 {
-    setLayouted( false );
+    setNeedsLayout(true);
     
     if (!newChild->isText() && newChild->style()->position() != STATIC)
         setOverhangingContents();
@@ -91,9 +91,8 @@ void RenderInline::addChildToFlow(RenderObject* newChild, RenderObject* beforeCh
     }
 
     RenderBox::addChild(newChild,beforeChild);
-    
-    newChild->setLayouted( false );
-    newChild->setMinMaxKnown( false );
+
+    newChild->setNeedsLayoutAndMinMaxRecalc();
 }
 
 static RenderInline* cloneInline(RenderFlow* src)
@@ -118,8 +117,7 @@ void RenderInline::splitInlines(RenderBlock* fromBlock, RenderBlock* toBlock,
         RenderObject* tmp = o;
         o = tmp->nextSibling();
         clone->appendChildNode(removeChildNode(tmp));
-        tmp->setLayouted(false);
-        tmp->setMinMaxKnown(false);
+        tmp->setNeedsLayoutAndMinMaxRecalc();
     }
 
     // Hook |clone| up as the continuation of the middle block.
@@ -150,8 +148,7 @@ void RenderInline::splitInlines(RenderBlock* fromBlock, RenderBlock* toBlock,
             RenderObject* tmp = o;
             o = tmp->nextSibling();
             clone->appendChildNode(curr->removeChildNode(tmp));
-            tmp->setLayouted(false);
-            tmp->setMinMaxKnown(false);
+            tmp->setNeedsLayoutAndMinMaxRecalc();
         }
 
         // Keep walking up the chain.
@@ -218,8 +215,7 @@ void RenderInline::splitFlow(RenderObject* beforeChild, RenderBlock* newBlockBox
             RenderObject* no = o;
             o = no->nextSibling();
             pre->appendChildNode(block->removeChildNode(no));
-            no->setLayouted(false);
-            no->setMinMaxKnown(false);
+            no->setNeedsLayoutAndMinMaxRecalc();
         }
     }
 
@@ -239,16 +235,15 @@ void RenderInline::splitFlow(RenderObject* beforeChild, RenderBlock* newBlockBox
     // XXXdwh is any of this even necessary? I don't think it is.
     pre->close();
     pre->setPos(0, -500000);
-    pre->setLayouted(false);
+    pre->setNeedsLayout(true);
     newBlockBox->close();
     newBlockBox->setPos(0, -500000);
-    newBlockBox->setLayouted(false);
+    newBlockBox->setNeedsLayout(true);
     post->close();
     post->setPos(0, -500000);
-    post->setLayouted(false);
+    post->setNeedsLayout(true);
 
-    block->setLayouted(false);
-    block->setMinMaxKnown(false);
+    block->setNeedsLayoutAndMinMaxRecalc();
 }
 
 void RenderInline::paint(QPainter *p, int _x, int _y, int _w, int _h,

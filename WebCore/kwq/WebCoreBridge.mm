@@ -898,7 +898,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(id <WebDOMElement>element)
 - (BOOL)needsLayout
 {
     RenderObject *renderer = _part->renderer();
-    return renderer ? !renderer->layouted() : false;
+    return renderer ? renderer->needsLayout() : false;
 }
 
 - (BOOL)interceptKeyEvent:(NSEvent *)event toView:(NSView *)view
