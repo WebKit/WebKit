@@ -8,13 +8,14 @@
 #import <WebKit/WebDefaultPolicyDelegate.h>
 #import <WebKit/WebFrame.h>
 #import <WebFoundation/WebResourceHandle.h>
+#import <WebFoundation/WebResourceRequest.h>
 
 
 @implementation WebDefaultPolicyDelegate
 
 + (WebURLPolicy *)defaultURLPolicyForURL: (NSURL *)URL
 {
-    if([WebResourceHandle canInitWithURL:URL]){
+    if([WebResourceHandle canInitWithRequest:[WebResourceRequest requestWithURL:URL]]){
         return [WebURLPolicy webPolicyWithURLAction:WebURLPolicyUseContentPolicy];
     }else{
         return [WebURLPolicy webPolicyWithURLAction:WebURLPolicyOpenExternally];

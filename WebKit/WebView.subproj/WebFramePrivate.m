@@ -581,7 +581,7 @@ static const char * const stateNames[] = {
         case WebURLPolicyUseContentPolicy:
             // handle non-file case first because it's short and sweet
             if (![URL isFileURL]) {
-                if (![WebResourceHandle canInitWithURL:URL]) {
+                if (![WebResourceHandle canInitWithRequest:[WebResourceRequest requestWithURL:URL]]) {
                     [self handleUnimplementablePolicy:URLPolicy errorCode:WebErrorCannotShowURL forURL:URL];
                     return NO;
                 }

@@ -1,5 +1,22 @@
 2002-09-25  Ken Kocienda  <kocienda@apple.com>
 
+        Removed this method from WebResourceHandle:
+
+        +(BOOL)canInitWithURL:(NSURL *)theURL;
+
+        replaced with:
+
+        +(BOOL)canInitWithRequest:(WebResourceRequest *)request;
+
+	Callers have been updated to reflect the change.
+
+        * WebView.subproj/WebDefaultPolicyDelegate.m:
+        (+[WebDefaultPolicyDelegate defaultURLPolicyForURL:])
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _shouldShowURL:])
+
+2002-09-25  Ken Kocienda  <kocienda@apple.com>
+
         More moves to the new WebResourceHandleDelegate API.   
 
         This change moves all WebResourceHandleDelegate implementors to:
