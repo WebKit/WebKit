@@ -1792,6 +1792,8 @@ static DOM::ElementImpl *listParent(DOM::ElementImpl *item)
     
     while (_id != ID_UL && _id != ID_OL) {
         item = static_cast<DOM::ElementImpl *>(item->parentNode());
+        if (!item)
+            break;
         _id = Node(item).elementId();
     }
     return item;
@@ -1908,39 +1910,41 @@ NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_startNode, int sta
                             listItemLocations.append (info);
                             
                             listText += '\t';
-                            // Ick!  Avoid use of itemParent->id() which confuses ObjC++.
-                            if (Node(itemParent).elementId() == ID_UL) {
-                                // Always use bullets.  Perhaps we could use other characters
-                                // for square and disc type lists.
-                                listText += ((QChar)BULLET_CHAR);
-                                if ([font pointSize] > maxMarkerWidth)
-                                    maxMarkerWidth = [font pointSize];
-                            }
-                            else {
-                                khtml::RenderListItem *listRenderer = static_cast<khtml::RenderListItem*>(renderer);
-                                QString marker = listRenderer->markerStringValue();
-                                listText += marker;
-                                // Use AppKit metrics.  Will be rendered by AppKit.
-                                float markerWidth = [font widthOfString: marker.getNSString()];
-                                if (markerWidth > maxMarkerWidth)
-                                    maxMarkerWidth = markerWidth;
-                            }
-                            listText += ' ';
-                            listText += '\t';
+                            if (itemParent){
+                                // Ick!  Avoid use of itemParent->id() which confuses ObjC++.
+                                if (Node(itemParent).elementId() == ID_UL) {
+                                    // Always use bullets.  Perhaps we could use other characters
+                                    // for square and disc type lists.
+                                    listText += ((QChar)BULLET_CHAR);
+                                    if ([font pointSize] > maxMarkerWidth)
+                                        maxMarkerWidth = [font pointSize];
+                                }
+                                else {
+                                    khtml::RenderListItem *listRenderer = static_cast<khtml::RenderListItem*>(renderer);
+                                    QString marker = listRenderer->markerStringValue();
+                                    listText += marker;
+                                    // Use AppKit metrics.  Will be rendered by AppKit.
+                                    float markerWidth = [font widthOfString: marker.getNSString()];
+                                    if (markerWidth > maxMarkerWidth)
+                                        maxMarkerWidth = markerWidth;
+                                }
+                                listText += ' ';
+                                listText += '\t';
     
-                            NSMutableDictionary *attrs;
-        
-                            attrs = [[NSMutableDictionary alloc] init];
-                            [attrs setObject:font forKey:NSFontAttributeName];
-                            if (style && style->color().isValid())
-                                [attrs setObject:style->color().getNSColor() forKey:NSForegroundColorAttributeName];
-                            if (style && style->backgroundColor().isValid())
-                                [attrs setObject:style->backgroundColor().getNSColor() forKey:NSBackgroundColorAttributeName];
-        
-                            NSAttributedString *partialString = [[NSAttributedString alloc] initWithString:listText.getNSString() attributes:attrs];
-                            [attrs release];
-                            [result appendAttributedString: partialString];                
-                            [partialString release];
+                                NSMutableDictionary *attrs;
+            
+                                attrs = [[NSMutableDictionary alloc] init];
+                                [attrs setObject:font forKey:NSFontAttributeName];
+                                if (style && style->color().isValid())
+                                    [attrs setObject:style->color().getNSColor() forKey:NSForegroundColorAttributeName];
+                                if (style && style->backgroundColor().isValid())
+                                    [attrs setObject:style->backgroundColor().getNSColor() forKey:NSBackgroundColorAttributeName];
+            
+                                NSAttributedString *partialString = [[NSAttributedString alloc] initWithString:listText.getNSString() attributes:attrs];
+                                [attrs release];
+                                [result appendAttributedString: partialString];                
+                                [partialString release];
+                            }
                         }
                         break;
 

@@ -1,3 +1,14 @@
+2003-07-30  Richard Williamson   <rjw@apple.com>
+
+	Fixed 3349598.  Deal gracefully with <li> items that
+	are not in a <ol> or <ul>, instead of crashing!
+
+        Reviewed by Ken.
+
+        * kwq/KWQKHTMLPart.mm:
+        (listParent):
+        (KWQKHTMLPart::attributedString):
+
 2003-07-29  Richard Williamson   <rjw@apple.com>
 
 	Use the new KURL getNSURL() method to create an NSURL.
