@@ -2367,7 +2367,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 - (BOOL)_responderValidateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)item
 {
     id responder = [self _responderForResponderOperations];
-    if ([responder respondsToSelector:[item action]]) {
+    if (responder != self && [responder respondsToSelector:[item action]]) {
         if ([responder respondsToSelector:@selector(validateUserInterfaceItem:)]) {
             return [responder validateUserInterfaceItem:item];
         }
@@ -2377,7 +2377,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 }
 
 #define VALIDATE(name) \
-else if (action == @selector(name:)) { return [self _responderValidateUserInterfaceItem:item]; }
+    else if (action == @selector(name:)) { return [self _responderValidateUserInterfaceItem:item]; }
 
 - (BOOL)validateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)item
 {

@@ -1,3 +1,22 @@
+2005-03-05  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed <rdar://problem/4034603> REGRESSION (185-188): RadarWeb can't send enclosures anymore
+
+        * WebView.subproj/WebFormDataStream.m:
+        (closeCurrentStream): Release currentData when closing the stream.
+        (advanceCurrentStream): Set up and retain currentData when the current stream is reading that data, so the
+        data won't be released while in use.
+        (formCreate): Initialize currentData to NULL.
+
+        - fixed <rdar://problem/4037562> Tiger8A402: Help Viewer crashed when viewing help for iChat (infinite recursion in WebView)
+
+        * WebView.subproj/WebView.m: (-[WebView _responderValidateUserInterfaceItem:]):
+        Check for the case where we ourselves are the responder. This avoids an infinite loop.
+        The actual code to perform operations avoids this with a global variable, but this lighter weight
+        solution is sufficient here because validate operations don't call through to the next responder.
+
 2005-03-04  Richard Williamson   <rjw@apple.com>
 
 	Fixed <rdar://problem/3968753> REGRESSION: Poor performance with differing multiple animated GIFs (was fast in Panther)

@@ -22,6 +22,7 @@ typedef struct {
     CFMutableSetRef scheduledRunLoopPairs;
     CFMutableArrayRef formDataArray;
     CFReadStreamRef currentStream;
+    CFDataRef currentData;
     CFReadStreamRef formStream;
 } FormStreamFields;
 
@@ -73,6 +74,10 @@ static void closeCurrentStream(FormStreamFields *form)
         CFRelease(form->currentStream);
         form->currentStream = NULL;
     }
+    if (form->currentData) {
+        CFRelease(form->currentData);
+        form->currentData = NULL;
+    }
 }
 
 static void scheduleWithPair(const void *value, void *context)
@@ -99,6 +104,8 @@ static void advanceCurrentStream(FormStreamFields *form)
         // nextInput is a CFData containing an absolute path
         CFDataRef data = (CFDataRef)nextInput;
         form->currentStream = CFReadStreamCreateWithBytesNoCopy(alloc, CFDataGetBytePtr(data), CFDataGetLength(data), kCFAllocatorNull);
+        form->currentData = data;
+        CFRetain(data);
     } else {
         // nextInput is a CFString containing an absolute path
         CFStringRef path = (CFStringRef)nextInput;
@@ -139,6 +146,7 @@ static void *formCreate(CFReadStreamRef stream, void *context)
     newInfo->scheduledRunLoopPairs = CFSetCreateMutable(alloc, 0, &runLoopAndModeCallBacks);
     newInfo->formDataArray = CFArrayCreateMutableCopy(alloc, CFArrayGetCount(formDataArray), formDataArray);
     newInfo->currentStream = NULL;
+    newInfo->currentData = NULL;
     newInfo->formStream = stream; // Don't retain. That would create a reference cycle.
     return newInfo;
 }
