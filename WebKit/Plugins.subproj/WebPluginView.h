@@ -37,7 +37,8 @@ typedef struct _StreamData{
     NPP instance;
     NPWindow window;
     NP_Port nPort;
-    
+    NPP_t instanceStruct;
+
     char **cAttributes, **cValues;
     bool isFlipped, transferred, hidden, stopped;
             

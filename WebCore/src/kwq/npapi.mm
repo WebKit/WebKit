@@ -51,13 +51,13 @@ const char* NPN_UserAgent(NPP instance){
 }
 
 void* NPN_MemAlloc(UInt32 size){
-    KWQDebug("NPN_MemAlloc\n");
+    //KWQDebug("NPN_MemAlloc\n");
     return malloc(size);
 
 }
 
 void NPN_MemFree(void* ptr){
-    KWQDebug("NPN_MemFree\n");
+    //KWQDebug("NPN_MemFree\n");
     free(ptr);
 
 }

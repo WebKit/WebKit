@@ -50,7 +50,8 @@
     uint i;
         
     [super initWithFrame: r];
-    instance = malloc(sizeof(NPP_t));
+    //instance = malloc(sizeof(NPP_t)); // this doesn't work for Flash, so I have create a NPP_t and point to it
+    instance = &instanceStruct;
     instance->ndata = self;
 
     mime = mimeType;
