@@ -1,3 +1,30 @@
+2005-02-18  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Chris
+
+        Fix for these bugs:
+        
+        <rdar://problem/4013025> Copy/Paste of quoted word results in removal of any following <cr>
+        <rdar://problem/4013100> Copy/Paste quoted text and then decrease quote level does not change text color
+
+        For the most part, these bugs were caused by errors and lack of foresight on my part when
+        I added the better paste code. Chalk these fixes up to the result of bake time.
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::ReplacementFragment::ReplacementFragment): Need to move count of number of blocks in
+        fragment after the call to remove unrendered nodes. Meant to do this before, but forgot to.
+        (khtml::ReplacementFragment::removeStyleNodes): Need to remove inline styles from elements!
+        Terrible omission now fixed.
+        (khtml::ReplacementFragment::removeBlockquoteColorsIfNeeded): Remove blockquote colors for now.
+        Code has a more extensive comment in it now to explain the difficulty, and the need for more
+        study and changes.
+        (khtml::ReplaceSelectionCommand::doApply): Need to call applyStyleToInsertedNodes() in the 
+        m_fragment.hasInterchangeNewline() case. This was just missed before.
+        * layout-tests/editing/pasteboard/paste-text-011-expected.txt: Updated results, subtly different, but OK.
+        * layout-tests/editing/pasteboard/paste-text-017-expected.txt: Updated for <p> to <div> change in test content.
+        * layout-tests/editing/pasteboard/paste-text-017.html: Needed to change <p> to <div> to 
+        make this test go with the new design of using <div> tags for default paragraphs.
+
 2005-02-18  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3974263 (and possibly others).  Don't let fixed tables use maxint as their maxwidth when some
