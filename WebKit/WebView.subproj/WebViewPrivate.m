@@ -131,7 +131,7 @@
     [[self resourceProgressHandler] receivedError: error forResourceHandle: resourceHandle partialProgress: progress fromDataSource: dataSource];
 
     [dataSource _addError: error forResource:
-        (resourceHandle != nil ? [[resourceHandle url] absoluteString] : [[error failingURL] absoluteString])];
+        (resourceHandle != nil ? [[resourceHandle url] absoluteString] : [error failingURL])];
     
     [frame _checkLoadComplete];
 }

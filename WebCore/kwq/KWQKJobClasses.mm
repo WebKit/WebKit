@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,23 +39,22 @@ class TransferJobPrivate
 {
 public:
     TransferJobPrivate(const KURL &kurl)
+        : status(0)
+        , metaData([[NSMutableDictionary alloc] initWithCapacity:17])
+        , URL(kurl)
+        , handle(nil)
     {
-        status = 0;
-        metaData = [[NSMutableDictionary alloc] initWithCapacity:17];
-        url = [kurl.getNSURL() copy];
-        handle = nil;
     }
 
     ~TransferJobPrivate()
     {
         [metaData release];
-        [url release];
         [handle release];
     }
 
     int status;
     NSMutableDictionary *metaData;
-    NSURL *url;
+    KURL URL;
     WebResourceHandle *handle;
 };
 
@@ -84,11 +83,10 @@ void TransferJob::setError(int e)
     d->status = e;
 }
 
-const QString &TransferJob::errorText() const
+QString TransferJob::errorText() const
 {
     _logNotYetImplemented();
-    static QString text("DEFAULT_ERROR_TEXT");
-    return text;
+    return 0;
 }
 
 QString TransferJob::queryMetaData(const QString &key) const
@@ -125,9 +123,9 @@ WebResourceHandle *TransferJob::handle() const
     return d->handle;
 }
 
-NSURL *TransferJob::url() const
+KURL TransferJob::url() const
 {
-    return [[d->url retain] autorelease];
+    return d->URL;
 }
 
 } // namespace KIO

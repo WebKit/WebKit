@@ -277,7 +277,7 @@
 	![[self class] canShowMIMEType:[dataSource contentType]]) {
 
 	WebError *error = [[WebError alloc] initWithErrorCode:WebErrorCannotShowMIMEType 
-			           inDomain:WebErrorDomainWebKit failingURL: [dataSource inputURL]];
+			           inDomain:WebErrorDomainWebKit failingURL:[[dataSource inputURL] absoluteString]];
 	[[self policyHandler] unableToImplementContentPolicy:error forDataSource:dataSource];
     } else {
 	[dataSource _setContentPolicy:policy];

@@ -30,12 +30,16 @@
 
 #import <khtml_part.h>
 
+#import <WebFoundation/WebCacheLoaderConstants.h>
+#import <WebFoundation/WebError.h>
+
 #import <WebCoreBridge.h>
 #import <WebCoreResourceLoader.h>
 
 #import <kwqdebug.h>
 
 using khtml::CachedObject;
+using khtml::CachedImage;
 using khtml::DocLoader;
 using khtml::Loader;
 using khtml::Request;
@@ -94,11 +98,20 @@ void KWQServeRequest(Loader *loader, Request *request, TransferJob *job)
         request->m_docLoader->part()->baseURL().url().latin1(),
         request->object->url().string().latin1());
     
-    WebCoreResourceLoader *resourceLoader = [[WebCoreResourceLoader alloc] initWithLoader:loader job:job];
-    
     WebCoreBridge *bridge = ((KHTMLPart *)request->m_docLoader->part())->impl->getBridge();
-    job->setHandle([bridge startLoadingResource:resourceLoader withURL:job->url()]);
+
+    NSURL *URL = job->url().getNSURL();
+    if (URL == nil) {
+        WebError *badURLError = [[WebError alloc] initWithErrorCode:WebResultBadURLError
+                                                           inDomain:WebErrorDomainWebFoundation
+                                                         failingURL:job->url().url().getNSString()];
+        [bridge reportError:badURLError];
+        [badURLError release];
+        return;
+    }
     
+    WebCoreResourceLoader *resourceLoader = [[WebCoreResourceLoader alloc] initWithLoader:loader job:job];
+    job->setHandle([bridge startLoadingResource:resourceLoader withURL:URL]);
     [resourceLoader release];
 }
 
@@ -121,8 +134,9 @@ void KWQCheckCacheObjectStatus(DocLoader *loader, CachedObject *cachedObject)
     
     // Notify the caller that we "loaded".
     WebCoreBridge *bridge = ((KHTMLPart *)loader->part())->impl->getBridge();
-    NSURL *nsURL = [[NSURL alloc] initWithString:cachedObject->url().string().getNSString()];
-    // FIXME: cachedObject-size() is not the correct size, see Radar 2965269
-    [bridge objectLoadedFromCache:nsURL size:cachedObject->size()];
-    [nsURL release];
+    NSURL *URL = [[NSURL alloc] initWithString:cachedObject->url().string().getNSString()];
+    KWQ_ASSERT(URL);
+    CachedImage *cachedImage = dynamic_cast<CachedImage *>(cachedObject);
+    [bridge objectLoadedFromCache:URL size:cachedImage ? cachedImage->dataSize() : cachedObject->size()];
+    [URL release];
 }

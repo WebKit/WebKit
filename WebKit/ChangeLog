@@ -1,3 +1,24 @@
+2002-07-25  Darin Adler  <darin@apple.com>
+
+	WebKit part of fix for 3006054 -- assert error failingURL != nil
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge reportError:]): New. Passes the error to the controller associated with
+	the dataSource.
+
+        * WebCoreSupport.subproj/WebSubresourceClient.m:
+        (+[WebSubresourceClient startLoadingResource:withURL:dataSource:]): Call absoluteString.
+        (-[WebSubresourceClient WebResourceHandleDidCancelLoading:]): Call absoluteString.
+        * WebView.subproj/WebController.m:
+        (-[WebController haveContentPolicy:andPath:forDataSource:]): Call absoluteString.
+        * WebView.subproj/WebControllerPrivate.m:
+        (-[WebController _receivedError:forResourceHandle:partialProgress:fromDataSource:]):
+	Don't call absoluteString.
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _shouldShowDataSource:]): Call absoluteString.
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient WebResourceHandleDidCancelLoading:]): Call absoluteString.
+
 2002-07-25  Chris Blumenberg  <cblu@apple.com>
 
 	Remove reloadImage until its implemented.

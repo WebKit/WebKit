@@ -66,12 +66,12 @@
     if (handle == nil) {
         [rLoader cancel];
 
-        WebError *badURLError = [WebError errorWithCode:WebResultBadURLError
-                                               inDomain:WebErrorDomainWebFoundation
-                                             failingURL:URL
-                                             isTerminal:YES];        
+        WebError *badURLError = [[WebError alloc] initWithErrorCode:WebResultBadURLError
+                                                           inDomain:WebErrorDomainWebFoundation
+                                                         failingURL:[URL absoluteString]];
         [[source controller] _receivedError:badURLError forResourceHandle:nil
             partialProgress:nil fromDataSource:source];
+        [badURLError release];
     } else {
         [source _addResourceHandle:handle];
         
@@ -120,7 +120,7 @@
     [dataSource _removeResourceHandle:handle];
         
     error = [[WebError alloc] initWithErrorCode:WebResultCancelled 
-        inDomain:WebErrorDomainWebFoundation failingURL:[dataSource inputURL]];
+        inDomain:WebErrorDomainWebFoundation failingURL:[[dataSource inputURL] absoluteString]];
     [self receivedError:error forHandle:handle];
     [error release];
 

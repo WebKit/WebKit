@@ -157,7 +157,7 @@ typedef khtml::RenderPart KHTMLRenderPart;
 - (void)setWindowFrame:(NSRect)frame;
 
 - (WebResourceHandle *)startLoadingResource:(id <WebCoreResourceLoader>)loader withURL:(NSURL *)URL;
-
+- (void)reportError:(WebError *)error;
 - (void)objectLoadedFromCache:(NSURL *)URL size:(unsigned)bytes;
 
 - (BOOL)openedByScript;

@@ -1,3 +1,26 @@
+2002-07-25  Darin Adler  <darin@apple.com>
+
+	- fixed 2965269 -- sizes reported to progress handler from KWQCheckCacheObjectStatus for images are wrong
+	- fixed 3006054 -- assert error failingURL != nil
+
+        * khtml/misc/loader.h: Add dataSize() and m_dataSize.
+        * khtml/misc/loader.cpp:
+        (CachedImage::CachedImage): Initialize m_dataSize.
+        (CachedImage::data): Update m_dataSize.
+
+        * kwq/kio/jobclasses.h:
+        * kwq/KWQKjobclasses.mm: Store a KURL instead of an NSURL, because KURL can hold any string.
+
+        * kwq/KWQLoaderImpl.mm:
+        (KWQServeRequest): Send an error with [WebCoreBridge reportError:] if the URL is so bad we can't
+	construct an NSURL from it. This is the only case in all our code where we need to have failingURL
+	accept a string.
+        (KWQCheckCacheObjectStatus): If the object is an image, use the dataSize() rather than size().
+	The size() is a (bad) estimate of how much memory is used in the case of an image, but we want
+	to report the size of the original data.
+
+        * kwq/WebCoreBridge.h: Add a [reportError:] method.
+
 2002-07-25  David Hyatt  <hyatt@apple.com>
 
 	Fix for huge white space problem on appleturns.com, bug 2947818.  Vertical-align

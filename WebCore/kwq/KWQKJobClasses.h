@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,7 +43,7 @@ class TransferJobPrivate;
 class Job : public QObject {
 public:
     virtual int error() const = 0;
-    virtual const QString & errorText() const = 0;
+    virtual QString errorText() const = 0;
     virtual void kill() = 0;
 };
 
@@ -54,7 +54,7 @@ public:
 
     int error() const;
     void setError(int);
-    const QString &errorText() const;
+    QString errorText() const;
     bool isErrorPage() const;
     QString queryMetaData(const QString &key) const;
     void addMetaData(const QString &key, const QString &value);
@@ -63,7 +63,7 @@ public:
     void setHandle(WebResourceHandle *);
     WebResourceHandle *handle() const;
     
-    NSURL *url() const;
+    KURL url() const;
 
 private:
     TransferJobPrivate *d;

@@ -295,4 +295,12 @@
     [attributes release];
 }
 
+- (void)reportError:(WebError *)error
+{
+    [[frame controller] _receivedError:error
+                     forResourceHandle:nil
+                       partialProgress:nil
+                        fromDataSource:[self dataSource]];
+}
+
 @end

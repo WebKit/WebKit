@@ -114,7 +114,7 @@
     
     // FIXME: Maybe we should be passing the URL from the handle here, not from the dataSource.
     error = [[WebError alloc] initWithErrorCode:WebResultCancelled 
-        inDomain:WebErrorDomainWebFoundation failingURL:[dataSource inputURL]];
+        inDomain:WebErrorDomainWebFoundation failingURL:[[dataSource inputURL] absoluteString]];
     [self receivedError:error forHandle:handle];
     [error release];
     
