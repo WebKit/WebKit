@@ -56,7 +56,11 @@
 #include <kdebug.h>
 #include <stdlib.h>
 
+// turn off inlining to void warning with newer gcc
+#undef __inline
+#define __inline
 #include "kentities.c"
+#undef __inline
 
 using namespace khtml;
 

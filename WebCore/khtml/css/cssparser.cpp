@@ -53,6 +53,9 @@ using namespace DOM;
 #include "misc/htmlhashes.h"
 #include "misc/helper.h"
 
+// turn off inlining to void warning with newer gcc
+#undef __inline
+#define __inline
 //
 // The following file defines the function
 //     const struct props *findProp(const char *word, int len)
@@ -61,7 +64,7 @@ using namespace DOM;
 // (and including) CSS_PROP_TOTAL-1
 #include "cssproperties.c"
 #include "cssvalues.c"
-
+#undef __inline
 
 static QPtrList<CSSProperty>* m_propList = 0;
 static bool m_bImportant = FALSE;

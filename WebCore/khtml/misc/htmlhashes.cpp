@@ -18,9 +18,15 @@
     the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
     Boston, MA 02111-1307, USA.
 */
+
 #include "htmlhashes.h"
+
+// turn off inlining to void warning with newer gcc
+#undef __inline
+#define __inline
 #include "htmltags.c"
 #include "htmlattrs.c"
+#undef __inline
 
 int khtml::getTagID(const char *tagStr, int len)
 {

@@ -1,5 +1,14 @@
 2002-09-28  Darin Adler  <darin@apple.com>
 
+	Give the next fat build a better chance of working with the
+	new gcc without turning warnings off.
+
+        * khtml/css/cssparser.cpp: Use a macro to disable inlining.
+        * khtml/html/htmltokenizer.cpp: Ditto.
+        * khtml/misc/htmlhashes.cpp: Ditto.
+
+2002-09-28  Darin Adler  <darin@apple.com>
+
 	- fixed 3022441 -- scroll bar is missing in window created with window.open
 
         * khtml/ecma/kjs_window.cpp: (WindowFunc::tryCall): The checks for extra
