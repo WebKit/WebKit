@@ -1,5 +1,16 @@
 2004-04-09  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by me
+        
+        Added two more layout tests for editing.
+
+        * layout-tests/editing/selection/move-between-blocks-no-001-expected.txt: Added.
+        * layout-tests/editing/selection/move-between-blocks-no-001.html: Added.
+        * layout-tests/editing/selection/move-between-blocks-yes-001-expected.txt: Added.
+        * layout-tests/editing/selection/move-between-blocks-yes-001.html: Added.
+
+2004-04-09  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by Dave
         
         Small collection of editing improvements.
