@@ -1,5 +1,15 @@
 2003-06-12  Richard Williamson   <rjw@apple.com>
 
+	Fixed 3288532.  When setCapacity: shrinks capacity, trim
+	the back/forward list.  Setting to zero will effectively
+	flush the list.
+
+        Reviewed by John.
+
+        * History.subproj/WebBackForwardList.m:
+
+2003-06-12  Richard Williamson   <rjw@apple.com>
+
 	Fixed 3221078.  Maintain a seperate width map
 	for substitute fonts to avoid collision of glyph
 	codes.
