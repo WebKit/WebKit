@@ -1,3 +1,10 @@
+2003-12-16  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by me
+
+        * WebCoreSupport.subproj/WebBridge.m: ObjC runtime needs a declaration for new
+	_calculatedExpiration SPI in NSURLResponse in Foundation
+
 2003-12-16  Richard Williamson   <rjw@apple.com>
 
 	Fixed 3512348:  Rewrote _CG_drawHighlightForRun:style:atPoint: to use width

@@ -66,6 +66,10 @@
 - (NSView *)_findLastViewInKeyViewLoop;
 @end
 
+@interface NSURLResponse (FoundationSecretsWebBridgeKnowsAbout)
+- (NSTimeInterval)_calculatedExpiration;
+@end
+
 @interface NSView (JavaPluginSecrets)
 - (jobject)pollForAppletInWindow: (NSWindow *)window;
 @end
