@@ -1,3 +1,11 @@
+2003-06-12  Don Melton  <gramps@apple.com>
+
+	Since Richard didn't actually correct the fix for 3288532 in
+	WebBackForwardList.m, I've backed out out his original fix entirely.
+
+        * History.subproj/WebBackForwardList.m:
+        (-[WebBackForwardList setCapacity:]):
+
 2003-06-12  Richard Williamson   <rjw@apple.com>
 
 	Correct fix for 3288532.
