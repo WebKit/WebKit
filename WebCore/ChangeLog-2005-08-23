@@ -1,5 +1,22 @@
 2005-03-20  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by me
+        
+        Added tests to cover new "unsupported content" editing code.
+
+        * layout-tests/editing/unsupported-content/list-delete-001-expected.txt: Added.
+        * layout-tests/editing/unsupported-content/list-delete-001.html: Added.
+        * layout-tests/editing/unsupported-content/list-delete-002-expected.txt: Added.
+        * layout-tests/editing/unsupported-content/list-delete-002.html: Added.
+        * layout-tests/editing/unsupported-content/list-delete-003-expected.txt: Added.
+        * layout-tests/editing/unsupported-content/list-delete-003.html: Added.
+        * layout-tests/editing/unsupported-content/list-type-after-expected.txt: Added.
+        * layout-tests/editing/unsupported-content/list-type-after.html: Added.
+        * layout-tests/editing/unsupported-content/list-type-before-expected.txt: Added.
+        * layout-tests/editing/unsupported-content/list-type-before.html: Added.
+
+2005-03-20  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by Maciej
         
         Fix for this bug:
