@@ -1,3 +1,14 @@
+2004-06-24  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Darin.
+        
+        - fixed <rdar://problem/3706792> 8A161: Choosing text encoding for 
+        error page opens finder window!?
+
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame _reloadAllowingStaleDataWithOverrideEncoding:]):
+        take unreachableURL into account
+
 2004-06-23  Richard Williamson   <rjw@apple.com>
 
 		Implemented changes for latest npruntime.h.

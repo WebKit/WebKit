@@ -1991,6 +1991,10 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     }
 
     NSMutableURLRequest *request = [[dataSource request] mutableCopy];
+    NSURL *unreachableURL = [dataSource unreachableURL];
+    if (unreachableURL != nil) {
+        [request setURL:unreachableURL];
+    }
     [request setCachePolicy:NSURLRequestReturnCacheDataElseLoad];
     WebDataSource *newDataSource = [[WebDataSource alloc] initWithRequest:request];
     [request release];
