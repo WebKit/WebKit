@@ -1,5 +1,17 @@
 2003-11-16  David Hyatt  <hyatt@apple.com>
 
+	Fix for 3485766.
+	
+	Make sure DOM elements that are programmatically focused at a time when they have no render objects restore the
+	focus to their widgets when render objects get built.
+	
+        Reviewed by darin
+
+        * khtml/html/html_formimpl.cpp:
+        (HTMLGenericFormElementImpl::attach):
+
+2003-11-16  David Hyatt  <hyatt@apple.com>
+
 	Add border info to the render tree dumper.
 
         * khtml/rendering/render_style.h:
