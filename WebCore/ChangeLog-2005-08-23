@@ -2,6 +2,14 @@
 
         Reviewed by Hyatt
 
+        * khtml/editing/htmlediting_impl.cpp:
+        (DeleteSelectionCommandImpl::doApply): Short-circuit return if the selection
+        is not a range after collapsing whitespace.
+
+2004-04-22  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+
         More work to bring code up to date with the latest API proposal.
 
         * khtml/xml/dom_selection.h: Fix typo in comment.
