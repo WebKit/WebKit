@@ -824,7 +824,7 @@ DOM::DOMString CSSPrimitiveValueImpl::cssText() const
 	    // ###
 	    break;
 	case CSSPrimitiveValue::CSS_NUMBER:
-	    text = DOMString(QString::number( (int)m_value.num ));
+	    text = DOMString(QString::number( m_value.num ));
 	    break;
 	case CSSPrimitiveValue::CSS_PERCENTAGE:
 	    text = DOMString(QString::number( m_value.num ) + "%");

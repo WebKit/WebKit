@@ -1,3 +1,19 @@
+2005-02-21  Richard Williamson   <rjw@apple.com>
+
+	Fixed <rdar://problem/4008338> REGRESSION (125-178): opacity style not working, breaks fading images on okcupid.com
+
+	There was a long standing bug in cssText().  Double value were always cast int!  So,
+	opacity values values were incorrectly converted to text, i.e. 0.75 became 0.
+	
+	The problem was newly triggered because we parse the css for opacity *TWICE*.  This is a result of 
+	incorrectly "invalidating" the style attribute (from fix for 3790449).  The second parse was from
+	the cssText() of the style.
+
+        Reviewed by Hyatt.
+
+        * khtml/css/css_valueimpl.cpp:
+        (DOM::CSSPrimitiveValueImpl::cssText):
+
 2005-02-21  David Hyatt  <hyatt@apple.com>
 
 	Fix for 4017204, apply the same fix to the base class nodeAtPoint that was already applied to RenderBlock.
