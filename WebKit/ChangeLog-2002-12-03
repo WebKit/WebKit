@@ -1,4 +1,32 @@
-2002-08-26  Richard Williamson (Home)  <rjw@apple.com>
+2002-08-26  Darin Adler  <darin@apple.com>
+
+	Add machinery for deferring callbacks. Not used yet.
+
+        * WebView.subproj/WebControllerPrivate.h: Add methods.
+        * WebView.subproj/WebControllerPrivate.m:
+        (-[WebController _defersCallbacks]): Returns old state.
+        (-[WebController _setDefersCallbacks:]): Changes state and calls _defersCallbacksChanged
+	on the main frame.
+
+        * WebView.subproj/WebFramePrivate.h: Add _defersCallbacksChanged.
+        * WebView.subproj/WebFramePrivate.m: (-[WebFrame _defersCallbacksChanged]):
+	Calls _defersCallbacksChanged on both data sources.
+
+        * WebView.subproj/WebDataSourcePrivate.h: Add _defersCallbacksChanged.
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _setController:]): Call _defersCallbacksChanged if changing the controller
+	changes the state.
+        (-[WebDataSource _addResourceHandle:]): Call setDefersCallbacks:YES on the new handle if
+	we are already attached to a controller that defers callbacks.
+        (-[WebDataSource _defersCallbacksChanged]): Call setDefersCallbacks on all the handles, and
+	call _defersCallbacksChanged on the child frames as well.
+
+        * WebView.subproj/WebDataSource.m: (-[WebDataSource controller]):
+	We need to know about all controller changes, so it's unacceptable to consult our
+	parent about the controller. But we already do know about it and this code was unnecessary.
+	Leave the old code around as an assert only.
+
+2002-08-26  Richard Williamson  <rjw@apple.com>
 
         * History.subproj/WebHistory.h:
         * History.subproj/WebHistory.m:
@@ -34,7 +62,7 @@
 	It would be better to do this at some other level, but without this code, we end
 	up leaving the entire KHTMLView behind when we switch to a non-HTML page.
 
-2002-08-22  Richard Williamson (Local)  <rjw@apple.com>
+2002-08-22  Richard Williamson  <rjw@apple.com>
 
         Changed public string from #define to extern NSString.
         
@@ -72,7 +100,7 @@
 
 === Alexander-20 ===
 
-2002-08-21  Richard Williamson (Local)  <rjw@apple.com>
+2002-08-21  Richard Williamson  <rjw@apple.com>
 
         Simple name change.  Plugin -> NetscapePlugin in anticipation
         of other plugin related API.
@@ -669,7 +697,7 @@
         (-[WebPreferences defaultTextEncoding]): Likewise.
         (-[WebPreferences setDefaultTextEncoding:]): Likewise.
 
-2002-08-08  Richard Williamson (Home)  <rjw@apple.com>
+2002-08-08  Richard Williamson  <rjw@apple.com>
 
         Changes to coalesce all drawing calls of the same text
         style and color into one call to CG.  Significantly
@@ -742,7 +770,7 @@
         * WebView.subproj/WebView.m:
         (-[WebView keyDown:]): Check for shift-delete.
 
-2002-08-07  Richard Williamson (Home)  <rjw@apple.com>
+2002-08-07  Richard Williamson  <rjw@apple.com>
 
         Fixed scrollview related drawing turd problems.
         (3000844 and 2896459).
@@ -935,7 +963,7 @@
         (-[WebIconLoader WebResourceHandleDidFinishLoading:data:]):
         * WebView.subproj/WebDataSourcePrivate.m:
 
-2002-08-05  Richard Williamson (Home)  <rjw@apple.com>
+2002-08-05  Richard Williamson  <rjw@apple.com>
 
         Added additional check to find appropriate fonts with available
         weight, rather than always using a weight of 5.
@@ -957,7 +985,7 @@
         * WebCoreSupport.subproj/WebBridge.m:
         (-[WebBridge setTitle:]): Call _web_stringByCollapsingNonPrintingCharacters.
 
-2002-08-05  Richard Williamson (Home)  <rjw@apple.com>
+2002-08-05  Richard Williamson  <rjw@apple.com>
 
         Added exported symbols file.
         
@@ -1049,7 +1077,7 @@
         (-[WebView keyDown:]):
 	Added checks for command key.
 
-2002-08-01  Richard Williamson (Local)  <rjw@apple.com>
+2002-08-01  Richard Williamson  <rjw@apple.com>
 
         Effort towards 3014555 (going back to frame), but not fixed.  
         Need to think more about appropriate solution and compromises.
@@ -1100,7 +1128,7 @@
         * Plugins.subproj/WebPluginView.m:
         (-[WebPluginView performKeyEquivalent:]):
 
-2002-08-01  Richard Williamson (Local)  <rjw@apple.com>
+2002-08-01  Richard Williamson  <rjw@apple.com>
 
         More back/forward work.  Support for restoring scroll position.
         We still have a big remaining issue.  We don't record the entire
@@ -1249,7 +1277,7 @@
 	it would be a mistake to get a redirect after having received
 	data.
 
-2002-07-30  Richard Williamson (local)  <rjw@apple.com>
+2002-07-30  Richard Williamson  <rjw@apple.com>
 
         Remove annoying log, it's really annoying.  Added FIX ME
         comment instead.
@@ -1426,7 +1454,7 @@
         * WebView.subproj/WebDataSourcePrivate.m:
         (-[WebDataSource _mainHandle]): added, WebPluginStream needs this
 
-2002-07-25  Richard Williamson (Local)  <rjw@apple.com>
+2002-07-25  Richard Williamson  <rjw@apple.com>
 
         More incremental changes for back/forward migration.
 
@@ -1631,7 +1659,7 @@
         * WebView.subproj/WebHTMLView.m:
         (-[WebHTMLView menuForEvent:]):
 
-2002-07-24  Richard Williamson (Local)  <rjw@apple.com>
+2002-07-24  Richard Williamson  <rjw@apple.com>
 
         Removed vestigal locationChangeHandler ivar.
         
@@ -1646,7 +1674,7 @@
         * WebView.subproj/WebDataSourcePrivate.m:
         (-[WebDataSource receivedPageIcon:]):
 
-2002-07-24  Richard Williamson (Local)  <rjw@apple.com>
+2002-07-24  Richard Williamson  <rjw@apple.com>
 
         Implemented find for text views.
         
@@ -1730,7 +1758,7 @@
 	Renamed minimumFont to defaultFont, and changed it from 11 to 16.
 	Also changed default monospaced font to Courier instead of Monaco.
 
-2002-07-24  Richard Williamson (Local)  <rjw@apple.com>
+2002-07-24  Richard Williamson  <rjw@apple.com>
 
         Support for find in HTML, find in text view coming soon.
         

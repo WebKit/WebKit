@@ -20,6 +20,7 @@
 #import <WebKit/WebMainResourceClient.h>
 #import <WebKit/WebTextRepresentation.h>
 #import <WebKit/WebController.h>
+#import <WebKit/WebControllerPrivate.h>
 #import <WebKit/WebBridge.h>
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebViewPrivate.h>
@@ -132,11 +133,17 @@
 
 - (void)_setController: (WebController *)controller
 {
+    BOOL defers = [_private->controller _defersCallbacks];
+    
     if (_private->loading) {
         [controller retain];
         [_private->controller release];
     }
     _private->controller = controller;
+    
+    if (defers != [_private->controller _defersCallbacks]) {
+        [self _defersCallbacksChanged];
+    }
 }
 
 - (void)_setParent: (WebDataSource *)p
@@ -187,9 +194,13 @@
 
 - (void)_addResourceHandle: (WebResourceHandle *)handle
 {
-    if (_private->resourceHandles == nil)
+    if (_private->resourceHandles == nil) {
         _private->resourceHandles = [[NSMutableArray alloc] init];
-    [_private->resourceHandles addObject: handle];
+    }
+    if ([_private->controller _defersCallbacks]) {
+        [handle setDefersCallbacks:YES];
+    }
+    [_private->resourceHandles addObject:handle];
     [self _setLoading:YES];
 }
 
@@ -484,6 +495,20 @@
 - (WebResourceHandle*)_mainHandle
 {
     return _private->mainHandle;
+}
+
+- (void)_defersCallbacksChanged
+{
+    BOOL defers = [_private->controller _defersCallbacks];
+
+    [_private->mainHandle setDefersCallbacks:defers];
+    NSEnumerator *e = [_private->resourceHandles objectEnumerator];
+    WebResourceHandle *handle;
+    while ((handle = [e nextObject])) {
+        [handle setDefersCallbacks:defers];
+    }
+
+    [[self children] makeObjectsPerformSelector:@selector(_defersCallbacksChanged)];
 }
 
 @end

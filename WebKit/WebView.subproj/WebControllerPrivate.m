@@ -192,4 +192,19 @@
     [dataSource release];
 }
 
+- (BOOL)_defersCallbacks
+{
+    return _private->defersCallbacks;
+}
+
+- (void)_setDefersCallbacks:(BOOL)defers
+{
+    if (defers == _private->defersCallbacks) {
+        return;
+    }
+
+    _private->defersCallbacks = defers;
+    [_private->mainFrame _defersCallbacksChanged];
+}
+
 @end

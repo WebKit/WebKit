@@ -694,4 +694,10 @@ static const char * const stateNames[] = {
     [[[self dataSource] children] makeObjectsPerformSelector:@selector(_textSizeMultiplierChanged)];
 }
 
+- (void)_defersCallbacksChanged
+{
+    [[self provisionalDataSource] _defersCallbacksChanged];
+    [[self dataSource] _defersCallbacksChanged];
+}
+
 @end

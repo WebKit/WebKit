@@ -170,8 +170,7 @@
     // All data sources used in a document share the same controller.
     // A single document may have many data sources corresponding to
     // frames or iframes.
-    if (_private->parent != nil)
-        return [_private->parent controller];
+    WEBKIT_ASSERT(_private->parent == nil || [_private->parent controller] == _private->controller);
     return _private->controller;
 }
 

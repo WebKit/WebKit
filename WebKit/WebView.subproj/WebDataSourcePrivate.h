@@ -81,6 +81,7 @@
 @end
 
 @interface WebDataSource (WebPrivate)
+
 - (void)_setResourceData:(NSData *)data;
 - (Class)_representationClass;
 - (void)_setRepresentation: (id<WebDocumentRepresentation>)representation;
@@ -120,5 +121,7 @@
 - (void)_commitIfReady;
 - (void)_makeRepresentation;
 - (void)_receivedData:(NSData *)data;
+
+- (void)_defersCallbacksChanged;
 
 @end

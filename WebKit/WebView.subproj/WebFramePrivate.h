@@ -73,6 +73,7 @@ typedef enum {
 @end
 
 @interface WebFrame (WebPrivate)
+
 - (void)_parentDataSourceWillBeDeallocated;
 - (void)_setController: (WebController *)controller;
 - (void)_setDataSource: (WebDataSource *)d;
@@ -93,4 +94,7 @@ typedef enum {
 - (void)_restoreScrollPosition;
 - (void)_scrollToTop;
 - (void)_textSizeMultiplierChanged;
+
+- (void)_defersCallbacksChanged;
+
 @end
