@@ -167,7 +167,7 @@
 - (BOOL)locationWillChangeTo: (NSURL *)url;
 
 - (void)locationChangeStarted;
-- (void)locationChangeCancelledL: (WKError *)error;
+- (void)locationChangeCancelled: (WKError *)error;
 - (void)locationChangeStopped: (WKError *)error;
 - (void)locationChangeFinished;
 
