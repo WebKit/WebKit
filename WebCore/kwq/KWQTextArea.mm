@@ -372,6 +372,13 @@ static NSRange RangeOfParagraph(NSString *text, int paragraph)
     [textView setBackgroundColor:color];
 }
 
+- (void)setDrawsBackground:(BOOL)drawsBackground
+{
+    [super setDrawsBackground:drawsBackground];
+    [[self contentView] setDrawsBackground:drawsBackground];
+    [textView setDrawsBackground:drawsBackground];
+}
+
 - (BOOL)becomeFirstResponder
 {
     [KWQKHTMLPart::bridgeForWidget(widget) makeFirstResponder:textView];

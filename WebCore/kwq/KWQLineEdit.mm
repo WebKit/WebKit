@@ -111,10 +111,15 @@ void QLineEdit::setPalette(const QPalette &palette)
 
     KWQ_BLOCK_EXCEPTIONS;
 
+    // Below we've added a special case that maps any completely transparent color to white.  This is a workaround for the following
+    // AppKit problems: <rdar://problem/3142730> and <rdar://problem/3036580>.  Without this special case we have black
+    // backgrounds on some text fields as described in <rdar://problem/3854383>.  Text fields will still not be able to display
+    // transparent and translucent backgrounds, which will need to be fixed in the future.  See  <rdar://problem/3865114>.
+        
     [textField setTextColor:palette.foreground().getNSColor()];
 
     QColor background = palette.background();
-    if (!background.isValid())
+    if (!background.isValid() || background.alpha() == 0)
         background = Qt::white;
     [textField setBackgroundColor:background.getNSColor()];
 

@@ -226,6 +226,11 @@ void QTextEdit::setPalette(const QPalette &palette)
     KWQTextArea *textArea = getView();
 
     KWQ_BLOCK_EXCEPTIONS;
+    
+    // Below is a workaround for the following AppKit bug which causes transparent backgrounds to be 
+    // drawn opaque <rdar://problem/3142730>.  Without this workaround, some textareas would be drawn with black backgrounds
+    // as described in <rdar://problem/3854383>.  We now call setDrawsBackground:NO when the background color is completely 
+    // transparent.  This does not solve the problem for translucent background colors for textareas <rdar://problem/3865161>.
 
     [textArea setTextColor:palette.foreground().getNSColor()];
 
@@ -233,6 +238,7 @@ void QTextEdit::setPalette(const QPalette &palette)
     if (!background.isValid())
         background = Qt::white;
     [textArea setBackgroundColor:background.getNSColor()];
+    [textArea setDrawsBackground:background.alpha() != 0];
 
     KWQ_UNBLOCK_EXCEPTIONS;
 }
