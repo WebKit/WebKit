@@ -4631,6 +4631,11 @@ void KHTMLPart::setTitle(const DOMString &title)
     impl->setTitle(title);
 }
 
+void KHTMLPart::detachView()
+{
+    impl->setView(0);
+}
+
 #endif
 
 using namespace KParts;

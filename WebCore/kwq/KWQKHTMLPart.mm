@@ -311,7 +311,8 @@ void KWQKHTMLPartImpl::end()
     d->m_doc->close();
     KURL::clearCaches();
     
-    d->m_view->complete();
+    if (d->m_view)
+        d->m_view->complete();
 }
  
 bool KWQKHTMLPartImpl::gotoBaseAnchor()

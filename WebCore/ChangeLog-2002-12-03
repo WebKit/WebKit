@@ -1,3 +1,15 @@
+2002-06-26  Darin Adler  <darin@apple.com>
+
+	Fixed (or at least worked around) a crash I saw where KWQKHTMLPartImpl::end was
+        making calls after the KHTMLView was gone. This is specific to our APPLE_CHANGES
+        code; it's handled differently in KDE.
+
+        * khtml/khtml_part.h: Added detachView.
+        * khtml/khtml_part.cpp: (KHTMLPart::detachView): Added. Nils out the view pointer.
+        * khtml/khtmlview.cpp: (KHTMLView::~KHTMLView): Call m_part->detachView().
+        * kwq/KWQKHTMLPart.mm: (KWQKHTMLPartImpl::end): Don't try to make calls to the view
+        if it's nil.
+
 2002-06-25  Richard Williamson  <rjw@apple.com>
         
         Support for khtml style selection drawing.  Ugly,
