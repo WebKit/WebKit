@@ -2,6 +2,14 @@
 
         Reviewed by Kevin.
 
+        - fixed <rdar://problem/3658277> REGRESSION (1.1-1.2): form submission should either not simulate a click at all or use (0,0) the way Mozilla does
+
+        * khtml/html/html_elementimpl.cpp: (HTMLElementImpl::click): Use 0,0 for the coordinates.
+
+2004-10-09  Darin Adler  <darin@apple.com>
+
+        Reviewed by Kevin.
+
         - fixed <rdar://problem/3804665> REGRESSION: WebCore framework now has many init routines
 
         * khtml/xml/dom_nodeimpl.h: Changed anyQName declaration to not use the inline function
