@@ -258,8 +258,8 @@ static void __IFFillStyleWithAttributes(ATSUStyle style, NSFont *theFont) {
         }
         cgContext = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
         CGContextSetCharacterSpacing(cgContext, 0.0);
-        //CGContextShowGlyphsAtPoint (cgContext, p.x, p.y + [frag boundingRect].size.height + (int)[font descender] - 1, (const short unsigned int *)usedGlyphBuf, numGlyphs);
-        CGContextShowGlyphsAtPoint (cgContext, p.x, p.y + lineHeight - 1 - (int)[font descender], (const short unsigned int *)usedGlyphBuf, numGlyphs);
+        //CGContextShowGlyphsAtPoint (cgContext, p.x, p.y + lineHeight - 1 - ROUND_TO_INT(-[font descender]), (const short unsigned int *)usedGlyphBuf, numGlyphs);
+        CGContextShowGlyphsAtPoint (cgContext, p.x, p.y + [font defaultLineHeightForFont] - 1, (const short unsigned int *)usedGlyphBuf, numGlyphs);
         
         if (glyphBuf)
             free (glyphBuf);
@@ -306,8 +306,10 @@ static void __IFFillStyleWithAttributes(ATSUStyle style, NSFont *theFont) {
         lineWidth = size.width;
     }
     CGContextSetLineWidth(cgContext, lineWidth);
-    CGContextMoveToPoint(cgContext, p.x, p.y + lineHeight + 0.5 - (int)[font descender]);
-    CGContextAddLineToPoint(cgContext, p.x + rect.size.width, p.y + lineHeight + 0.5 - (int)[font descender]);
+    ///CGContextMoveToPoint(cgContext, p.x, p.y + lineHeight + 0.5 - ROUND_TO_INT(-[font descender]));
+    //CGContextAddLineToPoint(cgContext, p.x + rect.size.width, p.y + lineHeight + 0.5 - ROUND_TO_INT(-[font descender]));
+    CGContextMoveToPoint(cgContext, p.x, p.y + [font defaultLineHeightForFont] + 0.5);
+    CGContextAddLineToPoint(cgContext, p.x + rect.size.width, p.y + [font defaultLineHeightForFont] + 0.5);
     CGContextStrokePath(cgContext);
 
     [graphicsContext setShouldAntialias: flag];
@@ -404,7 +406,7 @@ static void __IFFillStyleWithAttributes(ATSUStyle style, NSFont *theFont) {
     [super init];
 
     font = [aFont retain];
-    lineHeight = ROUND_TO_INT([font ascender]) - ROUND_TO_INT([font descender]) + 1;
+    lineHeight = ROUND_TO_INT([font ascender]) + ROUND_TO_INT(-[font descender]) + 1;
 
 #ifdef DIRECT_TO_CG
     ATSUStyle style;
@@ -451,6 +453,10 @@ static void __IFFillStyleWithAttributes(ATSUStyle style, NSFont *theFont) {
 #endif
 }
 
+#define CONTEXT_DPI    (72.0)
+#define ScaleEmToUnits(X, U_PER_EM)    (X * ((1.0 * CONTEXT_DPI) / (CONTEXT_DPI * U_PER_EM)))
+#define ScaleUnitsToPoints(F, POINTS)  (F * POINTS)
+
 #ifdef DIRECT_TO_CG
 - (void)_initializeCaches
 {
@@ -459,8 +465,8 @@ static void __IFFillStyleWithAttributes(ATSUStyle style, NSFont *theFont) {
     size_t numGlyphsInFont = CGFontGetNumberOfGlyphs([font _backingCGSFont]);
     short unsigned int sequentialGlyphs[INITIAL_GLYPH_CACHE_MAX];
     ATSLayoutRecord *glyphRecords;
-            
-    KWQDEBUGLEVEL3 (KWQ_LOG_FONTCACHE, "Caching %s %.0f (%ld glyphs)\n", [[font displayName] cString], [font pointSize], numGlyphsInFont); 
+
+    KWQDEBUGLEVEL6 (KWQ_LOG_FONTCACHE, "Caching %s %.0f (%ld glyphs) ascent = %f, descent = %f, defaultLineHeightForFont = %f\n", [[font displayName] cString], [font pointSize], numGlyphsInFont, [font ascender], [font descender], [font defaultLineHeightForFont]); 
 
     // Initially just cache the max of number of glyphs in font or
     // INITIAL_GLYPH_CACHE_MAX.  Holes in the cache will be filled on demand

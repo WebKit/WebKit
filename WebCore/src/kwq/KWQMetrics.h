@@ -55,6 +55,7 @@
 
 #import <ApplicationServices/ApplicationServices.h>
 #import <ATSUnicodePriv.h>
+#import <CoreGraphics/CGFontPrivate.h>
 
 #undef Fixed
 #undef Rect
@@ -64,13 +65,6 @@
 - (ATSUFontID)_atsFontID;
 - (CGFontRef) _backingCGSFont;
 @end
-
-extern "C" {
-
-CG_EXTERN int CGFontGetGlyphScaledAdvances(CGFontRef font, const CGGlyph glyph[], size_t count, float advance[], float scale);
-CG_EXTERN size_t CGFontGetNumberOfGlyphs(CGFontRef font);
-
-}
 
 //typedef unsigned short _IFGlyphWidth;
 typedef float _IFGlyphWidth;

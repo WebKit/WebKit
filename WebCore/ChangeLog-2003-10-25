@@ -1,3 +1,20 @@
+2002-03-30  Richard Williamson  <rjw@apple.com>
+
+        Twiddling with baselines.  kde 2.2 appears to not line up baselines correctly.
+        Need to experiment with kde 3.
+        
+        Removed copy of function prototype, instead included the correct header.
+ 
+	Fixed crasher in setFocusPolicy, I don't think we even need to use kde's focus policy.
+        This was added during the kde 3 beta 2 merge.
+       
+	* src/kwq/KWQFontMetrics.mm: (-[KWQLayoutInfo
+	drawString:atPoint:withFont:color:]), (-[KWQLayoutInfo
+	drawUnderlineForString:atPoint:withFont:color:]), (-[KWQLayoutInfo
+	initWithFont:]), (-[KWQLayoutInfo _initializeCaches]):
+	* src/kwq/KWQMetrics.h:
+	* src/kwq/KWQWidget.mm: (QWidget::setFocusProxy):
+
 2002-03-30  Darin Adler  <darin@apple.com>
 
 	* src/kwq/KWQKURL.mm: (copyAndReplaceAll), (needToHideColons): New

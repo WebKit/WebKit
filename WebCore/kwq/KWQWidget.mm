@@ -276,7 +276,10 @@ void QWidget::setFocusPolicy(FocusPolicy fp)
 
 void QWidget::setFocusProxy( QWidget *w)
 {
-    data->focusPolicy = w->focusPolicy();
+    if (w != 0)
+        data->focusPolicy = w->focusPolicy();
+    // else?  FIXME: [rjw] we need to understand kde's focus policy.  I don't
+    // think this is even relevant for us.
 }
 
 
