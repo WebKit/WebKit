@@ -1,7 +1,16 @@
+2002-10-13  Darin Adler  <darin@apple.com>
+
+        * English.lproj/StringsNotToBeLocalized.txt: Added strings from WebBookmarkProxy.m.
+
 2002-10-13  Chris Blumenberg  <cblu@apple.com>
 
-	- Eliminated the dual-role behavior of WebPluginStream. Renamed WebPluginStream to WebBaseNetscapePluginStream. 
- WebNetscapePluginRepresentation, a subclass of WebNetscapePluginRepresentation, is the document representation for standalone plug-ins. WebNetscapePluginStream, also a subclass of WebNetscapePluginRepresentation, is the general plug-in stream loader for embedded plug-ins or plug-in requested streams.
+	- Eliminated the dual-role behavior of WebPluginStream.
+
+	Renamed WebPluginStream to WebBaseNetscapePluginStream.
+	WebNetscapePluginRepresentation, a subclass of WebNetscapePluginRepresentation,
+	is the document representation for standalone plug-ins.
+	WebNetscapePluginStream, also a subclass of WebNetscapePluginRepresentation,
+	is the general plug-in stream loader for embedded plug-ins or plug-in requested streams.
 
 	23 plug-in source files with more likely to come!
 
