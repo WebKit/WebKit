@@ -284,6 +284,7 @@ static NSMutableDictionary *viewTypes;
 	    [WebHTMLView class], @"text/xml",
 	    [WebHTMLView class], @"application/xml",
 	    [WebHTMLView class], @"application/xhtml+xml",
+            [WebHTMLView class], @"application/x-webarchive",
             [WebTextView class], @"text/",
             [WebTextView class], @"application/x-javascript",
             nil];

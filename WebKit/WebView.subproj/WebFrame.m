@@ -262,23 +262,17 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
     [self _loadHTMLString:string baseURL:URL unreachableURL:unreachableURL];
 }
 
-- (void)loadPropertyList:(id)propertyList
+- (void)loadWebArchive:(NSData *)webArchive
 {
-    if ([propertyList isKindOfClass:[NSDictionary class]]) {
-        NSDictionary *resourcePropertyList = [propertyList objectForKey:WebMainResourceKey];
-        if (resourcePropertyList) {
-            WebResource *resource = [[WebResource alloc] _initWithPropertyList:resourcePropertyList];
-            if (resource) {
-                NSURLRequest *request = [self _webDataRequestForData:[resource data] 
-                                                            MIMEType:[resource MIMEType]
-                                                    textEncodingName:[resource textEncodingName]
-                                                             baseURL:[resource URL]
-                                                      unreachableURL:nil];
-                [resource release];
-                NSArray *subresourcePropertyLists = [propertyList objectForKey:WebSubresourcesKey];
-                [self _loadRequest:request subresources:subresourcePropertyLists ? [WebResource _resourcesFromPropertyLists:subresourcePropertyLists] : nil];
-            }
-        }
+    WebResource *mainResource;
+    NSArray *subresources;
+    if ([WebResource _parseWebArchive:webArchive mainResource:&mainResource subresources:&subresources]) {
+        NSURLRequest *request = [self _webDataRequestForData:[mainResource data] 
+                                                    MIMEType:[mainResource MIMEType]
+                                            textEncodingName:[mainResource textEncodingName]
+                                                     baseURL:[mainResource URL]
+                                              unreachableURL:nil];
+        [self _loadRequest:request subresources:subresources];
     }
 }
 

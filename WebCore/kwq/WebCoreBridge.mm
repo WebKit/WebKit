@@ -407,9 +407,9 @@ static bool initializedKJS = FALSE;
     return YES;
 }
 
-- (void)pasteHTMLString:(NSString *)HTMLString
+- (void)pasteMarkupString:(NSString *)markupString
 {
-    _part->pasteHTMLString(QString::fromNSString(HTMLString));
+    _part->pasteHTMLString(QString::fromNSString(markupString));
 }
 
 - (void)pasteImageWithURL:(NSURL *)URL
@@ -424,59 +424,65 @@ static bool initializedKJS = FALSE;
 
 - (BOOL)haveSelection
 {
-	return _part->selection().state() == KHTMLSelection::RANGE;
+    return _part->selection().state() == KHTMLSelection::RANGE;
 }
 
-- (NSString *)selectedHTMLString:(NSArray **)subresourceURLStrings
+- (DOMRange *)selectedRange
 {
-    QStringList *subresourceURLs = NULL;
-    if (subresourceURLStrings) {
-        subresourceURLs = new QStringList();
-    }
-	NSString *HTMLString = _part->selection().toRange().handle()->toHTMLWithOptions(true, subresourceURLs).string().getNSString();
-    if (subresourceURLStrings) {
-        *subresourceURLStrings = [NSMutableArray array];
-        for (QStringList::Iterator it = subresourceURLs->begin(); it != subresourceURLs->end(); ++it) {
-            [(NSMutableArray *)*subresourceURLStrings addObject:(*it).getNSString()];
-        }
-    }
-    return HTMLString ? HTMLString : @"";
+    return [DOMRange _rangeWithImpl:_part->selection().toRange().handle()];
 }
 
-- (NSString *)HTMLString:(NSArray **)subresourceURLStrings
+- (NSString *)_documentTypeString
 {
-    QStringList *subresourceURLs = NULL;
-    if (subresourceURLStrings) {
-        subresourceURLs = new QStringList();
-    }
-    NSString *docTypeString = nil;
-    NSString *HTMLString = nil;
+    NSString *documentTypeString = nil;
     DOM::DocumentImpl *doc = _part->xmlDocImpl();
     if (doc) {
         DocumentTypeImpl *doctype = doc->doctype();
         if (doctype) {
-            docTypeString = doctype->toString().string().getNSString();
-        }
-        ElementImpl *documentElement = doc->documentElement();
-        if (documentElement) {
-            HTMLString = documentElement->recursive_toHTMLWithOptions(true, false, NULL, subresourceURLs).getNSString();
-            if (subresourceURLStrings) {
-                *subresourceURLStrings = [NSMutableArray array];
-                for (QStringList::Iterator it = subresourceURLs->begin(); it != subresourceURLs->end(); ++it) {
-                    [(NSMutableArray *)*subresourceURLStrings addObject:(*it).getNSString()];
-                }
-            }
+            documentTypeString = doctype->toString().string().getNSString();
         }
     }
-    if (docTypeString && HTMLString) {
-        return [NSString stringWithFormat:@"%@\n%@", docTypeString, HTMLString];
-    } else if (docTypeString) {
-        return docTypeString;
-    } else if (HTMLString) {
-        return HTMLString;
+    return documentTypeString;
+}
+
+- (NSString *)_stringWithDocumentTypeStringAndMarkupString:(NSString *)markupString
+{
+    NSString *documentTypeString = [self _documentTypeString];
+    if (documentTypeString && markupString) {
+        return [NSString stringWithFormat:@"%@\n%@", documentTypeString, markupString];
+    } else if (documentTypeString) {
+        return documentTypeString;
+    } else if (markupString) {
+        return markupString;
     } else {
         return @"";
     }
+}
+
+- (NSString *)markupStringFromNode:(DOMNode *)node subresourceURLStrings:(NSArray **)subresourceURLStrings
+{
+    QStringList *subresourceURLs = NULL;
+    if (subresourceURLStrings) {
+        subresourceURLs = new QStringList();
+    }
+    NSString *markupString = [node _nodeImpl]->recursive_toHTMLWithOptions(true, false, NULL, subresourceURLs).getNSString();
+    if (subresourceURLStrings) {
+        *subresourceURLStrings = subresourceURLs->getNSArray();
+    }
+    return [self _stringWithDocumentTypeStringAndMarkupString:markupString];
+}
+
+- (NSString *)markupStringFromRange:(DOMRange *)range subresourceURLStrings:(NSArray **)subresourceURLStrings
+{
+    QStringList *subresourceURLs = NULL;
+    if (subresourceURLStrings) {
+        subresourceURLs = new QStringList();
+    }
+    NSString *markupString = [range _rangeImpl]->toHTMLWithOptions(false, subresourceURLs).string().getNSString();
+    if (subresourceURLStrings) {
+        *subresourceURLStrings = subresourceURLs->getNSArray();
+    }
+    return [self _stringWithDocumentTypeStringAndMarkupString:markupString];
 }
 
 - (NSString *)selectedString

@@ -75,7 +75,7 @@
 - (BOOL)_canDelete;
 - (BOOL)_canPaste;
 - (BOOL)_haveSelection;
-- (void)_pasteHTMLFromPasteboard:(NSPasteboard *)pasteboard;
+- (void)_pasteMarkupFromPasteboard:(NSPasteboard *)pasteboard;
 
 - (void)_frameOrBoundsChanged;
 

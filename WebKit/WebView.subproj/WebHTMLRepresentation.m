@@ -6,11 +6,15 @@
 #import <WebKit/WebHTMLRepresentation.h>
 
 #import <WebKit/DOM.h>
-#import <WebKit/WebDataSourcePrivate.h>
+#import <WebKit/WebAssertions.h>
 #import <WebKit/WebBridge.h>
-#import <WebKit/WebKitStatisticsPrivate.h>
+#import <WebKit/WebDataSourcePrivate.h>
+#import <WebKit/WebDocumentPrivate.h>
 #import <WebKit/WebFramePrivate.h>
-#import <WebKit/WebDocument.h>
+#import <WebKit/WebKitStatisticsPrivate.h>
+#import <WebKit/WebResourcePrivate.h>
+
+#import <Foundation/NSString_NSURLExtras.h>
 #import <Foundation/NSURLResponse.h>
 
 @interface WebHTMLRepresentationPrivate : NSObject
@@ -18,10 +22,18 @@
 @public
     WebDataSource *dataSource;
     WebBridge *bridge;
+    NSData *parsedWebArchiveData;
 }
 @end
 
 @implementation WebHTMLRepresentationPrivate
+
+- (void)dealloc
+{
+    [parsedWebArchiveData release];
+    [super dealloc];
+}
+
 @end
 
 @implementation WebHTMLRepresentation
@@ -57,23 +69,57 @@
     _private->bridge = [[dataSource webFrame] _bridge];
 }
 
+- (BOOL)_isDisplayingWebArchive
+{
+    return [[[_private->dataSource response] MIMEType] _web_isCaseInsensitiveEqualToString:@"application/x-webarchive"];
+}
+
 - (void)receivedData:(NSData *)data withDataSource:(WebDataSource *)dataSource
 {
-    if ([dataSource webFrame])
-        [_private->bridge receivedData:data withDataSource:dataSource];
+    if ([dataSource webFrame] && ![self _isDisplayingWebArchive]) {
+        [_private->bridge receivedData:data textEncodingName:[[_private->dataSource response] textEncodingName]];
+    }
 }
 
 - (void)receivedError:(NSError *)error withDataSource:(WebDataSource *)dataSource
 {
 }
 
+- (void)loadWebArchive
+{
+    WebResource *mainResource;
+    NSArray *subresources;
+    if (![WebResource _parseWebArchive:[_private->dataSource data] mainResource:&mainResource subresources:&subresources]) {
+        return;
+    }
+    
+    NSData *data = [mainResource data];
+    [data retain];
+    [_private->parsedWebArchiveData release];
+    _private->parsedWebArchiveData = data;
+    
+    [_private->dataSource addSubresources:subresources];
+    [_private->bridge closeURL];
+    [_private->bridge openURL:[mainResource URL]
+                       reload:NO 
+                  contentType:[mainResource MIMEType]
+                      refresh:NO
+                 lastModified:nil
+                    pageCache:nil];
+    [_private->bridge receivedData:data textEncodingName:[mainResource textEncodingName]];
+}
+
 - (void)finishedLoadingWithDataSource:(WebDataSource *)dataSource
 {
-    // Telling the bridge we received some data and passing nil as the data is our
-    // way to get work done that is normally done when the first bit of data is
-    // received, even for the case of a document with no data (like about:blank).
-    if ([dataSource webFrame])
-        [_private->bridge receivedData:nil withDataSource:dataSource];
+    if ([dataSource webFrame]) {
+        if ([self _isDisplayingWebArchive]) {
+            [self loadWebArchive];
+        }
+        // Telling the bridge we received some data and passing nil as the data is our
+        // way to get work done that is normally done when the first bit of data is
+        // received, even for the case of a document with no data (like about:blank).
+        [_private->bridge addData:nil];
+    }
 }
 
 - (BOOL)canProvideDocumentSource
@@ -83,7 +129,11 @@
 
 - (NSString *)documentSource
 {
-    return [WebBridge stringWithData:[_private->dataSource data] textEncoding:[_private->bridge textEncoding]];
+    if ([self _isDisplayingWebArchive]) {
+        return [[[NSString alloc] initWithData:_private->parsedWebArchiveData encoding:NSUTF8StringEncoding] autorelease];
+    } else {
+        return [WebBridge stringWithData:[_private->dataSource data] textEncoding:[_private->bridge textEncoding]];
+    }
 }
 
 - (NSString *)title
@@ -98,12 +148,6 @@
 
 - (void)setSelectionFrom:(DOMNode *)start startOffset:(int)startOffset to:(DOMNode *)end endOffset:(int) endOffset
 {
-}
-
-- (NSString *)reconstructedDocumentSource
-{
-    // FIXME implement
-    return @"";
 }
 
 - (NSAttributedString *)attributedText
@@ -162,9 +206,56 @@
     return [_private->bridge matchLabels:labels againstElement:element];
 }
 
-- (NSString *)HTMLString
+- (NSData *)_webArchiveWithMarkupString:(NSString *)markupString subresourceURLStrings:(NSArray *)subresourceURLStrings
+{ 
+    NSURLResponse *response = [_private->dataSource response];
+    WebResource *mainResource = [[WebResource alloc] initWithData:[markupString dataUsingEncoding:NSUTF8StringEncoding]
+                                                              URL:[response URL] 
+                                                         MIMEType:[response MIMEType]
+                                                 textEncodingName:@"UTF-8"];
+    
+    NSDictionary *subresourcesDictionary = [_private->dataSource _subresourcesDictionary];
+    NSEnumerator *enumerator = [subresourceURLStrings objectEnumerator];
+    NSMutableArray *subresources = [[NSMutableArray alloc] init];
+    NSString *URLString;
+    while ((URLString = [enumerator nextObject]) != nil) {
+        WebResource *subresource = [subresourcesDictionary objectForKey:URLString];
+        if (subresource) {
+            [subresources addObject:subresource];
+        } else {
+            ERROR("Failed to copy subresource because data source does not have subresource for %@", URLString);
+        }
+    }
+    
+    NSData *webArchive = [WebResource _webArchiveWithMainResource:mainResource subresources:subresources];
+    [mainResource release];
+    [subresources release];
+    
+    return webArchive;
+}
+
+- (NSString *)markupStringFromNode:(DOMNode *)node
+{
+    return [_private->bridge markupStringFromNode:node subresourceURLStrings:nil];
+}
+
+- (NSString *)markupStringFromRange:(DOMRange *)range
 {		
-	return [_private->bridge HTMLString:nil];
+    return [_private->bridge markupStringFromRange:range subresourceURLStrings:nil];
+}
+
+- (NSData *)webArchiveFromNode:(DOMNode *)node
+{
+    NSArray *subresourceURLStrings;
+    NSString *markupString = [_private->bridge markupStringFromNode:node subresourceURLStrings:&subresourceURLStrings];
+    return [self _webArchiveWithMarkupString:markupString subresourceURLStrings:subresourceURLStrings];
+}
+
+- (NSData *)webArchiveFromRange:(DOMRange *)range
+{
+    NSArray *subresourceURLStrings;
+    NSString *markupString = [_private->bridge markupStringFromRange:range subresourceURLStrings:&subresourceURLStrings];
+    return [self _webArchiveWithMarkupString:markupString subresourceURLStrings:subresourceURLStrings];
 }
 
 @end

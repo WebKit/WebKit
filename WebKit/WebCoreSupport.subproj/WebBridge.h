@@ -24,7 +24,7 @@
 - (id)initWithWebFrame:(WebFrame *)webFrame;
 - (void)close;
 
-- (void)receivedData:(NSData *)data withDataSource:(WebDataSource *)dataSource;
+- (void)receivedData:(NSData *)data textEncodingName:(NSString *)textEncodingName;
 - (void)runOpenPanelForFileButtonWithResultListener:(id <WebOpenPanelResultListener>)resultListener;
 - (BOOL)inNextKeyViewOutsideWebFrameViews;
 

@@ -19,6 +19,9 @@ extern NSString *WebSubresourcesKey;
 + (NSArray *)_resourcesFromPropertyLists:(NSArray *)propertyLists;
 + (NSArray *)_propertyListsFromResources:(NSArray *)resources;
 
++ (BOOL)_parseWebArchive:(NSData *)webArchive mainResource:(WebResource **)mainResource subresources:(NSArray **)subresources;
++ (NSData *)_webArchiveWithMainResource:(WebResource *)mainResource subresources:(NSArray *)subresources;
+
 - (id)_initWithPropertyList:(id)propertyList;
 - (id)_initWithCachedResponse:(NSCachedURLResponse *)response originalURL:(NSURL *)originalURL;
 

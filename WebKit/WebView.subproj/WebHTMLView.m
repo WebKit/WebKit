@@ -15,6 +15,7 @@
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebFrameViewPrivate.h>
 #import <WebKit/WebHTMLViewPrivate.h>
+#import <WebKit/WebHTMLRepresentationPrivate.h>
 #import <WebKit/WebNetscapePluginEmbeddedView.h>
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebNSPasteboardExtras.h>
@@ -516,15 +517,15 @@ static WebHTMLView *lastHitView = nil;
 
 + (NSArray *)_selectionPasteboardTypes
 {
-    return [NSArray arrayWithObjects:WebHTMLPboardType, NSHTMLPboardType, NSRTFPboardType, NSRTFDPboardType, NSStringPboardType, nil];
+    return [NSArray arrayWithObjects:WebArchivePboardType, NSHTMLPboardType, NSRTFPboardType, NSRTFDPboardType, NSStringPboardType, nil];
 }
 
-- (id)_selectedPropertyList:(NSString **)HTMLString
+- (NSData *)_selectedWebArchive:(NSString **)markupString
 {
     NSArray *subresourceURLStrings;
-    *HTMLString = [[self _bridge] selectedHTMLString:&subresourceURLStrings];
-    return [[self _dataSource] _propertyListWithData:[*HTMLString dataUsingEncoding:NSUTF8StringEncoding]  
-                               subresourceURLStrings:subresourceURLStrings];
+    WebHTMLRepresentation *rep = [[self _dataSource] representation];
+    *markupString = [[self _bridge] markupStringFromRange:[[self _bridge] selectedRange] subresourceURLStrings:&subresourceURLStrings];
+    return [rep _webArchiveWithMarkupString:*markupString subresourceURLStrings:subresourceURLStrings];
 }
 
 - (void)_writeSelectionToPasteboard:(NSPasteboard *)pasteboard
@@ -532,10 +533,10 @@ static WebHTMLView *lastHitView = nil;
     [pasteboard declareTypes:[[self class] _selectionPasteboardTypes] owner:nil];
 
     // Put HTML on the pasteboard.
-    NSString *HTMLString;
-    NSDictionary *HTMLPropertyList = [self _selectedPropertyList:&HTMLString];
-    [pasteboard setString:HTMLString forType:NSHTMLPboardType];
-    [pasteboard setPropertyList:HTMLPropertyList forType:WebHTMLPboardType];
+    NSString *markupString;
+    NSData *webArchive = [self _selectedWebArchive:&markupString];
+    [pasteboard setString:markupString forType:NSHTMLPboardType];
+    [pasteboard setData:webArchive forType:WebArchivePboardType];
     
     // Put attributed string on the pasteboard (RTF format).
     NSAttributedString *attributedString = [self selectedAttributedString];
@@ -552,49 +553,43 @@ static WebHTMLView *lastHitView = nil;
 
 - (BOOL)_haveSelection
 {
-	return [[self _bridge] haveSelection];
+    return [[self _bridge] haveSelection];
 }
 
 - (BOOL)_canDelete
 {
-	return [self _haveSelection] && [[self _bridge] isSelectionEditable];
+    return [self _haveSelection] && [[self _bridge] isSelectionEditable];
 }
 
 - (BOOL)_canPaste
 {
-	return [[self _bridge] isSelectionEditable];
+    return [[self _bridge] isSelectionEditable];
 }
 
-- (void)_pasteHTMLFromPasteboard:(NSPasteboard *)pasteboard
+- (void)_pasteMarkupFromPasteboard:(NSPasteboard *)pasteboard
 {
-	NSArray *types = [pasteboard types];
-	NSString *HTMLString = nil;
+    NSArray *types = [pasteboard types];
+    NSString *markupString = nil;
 	
-    if ([types containsObject:WebHTMLPboardType]) {
-        NSDictionary *HTMLPropertyList = [pasteboard propertyListForType:WebHTMLPboardType];
-        if ([HTMLPropertyList isKindOfClass:[NSDictionary class]]) {
-            NSDictionary *resourcePropertyList = [HTMLPropertyList objectForKey:WebMainResourceKey];
-            WebResource *resource = [[WebResource alloc] _initWithPropertyList:resourcePropertyList];
-            if (resource && [WebView canShowMIMETypeAsHTML:[resource MIMEType]]) {
-                HTMLString = [[[NSString alloc] initWithData:[resource data] encoding:NSUTF8StringEncoding] autorelease];
-                [resource release];
-                NSArray *propertyLists = [HTMLPropertyList objectForKey:WebSubresourcesKey];
-                if (propertyLists) {
-                    [[self _dataSource] addSubresources:[WebResource _resourcesFromPropertyLists:propertyLists]];
-                }
-            }
+    if ([types containsObject:WebArchivePboardType]) {
+        NSData *webArchive = [pasteboard dataForType:WebArchivePboardType];
+        WebResource *mainResource;
+        NSArray *subresources;
+        if ([WebResource _parseWebArchive:webArchive mainResource:&mainResource subresources:&subresources]) {
+            markupString = [[[NSString alloc] initWithData:[mainResource data] encoding:NSUTF8StringEncoding] autorelease];
+            [[self _dataSource] addSubresources:subresources];
         }
     }
     
-    if (!HTMLString && [types containsObject:NSHTMLPboardType]) {
-        HTMLString = [pasteboard stringForType:NSHTMLPboardType];
+    if (!markupString && [types containsObject:NSHTMLPboardType]) {
+        markupString = [pasteboard stringForType:NSHTMLPboardType];
     }
-    if (!HTMLString && [types containsObject:NSStringPboardType]) {
-        HTMLString = [pasteboard stringForType:NSStringPboardType];
+    if (!markupString && [types containsObject:NSStringPboardType]) {
+        markupString = [pasteboard stringForType:NSStringPboardType];
     }
-	if (HTMLString) {
-		[[self _bridge] pasteHTMLString:HTMLString];
-	}
+    if (markupString) {
+        [[self _bridge] pasteMarkupString:markupString];
+    }
 }
 
 -(NSImage *)_dragImageForLinkElement:(NSDictionary *)element
@@ -946,7 +941,7 @@ static WebHTMLView *lastHitView = nil;
     _private->pluginController = [[WebPluginController alloc] initWithHTMLView:self];
     _private->needsLayout = YES;
 	
-	[self registerForDraggedTypes:[NSArray arrayWithObjects:WebHTMLPboardType, NSHTMLPboardType, NSStringPboardType, nil]];
+    [self registerForDraggedTypes:[NSArray arrayWithObjects:WebArchivePboardType, NSHTMLPboardType, NSStringPboardType, nil]];
 
     return self;
 }
@@ -989,7 +984,7 @@ static WebHTMLView *lastHitView = nil;
 
 - (void)paste:(id)sender
 {
-    [self _pasteHTMLFromPasteboard:[NSPasteboard generalPasteboard]];
+    [self _pasteMarkupFromPasteboard:[NSPasteboard generalPasteboard]];
 }
 
 - (BOOL)writeSelectionToPasteboard:(NSPasteboard *)pasteboard types:(NSArray *)types
@@ -1652,7 +1647,7 @@ static WebHTMLView *lastHitView = nil;
 {
     if ([self _dragOperationForDraggingInfo:sender] != NSDragOperationNone) {
         // FIXME: We should delete the original selection if we're doing a move.
-        [self _pasteHTMLFromPasteboard:[sender draggingPasteboard]];
+        [self _pasteMarkupFromPasteboard:[sender draggingPasteboard]];
     } else {
         // Since we're not handling the drag, forward this message to the WebView since it may want to handle it.
         [[self _webView] concludeDragOperation:sender];

@@ -9,7 +9,7 @@
 #import <Foundation/NSDictionary_NSURLExtras.h>
 #import <Foundation/NSURL_NSURLExtras.h>
 
-NSString *WebHTMLPboardType =               @"Apple Web Kit pasteboard type";
+NSString *WebArchivePboardType =            @"Apple Web Archive pasteboard type";
 NSString *WebMainResourceKey =              @"WebMainResource";
 NSString *WebResourceDataKey =              @"WebResourceData";
 NSString *WebResourceMIMETypeKey =          @"WebResourceMIMEType";
@@ -126,6 +126,36 @@ NSString *WebSubresourcesKey =              @"WebSubresources";
         [propertyLists addObject:[resource _propertyListRepresentation]];
     }
     return propertyLists;
+}
+
++ (BOOL)_parseWebArchive:(NSData *)webArchive mainResource:(WebResource **)mainResource subresources:(NSArray **)subresources
+{
+    NSDictionary *propertyList = [NSPropertyListSerialization propertyListFromData:webArchive 
+                                                                  mutabilityOption:NSPropertyListImmutable 
+                                                                            format:nil
+                                                                  errorDescription:nil];
+    if ([propertyList isKindOfClass:[NSDictionary class]]) {
+        NSDictionary *resourcePropertyList = [propertyList objectForKey:WebMainResourceKey];
+        if (resourcePropertyList) {
+            *mainResource = [[[WebResource alloc] _initWithPropertyList:resourcePropertyList] autorelease];
+            if (*mainResource) {
+                *subresources = [WebResource _resourcesFromPropertyLists:[propertyList objectForKey:WebSubresourcesKey]];
+                return YES;
+            }
+        }
+    }
+    return NO;
+}
+
++ (NSData *)_webArchiveWithMainResource:(WebResource *)mainResource subresources:(NSArray *)subresources
+{
+    NSMutableDictionary *propertyList = [NSMutableDictionary dictionary];
+    [propertyList setObject:[mainResource _propertyListRepresentation] forKey:WebMainResourceKey];
+    NSArray *propertyLists = [self _propertyListsFromResources:subresources];
+    if ([propertyLists count] > 0) {
+        [propertyList setObject:propertyLists forKey:WebSubresourcesKey];
+    }
+    return [NSPropertyListSerialization dataFromPropertyList:propertyList format:NSPropertyListXMLFormat_v1_0 errorDescription:nil];
 }
 
 - (id)_initWithPropertyList:(id)propertyList

@@ -283,49 +283,49 @@ static QString escapeHTML( const QString& in )
 
 QString NodeImpl::recursive_toHTMLWithOptions(bool start, bool completeURLs, const DOM::RangeImpl *range, QStringList *subresourceURLs) const
 {	
-	QString me = "";
+    QString me = "";
     
     int exceptionCode;
-	NodeImpl *startContainer = range ? range->startContainer(exceptionCode) : NULL;
-	NodeImpl *endContainer = range ? range->endContainer(exceptionCode) : NULL;
-	NodeImpl *n = startContainer;
-	bool isNodeIncluded = range ? false : true;
-	Id ident = id();
-	
-	// Determine if the HTML string of this node should be part of the end result.
-	if (range && (!start || (start && (ident == ID_TABLE || ident == ID_OL || ident == ID_UL)))) {	
-		// Check if this node is in the range or is an ancestor of a node in the range.
-		while (n) {
-			NodeImpl *ancestor = n;
-			while (ancestor) {
-				if (this == ancestor) {
-					isNodeIncluded = true;
-					break;
-				}
-				ancestor = ancestor->parentNode();
-			}
-			if (isNodeIncluded) {
-				break;
-			}
-			if (n == endContainer) {
-				break;
-			}
-			NodeImpl *next = n->firstChild();
-			if (!next) {
-				next = n->nextSibling();
-			}
-			while (!next && n->parentNode()) {
-				n = n->parentNode();
-				next = n->nextSibling();
-			}
-			n = next;
-		}
-	}
-		
-	if (isNodeIncluded) {
-		// Copy who I am into the me string
-		if (nodeType() == Node::TEXT_NODE) {
-			DOMString str = nodeValue().copy();
+    NodeImpl *startContainer = range ? range->startContainer(exceptionCode) : NULL;
+    NodeImpl *endContainer = range ? range->endContainer(exceptionCode) : NULL;
+    NodeImpl *n = startContainer;
+    bool isNodeIncluded = range ? false : true;
+    Id ident = id();
+    
+    // Determine if the HTML string of this node should be part of the end result.
+    if (range && (!start || (start && (ident == ID_TABLE || ident == ID_OL || ident == ID_UL)))) {	
+        // Check if this node is in the range or is an ancestor of a node in the range.
+        while (n) {
+            NodeImpl *ancestor = n;
+            while (ancestor) {
+                if (this == ancestor) {
+                    isNodeIncluded = true;
+                    break;
+                }
+                ancestor = ancestor->parentNode();
+            }
+            if (isNodeIncluded) {
+                break;
+            }
+            if (n == endContainer) {
+                break;
+            }
+            NodeImpl *next = n->firstChild();
+            if (!next) {
+                next = n->nextSibling();
+            }
+            while (!next && n->parentNode()) {
+                n = n->parentNode();
+                next = n->nextSibling();
+            }
+            n = next;
+        }
+    }
+    
+    if (isNodeIncluded) {
+        // Copy who I am into the me string
+        if (nodeType() == Node::TEXT_NODE) {
+            DOMString str = nodeValue().copy();
             if (range) {
                 if (this == endContainer) {
                     str.truncate(range->endOffset(exceptionCode));
@@ -336,9 +336,9 @@ QString NodeImpl::recursive_toHTMLWithOptions(bool start, bool completeURLs, con
             }
             Id parentID = parentNode()->id();
             me += (parentID == ID_SCRIPT || parentID == ID_TEXTAREA) ? str.string() : escapeHTML(str.string());
-		} else {
-			// If I am an element, not a text
-			me += QChar('<') + nodeName().string();
+        } else if (nodeType() != Node::DOCUMENT_NODE) {
+            // If I am an element, not a text
+            me += QChar('<') + nodeName().string();
             if (nodeType() == Node::ELEMENT_NODE) {
                 const ElementImpl *el = static_cast<const ElementImpl *>(this);
                 
@@ -361,9 +361,9 @@ QString NodeImpl::recursive_toHTMLWithOptions(bool start, bool completeURLs, con
                 }
             }
             me += isHTMLElement() ? ">" : "/>";
-		}
-	}
-	
+        }
+    }
+    
     if (!isHTMLElement() || endTag[ident] != FORBIDDEN) {
         // print firstChild
         if ((n = firstChild())) {
@@ -371,14 +371,14 @@ QString NodeImpl::recursive_toHTMLWithOptions(bool start, bool completeURLs, con
         }
         // Print my ending tag
         if (isNodeIncluded && nodeType() != Node::TEXT_NODE) {
-			me += "</" + nodeName().string() + ">";
-		}
+            me += "</" + nodeName().string() + ">";
+        }
     }
     // print next sibling
     if ((n = nextSibling())) {
         me += n->recursive_toHTMLWithOptions(false, completeURLs, range, subresourceURLs);
-	}
-	
+    }
+    
     return me;
 }
 

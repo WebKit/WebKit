@@ -3,7 +3,7 @@
  Copyright (C) 2003 Apple Computer, Inc. All rights reserved.    
 */
 
-#import <Cocoa/Cocoa.h>
+#import <WebKit/WebDocumentPrivate.h>
 
 /*!
 @protocol _web_WebDocumentTextSizing

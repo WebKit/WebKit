@@ -96,10 +96,6 @@ using DOM::TextImpl;
 - (id)_init;
 @end
 
-@interface DOMRange (WebCoreInternal)
-+ (DOMRange *)_rangeWithImpl:(RangeImpl *)impl;
-@end
-
 //------------------------------------------------------------------------------------------
 // Static functions and data
 
@@ -1486,11 +1482,6 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
     [super dealloc];
 }
 
-- (RangeImpl *)_rangeImpl
-{
-    return reinterpret_cast<RangeImpl *>(_internal);
-}
-
 - (DOMNode *)startContainer
 {
     int code = 0;
@@ -1696,6 +1687,11 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
         return [[cachedInstance retain] autorelease];
     
     return [[[self alloc] _initWithRangeImpl:impl] autorelease];
+}
+
+- (RangeImpl *)_rangeImpl
+{
+    return reinterpret_cast<RangeImpl *>(_internal);
 }
 
 @end

@@ -351,15 +351,13 @@
     [[wv _UIDelegateForwarder] webView:wv setStatusText:status];
 }
 
-- (void)receivedData:(NSData *)data withDataSource:(WebDataSource *)withDataSource
+- (void)receivedData:(NSData *)data textEncodingName:(NSString *)textEncodingName
 {
-    ASSERT([self dataSource] == withDataSource);
-
     // Set the encoding. This only needs to be done once, but it's harmless to do it again later.
-    NSString *encoding = [withDataSource _overrideEncoding];
+    NSString *encoding = [[self dataSource] _overrideEncoding];
     BOOL userChosen = encoding != nil;
     if (encoding == nil) {
-        encoding = [[withDataSource response] textEncodingName];
+        encoding = textEncodingName;
     }
     [self setEncoding:encoding userChosen:userChosen];
 

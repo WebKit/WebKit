@@ -29,6 +29,7 @@ namespace DOM {
     class DocumentImpl;
     class ElementImpl;
     class NodeImpl;
+    class RangeImpl;
 }
 
 @interface DOMNode (WebCoreInternal)
@@ -43,4 +44,9 @@ namespace DOM {
 
 @interface DOMDocument (WebCoreInternal)
 + (DOMDocument *)_documentWithImpl:(DOM::DocumentImpl *)impl;
+@end
+
+@interface DOMRange (WebCoreInternal)
++ (DOMRange *)_rangeWithImpl:(DOM::RangeImpl *)impl;
+- (DOM::RangeImpl *)_rangeImpl;
 @end

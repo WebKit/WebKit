@@ -7,7 +7,7 @@
 
 #import <Foundation/NSHTTPCookie.h>
 #import <Foundation/NSError_NSURLExtras.h>
-
+#import <Foundation/NSString_NSURLExtras.h>
 #import <Foundation/NSURLFileTypeMappings.h>
 #import <Foundation/NSURLConnection.h>
 #import <Foundation/NSURLConnectionPrivate.h>
@@ -279,7 +279,17 @@
     ASSERT(![[dataSource _webView] defersCallbacks]);
 
     LOG(Loading, "main content type: %@", [r MIMEType]);
-
+    
+#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_3
+    NSURL *URL = [r URL];
+    if ([[[URL path] pathExtension] _web_isCaseInsensitiveEqualToString:@"webarchive"]) {
+        r = [[[NSURLResponse alloc] initWithURL:URL 
+                                       MIMEType:@"application/x-webarchive"
+                          expectedContentLength:[r expectedContentLength] 
+                               textEncodingName:[r textEncodingName]] autorelease];
+    }
+#endif
+    
     // retain/release self in this delegate method since the additional processing can do
     // anything including possibly releasing self; one example of this is 3266216
     [self retain];

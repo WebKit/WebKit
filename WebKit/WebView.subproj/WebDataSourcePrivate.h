@@ -120,12 +120,10 @@
 - (WebResource *)subresourceForURL:(NSURL *)URL;
 - (void)addSubresource:(WebResource *)subresource;
 - (void)addSubresources:(NSArray *)subresources;
-- (id)propertyList;
 - (NSURL *)unreachableURL;
 
+- (NSDictionary *)_subresourcesDictionary;
 - (NSFileWrapper *)_fileWrapperForURL:(NSURL *)URL;
-
-- (id)_propertyListWithData:(NSData *)data subresourceURLStrings:(NSArray *)subresourceURLStrings;
 
 - (NSError *)_mainDocumentError;
 - (NSString *)_stringWithData:(NSData *)data;

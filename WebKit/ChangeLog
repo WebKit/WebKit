@@ -1,3 +1,59 @@
+2004-03-09  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3577508>: API: web archive related API's
+	Implemented WebKit side of: <rdar://problem/3144033>: ability to save web sites (images and all)
+
+        Reviewed by rjw.
+
+        * WebCoreSupport.subproj/WebBridge.h:
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge receivedData:textEncodingName:]): renamed to take a textEncodingName instead of data source. The data source argument is only needed for the textEncodingName.
+        * WebKit.exp:
+        * WebView.subproj/WebDataSource.m:
+        (-[WebDataSource _subresourcesDictionary]): new
+        (+[WebDataSource _repTypesAllowImageTypeOmission:]): include "application/x-webarchive"
+        * WebView.subproj/WebDataSourcePrivate.h:
+        * WebView.subproj/WebDocumentInternal.h:
+        * WebView.subproj/WebDocumentPrivate.h:
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame loadWebArchive:]): renamed, code factored out to [WebResource _parseWebArchive:mainResource:subresources:]
+        * WebView.subproj/WebFramePrivate.h:
+        * WebView.subproj/WebFrameView.m:
+        (+[WebFrameView _viewTypesAllowImageTypeOmission:]): include "application/x-webarchive"
+        * WebView.subproj/WebHTMLRepresentation.h:
+        * WebView.subproj/WebHTMLRepresentation.m:
+        (-[WebHTMLRepresentationPrivate dealloc]):
+        (-[WebHTMLRepresentation _isDisplayingWebArchive]): new
+        (-[WebHTMLRepresentation receivedData:withDataSource:]): don't feed data to WebCore if we're displaying a web archive since web archive can't be progressively loaded
+        (-[WebHTMLRepresentation loadWebArchive]): new, feeds web archive data to WebCore
+        (-[WebHTMLRepresentation finishedLoadingWithDataSource:]): call loadWebArchive if necessary
+        (-[WebHTMLRepresentation documentSource]): if displaying a web archive, return the HTML source from within the archive
+        (-[WebHTMLRepresentation _webArchiveWithMarkupString:subresourceURLStrings:]): new
+        (-[WebHTMLRepresentation markupStringFromNode:]): implementation of new API
+        (-[WebHTMLRepresentation markupStringFromRange:]): ditto
+        (-[WebHTMLRepresentation webArchiveFromNode:]): ditto
+        (-[WebHTMLRepresentation webArchiveFromRange:]): ditto
+        * WebView.subproj/WebHTMLRepresentationPrivate.h:
+        * WebView.subproj/WebHTMLView.m:
+        (+[WebHTMLView _selectionPasteboardTypes]): use renamed WebArchivePboardType
+        (-[WebHTMLView _selectedWebArchive:]): renamed, call renamed methods
+        (-[WebHTMLView _writeSelectionToPasteboard:]): call renamed methods
+        (-[WebHTMLView _haveSelection]): indentation tweak
+        (-[WebHTMLView _canDelete]): ditto
+        (-[WebHTMLView _canPaste]): ditto
+        (-[WebHTMLView _pasteMarkupFromPasteboard:]): renamed, call [WebResource _webArchiveWithMainResource:subresources:]
+        (-[WebHTMLView initWithFrame:]): use renamed WebArchivePboardType
+        (-[WebHTMLView paste:]): call renamed _pasteMarkupFromPasteboard
+        (-[WebHTMLView concludeDragOperation:]): call renamed _pasteMarkupFromPasteboard
+        * WebView.subproj/WebHTMLViewPrivate.h:
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient connection:didReceiveResponse:]): modify the MIME type for web archives since Foundation is not yet web archive aware. This is ifdef'd pre-Tiger code.
+        * WebView.subproj/WebResource.h:
+        * WebView.subproj/WebResource.m:
+        (+[WebResource _parseWebArchive:mainResource:subresources:]): new
+        (+[WebResource _webArchiveWithMainResource:subresources:]): new
+        * WebView.subproj/WebResourcePrivate.h:
+
 2004-03-09  John Sullivan  <sullivan@apple.com>
 
         - fixed the following bugs:

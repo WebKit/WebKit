@@ -1,3 +1,27 @@
+2004-03-09  Chris Blumenberg  <cblu@apple.com>
+
+	Implemented WebCore side of: <rdar://problem/3577508>: API: web archive related API's
+
+        Reviewed by rjw.
+
+        * WebCore-combined.exp:
+        * WebCore.exp:
+        * kwq/DOM.mm:
+        (+[DOMRange _rangeWithImpl:]): made internally accessible
+        (-[DOMRange _rangeImpl]): ditto
+        * kwq/DOMInternal.h:
+        * kwq/KWQStringList.h:
+        * kwq/KWQStringList.mm:
+        (QStringList::getNSArray): new
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge pasteMarkupString:]): renamed from pasteHTMLString since XML pasting may be possible
+        (-[WebCoreBridge selectedRange]): new
+        (-[WebCoreBridge _documentTypeString]): new
+        (-[WebCoreBridge _stringWithDocumentTypeStringAndMarkupString:]): new
+        (-[WebCoreBridge markupStringFromNode:subresourceURLStrings:]): new, needed for WebKit API's
+        (-[WebCoreBridge markupStringFromRange:subresourceURLStrings:]): new, needed for WebKit API's
+
 2004-03-09  David Hyatt  <hyatt@apple.com>
 
 	Make the AXLinkUIElements attribute always return an array (never return nil).

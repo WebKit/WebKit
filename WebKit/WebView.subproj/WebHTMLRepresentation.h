@@ -5,29 +5,25 @@
 
 #import <Foundation/Foundation.h>
 
+#import <WebKit/WebDocumentPrivate.h>
+
 @class WebHTMLRepresentationPrivate;
 @class NSView;
 
-@class DOMDocument;
 @class DOMNode;
 @class DOMElement;
 
+@protocol WebDocumentMarkup;
 @protocol WebDocumentRepresentation;
 @protocol WebDocumentSourceRepresentation;
 
 /*!
     @class WebHTMLRepresentation
 */
-@interface WebHTMLRepresentation : NSObject <WebDocumentRepresentation>
+@interface WebHTMLRepresentation : NSObject <WebDocumentRepresentation, WebDocumentMarkup>
 {
     WebHTMLRepresentationPrivate *_private;
 }
-
-/*!
-    @method DOMDocument
-    @abstract return the DOM document for this data source.
-*/
-- (DOMDocument *)DOMDocument;
 
 /*!
     @method setSelectionFrom:startOffset:to:endOffset
@@ -38,15 +34,6 @@
     @param endOffset The character offset into the text of the ending node.
 */
 - (void)setSelectionFrom:(DOMNode *)start startOffset:(int)startOffset to:(DOMNode *)end endOffset:(int)endOffset;
-
-//- (NSAttributedString *)selectedAttributedString;
-
-/*!
-    @method documentSource
-    @abstract Get the current HTML reconstructed from the current state of the DOM.
-*/
-- (NSString *)reconstructedDocumentSource;
-
 
 - (NSAttributedString *)attributedStringFrom:(DOMNode *)startNode startOffset:(int)startOffset to:(DOMNode *)endNode endOffset:(int)endOffset;
 
@@ -59,7 +46,5 @@
 - (NSArray *)controlsInForm:(DOMElement *)form;
 - (NSString *)searchForLabels:(NSArray *)labels beforeElement:(DOMElement *)element;
 - (NSString *)matchLabels:(NSArray *)labels againstElement:(DOMElement *)element;
-
-- (NSString *)HTMLString;
 
 @end

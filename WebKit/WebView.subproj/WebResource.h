@@ -9,7 +9,7 @@
 
 @class WebResourcePrivate;
 
-extern NSString *WebHTMLPboardType;
+extern NSString *WebArchivePboardType;
 
 @interface WebResource : NSObject 
 {
