@@ -194,7 +194,7 @@ void NodeIteratorImpl::notifyBeforeNodeRemoval(NodeImpl *willRemove)
     if (!willRemove || willRemove == root())
         return;
     bool willRemoveReferenceNode = willRemove == referenceNode();
-    bool willRemoveReferenceNodeAncestor = willRemove->isAncestor(referenceNode());
+    bool willRemoveReferenceNodeAncestor = referenceNode() && referenceNode()->isAncestor(willRemove);
     if (!willRemoveReferenceNode && !willRemoveReferenceNodeAncestor)
         return;
 
@@ -204,7 +204,7 @@ void NodeIteratorImpl::notifyBeforeNodeRemoval(NodeImpl *willRemove)
             // Move out from under the node being removed if the reference node is
             // a descendant of the node being removed.
             if (willRemoveReferenceNodeAncestor) {
-                while (node && willRemove->isAncestor(node))
+                while (node && node->isAncestor(willRemove))
                     node = findNextNode(node);
             }
             if (node)
@@ -216,7 +216,7 @@ void NodeIteratorImpl::notifyBeforeNodeRemoval(NodeImpl *willRemove)
                 // Move out from under the node being removed if the reference node is
                 // a descendant of the node being removed.
                 if (willRemoveReferenceNodeAncestor) {
-                    while (node && willRemove->isAncestor(node))
+                    while (node && node->isAncestor(willRemove))
                         node = findPreviousNode(node);
                 }
                 if (node) {
@@ -235,7 +235,7 @@ void NodeIteratorImpl::notifyBeforeNodeRemoval(NodeImpl *willRemove)
             // Move out from under the node being removed if the reference node is
             // a descendant of the node being removed.
             if (willRemoveReferenceNodeAncestor) {
-                while (node && willRemove->isAncestor(node))
+                while (node && node->isAncestor(willRemove))
                     node = findPreviousNode(node);
             }
             if (node)
@@ -246,7 +246,7 @@ void NodeIteratorImpl::notifyBeforeNodeRemoval(NodeImpl *willRemove)
                 // Move out from under the node being removed if the reference node is
                 // a descendant of the node being removed.
                 if (willRemoveReferenceNodeAncestor) {
-                    while (node && willRemove->isAncestor(node))
+                    while (node && node->isAncestor(willRemove))
                         node = findPreviousNode(node);
                 }
                 if (node)

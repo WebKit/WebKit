@@ -1033,12 +1033,11 @@ void NodeImpl::checkAddChild(NodeImpl *newChild, int &exceptioncode)
     }
 }
 
-bool NodeImpl::isAncestor(NodeImpl *node) const
+bool NodeImpl::isAncestor(const NodeImpl *other) const
 {
-    if (!node || node == this)
-        return false;
-    for (NodeImpl *p = node->parentNode(); p; p = p->parentNode()) {
-        if (p == this)
+    // Return true if other is an ancestor of this, otherwise false
+    for (const NodeImpl *n = parentNode(); n; n = n->parentNode()) {
+        if (n == other)
             return true;
     }
     return false;

@@ -1,3 +1,22 @@
+2004-07-28  Darin Adler  <darin@apple.com>
+
+        Reviewed by Trey.
+
+        - fixed <rdar://problem/3658471> REGRESSION: Node.appendChild( ) fails when parent already contains that child
+
+        * khtml/xml/dom_nodeimpl.cpp: (NodeImpl::isAncestor): Restore the original meaning of this function.
+        It returns true if the parameter is an ancestor of this, but had been changed to return true if this
+        is an ancestor of the parameter. However, we do retain one change we made at the same time, which is
+        that it does not consider a node an ancestor of itself.
+
+        * khtml/editing/htmlediting_impl.cpp: (khtml::ApplyStyleCommandImpl::nodeFullySelected):
+        * khtml/xml/dom2_traversalimpl.cpp: (DOM::NodeIteratorImpl::notifyBeforeNodeRemoval):
+        Reverse parameters for callers who wanted the new meaning of isAncestor, with care to not use it in
+        any cases where the pointer might be 0.
+
+        * khtml/xml/dom_nodeimpl.h: Added const to the parameter to make things more symmetric and allow the
+        new uses to all compile.
+
 2004-07-28  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Darin

@@ -758,7 +758,7 @@ bool ApplyStyleCommandImpl::nodeFullySelected(const NodeImpl *node) const
             return end.offset() >= child->caretMaxOffset();
     }
 
-    return !node->isAncestor(end.node());
+    return !end.node()->isAncestor(node);
 }
 
 //------------------------------------------------------------------------------------------
