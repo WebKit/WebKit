@@ -47,7 +47,6 @@
 
     NSURLRequest *newRequest = [[NSURLRequest alloc] initWithURL:URL];
     [newRequest setCachePolicy:[[source request] cachePolicy]];
-    [newRequest setResponseCachePolicy:[[source request] responseCachePolicy]];
     [newRequest setReferrer:referrer];
     
     WebView *_controller = [source _controller];

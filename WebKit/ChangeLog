@@ -1,5 +1,18 @@
 2003-03-24  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by Darin
+
+        Removed now-obsolete WebResponseCachePolicy enum.
+        Once the new cache API is ready, there will be new features
+        to replace what this enum provided. Seeing as how this
+        enum was largely unused, there is no impact associated with         
+        removing it now.
+
+        * WebCoreSupport.subproj/WebSubresourceClient.m:
+        (+[WebSubresourceClient startLoadingResource:withURL:referrer:forDataSource:]):
+
+2003-03-24  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by John
 
         Cleaned up some missed WebRequest -> NSURLRequest  
