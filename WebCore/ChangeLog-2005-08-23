@@ -1,3 +1,26 @@
+2004-01-23  David Hyatt  <hyatt@apple.com>
+
+	Stub out @namespace support.  Implement the callbacks into the stylesheet that will enable us to
+	store namespace information for simple selectors.
+
+	Basically with this patch we no longer bomb when we encounter namespaced stylesheets, but we don't handle
+	them properly yet either.
+	
+        Reviewed by kocienda
+
+        * khtml/css/css_stylesheetimpl.cpp:
+        (CSSStyleSheetImpl::addNamespace):
+        (CSSStyleSheetImpl::determineNamespace):
+        * khtml/css/css_stylesheetimpl.h:
+        * khtml/css/cssparser.cpp:
+        (DOM::CSSParser::lex):
+        * khtml/css/cssparser.h:
+        * khtml/css/parser.cpp:
+        * khtml/css/parser.h:
+        * khtml/css/parser.y:
+        * khtml/css/tokenizer.cpp:
+        * khtml/css/tokenizer.flex:
+
 2004-01-23  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Hyatt

@@ -92,7 +92,7 @@ namespace DOM {
 
         ~Function() { delete args; }
     };
-
+    
     class CSSParser
     {
     public:

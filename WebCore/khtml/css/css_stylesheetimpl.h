@@ -97,6 +97,9 @@ public:
     unsigned long insertRule ( const DOM::DOMString &rule, unsigned long index, int &exceptioncode );
     void deleteRule ( unsigned long index, int &exceptioncode );
 
+    void addNamespace(const DOM::DOMString& prefix, const DOM::DOMString& uri);
+    void determineNamespace(CSSSelector* selector, const DOM::DOMString& prefix);
+    
     virtual bool parseString( const DOMString &string, bool strict = true );
 
     bool isLoading();
