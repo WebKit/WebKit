@@ -40,6 +40,7 @@
 #import "render_canvas.h"
 #import "render_object.h"
 #import "render_replaced.h"
+#import "render_list.h"
 #import "render_style.h"
 #import "render_text.h"
 #import "kjs_html.h"
@@ -60,6 +61,7 @@ using khtml::RenderWidget;
 using khtml::RenderCanvas;
 using khtml::RenderText;
 using khtml::RenderBlock;
+using khtml::RenderListMarker;
 
 // FIXME: This will eventually need to really localize.
 #define UI_STRING(string, comment) ((NSString *)[NSString stringWithUTF8String:(string)])
@@ -194,7 +196,9 @@ using khtml::RenderBlock;
         return NSAccessibilityUnknownRole;
 
     if (m_renderer->element() && m_renderer->element()->hasAnchor())
-        return NSAccessibilityButtonRole;
+        return @"AXLink";
+    if (m_renderer->isListMarker())
+        return @"AXListMarker";
     if (m_renderer->element() && m_renderer->element()->isHTMLElement() &&
         Node(m_renderer->element()).elementId() == ID_BUTTON)
         return NSAccessibilityButtonRole;
@@ -206,7 +210,7 @@ using khtml::RenderBlock;
         return @"AXWebArea";
     if (m_renderer->isBlockFlow())
         return NSAccessibilityGroupRole;
-    
+
     return NSAccessibilityUnknownRole;
 }
 
@@ -234,6 +238,12 @@ using khtml::RenderBlock;
     
     if ([role isEqualToString:@"AXWebArea"])
         return UI_STRING("web area", "accessibility role description for web area");
+    
+    if ([role isEqualToString:@"AXLink"])
+        return UI_STRING("link", "accessibility role description for link");
+    
+    if ([role isEqualToString:@"AXListMarker"])
+        return UI_STRING("list marker", "accessibility role description for list marker");
     
     return UI_STRING("unknown", "accessibility role description for unknown role");
 }
@@ -289,6 +299,9 @@ using khtml::RenderBlock;
     if (m_renderer->isText())
         return [self textUnderElement];
     
+    if (m_renderer->isListMarker())
+        return static_cast<RenderListMarker*>(m_renderer)->text().getNSString();
+
     // FIXME: We might need to implement a value here for more types
     // FIXME: It would be better not to advertise a value at all for the types for which we don't implement one;
     // this would require subclassing or making accessibilityAttributeNames do something other than return a
@@ -372,7 +385,7 @@ static QRect boundingBoxRect(RenderObject* obj)
     if (m_renderer->isBlockFlow() && m_renderer->childrenInline())
         return !static_cast<RenderBlock*>(m_renderer)->firstLineBox();
 
-    return (!m_renderer->isCanvas() && 
+    return (!m_renderer->isListMarker() && !m_renderer->isCanvas() && 
             !m_renderer->isImage() &&
             !(m_renderer->element() && m_renderer->element()->isHTMLElement() &&
               Node(m_renderer->element()).elementId() == ID_BUTTON));
