@@ -152,10 +152,15 @@ bool QChar::isLetter() const
                 kCFCharacterSetLetter), c);
 }
 
+bool QChar::isNumber() const
+{
+    return isLetterOrNumber() && !isLetter();
+}
+
 bool QChar::isLetterOrNumber() const
 {
     return CFCharacterSetIsCharacterMember(CFCharacterSetGetPredefined(
-                kCFCharacterSetAlphaNumeric), c) || isDigit();
+                kCFCharacterSetAlphaNumeric), c);
 }
 
 bool QChar::isPunct() const
