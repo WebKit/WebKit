@@ -1,3 +1,24 @@
+2004-08-04  David Hyatt  <hyatt@apple.com>
+
+	Add XSL Stylesheets to the WebCore cache.
+	
+        Reviewed by kocienda
+
+        * khtml/misc/loader.cpp:
+        (CachedXSLStyleSheet::CachedXSLStyleSheet):
+        (CachedXSLStyleSheet::ref):
+        (CachedXSLStyleSheet::deref):
+        (CachedXSLStyleSheet::data):
+        (CachedXSLStyleSheet::checkNotify):
+        (CachedXSLStyleSheet::error):
+        (DocLoader::requestXSLStyleSheet):
+        (Cache::requestXSLStyleSheet):
+        (Cache::getStatistics):
+        * khtml/misc/loader.h:
+        (khtml::CachedObject::):
+        (khtml::CachedXSLStyleSheet::sheet):
+        (khtml::CachedXSLStyleSheet::schedule):
+
 2004-08-03  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Hyatt

@@ -101,9 +101,12 @@ namespace khtml
 	enum Type {
 	    Image,
 	    CSSStyleSheet,
-	    Script,
+	    Script
+#ifdef KHTML_XSLT
+            , XSLStyleSheet
+#endif
 #ifndef KHTML_NO_XBL
-            XBL
+            , XBL
 #endif
 	};
 
@@ -362,6 +365,30 @@ namespace khtml
 #endif
     };
 
+#ifdef KHTML_XSLT
+    class CachedXSLStyleSheet : public CachedObject
+    {
+public:
+        CachedXSLStyleSheet(DocLoader* dl, const DOM::DOMString &url, KIO::CacheControl cachePolicy, time_t _expireDate);
+
+        const DOM::DOMString& sheet() const { return m_sheet; }
+        
+        virtual void ref(CachedObjectClient *consumer);
+        virtual void deref(CachedObjectClient *consumer);
+        
+        virtual void data(QBuffer &buffer, bool eof);
+        virtual void error(int err, const char *text);
+        
+        virtual bool schedule() const { return true; }
+        
+        void checkNotify();
+        
+protected:
+        DOM::DOMString m_sheet;
+        QTextCodec* m_codec;
+    };
+#endif
+    
 #ifndef KHTML_NO_XBL
     class CachedXBLDocument : public CachedObject
     {
@@ -402,6 +429,9 @@ protected:
 	CachedCSSStyleSheet *requestStyleSheet( const DOM::DOMString &url, const QString& charset);
         CachedScript *requestScript( const DOM::DOMString &url, const QString& charset);
 
+#ifdef KHTML_XSLT
+        CachedXSLStyleSheet* requestXSLStyleSheet(const DOM::DOMString& url);
+#endif
 #ifndef KHTML_NO_XBL
         CachedXBLDocument* requestXBLDocument(const DOM::DOMString &url);
 #endif
@@ -527,6 +557,11 @@ protected:
 	 */
 	static CachedCSSStyleSheet *requestStyleSheet( DocLoader* l, const DOM::DOMString &url, bool reload=false, time_t _expireDate=0, const QString& charset = QString::null);
 
+#ifdef KHTML_XSLT
+        // Ask the cache for an XSL stylesheet.
+        static CachedXSLStyleSheet* requestXSLStyleSheet(DocLoader* l, const DOM::DOMString &url, 
+                                                         bool reload=false, time_t _expireDate=0);
+#endif
 #ifndef KHTML_NO_XBL
         // Ask the cache for an XBL document.
         static CachedXBLDocument* requestXBLDocument(DocLoader* l, const DOM::DOMString &url, 
@@ -595,6 +630,9 @@ protected:
             TypeStatistic movies;
             TypeStatistic styleSheets;
             TypeStatistic scripts;
+#ifdef KHTML_XSLT
+            TypeStatistic xslStyleSheets;
+#endif
 #ifndef KHTML_NO_XBL
             TypeStatistic xblDocs;
 #endif
