@@ -244,6 +244,9 @@ KJS::Bindings::Instance *HTMLEmbedElementImpl::getEmbedInstance() const
             // from the guts of the Java VM.
             void *_view = r->widget()->getView();
             embedInstance = KWQ(part)->getEmbedInstanceForView((NSView *)_view);
+            // Applet may specified with <embed> tag.
+            if (!embedInstance)
+                embedInstance = KWQ(part)->getAppletInstanceForView((NSView *)_view);
         }
     }
     return embedInstance;
@@ -398,6 +401,9 @@ KJS::Bindings::Instance *HTMLObjectElementImpl::getObjectInstance() const
             // from the guts of the plugin.
             void *_view = r->widget()->getView();
             objectInstance = KWQ(part)->getObjectInstanceForView((NSView *)_view);
+            // Applet may specified with <object> tag.
+            if (!objectInstance)
+                objectInstance = KWQ(part)->getAppletInstanceForView((NSView *)_view);
         }
     }
     return objectInstance;

@@ -1,3 +1,15 @@
+2005-01-21  Richard Williamson   <rjw@apple.com>
+
+	Fixed <rdar://problem/3759399> Javascript / Liveconnect problems ((event handler):Undefined value)
+
+	Java applets specified with <object> or <embed> weren't scriptable.  Now they are.
+
+        Reviewed by Chris.
+
+        * khtml/html/html_objectimpl.cpp:
+        (HTMLEmbedElementImpl::getEmbedInstance):
+        (HTMLObjectElementImpl::getObjectInstance):
+
 2005-01-21  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by John
