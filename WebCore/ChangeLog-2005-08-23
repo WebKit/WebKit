@@ -2,6 +2,26 @@
 
         Reviewed by John
 
+        Fix for this bug:
+        
+        <rdar://problem/3917863> REGRESSION (Mail): pasting two lines of plain text copied from an RTF document results in two styles
+
+        Code to figuire out the end node to merge was missing the font tag in the second paragraph
+        written out by AppKit convert-to-HTML function. I refined the algorithm to be smarter.
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::ReplacementFragment::mergeEndNode): Refine algorithm used to walk through the fragment being pasted
+        looking for the node that is the last inline in the last block of the fragment. The old algorithm was 
+        insufficiently powerful.
+        (khtml::ReplacementFragment::enclosingBlock): New helper function.
+        * khtml/editing/htmlediting.h: Add declaration for new helper function.
+        * layout-tests/editing/pasteboard/paste-text-011-expected.txt: Added.
+        * layout-tests/editing/pasteboard/paste-text-011.html: Added.
+
+2004-12-13  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
         WebCore side of fix for this bug:
         
         <rdar://problem/3768372> REGRESSION (Mail): paste of text ending in whitespace loses whitespace

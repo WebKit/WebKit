@@ -1,0 +1,40 @@
+
+<html> 
+<head>
+
+<style>
+.editing { 
+    border: 2px solid red; 
+    padding: 12px; 
+    font-size: 24px; 
+}
+</style>
+<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
+
+<script>
+
+// There was a bug when pasting at the end of the block. The content was inserted at the 
+// start of the block instead of the end. This tests the insert-at-end case.
+
+function editingTest() {
+    selectAllCommand();
+    copyCommand();
+    moveSelectionForwardByCharacterCommand();
+    insertParagraphCommand();
+    pasteCommand();
+}
+
+</script>
+
+<title>Editing Test</title> 
+</head> 
+<body contenteditable id="root" id="test">
+<p><font face="Monaco"><b>hello</b></font></p>
+<p><font face="Monaco"><b>there</b></font></p>
+ 
+<script>
+runEditingTest();
+</script>
+
+</body>
+</html>

@@ -3127,19 +3127,19 @@ NodeImpl *ReplacementFragment::mergeEndNode() const
     NodeImpl *node = m_fragment->lastChild();
     while (node && node->lastChild())
         node = node->lastChild();
+    
+    if (isProbablyBlock(node))
+        return 0;
+        
+    NodeImpl *startingBlock = enclosingBlock(node);
+    ASSERT(startingBlock != node);
     while (node) {
         NodeImpl *prev = node->traversePreviousNode();
-        if (!isProbablyBlock(node)) {
-            NodeImpl *previousSibling = node->previousSibling();
-            while (1) {
-                if (!previousSibling || isProbablyBlock(previousSibling))
-                    return node;
-                node = previousSibling;
-                previousSibling = node->previousSibling();
-            }
-        }
+        if (prev == m_fragment || prev == startingBlock || enclosingBlock(prev) != startingBlock)
+            return node;
         node = prev;
     }
+    
     return 0;
 }
 
@@ -3174,6 +3174,13 @@ bool ReplacementFragment::isInterchangeConvertedSpaceSpan(const NodeImpl *node)
 {
     static DOMString convertedSpaceSpanClassString(AppleConvertedSpace);
     return node->isHTMLElement() && static_cast<const HTMLElementImpl *>(node)->getAttribute(ATTR_CLASS) == convertedSpaceSpanClassString;
+}
+
+NodeImpl *ReplacementFragment::enclosingBlock(NodeImpl *node) const
+{
+    while (node && !isProbablyBlock(node))
+        node = node->parentNode();    
+    return node ? node : m_fragment;
 }
 
 void ReplacementFragment::removeNode(NodeImpl *node)
