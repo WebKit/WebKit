@@ -17,16 +17,49 @@
         Reviewed by Gramps and Ken
 	Checked in by Ken
 
-	- fixed 3133207 -- crash in HTMLFrameElementImpl updateForNewURL at home.real.com
+	- fixed 3125877 -- RealPlayer plug-in doesn't work in Safari
 
-	My previous attempt to fix this dealt with the case where a RenderFrame object was
-	not yet created, but not with the case where a RenderFrame object was created without
-	a corresponding part. Somehow I overlooked this last time when I was doing testing.
-	Testing this time confirms this takes care of the remaining problem at movies.real.com.
+        * Plugins.subproj/WebBaseNetscapePluginView.h: Remove some methods that don't have
+	any need to be public, getCarbonEvent:, sendEvent:, sendUpdateEvent, setUpWindowAndPort.
+	Make setWindow public.
 
-        * khtml/html/html_baseimpl.cpp: (HTMLFrameElementImpl::updateForNewURL):
-	Use the same kind of requestFrame call here as in attach when there's a RenderFrame,
-	but no corresponding part. Maybe we can fix this an even more elegant way later.
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView saveAndSetPortStateForUpdate:]): Added. This replaces the
+	old setUpWindowAndPort. Besides setting up the port and the window, it also sets up the
+	port's origin, clip, visible, and update regions properly, and sets the current port.
+	In the case of an update event, we have extra work to do, which was formerly done in drawRect:.
+        (-[WebBaseNetscapePluginView saveAndSetPortState]): Calls saveAndSetPortStateForUpdate:NO.
+        (-[WebBaseNetscapePluginView restorePortState:]): Undoes the port state changes done by the
+	saveAndSetPortState calls.
+        (-[WebBaseNetscapePluginView sendEvent:]): Call saveAndSetPortStateForUpdate: before sending
+	the event to the plug-in. This is the core of fixing the bug. We need to have the port set
+	up properly. Specifically, RealPlayer depended on the port's origin being set and the update
+	region being set. Also added a "draw green" debugging aid to builds without NDEBUG set.
+        (-[WebBaseNetscapePluginView sendNullEvent]): Update text of a FIXME.
+        (-[WebBaseNetscapePluginView setWindow]): Call the new saveAndSetPortState method instead of
+	the old setUpWindowAndPort method.
+        (-[WebBaseNetscapePluginView drawRect:]): Remove bug workarounds that are now inside the
+	saveAndSetPortStateForUpdate: method.
+        (-[WebBaseNetscapePluginView viewDidMoveToWindow]): Add missing call to super.
+        (-[WebBaseNetscapePluginView windowBecameKey:]): Don't send an update event to the plugin directly.
+	Instead mark this view as needing display so we'll get a drawRect later.
+        (-[WebBaseNetscapePluginView windowResignedKey:]): Ditto.
+        (-[WebBaseNetscapePluginView requestWithURLCString:]): Corrected handling of URLs. Absolute URLs
+	are handled by the relative URL function, so there's no need to do an explicit check. Also use
+	requestWithURL instead of doing a three-method dance that does the same thing.
+        (-[WebBaseNetscapePluginView invalidateRect:]): Use setNeedsDisplayInRect: to schedule redrawing
+	rather than forcing an update right away by doing a sendUpdateEvent directly.
+        (-[WebBaseNetscapePluginView invalidateRegion:]): Ditto.
+        (-[WebBaseNetscapePluginView forceRedraw]): Use setNeedsDisplay: and displayIfNeeded to do the
+	drawing through the view system instead of doing a sendUpdateEvent directly.
+
+        * Plugins.subproj/WebNetscapePluginDocumentView.m: (-[WebNetscapePluginDocumentView layout]):
+	Do a setWindow rather than a setUpWindowAndPort when the size of the view changes. This matches
+	what other browsers do and extends the bug fix for the Java plug-in to the resize case as well as
+	the scrolling case.
+
+        * Plugins.subproj/WebNetscapePluginPackage.m: (-[WebNetscapePluginPackage initWithPath:]):
+	Remove RealPlayer antibodies.
 
 2002-12-27  Darin Adler  <darin@apple.com>
 
