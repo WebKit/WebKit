@@ -1,3 +1,16 @@
+2003-05-25  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3268589, static position miscomputed when the positioned object is the last item in its enclosing block and when its previous sibling is a text run that ends in a space.  In this case we need to clear our trailingSpaceObject so that we don't mistakenly ignore the positioned object when building up bidi runs.
+
+	Fix for 3260053, table-layout of inherit not supported.  This
+	caused a crash.  The fix is to just add in the support for the inherit
+	value to the style selector.
+	
+        Reviewed by john
+
+        * khtml/rendering/bidi.cpp:
+	* khtml/css/cssstyleselector.cpp
+	
 2003-05-26  John Sullivan  <sullivan@apple.com>
 
 	- fixed 3262849 -- jump to nil in KWQKHTMLPart::searchForLabelsAboveCell 

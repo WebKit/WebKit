@@ -1499,12 +1499,15 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start)
                 
                 // If we're ignoring spaces, we have to stop and include this object and
                 // then start ignoring spaces again.
-                if (ignoringSpaces && (needToSetStaticX || needToSetStaticY)) {
-                    BidiIterator startMid = { 0, o, 0 };
-                    BidiIterator stopMid = { 0, o, 1 };
-                    addMidpoint(startMid); // Stop ignoring spaces.
-                    addMidpoint(stopMid); // Start ignoring again.
-                }
+                if (needToSetStaticX || needToSetStaticY) {
+                    trailingSpaceObject = 0;
+                    if (ignoringSpaces) {
+                        BidiIterator startMid = { 0, o, 0 };
+                        BidiIterator stopMid = { 0, o, 1 };
+                        addMidpoint(startMid); // Stop ignoring spaces.
+                        addMidpoint(stopMid); // Start ignoring again.
+                    }
+                }                
             }
         } else if (o->isInlineFlow()) {
             // Only empty inlines matter.  We treat those similarly to replaced elements.
