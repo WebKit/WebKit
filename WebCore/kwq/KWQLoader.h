@@ -37,6 +37,10 @@ namespace KIO {
     class TransferJob;
 }
 
+namespace DOM {
+    class DOMString;
+}
+
 bool KWQServeRequest(khtml::Loader *, khtml::Request *, KIO::TransferJob *);
 bool KWQServeRequest(khtml::Loader *, khtml::DocLoader *, KIO::TransferJob *);
 
@@ -46,6 +50,8 @@ void KWQCheckCacheObjectStatus(khtml::DocLoader *, khtml::CachedObject *);
 bool KWQCheckIfReloading(khtml::DocLoader *loader);
 void KWQRetainResponse(void *response);
 void KWQReleaseResponse(void *response);
+bool KWQIsResponseURLEqualToURL(void *response, const DOM::DOMString &m_url);
+QString KWQResponseURL(void *response);
 void *KWQResponseMIMEType(void *response);
 void *KWQResponseTextEncodingName(void *response);
 void *KWQResponseHeaderString(void *response);

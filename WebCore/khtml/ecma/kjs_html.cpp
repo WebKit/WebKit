@@ -4024,17 +4024,17 @@ Value KJS::Context2DFunction::tryCall(ExecState *exec, Object &thisObj, const Li
             float dx, dy, dw = w, dh = h;
             float sx = 0.f, sy = 0.f, sw = w, sh = h;
             
-            if (args.size() <= 3) {
+            if (args.size() == 3) {
                 dx = args[1].toNumber(exec);
                 dy = args[2].toNumber(exec);
             }
-            else if (args.size() <= 5) {
+            else if (args.size() == 5) {
                 dx = args[1].toNumber(exec);
                 dy = args[2].toNumber(exec);
                 dw = args[3].toNumber(exec);
                 dh = args[4].toNumber(exec);
             }
-            else if (args.size() <= 9) {
+            else if (args.size() == 9) {
                 sx = args[1].toNumber(exec);
                 sy = args[2].toNumber(exec);
                 sw = args[3].toNumber(exec);

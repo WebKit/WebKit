@@ -251,8 +251,12 @@ void CachedCSSStyleSheet::checkNotify()
 #endif
 
     CachedObjectClientWalker w(m_clients);
-    while (CachedObjectClient *c = w.next())
-        c->setStyleSheet(m_url, m_sheet);
+    while (CachedObjectClient *c = w.next()) {
+        if (m_response && !KWQIsResponseURLEqualToURL(m_response,m_url))
+            c->setStyleSheet(DOMString (KWQResponseURL(m_response)), m_sheet);
+        else
+            c->setStyleSheet(m_url, m_sheet);
+    }
 }
 
 

@@ -271,6 +271,55 @@ void KWQReleaseResponse(void *response)
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 
+#define LOCAL_STRING_BUFFER_SIZE 1024
+
+bool KWQIsResponseURLEqualToURL(void *response, const DOM::DOMString &m_url)
+{
+    unichar _buffer[LOCAL_STRING_BUFFER_SIZE];
+    unichar *urlStringCharacters;
+    
+    NSURL *responseURL = [(NSURLResponse *)response URL];
+    NSString *urlString = [responseURL absoluteString];
+
+    if (m_url.length() != [urlString length])
+        return false;
+        
+    // Nasty hack to directly compare strings buffers of NSString
+    // and DOMString.  We do this for speed.
+    if ([urlString length] > LOCAL_STRING_BUFFER_SIZE) {
+        urlStringCharacters = (unichar *)malloc (sizeof(unichar)*[urlString length]);
+    }
+    else {
+        urlStringCharacters = _buffer;
+    }
+    [urlString getCharacters:urlStringCharacters];
+    
+    bool ret = false;
+    if(!memcmp(urlStringCharacters, m_url.unicode(), m_url.length()*sizeof(QChar)))
+	ret = true;
+    
+    if (urlStringCharacters != _buffer)
+        free (urlStringCharacters);
+        
+    return ret;
+}
+
+QString KWQResponseURL(void *response)
+{
+    KWQ_BLOCK_EXCEPTIONS;
+
+    NSURL *responseURL = [(NSURLResponse *)response URL];
+    NSString *urlString = [responseURL absoluteString];
+    
+    QString string;
+    string.setBufferFromCFString((CFStringRef)urlString);
+    return string;
+
+    KWQ_UNBLOCK_EXCEPTIONS;
+    
+    return NULL;
+}
+
 void *KWQResponseMIMEType(void *response)
 {
     KWQ_BLOCK_EXCEPTIONS;

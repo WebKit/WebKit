@@ -1,3 +1,23 @@
+2004-09-03  Richard Williamson   <rjw@apple.com>
+
+	Fixed <rdar://problem/3781001>: redirection of URL via resource load delegate does not correctly set base URL for subsequent loads
+
+	Ensure that stylesheets have the correct URL when request
+	is redirected.
+
+        Reviewed by Maciej.
+
+        * khtml/misc/loader.cpp:
+        (CachedCSSStyleSheet::checkNotify):
+        * kwq/KWQLoader.h:
+        * kwq/KWQLoader.mm:
+        (KWQIsResponseURLEqualToURL):
+        (KWQResponseURL):
+
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::Context2DFunction::tryCall):
+	Compare parameter count with == instead of <=.
+
 2004-09-03  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3779083, deleting large amount of text is really slow.  Don't use NodeLists in editing remove commands.
