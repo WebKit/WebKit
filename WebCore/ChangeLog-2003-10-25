@@ -1,5 +1,13 @@
 2002-11-16  David Hyatt  <hyatt@apple.com>
 
+	Fix more edge cases with whitespace handling that caused some
+	lines to be too long (and unselectable).
+	
+        * khtml/rendering/bidi.cpp:
+        (appendRunsForObject):
+
+2002-11-16  David Hyatt  <hyatt@apple.com>
+
 	Make <caption> error-handling more robust.
 
 	Specifically, handle <tr> and <td> misplaced inside

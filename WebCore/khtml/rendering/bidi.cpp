@@ -274,11 +274,15 @@ static void appendRunsForObject(int start, int end, RenderObject* obj)
         
         // An end midpoint has been encounted within our object.  We
         // need to go ahead and append a run with our endpoint.
-        sruns->append( new BidiRun(start, nextMidpoint->pos+1, obj, context, dir) );
-        betweenMidpoints = true;
-        int nextPos = nextMidpoint->pos+1;
-        smidpoints->removeFirst();
-        return appendRunsForObject(nextPos, end, obj);
+        if (int(nextMidpoint->pos+1) <= end) {
+            sruns->append( new BidiRun(start, nextMidpoint->pos+1, obj, context, dir) );
+            betweenMidpoints = true;
+            int nextPos = nextMidpoint->pos+1;
+            smidpoints->removeFirst();
+            return appendRunsForObject(nextPos, end, obj);
+        }
+        else
+            sruns->append( new BidiRun(start, end, obj, context, dir) );
     }
 }
 
