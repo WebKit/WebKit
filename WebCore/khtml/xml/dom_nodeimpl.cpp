@@ -1381,7 +1381,7 @@ void NodeImpl::displayNode(const char *prefix)
     if (!prefix)
         prefix = "";
     if (isTextNode())
-        fprintf(stderr, "%s%s\t%p %s\n", prefix, nodeName().string().latin1(), this, nodeValue().string().latin1());
+        fprintf(stderr, "%s%s\t%p \"%s\"\n", prefix, nodeName().string().latin1(), this, nodeValue().string().latin1());
     else
         fprintf(stderr, "%s%s\t%p\n", prefix, nodeName().string().latin1(), this);
 }
@@ -2095,7 +2095,7 @@ NodeImpl *NodeBaseImpl::childNode(unsigned long index)
 {
     unsigned long i;
     NodeImpl *n = firstChild();
-    for (i = 0; i < index; i++)
+    for (i = 0; n != 0 && i < index; i++)
         n = n->nextSibling();
     return n;
 }

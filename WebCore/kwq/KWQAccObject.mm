@@ -1007,26 +1007,17 @@ static QRect boundingBoxRect(RenderObject* obj)
 
 - (id)doAXStringForTextMarkerRange: (AXTextMarkerRangeRef) textMarkerRange
 {
-    VisiblePosition startVisiblePosition, endVisiblePosition;
-    Position startDeepPos, endDeepPos;
-    QString qString;
-    
     // extract the start and end VisiblePosition
-    startVisiblePosition = [self visiblePositionForStartOfTextMarkerRange: textMarkerRange];
+    VisiblePosition startVisiblePosition = [self visiblePositionForStartOfTextMarkerRange: textMarkerRange];
     if (startVisiblePosition.isNull())
         return nil;
     
-    endVisiblePosition = [self visiblePositionForEndOfTextMarkerRange: textMarkerRange];
+    VisiblePosition endVisiblePosition = [self visiblePositionForEndOfTextMarkerRange: textMarkerRange];
     if (endVisiblePosition.isNull())
         return nil;
     
-    // use deepEquivalent because it is what the user sees
-    startDeepPos = startVisiblePosition.deepEquivalent();
-    endDeepPos = endVisiblePosition.deepEquivalent();
-    
     // get the visible text in the range
-    qString = plainText(Range(startDeepPos.node(), startDeepPos.offset(), endDeepPos.node(), endDeepPos.offset()));
-    if (qString == nil) return nil;
+    QString qString = plainText(makeRange(startVisiblePosition, endVisiblePosition));
     
     // transform it to a CFString and return that
     return (id)qString.getCFString();
