@@ -1,5 +1,16 @@
 2004-06-24  Trey Matteson  <trey@apple.com>
 
+	3710422 - REGRESSION: Safari crashes trying to send onbeforecut event at about://blank
+
+	Simple fix - don't try to send the event to the body element if we have no body element.
+
+        Reviewed by NOBODY (OOPS!).
+
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::dispatchCPPEvent):
+
+2004-06-24  Trey Matteson  <trey@apple.com>
+
 	3704950	drag image in DB ConfigBar has horizontal graphics turd	WebCore JavaScript
 
 	When we generate a drag image (or a selection image too, for that matter) we

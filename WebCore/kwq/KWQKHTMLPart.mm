@@ -2101,8 +2101,11 @@ void KWQKHTMLPart::dragSourceEndedAt(const QPoint &loc)
 bool KWQKHTMLPart::dispatchCPPEvent(int eventId, KWQClipboard::AccessPolicy policy)
 {
     NodeImpl *target = d->m_selection.start().element();
-    if (!target) {
+    if (!target && docImpl()) {
         target = docImpl()->body();
+    }
+    if (!target) {
+        return true;
     }
 
     KWQClipboard *clipboard = new KWQClipboard(false, [NSPasteboard generalPasteboard], (KWQClipboard::AccessPolicy)policy);
