@@ -196,8 +196,41 @@ QColor QColor::dark(int factor) const
 
 NSColor *QColor::getNSColor() const
 {
-    return [NSColor colorWithCalibratedRed:red() / 255.0
-                                     green:green() / 255.0
-                                      blue:blue() / 255.0
-                                     alpha:1.0];
+    unsigned c = color & 0xFFFFFF;
+    switch (c) {
+        case Qt::black: {
+            static NSColor *blackColor = [[NSColor blackColor] retain];
+            return blackColor;
+        }
+        case Qt::white: {
+            static NSColor *whiteColor = [[NSColor whiteColor] retain];
+            return whiteColor;
+        }
+        default: {
+            const int cacheSize = 32;
+            static unsigned cachedRGBValues[cacheSize];
+            static NSColor *cachedColors[cacheSize];
+
+            for (int i = 0; i != cacheSize; ++i) {
+                if (cachedRGBValues[i] == c) {
+                    return cachedColors[i];
+                }
+            }
+
+            NSColor *result = [NSColor colorWithCalibratedRed:red() / 255.0
+                                                        green:green() / 255.0
+                                                         blue:blue() / 255.0
+                                                        alpha:1.0];
+
+            static int cursor;
+            cachedRGBValues[cursor] = c;
+            [cachedColors[cursor] autorelease];
+            cachedColors[cursor] = [result retain];
+            if (++cursor == cacheSize) {
+                cursor = 0;
+            }
+
+            return result;
+        }
+    }
 }
