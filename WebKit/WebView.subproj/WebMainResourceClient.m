@@ -197,7 +197,6 @@
 -(WebResourceRequest *)handle:(WebResourceHandle *)handle willSendRequest:(WebResourceRequest *)newRequest
 {
     WebController *controller = [dataSource controller];
-    WebContentPolicy *contentPolicy = [dataSource contentPolicy];
     NSURL *URL = [newRequest URL];
 
     LOG(Redirect, "URL = %@", URL);
@@ -218,9 +217,8 @@
         [self didStartLoadingWithURL:URL];
     }
 
-    if ([contentPolicy policyAction] == WebContentPolicyShow)
     // Let the resourceProgressDelegate get a crack at modifying the request.
-        newRequest = [resourceProgressDelegate resourceRequest: request willSendRequest: newRequest fromDataSource: dataSource];
+    newRequest = [resourceProgressDelegate resourceRequest: request willSendRequest: newRequest fromDataSource: dataSource];
 
     WebResourceRequest *oldRequest = request;
     request = [newRequest copy];

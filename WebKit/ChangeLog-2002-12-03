@@ -1,5 +1,12 @@
 2002-10-03  Richard Williamson   <rjw@apple.com>
 
+        Always call resourceRequest:willSendRequest: on resourceProgressDelegate.
+         
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient handle:willSendRequest:]):
+
+2002-10-03  Richard Williamson   <rjw@apple.com>
+
         Add calls to downloadProgressDelegate.
         
         * WebView.subproj/WebMainResourceClient.m:
