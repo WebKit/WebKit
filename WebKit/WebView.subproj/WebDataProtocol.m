@@ -11,7 +11,7 @@
 
 NSString *WebDataProtocolScheme = @"applewebdata";
 
-@interface WebDataRequestParameters : NSObject
+@interface WebDataRequestParameters : NSObject <NSCopying>
 {
 @public
     NSData *data;
@@ -23,15 +23,6 @@ NSString *WebDataProtocolScheme = @"applewebdata";
 @implementation WebDataRequestParameters
 
 -(id)copyWithZone:(NSZone *)zone
-{
-    WebDataRequestParameters *newInstance = [[WebDataRequestParameters allocWithZone:zone] init];
-    newInstance->data = [data copyWithZone:zone];
-    newInstance->encoding = [encoding copyWithZone:zone];
-    newInstance->baseURL = [baseURL copyWithZone:zone];
-    return newInstance;
-}
-
--(id)mutableCopyWithZone:(NSZone *)zone
 {
     WebDataRequestParameters *newInstance = [[WebDataRequestParameters allocWithZone:zone] init];
     newInstance->data = [data copyWithZone:zone];
@@ -107,7 +98,7 @@ NSString *WebDataProtocolScheme = @"applewebdata";
     parameters->baseURL = [baseURL retain];
 }
 
-- (NSURLRequest *)_webDataRequestExternalRequest
+- (NSMutableURLRequest *)_webDataRequestExternalRequest
 {
     WebDataRequestParameters *parameters = [WebProtocol partOfRequest:self withClass:[WebDataRequestParameters class] createIfDoesNotExist:NO];
     NSMutableURLRequest *newRequest = nil;
@@ -135,18 +126,9 @@ NSString *WebDataProtocolScheme = @"applewebdata";
     [WebProtocol registerClass: [self class]];
 }
 
-+ (BOOL)doesURLHaveInternalDataScheme: (NSURL *)URL
-{
-    return ([[URL scheme] caseInsensitiveCompare: WebDataProtocolScheme] == NSOrderedSame && [[URL path] length] == 0);
-}
-
-
 + (BOOL)canHandleURL:(NSURL *)theURL
 {
-    if ([WebDataProtocol doesURLHaveInternalDataScheme:theURL]){
-        return YES;
-    }
-    return NO;
+    return ([[theURL scheme] caseInsensitiveCompare: WebDataProtocolScheme] == NSOrderedSame);
 }
 
 + (NSURL *)canonicalURLForURL:(NSURL *)URL

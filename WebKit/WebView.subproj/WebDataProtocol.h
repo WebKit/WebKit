@@ -14,7 +14,6 @@
 @interface WebDataProtocol : WebProtocol
 {
 }
-+ (BOOL)doesURLHaveInternalDataScheme: (NSURL *)URL;
 @end
 
 @interface NSURLRequest (WebDataRequest)
@@ -25,5 +24,5 @@
 - (void)_webDataRequestSetEncoding:(NSString *)encoding;
 - (NSURL *)_webDataRequestBaseURL;
 - (void)_webDataRequestSetBaseURL:(NSURL *)baseURL;
-- (NSURLRequest *)_webDataRequestExternalRequest;
+- (NSMutableURLRequest *)_webDataRequestExternalRequest;
 @end

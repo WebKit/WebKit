@@ -135,9 +135,9 @@
     
     [mutableRequest HTTPSetUserAgent:[controller userAgentForURL:[newRequest URL]]];
     newRequest = [mutableRequest autorelease];
-    
+
     clientRequest = [newRequest _webDataRequestExternalRequest];
-    if (!clientRequest)
+    if(!clientRequest)
         clientRequest = newRequest;
     else
         haveDataSchemeRequest = YES;
@@ -197,7 +197,7 @@
 
     // If the URL is one of our whacky applewebdata URLs that
     // fake up a substitute URL to present to the delegate.
-    if([WebDataProtocol doesURLHaveInternalDataScheme: [r URL]] != nil){
+    if([WebDataProtocol canHandleURL: [r URL]] != nil){
         NSURL *baseURL = [request _webDataRequestBaseURL];
         if (baseURL)
             [r setURL: baseURL];

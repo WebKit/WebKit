@@ -1,3 +1,21 @@
+2003-04-03  Richard Williamson   <rjw@apple.com>
+
+        Tweaks to minimize access to the parts of a WebDataRequest
+        that turn out to be slow.  Although we've changed NSURLRequest
+        to be faster, it's still good to keep these tweaks.
+        
+        Reviewed by ken.
+
+        * WebView.subproj/WebBaseResourceHandleDelegate.m:
+        (-[WebBaseResourceHandleDelegate connection:willSendRequest:redirectResponse:]):
+        (-[WebBaseResourceHandleDelegate connection:didReceiveResponse:]):
+        * WebView.subproj/WebDataProtocol.h:
+        * WebView.subproj/WebDataProtocol.m:
+        (-[NSURLRequest _webDataRequestExternalRequest]):
+        (+[WebDataProtocol canHandleURL:]):
+        * WebView.subproj/WebDataSource.m:
+        (-[WebDataSource request]):
+
 2003-04-03  Trey Matteson  <trey@apple.com>
 
 	3067928 - printing should not break lines in half

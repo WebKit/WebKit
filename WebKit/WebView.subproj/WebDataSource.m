@@ -75,10 +75,10 @@
 
 -(NSMutableURLRequest *)request
 {
-    NSURLRequest *clientRequest = [_private->request _webDataRequestExternalRequest];
+    NSMutableURLRequest *clientRequest = [_private->request _webDataRequestExternalRequest];
     if (!clientRequest)
         clientRequest = _private->request;
-    return _private->request;
+    return clientRequest;
 }
 
 - (NSURLResponse *)response
