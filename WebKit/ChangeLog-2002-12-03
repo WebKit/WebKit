@@ -1,3 +1,11 @@
+2002-03-30  Richard Williamson  <rjw@apple.com>
+
+        Corrected comments describing the new 'acceptable to layout' state
+        transition.
+        
+	* WebView.subproj/IFBaseWebControllerPrivate.mm: (-[IFBaseWebController
+	_mainReceivedProgress:forResource:fromDataSource:]):
+
 2002-03-30  Darin Adler  <darin@apple.com>
 
 	* WebView.subproj/IFBaseWebController.mm:

@@ -74,6 +74,7 @@
         return;
     }
 
+    // The frame may be nil if a previously cancelled load is still making progress callbacks.
     if (frame == nil)
         return;
         
@@ -86,12 +87,15 @@
 
     // This resouce has completed, so check if the load is complete for all frames.
     if (progress->bytesSoFar == progress->totalToLoad){
+        // If the load is complete, make the primary load as done.  The primary load is the load
+        // of the main document.  Other resources may still be arriving.
         [dataSource _setPrimaryLoadComplete: YES];
         [frame _checkLoadCompleteResource: resourceDescription error: nil  isMainDocument: YES];
     }
     else {
-        // If the load is complete, make the primary load as done.  The primary load is the load
-        // of the main document.  Other resources may still be arriving.
+        // If the frame isn't complete is might be ready for a layout.  Perform that check here.
+        // Note that transitioning a frame to this state doesn't guarantee a layout, rather it
+        // just indicates that an early layout can be performed.
         int timedLayoutSize = [[IFPreferences standardPreferences] _initialTimedLayoutSize];
         if (progress->bytesSoFar > timedLayoutSize)
             [frame _transitionProvisionalToLayoutAcceptable];
