@@ -1,3 +1,15 @@
+2003-08-26  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed 3392650 -- REGRESSION?: assertion fails trying Apple-hosted page load test while not on Apple network
+
+        * WebView.subproj/WebFramePrivate.m: (-[WebFrame _isLoadComplete]):
+        Stop loading the provisional data source before blowing it away, in case
+        there are some callbacks that haven't occurred yet. It's a waste of time to
+        try to handle those additional callbacks, and can lead to failed assertions
+        since the data source won't be hooked up to any frame any more.
+
 2003-08-25  Richard Williamson   <rjw@apple.com>
 
 	Fix for 3391609.  Our rounding hack wasn't correctly reflected in the selection point

@@ -937,6 +937,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
                                                                  forFrame:self];
 
                     // We know the provisional data source didn't cut the muster, release it.
+                    [_private->provisionalDataSource _stopLoading];
                     [self _setProvisionalDataSource:nil];
                     
                     [self _setState:WebFrameStateComplete];
