@@ -1,3 +1,10 @@
+2004-03-01  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by me
+
+        * copy-webcore-files-to-webkit: Dumb typing error on my part in making
+	my previous quick fix. This quick fix works. 
+
 2004-03-01  Chris Blumenberg  <cblu@apple.com>
 
 	Updated the WebKit project file to 1.1 because a previous check-in reverted to 1.01.

@@ -52,7 +52,7 @@ sub AssertWebCoreFound {
 		# ok...WebCore is where we expect it
 		$WebCorePath = $localpath;
 	}
-	if (-d $builditpath) {
+	elsif (-d $builditpath) {
 		# ok...WebCore is where we expect it
 		$WebCorePath = $builditpath;
 	}
