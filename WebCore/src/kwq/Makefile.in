@@ -43,6 +43,8 @@ MMOBJECTS = \
 	KWQFrame.o \
 	KWQHBox.o \
 	KWQImage.o \
+        KWQKjobclasses.o \
+        KWQKnetaccess.o \
         KWQKApplication.o \
         KWQKCharsets.o \
         KWQKComboBox.o \
@@ -50,13 +52,19 @@ MMOBJECTS = \
         KWQKConfigBase.o \
         KWQKCursor.o \
         KWQKDebug.o \
+        KWQKFactory.o \
+        KWQKFileItem.o \
         KWQKGlobal.o \
 	KWQKGlobalSettings.o \
+        KWQKHistoryProvider.o \
         KWQKHTMLPart.o \
+        KWQKHTMLFactory.o \
         KWQKHTMLSettings.o \
         KWQKIconLoader.o \
         KWQKImageIO.o \
         KWQKInstance.o \
+        KWQKJavaEmbed.o \
+        KWQKJob.o \
         KWQKLineEdit.o \
         KWQKListBox.o \
         KWQKMimeType.o \
@@ -64,6 +72,8 @@ MMOBJECTS = \
         KWQKPartsEvent.o \
         KWQKPrinter.o \
         KWQKProcess.o \
+        KWQKProtocolManager.o \
+        KWQKScheduler.o \
         KWQKSimpleConfig.o \
         KWQKStringHandler.o \
         KWQKWin.o \
@@ -119,6 +129,7 @@ CMMFLAGS = $(BASECMMFLAGS) \
     -I$(TOPSRCDIR)/src/kwq/kdecore \
     -I$(TOPSRCDIR)/src/kwq/kdeui \
     -I$(TOPSRCDIR)/src/kwq/khtml \
+    -I$(TOPSRCDIR)/src/kwq/khtml/java \
     -I$(TOPSRCDIR)/src/kwq/kio \
     -I$(TOPSRCDIR)/src/kwq/kparts \
     -I. \

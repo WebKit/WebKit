@@ -23,35 +23,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <qcursor.h>
+#include <job.h>
 
-const QCursor & Qt::sizeAllCursor = QCursor();
-const QCursor & Qt::splitHCursor = QCursor();
-const QCursor & Qt::splitVCursor = QCursor();
 
-QCursor::QCursor()
+namespace KIO {
+
+SimpleJob *http_update_cache(const KURL &, bool, time_t)
 {
 }
 
-
-QCursor::QCursor(const QPixmap &pixmap, int hotX, int hotY)
+TransferJob *get(const KURL &url, bool reload=false, 
+    bool showProgressInfo=true)
 {
 }
 
-QPoint QCursor::pos()
-{
-}
+} // namespace KIO
 
-QCursor::QCursor(const QCursor &)
-{
-}
-
-
-QCursor::~QCursor()
-{
-}
-      
-
-QCursor &QCursor::operator=(const QCursor &)
-{
-}

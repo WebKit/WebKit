@@ -25,6 +25,10 @@
 
 #include <qcursor.h>
 
+const QCursor & Qt::sizeAllCursor = QCursor();
+const QCursor & Qt::splitHCursor = QCursor();
+const QCursor & Qt::splitVCursor = QCursor();
+
 QCursor::QCursor()
 {
 }

@@ -23,35 +23,44 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <qcursor.h>
+#ifndef KHTML_SETTINGS_H_
+#define KHTML_SETTINGS_H_
 
-const QCursor & Qt::sizeAllCursor = QCursor();
-const QCursor & Qt::splitHCursor = QCursor();
-const QCursor & Qt::splitVCursor = QCursor();
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
 
-QCursor::QCursor()
+#include <qstring.h>
+#include <qstringlist.h>
+#include <qfont.h>
+#include <qmap.h>
+
+class KHTMLSettings
 {
-}
+public:
+    // Font settings
+    QString stdFontName() const;
+    QString fixedFontName() const;
+    QString serifFontName() const;
+    QString sansSerifFontName() const;
+    QString cursiveFontName() const;
+    QString fantasyFontName() const;
 
+    QString settingsToCSS() const;
 
-QCursor::QCursor(const QPixmap &pixmap, int hotX, int hotY)
-{
-}
+    QFont::CharSet charset() const;
 
-QPoint QCursor::pos()
-{
-}
+    int minFontSize() const;
+    QString availableFamilies() const;
 
-QCursor::QCursor(const QCursor &)
-{
-}
+    QFont::CharSet script() const;
 
+    const QValueList<int> &fontSizes() const;
 
-QCursor::~QCursor()
-{
-}
-      
+    bool changeCursor();
 
-QCursor &QCursor::operator=(const QCursor &)
-{
-}
+    bool isFormCompletionEnabled() const;
+    int maxFormCompletionItems() const;
+};
+
+#endif

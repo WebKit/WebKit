@@ -215,7 +215,7 @@
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = "";
 				OTHER_CFLAGS = "-DHAVE_CONFIG_H -DQT_NO_DATASTREAM -D_KWQ_ -I../../../qt -I../../.. -I../../../../.. -I../../../../kdelibs/khtml -I../../../../kwq/kdecore -I../../../../kwq/kde";
-				OTHER_LDFLAGS = "-L../../../../.. -L../../.. -L../../../qt -lkde -lkwq -l_qt -lstdc++ -ljpeg";
+				OTHER_LDFLAGS = "-L../../../../.. -L../../.. -L../../../kde  -L../../../qt -lkde -lkwq -l_kde -l_qt -lstdc++ -ljpeg";
 				PRODUCT_NAME = WebViewTest;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
