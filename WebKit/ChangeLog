@@ -1,3 +1,17 @@
+2003-04-10  Richard Williamson   <rjw@apple.com>
+
+        Fix performance regression with iBench (post 71).  The iBench cheat was being defeated.
+        
+        Ensure that the layout timer is always invalidated when a frame completes 
+        or is cancelled.
+        
+        Reviewed by mjs & gramps.
+
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame stopLoading]):
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _setState:]):
+
 2003-04-10  Trey Matteson  <trey@apple.com>
 
 	3224973 - Safari sometimes stores data for AUTOCOMPLETE=OFF fields and password fields

@@ -840,8 +840,8 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         // FIXME: This overrides the setCopiesOnScroll setting done by
         // WebCore based on whether the page's contents are dynamic or not.
         [[sv contentView] setCopiesOnScroll:YES];
-        [_private->scheduledLayoutTimer fire];
-        ASSERT(_private->scheduledLayoutTimer == nil);
+        [_private->scheduledLayoutTimer invalidate];
+        _private->scheduledLayoutTimer = 0;
         [_private setPreviousItem:nil];
         _timeOfLastCompletedLoad = CFAbsoluteTimeGetCurrent();
     }

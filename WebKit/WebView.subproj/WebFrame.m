@@ -150,7 +150,8 @@
     if (_private->state != WebFrameStateComplete) {
         [_private->provisionalDataSource _stopLoading];
         [_private->dataSource _stopLoading];
-        [_private->scheduledLayoutTimer fire];
+        [_private->scheduledLayoutTimer invalidate];
+        _private->scheduledLayoutTimer = 0;
     }
     ASSERT(_private->scheduledLayoutTimer == nil);
 }
