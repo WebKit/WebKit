@@ -1,3 +1,24 @@
+2005-02-24  Adele Amchan  <adele@apple.com>
+
+        Reviewed by Chris.
+       
+        Fix for <rdar://problem/4023393> Safari crashed in khtml::RenderObject::repaintAfterLayoutIfNeeded(QRect const&, QRect const&)
+
+        We were crashing after hitting PageDown when viewing a pdf because 
+        WebKit was calling over to WebCore to scroll overflow areas.
+        Since this only needs to be done if we're dealing with a WebHTMLView, 
+        I added a wrapper function to check the documentView before calling
+        over to WebCore.
+
+        * WebView.subproj/WebFrameView.m:
+        (-[WebFrameView _scrollOverflowInDirection:granularity:]): added wrapper function that checks if documentView is a WebHTMLView 
+        (-[WebFrameView scrollToBeginningOfDocument:]): uses new wrapper function now
+        (-[WebFrameView scrollToEndOfDocument:]): uses new wrapper function now
+        (-[WebFrameView _pageVertically:]): uses new wrapper function now
+        (-[WebFrameView _pageHorizontally:]): uses new wrapper function now
+        (-[WebFrameView _scrollLineVertically:]): uses new wrapper function now
+        (-[WebFrameView _scrollLineHorizontally:]): uses new wrapper function now
+
 2005-02-24  Richard Williamson   <rjw@apple.com>
 
 	Fixed <rdar://problem/3985889> REGRESSION (125-180): setting <img> src to GIF that already animated does not animate; just shows final frame

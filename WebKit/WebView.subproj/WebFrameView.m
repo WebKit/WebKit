@@ -471,16 +471,22 @@ static NSMutableDictionary *viewTypes;
     return [[self webFrame] _bridge];
 }
 
+- (BOOL)_scrollOverflowInDirection:(WebScrollDirection)direction granularity:(WebScrollGranularity)granularity
+{
+    // scrolling overflows is only applicable if we're dealing with an WebHTMLView
+    return ([[self documentView] isKindOfClass:[WebHTMLView class]] && [[self _bridge] scrollOverflowInDirection:direction granularity:granularity]);
+}
+
 - (void)scrollToBeginningOfDocument:(id)sender
 {
-    if (![[self _bridge] scrollOverflowInDirection:WebScrollUp granularity:WebScrollDocument]) {
+    if (![self _scrollOverflowInDirection:WebScrollUp granularity:WebScrollDocument]) {
         [[self _contentView] scrollPoint:[[[self _scrollView] documentView] frame].origin];
     }
 }
 
 - (void)scrollToEndOfDocument:(id)sender
 {
-    if (![[self _bridge] scrollOverflowInDirection:WebScrollDown granularity:WebScrollDocument]) {
+    if (![self _scrollOverflowInDirection:WebScrollDown granularity:WebScrollDocument]) {
         NSRect frame = [[[self _scrollView] documentView] frame];
         [[self _contentView] scrollPoint:NSMakePoint(frame.origin.x, NSMaxY(frame))];
     }
@@ -532,7 +538,7 @@ static NSMutableDictionary *viewTypes;
 
 - (BOOL)_pageVertically:(BOOL)up
 {
-    if ([[self _bridge] scrollOverflowInDirection:up ? WebScrollUp : WebScrollDown granularity:WebScrollPage]) {
+    if ([self _scrollOverflowInDirection:up ? WebScrollUp : WebScrollDown granularity:WebScrollPage]) {
         return YES;
     }
     float delta = [self _verticalPageScrollDistance];
@@ -541,7 +547,7 @@ static NSMutableDictionary *viewTypes;
 
 - (BOOL)_pageHorizontally:(BOOL)left
 {
-    if ([[self _bridge] scrollOverflowInDirection:left ? WebScrollLeft : WebScrollRight granularity:WebScrollPage]) {
+    if ([self _scrollOverflowInDirection:left ? WebScrollLeft : WebScrollRight granularity:WebScrollPage]) {
         return YES;
     }
     float delta = [self _horizontalPageScrollDistance];
@@ -550,7 +556,7 @@ static NSMutableDictionary *viewTypes;
 
 - (BOOL)_scrollLineVertically:(BOOL)up
 {
-    if ([[self _bridge] scrollOverflowInDirection:up ? WebScrollUp : WebScrollDown granularity:WebScrollLine]) {
+    if ([self _scrollOverflowInDirection:up ? WebScrollUp : WebScrollDown granularity:WebScrollLine]) {
         return YES;
     }
     float delta = [self _verticalKeyboardScrollDistance];
@@ -559,7 +565,7 @@ static NSMutableDictionary *viewTypes;
 
 - (BOOL)_scrollLineHorizontally:(BOOL)left
 {
-    if ([[self _bridge] scrollOverflowInDirection:left ? WebScrollLeft : WebScrollRight granularity:WebScrollLine]) {
+    if ([self _scrollOverflowInDirection:left ? WebScrollLeft : WebScrollRight granularity:WebScrollLine]) {
         return YES;
     }
     float delta = [self _horizontalKeyboardScrollDistance];
