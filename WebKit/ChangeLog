@@ -1,3 +1,15 @@
+2002-06-21  Darin Adler  <darin@apple.com>
+
+	Fix rendering of non-opaque animated images.
+
+	* WebCoreSupport.subproj/IFImageRenderer.m:
+	(-[IFImageRenderer nextFrame:]): Use [NSView displayRect:] instead of
+	drawing explicitly so that views behind us get a chance to draw too.
+	This is less efficient than just drawing for opaque images, but NSImage
+	doesn't offer a way to find out if the image is opaque. Also, this changes
+	things a bit because beginAnimationInView gets called again, so we don't
+	have to reschedule the timer.
+
 2002-06-20  Richard Williamson (local)  <rjw@apple.com>
 
 	* WebCoreSupport.subproj/IFImageRenderer.m:

@@ -132,18 +132,22 @@ static NSMutableArray *activeImageRenderers;
 
 - (void)nextFrame:(id)context
 {
-    int currentFrame = [self currentFrame];
+    int currentFrame;
     
     // Release the timer that just fired.
     [frameTimer release];
+    frameTimer = nil;
     
-    currentFrame++;
+    currentFrame = [self currentFrame] + 1;
     if (currentFrame >= [self frameCount]) {
         currentFrame = 0;
     }
+    [self setCurrentFrame:currentFrame];
     
-    [self setCurrentFrame: currentFrame];
-    
+    [frameView displayRect:targetRect];
+    [[frameView window] flushWindow];
+
+#if 0 // The following would be more efficient than using displayRect if we knew the image was opaque.
     if ([frameView canDraw]) {
         [frameView lockFocus];
         [self drawInRect:targetRect
@@ -151,7 +155,6 @@ static NSMutableArray *activeImageRenderers;
                operation:NSCompositeSourceOver	// Renders transparency correctly
                 fraction:1.0];
         [frameView unlockFocus];
-        [[frameView window] flushWindow];
     }
 
     frameTimer = [[NSTimer scheduledTimerWithTimeInterval:[self frameDuration]
@@ -159,11 +162,12 @@ static NSMutableArray *activeImageRenderers;
                                                  selector:@selector(nextFrame:)
                                                  userInfo:nil
                                                   repeats:NO] retain];
+#endif
 }
 
 - (void)beginAnimationInView: (NSView *)view inRect: (NSRect)ir fromRect: (NSRect)fr
 {
-    // The previous, if any, frameView, is released in stopAnimations.
+    // The previous, if any, frameView, is released in stopAnimation.
     [self stopAnimation];
     
     if ([self frameCount] > 1) {
