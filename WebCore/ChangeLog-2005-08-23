@@ -1,3 +1,27 @@
+2004-04-12  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+        
+        Some delete and insert cleanups.
+
+        * khtml/editing/htmlediting_impl.cpp:
+        (DeleteSelectionCommandImpl::doApply): For ending position case 1,
+        the caret should be placed before the first child of the containing block, 
+        not before the containing block itself. Also, add some code to handle
+        converting nbsp's back to regular spaces. This will need to be improved
+        some day to convert only nbsp's added by the editor to make rendering come out right.
+        (InputTextCommandImpl::execute): 
+        (TypingCommandImpl::issueCommandForDeleteKey): Make deleting collapsible whitespace part 
+        of the work of deleting a selection, rather than something that needs to be done by a 
+        user of DeleteSelectionCommandImpl. This makes it impossible to leave out
+        this essential step.
+        (TypingCommandImpl::deleteKeyPressed): We can't use a possible optimization here until 
+        the code to do deletions properly has been factored better. Big FIXME added.
+        * layout-tests/editing/deleting/delete-block-contents-001-expected.txt: Updated for
+        ending position case 1 behavior change.
+        * layout-tests/editing/deleting/delete-block-contents-002-expected.txt: Ditto. 
+        * layout-tests/editing/deleting/delete-block-contents-003-expected.txt: Ditto.
+
 2004-04-09  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Darin

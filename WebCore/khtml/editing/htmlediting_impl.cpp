@@ -816,7 +816,8 @@ void DeleteSelectionCommandImpl::doApply()
     if (m_selectionToDelete.state() != KHTMLSelection::RANGE)
         return;
 
-    KHTMLSelection selection = m_selectionToDelete;
+    deleteCollapsibleWhitespace(m_selectionToDelete);
+    KHTMLSelection selection = endingSelection();
 
     DOMPosition endingPosition;
     bool adjustEndingPositionDownstream = false;
@@ -855,7 +856,7 @@ void DeleteSelectionCommandImpl::doApply()
     // Start is not completely selected
     if (startAtStartOfBlock) {
         LOG(Editing,  "ending position case 1");
-        endingPosition = DOMPosition(downstreamStart.node()->containingEditableBlock(), 0);
+        endingPosition = DOMPosition(downstreamStart.node()->containingEditableBlock(), 1);
         adjustEndingPositionDownstream = true;
     }
     else if (!startCompletelySelected) {
@@ -1197,8 +1198,19 @@ void InputTextCommandImpl::execute(const DOMString &text)
     // that will replace this some day.
     if (isWS(text))
         insertSpace(textNode, offset);
-    else
+    else {
+        const DOMString &existingText = textNode->data();
+        if (textNode->length() >= 2 && offset >= 2 && isNBSP(existingText[offset - 1]) && !isWS(existingText[offset - 2])) {
+            // DOM looks like this:
+            // character nbsp caret
+            // As we are about to insert a non-whitespace character at the caret
+            // convert the nbsp to a regular space.
+            // EDIT FIXME: This needs to be improved some day to convert back only
+            // those nbsp's added by the editor to make rendering come out right.
+            replaceText(textNode, offset - 1, 1, " ");
+        }
         insertText(textNode, offset, text);
+    }
     setEndingSelection(DOMPosition(textNode, offset + text.length()));
     m_charactersAdded += text.length();
 }
@@ -1695,21 +1707,26 @@ void TypingCommandImpl::insertNewline()
 
 void TypingCommandImpl::issueCommandForDeleteKey()
 {
-    KHTMLSelection selection = endingSelection();
-    ASSERT(selection.state() != KHTMLSelection::NONE);
+    KHTMLSelection selectionToDelete = endingSelection();
+    ASSERT(selectionToDelete.state() != KHTMLSelection::NONE);
     
-    if (selection.state() == KHTMLSelection::CARET) {
-        KHTMLSelection selectionToDelete(selection.startPosition().previousCharacterPosition(), selection.startPosition());
-        deleteCollapsibleWhitespace(selectionToDelete);
-    }
-    else { // selection.state() == KHTMLSelection::RANGE
-        deleteCollapsibleWhitespace();
-    }
-    deleteSelection(endingSelection());
+    if (selectionToDelete.state() == KHTMLSelection::CARET)
+        selectionToDelete = KHTMLSelection(selectionToDelete.startPosition().previousCharacterPosition(), selectionToDelete.startPosition());
+    deleteSelection(selectionToDelete);
 }
 
 void TypingCommandImpl::deleteKeyPressed()
 {
+// EDIT FIXME: The ifdef'ed out code below should be re-enabled.
+// In order for this to happen, the deleteCharacter case
+// needs work. Specifically, the caret-positioning code
+// and whitespace-handling code in DeleteSelectionCommandImpl::doApply()
+// needs to be factored out so it can be used again here.
+// Until that work is done, issueCommandForDeleteKey() does the
+// right thing, but less efficiently and with the cost of more
+// objects.
+    issueCommandForDeleteKey();
+#if 0    
     if (m_cmds.count() == 0) {
         issueCommandForDeleteKey();
     }
@@ -1730,6 +1747,7 @@ void TypingCommandImpl::deleteKeyPressed()
             issueCommandForDeleteKey();
         }
     }
+#endif
 }
 
 void TypingCommandImpl::removeCommand(const EditCommand &cmd)
