@@ -8,7 +8,7 @@
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebNetscapePluginPackage.h>
 
-#import <WebFoundation/WebFoundation.h>
+#import <WebFoundation/WebResponse.h>
 #import <WebFoundation/WebNSFileManagerExtras.h>
 
 @implementation WebBaseNetscapePluginStream

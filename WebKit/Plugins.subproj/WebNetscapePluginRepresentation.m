@@ -10,7 +10,7 @@
 #import <WebKit/WebNetscapePluginRepresentation.h>
 
 #import <WebFoundation/WebAssertions.h>
-#import <WebFoundation/WebFoundation.h>
+#import <WebFoundation/WebError.h>
 
 @implementation WebNetscapePluginRepresentation
 

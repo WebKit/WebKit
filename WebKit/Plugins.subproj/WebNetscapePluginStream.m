@@ -10,6 +10,8 @@
 #import <WebKit/WebViewPrivate.h>
 
 #import <WebFoundation/WebFoundation.h>
+#import <WebFoundation/WebRequest.h>
+#import <WebFoundation/WebResource.h>
 
 @implementation WebNetscapePluginStream
 
