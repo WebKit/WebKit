@@ -1,3 +1,12 @@
+2002-02-11  John Sullivan  <sullivan@apple.com>
+
+	Fixed bug where clicking on empty browser page would crash. This could
+	happen when the start page was empty, or failed to load.
+
+	* WebView.subproj/IFWebView.mm: 
+	(-[IFWebView mouseUp:]), (-[IFWebView mouseDown:]):
+	Checked for nil widget before dispatching mouse events.
+
 2002-02-08  John Sullivan  <sullivan@apple.com>
 
 	Changed back & forward to goBack and goForward and made them not return

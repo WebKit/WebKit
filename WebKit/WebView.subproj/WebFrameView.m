@@ -340,7 +340,10 @@
     NSPoint p = [event locationInWindow];
     
     QMouseEvent *kEvent = new QMouseEvent(QEvent::MouseButtonPress, QPoint(p.x, p.y), button, state);
-    ((IFWebViewPrivate *)_viewPrivate)->widget->viewportMouseReleaseEvent(kEvent);
+    KHTMLView *widget = ((IFWebViewPrivate *)_viewPrivate)->widget;
+    if (widget != 0l) {
+        widget->viewportMouseReleaseEvent(kEvent);
+    }
 }
 
 - (void)mouseDown: (NSEvent *)event
@@ -366,7 +369,10 @@
     NSPoint p = [event locationInWindow];
     
     QMouseEvent *kEvent = new QMouseEvent(QEvent::MouseButtonPress, QPoint(p.x, p.y), button, state);
-    ((IFWebViewPrivate *)_viewPrivate)->widget->viewportMousePressEvent(kEvent);
+    KHTMLView *widget = ((IFWebViewPrivate *)_viewPrivate)->widget;
+    if (widget != 0l) {
+        widget->viewportMousePressEvent(kEvent);
+    }
 }
 
 - (void)mouseDragged: (NSEvent *)event
