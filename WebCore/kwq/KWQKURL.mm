@@ -352,97 +352,89 @@ void KURL::clearCaches()
 
 QString KURL::normalizeURLString(const QString &s)
 {
-    CFMutableStringRef result = NULL;
-
     if (NormalizedURLCache == NULL) {
 	NormalizedURLCache = CFDictionaryCreateMutable(NULL, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks); 
     }
 
-    result = (CFMutableStringRef)CFDictionaryGetValue(NormalizedURLCache, s.getCFMutableString());
-
+    CFMutableStringRef result = (CFMutableStringRef)CFDictionaryGetValue(NormalizedURLCache, s.getCFMutableString());
     if (result != NULL) {
 	return QString::fromCFMutableString(result);
-    } else {
-	// normalize the URL string as KURL would:
-
-	QString qurl = QString(s);
-
-	// Special handling for paths
-	if (!qurl.isEmpty() && qurl[0] == '/') {
-	    qurl = QString("file:") + qurl;
-	}
-
-	if (d.isNull()) {
-	    d = KWQRefPtr<KWQKURLPrivate>(new KWQKURLPrivate(qurl));
-	}
-
-	qurl = d->sURL;
-
-	if (qurl.startsWith("file:///")) {
-	    qurl = QString("file:/") + qurl.mid(8);
-	} else if (qurl == "file://localhost") {
-	    qurl = QString("file:");
-	} else if (qurl.startsWith("file://localhost/")) {
-	    qurl = QString("file:/") + qurl.mid(17);
-	}
-
-	CFDictionarySetValue(NormalizedURLCache, s.getCFMutableString(), qurl.getCFMutableString());
-
-	return qurl;
     }
+    
+    // normalize the URL string as KURL would:
+
+    QString qurl = s;
+
+    // Special handling for paths
+    if (!qurl.isEmpty() && qurl[0] == '/') {
+        qurl = QString("file:") + qurl;
+    }
+
+    // FIXME: Do we really have to parse even the simplest URLs into pieces just to normalize them?
+    if (d.isNull()) {
+        d = KWQRefPtr<KWQKURLPrivate>(new KWQKURLPrivate(qurl));
+    }
+
+    qurl = d->sURL;
+
+    if (qurl.startsWith("file:///")) {
+        qurl = QString("file:/") + qurl.mid(8);
+    } else if (qurl == "file://localhost") {
+        qurl = QString("file:");
+    } else if (qurl.startsWith("file://localhost/")) {
+        qurl = QString("file:/") + qurl.mid(17);
+    }
+
+    CFDictionarySetValue(NormalizedURLCache, s.getCFMutableString(), qurl.getCFMutableString());
+
+    return qurl;
 }
 
 QString KURL::normalizeRelativeURLString(const KURL &base, const QString &relative)
 {
-    CFMutableStringRef result = NULL;
-    RelativeURLKey key = { base.urlString.getCFMutableString(), relative.getCFMutableString(), 0 };
-
     if (NormalizedRelativeURLCache == NULL) {
 	NormalizedRelativeURLCache = CFDictionaryCreateMutable(NULL, 0, &RelativeURLKeyCallBacks, &kCFTypeDictionaryValueCallBacks); 
     }
 
-    result = (CFMutableStringRef)CFDictionaryGetValue(NormalizedRelativeURLCache, &key);
-
-    if (result != NULL) {
-	return QString::fromCFMutableString(result);
-    } else {
-	QString result;
-	if (relative.isEmpty()) {
-	    result = base.urlString;
-	} else {
-	    base.parse();
-
-	    CFStringRef relativeURLString = CFURLCreateStringByAddingPercentEscapes
-                (NULL, relative.getCFMutableString(), CFSTR("%#"), NULL, kCFStringEncodingUTF8);
-
-	    CFURLRef relativeURL = CFURLCreateWithString(NULL, relativeURLString, base.d->urlRef);
-
-	    CFRelease(relativeURLString);
-
-	    if (relativeURL == NULL) {
-		result = normalizeURLString(relative);
-	    } else {
-		CFURLRef absoluteURL = CFURLCopyAbsoluteURL(relativeURL);
-                
-		result = normalizeURLString(QString::fromCFString(CFURLGetString(absoluteURL)));
-                
-		CFRelease(relativeURL);
-		CFRelease(absoluteURL);
-	    }
-	}
-		
-	CFDictionarySetValue(NormalizedRelativeURLCache, 
-			     new RelativeURLKey(key), 
-			     result.getCFMutableString());
-	return result;
+    RelativeURLKey key = { base.urlString.getCFMutableString(), relative.getCFMutableString(), 0 };
+    CFMutableStringRef cachedResult = (CFMutableStringRef)CFDictionaryGetValue(NormalizedRelativeURLCache, &key);
+    if (cachedResult != NULL) {
+	return QString::fromCFMutableString(cachedResult);
     }
+    
+    QString result;
+    if (relative.isEmpty()) {
+        result = base.urlString;
+    } else {
+        base.parse();
+
+        CFStringRef relativeURLString = CFURLCreateStringByAddingPercentEscapes
+            (NULL, relative.getCFMutableString(), CFSTR("%#"), NULL, kCFStringEncodingUTF8);
+
+        CFURLRef relativeURL = CFURLCreateWithString(NULL, relativeURLString, base.d->urlRef);
+
+        CFRelease(relativeURLString);
+
+        if (relativeURL == NULL) {
+            result = normalizeURLString(relative);
+        } else {
+            CFURLRef absoluteURL = CFURLCopyAbsoluteURL(relativeURL);
+            
+            result = normalizeURLString(QString::fromCFString(CFURLGetString(absoluteURL)));
+            
+            CFRelease(relativeURL);
+            CFRelease(absoluteURL);
+        }
+    }
+            
+    CFDictionarySetValue(NormalizedRelativeURLCache, new RelativeURLKey(key), result.getCFMutableString());
+    return result;
 }
 
 // KURL
 
 KURL::KURL() : 
-    d(NULL),
-    urlString(normalizeURLString(QString()))
+    d(NULL)
 {
 }
 

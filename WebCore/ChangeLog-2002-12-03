@@ -1,3 +1,18 @@
+2002-07-03  Darin Adler  <darin@apple.com>
+
+	A small KURL speed improvement.
+
+        * khtml/misc/loader.cpp:
+        (Cache::requestImage):
+        (Cache::requestStyleSheet):
+        (Cache::requestScript):
+	Don't do the isMalformed check, because it's expensive and has no clear benefit.
+	There's no harm in caching null results for malformed URLs.
+
+        * kwq/KWQKURL.mm:
+        (KURL::KURL): Make the default constructor faster by not running all the
+	normalize code on the empty string.
+
 === Alexander-11 ===
 
 2002-07-03  Maciej Stachowiak  <mjs@apple.com>

@@ -1341,6 +1341,9 @@ CachedImage *Cache::requestImage( DocLoader* dl, const DOMString & url, bool rel
         cachePolicy = KIO::CC_Verify;
     }
 
+#ifdef APPLE_CHANGES
+    // Checking if the URL is malformed is lots of extra work for little benefit.
+#else
     if( kurl.isMalformed() )
     {
 #ifdef CACHE_DEBUG
@@ -1348,6 +1351,7 @@ CachedImage *Cache::requestImage( DocLoader* dl, const DOMString & url, bool rel
 #endif
       return 0;
     }
+#endif
 
     CachedObject *o = 0;
     if (!reload)
@@ -1416,11 +1420,15 @@ CachedCSSStyleSheet *Cache::requestStyleSheet( DocLoader* dl, const DOMString & 
         cachePolicy = KIO::CC_Verify;
     }
 
+#ifdef APPLE_CHANGES
+    // Checking if the URL is malformed is lots of extra work for little benefit.
+#else
     if( kurl.isMalformed() )
     {
       kdDebug( 6060 ) << "Cache: Malformed url: " << kurl.url() << endl;
       return 0;
     }
+#endif
 
     CachedObject *o = cache->find(kurl.url());
     if(!o)
@@ -1496,11 +1504,15 @@ CachedScript *Cache::requestScript( DocLoader* dl, const DOM::DOMString &url, bo
         cachePolicy = KIO::CC_Verify;
     }
 
+#ifdef APPLE_CHANGES
+    // Checking if the URL is malformed is lots of extra work for little benefit.
+#else
     if( kurl.isMalformed() )
     {
       kdDebug( 6060 ) << "Cache: Malformed url: " << kurl.url() << endl;
       return 0;
     }
+#endif
 
     CachedObject *o = cache->find(kurl.url());
     if(!o)
