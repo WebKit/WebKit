@@ -76,6 +76,8 @@ public:
     QByteArray postData() const;
     QString method() const;
 private:
+    void assembleResponseHeaders() const;
+
     TransferJobPrivate *d;
 
     KWQSignal m_data;

@@ -291,8 +291,8 @@ typedef enum {
 - (BOOL)runJavaScriptConfirmPanelWithMessage:(NSString *)message;
 - (BOOL)runJavaScriptTextInputPanelWithPrompt:(NSString *)prompt defaultText:(NSString *)defaultText returningText:(NSString **)result;
 
-- (id <WebCoreResourceHandle>)startLoadingResource:(id <WebCoreResourceLoader>)loader withURL:(NSURL *)URL;
-- (id <WebCoreResourceHandle>)startLoadingResource:(id <WebCoreResourceLoader>)loader withURL:(NSURL *)URL postData:(NSData *)data;
+- (id <WebCoreResourceHandle>)startLoadingResource:(id <WebCoreResourceLoader>)loader withURL:(NSURL *)URL customHeaders:(NSDictionary *)customHeaders;
+- (id <WebCoreResourceHandle>)startLoadingResource:(id <WebCoreResourceLoader>)loader withURL:(NSURL *)URL customHeaders:(NSDictionary *)customHeaders postData:(NSData *)data;
 - (void)objectLoadedFromCacheWithURL:(NSURL *)URL response:(id)response size:(unsigned)bytes;
 - (BOOL)isReloading;
 

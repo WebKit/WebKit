@@ -1,3 +1,57 @@
+2003-11-21  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Ken.
+
+	WebCore part of fix for:
+	
+	<rdar://problem/3487134>: Implement http request/response status and headers for XMLHttpRequest
+
+        * khtml/ecma/xmlhttprequest.cpp:
+        (KJS::XMLHttpRequest::getValueProperty): Call appropriate methods for
+	status and statusText.
+        (KJS::XMLHttpRequest::send): Set request headers as "customHeaders"
+	metadata property.
+        (KJS::XMLHttpRequest::setRequestHeader): Simply append to header
+	string.
+        (KJS::XMLHttpRequest::getAllResponseHeaders): Return the header string
+	except for the first line.
+	(KJS::XMLHttpRequest::getResponseHeader): Scan the response header
+	string for the header field. Not sure if it's worth being more
+	efficient.
+        (KJS::XMLHttpRequest::getStatus): Try to pull a code out
+	of the status line.
+        (KJS::XMLHttpRequest::getStatusText): Pull the first line
+	off the headers (if any), otherwise return undefined.
+        (KJS::XMLHttpRequest::slotData): The first time through, save
+	the response headers, retrieved from "HTTP-Headers" metadata
+	property.
+        (KJS::XMLHttpRequestProtoFunc::tryCall): Make setRequestHeader,
+	getResponseHeader, getAllResponseHeaders call the right thing.
+        * khtml/ecma/xmlhttprequest.h:
+        * kwq/KWQKJobClasses.h:
+        * kwq/KWQKJobClasses.mm:
+        (KIO::TransferJobPrivate::TransferJobPrivate): Added header
+	support.
+        (KIO::TransferJobPrivate::~TransferJobPrivate):
+        (KIO::TransferJob::assembleResponseHeaders): Get a header string
+	out of the response if needed.
+        (KIO::TransferJob::queryMetaData): Special-case "HTTP-Headers".
+        (KIO::TransferJob::emitReceivedResponse): Save response.
+        * kwq/KWQLoader.h:
+        * kwq/KWQLoader.mm:
+        (-[NSDictionary _webcore_initWithHeaderString:]): Helper method to
+	turn a string of header fields into a dictionary.
+        (KWQServeRequest): Pass custom headers through.
+        (KWQResponseMIMEType): Admit it's an NSURLResponse *.
+        (KWQResponseHeaderString): Assembled status code and response
+	header fields into response header. Cheat a little on the status
+	line.
+        * kwq/KWQResourceLoader.mm:
+        (-[KWQResourceLoader receivedResponse:]): Admit it's an
+	NSURLResponse *.
+        * kwq/WebCoreResourceLoader.h: Ditto.
+	* kwq/WebCoreBridge.h: Add customHeader: arguments.
+
 2003-11-21  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3491907>: When viewing applet, view hierarchy was an empty KWQView

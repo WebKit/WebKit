@@ -66,6 +66,9 @@ namespace KJS {
     friend class XMLHttpRequestProtoFunc;
     friend class XMLHttpRequestQObject;
 
+    Value getStatusText() const;
+    Value getStatus() const;
+
     XMLHttpRequestQObject *qObject;
 
 #if APPLE_CHANGES
@@ -79,6 +82,9 @@ namespace KJS {
     void open(const QString& _method, const KURL& _url, bool _async);
     void send(const QString& _body);
     void abort();
+    void setRequestHeader(const QString& name, const QString &value);
+    Value getAllResponseHeaders() const;
+    Value getResponseHeader(const QString& name) const;
 
     void changeState(XMLHttpRequestState newState);
 
@@ -87,6 +93,7 @@ namespace KJS {
     KURL url;
     QString method;
     bool async;
+    QString requestHeaders;
 
     KIO::TransferJob * job;
 
@@ -96,6 +103,8 @@ namespace KJS {
     khtml::Decoder *decoder;
     QString encoding;
     QString response;
+
+    QString responseHeaders;
   };
 
 

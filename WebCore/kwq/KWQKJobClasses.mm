@@ -27,6 +27,7 @@
 
 #import "KWQExceptions.h"
 #import "KWQKJobClasses.h"
+#import "KWQLoader.h"
 #import "KWQResourceLoader.h"
 #import "KWQString.h"
 
@@ -46,6 +47,8 @@ public:
 	, URL(kurl)
 	, loader(nil)
 	, method("GET")
+	, response(0)
+	, assembledResponseHeaders(true)
     {
     }
 
@@ -56,11 +59,14 @@ public:
 	, loader(nil)
 	, method("POST")
 	, postData(_postData)
+	, response(0)
+	, assembledResponseHeaders(true)
     {
     }
 
     ~TransferJobPrivate()
     {
+	KWQReleaseResponse(response);
         [metaData release];
         [loader release];
     }
@@ -71,6 +77,10 @@ public:
     KWQResourceLoader *loader;
     QString method;
     QByteArray postData;
+
+    void *response;
+    bool assembledResponseHeaders;
+    QString responseHeaders;
 };
 
 TransferJob::TransferJob(const KURL &url, bool reload, bool showProgressInfo)
@@ -121,8 +131,22 @@ QString TransferJob::errorText() const
     return QString::null;
 }
 
+void TransferJob::assembleResponseHeaders() const
+{
+    if (!d->assembledResponseHeaders) {
+	d->responseHeaders = QString::fromNSString((NSString *)KWQResponseHeaderString(d->response));
+	d->assembledResponseHeaders = true;
+    }
+
+}
+
 QString TransferJob::queryMetaData(const QString &key) const
 {
+    if (key == "HTTP-Headers") {
+	assembleResponseHeaders();
+	return d->responseHeaders;
+    }
+
     NSString *value = [d->metaData objectForKey:key.getNSString()]; 
     return value ? QString::fromNSString(value) : QString::null;
 }
@@ -186,6 +210,10 @@ void TransferJob::emitResult()
 
 void TransferJob::emitReceivedResponse(void *response)
 {
+    d->assembledResponseHeaders = false;
+    d->response = response;
+    KWQRetainResponse(d->response);
+
     m_receivedResponse.call(this, response);
 }
 

@@ -41,12 +41,20 @@
 
 + (WebSubresourceClient *)startLoadingResource:(id <WebCoreResourceLoader>)rLoader
 				   withRequest:(NSMutableURLRequest *)newRequest
+                                 customHeaders:(NSDictionary *)customHeaders
 				      referrer:(NSString *)referrer 
 				 forDataSource:(WebDataSource *)source
 {
     WebSubresourceClient *client = [[[self alloc] initWithLoader:rLoader dataSource:source] autorelease];
     
     [source _addSubresourceClient:client];
+
+
+    NSEnumerator *e = [customHeaders keyEnumerator];
+    NSString *key;
+    while ((key = (NSString *)[e nextObject]) != nil) {
+	[newRequest addValue:[customHeaders objectForKey:key] forHTTPHeaderField:key];
+    }
 
     [newRequest setCachePolicy:[[source request] cachePolicy]];
     [newRequest setHTTPReferrer:referrer];
@@ -74,22 +82,29 @@
 }
 
 + (WebSubresourceClient *)startLoadingResource:(id <WebCoreResourceLoader>)rLoader
-    withURL:(NSURL *)URL referrer:(NSString *)referrer forDataSource:(WebDataSource *)source
+				       withURL:(NSURL *)URL
+				 customHeaders:(NSDictionary *)customHeaders
+				      referrer:(NSString *)referrer
+				 forDataSource:(WebDataSource *)source
 {
     NSMutableURLRequest *newRequest = [[NSMutableURLRequest alloc] initWithURL:URL];
-    WebSubresourceClient *client = [self startLoadingResource:rLoader withRequest:newRequest referrer:referrer forDataSource:source];
+    WebSubresourceClient *client = [self startLoadingResource:rLoader withRequest:newRequest customHeaders:customHeaders referrer:referrer forDataSource:source];
     [newRequest release];
 
     return client;
 }
 
 + (WebSubresourceClient *)startLoadingResource:(id <WebCoreResourceLoader>)rLoader
-    withURL:(NSURL *)URL postData:(NSData *)data referrer:(NSString *)referrer forDataSource:(WebDataSource *)source
+				       withURL:(NSURL *)URL
+				 customHeaders:(NSDictionary *)customHeaders
+				      postData:(NSData *)data
+				      referrer:(NSString *)referrer
+				 forDataSource:(WebDataSource *)source
 {
     NSMutableURLRequest *newRequest = [[NSMutableURLRequest alloc] initWithURL:URL];
     [newRequest setHTTPMethod:@"POST"];
     [newRequest setHTTPBody:data];
-    WebSubresourceClient *client = [self startLoadingResource:rLoader withRequest:newRequest referrer:referrer forDataSource:source];
+    WebSubresourceClient *client = [self startLoadingResource:rLoader withRequest:newRequest customHeaders:customHeaders referrer:referrer forDataSource:source];
     [newRequest release];
 
     return client;

@@ -1,3 +1,21 @@
+2003-11-21  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Ken.
+
+	WebKit part of fix for:
+	
+	<rdar://problem/3487134>: Implement http request/response status and headers for XMLHttpRequest
+	
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge startLoadingResource:withURL:customHeaders:]): Added customHeaders
+	parameter.
+        (-[WebBridge startLoadingResource:withURL:customHeaders:postData:]): Ditto.
+        * WebCoreSupport.subproj/WebSubresourceClient.h:
+        * WebCoreSupport.subproj/WebSubresourceClient.m:
+        (+[WebSubresourceClient startLoadingResource:withRequest:customHeaders:referrer:forDataSource:]): Add the custom headers.
+        (+[WebSubresourceClient startLoadingResource:withURL:customHeaders:referrer:forDataSource:]): Pass along the custom headers.
+        (+[WebSubresourceClient startLoadingResource:withURL:customHeaders:postData:referrer:forDataSource:]): Pass along the custom headers.
+
 2003-11-21  John Sullivan  <sullivan@apple.com>
 
         - WebKit part of fix for <rdar://problem/3333744>: Safari prints page with 

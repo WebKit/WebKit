@@ -363,7 +363,7 @@
     [self addData:data];
 }
 
-- (id <WebCoreResourceHandle>)startLoadingResource:(id <WebCoreResourceLoader>)resourceLoader withURL:(NSURL *)URL
+- (id <WebCoreResourceHandle>)startLoadingResource:(id <WebCoreResourceLoader>)resourceLoader withURL:(NSURL *)URL customHeaders:(NSDictionary *)customHeaders
 {
     // If we are no longer attached to a WebView, this must be an attempted load from an
     // onUnload handler, so let's just block it.
@@ -373,11 +373,12 @@
 
     return [WebSubresourceClient startLoadingResource:resourceLoader
                                               withURL:URL
+ 				        customHeaders:customHeaders
                                              referrer:[self referrer]
                                         forDataSource:[self dataSource]];
 }
 
-- (id <WebCoreResourceHandle>)startLoadingResource:(id <WebCoreResourceLoader>)resourceLoader withURL:(NSURL *)URL postData:(NSData *)data
+- (id <WebCoreResourceHandle>)startLoadingResource:(id <WebCoreResourceLoader>)resourceLoader withURL:(NSURL *)URL customHeaders:(NSDictionary *)customHeaders postData:(NSData *)data
 {
     // If we are no longer attached to a WebView, this must be an attempted load from an
     // onUnload handler, so let's just block it.
@@ -387,6 +388,7 @@
 
     return [WebSubresourceClient startLoadingResource:resourceLoader
                                               withURL:URL
+ 				        customHeaders:customHeaders
 				             postData:data
                                              referrer:[self referrer]
                                         forDataSource:[self dataSource]];

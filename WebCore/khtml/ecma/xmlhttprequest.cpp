@@ -130,15 +130,15 @@ Value XMLHttpRequest::getValueProperty(ExecState *, int token) const
   case ResponseXML:
     return Undefined();
   case Status:
-    return Undefined();
+    return getStatus();
   case StatusText:
-    return Undefined();
+    return getStatusText();
   case Onreadystatechange:
-    if (onReadyStateChangeListener && onReadyStateChangeListener->listenerObjImp()) {
-      return onReadyStateChangeListener->listenerObj();
-    } else {
-      return Null();
-    }
+   if (onReadyStateChangeListener && onReadyStateChangeListener->listenerObjImp()) {
+     return onReadyStateChangeListener->listenerObj();
+   } else {
+     return Null();
+   }
   default:
     kdWarning() << "XMLHttpRequest::getValueProperty unhandled token " << token << endl;
     return Value();
@@ -213,6 +213,9 @@ void XMLHttpRequest::send(const QString& _body)
   {
      job = KIO::get( url, false, false );
   }
+  if (requestHeaders.length() > 0) {
+    job->addMetaData("customHTTPHeader", requestHeaders);
+  }
 
   qObject->connect( job, SIGNAL( result( KIO::Job* ) ),
 		    SLOT( slotFinished( KIO::Job* ) ) );
@@ -241,6 +244,97 @@ void XMLHttpRequest::abort()
   }
 }
 
+void XMLHttpRequest::setRequestHeader(const QString& name, const QString &value)
+{
+  if (requestHeaders.length() > 0) {
+    requestHeaders += "\r\n";
+  }
+  requestHeaders += name;
+  requestHeaders += ": ";
+  requestHeaders += value;
+}
+
+Value XMLHttpRequest::getAllResponseHeaders() const
+{
+  if (responseHeaders.isEmpty()) {
+    return Undefined();
+  }
+
+  int endOfLine = responseHeaders.find("\n");
+
+  if (endOfLine == -1) {
+    return Undefined();
+  }
+
+  return String(responseHeaders.mid(endOfLine + 1) + "\n");
+}
+
+Value XMLHttpRequest::getResponseHeader(const QString& name) const
+{
+  if (responseHeaders.isEmpty()) {
+    return Undefined();
+  }
+
+  QRegExp headerLinePattern(name + ":", false);
+
+  int matchLength;
+  int headerLinePos = headerLinePattern.match(responseHeaders, 0, &matchLength);
+  while (headerLinePos != -1) {
+    if (headerLinePos == 0 || responseHeaders[headerLinePos-1] == '\n') {
+      break;
+    }
+    
+    headerLinePos = headerLinePattern.match(responseHeaders, headerLinePos + 1, &matchLength);
+  }
+
+
+  if (headerLinePos == -1) {
+    return Undefined();
+  }
+    
+  int endOfLine = responseHeaders.find("\n", headerLinePos + matchLength);
+
+  return String(responseHeaders.mid(headerLinePos + matchLength, endOfLine - (headerLinePos + matchLength)).stripWhiteSpace());
+}
+
+Value XMLHttpRequest::getStatus() const
+{
+  if (responseHeaders.isEmpty()) {
+    return Undefined();
+  }
+  
+  int endOfLine = responseHeaders.find("\n");
+  QString firstLine = endOfLine == -1 ? responseHeaders : responseHeaders.left(endOfLine);
+  int codeStart = firstLine.find(" ");
+  int codeEnd = firstLine.find(" ", codeStart + 1);
+  
+  if (codeStart == -1 || codeEnd == -1) {
+    return Undefined();
+  }
+  
+  QString number = firstLine.mid(codeStart + 1, codeEnd - (codeStart + 1));
+  
+  bool ok = false;
+  int code = number.toInt(&ok);
+  if (!ok) {
+    return Undefined();
+  }
+
+  return Number(code);
+}
+
+Value XMLHttpRequest::getStatusText() const
+{
+  if (responseHeaders.isEmpty()) {
+    return Undefined();
+  }
+  
+  int endOfLine = responseHeaders.find("\n");
+  QString firstLine = endOfLine == -1 ? responseHeaders : responseHeaders.left(endOfLine);
+  
+  return String(firstLine);
+}
+   
 void XMLHttpRequest::slotFinished(KIO::Job *)
 {
   if (decoder) {
@@ -261,13 +355,13 @@ void XMLHttpRequest::slotRedirection(KIO::Job*, const KURL& url)
 }
 
 #if APPLE_CHANGES
-void XMLHttpRequest::slotData( KIO::Job* _job, const char *data, int len )
+void XMLHttpRequest::slotData( KIO::Job*, const char *data, int len )
 #else
-void XMLHttpRequest::slotData(KIO::Job* _job, const QByteArray &_data)
+void XMLHttpRequest::slotData(KIO::Job*, const QByteArray &_data)
 #endif
 {
   if (state < Loaded) {
-    // handle http headers here
+    responseHeaders = job->queryMetaData("HTTP-Headers");
     changeState(Loaded);
   }
   
@@ -314,9 +408,17 @@ Value XMLHttpRequestProtoFunc::tryCall(ExecState *exec, Object &thisObj, const L
     request->abort();
     return Undefined();
   case XMLHttpRequest::GetAllResponseHeaders:
-    return Undefined();
+    if (args.size() != 0) {
+      return Undefined();
+    }
+
+    return request->getAllResponseHeaders();
   case XMLHttpRequest::GetResponseHeader:
-    return Undefined();
+    if (args.size() != 1) {
+      return Undefined();
+    }
+
+    return request->getResponseHeader(args[0].toString(exec).qstring());
   case XMLHttpRequest::Open: 
     {
       if (args.size() < 2 || args.size() > 5) {
@@ -371,6 +473,12 @@ Value XMLHttpRequestProtoFunc::tryCall(ExecState *exec, Object &thisObj, const L
       return Undefined();
     }
   case XMLHttpRequest::SetRequestHeader:
+    if (args.size() != 2) {
+      return Undefined();
+    }
+    
+    request->setRequestHeader(args[0].toString(exec).qstring(), args[1].toString(exec).qstring());
+    
     return Undefined();
   }
 

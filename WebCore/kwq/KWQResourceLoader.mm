@@ -51,7 +51,7 @@ using KIO::TransferJob;
     _handle = [handle retain];
 }
 
-- (void)receivedResponse:(id)response
+- (void)receivedResponse:(NSURLResponse *)response
 {
     ASSERT(response);
     ASSERT(_job);
