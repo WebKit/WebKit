@@ -33,3 +33,6 @@ freebsd.org, MacIE
 #
 # pretend to be Win IE to get the smaller font sizes the site gives for Windows
 abcnews.go.com, WinIE
+#
+# pretend to be Mac IE to avoid 500 Internal Server Error on disneyland.disney.go.com
+disney.go.com, MacIE

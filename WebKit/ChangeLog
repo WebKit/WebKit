@@ -1,3 +1,13 @@
+2003-04-02  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Ken.
+
+	- fixed 3177183 - disneyland.com says "500 Internal Server Error"
+
+        * WebView.subproj/WebUserAgentSpoofTable.gperf: Spoof as Mac IE
+	for disney.go.com
+        * WebView.subproj/WebUserAgentSpoofTable.c: Regenerated.
+
 2003-04-02  Richard Williamson  <rjw@apple.com>
 
         Reviewed by john.

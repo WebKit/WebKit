@@ -19,15 +19,15 @@ hash (register const char *str, register unsigned int len)
       36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
       36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
       36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
-      36, 36, 36, 36, 36,  0,  0, 36, 36, 15,
+      36, 36, 36, 36, 36,  5,  0, 36, 36, 15,
       36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
       36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
       36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
       36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
       36, 36, 36, 36, 36, 36, 36,  0,  0,  0,
-       0,  0, 10,  0,  0,  0, 25, 36,  0,  0,
+       0,  0, 10,  0,  0,  0, 10, 36,  0,  0,
        0,  0,  0, 36,  0,  0,  0,  0,  5,  0,
-      36,  5,  0, 36, 36, 36, 36, 36, 36, 36,
+      36, 15,  0, 36, 36, 36, 36, 36, 36, 36,
       36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
       36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
       36, 36, 36, 36, 36, 36, 36, 36, 36, 36,
@@ -100,7 +100,7 @@ _web_findSpoofTableEntry (register const char *str, register unsigned int len)
 {
   enum
     {
-      TOTAL_KEYWORDS = 17,
+      TOTAL_KEYWORDS = 18,
       MIN_WORD_LENGTH = 6,
       MAX_WORD_LENGTH = 20,
       MIN_HASH_VALUE = 9,
@@ -118,21 +118,23 @@ _web_findSpoofTableEntry (register const char *str, register unsigned int len)
       {"hondacars.com", MacIE},
       {"abcnews.go.com", WinIE},
       {"",0},
-      {"olympic.org", MacIE},
+      {"nj.com", MacIE},
       {"",0},
       {"hondaredriders.com", MacIE},
       {"oregonlive.com", MacIE},
-      {"",0},
+      {"jaguar.com", MacIE},
       {"freebsd.org", MacIE},
       {"firstusa.com", MacIE},
       {"microsoft.com", MacIE},
       {"pier1.com", MacIE},
-      {"wap.sonyericsson.com", MacIE},
+      {"",0},
+      {"olympic.org", MacIE},
+      {"",0},
+      {"disney.go.com", MacIE},
+      {"",0}, {"",0},
       {"bang-olufsen.com", MacIE},
-      {"",0}, {"",0}, {"",0}, {"",0},
-      {"nj.com", MacIE},
       {"",0}, {"",0}, {"",0},
-      {"jaguar.com", MacIE}
+      {"wap.sonyericsson.com", MacIE}
     };
 
   if (len <= MAX_WORD_LENGTH && len >= MIN_WORD_LENGTH)
