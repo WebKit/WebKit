@@ -1,5 +1,12 @@
 2002-07-25  Chris Blumenberg  <cblu@apple.com>
 
+	Remove reloadImage until its implemented.
+
+        * WebView.subproj/WebDefaultContextMenuHandler.m:
+        (-[WebDefaultContextMenuHandler contextMenuItemsForElement:defaultMenuItems:]):
+
+2002-07-25  Chris Blumenberg  <cblu@apple.com>
+
 	Renamed elementInfoAtPoint to elementAtPoint
 
         * WebKit.pbproj/project.pbxproj:

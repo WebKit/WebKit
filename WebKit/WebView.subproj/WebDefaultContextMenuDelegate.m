@@ -71,11 +71,6 @@
         [[self class] addMenuItemWithTitle:NSLocalizedString(@"Copy Image to Clipboard", @"Copy Image to Clipboard context menu item") 				                    action:@selector(copyImageToClipboard:)
                                     target:self
                                    toArray:menuItems];
-
-        [[self class] addMenuItemWithTitle:NSLocalizedString(@"Reload Image", @"Reload Image context menu item")
-                                    action:@selector(reloadImage:)
-                                    target:self
-                                   toArray:menuItems];
     }
 
     if(!imageURL && !linkURL){
