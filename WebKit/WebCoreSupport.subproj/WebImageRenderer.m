@@ -1,9 +1,10 @@
-/*	IFImageRenderer.m
-	Copyright 2002, Apple, Inc. All rights reserved.
+/*	
+        IFImageRenderer.m
+	Copyright (c) 2002, Apple, Inc. All rights reserved.
 */
 
-#import <WebKit/IFImageRenderer.h>
 #import <WebKit/IFException.h>
+#import <WebKit/IFImageRenderer.h>
 #import <WebKit/WebKitDebug.h>
 
 @implementation IFImageRenderer
@@ -26,7 +27,11 @@ static NSMutableArray *activeImageRenderers;
 
 - initWithSize:(NSSize)size
 {
-    return [super initWithSize:size];
+    self = [super initWithSize:size];
+    
+    statusOfCache = NSImageRepLoadStatusUnknownType;
+    
+    return self;
 }
 
 
@@ -46,11 +51,10 @@ static NSMutableArray *activeImageRenderers;
     NSBitmapImageRep* imageRep = [[self representations] objectAtIndex:0];
     //NSData *data = [[NSData alloc] initWithBytesNoCopy: (void *)bytes length: length freeWhenDone: NO];
     NSData *data = [[NSData alloc] initWithBytes: (void *)bytes length: length];
-    int status;
     
-    status = [imageRep incrementalLoadFromData:data complete:isComplete];
+    loadStatus = [imageRep incrementalLoadFromData:data complete:isComplete];
     [data release];
-    switch (status){
+    switch (loadStatus){
     case NSImageRepLoadStatusUnknownType:       // not enough data to determine image format. please feed me more data
         //printf ("NSImageRepLoadStatusUnknownType size %d, isComplete %d\n", length, isComplete);
         return NO;
@@ -79,12 +83,20 @@ static NSMutableArray *activeImageRenderers;
     return NO;
 }
 
+
+- (int)loadStatus
+{
+    return loadStatus;
+}
+
+
 - (void)dealloc
 {
     [self stopAnimation];
     [patternColor release];
     [super dealloc];
 }
+
 
 - (id)firstRepProperty:(NSString *)propertyName
 {
@@ -220,27 +232,33 @@ static NSMutableArray *activeImageRenderers;
 
 - (void)tileInRect:(NSRect)rect fromPoint:(NSPoint)point
 {
-    // FIXME: Does this optimization work right if the image is changed later?
-    if (!patternColor)
-        patternColor = [[NSColor colorWithPatternImage:self] retain];
+    int currentStatus = [self loadStatus];
     
-    // FIXME: This doesn't use the passed in point to determine the pattern phase.
-    // It might be OK to do what we're doing, but I'm not 100% sure.
-    // This code uses the coordinate system of whatever converting toView:nil
-    // does, which may be OK.
-    NSPoint p = [[NSView focusView] convertPoint:rect.origin toView:nil];
-    NSSize size = [self size];
-    CGSize phase = { (int)p.x % (int)size.width, (int)p.y % (int)size.height };
-
-    [NSGraphicsContext saveGraphicsState];
-
-    CGContextRef cgContext = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
-    CGContextSetPatternPhase(cgContext, phase);
-    [patternColor set];
-    
-    [NSBezierPath fillRect:rect];
-
-    [NSGraphicsContext restoreGraphicsState];
+    if ([self loadStatus] > 0 || [self loadStatus] == NSImageRepLoadStatusCompleted){
+        if (statusOfCache != currentStatus){
+            [patternColor release];
+            patternColor = [[NSColor colorWithPatternImage:self] retain];
+            statusOfCache = currentStatus;
+        }
+        
+        // FIXME: This doesn't use the passed in point to determine the pattern phase.
+        // It might be OK to do what we're doing, but I'm not 100% sure.
+        // This code uses the coordinate system of whatever converting toView:nil
+        // does, which may be OK.
+        NSPoint p = [[NSView focusView] convertPoint:rect.origin toView:nil];
+        NSSize size = [self size];
+        CGSize phase = { (int)p.x % (int)size.width, (int)p.y % (int)size.height };
+        
+        [NSGraphicsContext saveGraphicsState];
+        
+        CGContextRef cgContext = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
+        CGContextSetPatternPhase(cgContext, phase);
+        [patternColor set];
+        
+        [NSBezierPath fillRect:rect];
+        
+        [NSGraphicsContext restoreGraphicsState];
+    }
 }
 
 // required by protocol -- apparently inherited methods don't count

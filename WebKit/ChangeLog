@@ -1,5 +1,24 @@
 2002-06-27  Richard Williamson (local)  <rjw@apple.com>
 
+        Fixed tiling of progressively loaded images.
+        
+        * WebCoreSupport.subproj/IFImageRenderer.h:
+        * WebCoreSupport.subproj/IFImageRenderer.m:
+        (-[IFImageRenderer initWithSize:]):
+        (-[IFImageRenderer incrementalLoadWithBytes:length:complete:]):
+        (-[IFImageRenderer loadStatus]):
+        (-[IFImageRenderer tileInRect:fromPoint:]):
+
+2002-06-27  Richard Williamson (local)  <rjw@apple.com>
+
+        * WebCoreSupport.subproj/IFImageRenderer.h:
+        * WebCoreSupport.subproj/IFImageRenderer.m:
+        (-[IFImageRenderer incrementalLoadWithBytes:length:complete:]):
+        (-[IFImageRenderer loadStatus]):
+        (-[IFImageRenderer tileInRect:fromPoint:]):
+
+2002-06-27  Richard Williamson (local)  <rjw@apple.com>
+
         * WebCoreSupport.subproj/IFTextRenderer.m:
         (-[IFTextRenderer floatWidthForCharacters:stringLength:fromCharacterPosition:numberOfCharacters:applyRounding:attemptFontSubstitution:]):
         Fixed uninitialized variable warning.  Compile being too aggressive,
