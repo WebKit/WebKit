@@ -76,13 +76,16 @@ const struct HashTable EventExceptionConstructorTable = { 2, 1, EventExceptionCo
 namespace KJS {
 
 const struct HashEntry DOMUIEventTableEntries[] = {
-   { "detail", DOMUIEvent::Detail, DontDelete|ReadOnly, 0, &DOMUIEventTableEntries[3] },
    { 0, 0, 0, 0, 0 },
-   { "view", DOMUIEvent::View, DontDelete|ReadOnly, 0, 0 },
-   { "keyCode", DOMUIEvent::KeyCode, DontDelete|ReadOnly, 0, 0 }
+   { "pageX", DOMUIEvent::PageX, DontDelete|ReadOnly, 0, 0 },
+   { "detail", DOMUIEvent::Detail, DontDelete|ReadOnly, 0, &DOMUIEventTableEntries[6] },
+   { "view", DOMUIEvent::View, DontDelete|ReadOnly, 0, &DOMUIEventTableEntries[5] },
+   { 0, 0, 0, 0, 0 },
+   { "keyCode", DOMUIEvent::KeyCode, DontDelete|ReadOnly, 0, 0 },
+   { "pageY", DOMUIEvent::PageY, DontDelete|ReadOnly, 0, 0 }
 };
 
-const struct HashTable DOMUIEventTable = { 2, 4, DOMUIEventTableEntries, 3 };
+const struct HashTable DOMUIEventTable = { 2, 7, DOMUIEventTableEntries, 5 };
 
 }; // namespace
 

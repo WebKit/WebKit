@@ -328,6 +328,13 @@ public:
     int keyCode() const;
 
     /**
+     * Non-standard extensions to support Netscape-style pageX and pageY event property.
+     *
+     */
+    int pageX() const;
+    int pageY() const;
+
+    /**
      * The initUIEvent method is used to initialize the value of a UIEvent
      * created through the DocumentEvent interface. This method may only be
      * called before the UIEvent has been dispatched via the dispatchEvent

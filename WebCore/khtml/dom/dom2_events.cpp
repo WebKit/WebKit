@@ -267,6 +267,33 @@ int UIEvent::keyCode() const
         return 0;
 }
 
+int UIEvent::pageX() const
+{
+    if (!impl)
+	throw DOMException(DOMException::INVALID_STATE_ERR);
+    
+    MouseEventImpl *mouseEvent = dynamic_cast<MouseEventImpl*>(impl);
+    if (mouseEvent)
+        return mouseEvent->clientX();
+    else
+        return 0;
+}
+
+
+int UIEvent::pageY() const
+{
+    if (!impl)
+	throw DOMException(DOMException::INVALID_STATE_ERR);
+    
+    MouseEventImpl *mouseEvent = dynamic_cast<MouseEventImpl*>(impl);
+    if (mouseEvent)
+        return  mouseEvent->clientY();
+    else
+        return 0;
+}
+
+
+
 void UIEvent::initUIEvent(const DOMString &typeArg,
                                  bool canBubbleArg,
                                  bool cancelableArg,

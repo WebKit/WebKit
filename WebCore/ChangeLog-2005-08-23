@@ -1,3 +1,18 @@
+2002-12-13  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Ken.
+
+	- fixed 3083814 - dhtml at www.bayarea.com doesn't hide on some mouse movements
+	
+        * khtml/ecma/kjs_events.h:
+        * khtml/ecma/kjs_events.cpp:
+        (DOMUIEvent::getValueProperty): Implemented pageX and pageY properties.
+        * khtml/ecma/kjs_events.lut.h: Regenerated.
+        * khtml/dom/dom2_events.h:
+        * khtml/dom/dom2_events.cpp:
+        (UIEvent::pageX): Get x coordinate if a mouse event.
+        (UIEvent::pageY): Get y coordinate if a mouse event.
+
 2002-12-13  Richard Williamson   <rjw@apple.com>
 
         Fixed 3127225.  Set WebCore object cache size when first bridge is created.
