@@ -811,7 +811,7 @@ RenderTableCell* RenderTable::cellLeft(const RenderTableCell* cell) const
 RenderTableCell* RenderTable::cellRight(const RenderTableCell* cell) const
 {
     int effCol = colToEffCol(cell->col()+cell->colSpan());
-    if (effCol == numEffCols()-1)
+    if (effCol >= numEffCols())
         return 0;
     RenderTableCell* result = cell->section()->cellAt(cell->row(), effCol);
     return (result == (RenderTableCell*)-1) ? 0 : result;
