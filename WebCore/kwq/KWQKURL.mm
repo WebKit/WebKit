@@ -593,6 +593,64 @@ void KURL::setPort(unsigned short i)
     }
 }
 
+void KURL::setUser(const QString &user)
+{
+    if (m_isValid) {
+        QString u;
+        int end = userEndPos;
+        if (!user.isEmpty()) {
+            // Untested code, but this is never used.
+            ASSERT_NOT_REACHED();
+#if 0
+            u = user;
+            if (userStartPos == schemeEndPos + 1) {
+                u = "//" + u;
+            }
+            // Add '@' if we didn't have one before.
+            if (end == hostEndPos || (end == passwordEndPos && urlString[end] != '@')) {
+                u += '@';
+            }
+#endif
+        } else {
+            // Remove '@' if we now have neither user nor password.
+            if (userEndPos == passwordEndPos && end != hostEndPos && urlString[end] == '@') {
+                end += 1;
+            }
+        }
+        const QString newURL = urlString.left(userStartPos) + u + urlString.mid(end);
+        parse(newURL.ascii(), &newURL);
+    }
+}
+
+void KURL::setPass(const QString &password)
+{
+    if (m_isValid) {
+        QString p;
+        int end = passwordEndPos;
+        if (!password.isEmpty()) {
+            // Untested code, but this is never used.
+            ASSERT_NOT_REACHED();
+#if 0
+            p = ':' + password + '@';
+            if (userEndPos == schemeEndPos + 1) {
+                p = "//" + p;
+            }
+            // Eat the existing '@' since we are going to add our own.
+            if (end != hostEndPos && urlString[end] == '@') {
+                end += 1;
+            }
+#endif
+        } else {
+            // Remove '@' if we now have neither user nor password.
+            if (userStartPos == userEndPos && end != hostEndPos && urlString[end] == '@') {
+                end += 1;
+            }
+        }
+        const QString newURL = urlString.left(userEndPos) + p + urlString.mid(end);
+        parse(newURL.ascii(), &newURL);
+    }
+}
+
 void KURL::setRef(const QString &s)
 {
     if (m_isValid) {
@@ -603,8 +661,8 @@ void KURL::setRef(const QString &s)
 
 void KURL::setQuery(const QString &query, int encoding_hint)
 {
-    QString q;
     if (m_isValid) {
+        QString q;
 	if (!query.isEmpty() && query[0] != '?') {
 	    q = "?" + query;
 	} else {

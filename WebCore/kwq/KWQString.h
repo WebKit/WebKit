@@ -330,6 +330,8 @@ struct KWQStringData {
     char _internalBuffer[QS_INTERNAL_BUFFER_SIZE]; // Pad out to a (((size + 1) & ~15) + 14) size
 };
 
+#define QSTRING_NULL QString()
+
 class QString {
 public:
     static const char * const null; // not a QString as in Qt (can't have static constructor), but close enough to be compatible in most cases

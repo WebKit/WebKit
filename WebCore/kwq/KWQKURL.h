@@ -46,24 +46,28 @@ public:
 
     QString canonicalURL() const;
     QString url() const { return urlString; }
+
     QString protocol() const;
     QString host() const;
     unsigned short int port() const;
-    QString pass() const;
     QString user() const;
+    QString pass() const;
+    QString path() const;
+    QString query() const;
     QString ref() const;
     bool hasRef() const;
-    QString query() const;
-    QString path() const;
+
     QString htmlRef() const;
     QString encodedHtmlRef() const;
 
     void setProtocol(const QString &);
     void setHost(const QString &);
     void setPort(unsigned short int);
-    void setRef(const QString &);
-    void setQuery(const QString &, int encoding_hint=0);
+    void setUser(const QString &);
+    void setPass(const QString &);
     void setPath(const QString &);
+    void setQuery(const QString &, int encoding_hint=0);
+    void setRef(const QString &);
 
     QString prettyURL() const;
     

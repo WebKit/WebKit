@@ -1,5 +1,37 @@
 2003-07-11  Darin Adler  <darin@apple.com>
 
+        Reviewed by Ken.
+
+        - roll in change from KHTML to remove user and password from referrer
+
+        * khtml/khtml_part.cpp: (KHTMLPart::begin): Call setUser(""), setPass(""),
+        and setRef(""), then also set the referrer to "" if the protocol does not
+        start with http.
+
+        * kwq/WebCoreBridge.mm: (-[WebCoreBridge referrer]): Remove check to exclude
+        file URL referrers because KHTMLPart now excludes all non-http referrers.
+
+        * kwq/KWQKURL.h: Add setUser and setPass functions. Also sort by order within
+        the URL so it's clear no methods are omitted.
+        * kwq/KWQKURL.mm:
+        (KURL::setUser): Added. Adds or removes the username, adding or removing
+        delimiters as needed. For now only the remove part is compiled in.
+        (KURL::setPass): Added. Adds or removes a password, adding or removing
+        delimiters as needed. For now only the remove part is compiled in.
+
+        * kwq/KWQString.h: Add QSTRING_NULL macro to allow us to work around the fact
+        that there is no global QString::null object in KWQ without having to do a
+        relatively ineffecient conversion from a non-constant char * of 0 each time.
+        We can use this anywhere QString::null appears and perhaps get some small code
+        savings or performance boost.
+
+        - small cleanup
+
+        * kwq/KWQTextCodec.mm: (QTextCodec::fromUnicode): Remove unneeded checks that
+        repeat optimizations I already put in QString.
+
+2003-07-11  Darin Adler  <darin@apple.com>
+
         Reviewed by Dave.
 
         - added a function Dave needs for various work he's doing that goes
