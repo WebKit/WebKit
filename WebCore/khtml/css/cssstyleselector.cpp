@@ -557,6 +557,70 @@ unsigned int CSSStyleSelector::addInlineDeclarations(DOM::ElementImpl* e,
 
 static bool subject;
 
+// modified version of the one in kurl.cpp
+static void cleanpath(QString &path)
+{
+    int pos;
+    while ( (pos = path.find( "/../" )) != -1 ) {
+        int prev = 0;
+        if ( pos > 0 )
+            prev = path.findRev( "/", pos -1 );
+        // don't remove the host, i.e. http://foo.org/../foo.html
+        if (prev < 0 || (prev > 3 && path.findRev("://", prev-1) == prev-2))
+            path.remove( pos, 3);
+        else
+            // matching directory found ?
+            path.remove( prev, pos- prev + 3 );
+    }
+    pos = 0;
+
+    // Don't remove "//" from an anchor identifier. -rjw
+    // Set refPos to -2 to mean "I haven't looked for the anchor yet".
+    // We don't want to waste a function call on the search for the the anchor
+    // in the vast majority of cases where there is no "//" in the path.
+    int refPos = -2;
+    while ( (pos = path.find( "//", pos )) != -1) {
+        if (refPos == -2)
+            refPos = path.find("#", 0);
+        if (refPos > 0 && pos >= refPos)
+            break;
+
+        if ( pos == 0 || path[pos-1] != ':' )
+            path.remove( pos, 1 );
+        else
+            pos += 2;
+    }
+    while ( (pos = path.find( "/./" )) != -1)
+        path.remove( pos, 2 );
+    //kdDebug() << "checkPseudoState " << path << endl;
+}
+
+static void checkPseudoState( DOM::ElementImpl *e )
+{
+    if( e->id() != ID_A ) {
+        pseudoState = PseudoNone;
+        return;
+    }
+    DOMString attr = e->getAttribute(ATTR_HREF);
+    if( attr.isNull() ) {
+        pseudoState = PseudoNone;
+        return;
+    }
+    QConstString cu(attr.unicode(), attr.length());
+    QString u = cu.string();
+    if ( !u.contains("://") ) {
+        if ( u[0] == '/' )
+            u = encodedurl->host + u;
+        else if ( u[0] == '#' )
+            u = encodedurl->file + u;
+        else
+            u = encodedurl->path + u;
+        cleanpath( u );
+    }
+    //completeURL( attr.string() );
+    pseudoState = KHTMLFactory::vLinks()->contains( u ) ? PseudoVisited : PseudoLink;
+}
+
 void CSSStyleSelector::checkSelector(int selIndex, DOM::ElementImpl *e)
 {
     dynamicPseudo = RenderStyle::NOPSEUDO;
@@ -568,13 +632,16 @@ void CSSStyleSelector::checkSelector(int selIndex, DOM::ElementImpl *e)
 
     // we have the subject part of the selector
     subject = true;
-    
-    // hack. We can't allow :hover, as it would trigger a complete relayout with every mouse event.
-    bool single = false;
-    bool affectedByHover = style->affectedByHoverRules();
-    if ( sel->tag == -1 )
-        single = true;
 
+    // We track whether or not the rule contains only :hover and :active in a simple selector. If
+    // so, we can't allow that to apply to every element on the page.  We assume the author intended
+    // to apply the rules only to links.
+    bool onlyHoverActive = (sel->match == CSSSelector::Pseudo &&
+                            (sel->pseudoType() == CSSSelector::PseudoHover ||
+                             sel->pseudoType() == CSSSelector::PseudoActive));
+    bool affectedByHover = style->affectedByHoverRules();
+    bool affectedByActive = style->affectedByActiveRules();
+    
     // first selector has to match
     if(!checkOneSelector(sel, e)) return;
 
@@ -582,8 +649,7 @@ void CSSStyleSelector::checkSelector(int selIndex, DOM::ElementImpl *e)
     CSSSelector::Relation relation = sel->relation;
     while((sel = sel->tagHistory))
     {
-        single = false;
-	    if(!n->isElementNode()) return;
+        if (!n->isElementNode()) return;
         switch(relation)
         {
         case CSSSelector::Descendant:
@@ -612,7 +678,7 @@ void CSSStyleSelector::checkSelector(int selIndex, DOM::ElementImpl *e)
         }
         case CSSSelector::Sibling:
         {
-		subject = false;
+            subject = false;
             n = n->previousSibling();
 	    while( n && !n->isElementNode() )
 		n = n->previousSibling();
@@ -623,6 +689,11 @@ void CSSStyleSelector::checkSelector(int selIndex, DOM::ElementImpl *e)
         }
         case CSSSelector::SubSelector:
 	{
+            if (onlyHoverActive)
+                onlyHoverActive = (sel->match == CSSSelector::Pseudo &&
+                                   (sel->pseudoType() == CSSSelector::PseudoHover ||
+                                    sel->pseudoType() == CSSSelector::PseudoActive));
+            
 	    //kdDebug() << "CSSOrderedRule::checkSelector" << endl;
 	    ElementImpl *elem = static_cast<ElementImpl *>(n);
 	    // a selector is invalid if something follows :first-xxx
@@ -636,13 +707,21 @@ void CSSStyleSelector::checkSelector(int selIndex, DOM::ElementImpl *e)
         }
         relation = sel->relation;
     }
-    
-    // disallow *:hover
-    if (single && !affectedByHover && style->affectedByHoverRules()) {
-        style->setAffectedByHoverRules(false);
-        return;
+
+    // disallow *:hover, *:active, and *:hover:active except for links
+    if (onlyHoverActive && subject) {
+        if (pseudoState == PseudoUnknown)
+            checkPseudoState( e );
+
+        if (pseudoState == PseudoNone) {
+            if (!affectedByHover && style->affectedByHoverRules())
+                style->setAffectedByHoverRules(false);
+            if (!affectedByActive && style->affectedByActiveRules())
+                style->setAffectedByActiveRules(false);
+            return;
+        }
     }
-   
+
     if ( dynamicPseudo != RenderStyle::NOPSEUDO ) {
 	selectorCache[selIndex].state = AppliesPseudo;
 	selectors[ selIndex ]->pseudoId = dynamicPseudo;
@@ -651,70 +730,6 @@ void CSSStyleSelector::checkSelector(int selIndex, DOM::ElementImpl *e)
     //qDebug( "selector %d applies", selIndex );
     //selectors[ selIndex ]->print();
     return;
-}
-
-// modified version of the one in kurl.cpp
-static void cleanpath(QString &path)
-{
-    int pos;
-    while ( (pos = path.find( "/../" )) != -1 ) {
-	int prev = 0;
-	if ( pos > 0 )
-	    prev = path.findRev( "/", pos -1 );
-        // don't remove the host, i.e. http://foo.org/../foo.html
-        if (prev < 0 || (prev > 3 && path.findRev("://", prev-1) == prev-2))
-            path.remove( pos, 3);
-        else
-            // matching directory found ?
-            path.remove( prev, pos- prev + 3 );
-    }
-    pos = 0;
-
-    // Don't remove "//" from an anchor identifier. -rjw
-    // Set refPos to -2 to mean "I haven't looked for the anchor yet".
-    // We don't want to waste a function call on the search for the the anchor
-    // in the vast majority of cases where there is no "//" in the path.
-    int refPos = -2;
-    while ( (pos = path.find( "//", pos )) != -1) {
-        if (refPos == -2)
-            refPos = path.find("#", 0);
-        if (refPos > 0 && pos >= refPos)
-            break;
-            
-	if ( pos == 0 || path[pos-1] != ':' )
-	    path.remove( pos, 1 );
-	else
-	    pos += 2;
-    }
-    while ( (pos = path.find( "/./" )) != -1)
-	path.remove( pos, 2 );
-    //kdDebug() << "checkPseudoState " << path << endl;
-}
-
-static void checkPseudoState( DOM::ElementImpl *e )
-{
-    if( e->id() != ID_A ) {
-	pseudoState = PseudoNone;
-        return;
-    }
-    DOMString attr = e->getAttribute(ATTR_HREF);
-    if( attr.isNull() ) {
-	pseudoState = PseudoNone;
-	return;
-    }
-    QConstString cu(attr.unicode(), attr.length());
-    QString u = cu.string();
-    if ( !u.contains("://") ) {
-	if ( u[0] == '/' )
-	    u = encodedurl->host + u;
-	else if ( u[0] == '#' )
-	    u = encodedurl->file + u;
-	else
-	    u = encodedurl->path + u;
-	cleanpath( u );
-    }
-    //completeURL( attr.string() );
-    pseudoState = KHTMLFactory::vLinks()->contains( u ) ? PseudoVisited : PseudoLink;
 }
 
 bool CSSStyleSelector::checkOneSelector(DOM::CSSSelector *sel, DOM::ElementImpl *e)

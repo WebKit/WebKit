@@ -1,3 +1,13 @@
+2003-03-07  David Hyatt  <hyatt@apple.com>
+
+	Make the :hover:active behavior much more sophisticated
+	(and make it match WinIE, since that buggy browser is what
+	necessitates this hack).
+	
+        Reviewed by darin
+
+        * khtml/css/cssstyleselector.cpp:
+
 2003-03-06  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3156125, regression on hiptop.com.  Caused by better
