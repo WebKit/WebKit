@@ -184,7 +184,8 @@ lineClamp(RenderStyle::initialLineClamp()),
 #endif
 opacity(RenderStyle::initialOpacity()),
 userDrag(RenderStyle::initialUserDrag()),
-userSelect(RenderStyle::initialUserSelect())
+userSelect(RenderStyle::initialUserSelect()),
+textOverflow(RenderStyle::initialTextOverflow())
 #ifndef KHTML_NO_XBL
 , bindingURI(0)
 #endif
@@ -197,7 +198,7 @@ StyleCSS3NonInheritedData::StyleCSS3NonInheritedData(const StyleCSS3NonInherited
 lineClamp(o.lineClamp),
 #endif
 opacity(o.opacity), flexibleBox(o.flexibleBox), marquee(o.marquee),
-userDrag(o.userDrag), userSelect(o.userSelect)
+userDrag(o.userDrag), userSelect(o.userSelect), textOverflow(o.textOverflow)
 {
 #ifndef KHTML_NO_XBL
     bindingURI = o.bindingURI ? o.bindingURI->copy() : 0;
@@ -226,7 +227,7 @@ bool StyleCSS3NonInheritedData::bindingsEquivalent(const StyleCSS3NonInheritedDa
 bool StyleCSS3NonInheritedData::operator==(const StyleCSS3NonInheritedData& o) const
 {
     return opacity == o.opacity && flexibleBox == o.flexibleBox && marquee == o.marquee &&
-           userDrag == o.userDrag && userSelect == o.userSelect
+           userDrag == o.userDrag && userSelect == o.userSelect && textOverflow == o.textOverflow
 #ifndef KHTML_NO_XBL
            && bindingsEquivalent(o)
 #endif
@@ -548,7 +549,8 @@ RenderStyle::Diff RenderStyle::diff( const RenderStyle *other ) const
         !(noninherited_flags._originalDisplay == other->noninherited_flags._originalDisplay) ||
          visual->colspan != other->visual->colspan ||
          visual->counter_increment != other->visual->counter_increment ||
-         visual->counter_reset != other->visual->counter_reset)
+         visual->counter_reset != other->visual->counter_reset ||
+         css3NonInheritedData->textOverflow != other->css3NonInheritedData->textOverflow)
         return CbLayout;
    
     // changes causing Layout changes:

@@ -387,3 +387,9 @@ element
 #
 intrinsic
 min-intrinsic
+
+#
+# CSS_PROP_TEXT_OVERFLOW
+#
+clip
+ellipsis

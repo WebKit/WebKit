@@ -3590,7 +3590,16 @@ void CSSStyleSelector::applyProperty( int id, DOM::CSSValueImpl *value )
         style->setUserSelect(primitiveValue->getIdent() == CSS_VAL_AUTO);
         break;
     }
-        
+    case CSS_PROP_TEXT_OVERFLOW: {
+        // This property is supported by WinIE, and so we leave off the "-khtml-" in order to
+        // work with WinIE-specific pages that use the property.
+        HANDLE_INHERIT_AND_INITIAL(textOverflow, TextOverflow)
+        if (!primitiveValue || !primitiveValue->getIdent())
+            return;
+        style->setTextOverflow(primitiveValue->getIdent() == CSS_VAL_ELLIPSIS);
+        break;
+    }
+
 #if APPLE_CHANGES
     // Apple-specific changes.  Do not merge these properties into KHTML.
     case CSS_PROP__APPLE_LINE_CLAMP: {

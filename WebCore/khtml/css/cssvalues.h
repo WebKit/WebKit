@@ -269,7 +269,9 @@ DOM::DOMString getValueName(unsigned short id);
 #define CSS_VAL_ELEMENT 258
 #define CSS_VAL_INTRINSIC 259
 #define CSS_VAL_MIN_INTRINSIC 260
+#define CSS_VAL_CLIP 261
+#define CSS_VAL_ELLIPSIS 262
 
-#define CSS_VAL_TOTAL 261
+#define CSS_VAL_TOTAL 263
 #endif
 

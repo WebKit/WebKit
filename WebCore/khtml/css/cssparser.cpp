@@ -1105,6 +1105,10 @@ bool CSSParser::parseValue( int propId, bool important )
         if (id == CSS_VAL_AUTO || id == CSS_VAL_NONE)
             valid_primitive = true;
         break;
+    case CSS_PROP_TEXT_OVERFLOW: // clip | ellipsis
+        if (id == CSS_VAL_CLIP || id == CSS_VAL_ELLIPSIS)
+            valid_primitive = true;
+        break;
     // End of CSS3 properties
 
 #if APPLE_CHANGES
