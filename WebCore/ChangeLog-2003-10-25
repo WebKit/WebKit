@@ -1,5 +1,15 @@
 2003-09-22  Darin Adler  <darin@apple.com>
 
+        Reviewed by Ken.
+
+        - fixed 3292723 -- onBlur() getting called twice on <input type=text>
+
+        * khtml/rendering/render_replaced.cpp: (RenderWidget::eventFilter):
+        Call setFocusNode(0) instead of explicitly sending a blur event, otherwise
+        setFocusNode will send a second blur event later.
+
+2003-09-22  Darin Adler  <darin@apple.com>
+
         - fixed 3391837 -- we list ISO-8859-8-E as visual ordering for Hebrew; it's "explicit ordering", not supported
 
         * kwq/mac-encodings.txt: Removed ISO-8859-8-E.
