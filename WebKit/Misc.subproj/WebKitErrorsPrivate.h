@@ -18,13 +18,5 @@
                  pluginPageURL:(NSURL *)pluginPageURL
                     pluginName:(NSString *)pluginName
                       MIMEType:(NSString *)MIMEType;
-
-// This method is deprecated. Use _initWithPluginErrorCode:contentURL:pluginPageURL:pluginName:MIMEType: instead.
-- (id)_initWithPluginErrorCode:(int)code
-              contentURLString:(NSString *)contentURL
-           pluginPageURLString:(NSString *)pluginPageURL
-                    pluginName:(NSString *)pluginName
-                      MIMEType:(NSString *)MIMEType;
-
 @end
 

@@ -77,7 +77,7 @@
 
     WebNetscapePluginPackage *thePlugin;
     thePlugin = (WebNetscapePluginPackage *)[[WebPluginDatabase installedPlugins] pluginForMIMEType:MIME];
-    ASSERT([plugin isKindOfClass:[WebNetscapePluginPackage class]]);
+    ASSERT([thePlugin isKindOfClass:[WebNetscapePluginPackage class]]);
 
     if (![thePlugin load]) {
         NSError *error = [[NSError alloc] _initWithPluginErrorCode:WebKitErrorCannotLoadPlugIn

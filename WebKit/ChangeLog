@@ -1,3 +1,20 @@
+2004-09-30  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed:
+	Assertion failure when loading standalone netscape plug-in content.
+	Document loads of WebKit plug-in content should be cancelled since the plug-in does its own loading.
+
+        Reviewed by john.
+
+        * Misc.subproj/WebKitErrors.m: removed deprecated method
+        * Misc.subproj/WebKitErrorsPrivate.h:
+        * Plugins.subproj/WebNetscapePluginDocumentView.m:
+        (-[WebNetscapePluginDocumentView setDataSource:]): fixed the assertion statement
+        * Plugins.subproj/WebPluginDocumentView.h:
+        * Plugins.subproj/WebPluginDocumentView.m:
+        (-[WebPluginDocumentView dealloc]): remove retained plug-in
+        (-[WebPluginDocumentView setDataSource:]): retain the plug-in, cancel the laod
+
 2004-09-29  Chris Blumenberg  <cblu@apple.com>
 	
 	Fixed:

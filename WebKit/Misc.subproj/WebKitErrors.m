@@ -56,19 +56,6 @@ static void registerErrors(void);
 }
 
 - (id)_initWithPluginErrorCode:(int)code
-              contentURLString:(NSString *)contentURLString
-           pluginPageURLString:(NSString *)pluginPageURLString
-                    pluginName:(NSString *)pluginName
-                      MIMEType:(NSString *)MIMEType
-{
-    return [self _initWithPluginErrorCode:code 
-                               contentURL:[NSURL _web_URLWithUserTypedString:contentURLString]
-                            pluginPageURL:[NSURL _web_URLWithUserTypedString:pluginPageURLString]
-                               pluginName:pluginName
-                                 MIMEType:MIMEType];
-}
-
-- (id)_initWithPluginErrorCode:(int)code
                     contentURL:(NSURL *)contentURL
                  pluginPageURL:(NSURL *)pluginPageURL
                     pluginName:(NSString *)pluginName

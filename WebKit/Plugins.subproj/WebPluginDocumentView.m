@@ -6,8 +6,9 @@
 #import <WebKit/WebPluginDocumentView.h>
 
 #import <WebKit/WebAssertions.h>
-#import <WebKit/WebDataSource.h>
+#import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebFrameView.h>
+#import <WebKit/WebKitErrorsPrivate.h>
 #import <WebKit/WebNSURLExtras.h>
 #import <WebKit/WebNSViewExtras.h>
 #import <WebKit/WebPluginController.h>
@@ -29,6 +30,7 @@
 
 - (void)dealloc
 {
+    [plugin release];
     [pluginController destroyAllPlugins];
     [pluginController release];
     [super dealloc];
@@ -44,10 +46,15 @@
 
 - (void)setDataSource:(WebDataSource *)dataSource
 {
-    NSURLResponse *response = [dataSource response];
+    // Since this class is a WebDocumentView and WebDocumentRepresentation, setDataSource: will be called twice. Do work only once.
+    if (dataSourceHasBeenSet) {
+        return;
+    }
+    dataSourceHasBeenSet = YES;
     
+    NSURLResponse *response = [dataSource response];
     NSString *MIMEType = [response MIMEType];    
-    WebPluginPackage *plugin = (WebPluginPackage *)[[WebPluginDatabase installedPlugins] pluginForMIMEType:MIMEType];
+    plugin = (WebPluginPackage *)[[[WebPluginDatabase installedPlugins] pluginForMIMEType:MIMEType] retain];
     ASSERT([plugin isKindOfClass:[WebPluginPackage class]]);
     
     NSURL *URL = [response URL];
@@ -72,7 +79,15 @@
 
 - (void)dataSourceUpdated:(WebDataSource *)dataSource;
 {
-    
+    // Cancel the load since WebKit plug-ins do their own loading.
+    NSURLResponse *response = [dataSource response];
+    NSError *error = [[NSError alloc] _initWithPluginErrorCode:WebKitErrorPlugInCancelledConnection
+                                                    contentURL:[response URL]
+                                                 pluginPageURL:nil
+                                                    pluginName:[plugin name]
+                                                      MIMEType:[response MIMEType]];
+    [dataSource _stopLoadingWithError:error];
+    [error release];    
 }
 
 - (void)setNeedsLayout:(BOOL)flag
