@@ -1,3 +1,13 @@
+2003-10-01  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave.
+
+        - fixed 3437309 -- REGRESSION (100-107): Javascript menu doesn't work at www.aa.com
+
+        * khtml/xml/dom_elementimpl.cpp: (ElementImpl::removeAttribute): Restored the old behavior
+        for removeAttribute and removeAttributeNS; these don't give NOT_FOUND_ERR. But keep the
+        NOT_FOUND_ERR for removeAttributeNode and removedNamedItem.
+
 2003-10-01  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by me

@@ -184,8 +184,12 @@ ElementImpl::~ElementImpl()
 
 void ElementImpl::removeAttribute( NodeImpl::Id id, int &exceptioncode )
 {
-    if (namedAttrMap)
+    if (namedAttrMap) {
         namedAttrMap->removeNamedItem(id, exceptioncode);
+        if (exceptioncode == DOMException::NOT_FOUND_ERR) {
+            exceptioncode = 0;
+        }
+    }
 }
 
 void ElementImpl::setAttribute(NodeImpl::Id id, const DOMString &value)
@@ -619,10 +623,8 @@ Node NamedAttrMapImpl::setNamedItem ( NodeImpl* arg, int &exceptioncode )
 }
 
 // The DOM2 spec doesn't say that removeAttribute[NS] throws NOT_FOUND_ERR
-// if the attribute is not found - David
-// But the DOM Level 1 document does say that:
-// http://www.w3.org/TR/1998/REC-DOM-Level-1-19981001/level-one-core#ID-D58B193
-// and the DOM test suite from W3C checks that case, so I'm going with that. - Darin
+// if the attribute is not found, but at this level we have to throw NOT_FOUND_ERR
+// because of removeNamedItem, removeNamedItemNS, and removeAttributeNode.
 Node NamedAttrMapImpl::removeNamedItem ( NodeImpl::Id id, int &exceptioncode )
 {
     // ### should this really be raised when the attribute to remove isn't there at all?
