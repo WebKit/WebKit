@@ -52,6 +52,8 @@
 #import <WCURICache.h>
 #import <WCURICacheData.h>
 
+#import <WKPluginDatabase.h>
+
 #import <KWQView.h>
 
 static bool cache_init = false;
@@ -1331,8 +1333,7 @@ void KHTMLPart::urlSelected( const QString &url, int button, int state, const QS
 bool KHTMLPart::requestObject( khtml::RenderPart *frame, const QString &url, const QString &serviceType,
                     const QStringList &args)
 {
-    KWQDebug("requestObject: url: %s\n", url.latin1());
-    _logNeverImplemented();
+    [WKPluginDatabase installedPlugins];
     return FALSE;
 }
 
