@@ -1,3 +1,14 @@
+2004-02-20  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	<rdar://problem/3552346>: REGRESSION 100-125: nil-dereference in KHTMLPart::isPointInsideSelection (progz.ru, many other sites)
+	
+        * khtml/rendering/render_layer.cpp:
+        (RenderLayer::nodeAtPointForLayer): To cover the case of
+	positioned generated content, make sure to find an element if we
+	don't have one yet when we get to the layer level.
+
 === Safari-129 ===
 
 2004-02-19  Chris Blumenberg  <cblu@apple.com>
