@@ -1,5 +1,16 @@
 2004-09-13  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by John
+
+        Fix for this bug:
+        
+        <rdar://problem/3765519> REGRESSION (Mail): word movement goes too far upstream at start of line
+        
+        * khtml/xml/dom_position.cpp:
+        (DOM::Position::previousWordPosition): Use downstream position here when making final placement of caret. 
+
+2004-09-13  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by Darin
 
         Various editing improvements, many focused on the improvements made possible by the

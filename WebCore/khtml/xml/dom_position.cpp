@@ -444,7 +444,9 @@ Position Position::previousWordPosition() const
             pos = Position(node, it.range().startOffset());
         }
     }
-    pos = pos.equivalentDeepPosition().closestRenderedPosition(UPSTREAM);
+    // Use DOWNSTREAM here so that we don't jump past words at the start of lines.
+    // <rdar://problem/3765519> REGRESSION (Mail): word movement goes too far upstream at start of line
+    pos = pos.equivalentDeepPosition().closestRenderedPosition(DOWNSTREAM);
     return pos;
 }
 
