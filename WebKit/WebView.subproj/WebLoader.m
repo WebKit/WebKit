@@ -517,6 +517,7 @@
     [currentWebChallenge release];
     currentWebChallenge = nil;
 
+    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(deliverResource) object:nil];
     [connection cancel];
 
     [webView _completeProgressForConnectionDelegate:self];
