@@ -1,4 +1,10 @@
 2002-02-13  Richard Williamson  <rjw@apple.com>
+    
+    Use NSSwitchButtons for check boxes.
+
+	* src/kwq/KWQCheckBox.mm: (QCheckBox::QCheckBox):
+
+2002-02-13  Richard Williamson  <rjw@apple.com>
 
     Removed dead code from setView.
     

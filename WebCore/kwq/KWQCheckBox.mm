@@ -34,7 +34,7 @@ QCheckBox::QCheckBox(QWidget *w) : QButton (w)
     KWQNSButton *button;
     
     button = (KWQNSButton *)getView();
-    [button setButtonType: NSRadioButton];
+    [button setButtonType: NSSwitchButton];
     setView (button);
 }
 
