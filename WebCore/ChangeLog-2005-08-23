@@ -1,5 +1,13 @@
 2002-11-17  David Hyatt  <hyatt@apple.com>
 
+	Don't discard linefeeds after elements with no close tag
+	(e.g., <img> or <input>).
+	
+        * khtml/html/htmltokenizer.cpp:
+        (HTMLTokenizer::parseTag):
+
+2002-11-17  David Hyatt  <hyatt@apple.com>
+
 	Fix for slashdot table mispositioning in the upper right.
 	Now that we fixed <td> to set to -konq-center when align="center"
 	is specified, the style rules are no longer necessary in

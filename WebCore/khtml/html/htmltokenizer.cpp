@@ -1251,6 +1251,11 @@ void HTMLTokenizer::parseTag(DOMStringIt &src)
                 plaintext = beginTag;
                 break;
             }
+            
+            if (beginTag && endTag[tagID] == FORBIDDEN)
+                // Don't discard LFs since this element has no end tag.
+                discard = NoneDiscard;
+                
             return; // Finished parsing tag!
         }
         } // end switch
