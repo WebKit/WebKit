@@ -61,8 +61,14 @@
 - (void)IFURLHandleResourceDidCancelLoading:(IFURLHandle *)sender
 {
     WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "url = %s\n", DEBUG_OBJECT([sender url]));
-    
+
+    // FIXME Radar 2954901: I replaced the assertion below with a more lenient one,
+    // since cancel messages are sometimes sent before begin.
+#if wEBFOUNDATION_LOAD_MESSAGES_FIXED    
     WEBKIT_ASSERT([url isEqual:[sender redirectedURL] ? [sender redirectedURL] : [sender url]]);
+#else
+    WEBKIT_ASSERT(url == nil || [url isEqual:[sender redirectedURL] ? [sender redirectedURL] : [sender url]]);
+#endif    
     
     IFLoadProgress *loadProgress = [[IFLoadProgress alloc] init];
     loadProgress->totalToLoad = -1;

@@ -1,3 +1,10 @@
+2002-06-15  Maciej Stachowiak  <mjs@apple.com>
+
+        Added temporary workardound for Radar 2954901 by making the assertion more lenient.
+        
+	* WebView.subproj/IFMainURLHandleClient.mm:
+	(-[IFMainURLHandleClient IFURLHandleResourceDidCancelLoading:]):
+
 2002-06-14  Richard Williamson  <rjw@apple.com>
 
     Removed redundant private _isDocumentHTML method.
