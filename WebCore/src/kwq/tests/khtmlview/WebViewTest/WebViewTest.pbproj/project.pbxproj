@@ -65,7 +65,6 @@
 		};
 		1058C7A2FEA54F0111CA2CBB = {
 			children = (
-				2587FFAC017B21AB0ECA149E,
 				29B97325FDCFA39411CA2CEA,
 				29B97324FDCFA39411CA2CEA,
 			);
@@ -122,18 +121,6 @@
 //252
 //253
 //254
-		2587FFAC017B21AB0ECA149E = {
-			isa = PBXFrameworkReference;
-			name = WebKit.framework;
-			path = ../../../../../../../../../../../Network/Servers/noether/homes/gandalf/kocienda/symroots/WebKit.framework;
-			refType = 2;
-		};
-		2587FFAD017B21AB0ECA149E = {
-			fileRef = 2587FFAC017B21AB0ECA149E;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		25FB9CE1017B6FDB0ECA149E = {
 			isa = PBXFileReference;
 			name = draw.mm;
@@ -245,12 +232,12 @@
 				29B9732DFDCFA39411CA2CEA,
 			);
 			buildSettings = {
-				FRAMEWORK_SEARCH_PATHS = /Network/Servers/noether/homes/gandalf/kocienda/symroots;
+				FRAMEWORK_SEARCH_PATHS = /symroots;
 				HEADER_SEARCH_PATHS = "";
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = ../../../../../lib;
 				OTHER_CFLAGS = "-DHAVE_CONFIG_H -DQT_NO_DATASTREAM -D_KWQ_ -I../../../qt -I../../.. -I../../../../.. -I../../../../kdelibs/khtml -I../../../../kwq/kdecore -I../../../../kwq/kde";
-				OTHER_LDFLAGS = "-lwebcore";
+				OTHER_LDFLAGS = "-lwebcore -framework WebKit";
 				PRODUCT_NAME = WebViewTest;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
@@ -318,7 +305,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				1058C7A3FEA54F0111CA2CBB,
-				2587FFAD017B21AB0ECA149E,
 			);
 			isa = PBXFrameworksBuildPhase;
 			name = "Frameworks & Libraries";
