@@ -1,3 +1,27 @@
+2003-08-01  Richard Williamson   <rjw@apple.com>
+
+	Fixed 3095376.  Implemented correct selection behavior for rtl scripts.
+	We still use our Arabic and Hebrew layout scheme.
+
+	Fixed 3360487.  Implemented selection of ATSU rendered code.
+
+	Fixed 3360242.	Return nil from _bodyBackgroundColor when no 
+	background color specified.  This was requested by Doug D.
+
+        Reviewed by Maciej.
+
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (-[WebTextRenderer drawHighlightForRun:style:atPoint:]):
+        (-[WebTextRenderer _CG_drawHighlightForRun:style:atPoint:]):
+        (-[WebTextRenderer drawRun:style:atPoint:]):
+        (-[WebTextRenderer _CG_drawRun:style:atPoint:]):
+        (-[WebTextRenderer _CG_floatWidthForRun:style:widths:fonts:glyphs:startGlyph:endGlyph:numGlyphs:]):
+        (-[WebTextRenderer _ATSU_drawHighlightForRun:style:atPoint:]):
+        (-[WebTextRenderer _ATSU_drawRun:style:atPoint:]):
+        (-[WebTextRenderer pointToOffset:style:position:reversed:]):
+        (-[WebTextRenderer _ATSU_pointToOffset:style:position:reversed:]):
+        (-[WebTextRenderer _CG_pointToOffset:style:position:reversed:]):
+
 2003-08-01  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

@@ -305,7 +305,7 @@ int QFontMetrics::checkSelectionPoint (QChar *s, int slen, int pos, int len, int
     style.families = families;
     style.padding = toAdd;
 
-    return [data->getRenderer() checkSelectionPoint:&run style:&style position:x reversed:reversed];
+    return [data->getRenderer() pointToOffset:&run style:&style position:x reversed:reversed];
 }
 
 QRect QFontMetrics::boundingRect(const QString &qstring, int len) const

@@ -170,13 +170,22 @@ static CFCharacterSetRef nonBaseChars = NULL;
 
 - (float)_floatWidthForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style widths:(float *)widthBuffer fonts:(NSFont **)fontBuffer glyphs:(CGGlyph *)glyphBuffer startGlyph:(int *)startGlyph endGlyph:(int *)endGlyph numGlyphs:(int *)_numGlyphs;
 
-
+// Measuring runs.
 - (float)_CG_floatWidthForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style widths: (float *)widthBuffer fonts: (NSFont **)fontBuffer glyphs: (CGGlyph *)glyphBuffer  startGlyph:(int *)startGlyph endGlyph:(int *)endGlyph numGlyphs: (int *)_numGlyphs;
 - (float)_ATSU_floatWidthForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style;
 
-
+// Drawing runs.
 - (void)_CG_drawRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style atPoint:(NSPoint)point;
 - (void)_ATSU_drawRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style atPoint:(NSPoint)point;
+
+// Selection point detection in runs.
+- (int)_CG_pointToOffset:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style position:(int)x reversed:(BOOL)reversed;
+- (int)_ATSU_pointToOffset:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style position:(int)x reversed:(BOOL)reversed;
+
+// Drawing highlight for runs.
+- (void)_CG_drawHighlightForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style atPoint:(NSPoint)point;
+- (void)_ATSU_drawHighlightForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style atPoint:(NSPoint)point;
+
 @end
 
 
@@ -807,6 +816,98 @@ static void _drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *a
     }
 }
 
+- (void)drawHighlightForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style atPoint:(NSPoint)point
+{
+    if (shouldUseATSU(run))
+        [self _ATSU_drawHighlightForRun:run style:style atPoint:point];
+    else
+        [self _CG_drawHighlightForRun:run style:style atPoint:point];
+}
+
+- (void)_CG_drawHighlightForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style atPoint:(NSPoint)point
+{
+    float *widthBuffer, localWidthBuffer[LOCAL_BUFFER_SIZE];
+    CGGlyph *glyphBuffer, localGlyphBuffer[LOCAL_BUFFER_SIZE];
+    NSFont **fontBuffer, *localFontBuffer[LOCAL_BUFFER_SIZE];
+    CGSize *advances, localAdvanceBuffer[LOCAL_BUFFER_SIZE];
+    int numGlyphs = 0, i, startGlyph = 0, endGlyph = 0;
+    float startX;
+    unsigned int length = run->length;
+    
+    if (run->length == 0)
+        return;
+
+    if (length/2 > LOCAL_BUFFER_SIZE) {
+        advances = (CGSize *)calloc(length*2, sizeof(CGSize));
+        widthBuffer = (float *)calloc(length*2, sizeof(float));
+        glyphBuffer = (CGGlyph *)calloc(length*2, sizeof(ATSGlyphRef));
+        fontBuffer = (NSFont **)calloc(length*2, sizeof(NSFont *));
+    } else {
+        advances = localAdvanceBuffer;
+        widthBuffer = localWidthBuffer;
+        glyphBuffer = localGlyphBuffer;
+        fontBuffer = localFontBuffer;
+    }
+
+    [self _floatWidthForRun:run
+        style:style
+        widths:widthBuffer 
+        fonts:fontBuffer
+        glyphs:glyphBuffer
+        startGlyph:&startGlyph
+        endGlyph:&endGlyph
+        numGlyphs: &numGlyphs];
+        
+    // Eek.  We couldn't generate ANY glyphs for the run.
+    if (numGlyphs <= 0)
+        return;
+        
+    // Fill the advances array.
+    for (i = 0; i <= endGlyph; i++){
+        advances[i].width = widthBuffer[i];
+        advances[i].height = 0;
+    }
+
+    // Calculate the starting point of the glyphs to be displayed by adding
+    // all the advances up to the first glyph.
+    startX = point.x;
+    for (i = 0; i < startGlyph; i++)
+        startX += advances[i].width;
+
+    if (style->backgroundColor != nil){
+        // Calculate the width of the selection background by adding
+        // up teh advances of all the glyphs in the selection.
+        float backgroundWidth = 0.0;
+        
+        for (i = startGlyph; i <= endGlyph; i++)
+            backgroundWidth += advances[i].width;
+
+        [style->backgroundColor set];
+        
+        if (style->rtl){
+            WebCoreTextRun completeRun = *run;
+            completeRun.from = 0;
+            completeRun.to = run->length;
+            float completeRunWidth = [self floatWidthForRun:&completeRun style:style widths:widthBuffer];
+            float leftX = 0;
+            for (i = 0; i < startGlyph; i++)
+                leftX += widthBuffer[i];
+
+            [NSBezierPath fillRect:NSMakeRect(point.x + completeRunWidth - leftX - backgroundWidth, point.y - [self ascent], backgroundWidth, [self lineSpacing])];
+        }
+        else
+            [NSBezierPath fillRect:NSMakeRect(startX, point.y - [self ascent], backgroundWidth, [self lineSpacing])];
+    }
+    
+    if (advances != localAdvanceBuffer) {
+        free(advances);
+        free(widthBuffer);
+        free(glyphBuffer);
+        free(fontBuffer);
+    }
+}
+
+
 - (void)drawRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style atPoint:(NSPoint)point
 {
     if (shouldUseATSU(run))
@@ -842,9 +943,9 @@ static void _drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *a
 
     [self _floatWidthForRun:run
         style:style
-        widths: widthBuffer 
-        fonts: fontBuffer
-        glyphs: glyphBuffer
+        widths:widthBuffer 
+        fonts:fontBuffer
+        glyphs:glyphBuffer
         startGlyph:&startGlyph
         endGlyph:&endGlyph
         numGlyphs: &numGlyphs];
@@ -865,17 +966,8 @@ static void _drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *a
     for (i = 0; i < startGlyph; i++)
         startX += advances[i].width;
 
-    if (style->backgroundColor != nil){
-        // Calculate the width of the selection background by adding
-        // up teh advances of all the glyphs in the selection.
-        float backgroundWidth = 0.0;
-        
-        for (i = startGlyph; i <= endGlyph; i++)
-            backgroundWidth += advances[i].width;
-
-        [style->backgroundColor set];
-        [NSBezierPath fillRect:NSMakeRect(startX, point.y - [self ascent], backgroundWidth, [self lineSpacing])];
-    }
+    if (style->backgroundColor != nil)
+        [self _CG_drawHighlightForRun:run style:style atPoint:point];
     
     // Finally, draw the glyphs.
     int lastFrom = startGlyph;
@@ -1214,7 +1306,7 @@ static const char *joiningNames[] = {
             }
             substituteFont = [self substituteFontForCharacters: _characters length: clusterLength families: style->families];
             if (substituteFont) {
-                int cNumGlyphs;
+                int cNumGlyphs = 0;
                 ATSGlyphRef localGlyphBuffer[clusterLength*4];
                 
                 WebCoreTextRun clusterRun;
@@ -1679,6 +1771,65 @@ static const char *joiningNames[] = {
 }
 
 
+- (void)_ATSU_drawHighlightForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style atPoint:(NSPoint)point
+{
+    ATSUTextLayout layout;
+    int from = run->from;
+    int to = run->to;
+    float selectedLeftX;
+
+    if (style->backgroundColor == nil)
+        return;
+    
+    if (from == -1)
+        from = 0;
+    if (to == -1)
+        to = run->length;
+   
+    int runLength = to - from;
+    if (runLength <= 0){
+        return;
+    }
+
+    layout = [self _createATSUTextLayoutForRun:run];
+
+    WebCoreTextRun leadingRun = *run;
+    leadingRun.from = 0;
+    leadingRun.to = run->from;
+    
+    // ATSU provides the bounds of the glyphs for the run with an origin of
+    // (0,0), so we need to find the width of the glyphs immediately before
+    // the actually selected glyphs.
+    ATSTrapezoid leadingTrapezoid = [self _trapezoidForRun:&leadingRun style:style atPoint:point];
+    ATSTrapezoid selectedTrapezoid = [self _trapezoidForRun:run style:style atPoint:point];
+
+    float backgroundWidth = 
+            MAX(FixToFloat(selectedTrapezoid.upperRight.x), FixToFloat(selectedTrapezoid.lowerRight.x)) - 
+            MIN(FixToFloat(selectedTrapezoid.upperLeft.x), FixToFloat(selectedTrapezoid.lowerLeft.x));
+
+    if (run->from == 0)
+        selectedLeftX = point.x;
+    else
+        selectedLeftX = MIN(FixToFloat(leadingTrapezoid.upperRight.x), FixToFloat(leadingTrapezoid.lowerRight.x));
+    
+    [style->backgroundColor set];
+    
+    float yPos = point.y - [self ascent];
+    if (style->rtl){
+        WebCoreTextRun completeRun = *run;
+        completeRun.from = 0;
+        completeRun.to = run->length;
+        float completeRunWidth = [self floatWidthForRun:&completeRun style:style widths:0];
+        [NSBezierPath fillRect:NSMakeRect(point.x + completeRunWidth - (selectedLeftX-point.x) - backgroundWidth, yPos, backgroundWidth, [self lineSpacing])];
+    }
+    else {
+        [NSBezierPath fillRect:NSMakeRect(selectedLeftX, yPos, backgroundWidth, [self lineSpacing])];
+    }
+
+    ATSUDisposeTextLayout (layout); // Ignore the error.  Nothing we can do anyway.
+}
+
+
 - (void)_ATSU_drawRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style atPoint:(NSPoint)point
 {
     ATSUTextLayout layout;
@@ -1692,27 +1843,16 @@ static const char *joiningNames[] = {
         to = run->length;
    
     int runLength = to - from;
-    if (runLength <= 0){
+    if (runLength <= 0)
         return;
-    }
-
-    if (style->backgroundColor != nil){
-        ATSTrapezoid trapezoid = [self _trapezoidForRun:run style:style atPoint:point];
-
-
-        float backgroundWidth = 
-                MAX(FixToFloat(trapezoid.upperRight.x), FixToFloat(trapezoid.lowerRight.x)) - 
-                MIN(FixToFloat(trapezoid.upperLeft.x), FixToFloat(trapezoid.lowerLeft.x));
-        float leftX = MIN(FixToFloat(trapezoid.upperLeft.x), FixToFloat(trapezoid.lowerLeft.x));
-        
-        [style->backgroundColor set];
-        [NSBezierPath fillRect:NSMakeRect(leftX, point.y - [self ascent], backgroundWidth, [self lineSpacing])];
-    }
-        
-    [style->textColor set];
 
     layout = [self _createATSUTextLayoutForRun:run];
-    
+
+    if (style->backgroundColor != nil)
+        [self _ATSU_drawHighlightForRun:run style:style atPoint:point];
+
+    [style->textColor set];
+
     status = ATSUDrawText(layout, 
             from,
             runLength,
@@ -1726,60 +1866,83 @@ static const char *joiningNames[] = {
     ATSUDisposeTextLayout (layout); // Ignore the error.  Nothing we can do anyway.
 }
 
+- (int)pointToOffset:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style position:(int)x reversed:(BOOL)reversed
+{
+    if (shouldUseATSU(run))
+        return [self _ATSU_pointToOffset:run style:style position:x reversed:reversed];
+    return [self _CG_pointToOffset:run style:style position:x reversed:reversed];
+}
+
+
+- (int)_ATSU_pointToOffset:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style position:(int)x reversed:(BOOL)reversed
+{
+    unsigned int offset = 0;
+    ATSUTextLayout layout;
+    UniCharArrayOffset primaryOffset = 0;
+    UniCharArrayOffset secondaryOffset = 0;
+    OSStatus status;
+    Boolean isLeading;
+
+    layout = [self _createATSUTextLayoutForRun:run];
+
+    status = ATSUPositionToOffset (layout, (ATSUTextMeasurement)FloatToFixed(((float)x)), 1, &primaryOffset, &isLeading, &secondaryOffset);
+    if (status == noErr){
+        offset = (unsigned int)primaryOffset;
+    }
+    else {
+        // Failed to find offset!  Return 0 offset.
+    }
+
+    return offset;
+}
+
+
 #define LOCAL_WIDTH_BUF_SIZE 1024
 
-- (int)checkSelectionPoint:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style position:(int)x reversed:(BOOL)reversed
+- (int)_CG_pointToOffset:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style position:(int)x reversed:(BOOL)reversed
 {
     // FIXME.  This algorimth is the original KTHML algorithm.  We need to update it to
-    // support unicode (i.e. characters don't have a one-to-one mapping to a width) and our
-    // ATSU work (3095376).
+    // be more savvy about unicode.
     float delta = (float)x;
     float _widths[LOCAL_WIDTH_BUF_SIZE]; 
     float *widths = 0, width;
-    float monospaceWidth = 0;
+    unsigned int offset = 0;
 
-    if ([font isFixedPitch] || [font _isFakeFixedPitch]){
-        monospaceWidth = spaceWidth;
-        width = run->length * monospaceWidth;
-    }
-    else {
-        if (run->length > LOCAL_WIDTH_BUF_SIZE)
-            widths = (float *)malloc(run->length * sizeof(float));
-        else
-            widths = &_widths[0];
-        width = [self floatWidthForRun:run style:style widths: widths];
-    }
+    if (run->length > LOCAL_WIDTH_BUF_SIZE)
+        widths = (float *)malloc(run->length * sizeof(float));
+    else
+        widths = &_widths[0];
+    width = [self floatWidthForRun:run style:style widths:widths];
 
-    unsigned int pos = 0;
     if ( reversed ) {
-	delta -= width;
-	while(pos < run->length) {
-	    float w = (monospaceWidth != 0 ? monospaceWidth : widths[pos+run->from]);
-	    float w2 = w/2;
-	    w -= w2;
-	    delta += w2;
-	    if(delta >= 0)
-	        break;
-	    pos++;
-	    delta += w;
-	}
+        delta -= width;
+        while(offset < run->length) {
+            float w = widths[offset+run->from];
+            float w2 = w/2;
+            w -= w2;
+            delta += w2;
+            if(delta >= 0)
+                break;
+            offset++;
+            delta += w;
+        }
     } else {
-	while(pos < run->length) {
-	    float w = (monospaceWidth != 0 ? monospaceWidth : widths[pos+run->from]);
-	    float w2 = w/2;
-	    w -= w2;
-	    delta -= w2;
-	    if(delta <= 0) 
-	        break;
-	    pos++;
-	    delta -= w;
-	}
+        while(offset < run->length) {
+            float w = widths[offset+run->from];
+            float w2 = w/2;
+            w -= w2;
+            delta -= w2;
+            if(delta <= 0) 
+                break;
+            offset++;
+            delta -= w;
+        }
     }
     
     if (widths != _widths)
         free (widths);
         
-    return pos;
+    return offset;
 }
 
 @end

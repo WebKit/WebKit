@@ -1,3 +1,29 @@
+2003-08-01  Richard Williamson   <rjw@apple.com>
+
+	Fixed 3095376.  Implemented correct selection behavior for rtl scripts.
+	We still use our Arabic and Hebrew layout scheme.
+
+	Fixed 3360487.  Implemented selection of ATSU rendered code.
+
+	Fixed 3360242.	Return nil from _bodyBackgroundColor when no 
+	background color specified.  This was requested by Doug D.
+
+        Reviewed by Maciej.
+
+        * khtml/rendering/font.cpp:
+        (Font::drawHighlightForText):
+        * khtml/rendering/font.h:
+        * khtml/rendering/render_text.cpp:
+        (TextRun::paintSelection):
+        * kwq/KWQFontMetrics.mm:
+        (QFontMetrics::checkSelectionPoint):
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::bodyBackgroundColor):
+        * kwq/KWQPainter.h:
+        * kwq/KWQPainter.mm:
+        (QPainter::drawHighlightForText):
+        * kwq/WebCoreTextRenderer.h:
+
 2003-08-01  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by John.

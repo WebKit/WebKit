@@ -2257,7 +2257,7 @@ NSColor *KWQKHTMLPart::bodyBackgroundColor(void) const
         if (bgColor.isValid())
             return bgColor.getNSColor();
     }
-    return [NSColor whiteColor];
+    return nil;
 }
 
 
