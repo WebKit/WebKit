@@ -2,6 +2,15 @@
 
         Reviewed by John.
 
+        - fixed <rdar://problem/3807935> DOM CSS computed style line-height is wrong in two ways
+
+        * khtml/css/css_computedstyle.cpp: (DOM::CSSComputedStyleDeclarationImpl::getPropertyCSSValue):
+        Use specified size rather than computed size when dealing with a percentage for line height.
+
+2005-01-27  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
         - fixed <rdar://problem/3971372> SWB: template function DOM_cast() won't compile with gcc 4.0
         - fixed other gcc 4.0 compiling problems Patrick Beard pointed out on the phone
 
