@@ -1,3 +1,18 @@
+2002-12-08  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Dave.
+
+	- fixed 2981252 - JavaScript inside <!-- --> comments inside <select> is not executed
+
+	This problem is caused by the hack to turn all whitespace into
+	spaces inside <select>, so that it's collapsed in the DOM. But
+	this is especially bad for scripts inside select tags, so I
+	changed the select special case to not apply inside scripts.
+
+        * khtml/html/htmltokenizer.cpp:
+        (HTMLTokenizer::addPending): 
+        (HTMLTokenizer::write):
+
 2002-12-08  Darin Adler  <darin@apple.com>
 
         Reviewed by Don and Dave.

@@ -1265,7 +1265,7 @@ void HTMLTokenizer::parseTag(DOMStringIt &src)
 
 void HTMLTokenizer::addPending()
 {
-    if ( select)
+    if ( select && !script )
     {
         *dest++ = ' ';
     }
@@ -1435,7 +1435,7 @@ void HTMLTokenizer::write( const QString &str, bool appendData )
 
             if ( pending ) {
                 // pre context always gets its spaces/linefeeds
-                if ( pre || (!parser->selectMode() &&
+                if ( pre || script || (!parser->selectMode() &&
                              (!parser->noSpaces() || dest > buffer ))) {
                     addPending();
                     discard = AllDiscard; // So we discard the first LF after the open tag.
@@ -1469,7 +1469,7 @@ void HTMLTokenizer::write( const QString &str, bool appendData )
         }
         else if (( cc == '\n' ) || ( cc == '\r' ))
         {
-	    if (select)
+	    if (select && !script)
             {
                 if (discard == LFDiscard)
                 {
@@ -1510,7 +1510,7 @@ void HTMLTokenizer::write( const QString &str, bool appendData )
         }
         else if (( cc == ' ' ) || ( cc == '\t' ))
         {
-	    if (select) {
+	    if (select && !script) {
                 if(discard == SpaceDiscard)
                     discard = NoneDiscard;
                  else if(discard == AllDiscard)
