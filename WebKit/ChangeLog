@@ -1,5 +1,18 @@
 2003-08-29  Richard Williamson   <rjw@apple.com>
 
+	Fixed 3401334.  Use IB document key when checking for reference removal on instances of WebPreferences.
+
+	Also removed _userDefaultsKeysForIB, no longer needed by IB.
+
+        Reviewed by John.
+
+        * WebView.subproj/WebPreferences.m:
+        (+[WebPreferences _removeReferenceForIdentifier:]):
+        (-[WebPreferences _postPreferencesChangesNotification]):
+        * WebView.subproj/WebPreferencesPrivate.h:
+
+2003-08-29  Richard Williamson   <rjw@apple.com>
+
 	Fixed 3400807.  Don't release state associated with the current b/f item.  We shouldn't normally have page cache state associated with the current item (3401376).  This fix guarantees that we won't prematurely release the page cache state for the current item.
 
         Reviewed byJohn Sullivan.

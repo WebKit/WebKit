@@ -585,7 +585,7 @@ static NSMutableDictionary *webPreferencesInstances = nil;
 
 + (void)_removeReferenceForIdentifier:(NSString *)ident
 {
-    [webPreferencesInstances performSelector:@selector(_web_checkLastReferenceForIdentifier:) withObject:ident afterDelay:.1];
+    [webPreferencesInstances performSelector:@selector(_web_checkLastReferenceForIdentifier:) withObject: [self _concatenateKeyWithIBCreatorID:ident] afterDelay:.1];
 }
 
 - (void)_postPreferencesChangesNotification
@@ -593,31 +593,6 @@ static NSMutableDictionary *webPreferencesInstances = nil;
     [[NSNotificationCenter defaultCenter]
         postNotificationName:WebPreferencesChangedNotification object:self
                     userInfo:nil];
-}
-
-// This may NOT be used by IB anymore.  Check we Eric S. to see if we can remove.
-+ (NSArray *)_userDefaultsKeysForIB
-{
-    return [NSArray arrayWithObjects:
-        WebKitStandardFontPreferenceKey,
-        WebKitFixedFontPreferenceKey,
-        WebKitSerifFontPreferenceKey,
-        WebKitSansSerifFontPreferenceKey,
-        WebKitCursiveFontPreferenceKey,
-        WebKitFantasyFontPreferenceKey,
-        WebKitMinimumFontSizePreferenceKey,
-        WebKitDefaultFontSizePreferenceKey,
-        WebKitDefaultFixedFontSizePreferenceKey,
-        WebKitDefaultTextEncodingNamePreferenceKey,
-        WebKitJavaEnabledPreferenceKey,
-        WebKitJavaScriptEnabledPreferenceKey,
-        WebKitJavaScriptCanOpenWindowsAutomaticallyPreferenceKey,
-        WebKitPluginsEnabledPreferenceKey,
-        WebKitAllowAnimatedImagesPreferenceKey,
-        WebKitAllowAnimatedImageLoopingPreferenceKey,
-        WebKitDisplayImagesKey,
-        nil
-    ];
 }
 
 static NSString *classIBCreatorID = 0;
