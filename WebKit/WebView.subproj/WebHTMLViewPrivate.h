@@ -49,7 +49,6 @@
 + (BOOL)_modifierTrackingEnabled;
 + (void)_postFlagsChangedEvent:(NSEvent *)flagsChangedEvent;
 - (NSDictionary *)_elementAtPoint:(NSPoint)point;
-- (BOOL)_continueAfterClickPolicyForEvent: (NSEvent *)event;
 - (void)_mouseOverElement:(NSDictionary *)elementInformation modifierFlags:(unsigned)modifierFlags;
 
 - (void)_setAsideSubviews;

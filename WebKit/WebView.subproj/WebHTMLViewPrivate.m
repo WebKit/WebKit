@@ -158,42 +158,6 @@ BOOL _modifierTrackingEnabled = FALSE;
     return elementInfo;
 }
 
-- (BOOL)_continueAfterClickPolicyForEvent:(NSEvent *)event
-{
-    NSPoint point = [self convertPoint:[event locationInWindow] fromView:nil];
-    WebController *controller = [self _controller];
-    WebClickPolicy *clickPolicy;
-
-    clickPolicy = [[controller policyDelegate] clickPolicyForElement:[self _elementAtPoint:point]
-                                                              button:[event type]
-                                                       modifierFlags:[event modifierFlags]];
-
-    WebPolicyAction clickAction = [clickPolicy policyAction];
-    NSURL *URL = [clickPolicy URL];
-
-    switch (clickAction) {
-        case WebClickPolicyShow:
-            return YES;
-        case WebClickPolicyOpenNewWindow:
-            [controller _openNewWindowWithURL:URL referrer:[[self _bridge] referrer] behind:NO];
-            break;
-        case WebClickPolicyOpenNewWindowBehind:
-            [controller _openNewWindowWithURL:URL referrer:[[self _bridge] referrer] behind:YES];
-            break;
-        case WebClickPolicySave:
-        case WebClickPolicySaveAndOpenExternally:
-            [controller _downloadURL:URL
-                   withContentPolicy:[WebContentPolicy webPolicyWithContentAction:clickAction andPath:nil]];
-            break;
-        case WebClickPolicyIgnore:
-            break;
-        default:
-            [NSException raise:NSInvalidArgumentException
-                        format:@"clickPolicyForElement:button:modifierFlags: returned an invalid WebClickPolicy"];
-    }
-    return NO;
-}
-
 - (void)_setAsideSubviews
 {
     ASSERT(!_private->subviewsSetAside);

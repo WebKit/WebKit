@@ -780,9 +780,49 @@ static const char * const stateNames[] = {
     [newDataSource release];
 }
 
-// main funnel for navigating via callback from WebCore (e.g., clicking a link, redirect)
-- (void)_loadURL:(NSURL *)URL loadType:(WebFrameLoadType)loadType clientRedirect:(BOOL)clientRedirect
+-(BOOL)_continueAfterClickPolicyForEvent:(NSEvent *)event
 {
+    NSPoint point = [[[self webView] documentView] convertPoint:[event locationInWindow] fromView:nil];
+    WebController *controller = [self controller];
+    WebClickPolicy *clickPolicy;
+
+    clickPolicy = [[controller policyDelegate] clickPolicyForElement:[(WebHTMLView *)[[self webView] documentView] _elementAtPoint:point]
+                                                              button:[event type]
+                                                       modifierFlags:[event modifierFlags]];
+
+    WebPolicyAction clickAction = [clickPolicy policyAction];
+    NSURL *URL = [clickPolicy URL];
+
+    switch (clickAction) {
+        case WebClickPolicyShow:
+            return YES;
+        case WebClickPolicyOpenNewWindow:
+            [controller _openNewWindowWithURL:URL referrer:[[self _bridge] referrer] behind:NO];
+            break;
+        case WebClickPolicyOpenNewWindowBehind:
+            [controller _openNewWindowWithURL:URL referrer:[[self _bridge] referrer] behind:YES];
+            break;
+        case WebClickPolicySave:
+        case WebClickPolicySaveAndOpenExternally:
+            [controller _downloadURL:URL
+                   withContentPolicy:[WebContentPolicy webPolicyWithContentAction:clickAction andPath:nil]];
+            break;
+        case WebClickPolicyIgnore:
+            break;
+        default:
+            [NSException raise:NSInvalidArgumentException
+                        format:@"clickPolicyForElement:button:modifierFlags: returned an invalid WebClickPolicy"];
+    }
+    return NO;
+}
+
+// main funnel for navigating via callback from WebCore (e.g., clicking a link, redirect)
+- (void)_loadURL:(NSURL *)URL loadType:(WebFrameLoadType)loadType clientRedirect:(BOOL)clientRedirect triggeringEvent:(NSEvent *)event
+{
+    if (event != nil && ![self _continueAfterClickPolicyForEvent:event]) {
+	return;
+    }
+
     // FIXME: This logic doesn't exactly match what KHTML does in openURL, so it's possible
     // this will screw up in some cases involving framesets.
     if (loadType != WebFrameLoadTypeReload && [[URL _web_URLByRemovingFragment] isEqual:[[_private->bridge URL] _web_URLByRemovingFragment]]) {

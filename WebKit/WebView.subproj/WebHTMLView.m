@@ -790,24 +790,7 @@
 
 - (void)mouseUp: (NSEvent *)event
 {
-    NSEvent *theEvent;
-    
-    if([self _continueAfterClickPolicyForEvent:event]){
-        theEvent = event;
-    }else{
-        // Send a bogus mouse up event so we don't confuse WebCore
-        theEvent = [NSEvent mouseEventWithType: NSLeftMouseUp
-                                      location: NSMakePoint(0,0)
-                                 modifierFlags: [event modifierFlags]
-                                     timestamp: [event timestamp]
-                                  windowNumber: [event windowNumber]
-                                       context: [event context]
-                                   eventNumber: [event eventNumber]
-                                    clickCount: [event clickCount]
-                                      pressure: [event pressure]];
-    }
-    
-    [[self _bridge] mouseUp:theEvent];
+    [[self _bridge] mouseUp:event];
 }
 
 - (void)mouseMovedNotification:(NSNotification *)notification

@@ -280,9 +280,9 @@
     [[self dataSource] _setIconURL:URL withType:type];
 }
 
-- (void)loadURL:(NSURL *)URL reload:(BOOL)reload
+- (void)loadURL:(NSURL *)URL reload:(BOOL)reload triggeringEvent:(NSEvent *)event
 {
-    [frame _loadURL:URL loadType:(reload ? WebFrameLoadTypeReload : WebFrameLoadTypeStandard) clientRedirect:_doingClientRedirect];
+    [frame _loadURL:URL loadType:(reload ? WebFrameLoadTypeReload : WebFrameLoadTypeStandard) clientRedirect:_doingClientRedirect triggeringEvent:event];
     _doingClientRedirect = NO;
 }
 
@@ -306,7 +306,7 @@
     [[newFrame webView] _setMarginWidth:width];
     [[newFrame webView] _setMarginHeight:height];
 
-    [newFrame _loadURL:URL loadType:WebFrameLoadTypeInternal clientRedirect:NO];
+    [newFrame _loadURL:URL loadType:WebFrameLoadTypeInternal clientRedirect:NO triggeringEvent:nil];
 
     return [newFrame _bridge];
 }
