@@ -2350,9 +2350,44 @@ static WebHTMLView *lastHitView = nil;
 {
     WebBridge *bridge = [self _bridge];
     DOMCSSStyleDeclaration *style = [[bridge DOMDocument] createCSSStyleDeclaration];
-    //NSFontManager *fontManager = [NSFontManager sharedFontManager];
-    //NSFont *font = [fontManager convertFont:[NSFont]]
-    // FIXME: Figure out what style change to apply!
+
+    NSFontManager *fm = [NSFontManager sharedFontManager];
+
+    NSFont *a = [fm convertFont:[fm fontWithFamily:@"Helvetica" traits:0 weight:5 size:10]];
+    NSFont *b = [fm convertFont:[fm fontWithFamily:@"Times" traits:(NSBoldFontMask | NSItalicFontMask) weight:10 size:12]];
+    
+    NSString *fa = [a familyName];
+    NSString *fb = [a familyName];
+    if ([fa isEqualToString:fb]) {
+        [style setFontFamily:fa];
+    }
+
+    int sa = [a pointSize];
+    int sb = [b pointSize];
+    if (sa == sb) {
+        [style setFontSize:[NSString stringWithFormat:@"%dpx", sa]];
+    }
+
+    int wa = [fm weightOfFont:a];
+    int wb = [fm weightOfFont:b];
+    if (wa == wb) {
+        if (wa >= 9) {
+            [style setFontWeight:@"bold"];
+        } else {
+            [style setFontWeight:@"normal"];
+        }
+    }
+
+    BOOL ia = ([fm traitsOfFont:a] & NSItalicFontMask) != 0;
+    BOOL ib = ([fm traitsOfFont:b] & NSItalicFontMask) != 0;
+    if (ia == ib) {
+        if (ia) {
+            [style setFontStyle:@"italic"];
+        } else {
+            [style setFontStyle:@"normal"];
+        }
+    }
+
     return style;
 }
 
