@@ -1,3 +1,36 @@
+2003-04-28  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+	- fixed 2959353 -- eliminate globally initialized objects from JavaScriptCore
+
+        * JavaScriptCore.pbproj/project.pbxproj: Added fpconst.cpp.
+        * kjs/fpconst.cpp: Added. Defines KJS::NaN and KJS::Inf in a way that does not require a
+        framework init routine.
+
+        * kjs/identifier.h: Use a new KJS_IDENTIFIER_EACH_GLOBAL macro so we can do things to
+        the entire set of identifiers easily. Also added an init function that sets up these globals
+        in a way that does not require a framework init routine.
+        * kjs/identifier.cpp: (Identifier::init): Initialize the property ane globals in a way that
+        does not require a framework init routine.
+
+        * kjs/internal.cpp: (InterpreterImp::initGlobalObject): Call Identifier::init.
+        
+        * kjs/ustring.h: Remove UChar::null and UString::null, and add UString::null(). We can't have
+        a global object of a class that has a constructor if we want to avoid framework init routines,
+        and luckily very little code relies on these.
+        * kjs/ustring.cpp:
+        (UCharReference::ref): Use our own global specific to this function rather than returning
+        UChar::null when past the end of the string. This is dangerous because if the caller modifies
+        it, that affects what all subsequent callers will see.
+        (UString::Rep::create): Added assertions.
+        (UString::UString): Got rid of code here that used to set up UString::null.
+        (UString::null): Added. Returns a global null string, and can be used in some of the places
+        where we used to use the UString::null global.
+        (UString::operator[]): Fixed case where this used to return UChar::null to return '\0' instead.
+
+        * kjs/regexp.cpp: (RegExp::match): Change uses of UString::null to UString::null().
+
 2003-04-25  Darin Adler  <darin@apple.com>
 
 	- fixed 3241344 -- REGRESSION: top of page missing on wired.com and cnn.com

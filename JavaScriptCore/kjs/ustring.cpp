@@ -116,10 +116,8 @@ bool KJS::operator==(const KJS::CString& c1, const KJS::CString& c2)
   return (strcmp(c1.c_str(), c2.c_str()) == 0);
 }
 
-UChar UChar::null((char)0);
 UString::Rep UString::Rep::null = { 0, 0, 0, 1, 1 };
 UString::Rep UString::Rep::empty = { 0, 0, 0, 1, 1 };
-UString UString::null;
 const int normalStatBufferSize = 4096;
 static char *statBuffer = 0;
 static int statBufferSize = 0;
@@ -154,8 +152,10 @@ UChar& UCharReference::ref() const
 {
   if (offset < str->rep->len)
     return *(str->rep->dat + offset);
-  else
-    return UChar::null;
+  else {
+    static UChar callerBetterNotModifyThis('\0');
+    return callerBetterNotModifyThis;
+  }
 }
 
 UString::Rep *UString::Rep::create(UChar *d, int l)
@@ -252,7 +252,6 @@ unsigned UString::Rep::computeHash(const char *s)
 
 UString::UString()
 {
-  null.rep = &Rep::null;
   attach(&Rep::null);
 }
 
@@ -319,6 +318,12 @@ UString::UString(const UString &a, const UString &b)
   memcpy(d, a.data(), aSize * sizeof(UChar));
   memcpy(d + aSize, b.data(), bSize * sizeof(UChar));
   rep = Rep::create(d, length);
+}
+
+const UString &UString::null()
+{
+    static UString n;
+    return n;
 }
 
 UString UString::from(int i)
@@ -550,9 +555,8 @@ bool UString::is8Bit() const
 UChar UString::operator[](int pos) const
 {
   if (pos >= size())
-    return UChar::null;
-
-  return ((UChar *)data())[pos];
+    return '\0';
+  return data()[pos];
 }
 
 UCharReference UString::operator[](int pos)

@@ -19,6 +19,20 @@
  *
  */
 
+// For JavaScriptCore we need to avoid having static constructors.
+// Our strategy is to declare the global objects with a different type (initialized to 0)
+// and then use placement new to initialize the global objects later. This is not completely
+// portable, and it would be good to figure out a 100% clean way that still avoids code that
+// runs at init time.
+
+#if APPLE_CHANGES
+#define AVOID_STATIC_CONSTRUCTORS 1
+#endif
+
+#if AVOID_STATIC_CONSTRUCTORS
+#define KJS_IDENTIFIER_HIDE_GLOBALS 1
+#endif
+
 #include "identifier.h"
 
 #define DUMP_STATISTICS 0
@@ -42,18 +56,6 @@ IdentifierStatisticsExitLogger::~IdentifierStatisticsExitLogger()
 }
 
 #endif
-
-extern const Identifier argumentsPropertyName("arguments");
-extern const Identifier calleePropertyName("callee");
-extern const Identifier constructorPropertyName("constructor");
-extern const Identifier lengthPropertyName("length");
-extern const Identifier messagePropertyName("message");
-extern const Identifier namePropertyName("name");
-extern const Identifier prototypePropertyName("prototype");
-extern const Identifier specialPrototypePropertyName("__proto__");
-extern const Identifier toLocaleStringPropertyName("toLocaleString");
-extern const Identifier toStringPropertyName("toString");
-extern const Identifier valueOfPropertyName("valueOf");
 
 const int _minTableSize = 64;
 
@@ -298,6 +300,37 @@ const Identifier &Identifier::null()
 {
     static Identifier null;
     return null;
+}
+
+// Global constants for property name strings.
+
+#if !AVOID_STATIC_CONSTRUCTORS
+    // Define an Identifier in the normal way.
+    #define DEFINE_GLOBAL(name, string) extern const Identifier name ## PropertyName(string);
+#else
+    // Define an Identifier-sized array of pointers to avoid static initialization.
+    // Use an array of pointers instead of an array of char in case there is some alignment issue.
+    #define DEFINE_GLOBAL(name, string) \
+        void * name ## PropertyName[(sizeof(Identifier) + sizeof(void *) - 1) / sizeof(void *)];
+#endif
+
+#define CALL_DEFINE_GLOBAL(name) DEFINE_GLOBAL(name, #name)
+KJS_IDENTIFIER_EACH_GLOBAL(CALL_DEFINE_GLOBAL)
+DEFINE_GLOBAL(specialPrototype, "__proto__")
+
+void Identifier::init()
+{
+#if AVOID_STATIC_CONSTRUCTORS
+    static bool initialized;
+    if (!initialized) {
+        // Use placement new to initialize the globals.
+        #define PLACEMENT_NEW_GLOBAL(name, string) new (&name ## PropertyName) Identifier(string);
+        #define CALL_PLACEMENT_NEW_GLOBAL(name) PLACEMENT_NEW_GLOBAL(name, #name)
+        KJS_IDENTIFIER_EACH_GLOBAL(CALL_PLACEMENT_NEW_GLOBAL)
+        PLACEMENT_NEW_GLOBAL(specialPrototype, "__proto__")
+        initialized = true;
+    }
+#endif
 }
 
 } // namespace KJS

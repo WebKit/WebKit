@@ -100,7 +100,7 @@ UString RegExp::match(const UString &s, int i, int *pos, int **ovector)
     pos = &dummyPos;
   *pos = -1;
   if (i > s.size() || s.isNull())
-    return UString::null;
+    return UString::null();
 
 #ifdef HAVE_PCREPOSIX
   CString buffer(s.cstring());
@@ -109,10 +109,10 @@ UString RegExp::match(const UString &s, int i, int *pos, int **ovector)
 
   if (!pcregex || pcre_exec(pcregex, NULL, buffer.c_str(), buffer.size(), i,
 		  0, ovector ? *ovector : 0L, ovecsize) == PCRE_ERROR_NOMATCH)
-    return UString::null;
+    return UString::null();
 
   if (!ovector)
-    return UString::null; // don't rely on the return value if you pass ovector==0
+    return UString::null(); // don't rely on the return value if you pass ovector==0
 #else
   const uint maxMatch = 10;
   regmatch_t rmatch[maxMatch];
@@ -120,7 +120,7 @@ UString RegExp::match(const UString &s, int i, int *pos, int **ovector)
   char *str = strdup(s.ascii()); // TODO: why ???
   if (regexec(&preg, str + i, maxMatch, rmatch, 0)) {
     free(str);
-    return UString::null;
+    return UString::null();
   }
   free(str);
 

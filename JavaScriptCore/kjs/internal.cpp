@@ -54,6 +54,8 @@ extern int kjsyyparse();
 
 using namespace KJS;
 
+#if !APPLE_CHANGES
+
 namespace KJS {
 #ifdef WORDS_BIGENDIAN
   const unsigned char NaN_Bytes[] = { 0x7f, 0xf8, 0, 0, 0, 0, 0, 0 };
@@ -69,6 +71,8 @@ namespace KJS {
   const double NaN = *(const double*) NaN_Bytes;
   const double Inf = *(const double*) Inf_Bytes;
 };
+
+#endif // APPLE_CHANGES
 
 static pthread_once_t interpreterLockOnce = PTHREAD_ONCE_INIT;
 static pthread_mutex_t interpreterLock;
@@ -547,6 +551,8 @@ void InterpreterImp::unlock()
 
 void InterpreterImp::initGlobalObject()
 {
+  Identifier::init();
+  
   // Contructor prototype objects (Object.prototype, Array.prototype etc)
 
   FunctionPrototypeImp *funcProto = new FunctionPrototypeImp(globExec);

@@ -29,6 +29,8 @@ namespace KJS {
     class Identifier {
         friend class PropertyMap;
     public:
+        static void init();
+
         Identifier() { }
         Identifier(const char *s) : _ustring(add(s)) { }
         Identifier(const UChar *s, int length) : _ustring(add(s, length)) { }
@@ -98,17 +100,27 @@ namespace KJS {
     inline bool operator==(const Identifier &a, const char *b)
         { return Identifier::equal(a, b); }
 
-    extern const Identifier argumentsPropertyName;
-    extern const Identifier calleePropertyName;
-    extern const Identifier constructorPropertyName;
-    extern const Identifier lengthPropertyName;
-    extern const Identifier messagePropertyName;
-    extern const Identifier namePropertyName;
-    extern const Identifier prototypePropertyName;
-    extern const Identifier specialPrototypePropertyName;
-    extern const Identifier toLocaleStringPropertyName;
-    extern const Identifier toStringPropertyName;
-    extern const Identifier valueOfPropertyName;
+    // List of property names, passed to a macro so we can do set them up various
+    // ways without repeating the list.
+    #define KJS_IDENTIFIER_EACH_GLOBAL(macro) \
+        macro(arguments) \
+        macro(callee) \
+        macro(constructor) \
+        macro(length) \
+        macro(message) \
+        macro(name) \
+        macro(prototype) \
+        macro(toLocaleString) \
+        macro(toString) \
+        macro(valueOf)
+
+    // Define external global variables for all property names above (and one more).
+#if !KJS_IDENTIFIER_HIDE_GLOBALS
+    #define KJS_IDENTIFIER_DECLARE_GLOBAL(name) extern const Identifier name ## PropertyName;
+    KJS_IDENTIFIER_EACH_GLOBAL(KJS_IDENTIFIER_DECLARE_GLOBAL)
+    KJS_IDENTIFIER_DECLARE_GLOBAL(specialPrototype)
+    #undef KJS_IDENTIFIER_DECLARE_GLOBAL
+#endif
 
 }
 
