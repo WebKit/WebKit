@@ -1496,9 +1496,9 @@ static WebCoreTextRun reverseCharactersInRun(const WebCoreTextRun *run)
         selectedLeftX = MIN(FixedToFloat(leadingTrapezoid.upperRight.x), FixedToFloat(leadingTrapezoid.lowerRight.x));
     
     [style->backgroundColor set];
-    
+
     float yPos = point.y - [self ascent];
-    if (style->rtl){
+    if (style->rtl || style->visuallyOrdered){
         WebCoreTextRun completeRun = *aRun;
         completeRun.from = 0;
         completeRun.to = aRun->length;
@@ -1581,11 +1581,33 @@ static WebCoreTextRun reverseCharactersInRun(const WebCoreTextRun *run)
     const WebCoreTextRun *aRun = run;
     WebCoreTextRun swappedRun;
     
+    // Reverse the visually ordered characters.  ATSU will re-reverse.  Ick!
     if (style->visuallyOrdered) {
         swappedRun = reverseCharactersInRun(run);
         aRun = &swappedRun;
     }
 
+    // Work-around for bug (352175) in ATSUPositionToOffset().  ATSUPositionToOffset will
+    // always return a zero offset if a ATSUTextLayout is created with a non-zero
+    // starting character offset.
+    // The work-around creates a 'sub' run from the run with a starting position
+    // of 0 and creates a ATSUTextLayout with that 'sub' run.
+#define WORKAROUND_3521759 1
+#if WORKAROUND_3521759
+    WebCoreTextRun subRun;
+    if (run->from != 0) {
+        subRun.length = (aRun->length - aRun->from);
+        subRun.from = 0;
+        subRun.to = aRun->to - aRun->from;
+        subRun.characters = (UniChar *)malloc(sizeof(UniChar) * subRun.length);
+        memcpy ((void *)subRun.characters, &aRun->characters[aRun->from], sizeof(UniChar) * subRun.length);
+        aRun = &subRun;
+    }
+    else {
+        subRun.characters = 0;
+    }
+#endif
+    
     layout = [self _createATSUTextLayoutForRun:aRun];
 
     status = ATSUPositionToOffset(layout, FloatToFixed(x), FloatToFixed(-1), &primaryOffset, &isLeading, &secondaryOffset);
@@ -1595,9 +1617,15 @@ static WebCoreTextRun reverseCharactersInRun(const WebCoreTextRun *run)
     else {
         // Failed to find offset!  Return 0 offset.
     }
-    
-    if (style->visuallyOrdered)
+       
+    if (style->visuallyOrdered) {
         free ((void *)swappedRun.characters);
+    }
+
+#if WORKAROUND_3521759
+    if (subRun.characters != run->characters)
+        free ((void *)subRun.characters);
+#endif
 
     return offset;
 }

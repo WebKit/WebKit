@@ -1,3 +1,15 @@
+2004-01-05  Richard Williamson   <rjw@apple.com>
+
+	Fix for 3514454.  Work-around added for 3521759.
+
+	Filed 3521781 to cover deeper problem.
+
+        Reviewed by Kocienda.
+
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (-[WebTextRenderer _ATSU_drawHighlightForRun:style:atPoint:]):
+        (-[WebTextRenderer _ATSU_pointToOffset:style:position:reversed:]):
+
 2003-12-22  John Sullivan  <sullivan@apple.com>
 
 	- WebKit part of fix for <rdar://problem/3515706>: 
