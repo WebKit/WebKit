@@ -1,5 +1,29 @@
 2004-05-26  Richard Williamson   <rjw@apple.com>
 
+	Added shadow support (w/ Louch).
+	Added infrastructure for drawing images.
+
+	New context methods:
+
+	setShadow
+	setShadowWithColor
+	clearShadow
+
+	Reviewed by me and Louch.
+
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::Context2DFunction::tryCall):
+        * khtml/ecma/kjs_html.h:
+        (KJS::Image::image):
+        (KJS::Context2D::):
+        * khtml/ecma/kjs_html.lut.h:
+        (KJS::):
+        * kwq/KWQPainter.h:
+        * kwq/KWQPainter.mm:
+        (QPainter::drawPixmap):
+
+2004-05-26  Richard Williamson   <rjw@apple.com>
+
 	Fixed build snafu.
 
         * khtml/ecma/kjs_html.cpp:

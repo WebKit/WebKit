@@ -227,6 +227,9 @@ namespace KJS {
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
     enum { Src, Complete, OnLoad };
+    
+    khtml::CachedImage* image() { return img; }
+    
   private:
     UString src;
     QGuardedPtr<DOM::DocumentImpl> doc;
@@ -256,7 +259,8 @@ namespace KJS {
         FillPath, StrokePath, 
         MoveToPoint, AddLineToPoint, AddQuadraticCurveToPoint, AddBezierCurveToPoint,
         ClearRect,
-        DrawImage, DrawImageFromRect };
+        DrawImage, DrawImageFromRect,
+        SetShadow, SetShadowWithColor, ClearShadow };
 
     DOM::HTMLElementImpl *_element;
   };

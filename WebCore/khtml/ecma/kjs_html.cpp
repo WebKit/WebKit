@@ -53,6 +53,7 @@
 #include <kdebug.h>
 
 #include "qcolor.h"
+#include "qpixmap.h"
 
 #include <ApplicationServices/ApplicationServices.h>
 
@@ -3586,13 +3587,78 @@ Value KJS::Context2DFunction::tryCall(ExecState *exec, Object &thisObj, const Li
             renderer->setNeedsImageUpdate();
             break;
         }
+        case Context2D::SetShadow: {
+            if (args.size() != 3) {
+                Object err = Error::create(exec,SyntaxError);
+                exec->setException(err);
+                return err;
+            }
+            CGSize offset;
+            
+            offset.width = (float)args[0].toNumber(exec);
+            offset.height = (float)args[1].toNumber(exec);
+            float blur = (float)args[2].toNumber(exec);
+            CGContextSetShadow (drawingContext, offset, blur);
+            break;
+        }
+        
+        case Context2D::SetShadowWithColor: {
+            if (args.size() < 4) {
+                Object err = Error::create(exec,SyntaxError);
+                exec->setException(err);
+                return err;
+            }
+            CGSize offset;
+            
+            offset.width = (float)args[0].toNumber(exec);
+            offset.height = (float)args[1].toNumber(exec);
+            float blur = (float)args[2].toNumber(exec);
+            
+            QColor color = QColor(args[3].toString(exec).ascii());
+            float alpha;
+            if (args.size() > 4)
+                alpha = (float)args[4].toNumber(exec);
+            else
+                alpha = 1.;
+            
+            CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+            float components[4] = {color.red(), color.green(), color.blue(), alpha};
+            CGColorRef colorRef = CGColorCreate (colorSpace, components);
+            CGContextSetShadowWithColor (drawingContext, offset, blur, colorRef);
+            CFRelease (colorSpace);
+            CFRelease (colorRef);
+            break;
+        }
+
+        case Context2D::ClearShadow: {
+            if (args.size() != 0) {
+                Object err = Error::create(exec,SyntaxError);
+                exec->setException(err);
+                return err;
+            }
+            CGContextSetShadowWithColor (drawingContext, CGSizeMake(0, 0), 0, nil);
+            break;
+        }
         case Context2D::DrawImage: {
             if (args.size() != 6) {
                 Object err = Error::create(exec,SyntaxError);
                 exec->setException(err);
                 return err;
             }
-            // FIXME:  Implement
+            ObjectImp *o = static_cast<ObjectImp*>(args[0].imp());
+            if (!o->inherits(&Image::info)) {
+                Object err = Error::create(exec,TypeError);
+                exec->setException(err);
+                return err;
+            }
+            Image *i = static_cast<Image*>(o);
+            float x = (float)args[1].toNumber(exec);
+            float y = (float)args[2].toNumber(exec);
+            float w = (float)args[3].toNumber(exec);
+            float h = (float)args[4].toNumber(exec);
+            QString compositeOperator = args[5].toString(exec).qstring().lower();
+            QPixmap pixmap = i->image()->pixmap();
+            printf ("%s:%d  %p %f,%f,%f,%f %s\n", __FILE__, __LINE__, pixmap.image(), x, y, w, h, compositeOperator.ascii());
             renderer->setNeedsImageUpdate();
             break;
         }
@@ -3614,7 +3680,7 @@ Value KJS::Context2DFunction::tryCall(ExecState *exec, Object &thisObj, const Li
 const ClassInfo KJS::Context2D::info = { "Context2D", 0, &Context2DTable, 0 };
 
 /* Source for Context2DTable. Use "make hashtables" to regenerate.
-@begin Context2DTable 20
+@begin Context2DTable 23
   save                     Context2D::Save                        DontDelete|Function 0
   restore                  Context2D::Restore                     DontDelete|Function 0
   scale                    Context2D::Scale                       DontDelete|Function 2
@@ -3635,8 +3701,11 @@ const ClassInfo KJS::Context2D::info = { "Context2D", 0, &Context2DTable, 0 };
   addQuadraticCurveToPoint Context2D::AddQuadraticCurveToPoint    DontDelete|Function 4
   addBezierCurveToPoint    Context2D::AddBezierCurveToPoint       DontDelete|Function 6
   clearRect                Context2D::ClearRect                   DontDelete|Function 4
-  drawImage                Context2D::DrawImage                    DontDelete|Function 6
+  drawImage                Context2D::DrawImage                   DontDelete|Function 6
   drawImageFromRect        Context2D::DrawImageFromRect           DontDelete|Function 10
+  setShadow                Context2D::SetShadow                   DontDelete|Function 3
+  setShadowWithColor       Context2D::SetShadowWithColor          DontDelete|Function 4
+  clearShadow              Context2D::ClearShadow                 DontDelete|Function 0
 @end
 */
 
