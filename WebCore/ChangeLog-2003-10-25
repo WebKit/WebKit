@@ -1,3 +1,15 @@
+2003-01-28  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by John.
+
+	- fixed 3157014 - Crash on disabling JavaScript and reloading livepage.apple.com
+	
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::openURL): Move check of JavaScript setting and possible disabling from here...
+        (KHTMLPart::begin): ... to here, to make sure it happens after clearing the interpreter.
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::resumeActions): Don't bother to restore timers if JavaScript is off.
+
 2003-01-28  Trey Matteson  <trey@apple.com>
 
 	3158465 - REGRESSION: cursor turns into I-beam after clicking on most KWQ widgets

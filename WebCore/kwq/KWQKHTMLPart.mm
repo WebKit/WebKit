@@ -493,7 +493,7 @@ QMap<int, KJS::ScheduledAction*> *KWQKHTMLPart::pauseActions(const void *key)
 
 void KWQKHTMLPart::resumeActions(QMap<int, KJS::ScheduledAction*> *actions, const void *key)
 {
-    if (d->m_doc && d->m_jscript) {
+    if (d->m_doc && d->m_jscript && d->m_bJScriptEnabled) {
         KJS::Window *w = KJS::Window::retrieveWindow(this);
         w->resumeTimeouts(actions, key);
     }

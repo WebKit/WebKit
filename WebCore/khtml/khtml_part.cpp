@@ -463,7 +463,6 @@ bool KHTMLPart::openURL( const KURL &url )
   }
 
   // set the javascript flags according to the current url
-  d->m_bJScriptEnabled = KHTMLFactory::defaultHTMLSettings()->isJavaScriptEnabled(url.host());
   d->m_bJScriptDebugEnabled = KHTMLFactory::defaultHTMLSettings()->isJavaScriptDebugEnabled();
   d->m_bJavaEnabled = KHTMLFactory::defaultHTMLSettings()->isJavaEnabled(url.host());
   d->m_bPluginsEnabled = KHTMLFactory::defaultHTMLSettings()->isPluginsEnabled(url.host());
@@ -1316,6 +1315,11 @@ void KHTMLPart::begin( const KURL &url, int xOffset, int yOffset )
 #endif
 
   clear();
+
+  // Only do this after clearing the part, so that JavaScript can
+  // clean up properly if it was on for the last load.
+  d->m_bJScriptEnabled = KHTMLFactory::defaultHTMLSettings()->isJavaScriptEnabled(url.host());
+
   d->m_bCleared = false;
   d->m_cacheId = 0;
   d->m_bComplete = false;
