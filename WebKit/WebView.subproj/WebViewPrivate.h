@@ -42,7 +42,7 @@ extern NSString *_WebMainFrameURLKey;
 - (void)setDrawsBackground:(BOOL)drawsBackround;
 - (BOOL)drawsBackground;
 
-- (void)toggleContinuousSpellChecking:(id)sender;
+- (IBAction)toggleContinuousSpellChecking:(id)sender;
 
 - (BOOL)isContinuousGrammarCheckingEnabled;
 - (void)setContinuousGrammarCheckingEnabled:(BOOL)flag;

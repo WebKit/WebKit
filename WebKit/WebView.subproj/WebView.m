@@ -2127,6 +2127,18 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 	return [[self mainFrame] dataSource] != nil;
     } else if (action == @selector(stopLoading:)) {
 	return [self _isLoading];
+    } else if (action == @selector(toggleContinuousSpellChecking:)) {
+        BOOL checkMark = NO;
+        BOOL retVal = NO;
+	if ([self isEditable] && [self _continuousCheckingAllowed]) {
+            checkMark = [self isContinuousSpellCheckingEnabled];
+            retVal = YES;
+        }
+        if ([(NSObject *)item isKindOfClass:[NSMenuItem class]]) {
+            NSMenuItem *menuItem = (NSMenuItem *)item;
+            [menuItem setState:checkMark ? NSOnState : NSOffState];
+        }
+        return retVal;
     }
 
     return YES;
@@ -2189,7 +2201,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     }
 }
 
-- (void)toggleContinuousSpellChecking:(id)sender
+- (IBAction)toggleContinuousSpellChecking:(id)sender
 {
     if ([self isEditable]) {
         [self setContinuousSpellCheckingEnabled:![self isContinuousSpellCheckingEnabled]];

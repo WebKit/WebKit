@@ -1,3 +1,16 @@
+2004-08-09  Trey Matteson  <trey@apple.com>
+
+	Hookup UI for "Continuous Spelling" menu item.
+
+        Reviewed by Richard.
+
+        * WebView.subproj/WebView.m:
+        (-[WebView validateUserInterfaceItem:]):  Enable and check the
+	menu item to reflect our state.
+        (-[WebView toggleContinuousSpellChecking:]):  Change type to
+	IBAction, just cosmetic.
+        * WebView.subproj/WebViewPrivate.h:
+
 2004-08-08  Trey Matteson  <trey@apple.com>
 
 	3745023 - Safari crashes trying to access anchor while downloading
