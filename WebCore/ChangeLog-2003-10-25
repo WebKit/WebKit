@@ -1,3 +1,59 @@
+2003-09-19  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave.
+
+        - do the prep work for the mini controls feature; Dave will finish this
+
+        * khtml/rendering/render_form.cpp: (RenderFormElement::updateFromElement):
+        Tell the widget about the font size. Our widgets use the font size to
+        decide whether to use Aqua normal, small, or mini.
+
+        * kwq/KWQButton.h: Add setFont.
+        * kwq/KWQButton.mm:
+        (QButton::setFont): Set control size based on font.
+        (KWQNSControlSizeForFont): Determine control size given a font. Dave is going
+        to tweak this later.
+
+        * kwq/KWQCheckBox.h: Add dimensions function for metrics for each control size.
+        * kwq/KWQCheckBox.mm:
+        (QCheckBox::sizeHint): Use dimensions.
+        (QCheckBox::frameGeometry): Use dimensions.
+        (QCheckBox::setFrameGeometry): Use dimensions.
+        (QCheckBox::baselinePosition): Use dimensions.
+        (QCheckBox::dimensions): Added. Has newly tweaked values for all dimensions for
+        all three control sizes.
+
+        * kwq/KWQComboBox.h: Add setFont and dimensions.
+        * kwq/KWQComboBox.mm:
+        (QComboBox::sizeHint): Use dimensions.
+        (QComboBox::frameGeometry): Use dimensions.
+        (QComboBox::setFrameGeometry): Use dimensions.
+        (QComboBox::baselinePosition): Use dimensions.
+        (QComboBox::setFont): Use dimensions.
+        (QComboBox::dimensions): Added. Has newly tweaked values for all dimensions for
+        all three control sizes.
+
+        * kwq/KWQFileButton.mm: (KWQFileButton::baselinePosition): Change to adapt to
+        flipped version of file button NSControl.
+
+        * kwq/KWQPushButton.h: Add dimensions function for metrics for each control size.
+        * kwq/KWQPushButton.mm:
+        (QPushButton::sizeHint): Use dimensions.
+        (QPushButton::frameGeometry): Use dimensions.
+        (QPushButton::setFrameGeometry): Use dimensions.
+        (QPushButton::baselinePosition): Use dimensions.
+        (QPushButton::dimensions): Added. Has newly tweaked values for all dimensions for
+        all three control sizes.
+
+        * kwq/KWQRadioButton.h: Add dimensions function for metrics for each control size.
+        * kwq/KWQRadioButton.mm:
+        (QRadioButton::sizeHint): Use dimensions.
+        (QRadioButton::frameGeometry): Use dimensions.
+        (QRadioButton::setFrameGeometry): Use dimensions.
+        (QRadioButton::baselinePosition): Use dimensions.
+        (QRadioButton::dimensions): Added. Has newly tweaked values for all dimensions for
+        all three control sizes.
+
 2003-09-19  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

@@ -25,29 +25,25 @@
 
 #import "KWQComboBox.h"
 
+#import "KWQButton.h"
 #import "KWQView.h"
 #import "KWQKHTMLPart.h"
 #import "WebCoreBridge.h"
 
 #import "khtmlview.h"
 #import "render_replaced.h"
+
 using khtml::RenderWidget;
 
-// We empirically determined that combo boxes have these extra pixels on all
-// sides. It would be better to get this info from AppKit somehow.
-#define TOP_MARGIN 1
-#define BOTTOM_MARGIN 3
-#define LEFT_MARGIN 3
-#define RIGHT_MARGIN 3
-
-// This is the 2-pixel CELLOFFSET for bordered cells from NSCell.
-#define VERTICAL_FUDGE_FACTOR 2
-
-// When we discovered we needed to measure text widths ourselves, I empirically
-// determined these widths. I don't know what exactly they correspond to in the
-// NSPopUpButtonCell code.
-#define WIDTH_NOT_INCLUDING_TEXT 31
-#define MINIMUM_WIDTH 36
+enum {
+    topMargin,
+    bottomMargin,
+    leftMargin,
+    rightMargin,
+    baselineFudgeFactor,
+    widthNotIncludingText,
+    minimumTextWidth
+};
 
 @interface KWQComboBoxAdapter : NSObject
 {
@@ -82,7 +78,7 @@ QComboBox::QComboBox()
     [button setAction:@selector(action:)];
 
     [[button cell] setControlSize:NSSmallControlSize];
-    [button setFont:[NSFont systemFontOfSize:[NSFont smallSystemFontSize]]];
+    [button setFont:[NSFont systemFontOfSize:[NSFont systemFontSizeForControlSize:NSSmallControlSize]]];
 
     setView(button);
 
@@ -135,36 +131,36 @@ QSize QComboBox::sizeHint() const
             width = MAX(width, size.width);
         }
         _width = ceil(width);
-        if (_width < MINIMUM_WIDTH - WIDTH_NOT_INCLUDING_TEXT) {
-            _width = MINIMUM_WIDTH - WIDTH_NOT_INCLUDING_TEXT;
+        if (_width < dimensions()[minimumTextWidth]) {
+            _width = dimensions()[minimumTextWidth];
         }
         _widthGood = true;
     }
     
-    return QSize((int)_width + WIDTH_NOT_INCLUDING_TEXT,
-        (int)[[button cell] cellSize].height - (TOP_MARGIN + BOTTOM_MARGIN));
+    return QSize((int)_width + dimensions()[widthNotIncludingText],
+        (int)[[button cell] cellSize].height - (dimensions()[topMargin] + dimensions()[bottomMargin]));
 }
 
 QRect QComboBox::frameGeometry() const
 {
     QRect r = QWidget::frameGeometry();
-    return QRect(r.x() + LEFT_MARGIN, r.y() + TOP_MARGIN,
-        r.width() - (LEFT_MARGIN + RIGHT_MARGIN),
-        r.height() - (TOP_MARGIN + BOTTOM_MARGIN));
+    return QRect(r.x() + dimensions()[leftMargin], r.y() + dimensions()[topMargin],
+        r.width() - (dimensions()[leftMargin] + dimensions()[rightMargin]),
+        r.height() - (dimensions()[topMargin] + dimensions()[bottomMargin]));
 }
 
 void QComboBox::setFrameGeometry(const QRect &r)
 {
-    QWidget::setFrameGeometry(QRect(-LEFT_MARGIN + r.x(), -TOP_MARGIN + r.y(),
-        LEFT_MARGIN + r.width() + RIGHT_MARGIN,
-        TOP_MARGIN + r.height() + BOTTOM_MARGIN));
+    QWidget::setFrameGeometry(QRect(-dimensions()[leftMargin] + r.x(), -dimensions()[topMargin] + r.y(),
+        dimensions()[leftMargin] + r.width() + dimensions()[rightMargin],
+        dimensions()[topMargin] + r.height() + dimensions()[bottomMargin]));
 }
 
 int QComboBox::baselinePosition() const
 {
     // Menu text is at the top.
     KWQPopUpButton *button = (KWQPopUpButton *)getView();
-    return (int)ceil(-TOP_MARGIN + VERTICAL_FUDGE_FACTOR + [[button font] ascender]);
+    return (int)ceil(-dimensions()[topMargin] + dimensions()[baselineFudgeFactor] + [[button font] ascender]);
 }
 
 void QComboBox::clear()
@@ -199,7 +195,33 @@ void QComboBox::itemSelected()
         _activated.call(_currentItem);
     }
 }
- 
+
+void QComboBox::setFont(const QFont &f)
+{
+    QWidget::setFont(f);
+
+    const NSControlSize size = KWQNSControlSizeForFont(f);
+    NSControl * const button = static_cast<NSControl *>(getView());
+    if (size != [[button cell] controlSize]) {
+        [[button cell] setControlSize:size];
+        [button setFont:[NSFont systemFontOfSize:[NSFont systemFontSizeForControlSize:size]]];
+        _widthGood = false;
+    }
+}
+
+const int *QComboBox::dimensions() const
+{
+    // We empirically determined these dimensions.
+    // It would be better to get this info from AppKit somehow.
+    static const int w[3][7] = {
+        { 2, 3, 3, 3, 4, 34, 9 },
+        { 1, 3, 3, 3, 3, 31, 5 },
+        { 0, 0, 1, 1, 2, 32, 0 }
+    };
+    NSControl * const button = static_cast<NSControl *>(getView());
+    return w[[[button cell] controlSize]];
+}
+
 @implementation KWQComboBoxAdapter
 
 - initWithQComboBox:(QComboBox *)b

@@ -82,7 +82,7 @@ QButton::QButton()
 
     [button setTitle:@""];
     [[button cell] setControlSize:NSSmallControlSize];
-    [button setFont:[NSFont systemFontOfSize:[NSFont smallSystemFontSize]]];
+    [button setFont:[NSFont systemFontOfSize:[NSFont systemFontSizeForControlSize:NSSmallControlSize]]];
 
     setView(button);
 
@@ -122,4 +122,31 @@ void QButton::clicked()
     if ([button target]) {
         m_clicked.call();
     }
+}
+
+void QButton::setFont(const QFont &f)
+{
+    QWidget::setFont(f);
+
+    const NSControlSize size = KWQNSControlSizeForFont(f);    
+    NSControl * const button = static_cast<NSControl *>(getView());
+    [[button cell] setControlSize:size];
+    [button setFont:[NSFont systemFontOfSize:[NSFont systemFontSizeForControlSize:size]]];
+}
+
+NSControlSize KWQNSControlSizeForFont(const QFont &f)
+{
+    return NSSmallControlSize;
+    // Dave is going to turn this on once he figures out what he wants to do
+    // about mini controls.
+#if 0
+    const int fontSize = f.pixelSize();
+    if (fontSize >= 20) {
+        return NSRegularControlSize;
+    }
+    if (fontSize >= 10) {
+        return NSSmallControlSize;
+    }
+    return NSMiniControlSize;
+#endif
 }

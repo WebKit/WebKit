@@ -39,6 +39,9 @@ public:
     int baselinePosition() const;
     QRect frameGeometry() const;
     void setFrameGeometry(const QRect &);
+
+private:
+    const int *dimensions() const;
 };
 
 #endif

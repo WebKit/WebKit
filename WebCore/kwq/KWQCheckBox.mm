@@ -25,18 +25,15 @@
 
 #import "KWQCheckBox.h"
 
-// We empirically determined that check boxes have these dimensions.
-// It would be better to get this info from AppKit somehow.
-
-#define TOP_MARGIN 4
-#define BOTTOM_MARGIN 3
-#define LEFT_MARGIN 3
-#define RIGHT_MARGIN 3
-
-#define WIDTH 12
-#define HEIGHT 12
-
-#define BASELINE_MARGIN 2
+enum {
+    topMargin,
+    bottomMargin,
+    leftMargin,
+    rightMargin,
+    baselineFudgeFactor,
+    dimWidth,
+    dimHeight
+};
 
 QCheckBox::QCheckBox(QWidget *w)
     : m_stateChanged(this, SIGNAL(stateChanged(int)))
@@ -47,22 +44,22 @@ QCheckBox::QCheckBox(QWidget *w)
 
 QSize QCheckBox::sizeHint() const 
 {
-    return QSize(WIDTH, HEIGHT);
+    return QSize(dimensions()[dimWidth], dimensions()[dimHeight]);
 }
 
 QRect QCheckBox::frameGeometry() const
 {
     QRect r = QWidget::frameGeometry();
-    return QRect(r.x() + LEFT_MARGIN, r.y() + TOP_MARGIN,
-        r.width() - (LEFT_MARGIN + RIGHT_MARGIN),
-        r.height() - (TOP_MARGIN + BOTTOM_MARGIN));
+    return QRect(r.x() + dimensions()[leftMargin], r.y() + dimensions()[topMargin],
+        r.width() - (dimensions()[leftMargin] + dimensions()[rightMargin]),
+        r.height() - (dimensions()[topMargin] + dimensions()[bottomMargin]));
 }
 
 void QCheckBox::setFrameGeometry(const QRect &r)
 {
-    QWidget::setFrameGeometry(QRect(r.x() - LEFT_MARGIN, r.y() - TOP_MARGIN,
-        r.width() + LEFT_MARGIN + RIGHT_MARGIN,
-        r.height() + TOP_MARGIN + BOTTOM_MARGIN));
+    QWidget::setFrameGeometry(QRect(r.x() - dimensions()[leftMargin], r.y() - dimensions()[topMargin],
+        r.width() + dimensions()[leftMargin] + dimensions()[rightMargin],
+        r.height() + dimensions()[topMargin] + dimensions()[bottomMargin]));
 }
 
 void QCheckBox::setChecked(bool isChecked)
@@ -90,5 +87,18 @@ void QCheckBox::clicked()
 
 int QCheckBox::baselinePosition() const
 {
-    return height() - BASELINE_MARGIN;
+    return height() - dimensions()[baselineFudgeFactor];
+}
+
+const int *QCheckBox::dimensions() const
+{
+    // We empirically determined these dimensions.
+    // It would be better to get this info from AppKit somehow.
+    static const int w[3][7] = {
+        { 3, 4, 2, 4, 2, 14, 14 },
+        { 4, 3, 3, 3, 2, 12, 12 },
+        { 4, 3, 3, 3, 2, 10, 10 },
+    };
+    NSControl * const button = static_cast<NSControl *>(getView());
+    return w[[[button cell] controlSize]];
 }

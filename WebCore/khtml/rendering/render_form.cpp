@@ -79,6 +79,9 @@ short RenderFormElement::baselinePosition( bool f, bool isRootLineBox ) const
 void RenderFormElement::updateFromElement()
 {
     m_widget->setEnabled(!element()->disabled());
+#if APPLE_CHANGES
+    m_widget->setFont(style()->font());
+#endif
 
     QColor color = style()->color();
     QColor backgroundColor = style()->backgroundColor();

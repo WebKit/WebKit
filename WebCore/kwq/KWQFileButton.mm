@@ -84,7 +84,7 @@ void KWQFileButton::setFrameGeometry(const QRect &rect)
 int KWQFileButton::baselinePosition() const
 {
     NSView <WebCoreFileButton> *button = getView();
-    return (int)(NSMaxY([button frame]) - [button baseline] - [button visualFrame].origin.y);
+    return (int)([button frame].origin.y + [button baseline] - [button visualFrame].origin.y);
 }
 
 void KWQFileButton::filenameChanged()

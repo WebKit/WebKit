@@ -1,3 +1,16 @@
+2003-09-19  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave.
+
+        - do the prep work for the mini controls feature; Dave will finish this
+
+        * WebCoreSupport.subproj/WebFileButton.m:
+        (-[WebFileButton isFlipped]): Make this flipped, easier to understand coordinates that way.
+        (-[WebFileButton drawRect:]): Update for flipped-ness.
+        (-[WebFileButton visualFrame]): Update for flipped-ness.
+        (-[WebFileButton setVisualFrame:]): Update for flipped-ness.
+        (-[WebFileButton baseline]): Update for flipped-ness.
+
 2003-09-19  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
