@@ -25,21 +25,17 @@
 #ifndef __khtml_part_h__
 #define __khtml_part_h__
  
- 
 #include <dom/html_document.h>
-#include <dom/dom_doc.h>
 #include <dom/dom2_range.h>
 
-#include <qcursor.h>
-#include <qlist.h>
 #include <qregexp.h>
-#include <qstring.h>
-#include <qstringlist.h>
-#include <qvaluelist.h>
-#include <qvariant.h>
 
-#include <kurl.h>
+#include <kparts/part.h>
+#include <kparts/browserextension.h>
 
+class KHTMLSettings;
+class KJavaAppletContext;
+class KJSProxy;
 
 namespace DOM
 {
@@ -49,10 +45,13 @@ namespace DOM
   class Node;
 };
 
-class KJavaAppletContext;
+namespace khtml
+{
+  class RenderPart;
+};
 
  
-class KHTMLPart		// a.k.a. WebPageDocument
+class KHTMLPart : public KParts::ReadOnlyPart		// a.k.a. WebPageDocument
 {
 public:
   /**
@@ -498,20 +497,68 @@ public:
    */
   QString jsStatusBarText() const;
 
-  /**
-   * Called by KJS.
-   * Returns the DefaultStatusBarText assigned
-   * via window.defaultStatus
-   */
-  QString jsDefaultStatusBarText() const;
+    /**
+    * Called by KJS.
+    * Returns the DefaultStatusBarText assigned
+    * via window.defaultStatus
+    */
+    QString jsDefaultStatusBarText() const;
+    
+    // Most of the following should be NOT be called, but must be implemented because
+    // of existing references.
+
+    // This should be private.
+    const KHTMLSettings *settings() const;
+    
+    // This should be private.
+    KJSProxy *jScript();
+
+    // This should be private.
+    KURL completeURL( const QString &url, const QString &target = QString::null );
+
+    // This should be private.
+
+    // This should be private.
+    const KURL & url() const;
+
+    // The following are only present to get khtml to build.
+    void scheduleRedirection( int delay, const QString &url ); // ### KDE 3.0: make private?
+    KHTMLView *view() const;
+    QWidget *widget();
+    KHTMLPart *opener();
+    KHTMLPart *parentPart();
+    DOM::DocumentImpl *xmlDocImpl() const;
+    const QList<KParts::ReadOnlyPart> frames() const;
+    KHTMLPart *findFrame( const QString &f );
+    void setOpener(KHTMLPart *_opener);
+    bool openedByJS();
+    void setOpenedByJS(bool _openedByJS);
+    KParts::BrowserExtension *browserExtension() const;
+    DOM::EventListener *createHTMLEventListener( QString code );
+    QString requestFrameName();
+    bool frameExists( const QString &frameName );
+    bool requestFrame( khtml::RenderPart *frame, const QString &url, const QString &frameName,
+                        const QStringList &args = QStringList(), bool isIFrame = false );
+    void emitUnloadEvent();
+    virtual void submitForm( const char *action, const QString &url, const QByteArray &formData,
+                            const QString &target, const QString& contentType = QString::null,
+                            const QString& boundary = QString::null ); // ### KDE 3.0: make private
+    virtual void urlSelected( const QString &url, int button = 0, int state = 0,
+                            const QString &_target = QString::null ); // ### KDE 3.0: make private
+    bool requestObject( khtml::RenderPart *frame, const QString &url, const QString &serviceType,
+                        const QStringList &args = QStringList() );
+    void nodeActivated(const DOM::Node &);
+    QVariant executeScheduledScript();
+    void stopAutoScroll();
+    virtual void overURL( const QString &url, const QString &target ); // ### KDE 3.0: make private (merge)
 
 private:
-
+    
+    
+    
+    
     // DUBIOUS, why are impls being referenced?
-  DOM::HTMLDocumentImpl *docImpl() const;
-  DOM::DocumentImpl *xmlDocImpl() const;
-
-
+    DOM::HTMLDocumentImpl *docImpl() const;
 };
 
 #endif
