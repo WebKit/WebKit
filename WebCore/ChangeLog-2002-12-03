@@ -1,3 +1,12 @@
+2002-11-21  Darin Adler  <darin@apple.com>
+
+	- fixed 3107286 -- REGRESSION: unrepro assertion failure in KWQKHTMLPart.mm keyEvent
+
+        * kwq/KWQKHTMLPart.mm: (KWQKHTMLPart::keyEvent):
+	Handle case of nil document as well as case of nil focus node.
+
+        * kwq/WebCoreBridge.mm: Tweak whitespace.
+
 2002-11-20  Darin Adler  <darin@apple.com>
 
 	- fixed 3107383 -- clicking link on cnet.com leads to assertion failure

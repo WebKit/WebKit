@@ -820,7 +820,7 @@ static NSAttributedString *attributedString(DOM::NodeImpl *_startNode, int start
 
 - (BOOL)interceptKeyEvent:(NSEvent *)event toView:(NSView *)view
 {
-    return  _part->kwq->keyEvent(event);
+    return _part->kwq->keyEvent(event);
 }
 
 @end

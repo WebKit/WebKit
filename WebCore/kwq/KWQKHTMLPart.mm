@@ -563,15 +563,18 @@ bool KWQKHTMLPart::keyEvent(NSEvent *event)
 		     QString::fromNSString([event characters]),
 		     [event isARepeat]);
 
-    ASSERT(part->xmlDocImpl());
-
-    if (!part->xmlDocImpl()->focusNode()) {
-	// Too early for events - possible unmatched key up from
-	// pressing return in the location bar.
+    // Check for cases where we are too early for events -- possible unmatched key up
+    // from pressing return in the location bar.
+    DocumentImpl *doc = document();
+    if (!doc) {
+        return false;
+    }
+    NodeImpl *node = doc->focusNode();
+    if (!node) {
 	return false;
     }
 
-    bool result = part->xmlDocImpl()->focusNode()->dispatchKeyEvent(&qEvent);
+    bool result = node->dispatchKeyEvent(&qEvent);
 
     // We want to send both a down and a press for the initial key event
     if (![event isARepeat]) {
@@ -582,7 +585,7 @@ bool KWQKHTMLPart::keyEvent(NSEvent *event)
 			 QString::fromNSString([event characters]),
 			 true);
 	
-	result = result && part->xmlDocImpl()->focusNode()->dispatchKeyEvent(&qEvent);
+	result = result && node->dispatchKeyEvent(&qEvent);
     }
 
     return result;
