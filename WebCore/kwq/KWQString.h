@@ -202,7 +202,6 @@ public:
     void truncate(uint pos);
     void fill(QChar, int len=-1);
 
-    QString arg (int &);
     QString arg(int a, int fieldwidth=0, int base=10) const;
     QString arg(const QString &, int fieldwidth=0) const;
 
@@ -242,6 +241,11 @@ public:
 
 // NOTE: this is NOT private:
     CFMutableStringRef s;
+    mutable void *cache;
+    enum CacheType {
+        CacheInvalid, CacheUnicode, CacheLatin1
+    };
+    mutable CacheType cacheType;
 
 // protected -------------------------------------------------------------------
 // private ---------------------------------------------------------------------
