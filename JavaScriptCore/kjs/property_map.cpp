@@ -32,6 +32,8 @@
 // At the time I added USE_SINGLE_ENTRY, the optimization still gave a 1.5%
 // performance boost to the iBench JavaScript benchmark so I didn't remove it.
 
+// FIXME: _singleEntry.index is unused.
+
 #if !DO_CONSISTENCY_CHECK
 #define checkConsistency() ((void)0)
 #endif
@@ -41,12 +43,6 @@ namespace KJS {
 // Choose a number for the following so that most property maps are smaller,
 // but it's not going to blow out the stack to allocate this number of pointers.
 const int smallMapThreshold = 1024;
-
-// Ever-increasing index used to identify the order items were inserted into
-// the property map. It's vital that addEnumerablesToReferenceList return
-// the properties in the order they were added for compatibility with other
-// browsers' JavaScript implementations.
-static int lastIndexUsed;
 
 #if DUMP_STATISTICS
 
@@ -70,11 +66,16 @@ PropertyMapStatisticsExitLogger::~PropertyMapStatisticsExitLogger()
 
 #endif
 
+// lastIndexUsed is an ever-increasing index used to identify the order items
+// were inserted into the property map. It's vital that addEnumerablesToReferenceList
+// return the properties in the order they were added for compatibility with other
+// browsers' JavaScript implementations.
 struct PropertyMapHashTable
 {
     int sizeMask;
     int size;
     int keyCount;
+    int lastIndexUsed;
     PropertyMapHashTableEntry entries[1];
 };
 
@@ -262,7 +263,6 @@ void PropertyMap::put(const Identifier &name, ValueImp *value, int attributes)
             _singleEntry.key = rep;
             _singleEntry.value = value;
             _singleEntry.attributes = attributes;
-            _singleEntry.index = ++lastIndexUsed;
             checkConsistency();
             return;
         }
@@ -304,7 +304,7 @@ void PropertyMap::put(const Identifier &name, ValueImp *value, int attributes)
     _table->entries[i].key = rep;
     _table->entries[i].value = value;
     _table->entries[i].attributes = attributes;
-    _table->entries[i].index = ++lastIndexUsed;
+    _table->entries[i].index = ++_table->lastIndexUsed;
     ++_table->keyCount;
 
     checkConsistency();
@@ -354,7 +354,7 @@ void PropertyMap::expand()
 #if USE_SINGLE_ENTRY
     UString::Rep *key = _singleEntry.key;
     if (key) {
-        insert(key, _singleEntry.value, _singleEntry.attributes, _singleEntry.index);
+        insert(key, _singleEntry.value, _singleEntry.attributes, 0);
         _singleEntry.key = 0;
 	// update the count, because single entries don't count towards
 	// the table key count
@@ -363,17 +363,22 @@ void PropertyMap::expand()
     }
 #endif
     
+    int lastIndexUsed = 0;
     for (int i = 0; i != oldTableSize; ++i) {
-        UString::Rep *key = oldTable->entries[i].key;
+        Entry &entry = oldTable->entries[i];
+        UString::Rep *key = entry.key;
         if (key) {
             // Don't copy deleted-element sentinels.
             if (key == &UString::Rep::null)
                 key->deref();
-            else
-                insert(key, oldTable->entries[i].value,
-                    oldTable->entries[i].attributes, oldTable->entries[i].index);
+            else {
+                int index = entry.index;
+                lastIndexUsed = MAX(index, lastIndexUsed);
+                insert(key, entry.value, entry.attributes, index);
+            }
         }
     }
+    _table->lastIndexUsed = lastIndexUsed;
 
     free(oldTable);
 
@@ -582,14 +587,42 @@ void PropertyMap::save(SavedProperties &p) const
         }
 #endif
     } else {
+        // Save in the right order so we don't lose the order.
+        // Another possibility would be to save the indices.
+
+        // Allocate a buffer to use to sort the keys.
+        Entry *fixedSizeBuffer[smallMapThreshold];
+        Entry **sortedEntries;
+        if (count <= smallMapThreshold)
+            sortedEntries = fixedSizeBuffer;
+        else
+            sortedEntries = new Entry *[count];
+
+        // Get pointers to the entries in the buffer.
+        Entry **p = sortedEntries;
         for (int i = 0; i != _table->size; ++i) {
-            if (_table->entries[i].key && !(_table->entries[i].attributes & (ReadOnly | DontEnum | Function))) {
-                prop->key = Identifier(_table->entries[i].key);
-                prop->value = Value(_table->entries[i].value);
-                prop->attributes = _table->entries[i].attributes;
-                ++prop;
-            }
+            Entry *e = &_table->entries[i];
+            if (e->key && !(e->attributes & (ReadOnly | DontEnum | Function)))
+                *p++ = e;
         }
+        assert(p - sortedEntries == count);
+
+        // Sort the entries by index.
+        qsort(sortedEntries, p - sortedEntries, sizeof(sortedEntries[0]), comparePropertyMapEntryIndices);
+
+        // Put the sorted entries into the saved properties list.
+        Entry **q = sortedEntries;
+        while (q != p) {
+            Entry *e = *q++;
+            prop->key = Identifier(e->key);
+            prop->value = Value(e->value);
+            prop->attributes = e->attributes;
+            ++prop;
+        }
+
+        // Deallocate the buffer.
+        if (sortedEntries != fixedSizeBuffer)
+            delete [] sortedEntries;
     }
 }
 

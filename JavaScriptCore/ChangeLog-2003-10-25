@@ -1,3 +1,19 @@
+2003-06-20  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - improved the property map sorting technique so that the indices
+          are separate for each property map, and also preserve the ordering
+          when property maps are saved and restored
+
+        * kjs/property_map.cpp:
+        (PropertyMap::put): Don't bother setting the index for _singleEntry, since there's
+        no need to sort a single entry. Use the per-table lastIndexUsed instead of a global.
+        (PropertyMap::expand): Don't use the index (uninitialized now) out of a _singleEntry
+        when putting it in a newly-created map; just use 0. Compute a value for the new map's
+        lastIndexUsed as we walk through the elements we are adding to it (using the same old
+        indices from the old map).
+
 === Safari-85.1 ===
 
 === Safari-85 ===
