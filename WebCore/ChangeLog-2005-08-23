@@ -1,3 +1,17 @@
+2005-01-07  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+	
+	<rdar://problem/3807144> REGRESSION (125-TOT): my bank's website doesn't work (Societe Generale, socgen.com)
+
+        * Khtml/khtml_part.cpp:
+        (KHTMLPart::checkCompleted): If the document is NULL, assume this frame has
+	not started loading yet so it could not possibly be finishing here...
+        (KHTMLPart::stop): ...unless the part is explicitly stopped and there is still
+	no document, in this case we must have hit an error or been loading a non-HTML
+	frame.
+        * khtml/khtml_part.h:
+
 2005-01-08  David Harrison  <harrison@apple.com>
 
         Reviewed by Maciej.

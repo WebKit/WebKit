@@ -1677,7 +1677,7 @@ void KHTMLPart::stop()
         // WebCore is enough involved that we need to checkCompleted() in order for m_bComplete to
         // become true.  An example is when a subframe is a pure text doc, and that subframe is the
         // last one to complete.
-        checkCompleted();
+        checkCompleted(true);
 }
 
 #if !APPLE_CHANGES
@@ -1807,7 +1807,7 @@ void KHTMLPart::slotJobPercent( KIO::Job* /*job*/, unsigned long percent )
 
 #endif
 
-void KHTMLPart::checkCompleted()
+void KHTMLPart::checkCompleted(bool ignoreDoc)
 {
 //   kdDebug( 6050 ) << "KHTMLPart::checkCompleted() parsing: " << d->m_doc->parsing() << endl;
 //   kdDebug( 6050 ) << "                           complete: " << d->m_bComplete << endl;
@@ -1831,8 +1831,16 @@ void KHTMLPart::checkCompleted()
     if ( !(*it).m_bCompleted )
       return;
 
-  // Are we still parsing - or have we done the completed stuff already ?
-  if ( d->m_bComplete || (d->m_doc && d->m_doc->parsing()) )
+  // Have we completed before?
+  if ( d->m_bComplete )
+    return;
+
+  // Are we still parsing?
+  if ( d->m_doc && d->m_doc->parsing() )
+    return;
+
+  // Have we not even started getting data for the main resource yet?
+  if ( !d->m_doc && !ignoreDoc)
     return;
 
   // Still waiting for images/scripts from the loader ?

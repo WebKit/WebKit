@@ -4464,6 +4464,14 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
     if ([string isKindOfClass:[NSAttributedString class]]) {
 	ERROR("TEXTINPUT: requested insert of attributed string");
 	text = [string string];
+        int length = [text length];
+        int i = 0;
+        while (i < length) {
+            NSRange effectiveRange;
+            NSDictionary *attrs = [string attributesAtIndex:i longestEffectiveRange:&effectiveRange inRange:NSMakeRange(i,length - i)];
+            i = effectiveRange.location + effectiveRange.length;
+            NSLog(@"attribute chunk: %@ from %d length %d\n", attrs, effectiveRange.location, effectiveRange.length);
+	}
     } else {
 	text = string;
     }
