@@ -35,7 +35,7 @@
 + (WebCoreViewFactory *)sharedFactory;
 - init;
 
-- (NSView *)viewForPluginWithURL:(NSString *)url serviceType:(NSString *)serviceType arguments:(NSArray *)arguments baseURL:(NSString *)baseURL;
+- (NSView *)viewForPluginWithURL:(NSURL *)url serviceType:(NSString *)serviceType arguments:(NSArray *)arguments baseURL:(NSURL *)baseURL;
 - (NSArray *)pluginsInfo; // array of id <WebCorePluginInfo>
 
 - (NSView *)viewForJavaAppletWithArguments:(NSDictionary *)arguments;

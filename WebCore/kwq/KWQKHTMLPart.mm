@@ -486,10 +486,10 @@ bool KWQKHTMLPartImpl::requestObject(khtml::RenderPart *frame, const QString &ur
     
     QWidget *widget = new QWidget();
     widget->setView([[WebCoreViewFactory sharedFactory]
-        viewForPluginWithURL:part->completeURL(url).url().getNSString()
+        viewForPluginWithURL:part->completeURL(url).getNSURL()
                     serviceType:serviceType.getNSString()
                     arguments:argsArray
-                        baseURL:m_baseURL.url().getNSString()]);
+                        baseURL:m_baseURL.getNSURL()]);
     frame->setWidget(widget);
     
     return true;

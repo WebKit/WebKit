@@ -45,7 +45,7 @@ static WebCoreViewFactory *sharedFactory;
     return self;
 }
 
-- (NSView *)viewForPluginWithURL:(NSString *)url serviceType:(NSString *)serviceType arguments:(NSArray *)arguments baseURL:(NSString *)baseURL;
+- (NSView *)viewForPluginWithURL:(NSURL *)url serviceType:(NSString *)serviceType arguments:(NSArray *)arguments baseURL:(NSURL *)baseURL;
 {
     return nil;
 }

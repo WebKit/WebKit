@@ -1,3 +1,13 @@
+2002-06-24  Chris Blumenberg  <cblu@apple.com>
+
+	Changed the plug-in view constructor to take NSURL's rather
+	than URL strings.	
+
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPartImpl::requestObject):
+        * kwq/WebCoreViewFactory.h:
+        * kwq/WebCoreViewFactory.m:
+
 2002-06-24  Darin Adler  <darin@apple.com>
 
         * khtml/khtmlview.cpp: (KHTMLView::~KHTMLView): Put APPLE_CHANGES
