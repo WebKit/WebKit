@@ -20,7 +20,9 @@ include $(TOPSRCDIR)/Makefile.vars
 
 SOURCES = $(wildcard *.cpp)
 HEADERS = $(wildcard *.h)
-CXXOBJECTS = $(patsubst %.cpp,%.o,$(wildcard *.cpp))
+ALLOBJECTS = $(patsubst %.cpp,%.o,$(wildcard *.cpp))
+SKIPOBJECTS = javaembed.o
+CXXOBJECTS = $(filter-out $(SKIPOBJECTS),$(ALLOBJECTS))
 
 OBJECTS = $(CXXOBJECTS) 
 
