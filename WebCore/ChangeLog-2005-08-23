@@ -1,3 +1,47 @@
+2004-09-27  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin and Maciej
+
+        Removed EditCommand smart pointer wrappers from htmlediting.cpp/.h, save for the one
+        at the root of the hierarchy, and this one has been renamed EditCommandPtr. Renamed
+        each of the XXXCommandImpl classes, removing the Impl suffix from each, and rolled
+        these into the htmlediting.cpp/.h files. The htmlediting_impl.cpp/.h files have
+        been emptied and are being removed.
+
+        For the remainder of files, perform the mechanical changes necessary to make everything
+        compile and run as before.
+
+        * WebCore.pbproj/project.pbxproj
+        * khtml/editing/htmlediting.cpp
+        * khtml/editing/htmlediting.h
+        * khtml/editing/htmlediting_impl.cpp: Removed.
+        * khtml/editing/htmlediting_impl.h: Removed.
+        * khtml/editing/jsediting.cpp
+        * khtml/khtml_part.cpp
+        (KHTMLPart::openURL)
+        (KHTMLPart::lastEditCommand)
+        (KHTMLPart::appliedEditing)
+        (KHTMLPart::unappliedEditing)
+        (KHTMLPart::reappliedEditing)
+        (KHTMLPart::applyStyle):
+        * khtml/khtml_part.h
+        * khtml/khtmlpart_p.h
+        * kwq/KWQEditCommand.h
+        * kwq/KWQEditCommand.mm
+        (-[KWQEditCommand initWithEditCommandImpl:])
+        (+[KWQEditCommand commandWithEditCommandImpl:])
+        (-[KWQEditCommand impl])
+        * kwq/KWQKHTMLPart.h
+        * kwq/KWQKHTMLPart.mm
+        (KWQKHTMLPart::registerCommandForUndo)
+        (KWQKHTMLPart::registerCommandForRedo)
+        * kwq/WebCoreBridge.mm
+        (-[WebCoreBridge undoEditing:])
+        (-[WebCoreBridge redoEditing:])
+        (-[WebCoreBridge replaceSelectionWithFragment:selectReplacement:smartReplace:])
+        (-[WebCoreBridge moveSelectionToDragCaret:smartMove:])
+        (-[WebCoreBridge deleteSelectionWithSmartDelete:])
+
 2004-09-26  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

@@ -3719,7 +3719,7 @@ DocumentFragmentImpl *KWQKHTMLPart::documentFragmentWithText(NSString *text)
     return fragment;
 }
 
-void KWQKHTMLPart::registerCommandForUndo(const khtml::EditCommand &cmd)
+void KWQKHTMLPart::registerCommandForUndo(const khtml::EditCommandPtr &cmd)
 {
     ASSERT(cmd.get());
     KWQEditCommand *kwq = [KWQEditCommand commandWithEditCommandImpl:cmd.get()];
@@ -3727,7 +3727,7 @@ void KWQKHTMLPart::registerCommandForUndo(const khtml::EditCommand &cmd)
     _haveUndoRedoOperations = YES;
 }
 
-void KWQKHTMLPart::registerCommandForRedo(const khtml::EditCommand &cmd)
+void KWQKHTMLPart::registerCommandForRedo(const khtml::EditCommandPtr &cmd)
 {
     ASSERT(cmd.get());
     KWQEditCommand *kwq = [KWQEditCommand commandWithEditCommandImpl:cmd.get()];

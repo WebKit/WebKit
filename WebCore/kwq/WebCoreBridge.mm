@@ -101,11 +101,10 @@ using DOM::Position;
 using DOM::Range;
 using DOM::UPSTREAM;
 
-using khtml::ApplyStyleCommand;
 using khtml::Decoder;
 using khtml::DeleteSelectionCommand;
+using khtml::EditCommandPtr;
 using khtml::EditCommand;
-using khtml::EditCommandImpl;
 using khtml::ETextGranularity;
 using khtml::MoveSelectionCommand;
 using khtml::parseURL;
@@ -1332,7 +1331,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 {
     ASSERT([arg isKindOfClass:[KWQEditCommand class]]);
     
-    EditCommand cmd([arg impl]);
+    EditCommandPtr cmd([arg impl]);
     cmd.unapply();
 }
 
@@ -1340,7 +1339,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 {
     ASSERT([arg isKindOfClass:[KWQEditCommand class]]);
     
-    EditCommand cmd([arg impl]);
+    EditCommandPtr cmd([arg impl]);
     cmd.reapply();
 }
 
@@ -1517,7 +1516,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     if (!_part || !_part->xmlDocImpl() || !fragment)
         return;
     
-    ReplaceSelectionCommand cmd(_part->xmlDocImpl(), [fragment _fragmentImpl], selectReplacement, smartReplace);
+    EditCommandPtr cmd(new ReplaceSelectionCommand(_part->xmlDocImpl(), [fragment _fragmentImpl], selectReplacement, smartReplace));
     cmd.apply();
     [self ensureCaretVisible];
 }
@@ -1566,7 +1565,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 - (void)moveSelectionToDragCaret:(DOMDocumentFragment *)selectionFragment smartMove:(BOOL)smartMove
 {
     Position base = _part->dragCaret().base();
-    MoveSelectionCommand cmd(_part->xmlDocImpl(), [selectionFragment _fragmentImpl], base, smartMove);
+    EditCommandPtr cmd(new MoveSelectionCommand(_part->xmlDocImpl(), [selectionFragment _fragmentImpl], base, smartMove));
     cmd.apply();
 }
 
@@ -1614,7 +1613,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     if (!selection.isRange())
         return;
     
-    DeleteSelectionCommand cmd(_part->xmlDocImpl(), smartDelete);
+    EditCommandPtr cmd(new DeleteSelectionCommand(_part->xmlDocImpl(), smartDelete));
     cmd.apply();
 }
 

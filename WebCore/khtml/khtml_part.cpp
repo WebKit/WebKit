@@ -108,8 +108,7 @@ using khtml::ApplyStyleCommand;
 using khtml::CHARACTER;
 using khtml::ChildFrame;
 using khtml::Decoder;
-using khtml::DeleteSelectionCommand;
-using khtml::EditCommand;
+using khtml::EditCommandPtr;
 using khtml::ETextGranularity;
 using khtml::FormData;
 using khtml::InlineTextBox;
@@ -409,7 +408,7 @@ bool KHTMLPart::openURL( const KURL &url )
   cancelRedirection();
   
   // clear last edit command
-  d->m_lastEditCommand = EditCommand();
+  d->m_lastEditCommand = EditCommandPtr();
 #if APPLE_CHANGES
   KWQ(this)->clearUndoRedoOperations();
 #endif
@@ -4965,12 +4964,12 @@ bool KHTMLPart::isContentEditable() const
 #endif
 }
 
-EditCommand KHTMLPart::lastEditCommand()
+EditCommandPtr KHTMLPart::lastEditCommand()
 {
     return d->m_lastEditCommand;
 }
 
-void KHTMLPart::appliedEditing(EditCommand &cmd)
+void KHTMLPart::appliedEditing(EditCommandPtr &cmd)
 {
     setSelection(cmd.endingSelection(), false, false);
 
@@ -5002,24 +5001,24 @@ void KHTMLPart::appliedEditing(EditCommand &cmd)
 #endif
 }
 
-void KHTMLPart::unappliedEditing(EditCommand &cmd)
+void KHTMLPart::unappliedEditing(EditCommandPtr &cmd)
 {
     setSelection(cmd.startingSelection(), true, false);
 #if APPLE_CHANGES
     KWQ(this)->registerCommandForRedo(cmd);
     KWQ(this)->respondToChangedContents();
 #endif
-    d->m_lastEditCommand = EditCommand::emptyCommand();
+    d->m_lastEditCommand = EditCommandPtr::emptyCommand();
 }
 
-void KHTMLPart::reappliedEditing(EditCommand &cmd)
+void KHTMLPart::reappliedEditing(EditCommandPtr &cmd)
 {
     setSelection(cmd.endingSelection(), true, false);
 #if APPLE_CHANGES
     KWQ(this)->registerCommandForUndo(cmd);
     KWQ(this)->respondToChangedContents();
 #endif
-    d->m_lastEditCommand = EditCommand::emptyCommand();
+    d->m_lastEditCommand = EditCommandPtr::emptyCommand();
 }
 
 CSSStyleDeclarationImpl *KHTMLPart::typingStyle() const
@@ -5324,7 +5323,7 @@ void KHTMLPart::applyStyle(CSSStyleDeclarationImpl *style)
         }
         case Selection::RANGE:
             if (xmlDocImpl() && style) {
-                ApplyStyleCommand cmd(xmlDocImpl(), style);
+                EditCommandPtr cmd(new ApplyStyleCommand(xmlDocImpl(), style));
                 cmd.apply();
             }
             break;

@@ -26,13 +26,13 @@
 #import "KWQEditCommand.h"
 
 #import "KWQAssertions.h"
-#import "htmlediting_impl.h"
+#import "htmlediting.h"
 
-using khtml::EditCommandImpl;
+using khtml::EditCommand;
 
 @implementation KWQEditCommand
 
-- (id)initWithEditCommandImpl:(EditCommandImpl *)impl
+- (id)initWithEditCommandImpl:(EditCommand *)impl
 {
     ASSERT(impl);
     [super init];
@@ -55,12 +55,12 @@ using khtml::EditCommandImpl;
     [super dealloc];
 }
 
-+ (KWQEditCommand *)commandWithEditCommandImpl:(EditCommandImpl *)impl
++ (KWQEditCommand *)commandWithEditCommandImpl:(EditCommand *)impl
 {
     return [[[KWQEditCommand alloc] initWithEditCommandImpl:impl] autorelease];
 }
 
-- (EditCommandImpl *)impl
+- (EditCommand *)impl
 {
     return m_impl;
 }

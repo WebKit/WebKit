@@ -375,7 +375,7 @@ public:
   bool m_focusNodeRestored:1;
   bool m_isFocused:1;
 
-  khtml::EditCommand m_lastEditCommand;
+  khtml::EditCommandPtr m_lastEditCommand;
   int m_xPosForVerticalArrowNavigation;
   DOM::CSSStyleDeclarationImpl *m_typingStyle;
 

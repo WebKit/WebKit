@@ -70,7 +70,7 @@ namespace khtml
   class CSSStyleSelector;
   class DocLoader;
   class DrawContentsEvent;
-  class EditCommand;
+  class EditCommandPtr;
   class FormData;
   class HTMLTokenizer;
   class MouseDoubleClickEvent;
@@ -679,22 +679,22 @@ public:
   /**
    * Returns the most recent edit command applied.
    */
-  khtml::EditCommand lastEditCommand();
+  khtml::EditCommandPtr lastEditCommand();
 
   /**
    * Called when editing has been applied.
    */
-  void appliedEditing(khtml::EditCommand &);
+  void appliedEditing(khtml::EditCommandPtr &);
 
   /**
    * Called when editing has been unapplied.
    */
-  void unappliedEditing(khtml::EditCommand &);
+  void unappliedEditing(khtml::EditCommandPtr &);
 
   /**
    * Called when editing has been reapplied.
    */
-  void reappliedEditing(khtml::EditCommand &);
+  void reappliedEditing(khtml::EditCommandPtr &);
 
   /**
    * Returns the typing style for the document.

@@ -24,13 +24,14 @@
  */
 
 #include "htmlediting.h"
+#include "htmlediting.h"
 
 @interface KWQEditCommand : NSObject
 {
-    khtml::EditCommandImpl *m_impl;   
+    khtml::EditCommand *m_impl;   
 }
 
-+ (KWQEditCommand *)commandWithEditCommandImpl:(khtml::EditCommandImpl *)impl;
-- (khtml::EditCommandImpl *)impl;
++ (KWQEditCommand *)commandWithEditCommandImpl:(khtml::EditCommand *)impl;
+- (khtml::EditCommand *)impl;
 
 @end

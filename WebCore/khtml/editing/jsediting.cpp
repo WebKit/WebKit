@@ -25,13 +25,11 @@
 
 #include "jsediting.h"
 
-#include <qstring.h>
-
+#include "cssproperties.h"
 #include "htmlediting.h"
-#include "selection.h"
-
 #include "khtml_part.h"
-#include "css/cssproperties.h"
+#include "qstring.h"
+#include "selection.h"
 
 #if APPLE_CHANGES
 #include "KWQKHTMLPart.h"
