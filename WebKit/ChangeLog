@@ -1,3 +1,10 @@
+2002-08-01  Don Melton  <gramps@apple.com>
+
+	Fixed deployment build compile problem.
+
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _transitionToCommitted]):
+
 2002-08-01  Maciej Stachowiak  <mjs@apple.com>
 
         Remove stuff formerly useful for "View Reconstructed Source"

@@ -236,10 +236,12 @@ static const char * const stateNames[6] = {
 - (void)_transitionToCommitted
 {
     WEBKIT_ASSERT ([self controller] != nil);
-    NSView <WebDocumentView> *documentView = [[self webView] documentView];
+    NSView <WebDocumentView> *documentView;
     WebHistoryItem *backForwardItem;
     WebBackForwardList *backForwardList = [[self controller] backForwardList];
     
+    documentView = [[self webView] documentView];
+
     switch ([self _state]) {
     	case WebFrameStateProvisional:
         {
