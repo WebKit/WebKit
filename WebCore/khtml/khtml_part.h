@@ -1272,17 +1272,11 @@ private:
 
   DOM::EventListener *createHTMLEventListener( QString code );
 
-#if APPLE_CHANGES
-  public:
-#endif
-
-  DOM::HTMLDocumentImpl *docImpl() const;
+public:
   DOM::DocumentImpl *xmlDocImpl() const;
   void replaceDocImpl(DOM::DocumentImpl* newDoc);
   
-#if APPLE_CHANGES
-  private:
-#endif
+private:
   khtml::ChildFrame *childFrame( const QObject *obj );
 
   khtml::ChildFrame *recursiveFrameRequest( const KURL &url, const KParts::URLArgs &args, bool callParent = true );

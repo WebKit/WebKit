@@ -1,3 +1,34 @@
+2004-11-12  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - various small cleanups
+
+        * khtml/xml/dom_docimpl.h: Added policyBaseURL and setPolicyBaseURL.
+        * khtml/html/html_documentimpl.h: Removed policyBaseURL and setPolicyBaseURL.
+
+        * khtml/xml/xml_tokenizer.h: Marked isWaitingForScripts const.
+        * khtml/xml/xml_tokenizer.cpp: (khtml::XMLTokenizer::isWaitingForScripts): Marked const.
+        * khtml/html/htmltokenizer.h: Marked isWaitingForScripts const.
+        * khtml/html/htmltokenizer.cpp:
+        (khtml::HTMLTokenizer::isWaitingForScripts): Marked const.
+        (khtml::HTMLTokenizer::setOnHold): Took out extraneous line of code.
+
+        * khtml/khtml_part.h: Removed docImpl function.
+        * khtml/khtml_part.cpp: Ditto.
+
+        * khtml/xml/dom_docimpl.cpp: (DocumentImpl::close): Simplified code that implements
+        the "redirect during onload" optimization. Now uses isScheduledLocationChangePending.
+
+        * kwq/KWQKHTMLPart.h: Removed now-unused _firstResponderAtMouseDownTime.
+        * kwq/KWQKHTMLPart.mm: Removed _firstResponderAtMouseDownTime (forgot to land this
+        part of the change last time, which is why the build broke).
+        (KWQKHTMLPart::updatePolicyBaseURL): Use xmlDocImpl instead of docImpl.
+        (KWQKHTMLPart::setPolicyBaseURL): Ditto.
+        (KWQKHTMLPart::keyEvent): Ditto.
+        (KWQKHTMLPart::dispatchCPPEvent): Ditto.
+        (KWQKHTMLPart::bodyBackgroundColor): Ditto.
+
 2004-11-12  Chris Blumenberg  <cblu@apple.com>
 
 	<rdar://problem/3843312> REGRESSION: Tabbing into content area puts insertion point at start, should go to where it last was

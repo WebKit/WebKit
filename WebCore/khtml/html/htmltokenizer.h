@@ -130,7 +130,8 @@ public:
 
     virtual void write(const TokenizerString &str, bool appendData);
     virtual void finish();
-    virtual void setOnHold(bool _onHold);
+    virtual void setOnHold(bool onHold);
+    virtual bool isWaitingForScripts() const;
     virtual void stopped();
     virtual bool processingData() const;
 
@@ -179,7 +180,6 @@ protected:
     // from CachedObjectClient
     void notifyFinished(CachedObject *finishedObj);
 
-    virtual bool isWaitingForScripts();
 protected:
     // Internal buffers
     ///////////////////

@@ -3,7 +3,7 @@
  *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003 Apple Computer, Inc.
+ * Copyright (C) 2004 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -49,10 +49,6 @@ public:
     DOMString lastModified() const;
     DOMString cookie() const;
     void setCookie( const DOMString &);
-#if APPLE_CHANGES
-    DOMString policyBaseURL() const { return m_policyBaseURL; }
-    void setPolicyBaseURL(const DOMString &s) { m_policyBaseURL = s; }
-#endif
 
     void setBody(HTMLElementImpl *_body, int& exceptioncode);
 
@@ -81,10 +77,6 @@ private:
      // we actually store ints inside the pointer value itself; would use void *
     // but that makes the template unhappy.
     QDict<char> namedImageAndFormCounts;
-
-#if APPLE_CHANGES
-    DOMString m_policyBaseURL;
-#endif
 };
 
 }; //namespace

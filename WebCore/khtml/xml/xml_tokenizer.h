@@ -56,7 +56,7 @@ public:
     virtual void write(const TokenizerString &str, bool appendData) = 0;
     virtual void finish() = 0;
     virtual void setOnHold(bool onHold) = 0;
-    virtual bool isWaitingForScripts() = 0;
+    virtual bool isWaitingForScripts() const = 0;
 
     virtual void stopped() {};
     virtual bool processingData() const { return false; }

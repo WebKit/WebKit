@@ -160,7 +160,6 @@ using KParts::ReadOnlyPart;
 using KParts::URLArgs;
 
 NSEvent *KWQKHTMLPart::_currentEvent = nil;
-NSResponder *KWQKHTMLPart::_firstResponderAtMouseDownTime = nil;
 
 void KHTMLPart::completed()
 {
@@ -1671,9 +1670,8 @@ QPtrList<KWQKHTMLPart> &KWQKHTMLPart::mutableInstances()
 
 void KWQKHTMLPart::updatePolicyBaseURL()
 {
-    // FIXME: docImpl() returns null for everything other than HTML documents; is this causing problems? -dwh
-    if (parentPart() && parentPart()->docImpl()) {
-        setPolicyBaseURL(parentPart()->docImpl()->policyBaseURL());
+    if (parentPart() && parentPart()->xmlDocImpl()) {
+        setPolicyBaseURL(parentPart()->xmlDocImpl()->policyBaseURL());
     } else {
         setPolicyBaseURL(m_url.url());
     }
@@ -1681,10 +1679,8 @@ void KWQKHTMLPart::updatePolicyBaseURL()
 
 void KWQKHTMLPart::setPolicyBaseURL(const DOMString &s)
 {
-    // FIXME: XML documents will cause this to return null.  docImpl() is
-    // an HTMLdocument only. -dwh
-    if (docImpl())
-        docImpl()->setPolicyBaseURL(s);
+    if (xmlDocImpl())
+        xmlDocImpl()->setPolicyBaseURL(s);
     ConstFrameIt end = d->m_frames.end();
     for (ConstFrameIt it = d->m_frames.begin(); it != end; ++it) {
         ReadOnlyPart *subpart = (*it).m_part;
@@ -1897,11 +1893,11 @@ bool KWQKHTMLPart::keyEvent(NSEvent *event)
         return false;
     }
     NodeImpl *node = doc->focusNode();
-    if (!node && docImpl()) {
-	node = docImpl()->body();
-    }
     if (!node) {
-        return false;
+	node = doc->body();
+        if (!node) {
+            return false;
+        }
     }
     
     if ([event type] == NSKeyDown) {
@@ -2396,8 +2392,8 @@ void KWQKHTMLPart::dragSourceEndedAt(const QPoint &loc, NSDragOperation operatio
 bool KWQKHTMLPart::dispatchCPPEvent(int eventId, KWQClipboard::AccessPolicy policy)
 {
     NodeImpl *target = d->m_selection.start().element();
-    if (!target && docImpl()) {
-        target = docImpl()->body();
+    if (!target && xmlDocImpl()) {
+        target = xmlDocImpl()->body();
     }
     if (!target) {
         return true;
@@ -3707,8 +3703,8 @@ QChar KWQKHTMLPart::backslashAsCurrencySymbol() const
 
 NSColor *KWQKHTMLPart::bodyBackgroundColor() const
 {
-    if (docImpl() && docImpl()->body() && docImpl()->body()->renderer()) {
-        QColor bgColor = docImpl()->body()->renderer()->style()->backgroundColor();
+    if (xmlDocImpl() && xmlDocImpl()->body() && xmlDocImpl()->body()->renderer()) {
+        QColor bgColor = xmlDocImpl()->body()->renderer()->style()->backgroundColor();
         if (bgColor.isValid()) {
             return bgColor.getNSColor();
         }

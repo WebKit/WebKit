@@ -136,7 +136,7 @@ public:
     virtual void write(const TokenizerString &str, bool);
     virtual void finish();
     virtual void setOnHold(bool onHold);
-    virtual bool isWaitingForScripts();
+    virtual bool isWaitingForScripts() const;
 
 #ifdef KHTML_XSLT
     void setTransformSource(DocumentImpl* doc);
@@ -709,7 +709,7 @@ void XMLTokenizer::notifyFinished(CachedObject *finishedObj)
     }
 }
 
-bool XMLTokenizer::isWaitingForScripts()
+bool XMLTokenizer::isWaitingForScripts() const
 {
     return m_cachedScript != 0;
 }

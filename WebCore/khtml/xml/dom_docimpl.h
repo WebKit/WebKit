@@ -523,6 +523,9 @@ public:
 
     DOMString domain() const;
     void setDomain( const DOMString &newDomain, bool force = false ); // not part of the DOM
+
+    DOMString policyBaseURL() const { return m_policyBaseURL; }
+    void setPolicyBaseURL(const DOMString &s) { m_policyBaseURL = s; }
     
     // The following implements the rule from HTML 4 for what valid names are.
     // To get this right for all the XML cases, we probably have to improve this or move it
@@ -697,6 +700,8 @@ protected:
 #endif
     
     QMap<QString, HTMLMapElementImpl *> m_imageMapsByName;
+
+    DOMString m_policyBaseURL;
 
 #if APPLE_CHANGES
 public:

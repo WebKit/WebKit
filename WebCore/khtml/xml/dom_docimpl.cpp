@@ -1349,10 +1349,10 @@ void DocumentImpl::close()
     // First fire the onload.
     bool doload = !parsing() && m_tokenizer && !m_processingLoadEvent;
     
-    bool wasNotRedirecting = !part() || part()->d->m_scheduledRedirection == noRedirectionScheduled || part()->d->m_scheduledRedirection == historyNavigationScheduled;
+    bool wasLocationChangePending = part() && part()->isScheduledLocationChangePending();
     
-    m_processingLoadEvent = true;
     if (body() && doload) {
+        m_processingLoadEvent = true;
         // We have to clear the tokenizer, in case someone document.write()s from the
         // onLoad event handler, as in Radar 3206524
         delete m_tokenizer;
@@ -1363,16 +1363,16 @@ void DocumentImpl::close()
         if (!ownerElement())
             printf("onload fired at %d\n", elapsedTime());
 #endif
+        m_processingLoadEvent = false;
     }
-    m_processingLoadEvent = false;
     
     // Make sure both the initial layout and reflow happen after the onload
     // fires. This will improve onload scores, and other browsers do it.
     // If they wanna cheat, we can too. -dwh
     
-    bool isRedirectingSoon = view() && view()->part()->d->m_scheduledRedirection != noRedirectionScheduled && view()->part()->d->m_scheduledRedirection != historyNavigationScheduled && view()->part()->d->m_delayRedirect == 0;
+    bool isLocationChangePending = part() && part()->isScheduledLocationChangePending();
     
-    if (doload && wasNotRedirecting && isRedirectingSoon && m_startTime.elapsed() < cLayoutTimerDelay) {
+    if (doload && !wasLocationChangePending && isLocationChangePending && m_startTime.elapsed() < cLayoutTimerDelay) {
 	// Just bail out. During the onload we were shifted to another page.
 	// i-Bench does this. When this happens don't bother painting or laying out.        
 	delete m_tokenizer;
