@@ -1,3 +1,25 @@
+2004-12-10  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+
+        Fix for this bug:
+        
+        <rdar://problem/3915008> REGRESSION (Mail): Too much white space between lines separated by carriage returns
+
+        There are a number of interesting things we could do to fix this bug, including SPI and involving
+        the WebKit delegate, etc., however it seems reasonable to start with a hard-coded default that
+        will fix the bug in the general case until such time as we can come up with more specific
+        solutions. 
+        
+        So, I added a helper method to create <p> elements with an inline style that sets top and bottom margins
+        to 0.1em.
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::InsertParagraphSeparatorCommand::createParagraphElement): New factory method to create
+        paragraph elements to insert. Also adds style information to keep the <p> from having "too-big" margins.
+        (khtml::InsertParagraphSeparatorCommand::doApply): Call new factory method.
+        * khtml/editing/htmlediting.h: Add createParagraphElement() declaration.
+
 2004-12-10  Darin Adler  <darin@apple.com>
 
         Reviewed by Hyatt.

@@ -2157,6 +2157,19 @@ InsertParagraphSeparatorCommand::~InsertParagraphSeparatorCommand()
     derefNodesInList(clonedNodes);
 }
 
+ElementImpl *InsertParagraphSeparatorCommand::createParagraphElement()
+{
+    static DOMString paragraphStyle("margin-top: 0.1em; margin-bottom: 0.1em");
+
+    int exceptionCode = 0;
+    ElementImpl *element = document()->createHTMLElement("p", exceptionCode);
+    ASSERT(exceptionCode == 0);
+    element->setAttribute(ATTR_STYLE, paragraphStyle);
+    element->ref();
+    clonedNodes.append(element);
+    return element;
+}
+
 void InsertParagraphSeparatorCommand::doApply()
 {
     Selection selection = endingSelection();
@@ -2200,22 +2213,17 @@ void InsertParagraphSeparatorCommand::doApply()
     // of the the start block.
     NodeImpl *addedBlock = 0;
     if (startBlock == startBlock->rootEditableElement()) {
-        int exceptionCode = 0;
         if (startBlock->renderer() && !startBlock->renderer()->firstChild()) {
             // No rendered kids in the root editable element.
             // Just inserting a <p> in this situation is not enough, since this operation
             // is supposed to add an additional user-visible line to the content.
             // So, insert an extra <p> to make the one we insert right appear as the second
             // line in the root editable element.
-            NodeImpl *extraBlock = document()->createHTMLElement("P", exceptionCode);
-            ASSERT(exceptionCode == 0);
+            NodeImpl *extraBlock = createParagraphElement();
             appendNode(extraBlock, startBlock);
-            extraBlock->ref();
             insertBlockPlaceholderIfNeeded(extraBlock);
-            clonedNodes.append(extraBlock);
         }
-        addedBlock = document()->createHTMLElement("P", exceptionCode);
-        ASSERT(exceptionCode == 0);
+        addedBlock = createParagraphElement();
         appendNode(addedBlock, startBlock);
     }
     else {
