@@ -23,19 +23,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef KSIMPLECONFIG_H_
-#define KSIMPLECONFIG_H_
+#ifndef KPRINTER_H_
+#define KPRINTER_H_
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
 
-#include <kconfig.h>
+#include <qpaintdevice.h>
 #include <qstring.h>
+#include <qwidget.h>
+#include <qsize.h>
 
-class KSimpleConfig : public KConfig {
+// NOTE: I stuck this file here rather than create a whole new 
+// kdeprint directory
+
+class KPrinter : public QPaintDevice {
 public:
-    KSimpleConfig(const QString &, bool bReadOnly=false);
+    bool setup(QWidget *parent=0);
+    bool newPage();
+    void setDocName(const QString &);
+    void setCreator(const QString &);
+    void setFullPage(bool);
+    QSize margins() const;
 };
 
 #endif
+

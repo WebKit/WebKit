@@ -719,6 +719,7 @@ AC_OUTPUT(
 	src/kdelibs/khtml/java/Makefile
 	src/kdelibs/khtml/html/Makefile
 	src/kdelibs/khtml/rendering/Makefile
+	src/kdelibs/khtml/Makefile
 	src/kwq/Makefile
 	src/kwq/qt/Makefile
 	src/kwq/kde/Makefile

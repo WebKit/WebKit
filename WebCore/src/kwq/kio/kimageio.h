@@ -48,6 +48,7 @@ public:
 
     // static member functions -------------------------------------------------
 
+    static void registerFormats();
     static QStringList mimeTypes(Mode mode=Writing);
 
     // constructors, copy constructors, and destructors ------------------------

@@ -64,7 +64,7 @@ CLEAN_FILES = $(OBJECTS) \
 CMMFLAGS = $(BASECMMFLAGS) \
     -g \
     -I$(TOPSRCDIR) \
-    -I$(TOPSRCDIR)/src/kdelibs/khtml
+    -I$(TOPSRCDIR)/src/kdelibs/khtml \
     -I$(TOPSRCDIR)/src/kwq \
     -I$(TOPSRCDIR)/src/kwq/qt \
     -I$(TOPSRCDIR)/src/kwq/kde \
@@ -76,7 +76,7 @@ DEPFLAGS = $(CMMFLAGS)
 
 CMFLAGS = $(BASECMFLAGS) \
     -I$(TOPSRCDIR) \
-    -I$(TOPSRCDIR)/src/kdelibs/khtml
+    -I$(TOPSRCDIR)/src/kdelibs/khtml \
     -I$(TOPSRCDIR)/src/kwq \
     -I$(TOPSRCDIR)/src/kwq/qt \
     -I$(TOPSRCDIR)/src/kwq/kde \

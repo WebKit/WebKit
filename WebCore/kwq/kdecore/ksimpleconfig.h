@@ -30,4 +30,12 @@
 #include <config.h>
 #endif
 
+#include <kconfig.h>
+#include <qstring.h>
+
+class KSimpleConfig : public KConfig {
+public:
+    KSimpleConfig(const QString &, bool bReadOnly=false);
+};
+
 #endif

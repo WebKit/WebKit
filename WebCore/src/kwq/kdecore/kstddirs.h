@@ -31,12 +31,14 @@
 #endif
 
 #include <qstring.h>
-#include "kglobal.h"
+#include <kglobal.h>
 
 
 QString locate(const char *type, const QString& filename, 
     const KInstance* instance=KGlobal::instance());
 
+QString locateLocal(const char *type, const QString &filename, 
+    const KInstance *instance=KGlobal::instance());
 
 // class KStandardDirs =========================================================
 

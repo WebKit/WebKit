@@ -51,7 +51,7 @@ public:
 
     // constructors, copy constructors, and destructors ------------------------
 
-    QScrollView();
+    QScrollView(QWidget *parent=0, const char *name=0, WFlags f=0);
     ~QScrollView();
 
     // member functions --------------------------------------------------------
@@ -79,6 +79,20 @@ public:
     virtual void resizeContents(int w, int h);
     void updateContents(int x, int y, int w, int h);
     void repaintContents(int x, int y, int w, int h, bool erase=TRUE);
+    QPoint contentsToViewport(const QPoint &);
+    void viewportToContents(int vx, int vy, int& x, int& y);
+
+    virtual void viewportWheelEvent(QWheelEvent *);
+
+    QWidget *clipper() const;
+    void enableClipper(bool);
+
+    void setStaticBackground(bool);
+
+    void resizeEvent(QResizeEvent *);
+
+    void ensureVisible(int,int);
+    void ensureVisible(int,int,int,int);
 
     // operators ---------------------------------------------------------------
 

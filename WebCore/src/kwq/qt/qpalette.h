@@ -30,7 +30,8 @@
 #include <config.h>
 #endif
 
-class QColor;
+#include <qcolor.h>
+#include <qbrush.h>
 
 // class QColorGroup ===========================================================
 
@@ -63,6 +64,8 @@ public:
     ~QColorGroup();
 
     // member functions --------------------------------------------------------
+
+    const QBrush &brush(ColorRole) const;
 
     const QColor &color(ColorRole) const;
     void setColor(ColorRole, const QColor &);

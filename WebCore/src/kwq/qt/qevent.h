@@ -52,6 +52,7 @@ public:
         FocusOut,
         AccelAvailable,
         KeyPress,
+        Paint,
     };
 
     // constants ---------------------------------------------------------------
@@ -125,6 +126,7 @@ public:
     const QPoint &pos() const;
     ButtonState button();
     ButtonState state();
+    ButtonState stateAfter();
 
     // operators ---------------------------------------------------------------
 
@@ -223,6 +225,7 @@ public:
     int key() const;
     ButtonState state() const;
     void accept();
+    void ignore();
 
     // operators ---------------------------------------------------------------
 
@@ -459,6 +462,10 @@ public:
 #endif
     
     // member functions --------------------------------------------------------
+
+    void accept();
+    void ignore();
+    
     // operators ---------------------------------------------------------------
 
 // protected -------------------------------------------------------------------
@@ -480,4 +487,50 @@ private:
 
 }; // class QWheelEvent ========================================================
 
+
+// class QCustomEvent ===========================================================
+
+class QCustomEvent : public QEvent {
+public:
+
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
+    
+    // constructors, copy constructors, and destructors ------------------------
+    
+// add no-arg constructor
+#ifdef _KWQ_PEDANTIC_
+    QCustomEvent() {}
+#endif
+
+    QCustomEvent(Type);
+
+// add no-op destructor
+#ifdef _KWQ_PEDANTIC_
+    ~QCustomEvent() {}
+#endif
+    
+    // member functions --------------------------------------------------------
+    // operators ---------------------------------------------------------------
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+private:
+
+// add copy constructor
+// this private declaration prevents copying
+#ifdef _KWQ_PEDANTIC_
+    QCustomEvent(const QCustomEvent &);
+#endif
+
+// add assignment operator 
+// this private declaration prevents assignment
+#ifdef _KWQ_PEDANTIC_
+    QCustomEvent &operator=(const QCustomEvent &);
+#endif
+
+}; // class QWheelEvent ========================================================
 #endif

@@ -30,9 +30,10 @@
 #include <config.h>
 #endif
 
-#include "qwidget.h"
-#include "qpalette.h"
-#include "qsize.h"
+#include <qobject.h>
+#include <qwidget.h>
+#include <qpalette.h>
+#include <qsize.h>
 
 #if (defined(__APPLE__) && defined(__OBJC__) && defined(__cplusplus))
 #import <Cocoa/Cocoa.h>
@@ -41,7 +42,7 @@
 
 // class QApplication ==========================================================
 
-class QApplication {
+class QApplication : public QObject {
 public:
 
     // typedefs ----------------------------------------------------------------
@@ -57,6 +58,7 @@ public:
     static void	setOverrideCursor(const QCursor &);
     static void restoreOverrideCursor();
     static bool sendEvent(QObject *, QEvent *);
+    static void sendPostedEvents(QObject *receiver, int event_type);
 
     // constructors, copy constructors, and destructors ------------------------
 

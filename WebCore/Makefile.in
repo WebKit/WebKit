@@ -27,6 +27,7 @@ SUBDIRS = \
 	src/kdelibs/khtml/java \
 	src/kdelibs/khtml/html \
 	src/kdelibs/khtml/rendering \
+	src/kdelibs/khtml \
 	src/kwq/ \
 	src/kwq/qt \
 	src/kwq/kde \

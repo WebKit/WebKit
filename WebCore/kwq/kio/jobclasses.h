@@ -30,6 +30,7 @@
 #include <config.h>
 #endif
 
+#include <kurl.h>
 #include <qobject.h>
 #include <qstring.h>
 
@@ -59,7 +60,7 @@ public:
     int error();
     const QString & errorText();
     QString errorString();
-    virtual void kill(bool quietly = true);
+    virtual void kill(bool quietly=TRUE);
 
     // operators ---------------------------------------------------------------
 
@@ -138,6 +139,8 @@ public:
     // static member functions -------------------------------------------------
 
     // constructors, copy constructors, and destructors ------------------------
+    
+    TransferJob(const KURL &, bool reload=false, bool showProgressInfo=true);
 
 // add no-arg constructor
 #ifdef _KWQ_PEDANTIC_
@@ -153,6 +156,7 @@ public:
 
     bool isErrorPage() const;
     void addMetaData(const QString &key, const QString &value);
+    void kill(bool quietly=TRUE);
 
     // operators ---------------------------------------------------------------
 
@@ -160,6 +164,11 @@ public:
 // private ---------------------------------------------------------------------
 
 private:
+    KURL _url;
+    bool _reload;
+    bool _showProgressInfo;
+
+    void doLoad();
 
 // add copy constructor
 // this private declaration prevents copying

@@ -30,15 +30,16 @@
 #include <config.h>
 #endif
 
-#include "qnamespace.h"
-#include "qpaintdevice.h"
-#include "qcolor.h"
-#include "qpen.h"
-#include "qbrush.h"
-#include "qregion.h"
-#include "qpoint.h"
-#include "qstring.h"
-#include "qfontmetrics.h"
+#include <qnamespace.h>
+#include <qpaintdevice.h>
+#include <qcolor.h>
+#include <qpen.h>
+#include <qbrush.h>
+#include <qrect.h>
+#include <qregion.h>
+#include <qpoint.h>
+#include <qstring.h>
+#include <qfontmetrics.h>
 
 class QFont;
 class QPixmap;
@@ -148,10 +149,20 @@ public:
 
     void setClipping(bool);
     void setClipRegion(const QRegion &);
+    void setClipRect(const QRect &);
+    void setClipRect(int,int,int,int);
     const QRegion &clipRegion() const;
     bool hasClipping() const;
     RasterOp rasterOp() const;
     void setRasterOp(RasterOp);
+
+    void translate(double dx, double dy);
+    void scale(double dx, double dy);
+
+    bool begin(const QPaintDevice *);
+    bool end();
+
+    QPaintDevice *device() const;
 
     // operators ---------------------------------------------------------------
 

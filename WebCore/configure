@@ -3679,6 +3679,7 @@ trap 'rm -fr `echo "Makefile
 	src/kdelibs/khtml/java/Makefile
 	src/kdelibs/khtml/html/Makefile
 	src/kdelibs/khtml/rendering/Makefile
+	src/kdelibs/khtml/Makefile
 	src/kwq/Makefile
 	src/kwq/qt/Makefile
 	src/kwq/kde/Makefile
@@ -3796,6 +3797,7 @@ CONFIG_FILES=\${CONFIG_FILES-"Makefile
 	src/kdelibs/khtml/java/Makefile
 	src/kdelibs/khtml/html/Makefile
 	src/kdelibs/khtml/rendering/Makefile
+	src/kdelibs/khtml/Makefile
 	src/kwq/Makefile
 	src/kwq/qt/Makefile
 	src/kwq/kde/Makefile

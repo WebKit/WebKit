@@ -73,6 +73,8 @@ public:
         StrongFocus = 0x3,
         WheelFocus = 0x7
     };
+
+    enum BackgroundMode { NoBackground, };
     
     // constants ---------------------------------------------------------------
     // static member functions -------------------------------------------------
@@ -104,6 +106,7 @@ public:
     QWidget *topLevelWidget() const;
 
     QPoint mapToGlobal(const QPoint &) const;
+    QPoint mapFromGlobal(const QPoint &) const;
 
     void setFocus();
     void clearFocus();
@@ -131,6 +134,21 @@ public:
 
     virtual void show();
     virtual void hide();
+
+    virtual void showEvent(QShowEvent *);
+    virtual void hideEvent(QHideEvent *);
+    virtual void wheelEvent(QWheelEvent *);
+    virtual void keyPressEvent(QKeyEvent *);
+    virtual void keyReleaseEvent(QKeyEvent *);
+    virtual void focusOutEvent(QFocusEvent *);
+
+    virtual void setBackgroundMode(BackgroundMode);
+
+    virtual void setAcceptDrops(bool);
+
+    void erase();
+
+    QWidget *focusWidget() const;
 
     // Required for KWQ
 #ifdef _KWQ_

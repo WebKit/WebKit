@@ -38,7 +38,7 @@ namespace KParts {
 
 // class Event =================================================================
 
-class Event {
+class Event : public QCustomEvent {
 public:
 
     // structs -----------------------------------------------------------------

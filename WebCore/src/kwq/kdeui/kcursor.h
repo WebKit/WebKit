@@ -32,6 +32,9 @@
 
 #include <qwidget.h>
 
+static const QCursor &arrowCursor = QCursor();
+static const QCursor &waitCursor = QCursor();
+
 // class KCursor ===============================================================
 
 class KCursor {
@@ -45,6 +48,16 @@ public:
     // static member functions -------------------------------------------------
 
     static void setAutoHideCursor(QWidget *w, bool enable);
+
+    static QCursor arrowCursor();
+    static QCursor crossCursor();
+    static QCursor sizeAllCursor();
+    static QCursor sizeHorCursor();
+    static QCursor sizeVerCursor();
+    static QCursor sizeBDiagCursor();
+    static QCursor sizeFDiagCursor();
+    static QCursor ibeamCursor();
+    static QCursor waitCursor();
 
     // constructors, copy constructors, and destructors ------------------------
 

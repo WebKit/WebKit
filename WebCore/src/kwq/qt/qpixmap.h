@@ -78,6 +78,7 @@ public:
     int width() const;
     int height() const;
     void resize(const QSize &);
+    void resize(int,int);
 
     QPixmap xForm(const QWMatrix &) const;
     QImage convertToImage() const;

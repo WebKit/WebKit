@@ -30,6 +30,9 @@
 #include <config.h>
 #endif
 
+#include <qpixmap.h>
+#include <qpoint.h>
+
 // class QCursor ===============================================================
 
 class QCursor {
@@ -39,10 +42,13 @@ public:
     // enums -------------------------------------------------------------------
     // constants ---------------------------------------------------------------
     // static member functions -------------------------------------------------
+
+    static QPoint pos();
     
     // constructors, copy constructors, and destructors ------------------------
     
      QCursor();
+     QCursor(const QPixmap &pixmap, int hotX=1, int hotY=1);
      QCursor(const QCursor &);
      ~QCursor();
       
