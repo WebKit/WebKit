@@ -1,5 +1,14 @@
 2003-11-11  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by John.
+
+	- fixed 3479537 - reproducible crash in KJS::WindowFunc::tryCall
+	
+        * khtml/ecma/kjs_window.cpp:
+        (WindowFunc::tryCall): Check part and doc impl for null.
+
+2003-11-11  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Ken.
 
 	- fixed 3472330 -  REGRESSION: onKeyPress handler not called when hitting keys in <input type=password> field

@@ -1080,7 +1080,8 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
 
   switch (id) {
   case Window::Alert:
-    part->xmlDocImpl()->updateRendering();
+    if (part && part->xmlDocImpl())
+      part->xmlDocImpl()->updateRendering();
 #if APPLE_CHANGES
     KWQ(part)->runJavaScriptAlert(str);
 #else
@@ -1088,7 +1089,8 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
 #endif
     return Undefined();
   case Window::Confirm:
-    part->xmlDocImpl()->updateRendering();
+    if (part && part->xmlDocImpl())
+      part->xmlDocImpl()->updateRendering();
 #if APPLE_CHANGES
     return Boolean(KWQ(part)->runJavaScriptConfirm(str));
 #else
@@ -1096,7 +1098,8 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
                                                 i18n("OK"), i18n("Cancel")) == KMessageBox::Yes));
 #endif
   case Window::Prompt:
-    part->xmlDocImpl()->updateRendering();
+    if (part && part->xmlDocImpl())
+      part->xmlDocImpl()->updateRendering();
     bool ok;
 #if APPLE_CHANGES
     ok = KWQ(part)->runJavaScriptPrompt(str, args.size() >= 2 ? args[1].toString(exec).qstring() : QString::null, str2);
