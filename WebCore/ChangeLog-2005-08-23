@@ -1,3 +1,36 @@
+2005-03-07  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+        Fix for this bug:
+        
+        <rdar://problem/4035648> REGRESSION (Mail): line feed in source HTML file causes bad copy/paste behavior
+
+        The createMarkup() function in markup.cpp iterates over the nodes in a range,
+        and does some bookkeeping to figure out when to add close tags to the markup.
+        Some code added at the start of the loop to prevent markup from being written
+        for unrendered nodes short-circuited the rest of the loop, and so prevented
+        the close-tag-writing code from running when it should.
+
+        This is why the "plain" text wound up inside of the bold tag in the example
+        above. The addition of the unrendered return character caused an incorrect
+        delay in the close tag for the bold element from being written out, with the
+        result being that it wound up including additional content.
+
+        The fix is to add checks for node renderers throughout the loop at the points
+        where markup is written out for each node. This allows the additional close
+        tag logic to run as needed.
+
+        All layout tests pass with this change.
+
+        * khtml/editing/markup.cpp:
+        (khtml::createMarkup)
+
+        New test:
+        
+        * layout-tests/editing/pasteboard/paste-4035648-fix-expected.txt: Added.
+        * layout-tests/editing/pasteboard/paste-4035648-fix.html: Added.
+
 2005-03-06  Christy Warren  kali@appple.com
 
         Reviewed by Ken

@@ -330,8 +330,6 @@ QString createMarkup(const RangeImpl *range, QPtrList<NodeImpl> *nodes, EAnnotat
     NodeImpl *next;
     for (NodeImpl *n = range->startNode(); n != pastEnd; n = next) {
         next = n->traverseNextNode();
-        if (!n->renderer())
-            continue;
 
         if (n->isBlockFlow() && next == pastEnd) {
             // Don't write out an empty block.
@@ -339,15 +337,19 @@ QString createMarkup(const RangeImpl *range, QPtrList<NodeImpl> *nodes, EAnnotat
         }
         
         // Add the node to the markup.
-        markups.append(startMarkup(n, range, annotate, defaultStyle));
-        if (nodes) {
-            nodes->append(n);
+        if (n->renderer()) {
+            markups.append(startMarkup(n, range, annotate, defaultStyle));
+            if (nodes) {
+                nodes->append(n);
+            }
         }
         
         if (n->firstChild() == 0) {
             // Node has no children, add its close tag now.
-            markups.append(endMarkup(n));
-            lastClosed = n;
+            if (n->renderer()) {
+                markups.append(endMarkup(n));
+                lastClosed = n;
+            }
             
             // Check if the node is the last leaf of a tree.
             if (n->nextSibling() == 0 || next == pastEnd) {
@@ -379,7 +381,7 @@ QString createMarkup(const RangeImpl *range, QPtrList<NodeImpl> *nodes, EAnnotat
                     }
                 }
             }
-        } else {
+        } else if (n->renderer()) {
             // Node is an ancestor, set it to close eventually.
             ancestorsToClose.append(n);
         }
