@@ -1,3 +1,10 @@
+2002-11-25  Richard Williamson   <rjw@apple.com>
+
+        Added check for non-nil doc.
+        
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::setView):
+
 2002-11-25  David Hyatt  <hyatt@apple.com>
 
 	Fix for the DHTML on hrweb.  With these changes it works

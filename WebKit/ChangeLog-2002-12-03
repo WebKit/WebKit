@@ -1,5 +1,12 @@
 2002-11-25  Richard Williamson   <rjw@apple.com>
 
+        Changed ordering of cachability check.
+        
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _setState:]):
+
+2002-11-25  Richard Williamson   <rjw@apple.com>
+
         Changes fro back/forward cache.
         
         * History.subproj/WebHistoryItem.h:

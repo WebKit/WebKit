@@ -223,8 +223,9 @@ ReadOnlyPart *KWQKHTMLPart::createPart(const ChildFrame &child, const KURL &url,
     
 void KWQKHTMLPart::setView(KHTMLView *view, bool weOwnIt)
 {
-    if (_ownsView && !d->m_doc->inPageCache()) {
-        delete d->m_view;
+    if (_ownsView) {
+        if (!(d->m_doc && d->m_doc->inPageCache()))
+            delete d->m_view;
     }
     d->m_view = view;
     part->setWidget(view);
@@ -435,7 +436,6 @@ bool KWQKHTMLPart::canCachePage()
         d->m_objects.count() ||
         d->m_doc->getWindowEventListener (DOM::EventImpl::UNLOAD_EVENT) ||
         (d->m_jscript && KJS::Window::retrieveWindow(part)->hasTimeouts()))){
-        printf ("Not saving page state for %s\n", part->m_url.url().latin1());
         return false;
     }
     return true;

@@ -571,7 +571,7 @@ static const char * const stateNames[] = {
         [[[self webView] frameScrollView] setDrawsBackground:NO];
 
         // Cache the page, if possible.
-        if ([_private->bridge canCachePage] && [self _canCachePage] && [_private currentItem]){
+        if ([self _canCachePage] && [_private->bridge canCachePage] && [_private currentItem]){
             if (![[_private currentItem] pageCache]){
                 NSLog (@"saving page cache for %@, %@", [self name], [[self dataSource] URL]);
                 [[_private currentItem] setPageCacheEnabled: YES];
