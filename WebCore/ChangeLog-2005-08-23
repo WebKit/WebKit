@@ -1,5 +1,14 @@
 2004-04-29  David Hyatt  <hyatt@apple.com>
 
+	Expose summary on tables.
+	
+        Reviewed by darin
+
+        * kwq/KWQAccObject.mm:
+        (-[KWQAccObject helpText]):
+
+2004-04-29  David Hyatt  <hyatt@apple.com>
+
 	Implement image maps for accessibility.
 	
         Reviewed by darin
