@@ -1,5 +1,11 @@
 2003-01-29  Darin Adler  <darin@apple.com>
 
+        * khtml/rendering/break_lines.cpp: (isBreakable): Fix error that prevented this
+        from compiling. I had failed to build, and then tested the version without my change!
+        I retested with the change.
+
+2003-01-29  Darin Adler  <darin@apple.com>
+
         Reviewed by Ken.
 
 	- 3158477 -- text break locator leak leads to giant (2.04 GB) VSIZE idling at livepage
