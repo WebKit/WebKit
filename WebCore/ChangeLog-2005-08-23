@@ -1,3 +1,13 @@
+2004-09-30  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by me, coded by Darin
+
+        - fixed <rdar://problem/3818305> REGRESSION (Mail): Shift + page up has no effect; should modify selection
+
+        * khtml/editing/selection.cpp: (khtml::Selection::modify): Fix problem where vertical distance
+        was used as a distance threshold, but was a negative number. Now make it positive at the start
+        of the function (and make a couple related changes).
+
 2004-09-29  Richard Williamson   <rjw@apple.com>
 
 	Fixed <rdar://problem/3779998> bringing window to front or sending to back does not send focus/blur events to JavaScript window object

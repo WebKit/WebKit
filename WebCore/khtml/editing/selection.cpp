@@ -403,19 +403,22 @@ static bool caretY(const VisiblePosition &c, int &y)
 
 bool Selection::modify(EAlter alter, int verticalDistance)
 {
-    if (verticalDistance == 0) {
+    if (verticalDistance == 0)
         return false;
-    }
 
-    setModifyBias(alter, verticalDistance > 0 ? FORWARD : BACKWARD);
+    bool up = verticalDistance < 0;
+    if (up)
+        verticalDistance = -verticalDistance;
+
+    setModifyBias(alter, up ? BACKWARD : FORWARD);
 
     VisiblePosition pos;
-
     int xPos = 0; /* initialized only to make compiler happy */
+
     switch (alter) {
         case MOVE:
-            pos = VisiblePosition(verticalDistance > 0 ? m_end : m_start);
-            xPos = xPosForVerticalArrowNavigation(verticalDistance > 0 ? END : START, isRange());
+            pos = VisiblePosition(up ? m_start : m_end);
+            xPos = xPosForVerticalArrowNavigation(up ? START : END, isRange());
             break;
         case EXTEND:
             pos = VisiblePosition(m_extent);
@@ -426,7 +429,7 @@ bool Selection::modify(EAlter alter, int verticalDistance)
     int startY;
     if (!caretY(pos, startY))
         return false;
-    if (verticalDistance < 0)
+    if (up)
         startY = -startY;
     int lastY = startY;
 
@@ -434,15 +437,13 @@ bool Selection::modify(EAlter alter, int verticalDistance)
 
     VisiblePosition next;
     for (VisiblePosition p = pos; ; p = next) {
-        next = verticalDistance > 0
-            ? nextLinePosition(p, xPos)
-            : previousLinePosition(p, xPos);
+        next = (up ? previousLinePosition : nextLinePosition)(p, xPos);
         if (next.isNull() || next == p)
             break;
         int nextY;
         if (!caretY(next, nextY))
             break;
-        if (verticalDistance < 0)
+        if (up)
             nextY = -nextY;
         if (nextY - startY > verticalDistance)
             break;
