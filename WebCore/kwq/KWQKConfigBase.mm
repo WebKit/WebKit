@@ -51,12 +51,16 @@ void KConfigBase::writeEntry(const QString &pKey, const QStringList &rValue,
 QString KConfigBase::readEntry(const char *pKey, 
     const QString& aDefault=QString::null) const
 {
+    // FIXME: need to return a real value
+    return QString();
 }
 
 
 
 int KConfigBase::readNumEntry(const char *pKey, int nDefault=0) const
 {
+    // FIXME: need to return a real value
+    return 0;
 }
 
 
@@ -64,21 +68,29 @@ int KConfigBase::readNumEntry(const char *pKey, int nDefault=0) const
 unsigned int KConfigBase::readUnsignedNumEntry(const char *pKey, 
     unsigned int nDefault=0) const
 {
+    // FIXME: need to return a real value
+    return 0;
 }
 
 
 bool KConfigBase::readBoolEntry(const char *pKey, bool nDefault=0) const
 {
+    // FIXME: need to return a real value
+    return FALSE;
 }
 
 
 QColor KConfigBase::readColorEntry(const char *pKey, const QColor *pDefault=0L) const
 {
+    // FIXME: need to return a real value
+    return QColor(0,0,0);
 }
 
 
 QStringList KConfigBase::readListEntry(const QString &pKey, char sep=',') const
 {
+    // FIXME: need to return a real value
+    return QStringList();
 }
 
 

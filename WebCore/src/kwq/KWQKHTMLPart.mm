@@ -48,6 +48,19 @@
 
 static bool cache_init = false;
 
+static void recursive(const DOM::Node &pNode, const DOM::Node &node)
+{
+    DOM::Node cur_child = node.lastChild();
+
+    NSLog(@"cur_child: %s = %s", cur_child.nodeName().string().latin1(), cur_child.nodeValue().string().latin1());
+
+    while(!cur_child.isNull())
+    {
+        recursive(node, cur_child);
+        cur_child = cur_child.previousSibling();
+    }
+}
+
 // Class KHTMLPartNotificationReceiver ==============================================================
 
 @interface KHTMLPartNotificationReceiver : NSObject
@@ -61,11 +74,7 @@ static bool cache_init = false;
 
 -(void)cacheDataAvailable:(NSNotification *)notification
 {
-    id <WCURICacheData> data;
-    
-    data = [notification object];
-    
-    m_part->write((const char *)[data cacheData], [data cacheDataSize]);    
+    m_part->slotData([notification object]);
 }
 
 -(void)cacheFinished:(NSNotification *)notification
@@ -75,6 +84,7 @@ static bool cache_init = false;
 }
 
 @end
+
 
 // Class KHTMLPartPrivate ================================================================================
 
@@ -104,7 +114,7 @@ public:
             cache_init = true;
         }
         m_part = part;
-        m_doc = 0L;
+        m_doc = new HTMLDocumentImpl();
         m_decoder = 0L;
         m_bFirstData = true;
         m_settings = new KHTMLSettings(*KHTMLFactory::defaultHTMLSettings());
@@ -146,6 +156,17 @@ KHTMLPart::~KHTMLPart()
     _logNotYetImplemented();
 }
 
+// NOTE: This code emulates the interface used by the original khtml part  
+void KHTMLPart::slotData(id <WCURICacheData> data) 
+{
+    if (!d->m_workingURL.isEmpty()) {
+        //begin(d->m_workingURL, d->m_extension->urlArgs().xOffset, d->m_extension->urlArgs().yOffset);
+        begin(d->m_workingURL, 0, 0);
+        d->m_workingURL = KURL();
+    }
+          
+    write((const char *)[data cacheData], [data cacheDataSize]);    
+}
 
 bool KHTMLPart::openURL( const KURL &url )
 {
@@ -187,6 +208,10 @@ bool KHTMLPart::openURL( const KURL &url )
 
 bool KHTMLPart::closeURL()
 {
+    if (d && d->m_doc) {
+        recursive(0, d->m_doc);
+    }
+
     // Cancel any pending loads.
     
     // Reset the the current working URL to the default URL.
@@ -308,12 +333,32 @@ bool KHTMLPart::onlyLocalReferences() const
 
 void KHTMLPart::begin( const KURL &url, int xOffset, int yOffset)
 {
+    //d->m_referrer = url.url();
+    
+    d->m_doc = new HTMLDocumentImpl();
+    d->m_doc->ref();
+    //FIXME: do we need this? 
+    //d->m_doc->attach( d->m_view );
+    d->m_doc->setURL( url.url() );
+
+    /* FIXME: we'll need to make this work....
+    QString userStyleSheet = KHTMLFactory::defaultHTMLSettings()->userStyleSheet();
+    if ( !userStyleSheet.isEmpty() ) {
+        setUserStyleSheet( KURL( userStyleSheet ) );
+    }
+    */
+    
+    d->m_doc->open();    
+
     _logNotYetImplemented();
 }
 
 
 void KHTMLPart::write( const char *str, int len)
 {
+    /* 
+    FIXME: hook this code back when we have decoders working
+    
     if ( !d->m_decoder ) {
         d->m_decoder = new khtml::Decoder();
         if(d->m_encoding != QString::null)
@@ -329,6 +374,7 @@ void KHTMLPart::write( const char *str, int len)
         len = strlen( str );
     
     QString decoded = d->m_decoder->decode( str, len );
+        
     
     if(decoded.isEmpty())
         return;
@@ -353,10 +399,22 @@ void KHTMLPart::write( const char *str, int len)
         }
         d->m_doc->applyChanges(true, true);
     }
+
+    // End FIXME 
+    */
+
+    // begin lines added in lieu of big fixme
+    
+    QString decoded = QString(str);
+    //d->m_doc->applyChanges(true, true);
+    
+    // end lines added in lieu of big fixme
     
     Tokenizer* t = d->m_doc->tokenizer();
     if(t)
         t->write( decoded, true );
+        
+    NSLog(@"!!! write complete");
 }
 
 

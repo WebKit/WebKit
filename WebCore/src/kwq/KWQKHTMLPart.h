@@ -33,6 +33,10 @@
 #include <kparts/part.h>
 #include <kparts/browserextension.h>
 
+#if (defined(__APPLE__) && defined(__OBJC__) && defined(__cplusplus))
+#import <WCURICacheData.h>
+#endif
+
 class KHTMLSettings;
 class KJavaAppletContext;
 class KJSProxy;
@@ -555,11 +559,15 @@ public:
 
 #ifdef _KWQ_
     void init();
+#if (defined(__APPLE__) && defined(__OBJC__) && defined(__cplusplus))
+    void slotData(id <WCURICacheData> data);  
+#else
+    void slotData(void *data);  
+#endif
 #endif
 
 private:
     KHTMLPartPrivate *d;
-    
     // DUBIOUS, why are impls being referenced?
     DOM::HTMLDocumentImpl *docImpl() const;
 };

@@ -25,6 +25,11 @@
 
 #include <kstringhandler.h>
 
-QString KStringHandler::csqueeze(const QString &, uint maxlen)
+QString KStringHandler::csqueeze(const QString &str, uint maxlen)
 {
+    if (str.length() > maxlen && maxlen > 3) {
+    int part = (maxlen-3)/2;
+    return QString(str.left(part) + "..." + str.right(part));
+    }
+    else return str;
 }

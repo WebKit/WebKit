@@ -146,7 +146,10 @@ void CSSStyleSelector::loadDefaultStyle(const KHTMLSettings *s)
 {
     if(defaultStyle) return;
 
-    QFile f(locate( "data", "khtml/css/html4.css" ) );
+    // FIXME: replace the next line with the commented out one
+    // immediately following it
+    QFile f("/symroots/html4.css");
+    //QFile f(locate( "data", "khtml/css/html4.css" ) );
     f.open(IO_ReadOnly);
 
     QCString file( f.size()+1 );

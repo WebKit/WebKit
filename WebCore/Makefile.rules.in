@@ -60,9 +60,12 @@ export-objects: $(EXPORT_OBJECTS)
 	touch $@
 
 lib:
-	@$(MAKE) && \
-        (cd $(TOPSRCDIR)/lib || mkdir $(TOPSRCDIR)/lib) && \
-	$(MAKE)
+	@$(MAKE)
+	if [ ! -d "$(TOPSRCDIR)/lib" ]; then \
+	rm -f $(EXPORT_OBJECTS_DIR); \
+	mkdir -p $(EXPORT_OBJECTS_DIR); \
+	fi
+	cd $(TOPSRCDIR)/lib; $(MAKE)
 
 setup:
 	@if (test -f "./MakeSystemChanges.sh"); then \

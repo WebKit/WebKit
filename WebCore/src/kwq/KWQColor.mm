@@ -70,6 +70,8 @@ QColor::QColor(const char *)
     if ( !globals_init )
 	initGlobalColors();
     NSLog (@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    // FIXME: need to implement real construction of color based on string
+    _initialize (0,0,0);
 }
 
 
