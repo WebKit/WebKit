@@ -7,14 +7,11 @@
 
 @class WebImageRepresentation;
 @protocol WebDocumentView;
-@protocol WebDocumentDragSettings;
 
 @interface WebImageView : NSView <WebDocumentView>
 {
-    WebImageRepresentation *representation;
+    WebImageRepresentation *rep;
     BOOL needsLayout;
 }
-
 + (NSArray *)supportedImageMIMETypes;
-
 @end

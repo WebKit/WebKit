@@ -4,12 +4,14 @@
 */
 
 #import <WebKit/WebFrameView.h>
+#import <WebKit/WebImageRenderer.h>
 #import <WebKit/WebNSImageExtras.h>
 #import <WebKit/WebNSPasteboardExtras.h>
 #import <WebKit/WebNSViewExtras.h>
 
 #import <Foundation/NSString_NSURLExtras.h>
 #import <Foundation/NSURL_NSURLExtras.h>
+#import <Foundation/NSURLFileTypeMappings.h>
 
 #define WebDragStartHysteresisX			5.0
 #define WebDragStartHysteresisY			5.0
@@ -175,10 +177,9 @@
 }
 #endif
 
-- (void)_web_dragPromisedImage:(NSImage *)image
+- (void)_web_dragPromisedImage:(WebImageRenderer *)image
                           rect:(NSRect)rect
                            URL:(NSURL *)URL
-                      fileType:(NSString *)fileType
                          title:(NSString *)title
                          event:(NSEvent *)event
 {
@@ -187,6 +188,15 @@
     NSPoint origin;
     NSSize offset;
 
+    NSString *MIMEType = [image MIMEType];
+    NSString *fileType = nil;
+    if (MIMEType && ![MIMEType isEqualToString:@"application/octet-stream"]) {
+        fileType = [[NSURLFileTypeMappings sharedMappings] preferredExtensionForMIMEType:MIMEType];
+    }
+    if (!fileType) {
+        fileType = @"";
+    }
+    
     if ([image size].height * [image size].width <= WebMaxOriginalImageArea) {
         NSSize originalSize = rect.size;
         origin = rect.origin;

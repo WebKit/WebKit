@@ -528,10 +528,11 @@ static WebHTMLView *lastHitView = nil;
     
     if (imageURL) {
 	_private->draggingImageURL = [imageURL retain];
-        [self _web_dragPromisedImage:[element objectForKey:WebElementImageKey]
+        WebImageRenderer *image = [element objectForKey:WebElementImageKey];
+        ASSERT([image isKindOfClass:[WebImageRenderer class]]);
+        [self _web_dragPromisedImage:image
                                 rect:[[element objectForKey:WebElementImageRectKey] rectValue]
                                  URL:linkURL ? linkURL : imageURL
-                            fileType:[[imageURL path] pathExtension]
                                title:[element objectForKey:WebElementImageAltStringKey]
                                event:_private->mouseDownEvent];
         

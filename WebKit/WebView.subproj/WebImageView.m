@@ -33,20 +33,33 @@
 - (id)initWithFrame:(NSRect)frame
 {
     self = [super initWithFrame:frame];
+    [self setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
     return self;
 }
 
 - (void)dealloc
 {
-    [[representation image] stopAnimation];
-    [representation release];
+    [[rep image] stopAnimation];
+    [rep release];
     
     [super dealloc];
+}
+
+- (BOOL)haveCompleteImage
+{
+    NSSize imageSize = [[rep image] size];
+    return [rep doneLoading] && imageSize.width > 0 && imageSize.width > 0;
 }
 
 - (BOOL)isFlipped 
 {
     return YES;
+}
+
+- (NSRect)drawingRect
+{
+    NSSize imageSize = [[rep image] size];
+    return NSMakeRect(0, 0, imageSize.width, imageSize.height);
 }
 
 - (void)drawRect:(NSRect)rect
@@ -55,40 +68,53 @@
         [self layout];
     }
     
-    NSImage *image = [representation image];
-    if (image) {
-        [[representation image] beginAnimationInRect:[self frame] fromRect:[self frame]];
-    } else {
-        [[NSColor whiteColor] set];
-        NSRectFill(rect);
-    }
+    [[NSColor whiteColor] set];
+    NSRectFill(rect);
+    
+    NSRect drawingRect = [self drawingRect];
+    [[rep image] beginAnimationInRect:drawingRect fromRect:drawingRect];
+}
+
+// Ensures that the view always fills the content area (so we draw over the previous page)
+// and that the view is at least as large as the image.
+- (void)setFrameSizeUsingImage
+{
+    NSSize size = [[self _web_superviewOfClass:[NSClipView class]] frame].size;
+    NSSize imageSize = [[rep image] size];
+    size.width = MAX(size.width, imageSize.width);
+    size.height = MAX(size.height, imageSize.height);
+    [super setFrameSize:size];
+}
+
+- (void)setFrameSize:(NSSize)size
+{
+    [self setFrameSizeUsingImage];
+}
+
+- (void)layout
+{
+    [self setFrameSizeUsingImage];    
+    needsLayout = NO;
 }
 
 - (void)setDataSource:(WebDataSource *)dataSource
 {
-    representation = [[dataSource representation] retain];
+    ASSERT(!rep);
+    rep = [[dataSource representation] retain];
 }
 
 - (void)dataSourceUpdated:(WebDataSource *)dataSource
 {
+    NSSize imageSize = [[rep image] size];
+    if (imageSize.width > 0 && imageSize.height > 0) {
+        [self setNeedsLayout:YES];
+        [self setNeedsDisplay:YES];
+    }
 }
 
 - (void)setNeedsLayout: (BOOL)flag
 {
     needsLayout = flag;
-}
-
-- (void)layout
-{
-    WebImageRenderer *image = [representation image];
-    if (image) {
-        [self setFrameSize:[image size]];
-    } else {
-        NSRect superFrame = [[self _web_superviewOfClass:[WebFrameView class]] frame];
-        [self setFrame:NSMakeRect(0, 0, NSWidth(superFrame), NSHeight(superFrame))];
-    }
-    
-    needsLayout = NO;
 }
 
 - (void)viewWillMoveToHostWindow:(NSWindow *)hostWindow
@@ -104,7 +130,7 @@
 - (void)viewDidMoveToWindow
 {
     if (![self window]){
-        [[representation image] stopAnimation];
+        [[rep image] stopAnimation];
     }
     
     [super viewDidMoveToWindow];
@@ -118,7 +144,7 @@
 - (BOOL)validateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)item
 {
     if ([item action] == @selector(copy:)){
-        return ([representation image] != nil);
+        return [self haveCompleteImage];
     }
 
     return YES;
@@ -133,14 +159,17 @@
     return [super validRequestorForSendType:sendType returnType:returnType];
 }
 
-- (void)writeImageToPasteboard:(NSPasteboard *)pasteboard
+- (BOOL)writeImageToPasteboard:(NSPasteboard *)pasteboard
 {
-    NSData *TIFFData = [[representation image] TIFFRepresentation];
+    NSData *TIFFData = [self haveCompleteImage] ? [[rep image] TIFFRepresentation] : nil;
     
-    if(TIFFData){
+    if (TIFFData) {
         [pasteboard declareTypes:[NSArray arrayWithObject:NSTIFFPboardType] owner:nil];
         [pasteboard setData:TIFFData forType:NSTIFFPboardType];
+        return YES;
     }
+    
+    return NO;
 }
 
 - (void)copy:(id)sender
@@ -150,8 +179,7 @@
 
 - (BOOL)writeSelectionToPasteboard:(NSPasteboard *)pasteboard types:(NSArray *)types
 {
-    [self writeImageToPasteboard:pasteboard];
-    return YES;
+    return [self writeImageToPasteboard:pasteboard];
 }
 
 - (NSMenu *)menuForEvent:(NSEvent *)theEvent
@@ -164,9 +192,9 @@
     ASSERT(webView);
     
     NSDictionary *element = [NSDictionary dictionaryWithObjectsAndKeys:
-        [representation image], 		WebElementImageKey,
+        [rep image],                            WebElementImageKey,
         [NSValue valueWithRect:[self bounds]], 	WebElementImageRectKey,
-        [representation URL], 			WebElementImageURLKey,
+        [rep URL],                              WebElementImageURLKey,
         [NSNumber numberWithBool:NO], 		WebElementIsSelectedKey,
         frame, 					WebElementFrameKey, nil];
         
@@ -175,23 +203,26 @@
 
 - (void)mouseDragged:(NSEvent *)event
 {
+    if (![self haveCompleteImage]) {
+        return;
+    }
+    
     // Don't allow drags to be accepted by this WebFrameView.
     [[[self _web_parentWebFrameView] _webView] unregisterDraggedTypes];
 
     // Retain this view during the drag because it may be released before the drag ends.
     [self retain];
 
-    [self _web_dragPromisedImage:[representation image]
-                            rect:[self bounds]
-                             URL:[representation URL]
-                        fileType:[[[representation URL] path] pathExtension]
+    [self _web_dragPromisedImage:[rep image]
+                            rect:[self drawingRect]
+                             URL:[rep URL]
                            title:nil
                            event:event];
 }
 
 - (NSArray *)namesOfPromisedFilesDroppedAtDestination:(NSURL *)dropDestination
 {
-    NSURL *URL = [representation URL];
+    NSURL *URL = [rep URL];
     [[self webView] _downloadURL:URL toDirectory:[dropDestination path]];
 
     // FIXME: The file is supposed to be created at this point so the Finder places the file

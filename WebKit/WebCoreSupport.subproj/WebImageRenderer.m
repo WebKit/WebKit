@@ -149,11 +149,21 @@ static NSMutableArray *activeImageRenderers;
     return isNull;
 }
 
+- (void)_adjustSizeToPixelDimensions
+{
+    // Force the image to use the pixel size and ignore the dpi.
+    // Ignore any absolute size in the image and always use pixel dimensions.
+    NSBitmapImageRep *imageRep = [[self representations] objectAtIndex:0];
+    NSSize size = NSMakeSize([imageRep pixelsWide], [imageRep pixelsHigh]);
+    [self setCacheMode: NSImageCacheDefault];
+    [imageRep setSize:size];
+    [self setSize:size];
+}
+
 - (BOOL)incrementalLoadWithBytes:(const void *)bytes length:(unsigned)length complete:(BOOL)isComplete
 {
     NSBitmapImageRep *imageRep = [[self representations] objectAtIndex:0];
     NSData *data = [[NSData alloc] initWithBytes:bytes length:length];
-    NSSize size;
 
 #if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_2
     // Part of the workaround for bug 3090341.
@@ -180,17 +190,11 @@ static NSMutableArray *activeImageRenderers;
         return NO;
     case NSImageRepLoadStatusCompleted:         // all is well, the full pixelsHigh image is valid.
         //printf ("NSImageRepLoadStatusUnexpectedEOF size %d, isComplete %d\n", length, isComplete);
-        // Force the image to use the pixel size and ignore the dpi.
-        size = NSMakeSize([imageRep pixelsWide], [imageRep pixelsHigh]);
-        [self setCacheMode: NSImageCacheDefault];
-        [imageRep setSize:size];
-        
-        // Ignore any absolute size in the image and always use pixel dimensions.
-        [self setSize:size];
-        
+        [self _adjustSizeToPixelDimensions];        
         isNull = NO;
         return YES;
     default:
+        [self _adjustSizeToPixelDimensions];
         //printf ("incrementalLoadWithBytes: size %d, isComplete %d\n", length, isComplete);
         // We have some valid data.  Return YES so we can attempt to draw what we've got.
         isNull = NO;
@@ -456,6 +460,11 @@ static NSMutableArray *activeImageRenderers;
 - (NSSize)size
 {
     return [super size];
+}
+
+- (NSString *)MIMEType
+{
+    return MIMEType;
 }
 
 @end

@@ -18,16 +18,6 @@
 
 @implementation WebImageRepresentation
 
-- init
-{
-    self = [super init];
-    if (self) {
-        //image = [[WebImageRenderer alloc] init];
-    }
-    return self;
-}
-
-
 - (void)dealloc
 {
     [image release];
@@ -45,26 +35,37 @@
     return URL;
 }
 
+- (BOOL)doneLoading
+{
+    return doneLoading;
+}
+
 - (void)setDataSource:(WebDataSource *)dataSource
 {
     URL = [[[dataSource request] URL] retain];
+    image = [[[WebImageRendererFactory sharedFactory] imageRendererWithMIMEType:[[dataSource response] MIMEType]] retain];
 }
 
 - (void)receivedData:(NSData *)data withDataSource:(WebDataSource *)dataSource
 {
-    //[image incrementalLoadWithBytes:[data bytes] length:[data length] complete:isComplete];
+    NSData *allData = [dataSource data];
+    [image incrementalLoadWithBytes:[allData bytes] length:[allData length] complete:NO];
 }
 
 - (void)receivedError:(NSError *)error withDataSource:(WebDataSource *)dataSource
 {
-
+    NSData *allData = [dataSource data];
+    if ([allData length] > 0) {
+        [image incrementalLoadWithBytes:[allData bytes] length:[allData length] complete:YES];
+    }
+    doneLoading = YES;
 }
 
 - (void)finishedLoadingWithDataSource:(WebDataSource *)dataSource
 {
-    NSData *resourceData = [dataSource data];
-    image = [[[WebImageRendererFactory sharedFactory] imageRendererWithBytes:[resourceData bytes] 
-                length:[resourceData length]] retain];
+    NSData *allData = [dataSource data];
+    [image incrementalLoadWithBytes:[allData bytes] length:[allData length] complete:YES];
+    doneLoading = YES;
 }
 
 - (BOOL)canProvideDocumentSource

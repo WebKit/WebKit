@@ -1,3 +1,47 @@
+2003-07-08  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3134494>: no progressive loading for standalone images
+	Fixed: <rdar://problem/3280633>: exception raised (attempt to create array with nil element) when dragging image out of HTML
+
+        Reviewed by rjw.
+
+        * Misc.subproj/WebNSViewExtras.h:
+        * Misc.subproj/WebNSViewExtras.m:
+        (-[NSView _web_dragPromisedImage:rect:URL:title:event:]): don't take a file type since this can now be gotten from the image
+        * WebCoreSupport.subproj/WebImageRenderer.h:
+        * WebCoreSupport.subproj/WebImageRenderer.m:
+        (-[WebImageRenderer _adjustSizeToPixelDimensions]): new method that rjw factored from incrementalLoadWithBytes::: 
+        (-[WebImageRenderer incrementalLoadWithBytes:length:complete:]): call _adjustSizeToPixelDimensions so we have the correct image size as the image loads
+        (-[WebImageRenderer MIMEType]): new accessor
+        * WebView.subproj/WebHTMLViewPrivate.m:
+        (-[WebHTMLView _handleMouseDragged:]): use renamed _web_dragPromisedImage
+        * WebView.subproj/WebImageRepresentation.h:
+        * WebView.subproj/WebImageRepresentation.m:
+        (-[WebImageRepresentation doneLoading]): new
+        (-[WebImageRepresentation setDataSource:]): create the image here
+        (-[WebImageRepresentation receivedData:withDataSource:]): pass data to image
+        (-[WebImageRepresentation receivedError:withDataSource:]): complete image loading
+        (-[WebImageRepresentation finishedLoadingWithDataSource:]): complete image loading
+        * WebView.subproj/WebImageView.h:
+        * WebView.subproj/WebImageView.m:
+        (-[WebImageView initWithFrame:]): call setAutoresizingMask so setFrameSize is called often enough
+        (-[WebImageView dealloc]): tweak
+        (-[WebImageView haveCompleteImage]): new
+        (-[WebImageView drawingRect]): new
+        (-[WebImageView drawRect:]): fill white then draw the image so we never show the previous page
+        (-[WebImageView setFrameSizeUsingImage]): new, ensures that the view always fills the content area (so we draw over the previous page) and that the view is at least as large as the image.
+        (-[WebImageView setFrameSize:]): call setFrameSizeUsingImage
+        (-[WebImageView layout]): call setFrameSizeUsingImage
+        (-[WebImageView setDataSource:]): store the rep
+        (-[WebImageView dataSourceUpdated:]): call setNeedsLayout and setNeedsDisplay
+        (-[WebImageView viewDidMoveToWindow]): tweak
+        (-[WebImageView validateUserInterfaceItem:]): only allow copy if haveCompleteImage
+        (-[WebImageView writeImageToPasteboard:]): only writeImageToPasteboard if haveCompleteImage
+        (-[WebImageView writeSelectionToPasteboard:types:]): tweak
+        (-[WebImageView menuForEvent:]): tweak
+        (-[WebImageView mouseDragged:]): only allow drag if haveCompleteImage
+        (-[WebImageView namesOfPromisedFilesDroppedAtDestination:]): tweak
+
 2003-07-08  Dave Hyatt  <hyatt@apple.com>
 
 	Change minimum font size pref value back to 9. This change
