@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,6 +25,7 @@
 
 #include <qobject.h>
 #include <qvariant.h>
+#include <qguardedptr.h>
 
 #include <kwqdebug.h>
 
@@ -76,6 +77,7 @@ void QObject::setTarget (QObject *t)
 
 QObject::QObject(QObject *parent=0, const char *name=0)
 {
+    guardedPtrDummyList.append(this);
 }
 
 

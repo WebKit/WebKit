@@ -120,6 +120,7 @@ public:
     // constructors, copy constructors, and destructors ------------------------
 
     QPtrListIterator() {}
+    QPtrListIterator(const QPtrListIterator &li) : impl(li.impl) {}
     QPtrListIterator(const QPtrList<T> &l) : impl(l.impl) {}
     ~QPtrListIterator() {}
 
@@ -135,11 +136,9 @@ public:
     operator T *() const { return (T *)impl.current(); }
     T *operator--() { return (T *)(--impl); }
     T *operator++()  { return (T *)(++impl); }
-    QPtrListIterator<T> &operator=(const QPtrListIterator<T> &li) { impl = li.impl; return *this; }
+    QPtrListIterator &operator=(const QPtrListIterator &li) { impl = li.impl; return *this; }
 
 private:
-    QPtrListIterator<T>(const QPtrListIterator<T> &li) {}
-
     KWQListIteratorImpl impl;
 }; // class QPtrListIterator ======================================================
 

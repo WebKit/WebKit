@@ -1,3 +1,39 @@
+2002-05-13  Darin Adler  <darin@apple.com>
+
+	Fixed bug 2922884 (JavaScript object leak creating Image object from JavaScript).
+	There was a reference loop created when a document contained a variable that
+	referenced an image, because images held references to the document; the C++
+	kind that do not participate in the JavaScript garbage collection.
+
+	* khtml/ecma/kjs_html.h: Use a QGuardedPtr to the DocumentImpl instead of using
+	a Document object.
+	* khtml/ecma/kjs_html.cpp:
+	(Image::tryPut): Change because the "doc" pointer is now a pointer to the
+	DocumentImpl, not the Document. Also check for 0, since it's now a QGuardedPtr
+	that can become 0.
+	(Image::Image): Newly out of line. Changed because the "doc" pointer is now a
+	pointer to the DocumentImpl, not the Document.
+
+	Since the solution used QGuardedPtr, I had to implement it.
+
+	* kwq/qt/qguardedptr.h: Put the implementation in a new KWQGuardedPtrBase class,
+	with only the bare minimum in a template. This new implementation uses iterators
+	on a QPtrList, which means there's not much code needed.
+	* kwq/KWQGuardedPtr.mm: (KWQGuardedPtrBase::KWQGuardedPtrBase): Rewrite to use
+	a QPtrListIterator to a dummy list in the QObject. This reuses code nicely, but
+	a custom-coded solution would be a bit more efficient.
+
+	* kwq/qt/qobject.h:
+	* kwq/KWQObject.mm: (QObject::QObject): Create the one-element list that's used
+	by the QGuardedPtr instances.
+
+	Since the above code needed to copy a QPtrListIterator, I needed to support that.
+
+	* kwq/qt/qlist.h: Move the iterator's copy constructor out of the private part,
+	and implement it. This class was strange in that it has a public assignment
+	operator, but a private unimplemented copy constructor. Implementing it was trivial,
+	though, so this was no obstacle.
+
 2002-05-13  Maciej Stachowiak  <mjs@apple.com>
 
 	Removed libjpeg dependency. Turns out we don't need it.

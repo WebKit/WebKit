@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,16 +25,10 @@
 
 #include <qguardedptr.h>
 
-QGuardedPtrPrivate::QGuardedPtrPrivate(QObject* o)
-    : p(o)
+KWQGuardedPtrBase::KWQGuardedPtrBase(QObject *o)
 {
-    // FIXME: must connect
+    if (o) {
+        iterator = QPtrListIterator<QObject>(o->guardedPtrDummyList);
+        iterator.toFirst();
+    }
 }
-
-
-QGuardedPtrPrivate::~QGuardedPtrPrivate()
-{
-}
-
-
-

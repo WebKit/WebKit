@@ -26,16 +26,13 @@
 #ifndef QOBJECT_H_
 #define QOBJECT_H_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
 #include <KWQDef.h>
 
 #include "qnamespace.h"
 #include "qstring.h"
 #include "qevent.h"
 #include "qstringlist.h"
+#include "qptrlist.h"
 
 // FIXME: should these macros be in "kwq.h" or other header file?
 #define slots
@@ -67,12 +64,13 @@ class QTimer;
 class QImage;
 class QVariant;
 
+class KWQGuardedPtrBase;
+
 // class QObject ===============================================================
 
 class QObject : public Qt {
 public:
 
-#ifdef _KWQ_
     enum Actions {
         // Standard button action, maps to RenderFormElement::slotClicked
         ACTION_BUTTON_CLICKED = 1,
@@ -91,26 +89,12 @@ public:
         
         ACTION_COMBOBOX_CLICKED = 7
     };
-#endif
 
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-
-    // static member functions -------------------------------------------------
-
-    static bool connect(const QObject *, const char *, const QObject *, 
-        const char *);
-    
-    static bool disconnect( const QObject *, const char *, const QObject *, 
-        const char *);
-
-    // constructors, copy constructors, and destructors ------------------------
+    static bool connect(const QObject *, const char *, const QObject *, const char *);
+    static bool disconnect( const QObject *, const char *, const QObject *, const char *);
 
     QObject(QObject *parent=0, const char *name=0);
     virtual ~QObject();
-
-    // member functions --------------------------------------------------------
 
     const char *name() const;
     virtual void setName(const char *);
@@ -130,24 +114,19 @@ public:
 
     void blockSignals(bool);
 
-#ifdef _KWQ_
     virtual void performAction(QObject::Actions action);
     void emitAction(QObject::Actions action);
     void setTarget (QObject *obj);
-#endif    
     
-    // operators ---------------------------------------------------------------
-
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
-
 private:
     // no copying or assignment
-    // note that these are "standard" (no pendantic stuff needed)
     QObject(const QObject &);
     QObject &operator=(const QObject &);
 
     QObject *target;
-}; // class QObject ============================================================
+    QPtrList<QObject> guardedPtrDummyList;
+    
+    friend class KWQGuardedPtrBase;
+};
 
 #endif
