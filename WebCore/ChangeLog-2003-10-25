@@ -5,7 +5,7 @@
 	When pseudo-elements have display:none, they should not generate
 	rendering objects.
 	
-        Reviewed by darin.
+        Reviewed by rjw, kocienda.
 
         * khtml/rendering/render_container.cpp:
         (RenderContainer::insertPseudoChild):
