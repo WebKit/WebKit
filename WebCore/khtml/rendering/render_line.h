@@ -130,6 +130,8 @@ public:
 
     void dirtyLineBoxes();
     
+    virtual bool canAccommodateEllipsis(bool ltr, int blockEdge, int ellipsisWidth);
+    
 public: // FIXME: Would like to make this protected, but methods are accessing these
         // members over in the part.
     RenderObject* m_object;
@@ -260,6 +262,8 @@ public:
     
     void removeChild(InlineBox* child);
     
+    virtual bool canAccommodateEllipsis(bool ltr, int blockEdge, int ellipsisWidth);
+    
 protected:
     InlineBox* m_firstChild;
     InlineBox* m_lastChild;
@@ -303,7 +307,7 @@ public:
 
     void childRemoved(InlineBox* box);
 
-    bool canAccommodateEllipsis(int blockEdge, bool ltr, int ellipsisWidth);
+    bool canAccommodateEllipsis(bool ltr, int blockEdge, int lineBoxEdge, int ellipsisWidth);
     void placeEllipsis(QChar* ellipsisStr, int blockEdge, bool ltr, int ellipsisWidth);
 
 protected:

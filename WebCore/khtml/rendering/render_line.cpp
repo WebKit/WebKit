@@ -165,6 +165,33 @@ InlineBox* InlineBox::lastLeafChild()
     return this;
 }
 
+InlineBox* InlineBox::closestLeafChildForXPos(int _x, int _tx)
+{
+    if (!isInlineFlowBox())
+        return this;
+    
+    InlineFlowBox *flowBox = static_cast<InlineFlowBox*>(this);
+    if (!flowBox->firstChild())
+        return this;
+
+    InlineBox *box = flowBox->closestChildForXPos(_x, _tx);
+    if (!box)
+        return this;
+    
+    return box->closestLeafChildForXPos(_x, _tx);
+}
+
+bool InlineBox::canAccommodateEllipsis(bool ltr, int blockEdge, int ellipsisWidth)
+{
+    // Non-replaced elements can always accommodate an ellipsis.
+    if (!m_object || !m_object->isReplaced())
+        return true;
+    
+    QRect boxRect(m_x, 0, m_width, 1);
+    QRect ellipsisRect(ltr ? blockEdge - ellipsisWidth : blockEdge, 0, ellipsisWidth, 1);
+    return !(boxRect.intersects(ellipsisRect));
+}
+
 int InlineFlowBox::marginLeft()
 {
     if (!includeLeftEdge())
@@ -784,20 +811,13 @@ InlineBox* InlineFlowBox::closestChildForXPos(int _x, int _tx)
     return 0;
 }
 
-InlineBox* InlineBox::closestLeafChildForXPos(int _x, int _tx)
+bool InlineFlowBox::canAccommodateEllipsis(bool ltr, int blockEdge, int ellipsisWidth)
 {
-    if (!isInlineFlowBox())
-        return this;
-    
-    InlineFlowBox *flowBox = static_cast<InlineFlowBox*>(this);
-    if (!flowBox->firstChild())
-        return this;
-
-    InlineBox *box = flowBox->closestChildForXPos(_x, _tx);
-    if (!box)
-        return this;
-    
-    return box->closestLeafChildForXPos(_x, _tx);
+    for (InlineBox *box = firstChild(); box; box = box->nextOnLine()) {
+        if (!box->canAccommodateEllipsis(ltr, blockEdge, ellipsisWidth))
+            return false;
+    }
+    return true;
 }
 
 void RootInlineBox::detach(RenderArena* arena)
@@ -814,15 +834,16 @@ void RootInlineBox::detachEllipsisBox(RenderArena* arena)
     }
 }
 
-bool RootInlineBox::canAccommodateEllipsis(int blockEdge, bool ltr, int ellipsisWidth)
+bool RootInlineBox::canAccommodateEllipsis(bool ltr, int blockEdge, int lineBoxEdge, int ellipsisWidth)
 {
-    // First sanity-check the width of the whole line to see if there is sufficient room.
-    if (width() < ellipsisWidth)
+    // First sanity-check the unoverflowed width of the whole line to see if there is sufficient room.
+    int delta = ltr ? lineBoxEdge - blockEdge : blockEdge - lineBoxEdge;
+    if (width() - delta < ellipsisWidth)
         return false;
-        
+
     // Next iterate over all the line boxes on the line.  If we find a replaced element that intersects
     // then we refuse to accommodate the ellipsis.  Otherwise we're ok.
-    return false;
+    return InlineFlowBox::canAccommodateEllipsis(ltr, blockEdge, ellipsisWidth);
 }
 
 void RootInlineBox::placeEllipsis(QChar* ellipsisStr, int blockEdge, bool ltr, int ellipsisWidth)
