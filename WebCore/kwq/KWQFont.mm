@@ -27,6 +27,7 @@
 #import <qstring.h>
 
 #import <Cocoa/Cocoa.h>
+#import <WebCoreTextRendererFactory.h>
 
 QFont::QFont()
     : _family(@"")
@@ -94,4 +95,12 @@ bool QFont::operator==(const QFont &compareFont) const
     return _family == compareFont._family
         && _trait == compareFont._trait
         && _size == compareFont._size;
+}
+
+NSFont *QFont::getNSFont() const
+{
+    return [[WebCoreTextRendererFactory sharedFactory] 
+    	fontWithFamily:getNSFamily()
+                traits:getNSTraits() 
+                  size:getNSSize()];
 }

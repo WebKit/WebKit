@@ -132,3 +132,15 @@ int QTextEdit::horizontalScrollBarHeight() const
     KWQTextArea *textView = (KWQTextArea *)getView();
     return (int)[[textView horizontalScroller] frame].size.height;
 }
+
+void QTextEdit::setFont(const QFont &font)
+{
+    QWidget::setFont(font);
+    KWQTextArea *textView = (KWQTextArea *)getView();
+    [textView setFont:font.getNSFont()];
+}
+
+QWidget::FocusPolicy QTextEdit::focusPolicy() const
+{
+    return TabFocus;
+}

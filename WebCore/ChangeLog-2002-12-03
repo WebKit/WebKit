@@ -1,5 +1,53 @@
 2002-08-30  Darin Adler  <darin@apple.com>
 
+	- fixed 3027407 -- Console error refers to closed bug
+
+        * kwq/KWQKHTMLPartImpl.mm: (KWQKHTMLPartImpl::bridgeForFrameName):
+	Update bug number from 2959902 to 2942073.
+
+	- fixed 3027532 -- can't tab into or out of textareas
+	
+        * kwq/KWQTextArea.h: Add setFont:.
+        * kwq/KWQTextArea.mm:
+        (-[KWQTextArea _createTextView]): Make a KWQTextAreaTextView.
+        (-[KWQTextArea textDidChange:]): Send text changed messages when the text
+	is changed, not when done editing. I did this for KWQNSTextField a while ago;
+	it's tragic that AppKit leads us to have two separate classes for these nearly
+	identical purposes.
+        (-[KWQTextArea setFont:]): Call setFont on the text view.
+        (-[KWQTextArea becomeFirstResponder]): Call makeFirstResponder on the text view.
+        (-[KWQTextArea nextKeyView]): Do that voodoo, just like KWQNSTextField.
+        (-[KWQTextArea previousKeyView]): Ditto.
+        (-[KWQTextArea nextValidKeyView]): Ditto.
+        (-[KWQTextArea previousValidKeyView]): Ditto.
+        (-[KWQTextAreaTextView insertTab:]): Select the next key view. We don't get this
+	automatically because this is not a field editor. But being a field editor leads
+	to other unwanted behavior.
+        (-[KWQTextAreaTextView insertBacktab:]): Ditto.
+        (-[KWQTextAreaTextView becomeFirstResponder]): Select all on entry.
+        (-[KWQTextAreaTextView shouldDrawInsertionPoint]): Don't draw insertion point
+	when we are not the first responder.
+        (-[KWQTextAreaTextView selectedTextAttributes]): Don't draw the selection when
+	we are not the first responder.
+
+        * kwq/qt/qtextedit.h:
+        * kwq/KWQTextEdit.mm: (QTextEdit::setFont): Call -[KWQTextArea setFont:].
+        (QTextEdit::focusPolicy): Always return TabFocus, because the top level widget
+	is not an NSControl so QWidget::focusPolicy does not suffice.
+
+        * kwq/qt/qwidget.h: Make focusPolicy virtual.
+
+        * kwq/qt/qfont.h:
+        * kwq/KWQFont.mm: (QFont::getNSFont): Add this helper function
+	so we don't have to repeat this in multiple places.
+
+        * kwq/KWQLineEdit.mm: (QLineEdit::setFont): Use QFont::getNSFont.
+
+        * force-clean-timestamp: For you poor bastards who aren't using the new
+	Project Builder yet.
+
+2002-08-30  Darin Adler  <darin@apple.com>
+
         * WebCore.pbproj/project.pbxproj: Allowed the new Project Builder to put in
 	encodings for each file.
 

@@ -127,7 +127,7 @@ WebCoreBridge *KWQKHTMLPartImpl::bridgeForFrameName(const QString &frameName)
     } else {
         frame = [_bridge descendantFrameNamed:frameName.getNSString()];
         if (frame == nil) {
-            NSLog (@"WARNING: unable to find frame named %@, creating new window with \"_blank\" name. New window will not be named until 2959902 is fixed.\n", frameName.getNSString());
+            NSLog (@"WARNING: unable to find frame named %@, creating new window with \"_blank\" name. New window will not be named until 2942073 is fixed.\n", frameName.getNSString());
             frame = [_bridge descendantFrameNamed:@"_blank"];
         }
     }

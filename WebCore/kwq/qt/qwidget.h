@@ -99,9 +99,11 @@ public:
 
     virtual void setFocus();
     virtual void clearFocus();
-    FocusPolicy focusPolicy() const;
+    
+    virtual FocusPolicy focusPolicy() const;
     virtual void setFocusPolicy(FocusPolicy);
-    virtual void setFocusProxy( QWidget * );
+    
+    virtual void setFocusProxy(QWidget *);
 
     const QPalette& palette() const;
     virtual void setPalette(const QPalette &);

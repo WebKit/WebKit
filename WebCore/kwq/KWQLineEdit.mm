@@ -62,10 +62,7 @@ void QLineEdit::setFont(const QFont &font)
 {
     QWidget::setFont(font);
     KWQNSTextField *textField = (KWQNSTextField *)getView();
-    [textField setFont:[[WebCoreTextRendererFactory sharedFactory] 
-        fontWithFamily:font.getNSFamily()
-                traits:font.getNSTraits() 
-                  size:font.getNSSize()]];
+    [textField setFont:font.getNSFont()];
 }
 
 void QLineEdit::setText(const QString &s)

@@ -26,6 +26,7 @@
 #import <KWQTextArea.h>
 
 #import <qtextedit.h>
+#import <KWQKHTMLPartImpl.h>
 
 /*
     This widget is used to implement the <TEXTAREA> element.
@@ -48,6 +49,11 @@
     to construct the text with inserted \n.
 */
 
+@interface KWQTextAreaTextView : NSTextView
+{
+}
+@end
+
 @implementation KWQTextArea
 
 const float LargeNumberForText = 1.0e7;
@@ -68,7 +74,7 @@ const float LargeNumberForText = 1.0e7;
         textFrame.size.height = LargeNumberForText;
     }
         
-    textView = [[NSTextView alloc] initWithFrame:textFrame];
+    textView = [[KWQTextAreaTextView alloc] initWithFrame:textFrame];
     [[textView textContainer] setWidthTracksTextView:YES];
     [textView setRichText:NO];
     
@@ -112,7 +118,7 @@ const float LargeNumberForText = 1.0e7;
     [super dealloc];
 }
 
-- (void)textDidEndEditing:(NSNotification *)aNotification
+- (void)textDidChange:(NSNotification *)aNotification
 {
     widget->textChanged();
 }
@@ -191,7 +197,7 @@ const float LargeNumberForText = 1.0e7;
     return @"";
 }
 
-- (int) numLines
+- (int)numLines
 {
     NSRange glyphRange = NSMakeRange(0,0);
     NSLayoutManager *layoutManager = [textView layoutManager];
@@ -353,7 +359,6 @@ static NSRange RangeOfParagraph(NSString *text, int paragraph)
 
 - (void)getCursorPositionAsIndex:(int *)index inParagraph:(int *)paragraph
 {
-    // FIXME: is this right? Cocoa text view docs are impenetrable
     NSString *text = [textView string];
     NSRange selectedRange = [textView selectedRange];
     
@@ -365,7 +370,6 @@ static NSRange RangeOfParagraph(NSString *text, int paragraph)
 	int i;
 	NSRange range;
 	
-	// this loop will
 	for (i = 0; i < num; i++) {
 	    range = RangeOfParagraph(text, i);
 	    if (range.location + range.length > selectedRange.location) {
@@ -380,7 +384,6 @@ static NSRange RangeOfParagraph(NSString *text, int paragraph)
 
 - (void)setCursorPositionToIndex:(int)index inParagraph:(int)paragraph
 {
-    // FIXME: is this right? Cocoa text view docs are impenetrable
     NSString *text = [textView string];
     NSRange range = RangeOfParagraph(text, paragraph);
     if (range.location == NSNotFound) {
@@ -388,6 +391,84 @@ static NSRange RangeOfParagraph(NSString *text, int paragraph)
     } else {
 	[textView setMarkedText:@"" selectedRange:NSMakeRange(range.location + index, 0)];
     }
+}
+
+- (void)setFont:(NSFont *)font
+{
+    [textView setFont:font];
+}
+
+- (BOOL)becomeFirstResponder
+{
+    [[self window] makeFirstResponder:textView];
+    return YES;
+}
+
+- (NSView *)nextKeyView
+{
+    return inNextValidKeyView
+        ? KWQKHTMLPartImpl::nextKeyViewForWidget(widget, KWQSelectingNext)
+        : [super nextKeyView];
+}
+
+- (NSView *)previousKeyView
+{
+   return inNextValidKeyView
+        ? KWQKHTMLPartImpl::nextKeyViewForWidget(widget, KWQSelectingPrevious)
+        : [super previousKeyView];
+}
+
+- (NSView *)nextValidKeyView
+{
+    inNextValidKeyView = YES;
+    NSView *view = [super nextValidKeyView];
+    inNextValidKeyView = NO;
+    return view;
+}
+
+- (NSView *)previousValidKeyView
+{
+    inNextValidKeyView = YES;
+    NSView *view = [super previousValidKeyView];
+    inNextValidKeyView = NO;
+    return view;
+}
+
+@end
+
+@implementation KWQTextAreaTextView
+
+- (void)insertTab:(id)sender
+{
+    NSView *view = [[self delegate] nextValidKeyView];
+    if (view && view != self && view != [self delegate]) {
+        [[self window] makeFirstResponder:view];
+    }
+}
+
+- (void)insertBacktab:(id)sender
+{
+    NSView *view = [[self delegate] previousValidKeyView];
+    if (view && view != self && view != [self delegate]) {
+        [[self window] makeFirstResponder:view];
+    }
+}
+
+- (BOOL)becomeFirstResponder
+{
+    [super becomeFirstResponder];
+    [self selectAll:nil];
+    return YES;
+}
+
+- (BOOL)shouldDrawInsertionPoint
+{
+    return self == [[self window] firstResponder] && [super shouldDrawInsertionPoint];
+}
+
+- (NSDictionary *)selectedTextAttributes
+{
+    return self == [[self window] firstResponder] ? [super selectedTextAttributes] : nil;
 }
 
 @end

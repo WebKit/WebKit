@@ -29,8 +29,10 @@
 class QString;
 
 #ifdef __OBJC__
+@class NSFont;
 @class NSString;
 #else
+class NSFont;
 class NSString;
 #endif
 
@@ -59,6 +61,8 @@ public:
     NSString *getNSFamily() const { return _family; }
     int getNSTraits() const { return _trait; }
     float getNSSize() const { return _size; }
+    
+    NSFont *getNSFont() const;
 
 private:
     NSString *_family;

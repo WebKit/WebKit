@@ -25,13 +25,15 @@
  
 #import <Cocoa/Cocoa.h>
 
+@class KWQTextAreaTextView;
 class QTextEdit;
 
 @interface KWQTextArea : NSScrollView
 {
-    NSTextView *textView;
+    KWQTextAreaTextView *textView;
     QTextEdit *widget;
     BOOL wrap;
+    BOOL inNextValidKeyView;
 }
 
 - initWithQTextEdit:(QTextEdit *)w; 
@@ -39,13 +41,14 @@ class QTextEdit;
 // The following methods corresponds to methods required by KDE.
 - (void)setWordWrap:(BOOL)wrap;
 - (BOOL)wordWrap;
-- (void)setText:(NSString *)s;
+- (void)setText:(NSString *)text;
 - (NSString *)text;
 - (int)numLines;
 - (NSString *)textForLine:(int)line;
 - (void)selectAll;
 - (void)setEditable:(BOOL)flag;
 - (BOOL)isEditable;
+- (void)setFont:(NSFont *)font;
 
 // paragraph-oriented functions for the benefit of QTextEdit
 - (int)paragraphs;
