@@ -1,3 +1,13 @@
+2004-05-07  Don Melton  <gramps@apple.com>
+
+        Reviewed by Dave.
+
+	Fixed minor, edge-case regression in KEYGEN RSA logic caused by Dave's
+	"atomic string" patch back in January.
+
+        * khtml/html/html_formimpl.cpp:
+        (HTMLKeygenElementImpl::encoding):
+
 === Safari-139 ===
 
 2004-05-06  Maciej Stachowiak  <mjs@apple.com>

@@ -2506,7 +2506,7 @@ bool HTMLKeygenElementImpl::encoding(const QTextCodec* codec, khtml::encodingLis
 
 #if APPLE_CHANGES
     // Only RSA is supported at this time.
-    if (!m_keyType.isNull() && !strcasecmp(m_keyType, "rsa")) {
+    if (!m_keyType.isNull() && strcasecmp(m_keyType, "rsa")) {
         return false;
     }
     QString value = KSSLKeyGen::signedPublicKeyAndChallengeString((unsigned)selectedIndex(), m_challenge.string(), getDocument()->part()->baseURL());
