@@ -1,3 +1,5 @@
+=== Safari-94 ===
+
 2003-08-21  John Sullivan  <sullivan@apple.com>
 
 	- fixed 3387950 -- REGRESSION (85-89): Standalone image in Safari prints much 
