@@ -43,6 +43,7 @@ static NSMutableArray *activeImageRenderers;
     NSBitmapImageRep* imageRep = [[self representations] objectAtIndex:0];
     //NSData *data = [[NSData alloc] initWithBytesNoCopy: (void *)bytes length: length freeWhenDone: NO];
     NSData *data = [[NSData alloc] initWithBytes: (void *)bytes length: length];
+    NSSize size;
     
     loadStatus = [imageRep incrementalLoadFromData:data complete:isComplete];
     [data release];
@@ -65,7 +66,7 @@ static NSMutableArray *activeImageRenderers;
     case NSImageRepLoadStatusCompleted:         // all is well, the full pixelsHigh image is valid.
         //printf ("NSImageRepLoadStatusUnexpectedEOF size %d, isComplete %d\n", length, isComplete);
         // Force the image to use the pixel size and ignore the dpi.
-        NSSize size = NSMakeSize([imageRep pixelsWide], [imageRep pixelsHigh]);
+        size = NSMakeSize([imageRep pixelsWide], [imageRep pixelsHigh]);
         [imageRep setSize:size];
         [self setSize:size];
         return YES;

@@ -1,5 +1,11 @@
 2002-07-02  Darin Adler  <darin@apple.com>
 
+        * WebCoreSupport.subproj/IFImageRenderer.m:
+        (-[IFImageRenderer incrementalLoadWithBytes:length:complete:]):
+	Fixed a syntax error caused by a "just before committing" edit.
+
+2002-07-02  Darin Adler  <darin@apple.com>
+
 	- fixed 2952837 -- image not rendered if height or width attributes specified incorrectly
 
         * WebCoreSupport.subproj/IFImageRenderer.m:
