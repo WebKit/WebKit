@@ -1,3 +1,13 @@
+2002-11-24  Trey Matteson  <trey@apple.com>
+
+	Added URLString method to WebHistoryItem to avoid silly conversions between
+	NSURL and NSString.  When the dust settles with our plans for NSURL we can
+	rationalize this API with the rest of WebKit.
+
+        * History.subproj/WebHistoryItem.h:
+        * History.subproj/WebHistoryItem.m:
+        (-[WebHistoryItem URLString]):
+
 2002-11-24  Chris Blumenberg  <cblu@apple.com>
 
 	Added element keys for the image ALT and link TITLE attributes. This will eventually be used to fix other bugs. Also made WebKit and WebCore use the same element keys to simplify the conversion of the element dictionary.

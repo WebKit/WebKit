@@ -34,6 +34,7 @@
 - (id)initFromDictionaryRepresentation:(NSDictionary *)dict;
 
 - (NSURL *)URL;
+- (NSString *)URLString;
 - (NSString *)target;
 - (NSString *)parent;
 - (NSString *)title;

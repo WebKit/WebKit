@@ -83,6 +83,12 @@
     return _URLString ? [NSURL _web_URLWithString:_URLString] : nil;
 }
 
+// FIXME: need to decide it this class ever returns URLs, and the name of this method
+- (NSString *)URLString
+{
+    return _URLString;
+}
+
 - (NSString *)target
 {
     return _target;
