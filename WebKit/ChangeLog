@@ -1,3 +1,27 @@
+2003-08-04  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3106525>: Results of JavaScript requests are not returned to plug-ins
+
+        Reviewed by darin.
+
+        * Plugins.subproj/WebBaseNetscapePluginStream.h:
+        * Plugins.subproj/WebBaseNetscapePluginStream.m:
+        (-[WebBaseNetscapePluginStream setNotifyData:]): new
+        (-[WebBaseNetscapePluginStream startStreamWithURL:expectedContentLength:lastModifiedDate:MIMEType:]): renamed from setResponse
+        (-[WebBaseNetscapePluginStream startStreamWithResponse:]): new
+        (-[WebBaseNetscapePluginStream receivedData:]): tweak
+        (-[WebBaseNetscapePluginStream destroyStreamWithReason:]): tweak
+        (-[WebBaseNetscapePluginStream finishedLoadingWithData:]): tweak
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView evaluateJavaScriptPluginRequest:targetFrame:]): new
+        (-[WebBaseNetscapePluginView loadPluginRequest:]): call evaluateJavaScriptPluginRequest::
+        (-[WebBaseNetscapePluginView loadRequest:inTarget:withNotifyData:]): call loadPluginRequest for JS requests
+        * Plugins.subproj/WebNetscapePluginRepresentation.m:
+        (-[WebNetscapePluginRepresentation receivedData:withDataSource:]): call renamed startStreamWithResponse
+        * Plugins.subproj/WebNetscapePluginStream.m:
+        (-[WebNetscapePluginStream initWithRequest:pluginPointer:notifyData:]): call setNotifyData
+        (-[WebNetscapePluginConnectionDelegate connection:didReceiveResponse:]): call renamed startStreamWithResponse
+
 2003-08-05  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Richard

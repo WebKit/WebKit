@@ -26,6 +26,7 @@
 
 #import <Foundation/NSData_NSURLExtras.h>
 #import <Foundation/NSString_NSURLExtras.h>
+#import <Foundation/NSURL_NSURLExtras.h>
 
 #import <AppKit/NSEvent_Private.h>
 #import <Carbon/Carbon.h>
@@ -1198,39 +1199,81 @@ typedef struct {
     return [NSMutableURLRequest requestWithURL:URL];
 }
 
+- (void)evaluateJavaScriptPluginRequest:(WebPluginRequest *)JSPluginRequest targetFrame:(WebFrame *)targetFrame
+{
+    if (!isStarted) {
+        return;
+    }
+    
+    NSURL *URL = [[JSPluginRequest request] URL];
+    NSString *JSString = [URL _web_scriptIfJavaScriptURL];
+    ASSERT(JSString);
+    
+    WebFrame *evaluatingFrame = targetFrame ? targetFrame : [self webFrame];
+    NSString *result = [[evaluatingFrame _bridge] stringByEvaluatingJavaScriptFromString:JSString];
+    void *notifyData = [JSPluginRequest notifyData];
+    
+    if (targetFrame) {
+        // FIXME: If the result is a string, we probably want to put that string into the frame, just
+        // like we do in KHTMLPartBrowserExtension::openURLRequest.
+        if (notifyData) {
+            NPP_URLNotify(instance, [URL _web_URLCString], NPRES_DONE, notifyData);
+        }
+    } else {
+        NSData *JSData = nil;
+        
+        if ([result length] > 0) {
+            JSData = [result dataUsingEncoding:NSUTF8StringEncoding];
+        }
+        
+        WebBaseNetscapePluginStream *stream = [[WebBaseNetscapePluginStream alloc] init];
+        [stream setPluginPointer:instance];
+        [stream setNotifyData:notifyData];
+        [stream startStreamWithURL:URL
+             expectedContentLength:[JSData length]
+                  lastModifiedDate:nil
+                          MIMEType:@"text/plain"];
+        [stream receivedData:JSData];
+        [stream finishedLoadingWithData:JSData];
+        [stream release];
+    }
+}
+
 - (void)loadPluginRequest:(WebPluginRequest *)pluginRequest
 {
     NSURLRequest *request = [pluginRequest request];
     NSString *frameName = [pluginRequest frameName];
     void *notifyData = [pluginRequest notifyData];
-
-    // FIXME - need to get rid of this window creation which
-    // bypasses normal targeted link handling
-    WebFrame *frame = [[self webFrame] findFrameNamed:frameName];
-
-    if (frame == nil) {
-	WebView *newWebView = nil;
-	WebView *currentWebView = [self webView];
-	id wd = [currentWebView UIDelegate];
-	if ([wd respondsToSelector:@selector(webView:createWebViewWithRequest:)])
-	    newWebView = [wd webView:currentWebView createWebViewWithRequest:nil];
-	else
-	    newWebView = [[WebDefaultUIDelegate sharedUIDelegate] webView:currentWebView createWebViewWithRequest:nil];
-        
-	[newWebView _setTopLevelFrameName:frameName];
-	[[newWebView _UIDelegateForwarder] webViewShow:newWebView];
-	frame = [newWebView mainFrame];
+    WebFrame *frame = nil;
+    
+    NSURL *URL = [request URL];
+    NSString *JSString = [URL _web_scriptIfJavaScriptURL];
+    
+    ASSERT(frameName || JSString);
+    
+    if (frameName) {
+        // FIXME - need to get rid of this window creation which
+        // bypasses normal targeted link handling
+        frame = [[self webFrame] findFrameNamed:frameName];
+    
+        if (frame == nil) {
+            WebView *newWebView = nil;
+            WebView *currentWebView = [self webView];
+            id wd = [currentWebView UIDelegate];
+            if ([wd respondsToSelector:@selector(webView:createWebViewWithRequest:)]) {
+                newWebView = [wd webView:currentWebView createWebViewWithRequest:nil];
+            } else {
+                newWebView = [[WebDefaultUIDelegate sharedUIDelegate] webView:currentWebView createWebViewWithRequest:nil];
+            }
+            
+            [newWebView _setTopLevelFrameName:frameName];
+            [[newWebView _UIDelegateForwarder] webViewShow:newWebView];
+            frame = [newWebView mainFrame];
+        }
     }
 
-    NSURL *URL = [request URL];
-    NSString *JSString = [URL _webkit_scriptIfJavaScriptURL];
     if (JSString) {
-        [[frame _bridge] stringByEvaluatingJavaScriptFromString:JSString];
-        // FIXME: If the result is a string, we probably want to put that string into the frame, just
-        // like we do in KHTMLPartBrowserExtension::openURLRequest.
-        if (notifyData && isStarted) {
-            NPP_URLNotify(instance, [URL _web_URLCString], NPRES_DONE, notifyData);
-        }
+        [self evaluateJavaScriptPluginRequest:pluginRequest targetFrame:frame];
     } else {
         [frame loadRequest:request];
         if (notifyData) {
@@ -1253,11 +1296,28 @@ typedef struct {
 
 - (NPError)loadRequest:(NSMutableURLRequest *)request inTarget:(const char *)cTarget withNotifyData:(void *)notifyData
 {
-    if (![request URL]) {
+    NSURL *URL = [request URL];
+
+    if (!URL) {
         return NPERR_INVALID_URL;
     }
     
-    if (!cTarget) {
+    NSString *JSString = [URL _web_scriptIfJavaScriptURL];
+    
+    if (cTarget || JSString) {
+        // Make when targetting a frame or evaluating a JS string, perform the request after a delay because we don't
+        // want to potentially kill the plug-in inside of its URL request.
+        NSString *target = nil;
+        if (cTarget) {
+            // Find the frame given the target string.
+            target = (NSString *)CFStringCreateWithCString(kCFAllocatorDefault, cTarget, kCFStringEncodingWindowsLatin1);
+        }        
+        [request setHTTPReferrer:[[[[[self webFrame] dataSource] request] URL] absoluteString]];
+        WebPluginRequest *pluginRequest = [[WebPluginRequest alloc] initWithRequest:request frameName:target notifyData:notifyData];
+        [self performSelector:@selector(loadPluginRequest:) withObject:pluginRequest afterDelay:0];
+        [pluginRequest release];
+        [target release];
+    } else {
         WebNetscapePluginStream *stream = [[WebNetscapePluginStream alloc]
             initWithRequest:request pluginPointer:instance notifyData:notifyData];
         if (!stream) {
@@ -1266,17 +1326,6 @@ typedef struct {
         [streams addObject:stream];
         [stream start];
         [stream release];
-    } else {
-        // Find the frame given the target string.
-        NSString *target = (NSString *)CFStringCreateWithCString(kCFAllocatorDefault, cTarget, kCFStringEncodingWindowsLatin1);
-
-	[request setHTTPReferrer:[[[[[self webFrame] dataSource] request] URL] absoluteString]];
-        // Make a request, but don't do it right away because it could make the plugin view go away.
-        WebPluginRequest *pluginRequest = [[WebPluginRequest alloc]
-            initWithRequest:request frameName:target notifyData:notifyData];
-        [self performSelector:@selector(loadPluginRequest:) withObject:pluginRequest afterDelay:0];
-        [pluginRequest release];
-	[target release];
     }
     
     return NPERR_NO_ERROR;

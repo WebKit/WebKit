@@ -12,6 +12,7 @@
 #import <Foundation/NSURLResponse.h>
 #import <Foundation/NSURLResponsePrivate.h>
 #import <Foundation/NSFileManager_NSURLExtras.h>
+#import <Foundation/NSURL_NSURLExtras.h>
 
 @implementation WebBaseNetscapePluginStream
 
@@ -53,31 +54,42 @@
     NPP_URLNotify = 	[plugin NPP_URLNotify];
 }
 
-- (void)setResponse:(NSURLResponse *)r
+- (void)setNotifyData:(void *)theNotifyData
 {
-    if(![plugin isLoaded]){
+    notifyData = theNotifyData;
+}
+
+- (void)startStreamWithURL:(NSURL *)theURL 
+     expectedContentLength:(long long)expectedContentLength
+          lastModifiedDate:(NSDate *)lastModifiedDate
+                  MIMEType:(NSString *)MIMEType
+{
+    if (![plugin isLoaded]) {
         return;
     }
     
+    [theURL retain];
     [URL release];
-    URL = [[r URL] retain];
-    
-    stream.ndata = self;
-    stream.URL = strdup([URL _web_URLCString]);
-    stream.end = [r expectedContentLength];
-    stream.lastmodified = [[r _lastModifiedDate] timeIntervalSince1970];
-    stream.notifyData = notifyData;
+    URL = theURL;
 
+    free((void *)stream.URL);
+    stream.URL = strdup([URL _web_URLCString]);
+
+    stream.ndata = self;
+    stream.end = expectedContentLength;
+    stream.lastmodified = [lastModifiedDate timeIntervalSince1970];
+    stream.notifyData = notifyData;
+    
+    transferMode = NP_NORMAL;
     offset = 0;
 
     // FIXME: Need a way to check if stream is seekable
 
-    NPError npErr;
-    npErr = NPP_NewStream(instance, (char *)[[r MIMEType] cString], &stream, NO, &transferMode);
+    NPError npErr = NPP_NewStream(instance, (char *)[MIMEType cString], &stream, NO, &transferMode);
     LOG(Plugins, "NPP_NewStream: %d %@", npErr, URL);
 
     if (npErr != NPERR_NO_ERROR) {
-        ERROR("NPP_NewStream failed with error: %d", npErr);
+        ERROR("NPP_NewStream failed with error: %d URLString: %s", npErr, [URL _web_URLCString]);
         stream.ndata = nil;
         return;
     }
@@ -101,9 +113,17 @@
     }
 }
 
+- (void)startStreamWithResponse:(NSURLResponse *)r
+{
+    [self startStreamWithURL:[r URL]
+       expectedContentLength:[r expectedContentLength]
+            lastModifiedDate:[r _lastModifiedDate]
+                    MIMEType:[r MIMEType]];
+}
+
 - (void)receivedData:(NSData *)data
 {
-    if(![plugin isLoaded] || !stream.ndata) {
+    if (![plugin isLoaded] || !stream.ndata || [data length] == 0) {
         return;
     }
     
@@ -122,7 +142,7 @@
 
 - (void)destroyStreamWithReason:(NPReason)reason
 {
-    if(![plugin isLoaded] || !stream.ndata) {
+    if (![plugin isLoaded] || !stream.ndata) {
         return;
     }
     
@@ -139,11 +159,11 @@
 
 - (void)finishedLoadingWithData:(NSData *)data
 {
-    if(![plugin isLoaded] || !stream.ndata) {
+    if (![plugin isLoaded] || !stream.ndata) {
         return;
     }
     
-    if (transferMode == NP_ASFILE || transferMode == NP_ASFILEONLY) {
+    if ((transferMode == NP_ASFILE || transferMode == NP_ASFILEONLY) && [data length] > 0) {
         if (!path) {
             path = strdup("/tmp/WebKitPlugInStreamXXXXXX");
             int fd = mkstemp(path);

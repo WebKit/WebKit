@@ -46,7 +46,7 @@
     
     if(!instance){
         [self setPluginPointer:[view pluginPointer]];
-        [self setResponse:[ds response]];
+        [self startStreamWithResponse:[ds response]];
     }
     
     ASSERT(instance);

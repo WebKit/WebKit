@@ -31,7 +31,13 @@
 }
 
 - (void)setPluginPointer:(NPP)pluginPointer;
-- (void)setResponse:(NSURLResponse *)theReponse;
+- (void)setNotifyData:(void *)theNotifyData;
+
+- (void)startStreamWithURL:(NSURL *)theURL 
+     expectedContentLength:(long long)expectedContentLength
+          lastModifiedDate:(NSDate *)lastModifiedDate
+                  MIMEType:(NSString *)MIMEType;
+- (void)startStreamWithResponse:(NSURLResponse *)r;
 - (void)receivedData:(NSData *)data;
 - (void)receivedError:(NPReason)reason;
 - (void)finishedLoadingWithData:(NSData *)data;

@@ -40,12 +40,11 @@
     _startingRequest = [theRequest copy];
 
     [self setPluginPointer:thePluginPointer];
+    [self setNotifyData:theNotifyData];
 
     WebBaseNetscapePluginView *view = (WebBaseNetscapePluginView *)instance->ndata;
     _loader = [[WebNetscapePluginConnectionDelegate alloc] initWithStream:self view:view]; 
     [_loader setDataSource:[view dataSource]];
-
-    notifyData = theNotifyData;
 
     return self;
 }
@@ -99,7 +98,7 @@
     // retain/release self in this delegate method since the additional processing can do
     // anything including possibly releasing self; one example of this is 3266216
     [self retain]; 
-    [stream setResponse:theResponse];
+    [stream startStreamWithResponse:theResponse];
     [super connection:con didReceiveResponse:theResponse];
     if ([theResponse isKindOfClass:[NSHTTPURLResponse class]] &&
         [NSHTTPURLResponse isErrorStatusCode:[(NSHTTPURLResponse *)theResponse statusCode]]) {
