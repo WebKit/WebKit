@@ -1,5 +1,11 @@
 2002-07-24  Chris Blumenberg  <cblu@apple.com>
 
+	tiny change
+
+        * WebView.subproj/WebDefaultContextMenuHandler.m:
+
+2002-07-24  Chris Blumenberg  <cblu@apple.com>
+
 	Added implmentations for a few context menu items.
 
         * WebView.subproj/WebController.h:

@@ -132,11 +132,6 @@
     [pasteboard setData:tiff forType:NSTIFFPboardType];
 }
 
-- (void)reloadImage:(id)sender
-{
-
-}
-
 - (void)openFrameInNewWindow:(id)sender
 {
     WebFrame *webFrame = [element objectForKey:WebContextFrame];
