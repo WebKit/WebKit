@@ -1,3 +1,10 @@
+2002-11-25  David Hyatt  <hyatt@apple.com>
+
+	Don't add in the halfleading for align=texttop. That's incorrect.
+	
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::getVerticalPosition):
+
 2002-11-24  Maciej Stachowiak  <mjs@apple.com>
 
 	Fixed support for onLoad handlers on images - this is in

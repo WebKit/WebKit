@@ -1064,10 +1064,8 @@ short RenderObject::getVerticalPosition( bool firstLine ) const
 //                 vpos = 0;
 
 	    const QFont &f = parent()->font( firstLine );
-            int fontheight = parent()->lineHeight( firstLine );
-            int fontsize = f.pixelSize();
-            int halfleading = ( fontheight - fontsize ) / 2;
-
+        int fontsize = f.pixelSize();
+        
 	    if ( va == SUB )
 		vpos += fontsize/5 + 1;
 	    else if ( va == SUPER )
@@ -1078,8 +1076,7 @@ short RenderObject::getVerticalPosition( bool firstLine ) const
 //                 qDebug( "CSSLH: %d, CSS_FS: %d, basepos: %d", fontheight, fontsize, parent()->baselinePosition( firstLine ) );
 //                 qDebug( "this:" );
 //                 qDebug( "CSSLH: %d, CSS_FS: %d, basepos: %d", lineHeight( firstLine ), style()->font().pixelSize(), baselinePosition( firstLine ) );
-                vpos += ( baselinePosition( firstLine ) - parent()->baselinePosition( firstLine ) +
-                        halfleading );
+                vpos += ( baselinePosition( firstLine ) - parent()->baselinePosition( firstLine ) );
 	    } else if ( va == MIDDLE ) {
 #if APPLE_CHANGES
 		vpos += - (int)(QFontMetrics(f).xHeight()/2) - lineHeight( firstLine )/2 + baselinePosition( firstLine );
