@@ -1,3 +1,11 @@
+2004-11-15  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3879891> WebKit should link against PDFKit instead of Quartz
+
+        Reviewed by darin.
+
+        * WebKit.pbproj/project.pbxproj: link against PDFKit if it is present instead of Quartz.framework
+
 2004-11-15  Richard Williamson   <rjw@apple.com>
 
 	Fixed missing retain of image property data.
