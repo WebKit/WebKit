@@ -1,3 +1,14 @@
+2004-12-07  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by me
+        
+        Added a couple more layout tests.
+
+        * layout-tests/editing/deleting/delete-line-013-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-line-013.html: Added.
+        * layout-tests/editing/deleting/delete-line-014-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-line-014.html: Added.
+
 2004-12-06  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Hyatt.
