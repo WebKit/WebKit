@@ -1,5 +1,16 @@
 2003-08-21  David Hyatt  <hyatt@apple.com>
 
+	Fix for 3387302, floats weren't being allowed to be relatively positioned.  The
+	fix is trivial.  Stop making floating/relpositiion setting an if/else and just make
+	it two ifs.
+	
+        Reviewed by darin
+
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::setStyle):
+
+2003-08-21  David Hyatt  <hyatt@apple.com>
+
 	Fix for 3384635, breakable unicode characters that were preceded by multiple spaces
 	accidentally added in those spaces to their widths.
 	
