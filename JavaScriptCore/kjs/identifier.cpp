@@ -67,7 +67,7 @@ int Identifier::_keyCount;
 bool Identifier::equal(UString::Rep *r, const char *s)
 {
     int length = r->len;
-    const UChar *d = r->dat;
+    const UChar *d = r->data();
     for (int i = 0; i != length; ++i)
         if (d[i].uc != (unsigned char)s[i])
             return false;
@@ -78,7 +78,7 @@ bool Identifier::equal(UString::Rep *r, const UChar *s, int length)
 {
     if (r->len != length)
         return false;
-    const UChar *d = r->dat;
+    const UChar *d = r->data();
     for (int i = 0; i != length; ++i)
         if (d[i].uc != s[i].uc)
             return false;
@@ -90,8 +90,8 @@ bool Identifier::equal(UString::Rep *r, UString::Rep *b)
     int length = r->len;
     if (length != b->len)
         return false;
-    const UChar *d = r->dat;
-    const UChar *s = b->dat;
+    const UChar *d = r->data();
+    const UChar *s = b->data();
     for (int i = 0; i != length; ++i)
         if (d[i].uc != s[i].uc)
             return false;
@@ -122,14 +122,12 @@ UString::Rep *Identifier::add(const char *c)
         i = (i + 1) & _tableSizeMask;
     }
     
-    UChar *d = new UChar[length];
+    UChar *d = static_cast<UChar *>(malloc(sizeof(UChar) * length));
     for (int j = 0; j != length; j++)
         d[j] = c[j];
     
-    UString::Rep *r = new UString::Rep;
-    r->dat = d;
-    r->len = length;
-    r->capacity = UString::Rep::capacityForIdentifier;
+    UString::Rep *r = UString::Rep::create(d, length);
+    r->isIdentifier = 1;
     r->rc = 0;
     r->_hash = hash;
     
@@ -163,14 +161,12 @@ UString::Rep *Identifier::add(const UChar *s, int length)
         i = (i + 1) & _tableSizeMask;
     }
     
-    UChar *d = new UChar[length];
+    UChar *d = static_cast<UChar *>(malloc(sizeof(UChar) * length));
     for (int j = 0; j != length; j++)
         d[j] = s[j];
     
-    UString::Rep *r = new UString::Rep;
-    r->dat = d;
-    r->len = length;
-    r->capacity = UString::Rep::capacityForIdentifier;
+    UString::Rep *r = UString::Rep::create(d, length);
+    r->isIdentifier = 1;
     r->rc = 0;
     r->_hash = hash;
     
@@ -185,7 +181,7 @@ UString::Rep *Identifier::add(const UChar *s, int length)
 
 UString::Rep *Identifier::add(UString::Rep *r)
 {
-    if (r->capacity == UString::Rep::capacityForIdentifier)
+    if (r->isIdentifier)
         return r;
     if (r->len == 0)
         return &UString::Rep::empty;
@@ -206,7 +202,7 @@ UString::Rep *Identifier::add(UString::Rep *r)
         i = (i + 1) & _tableSizeMask;
     }
     
-    r->capacity = UString::Rep::capacityForIdentifier;
+    r->isIdentifier = 1;
     
     _table[i] = r;
     ++_keyCount;

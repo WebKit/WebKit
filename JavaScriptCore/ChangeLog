@@ -1,3 +1,54 @@
+2004-04-13  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	- fixed <rdar://problem/3600695>: String manipulation in JavaScript 24fun test is very slow (slow)
+	- fixed <rdar://problem/3600691>: Table generation test is really slow
+	- fixed <rdar://problem/3600661>: 24fun date test is really slow
+
+	80% speedup on the string test, lesser speedups on the other two.
+	
+	Two different optimizations here:
+
+	1) Avoid large overhead of scanning strings to see if they are all
+	ASCII before numeric conversion.
+	
+        * kjs/nodes.cpp:
+        (AssignNode::evaluate): Don't convert to integer until we know for
+	sure the operation will need it. Attempting to convert strings to
+	numbers is a waste when they are being appended with +=.
+
+	2) Avoid huge cost of appending strings.
+
+	This is done by allowing multiple strings to share a buffer but
+	actually use different ranges of it. The first time a string is
+	appended to, we start leaving at least 10% extra space in the
+	buffer, so doing N appends to the same string takes O(log N)
+	mallocs instead of O(N).
+	
+        * kjs/identifier.cpp:
+        (KJS::Identifier::equal):
+        (KJS::Identifier::add):
+        * kjs/ustring.cpp:
+        (KJS::):
+        (KJS::UCharReference::operator=):
+        (KJS::UCharReference::ref):
+        (KJS::UString::Rep::create):
+        (KJS::UString::Rep::destroy):
+        (KJS::UString::expandedSize):
+        (KJS::UString::usedCapacity):
+        (KJS::UString::expandCapacity):
+        (KJS::UString::UString):
+        (KJS::UString::null):
+        (KJS::UString::append):
+        (KJS::UString::operator=):
+        (KJS::UString::toStrictUInt32):
+        (KJS::UString::detach):
+        (KJS::KJS::operator==):
+        * kjs/ustring.h:
+        (KJS::UString::Rep::data):
+        (KJS::UString::Rep::hash):
+
 2004-04-09  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by John.

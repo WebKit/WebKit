@@ -206,25 +206,30 @@ namespace KJS {
       friend bool operator==(const UString&, const UString&);
       
       static Rep *create(UChar *d, int l);
+      static Rep *create(Rep *base, int l);
       void destroy();
       
-      UChar *data() const { return dat; }
+      UChar *data() const { return baseString ? baseString->buf : buf; }
       int size() const { return len; }
       
-      unsigned hash() const { if (_hash == 0) _hash = computeHash(dat, len); return _hash; }
+      unsigned hash() const { if (_hash == 0) _hash = computeHash(data(), len); return _hash; }
       static unsigned computeHash(const UChar *, int length);
       static unsigned computeHash(const char *);
 
       void ref() { ++rc; }
       void deref() { if (--rc == 0) destroy(); }
 
-      UChar *dat;
+      // unshared data
       int len;
-      int capacity;
       int rc;
       mutable unsigned _hash;
-      
-      enum { capacityForIdentifier = 0x10000000 };
+      bool isIdentifier;
+      UString::Rep *baseString;
+
+      // potentially shared data
+      UChar *buf;
+      int usedCapacity;
+      int capacity;
       
       static Rep null;
       static Rep empty;
@@ -448,6 +453,10 @@ namespace KJS {
     void attach(Rep *r);
     void detach();
     void release();
+    int expandedSize(int size) const;
+    int usedCapacity() const;
+    void expandCapacity(int requiredLength);
+
     Rep *rep;
   };
 
