@@ -349,3 +349,23 @@ void List::swap(List &other)
   hook = other.hook;
   other.hook = tmp;
 }
+
+void List::replaceFirst(ValueImp *v)
+{
+    ListNode *n = hook->next;
+    if (!m_needsMarking) {
+      v->ref();
+      n->member->deref();
+    }
+    n->member = v;
+}
+
+void List::replaceLast(ValueImp *v)
+{
+    ListNode *n = hook->prev;
+    if (!m_needsMarking) {
+      v->ref();
+      n->member->deref();
+    }
+    n->member = v;
+}

@@ -1,5 +1,17 @@
 2002-11-20  Darin Adler  <darin@apple.com>
 
+	- add a couple of list operations to avoid clearing lists so much during sorting; gives 1.5% iBench
+
+        * kjs/types.h: Added replaceFirst/replaceLast.
+        * kjs/types.cpp: (List::replaceFirst), (List::replaceLast): Added.
+
+        * kjs/array_object.cpp: (compareWithCompareFunctionForQSort): Use replaceFirst/replaceLast.
+
+        * kjs/property_map.cpp: Put in an ifdef so I can re-add/remove the single entry to see if
+	it has outlived its usefulness. (It hasn't yet.)
+
+2002-11-20  Darin Adler  <darin@apple.com>
+
 	- atomic identifiers; gives another 6.5% in the iBench suite
 
         * kjs/identifier.h: Did the real thing.

@@ -25,6 +25,9 @@
 #include "object.h"
 #include "reference_list.h"
 
+// At the time I added this, the optimization still gave a 1.5% performance boost.
+#define USE_SINGLE_ENTRY 1
+
 namespace KJS {
 
 // Algorithm concepts from Algorithms in C++, Sedgewick.
@@ -35,11 +38,13 @@ PropertyMap::PropertyMap() : _tableSize(0), _table(0), _keyCount(0)
 
 PropertyMap::~PropertyMap()
 {
+#if USE_SINGLE_ENTRY
     UString::Rep *key = _singleEntry.key;
     if (key)
         key->deref();
+#endif
     for (int i = 0; i < _tableSize; i++) {
-        key = _table[i].key;
+        UString::Rep *key = _table[i].key;
         if (key)
             key->deref();
     }
@@ -48,11 +53,13 @@ PropertyMap::~PropertyMap()
 
 void PropertyMap::clear()
 {
+#if USE_SINGLE_ENTRY
     UString::Rep *key = _singleEntry.key;
     if (key) {
         key->deref();
         _singleEntry.key = 0;
     }
+#endif
     for (int i = 0; i < _tableSize; i++) {
         UString::Rep *key = _table[i].key;
         if (key) {
@@ -70,18 +77,22 @@ inline int PropertyMap::hash(const UString::Rep *s) const
 
 ValueImp *PropertyMap::get(const Identifier &name, int &attributes) const
 {
+    UString::Rep *rep = name._ustring.rep;
+    
     if (!_table) {
+ #if USE_SINGLE_ENTRY
         UString::Rep *key = _singleEntry.key;
-        if (name._ustring.rep == key) {
+        if (rep == key) {
             attributes = _singleEntry.attributes;
             return _singleEntry.value;
         }
+#endif
         return 0;
     }
     
-    int i = hash(name._ustring.rep);
+    int i = hash(rep);
     while (UString::Rep *key = _table[i].key) {
-        if (name._ustring.rep == key) {
+        if (rep == key) {
             attributes = _table[i].attributes;
             return _table[i].value;
         }
@@ -92,16 +103,20 @@ ValueImp *PropertyMap::get(const Identifier &name, int &attributes) const
 
 ValueImp *PropertyMap::get(const Identifier &name) const
 {
+    UString::Rep *rep = name._ustring.rep;
+
     if (!_table) {
+#if USE_SINGLE_ENTRY
         UString::Rep *key = _singleEntry.key;
-        if (name._ustring.rep == key)
+        if (rep == key)
             return _singleEntry.value;
+#endif
         return 0;
     }
     
-    int i = hash(name._ustring.rep);
+    int i = hash(rep);
     while (UString::Rep *key = _table[i].key) {
-        if (name._ustring.rep == key)
+        if (rep == key)
             return _table[i].value;
         i = (i + 1) & _tableSizeMask;
     }
@@ -110,29 +125,33 @@ ValueImp *PropertyMap::get(const Identifier &name) const
 
 void PropertyMap::put(const Identifier &name, ValueImp *value, int attributes)
 {
+    UString::Rep *rep = name._ustring.rep;
+
+#if USE_SINGLE_ENTRY
     if (!_table) {
         UString::Rep *key = _singleEntry.key;
         if (key) {
-            if (name._ustring.rep == key) {
+            if (rep == key) {
             	_singleEntry.value = value;
                 return;
             }
         } else {
-            name._ustring.rep->ref();
-            _singleEntry.key = name._ustring.rep;
+            rep->ref();
+            _singleEntry.key = rep;
             _singleEntry.value = value;
             _singleEntry.attributes = attributes;
             _keyCount = 1;
             return;
         }
     }
+#endif
 
     if (_keyCount * 2 >= _tableSize)
         expand();
     
-    int i = hash(name._ustring.rep);
+    int i = hash(rep);
     while (UString::Rep *key = _table[i].key) {
-        if (name._ustring.rep == key) {
+        if (rep == key) {
             // Put a new value in an existing hash table entry.
             _table[i].value = value;
             // Attributes are intentionally not updated.
@@ -142,8 +161,8 @@ void PropertyMap::put(const Identifier &name, ValueImp *value, int attributes)
     }
     
     // Create a new hash table entry.
-    name._ustring.rep->ref();
-    _table[i].key = name._ustring.rep;
+    rep->ref();
+    _table[i].key = rep;
     _table[i].value = value;
     _table[i].attributes = attributes;
     ++_keyCount;
@@ -169,14 +188,16 @@ void PropertyMap::expand()
     _tableSizeMask = _tableSize - 1;
     _table = (Entry *)calloc(_tableSize, sizeof(Entry));
 
+#if USE_SINGLE_ENTRY
     UString::Rep *key = _singleEntry.key;
     if (key) {
         insert(key, _singleEntry.value, _singleEntry.attributes);
         _singleEntry.key = 0;
     }
+#endif
     
     for (int i = 0; i != oldTableSize; ++i) {
-        key = oldTable[i].key;
+        UString::Rep *key = oldTable[i].key;
         if (key)
             insert(key, oldTable[i].value, oldTable[i].attributes);
     }
@@ -186,22 +207,26 @@ void PropertyMap::expand()
 
 void PropertyMap::remove(const Identifier &name)
 {
+    UString::Rep *rep = name._ustring.rep;
+
     UString::Rep *key;
 
     if (!_table) {
+#if USE_SINGLE_ENTRY
         key = _singleEntry.key;
-        if (name._ustring.rep == key) {
+        if (rep == key) {
             key->deref();
             _singleEntry.key = 0;
             _keyCount = 0;
         }
+#endif
         return;
     }
 
     // Find the thing to remove.
-    int i = hash(name._ustring.rep);
+    int i = hash(rep);
     while ((key = _table[i].key)) {
-        if (name._ustring.rep == key)
+        if (rep == key)
             break;
         i = (i + 1) & _tableSizeMask;
     }
@@ -226,11 +251,13 @@ void PropertyMap::remove(const Identifier &name)
 
 void PropertyMap::mark() const
 {
+#if USE_SINGLE_ENTRY
     if (_singleEntry.key) {
         ValueImp *v = _singleEntry.value;
         if (!v->marked())
             v->mark();
     }
+#endif
     for (int i = 0; i != _tableSize; ++i) {
         if (_table[i].key) {
             ValueImp *v = _table[i].value;
@@ -242,9 +269,11 @@ void PropertyMap::mark() const
 
 void PropertyMap::addEnumerablesToReferenceList(ReferenceList &list, const Object &base) const
 {
+#if USE_SINGLE_ENTRY
     UString::Rep *key = _singleEntry.key;
     if (key && !(_singleEntry.attributes & DontEnum))
         list.append(Reference(base, Identifier(key)));
+#endif
     for (int i = 0; i != _tableSize; ++i) {
         UString::Rep *key = _table[i].key;
         if (key && !(_table[i].attributes & DontEnum))

@@ -214,7 +214,10 @@ struct CompareWithCompareFunctionArguments {
         : exec(e)
         , compareFunction(cf)
         , globalObject(e->interpreter()->globalObject())
-    { }
+    {
+        arguments.append(Undefined());
+        arguments.append(Undefined());
+    }
 
     ExecState *exec;
     ObjectImp *compareFunction;
@@ -228,9 +231,8 @@ static int compareWithCompareFunctionForQSort(const void *a, const void *b)
 {
     CompareWithCompareFunctionArguments *args = compareWithCompareFunctionArguments;
     
-    args->arguments.clear();
-    args->arguments.append(*(ValueImp **)a);
-    args->arguments.append(*(ValueImp **)b);
+    args->arguments.replaceFirst(*(ValueImp **)a);
+    args->arguments.replaceLast(*(ValueImp **)b);
     return args->compareFunction->call(args->exec, args->globalObject, args->arguments)
         .toInt32(args->exec);
 }
