@@ -403,11 +403,12 @@ QString KWQTextDecoder::convertUsingTEC(const unsigned char *chs, int len, bool 
 
     const unsigned char *sourcePointer = chs;
     int sourceLength = len;
+    bool bufferWasFull = false;
     UniChar buffer[4096];
 
-    while (sourceLength) {
-        int bytesRead;
-        int bytesWritten;
+    while (sourceLength || bufferWasFull) {
+        int bytesRead = 0;
+        int bytesWritten = 0;
         OSStatus status = convertOneChunkUsingTEC(sourcePointer, sourceLength, bytesRead, buffer, sizeof(buffer), bytesWritten);
         ASSERT(bytesRead <= sourceLength);
         sourcePointer += bytesRead;
@@ -446,6 +447,8 @@ QString KWQTextDecoder::convertUsingTEC(const unsigned char *chs, int len, bool 
         }
 
         appendOmittingNullsAndBOMs(result, buffer, bytesWritten);
+
+        bufferWasFull = status == kTECOutputBufferFullStatus;
     }
     
     if (flush) {

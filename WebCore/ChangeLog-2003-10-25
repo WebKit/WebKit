@@ -1,3 +1,12 @@
+2003-09-02  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed 3403388 -- decoder mishandles pages which fill the decoding buffer (mainly ISO-2022-JP)
+
+        * kwq/KWQTextCodec.mm: (KWQTextDecoder::convertUsingTEC): Keep decoding, passing in no additional bytes,
+        until we get noErr, don't ever stop after a kTECOutputBufferFullStatus error.
+
 2003-09-02  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3404452, paint errors on mezzoblue.com's links list.  There was a simple
