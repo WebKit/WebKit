@@ -25,8 +25,13 @@
 
 #include "KWQAccObjectCache.h"
 #include "KWQAccObject.h"
+#include <qstring.h>
+
+using khtml::RenderObject;
 
 // The simple Cocoa calls in this file can't throw.
+
+bool KWQAccObjectCache::gAccessibilityEnabled = false;
 
 KWQAccObjectCache::KWQAccObjectCache()
 {
@@ -39,7 +44,7 @@ KWQAccObjectCache::~KWQAccObjectCache()
     CFRelease(accCache);
 }
 
-KWQAccObject* KWQAccObjectCache::accObject(khtml::RenderObject* renderer)
+KWQAccObject* KWQAccObjectCache::accObject(RenderObject* renderer)
 {
     if (!accCache)
         // No need to retain/free either impl key, or id value.
@@ -54,7 +59,7 @@ KWQAccObject* KWQAccObjectCache::accObject(khtml::RenderObject* renderer)
     return obj;
 }
 
-void KWQAccObjectCache::setAccObject(khtml::RenderObject* impl, KWQAccObject* accObject)
+void KWQAccObjectCache::setAccObject(RenderObject* impl, KWQAccObject* accObject)
 {
     if (!accCache)
         // No need to retain/free either impl key, or id value.
@@ -63,7 +68,7 @@ void KWQAccObjectCache::setAccObject(khtml::RenderObject* impl, KWQAccObject* ac
     CFDictionarySetValue(accCache, (const void *)impl, accObject);
 }
 
-void KWQAccObjectCache::removeAccObject(khtml::RenderObject* impl)
+void KWQAccObjectCache::removeAccObject(RenderObject* impl)
 {
     if (!accCache)
         return;
@@ -76,12 +81,12 @@ void KWQAccObjectCache::removeAccObject(khtml::RenderObject* impl)
     }
 }
 
-void KWQAccObjectCache::detach(khtml::RenderObject* renderer)
+void KWQAccObjectCache::detach(RenderObject* renderer)
 {
     removeAccObject(renderer);
 }
 
-void KWQAccObjectCache::childrenChanged(khtml::RenderObject* renderer)
+void KWQAccObjectCache::childrenChanged(RenderObject* renderer)
 {
     if (!accCache)
         return;
@@ -91,4 +96,9 @@ void KWQAccObjectCache::childrenChanged(khtml::RenderObject* renderer)
         return;
     
     [obj childrenChanged];
+}
+
+void KWQAccObjectCache::postNotification(RenderObject* renderer, const QString& msg)
+{
+    NSAccessibilityPostNotification(accObject(renderer), msg.getNSString());
 }

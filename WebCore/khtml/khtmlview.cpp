@@ -64,6 +64,10 @@
 #include <kurldrag.h>
 #include <qobjectlist.h>
 
+#if APPLE_CHANGES
+#include "KWQAccObjectCache.h"
+#endif
+
 #define PAINT_BUFFER_HEIGHT 128
 
 //#define INSTRUMENT_LAYOUT_SCHEDULING 1
@@ -668,6 +672,10 @@ void KHTMLView::layout()
     }
     
     d->layoutCount++;
+#if APPLE_CHANGES
+    if (KWQAccObjectCache::accessibilityEnabled())
+        root->document()->getOrCreateAccObjectCache()->postNotification(root, "AXLayoutComplete");
+#endif
 
     if (root->needsLayout()) {
         //qDebug("needs layout, delaying repaint");

@@ -31,6 +31,8 @@
 class KWQAccObject;
 #endif
 
+class QString;
+
 namespace khtml {
     class RenderObject;
 }
@@ -48,7 +50,15 @@ public:
     void detach(khtml::RenderObject* renderer);
     
     void childrenChanged(khtml::RenderObject* renderer);
+
+    void postNotification(khtml::RenderObject* renderer, const QString& msg);
     
+    static void enableAccessibility() { gAccessibilityEnabled = true; }
+    static bool accessibilityEnabled() { return gAccessibilityEnabled; }
+
+private:
+    static bool gAccessibilityEnabled;
+
 private:
     CFMutableDictionaryRef accCache;
 };

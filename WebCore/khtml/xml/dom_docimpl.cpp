@@ -1330,12 +1330,18 @@ void DocumentImpl::close()
     // Now do our painting/layout, but only if we aren't in a subframe or if we're in a subframe
     // that has been sized already.  Otherwise, our view size would be incorrect, so doing any 
     // layout/painting now would be pointless.
-    if (doload && (!ownerElement() || (ownerElement()->renderer() && !ownerElement()->renderer()->needsLayout()))) {
-        updateRendering();
-        
-        // Always do a layout after loading if needed.
-        if (view() && renderer() && (!renderer()->firstChild() || renderer()->needsLayout()))
-            view()->layout();
+    if (doload) {
+        if (!ownerElement() || (ownerElement()->renderer() && !ownerElement()->renderer()->needsLayout())) {
+            updateRendering();
+            
+            // Always do a layout after loading if needed.
+            if (view() && renderer() && (!renderer()->firstChild() || renderer()->needsLayout()))
+                view()->layout();
+        }
+#if APPLE_CHANGES
+        if (renderer() && KWQAccObjectCache::accessibilityEnabled())
+            getOrCreateAccObjectCache()->postNotification(renderer(), "AXLoadComplete");
+#endif
     }
 }
 
