@@ -1,3 +1,56 @@
+2003-12-11  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3507164, scrolling really slow on hixie's web forms spec page.  Hixie has 12 little transparent layers
+        at various points on this page, and beginning/ending transparency on only those 12 layers as you scroll
+        is enough to kill scrolling performance.
+
+	This patch works around the issue by lazily beginning transparency layers only when we determine that
+	we're actually painting a descendant layer of a transparent ancestor or a transparent layer.
+
+	Also fixing QColor's comparison operator.  It was broken and not comparing the "valid" bit, so invalid and
+	valid colors were being assumed to be the same.
+
+	Also fixed the render dumper to not dump transparent and invalid background colors and fixed it do dump the
+	alpha for colors with an alpha < 0xFF.
+	
+	Reviewed by mjs (opacity changes), darin (color changes) and john (render tree dumper changes)
+
+        * ChangeLog:
+        * khtml/rendering/render_layer.cpp:
+        (RenderLayer::RenderLayer):
+        (RenderLayer::beginTransparencyLayers):
+        (RenderLayer::paint):
+        (RenderLayer::paintLayer):
+        * khtml/rendering/render_layer.h:
+        * kwq/KWQColor.h:
+        (operator==):
+        (operator!=):
+        * kwq/KWQColor.mm:
+        (QColor::name):
+        * kwq/KWQRenderTreeDebug.cpp:
+        (operator<<):
+
+2003-12-11  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3507164, scrolling really slow on hixie's web forms spec page.  Hixie has 12 little transparent layers
+	at various points on this page, and beginning/ending transparency on only those 12 layers as you scroll
+	is enough to kill scrolling performance.
+
+	This patch works around the issue by lazily beginning transparency layers only when we determine that
+	we're actually painting a descendant layer of a transparent ancestor or a transparent layer.
+
+	Also fixing QColor's comparison operator.  It was broken and not comparing the "valid" bit, so invalid and
+	valid colors were being assumed to be the same.
+	
+        Reviewed by mjs (opacity changes) and darin (color changes)
+
+        * khtml/rendering/render_layer.cpp:
+        (RenderLayer::RenderLayer):
+        (RenderLayer::beginTransparencyLayers):
+        (RenderLayer::paint):
+        (RenderLayer::paintLayer):
+        * khtml/rendering/render_layer.h:
+
 2003-12-11  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by me

@@ -90,13 +90,14 @@ m_scrollX( 0 ),
 m_scrollY( 0 ),
 m_scrollWidth( 0 ),
 m_scrollHeight( 0 ),
-m_scrollDimensionsDirty( true ),
 m_hBar( 0 ),
 m_vBar( 0 ),
 m_scrollMediator( 0 ),
 m_posZOrderList( 0 ),
 m_negZOrderList( 0 ),
+m_scrollDimensionsDirty( true ),
 m_zOrderListsDirty( true ),
+m_usedTransparency( false ),
 m_marquee( 0 )
 {
 }
@@ -251,6 +252,22 @@ RenderLayer::transparentAncestor()
     for ( ; curr && curr->m_object->style()->opacity() == 1.0f; curr = curr->parent());
     return curr;
 }
+
+void RenderLayer::beginTransparencyLayers(QPainter* p)
+{
+    if (isTransparent() && m_usedTransparency)
+        return;
+    
+    RenderLayer* ancestor = transparentAncestor();
+    if (ancestor)
+        ancestor->beginTransparencyLayers(p);
+    
+    if (isTransparent()) {
+        m_usedTransparency = true;
+        p->beginTransparencyLayer(renderer()->style()->opacity());
+    }
+}
+
 #endif
 
 void* RenderLayer::operator new(size_t sz, RenderArena* renderArena) throw()
@@ -695,7 +712,7 @@ RenderLayer::paintScrollbars(QPainter* p, const QRect& damageRect)
 void
 RenderLayer::paint(QPainter *p, const QRect& damageRect, bool selectionOnly)
 {
-    paintLayer(this, p, damageRect, selectionOnly);
+    paintLayer(this, p, damageRect, false, selectionOnly);
 }
 
 static void setClip(QPainter* p, const QRect& paintDirtyRect, const QRect& clipRect)
@@ -727,7 +744,7 @@ static void restoreClip(QPainter* p, const QRect& paintDirtyRect, const QRect& c
 
 void
 RenderLayer::paintLayer(RenderLayer* rootLayer, QPainter *p,
-                        const QRect& paintDirtyRect, bool selectionOnly)
+                        const QRect& paintDirtyRect, bool haveTransparency, bool selectionOnly)
 {
     // Calculate the clip rects we should use.
     QRect layerBounds, damageRect, clipRectToApply;
@@ -739,39 +756,42 @@ RenderLayer::paintLayer(RenderLayer* rootLayer, QPainter *p,
     updateZOrderLists();
 
 #if APPLE_CHANGES
-    // Set our transparency if we need to.
     if (isTransparent())
-        p->beginTransparencyLayer(renderer()->style()->opacity());
+        haveTransparency = true;
 #endif
-    
+
     // We want to paint our layer, but only if we intersect the damage rect.
     bool shouldPaint = intersectsDamageRect(layerBounds, damageRect);
-    if (shouldPaint && !selectionOnly) {
+    if (shouldPaint && !selectionOnly && !damageRect.isEmpty()) {
+#if APPLE_CHANGES
+        // Begin transparency layers lazily now that we know we have to paint something.
+        if (haveTransparency)
+            beginTransparencyLayers(p);
+#endif
+        
         // Paint our background first, before painting any child layers.
-        if (!damageRect.isEmpty()) {
-            // Establish the clip used to paint our background.
-            setClip(p, paintDirtyRect, damageRect);
+        // Establish the clip used to paint our background.
+        setClip(p, paintDirtyRect, damageRect);
 
-            // Paint the background.
-            renderer()->paint(p, damageRect.x(), damageRect.y(),
-                              damageRect.width(), damageRect.height(),
-                              x - renderer()->xPos(), y - renderer()->yPos(),
-                              PaintActionElementBackground);
+        // Paint the background.
+        renderer()->paint(p, damageRect.x(), damageRect.y(),
+                            damageRect.width(), damageRect.height(),
+                            x - renderer()->xPos(), y - renderer()->yPos(),
+                            PaintActionElementBackground);
 
 #ifndef INCREMENTAL_REPAINTING
-            // Position our scrollbars.
-            positionScrollbars(layerBounds);
+        // Position our scrollbars.
+        positionScrollbars(layerBounds);
 #endif
-            
+        
 #if APPLE_CHANGES
-            // Our scrollbar widgets paint exactly when we tell them to, so that they work properly with
-            // z-index.  We paint after we painted the background/border, so that the scrollbars will
-            // sit above the background/border.
-            paintScrollbars(p, damageRect);
+        // Our scrollbar widgets paint exactly when we tell them to, so that they work properly with
+        // z-index.  We paint after we painted the background/border, so that the scrollbars will
+        // sit above the background/border.
+        paintScrollbars(p, damageRect);
 #endif
-            // Restore the clip.
-            restoreClip(p, paintDirtyRect, damageRect);
-        }
+        // Restore the clip.
+        restoreClip(p, paintDirtyRect, damageRect);
     }
 
     // Now walk the sorted list of children with negative z-indices.
@@ -779,12 +799,18 @@ RenderLayer::paintLayer(RenderLayer* rootLayer, QPainter *p,
         uint count = m_negZOrderList->count();
         for (uint i = 0; i < count; i++) {
             RenderLayer* child = m_negZOrderList->at(i);
-            child->paintLayer(rootLayer, p, paintDirtyRect, selectionOnly);
+            child->paintLayer(rootLayer, p, paintDirtyRect, haveTransparency, selectionOnly);
         }
     }
     
     // Now establish the appropriate clip and paint our child RenderObjects.
     if (shouldPaint && !clipRectToApply.isEmpty()) {
+#if APPLE_CHANGES
+        // Begin transparency layers lazily now that we know we have to paint something.
+        if (haveTransparency)
+            beginTransparencyLayers(p);
+#endif
+
         // Set up the clip used when painting our children.
         setClip(p, paintDirtyRect, clipRectToApply);
 
@@ -816,14 +842,16 @@ RenderLayer::paintLayer(RenderLayer* rootLayer, QPainter *p,
         uint count = m_posZOrderList->count();
         for (uint i = 0; i < count; i++) {
             RenderLayer* child = m_posZOrderList->at(i);
-            child->paintLayer(rootLayer, p, paintDirtyRect, selectionOnly);
+            child->paintLayer(rootLayer, p, paintDirtyRect, haveTransparency, selectionOnly);
         }
     }
     
 #if APPLE_CHANGES
     // End our transparency layer
-    if (isTransparent())
+    if (isTransparent() && m_usedTransparency) {
         p->endTransparencyLayer();
+        m_usedTransparency = false;
+    }
 #endif
 }
 

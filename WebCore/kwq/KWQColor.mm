@@ -70,7 +70,10 @@ QColor::QColor(const char *name)
 QString QColor::name() const
 {
     QString name;
-    name.sprintf("#%02X%02X%02X", red(), green(), blue());
+    if (qAlpha(color) < 0xFF)
+        name.sprintf("#%02X%02X%02X%02X", red(), green(), blue(), qAlpha(color));
+    else
+        name.sprintf("#%02X%02X%02X", red(), green(), blue());
     return name;
 }
 

@@ -45,6 +45,7 @@ using khtml::InlineTextBox;
 using khtml::InlineTextBoxArray;
 using khtml::BorderValue;
 using khtml::EBorderStyle;
+using khtml::transparentColor;
 
 static void writeLayers(QTextStream &ts, const RenderLayer* rootLayer, RenderLayer* l,
                         const QRect& paintDirtyRect, int indent=0);
@@ -120,7 +121,10 @@ static QTextStream &operator<<(QTextStream &ts, const RenderObject &o)
     if (!o.isText()) {
         if (o.parent() && (o.parent()->style()->color() != o.style()->color()))
             ts << " [color=" << o.style()->color().name() << "]";
-        if (o.parent() && (o.parent()->style()->backgroundColor() != o.style()->backgroundColor()))
+        if (o.parent() && (o.parent()->style()->backgroundColor() != o.style()->backgroundColor()) &&
+            o.style()->backgroundColor().isValid() && 
+	    o.style()->backgroundColor().rgb() != khtml::transparentColor)
+	    // Do not dump invalid or transparent backgrounds, since that is the default.
             ts << " [bgcolor=" << o.style()->backgroundColor().name() << "]";
     
         if (o.borderTop() || o.borderRight() || o.borderBottom() || o.borderLeft()) {
