@@ -342,7 +342,8 @@ public:
     virtual FindSelectionResult checkSelectionPoint( int _x, int _y, int _tx, int _ty,
                                                      DOM::NodeImpl*&, int & offset );
     virtual bool nodeAtPoint(NodeInfo& info, int x, int y, int tx, int ty, bool inside=false);
-
+    void setHoverAndActive(NodeInfo& info, bool oldinside, bool inside);
+    
     // set the style of the object.
     virtual void setStyle(RenderStyle *style);
 

@@ -1,3 +1,19 @@
+2002-12-05  David Hyatt  <hyatt@apple.com>
+
+	Fix for wsj.com orange underline regression.  In quirks mode
+	only, don't let anchors without hrefs go into :hover.  This
+	matches MacIE's behavior.
+
+	The bug is 3118643.
+	
+        Reviewed by: mjs
+
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::setHoverAndActive):
+        (RenderObject::nodeAtPoint):
+        * khtml/rendering/render_object.h:
+        * khtml/rendering/render_text.h:
+
 2002-12-04  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by: David Hyatt
