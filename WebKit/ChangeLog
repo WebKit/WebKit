@@ -1,3 +1,18 @@
+2002-08-05  Richard Williamson (Home)  <rjw@apple.com>
+
+        Added additional check to find appropriate fonts with available
+        weight, rather than always using a weight of 5.
+        
+        Regarding "kCGErrorFailure : can't find name id 4 for font id 8395" errors:
+        CG appears to be lying to us about some fonts, Verdana in particular.
+        It claims to have an available Verdana font w/ the correct traits, but spits errors
+        when we request that font.  Further, the Font Panel behaves oddly when you request
+        Verdana.  The panel displays the font but if you select the font it doesn't
+        'stick'.  A mystery.
+        
+        * WebCoreSupport.subproj/WebTextRendererFactory.m:
+        (-[WebTextRendererFactory fontWithFamily:traits:size:]):
+
 2002-08-05  Darin Adler  <darin@apple.com>
 
 	- fixed 2986567 -- suppress return characters from title in title bar, status bar, menu items

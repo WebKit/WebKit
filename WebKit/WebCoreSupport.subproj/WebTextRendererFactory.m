@@ -118,14 +118,40 @@
     e = [[[NSFontManager sharedFontManager] availableFontFamilies] objectEnumerator];
     while ((availableFamily = [e nextObject])) {
         if ([family caseInsensitiveCompare:availableFamily] == NSOrderedSame) {
-            font = [[NSFontManager sharedFontManager] fontWithFamily:availableFamily traits:traits weight:5 size:size];
-            if (font != nil) {
-                return font;
+            NSArray *fonts = [[NSFontManager sharedFontManager] availableMembersOfFontFamily:availableFamily];
+            NSArray *fontInfo;
+            NSFontTraitMask fontMask;
+            int fontWeight;
+            unsigned i;
+        
+            for (i = 0; i < [fonts count]; i++){
+                fontInfo = [fonts objectAtIndex: i];
+                
+                // Hard coded positions depend on lame AppKit API.
+                fontWeight = [[fontInfo objectAtIndex: 2] intValue];
+                fontMask = [[fontInfo objectAtIndex: 3] unsignedIntValue];
+                
+                // First look for a 'normal' weight font.  The weight and mask
+                // properties are somewhat conflicting.
+                if (fontWeight == 5 && (fontMask & traits) == traits){
+                    font = [[NSFontManager sharedFontManager] fontWithFamily:availableFamily traits:traits weight:5 size:size];
+                    if (font != nil) {
+                        return font;
+                    }
+                } 
+                
+                // Get a font with the correct traits but a weight we're told actually exists.
+                if ((fontMask & traits) == traits){
+                    font = [[NSFontManager sharedFontManager] fontWithFamily:availableFamily traits:traits weight:fontWeight size:size];
+                    if (font != nil) {
+                        return font;
+                    }
+                } 
             }
         }
     }
-            
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_FONTCACHE, "unable to find font for family %s", [family lossyCString]);
+    
+    //NSLog(@"unable to find font for family %@, traits 0x%08x(%d), size %f", family, traits, traits, size);
     return [[NSFontManager sharedFontManager] fontWithFamily:@"Helvetica" traits:traits weight:5 size:size];
 }
 
