@@ -13,6 +13,7 @@
 @class WebHistoryItem;
 @class WebPluginController;
 @class WebView;
+@class WebResourceRequest;
 
 typedef enum {
     WebFrameStateProvisional,
@@ -89,7 +90,7 @@ typedef enum {
 - (void)_checkLoadComplete;
 - (void)_timedLayout: userInfo;
 - (WebBridge *)_bridge;
-- (BOOL)_shouldShowURL:(NSURL *)URL;
+- (BOOL)_shouldShowRequest:(WebResourceRequest *)request;
 - (void)_setProvisionalDataSource:(WebDataSource *)d;
 - (void)_setLoadType: (WebFrameLoadType)loadType;
 - (WebFrameLoadType)_loadType;

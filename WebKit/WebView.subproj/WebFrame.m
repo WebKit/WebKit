@@ -138,7 +138,7 @@
 
     // _shouldShowURL asks the client for the URL policies and reports errors if there are any
     // returns YES if we should show the data source
-    if (![self _shouldShowURL:[newDataSource URL]]) {
+    if (![self _shouldShowRequest:[newDataSource request]]) {
         return NO;
     }
     

@@ -608,71 +608,72 @@ static const char * const stateNames[] = {
     [[[self controller] policyDelegate] unableToImplementPolicy:policy error:error forURL:URL inFrame:self];    
 }
 
-- (BOOL)_shouldShowURL:(NSURL *)URL
+- (BOOL)_shouldShowRequest:(WebResourceRequest *)request
 {
     id <WebControllerPolicyDelegate> policyDelegate = [[self controller] policyDelegate];
-    WebURLPolicy *URLPolicy = [policyDelegate URLPolicyForURL:URL inFrame:self];
+    WebURLPolicy *URLPolicy = [policyDelegate URLPolicyForURL:[request URL] inFrame:self];
 
     switch ([URLPolicy policyAction]) {
         case WebURLPolicyIgnore:
             return NO;
 
         case WebURLPolicyOpenExternally:
-            if(![[NSWorkspace sharedWorkspace] openURL:URL]){
-                [self handleUnimplementablePolicy:URLPolicy errorCode:WebErrorCannotNotFindApplicationForURL forURL:URL];
+            if(![[NSWorkspace sharedWorkspace] openURL:[request URL]]){
+                [self handleUnimplementablePolicy:URLPolicy errorCode:WebErrorCannotNotFindApplicationForURL forURL:[request URL]];
             }
             return NO;
 
         case WebURLPolicyUseContentPolicy:
             // handle non-file case first because it's short and sweet
-            if (![URL isFileURL]) {
-                if (![WebResourceHandle canInitWithRequest:[WebResourceRequest requestWithURL:URL]]) {
-                    [self handleUnimplementablePolicy:URLPolicy errorCode:WebErrorCannotShowURL forURL:URL];
+            if (![[request URL] isFileURL]) {
+                if (![WebResourceHandle canInitWithRequest:request]) {
+                    [self handleUnimplementablePolicy:URLPolicy errorCode:WebErrorCannotShowURL forURL:[request URL]];
                     return NO;
                 }
                 return YES;
             } else {
                 // file URL
                 NSFileManager *fileManager = [NSFileManager defaultManager];
-                NSString *path = [URL path];
-                BOOL isDirectory;
-                BOOL fileExists = [fileManager fileExistsAtPath:path isDirectory:&isDirectory];
+                NSString *path = [[request URL] path];
                 NSString *type = [WebController _MIMETypeForFile: path];
-                WebFileURLPolicy *fileURLPolicy = [policyDelegate fileURLPolicyForMIMEType:type inFrame:self isDirectory:isDirectory];
+                WebFileURLPolicy *fileURLPolicy = [policyDelegate fileURLPolicyForMIMEType:type andRequest:request inFrame:self];
 
                 if([fileURLPolicy policyAction] == WebFileURLPolicyIgnore)
                     return NO;
 
+		BOOL isDirectory;
+		BOOL fileExists = [fileManager fileExistsAtPath:[[request URL] path] isDirectory:&isDirectory];
+
                 if(!fileExists){
-                    [self handleUnimplementablePolicy:fileURLPolicy errorCode:WebErrorCannotFindFile forURL:URL];
+                    [self handleUnimplementablePolicy:fileURLPolicy errorCode:WebErrorCannotFindFile forURL:[request URL]];
                     return NO;
                 }
 
                 if(![fileManager isReadableFileAtPath:path]){
-                    [self handleUnimplementablePolicy:fileURLPolicy errorCode:WebErrorCannotReadFile forURL:URL];
+                    [self handleUnimplementablePolicy:fileURLPolicy errorCode:WebErrorCannotReadFile forURL:[request URL]];
                     return NO;
                 }
 
                 switch ([fileURLPolicy policyAction]) {
                     case WebFileURLPolicyUseContentPolicy:
                         if (isDirectory) {
-                            [self handleUnimplementablePolicy:fileURLPolicy errorCode:WebErrorCannotShowDirectory forURL:URL];
+                            [self handleUnimplementablePolicy:fileURLPolicy errorCode:WebErrorCannotShowDirectory forURL:[request URL]];
                             return NO;
                         } else if (![WebController canShowMIMEType: type]) {
-                            [self handleUnimplementablePolicy:fileURLPolicy errorCode:WebErrorCannotShowMIMEType forURL:URL];
+                            [self handleUnimplementablePolicy:fileURLPolicy errorCode:WebErrorCannotShowMIMEType forURL:[request URL]];
                             return NO;
                         }
                         return YES;
                         
                     case WebFileURLPolicyOpenExternally:
                         if(![[NSWorkspace sharedWorkspace] openFile:path]){
-                            [self handleUnimplementablePolicy:fileURLPolicy errorCode:WebErrorCannotFindApplicationForFile forURL:URL];
+                            [self handleUnimplementablePolicy:fileURLPolicy errorCode:WebErrorCannotFindApplicationForFile forURL:[request URL]];
                         }
                         return NO;
 
                     case WebFileURLPolicyRevealInFinder:
                         if(![[NSWorkspace sharedWorkspace] selectFile:path inFileViewerRootedAtPath:@""]){
-                            [self handleUnimplementablePolicy:fileURLPolicy errorCode:WebErrorFinderCannotOpenDirectory forURL:URL];
+                            [self handleUnimplementablePolicy:fileURLPolicy errorCode:WebErrorFinderCannotOpenDirectory forURL:[request URL]];
                         }
                         return NO;
 

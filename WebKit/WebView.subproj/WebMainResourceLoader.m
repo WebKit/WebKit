@@ -114,7 +114,7 @@
 
     NSURL *URL = [newRequest URL];
 
-    if (![[dataSource webFrame] _shouldShowURL:URL]) {
+    if (![[dataSource webFrame] _shouldShowRequest:request]) {
         [handle cancel];
         [[dataSource webFrame] _setProvisionalDataSource:nil];
 	[[[dataSource controller] locationChangeDelegate] locationChangeDone:[WebError errorWithCode:WebErrorLocationChangeInterruptedByPolicyChange inDomain:WebErrorDomainWebKit failingURL:nil] forDataSource:dataSource];

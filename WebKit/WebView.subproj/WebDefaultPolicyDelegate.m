@@ -36,8 +36,11 @@
     return [WebDefaultPolicyDelegate defaultURLPolicyForURL:URL];
 }
 
-- (WebFileURLPolicy *)fileURLPolicyForMIMEType:(NSString *)type inFrame:(WebFrame *)frame isDirectory:(BOOL)isDirectory
+- (WebFileURLPolicy *)fileURLPolicyForMIMEType:(NSString *)type andRequest:(WebResourceRequest *)request inFrame:(WebFrame *)frame
 {
+    BOOL isDirectory;
+    [[NSFileManager defaultManager] fileExistsAtPath:[[request URL] path] isDirectory:&isDirectory];
+
     if(isDirectory)
         return [WebFileURLPolicy webPolicyWithFileAction:WebFileURLPolicyIgnore];
     if([WebController canShowMIMEType:type])

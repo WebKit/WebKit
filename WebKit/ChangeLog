@@ -1,3 +1,19 @@
+2002-10-30  Maciej Stachowiak  <mjs@apple.com>
+
+	Another step towards the policy API change - add request argument
+	to file URL policy and remove isDirectory argument.
+	
+        * WebView.subproj/WebControllerPolicyDelegate.h:
+        * WebView.subproj/WebDefaultPolicyDelegate.m:
+        (-[WebDefaultPolicyDelegate fileURLPolicyForMIMEType:andRequest:inFrame:]):
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame setProvisionalDataSource:]):
+        * WebView.subproj/WebFramePrivate.h:
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _shouldShowRequest:]):
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient handle:willSendRequest:]):
+
 2002-10-29  Maciej Stachowiak  <mjs@apple.com>
 
 	First step towards policy API change. Pass request instead of URL
