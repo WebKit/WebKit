@@ -1275,13 +1275,12 @@ static QRect boundingBoxRect(RenderObject* obj)
     if (visiblePos.isNull())
         return nil;
     
-    // make a caret selection for the position after marker position (to make sure
-    // we move off of a line end)
+    // to make sure we move off of a line end)
     VisiblePosition nextVisiblePos = visiblePos.next();
     if (nextVisiblePos.isNull())
         return nil;
         
-    // extend selection to the line
+    // make caret selection and extend it to the line
     // NOTE: ignores results of sel.modify because it returns false when
     // starting at an empty line.  The resulting selection in that case
     // will be a caret at nextVisiblePos. 
@@ -1326,6 +1325,11 @@ static QRect boundingBoxRect(RenderObject* obj)
     VisiblePosition visiblePos = [self visiblePositionForTextMarker:textMarker];
     if (visiblePos.isNull())
         return nil;
+    
+    // make sure we move off of a sentence end
+    visiblePos = visiblePos.next();
+    if (visiblePos.isNull())
+        return nil;
 
     VisiblePosition endPosition = endOfSentence(visiblePos);
     return (id) [self textMarkerForVisiblePosition: endPosition];
@@ -1339,6 +1343,9 @@ static QRect boundingBoxRect(RenderObject* obj)
     if (visiblePos.isNull())
         return nil;
 
+    // make sure we move off of a sentence start
+    visiblePos = visiblePos.previous();
+
     VisiblePosition startPosition = startOfSentence(visiblePos);
     return (id) [self textMarkerForVisiblePosition: startPosition];
 }
@@ -1346,6 +1353,11 @@ static QRect boundingBoxRect(RenderObject* obj)
 - (id)doAXNextParagraphEndTextMarkerForTextMarker: (AXTextMarkerRef) textMarker
 {
     VisiblePosition visiblePos = [self visiblePositionForTextMarker:textMarker];
+    if (visiblePos.isNull())
+        return nil;
+    
+    // make sure we move off of a paragraph end
+    visiblePos = visiblePos.next();
     if (visiblePos.isNull())
         return nil;
 
@@ -1358,6 +1370,9 @@ static QRect boundingBoxRect(RenderObject* obj)
     VisiblePosition visiblePos = [self visiblePositionForTextMarker:textMarker];
     if (visiblePos.isNull())
         return nil;
+
+    // make sure we move off of a paragraph start
+    visiblePos = visiblePos.previous();
 
     VisiblePosition startPosition = startOfParagraph(visiblePos);
     return (id) [self textMarkerForVisiblePosition: startPosition];

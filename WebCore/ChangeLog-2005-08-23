@@ -1,5 +1,22 @@
 2005-01-17  David Harrison  <harrison@apple.com>
 
+        Reviewed by John Sullivan.
+
+        <rdar://problem/3949429> AX: word marker routines returns incorrect data for empty line
+        <rdar://problem/3949848> AX: paragraph marker routines do not work when given a paragraph end marker
+
+        Also fixed sentence support in the same way.
+        
+        * kwq/KWQAccObject.mm:
+        (-[KWQAccObject doAXNextLineEndTextMarkerForTextMarker:]):
+        (-[KWQAccObject doAXNextSentenceEndTextMarkerForTextMarker:]):
+        (-[KWQAccObject doAXPreviousSentenceStartTextMarkerForTextMarker:]):
+        (-[KWQAccObject doAXNextParagraphEndTextMarkerForTextMarker:]):
+        (-[KWQAccObject doAXPreviousParagraphStartTextMarkerForTextMarker:]):
+        Move one position in desired direction before calling visible_units.cpp code.
+
+2005-01-17  David Harrison  <harrison@apple.com>
+
         Updated expected test results.
         
         <rdar://problem/3945880> line-ending space seems not to be present
