@@ -659,7 +659,7 @@ static WebHTMLView *lastHitView = nil;
     }
     
     if (imageURL) {
-	_private->draggingImageURL = [imageURL retain];
+        _private->draggingImageURL = [imageURL retain];
         WebImageRenderer *image = [element objectForKey:WebElementImageKey];
         ASSERT([image isKindOfClass:[WebImageRenderer class]]);
         [self _web_dragImage:image
@@ -691,7 +691,7 @@ static WebHTMLView *lastHitView = nil;
         NSRect visibleSelectionRect = [[self _bridge] visibleSelectionRect];
         [self dragImage:selectionImage
                      at:NSMakePoint(NSMinX(visibleSelectionRect), NSMaxY(visibleSelectionRect))
-                 offset:NSMakeSize(mouseDownPoint.x, mouseDownPoint.y)
+                 offset:NSMakeSize(mouseDraggedPoint.x - mouseDownPoint.x, mouseDraggedPoint.y - mouseDownPoint.y)
                   event:_private->mouseDownEvent
              pasteboard:pasteboard
                  source:self

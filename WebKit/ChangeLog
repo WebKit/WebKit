@@ -1,3 +1,12 @@
+2004-01-30  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3536126>: REGRESSION (Merlot): WebKit dragging is in strange location
+
+        Reviewed by kocienda.
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _handleMouseDragged:]): use the proper offset when dragging text
+
 2004-01-28  John Sullivan  <sullivan@apple.com>
 
         More header/footer work: refactored the header/footer code so it could
