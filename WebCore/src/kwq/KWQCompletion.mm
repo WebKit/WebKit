@@ -23,114 +23,34 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <KWQListBox.h>
+#include <KWQCompletion.h>
 
-
-QListBox::QListBox()
+KCompletion::KCompletion()
 {
 }
 
 
-QListBox::~QListBox()
+KCompletion::~KCompletion()
 {
 }
 
 
-uint QListBox::count() const
+void KCompletion::setItems(const QStringList &)
 {
 }
 
 
-void QListBox::clear()
+KCompletionBase::KCompletionBase()
 {
 }
 
 
-void QListBox::setSelectionMode(SelectionMode)
+KCompletionBase::~KCompletionBase()
 {
 }
 
-
-QListBoxItem *QListBox::firstItem() const
+KCompletion *KCompletionBase::completionObject(bool hsig = true)
 {
 }
 
-
-int QListBox::currentItem() const
-{
-}
-
-
-void QListBox::insertItem(const QString &, int index=-1)
-{
-}
-
-
-void QListBox::insertItem(const QListBoxItem *, int index=-1)
-{
-}
-
-
-void QListBox::setSelected(int, bool)
-{
-}
-
-
-bool QListBox::isSelected(int)
-{
-}
-
-
-// class QListBoxItem ==========================================================
-
-QListBoxItem::QListBoxItem()
-{
-}
-
-QListBoxItem::~QListBoxItem()
-{
-}
-
-
-void QListBoxItem::setSelectable(bool)
-{
-}
-
-
-QListBox *QListBoxItem::listBox() const
-{
-}
-
-
-int QListBoxItem::width(const QListBox *) const
-{
-}
-
-
-int QListBoxItem::height(const QListBox *) const
-{
-}
-
-
-QListBoxItem *QListBoxItem::next() const
-{
-}
-
-
-QListBoxItem *QListBoxItem::prev() const
-{
-}
-
-
-
-// class QListBoxText ==========================================================
-
-QListBoxText::QListBoxText(const QString &text=QString::null)
-{
-}
-
-
-QListBoxText::~QListBoxText()
-{
-}
 

@@ -31,6 +31,10 @@ KLineEdit::KLineEdit(QWidget *parent=0, const char *name=0)
 {
 }
 
+KLineEdit::~KLineEdit()
+{
+}
+
 
 void KLineEdit::setMouseTracking(bool)
 {

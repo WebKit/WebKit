@@ -488,6 +488,17 @@ bool QPainter::hasClipping() const
      NSLog (@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
 }
 
+void QPainter::setClipRect(const QRect &)
+{
+     NSLog (@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+}
+
+
+void QPainter::setClipRect(int,int,int,int)
+{
+     NSLog (@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+}
+
 
 Qt::RasterOp QPainter::rasterOp() const
 {

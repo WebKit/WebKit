@@ -87,6 +87,10 @@ QListBoxItem::QListBoxItem()
 {
 }
 
+QListBoxItem::~QListBoxItem()
+{
+}
+
 
 void QListBoxItem::setSelectable(bool)
 {

@@ -23,114 +23,29 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <KWQListBox.h>
+#include <qbutton.h>
 
-
-QListBox::QListBox()
+QButton::QButton()
 {
 }
 
 
-QListBox::~QListBox()
+QButton::QButton(QWidget *parent)
 {
 }
 
 
-uint QListBox::count() const
+QButton::~QButton()
 {
 }
 
 
-void QListBox::clear()
+void QButton::setText(const QString &)
 {
 }
 
 
-void QListBox::setSelectionMode(SelectionMode)
-{
-}
-
-
-QListBoxItem *QListBox::firstItem() const
-{
-}
-
-
-int QListBox::currentItem() const
-{
-}
-
-
-void QListBox::insertItem(const QString &, int index=-1)
-{
-}
-
-
-void QListBox::insertItem(const QListBoxItem *, int index=-1)
-{
-}
-
-
-void QListBox::setSelected(int, bool)
-{
-}
-
-
-bool QListBox::isSelected(int)
-{
-}
-
-
-// class QListBoxItem ==========================================================
-
-QListBoxItem::QListBoxItem()
-{
-}
-
-QListBoxItem::~QListBoxItem()
-{
-}
-
-
-void QListBoxItem::setSelectable(bool)
-{
-}
-
-
-QListBox *QListBoxItem::listBox() const
-{
-}
-
-
-int QListBoxItem::width(const QListBox *) const
-{
-}
-
-
-int QListBoxItem::height(const QListBox *) const
-{
-}
-
-
-QListBoxItem *QListBoxItem::next() const
-{
-}
-
-
-QListBoxItem *QListBoxItem::prev() const
-{
-}
-
-
-
-// class QListBoxText ==========================================================
-
-QListBoxText::QListBoxText(const QString &text=QString::null)
-{
-}
-
-
-QListBoxText::~QListBoxText()
+QString QButton::text() const
 {
 }
 

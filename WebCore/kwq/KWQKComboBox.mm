@@ -35,4 +35,7 @@ KComboBox::KComboBox(bool rw, QWidget *parent=0, const char *name=0)
 {
 }
 
+KComboBox::~KComboBox()
+{
+}
 

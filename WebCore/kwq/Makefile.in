@@ -25,9 +25,12 @@ MMOBJECTS = \
 	_KWQOwner.o \
 	KWQApplication.o \
 	KWQBrush.o \
+	KWQButton.o \
+        KWQCheckBox.o \
         KWQColor.o \
         KWQColorGroup.o \
         KWQComboBox.o \
+        KWQCompletion.o \
         KWQCursor.o \
 	KWQFont.o \
 	KWQFontMetrics.o \
@@ -37,6 +40,7 @@ MMOBJECTS = \
         KWQKCompletionBox.o \
         KWQKCursor.o \
         KWQKLineEdit.o \
+        KWQKListBox.o \
         KWQKMessageBox.o \
         KWQListBox.o \
         KWQLineEdit.o \
@@ -48,6 +52,8 @@ MMOBJECTS = \
 	KWQPen.o \
 	KWQPixmap.o \
 	KWQPointArray.o \
+	KWQPushButton.o \
+	KWQRadioButton.o \
 	KWQScrollView.o \
 	KWQTextEdit.o \
 	KWQView.o \

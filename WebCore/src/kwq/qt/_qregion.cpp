@@ -133,6 +133,40 @@ QRegion::~QRegion()
     fprintf (stderr,"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
 }
 
+QRegion QRegion::eor( const QRegion &r ) const
+{
+    fprintf (stderr,"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+}
+
+
+QRegion QRegion::subtract( const QRegion &r ) const
+{
+    fprintf (stderr,"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+}
+
+
+QRegion QRegion::unite( const QRegion &r ) const
+{
+    fprintf (stderr,"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+}
+
+
+QRegion QRegion::copy() const
+{
+    fprintf (stderr,"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+}
+
+
+bool QRegion::isNull() const
+{
+    return data->is_null;
+}
+
+bool QRegion::contains( const QPoint &p ) const
+{
+    fprintf (stderr,"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+}
+
 /*!
   Constructs a rectangular or elliptic region.
 
@@ -245,39 +279,6 @@ void QRegion::exec( const QByteArray &buffer, int ver )
     *this = rgn;
 }
 
-QRegion QRegion::eor( const QRegion &r ) const
-{
-    fprintf (stderr,"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
-}
-
-
-QRegion QRegion::subtract( const QRegion &r ) const
-{
-    fprintf (stderr,"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
-}
-
-
-QRegion QRegion::unite( const QRegion &r ) const
-{
-    fprintf (stderr,"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
-}
-
-
-QRegion QRegion::copy() const
-{
-    fprintf (stderr,"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
-}
-
-
-bool QRegion::isNull() const
-{
-    return data->is_null;
-}
-
-bool QRegion::contains( const QPoint &p ) const
-{
-    fprintf (stderr,"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
-}
 
 
 /*****************************************************************************
