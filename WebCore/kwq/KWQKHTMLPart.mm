@@ -120,10 +120,12 @@ KWQKHTMLPart::KWQKHTMLPart()
     , _ownsView(false)
     , _mouseDownView(nil)
 {
+    // Must init the cache before connecting to any signals
+    Cache::init();
+
     // The widget is made outside this class in our case.
     KHTMLPart::init( 0, DefaultGUI );
 
-    Cache::init();
     mutableInstances().prepend(this);
     d->m_redirectionTimer.setMonitor(redirectionTimerMonitor, this);
 }

@@ -1,5 +1,16 @@
 2002-12-10  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Don.
+
+	- really fixed 3123727 - SJ: Viewmaster arm sometimes doesn't animate on
+	http://www.pixar.com/howwedoit/
+
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::KWQKHTMLPart): Call Cache::init before
+	KHTMLPart::init so we have a loader to connect the signals to.
+
+2002-12-10  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Darin.
 
 	- fixed 3123727 - SJ: Viewmaster arm sometimes doesn't animate on
