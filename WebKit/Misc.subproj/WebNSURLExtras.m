@@ -813,7 +813,7 @@ static BOOL readIDNScriptWhiteListFile(NSString *filename)
                 if (IDNScriptWhiteList[index] & mask) {
                     NSLog(@"%@: script code %s is listed twice\n", filename, word);
                 }
-                IDNScriptWhiteList[script] |= mask;
+                IDNScriptWhiteList[index] |= mask;
             }
         }
     }
