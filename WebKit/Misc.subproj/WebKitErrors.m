@@ -58,7 +58,7 @@ static void registerErrors(void);
     
     NSMutableDictionary *userInfo = [[NSMutableDictionary alloc] init];
     if (contentURLString) {
-        [userInfo setObject:contentURLString forKey:NSErrorFailingURLKey];
+        [userInfo setObject:contentURLString forKey:NSErrorFailingURLStringKey];
     }
     if (pluginPageURLString) {
         [userInfo setObject:pluginPageURLString forKey:WebKitErrorPlugInPageURLStringKey];

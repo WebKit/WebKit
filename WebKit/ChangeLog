@@ -1,3 +1,12 @@
+2003-05-13  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	- renamed NSErrorFailingURLKey to NSErrorFailingURLStringKey
+
+        * Misc.subproj/WebKitErrors.m:
+        (-[NSError _initWithPluginErrorCode:contentURLString:pluginPageURLString:pluginName:MIMEType:]):
+
 2003-05-13  John Sullivan  <sullivan@apple.com>
 
 	fixed build break
