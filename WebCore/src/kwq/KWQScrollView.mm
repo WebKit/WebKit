@@ -193,11 +193,13 @@ void QScrollView::resizeContents(int w, int h)
         IFWebView *wview = [(NSScrollView *)getView() documentView];
         
         KWQDEBUG4 ("0x%08x %s at w %d h %d\n", wview, [[[wview class] className] cString], w, h);
-        w -= (int)[NSScroller scrollerWidth];
+        //w -= (int)[NSScroller scrollerWidth];
+        //w -= 1;
         if (w < 0)
             w = 0;
         // Why isn't there a scollerHeight?
-        h -= (int)[NSScroller scrollerWidth];
+        //h -= (int)[NSScroller scrollerWidth];
+        //h -= 1;
         if (h < 0)
             h = 0;
         [wview setFrameSize: NSMakeSize (w,h)];
