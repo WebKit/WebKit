@@ -32,8 +32,8 @@ NSSize WebIconSmallSize = {16, 16};
 NSSize WebIconMediumSize = {32, 32};
 NSSize WebIconLargeSize = {128, 128};
 
-@interface NSEnumerator (WebIconDatabase)
-- (BOOL)_web_isAllStrings;
+@interface NSMutableDictionary (WebIconDatabase)
+- (void)_web_setObjectUsingSetIfNecessary:(id)object forKey:(id)key;
 @end
 
 @interface WebIconDatabase (WebInternal)
@@ -64,7 +64,14 @@ NSSize WebIconLargeSize = {128, 128};
     static WebIconDatabase *database = nil;
     
     if (!database) {
+#if !LOG_DISABLED
+        double start = CFAbsoluteTimeGetCurrent();
+#endif
         database = [[WebIconDatabase alloc] init];
+#if !LOG_DISABLED
+        Log(Timing, "initializing icon database with %d sites and %d icons took %f", 
+              [database->_private->URLToIconURL count], [database->_private->iconURLToURLs count], (CFAbsoluteTimeGetCurrent() - start));
+#endif
     }
     return database;
 }
@@ -238,6 +245,18 @@ NSSize WebIconLargeSize = {128, 128};
     [_private->fileDatabase open];
 }
 
+- (void)_clearDictionaries
+{
+    [_private->URLToIconURL release];
+    [_private->iconURLToURLs release];
+    [_private->iconsOnDiskWithURLs release];
+    [_private->originalIconsOnDiskWithURLs release];
+    _private->URLToIconURL = [[NSMutableDictionary alloc] init];
+    _private->iconURLToURLs = [[NSMutableDictionary alloc] init];
+    _private->iconsOnDiskWithURLs = [[NSMutableSet alloc] init];
+    _private->originalIconsOnDiskWithURLs = [[NSMutableSet alloc] init];
+}
+
 - (void)_loadIconDictionaries
 {
     WebFileDatabase *fileDB = _private->fileDatabase;
@@ -258,7 +277,6 @@ NSSize WebIconLargeSize = {128, 128};
     NSMutableDictionary *URLToIconURL = nil;
     if (v <= WebIconDatabaseCurrentVersion) {
         URLToIconURL = [[fileDB objectForKey:WebURLToIconURLKey] retain];
-        
         // Remove the old unnecessary mapping files.
         if (v < WebIconDatabaseCurrentVersion) {
             [fileDB removeObjectForKey:ObsoleteIconsOnDiskKey];
@@ -267,8 +285,8 @@ NSSize WebIconLargeSize = {128, 128};
     }
     
     if (![URLToIconURL isKindOfClass:[NSMutableDictionary class]]) {
-        [URLToIconURL release];
-        URLToIconURL = [[NSMutableDictionary alloc] init];
+        [self _clearDictionaries];
+        return;
     }
 
     // Keep a set of icon URLs on disk so we know what we need to write out or remove.
@@ -281,21 +299,10 @@ NSSize WebIconLargeSize = {128, 128};
     while ((URL = [enumerator nextObject])) {
         NSString *iconURL = (NSString *)[URLToIconURL objectForKey:URL];
         if (![URL isKindOfClass:[NSString class]] || ![iconURL isKindOfClass:[NSString class]]) {
-            [URLToIconURL release];
-            [iconURLToURLs release];
-            [iconsOnDiskWithURLs release];
-            URLToIconURL = [[NSMutableDictionary alloc] init];
-            iconURLToURLs = [[NSMutableDictionary alloc] init];
-            iconsOnDiskWithURLs = [[NSMutableSet alloc] init];
-            break;
+            [self _clearDictionaries];
+            return;
         }
-        NSMutableSet *iconURLs = (NSMutableSet *)[iconURLToURLs objectForKey:iconURL];
-        if (iconURLs == nil) {
-            iconURLs = [[NSMutableSet alloc] init];
-            [iconURLToURLs setObject:iconURLs forKey:iconURL];
-            [iconURLs release];
-        }
-        [iconURLs addObject:URL];
+        [iconURLToURLs _web_setObjectUsingSetIfNecessary:URL forKey:iconURL];
     }
 
     _private->URLToIconURL = URLToIconURL;
@@ -334,9 +341,9 @@ NSSize WebIconLargeSize = {128, 128};
     while ((iconURLString = [enumerator nextObject]) != nil) {
         NSMutableDictionary *icons = [_private->iconURLToIcons objectForKey:iconURLString];
         if (icons) {
-            // Save the 16 x 16 size icons as this is the only size the Safari uses.
+            // Save the 16 x 16 size icons as this is the only size that Safari uses.
             // If we ever use larger sizes, we should save the largest size so icons look better when scaling up.
-            // This also worksaround the problem with cnet's blank 32x32 icon (3105486).
+            // This also works around the problem with cnet's blank 32x32 icon (3105486).
             NSImage *icon = [icons objectForKey:[NSValue valueWithSize:NSMakeSize(16,16)]];
             if (!icon) {
                 // In case there is no 16 x 16 size.
@@ -500,13 +507,7 @@ NSSize WebIconLargeSize = {128, 128};
     }
     
     [_private->URLToIconURL setObject:iconURL forKey:URL];
-    
-    NSMutableSet *URLStrings = [_private->iconURLToURLs objectForKey:iconURL];
-    if (!URLStrings) {
-        URLStrings = [NSMutableSet set];
-        [_private->iconURLToURLs setObject:URLStrings forKey:iconURL];
-    }
-    [URLStrings addObject:URL];
+    [_private->iconURLToURLs _web_setObjectUsingSetIfNecessary:URL forKey:iconURL];
 
     int futureRetainCount = (int)(void *)CFDictionaryGetValue(_private->futureURLToRetainCount, URL);
 
@@ -567,8 +568,13 @@ NSSize WebIconLargeSize = {128, 128};
 
         // Remove the icon's associated site URLs
         [iconURLString retain];
-        NSSet *URLStrings = [_private->iconURLToURLs objectForKey:iconURLString];
-        [_private->URLToIconURL removeObjectsForKeys:[URLStrings allObjects]];
+        id URLs = [_private->iconURLToURLs objectForKey:iconURLString];
+        if ([URLs isKindOfClass:[NSMutableSet class]]) {
+            [_private->URLToIconURL removeObjectsForKeys:[URLs allObjects]];
+        } else {
+            ASSERT([URLs isKindOfClass:[NSString class]]);
+            [_private->URLToIconURL removeObjectForKey:URLs];
+        }
         [_private->iconURLToURLs removeObjectForKey:iconURLString];
         [iconURLString release];
     }
@@ -729,18 +735,20 @@ NSSize WebIconLargeSize = {128, 128};
 
 @end
 
-@implementation NSEnumerator (WebIconDatabase)
+@implementation NSMutableDictionary (WebIconDatabase)
 
-- (BOOL)_web_isAllStrings
+- (void)_web_setObjectUsingSetIfNecessary:(id)object forKey:(id)key
 {
-    Class c = [NSString class];
-    id o;
-    while ((o = [self nextObject])) {
-        if (![o isKindOfClass:c]) {
-            return NO;
-        }
+    id previousObject = [self objectForKey:key];
+    if (previousObject == nil) {
+        [self setObject:object forKey:key];
+    } else if ([previousObject isKindOfClass:[NSMutableSet class]]) {
+        [previousObject addObject:object];
+    } else {
+        NSMutableSet *objects = [[NSMutableSet alloc] initWithObjects:previousObject, object, nil];
+        [self setObject:objects forKey:key];
+        [objects release];
     }
-    return YES;
 }
 
 @end

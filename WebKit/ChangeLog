@@ -1,3 +1,18 @@
+2004-11-18  Chris Blumenberg  <cblu@apple.com>
+
+	<rdar://problem/3885708> save memory in icon DB by not using NSSets when holding 1 object
+	
+        Reviewed by sullivan.
+
+        * Misc.subproj/WebIconDatabase.m:
+        (+[WebIconDatabase sharedIconDatabase]): added timing code
+        (-[WebIconDatabase _clearDictionaries]): new
+        (-[WebIconDatabase _loadIconDictionaries]): call _clearDictionaries in 2 places before we bail, use _web_setObjectUsingSetIfNecessary:forKey: when adding site URLs to the iconURLToURLs dictionary
+        (-[WebIconDatabase _updateFileDatabase]): fixed comment
+        (-[WebIconDatabase _setIconURL:forURL:]): use _web_setObjectUsingSetIfNecessary:forKey: when adding site URLs to the iconURLToURLs dictionary
+        (-[WebIconDatabase _releaseIconForIconURLString:]): handle NSString objects retured from iconURLToURLs
+        (-[NSMutableDictionary _web_setObjectUsingSetIfNecessary:forKey:]): new, puts a set on the dictionary when there are 2 or more object for s key
+
 2004-11-17  Richard Williamson   <rjw@apple.com>
 
 	Fixed <rdar://problem/3885073> REGRESSION: Tab images at top of news.com.com replicated and squished
