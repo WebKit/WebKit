@@ -1,5 +1,14 @@
 2004-06-21  Chris Blumenberg  <cblu@apple.com>
 
+	Made WebKitErrorDescriptionPlugInCancelledConnection properly reuse an already localized string to avoid loc changes.
+
+        Reviewed by john.
+
+        * ChangeLog:
+        * Misc.subproj/WebKitErrors.m:
+
+2004-06-21  Chris Blumenberg  <cblu@apple.com>
+
 	Fixed: <rdar://problem/3701269> change in error handling behavior from 10.3.3 to 10.3.4 breaks unreleased Adobe PDF plug-in
 
         Reviewed by john.

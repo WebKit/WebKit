@@ -34,7 +34,7 @@ NSString * const WebKitErrorPlugInPageURLStringKey = 	@"WebKitErrorPlugInPageURL
 #define WebKitErrorDescriptionJavaUnavailable UI_STRING("Java is unavailable", "WebKitErrorJavaUnavailable description")
 
 // FIXME: We use "Cannot load plug-in" to avoid localization changes. Update the string when localization is not an issue.
-#define WebKitErrorDescriptionPlugInCancelledConnection UI_STRING("Cannot load plug-in", "WebKitErrorDescriptionPlugInCancelledConnection description")
+#define WebKitErrorDescriptionPlugInCancelledConnection WebKitErrorDescriptionCannotLoadPlugin
 
 static pthread_once_t registerErrorsControl = PTHREAD_ONCE_INIT;
 static void registerErrors(void);
