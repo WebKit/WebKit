@@ -1,14 +1,14 @@
+2002-05-24  Maciej Stachowiak  <mjs@apple.com>
+
+	Added license and acknowledgements.
+
+	* AUTHORS: Added.
+	* COPYING.LIB: Added.
+	* THANKS: Added.
+
 === 0.3 ===
 
-2002-05-24  Shelley A Sheridan  <sheridan@apple.com>
-
-	* ChangeLog:
-
 === Alexander-6 ===
-
-2002-05-23  Shelley A Sheridan  <sheridan@apple.com>
-
-	* ChangeLog:
 
 === Alexander-5 ===
 
