@@ -1,5 +1,48 @@
 2004-11-30  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by John
+
+        Fix for this bug:
+        
+        <rdar://problem/3863031> REGRESSION (Mail): caret continues flashing while mouse is down
+
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::timerEvent): Add a check for whether the mouse is down. Keep the caret drawn
+        with no blink if it is.
+
+2004-11-30  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+        Fix for this bug:
+        
+        <rdar://problem/3861602> cursor gets lost trying to backspace to delete a form control
+
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::setFocusNodeIfNeeded): This function would clear the selection if a <button>
+        or <input type=image> was checked for focus since these elements are keyboard-focusable,
+        but not mouse focusable. Also, this function did not work hard enough to set the focused
+        node, and was content to clear it if the first element checked failed the test, rather
+        than looking more at parents. This would have the effect of clearing, then resetting the
+        focus on a DIV containing a button or image with content on either side of it in the
+        process of arrowing over such content.
+
+2004-11-30  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::ReplaceSelectionCommand::doApply): Fix smart replace, which I (knowingly) broke with yesterday's checkin.
+        Also, call updateLayout() in one more place to prevent stale information being returned from caretMaxOffset().
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::isCharacterSmartReplaceExempt): Make this virtual and always return true. This gets rid of an
+        ugly APPLE_CHANGES block and use of KWQ(part) in ReplaceSelectionCommand.
+        * khtml/khtml_part.h: To help out with the isCharacterSmartReplaceExempt cleanup, add declaration.
+        * kwq/KWQKHTMLPart.h: To help out with the isCharacterSmartReplaceExempt cleanup, make 
+        isCharacterSmartReplaceExempt virtual.
+
+2004-11-30  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by me
 
         * khtml/editing/htmlediting.cpp:

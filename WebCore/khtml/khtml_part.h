@@ -898,6 +898,7 @@ public:
   void applyEditingStyleToElement(DOM::ElementImpl *) const;
   void removeEditingStyleFromElement(DOM::ElementImpl *) const;
   void print();
+  virtual bool isCharacterSmartReplaceExempt(const QChar &, bool);
 
   // Used to keep the part alive when running a script that might destroy it.
   void keepAlive();

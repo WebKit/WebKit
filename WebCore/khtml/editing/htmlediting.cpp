@@ -2920,23 +2920,20 @@ void ReplaceSelectionCommand::doApply()
     bool addTrailingSpace = false;
     if (m_smartReplace) {
         addLeadingSpace = startPos.leadingWhitespacePosition().isNull();
+        if (addLeadingSpace) {
+            QChar previousChar = VisiblePosition(startPos).previous().character();
+            if (!previousChar.isNull()) {
+                addLeadingSpace = !part->isCharacterSmartReplaceExempt(previousChar, true);
+            }
+        }
         addTrailingSpace = endPos.trailingWhitespacePosition().isNull();
-    }
-
-#if APPLE_CHANGES
-    if (addLeadingSpace) {
-        QChar previousChar = VisiblePosition(startPos).previous().character();
-        if (!previousChar.isNull()) {
-            addLeadingSpace = !KWQ(part)->isCharacterSmartReplaceExempt(previousChar, true);
+        if (addTrailingSpace) {
+            QChar thisChar = VisiblePosition(endPos).character();
+            if (!thisChar.isNull()) {
+                addTrailingSpace = !part->isCharacterSmartReplaceExempt(thisChar, false);
+            }
         }
     }
-    if (addTrailingSpace) {
-        QChar thisChar = VisiblePosition(endPos).character();
-        if (!thisChar.isNull()) {
-            addTrailingSpace = !KWQ(part)->isCharacterSmartReplaceExempt(thisChar, false);
-        }
-    }
-#endif
 
     document()->updateLayout();
 
@@ -3030,9 +3027,42 @@ void ReplaceSelectionCommand::doApply()
             refNode = node;
             node = next;
         }
+        document()->updateLayout();
         insertionPos = Position(lastNodeInserted, lastNodeInserted->caretMaxOffset());
     }
 
+    // Handle "smart replace" whitespace
+    if (addTrailingSpace && lastNodeInserted) {
+        if (lastNodeInserted->isTextNode()) {
+            TextImpl *text = static_cast<TextImpl *>(lastNodeInserted);
+            insertTextIntoNode(text, text->length(), nonBreakingSpaceString());
+            insertionPos = Position(text, text->length());
+        }
+        else {
+            NodeImpl *node = document()->createEditingTextNode(nonBreakingSpaceString());
+            insertNodeAfter(node, lastNodeInserted);
+            if (!firstNodeInserted)
+                firstNodeInserted = node;
+            lastNodeInserted = node;
+            insertionPos = Position(node, 1);
+        }
+    }
+
+    if (addLeadingSpace && firstNodeInserted) {
+        if (firstNodeInserted->isTextNode()) {
+            TextImpl *text = static_cast<TextImpl *>(firstNodeInserted);
+            insertTextIntoNode(text, 0, nonBreakingSpaceString());
+        }
+        else {
+            NodeImpl *node = document()->createEditingTextNode(nonBreakingSpaceString());
+            insertNodeBefore(node, firstNodeInserted);
+            firstNodeInserted = node;
+            if (!lastNodeInsertedInMergeEnd)
+                lastNodeInserted = node;
+        }
+    }
+
+    // Handle trailing newline
     if (m_fragment.hasInterchangeNewlineComment()) {
         if (startBlock == endBlock && !isProbablyBlock(lastNodeInserted)) {
             setEndingSelection(insertionPos);
