@@ -1,3 +1,14 @@
+2004-09-15  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3802232> REGRESSION (Mail): WebCore Editing must do smart copy
+	
+        Reviewed by kocienda.
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _writeSelectionToPasteboard:]): call instance method not class method to get pasteboard types since the types depends on the current selection granularity
+        (-[WebHTMLView pasteboardTypesForSelection]): if the selection granularity is "word" include the smart pasteboard type
+        (-[WebHTMLView writeSelectionWithPasteboardTypes:toPasteboard:]): put nil on the pasteboard for smart copy
+
 2004-09-14  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

@@ -124,6 +124,9 @@ void _NSResetKillRingOperationFlag(void);
 // Any non-zero value will do, but using something recognizable might help us debug some day.
 #define TRACKING_RECT_TAG 0xBADFACE
 
+// FIXME: This constant is copied from AppKit's _NXSmartPaste constant.
+#define WebSmartPastePboardType @"NeXT smart paste pasteboard type"
+
 static BOOL forceRealHitTest = NO;
 
 @interface WebHTMLView (WebTextSizing) <_web_WebDocumentTextSizing>
@@ -788,7 +791,7 @@ static WebHTMLView *lastHitView = nil;
 - (void)_writeSelectionToPasteboard:(NSPasteboard *)pasteboard
 {
     ASSERT([self _hasSelection]);
-    NSArray *types = [[self class] _selectionPasteboardTypes];
+    NSArray *types = [self pasteboardTypesForSelection];
     [pasteboard declareTypes:types owner:nil];
     [self writeSelectionWithPasteboardTypes:types toPasteboard:pasteboard];
 }
@@ -1353,7 +1356,13 @@ static WebHTMLView *lastHitView = nil;
 
 - (NSArray *)pasteboardTypesForSelection
 {
-    return [[self class] _selectionPasteboardTypes];
+    if ([[self _bridge] selectionGranularity] == WebSelectByWord) {
+        NSMutableArray *types = [[[[self class] _selectionPasteboardTypes] mutableCopy] autorelease];
+        [types addObject:WebSmartPastePboardType];
+        return types;
+    } else {
+        return [[self class] _selectionPasteboardTypes];
+    }
 }
 
 - (void)writeSelectionWithPasteboardTypes:(NSArray *)types toPasteboard:(NSPasteboard *)pasteboard
@@ -1387,6 +1396,10 @@ static WebHTMLView *lastHitView = nil;
         [s replaceOccurrencesOfString:NonBreakingSpaceString withString:@" " options:0 range:NSMakeRange(0, [s length])];
         [pasteboard setString:s forType:NSStringPboardType];
         [s release];
+    }
+    
+    if ([types containsObject:WebSmartPastePboardType] && [[self _bridge] selectionGranularity] == WebSelectByWord) {
+        [pasteboard setData:nil forType:WebSmartPastePboardType];
     }
 }
 
