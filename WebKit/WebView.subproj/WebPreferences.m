@@ -88,7 +88,7 @@
         @"Lucida Grande",               WebKitSansSerifFontPreferenceKey,
         @"Apple Chancery",              WebKitCursiveFontPreferenceKey,
         @"Papyrus",                     WebKitFantasyFontPreferenceKey,
-        @"6",                           WebKitMinimumFontSizePreferenceKey,
+        @"9",                           WebKitMinimumFontSizePreferenceKey,
         @"14",                          WebKitDefaultFontSizePreferenceKey,
         @"14", 				WebKitDefaultFixedFontSizePreferenceKey,
 	@"latin1", 		        WebKitDefaultTextEncodingNamePreferenceKey,

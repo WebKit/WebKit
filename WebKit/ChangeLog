@@ -1,3 +1,15 @@
+2003-01-02  Richard Williamson   <rjw@apple.com>
+
+        Increase the minimum font size to 9pt.  This bounds the lower
+        size of the sizes array used for named sizes.  Net effect is
+        to increase xx-small from 8pt to 9pt.  xx-small is used by
+        www.microsoft.com.
+                
+        Reviewed by hyatt.
+
+        * WebView.subproj/WebPreferences.m:
+        (+[WebPreferences load]):
+
 2003-01-02  Darin Adler  <darin@apple.com>
 
         Reviewed by Don.
