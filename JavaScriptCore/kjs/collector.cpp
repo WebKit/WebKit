@@ -29,9 +29,6 @@
 #ifdef KJS_DEBUG_MEM
 #include <typeinfo>
 #endif
-#ifdef APPLE_CHANGES
-#include <pthread.h>
-#endif
 
 namespace KJS {
 

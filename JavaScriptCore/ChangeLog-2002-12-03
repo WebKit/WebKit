@@ -1,3 +1,28 @@
+2002-08-09  Darin Adler  <darin@apple.com>
+
+	Some string speedups. Makes sony.com cached 11% faster.
+
+        * kjs/ustring.h: Made it possible for UChar objects to be uninitialized, which
+	gives a speed boost. Inlined CString's +=, UString's destructor, +=, and +.
+        * kjs/ustring.cpp:
+        (UString::UString): Optimize const char * version, which showed up
+	heavily in performance analysis. Added new two-UString version, which
+	makes the + operator fast. 
+        (UString::ascii): Remove thread safety changes. Change static buffer to remember
+	its size, and to always be at least 4096 bytes long; that way we never have to
+	reallocate unless it's for a long string. Also make code to extract the characters
+	significantly faster by getting rid of two pointer dereferences per character.
+        (UString::is8Bit): Avoid one pointer dereference per character.
+        (UString::toDouble): Use ascii() instead of cstring() to avoid copying the string.
+
+        * kjs/collector.cpp: Remove unneeded APPLE_CHANGES.
+        * kjs/regexp.cpp: Remove ifdefs around some APPLE_CHANGES that we
+	want to keep, because they just fix warnings.
+        * kjs/value.h: Remove obsolete APPLE_CHANGES comment.
+
+        * JavaScriptCore.pbproj/project.pbxproj: Project Builder decided
+	to move a line around in the file.
+
 2002-08-09  Maciej Stachowiak  <mjs@apple.com>
 
 	Fix my last change to actually call the versions of the lock functions

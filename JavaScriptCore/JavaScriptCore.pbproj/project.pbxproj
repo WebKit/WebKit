@@ -427,8 +427,8 @@
 			);
 			buildSettings = {
 				INSTALL_PATH = "@executable_path/../Frameworks";
-				i386 = YES;
 				SKIP_INSTALL = YES;
+				i386 = YES;
 			};
 			isa = PBXBuildStyle;
 			name = DeploymentFat;

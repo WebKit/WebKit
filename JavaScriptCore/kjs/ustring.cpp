@@ -103,11 +103,6 @@ CString &CString::operator=(const CString &str)
   return *this;
 }
 
-CString &CString::operator+=(const CString &str)
-{
-  return append(str.c_str());
-}
-
 int CString::size() const
 {
   return strlen(data);
@@ -119,18 +114,11 @@ bool KJS::operator==(const KJS::CString& c1, const KJS::CString& c2)
 }
 
 UChar UChar::null;
-#ifdef APPLE_CHANGES
 UString::Rep UString::Rep::null = { 0, 0, 0, 1 };
-#else
-UString::Rep UString::Rep::null = { 0, 0, 1 };
-#endif
 UString UString::null;
-#ifdef APPLE_CHANGES
-static pthread_once_t statBufferKeyOnce = PTHREAD_ONCE_INIT;
-static pthread_key_t statBufferKey;
-#else
-static char *statBuffer = 0L;
-#endif
+const int normalStatBufferSize = 4096;
+static char *statBuffer = 0;
+static int statBufferSize = 0;
 
 UChar::UChar(const UCharReference &c)
     : uc( c.unicode() )
@@ -139,11 +127,11 @@ UChar::UChar(const UCharReference &c)
 
 UChar UChar::toLower() const
 {
-  // ### properly supprot unicode tolower
+  // ### properly support unicode tolower
   if (uc >= 256 || islower(uc))
     return *this;
 
-  return UChar(tolower(uc));
+  return (unsigned char)tolower(uc);
 }
 
 UChar UChar::toUpper() const
@@ -151,7 +139,7 @@ UChar UChar::toUpper() const
   if (uc >= 256 || isupper(uc))
     return *this;
 
-  return UChar(toupper(uc));
+  return (unsigned char)toupper(uc);
 }
 
 UCharReference& UCharReference::operator=(UChar c)
@@ -176,9 +164,7 @@ UString::Rep *UString::Rep::create(UChar *d, int l)
   Rep *r = new Rep;
   r->dat = d;
   r->len = l;
-#ifdef APPLE_CHANGES
   r->capacity = l;
-#endif
   r->rc = 1;
 
   return r;
@@ -193,14 +179,21 @@ UString::UString()
 UString::UString(char c)
 {
     UChar *d = new UChar[1];
-    d[0] = UChar(0, c);
+    d[0] = c;
     rep = Rep::create(d, 1);
 }
 
 UString::UString(const char *c)
 {
-  attach(&Rep::null);
-  operator=(c);
+  if (!c) {
+    attach(&Rep::null);
+    return;
+  }
+  int length = strlen(c);
+  UChar *d = new UChar[length];
+  for (int i = 0; i < length; i++)
+    d[i].uc = c[i];
+  rep = Rep::create(d, length);
 }
 
 UString::UString(const UChar *c, int length)
@@ -226,9 +219,14 @@ UString::UString(const UString &b)
   attach(b.rep);
 }
 
-UString::~UString()
+UString::UString(const UString &a, const UString &b)
 {
-  release();
+  int aSize = a.size();
+  int bSize = b.size();
+  UChar *d = new UChar[aSize + bSize];
+  memcpy(d, a.data(), aSize * sizeof(UChar));
+  memcpy(d + aSize, b.data(), bSize * sizeof(UChar));
+  rep = Rep::create(d, aSize + bSize);
 }
 
 UString UString::from(int i)
@@ -274,7 +272,6 @@ UString UString::from(double d)
 
 UString &UString::append(const UString &t)
 {
-#ifdef APPLE_CHANGES
   int l = size();
   int tLen = t.size();
   int newLen = l + tLen;
@@ -291,53 +288,40 @@ UString &UString::append(const UString &t)
   release();
   rep = Rep::create(n, newLen);
   rep->capacity = newCapacity;
-#else
-  int l = size();
-  UChar *n = new UChar[l+t.size()];
-  memcpy(n, data(), l * sizeof(UChar));
-  memcpy(n+l, t.data(), t.size() * sizeof(UChar));
-  release();
-  rep = Rep::create(n, l + t.size());
-#endif
 
   return *this;
 }
 
 CString UString::cstring() const
 {
-  return CString(ascii());
+  return ascii();
 }
-
-#ifdef APPLE_CHANGES
-static void statBufferKeyCleanup(void *statBuffer)
-{
-  if (statBuffer != NULL)
-    delete [] (char *)statBuffer;
-}
-
-static void statBufferKeyInit(void)
-{
-  pthread_key_create(&statBufferKey, statBufferKeyCleanup);
-}
-#endif
 
 char *UString::ascii() const
 {
-#ifdef APPLE_CHANGES
-  pthread_once(&statBufferKeyOnce, statBufferKeyInit);
-  char *statBuffer = (char *)pthread_getspecific(statBufferKey);
-#endif
-  if (statBuffer)
+  // Never make the buffer smaller than normalStatBufferSize.
+  // Thus we almost never need to reallocate.
+  int length = size();
+  int neededSize = length + 1;
+  if (neededSize < normalStatBufferSize) {
+    neededSize = normalStatBufferSize;
+  }
+  if (neededSize != statBufferSize) {
     delete [] statBuffer;
+    statBuffer = new char [neededSize];
+    statBufferSize = neededSize;
+  }
+  
+  const UChar *p = data();
+  char *q = statBuffer;
+  const UChar *limit = p + length;
+  while (p != limit) {
+    *q = p->uc;
+    ++p;
+    ++q;
+  }
+  *q = '\0';
 
-  statBuffer = new char[size()+1];
-  for(int i = 0; i < size(); i++)
-    statBuffer[i] = data()[i].low();
-  statBuffer[size()] = '\0';
-
-#ifdef APPLE_CHANGES
-  pthread_setspecific(statBufferKey, statBuffer);
-#endif
   return statBuffer;
 }
 
@@ -345,13 +329,13 @@ char *UString::ascii() const
 void UString::globalClear()
 {
   delete [] statBuffer;
-  statBuffer = 0L;
+  statBuffer = 0;
+  statBufferSize = 0;
 }
 #endif
 
 UString &UString::operator=(const char *c)
 {
-#ifdef APPLE_CHANGES
   int l = c ? strlen(c) : 0;
   UChar *d;
   if (rep->rc == 1 && l < rep->capacity) {
@@ -362,16 +346,7 @@ UString &UString::operator=(const char *c)
     rep = Rep::create(d, l);
   }
   for (int i = 0; i < l; i++)
-    d[i].uc = (uchar)c[i];
-#else
-  release();
-  int l = c ? strlen(c) : 0;
-
-  UChar *d = new UChar[l];
-  for (int i = 0; i < l; i++)
     d[i].uc = c[i];
-  rep = Rep::create(d, l);
-#endif
 
   return *this;
 }
@@ -385,17 +360,15 @@ UString &UString::operator=(const UString &str)
   return *this;
 }
 
-UString &UString::operator+=(const UString &s)
-{
-  return append(s);
-}
-
 bool UString::is8Bit() const
 {
   const UChar *u = data();
-  for(int i = 0; i < size(); i++, u++)
+  const UChar *limit = u + size();
+  while (u < limit) {
     if (u->uc > 0xFF)
       return false;
+    ++u;
+  }
 
   return true;
 }
@@ -421,8 +394,7 @@ double UString::toDouble( bool tolerant ) const
   if (!is8Bit())
     return NaN;
 
-  CString str = cstring();
-  const char *c = str.c_str();
+  const char *c = ascii();
 
   // skip leading white space
   while (isspace(*c))
@@ -613,12 +585,4 @@ bool KJS::operator<(const UString& s1, const UString& s2)
     return (c1->unicode() < c2->unicode());
 
   return (l1 < l2);
-}
-
-UString KJS::operator+(const UString& s1, const UString& s2)
-{
-  UString tmp(s1);
-  tmp.append(s2);
-
-  return tmp;
 }
