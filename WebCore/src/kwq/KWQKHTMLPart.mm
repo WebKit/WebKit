@@ -40,6 +40,9 @@
 #include <xml/dom_docimpl.h>
 #include <html/html_documentimpl.h>
 #include <loader.h>
+#include <kjs.h>
+#include <kjs_dom.h>
+#include <dom_doc.h>
 
 #include <KWQKHTMLPart.h>
 
@@ -108,6 +111,9 @@ public:
     bool m_bFirstData:1;
     bool m_haveEncoding:1;
     bool m_haveCharset:1;
+    
+    KJSProxy *m_jscript;
+    int m_runningScripts;
 
     KHTMLPartPrivate(KHTMLPart *part)
     {
@@ -125,6 +131,9 @@ public:
         m_haveEncoding = false;
         m_recv = [[KHTMLPartNotificationReceiver alloc] init];
         m_recv->m_part = part;
+        
+        m_jscript = 0L;
+        m_runningScripts = 0;
     }
 
     ~KHTMLPartPrivate()
@@ -225,13 +234,16 @@ bool KHTMLPart::closeURL()
 
 DOM::HTMLDocument KHTMLPart::htmlDocument() const
 {
-    _logNotYetImplemented();
+  if (d->m_doc && d->m_doc->isHTMLDocument())
+    return static_cast<HTMLDocumentImpl*>(d->m_doc);
+  else
+    return static_cast<HTMLDocumentImpl*>(0);
 }
 
 
 DOM::Document KHTMLPart::document() const
 {
-    _logNotYetImplemented();
+    return d->m_doc;
 }
 
 
@@ -244,6 +256,7 @@ void KHTMLPart::setJScriptEnabled( bool enable )
 bool KHTMLPart::jScriptEnabled() const
 {
     _logNotYetImplemented();
+    return TRUE;
 }
 
 
@@ -256,24 +269,42 @@ void KHTMLPart::enableMetaRefresh( bool enable )
 bool KHTMLPart::metaRefreshEnabled() const
 {
     _logNotYetImplemented();
+    return FALSE;
 }
-
 
 // DUBIOUS, rather than executing the script this document should be
 // passed to the interpreter.
 QVariant KHTMLPart::executeScript( const QString &script )
 {
-    _logNotYetImplemented();
+    return executeScript( DOM::Node(), script );
 }
-
 
 // DUBIOUS, rather than executing the script this document should be
 // passed to the interpreter.
 QVariant KHTMLPart::executeScript( const DOM::Node &n, const QString &script )
 {
-    _logNotYetImplemented();
+    KJSProxy *proxy = jScript();
+    
+    if (!proxy) {
+        return QVariant();
+    }
+    
+    d->m_runningScripts++;
+    QVariant ret = proxy->evaluate( script.unicode(), script.length(), n );
+    d->m_runningScripts--;
+    
+    // FIXME: implement
+    //if ( d->m_submitForm ) {
+    //    submitFormAgain();
+    //}
+    
+    if ( d->m_doc ) {
+        d->m_doc->updateRendering();
+    }
+    
+    //kdDebug(6050) << "KHTMLPart::executeScript - done" << endl;
+    return ret;
 }
-
 
 void KHTMLPart::setJavaEnabled( bool enable )
 {
@@ -284,6 +315,7 @@ void KHTMLPart::setJavaEnabled( bool enable )
 bool KHTMLPart::javaEnabled() const
 {
     _logNotYetImplemented();
+    return FALSE;
 }
 
 
@@ -654,7 +686,12 @@ const KHTMLSettings *KHTMLPart::settings() const
 
 KJSProxy *KHTMLPart::jScript()
 {
-    _logNotYetImplemented();
+  if ( !d->m_jscript )
+  {
+    d->m_jscript = kjs_html_init(this);
+  }
+
+  return d->m_jscript;
 }
 
 

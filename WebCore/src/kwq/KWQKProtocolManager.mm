@@ -23,6 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include <kwqdebug.h>
+
 #include <qstring.h>
 
 #include <kprotocolmanager.h>
@@ -30,14 +32,19 @@
 
 bool KProtocolManager::useProxy()
 {
+    return FALSE;
 }
 
 
 QString KProtocolManager::httpProxy()
 {
+    _logNotYetImplemented();
+    return QString();
 }
 
 QString KProtocolManager::userAgentForHost( const QString& )
 {
+    _logNotYetImplemented();
+    return QString("intrigue-0.000001");
 }
 

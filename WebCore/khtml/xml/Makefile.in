@@ -59,6 +59,7 @@ CLEAN_FILES = $(OBJECTS) \
 CXXFLAGS = $(BASECXXFLAGS) \
     -DNEED_BOGUS_TEXTSTREAMS \
     -I$(TOPSRCDIR) \
+    -I$(TOPSRCDIR)/WebCore/src/kdelibs/khtml/ecma \
     -I$(TOPSRCDIR)/WebCore/src/kwq \
     -I$(TOPSRCDIR)/WebCore/src/kwq/kde \
     -I$(TOPSRCDIR)/WebCore/src/kwq/kdecore \

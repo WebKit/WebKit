@@ -24,6 +24,7 @@
  */
 
 #include <qobject.h>
+#include <qvariant.h>
 
 #include <kwqdebug.h>
 
@@ -70,11 +71,10 @@ void QObject::setName(const char *)
     _logNeverImplemented();
 }
 
-#ifdef DO_QVARIANT
 QVariant QObject::property(const char *name) const
 {
+    _logNeverImplemented();
 }
-#endif
 
 bool QObject::inherits(const char *) const
 {

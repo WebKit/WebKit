@@ -32,6 +32,19 @@
 
 #include "qobject.h"
 
+// class QGuardedPtrPrivate ====================================================
+
+class QGuardedPtrPrivate : public QObject, public QShared {
+public:
+    QGuardedPtrPrivate(QObject *o);
+    ~QGuardedPtrPrivate();
+    
+    QObject *object() const;
+    
+private:
+    QObject *p;
+};
+
 // class QGuardedPtr ===========================================================
 
 template <class T> class QGuardedPtr : public QObject {
@@ -44,25 +57,70 @@ public:
 
     // constructors, copy constructors, and destructors ------------------------
 
-    QGuardedPtr() {}
-    QGuardedPtr(T *o) {}
-    QGuardedPtr(const QGuardedPtr<T> &) {}
+    QGuardedPtr() {
+        d = new QGuardedPtrPrivate(0L);
+    }
+    QGuardedPtr(T *o) {
+        d = new QGuardedPtrPrivate(o);
+    }
+    
+    QGuardedPtr(const QGuardedPtr<T> &p) {
+        d = p.d;
+        ref();
+    }
 
-    ~QGuardedPtr() {}
+    ~QGuardedPtr() {
+        deref();
+    }
 
     // member functions --------------------------------------------------------
 
-    bool isNull() const {}
+    bool isNull() const {
+        return !d->object();
+    }
 
     // operators ---------------------------------------------------------------
 
-    QGuardedPtr &operator=(const QGuardedPtr &) {}
-    operator T *() const {}
-    T *operator->() const {}
+    QGuardedPtr &operator=(const QGuardedPtr &p) {
+        if (d != p.d) {
+            deref();
+            d = p.d;
+            ref();
+        } 
+        return *this;
+    }
+    
+    operator T *() const {
+        return (T*)d->object();
+    }
+    
+    T *operator->() const {
+        return (T*)d->object();
+    }
 
 // protected -------------------------------------------------------------------
 // private ---------------------------------------------------------------------
+private:
+    QGuardedPtrPrivate *d;
+
+    void ref()
+    {
+        d->ref();
+    }
+    
+    void deref()
+    {
+        if (d->deref())
+            delete d;
+    }
+
 
 }; // class QGuardedPtr ========================================================
+
+
+inline QObject *QGuardedPtrPrivate::object() const
+{
+    return p;
+}
 
 #endif

@@ -37,3 +37,11 @@ QString locateLocal(const char *type, const QString &filename,
 {
     return "/symroots/appdata/"+filename;
 }
+
+QString KStandardDirs::saveLocation(const char *, const QString &suffix = QString::null, 
+    bool create = true) const
+{
+    _logNotYetImplemented();
+    return QString();
+}
+    

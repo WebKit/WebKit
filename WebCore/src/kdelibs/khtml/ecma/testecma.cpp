@@ -31,6 +31,10 @@
  *   ---> foo
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <stdio.h>
 #include <kjs/kjs.h>
 #include <dom_doc.h>
@@ -46,8 +50,8 @@ int main(int, char **)
   kjs.enableDebug();
   DOM::Document doc;
 
-  DOMDocument *dd = new DOMDocument(&doc);
-  Global::current().put("document", KJSO(dd));
+ DOMDocument *dd = new DOMDocument(&doc);
+ Global::current().put("document", KJSO(dd));
 
   printf("Entering interactive mode.\n"
 	 "You may access the DOM via the 'document' property.\n"

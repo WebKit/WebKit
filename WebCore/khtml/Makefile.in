@@ -41,6 +41,7 @@ CLEAN_FILES = $(OBJECTS) \
 # Set flags for this directory
 
 CXXFLAGS = $(BASECXXFLAGS) \
+    -I$(TOPSRCDIR)/WebCore/src/kdelibs/khtml/ecma \
 	-I$(TOPSRCDIR)/WebCore/src/kwq \
 	-I$(TOPSRCDIR)/WebCore/src/kwq/dcop \
 	-I$(TOPSRCDIR)/WebCore/src/kwq/kde \

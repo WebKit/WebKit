@@ -33,6 +33,8 @@
 #include <kparts/part.h>
 #include <kparts/browserextension.h>
 
+#include <kjs_proxy.h>
+
 #if (defined(__APPLE__) && defined(__OBJC__) && defined(__cplusplus))
 #import <WCURICacheData.h>
 #endif
@@ -55,6 +57,9 @@ namespace khtml
   class RenderPart;
 };
 
+extern "C" {
+    KJSProxy *kjs_html_init(KHTMLPart *khtmlpart);
+}
  
 class KHTMLPart : public KParts::ReadOnlyPart		// a.k.a. WebPageDocument
 {
@@ -568,9 +573,11 @@ public:
 #endif
 
 private:
+
     KHTMLPartPrivate *d;
     // DUBIOUS, why are impls being referenced?
     DOM::HTMLDocumentImpl *docImpl() const;
+
 };
 
 #endif

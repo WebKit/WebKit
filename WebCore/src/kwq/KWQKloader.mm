@@ -776,6 +776,7 @@ DocLoader::DocLoader(KHTMLPart* part)
     m_showAnimations = true;
     m_part = part;
 
+    Cache::init();
     Cache::docloader->append( this );
 }
 

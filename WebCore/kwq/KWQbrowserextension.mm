@@ -22,6 +22,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+#include <kwqdebug.h>
 
 #include <browserextension.h>
 
@@ -31,28 +32,72 @@ namespace KParts {
 
 BrowserExtension::~BrowserExtension()
 {
+    _logNotYetImplemented();
 }
 
 
 BrowserInterface *BrowserExtension::browserInterface() const
 {
+    _logNotYetImplemented();
 }
 
 
 void BrowserExtension::createNewWindow(const KURL &)
 {
+    _logNotYetImplemented();
 }
 
+void BrowserExtension::createNewWindow(const KURL &, const KParts::URLArgs &, 
+    const KParts::WindowArgs &, KParts::ReadOnlyPart *&)
+{
+    _logNotYetImplemented();
+}
+
+void BrowserExtension::openURLRequest(const KURL &, const KParts::URLArgs &)
+{
+    _logNotYetImplemented();
+}
 
 // class BrowserHostExtension ==================================================
 
 BrowserHostExtension::BrowserHostExtension()
 {
+    _logNotYetImplemented();
 }
 
 
 BrowserHostExtension::~BrowserHostExtension()
 {
+    _logNotYetImplemented();
+}
+
+// struct URLArgs ==============================================================
+
+URLArgs::URLArgs()
+{
+    _logNotYetImplemented();
+}
+
+URLArgs::URLArgs( const URLArgs &)
+{
+    _logNotYetImplemented();
+}
+
+URLArgs::~URLArgs()
+{
+    _logNotYetImplemented();
+}
+
+// struct WindowArgs ===========================================================
+
+WindowArgs::WindowArgs()
+{
+    _logNotYetImplemented();
+}
+
+WindowArgs::WindowArgs(const WindowArgs &)
+{
+    _logNotYetImplemented();
 }
 
 
