@@ -1,3 +1,18 @@
+2003-08-04  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin
+
+	Fix for this bug:
+
+	<rdar://problem/3363318>: REGRESSION: Plug-in content doesn't show up, animate etc
+
+	WebNetscapePluginConnectionDelegate must implement this method:
+
+	- (void)connection:(NSURLConnection *)con didReceiveData:(NSData *)data lengthReceived:(long long)lengthReceived
+
+        * Plugins.subproj/WebNetscapePluginStream.m:
+        (-[WebNetscapePluginConnectionDelegate connection:didReceiveData:lengthReceived:])
+
 2003-08-04  Darin Adler  <darin@apple.com>
 
         Reviewed by Richard.
