@@ -326,10 +326,10 @@ NSString *KWQKHTMLPart::searchForLabelsBeforeElement(NSArray *labels, DOM::Eleme
         {
             // We hit another form element or the start of the form - bail out
             break;
-        } else if (nodeID == ID_TEXT) {
+        } else if (nodeID == ID_TEXT
+                   && n->renderer() && n->renderer()->style()->visibility() == khtml::VISIBLE)
+        {
             // For each text chunk, run the regexp
-            //??? CDATA_SECTION_NODE too?  See html_formimpl.cpp:2323
-            //??? must we have a renderer?  See khtml_part.cpp:2036
             QString nodeString = n->nodeValue().string();
             // add 100 for slop, to make it more likely that we'll search whole nodes
             if (lengthSearched + nodeString.length() > maxCharsSearched) {

@@ -1,3 +1,13 @@
+2003-03-06  Trey Matteson  <trey@apple.com>
+
+	Refinement of routine that scans the DOM for field labels.
+	We skip nodes that have no renderer, or are invisible.
+
+        Reviewed by hyatt.
+
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::searchForLabelsBeforeElement): Added check.
+
 2003-03-06  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3190580, tables should reset line-height and white-space
