@@ -1,3 +1,19 @@
+2002-10-22  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: 3023814 - contexual menus and dragging doesn't work for some images
+
+	Added a innerNonSharedNode to NodeInfo that points to the node which is not shared by another node. In this case, the innerNonSharedNode is the image node not the area node.
+
+        * khtml/rendering/render_frames.cpp:
+        (RenderFrameSet::nodeAtPoint): call setInnerNonSharedNode
+        * khtml/rendering/render_image.cpp:
+        (RenderImage::nodeAtPoint): call setInnerNonSharedNode
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::nodeAtPoint): call setInnerNonSharedNode
+        * khtml/rendering/render_object.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge elementAtPoint:]): use the innerNonSharedNode
+
 2002-10-22  David Hyatt  <hyatt@apple.com>
 
 	Fix slashdot.  Make sure the KONQBLOCK hack just throws away

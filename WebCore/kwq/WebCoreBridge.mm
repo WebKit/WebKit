@@ -472,8 +472,8 @@ using khtml::RenderPart;
         }
     }
 
-    NodeImpl *node = nodeInfo.innerNode();
-    if (isImage(node)) {
+    NodeImpl *node = nodeInfo.innerNonSharedNode();
+    if (node && isImage(node)) {
         ElementImpl* i =  static_cast<ElementImpl*>(node);
         NSURL *URL = [self completeURLForDOMString:parseURL(i->getAttribute(ATTR_SRC))];
         if (URL) {

@@ -1490,18 +1490,27 @@
 			fileRef = 848DFF840365FE6A00CA2ACA;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Private,
+				);
 			};
 		};
 		848DFF880365FE6A00CA2ACA = {
 			fileRef = 848DFF850365FE6A00CA2ACA;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Private,
+				);
 			};
 		};
 		848DFF890365FE6A00CA2ACA = {
 			fileRef = 848DFF860365FE6A00CA2ACA;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Private,
+				);
 			};
 		};
 		84D4BFF70348EF7600CA2ACA = {

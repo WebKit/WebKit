@@ -279,19 +279,22 @@ public:
         friend class DOM::HTMLAreaElementImpl;
     public:
         NodeInfo(bool readonly, bool active)
-            : m_innerNode(0), m_innerURLElement(0), m_readonly(readonly), m_active(active)
+            : m_innerNode(0), m_innerNonSharedNode(0), m_innerURLElement(0), m_readonly(readonly), m_active(active)
             { }
 
         DOM::NodeImpl* innerNode() const { return m_innerNode; }
+        DOM::NodeImpl* innerNonSharedNode() const { return m_innerNonSharedNode; }
         DOM::NodeImpl* URLElement() const { return m_innerURLElement; }
         bool readonly() const { return m_readonly; }
         bool active() const { return m_active; }
 
     private:
         void setInnerNode(DOM::NodeImpl* n) { m_innerNode = n; }
+        void setInnerNonSharedNode(DOM::NodeImpl* n) { m_innerNonSharedNode = n; }
         void setURLElement(DOM::NodeImpl* n) { m_innerURLElement = n; }
 
         DOM::NodeImpl* m_innerNode;
+        DOM::NodeImpl* m_innerNonSharedNode;
         DOM::NodeImpl* m_innerURLElement;
         bool m_readonly;
         bool m_active;
