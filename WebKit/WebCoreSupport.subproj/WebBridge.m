@@ -796,11 +796,11 @@
             ASSERT_NOT_REACHED();
         }
     } else {
-        errorCode = WebKitErrorCannotFindPlugin;
+        errorCode = WebKitErrorCannotFindPlugIn;
     }
 
     if (!errorCode && !view) {
-        errorCode = WebKitErrorCannotLoadPlugin;
+        errorCode = WebKitErrorCannotLoadPlugIn;
     }
 
     if (errorCode) {
@@ -1228,6 +1228,11 @@ static id <WebFormDelegate> formDelegate(WebBridge *self)
 - (BOOL)isViewSelected:(NSView *)view
 {
     return [view conformsToProtocol:@protocol(WebPluginSelection)] ? [(id <WebPluginSelection>)view isSelected] : NO;
+}
+
+- (NSString *)overrideMediaType
+{
+    return [[_frame webView] mediaStyle];
 }
 
 @end

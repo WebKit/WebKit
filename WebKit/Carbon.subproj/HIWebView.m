@@ -202,6 +202,8 @@ static inline void HIRectToQDRect( const HIRect* inRect, Rect* outRect )
     outRect->right = CGRectGetMaxX( *inRect );
 }
 
+static Class webViewClass;
+
 //----------------------------------------------------------------------------------
 // HIWebViewCreate
 //----------------------------------------------------------------------------------
@@ -213,6 +215,23 @@ HIWebViewCreate( HIViewRef* outControl )
     
 	HIWebViewRegisterClass();
 
+    webViewClass = [WebView class];
+	err = HIObjectCreate( kHIWebViewClassID, NULL, (HIObjectRef*)outControl );
+
+	return err;
+}
+
+//----------------------------------------------------------------------------------
+// HIWebViewCreateWithClass
+//----------------------------------------------------------------------------------
+//
+OSStatus HIWebViewCreateWithClass(Class aClass, HIViewRef * outControl)
+{
+	OSStatus			err;
+    
+	HIWebViewRegisterClass();
+
+    webViewClass = aClass;
 	err = HIObjectCreate( kHIWebViewClassID, NULL, (HIObjectRef*)outControl );
 
 	return err;
@@ -238,6 +257,7 @@ HIWebViewGetWebView( HIViewRef inView )
 // HIWebViewConstructor
 //----------------------------------------------------------------------------------
 //
+
 static HIWebView*
 HIWebViewConstructor( HIViewRef inView )
 {
@@ -249,7 +269,7 @@ HIWebViewConstructor( HIViewRef inView )
 	
 		view->fViewRef = inView;
 
-		view->fWebView = [[WebView alloc] initWithFrame: frame];
+		view->fWebView = [[webViewClass alloc] initWithFrame: frame];
 		[HIViewAdapter bindHIViewToNSView:inView nsView:view->fWebView];
 		
 		view->fFirstResponder = NULL;

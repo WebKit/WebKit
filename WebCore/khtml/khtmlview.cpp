@@ -1325,6 +1325,12 @@ void KHTMLView::setMediaType( const QString &medium )
 
 QString KHTMLView::mediaType() const
 {
+#if APPLE_CHANGES
+    // See if we have an override type.
+    QString overrideType = KWQ(m_part)->overrideMediaType();
+    if (!overrideType.isNull())
+        return overrideType;
+#endif
     return m_medium;
 }
 

@@ -115,8 +115,8 @@ static void registerErrors()
         WebKitErrorDescriptionFrameLoadInterruptedByPolicyChange,[NSNumber numberWithInt: WebKitErrorFrameLoadInterruptedByPolicyChange],
 
         // Plug-in and java errors
-        WebKitErrorDescriptionCannotFindPlugin,		[NSNumber numberWithInt: WebKitErrorCannotFindPlugin],
-        WebKitErrorDescriptionCannotLoadPlugin,		[NSNumber numberWithInt: WebKitErrorCannotLoadPlugin],
+        WebKitErrorDescriptionCannotFindPlugin,		[NSNumber numberWithInt: WebKitErrorCannotFindPlugIn],
+        WebKitErrorDescriptionCannotLoadPlugin,		[NSNumber numberWithInt: WebKitErrorCannotLoadPlugIn],
         WebKitErrorDescriptionJavaUnavailable,		[NSNumber numberWithInt: WebKitErrorJavaUnavailable],
         nil];
 

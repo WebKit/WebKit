@@ -1,3 +1,51 @@
+2004-04-27  Richard Williamson   <rjw@apple.com>
+
+	Fixes for:
+
+	<rdar://problem/3279301>: API: WebKitErrorCannotFindPlugin and WebKitErrorCannotLoadPlugin should use PlugIn
+	<rdar://problem/3278513>: API: Need API to control the size of WebHistory
+	<rdar://problem/3564519>: API: please add a way to set the media type for a WebView
+	<rdar://problem/3565642>: API: allow a way to extend the MIME types that a WebView will display
+	<rdar://problem/3577693>: API: add ability to subclass WebView but still use it with Carbon
+        
+	Reviewed by Chris.
+
+        * Carbon.subproj/HIWebView.h:
+        * Carbon.subproj/HIWebView.m:
+        (HIWebViewCreate):
+        (HIWebViewCreateWithClass):
+        (HIWebViewConstructor):
+        * History.subproj/WebHistory.h:
+        * History.subproj/WebHistory.m:
+        (-[WebHistoryPrivate setHistoryAgeInDaysLimit:]):
+        (-[WebHistoryPrivate historyAgeInDaysLimit]):
+        (-[WebHistoryPrivate setHistoryItemLimit:]):
+        (-[WebHistoryPrivate historyItemLimit]):
+        (-[WebHistoryPrivate _ageLimitDate]):
+        (-[WebHistoryPrivate arrayRepresentation]):
+        (-[WebHistory setHistoryItemLimit:]):
+        (-[WebHistory historyItemLimit]):
+        (-[WebHistory setHistoryAgeInDaysLimit:]):
+        (-[WebHistory historyAgeInDaysLimit]):
+        * History.subproj/WebHistoryPrivate.h:
+        * Misc.subproj/WebKitErrors.h:
+        * Misc.subproj/WebKitErrors.m:
+        (registerErrors):
+        * Plugins.subproj/WebNetscapePluginDocumentView.m:
+        (-[WebNetscapePluginDocumentView setDataSource:]):
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge isViewSelected:]):
+        (-[WebBridge overrideMediaType]):
+        * WebView.subproj/WebView.h:
+        * WebView.subproj/WebView.m:
+        (-[WebViewPrivate dealloc]):
+        (+[WebView MIMETypesShownAsHTML]):
+        (+[WebView setMIMETypesShownAsHTML:]):
+        (-[WebView customUserAgent]):
+        (-[WebView setMediaStyle:]):
+        (-[WebView mediaStyle]):
+        * WebView.subproj/WebViewPrivate.h:
+
 2004-04-27  David Hyatt  <hyatt@apple.com>
 
 	Eliminate the preferences for timed/resource layouts.  Accessing them is now taking 0.5% on the cvs-base

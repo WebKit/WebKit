@@ -445,6 +445,8 @@ typedef enum {
 - (void)setIsSelected:(BOOL)isSelected forView:(NSView *)view;
 - (BOOL)isViewSelected:(NSView *)view;
 
+- (NSString *)overrideMediaType;
+
 @end
 
 // This interface definition allows those who hold a WebCoreBridge * to call all the methods

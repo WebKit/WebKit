@@ -1,3 +1,16 @@
+2004-04-27  Richard Williamson   <rjw@apple.com>
+
+	<rdar://problem/3564519>: API: please add a way to set the media type for a WebView
+
+        Reviewed by Chris.
+
+        * khtml/khtmlview.cpp:
+        (KHTMLView::mediaType):
+        * kwq/KWQKHTMLPart.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::overrideMediaType):
+        * kwq/WebCoreBridge.h:
+
 2004-04-27  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Hyatt

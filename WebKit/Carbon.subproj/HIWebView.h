@@ -44,6 +44,27 @@ HIWebViewCreate(HIViewRef * outControl);
 
 
 /*
+ *  HIWebViewCreateWithClass(HIViewRef * outControl, Class aClass)
+ *  
+ *  Summary:
+ *    Creates a new web view using the specified subclass of WebView.
+ *  
+ *  Parameters:
+ *    
+ *    outControl:
+ *      The new web view.
+ *  
+ *  Result:
+ *    An operating system status code.
+ *  
+ *  Availability:
+ *    Mac OS X:         in version 10.4 and later
+ *    CarbonLib:        not available
+ *    Non-Carbon CFM:   not available
+ */
+extern OSStatus HIWebViewCreateWithClass(Class aClass, HIViewRef * outControl);
+
+/*
  *  HIWebViewGetWebView()
  *  
  *  Summary:

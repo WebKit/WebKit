@@ -27,12 +27,12 @@ enum {
 /*!
     @enum
     @abstract Plug-in and java errors
-    @constant WebKitErrorCannotFindPlugin
-    @constant WebKitErrorCannotLoadPlugin
+    @constant WebKitErrorCannotFindPlugIn
+    @constant WebKitErrorCannotLoadPlugIn
     @constant WebKitErrorJavaUnavailable
 */
 enum {
-    WebKitErrorCannotFindPlugin = 				200,
-    WebKitErrorCannotLoadPlugin = 				201,
+    WebKitErrorCannotFindPlugIn = 				200,
+    WebKitErrorCannotLoadPlugIn = 				201,
     WebKitErrorJavaUnavailable = 				202,
 };

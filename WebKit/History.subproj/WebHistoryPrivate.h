@@ -18,6 +18,10 @@
     NSMutableDictionary *_entriesByURL;
     NSMutableArray *_datesWithEntries;
     NSMutableArray *_entriesByDate;
+    BOOL itemLimitSet;
+    int itemLimit;
+    BOOL ageInDaysLimitSet;
+    int ageInDaysLimit;
 }
 
 - (void)addItem:(WebHistoryItem *)entry;
@@ -37,6 +41,11 @@
 - (BOOL)saveToURL:(NSURL *)URL error:(NSError **)error;
 
 - (NSCalendarDate*)_ageLimitDate;
+
+- (void)setHistoryItemLimit:(int)limit;
+- (int)historyItemLimit;
+- (void)setHistoryAgeInDaysLimit:(int)limit;
+- (int)historyAgeInDaysLimit;
 
 @end
 

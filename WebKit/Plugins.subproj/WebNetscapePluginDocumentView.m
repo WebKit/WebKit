@@ -79,7 +79,7 @@
     thePlugin = (WebNetscapePluginPackage *)[[WebPluginDatabase installedPlugins] pluginForMIMEType:MIME];
 
     if (![thePlugin load]) {
-        NSError *error = [[NSError alloc] _initWithPluginErrorCode:WebKitErrorCannotLoadPlugin
+        NSError *error = [[NSError alloc] _initWithPluginErrorCode:WebKitErrorCannotLoadPlugIn
                                                         contentURL:[[theDataSource request] URL]
                                                      pluginPageURL:nil
                                                         pluginName:[thePlugin name]

@@ -2753,6 +2753,14 @@ void KWQKHTMLPart::setBridge(WebCoreBridge *p)
     _windowWidget = new KWQWindowWidget(_bridge);
 }
 
+QString KWQKHTMLPart::overrideMediaType()
+{
+    NSString *overrideType = [_bridge overrideMediaType];
+    if (overrideType)
+        return QString::fromNSString(overrideType);
+    return QString();
+}
+
 void KWQKHTMLPart::setMediaType(const QString &type)
 {
     if (d->m_view) {

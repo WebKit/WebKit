@@ -288,15 +288,38 @@ NSString *DatesArrayKey = @"WebHistoryDates";
 
 #pragma mark ARCHIVING/UNARCHIVING
 
+- (void)setHistoryAgeInDaysLimit:(int)limit
+{
+    ageInDaysLimitSet = YES;
+    ageInDaysLimit = limit;
+}
+
+- (int)historyAgeInDaysLimit
+{
+    if (ageInDaysLimitSet)
+        return ageInDaysLimit;
+    return [[NSUserDefaults standardUserDefaults] integerForKey: @"WebKitHistoryAgeInDaysLimit"];
+}
+
+- (void)setHistoryItemLimit:(int)limit
+{
+    itemLimitSet = YES;
+    itemLimit = limit;
+}
+
+- (int)historyItemLimit
+{
+    if (itemLimitSet)
+        return itemLimit;
+    return [[NSUserDefaults standardUserDefaults] integerForKey: @"WebKitHistoryItemLimit"];
+}
+
 // Return a date that marks the age limit for history entries saved to or
 // loaded from disk. Any entry on this day or older should be rejected,
 // as tested with -[NSCalendarDate compareDay:]
 - (NSCalendarDate *)_ageLimitDate
 {
-    int ageInDaysLimit;
-
-    ageInDaysLimit = [[NSUserDefaults standardUserDefaults] integerForKey: @"WebKitHistoryAgeInDaysLimit"];
-    return [[NSCalendarDate calendarDate] dateByAddingYears:0 months:0 days:-ageInDaysLimit
+    return [[NSCalendarDate calendarDate] dateByAddingYears:0 months:0 days:-[self historyAgeInDaysLimit]
                                                       hours:0 minutes:0 seconds:0];
 }
 
@@ -313,7 +336,7 @@ NSString *DatesArrayKey = @"WebHistoryDates";
 
     arrayRep = [NSMutableArray array];
 
-    limit = [[NSUserDefaults standardUserDefaults] integerForKey: @"WebKitHistoryItemLimit"];
+    limit = [self historyItemLimit];
     ageLimitDate = [self _ageLimitDate];
     totalSoFar = 0;
     
@@ -780,4 +803,25 @@ static inline bool matchUnicodeLetter(UniChar c, UniChar lowercaseLetter)
 {
     return [_historyPrivate _ageLimitDate];
 }
+
+- (void)setHistoryItemLimit:(int)limit
+{
+    [_historyPrivate setHistoryItemLimit:limit];
+}
+
+- (int)historyItemLimit
+{
+    return [_historyPrivate historyItemLimit];
+}
+
+- (void)setHistoryAgeInDaysLimit:(int)limit
+{
+    [_historyPrivate setHistoryAgeInDaysLimit:limit];
+}
+
+- (int)historyAgeInDaysLimit
+{
+    return [_historyPrivate historyAgeInDaysLimit];
+}
+
 @end

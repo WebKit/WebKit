@@ -102,6 +102,22 @@ extern NSString *WebViewProgressFinishedNotification;
 + (BOOL)canShowMIMETypeAsHTML:(NSString *)MIMEType;
 
 /*!
+    @method MIMETypesShownAsHTML
+    @result Returns an array of NSStrings that describe the MIME types
+    WebKit will attempt to render as HTML.
+*/
++ (NSArray *)MIMETypesShownAsHTML;
+
+/*!
+    @method setMIMETypesShownAsHTML:
+    @discussion Sets the array of NSString MIME types that WebKit will
+    attempt to render as HTML.  Typically you will retrieve the built-in
+    array using MIMETypesShownAsHTML and add additional MIME types to that
+    array.
+*/
++ (void)setMIMETypesShownAsHTML:(NSArray *)MIMETypes;
+
+/*!
     @method initWithFrame:frameName:groupName:
     @abstract The designated initializer for WebView.
     @discussion Initialize a WebView with the supplied parameters. This method will 
@@ -307,6 +323,21 @@ extern NSString *WebViewProgressFinishedNotification;
     @result The custom text encoding name or nil if no custom text encoding name has been set.
 */
 - (NSString *)customTextEncodingName;
+
+/*!
+    @method setMediaStyle:
+    @discussion Set the media style for the WebView.  The mediaStyle will override the normal value
+    of the CSS media property.  Setting the value to nil will restore the normal value.
+    @param mediaStyle The value to use for the CSS media property.
+*/
+- (void)setMediaStyle:(NSString *)mediaStyle;
+
+/*!
+    @method mediaStyle
+    @result mediaStyle The value to use for the CSS media property, as set by setMediaStyle:.  It
+    will be nil unless set by that method.
+*/
+- (NSString *)mediaStyle;
 
 /*!
     @method stringByEvaluatingJavaScriptFromString:

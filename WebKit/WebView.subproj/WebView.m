@@ -28,6 +28,7 @@
 #import <WebKit/WebFrameInternal.h>
 #import <WebKit/WebFrameViewPrivate.h>
 #import <WebKit/WebHistoryItemPrivate.h>
+#import <WebKit/WebHTMLRepresentation.h>
 #import <WebKit/WebHTMLView.h>
 #import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebIconDatabase.h>
@@ -139,6 +140,8 @@ NSString *_WebMainFrameURLKey =         @"mainFrameURL";
     [progressItems release];
     
     [draggedTypes release];
+    
+    [mediaStyle release];
     
     [super dealloc];
 }
@@ -1157,6 +1160,44 @@ NSMutableDictionary *countInvocations;
     return [WebFrameView _canShowMIMETypeAsHTML:MIMEType];
 }
 
++ (NSArray *)MIMETypesShownAsHTML
+{
+    NSMutableDictionary *viewTypes = [WebFrameView _viewTypesAllowImageTypeOmission:YES];
+    NSEnumerator *enumerator = [viewTypes keyEnumerator];
+    id key;
+    NSMutableArray *array = [[[NSMutableArray alloc] init] autorelease];
+    
+    while ((key = [enumerator nextObject])) {
+        if ([viewTypes objectForKey:key] == [WebHTMLView class]) {
+            [array addObject:key];
+        }
+    }
+    
+    return array;
+}
+
++ (void)setMIMETypesShownAsHTML:(NSArray *)MIMETypes
+{
+    NSEnumerator *enumerator;
+    id key;
+    
+    NSMutableDictionary *viewTypes = [WebFrameView _viewTypesAllowImageTypeOmission:YES];
+    enumerator = [viewTypes keyEnumerator];
+    while ((key = [enumerator nextObject])) {
+        if ([viewTypes objectForKey:key] == [WebHTMLView class]) {
+            [WebView _unregisterViewClassAndRepresentationClassForMIMEType:key];
+        }
+    }
+    
+    int i, count = [MIMETypes count];
+    for (i = 0; i < count; i++) {
+        [WebView registerViewClass:[WebHTMLView class] 
+                representationClass:[WebHTMLRepresentation class] 
+                forMIMEType:[MIMETypes objectAtIndex:i]];
+    }
+}
+
+
 - (void)_commonInitializationWithFrameName:(NSString *)frameName groupName:(NSString *)groupName
 {
     _private->drawsBackground = YES;
@@ -1482,6 +1523,19 @@ NS_ENDHANDLER
 - (NSString *)customUserAgent
 {
     return _private->userAgentOverridden ? [[_private->userAgent retain] autorelease] : nil;
+}
+
+- (void)setMediaStyle:(NSString *)mediaStyle
+{
+    if (_private->mediaStyle != mediaStyle) {
+        [_private->mediaStyle release];
+        _private->mediaStyle = [mediaStyle copy];
+    }
+}
+
+- (NSString *)mediaStyle
+{
+    return _private->mediaStyle;
 }
 
 - (BOOL)supportsTextEncoding

@@ -243,6 +243,8 @@ public:
 
     KWQWindowWidget *topLevelWidget();
     
+    QString overrideMediaType();
+    
     void setMediaType(const QString &);
 
     void setUsesInactiveTextBackgroundColor(bool u) { _usesInactiveTextBackgroundColor = u; }
