@@ -38,9 +38,9 @@ class QScrollView : public QFrame {
 public:
     enum ScrollBarMode { AlwaysOff, AlwaysOn, Auto };
 
-    QScrollView(QWidget *parent=0, const char *name=0, int f=0);
+    QScrollView(QWidget *parent = 0, const char *name = 0, int flags = 0);
 
-    QWidget* viewport() const;
+    QWidget *viewport() const;
     int visibleWidth() const;
     int visibleHeight() const;
     int contentsWidth() const;
@@ -49,28 +49,26 @@ public:
     int contentsY() const;
     void scrollBy(int dx, int dy);
 
-    virtual void setContentsPos(int x, int y);
+    void setContentsPos(int x, int y);
 
     virtual void setVScrollBarMode(ScrollBarMode);
     virtual void setHScrollBarMode(ScrollBarMode);
 
-    virtual void addChild(QWidget* child, int x=0, int y=0);
-    void removeChild(QWidget* child);
+    void addChild(QWidget *child, int x = 0, int y = 0);
+    void removeChild(QWidget *child);
     int childX(QWidget *child);
     int childY(QWidget *child);
 
     virtual void resizeContents(int w, int h);
     void updateContents(int x, int y, int w, int h);
     void updateContents(const QRect &r);
-    void repaintContents(int x, int y, int w, int h, bool erase=TRUE);
+    void repaintContents(int x, int y, int w, int h, bool erase = true);
     QPoint contentsToViewport(const QPoint &);
     void contentsToViewport(int x, int y, int& vx, int& vy);
     void viewportToContents(int vx, int vy, int& x, int& y);
 
-    virtual void viewportWheelEvent(QWheelEvent *);
-
-    QWidget *clipper() const;
-    void enableClipper(bool);
+    QWidget *clipper() const { return 0; }
+    void enableClipper(bool) { }
 
     void setStaticBackground(bool);
 

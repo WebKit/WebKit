@@ -189,21 +189,15 @@ using namespace khtml;
     }
 }
 
-- (void)_drawRect:(NSRect)rect withPainter:(QPainter *)p
+- (void)drawRect:(NSRect)rect withPainter:(QPainter *)p
 {
-    DOM::DocumentImpl *doc = part->xmlDocImpl();
-    if (doc) {
-        khtml::RenderObject *renderer = doc->renderer();
-        if (renderer) {
-            renderer->print(p, (int)rect.origin.x, (int)rect.origin.y, (int)rect.size.width, (int)rect.size.height, 0, 0);
-        }
-    }
+    part->impl->paint(*p, (int)rect.origin.x, (int)rect.origin.y, (int)rect.size.width, (int)rect.size.height);
 }
 
 - (void)drawRect:(NSRect)rect
 {
     QPainter p;
-    [self _drawRect:rect withPainter:&p];
+    [self drawRect:rect withPainter:&p];
 }
 
 - (void)adjustFrames:(NSRect)rect
@@ -215,7 +209,7 @@ using namespace khtml;
     [self forceLayout];
     QPainter p;
     p.setPaintingDisabled(YES);
-    [self _drawRect:rect withPainter:&p];
+    [self drawRect:rect withPainter:&p];
 }
 
 - (NSObject *)copyDOMNode:(DOM::NodeImpl *)node copier:(id <WebCoreDOMTreeCopier>)copier

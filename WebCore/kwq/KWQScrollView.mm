@@ -29,6 +29,8 @@
 
 #import <kwqdebug.h>
 
+#import <KWQKHTMLPartImpl.h>
+
 /*
     This class implementation does NOT actually emulate the Qt QScrollView.
     It does provide an implementation that khtml will use to interact with
@@ -90,7 +92,6 @@ int QScrollView::visibleWidth() const
     return visibleWidth;
 }
 
-
 int QScrollView::visibleHeight() const
 {
     NSScrollView *view = (NSScrollView *)getView();
@@ -101,10 +102,9 @@ int QScrollView::visibleHeight() const
     } else {
         visibleHeight = (int)[view bounds].size.height;
     }
-        
+    
     return visibleHeight;
 }
-
 
 int QScrollView::contentsWidth() const
 {
@@ -114,7 +114,6 @@ int QScrollView::contentsWidth() const
         return (int)[docView bounds].size.width;
     return (int)[view bounds].size.width;
 }
-
 
 int QScrollView::contentsHeight() const
 {
@@ -195,9 +194,10 @@ void QScrollView::addChild(QWidget* child, int x, int y)
     NSView *thisView, *thisDocView, *subview;
 
     KWQ_ASSERT(child != this);
+    
+    KWQKHTMLPartImpl::addedWidget(child);
 
-    //if (child->x() != x || child->y() != y)
-        child->move(x, y);
+    child->move(x, y);
     
     thisView = getView();
     thisDocView = [thisView _KWQ_getDocumentView];
@@ -211,7 +211,6 @@ void QScrollView::addChild(QWidget* child, int x, int y)
     // code in QWidget::internalSetGeometry.
     if ([subview conformsToProtocol:@protocol(WebCoreFrameView)]) {
         subview = [subview superview];
-        //[subview setFrameOrigin: NSMakePoint (x, y)];
     }
     
     KWQ_ASSERT(subview != thisView);
@@ -244,8 +243,7 @@ void QScrollView::resizeContents(int w, int h)
         if (h < 0)
             h = 0;
         [view setFrameSize: NSMakeSize (w,h)];
-    }
-    else {
+    } else {
         resize (w, h);
     }
 }
@@ -305,22 +303,6 @@ void QScrollView::viewportToContents(int vx, int vy, int& x, int& y)
     y = (int)np.y;
 }
 
-void QScrollView::viewportWheelEvent(QWheelEvent *)
-{
-    _logNeverImplemented();
-}
-
-QWidget *QScrollView::clipper() const
-{
-    _logNeverImplemented();
-    return (QWidget *)this;
-}
-
-void QScrollView::enableClipper(bool)
-{
-    _logNeverImplemented();
-}
-
 void QScrollView::setStaticBackground(bool)
 {
     _logNeverImplemented();
@@ -328,7 +310,6 @@ void QScrollView::setStaticBackground(bool)
 
 void QScrollView::resizeEvent(QResizeEvent *)
 {
-    _logNeverImplemented();
 }
 
 void QScrollView::ensureVisible(int,int)

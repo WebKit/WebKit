@@ -39,18 +39,12 @@
 
 #undef _KWQ_TIMING
 
-static void recursive(const DOM::Node &pNode, const DOM::Node &node)
-{
-    DOM::Node cur_child = node.lastChild();
+using khtml::Decoder;
+using khtml::RenderObject;
+using khtml::RenderPart;
+using khtml::RenderWidget;
 
-    KWQDEBUG("cur_child: %s = %s", cur_child.nodeName().string().latin1(), cur_child.nodeValue().string().latin1());
-
-    while(!cur_child.isNull())
-    {
-        recursive(node, cur_child);
-        cur_child = cur_child.previousSibling();
-    }
-}
+NSMutableSet *KWQKHTMLPartImpl::viewsNotYetAdded = nil;
 
 void KHTMLPart::onURL(const QString &)
 {
@@ -240,7 +234,7 @@ void KWQKHTMLPartImpl::write( const char *str, int len )
 
     // begin lines added in lieu of big fixme    
     if ( !d->m_decoder ) {
-        d->m_decoder = new khtml::Decoder();
+        d->m_decoder = new Decoder();
         if(!d->m_encoding.isNull())
             d->m_decoder->setEncoding(d->m_encoding.latin1(), d->m_haveEncoding);
         else {
@@ -424,7 +418,7 @@ void KWQKHTMLPartImpl::urlSelected( const QString &url, int button, int state, c
     [frame loadURL:clickedURL.getNSURL()];
 }
 
-bool KWQKHTMLPartImpl::requestFrame( khtml::RenderPart *frame, const QString &url, const QString &frameName,
+bool KWQKHTMLPartImpl::requestFrame( RenderPart *frame, const QString &url, const QString &frameName,
                                      const QStringList &params, bool isIFrame )
 {
     KWQ_ASSERT(!frameExists(frameName));
@@ -449,7 +443,7 @@ bool KWQKHTMLPartImpl::requestFrame( khtml::RenderPart *frame, const QString &ur
     {
         // static cast is safe as of isIFrame being false.
         // but: shouldn't we support this javascript hack for iframes aswell?
-        khtml::RenderFrame* rf = static_cast<khtml::RenderFrame*>(frame);
+        RenderFrame* rf = static_cast<RenderFrame*>(frame);
         assert(rf);
         QVariant res = executeScript( DOM::Node(rf->frameImpl()), url.right( url.length() - 11) );
         if ( res.type() == QVariant::String ) {
@@ -465,7 +459,7 @@ bool KWQKHTMLPartImpl::requestFrame( khtml::RenderPart *frame, const QString &ur
     return true;
 }
 
-bool KWQKHTMLPartImpl::requestObject(khtml::RenderPart *frame, const QString &url, const QString &serviceType, const QStringList &args)
+bool KWQKHTMLPartImpl::requestObject(RenderPart *frame, const QString &url, const QString &serviceType, const QStringList &args)
 {
     if (url.isEmpty()) {
         return false;
@@ -666,67 +660,118 @@ void KWQKHTMLPartImpl::unfocusWindow()
     [bridge unfocusWindow];
 }
 
-
 void KWQKHTMLPartImpl::overURL( const QString &url, const QString &target, int modifierState)
 {
-  if (url.isEmpty()) {
-      setStatusBarText(QString());
-      return;
-  }
+    if (url.isEmpty()) {
+        setStatusBarText(QString());
+        return;
+    }
 
-  NSString *message;
+    NSString *message;
+    
+    // FIXME: This would do strange things with a link that said "xjavascript:".
+    int position = url.find("javascript:", 0, false);
+    if (position != -1) {
+        // FIXME: Is it worthwhile to special-case scripts that do a window.open and nothing else?
+        const QString scriptName = url.mid(position + strlen("javascript:"));
+        message = [NSString stringWithFormat:@"Run script \"%@\"", scriptName.getNSString()];
+        setStatusBarText(QString::fromNSString(message));
+        return;
+    }
+    
+    KURL u = part->completeURL(url);
+    
+    if (u.protocol() == QString("mailto")) {
+        // FIXME: addressbook integration? probably not worth it...
+        
+        setStatusBarText(QString::fromNSString([NSString stringWithFormat:@"Send email to %@", KURL::decode_string(u.path()).getNSString()]));
+        return;
+    }
+    
+    NSString *format;
+    
+    if (target == QString("_blank")) {
+        // FIXME: should use curly quotes
+        format = @"Open \"%@\" in a new window";
+        
+    } else if (!target.isEmpty() &&
+                (target != QString("_top")) &&
+                (target != QString("_self")) &&
+                (target != QString("_parent"))) {
+        if (frameExists(target)) {
+            // FIXME: distinguish existing frame in same window from
+            // existing frame name for other window
+            format = @"Go to \"%@\" in another frame";
+        } else {
+            format = @"Open \"%@\" in a new window";
+        }
+    } else {
+        format = @"Go to \"%@\"";
+    }
+    
+    if ([bridge modifierTrackingEnabled]) {
+        if (modifierState & MetaButton) {
+            if (modifierState & ShiftButton) {
+                format = @"Open \"%@\" in a new window, behind the current window";
+            } else {
+                format = @"Open \"%@\" in a new window";
+            }
+        } else if (modifierState & AltButton) {
+            format = @"Download \"%@\"";
+        }
+    }
+    
+    setStatusBarText(QString::fromNSString([NSString stringWithFormat:format, url.getNSString()]));
+}
 
-  // FIXME: This would do strange things with a link that said "xjavascript:".
-  int position = url.find("javascript:", 0, false);
-  if (position != -1) {
-      // FIXME: Is it worthwhile to special-case scripts that do a window.open and nothing else?
-      const QString scriptName = url.mid(position + strlen("javascript:"));
-      message = [NSString stringWithFormat:@"Run script \"%@\"", scriptName.getNSString()];
-      setStatusBarText(QString::fromNSString(message));
-      return;
-  }
+void KWQKHTMLPartImpl::paint(QPainter &p, int x, int y, int width, int height)
+{
+    DOM::DocumentImpl *doc = part->xmlDocImpl();
+    if (!doc) {
+        return;
+    }
+    RenderObject *renderer = doc->renderer();
+    if (!renderer) {
+        return;
+    }
+    
+    // Walk the render tree, putting all the views into a set.
+    KWQ_ASSERT(viewsNotYetAdded == nil);
+    viewsNotYetAdded = [[NSMutableSet alloc] init];
+    buildViewsNotYetAddedSet(renderer);
+    
+    // We will remove views from the set when the corresponding widget gets an addChild call.
+    
+    renderer->print(&p, x, y, width, height, 0, 0);
 
-  KURL u = part->completeURL(url);
+    // Call removeFromSuperview on any that are still in the set at the end.
+    [viewsNotYetAdded makeObjectsPerformSelector:@selector(removeFromSuperview)];
+    [viewsNotYetAdded release];
+    viewsNotYetAdded = nil;
+}
 
-  if (u.protocol() == QString("mailto")) {
-      // FIXME: addressbook integration? probably not worth it...
-      
-      setStatusBarText(QString::fromNSString([NSString stringWithFormat:@"Send email to %@", KURL::decode_string(u.path()).getNSString()]));
-      return;
-  }
+void KWQKHTMLPartImpl::addedWidget(QWidget *widget)
+{
+    NSView *view = widget->getView();
+    if (view) {
+        [viewsNotYetAdded removeObject:view];
+    }
+}
 
-  NSString *format;
-
-  if (target == QString("_blank")) {
-      // FIXME: should use curly quotes
-      format = @"Open \"%@\" in a new window";
-      
-  } else if (!target.isEmpty() &&
-             (target != QString("_top")) &&
-             (target != QString("_self")) &&
-             (target != QString("_parent"))) {
-      if (frameExists(target)) {
-	  // FIXME: distinguish existing frame in same window from
-	  // existing frame name for other window
-          format = @"Go to \"%@\" in another frame";
-      } else {
-	  format = @"Open \"%@\" in a new window";
-      }
-  } else {
-      format = @"Go to \"%@\"";
-  }
-
-  if ([bridge modifierTrackingEnabled]) {
-      if (modifierState & MetaButton) {
-	  if (modifierState & ShiftButton) {
-	      format = @"Open \"%@\" in a new window, behind the current window";
-	  } else {
-	      format = @"Open \"%@\" in a new window";
-	  }
-      } else if (modifierState & AltButton) {
-	  format = @"Download \"%@\"";
-      }
-  }
-  
-  setStatusBarText(QString::fromNSString([NSString stringWithFormat:format, url.getNSString()]));
+void KWQKHTMLPartImpl::buildViewsNotYetAddedSet(RenderObject *renderObject)
+{
+    RenderWidget *renderWidget = dynamic_cast<RenderWidget *>(renderObject);
+    if (renderWidget) {
+        QWidget *widget = renderWidget->widget();
+        if (widget) {
+            NSView *view = widget->getView();
+            if (view) {
+                [viewsNotYetAdded addObject:view];
+            }
+        }
+    }
+    
+    for (RenderObject *child = renderObject->firstChild(); child; child = child->nextSibling()) {
+        buildViewsNotYetAddedSet(child);
+    }
 }

@@ -44,13 +44,11 @@ class KWQWindowWidget : public QWidget
     static KWQWindowWidget *fromNSWindow(NSWindow *window);
 
     virtual QSize sizeHint() const;
-    virtual QSize minimumSizeHint() const;
     virtual QRect frameGeometry() const;
 
     virtual QWidget *topLevelWidget() const;
     virtual QPoint mapToGlobal(const QPoint &) const;
     virtual QPoint mapFromGlobal(const QPoint &) const;
-    virtual void setCursor(const QCursor &);
 
  protected:
     virtual void internalSetGeometry( int x, int y, int w, int h );

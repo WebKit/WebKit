@@ -66,10 +66,12 @@ public:
     virtual ~QWidget();
 
     virtual QSize sizeHint() const;
-    virtual void setActiveWindow();
     virtual void setEnabled(bool);
-    virtual void setAutoMask(bool);
-    virtual void setMouseTracking(bool);
+    
+    void setActiveWindow();
+
+    void setAutoMask(bool) { }
+    void setMouseTracking(bool) { }
 
     long winId() const;
     int x() const;
@@ -107,24 +109,23 @@ public:
     virtual void setFont(const QFont &);
     
     void constPolish() const;
-    virtual QSize minimumSizeHint() const;
     bool isVisible() const;
-    virtual void setCursor(const QCursor &);
-    virtual QCursor cursor();
+    void setCursor(const QCursor &);
+    QCursor cursor();
     void unsetCursor();
     bool event(QEvent *);
     bool focusNextPrevChild(bool);
     bool hasMouseTracking() const;
 
-    virtual void show();
-    virtual void hide();
+    void show() { }
+    void hide() { }
 
-    virtual void showEvent(QShowEvent *);
-    virtual void hideEvent(QHideEvent *);
-    virtual void wheelEvent(QWheelEvent *);
-    virtual void keyPressEvent(QKeyEvent *);
-    virtual void keyReleaseEvent(QKeyEvent *);
-    virtual void focusOutEvent(QFocusEvent *);
+    void showEvent(QShowEvent *) { }
+    void hideEvent(QHideEvent *) { }
+    void wheelEvent(QWheelEvent *) { }
+    void keyPressEvent(QKeyEvent *) { }
+    void keyReleaseEvent(QKeyEvent *) { }
+    void focusOutEvent(QFocusEvent *) { }
 
     enum BackgroundMode { NoBackground };    
     void setBackgroundMode(BackgroundMode) { }

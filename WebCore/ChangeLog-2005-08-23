@@ -1,5 +1,39 @@
 2002-07-24  Darin Adler  <darin@apple.com>
 
+	- fixed 2949235 -- checkboxes in wrong place until you scroll away and back
+
+	The problem here was that we put views in when we print, but we never removed them.
+	I added code to keep track of existing views, and remove them if they are not re-added.
+
+        * kwq/KWQKHTMLPartImpl.h: Add paint, addedWidget, buildViewsNotAddedSet, and viewsNotYetAdded.
+	It might be nice to find a different place to hang this that is not included by the KHTML code.
+	But I think that having this on the bridge would be worse.
+        * kwq/KWQKHTMLPartImpl.mm:
+        (KWQKHTMLPartImpl::paint): Added. Removes any views that are not explicitly added by RenderWidget
+	during the print process.
+        (KWQKHTMLPartImpl::addedWidget): Added. Called by KWQScrollView to tell us a view was added.
+        (KWQKHTMLPartImpl::buildViewsNotYetAddedSet): Added. Used to build the initial set of views.
+
+        * kwq/KWQScrollView.mm: (QScrollView::addChild): Added call to KWQKHTMLPartImpl::addedWidget.
+        * kwq/WebCoreBridge.mm: (-[WebCoreBridge drawRect:withPainter:]): Calls KWQKHTMLPartImpl::paint.
+
+        * kwq/KWQWindowWidget.mm: (KWQWindowWidget::frameGeometry), (KWQWindowWidget::mapToGlobal),
+	(KWQWindowWidget::mapFromGlobal), (KWQWindowWidget::internalSetGeometry):
+	Fixed logic to work properly for windows not on main screen.
+
+        * khtml/khtml_part.cpp: Moved the boundary of an existing ifndef APPLE_CHANGES so that
+	KHTMLPart::show() and hide() are not compiled, mainly for clarity.
+        * khtml/rendering/render_replaced.cpp: (RenderWidget::detach): Removed unneeded APPLE_CHANGES.
+
+        * kwq/KWQWindowWidget.h: Removed some unneeded virtual functions.
+        * kwq/qt/qscrollview.h: Removed some unneeded virtual functions, made others non-virtual.
+        * kwq/qt/qwidget.h: Removed some unneeded virtual functions, made others non-virtual.
+        * kwq/KWQWidget.mm: Removed a lot of unused and unneeded stuff.
+
+        * force-clean-timestamp: Needed to do this because I changed header files.
+
+2002-07-24  Darin Adler  <darin@apple.com>
+
 	- fixed 3006329 - space should be stripped from beginning of relative url
 
         * kwq/KWQKURL.mm: (KURL::normalizeRelativeURLString): Added a call to stripWhiteSpace.

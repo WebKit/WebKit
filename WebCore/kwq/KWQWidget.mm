@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,15 +24,16 @@
  */
 
 #import <qwidget.h>
-#import <WebCoreFrameView.h>
+
 #import <KWQView.h>
+#import <WebCoreFrameView.h>
 #import <kwqdebug.h>
 #import <KWQWindowWidget.h>
 
 /*
-    A QWidget rougly corresponds to an NSView.  In Qt a QFrame and QMainWindow inherit
+    A QWidget roughly corresponds to an NSView.  In Qt a QFrame and QMainWindow inherit
     from a QWidget.  In Cocoa a NSWindow does not inherit from NSView.  We
-    emulate QWidgets using NSViews.
+    emulate most QWidgets using NSViews.
 */
 
 
@@ -79,14 +80,6 @@ void QWidget::setActiveWindow()
 }
 
 void QWidget::setEnabled(bool) 
-{
-}
-
-void QWidget::setAutoMask(bool) 
-{
-}
-
-void QWidget::setMouseTracking(bool) 
 {
 }
 
@@ -163,11 +156,7 @@ QWidget *QWidget::topLevelWidget() const
 	window = [view window];
     }
 
-    if (window != nil) {	
-	return KWQWindowWidget::fromNSWindow(window);
-    } else {
-	return NULL;
-    }
+    return window ? KWQWindowWidget::fromNSWindow(window) : NULL;
 }
 
 QPoint QWidget::mapToGlobal(const QPoint &p) const
@@ -255,20 +244,6 @@ void QWidget::constPolish() const
 {
 }
 
-QSize QWidget::minimumSizeHint() const
-{
-    NSView *view = getView();
-    
-    if ([view isKindOfClass:[NSControl class]]) {
-        NSControl *control = (NSControl *)view;
-        [control sizeToFit];
-        NSRect frame = [view frame];
-        return QSize((int)frame.size.width, (int)frame.size.height);
-    }
-
-    return QSize(0,0);
-}
-
 bool QWidget::isVisible() const
 {
     // FIXME - rewrite interms of top level widget?
@@ -314,14 +289,6 @@ bool QWidget::hasMouseTracking() const
     return true;
 }
 
-void QWidget::show()
-{
-}
-
-void QWidget::hide()
-{
-}
-
 void QWidget::internalSetGeometry(int x, int y, int w, int h)
 {
     NSView *view = getView();
@@ -337,34 +304,10 @@ void QWidget::internalSetGeometry(int x, int y, int w, int h)
     [view setFrame:NSMakeRect(x, y, w, h)];
 }
 
-void QWidget::showEvent(QShowEvent *)
-{
-}
-
-void QWidget::hideEvent(QHideEvent *)
-{
-}
-
-void QWidget::wheelEvent(QWheelEvent *)
-{
-}
-
-void QWidget::keyPressEvent(QKeyEvent *)
-{
-}
-
-void QWidget::keyReleaseEvent(QKeyEvent *)
-{
-}
-
-void QWidget::focusOutEvent(QFocusEvent *)
-{
-}
-
 QPoint QWidget::mapFromGlobal(const QPoint &p) const
 {
     NSPoint bp;
-    bp = [[data->view window] convertScreenToBase: [data->view convertPoint: NSMakePoint(p.x(), p.y()) toView: nil]];
+    bp = [[data->view window] convertScreenToBase:[data->view convertPoint:NSMakePoint(p.x(), p.y()) toView:nil]];
     return QPoint((int)bp.x, (int)bp.y);
 }
 
@@ -382,15 +325,16 @@ void QWidget::setView(NSView *view)
 
 void QWidget::endEditing()
 {
-    id window, firstResponder;
+    // FIXME: This seems to end editing of any widget in the same window, not just this one.
     
-    // Catch the field editor case.
-    window = [getView() window];
-    [window endEditingFor: nil];
+    // Handle the field editor case.
+    // This is probably not necessary, given the next bit of code.
+    NSWindow *window = [getView() window];
+    [window endEditingFor:nil];
     
-    // The previous case is probably not necessary, given that we whack
-    // any NSText first responders.
-    firstResponder = [window firstResponder];
-    if ([firstResponder isKindOfClass: [NSText class]])
-        [window makeFirstResponder: nil];
+    // Whack any NSText first responders.
+    NSResponder *firstResponder = [window firstResponder];
+    if ([firstResponder isKindOfClass:[NSText class]]) {
+        [window makeFirstResponder:nil];
+    }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,6 +24,7 @@
  */
 
 #import <KWQWindowWidget.h>
+
 #import <Cocoa/Cocoa.h>
 
 class KWQWindowWidgetPrivate
@@ -81,16 +82,10 @@ QSize KWQWindowWidget::sizeHint() const
     return size();
 }
 
-QSize KWQWindowWidget::minimumSizeHint() const
-{
-    return size();
-}
-
 QRect KWQWindowWidget::frameGeometry() const
 {
     NSRect frame = [d->window frame];
-    NSRect screenFrame = [[d->window screen] frame];
-    return QRect((int)frame.origin.x, (int)(screenFrame.size.height - frame.origin.y - frame.size.height),
+    return QRect((int)frame.origin.x, (int)(NSMaxY([[[NSScreen screens] objectAtIndex:0] frame]) - frame.origin.y),
 		 (int)frame.size.width, (int)frame.size.height);
 }
 
@@ -101,36 +96,20 @@ QWidget *KWQWindowWidget::topLevelWidget() const
 
 QPoint KWQWindowWidget::mapToGlobal(const QPoint &p) const
 {
-    NSRect screenFrame = [[d->window screen] frame];
-    NSRect frame = [d->window frame];
-    NSPoint windowPoint = NSMakePoint(p.x(), frame.size.height - p.y());
-
+    NSPoint windowPoint = NSMakePoint(p.x(), [d->window frame].size.height - p.y());
     NSPoint screenPoint = [d->window convertBaseToScreen:windowPoint];
-
-    return QPoint((int)screenPoint.x, (int)(screenFrame.size.height - screenFrame.origin.y - screenPoint.y));
+    return QPoint((int)screenPoint.x, (int)(NSMaxY([[[NSScreen screens] objectAtIndex:0] frame]) - screenPoint.y));
 }
 
 QPoint KWQWindowWidget::mapFromGlobal(const QPoint &p) const
 {
-    NSRect screenFrame = [[d->window screen] frame];
-    NSRect frame = [d->window frame];
-    NSPoint screenPoint = NSMakePoint(p.x(), screenFrame.size.height - screenFrame.origin.y - p.y());
-
+    NSPoint screenPoint = NSMakePoint(p.x(), NSMaxY([[[NSScreen screens] objectAtIndex:0] frame]) - p.y());
     NSPoint windowPoint = [d->window convertScreenToBase:screenPoint];
-
-    return QPoint((int)windowPoint.x, (int)(frame.size.height - windowPoint.y));
+    return QPoint((int)windowPoint.x, (int)([d->window frame].size.height - windowPoint.y));
 }
 
-void KWQWindowWidget::setCursor(const QCursor &)
-{
-}
-
-void KWQWindowWidget::internalSetGeometry( int x, int y, int w, int h )
+void KWQWindowWidget::internalSetGeometry(int x, int y, int w, int h)
 {
     // FIXME: should try to avoid saving changes
-    NSRect screenFrame = [[d->window screen] frame];
-    [d->window setFrame:NSMakeRect(x, screenFrame.size.height - y - h,
-			       w, h) display:NO];
+    [d->window setFrame:NSMakeRect(x, NSMaxY([[[NSScreen screens] objectAtIndex:0] frame]) - y - h, w, h) display:NO];
 }
-
-
