@@ -585,7 +585,9 @@ static NSMutableDictionary *webPreferencesInstances = nil;
 
 + (void)_removeReferenceForIdentifier:(NSString *)ident
 {
-    [webPreferencesInstances performSelector:@selector(_web_checkLastReferenceForIdentifier:) withObject: [self _concatenateKeyWithIBCreatorID:ident] afterDelay:.1];
+    if (ident != nil) {
+        [webPreferencesInstances performSelector:@selector(_web_checkLastReferenceForIdentifier:) withObject: [self _concatenateKeyWithIBCreatorID:ident] afterDelay:.1];
+    }
 }
 
 - (void)_postPreferencesChangesNotification
