@@ -1,5 +1,18 @@
 2004-07-12  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Kevin.
+
+	<rdar://problem/3673988>: (REGRESSION(141-144): connection assertion failure at http://traffic.511.org/sfgate)
+	
+        * WebView.subproj/WebBaseResourceHandleDelegate.m:
+        (-[WebBaseResourceHandleDelegate connectionDidFinishLoading:]):
+	Don't check connection consistency if this load got cancelled
+	while finishing, because in this case we have cleared the
+	connection field already. This can happen when a redirect fires
+	from an onload handler.
+
+2004-07-12  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by John.
 
 	<rdar://problem/3632570>: (REGRESSION: SocialText.net wiki keeps asking for auth, even though pages load)

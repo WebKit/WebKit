@@ -498,7 +498,9 @@
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)con
 {
-    ASSERT(con == connection);
+    // don't worry about checking connection consistency if this load
+    // got cancelled while finishing.
+    ASSERT(cancelledFlag || con == connection);
     [self didFinishLoading];
 }
 
