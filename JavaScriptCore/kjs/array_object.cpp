@@ -192,6 +192,55 @@ void ArrayInstanceImp::mark()
   }
 }
 
+static ExecState *execForCompareByStringForQSort;
+
+static int compareByStringForQSort(const void *a, const void *b)
+{
+    ExecState *exec = execForCompareByStringForQSort;
+    return compare(Value(*(ValueImp **)a).toString(exec), Value(*(ValueImp **)b).toString(exec));
+}
+
+void ArrayInstanceImp::sort(ExecState *exec)
+{
+    execForCompareByStringForQSort = exec;
+    qsort(storage, length, sizeof(ValueImp *), compareByStringForQSort);
+    execForCompareByStringForQSort = 0;
+}
+
+struct CompareWithCompareFunctionArguments {
+    CompareWithCompareFunctionArguments(ExecState *e, ObjectImp *cf)
+        : exec(e)
+        , compareFunction(cf)
+        , globalObject(e->interpreter()->globalObject())
+    { }
+
+    ExecState *exec;
+    ObjectImp *compareFunction;
+    List arguments;
+    Object globalObject;
+};
+
+static CompareWithCompareFunctionArguments *compareWithCompareFunctionArguments;
+
+static int compareWithCompareFunctionForQSort(const void *a, const void *b)
+{
+    CompareWithCompareFunctionArguments *args = compareWithCompareFunctionArguments;
+    
+    args->arguments.clear();
+    args->arguments.append(Value(*(ValueImp **)a));
+    args->arguments.append(Value(*(ValueImp **)b));
+    return args->compareFunction->call(args->exec, args->globalObject, args->arguments)
+        .toInt32(args->exec);
+}
+
+void ArrayInstanceImp::sort(ExecState *exec, Object &compareFunction)
+{
+    CompareWithCompareFunctionArguments args(exec, compareFunction.imp());
+    compareWithCompareFunctionArguments = &args;
+    qsort(storage, length, sizeof(ValueImp *), compareWithCompareFunctionForQSort);
+    compareWithCompareFunctionArguments = 0;
+}
+
 // ------------------------------ ArrayPrototypeImp ----------------------------
 
 const ClassInfo ArrayPrototypeImp::info = {"Array", &ArrayInstanceImp::info, &arrayTable, 0};
@@ -424,10 +473,19 @@ Value ArrayProtoFuncImp::call(ExecState *exec, Object &thisObj, const List &args
         if (!sortFunction.implementsCall())
           useSortFunction = false;
       }
+    
+    if (thisObj.imp()->classInfo() == &ArrayInstanceImp::info) {
+      if (useSortFunction)
+        ((ArrayInstanceImp *)thisObj.imp())->sort(exec, sortFunction);
+      else
+        ((ArrayInstanceImp *)thisObj.imp())->sort(exec);
+      result = thisObj;
+      break;
+    }
 
     if (length == 0) {
       thisObj.put(exec, lengthPropertyName, Number(0), DontEnum | DontDelete);
-      result = Undefined();
+      result = thisObj;
       break;
     }
 

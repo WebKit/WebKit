@@ -705,6 +705,7 @@ namespace KJS {
   inline void Object::setInternalValue(const Value &v)
     { imp()->setInternalValue(v); }
 
+  extern const UString argumentsPropertyName;
   extern const UString lengthPropertyName;
   extern const UString prototypePropertyName;
   extern const UString toStringPropertyName;

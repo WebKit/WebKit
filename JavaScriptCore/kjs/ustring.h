@@ -430,6 +430,8 @@ namespace KJS {
   inline UString operator+(const UString& s1, const UString& s2) {
     return UString(s1, s2);
   }
+  
+  int compare(const UString &, const UString &);
 
 }; // namespace
 

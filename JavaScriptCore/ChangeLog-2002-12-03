@@ -1,3 +1,28 @@
+2002-11-18  Darin Adler  <darin@apple.com>
+
+	- fix worst speed problems on the sort page of the iBench JavaScript test
+
+	Sped up JavaScript iBench by 70%, the sort page by 88%.
+
+        * kjs/array_object.h: Add array-specific sort functions.
+        * kjs/array_object.cpp:
+        (compareByStringForQSort): Added.
+        (ArrayInstanceImp::sort): Added.
+        (compareWithCompareFunctionForQSort): Added.
+        (ArrayProtoFuncImp::call): Use ArrayInstanceImp::sort if the object being
+	sorted is actually an array.
+
+        * kjs/object.h: Add argumentsPropertyName.
+        * kjs/object.cpp: Add argumentsPropertyName.
+        * kjs/function.cpp:
+        (FunctionImp::FunctionImp): Use argumentsPropertyName to avoid making a UString.
+        (FunctionImp::call): Ditto.
+        (ActivationImp::ActivationImp): Ditto.
+        * kjs/function_object.cpp: (FunctionObjectImp::construct): Ditto.
+
+        * kjs/ustring.h: Added compare function for -1/0/+1 comparison.
+        * kjs/ustring.cpp: (KJS::compare): Added.
+
 2002-11-18  Maciej Stachowiak  <mjs@apple.com>
 
 	Change ArgumentListNode operations to be iterative instead of

@@ -59,7 +59,7 @@ FunctionImp::FunctionImp(ExecState *exec, const UString &n)
 {
   Value protect(this);
   //fprintf(stderr,"FunctionImp::FunctionImp this=%p\n");
-  put(exec,"arguments",Null(),ReadOnly|DontDelete|DontEnum);
+  put(exec,argumentsPropertyName,Null(),ReadOnly|DontDelete|DontEnum);
 }
 
 FunctionImp::~FunctionImp()
@@ -108,12 +108,12 @@ Value FunctionImp::call(ExecState *exec, Object &thisObj, const List &args)
   // value from a possible earlier call. Upon return, we restore the
   // previous arguments object.
   // Note: this does not appear to be part of the spec
-  Value oldArgs = get(&newExec, "arguments");
+  Value oldArgs = get(&newExec, argumentsPropertyName);
 
   if (codeType() == FunctionCode) {
     assert(ctx.activationObject().inherits(&ActivationImp::info));
     Object argsObj = static_cast<ActivationImp*>(ctx.activationObject().imp())->argumentsObject();
-    put(&newExec, "arguments", argsObj, DontDelete|DontEnum|ReadOnly);
+    put(&newExec, argumentsPropertyName, argsObj, DontDelete|DontEnum|ReadOnly);
   }
 
   // assign user supplied arguments to parameters
@@ -127,7 +127,7 @@ Value FunctionImp::call(ExecState *exec, Object &thisObj, const List &args)
   if (newExec.hadException())
     exec->setException(newExec.exception());
   if (codeType() == FunctionCode)
-    put(&newExec, "arguments", oldArgs, DontDelete|DontEnum|ReadOnly);
+    put(&newExec, argumentsPropertyName, oldArgs, DontDelete|DontEnum|ReadOnly);
 
 #ifdef KJS_VERBOSE
   if (comp.complType() == Throw)
@@ -308,7 +308,7 @@ ActivationImp::ActivationImp(ExecState *exec, FunctionImp *f, const List &args)
 {
   Value protect(this);
   arguments = new ArgumentsImp(exec,f, args);
-  put(exec, "arguments", Object(arguments), Internal|DontDelete);
+  put(exec, argumentsPropertyName, Object(arguments), Internal|DontDelete);
 }
 
 ActivationImp::~ActivationImp()

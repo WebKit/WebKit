@@ -41,6 +41,7 @@
 
 namespace KJS {
 
+extern const UString argumentsPropertyName("arguments");
 extern const UString lengthPropertyName("length");
 extern const UString prototypePropertyName("prototype");
 extern const UString toStringPropertyName("toString");

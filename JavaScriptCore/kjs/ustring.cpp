@@ -642,3 +642,25 @@ bool KJS::operator<(const UString& s1, const UString& s2)
 
   return (l1 < l2);
 }
+
+int KJS::compare(const UString& s1, const UString& s2)
+{
+  const int l1 = s1.size();
+  const int l2 = s2.size();
+  const int lmin = l1 < l2 ? l1 : l2;
+  const UChar *c1 = s1.data();
+  const UChar *c2 = s2.data();
+  int l = 0;
+  while (l < lmin && *c1 == *c2) {
+    c1++;
+    c2++;
+    l++;
+  }
+  if (l < lmin)
+    return (c1->unicode() > c2->unicode()) ? 1 : -1;
+
+  if (l1 == l2) {
+    return 0;
+  }
+  return (l1 < l2) ? 1 : -1;
+}
