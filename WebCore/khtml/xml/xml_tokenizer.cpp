@@ -226,11 +226,6 @@ bool XMLHandler::enterText()
 {
     NodeImpl *newNode = m_doc->document()->createTextNode("");
     if (m_currentNode->addChild(newNode)) {
-        if (m_view && !newNode->attached()) {
-            newNode->init();
-            if (!newNode->attached())
-                newNode->attach();
-        }
         m_currentNode = newNode;
         return true;
     }
@@ -242,6 +237,12 @@ bool XMLHandler::enterText()
 
 void XMLHandler::exitText()
 {
+    if (m_view && m_currentNode && !m_currentNode->attached()) {
+        m_currentNode->init();
+        if (!m_currentNode->attached())
+            m_currentNode->attach();
+    }
+    
     NodeImpl* par = m_currentNode->parentNode();
     if (par != 0)
         m_currentNode = par;

@@ -1,3 +1,45 @@
+2003-03-19  David Hyatt  <hyatt@apple.com>
+
+	Fix continuations so that they are smarter about reusing
+	anonymous blocks.  Avoids deep nesting when it isn't 
+	necessary.
+
+	A complete implementation of the residual style fixes.  It
+	seems to fix all current outstanding bugs.
+
+	One of the bugs in the residual style list was caused by
+	font-weight not being reset to tables and is actually its
+	own problem.  I fixed that by moving the quirks resets for
+	table elements into the quirks stylesheet (which should be
+	a speed boost).
+	
+	<b><p>Foo</b> Goo</p>
+
+        Also fixed the huge XML failure issue that made us fail hundreds
+        of test cases.  Attachment of text nodes was being done way too
+        early, before the text of the node had been determined.  By moving
+        the attachment from enterText to exitText, the problem is solved.
+        
+        Reviewed by darin (res. style fix 1) and gramps (rest of res. style fix and XML fix)
+
+	* ChangeLog:
+        * khtml/css/quirks.css:
+        * khtml/html/html_tableimpl.cpp:
+        (HTMLTableElementImpl::attach):
+        * khtml/html/htmlparser.cpp:
+        (KHTMLParser::isResidualStyleTag):
+        (KHTMLParser::isAffectedByResidualStyle):
+        (KHTMLParser::handleResidualStyleCloseTagAcrossBlocks):
+        (KHTMLParser::reopenResidualStyleTags):
+        (KHTMLParser::popBlock):
+        (KHTMLParser::popOneBlock):
+        * khtml/html/htmlparser.h:
+        * khtml/rendering/render_inline.cpp:
+        (RenderInline::splitFlow):
+        * khtml/xml/xml_tokenizer.cpp:
+        (XMLHandler::enterText):
+        (XMLHandler::exitText):
+	
 2003-03-18  Darin Adler  <darin@apple.com>
 
         Reviewed by Ken.
@@ -59,7 +101,6 @@
 
 2003-03-18  Maciej Stachowiak  <mjs@apple.com>
 
->>>>>>> 1.1521
         Reviewed by John.
 
 	- fixed 3119663 - document.lastModified returns the wrong date format

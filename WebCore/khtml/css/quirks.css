@@ -26,6 +26,10 @@ UL, OL, MENU, DIR {
 TABLE {
     white-space: normal;
     line-height: normal;
+    font-weight: normal;
+    font-size: medium;
+    font-family: \2d konq-body;
+    color: \2d konq-text;
 }
 
 

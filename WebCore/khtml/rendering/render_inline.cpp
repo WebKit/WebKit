@@ -173,15 +173,26 @@ void RenderInline::splitInlines(RenderBlock* fromBlock, RenderBlock* toBlock,
 void RenderInline::splitFlow(RenderObject* beforeChild, RenderBlock* newBlockBox,
                              RenderObject* newChild, RenderFlow* oldCont)
 {
+    RenderBlock *pre = 0;
+    RenderStyle* newStyle = 0;
     RenderBlock* block = containingBlock();
-
-    RenderStyle* newStyle = new RenderStyle();
-    newStyle->inheritFrom(block->style());
-    newStyle->setDisplay(BLOCK);
-    RenderBlock *pre = new (renderArena()) RenderBlock(0 /* anonymous box */);
-    pre->setStyle(newStyle);
-    pre->setIsAnonymousBox(true);
-    pre->setChildrenInline(true);
+    bool madeNewBeforeBlock = false;
+    if (block->isAnonymousBox()) {
+        // We can reuse this block and make it the preBlock of the next continuation.
+        pre = block;
+        block = block->containingBlock();
+    }
+    else {
+        // No anonymous block available for use.  Make one.
+        newStyle = new RenderStyle();
+        newStyle->inheritFrom(block->style());
+        newStyle->setDisplay(BLOCK);
+        pre = new (renderArena()) RenderBlock(0 /* anonymous box */);
+        pre->setStyle(newStyle);
+        pre->setIsAnonymousBox(true);
+        pre->setChildrenInline(true);
+        madeNewBeforeBlock = true;
+    }
 
     newStyle = new RenderStyle();
     newStyle->inheritFrom(block->style());
@@ -191,20 +202,23 @@ void RenderInline::splitFlow(RenderObject* beforeChild, RenderBlock* newBlockBox
     post->setIsAnonymousBox(true);
     post->setChildrenInline(true);
 
-    RenderObject* boxFirst = block->firstChild();
-    block->insertChildNode(pre, boxFirst);
+    RenderObject* boxFirst = madeNewBeforeBlock ? block->firstChild() : pre->nextSibling();
+    if (madeNewBeforeBlock)
+        block->insertChildNode(pre, boxFirst);
     block->insertChildNode(newBlockBox, boxFirst);
     block->insertChildNode(post, boxFirst);
     block->setChildrenInline(false);
 
-    RenderObject* o = boxFirst;
-    while (o)
-    {
-        RenderObject* no = o;
-        o = no->nextSibling();
-        pre->appendChildNode(block->removeChildNode(no));
-        no->setLayouted(false);
-        no->setMinMaxKnown(false);
+    if (madeNewBeforeBlock) {
+        RenderObject* o = boxFirst;
+        while (o)
+        {
+            RenderObject* no = o;
+            o = no->nextSibling();
+            pre->appendChildNode(block->removeChildNode(no));
+            no->setLayouted(false);
+            no->setMinMaxKnown(false);
+        }
     }
 
     splitInlines(pre, post, newBlockBox, beforeChild, oldCont);

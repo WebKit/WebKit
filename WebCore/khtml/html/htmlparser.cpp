@@ -1179,6 +1179,235 @@ void KHTMLParser::processCloseTag(Token *t)
 #endif
 }
 
+bool KHTMLParser::isResidualStyleTag(int _id)
+{
+    switch (_id) {
+        case ID_A:
+        case ID_FONT:
+        case ID_EM:
+        case ID_B:
+        case ID_STRONG:
+        case ID_I:
+        case ID_TT:
+        case ID_CODE:
+        case ID_SMALL:
+            return true;
+        default:
+            return false;
+    }
+}
+
+bool KHTMLParser::isAffectedByResidualStyle(int _id)
+{
+    if (isResidualStyleTag(_id))
+        return true;
+    
+    switch (_id) {
+        case ID_P:
+        case ID_DIV:
+        case ID_BLOCKQUOTE:
+        case ID_ADDRESS:
+        case ID_H1:
+        case ID_H2:
+        case ID_H3:
+        case ID_H4:
+        case ID_H5:
+        case ID_H6:
+        case ID_CENTER:
+            return true;
+        default:
+            return false;
+    }
+}
+
+void KHTMLParser::handleResidualStyleCloseTagAcrossBlocks(HTMLStackElem* elem)
+{
+    // Find the element that crosses over to a higher level.   For now, if there is more than
+    // one, we will just give up and not attempt any sort of correction.  It's highly unlikely that
+    // there will be more than one, since <p> tags aren't allowed to be nested.
+    int exceptionCode = 0;
+    HTMLStackElem* curr = blockStack;
+    HTMLStackElem* maxElem = 0;
+    HTMLStackElem* prev = 0;
+    HTMLStackElem* prevMaxElem = 0;
+    while (curr && curr != elem) {
+        if (curr->level > elem->level) {
+            if (maxElem)
+                return;
+            maxElem = curr;
+            prevMaxElem = prev;
+        }
+
+        prev = curr;
+        curr = curr->next;
+    }
+
+    if (!curr || !maxElem || !isAffectedByResidualStyle(maxElem->id)) return;
+
+    NodeImpl* residualElem = prev->node;
+    NodeImpl* blockElem = prevMaxElem ? prevMaxElem->node : current;
+    NodeImpl* parentElem = elem->node;
+    
+    if (maxElem->node->parentNode() != elem->node) {
+        // Walk the stack and remove any elements that aren't residual style tags.  These
+        // are basically just being closed up.  Example:
+        // <font><span>Moo<p>Goo</font></p>.
+        // In the above example, the <span> doesn't need to be reopened.  It can just close.
+        HTMLStackElem* currElem = maxElem->next;
+        HTMLStackElem* prevElem = maxElem;
+        while (currElem != elem) {
+            HTMLStackElem* nextElem = currElem->next;
+            if (!isResidualStyleTag(currElem->id)) {
+                prevElem->next = nextElem;
+                prevElem->node = currElem->node;
+                delete currElem;
+            }
+            else
+                prevElem = currElem;
+            currElem = nextElem;
+        }
+        
+        // We have to reopen residual tags in between maxElem and elem.  An example of this case is:
+        // <font><i>Moo<p>Foo</font>.
+        // In this case, we need to transform the part before the <p> into:
+        // <font><i>Moo</i></font><i>
+        // so that the <i> will remain open.  This involves the modification of elements
+        // in the block stack.
+        // This will also affect how we ultimately reparent the block, since we want it to end up
+        // under the reopened residual tags (e.g., the <i> in the above example.)
+        NodeImpl* prevNode = 0;
+        NodeImpl* currNode = 0;
+        currElem = maxElem;
+        while (currElem->node != residualElem) {
+            if (isResidualStyleTag(currElem->node->id())) {
+                // Create a clone of this element.
+                currNode = currElem->node->cloneNode(false);
+
+                // Change the stack element's node to point to the clone.
+                currElem->node = currNode;
+                
+                // Attach the previous node as a child of this new node.
+                if (prevNode)
+                    currNode->appendChild(prevNode, exceptionCode);
+                else // The new parent for the block element is going to be the innermost clone.
+                    parentElem = currNode;
+                                
+                prevNode = currNode;
+            }
+            
+            currElem = currElem->next;
+        }
+
+        // Now append the chain of new residual style elements if one exists.
+        if (prevNode)
+            elem->node->appendChild(prevNode, exceptionCode);
+    }
+         
+    // We need to make a clone of |residualElem| and place it just inside |blockElem|.
+    // All content of |blockElem| is reparented to be under this clone.  We then
+    // reparent |blockElem| using real DOM calls so that attachment/detachment will
+    // be performed to fix up the rendering tree.
+    // So for this example: <b>...<p>Foo</b>Goo</p>
+    // The end result will be: <b>...</b><p><b>Foo</b>Goo</p>
+    //
+    // Step 1: Remove |blockElem| from its parent, doing a batch detach of all the kids.
+    blockElem->parentNode()->removeChild(blockElem, exceptionCode);
+        
+    // Step 2: Clone |residualElem|.
+    NodeImpl* newNode = residualElem->cloneNode(false); // Shallow clone. We don't pick up the same kids.
+
+    // Step 3: Place |blockElem|'s children under |newNode|.  Remove all of the children of |blockElem|
+    // before we've put |newElem| into the document.  That way we'll only do one attachment of all
+    // the new content (instead of a bunch of individual attachments).
+    NodeImpl* currNode = blockElem->firstChild();
+    while (currNode) {
+        NodeImpl* nextNode = currNode->nextSibling();
+        blockElem->removeChild(currNode, exceptionCode);
+        newNode->appendChild(currNode, exceptionCode);
+        currNode = nextNode;
+    }
+
+    // Step 4: Place |newNode| under |blockElem|.  |blockElem| is still out of the document, so no
+    // attachment can occur yet.
+    blockElem->appendChild(newNode, exceptionCode);
+    
+    // Step 5: Reparent |blockElem|.  Now the full attachment of the fixed up tree takes place.
+    parentElem->appendChild(blockElem, exceptionCode);
+    
+    // Step 6: Elide |elem|, since it is effectively no longer open.  Also update
+    // the node associated with the previous stack element so that when it gets popped,
+    // it doesn't make the residual element the next current node.
+    HTMLStackElem* currElem = maxElem;
+    HTMLStackElem* prevElem = 0;
+    while (currElem != elem) {
+        prevElem = currElem;
+        currElem = currElem->next;
+    }
+    prevElem->next = elem->next;
+    prevElem->node = elem->node;
+    delete elem;
+    
+    // Step 7: Reopen intermediate inlines, e.g., <b><p><i>Foo</b>Goo</p>.
+    // In the above example, Goo should stay italic.
+    curr = blockStack;
+    HTMLStackElem* residualStyleStack = 0;
+    while (curr && curr != maxElem) {
+        // In quirks mode only, we will actually schedule this tag for reopening
+        // after we complete the close of this entire block.
+        NodeImpl* currNode = current;
+        if (isResidualStyleTag(curr->id)) {
+            // We've overloaded the use of stack elements and are just reusing the
+            // struct with a slightly different meaning to the variables.  Instead of chaining
+            // from innermost to outermost, we build up a list of all the tags we need to reopen
+            // from the outermost to the innermost, i.e., residualStyleStack will end up pointing
+            // to the outermost tag we need to reopen.
+            // We also set curr->node to be the actual element that corresponds to the ID stored in
+            // curr->id rather than the node that you should pop to when the element gets pulled off
+            // the stack.
+            popOneBlock(false);
+            curr->next = 0;
+            curr->node = currNode;
+            if (!residualStyleStack)
+                residualStyleStack = curr;
+            else
+                residualStyleStack->next = curr;
+        }
+        else
+            popOneBlock();
+
+        curr = blockStack;
+    }
+
+    reopenResidualStyleTags(residualStyleStack);
+}
+
+void KHTMLParser::reopenResidualStyleTags(HTMLStackElem* elem)
+{
+    // Nothing required.
+    if (!elem)
+        return;
+
+    // We have some tags that need to be reopened.
+    int exceptionCode = 0;
+    while (elem) {
+        // Create a shallow clone of the DOM node for this element.
+        NodeImpl* newNode = elem->node->cloneNode(false); 
+
+        // Append the new node.
+        current->appendChild(newNode, exceptionCode);
+
+        // Now push a new stack element for this node we just created.
+        pushBlock(elem->id, elem->level);
+
+        // Update |current| manually to point to the new node.
+        current = newNode;
+        
+        // Advance to the next tag that needs to be reopened.
+        HTMLStackElem* next = elem->next;
+        delete elem;
+        elem = next;
+    }
+}
 
 void KHTMLParser::pushBlock(int _id, int _level)
 {
@@ -1211,11 +1440,22 @@ void KHTMLParser::popBlock( int _id )
         }
         Elem = Elem->next;
     }
-    if (!Elem || maxLevel > Elem->level)
+
+    if (!Elem)
         return;
 
-    Elem = blockStack;
+    if (maxLevel > Elem->level) {
+        // We didn't match because the tag is in a different scope, e.g.,
+        // <b><p>Foo</b>.  In quirks mode only, try to correct the problem.
+        if (!document->document()->inQuirksMode() || !isResidualStyleTag(_id))
+            return;
+        return handleResidualStyleCloseTagAcrossBlocks(Elem);
+    }
 
+    bool isAffectedByStyle = isAffectedByResidualStyle(Elem->id);
+    HTMLStackElem* residualStyleStack = 0;
+    
+    Elem = blockStack;
     while (Elem)
     {
         if (Elem->id == _id)
@@ -1230,14 +1470,37 @@ void KHTMLParser::popBlock( int _id )
                 // malformed HTML).  Set an attribute on the form to clear out its
                 // bottom margin.
                 form->setMalformed(true);
-            
-            popOneBlock();
+
+            // In quirks mode only, we will actually schedule this tag for reopening
+            // after we complete the close of this entire block.
+            NodeImpl* currNode = current;
+            if (isAffectedByStyle && document->document()->inQuirksMode() && isResidualStyleTag(Elem->id)) {
+                // We've overloaded the use of stack elements and are just reusing the
+                // struct with a slightly different meaning to the variables.  Instead of chaining
+                // from innermost to outermost, we build up a list of all the tags we need to reopen
+                // from the outermost to the innermost, i.e., residualStyleStack will end up pointing
+                // to the outermost tag we need to reopen.
+                // We also set Elem->node to be the actual element that corresponds to the ID stored in
+                // Elem->id rather than the node that you should pop to when the element gets pulled off
+                // the stack.
+                popOneBlock(false);
+                Elem->next = 0;
+                Elem->node = currNode;
+                if (!residualStyleStack)
+                    residualStyleStack = Elem;
+                else
+                    residualStyleStack->next = Elem;
+            }
+            else
+                popOneBlock();
             Elem = blockStack;
         }
     }
+
+    reopenResidualStyleTags(residualStyleStack);
 }
 
-void KHTMLParser::popOneBlock()
+void KHTMLParser::popOneBlock(bool delBlock)
 {
     HTMLStackElem *Elem = blockStack;
 
@@ -1267,8 +1530,9 @@ void KHTMLParser::popOneBlock()
 
     if (Elem->strayTableContent)
         inStrayTableContent = false;
-        
-    delete Elem;
+
+    if (delBlock)
+        delete Elem;
 }
 
 void KHTMLParser::popInlineBlocks()

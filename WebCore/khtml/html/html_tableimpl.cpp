@@ -531,15 +531,6 @@ void HTMLTableElementImpl::attach()
 {
     assert(!m_attached);
     if (parent()->renderer()) {
-        // reset font color and sizes here, if we don't have strict parse mode.
-        // this is 90% compatible to ie and mozilla, and the by way easiest solution...
-        // only difference to 100% correct is that in strict mode <font> elements are propagated into tables.
-        if ( getDocument()->inQuirksMode() ) {
-            addCSSProperty( CSS_PROP_FONT_SIZE, CSS_VAL_MEDIUM );
-            addCSSProperty( CSS_PROP_COLOR, CSS_VAL__KONQ_TEXT );
-            addCSSProperty( CSS_PROP_FONT_FAMILY, CSS_VAL__KONQ_BODY );
-        }
-        
         if (!m_noBorder) {
             int v = m_solid ? CSS_VAL_SOLID : CSS_VAL_OUTSET;
             addCSSProperty(CSS_PROP_BORDER_TOP_STYLE, v);
