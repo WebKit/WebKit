@@ -66,10 +66,6 @@ size_t total_space = 0;
 #define BLOCK_SIZE	1024*1024
 #define NUM_BLOCKS	1024
 #define IF_MALLOC_MAGIC	0xfeadface
-static int blockIndex;
-static char *currentBlock;
-static char *currentPtr;
-static void *blocks[NUM_BLOCKS];
 static malloc_zone_t *if_zone;
 
 void *(*oldMalloc)(struct _malloc_zone_t *zone, size_t size);
