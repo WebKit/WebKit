@@ -73,20 +73,25 @@
     }
 }
 
+- (void)setUpTextField:(NSTextField *)field
+{
+    // This is initialization that's shared by both self and the secure text field.
+
+    [[field cell] setScrollable:YES];
+    
+    [field setFormatter:formatter];
+
+    [field setDelegate:self];
+    
+    [field setTarget:self];
+    [field setAction:@selector(action:)];
+}
+
 - initWithFrame:(NSRect)frame
 {
     [super initWithFrame:frame];
-    
     formatter = [[KWQTextFieldFormatter alloc] init];
-    [self setFormatter:formatter];
-
-    [self setTarget:self];
-    [self setAction:@selector(action:)];
-
-    [self setDelegate:self];
-
-    [[self cell] setScrollable:YES];
-    
+    [self setUpTextField:self];
     return self;
 }
 
@@ -136,9 +141,9 @@
     } else {
         if (secureField == nil) {
             secureField = [[KWQSecureTextField alloc] initWithQWidget:widget];
-            [secureField setDelegate:self];
             [secureField setFormatter:formatter];
             [secureField setFont:[self font]];
+            [self setUpTextField:secureField];
             [self updateSecureFieldFrame];
         }
         [self addSubview:secureField];
