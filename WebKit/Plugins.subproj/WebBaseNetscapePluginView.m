@@ -11,7 +11,6 @@
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebNetscapePluginStream.h>
-#import <WebKit/WebNetscapePluginNullEventSender.h>
 #import <WebKit/WebNullPluginView.h>
 #import <WebKit/WebNSViewExtras.h>
 #import <WebKit/WebNetscapePluginPackage.h>
@@ -24,8 +23,11 @@
 #import <WebFoundation/WebNSURLExtras.h>
 
 #import <AppKit/NSEvent_Private.h>
-
 #import <Carbon/Carbon.h>
+
+// FIXME: Why .01? Why not 0? Why not a larger number?
+#define NullEventIntervalActive 	0.1
+#define NullEventIntervalNotActive	0.25
 
 @implementation WebBaseNetscapePluginView
 
@@ -154,6 +156,50 @@
     LOG(Plugins, "NPP_HandleEvent(updateEvt): %d", acceptedEvent);
 
     return acceptedEvent;
+}
+
+-(void)sendNullEvent
+{
+    EventRecord event;
+
+    [self getCarbonEvent:&event];
+
+    // plug-in should not react to cursor position when not active.
+    // FIXME: How does passing a v and h of 0 prevent it from reacting to the cursor position?
+    if (![_window isKeyWindow]) {
+        event.where.v = 0;
+        event.where.h = 0;
+    }
+
+    [self sendEvent:&event];
+}
+
+- (void)stopNullEvents
+{
+    [nullEventTimer invalidate];
+    [nullEventTimer release];
+    nullEventTimer = nil;
+}
+
+- (void)restartNullEvents
+{
+    if(nullEventTimer){
+        [self stopNullEvents];
+    }
+
+    NSTimeInterval interval;
+    
+    if ([_window isKeyWindow]) {
+        interval = NullEventIntervalActive;
+    }else{
+        interval = NullEventIntervalNotActive;
+    }
+    
+    nullEventTimer = [[NSTimer scheduledTimerWithTimeInterval:interval
+                                                       target:self
+                                                     selector:@selector(sendNullEvent)
+                                                     userInfo:nil
+                                                      repeats:YES] retain];
 }
 
 - (BOOL)acceptsFirstResponder
@@ -429,11 +475,10 @@
     LOG(Plugins, "NPP_New: %d", npErr);
     
     // Create a WindowRef is one doesn't already exist
-    [[self window] windowRef];
+    [_window windowRef];
         
     [self setWindow];
     
-    NSWindow *theWindow = [self window];
     NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
     NSView *view;
     for (view = self; view; view = [view superview]) {
@@ -443,26 +488,26 @@
             name:NSViewBoundsDidChangeNotification object:view];
     }
     [notificationCenter addObserver:self selector:@selector(windowWillClose:)
-        name:NSWindowWillCloseNotification object:theWindow];
+        name:NSWindowWillCloseNotification object:_window];
     [notificationCenter addObserver:self selector:@selector(windowBecameKey:) 
-        name:NSWindowDidBecomeKeyNotification object:theWindow];
+        name:NSWindowDidBecomeKeyNotification object:_window];
     [notificationCenter addObserver:self selector:@selector(windowResignedKey:) 
-        name:NSWindowDidResignKeyNotification object:theWindow];
+        name:NSWindowDidResignKeyNotification object:_window];
     [notificationCenter addObserver:self selector:@selector(defaultsHaveChanged:) 
         name:NSUserDefaultsDidChangeNotification object:nil];
     [notificationCenter addObserver:self selector:@selector(windowDidMiniaturize:)
-        name:NSWindowDidMiniaturizeNotification object:theWindow];
+        name:NSWindowDidMiniaturizeNotification object:_window];
     [notificationCenter addObserver:self selector:@selector(windowDidDeminiaturize:)
-        name:NSWindowDidDeminiaturizeNotification object:theWindow];
+        name:NSWindowDidDeminiaturizeNotification object:_window];
 
-    if ([theWindow isKeyWindow]) {
+    if ([_window isKeyWindow]) {
         [self sendActivateEvent:YES];
     }
     
-    eventSender = [[WebNetscapePluginNullEventSender alloc] initWithPluginView:self];
-    if (![theWindow isMiniaturized]) {
-        [eventSender sendNullEvents];
+    if (![_window isMiniaturized]) {
+        [self restartNullEvents];
     }
+    
     [self resetTrackingRect];
 }
 
@@ -480,8 +525,7 @@
     [streams makeObjectsPerformSelector:@selector(stop)];
     
     // Stop the null events
-    [eventSender stop];
-    [eventSender release];
+    [self stopNullEvents];
 
     // Set cursor back to arrow cursor
     [[NSCursor arrowCursor] set];
@@ -691,22 +735,24 @@
 {
     [self sendActivateEvent:YES];
     [self sendUpdateEvent];
+    [self restartNullEvents];
 }
 
 -(void)windowResignedKey:(NSNotification *)notification
 {
     [self sendActivateEvent:NO];
     [self sendUpdateEvent];
+    [self restartNullEvents];
 }
 
 -(void)windowDidMiniaturize:(NSNotification *)notification
 {
-    [eventSender stop];
+    [self stopNullEvents];
 }
 
 -(void)windowDidDeminiaturize:(NSNotification *)notification
 {
-    [eventSender sendNullEvents];
+    [self restartNullEvents];
 }
 
 - (void)defaultsHaveChanged:(NSNotification *)notification

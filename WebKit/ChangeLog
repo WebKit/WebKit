@@ -1,3 +1,22 @@
+2002-11-20  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: 3079134 - Throttle plug-ins while in background
+
+        * Plugins.subproj/WebBaseNetscapePluginView.h:
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView sendNullEvent]): new
+        (-[WebBaseNetscapePluginView stopNullEvents]): stops timer
+        (-[WebBaseNetscapePluginView restartNullEvents]): stops timer if there is one, and starts a new one based on window activation state
+        (-[WebBaseNetscapePluginView start]): call restartNullEvents
+        (-[WebBaseNetscapePluginView stop]): call stopNullEvents
+        (-[WebBaseNetscapePluginView windowBecameKey:]): call restartNullEvents
+        (-[WebBaseNetscapePluginView windowResignedKey:]): call restartNullEvents
+        (-[WebBaseNetscapePluginView windowDidMiniaturize:]): call stopNullEvents
+        (-[WebBaseNetscapePluginView windowDidDeminiaturize:]): call restartNullEvents
+        * Plugins.subproj/WebNetscapePluginNullEventSender.h: Removed. No need for another class, use a timer.
+        * Plugins.subproj/WebNetscapePluginNullEventSender.m: Removed. No need for another class, use a timer.
+        * WebKit.pbproj/project.pbxproj:
+
 2002-11-20  Richard Williamson   <rjw@apple.com>
 
         Fixed 3107007.  Letter-spacing is causing width to be miscalculated.
