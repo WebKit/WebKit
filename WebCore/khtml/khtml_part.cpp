@@ -2198,21 +2198,35 @@ bool KHTMLPart::findTextNext( const QString &str, bool forward, bool caseSensiti
 
 QString KHTMLPart::selectedText() const
 {
+    // FIXME: This whole function should use the render tree and not the DOM tree, since elements could
+    // be hidden using CSS, or additional generated content could be added.  For now, we just make sure
+    // text objects walk their renderers' TextRuns, so that we at least get the whitespace stripped out properly
+    // and obey CSS visibility for text runs.
   bool hasNewLine = true;
   QString text;
   DOM::Node n = d->m_selectionStart;
   while(!n.isNull()) {
       if(n.nodeType() == DOM::Node::TEXT_NODE) {
-        QString str = n.nodeValue().string();
-        hasNewLine = false;
-        if(n == d->m_selectionStart && n == d->m_selectionEnd)
-          text = str.mid(d->m_startOffset, d->m_endOffset - d->m_startOffset);
-        else if(n == d->m_selectionStart)
-          text = str.mid(d->m_startOffset);
-        else if(n == d->m_selectionEnd)
-          text += str.left(d->m_endOffset);
-        else
-          text += str;
+          hasNewLine = false;
+          QString str = n.nodeValue().string();
+          int start = (n == d->m_selectionStart) ? d->m_startOffset : -1;
+          int end = (n == d->m_selectionEnd) ? d->m_endOffset : -1;
+          if (n.handle()->renderer() && n.handle()->renderer()->isText()) {
+              RenderText* textObj = static_cast<RenderText*>(n.handle()->renderer());
+              TextRunArray runs = textObj->textRuns();
+              for (unsigned i = 0; i < runs.count(); i++) {
+                  int runStart = (start == -1) ? runs[i]->m_start : start;
+                  int runEnd = (end == -1) ? runs[i]->m_start + runs[i]->m_len : end;
+                  runEnd = QMIN(runEnd, runs[i]->m_start + runs[i]->m_len);
+                  if (runStart >= runs[i]->m_start &&
+                      runStart < runs[i]->m_start + runs[i]->m_len) {
+                      text += str.mid(runStart, runEnd - runStart);
+                      start = -1;
+                  }
+                  if (end != -1 && runEnd >= end)
+                      break;
+              }
+          }
       }
       else {
         // This is our simple HTML -> ASCII transformation:

@@ -63,6 +63,8 @@ using DOM::ElementImpl;
 using DOM::EventImpl;
 using DOM::Node;
 
+using khtml::TextRunArray;
+
 using khtml::Cache;
 using khtml::ChildFrame;
 using khtml::Decoder;
@@ -1867,23 +1869,29 @@ NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_startNode, int sta
             RenderStyle *style = renderer->style();
             NSFont *font = style->font().getNSFont();
             if (n.nodeType() == Node::TEXT_NODE) {
-    
-                QString str = n.nodeValue().string();
-    
                 QString text;
-                if(n == _startNode && n == endNode && startOffset >=0 && endOffset >= 0)
-                    text = str.mid(startOffset, endOffset - startOffset);
-                else if(n == _startNode && startOffset >= 0)
-                    text = str.mid(startOffset);
-                else if(n == endNode && endOffset >= 0)
-                    text = str.left(endOffset);
-                else
-                    text = str;
-    
+                QString str = n.nodeValue().string();
+                int start = (n == _startNode) ? startOffset : -1;
+                int end = (n == endNode) ? endOffset : -1;
+                if (renderer->isText()) {
+                    RenderText* textObj = static_cast<RenderText*>(renderer);
+                    TextRunArray runs = textObj->textRuns();
+                    for (unsigned i = 0; i < runs.count(); i++) {
+                        int runStart = (start == -1) ? runs[i]->m_start : start;
+                        int runEnd = (end == -1) ? runs[i]->m_start + runs[i]->m_len : end;
+                        runEnd = QMIN(runEnd, runs[i]->m_start + runs[i]->m_len);
+                        if (runStart >= runs[i]->m_start &&
+                            runStart < runs[i]->m_start + runs[i]->m_len) {
+                            text += str.mid(runStart, runEnd - runStart);
+                            start = -1;
+                        }
+                        if (end != -1 && runEnd >= end)
+                            break;
+                    }
+                }
+                
                 text = text.stripWhiteSpace();
                 text.replace('\\', renderer->backslashAsCurrencySymbol());
-                if (text.length() > 1)
-                    text += ' ';
     
                 if (text.length() > 0) {
                     hasNewLine = false;

@@ -1,3 +1,16 @@
+2003-08-04  Dave Hyatt  <hyatt@apple.com>
+
+	Fix for 3127909, copied text matched the document source instead of the
+	rendered HTML.  This patch makes sure that the TextRuns are walked instead
+	of just blindly pulling the text out of the DOM node.
+	
+        Reviewed by rjw
+
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::selectedText):
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::attributedString):
+
 2003-08-05  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin and Dave.
