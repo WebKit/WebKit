@@ -43,14 +43,15 @@ public:
     bool isNull() const;
     bool isDigit() const;
     bool isSpace() const;
-    friend inline int operator==(QChar, QChar);
-    friend inline int operator!=(QChar, QChar);
+    friend int operator==(QChar, QChar);
+    friend int operator!=(QChar, QChar);
+    operator char() const;
 
     enum Direction {
-	DirL, DirR, DirEN, DirES, DirET, DirAN, DirCS, DirB, DirS, DirWS, DirON,
-	DirLRE, DirLRO, DirAL, DirRLE, DirRLO, DirPDF, DirNSM, DirBN
+        // NOTE: alphabetical order
+        DirAL, DirAN, DirB, DirBN, DirCS, DirEN, DirES, DirET, DirL, DirLRE,
+        DirLRO, DirNSM, DirON, DirPDF, DirR, DirRLE, DirRLO, DirS, DirWS
     };
-
 };
 
 class QString {
