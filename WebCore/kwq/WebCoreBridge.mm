@@ -201,14 +201,7 @@ using khtml::RenderPart;
 
 - (void)forceLayout
 {
-    RenderObject *renderer = part->impl->renderer();
-    if (renderer) {
-        renderer->setLayouted(false);
-    }
-    KHTMLView *view = part->impl->view();
-    if (view) {
-        view->layout();
-    }
+    part->impl->forceLayout();
 }
 
 - (void)drawRect:(NSRect)rect withPainter:(QPainter *)p
@@ -495,7 +488,14 @@ using khtml::RenderPart;
 
 - (void)setTextSizeMultiplier:(float)multiplier
 {
-    part->setZoomFactor((int)rint(multiplier * 100));
+    int newZoomFactor = (int)rint(multiplier * 100);
+    if (part->zoomFactor() == newZoomFactor) {
+        return;
+    }
+    part->setZoomFactor(newZoomFactor);
+    // setZoomFactor will trigger a timed layout, but we want to do the layout before
+    // we do any drawing. This takes care of that. Without this we redraw twice.
+    [self setNeedsLayout];
 }
 
 - (CFStringEncoding)textEncoding

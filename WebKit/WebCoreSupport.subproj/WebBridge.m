@@ -387,6 +387,13 @@
     }
 }
 
+- (void)setNeedsLayout
+{
+    NSView <WebDocumentView> *view = [[frame webView] documentView];
+    [view setNeedsLayout:YES];
+    [view setNeedsDisplay:YES];
+}
+
 - (NSURL *)requestedURL
 {
     return [[[self dataSource] request] URL];

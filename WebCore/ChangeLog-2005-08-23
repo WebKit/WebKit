@@ -1,3 +1,27 @@
+2002-09-28  Darin Adler  <darin@apple.com>
+
+	- fixed 2886111 -- changing font or size preference causes open
+	windows to redraw incorrectly
+
+        * khtml/rendering/render_table.cpp: (RenderTable::addColInfo):
+	Fix logic about when a recalc of the minWidth and maxWidth is needed.
+
+	Fixed bug where changing the text size multiplier would cause the
+	window to redraw twice -- once with the text size changed, and then
+	later with the layout changed.
+
+        * khtml/khtmlview.h: Added unscheduleRelayout.
+        * khtml/khtmlview.cpp: (KHTMLView::unscheduleRelayout): Added.
+
+        * kwq/KWQKHTMLPartImpl.h: Added forceLayout.
+        * kwq/KWQKHTMLPartImpl.mm: (KWQKHTMLPartImpl::forceLayout): Call
+	both layout and unscheduleRelayout.
+
+        * kwq/WebCoreBridge.h: Add setNeedsLayout.
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge forceLayout]): Call KWQKHTMLPartImpl::forceLayout.
+        (-[WebCoreBridge setTextSizeMultiplier:]): Call forceLayout.
+
 2002-09-27  Darin Adler  <darin@apple.com>
 
         * khtml/rendering/render_table.cpp: (RenderTable::addColInfo):

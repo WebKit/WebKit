@@ -1,3 +1,7 @@
+2002-09-28  Darin Adler  <darin@apple.com>
+
+        * WebCoreSupport.subproj/WebBridge.m: (-[WebBridge setNeedsLayout]): Added.
+
 2002-09-27  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed KJS crasher caused by nil plug-in returned from WebPlugin.

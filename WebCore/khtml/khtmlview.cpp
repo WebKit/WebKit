@@ -1497,6 +1497,19 @@ void KHTMLView::scheduleRelayout()
     d->timerId = startTimer( parsing ? 1000 : 0 );
 }
 
+#if APPLE_CHANGES
+
+void KHTMLView::unscheduleRelayout()
+{
+    if (!d->timerId)
+        return;
+
+    killTimer(d->timerId);
+    d->timerId = 0;
+}
+
+#endif
+
 void KHTMLView::scheduleRepaint(int x, int y, int w, int h)
 {
 

@@ -570,3 +570,11 @@ QString KWQKHTMLPartImpl::requestedURLString() const
     return QString::fromNSString([[_bridge requestedURL] absoluteString]);
 }
 
+void KWQKHTMLPartImpl::forceLayout()
+{
+    KHTMLView *v = d->m_view;
+    if (v) {
+        v->layout();
+        v->unscheduleRelayout();
+    }
+}

@@ -192,6 +192,9 @@ private:
     void resetCursor();
 
     void scheduleRelayout();
+#if APPLE_CHANGES
+    void unscheduleRelayout();
+#endif
 
     void scheduleRepaint(int x, int y, int w, int h);
 
