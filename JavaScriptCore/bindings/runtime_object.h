@@ -62,7 +62,6 @@ public:
     Bindings::Instance *getInternalInstance() const { return instance; }
 
 private:
-    void _initializeClassInfoFromInstance();
     
     static const ClassInfo info;
     Bindings::Instance *instance;

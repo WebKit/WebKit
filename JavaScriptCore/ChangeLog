@@ -1,3 +1,26 @@
+2004-01-22  Richard Williamson   <rjw@apple.com>
+
+	Simplified JavaString by using UString as backing store.  This
+	revealed a bug in CString's assignment operator which I fixed.
+
+	Removed some dead code.
+ 
+        Reviewed by John.
+
+        * bindings/jni/jni_runtime.h:
+        (KJS::Bindings::JavaString::JavaString):
+        (KJS::Bindings::JavaString::_commonInit):
+        (KJS::Bindings::JavaString::UTF8String):
+        (KJS::Bindings::JavaString::uchars):
+        (KJS::Bindings::JavaString::length):
+        (KJS::Bindings::JavaString::ustring):
+        * bindings/runtime_object.cpp:
+        (RuntimeObjectImp::RuntimeObjectImp):
+        * bindings/runtime_object.h:
+        * kjs/ustring.cpp:
+        (KJS::CString::CString):
+        (KJS::CString::operator=):
+
 === Safari-125 ===
 
 === Safari-124 ===
