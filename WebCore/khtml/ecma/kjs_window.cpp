@@ -953,19 +953,17 @@ bool Window::isSafeScript(ExecState *exec) const
     return true;
   }
 
+  // JS may be attempting to access the "window" object, which should be valid,
+  // even if the document hasn't been constructed yet.  If the document doesn't
+  // exist yet allow JS to access the window object.
+  if (!m_part->xmlDocImpl())
+      return true;
+  
   DOM::HTMLDocument thisDocument = m_part->htmlDocument();
-#if !APPLE_CHANGES
   if ( thisDocument.isNull() ) {
     kdDebug(6070) << "Window::isSafeScript: trying to access an XML document !?" << endl;
     return false;
   }
-#else
-  // JS may be attempting to access the "window" object, which should be valid,
-  // even if the document hasn't been constructed yet.  If the document doesn't
-  // exist yet allow JS to access the window object.
-  if (thisDocument.isNull())
-    return true;
-#endif
 
   DOM::HTMLDocument actDocument = activePart->htmlDocument();
 

@@ -1,3 +1,27 @@
+2003-07-18  Dave Hyatt  <hyatt@apple.com>
+
+	Fix for 3334082, XML documents can access HTML/XML docs in other
+	domains.  The basic bug is that we made a change right before
+	1.0 to allow a parent document to access a child frame's document
+	if the child frame had no document.  What we didn't notice was
+	that the ptr was obtained from the part by asking for an HTML
+	document.  For XML documents that failed the cast, we got back
+	null as well, which means that for non-HTML XML documents we
+	always return true from isSafeScript.
+
+	This patch makes sure our addition uses the raw xmlDoc pointer,
+	so that there are no mistakes, and it restores the code that
+	denies access when you aren't an HTML document.
+
+	(It is a separate bug that we just disallow cross-frame
+	communication in XML documents right now that I'll file as
+	a follow-up to this one.)
+	
+        Reviewed by darin, rjw, mjs
+
+        * khtml/ecma/kjs_window.cpp:
+        (Window::isSafeScript):
+
 2003-07-15  Dave Hyatt  <hyatt@apple.com>
 
 	Fix for 3300362, crash on myuhc.com.  The residual style code
