@@ -258,6 +258,7 @@ void RenderFlow::layout()
     m_height = 0;
     m_clearStatus = CNONE;
 
+    // COLLAPSING MARGIN CODE
     // Start out by setting our margin values to our current margin.
     if (m_marginTop > 0)
         m_maxTopPosMargin = m_marginTop;
@@ -267,7 +268,8 @@ void RenderFlow::layout()
         m_maxBottomPosMargin = m_marginBottom;
     else
         m_maxBottomNegMargin = m_marginBottom;
-        
+    bool canCollapseOwnMargins = !isPositioned() && !isFloating() && !isTableCell();
+                                       
 //    kdDebug( 6040 ) << "childrenInline()=" << childrenInline() << endl;
     if(childrenInline()) {
         // ### make bidi resumeable so that we can get rid of this ugly hack
@@ -294,6 +296,30 @@ void RenderFlow::layout()
     layoutSpecialObjects( relayoutChildren );
 
     //kdDebug() << renderName() << " layout width=" << m_width << " height=" << m_height << endl;
+
+    // COLLAPSING MARGIN CODE
+    if (canCollapseOwnMargins && m_height == 0) {
+        // We are an empty block with no border and padding and a computed height
+        // of 0.  The CSS spec states that empty blocks collapse their margins
+        // together.
+        // When blocks are empty, we just use the top margin values and set the
+        // bottom margin max values to 0.  This way we don't factor in the values
+        // twice when we collapse with our previous vertically adjacent and 
+        // following vertically adjacent blocks.
+        m_maxBottomPosMargin = m_maxBottomNegMargin = 0;
+        if (m_marginTop >= 0 && m_marginBottom >= 0)
+            m_maxTopPosMargin = m_marginTop > m_marginBottom ? m_marginTop : m_marginBottom;
+        else if (m_marginTop >= 0) {
+            m_maxTopPosMargin = m_marginTop;
+            m_maxTopNegMargin = m_marginBottom;
+        }
+        else if (m_marginBottom >= 0) {
+            m_maxTopPosMargin = m_marginBottom;
+            m_maxTopNegMargin = m_marginTop;
+        }
+        else
+            m_maxTopNegMargin = m_marginTop > m_marginBottom ? -m_marginBottom : -m_marginTop;
+    }
 
     setLayouted();
 }
@@ -345,12 +371,13 @@ void RenderFlow::layoutBlockChildren( bool relayoutChildren )
         xPos = marginLeft() + m_width - paddingRight() - borderRight();
     }
 
-    // FIXME: The following variable appears to be unused.
-    // bool canCollapseWithChildren = !isPositioned() && !isFloating() && !isTableCell();
-    
     RenderObject *child = firstChild();
     RenderFlow *prevFlow = 0;
 
+    // COLLAPSING MARGIN CODE
+    //bool canCollapseWithChildren = !isPositioned() && !isFloating() && !isTableCell() &&
+    //                               (m_height == 0);
+   
     int prevMargin = 0;
     if(isTableCell() ) {
         prevMargin = TABLECELLMARGIN;
