@@ -2406,6 +2406,8 @@ NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_start, int startOf
         while (next.isNull() && !n.parentNode().isNull()) {
             QString text;
             n = n.parentNode();
+            if (n == endNode)
+                break;
             next = n.nextSibling();
 
             unsigned short _id = n.elementId();
