@@ -643,8 +643,16 @@ bool DOMPosition::isLastRenderedPositionInEditableBlock() const
     if (renderedOffset() != (long)node()->caretMaxRenderedOffset())
         return false;
 
-    NodeImpl *next = node()->nextEditable();
-    return !next || !node()->inSameContainingEditableBlock(next);
+    DOMPosition pos(node(), offset());
+    EditIterator it(pos);
+    while (!it.atEnd()) {
+        it.next();
+        if (!it.current().node()->inSameContainingEditableBlock(node()))
+            return true;
+        if (it.current().inRenderedContent())
+            return false;
+    }
+    return true;
 }
 
 bool DOMPosition::inFirstEditableInRootEditableBlock() const

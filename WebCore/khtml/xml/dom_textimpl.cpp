@@ -319,12 +319,12 @@ DOMString CommentImpl::toString() const
 // ### allow having children in text nodes for entities, comments etc.
 
 TextImpl::TextImpl(DocumentPtr *doc, const DOMString &_text)
-    : CharacterDataImpl(doc, _text), m_rendererIsNeeded(false)
+    : CharacterDataImpl(doc, _text)
 {
 }
 
 TextImpl::TextImpl(DocumentPtr *doc)
-    : CharacterDataImpl(doc), m_rendererIsNeeded(false)
+    : CharacterDataImpl(doc)
 {
 }
 
@@ -389,11 +389,6 @@ NodeImpl *TextImpl::cloneNode(bool /*deep*/)
 
 bool TextImpl::rendererIsNeeded(RenderStyle *style)
 {
-    if (m_rendererIsNeeded) {
-        m_rendererIsNeeded = false;
-        return true;
-    }
-
     if (!CharacterDataImpl::rendererIsNeeded(style)) {
         return false;
     }
@@ -528,5 +523,24 @@ DOMString CDATASectionImpl::toString() const
     return DOMString("<![CDATA[") + nodeValue() + "]]>";
 }
 
+// ---------------------------------------------------------------------------
 
+EditingTextImpl::EditingTextImpl(DocumentPtr *impl, const DOMString &text)
+    : TextImpl(impl, text)
+{
+}
+
+EditingTextImpl::EditingTextImpl(DocumentPtr *impl)
+    : TextImpl(impl)
+{
+}
+
+EditingTextImpl::~EditingTextImpl()
+{
+}
+
+bool EditingTextImpl::rendererIsNeeded(RenderStyle *style)
+{
+    return true;
+}
 

@@ -1,3 +1,51 @@
+2004-04-09  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Dave
+        
+        Small collection of editing improvements.
+
+        * ChangeLog:
+        * khtml/editing/htmlediting_impl.cpp:
+        (shouldDeleteUpstreamPosition): This was deleting significant spaces on preceding
+        lines when the caret was at the start of a line. Fixed. 
+        (DeleteSelectionCommandImpl::doApply): Fixed a case where caret jumped to previous
+        line when deleting a character at the start of a line after a BR.
+        (InputNewlineCommandImpl::doApply): Handle more cases correctly. Previously, this
+        only handled inserting a newline when the caret was already in a text node.
+        (InputTextCommandImpl::prepareForTextInsertion): Ditto.
+        (InputTextCommandImpl::execute): Ditto.
+        * khtml/editing/htmlediting_impl.h:
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::checkSelectionPointIgnoringContinuations): Now can place caret
+        with a click in an empty block.
+        * khtml/rendering/render_block.h: Added checkSelectionPointIgnoringContinuations declaration.
+        * khtml/rendering/render_replaced.cpp: 
+        (RenderReplaced::checkSelectionPointIgnoringContinuations): Now can place caret with a click 
+        on a replaced element.
+        * khtml/rendering/render_replaced.h: Added checkSelectionPointIgnoringContinuations declaration.
+        * khtml/rendering/render_text.cpp:
+        (InlineTextBox::checkSelectionPoint): Now can place caret with a click in text on a line made "tall"
+        by an image on the same line.
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::createEditingTextNode): This creates a text node subclass that whill always create
+        a renderer for itself.
+        * khtml/xml/dom_docimpl.h:
+        * khtml/xml/dom_position.cpp:
+        (DOMPosition::isLastRenderedPositionInEditableBlock): Improved code to handle more cases.
+        * khtml/xml/dom_textimpl.cpp:
+        (TextImpl::TextImpl): Rolled out m_rendererIsNeeded flag.
+        (TextImpl::rendererIsNeeded): Ditto.
+        (EditingTextImpl::EditingTextImpl): New class.
+        (EditingTextImpl::~EditingTextImpl): New.
+        (EditingTextImpl::rendererIsNeeded): New. Always returns true.
+        * khtml/xml/dom_textimpl.h: New EditingTextImpl class.
+        * layout-tests/editing/deleting/delete-3608430-fix-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-3608430-fix.html: Added.
+        * layout-tests/editing/deleting/delete-3608462-fix-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-3608462-fix.html: Added.
+        * layout-tests/editing/deleting/delete-trailing-ws-002-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-trailing-ws-002.html: Added.
+
 2004-04-08  Chris Blumenberg  <cblu@apple.com>
 
 	Renamed the PasteHTMLCommand to PasteMarkupCommand. Removed PasteImageCommand because we will use PasteMarkupCommand for pasting images.

@@ -126,6 +126,28 @@ unsigned long RenderReplaced::caretMaxRenderedOffset() const
     return 1; 
 }
 
+FindSelectionResult RenderReplaced::checkSelectionPointIgnoringContinuations(int _x, int _y, int _tx, int _ty, DOM::NodeImpl *&node, int &offset)
+{
+    int l = xPos() + _tx;
+    int r = xPos() + _tx + width();
+    int t = yPos() + _ty;
+    int b = yPos() + _ty + height();
+    
+    bool pointIsInside = (_x >= l && _x <= r && _y >= t && _y <= b);
+    
+    if (pointIsInside && element()) {
+        node = element();
+        if (_x < l + (width() / 2)) {
+            offset = 0;
+            return SelectionPointBefore;
+        }
+        offset = 1;
+        return SelectionPointAfter;
+    }
+    
+    return RenderBox::checkSelectionPointIgnoringContinuations(_x, _y, _tx, _ty, node, offset);
+}
+
 // -----------------------------------------------------------------------------
 
 RenderWidget::RenderWidget(DOM::NodeImpl* node)

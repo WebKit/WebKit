@@ -54,6 +54,7 @@ using DOM::DocumentImpl;
 using DOM::DOMPosition;
 using DOM::DOMString;
 using DOM::DOMStringImpl;
+using DOM::EditingTextImpl;
 using DOM::EditIterator;
 using DOM::ElementImpl;
 using DOM::HTMLElementImpl;
@@ -625,7 +626,7 @@ static bool shouldDeleteUpstreamPosition(const DOMPosition &pos)
     if (pos.isLastRenderedPositionInEditableBlock())
         return false;
 
-    if (pos.isFirstRenderedPositionOnLine())
+    if (pos.isFirstRenderedPositionOnLine() || pos.isLastRenderedPositionOnLine())
         return false;
 
     RenderText *textRenderer = static_cast<RenderText *>(renderer);
@@ -836,7 +837,6 @@ void DeleteSelectionCommandImpl::doApply()
          (downstreamStart.offset() <= downstreamStart.node()->caretMinOffset()));
 
     unsigned long startRenderedOffset = downstreamStart.renderedOffset();
-    //unsigned long endRenderedOffset = upstreamEnd.renderedOffset();
     
     bool startAtStartOfRootEditableBlock = startRenderedOffset == 0 && downstreamStart.inFirstEditableInRootEditableBlock();
     bool startAtStartOfBlock = startAtStartOfRootEditableBlock || 
@@ -869,12 +869,14 @@ void DeleteSelectionCommandImpl::doApply()
         endingPosition = upstreamStart;
         if (downstreamStart.node()->id() == ID_BR && downstreamStart.offset() == 0)
             adjustEndingPositionDownstream = true;
+        if (upstreamStart.node()->id() == ID_BR && upstreamStart.offset() == 1)
+            adjustEndingPositionDownstream = true;
     }
    
     //
     // Figure out the whitespace conversions to do
     //
-    if (startAtStartOfBlock && !endAtEndOfBlock) {
+    if ((startAtStartOfBlock && !endAtEndOfBlock) || (!startCompletelySelected && adjustEndingPositionDownstream)) {
         // convert trailing whitespace
         DOMPosition trailing = trailingWhitespacePosition(downstreamEnd.equivalentDownstreamPosition());
         if (trailing.notEmpty()) {
@@ -1031,47 +1033,50 @@ int InputNewlineCommandImpl::commandID() const
 
 void InputNewlineCommandImpl::doApply()
 {
-    KHTMLSelection selection = endingSelection();
-
-    if (!selection.startNode()->isTextNode())
-        return;
-
-    // Delete the current selection
     deleteSelection();
-    
-    // reset the selection since it may have changed due to the delete
-    selection = endingSelection();
+    KHTMLSelection selection = endingSelection();
 
     int exceptionCode = 0;
     ElementImpl *breakNode = document()->createHTMLElement("BR", exceptionCode);
     ASSERT(exceptionCode == 0);
 
-    TextImpl *textNode = static_cast<TextImpl *>(selection.startNode());
-    bool atStart = selection.startOffset() == textNode->renderer()->caretMinOffset();
-    bool atEnd = selection.startOffset() == textNode->renderer()->caretMaxOffset();
-    if (atStart) {
-        // Set the cursor at the beginning of text node now following the new BR.
-        insertNodeBefore(breakNode, textNode);
-        selection = KHTMLSelection(textNode, 0);
-        setEndingSelection(selection);
+    DOMPosition pos = selection.startPosition().equivalentDownstreamPosition();
+    bool atEnd = pos.offset() >= pos.node()->caretMaxOffset();
+    bool atStart = pos.offset() <= pos.node()->caretMinOffset();
+    bool atEndOfBlock = pos.isLastRenderedPositionInEditableBlock();
+    
+    if (atEndOfBlock) {
+        LOG(Editing, "input newline case 1");
+        appendNode(pos.node()->containingEditableBlock(), breakNode);
+        // EDIT FIXME: This should not insert a non-breaking space after the BR.
+        // But for right now, it gets the BR to render.
+        TextImpl *editingTextNode = document()->createEditingTextNode(nonBreakingSpaceString());
+        insertNodeAfter(editingTextNode, breakNode);
+        setEndingSelection(DOMPosition(editingTextNode, 1));
+        editingTextNode->deref();
     }
     else if (atEnd) {
-        insertNodeAfter(breakNode, textNode);
-        // Set the cursor at the beginning of the the BR.
-        DOMPosition pos(breakNode, 0);
-        setEndingSelection(pos);
+        LOG(Editing, "input newline case 2");
+        insertNodeAfter(breakNode, pos.node());
+        setEndingSelection(DOMPosition(breakNode, 0));
+    }
+    else if (atStart) {
+        LOG(Editing, "input newline case 3");
+        insertNodeAt(breakNode, pos.node(), 0);
+        setEndingSelection(DOMPosition(pos.node(), 0));
     }
     else {
+        LOG(Editing, "input newline case 4");
+        ASSERT(pos.node()->isTextNode());
+        TextImpl *textNode = static_cast<TextImpl *>(pos.node());
         TextImpl *textBeforeNode = document()->createTextNode(textNode->substringData(0, selection.startOffset(), exceptionCode));
         deleteText(textNode, 0, selection.startOffset());
         insertNodeBefore(textBeforeNode, textNode);
         insertNodeBefore(breakNode, textNode);
         textBeforeNode->deref();
-        // Set the cursor at the beginning of the node after the BR.
-        selection = KHTMLSelection(textNode, 0);
-        setEndingSelection(selection);
+        setEndingSelection(DOMPosition(textNode, 0));
     }
-    
+        
     breakNode->deref();
 }
 
@@ -1124,34 +1129,41 @@ void InputTextCommandImpl::deleteCharacter()
     }
 }
 
-DOMPosition InputTextCommandImpl::prepareForTextInsertion()
+DOMPosition InputTextCommandImpl::prepareForTextInsertion(bool adjustDownstream)
 {
     // Prepare for text input by looking at the current position.
     // It may be necessary to insert a text node to receive characters.
     KHTMLSelection selection = endingSelection();
     ASSERT(selection.state() == KHTMLSelection::CARET);
     
-    DOMPosition pos = selection.startPosition().equivalentUpstreamPosition();
-    if (!pos.inRenderedContent())
-        pos = pos.nextRenderedEditablePosition();
-    if (!pos.node()->inSameContainingEditableBlock(selection.startNode()))
-        pos = selection.startPosition();
+    DOMPosition pos = selection.startPosition();
+    if (adjustDownstream)
+        pos = pos.equivalentDownstreamPosition();
+    else
+        pos = pos.equivalentUpstreamPosition();
     
     if (!pos.node()->isTextNode()) {
         if (!m_insertedTextNode) {
-            m_insertedTextNode = document()->createTextNode("");
-            m_insertedTextNode->setRendererIsNeeded();
+            m_insertedTextNode = document()->createEditingTextNode("");
             m_insertedTextNode->ref();
         }
         
-        if (pos.node()->isEditableBlock())
+        if (pos.node()->isEditableBlock()) {
+            LOG(Editing, "prepareForTextInsertion case 1");
             appendNode(pos.node(), m_insertedTextNode);
-        else if (pos.node()->id() == ID_BR && pos.offset() == 1)
+        }
+        else if (pos.node()->id() == ID_BR && pos.offset() == 1) {
+            LOG(Editing, "prepareForTextInsertion case 2");
             insertNodeBefore(m_insertedTextNode, pos.node());
-        else if (pos.node()->caretMinOffset() == pos.offset())
+        }
+        else if (pos.node()->caretMinOffset() == pos.offset()) {
+            LOG(Editing, "prepareForTextInsertion case 3");
             insertNodeBefore(m_insertedTextNode, pos.node());
-        else if (pos.node()->caretMaxOffset() == pos.offset())
+        }
+        else if (pos.node()->caretMaxOffset() == pos.offset()) {
+            LOG(Editing, "prepareForTextInsertion case 4");
             insertNodeAfter(m_insertedTextNode, pos.node());
+        }
         else
             ASSERT_NOT_REACHED();
         
@@ -1164,15 +1176,18 @@ DOMPosition InputTextCommandImpl::prepareForTextInsertion()
 void InputTextCommandImpl::execute(const DOMString &text)
 {
     KHTMLSelection selection = endingSelection();
+    bool adjustDownstream = selection.startPosition().isFirstRenderedPositionOnLine();
 
     // Delete the current selection, or collapse whitespace, as needed
     if (selection.state() == KHTMLSelection::RANGE)
         deleteSelection();
     else
         deleteCollapsibleWhitespace();
+
+    // EDIT FIXME: Need to take typing style from upstream text, if any.
     
     // Make sure the document is set up to receive text
-    DOMPosition pos = prepareForTextInsertion();
+    DOMPosition pos = prepareForTextInsertion(adjustDownstream);
     
     TextImpl *textNode = static_cast<TextImpl *>(pos.node());
     long offset = pos.offset();
@@ -1184,8 +1199,7 @@ void InputTextCommandImpl::execute(const DOMString &text)
         insertSpace(textNode, offset);
     else
         insertText(textNode, offset, text);
-    selection = KHTMLSelection(textNode, offset + text.length());
-    setEndingSelection(selection);
+    setEndingSelection(DOMPosition(textNode, offset + text.length()));
     m_charactersAdded += text.length();
 }
 

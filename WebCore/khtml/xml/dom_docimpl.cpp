@@ -462,6 +462,11 @@ EntityReferenceImpl *DocumentImpl::createEntityReference ( const DOMString &name
     return new EntityReferenceImpl(docPtr(), name.implementation());
 }
 
+EditingTextImpl *DocumentImpl::createEditingTextNode(const DOMString &text)
+{
+    return new EditingTextImpl(docPtr(), text);
+}
+
 NodeImpl *DocumentImpl::importNode(NodeImpl *importedNode, bool deep, int &exceptioncode)
 {
 	NodeImpl *result = 0;

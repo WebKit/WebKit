@@ -85,6 +85,7 @@ namespace DOM {
 #if APPLE_CHANGES
     class DOMImplementation;
 #endif
+    class EditingTextImpl;
     class ElementImpl;
     class EntityReferenceImpl;
     class EventImpl;
@@ -244,6 +245,9 @@ public:
 
     TreeWalkerImpl *createTreeWalker(const Node &root, unsigned long whatToShow, const NodeFilter &filter,
                             bool entityReferenceExpansion);
+
+    // Special support for editing
+    EditingTextImpl *createEditingTextNode(const DOMString &text);
 
     virtual void recalcStyle( StyleChange = NoChange );
     static QPtrList<DocumentImpl> * changedDocuments;

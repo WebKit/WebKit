@@ -55,6 +55,9 @@ public:
     virtual long caretMinOffset() const;
     virtual long caretMaxOffset() const;
     virtual unsigned long caretMaxRenderedOffset() const;
+
+    virtual FindSelectionResult checkSelectionPointIgnoringContinuations
+        (int _x, int _y, int _tx, int _ty, DOM::NodeImpl *&, int &);
     
 private:
     int m_intrinsicWidth;

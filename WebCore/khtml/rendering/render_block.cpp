@@ -2022,6 +2022,17 @@ bool RenderBlock::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty,
     return inBox;
 }
 
+FindSelectionResult RenderBlock::checkSelectionPointIgnoringContinuations(int _x, int _y, int _tx, int _ty, DOM::NodeImpl *&node, int &offset)
+{
+    if (!firstChild() && element()) {
+        node = element();
+        offset = 0;
+        return SelectionPointBefore;
+    }
+    
+    return RenderFlow::checkSelectionPointIgnoringContinuations(_x, _y, _tx, _ty, node, offset);
+}
+
 void RenderBlock::calcMinMaxWidth()
 {
     KHTMLAssert( !minMaxKnown() );
