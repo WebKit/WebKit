@@ -1,3 +1,20 @@
+2003-10-14  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin
+
+	Fix for this bug:
+
+	<rdar://problem/3450449>: assertion failure in WebBridge 
+	_retrieveKeyboardUIModeFromPreferences
+
+	Can't assert that the preference always exists and is valid as I
+	thought you could. This could just mean that the a preference for full
+	keyboard access has not been specified by the user yet. If this is so,
+	just return the default keyboard access mode.
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge _retrieveKeyboardUIModeFromPreferences:])
+
 2003-10-13  Richard Williamson  <rjw@apple.com>
 
 	Added support for small-caps.

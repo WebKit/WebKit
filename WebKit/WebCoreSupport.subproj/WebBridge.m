@@ -975,9 +975,8 @@ static id <WebFormDelegate> formDelegate(WebBridge *self)
 {
     CFPreferencesAppSynchronize(UniversalAccessDomain);
 
-    BOOL sanityCheck;
-    int mode = CFPreferencesGetAppIntegerValue(AppleKeyboardUIMode, UniversalAccessDomain, &sanityCheck);
-    ASSERT(sanityCheck);
+    BOOL keyExistsAndHasValidFormat;
+    int mode = CFPreferencesGetAppIntegerValue(AppleKeyboardUIMode, UniversalAccessDomain, &keyExistsAndHasValidFormat);
     
     // The keyboard access mode is reported by two bits:
     // Bit 0 is set if feature is on
