@@ -1,3 +1,26 @@
+2003-03-12  David Hyatt  <hyatt@apple.com>
+
+	Two fixes.  The first is more help with macromedia.  Floats could
+	get lost and not painted by the correct layer still.  The new
+	code is more robust about checking if a layer crossing occurred
+	in the case where you want to addOverhangingFloats to a parent.
+
+	The second fix changes the priority of space allocation when
+	growing cells from their minwidths to their preferred widths.
+	The old code did fixed and then percent.  The new code does
+	percent and then fixed.
+
+	Also when tables are overconstrained after growing cells to their
+	effective widths, instead of shrinking cells without regard for
+	their type, I implemented a shrink system that follows the same
+	priority (reversed) that was used when growing the cells originally.
+	
+        Reviewed by darin
+
+        * khtml/rendering/render_block.cpp:
+        * khtml/rendering/table_layout.cpp:
+        (AutoTableLayout::layout):
+
 2003-03-12  Trey Matteson  <trey@apple.com>
 
 	3190784 REGRESSION: crash in KWQListIteratorImpl in form completion code at sonyericsson.com page
