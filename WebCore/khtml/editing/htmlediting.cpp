@@ -1678,6 +1678,7 @@ void DeleteSelectionCommand::handleGeneralDelete()
                 TextImpl *text = static_cast<TextImpl *>(m_downstreamEnd.node());
                 if (m_downstreamEnd.offset() > 0) {
                     deleteTextFromNode(text, 0, m_downstreamEnd.offset());
+                    m_downstreamEnd = Position(text, 0);
                     m_trailingWhitespaceValid = false;
                 }
             }

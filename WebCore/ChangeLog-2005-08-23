@@ -2,6 +2,16 @@
 
         Reviewed by Harrison
 
+        * khtml/editing/htmlediting.cpp:
+        (khtml::DeleteSelectionCommand::handleGeneralDelete): The downstream position in this function 
+        may need to be adjusted when deleting text off the front part of a text node. This fixes a problem 
+        I discovered while improving the paste command, where the insertion poitn wound up in the wrong
+        place after the delete. 
+
+2004-11-29  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Harrison
+
         Add a new helper function to insert a paragraph separator. Will be used in my
         upcoming paste improvments.
 
