@@ -15,6 +15,7 @@
 
 /*!
     @class WebHTMLView
+    @discussion A document view of WebView that displays HTML content.
 */
 @interface WebHTMLView : NSClipView <WebDocumentView, WebDocumentDragSettings, WebDocumentSearching, WebDocumentTextEncoding>
 {
@@ -24,42 +25,46 @@
 
 /*!
     @method setNeedsToApplyStyles:
-    @param flag
+    @abstract Sets flag to cause reapplication of style information.
+    @param flag YES to apply style information, NO to not apply style information.
 */
 - (void)setNeedsToApplyStyles: (BOOL)flag;
 
 /*!
     @method reapplyStyles
-    @discussion Reapplies style information to the document.  This should not be called directly,
+    @discussion Immediately causes reapplication of style information to the view.  This should not be called directly,
     instead call setNeedsToApplyStyles:.
 */
 - (void)reapplyStyles;
 
 /*!
     @method setContextMenusEnabled:
-    @param flag
+    @abstract Enables or disables contextual menus. 
+    @param flag YES to enable contextual menus, NO to disable contextual menus.
 */
 - (void)setContextMenusEnabled: (BOOL)flag;
 
 /*!
     @method contextMenusEnabled:
+    @result Returns YES if contextual menus are enabled, NO if they are not.
 */
 - (BOOL)contextMenusEnabled;
 
 /*!
     @method deselectText
+    @abstract Causes a text selection to lose its selection.
 */
 - (void)deselectText;
 
 /*!
     @method selectedAttributedText
-    @abstract Get an attributed string that represents the current selection.
+    @result Attributed string that represents the current selection.
 */
 - (NSAttributedString *)selectedAttributedText;
 
 /*!
     @method selectedText
-    @abstract Get an string that represents the current selection.
+    @result String that represents the current selection.
 */
 - (NSString *)selectedText;
 
