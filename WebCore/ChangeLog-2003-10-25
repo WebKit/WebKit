@@ -1,3 +1,14 @@
+2003-08-27  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3396962, hang on quote.com.  Fieldsets with display:inline should be treated
+	like inline-blocks. This matches WinIE's behavior.
+	
+        Reviewed by mjs
+
+        * khtml/rendering/render_form.cpp:
+        (RenderFieldset::setStyle):
+        * khtml/rendering/render_form.h:
+
 2003-08-26  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

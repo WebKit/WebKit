@@ -725,6 +725,18 @@ void RenderFieldset::paintBorderMinusLegend(QPainter *p, int _tx, int _ty, int w
     }
 }
 
+void RenderFieldset::setStyle(RenderStyle* _style)
+{
+    RenderBlock::setStyle(_style);
+
+    // WinIE renders fieldsets with display:inline like they're inline-blocks.  For us,
+    // an inline-block is just a block element with replaced set to true and inline set
+    // to true.  Ensure that if we ended up being inline that we set our replaced flag
+    // so that we're treated like an inline-block.
+    if (isInline())
+        setReplaced(true);
+}
+
 // -------------------------------------------------------------------------
 
 RenderFileButton::RenderFileButton(HTMLInputElementImpl *element)

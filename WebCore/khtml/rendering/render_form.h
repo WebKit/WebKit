@@ -288,6 +288,8 @@ public:
     virtual const char *renderName() const { return "RenderFieldSet"; }
 
     virtual RenderObject* layoutLegend(bool relayoutChildren);
+
+    virtual void setStyle(RenderStyle* _style);
     
 protected:
     virtual void paintBoxDecorations(QPainter *p,int, int _y,
