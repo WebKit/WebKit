@@ -198,6 +198,9 @@
 {
     IFWebFramePrivate *data = (IFWebFramePrivate *)_framePrivate;
     
+    if (self == [[self controller] mainFrame])
+        WEBKITDEBUGLEVEL (WEBKIT_LOG_DOCUMENTLOAD, "loading %s", [[[[self provisionalDataSource] inputURL] absoluteString] cString]);
+
     // Force refresh is irrelevant, as this will always be the first load.
     // The controller will transition the provisional data source to the
     // committed data source.

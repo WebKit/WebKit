@@ -1,3 +1,12 @@
+2002-04-08  Richard Williamson  <rjw@apple.com>
+
+        Added logs for Shelley to note start and completion of document load.
+        -WebKitLogLevel 0x1000.  Also, as a bonus, note time to load.
+        
+	* Misc.subproj/WebKitDebug.h:
+	* WebView.subproj/IFWebFrame.mm: (-[IFWebFrame startLoading]):
+	* WebView.subproj/IFWebFramePrivate.mm: (-[IFWebFrame _setState:]):
+
 2002-04-08  Chris Blumenberg  <cblu@apple.com>
 
 	* Plugins.subproj/IFNullPluginView.h:
