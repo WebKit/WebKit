@@ -71,7 +71,7 @@
     [dataSource release];
     dataSource = [theDataSource retain];
 
-    NSString *MIME = [[dataSource response] contentType];
+    NSString *MIME = [[dataSource response] MIMEType];
     
     [self setMIMEType:MIME];
     [self setBaseURL:[[dataSource request] URL]];

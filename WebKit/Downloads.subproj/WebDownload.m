@@ -24,6 +24,7 @@
 #import <WebFoundation/NSURLRequest.h>
 #import <WebFoundation/WebResource.h>
 #import <WebFoundation/NSURLResponse.h>
+#import <WebFoundation/NSURLResponsePrivate.h>
 
 typedef struct WebFSForkIOParam
 {

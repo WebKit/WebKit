@@ -1,3 +1,35 @@
+2003-03-27  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Trey
+
+	Moved to final NSURLResponse and NSHTTPURLResponse API.
+
+        * Downloads.subproj/WebDownload.m:
+        * Misc.subproj/WebNSURLResponseExtras.m:
+        (-[NSURLResponse suggestedFilenameForSaving]):
+        (-[NSHTTPURLResponse suggestedFilenameForSaving]):
+        * Plugins.subproj/WebBaseNetscapePluginStream.m:
+        (-[WebBaseNetscapePluginStream setResponse:]):
+        * Plugins.subproj/WebNetscapePluginDocumentView.m:
+        (-[WebNetscapePluginDocumentView setDataSource:]):
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _representationClass]):
+        (-[WebDataSource _commitIfReady:]):
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _opened]):
+        (-[WebFrame _loadItem:fromItem:withLoadType:]):
+        * WebView.subproj/WebFrameViewPrivate.m:
+        (-[WebFrameView _makeDocumentViewForDataSource:]):
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient continueAfterContentPolicy:response:]):
+        (-[WebMainResourceClient checkContentPolicyForResponse:]):
+        (-[WebMainResourceClient resource:didReceiveResponse:]):
+        (-[WebMainResourceClient startLoading:]):
+        * WebView.subproj/WebTextRepresentation.m:
+        (-[WebTextRepresentation setDataSource:]):
+        * WebView.subproj/WebTextView.m:
+        (-[WebTextView dataSourceUpdated:]):
+
 === Safari-69 ===
 
 2003-03-26  Richard Williamson   <rjw@apple.com>

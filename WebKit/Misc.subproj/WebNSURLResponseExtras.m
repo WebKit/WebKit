@@ -10,7 +10,6 @@
 
 #import <WebFoundation/WebAssertions.h>
 #import <WebFoundation/WebFileTypeMappings.h>
-#import <WebFoundation/NSHTTPURLResponse.h>
 #import <WebFoundation/WebLocalizableStrings.h>
 #import <WebFoundation/WebNSStringExtras.h>
 
@@ -25,7 +24,7 @@
     ASSERT([self URL]);
     
     // Get the filename from the URL and the MIME type. Always returns something valid.
-    return [[self URL] _web_suggestedFilenameForSavingWithMIMEType:[self contentType]];
+    return [[self URL] _web_suggestedFilenameForSavingWithMIMEType:[self MIMEType]];
 }
 
 @end
@@ -37,7 +36,7 @@
     NSString *filename = nil;
 
     // Use the content disposition of the filename if present.
-    NSString *contentDispositionHeader = [[self header] objectForKey:@"Content-Disposition"];
+    NSString *contentDispositionHeader = [[self allHeaderFields] objectForKey:@"Content-Disposition"];
     filename = [contentDispositionHeader _web_fileNameFromContentDispositionHeader];
     filename = [filename _web_filenameByFixingIllegalCharacters];
 

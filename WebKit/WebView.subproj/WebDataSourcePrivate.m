@@ -30,13 +30,13 @@
 #import <WebKit/WebViewPrivate.h>
 
 #import <WebFoundation/WebError.h>
-#import <WebFoundation/NSHTTPURLResponse.h>
 #import <WebFoundation/WebNSDictionaryExtras.h>
 #import <WebFoundation/WebNSStringExtras.h>
 #import <WebFoundation/WebNSURLExtras.h>
 #import <WebFoundation/WebResource.h>
 #import <WebFoundation/NSURLRequest.h>
 #import <WebFoundation/NSURLResponse.h>
+#import <WebFoundation/NSURLResponsePrivate.h>
 
 
 @implementation WebDataSourcePrivate 
@@ -91,7 +91,7 @@
 
 - (Class)_representationClass
 {
-    return [[[self class] _repTypes] _web_objectForMIMEType:[[self response] contentType]];
+    return [[[self class] _repTypes] _web_objectForMIMEType:[[self response] MIMEType]];
 }
 
 - (void)_setLoading:(BOOL)loading
@@ -478,7 +478,7 @@
             || loadType == WebFrameLoadTypeReloadAllowingStaleData;
         
         NSDictionary *headers = [_private->response isKindOfClass:[NSHTTPURLResponse class]]
-            ? [(NSHTTPURLResponse *)_private->response header] : nil;
+            ? [(NSHTTPURLResponse *)_private->response allHeaderFields] : nil;
 
         [frame _closeOldDataSources];
 
@@ -498,7 +498,7 @@
 
         [[self _bridge] openURL:urlString
                          reload:reload 
-                    contentType:[_private->response contentType]
+                    contentType:[_private->response MIMEType]
                         refresh:[headers objectForKey:@"Refresh"]
                    lastModified:(pageCache ? nil : [_private->response lastModifiedDate])
                       pageCache:pageCache];

@@ -65,7 +65,7 @@
 {
     // FIXME: This needs to be more efficient for progressively loading documents.
     
-    if ([[[dataSource response] contentType] isEqualToString:@"text/rtf"]) {
+    if ([[[dataSource response] MIMEType] isEqualToString:@"text/rtf"]) {
         [self setRichText:YES];
         [self replaceCharactersInRange:NSMakeRange(0, [[self string] length]) withRTF:[dataSource data]];
     } else {

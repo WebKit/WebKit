@@ -145,7 +145,7 @@
 
     switch (contentPolicy) {
     case WebPolicyUse:
-	if (![WebView canShowMIMEType:[r contentType]]) {
+	if (![WebView canShowMIMEType:[r MIMEType]]) {
 	    [[dataSource webFrame] _handleUnimplementablePolicyWithErrorCode:WebKitErrorCannotShowMIMEType forURL:[req URL]];
 	    [self stopLoadingForPolicyChange];
 	    return;
@@ -195,7 +195,7 @@
 
     WebView *c = [dataSource _controller];
     [c setDefersCallbacks:YES];
-    [[c _policyDelegateForwarder] webView:c decideContentPolicyForMIMEType:[r contentType]
+    [[c _policyDelegateForwarder] webView:c decideContentPolicyForMIMEType:[r MIMEType]
                                                                    andRequest:[dataSource request]
                                                                       inFrame:[dataSource webFrame]
                                                              decisionListener:listener];
@@ -208,10 +208,10 @@
     ASSERT(![self defersCallbacks]);
     ASSERT(![[dataSource _controller] defersCallbacks]);
 
-    LOG(Loading, "main content type: %@", [r contentType]);
+    LOG(Loading, "main content type: %@", [r MIMEType]);
 
     [dataSource _setResponse:r];
-    _contentLength = [r contentLength];
+    _contentLength = [r expectedContentLength];
 
     // Figure out the content policy.
     [self checkContentPolicyForResponse:r];
@@ -276,8 +276,8 @@
 
 	NSURLResponse *rsp = [[NSURLResponse alloc] init];
 	[rsp setURL:[[[self dataSource] request] URL]];
-	[rsp setContentType:@"text/html"];
-	[rsp setContentLength:0];
+	[rsp setMIMEType:@"text/html"];
+	[rsp setExpectedContentLength:0];
 	[self resource:resource didReceiveResponse:rsp];
 	[rsp release];
     } else {

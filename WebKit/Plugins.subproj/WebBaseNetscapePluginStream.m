@@ -9,6 +9,7 @@
 #import <WebKit/WebNetscapePluginPackage.h>
 
 #import <WebFoundation/NSURLResponse.h>
+#import <WebFoundation/NSURLResponsePrivate.h>
 #import <WebFoundation/WebNSFileManagerExtras.h>
 
 @implementation WebBaseNetscapePluginStream
@@ -61,7 +62,7 @@
 
     stream.ndata = self;
     stream.URL = cURL;
-    stream.end = [r contentLength];
+    stream.end = [r expectedContentLength];
     stream.lastmodified = [[r lastModifiedDate] timeIntervalSince1970];
     stream.notifyData = notifyData;
 
@@ -70,7 +71,7 @@
     // FIXME: Need a way to check if stream is seekable
 
     NPError npErr;
-    npErr = NPP_NewStream(instance, (char *)[[r contentType] cString], &stream, NO, &transferMode);
+    npErr = NPP_NewStream(instance, (char *)[[r MIMEType] cString], &stream, NO, &transferMode);
     LOG(Plugins, "NPP_NewStream: %d %@", npErr, URL);
 
     if (npErr != NPERR_NO_ERROR) {

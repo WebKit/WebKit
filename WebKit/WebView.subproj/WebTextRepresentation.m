@@ -18,7 +18,7 @@
 
 - (void)setDataSource:(WebDataSource *)dataSource
 {
-    hasRTFSource = [[[dataSource response] contentType] isEqualToString:@"text/rtf"];
+    hasRTFSource = [[[dataSource response] MIMEType] isEqualToString:@"text/rtf"];
     if (hasRTFSource){
         RTFSource = [[dataSource _stringWithData: [dataSource data]] retain];
     }
