@@ -95,7 +95,7 @@ static void URLFileReaderInit(void)
     [mutex unlock];
 
     if (fileNotMappable) {
-        data = [NSData dataWithContentsOfFile:path];
+        data = [[NSData alloc] initWithContentsOfFile:path];
     }
     else if (fileSystemPath && (fd = open(fileSystemPath, O_RDONLY, 0)) >= 0) {
         // File exists. Retrieve the file size.
@@ -111,7 +111,7 @@ static void URLFileReaderInit(void)
                 [mutex unlock];
                 
                 mappedBytes = NULL;
-                data = [NSData dataWithContentsOfFile:path];
+                data = [[NSData alloc] initWithContentsOfFile:path];
             }
             else {
                 // On success, create data object using mapped bytes.
@@ -121,7 +121,7 @@ static void URLFileReaderInit(void)
                 // be stubborn....try to read bytes again
                 if (!data) {
                     munmap(mappedBytes, mappedLength);    
-                    data = [NSData dataWithContentsOfFile:path];
+                    data = [[NSData alloc] initWithContentsOfFile:path];
                 }
             }
         }
