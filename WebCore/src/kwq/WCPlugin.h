@@ -50,7 +50,7 @@
     NPP_URLNotifyProcPtr NPP_URLNotify;
     NPP_GetValueProcPtr NPP_GetValue;
     NPP_SetValueProcPtr NPP_SetValue;
-    NPP_ShutdownProcPtr NPP_Shutdown; 
+    NPP_ShutdownProcPtr NPP_Shutdown;
 }
 
 - (BOOL)initializeWithPath:(NSString *)pluginPath;

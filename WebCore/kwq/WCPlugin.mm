@@ -135,6 +135,8 @@
     FSSpec spec;
     FSRef fref; 
     mainFuncPtr pluginMainFunc;
+    initializeFuncPtr NPP_Initialize;
+    getEntryPointsFuncPtr NPP_GetEntryPoints;
     NPError npErr;
     Boolean didLoad;
     NSBundle *tempBundle;
@@ -151,14 +153,20 @@
         if(!memcmp([data bytes], "Joy!peff", 8)){
             isCFM = TRUE;
         }else{
-            isCFM = FALSE;
+            isCFM = TRUE; //FIXME
         }
         [executableFile closeFile];
         didLoad = CFBundleLoadExecutable(bundle);
         if (!didLoad) {
             return;
         }
-        pluginMainFunc = (void*)CFBundleGetFunctionPointerForName(bundle, CFSTR("main") );
+        if(isCFM){
+            pluginMainFunc = (void*)CFBundleGetFunctionPointerForName(bundle, CFSTR("main") );
+        }else{
+            NPP_Initialize = (void*)CFBundleGetFunctionPointerForName(bundle, CFSTR("NPP_Initialize") );
+            NPP_GetEntryPoints = (void*)CFBundleGetFunctionPointerForName(bundle, CFSTR("NPP_GetEntryPoints") );
+            NPP_Shutdown = (void*)CFBundleGetFunctionPointerForName(bundle, CFSTR("NPP_Shutdown") );
+        }
     }else{ // single CFM file
         err = FSPathMakeRef((UInt8 *)[path cString], &fref, NULL);
         if(err != noErr){
@@ -243,11 +251,11 @@
         browserFuncs.invalidateregion = NPN_InvalidateRegion;
         browserFuncs.forceredraw = NPN_ForceRedraw;
         
-        npErr = pluginMainFunc(&browserFuncs, &pluginFuncs, &NPP_Shutdown);
+        NPP_Initialize(&browserFuncs);
+        NPP_GetEntryPoints(&pluginFuncs);
         
         pluginSize = pluginFuncs.size;
         pluginVersion = pluginFuncs.version;
-        KWQDebug("pluginMainFunc: %d, size=%d, version=%d\n", npErr, pluginSize, pluginVersion);
         
         NPP_New = pluginFuncs.newp;
         NPP_Destroy = pluginFuncs.destroy;

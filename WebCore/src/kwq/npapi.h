@@ -338,6 +338,9 @@ extern "C" {
 
 typedef NPError (* mainFuncPtr)(NPNetscapeFuncs*, NPPluginFuncs*, NPP_ShutdownProcPtr*);
 
+typedef NPError (* initializeFuncPtr)(NPNetscapeFuncs*);
+typedef NPError (* getEntryPointsFuncPtr)(NPPluginFuncs*);
+
 void *functionPointerForTVector(void *);
 void *tVectorForFunctionPointer(void *);
 

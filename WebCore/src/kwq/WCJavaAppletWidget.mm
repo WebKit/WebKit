@@ -57,16 +57,17 @@ WCJavaAppletWidget::WCJavaAppletWidget(QMap<QString, QString> args)
     for( it = args.begin(); it != args.end(); ++it ){
         [arguments setObject:QSTRING_TO_NSSTRING(it.data()) forKey:QSTRING_TO_NSSTRING(it.key())];
         if(it.key().contains("codebase", FALSE)){
-            codebase = QSTRING_TO_NSSTRING(it.data());
-            NSLog(codebase);
+            codebase = [NSString stringWithString:QSTRING_TO_NSSTRING(it.data())];
         }
         else if(it.key().contains("code", FALSE)){
-            code = QSTRING_TO_NSSTRING(it.data());
+            code = [NSString stringWithString:QSTRING_TO_NSSTRING(it.data())];
         }
     }
-    
-    URL = [codebase stringByAppendingPathComponent:code];
-    NSLog(URL);
+    if([codebase characterAtIndex:[codebase length]-1] != '/'){
+        URL = [[codebase stringByAppendingString:@"/"] stringByAppendingString:code];
+    }else{
+        URL = [codebase stringByAppendingString:code];
+    }
     setView(WCIFPluginMake(NSMakeRect(0,0,0,0), plugin, URL, @"application/x-java-applet", arguments, NP_EMBED));
 }
 
