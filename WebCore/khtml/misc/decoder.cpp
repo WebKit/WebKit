@@ -571,6 +571,7 @@ QString Decoder::decode(const char *data, int len)
 			    pos = endpos + 1;
 			}
 		    }
+                    case (ID_META+ID_CLOSE_TAG):
                     case ID_SCRIPT:
                     case (ID_SCRIPT+ID_CLOSE_TAG):
                     case ID_NOSCRIPT:

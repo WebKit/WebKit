@@ -1,3 +1,12 @@
+2004-07-02  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave.
+
+        - fixed half of <rdar://problem/3709244> utf-8 meta tag not parsed when page title contains angle brackets or if </meta> tag used
+
+        * khtml/misc/decoder.cpp: (Decoder::decode): Allow </meta> tags without deciding we
+        are done with the header.
+
 2004-06-30  Trey Matteson  <trey@apple.com>
 
 	Dragging within a web view should be allowed to start when the window isn't key.
