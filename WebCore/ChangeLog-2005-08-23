@@ -1,3 +1,27 @@
+2005-02-23  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+        Fix for this bug:
+        
+        <rdar://problem/3980209> Mail crashed when I pressed Cmd-Shift-[ (nil-deref in ApplyStyleCommand::addBlockStyleIfNeeded)
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::CompositeEditCommand::moveParagraphContentsToNewBlockIfNecessary): Reordered the new block
+        insertion so that it come before the move. The logic stays exactly the same, however, with the old
+        ordering, the new block could want to become a child of itself come insertion time. I considered
+        making a more complicated code change to fix this problem, but the simple reordering works just
+        as well, and seems less risky.
+        
+        These all changed in an insignificant way. It seems that with the new code, some empty text nodes
+        got reordered in the document. This has no effect on anything visible to the user.
+        
+        * layout-tests/editing/style/create-block-for-style-003-expected.txt
+        * layout-tests/editing/style/create-block-for-style-004-expected.txt
+        * layout-tests/editing/style/create-block-for-style-009-expected.txt
+        * layout-tests/editing/style/create-block-for-style-011-expected.txt
+        * layout-tests/editing/style/create-block-for-style-013-expected.txt
+
 2005-02-23  Darin Adler  <darin@apple.com>
 
         Reviewed by John.

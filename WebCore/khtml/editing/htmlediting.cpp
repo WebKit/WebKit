@@ -1171,14 +1171,6 @@ void CompositeEditCommand::moveParagraphContentsToNewBlockIfNecessary(const Posi
     if (paragraphStart.offset() >= paragraphStart.node()->caretMaxOffset())
         moveNode = moveNode->traverseNextNode();
     NodeImpl *endNode = paragraphEnd.node();
-    while (moveNode && !moveNode->isBlockFlow()) {
-        NodeImpl *next = moveNode->traverseNextNode();
-        removeNode(moveNode);
-        appendNode(moveNode, newBlock);
-        if (moveNode == endNode)
-            break;
-        moveNode = next;
-    }
 
     if (paragraphStart.node()->id() == ID_BODY) {
         insertNodeAt(newBlock, paragraphStart.node(), 0);
@@ -1194,6 +1186,15 @@ void CompositeEditCommand::moveParagraphContentsToNewBlockIfNecessary(const Posi
     }
     else {
         insertNodeAfter(newBlock, beforeParagraphStart.node());
+    }
+
+    while (moveNode && !moveNode->isBlockFlow()) {
+        NodeImpl *next = moveNode->traverseNextNode();
+        removeNode(moveNode);
+        appendNode(moveNode, newBlock);
+        if (moveNode == endNode)
+            break;
+        moveNode = next;
     }
 }
 
