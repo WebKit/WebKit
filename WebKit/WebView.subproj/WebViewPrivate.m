@@ -291,13 +291,13 @@
 {
     id wd = [self UIDelegate];
     WebView *newWindowController = nil;
-    if ([wd respondsToSelector:@selector(webView:createWindowWithRequest:)])
-        newWindowController = [wd webView:self createWindowWithRequest:request];
+    if ([wd respondsToSelector:@selector(webView:createWebViewWithRequest:)])
+        newWindowController = [wd webView:self createWebViewWithRequest:request];
     else {
-        newWindowController = [[WebDefaultUIDelegate sharedUIDelegate] webView:self createWindowWithRequest: request];
+        newWindowController = [[WebDefaultUIDelegate sharedUIDelegate] webView:self createWebViewWithRequest: request];
     }
 
-    [[newWindowController _UIDelegateForwarder] webViewShowWindow: self];
+    [[newWindowController _UIDelegateForwarder] webViewShow: self];
 
     return newWindowController;
 }

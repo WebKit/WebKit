@@ -38,38 +38,38 @@ static WebDefaultUIDelegate *sharedDelegate = nil;
     [super dealloc];
 }
 
-- (WebView *)webView: (WebView *)wv createWindowWithRequest:(NSURLRequest *)request
+- (WebView *)webView: (WebView *)wv createWebViewWithRequest:(NSURLRequest *)request
 {
     return nil;
 }
 
-- (void)webViewShowWindow: (WebView *)wv
+- (void)webViewShow: (WebView *)wv
 {
 }
 
-- (void)webViewCloseWindow: (WebView *)wv
+- (void)webViewClose: (WebView *)wv
 {
     [[wv window] close];
 }
 
-- (void)webViewFocusWindow: (WebView *)wv
+- (void)webViewFocus: (WebView *)wv
 {
     [[wv window] makeKeyAndOrderFront:wv];
 }
 
-- (void)webViewUnfocusWindow: (WebView *)wv
+- (void)webViewUnfocus: (WebView *)wv
 {
     if ([[wv window] isKeyWindow] || [[[wv window] attachedSheet] isKeyWindow]) {
 	[NSApp _cycleWindowsReversed:FALSE];
     }
 }
 
-- (NSResponder *)webViewFirstResponderInWindow: (WebView *)wv;
+- (NSResponder *)webViewFirstResponder: (WebView *)wv;
 {
     return [[wv window] firstResponder];
 }
 
-- (void)webView: (WebView *)wv makeFirstResponderInWindow:(NSResponder *)responder
+- (void)webView: (WebView *)wv makeFirstResponder:(NSResponder *)responder
 {
     [[wv window] makeFirstResponder:responder];
 }

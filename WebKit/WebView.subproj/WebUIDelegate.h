@@ -60,64 +60,71 @@ enum {
 @interface NSObject (WebUIDelegate)
 
 /*!
-    @method createWindowWithRequest:
+    @method webView:createWebViewWithRequest:
     @abstract Create a new window and begin to load the specified request.
     @discussion The newly created window is hidden, and the window operations delegate on the
     new WebViews will get a showWindow call.
+    @param sender The WebView sending the delegate method.
     @param request The request to load.
     @result The WebView for the new window.
 */
-- (WebView *)webView:(WebView *)webView createWindowWithRequest:(NSURLRequest *)request;
+- (WebView *)webView:(WebView *)sender createWebViewWithRequest:(NSURLRequest *)request;
 
 /*!
-    @method showWindow
+    @method webViewShow:
+    @param sender The WebView sending the delegate method.
     @abstract Show the window that contains the top level view of the WebView,
     ordering it frontmost.
     @discussion This will only be called just after createWindowWithRequest:
     is used to create a new window.
 */
-- (void)webViewShowWindow:(WebView *)webView;
+- (void)webViewShow:(WebView *)sender;
 
 /*!
-    @method closeWindow
+    @method webViewClose:
     @abstract Close the current window. 
+    @param sender The WebView sending the delegate method.
     @discussion Clients showing multiple views in one window may
     choose to close only the one corresponding to this
     WebView. Other clients may choose to ignore this method
     entirely.
 */
-- (void)webViewCloseWindow:(WebView *)webView;
+- (void)webViewClose:(WebView *)sender;
 
 /*!
-    @method focusWindow
+    @method webViewFocus:
     @abstract Focus the current window (i.e. makeKeyAndOrderFront:).
+    @param The WebView sending the delegate method.
     @discussion Clients showing multiple views in one window may want to
     also do something to focus the one corresponding to this WebView.
 */
-- (void)webViewFocusWindow:(WebView *)webView;
+- (void)webViewFocus:(WebView *)sender;
 
 /*!
-    @method unfocusWindow
+    @method webViewUnfocus:
     @abstract Unfocus the current window.
+    @param sender The WebView sending the delegate method.
     @discussion Clients showing multiple views in one window may want to
     also do something to unfocus the one corresponding to this WebView.
 */
-- (void)webViewUnfocusWindow:(WebView *)webView;
+- (void)webViewUnfocus:(WebView *)sender;
 
 /*!
-    @method firstResponderInWindow
+    @method webViewFirstResponder:
     @abstract Get the first responder for this window.
+    @param sender The WebView sending the delegate method.
     @discussion This method should return the focused control in the
     WebView's view, if any. If the view is out of the window
     hierarchy, this might return something than calling firstResponder
     on the real NSWindow would. It's OK to return either nil or the
     real first responder if some control not in the window has focus.
 */
-- (NSResponder *)webViewFirstResponderInWindow:(WebView *)webView;
+- (NSResponder *)webViewFirstResponder:(WebView *)sender;
 
 /*!
-    @method makeFirstResponderInWindow:
+    @method webView:makeFirstResponderInWindow:
     @abstract Set the first responder for this window.
+    @param sender The WebView sending the delegate method.
     @param responder The responder to make first (will always be a view)
     @discussion responder will always be a view that is in the view
     subhierarchy of the top-level web view for this WebView. If the
@@ -125,26 +132,29 @@ enum {
     hierarchy, it may be desirable to save the first responder
     elsewhere, or possibly ignore this call.
 */
-- (void)webView: (WebView *)webView makeFirstResponderInWindow:(NSResponder *)responder;
+- (void)webView: (WebView *)sender makeFirstResponder:(NSResponder *)responder;
 
 
 /*!
-    @method setStatusText:
+    @method webView:setStatusText:
     @abstract Set the window's status display, if any, to the specified string.
+    @param sender The WebView sending the delegate method.
     @param text The status text to set
 */
-- (void)webView: (WebView *)webView setStatusText:(NSString *)text;
+- (void)webView: (WebView *)sender setStatusText:(NSString *)text;
 
 /*!
     @method statusText
     @abstract Get the currently displayed status text.
+    @param sender The WebView sending the delegate method.
     @result The status text
 */
-- (NSString *)webViewStatusText:(WebView *)webView ;
+- (NSString *)webViewStatusText:(WebView *)sender;
 
 /*!
-    @method areToolbarsVisible
+    @method webViewAreToolbarsVisible:
     @abstract Determine whether the window's toolbars are currently visible
+    @param sender The WebView sending the delegate method.
     @discussion This method should return YES if the window has any
     toolbars that are currently on, besides the status bar. If the app
     has more than one toolbar per window, for example a regular
@@ -152,112 +162,122 @@ enum {
     this method if at least one is on.
     @result YES if at least one toolbar is visible, otherwise NO.
 */
-- (BOOL)webViewAreToolbarsVisible: (WebView *)webView;
+- (BOOL)webViewAreToolbarsVisible: (WebView *)sender;
 
 /*!
-    @method setToolbarsVisible:
+    @method webView:setToolbarsVisible:
+    @param sender The WebView sending the delegate method.
     @abstract Set whether the window's toolbars are currently visible.
     @param visible New value for toolbar visibility
     @discussion Setting this to YES should turn on all toolbars
     (except for a possible status bar). Setting it to NO should turn
     off all toolbars (with the same exception).
 */
-- (void)webView: (WebView *)webView setToolbarsVisible:(BOOL)visible;
+- (void)webView:(WebView *)sender setToolbarsVisible:(BOOL)visible;
 
 /*!
-    @method isStatusBarVisible
+    @method webViewIsStatusBarVisible:
     @abstract Determine whether the status bar is visible.
+    @param sender The WebView sending the delegate method.
     @result YES if the status bar is visible, otherwise NO.
 */
-- (BOOL)webViewIsStatusBarVisible: (WebView *)webView;
+- (BOOL)webViewIsStatusBarVisible:(WebView *)sender;
 
 /*!
-    @method setStatusBarVisible:
+    @method webView:setStatusBarVisible:
     @abstract Set whether the status bar is currently visible.
     @param visible The new visibility value
     @discussion Setting this to YES should show the status bar,
     setting it to NO should hide it.
 */
-- (void)webView: (WebView *)webView setStatusBarVisible:(BOOL)visible;
+- (void)webView:(WebView *)sender setStatusBarVisible:(BOOL)visible;
 
 /*!
-    @method isResizable
+    @method webViewIsResizable:
     @abstract Determine whether the window is resizable or not.
+    @param sender The WebView sending the delegate method.
     @result YES if resizable, NO if not.
     @discussion If there are multiple views in the same window, they
     have have their own separate resize controls and this may need to
     be handled specially.
 */
-- (BOOL)webViewIsResizable: (WebView *)webView;
+- (BOOL)webViewIsResizable:(WebView *)sender;
 
 /*!
-    @method setResizable:
+    @method webView:setResizable:
     @abstract Set the window to resizable or not
+    @param sender The WebView sending the delegate method.
     @param resizable YES if the window should be made resizable, NO if not.
     @discussion If there are multiple views in the same window, they
     have have their own separate resize controls and this may need to
     be handled specially.
 */
-- (void)webView: (WebView *)webView setResizable:(BOOL)resizable;
+- (void)webView:(WebView *)sender setResizable:(BOOL)resizable;
 
 /*!
-    @method setFrame:
+    @method webView:setFrame:
     @abstract Set the window's frame rect
+    @param sender The WebView sending the delegate method.
     @param frame The new window frame size
     @discussion Even though a caller could set the frame directly using the NSWindow,
     this method is provided so implementors of this protocol can do special
     things on programmatic move/resize, like avoiding autosaving of the size.
 */
-- (void)webView: (WebView *)webView setFrame:(NSRect)frame;
+- (void)webView:(WebView *)sender setFrame:(NSRect)frame;
 
 /*!
-    @method frame
+    @method webViewFrame
+    @param sender The WebView sending the delegate method.
     @abstract REturn the window's frame rect
     @discussion 
 */
-- (NSRect)webViewFrame: (WebView *)webView;
+- (NSRect)webViewFrame:(WebView *)sender;
 
 /*!
     @method webView:setContentRect:
     @abstract Set the window's content rect
+    @param sender The WebView sending the delegate method.
     @param frame The new window content rect
     @discussion Even though a caller could set the content rect
     directly using the NSWindow, this method is provided so
     implementors of this protocol can do special things on
     programmatic move/resize, like avoiding autosaving of the size.
 */
-- (void)webView:(WebView *)webView setContentRect:(NSRect)contentRect;
+- (void)webView:(WebView *)sender setContentRect:(NSRect)contentRect;
 
 /*!
     @method webViewContentRect:
     @abstract Return the window's content rect
     @discussion 
 */
-- (NSRect)webViewContentRect:(WebView *)webView;
+- (NSRect)webViewContentRect:(WebView *)sender;
 
 /*!
-    @method runJavaScriptAlertPanelWithMessage:
+    @method webView:runJavaScriptAlertPanelWithMessage:
     @abstract Display a JavaScript alert panel
+    @param sender The WebView sending the delegate method.
     @param message The message to display
     @discussion Clients should visually indicate that this panel comes
     from JavaScript. The panel should have a single OK button.
 */
-- (void)webView: (WebView *)webView runJavaScriptAlertPanelWithMessage:(NSString *)message;
+- (void)webView:(WebView *)sender runJavaScriptAlertPanelWithMessage:(NSString *)message;
 
 /*!
-    @method runJavaScriptAlertPanelWithMessage:
+    @method webView:runJavaScriptAlertPanelWithMessage:
     @abstract Display a JavaScript confirm panel
+    @param sender The WebView sending the delegate method.
     @param message The message to display
     @result YES if the user hit OK, no if the user chose Cancel.
     @discussion Clients should visually indicate that this panel comes
     from JavaScript. The panel should have two buttons, e.g. "OK" and
     "Cancel".
 */
-- (BOOL)webView: (WebView *)webView runJavaScriptConfirmPanelWithMessage:(NSString *)message;
+- (BOOL)webView:(WebView *)sender runJavaScriptConfirmPanelWithMessage:(NSString *)message;
 
 /*!
-    @method runJavaScriptTextInputPanelWithPrompt:defaultText:
+    @method webView:runJavaScriptTextInputPanelWithPrompt:defaultText:
     @abstract Display a JavaScript text input panel
+    @param sender The WebView sending the delegate method.
     @param message The message to display
     @param defaultText The initial text for the text entry area.
     @result The typed text if the user hit OK, otherwise nil.
@@ -265,35 +285,37 @@ enum {
     from JavaScript. The panel should have two buttons, e.g. "OK" and
     "Cancel", and an area to type text.
 */
-- (NSString *)webView: (WebView *)webView runJavaScriptTextInputPanelWithPrompt:(NSString *)prompt defaultText:(NSString *)defaultText;
+- (NSString *)webView:(WebView *)sender runJavaScriptTextInputPanelWithPrompt:(NSString *)prompt defaultText:(NSString *)defaultText;
 
 /*!
-    @method runOpenPanelForFileButtonWithResultListener:
+    @method webView:runOpenPanelForFileButtonWithResultListener:
     @abstract Display a file open panel for a file input control.
+    @param sender The WebView sending the delegate method.
     @param resultListener The object to call back with the results.
     @discussion This method is passed a callback object instead of giving a return
     value so that it can be handled with a sheet.
 */
-- (void)webView: (WebView *)webView runOpenPanelForFileButtonWithResultListener:(id<WebOpenPanelResultListener>)resultListener;
+- (void)webView:(WebView *)sender runOpenPanelForFileButtonWithResultListener:(id<WebOpenPanelResultListener>)resultListener;
 
 /*!
-    @method mouseDidMoveOverElement:modifierFlags:
+    @method webView:mouseDidMoveOverElement:modifierFlags:
     @abstract Update the window's feedback for mousing over links to reflect a new item the mouse is over
     or new modifier flags.
+    @param sender The WebView sending the delegate method.
     @param elementInformation Dictionary that describes the element that the mouse is over, or nil.
     @param modifierFlags The modifier flags as in NSEvent.
 */
-- (void)webView: (WebView *)webView mouseDidMoveOverElement:(NSDictionary *)elementInformation modifierFlags:(unsigned int)modifierFlags;
+- (void)webView:(WebView *)sender mouseDidMoveOverElement:(NSDictionary *)elementInformation modifierFlags:(unsigned int)modifierFlags;
 
 /*!
-    @method contextMenuItemsForElement:defaultMenuItems:
+    @method webView:contextMenuItemsForElement:defaultMenuItems:
     @abstract Returns the menu items to display in an element's contextual menu.
-    @param WebView The WebWebView requesting the context menus.
+    @param sender The WebView sending the delegate method.
     @param element A dictionary representation of the clicked element.
     @param defaultMenuItems An array of default NSMenuItems to include in all contextual menus.
     @result An array of NSMenuItems to include in the contextual menu.
 */
-- (NSArray *)webView:(WebView *)webView contextMenuItemsForElement:(NSDictionary *)element defaultMenuItems:(NSArray *)defaultMenuItems;
+- (NSArray *)webView:(WebView *)sender contextMenuItemsForElement:(NSDictionary *)element defaultMenuItems:(NSArray *)defaultMenuItems;
 
 
 @end

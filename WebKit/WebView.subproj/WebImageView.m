@@ -153,7 +153,7 @@
         [representation image], 		WebElementImageKey,
         [NSValue valueWithRect:[self bounds]], 	WebElementImageRectKey,
         [representation URL], 			WebElementImageURLKey,
-        [NSNumber numberWithBool:NO], 		WebElementIsSelectedTextKey,
+        [NSNumber numberWithBool:NO], 		WebElementIsSelectedKey,
         frame, 					WebElementFrameKey, nil];
         
     return [controller _menuForElement:element];

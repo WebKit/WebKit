@@ -507,7 +507,7 @@ static WebHTMLView *lastHitView = nil;
 
     NSURL *linkURL = [element objectForKey:WebElementLinkURLKey];
     NSURL *imageURL = [element objectForKey:WebElementImageURLKey];
-    BOOL isSelectedText = [[element objectForKey:WebElementIsSelectedTextKey] boolValue];
+    BOOL isSelectedText = [[element objectForKey:WebElementIsSelectedKey] boolValue];
 
     [_private->draggingImageURL release];
     _private->draggingImageURL = nil;
@@ -586,7 +586,7 @@ static WebHTMLView *lastHitView = nil;
     
     if ((imageURL && [[WebPreferences standardPreferences] loadsImagesAutomatically]) ||
         (!imageURL && [mouseDownElement objectForKey: WebElementLinkURLKey]) ||
-        ([[mouseDownElement objectForKey:WebElementIsSelectedTextKey] boolValue] &&
+        ([[mouseDownElement objectForKey:WebElementIsSelectedKey] boolValue] &&
          ([mouseDraggedEvent timestamp] - [_private->mouseDownEvent timestamp]) > TextDragDelay)) {
         return YES;
     }

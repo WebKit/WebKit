@@ -104,7 +104,7 @@
     }
 
     if (!imageURL && !linkURL) {
-        if ([[element objectForKey:WebElementIsSelectedTextKey] boolValue]) {
+        if ([[element objectForKey:WebElementIsSelectedKey] boolValue]) {
             [menuItems addObject:[self menuItemWithTag:WebMenuItemTagCopy]];
         } else {        
             WebFrame *webFrame = [element objectForKey:WebElementFrameKey];

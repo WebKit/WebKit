@@ -1136,13 +1136,13 @@ typedef struct {
 	WebView *newController = nil;
 	WebView *currentController = [self controller];
 	id wd = [currentController UIDelegate];
-	if ([wd respondsToSelector:@selector(webView:createWindowWithRequest:)])
-	    newController = [wd webView:currentController createWindowWithRequest:nil];
+	if ([wd respondsToSelector:@selector(webView:createWebViewWithRequest:)])
+	    newController = [wd webView:currentController createWebViewWithRequest:nil];
 	else
-	    newController = [[WebDefaultUIDelegate sharedUIDelegate] webView:currentController createWindowWithRequest:nil];
+	    newController = [[WebDefaultUIDelegate sharedUIDelegate] webView:currentController createWebViewWithRequest:nil];
         
 	[newController _setTopLevelFrameName:frameName];
-	[[newController _UIDelegateForwarder] webViewShowWindow:newController];
+	[[newController _UIDelegateForwarder] webViewShow:newController];
 	frame = [newController mainFrame];
     }
 

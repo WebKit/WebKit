@@ -1569,13 +1569,13 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     WebView *controller = nil;
     WebView *currentController = [self webView];
     id wd = [currentController UIDelegate];
-    if ([wd respondsToSelector:@selector(webView:createWindowWithRequest:)])
-	controller = [wd webView:currentController createWindowWithRequest:nil];
+    if ([wd respondsToSelector:@selector(webView:createWebViewWithRequest:)])
+	controller = [wd webView:currentController createWebViewWithRequest:nil];
     else
-        controller = [[WebDefaultUIDelegate sharedUIDelegate] webView:currentController createWindowWithRequest:nil];
+        controller = [[WebDefaultUIDelegate sharedUIDelegate] webView:currentController createWebViewWithRequest:nil];
         
     [controller _setTopLevelFrameName:frameName];
-    [[controller _UIDelegateForwarder] webViewShowWindow:controller];
+    [[controller _UIDelegateForwarder] webViewShow:controller];
     WebFrame *frame = [controller mainFrame];
 
     [frame _loadRequest:request triggeringAction:nil loadType:WebFrameLoadTypeStandard formState:formState];

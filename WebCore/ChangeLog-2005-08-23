@@ -1,3 +1,17 @@
+2003-04-28  Richard Williamson  <rjw@apple.com>
+
+        API changes from final review meeting.
+        
+        goBackOrForwardToItem: -> goToBackForwardItem:
+        drop "Window" from WebUIDelegate method names.
+        WebElementIsSelectedTextKey -> WebElementIsSelectedKey
+        Cross-frame searchFor on WebView now public.
+        
+        Reviewed by Chris.
+
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+
 2003-04-28  Darin Adler  <darin@apple.com>
 
         Reviewed by John.

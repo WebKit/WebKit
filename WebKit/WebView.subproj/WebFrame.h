@@ -112,8 +112,8 @@
     for _self and _current, the parent frame for _parent and the main frame for _top. 
     findFrameNamed returns self for _parent and _top if the receiver is the mainFrame.
     findFrameNamed first searches from the current frame to all descending frames then the
-    rest of the frames in the controller. If still not found, findFrameNamed searches the
-    frames of the other controllers.
+    rest of the frames in the WebView. If still not found, findFrameNamed searches the
+    frames of the other WebViews.
     @param name The name of the frame to find.
     @result The frame matching the provided name. nil if the frame is not found.
 */

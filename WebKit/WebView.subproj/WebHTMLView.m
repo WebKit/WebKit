@@ -613,7 +613,7 @@
 - (BOOL)_isSelectionEvent:(NSEvent *)event
 {
     NSPoint point = [self convertPoint:[event locationInWindow] fromView:nil];
-    return [[[self _elementAtPoint:point] objectForKey:WebElementIsSelectedTextKey] boolValue];
+    return [[[self _elementAtPoint:point] objectForKey:WebElementIsSelectedKey] boolValue];
 }
 
 - (BOOL)acceptsFirstMouse:(NSEvent *)event

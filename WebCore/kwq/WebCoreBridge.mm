@@ -84,7 +84,7 @@ NSString *WebCoreElementImageAltStringKey = 	@"WebElementImageAltString";
 NSString *WebCoreElementImageKey = 		@"WebElementImage";
 NSString *WebCoreElementImageRectKey = 		@"WebElementImageRect";
 NSString *WebCoreElementImageURLKey = 		@"WebElementImageURL";
-NSString *WebCoreElementIsSelectedTextKey = 	@"WebElementIsSelectedText";
+NSString *WebCoreElementIsSelectedKey = 	@"WebElementIsSelected";
 NSString *WebCoreElementLinkURLKey = 		@"WebElementLinkURL";
 NSString *WebCoreElementLinkTargetFrameKey =	@"WebElementTargetFrame";
 NSString *WebCoreElementLinkLabelKey = 		@"WebElementLinkLabel";
@@ -633,7 +633,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(id <WebDOMElement>element)
     
     NSMutableDictionary *element = [NSMutableDictionary dictionary];
     [element setObject:[NSNumber numberWithBool:_part->isPointInsideSelection((int)point.x, (int)point.y)]
-                forKey:WebCoreElementIsSelectedTextKey];
+                forKey:WebCoreElementIsSelectedKey];
     
     NodeImpl *URLNode = nodeInfo.URLElement();
     if (URLNode) {

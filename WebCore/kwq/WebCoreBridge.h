@@ -65,7 +65,7 @@ extern NSString *WebCoreElementImageAltStringKey;
 extern NSString *WebCoreElementImageKey;
 extern NSString *WebCoreElementImageRectKey;
 extern NSString *WebCoreElementImageURLKey;
-extern NSString *WebCoreElementIsSelectedTextKey;
+extern NSString *WebCoreElementIsSelectedKey;
 extern NSString *WebCoreElementLinkURLKey;
 extern NSString *WebCoreElementLinkTargetFrameKey;
 extern NSString *WebCoreElementLinkLabelKey;

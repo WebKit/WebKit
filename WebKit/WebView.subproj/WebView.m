@@ -46,7 +46,7 @@ NSString *WebElementImageKey = 			@"WebElementImage";
 NSString *WebElementImageAltStringKey = 	@"WebElementImageAltString";
 NSString *WebElementImageRectKey = 		@"WebElementImageRect";
 NSString *WebElementImageURLKey = 		@"WebElementImageURL";
-NSString *WebElementIsSelectedTextKey = 	@"WebElementIsSelectedText";
+NSString *WebElementIsSelectedKey = 	        @"WebElementIsSelected";
 NSString *WebElementLinkURLKey = 		@"WebElementLinkURL";
 NSString *WebElementLinkTargetFrameKey =	@"WebElementTargetFrame";
 NSString *WebElementLinkLabelKey = 		@"WebElementLinkLabel";
@@ -259,7 +259,7 @@ NSString *WebElementLinkTitleKey = 		@"WebElementLinkTitle";
     return NO;
 }
 
-- (BOOL)goBackOrForwardToItem:(WebHistoryItem *)item
+- (BOOL)goToBackForwardItem:(WebHistoryItem *)item
 {
     [self _goToItem: item withLoadType: WebFrameLoadTypeIndexedBackForward];
     return YES;
@@ -520,11 +520,9 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
                    : [curr _previousFrameWithWrap:wrapFlag];
 }
 
-// I think this should become public - see 3228520
-
 // Search from the end of the currently selected location, or from the beginning of the
 // document if nothing is selected.  Deals with subframes.
-- (BOOL)_searchFor:(NSString *)string direction:(BOOL)forward caseSensitive:(BOOL)caseFlag wrap:(BOOL)wrapFlag
+- (BOOL)searchFor:(NSString *)string direction:(BOOL)forward caseSensitive:(BOOL)caseFlag wrap:(BOOL)wrapFlag
 {
     // Get the frame holding the selection, or start with the main frame
     WebFrame *startFrame = [self _currentFrame];

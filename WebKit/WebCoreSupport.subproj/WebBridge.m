@@ -114,10 +114,10 @@
     id wd = [currentController UIDelegate];
     WebView *newController = nil;
     
-    if ([wd respondsToSelector:@selector(webView:createWindowWithRequest:)])
-        newController = [wd webView:currentController createWindowWithRequest:request];
+    if ([wd respondsToSelector:@selector(webView:createWebViewWithRequest:)])
+        newController = [wd webView:currentController createWebViewWithRequest:request];
     else
-        newController = [[WebDefaultUIDelegate sharedUIDelegate] webView:currentController createWindowWithRequest:request];
+        newController = [[WebDefaultUIDelegate sharedUIDelegate] webView:currentController createWebViewWithRequest:request];
     [newController _setTopLevelFrameName:name];
     return [[newController mainFrame] _bridge];
 }
@@ -125,7 +125,7 @@
 - (void)showWindow
 {
     WebView *c = [frame webView];
-    [[c _UIDelegateForwarder] webViewShowWindow: c];
+    [[c _UIDelegateForwarder] webViewShow: c];
 }
 
 - (BOOL)areToolbarsVisible
@@ -220,21 +220,21 @@
 {
     ASSERT(frame != nil);
     WebView *webView = [frame webView];
-    return [[webView _UIDelegateForwarder] webViewFirstResponderInWindow:webView];
+    return [[webView _UIDelegateForwarder] webViewFirstResponder:webView];
 }
 
 - (void)makeFirstResponder:(NSResponder *)view
 {
     ASSERT(frame != nil);
     WebView *webView = [frame webView];
-    [[webView _UIDelegateForwarder] webView:webView makeFirstResponderInWindow:view];
+    [[webView _UIDelegateForwarder] webView:webView makeFirstResponder:view];
 }
 
 - (void)closeWindow
 {
     ASSERT(frame != nil);
     WebView *webView = [frame webView];
-    [[webView _UIDelegateForwarder] webViewCloseWindow:webView];
+    [[webView _UIDelegateForwarder] webViewClose:webView];
 }
 
 
@@ -402,7 +402,7 @@
 
 - (void)focusWindow
 {
-    [[[frame webView] _UIDelegateForwarder] webViewFocusWindow:[frame webView]];
+    [[[frame webView] _UIDelegateForwarder] webViewFocus:[frame webView]];
 }
 
 - (void)unfocusWindow
@@ -856,7 +856,7 @@ static BOOL loggedObjectCacheSize = NO;
         }
     }
     if (item) {
-        [controller goBackOrForwardToItem:item];
+        [controller goToBackForwardItem:item];
     }
 }
 

@@ -35,7 +35,7 @@ _WebElementFrameKey
 _WebElementImageKey
 _WebElementImageRectKey
 _WebElementImageURLKey
-_WebElementIsSelectedTextKey
+_WebElementIsSelectedKey
 _WebElementLinkLabelKey
 _WebElementLinkTargetFrameKey
 _WebElementLinkTitleKey

@@ -183,7 +183,7 @@
 
     BOOL hasSelection = ([self selectedRange].location != NSNotFound && [self selectedRange].length > 0);
     NSDictionary *element = [NSDictionary dictionaryWithObjectsAndKeys:
-        [NSNumber numberWithBool:hasSelection], WebElementIsSelectedTextKey,
+        [NSNumber numberWithBool:hasSelection], WebElementIsSelectedKey,
         frame, WebElementFrameKey, nil];
 
     return [controller _menuForElement:element];
