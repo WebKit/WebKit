@@ -30,6 +30,7 @@
 
 #include "html/html_documentimpl.h"
 #include "html/html_inlineimpl.h"
+#include "html/html_formimpl.h"
 #include "rendering/render_object.h"
 #include "rendering/render_root.h"
 #include "rendering/render_style.h"
@@ -539,6 +540,14 @@ void KHTMLView::viewportMouseDoubleClickEvent( QMouseEvent *_mouse )
 #endif    
 }
 
+static bool isSubmitImage(DOM::NodeImpl *node)
+{
+    return node->isHTMLElement()
+//        && static_cast<HTMLElementImpl*>(node)->id() == ID_INPUT
+        && node->id() == ID_INPUT
+        && static_cast<HTMLInputElementImpl*>(node)->inputType() == HTMLInputElementImpl::IMAGE;
+}
+
 void KHTMLView::viewportMouseMoveEvent( QMouseEvent * _mouse )
 {
     if(!m_part->xmlDocImpl()) return;
@@ -584,7 +593,8 @@ void KHTMLView::viewportMouseMoveEvent( QMouseEvent * _mouse )
         if ( d->mousePressed )
             // during selection, use an IBeam no matter what we're over
             c = KCursor::ibeamCursor();
-        else if ( mev.url.length() && m_part->settings()->changeCursor() )
+        else if ( (mev.url.length() || isSubmitImage(mev.innerNode.handle()))
+                  && m_part->settings()->changeCursor() )
             c = m_part->urlCursor();
         else if ( mev.innerNode.nodeType() == Node::TEXT_NODE
                   || mev.innerNode.nodeType() == Node::CDATA_SECTION_NODE )

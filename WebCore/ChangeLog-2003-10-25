@@ -1,3 +1,15 @@
+2003-02-17  Trey Matteson  <trey@apple.com>
+
+	2938062 Mouse cursor does not change to link cursor over non-button form submission controls
+	
+        Reviewed by Darin
+
+        * khtml/khtmlview.cpp:
+        (isSubmitImage):  Helper function to ID submit buttons with images.
+        (KHTMLView::viewportMouseMoveEvent):  Set cursor for submit buttons with images.
+        * kwq/WebCoreBridge.mm:
+        (inputElementFromDOMElement):  Simplify previously written casting goop.
+
 2003-02-16  David Hyatt  <hyatt@apple.com>
 
 	Fix "Almost Strict" mode to not match @konq-quirks.

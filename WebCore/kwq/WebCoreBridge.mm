@@ -462,12 +462,9 @@ static bool initializedObjectCacheSize = FALSE;
 static HTMLInputElementImpl *inputElementFromDOMElement(id <WebDOMElement>element)
 {
     ASSERT([(NSObject *)element isKindOfClass:[WebCoreDOMElement class]]);
-DOM::ElementImpl *domElement = [(WebCoreDOMElement *)element elementImpl];
-    if (domElement->isHTMLElement()) {
-        HTMLElementImpl *htmlElement = static_cast<HTMLElementImpl *>(domElement);
-        if (idFromNode(htmlElement) == ID_INPUT) {
-            return static_cast<HTMLInputElementImpl *>(htmlElement);
-        }
+    DOM::ElementImpl *domElement = [(WebCoreDOMElement *)element elementImpl];
+    if (idFromNode(domElement) == ID_INPUT) {
+        return static_cast<HTMLInputElementImpl *>(domElement);
     }
     return nil;
 }
