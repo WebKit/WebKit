@@ -127,13 +127,13 @@ void KWQReleaseResponse(void *response)
 
 void *KWQResponseMIMEType(void *response)
 {
-    volatile void * volatile result = NULL;
+    void * volatile result = NULL;
 
     KWQ_BLOCK_NS_EXCEPTIONS;
     result = [(id)response MIMEType];
     KWQ_UNBLOCK_NS_EXCEPTIONS;
 
-    return (void *)result;
+    return result;
 }
 
 

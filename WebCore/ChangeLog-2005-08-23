@@ -1,5 +1,9 @@
 2003-10-26  Darin Adler  <darin@apple.com>
 
+        * kwq/KWQLoader.mm: (KWQResponseMIMEType): Removed an excess volatile.
+
+2003-10-26  Darin Adler  <darin@apple.com>
+
         Reviewed by Maciej.
 
         - fixed 3463624 -- page at cinemakorea.com shows up blank due to kTECBufferBelowMinimumSizeErr from TEC
