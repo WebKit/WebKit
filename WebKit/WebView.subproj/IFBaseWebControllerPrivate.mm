@@ -115,7 +115,7 @@
     // Check to see if this is these are the first bits of a provisional data source,
     // if so we need to transition the data source from provisional to committed.
     // This transition is only done for the IFContentPolicyShow policy.
-    if([frame provisionalDataSource] == dataSource && [dataSource _contentPolicy] == IFContentPolicyShow){
+    if([frame provisionalDataSource] == dataSource && [dataSource contentPolicy] == IFContentPolicyShow){
         WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "committing resource = %s\n", [[[dataSource inputURL] absoluteString] cString]);
         [frame _transitionProvisionalToCommitted];
     }

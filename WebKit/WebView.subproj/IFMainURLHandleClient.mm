@@ -78,7 +78,7 @@
 
     WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "url = %s\n", [[[sender url] absoluteString] cString]);
     
-    if([dataSource _contentPolicy] == IFContentPolicyShow){
+    if([dataSource contentPolicy] == IFContentPolicyShow){
         if(handlerType == IFMIMEHANDLERTYPE_TEXT) {
             contentHandler = [[IFContentHandler alloc] initWithMIMEHandler:mimeHandler URL:[sender url]];
             fakeHTMLDocument = [contentHandler textHTMLDocumentBottom];
@@ -88,12 +88,14 @@
         }
     }
     
-    else if([dataSource _contentPolicy] == IFContentPolicySave || 
-            [dataSource _contentPolicy] == IFContentPolicyOpenExternally){
+    else if([dataSource contentPolicy] == IFContentPolicySave || 
+            [dataSource contentPolicy] == IFContentPolicyOpenExternally){
         // FIXME [cblu]: We shouldn't wait for the download to end to write to the disk.
         // Will fix once we there is an IFURLHandle flag to not memory cache 
         [downloadHandler downloadCompletedWithData:[sender resourceData]];
         [downloadHandler release];
+    }else if([dataSource contentPolicy] == IFContentPolicyNone){
+        // do something
     }
 
     IFLoadProgress *loadProgress = [[IFLoadProgress alloc] init];
@@ -122,7 +124,7 @@
         typeChecked = YES;
     }
     
-    if([dataSource _contentPolicy] == IFContentPolicyShow){
+    if([dataSource contentPolicy] == IFContentPolicyShow){
         // if it's html, send the data to the part
         // FIXME: [sender contentType] still returns nil if from cache
         if(handlerType == IFMIMEHANDLERTYPE_NIL || handlerType == IFMIMEHANDLERTYPE_HTML) {
@@ -154,8 +156,8 @@
         }
     }
     
-    else if([dataSource _contentPolicy] == IFContentPolicySave || 
-            [dataSource _contentPolicy] == IFContentPolicyOpenExternally){
+    else if([dataSource contentPolicy] == IFContentPolicySave || 
+            [dataSource contentPolicy] == IFContentPolicyOpenExternally){
             if(!downloadStarted){
             
                 // If this is a download, detach the provisionalDataSource from the frame

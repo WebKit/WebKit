@@ -32,6 +32,8 @@
     
     primaryLoadComplete = NO;
     
+    contentPolicy = IFContentPolicyNone;
+    
     return self;
 }
 
@@ -286,11 +288,6 @@
 {
     [_private->downloadPath release];
     _private->downloadPath = [path retain];
-}
-
-- (IFContentPolicy) _contentPolicy
-{
-    return _private->contentPolicy;
 }
 
 - (void) _setContentPolicy:(IFContentPolicy)policy

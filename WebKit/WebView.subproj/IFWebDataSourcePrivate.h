@@ -92,7 +92,6 @@ class KHTMLPart;
 - (void)_setLocationChangeHandler: (id <IFLocationChangeHandler>)l;
 - (NSString *)_downloadPath;
 - (void) _setDownloadPath:(NSString *)path;
-- (IFContentPolicy) _contentPolicy;
 - (void) _setContentPolicy:(IFContentPolicy)policy;
 - (IFWebDataSource *) _recursiveDataSourceForLocationChangeHandler:(id <IFLocationChangeHandler>)handler;
 

@@ -1,3 +1,25 @@
+2002-05-13  Chris Blumenberg  <cblu@apple.com>
+
+
+	* WebView.subproj/IFBaseWebController.mm:
+	(-[IFBaseWebController URLPolicyForURL:]):
+	
+	Use [IFURLHandle canInitWithURL] instead of hard-coded URL schemes.
+
+	* WebView.subproj/IFBaseWebControllerPrivate.mm:
+	(-[IFBaseWebController _mainReceivedProgress:forResource:fromDataSource:]):
+	* WebView.subproj/IFMainURLHandleClient.mm:
+	(-[IFMainURLHandleClient IFURLHandleResourceDidFinishLoading:data:]):
+	(-[IFMainURLHandleClient IFURLHandle:resourceDataDidBecomeAvailable:]):
+	* WebView.subproj/IFWebDataSourcePrivate.h:
+	* WebView.subproj/IFWebDataSourcePrivate.mm:
+	(-[IFWebDataSourcePrivate init]):
+	(-[IFWebDataSource _setDownloadPath:]):
+
+	Removed _contentPolicy as contentPolicy is public. 
+
+	Initialize contentPolicy in [IFWebDataSourcePrivate init].
+
 2002-05-10  Richard J. Williamson  <rjw@apple.com>
 
 	Logging changes.

@@ -13,7 +13,7 @@
 #import <WebKit/IFWebController.h>
 #import <WebKit/WebKitDebug.h>
 
-#import <WebFoundation/IFError.h>
+#import <WebFoundation/WebFoundation.h>
 
 @implementation IFBaseWebController
 
@@ -246,8 +246,7 @@
 
 - (IFURLPolicy)URLPolicyForURL: (NSURL *)url
 {
-    // We need a factory method or something that tells us what schemes we handle
-    if([[url scheme] isEqualToString:@"http"] || [[url scheme] isEqualToString:@"https"] || [[url scheme] isEqualToString:@"file"]){
+    if([IFURLHandle canInitWithURL:url]){
         return IFURLPolicyUseContentPolicy;
     }else{
         return IFURLPolicyOpenExternally;
