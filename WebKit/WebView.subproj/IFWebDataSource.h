@@ -18,7 +18,7 @@
 
 @class IFWebFrame;
 @class IFURLHandle;
-@protocol IFWebController;
+@class IFWebController;
 
 #ifdef TENTATIVE_API
 @class IFLoader;
@@ -82,8 +82,8 @@
 // data source.  Perhaps setController: should be private?  Perhaps the back pointers
 // can be managed externally, i.e. + controllerForDataSource: as a class method on 
 // IFDefaultWebController?
-//- (void)setController: (id <IFWebController>)controller;
-- (id <IFWebController>)controller;
+//- (void)setController: (IFWebController *)controller;
+- (IFWebController *)controller;
 
 // May return nil if not initialized with a URL.
 - (NSURL *)inputURL;

@@ -71,8 +71,8 @@ static const char * const stateNames[6] = {
     }
 }
 
-- (id <IFWebController>)controller { return controller; }
-- (void)setController: (id <IFWebController>)c
+- (IFWebController *)controller { return controller; }
+- (void)setController: (IFWebController *)c
 { 
     controller = c; // not retained (yet)
 }
@@ -100,7 +100,7 @@ static const char * const stateNames[6] = {
 
 @implementation IFWebFrame (IFPrivate)
 
-- (void)_setController: (id <IFWebController>)controller
+- (void)_setController: (IFWebController *)controller
 {
     [_private setController: controller];
 }

@@ -93,7 +93,7 @@
     [self _setLoading: _private->mainHandle || [_private->urlHandles count]];
 }
 
-- (void)_setController: (id <IFWebController>)controller
+- (void)_setController: (IFWebController *)controller
 {
     WEBKIT_ASSERT(_private->part != nil);
     
@@ -286,7 +286,7 @@
 }
 
 
-// This method should only be called by haveContentPolicy in IFBaseWebController
+// This method should only be called by haveContentPolicy in IFWebController
 // and should only be called once.
 - (void) _setContentPolicy:(IFContentPolicy)policy
 {

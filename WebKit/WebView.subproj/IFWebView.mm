@@ -7,7 +7,6 @@
 #import <WebKit/IFWebDataSource.h>
 #import <WebKit/IFWebDataSourcePrivate.h>
 #import <WebKit/IFWebController.h>
-#import <WebKit/IFBaseWebController.h>
 #import <WebKit/IFDynamicScrollBarsView.h>
 #import <WebKit/IFException.h>
 #import <WebKit/IFWebCoreViewFactory.h>
@@ -72,7 +71,7 @@
 
 
 // Note that the controller is not retained.
-- (id <IFWebController>)controller
+- (IFWebController *)controller
 {
     return _private->controller;
 }

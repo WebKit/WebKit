@@ -10,7 +10,7 @@
 
 @class IFError;
 @class IFWebDataSource;
-@protocol IFWebController;
+@class IFWebController;
 
 @class IFWebFramePrivate;
 
@@ -20,11 +20,11 @@
     IFWebFramePrivate *_private;
 }
 
-- initWithName: (NSString *)name view: view provisionalDataSource: (IFWebDataSource *)dataSource controller: (id <IFWebController>)controller;
+- initWithName: (NSString *)name view: view provisionalDataSource: (IFWebDataSource *)dataSource controller: (IFWebController *)controller;
 - (NSString *)name;
 
-- (void)setController: (id <IFWebController>)controller;
-- (id <IFWebController>)controller;
+- (void)setController: (IFWebController *)controller;
+- (IFWebController *)controller;
 
 - (void)setView: (id)view;
 - (id)view;

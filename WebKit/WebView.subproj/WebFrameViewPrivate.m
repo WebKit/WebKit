@@ -63,7 +63,7 @@
     [subviews release];
 }
 
-- (void)_setController: (id <IFWebController>)controller
+- (void)_setController: (IFWebController *)controller
 {
     // Not retained; the controller owns the view.
     _private->controller = controller;    

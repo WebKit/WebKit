@@ -14,7 +14,7 @@ class KHTMLView;
 
 @interface IFWebViewPrivate : NSObject
 {
-    id <IFWebController>controller;
+    IFWebController *controller;
     KHTMLView *widget;
     KHTMLView *provisionalWidget;
     NSScrollView *frameScrollView;
@@ -30,7 +30,7 @@ class KHTMLView;
 @end
 
 @interface IFWebView (IFPrivate)
-- (void)_setController: (id <IFWebController>)controller;
+- (void)_setController: (IFWebController *)controller;
 - (void)_resetWidget;
 - (KHTMLView *)_widget;
 - (KHTMLView *)_provisionalWidget;

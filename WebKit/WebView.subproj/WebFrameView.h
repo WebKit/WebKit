@@ -12,7 +12,7 @@
 */
 
 @class IFWebDataSource;
-@protocol IFWebController;
+@class IFWebController;
 
 @class IFWebViewPrivate;
 
@@ -25,7 +25,7 @@
 - initWithFrame: (NSRect)frame;
 
 // Note that the controller is not retained.
-- (id <IFWebController>)controller;
+- (IFWebController *)controller;
 
 // These methods is typically called by the view's controller when
 // the data source is changed.

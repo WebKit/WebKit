@@ -20,7 +20,7 @@ class KHTMLPart;
     IFWebDataSource *parent;
     NSMutableArray *children;
     
-    id <IFWebController>controller;
+    IFWebController *controller;
     
     // The original URL as requested during initialization.
     NSURL *inputURL;
@@ -73,7 +73,7 @@ class KHTMLPart;
 @end
 
 @interface IFWebDataSource (IFPrivate)
-- (void)_setController: (id <IFWebController>)controller;
+- (void)_setController: (IFWebController *)controller;
 - (KHTMLPart *)_part;
 - (void)_setParent: (IFWebDataSource *)p;
 - (void)_startLoading: (BOOL)forceRefresh;

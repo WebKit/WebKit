@@ -145,7 +145,7 @@ static id IFWebDataSourceMake(void *url, void *attributes, unsigned flags)
 }
 
 
-- (id <IFWebController>)controller
+- (IFWebController *)controller
 {
     // All data sources used in a document share the same
     // controller.  A single document may have many datasource corresponding to

@@ -189,9 +189,9 @@ void WCSetIFLoadProgressMakeFunc(WCIFLoadProgressMakeFunc func)
     job->setError(1);
     m_loader->slotFinished(job);
 
-    [(IFBaseWebController *)controller _receivedError: result forResource: [job->url() absoluteString] partialProgress: loadProgress fromDataSource: m_dataSource];
+    [(IFWebController *)controller _receivedError: result forResource: [job->url() absoluteString] partialProgress: loadProgress fromDataSource: m_dataSource];
 
-    [(IFBaseWebController *)controller _didStopLoading:job->url()];
+    [(IFWebController *)controller _didStopLoading:job->url()];
 
     delete job;
 }
@@ -208,8 +208,8 @@ void WCSetIFLoadProgressMakeFunc(WCIFLoadProgressMakeFunc func)
     [m_dataSource _setFinalURL: url];
     
     [(id <IFLocationChangeHandler>)[m_dataSource controller] serverRedirectTo: url forDataSource: m_dataSource];
-    [(IFBaseWebController *)[m_dataSource controller] _didStopLoading:oldURL];
-    [(IFBaseWebController *)[m_dataSource controller] _didStartLoading:url];
+    [(IFWebController *)[m_dataSource controller] _didStopLoading:oldURL];
+    [(IFWebController *)[m_dataSource controller] _didStartLoading:url];
 }
 
 @end
@@ -242,7 +242,7 @@ void KWQLoaderImpl::serveRequest(Request *req, KIO::TransferJob *job)
         IFError *error = [IFError errorWithCode:IFURLHandleResultBadURLError inDomain:IFErrorCodeDomainWebFoundation isTerminal:YES];
 
         id <IFLoadHandler> controller = [((URLLoadClient *)req->client)->m_dataSource controller];
-        [(IFBaseWebController *)controller _receivedError: error forResource: urlString partialProgress: nil fromDataSource: ((URLLoadClient *)req->client)->m_dataSource];
+        [(IFWebController *)controller _receivedError: error forResource: urlString partialProgress: nil fromDataSource: ((URLLoadClient *)req->client)->m_dataSource];
     }
     else {
         [((URLLoadClient *)req->client)->m_dataSource _addURLHandle: job->handle()];

@@ -9,7 +9,7 @@
 #import <pthread.h>
 
 #import <WebKit/IFLoadProgress.h>
-#import <WebKit/IFBaseWebControllerPrivate.h>
+#import <WebKit/IFWebControllerPrivate.h>
 #import <WebKit/WebKitDebug.h>
 #import <WebKit/IFContentHandler.h>
 #import <WebKit/IFDownloadHandler.h>
@@ -70,7 +70,7 @@
 {
     WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "url = %s\n", [[[sender url] absoluteString] cString]);
     url = [[sender url] retain];
-    [(IFBaseWebController *)[dataSource controller] _didStartLoading:url];
+    [(IFWebController *)[dataSource controller] _didStartLoading:url];
 }
 
 
@@ -83,10 +83,10 @@
     IFLoadProgress *loadProgress = [[IFLoadProgress alloc] init];
     loadProgress->totalToLoad = -1;
     loadProgress->bytesSoFar = -1;
-    [(IFBaseWebController *)[dataSource controller] _mainReceivedProgress: (IFLoadProgress *)loadProgress 
+    [(IFWebController *)[dataSource controller] _mainReceivedProgress: (IFLoadProgress *)loadProgress 
         forResource: [[sender url] absoluteString] fromDataSource: dataSource];
     [loadProgress release];
-    [(IFBaseWebController *)[dataSource controller] _didStopLoading:url];
+    [(IFWebController *)[dataSource controller] _didStopLoading:url];
 }
 
 
@@ -107,10 +107,10 @@
     IFLoadProgress *loadProgress = [[IFLoadProgress alloc] init];
     loadProgress->totalToLoad = [data length];
     loadProgress->bytesSoFar = [data length];
-    [(IFBaseWebController *)[dataSource controller] _mainReceivedProgress: (IFLoadProgress *)loadProgress 
+    [(IFWebController *)[dataSource controller] _mainReceivedProgress: (IFLoadProgress *)loadProgress 
         forResource: [[sender url] absoluteString] fromDataSource: dataSource];
     [loadProgress release];
-    [(IFBaseWebController *)[dataSource controller] _didStopLoading:url];
+    [(IFWebController *)[dataSource controller] _didStopLoading:url];
 }
 
 
@@ -162,7 +162,7 @@
     IFLoadProgress *loadProgress = [[IFLoadProgress alloc] init];
     loadProgress->totalToLoad = contentLength;
     loadProgress->bytesSoFar = contentLengthReceived;
-    [(IFBaseWebController *)[dataSource controller] _mainReceivedProgress: (IFLoadProgress *)loadProgress 
+    [(IFWebController *)[dataSource controller] _mainReceivedProgress: (IFLoadProgress *)loadProgress 
         forResource: [[sender url] absoluteString] fromDataSource: dataSource];
     [loadProgress release];
 }
@@ -178,8 +178,8 @@
     loadProgress->totalToLoad = [sender contentLength];
     loadProgress->bytesSoFar = [sender contentLengthReceived];
 
-    [(IFBaseWebController *)[dataSource controller] _mainReceivedError: result forResource: [[sender url] absoluteString] 	partialProgress: loadProgress fromDataSource: dataSource];
-    [(IFBaseWebController *)[dataSource controller] _didStopLoading:url];
+    [(IFWebController *)[dataSource controller] _mainReceivedError: result forResource: [[sender url] absoluteString] 	partialProgress: loadProgress fromDataSource: dataSource];
+    [(IFWebController *)[dataSource controller] _didStopLoading:url];
 }
 
 
@@ -191,8 +191,8 @@
     [dataSource _setFinalURL: URL];
     
     [[dataSource _locationChangeHandler] serverRedirectTo: URL forDataSource: dataSource];
-    [(IFBaseWebController *)[dataSource controller] _didStopLoading: url];
-    [(IFBaseWebController *)[dataSource controller] _didStartLoading: URL];
+    [(IFWebController *)[dataSource controller] _didStopLoading: url];
+    [(IFWebController *)[dataSource controller] _didStartLoading: URL];
     [url release];
     url = [URL retain];
 }

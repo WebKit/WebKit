@@ -25,7 +25,6 @@
 #import <IFPlugin.h>
 #import <qwidget.h>
 #import <IFWebView.h>
-#import <IFBaseWebController.h>
 #import <IFPluginNullEventSender.h>
 #import "IFNullPluginView.h"
 
@@ -282,7 +281,8 @@ static char *newCString(NSString *string)
     srcURL = [theURL retain];
     
     // load the plug-in if it is not already loaded
-    [plugin load];
+    if(![plugin load])
+        return nil;
     
     // copy function pointers
     NPP_New = 		[plugin NPP_New];
@@ -500,7 +500,7 @@ static char *newCString(NSString *string)
     return webDataSource;
 }
 
-- (id <IFWebController>) webController
+- (IFWebController *) webController
 {
     return webController;
 }

@@ -42,15 +42,15 @@ typedef enum {
     IFWebDataSource *dataSource;
     IFWebDataSource *provisionalDataSource;
     khtml::RenderPart *renderFramePart;
-    id <IFWebController>controller;
+    IFWebController *controller;
     IFWebFrameState state;
     BOOL scheduledLayoutPending;
 }
 
 - (void)setName: (NSString *)n;
 - (NSString *)name;
-- (void)setController: (id <IFWebController>)c;
-- (id <IFWebController>)controller;
+- (void)setController: (IFWebController *)c;
+- (IFWebController *)controller;
 - (void)setView: v;
 - view;
 - (void)setDataSource: (IFWebDataSource *)d;
@@ -63,7 +63,7 @@ typedef enum {
 @end
 
 @interface IFWebFrame (IFPrivate)
-- (void)_setController: (id <IFWebController>)controller;
+- (void)_setController: (IFWebController *)controller;
 - (void)_setRenderFramePart: (khtml::RenderPart *)p;
 - (khtml::RenderPart *)_renderFramePart;
 - (void)_setDataSource: (IFWebDataSource *)d;

@@ -2,7 +2,7 @@
     IFWebController.mm
 	Copyright 2001, Apple, Inc. All rights reserved.
 */
-#import <WebKit/IFBaseWebControllerPrivate.h>
+#import <WebKit/IFWebControllerPrivate.h>
 #import <WebKit/IFWebDataSourcePrivate.h>
 #import <WebKit/IFWebViewPrivate.h>
 #import <WebKit/IFWebFramePrivate.h>
@@ -19,7 +19,7 @@
 #import <WebKit/WebKitDebug.h>
 
 
-@implementation IFBaseWebControllerPrivate
+@implementation IFWebControllerPrivate
 
 - init 
 {
@@ -59,7 +59,7 @@
 @end
 
 
-@implementation IFBaseWebController (IFPrivate)
+@implementation IFWebController (IFPrivate)
 
 - (void)_receivedProgress: (IFLoadProgress *)progress forResource: (NSString *)resourceDescription fromDataSource: (IFWebDataSource *)dataSource
 {

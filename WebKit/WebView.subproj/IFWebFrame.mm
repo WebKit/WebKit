@@ -9,7 +9,7 @@
 #import <WebKit/IFWebFramePrivate.h>
 #import <WebKit/IFWebViewPrivate.h>
 #import <WebKit/IFWebDataSourcePrivate.h>
-#import <WebKit/IFBaseWebControllerPrivate.h>
+#import <WebKit/IFWebControllerPrivate.h>
 #import <WebKit/IFWebController.h>
 #import <WebKit/IFLocationChangeHandler.h>
 #import <WebKit/IFDownloadHandler.h>
@@ -27,7 +27,7 @@
     return [self initWithName: nil view: nil provisionalDataSource: nil controller: nil];
 }
 
-- initWithName: (NSString *)n view: v provisionalDataSource: (IFWebDataSource *)d controller: (id<IFWebController>)c
+- initWithName: (NSString *)n view: v provisionalDataSource: (IFWebDataSource *)d controller: (IFWebController *)c
 {
     [super init];
 
@@ -87,13 +87,13 @@
     return [_private view];
 }
 
-- (id <IFWebController>)controller
+- (IFWebController *)controller
 {
     return [_private controller];
 }
 
 
-- (void)setController: (id <IFWebController>)controller
+- (void)setController: (IFWebController *)controller
 {
     [_private setController: controller];
 }
@@ -255,7 +255,7 @@
     }
     
     else if ([name isEqualToString:@"_blank"]){
-        id<IFWebController> newController = [[self controller] openNewWindowWithURL: nil];
+        IFWebController *newController = [[self controller] openNewWindowWithURL: nil];
         return [newController mainFrame];
     }
     

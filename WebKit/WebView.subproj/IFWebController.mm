@@ -1,9 +1,10 @@
 /*	
-    IFBaseWebController.mm
+    IFWebController.mm
 	Copyright 2001, 2002 Apple, Inc. All rights reserved.
 */
-#import <WebKit/IFBaseWebController.h>
-#import <WebKit/IFBaseWebControllerPrivate.h>
+
+#import <WebKit/IFWebController.h>
+#import <WebKit/IFWebControllerPrivate.h>
 #import <WebKit/IFWebViewPrivate.h>
 #import <WebKit/IFWebDataSourcePrivate.h>
 #import <WebKit/IFWebFrame.h>
@@ -15,7 +16,19 @@
 
 #import <WebFoundation/WebFoundation.h>
 
-@implementation IFBaseWebController
+@implementation IFWebController
+
+/*
++ (id <IFDocumentView>) createViewForMIMEType:(NSString *)MIMEType
+{
+    return nil;
+}
+
++ (void) registerClass:(Class)class forMIMEType:(NSString *)MIMEType
+{
+
+}
+*/
 
 - init
 {
@@ -26,7 +39,7 @@
 {
     [super init];
     
-    _private = [[IFBaseWebControllerPrivate alloc] init];
+    _private = [[IFWebControllerPrivate alloc] init];
     _private->mainFrame = [[IFWebFrame alloc] initWithName: @"_top" view: view provisionalDataSource: dataSource controller: self];
 
     return self;
@@ -40,12 +53,12 @@
 
 - (void)setDirectsAllLinksToSystemBrowser: (BOOL)flag
 {
-    [NSException raise:IFMethodNotYetImplemented format:@"IFBaseWebController::setDirectsAllLinksToSystemBrowser: is not implemented"];
+    [NSException raise:IFMethodNotYetImplemented format:@"IFWebController::setDirectsAllLinksToSystemBrowser: is not implemented"];
 }
 
 - (BOOL)directsAllLinksToSystemBrowser
 {
-    [NSException raise:IFMethodNotYetImplemented format:@"IFBaseWebController::directsAllLinksToSystemBrowser is not implemented"];
+    [NSException raise:IFMethodNotYetImplemented format:@"IFWebController::directsAllLinksToSystemBrowser is not implemented"];
     return NO;
 }
 
@@ -81,18 +94,18 @@
 // ---------------------------------------------------------------------
 - (void)setStatusText: (NSString *)text forDataSource: (IFWebDataSource *)dataSource
 {
-    [NSException raise:IFMethodNotYetImplemented format:@"IFBaseWebController::setStatusText:forDataSource: is not implemented"];
+    [NSException raise:IFMethodNotYetImplemented format:@"IFWebController::setStatusText:forDataSource: is not implemented"];
 }
 
 
 - (NSString *)statusTextForDataSource: (IFWebDataSource *)dataSource
 {
-    [NSException raise:IFMethodNotYetImplemented format:@"IFBaseWebController::statusTextForDataSource: is not implemented"];
+    [NSException raise:IFMethodNotYetImplemented format:@"IFWebController::statusTextForDataSource: is not implemented"];
     return nil;
 }
 
 
-- (id<IFWebController>)openNewWindowWithURL:(NSURL *)url
+- (IFWebController *)openNewWindowWithURL:(NSURL *)url
 {
     return nil;
 }

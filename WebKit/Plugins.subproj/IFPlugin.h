@@ -56,8 +56,7 @@
 }
 
 - initWithPath:(NSString *)pluginPath;
-- (void)getPluginInfoForResourceFile:(SInt16)resRef;
-- (void)load;
+- (BOOL)load;
 - (void)unload;
 - (NSString *)mimeTypeForURL:(NSString *)URL;
 - (NSString *)path;

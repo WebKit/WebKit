@@ -6,7 +6,6 @@
 #import "IFNullPluginView.h"
 #import "WCPluginWidget.h"
 #import "IFWebView.h"
-#import "IFBaseWebController.h"
 #import "IFWebController.h"
 
 static BOOL imageLoaded = NO;
@@ -58,7 +57,7 @@ static NSImage *image = nil;
 
 - (void)drawRect:(NSRect)rect {
     IFWebView *webView;
-    IFBaseWebController *webController;
+    IFWebController *webController;
     
     [super drawRect:rect];
     if(!errorSent){

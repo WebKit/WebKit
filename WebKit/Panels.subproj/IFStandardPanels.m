@@ -143,7 +143,7 @@ static void initSharedStandardPanels(void)
     }
 }
 
--(void)_didStartLoadingURL:(NSURL *)url inController:(id<IFWebController>)controller
+-(void)_didStartLoadingURL:(NSURL *)url inController:(IFWebController *)controller
 {
     NSCountedSet *set = [_privatePanels->urlContainers objectForKey:url];
 
@@ -155,7 +155,7 @@ static void initSharedStandardPanels(void)
     [set addObject:controller];
 }
 
--(void)_didStopLoadingURL:(NSURL *)url inController:(id<IFWebController>)controller
+-(void)_didStopLoadingURL:(NSURL *)url inController:(IFWebController *)controller
 {
     NSCountedSet *set = [_privatePanels->urlContainers objectForKey:url];
 

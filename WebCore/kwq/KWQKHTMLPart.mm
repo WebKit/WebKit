@@ -472,7 +472,7 @@ bool KWQKHTMLPartImpl::requestFrame( khtml::RenderPart *frame, const QString &ur
         IFWebDataSource *oldDataSource, *newDataSource;
         NSURL *childURL;
         IFWebFrame *newFrame;
-        id <IFWebController> controller;
+        IFWebController *controller;
         HTMLIFrameElementImpl *o = static_cast<HTMLIFrameElementImpl *>(frame->element());
                 
         childURL = part->completeURL(url).getNSURL();

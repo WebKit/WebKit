@@ -1,3 +1,20 @@
+2002-06-07  Chris Blumenberg  <cblu@apple.com>
+
+        Made IFWebController a class.
+        Fixed all places where IFWebController was referred to as a protocol.
+        Renamed IFBaseWebController files to IFWebController.
+        IFWebController.h replaces IFWebBaseController.h.
+
+	* kwq/KWQKHTMLPart.mm:
+	(KWQKHTMLPartImpl::requestFrame):
+	* kwq/KWQKHTMLPartBrowserExtension.mm:
+	(KHTMLPartBrowserExtension::createNewWindow):
+	* kwq/KWQKloader.mm:
+	(-[URLLoadClient IFURLHandle:resourceDidFailLoadingWithResult:]):
+	(-[URLLoadClient IFURLHandle:didRedirectToURL:]):
+	(KWQLoaderImpl::serveRequest):
+	* kwq/external.h:
+
 === Alexander-8 ===
 
 2002-06-07  Darin Adler  <darin@apple.com>

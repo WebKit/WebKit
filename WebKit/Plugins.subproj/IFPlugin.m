@@ -33,59 +33,7 @@ TransitionVector tVectorForFunctionPointer(FunctionPointer);
 
 @implementation IFPlugin
 
-- initWithPath:(NSString *)pluginPath
-{
-    NSFileManager *fileManager;
-    NSDictionary *fileInfo;
-    SInt16 resRef;
-    FSRef fref;
-    OSErr err;
-    UInt32 type;
-    CFURLRef pluginURL;
-        
-    fileManager = [NSFileManager defaultManager];
-    fileInfo = [fileManager fileAttributesAtPath:pluginPath traverseLink:YES];
-    if([[fileInfo objectForKey:@"NSFileType"] isEqualToString:@"NSFileTypeRegular"]){  // plug-in with resource fork
-        if([[fileInfo objectForKey:@"NSFileHFSTypeCode"] unsignedLongValue] == 1112690764){ // 1112690764 = 'BRPL'
-            err = FSPathMakeRef((UInt8 *)[pluginPath cString], &fref, NULL);
-            if(err != noErr){
-                WEBKITDEBUG("IFPlugin: FSPathMakeRef failed. Error=%d\n", err);
-                return nil;
-            }
-            resRef = FSOpenResFile(&fref, fsRdPerm);
-            if(resRef <= noErr){
-                WEBKITDEBUG("IFPlugin: FSOpenResFile failed. Can't open resource file: %s, Error=%d\n", [pluginPath lossyCString], err);
-                return nil;
-            }
-            [self getPluginInfoForResourceFile:resRef];
-            isBundle = FALSE;
-        }else return nil;
-        
-    }else if([[fileInfo objectForKey:@"NSFileType"] isEqualToString:@"NSFileTypeDirectory"]){ //bundle plug-in
-        pluginURL = CFURLCreateWithFileSystemPath(NULL, (CFStringRef)pluginPath, kCFURLPOSIXPathStyle, TRUE);
-        bundle = CFBundleCreate(NULL, pluginURL);
-        CFBundleGetPackageInfo(bundle, &type, NULL);
-        if(type == 1112690764){  // 1112690764 = 'BRPL'
-            resRef = CFBundleOpenBundleResourceMap(bundle);
-            [self getPluginInfoForResourceFile:resRef];
-            isBundle = TRUE;
-        }else{
-            return nil;
-        }
-        CFRelease(pluginURL);
-    }else{
-        return nil;
-    }
-    
-    filename = [pluginPath lastPathComponent];
-    path = pluginPath;
-    [path retain];
-    [filename retain];
-    isLoaded = FALSE;
-    return self;
-}
-
-- (void)getPluginInfoForResourceFile:(SInt16)resRef
+- (void)_getPluginInfoForResourceFile:(SInt16)resRef
 {
     Str255 theString;
     char temp[255], description[255];
@@ -101,6 +49,7 @@ TransitionVector tVectorForFunctionPointer(FunctionPointer);
         if(!strcmp(temp, "")) break;
         mime = [NSMutableArray arrayWithCapacity:3];
         [mimeTypes insertObject:mime atIndex:i];
+        
         //FIXME: Because our JS engine poops on semi-colons, I'm removing ";version=1.3"
         //Scott Adler is checking if semi-colons are allowed to be in mime-types
         if(!strcmp(temp, "application/x-java-applet;version=1.3")){
@@ -123,17 +72,72 @@ TransitionVector tVectorForFunctionPointer(FunctionPointer);
     }
     GetIndString(theString, 126, 1);
     CopyPascalStringToC(theString, description);
-    pluginDescription = [NSString stringWithCString:description];
-    [pluginDescription retain];
+    pluginDescription = [[NSString stringWithCString:description] retain];
     
     GetIndString(theString, 126, 2); 
     CopyPascalStringToC(theString, temp);
-    name = [NSString stringWithCString:temp]; // plugin's name
-    [name retain];
+    name = [[NSString stringWithCString:temp] retain]; // plugin's name
     [mimeTypes retain];
 }
 
-- (void)load
+- initWithPath:(NSString *)pluginPath
+{
+    NSFileManager *fileManager;
+    NSDictionary *fileInfo;
+    SInt16 resRef;
+    FSRef fref;
+    OSErr err;
+    UInt32 type;
+    CFURLRef pluginURL;
+        
+    fileManager = [NSFileManager defaultManager];
+    fileInfo = [fileManager fileAttributesAtPath:pluginPath traverseLink:YES];
+    
+    // single-file plug-in with resource fork
+    if([[fileInfo objectForKey:@"NSFileType"] isEqualToString:@"NSFileTypeRegular"]){
+        if([[fileInfo objectForKey:@"NSFileHFSTypeCode"] unsignedLongValue] == FOUR_CHAR_CODE('BRPL') ||
+           [[fileInfo objectForKey:@"NSFileHFSTypeCode"] unsignedLongValue] == FOUR_CHAR_CODE('IEPL')){
+           
+            err = FSPathMakeRef((UInt8 *)[pluginPath cString], &fref, NULL);
+            if(err != noErr){
+                WEBKITDEBUG("IFPlugin: FSPathMakeRef failed. Error=%d\n", err);
+                return nil;
+            }
+            
+            resRef = FSOpenResFile(&fref, fsRdPerm);
+            if(resRef <= noErr){
+                WEBKITDEBUG("IFPlugin: FSOpenResFile failed. Can't open resource file: %s, Error=%d\n", [pluginPath lossyCString], err);
+                return nil;
+            }
+            
+            [self _getPluginInfoForResourceFile:resRef];
+            isBundle = NO;
+        }else return nil;
+        
+    }else if([[fileInfo objectForKey:@"NSFileType"] isEqualToString:@"NSFileTypeDirectory"]){ //bundle plug-in
+        pluginURL = CFURLCreateWithFileSystemPath(NULL, (CFStringRef)pluginPath, kCFURLPOSIXPathStyle, TRUE);
+        bundle = CFBundleCreate(NULL, pluginURL);
+        CFBundleGetPackageInfo(bundle, &type, NULL);
+        
+        if(type == FOUR_CHAR_CODE('BRPL') || type == FOUR_CHAR_CODE('IEPL') ){  // 1112690764 = 'BRPL'
+            resRef = CFBundleOpenBundleResourceMap(bundle);
+            [self _getPluginInfoForResourceFile:resRef];
+            isBundle = YES;
+        }else{
+            return nil;
+        }
+        CFRelease(pluginURL);
+    }else{
+        return nil;
+    }
+    
+    filename = [[pluginPath lastPathComponent] retain];
+    path = [pluginPath retain];
+    isLoaded = NO;
+    return self;
+}
+
+- (BOOL)load
 {    
     OSErr err;
     FSSpec spec;
@@ -147,9 +151,9 @@ TransitionVector tVectorForFunctionPointer(FunctionPointer);
     NSFileHandle *executableFile;
     NSData *data;
     
-    if(isLoaded){
-        return;
-    }
+    if(isLoaded)
+        return YES;
+
     if(isBundle){ //CFM or Mach-o bundle
         tempBundle = [NSBundle bundleWithPath:path];
         executableFile = [NSFileHandle fileHandleForReadingAtPath:[tempBundle executablePath]];
@@ -165,35 +169,44 @@ TransitionVector tVectorForFunctionPointer(FunctionPointer);
         }
         [executableFile closeFile];
         didLoad = CFBundleLoadExecutable(bundle);
-        if (!didLoad) {
-            return;
-        }
+        if (!didLoad)
+            return NO;
+
         if(isCFM){
             pluginMainFunc = (mainFuncPtr)CFBundleGetFunctionPointerForName(bundle, CFSTR("main") );
+            if(!pluginMainFunc)
+                return NO;
         }else{
             NP_Initialize = (initializeFuncPtr)CFBundleGetFunctionPointerForName(bundle, CFSTR("NP_Initialize") );
             NP_GetEntryPoints = (getEntryPointsFuncPtr)CFBundleGetFunctionPointerForName(bundle, CFSTR("NP_GetEntryPoints") );
             NPP_Shutdown = (NPP_ShutdownProcPtr)CFBundleGetFunctionPointerForName(bundle, CFSTR("NP_Shutdown") );
+            if(!NP_Initialize || !NP_GetEntryPoints || !NPP_Shutdown)
+                return NO;
         }
     }else{ // single CFM file
         err = FSPathMakeRef((UInt8 *)[path cString], &fref, NULL);
         if(err != noErr){
             WEBKITDEBUG("IFPlugin: load: FSPathMakeRef failed. Error=%d\n", err);
-            return;
+            return NO;
         }
         err = FSGetCatalogInfo(&fref, kFSCatInfoNone, NULL, NULL, &spec, NULL);
         if(err != noErr){
             WEBKITDEBUG("IFPlugin: load: FSGetCatalogInfo failed. Error=%d\n", err);
-            return;
+            return NO;
         }
         err = GetDiskFragment(&spec, 0, kCFragGoesToEOF, nil, kPrivateCFragCopy, &connID, (Ptr *)&pluginMainFunc, nil);
         if(err != noErr){
             WEBKITDEBUG("IFPlugin: load: GetDiskFragment failed. Error=%d\n", err);
-            return;
+            return NO;
         }
         pluginMainFunc = (mainFuncPtr)functionPointerForTVector((TransitionVector)pluginMainFunc);
+        if(!pluginMainFunc)
+            return NO;
+            
         isCFM = TRUE;
     }
+    
+    // swap function table stage
     if(isCFM){
         browserFuncs.version = 11;
         browserFuncs.size = sizeof(NPNetscapeFuncs);
@@ -285,6 +298,7 @@ TransitionVector tVectorForFunctionPointer(FunctionPointer);
     }
     WEBKITDEBUG("Plugin Loaded\n");
     isLoaded = TRUE;
+    return YES;
 }
 
 - (void)unload
@@ -390,31 +404,10 @@ TransitionVector tVectorForFunctionPointer(FunctionPointer);
     return pluginDescription;
 }
 - (NSString *)description{
-    NSMutableString *desc;
     
-    desc = [NSMutableString stringWithCapacity:100];
-    [desc appendString:@"\n"];
-    [desc appendString:@"name: "];
-    [desc appendString:name];
-    [desc appendString:@"\n"];
-    [desc appendString:@"path: "];
-    [desc appendString:path];
-    [desc appendString:@"\n"];
-    [desc appendString:@"isLoaded: "];
-    if(isLoaded){
-        [desc appendString:@"TRUE\n"];
-    }else{
-        [desc appendString:@"FALSE\n"];
-    }
-    [desc appendString:@"mimeTypes: "];
-    [desc appendString:[mimeTypes description]];
-    [desc appendString:@"\n"];
-    [desc appendString:@"pluginDescription: "];
-    [desc appendString:pluginDescription];
-    [desc appendString:@"\n"];
-    return desc;
+    return [NSString stringWithFormat:@"name: %@\npath: %@\nisLoaded: %d\nmimeTypes:\n%@\npluginDescription:%@",
+        name, path, isLoaded, [mimeTypes description], pluginDescription];
 }
-
 @end
 
 
