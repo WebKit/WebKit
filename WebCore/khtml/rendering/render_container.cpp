@@ -61,16 +61,12 @@ void RenderContainer::detach()
     if (continuation())
         continuation()->detach();
     
-    RenderObject* next;
-    for(RenderObject* n = m_first; n; n = next ) {
-        n->removeFromObjectLists();
-        n->setParent(0);
-        next = n->nextSibling();
-        if (!n->isListMarker())
-            n->detach();
+    while (m_first) {
+        if (m_first->isListMarker())
+            m_first->remove();
+        else
+            m_first->detach();
     }
-    m_first = 0;
-    m_last = 0;
 
     RenderBox::detach();
 }

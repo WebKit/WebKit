@@ -1,5 +1,22 @@
 2004-10-20  David Hyatt  <hyatt@apple.com>
 
+	Add better dumping of overflow information for scrolling regions.
+
+	Fix for 3726524, crash in updateLayerPosition.  Make sure anonymous elements properly remove themselves
+	from the render tree so that layers and so forth are cleaned up.
+	
+        Reviewed by darin
+
+        * khtml/rendering/render_container.cpp:
+        (RenderContainer::detach):
+        * khtml/rendering/render_layer.h:
+        (khtml::RenderLayer::scrollXOffset):
+        (khtml::RenderLayer::scrollYOffset):
+        * kwq/KWQRenderTreeDebug.cpp:
+        (write):
+
+2004-10-20  David Hyatt  <hyatt@apple.com>
+
 	Fix for 3791146, make sure all lines are checked when computing overflow.
 	
         Reviewed by kocienda

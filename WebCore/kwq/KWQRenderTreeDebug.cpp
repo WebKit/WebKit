@@ -280,7 +280,7 @@ static void write(QTextStream &ts, const RenderObject &o, int indent = 0)
     }
 }
 
-static void write(QTextStream &ts, const RenderLayer &l,
+static void write(QTextStream &ts, RenderLayer &l,
                   const QRect& layerBounds, const QRect& backgroundClipRect, const QRect& clipRect,
                   int layerType = 0, int indent = 0)
 {
@@ -293,6 +293,17 @@ static void write(QTextStream &ts, const RenderLayer &l,
         ts << " backgroundClip " << backgroundClipRect;
     if (layerBounds != layerBounds.intersect(clipRect))
         ts << " clip " << clipRect;
+
+    if (l.renderer()->hasOverflowClip()) {
+        if (l.scrollXOffset())
+            ts << " scrollX " << l.scrollXOffset();
+        if (l.scrollYOffset())
+            ts << " scrollY " << l.scrollYOffset();
+        if (l.renderer()->clientWidth() != l.scrollWidth())
+            ts << " scrollWidth " << l.scrollWidth();
+        if (l.renderer()->clientHeight() != l.scrollHeight())
+            ts << " scrollHeight " << l.scrollHeight();
+    }
 
     if (layerType == -1)
         ts << " layerType: background only";
