@@ -1,5 +1,13 @@
 2002-03-25  Richard Williamson  <rjw@apple.com>
 
+        Added private API to allow browser to access the DOM tree.
+
+	* WebView.subproj/IFWebViewPrivate.mm: (-[IFWebView DOM::]), (+[IFWebView
+	_nodeName:DOM::]), (+[IFWebView _nodeValue:DOM::]), (+[IFWebView
+	_nodeHTML:DOM::]):
+
+2002-03-25  Richard Williamson  <rjw@apple.com>
+
         Added private API to allow browser to access the render tree.
         
 	* WebView.subproj/IFWebViewPrivate.mm:

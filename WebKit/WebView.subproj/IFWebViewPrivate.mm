@@ -98,6 +98,30 @@
     return ((IFWebViewPrivate *)_viewPrivate)->widget;    
 }
 
+- (DOM::DocumentImpl *)_document
+{
+    KHTMLPart *part = ((IFWebViewPrivate *)_viewPrivate)->widget->part();
+    if (part){
+        return part->xmlDocImpl();
+    }
+    return 0;
+}
+
++ (NSString *)_nodeName: (DOM::NodeImpl *)node
+{
+    return [NSString stringWithCString:  node->nodeName().string().latin1()];
+}
+
++ (NSString *)_nodeValue: (DOM::NodeImpl *)node
+{
+    return [NSString stringWithCString:  node->nodeValue().string().latin1()];
+}
+
++ (NSString *)_nodeHTML: (DOM::NodeImpl *)node
+{
+    return QSTRING_TO_NSSTRING(node->recursive_toHTML(1));
+}
+
 - (khtml::RenderObject *)_renderRoot
 {
     KHTMLPart *part = ((IFWebViewPrivate *)_viewPrivate)->widget->part();
