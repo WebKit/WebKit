@@ -3184,13 +3184,11 @@ NodeImpl *ReplacementFragment::lastChild() const
 NodeImpl *ReplacementFragment::mergeStartNode() const
 {
     NodeImpl *node = m_fragment->firstChild();
-    while (node) {
-        NodeImpl *next = node->traverseNextNode();
-        if (!isProbablyBlock(node))
-            return node;
-        node = next;
-     }
-     return 0;
+    if (!node)
+        return 0;
+    if (!isProbablyBlock(node))
+        return node;
+    return node->firstChild();
 }
 
 NodeImpl *ReplacementFragment::mergeEndNode() const
@@ -3338,8 +3336,17 @@ void ReplaceSelectionCommand::doApply()
     NodeImpl *startBlock = selection.start().node()->enclosingBlockFlowElement();
     NodeImpl *endBlock = selection.end().node()->enclosingBlockFlowElement();
 
-    bool mergeStart = !(startAtStartOfLine && (m_fragment.hasInterchangeNewline() || m_fragment.hasMoreThanOneBlock()));
-    bool mergeEnd = !m_fragment.hasInterchangeNewline() && m_fragment.hasMoreThanOneBlock();
+    bool mergeStart = false;
+    bool mergeEnd = false;
+    if (startBlock == endBlock && startAtStartOfBlock && startAtEndOfBlock) {
+        // Merge start only if insertion point is in an empty block.
+        mergeStart = true;
+    }
+    else {
+        mergeStart = !(startAtStartOfLine && (m_fragment.hasInterchangeNewline() || m_fragment.hasMoreThanOneBlock()));
+        mergeEnd = !m_fragment.hasInterchangeNewline() && m_fragment.hasMoreThanOneBlock();
+    }
+    
     Position startPos = Position(selection.start().node()->enclosingBlockFlowElement(), 0);
     Position endPos; 
     EStayInBlock upstreamStayInBlock = StayInBlock;

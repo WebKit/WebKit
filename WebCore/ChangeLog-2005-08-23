@@ -1,3 +1,19 @@
+2004-12-21  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::ReplacementFragment::mergeStartNode): Refine concept of how this node is found based on
+        further experiements.
+        (khtml::ReplaceSelectionCommand::doApply): Add a special case for determining merges that need to
+        be done if the insertion point is in an empty block.
+        * layout-tests/editing/pasteboard/paste-text-012-expected.txt: Added.
+        * layout-tests/editing/pasteboard/paste-text-012.html: Added.
+        * layout-tests/editing/pasteboard/paste-text-013-expected.txt: Added.
+        * layout-tests/editing/pasteboard/paste-text-013.html: Added.
+        * layout-tests/editing/pasteboard/paste-text-014-expected.txt: Added.
+        * layout-tests/editing/pasteboard/paste-text-014.html: Added.
+
 2004-12-21  Darin Adler  <darin@apple.com>
 
         Reviewed by Ken.
