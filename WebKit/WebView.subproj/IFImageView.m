@@ -96,11 +96,11 @@
 }
 
 
-- (void)viewWillMoveToWindow:(NSWindow *)newWindow
+- (void)viewDidMoveToWindow
 {
-    if (!newWindow)
+    if (![self window])
         [[representation image] stopAnimation];
-    [super viewWillMoveToWindow:newWindow];
+    [super viewDidMoveToWindow];
 }
 
 

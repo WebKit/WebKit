@@ -436,8 +436,6 @@ static char *newCString(NSString *string)
         [notificationCenter addObserver:self selector:@selector(viewHasMoved:) 
             name:NSViewBoundsDidChangeNotification object:view];
     }
-    [notificationCenter addObserver:self selector:@selector(windowWillClose:) 
-        name:NSWindowWillCloseNotification object:theWindow];
     [notificationCenter addObserver:self selector:@selector(windowBecameKey:) 
         name:NSWindowDidBecomeKeyNotification object:theWindow];
     [notificationCenter addObserver:self selector:@selector(windowResignedKey:) 
@@ -491,7 +489,7 @@ static char *newCString(NSString *string)
     // Release web objects here to avoid circular retain
     [webController release];
     [webFrame release];
-    [webDataSource release];    
+    [webDataSource release];
     
 #ifndef NDEBUG
     NPError npErr =
@@ -596,11 +594,11 @@ static char *newCString(NSString *string)
     return YES;
 }
 
-- (void)viewWillMoveToWindow:(NSWindow *)newWindow
+- (void)viewDidMoveToWindow
 {
-    if (!newWindow)
+    if (![self window])
         [self stop];
-    [super viewWillMoveToWindow:newWindow];
+    [super viewDidMoveToWindow];
 }
 
 #pragma mark NOTIFICATIONS
@@ -624,11 +622,6 @@ static char *newCString(NSString *string)
 {
     [self sendActivateEvent:NO];
     [self performSelector:@selector(sendUpdateEvent) withObject:nil afterDelay:.001];
-}
-
-- (void) windowWillClose:(NSNotification *)notification
-{
-    [self stop];
 }
 
 - (void) defaultsHaveChanged:(NSNotification *)notification

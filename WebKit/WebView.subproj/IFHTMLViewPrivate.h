@@ -28,6 +28,7 @@ class KHTMLView;
     BOOL canDragFrom;
     NSCursor *cursor;
     BOOL liveAllowsScrolling;
+    BOOL inWindow;
 }
 
 @end

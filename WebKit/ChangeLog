@@ -1,3 +1,19 @@
+2002-07-05  Darin Adler  <darin@apple.com>
+
+	Fix crashes I saw with zombies enabled caused by messing with windows that are
+	in the process of being destroyed.
+
+        * Plugins.subproj/IFPluginView.mm:
+        (-[IFPluginView start]): Remove windowWillClose notification because
+	we use viewDidMoveToWindow instead.
+        (-[IFPluginView viewDidMoveToWindow]): Use this instead of viewWillMoveToWindow.
+        * WebView.subproj/IFHTMLView.mm:
+        (-[IFHTMLView viewDidMoveToWindow]): Use this instead of viewWillMoveToWindow.
+        * WebView.subproj/IFHTMLViewPrivate.h: Need a boolean flag to tell window changes
+	before the first time we are installed from window changes afterward.
+        * WebView.subproj/IFImageView.m:
+        (-[IFImageView viewDidMoveToWindow]): Use this instead of viewWillMoveToWindow.
+
 2002-07-04  Maciej Stachowiak  <mjs@apple.com>
 
         * WebView.subproj/IFHTMLView.mm:

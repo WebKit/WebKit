@@ -104,13 +104,22 @@
 }
 
 
-- (void)viewWillMoveToWindow:(NSWindow *)window
+- (void)viewDidMoveToWindow
 {
-    if ([self window] && !window) {
-        [self removeNotifications];
-        [self _reset];
+    if ([self window]) {
+        _private->inWindow = YES;
+    } else {
+        // Reset when we are moved out of a window after being moved into one.
+        // Without this check, we reset ourselves before we even start.
+        // This is only needed because viewDidMoveToWindow is called even when
+        // the window is not changing (bug in AppKit).
+        if (_private->inWindow) {
+            [self removeNotifications];
+            [self _reset];
+            _private->inWindow = NO;
+        }
     }
-    [super viewWillMoveToWindow:window];
+    [super viewDidMoveToWindow];
 }
 
 
