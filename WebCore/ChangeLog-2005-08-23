@@ -1,3 +1,13 @@
+2003-09-24  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3430612, crash on about:blank in updateHoverActiveState.  Just missing
+	a null-check.  Also remove a hover optimization that was bogus.
+	
+        Reviewed by darin
+
+        * khtml/rendering/render_layer.cpp:
+        (RenderLayer::updateHoverActiveState):
+
 2003-09-24  Richard Williamson   <rjw@apple.com>
 
 	Fixed 3420736.  Clear renderer caches when get an ATS font changed notification.  This fix may be moot depending on progress toward fixing 2695906.
