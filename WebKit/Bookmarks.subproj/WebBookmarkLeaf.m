@@ -18,6 +18,13 @@
 
 @implementation IFBookmarkLeaf
 
+- (id)init
+{
+    [super init];
+    _entry = [[IFURIEntry alloc] init];
+    return self;
+}
+
 - (id)initWithURLString:(NSString *)URLString
                   title:(NSString *)title
                   image:(NSImage *)image
@@ -25,12 +32,13 @@
 {
     WEBKIT_ASSERT_VALID_ARG (group, group != nil);
     
-    [super init];
+    [self init];
 
     // Since our URLString may not be valid for creating an NSURL object,
     // just hang onto the string separately and don't bother creating
     // an NSURL object for the IFURIEntry.
-    _entry = [[IFURIEntry alloc] initWithURL:nil title:title image:image];
+    [self setTitle:title];
+    [self setImage:image];
     _URLString = [URLString retain];
     [self _setGroup:group];
 
@@ -92,7 +100,8 @@
     if ([title isEqualToString:[self title]]) {
         return;
     }
-    
+
+    WEBKIT_ASSERT (_entry != nil);
     [_entry setTitle:title];
 
     [[self group] _bookmarkDidChange:self];    
@@ -122,6 +131,7 @@
 
 - (void)setURLString:(NSString *)URLString
 {
+    WEBKIT_ASSERT_VALID_ARG (URLString, URLString != nil);
     if ([URLString isEqualToString:_URLString]) {
         return;
     }

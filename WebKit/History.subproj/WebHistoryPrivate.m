@@ -105,8 +105,10 @@
 
 - (BOOL)removeEntryForURLString: (NSString *)urlString
 {
+    NSMutableArray *entriesForDate;
     IFURIEntry *entry;
     int dateIndex;
+    BOOL foundDate;
 
     entry = [_urlDictionary objectForKey: urlString];
     if (entry == nil) {
@@ -115,18 +117,17 @@
 
     [_urlDictionary removeObjectForKey: urlString];
 
-    if ([self findIndex: &dateIndex forDay: [entry lastVisitedDate]]) {
-        NSMutableArray *entriesForDate = [_entriesByDate objectAtIndex: dateIndex];
-        [entriesForDate removeObject: entry];
+    foundDate = [self findIndex: &dateIndex forDay: [entry lastVisitedDate]];
 
-        // remove this date entirely if there are no other entries on it
-        if ([entriesForDate count] == 0) {
-            [_entriesByDate removeObjectAtIndex: dateIndex];
-            [_datesWithEntries removeObjectAtIndex: dateIndex];
-        }
-    } else {
-        WEBKITDEBUG("'%s' was in url dictionary but its date %s was not in date index",
-              DEBUG_OBJECT([entry url]), DEBUG_OBJECT([entry lastVisitedDate]));
+    WEBKIT_ASSERT (foundDate);
+    
+    entriesForDate = [_entriesByDate objectAtIndex: dateIndex];
+    [entriesForDate removeObject: entry];
+
+    // remove this date entirely if there are no other entries on it
+    if ([entriesForDate count] == 0) {
+        [_entriesByDate removeObjectAtIndex: dateIndex];
+        [_datesWithEntries removeObjectAtIndex: dateIndex];
     }
 
     return YES;

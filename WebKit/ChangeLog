@@ -1,3 +1,32 @@
+2002-06-13  John Sullivan  <sullivan@apple.com>
+
+	Various changes to better support the pasteboard.
+
+	* Bookmarks.subproj/IFBookmark.h,
+	* Bookmarks.subproj/IFBookmark.m:
+	(+[IFBookmark bookmarkOfType:]): New method.
+
+	* Bookmarks.subproj/IFBookmarkLeaf.m:
+	(-[IFBookmarkLeaf init]): start out with a non-nil _entry
+	(-[IFBookmarkLeaf setTitle:]): added assert
+	(-[IFBookmarkLeaf setURLString:]): added assert
+
+	* History.subproj/IFURLsWithTitles.h,
+	* History.subproj/IFURLsWithTitles.m:
+	(+[IFURLsWithTitles arrayWithIFURLsWithTitlesPboardType]),
+	(+[IFURLsWithTitles writeURLs:andTitles:toPasteboard:]),
+	(+[IFURLsWithTitles titlesFromPasteboard:]),
+	(+[IFURLsWithTitles URLsFromPasteboard:]):
+	New file with methods for reading/writing pasteboard entry representing
+	a list of URLs with associated titles. Used by Bookmarks window and
+	History window in Alexander.
+
+	* History.subproj/IFWebHistoryPrivate.m:
+	(-[IFWebHistoryPrivate removeEntryForURLString:]): refactored to turn a
+	WEBKITDEBUG into a more-appropriate WEBKIT_ASSERT.
+
+	* WebKit.pbproj/project.pbxproj: Updated for new files.
+
 2002-06-13  Kenneth Kocienda  <kocienda@apple.com>
 
         Fixed typo in ChangeLog comment.

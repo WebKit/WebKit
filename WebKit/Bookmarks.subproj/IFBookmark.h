@@ -23,6 +23,7 @@ typedef enum {
 }
 
 + (IFBookmark *)bookmarkFromDictionaryRepresentation:(NSDictionary *)dict withGroup:(IFBookmarkGroup *)group;
++ (IFBookmark *)bookmarkOfType:(IFBookmarkType)type;
 
 - (id)initFromDictionaryRepresentation:(NSDictionary *)dict withGroup:(IFBookmarkGroup *)group;
 - (NSDictionary *)dictionaryRepresentation;

@@ -170,6 +170,20 @@ static unsigned _highestUsedID = 0;
     [group _addedBookmark:self];
 }
 
++ (IFBookmark *)bookmarkOfType:(IFBookmarkType)type
+{
+    if (type == IFBookmarkTypeList) {
+        return [[[IFBookmarkList alloc] init] autorelease];
+    } else if (type == IFBookmarkTypeLeaf) {
+        return [[[IFBookmarkLeaf alloc] init] autorelease];
+    } else if (type == IFBookmarkTypeSeparator) {
+        return [[[IFBookmarkSeparator alloc] init] autorelease];
+    }
+
+    return nil;
+}
+
+
 + (IFBookmark *)bookmarkFromDictionaryRepresentation:(NSDictionary *)dict withGroup:(IFBookmarkGroup *)group
 {
     NSString *typeString;
