@@ -1,3 +1,22 @@
+2003-03-12  Chris Blumenberg  <cblu@apple.com>
+
+	3196673 - REGRESSION: Assertion failure when download fails to create file
+	- Retain the download delegate because it will live longer than the WebController which it is an instance of.
+
+        Reviewed by rjw.
+
+        * Downloads.subproj/WebDownload.m:
+        (-[WebDownload _initWithLoadingResource:request:response:delegate:proxy:]): call _downloadStarted
+        (-[WebDownload loadWithDelegate:]): call _downloadStarted
+        (-[WebDownload _downloadStarted]): renamed from _loadStarted
+        (-[WebDownload _downloadEnded]): release delegate
+        (-[WebDownload resource:willSendRequest:]): reordered so if we are released in this method, we never call self
+        (-[WebDownload resourceDidFinishLoading:]): don't call _loadEnded because _downloadEnded gets called in _didCloseFile and _cancelWithError
+        (-[WebDownload resource:didFailLoadingWithError:]):  don't call _loadEnded because _downloadEnded gets called in _didCloseFile and _cancelWithError
+        (-[WebDownload _didCloseFile:]): call _downloadEnded
+        (-[WebDownload _cancelWithError:]): call _downloadEnded
+        * WebView.subproj/WebController.h: mention that the download delegate gets retained.
+
 2003-03-12  Darin Adler  <darin@apple.com>
 
         Reviewed by John.

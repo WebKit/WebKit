@@ -155,6 +155,7 @@ extern NSString *WebElementLinkLabelKey;	// NSString of the text within the anch
 /*!
     @method setDownloadDelegate:
     @abstract Set the controller's WebDownloadDelegate.
+    @discussion The download delegate is retained by WebDownload when any downloads are in progress.
     @param delegate The WebDownloadDelegate to set as the download delegate.
 */    
 - (void)setDownloadDelegate: (id)delegate;

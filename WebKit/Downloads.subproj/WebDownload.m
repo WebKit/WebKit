@@ -50,7 +50,7 @@ typedef struct WebFSRefParam
     SInt16 resourceForkRefNum;
 
     BOOL deleteFile;
-    BOOL isLoading;
+    BOOL isDownloading;
     BOOL areWritesCancelled;
     BOOL encounteredCloseError;
 
@@ -75,8 +75,8 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
 
 @interface WebDownload (ForwardDeclarations)
 #pragma mark LOADING
-- (void)_loadStarted;
-- (void)_loadEnded;
+- (void)_downloadStarted;
+- (void)_downloadEnded;
 - (void)_setRequest:(WebRequest *)request;
 - (void)_setResponse:(WebResponse *)response;
 #pragma mark CREATING
@@ -106,6 +106,7 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
 - (void)_cancelWithError:(WebError *)error;
 - (void)_cancelWithErrorCode:(int)code;
 #pragma mark MISC
+- (void)_setDelegate:(id)delegate;
 - (void)_setPath:(NSString *)path;
 - (NSString *)_currentPath;
 - (WebError *)_errorWithCode:(int)code;
@@ -140,7 +141,7 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
 {
     ASSERT(!resource);
     ASSERT(!delegate);
-    ASSERT(!isLoading);
+    ASSERT(!isDownloading);
 
     free(fileRefPtr);
     
@@ -186,15 +187,16 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
                      proxy:(WebResourceDelegateProxy *)proxy
 {
     [super init];
-    
+     
     _private = [[WebDownloadPrivate alloc] init];
+    [self _downloadStarted];
+    
     _private->request =  [request retain];
     _private->resource = [resource retain];
     _private->response = [response retain];
-    _private->delegate = delegate;
     _private->proxy = 	 [proxy retain];
+    [self _setDelegate:delegate];
     [_private->proxy setDelegate:(id <WebResourceDelegate>)self];
-    [self _loadStarted];
 
     // Replay the delegate methods that would be called in the standalone download case.
     if ([_private->delegate respondsToSelector:@selector(download:didStartFromRequest:)]) {
@@ -216,7 +218,7 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
                     return nil;
                 }
                 [_private->resource loadWithDelegate:(id <WebResourceDelegate>)self];
-                [self _loadStarted];
+                [self _downloadStarted];
             }
             return self;
         }
@@ -250,11 +252,11 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
 
 - (void)loadWithDelegate:(id)delegate
 {
-    if (!_private->isLoading) {
-        _private->delegate = delegate;
+    if (!_private->isDownloading) {
+        [self _downloadStarted];
+        
+        [self _setDelegate:delegate];
         [_private->resource loadWithDelegate:(id <WebResourceDelegate>)self];
-
-        [self _loadStarted];
         
         if ([_private->delegate respondsToSelector:@selector(download:didStartFromRequest:)]) {
             [_private->delegate download:self didStartFromRequest:_private->request];
@@ -280,23 +282,25 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
 
 #pragma mark LOADING
 
-- (void)_loadStarted
+- (void)_downloadStarted
 {
-    if (!_private->isLoading) {
-        _private->isLoading = YES;
+    if (!_private->isDownloading) {
+        _private->isDownloading = YES;
         
         // Retain self while loading so we aren't released during the load.
         [self retain];
     }
 }
 
-- (void)_loadEnded
+- (void)_downloadEnded
 {
-    if (_private->isLoading) {
-        _private->isLoading = NO;
+    if (_private->isDownloading) {
+        _private->isDownloading = NO;
 
         [_private->resource release];
         _private->resource = nil;
+
+        [self _setDelegate:nil];
 
         // Balance the retain from when the load started.
         [self release];
@@ -328,12 +332,12 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
     } else {
         request = theRequest;
     }
-    
-    if (!request) {
-        [self _loadEnded];
-    }
 
     [self _setRequest:request];
+    
+    if (!request) {
+        [self _downloadEnded];
+    }
 
     return request;
 }
@@ -360,9 +364,7 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
 }
 
 -(void)resourceDidFinishLoading:(WebResource *)resource
-{
-    [self _loadEnded];
-    
+{    
     WebError *error = [self _decodeData:_private->bufferedData];
     [_private->bufferedData release];
     _private->bufferedData = nil;
@@ -381,9 +383,7 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
 }
 
 -(void)resource:(WebResource *)resource didFailLoadingWithError:(WebError *)error
-{
-    [self _loadEnded];
-    
+{    
     [self _cancelWithError:error];
 }
 
@@ -729,7 +729,7 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
         if ([_private->delegate respondsToSelector:@selector(downloadDidFinishDownloading:)]) {
             [_private->delegate downloadDidFinishDownloading:self];
         }
-        _private->delegate = nil;
+        [self _downloadEnded];
     }
 }
 
@@ -815,17 +815,14 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
 {
     [_private->resource cancel];
     
-    [self _loadEnded];
-
     if (error) {
         if ([_private->delegate respondsToSelector:@selector(download:didFailDownloadingWithError:)]) {
             [_private->delegate download:self didFailDownloadingWithError:error];
         }
     }
 
-    _private->delegate = nil;
-
     [self _closeAndDeleteFileAsync];
+    [self _downloadEnded];
 }
 
 - (void)_cancelWithErrorCode:(int)code
@@ -834,6 +831,13 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
 }
 
 #pragma mark MISCELLANEOUS
+
+- (void)_setDelegate:(id)delegate;
+{
+    [delegate retain];
+    [_private->delegate release];
+    _private->delegate = delegate;
+}
 
 - (void)_setPath:(NSString *)path
 {
