@@ -88,4 +88,4 @@ print OUT "    0\n};\n";
 print OUT "DOM::DOMString getTagName(unsigned short id)\n{\n";
 print OUT "    if(id > ID_CLOSE_TAG*2) id = ID_CLOSE_TAG+1;\n";
 print OUT "    return DOM::DOMString(tagList[id]);\n";
-print OUT "};\n";
+print OUT "}\n";

@@ -1,5 +1,16 @@
 2004-03-01  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by me, as suggested by Darin
+
+        * khtml/misc/htmlattrs.c:
+        (getAttrName): Generated code no longer has extraneous semicolon.
+        * khtml/misc/htmltags.c: Generated code no longer has extraneous semicolon.
+        (getTagName):
+        * khtml/misc/makeattrs: Removed extraneous semicolon from end of file.
+        * khtml/misc/maketags: Ditto.
+
+2004-03-01  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by me
 
         * kwq/DOMInternal.h: Replaced tabs with spaces.

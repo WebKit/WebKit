@@ -571,4 +571,4 @@ static const char * const attrList[] = {
 DOM::DOMString getAttrName(unsigned short id)
 {
     return attrList[id-1];
-};
+}

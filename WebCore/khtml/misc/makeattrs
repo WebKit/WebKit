@@ -78,7 +78,7 @@ while(defined ($line = shift @a))
 print OUT "    0\n};\n";
 print OUT "DOM::DOMString getAttrName(unsigned short id)\n{\n";
 print OUT "    return attrList[id-1];\n";
-print OUT "};\n";
+print OUT "}\n";
 
 
 
