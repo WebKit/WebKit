@@ -196,10 +196,12 @@ void RenderImage::setPixmap( const QPixmap &p, const QRect& r, CachedImage *o)
 #endif
     
 #if APPLE_CHANGES
-    p.increaseUseCount();
     pix.decreaseUseCount();
 #endif
     pix = p;
+#if APPLE_CHANGES
+    p.increaseUseCount();
+#endif
 
     if (needlayout) {
         if (!selfNeedsLayout())

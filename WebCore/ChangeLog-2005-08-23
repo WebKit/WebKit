@@ -1,3 +1,11 @@
+2004-09-30  Darin Adler  <darin@apple.com>
+
+        - rolled out bad image change that caused performance regression
+
+        * khtml/rendering/render_image.cpp: (RenderImage::setPixmap):
+        Don't reference the new image before doing the assignment.
+        This forced an unwanted.
+
 2004-09-30  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by me, coded by Darin
