@@ -158,7 +158,7 @@
     }
     
     // Either send a final error message or a final progress message.
-    WebError *nonTerminalError = [handle error];
+    WebError *nonTerminalError = [[handle response] error];
     if (nonTerminalError) {
         [self receivedError:nonTerminalError forHandle:handle];
     } else {

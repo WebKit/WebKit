@@ -1,3 +1,16 @@
+2002-09-05  Ken Kocienda  <kocienda@apple.com>
+
+	The WebError object has been removed from WebResourceHandle.
+        Objects of that class now rely on the WebError object in WebResourceResponse. 
+
+	This code has been updated to ask WebResourceResponse for it WebError object,
+	rather than asking WebResourceHandle.
+
+        * WebCoreSupport.subproj/WebSubresourceClient.m:
+        (-[WebSubresourceClient handleDidFinishLoading:])
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient handleDidFinishLoading:])
+
 2002-09-05  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed 3021365 - Crash failing to load plugin from local file

@@ -140,7 +140,7 @@
     
     [dataSource _removeResourceHandle:handle];
     
-    WebError *nonTerminalError = [handle error];
+    WebError *nonTerminalError = [[handle response] error];
     if (nonTerminalError) {
         [self receivedError:nonTerminalError forHandle:handle];
     }
