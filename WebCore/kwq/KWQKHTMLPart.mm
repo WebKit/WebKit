@@ -3441,7 +3441,6 @@ RenderStyle *KWQKHTMLPart::styleForSelectionStart(NodeImpl *&nodeToRemove) const
         return 0;
     
     Position pos = VisiblePosition(d->m_selection.start(), UPSTREAM).deepEquivalent();
-    ASSERT(pos.isNotNull());
     if (!pos.inRenderedContent())
         return 0;
     NodeImpl *node = pos.node();
@@ -3476,8 +3475,12 @@ NSFont *KWQKHTMLPart::fontForSelection(bool *hasMultipleFonts) const
 
     if (!d->m_selection.isRange()) {
         NodeImpl *nodeToRemove;
-        NSFont *result = styleForSelectionStart(nodeToRemove)->font().getNSFont();
+        RenderStyle *style = styleForSelectionStart(nodeToRemove); // sets nodeToRemove
 
+        NSFont *result = 0;
+        if (style)
+            result = style->font().getNSFont();
+        
         if (nodeToRemove) {
             int exceptionCode;
             nodeToRemove->remove(exceptionCode);

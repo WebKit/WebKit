@@ -674,10 +674,11 @@ void Selection::layout()
         m_expectedVisibleRect = QRect();
         return;
     }
+
+    m_start.node()->getDocument()->updateRendering();
         
     if (isCaret()) {
         Position pos = m_start;
-        pos.node()->getDocument()->updateRendering();
         switch (m_affinity) {
             case DOWNSTREAM:
                 pos = VisiblePosition(m_start).downstreamDeepEquivalent();
@@ -686,15 +687,29 @@ void Selection::layout()
                 pos = VisiblePosition(m_start).deepEquivalent();
                 break;
         }
-        m_caretRect = pos.node()->renderer()->caretRect(pos.offset(), m_affinity);
-        m_expectedVisibleRect = m_caretRect;
+        if (pos.isNotNull()) {
+            ASSERT(pos.node()->renderer());
+            m_caretRect = pos.node()->renderer()->caretRect(pos.offset(), m_affinity);
+            m_expectedVisibleRect = m_caretRect;
+        }
+        else {
+            m_caretRect = QRect();
+            m_expectedVisibleRect = QRect();
+        }
     }
     else {
         // Calculate which position to use based on whether the base is the start.
         // We want the position, start or end, that was calculated using the extent. 
         // This makes the selection follow the extent position while scrolling as a 
         // result of arrow navigation. 
+        //
+        // Note: no need to get additional help from VisiblePosition. The m_start and
+        // m_end positions should already be visible, and we're only interested in 
+        // a rectangle for m_expectedVisibleRect, hence affinity is not a factor
+        // like it is when drawing a caret.
+        //
         Position pos = m_baseIsStart ? m_end : m_start;
+        ASSERT(pos.node()->renderer()); 
         m_expectedVisibleRect = pos.node()->renderer()->caretRect(pos.offset(), m_affinity);
         m_caretRect = QRect();
     }

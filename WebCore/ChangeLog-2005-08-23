@@ -1,3 +1,29 @@
+2004-10-11  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+        This is a partial fix to this bug:
+        
+        <rdar://problem/3832886> increase quote level on new mail document leads to immediate 
+        crash in caret painting code
+        
+        To eliminate the bad behavior for good, I have done some investigations in Mail code,
+        and I have sent a suggested code change on to Grant. Basically, Mail can't add empty
+        blocks (like blockquote elements used for quoting) to documents without giving those 
+        blocks some content (so they have a height).
+
+        I added some other crash protections below.
+
+        * khtml/editing/selection.cpp:
+        (khtml::Selection::layout): Check for non-null position after calls to VisiblePosition, since
+        the VisiblePosition constructors may fail to find a visible spot in the document. Also, add
+        a couple position-has-renderer assertion checks.
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::styleForSelectionStart): Take out pos.isNotNull() assertion since VisiblePosition
+        may not yield a position. This assertion is a holdover from before we had VisiblePosition.
+        (KWQKHTMLPart::fontForSelection): Rearrange the code a little to deal with possible null results from
+        calls to helpers.
+
 2004-10-11  Darin Adler  <darin@apple.com>
 
         Reviewed by John.
