@@ -185,15 +185,6 @@ DocumentImpl *DOMImplementationImpl::createDocument( const DOMString &namespaceU
     if (doc->doctype() && dtype)
         doc->doctype()->copyFrom(*dtype);
 
-    ElementImpl *element = doc->createElementNS(namespaceURI,qualifiedName,exceptioncode);
-    if (element)
-        doc->appendChild(element,exceptioncode);
-    if (exceptioncode) {
-        delete element;
-        delete doc;
-        return 0;
-    }
-
     return doc;
 }
 

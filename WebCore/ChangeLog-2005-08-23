@@ -1,5 +1,14 @@
 2003-12-11  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Darin.
+
+	<rdar://problem/3464315>: createDocument creates document with initial child element, unlike other browsers
+	
+        * khtml/xml/dom_docimpl.cpp:
+        (DOMImplementationImpl::createDocument): Don;t add initial element.
+
+2003-12-11  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Darin. 
 
 	<rdar://problem/3507863>: XMLHttpRequest should not parse response if HTML
