@@ -1,5 +1,13 @@
 2004-04-23  David Hyatt  <hyatt@apple.com>
 
+	Fix the apple-line-clamp values to more closely match what is needed, an even split of the max lines between the possible
+	values.
+
+        * khtml/rendering/render_flexbox.cpp:
+        (khtml::RenderFlexibleBox::layoutVerticalBox):
+
+2004-04-23  David Hyatt  <hyatt@apple.com>
+
 	Fix to make the containing block percentage height calculation actually work according to the CSS2 spec.
 	Percentages other than 100% are now supported, and flexing percentage height blocks inside table cells
 	are now supported.

@@ -695,7 +695,7 @@ void RenderFlexibleBox::layoutVerticalBox(bool relayoutChildren)
         
         // Get the # of lines and then alter all block flow children with auto height to use the
         // specified height.
-        int numLines = kMax(1, int(maxLineCount*style()->lineClamp()/100.0));
+        int numLines = int(maxLineCount*style()->lineClamp()/100.0 + 1.0);
         if (numLines < maxLineCount) {
             child = iterator.first();
             while (child) {
