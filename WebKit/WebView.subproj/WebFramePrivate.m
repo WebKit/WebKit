@@ -287,8 +287,8 @@ static const char * const stateNames[] = {
     
     documentView = [[self webView] documentView];
 
-    // Stop plug-ins before blowing away the view.
-    [_private->pluginController stopAllPlugins];
+    // Destroy plug-ins before blowing away the view.
+    [_private->pluginController destroyAllPlugins];
         
     switch ([self _state]) {
     	case WebFrameStateProvisional:
@@ -819,7 +819,7 @@ static const char * const stateNames[] = {
 - (void)_didAddSubview:(NSView *)view
 {
     if([view conformsToProtocol:@protocol(WebPlugin)]){
-        [_private->pluginController didAddSubview:view];
+        [_private->pluginController didAddPluginView:view];
     }
 }
 

@@ -1,3 +1,18 @@
+2002-10-24  Chris Blumenberg  <cblu@apple.com>
+
+	Changed some method names in WebPluginController.
+
+        * Plugins.subproj/WebPluginController.h:
+        * Plugins.subproj/WebPluginController.m:
+        (-[WebPluginController didAddPluginView:]):
+        (-[WebPluginController startAllPlugins]):
+        (-[WebPluginController stopAllPlugins]):
+        (-[WebPluginController destroyAllPlugins]):
+        (-[WebPluginController windowWillClose:]):
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _transitionToCommitted]):
+        (-[WebFrame _didAddSubview:]):
+
 === Alexander-29 ===
 
 2002-10-24  Richard Williamson   <rjw@apple.com>

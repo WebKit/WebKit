@@ -51,14 +51,24 @@
     [view pluginInitialize];
 }
 
-- (void)didAddSubview:(NSView <WebPlugin> *)view
+- (void)didAddPluginView:(NSView <WebPlugin> *)view
 {
     [view pluginStart];
+}
+
+- (void)startAllPlugins
+{
+    [views makeObjectsPerformSelector:@selector(pluginStart)];
 }
 
 - (void)stopAllPlugins
 {
     [views makeObjectsPerformSelector:@selector(pluginStop)];
+}
+
+- (void)destroyAllPlugins
+{
+    [self stopAllPlugins];
     [views makeObjectsPerformSelector:@selector(pluginDestroy)];
     [views removeAllObjects];
 }
@@ -66,7 +76,7 @@
 - (void)windowWillClose:(NSNotification *)notification
 {
     if([notification object] == [[frame webView] window]){
-        [self stopAllPlugins];
+        [self destroyAllPlugins];
     }
 }
 
