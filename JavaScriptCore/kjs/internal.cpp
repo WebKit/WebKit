@@ -455,7 +455,12 @@ ProgramNode *Parser::parse(const UChar *code, unsigned int length, int *sourceId
       *errLine = eline;
     if (errMsg)
       *errMsg = "Parse error at line " + UString::from(eline);
-    delete prog;
+    if (prog) {
+      // must ref and deref to clean up properly
+      prog->ref();
+      prog->deref();
+      delete prog;
+    }
     return 0;
   }
 
@@ -725,7 +730,12 @@ bool InterpreterImp::checkSyntax(const UString &code)
   // Parser::parse() returns 0 in a syntax error occurs, so we just check for that
   ProgramNode *progNode = Parser::parse(code.data(),code.size(),0,0,0);
   bool ok = (progNode != 0);
-  delete progNode;
+  if (progNode) {
+    // must ref and deref to clean up properly
+    progNode->ref();
+    progNode->deref();
+    delete progNode;
+  }
   return ok;
 }
 

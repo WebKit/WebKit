@@ -1,3 +1,14 @@
+2003-07-28  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Richard.
+
+	- fixed 3240814 - LEAK: 120 byte leak in JavaScript parser in Sherlock Movies channel
+	
+        * kjs/internal.cpp:
+        (Parser::parse): ref() and deref() the program node, to make sure to clean up properly,
+	before deleting it.
+        (InterpreterImp::checkSyntax): Likewise.
+
 === Safari-90 ===
 
 2003-07-22  Maciej Stachowiak  <mjs@apple.com>
