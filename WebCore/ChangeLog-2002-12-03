@@ -1,5 +1,71 @@
 2002-10-24  Darin Adler  <darin@apple.com>
 
+	A step in the direction of making KWQ headers much nicer.
+	Move all empty headers out of kwq, and into ForwardingHeaders.
+
+        * ForwardingHeaders/kcmdlineargs.h: Added.
+        * ForwardingHeaders/kdatastream.h: Added.
+        * ForwardingHeaders/khtml_iface.h: Added.
+        * ForwardingHeaders/khtml_printsettings.h: Added.
+        * ForwardingHeaders/khtml_run.h: Added.
+        * ForwardingHeaders/kio/kprinter.h: Added.
+        * ForwardingHeaders/kio/kprotocolmanager.h:
+        * ForwardingHeaders/kio/ktrader.h: Added.
+        * ForwardingHeaders/kio/scheduler.h: Added.
+        * ForwardingHeaders/kmultipledrag.h: Added.
+        * ForwardingHeaders/kprinter.h: Added.
+        * ForwardingHeaders/kprotocolmanager.h: Added.
+        * ForwardingHeaders/ksslcertchain.h: Added.
+        * ForwardingHeaders/ksslinfodlg.h: Added.
+        * ForwardingHeaders/kstdaction.h: Added.
+        * ForwardingHeaders/ktempfile.h: Added.
+        * ForwardingHeaders/ktrader.h: Added.
+        * ForwardingHeaders/kurldrag.h: Added.
+        * ForwardingHeaders/kxmlguifactory.h: Added.
+        * ForwardingHeaders/qasyncimageio.h: Added.
+        * ForwardingHeaders/qbitmap.h: Added.
+        * ForwardingHeaders/qclipboard.h: Added.
+        * ForwardingHeaders/qfontdatabase.h: Added.
+        * ForwardingHeaders/qglobal.h: Added.
+        * ForwardingHeaders/qhbox.h: Added.
+        * ForwardingHeaders/qintcache.h: Added.
+        * ForwardingHeaders/qintdict.h: Added.
+        * ForwardingHeaders/qmetaobject.h: Added.
+        * ForwardingHeaders/qobjectlist.h: Added.
+        * ForwardingHeaders/scheduler.h: Added.
+
+        * kwq/dcop/kdatastream.h: Removed.
+        * kwq/kdecore/kcmdlineargs.h: Removed.
+        * kwq/kdecore/kmultipledrag.h: Removed.
+        * kwq/kdecore/ktempfile.h: Removed.
+        * kwq/kdecore/kurldrag.h: Removed.
+        * kwq/kdeui/kstdaction.h: Removed.
+        * kwq/kdeui/kxmlguifactory.h: Removed.
+        * kwq/khtml/khtml_iface.h: Removed.
+        * kwq/khtml/khtml_printsettings.h: Removed.
+        * kwq/khtml/khtml_run.h: Removed.
+        * kwq/kio/kprinter.h: Removed.
+        * kwq/kio/kprotocolmanager.h: Removed.
+        * kwq/kio/kssl/ksslcertchain.h: Removed.
+        * kwq/kio/kssl/ksslinfodlg.h: Removed.
+        * kwq/kio/ktrader.h: Removed.
+        * kwq/kio/scheduler.h: Removed.
+        * kwq/qt/qasyncimageio.h: Removed.
+        * kwq/qt/qbitmap.h: Removed.
+        * kwq/qt/qclipboard.h: Removed.
+        * kwq/qt/qfontdatabase.h: Removed.
+        * kwq/qt/qglobal.h: Removed.
+        * kwq/qt/qhbox.h: Removed.
+        * kwq/qt/qintcache.h: Removed.
+        * kwq/qt/qintdict.h: Removed.
+        * kwq/qt/qmetaobject.h: Removed.
+        * kwq/qt/qobjectlist.h: Removed.
+
+        * WebCore.pbproj/project.pbxproj: Removed all the above headers from
+	the project.
+
+2002-10-24  Darin Adler  <darin@apple.com>
+
         * ForwardingHeaders/private/qucomextra_p.h: Emptied this out.
         * kwq/qt/private/qucomextra_p.h: Removed.
 

@@ -217,10 +217,8 @@
 				F58785E402DE375901EA4122,
 				F58785E602DE375901EA4122,
 				F58785EC02DE37CB01EA4122,
-				F58785ED02DE37CB01EA4122,
 				F587860602DE382001EA4122,
 				F587860702DE382001EA4122,
-				F587860802DE382001EA4122,
 				F587860902DE382001EA4122,
 				F587860A02DE382001EA4122,
 				F587860B02DE382001EA4122,
@@ -229,15 +227,12 @@
 				F587860E02DE382001EA4122,
 				F587860F02DE382001EA4122,
 				F587861002DE382001EA4122,
-				F587861102DE382001EA4122,
 				F587861202DE382001EA4122,
 				F587861302DE382001EA4122,
 				F587861402DE382001EA4122,
 				F587861502DE382001EA4122,
 				F587861602DE382001EA4122,
-				F587861702DE382001EA4122,
 				F587861802DE382001EA4122,
-				F587861902DE382001EA4122,
 				F587861A02DE382001EA4122,
 				F587861B02DE382001EA4122,
 				F587862602DE398401EA4122,
@@ -247,16 +242,11 @@
 				F587862A02DE398401EA4122,
 				F587862B02DE398401EA4122,
 				F587862C02DE398401EA4122,
-				F587862D02DE398401EA4122,
-				F587862E02DE398401EA4122,
 				F587863102DE39E601EA4122,
 				F587863B02DE3A1401EA4122,
 				F587863C02DE3A1401EA4122,
 				F587863D02DE3A1401EA4122,
-				F587863E02DE3A1401EA4122,
 				F587863F02DE3A1401EA4122,
-				F587864002DE3A1401EA4122,
-				F587864102DE3A1401EA4122,
 				F587864202DE3A1401EA4122,
 				F587864602DE3A7701EA4122,
 				F587864702DE3A7701EA4122,
@@ -266,13 +256,7 @@
 				F587865702DE3A9A01EA4122,
 				F587865802DE3A9A01EA4122,
 				F587865902DE3A9A01EA4122,
-				F587865A02DE3A9A01EA4122,
-				F587865B02DE3A9A01EA4122,
-				F587865C02DE3A9A01EA4122,
 				F587865D02DE3A9A01EA4122,
-				F587865E02DE3A9A01EA4122,
-				F587866302DE3B1101EA4122,
-				F587866402DE3B1101EA4122,
 				F587866502DE3B1101EA4122,
 				F587866E02DE3B3201EA4122,
 				F587866F02DE3B3201EA4122,
@@ -283,14 +267,11 @@
 				F587867402DE3B3201EA4122,
 				F58786C702DE3B8601EA4122,
 				F58786C802DE3B8601EA4122,
-				F58786C902DE3B8601EA4122,
 				F58786CA02DE3B8601EA4122,
-				F58786CB02DE3B8601EA4122,
 				F58786CC02DE3B8601EA4122,
 				F58786CD02DE3B8601EA4122,
 				F58786CE02DE3B8601EA4122,
 				F58786CF02DE3B8601EA4122,
-				F58786D002DE3B8601EA4122,
 				F58786D102DE3B8601EA4122,
 				F58786D202DE3B8601EA4122,
 				F58786D302DE3B8601EA4122,
@@ -302,27 +283,21 @@
 				F58786D902DE3B8601EA4122,
 				F58786DA02DE3B8601EA4122,
 				F58786DB02DE3B8601EA4122,
-				F58786DC02DE3B8601EA4122,
 				F58786DD02DE3B8601EA4122,
 				F58786DE02DE3B8601EA4122,
 				F58786DF02DE3B8601EA4122,
-				F58786E002DE3B8601EA4122,
 				F58786E102DE3B8601EA4122,
 				F58786E302DE3B8601EA4122,
 				F58786E402DE3B8601EA4122,
-				F58786E502DE3B8601EA4122,
-				F58786E602DE3B8601EA4122,
 				F58786E702DE3B8601EA4122,
 				F58786E802DE3B8601EA4122,
 				F58786E902DE3B8601EA4122,
 				F58786EA02DE3B8601EA4122,
 				F58786EB02DE3B8601EA4122,
 				F58786EC02DE3B8601EA4122,
-				F58786ED02DE3B8601EA4122,
 				F58786EE02DE3B8601EA4122,
 				F58786EF02DE3B8601EA4122,
 				F58786F002DE3B8601EA4122,
-				F58786F102DE3B8601EA4122,
 				F58786F202DE3B8601EA4122,
 				F58786F302DE3B8601EA4122,
 				F58786F402DE3B8601EA4122,
@@ -478,7 +453,6 @@
 				F523D31E02DE4476018635CA,
 				F523D32002DE4476018635CA,
 				F523D32202DE4476018635CA,
-				F505847602E0934D018635CE,
 				F5B2A4FE02E2220F018635CB,
 				F5B2A52D02E22573018635CB,
 				F565AE8702ECA583018635CA,
@@ -493,12 +467,10 @@
 				9377FB57032C235C008635CE,
 				93861DE1032C2E52008635CE,
 				93CCF7D6033BD43C008635CE,
-				93CCF7E3033BE9C1008635CE,
 				F565A2740352509B01A80180,
 				F565A27D035284E301A80180,
 				F5EDAAF7035345D901A80180,
 				F5EDAAF8035345D901A80180,
-				F5EDAAF9035345D901A80180,
 				F5EDAAFA035345D901A80180,
 			);
 			isa = PBXHeadersBuildPhase;
@@ -917,18 +889,6 @@
 			settings = {
 			};
 		};
-		93CCF7E2033BE9C1008635CE = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = qhbox.h;
-			refType = 4;
-		};
-		93CCF7E3033BE9C1008635CE = {
-			fileRef = 93CCF7E2033BE9C1008635CE;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 //930
 //931
 //932
@@ -939,28 +899,6 @@
 //F52
 //F53
 //F54
-		F505847502E0934D018635CE = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			name = qucomextra_p.h;
-			path = qt/private/qucomextra_p.h;
-			refType = 4;
-		};
-		F505847602E0934D018635CE = {
-			fileRef = F505847502E0934D018635CE;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F505847702E09351018635CE = {
-			children = (
-				F505847502E0934D018635CE,
-			);
-			isa = PBXGroup;
-			name = private;
-			path = ..;
-			refType = 4;
-		};
 		F5117BC902F9FFEF018635CE = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
@@ -4102,7 +4040,6 @@
 				F565A27C035284E301A80180,
 				F5EDAAF3035345D901A80180,
 				F5EDAAF4035345D901A80180,
-				F5EDAAF5035345D901A80180,
 				F5EDAAF6035345D901A80180,
 			);
 			isa = PBXGroup;
@@ -5910,20 +5847,8 @@
 			path = dcopclient.h;
 			refType = 4;
 		};
-		F58785EB02DE37CB01EA4122 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = kdatastream.h;
-			refType = 4;
-		};
 		F58785EC02DE37CB01EA4122 = {
 			fileRef = F58785EA02DE37CB01EA4122;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F58785ED02DE37CB01EA4122 = {
-			fileRef = F58785EB02DE37CB01EA4122;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -5931,7 +5856,6 @@
 		F58785EF02DE37DE01EA4122 = {
 			children = (
 				F58785EA02DE37CB01EA4122,
-				F58785EB02DE37CB01EA4122,
 			);
 			isa = PBXGroup;
 			path = dcop;
@@ -5949,13 +5873,6 @@
 			isa = PBXFileReference;
 			name = kcharsets.h;
 			path = kdecore/kcharsets.h;
-			refType = 4;
-		};
-		F58785F202DE382001EA4122 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			name = kcmdlineargs.h;
-			path = kdecore/kcmdlineargs.h;
 			refType = 4;
 		};
 		F58785F302DE382001EA4122 = {
@@ -6014,13 +5931,6 @@
 			path = kdecore/klocale.h;
 			refType = 4;
 		};
-		F58785FB02DE382001EA4122 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			name = kmultipledrag.h;
-			path = kdecore/kmultipledrag.h;
-			refType = 4;
-		};
 		F58785FC02DE382001EA4122 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
@@ -6056,25 +5966,11 @@
 			path = kdecore/kstringhandler.h;
 			refType = 4;
 		};
-		F587860102DE382001EA4122 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			name = ktempfile.h;
-			path = kdecore/ktempfile.h;
-			refType = 4;
-		};
 		F587860202DE382001EA4122 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = kurl.h;
 			path = kdecore/kurl.h;
-			refType = 4;
-		};
-		F587860302DE382001EA4122 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			name = kurldrag.h;
-			path = kdecore/kurldrag.h;
 			refType = 4;
 		};
 		F587860402DE382001EA4122 = {
@@ -6099,12 +5995,6 @@
 		};
 		F587860702DE382001EA4122 = {
 			fileRef = F58785F102DE382001EA4122;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F587860802DE382001EA4122 = {
-			fileRef = F58785F202DE382001EA4122;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -6157,12 +6047,6 @@
 			settings = {
 			};
 		};
-		F587861102DE382001EA4122 = {
-			fileRef = F58785FB02DE382001EA4122;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		F587861202DE382001EA4122 = {
 			fileRef = F58785FC02DE382001EA4122;
 			isa = PBXBuildFile;
@@ -6193,20 +6077,8 @@
 			settings = {
 			};
 		};
-		F587861702DE382001EA4122 = {
-			fileRef = F587860102DE382001EA4122;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		F587861802DE382001EA4122 = {
 			fileRef = F587860202DE382001EA4122;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F587861902DE382001EA4122 = {
-			fileRef = F587860302DE382001EA4122;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -6229,7 +6101,6 @@
 				F58784C402DE375801EA4122,
 				F58785F102DE382001EA4122,
 				F58784EB02DE375901EA4122,
-				F58785F202DE382001EA4122,
 				F58785F302DE382001EA4122,
 				F58784ED02DE375901EA4122,
 				F58785F402DE382001EA4122,
@@ -6243,7 +6114,6 @@
 				F58785F902DE382001EA4122,
 				F58785FA02DE382001EA4122,
 				F587850402DE375901EA4122,
-				F58785FB02DE382001EA4122,
 				F58785FC02DE382001EA4122,
 				F587850B02DE375901EA4122,
 				F58785FE02DE382001EA4122,
@@ -6252,10 +6122,8 @@
 				F587850C02DE375901EA4122,
 				F587860002DE382001EA4122,
 				F587850D02DE375901EA4122,
-				F587860102DE382001EA4122,
 				F587860202DE382001EA4122,
 				F587850E02DE375901EA4122,
-				F587860302DE382001EA4122,
 				F587860402DE382001EA4122,
 				F587850F02DE375901EA4122,
 				F587860502DE382001EA4122,
@@ -6315,20 +6183,6 @@
 			path = kdeui/kmessagebox.h;
 			refType = 4;
 		};
-		F587862402DE398401EA4122 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			name = kstdaction.h;
-			path = kdeui/kstdaction.h;
-			refType = 4;
-		};
-		F587862502DE398401EA4122 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			name = kxmlguifactory.h;
-			path = kdeui/kxmlguifactory.h;
-			refType = 4;
-		};
 		F587862602DE398401EA4122 = {
 			fileRef = F587861D02DE398401EA4122;
 			isa = PBXBuildFile;
@@ -6371,18 +6225,6 @@
 			settings = {
 			};
 		};
-		F587862D02DE398401EA4122 = {
-			fileRef = F587862402DE398401EA4122;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F587862E02DE398401EA4122 = {
-			fileRef = F587862502DE398401EA4122;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		F587862F02DE398601EA4122 = {
 			children = (
 				F587861D02DE398401EA4122,
@@ -6394,8 +6236,6 @@
 				F587862202DE398401EA4122,
 				F587862302DE398401EA4122,
 				F587850502DE375901EA4122,
-				F587862402DE398401EA4122,
-				F587862502DE398401EA4122,
 			);
 			isa = PBXGroup;
 			name = kdeui;
@@ -6446,32 +6286,11 @@
 			path = khtml/khtml_find.h;
 			refType = 4;
 		};
-		F587863602DE3A1401EA4122 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			name = khtml_iface.h;
-			path = khtml/khtml_iface.h;
-			refType = 4;
-		};
 		F587863702DE3A1401EA4122 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = khtml_pagecache.h;
 			path = khtml/khtml_pagecache.h;
-			refType = 4;
-		};
-		F587863802DE3A1401EA4122 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			name = khtml_printsettings.h;
-			path = khtml/khtml_printsettings.h;
-			refType = 4;
-		};
-		F587863902DE3A1401EA4122 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			name = khtml_run.h;
-			path = khtml/khtml_run.h;
 			refType = 4;
 		};
 		F587863A02DE3A1401EA4122 = {
@@ -6499,26 +6318,8 @@
 			settings = {
 			};
 		};
-		F587863E02DE3A1401EA4122 = {
-			fileRef = F587863602DE3A1401EA4122;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		F587863F02DE3A1401EA4122 = {
 			fileRef = F587863702DE3A1401EA4122;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F587864002DE3A1401EA4122 = {
-			fileRef = F587863802DE3A1401EA4122;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F587864102DE3A1401EA4122 = {
-			fileRef = F587863902DE3A1401EA4122;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -6536,10 +6337,7 @@
 				F587863402DE3A1401EA4122,
 				F58784F702DE375901EA4122,
 				F587863502DE3A1401EA4122,
-				F587863602DE3A1401EA4122,
 				F587863702DE3A1401EA4122,
-				F587863802DE3A1401EA4122,
-				F587863902DE3A1401EA4122,
 				F587863A02DE3A1401EA4122,
 				F58784FB02DE375901EA4122,
 			);
@@ -6627,39 +6425,11 @@
 			path = kio/kmimetype.h;
 			refType = 4;
 		};
-		F587864F02DE3A9A01EA4122 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			name = kprinter.h;
-			path = kio/kprinter.h;
-			refType = 4;
-		};
-		F587865002DE3A9A01EA4122 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			name = kprotocolmanager.h;
-			path = kio/kprotocolmanager.h;
-			refType = 4;
-		};
-		F587865102DE3A9A01EA4122 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			name = ktrader.h;
-			path = kio/ktrader.h;
-			refType = 4;
-		};
 		F587865202DE3A9A01EA4122 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = netaccess.h;
 			path = kio/netaccess.h;
-			refType = 4;
-		};
-		F587865302DE3A9A01EA4122 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			name = scheduler.h;
-			path = kio/scheduler.h;
 			refType = 4;
 		};
 		F587865402DE3A9A01EA4122 = {
@@ -6698,32 +6468,8 @@
 			settings = {
 			};
 		};
-		F587865A02DE3A9A01EA4122 = {
-			fileRef = F587864F02DE3A9A01EA4122;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F587865B02DE3A9A01EA4122 = {
-			fileRef = F587865002DE3A9A01EA4122;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F587865C02DE3A9A01EA4122 = {
-			fileRef = F587865102DE3A9A01EA4122;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		F587865D02DE3A9A01EA4122 = {
 			fileRef = F587865202DE3A9A01EA4122;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F587865E02DE3A9A01EA4122 = {
-			fileRef = F587865302DE3A9A01EA4122;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -6742,30 +6488,12 @@
 				F587864D02DE3A9A01EA4122,
 				F587864E02DE3A9A01EA4122,
 				F587850602DE375901EA4122,
-				F587864F02DE3A9A01EA4122,
-				F587865002DE3A9A01EA4122,
-				F587865102DE3A9A01EA4122,
 				F587865202DE3A9A01EA4122,
 				F587850702DE375901EA4122,
-				F587865302DE3A9A01EA4122,
 			);
 			isa = PBXGroup;
 			name = kio;
 			path = "";
-			refType = 4;
-		};
-		F587866002DE3B1101EA4122 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			name = ksslcertchain.h;
-			path = kio/kssl/ksslcertchain.h;
-			refType = 4;
-		};
-		F587866102DE3B1101EA4122 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			name = ksslinfodlg.h;
-			path = kio/kssl/ksslinfodlg.h;
 			refType = 4;
 		};
 		F587866202DE3B1101EA4122 = {
@@ -6775,18 +6503,6 @@
 			path = kio/kssl/ksslkeygen.h;
 			refType = 4;
 		};
-		F587866302DE3B1101EA4122 = {
-			fileRef = F587866002DE3B1101EA4122;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F587866402DE3B1101EA4122 = {
-			fileRef = F587866102DE3B1101EA4122;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		F587866502DE3B1101EA4122 = {
 			fileRef = F587866202DE3B1101EA4122;
 			isa = PBXBuildFile;
@@ -6795,8 +6511,6 @@
 		};
 		F587866602DE3B1201EA4122 = {
 			children = (
-				F587866002DE3B1101EA4122,
-				F587866102DE3B1101EA4122,
 				F587866202DE3B1101EA4122,
 			);
 			isa = PBXGroup;
@@ -6927,22 +6641,10 @@
 			path = qarray.h;
 			refType = 4;
 		};
-		F587867802DE3B8601EA4122 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = qasyncimageio.h;
-			refType = 4;
-		};
 		F587867902DE3B8601EA4122 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = qasyncio.h;
-			refType = 4;
-		};
-		F587867A02DE3B8601EA4122 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = qbitmap.h;
 			refType = 4;
 		};
 		F587867B02DE3B8601EA4122 = {
@@ -6967,12 +6669,6 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = qcheckbox.h;
-			refType = 4;
-		};
-		F587867F02DE3B8601EA4122 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = qclipboard.h;
 			refType = 4;
 		};
 		F587868002DE3B8601EA4122 = {
@@ -7041,12 +6737,6 @@
 			path = qfont.h;
 			refType = 4;
 		};
-		F587868B02DE3B8601EA4122 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = qfontdatabase.h;
-			refType = 4;
-		};
 		F587868C02DE3B8601EA4122 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
@@ -7065,12 +6755,6 @@
 			path = qframe.h;
 			refType = 4;
 		};
-		F587868F02DE3B8601EA4122 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = qglobal.h;
-			refType = 4;
-		};
 		F587869002DE3B8601EA4122 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
@@ -7087,18 +6771,6 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = qinputdialog.h;
-			refType = 4;
-		};
-		F587869402DE3B8601EA4122 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = qintcache.h;
-			refType = 4;
-		};
-		F587869502DE3B8601EA4122 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = qintdict.h;
 			refType = 4;
 		};
 		F587869602DE3B8601EA4122 = {
@@ -7137,12 +6809,6 @@
 			path = qmemarray.h;
 			refType = 4;
 		};
-		F587869C02DE3B8601EA4122 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = qmetaobject.h;
-			refType = 4;
-		};
 		F587869D02DE3B8601EA4122 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
@@ -7159,12 +6825,6 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = qobject.h;
-			refType = 4;
-		};
-		F58786A002DE3B8601EA4122 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = qobjectlist.h;
 			refType = 4;
 		};
 		F58786A102DE3B8601EA4122 = {
@@ -7401,20 +7061,8 @@
 			settings = {
 			};
 		};
-		F58786C902DE3B8601EA4122 = {
-			fileRef = F587867802DE3B8601EA4122;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		F58786CA02DE3B8601EA4122 = {
 			fileRef = F587867902DE3B8601EA4122;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F58786CB02DE3B8601EA4122 = {
-			fileRef = F587867A02DE3B8601EA4122;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -7439,12 +7087,6 @@
 		};
 		F58786CF02DE3B8601EA4122 = {
 			fileRef = F587867E02DE3B8601EA4122;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F58786D002DE3B8601EA4122 = {
-			fileRef = F587867F02DE3B8601EA4122;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -7515,12 +7157,6 @@
 			settings = {
 			};
 		};
-		F58786DC02DE3B8601EA4122 = {
-			fileRef = F587868B02DE3B8601EA4122;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		F58786DD02DE3B8601EA4122 = {
 			fileRef = F587868C02DE3B8601EA4122;
 			isa = PBXBuildFile;
@@ -7539,12 +7175,6 @@
 			settings = {
 			};
 		};
-		F58786E002DE3B8601EA4122 = {
-			fileRef = F587868F02DE3B8601EA4122;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		F58786E102DE3B8601EA4122 = {
 			fileRef = F587869002DE3B8601EA4122;
 			isa = PBXBuildFile;
@@ -7559,18 +7189,6 @@
 		};
 		F58786E402DE3B8601EA4122 = {
 			fileRef = F587869302DE3B8601EA4122;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F58786E502DE3B8601EA4122 = {
-			fileRef = F587869402DE3B8601EA4122;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F58786E602DE3B8601EA4122 = {
-			fileRef = F587869502DE3B8601EA4122;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -7611,12 +7229,6 @@
 			settings = {
 			};
 		};
-		F58786ED02DE3B8601EA4122 = {
-			fileRef = F587869C02DE3B8601EA4122;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		F58786EE02DE3B8601EA4122 = {
 			fileRef = F587869D02DE3B8601EA4122;
 			isa = PBXBuildFile;
@@ -7631,12 +7243,6 @@
 		};
 		F58786F002DE3B8601EA4122 = {
 			fileRef = F587869F02DE3B8601EA4122;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F58786F102DE3B8601EA4122 = {
-			fileRef = F58786A002DE3B8601EA4122;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -7865,14 +7471,11 @@
 		};
 		F587871802DE3B8801EA4122 = {
 			children = (
-				F505847702E09351018635CE,
 				F587867602DE3B8601EA4122,
 				F587867702DE3B8601EA4122,
 				F58784C502DE375801EA4122,
 				F58784C602DE375801EA4122,
-				F587867802DE3B8601EA4122,
 				F587867902DE3B8601EA4122,
-				F587867A02DE3B8601EA4122,
 				F587867B02DE3B8601EA4122,
 				F587867C02DE3B8601EA4122,
 				F58784C802DE375901EA4122,
@@ -7880,7 +7483,6 @@
 				F58784C902DE375901EA4122,
 				F587867E02DE3B8601EA4122,
 				F58784CE02DE375901EA4122,
-				F587867F02DE3B8601EA4122,
 				F587868002DE3B8601EA4122,
 				F58784CF02DE375901EA4122,
 				F587868102DE3B8601EA4122,
@@ -7904,7 +7506,6 @@
 				F58784DF02DE375901EA4122,
 				F587868A02DE3B8601EA4122,
 				F58784E002DE375901EA4122,
-				F587868B02DE3B8601EA4122,
 				F587868C02DE3B8601EA4122,
 				F58784E102DE375901EA4122,
 				F587868D02DE3B8601EA4122,
@@ -7912,15 +7513,11 @@
 				F587868E02DE3B8601EA4122,
 				F58784E302DE375901EA4122,
 				F58784E402DE375901EA4122,
-				F587868F02DE3B8601EA4122,
 				F587869002DE3B8601EA4122,
 				F58784E602DE375901EA4122,
-				93CCF7E2033BE9C1008635CE,
 				F587869202DE3B8601EA4122,
 				F587869302DE3B8601EA4122,
 				F58784E802DE375901EA4122,
-				F587869402DE3B8601EA4122,
-				F587869502DE3B8601EA4122,
 				F587869602DE3B8601EA4122,
 				F587869702DE3B8601EA4122,
 				F587851102DE375901EA4122,
@@ -7935,7 +7532,6 @@
 				F587851802DE375901EA4122,
 				F587851902DE375901EA4122,
 				F587869B02DE3B8601EA4122,
-				F587869C02DE3B8601EA4122,
 				F587869D02DE3B8601EA4122,
 				F587851A02DE375901EA4122,
 				F587869E02DE3B8601EA4122,
@@ -7945,7 +7541,6 @@
 				F587851D02DE375901EA4122,
 				F5117BCA02F9FFEF018635CE,
 				F5117BCC02F9FFEF018635CE,
-				F58786A002DE3B8601EA4122,
 				F58786A102DE3B8601EA4122,
 				F58786A202DE3B8601EA4122,
 				F587851E02DE375901EA4122,
@@ -8212,13 +7807,6 @@
 			path = kwq/WebDOMElement.h;
 			refType = 2;
 		};
-		F5EDAAF5035345D901A80180 = {
-			fileEncoding = 4;
-			isa = PBXFileReference;
-			name = WebDOMNamedNodeMap.h;
-			path = kwq/WebDOMNamedNodeMap.h;
-			refType = 2;
-		};
 		F5EDAAF6035345D901A80180 = {
 			fileEncoding = 4;
 			isa = PBXFileReference;
@@ -8234,12 +7822,6 @@
 		};
 		F5EDAAF8035345D901A80180 = {
 			fileRef = F5EDAAF4035345D901A80180;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F5EDAAF9035345D901A80180 = {
-			fileRef = F5EDAAF5035345D901A80180;
 			isa = PBXBuildFile;
 			settings = {
 			};
