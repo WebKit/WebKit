@@ -74,18 +74,10 @@
 {
     IFLoadProgress *progress = [IFLoadProgress progressWithURLHandle:handle];
     
-    if([dataSource contentPolicy] == IFContentPolicySaveAndOpenExternally || [dataSource contentPolicy] == IFContentPolicySave){
-        if(isComplete)
-            [dataSource _setPrimaryLoadComplete: YES];
-            
-        if (progress->bytesSoFar == -1 && progress->totalToLoad == -1) {  
-            IFError *error = [[IFError alloc] initWithErrorCode: IFURLHandleResultCancelled 
-                inDomain:IFErrorCodeDomainWebFoundation failingURL: [dataSource inputURL]];
-            [dataSource _setMainDocumentError: error];
-            [downloadProgressHandler receivedError: error forResourceHandle: handle partialProgress: progress fromDataSource: dataSource];
-            [error release];
+    if ([dataSource contentPolicy] == IFContentPolicySaveAndOpenExternally || [dataSource contentPolicy] == IFContentPolicySave) {
+        if (isComplete) {
+            [dataSource _setPrimaryLoadComplete:YES];
         }
-        
         [downloadProgressHandler receivedProgress:progress forResourceHandle:handle 
             fromDataSource:dataSource complete:isComplete];
     } else {
@@ -94,14 +86,16 @@
     }
 }
 
-- (void)_receivedError: (IFError *)error forResourceHandle: (IFURLHandle *)resourceHandle partialProgress: (IFLoadProgress *)progress fromDataSource: (IFWebDataSource *)theDataSource
+- (void)receivedError:(IFError *)error forHandle:(IFURLHandle *)handle
 {
-    if([dataSource contentPolicy] == IFContentPolicySaveAndOpenExternally || [dataSource contentPolicy] == IFContentPolicySave){
-        [downloadProgressHandler receivedError:error forResourceHandle:resourceHandle 
-            partialProgress:progress fromDataSource:theDataSource];
-    }else{
-        [[dataSource controller] _mainReceivedError:error forResourceHandle:resourceHandle 
-            partialProgress:progress fromDataSource:theDataSource];
+    IFLoadProgress *progress = [IFLoadProgress progressWithURLHandle:handle];
+
+    if ([dataSource contentPolicy] == IFContentPolicySaveAndOpenExternally || [dataSource contentPolicy] == IFContentPolicySave) {
+        [downloadProgressHandler receivedError:error forResourceHandle:handle 
+            partialProgress:progress fromDataSource:dataSource];
+    } else {
+        [[dataSource controller] _mainReceivedError:error forResourceHandle:handle 
+            partialProgress:progress fromDataSource:dataSource];
     }
 }
 
@@ -114,9 +108,15 @@
 
 - (void)IFURLHandleResourceDidCancelLoading:(IFURLHandle *)handle
 {
+    IFError *error;
+    
     WEBKITDEBUGLEVEL(WEBKIT_LOG_LOADING, "url = %s\n", DEBUG_OBJECT([handle url]));
     
-    [self receivedProgressWithHandle:handle complete:YES];
+    // FIXME: Maybe we should be passing the URL from the handle here, not from the dataSource.
+    error = [[IFError alloc] initWithErrorCode:IFURLHandleResultCancelled 
+        inDomain:IFErrorCodeDomainWebFoundation failingURL:[dataSource inputURL]];
+    [self receivedError:error forHandle:handle];
+    [error release];
     
     [downloadHandler release];
     downloadHandler = nil;
@@ -144,8 +144,7 @@
     // Either send a final error message or a final progress message.
     IFError *nonTerminalError = [handle error];
     if (nonTerminalError){
-        [self _receivedError:nonTerminalError forResourceHandle:handle 
-            partialProgress:[IFLoadProgress progressWithURLHandle:handle] fromDataSource:dataSource];
+        [self receivedError:nonTerminalError forHandle:handle];
     }
     else {
         [self receivedProgressWithHandle:handle complete:YES];
@@ -243,8 +242,7 @@
 
     WEBKIT_ASSERT([currentURL isEqual:[handle redirectedURL] ? [handle redirectedURL] : [handle url]]);
 
-    [self _receivedError:result forResourceHandle:handle 
-        partialProgress:[IFLoadProgress progressWithURLHandle:handle] fromDataSource:dataSource];
+    [self receivedError:result forHandle:handle];
     
     [downloadHandler cancel];
     [downloadHandler release];

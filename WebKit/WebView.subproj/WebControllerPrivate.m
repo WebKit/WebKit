@@ -66,37 +66,18 @@
 
 @implementation IFWebController (IFPrivate)
 
-- (void)_receivedProgress: (IFLoadProgress *)progress forResourceHandle: (IFURLHandle *)resourceHandle fromDataSource: (IFWebDataSource *)dataSource complete: (BOOL)isComplete
+- (void)_receivedProgress:(IFLoadProgress *)progress forResourceHandle:(IFURLHandle *)resourceHandle fromDataSource:(IFWebDataSource *)dataSource complete:(BOOL)isComplete
 {
     IFWebFrame *frame = [dataSource webFrame];
     
     WEBKIT_ASSERT (dataSource != nil);
     
-    if (progress->bytesSoFar == -1 && progress->totalToLoad == -1){
-	WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "cancelled resource = %s\n", [[[dataSource inputURL] absoluteString] cString]);
-        if (frame != nil) {
-            NSString *resourceString;
-            IFError *error = [[IFError alloc] initWithErrorCode: IFURLHandleResultCancelled inDomain:IFErrorCodeDomainWebFoundation failingURL: [dataSource inputURL]];
-            [[self resourceProgressHandler] receivedError: error forResourceHandle: resourceHandle partialProgress: progress fromDataSource: dataSource];
-            if (resourceHandle != nil) {
-                resourceString = [[resourceHandle url] absoluteString];
-            } else {
-                WEBKIT_ASSERT ([error failingURL] != nil);
-                resourceString = [[error failingURL] absoluteString];
-            }
-            [dataSource _addError: error forResource: [[resourceHandle url] absoluteString]];
-            [error release];
-            [frame _checkLoadComplete];
-        }
-        return;
-    }
-
     [[self resourceProgressHandler] receivedProgress: progress forResourceHandle: resourceHandle 
         fromDataSource: dataSource complete:isComplete];
 
-    // This resouce has completed, so check if the load is complete for all frames.
-    if (isComplete){
-        if (frame != nil){
+    // This resource has completed, so check if the load is complete for all frames.
+    if (isComplete) {
+        if (frame != nil) {
             [frame _transitionProvisionalToLayoutAcceptable];
             [frame _checkLoadComplete];
         }
@@ -108,17 +89,6 @@
     IFWebFrame *frame = [dataSource webFrame];
     
     WEBKIT_ASSERT (dataSource != nil);
-
-    if (progress->bytesSoFar == -1 && progress->totalToLoad == -1){
-	WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "cancelled resource = %s\n", [[[dataSource inputURL] absoluteString] cString]);
-        [dataSource _setPrimaryLoadComplete: YES];
-        IFError *error = [[IFError alloc] initWithErrorCode: IFURLHandleResultCancelled inDomain:IFErrorCodeDomainWebFoundation failingURL: [dataSource inputURL]];
-        [[self resourceProgressHandler] receivedError: error forResourceHandle: resourceHandle partialProgress: progress fromDataSource: dataSource];
-        [dataSource _setMainDocumentError: error];
-        [error release];
-        [frame _checkLoadComplete];
-        return;
-    }
 
     [[self resourceProgressHandler] receivedProgress: progress forResourceHandle: resourceHandle 
         fromDataSource: dataSource complete:isComplete];
@@ -160,9 +130,6 @@
 
     [[self resourceProgressHandler] receivedError: error forResourceHandle: resourceHandle partialProgress: progress fromDataSource: dataSource];
 
-    if ([dataSource _isStopping])
-        return;
-    
     WEBKIT_ASSERT (frame != nil);
 
     [dataSource _addError: error forResource:
@@ -177,9 +144,6 @@
     IFWebFrame *frame = [dataSource webFrame];
 
     [[self resourceProgressHandler] receivedError: error forResourceHandle: resourceHandle partialProgress: progress fromDataSource: dataSource];
-    
-    if ([dataSource _isStopping])
-        return;
     
     WEBKIT_ASSERT (frame != nil);
 

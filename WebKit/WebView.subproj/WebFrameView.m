@@ -23,8 +23,9 @@
 #import <WebFoundation/IFNSURLExtensions.h>
 #import <WebFoundation/WebFoundation.h>
 
-#define SpaceKey 0x0020
-#define DeleteKey 0x007F
+enum {
+    SpaceKey = 0x0020
+};
 
 @implementation IFWebView
 
@@ -227,7 +228,7 @@
     count = [characters length];
     for (index = 0; index < count; ++index) {
         switch ([characters characterAtIndex:index]) {
-            case DeleteKey:
+            case NSDeleteCharacter:
                 [self _goBack];
                 callSuper = NO;
                 break;

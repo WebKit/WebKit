@@ -93,6 +93,12 @@
         forResourceHandle:handle fromDataSource:dataSource complete:isComplete];
 }
 
+- (void)receivedError:(IFError *)error forHandle:(IFURLHandle *)handle
+{
+    [[dataSource controller] _receivedError:error forResourceHandle:handle
+        partialProgress:[IFLoadProgress progressWithURLHandle:handle] fromDataSource:dataSource];
+}
+
 - (void)IFURLHandleResourceDidBeginLoading:(IFURLHandle *)handle
 {
     [self didStartLoadingWithURL:[handle url]];
@@ -109,12 +115,16 @@
 
 - (void)IFURLHandleResourceDidCancelLoading:(IFURLHandle *)handle
 {
+    IFError *error;
+    
     [loader cancel];
     
     [dataSource _removeURLHandle:handle];
         
-    [[dataSource controller] _receivedProgress:[IFLoadProgress progress]
-        forResourceHandle:handle fromDataSource:dataSource complete: YES];
+    error = [[IFError alloc] initWithErrorCode:IFURLHandleResultCancelled 
+        inDomain:IFErrorCodeDomainWebFoundation failingURL:[dataSource inputURL]];
+    [self receivedError:error forHandle:handle];
+    [error release];
 
     [self didStopLoading];
 }
@@ -131,8 +141,7 @@
     
     IFError *nonTerminalError = [handle error];
     if (nonTerminalError) {
-        [[dataSource controller] _receivedError:nonTerminalError forResourceHandle:handle
-            partialProgress:[IFLoadProgress progressWithURLHandle:handle] fromDataSource:dataSource];
+        [self receivedError:nonTerminalError forHandle:handle];
     }
     
     [self receivedProgressWithHandle:handle complete:YES];
@@ -148,8 +157,7 @@
     
     [dataSource _removeURLHandle:handle];
     
-    [[dataSource controller] _receivedError:error forResourceHandle:handle
-        partialProgress:[IFLoadProgress progressWithURLHandle:handle] fromDataSource:dataSource];
+    [self receivedError:error forHandle:handle];
 
     [self didStopLoading];
 }
