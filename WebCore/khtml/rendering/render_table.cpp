@@ -1694,9 +1694,6 @@ void RenderTable::print( QPainter *p, int _x, int _y,
 	}
     }
 
-    if ( specialObjects )
-	printSpecialObjects( p, _x, _y, _w, _h, _tx, _ty);
-
 #ifdef BOX_DEBUG
     outlineBox(p, _tx, _ty, "blue");
 #endif

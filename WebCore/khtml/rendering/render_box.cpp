@@ -76,16 +76,14 @@ void RenderBox::setStyle(RenderStyle *_style)
         break;
     default:
         setPositioned(false);
-        if(_style->isFloating()) {
+        if(_style->isFloating())
             setFloating(true);
-        } else {
-            if(_style->position() == RELATIVE) {
-                setRelPositioned(true);
-                if (!m_layer)
-                    m_layer = new RenderLayer(this);
-            }
-        }
+        else if(_style->position() == RELATIVE)
+            setRelPositioned(true);
     }
+    
+    if ((isPositioned() || isRelPositioned() || isFloating()) && !m_layer)
+        m_layer = new RenderLayer(this);
 }
 
 RenderBox::~RenderBox()

@@ -223,9 +223,6 @@ void RenderRoot::printObject(QPainter *p, int _x, int _y,
         _ty += m_view->contentsY();
     }
 
-    if(specialObjects)
-        printSpecialObjects(p, _x, _y, _w, _h, _tx, _ty);
-
 #ifdef BOX_DEBUG
     outlineBox(p, _tx, _ty);
 #endif

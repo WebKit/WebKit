@@ -64,9 +64,7 @@ public:
                         int tx, int ty);
     virtual void printObject( QPainter *, int x, int y, int w, int h,
                         int tx, int ty);
-    void printSpecialObjects( QPainter *, int x, int y, int w, int h,
-                        int tx, int ty);
-
+    
     virtual void layout( );
 
     virtual void close();
@@ -164,7 +162,6 @@ protected:
 	    left = 0;
 	    width = 0;
             count = 0;
-            noPaint = false;
 
         }
         RenderObject* node;
@@ -174,8 +171,7 @@ protected:
         short width;
         short count;
         Type type : 2; // left or right aligned
-        bool noPaint : 1;
-
+        
         bool operator==(const SpecialObject& ) const
         {
             return false;
