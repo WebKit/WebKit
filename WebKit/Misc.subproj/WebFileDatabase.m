@@ -15,6 +15,9 @@
 
 #define SIZE_FILE_NAME @".size"
 
+// The next line is a workaround for Radar 2905545. Once that's fixed, it can use PTHREAD_ONCE_INIT.
+static void databaseInit(void);
+static pthread_once_t databaseInitControl = {_PTHREAD_ONCE_SIG_init, {}};
 static NSNumber *IFURLFileDirectoryPosixPermissions;
 static NSNumber *IFURLFilePosixPermissions;
 
@@ -71,6 +74,11 @@ static void URLFileReaderInit(void)
     pthread_once(&cacheFileReaderControl, URLFileReaderInit);
 
     [super init];
+
+    if (self == nil || path == nil) {
+        [self dealloc];
+        return nil;
+    }
     
     data = nil;
     mappedBytes = NULL;
@@ -185,6 +193,9 @@ static void URLFileReaderInit(void)
 
 -(id)initWithCode:(IFURLFileDatabaseOpCode)theOpcode key:(id)theKey object:(id)theObject
 {
+    WEBFOUNDATION_ASSERT_NOT_NIL(theKey);
+    WEBFOUNDATION_ASSERT_NOT_NIL(theObject);
+
     if ((self = [super init])) {
         
         opcode = theOpcode;
@@ -215,12 +226,17 @@ static void URLFileReaderInit(void)
 
 -(void)perform:(IFURLFileDatabase *)target
 {
+    WEBFOUNDATION_ASSERT_NOT_NIL(target);
+
     switch (opcode) {
         case IFURLFileDatabaseSetObjectOp:
             [target performSetObject:object forKey:key];
             break;
         case IFURLFileDatabaseRemoveObjectOp:
             [target performRemoveObjectForKey:key];
+            break;
+        default:
+            WEBFOUNDATION_ASSERT_NOT_NIL(nil);
             break;
     }
 }
@@ -381,7 +397,7 @@ static void URLFileReaderInit(void)
 // creation functions ---------------------------------------------------------------------------
 #pragma mark creation functions
 
-+(void)initialize
+static void databaseInit()
 {
     // set file perms to owner read/write/execute only
     IFURLFileDirectoryPosixPermissions = [[NSNumber numberWithInt:(IF_UREAD | IF_UWRITE | IF_UEXEC)] retain];
@@ -392,20 +408,23 @@ static void URLFileReaderInit(void)
 
 -(id)initWithPath:(NSString *)thePath
 {
-    if ((self = [super initWithPath:thePath])) {
+    pthread_once(&databaseInitControl, databaseInit);
+
+    [super initWithPath:thePath];
     
-        ops = [[NSMutableArray alloc] init];
-        setCache = [[NSMutableDictionary alloc] init];
-        removeCache = [[NSMutableSet alloc] init];
-        timer = nil;
-        mutex = [[NSRecursiveLock alloc] init];
-        sizeFilePath = NULL;
-        
-        return self;
+    if (self == nil || thePath == nil) {
+        [self dealloc];
+        return nil;
     }
+
+    ops = [[NSMutableArray alloc] init];
+    setCache = [[NSMutableDictionary alloc] init];
+    removeCache = [[NSMutableSet alloc] init];
+    timer = nil;
+    mutex = [[NSRecursiveLock alloc] init];
+    sizeFilePath = NULL;
     
-    [self release];
-    return nil;
+    return self;
 }
 
 -(void)dealloc
@@ -434,6 +453,9 @@ static void URLFileReaderInit(void)
 {
     IFURLFileDatabaseOp *op;
 
+    WEBFOUNDATION_ASSERT_NOT_NIL(object);
+    WEBFOUNDATION_ASSERT_NOT_NIL(key);
+
     touch = CFAbsoluteTimeGetCurrent();
     
     [mutex lock];
@@ -449,6 +471,8 @@ static void URLFileReaderInit(void)
 -(void)removeObjectForKey:(id)key
 {
     IFURLFileDatabaseOp *op;
+
+    WEBFOUNDATION_ASSERT_NOT_NIL(key);
 
     touch = CFAbsoluteTimeGetCurrent();
     
@@ -492,6 +516,8 @@ static void URLFileReaderInit(void)
     fileReader = nil;
     data = nil;
     unarchiver = nil;
+
+    WEBFOUNDATION_ASSERT_NOT_NIL(key);
 
     touch = CFAbsoluteTimeGetCurrent();
 
@@ -553,6 +579,9 @@ static void URLFileReaderInit(void)
     NSArchiver *archiver;
     NSFileManager *defaultManager;
 
+    WEBFOUNDATION_ASSERT_NOT_NIL(object);
+    WEBFOUNDATION_ASSERT_NOT_NIL(key);
+
     WEBFOUNDATIONDEBUGLEVEL(WebFoundationLogDiskCacheActivity, "performSetObject - %s - %s",
         DEBUG_OBJECT(key), DEBUG_OBJECT([IFURLFileDatabase uniqueFilePathForKey:key]));
 
@@ -599,6 +628,8 @@ static void URLFileReaderInit(void)
     NSString *filePath;
     NSDictionary *attributes;
     NSNumber *size;
+    
+    WEBFOUNDATION_ASSERT_NOT_NIL(key);
     
     WEBFOUNDATIONDEBUGLEVEL(WebFoundationLogDiskCacheActivity, "performRemoveObjectForKey - %s", DEBUG_OBJECT(key));
 
@@ -676,6 +707,8 @@ static void URLFileReaderInit(void)
 -(void)lazySync:(NSTimer *)theTimer
 {
     IFURLFileDatabaseOp *op;
+
+    WEBFOUNDATION_ASSERT_NOT_NIL(theTimer);
 
     while (touch + SYNC_IDLE_THRESHOLD < CFAbsoluteTimeGetCurrent() && [ops count] > 0) {
         [mutex lock];
