@@ -685,13 +685,15 @@ uint32_t UString::toStrictUInt32(bool *ok) const
       return 0;
     const unsigned d = c - '0';
     
-    // Check for overflow.
-    const unsigned maxProduct = 0xFFFFFFFFU - d;
-    if (i > maxProduct / 10)
+    // Multiply by 10, checking for overflow out of 32 bits.
+    if (i > 0xFFFFFFFFU / 10)
       return 0;
-    
-    // Add in another digit.
     i *= 10;
+    
+    // Add in the digit, checking for overflow out of 32 bits.
+    const unsigned max = 0xFFFFFFFFU - d;
+    if (i > max)
+        return 0;
     i += d;
     
     // Handle end of string.

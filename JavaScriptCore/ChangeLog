@@ -1,3 +1,21 @@
+2003-07-13  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - do some improvements Maciej suggested while reviewing the array index change
+
+        * kjs/array_object.cpp:
+        (getArrayIndex): Return a flag to say whether the index was value separately, to avoid
+        in-band signalling.
+        (ArrayInstanceImp::get): Update for new getArrayIndex parameters.
+        (ArrayInstanceImp::put): Ditto.
+        (ArrayInstanceImp::hasProperty): Ditto.
+        (ArrayInstanceImp::setLength): Ditto.
+        
+        * kjs/ustring.cpp: (UString::toStrictUInt32): Check for overflow in a way that avoids doing
+        a divide every time through the loop. But note that it adds an extra branch to the loop.
+        I wonder which is worse.
+
 2003-07-12  Darin Adler  <darin@apple.com>
 
         Fixed broken build.

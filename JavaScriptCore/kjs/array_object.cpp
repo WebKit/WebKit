@@ -72,17 +72,14 @@ ArrayInstanceImp::~ArrayInstanceImp()
 
 // Rule from ECMA 15.2 about what an array index is.
 // Must exactly match string form of an unsigned integer, and be less than 2^32 - 1.
-
-const unsigned maxUInt32 = 0xFFFFFFFFU;
-const unsigned notArrayIndex = maxUInt32;
-
-unsigned getArrayIndex(const Identifier &propertyName)
+bool getArrayIndex(const Identifier &propertyName, unsigned &index)
 {
   bool ok;
-  unsigned index = propertyName.toStrictUInt32(&ok);
-  if (!ok || index >= maxUInt32)
-    return notArrayIndex;
-  return index;
+  unsigned i = propertyName.toStrictUInt32(&ok);
+  if (!ok || i >= 0xFFFFFFFFU)
+    return false;
+  index = i;
+  return true;
 }
 
 Value ArrayInstanceImp::get(ExecState *exec, const Identifier &propertyName) const
@@ -90,8 +87,8 @@ Value ArrayInstanceImp::get(ExecState *exec, const Identifier &propertyName) con
   if (propertyName == lengthPropertyName)
     return Number(length);
 
-  unsigned index = getArrayIndex(propertyName);
-  if (index != notArrayIndex) {
+  unsigned index;
+  if (getArrayIndex(propertyName, index)) {
     if (index >= length)
       return Undefined();
     if (index < storageLength) {
@@ -123,8 +120,8 @@ void ArrayInstanceImp::put(ExecState *exec, const Identifier &propertyName, cons
     return;
   }
   
-  unsigned index = getArrayIndex(propertyName);
-  if (index != notArrayIndex) {
+  unsigned index;
+  if (getArrayIndex(propertyName, index)) {
     put(exec, index, value, attr);
     return;
   }
@@ -156,8 +153,8 @@ bool ArrayInstanceImp::hasProperty(ExecState *exec, const Identifier &propertyNa
   if (propertyName == lengthPropertyName)
     return true;
   
-  unsigned index = getArrayIndex(propertyName);
-  if (index != notArrayIndex) {
+  unsigned index;
+  if (getArrayIndex(propertyName, index)) {
     if (index >= length)
       return false;
     if (index < storageLength) {
@@ -264,8 +261,8 @@ void ArrayInstanceImp::setLength(unsigned newLength, ExecState *exec)
     ReferenceListIterator it = sparseProperties.begin();
     while (it != sparseProperties.end()) {
       Reference ref = it++;
-      unsigned index = getArrayIndex(ref.getPropertyName(exec));
-      if (index != notArrayIndex && index > newLength) {
+      unsigned index;
+      if (getArrayIndex(ref.getPropertyName(exec), index) && index > newLength) {
 	ref.deleteValue(exec);
       }
     }
