@@ -1,3 +1,44 @@
+2003-07-22  Dave Hyatt  <hyatt@apple.com>
+
+	Fix for mozilla.org front page.  This patch re-architects 
+	align="left" and align="right" (for rtl and ltr directionality
+	respectively).  The attributes are mapped to custom text-align
+	values, konq-left and konq-right, just as was done with the
+	center/middle attributes for alignment.
+
+	A number of "hack" style rules have been dropped from html4.css
+	and replaced with this C++ code that now works in the general
+	case for any children of align="left/right" divs and tds.
+
+	In addition, absmiddle support has been added for <td>s.
+
+	For RTL blocks, there is also a regression fix (this was probably
+	the #1 culprit for mangled placement of blocks in Hebrew Web
+	pages).  The old code was doing byzantine math that happened to
+	work out.  When I tried to simplify it before 1.0, I missed a spot
+	and basically broke margin handling on RTL blocks completely.
+	
+        Reviewed by mjs
+
+        * khtml/css/cssparser.cpp:
+        (CSSParser::parseValue):
+        * khtml/css/cssvalues.c:
+        (hash_val):
+        (findValue):
+        * khtml/css/cssvalues.h:
+        * khtml/css/cssvalues.in:
+        * khtml/css/html4.css:
+        * khtml/html/html_blockimpl.cpp:
+        (HTMLDivElementImpl::parseAttribute):
+        (HTMLParagraphElementImpl::parseAttribute):
+        * khtml/html/html_tableimpl.cpp:
+        (HTMLTablePartElementImpl::parseAttribute):
+        * khtml/rendering/bidi.cpp:
+        * khtml/rendering/render_block.cpp:
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::calcHorizontalMargins):
+        * khtml/rendering/render_style.h:
+
 2003-07-21  Dave Hyatt  <hyatt@apple.com>
 
 	Fix for 3333557, crash on www.dremedia.com.  markDescendants in RenderBlock

@@ -600,6 +600,12 @@ void HTMLTablePartElementImpl::parseAttribute(AttributeImpl *attr)
         DOMString v = attr->value();
         if ( strcasecmp( attr->value(), "middle" ) == 0 || strcasecmp( attr->value(), "center" ) == 0 )
             addCSSProperty(CSS_PROP_TEXT_ALIGN, CSS_VAL__KONQ_CENTER);
+        else if (strcasecmp(attr->value(), "absmiddle") == 0)
+            addCSSProperty(CSS_PROP_TEXT_ALIGN, CSS_VAL_CENTER);
+        else if (strcasecmp(attr->value(), "left") == 0)
+            addCSSProperty(CSS_PROP_TEXT_ALIGN, CSS_VAL__KONQ_LEFT);
+        else if (strcasecmp(attr->value(), "right") == 0)
+            addCSSProperty(CSS_PROP_TEXT_ALIGN, CSS_VAL__KONQ_RIGHT);
         else
             addCSSProperty(CSS_PROP_TEXT_ALIGN, v);
         break;

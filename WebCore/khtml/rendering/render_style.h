@@ -477,7 +477,7 @@ enum EWhiteSpace {
 };
 
 enum ETextAlign {
-    TAAUTO, LEFT, RIGHT, CENTER, JUSTIFY, KONQ_CENTER
+    TAAUTO, LEFT, RIGHT, CENTER, JUSTIFY, KONQ_LEFT, KONQ_RIGHT, KONQ_CENTER
 };
 
 enum ETextTransform {
@@ -601,12 +601,27 @@ protected:
 
     // inherit
     struct InheritedFlags {
-    // 32 bit inherited, don't add to the struct, or the operator will break.
-	bool operator==( const InheritedFlags &other ) const {
-	    return *((Q_UINT32 *)this) == *((Q_UINT32 *)&other);
+    	bool operator==( const InheritedFlags &other ) const {
+	    return (_empty_cells == other._empty_cells) &&
+                   (_caption_side == other._caption_side) &&
+                   (_list_style_type == other._list_style_type) &&
+                   (_list_style_position == other._list_style_position) &&
+                   (_visibility == other._visibility) &&
+                   (_text_align == other._text_align) &&
+                   (_text_transform == other._text_transform) &&
+                   (_text_decorations == other._text_decorations) &&
+                   (_text_transform == other._text_transform) &&
+                   (_cursor_style == other._cursor_style) &&
+                   (_direction == other._direction) &&
+                   (_border_collapse == other._border_collapse) &&
+                   (_white_space == other._white_space) &&
+                   (_font_variant == other._font_variant) &&
+                   (_box_direction == other._box_direction) &&
+                   (_visuallyOrdered == other._visuallyOrdered) &&
+                   (_htmlHacks == other._htmlHacks);
 	}
 	bool operator!=( const InheritedFlags &other ) const {
-	    return *((Q_UINT32 *)this) != *((Q_UINT32 *)&other);
+            return !(*this == other);
 	}
 
 	EEmptyCell _empty_cells : 1 ;
@@ -614,7 +629,7 @@ protected:
 	EListStyleType _list_style_type : 5 ;
 	EListStylePosition _list_style_position :1;
 	EVisibility _visibility : 2;
-	ETextAlign _text_align : 3;
+	ETextAlign _text_align : 4;
 	ETextTransform _text_transform : 2;
 	int _text_decorations : 4;
 	ECursor _cursor_style : 4;

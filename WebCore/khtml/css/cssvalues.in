@@ -182,6 +182,8 @@ left
 right
 center
 justify
+-konq-left
+-konq-right
 -konq-center
 #
 # CSS_PROP_LIST_STYLE_POSITION:

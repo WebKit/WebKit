@@ -168,17 +168,9 @@ TABLE {
         \2d konq-flow-mode: \2d konq-around-floats;
 }
 
-TD[align=left] > TABLE {
-    margin-right: auto;
-}
-
-TD[align=right] > TABLE {
-    margin-left: auto;
-}
-
 TABLE[align="center"] { 
-	margin-left: auto !important; 
-	margin-right: auto !important;
+    margin-left: auto; 
+    margin-right: auto;
 }
 
 THEAD { 
@@ -228,12 +220,6 @@ CAPTION {
 	display: table-caption;  
 	text-align: \2d konq-center; 
 }
-
-/* rules to deal with right-aligned divs. -dwh */
-DIV[align="right"] > TABLE,
-DIV[align="right"] > P,
-DIV[align="right"] > DIV
- { margin-left: auto; margin-right: 0px; }
 
 /*
  * Lists

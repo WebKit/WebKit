@@ -915,9 +915,12 @@ void RenderBlock::layoutBlockChildren( bool relayoutChildren )
         if (topMarginContributor && !child->isSelfCollapsingBlock())
             topMarginContributor = false;
 
-        int chPos = xPos + child->marginLeft();
+        int chPos = xPos; 
 
         if (style()->direction() == LTR) {
+            // Add in our left margin.
+            chPos += child->marginLeft();
+            
             // html blocks flow around floats
             if (child->style()->hidesOverflow() || child->isFlexibleBox() ||
                  (( style()->htmlHacks() || child->isTable() ) && child->style()->flowAroundFloats()))
