@@ -12,25 +12,26 @@
 
 @implementation NSString (WebKitExtras)
 
-- (void)_web_drawAtPoint:(NSPoint)point font:(NSFont *)font textColor:(NSColor *)textColor;
+static BOOL canUseFastRenderer (const UniChar *buffer, unsigned length)
 {
-    unsigned i, length = [self length];
-    UniChar *buffer = (UniChar *)malloc(sizeof(UniChar) * length);
-    BOOL fastRender = YES;
-
-    [self getCharacters:buffer];
-    
-    // Check if this string only contains normal, and left-to-right characters.
-    // If not hand the string over to the appkit for slower but correct rendering.
+    unsigned i;
     for (i = 0; i < length; i++){
         WebCoreUnicodeDirection direction = WebCoreUnicodeDirectionFunction (buffer[i]);
         if (direction == DirectionR || direction > DirectionON){
-            fastRender = NO;
-            break;
+            return NO;
         }
     }
+    return YES;
+}
 
-    if (fastRender){
+- (void)_web_drawAtPoint:(NSPoint)point font:(NSFont *)font textColor:(NSColor *)textColor;
+{
+    unsigned length = [self length];
+    UniChar *buffer = (UniChar *)malloc(sizeof(UniChar) * length);
+
+    [self getCharacters:buffer];
+    
+    if (canUseFastRenderer(buffer, length)){
         WebTextRenderer *renderer = [[WebTextRendererFactory sharedFactory] rendererWithFont:font usingPrinterFont:NO];
         [renderer drawCharacters:buffer
                     stringLength:length
@@ -62,22 +63,29 @@
     UniChar *buffer = (UniChar *)malloc(sizeof(UniChar) * length);
 
     [self getCharacters:buffer];
-    WebTextRenderer *renderer = [[WebTextRendererFactory sharedFactory] rendererWithFont:font usingPrinterFont:NO];
-    width = [renderer _floatWidthForCharacters:buffer
-                stringLength:length
-                fromCharacterPosition: 0
-                numberOfCharacters: length
-                withPadding:0
-                applyRounding: NO
-                attemptFontSubstitution: YES
-                widths: 0
-                fonts: 0
-                glyphs: 0
-                numGlyphs: 0
-                letterSpacing: 0
-                wordSpacing: 0
-                smallCaps: false
-                fontFamilies: 0];
+
+    if (canUseFastRenderer(buffer, length)){
+        WebTextRenderer *renderer = [[WebTextRendererFactory sharedFactory] rendererWithFont:font usingPrinterFont:NO];
+        width = [renderer _floatWidthForCharacters:buffer
+                    stringLength:length
+                    fromCharacterPosition: 0
+                    numberOfCharacters: length
+                    withPadding:0
+                    applyRounding: NO
+                    attemptFontSubstitution: YES
+                    widths: 0
+                    fonts: 0
+                    glyphs: 0
+                    numGlyphs: 0
+                    letterSpacing: 0
+                    wordSpacing: 0
+                    smallCaps: false
+                    fontFamilies: 0];
+    }
+    else {
+        width = [self sizeWithAttributes:[NSDictionary dictionaryWithObjectsAndKeys:font, NSFontAttributeName, nil]].width;
+    }
+    
     free(buffer);
     
     return width;

@@ -1,3 +1,12 @@
+2003-05-09  Richard Williamson  <rjw@apple.com>
+
+        Apply the same check used to by-pass fast rendering
+        in the fix to 3146161 to measurement.
+        
+        Reviewed by Ken.
+
+        * Misc.subproj/WebKitNSStringExtras.m:
+
 2003-05-09  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by John
