@@ -80,6 +80,7 @@ static NSNumber *IFURLFilePosixPermissions;
     NSDictionary *attributes;
     NSDictionary *directoryAttributes;
     NSArchiver *archiver;
+    NSFileManager *defaultManager;
 
     result = NO;
 
@@ -102,9 +103,13 @@ static NSNumber *IFURLFilePosixPermissions;
         NULL
     ];
 
-//        
     filePath = [NSString stringWithFormat:@"%@/%@", path, [IFURLFileDatabase uniqueFilePathForKey:key]];
-    result = [[NSFileManager defaultManager] createFileAtPathWithIntermediateDirectories:filePath contents:data attributes:attributes directoryAttributes:directoryAttributes];
+    
+    defaultManager = [NSFileManager defaultManager];
+    result = [defaultManager createFileAtPath:filePath contents:data attributes:attributes];
+    if (!result) {
+        result = [defaultManager createFileAtPathWithIntermediateDirectories:filePath contents:data attributes:attributes directoryAttributes:directoryAttributes];
+    }
 
     [archiver release];
 }
@@ -178,12 +183,21 @@ static NSNumber *IFURLFilePosixPermissions;
             }
         }
         else {
-            isOpen = [manager createDirectoryAtPathWithIntermediateDirectories:path attributes:[NSDictionary dictionaryWithObjectsAndKeys:
+            isOpen = [manager createDirectoryAtPath:path attributes:[NSDictionary dictionaryWithObjectsAndKeys:
                 [NSDate date], @"NSFileModificationDate",
                 NSUserName(), @"NSFileOwnerAccountName",
                 IFURLFileDirectoryPosixPermissions, @"NSFilePosixPermissions",
                 NULL
             ]];
+            
+            if (!isOpen) {
+                isOpen = [manager createDirectoryAtPathWithIntermediateDirectories:path attributes:[NSDictionary dictionaryWithObjectsAndKeys:
+                    [NSDate date], @"NSFileModificationDate",
+                    NSUserName(), @"NSFileOwnerAccountName",
+                    IFURLFileDirectoryPosixPermissions, @"NSFilePosixPermissions",
+                    NULL
+                ]];
+            }
         }
     }
     
