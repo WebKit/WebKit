@@ -1,3 +1,0 @@
-single module:_kjs_strtod
-single module:dyld_stub_binding_helper
-single module:__ZN3KJS11Interpreter21shouldPrintExceptionsEv

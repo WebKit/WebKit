@@ -1,3 +1,10 @@
+2003-08-14  Vicki Murley  <vicki@apple.com>
+
+        Reviewed by John. 
+
+        * WebCore.order: Removed. We now point to the WebCore order file in /AppleInternal/OrderFiles.
+        * WebCore.pbproj/project.pbxproj: change sectorder flag to point to /AppleInternal/OrderFiles/WebCore.order
+
 2003-08-14  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Darin

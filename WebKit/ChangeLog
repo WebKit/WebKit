@@ -1,3 +1,10 @@
+2003-08-14  Vicki Murley  <vicki@apple.com>
+
+        Reviewed by John. 
+
+        * WebKit.order: Removed. We now point to the WebKit order file in /AppleInternal/OrderFiles.
+        * WebKit.pbproj/project.pbxproj: set sectorder flag to point to /AppleInternal/OrderFiles/WebKit.order
+
 2003-08-14  Darin Adler  <darin@apple.com>
 
         Reviewed by Chris.
