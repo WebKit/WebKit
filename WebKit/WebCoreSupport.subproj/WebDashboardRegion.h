@@ -33,9 +33,11 @@ typedef enum {
 @interface WebDashboardRegion : NSObject <NSCopying>
 {
     NSRect rect;
+    NSRect clip;
     WebDashboardRegionType type;
 }
-- initWithRect:(NSRect)rect type:(WebDashboardRegionType)type;
+- initWithRect:(NSRect)rect clip:(NSRect)clip type:(WebDashboardRegionType)type;
+- (NSRect)dashboardRegionClip;
 - (NSRect)dashboardRegionRect;
 - (WebDashboardRegionType)dashboardRegionType;
 @end

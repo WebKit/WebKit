@@ -1,3 +1,9 @@
+2004-09-24  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by me
+
+        * WebCoreSupport.subproj/WebDashboardRegion.h: Check in file copied from WebCore.
+
 2004-09-23  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
