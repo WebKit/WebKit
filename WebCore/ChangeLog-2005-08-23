@@ -1,3 +1,14 @@
+2005-03-08  Darin Adler  <darin@apple.com>
+
+        Change written by Hyatt, reviewed by me.
+
+        - fixed <rdar://problem/3952698> Function buttons do not display properly with Telia Webmail
+
+        * khtml/rendering/render_replaced.cpp: (RenderReplaced::calcMinMaxWidth):
+        Only use a minWidth of 0 for images with a percentage value. Other replaced elements aren't scalable
+        so their minWidth should be their calculated width. This has been wrong all along, but it's a relatively
+        safe change because it only affects replaced elements' min-width.
+
 2005-03-08  David Harrison  <harrison@apple.com>
 
         Reviewed by Ken.
