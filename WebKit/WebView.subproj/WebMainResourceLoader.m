@@ -103,11 +103,7 @@
 }
 
 - (void)receivedError:(WebError *)error forHandle:(WebResourceHandle *)handle
-{
-    if(suppressErrors){
-        return;
-    }
-    
+{    
     WebContentAction contentAction = [[dataSource contentPolicy] policyAction];
 
     if (contentAction == WebContentPolicySaveAndOpenExternally || contentAction == WebContentPolicySave) {
@@ -137,10 +133,7 @@
     [error release];
 
     if (downloadHandler) {
-        WebError *downloadError = [downloadHandler cancel];
-        if(downloadError) {
-            [self receivedError:downloadError forHandle:handle];
-        }
+        [downloadHandler cancel];
         [downloadHandler release];
         downloadHandler = nil;
     }
@@ -172,22 +165,24 @@
         WebError *downloadError = [downloadHandler finishedLoading];
         if (downloadError) {
             [self receivedError:downloadError forHandle:handle];
+        }else{
+            [downloadProgressDelegate resourceRequest:[handle _request] didFinishLoadingFromDataSource:dataSource];
         }
         [downloadHandler release];
         downloadHandler = nil;
-        [downloadProgressDelegate resourceRequest:[handle _request] didFinishLoadingFromDataSource:dataSource];
     }
     else {
         [dataSource _finishedLoading];
         [resourceProgressDelegate resourceRequest:[handle _request] didFinishLoadingFromDataSource:dataSource];
-    }
 
-    // Either send a final error message or a final progress message.
-    WebError *nonTerminalError = [[dataSource response] error];
-    if (nonTerminalError) {
-        [self receivedError:nonTerminalError forHandle:handle];
-    } else {
-        [self receivedProgressWithHandle:handle complete:YES];
+        // FIXME: Please let Chris know if this is really necessary?
+        // Either send a final error message or a final progress message.
+        WebError *nonTerminalError = [[dataSource response] error];
+        if (nonTerminalError) {
+            [self receivedError:nonTerminalError forHandle:handle];
+        } else {
+            [self receivedProgressWithHandle:handle complete:YES];
+        }
     }
     
     [self didStopLoading];
@@ -298,10 +293,6 @@
 
     if (downloadError) {
         [self receivedError:downloadError forHandle:handle];
-
-        // Supress errors because we don't want to confuse the client with
-        // the cancel error that will follow after cancel.
-        suppressErrors = YES;
         [handle cancel];
     }
     
@@ -321,10 +312,7 @@
     [self receivedError:result forHandle:handle];
 
     if (downloadHandler) {
-        WebError *downloadError = [downloadHandler cancel];
-        if (downloadError) {
-            [self receivedError:downloadError forHandle:handle];
-        }
+        [downloadHandler cancel];
         [downloadHandler release];
         downloadHandler = nil;
     }

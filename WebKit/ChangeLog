@@ -1,3 +1,17 @@
+2002-10-14  Chris Blumenberg  <cblu@apple.com>
+
+	- Cleaned up download handler and download progress delegate interactions.
+	- Got rid of error suppression junk.
+	- Only send 1 final message to the download progress delegate
+
+        * WebView.subproj/WebMainResourceClient.h:
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient receivedError:forHandle:]): no error suppression
+        (-[WebMainResourceClient didCancelWithHandle:]): ignore cancel errors because 1 download error is enough
+        (-[WebMainResourceClient handleDidFinishLoading:]): don't send the special and odd final message to the download progress delegate
+        (-[WebMainResourceClient handle:didReceiveData:]): no error suppression
+        (-[WebMainResourceClient handle:didFailLoadingWithError:]): ignore cancel errors because 1 download error is enough
+
 2002-10-14  Darin Adler  <darin@apple.com>
 
         * Bookmarks.subproj/WebBookmark.m:
