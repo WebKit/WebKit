@@ -311,6 +311,55 @@ private:
     Value _globalComposite;
   };
 
+  class Gradient : public DOMObject {
+  public:
+    //Gradient(const DOM::HTMLElement &e);
+    Gradient(float x0, float y0, float x1, float y1);
+    Gradient(float x0, float y0, float r0, float x1, float y1, float r1);
+    ~Gradient();
+    virtual Value tryGet(ExecState *exec, const Identifier &propertyName) const;
+    Value getValueProperty(ExecState *exec, int token) const;
+    virtual void tryPut(ExecState *exec, const Identifier &propertyName, const Value& value, int attr = None);
+    void putValue(ExecState *exec, int token, const Value& value, int /*attr*/);
+    virtual bool toBoolean(ExecState *) const { return true; }
+    virtual const ClassInfo* classInfo() const { return &info; }
+    static const ClassInfo info;
+
+    enum { 
+        AddColorStop
+    };
+    
+    enum {
+        Radial, Linear
+    };
+
+private:    
+    int _gradientType;
+    float _x0, _y0, _r0, _x1, _y1, _r1;
+  };
+
+  class ImagePattern : public DOMObject {
+  public:
+    //ImagePattern(const DOM::HTMLElement &e);
+    ImagePattern(Value i, int type);
+    ~ImagePattern();
+    virtual Value tryGet(ExecState *exec, const Identifier &propertyName) const;
+    Value getValueProperty(ExecState *exec, int token) const;
+    virtual void tryPut(ExecState *exec, const Identifier &propertyName, const Value& value, int attr = None);
+    void putValue(ExecState *exec, int token, const Value& value, int /*attr*/);
+    virtual bool toBoolean(ExecState *) const { return true; }
+    virtual const ClassInfo* classInfo() const { return &info; }
+    static const ClassInfo info;
+    
+    enum {
+        Repeat, RepeatX, RepeatY, NoRepeat
+    };
+    
+private:    
+    Value _image;
+    int _repetitionType;
+  };
+
   Value getHTMLCollection(ExecState *exec, const DOM::HTMLCollection &c);
   Value getSelectHTMLCollection(ExecState *exec, const DOM::HTMLCollection &c, const DOM::HTMLSelectElement &e);
 

@@ -1,3 +1,36 @@
+2004-08-26  Richard Williamson   <rjw@apple.com>
+
+        Boiler plate for canvas gradients and patterns.
+
+        Reviewed by John.
+
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::Context2DFunction::tryCall):
+        (Context2D::tryPut):
+        (Context2D::~Context2D):
+        (KJS::GradientFunction::tryCall):
+        (Gradient::Gradient):
+        (Gradient::tryGet):
+        (Gradient::getValueProperty):
+        (Gradient::tryPut):
+        (Gradient::putValue):
+        (Gradient::~Gradient):
+        (ImagePattern::ImagePattern):
+        (ImagePattern::tryGet):
+        (ImagePattern::getValueProperty):
+        (ImagePattern::tryPut):
+        (ImagePattern::putValue):
+        (ImagePattern::~ImagePattern):
+        * khtml/ecma/kjs_html.h:
+        (KJS::Gradient::toBoolean):
+        (KJS::Gradient::classInfo):
+        (KJS::Gradient::):
+        (KJS::ImagePattern::toBoolean):
+        (KJS::ImagePattern::classInfo):
+        (KJS::ImagePattern::):
+        * khtml/ecma/kjs_html.lut.h:
+        (KJS::):
+
 2004-08-26  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by John

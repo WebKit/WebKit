@@ -3884,6 +3884,7 @@ Value KJS::Context2DFunction::tryCall(ExecState *exec, Object &thisObj, const Li
             break;
         }
         case Context2D::DrawImage: {
+            // FIXME:  Add support for other variants of arguments.
             if (args.size() != 6) {
                 Object err = Error::create(exec,SyntaxError);
                 exec->setException(err);
@@ -3972,15 +3973,56 @@ Value KJS::Context2DFunction::tryCall(ExecState *exec, Object &thisObj, const Li
         }
         
         case Context2D::CreateLinearGradient: {
-        	// FIXME:  Implement gradients.
+            if (args.size() != 4) {
+                Object err = Error::create(exec,SyntaxError);
+                exec->setException(err);
+                return err;
+            }
+            float x0 = args[0].toNumber(exec);
+            float y0 = args[1].toNumber(exec);
+            float x1 = args[2].toNumber(exec);
+            float y1 = args[3].toNumber(exec);
+
+            return Object(new Gradient(x0, y0, x1, y1));
         }
         
         case Context2D::CreateRadialGradient: {
-        	// FIXME:  Implement gradients.
+            if (args.size() != 6) {
+                Object err = Error::create(exec,SyntaxError);
+                exec->setException(err);
+                return err;
+            }
+            float x0 = args[0].toNumber(exec);
+            float y0 = args[1].toNumber(exec);
+            float r0 = args[2].toNumber(exec);
+            float x1 = args[3].toNumber(exec);
+            float y1 = args[4].toNumber(exec);
+            float r1 = args[5].toNumber(exec);
+
+            return Object(new Gradient(x0, y0, r0, x1, y1, r1));
         }
         
         case Context2D::CreatePattern: {
-        	// FIXME:  Implement patterns.
+            if (args.size() != 2) {
+                Object err = Error::create(exec,SyntaxError);
+                exec->setException(err);
+                return err;
+            }
+            ObjectImp *o = static_cast<ObjectImp*>(args[0].imp());
+            if (o->type() != ObjectType || !o->inherits(&Image::info)) {
+                Object err = Error::create(exec,TypeError);
+                exec->setException(err);
+                return err;
+            }
+            int repetitionType = ImagePattern::Repeat;
+            QString repetitionString = args[1].toString(exec).qstring().lower();
+            if (repetitionString == "repeat-x")
+                repetitionType = ImagePattern::RepeatX;
+            else if (repetitionString == "repeat-y")
+                repetitionType = ImagePattern::RepeatY;
+            else if (repetitionString == "no-repeat")
+                repetitionType = ImagePattern::NoRepeat;
+            return Object(new ImagePattern(args[0], repetitionType));
         }
     }
 
@@ -4114,7 +4156,7 @@ Value Context2D::getValueProperty(ExecState *, int token) const
 
 void Context2D::tryPut(ExecState *exec, const Identifier &propertyName, const Value& value, int attr)
 {
-    DOMObjectLookupPut<Context2D,DOMObject>(exec, propertyName, value, attr, &ImageTable, this );
+    DOMObjectLookupPut<Context2D,DOMObject>(exec, propertyName, value, attr, &Context2DTable, this );
 }
 
 CGContextRef Context2D::drawingContext()
@@ -4343,6 +4385,128 @@ Context2D::Context2D(const DOM::HTMLElement &e)
 }
 
 Context2D::~Context2D()
+{
+}
+
+const ClassInfo KJS::Gradient::info = { "Gradient", 0, &GradientTable, 0 };
+
+/* Source for GradientTable. Use "make hashtables" to regenerate.
+@begin GradientTable 1
+  addColorStop             Gradient::AddColorStop                DontDelete|Function 2
+@end
+*/
+
+IMPLEMENT_PROTOFUNC(GradientFunction)
+
+Value KJS::GradientFunction::tryCall(ExecState *exec, Object &thisObj, const List &args)
+{
+    if (!thisObj.inherits(&Gradient::info)) {
+        Object err = Error::create(exec,TypeError);
+        exec->setException(err);
+        return err;
+    }
+
+    switch (id) {
+        case Gradient::AddColorStop: {
+            // FIXME:  Implement
+        }
+    }
+
+    return Undefined();
+}
+
+Gradient::Gradient(float x0, float y0, float x1, float y1)
+{
+    _gradientType = Gradient::Linear;
+    _x0 = x0;
+    _y0 = y0;
+    _x1 = x1;
+    _y1 = y1;
+}
+
+Gradient::Gradient(float x0, float y0, float r0, float x1, float y1, float r1)
+{
+    _gradientType = Gradient::Radial;
+    _x0 = x0;
+    _y0 = y0;
+    _r0 = r0;
+    _x1 = x1;
+    _y1 = y1;
+    _r1 = r1;
+}
+
+Value Gradient::tryGet(ExecState *exec, const Identifier &propertyName) const
+{
+    const HashTable* table = classInfo()->propHashTable; // get the right hashtable
+    const HashEntry* entry = Lookup::findEntry(table, propertyName);
+    if (entry) {
+        if (entry->attr & Function)
+            return lookupOrCreateFunction<KJS::GradientFunction>(exec, propertyName, this, entry->value, entry->params, entry->attr);
+        return getValueProperty(exec, entry->value);
+    }
+
+    return DOMObjectLookupGetValue<Gradient,DOMObject>(exec, propertyName, &GradientTable, this);
+}
+
+Value Gradient::getValueProperty(ExecState *, int token) const
+{
+    return Undefined();
+}
+
+void Gradient::tryPut(ExecState *exec, const Identifier &propertyName, const Value& value, int attr)
+{
+    DOMObjectLookupPut<Gradient,DOMObject>(exec, propertyName, value, attr, &GradientTable, this );
+}
+
+void Gradient::putValue(ExecState *exec, int token, const Value& value, int /*attr*/)
+{
+}
+
+Gradient::~Gradient()
+{
+}
+
+const ClassInfo KJS::ImagePattern::info = { "ImagePattern", 0, &ImagePatternTable, 0 };
+
+/* Source for ImagePatternTable. Use "make hashtables" to regenerate.
+@begin ImagePatternTable 0
+@end
+*/
+
+ImagePattern::ImagePattern(Value i, int repetitionType)
+{
+    _repetitionType = repetitionType;
+    _image = i;
+}
+
+Value ImagePattern::tryGet(ExecState *exec, const Identifier &propertyName) const
+{
+    const HashTable* table = classInfo()->propHashTable; // get the right hashtable
+    const HashEntry* entry = Lookup::findEntry(table, propertyName);
+    if (entry) {
+        if (entry->attr & Function)
+            return lookupOrCreateFunction<KJS::GradientFunction>(exec, propertyName, this, entry->value, entry->params, entry->attr);
+        return getValueProperty(exec, entry->value);
+    }
+
+    return DOMObjectLookupGetValue<ImagePattern,DOMObject>(exec, propertyName, &ImagePatternTable, this);
+}
+
+Value ImagePattern::getValueProperty(ExecState *, int token) const
+{
+    return Undefined();
+}
+
+void ImagePattern::tryPut(ExecState *exec, const Identifier &propertyName, const Value& value, int attr)
+{
+    DOMObjectLookupPut<ImagePattern,DOMObject>(exec, propertyName, value, attr, &ImagePatternTable, this );
+}
+
+void ImagePattern::putValue(ExecState *exec, int token, const Value& value, int /*attr*/)
+{
+}
+
+ImagePattern::~ImagePattern()
 {
 }
 

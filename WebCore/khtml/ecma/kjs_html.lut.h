@@ -1104,3 +1104,22 @@ const struct HashEntry Context2DTableEntries[] = {
 const struct HashTable Context2DTable = { 2, 61, Context2DTableEntries, 48 };
 
 } // namespace
+
+namespace KJS {
+
+const struct HashEntry GradientTableEntries[] = {
+   { "addColorStop", Gradient::AddColorStop, DontDelete|Function, 2, 0 }
+};
+
+const struct HashTable GradientTable = { 2, 1, GradientTableEntries, 1 };
+
+} // namespace
+
+namespace KJS {
+
+const struct HashEntry ImagePatternTableEntries[] = {
+};
+
+const struct HashTable ImagePatternTable = { 2, 0, ImagePatternTableEntries, 0 };
+
+} // namespace
