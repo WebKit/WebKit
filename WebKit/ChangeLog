@@ -1,3 +1,15 @@
+2003-04-01  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Richard.
+
+	- fixed 3214748 - REGRESSION: After using latest Safari for awhile, can't launch older Safaris (icon db problem)
+
+        * Misc.subproj/WebIconDatabase.m:
+	Changed icon cache path, since we are breaking compatibility and the old version
+	does not support versioning.
+        (-[WebIconDatabase _loadIconDictionaries]): Check version.
+        (-[WebIconDatabase _updateFileDatabase]): Save version.
+
 2003-04-01  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Darin
@@ -129,8 +141,6 @@
         * WebView.subproj/WebFramePrivate.m:
         (-[WebFrame _transitionToCommitted:]):  Update last visitTime when we revisit
 	the same URL (since no new history item is created).
-
-2003-03-31  Richard Williamson  <rjw@apple.com>
 
 2003-03-31  Richard Williamson  <rjw@apple.com>
 

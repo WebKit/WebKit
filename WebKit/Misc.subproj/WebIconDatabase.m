@@ -15,12 +15,15 @@
 #import <WebFoundation/WebNSURLExtras.h>
 #import <WebFoundation/WebFileDatabase.h>
 
-#define WebIconDatabaseDefaultDirectory ([NSString stringWithFormat:@"%@/%@", NSHomeDirectory(), @"Library/Caches/com.apple.WebKit/Icons"])
+#define WebIconDatabaseDefaultDirectory ([NSString stringWithFormat:@"%@/%@", NSHomeDirectory(), @"Library/Caches/WebKit/Icons"])
 
-#define WebIconsOnDiskKey 	@"WebIconsOnDisk"
-#define WebURLToIconURLKey 	@"WebSiteURLToIconURLKey"
-#define WebIconURLToURLsKey 	@"WebIconURLToSiteURLs"
-#define WebHostToURLsKey 	@"WebHostToSiteURLs"
+NSString * const WebIconDatabaseVersionKey = @"WebIconDatabaseVersion";
+NSString * const WebIconsOnDiskKey = @"WebIconsOnDisk";
+NSString * const WebURLToIconURLKey = @"WebSiteURLToIconURLKey";
+NSString * const WebIconURLToURLsKey = @"WebIconURLToSiteURLs";
+NSString * const WebHostToURLsKey = @"WebHostToSiteURLs";
+
+static const int WebIconDatabaseCurrentVersion = 1;
 
 NSString *WebIconDatabaseDidAddIconNotification = @"WebIconDatabaseDidAddIconNotification";
 NSString *WebIconNotificationUserInfoURLKey = @"WebIconNotificationUserInfoURLKey";
@@ -271,9 +274,12 @@ NSSize WebIconLargeSize = {128, 128};
 {
     WebFileDatabase *fileDB = _private->fileDatabase;
 
-    _private->iconsOnDiskWithURLs = 	[fileDB objectForKey:WebIconsOnDiskKey];
-    _private->URLToIconURL = 		[fileDB objectForKey:WebURLToIconURLKey];
-    _private->iconURLToURLs = 	[fileDB objectForKey:WebIconURLToURLsKey];
+    NSNumber *version = [fileDB objectForKey:WebIconDatabaseVersionKey];
+    if (version != nil && [version isKindOfClass:[NSNumber class]] && [version intValue] == WebIconDatabaseCurrentVersion) {
+	_private->iconsOnDiskWithURLs = 	[fileDB objectForKey:WebIconsOnDiskKey];
+	_private->URLToIconURL = 		[fileDB objectForKey:WebURLToIconURLKey];
+	_private->iconURLToURLs = 	[fileDB objectForKey:WebIconURLToURLsKey];
+    }
 
     if (![self _iconDictionariesAreGood]) {
         _private->iconsOnDiskWithURLs = [NSMutableSet set];
@@ -294,6 +300,8 @@ NSSize WebIconLargeSize = {128, 128};
     }
 
     WebFileDatabase *fileDB = _private->fileDatabase;
+
+    [fileDB setObject:[NSNumber numberWithInt:WebIconDatabaseCurrentVersion] forKey:WebIconDatabaseVersionKey];
 
     // Erase icons that have been released that are on disk.
     // Must remove icons before writing them to disk or else we could potentially remove the newly written ones.
