@@ -1,3 +1,12 @@
+2003-06-13  Darin Adler  <darin@apple.com>
+
+        Reviewed by Don.
+
+	- fixed 3293031 -- REGRESSION (83-84): extra entry in history when going to page that redirects (live365.com)
+
+        * khtml/khtmlpart_p.h: Initialize m_executingJavaScriptFormAction to false.
+        We had left it uninitialized when we fixed 3289047.
+
 2003-06-13  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3292630, misrendered page because of bad doctype.  Add
@@ -27,10 +36,13 @@
 
 2003-06-13  Richard Williamson  <rjw@apple.com>
 
-        Reviewed by NOBODY (OOPS!).
+        Fixed 3291537.
+        Reviewed by John.
 
         * kwq/KWQObject.mm:
         (QObject::killTimer):
+        Only remove the timer is it hasn't fired (and is therefore valid).
+        It is NOT permissible to reference a timer's userInfo if it is invalid.
 
 === Safari-84 ===
 
