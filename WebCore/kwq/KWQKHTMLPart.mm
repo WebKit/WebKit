@@ -507,7 +507,7 @@ NSString *KWQKHTMLPart::matchLabelsAgainstElement(NSArray *labels, ElementImpl *
     QString name = element->getAttribute(ATTR_NAME).string();
     // Make numbers and _'s in field names behave like word boundaries, e.g., "address2"
     name.replace(QRegExp("[[:digit:]]"), " ");
-    name.replace("_", " ");
+    name.replace('_', ' ');
     
     QRegExp *regExp = regExpForLabels(labels);
     // Use the largest match we can find in the whole name string
@@ -1882,21 +1882,29 @@ void KWQKHTMLPart::khtmlMouseMoveEvent(MouseMoveEvent *event)
             return;
         }
 
-	if (_mouseDownMayStartDrag && 
-        d->m_textElement == DOM::Selection::CHARACTER &&
-        [_bridge mayStartDragWithMouseDragged:_currentEvent]) {
+	if (_mouseDownMayStartDrag
+                && d->m_textElement == DOM::Selection::CHARACTER
+                && [_bridge mayStartDragWithMouseDragged:_currentEvent]) {
+
             // We are starting a text/image/url drag, so the cursor should be an arrow
             d->m_view->resetCursor();
-            [_bridge handleMouseDragged:_currentEvent];
-            return;
-	} else if (_mouseDownMayStartSelect) {
-	    // we use khtml's selection but our own autoscrolling
-	    [_bridge handleAutoscrollForMouseDragged:_currentEvent];
-            // Don't allow dragging after we've started selecting.
-            _mouseDownMayStartDrag = false;
-	} else {
+
+            if ([_bridge handleMouseDragged:_currentEvent]) {
+                // Prevent click handling from taking place once we start dragging.
+                d->m_view->invalidateClick();
+            }
             return;
 	}
+        if (!_mouseDownMayStartSelect) {
+            return;
+        }
+
+        // Don't allow dragging or click handling after we've started selecting.
+        _mouseDownMayStartDrag = false;
+        d->m_view->invalidateClick();
+
+        // We use khtml's selection but our own autoscrolling.
+        [_bridge handleAutoscrollForMouseDragged:_currentEvent];
     } else {
 	// If we allowed the other side of the bridge to handle a drag
 	// last time, then m_bMousePressed might still be set. So we
@@ -2373,7 +2381,7 @@ NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_start, int startOf
                         if (!textObj->firstTextBox() && str.length() > 0 && !addedSpace) {
                             // We have no runs, but we do have a length.  This means we must be
                             // whitespace that collapsed away at the end of a line.
-                            text += " ";
+                            text += ' ';
                             addedSpace = true;
                         }
                         else {

@@ -491,7 +491,7 @@ ruleset:
 	kdDebug( 6080 ) << "got ruleset" << endl << "  selector:" << endl;
 #endif
 	CSSParser *p = static_cast<CSSParser *>(parser);
-	if ( $1 && $4 && p->numParsedProperties ) {
+	if ( $1 ) {
             CSSStyleRuleImpl *rule = new CSSStyleRuleImpl( p->styleElement );
             CSSStyleDeclarationImpl *decl = p->createStyleDeclaration( rule );
             rule->setSelector( $1 );
@@ -499,7 +499,6 @@ ruleset:
             $$ = rule;
 	} else {
 	    $$ = 0;
-	    delete $1;
 	    p->clearProperties();
 	}
     }

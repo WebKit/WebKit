@@ -227,6 +227,7 @@ protected slots:
 private:
 
     void resetCursor();
+    void invalidateClick();
 
     void scheduleRelayout();
     void unscheduleRelayout();

@@ -680,7 +680,7 @@ static WebHTMLView *lastHitView = nil;
     return dragImage;
 }
 
-- (void)_handleMouseDragged:(NSEvent *)mouseDraggedEvent
+- (BOOL)_handleMouseDragged:(NSEvent *)mouseDraggedEvent
 {
     NSPoint mouseDownPoint = [self convertPoint:[_private->mouseDownEvent locationInWindow] fromView:nil];
     NSDictionary *element = [self elementAtPoint:mouseDownPoint];
@@ -704,7 +704,7 @@ static WebHTMLView *lastHitView = nil;
     if ((imageURL && deltaX < ImageDragHysteresis && deltaY < ImageDragHysteresis) ||
         (linkURL && deltaX < LinkDragHysteresis && deltaY < LinkDragHysteresis) ||
         (isSelected && deltaX < TextDragHysteresis && deltaY < TextDragHysteresis)) {
-        return;
+        return NO;
     }
     
     NSImage *dragImage = nil;
@@ -729,7 +729,7 @@ static WebHTMLView *lastHitView = nil;
                                        dragImage:dragImage 
                                   mouseDownEvent:_private->mouseDownEvent 
                                mouseDraggedEvent:mouseDraggedEvent]) {
-        return;   
+        return YES;   
     }
     
     if (imageURL) {
@@ -771,6 +771,7 @@ static WebHTMLView *lastHitView = nil;
     } else {
         ASSERT_NOT_REACHED();
     }
+    return YES;
 }
 
 - (void)_handleAutoscrollForMouseDragged:(NSEvent *)event

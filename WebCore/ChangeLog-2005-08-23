@@ -1,3 +1,31 @@
+2004-05-20  Darin Adler  <darin@apple.com>
+
+        Reviewed by Chris.
+
+        - fixed <rdar://problem/3662383>: (REGRESSION: drag slide-back sometimes causes link to load)
+        - fixed <rdar://problem/3662556>: (REGRESSION: letting up mouse while dragging over link activates the link)
+
+        * khtml/khtmlview.h: Added invalidateClick.
+        * khtml/khtmlview.cpp: (KHTMLView::invalidateClick): Added. Sets clickCount to 0.
+
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::matchLabelsAgainstElement): Changed a string replace to a character replace for slightly
+        faster code and smaller code size.
+        (KWQKHTMLPart::khtmlMouseMoveEvent): Call invalidateClick at the appropriate times. To do this correctly,
+        had to add a boolean result to handleMouseDragged: so I can tell if a drag started or not (due to hysteresis).
+        (KWQKHTMLPart::attributedString): Changed a string append to a character append for slightly faster code
+        and smaller code size.
+
+        * kwq/WebCoreBridge.h: Added BOOL result to handleMouseDragged:.
+
+        Reviewed by Dave.
+
+        - handle rules with empty bodies properly
+
+        * khtml/css/parser.y: Remove bogus check for empty body that prevents the rule
+        from being created.
+        * khtml/css/parser.cpp: Regenerated.
+
 2004-05-20  David Hyatt  <hyatt@apple.com>
 
 	Revise the patch for incorrect caret positions when brs get deleted.  It can be even simpler.

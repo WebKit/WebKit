@@ -403,7 +403,7 @@ typedef enum {
 
 - (NSString *)MIMETypeForPath:(NSString *)path;
 
-- (void)handleMouseDragged:(NSEvent *)event;
+- (BOOL)handleMouseDragged:(NSEvent *)event;
 - (void)handleAutoscrollForMouseDragged:(NSEvent *)event;
 - (BOOL)mayStartDragWithMouseDragged:(NSEvent *)event;
 
