@@ -228,19 +228,31 @@ char *stateNames[5] = {
             WEBKITDEBUGLEVEL1 (WEBKIT_LOG_LOADING, "%s:  checking complete, current state IFWEBFRAMESTATE_COMMITTED\n", [[self name] cString]);
             if (![[self dataSource] isLoading]){
                [self _setState: IFWEBFRAMESTATE_COMPLETE];
+                id mainView = [[[self controller] mainFrame] view];
+                id thisView = [self view];
                 
                 WEBKIT_ASSERT ([self dataSource] != nil);
                 
                 [[self dataSource] _part]->end();
                 
-                [[[[self controller] mainFrame] view] setNeedsLayout: YES];
-                [[self view] setNeedsLayout: YES];
-                [[self view] setNeedsDisplay: YES];
+                // May need to relayout each time a frame is completely
+                // loaded.
+                [mainView setNeedsLayout: YES];
+                
+                // Layout this view (eventually).
+                [thisView setNeedsLayout: YES];
+                
+                // Draw this view (eventually), and it's scroll view
+                // (eventually).
+                [thisView setNeedsDisplay: YES];
+                if ([thisView _frameScrollView])
+                    [[thisView _frameScrollView] setNeedsDisplay: YES];
                 
                 if ([[self controller] mainFrame] == self){
-                    [[[[self controller] mainFrame] view] layout];
-                    [[[[self controller] mainFrame] view] display];
+                    [mainView layout];
+                    [mainView display];
                 }
+                
                 [[self controller] locationChangeDone: [self mainDocumentError] forFrame: self];
                 
                 return;

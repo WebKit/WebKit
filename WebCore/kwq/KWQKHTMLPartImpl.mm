@@ -204,6 +204,8 @@ public:
     ~KHTMLPartPrivate()
     {
         delete m_settings;
+        if (m_decoder)
+            delete m_decoder;
     }
 
 };
