@@ -547,12 +547,18 @@
 			fileRef = 9C7CABBC0190A3E10ECA16EA;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
 			};
 		};
 		9C7CABC10190A3E10ECA16EA = {
 			fileRef = 9C7CABBE0190A3E10ECA16EA;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
 			};
 		};
 		9C93A48401920D0C0ECA16EA = {
