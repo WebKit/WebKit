@@ -3843,7 +3843,7 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
     WebBridge *bridge = [self _bridge];
 
     DOMRange *rectRange = [[bridge DOMDocument] createRange];
-    DOMRange *markedRange = [bridge markedDOMRange];
+    DOMRange *markedRange = [bridge markedTextDOMRange];
     [rectRange setStart:[markedRange startContainer] :theRange.location];
     [rectRange setEnd:[markedRange startContainer] :(theRange.location + theRange.length)];
 
