@@ -50,6 +50,7 @@ Value DOMObject::get(ExecState *exec, const Identifier &p) const
     // ### oh, and s/QString/i18n or I18N_NOOP (the code in kjs uses I18N_NOOP... but where is it translated ?)
     //     and where does it appear to the user ?
     Object err = Error::create(exec, GeneralError, QString("DOM exception %1").arg(e.code).local8Bit());
+    err.put(exec, "code", Number(e.code));
     exec->setException( err );
     result = Undefined();
   }
@@ -69,6 +70,7 @@ void DOMObject::put(ExecState *exec, const Identifier &propertyName,
   }
   catch (DOM::DOMException e) {
     Object err = Error::create(exec, GeneralError, QString("DOM exception %1").arg(e.code).local8Bit());
+    err.put(exec, "code", Number(e.code));
     exec->setException(err);
   }
   catch (...) {
@@ -90,6 +92,7 @@ Value DOMFunction::get(ExecState *exec, const Identifier &propertyName) const
   catch (DOM::DOMException e) {
     result = Undefined();
     Object err = Error::create(exec, GeneralError, QString("DOM exception %1").arg(e.code).local8Bit());
+    err.put(exec, "code", Number(e.code));
     exec->setException(err);
   }
   catch (...) {

@@ -25,14 +25,14 @@ layer at (82,842) size 519x200
   RenderBlock (positioned) zI: -3 {P} at (60,60) size 200x200 [color=#FFFFFF] [bgcolor=#990066]
     RenderText zI: -3 {TEXT} at (50,41) size 469x80
       text run at (50,41) width 469: "\x{A0}8\x{A0}hide\x{A0}me"
-layer at (32,2894) size 200x200
-  RenderBlock (positioned) zI: -3 {P} at (10,210) size 200x200 [color=#FFFFFF] [bgcolor=#660099]
-    RenderText zI: -3 {TEXT} at (71,41) size 57x80
-      text run at (71,41) width 57: "7"
 layer at (82,2744) size 200x200
   RenderBlock (positioned) zI: -3 {P} at (60,60) size 200x200 [color=#FFFFFF] [bgcolor=#990066]
     RenderText zI: -3 {TEXT} at (71,41) size 57x80
       text run at (71,41) width 57: "8"
+layer at (32,2894) size 200x200
+  RenderBlock (positioned) zI: -3 {P} at (10,210) size 200x200 [color=#FFFFFF] [bgcolor=#660099]
+    RenderText zI: -3 {TEXT} at (71,41) size 57x80
+      text run at (71,41) width 57: "7"
 layer at (82,3378) size 200x200
   RenderBlock (positioned) zI: -3 {P} at (60,60) size 200x200 [color=#FFFFFF] [bgcolor=#990066]
     RenderText zI: -3 {TEXT} at (71,41) size 57x80
@@ -49,14 +49,14 @@ layer at (32,992) size 200x200
   RenderBlock (positioned) zI: -2 {P} at (10,210) size 200x200 [color=#FFFFFF] [bgcolor=#660099]
     RenderText zI: -2 {TEXT} at (71,41) size 57x80
       text run at (71,41) width 57: "7"
-layer at (232,2460) size 200x200
-  RenderBlock (positioned) zI: -2 {P} at (210,410) size 200x200 [color=#FFFFFF] [bgcolor=#009999]
-    RenderText zI: -2 {TEXT} at (71,41) size 57x80
-      text run at (71,41) width 57: "5"
 layer at (82,2410) size 200x200
   RenderBlock (positioned) zI: -2 {P} at (60,360) size 200x200 [color=#FFFFFF] [bgcolor=#0000FF]
     RenderText zI: -2 {TEXT} at (71,41) size 57x80
       text run at (71,41) width 57: "6"
+layer at (232,2460) size 200x200
+  RenderBlock (positioned) zI: -2 {P} at (210,410) size 200x200 [color=#FFFFFF] [bgcolor=#009999]
+    RenderText zI: -2 {TEXT} at (71,41) size 57x80
+      text run at (71,41) width 57: "5"
 layer at (32,3528) size 200x200
   RenderBlock (positioned) zI: -2 {P} at (10,210) size 200x200 [color=#FFFFFF] [bgcolor=#660099]
     RenderText zI: -2 {TEXT} at (71,41) size 57x80

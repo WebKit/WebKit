@@ -1,3 +1,45 @@
+2003-09-19  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave.
+
+        - update layout tests for Dave's change
+
+        * layout-tests/apple-only/base/www.excite.com/index-expected.txt:
+        * layout-tests/fast/block/positioning/051-expected.txt:
+        * layout-tests/fast/overflow/003-expected.txt:
+
+        - fixed 3426272 -- sites that use text-shadow cause leaks (QPainter::setShadow)
+
+        * kwq/KWQPainter.mm: (QPainter::setShadow): Release the color space and color.
+
+        - fixed some errors that caused failures in the W3C DOM suite
+
+        * khtml/ecma/kjs_binding.cpp:
+        (DOMObject::get): Put "code" in the error object.
+        (DOMObject::put): Put "code" in the error object.
+        (DOMFunction::get): Put "code" in the error object.
+
+        * khtml/ecma/kjs_dom.cpp: (DOMCharacterDataProtoFunc::tryCall):
+        Add checks for negative count values. Not clear whether this change is
+        really great, but it helps us pass W3C DOM tests and clearly won't affect
+        normal pages in any bad way.
+
+        * khtml/xml/dom_elementimpl.cpp:
+        (AttrImpl::AttrImpl): Set m_specified to true. Since we never set up the
+        attributes from the DTD anyway, this is fine for now. If we ever go crazy
+        and implement that, then the bit field is sitting here waiting for us.
+        (NamedAttrMapImpl::removeNamedItem): The comment from KHTML says they
+        don't raise the not found exception because "the DOM 2 spec doesn't say
+        you should". But the DOM Level 1 specification clearly does, and the W3C
+        DOM Level 1 Core test requires it, so I'm putting it in.
+
+        * khtml/xml/dom_nodeimpl.cpp: (NodeImpl::checkAddChild): Typo; this was
+        returning the wrong error code in the "wrong document" case.
+
+        * khtml/xml/dom_stringimpl.cpp:
+        (DOMStringImpl::remove): Fix overflow case.
+        (DOMStringImpl::substring): Fix overflow case.
+        
 2003-09-19  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3401409, fix negative z-index.  This code actually substantially

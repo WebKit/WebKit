@@ -58,6 +58,7 @@ AttrImpl::AttrImpl(ElementImpl* element, DocumentPtr* docPtr, AttributeImpl* a)
     assert(!m_attribute->_impl);
     m_attribute->_impl = this;
     m_attribute->ref();
+    m_specified = true;
 }
 
 AttrImpl::~AttrImpl()
@@ -619,6 +620,9 @@ Node NamedAttrMapImpl::setNamedItem ( NodeImpl* arg, int &exceptioncode )
 
 // The DOM2 spec doesn't say that removeAttribute[NS] throws NOT_FOUND_ERR
 // if the attribute is not found - David
+// But the DOM Level 1 document does say that:
+// http://www.w3.org/TR/1998/REC-DOM-Level-1-19981001/level-one-core#ID-D58B193
+// and the DOM test suite from W3C checks that case, so I'm going with that. - Darin
 Node NamedAttrMapImpl::removeNamedItem ( NodeImpl::Id id, int &exceptioncode )
 {
     // ### should this really be raised when the attribute to remove isn't there at all?
@@ -629,7 +633,10 @@ Node NamedAttrMapImpl::removeNamedItem ( NodeImpl::Id id, int &exceptioncode )
     }
 
     AttributeImpl* a = getAttributeItem(id);
-    if (!a) return Node();
+    if (!a) {
+        exceptioncode = DOMException::NOT_FOUND_ERR;
+        return Node();
+    }
 
     if (!a->attrImpl())  a->allocateImpl(element);
     Node r(a->attrImpl());

@@ -638,11 +638,14 @@ void QPainter::setShadow(int x, int y, int blur, const QColor& color)
         float alpha = [deviceColor alphaComponent];
         const float components[] = { red, green, blue, alpha };
         
+        CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+        CGColorRef color = CGColorCreate(colorSpace, components);
+        CGColorSpaceRelease(colorSpace);
         CGContextSetShadowWithColor(context,
                                     CGSizeMake(x,-y), // y is flipped.
                                     blur, 
-                                    CGColorCreate(CGColorSpaceCreateDeviceRGB(),
-                                                  components));
+                                    color);
+        CGColorRelease(color);
     }
 }
 
