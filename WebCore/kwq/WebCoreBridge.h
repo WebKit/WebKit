@@ -421,6 +421,8 @@ typedef enum {
 - (void)registerCommandForUndo:(id)arg;
 - (void)registerCommandForRedo:(id)arg;
 - (void)clearUndoRedoOperations;
+- (void)issueUndoCommand;
+- (void)issueRedoCommand;
 
 - (void)editingKeyDown:(NSEvent *)event;
 

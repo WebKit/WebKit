@@ -272,6 +272,8 @@ public:
     void registerCommandForRedo(const khtml::EditCommand &);
     void clearUndoRedoOperations();
     void editingKeyEvent();
+    void issueUndoCommand();
+    void issueRedoCommand();
     
 private:
     virtual void khtmlMousePressEvent(khtml::MousePressEvent *);

@@ -176,6 +176,42 @@ const struct HashTable LocationTable = { 2, 16, LocationTableEntries, 11 };
 
 namespace KJS {
 
+const struct HashEntry SelectionTableEntries[] = {
+   { "focusOffset", Selection::FocusOffset, DontDelete|ReadOnly, 0, &SelectionTableEntries[20] },
+   { 0, 0, 0, 0, 0 },
+   { "modify", Selection::Modify, DontDelete|Function, 3, 0 },
+   { "focusNode", Selection::FocusNode, DontDelete|ReadOnly, 0, &SelectionTableEntries[19] },
+   { 0, 0, 0, 0, 0 },
+   { 0, 0, 0, 0, 0 },
+   { "extentOffset", Selection::FocusOffset, DontDelete|ReadOnly, 0, 0 },
+   { "setPosition", Selection::SetPosition, DontDelete|Function, 2, 0 },
+   { "empty", Selection::Empty, DontDelete|Function, 0, 0 },
+   { "extentNode", Selection::FocusNode, DontDelete|ReadOnly, 0, 0 },
+   { 0, 0, 0, 0, 0 },
+   { 0, 0, 0, 0, 0 },
+   { 0, 0, 0, 0, 0 },
+   { "type", Selection::_Type, DontDelete|ReadOnly, 0, 0 },
+   { "collapseToEnd", Selection::CollapseToEnd, DontDelete|Function, 0, &SelectionTableEntries[25] },
+   { "anchorOffset", Selection::AnchorOffset, DontDelete|ReadOnly, 0, &SelectionTableEntries[22] },
+   { 0, 0, 0, 0, 0 },
+   { 0, 0, 0, 0, 0 },
+   { "anchorNode", Selection::AnchorNode, DontDelete|ReadOnly, 0, &SelectionTableEntries[21] },
+   { "baseNode", Selection::AnchorNode, DontDelete|ReadOnly, 0, &SelectionTableEntries[23] },
+   { "baseOffset", Selection::AnchorOffset, DontDelete|ReadOnly, 0, 0 },
+   { "isCollapsed", Selection::IsCollapsed, DontDelete|ReadOnly, 0, 0 },
+   { "[[==]]", Selection::EqualEqual, DontDelete|ReadOnly, 0, &SelectionTableEntries[24] },
+   { "toString", Selection::ToString, DontDelete|Function, 0, &SelectionTableEntries[26] },
+   { "collapse", Selection::Collapse, DontDelete|Function, 2, 0 },
+   { "collapseToStart", Selection::CollapseToStart, DontDelete|Function, 0, 0 },
+   { "setBaseAndExtent", Selection::SetBaseAndExtent, DontDelete|Function, 4, 0 }
+};
+
+const struct HashTable SelectionTable = { 2, 27, SelectionTableEntries, 19 };
+
+} // namespace
+
+namespace KJS {
+
 const struct HashEntry HistoryTableEntries[] = {
    { 0, 0, 0, 0, 0 },
    { "back", History::Back, DontDelete|Function, 0, &HistoryTableEntries[4] },

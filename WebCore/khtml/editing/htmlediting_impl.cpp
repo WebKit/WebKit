@@ -232,6 +232,11 @@ static DOMString &nonBreakingSpaceString()
     return nonBreakingSpaceString;
 }
 
+static void debugPosition(const char *prefix, const DOMPosition &pos)
+{
+    LOG(Editing, "%s%s %p : %d", prefix, getTagName(pos.node()->id()).string().latin1(), pos.node(), pos.offset());
+}
+
 //------------------------------------------------------------------------------------------
 // EditCommandImpl
 
@@ -672,6 +677,8 @@ DOMPosition DeleteCollapsibleWhitespaceCommandImpl::deleteWhitespace(const DOMPo
             unsigned long count = it.current().offset() - deleteStart.offset();
             if (count == textNode->length()) {
                 LOG(Editing, "   removeNodeAndPrune 1: [%p]\n", textNode);
+                if (textNode == endingPosition.node())
+                    endingPosition = DOMPosition(next.node(), next.node()->caretMinOffset());
                 removeNodeAndPrune(textNode);
             }
             else {
@@ -794,13 +801,6 @@ void DeleteSelectionCommandImpl::joinTextNodesWithSameStyle()
     }
 }
 
-static void debugPosition(const char *prefix, const DOMPosition &pos)
-{
-    LOG(Editing, "%s%s %p : %d", prefix, getTagName(pos.node()->id()).string().latin1(), pos.node(), pos.offset());
-}
-
-enum { NoPositionModification, MoveDownstreamPositionModification, MoveToNextCharacterModification };
-
 void DeleteSelectionCommandImpl::doApply()
 {
     if (m_selectionToDelete.state() != KHTMLSelection::RANGE)
@@ -846,7 +846,7 @@ void DeleteSelectionCommandImpl::doApply()
     // Start is not completely selected
     if (startAtStartOfBlock) {
         LOG(Editing,  "ending position case 1");
-        endingPosition = DOMPosition(downstreamStart.node()->containingEditableBlock(), 1);
+        endingPosition = DOMPosition(downstreamStart.node()->containingEditableBlock(), 0);
         adjustEndingPositionDownstream = true;
     }
     else if (!startCompletelySelected) {
@@ -1123,6 +1123,8 @@ DOMPosition InputTextCommandImpl::prepareForTextInsertion()
     ASSERT(selection.state() == KHTMLSelection::CARET);
     
     DOMPosition pos = selection.startPosition().equivalentUpstreamPosition();
+    if (!pos.inRenderedContent())
+        pos = pos.nextRenderedEditablePosition();
     if (!pos.node()->inSameContainingEditableBlock(selection.startNode()))
         pos = selection.startPosition();
     
@@ -1135,12 +1137,14 @@ DOMPosition InputTextCommandImpl::prepareForTextInsertion()
         
         if (pos.node()->isEditableBlock())
             appendNode(pos.node(), m_insertedTextNode);
-        else if (pos.node()->id() == ID_BR || pos.offset() == 1)
-            insertNodeAfter(m_insertedTextNode, pos.node());
-        else {
-            ASSERT(pos.offset() == 0);
+        else if (pos.node()->id() == ID_BR && pos.offset() == 1)
             insertNodeBefore(m_insertedTextNode, pos.node());
-        }
+        else if (pos.node()->caretMinOffset() == pos.offset())
+            insertNodeBefore(m_insertedTextNode, pos.node());
+        else if (pos.node()->caretMaxOffset() == pos.offset())
+            insertNodeAfter(m_insertedTextNode, pos.node());
+        else
+            ASSERT_NOT_REACHED();
         
         pos = DOMPosition(m_insertedTextNode, 0);
     }
@@ -1153,7 +1157,10 @@ void InputTextCommandImpl::execute(const DOMString &text)
     KHTMLSelection selection = currentSelection();
 
     // Delete the current selection
-    deleteSelection();
+    if (selection.state() == KHTMLSelection::RANGE)
+        deleteSelection();
+    else
+        deleteCollapsibleWhitespace();
     
     // Make sure the document is set up to receive text
     DOMPosition pos = prepareForTextInsertion();
@@ -1711,15 +1718,12 @@ void TypingCommandImpl::issueCommandForDeleteKey()
     
     if (selection.state() == KHTMLSelection::CARET) {
         KHTMLSelection selectionToDelete(selection.startPosition().previousCharacterPosition(), selection.startPosition());
-        setEndingSelection(selectionToDelete);
-        deleteCollapsibleWhitespace();
-        selection = currentSelection();
-        deleteSelection(selection);
+        deleteCollapsibleWhitespace(selectionToDelete);
     }
     else { // selection.state() == KHTMLSelection::RANGE
         deleteCollapsibleWhitespace();
-        deleteSelection();
     }
+    deleteSelection(endingSelection());
 }
 
 void TypingCommandImpl::deleteKeyPressed()

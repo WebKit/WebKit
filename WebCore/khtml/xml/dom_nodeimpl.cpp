@@ -1156,7 +1156,7 @@ NodeImpl *NodeImpl::previousEditable() const
     while (node) {
         if (!node->isContentEditable())
             return 0;
-        if (node->hasChildNodes() == 0)
+        if (node->hasChildNodes() == false)
             return node;
         node = node->traversePreviousNode();
     }
@@ -1169,7 +1169,7 @@ NodeImpl *NodeImpl::nextEditable() const
     while (node) {
         if (!node->isContentEditable())
             return 0;
-        if (node->hasChildNodes() == 0)
+        if (node->hasChildNodes() == false)
             return node;
         node = node->traverseNextNode();
     }

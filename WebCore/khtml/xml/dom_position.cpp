@@ -118,6 +118,66 @@ long DOMPosition::renderedOffset() const
     return result;
 }
 
+DOMPosition DOMPosition::equivalentLeafPosition() const
+{
+    if (node()->hasChildNodes() == false)
+        return *this;
+    
+    NodeImpl *n = node();
+    int count = 0;
+    while (1) {
+        n = n->nextLeafNode();
+        if (!n)
+            return *this;
+        if (count + n->maxOffset() >= offset()) {
+            count = offset() - count;
+            break;
+        }
+        count += n->maxOffset();
+    }
+    return DOMPosition(n, count);
+}
+
+DOMPosition DOMPosition::previousRenderedEditablePosition() const
+{
+    if (isEmpty())
+        return DOMPosition();
+
+    if (node()->isContentEditable() && node()->hasChildNodes() == false && inRenderedContent())
+        return *this;
+
+    NodeImpl *n = node();
+    while (1) {
+        n = n->previousEditable();
+        if (!n)
+            return DOMPosition();
+        if (n->renderer() && n->renderer()->style()->visibility() == khtml::VISIBLE)
+            break;
+    }
+    
+    return DOMPosition(n, 0);
+}
+
+DOMPosition DOMPosition::nextRenderedEditablePosition() const
+{
+    if (isEmpty())
+        return DOMPosition();
+
+    if (node()->isContentEditable() && node()->hasChildNodes() == false && inRenderedContent())
+        return *this;
+
+    NodeImpl *n = node();
+    while (1) {
+        n = n->nextEditable();
+        if (!n)
+            return DOMPosition();
+        if (n->renderer() && n->renderer()->style()->visibility() == khtml::VISIBLE)
+            break;
+    }
+    
+    return DOMPosition(n, 0);
+}
+
 DOMPosition DOMPosition::previousCharacterPosition() const
 {
     if (isEmpty())
@@ -177,27 +237,47 @@ DOMPosition DOMPosition::equivalentUpstreamPosition() const
     if (!node())
         return DOMPosition();
 
-    if (!node()->isTextNode() && offset() > node()->caretMinOffset())
-        return *this;
-    
     NodeImpl *block = node()->containingEditableBlock();
-                
-    EditIterator it(*this);
-    DOMPosition prev = it.peekPrevious();
-    if (validUpstreamDownstreamPosition() && prev.validUpstreamDownstreamPosition()) {
-        if (node() == prev.node())
-            return *this;
-        else
-            return prev;
-    }
-    while (!it.atStart()) {
-        it.previous();
-        if (it.current().validUpstreamDownstreamPosition())
-            return it.current();
+    
+    EditIterator it(*this);            
+    for (; !it.atStart(); it.previous()) {   
         if (block != it.current().node()->containingEditableBlock())
             return it.next();
+
+        if (!node()->isContentEditable())
+            return it.next();
+            
+        RenderObject *renderer = it.current().node()->renderer();
+        if (!renderer)
+            continue;
+
+        if (renderer->style()->visibility() != khtml::VISIBLE)
+            continue;
+
+        if (renderer->isBlockFlow() || renderer->isReplaced() || renderer->isBR()) {
+            if (it.current().offset() >= renderer->caretMaxOffset())
+                return DOMPosition(it.current().node(), renderer->caretMaxOffset());
+            else
+                continue;
+        }
+
+        if (renderer->isText() && static_cast<RenderText *>(renderer)->firstTextBox()) {
+            if (it.current().node() != node())
+                return DOMPosition(it.current().node(), renderer->caretMaxOffset());
+
+            if (it.current().offset() < 0)
+                continue;
+            uint textOffset = it.current().offset();
+
+            RenderText *textRenderer = static_cast<RenderText *>(renderer);
+            for (InlineTextBox *box = textRenderer->firstTextBox(); box; box = box->nextTextBox()) {
+                if (textOffset > box->start() && textOffset <= box->start() + box->len())
+                    return it.current();
+            }
+        }
     }
-    return *this;
+    
+    return it.current();
 }
 
 DOMPosition DOMPosition::equivalentDownstreamPosition() const
@@ -205,69 +285,57 @@ DOMPosition DOMPosition::equivalentDownstreamPosition() const
     if (!node())
         return DOMPosition();
 
-    if (!node()->isTextNode() && offset() < node()->caretMaxOffset())
-        return *this;
-
     NodeImpl *block = node()->containingEditableBlock();
-        
-    EditIterator it(*this);
-    DOMPosition next = it.peekNext();
-    if (validUpstreamDownstreamPosition() && next.validUpstreamDownstreamPosition()) {
-        if (node() == next.node())
-            return *this;
-        else
-            return next;
-    }
-    while (!it.atEnd()) {
-        if (it.next().validUpstreamDownstreamPosition())
-            return it.current();
+    
+    EditIterator it(*this);            
+    for (; !it.atEnd(); it.next()) {   
         if (block != it.current().node()->containingEditableBlock())
             return it.previous();
-    }
-    return *this;
-}
 
-bool DOMPosition::validUpstreamDownstreamPosition() const
-{
-    if (isEmpty())
-        return false;
-        
-    RenderObject *renderer = node()->renderer();
-    if (!renderer || !renderer->isEditable())
-        return false;
+        if (!node()->isContentEditable())
+            return it.next();
+            
+        RenderObject *renderer = it.current().node()->renderer();
+        if (!renderer)
+            continue;
 
-    if (renderer->style()->visibility() != khtml::VISIBLE)
-        return false;
+        if (renderer->style()->visibility() != khtml::VISIBLE)
+            continue;
 
-    if (renderer->isBR() || renderer->isBlockFlow())
-        return true;
-    
-    if (renderer->isText()) {
-        RenderText *textRenderer = static_cast<RenderText *>(renderer);
-        InlineTextBox *lastTextBox = textRenderer->lastTextBox();
-        for (InlineTextBox *box = textRenderer->firstTextBox(); box; box = box->nextTextBox()) {
-            if (offset() >= box->m_start) {
-                if (box == lastTextBox) {
-                    if (offset() <= box->m_start + box->m_len)
-                        return true;
-                }
-                else if (offset() < box->m_start + box->m_len)
-                    return true;
-            }
-            else if (offset() < box->m_start) {
-                // The offset we're looking for is before this node
-                // this means the offset must be in content that is
-                // not rendered. Return false.
-                return false;
+        if (renderer->isBlockFlow() || renderer->isReplaced() || renderer->isBR()) {
+            if (it.current().offset() <= renderer->caretMinOffset())
+                return DOMPosition(it.current().node(), renderer->caretMinOffset());
+            else
+                continue;
+        }
+
+        if (renderer->isText() && static_cast<RenderText *>(renderer)->firstTextBox()) {
+            if (it.current().node() != node())
+                return DOMPosition(it.current().node(), renderer->caretMinOffset());
+
+            if (it.current().offset() < 0)
+                continue;
+            uint textOffset = it.current().offset();
+
+            RenderText *textRenderer = static_cast<RenderText *>(renderer);
+            for (InlineTextBox *box = textRenderer->firstTextBox(); box; box = box->nextTextBox()) {
+                if (textOffset >= box->start() && textOffset <= box->end())
+                    return it.current();
             }
         }
-        return false;
     }
     
-    if (offset() >= renderer->caretMinOffset() && offset() <= renderer->caretMaxOffset())
-        return true;
-    
-    return false;
+    return it.current();
+}
+
+bool DOMPosition::atStartOfContainingEditableBlock() const
+{
+    return renderedOffset() == 0 && inFirstEditableInContainingEditableBlock();
+}
+
+bool DOMPosition::atStartOfRootEditableBlock() const
+{
+    return renderedOffset() == 0 && inFirstEditableInRootEditableBlock();
 }
 
 bool DOMPosition::inRenderedContent() const

@@ -2641,6 +2641,51 @@ DOMString DocumentImpl::toString() const
 
 #endif // APPLE_CHANGES
 
+bool DocumentImpl::execCommand(const DOMString &command, bool userInterface, const DOMString &value)
+{
+    static AtomicString selectAllCommand("selectall");
+    static AtomicString insertTextCommand("inserttext");
+    static AtomicString undoCommand("undo");
+    static AtomicString redoCommand("redo");
+    static AtomicString deleteCommand("delete");
+
+    updateLayout();
+
+    AtomicString atom(command.lower());
+    if (atom == selectAllCommand) {
+        if (!part())
+            return false;
+        part()->selectAll();
+        return true;
+    }
+    else if (atom == insertTextCommand) {
+        if (!part() || part()->selection().isEmpty())
+            return false;
+        TypingCommand::insertText(this, value);
+        return true;
+    }
+    else if (atom == undoCommand) {
+        if (!part())
+            return false;
+        KWQ(part())->issueUndoCommand();
+        return true;
+    }
+    else if (atom == redoCommand) {
+        if (!part())
+            return false;
+        KWQ(part())->issueRedoCommand();
+        return true;
+    }
+    else if (atom == deleteCommand) {
+        if (!part() || part()->selection().isEmpty())
+            return false;
+        TypingCommand::deleteKeyPressed(this);
+        return true;
+    }
+
+    return false;
+}
+
 // ----------------------------------------------------------------------------
 
 DocumentFragmentImpl::DocumentFragmentImpl(DocumentPtr *doc) : NodeBaseImpl(doc)

@@ -1,3 +1,12 @@
+2004-04-06  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Dave
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge issueUndoCommand]): New method. Forwards call to the undo manager. Added
+        to support undo called via Javascript execCommand.
+        (-[WebBridge issueRedoCommand]): Ditto.
+
 2004-04-05  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3612580>: SPI: WebPlugin selection

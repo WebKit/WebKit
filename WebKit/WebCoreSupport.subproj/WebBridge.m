@@ -1183,6 +1183,20 @@ static id <WebFormDelegate> formDelegate(WebBridge *self)
     [[_frame webView] editingKeyDown:event];
 }
 
+- (void)issueUndoCommand
+{
+    NSUndoManager *undoManager = [[_frame webView] undoManager];
+    if ([undoManager canUndo])
+        [undoManager undo];
+}
+
+- (void)issueRedoCommand
+{
+    NSUndoManager *undoManager = [[_frame webView] undoManager];
+    if ([undoManager canRedo])
+        [undoManager redo];
+}
+
 - (void)setIsSelected:(BOOL)isSelected forView:(NSView *)view
 {
     if ([view conformsToProtocol:@protocol(WebPluginSelection)]) {

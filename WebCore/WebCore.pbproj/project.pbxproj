@@ -1227,12 +1227,6 @@
 			refType = 4;
 			sourceTree = "<group>";
 		};
-		832557C4061E3172007B8054 = {
-			fileRef = 832557C3061E3172007B8054;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 //830
 //831
 //832

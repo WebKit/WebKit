@@ -46,11 +46,15 @@ public:
     bool isEmpty() const { return m_node == 0; }
     bool notEmpty() const { return m_node != 0; }
     
+    DOMPosition equivalentLeafPosition() const;
+    DOMPosition previousRenderedEditablePosition() const;
+    DOMPosition nextRenderedEditablePosition() const;
     DOMPosition previousCharacterPosition() const;
     DOMPosition nextCharacterPosition() const;
     DOMPosition equivalentUpstreamPosition() const;
     DOMPosition equivalentDownstreamPosition() const;
-    bool validUpstreamDownstreamPosition() const;
+    bool atStartOfContainingEditableBlock() const;
+    bool atStartOfRootEditableBlock() const;
     bool inRenderedContent() const;
     bool inRenderedText() const;
     bool rendersOnSameLine(const DOMPosition &pos) const;

@@ -2885,3 +2885,12 @@ void KWQKHTMLPart::editingKeyEvent()
     [_bridge editingKeyDown:_currentEvent];
 }
 
+void KWQKHTMLPart::issueUndoCommand()
+{
+    [_bridge issueUndoCommand];
+}
+
+void KWQKHTMLPart::issueRedoCommand()
+{
+    [_bridge issueRedoCommand];
+}

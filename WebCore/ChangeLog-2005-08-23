@@ -1,3 +1,74 @@
+2004-04-06  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Dave
+
+        Added execCommand feature. 
+        Added Javascript selection object.
+        This lays the groundwork for layout tests for editing.
+
+        * khtml/dom/dom_doc.cpp:
+        (DOM::Document::execCommand): Added. Calls through to impl's execCommand.
+        * khtml/dom/dom_doc.h: Added execCommand declaration.
+        * khtml/ecma/kjs_dom.cpp:
+        (DOMDocumentProtoFunc::tryCall): Switch on new ExecCommand constant and call through to the document.
+        * khtml/ecma/kjs_dom.h: Added ExecCommand constant.
+        (KJS::DOMDocument::):
+        * khtml/ecma/kjs_dom.lut.h: Generated file.
+        * khtml/ecma/kjs_window.cpp:
+        (Window::Window): Initialize selection object.
+        (Window::selection): Return window's selection object.
+        (Window::mark): Mark selection object.
+        (WindowFunc::tryCall): Return selection object on GetSelection.
+        (LocationFunc::tryCall): Added.
+        (Selection::Selection): Added.
+        (Selection::~Selection): Added.
+        (Selection::get): Added.
+        (Selection::put): Added.
+        (Selection::toPrimitive): Added.
+        (Selection::toString): Added.
+        (SelectionFunc::tryCall): Added.
+        * khtml/ecma/kjs_window.h:
+        (KJS::Selection::): Added.
+        (KJS::Selection::part): Added.
+        (KJS::Selection::classInfo): Added.
+        * khtml/ecma/kjs_window.lut.h: Generated file.
+        * khtml/editing/htmlediting_impl.cpp:
+        (debugPosition): Debugging aid.
+        (DeleteCollapsibleWhitespaceCommandImpl::deleteWhitespace): Move the ending position
+        if you are about to delete it. Fixes a crasher I discovered while writing tests.
+        (DeleteSelectionCommandImpl::doApply): Move to containing editable block position 0
+        instead of 1 in a block in delete case 1.
+        (InputTextCommandImpl::prepareForTextInsertion):
+        (TypingCommandImpl::issueCommandForDeleteKey):
+        * khtml/khtml_part.h:
+        * khtml/khtml_selection.cpp:
+        (KHTMLSelection::validate): Now adjusts the selection down to leaf nodes if needed.
+        (KHTMLSelection::debugPosition): Debugging aid.
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::execCommand): Added. Supports five different commands.
+        * khtml/xml/dom_docimpl.h:
+        * khtml/xml/dom_nodeimpl.cpp:
+        (NodeImpl::previousEditable): Use false instead of 0 for equality check.
+        (NodeImpl::nextEditable): Ditto.
+        * khtml/xml/dom_position.cpp:
+        (DOMPosition::equivalentLeafPosition): New function
+        (DOMPosition::previousRenderedEditablePosition): New function
+        (DOMPosition::nextRenderedEditablePosition): New function
+        (DOMPosition::equivalentUpstreamPosition): Refined behavior to handle more cases correctly.
+        (DOMPosition::equivalentDownstreamPosition): Ditto.
+        (DOMPosition::atStartOfContainingEditableBlock):New function
+        (DOMPosition::atStartOfRootEditableBlock):New function
+        * khtml/xml/dom_position.h:
+        * kwq/KWQKHTMLPart.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::issueUndoCommand): New function for calling undo programatically.
+        (KWQKHTMLPart::issueRedoCommand): Ditto, but for redo.
+        * kwq/KWQRenderTreeDebug.cpp:
+        (nodePositionRelativeToRoot): New function to generate log information for the selection.
+        (writeSelection): Writes the selection if there is one.
+        (externalRepresentation): Calls writeSelection
+        * kwq/WebCoreBridge.h: New declarations for issueUndoCommand and issueRedoCommand.
+
 2004-04-05  Darin Adler  <darin@apple.com>
 
         * khtml/html/kentities.gperf: Added &COPY; and &REG;, both supported by Gecko

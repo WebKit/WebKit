@@ -27,14 +27,21 @@
 
 #include "htmltags.h"
 #include "khtmlview.h"
+#include "khtml_selection.h"
 #include "render_replaced.h"
 #include "render_table.h"
 #include "render_text.h"
 #include "render_canvas.h"
+#include "xml/dom_docimpl.h"
+#include "xml/dom_nodeimpl.h"
+#include "xml/dom_position.h"
 
 #include "KWQKHTMLPart.h"
 #include "KWQTextStream.h"
 
+using DOM::DocumentImpl;
+using DOM::DOMPosition;
+using DOM::NodeImpl;
 using khtml::RenderLayer;
 using khtml::RenderObject;
 using khtml::RenderTableCell;
@@ -318,6 +325,82 @@ static void writeLayers(QTextStream &ts, const RenderLayer* rootLayer, RenderLay
     }
 }
 
+static QString nodePositionRelativeToRoot(NodeImpl *node, NodeImpl *root)
+{
+    QString result;
+
+    NodeImpl *n = node;
+    while (1) {
+        NodeImpl *p = n->parentNode();
+        if (!p || n == root) {
+            result += " of root {" + getTagName(n->id()).string() + "}";
+            break;
+        }
+        if (n != node)
+            result +=  " of ";
+        int count = 1;
+        for (NodeImpl *search = p->firstChild(); search != n; search = search->nextSibling())
+            count++;
+        result +=  "child " + QString::number(count) + " {" + getTagName(n->id()).string() + "}";
+        n = p;
+    }
+    
+    return result;
+}
+
+static void writeSelection(QTextStream &ts, const RenderObject *o)
+{
+    DocumentImpl *doc = dynamic_cast<DocumentImpl *>(o->element());
+    if (!doc || !doc->part())
+        return;
+        
+    KHTMLSelection selection = doc->part()->selection();
+    if (selection.state() == KHTMLSelection::NONE)
+        return;
+
+    if (!selection.startPosition().node()->isContentEditable() || !selection.endPosition().node()->isContentEditable())
+        return;
+
+    DOMPosition startPosition = selection.startPosition();
+    DOMPosition endPosition = selection.endPosition();
+
+    QString startNodeTagName(getTagName(startPosition.node()->id()).string());
+    QString endNodeTagName(getTagName(endPosition.node()->id()).string());
+    
+    NodeImpl *rootNode = doc->getElementById("root");
+    
+    if (selection.state() == KHTMLSelection::CARET) {
+        DOMPosition upstream = startPosition.equivalentUpstreamPosition();
+        DOMPosition downstream = startPosition.equivalentDownstreamPosition();
+        QString positionString = nodePositionRelativeToRoot(startPosition.node(), rootNode);
+        QString upstreamString = nodePositionRelativeToRoot(upstream.node(), rootNode);
+        QString downstreamString = nodePositionRelativeToRoot(downstream.node(), rootNode);
+        ts << "selection is CARET:\n" << 
+            "start:      position " << startPosition.offset() << " of " << positionString << "\n"
+            "upstream:   position " << upstream.offset() << " of " << upstreamString << "\n"
+            "downstream: position " << downstream.offset() << " of " << downstreamString << "\n"; 
+    }
+    else if (selection.state() == KHTMLSelection::RANGE) {
+        QString startString = nodePositionRelativeToRoot(startPosition.node(), rootNode);
+        DOMPosition upstreamStart = startPosition.equivalentUpstreamPosition();
+        QString upstreamStartString = nodePositionRelativeToRoot(upstreamStart.node(), rootNode);
+        DOMPosition downstreamStart = startPosition.equivalentDownstreamPosition();
+        QString downstreamStartString = nodePositionRelativeToRoot(downstreamStart.node(), rootNode);
+        QString endString = nodePositionRelativeToRoot(endPosition.node(), rootNode);
+        DOMPosition upstreamEnd = endPosition.equivalentUpstreamPosition();
+        QString upstreamEndString = nodePositionRelativeToRoot(upstreamEnd.node(), rootNode);
+        DOMPosition downstreamEnd = endPosition.equivalentDownstreamPosition();
+        QString downstreamEndString = nodePositionRelativeToRoot(downstreamEnd.node(), rootNode);
+        ts << "selection is RANGE:\n" <<
+            "start:      position " << startPosition.offset() << " of " << startString << "\n" <<
+            "upstream:   position " << upstreamStart.offset() << " of " << upstreamStartString << "\n"
+            "downstream: position " << downstreamStart.offset() << " of " << downstreamStartString << "\n"
+            "end:        position " << endPosition.offset() << " of " << endString << "\n"
+            "upstream:   position " << upstreamEnd.offset() << " of " << upstreamEndString << "\n"
+            "downstream: position " << downstreamEnd.offset() << " of " << downstreamEndString << "\n"; 
+    }
+}
+
 QString externalRepresentation(RenderObject *o)
 {
     QString s;
@@ -329,8 +412,10 @@ QString externalRepresentation(RenderObject *o)
             o->canvas()->view()->setVScrollBarMode(QScrollView::AlwaysOff);
             o->canvas()->view()->layout();
             RenderLayer* l = o->layer();
-            if (l)
+            if (l) {
                 writeLayers(ts, l, l, QRect(l->xPos(), l->yPos(), l->width(), l->height()));
+                writeSelection(ts, o);
+            }
         }
     }
     return s;

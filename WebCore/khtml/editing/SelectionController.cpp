@@ -528,6 +528,23 @@ void KHTMLSelection::setEndOffset(long offset)
 
 void KHTMLSelection::validate(ETextGranularity expandTo)
 {
+    // move the base and extent nodes to their equivalent leaf positions
+    bool baseAndExtentEqual = m_baseNode == m_extentNode && m_baseOffset == m_extentOffset;
+    if (m_baseNode) {
+        DOMPosition pos = basePosition().equivalentLeafPosition();
+        m_baseNode = pos.node();
+        m_baseOffset = pos.offset();
+        if (baseAndExtentEqual) {
+            m_extentNode = pos.node();
+            m_extentOffset = pos.offset();
+        }
+    }
+    if (m_extentNode && !baseAndExtentEqual) {
+        DOMPosition pos = extentPosition().equivalentLeafPosition();
+        m_extentNode = pos.node();
+        m_extentOffset = pos.offset();
+    }
+
     // make sure we do not have a dangling start or end
 	if (!m_baseNode && !m_extentNode) {
         setBaseOffset(0);
@@ -1012,14 +1029,14 @@ void KHTMLSelection::debugPosition() const
         fprintf(stderr, "downstream: %s %p:%d\n", getTagName(downstream.node()->id()).string().latin1(), downstream.node(), downstream.offset());
     }
     else {
-        DOMPosition pos = endPosition();
+        DOMPosition pos = startPosition();
         DOMPosition upstream = pos.equivalentUpstreamPosition();
         DOMPosition downstream = pos.equivalentDownstreamPosition();
         fprintf(stderr, "upstream:   %s %p:%d\n", getTagName(upstream.node()->id()).string().latin1(), upstream.node(), upstream.offset());
         fprintf(stderr, "start:      %s %p:%d\n", getTagName(pos.node()->id()).string().latin1(), pos.node(), pos.offset());
         fprintf(stderr, "downstream: %s %p:%d\n", getTagName(downstream.node()->id()).string().latin1(), downstream.node(), downstream.offset());
         fprintf(stderr, "-----------------------------------\n");
-        pos = startPosition();
+        pos = endPosition();
         upstream = pos.equivalentUpstreamPosition();
         downstream = pos.equivalentDownstreamPosition();
         fprintf(stderr, "upstream:   %s %p:%d\n", getTagName(upstream.node()->id()).string().latin1(), upstream.node(), upstream.offset());

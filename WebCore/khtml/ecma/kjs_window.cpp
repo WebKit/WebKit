@@ -53,9 +53,18 @@
 
 #include "khtmlview.h"
 #include "khtml_part.h"
+#include "khtml_selection.h"
+#include "dom/dom_string.h"
+#include "dom/dom_node.h"
+#include "editing/htmlediting.h"
 #include "xml/dom2_eventsimpl.h"
 #include "xml/dom_docimpl.h"
 #include "html/html_documentimpl.h"
+
+using DOM::DocumentImpl;
+using DOM::DOMString;
+using DOM::Node;
+using khtml::TypingCommand;
 
 using namespace KJS;
 
@@ -279,7 +288,7 @@ const ClassInfo Window::info = { "Window", 0, &WindowTable, 0 };
 IMPLEMENT_PROTOFUNC(WindowFunc)
 
 Window::Window(KHTMLPart *p)
-  : ObjectImp(/*no proto*/), m_part(p), screen(0), history(0), frames(0), loc(0), m_evt(0)
+  : ObjectImp(/*no proto*/), m_part(p), screen(0), history(0), frames(0), loc(0), m_selection(0), m_evt(0)
 {
   winq = new WindowQObject(this);
   //kdDebug(6070) << "Window::Window this=" << this << " part=" << m_part << " " << m_part->name() << endl;
@@ -339,6 +348,13 @@ Location *Window::location() const
   return loc;
 }
 
+Selection *Window::selection() const
+{
+  if (!m_selection)
+    const_cast<Window*>(this)->m_selection = new Selection(m_part);
+  return m_selection;
+}
+
 // reference our special objects during garbage collection
 void Window::mark()
 {
@@ -352,6 +368,8 @@ void Window::mark()
   //kdDebug(6070) << "Window::mark " << this << " marking loc=" << loc << endl;
   if (loc && !loc->marked())
     loc->mark();
+  if (m_selection && !m_selection->marked())
+    m_selection->mark();
 }
 
 bool Window::hasProperty(ExecState * /*exec*/, const Identifier &/*p*/) const
@@ -1545,7 +1563,7 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
   case Window::GetSelection:
     if (!window->isSafeScript(exec))
         return Undefined();
-    return String(part->selectedText());
+    return Value(window->selection());
   case Window::Blur:
 #if APPLE_CHANGES
     KWQ(part)->unfocusWindow();
@@ -2077,6 +2095,196 @@ Value LocationFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
   } else
     kdDebug(6070) << "LocationFunc::tryExecute - no part!" << endl;
   return Undefined();
+}
+
+////////////////////// Selection Object ////////////////////////
+
+const ClassInfo Selection::info = { "Selection", 0, 0, 0 };
+/*
+@begin SelectionTable 19
+  anchorNode                Selection::AnchorNode		         DontDelete|ReadOnly
+  anchorOffset              Selection::AnchorOffset	             DontDelete|ReadOnly
+  focusNode                 Selection::FocusNode		         DontDelete|ReadOnly
+  focusOffset               Selection::FocusOffset		         DontDelete|ReadOnly
+  baseNode                  Selection::AnchorNode		         DontDelete|ReadOnly
+  baseOffset                Selection::AnchorOffset              DontDelete|ReadOnly
+  extentNode                Selection::FocusNode                 DontDelete|ReadOnly
+  extentOffset              Selection::FocusOffset		         DontDelete|ReadOnly
+  isCollapsed               Selection::IsCollapsed		         DontDelete|ReadOnly
+  type                      Selection::_Type                     DontDelete|ReadOnly
+  [[==]]	                Selection::EqualEqual	             DontDelete|ReadOnly
+  toString                  Selection::ToString                  DontDelete|Function 0
+  collapse                  Selection::Collapse                  DontDelete|Function 2
+  collapseToEnd             Selection::CollapseToEnd             DontDelete|Function 0
+  collapseToStart           Selection::CollapseToStart           DontDelete|Function 0
+  empty                     Selection::Empty                     DontDelete|Function 0
+  setBaseAndExtent          Selection::SetBaseAndExtent          DontDelete|Function 4
+  setPosition               Selection::SetPosition               DontDelete|Function 2
+  modify                    Selection::Modify                    DontDelete|Function 3
+@end
+*/
+IMPLEMENT_PROTOFUNC(SelectionFunc)
+Selection::Selection(KHTMLPart *p) : m_part(p)
+{
+  //kdDebug(6070) << "Selection::Selection " << this << " m_part=" << (void*)m_part << endl;
+}
+
+Selection::~Selection()
+{
+  //kdDebug(6070) << "Selection::~Selection " << this << " m_part=" << (void*)m_part << endl;
+}
+
+Value Selection::get(ExecState *exec, const Identifier &p) const
+{
+#ifdef KJS_VERBOSE
+  kdDebug(6070) << "Selection::get " << p.qstring() << " m_part=" << (void*)m_part << endl;
+#endif
+
+  if (m_part.isNull())
+    return Undefined();
+  
+  const Window* window = Window::retrieveWindow(m_part);
+  if (!window || !window->isSafeScript(exec))
+      return Undefined();
+
+  DocumentImpl *docimpl = m_part->xmlDocImpl();
+  if (docimpl)
+    docimpl->updateLayout();
+
+  KURL url = m_part->url();
+  const HashEntry *entry = Lookup::findEntry(&SelectionTable, p);
+  if (entry)
+    switch (entry->value) {
+        case AnchorNode:
+        case BaseNode:
+            return getDOMNode(exec, Node(m_part->selection().baseNode()));
+        case AnchorOffset:
+        case BaseOffset:
+            return Number(m_part->selection().baseOffset());
+        case FocusNode:
+        case ExtentNode:
+            return getDOMNode(exec, Node(m_part->selection().extentNode()));
+        case FocusOffset:
+        case ExtentOffset:
+            return Number(m_part->selection().extentOffset());
+        case IsCollapsed:
+            return Boolean(m_part->selection().state() == KHTMLSelection::CARET);
+        case _Type: {
+            switch (m_part->selection().state()) {
+                case KHTMLSelection::NONE:
+                    return String("None");
+                case KHTMLSelection::CARET:
+                    return String("Caret");
+                case KHTMLSelection::RANGE:
+                    return String("Range");
+            }
+        }
+        case EqualEqual:
+            return String(toString(exec));
+        case ToString:
+          return lookupOrCreateFunction<SelectionFunc>(exec,p,this,entry->value,entry->params,entry->attr);
+    }
+    // Look for overrides
+    ValueImp * val = ObjectImp::getDirect(p);
+    if (val)
+        return Value(val);
+    if (entry)
+        switch (entry->value) {
+            case Collapse:
+            case CollapseToEnd:
+            case CollapseToStart:
+            case Empty:
+            case SetBaseAndExtent:
+            case SetPosition:
+            case Modify:
+                return lookupOrCreateFunction<SelectionFunc>(exec,p,this,entry->value,entry->params,entry->attr);
+        }
+
+    return Undefined();
+}
+
+void Selection::put(ExecState *exec, const Identifier &p, const Value &v, int attr)
+{
+}
+
+Value Selection::toPrimitive(ExecState *exec, Type) const
+{
+  return String(toString(exec));
+}
+
+UString Selection::toString(ExecState *) const
+{
+    if (m_part->selection().state() != KHTMLSelection::RANGE)
+        return UString("");
+    return UString(m_part->selection().toRange().toString());
+}
+
+Value SelectionFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
+{
+    if (!thisObj.inherits(&Selection::info)) {
+        Object err = Error::create(exec,TypeError);
+        exec->setException(err);
+        return err;
+    }
+    Selection *selection = static_cast<Selection *>(thisObj.imp());
+    KHTMLPart *part = selection->part();
+    if (part) {
+        DocumentImpl *docimpl = part->xmlDocImpl();
+        if (docimpl)
+            docimpl->updateLayout();
+            
+        switch (id) {
+            case Selection::Collapse:
+                TypingCommand::closeTyping(part->lastEditCommand());
+                part->setSelection(KHTMLSelection(KJS::toNode(args[0]).handle(), args[1].toInt32(exec)));
+                break;
+            case Selection::CollapseToEnd:
+                TypingCommand::closeTyping(part->lastEditCommand());
+                part->setSelection(KHTMLSelection(part->selection().endPosition()));
+                break;
+            case Selection::CollapseToStart:
+                TypingCommand::closeTyping(part->lastEditCommand());
+                part->setSelection(KHTMLSelection(part->selection().startPosition()));
+                break;
+            case Selection::Empty:
+                TypingCommand::closeTyping(part->lastEditCommand());
+                part->clearSelection();
+                break;
+            case Selection::SetBaseAndExtent:
+                TypingCommand::closeTyping(part->lastEditCommand());
+                part->setSelection(KHTMLSelection(KJS::toNode(args[0]).handle(), args[1].toInt32(exec), KJS::toNode(args[2]).handle(), args[3].toInt32(exec)));
+                break;
+            case Selection::SetPosition:
+                TypingCommand::closeTyping(part->lastEditCommand());
+                part->setSelection(KHTMLSelection(KJS::toNode(args[0]).handle(), args[1].toInt32(exec)));
+                break;
+            case Selection::Modify: {
+                TypingCommand::closeTyping(part->lastEditCommand());
+                KHTMLSelection s(part->selection());
+                KHTMLSelection::EAlter alter = KHTMLSelection::MOVE;
+                if (args[0].toString(exec).string().lower() == "extend")
+                    alter = KHTMLSelection::EXTEND;
+                DOMString directionString = args[1].toString(exec).string().lower();
+                KHTMLSelection::EDirection direction = KHTMLSelection::FORWARD;
+                if (directionString == "backward")
+                    direction = KHTMLSelection::BACKWARD;
+                else if (directionString == "left")
+                    direction = KHTMLSelection::LEFT;
+                if (directionString == "right")
+                    direction = KHTMLSelection::RIGHT;
+                KHTMLSelection::ETextGranularity granularity = KHTMLSelection::CHARACTER;
+                DOMString granularityString = args[2].toString(exec).string().lower();
+                if (granularityString == "word")
+                    granularity = KHTMLSelection::WORD;
+                else if (granularityString == "line")
+                    granularity = KHTMLSelection::LINE;
+                s.modify(alter, direction, granularity);
+                part->setSelection(s);
+            }
+        }
+    }
+
+    return Undefined();
 }
 
 ////////////////////// History Object ////////////////////////

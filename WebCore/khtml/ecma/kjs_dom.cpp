@@ -714,6 +714,7 @@ void DOMAttr::putValue(ExecState *exec, int token, const Value& value, int /*att
   createTreeWalker   DOMDocument::CreateTreeWalker             DontDelete|Function 4
   createEvent        DOMDocument::CreateEvent                  DontDelete|Function 1
   getOverrideStyle   DOMDocument::GetOverrideStyle             DontDelete|Function 2
+  execCommand        DOMDocument::ExecCommand                  DontDelete|Function 3
 @end
 */
 DEFINE_PROTOTYPE("DOMDocument", DOMDocumentProto)
@@ -892,6 +893,9 @@ Value DOMDocumentProtoFunc::tryCall(ExecState *exec, Object &thisObj, const List
       return Undefined(); // throw exception?
     else
       return getDOMCSSStyleDeclaration(exec,doc.getOverrideStyle(static_cast<DOM::Element>(arg0),args[1].toString(exec).string()));
+  }
+  case DOMDocument::ExecCommand: {
+    return Boolean(doc.execCommand(args[0].toString(exec).string(), args[1].toBoolean(exec), args[2].toString(exec).string()));
   }
   default:
     break;
