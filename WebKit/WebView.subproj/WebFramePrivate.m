@@ -361,6 +361,8 @@ static const char * const stateNames[] = {
         NSScrollView *sv = [[self webView] frameScrollView];
         [sv setDrawsBackground: YES];
         [[sv contentView] setCopiesOnScroll: YES];
+        [_private->scheduledLayoutTimer fire];
+   	ASSERT(_private->scheduledLayoutTimer == nil);
     }
 }
 

@@ -1,3 +1,27 @@
+2002-09-09  Darin Adler  <darin@apple.com>
+
+	- fixed 3003605 -- Leaking 1 WebView after second run of static PLT
+
+	Fixing this should also help with footprint.
+
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame dealloc]): Remove old workaround for problem where we
+	always deallocated the frames from timer cleanup. I found a better
+	fix for this.
+        (-[WebFrame stopLoading]): Explicitly fire the scheduled layout
+	timer if any when we stop loading, rather than leaving it hanging.
+
+        * WebView.subproj/WebFramePrivate.m: (-[WebFrame _setState:]):
+	Explicitly fire the scheduled layout timer if any.
+
+        * WebView.subproj/WebDataSource.m: (-[WebDataSource isLoading]):
+	Use an autorelease pool here so we don't end up putting all the
+	frames in the main event loop's autorelease pool.
+
+        * Bookmarks.subproj/WebBookmark.m:
+        (-[WebBookmark init]): Use copy instead of retain.
+        (-[WebBookmark identifier]): Use copy instead of retain.
+
 2002-09-09  ken  <kocienda@apple.com>
 
 	Missed one call through asking WebResourceHandle for contentLength

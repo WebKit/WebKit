@@ -30,7 +30,7 @@ static unsigned _highestUsedID = 0;
 - (id)init
 {
     [super init];
-    _identifier = [[WebBookmark _generateUniqueIdentifier] retain];
+    _identifier = [[WebBookmark _generateUniqueIdentifier] copy];
     return self;
 }
 
@@ -45,7 +45,7 @@ static unsigned _highestUsedID = 0;
 - (NSString *)identifier
 {
     ASSERT(_identifier != nil);
-    return [[_identifier retain] autorelease];
+    return [[_identifier copy] autorelease];
 }
 
 - (id)copyWithZone:(NSZone *)zone
