@@ -2,6 +2,15 @@
 
         Reviewed by Maciej.
 
+        - fixed <rdar://problem/3797758> REGRESSION (155-156): Cannot tab between input fields at switchboard.com
+
+        * kwq/KWQLineEdit.mm: (QLineEdit::selectAll): Use setFocus() instead of calling makeFirstResponder
+        directly since it handles the case where the field editor has focus.
+
+2004-09-12  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
         - fixed <rdar://problem/3792082> zero character codes in UTF-16 input cause crash
 
         * kwq/KWQTextCodec.mm: (KWQTextDecoder::convertUTF16): Fixed code that was using the wrong variable

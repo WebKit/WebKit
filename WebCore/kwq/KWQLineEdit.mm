@@ -158,10 +158,11 @@ void QLineEdit::selectAll()
 {
     KWQ_BLOCK_EXCEPTIONS;
 
-    // Do the makeFirstResponder ourselves so WebHTMLView will know it's programmatic, and not the user clicking.
+    // Do the makeFirstResponder ourselves explicitly (by calling setFocus)
+    // so WebHTMLView will know it's programmatic and not the user clicking.
+    setFocus();
+
     NSTextField *textField = (NSTextField *)getView();
-    WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(this);
-    [bridge makeFirstResponder:textField];
     [textField selectText:nil];
 
     KWQ_UNBLOCK_EXCEPTIONS;
