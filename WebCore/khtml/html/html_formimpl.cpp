@@ -1266,6 +1266,7 @@ bool HTMLInputElementImpl::rendererIsNeeded(RenderStyle *style)
     case HIDDEN:   return false;
     }
     assert(false);
+    return false;
 }
 
 RenderObject *HTMLInputElementImpl::createRenderer(RenderArena *arena, RenderStyle *style)
@@ -1285,6 +1286,7 @@ RenderObject *HTMLInputElementImpl::createRenderer(RenderArena *arena, RenderSty
     case HIDDEN:   break;
     }
     assert(false);
+    return 0;
 }
 
 void HTMLInputElementImpl::attach()

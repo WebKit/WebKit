@@ -1,3 +1,10 @@
+2003-01-21  Darin Adler  <darin@apple.com>
+
+        * khtml/html/html_formimpl.cpp:
+        (HTMLInputElementImpl::rendererIsNeeded):
+	(HTMLInputElementImpl::attach):
+	Add return statements to fix compile on deployment build.
+
 2003-01-21  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Nobody, fixing an accidental commit.
