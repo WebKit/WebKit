@@ -1,3 +1,12 @@
+2004-09-03  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed <rdar://problem/3714501> REGRESSION (125.8-8A162): Chinese words display as garbage in search results (www.sz.net.cn)
+
+        * khtml/ecma/kjs_html.cpp: (KJS::HTMLDocument::putValue): Resolve URL using the document method
+        that passes the codec rather than calling the KURL constructor directly.
+
 2004-09-03  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3788409> can't create or clone an embed element

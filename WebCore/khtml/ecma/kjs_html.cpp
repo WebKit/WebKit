@@ -388,14 +388,12 @@ void KJS::HTMLDocument::putValue(ExecState *exec, int token, const Value& value,
     {
       QString str = value.toString(exec).qstring();
 
-      // When assinging location, IE and Mozilla both resolve the URL
+      // When assigning location, IE and Mozilla both resolve the URL
       // relative to the frame where the JavaScript is executing not
       // the target frame.
       KHTMLPart *activePart = static_cast<KJS::ScriptInterpreter *>( exec->dynamicInterpreter() )->part();
-      if (activePart) {
-       KURL resolvedURL(activePart->baseURL(), str);
-       str = resolvedURL.url();
-      }
+      if (activePart)
+        str = activePart->htmlDocument().completeURL(str).string();
 
 #if APPLE_CHANGES
       // We want a new history item if this JS was called via a user gesture
