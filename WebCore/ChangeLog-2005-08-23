@@ -1,3 +1,24 @@
+2005-04-04  Vicki Murley  <vicki@apple.com>
+
+        Reviewed by Maciej.
+
+	- fixed <rdar://problem/3871669> no focus or blur methods on HTML button elements
+
+        * khtml/dom/html_form.cpp:
+        (HTMLButtonElement::focus): 
+        (HTMLButtonElement::blur): 
+        * khtml/dom/html_form.h: 
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::HTMLElementFunction::tryCall):
+        * khtml/ecma/kjs_html.h:
+        (KJS::HTMLElement::):
+        * khtml/ecma/kjs_html.lut.h:
+        (KJS::):
+        * khtml/html/html_formimpl.cpp:
+        (DOM::HTMLButtonElementImpl::blur):
+        (DOM::HTMLButtonElementImpl::focus):
+        * khtml/html/html_formimpl.h:
+
 === WebCore-415 ===
 
 2005-03-28  David Harrison  <harrison@apple.com>

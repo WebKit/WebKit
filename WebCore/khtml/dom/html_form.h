@@ -109,7 +109,7 @@ public:
      * see @ref name
      */
     void setName( const DOMString & );
-
+    
     /**
      * Index that represents the element's position in the tabbing
      * order. See the <a
@@ -144,8 +144,19 @@ public:
      * see @ref value
      */
     void setValue( const DOMString & );
+    
+    /**
+     * Removes keyboard focus from this element.
+     *
+     */
+    void blur (  );
+        
+    /**
+     * Gives keyboard focus to this element.
+     *
+     */
+    void focus (  );
 };
-
 // --------------------------------------------------------------------------
 
 class HTMLFieldSetElementImpl;

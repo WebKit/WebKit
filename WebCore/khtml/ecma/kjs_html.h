@@ -107,7 +107,7 @@ namespace KJS {
            TextAreaAccessKey, TextAreaName, TextAreaDefaultValue, TextAreaSelect,
            TextAreaCols, TextAreaDisabled, TextAreaForm, TextAreaType,
            TextAreaTabIndex, TextAreaReadOnly, TextAreaRows, TextAreaValue,
-           TextAreaBlur, TextAreaFocus, ButtonForm, ButtonTabIndex, ButtonName,
+           TextAreaBlur, TextAreaFocus, ButtonBlur, ButtonFocus, ButtonForm, ButtonTabIndex, ButtonName,
            ButtonDisabled, ButtonAccessKey, ButtonType, ButtonValue, LabelHtmlFor,
            LabelForm, LabelAccessKey, FieldSetForm, LegendForm, LegendAccessKey,
            LegendAlign, UListType, UListCompact, OListStart, OListCompact,

@@ -818,6 +818,8 @@ const ClassInfo* KJS::HTMLElement::classInfo() const
   tabIndex	KJS::HTMLElement::ButtonTabIndex	DontDelete
   type		KJS::HTMLElement::ButtonType		DontDelete|ReadOnly
   value		KJS::HTMLElement::ButtonValue		DontDelete
+  blur		KJS::HTMLElement::ButtonBlur		DontDelete|Function 0
+  focus		KJS::HTMLElement::ButtonFocus		DontDelete|Function 0
 @end
 @begin HTMLLabelElementTable 3
   form		KJS::HTMLElement::LabelForm		DontDelete|ReadOnly
@@ -2165,6 +2167,19 @@ Value KJS::HTMLElementFunction::tryCall(ExecState *exec, Object &thisObj, const 
       }
       else if (id == KJS::HTMLElement::InputClick) {
         input.click();
+        return Undefined();
+      }
+    }
+    break;
+    case ID_BUTTON: {
+      DOM::HTMLButtonElement button = element;
+      
+      if (id == KJS::HTMLElement::ButtonBlur) {
+        button.blur();
+        return Undefined();
+      }
+      else if (id == KJS::HTMLElement::ButtonFocus) {
+        button.focus();
         return Undefined();
       }
     }
