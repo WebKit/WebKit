@@ -73,6 +73,7 @@ ObjectImp::ObjectImp()
   _proto = NullImp::staticNull;
   _internalValue = 0L;
   _scope = ListImp::empty();
+  _scope->setGcAllowed();
   _prop = new PropertyMap();
 }
 

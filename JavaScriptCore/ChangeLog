@@ -1,3 +1,10 @@
+2002-10-31  Maciej Stachowiak  <mjs@apple.com>
+
+	- fixed 3082660 - REGRESSION: one ListImp leaks opening/closing nearly empty web page
+	
+        * kjs/object.cpp: Set gc allowed on freshly created ListImp, since
+	there is no List wrapper for it.
+
 2002-10-31  Darin Adler  <darin@apple.com>
 
         * kjs/grammar.y: Fix the APPLE_CHANGES thing here too.
