@@ -45,7 +45,7 @@
     do {
         NSString *string = [self performSelector:selector];
         if ([string length] > 0) {
-            [URLs addObject:[[self ownerDocument] URLWithRelativeString:string]];
+            [URLs addObject:[[self ownerDocument] URLWithAttributeString:string]];
         }
     } while ((selector = va_arg(args, SEL)) != nil);
     
@@ -68,7 +68,7 @@
     return [[self _bridge] webFrame];
 }
 
-- (NSURL *)URLWithRelativeString:(NSString *)string
+- (NSURL *)URLWithAttributeString:(NSString *)string
 {
     return [[self _bridge] URLWithRelativeString:string];
 }
@@ -183,18 +183,28 @@
 
 @implementation DOMHTMLTableElement (WebDOMHTMLTableElementOperations)
 
+- (NSString *)_web_background
+{
+    return [self getAttribute:@"background"];
+}
+
 - (NSArray *)_subresourceURLs
 {
-    return [self _URLsFromSelectors:@selector(background), nil];
+    return [self _URLsFromSelectors:@selector(_web_background), nil];
 }
 
 @end
 
 @implementation DOMHTMLTableCellElement (WebDOMHTMLTableCellElementOperations)
 
+- (NSString *)_web_background
+{
+    return [self getAttribute:@"background"];
+}
+
 - (NSArray *)_subresourceURLs
 {
-    return [self _URLsFromSelectors:@selector(background), nil];
+    return [self _URLsFromSelectors:@selector(_web_background), nil];
 }
 
 @end

@@ -18,12 +18,23 @@
     @result A WebArchive representing the node and the children of the node.
 */
 - (WebArchive *)webArchive;
-- (NSString *)markupString;
+
 @end
 
 @interface DOMDocument (WebDOMDocumentOperations)
+
+/*!
+    @method webFrame
+    @abstract Returns the frame of the DOM document.
+*/
 - (WebFrame *)webFrame;
-- (NSURL *)URLWithRelativeString:(NSString *)string;
+
+/*!
+    @method URLWithAttributeString
+    @abstract Constructs a URL given an attribute string.
+*/
+- (NSURL *)URLWithAttributeString:(NSString *)string;
+
 @end
 
 @interface DOMRange (WebDOMRangeOperations)
@@ -33,6 +44,11 @@
     @result A WebArchive representing the range.
 */
 - (WebArchive *)webArchive;
+
+/*!
+    @method markupString
+    @result A markup string representing the range.
+*/
 - (NSString *)markupString;
 
 @end

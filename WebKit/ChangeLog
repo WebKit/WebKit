@@ -1,3 +1,19 @@
+2004-05-05  Chris Blumenberg  <cblu@apple.com>
+
+	- DOM Extensions API tweaks
+
+        Reviewed by kocienda.
+
+        * DOM.subproj/DOMExtensions.h: copied from WebCore
+        * DOM.subproj/WebDOMOperations.h: added header doc comments
+        * DOM.subproj/WebDOMOperations.m:
+        (-[DOMNode _URLsFromSelectors:]): use renamed URLWithAttributeString
+        (-[DOMDocument URLWithAttributeString:]): renamed
+        (-[DOMHTMLTableElement _web_background]): new private method
+        (-[DOMHTMLTableElement _subresourceURLs]): use new private method
+        (-[DOMHTMLTableCellElement _web_background]): new private method
+        (-[DOMHTMLTableCellElement _subresourceURLs]): use new private method
+
 2004-05-04  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Hyatt

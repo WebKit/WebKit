@@ -1,5 +1,6 @@
 .objc_class_name_DOMImplementation
 .objc_class_name_DOMNode
+.objc_class_name_DOMNodeFilter
 .objc_class_name_DOMNodeList
 .objc_class_name_DOMNamedNodeMap
 .objc_class_name_DOMCharacterData

@@ -639,6 +639,11 @@ DOMString HTMLElementImpl::innerHTML() const
     return toHTML();
 }
 
+DOMString HTMLElementImpl::outerHTML() const
+{
+    return recursive_toHTML(true);
+}
+
 DOMString HTMLElementImpl::innerText() const
 {
     DOMString text;
@@ -762,6 +767,19 @@ bool HTMLElementImpl::setInnerHTML( const DOMString &html )
     delete fragment;
     return !ec;
 }
+
+bool HTMLElementImpl::setOuterHTML( const DOMString &html )
+{
+    DocumentFragmentImpl *fragment = createContextualFragment( html );
+    if (fragment == NULL) {
+	return false;
+    }
+    
+    int ec = 0;
+    parentNode()->replaceChild(fragment, this, ec);
+    return !ec;
+}
+
 
 bool HTMLElementImpl::setInnerText( const DOMString &text )
 {

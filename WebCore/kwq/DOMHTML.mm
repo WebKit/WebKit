@@ -362,6 +362,16 @@ using DOM::NodeImpl;
     [self _HTMLElementImpl]->setInnerHTML(innerHTML);
 }
 
+- (NSString *)outerHTML
+{
+    return [self _HTMLElementImpl]->outerHTML();
+}
+
+- (void)setOuterHTML:(NSString *)outerHTML
+{
+    [self _HTMLElementImpl]->setOuterHTML(outerHTML);
+}
+
 - (NSString *)innerText
 {
     return [self _HTMLElementImpl]->innerText();
@@ -3939,30 +3949,4 @@ using DOM::NodeImpl;
     [self _embedElementImpl]->setAttribute(ATTR_WIDTH, string);
 }
 
-@end
-
-@implementation DOMHTMLTableElement (DOMHTMLTableElementExtensions)
-
-- (NSString *)background
-{
-    return [self _tableElementImpl]->getAttribute(ATTR_BACKGROUND);
-}
-
-- (void)setBackground:(NSString *)background
-{
-    [self _tableElementImpl]->setAttribute(ATTR_BACKGROUND, background);
-}
-@end
-
-@implementation DOMHTMLTableCellElement (DOMHTMLTableCellElementExtensions)
-
-- (NSString *)background
-{
-    return [self _tableCellElementImpl]->getAttribute(ATTR_BACKGROUND);
-}
-
-- (void)setBackground:(NSString *)background
-{
-    [self _tableCellElementImpl]->setAttribute(ATTR_BACKGROUND, background);
-}
 @end
