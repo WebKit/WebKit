@@ -16,6 +16,7 @@
 #import <WebKit/WebImageView.h>
 #import <WebKit/WebKitErrors.h>
 #import <WebKit/WebKitStatisticsPrivate.h>
+#import <WebKit/WebNSPasteboardExtras.h>
 #import <WebKit/WebNSViewExtras.h>
 #import <WebKit/WebTextRendererFactory.h>
 #import <WebKit/WebTextView.h>
@@ -72,7 +73,7 @@ enum {
     [scrollView setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
     [self addSubview: scrollView];
     
-    [self registerForDraggedTypes:[self _web_acceptableDragTypes]];
+    [self registerForDraggedTypes:[NSPasteboard _web_dragTypesForURL]];
     
     ++WebViewCount;
     
@@ -146,7 +147,7 @@ enum {
 
 - (NSDragOperation)draggingEntered:(id <NSDraggingInfo>)sender
 {
-    if([sender draggingSource] != [self documentView] && [NSView _web_bestURLFromPasteboard:[sender draggingPasteboard]]) {
+    if([sender draggingSource] != [self documentView] && [[sender draggingPasteboard] _web_bestURL]) {
         return NSDragOperationCopy;
     } else {
         return NSDragOperationNone;
@@ -165,7 +166,7 @@ enum {
 
 - (void)concludeDragOperation:(id <NSDraggingInfo>)sender
 {
-    NSURL *URL = [NSView _web_bestURLFromPasteboard:[sender draggingPasteboard]];
+    NSURL *URL = [[sender draggingPasteboard] _web_bestURL];
 
     if(URL){
         WebDataSource *dataSource = [[WebDataSource alloc] initWithURL:URL];

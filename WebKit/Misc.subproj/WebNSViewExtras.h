@@ -17,16 +17,6 @@
 
 - (BOOL)_web_dragShouldBeginFromMouseDown: (NSEvent *)mouseDownEvent withExpiration:(NSDate *)expiration;
 
-// FIXME: The following can be class methods
-
-// Returns an array with NSURLPboardType, NSStringPboardType and NSFilenamesPboardType pasteboard types
-- (NSArray *)_web_acceptableDragTypes;
-
-// Finds the best URL from the NSURLPboardType, NSStringPboardType and NSFilenamesPboardType pasteboard types
-// and gives priority to http and https URLs
-// FIXME: This method is in an awkward place. It has nothing to do with NSView.
-+ (NSURL *)_web_bestURLFromPasteboard:(NSPasteboard *)pasteboard;
-
 // Convenience method. Returns NSDragOperationCopy if _web_bestURLFromPasteboard doesn't return nil.
 // Returns NSDragOperationNone otherwise.
 - (NSDragOperation)_web_dragOperationForDraggingInfo:(id <NSDraggingInfo>)sender;

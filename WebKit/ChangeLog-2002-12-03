@@ -1,3 +1,27 @@
+2002-09-19  John Sullivan  <sullivan@apple.com>
+
+	- cleaned up some SPI for handling URLs on pasteboard
+
+        * Misc.subproj/WebNSPasteboardExtras.h: Added.
+        * Misc.subproj/WebNSPasteboardExtras.m: Added.
+        (+[NSPasteboard _web_dragTypesForURL]): Moved this here; was
+	-[NSView _web_acceptableDragTypes]
+        (-[NSPasteboard _web_bestURL]): Moved this here; was
+	+[NSView _web_bestURLFromPasteboard:]
+
+        * WebView.subproj/WebView.m:
+        (-[WebView initWithFrame:]),
+        (-[WebView draggingEntered:]),
+        (-[WebView concludeDragOperation:]):
+	Updated for SPI change; also removed methods now in NSPasteboard.
+
+        * Misc.subproj/WebNSViewExtras.h:
+        * Misc.subproj/WebNSViewExtras.m:
+        (-[NSView _web_dragOperationForDraggingInfo:]):
+	Updated for SPI change.
+
+        * WebKit.pbproj/project.pbxproj: Updated for new files.
+
 === Alexander-24 ===
 
 2002-09-18  Darin Adler  <darin@apple.com>

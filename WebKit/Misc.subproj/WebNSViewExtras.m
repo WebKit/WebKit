@@ -3,8 +3,9 @@
         Copyright (c) 2002, Apple, Inc. All rights reserved.
 */
 
-#import <WebKit/WebController.h>
 #import <WebKit/WebNSViewExtras.h>
+
+#import <WebKit/WebNSPasteboardExtras.h>
 #import <WebKit/WebView.h>
 
 #import <WebFoundation/WebNSStringExtras.h>
@@ -105,55 +106,9 @@
     return dragIt;
 }
 
-- (NSArray *)_web_acceptableDragTypes
-{
-    return [NSArray arrayWithObjects:NSURLPboardType, NSStringPboardType, NSFilenamesPboardType, nil];
-}
-
-+ (NSURL *)_web_bestURLFromPasteboard:(NSPasteboard *)pasteboard
-{
-    NSArray *types = [pasteboard types];
-
-    if ([types containsObject:NSURLPboardType]) {
-        NSURL *URLFromPasteboard;
-        NSString *scheme;
-
-        URLFromPasteboard = [NSURL URLFromPasteboard:pasteboard];
-        scheme = [URLFromPasteboard scheme];
-        if ([scheme isEqualToString:@"http"] || [scheme isEqualToString:@"https"]) {
-            return URLFromPasteboard;
-        }
-    }
-
-    if ([types containsObject:NSStringPboardType]) {
-        NSString *URLString;
-
-        URLString = [[pasteboard stringForType:NSStringPboardType] _web_stringByTrimmingWhitespace];
-        if ([URLString _web_looksLikeAbsoluteURL]) {
-            return [NSURL _web_URLWithString:URLString];
-        }        
-    }
-
-    if ([types containsObject:NSFilenamesPboardType]) {
-        NSArray *files;
-
-        files = [pasteboard propertyListForType:NSFilenamesPboardType];
-        if ([files count] == 1) {
-            NSString *file;
-
-            file = [files objectAtIndex:0];
-            if ([WebController canShowFile:file]) {
-                return [NSURL fileURLWithPath:file];
-            }
-        }
-    }
-    
-    return nil;
-}
-
 - (NSDragOperation)_web_dragOperationForDraggingInfo:(id <NSDraggingInfo>)sender
 {
-    if([sender draggingSource] != self && [NSView _web_bestURLFromPasteboard:[sender draggingPasteboard]]) {
+    if([sender draggingSource] != self && [[sender draggingPasteboard] _web_bestURL]) {
         return NSDragOperationCopy;
     } else {
         return NSDragOperationNone;
