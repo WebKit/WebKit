@@ -222,8 +222,8 @@ public:
     long toLong(bool *ok=NULL, int base=10) const;
     float toFloat(bool *ok=NULL) const;
 
-    QString arg(const QString &, int padding=0) const;
-    QString arg(int, int padding=0 /* NOTE: base NOT used */ ) const;
+    QString arg(const QString &, int width=0) const;
+    QString arg(int, int width=0 /* NOTE: base NOT used */ ) const;
 
     QString left(uint) const;
     QString right(uint) const;

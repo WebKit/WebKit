@@ -689,7 +689,7 @@ float QString::toFloat(bool *ok) const
     return n;
 }
 
-QString QString::arg(const QString &replacement, int padding) const
+QString QString::arg(const QString &replacement, int width) const
 {
     QString qs;
     if (s && CFStringGetLength(s)) {
@@ -717,31 +717,35 @@ QString QString::arg(const QString &replacement, int padding) const
                 }
             }
         }
-        CFIndex rlen;
+        CFIndex mlen;
         if (found) {
-            rlen = 2;
+            mlen = 2;
         } else {
             // append space and then replacement text at end of string
             CFStringAppend(qs.s, CFSTR(" "));
             pos = len + 1;
-            rlen = 0;
+            mlen = 0;
         }
         if (replacement.s) {
-            CFStringReplace(qs.s, CFRangeMake(pos, rlen), replacement.s);
-            if (padding) {
-                CFMutableStringRef tmp =
-                    CFStringCreateMutable(kCFAllocatorDefault, 0);
-                if (tmp) {
-                    CFIndex plen;
-                    if (padding < 0) {
-                        plen = -padding;
-                        pos += CFStringGetLength(replacement.s);
-                    } else {
-                        plen = padding;
+            CFStringReplace(qs.s, CFRangeMake(pos, mlen), replacement.s);
+            if (width) {
+                CFIndex rlen = CFStringGetLength(replacement.s);
+                CFIndex padding;
+                if (width < 0) {
+                    padding = -width;
+                    pos += rlen;
+                } else {
+                    padding = width;
+                }
+                padding -= rlen;
+                if (padding > 0) {
+                    CFMutableStringRef tmp =
+                        CFStringCreateMutable(kCFAllocatorDefault, 0);
+                    if (tmp) {
+                        CFStringPad(tmp, CFSTR(" "), padding, 0);
+                        CFStringInsert(qs.s, pos, tmp);
+                        CFRelease(tmp);
                     }
-                    CFStringPad(tmp, CFSTR(" "), plen, 0);
-                    CFStringInsert(qs.s, pos, tmp);
-                    CFRelease(tmp);
                 }
             }
         }
@@ -749,9 +753,9 @@ QString QString::arg(const QString &replacement, int padding) const
     return qs;
 }
 
-QString QString::arg(int replacement, int padding) const
+QString QString::arg(int replacement, int width) const
 {
-    return arg(number(replacement), padding);
+    return arg(number(replacement), width);
 }
 
 QString QString::left(uint width) const
