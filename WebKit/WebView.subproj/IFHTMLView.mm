@@ -484,7 +484,9 @@
     if ([thisWindow isMainWindow] &&
         [[[notification userInfo] objectForKey: @"NSEvent"] window] == thisWindow &&
         [[thisWindow contentView] hitTest:p] == self) {
-        QMouseEvent kEvent(QEvent::MouseMove, QPoint((int)p.x, (int)p.y), 0, 0);
+	int state = 0;
+	[self _addModifiers:[event modifierFlags] toState:&state];
+        QMouseEvent kEvent(QEvent::MouseMove, QPoint((int)p.x, (int)p.y), 0, state);
         KHTMLView *widget = _private->widget;
         if (widget) {
             widget->viewportMouseMoveEvent(&kEvent);

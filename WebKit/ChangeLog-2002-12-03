@@ -1,3 +1,9 @@
+2002-07-04  Maciej Stachowiak  <mjs@apple.com>
+
+        * WebView.subproj/IFHTMLView.mm:
+        (-[IFHTMLView mouseMovedNotification:]): Pass the modifier flags
+	along for mouse move events.
+
 2002-07-04  John Sullivan  <sullivan@apple.com>
 
         * WebView.subproj/IFDynamicScrollBarsView.h:
