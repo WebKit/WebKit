@@ -1,5 +1,18 @@
 2003-04-02  David Hyatt  <hyatt@apple.com>
 
+	Fix for 3212011.  Avoid applying a fixup to the minwidth
+	of overflow:hidden table cells, since we don't really have
+	an accurate width to compare against.
+
+	I filed followup bug 3216709 to deal with the fact that this
+	fixup has been disabled.
+	
+        Reviewed by john
+
+        * khtml/rendering/render_block.cpp:
+
+2003-04-02  David Hyatt  <hyatt@apple.com>
+
 	Do not assume all columns have a minwidth/maxwidth of 1px.
 	Instead give them a min/maxwidth of 0px, and only inflate to
 	1px if a cell originates in the column.
