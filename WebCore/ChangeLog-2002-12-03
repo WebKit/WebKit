@@ -1,3 +1,8 @@
+2002-10-21  Darin Adler  <darin@apple.com>
+
+        * khtml/khtmlview.cpp: (KHTMLView::clear): Default to fast scrolling.
+	I'm pretty sure this was just backwards here.
+
 2002-10-21  David Hyatt  <hyatt@apple.com>
 
 	DLs are supposed to have margins.
