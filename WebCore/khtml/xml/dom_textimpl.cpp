@@ -363,7 +363,7 @@ void TextImpl::attach()
     assert(parentNode() && parentNode()->isElementNode());
 
     ElementImpl* element = static_cast<ElementImpl*>(parentNode());
-    if (!m_render && element->renderer()) {
+    if (!m_render && element->renderer() && !element->renderer()->isTextArea()) {
         RenderObject* par = element->renderer();
         khtml::RenderStyle* _style = par->style();
         bool onlyWS = containsOnlyWhitespace();

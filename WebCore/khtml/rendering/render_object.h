@@ -153,6 +153,7 @@ public:
     virtual bool isWidget() const { return false; }
     virtual bool isBody() const { return false; }
     virtual bool isFormElement() const { return false; }
+    virtual bool isTextArea() const { return false; }
     virtual bool isFrameSet() const { return false; }
     virtual bool isApplet() const { return false; }
 

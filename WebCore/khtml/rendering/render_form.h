@@ -398,6 +398,8 @@ public:
     virtual void close ( );
     virtual void updateFromElement();
 
+    virtual bool isTextArea() const { return true; }
+    
     // don't even think about making this method virtual!
     DOM::HTMLTextAreaElementImpl* element() const
     { return static_cast<DOM::HTMLTextAreaElementImpl*>(RenderObject::element()); }
