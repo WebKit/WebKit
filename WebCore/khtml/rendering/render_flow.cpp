@@ -57,6 +57,7 @@ RenderFlow::RenderFlow(DOM::NodeImpl* node)
     
     m_maxTopPosMargin = m_maxTopNegMargin = m_maxBottomPosMargin = m_maxBottomNegMargin = 0;
     m_topMarginQuirk = m_bottomMarginQuirk = false;
+    m_overflowHeight = 0;
 }
 
 void RenderFlow::setStyle(RenderStyle *_style)
@@ -256,6 +257,7 @@ void RenderFlow::layout()
     clearFloats();
 
     m_height = 0;
+    m_overflowHeight = 0;
     m_clearStatus = CNONE;
 
     // We use four values, maxTopPos, maxPosNeg, maxBottomPos, and maxBottomNeg, to track
@@ -303,14 +305,34 @@ void RenderFlow::layout()
 
     int oldHeight = m_height;
     calcHeight();
-    if (oldHeight != m_height)
+    if (oldHeight != m_height) {
         relayoutChildren = true;
-
-    if ( isTableCell() && lastChild() && lastChild()->hasOverhangingFloats() ) {
-        m_height = lastChild()->yPos() + static_cast<RenderFlow*>(lastChild())->floatBottom();
-        m_height += borderBottom() + paddingBottom();
+        
+        // If the block got expanded in size, then increase our overflowheight to match.
+        if (m_overflowHeight > m_height)
+            m_overflowHeight -= (borderBottom()+paddingBottom());
+        if (m_overflowHeight < m_height)
+            m_overflowHeight = m_height;
     }
-    if( hasOverhangingFloats() && (isFloating() || isTableCell()) ) {
+    
+    // overflow:hidden will just clip, so we don't have overflow.
+    if (style()->overflow()==OHIDDEN)
+        m_overflowHeight = m_height;
+    
+    if (isTableCell()) {
+        // Table cells need to grow to accommodate both overhanging floats and
+        // blocks that have overflowed content.
+        // Check for an overhanging float first.
+        if (lastChild() && lastChild()->hasOverhangingFloats() ) {
+            m_height = lastChild()->yPos() + static_cast<RenderFlow*>(lastChild())->floatBottom();
+            m_height += borderBottom() + paddingBottom();
+        }
+        
+        if (m_overflowHeight > m_height)
+            m_height = m_overflowHeight + borderBottom() + paddingBottom();
+    }
+    
+    if( hasOverhangingFloats() && (isFloating() || isTableCell())) {
         m_height = floatBottom();
         m_height += borderBottom() + paddingBottom();
     }
@@ -381,6 +403,7 @@ void RenderFlow::layoutBlockChildren( bool relayoutChildren )
     }
 
     int minHeight = m_height + toAdd;
+    m_overflowHeight = m_height;
     
     if( style()->direction() == RTL ) {
         xPos = marginLeft() + m_width - paddingRight() - borderRight();
@@ -652,7 +675,12 @@ void RenderFlow::layoutBlockChildren( bool relayoutChildren )
         child->setPos(chPos, child->yPos());
 
         m_height += child->height();
-
+        if (m_overflowHeight < m_height) {
+            int overflowDelta = child->overflowHeight() - child->height();
+            if (m_height + overflowDelta > m_overflowHeight)
+                m_overflowHeight = m_height + overflowDelta;
+        }
+        
         if (child->isFlow())
             prevFlow = static_cast<RenderFlow*>(child);
 
@@ -680,14 +708,18 @@ void RenderFlow::layoutBlockChildren( bool relayoutChildren )
             && (strictMode || !quirkContainer || !bottomChildQuirk)
         ))
         m_height += prevPosMargin - prevNegMargin;
-        
-    m_height += toAdd;
     
+    m_height += toAdd;
+     
     // Negative margins can cause our height to shrink below our minimal height (border/padding).
     // If this happens, ensure that the computed height is increased to the minimal height.
     if (m_height < minHeight)
         m_height = minHeight;
     
+    // Always make sure our overflowheight is at least our height.
+    if (m_overflowHeight < m_height)
+        m_overflowHeight = m_height;
+   
     if (canCollapseWithChildren && !topMarginContributor) {
         // Update our max pos/neg bottom margins, since we collapsed our bottom margins
         // with our children.

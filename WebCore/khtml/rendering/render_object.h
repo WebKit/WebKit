@@ -372,6 +372,11 @@ public:
     virtual short width() const { return 0; }
     virtual int height() const { return 0; }
 
+    // The height of a block when you include overflow spillage out of the bottom
+    // of the block (e.g., a <div style="height:25px"> that has a 100px tall image inside
+    // it would have an overflow height of borderTop() + paddingTop() + 100px.
+    virtual int overflowHeight() const { return height(); }
+    
     // IE extensions. Used to calculate offsetWidth/Height.  Overridden by inlines (render_flow) 
     // to return the remaining width on a given line (and the height of a single line). -dwh
     virtual short offsetWidth() const { return width(); }

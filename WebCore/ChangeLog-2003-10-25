@@ -1,3 +1,17 @@
+2002-11-19  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3049663.  Table cells don't grow to accommodate block
+	overflow.
+	
+        * khtml/rendering/bidi.cpp:
+        (RenderFlow::layoutInlineChildren):
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::RenderFlow):
+        (RenderFlow::layout):
+        (RenderFlow::layoutBlockChildren):
+        * khtml/rendering/render_flow.h:
+        * khtml/rendering/render_object.h:
+
 2002-11-19  Darin Adler  <darin@apple.com>
 
 	- next step towards atomic identifiers; Identifier is no longer derived from UString
