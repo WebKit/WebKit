@@ -390,10 +390,27 @@ void TextIterator::exitNode()
         case ID_H4:
         case ID_H5:
         case ID_H6:
-        case ID_P:
+        case ID_P: {
             endLine = true;
-            addNewline = true;
+
+            // FIXME: Some day we could do this for other tags.
+            // However, doing it just for the tags above makes it more likely
+            // we'll end up getting the right result without margin collapsing.
+            // For example: <div><p>text</p></div> will work right even if both
+            // the <div> and the <p> have bottom margins.
+            RenderObject *renderer = m_node->renderer();
+            if (renderer) {
+                RenderStyle *style = renderer->style();
+                if (style) {
+                    int bottomMargin = renderer->collapsedMarginBottom();
+                    int fontSize = style->htmlFont().getFontDef().computedPixelSize();
+                    if (bottomMargin * 2 >= fontSize) {
+                        addNewline = true;
+                    }
+                }
+            }
             break;
+        }
     }
 
     if (endLine && m_lastCharacter != '\n' && m_lastTextNode) {

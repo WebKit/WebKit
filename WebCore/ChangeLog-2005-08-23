@@ -1,3 +1,13 @@
+2004-12-15  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+        
+        - fixed problem where plain-text would put a blank line between each <p> even when they have no margins
+
+        * khtml/editing/visible_text.cpp: (khtml::TextIterator::exitNode): Add more checks and only set the
+        "add one more newline" flag if the margin is sufficient. A more complete fix would ignore the node
+        type altogether and use the render tree instead.
+
 2004-12-14  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Ken.
