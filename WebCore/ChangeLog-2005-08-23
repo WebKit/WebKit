@@ -1,3 +1,14 @@
+2002-12-30  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3129016, make sure that zero-height tables and lists
+	will be skipped in a search for floats that occur before
+	them.  Makes usatoday work.
+	
+        Reviewed by gramps
+
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::clearFloats):
+
 2002-12-30  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

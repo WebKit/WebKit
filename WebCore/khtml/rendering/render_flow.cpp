@@ -1257,7 +1257,9 @@ RenderFlow::clearFloats()
     while (prev) {
 	if (!prev->isFlow() || prev->isFloating() ||
 	    (prev->style()->flowAroundFloats() &&
-	     (static_cast<RenderFlow *>(prev)->floatBottom()+prev->yPos() < m_y ))) {
+        // A <table> or <ul> can have a height of 0, so its ypos may be the same
+        // as m_y.  That's why we have a <= and not a < here. -dwh
+	     (static_cast<RenderFlow *>(prev)->floatBottom()+prev->yPos() <= m_y ))) {
 	    if ( prev->isFloating() && parent()->isFlow() ) {
 		parentHasFloats = true;
 	    }
