@@ -1,3 +1,13 @@
+2003-09-20  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave.
+
+        - fixed 3419380 -- JavaScript Date.getTimezoneOffset is off by one hour (during daylight savings)
+
+        * kjs/date_object.cpp: (DateProtoFuncImp::call): The daylight savings correction
+        in here was incorrect. Perhaps I should have corrected it for the non-BSD case too,
+        but I'm not sure the issue is the same.
+
 2003-09-17  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

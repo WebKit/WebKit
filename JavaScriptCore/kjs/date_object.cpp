@@ -390,12 +390,14 @@ Value DateProtoFuncImp::call(ExecState *exec, Object &thisObj, const List &args)
     break;
   case GetTimezoneOffset:
 #if defined BSD || defined(__APPLE__)
-    result = Number(-( t->tm_gmtoff / 60 ) + ( t->tm_isdst ? 60 : 0 ));
+    result = Number(-t->tm_gmtoff / 60);
 #else
 #  if defined(__BORLANDC__)
 #error please add daylight savings offset here!
+    // FIXME: Using the daylight value was wrong for BSD, maybe wrong here too.
     result = Number(_timezone / 60 - (_daylight ? 60 : 0));
 #  else
+    // FIXME: Using the daylight value was wrong for BSD, maybe wrong here too.
     result = Number(( timezone / 60 - ( daylight ? 60 : 0 )));
 #  endif
 #endif
