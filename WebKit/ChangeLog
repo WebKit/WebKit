@@ -1,3 +1,9 @@
+2001-12-21  John Sullivan  <sullivan@apple.com>
+
+	* .cvsignore:
+	* WebKit.pbproj/.cvsignore:
+	Added files that were showing up on my machine to .cvsignores.
+
 2001-12-18  Kenneth Kocienda  <kocienda@apple.com>
 
         Deleted one little word
