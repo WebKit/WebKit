@@ -1,3 +1,20 @@
+2003-08-07  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Maciej
+
+	There was a bug in this code that caused a relative URL that was
+	being resolved against an empty base URL to process incorrectly.
+	The bug is that the resolution was being done twice. The first
+	time was correct handling of this case, but then the code did
+	not return at this point, and instead proceeded on through the
+	code path that is used to handle resolution of a relative URL
+	against a non-empty base. This double processing is clearly
+	wrong, and we found this bug as the result of the recent addition 
+	of an assertion in some related code.
+
+        * kwq/KWQKURL.mm:
+        (KURL::KURL)
+
 2003-08-06  Darin Adler  <darin@apple.com>
 
         Reviewed by Richard.

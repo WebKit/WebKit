@@ -301,6 +301,10 @@ KURL::KURL(const KURL &base, const QString &relative, const QTextCodec *codec)
 	if (!base.m_isValid) {
 	    QString newURL = base.urlString + str;
 	    parse(newURL.ascii(), &newURL);
+            if (strBuffer) {
+                free(strBuffer);
+            }
+            return;
 	}
 
 	switch(str[0]) {
