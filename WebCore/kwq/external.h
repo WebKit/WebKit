@@ -98,6 +98,7 @@ namespace khtml {
 - (void)_setRenderFramePart: (void *)p;
 - (void *)_renderFramePart;
 - (void)startLoading;
+- (IFWebFrame *)frameNamed: (NSString *)name;
 @end
 
 typedef enum {

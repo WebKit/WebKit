@@ -1,3 +1,12 @@
+2002-06-05  Richard Williamson  <rjw@apple.com>
+
+    Cleaned up call to frameNamed:.  Now use frame relative naming.
+    Fixed various frame related bugs.
+    
+	* kwq/KWQKHTMLPart.mm:
+	(KWQKHTMLPartImpl::urlSelected):
+	* kwq/external.h:
+
 2002-06-04  Richard Williamson  <rjw@apple.com>
 
 	* kwq/KWQKHTMLPart.mm:

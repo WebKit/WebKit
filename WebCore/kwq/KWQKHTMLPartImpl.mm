@@ -400,7 +400,7 @@ void KWQKHTMLPartImpl::urlSelected( const QString &url, int button, int state, c
 {
     IFWebDataSource *oldDataSource, *newDataSource;
     KURL clickedURL(part->completeURL( url));
-    IFWebFrame *frame;
+    IFWebFrame *frame, *currentFrame;
     KURL refLess(clickedURL);
 	
     if ( url.find( QString::fromLatin1( "javascript:" ), 0, false ) == 0 )
@@ -423,18 +423,25 @@ void KWQKHTMLPartImpl::urlSelected( const QString &url, int button, int state, c
         return;
     }
     
+    oldDataSource = getDataSource();
+    currentFrame = [oldDataSource webFrame];
     if (_target.isEmpty()){
-        oldDataSource = getDataSource();
-        frame = [oldDataSource webFrame];
-        
         // If we're the only frame in a frameset then pop
         // the frame.
         if ([[[oldDataSource parent] children] count] == 1){
             frame = [[oldDataSource parent] webFrame];
         }
+        else
+            frame = currentFrame;
     }
     else {
-        frame = [[getDataSource() controller] frameNamed: QSTRING_TO_NSSTRING(_target)];
+        frame = [currentFrame frameNamed: QSTRING_TO_NSSTRING(_target)];
+        if (frame == nil){
+            // FIXME:  What is the correct behavior here?
+            NSLog (@"ERROR:  unable to find frame named %@\n",
+                        QSTRING_TO_NSSTRING(_target));
+            return;
+        }
         oldDataSource = [frame dataSource];
     }
     
