@@ -208,8 +208,6 @@ void HTMLBodyElementImpl::attach()
 HTMLFrameElementImpl::HTMLFrameElementImpl(DocumentPtr *doc)
     : HTMLElementImpl(doc)
 {
-    parentWidget = 0;
-
     frameBorder = true;
     frameBorderSet = false;
     marginWidth = -1;
@@ -231,7 +229,16 @@ NodeImpl::Id HTMLFrameElementImpl::id() const
 void HTMLFrameElementImpl::updateForNewURL()
 {
     if (attached()) {
-	// ignore display: none for this element!
+        // Handle the common case where we decided not to make a frame the first time.
+        // Detach and the let attach() decide again whether to make the frame for this URL.
+        if (!m_render) {
+            detach();
+            attach();
+            return;
+        }
+
+        // The following is repeated logic from attach(). We should share the code instead.
+        
 	KHTMLView* w = getDocument()->view();
 	// avoid endless recursion
 	KURL u;
@@ -242,6 +249,8 @@ void HTMLFrameElementImpl::updateForNewURL()
 		selfreference = true;
 		break;
 	    }
+        if (selfreference)
+            return;
 
 	// load the frame contents
 	if ( !url.isEmpty() && !(w->part()->onlyLocalReferences() && u.protocol() != "file")) {
@@ -258,7 +267,7 @@ void HTMLFrameElementImpl::parseAttribute(AttributeImpl *attr)
     {
     case ATTR_SRC:
         url = khtml::parseURL(attr->val());
-	updateForNewURL();
+        updateForNewURL();
         break;
     case ATTR_ID:
     case ATTR_NAME:
@@ -353,12 +362,6 @@ void HTMLFrameElementImpl::attach()
     // load the frame contents
     if ( !url.isEmpty() && !(w->part()->onlyLocalReferences() && u.protocol() != "file"))
         w->part()->requestFrame( static_cast<RenderFrame*>(m_render), url.string(), name.string() );
-}
-
-void HTMLFrameElementImpl::detach()
-{
-    HTMLElementImpl::detach();
-    parentWidget = 0;
 }
 
 void HTMLFrameElementImpl::setLocation( const DOMString& str )
@@ -644,11 +647,6 @@ void HTMLIFrameElementImpl::attach()
             selfreference = true;
             break;
         }
-
-    KHTMLPart *part = w->part();
-    int depth = 0;
-    while ((part = part->parentPart()))
-	depth++;
 
     RenderStyle* _style = getDocument()->styleSelector()->styleForElement(this);
     _style->ref();

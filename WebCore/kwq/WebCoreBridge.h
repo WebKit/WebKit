@@ -29,6 +29,7 @@
 
 class KWQKHTMLPart;
 class KHTMLView;
+class RenderArena;
 
 namespace khtml {
     class RenderPart;
@@ -42,6 +43,7 @@ typedef khtml::RenderPart KHTMLRenderPart;
 @class KWQKHTMLPart;
 @class KHTMLView;
 @class KHTMLRenderPart;
+@class RenderArena;
 
 #endif
 
@@ -85,6 +87,7 @@ enum FrameBorderStyle {
 {
     KWQKHTMLPart *_part;
     KHTMLRenderPart *_renderPart;
+    RenderArena *_renderPartArena;
 }
 
 - (void)setRenderPart:(KHTMLRenderPart *)renderPart;

@@ -1,5 +1,44 @@
 2002-12-20  Darin Adler  <darin@apple.com>
 
+        Reviewed by Richard and John.
+
+	- fixed 3133207 -- crash in HTMLFrameElementImpl updateForNewURL at home.real.com
+
+	This refines Maciej's fix for 3052113, 3075392, and 3125412.
+
+        * khtml/html/html_baseimpl.h: Remove detach() and parentWidget from HTMLFrameElementImpl.
+        * khtml/html/html_baseimpl.cpp:
+        (HTMLFrameElementImpl::HTMLFrameElementImpl): Take out initialization of unused parentWidget.
+        (HTMLFrameElementImpl::updateForNewURL): Add case for when we are attached by did not allocate
+	a render object. In that case we just detach so we can attach again. Also fix the self-reference
+	check which was in there but not working.
+        (HTMLFrameElementImpl::detach): Remove method since all it did was set unused parentWidget. 
+        (HTMLIFrameElementImpl::attach): Remove unused depth computation.
+
+	- fixed more leaks
+
+        * khtml/rendering/render_replaced.h: Made the deref method inherited from khtml::Shared
+	private by using private inheritance. Changed the name of arenaDeref to deref, but it still
+	takes an arena parameter. Now incorrect deref's are compile-time errors instead of potential leaks.
+        * khtml/rendering/render_replaced.cpp:
+        (RenderWidget::detach): Rename arenaDeref to deref.
+        (RenderWidget::resizeWidget): Ditto.
+        (RenderWidget::eventFilter): Ditto.
+        (RenderWidget::deref): Ditto.
+
+        * khtml/rendering/render_form.cpp: (RenderFormElement::slotClicked):
+	Pass the arena when deref'ing the RenderFormElement.
+        * kwq/WebCoreBridge.h: Add a field for the arena for the RenderPart.
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge dealloc]): Pass the arena when deref'ing the RenderPart.
+        (-[WebCoreBridge setRenderPart:]): Pass the arena when deref'ing the RenderPart. Store the arena
+	of the new part when storing the part pointer.
+
+        * khtml/xml/dom_docimpl.cpp: (DocumentImpl::~DocumentImpl): Assert that the render object is
+	not nil, in an attempt to catch a leak I observed yesterday.
+
+2002-12-20  Darin Adler  <darin@apple.com>
+
         Reviewed by Dave.
 
 	- fixed 3129129 -- leak of 820 RenderStyle objects each time we run cvs-base

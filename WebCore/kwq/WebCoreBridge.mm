@@ -105,7 +105,7 @@ static bool initializedObjectCacheSize = FALSE;
     [self removeFromFrame];
     
     if (_renderPart) {
-        _renderPart->deref();
+        _renderPart->deref(_renderPartArena);
     }
     _part->setBridge(nil);
     _part->deref();
@@ -120,11 +120,12 @@ static bool initializedObjectCacheSize = FALSE;
 
 - (void)setRenderPart:(KHTMLRenderPart *)newPart;
 {
-    newPart->ref();
+    RenderArena *arena = newPart->ref();
     if (_renderPart) {
-        _renderPart->deref();
+        _renderPart->deref(_renderPartArena);
     }
     _renderPart = newPart;
+    _renderPartArena = arena;
 }
 
 - (KHTMLRenderPart *)renderPart

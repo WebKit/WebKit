@@ -296,6 +296,8 @@ DocumentImpl::DocumentImpl(DOMImplementationImpl *_implementation, KHTMLView *v)
 
 DocumentImpl::~DocumentImpl()
 {
+    assert(!m_render);
+    
     KJS::ScriptInterpreter::forgetDOMObjectsForDocument(this);
 
     if (changedDocuments && m_docChanged)
