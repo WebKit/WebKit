@@ -2,7 +2,7 @@ layer at (0,0) size 800x600
   RenderCanvas at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x571
+    RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x165 [border: (2px solid #0000FF)]
         RenderBlock {DIV} at (14,14) size 756x56
           RenderText {TEXT} at (0,0) size 67x28
@@ -37,8 +37,6 @@ layer at (0,0) size 800x600
                     text run at (31,2) width 46: "cde"
             RenderText {TEXT} at (77,8) size 24x28
               text run at (77,8) width 24: "fg"
-          RenderText {TEXT} at (0,0) size 0x0
-        RenderBlock {H1} at (0,62) size 784x0
 selection is CARET:
 start:      position 3 of child 1 {TEXT} of child 1 {B} of child 1 {SPAN} of child 2 {FONT} of child 2 {SPAN} of child 1 {DIV} of root {DIV}
 upstream:   position 3 of child 1 {TEXT} of child 1 {B} of child 1 {SPAN} of child 2 {FONT} of child 2 {SPAN} of child 1 {DIV} of root {DIV}

@@ -1,5 +1,32 @@
 2005-03-13  Darin Adler  <darin@apple.com>
 
+        Reviewed by John and Ken.
+
+        - fixed <rdar://problem/4044347> REGRESSION (Mail): Control-K in particular message moves insertion point to previous line
+
+        Tweaked the deleting code, and added three new deleting layout tests to confirm the new code works.
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::DeleteSelectionCommand::handleSpecialCaseBRDelete): Removed special case with comment that said it was
+        for the case where a "selection contains only a BR right after a block ended". This code was being triggered in
+        more cases than just that one, and in all the cases I tested, the general delete code works fine.
+        (khtml::DeleteSelectionCommand::handleGeneralDelete): Changed the code that decides whether to delete an entire
+        block to understand the case where the end block is outside the start block, but contains the start block.
+        In that case, we want to delete the entire block. Not deleting the block was causing us to delete just the <br>,
+        and not the enclosing <div> in the case in the bug.
+
+        * layout-tests/editing/deleting/delete-line-015-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-line-015.html: Added.
+        * layout-tests/editing/deleting/delete-line-016-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-line-016.html: Added.
+        * layout-tests/editing/deleting/delete-line-017-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-line-017.html: Added.
+        * layout-tests/editing/style/smoosh-styles-002-expected.txt: Updated to improved results. With the code change, the deletion
+        now deletes more than it used to. The old results had an empty text node and <h1> element that were both 0-sized, and now
+        we delete both of those.
+
+2005-03-13  Darin Adler  <darin@apple.com>
+
         - fixed <rdar://problem/4049172> REGRESSION (403-405): Gmail: text box in "Invite a friend" section overlaps other sections
 
         Rolled out fix for <rdar://problem/3952698> Function buttons do not display properly with Telia Webmail
@@ -1219,7 +1246,6 @@
         * khtml/rendering/render_flow.cpp:
         (RenderFlow::paintLines):
 
-<<<<<<< ChangeLog
 2005-03-01  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/4030669> smart delete does not delete spaces from pasted content
