@@ -116,7 +116,7 @@ static void URLFileReaderInit(void)
             else {
                 // On success, create data object using mapped bytes.
                 mappedLength = statInfo.st_size;
-                data = [[NSData alloc] initWithBytesNoCopy:mappedBytes length:mappedLength freeWhenDone:YES];
+                data = [[NSData alloc] initWithBytesNoCopy:mappedBytes length:mappedLength freeWhenDone:NO];
                 // ok data creation failed but we know file exists
                 // be stubborn....try to read bytes again
                 if (!data) {
