@@ -179,6 +179,7 @@ KWQKHTMLPart::KWQKHTMLPart()
     , _sendingEventToSubview(false)
     , _mouseDownMayStartDrag(false)
     , _mouseDownMayStartSelect(false)
+    , _activationEventNumber(0)
     , _formValuesAboutToBeSubmitted(nil)
     , _formAboutToBeSubmitted(nil)
     , _windowWidget(NULL)
@@ -1715,6 +1716,7 @@ void KWQKHTMLPart::khtmlMousePressEvent(MousePressEvent *event)
     // If we got the event back, that must mean it wasn't prevented,
     // so it's allowed to start a drag or selection.
     _mouseDownMayStartSelect = true;
+    // Careful that the drag starting logic stays in sync with eventMayStartDrag()
     _mouseDownMayStartDrag = singleClick;
 
     if (!passWidgetMouseDownEventToWidget(event)) {
@@ -1910,7 +1912,9 @@ NSView *KWQKHTMLPart::mouseDownViewIfStillGood()
 #define LinkDragHysteresis              40.0
 #define ImageDragHysteresis              5.0
 #define TextDragHysteresis               3.0
-#define GeneralDragHysterisis            3.0
+#define GeneralDragHysteresis            3.0
+
+#define TextDragDelay                    0.15
 
 bool KWQKHTMLPart::dragHysteresisExceeded(float dragLocationX, float dragLocationY) const
 {
@@ -1919,7 +1923,7 @@ bool KWQKHTMLPart::dragHysteresisExceeded(float dragLocationX, float dragLocatio
     float deltaX = QABS(dragX - _mouseDownX);
     float deltaY = QABS(dragY - _mouseDownY);
 
-    float threshold = GeneralDragHysterisis;
+    float threshold = GeneralDragHysteresis;
     if (_dragSrcIsImage) {
         threshold = ImageDragHysteresis;
     } else if (_dragSrcIsLink) {
@@ -1937,6 +1941,32 @@ bool KWQKHTMLPart::dispatchDragSrcEvent(int eventId, const QPoint &loc) const
     return !noDefaultProc;
 }
 
+bool KWQKHTMLPart::eventMayStartDrag(NSEvent *event)
+{
+    // This is a pre-flight check of whether the event might lead to a drag being started.  Be careful
+    // that its logic needs to stay in sync with khtmlMouseMoveEvent() and the way we set
+    // _mouseDownMayStartDrag in khtmlMousePressEvent
+    
+    if ([event type] != NSLeftMouseDown || [event clickCount] != 1) {
+        return false;
+    }
+    
+    BOOL DHTMLFlag, UAFlag;
+    [_bridge allowDHTMLDrag:&DHTMLFlag UADrag:&UAFlag];
+    if (!DHTMLFlag && !UAFlag) {
+        return false;
+    }
+
+    NSPoint loc = [event locationInWindow];
+    int mouseDownX, mouseDownY;
+    d->m_view->viewportToContents((int)loc.x, (int)loc.y, mouseDownX, mouseDownY);
+    RenderObject::NodeInfo nodeInfo(true, false);
+    renderer()->layer()->nodeAtPoint(nodeInfo, mouseDownX, mouseDownY);
+    bool srcIsDHTML;
+    Node possibleSrc = nodeInfo.innerNode()->renderer()->draggableNode(DHTMLFlag, UAFlag, mouseDownX, mouseDownY, srcIsDHTML);
+    return !possibleSrc.isNull();
+}
+
 void KWQKHTMLPart::khtmlMouseMoveEvent(MouseMoveEvent *event)
 {
     KWQ_BLOCK_EXCEPTIONS;
@@ -1951,6 +1981,8 @@ void KWQKHTMLPart::khtmlMouseMoveEvent(MouseMoveEvent *event)
             return;
         }
 
+        // Careful that the drag starting logic stays in sync with eventMayStartDrag()
+    
 	if (_mouseDownMayStartDrag && _dragSrc.isNull()) {
             BOOL tempFlag1, tempFlag2;
             [_bridge allowDHTMLDrag:&tempFlag1 UADrag:&tempFlag2];
@@ -1965,7 +1997,7 @@ void KWQKHTMLPart::khtmlMouseMoveEvent(MouseMoveEvent *event)
             // try to find an element that wants to be dragged
             RenderObject::NodeInfo nodeInfo(true, false);
             renderer()->layer()->nodeAtPoint(nodeInfo, _mouseDownX, _mouseDownY);
-            _dragSrc = nodeInfo.innerNode()->renderer()->draggableNode(_dragSrcMayBeDHTML, _dragSrcMayBeUA, _dragSrcIsDHTML);
+            _dragSrc = nodeInfo.innerNode()->renderer()->draggableNode(_dragSrcMayBeDHTML, _dragSrcMayBeUA, _mouseDownX, _mouseDownY, _dragSrcIsDHTML);
             if (_dragSrc.isNull()) {
                 _mouseDownMayStartDrag = false;     // no element is draggable
             } else {
@@ -1978,6 +2010,16 @@ void KWQKHTMLPart::khtmlMouseMoveEvent(MouseMoveEvent *event)
 
                 _dragSrcInSelection = isPointInsideSelection(_mouseDownX, _mouseDownY);
             }                
+        }
+        
+        // For drags starting in the selection, the user must wait between the mousedown and mousedrag,
+        // or else we bail on the dragging stuff and allow selection to occur
+        if (_mouseDownMayStartDrag && _dragSrcInSelection && [_currentEvent timestamp] - _mouseDownTimestamp < TextDragDelay) {
+            _mouseDownMayStartDrag = false;
+            // ...but if this was the first click in the window, we don't even want to start selection
+            if (_activationEventNumber == [_currentEvent eventNumber]) {
+                _mouseDownMayStartSelect = false;
+            }
         }
 
         if (_mouseDownMayStartDrag) {
@@ -2173,7 +2215,14 @@ void KWQKHTMLPart::khtmlMouseReleaseEvent(MouseReleaseEvent *event)
 {
     NSView *view = mouseDownViewIfStillGood();
     if (!view) {
-        KHTMLPart::khtmlMouseReleaseEvent(event);
+        // If this was the first click in the window, we don't even want to clear the selection.
+        // This case occurs when the user clicks on a draggable element, since we have to process
+        // the mouse down and drag events to see if we might start a drag.  For other first clicks
+        // in a window, we just don't acceptFirstMouse, and the whole down-drag-up sequence gets
+        // ignored upstream of this layer.
+        if (_activationEventNumber != [_currentEvent eventNumber]) {
+            KHTMLPart::khtmlMouseReleaseEvent(event);
+        }
         return;
     }
     
@@ -2275,6 +2324,7 @@ void KWQKHTMLPart::mouseDown(NSEvent *event)
     _mouseDownWinX = (int)loc.x;
     _mouseDownWinY = (int)loc.y;
     d->m_view->viewportToContents(_mouseDownWinX, _mouseDownWinY, _mouseDownX, _mouseDownY);
+    _mouseDownTimestamp = [event timestamp];
 
     NSResponder *oldFirstResponderAtMouseDownTime = _firstResponderAtMouseDownTime;
     // Unlike other places in WebCore where we get the first
@@ -2459,14 +2509,17 @@ void KWQKHTMLPart::mouseMoved(NSEvent *event)
 }
 
 // Called as we walk up the element chain for nodes with CSS property -khtml-user-drag == auto
-bool KWQKHTMLPart::shouldDragAutoNode(DOM::NodeImpl* node) const
+bool KWQKHTMLPart::shouldDragAutoNode(DOM::NodeImpl* node, int x, int y) const
 {
     // We assume that WebKit only cares about dragging things that can be leaf nodes (text, images, urls).
     // This saves a bunch of expensive calls (creating WC and WK element dicts) as we walk farther up
     // the node hierarchy, and we also don't have to cook up a way to ask WK about non-leaf nodes
     // (since right now WK just hit-tests using a cached lastMouseDown).
-    if (!node->hasChildNodes()) {
-        return [_bridge mayStartDragWithMouseDragged:_currentEvent];
+    if (!node->hasChildNodes() && d->m_view) {
+        int windowX, windowY;
+        d->m_view->contentsToViewport(x, y, windowX, windowY);
+        NSPoint eventLoc = {windowX, windowY};
+        return [_bridge mayStartDragAtEventLocation:eventLoc];
     } else {
         return NO;
     }

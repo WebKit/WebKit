@@ -759,6 +759,11 @@ static BOOL nowPrinting(WebCoreBridge *self)
     _part->view()->initScrollBars();
 }
 
+- (void)setActivationEventNumber:(int)num
+{
+    _part->setActivationEventNumber(num);
+}
+
 - (void)mouseDown:(NSEvent *)event
 {
     _part->mouseDown(event);
@@ -1569,6 +1574,11 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 }
 
 // [info draggingLocation] is in window coords
+
+- (BOOL)eventMayStartDrag:(NSEvent *)event
+{
+    return _part ? _part->eventMayStartDrag(event) : NO;
+}
 
 - (NSDragOperation)dragOperationForDraggingInfo:(id <NSDraggingInfo>)info
 {

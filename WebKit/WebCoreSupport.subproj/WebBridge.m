@@ -1023,13 +1023,13 @@ static BOOL loggedObjectCacheSize = NO;
     [docView _handleAutoscrollForMouseDragged:event];
 }
 
-- (BOOL)mayStartDragWithMouseDragged:(NSEvent *)event
+- (BOOL)mayStartDragAtEventLocation:(NSPoint)location
 {
     WebHTMLView *docView = (WebHTMLView *)[[_frame frameView] documentView];
 
     ASSERT([docView isKindOfClass:[WebHTMLView class]]);
 
-    return [docView _mayStartDragWithMouseDragged:event];
+    return [docView _mayStartDragAtEventLocation:location];
 }
 
 - (int)historyLength

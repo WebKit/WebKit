@@ -231,7 +231,9 @@ public:
     void mouseMoved(NSEvent *);
     bool keyEvent(NSEvent *);
     bool lastEventIsMouseUp();
+    void setActivationEventNumber(int num) { _activationEventNumber = num; }
 
+    bool eventMayStartDrag(NSEvent *);
     void dragSourceMovedTo(const QPoint &loc);
     void dragSourceEndedAt(const QPoint &loc, NSDragOperation operation);
 
@@ -317,7 +319,7 @@ public:
     void partClearedInBegin();
     
     // Implementation of CSS property -khtml-user-drag == auto
-    bool shouldDragAutoNode(DOM::NodeImpl*) const;
+    bool shouldDragAutoNode(DOM::NodeImpl*, int x, int y) const;
 
 private:
     virtual void khtmlMousePressEvent(khtml::MousePressEvent *);
@@ -363,6 +365,8 @@ private:
     int _mouseDownWinX, _mouseDownWinY;
     // in our view's coords
     int _mouseDownX, _mouseDownY;
+    float _mouseDownTimestamp;
+    int _activationEventNumber;
     
     static NSEvent *_currentEvent;
     static NSResponder *_firstResponderAtMouseDownTime;

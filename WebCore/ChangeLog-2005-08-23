@@ -1,3 +1,44 @@
+2004-06-30  Trey Matteson  <trey@apple.com>
+
+	Dragging within a web view should be allowed to start when the window isn't key.
+
+	A few months ago, Chris made this work, but it relied on the fact that all dragging
+	was done in WebKit.  When WebCore got involved in dragging, it was broken.  Now we
+	have a new scheme that gets it working again that properly involves WebCore.
+
+	The general idea is that when AK asks us whether to accept the first mouse and do
+	"delayed window ordering", we must consult WC to see if we might start a drag.  In
+	addition, instead of these drags in non-active windows being started as a special
+	case in WK, they go through the normal WK-WC drag machinery.
+
+        Reviewed by John.
+
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::shouldDragAutoNode):  New x,y args.
+        * khtml/khtml_part.h:
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::draggableNode):  Pass through new x,y args.
+        * khtml/rendering/render_object.h:
+        * kwq/KWQKHTMLPart.h:
+        (KWQKHTMLPart::setActivationEventNumber):  New setter.
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::KWQKHTMLPart):  Init new ivar.
+        (KWQKHTMLPart::eventMayStartDrag):  New routine that checks if we might start
+	a drag in response to a mouseDown.
+        (KWQKHTMLPart::khtmlMouseMoveEvent):  Pass x,y to the routine that finds a draggable
+	node.  This eventually gets back up to WK's _mayStartDragAtEventLocation:.
+	Delay requirement when dragging the selection now implemented here.
+        (KWQKHTMLPart::khtmlMouseReleaseEvent):  Must avoid changing the selection if we
+	wind up here as part of the first click in a window (because we started handling
+	the click to possible start a drag, but that never came through).
+        (KWQKHTMLPart::mouseDown): Save away event timestamp.
+        (KWQKHTMLPart::shouldDragAutoNode):  Pass location up to WK instead of the
+	most recent event we stashed.
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge setActivationEventNumber:]):  Trivial glue.
+        (-[WebCoreBridge eventMayStartDrag:]):  Ditto.
+
 2004-06-29  Trey Matteson  <trey@apple.com>
 
 	Need to tighten up JS error checking for requesting drag props

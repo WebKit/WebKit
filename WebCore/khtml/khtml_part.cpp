@@ -4265,7 +4265,7 @@ bool KHTMLPart::dndEnabled() const
   return d->m_bDnd;
 }
 
-bool KHTMLPart::shouldDragAutoNode(DOM::NodeImpl *node) const
+bool KHTMLPart::shouldDragAutoNode(DOM::NodeImpl *node, int x, int y) const
 {
     // No KDE impl yet
     return false;

@@ -704,7 +704,7 @@ public:
     virtual void setSelectionState(SelectionState) {}
     bool shouldSelect() const;
 
-    DOM::NodeImpl* draggableNode(bool dhtmlOK, bool uaOK, bool& dhtmlWillDrag) const;
+    DOM::NodeImpl* draggableNode(bool dhtmlOK, bool uaOK, int x, int y, bool& dhtmlWillDrag) const;
 
     /**
      * Returns the content coordinates of the caret within this render object.

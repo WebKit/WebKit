@@ -1,3 +1,41 @@
+2004-06-30  Trey Matteson  <trey@apple.com>
+
+	Dragging within a web view should be allowed to start when the window isn't key.
+
+	A few months ago, Chris made this work, but it relied on the fact that all dragging
+	was done in WebKit.  When WebCore got involved in dragging, it was broken.  Now we
+	have a new scheme that gets it working again that properly involves WebCore.
+
+	The general idea is that when AK asks us whether to accept the first mouse and do
+	"delayed window ordering", we must consult WC to see if we might start a drag.  In
+	addition, instead of these drags in non-active windows being started as a special
+	case in WK, they go through the normal WK-WC drag machinery.  Finally to work in
+	frames we have to drill to the deepest hit view in acceptsFirstMouse, because previous
+	hacks to hitTest make the top-most WebHTMLView field all events for its view tree
+	(which leads to it fielding all acceptFirstMouse messages too).
+
+        Reviewed by John.
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge mayStartDragAtEventLocation:]):  Glue change for new arg type.
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _startDraggingImage:at:operation:event:sourceIsDHTML:DHTMLWroteData:]):
+	firstMouseDownEvent ivar is no longer needed.
+        (-[WebHTMLView _mayStartDragAtEventLocation:]):  Receives a location instead of a drag
+	event, since we need to do this work when we have no drag event.  This means the
+	check of the delay for text dragging is moved down to WebCore.
+        (-[WebHTMLView acceptsFirstMouse:]):  Respond based on whether we might do a drag.
+	This includes drilling to the deepest view the event hits, whereas we used to only
+	respond considering the topmost WebHTMLView.
+        (-[WebHTMLView shouldDelayWindowOrderingForEvent:]):  Ditto.
+        (-[WebHTMLView mouseDown:]):  Get rid of special case where some activating
+	mouseDown events weren't sent to WC.  We need to go through the whole pipeline
+	now to get a drag started properly.
+        (-[WebHTMLView mouseDragged:]):  Ditto, let WC start the drag.
+        (-[WebHTMLView mouseUp:]):  firstMouseDownEvent ivar is no longer needed.
+        * WebView.subproj/WebHTMLViewInternal.h:
+        * WebView.subproj/WebHTMLViewPrivate.h:
+
 2004-06-25  Trey Matteson  <trey@apple.com>
 
 	Added new utility method.

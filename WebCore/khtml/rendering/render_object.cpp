@@ -1391,7 +1391,7 @@ bool RenderObject::shouldSelect() const
     return node->dispatchHTMLEvent(DOM::EventImpl::SELECTSTART_EVENT, true, true);
 }
 
-DOM::NodeImpl* RenderObject::draggableNode(bool dhtmlOK, bool uaOK, bool& dhtmlWillDrag) const
+DOM::NodeImpl* RenderObject::draggableNode(bool dhtmlOK, bool uaOK, int x, int y, bool& dhtmlWillDrag) const
 {
     if (!dhtmlOK && !uaOK)
         return 0;
@@ -1402,7 +1402,7 @@ DOM::NodeImpl* RenderObject::draggableNode(bool dhtmlOK, bool uaOK, bool& dhtmlW
         if (elt && elt->nodeType() == Node::TEXT_NODE) {
             // Since there's no way for the author to address the -khtml-user-drag style for a text node,
             // we use our own judgement.
-            if (uaOK && canvas()->view()->part()->shouldDragAutoNode(curr->node())) {
+            if (uaOK && canvas()->view()->part()->shouldDragAutoNode(curr->node(), x, y)) {
                 dhtmlWillDrag = false;
                 return curr->node();
             } else if (curr->shouldSelect()) {
@@ -1417,7 +1417,7 @@ DOM::NodeImpl* RenderObject::draggableNode(bool dhtmlOK, bool uaOK, bool& dhtmlW
                 dhtmlWillDrag = true;
                 return curr->node();
             } else if (uaOK && dragMode == DRAG_AUTO
-                       && canvas()->view()->part()->shouldDragAutoNode(curr->node()))
+                       && canvas()->view()->part()->shouldDragAutoNode(curr->node(), x, y))
             {
                 dhtmlWillDrag = false;
                 return curr->node();

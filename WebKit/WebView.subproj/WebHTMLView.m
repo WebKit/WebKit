@@ -52,8 +52,6 @@
 
 #import <CoreGraphics/CGContextGState.h>
 
-#define TextDragDelay                    0.15
-
 // By imaging to a width a little wider than the available pixels,
 // thin pages will be scaled down a little, matching the way they
 // print in IE and Camino. This lets them use fewer sheets than they
@@ -781,9 +779,6 @@ static WebHTMLView *lastHitView = nil;
 
 - (BOOL)_startDraggingImage:(NSImage *)wcDragImage at:(NSPoint)wcDragLoc operation:(NSDragOperation)op event:(NSEvent *)mouseDraggedEvent sourceIsDHTML:(BOOL)srcIsDHTML DHTMLWroteData:(BOOL)dhtmlWroteData
 {
-    // Once we start a drag session we may not get a mouseup, so clear this out here as well as mouseUp:
-    _private->firstMouseDownEvent = nil;
-
     NSPoint mouseDownPoint = [self convertPoint:[_private->mouseDownEvent locationInWindow] fromView:nil];
     NSDictionary *element = [self elementAtPoint:mouseDownPoint];
 
@@ -919,9 +914,9 @@ static WebHTMLView *lastHitView = nil;
     [self _startAutoscrollTimer:event];
 }
 
-- (BOOL)_mayStartDragWithMouseDragged:(NSEvent *)mouseDraggedEvent
+- (BOOL)_mayStartDragAtEventLocation:(NSPoint)location
 {
-    NSPoint mouseDownPoint = [self convertPoint:[_private->mouseDownEvent locationInWindow] fromView:nil];
+    NSPoint mouseDownPoint = [self convertPoint:location fromView:nil];
     NSDictionary *mouseDownElement = [self elementAtPoint:mouseDownPoint];
 
     if ([mouseDownElement objectForKey: WebElementImageURLKey] != nil && 
@@ -936,7 +931,6 @@ static WebHTMLView *lastHitView = nil;
     }
     
     if ([[mouseDownElement objectForKey:WebElementIsSelectedKey] boolValue] &&
-        (([mouseDraggedEvent timestamp] - [_private->mouseDownEvent timestamp]) > TextDragDelay) &&
         (_private->dragSourceActionMask & WebDragSourceActionSelection)) {
         return YES;
     }
@@ -1729,22 +1723,37 @@ static WebHTMLView *lastHitView = nil;
     [[self _pluginController] destroyAllPlugins];
 }
 
-- (BOOL)_isSelectionEvent:(NSEvent *)event
-{
-    NSPoint point = [self convertPoint:[event locationInWindow] fromView:nil];
-    return [[[self elementAtPoint:point] objectForKey:WebElementIsSelectedKey] boolValue];
-}
-
 - (BOOL)acceptsFirstMouse:(NSEvent *)event
 {
-    // We don't retain this because we never dispatch to it; we only check its value.
-    _private->firstMouseDownEvent = event;
-    return [self _isSelectionEvent:event];
+    // We hack AK's hitTest method to catch all events at the topmost WebHTMLView.  However, for
+    // the purposes of this method we want to really query the deepest view, so we forward to it.
+    forceRealHitTest = YES;
+    NSView *hitView = [[[self window] contentView] hitTest:[event locationInWindow]];
+    forceRealHitTest = NO;
+    
+    if ([hitView isKindOfClass:[self class]]) {
+        WebHTMLView *hitHTMLView = (WebHTMLView *)hitView;
+        [[hitHTMLView _bridge] setActivationEventNumber:[event eventNumber]];
+        return [[hitHTMLView _bridge] eventMayStartDrag:event];
+    } else {
+        return [hitView acceptsFirstMouse:event];
+    }
 }
 
 - (BOOL)shouldDelayWindowOrderingForEvent:(NSEvent *)event
 {
-    return [self _isSelectionEvent:event];
+    // We hack AK's hitTest method to catch all events at the topmost WebHTMLView.  However, for
+    // the purposes of this method we want to really query the deepest view, so we forward to it.
+    forceRealHitTest = YES;
+    NSView *hitView = [[[self window] contentView] hitTest:[event locationInWindow]];
+    forceRealHitTest = NO;
+    
+    if ([hitView isKindOfClass:[self class]]) {
+        WebHTMLView *hitHTMLView = (WebHTMLView *)hitView;
+        return [[hitHTMLView _bridge] eventMayStartDrag:event];
+    } else {
+        return [hitView shouldDelayWindowOrderingForEvent:event];
+    }
 }
 
 - (void)mouseDown:(NSEvent *)event
@@ -1764,12 +1773,9 @@ static WebHTMLView *lastHitView = nil;
     // Don't do any mouseover while the mouse is down.
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(_updateMouseoverWithFakeEvent) object:nil];
 
-    // Don't tell WebCore about the first mouse down event since only dragging can occur on the first mouse down.
-    if (_private->firstMouseDownEvent != event) {
-        // Let KHTML get a chance to deal with the event. This will call back to us
-        // to start the autoscroll timer if appropriate.
-        [[self _bridge] mouseDown:event];
-    }
+    // Let KHTML get a chance to deal with the event. This will call back to us
+    // to start the autoscroll timer if appropriate.
+    [[self _bridge] mouseDown:event];
 }
 
 - (void)dragImage:(NSImage *)dragImage
@@ -1793,14 +1799,7 @@ static WebHTMLView *lastHitView = nil;
 
 - (void)mouseDragged:(NSEvent *)event
 {
-    // If this drag started from a mouse down in an inactive window, we only allow it to drag out an existing selection, so don't tell WebCore about it.
-    if (_private->mouseDownEvent == _private->firstMouseDownEvent) {
-        // Handle the drag directly instead of getting callbacks from WebCore.
-        // FIXME - how does this play with DHTML dragging?
-        if ([self _mayStartDragWithMouseDragged:event]) {
-            [self _startDraggingImage:nil at:NSZeroPoint operation:NSDragOperationNone event:event sourceIsDHTML:NO DHTMLWroteData:NO];
-        }
-    } else if (!_private->ignoringMouseDraggedEvents) {
+    if (!_private->ignoringMouseDraggedEvents) {
         [[self _bridge] mouseDragged:event];
     }
 }
@@ -1983,7 +1982,6 @@ static WebHTMLView *lastHitView = nil;
 
 - (void)mouseUp:(NSEvent *)event
 {
-    _private->firstMouseDownEvent = nil;
     [self _stopAutoscrollTimer];
     [[self _bridge] mouseUp:event];
     [self _updateMouseoverWithFakeEvent];
