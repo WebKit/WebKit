@@ -1,3 +1,8 @@
+2004-04-15  John Sullivan  <sullivan@apple.com>
+
+        * WebView.subproj/WebPreferencesPrivate.h:
+        added comments
+
 2004-04-14  Richard Williamson   <rjw@apple.com>
 
 	Updated fix for 3576315.  Don't hardcode 22 as the titlebar
