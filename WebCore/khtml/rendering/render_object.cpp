@@ -1295,8 +1295,8 @@ bool RenderObject::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty,
                   (_x >= tx) && (_x < tx + effectiveWidth()))) || isBody() || isHtml();
     
     // ### table should have its own, more performant method
-    if (/* FIXME (!isRenderBlock() ||
-	  !static_cast<RenderBlock*>(this)->isPointInScrollbar(_x, _y, _tx, _ty)) &&*/
+    if ((!isRenderBlock() ||
+         !static_cast<RenderBlock*>(this)->isPointInScrollbar(_x, _y, _tx, _ty)) &&
         (overhangingContents() || isInline() || isRoot() || isTableRow() || isTableSection() || inside || mouseInside() || (childrenInline() && firstChild() && firstChild()->isCompact()))) {
         int stx = _tx + xPos();
         int sty = _ty + yPos();
@@ -1481,7 +1481,7 @@ void RenderObject::recalcMinMaxWidths()
 
     // we need to recalculate, if the contains inline children, as the change could have
     // happened somewhere deep inside the child tree
-    if ( !isInline() && childrenInline() )
+    if ((!isInline() || isInlineBlockOrInlineTable()) && childrenInline())
 	m_minMaxKnown = false;
 
     if ( !m_minMaxKnown )

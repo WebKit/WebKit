@@ -1465,6 +1465,12 @@ void RenderTableCell::setWidth( int width )
     }
 }
 
+void RenderTableCell::layout()
+{
+    layoutBlock(m_widthChanged);
+    m_widthChanged = false;
+}
+
 void RenderTableCell::close()
 {
     RenderBlock::close();

@@ -473,11 +473,10 @@ RenderLayer::checkScrollbarsAfterLayout()
         setHasVerticalScrollbar(needVerticalBar);
        
         m_object->setLayouted(false);
-	/* FIXME        if (m_object->isRenderBlock())
+	if (m_object->isRenderBlock())
             static_cast<RenderBlock*>(m_object)->layoutBlock(true);
         else
             m_object->layout();
-	*/
 	return;
     }
 

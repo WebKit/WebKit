@@ -1,6 +1,8 @@
 /*
  * This file is part of the render object implementation for KHTML.
  *
+ * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
+ *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  * Copyright (C) 2003 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
@@ -86,8 +88,9 @@ public:
     virtual void removeChild(RenderObject *oldChild);
         
     virtual void setStyle(RenderStyle* _style);
-    
+
     virtual void layout();
+    void layoutBlock( bool relayoutChildren );
     void layoutBlockChildren( bool relayoutChildren );
     void layoutInlineChildren( bool relayoutChildren );
 
@@ -146,6 +149,8 @@ public:
 
     virtual bool nodeAtPoint(NodeInfo& info, int x, int y, int tx, int ty, bool inside=false);
 
+    bool isPointInScrollbar(int x, int y, int tx, int ty);
+    
     virtual void calcMinMaxWidth();
     void calcInlineMinMaxWidth();
     void calcBlockMinMaxWidth();

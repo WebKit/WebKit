@@ -1,3 +1,28 @@
+2003-04-29  David Hyatt  <hyatt@apple.com>
+
+	The remainder of the overflow:auto patch.
+
+	A minor table cell optimization has also been included.
+
+	Also fixing one of rjw's inline table bugs.  Inline tables
+	didn't clear their minmaxwidth bool when contents inside them
+	changed size.
+	
+	r=mjs/gramps on overflow:auto stuff
+	r=rjw on the table stuff
+
+        * khtml/html/html_tableimpl.cpp:
+        (HTMLTableElementImpl::parseAttribute):
+        * khtml/rendering/render_block.cpp:
+        * khtml/rendering/render_block.h:
+        * khtml/rendering/render_layer.cpp:
+        (RenderLayer::checkScrollbarsAfterLayout):
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::nodeAtPoint):
+        * khtml/rendering/render_table.cpp:
+        (RenderTableCell::layout):
+        * khtml/rendering/render_table.h:
+
 2003-04-29  Darin Adler  <darin@apple.com>
 
         Reviewed by John.
