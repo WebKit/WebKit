@@ -761,22 +761,6 @@ Value Window::get(ExecState *exec, const Identifier &p) const
     }
   }
 
-  // give access to functions (and variables ?) from parent frameset
-  if (m_part->parentPart())
-  {
-    Object parentObject = Object::dynamicCast( retrieve(m_part->parentPart()) );
-    if ( !parentObject.isNull() )
-    {
-      Value ret = parentObject.get(exec,p);
-      if (ret.type() != UndefinedType ) {
-#ifdef KJS_VERBOSE
-        kdDebug(6070) << "Window::get property " << p.qstring() << " found in parent part" << endl;
-#endif
-        return ret;
-      }
-    }
-  }
-
   // This isn't necessarily a bug. Some code uses if(!window.blah) window.blah=1
   // But it can also mean something isn't loaded or implemented, hence the WARNING to help grepping.
 #ifdef KJS_VERBOSE

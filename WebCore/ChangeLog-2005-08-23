@@ -1,3 +1,8 @@
+2004-04-22  Darin Adler  <darin@apple.com>
+
+        * khtml/ecma/kjs_window.cpp: (Window::get): Removed code that gets properties from the parent.
+        This was a mistake we inherited from KHTML, and they have long since fixed it.
+
 2004-04-22  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Hyatt
