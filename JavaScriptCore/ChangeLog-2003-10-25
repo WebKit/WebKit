@@ -1,5 +1,16 @@
 2002-11-24  Maciej Stachowiak  <mjs@apple.com>
 
+	- fixed 3098356 - Hard hang on movie search at www.movietickets.com
+	
+        * kjs/string_object.cpp:
+        (StringProtoFuncImp::call): When doing a regexp replacement that
+	results in an empty match, always move on to the next character
+	after doing the replacement. The previous code would hit an
+	infinite loop if an initial empty match was replaced with the
+	empty string.
+
+2002-11-24  Maciej Stachowiak  <mjs@apple.com>
+
 	- fixed 3095446 - Crash on AppleScript page due to very long argument list
 	
         * kjs/grammar.y: Don't try to construct the argument list in the
