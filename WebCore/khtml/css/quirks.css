@@ -2,7 +2,7 @@
  * This style sheet is used by khtml to render HTML pages in quirks mode
  * (C) 2000-2003 Lars Knoll (knoll@kde.org)
  *
- * Konqueror/khtml relies on the existance of this style sheet for
+ * Konqueror/khtml relies on the existence of this style sheet for
  * rendering. Do not remove or modify this file unless you know
  * what you are doing.
  */
@@ -21,3 +21,11 @@ UL, OL, MENU, DIR {
     \2d konq-flow-mode: \2d konq-around-floats;
 }
     
+/* Tables reset both line-height and white-space in quirks mode.
+   Compatible with WinIE. */
+TABLE {
+    white-space: normal;
+    line-height: normal;
+}
+
+
