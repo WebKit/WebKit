@@ -4514,7 +4514,7 @@ bool KHTMLPart::isPointInsideSelection(int x, int y)
     }
     int ax, ay;
     innerNode->renderer()->absolutePosition(ax, ay);
-    Position pos(innerNode->positionForCoordinates(ax, ay));
+    Position pos(innerNode->positionForCoordinates(ax + x, ay + y));
     if (pos.isEmpty()) {
         return false;
     }
