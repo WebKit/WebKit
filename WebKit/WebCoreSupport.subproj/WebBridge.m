@@ -49,7 +49,7 @@
 
 - (NSArray *)childFrames
 {
-    NSArray *frames = [[self dataSource] children];
+    NSArray *frames = [frame children];
     NSEnumerator *e = [frames objectEnumerator];
     NSMutableArray *frameBridges = [NSMutableArray arrayWithCapacity:[frames count]];
     WebFrame *childFrame;
@@ -207,6 +207,7 @@
     if (frame == nil) {
 	// FIXME: non-retained because data source owns representation owns bridge
 	frame = webFrame;
+        [self setParent:[[frame parent] _bridge]];
         [self setTextSizeMultiplier:[[frame controller] textSizeMultiplier]];
     } else {
 	ASSERT(frame == webFrame);
@@ -215,7 +216,6 @@
 
 - (void)dataSourceChanged
 {
-    [self setParent:[[[self dataSource] parent] _bridge]];
     [self openURL:[[self dataSource] URL]];
 }
 
@@ -252,10 +252,9 @@
     [[self dataSource] _setIconURL:URL withType:type];
 }
 
-- (void)loadRequest:(WebResourceRequest *)request withParent:(WebDataSource *)parent
+- (void)loadRequest:(WebResourceRequest *)request
 {
     WebDataSource *newDataSource = [[WebDataSource alloc] initWithRequest:request];
-    [newDataSource _setParent:parent];
     if ([frame setProvisionalDataSource:newDataSource]) {
         [frame startLoading];
     }
@@ -266,15 +265,7 @@
 {
     WebResourceRequest *request = [[WebResourceRequest alloc] initWithURL:URL];
     [request setReferrer:referrer];
-    [self loadRequest:request withParent:[[frame dataSource] parent]];
-    [request release];
-}
-
-- (void)loadURL:(NSURL *)URL referrer:(NSString *)referrer withParent:(WebDataSource *)parent
-{
-    WebResourceRequest *request = [[WebResourceRequest alloc] initWithURL:URL];
-    [request setReferrer:referrer];
-    [self loadRequest:request withParent:parent];
+    [self loadRequest:request];
     [request release];
 }
 
@@ -290,7 +281,7 @@
     [request setData:data];
     [request setContentType:contentType];
     [request setReferrer:referrer];
-    [self loadRequest:request withParent:[[frame dataSource] parent]];
+    [self loadRequest:request];
     [request release];
 }
 
@@ -300,7 +291,7 @@
     allowsScrolling:(BOOL)allowsScrolling marginWidth:(int)width marginHeight:(int)height
 {
     ASSERT(frame != nil);
-    WebFrame *newFrame = [[frame controller] createFrameNamed:frameName for:nil inParent:[self dataSource] allowsScrolling:allowsScrolling];
+    WebFrame *newFrame = [[frame controller] createFrameNamed:frameName for:nil inParent:frame allowsScrolling:allowsScrolling];
     if (newFrame == nil) {
         return nil;
     }
@@ -310,7 +301,7 @@
     [[newFrame webView] _setMarginWidth:width];
     [[newFrame webView] _setMarginHeight:height];
     
-    [[newFrame _bridge] loadURL:URL referrer:referrer withParent:[self dataSource]];
+    [[newFrame _bridge] loadURL:URL referrer:referrer];
     
     // Set the load type so this load doesn't end up in the back
     // forward list.
@@ -353,10 +344,8 @@
 
 - (void)addBackForwardItemWithURL:(NSURL *)URL anchor:(NSString *)anchor;
 {
-    WebHistoryItem *backForwardItem;
-    WebFrame *parentFrame = [[frame controller] frameForDataSource:[[frame dataSource] parent]]; 
-
-    backForwardItem = [[WebHistoryItem alloc] initWithURL:URL target:[frame name] parent:[parentFrame name] title:[[frame dataSource] pageTitle]];
+    WebHistoryItem *backForwardItem = [[WebHistoryItem alloc] initWithURL:URL
+        target:[frame name] parent:[[frame parent] name] title:[[frame dataSource] pageTitle]];
     [backForwardItem setAnchor:anchor];
     [[[frame controller] backForwardList] addEntry:backForwardItem];
     [backForwardItem release];

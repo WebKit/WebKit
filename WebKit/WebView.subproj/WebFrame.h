@@ -108,7 +108,7 @@
 /*!
     @method stopLoading
     @discussion Stop any pending loads on the frame's data source,
-    and it's children.
+    and its children.
 */
 - (void)stopLoading;
 
@@ -128,5 +128,18 @@
     @result The frame matching the provided name.
 */
 - (WebFrame *)frameNamed:(NSString *)name;
+
+/*!
+    @method parent
+    @result The frame containing this frame, or nil if this is a top level frame.
+*/
+- (WebFrame *)parent;
+
+/*!
+    @method children
+    @discussion The frames in the array are associated with a frame set or iframe.
+    @result Returns an array of WebFrame.
+*/
+- (NSArray *)children;
 
 @end

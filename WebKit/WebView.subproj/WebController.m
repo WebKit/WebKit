@@ -153,7 +153,7 @@ NSString *WebElementFrameKey = @"WebElementFrame";
     if ([frame provisionalDataSource] == dataSource)
         return frame;
         
-    frames = [[frame dataSource] children];
+    frames = [frame children];
     count = [frames count];
     for (i = 0; i < count; i++){
         aFrame = [frames objectAtIndex: i];
@@ -162,15 +162,6 @@ NSString *WebElementFrameKey = @"WebElementFrame";
             return result;
     }
 
-    frames = [[frame provisionalDataSource] children];
-    count = [frames count];
-    for (i = 0; i < count; i++){
-        aFrame = [frames objectAtIndex: i];
-        result = [self _frameForDataSource: dataSource fromFrame: aFrame];
-        if (result)
-            return result;
-    }
-    
     return nil;       
 }
 
@@ -192,7 +183,7 @@ NSString *WebElementFrameKey = @"WebElementFrame";
     if ([frame webView] == aView)
         return frame;
         
-    frames = [[frame dataSource] children];
+    frames = [frame children];
     count = [frames count];
     for (i = 0; i < count; i++){
         aFrame = [frames objectAtIndex: i];
@@ -201,15 +192,6 @@ NSString *WebElementFrameKey = @"WebElementFrame";
             return result;
     }
 
-    frames = [[frame provisionalDataSource] children];
-    count = [frames count];
-    for (i = 0; i < count; i++){
-        aFrame = [frames objectAtIndex: i];
-        result = [self _frameForView: aView fromFrame: aFrame];
-        if (result)
-            return result;
-    }
-    
     return nil;       
 }
 

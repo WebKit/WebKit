@@ -58,15 +58,16 @@ static const char * const stateNames[] = {
     [scheduledLayoutTimer invalidate];
     [scheduledLayoutTimer release];
     
-    [webView _setController: nil];
-    [dataSource _setController: nil];
-    [provisionalDataSource _setController: nil];
+    [webView _setController:nil];
+    [dataSource _setController:nil];
+    [provisionalDataSource _setController:nil];
 
     [bridge release];
     [name release];
     [webView release];
     [dataSource release];
     [provisionalDataSource release];
+    [children release];
     
     [super dealloc];
 }
@@ -120,8 +121,20 @@ static const char * const stateNames[] = {
 
 @implementation WebFrame (WebPrivate)
 
-- (void)reset
+- (void)_controllerWillBeDeallocated
 {
+    [self _detachFromParent];
+}
+
+- (void)_detachFromParent
+{
+    [[self children] makeObjectsPerformSelector:@selector(_detachFromParent)];
+    
+    [_private setController:nil];
+    [_private->webView _setController:nil];
+    [_private->dataSource _setController:nil];
+    [_private->provisionalDataSource _setController:nil];
+
     [_private setDataSource:nil];
     [_private setWebView:nil];
 
@@ -130,34 +143,31 @@ static const char * const stateNames[] = {
     _private->scheduledLayoutTimer = nil;
 }
 
-
-- (void)_parentDataSourceWillBeDeallocated
-{
-    [_private setController:nil];
-    [_private->dataSource _setParent:nil];
-    [_private->provisionalDataSource _setParent:nil];
-}
-
 - (void)_setController: (WebController *)controller
 {
-    [_private setController: controller];
+    [_private setController:controller];
 }
 
-- (void)_setDataSource: (WebDataSource *)ds
+- (void)_setDataSource:(WebDataSource *)ds
 {
+    ASSERT(ds != _private->dataSource);
+    
     if ([_private->dataSource isDocumentHTML] && ![ds isDocumentHTML]) {
         [[self _bridge] removeFromFrame];
     }
 
-    [_private setDataSource: ds];
-    [ds _setController: [self controller]];
+    [[self children] makeObjectsPerformSelector:@selector(_detachFromParent)];
+    [_private->children release];
+    _private->children = nil;
+    
+    [_private setDataSource:ds];
+    [ds _setController:[self controller]];
 }
 
 - (void)_setLoadType: (WebFrameLoadType)t
 {
     [_private setLoadType: t];
 }
-
 
 - (WebFrameLoadType)_loadType
 {
@@ -279,11 +289,9 @@ static const char * const stateNames[] = {
 	    ASSERT(documentView != nil);
 
             // Set the committed data source on the frame.
-            [self _setDataSource: _private->provisionalDataSource];
-
-            // Now that the provisional data source is committed, release it.
+            [self _setDataSource:_private->provisionalDataSource];
             [_private setProvisionalDataSource: nil];
-        
+
             [self _setState: WebFrameStateCommittedPage];
         
             // Handle adding the URL to the back/forward list.
@@ -317,7 +325,7 @@ static const char * const stateNames[] = {
                         [entry setTitle: ptitle];
                 
                     // Add item to back/forward list.
-                    parentFrame = [[self controller] frameForDataSource: [[self dataSource] parent]]; 
+                    parentFrame = [self parent]; 
                     backForwardItem = [[WebHistoryItem alloc] initWithURL:[[[self dataSource] request] URL]
                                                                    target:[self name]
                                                                    parent:[parentFrame name]
@@ -450,9 +458,9 @@ static const char * const stateNames[] = {
                 // Unfortunately we have to get our parent to adjust the frames in this
                 // frameset so this frame's geometry is set correctly.  This should
                 // be a reasonably inexpensive operation.
-                id parentDS = [[[ds parent] webFrame] dataSource];
+                id parentDS = [[self parent] dataSource];
                 if ([[parentDS _bridge] isFrameSet]){
-                    id parentWebView = [[[ds parent] webFrame] webView];
+                    id parentWebView = [[self parent] webView];
                     if ([parentWebView isDocumentHTML])
                         [[parentWebView documentView] _adjustFrames];
                 }
@@ -545,7 +553,7 @@ static const char * const stateNames[] = {
     int i, count;
     NSArray *childFrames;
     
-    childFrames = [[fromFrame dataSource] children];
+    childFrames = [fromFrame children];
     count = [childFrames count];
     for (i = 0; i < count; i++) {
         WebFrame *childFrame;
@@ -745,7 +753,7 @@ static const char * const stateNames[] = {
 - (void)_textSizeMultiplierChanged
 {
     [[self _bridge] setTextSizeMultiplier:[[self controller] textSizeMultiplier]];
-    [[[self dataSource] children] makeObjectsPerformSelector:@selector(_textSizeMultiplierChanged)];
+    [[self children] makeObjectsPerformSelector:@selector(_textSizeMultiplierChanged)];
 }
 
 - (void)_defersCallbacksChanged
@@ -766,7 +774,6 @@ static const char * const stateNames[] = {
     WebDataSource *newDataSource = [[WebDataSource alloc] initWithRequest:request];
     [request release];
     
-    [newDataSource _setParent:[dataSource parent]];
     [newDataSource _setOverrideEncoding:encoding];
     
     if ([self setProvisionalDataSource:newDataSource]) {
@@ -775,6 +782,16 @@ static const char * const stateNames[] = {
     }
     
     [newDataSource release];
+}
+
+- (void)_addChild:(WebFrame *)child
+{
+    if (_private->children == nil)
+        _private->children = [[NSMutableArray alloc] init];
+    [_private->children addObject:child];
+
+    child->_private->parent = self;
+    [[child dataSource] _setOverrideEncoding:[[self dataSource] _overrideEncoding]];   
 }
 
 @end

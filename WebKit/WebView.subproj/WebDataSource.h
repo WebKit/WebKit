@@ -68,58 +68,10 @@
 - (id <WebDocumentRepresentation>)representation;
 
 /*!
-    @method parent
-    @result Returns nil if this data source represents the main document.  Otherwise
-    returns the parent data source.
-*/
-- (WebDataSource *)parent;
-
-/*!
     @method webFrame
     @result Return the frame that represents this data source.
 */
 - (WebFrame *)webFrame;
-
-/*!
-    @method children
-    @discussion The frames in the array are
-    associated with a frame set or iframe.
-    @result Returns an array of WebFrame.
-*/
-- (NSArray *)children;
-
-/*!
-    @method frameNamed:
-    @discussion Find the frame named frameName in this datasource's
-    children.  Does not recurse.
-    @param frameName The name of the frame to find.
-    @result Returns the frame named frameName, or nil.
-*/
-- (WebFrame *)frameNamed:(NSString *)frameName;
-
-/*!
-    @method frameNames
-    @discussion The NSStrings corresponds to
-    frame names.  If this data source is the main document and has no
-    frames then frameNames will return nil.
-    @result Returns an array of NSStrings or nil.
-*/
-- (NSArray *)frameNames;
-
-/*!
-    @method findDataSourceForFrameNamed:
-    @param name The name of the frame to find. Does not recurse.
-    @result Returns the child data source associated with
-    the frame named 'name', or nil. 
-*/
-- (WebDataSource *)findDataSourceForFrameNamed:(NSString *)name;
-
-/*!
-    @method frameExists:
-    @param name The name of the frame to check for existence.  Does not recurse.
-    @result Returns YES if a frame named name exists.
-*/
-- (BOOL)frameExists: (NSString *)name;
 
 /*!
     @method controller

@@ -43,7 +43,7 @@
         Called when a data source needs to create a frame.  This method encapsulates the
         specifics of creating and initializing a view of the appropriate class.
 */    
-- (WebFrame *)createFrameNamed: (NSString *)fname for: (WebDataSource *)child inParent: (WebDataSource *)parent allowsScrolling: (BOOL)allowsScrolling;
+- (WebFrame *)createFrameNamed: (NSString *)fname for: (WebDataSource *)child inParent: (WebFrame *)parent allowsScrolling: (BOOL)allowsScrolling;
 
 
 - (id<WebContextMenuDelegate>)_defaultContextMenuDelegate;

@@ -45,18 +45,11 @@
     // retained while loading, so no need to release here
     ASSERT(!loading);
     
-    NSEnumerator *e = [[frames allValues] objectEnumerator];
-    WebFrame *frame;
-    while ((frame = [e nextObject])) {
-        [frame _parentDataSourceWillBeDeallocated];
-    }
-    
     [resourceData release];
     [representation release];
     [inputURL release];
     [request release];
     [finalURL release];
-    [frames release];
     [mainClient release];
     [mainHandle release];
     [subresourceClients release];
@@ -124,17 +117,6 @@
     _private->controller = controller;
     
     [self _defersCallbacksChanged];
-}
-
-- (void)_setParent: (WebDataSource *)p
-{
-    // Non-retained.
-    _private->parent = p;
-    
-    // Inherit the override encoding setting from the parent.
-    if (p) {
-        _private->overrideEncoding = p->_private->overrideEncoding;
-    }
 }
 
 - (void)_setPrimaryLoadComplete: (BOOL)flag
@@ -240,7 +222,7 @@
 {
     [self retain];
     [self _stopLoading];
-    [[self children] makeObjectsPerformSelector:@selector(stopLoading)];
+    [[[self webFrame] children] makeObjectsPerformSelector:@selector(stopLoading)];
     [self release];
 }
 
@@ -355,8 +337,8 @@
 
 - (void)_layoutChildren
 {
-    if ([[self children] count] > 0){
-        NSArray *subFrames = [self children];
+    NSArray *subFrames = [[self webFrame] children];
+    if ([subFrames count]) {
         WebFrame *subFrame;
         unsigned int i;
         id dview;
@@ -524,19 +506,7 @@
         [[client handle] _setDefersCallbacks:defers];
     }
 
-    [[self children] makeObjectsPerformSelector:@selector(_defersCallbacksChanged)];
-}
-
-- (void)addFrame: (WebFrame *)frame
-{
-    if (_private->frames == nil)
-        _private->frames = [[NSMutableDictionary alloc] init];
-
-    // Check to make sure a duplicate frame name didn't creep in.
-    ASSERT([_private->frames objectForKey:[frame name]] == nil);
-
-    [[frame dataSource] _setParent: self];   
-    [_private->frames setObject: frame forKey: [frame name]];    
+    [[[self webFrame] children] makeObjectsPerformSelector:@selector(_defersCallbacksChanged)];
 }
 
 @end

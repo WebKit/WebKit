@@ -55,34 +55,30 @@ typedef enum {
     WebFrameState state;
     NSTimer *scheduledLayoutTimer;
     WebFrameLoadType loadType;
+    WebFrame *parent;
+    NSMutableArray *children;
 }
 
-- (void)setName: (NSString *)n;
+- (void)setName:(NSString *)name;
 - (NSString *)name;
-- (void)setController: (WebController *)c;
+- (void)setController:(WebController *)c;
 - (WebController *)controller;
-- (void)setWebView: (WebView *)v;
+- (void)setWebView:(WebView *)v;
 - (WebView *)webView;
-- (void)setDataSource: (WebDataSource *)d;
+- (void)setDataSource:(WebDataSource *)d;
 - (WebDataSource *)dataSource;
-- (void)setProvisionalDataSource: (WebDataSource *)d;
+- (void)setProvisionalDataSource:(WebDataSource *)d;
 - (WebDataSource *)provisionalDataSource;
 - (WebFrameLoadType)loadType;
-- (void)setLoadType: (WebFrameLoadType)loadType;
+- (void)setLoadType:(WebFrameLoadType)loadType;
 
 @end
 
 @interface WebFrame (WebPrivate)
 
-/*!
-    @method reset
-    @discussioin This method removes references the underlying resources.
-    FIXME:  I think this should be private.
-*/
-- (void)reset;
+- (void)_controllerWillBeDeallocated;
+- (void)_detachFromParent;
 
-
-- (void)_parentDataSourceWillBeDeallocated;
 - (void)_setController: (WebController *)controller;
 - (void)_setDataSource: (WebDataSource *)d;
 - (void)_transitionToCommitted;
@@ -106,5 +102,7 @@ typedef enum {
 - (void)_defersCallbacksChanged;
 
 - (void)_reloadAllowingStaleDataWithOverrideEncoding:(NSString *)encoding;
+
+- (void)_addChild:(WebFrame *)child;
 
 @end

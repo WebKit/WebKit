@@ -48,7 +48,7 @@
     [aFrame _setController: nil];
 
     // Walk the frame tree, niling the controller.
-    frames = [[aFrame dataSource] children];
+    frames = [aFrame children];
     count = [frames count];
     for (i = 0; i < count; i++){
         nextFrame = [frames objectAtIndex: i];
@@ -59,8 +59,7 @@
 - (void)dealloc
 {
     [self _clearControllerReferences: mainFrame];
-
-    [mainFrame reset];
+    [mainFrame _controllerWillBeDeallocated];
     
     [mainFrame release];
     [backForwardList release];
@@ -79,7 +78,7 @@
 
 @implementation WebController (WebPrivate)
 
-- (WebFrame *)createFrameNamed: (NSString *)fname for: (WebDataSource *)childDataSource inParent: (WebDataSource *)parentDataSource allowsScrolling: (BOOL)allowsScrolling
+- (WebFrame *)createFrameNamed: (NSString *)fname for: (WebDataSource *)childDataSource inParent: (WebFrame *)parent allowsScrolling: (BOOL)allowsScrolling
 {
     WebView *childView;
     WebFrame *newFrame;
@@ -88,7 +87,7 @@
 
     newFrame = [[WebFrame alloc] initWithName: fname webView: childView provisionalDataSource: childDataSource controller: self];
 
-    [parentDataSource addFrame: newFrame];
+    [parent _addChild: newFrame];
     
     [newFrame release];
 

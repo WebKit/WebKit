@@ -60,7 +60,8 @@
 - (void)dealloc
 {
     --WebFrameCount;
-    
+
+    [self _detachFromParent];
     [_private release];
     [super dealloc];
 }
@@ -70,8 +71,7 @@
     return [_private name];
 }
 
-
-- (void)setWebView: (WebView *)v
+- (void)setWebView:(WebView *)v
 {
     [_private setWebView: v];
     [v _setController: [self controller]];
@@ -110,9 +110,6 @@
 //    disallows by returning a WebURLPolicyIgnore.
 - (BOOL)setProvisionalDataSource: (WebDataSource *)newDataSource
 {
-    id <WebLocationChangeDelegate>locationChangeDelegate;
-    WebDataSource *oldDataSource;
-    
     ASSERT([self controller] != nil);
 
     // Unfortunately the view must be non-nil, this is ultimately due
@@ -131,7 +128,8 @@
             [entry setScrollPoint: point];
         }
     }
-    if ([self _state] != WebFrameStateComplete){
+
+    if ([self _state] != WebFrameStateComplete) {
         [self stopLoading];
     }
 
@@ -139,42 +137,31 @@
 
     // _shouldShowURL asks the client for the URL policies and reports errors if there are any
     // returns YES if we should show the data source
-    if([self _shouldShowURL:[newDataSource URL]]){
-        
-        locationChangeDelegate = [[self controller] locationChangeDelegate];
-        
-        oldDataSource = [self dataSource];
-        
-        // Is this the top frame?  If so set the data source's parent to nil.
-        if (self == [[self controller] mainFrame])
-            [newDataSource _setParent: nil];
-            
-        // Otherwise set the new data source's parent to the old data source's parent.
-        else if (oldDataSource && oldDataSource != newDataSource)
-            [newDataSource _setParent: [oldDataSource parent]];
-                
-        [newDataSource _setController: [self controller]];
-        
-        [_private setProvisionalDataSource: newDataSource];
-        
-        ASSERT([newDataSource webFrame] == self);
-        
-        // We tell the documentView provisionalDataSourceChanged:
-        // once it has been created by the controller.
-            
-        [self _setState: WebFrameStateProvisional];
-        
-        return YES;
+    if (![self _shouldShowURL:[newDataSource URL]]) {
+        return NO;
     }
     
-    return NO;
+    if ([self parent]) {
+        [newDataSource _setOverrideEncoding:[[[self parent] dataSource] _overrideEncoding]];
+    }
+    [newDataSource _setController:[self controller]];
+    [_private setProvisionalDataSource:newDataSource];
+    
+    ASSERT([newDataSource webFrame] == self);
+    
+    // We tell the documentView provisionalDataSourceChanged:
+    // once it has been created by the controller.
+    
+    [self _setState: WebFrameStateProvisional];
+    
+    return YES;
 }
 
 
 - (void)startLoading
 {
     if (self == [[self controller] mainFrame])
-        LOG(DocumentLoad, "loading %s", [[[[[self provisionalDataSource] request] URL] absoluteString] cString]);
+        LOG(DocumentLoad, "loading %@", [[[self provisionalDataSource] request] URL]);
 
     [_private->provisionalDataSource startLoading];
 }
@@ -201,7 +188,6 @@
     WebDataSource *newDataSource = [[WebDataSource alloc] initWithRequest:request];
     [request release];
     
-    [newDataSource _setParent:[dataSource parent]];
     [newDataSource _setOverrideEncoding:[dataSource _overrideEncoding]];
     
     if ([self setProvisionalDataSource:newDataSource]) {
@@ -222,7 +208,7 @@
     if ([[aFrame name] isEqualToString: name])
         return aFrame;
 
-    children = [[aFrame dataSource] children];
+    children = [aFrame children];
     count = [children count];
     for (i = 0; i < count; i++){
         aFrame = [children objectAtIndex: i];
@@ -241,33 +227,37 @@
 - (WebFrame *)frameNamed:(NSString *)name
 {
     // First, deal with 'special' names.
-    if([name isEqualToString:@"_self"] || [name isEqualToString:@"_current"]){
+    if ([name isEqualToString:@"_self"] || [name isEqualToString:@"_current"]){
         return self;
     }
     
-    else if([name isEqualToString:@"_top"]) {
+    if ([name isEqualToString:@"_top"]) {
         return [[self controller] mainFrame];
     }
     
-    else if([name isEqualToString:@"_parent"]){
-        WebDataSource *parent = [[self dataSource] parent];
-        if(parent){
-            return [parent webFrame];
-        }
-        else{
-            return self;
-        }
+    if ([name isEqualToString:@"_parent"]) {
+        WebFrame *parent = [self parent];
+        return parent ? parent : self;
     }
     
-    else if ([name isEqualToString:@"_blank"]){
+    if ([name isEqualToString:@"_blank"]) {
         WebController *newController = [[[self controller] windowOperationsDelegate] openNewWindowWithURL:nil referrer:nil behind:NO];
 	[[[[newController windowOperationsDelegate] window] windowController] showWindow:nil];
-
         return [newController mainFrame];
     }
     
-    // Now search the namespace associated with this frame's controller.
-    return [WebFrame _frameNamed: name fromFrame: [[self controller] mainFrame]];
+    // Now search the name space associated with this frame's controller.
+    return [WebFrame _frameNamed:name fromFrame:[[self controller] mainFrame]];
+}
+
+- (WebFrame *)parent
+{
+    return [[_private->parent retain] autorelease];
+}
+
+- (NSArray *)children
+{
+    return [[_private->children copy] autorelease];
 }
 
 @end

@@ -91,57 +91,11 @@
     return [[self webFrame] name];    
 }
 
-// Returns nil if this data source represents the main document.  Otherwise
-// returns the parent data source.
-- (WebDataSource *)parent 
-{
-    return _private->parent;
-}
-
-
-// Returns an array of WebFrame.  The frames in the array are
-// associated with a frame set or iframe.
-- (NSArray *)children
-{
-    return [_private->frames allValues];
-}
-
-- (WebFrame *)frameNamed: (NSString *)frameName
-{
-    return (WebFrame *)[_private->frames objectForKey: frameName];
-}
-
-
-
-// Returns an array of NSStrings or nil.  The NSStrings corresponds to
-// frame names.  If this data source is the main document and has no
-// frames then frameNames will return nil.
-- (NSArray *)frameNames
-{
-    return [_private->frames allKeys];
-}
-
-
-// findDataSourceForFrameNamed: returns the child data source associated with
-// the frame named 'name', or nil. 
-- (WebDataSource *) findDataSourceForFrameNamed: (NSString *)name
-{
-    return [[self frameNamed: name] dataSource];
-}
-
-
-- (BOOL)frameExists: (NSString *)name
-{
-    return [self frameNamed: name] == 0 ? NO : YES;
-}
-
-
 - (WebController *)controller
 {
     // All data sources used in a document share the same controller.
     // A single document may have many data sources corresponding to
     // frames or iframes.
-    ASSERT(_private->parent == nil || [_private->parent controller] == _private->controller);
     return _private->controller;
 }
 
@@ -202,7 +156,7 @@
     // Put in the auto-release pool because it's common to call this from a run loop source,
     // and then the entire list of frames lasts until the next autorelease.
     NSAutoreleasePool *pool = [NSAutoreleasePool new];
-    NSEnumerator *e = [[self children] objectEnumerator];
+    NSEnumerator *e = [[[self webFrame] children] objectEnumerator];
     WebFrame *childFrame;
     while ((childFrame = [e nextObject])) {
         if ([[childFrame dataSource] isLoading] || [[childFrame provisionalDataSource] isLoading]) {

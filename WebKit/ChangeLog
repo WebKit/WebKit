@@ -1,4 +1,84 @@
- --2002-10-08  John Sullivan  <sullivan@apple.com>
+2002-10-08  Darin Adler  <darin@apple.com>
+
+	Make WebFrame do the entire frame hierarchy, instead of having the
+	parent and child pointers in the data source.
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge childFrames]): Get children from the frame, not the data source.
+        (-[WebBridge setFrame:]): Do the setParent: call on the bridge here, instead of
+	in dataSourceChanged, since the parent relationship is now established even without
+	having the data source.
+        (-[WebBridge dataSourceChanged]): Remove the setParent: call.
+        (-[WebBridge loadRequest:]): Remove the parent parameter. It's already set up at
+	this point so we don't need to set it.
+        (-[WebBridge loadURL:referrer:]): Don't pass a parent.
+        (-[WebBridge postWithURL:referrer:data:contentType:]): Don't pass a parent.
+        (-[WebBridge createChildFrameNamed:withURL:referrer:renderPart:allowsScrolling:marginWidth:marginHeight:]):
+	Don't pass a parent.
+	(-[WebBridge addBackForwardItemWithURL:anchor:]): Get the parent frame by just calling
+	the parent method instead of the more roundabout way that it was doing it before.
+
+        * WebView.subproj/WebController.m:
+        (-[WebController _frameForDataSource:fromFrame:]): Get the children list from the frame,
+	no need to ask the data source. And no need to deal with the provisional data source, since
+	those can't have children any more.
+        (-[WebController _frameForView:fromFrame:]): Ditto.
+
+        * WebView.subproj/WebControllerPrivate.h: Change parent parameter when creating a new
+	frame to be a frame, not a data source.
+        * WebView.subproj/WebControllerPrivate.m:
+        (-[WebControllerPrivate _clearControllerReferences:]): Get the children list from the frame.
+        (-[WebControllerPrivate dealloc]): Rename the _reset method _controllerWillBeDeallocated
+	to be more concrete. More simplification can happen here later.
+        (-[WebController createFrameNamed:for:inParent:allowsScrolling:]): Call _addChild on the
+	parent frame rather than calling addFrame on the parent data source.
+
+        * WebView.subproj/WebDataSource.h: Remove the parent, children, frameNamed, frameNames, and
+	frameExists methods.
+        * WebView.subproj/WebDataSource.m:
+        (-[WebDataSource controller]): Remove the assertion here about parents, since we don't have
+	a parent pointer any more.
+        (-[WebDataSource isLoading]): Get the list of children from the frame.
+
+        * WebView.subproj/WebDataSourcePrivate.h: Remove the parent pointer and the frames dictionary,
+	also remove the _setParent: and addFrame: methods.
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSourcePrivate dealloc]): Don't release the frames list.
+        (-[WebDataSource _recursiveStopLoading]): Get the frames list from the frame.
+        (-[WebDataSource _layoutChildren]): Ditto.
+        (-[WebDataSource _defersCallbacksChanged]): Ditto.
+
+        * WebView.subproj/WebFrame.h: Add parent and children methods.
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame dealloc]): Call _detachFromParent.
+        (-[WebFrame setProvisionalDataSource:]): Set the encoding of the data source to match
+	the encoding of the parent's data source. This used to be done in [WebDataSource _setParent:].
+	Further simplification can probably be done here.
+        (-[WebFrame reload]): Remove the call to [WebDataSource _setParent:].
+        (+[WebFrame _frameNamed:fromFrame:]): Get the children from the frame.
+        (-[WebFrame frameNamed:]): Get the parent from the frame.
+        (-[WebFrame parent]): Added.
+        (-[WebFrame children]): Added.
+
+        * WebView.subproj/WebFramePrivate.h: Added parent and children fields, changed reset to
+	_controllerWillBeDeallocated, changed _parentDataSourceWillBeDeallocated to _detachFromParent,
+	added _addChild method. Further simplification can probably be done here.
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFramePrivate dealloc]): Release the children array.
+        (-[WebFrame _controllerWillBeDeallocated]): Renamed from reset. Now just calls _detachFromParent.
+        (-[WebFrame _detachFromParent]): Does all the work that reset and _parentDataSourceWillBeDeallocated
+	used to do.
+        (-[WebFrame _setDataSource:]): Call _detachFromParent on all the children and release them
+	before setting up the new data source.
+        (-[WebFrame _transitionToCommitted]): Get the parent from self instead of the data source.
+        (-[WebFrame _isLoadComplete]): Ditto.
+        (+[WebFrame _recursiveCheckCompleteFromFrame:]): Get the children from self instead of the data source.
+        (-[WebFrame _textSizeMultiplierChanged]): Ditto.
+        (-[WebFrame _reloadAllowingStaleDataWithOverrideEncoding:]): Remove the call to [WebDataSource _setParent:].
+        (-[WebFrame _addChild:]): Added. Puts the child in a children list, and also sets the override
+	encoding of the child based on our data source's override encoding.
+
+2002-10-08  John Sullivan  <sullivan@apple.com>
 
         * WebKit.pbproj/project.pbxproj:
 	Project Builder says I changed it only by setting
