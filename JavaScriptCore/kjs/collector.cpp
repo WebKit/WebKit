@@ -162,7 +162,6 @@ void* Collector::allocate(size_t s)
 
 bool Collector::collect()
 {
-  puts("COLLECT");
   bool deleted = false;
 
   // MARK: first mark all referenced objects recursively
