@@ -1022,6 +1022,8 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
             [sv setDrawsBackground:YES];
         [_private setPreviousItem:nil];
         _timeOfLastCompletedLoad = CFAbsoluteTimeGetCurrent();
+
+        [[self dataSource] _stopRecordingResponses];
     }
 }
 
@@ -1065,8 +1067,6 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         [[self dataSource] _setPrimaryLoadComplete: YES];
         [self _checkLoadCompleteForThisFrame];
     }
-
-    [[self dataSource] _stopRecordingResponses];
 }
 
 - (void)_checkLoadCompleteForThisFrame

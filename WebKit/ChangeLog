@@ -1,3 +1,16 @@
+2005-03-23  Richard Williamson   <rjw@apple.com>
+
+	Fixed <rdar://problem/4062490> REGRESSION (WebKit-408): no subresources reported in Activity window after going back at hrweb.apple.com
+
+	Stop collecting subresource responses after the document
+	had loaded, not after it has been opened.
+
+        Reviewed by Chris.
+
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame _setState:]):
+        (-[WebFrame _opened]):
+
 2005-03-21  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
