@@ -37,7 +37,7 @@
 #include "xml/dom_nodeimpl.h"
 
 // Uncomment to turn on incremental repainting.
-// #define INCREMENTAL_REPAINTING 1
+#define INCREMENTAL_REPAINTING 1
 
 class QPainter;
 class QTextStream;
@@ -280,8 +280,8 @@ public:
 
     virtual void markAllDescendantsWithFloatsForLayout(RenderObject* floatToRemove = 0);
     void markContainingBlocksForLayout();
-    void setNeedsLayout(bool b);
-    void setChildNeedsLayout(bool b);
+    void setNeedsLayout(bool b, bool markParents = true);
+    void setChildNeedsLayout(bool b, bool markParents = true);
     void setMinMaxKnown(bool b=true) {
 	m_minMaxKnown = b;
 	if ( !b ) {

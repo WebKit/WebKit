@@ -268,8 +268,26 @@ void RenderCanvas::repaintViewRectangle(const QRect& ur, bool immediate)
     if (m_printingMode || ur.width() == 0 || ur.height() == 0) return;
 
     QRect vr = viewRect();
-    if (m_view && ur.intersects(vr))
-        m_view->repaintRectangle(ur.intersect(vr), immediate);
+    if (m_view && ur.intersects(vr)) {
+        // We always just invalidate the root view, since we could be an iframe that is clipped out
+        // or even invisible.
+        QRect r = ur.intersect(vr);
+        DOM::ElementImpl* elt = element()->getDocument()->ownerElement();
+        if (!elt)
+            m_view->repaintRectangle(r, immediate);
+        else {
+            // Subtract out the contentsX and contentsY offsets to get our coords within the viewing
+            // rectangle.
+            r.setX(r.x() - m_view->contentsX());
+            r.setY(r.y() - m_view->contentsY());
+            
+            RenderObject* obj = elt->renderer();
+            int frameOffset = (m_view->frameStyle() != QFrame::NoFrame) ? 2 : 0;
+            r.setX(r.x() + obj->borderLeft()+obj->paddingLeft() + frameOffset);
+            r.setY(r.y() + obj->borderTop()+obj->paddingTop() + frameOffset);
+            obj->repaintRectangle(r, immediate);
+        }
+    }
 }
 
 QRect RenderCanvas::getAbsoluteRepaintRect()

@@ -437,7 +437,7 @@ void RenderObject::markAllDescendantsWithFloatsForLayout(RenderObject*)
 {
 }
 
-void RenderObject::setNeedsLayout(bool b) 
+void RenderObject::setNeedsLayout(bool b, bool markParents) 
 {
 #ifdef INCREMENTAL_REPAINTING
     bool alreadyNeededLayout = m_needsLayout;
@@ -446,7 +446,7 @@ void RenderObject::setNeedsLayout(bool b)
 #endif
     m_needsLayout = b;
     if (b) {
-        if (!alreadyNeededLayout)
+        if (!alreadyNeededLayout && markParents)
             markContainingBlocksForLayout();
     }
     else {
@@ -455,7 +455,7 @@ void RenderObject::setNeedsLayout(bool b)
     }
 }
 
-void RenderObject::setChildNeedsLayout(bool b)
+void RenderObject::setChildNeedsLayout(bool b, bool markParents)
 {
 #ifdef INCREMENTAL_REPAINTING
     bool alreadyNeededLayout = m_normalChildNeedsLayout;
@@ -464,7 +464,7 @@ void RenderObject::setChildNeedsLayout(bool b)
 #endif
     m_normalChildNeedsLayout = b;
     if (b) {
-        if (!alreadyNeededLayout)
+        if (!alreadyNeededLayout && markParents)
             markContainingBlocksForLayout();
     }
     else {

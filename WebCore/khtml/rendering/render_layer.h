@@ -54,7 +54,7 @@ class QScrollBar;
 template <class T> class QPtrVector;
 
 // Uncomment to enable incremental painting
-//#define INCREMENTAL_REPAINTING 1
+#define INCREMENTAL_REPAINTING 1
 
 namespace khtml {
     class RenderStyle;

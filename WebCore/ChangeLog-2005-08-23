@@ -1,3 +1,21 @@
+2003-11-12  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3482132, incremental repainting for layout, i.e., only repaint areas that change when
+	doing a layout.
+	
+        Reviewed by kocienda
+
+        * khtml/khtmlview.h:
+        * khtml/rendering/render_canvas.cpp:
+        (RenderCanvas::repaintViewRectangle):
+        * khtml/rendering/render_layer.h:
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::setNeedsLayout):
+        (RenderObject::setChildNeedsLayout):
+        * khtml/rendering/render_object.h:
+        * khtml/rendering/render_table.cpp:
+        (RenderTableSection::layoutRows):
+
 2003-11-12  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by me

@@ -33,7 +33,7 @@ class QPainter;
 class QRect;
 
 // Uncomment to enable INCREMENTAL_REPAINTING
-//#define INCREMENTAL_REPAINTING
+#define INCREMENTAL_REPAINTING
 
 namespace DOM {
     class HTMLDocumentImpl;
