@@ -1,5 +1,13 @@
 2003-01-09  Darin Adler  <darin@apple.com>
 
+        * WebKit.pbproj/project.pbxproj: Add the year 2003, remove CFBundleIconFile,
+	bump marketing version to 0.8.1 and version to 52u to keep up with the branch,
+	remove CFHumanReadableCopyright, remove NSPrincipalClass.
+
+        * English.lproj/InfoPlist.strings: Updated to match above changes.
+
+2003-01-09  Darin Adler  <darin@apple.com>
+
         Reviewed by Maciej.
 
         * English.lproj/StringsNotToBeLocalized.txt: Update for recent changes.

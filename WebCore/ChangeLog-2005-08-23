@@ -1,3 +1,12 @@
+2003-01-09  Darin Adler  <darin@apple.com>
+
+        * WebCore.pbproj/project.pbxproj: Add the year 2003, remove CFBundleIconFile,
+	bump marketing version to 0.8.1 and version to 52u to keep up with the branch,
+	remove NSHumanReadableCopyright, remove NSPrincipalClass, remove SKIP_INSTALL
+	that was in the Info plist instead of project settings.
+
+        * English.lproj/InfoPlist.strings: Update to match above.
+
 2003-01-09  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Dave.
