@@ -1,3 +1,12 @@
+2003-02-25  David Hyatt  <hyatt@apple.com>
+
+	Fix for bug #3181249.  Ensure the padding argument gets passed
+	through properly (instead of just passing 0).
+	
+        Reviewed by darin
+
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+
 2003-02-25  John Sullivan  <sullivan@apple.com>
 
 	WebKit part of fix for 3181290 -- need call to reload all bookmarks from disk, 
