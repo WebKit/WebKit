@@ -1,5 +1,13 @@
 2002-04-18  Richard Williamson  <rjw@apple.com>
 
+        Fixed typo.
+
+	* WebView.subproj/IFBaseLocationChangeHandler.m: (-[IFBaseLocationChangeHandler
+	requestContentPolicyForMIMEType:]):
+	* WebView.subproj/IFLocationChangeHandler.h:
+
+2002-04-18  Richard Williamson  <rjw@apple.com>
+
         New API stubs for content policy.
         
 	* WebView.subproj/IFBaseLocationChangeHandler.h: Added.

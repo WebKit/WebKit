@@ -87,9 +87,9 @@
 // has been determined.  Should not block.
 // Implementations typically call setContentPolicy: immediately, although
 // may call it later after showing a user dialog.
-- (void)requestContentPolicyForContentMIMEType: (NSString *)type
+- (void)requestContentPolicyForMIMEType: (NSString *)type
 {
-    [self haveContentPolicy: [IFBaseLocationChangeHandler globaContentPolicyForContentType: type] forLocationChangeHandler: self];
+    [self haveContentPolicy: [IFBaseLocationChangeHandler globaContentPolicyForMIMEType: type] forLocationChangeHandler: self];
 }
 
 // We may have different errors that cause the the policy to be un-implementable, i.e.
