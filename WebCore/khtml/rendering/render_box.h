@@ -130,7 +130,7 @@ public:
 
     virtual RenderLayer* layer() const { return m_layer; }
     
-    virtual QRect caretRect(int offset, bool override);
+    virtual QRect caretRect(int offset, bool override, int *extraWidthToEndOfLine = 0);
 
     virtual void paintBackgroundExtended(QPainter *p, const QColor &c, CachedImage *bg, int clipy, int cliph,
                                          int _tx, int _ty, int w, int height,

@@ -483,11 +483,11 @@ int RenderFlow::leftmostPosition(bool includeOverflowInterior, bool includeSelf)
     return left;
 }
 
-QRect RenderFlow::caretRect(int offset, bool override)
+QRect RenderFlow::caretRect(int offset, bool override, int *extraWidthToEndOfLine)
 {
     if (firstChild() || style()->display() == INLINE) {
         // Do the normal calculation
-        return RenderContainer::caretRect(offset, override);
+        return RenderContainer::caretRect(offset, override, extraWidthToEndOfLine);
     }
 
     // This is a special case:
@@ -527,6 +527,21 @@ QRect RenderFlow::caretRect(int offset, bool override)
     }
     
     _y = 0;
+
+    if (extraWidthToEndOfLine) {
+        if (isRenderBlock()) {
+            *extraWidthToEndOfLine = this->width() - (_x + width);
+        } else {
+            int myRight = _x + width;
+            int ignore;
+            absolutePosition(myRight, ignore);
+
+            int containerRight = containingBlock()->xPos() + containingBlockWidth();
+            absolutePosition(containerRight, ignore);
+
+            *extraWidthToEndOfLine = containerRight - myRight;
+        }
+    }
     
     int absx, absy;
     absolutePosition(absx, absy, false);

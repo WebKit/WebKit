@@ -1590,8 +1590,11 @@ bool RenderObject::absolutePosition(int &xPos, int &yPos, bool f)
     }
 }
 
-QRect RenderObject::caretRect(int /*offset*/, bool /*override*/)
+QRect RenderObject::caretRect(int /*offset*/, bool /*override*/, int *extraWidthToEndOfLine)
 {
+    if (extraWidthToEndOfLine)
+        *extraWidthToEndOfLine = 0;
+
     // the caret has a default width of one pixel. If you want
     // to check for validity, only test the x-coordinate for >= 0.
     return QRect(-1, -1, 1, -1);
