@@ -1,3 +1,13 @@
+2003-11-11  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by John.
+
+	- fixed 3475272 - custom property on CSSStyleObject won't hold a value
+
+        * khtml/ecma/kjs_css.cpp:
+        (DOMCSSStyleDeclaration::tryPut): If the property is not a css property,
+	save it as a custom object property in the normal way.
+
 2003-11-11  John Sullivan  <sullivan@apple.com>
 
         - fixed <rdar://problem/3480421>: Focus rings around links are too thick, 
