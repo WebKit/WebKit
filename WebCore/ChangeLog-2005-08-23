@@ -1,31 +1,5 @@
 2004-12-09  Ken Kocienda  <kocienda@apple.com>
 
-        Reviewed by Harrison
-
-        Fix for this bug:
-        
-        <rdar://problem/3910425> REGRESSION (Mail): Crash in ReplaceSelectionCommand; selection is empty, leading to null deref
-
-        * khtml/editing/htmlediting.cpp:
-        (khtml::MoveSelectionCommand::doApply): The node representing the destination for the move may have
-        been deleted. If this is the case, set the destination to the node the delete command provides in
-        its ending selection.
-
-2004-12-09  Ken Kocienda  <kocienda@apple.com>
-
-        Reviewed by NOBODY (OOPS!).
-
-        Fix for this bug:
-        
-        <rdar://problem/3910425> REGRESSION (Mail): Crash in ReplaceSelectionCommand; selection is empty, leading to null deref
-
-        * khtml/editing/htmlediting.cpp:
-        (khtml::MoveSelectionCommand::doApply): The node representing the destination for the move may have
-        been deleted. If this is the case, set the destination to the node the delete command provides in
-        its ending selection.
-
-2004-12-09  Ken Kocienda  <kocienda@apple.com>
-
         Reviewed by John
         
         Fix for this bug:
