@@ -268,7 +268,11 @@ static inline void bubbleSort( CSSOrderedProperty **b, CSSOrderedProperty **e )
 	bool swapped = FALSE;
         CSSOrderedProperty **y = e+1;
 	CSSOrderedProperty **x = e;
+#ifdef APPLE_CHANGES
+        CSSOrderedProperty **swappedPos = 0; // quiet gcc warning
+#else
         CSSOrderedProperty **swappedPos;
+#endif
 	do {
 	    if ( !((**(--x)) < (**(--y))) ) {
 		swapped = TRUE;
