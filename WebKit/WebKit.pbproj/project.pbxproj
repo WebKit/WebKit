@@ -285,6 +285,9 @@
 				83402EF8035A588900BE770A,
 				83402EFC035A58D100BE770A,
 				9345D4EC0365C5B2008635CE,
+				848DFF870365FE6A00CA2ACA,
+				848DFF880365FE6A00CA2ACA,
+				848DFF890365FE6A00CA2ACA,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1421,10 +1424,49 @@
 		};
 		848DFF430365F71500CA2ACA = {
 			children = (
+				848DFF840365FE6A00CA2ACA,
+				848DFF850365FE6A00CA2ACA,
+				848DFF860365FE6A00CA2ACA,
 			);
 			isa = PBXGroup;
 			name = "WebKit Plug-ins";
 			refType = 4;
+		};
+		848DFF840365FE6A00CA2ACA = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = WebPlugin.h;
+			refType = 4;
+		};
+		848DFF850365FE6A00CA2ACA = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = WebPluginContainer.h;
+			refType = 4;
+		};
+		848DFF860365FE6A00CA2ACA = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = WebPluginViewFactory.h;
+			refType = 4;
+		};
+		848DFF870365FE6A00CA2ACA = {
+			fileRef = 848DFF840365FE6A00CA2ACA;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		848DFF880365FE6A00CA2ACA = {
+			fileRef = 848DFF850365FE6A00CA2ACA;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		848DFF890365FE6A00CA2ACA = {
+			fileRef = 848DFF860365FE6A00CA2ACA;
+			isa = PBXBuildFile;
+			settings = {
+			};
 		};
 		84D4BFF70348EF7600CA2ACA = {
 			fileEncoding = 4;

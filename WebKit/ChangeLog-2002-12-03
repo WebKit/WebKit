@@ -1,5 +1,14 @@
 2002-10-22  Chris Blumenberg  <cblu@apple.com>
 
+	Added protocol headers for new plug-in API.
+
+        * Plugins.subproj/WebPlugin.h: Added.
+        * Plugins.subproj/WebPluginContainer.h: Added.
+        * Plugins.subproj/WebPluginViewFactory.h: Added.
+        * WebKit.pbproj/project.pbxproj:
+
+2002-10-22  Chris Blumenberg  <cblu@apple.com>
+
 	- Moved things around to make room for new plug-in API.
 	- Renamed WebNetscapePlugin to WebNetscapePluginPackage.
 	- Renamed WebNetscapePluginDatabase to WebPluginDatabase.
