@@ -66,8 +66,11 @@ struct WindowArgs {
 class BrowserExtension {
 public:
      BrowserInterface *browserInterface() const;
-     void openURLRequest(const KURL &url, const KParts::URLArgs &args = KParts::URLArgs());
-     void createNewWindow(const KURL &url, const KParts::URLArgs &args, const KParts::WindowArgs &windowArgs, KParts::ReadOnlyPart *&part);
+     void openURLRequest(const KURL &, const KParts::URLArgs &args =
+             KParts::URLArgs());
+     void createNewWindow(const KURL &);
+     void createNewWindow(const KURL &, const KParts::URLArgs &, const
+             KParts::WindowArgs &, KParts::ReadOnlyPart *&);
 };
 
 class BrowserHostExtension {
