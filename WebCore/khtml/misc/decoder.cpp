@@ -279,7 +279,7 @@ Decoder::~Decoder()
     delete m_decoder;
 }
 
-void Decoder::setEncoding(const char *_encoding, bool force)
+void Decoder::setEncoding(const char *_encoding, bool force, bool eightBitOnly)
 {
 #ifdef DECODE_DEBUG
     kdDebug(6005) << "setEncoding " << _encoding << " " << force << endl;
@@ -296,25 +296,29 @@ void Decoder::setEncoding(const char *_encoding, bool force)
 #endif
     if(enc.isNull() || enc.isEmpty())
         return;
-#if !APPLE_CHANGES
+
+#if APPLE_CHANGES
+    m_codec = eightBitOnly
+        ? QTextCodec::codecForNameEightBitOnly(enc)
+        : QTextCodec::codecForName(enc);
+    if (m_codec) {
+        enc = m_codec->name();
+        visualRTL = m_codec->usesVisualOrdering();
+    }
+    bool b = m_codec;
+#else
     if(enc == "visual") // hebrew visually ordered
         enc = "iso8859-8";
-#endif
     bool b;
     m_codec = KGlobal::charsets()->codecForName(enc, b);
 
-    bool couldBeVisualRTL;
-#if APPLE_CHANGES
-    couldBeVisualRTL = m_codec->isISOLatin1Hebrew();
-#else
-    couldBeVisualRTL = m_codec->mibEnum() == 11;
-#endif
-    if (couldBeVisualRTL)  {
+    if (m_codec->mibEnum() == 11)  {
         // visually ordered unless one of the following
         if( !(enc == "iso-8859-8-i" || enc == "iso_8859-8-i"
                 || enc == "csiso88598i" || enc == "logical") )
             visualRTL = true;
     }
+#endif
 
     if( !b ) // in case the codec didn't exist, we keep the old one (fixes some sites specifying invalid codecs)
 	m_codec = old;
@@ -437,7 +441,7 @@ QString Decoder::decode(const char *data, int len)
 #ifdef DECODE_DEBUG
 			    kdDebug( 6005 ) << "Decoder: found charset: " << enc.data() << endl;
 #endif
-			    setEncoding(enc, true);
+			    setEncoding(enc, true, true);
 			    if( haveEncoding ) goto found;
 
                             if ( endpos >= str.length() || str[endpos] == '/' || str[endpos] == '>' ) break;
@@ -574,7 +578,11 @@ QString Decoder::decode(const char *data, int len)
 
 QString Decoder::flush() const
 {
+#if APPLE_CHANGES
+    return m_decoder->toUnicode(buffer.latin1(), buffer.length(), true);
+#else
     return m_decoder->toUnicode(buffer.latin1(), buffer.length());
+#endif
 }
 
 // -----------------------------------------------------------------------------

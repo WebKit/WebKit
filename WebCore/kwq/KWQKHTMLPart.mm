@@ -53,6 +53,7 @@
 
 using DOM::DocumentImpl;
 using DOM::DOMString;
+using DOM::ElementImpl;
 using DOM::EventImpl;
 using DOM::Node;
 
@@ -65,13 +66,16 @@ using khtml::MousePressEvent;
 using khtml::MouseReleaseEvent;
 using khtml::RenderObject;
 using khtml::RenderPart;
+using khtml::RenderRoot;
 using khtml::RenderStyle;
 using khtml::RenderText;
 using khtml::RenderWidget;
+using khtml::VISIBLE;
 
 using KIO::Job;
 
 using KJS::SavedProperties;
+using KJS::ScheduledAction;
 using KJS::Window;
 
 using KParts::ReadOnlyPart;
@@ -298,7 +302,7 @@ QRegExp *regExpForLabels(NSArray *labels)
 }
     
 
-NSString *KWQKHTMLPart::searchForLabelsBeforeElement(NSArray *labels, DOM::ElementImpl *element)
+NSString *KWQKHTMLPart::searchForLabelsBeforeElement(NSArray *labels, ElementImpl *element)
 {
     QRegExp *regExp = regExpForLabels(labels);
     // We stop searching after we've seen this many chars
@@ -322,7 +326,7 @@ NSString *KWQKHTMLPart::searchForLabelsBeforeElement(NSArray *labels, DOM::Eleme
             // We hit another form element or the start of the form - bail out
             break;
         } else if (nodeID == ID_TEXT
-                   && n->renderer() && n->renderer()->style()->visibility() == khtml::VISIBLE)
+                   && n->renderer() && n->renderer()->style()->visibility() == VISIBLE)
         {
             // For each text chunk, run the regexp
             QString nodeString = n->nodeValue().string();
@@ -341,7 +345,7 @@ NSString *KWQKHTMLPart::searchForLabelsBeforeElement(NSArray *labels, DOM::Eleme
     return nil;
 }
 
-NSString *KWQKHTMLPart::matchLabelsAgainstElement(NSArray *labels, DOM::ElementImpl *element)
+NSString *KWQKHTMLPart::matchLabelsAgainstElement(NSArray *labels, ElementImpl *element)
 {
     QString name = element->getAttribute(ATTR_NAME).string();
     // Make numbers in field names behave like word boundaries, e.g., "address2"
@@ -719,10 +723,10 @@ NSView *KWQKHTMLPart::nextKeyViewForWidget(QWidget *startingWidget, KWQSelection
     return partForNode(node)->nextKeyView(node, direction);
 }
 
-QMap<int, KJS::ScheduledAction*> *KWQKHTMLPart::pauseActions(const void *key)
+QMap<int, ScheduledAction*> *KWQKHTMLPart::pauseActions(const void *key)
 {
     if (d->m_doc && d->m_jscript) {
-        KJS::Window *w = KJS::Window::retrieveWindow(this);
+        Window *w = Window::retrieveWindow(this);
         if (w && w->hasTimeouts()) {
             return w->pauseTimeouts(key);
         }
@@ -730,12 +734,13 @@ QMap<int, KJS::ScheduledAction*> *KWQKHTMLPart::pauseActions(const void *key)
     return 0;
 }
 
-
-void KWQKHTMLPart::resumeActions(QMap<int, KJS::ScheduledAction*> *actions, const void *key)
+void KWQKHTMLPart::resumeActions(QMap<int, ScheduledAction*> *actions, const void *key)
 {
     if (d->m_doc && d->m_jscript && d->m_bJScriptEnabled) {
-        KJS::Window *w = KJS::Window::retrieveWindow(this);
-        w->resumeTimeouts(actions, key);
+        Window *w = Window::retrieveWindow(this);
+        if (w) {
+            w->resumeTimeouts(actions, key);
+        }
     }
 }
 
@@ -757,40 +762,38 @@ bool KWQKHTMLPart::canCachePage()
 
 void KWQKHTMLPart::saveWindowProperties(SavedProperties *windowProperties)
 {
-    KJS::Window *window;
-    window = Window::retrieveWindow(this);
-    
-    ASSERT(window);
+    Window *window = Window::retrieveWindow(this);
     if (window)
         window->saveProperties(*windowProperties);
+    else
+        ERROR("NULL window");
 }
 
 void KWQKHTMLPart::saveLocationProperties(SavedProperties *locationProperties)
 {
-    KJS::Window *window;
-    window = Window::retrieveWindow(this);
-    ASSERT(window);
+    Window *window = Window::retrieveWindow(this);
     if (window)
         window->saveProperties(*locationProperties);
+    else
+        ERROR("NULL window");
 }
 
 void KWQKHTMLPart::restoreWindowProperties(SavedProperties *windowProperties)
 {
-    KJS::Window *window;
-    window = Window::retrieveWindow(this);
-    ASSERT(window);
+    Window *window = Window::retrieveWindow(this);
     if (window)
         window->restoreProperties(*windowProperties);
+    else
+        ERROR("NULL window");
 }
 
 void KWQKHTMLPart::restoreLocationProperties(SavedProperties *locationProperties)
 {
-    KJS::Window *window;
-    window = Window::retrieveWindow(this);
+    Window *window = Window::retrieveWindow(this);
     if (window)
         window->location()->restoreProperties(*locationProperties);
     else
-        printf ("KWQKHTMLPart::restoreLocationProperties  unable to find window\n");
+        ERROR("NULL window");
 }
 
 void KWQKHTMLPart::openURLFromPageCache(KWQPageState *state)
@@ -800,7 +803,7 @@ void KWQKHTMLPart::openURLFromPageCache(KWQPageState *state)
     KURL *url = [state URL];
     SavedProperties *windowProperties = [state windowProperties];
     SavedProperties *locationProperties = [state locationProperties];
-    QMap<int, KJS::ScheduledAction*> *actions = [state pausedActions];
+    QMap<int, ScheduledAction*> *actions = [state pausedActions];
     
     d->m_redirectionTimer.stop();
 
@@ -1100,7 +1103,7 @@ bool KWQKHTMLPart::passWidgetMouseDownEventToWidget(khtml::MouseEvent *event)
     // just pass _currentEvent down to the widget,  we don't want to call it for events that
     // don't correspond to Cocoa events.  The mousedown/ups will have already been passed on as
     // part of the pressed/released handling.
-    if (!khtml::MouseDoubleClickEvent::test(event))
+    if (!MouseDoubleClickEvent::test(event))
         return passWidgetMouseDownEventToWidget(static_cast<RenderWidget *>(target));
     else
         return true;
@@ -1278,7 +1281,7 @@ void KWQKHTMLPart::clearTimers()
     clearTimers(d->m_view);
 }
 
-bool KWQKHTMLPart::passSubframeEventToSubframe(DOM::NodeImpl::MouseEvent &event)
+bool KWQKHTMLPart::passSubframeEventToSubframe(NodeImpl::MouseEvent &event)
 {
     switch ([_currentEvent type]) {
     	case NSLeftMouseDown: {
@@ -1658,7 +1661,7 @@ QRect KWQKHTMLPart::selectionRect() const
         return QRect();
     }
 
-    khtml::RenderRoot *root = static_cast<khtml::RenderRoot *>(xmlDocImpl()->renderer());
+    RenderRoot *root = static_cast<RenderRoot *>(xmlDocImpl()->renderer());
     if (!root) {
         return QRect();
 
@@ -1666,4 +1669,3 @@ QRect KWQKHTMLPart::selectionRect() const
 
     return root->selectionRect();
 }
-

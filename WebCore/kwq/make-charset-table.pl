@@ -8,8 +8,6 @@ my $MAC_SUPPORTED_ONLY = 1;
 my %aliasesFromCharsetsFile;
 my %namesWritten;
 
-my $invalid_encoding = "kCFStringEncodingInvalidId";
-
 my $output = "";
 
 my $error = 0;
@@ -22,13 +20,12 @@ sub error ($)
 
 sub emit_line
 {
-    my ($name, $encodingNum) = @_;
+    my ($name, $encoding, $flags) = @_;
  
     error "$name shows up twice in output" if $namesWritten{$name};
     $namesWritten{$name} = 1;
-        
-    $encodingNum = "kCFStringEncoding" . $encodingNum if $encodingNum !~ /^[0-9]/;
-    $output .= "    { \"$name\", $encodingNum },\n";
+    
+    $output .= "    { \"$name\", kCFStringEncoding$encoding, $flags },\n";
 }
 
 sub process_mac_encodings
@@ -44,11 +41,17 @@ sub process_mac_encodings
         chomp;
         s/\#.*$//;
         s/\s+$//;
-	if (my ($MacName, $IANANames) = /(.*): (.*)/) {
+	if (my ($MacName, undef, $flags, $IANANames) = /^(.+?)(, (.+))?: (.+)$/) {
             my %aliases;
             
-            error "CFString encoding name $MacName is mentioned twice in mac-encodings.txt" if $seenMacNames{$MacName};
-            $seenMacNames{$MacName} = 1;
+            my $MacNameWithFlags = $MacName;
+            if ($flags) {
+                $MacNameWithFlags .= ", " . $flags;
+            } else {
+                $flags = "NoEncodingFlags";
+            }
+            error "CFString encoding name $MacName is mentioned twice in mac-encodings.txt" if $seenMacNames{$MacNameWithFlags};
+            $seenMacNames{$MacNameWithFlags} = 1;
 
             # Build the aliases list.
             # Also check that no two names are part of the same entry in the charsets file.
@@ -90,13 +93,15 @@ sub process_mac_encodings
             
             # write out
             for my $alias (sort keys %aliases) {
-                emit_line($alias, $MacName);
+                emit_line($alias, $MacName, $flags);
             }
-	} elsif (/./) {
+	} elsif (/^[a-zA-Z0-9_]+$/) {
             my $MacName = $_;
             
             error "CFString encoding name $MacName is mentioned twice in mac-encodings.txt" if $seenMacNames{$MacName};
             $seenMacNames{$MacName} = 1;
+        } elsif (/./) {
+            error "syntax error in mac-encodings.txt, line $.";
         }
     }
     
@@ -165,4 +170,4 @@ exit 1 if $error;
 
 print "static const CharsetEntry table[] = {\n";
 print $output;
-print "    { 0, $invalid_encoding }\n};\n";
+print "    { 0, kCFStringEncodingInvalidId, NoEncodingFlags }\n};\n";

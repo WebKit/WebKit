@@ -26,6 +26,7 @@
 #ifndef QTEXTCODEC_H_
 #define QTEXTCODEC_H_
 
+#include "KWQCharsets.h"
 #include "KWQString.h"
 #include "KWQCString.h"
 
@@ -34,12 +35,13 @@ class QTextDecoder;
 class QTextCodec {
 public:
     static QTextCodec *codecForName(const char *);
+    static QTextCodec *codecForNameEightBitOnly(const char *);
     static QTextCodec *codecForLocale();
 
-    QTextCodec(CFStringEncoding e) : _encoding(e) { }
+    QTextCodec(CFStringEncoding e, KWQEncodingFlags f = NoEncodingFlags) : _encoding(e), _flags(f) { }
 
     const char *name() const;
-    bool isISOLatin1Hebrew() const;
+    bool usesVisualOrdering() const { return _flags & VisualOrdering; }
 
     QTextDecoder *makeDecoder() const;
 
@@ -48,13 +50,18 @@ public:
     QString toUnicode(const char *, int) const;
     QString toUnicode(const QByteArray &, int) const;
     
+    friend bool operator==(const QTextCodec &, const QTextCodec &);
+    unsigned hash() const;
+    
 private:
     CFStringEncoding _encoding;
+    KWQEncodingFlags _flags;
 };
 
 class QTextDecoder {
 public:
-    virtual QString toUnicode(const char *, int) = 0;
+    virtual ~QTextDecoder();
+    virtual QString toUnicode(const char *, int, bool flush = false) = 0;
 };
 
 #endif

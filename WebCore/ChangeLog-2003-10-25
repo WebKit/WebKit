@@ -1,3 +1,92 @@
+2003-03-18  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+	- fixed 3164522 -- text encoding conversion is done a chunk at a time with no state; won't work in some cases
+	- fixed 3164557 -- pages served with encoding UTF-16LE but no BOM character won't be decoded correctly
+	- fixed 3164569 -- pages without BOM that have a server-specified encoding of utf-16 will fail to decode
+	- fixed 3165002 -- can't open link with tilde (~) in page with Japanese encoding
+	- fixed 3181297 -- can't open link with backslash (\) in page with Japanese encoding (download at netscape.com)
+	- fixed 3182977 -- "unicode" encoding handled as UTF-16 rather than UTF-8 at www.delcom-eng.com
+
+        * khtml/misc/decoder.h: Add an optional "8-bit-only" parameter to the
+        setEncoding method.
+        * khtml/misc/decoder.cpp:
+        (Decoder::setEncoding): Add an "8-bit-only" parameter. Use the new
+        codeForNameEightBitOnly method when that parameter is true. Use the new
+        usesVisualOrdering constant rather than all the hardcoded logic here to
+        tell logical from visual Hebrew encodings.
+        (Decoder::decode): Pass true for "8-bit-only" when the encoding came out
+        of an HTML header, since we are already parsing the file by this point so
+        it makes no sense to use a non-8-bit encoding.
+        (Decoder::flush): Pass true for the "flush" parameter when calling the decoder.
+        
+        * kwq/KWQCharsets.h: Add a new KWQEncodingFlags enum, and return a parameter of
+        that type (optionally) from KWQCFStringEncodingFromIANACharsetName.
+        * kwq/KWQCharsets.mm:
+        (buildDictionaries): Make the dictionaries lead to table entries so we can get
+        both the flags and the encoding.
+        (KWQCFStringEncodingFromIANACharsetName): Get the flags as well as the encoding.
+        (KWQCFStringEncodingToIANACharsetName): Use the new dictionary format.
+        (encodingNameHash): Removed special case for hash for 0. This was useful in
+        JavaScriptCore where this hash function came from, but it's not relevant for
+        a CF hash function.
+        
+        * kwq/KWQTextCodec.h: Added codecForNameEightBitOnly function to QTextCodec. Added optional
+        KWQEncodingFlags parameter to QTextCodec constructor. Replaced isISOLatin1Hebrew with
+        usesVisualOrdering. Added == and hash functions to QTextCodec. Added virtual destructor to
+        QTextDecoder. Added optional "flush" boolean parameter to QTextDecoder's toUnicode function.
+        * kwq/KWQTextCodec.mm:
+        (codecForCFStringEncoding): Use both the encoding and the flags as a key for the dictionary
+        that holds QTextCodec objects.
+        (QTextCodec::codecForName): Pass flags through.
+        (QTextCodec::codecForNameEightBitOnly): Added. Maps kCFStringEncodingUnicode to
+        kCFStringEncodingUTF8.
+        (QTextCodec::codecForLocale): Pass noEncodingFlags.
+        (QTextCodec::makeDecoder): Pass flags to KWQTextDecoder constructor.
+        (QTextCodec::toUnicode): Pass true for the "flush" boolean parameter to KWQTextDecoder.
+        (operator==): Added. Compares both encoding and flags.
+        (QTextCodec::hash): Added. Computes a hash of encoding and flags.
+        (QTextCodecsEqual): Added. Calls operator==.
+        (QTextCodecHash): Added. Calls hash member function.
+        (QTextDecoder::~QTextDecoder): Added. Empty.
+        (KWQTextDecoder::KWQTextDecoder): Made this no longer inline.
+        (KWQTextDecoder::~KWQTextDecoder): Added. Cache the TEC object for use next time.
+        (KWQTextDecoder::convertUTF16): Use the flags to decide on big vs. little endian when the
+        page does not have a BOM marker that makes it unambiguous.
+        (KWQTextDecoder::convertUsingTEC): Added flush parameter. Changed code to reuse the same
+        converter for successive convert calls, and only flush when the flush parameter is passed.
+        Added code to set the kUnicodeForceASCIIRangeMask. Do it directly since we can't use
+        TECSetBasicOptions due to bug 3201405.
+        (KWQTextDecoder::toUnicode): Pass flush parameter through.
+        
+        * kwq/mac-encodings.txt: Added new sections for "Unicode, bigEndian", "Unicode, littleEndian",
+        and "ISOLatinHebrew, visualOrdering". Also moved UTF-16 to "Unicode" from "UTF8" since we now
+        handle this with the "8-bit-only" mechanism.
+        
+        * kwq/make-charset-table.pl: Updated script to support flags (after a comma), and made it a bit
+        more strict about what to do with ill-formed lines.
+
+        * kwq/KWQCharsetData.c: Regenerated.
+        
+        - other changes
+        
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::searchForLabelsBeforeElement): Take advantage of "using" and remove
+        unneeded namespace prefixes.
+        (KWQKHTMLPart::matchLabelsAgainstElement): Ditto.
+        (KWQKHTMLPart::pauseActions): Ditto.
+        (KWQKHTMLPart::resumeActions): Add check for nil to match pauseActions. Also take
+        advantage of "using" and remove unneeded namespace prefixes.
+        (KWQKHTMLPart::saveWindowProperties): Use ERROR instead of ASSERT for the nil case.
+        (KWQKHTMLPart::saveLocationProperties): Use ERROR instead of ASSERT for the nil case.
+        (KWQKHTMLPart::restoreWindowProperties): Use ERROR instead of ASSERT for the nil case.
+        (KWQKHTMLPart::restoreLocationProperties): Use ERROR instead of printf for the nil case.
+        (KWQKHTMLPart::openURLFromPageCache): Take advantage of "using" and remove
+        unneeded namespace prefixes.
+        (KWQKHTMLPart::passWidgetMouseDownEventToWidget): Ditto.
+        (KWQKHTMLPart::passSubframeEventToSubframe): Ditto.
+
 2003-03-16  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Trey.

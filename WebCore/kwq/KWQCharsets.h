@@ -28,7 +28,14 @@
 
 #include <CoreFoundation/CoreFoundation.h>
 
-CFStringEncoding KWQCFStringEncodingFromIANACharsetName(const char *);
+enum KWQEncodingFlags {
+    NoEncodingFlags = 0,
+    VisualOrdering = 1,
+    BigEndian = 2,
+    LittleEndian = 4
+};
+
+CFStringEncoding KWQCFStringEncodingFromIANACharsetName(const char *, KWQEncodingFlags *flags = 0);
 const char *KWQCFStringEncodingToIANACharsetName(CFStringEncoding);
 
 #endif /* KWQCHARSETS_H_ */

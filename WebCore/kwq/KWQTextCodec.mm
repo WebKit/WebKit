@@ -28,16 +28,29 @@
 #import "KWQAssertions.h"
 #import "KWQCharsets.h"
 
+struct TECObjectPeek {
+    UInt32 skip1;
+    UInt32 skip2;
+    UInt32 skip3;
+    OptionBits optionsControlFlags;
+};
+
 class KWQTextDecoder : public QTextDecoder {
 public:
-    KWQTextDecoder(CFStringEncoding e) : _encoding(e), _state(atStart), _haveBufferedByte(false) { }
-    QString toUnicode(const char *chs, int len);
+    KWQTextDecoder(CFStringEncoding, KWQEncodingFlags);
+    ~KWQTextDecoder();
+    
+    QString toUnicode(const char *chs, int len, bool flush);
 
 private:
     QString convertUTF16(const unsigned char *chs, int len);
-    QString convertUsingTEC(const UInt8 *chs, int len);
+    QString convertUsingTEC(const UInt8 *chs, int len, bool flush);
+    
+    KWQTextDecoder(const KWQTextDecoder &);
+    KWQTextDecoder &operator=(const KWQTextDecoder &);
 
     CFStringEncoding _encoding;
+    KWQEncodingFlags _flags;
     
     // State for Unicode decoding.
     enum UnicodeEndianState {
@@ -48,33 +61,60 @@ private:
     UnicodeEndianState _state;
     bool _haveBufferedByte;
     char _bufferedByte;
+    
+    // State for TEC decoding.
+    TECObjectRef _converter;
+    static TECObjectRef _cachedConverter;
+    static CFStringEncoding _cachedConverterEncoding;
 };
 
-static QTextCodec *codecForCFStringEncoding(CFStringEncoding encoding)
+TECObjectRef KWQTextDecoder::_cachedConverter;
+CFStringEncoding KWQTextDecoder::_cachedConverterEncoding = kCFStringEncodingInvalidId;
+
+static Boolean QTextCodecsEqual(const void *value1, const void *value2);
+static CFHashCode QTextCodecHash(const void *value);
+
+static QTextCodec *codecForCFStringEncoding(CFStringEncoding encoding, KWQEncodingFlags flags)
 {
     if (encoding == kCFStringEncodingInvalidId) {
         return 0;
     }
     
-    static CFMutableDictionaryRef encodingToCodec = CFDictionaryCreateMutable(NULL, 0, NULL, NULL);
+    static const CFDictionaryKeyCallBacks QTextCodecKeyCallbacks = { 0, NULL, NULL, NULL, QTextCodecsEqual, QTextCodecHash };
+    static CFMutableDictionaryRef encodingToCodec = CFDictionaryCreateMutable(NULL, 0, &QTextCodecKeyCallbacks, NULL);
     
+    QTextCodec key(encoding, flags);
     const void *value;
-    if (CFDictionaryGetValueIfPresent(encodingToCodec, (void *)encoding, &value)) {
-        return (QTextCodec *)value;
+    if (CFDictionaryGetValueIfPresent(encodingToCodec, &key, &value)) {
+        return const_cast<QTextCodec *>(static_cast<const QTextCodec *>(value));
     }
-    QTextCodec *codec = new QTextCodec(encoding);
-    CFDictionarySetValue(encodingToCodec, (void *)encoding, codec);
+    QTextCodec *codec = new QTextCodec(encoding, flags);
+    CFDictionarySetValue(encodingToCodec, codec, codec);
     return codec;
 }
 
 QTextCodec *QTextCodec::codecForName(const char *name)
 {
-    return codecForCFStringEncoding(KWQCFStringEncodingFromIANACharsetName(name));
+    KWQEncodingFlags flags;
+    CFStringEncoding encoding = KWQCFStringEncodingFromIANACharsetName(name, &flags);
+    return codecForCFStringEncoding(encoding, flags);
+}
+
+QTextCodec *QTextCodec::codecForNameEightBitOnly(const char *name)
+{
+    KWQEncodingFlags flags;
+    CFStringEncoding encoding = KWQCFStringEncodingFromIANACharsetName(name, &flags);
+    switch (encoding) {
+        case kCFStringEncodingUnicode:
+            encoding = kCFStringEncodingUTF8;
+            break;
+    }
+    return codecForCFStringEncoding(encoding, flags);
 }
 
 QTextCodec *QTextCodec::codecForLocale()
 {
-    return codecForCFStringEncoding(CFStringGetSystemEncoding());
+    return codecForCFStringEncoding(CFStringGetSystemEncoding(), NoEncodingFlags);
 }
 
 const char *QTextCodec::name() const
@@ -84,7 +124,7 @@ const char *QTextCodec::name() const
 
 QTextDecoder *QTextCodec::makeDecoder() const
 {
-    return new KWQTextDecoder(_encoding);
+    return new KWQTextDecoder(_encoding, _flags);
 }
 
 QCString QTextCodec::fromUnicode(const QString &qcs) const
@@ -101,17 +141,67 @@ QCString QTextCodec::fromUnicode(const QString &qcs) const
 
 QString QTextCodec::toUnicode(const char *chs, int len) const
 {
-    return KWQTextDecoder(_encoding).toUnicode(chs, len);
+    return KWQTextDecoder(_encoding, _flags).toUnicode(chs, len, true);
 }
 
 QString QTextCodec::toUnicode(const QByteArray &qba, int len) const
 {
-    return KWQTextDecoder(_encoding).toUnicode(qba, len);
+    return KWQTextDecoder(_encoding, _flags).toUnicode(qba, len, true);
 }
 
-bool QTextCodec::isISOLatin1Hebrew() const
+bool operator==(const QTextCodec &a, const QTextCodec &b)
 {
-    return _encoding == kCFStringEncodingISOLatinHebrew;
+    return a._encoding == b._encoding && a._flags == b._flags;
+}
+
+unsigned QTextCodec::hash() const
+{
+    unsigned h = _encoding;
+
+    h += (h << 10);
+    h ^= (h << 6);
+    
+    h ^= _flags;
+
+    h += (h << 3);
+    h ^= (h >> 11);
+    h += (h << 15);
+    
+    return h;
+}
+
+static Boolean QTextCodecsEqual(const void *a, const void *b)
+{
+    return *static_cast<const QTextCodec *>(a) == *static_cast<const QTextCodec *>(b);
+}
+
+static CFHashCode QTextCodecHash(const void *value)
+{
+    return static_cast<const QTextCodec *>(value)->hash();
+}
+
+// ================
+
+QTextDecoder::~QTextDecoder()
+{
+}
+
+// ================
+
+KWQTextDecoder::KWQTextDecoder(CFStringEncoding e, KWQEncodingFlags f)
+    : _encoding(e), _flags(f), _state(atStart), _haveBufferedByte(false), _converter(0)
+{
+}
+
+KWQTextDecoder::~KWQTextDecoder()
+{
+    if (_converter) {
+        if (_cachedConverter != 0) {
+            TECDisposeConverter(_cachedConverter);
+        }
+        _cachedConverter = _converter;
+        _cachedConverterEncoding = _encoding;
+    }
 }
 
 QString KWQTextDecoder::convertUTF16(const unsigned char *s, int length)
@@ -158,7 +248,7 @@ QString KWQTextDecoder::convertUTF16(const unsigned char *s, int length)
                 len -= 2;
             }
         } else {
-            _state = bigEndian;
+            _state = (_flags & ::LittleEndian) ? littleEndian : bigEndian;
         }
     }
     
@@ -203,28 +293,28 @@ QString KWQTextDecoder::convertUTF16(const unsigned char *s, int length)
     return result;
 }
 
-QString KWQTextDecoder::convertUsingTEC(const UInt8 *chs, int len)
+QString KWQTextDecoder::convertUsingTEC(const UInt8 *chs, int len, bool flush)
 {
-    // FIXME: This discards state between calls, which won't work for multibyte encodings.
+    OSStatus status;
 
     // Get a converter for the passed-in encoding.
-    static TECObjectRef converter;
-    static CFStringEncoding converterEncoding = kCFStringEncodingInvalidId;
-    OSStatus status;
-    if (_encoding != converterEncoding) {
-        TECObjectRef newConverter;
-        status = TECCreateConverter(&newConverter, _encoding,
-            CreateTextEncoding(kTextEncodingUnicodeDefault, kTextEncodingDefaultVariant, kUnicode16BitFormat));
-        if (status) {
-            ERROR("the Text Encoding Converter won't convert from text encoding 0x%X, error %d", _encoding, status);
-            return QString::null;
+    if (!_converter) {
+        if (_cachedConverterEncoding == _encoding) {
+            _converter = _cachedConverter;
+            _cachedConverter = 0;
+            _cachedConverterEncoding = kCFStringEncodingInvalidId;
+            TECClearConverterContextInfo(_converter);
+        } else {
+            status = TECCreateConverter(&_converter, _encoding,
+                CreateTextEncoding(kTextEncodingUnicodeDefault, kTextEncodingDefaultVariant, kUnicode16BitFormat));
+            if (status) {
+                ERROR("the Text Encoding Converter won't convert from text encoding 0x%X, error %d", _encoding, status);
+                return QString::null;
+            }
+
+            // Workaround for missing TECSetBasicOptions call.
+            reinterpret_cast<TECObjectPeek **>(_converter)[0]->optionsControlFlags |= kUnicodeForceASCIIRangeMask;
         }
-        if (converter) {
-            TECDisposeConverter(converter);
-        }
-        converter = newConverter;
-    } else {
-        TECClearConverterContextInfo(converter);
     }
     
     QString result;
@@ -235,13 +325,22 @@ QString KWQTextDecoder::convertUsingTEC(const UInt8 *chs, int len)
     for (;;) {
         UniChar buffer[4096];
         unsigned long bytesWritten = 0;
-        bool doingFlush = sourceLength == 0;
+        bool doingFlush = false;
+        
+        if (sourceLength == 0) {
+            if (!flush) {
+                // Done.
+                break;
+            }
+            doingFlush = true;
+        }
+         
         if (doingFlush) {
-            status = TECFlushText(converter,
+            status = TECFlushText(_converter,
                 reinterpret_cast<UInt8 *>(buffer), sizeof(buffer), &bytesWritten);
         } else {
             unsigned long bytesRead = 0;
-            status = TECConvertText(converter, sourcePointer, sourceLength, &bytesRead,
+            status = TECConvertText(_converter, sourcePointer, sourceLength, &bytesRead,
                 reinterpret_cast<UInt8 *>(buffer), sizeof(buffer), &bytesWritten);
             sourcePointer += bytesRead;
             sourceLength -= bytesRead;
@@ -252,7 +351,7 @@ QString KWQTextDecoder::convertUsingTEC(const UInt8 *chs, int len)
         }
         if (status == kTextMalformedInputErr || status == kTextUndefinedElementErr) {
             // FIXME: Put in FFFD character here?
-            TECClearConverterContextInfo(converter);
+            TECClearConverterContextInfo(_converter);
             if (sourceLength) {
                 sourcePointer += 1;
                 sourceLength -= 1;
@@ -266,6 +365,7 @@ QString KWQTextDecoder::convertUsingTEC(const UInt8 *chs, int len)
             ERROR("text decoding failed with error %d", status);
             break;
         }
+        
         if (doingFlush) {
             // Done.
             break;
@@ -275,7 +375,7 @@ QString KWQTextDecoder::convertUsingTEC(const UInt8 *chs, int len)
     return result;
 }
 
-QString KWQTextDecoder::toUnicode(const char *chs, int len)
+QString KWQTextDecoder::toUnicode(const char *chs, int len, bool flush)
 {
     ASSERT_ARG(len, len >= 0);
     
@@ -287,5 +387,5 @@ QString KWQTextDecoder::toUnicode(const char *chs, int len)
         return convertUTF16(reinterpret_cast<const unsigned char *>(chs), len);
     }
     
-    return convertUsingTEC(reinterpret_cast<const UInt8 *>(chs), len);
+    return convertUsingTEC(reinterpret_cast<const UInt8 *>(chs), len, flush);
 }
