@@ -29,6 +29,9 @@ static CFDictionaryRef imageSourceOptions;
 - (void)_stopAnimation;
 - (void)_nextFrame;
 - (CFDictionaryRef)_imageSourceOptions;
+-(void)_createPDFWithData:(NSData *)data;
+- (CGPDFDocumentRef)_PDFDocumentRef;
+- (BOOL)_PDFDrawFromRect:(NSRect)srcRect toRect:(NSRect)dstRect operation:(CGCompositeOperation)op alpha:(float)alpha flipped:(BOOL)flipped context:(CGContextRef)context;
 @end
 
 
@@ -51,6 +54,15 @@ static CFDictionaryRef imageSourceOptions;
     return self;
 }
 
+- (void)setIsPDF:(BOOL)f
+{
+    isPDF = f;
+}
+
+- (BOOL)isPDF
+{
+    return isPDF;
+}
 
 - (void)_commonTermination
 {
@@ -69,6 +81,7 @@ static CFDictionaryRef imageSourceOptions;
 
 - (void)dealloc
 {
+    [_PDFDoc release];
     [decodeLock release];
 
     [self _commonTermination];
@@ -199,31 +212,49 @@ static CFDictionaryRef imageSourceOptions;
 }
 
 // Called from decoder thread.
-- (void)decodeData:(CFDataRef)data isComplete:(BOOL)f callback:(id)callback
+- (void)decodeData:(CFDataRef)data isComplete:(BOOL)isComplete callback:(id)callback
 {
     [decodeLock lock];
     
-    CGImageSourceUpdateData (imageSource, data, f);
-
-    // The work of decoding is actually triggered by image creation.
-    [self _createImages];
-
+    if (isPDF) {
+        if (isComplete) {
+            [self _createPDFWithData:(NSData *)data];
+        }
+    }
+    else {
+        // The work of decoding is actually triggered by image creation.
+        CGImageSourceUpdateData (imageSource, data, isComplete);
+        [self _createImages];
+    }
+        
     [decodeLock unlock];
 
-    // Use status from first image to trigger appropriate notification back to WebCore
-    // on main thread.
-    if (callback) {
-        CGImageSourceStatus imageStatus = CGImageSourceGetStatusAtIndex(imageSource, 0);
-        
-        // Lie about status.  If we have all the data, go ahead and say we're complete
-        // as long we are have at least some valid bands (i.e. >= kCGImageStatusIncomplete).
-        // We have to lie because CG incorrectly reports the status.
-        if (f && imageStatus >= kCGImageStatusIncomplete)
-            imageStatus = kCGImageStatusComplete;
-        
-        // Only send bad status if we've read the whole image.
-        if (f || (!f && imageStatus >= kCGImageStatusIncomplete))
-            [WebImageDecoder decodeComplete:callback status:imageStatus];
+    if (isPDF) {
+        if (isComplete && callback) {
+            if ([self _PDFDocumentRef]) {
+                [WebImageDecoder decodeComplete:callback status:kCGImageStatusComplete];
+            }
+            else {
+                [WebImageDecoder decodeComplete:callback status:kCGImageStatusInvalidData];
+            }
+        }
+    }
+    else {
+        // Use status from first image to trigger appropriate notification back to WebCore
+        // on main thread.
+        if (callback) {
+            CGImageSourceStatus imageStatus = CGImageSourceGetStatusAtIndex(imageSource, 0);
+            
+            // Lie about status.  If we have all the data, go ahead and say we're complete
+            // as long we are have at least some valid bands (i.e. >= kCGImageStatusIncomplete).
+            // We have to lie because CG incorrectly reports the status.
+            if (isComplete && imageStatus >= kCGImageStatusIncomplete)
+                imageStatus = kCGImageStatusComplete;
+            
+            // Only send bad status if we've read the whole image.
+            if (isComplete || (!isComplete && imageStatus >= kCGImageStatusIncomplete))
+                [WebImageDecoder decodeComplete:callback status:imageStatus];
+        }
     }
 }
 
@@ -235,8 +266,15 @@ static CFDictionaryRef imageSourceOptions;
         [WebImageDecoder performDecodeWithImage:self data:data isComplete:isComplete callback:callback];
     }
     else {
-        CGImageSourceUpdateData (imageSource, data, isComplete);
-        [self _createImages];
+        if (isPDF) {
+            if (isComplete) {
+                [self _createPDFWithData:(NSData *)data];
+            }
+        }
+        else {
+            CGImageSourceUpdateData (imageSource, data, isComplete);
+            [self _createImages];
+        }
     }
     
     CFRelease (data);
@@ -245,60 +283,70 @@ static CFDictionaryRef imageSourceOptions;
 }
 
 - (void)drawImageAtIndex:(size_t)index inRect:(CGRect)ir fromRect:(CGRect)fr adjustedSize:(CGSize)adjustedSize compositeOperation:(CGCompositeOperation)op context:(CGContextRef)aContext;
-{    
-    [decodeLock lock];
-    
-    CGImageRef image = [self imageAtIndex:index];
-    
-    if (!image) {
-        [decodeLock unlock];
-        return;
+{
+    if (isPDF) {
+        [self _PDFDrawFromRect:NSMakeRect(fr.origin.x, fr.origin.y, fr.size.width, fr.size.height)
+                toRect:NSMakeRect(ir.origin.x, ir.origin.y, ir.size.width, ir.size.height)
+                operation:op 
+                alpha:1.0 
+                flipped:YES
+                context:aContext];
     }
+    else {
+        [decodeLock lock];
+        
+        CGImageRef image = [self imageAtIndex:index];
+        
+        if (!image) {
+            [decodeLock unlock];
+            return;
+        }
 
-    CGContextSaveGState (aContext);
+        CGContextSaveGState (aContext);
 
-    // Get the height of the portion of the image that is currently decoded.  This
-    // could be less that the actual height.
-    float h = CGImageGetHeight(image);
+        // Get the height of the portion of the image that is currently decoded.  This
+        // could be less that the actual height.
+        float h = CGImageGetHeight(image);
 
-    // Is the amount of available bands less than what we need to draw?  If so,
-    // clip.
-    BOOL clipped = NO;
-    CGSize actualSize = [self size];
-    if (h != actualSize.height) {
-	float proportionLoaded = h/actualSize.height;
-	fr.size.height = fr.size.height * proportionLoaded;
-	ir.size.height = ir.size.height * proportionLoaded;
-	clipped = YES;
-    }
-    
-    // Flip the coords.
-    CGContextSetCompositeOperation (aContext, op);
-    CGContextTranslateCTM (aContext, ir.origin.x, ir.origin.y);
-    CGContextScaleCTM (aContext, 1, -1);
-    CGContextTranslateCTM (aContext, 0, -fr.size.height);
-    
-    // Translated to origin, now draw at 0,0.
-    ir.origin.x = ir.origin.y = 0;
-    
-    // If we're drawing a sub portion of the image then create
-    // a image for the sub portion and draw that.
-    // Test using example site at http://www.meyerweb.com/eric/css/edge/complexspiral/demo.html
-    if (clipped == NO && (fr.size.width != adjustedSize.width || fr.size.height != adjustedSize.height)) {
-        image = CGImageCreateWithImageInRect (image, fr);
-        if (image) {
+        // Is the amount of available bands less than what we need to draw?  If so,
+        // clip.
+        BOOL clipped = NO;
+        CGSize actualSize = [self size];
+        if (h != actualSize.height) {
+            float proportionLoaded = h/actualSize.height;
+            fr.size.height = fr.size.height * proportionLoaded;
+            ir.size.height = ir.size.height * proportionLoaded;
+            clipped = YES;
+        }
+        
+        // Flip the coords.
+        CGContextSetCompositeOperation (aContext, op);
+        CGContextTranslateCTM (aContext, ir.origin.x, ir.origin.y);
+        CGContextScaleCTM (aContext, 1, -1);
+        CGContextTranslateCTM (aContext, 0, -fr.size.height);
+        
+        // Translated to origin, now draw at 0,0.
+        ir.origin.x = ir.origin.y = 0;
+        
+        // If we're drawing a sub portion of the image then create
+        // a image for the sub portion and draw that.
+        // Test using example site at http://www.meyerweb.com/eric/css/edge/complexspiral/demo.html
+        if (clipped == NO && (fr.size.width != adjustedSize.width || fr.size.height != adjustedSize.height)) {
+            image = CGImageCreateWithImageInRect (image, fr);
+            if (image) {
             CGContextDrawImage (aContext, ir, image);
             CFRelease (image);
+            }
         }
-    }
-    // otherwise draw the whole image.
-    else { 
-        CGContextDrawImage (aContext, ir, image);
-    }
+        // otherwise draw the whole image.
+        else { 
+            CGContextDrawImage (aContext, ir, image);
+        }
 
-    CGContextRestoreGState (aContext);
+        CGContextRestoreGState (aContext);
 
-    [decodeLock unlock];
+        [decodeLock unlock];
+    }
 }
 
 - (void)drawImageAtIndex:(size_t)index inRect:(CGRect)ir fromRect:(CGRect)fr compositeOperation:(CGCompositeOperation)op context:(CGContextRef)aContext;
@@ -407,10 +455,17 @@ CGPatternCallbacks patternCallbacks = { 0, drawPattern, NULL };
 {
     float w = 0.f, h = 0.f;
 
-    if (!haveSize) {
-        [decodeLock lock];
-        CFDictionaryRef properties = [self propertiesAtIndex:0];
-        if (properties) {
+    if (isPDF) {
+        if (_PDFDoc) {
+            CGRect mediaBox = [_PDFDoc mediaBox];
+            return mediaBox.size;
+        }
+    }
+    else {
+        if (!haveSize) {
+            [decodeLock lock];
+            CFDictionaryRef properties = [self propertiesAtIndex:0];
+            if (properties) {
             CFNumberRef num = CFDictionaryGetValue (properties, kCGImagePropertyPixelWidth);
             if (num)
                 CFNumberGetValue (num, kCFNumberFloat32Type, &w);
@@ -422,8 +477,9 @@ CGPatternCallbacks patternCallbacks = { 0, drawPattern, NULL };
             size.height = h;
             
             haveSize = YES;
+            }
+            [decodeLock unlock];
         }
-        [decodeLock unlock];
     }
     
     return size;
@@ -639,6 +695,69 @@ static NSMutableSet *activeAnimations;
                                                   selector:@selector(_nextFrame:)
                                                   userInfo:nil
                                                    repeats:NO] retain];
+}
+
+-(void)_createPDFWithData:(NSData *)data
+{
+    if (!_PDFDoc) {
+        _PDFDoc = [[WebPDFDocument alloc] initWithData:data];
+    }
+}
+
+- (CGPDFDocumentRef)_PDFDocumentRef
+{
+    return [_PDFDoc documentRef];
+}
+
+- (void)_PDFDrawInContext:(CGContextRef)context
+{
+    CGPDFDocumentRef document = [self _PDFDocumentRef];
+    if (document != NULL) {
+        CGRect       mediaBox = [_PDFDoc mediaBox];
+        
+        CGContextSaveGState(context);
+        // Rotate translate image into position according to doc properties.
+        [_PDFDoc adjustCTM:context];	
+
+        // Media box may have non-zero origin which we ignore. CGPDFDocumentShowPage pages start
+        // at 1, not 0.
+        CGContextDrawPDFDocument(context, CGRectMake(0, 0, mediaBox.size.width, mediaBox.size.height), document, 1);
+
+        CGContextRestoreGState(context);
+    }
+}
+
+- (BOOL)_PDFDrawFromRect:(NSRect)srcRect toRect:(NSRect)dstRect operation:(CGCompositeOperation)op alpha:(float)alpha flipped:(BOOL)flipped context:(CGContextRef)context
+{
+    float hScale, vScale;
+
+    CGContextSaveGState(context);
+
+    CGContextSetCompositeOperation (context, op);
+
+    // Scale and translate so the document is rendered in the correct location.
+    hScale = dstRect.size.width  / srcRect.size.width;
+    vScale = dstRect.size.height / srcRect.size.height;
+
+    CGContextTranslateCTM (context, dstRect.origin.x - srcRect.origin.x * hScale, dstRect.origin.y - srcRect.origin.y * vScale);
+    CGContextScaleCTM (context, hScale, vScale);
+
+    // Reverse if flipped image.
+    if (flipped) {
+        CGContextScaleCTM(context, 1, -1);
+        CGContextTranslateCTM (context, 0, -(dstRect.origin.y + dstRect.size.height));
+    }
+
+    // Clip to destination in case we are imaging part of the source only
+    CGContextClipToRect(context, CGRectIntegral(*(CGRect*)&srcRect));
+
+    // and draw
+    [self _PDFDrawInContext:context];
+
+    // done with our fancy transforms
+    CGContextRestoreGState(context);
+
+    return YES;
 }
 
 @end

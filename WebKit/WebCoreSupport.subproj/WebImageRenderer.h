@@ -68,6 +68,24 @@
 
 #endif
 
+@interface WebPDFDocument : NSObject
+{
+    CGPDFDocumentRef _document;
+    CGRect           _mediaBox;
+    NSRect           _cropBox;
+    float            _rotation;
+    int              _currentPage;
+}
+- (id)               initWithData:(NSData*)data;
+- (CGPDFDocumentRef) documentRef;
+- (CGRect)           mediaBox;
+- (NSRect)           bounds;	// adjust for rotation
+- (void)             setCurrentPage:(int)page;
+- (int)              currentPage;
+- (int)              pageCount;
+- (void)             adjustCTM:(CGContextRef)context;
+@end
+
 CGColorSpaceRef WebCGColorSpaceCreateRGB(void);
 CGColorSpaceRef WebCGColorSpaceCreateGray(void);
 CGColorSpaceRef WebCGColorSpaceCreateCMYK(void);

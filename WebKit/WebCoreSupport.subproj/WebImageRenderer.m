@@ -101,7 +101,7 @@
         return adjustedSize;
         
     if (!imageData)
-	return NSZeroSize;
+        return NSZeroSize;
 	
     CGSize sz = [imageData size];
     return NSMakeSize(sz.width, sz.height);
@@ -125,8 +125,12 @@
 
 - (BOOL)incrementalLoadWithBytes:(const void *)bytes length:(unsigned)length complete:(BOOL)isComplete callback:(id)c
 {
-    if (!imageData)
+    if (!imageData) {
         imageData = [[WebImageData alloc] init];
+        if ([MIMEType isEqual:@"application/pdf"]) {
+            [imageData setIsPDF:YES];
+        }
+    }
     return [imageData incrementalLoadWithBytes:bytes length:length complete:isComplete callback:c];
 }
 
@@ -148,15 +152,15 @@
         op = kCGCompositeSover;
         
     if (isSizeAdjusted) {
-	[imageData drawImageAtIndex:[imageData currentFrame] inRect:CGRectMake(ir.origin.x, ir.origin.y, ir.size.width, ir.size.height) 
-			fromRect:CGRectMake(fr.origin.x, fr.origin.y, fr.size.width, fr.size.height) 
-			adjustedSize:CGSizeMake(adjustedSize.width, adjustedSize.height)
-			compositeOperation:op context:aContext];
+        [imageData drawImageAtIndex:[imageData currentFrame] inRect:CGRectMake(ir.origin.x, ir.origin.y, ir.size.width, ir.size.height) 
+                fromRect:CGRectMake(fr.origin.x, fr.origin.y, fr.size.width, fr.size.height) 
+                adjustedSize:CGSizeMake(adjustedSize.width, adjustedSize.height)
+                compositeOperation:op context:aContext];
     }
     else {
-	[imageData drawImageAtIndex:[imageData currentFrame] inRect:CGRectMake(ir.origin.x, ir.origin.y, ir.size.width, ir.size.height) 
-			fromRect:CGRectMake(fr.origin.x, fr.origin.y, fr.size.width, fr.size.height) 
-			compositeOperation:op context:aContext];
+        [imageData drawImageAtIndex:[imageData currentFrame] inRect:CGRectMake(ir.origin.x, ir.origin.y, ir.size.width, ir.size.height) 
+                fromRect:CGRectMake(fr.origin.x, fr.origin.y, fr.size.width, fr.size.height) 
+                compositeOperation:op context:aContext];
     }
 
     targetAnimationRect = ir;
@@ -355,23 +359,6 @@ static CGImageRef _createImageRef(NSBitmapImageRep *rep);
 - (NSRect)bounds;
 @end
 
-@interface WebPDFDocument : NSObject
-{
-    CGPDFDocumentRef _document;
-    CGRect           _mediaBox;
-    NSRect           _cropBox;
-    float            _rotation;
-    int              _currentPage;
-}
-- (id)               initWithData:(NSData*)data;
-- (CGPDFDocumentRef) documentRef;
-- (CGRect)           mediaBox;
-- (NSRect)           bounds;	// adjust for rotation
-- (void)             setCurrentPage:(int)page;
-- (int)              currentPage;
-- (int)              pageCount;
-- (void)             adjustCTM:(CGContextRef)context;
-@end
 
 @implementation WebImageContext
 
@@ -1336,6 +1323,36 @@ static NSMutableSet *activeImageRenderers;
 
 @end
 
+static CGImageRef _createImageRef(NSBitmapImageRep *rep) {
+    BOOL isPlanar = [rep isPlanar];
+    if (isPlanar)
+        return 0;
+        
+    const unsigned char *bitmapData = [rep bitmapData];
+    int pixelsWide = [rep pixelsWide];
+    int pixelsHigh = [rep pixelsHigh];
+    int bitsPerSample = [rep bitsPerSample];
+    int bitsPerPixel = [rep bitsPerPixel];
+    int bytesPerRow = [rep bytesPerRow];
+    BOOL hasAlpha = [rep hasAlpha];
+    CGImageRef image;
+    CGDataProviderRef dataProvider;
+
+    CGColorSpaceRef colorSpace = WebCGColorSpaceCreateRGB();
+    dataProvider = CGDataProviderCreateWithData(NULL, bitmapData, pixelsHigh * bytesPerRow, NULL);
+
+    image = CGImageCreate(pixelsWide, pixelsHigh, bitsPerSample, bitsPerPixel, bytesPerRow, colorSpace,
+                          hasAlpha ? kCGImageAlphaPremultipliedLast : kCGImageAlphaNone,
+                          dataProvider, NULL, false /*shouldInterpolate*/, kCGRenderingIntentDefault);
+
+    CGDataProviderRelease(dataProvider);
+    CGColorSpaceRelease(colorSpace);	
+
+    return image;
+}
+
+#endif
+
 //------------------------------------------------------------------------------------
 
 @implementation WebPDFDocument
@@ -1462,35 +1479,6 @@ static void ReleasePDFDocumentData(void *info, const void *data, size_t size) {
 }
 
 @end
-
-static CGImageRef _createImageRef(NSBitmapImageRep *rep) {
-    BOOL isPlanar = [rep isPlanar];
-    if (isPlanar)
-        return 0;
-        
-    const unsigned char *bitmapData = [rep bitmapData];
-    int pixelsWide = [rep pixelsWide];
-    int pixelsHigh = [rep pixelsHigh];
-    int bitsPerSample = [rep bitsPerSample];
-    int bitsPerPixel = [rep bitsPerPixel];
-    int bytesPerRow = [rep bytesPerRow];
-    BOOL hasAlpha = [rep hasAlpha];
-    CGImageRef image;
-    CGDataProviderRef dataProvider;
-
-    CGColorSpaceRef colorSpace = WebCGColorSpaceCreateRGB();
-    dataProvider = CGDataProviderCreateWithData(NULL, bitmapData, pixelsHigh * bytesPerRow, NULL);
-
-    image = CGImageCreate(pixelsWide, pixelsHigh, bitsPerSample, bitsPerPixel, bytesPerRow, colorSpace,
-                          hasAlpha ? kCGImageAlphaPremultipliedLast : kCGImageAlphaNone,
-                          dataProvider, NULL, false /*shouldInterpolate*/, kCGRenderingIntentDefault);
-
-    CGDataProviderRelease(dataProvider);
-    CGColorSpaceRelease(colorSpace);	
-
-    return image;
-}
-#endif
 
 CGColorSpaceRef WebCGColorSpaceCreateRGB(void)
 {

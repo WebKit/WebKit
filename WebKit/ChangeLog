@@ -1,3 +1,32 @@
+2004-12-10  Richard Williamson   <rjw@apple.com>
+
+	Fixed <rdar://problem/3898708> REGRESSION (8A314-8A317): World Clock's short hand not displayed (ImageIO problem with PDF?)
+	Fixed <rdar://problem/3914012> use CG directly for pdf images not ImageIO
+
+	Create a PDF document and draw that instead of using ImageIO to create a rasterized image.
+
+        Reviewed by Maciej.
+
+        * WebCoreSupport.subproj/WebImageData.h:
+        * WebCoreSupport.subproj/WebImageData.m:
+        (-[WebImageData setIsPDF:]):
+        (-[WebImageData isPDF]):
+        (-[WebImageData dealloc]):
+        (-[WebImageData decodeData:isComplete:callback:]):
+        (-[WebImageData incrementalLoadWithBytes:length:complete:callback:]):
+        (-[WebImageData size]):
+        (-[WebImageData animate]):
+        (-[WebImageData _createPDFWithData:]):
+        (-[WebImageData _PDFDocumentRef]):
+        (-[WebImageData _PDFDrawInContext:]):
+        (-[WebImageData _PDFDrawFromRect:toRect:operation:alpha:flipped:context:]):
+        * WebCoreSupport.subproj/WebImageRenderer.h:
+        * WebCoreSupport.subproj/WebImageRenderer.m:
+        (-[WebImageRenderer size]):
+        (-[WebImageRenderer incrementalLoadWithBytes:length:complete:callback:]):
+        (-[WebImageRenderer drawImageInRect:fromRect:compositeOperator:context:]):
+        (_createImageRef):
+
 2004-12-10  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Ken.
