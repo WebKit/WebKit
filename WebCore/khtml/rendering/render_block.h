@@ -23,6 +23,8 @@
 #ifndef RENDER_BLOCK_H
 #define RENDER_BLOCK_H
 
+#include <qsortedlist.h>
+
 #include "render_flow.h"
 
 namespace khtml {
