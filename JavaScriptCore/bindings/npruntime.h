@@ -127,8 +127,6 @@ struct NP_Class
     int32_t structVersion;
     NP_CreateInterface create;
     NP_DestroyInterface destroy;
-    NP_RetainInterface retain;
-    NP_ReleaseInterface release;
     NP_InvalidateInterface invalidate;
     NP_HasMethodInterface hasMethod;
     NP_InvokeInterface invoke;

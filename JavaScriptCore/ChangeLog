@@ -1,5 +1,17 @@
 2004-03-02  Richard Williamson   <rjw@apple.com>
 
+	Removed retain/release from NP_Class.  Classes will not be allowed to implement their
+	own customer retain/release scheme.
+
+        Reviewed by Chris.
+
+        * bindings/NP_runtime.cpp:
+        (NP_RetainObject):
+        (NP_ReleaseObject):
+        * bindings/NP_runtime.h:
+
+2004-03-02  Richard Williamson   <rjw@apple.com>
+
 	C binding API.  Partial implementation.
 
 	Completed ObjectiveC bindings (not based on the C API).  These will re-implemented over the C binding API, but I wanted to get this code in the tree.
