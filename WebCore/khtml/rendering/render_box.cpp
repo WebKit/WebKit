@@ -923,39 +923,16 @@ void RenderBox::calcHeight()
             h = Length(parent()->contentHeight() - marginTop() - marginBottom() -
                        borderTop() - paddingTop() - borderBottom() - paddingBottom(), Fixed);
 
-        if (!h.isVariable())
-        {
-            int fh=-1;
+        if (!h.isVariable()) {
+            int fh = -1;
             if (h.isFixed())
-                fh = h.value + borderTop() + paddingTop() + borderBottom() + paddingBottom();
-            else if (h.isPercent()) {
-                // Handle a common case: nested 100% height <div>s.
-                // This is kind of a one-off hack rather than doing it right.
-                // Makes dbaron's z-index root bg testcases work. Bad dave. - dwh
-                RenderBlock* cb = containingBlock();
-                Length ch = containingBlock()->style()->height();
-                while (cb && !cb->isTableCell() && ch.isPercent() && ch.value == 100) {
-                    cb = cb->containingBlock();
-                    ch = cb->style()->height();
-                }
-
-                if (cb->isCanvas()) {
-                    // Don't allow this to affect the canvas' m_height member variable, since this
-                    // can get called while the canvas is still laying out its kids.
-                    // e.g., <html style="height:100%">etc. -dwh
-                    int oldHeight = cb->height();
-                    static_cast<RenderCanvas*>(cb)->calcHeight();
-                    fh = h.width(cb->height()) + borderTop() + paddingTop() + borderBottom() + paddingBottom();
-                    cb->setHeight(oldHeight);
-                }
-                else if (ch.isFixed())
-                    fh = h.width(ch.value) + borderTop() + paddingTop() + borderBottom() + paddingBottom();
-            }
-            if (fh!=-1)
-            {
-                if (fh<m_height && !overhangingContents() && style()->overflow()==OVISIBLE)
+                fh = h.value;
+            else if (h.isPercent())
+                fh = calcPercentageHeight();
+            if (fh != -1) {
+                fh += borderTop() + paddingTop() + borderBottom() + paddingBottom();
+                if (fh < m_height && !overhangingContents() && style()->overflow() == OVISIBLE)
                     setOverhangingContents();
-
                 m_height = fh;
             }
         }
@@ -967,6 +944,36 @@ void RenderBox::calcHeight()
         m_layer->marquee()->setEnd(m_height);
         m_height = kMin(m_height, m_layer->marquee()->unfurlPos());
     }
+}
+
+int RenderBox::calcPercentageHeight()
+{
+    int result = -1;
+    RenderBlock* cb = containingBlock();
+    // Table cells violate what the CSS spec says to do with heights.  Basically we
+    // don't care if the cell specified a height or not.  We just always make ourselves
+    // be a percentage of the cell's current content height.
+    if (cb->isTableCell())
+        result = static_cast<RenderTableCell*>(cb)->getCellPercentageHeight();
+    
+    // Otherwise we only use our percentage height if our containing block had a specified
+    // height.
+    else if (cb->style()->height().isFixed())
+        result = cb->style()->height().value;
+    else if (cb->style()->height().isPercent())
+        // We need to recur and compute the percentage height for our containing block.
+        result = cb->calcPercentageHeight();
+    else if (cb->isCanvas()) {
+        // Don't allow this to affect the block' m_height member variable, since this
+        // can get called while the block is still laying out its kids.
+        int oldHeight = cb->height();
+        cb->calcHeight();
+        result = cb->height();
+        cb->setHeight(oldHeight);
+    }
+    if (result != -1)
+        result = style()->height().width(result);
+    return result;
 }
 
 int RenderBox::calcReplacedWidth() const
