@@ -1,3 +1,49 @@
+2002-12-08  Darin Adler  <darin@apple.com>
+
+        Reviewed by Don and Dave.
+
+	- fixed 3115845 -- bad-pointer crash destroying DOM tree reproducible at a particular site
+
+	All hail libgmalloc, without which this would just be another bug I can't reproduce!
+
+	This memory trasher bug was caused bug calling setChildrenLoaded after casting a node to
+	HTMLObjectElementImpl, when the node wasn't always an object element. It turns out that this
+        fix was made obsolete a while back when I changed close on renderers to be delivered even for
+        cases where the renderer is not created yet at close time.
+
+        * khtml/html/htmlparser.cpp: (KHTMLParser::processCloseTag): Remove the special case for
+	</object>. Now that this is fixed another way we don't need this at all.
+
+        * khtml/html/html_objectimpl.h: Remove setChildrenLoaded and m_childrenLoaded.
+        * khtml/html/html_objectimpl.cpp: (HTMLObjectElementImpl::HTMLObjectElementImpl):
+	Remove code that sets m_childrenLoaded to false.
+        (HTMLObjectElementImpl::attach): Remove code that looks at m_childrenLoaded, since we don't
+	need it any more (and in fact there's no way to set it any more).
+
+	- fixed 3120578 -- REGRESSION: going to about:blank creates null view
+
+	If no tokens are ever sent to the parser, then we end up without a render tree.
+
+        * khtml/html/htmlparser.h: Add finished() function.
+        * khtml/html/htmlparser.cpp: (KHTMLParser::finished): Make an HTML element if the document is still
+	empty at this point. This is identical to what KHTMLParser::insertNode does when you insert any kind
+	of element other than an HTML element.
+
+        * khtml/html/htmltokenizer.cpp: (HTMLTokenizer::end): Call finished() to let the parser know.
+
+        * kwq/KWQKHTMLPart.mm: (KWQKHTMLPart::paint): Turn on the "paint red" feature in development builds.
+	Null view problems are particularly hard to debug without something like this, and we don't care
+	if development builds are ever-so-slightly slower. No change in deployment.
+
+	- fixed 3121527 -- crash in WebCoreBridge frameBorderStyle
+
+        * kwq/WebCoreBridge.mm: (-[WebCoreBridge frameBorderStyle]): Handle case where this is called and
+	we don't have a KHTMLView yet.
+
+	- other changes
+
+        * WebCore.pbproj/project.pbxproj: Electron is doing his thing.
+
 2002-12-08  David Hyatt  <hyatt@apple.com>
 
 	Fix for image bullets.  They were neglecting to offset

@@ -1,3 +1,46 @@
+2002-12-08  Darin Adler  <darin@apple.com>
+
+        Reviewed by Don and Dave.
+
+	- fixed 3120578 -- REGRESSION: going to about:blank creates null view
+
+	This part of the fix makes sure that a renderer is created, even when there are no bytes
+	of data passed through. This makes the empty document about:blank case work just like the
+	"document with just whitespace in it case". There's another part of the fix in WebCore that
+	takes care of the remaining problem. 
+
+        * WebView.subproj/WebHTMLRepresentation.m:
+        (-[WebHTMLRepresentation finishedLoadingWithDataSource:]):
+	Call receivedData:withDataSource: on the bridge with nil for the data. It would be even more
+	elegant to add a new call for the case where we finish, but it's not necessary, since the
+	existing receivedData: call does all the right things if passed nil.
+
+        * WebView.subproj/WebDataSourcePrivate.m: (-[WebDataSource _finishedLoading]):
+	Call finishedLoadingWithDataSource: here, to make sure it's done after committing.	
+	This parallels what we already do for the didReceiveData call.
+        * WebView.subproj/WebMainResourceClient.m: (-[WebMainResourceClient handleDidFinishLoading:]):
+	Remove the call to finishedLoadingWithDataSource: because it's handled by _finishedLoading now.
+	This parallels what we already do for the didReceiveData call.
+
+	- fixed long standing problem where resizing could make you see a "null view"
+
+        * WebView.subproj/WebView.m:
+        (-[WebView drawRect:]): Add a "paint cyan" feature in development builds.
+	Null view problems are particularly hard to debug without something like this,
+	and we don't care if development builds are slightly slower. No change in deployment.
+        (-[WebView setFrameSize:]): Tell the scroll view to draw the background if we are
+	resized. We can't do our "let the old bits show through" thing any more if we have to
+	redraw because of resizing.
+
+	- other changes
+
+        * WebKit.pbproj/project.pbxproj: Remove the old -DAPPLE_CHANGES and -DHAVE_CONFIG_H that we
+        once needed when WebKit used to compile  C++ headers from the KHTML part of WebCore.
+        We haven't needed those for ages. Also sort things a bit, using the new Electron feature for
+	sorting lists of files alphabetically, and some by hand.
+
+        * English.lproj/StringsNotToBeLocalized.txt: Update for recent changes.
+
 2002-12-08  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: 3121627 - REGRESSION: partial progress is left in address field after download

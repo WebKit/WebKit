@@ -870,10 +870,13 @@ DOM::Node next = n.firstChild();
 
 - (int)frameBorderStyle
 {
-    if (_part->kwq->view()->frameStyle() & QFrame::Sunken)
-        return SunkenFrameBorder;
-    if (_part->kwq->view()->frameStyle() & QFrame::Plain)
-        return PlainFrameBorder;
+    KHTMLView *view = _part->kwq->view();
+    if (view) {
+        if (view->frameStyle() & QFrame::Sunken)
+            return SunkenFrameBorder;
+        if (view->frameStyle() & QFrame::Plain)
+            return PlainFrameBorder;
+    }
     return NoFrameBorder;
 }
 

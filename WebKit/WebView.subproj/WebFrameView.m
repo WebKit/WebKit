@@ -140,7 +140,6 @@ NSString *WebErrorDomainWebKit = @"WebErrorDomainWebKit";
     return _private->controller;
 }
 
-
 - (BOOL)isDocumentHTML
 {
     return [[self documentView] isKindOfClass:[WebHTMLView class]];
@@ -206,7 +205,22 @@ NSString *WebErrorDomainWebKit = @"WebErrorDomainWebKit";
         // Need to paint ourselves if there's no documentView to do it instead.
         [[NSColor whiteColor] set];
         NSRectFill(rect);
+    } else {
+#ifndef NDEBUG
+        if ([_private->frameScrollView drawsBackground]) {
+            [[NSColor cyanColor] set];
+            NSRectFill(rect);
+        }
+#endif
     }
+}
+
+- (void)setFrameSize:(NSSize)size
+{
+    if (!NSEqualSizes(size, [self frame].size)) {
+        [_private->frameScrollView setDrawsBackground:YES];
+    }
+    [super setFrameSize:size];
 }
 
 - (NSWindow *)window

@@ -291,13 +291,15 @@ void KWQKHTMLPart::redirectionTimerStartedOrStopped()
 
 void KWQKHTMLPart::paint(QPainter *p, const QRect &rect)
 {
-#ifdef DEBUG_DRAWING
+#ifndef NDEBUG
     [[NSColor redColor] set];
     [NSBezierPath fillRect:[view()->getView() visibleRect]];
 #endif
 
     if (renderer()) {
         renderer()->layer()->paint(p, rect.x(), rect.y(), rect.width(), rect.height());
+    } else {
+        ERROR("called KWQKHTMLPart::paint with nil renderer");
     }
 }
 

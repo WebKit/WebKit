@@ -265,7 +265,6 @@ void HTMLEmbedElementImpl::attach()
 HTMLObjectElementImpl::HTMLObjectElementImpl(DocumentPtr *doc) : HTMLElementImpl(doc)
 {
     needWidgetUpdate = false;
-    m_childrenLoaded = false;
 }
 
 HTMLObjectElementImpl::~HTMLObjectElementImpl()
@@ -376,12 +375,6 @@ void HTMLObjectElementImpl::attach()
     _style->deref();
 
     NodeBaseImpl::attach();
-
-    // Go ahead and perform the update.
-    if (m_childrenLoaded && m_render && strcmp(m_render->renderName(), "RenderPartObject") == 0) {
-        m_childrenLoaded = false;
-        static_cast<RenderPartObject*>(m_render)->updateWidget();
-    }
 
     // ### do this when we are actually finished loading instead
     if (m_render)

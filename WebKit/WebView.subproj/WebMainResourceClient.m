@@ -306,7 +306,6 @@
         downloadHandler = nil;
     } else {
         [dataSource _setResourceData:resourceData];
-        [[dataSource representation] finishedLoadingWithDataSource:dataSource];
         [dataSource _finishedLoading];
         [[dataSource controller] _mainReceivedBytesSoFar:[resourceData length]
                                           fromDataSource:dataSource

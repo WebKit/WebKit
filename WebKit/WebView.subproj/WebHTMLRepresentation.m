@@ -67,6 +67,11 @@
 
 - (void)finishedLoadingWithDataSource:(WebDataSource *)dataSource
 {
+    // Telling the bridge we received some data and passing nil as the data is our
+    // way to get work done that is normally done when the first bit of data is
+    // received, even for the case of a document with no data (like about:blank).
+    if ([dataSource webFrame])
+        [_private->bridge receivedData:nil withDataSource:dataSource];
 }
 
 - (NSString *)documentSource

@@ -1116,12 +1116,6 @@ void KHTMLParser::processCloseTag(Token *t)
     case ID_SELECT+ID_CLOSE_TAG:
         inSelect = false;
         break;
-    case ID_OBJECT+ID_CLOSE_TAG:
-        // This case has been added to deal with async rendering tree construction
-        // caused by <link rel=stylesheet>. We need to update the widget if and only
-        // if all children have loaded.  -dwh
-        if (current && !current->renderer())
-            static_cast<HTMLObjectElementImpl*>(current)->setChildrenLoaded();
     default:
         break;
     }
@@ -1309,4 +1303,15 @@ void KHTMLParser::startBody()
         insertNode( isindex, true /* don't decend into this node */ );
         isindex = 0;
     }
+}
+
+void KHTMLParser::finished()
+{
+    // Make an HTML element for the case of an otherwise-empty document.
+    // This works around the fact that the RenderRoot doesn't itself do any drawing.
+    // In the long run, it might be better to fix the render tree so that the background
+    // is drawn even without an element below the root, since that will work for the XML case
+    // too, not just the HTML case.
+    if (doc() && !doc()->firstChild())
+        insertNode(new HTMLHtmlElementImpl(document));
 }

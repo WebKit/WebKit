@@ -499,6 +499,8 @@
 {
     _private->gotFirstByte = YES;
     [self _commitIfReady];
+
+    [[self representation] finishedLoadingWithDataSource:self];
 }
 
 - (void)_updateIconDatabaseWithURL:(NSURL *)iconURL
