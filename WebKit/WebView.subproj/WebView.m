@@ -73,28 +73,16 @@
 }
 
 
-
-// ---------------------------------------------------------------------
-// IFScriptContextHandler
-// ---------------------------------------------------------------------
-- (void)setStatusText: (NSString *)text forDataSource: (IFWebDataSource *)dataSource
+- (void)setWindowContext: (id<IFWindowContext>)context
 {
-    [NSException raise:IFMethodNotYetImplemented format:@"IFWebController::setStatusText:forDataSource: is not implemented"];
+    [_private->windowContext autorelease];
+    _private->windowContext = [context retain];
 }
 
-
-- (NSString *)statusTextForDataSource: (IFWebDataSource *)dataSource
+- (id<IFWindowContext>)windowContext
 {
-    [NSException raise:IFMethodNotYetImplemented format:@"IFWebController::statusTextForDataSource: is not implemented"];
-    return nil;
+    return _private->windowContext;
 }
-
-
-- (IFWebController *)openNewWindowWithURL:(NSURL *)url
-{
-    return nil;
-}
-
 
 - (void)setResourceProgressHandler: (id<IFResourceProgressHandler>)handler
 {

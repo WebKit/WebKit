@@ -1014,6 +1014,9 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
         winargs.menuBarVisible = false;
         winargs.toolBarsVisible = false;
         winargs.statusBarVisible = false;
+#ifdef APPLE_CHANGES
+	winargs.scrollbarsVisible = false;
+#endif
         QStringList flist = QStringList::split(',', features);
         QStringList::ConstIterator it = flist.begin();
         while (it != flist.end()) {
@@ -1031,22 +1034,34 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
               winargs.x = val.toInt() + screen.x();
 	      if (winargs.x < screen.x() || winargs.x > screen.right())
 		  winargs.x = screen.x(); // only safe choice until size is determined
+#ifdef APPLE_CHANGES
+	      winargs.xSet = true;
+#endif
             } else if (key == "top" || key == "screeny") {
               winargs.y = val.toInt() + screen.y();
 	      if (winargs.y < screen.y() || winargs.y > screen.bottom())
 		  winargs.y = screen.y(); // only safe choice until size is determined
+#ifdef APPLE_CHANGES
+	      winargs.ySet = true;
+#endif
             } else if (key == "height") {
               winargs.height = val.toInt() + 2*qApp->style().pixelMetric( QStyle::PM_DefaultFrameWidth ) + 2;
 	      if (winargs.height > screen.height())  // should actually check workspace
 		  winargs.height = screen.height();
               if (winargs.height < 100)
 		  winargs.height = 100;
+#ifdef APPLE_CHANGES
+	      winargs.heightSet = true;
+#endif
             } else if (key == "width") {
               winargs.width = val.toInt() + 2*qApp->style().pixelMetric( QStyle::PM_DefaultFrameWidth ) + 2;
 	      if (winargs.width > screen.width())    // should actually check workspace
 		  winargs.width = screen.width();
               if (winargs.width < 100)
 		  winargs.width = 100;
+#ifdef APPLE_CHANGES
+	      winargs.widthSet = true;
+#endif
             } else {
               goto boolargs;
 	    }
@@ -1069,6 +1084,10 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
             winargs.resizable = (val == "1" || val == "yes");
           else if (key == "fullscreen")
             winargs.fullscreen = (val == "1" || val == "yes");
+#ifdef APPLE_CHANGES
+          else if (key == "scrollbars")
+            winargs.scrollbarsVisible = (val == "1" || val == "yes");
+#endif
         }
       }
 

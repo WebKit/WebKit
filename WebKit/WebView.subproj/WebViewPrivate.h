@@ -12,6 +12,7 @@
 @interface IFWebControllerPrivate : NSObject
 {
     IFWebFrame *mainFrame;
+    id<IFWindowContext> windowContext;
     id<IFResourceProgressHandler> resourceProgressHandler;
     id<IFWebControllerPolicyHandler> policyHandler;
 }

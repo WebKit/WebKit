@@ -1,3 +1,35 @@
+2002-06-29  Maciej Stachowiak  <mjs@apple.com>
+
+        WebKit part of fix for:
+
+	Radar 2942074 - JavaScript size, positioning and feature
+	parameters to window.open are ignored
+
+	Also, renamed IFScriptContextHandler protocol to IFWindowContext,
+	and made it a settable handler like the others rather than
+	something implemented by the controller, so it can be used w/o
+	subclassing.
+	
+        * WebCoreSupport.subproj/IFWebCoreBridge.mm:
+        (-[IFWebCoreBridge openNewWindowWithURL:]): Forward to the WindowContext.
+        (-[IFWebCoreBridge areToolbarsVisisble]): Likewise.
+        (-[IFWebCoreBridge setToolbarsVisible:]): Likewise.
+        (-[IFWebCoreBridge areScrollbarsVisible]): Likewise.
+        (-[IFWebCoreBridge setScrollbarsVisible:]): Likewise.
+        (-[IFWebCoreBridge isStatusBarVisisble]): Likewise.
+        (-[IFWebCoreBridge setStatusBarVisible:]): Likewise.
+        (-[IFWebCoreBridge setWindowFrame:]): Likewise.
+        (-[IFWebCoreBridge window]): Likewise.
+        * WebView.subproj/IFWebController.h:
+        * WebView.subproj/IFWebController.mm:
+        (-[IFWebController setWindowContext:]): Setter for new WindowContext handler
+        (-[IFWebController windowContext]): Likewise.
+        * WebView.subproj/IFWebControllerPrivate.h:
+        * WebView.subproj/IFWebControllerPrivate.mm:
+        (-[IFWebControllerPrivate dealloc]): Release window context.
+        * WebView.subproj/IFWebFrame.mm:
+        (-[IFWebFrame frameNamed:]): Open new windows via WindowContext.
+
 2002-06-28  Darin Adler  <darin@apple.com>
 
         * WebCoreSupport.subproj/IFImageRenderer.h: Renamed statusOfCache to

@@ -59,7 +59,53 @@ void KHTMLPartBrowserExtension::createNewWindow(const KURL &url,
 						KParts::ReadOnlyPart **partResult)
 { 
     WebCoreBridge *bridge = [m_part->impl->getBridge() openNewWindowWithURL:url.getNSURL()];
-    
+
+    if (!winArgs.toolBarsVisible) {
+	[bridge setToolbarsVisible:NO];
+    }
+
+    if (!winArgs.statusBarVisible) {
+	[bridge setStatusBarVisible:NO];
+    }
+
+    if (!winArgs.scrollbarsVisible) {
+	[bridge setScrollbarsVisible:NO];
+    }
+
+    if (!winArgs.resizable) {
+	[[bridge window] setShowsResizeIndicator:NO];
+    }
+
+    if (winArgs.xSet || winArgs.ySet || winArgs.widthSet || winArgs.heightSet) {
+
+	NSRect screenFrame = [[[bridge window] screen] frame];
+	NSRect frame = [[bridge window] frame];
+
+	if (winArgs.xSet) {
+	    frame.origin.x = winArgs.x;
+	}
+
+	if (winArgs.ySet) {
+	    if (winArgs.heightSet) {
+		frame.origin.y = screenFrame.size.height - winArgs.y + frame.size.height - winArgs.height;
+	    } else {
+		frame.origin.y = screenFrame.size.height - winArgs.y;
+	    }
+	}
+
+	if (winArgs.widthSet) {
+	    frame.size.width = winArgs.width;
+	}
+	
+	if (winArgs.heightSet) {
+	    frame.size.height = winArgs.height;
+	}
+	
+	[bridge setWindowFrame:frame];
+    }
+
+    [[[bridge window] windowController] showWindow:nil];
+
     // We can't return a KHTMLPart in all cases, because the new window might not even
     // have HTML in it. And we don't create the KHTMLPart until we become "committed".
     // So it's better not to try to return the KHTMLPart, and no callers currently need it.

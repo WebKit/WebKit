@@ -89,7 +89,7 @@
 
 - (WebCoreBridge *)openNewWindowWithURL:(NSURL *)url
 {
-    IFWebController *newController = [[dataSource controller] openNewWindowWithURL:url];
+    IFWebController *newController = [[[dataSource controller] windowContext] openNewWindowWithURL:url];
     IFWebDataSource *newDataSource;
     
     newDataSource = [[newController mainFrame] provisionalDataSource];
@@ -97,6 +97,47 @@
         return [(IFHTMLRepresentation *)[newDataSource representation] _bridge];
         
     return nil;
+}
+
+- (BOOL)areToolbarsVisisble
+{
+    return [[[dataSource controller] windowContext] areToolbarsVisible];
+}
+
+- (void)setToolbarsVisible:(BOOL)visible
+{
+    [[[dataSource controller] windowContext] setToolbarsVisible:visible];
+}
+
+- (BOOL)areScrollbarsVisible
+{
+    return [[[dataSource webFrame] webView] allowsScrolling];
+}
+
+- (void)setScrollbarsVisible:(BOOL)visible
+{
+    return [[[dataSource webFrame] webView] setAllowsScrolling:visible];
+}
+
+- (BOOL)isStatusBarVisisble
+{
+    return [[[dataSource controller] windowContext] isStatusBarVisible];
+}
+
+- (void)setStatusBarVisible:(BOOL)visible
+{
+    [[[dataSource controller] windowContext] setStatusBarVisible:visible];
+}
+
+- (void)setWindowFrame:(NSRect)frame
+{
+    [[[dataSource controller] windowContext] setFrame:frame];
+}
+
+
+- (NSWindow *)window
+{
+    return [[[dataSource controller] windowContext] window];
 }
 
 - (void)setTitle:(NSString *)title

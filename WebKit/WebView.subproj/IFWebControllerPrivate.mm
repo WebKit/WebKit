@@ -53,6 +53,7 @@
 
     [mainFrame reset];
     [mainFrame autorelease];
+    [windowContext autorelease];
     [resourceProgressHandler autorelease];
     [policyHandler autorelease];
 

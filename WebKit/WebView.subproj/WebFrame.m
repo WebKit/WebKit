@@ -263,7 +263,7 @@
     }
     
     else if ([name isEqualToString:@"_blank"]){
-        IFWebController *newController = [[self controller] openNewWindowWithURL: nil];
+        IFWebController *newController = [[[self controller] windowContext] openNewWindowWithURL: nil];
         return [newController mainFrame];
     }
     

@@ -1,3 +1,19 @@
+2002-06-29  Maciej Stachowiak  <mjs@apple.com>
+
+        WebCore part of fix for:
+
+	Radar 2942074 - JavaScript size, positioning and feature
+	parameters to window.open are ignored
+
+        * kwq/WebCoreBridge.h: Add new calls needed for window
+	size/position/feature getting and setting.
+        * kwq/KWQKHTMLPartBrowserExtension.mm:
+        (KHTMLPartBrowserExtension::createNewWindow): Set properties on window
+	after creating it using new bridge calls; make it visible.
+	* khtml/ecma/kjs_window.cpp:
+        (WindowFunc::tryCall): Support scrollbars feature too.
+        * kwq/kparts/browserextension.h: Include scrollbar setting stuff.
+
 2002-06-28  Richard Williamson  <rjw@apple.com>
 
         Use float character measurement to determine selection
