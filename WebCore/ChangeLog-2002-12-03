@@ -1,3 +1,8 @@
+2002-03-12  Richard Williamson  <rjw@apple.com>
+
+	* src/kwq/KWQString.mm: (QString::find), (QString::contains),
+	(QString::compareToLatin1):
+
 2002-03-11  Richard Williamson  <rjw@apple.com>
 
 Re-implemented QPainter::drawTiledPixmap to use core graphics patterns.  Currently this depends

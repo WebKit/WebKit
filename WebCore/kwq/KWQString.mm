@@ -528,26 +528,91 @@ int QString::find(const QString &qs, int index) const
     return -1;
 }
 
-int QString::find(const char *chs, int index, bool cs) const
+#ifdef DEBUG_FIND_COUNTER
+static int findCount = 0;
+static int findExpensiveCount = 0;
+static int findCheapCount = 0;
+#endif
+
+int QString::find(const char *chs, int index, bool caseSensitive) const
 {
     int pos = -1;
     if (s && chs) {
+#ifdef DEBUG_FIND_COUNTER
+        findCount++;
+#endif
+        const UniChar *internalBuffer = CFStringGetCharactersPtr (s);
         CFIndex len = CFStringGetLength(s);
         if (index < 0) {
             index += len;
         }
-        if (len && (index >= 0) && (index < len)) {
-            CFStringRef tmp = CFStringCreateWithCStringNoCopy(
-                    kCFAllocatorDefault, chs, kCFStringEncodingISOLatin1,
-                    kCFAllocatorNull);
-            if (tmp) {
-                CFRange r;
-                if (CFStringFindWithOptions(s, tmp,
-                        CFRangeMake(index, len - index),
-                        cs ? 0 : kCFCompareCaseInsensitive, &r)) {
-                    pos = r.location;
+        if (internalBuffer == 0){
+#ifdef DEBUG_FIND_COUNTER
+            findExpensiveCount++;
+            if (findCount % 500 == 0)
+                fprintf (stdout, "findCount = %d, expensive = %d, cheap = %d\n", findCount, findExpensiveCount, findCheapCount);
+#endif
+            if (len && (index >= 0) && (index < len)) {
+                CFStringRef tmp = CFStringCreateWithCStringNoCopy(
+                        kCFAllocatorDefault, chs, kCFStringEncodingISOLatin1,
+                        kCFAllocatorNull);
+                if (tmp) {
+                    CFRange r;
+                    if (CFStringFindWithOptions(s, tmp,
+                            CFRangeMake(index, len - index),
+                            caseSensitive ? 0 : kCFCompareCaseInsensitive, &r)) {
+                        pos = r.location;
+                    }
+                    _cf_release(tmp);
                 }
-                _cf_release(tmp);
+            }
+        }
+        else {
+#ifdef DEBUG_FIND_COUNTER
+            findCheapCount++;
+            if (findCount % 500 == 0)
+                fprintf (stdout, "findCount = %d, expensive = %d, cheap = %d\n", findCount, findExpensiveCount, findCheapCount);
+#endif
+            if (len && (index >= 0) && (index < len)) {
+                UniChar firstC, c1, c2, otherCase_c2;
+                const char *_chs;
+                int remaining = len - index, found = -1;
+                int compareToLength = strlen(chs);
+                
+                internalBuffer = &internalBuffer[index];
+                
+                _chs = chs;
+                firstC = (UniChar)(*_chs);
+                while (remaining >= compareToLength){
+                    if (*internalBuffer++ == firstC){
+                        const UniChar *compareTo = internalBuffer;
+                        int caseDelta = ('a' - 'A');
+                        
+                        found = len - remaining;
+                        _chs++;
+                        while (*compareTo && *_chs){
+                            c1 = (UniChar)(*compareTo++);
+                            c2 = (UniChar)(*_chs);
+                            if (caseSensitive){
+                                if (c2 >= 'a' && c2 <= 'z')
+                                    otherCase_c2 = c2 - caseDelta;
+                                else if (c2 >= 'A' && c2 <= 'Z')
+                                    otherCase_c2 = c2 + caseDelta;
+                                else
+                                    otherCase_c2 = c2;
+                                if (c1 != c2 && c1 != otherCase_c2)
+                                    break;
+                            }
+                            else if (c1 != c2)
+                                break;
+                            _chs++;
+                        }
+                        if (!*_chs)
+                            return found;
+                        _chs = chs;
+                    }
+                    remaining--;
+                }
             }
         }
     }
@@ -613,6 +678,10 @@ int QString::findRev(const char *chs, int index) const
     return pos;
 }
 
+#ifdef DEBUG_CONTAINS_COUNTER
+static int containsCount = 0;
+#endif
+
 int QString::contains(char ch) const
 {
     int c = 0;
@@ -635,6 +704,11 @@ int QString::contains(const char *chs, bool cs) const
 {
     int c = 0;
     if (s && chs) {
+#ifdef DEBUG_CONTAINS_COUNTER
+        containsCount++;
+        if (containsCount % 500 == 0)
+            fprintf (stdout, "containsCount = %d\n", containsCount);
+#endif
         CFStringRef tmp = CFStringCreateWithCStringNoCopy(
                 kCFAllocatorDefault, chs, kCFStringEncodingISOLatin1,
                 kCFAllocatorNull);
@@ -1425,6 +1499,12 @@ QString QString::leftRight(uint width, bool left) const
     return qs;
 }
 
+#ifdef DEBUG_COMPARE_COUNTER
+static int compareCount = 0;
+static int compareCountExpensive = 0;
+static int compareCountCheap = 0;
+#endif
+
 int QString::compareToLatin1(const char *chs) const
 {
     if (!s) {
@@ -1433,15 +1513,52 @@ int QString::compareToLatin1(const char *chs) const
     if (!chs) {
         return kCFCompareGreaterThan;
     }
-    CFStringRef tmp = CFStringCreateWithCStringNoCopy(
-            kCFAllocatorDefault, chs, kCFStringEncodingISOLatin1,
-            kCFAllocatorNull);
-    if (tmp) {
-        int result = CFStringCompare(s, tmp, 0);
-        _cf_release(tmp);
-        return result;
+
+#ifdef DEBUG_COMPARE_COUNTER
+    compareCount++;
+    if (compareCount % 500 == 0)
+        fprintf (stdout, "compareCount = %d\n", compareCount);
+#endif
+
+    const UniChar *internalBuffer = CFStringGetCharactersPtr (s);
+    if (internalBuffer == 0){
+#ifdef DEBUG_COMPARE_COUNTER
+        compareCountExpensive++;
+
+        if (compareCount % 500 == 0)
+            fprintf (stdout, "compareCount = %d, expensive = %d, cheap = %d\n", compareCount, compareCountExpensive, compareCountCheap);
+#endif
+        CFStringRef tmp = CFStringCreateWithCStringNoCopy(
+                kCFAllocatorDefault, chs, kCFStringEncodingISOLatin1,
+                kCFAllocatorNull);
+        if (tmp) {
+            int result = CFStringCompare(s, tmp, 0);
+            _cf_release(tmp);
+            return result;
+        }
+        return kCFCompareGreaterThan;
     }
-    return kCFCompareGreaterThan;
+    else {
+        CFIndex len = CFStringGetLength(s);
+        
+#ifdef DEBUG_COMPARE_COUNTER
+        compareCountCheap++;
+        if (compareCount % 500 == 0)
+            fprintf (stdout, "compareCount = %d, expensive = %d, cheap = %d\n", compareCount, compareCountExpensive, compareCountCheap);
+#endif
+        while (len && *chs){
+            UniChar c1 = *internalBuffer++;
+            UniChar c2 = (UniChar)(*chs++);
+            if (c1 < c2)
+                return kCFCompareLessThan;
+            else if (c1 > c2)
+                return kCFCompareGreaterThan;
+            len--;
+        }
+        if (len == 0 && *chs == 0)
+            return 0;
+        return kCFCompareGreaterThan;
+    }
 }
 
 
