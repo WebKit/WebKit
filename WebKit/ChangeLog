@@ -1,5 +1,10 @@
 2003-01-31  Chris Blumenberg  <cblu@apple.com>
 
+        * English.lproj/StringsNotToBeLocalized.txt: Updated for recent changes.
+        * WebView.subproj/WebController.m: fixed key value
+
+2003-01-31  Chris Blumenberg  <cblu@apple.com>
+
 	Fixed : 3155148 - image shown when dragging gets size from image file, not size as used on page
 
         Reviewed by darin.
