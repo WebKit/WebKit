@@ -70,7 +70,7 @@ RenderFormElement::~RenderFormElement()
 short RenderFormElement::baselinePosition( bool f ) const
 {
 #ifdef APPLE_CHANGES
-    return RenderWidget::baselinePosition( f ) - 6 - style()->fontMetrics().descent();
+    return marginTop() + widget()->baselinePosition();
 #else
     return RenderWidget::baselinePosition( f ) - 2 - style()->fontMetrics().descent();
 #endif
@@ -201,9 +201,7 @@ RenderButton::RenderButton(HTMLGenericFormElementImpl *element)
 short RenderButton::baselinePosition( bool f ) const
 {
 #if APPLE_CHANGES
-    // We put the bottoms of buttons on the baseline,
-    // This looks better than trying to line up the button text's baseline.
-    return height() + marginTop() - 2;
+    return RenderFormElement::baselinePosition( f );
 #else
     return RenderWidget::baselinePosition( f ) - 2;
 #endif
@@ -374,11 +372,7 @@ QString RenderSubmitButton::defaultLabel() {
 
 short RenderSubmitButton::baselinePosition( bool f ) const
 {
-#ifdef APPLE_CHANGES
-    return RenderButton::baselinePosition( f );
-#else
     return RenderFormElement::baselinePosition( f );
-#endif
 }
 
 // -------------------------------------------------------------------------------
@@ -482,16 +476,6 @@ RenderLineEdit::RenderLineEdit(HTMLInputElementImpl *element)
 
     setQWidget(edit);
 }
-
-#ifdef APPLE_CHANGES
-short RenderLineEdit::baselinePosition( bool f ) const
-{
-    // We arbitrarily put the bottoms of line edits 2 pixels below the baseline.
-    // This looks better than trying to line up the baseline of the text inside
-    // and also matches WinIE.
-    return height() + marginTop() - 2;
-}
-#endif
 
 void RenderLineEdit::slotReturnPressed()
 {
@@ -873,9 +857,7 @@ void RenderSelect::updateFromElement()
 short RenderSelect::baselinePosition( bool f ) const
 {
     if (!m_useListBox) {
-        // We put the bottoms of menus on the baseline,
-        // This looks better than trying to line up the button text's baseline.
-        return height() + marginTop() - 2;
+        return RenderFormElement::baselinePosition( f );
     } else {
         return RenderWidget::baselinePosition( f ) - 7;
     }

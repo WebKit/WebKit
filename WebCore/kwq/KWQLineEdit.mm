@@ -29,6 +29,9 @@
 #import <kwqdebug.h>
 #import <WebCoreTextRendererFactory.h>
 
+// This replicates constants from [NSTextFieldCell drawingRectForBounds].
+#define VERTICAL_FUDGE_FACTOR 3
+
 QLineEdit::QLineEdit()
     : m_returnPressed(this, SIGNAL(returnPressed()))
     , m_textChanged(this, SIGNAL(textChanged(const QString &)))
@@ -155,4 +158,13 @@ void QLineEdit::setFrameGeometry(const QRect &r)
 {
     QWidget::setFrameGeometry(QRect(r.x() - FOCUS_BORDER_SIZE, r.y() - FOCUS_BORDER_SIZE,
         r.width() + FOCUS_BORDER_SIZE * 2, r.height() + FOCUS_BORDER_SIZE * 2));
+}
+
+int QLineEdit::baselinePosition() const
+{
+    KWQNSTextField *textField = (KWQNSTextField *)getView();
+    NSRect bounds = [textField bounds];
+    NSFont *font = [textField font];
+    return (int)ceil([[textField cell] drawingRectForBounds:bounds].origin.y - bounds.origin.y
+        + [font defaultLineHeightForFont] + [font descender]);
 }

@@ -151,6 +151,11 @@ QRect QWidget::frameGeometry() const
     return QRect((int)vFrame.origin.x, (int)vFrame.origin.y, (int)vFrame.size.width, (int)vFrame.size.height);
 }
 
+int QWidget::baselinePosition() const
+{
+    return height();
+}
+
 QWidget *QWidget::topLevelWidget() const 
 {
     NSWindow *window = nil;

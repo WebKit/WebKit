@@ -25,7 +25,60 @@
 
 #import <qpushbutton.h>
 
-QPushButton::QPushButton(const QString &text, QWidget *parent)
+// We empirically determined that buttons have these extra pixels on all
+// sides. It would be better to get this info from AppKit somehow.
+#define TOP_MARGIN 4
+#define BOTTOM_MARGIN 6
+#define LEFT_MARGIN 5
+#define RIGHT_MARGIN 5
+
+// AppKit calls this kThemePushButtonSmallTextOffset.
+#define VERTICAL_FUDGE_FACTOR 2
+
+QPushButton::QPushButton(QWidget *)
 {
+    NSButton *button = (NSButton *)getView();
+    [button setBezelStyle:NSRoundedBezelStyle];
+}
+
+QPushButton::QPushButton(const QString &text, QWidget *)
+{
+    NSButton *button = (NSButton *)getView();
+    [button setBezelStyle:NSRoundedBezelStyle];
+
     setText(text);
+}
+
+QSize QPushButton::sizeHint() const 
+{
+    NSButton *button = (NSButton *)getView();
+    return QSize((int)[[button cell] cellSize].width - (LEFT_MARGIN + RIGHT_MARGIN),
+        (int)[[button cell] cellSize].height - (TOP_MARGIN + BOTTOM_MARGIN));
+}
+
+QRect QPushButton::frameGeometry() const
+{
+    QRect r = QWidget::frameGeometry();
+    return QRect(r.x() + LEFT_MARGIN, r.y() + TOP_MARGIN,
+        r.width() - (LEFT_MARGIN + RIGHT_MARGIN),
+        r.height() - (TOP_MARGIN + BOTTOM_MARGIN));
+}
+
+void QPushButton::setFrameGeometry(const QRect &r)
+{
+    QWidget::setFrameGeometry(QRect(r.x() - LEFT_MARGIN, r.y() - TOP_MARGIN,
+        r.width() + LEFT_MARGIN + RIGHT_MARGIN,
+        r.height() + TOP_MARGIN + BOTTOM_MARGIN));
+}
+
+int QPushButton::baselinePosition() const
+{
+    // Button text is centered vertically, with a fudge factor to account for the shadow.
+    NSButton *button = (NSButton *)getView();
+    NSFont *font = [button font];
+    float ascender = [font ascender];
+    float descender = [font descender];
+    return (int)ceil(-TOP_MARGIN
+        + ((height() + TOP_MARGIN + BOTTOM_MARGIN) - (ascender - descender)) / 2.0
+        + ascender - VERTICAL_FUDGE_FACTOR);
 }

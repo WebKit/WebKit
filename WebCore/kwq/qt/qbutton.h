@@ -44,10 +44,6 @@ public:
     virtual void setText(const QString &);
     QString text() const;
     
-    QSize sizeHint() const;
-    QRect frameGeometry() const;
-    void setFrameGeometry(const QRect &);
-    
     virtual void clicked();
 
 private:

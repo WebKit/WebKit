@@ -1,3 +1,61 @@
+2002-08-21  Darin Adler  <darin@apple.com>
+
+	Implemented baseline alignment for form elements. We decided that this was better
+	than what we're currently doing. But it will look even better when the font of the
+	text field matches the font of the surrounding text, so we should consider that.
+
+	I also nudged the text down one pixel in popup menus, to match buttons. I think we
+	probably should suggest that this be done in Aqua by default (buttons and popup menus
+	already match in the normal size; this is the small size).
+
+        * khtml/rendering/render_form.h: Remove some APPLE_CHANGES.
+        * khtml/rendering/render_form.cpp:
+        (RenderFormElement::baselinePosition): Use the widget's concept of the baseline
+	position (the new QWidget::baselinePosition function).
+        (RenderButton::baselinePosition): Just call the inherited version.
+        (RenderSubmitButton::baselinePosition): Remove our ifdef because we want what the
+	original code said, which was just calling the inherited version.
+	(RenderLineEdit::baselinePosition): Removed our added method since we want to just
+	call the inherited version.
+        (RenderSelect::baselinePosition): Just call the inherited version for the pop up
+	menu case. For the list box, just left the old code alone until someone can take
+	a look at it.
+
+        * kwq/qt/qwidget.h: Added new virtual baselinePosition function.
+        * kwq/KWQWidget.mm: (QWidget::baselinePosition): Default for baseline is the bottom.
+
+        * kwq/qt/qlineedit.h:
+        * kwq/KWQLineEdit.mm:
+        (QLineEdit::baselinePosition): Compute the baseline based on how NSTextField does it.
+	Compared to the other widgets this was easy, because the cell's drawingRectForBounds
+	gives you the place where the top of the line is. It does use defaultLineHeightForFont,
+	which is not used by other widgets, but that's no real problem.
+
+        * kwq/qt/qbutton.h:
+        * kwq/KWQButton.mm: Moved all the code that's push-button specific into QPushButton.
+
+        * kwq/qt/qpushbutton.h:
+        * kwq/KWQPushButton.mm:
+        (QPushButton::QPushButton): Set the bezel style of the button.
+        (QPushButton::sizeHint): Moved here from QButton.
+        (QPushButton::frameGeometry): Moved here from QButton.
+        (QPushButton::setFrameGeometry): Moved here from QButton.
+        (QPushButton::baselinePosition): Compute the baseline based on how NSButton does it.
+	The rule for the style of button we use is "centered vertically in the available space,
+	offset by kThemePushButtonSmallTextOffset", so I had to hardcode the value of
+	kThemePushButtonSmallTextOffset; I called it VERTICAL_FUDGE_FACTOR (2).
+
+        * kwq/qt/qcombobox.h:
+        * kwq/KWQComboBox.mm:
+        (-[KWQPopUpButtonCell drawInteriorWithFrame:inView:]): Custom cell class that nudges
+	the text down one pixel.
+        (QComboBox::QComboBox): Attach the custom cell class.
+        (QComboBox::baselinePosition): Compute the baseline based on how NSPopUpButton does it.
+	The rule for the style of pop-up button we use is "CELLOFFSET pixels down from the top",
+	so I had to hardcode the value of CELLOFFSET; I called it VERTICAL_FUDGE_FACTOR (2).
+
+        * force-clean-timestamp: Yes, again.
+
 2002-08-20  Darin Adler  <darin@apple.com>
 
 	- fix 3028936 -- fields are not submitting the correct data if they are selected

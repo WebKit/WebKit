@@ -90,6 +90,8 @@ public:
     virtual QRect frameGeometry() const;
     virtual void setFrameGeometry(const QRect &);
 
+    virtual int baselinePosition() const; // relative to the top of the widget
+
     virtual QWidget *topLevelWidget() const;
 
     virtual QPoint mapToGlobal(const QPoint &) const;

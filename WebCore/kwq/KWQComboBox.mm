@@ -34,6 +34,11 @@
 #define LEFT_MARGIN 3
 #define RIGHT_MARGIN 3
 
+#define TEXT_VERTICAL_NUDGE 1
+
+// This is the 2-pixel CELLOFFSET for bordered cells from NSCell.
+#define VERTICAL_FUDGE_FACTOR 2
+
 @interface KWQComboBoxAdapter : NSObject
 {
     QComboBox *box;
@@ -44,11 +49,31 @@
 
 @end
 
+@interface KWQPopUpButtonCell : NSPopUpButtonCell
+{
+}
+@end
+
+@implementation KWQPopUpButtonCell
+
+- (void)drawInteriorWithFrame:(NSRect)cellFrame inView:(NSView *)controlView
+{
+    cellFrame.origin.y += TEXT_VERTICAL_NUDGE;
+    cellFrame.size.height -= TEXT_VERTICAL_NUDGE;
+    [super drawInteriorWithFrame:cellFrame inView:controlView];
+}
+
+@end
+
 QComboBox::QComboBox()
     : m_activated(this, SIGNAL(activated(int)))
     , m_adapter([[KWQComboBoxAdapter alloc] initWithQComboBox:this])
 {
     NSPopUpButton *button = [[NSPopUpButton alloc] init];
+    
+    KWQPopUpButtonCell *cell = [[KWQPopUpButtonCell alloc] init];
+    [button setCell:cell];
+    [cell release];
 
     [button setTarget:m_adapter];
     [button setAction:@selector(action:)];
@@ -100,9 +125,17 @@ QRect QComboBox::frameGeometry() const
 
 void QComboBox::setFrameGeometry(const QRect &r)
 {
-    QWidget::setFrameGeometry(QRect(r.x() - LEFT_MARGIN, r.y() - TOP_MARGIN,
-        r.width() + LEFT_MARGIN + RIGHT_MARGIN,
-        r.height() + TOP_MARGIN + BOTTOM_MARGIN));
+    QWidget::setFrameGeometry(QRect(-LEFT_MARGIN + r.x(), -TOP_MARGIN + r.y(),
+        LEFT_MARGIN + r.width() + RIGHT_MARGIN,
+        TOP_MARGIN + r.height() + BOTTOM_MARGIN));
+}
+
+int QComboBox::baselinePosition() const
+{
+    // Menu text is at the top.
+    NSPopUpButton *button = (NSButton *)getView();
+    return (int)ceil(-TOP_MARGIN + VERTICAL_FUDGE_FACTOR
+        + TEXT_VERTICAL_NUDGE + [[button font] ascender]);
 }
 
 void QComboBox::clear()

@@ -234,9 +234,6 @@ public:
     virtual void updateFromElement();
 
     void select();
-#ifdef APPLE_CHANGES
-    short baselinePosition( bool f ) const;
-#endif
 
     KLineEdit *widget() const { return static_cast<KLineEdit*>(m_widget); }
     DOM::HTMLInputElementImpl* element() const

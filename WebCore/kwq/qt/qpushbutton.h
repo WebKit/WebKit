@@ -30,8 +30,13 @@
 
 class QPushButton : public QButton {
 public:
-    QPushButton(QWidget *parent) { }
+    QPushButton(QWidget *parent);
     QPushButton(const QString &text, QWidget *parent);
+
+    QSize sizeHint() const;
+    QRect frameGeometry() const;
+    void setFrameGeometry(const QRect &);
+    int baselinePosition() const;
 };
 
 #endif

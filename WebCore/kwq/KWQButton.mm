@@ -27,13 +27,6 @@
 
 #import <qcheckbox.h>
 
-// We empirically determined that buttons have these extra pixels on all
-// sides. It would be better to get this info from AppKit somehow.
-#define TOP_MARGIN 4
-#define BOTTOM_MARGIN 6
-#define LEFT_MARGIN 5
-#define RIGHT_MARGIN 5
-
 @interface KWQButtonAdapter : NSObject
 {
     QButton *button;
@@ -54,7 +47,6 @@ QButton::QButton()
     [button setAction:@selector(action:)];
 
     [button setTitle:@""];
-    [button setBezelStyle:NSRoundedBezelStyle];
     [[button cell] setControlSize:NSSmallControlSize];
     [button setFont:[NSFont systemFontOfSize:[NSFont smallSystemFontSize]]];
 
@@ -66,28 +58,6 @@ QButton::QButton()
 QButton::~QButton()
 {
     [m_adapter release];
-}
-
-QSize QButton::sizeHint() const 
-{
-    NSButton *button = (NSButton *)getView();
-    return QSize((int)[[button cell] cellSize].width - (LEFT_MARGIN + RIGHT_MARGIN),
-        (int)[[button cell] cellSize].height - (TOP_MARGIN + BOTTOM_MARGIN));
-}
-
-QRect QButton::frameGeometry() const
-{
-    QRect r = QWidget::frameGeometry();
-    return QRect(r.x() + LEFT_MARGIN, r.y() + TOP_MARGIN,
-        r.width() - (LEFT_MARGIN + RIGHT_MARGIN),
-        r.height() - (TOP_MARGIN + BOTTOM_MARGIN));
-}
-
-void QButton::setFrameGeometry(const QRect &r)
-{
-    QWidget::setFrameGeometry(QRect(r.x() - LEFT_MARGIN, r.y() - TOP_MARGIN,
-        r.width() + LEFT_MARGIN + RIGHT_MARGIN,
-        r.height() + TOP_MARGIN + BOTTOM_MARGIN));
 }
 
 void QButton::setText(const QString &s)
