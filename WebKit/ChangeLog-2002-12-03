@@ -1,3 +1,23 @@
+2002-11-07  Darin Adler  <darin@apple.com>
+
+        * History.subproj/WebHistoryItem.h: Replace _URL with _URLString.
+
+        * History.subproj/WebHistoryItem.m:
+        (-[WebHistoryItem _retainIconInDatabase:]): Get the URL with [self URL].
+        (-[WebHistoryItem initWithURL:target:parent:title:]): Set up _URLString.
+        (-[WebHistoryItem dealloc]): Release _URLString.
+        (-[WebHistoryItem URL]): Make a URL from _URLString.
+        (-[WebHistoryItem icon]): Use [self URL] instead of _URL.
+        (-[WebHistoryItem setURL:]): Store a URL string.
+        (-[WebHistoryItem hash]): Use the URL string's hash.
+        (-[WebHistoryItem isEqual:]): Compare the URL strings.
+        (-[WebHistoryItem description]): Use _URLString.
+        (-[WebHistoryItem dictionaryRepresentation]): Use _URLString.
+        (-[WebHistoryItem initFromDictionaryRepresentation:]): Call through to
+	the other init functions so we have only one designated initializer.
+	Leave the date as nil if there's no date in the dictionary instead of
+	setting the date to 0.
+
 2002-11-07  Maciej Stachowiak  <mjs@apple.com>
 
 	Removed SaveAndOpenExternally policy.

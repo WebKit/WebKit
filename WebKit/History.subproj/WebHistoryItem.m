@@ -4,49 +4,51 @@
 */
 
 #import <WebKit/WebHistoryItem.h>
+
 #import <WebKit/WebIconDatabase.h>
 #import <WebKit/WebIconLoader.h>
 
+#import <WebFoundation/WebNSDictionaryExtras.h>
 #import <WebFoundation/WebNSURLExtras.h>
 
 @implementation WebHistoryItem
 
 - (void)_retainIconInDatabase:(BOOL)retain
 {
-    if(_URL){
+    NSURL *URL = [self URL];
+    if (URL) {
         WebIconDatabase *iconDB = [WebIconDatabase sharedIconDatabase];
-
-        if(retain){
-            [iconDB retainIconForSiteURL:_URL];
-        }else{
-            [iconDB releaseIconForSiteURL:_URL];
+        if (retain) {
+            [iconDB retainIconForSiteURL:URL];
+        } else {
+            [iconDB releaseIconForSiteURL:URL];
         }
     }
 }
 
-+(WebHistoryItem *)entryWithURL:(NSURL *)URL
++ (WebHistoryItem *)entryWithURL:(NSURL *)URL
 {
     return [[[self alloc] initWithURL:URL title:nil] autorelease];
 }
 
--(id)init
+- (id)init
 {
     return [self initWithURL:nil title:nil];
 }
 
--(id)initWithURL:(NSURL *)URL title:(NSString *)title
+- (id)initWithURL:(NSURL *)URL title:(NSString *)title
 {
-    return [self initWithURL:URL target: nil parent: nil title:title];
+    return [self initWithURL:URL target:nil parent:nil title:title];
 }
 
--(id)initWithURL:(NSURL *)URL target: (NSString *)target parent: (NSString *)parent title:(NSString *)title
+- (id)initWithURL:(NSURL *)URL target:(NSString *)target parent:(NSString *)parent title:(NSString *)title
 {
     if (self != [super init])
     {
         return nil;
     }
     
-    _URL = [URL retain];
+    _URLString = [[URL absoluteString] copy];
     _target = [target copy];
     _parent = [parent copy];
     _title = [title copy];
@@ -61,7 +63,7 @@
 {
     [self _retainIconInDatabase:NO];
     
-    [_URL release];
+    [_URLString release];
     [_target release];
     [_parent release];
     [_title release];
@@ -74,42 +76,42 @@
     [super dealloc];
 }
 
--(NSURL *)URL
+- (NSURL *)URL
 {
-    return _URL;
+    return [NSURL _web_URLWithString:_URLString];
 }
 
--(NSString *)target
+- (NSString *)target
 {
     return _target;
 }
 
--(NSString *)parent
+- (NSString *)parent
 {
     return _parent;
 }
 
--(NSString *)title
+- (NSString *)title
 {
     return _title;
 }
 
--(NSString *)displayTitle;
+- (NSString *)displayTitle;
 {
     return _displayTitle;
 }
 
--(void)_setIcon:(NSImage *)newIcon
+- (void)_setIcon:(NSImage *)newIcon
 {
     [newIcon retain];
     [_icon release];
     _icon = newIcon;
 }
 
--(NSImage *)icon
+- (NSImage *)icon
 {
     if (!_loadedIcon) {
-        NSImage *newIcon = [[WebIconDatabase sharedIconDatabase] iconForSiteURL:_URL withSize:WebIconSmallSize];
+        NSImage *newIcon = [[WebIconDatabase sharedIconDatabase] iconForSiteURL:[self URL] withSize:WebIconSmallSize];
         [self _setIcon:newIcon];
         _loadedIcon = YES;
     }
@@ -118,51 +120,52 @@
 }
 
 
--(NSCalendarDate *)lastVisitedDate
+- (NSCalendarDate *)lastVisitedDate
 {
     return _lastVisitedDate;
 }
 
--(void)setURL:(NSURL *)URL
+- (void)setURL:(NSURL *)URL
 {
-    if (!(URL == _URL || [URL isEqual:_URL])) {
+    NSString *string = [URL absoluteString];
+    if (!(string == _URLString || [string isEqual:_URLString])) {
         [self _retainIconInDatabase:NO];
-        [_URL release];
-        _URL = [URL retain];
+        [_URLString release];
+        _URLString = [string copy];
         _loadedIcon = NO;
         [self _retainIconInDatabase:YES];
     }
 }
 
--(void)setTitle:(NSString *)title
+- (void)setTitle:(NSString *)title
 {
     NSString *copy = [title copy];
     [_title release];
     _title = copy;
 }
 
--(void)setTarget:(NSString *)target
+- (void)setTarget:(NSString *)target
 {
     NSString *copy = [target copy];
     [_target release];
     _target = copy;
 }
 
--(void)setParent:(NSString *)parent
+- (void)setParent:(NSString *)parent
 {
     NSString *copy = [parent copy];
     [_parent release];
     _parent = copy;
 }
 
--(void)setDisplayTitle:(NSString *)displayTitle
+- (void)setDisplayTitle:(NSString *)displayTitle
 {
     NSString *copy = [displayTitle copy];
     [_displayTitle release];
     _displayTitle = copy;
 }
 
--(void)setLastVisitedDate:(NSCalendarDate *)date
+- (void)setLastVisitedDate:(NSCalendarDate *)date
 {
     [date retain];
     [_lastVisitedDate release];
@@ -181,19 +184,19 @@
     return _documentState;
 }
 
--(NSPoint)scrollPoint
+- (NSPoint)scrollPoint
 {
     return _scrollPoint;
 }
 
--(void)setScrollPoint: (NSPoint)scrollPoint
+- (void)setScrollPoint:(NSPoint)scrollPoint
 {
     _scrollPoint = scrollPoint;
 }
 
--(unsigned)hash
+- (unsigned)hash
 {
-    return [_URL hash];
+    return [_URLString hash];
 }
 
 - (NSString *)anchor
@@ -201,49 +204,44 @@
     return anchor;
 }
 
-- (void)setAnchor: (NSString *)a
+- (void)setAnchor:(NSString *)a
 {
     NSString *copy = [a copy];
     [anchor release];
     anchor = copy;
 }
 
-
--(BOOL)isEqual:(id)anObject
+- (BOOL)isEqual:(id)anObject
 {
-    BOOL result;
-    
-    result = NO;
-
-    if ([anObject isMemberOfClass:[WebHistoryItem class]]) {
-        result = [_URL isEqual:[anObject URL]];
+    if (![anObject isMemberOfClass:[WebHistoryItem class]]) {
+        return NO;
     }
     
-    return result;
+    NSString *otherURL = ((WebHistoryItem *)anObject)->_URLString;
+    return _URLString == otherURL || [_URLString isEqualToString:otherURL];
 }
 
--(NSString *)description
+- (NSString *)description
 {
-    return [NSString stringWithFormat:@"WebHistoryItem %@", _URL];
+    return [NSString stringWithFormat:@"WebHistoryItem %@", _URLString];
 }
-
 
 - (NSDictionary *)dictionaryRepresentation
 {
-    NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithCapacity: 6];
+    NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithCapacity:6];
 
-    if (_URL != nil) {
-        [dict setObject: [_URL absoluteString] forKey: @""];
+    if (_URLString) {
+        [dict setObject:_URLString forKey:@""];
     }
-    if (_title != nil) {
-        [dict setObject: _title forKey: @"title"];
+    if (_title) {
+        [dict setObject:_title forKey:@"title"];
     }
-    if (_displayTitle != nil) {
-        [dict setObject: _displayTitle forKey: @"displayTitle"];
+    if (_displayTitle) {
+        [dict setObject:_displayTitle forKey:@"displayTitle"];
     }
-    if (_lastVisitedDate != nil) {
-        [dict setObject: [NSString stringWithFormat:@"%lf", [_lastVisitedDate timeIntervalSinceReferenceDate]]
-                 forKey: @"lastVisitedDate"];
+    if (_lastVisitedDate) {
+        [dict setObject:[NSString stringWithFormat:@"%lf", [_lastVisitedDate timeIntervalSinceReferenceDate]]
+                 forKey:@"lastVisitedDate"];
     }
 
     return dict;
@@ -251,20 +249,19 @@
 
 - (id)initFromDictionaryRepresentation:(NSDictionary *)dict
 {
-    // FIXME: Make robust against bad dictionary contents.
+    NSString *URL = [dict _web_stringForKey:@""];
+    NSString *title = [dict _web_stringForKey:@"title"];
 
-    [super init];
+    [self initWithURL:[NSURL _web_URLWithString:URL] title:title];
     
-    NSString *storedURLString = [dict objectForKey: @""];
-    if (storedURLString != nil) {
-        _URL = [[NSURL _web_URLWithString:storedURLString] retain];
-        [self _retainIconInDatabase:YES];
+    [self setDisplayTitle:[dict _web_stringForKey:@"displayTitle"]];
+    NSString *date = [dict _web_stringForKey:@"lastVisitedDate"];
+    if (date) {
+        NSCalendarDate *calendarDate = [[NSCalendarDate alloc]
+            initWithTimeIntervalSinceReferenceDate:[date doubleValue]];
+        [self setLastVisitedDate:calendarDate];
+        [calendarDate release];
     }
-    
-    _title = [[dict objectForKey:@"title"] copy];
-    _displayTitle = [[dict objectForKey:@"displayTitle"] copy];
-    _lastVisitedDate = [[NSCalendarDate alloc] initWithTimeIntervalSinceReferenceDate:
-        [[dict objectForKey:@"lastVisitedDate"] doubleValue]];
     
     return self;
 }
