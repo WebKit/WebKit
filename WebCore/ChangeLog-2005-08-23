@@ -1,3 +1,13 @@
+2004-07-19  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3715117, crash from a bug in removeChildren.  Clean up node removal and fix an n-squared removal
+	bug.  Also clean up checks in removeChild and in the dispatch of removedFromDocument mutation events to
+	make node removal more efficient.
+	
+        Reviewed by kocienda
+
+        * khtml/xml/dom_nodeimpl.cpp:
+
 2004-07-19  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Trey.

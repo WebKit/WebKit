@@ -1668,33 +1668,37 @@ NodeImpl *NodeBaseImpl::removeChild ( NodeImpl *oldChild, int &exceptioncode )
     // Dispatch post-removal mutation events
     dispatchSubtreeModifiedEvent();
 
-    NodeImpl *p = this;
-    while (p->parentNode())
-	p = p->parentNode();
-    if (p->nodeType() == Node::DOCUMENT_NODE) {
-	for (NodeImpl *c = oldChild; c; c = c->traverseNextNode(oldChild))
-	    c->removedFromDocument();
-    }
+    if (oldChild->inDocument())
+        oldChild->removedFromDocument();
 
     return oldChild;
 }
 
 void NodeBaseImpl::removeChildren()
 {
+    int exceptionCode;
     while (NodeImpl *n = _first) {
         NodeImpl *next = n->nextSibling();
+        
+        // Fire removed from document mutation events.
+        dispatchChildRemovalEvents(n, exceptionCode);
+    
         if (n->attached())
 	    n->detach();
-        if (n->inDocument())
-            n->removedFromDocument();
         n->setPreviousSibling(0);
         n->setNextSibling(0);
         n->setParent(0);
+        
+        if (n->inDocument())
+            n->removedFromDocument();
         if (!n->refCount())
             delete n;
         _first = next;
     }
     _last = 0;
+    
+    // Dispatch a single post-removal mutation event denoting a modified subtree.
+    dispatchSubtreeModifiedEvent();
 }
 
 
@@ -2117,10 +2121,7 @@ void NodeBaseImpl::dispatchChildRemovalEvents( NodeImpl *child, int &exceptionco
     bool hasRemovalListeners = getDocument()->hasListenerType(DocumentImpl::DOMNODEREMOVEDFROMDOCUMENT_LISTENER);
 
     // dispatch the DOMNOdeRemovedFromDocument event to all descendants
-    NodeImpl *p = this;
-    while (p->parentNode())
-	p = p->parentNode();
-    if (p->nodeType() == Node::DOCUMENT_NODE) {
+    if (inDocument()) {
 	for (NodeImpl *c = child; c; c = c->traverseNextNode(child)) {
 	    if (hasRemovalListeners) {
 		c->dispatchEvent(new MutationEventImpl(EventImpl::DOMNODEREMOVEDFROMDOCUMENT_EVENT,
