@@ -3432,10 +3432,25 @@ void KWQKHTMLPart::setDisplaysWithFocusAttributes(bool flag)
         d->m_view->updateContents(QRect(visibleSelectionRect()));
 
     // 2. Caret blinking (blinks | does not blink)
+    //    Also, put the caret someplace if the selection is empty and the part is editable.
+    //    This has the effect of flashing the caret in a contentEditable view automatically 
+    //    without requiring the programmer to set a selection explicitly.
+    DocumentImpl *doc = xmlDocImpl();
+    if (doc && flag && selection().state() == Selection::NONE && isContentEditable()) {
+        NodeImpl *node = doc->documentElement();
+        while (node) {
+            // Look for a block flow, but skip over the HTML element, since we really
+            // want to get at least as far as the the BODY element in a document.
+            if (node->isBlockFlow() && node->identifier() != ID_HTML)
+                break;
+            node = node->traverseNextNode();
+        }
+        if (node)
+            setSelection(Position(node, 0));
+    }
     setCaretVisible(flag);
 
     // 3. The drawing of a focus ring around links in web pages.
-    DocumentImpl *doc = xmlDocImpl();
     if (doc) {
         NodeImpl *node = doc->focusNode();
         if (node && node->renderer())

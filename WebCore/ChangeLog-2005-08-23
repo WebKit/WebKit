@@ -1,3 +1,21 @@
+2004-07-31  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+        <rdar://problem/3745498> HTMLCompose: Can't edit new empty message (and typing eventually crashes)
+        <rdar://problem/3746408> HTMLCompose: cannot type in message body of new messages (and tabbing causes a crash.)
+        
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::setDisplaysWithFocusAttributes): Add in some smarts to look around for
+        a good place to put the caret if focus is turning "on", the part is contentEditable,
+        and it does not currently have a selection. This has the effect of flashing the caret 
+        in a contentEditable view automatically without requiring the programmer to set a 
+        selection explicitly. This also fixes the bug listed above. Both are cases where the
+        bad behavior happened since the editing code tried to process input without an active 
+        selection. I always took the extra step of setting the selection explicitly when
+        opening new windows in programs like Blot, but it seems silly to require developers to
+        do this in general. With this patch, they no longer need to.
+
 2004-07-30  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by John
