@@ -87,6 +87,8 @@ using khtml::VISIBLE;
 
 using KIO::Job;
 
+using KJS::Interpreter;
+using KJS::Location;
 using KJS::SavedBuiltins;
 using KJS::SavedProperties;
 using KJS::ScheduledAction;
@@ -1141,8 +1143,12 @@ void KWQKHTMLPart::saveWindowProperties(SavedProperties *windowProperties)
 void KWQKHTMLPart::saveLocationProperties(SavedProperties *locationProperties)
 {
     Window *window = Window::retrieveWindow(this);
-    if (window)
-        window->location()->saveProperties(*locationProperties);
+    if (window) {
+        Interpreter::lock();
+        Location *location = window->location();
+        Interpreter::unlock();
+        location->saveProperties(*locationProperties);
+    }
 }
 
 void KWQKHTMLPart::restoreWindowProperties(SavedProperties *windowProperties)
@@ -1155,8 +1161,12 @@ void KWQKHTMLPart::restoreWindowProperties(SavedProperties *windowProperties)
 void KWQKHTMLPart::restoreLocationProperties(SavedProperties *locationProperties)
 {
     Window *window = Window::retrieveWindow(this);
-    if (window)
-        window->location()->restoreProperties(*locationProperties);
+    if (window) {
+        Interpreter::lock();
+        Location *location = window->location();
+        Interpreter::unlock();
+        location->restoreProperties(*locationProperties);
+    }
 }
 
 void KWQKHTMLPart::saveInterpreterBuiltins(SavedBuiltins &interpreterBuiltins)

@@ -1,3 +1,12 @@
+2003-12-09  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::saveLocationProperties): Add locking around the call to get the location
+        since it can allocate.
+        (KWQKHTMLPart::restoreLocationProperties): Ditto.
+
 2003-12-09  David Hyatt  <hyatt@apple.com>
 
 	Fix for mojibake bg painting problem on bofa.com.  The bug # is 3487144.  Transparent colors were not
