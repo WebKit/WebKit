@@ -55,6 +55,7 @@
 // Another is hook up next and previous key views to KHTML.
 @interface KWQSecureTextField : NSSecureTextField <KWQWidgetHolder>
 {
+    BOOL inNextValidKeyView;
     BOOL inSetFrameSize;
 }
 @end
@@ -502,26 +503,32 @@
 
 - (NSView *)nextKeyView
 {
-    ASSERT([self delegate] == nil || [[self delegate] isKindOfClass:[KWQTextField class]]);
-    return [(KWQTextField *)[self delegate] nextKeyView];
+    return inNextValidKeyView
+        ? KWQKHTMLPart::nextKeyViewForWidget([self widget], KWQSelectingNext)
+        : [super nextKeyView];
 }
 
 - (NSView *)previousKeyView
 {
-    ASSERT([self delegate] == nil || [[self delegate] isKindOfClass:[KWQTextField class]]);
-    return [(KWQTextField *)[self delegate] previousKeyView];
+   return inNextValidKeyView
+        ? KWQKHTMLPart::nextKeyViewForWidget([self widget], KWQSelectingPrevious)
+        : [super previousKeyView];
 }
 
 - (NSView *)nextValidKeyView
 {
-    ASSERT([self delegate] == nil || [[self delegate] isKindOfClass:[KWQTextField class]]);
-    return [(KWQTextField *)[self delegate] nextValidKeyView];
+    inNextValidKeyView = YES;
+    NSView *view = [super nextValidKeyView];
+    inNextValidKeyView = NO;
+    return view;
 }
 
 - (NSView *)previousValidKeyView
 {
-    ASSERT([self delegate] == nil || [[self delegate] isKindOfClass:[KWQTextField class]]);
-    return [(KWQTextField *)[self delegate] previousValidKeyView];
+    inNextValidKeyView = YES;
+    NSView *view = [super previousValidKeyView];
+    inNextValidKeyView = NO;
+    return view;
 }
 
 // The currentEditor method does not work for secure text fields.

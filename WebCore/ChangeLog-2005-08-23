@@ -1,3 +1,18 @@
+2003-05-12  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+	- fixed 3255281 -- REGRESSION: objc_error in key loop code, closing tab containing aintitcool.com page
+
+        * kwq/KWQTextField.mm:
+        (-[KWQSecureTextField nextKeyView]): Change back to using our own nextKeyView
+        implementation. By returning the nextKeyView from KWQTextField, we ended up making
+        AppKit very upset about the key view loop. This undoes a change I made last
+        Thursday, so the regression is very new and was never in a release.
+        (-[KWQSecureTextField previousKeyView]): More of the same.
+        (-[KWQSecureTextField nextValidKeyView]): Ditto.
+        (-[KWQSecureTextField previousValidKeyView]): Ditto.
+
 2003-05-11  David Hyatt  <hyatt@apple.com>
 
 	The root element (HTML) tries to set itself to the lowest position
