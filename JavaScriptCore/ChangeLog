@@ -1,3 +1,30 @@
+2004-11-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - fixed <rdar://problem/3865365> since -[WebScriptObject dealloc] does not call [super dealloc], the build will fail due to a warning
+        - fixed behavior so that [[WebScriptObject alloc] initWithCoder:] doesn't leak WebUndefined instances
+          and incidentally so that [[WebScriptObject alloc] init] returns the single shared instance rather
+          than allocating a new one
+
+        * bindings/objc/WebScriptObject.mm: Removed some stray semicolons.
+        (+[WebUndefined allocWithZone:]): Made this the common bottleneck that returns the single instance
+        of WebUndefined, since it's the single method that normally allocates new instances. Calls super to
+        actually allocate only the very first time it's called.
+        (-[WebUndefined initWithCoder:]): Simplified to just return self (no reason to re-lookup the single
+        shared instance since there can be only one).
+        (-[WebUndefined copyWithZone:]): Ditto.
+        (-[WebUndefined retain]): Ditto.
+        (-[WebUndefined retainCount]): Use UINT_MAX constant here (matches usage in NSObject.m for retain count
+        of class).
+        (-[WebUndefined autorelease]): Simplified to just return self (see above).
+        (-[WebUndefined copy]): No need to override this since it just turns around and calls copyWithZone:.
+        (-[WebUndefined dealloc]): Added an assertion since this method should never be called. Also added
+        a call to [super dealloc] after return; to make the new -Wdealloc-check compiler happy (fixing the
+        bug mentioned above).
+        (+[WebUndefined undefined]): Reimplemented; calls allocWithZone:NULL to get to the shared instance.
+        No need to call init, since that's a no-op for this class.
+
 2004-11-03  David Harrison  <harrison@apple.com>
 
         Reviewed by Darin.

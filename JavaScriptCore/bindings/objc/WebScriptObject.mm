@@ -270,7 +270,7 @@ static KJS::List listFromNSArray(ExecState *exec, NSArray *array)
     return resultObj;
 }
 
-- (void)removeWebScriptKey:(NSString *)key;
+- (void)removeWebScriptKey:(NSString *)key
 {
     if (![self _executionContext])
         return;
@@ -305,7 +305,7 @@ static KJS::List listFromNSArray(ExecState *exec, NSArray *array)
     return resultObj;
 }
 
-- (id)webScriptValueAtIndex:(unsigned int)index;
+- (id)webScriptValueAtIndex:(unsigned int)index
 {
     if (![self _executionContext])
         return nil;
@@ -327,7 +327,7 @@ static KJS::List listFromNSArray(ExecState *exec, NSArray *array)
     return resultObj;
 }
 
-- (void)setWebScriptValueAtIndex:(unsigned int)index value:(id)value;
+- (void)setWebScriptValueAtIndex:(unsigned int)index value:(id)value
 {
     if (![self _executionContext])
         return;
@@ -344,7 +344,7 @@ static KJS::List listFromNSArray(ExecState *exec, NSArray *array)
     _didExecute(self);
 }
 
-- (void)setException: (NSString *)description;
+- (void)setException: (NSString *)description
 {
     if (![self _executionContext])
         return;
@@ -405,21 +405,19 @@ static KJS::List listFromNSArray(ExecState *exec, NSArray *array)
 
 @end
 
-
 @implementation WebUndefined
 
-static WebUndefined *sharedUndefined = 0;
-
-+ (WebUndefined *)undefined
++ (id)allocWithZone:(NSZone *)zone
 {
+    static WebUndefined *sharedUndefined = 0;
     if (!sharedUndefined)
-        sharedUndefined = [[WebUndefined alloc] init];
+        sharedUndefined = [super allocWithZone:NULL];
     return sharedUndefined;
 }
 
 - (id)initWithCoder:(NSCoder *)coder
 {
-    return [WebUndefined undefined];
+    return self;
 }
 
 - (void)encodeWithCoder:(NSCoder *)encoder
@@ -428,33 +426,38 @@ static WebUndefined *sharedUndefined = 0;
 
 - (id)copyWithZone:(NSZone *)zone
 {
-    return [WebUndefined undefined];
+    return self;
 }
 
-- (id)retain {
-    return [WebUndefined undefined];
+- (id)retain
+{
+    return self;
 }
 
-- (void)release {
+- (void)release
+{
 }
 
-- (unsigned)retainCount {
-    return 0xFFFFFFFF;
+- (unsigned)retainCount
+{
+    return UINT_MAX;
 }
 
-- (id)autorelease {
-    return [WebUndefined undefined];
+- (id)autorelease
+{
+    return self;
 }
 
-- (void)dealloc {
+- (void)dealloc
+{
+    assert(false);
+    return;
+    [super dealloc]; // make -Wdealloc-check happy
 }
 
-- (id)copy {
-    return [WebUndefined undefined];
-}
-
-- (id)replacementObjectForPortCoder:(NSPortCoder *)encoder {
-    return [WebUndefined undefined];
++ (WebUndefined *)undefined
+{
+    return [WebUndefined allocWithZone:NULL];
 }
 
 @end
