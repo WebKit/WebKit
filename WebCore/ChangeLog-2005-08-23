@@ -1,3 +1,34 @@
+2004-07-30  Trey Matteson  <trey@apple.com>
+
+	Next steps for spell checking:  We have data structures for the marked pieces of
+	text and the smarts to draw them (although at this point, they just get a green
+	underline instead of using the real AppKit pattern.)
+
+	Note we don't call this code outside of development, since at this point I suspect
+	it could be made to crash by mixing spelling and editing. 
+
+        Reviewed by Ken.
+
+        * khtml/rendering/render_text.cpp:
+        (InlineTextBox::paintMarker):  Paint one marker's intersection with a text run
+        (RenderText::paint):  Find intersections of all markers and runs, call paintMarker
+        * khtml/rendering/render_text.h:
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::addMarker):  Adds a marker to a DOM Range.
+        (DocumentImpl::removeMarker):  Removes a marker from a DOM Range.
+        (DocumentImpl::addMarker):  Adds a marker to a single DOM Node, merging previous
+	markers as needed.
+        (DocumentImpl::removeMarker):  Removes a marker from a single DOM Node, breaking
+	up previous markers as needed.
+        (DocumentImpl::markersForNode):  Return markers for a Node.
+        * khtml/xml/dom_docimpl.h:
+        (DOM::DocumentMarker::):  New marker struct
+        (DOM::DocumentMarker::operator == ):
+        (DOM::DocumentMarker::operator != ):
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::advanceToNextMisspelling):  Mark misspelled ranges when we find them.
+	Debug only for now.
+
 2004-07-29  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

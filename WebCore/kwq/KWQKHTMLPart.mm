@@ -74,6 +74,7 @@
 using DOM::AtomicString;
 using DOM::ClipboardEventImpl;
 using DOM::DocumentImpl;
+using DOM::DocumentMarker;
 using DOM::DOMString;
 using DOM::ElementImpl;
 using DOM::EventImpl;
@@ -964,10 +965,11 @@ QString KWQKHTMLPart::advanceToNextMisspelling()
                 
                     setSelection(misspellingRange);
                     jumpToSelection();
-                    
-                    // Mark misspelling in document.  Use a TextIterator to visit the potentially
-                    // multiple nodes the misspelling covers.
-                    
+#ifndef NDEBUG      // not yet baked enough for deployment
+                    // Mark misspelling in document.
+                    xmlDocImpl()->addMarker(misspellingRange, DocumentMarker::Spelling);
+#endif
+
                     return result;
                 }
             }

@@ -55,6 +55,7 @@
 
 #include "khtmlview.h"
 #include "khtml_part.h"
+#include "khtml_text_operations.h"
 
 #include <kglobalsettings.h>
 #include <kstringhandler.h>
@@ -2862,6 +2863,128 @@ bool DocumentImpl::queryCommandSupported(const DOMString &command)
 DOMString DocumentImpl::queryCommandValue(const DOMString &command)
 {
     return jsEditor()->queryCommandValue(command);
+}
+
+// ----------------------------------------------------------------------------
+
+void DocumentImpl::addMarker(Range range, DocumentMarker::MarkerType type)
+{
+    // Use a TextIterator to visit the potentially multiple nodes the range covers.
+    for (TextIterator markedText(range); !markedText.atEnd(); markedText.advance()) {
+        Range textPiece = markedText.range();
+        DocumentMarker marker = {type, textPiece.startOffset(), textPiece.endOffset()};
+        addMarker(textPiece.startContainer().handle(), marker);
+    }
+}
+
+void DocumentImpl::removeMarker(Range range, DocumentMarker::MarkerType type)
+{
+    // Use a TextIterator to visit the potentially multiple nodes the range covers.
+    for (TextIterator markedText(range); !markedText.atEnd(); markedText.advance()) {
+        Range textPiece = markedText.range();
+        DocumentMarker marker = {type, textPiece.startOffset(), textPiece.endOffset()};
+        removeMarker(textPiece.startContainer().handle(), marker);
+    }
+}
+
+// FIXME:  We don't deal with markers of more than one type yet
+
+// Markers are stored in order sorted by their location.  They do not overlap each other, as currently
+// required by the drawing code in render_text.cpp.
+
+void DocumentImpl::addMarker(NodeImpl *node, DocumentMarker newMarker) 
+{
+    assert(newMarker.endOffset >= newMarker.startOffset);
+    if (newMarker.endOffset == newMarker.startOffset) {
+        return;     // zero length markers are a NOP
+    }
+    
+    QValueList <DocumentMarker> *markers = m_markers.find(node);
+    if (!markers) {
+        markers = new QValueList <DocumentMarker>();
+        markers->append(newMarker);
+        m_markers.insert(node, markers);
+    } else {
+        QValueListIterator<DocumentMarker> it;
+        for (it = markers->begin(); it != markers->end(); ) {
+            DocumentMarker marker = *it;
+            
+            if (newMarker.endOffset < marker.startOffset+1) {
+                // This is the first marker that is completely after newMarker, and disjoint from it.
+                // We found our insertion point.
+                break;
+            } else if (newMarker.startOffset > marker.endOffset) {
+                // maker is before newMarker, and disjoint from it.  Keep scanning.
+                it++;
+            } else if (newMarker == marker) {
+                // already have this one, NOP
+                return;
+            } else {
+                // marker and newMarker intersect or touch - merge them into newMarker
+                newMarker.startOffset = kMin(newMarker.startOffset, marker.startOffset);
+                newMarker.endOffset = kMax(newMarker.endOffset, marker.endOffset);
+                // remove old one, we'll add newMarker later
+                it = markers->remove(it);
+                // it points to the next marker to consider
+            }
+        }
+        // at this point it points to the node before which we want to insert
+        markers->insert(it, newMarker);
+    }
+}
+
+void DocumentImpl::removeMarker(NodeImpl *node, DocumentMarker target)
+{
+    assert(target.endOffset >= target.startOffset);
+    if (target.endOffset == target.startOffset) {
+        return;     // zero length markers are a NOP
+    }
+
+    QValueList <DocumentMarker> *markers = m_markers.find(node);
+    if (!markers) {
+        return;
+    }
+    
+    QValueListIterator<DocumentMarker> it;
+    for (it = markers->begin(); it != markers->end(); ) {
+        DocumentMarker marker = *it;
+
+        if (target.endOffset <= marker.startOffset) {
+            // This is the first marker that is completely after target.  All done.
+            break;
+        } else if (target.startOffset >= marker.endOffset) {
+            // marker is before target.  Keep scanning.
+            it++;
+        } else {
+            // at this point we know that marker and target intersect in some way
+            
+            // pitch the old marker
+            it = markers->remove(it);
+            // it now points to the next node
+            
+            // add either of the resulting slices that are left after removing target
+            if (target.startOffset > marker.startOffset) {
+                DocumentMarker newLeft = marker;
+                newLeft.endOffset = target.startOffset;
+                markers->insert(it, newLeft);
+            }
+            if (marker.endOffset > target.endOffset) {
+                DocumentMarker newRight = marker;
+                newRight.startOffset = target.endOffset;
+                markers->insert(it, newRight);
+            }
+        }
+    }
+}
+
+QValueList<DocumentMarker> DocumentImpl::markersForNode(NodeImpl *node)
+{
+    QValueList <DocumentMarker> *markers = m_markers.find(node);
+    if (markers) {
+        return *markers;
+    } else {
+        return QValueList <DocumentMarker> ();
+    }
 }
 
 // ----------------------------------------------------------------------------

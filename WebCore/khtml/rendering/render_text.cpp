@@ -276,6 +276,44 @@ void InlineTextBox::paintDecoration( QPainter *pt, int _tx, int _ty, int decorat
 }
 #endif
 
+void InlineTextBox::paintMarker(QPainter *pt, int _tx, int _ty, DocumentMarker marker)
+{
+    _tx += m_x;
+    _ty += m_y;
+
+    if (m_truncation == cFullTruncation)
+        return;
+    
+    int start = 0;                  // start of line to draw, relative to _tx
+    int width = m_width;            // how much line to draw
+    bool useWholeWidth = true;
+    ulong paintStart = m_start;
+    ulong paintEnd = end()+1;      // end doesn't points at the last char, not past it
+    if (paintStart != marker.startOffset) {
+        paintStart = marker.startOffset;
+        useWholeWidth = false;
+        start = static_cast<RenderText*>(m_object)->width(m_start, paintStart - m_start, m_firstLine);
+    }
+    if (paintEnd != marker.endOffset) {      // end doesn't points at the last char, not past it
+        paintEnd = kMin(paintEnd, marker.endOffset);
+        useWholeWidth = false;
+    }
+    if (m_truncation != cNoTruncation) {
+        paintEnd = kMin(paintEnd, (ulong)m_truncation);
+        useWholeWidth = false;
+    }
+    if (!useWholeWidth) {
+        width = static_cast<RenderText*>(m_object)->width(paintStart, paintEnd - paintStart, m_firstLine);
+    }
+
+    int underlineOffset = ( pt->fontMetrics().height() + m_baseline ) / 2;
+    if(underlineOffset <= m_baseline) {
+        underlineOffset = m_baseline+1;
+    }
+    pt->setPen(QColor(0, 255, 0));  // FIXME - use AppKit pattern-based code to draw
+    pt->drawLine(_tx + start, _ty + underlineOffset, _tx + start + width, _ty + underlineOffset );
+}
+
 long InlineTextBox::caretMinOffset() const
 {
     return m_start;
@@ -687,6 +725,8 @@ void RenderText::paint(PaintInfo& i, int tx, int ty)
     }
 
     InlineTextBox* startBox = s;
+    QValueList<DocumentMarker> markers = document()->markersForNode(node());
+    QValueListIterator <DocumentMarker> markerIt = markers.begin();
     for (int pass = 0; pass < (haveSelection ? 2 : 1); pass++) {
         s = startBox;
         bool drawSelectionBackground = haveSelection && pass == 0 && i.phase != PaintActionSelection;
@@ -849,6 +889,31 @@ void RenderText::paint(PaintInfo& i, int tx, int ty)
             style()->htmlHacks()) {
             p->setPen(_style->color());
             s->paintDecoration(p, tx, ty, d);
+        }
+
+        // Draw any doc markers that touch this run
+        // Note s->end() points at the last char, not one past it like endOffset and ranges do
+        
+        for ( ; markerIt != markers.end(); markerIt++) {
+            DocumentMarker marker = *markerIt;
+
+            if (marker.endOffset <= s->start()) {
+                // marker is completely before this run.  This might be a marker that sits before the
+                // first run we draw, or markers that were within runs we skipped due to truncation.
+                continue;
+            }
+            
+            if (marker.startOffset <= s->end()) {
+                // marker intersects this run.  Paint it.
+                s->paintMarker(p, tx, ty, marker);
+                if (marker.endOffset > s->end()+1) {
+                    // marker also runs into the next run. Bail now, no more marker advancement.
+                    break;
+                }
+            } else {
+                // marker is completely after this run, bail.  A later run will paint it.
+                break;
+            }
         }
 
 #if APPLE_CHANGES
