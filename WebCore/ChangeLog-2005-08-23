@@ -1,5 +1,22 @@
 2005-02-15  David Harrison  <harrison@apple.com>
 
+        Reviewed by Maciej.
+
+        <rdar://problem/3933665> smart delete seems to delete too much after expanding selection with arrow keys
+
+        Fixed by updating the selection granularity.  Only byWord granularity enables smart delete, but in this
+        case the granularity changed from byWord to byCharacter.
+
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::setSelectionGranularity):
+        * khtml/khtml_part.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge rangeByExpandingSelectionWithGranularity:]):
+        (-[WebCoreBridge rangeByAlteringCurrentSelection:direction:granularity:]):
+        (-[WebCoreBridge alterCurrentSelection:direction:granularity:]):
+
+2005-02-15  David Harrison  <harrison@apple.com>
+
         Reviewed by Darin.
 
         (continued) <rdar://problem/4004305> REGRESSION (Mail): Command-right-arrow on wrapped text goes to end of previous line

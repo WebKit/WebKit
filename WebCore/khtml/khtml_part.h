@@ -594,6 +594,11 @@ public:
   khtml::ETextGranularity selectionGranularity() const;
   
   /**
+   * Sets the granularity of the selection (character, word, line, paragraph).
+   */
+  void KHTMLPart::setSelectionGranularity(khtml::ETextGranularity granularity) const;
+
+  /**
    * Returns the drag caret of the HTML.
    */
   const khtml::Selection &dragCaret() const;

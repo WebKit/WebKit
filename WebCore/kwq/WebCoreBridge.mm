@@ -1451,6 +1451,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
         
     // NOTE: The enums *must* match the very similar ones declared in ktml_selection.h
     Selection selection(_part->selection());
+    _part->setSelectionGranularity(static_cast<ETextGranularity>(granularity));
     selection.expandUsingGranularity(static_cast<ETextGranularity>(granularity));
     return [DOMRange _rangeWithImpl:selection.toRange().handle()];
 }
@@ -1462,6 +1463,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
         
     // NOTE: The enums *must* match the very similar ones declared in ktml_selection.h
     Selection selection(_part->selection());
+    _part->setSelectionGranularity(static_cast<ETextGranularity>(granularity));
     selection.modify(static_cast<Selection::EAlter>(alteration), 
                      static_cast<Selection::EDirection>(direction), 
                      static_cast<ETextGranularity>(granularity));
@@ -1475,6 +1477,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
         
     // NOTE: The enums *must* match the very similar ones declared in dom_selection.h
     Selection selection(_part->selection());
+    _part->setSelectionGranularity(static_cast<ETextGranularity>(granularity));
     selection.modify(static_cast<Selection::EAlter>(alteration), 
                      static_cast<Selection::EDirection>(direction), 
                      static_cast<ETextGranularity>(granularity));
