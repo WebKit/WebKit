@@ -104,12 +104,25 @@ void KWQServeRequest(Loader *loader, Request *request, TransferJob *job)
 
 void KWQCheckCacheObjectStatus(DocLoader *loader, CachedObject *cachedObject)
 {
-    CachedObject::Status status = cachedObject->status();
-    if (status == CachedObject::Persistent || status == CachedObject::Cached || status == CachedObject::Uncacheable) {
-        WebCoreBridge *bridge = ((KHTMLPart *)loader->part())->impl->getBridge();
-        NSURL *nsURL = [[NSURL alloc] initWithString:QSTRING_TO_NSSTRING(cachedObject->url().string())];
-        unsigned size = abs(cachedObject->size());
-        [bridge objectLoadedFromCache:nsURL size:size];
-        [nsURL release];
+    // Return from the function for objects that we didn't load from the cache.
+    if (!cachedObject)
+        return;
+    switch (cachedObject->status()) {
+    case CachedObject::Persistent:
+    case CachedObject::Cached:
+    case CachedObject::Uncacheable:
+        break;
+    case CachedObject::NotCached:
+    case CachedObject::Unknown:
+    case CachedObject::New:
+    case CachedObject::Pending:
+        return;
     }
+    
+    // Notify the caller that we "loaded".
+    WebCoreBridge *bridge = ((KHTMLPart *)loader->part())->impl->getBridge();
+    NSURL *nsURL = [[NSURL alloc] initWithString:cachedObject->url().string().getNSString()];
+    // FIXME: cachedObject-size() is not the correct size, see Radar 2965269
+    [bridge objectLoadedFromCache:nsURL size:cachedObject->size()];
+    [nsURL release];
 }
