@@ -144,7 +144,8 @@
 {
     // Terminate the locationChangeDelegate correctly.
     WebError *interruptError = [WebError errorWithCode:WebErrorLocationChangeInterruptedByPolicyChange inDomain:WebErrorDomainWebKit failingURL:nil];
-    [[[dataSource controller] locationChangeDelegate] locationChangeDone:interruptError forDataSource:dataSource];
+    
+    [self receivedError:interruptError];
 
     [super notifyDelegatesOfInterruptionByPolicyChange];
 }

@@ -1,5 +1,16 @@
 2002-12-05  Darin Adler  <darin@apple.com>
 
+        Reviewed by Richard.
+
+	- fixed 3107240 -- world leak: reproducible, trying to open TIFF file
+
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient notifyDelegatesOfInterruptionByPolicyChange]):
+	Send error to the delegate using receivedError: rather than directly.
+	This results in the frame properly stopping the load and fixes the leak.
+
+2002-12-05  Darin Adler  <darin@apple.com>
+
         Reviewed by Chris.
 
         * Downloads.subproj/WebDownloadHandler.m: (-[WebDownloadHandler initWithDataSource:]):
