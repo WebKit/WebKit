@@ -304,6 +304,16 @@ void KJS::HTMLDocument::putValue(ExecState *exec, int token, const Value& value,
     {
       KHTMLPart *part = view->part();
       QString str = value.toString(exec).qstring();
+
+      // When assinging location, IE and Mozilla both resolve the URL
+      // relative to the frame where the JavaScript is executing not
+      // the target frame.
+      KHTMLPart *activePart = static_cast<KJS::ScriptInterpreter *>( exec->interpreter() )->part();
+      if (activePart) {
+       KURL resolvedURL(activePart->baseURL(), str);
+       str = resolvedURL.url();
+      }
+
       part->scheduleRedirection(0, str);
     }
     break;

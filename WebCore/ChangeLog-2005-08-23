@@ -1,3 +1,12 @@
+2002-11-18  Maciej Stachowiak  <mjs@apple.com>
+
+	- fixed 3103711 - Alexander does not complete JavaScript iBench
+	
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::HTMLDocument::putValue): Resolve URL for location property
+	relative to the base URL of the frame where the JavaScript is
+	executing, not the target frame.
+
 2002-11-18  David Hyatt  <hyatt@apple.com>
 
 	Yay! Found the main cause of :hover feedback being so
