@@ -2005,32 +2005,8 @@ void RenderFlow::addChildToFlow(RenderObject* newChild, RenderObject* beforeChil
             newChild->setMinMaxKnown( false );
             return;
         }
-        else {
-            // Trying to insert a block child into an anonymous block box which contains only
-            // inline elements... move all of the anonymous box's inline children into other
-            // anonymous boxes which become children of this
-
-            RenderObject *anonBox = beforeChild->parent();
-            KHTMLAssert (anonBox->isFlow()); // ### RenderTableSection the only exception - should never happen here
-
-            if ( anonBox->childrenInline() ) {
-                static_cast<RenderFlow*>(anonBox)->makeChildrenNonInline(beforeChild);
-                madeBoxesNonInline = true;
-            }
-            
-            beforeChild = beforeChild->parent();
-
-            RenderObject *child;
-            while ((child = anonBox->firstChild()) != 0) {
-                anonBox->removeChild(child);
-                addChild(child,anonBox);
-            }
-
-            removeChildNode(anonBox);
-            anonBox->detach(renderArena()); // does necessary cleanup & deletes anonBox
-
-            KHTMLAssert(beforeChild->parent() == this);
-        }
+        else
+            return addChildToFlow(newChild, beforeChild->parent());
     }
 
     // prevent non-layouted elements from getting painted by pushing them far above the top of the
@@ -2156,13 +2132,13 @@ void RenderFlow::makeChildrenNonInline(RenderObject *box2Start)
         next = child->nextSibling();
 
         if (child->isInline()) {
-	    if ( !boxFirst )
-		boxFirst = child;
+            if ( !boxFirst )
+                boxFirst = child;
             boxLast = child;
         }
 
-        if ( boxFirst &&
-	     ( !child->isInline() || !next || child == box2Start ) ) {
+        if (boxFirst &&
+            (!child->isInline() || !next || child == box2Start)) {
             // Create a new anonymous box containing all children starting from boxFirst
             // and up to (but not including) boxLast, and put it in place of the children
             RenderStyle *newStyle = new RenderStyle();
@@ -2184,11 +2160,17 @@ void RenderFlow::makeChildrenNonInline(RenderObject *box2Start)
                 o = no->nextSibling();
                 box->appendChildNode(removeChildNode(no));
             }
-            box->appendChildNode(removeChildNode(boxLast));
+            if (child && child == box2Start && boxLast == child) {
+                boxFirst = boxLast = child;
+                box2Start = 0;
+            }
+            else {
+                box->appendChildNode(removeChildNode(boxLast));
+                boxFirst = boxLast = next;
+            }
             box->close();
             box->setPos(box->xPos(), -500000);
             box->setLayouted(false);
-            boxFirst = boxLast = next;
         }
 
         child = next;
