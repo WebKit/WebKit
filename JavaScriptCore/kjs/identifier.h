@@ -32,7 +32,7 @@ namespace KJS {
         Identifier() { }
         Identifier(const char *s) : _ustring(add(s)) { }
         Identifier(const UChar *s, int length) : _ustring(add(s, length)) { }
-        explicit Identifier(const UString &s) : _ustring(add(s)) { }
+        explicit Identifier(const UString &s) : _ustring(add(s.rep)) { }
         
         const UString &ustring() const { return _ustring; }
         DOM::DOMString string() const;
@@ -61,22 +61,41 @@ namespace KJS {
         static void remove(UString::Rep *);
 
     private:
+        UString _ustring;
+        
+        static bool equal(UString::Rep *, const char *);
+        static bool equal(UString::Rep *, const UChar *, int length);
+        static bool equal(UString::Rep *, UString::Rep *);
+
+        static bool equal(const Identifier &a, const Identifier &b)
+            { return a._ustring.rep == b._ustring.rep; }
+        static bool equal(const Identifier &a, const char *b)
+            { return equal(a._ustring.rep, b); }
+        
         static UString::Rep *add(const char *);
         static UString::Rep *add(const UChar *, int length);
-        static UString::Rep *add(const UString &);
+        static UString::Rep *add(UString::Rep *);
         
-        UString _ustring;
+        static void insert(UString::Rep *);
+        
+        static void rehash(int newTableSize);
+        static void expand();
+        static void shrink();
+
+        static UString::Rep **_table;
+        static int _tableSize;
+        static int _tableSizeMask;
+        static int _keyCount;
     };
     
     inline bool operator==(const Identifier &a, const Identifier &b)
-    {
-        return a._ustring == b._ustring;
-    }
+        { return Identifier::equal(a, b); }
 
     inline bool operator!=(const Identifier &a, const Identifier &b)
-    {
-        return a._ustring != b._ustring;
-    }
+        { return !Identifier::equal(a, b); }
+
+    inline bool operator==(const Identifier &a, const char *b)
+        { return Identifier::equal(a, b); }
 
     extern const Identifier argumentsPropertyName;
     extern const Identifier calleePropertyName;

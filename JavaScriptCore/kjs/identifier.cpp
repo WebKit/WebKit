@@ -37,61 +37,223 @@ extern const Identifier toLocaleStringPropertyName("toLocaleString");
 extern const Identifier toStringPropertyName("toString");
 extern const Identifier valueOfPropertyName("valueOf");
 
-bool operator==(const Identifier &a, const char *b)
+const int _minTableSize = 64;
+
+UString::Rep **Identifier::_table;
+int Identifier::_tableSize;
+int Identifier::_tableSizeMask;
+int Identifier::_keyCount;
+
+bool Identifier::equal(UString::Rep *r, const char *s)
 {
-    return a._ustring == b;
+    int length = r->len;
+    const UChar *d = r->dat;
+    for (int i = 0; i != length; ++i)
+        if (d[i].unicode() != (unsigned char)s[i])
+            return false;
+    return s[length] == 0;
+}
+
+bool Identifier::equal(UString::Rep *r, const UChar *s, int length)
+{
+    if (r->len != length)
+        return false;
+    const UChar *d = r->dat;
+    for (int i = 0; i != length; ++i)
+        if (d[i].unicode() != s[i].unicode())
+            return false;
+    return true;
+}
+
+bool Identifier::equal(UString::Rep *r, UString::Rep *b)
+{
+    int length = r->len;
+    if (length != b->len)
+        return false;
+    const UChar *d = r->dat;
+    const UChar *s = b->dat;
+    for (int i = 0; i != length; ++i)
+        if (d[i].unicode() != s[i].unicode())
+            return false;
+    return true;
 }
 
 UString::Rep *Identifier::add(const char *c)
 {
-  if (!c)
-    return &UString::Rep::null;
-  int length = strlen(c);
-  if (length == 0)
-    return &UString::Rep::empty;
-
-  // Here's where we compute a hash and find it or put it in the hash table.
-  UChar *d = new UChar[length];
-  for (int i = 0; i < length; i++)
-    d[i] = c[i];
-
-  UString::Rep *r = new UString::Rep;
-  r->dat = d;
-  r->len = length;
-  r->capacity = length;
-  r->rc = 0;
-  r->_hash = 0;
-  return r;
+    if (!c)
+        return &UString::Rep::null;
+    int length = strlen(c);
+    if (length == 0)
+        return &UString::Rep::empty;
+    
+    if (!_table)
+        expand();
+    
+    unsigned hash = UString::Rep::computeHash(c);
+    
+    int i = hash & _tableSizeMask;
+    while (UString::Rep *key = _table[i]) {
+        if (equal(key, c))
+            return key;
+        i = (i + 1) & _tableSizeMask;
+    }
+    
+    UChar *d = new UChar[length];
+    for (int j = 0; j != length; j++)
+        d[j] = c[j];
+    
+    UString::Rep *r = new UString::Rep;
+    r->dat = d;
+    r->len = length;
+    r->capacity = UString::Rep::capacityForIdentifier;
+    r->rc = 0;
+    r->_hash = hash;
+    
+    _table[i] = r;
+    ++_keyCount;
+    
+    if (_keyCount * 2 >= _tableSize)
+        expand();
+    
+    return r;
 }
 
 UString::Rep *Identifier::add(const UChar *s, int length)
 {
-  // Here's where we compute a hash and find it or put it in the hash table.
-
-  UChar *d = new UChar[length];
-  for (int i = 0; i < length; i++)
-    d[i] = s[i];
-
-  UString::Rep *r = new UString::Rep;
-  r->dat = d;
-  r->len = length;
-  r->capacity = length;
-  r->rc = 0;
-  r->_hash = 0;
-  return r;
+    if (length == 0)
+        return &UString::Rep::empty;
+    
+    if (!_table)
+        expand();
+    
+    unsigned hash = UString::Rep::computeHash(s, length);
+    
+    int i = hash & _tableSizeMask;
+    while (UString::Rep *key = _table[i]) {
+        if (equal(key, s, length))
+            return key;
+        i = (i + 1) & _tableSizeMask;
+    }
+    
+    UChar *d = new UChar[length];
+    for (int j = 0; j != length; j++)
+        d[j] = s[j];
+    
+    UString::Rep *r = new UString::Rep;
+    r->dat = d;
+    r->len = length;
+    r->capacity = UString::Rep::capacityForIdentifier;
+    r->rc = 0;
+    r->_hash = hash;
+    
+    _table[i] = r;
+    ++_keyCount;
+    
+    if (_keyCount * 2 >= _tableSize)
+        expand();
+    
+    return r;
 }
 
-UString::Rep *Identifier::add(const UString &s)
+UString::Rep *Identifier::add(UString::Rep *r)
 {
-  // Here's where we compute a hash and find it or put it in the hash table.
-  // Don't forget to check for the case of a string that's already in the table by looking at capacity.
-  
-  return s.rep;
+    if (r->capacity == UString::Rep::capacityForIdentifier)
+        return r;
+    if (r->len == 0)
+        return &UString::Rep::empty;
+    
+    if (!_table)
+        expand();
+    
+    unsigned hash = r->hash();
+    
+    int i = hash & _tableSizeMask;
+    while (UString::Rep *key = _table[i]) {
+        if (equal(key, r))
+            return key;
+        i = (i + 1) & _tableSizeMask;
+    }
+    
+    r->capacity = UString::Rep::capacityForIdentifier;
+    
+    _table[i] = r;
+    ++_keyCount;
+    
+    if (_keyCount * 2 >= _tableSize)
+        expand();
+    
+    return r;
 }
 
-void Identifier::remove(UString::Rep *)
+inline void Identifier::insert(UString::Rep *key)
 {
-  // Here's where we find the string already in the hash table, and remove it.
+    unsigned hash = key->hash();
+    
+    int i = hash & _tableSizeMask;
+    while (_table[i])
+        i = (i + 1) & _tableSizeMask;
+    
+    _table[i] = key;
+}
+
+void Identifier::remove(UString::Rep *r)
+{
+    unsigned hash = r->hash();
+    
+    UString::Rep *key;
+    
+    int i = hash & _tableSizeMask;
+    while ((key = _table[i])) {
+        if (equal(key, r))
+            break;
+        i = (i + 1) & _tableSizeMask;
+    }
+    if (!key)
+        return;
+    
+    _table[i] = 0;
+    --_keyCount;
+    
+    if (_keyCount * 3 < _tableSize && _tableSize > _minTableSize) {
+        shrink();
+        return;
+    }
+    
+    // Reinsert all the items to the right in the same cluster.
+    while (1) {
+        i = (i + 1) & _tableSizeMask;
+        key = _table[i];
+        if (!key)
+            break;
+        _table[i] = 0;
+        insert(key);
+    }
+}
+
+void Identifier::expand()
+{
+    rehash(_tableSize == 0 ? _minTableSize : _tableSize * 2);
+}
+
+void Identifier::shrink()
+{
+    rehash(_tableSize / 2);
+}
+
+void Identifier::rehash(int newTableSize)
+{
+    int oldTableSize = _tableSize;
+    UString::Rep **oldTable = _table;
+
+    _tableSize = newTableSize;
+    _tableSizeMask = newTableSize - 1;
+    _table = (UString::Rep **)calloc(newTableSize, sizeof(UString::Rep *));
+
+    for (int i = 0; i != oldTableSize; ++i)
+        if (UString::Rep *key = oldTable[i])
+            insert(key);
+
+    free(oldTable);
 }
 
 } // namespace KJS

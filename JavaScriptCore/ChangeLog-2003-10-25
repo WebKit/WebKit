@@ -1,3 +1,14 @@
+2002-11-20  Darin Adler  <darin@apple.com>
+
+	- atomic identifiers; gives another 6.5% in the iBench suite
+
+        * kjs/identifier.h: Did the real thing.
+        * kjs/identifier.cpp: Ditto.
+
+        * kjs/property_map.h: _tableSizeHashMask -> _tableSizeMask
+        * kjs/property_map.cpp: The above, plus take advantage of comparing
+	by pointer instead of by comparing bytes.
+
 2002-11-19  Darin Adler  <darin@apple.com>
 
 	- a few more globals for often-used property names
