@@ -1,3 +1,21 @@
+2003-04-10  Darin Adler  <darin@apple.com>
+
+        Reviewed by Trey.
+
+	- fixed 3224622 -- REGRESSION: in an empty window, repeated tabs don't cycle back to location field
+
+        Added logic to WebFrameView's next/previous that matches the logic in WebHTMLView.
+        Looking for a better solution some day to the whole nextKeyView thing.
+
+        * WebView.subproj/WebFrameView.m:
+        (-[WebFrameView nextKeyView]): If being called from nextValidKeyView, return the nextKeyView
+        of the WebView rather than of self.
+        (-[WebFrameView previousKeyView]): Ditto.
+        (-[WebFrameView nextValidKeyView]): Set the inNextValidKeyView flag.
+        (-[WebFrameView previousValidKeyView]): Ditto.
+        
+        * WebView.subproj/WebFrameViewPrivate.h: Add the inNextValidKeyView flag.
+
 2003-04-10  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

@@ -269,4 +269,44 @@ enum {
     }
 }
 
+- (NSView *)nextKeyView
+{
+    if (_private->inNextValidKeyView) {
+        WebFrame *webFrame = [self webFrame];
+        WebView *webView = [[self webFrame] webView];
+        if (webFrame == [webView mainFrame]) {
+            return [webView nextKeyView];
+        }
+    }
+    return [super nextKeyView];
+}
+
+- (NSView *)previousKeyView
+{
+    if (_private->inNextValidKeyView) {
+        WebFrame *webFrame = [self webFrame];
+        WebView *webView = [[self webFrame] webView];
+        if (webFrame == [webView mainFrame]) {
+            return [webView previousKeyView];
+        }
+    }
+    return [super previousKeyView];
+}
+
+- (NSView *)nextValidKeyView
+{
+    _private->inNextValidKeyView = YES;
+    NSView *view = [super nextValidKeyView];
+    _private->inNextValidKeyView = NO;
+    return view;
+}
+
+- (NSView *)previousValidKeyView
+{
+    _private->inNextValidKeyView = YES;
+    NSView *view = [super previousValidKeyView];
+    _private->inNextValidKeyView = NO;
+    return view;
+}
+
 @end
