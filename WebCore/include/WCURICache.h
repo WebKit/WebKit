@@ -4,7 +4,6 @@
 
 #import <Foundation/Foundation.h>
 
-#import <WCURICacheClient.h>
 #import <WCURICacheJobID.h>
 
 @protocol WCURICache 
