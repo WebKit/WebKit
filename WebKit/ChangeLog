@@ -1,3 +1,9 @@
+2002-11-04  John Sullivan  <sullivan@apple.com>
+
+        * Resources/url_icon.tiff:
+	new "generic URL" icon from HI -- this one looks like
+	a red ribbon (!)
+
 2002-11-03  Darin Adler  <darin@apple.com>
 
         * Plugins.subproj/WebPluginError.h:
