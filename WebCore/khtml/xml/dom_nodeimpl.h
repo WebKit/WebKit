@@ -277,6 +277,7 @@ public:
     void removeHTMLEventListener(int id);
     void setHTMLEventListener(int id, EventListener *listener);
     EventListener *getHTMLEventListener(int id);
+    void removeAllEventListeners();
 
     bool dispatchEvent(EventImpl *evt, int &exceptioncode, bool tempEvent = false);
     bool dispatchGenericEvent( EventImpl *evt, int &exceptioncode);

@@ -110,6 +110,8 @@ NodeImpl::~NodeImpl()
 {
     if (m_render)
         detach();
+    if (m_regdListeners && !m_regdListeners->isEmpty() && getDocument() && !inDocument())
+        getDocument()->unregisterDisconnectedNodeWithEventListeners(this);
     delete m_regdListeners;
     delete m_nodeLists;
     if (document)
@@ -340,6 +342,9 @@ unsigned long NodeImpl::nodeIndex() const
 
 void NodeImpl::addEventListener(int id, EventListener *listener, const bool useCapture)
 {
+    if (getDocument() && !getDocument()->attached())
+        return;
+
     switch (id) {
 	case EventImpl::DOMSUBTREEMODIFIED_EVENT:
 	    getDocument()->addListenerType(DocumentImpl::DOMSUBTREEMODIFIED_LISTENER);
@@ -378,6 +383,10 @@ void NodeImpl::addEventListener(int id, EventListener *listener, const bool useC
     // spec says that "duplicate instances are discarded" in this case.
     removeEventListener(id,listener,useCapture);
 
+    // adding the first one
+    if (m_regdListeners->isEmpty() && getDocument() && !inDocument())
+        getDocument()->registerDisconnectedNodeWithEventListeners(this);
+        
     m_regdListeners->append(rl);
     listener->deref();
 }
@@ -393,8 +402,17 @@ void NodeImpl::removeEventListener(int id, EventListener *listener, bool useCapt
     for (; it.current(); ++it)
         if (*(it.current()) == rl) {
             m_regdListeners->removeRef(it.current());
+            // removed last
+            if (m_regdListeners->isEmpty() && getDocument() && !inDocument())
+                getDocument()->unregisterDisconnectedNodeWithEventListeners(this);
             return;
         }
+}
+
+void NodeImpl::removeAllEventListeners()
+{
+    delete m_regdListeners;
+    m_regdListeners = 0;
 }
 
 void NodeImpl::removeHTMLEventListener(int id)
@@ -407,6 +425,9 @@ void NodeImpl::removeHTMLEventListener(int id)
         if (it.current()->id == id &&
             it.current()->listener->eventListenerType() == "_khtml_HTMLEventListener") {
             m_regdListeners->removeRef(it.current());
+            // removed last
+            if (m_regdListeners->isEmpty() && getDocument() && !inDocument())
+                getDocument()->unregisterDisconnectedNodeWithEventListeners(this);
             return;
         }
 }
@@ -1094,11 +1115,17 @@ void NodeImpl::restoreState(QStringList &/*states*/)
 
 void NodeImpl::insertedIntoDocument()
 {
+    if (m_regdListeners && !m_regdListeners->isEmpty() && getDocument())
+        getDocument()->unregisterDisconnectedNodeWithEventListeners(this);
+
     setInDocument(true);
 }
 
 void NodeImpl::removedFromDocument()
 {
+    if (m_regdListeners && !m_regdListeners->isEmpty() && getDocument())
+        getDocument()->registerDisconnectedNodeWithEventListeners(this);
+
     setInDocument(false);
 }
 

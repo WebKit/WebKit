@@ -1,3 +1,38 @@
+2005-02-08  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	<rdar://problem/3977973> pages on ebay leak referenced JavaScript objects -- over time browsing becomes super-slow
+
+	I fixed this by removing all event listeners for a document, it's
+	children, and any disconnected nodes that used to be in the
+	document at document detach time. Mozilla temporarily disables
+	event listeners on such nodes, but re-enables them if you
+	re-parant a node into a new document. However, in WebCore, you
+	can't re-parent a node into another document, so there is no
+	observable change in behavior.
+
+	We have to do this to break the possible reference cycles between
+	event listeners and the dom nodes they are attached to (e.g. via
+	scope chain, as in this case).
+
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::detach):
+        (DocumentImpl::removeAllEventListenersFromAllNodesx):
+        (DocumentImpl::registerDisconnectedNodeWithEventListeners):
+        (DocumentImpl::unregisterDisconnectedNodeWithEventListeners):
+        (DocumentImpl::removeAllDisconnectedNodeEventListeners):
+        * khtml/xml/dom_docimpl.h:
+        * khtml/xml/dom_nodeimpl.cpp:
+        (NodeImpl::~NodeImpl):
+        (NodeImpl::addEventListener):
+        (NodeImpl::removeEventListener):
+        (NodeImpl::removeAllEventListeners):
+        (NodeImpl::removeHTMLEventListener):
+        (NodeImpl::insertedIntoDocument):
+        (NodeImpl::removedFromDocument):
+        * khtml/xml/dom_nodeimpl.h:
+
 2005-02-09  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3999213> Sometimes 2 Windows Media Player plugin instances are loaded

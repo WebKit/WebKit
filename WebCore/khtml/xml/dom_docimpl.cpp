@@ -1191,6 +1191,8 @@ void DocumentImpl::detach()
     m_imageLoadEventDispatchSoonList.clear();
     m_imageLoadEventDispatchingList.clear();
 
+    removeAllEventListenersFromAllNodes();
+
     NodeBaseImpl::detach();
 
     if ( render )
@@ -1203,6 +1205,34 @@ void DocumentImpl::detach()
     if (m_renderArena){
         delete m_renderArena;
         m_renderArena = 0;
+    }
+}
+
+void DocumentImpl::removeAllEventListenersFromAllNodes()
+{
+    m_windowEventListeners.clear();
+    removeAllDisconnectedNodeEventListeners();
+    for (NodeImpl *n = this; n; n = n->traverseNextNode()) {
+        n->removeAllEventListeners();
+    }
+}
+
+void DocumentImpl::registerDisconnectedNodeWithEventListeners(NodeImpl *node)
+{
+    m_disconnectedNodesWithEventListeners.insert(node, node);
+}
+
+void DocumentImpl::unregisterDisconnectedNodeWithEventListeners(NodeImpl *node)
+{
+    m_disconnectedNodesWithEventListeners.remove(node);
+}
+
+void DocumentImpl::removeAllDisconnectedNodeEventListeners()
+{
+    for (QPtrDictIterator<NodeImpl> iter(m_disconnectedNodesWithEventListeners);
+         iter.current();
+         ++iter) {
+        iter.current()->removeAllEventListeners();
     }
 }
 
