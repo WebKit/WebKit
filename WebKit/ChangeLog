@@ -1,3 +1,13 @@
+2003-08-06  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3161102>: Avoid retain cycles by destroying plug-ins in the page cache before dealloc
+
+        Reviewed by rjw.
+
+	* History.subproj/WebHistoryItemPrivate.h: added declaration for [WebBackForwardList _clearPageCache]
+        * WebView.subproj/WebViewPrivate.m:
+        (-[WebView _close]): clear the page cache when we are closing the web view so we call destroy on all the plug-ins on the page cache to break any retain cycles.
+
 2003-08-04  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3106525>: Results of JavaScript requests are not returned to plug-ins

@@ -125,6 +125,10 @@ NSString *_WebMainFrameURLKey = @"mainFrameURL";
     [_private->mainFrame _detachFromParent];
     [_private->mainFrame release];
     _private->mainFrame = nil;
+    
+    // Clear the page cache so we call destroy on all the plug-ins in the page cache to break any retain cycles.
+    // See comment in [WebHistoryItem _releaseAllPendingPageCaches] for more information.
+    [_private->backForwardList _clearPageCache];
 }
 
 - (WebFrame *)_createFrameNamed:(NSString *)fname inParent:(WebFrame *)parent allowsScrolling:(BOOL)allowsScrolling
