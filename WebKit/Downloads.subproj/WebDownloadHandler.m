@@ -11,6 +11,7 @@
 #import <WebKit/WebBinHexDecoder.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDownloadDecoder.h>
+#import <WebKit/WebGZipDecoder.h>
 #import <WebKit/WebKitErrors.h>
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebMacBinaryDecoder.h>
@@ -30,6 +31,7 @@
     decoderClasses = [[NSArray arrayWithObjects:
         [WebBinHexDecoder class],
         [WebMacBinaryDecoder class],
+        [WebGZipDecoder class],
         nil] retain];
     
     LOG(Download, "Download started for: %@", [[dSource request] URL]);

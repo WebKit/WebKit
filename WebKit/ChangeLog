@@ -1,3 +1,15 @@
+2002-12-05  Darin Adler  <darin@apple.com>
+
+        Reviewed by Chris.
+
+        * Downloads.subproj/WebDownloadHandler.m: (-[WebDownloadHandler initWithDataSource:]):
+	Add WebGZipDecoder to the list.
+
+        * Downloads.subproj/WebGZipDecoder.h: Finished this.
+        * Downloads.subproj/WebGZipDecoder.m: Finished this.
+
+        * English.lproj/StringsNotToBeLocalized.txt: Updated for recent changes.
+
 2002-12-05  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by: Darin
