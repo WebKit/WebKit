@@ -148,7 +148,7 @@ static void recursive(const DOM::Node &pNode, const DOM::Node &node)
     [sender autorelease];
 }
 
-- (void)WCURLHandleResourceDidFinishLoading:(id)sender userData:(void *)userData
+- (void)WCURLHandleResourceDidFinishLoading:(id)sender data: (NSData *)data userData:(void *)userData
 {
     KWQDEBUGLEVEL1 (0x2000, "userData = 0x%08x\n", userData);
     m_part->closeURL();

@@ -1,5 +1,12 @@
 2002-02-22  Richard Williamson  <rjw@apple.com>
 
+        Added data: to IFURLHandleResourceDidFinishLoading:
+        
+	* WebView.subproj/IFWebDataSource.h:
+	* WebView.subproj/IFWebDataSource.mm: (-[IFWebDataSource isLoading]):
+
+2002-02-22  Richard Williamson  <rjw@apple.com>
+
         Implemented missing getter for provisionalDataSource.
         
 	* WebView.subproj/IFWebFrame.mm: (-[IFWebFrame provisionalDataSource]):

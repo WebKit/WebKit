@@ -211,7 +211,6 @@
 // one document at a time, although one document may have many related
 // resources.  stopLoading will stop all loads related to the data source.  This
 // method will also stop loads that may be loading in child frames.
-// Returns NO if the data source is not currently loading.
 - (void)stopLoading
 {
     [self _recursiveStopLoading];
@@ -221,8 +220,9 @@
 // Returns YES if there are any pending loads.
 - (BOOL)isLoading
 {
-    [NSException raise:IFMethodNotYetImplemented format:@"IFWebDataSource::isLoading is not implemented"];
-    return NO;
+    // FIXME!  Also need to account for main document.
+    IFWebDataSourcePrivate *data = (IFWebDataSourcePrivate *)_dataSourcePrivate;
+    return [data->urlHandles count] ? YES : NO;
 }
 
 

@@ -1,3 +1,13 @@
+2002-02-22  Richard Williamson  <rjw@apple.com>
+
+        Added data: to IFURLHandleResourceDidFinishLoading:
+        
+	* include/WCURLHandle.h:
+	* src/kwq/KWQKHTMLPart.mm: (-[KHTMLPartLoadClient
+	WCURLHandleResourceDidFinishLoading:data:userData:]):
+	* src/kwq/KWQKloader.mm: (-[URLLoadClient
+	WCURLHandleResourceDidFinishLoading:data:userData:]):
+
 2002-02-22  Kenneth Kocienda  <kocienda@apple.com>
 
 	Sent handle an autorelease message.

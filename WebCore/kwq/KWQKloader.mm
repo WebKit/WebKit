@@ -974,22 +974,23 @@ typedef enum {
     [sender autorelease];
 }
 
-- (void)WCURLHandleResourceDidFinishLoading:(id)sender userData:(void *)userData
+- (void)WCURLHandleResourceDidFinishLoading:(id)sender data: (NSData *)data userData:(void *)userData
 {
     KIO::TransferJob *job = static_cast<KIO::TransferJob *>(userData);
     QString urlString = job->url().url();
 
     [m_dataSource _removeURLHandle: job->handle()];
     
-    KWQDEBUGLEVEL2 (0x2000, "dataSource = 0x%08x for URL %s\n", m_dataSource, urlString.latin1());
+    KWQDEBUGLEVEL4 (0x2000, "dataSource = 0x%08x for URL %s data at 0x%08x, length %d\n", m_dataSource, urlString.latin1(), data, [data length]);
+
     m_loader->slotFinished(job);
     
     id <IFLoadHandler> controller;
     
     controller = [m_dataSource controller];
     IFLoadProgress *loadProgress = [[[IFLoadProgress alloc] init] autorelease];
-    loadProgress->totalToLoad = 0;
-    loadProgress->bytesSoFar = 0;
+    loadProgress->totalToLoad = [data length];
+    loadProgress->bytesSoFar = [data length];
     [controller receivedProgress: (IFLoadProgress *)loadProgress forResource: QSTRING_TO_NSSTRING(urlString) fromDataSource: m_dataSource];
 
     [sender autorelease];
