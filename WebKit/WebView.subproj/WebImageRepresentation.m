@@ -5,10 +5,12 @@
 
 #import "WebImageRepresentation.h"
 
-#import <WebCore/WebCoreImageRenderer.h>
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebImageRenderer.h>
 #import <WebKit/WebImageRendererFactory.h>
+#import <WebKit/WebLocalizableStrings.h>
+
+#import <WebCore/WebCoreImageRenderer.h>
 
 #import <Foundation/NSURLRequest.h>
 
@@ -76,7 +78,12 @@
 
 - (NSString *)title
 {
-    return nil;
+    NSString *lastPathComponent = [[URL path] lastPathComponent];
+    NSSize size = [image size];
+    if (!NSEqualSizes(size, NSZeroSize)) {
+        return [NSString stringWithFormat:UI_STRING("%@ %dx%d pixels", "window title for a standalone image"), lastPathComponent, (int)size.width, (int)size.height];
+    }
+    return lastPathComponent;
 }
 
 @end
