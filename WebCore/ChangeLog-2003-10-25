@@ -1,3 +1,13 @@
+2003-03-20  David Hyatt  <hyatt@apple.com>
+
+	Fix the color handling of link= attributes on <body> elements
+	to pass in the quirks mode so that lax parsing can take place.
+	
+        Reviewed by rjw and john
+
+        * khtml/html/html_baseimpl.cpp:
+        (HTMLBodyElementImpl::parseAttribute):
+
 2003-03-20  Richard Williamson   <rjw@apple.com>
 
         Use "Item" consistently in the WebHistory and WebBackForwardList.

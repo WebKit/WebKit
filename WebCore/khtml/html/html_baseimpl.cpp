@@ -124,7 +124,7 @@ void HTMLBodyElementImpl::parseAttribute(AttributeImpl *attr)
 	else if ( attr->id() == ATTR_ALINK )
 	    aStr = "a:active";
 	aStr += " { color: " + attr->value().string() + "; }";
-        m_styleSheet->parseString(aStr);
+        m_styleSheet->parseString(aStr, !getDocument()->inQuirksMode());
         m_styleSheet->setNonCSSHints();
         if (attached())
             getDocument()->updateStyleSelector();
