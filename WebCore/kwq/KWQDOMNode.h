@@ -23,12 +23,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "dom_nodeimpl.h"
+#include "dom_nodeimpl.h"
 
-namespace DOM {
-    class NodeImpl;
-}
-
-bool isImage(DOM::NodeImpl *);
 DOM::NodeImpl::Id idFromNode(DOM::NodeImpl *);
-

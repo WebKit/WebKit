@@ -1,5 +1,18 @@
 2003-07-11  Darin Adler  <darin@apple.com>
 
+        Reviewed by Chris.
+
+        - fixed 3305391 -- repro crash in QPixmap::QPixmap after click in SVG using Adobe SVG plugin
+
+        * kwq/WebCoreBridge.mm: (-[WebCoreBridge elementAtPoint:]): Remove code that tried to determine
+        if something is an image by looking at the node type. Instead look at the object in the render
+        tree and ask it if it's an image. Also use logic that exactly matches what RenderImage uses.
+
+        * kwq/KWQDOMNode.h: Remove unused isImage function.
+        * kwq/KWQDOMNode.cpp: Ditto.
+
+2003-07-11  Darin Adler  <darin@apple.com>
+
         Reviewed by Ken.
 
         - fixed 3300220 -- repro crash in closeURL when choosing from popup menus on www.drivewire.com

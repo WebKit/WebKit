@@ -25,33 +25,10 @@
 
 #include "KWQDOMNode.h"
 
-#include "dom_elementimpl.h"
-#include "dom_nodeimpl.h"
-#include "htmlattrs.h"
-#include "htmltags.h"
+using DOM::NodeImpl;
 
-bool isImage(DOM::NodeImpl *node)
-{    
-    if(node->id() == ID_IMG){
-        return true;
-    }else if(node->id() == ID_INPUT){
-        ElementImpl* i =  static_cast<ElementImpl*>(node);
-        if(i->getAttribute(ATTR_TYPE) == "image"){
-            return true;
-        }
-    }else if(node->id() == ID_OBJECT){
-        ElementImpl* i =  static_cast<ElementImpl*>(node);
-        if(i->getAttribute(ATTR_TYPE).string().startsWith("image/")){
-            return true;
-        }
-    }
-
-    return false;
-}
-
-// here because calling id() from ObjC runs into probs with id being a reserved word
-NodeImpl::Id idFromNode(DOM::NodeImpl *node)
+// This needs to be in a C++ source file because id is a reserved word in Objective-C++.
+NodeImpl::Id idFromNode(NodeImpl *node)
 {
     return node->id();
 }
-

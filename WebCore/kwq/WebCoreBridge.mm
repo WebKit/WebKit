@@ -29,8 +29,9 @@
 #import "dom_node.h"
 #import "dom_docimpl.h"
 #import "dom_nodeimpl.h"
-#import "html_formimpl.h"
 #import "html_documentimpl.h"
+#import "html_formimpl.h"
+#import "html_imageimpl.h"
 #import "htmlattrs.h"
 #import "htmltags.h"
 #import "khtml_part.h"
@@ -42,7 +43,6 @@
 #import "render_canvas.h"
 #import "render_style.h"
 #import "render_replaced.h"
-using khtml::RenderWidget;
 
 #import <JavaScriptCore/property_map.h>
 
@@ -70,11 +70,12 @@ using DOM::NodeImpl;
 
 using khtml::Decoder;
 using khtml::parseURL;
+using khtml::RenderCanvas;
 using khtml::RenderImage;
 using khtml::RenderObject;
 using khtml::RenderPart;
 using khtml::RenderStyle;
-using khtml::RenderCanvas;
+using khtml::RenderWidget;
 
 using KJS::SavedProperties;
 using KJS::SavedBuiltins;
@@ -704,37 +705,42 @@ static HTMLFormElementImpl *formElementFromDOMElement(id <WebDOMElement>element)
     }
 
     NodeImpl *node = nodeInfo.innerNonSharedNode();
-    if (node && isImage(node)){
+    if (node && node->renderer() && node->renderer()->isImage()) {
         ElementImpl *i = static_cast<ElementImpl*>(node);
-        DOMString attr = i->getAttribute(ATTR_SRC);
-        if (attr.isEmpty()) {
-            // Look for the URL in the DATA attribute of the OBJECT tag.
-            attr = i->getAttribute(ATTR_DATA);
-        }
 
+        // FIXME: Code copied from RenderImage::updateFromElement; should share.
+        DOMString attr;
+        if (idFromNode(i) == ID_OBJECT) {
+            attr = i->getAttribute(ATTR_DATA);
+        } else {
+            attr = i->getAttribute(ATTR_SRC);
+        }
         if (!attr.isEmpty()) {
             [element setObject:_part->xmlDocImpl()->completeURL(attr.string()).getNSString() forKey:WebCoreElementImageURLKey];
         }
         
-        DOMString alt = i->getAttribute(ATTR_ALT);
+        // FIXME: Code copied from RenderImage::updateFromElement; should share.
+        DOMString alt;
+        if (idFromNode(i) == ID_INPUT)
+            alt = static_cast<HTMLInputElementImpl *>(i)->altText();
+        else if (idFromNode(i) == ID_IMG)
+            alt = static_cast<HTMLImageElementImpl *>(i)->altText();
         if (!alt.isNull()) {
             QString altText = alt.string();
             altText.replace('\\', _part->backslashAsCurrencySymbol());
             [element setObject:altText.getNSString() forKey:WebCoreElementImageAltStringKey];
         }
-        
-        RenderImage *r = (RenderImage *)node->renderer();
-        if (r) {
-            int x, y;
-            if (r->absolutePosition(x, y)) {
-                NSValue *rect = [NSValue valueWithRect:NSMakeRect(x, y, r->contentWidth(), r->contentHeight())];
-                [element setObject:rect forKey:WebCoreElementImageRectKey];
-            }
-            
-            NSImage *image = r->pixmap().image();
-            if (image) {
-                [element setObject:image forKey:WebCoreElementImageKey];
-            }
+
+        RenderImage *r = static_cast<RenderImage *>(node->renderer());
+        int x, y;
+        if (r->absolutePosition(x, y)) {
+            NSValue *rect = [NSValue valueWithRect:NSMakeRect(x, y, r->contentWidth(), r->contentHeight())];
+            [element setObject:rect forKey:WebCoreElementImageRectKey];
+        }
+
+        NSImage *image = r->pixmap().image();
+        if (image) {
+            [element setObject:image forKey:WebCoreElementImageKey];
         }
     }
     
