@@ -1,3 +1,14 @@
+2003-06-09  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3284848>: REGRESSION: repro crash in Flash handling null event, going back to Japanese Disney page
+
+	When restarting plug-ins from the BF cache, we were not calling NPP_SetWindow.
+
+        Reviewed by darin.
+
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView stop]): set the window type to 0 to force the calling of NPP_SetWindow 
+
 === Safari-83 ===
 
 2003-06-07  Darin Adler  <darin@apple.com>

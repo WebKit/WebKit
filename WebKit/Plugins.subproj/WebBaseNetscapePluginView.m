@@ -810,7 +810,7 @@ typedef struct {
     [self resetTrackingRect];
     
     [self didStart];
-
+    
     return YES;
 }
 
@@ -836,6 +836,9 @@ typedef struct {
     // Stop notifications and callbacks.
     [self removeWindowObservers];
     [NSObject cancelPreviousPerformRequestsWithTarget:self];
+
+    // Setting the window type to 0 ensures that NPP_SetWindow will be called if the plug-in is restarted.
+    lastSetWindow.type = 0;
     
     NPError npErr;
     npErr = NPP_Destroy(instance, NULL);
