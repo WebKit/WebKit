@@ -1,3 +1,7 @@
+2002-11-10  Darin Adler  <darin@apple.com>
+
+        * English.lproj/StringsNotToBeLocalized.txt: Updated for recent changes.
+
 2002-11-09  Darin Adler  <darin@apple.com>
 
 	- fixed 3095156 -- reproducible leak of WebDataSource due to bad URL in stylesheet
