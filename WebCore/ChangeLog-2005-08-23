@@ -1,3 +1,20 @@
+2003-03-14  Richard Williamson   <rjw@apple.com>
+
+        Fixed 3197162.  The regression was introduced with the change
+        to preferences.  The old settings API was used to 'reset' the jscript
+        other properties of the part.  This effectively always disabled 
+        javascript and prevented properties from being restored to the js
+        property maps.
+        
+        Reviewed by trey.
+
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::saveWindowProperties):
+        (KWQKHTMLPart::saveLocationProperties):
+        (KWQKHTMLPart::restoreWindowProperties):
+        (KWQKHTMLPart::restoreLocationProperties):
+        (KWQKHTMLPart::openURLFromPageCache):
+
 2003-03-14  David Hyatt  <hyatt@apple.com>
 
 	Make :target match the root element if no #fragment is specified in

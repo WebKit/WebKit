@@ -759,6 +759,8 @@ void KWQKHTMLPart::saveWindowProperties(SavedProperties *windowProperties)
 {
     KJS::Window *window;
     window = Window::retrieveWindow(this);
+    
+    ASSERT(window);
     if (window)
         window->saveProperties(*windowProperties);
 }
@@ -767,6 +769,7 @@ void KWQKHTMLPart::saveLocationProperties(SavedProperties *locationProperties)
 {
     KJS::Window *window;
     window = Window::retrieveWindow(this);
+    ASSERT(window);
     if (window)
         window->saveProperties(*locationProperties);
 }
@@ -775,6 +778,7 @@ void KWQKHTMLPart::restoreWindowProperties(SavedProperties *windowProperties)
 {
     KJS::Window *window;
     window = Window::retrieveWindow(this);
+    ASSERT(window);
     if (window)
         window->restoreProperties(*windowProperties);
 }
@@ -785,6 +789,8 @@ void KWQKHTMLPart::restoreLocationProperties(SavedProperties *locationProperties
     window = Window::retrieveWindow(this);
     if (window)
         window->location()->restoreProperties(*locationProperties);
+    else
+        printf ("KWQKHTMLPart::restoreLocationProperties  unable to find window\n");
 }
 
 void KWQKHTMLPart::openURLFromPageCache(KWQPageState *state)
@@ -818,12 +824,6 @@ void KWQKHTMLPart::openURLFromPageCache(KWQPageState *state)
     ASSERT (url);
     
     m_url = *url;
-    
-    // set the javascript flags according to the current url
-    d->m_bJScriptEnabled = KHTMLFactory::defaultHTMLSettings()->isJavaScriptEnabled(m_url.host());
-    d->m_bJScriptDebugEnabled = KHTMLFactory::defaultHTMLSettings()->isJavaScriptDebugEnabled();
-    d->m_bJavaEnabled = KHTMLFactory::defaultHTMLSettings()->isJavaEnabled(m_url.host());
-    d->m_bPluginsEnabled = KHTMLFactory::defaultHTMLSettings()->isPluginsEnabled(m_url.host());
     
     // initializing m_url to the new url breaks relative links when opening such a link after this call and _before_ begin() is called (when the first
     // data arrives) (Simon)
