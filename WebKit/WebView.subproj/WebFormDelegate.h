@@ -10,6 +10,15 @@
 @class WebFrame;
 @protocol WebDOMElement;
 
+
+/*!
+    @protocol  WebFormSubmissionListener
+    @discussion .
+*/
+@protocol WebFormSubmissionListener <NSObject>
+- (void)continue;
+@end
+
 /*!
     @protocol  WebFormDelegate
     @discussion .
@@ -33,7 +42,8 @@
 - (BOOL)control:(NSControl *)control textView:(NSTextView *)textView doCommandBySelector:(SEL)commandSelector inFrame:(WebFrame *)frame;
 
 // Sent when a form is just about to be submitted (before the load is started)
-- (void)frame:(WebFrame *)frame willSubmitForm:(id <WebDOMElement>)form withValues:(NSDictionary *)values;
+// listener must be sent continue when the delegate is done.
+- (void)frame:(WebFrame *)frame willSubmitForm:(id <WebDOMElement>)form withValues:(NSDictionary *)values submissionListener:(id <WebFormSubmissionListener>)listener;
 @end
 
 /*!

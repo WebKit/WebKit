@@ -5,6 +5,8 @@
 
 #import "WebFormDelegatePrivate.h"
 
+//FIXME:  This should become an informal protocol, now that we switch all the others
+
 @implementation WebFormDelegate
 
 static WebFormDelegate *sharedDelegate = nil;
@@ -55,6 +57,9 @@ static WebFormDelegate *sharedDelegate = nil;
     return NO;
 }
 
-- (void)frame:(WebFrame *)frame willSubmitForm:(id <WebDOMElement>)form withValues:(NSDictionary *)values  { }
+- (void)frame:(WebFrame *)frame willSubmitForm:(id <WebDOMElement>)form withValues:(NSDictionary *)values submissionListener:(id <WebFormSubmissionListener>)listener
+{
+    [listener continue];
+}
 
 @end

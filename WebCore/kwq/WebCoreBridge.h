@@ -159,8 +159,8 @@ enum FrameBorderStyle {
 
 - (NSDictionary *)elementAtPoint:(NSPoint)point;
 - (id <WebDOMElement>)elementForView:(NSView *)view;
-- (BOOL)formIsLoginForm:(id <WebDOMElement>)element;
 - (BOOL)elementDoesAutoComplete:(id <WebDOMElement>)element;
+- (BOOL)elementIsPassword:(id <WebDOMElement>)element;
 - (id <WebDOMElement>)formForElement:(id <WebDOMElement>)element;
 - (id <WebDOMElement>)currentForm;
 - (NSArray *)controlsInForm:(id <WebDOMElement>)form;

@@ -492,18 +492,19 @@ static HTMLFormElementImpl *formElementFromDOMElement(id <WebDOMElement>element)
     return nil;
 }
 
-- (BOOL)formIsLoginForm:(id <WebDOMElement>)element
-{
-    HTMLFormElementImpl *formElement = formElementFromDOMElement(element);
-    return formElement->isLoginForm();
-}
-
 - (BOOL)elementDoesAutoComplete:(id <WebDOMElement>)element
 {
     HTMLInputElementImpl *inputElement = inputElementFromDOMElement(element);
     return inputElement != nil
         && inputElement->inputType() == HTMLInputElementImpl::TEXT
         && inputElement->autoComplete();
+}
+
+- (BOOL)elementIsPassword:(id <WebDOMElement>)element
+{
+    HTMLInputElementImpl *inputElement = inputElementFromDOMElement(element);
+    return inputElement != nil
+        && inputElement->inputType() == HTMLInputElementImpl::PASSWORD;
 }
 
 - (id <WebDOMElement>)formForElement:(id <WebDOMElement>)element;

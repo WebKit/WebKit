@@ -91,24 +91,6 @@ NodeImpl::Id HTMLFormElementImpl::id() const
 }
 
 #if APPLE_CHANGES
-bool HTMLFormElementImpl::isLoginForm()
-{
-    int numPasswordFields = 0;
-    int numTextFields = 0;
-    QPtrListIterator<HTMLGenericFormElementImpl> it(formElements);
-    for (; it.current(); ++it) {
-        if (it.current()->id() == ID_INPUT) {
-            HTMLInputElementImpl *inputElt = static_cast<HTMLInputElementImpl*>(it.current());
-            if (inputElt->inputType() == HTMLInputElementImpl::PASSWORD) {
-                numPasswordFields++;
-            } else if (inputElt->inputType() == HTMLInputElementImpl::TEXT) {
-                numTextFields++;
-            }
-        }
-    }
-    return (numPasswordFields > 0) && (numTextFields == 1);
-}
-
 bool HTMLFormElementImpl::formWouldHaveSecureSubmission(DOMString url)
 {
     if (url.isNull()) {
@@ -524,17 +506,26 @@ void HTMLFormElementImpl::submit( bool activateSubmitButton )
 #endif
     for (QPtrListIterator<HTMLGenericFormElementImpl> it(formElements); it.current(); ++it) {
         HTMLGenericFormElementImpl* current = it.current();
+#if APPLE_CHANGES
+        // Our app needs to get form values for password fields for doing password autocomplete,
+        // so we are more lenient in pushing values, and let the app decide what to save when.
+        if (current->id() == ID_INPUT) {
+            HTMLInputElementImpl *input = static_cast<HTMLInputElementImpl*>(current);
+            if (input->inputType() == HTMLInputElementImpl::TEXT
+                || input->inputType() ==  HTMLInputElementImpl::PASSWORD)
+            {
+                KWQ(view->part())->recordFormValue(input->name().string(), input->value().string(), this);
+            }
+        }
+#else
         if (current->id() == ID_INPUT &&
             static_cast<HTMLInputElementImpl*>(current)->inputType() == HTMLInputElementImpl::TEXT &&
             static_cast<HTMLInputElementImpl*>(current)->autoComplete() )
         {
             HTMLInputElementImpl *input = static_cast<HTMLInputElementImpl *>(current);
-#if APPLE_CHANGES
-            KWQ(view->part())->recordFormValue(input->name().string(), input->value().string(), this);
-#else
             view->addFormCompletionItem(input->name().string(), input->value().string());
-#endif
         }
+#endif
 
         if (needButtonActivation) {
             if (current->isActivatedSubmit()) {

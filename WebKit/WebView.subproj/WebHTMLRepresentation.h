@@ -53,7 +53,7 @@
 
 - (id <WebDOMElement>)elementForView:(NSView *)view;
 - (BOOL)elementDoesAutoComplete:(id <WebDOMElement>)element;
-- (BOOL)formIsLoginForm:(id <WebDOMElement>)element;
+- (BOOL)elementIsPassword:(id <WebDOMElement>)element;
 - (id <WebDOMElement>)formForElement:(id <WebDOMElement>)element;
 - (id <WebDOMElement>)currentForm;
 - (NSArray *)controlsInForm:(id <WebDOMElement>)form;

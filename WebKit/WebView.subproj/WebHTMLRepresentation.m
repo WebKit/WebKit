@@ -123,9 +123,9 @@
     return [_private->bridge elementDoesAutoComplete:element];
 }
 
-- (BOOL)formIsLoginForm:(id <WebDOMElement>)element
+- (BOOL)elementIsPassword:(id <WebDOMElement>)element
 {
-    return [_private->bridge formIsLoginForm:element];
+    return [_private->bridge elementIsPassword:element];
 }
 
 - (id <WebDOMElement>)formForElement:(id <WebDOMElement>)element

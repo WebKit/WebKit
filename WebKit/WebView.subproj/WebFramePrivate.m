@@ -111,7 +111,8 @@ Repeat load of the same URL (by any other means of navigation other than the rel
 // over the bridge, and possibly hand it on through to the FormsDelegate.
 // Today it is just used internally to keep some state as we make our way through a bunch
 // layers while doing a load.
-@interface WebFormState : NSObject {
+@interface WebFormState : NSObject
+{
     NSObject <WebDOMElement> *_form;
     NSDictionary *_values;
 }
@@ -1535,7 +1536,10 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     ASSERT(loadType != WebFrameLoadTypeSame);
 
     NSDictionary *action = [self _actionInformationForLoadType:loadType isFormSubmission:isFormSubmission event:event originalURL:URL];
-    WebFormState *formState = [[WebFormState alloc] initWithForm:form values:values];
+    WebFormState *formState = nil;
+    if (form && values) {
+        formState = [[WebFormState alloc] initWithForm:form values:values];
+    }
 
     if (target != nil) {
 	WebFrame *targetFrame = [self findFrameNamed:target];
@@ -1656,7 +1660,10 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     [request setReferrer:referrer];
 
     NSDictionary *action = [self _actionInformationForLoadType:WebFrameLoadTypeStandard isFormSubmission:YES event:event originalURL:URL];
-    WebFormState *formState = [[WebFormState alloc] initWithForm:form values:values];
+    WebFormState *formState = nil;
+    if (form && values) {
+        formState = [[WebFormState alloc] initWithForm:form values:values];
+    }
 
     if (target != nil) {
 	WebFrame *targetFrame = [self findFrameNamed:target];
@@ -1849,6 +1856,17 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     return nil;
 }
 
+// Called after the FormsDelegate is done processing willSubmitForm:
+-(void)_continueAfterWillSubmitForm:(WebPolicyAction)policy
+{
+    if (_private->listener) {
+        [_private->listener _invalidate];
+        [_private->listener release];
+        _private->listener = nil;
+    }
+    [_private->provisionalDataSource _startLoading];
+}
+
 -(void)_continueLoadRequestAfterNavigationPolicy:(WebRequest *)request formState:(WebFormState *)formState
 {
     if (!request) {
@@ -1878,9 +1896,13 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         }
     } else {
         if (formState) {
-            [[[self webView] _formDelegate] frame:self willSubmitForm:[formState form] withValues:[formState values]];
+            // It's a bit of a hack to reuse the WebPolicyDecisionListener for the continuation
+            // mechanism across the willSubmitForm callout.
+            _private->listener = [[WebPolicyDecisionListener alloc] _initWithTarget:self action:@selector(_continueAfterWillSubmitForm:)];
+            [[[self webView] _formDelegate] frame:self willSubmitForm:[formState form] withValues:[formState values] submissionListener:_private->listener];
+        } else {
+            [self _continueAfterWillSubmitForm:WebPolicyUse];
         }
-        [_private->provisionalDataSource _startLoading];
     }
 }
 

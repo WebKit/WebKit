@@ -1,3 +1,21 @@
+2003-03-17  Trey Matteson  <trey@apple.com>
+
+	Support for password saving in forms.  Added elementIsPassword:,
+	nuked deadwood formIsLoginForm:.
+
+        Reviewed by Maciej.
+
+        * khtml/html/html_formimpl.cpp:
+        (HTMLFormElementImpl::submit):  Pass forms data for login forms and
+	password fields to bridge.  This case was skipped for security in
+	khtml's autocomplete, but we need this data to save passwords, and
+	we enforce policy at a higher level.
+        * khtml/html/html_formimpl.h:
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        Nuked formIsLoginForm:.
+        (-[WebCoreBridge elementIsPassword:]):  New utility.
+
 2003-03-18  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by John.

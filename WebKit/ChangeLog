@@ -1,3 +1,35 @@
+2003-03-17  Trey Matteson  <trey@apple.com>
+
+	Support for saving passwords on forms-based logins.  Biggest change is that
+	the willSubmitForm: message is async to allow a sheet to be presented.
+
+	Also fixed @interface.*{ so prepare-change-log can swallow WebFramePrivate.m.
+
+        Reviewed by Maciej.
+
+        * WebView.subproj/WebControllerPolicyDelegate.m:
+        (-[WebPolicyDecisionListener continue]):  The decision listener also
+	implements WebFormSubmissionListener, to share some other impl.
+        * WebView.subproj/WebControllerPolicyDelegatePrivate.h:
+        * WebView.subproj/WebFormDelegate.h:
+        * WebView.subproj/WebFormDelegate.m:
+        (-[WebFormDelegate frame:willSubmitForm:withValues:submissionListener:]):
+	Take listener param for async API.
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _loadURL:referrer:loadType:target:triggeringEvent:form:formValues:]):
+	Latent bug.  Don't call willSubmitForm if no values are being submitted.
+        (-[WebFrame _postWithURL:referrer:target:data:contentType:triggeringEvent:form:formValues:]):
+	Latent bug.  Don't call willSubmitForm if no values are being submitted.
+        (-[WebFrame _continueAfterWillSubmitForm:]):
+	Continuation code for after FormDelegate is done with willSubmitForm.
+        (-[WebFrame _continueLoadRequestAfterNavigationPolicy:formState:]):
+	Pass new listener arg to willSubmitForm.
+        * WebView.subproj/WebHTMLRepresentation.h:
+        * WebView.subproj/WebHTMLRepresentation.m:
+	Nuke deadwood formIsLoginForm.
+        (-[WebHTMLRepresentation elementIsPassword:]):  Just pass through glue
+	over the bridge.
+
 2003-03-18  Richard Williamson   <rjw@apple.com>
 
         Another rename WebController*.[hm] to WebView*.[hm]

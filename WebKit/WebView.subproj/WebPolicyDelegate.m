@@ -77,6 +77,8 @@ NSString *WebActionOriginalURLKey = @"WebActionOriginalURLKey";
     [self release];
 }
 
+// WebPolicyDecisionListener implementation
+
 -(void)use
 {
     [self _usePolicy:WebPolicyUse];
@@ -90,6 +92,13 @@ NSString *WebActionOriginalURLKey = @"WebActionOriginalURLKey";
 -(void)download
 {
     [self _usePolicy:WebPolicyDownload];
-}   
+}
+
+// WebFormSubmissionListener implementation
+
+-(void)continue
+{
+    [self _usePolicy:WebPolicyUse];
+}
 
 @end
