@@ -1,3 +1,33 @@
+2003-07-18  Richard Williamson   <rjw@apple.com>
+
+	Fixed 3283594.  "Times RO" appears to have a corrupt regular variant.  Added
+	additional bullet proofing to catch corrupt fonts.  Also added a special case
+	hack to map "Times RO" to "Time New Roman" if the variant doesn't have valid
+	glyphs.
+
+	Fixed 3319846.  The page mentioned in this bug required > 10 substitute fonts for
+	the same base font.  This triggered some buggy code that hasn't been exercise before.
+	Specifically the code that resizes the substitute fonts array was incorrect.
+
+        Reviewed by mjs.
+
+        * Misc.subproj/WebAssertions.h:  Added FATAL_ALWAYS macro that logs and CRASHES
+	even in deployment builds.
+
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (mapForSubstituteFont):
+        (widthFromMap):
+        (FillStyleWithAttributes):
+        (-[WebTextRenderer convertCharacters:length:toGlyphs:skipControlCharacters:]):
+        (-[WebTextRenderer convertUnicodeCharacters:length:toGlyphs:]):
+        (-[WebTextRenderer _computeWidthForSpace]):
+        (-[WebTextRenderer _setupFont:]):
+        (pathFromFont):
+        (glyphCountFromFont):
+        (-[WebTextRenderer initWithFont:usingPrinterFont:]):
+        (-[WebTextRenderer extendUnicodeCharacterToGlyphMapToInclude:]):
+        (-[WebTextRenderer extendCharacterToGlyphMapToInclude:]):
+
 2003-07-17  Darin Adler  <darin@apple.com>
 
         Reviewed by John.

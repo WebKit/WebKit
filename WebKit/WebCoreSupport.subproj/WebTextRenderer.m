@@ -194,9 +194,13 @@ static inline SubstituteFontWidthMap *mapForSubstituteFont(WebTextRenderer *rend
             return &renderer->substituteFontWidthMaps[i];
     }
     
-    if (renderer->numSubstituteFontWidthMaps+1 == renderer->maxSubstituteFontWidthMaps){
+    if (renderer->numSubstituteFontWidthMaps == renderer->maxSubstituteFontWidthMaps){
         renderer->maxSubstituteFontWidthMaps = renderer->maxSubstituteFontWidthMaps * 2;
-        renderer->substituteFontWidthMaps = realloc (renderer->substituteFontWidthMaps, renderer->maxSubstituteFontWidthMaps);
+        renderer->substituteFontWidthMaps = realloc (renderer->substituteFontWidthMaps, renderer->maxSubstituteFontWidthMaps * sizeof(SubstituteFontWidthMap));
+        for (i = renderer->numSubstituteFontWidthMaps; i < renderer->maxSubstituteFontWidthMaps; i++){
+            renderer->substituteFontWidthMaps[i].font = 0;
+            renderer->substituteFontWidthMaps[i].map = 0;
+        }
     }
     
     renderer->substituteFontWidthMaps[renderer->numSubstituteFontWidthMaps].font = font;
@@ -224,7 +228,7 @@ static inline WebGlyphWidth widthFromMap (WebTextRenderer *renderer, WidthMap *m
                 else
                     errorResult = CGFontGetGlyphScaledAdvances ([renderer->font _backingCGSFont], &glyph, 1, &map->widths[glyph-map->startRange].width, [renderer->font pointSize]);
                 if (errorResult == 0)
-                    [NSException raise:NSInternalInconsistencyException format:@"Optimization assumption violation:  unable to cache glyph widths - for %@ %f",  [renderer->font displayName], [renderer->font pointSize]];
+                    FATAL_ALWAYS ("Unable to cache glyph widths for %@ %f",  [renderer->font displayName], [renderer->font pointSize]);
 
 #ifdef _TIMING
                 double thisTime = CFAbsoluteTimeGetCurrent() - startTime;
@@ -275,7 +279,7 @@ static inline  WebGlyphWidth widthForCharacter (WebTextRenderer *renderer, UniCh
 }
 
 
-static void FillStyleWithAttributes(ATSUStyle style, NSFont *theFont)
+static BOOL FillStyleWithAttributes(ATSUStyle style, NSFont *theFont)
 {
     if (theFont) {
         ATSUFontID fontId = (ATSUFontID)[theFont _atsFontID];
@@ -285,9 +289,14 @@ static void FillStyleWithAttributes(ATSUStyle style, NSFont *theFont)
 
         if (fontId) {
             if (ATSUSetAttributes(style, 1, &tag, &size, (void *)valueArray) != noErr)
-                [NSException raise:NSInternalInconsistencyException format:@"Failed to set font (%@) ATSUStyle 0x%X", theFont, style];
+                return NO;
         }
+        else {
+            return NO;
+        }
+        return YES;
     }
+    return NO;
 }
 
 
@@ -413,6 +422,9 @@ static inline BOOL _fontContainsString (NSFont *font, NSString *string)
     }
     
     status = ATSUConvertCharToGlyphs(styleGroup, characters, 0, numCharacters, 0, glyphs);
+    if (status != noErr){
+        FATAL_ALWAYS ("unable to get glyphsfor %@ %f error = (%d)", self, [font displayName], [font pointSize], status);
+    }
 
 #ifdef DEBUG_GLYPHS
     int foundGlyphs = 0;
@@ -455,6 +467,9 @@ static inline BOOL _fontContainsString (NSFont *font, NSString *string)
     }
         
     status = ATSUConvertCharToGlyphs(styleGroup, buffer, 0, numCharacters*2, 0, glyphs);
+    if (status != noErr){
+        FATAL_ALWAYS ("unable to get glyphsfor %@ %f error = (%d)", self, [font displayName], [font pointSize], status);
+    }
     
     if (buffer != localBuffer) {
         free(buffer);
@@ -464,12 +479,15 @@ static inline BOOL _fontContainsString (NSFont *font, NSString *string)
 // Nasty hack to determine if we should round or ceil space widths.
 // If the font is monospace, or fake monospace we ceil to ensure that 
 // every character and the space are the same width.  Otherwise we round.
-- (void)_computeWidthForSpace
+- (BOOL)_computeWidthForSpace
 {
     UniChar c = ' ';
     float _spaceWidth;
 
     spaceGlyph = [self extendCharacterToGlyphMapToInclude: c];
+    if (spaceGlyph == 0){
+        return NO;
+    }
     _spaceWidth = widthForGlyph(self, spaceGlyph, 0);
     ceiledSpaceWidth = (float)CEIL_TO_INT(_spaceWidth);
     roundedSpaceWidth = (float)ROUND_TO_INT(_spaceWidth);
@@ -480,38 +498,120 @@ static inline BOOL _fontContainsString (NSFont *font, NSString *string)
         adjustedSpaceWidth = roundedSpaceWidth;
     }
     spaceWidth = _spaceWidth;
+    
+    return YES;
 }
 
+- (BOOL)_setupFont: (NSFont *)f
+{
+    OSStatus errCode;
+    ATSUStyle style;
+    
+    if ((errCode = ATSUCreateStyle(&style)) != noErr)
+        return NO;
+
+    if (!FillStyleWithAttributes(style, font))
+        return NO;
+
+    if ((errCode = ATSUGetStyleGroup(style, &styleGroup)) != noErr){
+        ATSUDisposeStyle(style);
+        return NO;
+    }
+    
+    ATSUDisposeStyle(style);
+
+    if (![self _computeWidthForSpace]){
+        if (styleGroup){
+            ATSUDisposeStyleGroup(styleGroup);
+            styleGroup = 0;
+        }
+        return NO;
+    }
+   
+    return YES;
+}
+
+#define ATSFontRefFromNSFont(font) (FMGetATSFontRefFromFont((FMFont)[font _atsFontID]))
+static NSString *pathFromFont (NSFont *font)
+{
+    UInt8 _filePathBuffer[PATH_MAX];
+    NSString *filePath = nil;
+    FSSpec oFile;
+    OSStatus status = ATSFontGetFileSpecification(
+            ATSFontRefFromNSFont(font),
+            &oFile);
+    if (status == noErr){
+        OSErr err;
+        FSRef fileRef;
+        err = FSpMakeFSRef(&oFile,&fileRef);
+        if (err == noErr){
+            status = FSRefMakePath(&fileRef,_filePathBuffer, PATH_MAX);
+            if (status == noErr){
+                filePath = [NSString stringWithUTF8String:&_filePathBuffer[0]];
+            }
+        }
+    }
+    return filePath;
+}
+
+static UInt16 glyphCountFromFont (NSFont *font)
+{
+    return ATSFontGetGlyphCount(ATSFontRefFromNSFont(font));
+}
+
+static NSString *WebFallbackFontFamily;
 
 - initWithFont:(NSFont *)f usingPrinterFont:(BOOL)p
 {
     if ([f glyphPacking] != NSNativeShortGlyphPacking &&
         [f glyphPacking] != NSTwoByteGlyphPacking)
-        [NSException raise:NSInternalInconsistencyException format:@"%@: Don't know how to pack glyphs for font %@ %f", self, [f displayName], [f pointSize]];
+        FATAL_ALWAYS ("%@: Don't know how to pack glyphs for font %@ %f", self, [f displayName], [f pointSize]);
         
     [super init];
-
+    
     maxSubstituteFontWidthMaps = NUM_SUBSTITUTE_FONT_MAPS;
     substituteFontWidthMaps = calloc (1, maxSubstituteFontWidthMaps * sizeof(SubstituteFontWidthMap));
-    
     font = [(p ? [f printerFont] : [f screenFont]) retain];
     usingPrinterFont = p;
     
-    OSStatus errCode;
-    ATSUStyle style;
-    
-    if ((errCode = ATSUCreateStyle(&style)) != noErr)
-        [NSException raise:NSInternalInconsistencyException format:@"%@: Failed to alloc ATSUStyle %d", self, errCode];
+    if (![self _setupFont:font]){
+        // Ack!  Something very bad happened, like a corrupt font.  Try
+        // looking for an alternate 'base' font for this renderer.
 
-    FillStyleWithAttributes(style, font);
+        // Special case hack to use "Times New Roman" in place of "Times".  "Times RO" is a common font
+        // whose family name is "Times".  It overrides the normal "Times" family font.  It also
+        // appears to have a corrupt regular variant.
+        NSString *fallbackFontFamily;
 
-    if ((errCode = ATSUGetStyleGroup(style, &styleGroup)) != noErr) {
-        [NSException raise:NSInternalInconsistencyException format:@"%@: Failed to create attribute group from ATSUStyle 0x%X %d", self, style, errCode];
+        if ([[font familyName] isEqual:@"Times"])
+            fallbackFontFamily = @"Times New Roman";
+        else {
+            if (!WebFallbackFontFamily)
+                // Could use any size, we just care about the family of the system font.
+                WebFallbackFontFamily = [[[NSFont systemFontOfSize:16.0] familyName] retain];
+                
+            fallbackFontFamily = WebFallbackFontFamily;
+        }
+        
+        // Try setting up the alternate font.
+        NSFont *alternateFont = [[NSFontManager sharedFontManager] convertFont:font toFamily:fallbackFontFamily];
+        NSFont *initialFont = font;
+        [initialFont autorelease];
+        font = [alternateFont retain];
+        NSString *filePath = pathFromFont(initialFont);
+        filePath = filePath ? filePath : @"not known";
+        if (![self _setupFont:alternateFont]){
+            // Give up!
+            FATAL_ALWAYS ("%@ unable to initialize with font %@ at %@", self, initialFont, filePath);
+        }
+
+        // Report the problem.
+        ERROR ("Corrupt font detected, using %@ in place of %@ (%d glyphs) located at \"%@\".", 
+                    [alternateFont familyName], 
+                    [initialFont familyName],
+                    glyphCountFromFont(initialFont),
+                    filePath);
     }
-    
-    ATSUDisposeStyle(style);
-
-    [self _computeWidthForSpace];
 
     // We emulate the appkit metrics by applying rounding as is done
     // in the appkit.
@@ -563,7 +663,7 @@ static inline BOOL _fontContainsString (NSFont *font, NSString *string)
         printf ("lineSpacing %f\n", [font defaultLineHeightForFont]);
     }
 #endif
-    
+     
     return self;
 }
 
@@ -1175,11 +1275,21 @@ static const char *joiningNames[] = {
         buffer[i] = i+start;
     }
 
-    ATSInitializeGlyphVector(count*2, 0, &glyphVector);
+    OSStatus status;
+    status = ATSInitializeGlyphVector(count*2, 0, &glyphVector);
+    if (status != noErr){
+        // This should never happen, indicates a bad font!  If it does the
+        // font substitution code will find an alternate font.
+        return 0;
+    }
+    
     [self convertUnicodeCharacters: &buffer[0] length: count toGlyphs: &glyphVector];
     unsigned numGlyphs = glyphVector.numGlyphs;
-    if (numGlyphs != count)
-        [NSException raise:NSInternalInconsistencyException format:@"surrogate matching violation:  count and glyphID count not equal - for %@ %f", self, [font displayName], [font pointSize]];
+    if (numGlyphs != count){
+        // This should never happen, indicates a bad font!  If it does the
+        // font substitution code will find an alternate font.
+        return 0;
+    }
             
     map->glyphs = (GlyphEntry *)malloc (count * sizeof(GlyphEntry));
     glyphRecord = (ATSLayoutRecord *)glyphVector.firstRecord;
@@ -1248,11 +1358,21 @@ static const char *joiningNames[] = {
         buffer[i] = i+start;
     }
 
-    ATSInitializeGlyphVector(count, 0, &glyphVector);
+    [font set];
+    OSStatus status = ATSInitializeGlyphVector(count, 0, &glyphVector);
+    if (status != noErr){
+        // This should never happen, perhaps indicates a bad font!  If it does the
+        // font substitution code will find an alternate font.
+        return 0;
+    }
+
     [self convertCharacters: &buffer[0] length: count toGlyphs: &glyphVector skipControlCharacters: NO];
     unsigned numGlyphs = glyphVector.numGlyphs;
-    if (numGlyphs != count)
-        [NSException raise:NSInternalInconsistencyException format:@"Optimization assumption violation:  count and glyphID count not equal - for %@ %f", self, [font displayName], [font pointSize]];
+    if (numGlyphs != count){
+        // This should never happen, perhaps indicates a bad font!  If it does the
+        // font substitution code will find an alternate font.
+        return 0;
+    }
             
     map->glyphs = (GlyphEntry *)malloc (count * sizeof(GlyphEntry));
     glyphRecord = (ATSLayoutRecord *)glyphVector.firstRecord;

@@ -119,6 +119,17 @@ while (0)
 } while (0)
 #endif
 
+// FATAL_ALWAYS
+
+#if FATAL_ALWAYS_DISABLED
+#define FATAL_ALWAYS(formatAndArgs...) ((void)0)
+#else
+#define FATAL_ALWAYS(formatAndArgs...) do { \
+    WebReportFatalError(__FILE__, __LINE__, __PRETTY_FUNCTION__, formatAndArgs); \
+    CRASH(); \
+} while (0)
+#endif
+
 // ERROR
 
 #if ERROR_DISABLED
