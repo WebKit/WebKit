@@ -42,22 +42,30 @@
 #include "dtoa.h"
 
 namespace KJS {
-  extern const double NaN;
-  extern const double Inf;
-};
 
-using namespace KJS;
+extern const double NaN;
+extern const double Inf;
 
 CString::CString(const char *c)
 {
-  data = new char[strlen(c)+1];
+  length = strlen(c);
+  data = new char[length+1];
   strcpy(data, c);
+}
+
+CString::CString(const char *c, int len)
+{
+  length = len;
+  data = new char[len+1];
+  memcpy(data, c, len);
+  data[len] = 0;
 }
 
 CString::CString(const CString &b)
 {
-  data = new char[b.size()+1];
-  strcpy(data, b.c_str());
+  length = b.length;
+  data = new char[length+1];
+  memcpy(data, b.data, length);
 }
 
 CString::~CString()
@@ -68,14 +76,13 @@ CString::~CString()
 CString &CString::append(const CString &t)
 {
   char *n;
-  if (data) {
-    n = new char[strlen(data)+t.size()+1];
-    strcpy(n, data);
-  } else {
-    n = new char[t.size()+1];
-    n[0] = '\0';
-  }
-  strcat(n, t.c_str());
+  n = new char[length+t.length+1];
+  if (length)
+    memcpy(n, data, length);
+  if (t.length)
+    memcpy(n+length, t.data, t.length);
+  length += t.length;
+  n[length] = 0;
 
   delete [] data;
   data = n;
@@ -87,7 +94,8 @@ CString &CString::operator=(const char *c)
 {
   if (data)
     delete [] data;
-  data = new char[strlen(c)+1];
+  length = strlen(c);
+  data = new char[length+1];
   strcpy(data, c);
 
   return *this;
@@ -100,20 +108,17 @@ CString &CString::operator=(const CString &str)
 
   if (data)
     delete [] data;
-  data = new char[str.size()+1];
-  strcpy(data, str.c_str());
+  length = str.length;
+  data = new char[length + 1];
+  memcpy(data, str.data, length + 1);
 
   return *this;
 }
 
-int CString::size() const
-{
-  return strlen(data);
-}
-
 bool KJS::operator==(const KJS::CString& c1, const KJS::CString& c2)
 {
-  return (strcmp(c1.c_str(), c2.c_str()) == 0);
+  int len = c1.size();
+  return len == c2.size() && (len == 0 || memcmp(c1.c_str(), c2.c_str(), len) == 0);
 }
 
 UString::Rep UString::Rep::null = { 0, 0, 0, 1, 1 };
@@ -463,6 +468,53 @@ UString &UString::append(const UString &t)
   UChar *n = new UChar[newCapacity];
   memcpy(n, data(), l * sizeof(UChar));
   memcpy(n+l, t.data(), tLen * sizeof(UChar));
+  release();
+  rep = Rep::create(n, newLen);
+  rep->capacity = newCapacity;
+
+  return *this;
+}
+
+UString &UString::append(const char *t)
+{
+  int l = size();
+  int tLen = strlen(t);
+  int newLen = l + tLen;
+  if (rep->rc == 1 && newLen <= rep->capacity) {
+    for (int i = 0; i < tLen; ++i)
+      rep->dat[l+i] = t[i];
+    rep->len = newLen;
+    rep->_hash = 0;
+    return *this;
+  }
+  
+  int newCapacity = (newLen * 3 + 1) / 2;
+  UChar *n = new UChar[newCapacity];
+  memcpy(n, data(), l * sizeof(UChar));
+  for (int i = 0; i < tLen; ++i)
+    n[l+i] = t[i];
+  release();
+  rep = Rep::create(n, newLen);
+  rep->capacity = newCapacity;
+
+  return *this;
+}
+
+UString &UString::append(unsigned short c)
+{
+  int l = size();
+  int newLen = l + 1;
+  if (rep->rc == 1 && newLen <= rep->capacity) {
+    rep->dat[l] = c;
+    rep->len = newLen;
+    rep->_hash = 0;
+    return *this;
+  }
+  
+  int newCapacity = (newLen * 3 + 1) / 2;
+  UChar *n = new UChar[newCapacity];
+  memcpy(n, data(), l * sizeof(UChar));
+  n[l] = c;
   release();
   rep = Rep::create(n, newLen);
   rep->capacity = newCapacity;
@@ -894,3 +946,241 @@ int KJS::compare(const UString& s1, const UString& s2)
   }
   return (l1 < l2) ? 1 : -1;
 }
+
+// Given a first byte, gives the length of the UTF-8 sequence it begins.
+// Returns 0 for bytes that are not legal starts of UTF-8 sequences.
+// Only allows sequences of up to 4 bytes, since that works for all Unicode characters (U-00000000 to U-0010FFFF).
+int UTF8SequenceLength(char b0)
+{
+  if ((b0 & 0x80) == 0)
+    return 1;
+  if ((b0 & 0xC0) != 0xC0)
+    return 0;
+  if ((b0 & 0xE0) == 0xC0)
+    return 2;
+  if ((b0 & 0xF0) == 0xE0)
+    return 3;
+  if ((b0 & 0xF8) == 0xF0)
+    return 4;
+  return 0;
+}
+
+// Takes a null-terminated C-style string with a UTF-8 sequence in it and converts it to a character.
+// Only allows Unicode characters (U-00000000 to U-0010FFFF).
+// Returns -1 if the sequence is not valid (including presence of extra bytes).
+int decodeUTF8Sequence(const char *sequence)
+{
+  // Handle 0-byte sequences (never valid).
+  const unsigned char b0 = sequence[0];
+  const int length = UTF8SequenceLength(b0);
+  if (length == 0)
+    return -1;
+
+  // Handle 1-byte sequences (plain ASCII).
+  const unsigned char b1 = sequence[1];
+  if (length == 1) {
+    if (b1)
+      return -1;
+    return b0;
+  }
+
+  // Handle 2-byte sequences.
+  if ((b1 & 0xC0) != 0x80)
+    return -1;
+  const unsigned char b2 = sequence[2];
+  if (length == 2) {
+    if (b2)
+      return -1;
+    const int c = ((b0 & 0x1F) << 6) | (b1 & 0x3F);
+    if (c < 0x80)
+      return -1;
+    return c;
+  }
+
+  // Handle 3-byte sequences.
+  if ((b2 & 0xC0) != 0x80)
+    return -1;
+  const unsigned char b3 = sequence[3];
+  if (length == 3) {
+    if (b3)
+      return -1;
+    const int c = ((b0 & 0xF) << 12) | ((b1 & 0x3F) << 6) | (b2 & 0x3F);
+    if (c < 0x800)
+      return -1;
+    // UTF-16 surrogates should never appear in UTF-8 data.
+    if (c >= 0xD800 && c <= 0xDFFF)
+      return -1;
+    // Backwards BOM and U+FFFF should never appear in UTF-8 data.
+    if (c == 0xFFFE || c == 0xFFFF)
+      return -1;
+    return c;
+  }
+
+  // Handle 4-byte sequences.
+  if ((b3 & 0xC0) != 0x80)
+    return -1;
+  const unsigned char b4 = sequence[4];
+  if (length == 4) {
+    if (b4)
+      return -1;
+    const int c = ((b0 & 0x7) << 18) | ((b1 & 0x3F) << 12) | ((b2 & 0x3F) << 6) | (b3 & 0x3F);
+    if (c < 0x10000 || c > 0x10FFFF)
+      return -1;
+    return c;
+  }
+
+  return -1;
+}
+
+CString UString::UTF8String() const
+{
+  // Allocate a buffer big enough to hold all the characters.
+  const int length = size();
+  const unsigned bufferSize = length * 3;
+  char fixedSizeBuffer[1024];
+  char *buffer;
+  if (bufferSize > sizeof(fixedSizeBuffer)) {
+    buffer = new char [bufferSize];
+  } else {
+    buffer = fixedSizeBuffer;
+  }
+
+  // Convert to runs of 8-bit characters.
+  char *p = buffer;
+  const UChar *d = data();
+  for (int i = 0; i != length; ++i) {
+    unsigned short c = d[i].unicode();
+    if (c < 0x80) {
+      *p++ = (char)c;
+    } else if (c < 0x800) {
+      *p++ = (char)((c >> 6) | 0xC0); // C0 is the 2-byte flag for UTF-8
+      *p++ = (char)((c | 0x80) & 0xBF); // next 6 bits, with high bit set
+    } else if (c >= 0xD800 && c <= 0xDBFF && i < length && d[i+1].uc >= 0xDC00 && d[i+2].uc <= 0xDFFF) {
+      unsigned sc = 0x10000 + (((c & 0x3FF) << 10) | (d[i+1].uc & 0x3FF));
+      *p++ = (char)((sc >> 18) | 0xF0); // F0 is the 4-byte flag for UTF-8
+      *p++ = (char)(((sc >> 12) | 0x80) & 0xBF); // next 6 bits, with high bit set
+      *p++ = (char)(((sc >> 6) | 0x80) & 0xBF); // next 6 bits, with high bit set
+      *p++ = (char)((sc | 0x80) & 0xBF); // next 6 bits, with high bit set
+      ++i;
+    } else {
+      *p++ = (char)((c >> 12) | 0xE0); // E0 is the 3-byte flag for UTF-8
+      *p++ = (char)(((c >> 6) | 0x80) & 0xBF); // next 6 bits, with high bit set
+      *p++ = (char)((c | 0x80) & 0xBF); // next 6 bits, with high bit set
+    }
+  }
+
+  // Return the result as a C string.
+  CString result(buffer, p - buffer);
+  if (buffer != fixedSizeBuffer) {
+    delete [] buffer;
+  }
+  return result;
+}
+
+struct StringOffset {
+    int offset;
+    int locationInOffsetsArray;
+};
+
+static int compareStringOffsets(const void *a, const void *b)
+{
+    const StringOffset *oa = static_cast<const StringOffset *>(a);
+    const StringOffset *ob = static_cast<const StringOffset *>(b);
+    
+    if (oa->offset < ob->offset) {
+        return -1;
+    }
+    if (oa->offset > ob->offset) {
+        return +1;
+    }
+    return 0;
+}
+
+const int sortedOffsetsFixedBufferSize = 128;
+
+static StringOffset *createSortedOffsetsArray(const int offsets[], int numOffsets,
+    StringOffset sortedOffsetsFixedBuffer[sortedOffsetsFixedBufferSize])
+{
+    // Allocate the sorted offsets.
+    StringOffset *sortedOffsets;
+    if (numOffsets <= sortedOffsetsFixedBufferSize) {
+        sortedOffsets = sortedOffsetsFixedBuffer;
+    } else {
+        sortedOffsets = new StringOffset [numOffsets];
+    }
+
+    // Copy offsets.
+    for (int i = 0; i != numOffsets; ++i) {
+        sortedOffsets[i].offset = offsets[i];
+        sortedOffsets[i].locationInOffsetsArray = i;
+    }
+
+    // Sort them.
+    qsort(sortedOffsets, numOffsets, sizeof(StringOffset), compareStringOffsets);
+
+    return sortedOffsets;
+}
+
+// Note: This function assumes valid UTF-8.
+// It can even go into an infinite loop if the passed in string is not valid UTF-8.
+void convertUTF16OffsetsToUTF8Offsets(const char *s, int *offsets, int numOffsets)
+{
+    // Allocate buffer.
+    StringOffset fixedBuffer[sortedOffsetsFixedBufferSize];
+    StringOffset *sortedOffsets = createSortedOffsetsArray(offsets, numOffsets, fixedBuffer);
+
+    // Walk through sorted offsets and string, adjusting all the offests.
+    // Offsets that are off the ends of the string map to the edges of the string.
+    int UTF16Offset = 0;
+    const char *p = s;
+    for (int oi = 0; oi != numOffsets; ++oi) {
+        const int nextOffset = sortedOffsets[oi].offset;
+        while (*p && UTF16Offset < nextOffset) {
+            // Skip to the next character.
+            const int sequenceLength = UTF8SequenceLength(*p);
+            assert(sequenceLength >= 1 && sequenceLength <= 4);
+            p += sequenceLength;
+            // Characters that take a 4 byte sequence in UTF-8 take two bytes in UTF-16.
+            UTF16Offset += sequenceLength < 4 ? 1 : 2;
+        }
+        offsets[sortedOffsets[oi].locationInOffsetsArray] = p - s;
+    }
+
+    // Free buffer.
+    if (sortedOffsets != fixedBuffer) {
+        delete [] sortedOffsets;
+    }
+}
+
+// Note: This function assumes valid UTF-8.
+// It can even go into an infinite loop if the passed in string is not valid UTF-8.
+void convertUTF8OffsetsToUTF16Offsets(const char *s, int *offsets, int numOffsets)
+{
+    // Allocate buffer.
+    StringOffset fixedBuffer[sortedOffsetsFixedBufferSize];
+    StringOffset *sortedOffsets = createSortedOffsetsArray(offsets, numOffsets, fixedBuffer);
+
+    // Walk through sorted offsets and string, adjusting all the offests.
+    // Offsets that are off the end of the string map to the edges of the string.
+    int UTF16Offset = 0;
+    const char *p = s;
+    for (int oi = 0; oi != numOffsets; ++oi) {
+        const int nextOffset = sortedOffsets[oi].offset;
+        while (*p && (p - s) < nextOffset) {
+            // Skip to the next character.
+            const int sequenceLength = UTF8SequenceLength(*p);
+            assert(sequenceLength >= 1 && sequenceLength <= 4);
+            p += sequenceLength;
+            // Characters that take a 4 byte sequence in UTF-8 take two bytes in UTF-16.
+            UTF16Offset += sequenceLength < 4 ? 1 : 2;
+        }
+        offsets[sortedOffsets[oi].locationInOffsetsArray] = UTF16Offset;
+    }
+
+    // Free buffer.
+    if (sortedOffsets != fixedBuffer) {
+        delete [] sortedOffsets;
+    }
+}
+
+} // namespace KJS

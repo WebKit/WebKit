@@ -664,6 +664,10 @@ void InterpreterImp::unlock()
   global.put(globExec,"isFinite",   Object(new GlobalFuncImp(globExec,funcProto,GlobalFuncImp::IsFinite,   1)), DontEnum);
   global.put(globExec,"escape",     Object(new GlobalFuncImp(globExec,funcProto,GlobalFuncImp::Escape,     1)), DontEnum);
   global.put(globExec,"unescape",   Object(new GlobalFuncImp(globExec,funcProto,GlobalFuncImp::UnEscape,   1)), DontEnum);
+  global.put(globExec,"decodeURI",  Object(new GlobalFuncImp(globExec,funcProto,GlobalFuncImp::DecodeURI,  1)), DontEnum);
+  global.put(globExec,"decodeURIComponent", Object(new GlobalFuncImp(globExec,funcProto,GlobalFuncImp::DecodeURIComponent, 1)), DontEnum);
+  global.put(globExec,"encodeURI",  Object(new GlobalFuncImp(globExec,funcProto,GlobalFuncImp::EncodeURI,  1)), DontEnum);
+  global.put(globExec,"encodeURIComponent", Object(new GlobalFuncImp(globExec,funcProto,GlobalFuncImp::EncodeURIComponent, 1)), DontEnum);
 #ifndef NDEBUG
   global.put(globExec,"kjsprint",   Object(new GlobalFuncImp(globExec,funcProto,GlobalFuncImp::KJSPrint,   1)), DontEnum);
 #endif

@@ -408,13 +408,113 @@ bool GlobalFuncImp::implementsCall() const
   return true;
 }
 
+static Value encode(ExecState *exec, const List &args, const char *do_not_escape)
+{
+  UString r = "", s, str = args[0].toString(exec);
+  CString cstr = str.UTF8String();
+  const char *p = cstr.c_str();
+  for (int k = 0; k < cstr.size(); k++, p++) {
+    char c = *p;
+    if (c && strchr(do_not_escape, c)) {
+      r.append(c);
+    } else {
+      char tmp[4];
+      sprintf(tmp, "%%%02X", (unsigned char)c);
+      r += tmp;
+    }
+  }
+  return String(r);
+}
+
+static Value decode(ExecState *exec, const List &args, const char *do_not_unescape, bool strict)
+{
+  UString s = "", str = args[0].toString(exec);
+  int k = 0, len = str.size();
+  const UChar *d = str.data();
+  UChar u;
+  while (k < len) {
+    const UChar *p = d + k;
+    UChar c = *p;
+    if (c == '%') {
+      int charLen = 0;
+      if (k <= len - 3 && isxdigit(p[1].uc) && isxdigit(p[2].uc)) {
+        const char b0 = Lexer::convertHex(p[1].uc, p[2].uc);
+        const int sequenceLen = UTF8SequenceLength(b0);
+        if (sequenceLen != 0 && k <= len - sequenceLen * 3) {
+          charLen = sequenceLen * 3;
+          char sequence[5];
+          sequence[0] = b0;
+          for (int i = 1; i < sequenceLen; ++i) {
+            const UChar *q = p + i * 3;
+            if (q[0] == '%' && isxdigit(q[1].uc) && isxdigit(q[2].uc))
+              sequence[i] = Lexer::convertHex(q[1].uc, q[2].uc);
+            else {
+              charLen = 0;
+              break;
+            }
+          }
+          if (charLen != 0) {
+            sequence[sequenceLen] = 0;
+            const int character = decodeUTF8Sequence(sequence);
+            if (character < 0 || character >= 0x110000) {
+              charLen = 0;
+            } else if (character >= 0x10000) {
+              // Convert to surrogate pair.
+              s.append(static_cast<unsigned short>(0xD800 | ((character - 0x10000) >> 10)));
+              u = static_cast<unsigned short>(0xDC00 | ((character - 0x10000) & 0x3FF));
+            } else {
+              u = static_cast<unsigned short>(character);
+            }
+          }
+        }
+      }
+      if (charLen == 0) {
+        if (strict) {
+	  Object error = Error::create(exec, URIError);
+          exec->setException(error);
+          return error;
+        }
+        // The only case where we don't use "strict" mode is the "unescape" function.
+        // For that, it's good to support the wonky "%u" syntax for compatibility with WinIE.
+        if (k <= len - 6 && p[1] == 'u'
+            && isxdigit(p[2].uc) && isxdigit(p[3].uc)
+            && isxdigit(p[4].uc) && isxdigit(p[5].uc)) {
+	  charLen = 6;
+	  u = Lexer::convertUnicode(p[2].uc, p[3].uc, p[4].uc, p[5].uc);
+        }
+      }
+      if (charLen && (u.uc == 0 || u.uc >= 128 || !strchr(do_not_unescape, u.low()))) {
+        c = u;
+        k += charLen - 1;
+      }
+    }
+    k++;
+    s.append(c);
+  }
+  return String(s);
+}
+
 Value GlobalFuncImp::call(ExecState *exec, Object &/*thisObj*/, const List &args)
 {
   Value res;
 
-  static const char non_escape[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-				   "abcdefghijklmnopqrstuvwxyz"
-				   "0123456789@*_+-./";
+  static const char do_not_escape[] =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    "abcdefghijklmnopqrstuvwxyz"
+    "0123456789"
+    "*+-./@_";
+  static const char do_not_escape_when_encoding_URI_component[] =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    "abcdefghijklmnopqrstuvwxyz"
+    "0123456789"
+    "!'()*-._~";
+  static const char do_not_escape_when_encoding_URI[] =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    "abcdefghijklmnopqrstuvwxyz"
+    "0123456789"
+    "!#$&'()*+,-./:;=?@_~";
+  static const char do_not_unescape_when_decoding_URI[] =
+    "#$&+,/:;=?@";
 
   switch (id) {
   case Eval: { // eval()
@@ -502,54 +602,28 @@ Value GlobalFuncImp::call(ExecState *exec, Object &/*thisObj*/, const List &args
     res = Boolean(!isNaN(n) && !isInf(n));
     break;
   }
-  case Escape: {
-    UString r = "", s, str = args[0].toString(exec);
-    const UChar *c = str.data();
-    for (int k = 0; k < str.size(); k++, c++) {
-      int u = c->uc;
-      if (u > 255) {
-	char tmp[7];
-	sprintf(tmp, "%%u%04X", u);
-	s = UString(tmp);
-      } else if (strchr(non_escape, (char)u)) {
-	s = UString(c, 1);
-      } else {
-	char tmp[4];
-	sprintf(tmp, "%%%02X", u);
-	s = UString(tmp);
-      }
-      r += s;
-    }
-    res = String(r);
+  case DecodeURI:
+    res = decode(exec, args, do_not_unescape_when_decoding_URI, true);
     break;
-  }
-  case UnEscape: {
-    UString s, str = args[0].toString(exec);
-    int k = 0, len = str.size();
-    UChar u;
-    while (k < len) {
-      const UChar *c = str.data() + k;
-      if (*c == UChar('%') && k <= len - 6 && *(c+1) == UChar('u')) {
-	u = Lexer::convertUnicode((c+2)->uc, (c+3)->uc,
-				  (c+4)->uc, (c+5)->uc);
-	c = &u;
-	k += 5;
-      } else if (*c == UChar('%') && k <= len - 3) {
-	u = UChar(Lexer::convertHex((c+1)->uc, (c+2)->uc));
-	c = &u;
-	k += 2;
-      }
-      k++;
-      s += UString(c, 1);
-    }
-    res = String(s);
+  case DecodeURIComponent:
+    res = decode(exec, args, "", true);
     break;
-  }
+  case EncodeURI:
+    res = encode(exec, args, do_not_escape_when_encoding_URI);
+    break;
+  case EncodeURIComponent:
+    res = encode(exec, args, do_not_escape_when_encoding_URI_component);
+    break;
+  case Escape:
+    res = encode(exec, args, do_not_escape);
+    break;
+  case UnEscape:
+    res = decode(exec, args, "", false);
+    break;
 #ifndef NDEBUG
-  case KJSPrint: {
-    UString str = args[0].toString(exec);
-    puts(str.ascii());
-  }
+  case KJSPrint:
+    puts(args[0].toString(exec).ascii());
+    break;
 #endif
   }
 

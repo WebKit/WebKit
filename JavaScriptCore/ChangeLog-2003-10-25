@@ -1,3 +1,60 @@
+2003-08-17  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fixed 3247528 -- encodeURI missing from JavaScriptCore (needed by Crystal Reports)
+        - fixed 3381297 -- escape method does not escape the null character
+        - fixed 3381299 -- escape method produces incorrect escape sequences ala WinIE, rather than correct ala Gecko
+        - fixed 3381303 -- unescape method treats escape sequences as Latin-1 ala WinIE rather than as UTF-8 ala Gecko
+        - fixed 3381304 -- unescape method garbles strings with bad escape sequences in them
+
+        * kjs/function.h: Added constants for decodeURI, decodeURIComponent, encodeURI, and
+        encodeURIComponent.
+        * kjs/function.cpp:
+        (encode): Added. New helper function for escape, encodeURI, and encodeURIComponent.
+        (decode): Added. New helper function for unescape, decodeURI, and decodeURIComponent.
+        (GlobalFuncImp::call): Added decodeURI, decodeURIComponent, encodeURI, and encodeURIComponent 
+        implementations. Changed escape and unescape to use new helper functions, which fixes
+        the four problems above.
+
+        * kjs/internal.cpp: (InterpreterImp::initGlobalObject): Add decodeURI, decodeURIComponent,
+        encodeURI, and encodeURIComponent to the global object.
+
+        * kjs/ustring.h: Added a length to the CString class so it can hold strings with null
+        characters in them, not just null-terminated strings. This allows a null character from
+        a UString to survive the process of UTF-16 to UTF-8 decoding. Added overloads to
+        UString::append, UString::UTF8String, UTF8SequenceLength, decodeUTF8Sequence,
+        convertUTF16OffsetsToUTF8Offsets, and convertUTF8OffsetsToUTF16Offsets.
+        
+        * kjs/ustring.cpp:
+        (CString::CString): Set up the length properly in all the constructors. Also add a new
+        constructor that takes a length.
+        (CString::append): Use and set the length properly.
+        (CString::operator=): Use and set the length properly.
+        (operator==): Use and the length and memcmp instead of strcmp.
+        (UString::append): Added new overloads for const char * and for a single string to make
+        it more efficient to build up a UString from pieces. The old way, a UString was created
+        and destroyed each time you appended.
+        (UTF8SequenceLength): New. Helper for decoding UTF-8.
+        (decodeUTF8Sequence): New. Helper for decoding UTF-8.
+        (UString::UTF8String): New. Decodes from UTF-16 to UTF-8. Same as the function that
+        was in regexp.cpp, except has proper handling for UTF-16 surrogates.
+        (compareStringOffsets): Moved from regexp.cpp.
+        (createSortedOffsetsArray): Moved from regexp.cpp.
+        (convertUTF16OffsetsToUTF8Offsets): New. Converts UTF-16 offsets to UTF-8 offsets, given
+        a UTF-8 string. Same as the function that was in regexp.cpp, except has proper handling
+        for UTF-16 surrogates.
+        (convertUTF8OffsetsToUTF16Offsets): New. Converts UTF-8 offsets to UTF-16 offsets, given
+        a UTF-8 string. Same as the function that was in regexp.cpp, except has proper handling
+        for UTF-16 surrogates.
+
+        - fixed 3381296 -- regular expression matches with UTF-16 surrogates will treat sequences as two characters
+
+        * kjs/regexp.cpp:
+        (RegExp::RegExp): Use the new UString::UTF8String function instead a function in this file.
+        (RegExp::match): Use the new convertUTF16OffsetsToUTF8Offsets (and the corresponding
+        reverse) instead of convertCharacterOffsetsToUTF8ByteOffsets in this file.
+
 === Safari-93 ===
 
 2003-08-14  Vicki Murley  <vicki@apple.com>
