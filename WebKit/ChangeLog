@@ -1,5 +1,18 @@
 2003-04-15  Richard Williamson   <rjw@apple.com>
 
+        Create the dictionary for volatile values.  Without this fix
+        values were never volatile!
+        
+        Reviewed by mjs.
+
+        * WebView.subproj/WebPreferences.m:
+        (-[WebPreferences _init]):
+        (-[WebPreferences init]):
+        (+[WebPreferences standardPreferences]):
+        (-[WebPreferences dealloc]):
+
+2003-04-15  Richard Williamson   <rjw@apple.com>
+
         Fix for 3226746.  Remove some ancient and apparantly invalid cruft.
         
         Reviewed by trey.

@@ -49,12 +49,26 @@ NSString *WebPreferencesChangedNotification = @"WebPreferencesChangedNotificatio
                     userInfo:nil];
 }
 
+// Only used tp initialize the shared instance.
+- _init
+{
+    [super init];
+    return self;
+}
+
+- init
+{
+    [super init];
+    values = [[NSMutableDictionary alloc] init];
+    return self;
+}
+
 + (WebPreferences *)standardPreferences
 {
     static WebPreferences *_standardPreferences = nil;
 
     if (_standardPreferences == nil) {
-        _standardPreferences = [[WebPreferences alloc] init];
+        _standardPreferences = [[WebPreferences alloc] _init];
         [_standardPreferences _postPreferencesChangesNotification];
     }
 
@@ -97,6 +111,12 @@ NSString *WebPreferencesChangedNotification = @"WebPreferencesChangedNotificatio
     [[NSUserDefaults standardUserDefaults] registerDefaults:dict];
 }
 
+- (void)dealloc
+{
+    [values release];
+    [super dealloc];
+}
+
 - (NSString *)_stringValueForKey: (NSString *)key
 {
     NSString *s = [values objectForKey:key];
@@ -109,8 +129,9 @@ NSString *WebPreferencesChangedNotification = @"WebPreferencesChangedNotificatio
 {
     if (self == [WebPreferences standardPreferences])
         [[NSUserDefaults standardUserDefaults] setObject:value forKey:key];
-    else
+    else {
         [values setObject: value forKey: key];
+    }
     [self _postPreferencesChangesNotification];
 }
 
@@ -126,8 +147,9 @@ NSString *WebPreferencesChangedNotification = @"WebPreferencesChangedNotificatio
 {
     if (self == [WebPreferences standardPreferences])
         [[NSUserDefaults standardUserDefaults] setInteger:value forKey:key];
-    else
+    else{
         [values _web_setInt: value forKey: key];
+    }
     [self _postPreferencesChangesNotification];
 }
 
@@ -143,8 +165,9 @@ NSString *WebPreferencesChangedNotification = @"WebPreferencesChangedNotificatio
 {
     if (self == [WebPreferences standardPreferences])
         [[NSUserDefaults standardUserDefaults] setBool:value forKey:key];
-    else
+    else{
         [values _web_setBool: value forKey: key];
+    }
     [self _postPreferencesChangesNotification];
 }
 
