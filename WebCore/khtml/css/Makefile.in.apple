@@ -81,7 +81,7 @@ $(PROPFILES):
 
 depend: Makefile.dep
 
-Makefile.dep: $(VALUEFILES) $(PROPFILES) $(SOURCES) $(HEADERS)
+Makefile.dep: $(SOURCES) $(HEADERS)
 	$(CC) -MM $(CXXFLAGS) $(SOURCES) > Makefile.dep
 
 #----------------------------------------------------------------------
