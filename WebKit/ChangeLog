@@ -1,3 +1,9 @@
+2003-01-26  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin and Ken.
+
+        * English.lproj/StringsNotToBeLocalized.txt: Removed unused exception.
+
 2003-01-27  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: 3156230 - REGRESSION: Java 141: Safari Does Not Stop Applets When Browser Window Closes
