@@ -26,7 +26,12 @@
 #ifndef __khtml_text_operations_h__
 #define __khtml_text_operations_h__
 
-#include <dom/dom2_range.h>
+#include <qstring.h>
+#include "dom/dom2_range.h"
+
+namespace DOM {
+class NodeImpl;
+}
 
 // FIXME: This class should probably use the render tree and not the DOM tree, since elements could
 // be hidden using CSS, or additional generated content could be added.  For now, we just make sure
@@ -35,8 +40,131 @@
 
 namespace khtml {
 
+class InlineTextBox;
+
+// General utillity functions
+
 QString plainText(const DOM::Range &);
 DOM::Range findPlainText(const DOM::Range &, const QString &, bool forward, bool caseSensitive);
+
+
+// Iterates through the DOM range, returning all the text, and 0-length boundaries
+// at points where replaced elements break up the text flow.  The text comes back in
+// chunks so as to optimize for performance of the iteration.
+class TextIterator
+{
+public:
+    TextIterator();
+    explicit TextIterator(const DOM::Range &);
+    
+    bool atEnd() const { return !m_positionNode; }
+    void advance();
+    
+    long length() const { return m_textLength; }
+    const QChar *characters() const { return m_textCharacters; }
+    
+    DOM::Range range() const;
+        
+private:
+    void exitNode();
+    bool handleTextNode();
+    bool handleReplacedElement();
+    bool handleNonTextNode();
+    void handleTextBox();
+    void emitCharacter(QChar, DOM::NodeImpl *textNode, long textStartOffset, long textEndOffset);
+    
+    // Current position, not necessarily of the text being returned, but position
+    // as we walk through the DOM tree.
+    DOM::NodeImpl *m_node;
+    long m_offset;
+    bool m_handledNode;
+    bool m_handledChildren;
+    
+    // End of the range.
+    DOM::NodeImpl *m_endNode;
+    long m_endOffset;
+    
+    // The current text and its position, in the form to be returned from the iterator.
+    DOM::NodeImpl *m_positionNode;
+    long m_positionStartOffset;
+    long m_positionEndOffset;
+    const QChar *m_textCharacters;
+    long m_textLength;
+    
+    // Used when there is still some pending text from the current node; when these
+    // are false and 0, we go back to normal iterating.
+    bool m_needAnotherNewline;
+    InlineTextBox *m_textBox;
+    
+    // Used to do the whitespace collapsing logic.
+    DOM::NodeImpl *m_lastTextNode;    
+    bool m_lastTextNodeEndedWithCollapsedSpace;
+    QChar m_lastCharacter;
+    
+    // Used for whitespace characters that aren't in the DOM, so we can point at them.
+    QChar m_singleCharacterBuffer;
+};
+
+
+// Builds on the text iterator, adding a character position so we can walk one
+// character at a time, or faster, as needed. Useful for searching.
+class CharacterIterator {
+public:
+    CharacterIterator();
+    explicit CharacterIterator(const DOM::Range &r);
+    
+    void advance(long numCharacters);
+    
+    bool atBreak() const { return m_atBreak; }
+    bool atEnd() const { return m_textIterator.atEnd(); }
+    
+    long length() const { return m_textIterator.length() - m_runOffset; }
+    const QChar *characters() const { return m_textIterator.characters() + m_runOffset; }
+    QString string(long numChars);
+    
+    long characterOffset() const { return m_offset; }
+    DOM::Range range() const;
+        
+private:
+    long m_offset;
+    long m_runOffset;
+    bool m_atBreak;
+    
+    TextIterator m_textIterator;
+};
+    
+
+// Very similar to the TextIterator, except that the chunks of text returned are "well behaved",
+// meaning they never end split up a word.  This is useful for spellcheck or (perhaps one day) searching.
+class WordAwareIterator {
+public:
+    WordAwareIterator();
+    explicit WordAwareIterator(const DOM::Range &r);
+
+    bool atEnd() const { return !m_didLookAhead && m_textIterator.atEnd(); }
+    void advance();
+    
+    long length() const;
+    const QChar *characters() const;
+    
+    // Range of the text we're currently returning
+    DOM::Range range() const { return m_range; }
+
+private:
+    // text from the previous chunk from the textIterator
+    const QChar *m_previousText;
+    long m_previousLength;
+
+    // many chunks from textIterator concatenated
+    QString m_buffer;
+    
+    // Did we have to look ahead in the textIterator to confirm the current chunk?
+    bool m_didLookAhead;
+
+    DOM::Range m_range;
+
+    TextIterator m_textIterator;
+};
 
 }
 

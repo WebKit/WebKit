@@ -28,6 +28,8 @@
 #include <misc/htmltags.h>
 #include <rendering/render_text.h>
 #include <xml/dom_nodeimpl.h>
+#include <xml/dom_position.h>
+#include <xml/dom2_rangeimpl.h>
 
 using DOM::DOMString;
 using DOM::Node;
@@ -37,88 +39,6 @@ using DOM::Range;
 namespace khtml {
 
 const unsigned short nonBreakingSpace = 0xA0;
-
-// Iterates through the DOM range, returning all the text, and 0-length boundaries
-// at points where replaced elements break up the text flow.
-class TextIterator
-{
-public:
-    TextIterator();
-    explicit TextIterator(const DOM::Range &);
-
-    bool atEnd() const { return !m_positionNode; }
-    void advance();
-
-    long textLength() const { return m_textLength; }
-    const QChar *textCharacters() const { return m_textCharacters; }
-
-    DOM::Range position() const;
-
-private:
-    void exitNode();
-    bool handleTextNode();
-    bool handleReplacedElement();
-    bool handleNonTextNode();
-    void handleTextBox();
-    void emitCharacter(QChar, DOM::NodeImpl *textNode, long textStartOffset, long textEndOffset);
-
-    // Current position, not necessarily of the text being returned, but position
-    // as we walk through the DOM tree.
-    DOM::NodeImpl *m_node;
-    long m_offset;
-    bool m_handledNode;
-    bool m_handledChildren;
-
-    // End of the range.
-    DOM::NodeImpl *m_endNode;
-    long m_endOffset;
-
-    // The current text and its position, in the form to be returned from the iterator.
-    DOM::NodeImpl *m_positionNode;
-    long m_positionStartOffset;
-    long m_positionEndOffset;
-    const QChar *m_textCharacters;
-    long m_textLength;
-
-    // Used when there is still some pending text from the current node; when these
-    // are false and 0, we go back to normal iterating.
-    bool m_needAnotherNewline;
-    InlineTextBox *m_textBox;
-
-    // Used to do the whitespace collapsing logic.
-    DOM::NodeImpl *m_lastTextNode;    
-    bool m_lastTextNodeEndedWithCollapsedSpace;
-    QChar m_lastCharacter;
-
-    // Used for whitespace characters that aren't in the DOM, so we can point at them.
-    QChar m_singleCharacterBuffer;
-};
-
-// Builds on the text iterator, adding a character position so we can walk one
-// character at a time, or faster, as needed. Useful for searching.
-class CharacterIterator {
-public:
-    CharacterIterator();
-    explicit CharacterIterator(const DOM::Range &r);
-
-    void advance(long numCharacters);
-
-    bool atBreak() const { return m_atBreak; }
-    bool atEnd() const { return m_textIterator.atEnd(); }
-
-    long numCharacters() const { return m_textIterator.textLength() - m_runOffset; }
-    const QChar *characters() const { return m_textIterator.textCharacters() + m_runOffset; }
-
-    long characterOffset() const { return m_offset; }
-    Range position() const;
-
-private:
-    long m_offset;
-    long m_runOffset;
-    bool m_atBreak;
-
-    TextIterator m_textIterator;
-};
 
 // Buffer that knows how to compare with a search target.
 // Keeps enough of the previous text to be able to search in the future,
@@ -522,7 +442,7 @@ void TextIterator::emitCharacter(QChar c, NodeImpl *textNode, long textStartOffs
     m_lastCharacter = c;
 }
 
-Range TextIterator::position() const
+Range TextIterator::range() const
 {
     assert(m_positionNode);
     return Range(m_positionNode, m_positionStartOffset, m_positionNode, m_positionEndOffset);
@@ -536,15 +456,15 @@ CharacterIterator::CharacterIterator()
 CharacterIterator::CharacterIterator(const Range &r)
     : m_offset(0), m_runOffset(0), m_atBreak(true), m_textIterator(r)
 {
-    while (!atEnd() && m_textIterator.textLength() == 0) {
+    while (!atEnd() && m_textIterator.length() == 0) {
         m_textIterator.advance();
     }
 }
 
-Range CharacterIterator::position() const
+Range CharacterIterator::range() const
 {
-    Range r = m_textIterator.position();
-    if (m_textIterator.textLength() <= 1) {
+    Range r = m_textIterator.range();
+    if (m_textIterator.length() <= 1) {
         assert(m_runOffset == 0);
     } else {
         Node n = r.startContainer();
@@ -562,7 +482,7 @@ void CharacterIterator::advance(long count)
 
     m_atBreak = false;
 
-    long remaining = m_textIterator.textLength() - m_runOffset;
+    long remaining = m_textIterator.length() - m_runOffset;
     if (count < remaining) {
         m_runOffset += count;
         m_offset += count;
@@ -572,7 +492,7 @@ void CharacterIterator::advance(long count)
     count -= remaining;
     m_offset += remaining;
     for (m_textIterator.advance(); !atEnd(); m_textIterator.advance()) {
-        long runLength = m_textIterator.textLength();
+        long runLength = m_textIterator.length();
         if (runLength == 0) {
             m_atBreak = true;
         } else {
@@ -588,6 +508,115 @@ void CharacterIterator::advance(long count)
 
     m_atBreak = true;
     m_runOffset = 0;
+}
+
+QString CharacterIterator::string(long numChars)
+{
+    QString result;
+    result.reserve(numChars);
+    while (numChars > 0 && !atEnd()) {
+        long runSize = kMin(numChars, length());
+        result.append(characters(), runSize);
+        numChars -= runSize;
+        advance(runSize);
+    }
+    return result;
+}
+
+WordAwareIterator::WordAwareIterator()
+: m_previousText(0), m_didLookAhead(false)
+{
+}
+
+WordAwareIterator::WordAwareIterator(const Range &r)
+: m_previousText(0), m_didLookAhead(false), m_textIterator(r)
+{
+    if (!m_textIterator.atEnd()) {
+        m_didLookAhead = true;  // so we consider the first chunk from the text iterator
+        advance();              // get in position over the first chunk of text
+    }
+}
+
+// We're always in one of these modes:
+// - The current chunk in the text iterator is our current chunk
+//      (typically its a piece of whitespace, or text that ended with whitespace)
+// - The previous chunk in the text iterator is our current chunk
+//      (we looked ahead to the next chunk and found a word boundary)
+// - We built up our own chunk of text from many chunks from the text iterator
+
+//FIXME: Perf could be bad for huge spans next to each other that don't fall on word boundaries
+
+void WordAwareIterator::advance()
+{
+    m_previousText = 0;
+    m_buffer = "";      // toss any old buffer we built up
+
+    // If last time we did a look-ahead, start with that looked-ahead chunk now
+    if (!m_didLookAhead) {
+        assert(!m_textIterator.atEnd());
+        m_textIterator.advance();
+    }
+    m_didLookAhead = false;
+
+    // Go to next non-empty chunk 
+    while (!m_textIterator.atEnd() && m_textIterator.length() == 0) {
+        m_textIterator.advance();
+    }
+
+    if (m_textIterator.atEnd()) {
+        return;
+    }
+    m_range = m_textIterator.range();
+    
+    while (1) {
+        // If this chunk ends in whitespace we can just use it as our chunk.
+        if (m_textIterator.characters()[m_textIterator.length()-1].isSpace()) {
+            return;
+        }
+
+        // If this is the first chunk that failed, save it in previousText before look ahead
+        if (m_buffer.isEmpty()) {
+            m_previousText = m_textIterator.characters();
+            m_previousLength = m_textIterator.length();
+        }
+
+        // Look ahead to next chunk.  If it is whitespace or a break, we can use the previous stuff
+        m_textIterator.advance();
+        if (m_textIterator.atEnd() || m_textIterator.length() == 0 || m_textIterator.characters()[0].isSpace()) {
+            m_didLookAhead = true;
+            return;
+        }
+
+        if (m_buffer.isEmpty()) {
+            // Start gobbling chunks until we get to a suitable stopping point
+            m_buffer.append(m_previousText, m_previousLength);
+            m_previousText = 0;
+        }
+        m_buffer.append(m_textIterator.characters(), m_textIterator.length());
+        m_range.setEnd(m_textIterator.range().endContainer(), m_textIterator.range().endOffset());
+    }
+}
+
+long WordAwareIterator::length() const
+{
+    if (!m_buffer.isEmpty()) {
+        return m_buffer.length();
+    } else if (m_previousText) {
+        return m_previousLength;
+    } else {
+        return m_textIterator.length();
+    }
+}
+
+const QChar *WordAwareIterator::characters() const
+{
+    if (!m_buffer.isEmpty()) {
+        return m_buffer.unicode();
+    } else if (m_previousText) {
+        return m_previousText;
+    } else {
+        return m_textIterator.characters();
+    }
 }
 
 CircularSearchBuffer::CircularSearchBuffer(const QString &s, bool isCaseSensitive)
@@ -668,12 +697,12 @@ QString plainText(const Range &r)
     // Allocate string at the right size, rather than building it up by successive append calls.
     long length = 0;
     for (TextIterator it(r); !it.atEnd(); it.advance()) {
-        length += it.textLength();
+        length += it.length();
     }
     QString result("");
     result.reserve(length);
     for (TextIterator it(r); !it.atEnd(); it.advance()) {
-        result.append(it.textCharacters(), it.textLength());
+        result.append(it.characters(), it.length());
     }
     return result;
 }
@@ -706,7 +735,7 @@ Range findPlainText(const Range &r, const QString &s, bool forward, bool caseSen
                     }
                     buffer.clear();
                 }
-                long available = it.numCharacters();
+                long available = it.length();
                 long runLength = kMin(needed, available);
                 buffer.append(runLength, it.characters());
                 it.advance(runLength);
@@ -738,9 +767,9 @@ done:
     } else {
         CharacterIterator it(r);
         it.advance(rangeEnd.characterOffset() - buffer.length());
-        result.setStart(it.position().startContainer(), it.position().startOffset());
+        result.setStart(it.range().startContainer(), it.range().startOffset());
         it.advance(buffer.length() - 1);
-        result.setEnd(it.position().endContainer(), it.position().endOffset());
+        result.setEnd(it.range().endContainer(), it.range().endOffset());
     }
     return result;
 }

@@ -92,6 +92,7 @@ using DOM::Selection;
 using DOM::TextImpl;
 
 using khtml::Cache;
+using khtml::CharacterIterator;
 using khtml::ChildFrame;
 using khtml::Decoder;
 using khtml::findPlainText;
@@ -113,6 +114,7 @@ using khtml::RenderTableCell;
 using khtml::RenderText;
 using khtml::RenderWidget;
 using khtml::VISIBLE;
+using khtml::WordAwareIterator;
 
 using KIO::Job;
 
@@ -568,9 +570,13 @@ bool KWQKHTMLPart::findString(NSString *string, bool forward, bool caseFlag, boo
     searchRange.selectNodeContents(xmlDocImpl());
     if (selectionStart()) {
         if (forward) {
-            searchRange.setStart(selectionEnd(), selectionEndOffset());
+            // Must ensure the position is on a container to be usable with a DOMRange
+            Position selEnd = selection().rangeEnd();
+            searchRange.setStart(selEnd.node(), selEnd.offset());
         } else {
-            searchRange.setEnd(selectionStart(), selectionStartOffset());
+            // Must ensure the position is on a container to be usable with a DOMRange
+            Position selStart = selection().rangeStart();
+            searchRange.setEnd(selStart.node(), selStart.offset());
         }
     }
 
@@ -876,6 +882,122 @@ void KWQKHTMLPart::jumpToSelection()
 	KWQ_UNBLOCK_EXCEPTIONS;
 */
     }
+}
+
+QString KWQKHTMLPart::advanceToNextMisspelling()
+{
+    // The basic approach is to search in two phases - from the selection end to the end of the doc, and
+    // the we wrap and search from the doc start to (approximately) where we started.
+    
+    // Start at the end of the selection, search to edge of document.  Starting at the selection end makes
+    // repeated "check spelling" commands work.
+    Range searchRange(xmlDocImpl());
+    searchRange.selectNodeContents(xmlDocImpl());
+    bool startedWithSelection = false;
+    if (selectionStart()) {
+        startedWithSelection = true;
+        // Must ensure the position is on a container to be usable with a DOMRange
+        Position selEnd = selection().rangeEnd();
+        searchRange.setStart(selEnd.node(), selEnd.offset());
+    }
+    
+    // If we're not in an editable node, try to find one, make that our range to work in
+    NodeImpl *editableNodeImpl = searchRange.startContainer().handle();
+    if (!editableNodeImpl->isContentEditable()) {
+        editableNodeImpl = editableNodeImpl->nextEditable();
+        if (!editableNodeImpl) {
+            return QString();
+        }
+        searchRange.setStartBefore(Node(editableNodeImpl));
+        startedWithSelection = false;   // won't need to wrap
+    }
+    
+    // topNode defines the whole range we want to operate on 
+    Node topNode(editableNodeImpl->rootEditableElement());
+    searchRange.setEndAfter(topNode);
+
+    // Make sure start of searchRange is not in the middle of a word.  Jumping back a char and then
+    // forward by a word happens to do the trick.
+    if (startedWithSelection) {
+        Position start(searchRange.startContainer().handle(), searchRange.startOffset());
+        Position newStart = start.previousCharacterPosition();
+        if (newStart != start) {
+            newStart = newStart.nextWordBoundary();
+            // Must ensure the position is on a container to be usable with a DOMRange
+            newStart = newStart.equivalentRangeCompliantPosition();
+            searchRange.setStart(Node(newStart.node()), newStart.offset());
+        } // else we were already at the start of the editable node
+    }
+    
+    if (searchRange.collapsed()) {
+        return QString();       // nothing to search in
+    }
+    
+    NSSpellChecker *checker = [NSSpellChecker sharedSpellChecker];
+    WordAwareIterator it(searchRange);
+    bool wrapped = false;
+    
+    Node searchEndAfterWrapNode;
+    long searchEndAfterWrapOffset;
+    if (it.atEnd()) {
+        // it.range() is not valid if we're already at the end
+        searchEndAfterWrapNode = searchRange.startContainer();
+        searchEndAfterWrapOffset = searchRange.startOffset();
+    } else {
+        // We go to the end of our first range insted of the start of it, just to be sure
+        // we don't get foiled by any word boundary problems at the start.  It means we might
+        // do a tiny bit more searching.
+        searchEndAfterWrapNode = it.range().endContainer();
+        searchEndAfterWrapOffset = it.range().endOffset();
+    }
+
+    while (1) {
+        if (!it.atEnd()) {      // we may be starting at the end of the doc, and already by atEnd
+            const QChar *chars = it.characters();
+            long len = it.length();
+            if (len > 1 || !chars[0].isSpace()) {
+                NSString *chunk = [[NSString alloc] initWithCharactersNoCopy:(unichar *)chars length:len freeWhenDone:NO];
+                NSRange misspelling = [checker checkSpellingOfString:chunk startingAt:0 language:nil wrap:NO inSpellDocumentWithTag:[_bridge spellCheckerDocumentTag] wordCount:NULL];
+                [chunk release];
+                if (misspelling.length > 0) {
+                    // build up result range and string, possibly reiterating over text nodes
+                    Range misspellingRange(xmlDocImpl());
+                    CharacterIterator chars(it.range());
+                    chars.advance(misspelling.location);
+                    misspellingRange.setStart(chars.range().startContainer(), chars.range().startOffset());
+                    QString result = chars.string(misspelling.length);
+                    if (chars.atEnd()) {
+                        misspellingRange.setEnd(it.range().endContainer(), it.range().endOffset());
+                    } else {
+                        misspellingRange.setEnd(chars.range().startContainer(), chars.range().startOffset());
+                    }
+                
+                    setSelection(misspellingRange);
+                    jumpToSelection();
+                    
+                    // TODO: mark misspelling in document
+
+                    return result;
+                }
+            }
+        
+            it.advance();
+        }
+        if (it.atEnd()) {
+            if (wrapped || !startedWithSelection) {
+                break;      // finished the second range, or we did the whole doc with the first range
+            } else {
+                // we've gone from the selection to the end of doc, now wrap around
+                wrapped = YES;
+                searchRange.setStartBefore(topNode);
+                // going until the end of the very first chunk we tested is far enough
+                searchRange.setEnd(searchEndAfterWrapNode, searchEndAfterWrapOffset);
+                it = WordAwareIterator(searchRange);
+            }
+        }   
+    }
+    
+    return QString();
 }
 
 void KWQKHTMLPart::redirectionTimerStartedOrStopped()

@@ -1225,8 +1225,13 @@ static WebHTMLView *lastHitView = nil;
         return [self _haveSelection];
     } else if (action == @selector(jumpToSelection:)) {
         return [self _haveSelection];
+    } else if (action == @selector(checkSpelling:)
+               || action == @selector(showGuessPanel:)
+               || action == @selector(changeSpelling:)
+               || action == @selector(ignoreSpelling:)) {
+        return [[self _bridge] isSelectionEditable];
     }
-    
+
     return YES;
 }
 
@@ -2871,7 +2876,17 @@ static WebHTMLView *lastHitView = nil;
 
 - (void)checkSpelling:(id)sender
 {
-#if 0
+    // WebCore does everything but update the spelling panel
+    NSSpellChecker *checker = [NSSpellChecker sharedSpellChecker];
+    if (!checker) {
+        return;
+    }
+    NSString *badWord = [[self _bridge] advanceToNextMisspelling];
+    if (badWord) {
+        [checker updateSpellingPanelWithMisspelledWord:badWord];
+    }
+}
+#if APPKIT_CODE_FOR_REFERENCE
     NSTextStorage *text = _getTextStorage(self);
     NSTextViewSharedData *sharedData = _getSharedData(self);
     if (text && ([text length] > 0) && [self isSelectable]) {
@@ -2915,11 +2930,23 @@ static WebHTMLView *lastHitView = nil;
         }
     }
 #endif
-}
+
 
 - (void)showGuessPanel:(id)sender
 {
-#if 0
+    // WebCore does everything but update the spelling panel
+    NSSpellChecker *checker = [NSSpellChecker sharedSpellChecker];
+    if (!checker) {
+        return;
+    }
+
+    NSString *badWord = [[self _bridge] advanceToNextMisspelling];
+    if (badWord) {
+        [checker updateSpellingPanelWithMisspelledWord:badWord];
+    }
+    [[checker spellingPanel] orderFront:sender];
+}
+#if APPKIT_CODE_FOR_REFERENCE
     NSTextStorage *text = _getTextStorage(self);
     NSTextViewSharedData *sharedData = _getSharedData(self);
     NSSpellChecker *checker = [NSSpellChecker sharedSpellChecker];
@@ -2944,19 +2971,33 @@ static WebHTMLView *lastHitView = nil;
         [[checker spellingPanel] orderFront:sender];
     }
 #endif
+
+- (void)_changeSpellingToWord:(NSString *)newWord
+{
+    WebBridge *bridge = [self _bridge];
+    if (![bridge isSelectionEditable]) {
+        return;
+    }
+    
+    // Don't correct to empty string.  (AppKit checked this, we might as well too.)
+    if (![NSSpellChecker sharedSpellChecker] || [newWord isEqualToString:@""]) {
+        return;
+    }
+
+    WebView *webView = [self _webView];
+    if ([[webView _editingDelegateForwarder] webView:webView shouldInsertText:newWord replacingDOMRange:[bridge selectedDOMRange] givenAction:WebViewInsertActionPasted]) {
+        [bridge replaceSelectionWithText:newWord selectReplacement:YES];
+    }
 }
-
-#if 0
-
-- (void)_changeSpellingToWord:(NSString *)newWord {
+#if APPKIT_CODE_FOR_REFERENCE
     NSRange charRange = [self rangeForUserTextChange];
     if ([self isEditable] && charRange.location != NSNotFound) {
         NSSpellChecker *checker = [NSSpellChecker sharedSpellChecker];
         if (!checker || [checker windowIsSpellingPanel:[self window]]) return;
-
+        
         // Don't correct to empty string.
         if ([newWord isEqualToString:@""]) return;
-
+        
         if ([self shouldChangeTextInRange:charRange replacementString:newWord]) {
             [self replaceCharactersInRange:charRange withString:newWord];
             charRange.length = [newWord length];
@@ -2964,25 +3005,39 @@ static WebHTMLView *lastHitView = nil;
             [self didChangeText];
         }
     }
-}
-
-- (void)_changeSpellingFromMenu:(id)sender {
-    [self _changeSpellingToWord:[sender title]];
-}
+#endif
 
 - (void)changeSpelling:(id)sender {
     [self _changeSpellingToWord:[[sender selectedCell] stringValue]];
 }
 
 - (void)ignoreSpelling:(id)sender {
+    WebBridge *bridge = [self _bridge];
+    if (![bridge isSelectionEditable]) {
+        return;
+    }
+    
+    NSSpellChecker *checker = [NSSpellChecker sharedSpellChecker];
+    if (!checker) {
+        return;
+    }
+    
+    NSString *stringToIgnore = [sender stringValue];
+    unsigned int length = [stringToIgnore length];
+    if (stringToIgnore && length > 0) {
+        [checker ignoreWord:stringToIgnore inSpellDocumentWithTag:[[self _webView] spellCheckerDocumentTag]];
+        //??? need to clear any special markup for misspelled words
+    }
+}
+#if APPKIT_CODE_FOR_REFERENCE
     NSRange charRange = [self rangeForUserTextChange];
     if ([self isEditable]) {
         NSSpellChecker *checker = [NSSpellChecker sharedSpellChecker];
         NSString *stringToIgnore;
         unsigned int length;
-
+        
         if (!checker) return;
-
+        
         stringToIgnore = [sender stringValue];
         length = [stringToIgnore length];
         if (stringToIgnore && length > 0) {
@@ -2992,6 +3047,13 @@ static WebHTMLView *lastHitView = nil;
             }
         }
     }
+#endif
+
+
+#if APPKIT_CODE_FOR_REFERENCE
+
+- (void)_changeSpellingFromMenu:(id)sender {
+    [self _changeSpellingToWord:[sender title]];
 }
 
 - (void)_ignoreSpellingFromMenu:(id)sender {

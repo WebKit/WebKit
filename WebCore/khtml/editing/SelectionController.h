@@ -81,6 +81,9 @@ public:
     Position extent() const { return m_extent; }
     Position start() const { return m_start; }
     Position end() const { return m_end; }
+    // These values are suitable for use in a DOM::Range.  The previous ones may not be.
+    Position rangeStart() const { return m_start.equivalentRangeCompliantPosition(); }
+    Position rangeEnd() const { return m_end.equivalentRangeCompliantPosition(); }
 
     QRect getRepaintRect() const;
     void setNeedsLayout(bool flag=true);

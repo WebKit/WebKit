@@ -1,54 +1,60 @@
-2004-07-28  Ken Kocienda  <kocienda@apple.com>
+2004-07-28  Trey Matteson  <trey@apple.com>
 
-        Reviewed by John
+	Spellchecking, Part I.  Basic spellcheck is working.  Spelling panel is hooked up.
 
-        Export a couple more symbols for test programs.
+	At this point, no special marking of misspellings, no grammar check, no context
+	menu integration, no "check continually" mode.
 
-        * WebCore-combined.exp:
-        * WebCore-tests.exp:
+	Much of the TextIterator and CharacterIterator interface got published outside
+	of khtml_text_operations.cpp, with a little API rationalizing.
 
-2004-07-28  Richard Williamson   <rjw@apple.com>
+        Reviewed by Ken.
 
-        We're changing the way color is specified as a parameter in the
-        <canvas> API.  Colors are now specified using the CSS color
-        functions (or old style names or "#").  For example
-        'context.setStrokeColor ("rgba(128,128,128,0.5)")'.  Most of the
-        patch is cleanup of duplicated code in cssparser.cpp and a new
-        static function that'll crank up the CSS parser to parse the
-        color. This patch leaves the old mechanisms in place for now, so
-        we don't break any existing gadgets.
+        * khtml/misc/khtml_text_operations.cpp:
+        (khtml::TextIterator::range):  Name changes.
+        (khtml::CharacterIterator::CharacterIterator):  Ditto.
+        (khtml::CharacterIterator::range):  Ditto.
+        (khtml::CharacterIterator::advance):  Ditto.
+        (khtml::CharacterIterator::string):  New method to consume chars into a string.
+        (khtml::WordAwareIterator::WordAwareIterator):  New class that iterates over
+	the text respecting word boundaries.
+        (khtml::WordAwareIterator::advance):
+        (khtml::WordAwareIterator::length):
+        (khtml::WordAwareIterator::characters):
+        (khtml::plainText):  Name changes.
+        (khtml::findPlainText):  Ditto.
 
-        Reviewed by John.
+	API moved from cpp to header file.
+        * khtml/misc/khtml_text_operations.h:
+        (khtml::TextIterator::atEnd):
+        (khtml::TextIterator::length):
+        (khtml::TextIterator::characters):
+        (khtml::CharacterIterator::atBreak):
+        (khtml::CharacterIterator::atEnd):
+        (khtml::CharacterIterator::length):
+        (khtml::CharacterIterator::characters):
+        (khtml::CharacterIterator::characterOffset):
+        (khtml::WordAwareIterator::atEnd):
+        (khtml::WordAwareIterator::range):
 
-        * WebCore.pbproj/project.pbxproj:
-        * khtml/css/cssparser.cpp:
-        (CSSParser::CSSParser):
-        (CSSParser::setupParser):
-        (CSSParser::parseSheet):
-        (CSSParser::parseRule):
-        (CSSParser::parseValue):
-        (CSSParser::parseColor):
-        (CSSParser::parseDeclaration):
-        * khtml/css/cssparser.h:
-        * khtml/ecma/kjs_html.cpp:
-        (KJS::Context2DFunction::tryCall):
-
-        * kwq/KWQColor.h:
-        (QColor::alpha):
-	Added alpha() function to QColor, use instead of quirky
-	qAlpha() global function.
-
-2004-07-28  Ken Kocienda  <kocienda@apple.com>
-
-        Reviewed by Trey
-
-        Only apply the typing style if it is non-null and has a length.
-        This fixes a problem Trey noticed with my last checkin, where
-        typed characters were placed in empty "typing style" spans.
-
-        * khtml/editing/htmlediting_impl.cpp:
-        (khtml::InputNewlineCommandImpl::doApply)
-        (khtml::InputTextCommandImpl::prepareForTextInsertion)
+        * khtml/xml/dom_position.cpp:
+        (DOM::Position::previousWordBoundary):  New name for the old routine.  This routines semantics
+	match the current behavior of this code.
+        (DOM::Position::nextWordBoundary):  Ditto.
+        (DOM::Position::previousWordPosition):  Call old code with the new name.  When we fix
+	word advancement, this routine will have its own impl.
+        (DOM::Position::nextWordPosition):  Ditto.
+        * khtml/xml/dom_position.h:
+        * khtml/xml/dom_selection.h:
+        (DOM::Selection::rangeStart):  New convenience methods
+        (DOM::Selection::rangeEnd):
+        * kwq/KWQKHTMLPart.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::findString):  Ensure we use range-compatible positions.
+        (KWQKHTMLPart::advanceToNextMisspelling):  Brand new.
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge advanceToNextMisspelling]):  Typical bridge glue.
 
 2004-07-28  Ken Kocienda  <kocienda@apple.com>
 

@@ -280,6 +280,11 @@ NSString *_WebMainFrameURLKey =         @"mainFrameURL";
     // Clear the page cache so we call destroy on all the plug-ins in the page cache to break any retain cycles.
     // See comment in [WebHistoryItem _releaseAllPendingPageCaches] for more information.
     [_private->backForwardList _clearPageCache];
+    
+    if (_private->hasSpellCheckerDocumentTag) {
+        [[NSSpellChecker sharedSpellChecker] closeSpellDocumentWithTag:_private->spellCheckerDocumentTag];
+        _private->hasSpellCheckerDocumentTag = NO;
+    }
 }
 
 - (WebFrame *)_createFrameNamed:(NSString *)fname inParent:(WebFrame *)parent allowsScrolling:(BOOL)allowsScrolling

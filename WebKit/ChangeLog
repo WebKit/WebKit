@@ -1,3 +1,24 @@
+2004-07-28  Trey Matteson  <trey@apple.com>
+
+	Spellchecking, Part I.  Basic spellcheck is working.  Spelling panel is hooked up.
+
+	At this point, no special marking of misspellings, no grammar check, no context
+	menu integration, no "check continually" mode.
+
+        Reviewed by Ken.
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge spellCheckerDocumentTag]):  Typical bridge glue.
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView validateUserInterfaceItem:]):  Validate various spelling actions.
+        (-[WebHTMLView checkSpelling:]):  Call WC for real work, update panel.
+        (-[WebHTMLView showGuessPanel:]):  Show panel, call WC for real work.
+        (-[WebHTMLView _changeSpellingToWord:]):  Apply correction to our doc.
+        (-[WebHTMLView changeSpelling:]):  Simple pass through to above method.
+        (-[WebHTMLView ignoreSpelling:]):  Tell checker to ignore the word.
+        * WebView.subproj/WebView.m:
+        (-[WebView _close]):  Call AK's closeSpellDocumentWithTag: for proper cleanup.
+
 2004-07-27  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Trey.

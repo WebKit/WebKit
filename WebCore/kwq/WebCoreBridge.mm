@@ -1049,6 +1049,11 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     _part->jumpToSelection();
 }
 
+- (NSString *)advanceToNextMisspelling
+{
+    return _part->advanceToNextMisspelling().getNSString();
+}
+
 - (void)setTextSizeMultiplier:(float)multiplier
 {
     int newZoomFactor = (int)rint(multiplier * 100);

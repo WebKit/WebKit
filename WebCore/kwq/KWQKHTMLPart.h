@@ -133,6 +133,7 @@ public:
     
     void scrollToAnchor(const KURL &);
     void jumpToSelection();
+    QString advanceToNextMisspelling();
     
     void setEncoding(const QString &encoding, bool userChosen);
     void addData(const char *bytes, int length);

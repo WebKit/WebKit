@@ -60,10 +60,17 @@ public:
     Position nextRenderedEditablePosition() const;
     Position previousCharacterPosition() const;
     Position nextCharacterPosition() const;
+    
+    // suitable for moving by word in the UI
     Position previousWordPosition() const;
     Position nextWordPosition() const;
     Position previousLinePosition(int x) const;
     Position nextLinePosition(int x) const;
+
+    // next word boundary - would be too tedious to use in UI
+    Position previousWordBoundary() const;
+    Position nextWordBoundary() const;
+
     Position equivalentUpstreamPosition() const;
     Position equivalentDownstreamPosition() const;
     Position equivalentRangeCompliantPosition() const;
