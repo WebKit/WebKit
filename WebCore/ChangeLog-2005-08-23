@@ -1,5 +1,14 @@
 2004-04-21  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by Hyatt
+
+        * khtml/css/css_computedstyle.cpp:
+        (DOM::CSSComputedStyleDeclarationImpl::getPropertyCSSValue): Added implementations for
+        these properties: CSS_PROP_TEXT_DECORATION, CSS_PROP_VERTICAL_ALIGN, CSS_PROP_TEXT_INDENT,
+        CSS_PROP_LETTER_SPACING, CSS_PROP_WORD_SPACING, CSS_PROP_LINE_HEIGHT
+
+2004-04-21  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by John
 
         The Selection class now uses the Position class throughout its public and

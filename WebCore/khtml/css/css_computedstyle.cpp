@@ -386,11 +386,19 @@ CSSValueImpl *CSSComputedStyleDeclarationImpl::getPropertyCSSValue(int propertyI
         // FIXME: unimplemented
 		break;
     case CSS_PROP_LETTER_SPACING:
-        // FIXME: unimplemented
-		break;
-    case CSS_PROP_LINE_HEIGHT:
-        // FIXME: unimplemented
-		break;
+        if (m_renderer->style()->letterSpacing() == 0)
+            return new CSSPrimitiveValueImpl("normal", CSSPrimitiveValue::CSS_STRING);
+        return new CSSPrimitiveValueImpl(m_renderer->style()->letterSpacing(), CSSPrimitiveValue::CSS_PX);
+    case CSS_PROP_LINE_HEIGHT: {
+        Length length(m_renderer->style()->lineHeight());
+        if (length.isPercent()) {
+            float computedSize = m_renderer->style()->htmlFont().getFontDef().computedSize;
+            return new CSSPrimitiveValueImpl((int)(length.length() * computedSize) / 100, CSSPrimitiveValue::CSS_PX);
+        }
+        else {
+            return new CSSPrimitiveValueImpl(length.length(), CSSPrimitiveValue::CSS_PX);
+        }
+    }
     case CSS_PROP_LIST_STYLE_IMAGE:
         // FIXME: unimplemented
 		break;
@@ -516,14 +524,34 @@ CSSValueImpl *CSSComputedStyleDeclarationImpl::getPropertyCSSValue(int propertyI
     case CSS_PROP_TEXT_ALIGN:
         return new CSSPrimitiveValueImpl(stringForTextAlign(m_renderer->style()->textAlign()), CSSPrimitiveValue::CSS_STRING);
     case CSS_PROP_TEXT_DECORATION:
-        // FIXME: unimplemented
-		break;
+    {
+        QString string;
+        if (m_renderer->style()->textDecoration() & khtml::UNDERLINE)
+            string += "underline";
+        if (m_renderer->style()->textDecoration() & khtml::OVERLINE) {
+            if (string.length() > 0)
+                string += " ";
+            string += "overline";
+        }
+        if (m_renderer->style()->textDecoration() & khtml::LINE_THROUGH) {
+            if (string.length() > 0)
+                string += " ";
+            string += "line-through";
+        }
+        if (m_renderer->style()->textDecoration() & khtml::BLINK) {
+            if (string.length() > 0)
+                string += " ";
+            string += "blink";
+        }
+        if (string.length() == 0)
+            string = "none";
+        return new CSSPrimitiveValueImpl(string, CSSPrimitiveValue::CSS_STRING);
+    }
     case CSS_PROP_TEXT_DECORATION_COLOR:
         // FIXME: unimplemented
 		break;
     case CSS_PROP_TEXT_INDENT:
-        // FIXME: unimplemented
-		break;
+        return valueForLength(m_renderer->style()->textIndent(), m_renderer->contentWidth());
     case CSS_PROP_TEXT_SHADOW:
         // FIXME: unimplemented
 		break;
@@ -537,8 +565,30 @@ CSSValueImpl *CSSComputedStyleDeclarationImpl::getPropertyCSSValue(int propertyI
         // FIXME: unimplemented
 		break;
     case CSS_PROP_VERTICAL_ALIGN:
-        // FIXME: unimplemented
-		break;
+    {
+        switch (m_renderer->style()->verticalAlign()) {
+            case khtml::BASELINE:
+                return new CSSPrimitiveValueImpl("baseline", CSSPrimitiveValue::CSS_STRING);
+            case khtml::MIDDLE:
+                return new CSSPrimitiveValueImpl("middle", CSSPrimitiveValue::CSS_STRING);
+            case khtml::SUB:
+                return new CSSPrimitiveValueImpl("sub", CSSPrimitiveValue::CSS_STRING);
+            case khtml::SUPER:
+                return new CSSPrimitiveValueImpl("super", CSSPrimitiveValue::CSS_STRING);
+            case khtml::TEXT_TOP:
+                return new CSSPrimitiveValueImpl("text-top", CSSPrimitiveValue::CSS_STRING);
+            case khtml::TEXT_BOTTOM:
+                return new CSSPrimitiveValueImpl("text-bottom", CSSPrimitiveValue::CSS_STRING);
+            case khtml::TOP:
+                return new CSSPrimitiveValueImpl("top", CSSPrimitiveValue::CSS_STRING);
+            case khtml::BOTTOM:
+                return new CSSPrimitiveValueImpl("bottom", CSSPrimitiveValue::CSS_STRING);
+            case khtml::BASELINE_MIDDLE:
+                return new CSSPrimitiveValueImpl("baseline-middle", CSSPrimitiveValue::CSS_STRING);
+            case khtml::LENGTH:
+                return valueForLength(m_renderer->style()->verticalAlignLength(), m_renderer->contentWidth());
+        }
+    }
     case CSS_PROP_VISIBILITY:
         // FIXME: unimplemented
 		break;
@@ -561,8 +611,7 @@ CSSValueImpl *CSSComputedStyleDeclarationImpl::getPropertyCSSValue(int propertyI
     case CSS_PROP_WIDTH:
         return new CSSPrimitiveValueImpl(m_renderer->contentWidth(), CSSPrimitiveValue::CSS_PX);
     case CSS_PROP_WORD_SPACING:
-        // FIXME: unimplemented
-		break;
+        return new CSSPrimitiveValueImpl(m_renderer->style()->wordSpacing(), CSSPrimitiveValue::CSS_PX);
     case CSS_PROP_Z_INDEX:
         // FIXME: unimplemented
 		break;
