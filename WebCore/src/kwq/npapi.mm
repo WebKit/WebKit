@@ -1,32 +1,33 @@
 #include "npapi.h"
 #include <WKPluginView.h>
+#include "kwqdebug.h"
 
 // general plug-in to browser functions
 
 const char* NPN_UserAgent(NPP instance){
-    printf("NPN_UserAgent\n");
+    KWQDebug("NPN_UserAgent\n");
     return "IE";
 }
 
 void* NPN_MemAlloc(UInt32 size){
-    printf("NPN_MemAlloc\n");
+    KWQDebug("NPN_MemAlloc\n");
     return malloc(size);
 
 }
 
 void NPN_MemFree(void* ptr){
-    printf("NPN_MemFree\n");
+    KWQDebug("NPN_MemFree\n");
     free(ptr);
 
 }
 
 UInt32 NPN_MemFlush(UInt32 size){
-    printf("NPN_MemFlush\n");
+    KWQDebug("NPN_MemFlush\n");
     return 0;
 }
 
 void NPN_ReloadPlugins(NPBool reloadPages){
-    printf("NPN_ReloadPlugins\n");
+    KWQDebug("NPN_ReloadPlugins\n");
 
 }
 
