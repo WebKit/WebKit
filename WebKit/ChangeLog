@@ -1,3 +1,9 @@
+2004-05-04  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+
+        * DOM.subproj/DOMTraversal.h: File coppied from WebCore
+
 2004-05-02  Darin Adler  <darin@apple.com>
 
         Reviewed by Ken.

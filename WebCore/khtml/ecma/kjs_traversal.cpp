@@ -38,6 +38,8 @@ const ClassInfo DOMNodeIterator::info = { "NodeIterator", 0, &DOMNodeIteratorTab
   whatToShow			DOMNodeIterator::WhatToShow		DontDelete|ReadOnly
   filter			DOMNodeIterator::Filter			DontDelete|ReadOnly
   expandEntityReferences	DOMNodeIterator::ExpandEntityReferences	DontDelete|ReadOnly
+  referenceNode	DOMNodeIterator::ReferenceNode	DontDelete|ReadOnly
+  pointerBeforeReferenceNode DOMNodeIterator::PointerBeforeReferenceNode	DontDelete|ReadOnly
 @end
 @begin DOMNodeIteratorProtoTable 3
   nextNode	DOMNodeIterator::NextNode	DontDelete|Function 0
@@ -74,6 +76,10 @@ Value DOMNodeIterator::getValueProperty(ExecState *exec, int token) const
     return getDOMNodeFilter(exec,ni.filter());
   case ExpandEntityReferences:
     return Boolean(ni.expandEntityReferences());
+  case ReferenceNode:
+    return getDOMNode(exec,ni.referenceNode());
+  case PointerBeforeReferenceNode:
+    return Boolean(ni.pointerBeforeReferenceNode());
  default:
    kdWarning() << "Unhandled token in DOMNodeIterator::getValueProperty : " << token << endl;
    return Value();
@@ -182,7 +188,7 @@ Value DOMNodeFilterProtoFunc::tryCall(ExecState *exec, Object &thisObj, const Li
 
 Value KJS::getDOMNodeFilter(ExecState *exec, DOM::NodeFilter nf)
 {
-  return cacheDOMObject<DOM::NodeFilter, DOMNodeFilter>(exec, nf);
+    return cacheDOMObject<DOM::NodeFilter, DOMNodeFilter>(exec, nf);
 }
 
 // -------------------------------------------------------------------------
@@ -273,7 +279,7 @@ Value DOMTreeWalkerProtoFunc::tryCall(ExecState *exec, Object &thisObj, const Li
     case DOMTreeWalker::NextSibling:
       return getDOMNode(exec,treeWalker.nextSibling());
     case DOMTreeWalker::PreviousNode:
-      return getDOMNode(exec,treeWalker.previousSibling());
+      return getDOMNode(exec,treeWalker.previousNode());
     case DOMTreeWalker::NextNode:
       return getDOMNode(exec,treeWalker.nextNode());
   }
@@ -297,28 +303,22 @@ DOM::NodeFilter KJS::toNodeFilter(const Value& val)
 
 // -------------------------------------------------------------------------
 
-JSNodeFilter::JSNodeFilter(Object & _filter) : DOM::CustomNodeFilter(), filter( _filter )
+JSNodeFilterCondition::JSNodeFilterCondition(Object & _filter) : filter( _filter )
 {
 }
 
-JSNodeFilter::~JSNodeFilter()
+short JSNodeFilterCondition::acceptNode(const DOM::Node &node) const
 {
-}
-
-short JSNodeFilter::acceptNode(const DOM::Node &n)
-{
-  KHTMLPart *part = static_cast<DOM::DocumentImpl *>( n.handle()->docPtr()->document() )->part();
-  KJSProxy *proxy = KJSProxy::proxy( part );
-  if (proxy) {
-    ExecState *exec = proxy->interpreter()->globalExec();
-    Object acceptNodeFunc = Object::dynamicCast( filter.get(exec, "acceptNode") );
-    if (acceptNodeFunc.implementsCall()) {
-      List args;
-      args.append(getDOMNode(exec,n));
-      Value result = acceptNodeFunc.call(exec,filter,args);
-      return result.toInt32(exec);
+    KHTMLPart *part = static_cast<DOM::DocumentImpl *>(node.handle()->docPtr()->document())->part();
+    KJSProxy *proxy = KJSProxy::proxy(part);
+    if (proxy && filter.implementsCall()) {
+        ExecState *exec = proxy->interpreter()->globalExec();
+        List args;
+        args.append(getDOMNode(exec,node));
+        Object obj = const_cast<ProtectedObject &>(filter);
+        Value result = obj.call(exec, obj, args);
+        return result.toInt32(exec);
     }
-  }
 
-  return DOM::NodeFilter::FILTER_REJECT;
+    return DOM::NodeFilter::FILTER_REJECT;
 }

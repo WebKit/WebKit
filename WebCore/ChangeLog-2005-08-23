@@ -1,3 +1,43 @@
+2004-05-04  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+        
+        Implemented DOM traversal objects, NodeIterator and TreeWalker.
+
+        * WebCore-combined.exp: Regenerate
+        * WebCore.exp: Export DOMNodeFilter protocol
+        * khtml/dom/dom2_traversal.cpp: Completed half-done implementation pulled from KDE tree.
+        * khtml/dom/dom2_traversal.h: Ditto.
+        * khtml/dom/dom_doc.cpp:
+        (DOM::Document::createNodeIterator): Ditto.
+        (DOM::Document::createTreeWalker): Ditto.
+        * khtml/dom/dom_doc.h: Ditto.
+        * khtml/ecma/kjs_dom.cpp:
+        (DOMDocumentProtoFunc::tryCall): Fix cases that create traversal objects.
+        * khtml/ecma/kjs_traversal.cpp:
+        (DOMNodeIterator::getValueProperty): Add referenceNode and pointerBeforeReferenceNode
+        properties to node interator.
+        (DOMTreeWalkerProtoFunc::tryCall): Fix typo where DOMTreeWalker::PreviousNode case called previousSibling function.
+        (JSNodeFilterCondition::JSNodeFilterCondition): Implement JS glue class for node filter conditions.
+        (JSNodeFilterCondition::acceptNode): Ditto.
+        * khtml/ecma/kjs_traversal.h:
+        (KJS::DOMNodeIterator::): Add ReferenceNode and PointerBeforeReferenceNode constants.
+        * khtml/ecma/kjs_traversal.lut.h:
+        (KJS::): Regenerated
+        * khtml/xml/dom2_traversalimpl.cpp: Completed half-done implementation pulled from KDE tree.
+        * khtml/xml/dom2_traversalimpl.h: Ditto.
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::createNodeIterator): Ditto.
+        (DocumentImpl::createTreeWalker): Ditto.
+        * khtml/xml/dom_docimpl.h: Ditto.
+        * khtml/xml/dom_nodeimpl.cpp:
+        (NodeImpl::checkAddChild): Patched due to change in isAncestor function. This was the one pre-existing caller.
+        (NodeImpl::isAncestor): Changed so that it does not return true for itself: node->isAncestor(node) now returns false.
+        * khtml/xml/dom_nodeimpl.h: Made isAncestor const.
+        * kwq/DOM.mm: Implemented obj-c glue for traversal objects.
+        * kwq/DOMInternal.h: Ditto.
+        * kwq/DOMTraversal.h: Ditto.
+
 2004-05-04  Darin Adler  <darin@apple.com>
 
         Reviewed by Ken.

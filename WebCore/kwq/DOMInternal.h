@@ -30,10 +30,13 @@ namespace DOM {
     class CSSStyleSheetImpl;
     class DocumentImpl;
     class ElementImpl;
+    class NodeFilterImpl;
     class NodeImpl;
+    class NodeIteratorImpl;
     class NodeListImpl;
     class RangeImpl;
     class StyleSheetListImpl;
+    class TreeWalkerImpl;
 }
 
 @interface DOMNode (WebCoreInternal)
@@ -60,6 +63,14 @@ namespace DOM {
 - (DOM::RangeImpl *)_rangeImpl;
 @end
 
+@interface DOMNodeIterator (WebCoreInternal)
++ (DOMNodeIterator *)_nodeIteratorWithImpl:(DOM::NodeIteratorImpl *)impl filter:(id <DOMNodeFilter>)filter;
+@end
+
+@interface DOMTreeWalker (WebCoreInternal)
++ (DOMTreeWalker *)_treeWalkerWithImpl:(DOM::TreeWalkerImpl *)impl filter:(id <DOMNodeFilter>)filter;
+@end
+
 @interface DOMObject (WebCoreInternal)
 - (id)_init;
 @end
@@ -75,6 +86,10 @@ namespace DOM {
 
 @interface DOMCSSStyleSheet (WebCoreInternal)
 + (DOMCSSStyleSheet *)_CSSStyleSheetWithImpl:(DOM::CSSStyleSheetImpl *)impl;
+@end
+
+@interface DOMNodeFilter : DOMObject <DOMNodeFilter>
++ (DOMNodeFilter *)_nodeFilterWithImpl:(DOM::NodeFilterImpl *)impl;
 @end
 
 // Helper functions for DOM wrappers and gluing to Objective-C
@@ -120,9 +135,12 @@ ALLOW_DOM_CAST(HTMLCollectionImpl)
 ALLOW_DOM_CAST(HTMLOptionsCollectionImpl)
 ALLOW_DOM_CAST(MediaListImpl)
 ALLOW_DOM_CAST(NamedNodeMapImpl)
+ALLOW_DOM_CAST(NodeFilterImpl)
 ALLOW_DOM_CAST(NodeImpl)
+ALLOW_DOM_CAST(NodeIteratorImpl)
 ALLOW_DOM_CAST(NodeListImpl)
 ALLOW_DOM_CAST(RangeImpl)
 ALLOW_DOM_CAST(RectImpl)
 ALLOW_DOM_CAST(StyleSheetImpl)
 ALLOW_DOM_CAST(StyleSheetListImpl)
+ALLOW_DOM_CAST(TreeWalkerImpl)

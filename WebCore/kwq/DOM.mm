@@ -35,6 +35,7 @@
 #import <dom/dom_text.h>
 #import <dom/dom_xml.h>
 #import <dom/dom2_range.h>
+#import <dom/dom2_traversal.h>
 #import <html/html_elementimpl.h>
 #import <misc/htmltags.h>
 #import <xml/dom_docimpl.h>
@@ -68,7 +69,11 @@ using DOM::HTMLElementImpl;
 using DOM::NamedNodeMap;
 using DOM::NamedNodeMapImpl;
 using DOM::Node;
+using DOM::NodeFilter;
+using DOM::NodeFilterCondition;
+using DOM::NodeFilterImpl;
 using DOM::NodeImpl;
+using DOM::NodeIteratorImpl;
 using DOM::NodeListImpl;
 using DOM::NotationImpl;
 using DOM::ProcessingInstructionImpl;
@@ -76,6 +81,7 @@ using DOM::Range;
 using DOM::RangeException;
 using DOM::RangeImpl;
 using DOM::TextImpl;
+using DOM::TreeWalkerImpl;
 
 @interface DOMAttr (WebCoreInternal)
 + (DOMAttr *)_attrWithImpl:(AttrImpl *)impl;
@@ -1858,154 +1864,320 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 
 @end
 
-@implementation DOMDocument (DOMDocumentTraversal)
-
-- (DOMNodeIterator *)createNodeIterator:(DOMNode *)root :(unsigned long)whatToShow :(DOMNodeFilter *)filter :(BOOL)entityReferenceExpansion
-{
-    ERROR("unimplemented");
-    return nil;
-}
-
-- (DOMTreeWalker *)createTreeWalker:(DOMNode *)root :(unsigned long)whatToShow :(DOMNodeFilter *)filter :(BOOL)entityReferenceExpansion
-{
-    ERROR("unimplemented");
-    return nil;
-}
-
-@end
+//------------------------------------------------------------------------------------------
 
 @implementation DOMNodeFilter
 
-- (short)acceptNode:(DOMNode *)n
+- (id)_initWithNodeFilterImpl:(NodeFilterImpl *)impl
 {
-    ERROR("unimplemented");
-    return 0;
+    ASSERT(impl);
+
+    [super _init];
+    _internal = DOM_cast<DOMObjectInternal *>(impl);
+    impl->ref();
+    addDOMWrapper(self, impl);
+    return self;
+}
+
++ (DOMNodeFilter *)_nodeFilterWithImpl:(NodeFilterImpl *)impl
+{
+    if (!impl)
+        return nil;
+    
+    id cachedInstance;
+    cachedInstance = getDOMWrapper(impl);
+    if (cachedInstance)
+        return [[cachedInstance retain] autorelease];
+    
+    return [[[self alloc] _initWithNodeFilterImpl:impl] autorelease];
+}
+
+- (NodeFilterImpl *)_nodeFilterImpl
+{
+    return DOM_cast<NodeFilterImpl *>(_internal);
+}
+
+- (void)dealloc
+{
+    if (_internal)
+        DOM_cast<NodeFilterImpl *>(_internal)->deref();
+    [super dealloc];
+}
+
+- (short)acceptNode:(DOMNode *)node
+{
+    return [self _nodeFilterImpl]->acceptNode([node _nodeImpl]);
 }
 
 @end
 
+
 @implementation DOMNodeIterator
+
+- (id)_initWithNodeIteratorImpl:(NodeIteratorImpl *)impl filter:(id <DOMNodeFilter>)filter
+{
+    ASSERT(impl);
+
+    [super _init];
+    _internal = DOM_cast<DOMObjectInternal *>(impl);
+    impl->ref();
+    addDOMWrapper(self, impl);
+    m_filter = [filter retain];
+    return self;
+}
+
+- (NodeIteratorImpl *)_nodeIteratorImpl
+{
+    return DOM_cast<NodeIteratorImpl *>(_internal);
+}
+
+- (void)dealloc
+{
+    if (m_filter)
+        [m_filter release];
+    if (_internal)
+        DOM_cast<NodeIteratorImpl *>(_internal)->deref();
+    [super dealloc];
+}
 
 - (DOMNode *)root
 {
-    ERROR("unimplemented");
-    return nil;
+    return [DOMNode _nodeWithImpl:[self _nodeIteratorImpl]->root()];
 }
 
 - (unsigned long)whatToShow
 {
-    ERROR("unimplemented");
-    return 0;
+    return [self _nodeIteratorImpl]->whatToShow();
 }
 
-- (DOMNodeFilter *)filter
+- (id <DOMNodeFilter>)filter
 {
-    ERROR("unimplemented");
-    return nil;
+    if (m_filter)
+        // This node iterator was created from the objc side
+        return [[m_filter retain] autorelease];
+
+    // This node iterator was created from the c++ side
+    return [DOMNodeFilter _nodeFilterWithImpl:[self _nodeIteratorImpl]->filter()];
 }
 
 - (BOOL)expandEntityReferences
 {
-    ERROR("unimplemented");
-    return NO;
+    return [self _nodeIteratorImpl]->expandEntityReferences();
 }
 
 - (DOMNode *)nextNode
 {
-    ERROR("unimplemented");
-    return nil;
+    int exceptionCode = 0;
+    DOMNode *result = [DOMNode _nodeWithImpl:[self _nodeIteratorImpl]->nextNode(exceptionCode)];
+    raiseOnDOMError(exceptionCode);
+    return result;
 }
 
 - (DOMNode *)previousNode
 {
-    ERROR("unimplemented");
-    return nil;
+    int exceptionCode = 0;
+    DOMNode *result = [DOMNode _nodeWithImpl:[self _nodeIteratorImpl]->previousNode(exceptionCode)];
+    raiseOnDOMError(exceptionCode);
+    return result;
 }
 
 - (void)detach
 {
-    ERROR("unimplemented");
+    int exceptionCode = 0;
+    [self _nodeIteratorImpl]->detach(exceptionCode);
+    raiseOnDOMError(exceptionCode);
+}
+
+@end
+
+@implementation DOMNodeIterator(WebCoreInternal)
+
++ (DOMNodeIterator *)_nodeIteratorWithImpl:(NodeIteratorImpl *)impl filter:(id <DOMNodeFilter>)filter
+{
+    if (!impl)
+        return nil;
+    
+    id cachedInstance;
+    cachedInstance = getDOMWrapper(impl);
+    if (cachedInstance)
+        return [[cachedInstance retain] autorelease];
+    
+    return [[[self alloc] _initWithNodeIteratorImpl:impl filter:filter] autorelease];
 }
 
 @end
 
 @implementation DOMTreeWalker
 
+- (id)_initWithTreeWalkerImpl:(TreeWalkerImpl *)impl filter:(id <DOMNodeFilter>)filter
+{
+    ASSERT(impl);
+
+    [super _init];
+    _internal = DOM_cast<DOMObjectInternal *>(impl);
+    impl->ref();
+    addDOMWrapper(self, impl);
+    m_filter = [filter retain];
+    return self;
+}
+
+- (TreeWalkerImpl *)_treeWalkerImpl
+{
+    return DOM_cast<TreeWalkerImpl *>(_internal);
+}
+
+- (void)dealloc
+{
+    if (m_filter)
+        [m_filter release];
+    if (_internal)
+        DOM_cast<TreeWalkerImpl *>(_internal)->deref();
+    [super dealloc];
+}
+
 - (DOMNode *)root
 {
-    ERROR("unimplemented");
-    return nil;
+    return [DOMNode _nodeWithImpl:[self _treeWalkerImpl]->root()];
 }
 
 - (unsigned long)whatToShow
 {
-    ERROR("unimplemented");
-    return 0;
+    return [self _treeWalkerImpl]->whatToShow();
 }
 
-- (DOMNodeFilter *)filter
+- (id <DOMNodeFilter>)filter
 {
-    ERROR("unimplemented");
-    return nil;
+    if (m_filter)
+        // This tree walker was created from the objc side
+        return [[m_filter retain] autorelease];
+
+    // This tree walker was created from the c++ side
+    return [DOMNodeFilter _nodeFilterWithImpl:[self _treeWalkerImpl]->filter()];
 }
 
 - (BOOL)expandEntityReferences
 {
-    ERROR("unimplemented");
-    return NO;
+    return [self _treeWalkerImpl]->expandEntityReferences();
 }
 
 - (DOMNode *)currentNode
 {
-    ERROR("unimplemented");
-    return nil;
+    return [DOMNode _nodeWithImpl:[self _treeWalkerImpl]->currentNode()];
 }
 
 - (void)setCurrentNode:(DOMNode *)currentNode
 {
-    ERROR("unimplemented");
+    int exceptionCode = 0;
+    [self _treeWalkerImpl]->setCurrentNode([currentNode _nodeImpl], exceptionCode);
+    raiseOnDOMError(exceptionCode);
 }
 
 - (DOMNode *)parentNode
 {
-    ERROR("unimplemented");
-    return nil;
+    return [DOMNode _nodeWithImpl:[self _treeWalkerImpl]->parentNode()];
 }
 
 - (DOMNode *)firstChild
 {
-    ERROR("unimplemented");
-    return nil;
+    return [DOMNode _nodeWithImpl:[self _treeWalkerImpl]->firstChild()];
 }
 
 - (DOMNode *)lastChild
 {
-    ERROR("unimplemented");
-    return nil;
+    return [DOMNode _nodeWithImpl:[self _treeWalkerImpl]->lastChild()];
 }
 
 - (DOMNode *)previousSibling
 {
-    ERROR("unimplemented");
-    return nil;
+    return [DOMNode _nodeWithImpl:[self _treeWalkerImpl]->previousSibling()];
 }
 
 - (DOMNode *)nextSibling
 {
-    ERROR("unimplemented");
-    return nil;
+    return [DOMNode _nodeWithImpl:[self _treeWalkerImpl]->nextSibling()];
 }
 
 - (DOMNode *)previousNode
 {
-    ERROR("unimplemented");
-    return nil;
+    return [DOMNode _nodeWithImpl:[self _treeWalkerImpl]->previousNode()];
 }
 
 - (DOMNode *)nextNode
 {
-    ERROR("unimplemented");
-    return nil;
+    return [DOMNode _nodeWithImpl:[self _treeWalkerImpl]->nextNode()];
+}
+
+@end
+
+@implementation DOMTreeWalker (WebCoreInternal)
+
++ (DOMTreeWalker *)_treeWalkerWithImpl:(TreeWalkerImpl *)impl filter:(id <DOMNodeFilter>)filter
+{
+    if (!impl)
+        return nil;
+    
+    id cachedInstance;
+    cachedInstance = getDOMWrapper(impl);
+    if (cachedInstance)
+        return [[cachedInstance retain] autorelease];
+    
+    return [[[self alloc] _initWithTreeWalkerImpl:impl filter:filter] autorelease];
+}
+
+@end
+
+class ObjCNodeFilterCondition : public NodeFilterCondition 
+{
+public:
+    ObjCNodeFilterCondition(id <DOMNodeFilter>);
+    virtual ~ObjCNodeFilterCondition();
+    virtual short acceptNode(const Node &) const;
+private:
+    id <DOMNodeFilter> m_filter;
+};
+
+ObjCNodeFilterCondition::ObjCNodeFilterCondition(id <DOMNodeFilter> filter)
+    : m_filter(filter)
+{
+    ASSERT(m_filter);
+    [m_filter retain];
+}
+
+ObjCNodeFilterCondition::~ObjCNodeFilterCondition()
+{
+    [m_filter release];
+}
+
+short ObjCNodeFilterCondition::acceptNode(const Node &n) const
+{
+    if (n.isNull())
+        return NodeFilter::FILTER_REJECT;
+
+    return [m_filter acceptNode:[DOMNode _nodeWithImpl:n.handle()]];
+}
+
+@implementation DOMDocument (DOMDocumentTraversal)
+
+- (DOMNodeIterator *)createNodeIterator:(DOMNode *)root :(unsigned long)whatToShow :(id <DOMNodeFilter>)filter :(BOOL)expandEntityReferences
+{
+    NodeFilter cppFilter;
+    if (filter)
+        cppFilter = NodeFilter(new ObjCNodeFilterCondition(filter));
+    int exceptionCode = 0;
+    NodeIteratorImpl *impl = [self _documentImpl]->createNodeIterator([root _nodeImpl], whatToShow, cppFilter.handle(), expandEntityReferences, exceptionCode);
+    raiseOnDOMError(exceptionCode);
+    return [DOMNodeIterator _nodeIteratorWithImpl:impl filter:filter];
+}
+
+- (DOMTreeWalker *)createTreeWalker:(DOMNode *)root :(unsigned long)whatToShow :(id <DOMNodeFilter>)filter :(BOOL)expandEntityReferences
+{
+    NodeFilter cppFilter;
+    if (filter)
+        cppFilter = NodeFilter(new ObjCNodeFilterCondition(filter));
+    int exceptionCode = 0;
+    TreeWalkerImpl *impl = [self _documentImpl]->createTreeWalker([root _nodeImpl], whatToShow, cppFilter.handle(), expandEntityReferences, exceptionCode);
+    raiseOnDOMError(exceptionCode);
+    return [DOMTreeWalker _treeWalkerWithImpl:impl filter:filter];
 }
 
 @end

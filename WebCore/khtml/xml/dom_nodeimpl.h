@@ -339,7 +339,7 @@ public:
     
     void checkSetPrefix(const DOMString &_prefix, int &exceptioncode);
     void checkAddChild(NodeImpl *newChild, int &exceptioncode);
-    bool isAncestor( NodeImpl *other );
+    bool isAncestor(NodeImpl *) const;
     virtual bool childAllowed( NodeImpl *newChild );
 
     virtual long maxOffset() const;

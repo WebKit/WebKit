@@ -4,6 +4,7 @@
  * (C) 1999 Lars Knoll (knoll@kde.org)
  * (C) 2000 Frederik Holljen (frederik.holljen@hig.no)
  * (C) 2001 Peter Kelly (pmk@post.com)
+ *  Copyright (C) 2004 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,688 +22,479 @@
  * Boston, MA 02111-1307, USA.
  */
 
+#include "xml/dom2_traversalimpl.h"
 #include "dom/dom_exception.h"
 #include "xml/dom_docimpl.h"
 
-using namespace DOM;
+#include "htmltags.h"
 
-NodeIteratorImpl::NodeIteratorImpl(NodeImpl *_root, unsigned long _whatToShow,
-				   NodeFilter _filter, bool _entityReferenceExpansion)
+namespace DOM {
+
+NodeFilterImpl::NodeFilterImpl(NodeFilterCondition *condition)
+    : m_condition(condition)
 {
-    m_root = _root;
-    m_whatToShow = _whatToShow;
-    m_filter = _filter;
-    m_expandEntityReferences = _entityReferenceExpansion;
-
-    m_referenceNode = _root;
-    m_inFront = false;
-
-    m_doc = m_root->getDocument();
-    m_doc->attachNodeIterator(this);
-    m_doc->ref();
-
-    m_detached = false;
-}
-
-NodeIteratorImpl::~NodeIteratorImpl()
-{
-    m_doc->detachNodeIterator(this);
-    m_doc->deref();
-}
-
-NodeImpl *NodeIteratorImpl::root()
-{
-    return m_root;
-}
-
-unsigned long NodeIteratorImpl::whatToShow()
-{
-    return m_whatToShow;
-}
-
-NodeFilter NodeIteratorImpl::filter()
-{
-    return m_filter;
-}
-
-bool NodeIteratorImpl::expandEntityReferences()
-{
-    return m_expandEntityReferences;
-}
-
-NodeImpl *NodeIteratorImpl::nextNode( int &exceptioncode )
-{
-    if (m_detached) {
-	exceptioncode = DOMException::INVALID_STATE_ERR;
-	return 0;
-    }
-
-    if (!m_referenceNode) {
-	m_inFront = true;
-	return 0;
-    }
-
-    if (!m_inFront) {
-	m_inFront = true;
-	if (isAccepted(m_referenceNode) == NodeFilter::FILTER_ACCEPT)
-	    return m_referenceNode;
-    }
-
-    NodeImpl *_tempCurrent = getNextNode(m_referenceNode);
-    while( _tempCurrent ) {
-	m_referenceNode = _tempCurrent;
-	if(isAccepted(_tempCurrent) == NodeFilter::FILTER_ACCEPT)
-	    return m_referenceNode;
-      _tempCurrent = getNextNode(_tempCurrent);
-    }
-
-    return 0;
-}
-
-NodeImpl *NodeIteratorImpl::getNextNode(NodeImpl *n)
-{
-  /*  1. my first child
-   *  2. my next sibling
-   *  3. my parents sibling, or their parents sibling (loop)
-   *  4. not found
-   */
-
-  if( !n )
-    return 0;
-
-  if( n->hasChildNodes() )
-    return n->firstChild();
-
-  if( n->nextSibling() )
-    return n->nextSibling();
-
-  if( m_root == n)
-     return 0;
-
-  NodeImpl *parent = n->parentNode();
-  while( parent )
-    {
-      n = parent->nextSibling();
-      if( n )
-        return n;
-
-      if( m_root == parent )
-        return 0;
-
-      parent = parent->parentNode();
-    }
-  return 0;
-}
-
-NodeImpl *NodeIteratorImpl::previousNode( int &exceptioncode )
-{
-    if (m_detached) {
-	exceptioncode = DOMException::INVALID_STATE_ERR;
-	return 0;
-    }
-
-    if (!m_referenceNode) {
-	m_inFront = false;
-	return 0;
-    }
-
-    if (m_inFront) {
-	m_inFront = false;
-	if (isAccepted(m_referenceNode) == NodeFilter::FILTER_ACCEPT)
-	    return m_referenceNode;
-    }
-
-    NodeImpl *_tempCurrent = getPreviousNode(m_referenceNode);
-    while( _tempCurrent ) {
-	m_referenceNode = _tempCurrent;
-	if(isAccepted(_tempCurrent) == NodeFilter::FILTER_ACCEPT)
-	    return m_referenceNode;
-	_tempCurrent = getPreviousNode(_tempCurrent);
-    }
-
-    return 0;
-}
-
-NodeImpl *NodeIteratorImpl::getPreviousNode(NodeImpl *n)
-{
-/* 1. my previous sibling.lastchild
- * 2. my previous sibling
- * 3. my parent
- */
-  NodeImpl *_tempCurrent;
-
-  if( !n )
-    return 0;
-
-  _tempCurrent = n->previousSibling();
-  if( _tempCurrent )
-    {
-      if( _tempCurrent->lastChild() )
-        {
-          while( _tempCurrent->lastChild() )
-            _tempCurrent = _tempCurrent->lastChild();
-          return _tempCurrent;
-        }
-      else
-        return _tempCurrent;
-    }
-
-
-  if(n == m_root)
-    return 0;
-
-  return n->parentNode();
-
-
-}
-
-void NodeIteratorImpl::detach(int &/*exceptioncode*/)
-{
-    m_doc->detachNodeIterator(this);
-    m_detached = true;
-}
-
-
-void NodeIteratorImpl::notifyBeforeNodeRemoval(NodeImpl *removed)
-{
-    // make sure the deleted node is with the root (but not the root itself)
-    if (removed == m_root)
-	return;
-
-    NodeImpl *maybeRoot = removed->parentNode();
-    while (maybeRoot && maybeRoot != m_root)
-	maybeRoot = maybeRoot->parentNode();
-    if (!maybeRoot)
-	return;
-
-    // did I get deleted, or one of my parents?
-    NodeImpl *_tempDeleted = m_referenceNode;
-    while( _tempDeleted && _tempDeleted != removed)
-        _tempDeleted = _tempDeleted->parentNode();
-
-    if( !_tempDeleted )  // someone that didn't consern me got deleted
-        return;
-
-    if( !m_inFront)
-    {
-        NodeImpl *_next = getNextNode(_tempDeleted);
-        if( _next )
-            m_referenceNode = _next;
-        else
-        {
-	    // deleted node was at end of list
-            m_inFront = true;
-            m_referenceNode = getPreviousNode(_tempDeleted);
-        }
-    }
-    else {
-	NodeImpl *_prev = getPreviousNode(_tempDeleted);
-	if ( _prev )
-	    m_referenceNode = _prev;
-	else
-	{
-	    // deleted node was at start of list
-	    m_inFront = false;
-	    m_referenceNode = getNextNode(_tempDeleted);
-	}
-    }
-
-}
-
-short NodeIteratorImpl::isAccepted(NodeImpl *n)
-{
-  // if XML is implemented we have to check expandEntityRerefences in this function
-  if( ( ( 1 << n->nodeType()-1) & m_whatToShow) != 0 )
-    {
-        if(!m_filter.isNull())
-            return m_filter.acceptNode(n);
-        else
-	    return NodeFilter::FILTER_ACCEPT;
-    }
-    return NodeFilter::FILTER_SKIP;
-}
-
-// --------------------------------------------------------------
-
-
-NodeFilterImpl::NodeFilterImpl()
-{
-    m_customNodeFilter = 0;
+    if (m_condition)
+        m_condition->ref();
 }
 
 NodeFilterImpl::~NodeFilterImpl()
 {
-    if (m_customNodeFilter)
-	m_customNodeFilter->deref();
+    if (m_condition)
+        m_condition->deref();
 }
 
-short NodeFilterImpl::acceptNode(const Node &n)
+short NodeFilterImpl::acceptNode(const Node &node) const
 {
-    if (m_customNodeFilter)
-	return m_customNodeFilter->acceptNode(n);
-    else
-	return NodeFilter::FILTER_ACCEPT;
-}
-
-void NodeFilterImpl::setCustomNodeFilter(CustomNodeFilter *custom)
-{
-    m_customNodeFilter = custom;
-    if (m_customNodeFilter)
-	m_customNodeFilter->ref();
-}
-
-CustomNodeFilter *NodeFilterImpl::customNodeFilter()
-{
-    return m_customNodeFilter;
+    // cast to short silences "enumeral and non-enumeral types in return" warning
+    return m_condition ? m_condition->acceptNode(node) : static_cast<short>(NodeFilter::FILTER_ACCEPT);
 }
 
 // --------------------------------------------------------------
 
-TreeWalkerImpl::TreeWalkerImpl()
+TraversalImpl::TraversalImpl(NodeImpl *rootNode, long whatToShow, NodeFilterImpl *nodeFilter, bool expandEntityReferences)
+    : m_root(rootNode), m_whatToShow(whatToShow), m_filter(nodeFilter), m_expandEntityReferences(expandEntityReferences)
 {
-    m_filter = 0;
-    m_whatToShow = 0x0000FFFF;
-    m_expandEntityReferences = true;
+    if (root())
+        root()->ref();
+    if (filter())
+        filter()->ref();
 }
 
-TreeWalkerImpl::TreeWalkerImpl(const TreeWalkerImpl &other)
-    : khtml::Shared<TreeWalkerImpl>()
+TraversalImpl::~TraversalImpl()
 {
-    m_expandEntityReferences = other.m_expandEntityReferences;
-    m_filter = other.m_filter;
-    m_whatToShow = other.m_whatToShow;
-    m_currentNode = other.m_currentNode;
-    m_rootNode = other.m_rootNode;
+    if (root())
+        root()->deref();
+    if (filter())
+        filter()->deref();
 }
 
-TreeWalkerImpl::TreeWalkerImpl(Node n, NodeFilter *f)
+short TraversalImpl::acceptNode(NodeImpl *node) const
 {
-  m_currentNode = n;
-  m_rootNode = n;
-  m_whatToShow = 0x0000FFFF;
-  m_filter = f;
+    // FIXME: If XML is implemented we have to check expandEntityRerefences in this function.
+    // The bid twiddling here is done to map DOM node types, which are given as integers from
+    // 1 through 12, to whatToShow bit masks.
+    if (node && ((1 << (node->nodeType()-1)) & m_whatToShow) != 0)
+        // cast to short silences "enumeral and non-enumeral types in return" warning
+        return m_filter ? m_filter->acceptNode(node) : static_cast<short>(NodeFilter::FILTER_ACCEPT);
+    return NodeFilter::FILTER_SKIP;
 }
 
-TreeWalkerImpl::TreeWalkerImpl(Node n, long _whatToShow, NodeFilter *f)
+NodeImpl *TraversalImpl::findParentNode(NodeImpl *node, short accept) const
 {
-  m_currentNode = n;
-  m_rootNode = n;
-  m_whatToShow = _whatToShow;
-  m_filter = f;
+    if (!node || node == root())
+        return 0;
+    NodeImpl *n = node->parentNode();
+    while (n) {
+        if (acceptNode(n) & accept)
+            return n;
+        if (n == root())
+            return 0;
+        n = n->parentNode();
+    }
+    return 0;
 }
 
-TreeWalkerImpl &TreeWalkerImpl::operator = (const TreeWalkerImpl &other)
+NodeImpl *TraversalImpl::findFirstChild(NodeImpl *node) const
 {
-  m_expandEntityReferences = other.m_expandEntityReferences;
-  m_filter = other.m_filter;
-  m_whatToShow = other.m_whatToShow;
-  m_currentNode = other.m_currentNode;
-  return *this;
+    if (!node || acceptNode(node) == NodeFilter::FILTER_REJECT)
+        return 0;
+    NodeImpl *n = node->firstChild();
+    while (n) {
+        if (acceptNode(n) == NodeFilter::FILTER_ACCEPT)
+            return n;
+        n = n->nextSibling();
+    }
+    return 0;
+}
+
+NodeImpl *TraversalImpl::findLastChild(NodeImpl *node) const
+{
+    if (!node || acceptNode(node) == NodeFilter::FILTER_REJECT)
+        return 0;
+    NodeImpl *n = node->lastChild();
+    while (n) {
+        if (acceptNode(n) == NodeFilter::FILTER_ACCEPT)
+            return n;
+        n = n->previousSibling();
+    }
+    return 0;
+}
+
+NodeImpl *TraversalImpl::findPreviousSibling(NodeImpl *node) const
+{
+    if (!node)
+        return 0;
+    NodeImpl *n = node->previousSibling();
+    while (n) {
+        if (acceptNode(n) == NodeFilter::FILTER_ACCEPT)
+            return n;
+        n = n->previousSibling();
+    }
+    return 0;
+}
+
+NodeImpl *TraversalImpl::findNextSibling(NodeImpl *node) const
+{
+    if (!node)
+        return 0;
+    NodeImpl *n = node->nextSibling();
+    while (n) {
+        if (acceptNode(n) == NodeFilter::FILTER_ACCEPT)
+            return n;
+        n = n->nextSibling();
+    }
+    return 0;
+}
+
+NodeImpl *TraversalImpl::findLastDescendant(NodeImpl *node) const
+{
+    NodeImpl *n = node;
+    NodeImpl *r = node;
+    while (n) {
+        short accepted = acceptNode(n);
+        if (accepted != NodeFilter::FILTER_REJECT) {
+            if (accepted == NodeFilter::FILTER_ACCEPT)
+                r = n;
+            if (n->lastChild())
+                n = n->lastChild();
+            else if (n != node && n->previousSibling())
+                n = n->previousSibling();
+            else
+                break;
+        }
+        else
+            break;
+    }
+    return r;
+}
+
+NodeImpl *TraversalImpl::findPreviousNode(NodeImpl *node) const
+{
+    NodeImpl *n = node->previousSibling();
+    while (n) {
+        short accepted = acceptNode(n);
+        if (accepted != NodeFilter::FILTER_REJECT) {
+            NodeImpl *d = findLastDescendant(n);
+            if (acceptNode(d) == NodeFilter::FILTER_ACCEPT)
+                return d;
+            // else FILTER_SKIP
+        }
+        n = n->previousSibling();
+    }
+    return findParentNode(node);
+}
+
+NodeImpl *TraversalImpl::findNextNode(NodeImpl *node) const
+{
+    NodeImpl *n = node->firstChild();
+    while (n) {
+        switch (acceptNode(n)) {
+            case NodeFilter::FILTER_ACCEPT:
+                return n;
+            case NodeFilter::FILTER_SKIP:
+                if (n->firstChild())
+                    n = n->firstChild();
+                else
+                    n = n->nextSibling();
+                break;
+            case NodeFilter::FILTER_REJECT:
+                n = n->nextSibling();
+                break;
+        }
+    }
+
+    n = node->nextSibling();
+    while (n) {
+        switch (acceptNode(n)) {
+            case NodeFilter::FILTER_ACCEPT:
+                return n;
+            case NodeFilter::FILTER_SKIP:
+                return findNextNode(n);
+            case NodeFilter::FILTER_REJECT:
+                n = n->nextSibling();
+                break;
+        }
+    }
+
+    NodeImpl *parent = findParentNode(node, NodeFilter::FILTER_ACCEPT | NodeFilter::FILTER_SKIP);
+    while (parent) { 
+        n = parent->nextSibling();
+        while (n) {
+            switch (acceptNode(n)) {
+                case NodeFilter::FILTER_ACCEPT:
+                    return n;
+                case NodeFilter::FILTER_SKIP:
+                    return findNextNode(n);
+                case NodeFilter::FILTER_REJECT:
+                    n = n->nextSibling();
+                    break;
+            }
+        }
+        parent = findParentNode(parent, NodeFilter::FILTER_ACCEPT | NodeFilter::FILTER_SKIP);
+    }
+
+    return 0;
+}
+
+// --------------------------------------------------------------
+
+NodeIteratorImpl::NodeIteratorImpl(NodeImpl *rootNode, long whatToShow, NodeFilterImpl *filter, bool expandEntityReferences)
+    :TraversalImpl(rootNode, whatToShow, filter, expandEntityReferences), m_referenceNode(0), m_beforeReferenceNode(true), m_detached(false), m_doc(0)
+{
+    if (root()) {
+        setDocument(root()->getDocument());
+        if (document()) {
+            document()->attachNodeIterator(this);
+            document()->ref();
+        }
+    }
+}
+
+NodeIteratorImpl::~NodeIteratorImpl()
+{
+    if (referenceNode())
+        referenceNode()->deref();
+    if (document()) {
+        document()->detachNodeIterator(this);
+        document()->deref();
+    }
+}
+
+NodeImpl *NodeIteratorImpl::nextNode(int &exceptioncode)
+{
+    if (detached()) {
+        exceptioncode = DOMException::INVALID_STATE_ERR;
+        return 0;
+    }
+
+    NodeImpl *result = 0;
+    if (pointerBeforeReferenceNode() && acceptNode(referenceNode()) == NodeFilter::FILTER_ACCEPT)
+        result = referenceNode();
+    else {
+        result = findNextNode(referenceNode());
+        if (result)
+            setReferenceNode(result);
+    }
+
+    setPointerBeforeReferenceNode(false);
+    return result;
+}
+
+NodeImpl *NodeIteratorImpl::previousNode(int &exceptioncode)
+{
+    if (detached()) {
+        exceptioncode = DOMException::INVALID_STATE_ERR;
+        return 0;
+    }
+
+    NodeImpl *result = 0;
+    if (!pointerBeforeReferenceNode() && acceptNode(referenceNode()) == NodeFilter::FILTER_ACCEPT)
+        result = referenceNode();
+    else {
+        result = findPreviousNode(referenceNode());
+        if (result)
+            setReferenceNode(result);
+    }
+
+    setPointerBeforeReferenceNode();
+    return result;
+}
+
+void NodeIteratorImpl::detach(int &/*exceptioncode*/)
+{
+    if (document())
+        document()->detachNodeIterator(this);
+    m_detached = true;
+}
+
+void NodeIteratorImpl::setReferenceNode(NodeImpl *node)
+{
+    if (node == m_referenceNode)
+        return;
+    
+    NodeImpl *old = m_referenceNode;
+    m_referenceNode = node;
+    if (m_referenceNode)
+        m_referenceNode->ref();
+    if (old)
+        old->deref();
+}
+
+void NodeIteratorImpl::setDocument(DocumentImpl *doc)
+{
+    if (doc == m_doc)
+        return;
+    
+    DocumentImpl *old = m_doc;
+    m_doc = doc;
+    if (m_doc)
+        m_doc->ref();
+    if (old)
+        old->deref();
+}
+
+void NodeIteratorImpl::notifyBeforeNodeRemoval(NodeImpl *willRemove)
+{
+    // Iterator is not affected if the removed node is the reference node and is the root.
+    // or if removed node is not the reference node, or the ancestor of the reference node.
+    if (!willRemove || willRemove == root())
+        return;
+    bool willRemoveReferenceNode = willRemove == referenceNode();
+    bool willRemoveReferenceNodeAncestor = willRemove->isAncestor(referenceNode());
+    if (!willRemoveReferenceNode && !willRemoveReferenceNodeAncestor)
+        return;
+
+    if (pointerBeforeReferenceNode()) {
+        NodeImpl *node = findNextNode(willRemove);
+        if (node) {
+            // Move out from under the node being removed if the reference node is
+            // a descendant of the node being removed.
+            if (willRemoveReferenceNodeAncestor) {
+                while (node && willRemove->isAncestor(node))
+                    node = findNextNode(node);
+            }
+            if (node)
+                setReferenceNode(node);
+        }
+        else {
+            node = findPreviousNode(willRemove);
+            if (node) {
+                // Move out from under the node being removed if the reference node is
+                // a descendant of the node being removed.
+                if (willRemoveReferenceNodeAncestor) {
+                    while (node && willRemove->isAncestor(node))
+                        node = findPreviousNode(node);
+                }
+                if (node) {
+                    // Removing last node.
+                    // Need to move the pointer after the node preceding the 
+                    // new reference node.
+                    setReferenceNode(node);
+                    setPointerBeforeReferenceNode(false);
+                }
+            }
+        }
+    }
+    else {
+        NodeImpl *node = findPreviousNode(willRemove);
+        if (node) {
+            // Move out from under the node being removed if the reference node is
+            // a descendant of the node being removed.
+            if (willRemoveReferenceNodeAncestor) {
+                while (node && willRemove->isAncestor(node))
+                    node = findPreviousNode(node);
+            }
+            if (node)
+                setReferenceNode(node);
+        }
+        else {
+            node = findNextNode(willRemove);
+                // Move out from under the node being removed if the reference node is
+                // a descendant of the node being removed.
+                if (willRemoveReferenceNodeAncestor) {
+                    while (node && willRemove->isAncestor(node))
+                        node = findPreviousNode(node);
+                }
+                if (node)
+                    setReferenceNode(node);
+        }
+    }
+}
+
+// --------------------------------------------------------------
+
+TreeWalkerImpl::TreeWalkerImpl(NodeImpl *rootNode, long whatToShow, NodeFilterImpl *filter, bool expandEntityReferences)
+    : TraversalImpl(rootNode, whatToShow, filter, expandEntityReferences), m_current(rootNode)
+{
+    if (currentNode())
+        currentNode()->ref();
 }
 
 TreeWalkerImpl::~TreeWalkerImpl()
 {
-    if(m_filter)
-      {
-        delete m_filter;
-        m_filter = 0;
-      }
+    if (currentNode())
+        currentNode()->deref();
 }
 
-
-
-
-
-Node TreeWalkerImpl::getRoot()
+void TreeWalkerImpl::setCurrentNode(NodeImpl *node, int &exceptioncode)
 {
-    // ###
-    return 0;
-}
-
-unsigned long TreeWalkerImpl::getWhatToShow()
-{
-    // ###
-    return 0;
-}
-
-NodeFilter TreeWalkerImpl::getFilter()
-{
-    // ###
-    return 0;
-}
-
-bool TreeWalkerImpl::getExpandEntityReferences()
-{
-    // ###
-    return 0;
-}
-
-Node TreeWalkerImpl::getCurrentNode()
-{
-    return m_currentNode;
-}
-
-void TreeWalkerImpl::setWhatToShow(long _whatToShow)
-{
-  // do some testing wether this is an accepted value
-  m_whatToShow = _whatToShow;
-}
-
-void TreeWalkerImpl::setFilter(NodeFilter *_filter)
-{
-  // ### allow setting of filter to 0?
-  if(_filter)
-    m_filter = _filter;
-}
-
-void TreeWalkerImpl::setExpandEntityReferences(bool value)
-{
-  m_expandEntityReferences = value;
-}
-
-void TreeWalkerImpl::setCurrentNode( const Node n )
-{
-    if( !n.isNull() )
-    {
-        m_rootNode = n;
-        m_currentNode = n;
-    }
-//     else
-//         throw( DOMException::NOT_SUPPORTED_ERR );
-}
-
-Node TreeWalkerImpl::parentNode(  )
-{
-    Node n = getParentNode(m_currentNode);
-    if( !n.isNull() )
-        m_currentNode = n;
-    return n;
-}
-
-
-Node TreeWalkerImpl::firstChild(  )
-{
-    Node n = getFirstChild(m_currentNode);
-    if( !n.isNull() )
-        m_currentNode = n;
-    return n;
-}
-
-
-Node TreeWalkerImpl::lastChild(  )
-{
-    Node n = getLastChild(m_currentNode);
-    if( !n.isNull() )
-        m_currentNode = n;
-    return n;
-}
-
-Node TreeWalkerImpl::previousSibling(  )
-{
-    Node n = getPreviousSibling(m_currentNode);
-    if( !n.isNull() )
-        m_currentNode = n;
-    return n;
-}
-
-Node TreeWalkerImpl::nextSibling(  )
-{
-    Node n = getNextSibling(m_currentNode);
-    if( !n.isNull() )
-        m_currentNode = n;
-    return n;
-}
-
-Node TreeWalkerImpl::previousNode(  )
-{
-/* 1. my previous sibling.lastchild
- * 2. my previous sibling
- * 3. my parent
- */
-
-    Node n = getPreviousSibling(m_currentNode);
-    if( n.isNull() )
-    {
-        n = getParentNode(m_currentNode);
-        if( !n.isNull() )      //parent
-        {
-            m_currentNode = n;
-            return m_currentNode;
-        }
-        else                  // parent failed.. no previous node
-            return Node();
+    if (!node) {
+        exceptioncode = DOMException::NOT_SUPPORTED_ERR;
+        return;
     }
 
-    Node child = getLastChild(n);
-    if( !child.isNull() )     // previous siblings last child
-    {
-        m_currentNode = child;
-        return m_currentNode;
-    }
-    else                      // previous sibling
-    {
-        m_currentNode = n;
-        return m_currentNode;
-    }
-    return Node();            // should never get here!
+    if (node == m_current)
+        return;
+    
+    NodeImpl *old = m_current;
+    m_current = node;
+    if (m_current)
+        m_current->ref();
+    if (old)
+        old->deref();
 }
 
-Node TreeWalkerImpl::nextNode(  )
+void TreeWalkerImpl::setCurrentNode(NodeImpl *node)
 {
-/*  1. my first child
- *  2. my next sibling
- *  3. my parents sibling, or their parents sibling (loop)
- *  4. not found
- */
-
-    Node n = getFirstChild(m_currentNode);
-    if( !n.isNull()  ) // my first child
-    {
-        m_currentNode = n;
-        return n;
-    }
-
-    n = getNextSibling(m_currentNode); // my next sibling
-    if( !n.isNull() )
-    {
-        m_currentNode = n;
-        return m_currentNode;
-    }
-    Node parent = getParentNode(m_currentNode);
-    while( !parent.isNull() ) // parents sibling
-    {
-        n = getNextSibling(parent);
-        if( !n.isNull() )
-        {
-          m_currentNode = n;
-          return m_currentNode;
-        }
-        else
-            parent = getParentNode(parent);
-    }
-    return Node();
+    assert(node);
+    int dummy;
+    setCurrentNode(node, dummy);
 }
 
-short TreeWalkerImpl::isAccepted(Node n)
+NodeImpl *TreeWalkerImpl::parentNode()
 {
-    // if XML is implemented we have to check expandEntityRerefences in this function
-  if( ( ( 1 << n.nodeType()-1 ) & m_whatToShow) != 0 )
-    {
-      if(m_filter)
-        return m_filter->acceptNode(n);
-      else
-        return NodeFilter::FILTER_ACCEPT;
-    }
-  return NodeFilter::FILTER_SKIP;
+    NodeImpl *node = findParentNode(currentNode());
+    if (node)
+        setCurrentNode(node);
+    return currentNode();
 }
 
-Node TreeWalkerImpl::getParentNode(Node n)
+NodeImpl *TreeWalkerImpl::firstChild()
 {
-     short _result = NodeFilter::FILTER_ACCEPT;
-
-    if( n == m_rootNode /*|| n.isNull()*/ )
-      return Node();
-
-    Node _tempCurrent = n.parentNode();
-
-    if( _tempCurrent.isNull() )
-      return Node();
-
-    _result = isAccepted(_tempCurrent );
-    if(_result == NodeFilter::FILTER_ACCEPT)
-      return _tempCurrent;       // match found
-
-    return getParentNode(_tempCurrent);
+    NodeImpl *node = findFirstChild(currentNode());
+    if (node)
+        setCurrentNode(node);
+    return currentNode();
 }
 
-Node TreeWalkerImpl::getFirstChild(Node n)
+NodeImpl *TreeWalkerImpl::lastChild()
 {
-    short _result;
-
-    if( n.isNull() || n.firstChild().isNull() )
-        return Node();
-    n = n.firstChild();
-
-    _result = isAccepted(n);
-
-    switch(_result)
-    {
-         case NodeFilter::FILTER_ACCEPT:
-           return n;
-           break;
-        case NodeFilter::FILTER_SKIP:
-          if( n.hasChildNodes() )
-                return getFirstChild(n);
-            else
-                return getNextSibling(n);
-            break;
-
-        case NodeFilter::FILTER_REJECT:
-            return getNextSibling(n);
-            break;
-    }
-    return Node();      // should never get here!
+    NodeImpl *node = findLastChild(currentNode());
+    if (node)
+        setCurrentNode(node);
+    return currentNode();
 }
 
-Node TreeWalkerImpl::getLastChild(Node n)
+NodeImpl *TreeWalkerImpl::previousSibling()
 {
-    short _result;
-
-    if( n.isNull() || n.lastChild().isNull() )
-        return Node();
-    n = n.lastChild();
-    _result = isAccepted(n);
-    switch(_result)
-    {
-        case NodeFilter::FILTER_ACCEPT:
-            return n;
-            break;
-
-        case NodeFilter::FILTER_SKIP:
-            if( n.hasChildNodes() )
-                return getLastChild(n);
-            else
-                return getPreviousSibling(n);
-            break;
-
-        case NodeFilter::FILTER_REJECT:
-            return getPreviousSibling(n);
-            break;
-    }
-    return Node();
+    NodeImpl *node = findPreviousSibling(currentNode());
+    if (node)
+        setCurrentNode(node);
+    return currentNode();
 }
 
-Node TreeWalkerImpl::getPreviousSibling(Node n)
+NodeImpl *TreeWalkerImpl::nextSibling()
 {
-    short _result;
-    Node _tempCurrent;
-
-    if( n.isNull() )
-        return Node();
-    //first the cases if we have a previousSibling
-    _tempCurrent = n.previousSibling();
-    if( !_tempCurrent.isNull() )
-    {
-        _result = isAccepted(_tempCurrent);
-        switch(_result)
-        {
-            case NodeFilter::FILTER_ACCEPT:
-                return _tempCurrent;
-                break;
-
-            case NodeFilter::FILTER_SKIP:
-            {
-                Node nskip = getLastChild(_tempCurrent);
-                if( !nskip.isNull() )
-                    return nskip;
-                return getPreviousSibling(_tempCurrent);
-                break;
-            }
-
-            case NodeFilter::FILTER_REJECT:
-                return getPreviousSibling(_tempCurrent);
-                break;
-        }
-    }
-    // now the case if we don't have previous sibling
-    else
-    {
-        _tempCurrent = _tempCurrent.parentNode();
-        if(_tempCurrent.isNull() || _tempCurrent == m_rootNode)
-            return Node();
-        _result = isAccepted(_tempCurrent);
-        if(_result == NodeFilter::FILTER_SKIP)
-            return getPreviousSibling(_tempCurrent);
-
-        return Node();
-
-    }
-    return Node();  // should never get here!
+    NodeImpl *node = findNextSibling(currentNode());
+    if (node)
+        setCurrentNode(node);
+    return currentNode();
 }
 
-Node TreeWalkerImpl::getNextSibling(Node n)
+NodeImpl *TreeWalkerImpl::previousNode()
 {
-    Node _tempCurrent;
-    short _result;
-
-    if( n.isNull() || _tempCurrent == m_rootNode)
-        return Node();
-
-    _tempCurrent = n.nextSibling();
-    if( !_tempCurrent.isNull() )
-    {
-        _result = isAccepted(_tempCurrent);
-        switch(_result)
-        {
-            case NodeFilter::FILTER_ACCEPT:
-                return _tempCurrent;
-                break;
-
-            case NodeFilter::FILTER_SKIP:
-            {
-                Node nskip = getFirstChild(_tempCurrent);
-                if( !nskip.isNull() )
-                    return nskip;
-                return getNextSibling(_tempCurrent);
-                break;
-            }
-
-            case NodeFilter::FILTER_REJECT:
-                return getNextSibling(_tempCurrent);
-                break;
-        }
-    }
-    else
-    {
-        _tempCurrent = _tempCurrent.parentNode();
-        if(_tempCurrent.isNull() || _tempCurrent == m_rootNode)
-            return Node();
-        _result = isAccepted(_tempCurrent);
-        if(_result == NodeFilter::FILTER_SKIP)
-            return getNextSibling(_tempCurrent);
-
-        return Node();
-    }
-    return Node();
+    NodeImpl *node = findPreviousNode(currentNode());
+    if (node)
+        setCurrentNode(node);
+    return currentNode();
 }
 
+NodeImpl *TreeWalkerImpl::nextNode()
+{
+    NodeImpl *node = findNextNode(currentNode());
+    if (node)
+        setCurrentNode(node);
+    return currentNode();
+}
+
+} // namespace DOM

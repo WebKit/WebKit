@@ -40,16 +40,6 @@
 
 @class DOMNodeFilter;
 
-@interface DOMNodeIterator : DOMObject
-- (DOMNode *)root;
-- (unsigned long)whatToShow;
-- (DOMNodeFilter *)filter;
-- (BOOL)expandEntityReferences;
-- (DOMNode *)nextNode;
-- (DOMNode *)previousNode;
-- (void)detach;
-@end
-
 enum {
     // Constants returned by acceptNode
     DOM_FILTER_ACCEPT                  = 1,
@@ -74,14 +64,30 @@ enum {
     DOM_SHOW_NOTATION                  = 0x00000800,
 };
 
-@interface DOMNodeFilter : DOMObject
+@protocol DOMNodeFilter <NSObject>
 - (short)acceptNode:(DOMNode *)n;
 @end
 
-@interface DOMTreeWalker : DOMObject
+@interface DOMNodeIterator : DOMObject
+{
+    id <DOMNodeFilter> m_filter;
+}
 - (DOMNode *)root;
 - (unsigned long)whatToShow;
-- (DOMNodeFilter *)filter;
+- (id <DOMNodeFilter>)filter;
+- (BOOL)expandEntityReferences;
+- (DOMNode *)nextNode;
+- (DOMNode *)previousNode;
+- (void)detach;
+@end
+
+@interface DOMTreeWalker : DOMObject
+{
+    id <DOMNodeFilter> m_filter;
+}
+- (DOMNode *)root;
+- (unsigned long)whatToShow;
+- (id <DOMNodeFilter>)filter;
 - (BOOL)expandEntityReferences;
 - (DOMNode *)currentNode;
 - (void)setCurrentNode:(DOMNode *)currentNode;
@@ -95,6 +101,6 @@ enum {
 @end
 
 @interface DOMDocument (DOMDocumentTraversal)
-- (DOMNodeIterator *)createNodeIterator:(DOMNode *)root :(unsigned long)whatToShow :(DOMNodeFilter *)filter :(BOOL)entityReferenceExpansion;
-- (DOMTreeWalker *)createTreeWalker:(DOMNode *)root :(unsigned long)whatToShow :(DOMNodeFilter *)filter :(BOOL)entityReferenceExpansion;
+- (DOMNodeIterator *)createNodeIterator:(DOMNode *)root :(unsigned long)whatToShow :(id <DOMNodeFilter>)filter :(BOOL)expandEntityReferences;
+- (DOMTreeWalker *)createTreeWalker:(DOMNode *)root :(unsigned long)whatToShow :(id <DOMNodeFilter>)filter :(BOOL)expandEntityReferences;
 @end

@@ -367,25 +367,32 @@ Range Document::createRange()
     return 0;
 }
 
-NodeIterator Document::createNodeIterator(Node root, unsigned long whatToShow,
-                                    NodeFilter filter, bool entityReferenceExpansion)
+NodeIterator Document::createNodeIterator(const Node &root, unsigned long whatToShow,
+    const NodeFilter &filter, bool expandEntityReferences)
 {
     if (!impl)
-	throw DOMException(DOMException::INVALID_STATE_ERR);
+        throw DOMException(DOMException::INVALID_STATE_ERR);
 
     int exceptioncode = 0;
-    NodeIteratorImpl *r = static_cast<DocumentImpl*>(impl)->createNodeIterator(root.handle(),
-			  whatToShow,filter,entityReferenceExpansion,exceptioncode);
+    NodeIteratorImpl *result = static_cast<DocumentImpl*>(impl)->createNodeIterator(root.handle(), whatToShow, 
+        filter.handle(), expandEntityReferences, exceptioncode);
     if (exceptioncode)
-	throw DOMException(exceptioncode);
-    return r;
+        throw DOMException(exceptioncode);
+    return result;
 }
 
-TreeWalker Document::createTreeWalker(Node root, unsigned long whatToShow, NodeFilter filter,
-                                bool entityReferenceExpansion)
+TreeWalker Document::createTreeWalker(const Node &root, unsigned long whatToShow, 
+    const NodeFilter &filter, bool expandEntityReferences)
 {
-    if (impl) return ((DocumentImpl *)impl)->createTreeWalker(root,whatToShow,filter,entityReferenceExpansion);
-    return 0;
+    if (!impl)
+        throw DOMException(DOMException::INVALID_STATE_ERR);
+
+    int exceptioncode = 0;
+    TreeWalkerImpl *result = static_cast<DocumentImpl*>(impl)->createTreeWalker(root.handle(), whatToShow, 
+        filter.handle(), expandEntityReferences, exceptioncode);
+    if (exceptioncode)
+        throw DOMException(exceptioncode);
+    return result;
 }
 
 Event Document::createEvent(const DOMString &eventType)

@@ -243,10 +243,10 @@ public:
     RangeImpl *createRange();
 
     NodeIteratorImpl *createNodeIterator(NodeImpl *root, unsigned long whatToShow,
-                                    NodeFilter &filter, bool entityReferenceExpansion, int &exceptioncode);
+        NodeFilterImpl *filter, bool expandEntityReferences, int &exceptioncode);
 
-    TreeWalkerImpl *createTreeWalker(const Node &root, unsigned long whatToShow, const NodeFilter &filter,
-                            bool entityReferenceExpansion);
+    TreeWalkerImpl *createTreeWalker(NodeImpl *root, unsigned long whatToShow, 
+        NodeFilterImpl *filter, bool expandEntityReferences, int &exceptioncode);
 
     // Special support for editing
     CSSStyleDeclarationImpl *createCSSStyleDeclaration();

@@ -48,6 +48,7 @@
 using namespace KJS;
 
 using DOM::DOMException;
+using DOM::NodeFilter;
 
 // -------------------------------------------------------------------------
 /* Source for DOMNodeProtoTable. Use "make hashtables" to regenerate.
@@ -862,29 +863,24 @@ Value DOMDocumentProtoFunc::tryCall(ExecState *exec, Object &thisObj, const List
     return getDOMNode(exec,doc.getElementById(args[0].toString(exec).string()));
   case DOMDocument::CreateRange:
     return getDOMRange(exec,doc.createRange());
-  case DOMDocument::CreateNodeIterator:
-    if (args[2].isA(NullType)) {
-        DOM::NodeFilter filter;
-        return getDOMNodeIterator(exec,
-                                  doc.createNodeIterator(toNode(args[0]),
-                                                         (long unsigned int)(args[1].toNumber(exec)),
-                                                         filter,args[3].toBoolean(exec)));
+  case DOMDocument::CreateNodeIterator: {
+    NodeFilter filter;
+    if (!args[2].isA(NullType)) {
+        Object obj = Object::dynamicCast(args[2]);
+        if (!obj.isNull())
+            filter = NodeFilter(new JSNodeFilterCondition(obj));
     }
-    else {
-      Object obj = Object::dynamicCast(args[2]);
-      if (!obj.isNull())
-      {
-        DOM::CustomNodeFilter *customFilter = new JSNodeFilter(obj);
-        DOM::NodeFilter filter = DOM::NodeFilter::createCustom(customFilter);
-        return getDOMNodeIterator(exec,
-          doc.createNodeIterator(
-            toNode(args[0]),(long unsigned int)(args[1].toNumber(exec)),
-            filter,args[3].toBoolean(exec)));
-      }// else?
+    return getDOMNodeIterator(exec, doc.createNodeIterator(toNode(args[0]), (long unsigned int)(args[1].toNumber(exec)), filter, args[3].toBoolean(exec)));
+  }
+  case DOMDocument::CreateTreeWalker: {
+    NodeFilter filter;
+    if (!args[2].isA(NullType)) {
+        Object obj = Object::dynamicCast(args[2]);
+        if (!obj.isNull())
+            filter = NodeFilter(new JSNodeFilterCondition(obj));
     }
-  case DOMDocument::CreateTreeWalker:
-    return getDOMTreeWalker(exec,doc.createTreeWalker(toNode(args[0]),(long unsigned int)(args[1].toNumber(exec)),
-             toNodeFilter(args[2]),args[3].toBoolean(exec)));
+    return getDOMTreeWalker(exec, doc.createTreeWalker(toNode(args[0]), (long unsigned int)(args[1].toNumber(exec)), filter, args[3].toBoolean(exec)));
+  }
   case DOMDocument::CreateEvent:
     return getDOMEvent(exec,doc.createEvent(s));
   case DOMDocument::GetOverrideStyle: {

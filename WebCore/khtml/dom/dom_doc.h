@@ -655,7 +655,7 @@ public:
      * @param filter The NodeFilter to be used with this TreeWalker, or null to
      * indicate no filter.
      *
-     * @param entityReferenceExpansion The value of this flag determines
+     * @param expandEntityReferences The value of this flag determines
      * whether entity reference nodes are expanded.
      *
      * @return NodeIterator The newly created NodeIterator.
@@ -663,9 +663,7 @@ public:
      * @exception DOMException
      * NOT_SUPPORTED_ERR: Raised if the specified root is null.
      */
-    NodeIterator createNodeIterator(Node root, unsigned long whatToShow,
-                                    NodeFilter filter,
-                                    bool entityReferenceExpansion);
+    NodeIterator createNodeIterator(const Node &root, unsigned long whatToShow, const NodeFilter &filter, bool expandEntityReferences);
 
     /**
      * Introduced in DOM Level 2
@@ -689,7 +687,7 @@ public:
      * @param filter The NodeFilter to be used with this TreeWalker, or null to
      * indicate no filter.
      *
-     * @param entityReferenceExpansion If this flag is false, the contents of
+     * @param expandEntityReferences If this flag is false, the contents of
      * EntityReference nodes are not presented in the logical view.
      *
      * @return The newly created TreeWalker.
@@ -697,9 +695,7 @@ public:
      * @exception DOMException
      * NOT_SUPPORTED_ERR: Raised if the specified root is null.
      */
-    TreeWalker createTreeWalker(Node root, unsigned long whatToShow,
-                                NodeFilter filter,
-                                bool entityReferenceExpansion);
+    TreeWalker createTreeWalker(const Node &root, unsigned long whatToShow, const NodeFilter &filter, bool expandEntityReferences);
 
     /**
      * Introduced in DOM Level 2

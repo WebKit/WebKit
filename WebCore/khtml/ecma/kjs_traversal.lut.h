@@ -3,15 +3,16 @@
 namespace KJS {
 
 const struct HashEntry DOMNodeIteratorTableEntries[] = {
-   { 0, 0, 0, 0, 0 },
+   { "pointerBeforeReferenceNode", DOMNodeIterator::PointerBeforeReferenceNode, DontDelete|ReadOnly, 0, 0 },
    { "filter", DOMNodeIterator::Filter, DontDelete|ReadOnly, 0, 0 },
    { "root", DOMNodeIterator::Root, DontDelete|ReadOnly, 0, 0 },
    { "whatToShow", DOMNodeIterator::WhatToShow, DontDelete|ReadOnly, 0, &DOMNodeIteratorTableEntries[5] },
    { 0, 0, 0, 0, 0 },
-   { "expandEntityReferences", DOMNodeIterator::ExpandEntityReferences, DontDelete|ReadOnly, 0, 0 }
+   { "expandEntityReferences", DOMNodeIterator::ExpandEntityReferences, DontDelete|ReadOnly, 0, &DOMNodeIteratorTableEntries[6] },
+   { "referenceNode", DOMNodeIterator::ReferenceNode, DontDelete|ReadOnly, 0, 0 }
 };
 
-const struct HashTable DOMNodeIteratorTable = { 2, 6, DOMNodeIteratorTableEntries, 5 };
+const struct HashTable DOMNodeIteratorTable = { 2, 7, DOMNodeIteratorTableEntries, 5 };
 
 } // namespace
 

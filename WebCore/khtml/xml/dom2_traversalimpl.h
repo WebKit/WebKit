@@ -4,6 +4,7 @@
  * (C) 1999 Lars Knoll (knoll@kde.org)
  * (C) 2000 Frederik Holljen (frederik.holljen@hig.no)
  * (C) 2001 Peter Kelly (pmk@post.com)
+ *  Copyright (C) 2004 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -22,37 +23,75 @@
  *
  */
 
-#ifndef _DOM2_TraversalImpl_h_
-#define _DOM2_TraversalImpl_h_
+#ifndef _dom2_traversal_h
+#define _dom2_traversal_h
 
+#include "dom/dom2_traversal.h"
 #include "dom/dom_node.h"
 #include "dom/dom_misc.h"
 #include "misc/shared.h"
-#include "dom/dom2_traversal.h"
 
 namespace DOM {
 
 class NodeImpl;
 class DocumentImpl;
 
-class NodeIteratorImpl : public khtml::Shared<NodeIteratorImpl>
+class NodeFilterImpl : public khtml::Shared<NodeFilterImpl>
 {
 public:
-    NodeIteratorImpl(NodeImpl *_root, unsigned long _whatToShow, NodeFilter _filter, bool _entityReferenceExpansion);
+    NodeFilterImpl() {}
+    NodeFilterImpl(NodeFilterCondition *);
+    ~NodeFilterImpl();
+    
+    short acceptNode(const Node &) const;
+    
+private:
+    NodeFilterImpl(const NodeFilterImpl &) : khtml::Shared<NodeFilterImpl>() {}
+    NodeFilterImpl &operator=(const NodeFilterImpl &) { return *this; }
+    NodeFilterCondition *m_condition;
+};
+
+class TraversalImpl : public khtml::Shared<TraversalImpl>
+{
+public:
+    TraversalImpl();
+    TraversalImpl(NodeImpl *, long whatToShow, NodeFilterImpl *, bool expandEntityReferences);
+    ~TraversalImpl();
+
+    NodeImpl *root() const { return m_root; }
+    unsigned long whatToShow() const { return m_whatToShow; }
+    NodeFilterImpl *filter() const { return m_filter; }
+    bool expandEntityReferences() const { return m_expandEntityReferences; }
+
+    NodeImpl *findParentNode(NodeImpl *, short accept=NodeFilter::FILTER_ACCEPT) const;
+    NodeImpl *findFirstChild(NodeImpl *) const;
+    NodeImpl *findLastChild(NodeImpl *) const;
+    NodeImpl *findNextSibling(NodeImpl *) const;
+    NodeImpl *findPreviousSibling(NodeImpl *) const;
+    NodeImpl *findNextNode(NodeImpl *) const;
+    NodeImpl *findLastDescendant(NodeImpl *node) const;
+    NodeImpl *findPreviousNode(NodeImpl *) const;
+    short acceptNode(NodeImpl *) const;
+
+private:
+    NodeImpl *m_root;
+    long m_whatToShow;
+    NodeFilterImpl *m_filter;
+    bool m_expandEntityReferences;
+};
+
+class NodeIteratorImpl : public TraversalImpl
+{
+public:
+    NodeIteratorImpl(NodeImpl *, long whatToShow, NodeFilterImpl *, bool expandEntityReferences);
     ~NodeIteratorImpl();
-
-
-    NodeImpl *root();
-    unsigned long whatToShow();
-    NodeFilter filter();
-    bool expandEntityReferences();
 
     NodeImpl *nextNode(int &exceptioncode);
     NodeImpl *previousNode(int &exceptioncode);
     void detach(int &exceptioncode);
 
-
-
+    NodeImpl *referenceNode() const { return m_referenceNode; }
+    bool pointerBeforeReferenceNode() const { return m_beforeReferenceNode; }
 
     /**
      * This function has to be called if you delete a node from the
@@ -61,136 +100,52 @@ public:
      */
     void notifyBeforeNodeRemoval(NodeImpl *removed);
 
-    short isAccepted(NodeImpl *n);
-    NodeImpl *getNextNode(NodeImpl *n);
-    NodeImpl *getPreviousNode(NodeImpl *n);
-protected:
-    NodeImpl *m_root;
-    long m_whatToShow;
-    NodeFilter m_filter;
-    bool m_expandEntityReferences;
+private:
+    NodeIteratorImpl() {};
+    NodeIteratorImpl(const NodeIteratorImpl &) : TraversalImpl() {}
+    NodeIteratorImpl &operator=(const NodeIteratorImpl &) { return *this; }
+    
+    void setReferenceNode(NodeImpl *);
+    void setPointerBeforeReferenceNode(bool flag=true) { m_beforeReferenceNode = flag; }
+    bool detached() const { return m_detached; }
+    DocumentImpl * document() const { return m_doc; }
+    void setDocument(DocumentImpl *);
 
-    bool m_inFront;
     NodeImpl *m_referenceNode;
+    bool m_beforeReferenceNode;
     bool m_detached;
     DocumentImpl *m_doc;
 };
 
-class NodeFilterImpl : public khtml::Shared<NodeFilterImpl>
+class TreeWalkerImpl : public TraversalImpl
 {
 public:
-    NodeFilterImpl();
-    ~NodeFilterImpl();
-
-    short acceptNode(const Node &n);
-
-    void setCustomNodeFilter(CustomNodeFilter *custom);
-    CustomNodeFilter *customNodeFilter();
-protected:
-    CustomNodeFilter *m_customNodeFilter;
-
-};
-
-class TreeWalkerImpl : public khtml::Shared<TreeWalkerImpl>
-{
-public:
-    TreeWalkerImpl();
-    TreeWalkerImpl(const TreeWalkerImpl &other);
-    TreeWalkerImpl(Node n, NodeFilter *f=0);
-    TreeWalkerImpl(Node n, long _whatToShow, NodeFilter *f=0);
-    TreeWalkerImpl & operator = (const TreeWalkerImpl &other);
-
-
+    TreeWalkerImpl(NodeImpl *, long whatToShow, NodeFilterImpl *, bool expandEntityReferences);
     ~TreeWalkerImpl();
 
-    Node getRoot();
+    NodeImpl *currentNode() const { return m_current; }
+    void setCurrentNode(NodeImpl *, int &exceptioncode);
 
-    unsigned long getWhatToShow();
+    NodeImpl *parentNode();
+    NodeImpl *firstChild();
+    NodeImpl *lastChild();
+    NodeImpl *previousSibling();
+    NodeImpl *nextSibling();
+    NodeImpl *previousNode();
+    NodeImpl *nextNode();
 
-    NodeFilter getFilter();
+private:
+    TreeWalkerImpl() {};
+    TreeWalkerImpl(const TreeWalkerImpl &) : TraversalImpl() {}
+    TreeWalkerImpl &operator=(const TreeWalkerImpl &) { return *this; }
 
-    bool getExpandEntityReferences();
-
-    Node getCurrentNode();
-
-    void setCurrentNode(const Node _currentNode);
-
-    Node parentNode();
-
-    Node firstChild();
-
-    Node lastChild ();
-
-    Node previousSibling ();
-
-    Node nextSibling();
-
-    Node previousNode();
-
-    Node nextNode();
-
-
-    /**
-     * Sets which node types are to be presented via the TreeWalker
-     */
-    void setWhatToShow(long _whatToShow);
-    void setFilter(NodeFilter *_filter);
-    void setExpandEntityReferences(bool value);
-
-    Node getParentNode(Node n);
-    Node getFirstChild(Node n);
-    Node getLastChild(Node n);
-    Node getPreviousSibling(Node n);
-    Node getNextSibling(Node n);
-
-    short isAccepted(Node n);
-
-protected:
-    /**
-     * This attribute determines which node types are presented via
-     * the TreeWalker.
-     *
-     */
-    long m_whatToShow;
-
-    /**
-     * The filter used to screen nodes.
-     *
-     */
-    NodeFilter *m_filter;
-
-    /**
-     * The value of this flag determines whether entity reference
-     * nodes are expanded. To produce a view of the document that has
-     * entity references expanded and does not expose the entity
-     * reference node itself, use the whatToShow flags to hide the
-     * entity reference node and set expandEntityReferences to true
-     * when creating the iterator. To produce a view of the document
-     * that has entity reference nodes but no entity expansion, use
-     * the whatToShow flags to show the entity reference node and set
-     * expandEntityReferences to true.
-     *
-     * This is not implemented (allways true)
-     */
-    bool m_expandEntityReferences;
-
-    /**
-     * The current node.
-     *
-     *  The value must not be null. Attempting to set it to null will
-     * raise a NOT_SUPPORTED_ERR exception. When setting a node, the
-     * whatToShow flags and any Filter associated with the TreeWalker
-     * are not checked. The currentNode may be set to any Node of any
-     * type.
-     *
-     */
-    Node m_currentNode;
-
-    Node m_rootNode;
+    // convenience for when it is known there will be no exception
+    void setCurrentNode(NodeImpl *);
+    
+    NodeImpl *m_current;
 };
 
-
-}; // namespace
+} // namespace
 
 #endif
 

@@ -20,12 +20,76 @@
  *
  */
 
+#include "dom/dom2_traversal.h"
+
 #include "dom/dom_exception.h"
 #include "dom/dom_string.h"
 #include "xml/dom2_traversalimpl.h"
 
-using namespace DOM;
+namespace DOM {
 
+// --------------------------------------------------------------
+
+short NodeFilterCondition::acceptNode(const Node &) const
+{
+    return NodeFilter::FILTER_ACCEPT;
+}
+
+// --------------------------------------------------------------
+
+NodeFilter::NodeFilter() : impl(0)
+{
+}
+
+NodeFilter::NodeFilter(NodeFilterCondition *condition)
+{
+    impl = new NodeFilterImpl(condition);
+    impl->ref();
+}
+
+NodeFilter::NodeFilter(const NodeFilter &other)
+{
+    impl = other.impl;
+    if (impl) 
+        impl->ref();
+}
+
+NodeFilter::NodeFilter(NodeFilterImpl *i)
+{
+    impl = i;
+    if (impl)
+        impl->ref();
+}
+
+NodeFilter &NodeFilter::operator=(const NodeFilter &other)
+{
+    if (impl == other.impl)
+        return *this;
+    
+    NodeFilterImpl *old = impl;
+    impl = other.impl;
+    if (impl) 
+        impl->ref();
+    if (old) 
+        old->deref();
+
+    return *this;
+}
+
+NodeFilter::~NodeFilter()
+{
+    if (impl) 
+        impl->deref();
+}
+
+short NodeFilter::acceptNode(const Node &node) const
+{
+    if (impl)
+        return impl->acceptNode(node.handle());
+    return FILTER_ACCEPT;
+}
+
+// --------------------------------------------------------------
 
 NodeIterator::NodeIterator()
 {
@@ -35,345 +99,251 @@ NodeIterator::NodeIterator()
 NodeIterator::NodeIterator(const NodeIterator &other)
 {
     impl = other.impl;
-    if (impl) impl->ref();
+    if (impl) 
+        impl->ref();
 }
 
 NodeIterator::NodeIterator(NodeIteratorImpl *i)
 {
     impl = i;
-    if (impl) impl->ref();
+    if (impl) 
+        impl->ref();
 }
 
-NodeIterator &NodeIterator::operator = (const NodeIterator &other)
+NodeIterator &NodeIterator::operator=(const NodeIterator &other)
 {
-    if ( impl != other.impl ) {
-	if (impl) impl->deref();
-	impl = other.impl;
-	if (impl) impl->ref();
-    }
+    if (impl == other.impl)
+        return *this;
+    
+    NodeIteratorImpl *old = impl;
+    impl = other.impl;
+    if (impl) 
+        impl->ref();
+    if (old) 
+        old->deref();
+
     return *this;
 }
 
 NodeIterator::~NodeIterator()
 {
-    if (impl) impl->deref();
+    if (impl) 
+        impl->deref();
 }
 
-Node NodeIterator::root()
+Node NodeIterator::root() const
 {
-    if (impl) return impl->root();
+    if (impl) 
+        return impl->root();
     return 0;
 }
 
-unsigned long NodeIterator::whatToShow()
+unsigned long NodeIterator::whatToShow() const
 {
-    if (impl) return impl->whatToShow();
+    if (impl) 
+        return impl->whatToShow();
     return 0;
 }
 
-NodeFilter NodeIterator::filter()
+NodeFilter NodeIterator::filter() const
 {
-    if (impl) return impl->filter();
+    if (impl) 
+        return impl->filter();
+    return NodeFilter();
+}
+
+bool NodeIterator::expandEntityReferences() const
+{
+    if (impl) 
+        return impl->expandEntityReferences();
     return 0;
 }
 
-bool NodeIterator::expandEntityReferences()
-{
-    if (impl) return impl->expandEntityReferences();
-    return 0;
-}
-
-Node NodeIterator::nextNode(  )
+Node NodeIterator::nextNode()
 {
     if (!impl)
-	throw DOMException(DOMException::INVALID_STATE_ERR);
+        throw DOMException(DOMException::INVALID_STATE_ERR);
 
     int exceptioncode = 0;
-    NodeImpl *r = impl->nextNode(exceptioncode);
+    NodeImpl *result = impl->nextNode(exceptioncode);
     if (exceptioncode)
-	throw DOMException(exceptioncode);
-    return r;
+        throw DOMException(exceptioncode);
+    return result;
 }
 
-Node NodeIterator::previousNode(  )
+Node NodeIterator::previousNode()
 {
     if (!impl)
-	throw DOMException(DOMException::INVALID_STATE_ERR);
+        throw DOMException(DOMException::INVALID_STATE_ERR);
 
     int exceptioncode = 0;
-    NodeImpl *r = impl->previousNode(exceptioncode);
+    NodeImpl *result = impl->previousNode(exceptioncode);
     if (exceptioncode)
-	throw DOMException(exceptioncode);
-    return r;
+        throw DOMException(exceptioncode);
+    return result;
 }
 
 void NodeIterator::detach()
 {
     if (!impl)
-	throw DOMException(DOMException::INVALID_STATE_ERR);
+        throw DOMException(DOMException::INVALID_STATE_ERR);
 
     int exceptioncode = 0;
     impl->detach(exceptioncode);
     if (exceptioncode)
-	throw DOMException(exceptioncode);
+        throw DOMException(exceptioncode);
 }
 
-NodeIteratorImpl *NodeIterator::handle() const
+Node NodeIterator::referenceNode() const
 {
-    return impl;
+    if (!impl)
+        throw DOMException(DOMException::INVALID_STATE_ERR);
+        
+    return impl->referenceNode();
 }
 
-bool NodeIterator::isNull() const
+bool NodeIterator::pointerBeforeReferenceNode() const
 {
-    return (impl == 0);
-}
-
-// -----------------------------------------------------------
-
-NodeFilter::NodeFilter()
-{
-    impl = 0;
-}
-
-NodeFilter::NodeFilter(const NodeFilter &other)
-{
-    impl = other.impl;
-    if (impl) impl->ref();
-}
-
-NodeFilter::NodeFilter(NodeFilterImpl *i)
-{
-    impl = i;
-    if (impl) impl->ref();
-}
-
-NodeFilter &NodeFilter::operator = (const NodeFilter &other)
-{
-    if ( impl != other.impl ) {
-	if (impl) impl->deref();
-	impl = other.impl;
-	if (impl) impl->ref();
-    }
-    return *this;
-}
-
-NodeFilter::~NodeFilter()
-{
-    if (impl) impl->deref();
-}
-
-short NodeFilter::acceptNode(const Node &n)
-{
-    if (impl) return impl->acceptNode(n);
-    return 0;
-}
-
-void NodeFilter::setCustomNodeFilter(CustomNodeFilter *custom)
-{
-    if (impl) impl->setCustomNodeFilter(custom);
-}
-
-CustomNodeFilter *NodeFilter::customNodeFilter()
-{
-    if (impl) return impl->customNodeFilter();
-    return 0;
-}
-
-NodeFilterImpl *NodeFilter::handle() const
-{
-    return impl;
-}
-
-bool NodeFilter::isNull() const
-{
-    return (impl == 0);
-}
-
-NodeFilter NodeFilter::createCustom(CustomNodeFilter *custom)
-{
-    NodeFilterImpl *i = new NodeFilterImpl();
-    i->setCustomNodeFilter(custom);
-    return i;
-}
-
-// --------------------------------------------------------------
-CustomNodeFilter::CustomNodeFilter()
-{
-    impl = 0;
-}
-
-CustomNodeFilter::~CustomNodeFilter()
-{
-}
-
-short CustomNodeFilter::acceptNode (const Node &/*n*/)
-{
-    return NodeFilter::FILTER_ACCEPT;
-}
-
-bool CustomNodeFilter::isNull()
-{
-    return false;
-}
-
-DOMString CustomNodeFilter::customNodeFilterType()
-{
-    return "";
+    if (!impl)
+        throw DOMException(DOMException::INVALID_STATE_ERR);
+        
+    return impl->pointerBeforeReferenceNode();
 }
 
 // --------------------------------------------------------------
 
-TreeWalker::TreeWalker() {
+TreeWalker::TreeWalker()
+{
     impl = 0;
 }
 
-TreeWalker::TreeWalker(const TreeWalker &other) {
+TreeWalker::TreeWalker(const TreeWalker &other)
+{
     impl = other.impl;
-    if (impl) impl->ref();
+    if (impl) 
+        impl->ref();
 }
 
 TreeWalker::TreeWalker(TreeWalkerImpl *i)
 {
     impl = i;
-    if (impl) impl->ref();
+    if (impl) 
+        impl->ref();
 }
 
-TreeWalker & TreeWalker::operator = (const TreeWalker &other)
+TreeWalker &TreeWalker::operator=(const TreeWalker &other)
 {
-    if ( impl != other.impl ) {
-	if (impl) impl->deref();
-	impl = other.impl;
-	if (impl) impl->ref();
-    }
+    if (impl == other.impl)
+        return *this;
+    
+    TreeWalkerImpl *old = impl;
+    impl = other.impl;
+    if (impl) 
+        impl->ref();
+    if (old) 
+        old->deref();
 
     return *this;
 }
 
 TreeWalker::~TreeWalker()
 {
-    if (impl) impl->deref();
+    if (impl) 
+        impl->deref();
 }
 
-Node TreeWalker::root()
+Node TreeWalker::root() const
 {
-    if (impl) return impl->getRoot();
+    if (impl) 
+        return impl->root();
     return 0;
 }
 
-unsigned long TreeWalker::whatToShow()
+unsigned long TreeWalker::whatToShow() const
 {
-    if (impl) return impl->getWhatToShow();
+    if (impl) 
+        return impl->whatToShow();
     return 0;
 }
 
-NodeFilter TreeWalker::filter()
+NodeFilter TreeWalker::filter() const
 {
-    if (impl) return impl->getFilter();
-    return 0;
+    if (impl) 
+        return impl->filter();
+    return NodeFilter();
 }
 
-bool TreeWalker::expandEntityReferences()
+bool TreeWalker::expandEntityReferences() const
 {
-    if (impl) return impl->getExpandEntityReferences();
+    if (impl) return impl->expandEntityReferences();
     return false;
 }
 
-Node TreeWalker::currentNode()
+Node TreeWalker::currentNode() const
 {
-    if (impl) return impl->getCurrentNode();
+    if (impl) 
+        return impl->currentNode();
     return 0;
 }
 
-void TreeWalker::setCurrentNode(const Node _currentNode)
+void TreeWalker::setCurrentNode(const Node &node)
 {
-    if (impl) impl->setCurrentNode(_currentNode);
+    if (impl) {
+        int exceptioncode = 0;
+        impl->setCurrentNode(node.handle(), exceptioncode);
+        if (exceptioncode)
+            throw DOMException(exceptioncode);
+    }
 }
 
 Node TreeWalker::parentNode()
 {
-    if (impl) return impl->parentNode();
+    if (impl) 
+        return impl->parentNode();
     return 0;
 }
 
 Node TreeWalker::firstChild()
 {
-    if (impl) return impl->firstChild();
+    if (impl) 
+        return impl->firstChild();
     return 0;
 }
 
 Node TreeWalker::lastChild()
 {
-    if (impl) return impl->lastChild();
+    if (impl) 
+        return impl->lastChild();
     return 0;
 }
 
 Node TreeWalker::previousSibling()
 {
-    if (impl) return impl->previousSibling();
+    if (impl) 
+        return impl->previousSibling();
     return 0;
 }
 
 Node TreeWalker::nextSibling()
 {
-    if (impl) return impl->nextSibling();
+    if (impl) 
+        return impl->nextSibling();
     return 0;
 }
 
 Node TreeWalker::previousNode()
 {
-    if (impl) return impl->previousNode();
+    if (impl) 
+        return impl->previousNode();
     return 0;
 }
 
 Node TreeWalker::nextNode()
 {
-    if (impl) return impl->nextNode();
+    if (impl) 
+        return impl->nextNode();
     return 0;
 }
 
-TreeWalkerImpl *TreeWalker::handle() const
-{
-    return impl;
-}
-
-bool TreeWalker::isNull() const
-{
-    return (impl == 0);
-}
-
-// -----------------------------------------------------------------------
-
-/*DocumentTraversal::DocumentTraversal()
-{
-}
-
-DocumentTraversal::DocumentTraversal(const DocumentTraversal &other)
-{
-}
-
-DocumentTraversal &DocumentTraversal::operator = (const DocumentTraversal &other)
-{
-    DocumentTraversal::operator = (other);
-    return *this;
-}
-
-DocumentTraversal::~DocumentTraversal()
-{
-}
-
-NodeIterator DocumentTraversal::createNodeIterator( const Node &root, long whatToShow,
-						    const NodeFilter &filter,
-						    bool entityReferenceExpansion )
-{
-    return NodeIterator();
-}
-
-TreeWalker DocumentTraversal::createTreeWalker( const Node &root, long whatToShow,
-						const NodeFilter &filter,
-						bool entityReferenceExpansion )
-{
-    return TreeWalker();
-}
-
-*/
+} // namespace DOM
 

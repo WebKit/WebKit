@@ -35,7 +35,7 @@ namespace KJS {
     // no put - all read-only
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
-    enum { Filter, Root, WhatToShow, ExpandEntityReferences,
+    enum { Filter, Root, WhatToShow, ExpandEntityReferences, ReferenceNode, PointerBeforeReferenceNode,
            NextNode, PreviousNode, Detach };
     DOM::NodeIterator toNodeIterator() const { return nodeIterator; }
   protected:
@@ -94,11 +94,11 @@ namespace KJS {
    */
   DOM::NodeFilter toNodeFilter(const Value&);
 
-  class JSNodeFilter : public DOM::CustomNodeFilter {
+  class JSNodeFilterCondition : public DOM::NodeFilterCondition {
   public:
-    JSNodeFilter(Object & _filter);
-    virtual ~JSNodeFilter();
-    virtual short acceptNode (const DOM::Node &n);
+    JSNodeFilterCondition(Object & _filter);
+    virtual ~JSNodeFilterCondition() {}
+    virtual short acceptNode(const DOM::Node &) const;
   protected:
     ProtectedObject filter;
   };
