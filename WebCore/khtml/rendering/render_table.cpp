@@ -1799,7 +1799,7 @@ CollapsedBorderValue RenderTableCell::collapsedRightBorder() const
     // (2) The next cell's left border.
     if (!inLastColumn) {
         RenderTableCell* nextCell = tableElt->cellRight(this);
-        if (nextCell) {
+        if (nextCell && nextCell->style()) {
             result = compareBorders(result, CollapsedBorderValue(&nextCell->style()->borderLeft(), BCELL));
             if (!result.exists()) return result;
         }

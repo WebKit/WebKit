@@ -1,3 +1,14 @@
+2005-03-15  Richard Williamson   <rjw@apple.com>
+
+	Fixed <rdar://problem/4053658> Crash getting direction at maps.google.com
+
+	Add non nil style() check.
+
+        Reviewed by Dave Harrison.
+
+        * khtml/rendering/render_table.cpp:
+        (RenderTableCell::collapsedRightBorder):
+
 2005-03-15  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by John
