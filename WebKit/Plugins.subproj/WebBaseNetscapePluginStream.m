@@ -16,6 +16,8 @@
 #import <Foundation/NSFileManager_NSURLExtras.h>
 #import <Foundation/NSURL_NSURLExtras.h>
 
+static const char *CarbonPathFromPOSIXPath(const char *posixPath);
+
 @implementation WebBaseNetscapePluginStream
 
 - (void)dealloc
@@ -150,9 +152,10 @@
     
     if (reason == NPRES_DONE && (transferMode == NP_ASFILE || transferMode == NP_ASFILEONLY)) {
         ASSERT(path != NULL);
-        NSString *carbonPath = [[NSFileManager defaultManager] _web_carbonPathForPath:[NSString stringWithUTF8String:path]];
-        NPP_StreamAsFile(instance, &stream, [carbonPath fileSystemRepresentation]);
-        LOG(Plugins, "NPP_StreamAsFile URL=%@ path=%@", URL, carbonPath);
+        const char *carbonPath = CarbonPathFromPOSIXPath(path);
+        ASSERT(carbonPath != NULL);
+        NPP_StreamAsFile(instance, &stream, carbonPath);
+        LOG(Plugins, "NPP_StreamAsFile URL=%@ path=%s", URL, carbonPath);
     }
     
     NPError npErr;
@@ -289,3 +292,56 @@
 }
 
 @end
+
+static const char *CarbonPathFromPOSIXPath(const char *posixPath)
+{
+    // Returns NULL if path is to file that does not exist.
+    // Doesn't add a trailing colon for directories; this is a problem for paths to a volume,
+    // so this function would need to be revised if we ever wanted to call it with that.
+
+    OSStatus error;
+    FSCatalogInfo info;
+
+    // Make an FSRef.
+    FSRef ref;
+    error = FSPathMakeRef((const UInt8 *)posixPath, &ref, NULL);
+    if (error != noErr) {
+        return NULL;
+    }
+
+    // Get volume refNum.
+    error = FSGetCatalogInfo(&ref, kFSCatInfoVolume, &info, NULL, NULL, NULL);
+    if (error != noErr) {
+        return NULL;
+    }
+
+    // Get root directory FSRef.
+    FSRef rootRef;
+    error = FSGetVolumeInfo(info.volume, 0, NULL, kFSVolInfoNone, NULL, NULL, &rootRef);
+    if (error != noErr) {
+        return NULL;
+    }
+
+    // Get the pieces of the path.
+    NSMutableData *carbonPath = [NSMutableData dataWithBytes:"" length:1];
+    BOOL needColon = NO;
+    for (;;) {
+        FSSpec spec;
+        FSRef parentRef;
+        error = FSGetCatalogInfo(&ref, kFSCatInfoNone, NULL, NULL, &spec, &parentRef);
+        if (error != noErr) {
+            return NULL;
+        }
+        if (needColon) {
+            [carbonPath replaceBytesInRange:NSMakeRange(0, 0) withBytes:":" length:1];
+        }
+        [carbonPath replaceBytesInRange:NSMakeRange(0, 0) withBytes:&spec.name[1] length:spec.name[0]];
+        needColon = YES;
+        if (FSCompareFSRefs(&ref, &rootRef) == noErr) {
+            break;
+        }
+        ref = parentRef;
+    }
+
+    return (const char *)[carbonPath bytes];
+}
