@@ -760,21 +760,21 @@ static BOOL loggedObjectCacheSize = NO;
     return cacheSize * multiplier;
 }
 
-- (BOOL)frameRequiredForMIMEType: (NSString*)mimeType
+- (BOOL)frameRequiredForMIMEType:(NSString*)mimeType
 {
     // Assume a plugin is required. Don't make a frame.
     if ([mimeType length] == 0)
         return NO;
     
-    Class result = [[WebFrameView _viewTypes] _web_objectForMIMEType: mimeType];
+    Class result = [WebFrameView _viewClassForMIMEType:mimeType];
     if (!result)
         return NO;  // Want to display a "plugin not found" dialog/image, so let a plugin get made.
         
     // If we're a supported type other than a plugin, we want to make a frame.
     // Ultimately we should just use frames for all mime types (plugins and HTML/XML/text documents),
     // but for now we're burdened with making a distinction between the two.
-    return !([result isSubclassOfClass: [WebNetscapePluginDocumentView class]] ||
-            [result conformsToProtocol: @protocol(WebPlugin)]);
+    return !([result isSubclassOfClass:[WebNetscapePluginDocumentView class]] ||
+            [result conformsToProtocol:@protocol(WebPlugin)]);
 }
 
 - (void)loadEmptyDocumentSynchronously

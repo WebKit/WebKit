@@ -1,3 +1,33 @@
+2003-04-10  Darin Adler  <darin@apple.com>
+
+        Reviewed by Trey.
+
+        - speed up startup by not calling [NSImage imageFileTypes] until we need to
+
+        * WebCoreSupport.subproj/WebBridge.m: (-[WebBridge frameRequiredForMIMEType:]):
+        Call _viewClassForMIMEType instead of _viewTypes, since _viewClassForMIMEType is now optimized
+        by not loading the image types unless needed.
+
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _representationClass]): Call _representationClassForMIMEType instead of
+        _repTypes, since _representationClassForMIMEType is now optimized by not loading the image
+        types unless needed.
+        (+[WebDataSource _repTypesAllowImageTypeOmission:]): Added. Moved the guts of _repTypes
+        in here. If you pass YES, doesn't bother adding the image types yet.
+        (+[WebDataSource _repTypes]): Now calls _repTypesAllowImageTypeOmission:NO.
+        (+[WebDataSource _representationClassForMIMEType:]): First try the dictionary without
+        requiring the image types, then only in the case where we get nil, try with the image types.
+        
+        * WebView.subproj/WebFrameViewPrivate.m:
+        (-[WebFrameView _makeDocumentViewForDataSource:]): Call _viewClassForMIMEType instead of
+        _viewTypes, since _viewClassForMIMEType is now optimized by not loading the image types
+        unless needed.
+        (+[WebFrameView _viewTypesAllowImageTypeOmission:]): Added. Moved the guts of _viewTypes
+        in here. If you pass YES, doesn't bother adding the image types yet.
+        (+[WebFrameView _viewTypes]): Now calls _viewTypesAllowImageTypeOmission:NO.
+        (+[WebFrameView _viewClassForMIMEType:]): First try the dictionary without requiring
+        the image types, then only in the case where we get nil, try with the image types.
+
 2003-04-09  Trey Matteson  <trey@apple.com>
 
 	3223413 - crash in [CompletionController controlTextDidChange] at travelocity.com

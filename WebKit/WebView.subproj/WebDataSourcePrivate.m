@@ -92,7 +92,7 @@
 
 - (Class)_representationClass
 {
-    return [[[self class] _repTypes] _web_objectForMIMEType:[[self response] MIMEType]];
+    return [[self class] _representationClassForMIMEType:[[self response] MIMEType]];
 }
 
 - (void)_setLoading:(BOOL)loading
@@ -438,10 +438,11 @@
     }
 }
 
-+ (NSMutableDictionary *)_repTypes
++ (NSMutableDictionary *)_repTypesAllowImageTypeOmission:(BOOL)allowImageTypeOmission
 {
     static NSMutableDictionary *repTypes = nil;
-
+    static BOOL addedImageTypes;
+    
     if (!repTypes) {
         repTypes = [[NSMutableDictionary alloc] initWithObjectsAndKeys:
             [WebHTMLRepresentation class], @"text/html",
@@ -451,20 +452,33 @@
             [WebTextRepresentation class], @"text/",
             [WebTextRepresentation class], @"application/x-javascript",
             nil];
-
+    }
+    
+    if (!addedImageTypes && !allowImageTypeOmission) {
         NSEnumerator *enumerator = [[WebImageView supportedImageMIMETypes] objectEnumerator];
         NSString *mime;
         while ((mime = [enumerator nextObject]) != nil) {
             [repTypes setObject:[WebImageRepresentation class] forKey:mime];
         }
+        addedImageTypes = YES;
     }
     
     return repTypes;
 }
 
++ (NSMutableDictionary *)_repTypes
+{
+    return [self _repTypesAllowImageTypeOmission:NO];
+}
+
 + (Class)_representationClassForMIMEType:(NSString *)MIMEType
 {
-    return [[self _repTypes] _web_objectForMIMEType:MIMEType];
+    // Getting the image types is slow, so don't do it until we have to.
+    Class c = [[self _repTypesAllowImageTypeOmission:YES] _web_objectForMIMEType:MIMEType];
+    if (c == nil) {
+        c = [[self _repTypes] _web_objectForMIMEType:MIMEType];
+    }
+    return c;
 }
 
 - (WebBridge *)_bridge

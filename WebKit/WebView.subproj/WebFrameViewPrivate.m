@@ -85,7 +85,7 @@
 {
     NSString *MIMEType = [[dataSource response] MIMEType];
     
-    Class viewClass = [[[self class] _viewTypes] _web_objectForMIMEType:MIMEType];
+    Class viewClass = [[self class] _viewClassForMIMEType:MIMEType];
     NSView <WebDocumentView> *documentView = viewClass ? [[viewClass alloc] init] : nil;
     [self _setDocumentView:documentView];
     [documentView release];
@@ -244,9 +244,10 @@
     [self _scrollLineHorizontally: NO];
 }
 
-+ (NSMutableDictionary *)_viewTypes
++ (NSMutableDictionary *)_viewTypesAllowImageTypeOmission:(BOOL)allowImageTypeOmission
 {
     static NSMutableDictionary *viewTypes;
+    static BOOL addedImageTypes;
 
     if (!viewTypes) {
         viewTypes = [[NSMutableDictionary alloc] initWithObjectsAndKeys:
@@ -257,20 +258,33 @@
             [WebTextView class], @"text/",
             [WebTextView class], @"application/x-javascript",
             nil];
+    }
 
+    if (!addedImageTypes && !allowImageTypeOmission) {
         NSEnumerator *enumerator = [[WebImageView supportedImageMIMETypes] objectEnumerator];
         NSString *mime;
         while ((mime = [enumerator nextObject]) != nil) {
             [viewTypes setObject:[WebImageView class] forKey:mime];
         }
+        addedImageTypes = YES;
     }
     
     return viewTypes;
 }
 
++ (NSMutableDictionary *)_viewTypes
+{
+    return [self _viewTypesAllowImageTypeOmission:NO];
+}
+
 + (Class)_viewClassForMIMEType:(NSString *)MIMEType
 {
-    return [[self _viewTypes] _web_objectForMIMEType:MIMEType];
+    // Getting the image types is slow, so don't do it until we have to.
+    Class c = [[self _viewTypesAllowImageTypeOmission:YES] _web_objectForMIMEType:MIMEType];
+    if (c == nil) {
+        c = [[self _viewTypes] _web_objectForMIMEType:MIMEType];
+    }
+    return c;
 }
 
 - (void)_goBack
