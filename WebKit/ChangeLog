@@ -1,3 +1,122 @@
+2004-05-26  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - moved HTML editing operations from WebView to WebHTMLView, leaving only forwarding machinery
+          at the WebView level
+
+        - fixed <rdar://problem/3655412>: (Editing: -startSpeaking: method unimplemented (WebKit editing API))
+        - fixed <rdar://problem/3655414>: (Editing: -stopSpeaking: method unimplemented (WebKit editing API))
+        - fixed <rdar://problem/3655375>: (Editing: -pasteAsRichText: method unimplemented (WebKit editing API))
+
+        * WebView.subproj/WebView.h: Added missing declaration of selectionAffinity. I think this
+        omission was an editorial mistake.
+
+        * WebView.subproj/WebView.m:
+        (-[WebView searchFor:direction:caseSensitive:wrap:]): Use _frameForCurrentSelection directly,
+        since it no longer returns nil.
+        (-[WebView pasteboardTypesForSelection]): Use _frameForCurrentSelection instead of going through the bridge.
+        (-[WebView _frameForCurrentSelection]): Renamed from _currentFrame and changed to return main frame
+        rather than nil when called on WebView that has no current selection.
+        (-[WebView _bridgeForCurrentSelection]): Moved in file.
+        (-[WebView _updateFontPanel]): Removed the one call to _currentSelectionIsEditable here, since
+        it was the only one left in this file. Eventually this code will move to WebHTMLView.
+        (-[WebView _performResponderOperation:with:]): Name change.
+
+        * WebView.subproj/WebDataSource.m: (-[WebDataSource _documentFragmentWithImageResource:]):
+        Build document fragment using DOM instead of composing HTML text.
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _documentFragmentFromPasteboard:allowPlainText:]): Added allowPlainText boolean,
+        moved method into new location in file so it can be in the right category, changed link pasting
+        to use DOM instead of composing HTML text.
+        (-[WebHTMLView _replaceSelectionWithPasteboard:selectReplacement:allowPlainText:]): Added allowPlainText
+        boolean, moved method into new location in file so it can be in the right category.
+        (-[WebHTMLView concludeDragForDraggingInfo:]): Pass YES for allowPlainText.
+        (-[WebHTMLView centerSelectionInVisibleArea:]): Moved here from WebView.
+        (-[WebHTMLView _alterCurrentSelection:direction:granularity:]): Ditto.
+        (-[WebHTMLView moveBackward:]): Ditto.
+        (-[WebHTMLView moveBackwardAndModifySelection:]): Ditto.
+        (-[WebHTMLView moveDown:]): Ditto.
+        (-[WebHTMLView moveDownAndModifySelection:]): Ditto.
+        (-[WebHTMLView moveForward:]): Ditto.
+        (-[WebHTMLView moveForwardAndModifySelection:]): Ditto.
+        (-[WebHTMLView moveLeft:]): Ditto.
+        (-[WebHTMLView moveLeftAndModifySelection:]): Ditto.
+        (-[WebHTMLView moveRight:]): Ditto.
+        (-[WebHTMLView moveRightAndModifySelection:]): Ditto.
+        (-[WebHTMLView moveToBeginningOfDocument:]): Ditto.
+        (-[WebHTMLView moveToBeginningOfLine:]): Ditto.
+        (-[WebHTMLView moveToBeginningOfParagraph:]): Ditto.
+        (-[WebHTMLView moveToEndOfDocument:]): Ditto.
+        (-[WebHTMLView moveToEndOfLine:]): Ditto.
+        (-[WebHTMLView moveToEndOfParagraph:]): Ditto.
+        (-[WebHTMLView moveUp:]): Ditto.
+        (-[WebHTMLView moveUpAndModifySelection:]): Ditto.
+        (-[WebHTMLView moveWordBackward:]): Ditto.
+        (-[WebHTMLView moveWordBackwardAndModifySelection:]): Ditto.
+        (-[WebHTMLView moveWordForward:]): Ditto.
+        (-[WebHTMLView moveWordForwardAndModifySelection:]): Ditto.
+        (-[WebHTMLView moveWordLeft:]): Ditto.
+        (-[WebHTMLView moveWordLeftAndModifySelection:]): Ditto.
+        (-[WebHTMLView moveWordRight:]): Ditto.
+        (-[WebHTMLView moveWordRightAndModifySelection:]): Ditto.
+        (-[WebHTMLView pageDown:]): Ditto.
+        (-[WebHTMLView pageUp:]): Ditto.
+        (-[WebHTMLView selectParagraph:]): Ditto.
+        (-[WebHTMLView selectLine:]): Ditto.
+        (-[WebHTMLView selectWord:]): Ditto.
+        (-[WebHTMLView copy:]): Moved down in file so it's in the right category.
+        (-[WebHTMLView cut:]): Ditto.
+        (-[WebHTMLView delete:]): Ditto.
+        (-[WebHTMLView paste:]): Ditto.
+        (-[WebHTMLView copyFont:]): Moved here from WebView.
+        (-[WebHTMLView pasteFont:]): Ditto.
+        (-[WebHTMLView pasteAsPlainText:]): Ditto.
+        (-[WebHTMLView pasteAsRichText:]): Implemented this by calling the paste code with
+        allowPlainText:NO; believe it or not, that's what this means in NSTextView.
+        (-[WebHTMLView changeFont:]): Moved here from WebView.
+        (-[WebHTMLView changeAttributes:]): Ditto.
+        (-[WebHTMLView changeDocumentBackgroundColor:]): Ditto.
+        (-[WebHTMLView changeColor:]): Ditto.
+        (-[WebHTMLView alignCenter:]): Ditto.
+        (-[WebHTMLView alignJustified:]): Ditto.
+        (-[WebHTMLView alignLeft:]): Ditto.
+        (-[WebHTMLView alignRight:]): Ditto.
+        (-[WebHTMLView indent:]): Ditto.
+        (-[WebHTMLView insertTab:]): Moved here from WebView, also call insertText rather than
+        replaceSelectionWithText so it's undoable like a typed character.
+        (-[WebHTMLView insertBacktab:]): Moved here from WebView.
+        (-[WebHTMLView insertNewline:]): Moved here from WebView, also call insertText rather than
+        replaceSelectionWithText so it's undoable like a typed character.
+        (-[WebHTMLView insertParagraphSeparator:]): Moved here from WebView.
+        (-[WebHTMLView changeCaseOfLetter:]): Ditto.
+        (-[WebHTMLView uppercaseWord:]): Ditto.
+        (-[WebHTMLView lowercaseWord:]): Ditto.
+        (-[WebHTMLView capitalizeWord:]): Ditto.
+        (-[WebHTMLView deleteForward:]): Ditto.
+        (-[WebHTMLView deleteBackward:]): Ditto.
+        (-[WebHTMLView deleteBackwardByDecomposingPreviousCharacter:]): Ditto.
+        (-[WebHTMLView deleteWordForward:]): Ditto.
+        (-[WebHTMLView deleteWordBackward:]): Ditto.
+        (-[WebHTMLView deleteToBeginningOfLine:]): Ditto.
+        (-[WebHTMLView deleteToEndOfLine:]): Ditto.
+        (-[WebHTMLView deleteToBeginningOfParagraph:]): Ditto.
+        (-[WebHTMLView deleteToEndOfParagraph:]): Ditto.
+        (-[WebHTMLView complete:]): Ditto.
+        (-[WebHTMLView checkSpelling:]): Ditto.
+        (-[WebHTMLView showGuessPanel:]): Ditto.
+        (-[WebHTMLView performFindPanelAction:]): Ditto.
+        (-[WebHTMLView startSpeaking:]): Implemented this.
+        (-[WebHTMLView stopSpeaking:]): Implemented this.
+        (-[WebHTMLView insertText:]): Moved here from WebView.
+
+        * WebView.subproj/WebHTMLViewPrivate.h: Removed declarations of methods that are neither
+        SPI nor needed outside WebHTMLView.m.
+
+        * WebView.subproj/WebViewInternal.h: Removed _currentFrame, and added _frameForCurrentSelection and
+        _bridgeForCurrentSelection.
+
 2004-05-25  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Richard.

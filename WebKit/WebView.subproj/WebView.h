@@ -548,6 +548,7 @@ extern NSString * const WebViewDidChangeSelectionNotification;
 @interface WebView (WebViewEditing)
 - (void)setSelectedDOMRange:(DOMRange *)range affinity:(NSSelectionAffinity)selectionAffinity;
 - (DOMRange *)selectedDOMRange;
+- (NSSelectionAffinity)selectionAffinity;
 - (void)setEditable:(BOOL)flag;
 - (BOOL)isEditable;
 - (void)setTypingStyle:(DOMCSSStyleDeclaration *)style;

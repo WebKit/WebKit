@@ -115,13 +115,6 @@ NSString *_WebMainFrameURLKey =         @"mainFrameURL";
 @implementation WebProgressItem
 @end
 
-@interface WebView (WebViewEditingInternal)
-- (void)_alterCurrentSelection:(WebSelectionAlteration)alteration direction:(WebSelectionDirection)direction granularity:(WebSelectionGranularity)granularity;
-- (WebBridge *)_bridgeForCurrentSelection;
-- (BOOL)_currentSelectionIsEditable;
-@end
-
-
 @implementation WebViewPrivate
 
 - init 
@@ -1849,10 +1842,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 - (BOOL)searchFor:(NSString *)string direction:(BOOL)forward caseSensitive:(BOOL)caseFlag wrap:(BOOL)wrapFlag
 {
     // Get the frame holding the selection, or start with the main frame
-    WebFrame *startFrame = [self _currentFrame];
-    if (!startFrame) {
-        startFrame = [self mainFrame];
-    }
+    WebFrame *startFrame = [self _frameForCurrentSelection];
 
     // Search the first frame, then all the other frames, in order
     NSView <WebDocumentSearching> *startSearchView = nil;
@@ -1925,7 +1915,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 
 - (NSArray *)pasteboardTypesForSelection
 {
-    NSView <WebDocumentView> *documentView = [[[[self _bridgeForCurrentSelection] webFrame] frameView] documentView];
+    NSView <WebDocumentView> *documentView = [[[self _frameForCurrentSelection] frameView] documentView];
     if ([documentView conformsToProtocol:@protocol(WebDocumentSelection)]) {
         return [(NSView <WebDocumentSelection> *)documentView pasteboardTypesForSelection];
     }
@@ -2244,32 +2234,6 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 //==========================================================================================
 // Editing
 
-@implementation WebView (WebViewEditingInternal)
-
-- (void)_alterCurrentSelection:(WebSelectionAlteration)alteration direction:(WebSelectionDirection)direction granularity:(WebSelectionGranularity)granularity
-{
-    WebBridge *bridge = [self _bridgeForCurrentSelection];
-    DOMRange *proposedRange = [bridge rangeByAlteringCurrentSelection:alteration direction:direction granularity:granularity];
-    if ([[self _editingDelegateForwarder] webView:self shouldChangeSelectedDOMRange:[self selectedDOMRange] toDOMRange:proposedRange affinity:[bridge selectionAffinity] stillSelecting:NO]) {
-        [bridge alterCurrentSelection:alteration direction:direction granularity:granularity];
-        [bridge ensureCaretVisible];
-    }
-}
-
-// Note: This method should only be used by callers that wish to do nothing if there is no selection or if
-// the selection is outside of the WebView hierarchy.
-- (WebBridge *)_bridgeForCurrentSelection
-{
-    return [[self _currentFrame] _bridge];
-}
-
-- (BOOL)_currentSelectionIsEditable
-{
-    return [[self _bridgeForCurrentSelection] isSelectionEditable];
-}
-
-@end
-
 @implementation WebView (WebViewCSS)
 
 - (DOMCSSStyleDeclaration *)computedStyleForElement:(DOMElement *)element pseudoElement:(NSString *)pseudoElement
@@ -2286,16 +2250,21 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 @implementation WebView (WebInternal)
 
 // Return the frame holding first responder
-- (WebFrame *)_currentFrame
+- (WebFrame *)_frameForCurrentSelection
 {
     // Find the frame holding the first responder, or holding the first form in the doc
     NSResponder *resp = [[self window] firstResponder];
     if (!resp || ![resp isKindOfClass:[NSView class]] || ![(NSView *)resp isDescendantOf:self]) {
-        return nil;	// first responder outside our view tree
+        return [self mainFrame];	// first responder outside our view tree
     } else {
         WebFrameView *frameView = (WebFrameView *)[(NSView *)resp _web_superviewOfClass:[WebFrameView class]];
         return [frameView webFrame];
     }
+}
+
+- (WebBridge *)_bridgeForCurrentSelection
+{
+    return [[self _frameForCurrentSelection] _bridge];
 }
 
 - (BOOL)_isLoading
@@ -2305,6 +2274,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
         || [[mainFrame provisionalDataSource] isLoading];
 }
 
+// FIXME: Move to WebHTMLView.
 static NSFont *_fontFromStyle(DOMCSSStyleDeclaration *style)
 {
     // FIXME: can't get at CSS_PROP_FONT_FAMILY and such from cssproperties.h in WebCore
@@ -2317,12 +2287,13 @@ static NSFont *_fontFromStyle(DOMCSSStyleDeclaration *style)
     return nil;
 }
 
+// FIXME: Move to WebHTMLView.
 - (void)_updateFontPanel
 {
     // FIXME: NSTextView bails out if becoming or resigning first responder, for which it has ivar flags. Not
     // sure if we need to do something similar.
     
-    if (![self _currentSelectionIsEditable]) {
+    if (![[self _bridgeForCurrentSelection] isSelectionEditable]) {
         return;
     }
     
@@ -2602,17 +2573,13 @@ static NSFont *_fontFromStyle(DOMCSSStyleDeclaration *style)
 
 @end
 
-
-/*!
-    @implementation WebView (WebViewEditingActions)
-*/
 @implementation WebView (WebViewEditingActions)
 
-- (void)_performResponderOperation:(SEL)selector sender:(id)sender
+- (void)_performResponderOperation:(SEL)selector with:(id)parameter
 {
     static BOOL reentered = NO;
     if (reentered) {
-        [[self nextResponder] tryToPerform:selector with:sender];
+        [[self nextResponder] tryToPerform:selector with:parameter];
         return;
     }
 
@@ -2636,741 +2603,398 @@ static NSFont *_fontFromStyle(DOMCSSStyleDeclaration *style)
         }
     }
     reentered = YES;
-    [responder tryToPerform:selector with:sender];
+    [responder tryToPerform:selector with:parameter];
     reentered = NO;
 }
 
 - (void)centerSelectionInVisibleArea:(id)sender
 {
-    if ([self _currentSelectionIsEditable]) {
-        // FIXME: Does this do the right thing when the selection is not a caret?
-        [[self _bridgeForCurrentSelection] ensureCaretVisible];
-        return;
-    }
-    [[self nextResponder] tryToPerform:@selector(centerSelectionInVisibleArea:) with:sender];
+    [self _performResponderOperation:@selector(centerSelectionInVisibleArea:) with:sender];
 }
 
 - (void)moveBackward:(id)sender
 {
-    if ([self _currentSelectionIsEditable]) {
-        [self _alterCurrentSelection:WebSelectByMoving direction:WebSelectBackward granularity:WebSelectByCharacter];
-        return;
-    }
-    [[self nextResponder] tryToPerform:@selector(moveBackward:) with:sender];
+    [self _performResponderOperation:@selector(moveBackward:) with:sender];
 }
 
 - (void)moveBackwardAndModifySelection:(id)sender
 {
-    if ([self _currentSelectionIsEditable]) {
-        [self _alterCurrentSelection:WebSelectByExtending direction:WebSelectBackward granularity:WebSelectByCharacter];
-        return;
-    }
-    [[self nextResponder] tryToPerform:@selector(moveBackwardAndModifySelection:) with:sender];
+    [self _performResponderOperation:@selector(moveBackwardAndModifySelection:) with:sender];
 }
 
 - (void)moveDown:(id)sender
 {
-    if ([self _currentSelectionIsEditable]) {
-        [self _alterCurrentSelection:WebSelectByMoving direction:WebSelectDown granularity:WebSelectByCharacter];
-        return;
-    }
-    [[self nextResponder] tryToPerform:@selector(moveDown:) with:sender];
+    [self _performResponderOperation:@selector(moveDown:) with:sender];
 }
 
 - (void)moveDownAndModifySelection:(id)sender
 {
-    if ([self _currentSelectionIsEditable]) {
-        [self _alterCurrentSelection:WebSelectByExtending direction:WebSelectDown granularity:WebSelectByCharacter];
-        return;
-    }
-    [[self nextResponder] tryToPerform:@selector(moveDownAndModifySelection:) with:sender];
+    [self _performResponderOperation:@selector(moveDownAndModifySelection:) with:sender];
 }
 
 - (void)moveForward:(id)sender
 {
-    if ([self _currentSelectionIsEditable]) {
-        [self _alterCurrentSelection:WebSelectByMoving direction:WebSelectForward granularity:WebSelectByCharacter];
-        return;
-    }
-    [[self nextResponder] tryToPerform:@selector(moveForward:) with:sender];
+    [self _performResponderOperation:@selector(moveForward:) with:sender];
 }
 
 - (void)moveForwardAndModifySelection:(id)sender
 {
-    if ([self _currentSelectionIsEditable]) {
-        [self _alterCurrentSelection:WebSelectByExtending direction:WebSelectForward granularity:WebSelectByCharacter];
-        return;
-    }
-    [[self nextResponder] tryToPerform:@selector(moveForwardAndModifySelection:) with:sender];
+    [self _performResponderOperation:@selector(moveForwardAndModifySelection:) with:sender];
 }
 
 - (void)moveLeft:(id)sender
 {
-    if ([self _currentSelectionIsEditable]) {
-        [self _alterCurrentSelection:WebSelectByMoving direction:WebSelectLeft granularity:WebSelectByCharacter];
-        return;
-    }
-    [[self nextResponder] tryToPerform:@selector(moveLeft:) with:sender];
+    [self _performResponderOperation:@selector(moveLeft:) with:sender];
 }
 
 - (void)moveLeftAndModifySelection:(id)sender
 {
-    if ([self _currentSelectionIsEditable]) {
-        [self _alterCurrentSelection:WebSelectByExtending direction:WebSelectLeft granularity:WebSelectByCharacter];
-        return;
-    }
-    [[self nextResponder] tryToPerform:@selector(moveLeftAndModifySelection:) with:sender];
+    [self _performResponderOperation:@selector(moveLeftAndModifySelection:) with:sender];
 }
 
 - (void)moveRight:(id)sender
 {
-    if ([self _currentSelectionIsEditable]) {
-        [self _alterCurrentSelection:WebSelectByMoving direction:WebSelectRight granularity:WebSelectByCharacter];
-        return;
-    }
-    [[self nextResponder] tryToPerform:@selector(moveRight:) with:sender];
+    [self _performResponderOperation:@selector(moveRight:) with:sender];
 }
 
 - (void)moveRightAndModifySelection:(id)sender
 {
-    if ([self _currentSelectionIsEditable]) {
-        [self _alterCurrentSelection:WebSelectByExtending direction:WebSelectRight granularity:WebSelectByCharacter];
-        return;
-    }
-    [[self nextResponder] tryToPerform:@selector(moveRightAndModifySelection:) with:sender];
+    [self _performResponderOperation:@selector(moveRightAndModifySelection:) with:sender];
 }
 
 - (void)moveToBeginningOfDocument:(id)sender
 {
-    if ([self _currentSelectionIsEditable]) {
-        ERROR("unimplemented");
-        return;
-    }
-    [[self nextResponder] tryToPerform:@selector(moveToBeginningOfDocument:) with:sender];
+    [self _performResponderOperation:@selector(moveToBeginningOfDocument:) with:sender];
 }
 
 - (void)moveToBeginningOfLine:(id)sender
 {
-    if ([self _currentSelectionIsEditable]) {
-        ERROR("unimplemented");
-        return;
-    }
-    [[self nextResponder] tryToPerform:@selector(moveToBeginningOfLine:) with:sender];
+    [self _performResponderOperation:@selector(moveToBeginningOfLine:) with:sender];
 }
 
 - (void)moveToBeginningOfParagraph:(id)sender
 {
-    if ([self _currentSelectionIsEditable]) {
-        ERROR("unimplemented");
-        return;
-    }
-    [[self nextResponder] tryToPerform:@selector(moveToBeginningOfParagraph:) with:sender];
+    [self _performResponderOperation:@selector(moveToBeginningOfParagraph:) with:sender];
 }
 
 - (void)moveToEndOfDocument:(id)sender
 {
-    if ([self _currentSelectionIsEditable]) {
-        ERROR("unimplemented");
-        return;
-    }
-    [[self nextResponder] tryToPerform:@selector(moveToEndOfDocument:) with:sender];
+    [self _performResponderOperation:@selector(moveToEndOfDocument:) with:sender];
 }
 
 - (void)moveToEndOfLine:(id)sender
 {
-    if ([self _currentSelectionIsEditable]) {
-        ERROR("unimplemented");
-        return;
-    }
-    [[self nextResponder] tryToPerform:@selector(moveToEndOfLine:) with:sender];
+    [self _performResponderOperation:@selector(moveToEndOfLine:) with:sender];
 }
 
 - (void)moveToEndOfParagraph:(id)sender
 {
-    if ([self _currentSelectionIsEditable]) {
-        ERROR("unimplemented");
-        return;
-    }
-    [[self nextResponder] tryToPerform:@selector(moveToEndOfParagraph:) with:sender];
+    [self _performResponderOperation:@selector(moveToEndOfParagraph:) with:sender];
 }
 
 - (void)moveUp:(id)sender
 {
-    if ([self _currentSelectionIsEditable]) {
-        [self _alterCurrentSelection:WebSelectByMoving direction:WebSelectUp granularity:WebSelectByCharacter];
-        return;
-    }
-    [[self nextResponder] tryToPerform:@selector(moveUp:) with:sender];
+    [self _performResponderOperation:@selector(moveUp:) with:sender];
 }
 
 - (void)moveUpAndModifySelection:(id)sender
 {
-    if ([self _currentSelectionIsEditable]) {
-        [self _alterCurrentSelection:WebSelectByExtending direction:WebSelectUp granularity:WebSelectByCharacter];
-        return;
-    }
-    [[self nextResponder] tryToPerform:@selector(moveUpAndModifySelection:) with:sender];
+    [self _performResponderOperation:@selector(moveUpAndModifySelection:) with:sender];
 }
 
 - (void)moveWordBackward:(id)sender
 {
-    if ([self _currentSelectionIsEditable]) {
-        [self _alterCurrentSelection:WebSelectByMoving direction:WebSelectBackward granularity:WebSelectByWord];
-        return;
-    }
-    [[self nextResponder] tryToPerform:@selector(moveWordBackward:) with:sender];
+    [self _performResponderOperation:@selector(moveWordBackward:) with:sender];
 }
 
 - (void)moveWordBackwardAndModifySelection:(id)sender
 {
-    if ([self _currentSelectionIsEditable]) {
-        [self _alterCurrentSelection:WebSelectByExtending direction:WebSelectBackward granularity:WebSelectByWord];
-        return;
-    }
-    [[self nextResponder] tryToPerform:@selector(moveWordBackwardAndModifySelection:) with:sender];
+    [self _performResponderOperation:@selector(moveWordBackwardAndModifySelection:) with:sender];
 }
 
 - (void)moveWordForward:(id)sender
 {
-    if ([self _currentSelectionIsEditable]) {
-        [self _alterCurrentSelection:WebSelectByMoving direction:WebSelectForward granularity:WebSelectByWord];
-        return;
-    }
-    [[self nextResponder] tryToPerform:@selector(moveWordForward:) with:sender];
+    [self _performResponderOperation:@selector(moveWordForward:) with:sender];
 }
 
 - (void)moveWordForwardAndModifySelection:(id)sender
 {
-    if ([self _currentSelectionIsEditable]) {
-        [self _alterCurrentSelection:WebSelectByExtending direction:WebSelectForward granularity:WebSelectByWord];
-        return;
-    }
-    [[self nextResponder] tryToPerform:@selector(moveWordForwardAndModifySelection:) with:sender];
+    [self _performResponderOperation:@selector(moveWordForwardAndModifySelection:) with:sender];
 }
 
 - (void)moveWordLeft:(id)sender
 {
-    if ([self _currentSelectionIsEditable]) {
-        [self _alterCurrentSelection:WebSelectByMoving direction:WebSelectLeft granularity:WebSelectByWord];
-        return;
-    }
-    [[self nextResponder] tryToPerform:@selector(moveWordLeft:) with:sender];
+    [self _performResponderOperation:@selector(moveWordLeft:) with:sender];
 }
 
 - (void)moveWordLeftAndModifySelection:(id)sender
 {
-    if ([self _currentSelectionIsEditable]) {
-        [self _alterCurrentSelection:WebSelectByExtending direction:WebSelectLeft granularity:WebSelectByWord];
-        return;
-    }
-    [[self nextResponder] tryToPerform:@selector(moveWordLeftAndModifySelection:) with:sender];
+    [self _performResponderOperation:@selector(moveWordLeftAndModifySelection:) with:sender];
 }
 
 - (void)moveWordRight:(id)sender
 {
-    if ([self _currentSelectionIsEditable]) {
-        [self _alterCurrentSelection:WebSelectByMoving direction:WebSelectRight granularity:WebSelectByWord];
-        return;
-    }
-    [[self nextResponder] tryToPerform:@selector(moveWordRight:) with:sender];
+    [self _performResponderOperation:@selector(moveWordRight:) with:sender];
 }
 
 - (void)moveWordRightAndModifySelection:(id)sender
 {
-    if ([self _currentSelectionIsEditable]) {
-        [self _alterCurrentSelection:WebSelectByExtending direction:WebSelectRight granularity:WebSelectByWord];
-        return;
-    }
-    [[self nextResponder] tryToPerform:@selector(moveWordRightAndModifySelection:) with:sender];
+    [self _performResponderOperation:@selector(moveWordRightAndModifySelection:) with:sender];
 }
 
 - (void)pageDown:(id)sender
 {
-    if ([self _currentSelectionIsEditable]) {
-        ERROR("unimplemented");
-        return;
-    }
-    [[self nextResponder] tryToPerform:@selector(pageDown:) with:sender];
+    [self _performResponderOperation:@selector(pageDown:) with:sender];
 }
 
 - (void)pageUp:(id)sender
 {
-    if ([self _currentSelectionIsEditable]) {
-        ERROR("unimplemented");
-        return;
-    }
-    [[self nextResponder] tryToPerform:@selector(pageUp:) with:sender];
+    [self _performResponderOperation:@selector(pageUp:) with:sender];
 }
 
 - (void)scrollLineDown:(id)sender
 {
-    [self _performResponderOperation:@selector(scrollLineDown:) sender:sender];
+    [self _performResponderOperation:@selector(scrollLineDown:) with:sender];
 }
 
 - (void)scrollLineUp:(id)sender
 {
-    [self _performResponderOperation:@selector(scrollLineUp:) sender:sender];
+    [self _performResponderOperation:@selector(scrollLineUp:) with:sender];
 }
 
 - (void)scrollPageDown:(id)sender
 {
-    [self _performResponderOperation:@selector(scrollPageDown:) sender:sender];
+    [self _performResponderOperation:@selector(scrollPageDown:) with:sender];
 }
 
 - (void)scrollPageUp:(id)sender
 {
-    [self _performResponderOperation:@selector(scrollPageUp:) sender:sender];
+    [self _performResponderOperation:@selector(scrollPageUp:) with:sender];
 }
-
-
-    /* Selections */
 
 - (void)selectAll:(id)sender
 {
-    if ([self _currentSelectionIsEditable]) {
-        ERROR("unimplemented");
-        return;
-    }
-    [[self nextResponder] tryToPerform:@selector(selectAll:) with:sender];
+    [self _performResponderOperation:@selector(selectAll:) with:sender];
 }
 
 - (void)selectParagraph:(id)sender
 {
-    if ([self _currentSelectionIsEditable]) {
-        ERROR("unimplemented");
-        return;
-    }
-    [[self nextResponder] tryToPerform:@selector(selectParagraph:) with:sender];
+    [self _performResponderOperation:@selector(selectParagraph:) with:sender];
 }
 
 - (void)selectLine:(id)sender
 {
-    if ([self _currentSelectionIsEditable]) {
-        ERROR("unimplemented");
-        return;
-    }
-    [[self nextResponder] tryToPerform:@selector(selectLine:) with:sender];
+    [self _performResponderOperation:@selector(selectLine:) with:sender];
 }
 
 - (void)selectWord:(id)sender
 {
-    if ([self _currentSelectionIsEditable]) {
-        ERROR("unimplemented");
-        return;
-    }
-    [[self nextResponder] tryToPerform:@selector(selectWord:) with:sender];
+    [self _performResponderOperation:@selector(selectWord:) with:sender];
 }
-
-
-    /* "Edit menu" actions */
 
 - (void)copy:(id)sender
 {
-    [self _performResponderOperation:@selector(copy:) sender:sender];
+    [self _performResponderOperation:@selector(copy:) with:sender];
 }
 
 - (void)cut:(id)sender
 {
-    [self _performResponderOperation:@selector(cut:) sender:sender];
+    [self _performResponderOperation:@selector(cut:) with:sender];
 }
 
 - (void)paste:(id)sender
 {
-    [self _performResponderOperation:@selector(paste:) sender:sender];
+    [self _performResponderOperation:@selector(paste:) with:sender];
 }
 
 - (void)copyFont:(id)sender
 {
-    if ([self _currentSelectionIsEditable]) {
-        ERROR("unimplemented");
-        return;
-    }
-    [[self nextResponder] tryToPerform:@selector(copyFont:) with:sender];
+    [self _performResponderOperation:@selector(copyFont:) with:sender];
 }
 
 - (void)pasteFont:(id)sender
 {
-    if ([self _currentSelectionIsEditable]) {
-        ERROR("unimplemented");
-        return;
-    }
-    [[self nextResponder] tryToPerform:@selector(pasteFont:) with:sender];
+    [self _performResponderOperation:@selector(pasteFont:) with:sender];
 }
 
 - (void)delete:(id)sender
 {
-    [self _performResponderOperation:@selector(delete:) sender:sender];
+    [self _performResponderOperation:@selector(delete:) with:sender];
 }
 
 - (void)pasteAsPlainText:(id)sender
 {
-    if ([self _currentSelectionIsEditable]) {
-        id <WebDocumentView> view = [[[self mainFrame] frameView] documentView];
-        if ([view isKindOfClass:[WebHTMLView class]]) {
-            NSString *text = [[NSPasteboard generalPasteboard] stringForType:NSStringPboardType];
-            if ([[self _editingDelegateForwarder] webView:self shouldInsertText:text replacingDOMRange:[self selectedDOMRange] givenAction:WebViewInsertActionPasted]) {
-                [[self _bridgeForCurrentSelection] replaceSelectionWithText:text selectReplacement:NO];
-            }
-        }
-        return;
-    }
-    [[self nextResponder] tryToPerform:@selector(pasteAsPlainText:) with:sender];
+    [self _performResponderOperation:@selector(pasteAsPlainText:) with:sender];
 }
 
 - (void)pasteAsRichText:(id)sender
 {
-    if ([self _currentSelectionIsEditable]) {
-        ERROR("unimplemented");
-        return;
-    }
-    [[self nextResponder] tryToPerform:@selector(pasteAsRichText:) with:sender];
+    [self _performResponderOperation:@selector(pasteAsRichText:) with:sender];
 }
-
-
-    /* Fonts */
 
 - (void)changeFont:(id)sender
 {
-    if ([self _currentSelectionIsEditable]) {
-        ERROR("unimplemented");
-        return;
-    }
-    [[self nextResponder] tryToPerform:@selector(changeFont:) with:sender];
+    [self _performResponderOperation:@selector(changeFont:) with:sender];
 }
 
 - (void)changeAttributes:(id)sender
 {
-    if ([self _currentSelectionIsEditable]) {
-        ERROR("unimplemented");
-        return;
-    }
-    [[self nextResponder] tryToPerform:@selector(changeAttributes:) with:sender];
+    [self _performResponderOperation:@selector(changeAttributes:) with:sender];
 }
 
 - (void)changeDocumentBackgroundColor:(id)sender
 {
-    if ([self _currentSelectionIsEditable]) {
-        ERROR("unimplemented");
-        return;
-    }
-    [[self nextResponder] tryToPerform:@selector(changeDocumentBackgroundColor:) with:sender];
+    [self _performResponderOperation:@selector(changeDocumentBackgroundColor:) with:sender];
 }
-
-
-    /* Colors */
 
 - (void)changeColor:(id)sender
 {
-    if ([self _currentSelectionIsEditable]) {
-        ERROR("unimplemented");
-        return;
-    }
-    [[self nextResponder] tryToPerform:@selector(changeColor:) with:sender];
+    [self _performResponderOperation:@selector(changeColor:) with:sender];
 }
-
-
-	/* Alignment */
 
 - (void)alignCenter:(id)sender
 {
-    if ([self _currentSelectionIsEditable]) {
-        ERROR("unimplemented");
-        return;
-    }
-    [[self nextResponder] tryToPerform:@selector(alignCenter:) with:sender];
+    [self _performResponderOperation:@selector(alignCenter:) with:sender];
 }
 
 - (void)alignJustified:(id)sender
 {
-    if ([self _currentSelectionIsEditable]) {
-        ERROR("unimplemented");
-        return;
-    }
-    [[self nextResponder] tryToPerform:@selector(alignJustified:) with:sender];
+    [self _performResponderOperation:@selector(alignJustified:) with:sender];
 }
 
 - (void)alignLeft:(id)sender
 {
-    if ([self _currentSelectionIsEditable]) {
-        ERROR("unimplemented");
-        return;
-    }
-    [[self nextResponder] tryToPerform:@selector(alignLeft:) with:sender];
+    [self _performResponderOperation:@selector(alignLeft:) with:sender];
 }
 
 - (void)alignRight:(id)sender
 {
-    if ([self _currentSelectionIsEditable]) {
-        ERROR("unimplemented");
-        return;
-    }
-    [[self nextResponder] tryToPerform:@selector(alignRight:) with:sender];
+    [self _performResponderOperation:@selector(alignRight:) with:sender];
 }
-
-
-    /* Insertions and Indentations */
 
 - (void)indent:(id)sender
 {
-    if ([self _currentSelectionIsEditable]) {
-        ERROR("unimplemented");
-        return;
-    }
-    [[self nextResponder] tryToPerform:@selector(indent:) with:sender];
+    [self _performResponderOperation:@selector(indent:) with:sender];
 }
 
 - (void)insertTab:(id)sender
 {
-    if ([self _currentSelectionIsEditable]) {
-        id <WebDocumentView> view = [[[self mainFrame] frameView] documentView];
-        if ([view isKindOfClass:[WebHTMLView class]]) {
-            if ([[self _editingDelegateForwarder] webView:self shouldInsertText:@"\t" replacingDOMRange:[self selectedDOMRange] givenAction:WebViewInsertActionPasted]) {
-                [[self _bridgeForCurrentSelection] replaceSelectionWithText:@"\t" selectReplacement:NO];
-            }
-        }
-        return;
-    }
-    [[self nextResponder] tryToPerform:@selector(insertTab:) with:sender];
+    [self _performResponderOperation:@selector(insertTab:) with:sender];
 }
 
 - (void)insertBacktab:(id)sender
 {
-    // Doing nothing matches normal NSTextView behavior. If we ever use WebView for a field-editor-type purpose
-    // we might add code here.
-    [self _performResponderOperation:@selector(insertBacktab:) sender:sender];
+    [self _performResponderOperation:@selector(insertBacktab:) with:sender];
 }
 
 - (void)insertNewline:(id)sender
 {
-    if ([self _currentSelectionIsEditable]) {
-        // Perhaps we should make this delegate call sensitive to the real DOM operation we actually do.
-        if ([[self _editingDelegateForwarder] webView:self shouldInsertText:@"\n" replacingDOMRange:[self selectedDOMRange] givenAction:WebViewInsertActionTyped]) {
-            WebBridge *bridge = [self _bridgeForCurrentSelection];
-            [bridge replaceSelectionWithNewline];
-            [bridge ensureCaretVisible];
-        }
-        return;
-    }
-    [[self nextResponder] tryToPerform:@selector(insertNewline:) with:sender];
+    [self _performResponderOperation:@selector(insertNewline:) with:sender];
 }
 
 - (void)insertParagraphSeparator:(id)sender
 {
-    if ([self _currentSelectionIsEditable]) {
-        ERROR("unimplemented");
-        return;
-    }
-    [[self nextResponder] tryToPerform:@selector(insertParagraphSeparator:) with:sender];
+    [self _performResponderOperation:@selector(insertParagraphSeparator:) with:sender];
 }
-
-
-    /* Case changes */
 
 - (void)changeCaseOfLetter:(id)sender
 {
-    if ([self _currentSelectionIsEditable]) {
-        ERROR("unimplemented");
-        return;
-    }
-    [[self nextResponder] tryToPerform:@selector(changeCaseOfLetter:) with:sender];
+    [self _performResponderOperation:@selector(changeCaseOfLetter:) with:sender];
 }
 
 - (void)uppercaseWord:(id)sender
 {
-    if ([self _currentSelectionIsEditable]) {
-        ERROR("unimplemented");
-        return;
-    }
-    [[self nextResponder] tryToPerform:@selector(uppercaseWord:) with:sender];
+    [self _performResponderOperation:@selector(uppercaseWord:) with:sender];
 }
 
 - (void)lowercaseWord:(id)sender
 {
-    if ([self _currentSelectionIsEditable]) {
-        ERROR("unimplemented");
-        return;
-    }
-    [[self nextResponder] tryToPerform:@selector(lowercaseWord:) with:sender];
+    [self _performResponderOperation:@selector(lowercaseWord:) with:sender];
 }
 
 - (void)capitalizeWord:(id)sender
 {
-    if ([self _currentSelectionIsEditable]) {
-        ERROR("unimplemented");
-        return;
-    }
-    [[self nextResponder] tryToPerform:@selector(capitalizeWord:) with:sender];
+    [self _performResponderOperation:@selector(capitalizeWord:) with:sender];
 }
-
-
-    /* Deletions */
 
 - (void)deleteForward:(id)sender
 {
-    if ([self _currentSelectionIsEditable]) {
-        ERROR("unimplemented");
-        return;
-    }
-    [[self nextResponder] tryToPerform:@selector(deleteForward:) with:sender];
+    [self _performResponderOperation:@selector(deleteForward:) with:sender];
 }
 
 - (void)deleteBackward:(id)sender
 {
-    if ([self _currentSelectionIsEditable]) {
-        if ([[self _editingDelegateForwarder] webView:self shouldDeleteDOMRange:[self selectedDOMRange]]) {
-            WebBridge *bridge = [self _bridgeForCurrentSelection];
-            [bridge deleteKeyPressed];
-            [bridge ensureCaretVisible];
-        }
-        return;
-    }
-    [[self nextResponder] tryToPerform:@selector(deleteBackward:) with:sender];
+    [self _performResponderOperation:@selector(deleteBackward:) with:sender];
 }
 
 - (void)deleteBackwardByDecomposingPreviousCharacter:(id)sender
 {
-    if ([self _currentSelectionIsEditable]) {
-        ERROR("unimplemented");
-        return;
-    }
-    [[self nextResponder] tryToPerform:@selector(deleteBackwardByDecomposingPreviousCharacter:) with:sender];
+    [self _performResponderOperation:@selector(deleteBackwardByDecomposingPreviousCharacter:) with:sender];
 }
 
 - (void)deleteWordForward:(id)sender
 {
-    if ([self _currentSelectionIsEditable]) {
-        [self moveWordForwardAndModifySelection:sender];
-        [self delete:sender];
-        return;
-    }
-    [[self nextResponder] tryToPerform:@selector(deleteWordForward:) with:sender];
+    [self _performResponderOperation:@selector(deleteWordForward:) with:sender];
 }
 
 - (void)deleteWordBackward:(id)sender
 {
-    if ([self _currentSelectionIsEditable]) {
-        [self moveWordBackwardAndModifySelection:sender];
-        [self delete:sender];
-        return;
-    }
-    [[self nextResponder] tryToPerform:@selector(deleteWordBackward:) with:sender];
+    [self _performResponderOperation:@selector(deleteWordBackward:) with:sender];
 }
 
 - (void)deleteToBeginningOfLine:(id)sender
 {
-    if ([self _currentSelectionIsEditable]) {
-        ERROR("unimplemented");
-        return;
-    }
-    [[self nextResponder] tryToPerform:@selector(deleteToBeginningOfLine:) with:sender];
+    [self _performResponderOperation:@selector(deleteToBeginningOfLine:) with:sender];
 }
 
 - (void)deleteToEndOfLine:(id)sender
 {
-    if ([self _currentSelectionIsEditable]) {
-        ERROR("unimplemented");
-        return;
-    }
-    [[self nextResponder] tryToPerform:@selector(deleteToEndOfLine:) with:sender];
+    [self _performResponderOperation:@selector(deleteToEndOfLine:) with:sender];
 }
 
 - (void)deleteToBeginningOfParagraph:(id)sender
 {
-    if ([self _currentSelectionIsEditable]) {
-        ERROR("unimplemented");
-        return;
-    }
-    [[self nextResponder] tryToPerform:@selector(deleteToBeginningOfParagraph:) with:sender];
+    [self _performResponderOperation:@selector(deleteToBeginningOfParagraph:) with:sender];
 }
 
 - (void)deleteToEndOfParagraph:(id)sender
 {
-    if ([self _currentSelectionIsEditable]) {
-        ERROR("unimplemented");
-        return;
-    }
-    [[self nextResponder] tryToPerform:@selector(deleteToEndOfParagraph:) with:sender];
+    [self _performResponderOperation:@selector(deleteToEndOfParagraph:) with:sender];
 }
-
-
-    /* Completion */
 
 - (void)complete:(id)sender
 {
-    if ([self _currentSelectionIsEditable]) {
-        ERROR("unimplemented");
-        return;
-    }
-    [[self nextResponder] tryToPerform:@selector(complete:) with:sender];
+    [self _performResponderOperation:@selector(complete:) with:sender];
 }
-
-
-    /* Spelling */
 
 - (void)checkSpelling:(id)sender
 {
-    if ([self _currentSelectionIsEditable]) {
-        ERROR("unimplemented");
-        return;
-    }
-    [[self nextResponder] tryToPerform:@selector(checkSpelling:) with:sender];
+    [self _performResponderOperation:@selector(checkSpelling:) with:sender];
 }
 
 - (void)showGuessPanel:(id)sender
 {
-    if ([self _currentSelectionIsEditable]) {
-        ERROR("unimplemented");
-        return;
-    }
-    [[self nextResponder] tryToPerform:@selector(showGuessPanel:) with:sender];
+    [self _performResponderOperation:@selector(showGuessPanel:) with:sender];
 }
 
-
-    /* Finding */
-    
 - (void)performFindPanelAction:(id)sender
 {
-    if ([self _currentSelectionIsEditable]) {
-        ERROR("unimplemented");
-        return;
-    }
-    [[self nextResponder] tryToPerform:@selector(performFindPanelAction:) with:sender];
+    [self _performResponderOperation:@selector(performFindPanelAction:) with:sender];
 }
-
-
-	/* Speech */
 
 - (void)startSpeaking:(id)sender
 {
-    if ([self _currentSelectionIsEditable]) {
-        ERROR("unimplemented");
-        return;
-    }
-    [[self nextResponder] tryToPerform:@selector(startSpeaking:) with:sender];
+    [self _performResponderOperation:@selector(startSpeaking:) with:sender];
 }
 
 - (void)stopSpeaking:(id)sender
 {
-    if ([self _currentSelectionIsEditable]) {
-        ERROR("unimplemented");
-        return;
-    }
-    [[self nextResponder] tryToPerform:@selector(stopSpeaking:) with:sender];
+    [self _performResponderOperation:@selector(stopSpeaking:) with:sender];
 }
-
-	/* Text input */
 
 - (void)insertText:(NSString *)text
 {
-    if ([self _currentSelectionIsEditable]) {
-        if ([[self _editingDelegateForwarder] webView:self shouldInsertText:text replacingDOMRange:[self selectedDOMRange] givenAction:WebViewInsertActionTyped]) {
-            WebBridge *bridge = [self _bridgeForCurrentSelection];
-            [bridge insertText:text];
-            [bridge ensureCaretVisible];
-        }
-        return;
-    }
-    [[self nextResponder] tryToPerform:@selector(insertText:) with:text];
+    [self _performResponderOperation:@selector(insertText:) with:text];
 }
 
 @end

@@ -14,6 +14,7 @@
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDocumentInternal.h>
 #import <WebKit/WebDOMOperations.h>
+#import <WebKit/WebEditingDelegate.h>
 #import <WebKit/WebException.h>
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebFrameViewPrivate.h>
@@ -84,6 +85,11 @@
 
 static BOOL forceRealHitTest = NO;
 
+@interface WebHTMLView (WebHTMLViewFileInternal)
+- (DOMDocumentFragment *)_documentFragmentFromPasteboard:(NSPasteboard *)pasteboard allowPlainText:(BOOL)allowPlainText;
+- (void)_replaceSelectionWithPasteboard:(NSPasteboard *)pasteboard selectReplacement:(BOOL)selectReplacement allowPlainText:(BOOL)allowPlainText;
+@end
+
 @interface WebHTMLView (WebHTMLViewPrivate)
 - (void)_setPrinting:(BOOL)printing minimumPageWidth:(float)minPageWidth maximumPageWidth:(float)maxPageWidth adjustViewSize:(BOOL)adjustViewSize;
 - (void)_updateTextSizeMultiplier;
@@ -94,12 +100,15 @@ static BOOL forceRealHitTest = NO;
 // Any non-zero value will do, but using somethign recognizable might help us debug some day.
 #define TRACKING_RECT_TAG 0xBADFACE
 
-
 @interface NSView (AppKitSecretsIKnowAbout)
 - (void)_recursiveDisplayRectIfNeededIgnoringOpacity:(NSRect)rect isVisibleRect:(BOOL)isVisibleRect rectIsVisibleRectForView:(NSView *)visibleView topView:(BOOL)topView;
 - (void)_recursiveDisplayAllDirtyWithLockFocus:(BOOL)needsLockFocus visRect:(NSRect)visRect;
 - (NSRect)_dirtyRect;
 - (void)_setDrawsOwnDescendants:(BOOL)drawsOwnDescendants;
+@end
+
+@interface NSApplication (AppKitSecretsIKnowAbout)
+- (void)speakString:(NSString *)string;
 @end
 
 @interface NSView (WebHTMLViewPrivate)
@@ -131,6 +140,81 @@ static BOOL forceRealHitTest = NO;
 
 @end
 
+@implementation WebHTMLView (WebHTMLViewFileInternal)
+
+- (DOMDocumentFragment *)_documentFragmentFromPasteboard:(NSPasteboard *)pasteboard allowPlainText:(BOOL)allowPlainText
+{
+    NSArray *types = [pasteboard types];
+
+    if ([types containsObject:WebArchivePboardType]) {
+        WebArchive *archive = [[WebArchive alloc] initWithData:[pasteboard dataForType:WebArchivePboardType]];
+        if (archive) {
+            DOMDocumentFragment *fragment = [[self _dataSource] _documentFragmentWithArchive:archive];
+            [archive release];
+            if (fragment) {
+                return fragment;
+            }
+        }
+    }
+    
+    NSURL *URL;
+    
+    if ([types containsObject:NSHTMLPboardType]) {
+        return [[self _bridge] documentFragmentWithMarkupString:[pasteboard stringForType:NSHTMLPboardType] baseURLString:nil];
+    } else if ([types containsObject:NSTIFFPboardType]) {
+        WebResource *resource = [[WebResource alloc] initWithData:[pasteboard dataForType:NSTIFFPboardType]
+                                                              URL:[NSURL _web_uniqueWebDataURLWithRelativeString:@"/image.tiff"]
+                                                         MIMEType:@"image/tiff" 
+                                                 textEncodingName:nil
+                                                        frameName:nil];
+        DOMDocumentFragment *fragment = [[self _dataSource] _documentFragmentWithImageResource:resource];
+        [resource release];
+        return fragment;
+    } else if ([types containsObject:NSPICTPboardType]) {
+        WebResource *resource = [[WebResource alloc] initWithData:[pasteboard dataForType:NSPICTPboardType]
+                                                              URL:[NSURL _web_uniqueWebDataURLWithRelativeString:@"/image.pict"]
+                                                         MIMEType:@"image/pict" 
+                                                 textEncodingName:nil
+                                                        frameName:nil];
+        DOMDocumentFragment *fragment = [[self _dataSource] _documentFragmentWithImageResource:resource];
+        [resource release];
+        return fragment;
+    } else if ((URL = [pasteboard _web_bestURL])) {
+        NSString *URLString = [URL _web_originalDataAsString];
+        NSString *linkLabel = [pasteboard stringForType:WebURLNamePboardType];
+        linkLabel = [linkLabel length] > 0 ? linkLabel : URLString;
+
+        DOMDocument *document = [[self _bridge] DOMDocument];
+        DOMDocumentFragment *fragment = [document createDocumentFragment];
+        DOMElement *anchorElement = [document createElement:@"a"];
+        [anchorElement setAttribute:@"href" :URLString];
+        [fragment appendChild:anchorElement];
+        [anchorElement appendChild:[document createTextNode:linkLabel]];
+        return fragment;
+    } else if ([types containsObject:NSRTFDPboardType]) {
+        // FIXME: Support RTFD to HTML (or DOM) conversion.
+        ERROR("RTFD to HTML conversion not yet supported.");
+        return [[self _bridge] documentFragmentWithMarkupString:[pasteboard stringForType:NSStringPboardType] baseURLString:nil];
+    } else if ([types containsObject:NSRTFPboardType]) {
+        // FIXME: Support RTF to HTML (or DOM) conversion.
+        ERROR("RTF to HTML conversion not yet supported.");
+        return [[self _bridge] documentFragmentWithMarkupString:[pasteboard stringForType:NSStringPboardType] baseURLString:nil];
+    } else if (allowPlainText && [types containsObject:NSStringPboardType]) {
+        return [[self _bridge] documentFragmentWithText:[pasteboard stringForType:NSStringPboardType]];
+    }
+    
+    return nil;
+}
+
+- (void)_replaceSelectionWithPasteboard:(NSPasteboard *)pasteboard selectReplacement:(BOOL)selectReplacement allowPlainText:(BOOL)allowPlainText
+{
+    DOMDocumentFragment *fragment = [self _documentFragmentFromPasteboard:pasteboard allowPlainText:allowPlainText];
+    if (fragment) {
+        [[self _bridge] replaceSelectionWithFragment:fragment selectReplacement:selectReplacement];
+    }
+}
+
+@end
 
 @implementation WebHTMLView (WebPrivate)
 
@@ -544,75 +628,6 @@ static WebHTMLView *lastHitView = nil;
     return [[self _bridge] isSelectionEditable];
 }
 
-- (DOMDocumentFragment *)_documentFragmentFromPasteboard:(NSPasteboard *)pasteboard
-{
-    NSArray *types = [pasteboard types];
-
-    if ([types containsObject:WebArchivePboardType]) {
-        WebArchive *archive = [[WebArchive alloc] initWithData:[pasteboard dataForType:WebArchivePboardType]];
-        if (archive) {
-            DOMDocumentFragment *fragment = [[self _dataSource] _documentFragmentWithArchive:archive];
-            [archive release];
-            if (fragment) {
-                return fragment;
-            }
-        }
-    }
-    
-    NSURL *URL;
-    
-    if ([types containsObject:NSHTMLPboardType]) {
-        return [[self _bridge] documentFragmentWithMarkupString:[pasteboard stringForType:NSHTMLPboardType] baseURLString:nil];
-    } else if ([types containsObject:NSTIFFPboardType]) {
-        WebResource *resource = [[WebResource alloc] initWithData:[pasteboard dataForType:NSTIFFPboardType]
-                                                              URL:[NSURL _web_uniqueWebDataURLWithRelativeString:@"/image.tiff"]
-                                                         MIMEType:@"image/tiff" 
-                                                 textEncodingName:nil
-                                                        frameName:nil];
-        DOMDocumentFragment *fragment = [[self _dataSource] _documentFragmentWithImageResource:resource];
-        [resource release];
-        return fragment;
-    } else if ([types containsObject:NSPICTPboardType]) {
-        WebResource *resource = [[WebResource alloc] initWithData:[pasteboard dataForType:NSPICTPboardType]
-                                                              URL:[NSURL _web_uniqueWebDataURLWithRelativeString:@"/image.pict"]
-                                                         MIMEType:@"image/pict" 
-                                                 textEncodingName:nil
-                                                        frameName:nil];
-        DOMDocumentFragment *fragment = [[self _dataSource] _documentFragmentWithImageResource:resource];
-        [resource release];
-        return fragment;
-    } else if ((URL = [pasteboard _web_bestURL])) {
-        NSString *URLString = [URL _web_originalDataAsString];
-        NSString *linkLabel = [pasteboard stringForType:WebURLNamePboardType];
-        linkLabel = [linkLabel length] > 0 ? linkLabel : URLString;
-        // FIXME: Need to escape the text in the linkLabel, otherwise characters like "<" won't work.
-        // An even better solution would be to make a DOM node with the DOM API rather than creating
-        // a markup string here.
-        NSString *markupString = [NSString stringWithFormat:@"<A HREF=\"%@\">%@</A>", URLString, linkLabel];
-        return [[self _bridge] documentFragmentWithMarkupString:markupString baseURLString:nil];
-    } else if ([types containsObject:NSRTFDPboardType]) {
-        // FIXME: Support RTFD to HTML (or DOM) conversion.
-        ERROR("RTFD to HTML conversion not yet supported.");
-        return [[self _bridge] documentFragmentWithMarkupString:[pasteboard stringForType:NSStringPboardType] baseURLString:nil];
-    } else if ([types containsObject:NSRTFPboardType]) {
-        // FIXME: Support RTF to HTML (or DOM) conversion.
-        ERROR("RTF to HTML conversion not yet supported.");
-        return [[self _bridge] documentFragmentWithMarkupString:[pasteboard stringForType:NSStringPboardType] baseURLString:nil];
-    } else if ([types containsObject:NSStringPboardType]) {
-        return [[self _bridge] documentFragmentWithText:[pasteboard stringForType:NSStringPboardType]];
-    }
-    
-    return nil;
-}
-
-- (void)_replaceSelectionWithPasteboard:(NSPasteboard *)pasteboard selectReplacement:(BOOL)selectReplacement
-{
-    DOMDocumentFragment *fragment = [self _documentFragmentFromPasteboard:pasteboard];
-    if (fragment) {
-        [[self _bridge] replaceSelectionWithFragment:fragment selectReplacement:selectReplacement];
-    }
-}
-
 - (NSImage *)_dragImageForLinkElement:(NSDictionary *)element
 {
     NSURL *linkURL = [element objectForKey: WebElementLinkURLKey];
@@ -890,39 +905,6 @@ static WebHTMLView *lastHitView = nil;
         context:[[NSApp currentEvent] context]
         eventNumber:0 clickCount:0 pressure:0];
     [self mouseDragged:fakeEvent];
-}
-
-- (void)copy:(id)sender
-{
-    if (![self _haveSelection]) {
-        NSBeep();
-        return;
-    }
-    [self _writeSelectionToPasteboard:[NSPasteboard generalPasteboard]];
-}
-
-- (void)cut:(id)sender
-{   
-    if (![self _haveSelection]) {
-        NSBeep();
-        return;
-    }
-    [self copy:sender];
-    [[self _bridge] deleteSelection];
-}
-
-- (void)delete:(id)sender
-{
-    if (![self _haveSelection]) {
-        NSBeep();
-        return;
-    }
-    [[self _bridge] deleteSelection];
-}
-
-- (void)paste:(id)sender
-{
-    [self _replaceSelectionWithPasteboard:[NSPasteboard generalPasteboard] selectReplacement:NO];
 }
 
 @end
@@ -1750,11 +1732,11 @@ static WebHTMLView *lastHitView = nil;
     BOOL didInsert = NO;
     if ([self _canProcessDragWithDraggingInfo:draggingInfo]) {
         if (_private->initiatedDrag && [[self _bridge] isSelectionEditable]) {
-            DOMDocumentFragment *fragment = [self _documentFragmentFromPasteboard:[draggingInfo draggingPasteboard]];
+            DOMDocumentFragment *fragment = [self _documentFragmentFromPasteboard:[draggingInfo draggingPasteboard] allowPlainText:YES];
             [bridge moveSelectionToDragCaret:fragment];
         } else {
             [bridge setSelectionToDragCaret];
-            [self _replaceSelectionWithPasteboard:[draggingInfo draggingPasteboard] selectReplacement:YES];
+            [self _replaceSelectionWithPasteboard:[draggingInfo draggingPasteboard] selectReplacement:YES allowPlainText:YES];
         }
         didInsert = YES;
     }
@@ -2101,6 +2083,443 @@ static WebHTMLView *lastHitView = nil;
     else
         return self;
 }
+
+- (void)centerSelectionInVisibleArea:(id)sender
+{
+    // FIXME: Does this do the right thing when the selection is not a caret?
+    [[self _bridge] ensureCaretVisible];
+}
+
+- (void)_alterCurrentSelection:(WebSelectionAlteration)alteration direction:(WebSelectionDirection)direction granularity:(WebSelectionGranularity)granularity
+{
+    WebBridge *bridge = [self _bridge];
+    DOMRange *proposedRange = [bridge rangeByAlteringCurrentSelection:alteration direction:direction granularity:granularity];
+    WebView *webView = [self _webView];
+    if ([[webView _editingDelegateForwarder] webView:webView shouldChangeSelectedDOMRange:[bridge selectedDOMRange] toDOMRange:proposedRange affinity:[bridge selectionAffinity] stillSelecting:NO]) {
+        [bridge alterCurrentSelection:alteration direction:direction granularity:granularity];
+        [bridge ensureCaretVisible];
+    }
+}
+
+- (void)moveBackward:(id)sender
+{
+    [self _alterCurrentSelection:WebSelectByMoving direction:WebSelectBackward granularity:WebSelectByCharacter];
+}
+
+- (void)moveBackwardAndModifySelection:(id)sender
+{
+    [self _alterCurrentSelection:WebSelectByExtending direction:WebSelectBackward granularity:WebSelectByCharacter];
+}
+
+- (void)moveDown:(id)sender
+{
+    [self _alterCurrentSelection:WebSelectByMoving direction:WebSelectDown granularity:WebSelectByCharacter];
+}
+
+- (void)moveDownAndModifySelection:(id)sender
+{
+    [self _alterCurrentSelection:WebSelectByExtending direction:WebSelectDown granularity:WebSelectByCharacter];
+}
+
+- (void)moveForward:(id)sender
+{
+    [self _alterCurrentSelection:WebSelectByMoving direction:WebSelectForward granularity:WebSelectByCharacter];
+}
+
+- (void)moveForwardAndModifySelection:(id)sender
+{
+    [self _alterCurrentSelection:WebSelectByExtending direction:WebSelectForward granularity:WebSelectByCharacter];
+}
+
+- (void)moveLeft:(id)sender
+{
+    [self _alterCurrentSelection:WebSelectByMoving direction:WebSelectLeft granularity:WebSelectByCharacter];
+}
+
+- (void)moveLeftAndModifySelection:(id)sender
+{
+    [self _alterCurrentSelection:WebSelectByExtending direction:WebSelectLeft granularity:WebSelectByCharacter];
+}
+
+- (void)moveRight:(id)sender
+{
+    [self _alterCurrentSelection:WebSelectByMoving direction:WebSelectRight granularity:WebSelectByCharacter];
+}
+
+- (void)moveRightAndModifySelection:(id)sender
+{
+    [self _alterCurrentSelection:WebSelectByExtending direction:WebSelectRight granularity:WebSelectByCharacter];
+}
+
+- (void)moveToBeginningOfDocument:(id)sender
+{
+    ERROR("unimplemented");
+}
+
+- (void)moveToBeginningOfLine:(id)sender
+{
+    ERROR("unimplemented");
+}
+
+- (void)moveToBeginningOfParagraph:(id)sender
+{
+    ERROR("unimplemented");
+}
+
+- (void)moveToEndOfDocument:(id)sender
+{
+    ERROR("unimplemented");
+}
+
+- (void)moveToEndOfLine:(id)sender
+{
+    ERROR("unimplemented");
+}
+
+- (void)moveToEndOfParagraph:(id)sender
+{
+    ERROR("unimplemented");
+}
+
+- (void)moveUp:(id)sender
+{
+    [self _alterCurrentSelection:WebSelectByMoving direction:WebSelectUp granularity:WebSelectByCharacter];
+}
+
+- (void)moveUpAndModifySelection:(id)sender
+{
+    [self _alterCurrentSelection:WebSelectByExtending direction:WebSelectUp granularity:WebSelectByCharacter];
+}
+
+- (void)moveWordBackward:(id)sender
+{
+    [self _alterCurrentSelection:WebSelectByMoving direction:WebSelectBackward granularity:WebSelectByWord];
+}
+
+- (void)moveWordBackwardAndModifySelection:(id)sender
+{
+    [self _alterCurrentSelection:WebSelectByExtending direction:WebSelectBackward granularity:WebSelectByWord];
+}
+
+- (void)moveWordForward:(id)sender
+{
+    [self _alterCurrentSelection:WebSelectByMoving direction:WebSelectForward granularity:WebSelectByWord];
+}
+
+- (void)moveWordForwardAndModifySelection:(id)sender
+{
+    [self _alterCurrentSelection:WebSelectByExtending direction:WebSelectForward granularity:WebSelectByWord];
+}
+
+- (void)moveWordLeft:(id)sender
+{
+    [self _alterCurrentSelection:WebSelectByMoving direction:WebSelectLeft granularity:WebSelectByWord];
+}
+
+- (void)moveWordLeftAndModifySelection:(id)sender
+{
+    [self _alterCurrentSelection:WebSelectByExtending direction:WebSelectLeft granularity:WebSelectByWord];
+}
+
+- (void)moveWordRight:(id)sender
+{
+    [self _alterCurrentSelection:WebSelectByMoving direction:WebSelectRight granularity:WebSelectByWord];
+}
+
+- (void)moveWordRightAndModifySelection:(id)sender
+{
+    [self _alterCurrentSelection:WebSelectByExtending direction:WebSelectRight granularity:WebSelectByWord];
+}
+
+- (void)pageDown:(id)sender
+{
+    ERROR("unimplemented");
+}
+
+- (void)pageUp:(id)sender
+{
+    ERROR("unimplemented");
+}
+
+
+    /* Selections */
+
+- (void)selectParagraph:(id)sender
+{
+    ERROR("unimplemented");
+}
+
+- (void)selectLine:(id)sender
+{
+    ERROR("unimplemented");
+}
+
+- (void)selectWord:(id)sender
+{
+    ERROR("unimplemented");
+}
+
+- (void)copy:(id)sender
+{
+    if (![self _haveSelection]) {
+        NSBeep();
+        return;
+    }
+    [self _writeSelectionToPasteboard:[NSPasteboard generalPasteboard]];
+}
+
+- (void)cut:(id)sender
+{   
+    if (![self _haveSelection]) {
+        NSBeep();
+        return;
+    }
+    [self copy:sender];
+    [[self _bridge] deleteSelection];
+}
+
+- (void)delete:(id)sender
+{
+    if (![self _haveSelection]) {
+        NSBeep();
+        return;
+    }
+    [[self _bridge] deleteSelection];
+}
+
+- (void)paste:(id)sender
+{
+    [self _replaceSelectionWithPasteboard:[NSPasteboard generalPasteboard] selectReplacement:NO allowPlainText:YES];
+}
+
+- (void)copyFont:(id)sender
+{
+    ERROR("unimplemented");
+}
+
+- (void)pasteFont:(id)sender
+{
+    ERROR("unimplemented");
+}
+
+- (void)pasteAsPlainText:(id)sender
+{
+    NSString *text = [[NSPasteboard generalPasteboard] stringForType:NSStringPboardType];
+    WebView *webView = [self _webView];
+    WebBridge *bridge = [self _bridge];
+    if ([[webView _editingDelegateForwarder] webView:webView shouldInsertText:text replacingDOMRange:[bridge selectedDOMRange] givenAction:WebViewInsertActionPasted]) {
+        [[self _bridge] replaceSelectionWithText:text selectReplacement:NO];
+    }
+}
+
+- (void)pasteAsRichText:(id)sender
+{
+    [self _replaceSelectionWithPasteboard:[NSPasteboard generalPasteboard] selectReplacement:NO allowPlainText:NO];
+}
+
+- (void)changeFont:(id)sender
+{
+    ERROR("unimplemented");
+}
+
+- (void)changeAttributes:(id)sender
+{
+    ERROR("unimplemented");
+}
+
+- (void)changeDocumentBackgroundColor:(id)sender
+{
+    ERROR("unimplemented");
+}
+
+- (void)changeColor:(id)sender
+{
+    ERROR("unimplemented");
+}
+
+- (void)alignCenter:(id)sender
+{
+    ERROR("unimplemented");
+}
+
+- (void)alignJustified:(id)sender
+{
+    ERROR("unimplemented");
+}
+
+- (void)alignLeft:(id)sender
+{
+    ERROR("unimplemented");
+}
+
+- (void)alignRight:(id)sender
+{
+    ERROR("unimplemented");
+}
+
+- (void)indent:(id)sender
+{
+    ERROR("unimplemented");
+}
+
+- (void)insertTab:(id)sender
+{
+    WebView *webView = [self _webView];
+    WebBridge *bridge = [self _bridge];
+    if ([[webView _editingDelegateForwarder] webView:webView shouldInsertText:@"\t" replacingDOMRange:[bridge selectedDOMRange] givenAction:WebViewInsertActionPasted]) {
+        [[self _bridge] insertText:@"\t"];
+    }
+}
+
+- (void)insertBacktab:(id)sender
+{
+    // Doing nothing matches normal NSTextView behavior. If we ever use WebView for a field-editor-type purpose
+    // we might add code here.
+}
+
+- (void)insertNewline:(id)sender
+{
+    // Perhaps we should make this delegate call sensitive to the real DOM operation we actually do.
+    WebView *webView = [self _webView];
+    WebBridge *bridge = [self _bridge];
+    if ([[webView _editingDelegateForwarder] webView:webView shouldInsertText:@"\n" replacingDOMRange:[bridge selectedDOMRange] givenAction:WebViewInsertActionTyped]) {
+        [bridge replaceSelectionWithNewline];
+        [bridge ensureCaretVisible];
+    }
+}
+
+- (void)insertParagraphSeparator:(id)sender
+{
+    ERROR("unimplemented");
+}
+
+- (void)changeCaseOfLetter:(id)sender
+{
+    ERROR("unimplemented");
+}
+
+- (void)uppercaseWord:(id)sender
+{
+    ERROR("unimplemented");
+}
+
+- (void)lowercaseWord:(id)sender
+{
+    ERROR("unimplemented");
+}
+
+- (void)capitalizeWord:(id)sender
+{
+    ERROR("unimplemented");
+}
+
+- (void)deleteForward:(id)sender
+{
+    ERROR("unimplemented");
+}
+
+- (void)deleteBackward:(id)sender
+{
+    WebBridge *bridge = [self _bridge];
+    if ([bridge isSelectionEditable]) {
+        WebView *webView = [self _webView];
+        if ([[webView _editingDelegateForwarder] webView:webView shouldDeleteDOMRange:[bridge selectedDOMRange]]) {
+            [bridge deleteKeyPressed];
+            [bridge ensureCaretVisible];
+        }
+    }
+}
+
+- (void)deleteBackwardByDecomposingPreviousCharacter:(id)sender
+{
+    ERROR("unimplemented");
+}
+
+- (void)deleteWordForward:(id)sender
+{
+    [self moveWordForwardAndModifySelection:sender];
+    [self delete:sender];
+}
+
+- (void)deleteWordBackward:(id)sender
+{
+    [self moveWordBackwardAndModifySelection:sender];
+    [self delete:sender];
+}
+
+- (void)deleteToBeginningOfLine:(id)sender
+{
+    [self moveToBeginningOfLine:sender];
+    [self delete:sender];
+}
+
+- (void)deleteToEndOfLine:(id)sender
+{
+    [self moveToEndOfLine:sender];
+    [self delete:sender];
+}
+
+- (void)deleteToBeginningOfParagraph:(id)sender
+{
+    [self moveToBeginningOfParagraph:sender];
+    [self delete:sender];
+}
+
+- (void)deleteToEndOfParagraph:(id)sender
+{
+    [self moveToEndOfParagraph:sender];
+    [self delete:sender];
+}
+
+- (void)complete:(id)sender
+{
+    ERROR("unimplemented");
+}
+
+- (void)checkSpelling:(id)sender
+{
+    ERROR("unimplemented");
+}
+
+- (void)showGuessPanel:(id)sender
+{
+    ERROR("unimplemented");
+}
+
+- (void)performFindPanelAction:(id)sender
+{
+    ERROR("unimplemented");
+}
+
+- (void)startSpeaking:(id)sender
+{
+    NSString *string = [self selectedString];
+    if ([string length] == 0) {
+        // FIXME: This cast must go away, because otherwise we have XML bugs.
+        // We agreed to do this by just adding another bridge method analogous to
+        // selectedString rather than trying to straighten this out in the DOM API for now.
+        string = [(DOMHTMLElement *)[[[self _bridge] DOMDocument] documentElement] outerText];
+    }
+    [NSApp speakString:string];
+}
+
+- (void)stopSpeaking:(id)sender
+{
+    [NSApp stopSpeaking:sender];
+}
+
+- (void)insertText:(NSString *)text
+{
+    WebBridge *bridge = [self _bridge];
+    if ([bridge isSelectionEditable]) {
+        WebView *webView = [self _webView];
+        if ([[webView _editingDelegateForwarder] webView:webView shouldInsertText:text replacingDOMRange:[bridge selectedDOMRange] givenAction:WebViewInsertActionTyped]) {
+            [bridge insertText:text];
+            [bridge ensureCaretVisible];
+        }
+    }
+}
+
 @end
 
 @implementation WebHTMLView (TextSizing)

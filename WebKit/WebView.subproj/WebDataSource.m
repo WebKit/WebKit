@@ -204,8 +204,14 @@
 {
     ASSERT(resource);
     [self addSubresource:resource];
-    NSString *markupString = [NSString stringWithFormat:@"<IMG SRC=\"%@\">", [[resource URL] _web_originalDataAsString]];
-    return [[self _bridge] documentFragmentWithMarkupString:markupString baseURLString:nil];
+
+    DOMDocument *document = [[self _bridge] DOMDocument];
+    DOMDocumentFragment *fragment = [document createDocumentFragment];
+    DOMElement *imageElement = [document createElement:@"img"];
+    [imageElement setAttribute:@"src" :[[resource URL] _web_originalDataAsString]];
+    [fragment appendChild:imageElement];
+
+    return fragment;
 }
 
 - (DOMDocumentFragment *)_documentFragmentWithArchive:(WebArchive *)archive
