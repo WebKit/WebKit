@@ -196,8 +196,16 @@ void HTMLBRElementImpl::parseAttribute(AttributeImpl *attr)
     case ATTR_CLEAR:
     {
         DOMString str = attr->value();
-        if( strcasecmp (str,"all")==0 || str.isEmpty() ) str = "both";
-        addCSSProperty(CSS_PROP_CLEAR, str);
+        // If the string is empty, then remove the clear property. 
+        // <br clear> and <br clear=""> are just treated like <br> by Gecko,
+        // Mac IE, etc. -dwh
+        if (str.isEmpty())
+            removeCSSProperty(CSS_PROP_CLEAR);
+        else {
+            if (strcasecmp (str,"all")==0) 
+                str = "both";
+            addCSSProperty(CSS_PROP_CLEAR, str);
+        }
         break;
     }
     default:

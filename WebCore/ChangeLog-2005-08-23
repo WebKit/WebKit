@@ -1,5 +1,14 @@
 2002-11-27  David Hyatt  <hyatt@apple.com>
 
+	Fix <br clear=""> and <br clear> to just behave like <br>
+	rather than <br clear="all">.  Matches behavior in other
+	browsers.
+	
+        * khtml/html/html_inlineimpl.cpp:
+        (HTMLBRElementImpl::parseAttribute):
+
+2002-11-27  David Hyatt  <hyatt@apple.com>
+
         Numerous overflow: hidden improvements to fix espn.com.
 
 	First stop absolute positioned overflow hidden elements
