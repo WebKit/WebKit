@@ -290,20 +290,35 @@ extern NSString *WebElementFrameKey;
 /*!
     @method setUserAgent:
     @abstract Set the user agent. 
-    @discussion Setting the user-agent string to nil means
-    that WebKit should construct the best possible user-agent string for each URL
-    for best results rendering web pages. Setting it to any string means
-    that WebKit should use that user-agent string for all purposes until it is set
-    back to nil.
+    @discussion Setting this means that the controller should use this user-agent string
+    instead of constructing a user-agent string for each URL.
     @param userAgentString the user agent description
 */
-- (void)setUserAgent:(NSString *)userAgentString;
+- (void)setCustomUserAgent:(NSString *)userAgentString;
 
 /*!
-    @method userAgent
-    @result userAgent Returns the userAgent string.
+    @method resetUserAgent
+    @abstract Reset the user agent. 
+    @discussion Causes the controller to construct the user-agent string for each URL
+    for best results rendering web pages.
+    @param userAgentString the user agent description
 */
-- (NSString *)userAgent;
+- (void)resetUserAgent;
+
+/*!
+    @method hasCustomUserAgent
+    @abstract Determine whether or not a custom user-agent string is in use.
+    @discussion It's an error to call customUserAgent if hasCustomUserAgent is NO.
+    @reselt Returns YES if a custom encoding has been set, NO otherwise.
+*/
+- (BOOL)hasCustomUserAgent;
+
+/*!
+    @method customUserAgent
+    @result customUserAgent Returns the custom user-agent string. Should only be called
+    if hasCustomUserAgent returns YES.
+*/
+- (NSString *)customUserAgent;
 
 /*!
     @method userAgentForURL:
@@ -322,23 +337,15 @@ extern NSString *WebElementFrameKey;
 - (BOOL)supportsTextEncoding;
 
 /*!
-    @method setCustomTextEncoding:
+    @method setCustomTextEncodingName:
     @discussion Make the page display with a different text encoding; stops any load in progress.
     The text encoding passed in overrides the normal text encoding smarts including
     what's specified in a web page's header or HTTP response.
     The text encoding automatically goes back to the default when the top level frame
     changes to a new location.
     @param encoding
-    // FIXME Resolve whether to use NSStringEncoding
 */
-- (void)setCustomTextEncoding:(CFStringEncoding)encoding;
-
-/*!
-    @method customTextEncoding
-    @result Returns the custom text encoding.
-    // FIXME Resolve whether to use NSStringEncoding
-*/
-- (CFStringEncoding)customTextEncoding;
+- (void)setCustomTextEncodingName:(NSString *)encoding;
 
 /*!
     @method resetTextEncoding
@@ -353,5 +360,12 @@ extern NSString *WebElementFrameKey;
     @reselt Returns YES if a custom encoding has been set, NO otherwise.
 */
 - (BOOL)hasCustomTextEncoding;
+
+/*!
+    @method customTextEncoding
+    @result Returns the custom text encoding.
+    // FIXME Resolve whether to use NSStringEncoding
+*/
+- (NSString *)customTextEncodingName;
 
 @end

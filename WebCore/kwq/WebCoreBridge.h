@@ -85,7 +85,7 @@ typedef khtml::RenderPart KHTMLRenderPart;
 
 - (void)openURL:(NSURL *)URL;
 - (void)addData:(NSData *)data withEncoding:(NSString *)encoding;
-- (void)addData:(NSData *)data withOverrideEncoding:(CFStringEncoding)encoding;
+- (void)addData:(NSData *)data withOverrideEncoding:(NSString *)encoding;
 - (void)closeURL;
 - (void)saveDocumentState;
 - (void)restoreDocumentState;

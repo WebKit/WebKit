@@ -359,13 +359,12 @@ NSString * WebElementFrameKey = @"WebElementFrame";
     return [[_private->applicationNameForUserAgent copy] autorelease];
 }
 
-// Set the user agent explicitly. Setting the user-agent string to nil means
-// that WebKit should construct the best possible user-agent string for each URL
-// for best results rendering web pages. Setting it to any string means
-// that WebKit should use that user-agent string for all purposes until it is set
-// back to nil.
-- (void)setUserAgent:(NSString *)userAgentString
+- (void)setCustomUserAgent:(NSString *)userAgentString
 {
+    ASSERT_ARG(userAgentString, userAgentString);
+    
+    // FIXME: Lock can go away once WebFoundation's user agent callback is replaced with something
+    // that's thread safe.
     NSString *override = [userAgentString copy];
     [_private->userAgentLock lock];
     [_private->userAgentOverride release];
@@ -373,15 +372,34 @@ NSString * WebElementFrameKey = @"WebElementFrame";
     [_private->userAgentLock unlock];
 }
 
-- (NSString *)userAgent
+- (void)resetUserAgent
 {
+    // FIXME: Lock can go away once WebFoundation's user agent callback is replaced with something
+    // that's thread safe.
+    [_private->userAgentLock lock];
+    [_private->userAgentOverride release];
+    _private->userAgentOverride = nil;
+    [_private->userAgentLock unlock];
+}
+
+- (BOOL)hasCustomUserAgent
+{
+    return _private->userAgentOverride != nil;
+}
+
+- (NSString *)customUserAgent
+{
+    if (_private->userAgentOverride == nil) {
+        ERROR("must not ask for customUserAgent is hasCustomUserAgent is NO");
+    }
+
     return [[_private->userAgentOverride copy] autorelease];
 }
 
 // Get the appropriate user-agent string for a particular URL.
 - (NSString *)userAgentForURL:(NSURL *)URL
 {
-    // FIXME: Lock can go away once WebFoundation's user agent API is replaced with something
+    // FIXME: Lock can go away once WebFoundation's user agent callback is replaced with something
     // that's thread safe.
     [_private->userAgentLock lock];
     NSString *result = [[_private->userAgentOverride copy] autorelease];
@@ -408,14 +426,11 @@ NSString * WebElementFrameKey = @"WebElementFrame";
         && [documentView supportsTextEncoding];
 }
 
-- (void)setCustomTextEncoding:(CFStringEncoding)encoding
+- (void)setCustomTextEncodingName:(NSString *)encoding
 {
-    if (encoding == kCFStringEncodingInvalidId) {
-        ERROR("setCustomTextEncoding called with kCFStringEncodingInvalidId");
-        return;
-    }
+    ASSERT_ARG(encoding, encoding);
     
-    if ([self hasCustomTextEncoding] && encoding == [self customTextEncoding]) {
+    if ([self hasCustomTextEncoding] && [encoding isEqualToString:[self customTextEncodingName]]) {
         return;
     }
 
@@ -428,31 +443,31 @@ NSString * WebElementFrameKey = @"WebElementFrame";
         return;
     }
     
-    [[self mainFrame] _reloadAllowingStaleDataWithOverrideEncoding:kCFStringEncodingInvalidId];
+    [[self mainFrame] _reloadAllowingStaleDataWithOverrideEncoding:nil];
 }
 
-- (CFStringEncoding)_mainFrameOverrideEncoding
+- (NSString *)_mainFrameOverrideEncoding
 {
     WebDataSource *dataSource = [[self mainFrame] provisionalDataSource];
     if (dataSource == nil) {
         dataSource = [[self mainFrame] dataSource];
     }
     if (dataSource == nil) {
-        return kCFStringEncodingInvalidId;
+        return nil;
     }
     return [dataSource _overrideEncoding];
 }
 
 - (BOOL)hasCustomTextEncoding
 {
-    return [self _mainFrameOverrideEncoding] != kCFStringEncodingInvalidId;
+    return [self _mainFrameOverrideEncoding] != nil;
 }
 
-- (CFStringEncoding)customTextEncoding
+- (NSString *)customTextEncodingName
 {
-    CFStringEncoding result = [self _mainFrameOverrideEncoding];
+    NSString *result = [self _mainFrameOverrideEncoding];
     
-    if (result == kCFStringEncodingInvalidId) {
+    if (result == nil) {
         ERROR("must not ask for customTextEncoding is hasCustomTextEncoding is NO");
     }
 

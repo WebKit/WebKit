@@ -44,9 +44,8 @@
 
 - init
 {
-    encoding = [[WebCoreEncodings charsetNameForEncoding:[[WebPreferences standardPreferences] defaultTextEncoding]] retain];
-    overrideEncoding = kCFStringEncodingInvalidId;
-
+    [super init];
+    encoding = [[[WebPreferences standardPreferences] defaultTextEncodingName] copy];
     return self;
 }
 
@@ -307,24 +306,28 @@
 
 - (void)_setContentType:(NSString *)type
 {
+    NSString *copy = [type copy];
     [_private->contentType release];
-    _private->contentType = [type retain];
+    _private->contentType = copy;
 }
 
 - (void)_setEncoding:(NSString *)encoding
 {
+    NSString *copy = [encoding copy];
     [_private->encoding release];
-    _private->encoding = [encoding retain];
+    _private->encoding = copy;
 }
 
-- (void)_setOverrideEncoding:(CFStringEncoding)overrideEncoding
+- (void)_setOverrideEncoding:(NSString *)overrideEncoding
 {
-    _private->overrideEncoding = overrideEncoding;
+    NSString *copy = [overrideEncoding copy];
+    [_private->overrideEncoding release];
+    _private->overrideEncoding = copy;
 }
 
-- (CFStringEncoding)_overrideEncoding
+- (NSString *)_overrideEncoding
 {
-    return _private->overrideEncoding;
+    return [[_private->overrideEncoding copy] autorelease];
 }
 
 - (void)_setMainDocumentError: (WebError *)error

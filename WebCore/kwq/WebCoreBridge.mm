@@ -110,10 +110,8 @@ using khtml::RenderPart;
     part->impl->slotData(encoding, NO, (const char *)[data bytes], [data length], NO);
 }
 
-- (void)addData:(NSData *)data withOverrideEncoding:(CFStringEncoding)overrideEncoding
+- (void)addData:(NSData *)data withOverrideEncoding:(NSString *)encoding
 {
-    NSString *encoding = (NSString *)KWQCFStringEncodingToIANACharsetName(overrideEncoding);
-
     part->impl->slotData(encoding, YES, (const char *)[data bytes], [data length], NO);
 }
 

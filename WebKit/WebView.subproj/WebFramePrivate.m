@@ -710,7 +710,7 @@ static const char * const stateNames[] = {
     [[self dataSource] _defersCallbacksChanged];
 }
 
-- (void)_reloadAllowingStaleDataWithOverrideEncoding:(CFStringEncoding)encoding
+- (void)_reloadAllowingStaleDataWithOverrideEncoding:(NSString *)encoding
 {
     WebDataSource *dataSource = [self dataSource];
     if (dataSource == nil) {

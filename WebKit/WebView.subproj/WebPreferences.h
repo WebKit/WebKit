@@ -117,15 +117,15 @@
 - (void)setMinimumFontSize:(int)size;
 
 /*!
-    @method defaultTextEncoding
+    @method defaultTextEncodingName
 */
-- (CFStringEncoding)defaultTextEncoding;
+- (NSString *)defaultTextEncodingName;
 
 /*!
-    @method setDefaultTextEncoding:
+    @method setDefaultTextEncodingName:
     @param encoding
 */
-- (void)setDefaultTextEncoding:(CFStringEncoding)encoding;
+- (void)setDefaultTextEncodingName:(NSString *)encoding;
 
 /*!
     @method userStyleSheetEnabled

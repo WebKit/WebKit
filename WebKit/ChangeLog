@@ -1,3 +1,40 @@
+2002-09-26  Darin Adler  <darin@apple.com>
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge receivedData:withDataSource:]): Use NSString for encoding.
+        * WebView.subproj/WebController.h: Update names to use separate boolean
+	for user agent and strings for text encodings instead of CFStringEncoding.
+        * WebView.subproj/WebController.m:
+        (-[WebController setCustomUserAgent:]): Name change.
+        (-[WebController resetUserAgent]): Added.
+        (-[WebController hasCustomUserAgent]): Added.
+        (-[WebController customUserAgent]): Name change.
+        (-[WebController setCustomTextEncodingName:]): Take NSString.
+        (-[WebController resetTextEncoding]): Update for NSString.
+        (-[WebController _mainFrameOverrideEncoding]): Ditto.
+        (-[WebController hasCustomTextEncoding]): Ditto.
+        (-[WebController customTextEncodingName]): Return NSString.
+
+        * WebView.subproj/WebDataSourcePrivate.h: Use NSString instead of
+	CFStringEncoding.
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSourcePrivate init]): No need to init.
+        (-[WebDataSource _setContentType:]): Copy, don't retain.
+        (-[WebDataSource _setEncoding:]): Copy, don't retain.
+        (-[WebDataSource _setOverrideEncoding:]): Use NSString.
+        (-[WebDataSource _overrideEncoding]): Use NSString.
+
+        * WebView.subproj/WebFramePrivate.h: Use NSString.
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _reloadAllowingStaleDataWithOverrideEncoding:]): Use NSString.
+
+        * WebView.subproj/WebPreferences.h: Use NSString instead of
+	CFStringEncoding.
+        * WebView.subproj/WebPreferences.m:
+        (+[WebPreferences load]): Use NSString.
+        (-[WebPreferences defaultTextEncodingName]): Use NSString.
+        (-[WebPreferences setDefaultTextEncodingName:]): Use NSString.
+
 2002-09-26  Chris Blumenberg  <cblu@apple.com>
 
 	Made WebTextView super-private.

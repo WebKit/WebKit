@@ -150,7 +150,7 @@
 {
     ASSERT([self dataSource] == withDataSource);
 
-    if ([withDataSource _overrideEncoding] != kCFStringEncodingInvalidId) {
+    if ([withDataSource _overrideEncoding]) {
 	[self addData:data withOverrideEncoding:[withDataSource _overrideEncoding]];
     } else {
 	[self addData:data withEncoding:[withDataSource encoding]];

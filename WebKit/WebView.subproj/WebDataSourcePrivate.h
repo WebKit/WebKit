@@ -56,7 +56,7 @@
     NSString *pageTitle;
     
     NSString *encoding;
-    CFStringEncoding overrideEncoding;
+    NSString *overrideEncoding;
 
     NSString *contentType;
 
@@ -110,9 +110,9 @@
 - (void)_loadIcon;
 - (void)_setIconURL:(NSURL *)URL;
 - (void)_setIconURL:(NSURL *)URL withType:(NSString *)iconType;
-- (WebResourceHandle*)_mainHandle;
-- (void)_setOverrideEncoding:(CFStringEncoding)overrideEncoding;
-- (CFStringEncoding)_overrideEncoding;
+- (WebResourceHandle *)_mainHandle;
+- (void)_setOverrideEncoding:(NSString *)overrideEncoding;
+- (NSString *)_overrideEncoding;
 
 // Convenience interface for getting here from an WebDataSource.
 // This returns nil if the representation is not an WebHTMLRepresentation.
