@@ -1,5 +1,12 @@
 2002-08-01  Chris Blumenberg  <cblu@apple.com>
 
+	Only send command keyDown once by ignoring the keyDown that comes after performKeyEquivalent.
+
+        * Plugins.subproj/WebPluginView.m:
+        (-[WebPluginView keyDown:]):
+
+2002-08-01  Chris Blumenberg  <cblu@apple.com>
+
 	Fixed: 2970530 - Command keys are not getting passed in to plugins
 
         * Plugins.subproj/WebPluginView.m:

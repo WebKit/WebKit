@@ -259,6 +259,12 @@
 {
     EventRecord event;
     bool acceptedEvent;
+
+    // Some command keys are sent with both performKeyEquivalent and keyDown.
+    // We should send only 1 keyDown to the plug-in, so we'll ignore this one.
+    if([theEvent modifierFlags] & NSCommandKeyMask){
+        return;
+    }
     
     [self getCarbonEvent:&event withEvent:theEvent];
     event.what = keyDown;
