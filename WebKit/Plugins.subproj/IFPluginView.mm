@@ -548,6 +548,7 @@ static char *newCString(NSString *string)
     
     [self setFrame:NSMakeRect(0, 0, superFrame.size.width, superFrame.size.height)];
     [self setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
+    [self setWindow];
 }
 
 
@@ -577,9 +578,9 @@ static char *newCString(NSString *string)
 
 -(void) viewHasMoved:(NSNotification *)notification
 {
-    [self sendUpdateEvent];
+    [self sendUpdateEvent]; 
     [self setWindow];
-    
+
     // reset the tracking rect
     [self removeTrackingRect:trackingTag];
     trackingTag = [self addTrackingRect:[self bounds] owner:self userData:nil assumeInside:NO];
