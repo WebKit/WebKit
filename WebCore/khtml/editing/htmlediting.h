@@ -245,8 +245,9 @@ protected:
     void deleteInsignificantTextDownstream(const DOM::Position &);
 
     void insertBlockPlaceholder(DOM::NodeImpl *);
-    bool insertBlockPlaceholderIfNeeded(DOM::NodeImpl *);
-    bool removeBlockPlaceholderIfNeeded(DOM::NodeImpl *);
+    void appendBlockPlaceholder(DOM::NodeImpl *);
+    bool addBlockPlaceholderIfNeeded(DOM::NodeImpl *, bool forceInsertIfNonEmpty=false);
+    bool removeBlockPlaceholder(DOM::NodeImpl *);
     DOM::NodeImpl *findBlockPlaceholder(DOM::NodeImpl *);
 
     void moveParagraphContentsToNewBlockIfNecessary(const DOM::Position &);
