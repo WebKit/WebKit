@@ -118,6 +118,7 @@ dnl Checks for header files.
 dnl -------------------------------------------------------------------
 dnl
 
+AC_HEADER_STAT 
 AC_HEADER_DIRENT
 AC_HEADER_STDC
 AC_CHECK_HEADERS(sys/param.h sys/mman.h sys/time.h sys/cdefs.h)
@@ -142,6 +143,7 @@ dnl
 AC_C_CONST
 AC_C_INLINE
 AC_HEADER_TIME
+AC_CHECK_ISSOCK
 
 dnl
 dnl -------------------------------------------------------------------
