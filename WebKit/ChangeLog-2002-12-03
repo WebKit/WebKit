@@ -1,3 +1,16 @@
+2002-07-14  Maciej Stachowiak  <mjs@apple.com>
+
+        More workarounds for the Objective C++ typecasting bug.
+
+	* WebView.subproj/IFDOMNode.mm:
+        (-[IFDOMNode initWithWebView:]):
+        * WebView.subproj/IFHTMLViewPrivate.mm:
+        (-[NSView _IF_stopIfPluginView]):
+        * WebView.subproj/IFRenderNode.mm:
+        (-[IFRenderNode initWithWebView:]):
+        * WebView.subproj/IFWebFrame.mm:
+        (-[IFWebFrame reset]):
+
 2002-07-14  Darin Adler  <darin@apple.com>
 
 	Wean WebKit completely from getting at the C++ parts of WebCore.

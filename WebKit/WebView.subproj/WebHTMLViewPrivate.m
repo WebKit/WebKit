@@ -25,7 +25,8 @@
 - (void)_IF_stopIfPluginView
 {
     if ([self isKindOfClass:[IFPluginView class]]) {
-        [(IFPluginView *)self stop];
+	IFPluginView *pluginView = (IFPluginView *)self;
+        [pluginView stop];
     }
 }
 @end

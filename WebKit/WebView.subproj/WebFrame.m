@@ -205,8 +205,10 @@
 - (void)reset
 {
     [_private setDataSource: nil];
-    if ([[self webView] isDocumentHTML])
-        [(IFHTMLView *)[[self webView] documentView] _reset];
+    if ([[self webView] isDocumentHTML]) {
+	IFHTMLView *htmlView = (IFHTMLView *)[[self webView] documentView];
+	[htmlView _reset];
+    }
     [_private setWebView: nil];
 }
 

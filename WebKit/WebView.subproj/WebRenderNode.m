@@ -54,7 +54,8 @@
     }
     
     copier = [[WebKitRenderTreeCopier alloc] init];
-    self = [[[(IFHTMLView *)[view documentView] _bridge] copyRenderTree:copier] retain];
+    IFHTMLView *htmlView = (IFHTMLView *)[view documentView];
+    self = [[[htmlView _bridge] copyRenderTree:copier] retain];
     [copier release];
     
     return self;

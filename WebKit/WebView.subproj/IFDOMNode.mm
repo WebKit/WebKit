@@ -40,7 +40,8 @@
     }
     
     copier = [[WebKitDOMTreeCopier alloc] init];
-    self = [[[(IFHTMLView *)[view documentView] _bridge] copyDOMTree:copier] retain];
+    IFHTMLView *htmlView = (IFHTMLView *)[view documentView];
+    self = [[[htmlView _bridge] copyDOMTree:copier] retain];
     [copier release];
     
     return self;
