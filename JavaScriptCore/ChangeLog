@@ -1,3 +1,23 @@
+2003-01-28  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fixed 3144918 -- Can't drill down multiple levels of categories when selling on ebay
+        if first item in list is chosen
+        
+        The bug was caused by having array values in the property map past the storageLength cutoff
+        in an array object; those values would not be seen when you do a get.
+
+        * kjs/array_object.cpp:
+        (ArrayInstanceImp::put): Implement a new rule for resizing the storage that is independent
+        of the length. The old rule would sometimes make the storage very big if you added two elements
+        in a row that both had large, but consecutive indexes. This eliminates any cases where we
+        make sparse entries in the property map below the sparse array cutoff.
+        (ArrayInstanceImp::resizeStorage): Don't ever make storage size bigger than the cutoff unless
+        the caller specifically requests it.
+        (ArrayInstanceImp::setLength): Change this so it only makes the storage smaller, never larger.
+        We will actually enlarge the storage when putting elements in.
+
 2003-01-25  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
