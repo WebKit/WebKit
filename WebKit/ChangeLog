@@ -1,7 +1,6 @@
 2002-10-17  Darin Adler  <darin@apple.com>
 
-	A small change that eliminates a variety of strange clipping problems, including ones that
-	make large swathes of the page disappear.
+	- fixed 3078644 -- Odd clipping in frame
 
         * WebView.subproj/WebClipView.h: Add hasAdditionalClip and additionalClip methods.
         * WebView.subproj/WebClipView.m:
