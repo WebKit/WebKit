@@ -165,7 +165,7 @@ void ScriptInterpreter::forgetDOMObject( void* objectHandle )
   }
 }
 
-DOMObject* ScriptInterpreter::getDOMObjectForDocument( void* documentHandle, void *objectHandle ) const
+DOMObject* ScriptInterpreter::getDOMObjectForDocument( DOM::DocumentImpl* documentHandle, void *objectHandle ) const
 {
   QPtrDict<DOMObject> *documentDict = (QPtrDict<DOMObject> *)m_domObjectsPerDocument[documentHandle];
   if (documentDict) {
@@ -175,7 +175,7 @@ DOMObject* ScriptInterpreter::getDOMObjectForDocument( void* documentHandle, voi
   return NULL;
 }
 
-void ScriptInterpreter::putDOMObjectForDocument( void* documentHandle, void *objectHandle, DOMObject *obj )
+void ScriptInterpreter::putDOMObjectForDocument( DOM::DocumentImpl* documentHandle, void *objectHandle, DOMObject *obj )
 {
   QPtrDict<DOMObject> *documentDict = (QPtrDict<DOMObject> *)m_domObjectsPerDocument[documentHandle];
   if (!documentDict) {
@@ -186,7 +186,7 @@ void ScriptInterpreter::putDOMObjectForDocument( void* documentHandle, void *obj
   documentDict->insert( objectHandle, obj );
 }
 
-bool ScriptInterpreter::deleteDOMObjectsForDocument( void* documentHandle )
+bool ScriptInterpreter::deleteDOMObjectsForDocument( DOM::DocumentImpl* documentHandle )
 {
   return m_domObjectsPerDocument.remove( documentHandle );
 }
@@ -210,9 +210,9 @@ void ScriptInterpreter::mark()
   }
 }
 
-void ScriptInterpreter::forgetDOMObjectsForDocument( void* documentHandle )
+void ScriptInterpreter::forgetDOMObjectsForDocument( DOM::DocumentImpl* documentHandle )
 {
- InterpreterImp *first = InterpreterImp::firstInterpreter();
+  InterpreterImp *first = InterpreterImp::firstInterpreter();
   if (first) {
     InterpreterImp *scr = first;
     do {

@@ -1301,7 +1301,7 @@ Value KJS::getDOMNode(ExecState *exec, const DOM::Node &n)
   ScriptInterpreter* interp = static_cast<ScriptInterpreter *>(exec->interpreter());
   DOM::NodeImpl *doc = n.ownerDocument().handle();
 
-  if ((ret = interp->getDOMObjectForDocument(doc, n.handle())))
+  if ((ret = interp->getDOMObjectForDocument(static_cast<DOM::DocumentImpl *>(doc), n.handle())))
     return Value(ret);
 
   switch (n.nodeType()) {
@@ -1346,7 +1346,7 @@ Value KJS::getDOMNode(ExecState *exec, const DOM::Node &n)
       ret = new DOMNode(exec, n);
   }
 
-  interp->putDOMObjectForDocument(doc, n.handle(), ret);
+  interp->putDOMObjectForDocument(static_cast<DOM::DocumentImpl *>(doc), n.handle(), ret);
 
   return Value(ret);
 }

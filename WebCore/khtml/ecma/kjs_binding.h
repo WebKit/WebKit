@@ -24,6 +24,7 @@
 
 #include <kjs/interpreter.h>
 #include <dom/dom_node.h>
+#include <dom/dom_doc.h>
 #include <qvariant.h>
 #include <qptrdict.h>
 #include <kurl.h>
@@ -98,15 +99,15 @@ namespace KJS {
       return m_domObjects.remove( objectHandle );
     }
 
-    DOMObject* getDOMObjectForDocument( void* documentHandle, void *objectHandle ) const;
-    void putDOMObjectForDocument( void* documentHandle, void *objectHandle, DOMObject *obj );
-    bool deleteDOMObjectsForDocument( void* documentHandle );
+    DOMObject* getDOMObjectForDocument( DOM::DocumentImpl* documentHandle, void *objectHandle ) const;
+    void putDOMObjectForDocument( DOM::DocumentImpl* documentHandle, void *objectHandle, DOMObject *obj );
+    bool deleteDOMObjectsForDocument( DOM::DocumentImpl* documentHandle );
 
     /**
      * Static method. Makes all interpreters forget about the object
      */
     static void forgetDOMObject( void* objectHandle );
-    static void forgetDOMObjectsForDocument( void* documentHandle );
+    static void forgetDOMObjectsForDocument( DOM::DocumentImpl* documentHandle );
 
     KHTMLPart* part() const { return m_part; }
 

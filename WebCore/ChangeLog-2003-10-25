@@ -1,3 +1,22 @@
+2003-04-14  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Trey.
+
+	- fixed 3214900 - iBench JavaScript test times get progressively slower with each test run
+
+	The fix is to make sure to always cast NodeImpl * to DocumentImpl
+	*. Multiple inheritance means the pointer values need not be the
+	same.
+	
+        * khtml/ecma/kjs_binding.cpp:
+        (ScriptInterpreter::getDOMObjectForDocument):
+        (ScriptInterpreter::putDOMObjectForDocument):
+        (ScriptInterpreter::deleteDOMObjectsForDocument):
+        (ScriptInterpreter::forgetDOMObjectsForDocument):
+        * khtml/ecma/kjs_binding.h:
+        * khtml/ecma/kjs_dom.cpp:
+        (KJS::getDOMNode):
+
 2003-04-11  David Hyatt  <hyatt@apple.com>
 
         Reviewed by darin
