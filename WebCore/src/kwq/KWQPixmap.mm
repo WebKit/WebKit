@@ -24,3 +24,126 @@
  */
 
 #include <qpixmap.h>
+
+
+QPixmap::QPixmap()
+{
+    nsimage = nil;
+}
+
+
+QPixmap::QPixmap(const QSize&sz)
+{
+    nsimage = [[NSImage alloc] initWithSize: NSMakeSize ((float)sz.width(), (float)sz.height())];
+}
+
+
+QPixmap::QPixmap(const QByteArray&bytes)
+{
+    NSData *nsdata = [[[NSData alloc] initWithBytesNoCopy: bytes.data() length: bytes.size()] autorelease];
+    nsimage = [[NSImage alloc] initWithData: nsdata];
+    [nsimage setFlipped: YES];
+}
+
+
+QPixmap::QPixmap(int w, int h)
+{
+    nsimage = [[NSImage alloc] initWithSize: NSMakeSize(w, h)];
+}
+
+
+QPixmap::QPixmap(const QPixmap &copyFrom)
+{
+    if (copyFrom.nsimage != nil)
+        nsimage = [copyFrom.nsimage retain];
+    else
+        nsimage = nil;
+    xmatrix = copyFrom.xmatrix;
+}
+
+
+QPixmap::~QPixmap()
+{
+    if (nsimage != nil){
+        [nsimage release];
+        nsimage = nil;
+    }
+}
+
+
+void QPixmap::setMask(const QBitmap &)
+{
+    NSLog (@"ERROR (NOT IMPLEMENTED) void QPixmap::setMask(const QBitmap &) Not needed?\n");
+}
+
+
+const QBitmap *QPixmap::mask() const
+{
+    NSLog (@"ERROR (NOT IMPLEMENTED) const QBitmap *QPixmap::mask() const Not needed?\n");
+}
+
+
+bool QPixmap::isNull() const
+{
+    if (nsimage == nil)
+        return TRUE;
+    return false;
+}
+
+
+QSize QPixmap::size() const
+{
+    NSSize sz = [nsimage size];
+    return QSize (sz.width, sz.height);
+}
+
+
+QRect QPixmap::rect() const
+{
+    NSSize sz = [nsimage size];
+    return QRect (0,0,sz.width, sz.height);
+}
+
+
+int QPixmap::width() const
+{
+    return (int)[nsimage size].width;
+}
+
+
+int QPixmap::height() const
+{
+    return (int)[nsimage size].height;
+}
+
+
+void QPixmap::resize(const QSize &sz)
+{
+    [nsimage setSize: NSMakeSize ((float)(sz.width()), (float)(sz.height()))];
+}
+
+
+QPixmap QPixmap::xForm(const QWMatrix &xmatrix) const
+{
+    QPixmap xPix = *this;
+    xPix.xmatrix = xmatrix;
+    return xPix;
+}
+
+
+QImage QPixmap::convertToImage() const
+{
+    NSLog (@"ERROR (NOT IMPLEMENTED) QImage QPixmap::convertToImage() This method should never be called.  It is only used by Qt drag and drop (I think!)\n");
+}
+
+
+QPixmap &QPixmap::operator=(const QPixmap &assignFrom)
+{
+    if (assignFrom.nsimage == nsimage)
+        return *this;
+    [nsimage release];
+    nsimage = [assignFrom.nsimage retain];
+    xmatrix = assignFrom.xmatrix;
+    return *this;
+}
+

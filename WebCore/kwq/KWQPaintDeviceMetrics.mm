@@ -23,52 +23,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <qpen.h>
+#include <qpaintdevicemetrics.h>
 
-QPen::QPen()
-{
-    qcolor = Qt::black;
-}
-
-
-QPen::QPen(const QColor &color, uint width, PenStyle style)
-{
-    qcolor = color;
-}
-
-
-QPen::QPen(const QPen &copyFrom)
-{
-    qcolor = copyFrom.qcolor;
-}
-
-
-QPen::~QPen()
+QPaintDeviceMetrics::QPaintDeviceMetrics(const QPaintDevice *)
 {
 }
 
 
-const QColor &QPen::color() const
+int QPaintDeviceMetrics::logicalDpiY() const 
 {
-    return qcolor;
 }
 
 
-QPen &QPen::operator=(const QPen &assignFrom)
+int QPaintDeviceMetrics::depth() const
 {
-    qcolor = assignFrom.qcolor;
-    return *this;
 }
-
-bool QPen::operator==(const QPen &compareTo) const
-{
-    return qcolor == compareTo.qcolor;
-}
-
-
-bool QPen::operator!=(const QPen &compareTo) const
-{
-    return !(operator==( compareTo ));
-}
-
 

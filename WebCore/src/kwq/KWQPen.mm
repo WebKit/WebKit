@@ -24,3 +24,51 @@
  */
 
 #include <qpen.h>
+
+QPen::QPen()
+{
+    qcolor = Qt::black;
+}
+
+
+QPen::QPen(const QColor &color, uint width, PenStyle style)
+{
+    qcolor = color;
+}
+
+
+QPen::QPen(const QPen &copyFrom)
+{
+    qcolor = copyFrom.qcolor;
+}
+
+
+QPen::~QPen()
+{
+}
+
+
+const QColor &QPen::color() const
+{
+    return qcolor;
+}
+
+
+QPen &QPen::operator=(const QPen &assignFrom)
+{
+    qcolor = assignFrom.qcolor;
+    return *this;
+}
+
+bool QPen::operator==(const QPen &compareTo) const
+{
+    return qcolor == compareTo.qcolor;
+}
+
+
+bool QPen::operator!=(const QPen &compareTo) const
+{
+    return !(operator==( compareTo ));
+}
+
+

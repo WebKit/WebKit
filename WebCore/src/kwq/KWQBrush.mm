@@ -24,3 +24,49 @@
  */
 
 #include <qbrush.h>
+
+QBrush::QBrush()
+{
+    qcolor = Qt::black;
+    qbrushstyle = NoBrush;
+}
+
+
+QBrush::QBrush(const QColor &c)
+{
+    qcolor = c;
+    qbrushstyle = SolidPattern;
+}
+
+
+QBrush::QBrush(const QBrush &copyFrom)
+{
+    qcolor = copyFrom.qcolor;
+    qbrushstyle = copyFrom.qbrushstyle;
+}
+
+
+QBrush &QBrush::operator=(const QBrush &assignFrom)
+{
+    qcolor = assignFrom.qcolor;
+    qbrushstyle = assignFrom.qbrushstyle;
+    return *this;
+}
+
+
+QBrush::~QBrush()
+{
+}
+
+
+bool QBrush::operator==(const QBrush &compareTo) const
+{
+    return qcolor == compareTo.qcolor;
+}
+
+
+bool QBrush::operator!=(const QBrush &compareTo) const
+{
+    return !(operator==( compareTo ));
+}
+

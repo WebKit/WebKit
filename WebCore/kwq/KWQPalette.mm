@@ -23,52 +23,49 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <qpen.h>
+#include <qpalette.h>
 
-QPen::QPen()
-{
-    qcolor = Qt::black;
-}
-
-
-QPen::QPen(const QColor &color, uint width, PenStyle style)
-{
-    qcolor = color;
-}
-
-
-QPen::QPen(const QPen &copyFrom)
-{
-    qcolor = copyFrom.qcolor;
-}
-
-
-QPen::~QPen()
+QPalette::QPalette()
 {
 }
 
 
-const QColor &QPen::color() const
+QPalette::QPalette(const QPalette &)
 {
-    return qcolor;
 }
 
 
-QPen &QPen::operator=(const QPen &assignFrom)
+QPalette::~QPalette()
 {
-    qcolor = assignFrom.qcolor;
-    return *this;
-}
-
-bool QPen::operator==(const QPen &compareTo) const
-{
-    return qcolor == compareTo.qcolor;
 }
 
 
-bool QPen::operator!=(const QPen &compareTo) const
+void QPalette::setColor(ColorGroup, QColorGroup::ColorRole role, const QColor &color)
 {
-    return !(operator==( compareTo ));
 }
 
+
+const QColorGroup &QPalette::active() const
+{
+}
+
+
+const QColorGroup &QPalette::inactive() const
+{
+}
+
+
+const QColorGroup &QPalette::disabled() const
+{
+}
+
+
+const QColorGroup &QPalette::normal() const
+{
+}
+
+
+QPalette &QPalette::operator=(const QPalette &)
+{
+}
 

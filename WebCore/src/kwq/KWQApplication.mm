@@ -24,3 +24,115 @@
  */
 
 #include <qapplication.h>
+
+#import "_KWQOwner.h"
+
+QPalette QApplication::palette(const QWidget *p)
+{
+    NSLog (@"ERROR (NOT YET IMPLEMENTED) QPalette QApplication::palette(const QWidget *p)\n");
+}
+
+
+QWidget *QApplication::desktop()
+{
+    NSLog (@"ERROR (NOT YET IMPLEMENTED) QWidget *QApplication::desktop()\n");
+}
+
+
+int QApplication::startDragDistance()
+{
+    NSLog (@"ERROR (NOT YET IMPLEMENTED) int QApplication::startDragDistance()\n");
+}
+
+
+QSize QApplication::globalStrut()
+{
+    NSLog (@"ERROR (NOT YET IMPLEMENTED) QSize QApplication::globalStrut()\n");
+}
+
+
+void QApplication::setOverrideCursor(const QCursor &c)
+{
+    NSLog (@"ERROR (NOT YET IMPLEMENTED) void QApplication::setOverrideCursor(const QCursor &c)\n");
+}
+
+
+void QApplication::restoreOverrideCursor()
+{
+    NSLog (@"ERROR (NOT YET IMPLEMENTED) void QApplication::restoreOverrideCursor()\n");
+}
+
+
+bool QApplication::sendEvent(QObject *o, QEvent *e)
+{
+    NSLog (@"ERROR (NOT YET IMPLEMENTED) bool QApplication::sendEvent(QObject *o, QEvent *e)\n");
+}
+
+
+QApplication::QApplication( int &argc, char **argv)
+{
+    _initialize();
+}
+
+
+void QApplication::_initialize(){
+    NSDictionary *info;
+    NSString *principalClassName;
+    NSString *mainNibFile;
+
+    globalPool = [[NSAutoreleasePool allocWithZone:NULL] init];
+    info = [[NSBundle mainBundle] infoDictionary];
+    principalClassName = [info objectForKey:@"NSPrincipalClass"];
+    mainNibFile = [info objectForKey:@"NSMainNibFile"];
+
+    if (principalClassName) {
+        Class principalClass = NSClassFromString(principalClassName);
+	if (principalClass) {
+            application = [principalClass sharedApplication];
+	    if (![NSBundle loadNibNamed: mainNibFile owner: application]) {
+                NSLog (@"ERROR:  QApplication::_initialize() unable to load %@\n", mainNibFile, nil);
+            }
+        }
+    }	
+    
+    //  Force linkage
+    [_KWQOwner class];
+}
+
+
+QApplication::~QApplication()
+{
+    [globalPool release];
+}
+
+
+void QApplication::setMainWidget(QWidget *w)
+{
+    if (application == nil){
+        NSLog (@"ERROR: QApplication::setMainWidget() application not set.\n");
+        return;
+    }
+    if (w == 0){
+        NSLog (@"ERROR: QApplication::setMainWidget() widget not valid.\n");
+        return;
+    }
+    
+    NSScrollView *sv = [[NSScrollView alloc] initWithFrame: NSMakeRect (0,0,0,0)];
+    [sv setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
+    [sv setHasVerticalScroller: YES];
+    [sv setHasHorizontalScroller: YES];
+    [sv setDocumentView: w->getView()];
+    [((_KWQOwner *)application)->window setContentView: sv];
+}
+
+
+int QApplication::exec()
+{
+    if (application == nil){
+        NSLog (@"ERROR: QApplication::exec() application not set.\n");
+        return 0;
+    }
+    [application run];
+    return 1;
+}
+

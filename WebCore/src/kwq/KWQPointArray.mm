@@ -23,52 +23,50 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <qpen.h>
+#include "qpoint.h"
 
-QPen::QPen()
+
+
+QPointArray::QPointArray(int nPoints, const QCOORD *points)
 {
-    qcolor = Qt::black;
+    setPoints( nPoints, points );
 }
 
 
-QPen::QPen(const QColor &color, uint width, PenStyle style)
+void QPointArray::setPoint( uint index, int x, int y )
 {
-    qcolor = color;
+    QArray<QPoint>::at( index ) = QPoint( x, y );
 }
 
 
-QPen::QPen(const QPen &copyFrom)
+bool QPointArray::setPoints( int nPoints, const QCOORD *points )
 {
-    qcolor = copyFrom.qcolor;
+    if ( !resize(nPoints) )
+	return FALSE;
+    int i = 0;
+    while ( nPoints-- ) {			// make array of points
+	setPoint( i++, *points, *(points+1) );
+	points++;
+	points++;
+    }
+    return TRUE;
 }
 
 
-QPen::~QPen()
+bool QPointArray::setPoints( int nPoints, int firstx, int firsty, ... )
 {
+    va_list ap;
+    if ( !resize(nPoints) )
+	return FALSE;
+    setPoint( 0, firstx, firsty );		// set first point
+    int i = 1, x, y;
+    nPoints--;
+    va_start( ap, firsty );
+    while ( nPoints-- ) {
+	x = va_arg( ap, int );
+	y = va_arg( ap, int );
+	setPoint( i++, x, y );
+    }
+    va_end( ap );
+    return TRUE;
 }
-
-
-const QColor &QPen::color() const
-{
-    return qcolor;
-}
-
-
-QPen &QPen::operator=(const QPen &assignFrom)
-{
-    qcolor = assignFrom.qcolor;
-    return *this;
-}
-
-bool QPen::operator==(const QPen &compareTo) const
-{
-    return qcolor == compareTo.qcolor;
-}
-
-
-bool QPen::operator!=(const QPen &compareTo) const
-{
-    return !(operator==( compareTo ));
-}
-
-

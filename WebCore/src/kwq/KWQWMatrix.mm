@@ -24,3 +24,23 @@
  */
 
 #include <qpainter.h>
+
+
+// Simple implementation.  Only allows for scaling, and scaling once! 
+// This class is used by khtml to scale images.
+QWMatrix::QWMatrix()
+{
+    empty = TRUE;
+}
+    
+
+QWMatrix &QWMatrix::scale(double _sx, double _sy)
+{
+    if (empty != TRUE){
+        NSLog (@"ERROR (INCOMPLETE IMPLEMENTATION) QWMatrix &QWMatrix::scale(double _sx, double _sy) scale may only be called once.\n");
+    }
+    empty = FALSE;
+    sx = _sx;
+    sy = _sy;
+}
+

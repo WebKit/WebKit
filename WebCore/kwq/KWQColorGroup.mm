@@ -23,52 +23,86 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <qpen.h>
+#include <qpalette.h>
+#include <qcolor.h>
 
-QPen::QPen()
-{
-    qcolor = Qt::black;
-}
-
-
-QPen::QPen(const QColor &color, uint width, PenStyle style)
-{
-    qcolor = color;
-}
-
-
-QPen::QPen(const QPen &copyFrom)
-{
-    qcolor = copyFrom.qcolor;
-}
-
-
-QPen::~QPen()
+QColorGroup::QColorGroup()
 {
 }
 
 
-const QColor &QPen::color() const
+QColorGroup::QColorGroup(const QColorGroup &)
 {
-    return qcolor;
 }
 
 
-QPen &QPen::operator=(const QPen &assignFrom)
+QColorGroup::~QColorGroup()
 {
-    qcolor = assignFrom.qcolor;
-    return *this;
-}
-
-bool QPen::operator==(const QPen &compareTo) const
-{
-    return qcolor == compareTo.qcolor;
 }
 
 
-bool QPen::operator!=(const QPen &compareTo) const
+const QColor &color(QColorGroup::ColorRole cr)
 {
-    return !(operator==( compareTo ));
+}
+
+
+void setColor(QColorGroup::ColorRole cr, const QColor &)
+{
+}
+
+
+const QColor &QColorGroup::foreground() const
+{
+}
+
+
+const QColor &QColorGroup::shadow() const
+{
+}
+
+
+const QColor &QColorGroup::light() const
+{
+}
+
+
+const QColor &QColorGroup::midlight() const
+{
+}
+
+
+const QColor &QColorGroup::dark() const
+{
+}
+
+
+const QColor &QColorGroup::base() const
+{
+}
+
+
+const QColor &QColorGroup::buttonText() const
+{
+}
+
+
+const QColor &QColorGroup::button() const
+{
+}
+
+
+const QColor &QColorGroup::text() const
+{
+}
+
+
+const QColor &QColorGroup::background() const
+{
+}
+
+
+QColorGroup &QColorGroup::operator=(const QColorGroup &)
+{
 }
 
 

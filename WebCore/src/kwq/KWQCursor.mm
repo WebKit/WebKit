@@ -23,52 +23,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <qpen.h>
+#include <qcursor.h>
 
-QPen::QPen()
-{
-    qcolor = Qt::black;
-}
-
-
-QPen::QPen(const QColor &color, uint width, PenStyle style)
-{
-    qcolor = color;
-}
-
-
-QPen::QPen(const QPen &copyFrom)
-{
-    qcolor = copyFrom.qcolor;
-}
-
-
-QPen::~QPen()
+QCursor::QCursor()
 {
 }
 
 
-const QColor &QPen::color() const
+QCursor::QCursor(const QCursor &)
 {
-    return qcolor;
 }
 
 
-QPen &QPen::operator=(const QPen &assignFrom)
+QCursor::~QCursor()
 {
-    qcolor = assignFrom.qcolor;
-    return *this;
 }
+      
 
-bool QPen::operator==(const QPen &compareTo) const
+QCursor &QCursor::operator=(const QCursor &)
 {
-    return qcolor == compareTo.qcolor;
 }
-
-
-bool QPen::operator!=(const QPen &compareTo) const
-{
-    return !(operator==( compareTo ));
-}
-
-
