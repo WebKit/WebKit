@@ -173,7 +173,7 @@
     switch (contentPolicy) {
     case WebPolicyShow:
 	if (![WebController canShowMIMEType:[r contentType]]) {
-	    [[dataSource webFrame] _handleUnimplementablePolicy:contentPolicy errorCode:WebKitErrorCannotShowMIMEType forURL:[req URL]];
+	    [[dataSource webFrame] _handleUnimplementablePolicyWithErrorCode:WebKitErrorCannotShowMIMEType forURL:[req URL]];
 	    [self stopLoadingForPolicyChange];
 	    return;
 	}
@@ -213,11 +213,11 @@
     case WebPolicyOpenURL:
 	if ([[req URL] isFileURL]) {
 	    if(![[NSWorkspace sharedWorkspace] openFile:[[req URL] path]]){
-		[[dataSource webFrame] _handleUnimplementablePolicy:contentPolicy errorCode:WebKitErrorCannotFindApplicationForFile forURL:[req URL]];
+		[[dataSource webFrame] _handleUnimplementablePolicyWithErrorCode:WebKitErrorCannotFindApplicationForFile forURL:[req URL]];
 	    }
 	} else {
 	    if(![[NSWorkspace sharedWorkspace] openURL:[req URL]]){
-		[[dataSource webFrame] _handleUnimplementablePolicy:contentPolicy errorCode:WebKitErrorCannotFindApplicationForURL forURL:[req URL]];
+		[[dataSource webFrame] _handleUnimplementablePolicyWithErrorCode:WebKitErrorCannotFindApplicationForURL forURL:[req URL]];
 	    }
 	}
 
@@ -229,7 +229,7 @@
 	if (![[req URL] isFileURL]) {
 	    ERROR("contentPolicyForMIMEType:andRequest:inFrame: returned an invalid content policy.");
 	} else if (![[NSWorkspace sharedWorkspace] selectFile:[[req URL] path] inFileViewerRootedAtPath:@""]) {
-	    [[dataSource webFrame] _handleUnimplementablePolicy:contentPolicy errorCode:WebKitErrorFinderCannotOpenDirectory forURL:[req URL]];
+	    [[dataSource webFrame] _handleUnimplementablePolicyWithErrorCode:WebKitErrorFinderCannotOpenDirectory forURL:[req URL]];
 	}
 
 	[self stopLoadingForPolicyChange];

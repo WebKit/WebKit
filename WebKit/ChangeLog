@@ -1,3 +1,16 @@
+2003-03-05  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by John.
+
+	Step towards policy API chantes - removed unneeded policy and URL
+	arguments from unableToImplementPolicy:
+	
+        * WebView.subproj/WebControllerPolicyDelegate.h:
+        * WebView.subproj/WebFramePrivate.h:
+        * WebView.subproj/WebFramePrivate.m:
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient continueAfterContentPolicy:response:]):
+
 2003-03-06  Ed Voas  voas@apple.com
 
         Reviewed by Richard.

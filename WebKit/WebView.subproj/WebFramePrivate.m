@@ -979,12 +979,12 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     return _private->bridge;
 }
 
-- (void)_handleUnimplementablePolicy:(WebPolicyAction)policy errorCode:(int)code forURL:(NSURL *)URL
+- (void)_handleUnimplementablePolicyWithErrorCode:(int)code forURL:(NSURL *)URL
 {
     WebError *error = [WebError errorWithCode:code
                                      inDomain:WebErrorDomainWebKit
                                    failingURL:[URL absoluteString]];
-    [[[self controller] _policyDelegateForwarder] unableToImplementPolicy:policy error:error forURL:URL inFrame:self];    
+    [[[self controller] _policyDelegateForwarder] unableToImplementPolicyWithError:error inFrame:self];    
 }
 
 - (void)_clearProvisionalDataSource
@@ -1340,11 +1340,11 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     case WebPolicyOpenURL:
         if ([[request URL] isFileURL]) {
             if (![[NSWorkspace sharedWorkspace] openFile:[[request URL] path]]) {
-                [self _handleUnimplementablePolicy:policy errorCode:WebKitErrorCannotFindApplicationForFile forURL:[request URL]];
+                [self _handleUnimplementablePolicyWithErrorCode:WebKitErrorCannotFindApplicationForFile forURL:[request URL]];
             }
         } else {
             if (![[NSWorkspace sharedWorkspace] openURL:[request URL]]) {
-                [self _handleUnimplementablePolicy:policy errorCode:WebKitErrorCannotFindApplicationForURL forURL:[request URL]];
+                [self _handleUnimplementablePolicyWithErrorCode:WebKitErrorCannotFindApplicationForURL forURL:[request URL]];
             }
         }
         break;
@@ -1362,12 +1362,12 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
             [NSException raise:NSInvalidArgumentException
                         format:@"clickPolicyForElement:button:modifierFlags: returned an invalid WebClickPolicy"];
         } else if (![[NSWorkspace sharedWorkspace] selectFile:[[request URL] path] inFileViewerRootedAtPath:@""]) {
-            [self _handleUnimplementablePolicy:policy errorCode:WebKitErrorFinderCannotOpenDirectory forURL:[request URL]];
+            [self _handleUnimplementablePolicyWithErrorCode:WebKitErrorFinderCannotOpenDirectory forURL:[request URL]];
         }
         break;
     case WebPolicyUse:
         if (![WebResource canInitWithRequest:request]) {
-            [self _handleUnimplementablePolicy:policy errorCode:WebKitErrorCannotShowURL forURL:[request URL]];
+            [self _handleUnimplementablePolicyWithErrorCode:WebKitErrorCannotShowURL forURL:[request URL]];
         } else {
             shouldContinue = YES;
         }

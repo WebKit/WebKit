@@ -137,6 +137,6 @@ typedef enum {
     @param URL The URL of the resource for which a particular action was requested but failed.
     @param frame The frame in which the policy could not be implemented.
 */
-- (void)unableToImplementPolicy:(WebPolicyAction)policy error:(WebError *)error forURL:(NSURL *)URL inFrame:(WebFrame *)frame;
+- (void)unableToImplementPolicyWithError:(WebError *)error inFrame:(WebFrame *)frame;
 
 @end
