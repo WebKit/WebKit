@@ -269,11 +269,11 @@
     // If the URL is one of our whacky applewebdata URLs that
     // fake up a substitute URL to present to the delegate.
     if([WebDataProtocol _webIsDataProtocolURL:[r URL]]) {
-        NSURL *baseURL = [request _webDataRequestBaseURL];
-        if (baseURL)
-            [r _setURL: baseURL];
-        else
-            [r _setURL: [NSURL URLWithString: @"about:blank"]];
+	NSURL *baseURL = [request _webDataRequestBaseURL];
+        if (baseURL == nil) {
+            baseURL = @"about:blank";
+	}
+        r = [[[NSURLResponse alloc] initWithURL:baseURL MIMEType:[r MIMEType] expectedContentLength:[r expectedContentLength] textEncodingName:[r textEncodingName]] autorelease];
     }
 
     [r retain];

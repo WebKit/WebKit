@@ -305,10 +305,10 @@
 
 	[self connection:connection willSendRequest:r redirectResponse:nil];
 
-	NSURLResponse *rsp = [[NSURLResponse alloc] init];
-	[rsp _setURL:[[[self dataSource] request] URL]];
-	[rsp _setMIMEType:@"text/html"];
-	[rsp _setExpectedContentLength:0];
+	NSURLResponse *rsp = [[NSURLResponse alloc] initWithURL:[[[self dataSource] request] URL]
+						    MIMEType:@"text/html"
+						    expectedContentLength:0
+						    textEncodingName:nil];
 	[self connection:connection didReceiveResponse:rsp];
 	[rsp release];
     } else {

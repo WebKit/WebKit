@@ -2,6 +2,19 @@
 
         Reviewed by Darin.
 
+	Updated for NSURLResponse API changes.
+
+        * WebView.subproj/WebBaseResourceHandleDelegate.m:
+        (-[WebBaseResourceHandleDelegate connection:didReceiveResponse:]):
+        * WebView.subproj/WebDataProtocol.m:
+        (-[WebDataProtocol startLoading]):
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient loadWithRequest:]):
+
+2003-05-09  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
 	- removed WebAuthenticationChallenge
 	- adjusted everything for removal of NSURLAuthenticationChallenge subclasses.
 	
