@@ -189,21 +189,26 @@ void KWQKHTMLPartImpl::urlSelected(const QString &url, int button, int state, co
         [bridge openNewWindowWithURL:cocoaURL];
         return;
     }
+    
+    WebCoreBridge *targetBridge = getBridgeForFrameName(target);
 
-    // FIXME: KHTML does this in openURL -- we should consider doing that too, because
-    // this won't work when there's targeting involved.
-    KURL refLess(clickedURL);
-    part->m_url.setRef("");
-    refLess.setRef("");
-    if (refLess.url() == part->m_url.url()) {
-        part->m_url = clickedURL;
-        part->gotoAnchor(clickedURL.ref());
-        // This URL needs to be added to the back/forward list.
-        [bridge addBackForwardItemWithURL:cocoaURL anchor:clickedURL.ref().getNSString()];
-        return;
+    // FIXME: KHTML does this in openURL -- we should do this at that level so we don't
+    // have the complexity of dealing with the target here.
+    KHTMLPart *targetPart = [targetBridge part];
+    if (targetPart) {
+        KURL refLess(clickedURL);
+        targetPart->m_url.setRef("");
+        refLess.setRef("");
+        if (refLess.url() == targetPart->m_url.url()) {
+            targetPart->m_url = clickedURL;
+            targetPart->gotoAnchor(clickedURL.ref());
+            // This URL needs to be added to the back/forward list.
+            [targetBridge addBackForwardItemWithURL:cocoaURL anchor:clickedURL.ref().getNSString()];
+            return;
+        }
     }
     
-    [getBridgeForFrameName(target) loadURL:cocoaURL];
+    [targetBridge loadURL:cocoaURL];
 }
 
 bool KWQKHTMLPartImpl::requestFrame( RenderPart *frame, const QString &url, const QString &frameName,

@@ -1,3 +1,14 @@
+2002-08-16  Darin Adler  <darin@apple.com>
+
+	- fixed 3026042 -- hide frames button at developer documentation doesn't work
+
+	This regression was introduced by the anchor changes we made just after
+	the Alexander-15 release.
+
+        * kwq/KWQKHTMLPartImpl.mm: (KWQKHTMLPartImpl::urlSelected):
+	Make decisions about special handling for links with anchors based
+	on the target frame, not the current frame.
+
 2002-08-16  Maciej Stachowiak  <mjs@apple.com>
 
         * force-clean-timestamp: rebuild for JavaScriptCore changes.
