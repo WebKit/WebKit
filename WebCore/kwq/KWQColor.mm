@@ -221,6 +221,11 @@ NSColor *QColor::getNSColor() const
 {
     unsigned c = color & 0xFFFFFFFF;
     switch (c) {
+        case 0: {
+            // Need this to avoid returning nil because cachedRGBAValues will default to 0.
+            static NSColor *clearColor = [[NSColor clearColor] retain];
+            return clearColor;
+        }
         case Qt::black: {
             static NSColor *blackColor = [[NSColor blackColor] retain];
             return blackColor;

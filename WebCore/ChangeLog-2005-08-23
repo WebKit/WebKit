@@ -1,5 +1,15 @@
 2004-01-26  Darin Adler  <darin@apple.com>
 
+        Reviewed by Dave.
+
+        - fixed <rdar://problem/3539286>: text with a transparent background color pastes as black on black
+
+        * kwq/KWQKHTMLPart.mm: (KWQKHTMLPart::attributedString): Don't put color in the mutable
+        string if it's entirely transparent.
+        * kwq/KWQColor.mm: (QColor::getNSColor): Fix bug where we would return nil for RGBA of 0.
+
+2004-01-26  Darin Adler  <darin@apple.com>
+
         Reviewed by Maciej.
 
         - fixed <rdar://problem/3529120>: text-align style property not respected on input fields

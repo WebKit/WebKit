@@ -2327,9 +2327,9 @@ NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_start, int startOf
                 if (text.length() > 0 || needSpace) {
                     NSMutableDictionary *attrs = [[NSMutableDictionary alloc] init];
                     [attrs setObject:font forKey:NSFontAttributeName];
-                    if (style && style->color().isValid())
+                    if (style && style->color().isValid() && qAlpha(style->color().rgb()) != 0)
                         [attrs setObject:style->color().getNSColor() forKey:NSForegroundColorAttributeName];
-                    if (style && style->backgroundColor().isValid())
+                    if (style && style->backgroundColor().isValid() && qAlpha(style->backgroundColor().rgb()) != 0)
                         [attrs setObject:style->backgroundColor().getNSColor() forKey:NSBackgroundColorAttributeName];
 
                     if (text.length() > 0) {
