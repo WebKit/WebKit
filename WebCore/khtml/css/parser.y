@@ -185,6 +185,7 @@ static int cssyylex( YYSTYPE *yylval ) {
 %type <rule> font_face
 %type <rule> invalid_rule
 %type <rule> invalid_at
+%type <rule> invalid_import
 %type <rule> rule
 
 %type <string> maybe_ns_prefix
@@ -336,6 +337,7 @@ rule:
   | font_face
   | invalid_rule
   | invalid_at
+  | invalid_import
     ;
 
 import:
@@ -1044,6 +1046,16 @@ invalid_at:
 	$$ = 0;
 #ifdef CSS_DEBUG
 	kdDebug( 6080 ) << "skipped invalid @-rule" << endl;
+#endif
+    }
+    ;
+
+invalid_import:
+    import {
+        delete $1;
+        $$ = 0;
+#ifdef CSS_DEBUG
+        kdDebug( 6080 ) << "skipped invalid import" << endl;
 #endif
     }
     ;

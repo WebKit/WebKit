@@ -99,7 +99,7 @@ layer at (0,0) size 800x943
             text run at (129,18) width 68: "section 3.0"
         RenderText {TEXT} at (197,18) size 275x18
           text run at (197,18) width 275: " of the CSS1 specification for more details)."
-      RenderBlock {P} at (0,527) size 784x18
+      RenderBlock {P} at (0,527) size 784x18 [color=#008000]
         RenderText {TEXT} at (0,0) size 203x18
           text run at (0,0) width 203: "This paragraph should be green."
       RenderTable {TABLE} at (0,561) size 784x366 [border: (1px outset #808080)]
@@ -194,6 +194,6 @@ layer at (0,0) size 800x943
                     text run at (129,18) width 68: "section 3.0"
                 RenderText {TEXT} at (197,18) size 275x18
                   text run at (197,18) width 275: " of the CSS1 specification for more details)."
-              RenderBlock {P} at (4,316) size 762x18
+              RenderBlock {P} at (4,316) size 762x18 [color=#008000]
                 RenderText {TEXT} at (0,0) size 203x18
                   text run at (0,0) width 203: "This paragraph should be green."
