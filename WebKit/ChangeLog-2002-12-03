@@ -1,3 +1,9 @@
+2002-07-10  Darin Adler  <darin@apple.com>
+
+        * WebView.subproj/IFWebViewPrivate.mm:
+        (-[IFWebView _scrollToBottomLeft]): Fix this to use the document view to define what
+	the bottom left is, not the content view (which is often much smaller than the document).
+
 2002-07-10  Chris Blumenberg  <cblu@apple.com>
 
 	Fixes for:

@@ -154,7 +154,7 @@ static NSMutableDictionary *_viewTypes=nil;
 
 - (void)_scrollToBottomLeft
 {
-    [[self _contentView] scrollPoint: NSMakePoint(0, [[self _contentView] bounds].size.height)];
+    [[self _contentView] scrollPoint: NSMakePoint(0, [[[self frameScrollView] documentView] bounds].size.height)];
 }
 
 - (void)_lineDown
