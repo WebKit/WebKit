@@ -1074,7 +1074,8 @@ int RenderTableSection::layoutRows( int toAdd )
             }
             if (cellChildrenFlex) {
                 cell->setCellPercentageHeight(rHeight);
-                cell->layout();
+                if (!cell->layouted())
+                    cell->layout();
            
                 // Alignment within a cell is based off the calculated
                 // height, which becomes irrelevant once the cell has

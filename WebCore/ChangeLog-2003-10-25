@@ -1,3 +1,16 @@
+2003-03-27  David Hyatt  <hyatt@apple.com>
+
+	This is just a long-standing screwup where I didn't port an old
+	table fix I made to Lars' new table code properly.  The original
+	fix had this check in it.
+
+	The bug is 3171963 (cvs.com).
+	
+        Reviewed by darin
+
+        * khtml/rendering/render_table.cpp:
+        (RenderTableSection::layoutRows):
+
 2003-03-27  Darin Adler  <darin@apple.com>
 
         Reviewed by Trey.
