@@ -1,5 +1,12 @@
 2002-10-20  Chris Blumenberg  <cblu@apple.com>
 
+	Fixed possible build failure.
+
+        * kwq/KWQDOMNode.cpp:
+        (isImage): remove unused variable.
+
+2002-10-20  Chris Blumenberg  <cblu@apple.com>
+
 	Partial fix for:
 	3023814 - contexual menus and dragging doesn't work for some images
 

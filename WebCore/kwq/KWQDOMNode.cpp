@@ -31,9 +31,7 @@
 #include <htmltags.h>
 
 bool isImage(DOM::NodeImpl *node)
-{
-    int id = node->id();
-    
+{    
     if(node->id() == ID_IMG){
         return true;
     }else if(node->id() == ID_INPUT){
