@@ -144,10 +144,16 @@ void QScrollView::addChild(QWidget* child, int x, int y)
     
     thisView = getView();
     subView = child->getView();
+    NSRect wFrame = [subView frame];
+
+    if ([subView superview] == thisView){
+        //NSLog (@"Already added 0x%08x %@ at (%d,%d) w %d h %d\n", subView, [[subView class] className], x, y, (int)wFrame.size.width, (int)wFrame.size.height);
+        return;
+    }
+    
     [subView removeFromSuperview];
     
-    NSRect wFrame = [subView frame];
-    NSLog (@"Adding %@ at (%d,%d) w %d h %d\n", [[subView class] className], x, y, (int)wFrame.size.width, (int)wFrame.size.height);
+    NSLog (@"Adding 0x%08x %@ at (%d,%d) w %d h %d\n", subView, [[subView class] className], x, y, (int)wFrame.size.width, (int)wFrame.size.height);
     [thisView addSubview: subView];
 }
 
