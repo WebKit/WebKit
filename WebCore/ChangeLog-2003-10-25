@@ -1,5 +1,16 @@
 2003-06-12  Darin Adler  <darin@apple.com>
 
+        Reviewed by John.
+
+	- fixed 3289405 -- repro crash in KWQPopUpButtonCell at umax.de
+
+        * kwq/KWQComboBox.mm: (-[KWQPopUpButtonCell trackMouse:inRect:ofView:untilMouseUp:]):
+        Use the bridge that we got earlier in the function to find the right part. This is
+        simpler, and more reliable. The old way would run into trouble if the widget or
+        any of the other objects in the chain got destroyed during the event handling.
+
+2003-06-12  Darin Adler  <darin@apple.com>
+
         Fixed by Richard, reviewed by me.
 
 	- fixed 3289047 -- REGRESSION: can't go back after using form at attwireless.com

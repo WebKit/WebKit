@@ -238,7 +238,7 @@ void QComboBox::itemSelected()
     // use a Carbon implementation, and it uses the default run loop mode.
     // See bugs 3021018 and 3242460 for some more information.
     
-    WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(widget);
+    WebCoreBridge *bridge = [KWQKHTMLPart::bridgeForWidget(widget) retain];
     BOOL wasDeferringLoading = [bridge defersLoading];
     if (!wasDeferringLoading) {
         [bridge setDefersLoading:YES];
@@ -258,9 +258,9 @@ void QComboBox::itemSelected()
         // Give khtml a chance to fix up its event state, since the popup eats all the
         // events during tracking.  [NSApp currentEvent] is still the original mouseDown
         // at this point!
-        RenderWidget *renderWidget = dynamic_cast<RenderWidget *>(const_cast<QObject *>(widget->eventFilterObject()));
-        KWQ(renderWidget->view()->part())->doFakeMouseUpAfterWidgetTracking(event);
+        [bridge part]->doFakeMouseUpAfterWidgetTracking(event);
     }
+    [bridge release];
     return result;
 }
 
