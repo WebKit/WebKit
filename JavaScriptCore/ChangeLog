@@ -1,3 +1,14 @@
+2002-08-14  Darin Adler  <darin@apple.com>
+
+	Another pass of tweaks, including one bug fix.
+
+        * kjs/array_object.cpp:
+        (ArrayInstanceImp::ArrayInstanceImp): Use malloc, not new.
+        (ArrayInstanceImp::get): Use a local variable so we don't rely on the optimizer
+	to avoid indexing twice.
+        (ArrayInstanceImp::hasProperty): Use a local variable, and also check against
+	UndefinedImp::staticUndefined rather than doing type() != UndefinedType.
+
 2002-08-14  Maciej Stachowiak  <mjs@apple.com>
 
         Simplified array handling by using NULL to represent empty cells
