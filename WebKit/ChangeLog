@@ -1,3 +1,17 @@
+2003-01-14  Darin Adler  <darin@apple.com>
+
+	Reviewed by Dave.
+
+        * Plugins.subproj/WebBaseNetscapePluginStream.m:
+        (-[WebBaseNetscapePluginStream finishedLoadingWithData:]):
+	Fixed uninitialized variable warning so builds work again.
+
+        * WebView.subproj/WebDataSourcePrivate.m: (+[WebDataSource _repTypes]): Added "application/xml".
+        * WebView.subproj/WebViewPrivate.m: (+[WebView _viewTypes]): Added "application/xml".
+
+	* English.lproj/Localizable.strings: Regenerated.
+	* English.lproj/StringsNotToBeLocalized.txt: Updated for above change.
+
 2003-01-13  Darin Adler  <darin@apple.com>
 
         Reviewed by Trey, John, and Maciej, and given the seal of approval by Don.

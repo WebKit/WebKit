@@ -151,15 +151,15 @@
         }
         int dataLength = [data length];
         int byteCount = write(fd, [data bytes], dataLength);
-        int writeError = errno;
-        close(fd);
         if (byteCount != dataLength) {
             // This happens only rarely, when we are out of disk space or have a disk I/O error.
-            ERROR("error writing to temporary file, errno %d", writeError);
+            ERROR("error writing to temporary file, errno %d", errno);
+            close(fd);
             // This is not a network error, but the only error codes are "network error" and "user break".
             [self destroyStreamWithReason:NPRES_NETWORK_ERR];
             return;
         }
+        close(fd);
         
         NSString *carbonPath = [[NSFileManager defaultManager] _web_carbonPathForPath:[NSString stringWithCString:path]];
         NPP_StreamAsFile(instance, &stream, [carbonPath cString]);
