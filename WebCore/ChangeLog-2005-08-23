@@ -1,3 +1,15 @@
+2004-12-10  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Chris
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::InsertParagraphSeparatorCommand::doApply): There is a starting block which is supposed to 
+        act as the root node for this operation. However, a loop was incorrectly coded, and a parent node
+        search could escape this node. Also, one other piece to code to move nodes to the new <p> element
+        should do nothing if the starting point for the selection is itself the starting block.
+        (khtml::InsertParagraphSeparatorInQuotedContentCommand::doApply): Similar changes, in spirit, to the above
+        function, though the names and concepts are slightly different.
+
 2004-12-10  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Ken.
