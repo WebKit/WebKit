@@ -589,7 +589,7 @@ public:
   /**
    * Sets the current selection.
    */
-  void setSelection(const DOM::Selection &, bool closeTyping=true);
+  void setSelection(const DOM::Selection &, bool closeTyping = true, bool unmarkOldSelection = true);
 
   /**
    * Returns a mark, to be used as emacs uses it.

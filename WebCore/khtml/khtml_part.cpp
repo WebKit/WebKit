@@ -2337,14 +2337,14 @@ void KHTMLPart::setMark(const Selection &s)
     d->m_mark = s;
 }
 
-void KHTMLPart::setSelection(const Selection &s, bool closeTyping)
+void KHTMLPart::setSelection(const Selection &s, bool closeTyping, bool unmarkOldSelection)
 {
     if (d->m_selection != s) {
         clearCaretRectIfNeeded(); 
 #if APPLE_CHANGES
         // Mark misspellings in the soon-to-be previous selection.  When typing we check spelling
         // elsewhere, so don't redo it here
-        if (closeTyping) {
+        if (unmarkOldSelection) {
             KWQ(this)->markMisspellingsInSelection(d->m_selection);
         }
 #endif
@@ -4969,7 +4969,7 @@ EditCommand KHTMLPart::lastEditCommand()
 
 void KHTMLPart::appliedEditing(EditCommand &cmd)
 {
-    setSelection(cmd.endingSelection(), false);
+    setSelection(cmd.endingSelection(), false, false);
 
     // Now set the typing style from the command. Clear it when done.
     // This helps make the case work where you completely delete a piece
@@ -5001,7 +5001,7 @@ void KHTMLPart::appliedEditing(EditCommand &cmd)
 
 void KHTMLPart::unappliedEditing(EditCommand &cmd)
 {
-    setSelection(cmd.startingSelection());
+    setSelection(cmd.startingSelection(), true, false);
 #if APPLE_CHANGES
     KWQ(this)->registerCommandForRedo(cmd);
     KWQ(this)->respondToChangedContents();
@@ -5011,7 +5011,7 @@ void KHTMLPart::unappliedEditing(EditCommand &cmd)
 
 void KHTMLPart::reappliedEditing(EditCommand &cmd)
 {
-    setSelection(cmd.endingSelection());
+    setSelection(cmd.endingSelection(), true, false);
 #if APPLE_CHANGES
     KWQ(this)->registerCommandForUndo(cmd);
     KWQ(this)->respondToChangedContents();

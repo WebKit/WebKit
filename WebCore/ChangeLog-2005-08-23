@@ -1,3 +1,26 @@
+2004-09-21  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - fix crash when pasting text at the end of the document and then doing an undo
+
+        * khtml/editing/htmlediting_impl.cpp:
+        (khtml::EditCommandImpl::apply): Call markMisspellingsInSelection before doing
+        the editing operation, and we'll tell setSelection not to unmark the old selection.
+        Also call updateLayout before calling appliedEditing so DOM operations in the
+        code responding to the selection change will work.
+        (khtml::EditCommandImpl::unapply): Ditto.
+        (khtml::EditCommandImpl::reapply): Ditto.
+
+        * khtml/khtml_part.h: Added a third parameter to setSelection to tell it whether
+        to unmark the old selection. We must pass false when editing, because the old
+        selection might have now-invalid offsets inside it.
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::setSelection): Add unmarkOldSelection parameter, and respect it.
+        (KHTMLPart::appliedEditing): Pass false for unmarkOldSelection.
+        (KHTMLPart::unappliedEditing): Ditto.
+        (KHTMLPart::reappliedEditing): Ditto.
+
 2004-09-21  Richard Williamson   <rjw@apple.com>
 
         Part 2 of the feature requested in
