@@ -1,3 +1,16 @@
+2002-12-18  Darin Adler  <darin@apple.com>
+
+        Reviewed by Richard.
+
+	- fixed 3127490 -- pages w/frames sometimes show up blank
+
+        * WebView.subproj/WebHTMLView.m: (-[WebHTMLView drawRect:]):
+	Updated the optimization where we draw the entire view if we did a layout
+	so that it works properly for the case where the clip is narrower because of
+	the parent WebHTMLView.
+
+        * English.lproj/StringsNotToBeLocalized.txt: Updated for recent changes.
+
 === Alexander-40 ===
 
 2002-12-18  Trey Matteson  <trey@apple.com>

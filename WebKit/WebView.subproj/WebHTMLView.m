@@ -498,8 +498,21 @@
     [self layout];
 
     if (didReapplyStylesOrLayout) {
-        rect = [self visibleRect];
-        [self setNeedsDisplay:NO];
+        // If we reapplied styles or did layout, we would like to draw as much as possible right now.
+        // If we can draw the entire view, then we don't need to come back and display, even though
+        // layout will have called setNeedsDisplay:YES to make that happen.
+        NSRect visibleRect = [self visibleRect];
+        CGRect clipBoundingBoxCG = CGContextGetClipBoundingBox((CGContextRef)[[NSGraphicsContext currentContext] graphicsPort]);
+        NSRect clipBoundingBox = NSMakeRect(clipBoundingBoxCG.origin.x, clipBoundingBoxCG.origin.y,
+            clipBoundingBoxCG.size.width, clipBoundingBoxCG.size.height);
+        // If the clip is such that we can draw the entire view instead of just the requested bit,
+        // then we will do just that. Note that this works only for rectangular clip, because we
+        // are only checking if the clip's bounding box contains the rect; we would prefer to check
+        // if the clip contained it, but that's not possible.
+        if (NSContainsRect(clipBoundingBox, visibleRect)) {
+            rect = visibleRect;
+            [self setNeedsDisplay:NO];
+        }
     }
     
 #ifdef _KWQ_TIMING

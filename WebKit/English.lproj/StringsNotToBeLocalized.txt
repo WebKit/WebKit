@@ -232,6 +232,7 @@ History.subproj/WebHistoryItem.m:"children"
 History.subproj/WebHistoryItem.m:"title"
 Misc.subproj/WebKitLogging.m
 Plugins.subproj/WebBasePluginPackage.m:"name: %@\npath: %@\nmimeTypes:\n%@\npluginDescription:%@"
+Plugins.subproj/WebNetscapePluginPackage.m:"RealPlayer"
 Plugins.subproj/WebNetscapePluginPackage.m:"main"
 WebCoreSupport.subproj/WebBridge.m:"height"
 WebCoreSupport.subproj/WebBridge.m:"width"
