@@ -102,7 +102,7 @@
     [super connectionDidFinishLoading:con];
 }
 
-- (void)connection:(NSURLConnection *)con didFailLoadingWithError:(NSError *)result
+- (void)connection:(NSURLConnection *)con didFailWithError:(NSError *)result
 {
     [[view webView] _receivedError:result fromDataSource:[view dataSource]];
 
@@ -111,7 +111,7 @@
     [view release];
     view = nil;
     
-    [super connection:con didFailLoadingWithError:result];
+    [super connection:con didFailWithError:result];
 }
 
 @end

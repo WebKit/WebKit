@@ -61,7 +61,7 @@
     // Calling _receivedError will likely result in a call to release, so we must retain.
     [self retain];
     [dataSource _receivedError:error complete:YES];
-    [super connection:connection didFailLoadingWithError:error];
+    [super connection:connection didFailWithError:error];
     [self release];
 }
 
@@ -285,7 +285,7 @@
     [self release];
 }
 
-- (void)connection:(NSURLConnection *)con didFailLoadingWithError:(NSError *)error
+- (void)connection:(NSURLConnection *)con didFailWithError:(NSError *)error
 {
     ASSERT(![con defersCallbacks]);
     ASSERT(![self defersCallbacks]);

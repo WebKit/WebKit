@@ -129,7 +129,7 @@
     [_private->resourceData appendData:data];
 }
 
-- (void)connection:(NSURLConnection *)connection didFailLoadingWithError:(NSError *)result
+- (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)result
 {
 
 }

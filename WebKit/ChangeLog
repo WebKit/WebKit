@@ -1,3 +1,23 @@
+2003-05-09  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by John.
+
+	Rename connection:didFailLoadingWithError: to
+	connection:didFailWithError: to match NSURLDownload and
+	NSURLProtocol.
+
+        * Misc.subproj/WebIconLoader.m:
+        (-[WebIconLoader connection:didFailWithError:]):
+        * Plugins.subproj/WebNetscapePluginStream.m:
+        (-[WebNetscapePluginStream connection:didFailWithError:]):
+        * WebCoreSupport.subproj/WebSubresourceClient.m:
+        (-[WebSubresourceClient connection:didFailWithError:]):
+        * WebView.subproj/WebBaseResourceHandleDelegate.m:
+        (-[WebBaseResourceHandleDelegate connection:didFailWithError:]):
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient receivedError:]):
+        (-[WebMainResourceClient connection:didFailWithError:]):
+
 2003-05-09  Richard Williamson  <rjw@apple.com>
 
         Apply the same check used to by-pass fast rendering

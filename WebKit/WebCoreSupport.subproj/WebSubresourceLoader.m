@@ -123,7 +123,7 @@
     [self release];    
 }
 
-- (void)connection:(NSURLConnection *)con didFailLoadingWithError:(NSError *)error
+- (void)connection:(NSURLConnection *)con didFailWithError:(NSError *)error
 {
     // Calling _removeSubresourceClient will likely result in a call to release, so we must retain.
     [self retain];
@@ -131,7 +131,7 @@
     [loader reportError];
     [dataSource _removeSubresourceClient:self];
     [self receivedError:error];
-    [super connection:con didFailLoadingWithError:error];
+    [super connection:con didFailWithError:error];
 
     [self release];
 }

@@ -299,7 +299,7 @@
     [self _releaseResources];
 }
 
-- (void)connection:(NSURLConnection *)con didFailLoadingWithError:(NSError *)result
+- (void)connection:(NSURLConnection *)con didFailWithError:(NSError *)result
 {
     ASSERT(con == connection);
     ASSERT(!reachedTerminalState);
