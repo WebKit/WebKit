@@ -33,8 +33,8 @@ using khtml::FormDataElement;
 
 NSArray *arrayFromFormData(const FormData &d)
 {
-    NSMutableArray *a = [NSMutableArray arrayWithCapacity:d.m_elements.count()];
-    for (QValueListConstIterator<FormDataElement> it = d.m_elements.begin(); it != d.m_elements.end(); ++it) {
+    NSMutableArray *a = [NSMutableArray arrayWithCapacity:d.count()];
+    for (QValueListConstIterator<FormDataElement> it = d.begin(); it != d.end(); ++it) {
         const FormDataElement &e = *it;
         if (e.m_type == FormDataElement::data) {
             [a addObject:[NSData dataWithBytes:e.m_data.data() length:e.m_data.size()]];

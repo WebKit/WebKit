@@ -42,6 +42,11 @@ void FormData::appendData(const void *data, size_t size)
     memcpy(e.m_data.data() + oldSize, data, size);
 }
 
+void FormData::appendFile(const QString &filename)
+{
+    m_elements.append(filename);
+}
+
 QByteArray FormData::flatten() const
 {
     // Concatenate all the byte arrays, but omit any files.

@@ -2,6 +2,17 @@
 
         Reviewed by John.
 
+        - did some clean-up on form data code
+
+        * khtml/misc/formdata.h: Added more public functions as suggested by Chris when he reviewed
+        this class.
+        * khtml/misc/formdata.cpp: (khtml::FormData::appendFile): Added. Will be needed soon.
+        * kwq/KWQFormData.mm: (arrayFromFormData): Use new cleaned-up FormData API.
+
+2004-09-06  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
         * kwq/DOM-CSS.mm: (-[DOMCSSStyleDeclaration description]): Use cssText in the description
         so it's easier to see in the debugger.
 
