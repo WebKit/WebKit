@@ -1,3 +1,16 @@
+2003-11-06  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed:
+	<rdar://problem/3275118>: Dragging from missing-image link stretches missing-image icon to size of missing image
+	<rdar://problem/3476225>: assert dragging non-existant images
+
+        Reviewed by rjw.
+
+        * khtml/rendering/render_image.h:
+        (khtml::RenderImage::isDisplayingError): new method, returns true for the broken image
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge elementAtPoint:]): only provide info if there is an image and the image is not broken
+
 2003-11-06  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Richard

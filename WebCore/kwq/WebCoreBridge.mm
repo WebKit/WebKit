@@ -747,41 +747,44 @@ static HTMLFormElementImpl *formElementFromDOMElement(id <WebDOMElement>element)
 
     NodeImpl *node = nodeInfo.innerNonSharedNode();
     if (node && node->renderer() && node->renderer()->isImage()) {
-        ElementImpl *i = static_cast<ElementImpl*>(node);
-
-        // FIXME: Code copied from RenderImage::updateFromElement; should share.
-        DOMString attr;
-        if (idFromNode(i) == ID_OBJECT) {
-            attr = i->getAttribute(ATTR_DATA);
-        } else {
-            attr = i->getAttribute(ATTR_SRC);
-        }
-        if (!attr.isEmpty()) {
-            [element setObject:_part->xmlDocImpl()->completeURL(attr.string()).getNSString() forKey:WebCoreElementImageURLKey];
-        }
         
-        // FIXME: Code copied from RenderImage::updateFromElement; should share.
-        DOMString alt;
-        if (idFromNode(i) == ID_INPUT)
-            alt = static_cast<HTMLInputElementImpl *>(i)->altText();
-        else if (idFromNode(i) == ID_IMG)
-            alt = static_cast<HTMLImageElementImpl *>(i)->altText();
-        if (!alt.isNull()) {
-            QString altText = alt.string();
-            altText.replace('\\', _part->backslashAsCurrencySymbol());
-            [element setObject:altText.getNSString() forKey:WebCoreElementImageAltStringKey];
-        }
-
         RenderImage *r = static_cast<RenderImage *>(node->renderer());
-        int x, y;
-        if (r->absolutePosition(x, y)) {
-            NSValue *rect = [NSValue valueWithRect:NSMakeRect(x, y, r->contentWidth(), r->contentHeight())];
-            [element setObject:rect forKey:WebCoreElementImageRectKey];
-        }
-
         NSImage *image = r->pixmap().image();
-        if (image) {
-            [element setObject:image forKey:WebCoreElementImageKey];
+        // Only return image information if there is an image.
+        if (image && !r->isDisplayingError()) {
+            [element setObject:r->pixmap().image() forKey:WebCoreElementImageKey];
+            
+            int x, y;
+            if (r->absolutePosition(x, y)) {
+                NSValue *rect = [NSValue valueWithRect:NSMakeRect(x, y, r->contentWidth(), r->contentHeight())];
+                [element setObject:rect forKey:WebCoreElementImageRectKey];
+            }
+            
+            ElementImpl *i = static_cast<ElementImpl*>(node);
+    
+            // FIXME: Code copied from RenderImage::updateFromElement; should share.
+            DOMString attr;
+            if (idFromNode(i) == ID_OBJECT) {
+                attr = i->getAttribute(ATTR_DATA);
+            } else {
+                attr = i->getAttribute(ATTR_SRC);
+            }
+            if (!attr.isEmpty()) {
+                QString URLString = parseURL(attr).string();
+                [element setObject:_part->xmlDocImpl()->completeURL(URLString).getNSString() forKey:WebCoreElementImageURLKey];
+            }
+            
+            // FIXME: Code copied from RenderImage::updateFromElement; should share.
+            DOMString alt;
+            if (idFromNode(i) == ID_INPUT)
+                alt = static_cast<HTMLInputElementImpl *>(i)->altText();
+            else if (idFromNode(i) == ID_IMG)
+                alt = static_cast<HTMLImageElementImpl *>(i)->altText();
+            if (!alt.isNull()) {
+                QString altText = alt.string();
+                altText.replace('\\', _part->backslashAsCurrencySymbol());
+                [element setObject:altText.getNSString() forKey:WebCoreElementImageAltStringKey];
+            }
         }
     }
     
