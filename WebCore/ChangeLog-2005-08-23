@@ -1,3 +1,39 @@
+2004-11-12  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Kevin.
+
+	- fixed <rdar://problem/3878183> Safari is 77% slower than it should be on a page on an IBM website due to NodeListImpl length
+        
+	I fixed this by changing NodeLists to cache their length, but
+	invalidate it whenever there is a change in the DOM subtree at
+	which they are rooted. This makes NodeListImpl::recursiveLength()
+	drop completely off the profile, since we were repeatedly getting
+	a length for the same NodeList over and over.
+	
+        * khtml/xml/dom_nodeimpl.cpp:
+        (NodeImpl::NodeImpl):
+        (NodeImpl::~NodeImpl):
+        (NodeImpl::registerNodeList):
+        (NodeImpl::unregisterNodeList):
+        (NodeImpl::notifyLocalNodeListsSubtreeModified):
+        (NodeImpl::notifyNodeListsSubtreeModified):
+        (NodeImpl::dispatchSubtreeModifiedEvent):
+        (NodeListImpl::NodeListImpl):
+        (NodeListImpl::~NodeListImpl):
+        (NodeListImpl::recursiveLength):
+        (NodeListImpl::recursiveItem):
+        (NodeListImpl::rootNodeSubtreeModified):
+        (ChildNodeListImpl::ChildNodeListImpl):
+        (ChildNodeListImpl::length):
+        (ChildNodeListImpl::item):
+        (TagNodeListImpl::TagNodeListImpl):
+        (TagNodeListImpl::length):
+        (TagNodeListImpl::item):
+        (NameNodeListImpl::NameNodeListImpl):
+        (NameNodeListImpl::length):
+        (NameNodeListImpl::item):
+        * khtml/xml/dom_nodeimpl.h:
+
 2004-11-12  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
