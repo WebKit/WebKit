@@ -28,12 +28,15 @@
 #include "rendering/render_object.h"
 #include "rendering/render_text.h"
 #include "rendering/break_lines.h"
+#include "dom/dom2_range.h"
 #include "xml/dom_nodeimpl.h"
 #include "xml/dom_docimpl.h"
 #include "xml/dom_position.h"
 #include "render_arena.h"
 
 #include "misc/loader.h"
+
+#include "khtml_part.h"
 
 #include <qpainter.h>
 #include <kdebug.h>
@@ -216,6 +219,65 @@ void InlineTextBox::paintSelection(const Font *f, RenderText *text, QPainter *p,
 #endif
     p->restore();
 }
+
+#if APPLE_CHANGES
+void InlineTextBox::paintMarkedTextBackground(const Font *f, RenderText *text, QPainter *p, RenderStyle* style, int tx, int ty, int startPos, int endPos)
+{
+    int offset = m_start;
+    int sPos = kMax(startPos - offset, 0);
+    int ePos = kMin(endPos - offset, (int)m_len);
+
+    if (sPos >= ePos)
+        return;
+
+    p->save();
+
+    QColor c = QColor(225, 221, 85);
+    
+    p->setPen(c); // Don't draw text at all!
+    
+    // Do the calculations to draw marked text background as tall as the line.
+    // Use the bottom of the line above as the y position (if there is one, 
+    // otherwise use the top of this renderer's line) and the height of the line as the height. 
+    // This mimics Cocoa.
+    RenderBlock *cb = object()->containingBlock();
+
+    int y = 0;
+    if (root()->prevRootBox())
+        y = root()->prevRootBox()->bottomOverflow();
+    else
+        y = root()->topOverflow();
+
+    int h = root()->bottomOverflow() - y;
+
+    int x = m_x;
+    int minX = x;
+    int maxX = x;
+
+    // Extend selection to the start of the line if:
+    // 1. The starting point of the selection is at or beyond the start of the text box; and
+    // 2. This box is the first box on the line; and
+    // 3. There is a another line before this one (first lines have special behavior;
+    //    the selection never extends on the first line); and 
+    // 4. The last leaf renderer on the previous line is selected.
+    RenderObject *prevLineLastLeaf = root()->prevRootBox() ? root()->prevRootBox()->lastLeafChild()->object() : 0;
+    if (startPos <= m_start && root()->firstLeafChild() == this && root()->prevRootBox() && prevLineLastLeaf && 
+        prevLineLastLeaf->selectionState() != RenderObject::SelectionNone)
+        minX = kMax(cb->leftOffset(y), cb->leftOffset(root()->blockHeight()));
+        
+    // Extend selection to the end of the line if:
+    // 1. The ending point of the selection is at or beyond the end of the text box; and
+    // 2. There is a another line after this one (last lines have special behavior;
+    //    the selection never extends on the last line); and 
+    // 3. The last leaf renderer of the root box is this box.
+    if (endPos >= m_start + m_len && root()->nextRootBox() && root()->lastLeafChild() == this)
+        maxX = kMin(cb->rightOffset(y), cb->rightOffset(root()->blockHeight()));
+    
+    f->drawHighlightForText(p, x + tx, minX + tx, maxX + tx, y + ty, h, text->str->s, text->str->l, m_start, m_len,
+		m_toAdd, m_reversed ? QPainter::RTL : QPainter::LTR, style->visuallyOrdered(), sPos, ePos, c);
+    p->restore();
+}
+#endif
 
 #ifdef APPLE_CHANGES
 void InlineTextBox::paintDecoration( QPainter *pt, int _tx, int _ty, int deco)
@@ -728,10 +790,14 @@ void RenderText::paint(PaintInfo& i, int tx, int ty)
     InlineTextBox* startBox = s;
     QValueList<DocumentMarker> markers = document()->markersForNode(node());
     QValueListIterator <DocumentMarker> markerIt = markers.begin();
-    for (int pass = 0; pass < (haveSelection ? 2 : 1); pass++) {
+    Range markedTextRange = KWQ(document()->part())->markedRange();
+    bool haveMarkedText = markedTextRange.handle() != 0 && markedTextRange.startContainer() == node();
+
+    for (int pass = 0; pass < (haveSelection || haveMarkedText ? 2 : 1); pass++) {
         s = startBox;
         bool drawSelectionBackground = haveSelection && pass == 0 && i.phase != PaintActionSelection;
-        bool drawText = !haveSelection || pass == 1;
+        bool drawMarkedTextBackground = haveMarkedText && pass == 0 && i.phase != PaintActionSelection;
+        bool drawText = !(haveSelection || haveMarkedText) || pass == 1;
 #endif
 
     // run until we find one that is outside the range, then we
@@ -925,10 +991,17 @@ void RenderText::paint(PaintInfo& i, int tx, int ty)
 #endif
 
 #if APPLE_CHANGES
+        if (drawMarkedTextBackground && !isPrinting)
+	    s->paintMarkedTextBackground(font, this, p, _style, tx, ty, markedTextRange.startOffset(), markedTextRange.endOffset());
+
+#endif
+
+#if APPLE_CHANGES
         if (drawSelectionBackground)
 #endif
         if (!isPrinting && (selectionState() != SelectionNone))
             s->paintSelection(font, this, p, _style, tx, ty, startPos, endPos);
+
 
 #ifdef BIDI_DEBUG
         {

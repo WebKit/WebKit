@@ -1434,6 +1434,22 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     return static_cast<NSSelectionAffinity>(_part->selection().affinity());
 }
 
+- (void)setMarkedDOMRange:(DOMRange *)range
+{
+    _part->setMarkedRange([range _rangeImpl]);
+}
+
+- (DOMRange *)markedDOMRange
+{
+    DOM::RangeImpl *range = _part->markedRange().handle();
+    return range ? [DOMRange _rangeWithImpl:range] : nil;
+}
+
+- (void)clearMarkedDOMRange
+{
+    _part->setMarkedRange(Range(0));
+}
+
 - (DOMDocumentFragment *)documentFragmentWithMarkupString:(NSString *)markupString baseURLString:(NSString *)baseURLString 
 {
     DOM::DocumentImpl *document = _part->xmlDocImpl();

@@ -3348,7 +3348,16 @@ static WebHTMLView *lastHitView = nil;
 
 - (NSRange)markedRange
 {
-    return _private->markedRangeInNode;
+    if (![self hasMarkedText]) {
+	return NSMakeRange(NSNotFound,0);
+    }
+
+    DOMRange *markedDOMRange = [[self _bridge] markedDOMRange];
+
+    unsigned rangeLocation = [markedDOMRange startOffset];
+    unsigned rangeLength = [markedDOMRange endOffset] - rangeLocation;
+
+    return NSMakeRange(rangeLocation, rangeLength);
 }
 
 - (NSAttributedString *)attributedSubstringFromRange:(NSRange)theRange
@@ -3364,52 +3373,38 @@ static WebHTMLView *lastHitView = nil;
 
 - (BOOL)hasMarkedText
 {
-    return _private->markedTextNode != nil;
+    return [[self _bridge] markedDOMRange] != nil;
 }
 
 - (void)unmarkText
 {
-    [_private->markedTextNode release];
-    _private->markedTextNode = nil;
+    [[self _bridge] clearMarkedDOMRange];
 }
 
 - (void)_selectMarkedText
 {
     if ([self hasMarkedText]) {
 	WebBridge *bridge = [self _bridge];
-	DOMRange *markedTextRange = [[bridge DOMDocument] createRange];
-
-	[markedTextRange setStart:_private->markedTextNode :_private->markedRangeInNode.location];
-	[markedTextRange setEnd:_private->markedTextNode :(_private->markedRangeInNode.location + _private->markedRangeInNode.length)];
-
+	DOMRange *markedTextRange = [bridge markedDOMRange];
 	[bridge setSelectedDOMRange:markedTextRange affinity:NSSelectionAffinityUpstream];
     }
 }
 
-- (void)_setMarkedDOMRange:(DOMRange *)range
-{
-    ASSERT([range startContainer] == [range endContainer]);
-    ASSERT([[range startContainer] nodeType] == DOM_TEXT_NODE);
-
-    DOMNode *newMarkedTextNode = [[range startContainer] retain];
-    [_private->markedTextNode release];
-    _private->markedTextNode = [newMarkedTextNode retain];
-
-    long startOffset = [range startOffset];
-    long endOffset = [range endOffset];
-    _private->markedRangeInNode = NSMakeRange(startOffset, endOffset - startOffset);
-}
-
 - (void)_selectRangeInMarkedText:(NSRange)range
 {
+    ASSERT([self hasMarkedText]);
+
     WebBridge *bridge = [self _bridge];
     DOMRange *selectedRange = [[bridge DOMDocument] createRange];
+    DOMRange *markedRange = [bridge markedDOMRange];
     
-    unsigned selectionStart = _private->markedRangeInNode.location + range.location;
+    ASSERT([markedRange startContainer] == [markedRange endContainer]);
+
+    unsigned selectionStart = [markedRange startOffset] + range.location;
     unsigned selectionEnd = selectionStart + range.length;
 
-    [selectedRange setStart:_private->markedTextNode :selectionStart];
-    [selectedRange setEnd:_private->markedTextNode :selectionEnd];
+    [selectedRange setStart:[markedRange startContainer] :selectionStart];
+    [selectedRange setEnd:[markedRange startContainer] :selectionEnd];
 
     [bridge setSelectedDOMRange:selectedRange affinity:NSSelectionAffinityUpstream];
 }
@@ -3436,7 +3431,7 @@ static WebHTMLView *lastHitView = nil;
     }
 
     [bridge replaceSelectionWithText:text selectReplacement:YES];
-    [self _setMarkedDOMRange:[bridge selectedDOMRange]];
+    [bridge setMarkedDOMRange:[bridge selectedDOMRange]];
     [self _selectRangeInMarkedText:newSelRange];
 
     _private->ignoreMarkedTextSelectionChange = NO;
@@ -3499,18 +3494,22 @@ static WebHTMLView *lastHitView = nil;
 
 - (BOOL)_selectionIsInsideMarkedText
 {
-    DOMRange *selection = [[self _bridge] selectedDOMRange];
+    WebBridge *bridge = [self _bridge];
+    DOMRange *selection = [bridge selectedDOMRange];
+    DOMRange *markedRange = [bridge markedDOMRange];
 
-    if ([selection startContainer] != _private->markedTextNode) 
+    ASSERT([markedRange startContainer] == [markedRange endContainer]);
+
+    if ([selection startContainer] != [markedRange startContainer]) 
 	return NO;
 
-    if ([selection endContainer] != _private->markedTextNode)
+    if ([selection endContainer] != [markedRange startContainer])
 	return NO;
 
-    if ((unsigned)[selection startOffset] < _private->markedRangeInNode.location)
+    if ([selection startOffset] < [markedRange startOffset])
 	return NO;
 
-    if ((unsigned)[selection endOffset] > _private->markedRangeInNode.location + _private->markedRangeInNode.length)
+    if ([selection endOffset] > [markedRange endOffset])
 	return NO;
 
     return YES;
@@ -3523,8 +3522,9 @@ static WebHTMLView *lastHitView = nil;
 
     if ([self _selectionIsInsideMarkedText]) {
 	DOMRange *selection = [[self _bridge] selectedDOMRange];
-	
-	unsigned markedSelectionStart = [selection startOffset] - _private->markedRangeInNode.location;
+	DOMRange *markedDOMRange = [[self _bridge] markedDOMRange];
+
+	unsigned markedSelectionStart = [selection startOffset] - [markedDOMRange startOffset];
 	unsigned markedSelectionLength = [selection endOffset] - [selection startOffset];
 	NSRange newSelectionRange = NSMakeRange(markedSelectionStart, markedSelectionLength);
 	

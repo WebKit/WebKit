@@ -1,3 +1,23 @@
+2004-08-09  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Trey.
+
+	WebKit part of:
+
+	- made basic marked text highlighting work to complete basic level of <rdar://problem/3704359> input method support not yet implemented for HTML editing
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView markedRange]): Use new bridge calls instead of internal marked range storage.
+        (-[WebHTMLView hasMarkedText]): Likewise.
+        (-[WebHTMLView unmarkText]): Likewise.
+        (-[WebHTMLView _selectMarkedText]): Likewise.
+        (-[WebHTMLView _selectRangeInMarkedText:]): Likewise.
+        (-[WebHTMLView _selectionIsInsideMarkedText]): Likewise.
+        (-[WebHTMLView _updateSelectionForInputManager]): Likewise.
+        (-[WebHTMLView setMarkedText:selectedRange:]): Use direct bridge call instead
+	of private _selectMarkedDOMRange: method, which would now be trivial.
+        * WebView.subproj/WebHTMLViewInternal.h: Remove unneeded
+
 2004-08-10  Darin Adler  <darin@apple.com>
 
         Reviewed by Ken.

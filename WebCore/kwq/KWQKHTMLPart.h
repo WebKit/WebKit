@@ -327,6 +327,8 @@ public:
     // Implementation of CSS property -khtml-user-drag == auto
     bool shouldDragAutoNode(DOM::NodeImpl*, int x, int y) const;
 
+    DOM::Range markedRange() const;
+    void setMarkedRange(const DOM::Range &);
 private:
     virtual void khtmlMousePressEvent(khtml::MousePressEvent *);
     virtual void khtmlMouseDoubleClickEvent(khtml::MouseDoubleClickEvent *);
@@ -409,6 +411,8 @@ private:
     KWQClipboard *_dragClipboard;   // used on only the source side of dragging
     
     mutable DOM::Node _elementToDraw;
+
+    DOM::Range m_markedRange;
 };
 
 inline KWQKHTMLPart *KWQ(KHTMLPart *part) { return static_cast<KWQKHTMLPart *>(part); }

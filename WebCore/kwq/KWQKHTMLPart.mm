@@ -3524,6 +3524,7 @@ bool KWQKHTMLPart::haveToldBridgeAboutLoad(const QString &urlString)
 void KWQKHTMLPart::clear()
 {
     urlsBridgeKnowsAbout.clear();
+    setMarkedRange(0);
     KHTMLPart::clear();
 }
 
@@ -3771,4 +3772,27 @@ bool KWQKHTMLPart::shouldEndEditing(const Range &range) const
 {
     ASSERT(!range.isNull());
     return [_bridge shouldEndEditing:[DOMRange _rangeWithImpl:range.handle()]];
+}
+
+DOM::Range KWQKHTMLPart::markedRange() const
+{
+    return m_markedRange;
+}
+
+void KWQKHTMLPart::setMarkedRange(const DOM::Range &range)
+{
+    ASSERT(!range.handle() || range.startContainer() == range.endContainer());
+    ASSERT(!range.handle() || range.startContainer().nodeType() == Node::TEXT_NODE);
+
+    if (m_markedRange.handle() && xmlDocImpl() 
+	&& m_markedRange.startContainer().handle()->renderer()) {
+	m_markedRange.startContainer().handle()->renderer()->repaint();
+    }
+
+    m_markedRange = range;
+
+    if (m_markedRange.handle() && xmlDocImpl() 
+	&& m_markedRange.startContainer().handle()->renderer()) {
+	m_markedRange.startContainer().handle()->renderer()->repaint();
+    }
 }

@@ -102,6 +102,9 @@ public:
     
     void paintDecoration( QPainter *pt, int _tx, int _ty, int decoration);
     void paintSelection(const Font *f, RenderText *text, QPainter *p, RenderStyle* style, int tx, int ty, int startPos, int endPos);
+#if APPLE_CHANGES
+    void paintMarkedTextBackground(const Font *f, RenderText *text, QPainter *p, RenderStyle* style, int tx, int ty, int startPos, int endPos);
+#endif
     void paintMarker(QPainter *pt, int _tx, int _ty, DOM::DocumentMarker marker);
 
     virtual long caretMinOffset() const;

@@ -1,3 +1,32 @@
+2004-08-09  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Trey.
+
+	WebCore part of:
+
+	- made basic marked text highlighting work to complete basic level of <rdar://problem/3704359> input method support not yet implemented for HTML editing
+
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge setMarkedDOMRange:]): Added this new call to support storing
+	a marked range in WebCore. The provided DOMRange must start and end in the same
+	node, which must be a text node.
+        (-[WebCoreBridge markedDOMRange]): New call to get the marked range. 
+        (-[WebCoreBridge clearMarkedDOMRange]): New call to clear the marked range.
+        * kwq/WebCoreBridge.h: Prototype new methods.
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::markedRange): Implementation of WebCore call above.
+        (KWQKHTMLPart::setMarkedRange): Implementation of WebCore call above -
+	store the marked range, and repaint new and old nodes if needed.
+        (KWQKHTMLPart::clear): Clear marked range.
+        * kwq/KWQKHTMLPart.h: Prototype new methods.
+        * khtml/rendering/render_text.cpp:
+        (InlineTextBox::paintMarkedTextBackground): New method to paint the background
+	for marked text, modeled on paintSelection.
+	(RenderText::paint): Optionally handle painting marked text
+	background as well as selection background in the marked text
+	pass.
+        * khtml/rendering/render_text.h: Prototype new method.
+
 2004-08-10  Darin Adler  <darin@apple.com>
 
         Reviewed by Dave.
