@@ -377,7 +377,7 @@ void InlineTextBox::paintMarker(QPainter *pt, int _tx, int _ty, DocumentMarker m
     bool useWholeWidth = true;
     ulong paintStart = m_start;
     ulong paintEnd = end()+1;      // end points at the last char, not past it
-    if (paintStart != marker.startOffset) {
+    if (paintStart <= marker.startOffset) {
         paintStart = marker.startOffset;
         useWholeWidth = false;
         start = static_cast<RenderText*>(m_object)->width(m_start, paintStart - m_start, m_firstLine);

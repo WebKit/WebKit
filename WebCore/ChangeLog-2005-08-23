@@ -1,3 +1,19 @@
+2004-09-15  Richard Williamson   <rjw@apple.com>
+
+	Fixed <rdar://problem/3781561> REGRESSION (Mail): typing in Mail became suddenly really sluggish (substitute font code)
+
+	A DocumentMarker may begin before the InLineBox that includes
+	it.  Ensure that we correctly handle that case.  The paintMarker()
+	method and code that calls it could do with some cleanup to
+	make it clearer how all the cases are handled, i.e. marker
+	within box, or intersecting beginning or end of box.
+
+        Reviewed by Darin.
+
+        * khtml/rendering/render_text.cpp:
+        (InlineTextBox::paintMarker):  Minimal change to ensure that we
+	handle the case of marker starting before box.
+
 2004-09-15  Darin Adler  <darin@apple.com>
 
         Reviewed by John.
