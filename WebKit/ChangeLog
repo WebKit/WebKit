@@ -1,5 +1,14 @@
 2003-09-04  Chris Blumenberg  <cblu@apple.com>
 
+	Fixed: <rdar://problem/3316704>: Shockwave: getnetText steam is not functioning correctly
+
+        Reviewed by mjs.
+
+        * Plugins.subproj/WebBaseNetscapePluginStream.m:
+        (-[WebBaseNetscapePluginStream startStreamWithURL:expectedContentLength:lastModifiedDate:MIMEType:]): if the content length is unknown, use 0 instead of -1
+
+2003-09-04  Chris Blumenberg  <cblu@apple.com>
+
 	Fixed: <rdar://problem/3286922>: Shockwave: Using HTTP to stream .mp3 or .swa files fails at ~50%
 
         Reviewed by mjs.

@@ -77,7 +77,7 @@
     stream.URL = strdup([URL _web_URLCString]);
 
     stream.ndata = self;
-    stream.end = expectedContentLength;
+    stream.end = expectedContentLength > 0 ? expectedContentLength : 0;
     stream.lastmodified = [lastModifiedDate timeIntervalSince1970];
     stream.notifyData = notifyData;
     
