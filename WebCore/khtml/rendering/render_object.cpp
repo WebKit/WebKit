@@ -969,6 +969,13 @@ FindSelectionResult RenderObject::checkSelectionPoint( int _x, int _y, int _tx, 
     return SelectionPointAfter;
 }
 
+bool RenderObject::mouseInside() const
+{ 
+    if (!m_mouseInside && continuation()) 
+        return continuation()->mouseInside();
+    return m_mouseInside; 
+}
+
 bool RenderObject::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty)
 {
     int tx = _tx + xPos();

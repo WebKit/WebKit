@@ -191,6 +191,9 @@ RenderObject* RenderContainer::removeChildNode(RenderObject* oldChild)
 
 void RenderContainer::removeChild(RenderObject *oldChild)
 {
+    if (oldChild->continuation())
+        oldChild->continuation()->parent()->removeChild(oldChild->continuation());
+    
     removeChildNode(oldChild);
     setLayouted(false);
 }
@@ -316,7 +319,7 @@ void RenderContainer::removeLeftoverAnonymousBoxes()
     while( child ) {
 	RenderObject *next = child->nextSibling();
 	
-	if ( child->isFlow() && child->isAnonymousBox() && !child->childrenInline() ) {
+	if ( child->isFlow() && child->isAnonymousBox() && !child->continuation() && !child->childrenInline() ) {
 	    RenderObject *firstAnChild = child->firstChild();
 	    RenderObject *lastAnChild = child->lastChild();
 	    if ( firstAnChild ) {

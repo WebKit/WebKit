@@ -488,7 +488,12 @@ void KWQKHTMLPart::forceLayout()
     KHTMLView *v = d->m_view;
     if (v) {
         v->layout();
-        v->unscheduleRelayout();
+        // We cannot unschedule a pending relayout, since the force can be called with
+        // a tiny rectangle from a drawRect update.  By unscheduling we in effect
+        // "validate" and stop the necessary full repaint from occurring.  Basically any basic
+        // append/remove DHTML is broken by this call.  For now, I have removed the optimization
+        // until we have a better invalidation stategy. -dwh
+        //v->unscheduleRelayout();
     }
 }
 

@@ -47,17 +47,33 @@ public:
 
     virtual ~RenderFlow();
 
-    virtual const char *renderName() const { return "RenderFlow"; }
-
+    virtual const char *renderName() const 
+    { 
+        if (isAnonymousBox()) 
+            return "Block (Anonymous)";
+        if (isInline())
+            return "Inline";
+        return "Block";
+    };
+    
     virtual void setStyle(RenderStyle *style);
 
     virtual bool isFlow() const { return true; }
     virtual bool childrenInline() const { return m_childrenInline; }
+    virtual void setChildrenInline(bool b) { m_childrenInline = b; }
+    
     virtual bool isRendered() const { return true; }
     virtual void setBlockBidi() { m_blockBidi = true; }
 
-    RenderFlow* continuation() { return m_continuation; }
+    virtual RenderFlow* continuation() const { return m_continuation; }
     void setContinuation(RenderFlow* c) { m_continuation = c; }
+    RenderFlow* continuationBefore(RenderObject* beforeChild);
+    
+    void splitInlines(RenderFlow* fromBlock, RenderFlow* toBlock, RenderFlow* middleBlock,
+                      RenderObject* beforeChild, RenderFlow* oldCont);
+    void splitFlow(RenderObject* beforeChild, RenderFlow* newBlockBox, RenderFlow* oldCont);
+    void addChildWithContinuation(RenderObject* newChild, RenderObject* beforeChild);
+    void addChildToFlow(RenderObject* newChild, RenderObject* beforeChild);
     
     void makeChildrenNonInline(RenderObject *box2Start = 0);
 
@@ -210,7 +226,7 @@ private:
     bool firstLine        : 1; // used in inline layouting
     bool m_blockBidi : 1;
     EClear m_clearStatus  : 2; // used during layuting of paragraphs
-    
+     
     short m_maxTopPosMargin;
     short m_maxTopNegMargin;
     short m_maxBottomPosMargin;

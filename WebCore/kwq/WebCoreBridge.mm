@@ -301,7 +301,7 @@ NSString *WebCoreElementStringKey = 		@"WebElementString";
     for (RenderObject *child = node->firstChild(); child; child = child->nextSibling()) {
         [children addObject:[self copyRenderNode:child copier:copier]];
     }
-    
+          
     NSString *name = [[NSString alloc] initWithUTF8String:node->renderName()];
     
     RenderPart *nodeRenderPart = dynamic_cast<RenderPart *>(node);

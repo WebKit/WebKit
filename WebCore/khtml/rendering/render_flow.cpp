@@ -100,6 +100,18 @@ void RenderFlow::setStyle(RenderStyle *_style)
         }
         child = child->nextSibling();
     }
+    
+    // Ensure that all of the split inlines pick up the new style.
+    RenderFlow* currCont = continuation();
+    while (currCont) {
+        if (currCont->isInline()) {
+            RenderFlow* nextCont = currCont->continuation();
+            currCont->setContinuation(0);
+            currCont->setStyle(style());
+            currCont->setContinuation(nextCont);
+        }
+        currCont = currCont->continuation();
+    }
 }
 
 RenderFlow::~RenderFlow()
@@ -450,7 +462,7 @@ void RenderFlow::layoutBlockChildren( bool relayoutChildren )
     bool topChildQuirk = false;
     bool bottomChildQuirk = false;
     
-    bool strictMode = (element()->getDocument()->parseMode() == DocumentImpl::Strict);
+    bool strictMode = isAnonymousBox() ? true : (element()->getDocument()->parseMode() == DocumentImpl::Strict);
      
     //kdDebug() << "RenderFlow::layoutBlockChildren " << prevMargin << endl;
 
@@ -735,7 +747,7 @@ void RenderFlow::layoutBlockChildren( bool relayoutChildren )
             m_bottomMarginQuirk = false;
     }
     
-    if (element()->id() == ID__KONQBLOCK)
+    if (element() && element()->id() == ID__KONQBLOCK)
         // Deal with the case where <forms> get wrapped in a KONQBLOCK.
         // We want that form's bottom margin to actually disappear.
         // Don't let any children affect a KONQBLOCK's margins.
@@ -1720,6 +1732,191 @@ int RenderFlow::offsetTop() const
     return y;
 }
 
+RenderFlow* RenderFlow::continuationBefore(RenderObject* beforeChild)
+{
+    if (beforeChild && beforeChild->parent() == this)
+        return this;
+       
+    RenderFlow* curr = continuation();
+    RenderFlow* nextToLast = this;
+    RenderFlow* last = this;
+    while (curr) {
+        if (beforeChild && beforeChild->parent() == curr) {
+            if (curr->firstChild() == beforeChild)
+                return last;
+            return curr;
+        }
+        
+        nextToLast = last;
+        last = curr;
+        curr = curr->continuation();
+    }
+    
+    if (!beforeChild && !last->firstChild())
+        return nextToLast;
+    return last;
+}
+
+static RenderFlow* cloneInline(RenderFlow* src)
+{
+    RenderFlow *o = new (src->renderArena()) RenderFlow(src->element());
+    o->setStyle(src->style());
+    return o;
+}
+
+void RenderFlow::splitInlines(RenderFlow* fromBlock, RenderFlow* toBlock,
+                              RenderFlow* middleBlock,
+                              RenderObject* beforeChild, RenderFlow* oldCont)
+{
+    // Create a clone of this inline.
+    RenderFlow* clone = cloneInline(this);
+    clone->setContinuation(oldCont);
+    
+    // Now take all of the children from beforeChild to the end and remove
+    // then from |this| and place them in the clone.
+    RenderObject* o = beforeChild;
+    while (o) {
+        RenderObject* tmp = o;
+        o = tmp->nextSibling();
+        clone->appendChildNode(removeChildNode(tmp));
+        tmp->setLayouted(false);
+        tmp->setMinMaxKnown(false);
+    }
+    
+    // Hook |clone| up as the continuation of the middle block.
+    middleBlock->setContinuation(clone);
+    
+    // We have been reparented and are now under the fromBlock.  We need
+    // to walk up our inline parent chain until we hit the containing block.
+    // Once we hit the containing block we're done.
+    RenderFlow* curr = static_cast<RenderFlow*>(parent());
+    RenderFlow* currChild = this;
+    while (curr && curr != fromBlock) {
+        // Create a new clone.
+        RenderFlow* cloneChild = clone;
+        clone = cloneInline(curr);
+        
+        // Insert our child clone as the first child.
+        clone->appendChildNode(cloneChild);
+        
+        // Hook the clone up as a continuation of |curr|.
+        RenderFlow* oldCont = curr->continuation();
+        curr->setContinuation(clone);
+        clone->setContinuation(oldCont);
+        
+        // Now we need to take all of the children starting from the first child
+        // *after* currChild and append them all to the clone.
+        o = currChild->nextSibling();
+        while (o) {
+            RenderObject* tmp = o;
+            o = tmp->nextSibling();
+            clone->appendChildNode(curr->removeChildNode(tmp));
+            tmp->setLayouted(false);
+            tmp->setMinMaxKnown(false);
+        }
+        
+        // Keep walking up the chain.
+        currChild = curr;
+        curr = static_cast<RenderFlow*>(curr->parent());
+    }
+  
+    // Now we are at the block level. We need to put the clone into the toBlock.
+    toBlock->appendChildNode(clone);
+    
+    // Now take all the children after currChild and remove them from the fromBlock
+    // and put them in the toBlock.
+    o = currChild->nextSibling();
+    while (o) {
+        RenderObject* tmp = o;
+        o = tmp->nextSibling();
+        toBlock->appendChildNode(fromBlock->removeChildNode(tmp));
+    }
+}
+
+void RenderFlow::splitFlow(RenderObject* beforeChild, RenderFlow* newBlockBox, RenderFlow* oldCont)
+{
+    RenderObject* block = containingBlock();
+    RenderFlow* pre = 0;
+    RenderFlow* post = 0;
+    
+    RenderStyle* newStyle = new RenderStyle();
+    newStyle->inheritFrom(block->style());
+    newStyle->setDisplay(BLOCK);
+    pre = new (renderArena()) RenderFlow(0 /* anonymous box */);
+    pre->setStyle(newStyle);
+    pre->setIsAnonymousBox(true);
+    pre->setChildrenInline(true);
+    
+    newStyle = new RenderStyle();
+    newStyle->inheritFrom(block->style());
+    newStyle->setDisplay(BLOCK);
+    post = new (renderArena()) RenderFlow(0 /* anonymous box */);
+    post->setStyle(newStyle);
+    post->setIsAnonymousBox(true);
+    post->setChildrenInline(true);
+    
+    RenderObject* boxFirst = block->firstChild();
+    block->insertChildNode(pre, boxFirst);
+    block->insertChildNode(newBlockBox, boxFirst);
+    block->insertChildNode(post, boxFirst);
+    block->setChildrenInline(false);
+    
+    RenderObject* o = boxFirst;
+    while (o) 
+    {
+        RenderObject* no = o;
+        o = no->nextSibling();
+        pre->appendChildNode(block->removeChildNode(no));
+        no->setLayouted(false);
+        no->setMinMaxKnown(false);
+    }
+    
+    splitInlines(pre, post, newBlockBox, beforeChild, oldCont);
+    
+    // XXXdwh is any of this even necessary? I don't think it is.
+    pre->close();
+    pre->setPos(0, -500000);
+    pre->setLayouted(false);
+    newBlockBox->close();
+    newBlockBox->setPos(0, -500000);
+    newBlockBox->setLayouted(false);
+    post->close();
+    post->setPos(0, -500000);
+    post->setLayouted(false);
+    
+    block->setLayouted(false);
+    block->setMinMaxKnown(false);
+}
+
+void RenderFlow::addChildWithContinuation(RenderObject* newChild, RenderObject* beforeChild)
+{
+    RenderFlow* flow = continuationBefore(beforeChild);
+    RenderFlow* beforeChildParent = beforeChild ? static_cast<RenderFlow*>(beforeChild->parent()) : 
+                                    (flow->continuation() ? flow->continuation() : flow);
+    
+    if (newChild->isSpecial())
+        return beforeChildParent->addChildToFlow(newChild, beforeChild);
+    
+    // A continuation always consists of two potential candidates: an inline or an anonymous
+    // block box holding block children.
+    bool childInline = newChild->isInline();
+    bool bcpInline = beforeChildParent->isInline();
+    bool flowInline = flow->isInline();
+    
+    if (flow == beforeChildParent)
+        return flow->addChildToFlow(newChild, beforeChild);
+    else {
+        // The goal here is to match up if we can, so that we can coalesce and create the
+        // minimal # of continuations needed for the inline.
+        if (childInline == bcpInline)
+            return beforeChildParent->addChildToFlow(newChild, beforeChild);
+        else if (flowInline == childInline)
+            return flow->addChildToFlow(newChild, 0); // Just treat like an append.
+        else 
+            return beforeChildParent->addChildToFlow(newChild, beforeChild);
+    }
+}
+
 void RenderFlow::addChild(RenderObject *newChild, RenderObject *beforeChild)
 {
 #ifdef DEBUG_LAYOUT
@@ -1727,6 +1924,14 @@ void RenderFlow::addChild(RenderObject *newChild, RenderObject *beforeChild)
                        ", " << (beforeChild ? beforeChild->renderName() : "0") << " )" << endl;
     kdDebug( 6040 ) << "current height = " << m_height << endl;
 #endif
+
+    if (continuation())
+        return addChildWithContinuation(newChild, beforeChild);
+    return addChildToFlow(newChild, beforeChild);
+}
+
+void RenderFlow::addChildToFlow(RenderObject* newChild, RenderObject* beforeChild)
+{
     setLayouted( false );
     
     bool madeBoxesNonInline = FALSE;
@@ -1832,7 +2037,26 @@ void RenderFlow::addChild(RenderObject *newChild, RenderObject *beforeChild)
     // inline children into anonymous block boxes
     if ( m_childrenInline && !newChild->isInline() && !newChild->isSpecial() )
     {
-        if ( m_childrenInline ) {
+        if (isInline()) {
+            // We are placing a block inside an inline. We have to perform a split of this
+            // inline into continuations.  This involves creating an anonymous block box to hold 
+            // |newChild|.  We then make that block box a continuation of this inline.  We take all of
+            // the children after |beforeChild| and put them in a clone of this object.
+            RenderStyle *newStyle = new RenderStyle();
+            newStyle->inheritFrom(style());
+            newStyle->setDisplay(BLOCK);
+
+            RenderFlow *newBox = new (renderArena()) RenderFlow(0 /* anonymous box */);
+            newBox->setStyle(newStyle);
+            newBox->setIsAnonymousBox(true);
+            newBox->addChild(newChild);
+            RenderFlow* oldContinuation = continuation();
+            setContinuation(newBox);
+            splitFlow(beforeChild, newBox, oldContinuation);
+            return;
+        }
+        else {
+            // This is a block with inline content. Wrap the inline content in anonymous blocks.
             makeChildrenNonInline(beforeChild);
             madeBoxesNonInline = true;
         }
@@ -1891,25 +2115,6 @@ void RenderFlow::addChild(RenderObject *newChild, RenderObject *beforeChild)
             // ### get rid of the closing thing altogether this will only work during initial parsing
             if (lastChild() && lastChild()->isAnonymousBox()) {
                 lastChild()->close();
-            }
-        }
-    }
-
-    if(!newChild->isInline()) // block child
-    {
-        // XXX This is all just completely wrong and is going to have to be
-        // rewritten. -dwh
-        
-        // If we are inline ourselves and have become block, we have to make sure our parent
-        // makes the necessary adjustments so that all of its other children are moved into
-        // anonymous block boxes where necessary
-        if (style()->display() == INLINE)
-        {
-            setInline(false); // inline can't contain blocks
-            RenderObject *p = parent();
-            if (p && p->isFlow() && p->childrenInline() ) {
-                static_cast<RenderFlow*>(p)->makeChildrenNonInline();
-                madeBoxesNonInline = true;
             }
         }
     }

@@ -45,7 +45,7 @@ using namespace DOM;
 // 10 html
 const unsigned short DOM::tagPriority[] = {
     0, // 0
-    5, // ID_A == 1
+    1, // ID_A == 1
     1, // ID_ABBR
     1, // ID_ACRONYM
     3, // ID_ADDRESS
@@ -76,7 +76,7 @@ const unsigned short DOM::tagPriority[] = {
     1, // ID_EM
     0, // ID_EMBED
     3, // ID_FIELDSET
-    5, // ID_FONT
+    1, // ID_FONT
     3, // ID_FORM
     0, // ID_FRAME
    10,// ID_FRAMESET
@@ -593,8 +593,9 @@ bool DOM::checkChild(ushort tagID, ushort childID)
     case ID_BDO:
     case ID_Q:
     case ID_LEGEND:
-        // _0 *
-        return check_array(childID, tag_list_0);
+    case ID_FONT:
+    case ID_A:
+        return check_array(childID, tag_list_1);
     case ID_P:
     case ID_H1:
     case ID_H2:
@@ -602,7 +603,7 @@ bool DOM::checkChild(ushort tagID, ushort childID)
     case ID_H4:
     case ID_H5:
     case ID_H6:
-        if (childID == ID_TABLE) return true;
+        if (childID == ID_TABLE || (tagID != ID_P && childID == ID_CENTER)) return true;
         return check_array(childID, tag_list_0);
     case ID_BASEFONT:
     case ID_BR:
@@ -630,9 +631,6 @@ bool DOM::checkChild(ushort tagID, ushort childID)
         // ADDRESS: ( _0 | P ) *
         if( check_array(childID, tag_list_0) ) return true;
         return (childID == ID_P);
-    case ID_FONT:
-        // special handling for FONT: (_0 | 3)
-        return check_array(childID, tag_list_3) || check_array(childID, tag_list_0);
     case ID__KONQBLOCK:
         if ( childID == ID__KONQBLOCK ) return false;
         // Fall through!
@@ -655,13 +653,6 @@ bool DOM::checkChild(ushort tagID, ushort childID)
     case ID_MARQUEE:
         // DIV: _1 *
         return check_array(childID, tag_list_1);
-    case ID_A:
-        // A: _0 * - A
-        if( check_array(childID, tag_list_0) ) return true;
-        if ( childID == ID_TABLE ) return false; // no table in anchor
-        if( check_array(childID, tag_list_3) ) return true;
-        if( childID == ID_ADDRESS ) return true;
-        return false;
     case ID_MAP:
         // MAP: ( _3 + | AREA + )
         if( check_array(childID, tag_list_3) ) return true;

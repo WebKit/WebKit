@@ -1278,7 +1278,7 @@ void KHTMLParser::popOneBlock()
 
 void KHTMLParser::popInlineBlocks()
 {
-    while(current->isInline() && current->id() != ID_FONT)
+    while(current->isInline())
         popOneBlock();
 }
 

@@ -1,3 +1,53 @@
+2002-11-24  David Hyatt  <hyatt@apple.com>
+
+	This landing adds support for blocks inside inlines.  It
+	gets rid of the old broken way KHTML used to handle this
+	and implements a brand new mechanism.
+
+	With this change, I have decreased the tag priority of <font>
+	and <a> to match other inlines (<i>, <span>, etc.), and I
+	now allow all the inlines to contain blocks for relaxed parsing.
+
+	Now if you open an <i> or a <b> and just leave it open across
+	blocks, this will work.
+
+	I also fixed a bad DHTML bug caused by the WebCoreBridge 
+	forceLayout method.  The basic pattern is that someone does
+	a tiny repaint of just a sliver of the window, then someone
+	schedules a layout (which means they want a full repaint), but
+	then drawRect comes along and calls forceLayout which unschedules
+	the layout, thus preventing the full repaint from occurring.
+
+	Any basic DHTML that used append/remove child was broken because
+	of this pattern.  For now I have just removed the unscheduleLayout
+	call at the end of forceLayout.
+	
+        * khtml/html/dtd.cpp:
+        (DOM::checkChild):
+        * khtml/html/htmlparser.cpp:
+        (KHTMLParser::popInlineBlocks):
+        * khtml/rendering/render_container.cpp:
+        (RenderContainer::removeChild):
+        (RenderContainer::removeLeftoverAnonymousBoxes):
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::setStyle):
+        (RenderFlow::layoutBlockChildren):
+        (RenderFlow::continuationBefore):
+        (cloneInline):
+        (RenderFlow::splitInlines):
+        (RenderFlow::splitFlow):
+        (RenderFlow::addChildWithContinuation):
+        (RenderFlow::addChild):
+        (RenderFlow::addChildToFlow):
+        * khtml/rendering/render_flow.h:
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::mouseInside):
+        * khtml/rendering/render_object.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::forceLayout):
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge copyRenderNode:copier:]):
+
 2002-11-24  Chris Blumenberg  <cblu@apple.com>
 
 	Added element keys for the image ALT and link TITLE attributes. This will eventually be used to fix other bugs. Also made WebKit and WebCore use the same element keys to simplify the conversion of the element dictionary.
