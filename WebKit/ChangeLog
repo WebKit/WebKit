@@ -1,3 +1,15 @@
+2004-02-02  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Darin.
+
+        * Misc.subproj/WebNSURLExtras.h:
+        * Misc.subproj/WebNSURLExtras.m:
+        (-[NSURL _web_URLWithLowercasedScheme]):
+        new method, returns a URL whose scheme has been tolower'ed
+
+        * English.lproj/StringsNotToBeLocalized.txt:
+        Updated for recent changes.
+
 2004-02-02  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3546924>: REGRESSION: dragging text or images over a WebView is jerky

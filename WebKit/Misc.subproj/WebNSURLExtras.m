@@ -526,6 +526,47 @@ static NSString *mapHostNames(NSString *string, BOOL encode)
     return [[self _web_originalDataAsString] _web_hasCaseInsensitivePrefix:@"about:"] || [self _web_isEmpty];
 }
 
+- (NSURL *)_web_URLWithLowercasedScheme
+{
+    CFRange range;
+    CFURLGetByteRangeForComponent((CFURLRef)self, kCFURLComponentScheme, &range);
+    if (range.location == kCFNotFound) {
+        return self;
+    }
+    
+    UInt8 static_buffer[URL_BYTES_BUFFER_LENGTH];
+    UInt8 *buffer = static_buffer;
+    CFIndex bytesFilled = CFURLGetBytes((CFURLRef)self, buffer, URL_BYTES_BUFFER_LENGTH);
+    if (bytesFilled == -1) {
+        CFIndex bytesToAllocate = CFURLGetBytes((CFURLRef)self, NULL, 0);
+        buffer = malloc(bytesToAllocate);
+        bytesFilled = CFURLGetBytes((CFURLRef)self, buffer, bytesToAllocate);
+        ASSERT(bytesFilled == bytesToAllocate);
+    }
+    
+    int i;
+    BOOL changed = NO;
+    for (i = 0; i < range.length; ++i) {
+        UInt8 c = buffer[range.location + i];
+        UInt8 lower = tolower(c);
+        if (c != lower) {
+            buffer[range.location + i] = lower;
+            changed = YES;
+        }
+    }
+    
+    NSURL *result = changed
+        ? [(NSURL *)CFURLCreateAbsoluteURLWithBytes(NULL, buffer, bytesFilled, kCFStringEncodingUTF8, nil, YES) autorelease]
+        : self;
+
+    if (buffer != static_buffer) {
+        free(buffer);
+    }
+    
+    return result;
+}
+
+
 -(BOOL)_web_hasQuestionMarkOnlyQueryString
 {
     CFRange rangeWithSeparators;
