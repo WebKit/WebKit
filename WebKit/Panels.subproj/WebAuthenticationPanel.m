@@ -9,10 +9,10 @@
 
 #import <WebFoundation/WebAssertions.h>
 #import <WebFoundation/WebLocalizableStrings.h>
+#import <WebFoundation/WebNSURLExtras.h>
 
 #import <WebKit/WebNSControlExtras.h>
 #import <WebKit/WebStandardPanelsPrivate.h>
-
 
 #define WebAuthenticationPanelNibName @"WebAuthenticationPanel"
 
@@ -105,11 +105,7 @@
     if ([resource isProxy]) {
         host = [resource proxyHost];
     } else {
-        host = [[resource URL] host];
-        int port = [[[resource URL] port] intValue];
-        if (port) {
-            host = [NSString stringWithFormat:@"%@:%u", host, port];
-        }
+        host = [[resource URL] _web_hostWithPort];
     }
     
     NSString *message;

@@ -1,5 +1,10 @@
 2002-11-02  Darin Adler  <darin@apple.com>
 
+        * Panels.subproj/WebAuthenticationPanel.m: (-[WebAuthenticationPanel setUpForRequest:]):
+	Do the previous fix one better by using _web_hostWithPort.
+
+2002-11-02  Darin Adler  <darin@apple.com>
+
 	- fixed bug where the address of an NSNumber object would be used for the port number
 
         * Panels.subproj/WebAuthenticationPanel.m: (-[WebAuthenticationPanel setUpForRequest:]):
