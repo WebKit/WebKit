@@ -76,6 +76,16 @@ namespace khtml
     class Request;
     class DocLoader;
 
+ #define MAX_LRU_LISTS 20
+    
+    struct LRUList {
+        CachedObject* m_head;
+        CachedObject* m_tail;
+    
+        LRUList();
+        ~LRUList();
+    };
+    
     /**
      * @internal
      *
@@ -97,10 +107,10 @@ namespace khtml
 	    NotCached,    // this URL is not cached
 	    Unknown,      // let imagecache decide what to do with it
 	    New,          // inserting new image
-            Pending,      // only partially loaded
+        Pending,      // only partially loaded
 	    Persistent,   // never delete this pixmap
 	    Cached,       // regular case
-	    Uncacheable   // to big to be cached,
+	    Uncacheable   // too big to be cached,
 	};  	          // will be destroyed as soon as possible
 
 	CachedObject(const DOM::DOMString &url, Type type, KIO::CacheControl _cachePolicy, time_t _expireDate, int size = 0)
@@ -113,13 +123,16 @@ namespace khtml
 	    m_cachePolicy = _cachePolicy;
 	    m_request = 0;
 #if APPLE_CHANGES
-            m_response = 0;
+        m_response = 0;
 #endif            
 	    m_expireDate = _expireDate;
-            m_deleted = false;
-            m_expireDateChanged = false;
-            m_nextInLRUList = 0;
-            m_prevInLRUList = 0;
+        m_deleted = false;
+        m_expireDateChanged = false;
+        
+        m_accessCount = 0;
+        
+        m_nextInLRUList = 0;
+        m_prevInLRUList = 0;
 	}
 	virtual ~CachedObject();
 
@@ -138,6 +151,9 @@ namespace khtml
 
 	int size() const { return m_size; }
 
+    int accessCount() const { return m_accessCount; }
+    void increaseAccessCount() { m_accessCount++; }
+    
 	/**
 	 * computes the status of an object after loading.
 	 * the result depends on the objects size and the size of the cache
@@ -190,6 +206,8 @@ namespace khtml
 	Status m_status;
     private:
 	int m_size;
+    int m_accessCount;
+    
     protected:
 	time_t m_expireDate;
 	KIO::CacheControl m_cachePolicy;
@@ -547,29 +565,30 @@ namespace khtml
 
         static void insertInLRUList(CachedObject *);
         static void removeFromLRUList(CachedObject *);
-        static void adjustSize(CachedObject *, int sizeDelta);
+        static bool adjustSize(CachedObject *, int sizeDelta);
+        
+        static LRUList* getLRUListFor(CachedObject* o);
         
         static void checkLRUAndUncacheableListIntegrity();
 
-        protected:
-	static QDict<CachedObject> *cache;
+    protected:
+        static QDict<CachedObject> *cache;
         static QPtrList<DocLoader>* docloader;
-
-	static int maxSize;
-	static int flushCount;
-
-	static Loader *m_loader;
-
+    
+        static int maxSize;
+        static int flushCount;
+    
+        static Loader *m_loader;
+    
         static unsigned long s_ulRefCnt;
-
+    
         static void moveToHeadOfLRUList(CachedObject *);
-
-	static CachedObject *m_headOfLRUList;
-	static CachedObject *m_tailOfLRUList;
-        static int m_totalSizeOfLRUList;
-        
-	static CachedObject *m_headOfUncacheableList;
-        
+    
+        static LRUList m_LRULists[];
+        static int m_totalSizeOfLRULists;
+            
+        static CachedObject *m_headOfUncacheableList;
+            
         static int m_countOfLRUAndUncacheableLists;
     };
 

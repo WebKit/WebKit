@@ -31,7 +31,7 @@
 #include "loader.h"
 
 // up to which size is a picture for sure cacheable
-#define MAXCACHEABLE 16*1024
+#define MAXCACHEABLE 40*1024
 // default cache size
 #define DEFCACHESIZE 4096*1024
 
@@ -146,6 +146,7 @@ void CachedObject::ref(CachedObjectClient *c)
     m_clients.remove(c);
     m_clients.append(c);
     Cache::removeFromLRUList(this);
+    increaseAccessCount();
 }
 
 void CachedObject::deref(CachedObjectClient *c)
@@ -157,8 +158,16 @@ void CachedObject::deref(CachedObjectClient *c)
 
 void CachedObject::setSize(int size)
 {
-    Cache::adjustSize(this, size - m_size);
+    bool sizeChanged = Cache::adjustSize(this, size - m_size);
+
+    // The object must now be moved to a different queue, since its size has been changed.
+    if (sizeChanged && allowInLRUList())
+        Cache::removeFromLRUList(this);
+
     m_size = size;
+    
+    if (sizeChanged && allowInLRUList())
+        Cache::insertInLRUList(this);
 }
 
 // -------------------------------------------------------------------------------------------
@@ -1369,6 +1378,13 @@ KIO::Job *Loader::jobForRequest( const DOM::DOMString &url ) const
 // ----------------------------------------------------------------------------
 
 
+LRUList::LRUList()
+:m_head(0), m_tail(0) 
+{}
+
+LRUList::~LRUList()
+{}
+
 QDict<CachedObject> *Cache::cache = 0;
 QPtrList<DocLoader>* Cache::docloader = 0;
 Loader *Cache::m_loader = 0;
@@ -1379,11 +1395,10 @@ int Cache::flushCount = 0;
 QPixmap *Cache::nullPixmap = 0;
 QPixmap *Cache::brokenPixmap = 0;
 
-CachedObject *Cache::m_headOfLRUList = 0;
-CachedObject *Cache::m_tailOfLRUList = 0;
 CachedObject *Cache::m_headOfUncacheableList = 0;
-int Cache::m_totalSizeOfLRUList = 0;
+int Cache::m_totalSizeOfLRULists = 0;
 int Cache::m_countOfLRUAndUncacheableLists;
+LRUList Cache::m_LRULists[MAX_LRU_LISTS];
 
 void Cache::init()
 {
@@ -1687,8 +1702,15 @@ void Cache::flush(bool force)
 
     while (m_headOfUncacheableList)
         removeCacheEntry(m_headOfUncacheableList);
-    while (m_totalSizeOfLRUList > maxSize)
-        removeCacheEntry(m_tailOfLRUList);
+    
+    for (int i = MAX_LRU_LISTS-1; i>=0; i--) {
+        if (m_totalSizeOfLRULists <= maxSize)
+            break;
+            
+        while (m_totalSizeOfLRULists > maxSize && m_LRULists[i].m_tail) {
+            removeCacheEntry(m_LRULists[i].m_tail);
+        }
+    }
 
     flushCount = m_countOfLRUAndUncacheableLists+10; // Flush again when the cache has grown.
 #ifdef CACHE_DEBUG
@@ -1804,12 +1826,52 @@ void Cache::removeCacheEntry( CachedObject *object )
      delete object;
 }
 
+#define FAST_LOG2(_log2,_n)   \
+      unsigned int j_ = (unsigned int)(_n);   \
+      (_log2) = 0;                    \
+      if ((j_) & ((j_)-1))            \
+      (_log2) += 1;               \
+      if ((j_) >> 16)                 \
+      (_log2) += 16, (j_) >>= 16; \
+      if ((j_) >> 8)                  \
+      (_log2) += 8, (j_) >>= 8;   \
+      if ((j_) >> 4)                  \
+      (_log2) += 4, (j_) >>= 4;   \
+      if ((j_) >> 2)                  \
+      (_log2) += 2, (j_) >>= 2;   \
+      if ((j_) >> 1)                  \
+      (_log2) += 1;
+
+int FastLog2(unsigned int i) {
+    int log2;
+    FAST_LOG2(log2,i);
+    return log2;
+}
+
+LRUList* Cache::getLRUListFor(CachedObject* o)
+{
+    ASSERT(o->accessCount());
+    int sizeLog = FastLog2(o->size());
+    int queueIndex = sizeLog/o->accessCount();
+    queueIndex--;
+    if (queueIndex < 0)
+        queueIndex = 0;
+    if (queueIndex >= MAX_LRU_LISTS)
+        queueIndex = MAX_LRU_LISTS-1;
+    return &(m_LRULists[queueIndex]);
+}
+
 void Cache::removeFromLRUList(CachedObject *object)
 {
+    if (!object->accessCount())
+        return; // No way we can be in a queue yet.
+        
     CachedObject *next = object->m_nextInLRUList;
     CachedObject *prev = object->m_prevInLRUList;
     bool uncacheable = object->status() == CachedObject::Uncacheable;
-    CachedObject *&head = uncacheable ? m_headOfUncacheableList : m_headOfLRUList;
+    
+    LRUList* list = uncacheable ? 0 : getLRUListFor(object);
+    CachedObject *&head = uncacheable ? m_headOfUncacheableList : list->m_head;
     
     if (next == 0 && prev == 0 && head != object) {
         return;
@@ -1820,8 +1882,8 @@ void Cache::removeFromLRUList(CachedObject *object)
     
     if (next)
         next->m_prevInLRUList = prev;
-    else if (m_tailOfLRUList == object)
-        m_tailOfLRUList = prev;
+    else if (!uncacheable && list->m_tail == object)
+        list->m_tail = prev;
 
     if (prev)
         prev->m_nextInLRUList = next;
@@ -1831,7 +1893,7 @@ void Cache::removeFromLRUList(CachedObject *object)
     --m_countOfLRUAndUncacheableLists;
     
     if (!uncacheable)
-        m_totalSizeOfLRUList -= object->size();
+        m_totalSizeOfLRULists -= object->size();
 }
 
 void Cache::moveToHeadOfLRUList(CachedObject *object)
@@ -1846,8 +1908,10 @@ void Cache::insertInLRUList(CachedObject *object)
     if (!object->allowInLRUList())
         return;
     
+    LRUList* list = getLRUListFor(object);
+    
     bool uncacheable = object->status() == CachedObject::Uncacheable;
-    CachedObject *&head = uncacheable ? m_headOfUncacheableList : m_headOfLRUList;
+    CachedObject *&head = uncacheable ? m_headOfUncacheableList : list->m_head;
 
     object->m_nextInLRUList = head;
     if (head)
@@ -1855,25 +1919,25 @@ void Cache::insertInLRUList(CachedObject *object)
     head = object;
     
     if (object->m_nextInLRUList == 0 && !uncacheable)
-        m_tailOfLRUList = object;
+        list->m_tail = object;
     
     ++m_countOfLRUAndUncacheableLists;
     
     if (!uncacheable)
-        m_totalSizeOfLRUList += object->size();
+        m_totalSizeOfLRULists += object->size();
 }
 
-void Cache::adjustSize(CachedObject *object, int delta)
+bool Cache::adjustSize(CachedObject *object, int delta)
 {
-    if (object->m_nextInLRUList == 0 && object->m_prevInLRUList == 0 && m_headOfLRUList != object) {
-        return;
-    }
+    if (object->status() == CachedObject::Uncacheable)
+        return false;
 
-    if (object->status() == CachedObject::Uncacheable) {
-        return;
-    }
+    if (object->m_nextInLRUList == 0 && object->m_prevInLRUList == 0 &&
+        getLRUListFor(object)->m_head != object)
+        return false;
     
-    m_totalSizeOfLRUList += delta;
+    m_totalSizeOfLRULists += delta;
+    return delta != 0;
 }
 
 // --------------------------------------
