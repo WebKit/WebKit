@@ -257,7 +257,7 @@ namespace KJS {
         BeginPath, ClosePath, 
         SetStrokeColor, SetFillColor, SetLineWidth, SetLineCap, SetLineJoin, SetMiterLimit, 
         FillPath, StrokePath, 
-        MoveToPoint, AddLineToPoint, AddQuadraticCurveToPoint, AddBezierCurveToPoint, AddArcToPoint, AddRect,
+        MoveToPoint, AddLineToPoint, AddQuadraticCurveToPoint, AddBezierCurveToPoint, AddArcToPoint, AddArc, AddRect, Clip,
         ClearRect, FillRect, StrokeRect,
         DrawImage, DrawImageFromRect,
         SetShadow, SetShadowWithColor, ClearShadow,

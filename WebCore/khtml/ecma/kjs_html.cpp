@@ -3585,7 +3585,21 @@ Value KJS::Context2DFunction::tryCall(ExecState *exec, Object &thisObj, const Li
             float y2 = (float)args[3].toNumber(exec);
             float r = (float)args[4].toNumber(exec);
             CGContextAddArcToPoint (drawingContext, x1, y1, x2, y2, r);
-            // ouch: messing with the pass should not cause an update
+            break;
+        }
+        case Context2D::AddArc: {
+            if (args.size() != 6) {
+                Object err = Error::create(exec,SyntaxError);
+                exec->setException(err);
+                return err;
+            }
+            float x = (float)args[0].toNumber(exec);
+            float y = (float)args[1].toNumber(exec);
+            float r = (float)args[2].toNumber(exec);
+            float sa = (float)args[3].toNumber(exec);
+            float ea = (float)args[4].toNumber(exec);
+            bool clockwise = args[5].toBoolean(exec);
+            CGContextAddArc (drawingContext, x, y, r, sa, ea, clockwise);
             break;
         }
         case Context2D::AddRect: {
@@ -3601,6 +3615,16 @@ Value KJS::Context2DFunction::tryCall(ExecState *exec, Object &thisObj, const Li
             CGContextAddRect (drawingContext, CGRectMake(x,y,w,h));
             break;
         }
+        case Context2D::Clip: {
+            if (args.size() != 0) {
+                Object err = Error::create(exec,SyntaxError);
+                exec->setException(err);
+                return err;
+            }
+            CGContextClip (drawingContext);
+            break;
+        }
+
         case Context2D::ClearRect: {
             if (args.size() != 4) {
                 Object err = Error::create(exec,SyntaxError);
@@ -3750,7 +3774,7 @@ Value KJS::Context2DFunction::tryCall(ExecState *exec, Object &thisObj, const Li
 const ClassInfo KJS::Context2D::info = { "Context2D", 0, &Context2DTable, 0 };
 
 /* Source for Context2DTable. Use "make hashtables" to regenerate.
-@begin Context2DTable 30
+@begin Context2DTable 32
   save                     Context2D::Save                        DontDelete|Function 0
   restore                  Context2D::Restore                     DontDelete|Function 0
   scale                    Context2D::Scale                       DontDelete|Function 2
@@ -3771,7 +3795,9 @@ const ClassInfo KJS::Context2D::info = { "Context2D", 0, &Context2DTable, 0 };
   addQuadraticCurveToPoint Context2D::AddQuadraticCurveToPoint    DontDelete|Function 4
   addBezierCurveToPoint    Context2D::AddBezierCurveToPoint       DontDelete|Function 6
   addArcToPoint            Context2D::AddArcToPoint               DontDelete|Function 5
+  addArc                   Context2D::AddArc                      DontDelete|Function 6
   addRect                  Context2D::AddRect                     DontDelete|Function 4
+  clip                     Context2D::Clip                        DontDelete|Function 0
   clearRect                Context2D::ClearRect                   DontDelete|Function 4
   fillRect                 Context2D::FillRect                    DontDelete|Function 4
   strokeRect               Context2D::StrokeRect                  DontDelete|Function 4
