@@ -143,7 +143,6 @@ void RenderTable::addChild(RenderObject *child, RenderObject *beforeChild)
         break;
     case TABLE_COLUMN:
     case TABLE_COLUMN_GROUP:
-	RenderContainer::addChild(child,beforeChild);
 	has_col_elems = true;
         break;
     case TABLE_HEADER_GROUP:

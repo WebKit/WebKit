@@ -1,3 +1,13 @@
+2003-02-05  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave.
+
+        - fixed 3165682 -- REGRESSION: assertion failure in appendChildNode loading cnn.com
+
+        * khtml/rendering/render_table.cpp: (RenderTable::addChild):
+        Get rid of double-addChild introduced when I carelessly rolled in a change
+        from the KHTML guys.
+
 2003-02-05  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3164949.  My fix to make form controls actually obey
