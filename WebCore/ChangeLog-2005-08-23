@@ -3,6 +3,30 @@
         Reviewed by Hyatt
 
         * khtml/editing/htmlediting_impl.cpp:
+        (khtml::DeleteSelectionCommandImpl::doApply): The whitespace fixup code
+        that makes sure proper whitespace renders after deletion was getting confused
+        in cases where the deletion merged blocks. Basically, I needed to move some
+        whitespace fixup code so it runs before deleting in the case where blocks
+        need to be merged. It used to run after, and was getting confused by
+        whitespace left over at the ends of the block after the deletion.
+        * layout-tests/editing/deleting/delete-block-merge-contents-012-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-block-merge-contents-012.html: Added.
+        * layout-tests/editing/deleting/delete-block-merge-contents-013-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-block-merge-contents-013.html: Added.
+        * layout-tests/editing/deleting/delete-block-merge-contents-014-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-block-merge-contents-014.html: Added.
+        * layout-tests/editing/deleting/delete-block-merge-contents-015-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-block-merge-contents-015.html: Added.
+        * layout-tests/editing/deleting/delete-block-merge-contents-016-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-block-merge-contents-016.html: Added.
+        * layout-tests/editing/deleting/delete-block-merge-contents-017-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-block-merge-contents-017.html: Added.
+
+2004-09-15  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+
+        * khtml/editing/htmlediting_impl.cpp:
         (khtml::DeleteSelectionCommandImpl::moveNodesAfterNode): Renamed from moveNodesToBlock.
         Just some simplification and cleanup in this function.
         (khtml::DeleteSelectionCommandImpl::doApply): Remove a hunk of start-of-block code I thought

@@ -1087,6 +1087,20 @@ void DeleteSelectionCommandImpl::doApply()
         // be nice to be able to deal with this, but for now, bail.
         return;
 
+    if (startBlock != endBlock) {
+        // Delete some unrendered whitespace. This prepares the startBlock to
+        // receive content that will be merged from endBlock. Do this before 
+        // deleting, since deleting content can alter the notion of what 
+        // should collapse away.
+        // stay in this block and delete unrenderered text from the upstreamStart location
+        deleteUnrenderedText(upstreamStart);
+        Position upstreamInPreviousBlock(upstreamStart.upstream()); // Note no StayInBlock on upstream call.
+        if (upstreamInPreviousBlock != upstreamStart)
+            // cross blocks and delete unrenderered text from the upstream
+            // position in startBlock. 
+            deleteUnrenderedText(upstreamInPreviousBlock);
+    }
+
     // Figure out the typing style in effect before the delete is done.
     // FIXME: Improve typing style.
     // See this bug: <rdar://problem/3769899> Implementation of typing style needs improvement
@@ -1172,13 +1186,7 @@ void DeleteSelectionCommandImpl::doApply()
     
     // Do block merge if start and end of selection are in different blocks.
     if (endBlock != startBlock && downstreamEnd.node()->inDocument()) {
-        LOG(Editing,  "merging content to start block");
-        // cross blocks and delete unrenderered text from the destination location
-        deleteUnrenderedText(upstreamStart.upstream());
-        // stay in this block and delete unrenderered text from the source location
-        deleteUnrenderedText(upstreamStart);
-        // move the downstream end position's node, and all other nodes in its
-        // block to the start block.
+        LOG(Editing,  "merging content from end block");
         moveNodesAfterNode(downstreamEnd.node(), upstreamStart.node());
     }
       
