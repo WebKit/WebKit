@@ -1228,46 +1228,14 @@ static id <WebFormDelegate> formDelegate(WebBridge *self)
     [[NSNotificationCenter defaultCenter] postNotificationName:WebViewDidChangeSelectionNotification object:[_frame webView]];
 }
 
-- (void)registerCommandForUndo:(id)arg
+- (NSUndoManager *)undoManager
 {
-    NSUndoManager *undoManager = [[_frame webView] undoManager];
-    [undoManager registerUndoWithTarget:self selector:@selector(undoEditing:) object:arg];
-    _haveUndoRedoOperations = YES;
-}
-
-- (void)registerCommandForRedo:(id)arg
-{
-    NSUndoManager *undoManager = [[_frame webView] undoManager];
-    [undoManager registerUndoWithTarget:self selector:@selector(redoEditing:) object:arg];
-    _haveUndoRedoOperations = YES;
-}
-
-- (void)clearUndoRedoOperations
-{
-    if (_haveUndoRedoOperations) {
-	NSUndoManager *undoManager = [[_frame webView] undoManager];
-	[undoManager removeAllActionsWithTarget:self];
-	_haveUndoRedoOperations = NO;
-    }
+    return [[_frame webView] undoManager];
 }
 
 - (BOOL)interceptEditingKeyEvent:(NSEvent *)event
 {
     return [[_frame webView] _interceptEditingKeyEvent:event];
-}
-
-- (void)issueUndoCommand
-{
-    NSUndoManager *undoManager = [[_frame webView] undoManager];
-    if ([undoManager canUndo])
-        [undoManager undo];
-}
-
-- (void)issueRedoCommand
-{
-    NSUndoManager *undoManager = [[_frame webView] undoManager];
-    if ([undoManager canRedo])
-        [undoManager redo];
 }
 
 - (void)issueCutCommand

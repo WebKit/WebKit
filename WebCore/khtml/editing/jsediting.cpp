@@ -32,18 +32,6 @@
 #include "KWQKHTMLPart.h"
 #include "qstring.h"
 
-#if APPLE_CHANGES
-#include "KWQAssertions.h"
-#include "KWQLogging.h"
-#else
-#define ASSERT(assertion) ((void)0)
-#define ASSERT_WITH_MESSAGE(assertion, formatAndArgs...) ((void)0)
-#define ASSERT_NOT_REACHED() ((void)0)
-#define LOG(channel, formatAndArgs...) ((void)0)
-#define ERROR(formatAndArgs...) ((void)0)
-#endif
-
-using khtml::ApplyStyleCommand;
 using khtml::TypingCommand;
 
 namespace DOM {
@@ -52,12 +40,10 @@ class DocumentImpl;
 
 namespace {
 
-enum CommandState { no, yes, partial };
-
 struct CommandImp {
     bool (*execFn)(KHTMLPart *part, bool userInterface, const DOMString &value);
     bool (*enabledFn)(KHTMLPart *part);
-    CommandState (*stateFn)(KHTMLPart *part);
+    KHTMLPart::TriState (*stateFn)(KHTMLPart *part);
     DOMString (*valueFn)(KHTMLPart *part);
 };
 
@@ -79,7 +65,6 @@ bool JSEditor::execCommand(const DOMString &command, bool userInterface, const D
     KHTMLPart *part = m_doc->part();
     if (!part)
         return false;
-    ASSERT(cmd->enabledFn);
     m_doc->updateLayout();
     return cmd->enabledFn(part) && cmd->execFn(part, userInterface, value);
 }
@@ -105,7 +90,7 @@ bool JSEditor::queryCommandIndeterm(const DOMString &command)
     if (!part)
         return false;
     m_doc->updateLayout();
-    return cmd->stateFn(part) == partial;
+    return cmd->stateFn(part) == KHTMLPart::mixedTriState;
 }
 
 bool JSEditor::queryCommandState(const DOMString &command)
@@ -117,7 +102,7 @@ bool JSEditor::queryCommandState(const DOMString &command)
     if (!part)
         return false;
     m_doc->updateLayout();
-    return cmd->stateFn(part) != no;
+    return cmd->stateFn(part) != KHTMLPart::falseTriState;
 }
 
 bool JSEditor::queryCommandSupported(const DOMString &command)
@@ -148,18 +133,7 @@ bool execStyleChange(KHTMLPart *part, int propertyID, const DOMString &propertyV
     CSSStyleDeclarationImpl *style = new CSSStyleDeclarationImpl(0);
     style->setProperty(propertyID, propertyValue);
     style->ref();
-    // FIXME: This should share code with WebCoreBridge applyStyle: -- maybe a method on KHTMLPart?
-    switch (part->selection().state()) {
-        case Selection::NONE:
-            // do nothing
-            break;
-        case Selection::CARET:
-            part->setTypingStyle(style);
-            break;
-        case Selection::RANGE:
-            ApplyStyleCommand(part->xmlDocImpl(), style).apply();
-            break;
-    }
+    part->applyStyle(style);
     style->deref();
     return true;
 }
@@ -169,19 +143,35 @@ bool execStyleChange(KHTMLPart *part, int propertyID, const char *propertyValue)
     return execStyleChange(part, propertyID, DOMString(propertyValue));
 }
 
-CommandState stateStyle(KHTMLPart *part, int propertyID, const char *desiredValue)
+KHTMLPart::TriState stateStyle(KHTMLPart *part, int propertyID, const char *desiredValue)
 {
-    // FIXME: Needs implementation.
-    return no;
+    CSSStyleDeclarationImpl *style = new CSSStyleDeclarationImpl(0);
+    style->setProperty(propertyID, desiredValue);
+    style->ref();
+    KHTMLPart::TriState state = part->selectionHasStyle(style);
+    style->deref();
+    return state;
+}
+
+bool selectionStartHasStyle(KHTMLPart *part, int propertyID, const char *desiredValue)
+{
+    CSSStyleDeclarationImpl *style = new CSSStyleDeclarationImpl(0);
+    style->setProperty(propertyID, desiredValue);
+    style->ref();
+    bool hasStyle = part->selectionStartHasStyle(style);
+    style->deref();
+    return hasStyle;
+}
+
+DOMString valueStyle(KHTMLPart *part, int propertyID)
+{
+    return part->selectionStartStylePropertyValue(propertyID);
 }
 
 // =============================================================================================
 //
 // execCommand implementations
 //
-// EDIT FIXME: All these responses should be tested against the behavior
-// of Microsoft browsers to ensure we are as compatible with their
-// behavior as is sensible.
 
 bool execBackColor(KHTMLPart *part, bool userInterface, const DOMString &value)
 {
@@ -190,21 +180,19 @@ bool execBackColor(KHTMLPart *part, bool userInterface, const DOMString &value)
 
 bool execBold(KHTMLPart *part, bool userInterface, const DOMString &value)
 {
-    bool isBold = false; // FIXME: Needs implementation.
+    bool isBold = selectionStartHasStyle(part, CSS_PROP_FONT_WEIGHT, "bold");
     return execStyleChange(part, CSS_PROP_FONT_WEIGHT, isBold ? "normal" : "bold");
 }
 
 bool execCopy(KHTMLPart *part, bool userInterface, const DOMString &value)
 {
-    // FIXME: Should have a non-KWQ-specific way to do this.
-    KWQ(part)->issueCopyCommand();
+    part->copyToPasteboard();
     return true;
 }
 
 bool execCut(KHTMLPart *part, bool userInterface, const DOMString &value)
 {
-    // FIXME: Should have a non-KWQ-specific way to do this.
-    KWQ(part)->issueCutCommand();
+    part->cutToPasteboard();
     return true;
 }
 
@@ -249,7 +237,7 @@ bool execInsertText(KHTMLPart *part, bool userInterface, const DOMString &value)
 
 bool execItalic(KHTMLPart *part, bool userInterface, const DOMString &value)
 {
-    bool isItalic = false; // FIXME: Needs implementation.
+    bool isItalic = selectionStartHasStyle(part, CSS_PROP_FONT_STYLE, "italic");
     return execStyleChange(part, CSS_PROP_FONT_STYLE, isItalic ? "normal" : "italic");
 }
 
@@ -283,8 +271,7 @@ bool execOutdent(KHTMLPart *part, bool userInterface, const DOMString &value)
 
 bool execPaste(KHTMLPart *part, bool userInterface, const DOMString &value)
 {
-    // FIXME: Should have a non-KWQ-specific way to do this.
-    KWQ(part)->issuePasteCommand();
+    part->pasteFromPasteboard();
     return true;
 }
 
@@ -292,14 +279,13 @@ bool execPaste(KHTMLPart *part, bool userInterface, const DOMString &value)
 
 bool execPrint(KHTMLPart *part, bool userInterface, const DOMString &value)
 {
-    // FIXME: Implement.
-    return false;
+    part->print();
+    return true;
 }
 
 bool execRedo(KHTMLPart *part, bool userInterface, const DOMString &value)
 {
-    // FIXME: Should have a non-KWQ-specific way to do this.
-    KWQ(part)->issueRedoCommand();
+    part->redo();
     return true;
 }
 
@@ -321,8 +307,7 @@ bool execSuperscript(KHTMLPart *part, bool userInterface, const DOMString &value
 
 bool execUndo(KHTMLPart *part, bool userInterface, const DOMString &value)
 {
-    // FIXME: Should have a non-KWQ-specific way to do this.
-    KWQ(part)->issueUndoCommand();
+    part->undo();
     return true;
 }
 
@@ -336,20 +321,11 @@ bool execUnselect(KHTMLPart *part, bool userInterface, const DOMString &value)
 //
 // queryCommandEnabled implementations
 //
-// EDIT FIXME: All these responses should be tested against the behavior
-// of Microsoft browsers to ensure we are as compatible with their
-// behavior as is sensible. For now, the returned values are just my best
-// guesses.
-//
-// It's a bit confusing to get a clear notion of the difference between
+// It's a bit difficult to get a clear notion of the difference between
 // "supported" and "enabled" from reading the Microsoft documentation, but
 // what little I could glean from that seems to make some sense.
 //     Supported = The command is supported by this object.
 //     Enabled =   The command is available and enabled.
-//
-// With this definition, the different commands return true or false
-// based on simple, and for now incomplete, checks on the part and
-// selection.
 
 bool enabled(KHTMLPart *part)
 {
@@ -365,8 +341,7 @@ bool enabledAnySelection(KHTMLPart *part)
 
 bool enabledPaste(KHTMLPart *part)
 {
-    // FIXME: Should also check if there is something on the pasteboard to paste
-    return part->selection().notEmpty();
+    return part->canPaste();
 }
 
 #endif
@@ -378,26 +353,19 @@ bool enabledRangeSelection(KHTMLPart *part)
 
 bool enabledRedo(KHTMLPart *part)
 {
-    // EDIT FIXME: Should check if the undo manager has something to undo
-    return true;
+    return part->canRedo();
 }
 
 bool enabledUndo(KHTMLPart *part)
 {
-    // EDIT FIXME: Should check if the undo manager has something to redo
-    return true;
+    return part->canUndo();
 }
 
 // =============================================================================================
 //
-// queryCommandIndeterm implementations
+// queryCommandIndeterm/State implementations
 //
-// EDIT FIXME: All these responses should be tested against the behavior
-// of Microsoft browsers to ensure we are as compatible with their
-// behavior as is sensible. For now, the returned values are just my best
-// guesses.
-//
-// It's a bit confusing to get a clear notion of what this method is supposed
+// It's a bit difficult to get a clear notion of what these methods are supposed
 // to do from reading the Microsoft documentation, but my current guess is this:
 //
 //     queryCommandState and queryCommandIndeterm work in concert to return
@@ -408,57 +376,29 @@ bool enabledUndo(KHTMLPart *part)
 // If this is so, then queryCommandState should return "yes" in the case where
 // all the text is bold and "no" for non-bold or partially-bold text.
 // Then, queryCommandIndeterm should return "no" in the case where
-// all the text is either all bold or not-bold and and "yes" for partially-bold
-// text.
-//
-// Note that, for now, the returned values are just place-holders.
+// all the text is either all bold or not-bold and and "yes" for partially-bold text.
 
-// =============================================================================================
-//
-// queryCommandState implementations
-//
-// EDIT FIXME: All these responses should be tested against the behavior
-// of Microsoft browsers to ensure we are as compatible with their
-// behavior as is sensible. For now, the returned values are just my best
-// guesses.
-//
-// It's a bit confusing to get a clear notion of what this method is supposed
-// to do from reading the Microsoft documentation, but my current guess is this:
-//
-//     queryCommandState and queryCommandIndeterm work in concert to return
-//     the two bits of information that are needed to tell, for instance,
-//     if the text of a selection is bold. The answer can be "yes", "no", or
-//     "partially".
-//
-// If this is so, then queryCommandState should return "yes" in the case where
-// all the text is bold and "no" for non-bold or partially-bold text.
-// Then, queryCommandIndeterm should return "no" in the case where
-// all the text is either all bold or not-bold and and "yes" for partially-bold
-// text.
-//
-// Note that, for now, the returned values are just place-holders.
-
-CommandState stateNo(KHTMLPart *part)
+KHTMLPart::TriState stateNone(KHTMLPart *part)
 {
-    return no;
+    return KHTMLPart::falseTriState;
 }
 
-CommandState stateBold(KHTMLPart *part)
+KHTMLPart::TriState stateBold(KHTMLPart *part)
 {
     return stateStyle(part, CSS_PROP_FONT_WEIGHT, "bold");
 }
 
-CommandState stateItalic(KHTMLPart *part)
+KHTMLPart::TriState stateItalic(KHTMLPart *part)
 {
     return stateStyle(part, CSS_PROP_FONT_STYLE, "italic");
 }
 
-CommandState stateSubscript(KHTMLPart *part)
+KHTMLPart::TriState stateSubscript(KHTMLPart *part)
 {
     return stateStyle(part, CSS_PROP_VERTICAL_ALIGN, "sub");
 }
 
-CommandState stateSuperscript(KHTMLPart *part)
+KHTMLPart::TriState stateSuperscript(KHTMLPart *part)
 {
     return stateStyle(part, CSS_PROP_VERTICAL_ALIGN, "super");
 }
@@ -467,9 +407,6 @@ CommandState stateSuperscript(KHTMLPart *part)
 //
 // queryCommandValue implementations
 //
-// EDIT FIXME: All these responses should be tested against the behavior
-// of Microsoft browsers to ensure we are as compatible with their
-// behavior as is sensible. For now, the returned values are just place-holders.
 
 DOMString valueNull(KHTMLPart *part)
 {
@@ -478,128 +415,113 @@ DOMString valueNull(KHTMLPart *part)
 
 DOMString valueBackColor(KHTMLPart *part)
 {
-    // FIXME: Implement.
-    return DOMString();
+    return valueStyle(part, CSS_PROP_BACKGROUND_COLOR);
 }
 
 DOMString valueFontName(KHTMLPart *part)
 {
-    // FIXME: Implement.
-    return DOMString();
+    return valueStyle(part, CSS_PROP_FONT_FAMILY);
 }
 
 DOMString valueFontSize(KHTMLPart *part)
 {
-    // FIXME: Implement.
-    return DOMString();
+    return valueStyle(part, CSS_PROP_FONT_SIZE);
 }
 
 DOMString valueForeColor(KHTMLPart *part)
 {
-    // FIXME: Implement.
-    return DOMString();
+    return valueStyle(part, CSS_PROP_COLOR);
 }
 
 // =============================================================================================
 
 QDict<CommandImp> createCommandDictionary()
 {
-    //
-    // All commands are listed with a "supported" or "not supported" label.
-    //
-    // The "supported" commands need to have all their functions implemented. These bugs
-    // correspond to this work.
-    // <rdar://problem/3675867>: "Make execCommand work as specified in the Javascript execCommand Compatibility Plan"
-    // <rdar://problem/3675898>: "Make queryCommandEnabled work as specified in the Javascript execCommand Compatibility Plan"
-    // <rdar://problem/3675899>: "Make queryCommandIndeterm work as specified in the Javascript execCommand Compatibility Plan"
-    // <rdar://problem/3675901>: "Make queryCommandState work as specified in the Javascript execCommand Compatibility Plan"
-    // <rdar://problem/3675903>: "Make queryCommandSupported work as specified in the Javascript execCommand Compatibility Plan"
-    // <rdar://problem/3675904>: "Make queryCommandValue work as specified in the Javascript execCommand Compatibility Plan"
-    //
-    // The "unsupported" commands are listed here since they appear in the Microsoft
-    // documentation used as the basis for the list.
-    //
-
     struct EditorCommand { const char *name; CommandImp imp; };
 
     static const EditorCommand commands[] = {
 
-        { "backColor", { execBackColor, enabled, stateNo, valueBackColor } },
+        { "backColor", { execBackColor, enabled, stateNone, valueBackColor } },
         { "bold", { execBold, enabledAnySelection, stateBold, valueNull } },
-        { "copy", { execCopy, enabledRangeSelection, stateNo, valueNull } },
-        { "cut", { execCut, enabledRangeSelection, stateNo, valueNull } },
-        { "delete", { execDelete, enabledAnySelection, stateNo, valueNull } },
-        { "fontName", { execFontName, enabledAnySelection, stateNo, valueFontName } },
-        { "fontSize", { execFontSize, enabledAnySelection, stateNo, valueFontSize } },
-        { "foreColor", { execForeColor, enabledAnySelection, stateNo, valueForeColor } },
-        { "indent", { execIndent, enabledAnySelection, stateNo, valueNull } },
-        { "insertParagraph", { execInsertParagraph, enabledAnySelection, stateNo, valueNull } },
-        { "insertText", { execInsertText, enabledAnySelection, stateNo, valueNull } },
+        { "copy", { execCopy, enabledRangeSelection, stateNone, valueNull } },
+        { "cut", { execCut, enabledRangeSelection, stateNone, valueNull } },
+        { "delete", { execDelete, enabledAnySelection, stateNone, valueNull } },
+        { "fontName", { execFontName, enabledAnySelection, stateNone, valueFontName } },
+        { "fontSize", { execFontSize, enabledAnySelection, stateNone, valueFontSize } },
+        { "foreColor", { execForeColor, enabledAnySelection, stateNone, valueForeColor } },
+        { "indent", { execIndent, enabledAnySelection, stateNone, valueNull } },
+        { "insertParagraph", { execInsertParagraph, enabledAnySelection, stateNone, valueNull } },
+        { "insertText", { execInsertText, enabledAnySelection, stateNone, valueNull } },
         { "italic", { execItalic, enabledAnySelection, stateItalic, valueNull } },
-        { "justifyCenter", { execJustifyCenter, enabledAnySelection, stateNo, valueNull } },
-        { "justifyFull", { execJustifyFull, enabledAnySelection, stateNo, valueNull } },
-        { "justifyLeft", { execJustifyLeft, enabledAnySelection, stateNo, valueNull } },
-        { "justifyNone", { execJustifyLeft, enabledAnySelection, stateNo, valueNull } },
-        { "justifyRight", { execJustifyRight, enabledAnySelection, stateNo, valueNull } },
-        { "outdent", { execOutdent, enabledAnySelection, stateNo, valueNull } },
+        { "justifyCenter", { execJustifyCenter, enabledAnySelection, stateNone, valueNull } },
+        { "justifyFull", { execJustifyFull, enabledAnySelection, stateNone, valueNull } },
+        { "justifyLeft", { execJustifyLeft, enabledAnySelection, stateNone, valueNull } },
+        { "justifyNone", { execJustifyLeft, enabledAnySelection, stateNone, valueNull } },
+        { "justifyRight", { execJustifyRight, enabledAnySelection, stateNone, valueNull } },
+        { "outdent", { execOutdent, enabledAnySelection, stateNone, valueNull } },
 #if SUPPORT_PASTE
-        { "paste", { execPaste, enabledPaste, stateNo, valueNull } },
+        { "paste", { execPaste, enabledPaste, stateNone, valueNull } },
 #endif
-        { "print", { execPrint, enabled, stateNo, valueNull } },
-        { "redo", { execRedo, enabledRedo, stateNo, valueNull } },
-        { "selectAll", { execSelectAll, enabled, stateNo, valueNull } },
+        { "print", { execPrint, enabled, stateNone, valueNull } },
+        { "redo", { execRedo, enabledRedo, stateNone, valueNull } },
+        { "selectAll", { execSelectAll, enabled, stateNone, valueNull } },
         { "subscript", { execSubscript, enabledAnySelection, stateSubscript, valueNull } },
         { "superscript", { execSuperscript, enabledAnySelection, stateSuperscript, valueNull } },
-        { "undo", { execUndo, enabledUndo, stateNo, valueNull } },
-        { "unselect", { execUnselect, enabledAnySelection, stateNo, valueNull } }
+        { "undo", { execUndo, enabledUndo, stateNone, valueNull } },
+        { "unselect", { execUnselect, enabledAnySelection, stateNone, valueNull } }
+
+        //
+        // The "unsupported" commands are listed here since they appear in the Microsoft
+        // documentation used as the basis for the list.
+        //
 
         // 2d-position (not supported)
-        // absoluteposition (not supported)
-        // blockdirltr (not supported)
-        // blockdirrtl (not supported)
-        // browsemode (not supported)
-        // clearauthenticationcache (not supported)
-        // createbookmark (not supported)
-        // createlink (not supported)
-        // dirltr (not supported)
-        // dirrtl (not supported)
-        // editmode (not supported)
-        // formatblock (not supported)
-        // inlinedirltr (not supported)
-        // inlinedirrtl (not supported)
-        // insertbutton (not supported)
-        // insertfieldset (not supported)
-        // inserthorizontalrule (not supported)
-        // insertiframe (not supported)
-        // insertimage (not supported)
-        // insertinputbutton (not supported)
-        // insertinputcheckbox (not supported)
-        // insertinputfileupload (not supported)
-        // insertinputhidden (not supported)
-        // insertinputimage (not supported)
-        // insertinputpassword (not supported)
-        // insertinputradio (not supported)
-        // insertinputreset (not supported)
-        // insertinputsubmit (not supported)
-        // insertinputtext (not supported)
-        // insertmarquee (not supported)
-        // insertorderedlist (not supported)
-        // insertselectdropdown (not supported)
-        // insertselectlistbox (not supported)
-        // inserttextarea (not supported)
-        // insertunorderedlist (not supported)
-        // liveresize (not supported)
-        // multipleselection (not supported)
+        // absolutePosition (not supported)
+        // blockDirLTR (not supported)
+        // blockDirRTL (not supported)
+        // browseMode (not supported)
+        // clearAuthenticationCache (not supported)
+        // createBookmark (not supported)
+        // createLink (not supported)
+        // dirLTR (not supported)
+        // dirRTL (not supported)
+        // editMode (not supported)
+        // formatBlock (not supported)
+        // inlineDirLTR (not supported)
+        // inlineDirRTL (not supported)
+        // insertButton (not supported)
+        // insertFieldSet (not supported)
+        // insertHorizontalRule (not supported)
+        // insertIFrame (not supported)
+        // insertImage (not supported)
+        // insertInputButton (not supported)
+        // insertInputCheckbox (not supported)
+        // insertInputFileUpload (not supported)
+        // insertInputHidden (not supported)
+        // insertInputImage (not supported)
+        // insertInputPassword (not supported)
+        // insertInputRadio (not supported)
+        // insertInputReset (not supported)
+        // insertInputSubmit (not supported)
+        // insertInputText (not supported)
+        // insertMarquee (not supported)
+        // insertOrderedList (not supported)
+        // insertSelectDropDown (not supported)
+        // insertSelectListBox (not supported)
+        // insertTextArea (not supported)
+        // insertUnorderedList (not supported)
+        // liveResize (not supported)
+        // multipleSelection (not supported)
         // open (not supported)
         // overwrite (not supported)
-        // playimage (not supported)
+        // playImage (not supported)
         // refresh (not supported)
-        // removeformat (not supported)
-        // removeparaformat (not supported)
-        // saveas (not supported)
-        // sizetocontrol (not supported)
-        // sizetocontrolheight (not supported)
-        // sizetocontrolwidth (not supported)
+        // removeFormat (not supported)
+        // removeParaFormat (not supported)
+        // saveAs (not supported)
+        // sizeToControl (not supported)
+        // sizeToControlHeight (not supported)
+        // sizeToControlWidth (not supported)
         // stop (not supported)
         // stopimage (not supported)
         // strikethrough (not supported)

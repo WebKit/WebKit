@@ -1,3 +1,67 @@
+2004-06-10  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - filled out execCommand a lot more
+        - fixed <rdar://problem/3685231>: (execCommand italic is not implemented)
+        - fixed <rdar://problem/3685232>: (execCommand bold is not implemented)
+        - fixed <rdar://problem/3675899>: (Make queryCommandIndeterm work as specified in the Javascript execCommand Compatibility Plan)
+        - fixed <rdar://problem/3675901>: (Make queryCommandState work as specified in the Javascript execCommand Compatibility Plan)
+        - fixed <rdar://problem/3675904>: (Make queryCommandValue work as specified in the Javascript execCommand Compatibility Plan)
+
+        * khtml/editing/jsediting.cpp:
+        (DOM::JSEditor::queryCommandIndeterm): Changed to use KHTMLPart::TriState instead of CommandState.
+        (DOM::JSEditor::queryCommandState): Ditto.
+        (execStyleChange): Changed to use KHTMLPart::applyStyle.
+        (stateStyle): Used KHTMLPart::selectionHasStyle for this.
+        (selectionStartHasStyle): Use KHTMLPart::selectionStartHasStyle for this.
+        (valueStyle): Used KHTMLPart::selectionStartStylePropertyValue for this.
+        (execBold): Implemented toggling, using selectionStartHasStyle.
+        (execItalic): Implemented toggling, using selectionStartHasStyle.
+        (execPrint): Implemented.
+        (enabledRedo): Implemented, using canRedo.
+        (enabledUndo): Implemented, using canUndo.
+        (stateNone): Renamed from stateNo.
+        (valueBackColor): Implemented, using valueStyle.
+        (valueFontName): Implemented, using valueStyle.
+        (valueFontSize): Implemented, using valueStyle.
+        (valueForeColor): Implemented, using valueStyle.
+        (valueFontSize): Implemented, using valueStyle.
+
+        * khtml/khtml_part.h: Added editing operations.
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::copyToPasteboard): Added.
+        (KHTMLPart::cutToPasteboard): Added.
+        (KHTMLPart::redo): Added.
+        (KHTMLPart::undo): Added.
+        (KHTMLPart::applyStyle): Added.
+        (updateState): Added.
+        (KHTMLPart::selectionHasStyle): Added.
+        (KHTMLPart::selectionStartHasStyle): Added.
+        (KHTMLPart::selectionStartStylePropertyValue): Added.
+        (KHTMLPart::selectionComputedStyle): Added.
+        (KHTMLPart::print): Added.
+
+        * khtml/ecma/kjs_window.cpp: (WindowFunc::tryCall): Call print() on plain old part, not KWQ(part).
+
+        * kwq/KWQKHTMLPart.h: Removed print(), added _haveUndoRedoOperations.
+        * kwq/KWQKHTMLPart.mm:
+        (KHTMLPart::print): Moved from KWQKHTMLPart to KHTMLPart.
+        (KWQKHTMLPart::registerCommandForUndo): Moved code here from bridge.
+        (KWQKHTMLPart::registerCommandForRedo): Moved code here from bridge.
+        (KWQKHTMLPart::clearUndoRedoOperations): Moved code here from bridge.
+        (KWQKHTMLPart::issueUndoCommand): Moved code here from bridge.
+        (KWQKHTMLPart::issueRedoCommand): Moved code here from bridge.
+        (KWQKHTMLPart::issuePasteCommand): Moved code here from bridge.
+        (KHTMLPart::canUndo): Added.
+        (KHTMLPart::canRedo): Added.
+
+        * kwq/WebCoreBridge.h: Added undoManager, removed undo-related methods.
+        * kwq/WebCoreBridge.mm: (-[WebCoreBridge applyStyle:]): Changed to call
+        KHTMLPart::applyStyle.
+
+        * WebCore.pbproj/.cvsignore: Updated for new Xcode files.
+
 2004-06-09  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Dave.

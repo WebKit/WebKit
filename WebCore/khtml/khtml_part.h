@@ -7,7 +7,7 @@
  *                     2000-2001 Simon Hausmann <hausmann@kde.org>
  *                     2000-2001 Dirk Mueller <mueller@kde.org>
  *                     2000 Stefan Schimanski <1Stein@gmx.de>
- * Copyright (C) 2003 Apple Computer, Inc.
+ * Copyright (C) 2004 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -846,6 +846,25 @@ public:
   void decrementFrameCount();
   int topLevelFrameCount();
 
+  // Editing operations.
+  // Not clear if these will be wanted in KHTMLPart by KDE,
+  // but for now these bridge so we don't have to pepper the
+  // KHTML code with WebCore-specific stuff.
+  enum TriState { falseTriState, trueTriState, mixedTriState };
+  void copyToPasteboard();
+  void cutToPasteboard();
+  void pasteFromPasteboard();
+  bool canPaste() const;
+  void redo();
+  void undo();
+  bool canRedo() const;
+  bool canUndo() const;
+  void applyStyle(DOM::CSSStyleDeclarationImpl *);
+  TriState selectionHasStyle(DOM::CSSStyleDeclarationImpl *) const;
+  bool selectionStartHasStyle(DOM::CSSStyleDeclarationImpl *) const;
+  DOM::DOMString selectionStartStylePropertyValue(int stylePropertyID) const;
+  void print();
+
 signals:
   /**
    * Emitted if the cursor is moved over an URL.
@@ -1259,6 +1278,8 @@ private:
   void handleMousePressEventDoubleClick(khtml::MousePressEvent *event);
   void handleMousePressEventTripleClick(khtml::MousePressEvent *event);
 #endif
+
+  DOM::CSSStyleDeclarationImpl *selectionComputedStyle(DOM::NodeImpl *&nodeToRemove) const;
 
   KHTMLPartPrivate *d;
   friend class KHTMLPartPrivate;

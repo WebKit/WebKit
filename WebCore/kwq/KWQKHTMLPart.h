@@ -277,7 +277,6 @@ public:
 
     void didTellBridgeAboutLoad(const QString &urlString);
     bool haveToldBridgeAboutLoad(const QString &urlString);
-    void print();
 
     KJS::Bindings::Instance *getAppletInstanceForView (NSView *aView);
     void addPluginRootObject(const KJS::Bindings::RootObject *root);
@@ -362,6 +361,7 @@ private:
     bool _usesInactiveTextBackgroundColor;
     bool _showsFirstResponder;
     mutable bool _drawSelectionOnly;
+    bool _haveUndoRedoOperations;
     
     QDict<char> urlsBridgeKnowsAbout;
 

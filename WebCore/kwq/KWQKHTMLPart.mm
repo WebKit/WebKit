@@ -3159,9 +3159,9 @@ void KWQKHTMLPart::clear()
     KHTMLPart::clear();
 }
 
-void KWQKHTMLPart::print()
+void KHTMLPart::print()
 {
-    [_bridge print];
+    [KWQ(this)->_bridge print];
 }
 
 KJS::Bindings::Instance *KWQKHTMLPart::getAppletInstanceForView (NSView *aView)
@@ -3194,22 +3194,25 @@ void KWQKHTMLPart::cleanupPluginRootObjects()
 void KWQKHTMLPart::registerCommandForUndo(const khtml::EditCommand &cmd)
 {
     ASSERT(cmd.handle());
-
     KWQEditCommand *kwq = [KWQEditCommand commandWithEditCommandImpl:cmd.handle()];
-    [_bridge registerCommandForUndo:kwq];
+    [[_bridge undoManager] registerUndoWithTarget:_bridge selector:@selector(undoEditing:) object:kwq];
+    _haveUndoRedoOperations = YES;
 }
 
 void KWQKHTMLPart::registerCommandForRedo(const khtml::EditCommand &cmd)
 {
     ASSERT(cmd.handle());
-
     KWQEditCommand *kwq = [KWQEditCommand commandWithEditCommandImpl:cmd.handle()];
-    [_bridge registerCommandForRedo:kwq];
+    [[_bridge undoManager] registerUndoWithTarget:_bridge selector:@selector(redoEditing:) object:kwq];
+    _haveUndoRedoOperations = YES;
 }
 
 void KWQKHTMLPart::clearUndoRedoOperations()
 {
-    [_bridge clearUndoRedoOperations];
+    if (_haveUndoRedoOperations) {
+	[[_bridge undoManager] removeAllActionsWithTarget:_bridge];
+	_haveUndoRedoOperations = NO;
+    }
 }
 
 bool KWQKHTMLPart::interceptEditingKeyEvent()
@@ -3219,12 +3222,14 @@ bool KWQKHTMLPart::interceptEditingKeyEvent()
 
 void KWQKHTMLPart::issueUndoCommand()
 {
-    [_bridge issueUndoCommand];
+    if (canUndo())
+        [[_bridge undoManager] undo];
 }
 
 void KWQKHTMLPart::issueRedoCommand()
 {
-    [_bridge issueRedoCommand];
+    if (canRedo())
+        [[_bridge undoManager] redo];
 }
 
 void KWQKHTMLPart::issueCutCommand()
@@ -3240,6 +3245,16 @@ void KWQKHTMLPart::issueCopyCommand()
 void KWQKHTMLPart::issuePasteCommand()
 {
     [_bridge issuePasteCommand];
+}
+
+bool KHTMLPart::canUndo() const
+{
+    return [[KWQ(this)->_bridge undoManager] canUndo];
+}
+
+bool KHTMLPart::canRedo() const
+{
+    return [[KWQ(this)->_bridge undoManager] canRedo];
 }
 
 void KWQKHTMLPart::respondToChangedSelection()

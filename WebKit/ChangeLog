@@ -1,3 +1,12 @@
+2004-06-10  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        * WebCoreSupport.subproj/WebBridge.m: Removed undo-related methods.
+        (-[WebBridge undoManager]): Added.
+
+        * WebKit.pbproj/.cvsignore: Updated for new Xcode files.
+
 2004-06-09  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Darin

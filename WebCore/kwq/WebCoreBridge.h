@@ -460,11 +460,7 @@ typedef enum {
 
 - (jobject)pollForAppletInView:(NSView *)view;
 
-- (void)registerCommandForUndo:(id)arg;
-- (void)registerCommandForRedo:(id)arg;
-- (void)clearUndoRedoOperations;
-- (void)issueUndoCommand;
-- (void)issueRedoCommand;
+- (NSUndoManager *)undoManager;
 - (void)issueCutCommand;
 - (void)issueCopyCommand;
 - (void)issuePasteCommand;

@@ -1421,7 +1421,7 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
   }
 #if APPLE_CHANGES
   case Window::Print:
-    KWQ(part)->print();
+    part->print();
     return Undefined();
 #endif
   case Window::ScrollBy:

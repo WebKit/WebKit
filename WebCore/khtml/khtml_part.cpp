@@ -54,6 +54,7 @@
 #include "css/cssstyleselector.h"
 #include "css/csshelper.h"
 #include "misc/khtml_text_operations.h"
+#include "css/css_computedstyle.h"
 
 using namespace DOM;
 
@@ -101,6 +102,7 @@ using namespace DOM;
 #include <CoreServices/CoreServices.h>
 #endif
 
+using khtml::ApplyStyleCommand;
 using khtml::Decoder;
 using khtml::DeleteSelectionCommand;
 using khtml::EditCommand;
@@ -5224,6 +5226,219 @@ bool KHTMLPart::tabsToAllControls() const
     return true;
 }
 
+void KHTMLPart::copyToPasteboard()
+{
+#if APPLE_CHANGES
+    KWQ(this)->issueCopyCommand();
+#endif
+}
+
+void KHTMLPart::cutToPasteboard()
+{
+#if APPLE_CHANGES
+    KWQ(this)->issueCutCommand();
+#endif
+}
+
+void KHTMLPart::redo()
+{
+#if APPLE_CHANGES
+    KWQ(this)->issueRedoCommand();
+#endif
+}
+
+void KHTMLPart::undo()
+{
+#if APPLE_CHANGES
+    KWQ(this)->issueUndoCommand();
+#endif
+}
+
+#if !APPLE_CHANGES
+
+bool KHTMLPart::canRedo() const
+{
+    // FIXME: Implement.
+    return true;
+}
+
+bool KHTMLPart::canUndo() const
+{
+    // FIXME: Implement.
+    return true;
+}
+
+#endif
+
+void KHTMLPart::applyStyle(CSSStyleDeclarationImpl *style)
+{
+    switch (selection().state()) {
+        case Selection::NONE:
+            // do nothing
+            break;
+        case Selection::CARET:
+            // FIXME: This blows away all the other properties of the typing style.
+            setTypingStyle(style);
+            break;
+        case Selection::RANGE:
+            if (xmlDocImpl() && style) {
+                ApplyStyleCommand cmd(xmlDocImpl(), style);
+                cmd.apply();
+            }
+            break;
+    }
+}
+
+static void updateState(CSSStyleDeclarationImpl *desiredStyle, CSSStyleDeclarationImpl *computedStyle, bool &atStart, KHTMLPart::TriState &state)
+{
+    for (QPtrListIterator<CSSProperty> it(*desiredStyle->values()); it.current(); ++it) {
+        int propertyID = it.current()->id();
+        DOMString desiredProperty = desiredStyle->getPropertyValue(propertyID);
+        DOMString computedProperty = computedStyle->getPropertyValue(propertyID);
+        KHTMLPart::TriState propertyState = strcasecmp(desiredProperty, computedProperty) == 0
+            ? KHTMLPart::trueTriState : KHTMLPart::falseTriState;
+        if (atStart) {
+            state = propertyState;
+            atStart = false;
+        } else if (state != propertyState) {
+            state = KHTMLPart::mixedTriState;
+            break;
+        }
+    }
+}
+
+KHTMLPart::TriState KHTMLPart::selectionHasStyle(CSSStyleDeclarationImpl *style) const
+{
+    bool atStart = true;
+    TriState state = falseTriState;
+
+    if (d->m_selection.state() != Selection::RANGE) {
+        NodeImpl *nodeToRemove;
+        CSSStyleDeclarationImpl *selectionStyle = selectionComputedStyle(nodeToRemove);
+        if (!selectionStyle)
+            return falseTriState;
+        selectionStyle->ref();
+        updateState(style, selectionStyle, atStart, state);
+        selectionStyle->deref();
+        if (nodeToRemove) {
+            int exceptionCode = 0;
+            nodeToRemove->remove(exceptionCode);
+            assert(exceptionCode == 0);
+        }
+    } else {
+        for (NodeImpl *node = d->m_selection.start().node(); node; node = node->traverseNextNode()) {
+            if (node->isHTMLElement()) {
+                CSSStyleDeclarationImpl *computedStyle = new CSSComputedStyleDeclarationImpl(node);
+                computedStyle->ref();
+                updateState(style, computedStyle, atStart, state);
+                computedStyle->deref();
+                if (state == mixedTriState)
+                    break;
+            }
+            if (node == d->m_selection.end().node())
+                break;
+        }
+    }
+
+    return state;
+}
+
+bool KHTMLPart::selectionStartHasStyle(CSSStyleDeclarationImpl *style) const
+{
+    NodeImpl *nodeToRemove;
+    CSSStyleDeclarationImpl *selectionStyle = selectionComputedStyle(nodeToRemove);
+    if (!selectionStyle)
+        return false;
+
+    selectionStyle->ref();
+
+    bool match = true;
+    for (QPtrListIterator<CSSProperty> it(*style->values()); it.current(); ++it) {
+        int propertyID = it.current()->id();
+        DOMString desiredProperty = style->getPropertyValue(propertyID);
+        DOMString selectionProperty = selectionStyle->getPropertyValue(propertyID);
+        if (strcasecmp(selectionProperty, desiredProperty) != 0) {
+            match = false;
+            break;
+        }
+    }
+
+    selectionStyle->deref();
+
+    if (nodeToRemove) {
+        int exceptionCode = 0;
+        nodeToRemove->remove(exceptionCode);
+        assert(exceptionCode == 0);
+    }
+
+    return match;
+}
+
+DOMString KHTMLPart::selectionStartStylePropertyValue(int stylePropertyID) const
+{
+    NodeImpl *nodeToRemove;
+    CSSStyleDeclarationImpl *selectionStyle = selectionComputedStyle(nodeToRemove);
+    if (!selectionStyle)
+        return DOMString();
+
+    selectionStyle->ref();
+    DOMString value = selectionStyle->getPropertyValue(stylePropertyID);
+    selectionStyle->deref();
+
+    if (nodeToRemove) {
+        int exceptionCode = 0;
+        nodeToRemove->remove(exceptionCode);
+        assert(exceptionCode == 0);
+    }
+
+    return value;
+}
+
+CSSStyleDeclarationImpl *KHTMLPart::selectionComputedStyle(NodeImpl *&nodeToRemove) const
+{
+    nodeToRemove = 0;
+
+    if (!xmlDocImpl())
+        return 0;
+
+    if (d->m_selection.state() == Selection::NONE)
+        return 0;
+
+    Range range(d->m_selection.toRange());
+    Position pos(range.startContainer().handle(), range.startOffset());
+    assert(pos.notEmpty());
+    ElementImpl *elem = pos.element();
+    ElementImpl *styleElement = elem;
+    int exceptionCode = 0;
+
+    if (d->m_typingStyle) {
+        styleElement = xmlDocImpl()->createHTMLElement("SPAN", exceptionCode);
+        assert(exceptionCode == 0);
+        
+        styleElement->setAttribute(ATTR_STYLE, d->m_typingStyle->cssText().implementation(), exceptionCode);
+        assert(exceptionCode == 0);
+        
+        TextImpl *text = xmlDocImpl()->createEditingTextNode("");
+        styleElement->appendChild(text, exceptionCode);
+        assert(exceptionCode == 0);
+
+        elem->appendChild(styleElement, exceptionCode);
+        assert(exceptionCode == 0);
+
+        nodeToRemove = styleElement;
+    }
+
+    return new CSSComputedStyleDeclarationImpl(styleElement);
+}
+
+#if !APPLE_CHANGES
+
+void KHTMLPart::print()
+{
+    // needs implementation
+}
+
+#endif
+
 using namespace KParts;
 #include "khtml_part.moc"
-
