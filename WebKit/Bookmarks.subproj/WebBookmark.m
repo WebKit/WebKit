@@ -46,7 +46,7 @@
     // since the copy isn't in a group yet. When it's added
     // to a group, the UUID will be uniqued if necessary at that time.
     if ([self _hasUUID]) {
-        [copy _setUUID:[self UUID]];
+        [copy setUUID:[self UUID]];
     }
     
     // parent and group are left nil for fresh copies
@@ -144,10 +144,12 @@
     _parent = parent;
 }
 
-- (void)_setUUID:(NSString *)UUID
+- (void)setUUID:(NSString *)UUID
 {
-    ASSERT(_UUID == nil || UUID == nil);
-
+    if (UUID == _UUID || [UUID isEqualToString:_UUID]) {
+        return;
+    }
+    
     NSString *oldUUID = _UUID;
     _UUID = [UUID copy];
 
@@ -235,7 +237,7 @@
     [self init];
 
     [self setIdentifier:[dict objectForKey:WebBookmarkIdentifierKey]];
-    [self _setUUID:[dict objectForKey:WebBookmarkUUIDKey]];
+    [self setUUID:[dict objectForKey:WebBookmarkUUIDKey]];
     [group _addBookmark:self];
 
     return self;

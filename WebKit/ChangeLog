@@ -1,3 +1,36 @@
+2003-03-07  John Sullivan  <sullivan@apple.com>
+
+	WebKit part of fixes to these two synching-related bugs:
+
+	3190844 -- Bookmarks Bar and Menu collections need to be
+	marked specially in Bookmarks file
+
+	3192197 -- Safari should write out UUID-full Bookmarks 
+	file after reading UUID-free one
+
+        Reviewed by Trey
+
+        * Bookmarks.subproj/WebBookmark.h:
+        * Bookmarks.subproj/WebBookmark.m:
+        (-[WebBookmark setUUID:]):
+	Removed the leading underscore, made this method public.
+	Removed unnecessary constraint that new or old UUID had
+	to be nil; now short-circuits the no-change case.
+        (-[WebBookmark copyWithZone:]):
+	updated for name change
+        (-[WebBookmark initFromDictionaryRepresentation:withGroup:]):
+	ditto
+
+        * Bookmarks.subproj/WebBookmarkGroup.h:
+        * Bookmarks.subproj/WebBookmarkGroup.m:
+        (-[WebBookmarkGroup bookmarkForUUID:]):
+	new public method to find a bookmark from a UUID.
+        (-[WebBookmarkGroup _addBookmark:]):
+	updated for name change
+
+        * Bookmarks.subproj/WebBookmarkPrivate.h:
+	removed declaration for old _setUUID
+
 2003-03-07  Darin Adler  <darin@apple.com>
 
         Reviewed by John.

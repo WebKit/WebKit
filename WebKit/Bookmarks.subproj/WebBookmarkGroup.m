@@ -67,6 +67,11 @@ NSString *TagKey = @"WebBookmarkGroupTag";
     [super dealloc];
 }
 
+- (WebBookmark *)bookmarkForUUID:(NSString *)UUID
+{
+    return [_bookmarksByUUID objectForKey:UUID];
+}
+
 - (void)_addBookmark:(WebBookmark *)bookmark
 {
     if ([bookmark group] == self) {
@@ -79,7 +84,7 @@ NSString *TagKey = @"WebBookmarkGroupTag";
         NSString *UUID = [bookmark UUID];
         // Clear UUID on former owner of this UUID (if any) -- new copy gets to keep it
         // FIXME 3153832: this means copy/paste transfers the UUID to the new bookmark.
-        [[_bookmarksByUUID objectForKey:UUID] _setUUID:nil];
+        [[_bookmarksByUUID objectForKey:UUID] setUUID:nil];
         [_bookmarksByUUID setObject:bookmark forKey:UUID];
     }
 

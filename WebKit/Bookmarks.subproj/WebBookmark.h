@@ -56,6 +56,12 @@ typedef enum {
 // Globally unique ID for this bookmark.
 - (NSString *)UUID;
 
+// Set a globally unique ID for this bookmark. If any existing bookmark in this
+// group has this UUID, the existing one will be changed. Normally clients do
+// not need to call this; it is handled internally automatically. Occasionally
+// a client might want to assign a specific UUID to a specific bookmark.
+- (void)setUUID:(NSString *)newUUID;
+
 // Array of child WebBookmarks. Returns nil if bookmarkType is not WebBookmarkTypeList.
 // This creates a copy of the internal data structure, and thus is safe to (for example),
 // iterate through, removing items from their parent as you go.
