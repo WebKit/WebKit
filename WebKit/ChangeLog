@@ -1,3 +1,18 @@
+2004-09-21  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Ken.
+        
+        - fixed <rdar://problem/3809477> WebHTMLView needs to pass doCommandBySelector through delegate
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView doCommandBySelector:]):
+        Call through to editing delegate. If editing delegate returns YES, don't call super.
+
+        * WebView.subproj/WebDefaultEditingDelegate.m:
+        (-[WebDefaultEditingDelegate webView:doCommandBySelector:]):
+        default implementation (which was never called) was returning YES, but it should
+        return NO to signal that it didn't handle the selector.
+        
 2004-09-21  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3647229> Safari does not play inline Windows Media Content on some sites (miggy.net and ministryofsound.com)

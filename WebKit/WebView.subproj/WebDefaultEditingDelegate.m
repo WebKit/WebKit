@@ -64,7 +64,7 @@ static WebDefaultEditingDelegate *sharedDelegate = nil;
 
 - (BOOL)webView:(WebView *)webView doCommandBySelector:(SEL)selector
 {
-    return YES;
+    return NO;
 }
 
 - (void)webViewDidBeginEditing:(NSNotification *)notification

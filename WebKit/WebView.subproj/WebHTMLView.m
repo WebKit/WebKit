@@ -4045,7 +4045,9 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 
 - (void)doCommandBySelector:(SEL)aSelector
 {
-    [super doCommandBySelector:aSelector];
+    if (![[webView _editingDelegateForwarder] webView:webView doCommandBySelector:aSelector]) {
+        [super doCommandBySelector:aSelector];
+    }
 }
 
 - (void)_discardMarkedText
