@@ -1,10 +1,9 @@
-//
-//  WebPluginError.h
-//  WebKit
-//
-//  Created by Chris Blumenberg on Fri Nov 01 2002.
-//  Copyright (c) 2002 Apple Computer, Inc. All rights reserved.
-//
+/*
+    WebPlugInError.h
+    Copyright 2002, Apple, Inc. All rights reserved.
+
+    Public header file.
+ */
 
 #import <Foundation/Foundation.h>
 

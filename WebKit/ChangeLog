@@ -1,5 +1,17 @@
 2003-03-26  Richard Williamson   <rjw@apple.com>
 
+        File name change WebPluginError.[hm] -> WebPlugInError.[hm]
+
+        * Misc.subproj/WebKit.h:
+        * Plugins.subproj/WebNullPluginView.m:
+        * Plugins.subproj/WebPlugInError.h:
+        * Plugins.subproj/WebPluginError.h: Removed.
+        * Plugins.subproj/WebPluginError.m: Removed.
+        * Plugins.subproj/WebPluginErrorPrivate.h:
+        * WebKit.pbproj/project.pbxproj:
+
+2003-03-26  Richard Williamson   <rjw@apple.com>
+
         WebPreferences API changes:
         
         JavaScriptCanOpenWindowsAutomatically -> javaScriptCanOpenWindowsAutomatically

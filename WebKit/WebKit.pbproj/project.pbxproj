@@ -239,7 +239,6 @@
 				65490EC503666E0C000CED4B,
 				8467275E0367158500CA2ACA,
 				F5F717260288493C018635CA,
-				830A567403731461000C720C,
 				65490EC603666E0C000CED4B,
 				65490EC703666E0D000CED4B,
 				F5F717280288493C018635CA,
@@ -306,6 +305,7 @@
 				51A8B57F0428353A00CA2D3A,
 				51443F9D0429392B00CA2D3A,
 				51443F9F0429392B00CA2D3A,
+				5110F7530432AC0800CA2D3A,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -370,7 +370,6 @@
 				F5883BE3025E5E9D01000102,
 				8467275F0367158500CA2ACA,
 				F5F717270288493C018635CA,
-				830A567503731461000C720C,
 				83E4AF4E036659440000E506,
 				F5F717290288493C018635CA,
 				F5AFB46102B94DC8018635CA,
@@ -424,6 +423,7 @@
 				51A8B57C042834F700CA2D3A,
 				51A8B5800428353A00CA2D3A,
 				51443F9E0429392B00CA2D3A,
+				5110F7540432AC0800CA2D3A,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1060,6 +1060,33 @@
 //512
 //513
 //514
+		5110F7510432AC0800CA2D3A = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = WebPlugInError.h;
+			refType = 4;
+		};
+		5110F7520432AC0800CA2D3A = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = WebPlugInError.m;
+			refType = 4;
+		};
+		5110F7530432AC0800CA2D3A = {
+			fileRef = 5110F7510432AC0800CA2D3A;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+			};
+		};
+		5110F7540432AC0800CA2D3A = {
+			fileRef = 5110F7520432AC0800CA2D3A;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		511D5553033FD51000CA2ACD = {
 			fileEncoding = 4;
 			isa = PBXFileReference;
@@ -1699,33 +1726,6 @@
 //832
 //833
 //834
-		830A567203731461000C720C = {
-			fileEncoding = 4;
-			isa = PBXFileReference;
-			path = WebPluginError.h;
-			refType = 4;
-		};
-		830A567303731461000C720C = {
-			fileEncoding = 4;
-			isa = PBXFileReference;
-			path = WebPluginError.m;
-			refType = 4;
-		};
-		830A567403731461000C720C = {
-			fileRef = 830A567203731461000C720C;
-			isa = PBXBuildFile;
-			settings = {
-				ATTRIBUTES = (
-					Public,
-				);
-			};
-		};
-		830A567503731461000C720C = {
-			fileRef = 830A567303731461000C720C;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		8324709903F32305003026AC = {
 			fileEncoding = 4;
 			isa = PBXFileReference;
@@ -3493,9 +3493,9 @@
 				F5883BE1025E5E9D01000102,
 				F5F717200288493C018635CA,
 				F5F717210288493C018635CA,
-				830A567203731461000C720C,
 				8466AEDD03F1F82100CA2ACA,
-				830A567303731461000C720C,
+				5110F7510432AC0800CA2D3A,
+				5110F7520432AC0800CA2D3A,
 			);
 			isa = PBXGroup;
 			name = Plugins;

@@ -7,7 +7,7 @@
  *
  */
 
-#import <WebKit/WebPluginError.h>
+#import <WebKit/WebPlugInError.h>
 
 @interface WebPlugInError (WebPrivate)
 

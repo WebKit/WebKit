@@ -6,7 +6,7 @@
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebFrame.h>
 #import <WebKit/WebFrameView.h>
-#import <WebKit/WebPluginError.h>
+#import <WebKit/WebPlugInError.h>
 #import <WebKit/WebNullPluginView.h>
 #import <WebKit/WebNSViewExtras.h>
 #import <WebKit/WebResourceLoadDelegate.h>

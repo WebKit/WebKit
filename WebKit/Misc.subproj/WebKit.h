@@ -18,7 +18,7 @@
 #import <WebKit/WebKitErrors.h>
 #import <WebKit/WebLocationChangeDelegate.h>
 #import <WebKit/WebPreferences.h>
-#import <WebKit/WebPluginError.h>
+#import <WebKit/WebPlugInError.h>
 #import <WebKit/WebPolicyDelegate.h>
 #import <WebKit/WebResourceLoadDelegate.h>
 #import <WebKit/WebNSURLResponseExtras.h>
