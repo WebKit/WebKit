@@ -153,12 +153,11 @@
     }
     
     else if(urlPolicy == IFURLPolicyOpenExternally){
-        [IFDownloadHandler launchURL:[newDataSource inputURL]];
+        return [[NSWorkspace sharedWorkspace] openURL:[newDataSource inputURL]];
     }
     
     // Do nothing in the IFURLPolicyIgnore case.
-    
-    //FIXME: When do we return NO?
+
     return YES;
 }
 
