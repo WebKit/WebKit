@@ -1,5 +1,18 @@
 2002-10-04  Richard Williamson   <rjw@apple.com>
 
+        Danger Will Robinson.  We have to poseAsClass: as early as possible
+        so that any NSViews will be created with the appropriate poser.
+        This problem manifested itself with SimpleViewer failing
+        immediately.  NSViews were created by loading a nib before
+        WebHTMLView class initialization occured.  After posing the
+        already instantiated instances of NSView had a %NSView class,
+        causing many things to break.
+        
+        * WebView.subproj/WebHTMLViewPrivate.m:
+        (+[WebHTMLView load]):
+
+2002-10-04  Richard Williamson   <rjw@apple.com>
+
         Ensure that we return non-nil request  from handle:willSendRequest:
         even when WK's laod delegate is nil.
         

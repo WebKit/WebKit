@@ -62,13 +62,17 @@
 
 @end
 
+
 @implementation WebHTMLView (WebPrivate)
 
-+ (void)initialize
+// Danger Will Robinson.  We have to poseAsClass: as early as possible
+// so that any NSViews will be created with the appropriate poser.
++ (void)load
 {
     [[WebNSTextView class] poseAsClass:[NSTextView class]];
     [[WebNSView class] poseAsClass:[NSView class]];
 }
+
 
 - (void)_adjustFrames
 {
