@@ -7,8 +7,12 @@
 //
 
 #import <WebKit/IFBookmark.h>
+#import <WebKit/IFBookmark_Private.h>
 #import <WebKit/IFBookmarkGroup.h>
 #import <WebKit/IFBookmarkGroup_Private.h>
+#import <WebKit/IFBookmarkLeaf.h>
+#import <WebKit/IFBookmarkList.h>
+#import <WebKit/IFBookmarkSeparator.h>
 #import <WebKit/WebKitDebug.h>
 
 // to get NSRequestConcreteImplementation
@@ -166,13 +170,32 @@ static unsigned _highestUsedID = 0;
     [group _addedBookmark:self];
 }
 
-- (id)_initFromDictionaryRepresentation:(NSDictionary *)dict withGroup:(IFBookmarkGroup *)group
++ (IFBookmark *)bookmarkFromDictionaryRepresentation:(NSDictionary *)dict withGroup:(IFBookmarkGroup *)group
+{
+    NSString *typeString;
+    
+    typeString = [dict objectForKey:IFBookmarkTypeKey];
+    if ([typeString isEqualToString:IFBookmarkTypeListValue]) {
+        return [[[IFBookmarkList alloc] initFromDictionaryRepresentation:dict
+                                                               withGroup:group] autorelease];
+    } else if ([typeString isEqualToString:IFBookmarkTypeLeafValue]) {
+        return [[[IFBookmarkLeaf alloc] initFromDictionaryRepresentation:dict
+                                                                withGroup:group] autorelease];
+    } else if ([typeString isEqualToString:IFBookmarkTypeSeparatorValue]) {
+        return [[[IFBookmarkSeparator alloc] initFromDictionaryRepresentation:dict
+                                                                     withGroup:group] autorelease];
+    }
+
+    return nil;
+}
+
+- (id)initFromDictionaryRepresentation:(NSDictionary *)dict withGroup:(IFBookmarkGroup *)group
 {
     NSRequestConcreteImplementation(self, _cmd, [self class]);
     return nil;
 }
 
-- (NSDictionary *)_dictionaryRepresentation
+- (NSDictionary *)dictionaryRepresentation
 {
     NSRequestConcreteImplementation(self, _cmd, [self class]);
     return nil;

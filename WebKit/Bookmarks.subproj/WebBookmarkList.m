@@ -34,12 +34,10 @@
     return self;
 }
 
-- (id)_initFromDictionaryRepresentation:(NSDictionary *)dict withGroup:(IFBookmarkGroup *)group
+- (id)initFromDictionaryRepresentation:(NSDictionary *)dict withGroup:(IFBookmarkGroup *)group
 {
     NSArray *storedChildren;
-    NSDictionary *childAsDictionary;
     IFBookmark *child;
-    NSString *typeString;
     unsigned index, count;
     
     WEBKIT_ASSERT_VALID_ARG (dict, dict != nil);
@@ -56,20 +54,8 @@
     if (storedChildren != nil) {
         count = [storedChildren count];
         for (index = 0; index < count; ++index) {
-            childAsDictionary = [storedChildren objectAtIndex:index];
-            child = nil;
-            
-            typeString = [childAsDictionary objectForKey:IFBookmarkTypeKey];
-            if ([typeString isEqualToString:IFBookmarkTypeListValue]) {
-                child = [[[IFBookmarkList alloc] _initFromDictionaryRepresentation:childAsDictionary
-                                                                        withGroup:group] autorelease];
-            } else if ([typeString isEqualToString:IFBookmarkTypeLeafValue]) {
-                child = [[[IFBookmarkLeaf alloc] _initFromDictionaryRepresentation:childAsDictionary
-                                                                        withGroup:group] autorelease];
-            } else if ([typeString isEqualToString:IFBookmarkTypeSeparatorValue]) {
-                child = [[[IFBookmarkSeparator alloc] _initFromDictionaryRepresentation:childAsDictionary
-                                                                             withGroup:group] autorelease];
-            }
+            child = [IFBookmark bookmarkFromDictionaryRepresentation:[storedChildren objectAtIndex:index]
+                                                           withGroup:group];	
 
             if (child != nil) {
                 [self insertChild:child atIndex:index];
@@ -80,7 +66,7 @@
     return self;
 }
 
-- (NSDictionary *)_dictionaryRepresentation
+- (NSDictionary *)dictionaryRepresentation
 {
     NSMutableDictionary *dict;
     NSMutableArray *childrenAsDictionaries;
@@ -103,7 +89,7 @@
             IFBookmark *child;
 
             child = [_list objectAtIndex:index];
-            [childrenAsDictionaries addObject:[child _dictionaryRepresentation]];
+            [childrenAsDictionaries addObject:[child dictionaryRepresentation]];
         }
 
         [dict setObject:childrenAsDictionaries forKey:ChildrenKey];

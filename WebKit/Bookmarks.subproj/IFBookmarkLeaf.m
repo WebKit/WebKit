@@ -37,7 +37,7 @@
     return self;
 }
 
-- (id)_initFromDictionaryRepresentation:(NSDictionary *)dict withGroup:(IFBookmarkGroup *)group
+- (id)initFromDictionaryRepresentation:(NSDictionary *)dict withGroup:(IFBookmarkGroup *)group
 {
     WEBKIT_ASSERT_VALID_ARG (dict, dict != nil);
 
@@ -52,7 +52,7 @@
     return self;
 }
 
-- (NSDictionary *)_dictionaryRepresentation
+- (NSDictionary *)dictionaryRepresentation
 {
     NSMutableDictionary *dict;
 

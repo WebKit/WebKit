@@ -16,9 +16,6 @@
 
 @interface IFBookmark(IFPrivate)
 
-- (id)_initFromDictionaryRepresentation:(NSDictionary *)dict withGroup:(IFBookmarkGroup *)group;
-- (NSDictionary *)_dictionaryRepresentation;
-
 - (void)_setParent:(IFBookmark *)parent;
 - (void)_setGroup:(IFBookmarkGroup *)group;
 

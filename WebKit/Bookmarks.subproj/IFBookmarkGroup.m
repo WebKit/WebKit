@@ -211,7 +211,7 @@
     }
 
     _loading = YES;
-    newTopBookmark = [[[IFBookmarkList alloc] _initFromDictionaryRepresentation:dictionary withGroup:self] autorelease];
+    newTopBookmark = [[[IFBookmarkList alloc] initFromDictionaryRepresentation:dictionary withGroup:self] autorelease];
     [self _setTopBookmark:newTopBookmark];
     _loading = NO;
 
@@ -246,7 +246,7 @@
         return NO;
     }
 
-    dictionary = [[self topBookmark] _dictionaryRepresentation];
+    dictionary = [[self topBookmark] dictionaryRepresentation];
     if (![dictionary writeToFile:path atomically:YES]) {
         WEBKITDEBUG("attempt to save %s to %s failed\n", DEBUG_OBJECT(dictionary), DEBUG_OBJECT(path));
         return NO;

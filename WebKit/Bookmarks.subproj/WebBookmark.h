@@ -22,6 +22,11 @@ typedef enum {
     NSString *_identifier;
 }
 
++ (IFBookmark *)bookmarkFromDictionaryRepresentation:(NSDictionary *)dict withGroup:(IFBookmarkGroup *)group;
+
+- (id)initFromDictionaryRepresentation:(NSDictionary *)dict withGroup:(IFBookmarkGroup *)group;
+- (NSDictionary *)dictionaryRepresentation;
+
 - (NSString *)title;
 - (void)setTitle:(NSString *)title;
 

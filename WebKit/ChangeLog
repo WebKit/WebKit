@@ -1,3 +1,31 @@
+2002-06-11  John Sullivan  <sullivan@apple.com>
+
+	Made methods that convert bookmarks to and from
+	property-list-compatible dictionaries public so they
+	can be used in the Bookmarks window for cut/paste.
+
+	* Bookmarks.subproj/IFBookmark.h:
+	* Bookmarks.subproj/IFBookmark.m:
+	(+[IFBookmark bookmarkFromDictionaryRepresentation:withGroup:]): New method
+
+	(-[IFBookmark initFromDictionaryRepresentation:withGroup:]):
+	(-[IFBookmark dictionaryRepresentation]):
+	* Bookmarks.subproj/IFBookmarkGroup.m:
+	(-[IFBookmarkGroup _loadBookmarkGroupGuts]):
+	(-[IFBookmarkGroup _saveBookmarkGroupGuts]):
+	* Bookmarks.subproj/IFBookmarkLeaf.m:
+	(-[IFBookmarkLeaf initFromDictionaryRepresentation:withGroup:]):
+	(-[IFBookmarkLeaf dictionaryRepresentation]):
+	* Bookmarks.subproj/IFBookmarkList.m:
+	(-[IFBookmarkList initFromDictionaryRepresentation:withGroup:]):
+	(-[IFBookmarkList dictionaryRepresentation]):
+	* Bookmarks.subproj/IFBookmarkSeparator.m:
+	(-[IFBookmarkSeparator initFromDictionaryRepresentation:withGroup:]):
+	(-[IFBookmarkSeparator dictionaryRepresentation]):
+	* Bookmarks.subproj/IFBookmark_Private.h: Removed leading underscores from
+	_initFromDictionaryRepresentation and _dictionaryRepresentation, and made
+	them public.
+
 2002-06-11  Darin Adler  <darin@apple.com>
 
 	* WebView.subproj/IFDOMNode.h: Added.

@@ -24,7 +24,7 @@
     return self;    
 }
 
-- (id)_initFromDictionaryRepresentation:(NSDictionary *)dict withGroup:(IFBookmarkGroup *)group
+- (id)initFromDictionaryRepresentation:(NSDictionary *)dict withGroup:(IFBookmarkGroup *)group
 {
     if (![[dict objectForKey:IFBookmarkTypeKey] isEqualToString:IFBookmarkTypeSeparatorValue]) {
         WEBKITDEBUG("Can't initialize Bookmark separator from non-separator type");
@@ -34,7 +34,7 @@
     return [self initWithGroup:group];
 }
 
-- (NSDictionary *)_dictionaryRepresentation
+- (NSDictionary *)dictionaryRepresentation
 {
     return [NSDictionary dictionaryWithObject:IFBookmarkTypeSeparatorValue forKey:IFBookmarkTypeKey];
 }
