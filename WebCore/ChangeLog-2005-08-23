@@ -1,3 +1,16 @@
+2004-10-15  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+
+        * khtml/rendering/bidi.cpp:
+        (khtml::RenderBlock::skipNonBreakingSpace): Also need to forego the
+        skipping after a clean line break, in addition to the cases already 
+        checked for.
+        * layout-tests/editing/inserting/insert-br-007-expected.txt: Added.
+        * layout-tests/editing/inserting/insert-br-007.html: Added.
+        * layout-tests/editing/inserting/insert-br-008-expected.txt: Added.
+        * layout-tests/editing/inserting/insert-br-008.html: Added.
+
 === Safari-167 ===
 
 2004-10-14  Ken Kocienda  <kocienda@apple.com>
