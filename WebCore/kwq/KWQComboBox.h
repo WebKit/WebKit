@@ -63,6 +63,7 @@ public:
 
     void setWritingDirection(QPainter::TextDirection);
 
+    virtual void populate();
     void populateMenu();
     
 private:

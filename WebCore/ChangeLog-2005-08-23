@@ -1,3 +1,20 @@
+2004-02-26  Trey Matteson  <trey@apple.com>
+
+	3566668 - REGRESSION (125-128): autofill of popup lists is broken
+	3571271 - autofill parsing of field names should treat _ as a word separator
+
+        Reviewed by Chris, Darin
+
+        * kwq/KWQComboBox.h:
+        * kwq/KWQComboBox.mm:
+        (QComboBox::populate):   New virtual method to force any lazy field population to happen.
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::matchLabelsAgainstElement):  Change _ to ' ', to make it a word separator.
+        * kwq/KWQWidget.h:
+        (QWidget::populate):  Implement populate to fill out the menu's data.
+        * kwq/WebCoreBridge.mm:
+        (viewForElement):    Make sure widget is populated before handing it out.
+
 2004-02-26  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Chris

@@ -145,7 +145,8 @@ public:
     NSView *getView() const;
     NSView *getOuterView() const;
     void setView(NSView *aView);
-    
+    virtual void populate() {};
+
     void displayRect(int x, int y, int w, int h);
     void lockDrawingFocus();
     void unlockDrawingFocus();

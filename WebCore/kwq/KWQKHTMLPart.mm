@@ -480,8 +480,9 @@ NSString *KWQKHTMLPart::searchForLabelsBeforeElement(NSArray *labels, ElementImp
 NSString *KWQKHTMLPart::matchLabelsAgainstElement(NSArray *labels, ElementImpl *element)
 {
     QString name = element->getAttribute(ATTR_NAME).string();
-    // Make numbers in field names behave like word boundaries, e.g., "address2"
+    // Make numbers and _'s in field names behave like word boundaries, e.g., "address2"
     name.replace(QRegExp("[[:digit:]]"), " ");
+    name.replace("_", " ");
     
     QRegExp *regExp = regExpForLabels(labels);
     // Use the largest match we can find in the whole name string

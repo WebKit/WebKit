@@ -320,6 +320,11 @@ void QComboBox::populateMenu()
     }
 }
 
+void QComboBox::populate()
+{
+    populateMenu();
+}
+
 @implementation KWQPopUpButtonCell
 
 - (id)initWithQComboBox:(QComboBox *)b

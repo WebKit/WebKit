@@ -733,6 +733,7 @@ static NSView *viewForElement(DOM::ElementImpl *elementImpl)
     if (renderer && renderer->isWidget()) {
         QWidget *widget = static_cast<const RenderWidget *>(renderer)->widget();
         if (widget) {
+            widget->populate();
             return widget->getView();
         }
     }
