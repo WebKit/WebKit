@@ -1,3 +1,27 @@
+2004-10-28  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Chris
+
+        Fix for these bugs:
+        
+        <rdar://problem/3854848> Tiger Mail Crash in WebCore - khtml::CompositeEditCommand::insertNodeAfter
+        <rdar://problem/3803832> REGRESSION (Mail): incorrect behavior after Return + Delete in quoted text
+        
+        * khtml/editing/htmlediting.cpp:
+        (khtml::DeleteSelectionCommand::DeleteSelectionCommand): Added node pointer class members 
+        to initialization list, zeroing them out.
+        (khtml::DeleteSelectionCommand::canPerformSpecialCaseBRDelete): New special-case helper to
+        handle a delete of content in special cases where the only thing selected is a BR. This
+        code path is much simpler than the newly-named performGeneralDelete, and detects when no
+        content merging should be done between blocks. This aspect of the change fixes 3854848.
+        One of the special cases added fixes 3803832.
+        (khtml::DeleteSelectionCommand::performGeneralDelete): Renamed, from performDelete.
+        (khtml::DeleteSelectionCommand::moveNodesAfterNode): Made this helper be a no-arg function, just
+        like the other helpers in this class.
+        (khtml::DeleteSelectionCommand::clearTransientState): Fix cut and paste error in deref code.
+        (khtml::DeleteSelectionCommand::doApply): Updated for changed helpers.
+        * khtml/editing/htmlediting.h: Added new helper and changed an old one.
+
 2004-10-28  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3856913> Panther-only crash in QString code copying front page of store.apple.com

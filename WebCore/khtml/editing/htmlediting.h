@@ -279,9 +279,10 @@ private:
     DOM::Position startPositionForDelete() const;
     DOM::Position endPositionForDelete() const;
     void saveTypingStyleState();
-    void performDelete();
+    bool canPerformSpecialCaseBRDelete();
+    void performGeneralDelete();
     void fixupWhitespace();
-    void moveNodesAfterNode(DOM::NodeImpl *startNode, DOM::NodeImpl *dstNode);
+    void moveNodesAfterNode();
     void calculateEndingPosition();
     void calculateTypingStyleAfterDelete();
     void clearTransientState();
