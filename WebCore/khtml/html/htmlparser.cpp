@@ -1021,7 +1021,9 @@ NodeImpl *KHTMLParser::getElement(Token* t)
     case ID_STRIKE:
     case ID_BIG:
     case ID_SMALL:
-
+        if (!allowNestedRedundantTag(t->id))
+            return 0;
+        // Fall through and get handled with the rest of the tags
         // %phrase
     case ID_EM:
     case ID_STRONG:
@@ -1077,6 +1079,20 @@ NodeImpl *KHTMLParser::getElement(Token* t)
         kdDebug( 6035 ) << "Unknown tag " << t->id << "!" << endl;
     }
     return n;
+}
+
+#define MAX_REDUNDANT 20
+
+bool KHTMLParser::allowNestedRedundantTag(int _id)
+{
+    // www.liceo.edu.mx is an example of a site that achieves a level of nesting of
+    // about 1500 tags, all from a bunch of <b>s.  We will only allow at most 20
+    // nested tags of the same type before just ignoring them all together.
+    int i = 0;
+    for (HTMLStackElem* curr = blockStack;
+         i < MAX_REDUNDANT && curr && curr->id == _id;
+         curr = curr->next, i++);
+    return i != MAX_REDUNDANT;
 }
 
 void KHTMLParser::processCloseTag(Token *t)

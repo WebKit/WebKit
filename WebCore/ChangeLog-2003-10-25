@@ -1,3 +1,20 @@
+2003-05-29  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3263156, stack overflow at www.liceo.edu.mx.  This
+	site nests about 500 bold tags, only closes some of them, 
+	and then opens 500 more, etc.
+
+	The fix for this problem is to stop honoring tags in the parser
+	after you see 20 identical tags.  We do this only for fontstyle HTML
+	tags.
+	
+        Reviewed by john/darin
+
+        * khtml/html/htmlparser.cpp:
+        (KHTMLParser::getElement):
+        (KHTMLParser::allowNestedRedundantTag):
+        * khtml/html/htmlparser.h:
+
 2003-05-30  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Chris
