@@ -40,7 +40,7 @@
 #import <WebKit/WebPluginViewFactoryPrivate.h>
 #import <WebKit/WebNetscapePluginDocumentView.h>
 #import <WebKit/WebPreferencesPrivate.h>
-#import <WebKit/WebResource.h>
+#import <WebKit/WebResourcePrivate.h>
 #import <WebKit/WebSubresourceClient.h>
 #import <WebKit/WebViewInternal.h>
 #import <WebKit/WebViewPrivate.h>
@@ -444,11 +444,14 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 
 - (void)objectLoadedFromCacheWithURL:(NSURL *)URL response:(NSURLResponse *)response data:(NSData *)data
 {
-    WebResource *resource = [[WebResource alloc] initWithData:data
-                                                          URL:URL
-                                                     MIMEType:[response MIMEType]
-                                             textEncodingName:[response textEncodingName]
-                                                    frameName:nil];
+    // Pass NO for copyData since the data doesn't need to be copied since it won't be modified. 
+    // Copying it will also cause a performance regression. 
+    WebResource *resource = [[WebResource alloc] _initWithData:data
+                                                           URL:URL
+                                                      MIMEType:[response MIMEType]
+                                              textEncodingName:[response textEncodingName]
+                                                     frameName:nil
+                                                      copyData:NO];
     ASSERT(resource != nil);
     [[self dataSource] addSubresource:resource];
     [resource release];

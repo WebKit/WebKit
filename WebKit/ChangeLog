@@ -1,5 +1,14 @@
 2004-12-07  Chris Blumenberg  <cblu@apple.com>
 
+	Fix for performance regression.
+
+        Reviewed by kevin.
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge objectLoadedFromCacheWithURL:response:data:]): construct the WebResource without copying the data
+
+2004-12-07  Chris Blumenberg  <cblu@apple.com>
+
 	Fixed: <rdar://problem/3909243> REGRESSION: large standalone images stop loading part way through
 
         Reviewed by kevin.
