@@ -150,7 +150,8 @@
 	<key>CFBundleExecutable</key>
 	<string>JavaScriptCore</string>
 	<key>CFBundleGetInfoString</key>
-	<string>1.0 Beta, Copyright 2001-2002 Apple Computer, Inc</string>
+	<string>1.0 Beta, Copyright 2001-2002 Apple Computer, Inc; Copyright 1999-2001 Harri Porten &lt;porten@kde.org&gt;; Copyright 2001 Peter Kelly &lt;pmk@post.com&gt;; Copyright 1997-2001 University of Cambridge; Copyright 1991, 2000, 2001 by Lucent Technologies.
+</string>
 	<key>CFBundleIconFile</key>
 	<string></string>
 	<key>CFBundleIdentifier</key>
@@ -166,7 +167,8 @@
 	<key>CFBundleVersion</key>
 	<string>49u</string>
 	<key>CFHumanReadableCopyright</key>
-	<string>Copyright (c) 2001-2002 Apple Computer</string>
+	<string>Copyright 2001-2002 Apple Computer, Inc; Copyright 1999-2001 Harri Porten &lt;porten@kde.org&gt;; Copyright 2001 Peter Kelly &lt;pmk@post.com&gt;; Copyright 1997-2001 University of Cambridge; Copyright 1991, 2000, 2001 by Lucent Technologies.
+</string>
 	<key>NSPrincipalClass</key>
 	<string></string>
 </dict>

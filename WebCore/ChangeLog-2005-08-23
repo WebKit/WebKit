@@ -1,3 +1,11 @@
+2003-01-05  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by no one cause I'm just changing copyright strings.
+
+        * WebCore.pbproj/project.pbxproj: Added non-Apple copyrights to
+	copyright strings.
+        * English.lproj/InfoPlist.strings: Likewise.
+
 2003-01-05  Darin Adler  <darin@apple.com>
 
         * Resources/Info.plist: Fix "Apple Compupter" typo.
