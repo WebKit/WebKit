@@ -21,29 +21,47 @@
 
 - (void)dealloc
 {
+    [fileHandle release];
     [dataSource release];
 }
 
-- (void)downloadCompletedWithData:(NSData *)data;
+- (void)receivedData:(NSData *)data isComplete:(BOOL)isComplete
 {
     NSString *path = [dataSource downloadPath];
     NSFileManager *fileManager;
     NSWorkspace *workspace;
     
-    // FIXME: Should probably not replace existing file
-    // FIXME: Should report error if there is one
-    fileManager = [NSFileManager defaultManager];
-    [fileManager createFileAtPath:path contents:data attributes:nil];
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_DOWNLOAD, "Download complete. Saved to: %s", [path cString]);
-    
-    // Send Finder notification
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_DOWNLOAD, "Notifying Finder");
-    workspace = [NSWorkspace sharedWorkspace];
-    [workspace noteFileSystemChanged:path];
-    
-    if([dataSource contentPolicy] == IFContentPolicyOpenExternally){
-        [workspace openFile:path];
+    if(!fileHandle){
+        // FIXME: Should not replace existing file
+        // FIXME: Handle errors
+        fileManager = [NSFileManager defaultManager];
+        [fileManager createFileAtPath:path contents:nil attributes:nil];
+        fileHandle = [[NSFileHandle fileHandleForWritingAtPath:path] retain];
+        
+        workspace = [NSWorkspace sharedWorkspace];
+        [workspace noteFileSystemChanged:path];
     }
+    
+    [fileHandle writeData:data];
+    
+    if(isComplete){
+    
+        [fileHandle closeFile];
+        WEBKITDEBUGLEVEL(WEBKIT_LOG_DOWNLOAD, "Download complete. Saved to: %s", [path cString]);
+        
+        workspace = [NSWorkspace sharedWorkspace];
+        [workspace noteFileSystemChanged:path];
+        
+        if([dataSource contentPolicy] == IFContentPolicyOpenExternally){
+            [workspace openFile:path];
+        }
+    }
+}
+
+- (void)cancel
+{
+    [fileHandle closeFile];
+    // FIXME: Do something to mark it as resumable?
 }
 
 

@@ -11,9 +11,10 @@
 
 @interface IFDownloadHandler : NSObject {
     IFWebDataSource *dataSource;
+    NSFileHandle *fileHandle;
 }
 
 - initWithDataSource:(IFWebDataSource *)dSource;
-- (void)downloadCompletedWithData:(NSData *)data;
-
+- (void)receivedData:(NSData *)data isComplete:(BOOL)isComplete;
+- (void)cancel;
 @end

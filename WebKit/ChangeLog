@@ -1,3 +1,36 @@
+2002-06-13  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed downloads.
+	Now write out download files as data comes in.
+	Removed useless lproj's.
+
+	* Dutch.lproj/InfoPlist.strings: Removed.
+	* Dutch.lproj/Localizable.strings: Removed.
+	* French.lproj/InfoPlist.strings: Removed.
+	* French.lproj/Localizable.strings: Removed.
+	* German.lproj/InfoPlist.strings: Removed.
+	* German.lproj/Localizable.strings: Removed.
+	* Italian.lproj/InfoPlist.strings: Removed.
+	* Italian.lproj/Localizable.strings: Removed.
+	* Japanese.lproj/InfoPlist.strings: Removed.
+	* Japanese.lproj/Localizable.strings: Removed.
+	* MIME.subproj/IFDownloadHandler.h:
+	* MIME.subproj/IFDownloadHandler.mm:
+	(-[IFDownloadHandler dealloc]):
+	(-[IFDownloadHandler receivedData:isComplete:]): added
+	(-[IFDownloadHandler cancel]): added
+	* Spanish.lproj/InfoPlist.strings: Removed.
+	* Spanish.lproj/Localizable.strings: Removed.
+	* WebKit.pbproj/project.pbxproj:
+	* WebView.subproj/IFMainURLHandleClient.h:
+	* WebView.subproj/IFMainURLHandleClient.mm:
+	(-[IFMainURLHandleClient initWithDataSource:]): removed unused BOOL
+	(-[IFMainURLHandleClient dealloc]): 
+	(-[IFMainURLHandleClient IFURLHandleResourceDidCancelLoading:]):
+	(-[IFMainURLHandleClient IFURLHandleResourceDidFinishLoading:data:]):
+	(-[IFMainURLHandleClient IFURLHandle:resourceDataDidBecomeAvailable:]):
+	(-[IFMainURLHandleClient IFURLHandle:resourceDidFailLoadingWithResult:]):
+
 2002-06-12  Chris Blumenberg  <cblu@apple.com>
 
 	Couldn't run ChangeLog because it hung with the massize diffs, so here's

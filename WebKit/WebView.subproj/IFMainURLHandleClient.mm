@@ -5,6 +5,7 @@
 */
 
 #import <WebKit/IFDocument.h>
+#import <WebKit/IFDownloadHandler.h>
 #import <WebKit/IFHTMLRepresentation.h>
 #import <WebKit/IFLoadProgress.h>
 #import <WebKit/IFLocationChangeHandler.h>
@@ -30,7 +31,6 @@
 {
     if ((self = [super init])) {
         dataSource = [ds retain];
-        examinedInitialData = NO;
         processedBufferedData = NO;
         isFirstChunk = YES;
         return self;
@@ -42,7 +42,7 @@
 - (void)dealloc
 {
     WEBKIT_ASSERT(url == nil);
-    
+
     [dataSource release];
     [super dealloc];
 }
@@ -73,6 +73,10 @@
     [(IFWebController *)[dataSource controller] _didStopLoading:url];
     [url release];
     url = nil;
+    
+    [downloadHandler cancel];
+    [downloadHandler release];
+    downloadHandler = nil;
 }
 
 
@@ -82,7 +86,10 @@
     
     WEBKIT_ASSERT([url isEqual:[sender redirectedURL] ? [sender redirectedURL] : [sender url]]);
     
-    [dataSource _setResourceData:data];
+    // Don't retain download data
+    if([dataSource contentPolicy] != IFContentPolicySave &&
+       [dataSource contentPolicy] != IFContentPolicyOpenExternally)
+       [dataSource _setResourceData:data];
     
     // update progress
     IFLoadProgress *loadProgress = [[IFLoadProgress alloc] init];
@@ -94,10 +101,13 @@
     [(IFWebController *)[dataSource controller] _didStopLoading:url];
     [url release];
     url = nil;
+    
+    [downloadHandler release];
+    downloadHandler = nil;
 }
 
 
-- (void)IFURLHandle:(IFURLHandle *)sender resourceDataDidBecomeAvailable:(NSData *)data
+- (void)IFURLHandle:(IFURLHandle *)sender resourceDataDidBecomeAvailable:(NSData *)incomingData
 {
     int contentLength = [sender contentLength];
     int contentLengthReceived = [sender contentLengthReceived];
@@ -106,41 +116,52 @@
     IFWebFrame *frame = [dataSource webFrame];
     IFWebView *view = [frame view];
     IFContentPolicy contentPolicy;
+    NSData *data;
     
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_LOADING, "url = %s, data = %p, length %d\n", DEBUG_OBJECT([sender url]), data, [data length]);
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_LOADING, "url = %s, data = %p, length %d\n", DEBUG_OBJECT([sender url]), incomingData, [incomingData length]);
     
     WEBKIT_ASSERT([url isEqual:[sender redirectedURL] ? [sender redirectedURL] : [sender url]]);
     
     // Check the mime type and ask the client for the content policy.
-    if(!examinedInitialData){
+    if(isFirstChunk){
         WEBKITDEBUGLEVEL(WEBKIT_LOG_DOWNLOAD, "main content type: %s", DEBUG_OBJECT(contentType));
         [dataSource _setContentType:contentType];
         [dataSource _setEncoding:[sender characterSet]];
         [[dataSource _locationChangeHandler] requestContentPolicyForMIMEType:contentType];
-        examinedInitialData = YES;
     }
     
     contentPolicy = [dataSource contentPolicy];
-    if(contentPolicy == IFContentPolicyIgnore){
-        [sender cancelLoadInBackground];
-        return;
-    }
-    
+
     if(contentPolicy != IFContentPolicyNone){
         if(!processedBufferedData){
             // Process all data that has been received now that we have a content policy
             // and don't call resourceData if this is the first chunk since resourceData is a copy
             if(isFirstChunk){
-                [[dataSource representation] receivedData:data withDataSource:dataSource isComplete:isComplete];
+                data = incomingData;
             }else{
-                [[dataSource representation] receivedData:[sender resourceData] 
-                    withDataSource:dataSource isComplete:isComplete];
+                data = [sender resourceData];
             }
             processedBufferedData = YES;          
         }else{
-            [[dataSource representation] receivedData:data withDataSource:dataSource isComplete:isComplete];
+            data = incomingData;
         }
+    }
+    
+    if(contentPolicy == IFContentPolicyShow){
+        [[dataSource representation] receivedData:data withDataSource:dataSource isComplete:isComplete];
         [[view documentView] dataSourceUpdated:dataSource];
+        
+    }else if(contentPolicy == IFContentPolicySave || contentPolicy == IFContentPolicyOpenExternally){
+        if(!downloadHandler){
+            [frame->_private setProvisionalDataSource:nil];
+            [[dataSource _locationChangeHandler] locationChangeDone:nil];
+            downloadHandler = [[IFDownloadHandler alloc] initWithDataSource:dataSource];
+        }
+        [downloadHandler receivedData:data isComplete:isComplete];
+        
+    }else if(contentPolicy == IFContentPolicyIgnore){
+        [sender cancelLoadInBackground];
+        return;
     }
     
     WEBKITDEBUGLEVEL(WEBKIT_LOG_DOWNLOAD, "%d of %d", contentLengthReceived, contentLength);
@@ -178,6 +199,10 @@
     [(IFWebController *)[dataSource controller] _didStopLoading:url];
     [url release];
     url = nil;
+    
+    [downloadHandler cancel];
+    [downloadHandler release];
+    downloadHandler = nil;
 }
 
 
