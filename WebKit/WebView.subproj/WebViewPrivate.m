@@ -3,19 +3,20 @@
 	Copyright (c) 2001, 2002, Apple, Inc. All rights reserved.
 */
 
-#import <WebKit/WebLoadProgress.h>
-#import <WebKit/WebPreferencesPrivate.h>
-#import <WebKit/WebStandardPanelsPrivate.h>
+#import <WebKit/WebBackForwardList.h>
 #import <WebKit/WebControllerPrivate.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebFramePrivate.h>
+#import <WebKit/WebLoadProgress.h>
+#import <WebKit/WebPreferencesPrivate.h>
+#import <WebKit/WebStandardPanelsPrivate.h>
 #import <WebKit/WebViewPrivate.h>
 
 #import <WebKit/WebKitDebug.h>
 
+#import <WebFoundation/WebCacheLoaderConstants.h>
 #import <WebFoundation/WebError.h>
 #import <WebFoundation/WebFileTypeMappings.h>
-#import <WebFoundation/WebCacheLoaderConstants.h>
 #import <WebFoundation/WebResourceHandle.h>
 
 @implementation WebControllerPrivate
@@ -23,6 +24,7 @@
 - init 
 {
     mainFrame = nil;
+    backForwardList = [[WebBackForwardList alloc] init];
     return self;
 }
 
@@ -54,6 +56,7 @@
     [windowContext release];
     [resourceProgressHandler release];
     [policyHandler release];
+    [backForwardList release];
 
     [super dealloc];
 }
@@ -167,5 +170,6 @@
 {
     _private->openedByScript = openedByScript;
 }
+
 
 @end

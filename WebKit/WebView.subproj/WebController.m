@@ -298,4 +298,10 @@
     return [[self class] canShowMIMEType:MIMEType];
 }
 
+- (WebBackForwardList *)backForwardList
+{
+    return _private->backForwardList;
+}
+
 @end
+

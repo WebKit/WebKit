@@ -29,14 +29,15 @@
    ============================================================================= 
 */
 
-@class WebDownloadHandler;
-@class WebError;
-@class WebLoadProgress;
-@class WebResourceHandle;
+@class WebBackForwardList;
 @class WebController;
 @class WebControllerPrivate;
 @class WebDataSource;
+@class WebDownloadHandler;
+@class WebError;
 @class WebFrame;
+@class WebLoadProgress;
+@class WebResourceHandle;
 @class WebView;
 
 @protocol WebDocumentLoading;
@@ -192,4 +193,7 @@
 
 + (BOOL)canShowMIMEType:(NSString *)MIMEType;
 + (BOOL)canShowFile:(NSString *)path;
+
+- (WebBackForwardList *)backForwardList;
+
 @end

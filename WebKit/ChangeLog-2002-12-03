@@ -1,3 +1,16 @@
+2002-07-22  Richard Williamson  <rjw@apple.com>
+
+        Moved back/forward list from Alex's document to WebController.  First step
+        to address a series of back/forward related issues.        
+
+        * WebView.subproj/WebController.h:
+        * WebView.subproj/WebController.m:
+        (-[WebController backForwardList]):
+        * WebView.subproj/WebControllerPrivate.h:
+        * WebView.subproj/WebControllerPrivate.m:
+        (-[WebControllerPrivate init]):
+        (-[WebControllerPrivate dealloc]):
+
 2002-07-22  Chris Blumenberg  <cblu@apple.com>
 
 	Strip white space before and after URL string 2998696
