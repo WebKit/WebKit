@@ -88,4 +88,4 @@ void* ArenaAllocate(ArenaPool *pool, unsigned int nb);
          free(a); \
          (a) = 0;
 
-#endif ARENA_H
+#endif
