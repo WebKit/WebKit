@@ -282,20 +282,6 @@ static WebElementOrTextFilter *elementOrTextFilterInstance = nil;
         return fragment;
     }
     
-    if ((URL = [pasteboard _web_bestURL])) {
-        NSString *URLString = [URL _web_originalDataAsString];
-        NSString *linkLabel = [pasteboard stringForType:WebURLNamePboardType];
-        linkLabel = [linkLabel length] > 0 ? linkLabel : URLString;
-
-        DOMDocument *document = [[self _bridge] DOMDocument];
-        DOMDocumentFragment *fragment = [document createDocumentFragment];
-        DOMElement *anchorElement = [document createElement:@"a"];
-        [anchorElement setAttribute:@"href" :URLString];
-        [fragment appendChild:anchorElement];
-        [anchorElement appendChild:[document createTextNode:linkLabel]];
-        return fragment;
-    }
-    
 #ifdef BUILT_ON_TIGER_OR_LATER
     NSAttributedString *string = nil;
     if ([types containsObject:NSRTFDPboardType]) {
@@ -323,6 +309,13 @@ static WebElementOrTextFilter *elementOrTextFilterInstance = nil;
         }
     }
 #endif
+    
+    if ((URL = [NSURL URLFromPasteboard:pasteboard])) {
+        NSString *URLString = [URL _web_userVisibleString];
+        if ([URLString length] > 0) {
+            return [[self _bridge] documentFragmentWithText:URLString];
+        }
+    }
     
     if (allowPlainText && [types containsObject:NSStringPboardType]) {
         return [[self _bridge] documentFragmentWithText:[pasteboard stringForType:NSStringPboardType]];

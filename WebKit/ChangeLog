@@ -1,3 +1,17 @@
+2004-08-27  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Chris
+
+        Fix for this bug:
+        
+        <rdar://problem/3756997> WebKit aggressive in making pasted text into a URL, even when it's not much like a URL
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _documentFragmentFromPasteboard:allowPlainText:]): Don't try so hard to coerce data
+        on the pasteboard into a URL, and do not make an anchor with an href for any URLs that are 
+        explicitly present on the pasteboard. Also, move URL pasteboard type check beneath the RTF
+        checks.
+
 === Safari-161 ===
 
 2004-08-26  Chris Blumenberg  <cblu@apple.com>
