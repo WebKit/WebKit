@@ -539,7 +539,5 @@ RenderObject *KWQKHTMLPartImpl::getRenderer()
 
 QString KWQKHTMLPartImpl::userAgent() const
 {
-    // FIXME: Should get this from WebFoundation so that we don't have two copies of the
-    // user agent string that we need to keep in sync.
-    return "Mozilla/5.0 (Macintosh; U; PPC Mac OS X; en-US; rv:1.0.0) Gecko/20020715";
+    return QString::fromNSString([bridge userAgentForURL:part->m_url.getNSURL()]);
 }

@@ -25,7 +25,6 @@
 
 - init 
 {
-    mainFrame = nil;
     backForwardList = [[WebBackForwardList alloc] init];
     defaultContextMenuHandler = [[WebDefaultContextMenuHandler alloc] init];
     textSizeMultiplier = 1;
@@ -62,6 +61,8 @@
     [policyHandler release];
     [backForwardList release];
     [defaultContextMenuHandler release];
+    [applicationNameForUserAgent release];
+    [userAgentOverride release];
     
     [super dealloc];
 }

@@ -308,4 +308,9 @@
     [backForwardItem release];
 }
 
+- (NSString *)userAgentForURL:(NSURL *)URL
+{
+    return [[frame controller] userAgentForURL:URL];
+}
+
 @end

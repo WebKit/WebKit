@@ -369,5 +369,40 @@
     return _private->textSizeMultiplier;
 }
 
-@end
+- (void)setApplicationNameForUserAgent:(NSString *)applicationName
+{
+    NSString *name = [applicationName copy];
+    [_private->applicationNameForUserAgent release];
+    _private->applicationNameForUserAgent = name;
+}
 
+// Set the user agent explicitly. Setting the user-agent string to nil means
+// that WebKit should construct the best possible user-agent string for each URL
+// for best results rendering web pages. Setting it to any string means
+// that WebKit should use that user-agent string for all purposes until it is set
+// back to nil.
+- (void)setUserAgent:(NSString *)userAgentString
+{
+    NSString *override = [userAgentString copy];
+    [_private->userAgentOverride release];
+    _private->userAgentOverride = override;
+}
+
+// Get the appropriate user-agent string for a particular URL.
+- (NSString *)userAgentForURL:(NSURL *)URL
+{
+    if (_private->userAgentOverride) {
+        return _private->userAgentOverride;
+    }
+
+    // Note that we currently don't look at the URL.
+    // If we find that we need different user agent strings for different web pages
+    // for best results, then that logic will go here.
+
+    // FIXME: Incorporate applicationNameForUserAgent in this string so that people
+    // can tell that they are talking to Alexander. Maybe also incorporate something
+    // that identifies WebKit's involvement.
+    return @"Mozilla/5.0 (Macintosh; U; PPC Mac OS X; en-US; rv:1.0.0) Gecko/20020715";
+}
+
+@end

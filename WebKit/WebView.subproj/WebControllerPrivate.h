@@ -23,6 +23,8 @@
     WebBackForwardList *backForwardList;
     float textSizeMultiplier;
     BOOL useBackForwardList;
+    NSString *applicationNameForUserAgent;
+    NSString *userAgentOverride;
 }
 @end
 

@@ -1,5 +1,27 @@
 2002-08-16  Darin Adler  <darin@apple.com>
 
+	Step 3 in adding user agent API to WebKit and WebFoundation.
+	Add the calls to WebKit to configure the user-agent string.
+	Change WebCore to get the user-agent from WebKit via the bridge.
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge userAgentForURL:]): Added. Calls [WebController userAgentForURL:].
+
+        * WebView.subproj/WebController.h: Add three new methods.
+        * WebView.subproj/WebController.m:
+        (-[WebController setApplicationNameForUserAgent:]): Store an application name that
+	will be used to build up the user-agent string.
+        (-[WebController setUserAgent:]): Set an override user agent; mainly useful for
+	testing user-agent strings different from the one WebKit supplies.
+        (-[WebController userAgentForURL:]): Public API for getting the user agent string
+	that the WebController will use for a particular URL.
+
+        * WebView.subproj/WebControllerPrivate.h: Add fields for the user-agent parameters.
+        * WebView.subproj/WebControllerPrivate.m:
+        (-[WebControllerPrivate dealloc]): Release both strings when the controller goes away.
+
+2002-08-16  Darin Adler  <darin@apple.com>
+
 	Missed one call to [WebResourceHandle initWithURL:].
         * WebCoreSupport.subproj/WebBridge.m: (-[WebBridge objectLoadedFromCache:size:]):
         Change to call [WebResourceHandle initWithClient:URL:] with nil for the client.

@@ -1,5 +1,11 @@
 2002-08-16  Darin Adler  <darin@apple.com>
 
+        * kwq/KWQKHTMLPartImpl.mm: (KWQKHTMLPartImpl::userAgent):
+	Call bridge's userAgentForURL: method.
+        * kwq/WebCoreBridge.h: Added userAgentForURL: to the protocol
+
+2002-08-16  Darin Adler  <darin@apple.com>
+
 	Step 2 in adding user agent API to WebKit and WebFoundation.
 	In this step, I change WebCore so that it the KWQKHTMLPartImpl
 	is responsible for fetching the user agent. Later it will

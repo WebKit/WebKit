@@ -139,6 +139,8 @@ typedef khtml::RenderPart KHTMLRenderPart;
 - (void)postWithURL:(NSURL *)URL data:(NSData *)data;
 - (WebCoreBridge *)openNewWindowWithURL:(NSURL *)URL;
 
+- (NSString *)userAgentForURL:(NSURL *)URL;
+
 - (void)setTitle:(NSString *)title;
 - (void)setStatusText:(NSString *)status;
 

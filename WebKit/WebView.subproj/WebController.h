@@ -200,4 +200,18 @@
 - (void)setTextSizeMultiplier:(float)multiplier; // 1.0 is normal size
 - (float)textSizeMultiplier;
 
+// Set the application name. This name will be used in user-agent strings
+// that are chosen for best results in rendering web pages.
+- (void)setApplicationNameForUserAgent:(NSString *)applicationName;
+
+// Set the user agent explicitly. Setting the user-agent string to nil means
+// that WebKit should construct the best possible user-agent string for each URL
+// for best results rendering web pages. Setting it to any string means
+// that WebKit should use that user-agent string for all purposes until it is set
+// back to nil.
+- (void)setUserAgent:(NSString *)userAgentString;
+
+// Get the appropriate user-agent string for a particular URL.
+- (NSString *)userAgentForURL:(NSURL *)URL;
+
 @end
