@@ -18,7 +18,7 @@ img[align="right"] {
 
 /* Make lists flow around floats. */
 UL, OL, MENU, DIR {
-    \2d konq-flow-mode: \2d konq-around-floats;
+    -khtml-flow-mode: -khtml-around-floats;
 }
     
 /* Tables reset both line-height and white-space in quirks mode.
@@ -30,7 +30,7 @@ TABLE {
     font-size: medium;
     font-variant: normal;
     font-style: normal;
-    color: \2d konq-text;
+    color: -khtml-text;
 }
 
 

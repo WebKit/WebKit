@@ -143,9 +143,9 @@ static int cssyylex( YYSTYPE *yylval ) {
 %token MEDIA_SYM
 %token FONT_FACE_SYM
 %token CHARSET_SYM
-%token KONQ_RULE_SYM
-%token KONQ_DECLS_SYM
-%token KONQ_VALUE_SYM
+%token KHTML_RULE_SYM
+%token KHTML_DECLS_SYM
+%token KHTML_VALUE_SYM
 
 %token IMPORTANT_SYM
 
@@ -229,26 +229,26 @@ static int cssyylex( YYSTYPE *yylval ) {
 
 stylesheet:
     maybe_charset maybe_sgml import_list rule_list
-  | konq_rule maybe_space
-  | konq_decls maybe_space
-  | konq_value maybe_space
+  | khtml_rule maybe_space
+  | khtml_decls maybe_space
+  | khtml_value maybe_space
   ;
 
-konq_rule:
-    KONQ_RULE_SYM '{' maybe_space ruleset maybe_space '}' {
+khtml_rule:
+    KHTML_RULE_SYM '{' maybe_space ruleset maybe_space '}' {
         CSSParser *p = static_cast<CSSParser *>(parser);
         p->rule = $4;
     }
 ;
 
-konq_decls:
-    KONQ_DECLS_SYM '{' maybe_space declaration_list '}' {
+khtml_decls:
+    KHTML_DECLS_SYM '{' maybe_space declaration_list '}' {
 	/* can be empty */
     }
 ;
 
-konq_value:
-    KONQ_VALUE_SYM '{' maybe_space expr '}' {
+khtml_value:
+    KHTML_VALUE_SYM '{' maybe_space expr '}' {
 	CSSParser *p = static_cast<CSSParser *>(parser);
 	if ( $4 ) {
 	    p->valueList = $4;

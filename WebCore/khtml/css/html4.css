@@ -91,7 +91,7 @@ IFRAME {
 CENTER { 
 	display: block;
 	/* special centering to be able to emulate the html4/netscape behaviour */
-	text-align: \2d konq-center;
+	text-align: -khtml-center;
 }  
       
 HR  { 
@@ -102,7 +102,7 @@ HR  {
         border-width: 1px;
         margin-left: 1px; /* will be overwritten by ALIGN */ 
         margin-right: 1px; /* will be overwritten by ALIGN */
-        \2d konq-flow-mode: \2d konq-around-floats;
+        -khtml-flow-mode: -khtml-around-floats;
 } 
  
 MAP { 
@@ -162,10 +162,10 @@ H6 {
 TABLE { 
 	display: table;
 	border-collapse: separate;
-	text-align: \2d konq-auto;
+	text-align: -khtml-auto;
 	border-spacing: 2px;
 	border-color: gray;
-        \2d konq-flow-mode: \2d konq-around-floats;
+        -khtml-flow-mode: -khtml-around-floats;
 }
 
 TABLE[align="center"] { 
@@ -218,7 +218,7 @@ TH {
 
 CAPTION { 
 	display: table-caption;  
-	text-align: \2d konq-center; 
+	text-align: -khtml-center; 
 }
 
 /*

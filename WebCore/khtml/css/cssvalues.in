@@ -71,7 +71,7 @@ medium
 large
 x-large
 xx-large
--konq-xxx-large
+-khtml-xxx-large
 smaller
 larger
 #
@@ -96,7 +96,7 @@ sans-serif
 cursive
 fantasy
 monospace
--konq-body
+-khtml-body
 #
 #
 # CSS_PROP_BACKGROUND_COLOR:
@@ -153,7 +153,7 @@ windowtext
 #
 # colors in non strict mode
 grey
--konq-text
+-khtml-text
 #
 # CSS_PROP_BACKGROUND_REPEAT:
 #
@@ -173,18 +173,18 @@ text-bottom
 top
 bottom
 # HTML alignment MIDDLE has no corresponding CSS alignment
--konq-baseline-middle
+-khtml-baseline-middle
 #
 # CSS_PROP_TEXT_ALIGN:
 #
--konq-auto
+-khtml-auto
 left
 right
 center
 justify
--konq-left
--konq-right
--konq-center
+-khtml-left
+-khtml-right
+-khtml-center
 #
 # CSS_PROP_LIST_STYLE_POSITION:
 #
@@ -315,10 +315,10 @@ static
 thick
 thin
 underline
--konq-nowrap
-# CSS_PROP__KONQ_FLOW_MODE
--konq-normal
--konq-around-floats
+-khtml-nowrap
+# CSS_PROP__khtml_FLOW_MODE
+-khtml-normal
+-khtml-around-floats
 #
 # Not supported CSS 2 Aural values
 #

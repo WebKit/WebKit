@@ -644,7 +644,7 @@ void RenderBlock::computeHorizontalPositionsForLine(InlineFlowBox* lineBox, Bidi
     int availableWidth = lineWidth(m_height);
     switch(style()->textAlign()) {
         case LEFT:
-        case KONQ_LEFT:
+        case KHTML_LEFT:
             numSpaces = 0;
             break;
         case JUSTIFY:
@@ -657,12 +657,12 @@ void RenderBlock::computeHorizontalPositionsForLine(InlineFlowBox* lineBox, Bidi
             if (endEmbed->basicDir == QChar::DirL)
                 break;
         case RIGHT:
-        case KONQ_RIGHT:
+        case KHTML_RIGHT:
             x += availableWidth - totWidth;
             numSpaces = 0;
             break;
         case CENTER:
-        case KONQ_CENTER:
+        case KHTML_CENTER:
             int xd = (availableWidth - totWidth)/2;
             x += xd >0 ? xd : 0;
             numSpaces = 0;

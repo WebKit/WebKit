@@ -32,9 +32,9 @@ typedef union {
 #define	MEDIA_SYM	269
 #define	FONT_FACE_SYM	270
 #define	CHARSET_SYM	271
-#define	KONQ_RULE_SYM	272
-#define	KONQ_DECLS_SYM	273
-#define	KONQ_VALUE_SYM	274
+#define	KHTML_RULE_SYM	272
+#define	KHTML_DECLS_SYM	273
+#define	KHTML_VALUE_SYM	274
 #define	IMPORTANT_SYM	275
 #define	QEMS	276
 #define	EMS	277

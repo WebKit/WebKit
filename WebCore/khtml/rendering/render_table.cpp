@@ -1535,7 +1535,7 @@ void RenderTableCell::setStyle( RenderStyle *style )
     RenderBlock::setStyle( style );
     setShouldPaintBackgroundOrBorder(true);
 
-    if (style->whiteSpace() == KONQ_NOWRAP) {
+    if (style->whiteSpace() == KHTML_NOWRAP) {
         // Figure out if we are really nowrapping or if we should just
         // use normal instead.  If the width of the cell is fixed, then
         // we don't actually use NOWRAP. 

@@ -159,12 +159,12 @@ CSSRuleImpl *CSSParser::parseRule( DOM::CSSStyleSheetImpl *sheet, const DOM::DOM
 {
     styleElement = sheet;
     
-    const char konq_rule[] = "@-konq-rule{";
-    int length = string.length() + 4 + strlen(konq_rule);
+    const char khtml_rule[] = "@-khtml-rule{";
+    int length = string.length() + 4 + strlen(khtml_rule);
     data = (unsigned short *)malloc( length *sizeof( unsigned short ) );
-    for ( unsigned int i = 0; i < strlen(konq_rule); i++ )
-	data[i] = konq_rule[i];
-    memcpy( data + strlen( konq_rule ), string.unicode(), string.length()*sizeof( unsigned short) );
+    for ( unsigned int i = 0; i < strlen(khtml_rule); i++ )
+	data[i] = khtml_rule[i];
+    memcpy( data + strlen( khtml_rule ), string.unicode(), string.length()*sizeof( unsigned short) );
     // qDebug("parse string = '%s'", QConstString( (const QChar *)data, length ).string().latin1() );
     data[length-1] = 0;
     data[length-2] = 0;
@@ -196,12 +196,12 @@ bool CSSParser::parseValue( DOM::CSSStyleDeclarationImpl *declaration, int _id, 
 
     styleElement = declaration->stylesheet();
 
-    const char konq_value[] = "@-konq-value{";
-    int length = string.length() + 4 + strlen(konq_value);
+    const char khtml_value[] = "@-khtml-value{";
+    int length = string.length() + 4 + strlen(khtml_value);
     data = (unsigned short *)malloc( length *sizeof( unsigned short ) );
-    for ( unsigned int i = 0; i < strlen(konq_value); i++ )
-	data[i] = konq_value[i];
-    memcpy( data + strlen( konq_value ), string.unicode(), string.length()*sizeof( unsigned short) );
+    for ( unsigned int i = 0; i < strlen(khtml_value); i++ )
+	data[i] = khtml_value[i];
+    memcpy( data + strlen( khtml_value ), string.unicode(), string.length()*sizeof( unsigned short) );
     data[length-1] = 0;
     data[length-2] = 0;
     data[length-3] = ' ';
@@ -247,12 +247,12 @@ bool CSSParser::parseDeclaration( DOM::CSSStyleDeclarationImpl *declaration, con
 
     styleElement = declaration->stylesheet();
 
-    const char konq_decls[] = "@-konq-decls{";
-    int length = string.length() + 4 + strlen(konq_decls);
+    const char khtml_decls[] = "@-khtml-decls{";
+    int length = string.length() + 4 + strlen(khtml_decls);
     data = (unsigned short *)malloc( length *sizeof( unsigned short ) );
-    for ( unsigned int i = 0; i < strlen(konq_decls); i++ )
-	data[i] = konq_decls[i];
-    memcpy( data + strlen( konq_decls ), string.unicode(), string.length()*sizeof( unsigned short) );
+    for ( unsigned int i = 0; i < strlen(khtml_decls); i++ )
+	data[i] = khtml_decls[i];
+    memcpy( data + strlen( khtml_decls ), string.unicode(), string.length()*sizeof( unsigned short) );
     data[length-1] = 0;
     data[length-2] = 0;
     data[length-3] = ' ';
@@ -524,7 +524,7 @@ bool CSSParser::parseValue( int propId, bool important )
 	break;
 
     case CSS_PROP_DISPLAY:
-        // inline | block | list-item | run-in | inline-block | -konq-ruler | table |
+        // inline | block | list-item | run-in | inline-block | table |
         // inline-table | table-row-group | table-header-group | table-footer-group | table-row |
         // table-column-group | table-column | table-cell | table-caption | box | inline-box | none | inherit
 	if ((id >= CSS_VAL_INLINE && id <= CSS_VAL_INLINE_BOX) || id == CSS_VAL_NONE)
@@ -554,8 +554,8 @@ bool CSSParser::parseValue( int propId, bool important )
 	break;
 
     case CSS_PROP_TEXT_ALIGN:
-    	// left | right | center | justify | konq_left | konq_right | konq_center | <string> | inherit
-	if ( ( id >= CSS_VAL__KONQ_AUTO && id <= CSS_VAL__KONQ_CENTER ) ||
+    	// left | right | center | justify | khtml_left | khtml_right | khtml_center | <string> | inherit
+	if ( ( id >= CSS_VAL__KHTML_AUTO && id <= CSS_VAL__KHTML_CENTER ) ||
 	     value->unit == CSSPrimitiveValue::CSS_STRING )
 	    valid_primitive = true;
 	break;
@@ -727,11 +727,11 @@ bool CSSParser::parseValue( int propId, bool important )
         /* fall through */
     case CSS_PROP_COLOR:                // <color> | inherit
     case CSS_PROP_TEXT_DECORATION_COLOR:
-        if (id == CSS_VAL__KONQ_TEXT)
+        if (id == CSS_VAL__KHTML_TEXT)
             valid_primitive = true; // Always allow this, even when strict parsing is on,
                                     // since we use this in our UA sheets.
 	else if ( id >= CSS_VAL_AQUA && id <= CSS_VAL_WINDOWTEXT || id == CSS_VAL_MENU ||
-	     (id >= CSS_VAL_GREY && id < CSS_VAL__KONQ_TEXT && (nonCSSHint|!strict)) ) {
+	     (id >= CSS_VAL_GREY && id < CSS_VAL__KHTML_TEXT && (nonCSSHint|!strict)) ) {
 	    valid_primitive = true;
 	} else {
 	    parsedValue = parseColor();
@@ -843,7 +843,7 @@ bool CSSParser::parseValue( int propId, bool important )
     	// baseline | sub | super | top | text-top | middle | bottom | text-bottom |
 	// <percentage> | <length> | inherit
 
-	if ( id >= CSS_VAL_BASELINE && id <= CSS_VAL__KONQ_BASELINE_MIDDLE )
+	if ( id >= CSS_VAL_BASELINE && id <= CSS_VAL__KHTML_BASELINE_MIDDLE )
 	    valid_primitive = true;
 	else
 	    valid_primitive = ( !id && validUnit( value, FLength|FPercent, strict&(!nonCSSHint) ) );
@@ -966,49 +966,49 @@ bool CSSParser::parseValue( int propId, bool important )
 	    valid_primitive = true;
 	break;
 
-    case CSS_PROP__KONQ_FLOW_MODE:
-	if ( id == CSS_VAL__KONQ_NORMAL || id == CSS_VAL__KONQ_AROUND_FLOATS )
+    case CSS_PROP__KHTML_FLOW_MODE:
+	if ( id == CSS_VAL__KHTML_NORMAL || id == CSS_VAL__KHTML_AROUND_FLOATS )
 	    valid_primitive = true;
 	break;
 
     /* CSS3 properties */
-    case CSS_PROP_OPACITY:
-        valid_primitive = validUnit(value, FNumber, strict);
-        break;
     case CSS_PROP_TEXT_SHADOW: // CSS2 property, dropped in CSS2.1, back in CSS3, so treat as CSS3
         if (id == CSS_VAL_NONE)
             valid_primitive = true;
         else
             return parseShadow(propId, important);
         break;
-    case CSS_PROP_BOX_ALIGN:
+    case CSS_PROP__KHTML_OPACITY:
+        valid_primitive = validUnit(value, FNumber, strict);
+        break;
+    case CSS_PROP__KHTML_BOX_ALIGN:
         if (id == CSS_VAL_STRETCH || id == CSS_VAL_START || id == CSS_VAL_END ||
             id == CSS_VAL_CENTER || id == CSS_VAL_BASELINE)
             valid_primitive = true;
         break;
-    case CSS_PROP_BOX_DIRECTION:
+    case CSS_PROP__KHTML_BOX_DIRECTION:
         if (id == CSS_VAL_NORMAL || id == CSS_VAL_REVERSE)
             valid_primitive = true;
         break;
-    case CSS_PROP_BOX_LINES:
+    case CSS_PROP__KHTML_BOX_LINES:
         if (id == CSS_VAL_SINGLE || id == CSS_VAL_MULTIPLE)
             valid_primitive = true;
         break;
-    case CSS_PROP_BOX_ORIENT:
+    case CSS_PROP__KHTML_BOX_ORIENT:
         if (id == CSS_VAL_HORIZONTAL || id == CSS_VAL_VERTICAL ||
             id == CSS_VAL_INLINE_AXIS || id == CSS_VAL_BLOCK_AXIS)
             valid_primitive = true;
         break;
-    case CSS_PROP_BOX_PACK:
+    case CSS_PROP__KHTML_BOX_PACK:
         if (id == CSS_VAL_START || id == CSS_VAL_END ||
             id == CSS_VAL_CENTER || id == CSS_VAL_JUSTIFY)
             valid_primitive = true;
         break;
-    case CSS_PROP_BOX_FLEX:
+    case CSS_PROP__KHTML_BOX_FLEX:
         valid_primitive = validUnit(value, FNumber, strict);
         break;
-    case CSS_PROP_BOX_FLEX_GROUP:
-    case CSS_PROP_BOX_ORDINAL_GROUP:
+    case CSS_PROP__KHTML_BOX_FLEX_GROUP:
+    case CSS_PROP__KHTML_BOX_ORDINAL_GROUP:
         valid_primitive = validUnit(value, FInteger|FNonNeg, true);
         break;
     
@@ -1500,10 +1500,10 @@ CSSValueListImpl *CSSParser::parseFontFamily()
         bool nextValBreaksFont = !nextValue ||
                                  (nextValue->unit == Value::Operator && nextValue->iValue == ',');
         bool nextValIsFontName = nextValue &&
-            ((nextValue->id >= CSS_VAL_SERIF && nextValue->id <= CSS_VAL__KONQ_BODY) ||
+            ((nextValue->id >= CSS_VAL_SERIF && nextValue->id <= CSS_VAL__KHTML_BODY) ||
             (nextValue->unit == CSSPrimitiveValue::CSS_STRING || nextValue->unit == CSSPrimitiveValue::CSS_IDENT));
 
-        if (value->id >= CSS_VAL_SERIF && value->id <= CSS_VAL__KONQ_BODY) {
+        if (value->id >= CSS_VAL_SERIF && value->id <= CSS_VAL__KHTML_BODY) {
             if (currFamily) {
                 currFamily->parsedFontName += ' ';
                 currFamily->parsedFontName += qString(value->string);
@@ -1789,7 +1789,7 @@ bool CSSParser::parseShadow( int propId, bool important )
             // The only other type of value that's ok is a color value.
             CSSPrimitiveValueImpl* parsedColor = 0;
             bool isColor = (val->id >= CSS_VAL_AQUA && val->id <= CSS_VAL_WINDOWTEXT || val->id == CSS_VAL_MENU ||
-                            (val->id >= CSS_VAL_GREY && val->id <= CSS_VAL__KONQ_TEXT && (nonCSSHint|!strict)));
+                            (val->id >= CSS_VAL_GREY && val->id <= CSS_VAL__KHTML_TEXT && (nonCSSHint|!strict)));
             if (isColor) {
                 if (!context.allowColor)
                     return context.failed();

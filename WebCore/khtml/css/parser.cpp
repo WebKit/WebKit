@@ -26,9 +26,9 @@
 #define	MEDIA_SYM	269
 #define	FONT_FACE_SYM	270
 #define	CHARSET_SYM	271
-#define	KONQ_RULE_SYM	272
-#define	KONQ_DECLS_SYM	273
-#define	KONQ_VALUE_SYM	274
+#define	KHTML_RULE_SYM	272
+#define	KHTML_DECLS_SYM	273
+#define	KHTML_VALUE_SYM	274
 #define	IMPORTANT_SYM	275
 #define	QEMS	276
 #define	EMS	277
@@ -318,11 +318,11 @@ static const short yyrline[] = { 0,
 static const char * const yytname[] = {   "$","error","$undefined.","S","SGML_CD",
 "INCLUDES","DASHMATCH","BEGINSWITH","ENDSWITH","CONTAINS","STRING","IDENT","HASH",
 "':'","'.'","'['","IMPORT_SYM","PAGE_SYM","MEDIA_SYM","FONT_FACE_SYM","CHARSET_SYM",
-"KONQ_RULE_SYM","KONQ_DECLS_SYM","KONQ_VALUE_SYM","IMPORTANT_SYM","QEMS","EMS",
-"EXS","PXS","CMS","MMS","INS","PTS","PCS","DEGS","RADS","GRADS","MSECS","SECS",
-"HERZ","KHERZ","DIMEN","PERCENTAGE","NUMBER","URI","FUNCTION","UNICODERANGE",
+"KHTML_RULE_SYM","KHTML_DECLS_SYM","KHTML_VALUE_SYM","IMPORTANT_SYM","QEMS",
+"EMS","EXS","PXS","CMS","MMS","INS","PTS","PCS","DEGS","RADS","GRADS","MSECS",
+"SECS","HERZ","KHERZ","DIMEN","PERCENTAGE","NUMBER","URI","FUNCTION","UNICODERANGE",
 "'{'","'}'","';'","','","'+'","'>'","'-'","'*'","']'","'='","')'","'/'","'#'",
-"'@'","stylesheet","konq_rule","konq_decls","konq_value","maybe_space","maybe_sgml",
+"'@'","stylesheet","khtml_rule","khtml_decls","khtml_value","maybe_space","maybe_sgml",
 "maybe_charset","import_list","rule_list","rule","import","string_or_uri","maybe_media_list",
 "media_list","media","ruleset_list","medium","page","font_face","combinator",
 "unary_operator","ruleset","selector_list","selector","simple_selector","element_name",

@@ -11,7 +11,7 @@ nmchar          [_a-zA-Z0-9-]|{nonascii}|{escape}
 string1         \"([\t !#$%&(-~]|\\{nl}|\'|{nonascii}|{escape})*\"
 string2         \'([\t !#$%&(-~]|\\{nl}|\"|{nonascii}|{escape})*\'
 
-ident           {nmstart}{nmchar}*
+ident           -?{nmstart}{nmchar}*
 name            {nmchar}+
 num             [0-9]+|[0-9]*"."[0-9]+
 string          {string1}|{string2}
@@ -45,9 +45,9 @@ range           \?{1,6}|{h}(\?{0,5}|{h}(\?{0,4}|{h}(\?{0,3}|{h}(\?{0,2}|{h}(\??|
 "@media"                {yyTok = MEDIA_SYM; return yyTok;}
 "@font-face"            {yyTok = FONT_FACE_SYM; return yyTok;}
 "@charset"              {yyTok = CHARSET_SYM; return yyTok;}
-"@-konq-rule"    {yyTok = KONQ_RULE_SYM; return yyTok; }
-"@-konq-decls"   {yyTok = KONQ_DECLS_SYM; return yyTok; }
-"@-konq-value"   {yyTok = KONQ_VALUE_SYM; return yyTok; }
+"@-khtml-rule"    {yyTok = KHTML_RULE_SYM; return yyTok; }
+"@-khtml-decls"   {yyTok = KHTML_DECLS_SYM; return yyTok; }
+"@-khtml-value"   {yyTok = KHTML_VALUE_SYM; return yyTok; }
 
 "!"{w}"important"         {yyTok = IMPORTANT_SYM; return yyTok;}
 

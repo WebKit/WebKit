@@ -538,7 +538,7 @@ void HTMLElementImpl::addHTMLAlignment( DOMString alignment )
     } else if ( strcasecmp( alignment, "top" ) == 0 ) {
 	propvalign = CSS_VAL_TOP;
     } else if ( strcasecmp( alignment, "middle" ) == 0 ) {
-	propvalign = CSS_VAL__KONQ_BASELINE_MIDDLE;
+	propvalign = CSS_VAL__KHTML_BASELINE_MIDDLE;
     } else if ( strcasecmp( alignment, "center" ) == 0 ) {
 	propvalign = CSS_VAL_MIDDLE;
     } else if ( strcasecmp( alignment, "bottom" ) == 0 ) {

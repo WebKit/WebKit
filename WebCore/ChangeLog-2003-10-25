@@ -1,3 +1,57 @@
+2003-07-24  Dave Hyatt  <hyatt@apple.com>
+
+	Change all uses of "konq-" in CSS to "khtml-".  
+
+	Also rename the CSS3 properties that have either buggy or 
+	incomplete implementations to "-khtml-property" for forward
+	compatibility (so that people don't have to worry about a buggy
+	Safari if/when they use the official property names).
+	
+        Reviewed by john
+
+        * khtml/css/cssparser.cpp:
+        (CSSParser::parseRule):
+        (CSSParser::parseValue):
+        (CSSParser::parseDeclaration):
+        (CSSParser::parseFontFamily):
+        (CSSParser::parseShadow):
+        * khtml/css/cssproperties.c:
+        (hash_prop):
+        (findProp):
+        * khtml/css/cssproperties.h:
+        * khtml/css/cssproperties.in:
+        * khtml/css/cssstyleselector.cpp:
+        * khtml/css/cssvalues.c:
+        (hash_val):
+        (findValue):
+        * khtml/css/cssvalues.h:
+        * khtml/css/cssvalues.in:
+        * khtml/css/html4.css:
+        * khtml/css/parser.cpp:
+        * khtml/css/parser.h:
+        * khtml/css/parser.y:
+        * khtml/css/quirks.css:
+        * khtml/css/tokenizer.cpp:
+        * khtml/css/tokenizer.flex:
+        * khtml/html/html_blockimpl.cpp:
+        (HTMLDivElementImpl::parseAttribute):
+        (HTMLParagraphElementImpl::parseAttribute):
+        * khtml/html/html_elementimpl.cpp:
+        (HTMLElementImpl::addHTMLAlignment):
+        * khtml/html/html_inlineimpl.cpp:
+        (HTMLFontElementImpl::parseAttribute):
+        * khtml/html/html_tableimpl.cpp:
+        (HTMLTablePartElementImpl::parseAttribute):
+        (HTMLTableCellElementImpl::parseAttribute):
+        * khtml/rendering/bidi.cpp:
+        * khtml/rendering/render_block.cpp:
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::calcHorizontalMargins):
+        * khtml/rendering/render_flexbox.cpp:
+        * khtml/rendering/render_style.h:
+        * khtml/rendering/render_table.cpp:
+        (RenderTableCell::setStyle):
+
 === Safari-90 ===
 
 2003-07-23  Dave Hyatt  <hyatt@apple.com>

@@ -172,7 +172,7 @@ void RenderFlexibleBox::calcVerticalMinMaxWidth()
         Length ml = child->style()->marginLeft();
         Length mr = child->style()->marginRight();
 
-        if (style()->textAlign() == KONQ_CENTER)
+        if (style()->textAlign() == KHTML_CENTER)
         {
             if (ml.type==Fixed) margin+=ml.value;
             if (mr.type==Fixed) margin+=mr.value;

@@ -807,7 +807,7 @@ void RenderBox::calcHorizontalMargins(const Length& ml, const Length& mr, int cw
     {
         if ( (ml.type == Variable && mr.type == Variable) ||
              (ml.type != Variable && mr.type != Variable &&
-                containingBlock()->style()->textAlign() == KONQ_CENTER) )
+                containingBlock()->style()->textAlign() == KHTML_CENTER) )
         {
             m_marginLeft = (cw - m_width)/2;
             if (m_marginLeft<0) m_marginLeft=0;
@@ -815,14 +815,14 @@ void RenderBox::calcHorizontalMargins(const Length& ml, const Length& mr, int cw
         }
         else if (mr.type == Variable ||
                  (ml.type != Variable && containingBlock()->style()->direction() == RTL &&
-                  containingBlock()->style()->textAlign() == KONQ_LEFT))
+                  containingBlock()->style()->textAlign() == KHTML_LEFT))
         {
             m_marginLeft = ml.width(cw);
             m_marginRight = cw - m_width - m_marginLeft;
         }
         else if (ml.type == Variable ||
                  (mr.type != Variable && containingBlock()->style()->direction() == LTR &&
-                  containingBlock()->style()->textAlign() == KONQ_RIGHT))
+                  containingBlock()->style()->textAlign() == KHTML_RIGHT))
         {
             m_marginRight = mr.width(cw);
             m_marginLeft = cw - m_width - m_marginRight;
