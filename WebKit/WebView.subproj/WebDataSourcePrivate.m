@@ -502,9 +502,13 @@
     }
                 
     if(!_private->iconURL){
-        // No icon URL from the LINK tag so try the server's root
-        _private->iconURL = [[[NSURL _web_URLWithString:@"/favicon.ico"
-                                            relativeToURL:[self URL]] absoluteURL] retain];
+        // No icon URL from the LINK tag so try the server's root.
+        // This is only really a feature of http or https, so don't try this with other protocols.
+        NSString *scheme = [[self URL] scheme];
+        if([scheme isEqualToString:@"http"] || [scheme isEqualToString:@"https"]){
+            _private->iconURL = [[[NSURL _web_URLWithString:@"/favicon.ico"
+                                              relativeToURL:[self URL]] absoluteURL] retain];
+        }
     }
 
     if(_private->iconURL != nil){

@@ -1,4 +1,12 @@
-	2002-11-22  Chris Blumenberg  <cblu@apple.com>
+2002-11-22  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed assertion while loading local files.
+
+        * Misc.subproj/WebIconDatabase.m: we don't have icon URLs for files
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _loadIcon]): Only try loading favicon as the root of server if scheme is http or https. This isn't really a feature of other protocols.
+
+2002-11-22  Chris Blumenberg  <cblu@apple.com>
 
         * WebView.subproj/WebMainResourceClient.m:
         (-[WebMainResourceClient continueAfterContentPolicy:response:]): Added a FIXME around saveFilenameForResponse:andRequest: because the API expects a path but is asking for a filename.

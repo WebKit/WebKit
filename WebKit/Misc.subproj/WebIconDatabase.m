@@ -328,12 +328,7 @@ NSSize WebIconLargeSize = {128, 128};
 
 - (BOOL)_hasIconForIconURL:(NSURL *)iconURL;
 {
-    if ([iconURL isFileURL] ||
-        [_private->iconURLToSiteURLs objectForKey:[iconURL absoluteString]]){
-        return YES;
-    }
-    
-    return NO;
+    return ([_private->iconURLToSiteURLs objectForKey:[iconURL absoluteString]] != nil);
 }
 
 - (NSMutableDictionary *)_iconsForIconURLString:(NSString *)iconURLString
