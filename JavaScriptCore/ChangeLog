@@ -1,3 +1,11 @@
+2003-07-22  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by John.
+
+	Remove -seg_addr_table_filename to fix build.
+
+        * JavaScriptCore.pbproj/project.pbxproj:
+
 2003-07-17  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by John.
