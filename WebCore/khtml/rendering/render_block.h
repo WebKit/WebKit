@@ -121,6 +121,7 @@ public:
     RootInlineBox* determineEndPosition(RootInlineBox* startBox, BidiIterator& cleanLineStart, int& yPos);
     bool matchedEndLine(const BidiIterator& start, const BidiIterator& endLineStart, 
                         RootInlineBox*& endLine, int& endYPos);
+    int skipWhitespace(BidiIterator &, BidiState &);
     BidiIterator findNextLineBreak(BidiIterator &start, BidiState &info );
     RootInlineBox* constructLine(const BidiIterator& start, const BidiIterator& end);
     InlineFlowBox* createLineBoxes(RenderObject* obj);

@@ -169,12 +169,13 @@ Position VisiblePosition::previousVisiblePosition(const Position &pos)
         return Position();
 
     Position test = deepEquivalent(pos);
-    bool acceptAnyVisiblePosition = !isCandidate(test) || pos.isFirstRenderedPositionOnLine();
+    Position downstreamTest = test.downstream(StayInBlock);
+    bool acceptAnyVisiblePosition = !isCandidate(test);
 
     Position current = test;
     while (!atStart(current)) {
         current = previousPosition(current);
-        if (isCandidate(current) && (acceptAnyVisiblePosition || current.rendersInDifferentPosition(test))) {
+        if (isCandidate(current) && (acceptAnyVisiblePosition || (downstreamTest != current.downstream(StayInBlock)))) {
             return current;
         }
     }
@@ -188,12 +189,13 @@ Position VisiblePosition::nextVisiblePosition(const Position &pos)
         return Position();
 
     Position test = deepEquivalent(pos);
-    bool acceptAnyVisiblePosition = !isCandidate(test) || pos.isLastRenderedPositionOnLine();
+    bool acceptAnyVisiblePosition = !isCandidate(test);
 
     Position current = test;
+    Position downstreamTest = test.downstream(StayInBlock);
     while (!atEnd(current)) {
         current = nextPosition(current);
-        if (isCandidate(current) && (acceptAnyVisiblePosition || current.rendersInDifferentPosition(test))) {
+        if (isCandidate(current) && (acceptAnyVisiblePosition || (downstreamTest != current.downstream(StayInBlock)))) {
             return current;
         }
     }

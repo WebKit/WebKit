@@ -340,14 +340,14 @@ inline bool BidiIterator::atEnd() const
 
 const QChar &BidiIterator::current() const
 {
-    static QChar nonBreakingSpace(0xA0);
+    static QChar nullCharacter;
     
     if (!obj || !obj->isText())
-      return nonBreakingSpace;
+      return nullCharacter;
     
     RenderText* text = static_cast<RenderText*>(obj);
     if (!text->text())
-        return nonBreakingSpace;
+        return nullCharacter;
     
     return text->text()[pos];
 }
@@ -717,14 +717,24 @@ RootInlineBox* RenderBlock::constructLine(const BidiIterator &start, const BidiI
 void RenderBlock::computeHorizontalPositionsForLine(RootInlineBox* lineBox, BidiState &bidi)
 {
     // First determine our total width.
+    int availableWidth = lineWidth(m_height);
     int totWidth = lineBox->getFlowSpacingWidth();
     BidiRun* r = 0;
     for (r = sFirstBidiRun; r; r = r->nextRun) {
         if (!r->box || r->obj->isPositioned())
             continue; // Positioned objects are only participating to figure out their
                       // correct static x position.  They have no effect on the width.
-        if (r->obj->isText())
-            r->box->setWidth(static_cast<RenderText *>(r->obj)->width(r->start, r->stop-r->start, m_firstLine));
+        if (r->obj->isText()) {
+            int textWidth = static_cast<RenderText *>(r->obj)->width(r->start, r->stop-r->start, m_firstLine);
+            if (!r->compact) {
+                RenderStyle *style = r->obj->style();
+                if (style->whiteSpace() == NORMAL && style->khtmlLineBreak() == AFTER_WHITE_SPACE) {
+                    // shrink the box as needed to keep the line from overflowing the available width
+                    textWidth = kMin(textWidth, availableWidth - totWidth + style->borderLeftWidth());
+                }
+                r->box->setWidth(textWidth);
+            }
+        }
         else if (!r->obj->isInlineFlow()) {
             r->obj->calcWidth();
             r->box->setWidth(r->obj->width());
@@ -742,7 +752,6 @@ void RenderBlock::computeHorizontalPositionsForLine(RootInlineBox* lineBox, Bidi
     // objects horizontally.  The total width of the line can be increased if we end up
     // justifying text.
     int x = leftOffset(m_height);
-    int availableWidth = lineWidth(m_height);
     switch(style()->textAlign()) {
         case LEFT:
         case KHTML_LEFT:
@@ -1723,23 +1732,16 @@ bool RenderBlock::matchedEndLine(const BidiIterator& start, const BidiIterator& 
     return false;
 }
 
-BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi)
+static const ushort nonBreakingSpace = 0xa0;
+
+int RenderBlock::skipWhitespace(BidiIterator &it, BidiState &bidi)
 {
     int width = lineWidth(m_height);
-    int w = 0;
-    int tmpW = 0;
-#ifdef DEBUG_LINEBREAKS
-    kdDebug(6041) << "findNextLineBreak: line at " << m_height << " line width " << width << endl;
-    kdDebug(6041) << "sol: " << start.obj << " " << start.pos << endl;
-#endif
-
-    // eliminate spaces at beginning of line
-    // remove leading spaces.  Any inline flows we encounter will be empty and should also
-    // be skipped.
-    while (!start.atEnd() && (start.obj->isInlineFlow() || (start.obj->style()->whiteSpace() != PRE && !start.obj->isBR() &&
-          (start.current() == ' ' || start.current() == '\n' || start.obj->isFloatingOrPositioned())))) {
-        if( start.obj->isFloatingOrPositioned() ) {
-            RenderObject *o = start.obj;
+    while (!it.atEnd() && (it.obj->isInlineFlow() || (it.obj->style()->whiteSpace() != PRE && !it.obj->isBR() &&
+          (it.current() == ' ' || it.current() == '\n' || 
+          (it.obj->style()->nbspMode() == SPACE && it.current().unicode() == nonBreakingSpace) || it.obj->isFloatingOrPositioned())))) {
+        if (it.obj->isFloatingOrPositioned()) {
+            RenderObject *o = it.obj;
             // add to special objects...
             if (o->isFloating()) {
                 insertFloatingObject(o);
@@ -1757,9 +1759,24 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
         }
         
         adjustEmbedding = true;
-        start.increment(bidi);
+        it.increment(bidi);
         adjustEmbedding = false;
     }
+    return width;
+}
+
+BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi)
+{
+    int width = lineWidth(m_height);
+    int w = 0;
+    int tmpW = 0;
+#ifdef DEBUG_LINEBREAKS
+    kdDebug(6041) << "findNextLineBreak: line at " << m_height << " line width " << width << endl;
+    kdDebug(6041) << "sol: " << start.obj << " " << start.pos << endl;
+#endif
+
+    // eliminate spaces at beginning of line
+    width = skipWhitespace(start, bidi);
     
     if ( start.atEnd() ){
         return start;
@@ -1967,11 +1984,12 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
                 }
                 
                 bool applyWordSpacing = false;
-
-                bool breakWords = w == 0 && o->style()->whiteSpace() == NORMAL && o->style()->wordWrap() == BREAK_WORD;
+                bool isNormal = o->style()->whiteSpace() == NORMAL;
+                bool breakNBSP = isNormal && o->style()->nbspMode() == SPACE;
+                bool breakWords = w == 0 && isNormal && o->style()->wordWrap() == BREAK_WORD;
                 if (breakWords)
                     wrapW += t->width(pos, 1, f);
-                if ((isPre && c == '\n') || (!isPre && isBreakable(str, pos, strlen)) || (breakWords && wrapW > width)) {
+                if ((isPre && c == '\n') || (!isPre && isBreakable(str, pos, strlen, breakNBSP)) || (breakWords && wrapW > width)) {
                     if (ignoringSpaces) {
                         if (!currentCharacterIsSpace) {
                             // Stop ignoring spaces and begin at this
@@ -2023,8 +2041,11 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
                     }
         
                     if (o->style()->whiteSpace() == NORMAL) {
-                        if (w + tmpW > width)
+                        if (w + tmpW > width) {
+                            if (o->style()->khtmlLineBreak() == AFTER_WHITE_SPACE)
+                                skipWhitespace(lBreak, bidi);
                             goto end; // Didn't fit. Jump to the end.
+                        }
                         else if (pos > 1 && str[pos-1].unicode() == SOFT_HYPHEN)
                             // Subtract the width of the soft hyphen out since we fit on a line.
                             tmpW -= t->width(pos-1, 1, f);

@@ -28,7 +28,7 @@ namespace khtml {
   This function returns true, if the string can bre broken before the 
   character at position pos in the string s with length len
 */
-bool isBreakable( const QChar *s, int pos, int len)
+bool isBreakable(const QChar *s, int pos, int len, bool breakNBSP)
 {
 #if !APPLE_CHANGES
     const QChar *c = s+pos;
@@ -84,8 +84,8 @@ bool isBreakable( const QChar *s, int pos, int len)
     const QChar *c = s+pos;
     unsigned short ch = c->unicode();
 
-    // Newlines are always breakable.
-    if (ch == '\n')
+    // Newlines are always breakable, as are non-breaking spaces when breakNBSP is true.
+    if (ch == '\n' || (breakNBSP && ch == 0xa0))
         return true;
 
     // If current character, or the previous character aren't simple latin1 then

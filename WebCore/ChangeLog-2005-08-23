@@ -1,6 +1,40 @@
 2004-10-05  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Darin
+        
+        Use the new CSS properties I added with my previous check-in. Also makes
+        some changes to caret positioning and drawing to make the proper editing
+        end-of-line behavior work correctly.
+
+        * khtml/editing/selection.cpp:
+        (khtml::Selection::layout): Caret drawing now takes affinity into account
+        when deciding where to paint the caret (finally!).
+        * khtml/editing/visible_position.cpp:
+        (khtml::VisiblePosition::previousVisiblePosition): Move off Position::rendersInDifferentPosition
+        to determine the result. Use a simpler test involving comparisons between
+        downstream positions while iterating. This is cheaper to do and easier to understand.
+        (khtml::VisiblePosition::nextVisiblePosition): Ditto.
+        * khtml/rendering/bidi.cpp:
+        (khtml::BidiIterator::current): Do not return non-breaking spaces for empty
+        text renderers and for non-text renderers. Return a null Qchar instead. Returning
+        non-breaking spaces was causing errors when the new -khtml-nbsp-mode was set to "space".
+        (khtml::RenderBlock::computeHorizontalPositionsForLine): Shrink line boxes that 
+        contain with more spaces than can fit on the end of a line.
+        (khtml::RenderBlock::skipWhitespace): Factor this out from findNextLineBreak.
+        (khtml::RenderBlock::findNextLineBreak): Use new skipWhitespace function. Add
+        in code to check and use new CSS properties.
+        * khtml/rendering/break_lines.cpp:
+        (khtml::isBreakable): Consider a non-breaking space a breakable character based
+        on setting of new -khtml-nbsp-mode property.
+        * khtml/rendering/break_lines.h: Ditto.
+        * khtml/rendering/render_block.h: Declare skipWhitespace function.
+        * khtml/rendering/render_text.cpp: 
+        (RenderText::caretRect): Do not draw the caret beyond the right edge of the
+        window when in white-space normal mode.
+
+2004-10-05  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin
 
         Fix for these bugs:
         

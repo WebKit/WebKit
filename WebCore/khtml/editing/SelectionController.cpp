@@ -618,9 +618,17 @@ void Selection::layout()
     }
         
     if (isCaret()) {
-        // EDIT FIXME: Enhance call to pass along selection 
-        // upstream/downstream affinity to get the right position.
-        m_caretRect = m_start.node()->renderer()->caretRect(m_start.offset(), false);
+        Position pos = m_start;
+        pos.node()->getDocument()->updateRendering();
+        switch (m_affinity) {
+            case DOWNSTREAM:
+                pos = VisiblePosition(m_start).deepEquivalent();
+                break;
+            case UPSTREAM:
+                pos = VisiblePosition(m_start).upstreamDeepEquivalent();
+                break;
+        }
+        m_caretRect = pos.node()->renderer()->caretRect(pos.offset(), false);
         m_expectedVisibleRect = m_caretRect;
     }
     else {

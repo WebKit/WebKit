@@ -720,6 +720,11 @@ QRect RenderText::caretRect(int offset, bool override)
     // Would be better to somehow derive it once we understand exactly why it's needed.
     left += 1;
 
+    RenderBlock *cb = containingBlock();
+    int availableWidth = cb->lineWidth(height);
+    if (style()->whiteSpace() == NORMAL)
+        left = kMin(left, absx + availableWidth - 1);
+    
     return QRect(left, top, 1, height);
 }
 
