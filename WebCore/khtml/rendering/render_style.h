@@ -354,6 +354,11 @@ struct StyleDashboardRegion
         Circle,
         Rectangle
     };
+
+    bool operator==(const StyleDashboardRegion& o) const
+    {
+        return type == o.type && offset == o.offset && label == o.label;
+    }
 };
 #endif
 
@@ -1165,7 +1170,8 @@ public:
     void setMaxHeight(Length v) { SET_VAR(box,max_height,v) }
 
 #if APPLE_CHANGES
-    QValueList<StyleDashboardRegion> dashboardRegions() { return m_dashboardRegions; }
+    QValueList<StyleDashboardRegion> dashboardRegions() const { return m_dashboardRegions; }
+    void setDashboardRegions(QValueList<StyleDashboardRegion> regions) { m_dashboardRegions = regions; }
     void setDashboardRegion (int type, QString label, Length t, Length r, Length b, Length l, bool append) {
         StyleDashboardRegion region;
         region.label = label;
@@ -1449,6 +1455,10 @@ public:
     // Keep these at the end.
     static int initialLineClamp() { return -1; }
     static bool initialTextSizeAdjust() { return true; }
+    static QValueList<StyleDashboardRegion> initialDashboardRegions() { 
+        QValueList<StyleDashboardRegion> emptyList;
+        return emptyList;
+    }
 #endif
 };
 

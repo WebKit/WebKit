@@ -1,3 +1,31 @@
+2004-09-21  Richard Williamson   <rjw@apple.com>
+
+	More dashboard region work.
+
+	Added support for computed style and cssText for new region property.
+	Added restriction on length types allowed in region functions.
+	Added initial and inheritance support for -apple-dashboard-region.
+
+        Reviewed by Hyatt.
+
+        * khtml/css/css_computedstyle.cpp:
+        (DOM::CSSComputedStyleDeclarationImpl::getPropertyCSSValue):
+        * khtml/css/css_valueimpl.cpp:
+        (CSSPrimitiveValueImpl::cssText):
+        * khtml/css/cssparser.cpp:
+        (CSSParser::parseDashboardRegions):
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::applyProperty):
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::addDashboardRegions):
+        * khtml/rendering/render_style.cpp:
+        (RenderStyle::diff):
+        * khtml/rendering/render_style.h:
+        (khtml::StyleDashboardRegion::operator==):
+        (khtml::RenderStyle::dashboardRegions):
+        (khtml::RenderStyle::setDashboardRegions):
+        (khtml::RenderStyle::initialDashboardRegions):
+
 2004-09-21  Darin Adler  <darin@apple.com>
 
         Reviewed by Ken.

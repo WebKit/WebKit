@@ -1572,6 +1572,10 @@ bool CSSParser::parseDashboardRegions( int propId, bool important )
             arg = args->next();
             arg = skipCommaInDashboardRegion (args);
 
+            valid = arg->id == CSS_VAL_AUTO || validUnit( arg, FLength, strict );
+            if ( !valid )
+                break;
+                
             CSSPrimitiveValueImpl *amount = arg->id == CSS_VAL_AUTO ?
                 new CSSPrimitiveValueImpl(CSS_VAL_AUTO) :
                 new CSSPrimitiveValueImpl(arg->fValue, (CSSPrimitiveValue::UnitTypes) arg->unit );

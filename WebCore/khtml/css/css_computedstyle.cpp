@@ -42,8 +42,10 @@ using khtml::ETextAlign;
 using khtml::Font;
 using khtml::FontDef;
 using khtml::Length;
+using khtml::LengthBox;
 using khtml::RenderStyle;
 using khtml::ShadowData;
+using khtml::StyleDashboardRegion;
 
 namespace DOM {
 
@@ -776,7 +778,33 @@ CSSValueImpl *CSSComputedStyleDeclarationImpl::getPropertyCSSValue(int propertyI
     case CSS_PROP__KHTML_FLOW_MODE:
         // FIXME: unimplemented
         break;
+#if APPLE_CHANGES
+        case CSS_PROP__APPLE_DASHBOARD_REGION: {
+            QValueList<StyleDashboardRegion> regions = style->dashboardRegions();
+            uint i, count = regions.count();
+            DashboardRegionImpl *firstRegion = new DashboardRegionImpl(), *region;
+            region = firstRegion;
+            for (i = 0; i < count; i++) {
+                StyleDashboardRegion styleRegion = regions[i];
+                region->m_label = styleRegion.label;
+                LengthBox offset = styleRegion.offset;
+                region->setTop (new CSSPrimitiveValueImpl(offset.top.value, CSSPrimitiveValue::CSS_PX));
+                region->setRight (new CSSPrimitiveValueImpl(offset.right.value, CSSPrimitiveValue::CSS_PX));
+                region->setBottom (new CSSPrimitiveValueImpl(offset.bottom.value, CSSPrimitiveValue::CSS_PX));
+                region->setLeft (new CSSPrimitiveValueImpl(offset.left.value, CSSPrimitiveValue::CSS_PX));
+                region->m_isRectangle = (styleRegion.type == StyleDashboardRegion::Rectangle); 
+                region->m_isCircle = (styleRegion.type == StyleDashboardRegion::Circle);
+                if (i != count-1) {
+                    DashboardRegionImpl *newRegion = new DashboardRegionImpl();
+                    region->setNext (newRegion);
+                    region = newRegion;
+                }
+            }
+            return new CSSPrimitiveValueImpl(firstRegion);
+        }
+#endif
     }
+
     ERROR("unimplemented propertyID: %d", propertyID);
     return 0;
 }

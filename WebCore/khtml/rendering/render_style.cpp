@@ -669,6 +669,12 @@ RenderStyle::Diff RenderStyle::diff( const RenderStyle *other ) const
 	)
         return Visible;
 
+#if APPLE_CHANGES
+// If regions change trigger a relayout to re-calc regions.
+    if (!(m_dashboardRegions == other->m_dashboardRegions))
+        return Layout;
+#endif
+
     return Equal;
 }
 
