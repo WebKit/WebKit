@@ -111,10 +111,9 @@
         [[self controller] _setDefersCallbacks:YES];
     }
 
-    BOOL acceptedEvent;
-
-    if(NPP_HandleEvent){
-        acceptedEvent= NPP_HandleEvent(instance, event);
+    BOOL acceptedEvent = NO;
+    if (NPP_HandleEvent) {
+        acceptedEvent = NPP_HandleEvent(instance, event);
     }
 
     if (!defers) {
