@@ -36,6 +36,11 @@ QMouseEvent::QMouseEvent( Type t, const QPoint &pos, int b, int s )
 {
 }
 
+QMouseEvent::QMouseEvent( Type t, const QPoint &pos, int b, int s, int cs )
+    : QEvent(t), _position(pos), _button((ButtonState)b), _state((ButtonState)s), _clickCount(cs)
+{
+}
+
 QMouseEvent::QMouseEvent(Type t, const QPoint &pos, const QPoint &, int b, int s)
     : QEvent(t), _position(pos), _button((ButtonState)b), _state((ButtonState)s)
 {

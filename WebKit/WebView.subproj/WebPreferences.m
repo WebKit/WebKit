@@ -64,7 +64,7 @@
     [settings setSansSerifFontFamily:[self sansSerifFontFamily]];
     [settings setSerifFontFamily:[self serifFontFamily]];
     [settings setStandardFontFamily:[self standardFontFamily]];
-    [settings setWillLoadImagesAutomatically:[self displayImages]];
+    [settings setWillLoadImagesAutomatically:[self willLoadImagesAutomatically]];
     
     if ([self userStyleSheetEnabled]) {
         [settings setUserStyleSheetLocation:[self userStyleSheetLocation]];
@@ -341,13 +341,13 @@
     [[NSUserDefaults standardUserDefaults] setBool:flag forKey:WebKitAllowAnimatedImageLoopingPreferenceKey];
 }
 
-- (void)setDisplayImages: (BOOL)flag
+- (void)setWillLoadImagesAutomatically: (BOOL)flag
 {
     [[NSUserDefaults standardUserDefaults] setBool:flag forKey:WebKitDisplayImagesKey];
     [self _updateWebCoreSettings];
 }
 
-- (BOOL)displayImages
+- (BOOL)willLoadImagesAutomatically
 {
     return [[NSUserDefaults standardUserDefaults] boolForKey:WebKitDisplayImagesKey];
 }

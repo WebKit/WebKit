@@ -73,6 +73,7 @@ namespace khtml
   class MouseEvent;
   class MousePressEvent;
   class MouseDoubleClickEvent;
+  class MouseTripleClickEvent;
   class MouseMoveEvent;
   class MouseReleaseEvent;
   class DrawContentsEvent;
@@ -766,6 +767,11 @@ protected:
    * Eventhandler for the khtml::MouseDoubleClickEvent.
    */
   virtual void khtmlMouseDoubleClickEvent( khtml::MouseDoubleClickEvent * );
+
+#ifdef APPLE_CHANGES
+  virtual void khtmlMouseTripleClickEvent( khtml::MouseTripleClickEvent * );
+#endif
+
   /**
    * Eventhandler for the khtml::MouseDoubleMoveEvent.
    */

@@ -92,6 +92,22 @@ private:
   static const char *s_strMouseDoubleClickEvent;
 };
 
+class MouseTripleClickEvent : public MouseEvent
+{
+public:
+  MouseTripleClickEvent( QMouseEvent *mouseEvent, int x, int y,
+                         const DOM::DOMString &url, const DOM::DOMString& target,
+		         const DOM::Node &innerNode)
+  : MouseEvent( s_strMouseTripleClickEvent, mouseEvent, x, y, url, target, innerNode )
+  {}
+
+  static bool test( const QEvent *event )
+  { return KParts::Event::test( event, s_strMouseTripleClickEvent ); }
+
+private:
+  static const char *s_strMouseTripleClickEvent;
+};
+
 class MouseMoveEvent : public MouseEvent
 {
 public:

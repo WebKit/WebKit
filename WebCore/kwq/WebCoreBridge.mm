@@ -362,8 +362,8 @@ using khtml::RenderPart;
     }
     state |= [self stateForEvent:event];
     
-    QMouseEvent kEvent(QEvent::MouseButtonPress, QPoint((int)p.x, (int)p.y), button, state);
     if (part->impl->view()) {
+        QMouseEvent kEvent(QEvent::MouseButtonRelease, QPoint((int)p.x, (int)p.y), button, state, [event clickCount]);
         part->impl->view()->viewportMouseReleaseEvent(&kEvent);
     }
 }
@@ -371,7 +371,7 @@ using khtml::RenderPart;
 - (void)mouseDown:(NSEvent *)event
 {
     NSPoint p = [event locationInWindow];
-
+    
     int button, state;     
     switch ([event type]) {
     case NSRightMouseUp:
@@ -389,9 +389,15 @@ using khtml::RenderPart;
     }
     state |= [self stateForEvent:event];
     
-    QMouseEvent kEvent(QEvent::MouseButtonPress, QPoint((int)p.x, (int)p.y), button, state);
     if (part->impl->view()) {
-        part->impl->view()->viewportMousePressEvent(&kEvent);
+        if ([event clickCount] % 2 == 0){
+            QMouseEvent kEvent(QEvent::MouseButtonDblClick, QPoint((int)p.x, (int)p.y), button, state, [event clickCount]);
+            part->impl->view()->viewportMouseDoubleClickEvent(&kEvent);
+        }
+        else {
+            QMouseEvent kEvent(QEvent::MouseButtonPress, QPoint((int)p.x, (int)p.y), button, state, [event clickCount]);
+            part->impl->view()->viewportMousePressEvent(&kEvent);
+        }
     }
 }
 

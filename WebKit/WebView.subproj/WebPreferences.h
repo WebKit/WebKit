@@ -66,33 +66,14 @@
 - (BOOL)allowAnimatedImageLooping;
 - (void)setAllowAnimatedImageLooping: (BOOL)flag;
 
-- (void)setDisplayImages: (BOOL)flag;
-- (BOOL)displayImages;
+- (void)setWillLoadImagesAutomatically: (BOOL)flag;
+- (BOOL)willLoadImagesAutomatically;
 
 @end
 
 #ifdef READY_FOR_PRIMETIME
-
-/*
-   ============================================================================= 
-
-    Here is some not-yet-implemented API that we might want to get around to.
-    Someday we might have preferences on a per-URL basis.
-*/
-
-+ getPreferencesForURL: (NSURL *);
-
-// Encoding that will be used in none specified on page? or in header?
-+ setEncoding: (NSString *)encoding;
-+ (NSString *)encoding;
-
-// Document refreshes allowed
 - setRefreshEnabled: (BOOL)flag;
 - (BOOL)refreshEnabled;
-
-// Should images be loaded.
-- (void)setAutoloadImages: (BOOL)flag;
-- (BOOL)autoloadImages;
 
 /*
     Specify whether only local references ( stylesheets, images, scripts, subdocuments )

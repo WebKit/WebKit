@@ -1,3 +1,27 @@
+2002-09-10  Richard Williamson (Local)  <rjw@apple.com>
+
+        Fixed broken DOM handling of click count.  DOM click 
+        events can be tested with Labyrinth/Test/html/mousetest.html.
+        Preparation work for double and triple click selection.
+        
+        * khtml/khtml_events.cpp:
+        * khtml/khtml_events.h:
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::khtmlMouseTripleClickEvent):
+        * khtml/khtml_part.h:
+        * khtml/khtmlview.cpp:
+        (KHTMLView::viewportMousePressEvent):
+        (KHTMLView::viewportMouseTripleClickEvent):
+        (KHTMLView::viewportMouseDoubleClickEvent):
+        (KHTMLView::viewportMouseReleaseEvent):
+        * khtml/khtmlview.h:
+        * kwq/KWQEvent.mm:
+        (QMouseEvent::QMouseEvent):
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge mouseUp:]):
+        (-[WebCoreBridge mouseDown:]):
+        * kwq/qt/qevent.h:
+
 2002-09-10  David Hyatt  <hyatt@apple.com>
 
 	Fix FOUC to behave correctly.  I was smoking crack when I

@@ -60,6 +60,10 @@ const char *khtml::MousePressEvent::s_strMousePressEvent = "khtml/Events/MousePr
 
 const char *khtml::MouseDoubleClickEvent::s_strMouseDoubleClickEvent = "khtml/Events/MouseDoubleClickEvent";
 
+#ifdef APPLE_CHANGES
+const char *khtml::MouseTripleClickEvent::s_strMouseTripleClickEvent = "khtml/Events/MouseTripleClickEvent";
+#endif
+
 const char *khtml::MouseMoveEvent::s_strMouseMoveEvent = "khtml/Events/MouseMoveEvent";
 
 const char *khtml::MouseReleaseEvent::s_strMouseReleaseEvent = "khtml/Events/MouseReleaseEvent";

@@ -1,3 +1,11 @@
+2002-09-10  Richard Williamson (Local)  <rjw@apple.com>
+
+        * WebView.subproj/WebPreferences.h:
+        * WebView.subproj/WebPreferences.m:
+        (-[WebPreferences _updateWebCoreSettings]):
+        (-[WebPreferences setWillLoadImagesAutomatically:]):
+        (-[WebPreferences willLoadImagesAutomatically]):
+
 2002-09-10  Chris Blumenberg  <cblu@apple.com>
 
 	Report download handler errors

@@ -3974,6 +3974,12 @@ void KHTMLPart::khtmlMouseDoubleClickEvent( khtml::MouseDoubleClickEvent * )
 {
 }
 
+#ifdef APPLE_CHANGES
+void KHTMLPart::khtmlMouseTripleClickEvent( khtml::MouseTripleClickEvent * )
+{
+}
+#endif
+
 void KHTMLPart::khtmlMouseMoveEvent( khtml::MouseMoveEvent *event )
 {
   QMouseEvent *_mouse = event->qmouseEvent();
