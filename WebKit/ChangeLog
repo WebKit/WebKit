@@ -21,6 +21,8 @@
         (-[NSURLRequest _webDataRequestExternalRequest]):
         (-[NSURLRequest _webDataRequestSanitize]):
 
+=== Safari-405 ===
+
 2005-03-10  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Vicki.
@@ -29,8 +31,6 @@
         
 	* Plugins.subproj/WebNetscapePluginStream.m:
         (-[WebNetscapePluginStream initWithRequest:pluginPointer:notifyData:sendNotification:]):
-
-=== Safari-405 ===
 
 2005-03-10  John Sullivan  <sullivan@apple.com>
 
