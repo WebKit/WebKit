@@ -1,3 +1,26 @@
+2004-04-29  John Sullivan  <sullivan@apple.com>
+
+        - more work on getting the font panel to work with editable HTML
+
+        Reviewed by Ken.
+
+        * WebView.subproj/WebView.m:
+        (-[WebView computedStyleForElement:pseudoElement:]):
+        convert nil pseudoElement to empty string because lower level chokes on nil
+        (_fontFromStyle):
+        I tried to implement this, but was thwarted by missing API, so I added a
+        bunch of FIXMEs instead
+        (_stylesRepresentSameFont):
+        new function, not yet implementable
+        (_stylesRepresentSameAttributes):
+        new function, not yet implementable
+        (-[WebView _updateFontPanel]):
+        added code to get first and last element in selection, and to use
+        NodeIterator to walk through the entire selection to see if more than one
+        font or set of attributes is in use. However, createNodeIterator is declared
+        in DOMTraversal.h but not actually defined anywhere, so I had to prevent this
+        code from actually being called.
+
 2004-04-28  Chris Blumenberg  <cblu@apple.com>
 
 	- Made WebArchive and WebResource conform to NSCoding and NSCopying.

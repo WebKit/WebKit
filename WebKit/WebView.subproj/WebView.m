@@ -2124,6 +2124,10 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 
 - (DOMCSSStyleDeclaration *)computedStyleForElement:(DOMElement *)element pseudoElement:(NSString *)pseudoElement
 {
+    // FIXME: is this the best level for this conversion?
+    if (pseudoElement == nil) {
+        pseudoElement = @"";
+    }
     return [[self DOMDocument] getComputedStyle:element :pseudoElement];
 }
 
@@ -2146,14 +2150,31 @@ static NSDictionary *_textAttributesFromStyle(DOMCSSStyleDeclaration *style)
 
 static NSFont *_fontFromStyle(DOMCSSStyleDeclaration *style)
 {
+    ASSERT_ARG(style, style != nil);
+    // FIXME: can't get at CSS_PROP_FONT_FAMILY and such from cssproperties.h in WebCore
+    // because that header file isn't available to WebKit. Is that a problem?
+    // FIXME: calling [DOMCSSStyleDeclaration fontFamily] doesn't work yet, returns nil.
+    // FIXME: calling [DOMCSSStyleDeclaration fontSize] doesn't work yet, returns nil.
+    // FIXME: is there SPI/API for converting a fontSize string into a numeric value?
+    // FIXME: calling [DOMCSSStyleDeclaration font] doesn't work yet, fails WebCore assertion
     ERROR("unimplemented");
     return nil;
 }
 
+static BOOL _stylesRepresentSameFont(DOMCSSStyleDeclaration *style, DOMCSSStyleDeclaration *otherStyle)
+{
+    ERROR("unimplemented");
+    return NO;
+}
+
+static BOOL _stylesRepresentSameAttributes(DOMCSSStyleDeclaration *style, DOMCSSStyleDeclaration *otherStyle)
+{
+    ERROR("unimplemented");
+    return NO;
+}
+
 - (void)_updateFontPanel
 {
-    // FIXME: can we bail out if [NSFontManager fontPanel:NO] returns nil? (Will we somehow be notified or asked
-    // to provide a font when the font panel first comes into existence?)
     // FIXME: NSTextView bails out if becoming or resigning first responder, for which it has ivar flags. Not
     // sure if we need to do something similar.
     
@@ -2167,34 +2188,85 @@ static NSFont *_fontFromStyle(DOMCSSStyleDeclaration *style)
         return;
     }
     
-    NSFont *font = nil;
     BOOL onlyOneFontInSelection = YES;
     BOOL attributesIdenticalThroughoutSelection = YES;
-    NSDictionary *textAttributes = nil;
     DOMCSSStyleDeclaration *style = nil;
-    NSFontManager *fm = [NSFontManager sharedFontManager];
     
-    if ([[self _bridgeForCurrentSelection] haveSelection]) {
-        // FIXME: get first element in selection, get style, get attributes
-        // and font from style. Then walk through other elements to see whether 
-        // any other styles/attributes are in selection, to update
-        // onlyOneFontInSelection and attributesIdenticalThroughoutSelection. But how to get elements in selection?
-        // FIXME: For now, return some bogus font to test the rest of the code path.
-        font = [NSFont menuFontOfSize:23];
-    } else {
+    if (![[self _bridgeForCurrentSelection] haveSelection]) {
         style = [self typingStyle];
-        font = _fontFromStyle(style);
-        if (font == nil) {
-            // For now, return some bogus font to test the rest of the code path.
-            font = [NSFont toolTipsFontOfSize:17];
+    } else {
+        // FIXME: This code is being reached after backspacing with only an insertion
+        // point showing; this must be a bug in haveSelection or underlying code.
+        DOMRange *selection = [self selectedDOMRange];
+        
+        DOMNode *firstSelectedElement = [selection startContainer];
+        while (firstSelectedElement != nil && ![firstSelectedElement isKindOfClass:[DOMElement class]]) {
+            firstSelectedElement = [firstSelectedElement parentNode];
         }
-        textAttributes = _textAttributesFromStyle(style);
+        ASSERT([firstSelectedElement isKindOfClass:[DOMElement class]]);
+        
+        style = [self computedStyleForElement:(DOMElement *)firstSelectedElement pseudoElement:nil];
+        
+        // Iterate through all selected elements to see if fonts or attributes change.
+        if ([selection startContainer] != [selection endContainer]) {
+            DOMNode *lastSelectedElement = [selection endContainer];
+            while (lastSelectedElement != nil && ![lastSelectedElement isKindOfClass:[DOMElement class]]) {
+                lastSelectedElement = [lastSelectedElement parentNode];
+            }
+            ASSERT([lastSelectedElement isKindOfClass:[DOMElement class]]);
+            
+            // FIXME: The "&& NO" prevents createNodeIterator from being called, which is nice because
+            // it's not actually defined yet.
+            if (lastSelectedElement != firstSelectedElement && NO) {
+                DOMNodeIterator *iterator = [[self DOMDocument] createNodeIterator:firstSelectedElement
+                                                                                  :DOM_SHOW_ELEMENT
+                                                                                  :nil
+                                                                                  :NO];
+                DOMNode *element = [iterator nextNode];
+                ASSERT(element == firstSelectedElement);
+                
+                for (; element != lastSelectedElement; element = [iterator nextNode]) {
+                    ASSERT([element isKindOfClass:[DOMElement class]]);
+                    
+                    DOMCSSStyleDeclaration *otherStyle = [self computedStyleForElement:(DOMElement *)element pseudoElement:nil];
+                    if (onlyOneFontInSelection && !_stylesRepresentSameFont(style, otherStyle)) {
+                        onlyOneFontInSelection = NO;
+                    }
+                    
+                    if (attributesIdenticalThroughoutSelection && !_stylesRepresentSameAttributes(style, otherStyle)) {
+                        attributesIdenticalThroughoutSelection = NO;
+                    }
+                    
+                    // If we've concluded that the selection contains more than one font and
+                    // more than one set of attributes, then we needn't check further.
+                    if (!onlyOneFontInSelection && !attributesIdenticalThroughoutSelection) {
+                        break;
+                    }
+                }
+                
+                // Since our iterator is autoreleased, we needn't call [iterator detach]
+            }
+        }
     }
     
-    if (font != nil) {
-        [fm setSelectedFont:font isMultiple:!onlyOneFontInSelection];
+    // FIXME: getting a font from the DOMCSSStyleDeclaration is probably not reliable.
+    // We might need some API that asks the renderer what font was actually used.
+    NSFont *font = _fontFromStyle(style);
+    // FIXME: for now, return a bogus font that distinguishes the empty selection from the non-empty
+    // selection. We should be able to replace this with ASSERT(style != nil) once _fontFromStyle() and
+    // [self typingStyle] both work.
+    if (font == nil) {
+        if (![[self _bridgeForCurrentSelection] haveSelection]) {
+            font = [NSFont toolTipsFontOfSize:17];
+        } else {
+            font = [NSFont menuFontOfSize:23];
+        }
     }
-    [fm setSelectedAttributes:textAttributes isMultiple:!attributesIdenticalThroughoutSelection];
+    ASSERT(font != nil);
+        
+    NSFontManager *fm = [NSFontManager sharedFontManager];
+    [fm setSelectedFont:font isMultiple:!onlyOneFontInSelection];
+    [fm setSelectedAttributes:_textAttributesFromStyle(style) isMultiple:!attributesIdenticalThroughoutSelection];
 }
 
 @end
