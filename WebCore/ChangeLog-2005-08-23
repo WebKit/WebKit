@@ -1,3 +1,20 @@
+2003-01-30  Trey Matteson  <trey@apple.com>
+
+	3161486 - REGRESSION: double click on a widget causes crash
+
+	Slight enhancement to the earlier fix of this bug.  When handling a doubleclick we
+	don't want to try to pass the current event down the Cocoa widgets, because Cocoa
+	has no double-click event, and we just end up resending one we already sent.
+
+	The upshot is that we do not pass an extra mouseup event to the widgets at the
+	end of a double click sequence.
+
+        Reviewed by Darin.
+
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::passWidgetMouseDownEventToWidget):
+	Do not pass event down to the widget for doubleclick events.
+
 === Safari-55 ===
 
 2003-01-30  Darin Adler  <darin@apple.com>

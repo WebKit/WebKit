@@ -863,7 +863,15 @@ bool KWQKHTMLPart::passWidgetMouseDownEventToWidget(khtml::MouseEvent *event)
     if (!target || !target->isWidget()) {
         return false;
     }
-    return passWidgetMouseDownEventToWidget(static_cast<RenderWidget *>(target));
+
+    // Doubleclick events don't exist in Cocoa.  Since passWidgetMouseDownEventToWidget will
+    // just pass _currentEvent down to the widget,  we don't want to call it for events that
+    // don't correspond to Cocoa events.  The mousedown/ups will have already been passed on as
+    // part of the pressed/released handling.
+    if (!khtml::MouseDoubleClickEvent::test(event))
+        return passWidgetMouseDownEventToWidget(static_cast<RenderWidget *>(target));
+    else
+        return true;
 }
 
 bool KWQKHTMLPart::passWidgetMouseDownEventToWidget(RenderWidget *renderWidget)
