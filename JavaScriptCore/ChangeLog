@@ -1,5 +1,12 @@
 2004-04-22  Richard Williamson   <rjw@apple.com>
 
+	Fixed build snafu (re-declaration of NPBool in npruntime.h and
+	npapi.h).
+
+        * bindings/npruntime.h:
+
+2004-04-22  Richard Williamson   <rjw@apple.com>
+
 	Updated plugin binding API to reflect latest revision from
 	working group.
 	

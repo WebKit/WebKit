@@ -103,7 +103,10 @@ typedef struct _NPString {
     uint32_t UTF8Length;
 } NPString;
 
+#ifndef _NPAPI_H_
+// Ack!  Temporary hack to get build working.
 typedef unsigned char NPBool;
+#endif
   
 typedef enum {
     NPVariantVoidType,
