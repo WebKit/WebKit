@@ -173,12 +173,12 @@ static WebDefaultUIDelegate *sharedDelegate = nil;
     return YES;
 }
 
-- (NSDragOperation)webView:(WebView *)webView dragOperationForDraggingInfo:(id <NSDraggingInfo>)draggingInfo overElement:(NSDictionary *)element
+- (BOOL)webView:(WebView *)webView shouldDetermineDragOperationForDraggingInfo:(id <NSDraggingInfo>)draggingInfo dragOperation:(NSDragOperation *)dragOperation
 {
-    return [webView dragOperationForDraggingInfo:draggingInfo];
+    return YES;
 }
 
-- (BOOL)webView:(WebView *)webView shouldProcessDragWithDraggingInfo:(id <NSDraggingInfo>)draggingInfo overElement:(NSDictionary *)element
+- (BOOL)webView:(WebView *)webView shouldProcessDragWithDraggingInfo:(id <NSDraggingInfo>)draggingInfo
 {
     return YES;
 }

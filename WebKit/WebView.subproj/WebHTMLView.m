@@ -1704,26 +1704,20 @@ static WebHTMLView *lastHitView = nil;
     return NO;
 }
 
-- (NSDragOperation)dragOperationForDraggingInfo:(id <NSDraggingInfo>)draggingInfo
+- (NSDragOperation)draggingUpdatedWithDraggingInfo:(id <NSDraggingInfo>)draggingInfo
 {
     if ([self _canProcessDragWithDraggingInfo:draggingInfo]) {
+        [[self _bridge] moveDragCaretToPoint:[self convertPoint:[draggingInfo draggingLocation] fromView:nil]];
         return (_private->initiatedDrag && [[self _bridge] isSelectionEditable]) ? NSDragOperationMove : NSDragOperationCopy;
+    } else {
+        [[self _bridge] removeDragCaret];
+        return NSDragOperationNone;
     }
-    return NSDragOperationNone;
 }
 
 - (void)draggingCancelledWithDraggingInfo:(id <NSDraggingInfo>)draggingInfo
 {
     [[self _bridge] removeDragCaret];
-}
-
-- (void)draggingUpdatedWithDraggingInfo:(id <NSDraggingInfo>)draggingInfo
-{
-    if ([self _canProcessDragWithDraggingInfo:draggingInfo]) {
-        [[self _bridge] moveDragCaretToPoint:[self convertPoint:[draggingInfo draggingLocation] fromView:nil]];
-    } else {
-        [[self _bridge] removeDragCaret];
-    }
 }
 
 - (BOOL)concludeDragForDraggingInfo:(id <NSDraggingInfo>)draggingInfo
