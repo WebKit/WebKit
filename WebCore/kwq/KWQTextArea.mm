@@ -380,12 +380,14 @@ static NSRange RangeOfParagraph(NSString *text, int paragraph)
     for (i = 0; i < num; i++) {
         range = RangeOfParagraph(text, i);
         if (range.location + range.length > selectedRange.location) {
-            break;
+            *paragraph = i;
+            *index = selectedRange.location - range.location;
+            return;
         }
     }
 
+    // Express the end of text as past the last paragraph.
     *paragraph = num;
-    *index = selectedRange.location - range.location;
 }
 
 - (void)setCursorPositionToIndex:(int)index inParagraph:(int)paragraph
@@ -395,6 +397,11 @@ static NSRange RangeOfParagraph(NSString *text, int paragraph)
     if (range.location == NSNotFound) {
 	[textView setSelectedRange:NSMakeRange([text length], 0)];
     } else {
+        if (index < 0) {
+            index = 0;
+        } else if ((unsigned)index > range.length) {
+            index = range.length;
+        }
 	[textView setSelectedRange:NSMakeRange(range.location + index, 0)];
     }
 }

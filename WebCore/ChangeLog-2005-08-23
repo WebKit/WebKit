@@ -1,3 +1,16 @@
+2002-12-20  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+	- fixed 3129387 -- Stopped responding to controls while filling out form (exception in KWQTextArea)
+
+        * kwq/KWQTextArea.mm:
+        (-[KWQTextArea getCursorPositionAsIndex:inParagraph:]): Fix code that was returning the wrong
+	paragraph number along with the index within the paragraph. Also made it return a paragraph one
+	past the end with an index of 0 for cases where you are at the end of the text.
+        (-[KWQTextArea setCursorPositionToIndex:inParagraph:]): Range check the passed-in index. This
+	would also have prevented the exception.
+
 === Alexander-43 ===
 
 2002-12-20  Darin Adler  <darin@apple.com>
