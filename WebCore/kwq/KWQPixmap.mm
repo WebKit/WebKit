@@ -25,6 +25,15 @@
 
 #include <qpixmap.h>
 
+/*
+ * FIXME: This is a bad hack which really should go away.
+ * Here we're using private API to get around the problem 
+ * of image bytes being double freed.
+ */
+@interface NSData (NSDataWebCoreExtensions)
+- (id)initWithBytes:(void *)bytes length:(unsigned)length copy:(BOOL)copy freeWhenDone:(BOOL)freeBytes bytesAreVM:(BOOL)vm;
+@end
+
 
 QPixmap::QPixmap()
 {
@@ -40,7 +49,13 @@ QPixmap::QPixmap(const QSize&sz)
 
 QPixmap::QPixmap(const QByteArray&bytes)
 {
-    NSData *nsdata = [[[NSData alloc] initWithBytesNoCopy: bytes.data() length: bytes.size()] autorelease];
+    /*
+     * FIXME: This is a bad hack which really should go away.
+     * Here we're using private API to get around the problem 
+     * of image bytes being double freed.
+     */
+    //NSData *nsdata = [[[NSData alloc] initWithBytesNoCopy: bytes.data() length: bytes.size()] autorelease];
+    NSData *nsdata = [[[NSData alloc] initWithBytes: bytes.data() length: bytes.size() copy:NO freeWhenDone:NO bytesAreVM:NO] autorelease];
     nsimage = [[NSImage alloc] initWithData: nsdata];
     [nsimage setFlipped: YES];
 }
