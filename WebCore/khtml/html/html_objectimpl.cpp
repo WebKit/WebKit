@@ -369,12 +369,14 @@ void HTMLObjectElementImpl::attach()
     }
 
     // ### do this when we are actually finished loading instead
-    dispatchHTMLEvent(EventImpl::LOAD_EVENT,false,false);
+    if (m_render)
+        dispatchHTMLEvent(EventImpl::LOAD_EVENT,false,false);
 }
 
 void HTMLObjectElementImpl::detach()
 {
-    if (attached())
+    // Only bother with an unload event if we had a render object.  - dwh
+    if (attached() && m_render)
         // ### do this when we are actualy removed from document instead
         dispatchHTMLEvent(EventImpl::UNLOAD_EVENT,false,false);
 
