@@ -1,3 +1,23 @@
+2004-05-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - fixed <rdar://problem/3666022>: (REGRESSION: crash from infinite regress in -[WebFrameView(WebPrivate) scrollPageDown:])
+
+        * WebView.subproj/WebView.m:
+        (-[WebView _performResponderOperation:sender:]): Helper method that knows how to pass on operations
+        to the responder chain, allowing us to implement operations that will get passed to views inside
+        us as necessary. Moved a few methods to this, and soon will move even more.
+        (-[WebView scrollLineDown:]): Use the above method.
+        (-[WebView scrollLineUp:]): Ditto.
+        (-[WebView scrollPageDown:]): Ditto.
+        (-[WebView scrollPageUp:]): Ditto.
+        (-[WebView copy:]): Ditto.
+        (-[WebView cut:]): Ditto.
+        (-[WebView paste:]): Ditto.
+        (-[WebView delete:]): Ditto.
+        (-[WebView insertBacktab:]): Ditto.
+
 2004-05-24  Chris Blumenberg  <cblu@apple.com>
 
 	Improved editing via drag

@@ -2595,6 +2595,38 @@ static NSFont *_fontFromStyle(DOMCSSStyleDeclaration *style)
 */
 @implementation WebView (WebViewEditingActions)
 
+- (void)_performResponderOperation:(SEL)selector sender:(id)sender
+{
+    static BOOL reentered = NO;
+    if (reentered) {
+        [[self nextResponder] tryToPerform:selector with:sender];
+        return;
+    }
+
+    // There are two possibilities here.
+    //
+    // One is that WebView has been called in its role as part of the responder chain.
+    // In that case, it's fine to call the first responder and end up calling down the
+    // responder chain again. Later we will return here with reentered = YES and continue
+    // past the WebView.
+    //
+    // The other is that we are being called directly, in which case we want to pass the
+    // selector down to the view inside us that can handle it, and continue down the
+    // responder chain as usual.
+
+    // Pass this selector down to the first responder.
+    NSResponder *responder = [[self window] firstResponder];
+    if (!responder || ![responder isKindOfClass:[NSView class]] || ![(NSView *)responder isDescendantOf:self]) {
+        responder = [[[self mainFrame] frameView] documentView];
+        if (!responder) {
+            responder = [[self mainFrame] frameView];
+        }
+    }
+    reentered = YES;
+    [responder tryToPerform:selector with:sender];
+    reentered = NO;
+}
+
 - (void)centerSelectionInVisibleArea:(id)sender
 {
     if ([self _currentSelectionIsEditable]) {
@@ -2859,42 +2891,22 @@ static NSFont *_fontFromStyle(DOMCSSStyleDeclaration *style)
 
 - (void)scrollLineDown:(id)sender
 {
-    WebFrameView *frameView = [[self mainFrame] frameView];
-    if (frameView) {
-        [frameView scrollLineDown:sender];
-        return;
-    }
-    [[self nextResponder] tryToPerform:@selector(scrollLineDown:) with:sender];
+    [self _performResponderOperation:@selector(scrollLineDown:) sender:sender];
 }
 
 - (void)scrollLineUp:(id)sender
 {
-    WebFrameView *frameView = [[self mainFrame] frameView];
-    if (frameView) {
-        [frameView scrollLineUp:sender];
-        return;
-    }
-    [[self nextResponder] tryToPerform:@selector(scrollLineUp:) with:sender];
+    [self _performResponderOperation:@selector(scrollLineUp:) sender:sender];
 }
 
 - (void)scrollPageDown:(id)sender
 {
-    WebFrameView *frameView = [[self mainFrame] frameView];
-    if (frameView) {
-        [frameView scrollPageDown:sender];
-        return;
-    }
-    [[self nextResponder] tryToPerform:@selector(scrollPageDown:) with:sender];
+    [self _performResponderOperation:@selector(scrollPageDown:) sender:sender];
 }
 
 - (void)scrollPageUp:(id)sender
 {
-    WebFrameView *frameView = [[self mainFrame] frameView];
-    if (frameView) {
-        [frameView scrollPageUp:sender];
-        return;
-    }
-    [[self nextResponder] tryToPerform:@selector(scrollPageUp:) with:sender];
+    [self _performResponderOperation:@selector(scrollPageUp:) sender:sender];
 }
 
 
@@ -2941,38 +2953,17 @@ static NSFont *_fontFromStyle(DOMCSSStyleDeclaration *style)
 
 - (void)copy:(id)sender
 {
-    if ([self _currentSelectionIsEditable]) {
-        id <WebDocumentView> view = [[[self mainFrame] frameView] documentView];
-        if ([view isKindOfClass:[WebHTMLView class]]) {
-            [(WebHTMLView *)view copy:nil];
-        }
-        return;
-    }
-    [[self nextResponder] tryToPerform:@selector(copy:) with:sender];
+    [self _performResponderOperation:@selector(copy:) sender:sender];
 }
 
 - (void)cut:(id)sender
 {
-    if ([self _currentSelectionIsEditable]) {
-        id <WebDocumentView> view = [[[self mainFrame] frameView] documentView];
-        if ([view isKindOfClass:[WebHTMLView class]]) {
-            [(WebHTMLView *)view cut:nil];
-        }
-        return;
-    }
-    [[self nextResponder] tryToPerform:@selector(cut:) with:sender];
+    [self _performResponderOperation:@selector(cut:) sender:sender];
 }
 
 - (void)paste:(id)sender
 {
-    if ([self _currentSelectionIsEditable]) {
-        id <WebDocumentView> view = [[[self mainFrame] frameView] documentView];
-        if ([view isKindOfClass:[WebHTMLView class]]) {
-            [(WebHTMLView *)view paste:nil];
-        }
-        return;
-    }
-    [[self nextResponder] tryToPerform:@selector(paste:) with:sender];
+    [self _performResponderOperation:@selector(paste:) sender:sender];
 }
 
 - (void)copyFont:(id)sender
@@ -2995,14 +2986,7 @@ static NSFont *_fontFromStyle(DOMCSSStyleDeclaration *style)
 
 - (void)delete:(id)sender
 {
-    if ([self _currentSelectionIsEditable]) {
-        id <WebDocumentView> view = [[[self mainFrame] frameView] documentView];
-        if ([view isKindOfClass:[WebHTMLView class]]) {
-            [(WebHTMLView *)view delete:nil];
-        }
-        return;
-    }
-    [[self nextResponder] tryToPerform:@selector(delete:) with:sender];
+    [self _performResponderOperation:@selector(delete:) sender:sender];
 }
 
 - (void)pasteAsPlainText:(id)sender
@@ -3140,7 +3124,7 @@ static NSFont *_fontFromStyle(DOMCSSStyleDeclaration *style)
 {
     // Doing nothing matches normal NSTextView behavior. If we ever use WebView for a field-editor-type purpose
     // we might add code here.
-    [[self nextResponder] tryToPerform:@selector(insertBacktab:) with:sender];
+    [self _performResponderOperation:@selector(insertBacktab:) sender:sender];
 }
 
 - (void)insertNewline:(id)sender
