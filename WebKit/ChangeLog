@@ -1,3 +1,26 @@
+2003-09-24  Richard Williamson   <rjw@apple.com>
+
+	Fixed 3420736.  Clear renderer caches when get an ATS font changed notification.  This fix may be moot depending on progress toward fixing 2695906.  Also 3428451 needs to should be resolved.
+
+	Also added code to get and log entry point for the function used to get a Java class from plugins.  That class is used for LiveConnect support.
+
+        Reviewed by John.
+
+        * Misc.subproj/WebKitLogging.h:
+        * Misc.subproj/WebKitLogging.m:
+        * Plugins.subproj/WebNetscapePluginPackage.h:
+        * Plugins.subproj/WebNetscapePluginPackage.m:
+        (-[WebNetscapePluginPackage load]):
+        * Plugins.subproj/npapi.h:
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (FillStyleWithAttributes):
+        * WebCoreSupport.subproj/WebTextRendererFactory.m:
+        (-[WebTextRendererFactory clearCaches]):
+        (fontsChanged):
+        (+[WebTextRendererFactory createSharedFactory]):
+        (-[WebTextRendererFactory fontWithFamily:traits:size:]):
+        (-[WebTextRendererFactory cachedFontFromFamily:traits:size:]):
+
 2003-09-23  Darin Adler  <darin@apple.com>
 
         Reviewed by John and Richard.

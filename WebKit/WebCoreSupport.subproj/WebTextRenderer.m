@@ -513,13 +513,18 @@ static BOOL FillStyleWithAttributes(ATSUStyle style, NSFont *theFont)
 {
     if (theFont) {
         ATSUFontID fontId = (ATSUFontID)[theFont _atsFontID];
+        LOG (FontCache, "FillStyleWithAttributes:  font = %p,%@, _atsFontID = %x\n", theFont, theFont, (unsigned int)fontId);
         ATSUAttributeTag tag = kATSUFontTag;
         ByteCount size = sizeof(ATSUFontID);
         ATSUFontID *valueArray[1] = {&fontId};
+        OSStatus status;
 
         if (fontId) {
-            if (ATSUSetAttributes(style, 1, &tag, &size, (void *)valueArray) != noErr)
+            status = ATSUSetAttributes(style, 1, &tag, &size, (void *)valueArray);
+            if (status != noErr){
+                LOG (FontCache, "FillStyleWithAttributes failed(%d):  font = %p,%@, _atsFontID = %x\n", (int)status, theFont, theFont, (unsigned int)fontId);
                 return NO;
+            }
         }
         else {
             return NO;

@@ -1,3 +1,11 @@
+2003-09-24  Richard Williamson   <rjw@apple.com>
+
+	Fixed 3420736.  Clear renderer caches when get an ATS font changed notification.  This fix may be moot depending on progress toward fixing 2695906.
+
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (+[WebCoreBridge updateAllViews]):
+
 2003-09-24  Darin Adler  <darin@apple.com>
 
         - a new test for JavaScript date parsing

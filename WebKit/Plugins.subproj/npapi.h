@@ -217,6 +217,8 @@ typedef void (*NPP_URLNotifyProcPtr)(NPP instance, const char* URL, NPReason rea
 typedef NPError	(*NPP_GetValueProcPtr)(NPP instance, NPPVariable variable, void *ret_value);
 typedef NPError	(*NPP_SetValueProcPtr)(NPP instance, NPNVariable variable, void *value);
 typedef void (*NPP_ShutdownProcPtr)(void);
+
+typedef void *(*NPP_GetJavaClassProcPtr)(void);
 typedef void*	JRIGlobalRef; //not using this right now
 
 typedef struct _NPNetscapeFuncs {
@@ -322,6 +324,8 @@ typedef NPError (* NP_InitializeFuncPtr)(NPNetscapeFuncs*);
 typedef NPError (* NP_GetEntryPointsFuncPtr)(NPPluginFuncs*);
 typedef void 	(* BP_CreatePluginMIMETypesPreferencesFuncPtr)(void);
 
+typedef void*	(* NP_GetJavaClassFuncPtr)(void);
+
 /*
  * NPN_* functions are provided by the navigator and called by the plugin.
  */
@@ -371,5 +375,7 @@ int16		NPP_HandleEvent(NPP instance, void* event);
 void		NPP_URLNotify(NPP instance, const char* URL, NPReason reason, void* notifyData);
 NPError		NPP_GetValue(void *instance, NPPVariable variable, void *value);
 NPError		NPP_SetValue(void *instance, NPNVariable variable, void *value);
+
+void*           NPP_GetJavaClass();
 */
 #endif /* _NPAPI_H_ */

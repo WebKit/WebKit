@@ -14,27 +14,20 @@
 
 extern WebLogChannel WebKitLogTiming;
 extern WebLogChannel WebKitLogLoading;
-
 extern WebLogChannel WebKitLogFontCache;
 extern WebLogChannel WebKitLogFontSubstitution;
 extern WebLogChannel WebKitLogFontSelection;
 extern WebLogChannel WebKitLogDownload;
 extern WebLogChannel WebKitLogDocumentLoad;
 extern WebLogChannel WebKitLogPlugins;
-
 extern WebLogChannel WebKitLogEvents;
 extern WebLogChannel WebKitLogView;
 extern WebLogChannel WebKitLogRedirect;
-
 extern WebLogChannel WebKitLogPageCache;
 extern WebLogChannel WebKitLogCacheSizes;
-
 extern WebLogChannel WebKitLogFormDelegate;
-
 extern WebLogChannel WebKitLogFileDatabaseActivity;
-
 extern WebLogChannel WebKitLogHistory;
-
 extern WebLogChannel WebKitLogBindings;
-
 extern WebLogChannel WebKitLogEncoding;
+extern WebLogChannel WebKitLogLiveConnect;

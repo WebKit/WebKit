@@ -4,8 +4,10 @@
 */
 
 #import <WebKit/WebAssertions.h>
+#import <WebKit/WebBridge.h>
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebKitSystemBits.h>
+#import <WebKit/WebPreferences.h>
 #import <WebKit/WebTextRendererFactory.h>
 #import <WebKit/WebTextRenderer.h>
 
@@ -27,6 +29,10 @@
 )
 
 #define DESIRED_WEIGHT 5
+
+@interface NSFont (WebPrivate)
+- (ATSUFontID)_atsFontID;
+@end
 
 @interface NSFont (WebAppKitSecretAPI)
 - (BOOL)_isFakeFixedPitch;
@@ -173,6 +179,35 @@ static int getLCDScaleParameters(void)
 
 }
 
+static CFMutableDictionaryRef fontCache = NULL;
+
+- (void)clearCaches
+{
+    [cacheForScreen release];
+    [cacheForPrinter release];
+    
+    cacheForScreen = [[NSMutableDictionary alloc] init];
+    cacheForPrinter = [[NSMutableDictionary alloc] init];
+
+    if (fontCache)
+        CFRelease (fontCache);
+    fontCache = NULL;
+    
+    [WebBridge updateAllViews];
+}
+
+static void 
+fontsChanged( ATSFontNotificationInfoRef info, void *_factory)
+{
+    WebTextRendererFactory *factory = (WebTextRendererFactory *)_factory;
+    
+    LOG (FontCache, "clearing font caches");
+
+    ASSERT (factory);
+
+    [factory clearCaches];
+}
+
 #define MINIMUM_GLYPH_CACHE_SIZE 1536 * 1024
 
 + (void)createSharedFactory
@@ -194,6 +229,10 @@ static int getLCDScaleParameters(void)
 #endif
         CGFontCacheSetMaxSize (fontCache, s);
         CGFontCacheRelease(fontCache);
+
+        // Ignore errors returned from ATSFontNotificationSubscribe.  If we can't subscribe then we
+        // won't be told about changes to fonts.
+	ATSFontNotificationSubscribe( fontsChanged, kATSFontNotifyOptionDefault, (void *)[super sharedFactory], nil );
     }
     ASSERT([[self sharedFactory] isKindOfClass:self]);
 }
@@ -417,9 +456,8 @@ static BOOL betterChoice(NSFontTraitMask desiredTraits, int desiredWeight,
     }
 
     font = [fontManager fontWithFamily:availableFamily traits:chosenTraits weight:chosenWeight size:size];
-    
-    LOG (FontSelection, "returning font family %@ (%@) traits %x\n\n", 
-            availableFamily, [[[font fontDescriptor] fontAttributes] objectForKey: NSFontNameAttribute], chosenTraits);
+    LOG (FontSelection, "returning font family %@ (%@) traits %x, fontID = %x\n\n", 
+            availableFamily, [[[font fontDescriptor] fontAttributes] objectForKey: NSFontNameAttribute], chosenTraits, (unsigned int)[font _atsFontID]);
     
     return font;
 }
@@ -479,7 +517,6 @@ static void FontCacheValueRelease(CFAllocatorRef allocator, const void *value)
 {
     ASSERT(family);
     
-    static CFMutableDictionaryRef fontCache = NULL;
     if (!fontCache) {
         static const CFDictionaryKeyCallBacks fontCacheKeyCallBacks = { 0, FontCacheKeyCopy, FontCacheKeyFree, NULL, FontCacheKeyEqual, FontCacheKeyHash };
         static const CFDictionaryValueCallBacks fontCacheValueCallBacks = { 0, FontCacheValueRetain, FontCacheValueRelease, NULL, NULL };

@@ -365,6 +365,7 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
                 goto abort;
             }
         }
+
         BP_CreatePluginMIMETypesPreferences = (BP_CreatePluginMIMETypesPreferencesFuncPtr)CFBundleGetFunctionPointerForName(cfBundle, CFSTR("BP_CreatePluginMIMETypesPreferences"));
     } else {
         // single CFM file
@@ -476,6 +477,15 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
         NPP_URLNotify = (NPP_URLNotifyProcPtr)functionPointerForTVector((TransitionVector)pluginFuncs.urlnotify);
         NPP_GetValue = (NPP_GetValueProcPtr)functionPointerForTVector((TransitionVector)pluginFuncs.getvalue);
         NPP_SetValue = (NPP_SetValueProcPtr)functionPointerForTVector((TransitionVector)pluginFuncs.setvalue);
+
+        // LiveConnect support
+        NPP_GetJavaClass = (NPP_GetJavaClassProcPtr)functionPointerForTVector((TransitionVector)pluginFuncs.javaClass);
+        if (NPP_GetJavaClass){
+            LOG(LiveConnect, "%@:  CFM entry point for NPP_GetJavaClass = %p", [self name], NPP_GetJavaClass);
+        } else {
+            LOG(LiveConnect, "%@:  no entry point for NPP_GetJavaClass", [self name]);
+        }
+
     } else {
         // no function pointer conversion necessary for mach-o
         browserFuncs.version = 11;
@@ -537,6 +547,14 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
         NPP_URLNotify = pluginFuncs.urlnotify;
         NPP_GetValue = pluginFuncs.getvalue;
         NPP_SetValue = pluginFuncs.setvalue;
+
+        // LiveConnect support
+        NPP_GetJavaClass = pluginFuncs.javaClass;
+        if (NPP_GetJavaClass){
+            LOG(LiveConnect, "%@:  mach-o entry point for NPP_GetJavaClass = %p", [self name], NPP_GetJavaClass);
+        } else {
+            LOG(LiveConnect, "%@:  no entry point for NPP_GetJavaClass", [self name]);
+        }
     }
 
 #if !LOG_DISABLED
