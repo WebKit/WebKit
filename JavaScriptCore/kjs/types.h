@@ -104,7 +104,7 @@ namespace KJS {
    * The list is explicitly shared. Note that while copy() returns a
    * copy of the list the referenced objects are still shared.
    */
-  class List : private Value {
+  class List {
     friend class ListIterator;
   public:
     List(bool needsMarking = false);
@@ -197,8 +197,10 @@ namespace KJS {
     static void markEmptyList();
   private:
     List(ListImp *);
-    ListImp *imp() const { return (ListImp *)Value::imp(); }
+
+    ListImp *imp;
     bool m_needsMarking;
+    friend class ListNode;
   };
 
 }; // namespace

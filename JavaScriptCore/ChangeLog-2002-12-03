@@ -1,5 +1,32 @@
 2002-11-18  Maciej Stachowiak  <mjs@apple.com>
 
+	Another step towards the List conversion: stop inheriting from Value.
+	
+        * kjs/types.cpp:
+        (ListIterator::ListIterator):
+        (List::List):
+        (List::operator=):
+        (List::~List):
+        (List::mark):
+        (List::append):
+        (List::prepend):
+        (List::appendList):
+        (List::prependList):
+        (List::removeFirst):
+        (List::removeLast):
+        (List::remove):
+        (List::clear):
+        (List::copy):
+        (List::begin):
+        (List::end):
+        (List::isEmpty):
+        (List::size):
+        (List::at):
+        (List::operator[]):
+        * kjs/types.h:
+
+2002-11-18  Maciej Stachowiak  <mjs@apple.com>
+
 	Partway to removing Value from List. Created a marking List
 	variant, used it in place of ListImp.
 	

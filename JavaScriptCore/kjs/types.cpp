@@ -114,7 +114,7 @@ ListIterator::ListIterator(ListNode *n) : node(n)
 }
 
 ListIterator::ListIterator(const List &l)
-  : node(static_cast<ListImp*>(l.imp())->hook->next)
+  : node(l.imp->hook->next)
 {
 }
 
@@ -169,130 +169,136 @@ bool ListIterator::operator!=(const ListIterator &it) const
 // ------------------------------ List -----------------------------------------
 
 List::List(bool needsMarking)
-  : Value(needsMarking ? ListImp::empty() : new ListImp()),
-    m_needsMarking(needsMarking)
+  : m_needsMarking(needsMarking)
 {
-  if (m_needsMarking) {
-    imp()->deref();
+  imp = m_needsMarking ? ListImp::empty() : new ListImp();
+    
+  if (!m_needsMarking) {
+    imp->ref();
   }
 }
 
 
 List::List(const List& l)
-  : Value(l),
-    m_needsMarking(false)
+  : m_needsMarking(false)
 {  
+  imp = l.imp;
+
+  if (!m_needsMarking) {
+    imp->ref();
+  }
 }
 
-List::List(ListImp *imp) 
-  : Value(imp),
-    m_needsMarking(false)
+List::List(ListImp *p_imp) 
+  : m_needsMarking(false)
 {
+  imp = p_imp;
+
+  if (!m_needsMarking) {
+    imp->ref();
+  }
 }
 
 
 List& List::operator=(const List& l)
 {
-  if (m_needsMarking) {
-    imp()->ref();
+  if (!m_needsMarking) {
+    l.imp->ref();
+    imp->deref();
   }
 
-  Value::operator=(l);
-
-  if (m_needsMarking) {
-    imp()->deref();
-  }
+  imp = l.imp;
 
   return *this;
 }
       
 List::~List()
 {
-  if (m_needsMarking) {
-    imp()->ref();
+  if (!m_needsMarking) {
+    imp->deref();
   }
 }
 
 void List::mark()
 {
-  if (!imp()->marked()) {
-    imp()->mark();
+  if (!imp->marked()) {
+    imp->mark();
   }
 }
 
 void List::append(const Value& val)
 {
-  static_cast<ListImp*>(rep)->append(val);
+  imp->append(val);
 }
 
 void List::prepend(const Value& val)
 {
-  static_cast<ListImp*>(rep)->prepend(val);
+  imp->prepend(val);
 }
 
 void List::appendList(const List& lst)
 {
-  static_cast<ListImp*>(rep)->appendList(lst);
+  imp->appendList(lst);
 }
 
 void List::prependList(const List& lst)
 {
-  static_cast<ListImp*>(rep)->prependList(lst);
+  imp->prependList(lst);
 }
 
 void List::removeFirst()
 {
-  static_cast<ListImp*>(rep)->removeFirst();
+  imp->removeFirst();
 }
 
 void List::removeLast()
 {
-  static_cast<ListImp*>(rep)->removeLast();
+  imp->removeLast();
 }
 
 void List::remove(const Value &val)
 {
-  static_cast<ListImp*>(rep)->remove(val);
+  imp->remove(val);
 }
 
 void List::clear()
 {
-  static_cast<ListImp*>(rep)->clear();
+  imp->clear();
 }
 
 List List::copy() const
 {
-  return static_cast<ListImp*>(rep)->copy();
+  return imp->copy();
 }
 
 ListIterator List::begin() const
 {
-  return static_cast<ListImp*>(rep)->begin();
+  return imp->begin();
 }
 
 ListIterator List::end() const
 {
-  return static_cast<ListImp*>(rep)->end();
+  return imp->end();
 }
 
 bool List::isEmpty() const
 {
-  return static_cast<ListImp*>(rep)->isEmpty();
+  return imp->isEmpty();
 }
 
 int List::size() const
 {
-  return static_cast<ListImp*>(rep)->size();
+  return imp->size();
 }
 
 Value List::at(int i) const
 {
-  return static_cast<ListImp*>(rep)->at(i);
+  return imp->at(i);
 }
 
 Value List::operator[](int i) const
 {
-  return static_cast<ListImp*>(rep)->at(i);
+  return imp->at(i);
 }
 
 const List List::empty()
