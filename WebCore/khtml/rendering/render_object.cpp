@@ -483,7 +483,7 @@ void RenderObject::markContainingBlocksForLayout()
     RenderObject *last = this;
 
     while (o) {
-        if (last->style()->position() == FIXED || last->style()->position() == ABSOLUTE) {
+        if (!last->isText() && (last->style()->position() == FIXED || last->style()->position() == ABSOLUTE)) {
 #ifdef INCREMENTAL_REPAINTING
             if (o->m_posChildNeedsLayout)
                 return;
@@ -520,13 +520,13 @@ RenderBlock* RenderObject::containingBlock() const
         return static_cast<const RenderTableCell *>(this)->table();
     if (isCanvas())
         return (RenderBlock*)this;
-    
+
     RenderObject *o = parent();
-    if (m_style->position() == FIXED) {
+    if (!isText() && m_style->position() == FIXED) {
         while ( o && !o->isCanvas() )
             o = o->parent();
     }
-    else if (m_style->position() == ABSOLUTE) {
+    else if (!isText() && m_style->position() == ABSOLUTE) {
         while (o && (o->style()->position() == STATIC || (o->isInline() && !o->isReplaced()))
                && !o->isRoot() && !o->isCanvas()) {
             // For relpositioned inlines, we return the nearest enclosing block.  We don't try
@@ -1032,7 +1032,7 @@ bool RenderObject::checkForRepaintDuringLayout() const
 
 void RenderObject::repaintObjectsBeforeLayout()
 {
-    if (!needsLayout())
+    if (!needsLayout() || isText())
         return;
     
     // FIXME: For now we just always repaint blocks with inline children, regardless of whether
@@ -1296,13 +1296,14 @@ void RenderObject::setStyle(RenderStyle *style)
     
     if (affectsParentBlock)
         handleDynamicFloatPositionChange();
-            
-    if ( d >= RenderStyle::Position && m_parent ) {
-        //qDebug("triggering relayout");
-        setNeedsLayoutAndMinMaxRecalc();
-    } else if ( m_parent && !isText() && d == RenderStyle::Visible ) {
-        //qDebug("triggering repaint");
-    	repaint();
+    
+    if (!isText()) {
+        // No need to ever schedule relayouts/repaints from a style change of a text run, since
+        // we already did this for the parent of the text run.
+        if (d >= RenderStyle::Position && m_parent)
+            setNeedsLayoutAndMinMaxRecalc();
+        else if (m_parent && d == RenderStyle::Visible)
+            repaint();
     }
 }
 
@@ -1436,7 +1437,7 @@ RenderObject *RenderObject::container() const
     // calcAbsoluteVertical have to use container().
     EPosition pos = m_style->position();
     RenderObject *o = 0;
-    if( pos == FIXED ) {
+    if (!isText() && pos == FIXED) {
         // container() can be called on an object that is not in the
         // tree yet.  We don't call canvas() since it will assert if it
         // can't get back to the canvas.  Instead we just walk as high up
@@ -1444,9 +1445,9 @@ RenderObject *RenderObject::container() const
         // aren't we'll get the root of our little subtree (most likely
         // we'll just return 0).
         o = parent();
-        while ( o && o->parent() ) o = o->parent();
+        while (o && o->parent()) o = o->parent();
     }
-    else if ( pos == ABSOLUTE ) {
+    else if (!isText() && pos == ABSOLUTE) {
         // Same goes here.  We technically just want our containing block, but
         // we may not have one if we're part of an uninstalled subtree.  We'll
         // climb as high as we can though.

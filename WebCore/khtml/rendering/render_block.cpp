@@ -946,8 +946,8 @@ void RenderBlock::layoutBlockChildren( bool relayoutChildren )
             chPos += child->marginLeft();
             
             // html blocks flow around floats
-            if (child->style()->hidesOverflow() || child->isFlexibleBox() ||
-                 (( style()->htmlHacks() || child->isTable() ) && child->style()->flowAroundFloats()))
+            if (child->style()->hidesOverflow() || child->isFlexibleBox() || 
+                child->isTable() || child->isReplaced() || child->style()->flowAroundFloats())
             {
                 int leftOff = leftOffset(m_height);
                 if (leftOff != xPos) {
@@ -965,9 +965,9 @@ void RenderBlock::layoutBlockChildren( bool relayoutChildren )
             }
         } else {
             chPos -= child->width() + child->marginRight();
-            if (child->style()->hidesOverflow() || child->isFlexibleBox() ||
-                ((style()->htmlHacks() || child->isTable()) && child->style()->flowAroundFloats()))
-                chPos -= leftOffset(m_height);
+            if (child->style()->hidesOverflow() || child->isFlexibleBox() || 
+                child->isTable() || child->isReplaced() || child->style()->flowAroundFloats())
+                chPos -= (xPos - rightOffset(m_height));
         }
 
         child->setPos(chPos, child->yPos());
@@ -1734,7 +1734,8 @@ RenderBlock::clearFloats()
     if (m_floatingObjects)
         m_floatingObjects->clear();
 
-    if (isFloating() || isPositioned()) return;
+    if (isFloating() || isPositioned() || style()->hidesOverflow() || style()->flowAroundFloats() || isFlexibleBox()) 
+        return;
     
     RenderObject *prev = previousSibling();
 

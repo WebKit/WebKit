@@ -1,5 +1,29 @@
 2003-11-14  David Hyatt  <hyatt@apple.com>
 
+	Fix for 3485260, regression on Uniview site from incremental repainting.  When appending/inserting child
+	nodes into the render tree, we need to always mark them as needing layout themselves (and not just as
+	having children needing layout).  This ensures that the incremental repainting code will know to repaint the
+	enclosing container (even though that container's size may not change).
+
+	Fix for 3411960, block-level replaced elements should avoid floats.
+
+	Fix for 3463234, floats should not intrude into overflow blocks (even when siblings happen to get in
+	between the float and the overflow block).
+
+	Fix for 3485576, the containing block for text runs is incorrect.
+
+	Fix for 3485577, text runs should not trigger layout when style is re-resolved.
+	
+        Reviewed by darin
+
+        * khtml/rendering/render_container.cpp:
+        (RenderContainer::appendChildNode):
+        (RenderContainer::insertChildNode):
+        * khtml/rendering/render_box.cpp
+	* khtml/rendering/render_object.cpp
+	
+2003-11-14  David Hyatt  <hyatt@apple.com>
+
 	Fix for 3473707, 100% height positioned divs are too tall.  The padding box wasn't being used like it was
 	supposed to be when calcing percentage heights.
 	

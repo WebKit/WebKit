@@ -610,15 +610,15 @@ void RenderBox::computeAbsoluteRepaintRect(QRect& r, bool f)
         // <body> may not have a layer, since it might be applying its overflow value to the
         // scrollbars.
         if (o->style()->hidesOverflow() && o->layer()) {
-            int ow = o->style() ? o->style()->outlineSize() : 0;
-            QRect boxRect(-ow, -ow, o->width()+ow*2, o->height()+ow*2);
+            // o->height() is inaccurate if we're in the middle of a layout of |o|, so use the
+            // layer's size instead.  Even if the layer's size is wrong, the layer itself will repaint
+            // anyway if its size does change.
+            QRect boxRect(0, 0, o->layer()->width(), o->layer()->height());
             o->layer()->subtractScrollOffset(x,y); // For overflow:auto/scroll/hidden.
             QRect repaintRect(x, y, r.width(), r.height());
-            if (!repaintRect.intersects(boxRect)) {
-                r = QRect();
-                return;
-            }
             r = repaintRect.intersect(boxRect);
+            if (r.isEmpty())
+                return;
         }
         else {
             r.setX(x);
