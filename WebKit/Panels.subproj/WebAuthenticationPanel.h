@@ -7,6 +7,8 @@
 #import <Cocoa/Cocoa.h>
 #import <WebFoundation/NSURLCredentialStorage.h>
 
+@class NSURLAuthenticationChallenge;
+
 @interface WebAuthenticationPanel : NSObject
 {
     IBOutlet id mainLabel;

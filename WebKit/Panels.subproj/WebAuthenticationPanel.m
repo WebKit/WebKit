@@ -7,6 +7,8 @@
 
 #import <WebKit/WebAuthenticationPanel.h>
 
+#import <WebFoundation/NSURLAuthenticationChallenge.h>
+#import <WebFoundation/NSURLProtectionSpace.h>
 #import <WebFoundation/WebAssertions.h>
 #import <WebFoundation/WebLocalizableStrings.h>
 #import <WebFoundation/WebNSURLExtras.h>

@@ -1,3 +1,12 @@
+2003-04-30  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	Fixed imports and @class directives for WebFoundation changes.
+
+        * Panels.subproj/WebAuthenticationPanel.h:
+        * Panels.subproj/WebAuthenticationPanel.m:
+
 2003-04-30  Richard Williamson   <rjw@apple.com>
 
         Fixed doc errors.
