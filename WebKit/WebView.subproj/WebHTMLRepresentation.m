@@ -162,4 +162,9 @@
     return [_private->bridge matchLabels:labels againstElement:element];
 }
 
+- (NSString *)reconstructedSource
+{		
+	return [_private->bridge reconstructedSource];
+}
+
 @end

@@ -58,4 +58,7 @@
 - (NSArray *)controlsInForm:(id <WebDOMElement>)form;
 - (NSString *)searchForLabels:(NSArray *)labels beforeElement:(id <WebDOMElement>)element;
 - (NSString *)matchLabels:(NSArray *)labels againstElement:(id <WebDOMElement>)element;
+
+- (NSString *)reconstructedSource;
+
 @end

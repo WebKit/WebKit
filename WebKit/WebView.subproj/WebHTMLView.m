@@ -507,21 +507,15 @@ static WebHTMLView *lastHitView = nil;
 
 + (NSArray *)_pasteboardTypes
 {
-    return [NSArray arrayWithObjects:
-#if SUPPORT_HTML_PBOARD
-        NSHTMLPboardType,
-#endif
-        NSRTFPboardType, NSRTFDPboardType, NSStringPboardType, nil];
+    return [NSArray arrayWithObjects:NSHTMLPboardType, NSRTFPboardType, NSRTFDPboardType, NSStringPboardType, nil];
 }
 
 - (void)_writeSelectionToPasteboard:(NSPasteboard *)pasteboard
 {
     [pasteboard declareTypes:[[self class] _pasteboardTypes] owner:nil];
 
-#if SUPPORT_HTML_PBOARD
     // Put HTML on the pasteboard.
-    [pasteboard setData:??? forType:NSHTMLPboardType];
-#endif
+    [pasteboard setString:[[self _bridge] selectedHTML] forType:NSHTMLPboardType];
 
     // Put attributed string on the pasteboard (RTF format).
     NSAttributedString *attributedString = [self selectedAttributedString];

@@ -1,3 +1,19 @@
+2004-01-22  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3537542>: support for copying HTML
+
+        Reviewed by dave.
+
+        * khtml/xml/dom2_rangeimpl.cpp:
+        (RangeImpl::toHTML): implemented
+        * khtml/xml/dom_nodeimpl.cpp:
+        (NodeImpl::recursive_toHTMLWithRange): new
+        * khtml/xml/dom_nodeimpl.h:
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge selectedHTML]): new
+        (-[WebCoreBridge reconstructedSource]): new
+
 2004-01-21  David Hyatt  <hyatt@apple.com>
 
 	Fix for two margin collapsing edge cases.

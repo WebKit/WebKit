@@ -267,6 +267,118 @@ static QString escapeHTML( const QString& in )
     return s;
 }
 
+QString NodeImpl::recursive_toHTMLWithRange(bool start, const DOM::Range &range) const
+{	
+	QString me = "";
+		
+	NodeImpl *startContainer = range.startContainer().handle();
+	NodeImpl *endContainer = range.endContainer().handle();
+	NodeImpl *n = startContainer;
+	bool isNodeIncluded = false;
+	Id ident = id();
+	
+	if (!start || (start && (ident == ID_TABLE || ident == ID_OL || ident == ID_UL))) {	
+		// Check if this node is in the range or is an ancestor of a node in the range.
+		while (n) {
+			NodeImpl *ancestor = n;
+			while (ancestor) {
+				if (this == ancestor) {
+					isNodeIncluded = true;
+					break;
+				}
+				ancestor = ancestor->parentNode();
+			}
+			if (isNodeIncluded) {
+				break;
+			}
+			if (n == endContainer) {
+				break;
+			}
+			NodeImpl *next = n->firstChild();
+			if (!next) {
+				next = n->nextSibling();
+			}
+			while (!next && n->parentNode()) {
+				n = n->parentNode();
+				next = n->nextSibling();
+			}
+			n = next;
+		}
+	}
+	
+	if (isNodeIncluded) {	
+		// Copy who I am into the htmlText string
+		if (nodeType() == Node::TEXT_NODE) {
+			DOMString str = nodeValue().copy();
+			if (this == endContainer) {
+				str.truncate(range.endOffset());
+			}
+			if (this == startContainer) {
+				str.remove(0, range.startOffset());
+			}
+			me = escapeHTML(str.string());
+		} else {
+			// If I am an element, not a text
+			NodeImpl* temp = previousSibling();
+			if(temp)
+			{
+				if( !start && (temp->nodeType() != Node::TEXT_NODE && nodeType() != Node::TEXT_NODE ) )
+					me = QString("    ") + QChar('<') + nodeName().string();
+				else
+					me = QChar('<') + nodeName().string();
+			}
+			else
+				me = QChar('<') + nodeName().string();
+			// print attributes
+			if( nodeType() == Node::ELEMENT_NODE )
+			{
+				const ElementImpl *el = static_cast<const ElementImpl *>(this);
+				NamedNodeMap attrs = el->attributes();
+				unsigned long lmap = attrs.length();
+				for( unsigned int j=0; j<lmap; j++ )
+					me += " " + attrs.item(j).nodeName().string() + "=\"" + attrs.item(j).nodeValue().string() + "\"";
+			}
+			// print ending bracket of start tag
+			if( firstChild() == 0 ) {    // if element has no endtag
+				if (isHTMLElement()) {
+					me +=">";
+				} else {
+					me +="/>";
+				}
+			} else                        // if element has endtag
+			{
+				NodeImpl* temp = nextSibling();
+				if(temp)
+				{
+					if( (temp->nodeType() != Node::TEXT_NODE) )
+						me += ">\n";
+					else
+						me += ">";
+				}
+				else
+					me += ">";
+			}
+		}
+	}
+	
+    if( (n = firstChild()) )
+    {
+        // print firstChild
+        me += n->recursive_toHTMLWithRange(false, range);
+		
+        // Print my ending tag
+        if (isNodeIncluded && nodeType() != Node::TEXT_NODE) {
+            me += "</" + nodeName().string() + ">\n";
+		}
+    }
+    // print next sibling
+    if( (n = nextSibling()) )
+        me += n->recursive_toHTMLWithRange(false, range);
+	
+    return me;
+}
+
+
 QString NodeImpl::recursive_toHTML(bool start) const
 {
     QString me = "";

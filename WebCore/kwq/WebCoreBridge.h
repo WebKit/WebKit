@@ -200,6 +200,7 @@ typedef enum {
 
 - (void)setSelectionFrom:(id <WebDOMNode>)start startOffset:(int)startOffset to:(id <WebDOMNode>)end endOffset:(int) endOffset;
 
+- (NSString *)selectedHTML;
 - (NSString *)selectedString;
 - (NSAttributedString *)selectedAttributedString;
 
@@ -235,6 +236,8 @@ typedef enum {
 + (void)updateAllViews;
 
 - (id)accessibilityTree;
+
+- (NSString *)reconstructedSource;
 
 @end
 

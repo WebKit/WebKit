@@ -356,6 +356,11 @@ static bool initializedKJS = FALSE;
     _part->gotoAnchor(QString::fromNSString(a));
 }
 
+- (NSString *)selectedHTML
+{
+	return _part->selection().toHTML().string().getNSString();
+}
+
 - (NSString *)selectedString
 {
     QString text = _part->selectedText();
@@ -1123,5 +1128,17 @@ static HTMLFormElementImpl *formElementFromDOMElement(id <WebDOMElement>element)
     return _part->xmlDocImpl()->getOrCreateAccObjectCache()->accObject(root);
 }
 
+- (NSString *)reconstructedSource
+{
+    NSString *string = nil;
+    DOM::DocumentImpl *doc = _part->xmlDocImpl();
+    if (doc) {
+        string = [[doc->recursive_toHTML(1).getNSString() copy] autorelease];
+    }
+    if (string == nil) {
+        string = @"";
+    }
+    return string;
+}
 
 @end
