@@ -1,3 +1,15 @@
+2004-07-16  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+
+        Fix for this bug:
+        
+        <rdar://problem/3687216> editable inline causes crash when focused
+
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::relinquishesEditingFocus): Add null check for rootEditableElement.
+        (DocumentImpl::acceptsEditingFocus): Ditto.
+
 2004-07-16  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3709337, crash when using display: compact.  Need to make sure that the isCompact() check in bidi.cpp is

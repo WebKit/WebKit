@@ -2296,10 +2296,10 @@ bool DocumentImpl::relinquishesEditingFocus(NodeImpl *node)
     assert(node);
     assert(node->isContentEditable());
 
-    if (!part())
-        return true;
-    
     NodeImpl *rootImpl = node->rootEditableElement();
+    if (!part() || !rootImpl)
+        return false;
+
     Node root(rootImpl);
     Range range(root, 0, root, rootImpl->childNodeCount());
     return part()->shouldEndEditing(range);
@@ -2310,10 +2310,10 @@ bool DocumentImpl::acceptsEditingFocus(NodeImpl *node)
     assert(node);
     assert(node->isContentEditable());
 
-    if (!part())
-        return true;
-
     NodeImpl *rootImpl = node->rootEditableElement();
+    if (!part() || !rootImpl)
+        return false;
+
     Node root(rootImpl);
     Range range(root, 0, root, rootImpl->childNodeCount());
     return part()->shouldBeginEditing(range);
