@@ -132,9 +132,15 @@ void QPainter::setPen(const QPen &pen)
 }
 
 
-void QPainter::setPen(PenStyle ps)
+void QPainter::setPen(PenStyle style)
 {
-    data->qpen.setStyle(ps);
+    QPen::QPenData *d = data->qpen.data;
+    if (d->count != 1) {
+        data->qpen.detach();
+        d = data->qpen.data;  
+    }
+
+    data->qpen.setStyle(style);
     data->qpen.setColor(Qt::black);
     data->qpen.setWidth(0);
 }
@@ -147,8 +153,14 @@ void QPainter::setBrush(const QBrush &brush)
 
 void QPainter::setBrush(BrushStyle style)
 {
-    // Either NoBrush or SolidPattern.
+    QBrush::QBrushData *d = data->qbrush.data;
+    if (d->count != 1) {
+        data->qbrush.detach();
+        d = data->qbrush.data;  
+    }
+
     data->qbrush.setStyle(style);
+    data->qbrush.setColor(Qt::black);
 }
 
 const QBrush &QPainter::brush() const
@@ -205,12 +217,14 @@ void QPainter::restore()
 void QPainter::drawRect(int x, int y, int w, int h)
 {
     _lockFocus();
-    if (data->qbrush.style() == SolidPattern){
-        //_setColorFromBrush();
-        //[NSBezierPath fillRect:NSMakeRect(x, y, w, h)];
+    if (data->qbrush.style() != NoBrush){
+        _setColorFromBrush();
+        [NSBezierPath fillRect:NSMakeRect(x, y, w, h)];
     }
-    _setColorFromPen();
-    [NSBezierPath strokeRect:NSMakeRect(x, y, w, h)];
+    if (data->qpen.style() != NoPen){
+        _setColorFromPen();
+        [NSBezierPath strokeRect:NSMakeRect(x, y, w, h)];
+    }
     _unlockFocus();
 }
 
@@ -252,12 +266,14 @@ void QPainter::drawEllipse(int x, int y, int w, int h)
     path = [NSBezierPath bezierPathWithOvalInRect: NSMakeRect (x, y, w, h)];
     
     _lockFocus();
-    if (data->qbrush.style() == SolidPattern){
+    if (data->qbrush.style() != NoBrush){
         _setColorFromBrush();
         [path fill];
     }
-    _setColorFromPen();
-    [path stroke];
+    if (data->qpen.style() != NoPen){
+        _setColorFromPen();
+        [path stroke];
+    }
     _unlockFocus();
 }
 
@@ -265,28 +281,31 @@ void QPainter::drawEllipse(int x, int y, int w, int h)
 // Only supports arc on circles.  That's all khtml needs.
 void QPainter::drawArc (int x, int y, int w, int h, int a, int alen)
 {
-    NSBezierPath *path;
-    float fa, falen;
+    if (data->qpen.style() != NoPen){
+
+        NSBezierPath *path;
+        float fa, falen;
     
-    if (w != h){
-        NSLog (@"ERROR (INCOMPLETE IMPLEMENTATION) void QPainter::drawArc (int x, int y, int w, int h, int a, int alen)\nOnly supports drawing arcs on a circle.\n");
+        if (w != h){
+            NSLog (@"ERROR (INCOMPLETE IMPLEMENTATION) void QPainter::drawArc (int x, int y, int w, int h, int a, int alen)\nOnly supports drawing arcs on a circle.\n");
+        }
+        
+        path = [[[NSBezierPath alloc] init] autorelease];
+        fa = (float)(a/16);
+        falen =  fa + (float)(alen/16);
+        [path appendBezierPathWithArcWithCenter: NSMakePoint(x + w/2, y + h/2) 
+                    radius: (float)(w/2) 
+                    startAngle: -fa
+                    endAngle: -falen
+                    clockwise: YES];
+    
+        _lockFocus();
+    
+        _setColorFromPen();
+        [path stroke];
+    
+        _unlockFocus();
     }
-    
-    path = [[[NSBezierPath alloc] init] autorelease];
-    fa = (float)(a/16);
-    falen =  fa + (float)(alen/16);
-    [path appendBezierPathWithArcWithCenter: NSMakePoint(x + w/2, y + h/2) 
-                radius: (float)(w/2) 
-                startAngle: -fa
-                endAngle: -falen
-                clockwise: YES];
-
-    _lockFocus();
-
-    _setColorFromPen();
-    [path stroke];
-
-    _unlockFocus();
 }
 
 void QPainter::drawLineSegments(const QPointArray &points, int index, int nlines)
@@ -300,49 +319,49 @@ void QPainter::drawPolyline(const QPointArray &points, int index, int npoints)
 }
 
 
-void QPainter::drawPolygon(const QPointArray &points, bool winding, int index,
+void QPainter::drawPolygon(const QPointArray &points, bool winding, int index, 
     int npoints)
 {
     _drawPoints (points, winding, index, npoints, TRUE);
 }
 
 
-void QPainter::_drawPoints (const QPointArray &_points, bool winding, int index, int _npoints, bool fill)
+void QPainter::_drawPoints (const QPointArray &_points, bool winding, int index, 
+    int _npoints, bool fill)
 {
     NSBezierPath *path;
     float fa, falen;
     int i;
     int npoints = _npoints != -1 ? _npoints : _points.size()-index;
 
-        
-    {
-        NSPoint points[npoints];
-        
-        for (i = 0; i < npoints; i++){
-            points[i].x = _points[index+i].x();
-            points[i].y = _points[index+i].y();
-        }
-        
-        
-        path = [[[NSBezierPath alloc] init] autorelease];
-        [path appendBezierPathWithPoints: &points[0] count: npoints];
-        [path closePath];	// Qt always closes the path.  Determined empirically.
-        
-        _lockFocus();
+    NSPoint points[npoints];
+    
+    for (i = 0; i < npoints; i++){
+        points[i].x = _points[index+i].x();
+        points[i].y = _points[index+i].y();
+    }
+            
+    path = [[[NSBezierPath alloc] init] autorelease];
+    [path appendBezierPathWithPoints: &points[0] count: npoints];
+    [path closePath];	// Qt always closes the path.  Determined empirically.
+    
+    _lockFocus();
 
-        if (fill == TRUE && data->qbrush.style() == SolidPattern){
-            if (winding == TRUE)
-                [path setWindingRule: NSNonZeroWindingRule];
-            else
-                [path setWindingRule: NSEvenOddWindingRule];
-            _setColorFromBrush();
-            [path fill];
-        }
+    if (fill == TRUE && data->qbrush.style() != NoBrush){
+        if (winding == TRUE)
+            [path setWindingRule: NSNonZeroWindingRule];
+        else
+            [path setWindingRule: NSEvenOddWindingRule];
+        _setColorFromBrush();
+        [path fill];
+    }
+
+    if (data->qpen.style() != NoPen){
         _setColorFromPen();
         [path stroke];
-        
-        _unlockFocus();
     }
+    
+    _unlockFocus();
 }
 
 

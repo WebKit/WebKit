@@ -181,6 +181,7 @@ TABLE {
 	vertical-align: middle;
 	text-align: justify;
 	border-spacing: 2px;
+	border-color: gray;
 	border-style: outset;
 	border-width: 0px;
 	padding: 1px;

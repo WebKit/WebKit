@@ -84,6 +84,7 @@ public:
     void setRgb(int);
 
     void hsv(int *, int *, int *) const;
+    void setHsv(int h, int s, int v);
 
     QColor light(int f = 150) const;
     QColor dark(int f = 200) const;
