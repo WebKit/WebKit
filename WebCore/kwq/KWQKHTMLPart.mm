@@ -580,13 +580,6 @@ void KWQKHTMLPart::submitForm(const KURL &url, const URLArgs &args)
     clearRecordedFormValues();
 }
 
-void KWQKHTMLPart::scheduleHistoryNavigation( int steps )
-{
-    if ([_bridge canGoBackOrForward:steps]) {
-	KHTMLPart::scheduleHistoryNavigation(steps);
-    }
-}
-
 void KWQKHTMLPart::setEncoding(const QString &name, bool userChosen)
 {
     if (!d->m_workingURL.isEmpty()) {

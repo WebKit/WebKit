@@ -838,10 +838,10 @@ static BOOL loggedObjectCacheSize = NO;
     return [[[_frame webView] backForwardList] backListCount];
 }
 
-- (WebHistoryItem *)backOrForwardItemWithDistance:(int)distance
+- (void)goBackOrForward:(int)distance
 {
     if (distance == 0) {
-        return nil;
+        return;
     }
     WebView *webView = [_frame webView];
     WebBackForwardList *list = [webView backForwardList];
@@ -859,20 +859,8 @@ static BOOL loggedObjectCacheSize = NO;
             }
         }
     }
-
-    return item;
-}
-
-- (BOOL)canGoBackOrForward:(int)distance
-{
-    return [self backOrForwardItemWithDistance:distance] != nil;
-}
-
-- (void)goBackOrForward:(int)distance
-{
-    WebHistoryItem *item = [self backOrForwardItemWithDistance:distance];
-    if (item != nil) {
-        [[_frame webView] goToBackForwardItem:item];
+    if (item) {
+        [webView goToBackForwardItem:item];
     }
 }
 

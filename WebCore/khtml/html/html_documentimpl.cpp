@@ -306,7 +306,7 @@ void HTMLDocumentImpl::close()
     // First fire the onload.
     bool doload = !parsing() && m_tokenizer && !processingLoadEvent;
     
-    bool wasNotRedirecting = !view();
+    bool wasNotRedirecting = !view() || view()->part()->d->m_scheduledRedirection == noRedirectionScheduled || view()->part()->d->m_scheduledRedirection == historyNavigationScheduled;
 
     processingLoadEvent = true;
     if (body() && doload) {
@@ -322,9 +322,10 @@ void HTMLDocumentImpl::close()
     // Make sure both the initial layout and reflow happen after the onload
     // fires. This will improve onload scores, and other browsers do it.
     // If they wanna cheat, we can too. -dwh
-    if (doload && wasNotRedirecting && view()
-            && view()->part()->d->m_delayRedirect == 0
-            && m_startTime.elapsed() < 1000) {
+    
+    bool isRedirectingSoon = view() && view()->part()->d->m_scheduledRedirection != noRedirectionScheduled && view()->part()->d->m_scheduledRedirection != historyNavigationScheduled && view()->part()->d->m_delayRedirect == 0;
+
+    if (doload && wasNotRedirecting && isRedirectingSoon && m_startTime.elapsed() < 1000) {
         static int redirectCount = 0;
         if (redirectCount++ % 4) {
             // When redirecting over and over (e.g., i-bench), to avoid the appearance of complete inactivity,

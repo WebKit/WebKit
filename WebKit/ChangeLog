@@ -1,3 +1,12 @@
+2003-09-19  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	Roll out old fix for 3410980.
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge goBackOrForward:]):
+
 2003-09-19  Darin Adler  <darin@apple.com>
 
         Reviewed by Dave.

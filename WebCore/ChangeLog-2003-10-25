@@ -1,3 +1,15 @@
+2003-09-19  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	Roll out old fix for 3410980 and do a new better fix.
+
+        * khtml/html/html_documentimpl.cpp:
+        (HTMLDocumentImpl::close):
+        * khtml/khtml_part.h:
+        * kwq/KWQKHTMLPart.mm:
+        * kwq/WebCoreBridge.h:
+
 2003-09-19  Darin Adler  <darin@apple.com>
 
         Reviewed by Dave.
