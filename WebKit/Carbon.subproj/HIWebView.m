@@ -99,9 +99,12 @@ typedef struct HIWebView HIWebView;
 @end
 
 static const OSType NSAppKitPropertyCreator = 'akit';
+/*
+These constants are not used. Commented out to make the compiler happy.
 static const OSType NSViewCarbonControlViewPropertyTag = 'view';
 static const OSType NSViewCarbonControlAutodisplayPropertyTag = 'autd';
 static const OSType NSViewCarbonControlFirstResponderViewPropertyTag = 'frvw';
+*/
 static const OSType NSCarbonWindowPropertyTag = 'win ';
 
 static SEL _NSSelectorForHICommand( const HICommand* hiCommand );

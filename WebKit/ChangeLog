@@ -1,3 +1,25 @@
+2003-06-26  Chris Blumenberg  <cblu@apple.com>
+
+	Changes to make WebKit compile with gcc 3.3.
+
+        Reviewed by darin.
+
+        * Carbon.subproj/HIWebView.m:
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge setScrollbarsVisible:]):
+        (-[WebBridge loadURL:referrer:reload:target:triggeringEvent:form:formValues:]):
+        (-[WebBridge postWithURL:referrer:target:data:contentType:triggeringEvent:form:formValues:]):
+        * WebView.subproj/WebFramePrivate.h:
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _loadURL:referrer:loadType:target:triggeringEvent:form:formValues:]):
+        (-[WebFrame _postWithURL:referrer:target:data:contentType:triggeringEvent:form:formValues:]):
+        * WebView.subproj/WebPreferences.m:
+        (-[WebPreferences setDefaultFontSize:]):
+        (-[WebPreferences setDefaultFixedFontSize:]):
+        (-[WebPreferences setMinimumFontSize:]):
+        * WebView.subproj/WebView.m:
+        (-[WebView searchFor:direction:caseSensitive:wrap:]):
+
 2003-06-24  Chris Blumenberg  <cblu@apple.com>
 
 	Renamed the context menu item Download Image To Disk" to "Download Image to Disk".

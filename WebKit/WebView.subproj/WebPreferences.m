@@ -342,7 +342,7 @@ NS_ENDHANDLER
 
 - (void)setDefaultFontSize:(int)size
 {
-    return [self _setIntegerValue: size forKey: WebKitDefaultFontSizePreferenceKey];
+    [self _setIntegerValue: size forKey: WebKitDefaultFontSizePreferenceKey];
 }
 
 - (int)defaultFixedFontSize
@@ -352,7 +352,7 @@ NS_ENDHANDLER
 
 - (void)setDefaultFixedFontSize:(int)size
 {
-    return [self _setIntegerValue: size forKey: WebKitDefaultFixedFontSizePreferenceKey];
+    [self _setIntegerValue: size forKey: WebKitDefaultFixedFontSizePreferenceKey];
 }
 
 - (int)minimumFontSize
@@ -362,7 +362,7 @@ NS_ENDHANDLER
 
 - (void)setMinimumFontSize:(int)size
 {
-    return [self _setIntegerValue: size forKey: WebKitMinimumFontSizePreferenceKey];
+    [self _setIntegerValue: size forKey: WebKitMinimumFontSizePreferenceKey];
 }
 
 - (NSString *)defaultTextEncodingName

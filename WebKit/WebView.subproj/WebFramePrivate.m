@@ -47,17 +47,6 @@ static const char * const stateNames[] = {
     "WebFrameStateLayoutAcceptable",
     "WebFrameStateComplete"
 };
-
-static const char * const loadTypeNames[] = {
-    "WebFrameLoadTypeStandard",
-    "WebFrameLoadTypeBack",
-    "WebFrameLoadTypeForward",
-    "WebFrameLoadTypeIndexedBackForward",
-    "WebFrameLoadTypeReload",
-    "WebFrameLoadTypeReloadAllowingStaleData",
-    "WebFrameLoadTypeSame",
-    "WebFrameLoadTypeInternal"
-};
 #endif
 
 /*
@@ -1655,7 +1644,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 
 // main funnel for navigating via callback from WebCore (e.g., clicking a link, redirect)
-- (void)_loadURL:(NSURL *)URL referrer:(NSString *)referrer loadType:(WebFrameLoadType)loadType target:(NSString *)target triggeringEvent:(NSEvent *)event form:(id <WebDOMElement>)form formValues:(NSDictionary *)values
+- (void)_loadURL:(NSURL *)URL referrer:(NSString *)referrer loadType:(WebFrameLoadType)loadType target:(NSString *)target triggeringEvent:(NSEvent *)event form:(NSObject <WebDOMElement> *)form formValues:(NSDictionary *)values
 {
     BOOL isFormSubmission = (values != nil);
 
@@ -1791,7 +1780,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     [childFrame _loadURL:URL referrer:[[self _bridge] referrer] loadType:childLoadType target:nil triggeringEvent:nil form:nil formValues:nil];
 }
 
-- (void)_postWithURL:(NSURL *)URL referrer:(NSString *)referrer target:(NSString *)target data:(NSData *)data contentType:(NSString *)contentType triggeringEvent:(NSEvent *)event form:(id <WebDOMElement>)form formValues:(NSDictionary *)values
+- (void)_postWithURL:(NSURL *)URL referrer:(NSString *)referrer target:(NSString *)target data:(NSData *)data contentType:(NSString *)contentType triggeringEvent:(NSEvent *)event form:(NSObject <WebDOMElement> *)form formValues:(NSDictionary *)values
 {
     // When posting, use the NSURLRequestReloadIgnoringCacheData load flag.
     // This prevents a potential bug which may cause a page with a form that uses itself

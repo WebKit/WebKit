@@ -1,5 +1,13 @@
 2003-06-26  Chris Blumenberg  <cblu@apple.com>
 
+	More changes to make WebKit and WebCore compile with gcc 3.3.
+
+        Reviewed by darin.
+
+        * kwq/WebCoreBridge.h:
+
+2003-06-26  Chris Blumenberg  <cblu@apple.com>
+
 	Made WebCore compile with gcc 3.3.
 
         Reviewed by darin.

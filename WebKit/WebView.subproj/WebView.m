@@ -601,13 +601,13 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     }
 
     // Search the first frame, then all the other frames, in order
-    id <WebDocumentSearching> startSearchView = nil;
+    NSView <WebDocumentSearching> *startSearchView = nil;
     BOOL startHasSelection = NO;
     WebFrame *frame = startFrame;
     do {
         id <WebDocumentView> view = [[frame frameView] documentView];
         if ([view conformsToProtocol:@protocol(WebDocumentSearching)]) {
-            id <WebDocumentSearching> searchView = (id <WebDocumentSearching>)view;
+            NSView <WebDocumentSearching> *searchView = (NSView <WebDocumentSearching> *)view;
 
             // first time through
             if (frame == startFrame) {
@@ -618,7 +618,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
                 } else if ([searchView conformsToProtocol:@protocol(WebDocumentText)]) {
                     startHasSelection = [(id <WebDocumentText>)searchView selectedString] != nil;
                 }
-                startSearchView = (id <WebDocumentSearching>)searchView;
+                startSearchView = searchView;
             }
             
             // Note at this point we are assuming the search will be done top-to-bottom,

@@ -168,7 +168,7 @@
 - (void)setScrollbarsVisible:(BOOL)visible
 {
     ASSERT(_frame != nil);
-    return [[_frame frameView] setAllowsScrolling:visible];
+    [[_frame frameView] setAllowsScrolling:visible];
 }
 
 - (BOOL)isStatusBarVisible
@@ -427,7 +427,7 @@
     [[self dataSource] _setIconURL:[NSURL _web_URLWithString:URL] withType:type];
 }
 
-- (void)loadURL:(NSString *)URL referrer:(NSString *)referrer reload:(BOOL)reload target:(NSString *)target triggeringEvent:(NSEvent *)event form:(id <WebDOMElement>)form formValues:(NSDictionary *)values
+- (void)loadURL:(NSString *)URL referrer:(NSString *)referrer reload:(BOOL)reload target:(NSString *)target triggeringEvent:(NSEvent *)event form:(NSObject <WebDOMElement> *)form formValues:(NSDictionary *)values
 {
     if ([target length] == 0) {
 	target = nil;
@@ -442,7 +442,7 @@
     }
 }
 
-- (void)postWithURL:(NSString *)URL referrer:(NSString *)referrer target:(NSString *)target data:(NSData *)data contentType:(NSString *)contentType triggeringEvent:(NSEvent *)event form:(id <WebDOMElement>)form formValues:(NSDictionary *)values
+- (void)postWithURL:(NSString *)URL referrer:(NSString *)referrer target:(NSString *)target data:(NSData *)data contentType:(NSString *)contentType triggeringEvent:(NSEvent *)event form:(NSObject <WebDOMElement> *)form formValues:(NSDictionary *)values
 {
     if ([target length] == 0) {
 	target = nil;
