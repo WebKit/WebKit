@@ -30,13 +30,14 @@
 
 template <class T> class QArray {
 public:
+    QArray(int);
     T &at(uint) const;
     T *data() const;
 
     uint size() const;
-    bool resize(uint size);
+    bool resize(uint);
     
-    T& operator[](int i) const;
+    T &operator[](int) const;
 };
 
 #endif
