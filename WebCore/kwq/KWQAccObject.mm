@@ -800,6 +800,16 @@ static QRect boundingBoxRect(RenderObject* obj)
     AXTextMarkerRef endTextMarker   = [self textMarkerForVisiblePosition: endPosition];
     return [self textMarkerRangeFromMarkers: startTextMarker andEndMarker:endTextMarker];
 }
+
+- (AXTextMarkerRangeRef)textMarkerRange
+{
+    if (!m_renderer)
+        return nil;
+        
+    AXTextMarkerRef startTextMarker = [self textMarkerForVisiblePosition: VisiblePosition(m_renderer->element(), m_renderer->caretMinOffset(), khtml::VP_DEFAULT_AFFINITY)];
+    AXTextMarkerRef endTextMarker   = [self textMarkerForVisiblePosition: VisiblePosition(m_renderer->element(), m_renderer->caretMaxRenderedOffset(), khtml::VP_DEFAULT_AFFINITY)];
+    return [self textMarkerRangeFromMarkers: startTextMarker andEndMarker:endTextMarker];
+}
 #endif
 
 - (DocumentImpl *)topDocument
@@ -958,6 +968,7 @@ static QRect boundingBoxRect(RenderObject* obj)
     if (paramAttributes == nil) {
         paramAttributes = [[NSArray alloc] initWithObjects:
             @"AXUIElementForTextMarker",
+            @"AXTextMarkerRangeForUIElement",
             kAXLineForTextMarkerParameterizedAttribute,
             kAXTextMarkerRangeForLineParameterizedAttribute,
             kAXStringForTextMarkerRangeParameterizedAttribute,
@@ -1000,6 +1011,11 @@ static QRect boundingBoxRect(RenderObject* obj)
         return nil;
     
     return obj->document()->getAccObjectCache()->accObject(obj);
+}
+
+- (id)doAXTextMarkerRangeForUIElement: (id) uiElement
+{
+    return (id)[uiElement textMarkerRange];
 }
 
 - (id)doAXLineForTextMarker: (AXTextMarkerRef) textMarker
@@ -1655,6 +1671,7 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
     AXValueRef              value = nil;
     NSNumber *              number = nil;
     NSArray *               array = nil;
+    KWQAccObject *          uiElement = nil;
     CGPoint                 point;
     CGSize                  size;
     CGRect                  rect;
@@ -1673,6 +1690,9 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
 
     else if (CFGetTypeID(parameter) == AXTextMarkerRangeGetTypeID())
         textMarkerRange = (AXTextMarkerRangeRef) parameter;
+
+    else if ([parameter isKindOfClass:[KWQAccObject self]])
+        uiElement = (KWQAccObject *) parameter;
 
     else if ([parameter isKindOfClass:[NSNumber self]])
         number = parameter;
@@ -1706,6 +1726,9 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
     // dispatch
     if ([attribute isEqualToString: @"AXUIElementForTextMarker"])
         return [self doAXUIElementForTextMarker: textMarker];
+
+    if ([attribute isEqualToString: @"AXTextMarkerRangeForUIElement"])
+        return [self doAXTextMarkerRangeForUIElement: uiElement];
 
     if ([attribute isEqualToString: (NSString *) kAXLineForTextMarkerParameterizedAttribute])
         return [self doAXLineForTextMarker: textMarker];

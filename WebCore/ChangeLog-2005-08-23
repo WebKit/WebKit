@@ -1,5 +1,18 @@
 2005-02-24  David Harrison  <harrison@apple.com>
 
+        Reviewed by Ken.
+        
+        <rdar://problem/3990849> AX: textMarkerRange for an AXUIElement within an AXWebArea
+
+        * kwq/KWQAccObject.mm:
+        (-[KWQAccObject textMarkerRange]):
+        (-[KWQAccObject accessibilityParameterizedAttributeNames]):
+        (-[KWQAccObject doAXTextMarkerRangeForUIElement:]):
+        (-[KWQAccObject accessibilityAttributeValue:forParameter:]):
+        Added AXTextMarkerRangeForUIElement, or you can send textMarkerRange to the UIElement itself.
+
+2005-02-24  David Harrison  <harrison@apple.com>
+
         Reviewed by Vicki.
 
         <rdar://problem/4004279> 3 AXSelectedTextChanged notifications are firing each time I type a character
