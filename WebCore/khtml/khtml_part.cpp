@@ -2323,7 +2323,7 @@ void KHTMLPart::setCaretVisible(bool flag)
     clearCaretRectIfNeeded();
     setFocusNodeIfNeeded(d->m_selection);
     d->m_caretVisible = flag;
-    notifySelectionChanged();
+    selectionLayoutChanged();
 }
 
 void KHTMLPart::slotClearSelection()
@@ -2397,10 +2397,11 @@ void KHTMLPart::selectionLayoutChanged()
 void KHTMLPart::notifySelectionChanged(bool closeTyping)
 {
     selectionLayoutChanged();
-    clearTypingStyle();
 
-    if (closeTyping)
+    if (closeTyping) {
         TypingCommand::closeTyping(lastEditCommand());
+        clearTypingStyle();
+    }
     
     emitSelectionChanged();
     
@@ -5278,8 +5279,10 @@ void KHTMLPart::applyStyle(CSSStyleDeclarationImpl *style)
             // do nothing
             break;
         case Selection::CARET:
-            // FIXME: This blows away all the other properties of the typing style.
-            setTypingStyle(style);
+            if (typingStyle())
+                typingStyle()->merge(style);
+            else
+                setTypingStyle(style);
             break;
         case Selection::RANGE:
             if (xmlDocImpl() && style) {

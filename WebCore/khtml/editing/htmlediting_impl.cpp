@@ -1171,6 +1171,46 @@ bool DeleteSelectionCommandImpl::containsOnlyWhitespace(const Position &start, c
     return true;
 }
 
+CSSStyleDeclarationImpl *DeleteSelectionCommandImpl::computeTypingStyle(const Position &pos) const
+{
+    ElementImpl *element = pos.element();
+    ElementImpl *shallowElement = pos.equivalentShallowPosition().element();
+    
+    ElementImpl *parent = Position(shallowElement->parentNode(), 0).element();
+    if (!parent)
+        return 0;
+
+    // Loop from the element up to the shallowElement, building up the
+    // style that this node has that its parent does not.
+    CSSStyleDeclarationImpl *result = document()->createCSSStyleDeclaration();
+    NodeImpl *node = element;
+    while (1) {
+        // check for an inline style declaration
+        if (node->isHTMLElement()) {
+            CSSStyleDeclarationImpl *s = static_cast<HTMLElementImpl *>(node)->inlineStyleDecl();
+            if (s)
+                result->merge(s, false);
+        }
+        // check if this is a bold tag
+        if (node->id() == ID_B) {
+            CSSValueImpl *boldValue = result->getPropertyCSSValue(CSS_PROP_FONT_WEIGHT);
+            if (!boldValue)
+                result->setProperty(CSS_PROP_FONT_WEIGHT, "bold");
+        }
+        // check if this is an italic tag
+        if (node->id() == ID_I) {
+            CSSValueImpl *italicValue = result->getPropertyCSSValue(CSS_PROP_FONT_STYLE);
+            if (!italicValue)
+                result->setProperty(CSS_PROP_FONT_STYLE, "italic");
+        }
+        if (node == shallowElement)
+            break;
+        node = node->parentNode();
+    }
+
+    return result;
+}
+
 void DeleteSelectionCommandImpl::doApply()
 {
     // If selection has not been set to a custom selection when the command was created,
@@ -1289,7 +1329,16 @@ void DeleteSelectionCommandImpl::doApply()
             replaceText(textNode, leading.offset(), 1, nonBreakingSpaceString());
         }
     }
-        
+
+    //
+    // Figure out the typing style and set it on the part.
+    // This point in the code is a "bottleneck" that takes care
+    // of updating the typing style for the delete key, the return
+    // key, typed characters, and other deleting functions like the
+    // cut command.
+    //
+    document()->part()->setTypingStyle(computeTypingStyle(downstreamStart));
+
     //
     // Do the delete
     //
@@ -1485,7 +1534,6 @@ void InputNewlineCommandImpl::doApply()
     
     // Handle the case where there is a typing style.
     if (document()->part()->typingStyle()) {
-        int exceptionCode = 0;
         ElementImpl *styleElement = createTypingStyleElement();
         styleElement->appendChild(breakNode, exceptionCode);
         ASSERT(exceptionCode == 0);
@@ -1592,6 +1640,8 @@ Position InputTextCommandImpl::prepareForTextInsertion(bool adjustDownstream)
     if (!pos.node()->isTextNode()) {
         NodeImpl *textNode = document()->createEditingTextNode("");
         NodeImpl *nodeToInsert = textNode;
+
+        // Handle the case where there is a typing style.
         if (document()->part()->typingStyle()) {
             int exceptionCode = 0;
             ElementImpl *styleElement = createTypingStyleElement();
@@ -1640,11 +1690,8 @@ Position InputTextCommandImpl::prepareForTextInsertion(bool adjustDownstream)
             styleElement->appendChild(editingTextNode, exceptionCode);
             ASSERT(exceptionCode == 0);
 
-            NodeImpl *node = endingSelection().start().node();
-            if (endingSelection().start().isLastRenderedPositionOnLine())
-                insertNodeAfter(styleElement, node);
-            else
-                insertNodeBefore(styleElement, node);
+            NodeImpl *node = endingSelection().start().equivalentUpstreamPosition().node();
+            insertNodeAfter(styleElement, node);
             pos = Position(editingTextNode, 0);
         }
     }
@@ -1661,8 +1708,6 @@ void InputTextCommandImpl::execute(const DOMString &text)
         deleteSelection();
     else
         deleteCollapsibleWhitespace();
-
-    // EDIT FIXME: Need to take typing style from upstream text, if any.
     
     // Make sure the document is set up to receive text
     Position pos = prepareForTextInsertion(adjustDownstream);

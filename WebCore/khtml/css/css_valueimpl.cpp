@@ -407,6 +407,22 @@ bool CSSStyleDeclarationImpl::parseString( const DOMString &/*string*/, bool )
     // ###
 }
 
+void CSSStyleDeclarationImpl::merge(CSSStyleDeclarationImpl *other, bool argOverridesOnConflict)
+{
+    for (QPtrListIterator<CSSProperty> it(*(other->values())); it.current(); ++it) {
+        CSSProperty *property = it.current();
+        if (getPropertyCSSValue(property->id())) {
+            if (!argOverridesOnConflict)
+                continue;
+            removeProperty(property->id());
+            m_lstValues->append(new CSSProperty(*property));
+        }
+        else {
+            m_lstValues->append(new CSSProperty(*property));
+        }
+    }
+}
+
 // --------------------------------------------------------------------------------------
 
 CSSValueImpl::CSSValueImpl()

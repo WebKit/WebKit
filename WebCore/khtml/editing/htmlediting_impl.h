@@ -252,6 +252,7 @@ private:
     void deleteDownstreamWS(const DOM::Position &start);
     bool containsOnlyWhitespace(const DOM::Position &start, const DOM::Position &end);
     void joinTextNodesWithSameStyle();
+    DOM::CSSStyleDeclarationImpl *computeTypingStyle(const DOM::Position &pos) const;
 
     DOM::Selection m_selectionToDelete;
     bool m_hasSelectionToDelete;

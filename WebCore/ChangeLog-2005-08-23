@@ -1,3 +1,36 @@
+2004-07-28  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin
+
+        Fix for this bug:
+        
+        <rdar://problem/3681552> html editing needs to preserve typing font when replacing selection
+
+        * khtml/css/css_valueimpl.cpp:
+        (CSSStyleDeclarationImpl::merge): New helper that merges styles together. Helpful for
+        dealing with typing styles.
+        * khtml/css/css_valueimpl.h:
+        * khtml/editing/htmlediting_impl.cpp:
+        (khtml::DeleteSelectionCommandImpl::computeTypingStyle): New helper that updates the
+        typing style based on the current selection. This is a convenient bottleneck for all
+        the code that needs to worry about typing style.
+        (khtml::DeleteSelectionCommandImpl::doApply): Update typing style before doing the delete.
+        (khtml::InputNewlineCommandImpl::doApply): No need to redeclare exceptionCode local.
+        Improve comments. 
+        (khtml::InputTextCommandImpl::prepareForTextInsertion): Remove unneeded complication when 
+        figuring out where to insert style node. Not even sure what I was trying to do here, but
+        it does not seem to be needed any more.
+        (khtml::InputTextCommandImpl::execute): Remove unneeded comment.
+        * khtml/editing/htmlediting_impl.h: Declare new computeTypingStyle helper.
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::setCaretVisible): Call selectionLayoutChanged instead of notifySelectionChanged
+        in this function. The selection did not change simply by calling this function, but it
+        does need a layout.
+        (KHTMLPart::notifySelectionChanged): Treat clearing the typing style much like closing typing,
+        instead of clearing it unconditionally.
+        (KHTMLPart::applyStyle): In the case where the current selection is a caret, merge the
+        style being applied with any current typing style that already exists.
+
 2004-07-28  Darin Adler  <darin@apple.com>
 
         Reviewed by Ken.

@@ -83,6 +83,8 @@ public:
     QPtrList<CSSProperty> *values() { return m_lstValues; }
     void setNode(NodeImpl *_node) { m_node = _node; }
     NodeImpl* node() const { return m_node; }
+    
+    void merge(CSSStyleDeclarationImpl *, bool argOverridesOnConflict=true);
 
     void setChanged();
 
