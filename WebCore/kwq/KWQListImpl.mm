@@ -211,7 +211,7 @@ void *KWQListImpl::at(uint n)
     }
 
     cur = node;
-    return node->data;
+    return node ? node->data : 0;
 }
 
 bool KWQListImpl::insert(uint n, const void *item)
