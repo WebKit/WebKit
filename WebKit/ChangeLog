@@ -1,3 +1,16 @@
+2002-09-13  Maciej Stachowiak  <mjs@apple.com>
+
+	WebKit changes for:
+	
+	- fixed 3032238 - Eliminate "Ask each time" choice for cookies
+	
+        * Panels.subproj/WebStandardPanels.h:
+        * Panels.subproj/WebStandardPanels.m:
+        (-[WebStandardPanels useStandardAuthenticationPanel]):
+        * WebCoreSupport.subproj/WebCookieAdapter.m:
+        (-[WebCookieAdapter cookiesEnabled]):
+        * WebKit.pbproj/project.pbxproj:
+
 2002-09-13  Darin Adler  <darin@apple.com>
 
 	Added assertions, and dealt with some breakage I created while

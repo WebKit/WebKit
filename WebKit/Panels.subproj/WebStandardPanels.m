@@ -7,11 +7,9 @@
 #import <WebKit/WebStandardPanels.h>
 #import <WebKit/WebStandardPanelsPrivate.h>
 #import <WebKit/WebPanelAuthenticationHandler.h>
-#import <WebKit/WebPanelCookieAcceptHandler.h>
 #import <WebKit/WebFrame.h>
 #import <WebKit/WebView.h>
 #import <WebFoundation/WebAuthenticationManager.h>
-#import <WebFoundation/WebCookieManager.h>
 
 #import <Carbon/Carbon.h>
 
@@ -19,7 +17,6 @@
 {
 @public
     WebPanelAuthenticationHandler *panelAuthenticationHandler;
-    WebPanelCookieAcceptHandler *panelCookieAcceptHandler;
     NSMutableDictionary *URLContainers;
 }
 @end
@@ -102,27 +99,6 @@ static void initSharedStandardPanels(void)
 -(BOOL)useStandardAuthenticationPanel
 {
     return _privatePanels->panelAuthenticationHandler != nil;
-}
-
--(void)setUseStandardCookieAcceptPanel:(BOOL)use
-{
-    if (use) {
-        if (![self useStandardCookieAcceptPanel]) {
-            _privatePanels->panelCookieAcceptHandler = [[WebPanelCookieAcceptHandler alloc] init];
-            [[WebCookieManager sharedCookieManager] addAcceptHandler:_privatePanels->panelCookieAcceptHandler];
-        }
-    } else {
-        if ([self useStandardCookieAcceptPanel]) {
-            [[WebCookieManager sharedCookieManager] removeAcceptHandler:_privatePanels->panelCookieAcceptHandler];
-            [_privatePanels->panelCookieAcceptHandler release];
-            _privatePanels->panelCookieAcceptHandler = nil;
-        }
-    }
-}
-
--(BOOL)useStandardCookieAcceptPanel
-{
-    return _privatePanels->panelCookieAcceptHandler != nil;
 }
 
 -(void)didStartLoadingURL:(NSURL *)URL inWindow:(NSWindow *)window

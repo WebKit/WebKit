@@ -28,8 +28,6 @@
 
     if ([acceptCookiesPref isEqualTo:WebAcceptCookiesPreferenceNever]) {
         result = NO;
-    } else if ([acceptCookiesPref isEqualTo:WebAcceptCookiesPreferenceAsk]) {
-        result = YES;
     } else if ([acceptCookiesPref isEqualTo:WebAcceptCookiesPreferenceAlways]) {
         result = YES;
     } else {

@@ -18,8 +18,6 @@
 
 -(void)setUseStandardAuthenticationPanel:(BOOL)use;
 -(BOOL)useStandardAuthenticationPanel;
--(void)setUseStandardCookieAcceptPanel:(BOOL)use;
--(BOOL)useStandardCookieAcceptPanel;
 
 -(void)didStartLoadingURL:(NSURL *)URL inWindow:(NSWindow *)window;
 -(void)didStopLoadingURL:(NSURL *)URL inWindow:(NSWindow *)window;
