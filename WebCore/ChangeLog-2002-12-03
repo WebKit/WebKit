@@ -1,3 +1,8 @@
+2002-09-09  Darin Adler  <darin@apple.com>
+
+        * kwq/KWQKHTMLPartImpl.mm: (KWQKHTMLPartImpl::nextKeyView):
+	Remove stray printf.
+
 2002-09-09  David Hyatt  <hyatt@apple.com>
 
 	Switching over to the layer system for the handling of mouse

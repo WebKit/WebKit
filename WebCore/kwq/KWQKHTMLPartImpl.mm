@@ -610,7 +610,6 @@ NSView *KWQKHTMLPartImpl::nextKeyView(NodeImpl *node, KWQSelectionDirection dire
     }
     
     // If all else fails, make a loop by starting from 0.
-    printf("got all the way down to nextKeyViewInFrameHierarchy\n");
     return nextKeyViewInFrameHierarchy(0, direction);
 }
 
