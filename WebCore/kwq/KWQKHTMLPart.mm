@@ -3542,8 +3542,13 @@ void KHTMLPart::print()
 
 KJS::Bindings::Instance *KWQKHTMLPart::getAppletInstanceForView (NSView *aView)
 {
+    jobject applet;
+    
     // Get a pointer to the actual Java applet instance.
-    jobject applet = [_bridge pollForAppletInView:aView];
+    if ([_bridge respondsToSelector:@selector(getAppletInView:)])
+        applet = [_bridge getAppletInView:aView];
+    else
+        applet = [_bridge pollForAppletInView:aView];
     
     if (applet)
         // Wrap the Java instance in a language neutral binding and hand

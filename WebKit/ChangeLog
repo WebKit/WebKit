@@ -1,3 +1,14 @@
+2004-08-18  Richard Williamson   <rjw@apple.com>
+
+        Replace horrible pollForAppletInView: with new
+        webPlugInGetApplet.  The details of how the applet instance
+        is provided now belong to the Java team.  Yeh.
+		
+        Reviewed by Chris.
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge getAppletInView:]):
+
 2004-08-17  Richard Williamson   <rjw@apple.com>
 
         Fixed <rdar://problem/3759093> Need PDF context menu: "Open in Preview" or other external app

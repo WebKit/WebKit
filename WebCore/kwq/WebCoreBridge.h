@@ -475,6 +475,9 @@ typedef enum {
 
 - (void)print;
 
+- (jobject)getAppletInView:(NSView *)view;
+
+// Deprecated, use getAppletInView: instead.
 - (jobject)pollForAppletInView:(NSView *)view;
 
 - (NSUndoManager *)undoManager;

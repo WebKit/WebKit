@@ -22,6 +22,7 @@
 #import <WebKit/WebHistoryItemPrivate.h>
 #import <WebKit/WebHTMLRepresentationPrivate.h>
 #import <WebKit/WebHTMLViewInternal.h>
+#import <WebKit/WebJavaPlugIn.h>
 #import <WebKit/WebJavaScriptTextInputPanel.h>
 #import <WebKit/WebKitErrorsPrivate.h>
 #import <WebKit/WebKitLogging.h>
@@ -1243,9 +1244,20 @@ static id <WebFormDelegate> formDelegate(WebBridge *self)
     }
 }
 
+- (jobject)getAppletInView:(NSView *)view
+{
+    jobject applet = 0;
+
+    if ([view respondsToSelector: @selector(webPlugInGetApplet:)])
+        applet = [view webPlugInGetApplet];
+        
+    return applet;
+}
+
 // NOTE: pollForAppletInView: will block until the block is ready to use, or
 // until a timeout is exceeded.  It will return nil if the timeour is
 // exceeded.
+// Deprecated, use getAppletInView:.
 - (jobject)pollForAppletInView: (NSView *)view
 {
     jobject applet = 0;

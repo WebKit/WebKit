@@ -1,3 +1,14 @@
+2004-08-18  Richard Williamson   <rjw@apple.com>
+
+        Replace horrible pollForAppletInView: with new
+        webPlugInGetApplet.  The details of how the applet instance
+        is provided now belong to the Java team.  Yeh.
+		
+        Reviewed by Chris.
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::getAppletInstanceForView):
+        * kwq/WebCoreBridge.h:
+
 2004-08-18  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3692199> 8A146: Safari crashes in toHTMLWithOptions, selection with no renderer (various sites)
