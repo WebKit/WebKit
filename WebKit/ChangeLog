@@ -1,5 +1,34 @@
 2003-02-06  Chris Blumenberg  <cblu@apple.com>
 
+	- Made WebDownload.h a public header.
+	- Added stubs for the new methods.
+	- Moved all private methods to the WebPrivate category.
+	- Added FIXMEs for things that needed to be removed or implemented.
+
+        Reviewed by rjw.
+
+        * Downloads.subproj/WebDownload.h:
+        * Downloads.subproj/WebDownload.m:
+        (-[WebDownload initWithRequest:delegate:]):
+        (-[WebDownload dealloc]):
+        (-[WebDownload cancel]):
+        (-[WebDownload _initWithLoadingHandle:request:response:delegate:]):
+        (-[WebDownload initWithDataSource:]):
+        (-[WebDownload receivedData:]):
+        (-[WebDownload finishedLoading]):
+        (-[WebDownload decodeHeaderData:dataForkData:resourceForkData:]):
+        (-[WebDownload decodeData:dataForkData:resourceForkData:]):
+        (-[WebDownload createFileIfNecessary]):
+        (-[WebDownload writeDataForkData:resourceForkData:]):
+        (-[WebDownload dataIfDoneBufferingData:]):
+        (-[WebDownload decodeData:]):
+        (-[WebDownload finishDecoding]):
+        * Downloads.subproj/WebDownloadPrivate.h:
+        * WebKit.pbproj/project.pbxproj:
+        * WebView.subproj/WebMainResourceClient.m:
+
+2003-02-06  Chris Blumenberg  <cblu@apple.com>
+
 	Renamed WebDownloadHandler to WebDownload.
 	Made ivars of WebDownload private.
 

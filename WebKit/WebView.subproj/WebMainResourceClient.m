@@ -22,7 +22,7 @@
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDocument.h>
-#import <WebKit/WebDownload.h>
+#import <WebKit/WebDownloadPrivate.h>
 #import <WebKit/WebFrame.h>
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebKitErrors.h>

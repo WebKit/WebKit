@@ -7,7 +7,33 @@
 
 #import <WebKit/WebDownload.h>
 
+@class WebDataSource;
+@class WebResourceHandle;
+
 @interface WebDownload (WebPrivate)
+- _initWithLoadingHandle:(WebResourceHandle *)handle
+                 request:(WebResourceRequest *)request
+                response:(WebResourceRequest *)response
+                delegate:(id <WebDownloadDelegate>)delegate;
+// FIXME: Remove many of the following methods.
+- initWithDataSource:(WebDataSource *)dSource;
+- (WebError *)receivedData:(NSData *)data;
+- (WebError *)finishedLoading;
+- (void)decodeHeaderData:(NSData *)headerData
+            dataForkData:(NSData **)dataForkData
+        resourceForkData:(NSData **)resourceForkData;
+- (BOOL)decodeData:(NSData *)data
+      dataForkData:(NSData **)dataForkData
+  resourceForkData:(NSData **)resourceForkData;
+- (void)closeFork:(SInt16)forkRefNum deleteFile:(BOOL)deleteFile;
+- (void)closeFileAndDelete:(BOOL)deleteFile;
+- (void)closeFile;
+- (void)cleanUpAfterFailure;
+- (WebError *)createFileIfNecessary;
+- (WebError *)writeDataForkData:(NSData *)dataForkData resourceForkData:(NSData *)resourceForkData;
+- (NSData *)dataIfDoneBufferingData:(NSData *)data;
+- (WebError *)decodeData:(NSData *)data;
+- (BOOL)finishDecoding;
 - (NSString *)path;
 - (WebError *)errorWithCode:(int)code;
 - (void)cancelWithError:(WebError *)error;

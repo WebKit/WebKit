@@ -93,14 +93,10 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
 
 @implementation WebDownload
 
-- initWithDataSource:(WebDataSource *)dSource
+- initWithRequest:(WebResourceRequest *)request delegate:(id <WebDownloadDelegate>)delegate
 {
     [super init];
-
-    _private = [[WebDownloadPrivate alloc] init];
-    _private->dataSource = [dSource retain];
-    
-    LOG(Download, "Download started for: %@", [[dSource request] URL]);
+    // FIXME: Implement.
     return self;
 }
 
@@ -108,6 +104,68 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
 {
     [_private release];
     [super dealloc];
+}
+
+- (void)cancel
+{
+    _private->isCancelled = YES;
+    [self cleanUpAfterFailure];
+}
+
+@end
+
+@implementation WebDownload (WebPrivate)
+
+- _initWithLoadingHandle:(WebResourceHandle *)handle
+                 request:(WebResourceRequest *)request
+                response:(WebResourceRequest *)response
+                delegate:(id <WebDownloadDelegate>)delegate
+{
+    [super init];
+    // FIXME: Implement.
+    return self;
+}
+
+// FIXME: Remove many of the following methods.
+
+- initWithDataSource:(WebDataSource *)dSource
+{
+    [super init];
+
+    _private = [[WebDownloadPrivate alloc] init];
+    _private->dataSource = [dSource retain];
+
+    LOG(Download, "Download started for: %@", [[dSource request] URL]);
+    return self;
+}
+
+- (WebError *)receivedData:(NSData *)data
+{
+    ASSERT(data);
+
+    return [self decodeData:[self dataIfDoneBufferingData:data]];
+}
+
+- (WebError *)finishedLoading
+{
+    WebError *error = [self decodeData:_private->bufferedData];
+    [_private->bufferedData release];
+    _private->bufferedData = nil;
+    if (error) {
+        return error;
+    }
+
+    if (![self finishDecoding]) {
+        ERROR("Download decoding failed.");
+        [self cleanUpAfterFailure];
+        return [self errorWithCode:WebKitErrorDownloadDecodingFailedToComplete];
+    }
+
+    [self closeFile];
+
+    LOG(Download, "Download complete. Saved to: %@", [_private->dataSource downloadPath]);
+
+    return nil;
 }
 
 - (void)decodeHeaderData:(NSData *)headerData
@@ -118,7 +176,7 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
     ASSERT([headerData length]);
     ASSERT(dataForkData);
     ASSERT(resourceForkData);
-    
+
     unsigned i;
     for (i = 0; i < [_private->decoderClasses count]; i++) {
         Class decoderClass = [_private->decoderClasses objectAtIndex:i];
@@ -134,7 +192,7 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
             }
 
             [_private->decoderSequence addObject:decoder];
-            
+
             [self decodeHeaderData:*dataForkData dataForkData:dataForkData resourceForkData:resourceForkData];
             break;
         }
@@ -149,20 +207,20 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
     ASSERT([data length]);
     ASSERT(dataForkData);
     ASSERT(resourceForkData);
-    
+
     if (!_private->decoderSequence) {
         _private->decoderSequence = [[NSMutableArray array] retain];
         [self decodeHeaderData:data dataForkData:dataForkData resourceForkData:resourceForkData];
     } else {
         unsigned i;
         for (i = 0; i< [_private->decoderSequence count]; i++) {
-            NSObject <WebDownloadDecoder> *decoder = [_private->decoderSequence objectAtIndex:i];            
+            NSObject <WebDownloadDecoder> *decoder = [_private->decoderSequence objectAtIndex:i];
             BOOL didDecode = [decoder decodeData:data dataForkData:dataForkData resourceForkData:resourceForkData];
-    
+
             if (!didDecode) {
                 return NO;
             }
-            
+
             data = *dataForkData;
         }
     }
@@ -171,7 +229,7 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
         *dataForkData = data;
         *resourceForkData = nil;
     }
-    
+
     return YES;
 }
 
@@ -209,11 +267,11 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
     if (_private->fileRefPtr) {
         return nil;
     }
-    
+
     NSFileManager *fileManager = [NSFileManager defaultManager];
     NSString *path = [_private->dataSource downloadPath];
     NSObject <WebDownloadDecoder> *lastDecoder = [_private->decoderSequence lastObject];
-        
+
     NSString *filename = [[lastDecoder filename] _web_filenameByFixingIllegalCharacters];
 
     if ([filename length] != 0) {
@@ -250,7 +308,7 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
             [response createdDate], NSFileCreationDate,
             [response lastModifiedDate], NSFileModificationDate, nil];
     }
-    
+
     if (![fileManager _web_createFileAtPath:path contents:nil attributes:fileAttributes]) {
         ERROR("-[NSFileManager _web_createFileAtPath:contents:attributes:] failed.");
         return [self errorWithCode:WebKitErrorCannotCreateFile];
@@ -276,9 +334,9 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
     if (error) {
         return error;
     }
-    
+
     BOOL didWrite = YES;
-    
+
     if ([dataForkData length]) {
         didWrite = [self writeForkData:dataForkData isDataFork:YES];
     }
@@ -303,7 +361,7 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
         // When bufferedData's length is 0, we're done buffering.
         return data;
     } else {
-        // Append new data. 
+        // Append new data.
         [_private->bufferedData appendData:data];
     }
 
@@ -324,10 +382,10 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
     if ([data length] == 0) {
         return nil;
     }
-    
+
     NSData *dataForkData = nil;
     NSData *resourceForkData = nil;
-    
+
     if (![self decodeData:data dataForkData:&dataForkData resourceForkData:&resourceForkData]) {
         ERROR("Download decoding failed.");
         [self cleanUpAfterFailure];
@@ -342,18 +400,11 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
     return nil;
 }
 
-- (WebError *)receivedData:(NSData *)data
-{
-    ASSERT(data);
-    
-    return [self decodeData:[self dataIfDoneBufferingData:data]];
-}
-
 - (BOOL)finishDecoding
 {
     NSObject <WebDownloadDecoder> *decoder;
     unsigned i;
-    
+
     for (i = 0; i < [_private->decoderSequence count]; i++) {
         decoder = [_private->decoderSequence objectAtIndex:i];
         if (![decoder finishDecoding]) {
@@ -363,38 +414,6 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
 
     return YES;
 }
-
-- (WebError *)finishedLoading
-{
-    WebError *error = [self decodeData:_private->bufferedData];
-    [_private->bufferedData release];
-    _private->bufferedData = nil;
-    if (error) {
-        return error;
-    }
-
-    if (![self finishDecoding]) {
-        ERROR("Download decoding failed.");
-        [self cleanUpAfterFailure];
-        return [self errorWithCode:WebKitErrorDownloadDecodingFailedToComplete];
-    }
-
-    [self closeFile];
-
-    LOG(Download, "Download complete. Saved to: %@", [_private->dataSource downloadPath]);
-
-    return nil;
-}
-
-- (void)cancel
-{
-    _private->isCancelled = YES;
-    [self cleanUpAfterFailure];
-}
-
-@end
-
-@implementation WebDownload (WebPrivate)
 
 - (NSString *)path
 {
