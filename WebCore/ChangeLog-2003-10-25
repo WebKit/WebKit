@@ -7,6 +7,15 @@
 
 2002-04-03  Darin Adler  <darin@apple.com>
 
+	* src/Makefile.am: Concatenate libwebcore.exp and libwebcoretests.exp.
+	* src/libwebcore.exp: Update with exports that are needed when inlining is
+        turned off.
+	* src/libwebcoretests.exp: Added. Exports that we need to run the test in the
+        Tests directory.
+        * .cvsignore: Ignore the concatenated file.
+
+2002-04-03  Darin Adler  <darin@apple.com>
+
 	* src/Makefile.am: Don't strip at all if STRIP_FLAGS are empty.
 	* src/kwq/qt/qtextcodec.h: Remove stray undef.
 
