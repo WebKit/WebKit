@@ -1,3 +1,12 @@
+2004-09-08  Maciej Stachowiak  <mjs@apple.com>
+
+        - fixed deployment build problems noticed by Grant
+
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::caretRect):
+        * khtml/rendering/render_text.cpp:
+        (RenderText::caretRect):
+
 2004-09-08  David Hyatt  <hyatt@apple.com>
 
 	Fix XML so that elements with no namespace never make HTML elements (when their names coincidentally match).

@@ -667,7 +667,7 @@ QRect RenderText::caretRect(int offset, bool override)
         return QRect(-1, -1, 1, -1);
     }
 
-    int _x, _y, width, height;
+    int _x, _y, height;
 
     height = box->root()->bottomOverflow() - box->root()->topOverflow();
     _y = box->root()->topOverflow();
@@ -688,7 +688,7 @@ QRect RenderText::caretRect(int offset, bool override)
     _x += absx;
     _y += absy;
 
-    return QRect(_x, _y, width, height);
+    return QRect(_x, _y, 1, height);
 }
 
 void RenderText::posOfChar(int chr, int &x, int &y)

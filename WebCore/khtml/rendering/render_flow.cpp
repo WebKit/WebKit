@@ -513,6 +513,7 @@ QRect RenderFlow::caretRect(int offset, bool override)
         case KHTML_LEFT:
         case TAAUTO:
         case JUSTIFY:
+        default:
             _x = 0;
             break;
         case CENTER:
