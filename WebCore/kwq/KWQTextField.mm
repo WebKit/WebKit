@@ -306,6 +306,7 @@
 
 - (void)fieldEditorWillBecomeFirstResponder
 {
+    //FIXME:  Note due to 3178518, this code is never called.
     QFocusEvent event(QEvent::FocusIn);
     (const_cast<QObject *>(widget->eventFilterObject()))->eventFilter(widget, &event);
 }
