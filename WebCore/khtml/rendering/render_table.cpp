@@ -622,7 +622,7 @@ RenderTableCell* RenderTable::cellAbove(RenderTableCell* cell) const
     // Find the section and row to look in
     int r = cell->row();
     RenderTableSection *section;
-    int rAbove;
+    int rAbove = 0;
     if (r > 0) {
         // cell is not in the first row, so use the above row in its own section
         section = cell->section();

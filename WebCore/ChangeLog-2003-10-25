@@ -1,3 +1,12 @@
+2003-04-14  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed build failure.
+
+        Reviewed by darin.
+
+        * khtml/rendering/render_table.cpp:
+        (RenderTable::cellAbove):
+
 2003-04-12  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: 3162338 - Embedding SVG with <object type="image/svg+xml"> doesn't work
