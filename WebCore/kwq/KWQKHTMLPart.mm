@@ -3878,6 +3878,7 @@ DocumentFragmentImpl *KWQKHTMLPart::documentFragmentWithText(NSString *text)
     [string replaceOccurrencesOfString:@"\r\n" withString:@"\n" options:0 range:NSMakeRange(0, [string length])];
     [string replaceOccurrencesOfString:@"\r" withString:@"\n" options:0 range:NSMakeRange(0, [string length])];
     NSArray *array = [string componentsSeparatedByString:@"\n"];
+    [string release];
     int count = [array count];
     int i;
     for (i = 0; i < count; i++) {
