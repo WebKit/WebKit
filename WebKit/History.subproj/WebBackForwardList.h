@@ -1,5 +1,8 @@
-/*	WebBackForwardList.h
-	Copyright 2001, Apple, Inc. All rights reserved.
+/*
+    WebBackForwardList.h
+    Copyright (C) 2003 Apple Computer, Inc. All rights reserved.    
+    
+    Public header file.
 */
 
 #import <Foundation/Foundation.h>

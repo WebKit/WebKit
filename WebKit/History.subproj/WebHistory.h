@@ -1,9 +1,9 @@
 /*	
-        WebHistory.h
-	Copyright 2001, 2002, Apple Computer, Inc.
-
-        Public header file.
-*/
+    WebHistory.h
+    Copyright (C) 2003 Apple Computer, Inc. All rights reserved.    
+    
+    Public header file.
+ */
 #import <Foundation/Foundation.h>
 
 @class NSError;

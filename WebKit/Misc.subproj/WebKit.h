@@ -1,6 +1,8 @@
 /*	
-        WebKit.h
-	Copyright 2001, Apple, Inc. All rights reserved.
+    WebKit.h
+    Copyright (C) 2003 Apple Computer, Inc. All rights reserved.    
+
+    Public header file.
 */
 
 #import <WebKit/WebBackForwardList.h>

@@ -1,8 +1,8 @@
 /*	
-        WebFrameLoadDelegate.h
-	Copyright 2001, 2002, Apple, Inc. All rights reserved.
-
-        Public header file.
+    WebFrameLoadDelegate.h
+    Copyright (C) 2003 Apple Computer, Inc. All rights reserved.
+    
+    Public header file.
 */
 
 #import <Cocoa/Cocoa.h>

@@ -1,11 +1,9 @@
 /*
- *  CarbonUtils.h
- *  WebKit
- *
- *  Created by Ed Voas on Mon Feb 17 2003.
- *  Copyright (c) 2003 __MyCompanyName__. All rights reserved.
- *
- */
+    CarbonUtils.h
+    Copyright (C) 2003 Apple Computer, Inc. All rights reserved.
+    
+    Public header file.
+*/
 #ifndef __HIWEBCARBONUTILS__
 #define __HIWEBCARBONUTILS__
 

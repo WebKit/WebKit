@@ -1,3 +1,28 @@
+2003-04-29  Richard Williamson   <rjw@apple.com>
+
+        Added "Copyright (C) 2003 Apple Computer, Inc. All rights reserved."
+        to all public headers.  Also made formatting consistent.
+    
+        Reviewed by darin.
+
+        * Carbon.subproj/CarbonUtils.h:
+        * Carbon.subproj/HIWebView.h:
+        * History.subproj/WebBackForwardList.h:
+        * History.subproj/WebHistory.h:
+        * History.subproj/WebHistoryItem.h:
+        * Misc.subproj/WebKit.h:
+        * Misc.subproj/WebKitErrors.h:
+        * WebView.subproj/WebDataSource.h:
+        * WebView.subproj/WebDocument.h:
+        * WebView.subproj/WebFrame.h:
+        * WebView.subproj/WebFrameLoadDelegate.h:
+        * WebView.subproj/WebFrameView.h:
+        * WebView.subproj/WebPolicyDelegate.h:
+        * WebView.subproj/WebPreferences.h:
+        * WebView.subproj/WebResourceLoadDelegate.h:
+        * WebView.subproj/WebUIDelegate.h:
+        * WebView.subproj/WebView.h:
+
 2003-04-28  Don Melton  <gramps@apple.com>
 
 	Fixed 3225050 -- Default font size should be 16px

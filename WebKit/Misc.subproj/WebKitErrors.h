@@ -1,8 +1,8 @@
 /*	
-        WebKitErrors.h
-	Copyright 2002, Apple, Inc. All rights reserved.
-        
-        Public header file.
+    WebKitErrors.h
+    Copyright (C) 2003 Apple Computer, Inc. All rights reserved.    
+    
+    Public header file.
 */
 
 extern NSString *WebKitErrorDomain;
