@@ -28,7 +28,7 @@
 
 #include <qwidget.h>
 #include <KWQFrame.h>
-#include <KWQScrollbar.h>
+#include <KWQScrollBar.h>
 #include <qstring.h>
 
 class QTableView : public QFrame {
