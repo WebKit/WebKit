@@ -469,6 +469,8 @@ Value ArrayProtoFuncImp::call(ExecState *exec, Object &thisObj, const List &args
       Value element = thisObj.get(exec,k);
       if (element.type() != UndefinedType && element.type() != NullType)
         str += element.toString(exec);
+      if ( exec->hadException() )
+	break;
     }
     result = String(str);
     break;

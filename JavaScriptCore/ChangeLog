@@ -1,3 +1,17 @@
+2003-12-02  Maciej Stachowiak  <mjs@apple.com>
+
+        Merged patches from Harri Porten and David Faure to fix:
+
+	<rdar://problem/3497643>: reproducible crash printing self-referential array
+        
+	* kjs/array_object.cpp:
+        (ArrayProtoFuncImp::call): Break out of the loop if an exception was thrown.
+        * kjs/nodes.cpp:
+        (FunctionCallNode::evaluate): Move function call depth check from here...
+        * kjs/object.cpp:
+        (KJS::Object::call): ...to here.
+        * kjs/object.h: Un-inline Object::call now that it does more.
+
 2003-12-01  Richard Williamson   <rjw@apple.com>
 
 	Fixed mistake in method signatures used to get boolean and integer fields.

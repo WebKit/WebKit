@@ -698,9 +698,6 @@ namespace KJS {
   inline bool Object::implementsCall() const
     { return imp()->implementsCall(); }
 
-  inline Value Object::call(ExecState *exec, Object &thisObj, const List &args)
-    { return imp()->call(exec,thisObj,args); }
-
   inline bool Object::implementsHasInstance() const
     { return imp()->implementsHasInstance(); }
 

@@ -698,14 +698,6 @@ Value FunctionCallNode::evaluate(ExecState *exec)
     return throwError(exec, TypeError, "Object %s (result of expression %s) does not allow calls.", v, expr);
   }
 
-#if KJS_MAX_STACK > 0
-  static int depth = 0; // sum of all concurrent interpreters
-  if (++depth > KJS_MAX_STACK) {
-    --depth;
-    return throwError(exec, RangeError, "Exceeded maximum function call depth calling %s (result of expression %s).", v, expr);
-  }
-#endif
-
   Value thisVal;
   if (ref.isMutable())
     thisVal = ref.getBase(exec);
@@ -729,10 +721,6 @@ Value FunctionCallNode::evaluate(ExecState *exec)
 
   Object thisObj = Object::dynamicCast(thisVal);
   Value result = func.call(exec,thisObj, argList);
-
-#if KJS_MAX_STACK > 0
-  --depth;
-#endif
 
   return result;
 }

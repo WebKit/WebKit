@@ -51,6 +51,29 @@ Object Object::dynamicCast(const Value &v)
   return Object(static_cast<ObjectImp*>(v.imp()));
 }
 
+
+Value Object::call(ExecState *exec, Object &thisObj, const List &args)
+{ 
+#if KJS_MAX_STACK > 0
+  static int depth = 0; // sum of all concurrent interpreters
+  if (++depth > KJS_MAX_STACK) {
+    --depth;
+    Object err = Error::create(exec, RangeError,
+                               "Maximum call stack size exceeded.");
+    exec->setException(err);
+    return err;
+  }
+#endif
+
+  Value ret = imp()->call(exec,thisObj,args); 
+
+#if KJS_MAX_STACK > 0
+  --depth;
+#endif
+
+  return ret;
+}
+
 // ------------------------------ ObjectImp ------------------------------------
 
 ObjectImp::ObjectImp(const Object &proto)
