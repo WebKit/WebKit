@@ -444,7 +444,7 @@ static const char * const stateNames[] = {
                     break;
                     
                 case WebFrameLoadTypeReload:
-                    [self _scrollToTop];
+                    [self _saveScrollPositionToItem:[_private currentItem]];
                     break;
     
                 case WebFrameLoadTypeStandard:
@@ -629,13 +629,10 @@ static const char * const stateNames[] = {
                     case WebFrameLoadTypeForward:
                     case WebFrameLoadTypeBack:
                     case WebFrameLoadTypeIndexedBackForward:
+                    case WebFrameLoadTypeReload:
                         [self _restoreScrollPosition];
                         break;
-                        
-                    case WebFrameLoadTypeReload:
-                        [self _scrollToTop];
-                        break;
-        
+
                     case WebFrameLoadTypeStandard:
                     case WebFrameLoadTypeInternal:
                     case WebFrameLoadTypeReloadAllowingStaleData:

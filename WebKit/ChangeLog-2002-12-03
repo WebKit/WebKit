@@ -1,5 +1,13 @@
 2002-11-11  Trey Matteson  <trey@apple.com>
 
+        Fixed 3015884 - Reloading a page should remember the scroll position
+
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _transitionToCommitted]):  Save scroll position on reload
+        (-[WebFrame _isLoadComplete]):  Restore position on reload
+
+2002-11-11  Trey Matteson  <trey@apple.com>
+
         * History.subproj/WebBackForwardList.m:
         (-[WebBackForwardList addEntry:]):  Yank code to avoid adding a duplicate entry, to catch the
 	refresh case.  That's dealt with in WebFramePrivate now.
