@@ -412,6 +412,7 @@ private:
     int _activationEventNumber;
     
     static NSEvent *_currentEvent;
+    static NSResponder *_firstResponderAtMouseDownTime;
 
     KURL _submittedFormURL;
 
