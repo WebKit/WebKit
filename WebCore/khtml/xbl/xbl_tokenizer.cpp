@@ -1,3 +1,5 @@
+#ifndef KHTML_NO_XBL
+
 #include "dom/dom_node.h"
 #include "xml/dom_elementimpl.h"
 #include "misc/htmlattrs.h"
@@ -412,3 +414,5 @@ void XBLTokenHandler::createParameter(const QXmlAttributes& attrs)
 }
 
 }
+
+#endif

@@ -1,3 +1,18 @@
+2004-01-30  David Hyatt  <hyatt@apple.com>
+
+	Disable XBL.  The loadBindings call was taking 0.1-0.25%.  While I know how to get rid of this overhead,
+	it's easier for now to just disable all of XBL.
+
+        * WebCorePrefix.h:
+        * khtml/misc/loader.h:
+        * khtml/xbl/xbl_binding.cpp:
+        * khtml/xbl/xbl_binding_manager.cpp:
+        * khtml/xbl/xbl_docimpl.cpp:
+        * khtml/xbl/xbl_protobinding.cpp:
+        * khtml/xbl/xbl_protohandler.cpp:
+        * khtml/xbl/xbl_protoimplementation.cpp:
+        * khtml/xbl/xbl_tokenizer.cpp:
+
 2004-01-29  David Hyatt  <hyatt@apple.com>
 
 	Atomize font families (KWQFontFamily) and all attribute values.  Move atomic string into separate files.

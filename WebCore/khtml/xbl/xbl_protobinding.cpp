@@ -1,3 +1,5 @@
+#ifndef KHTML_NO_XBL
+
 #include "xbl_protobinding.h"
 #include "xbl_docimpl.h"
 
@@ -29,3 +31,5 @@ void XBLPrototypeBinding::addResource(const DOMString& type, const DOMString& sr
 }
 
 }
+
+#endif

@@ -401,8 +401,11 @@ protected:
 	CachedImage *requestImage( const DOM::DOMString &url);
 	CachedCSSStyleSheet *requestStyleSheet( const DOM::DOMString &url, const QString& charset);
         CachedScript *requestScript( const DOM::DOMString &url, const QString& charset);
+
+#ifndef KHTML_NO_XBL
         CachedXBLDocument* requestXBLDocument(const DOM::DOMString &url);
-        
+#endif
+
 	bool autoloadImages() const { return m_bautoloadImages; }
         KIO::CacheControl cachePolicy() const { return m_cachePolicy; }
         KHTMLSettings::KAnimationAdvice showAnimations() const { return m_showAnimations; }
