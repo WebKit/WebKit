@@ -1,3 +1,25 @@
+2003-01-28  John Sullivan  <sullivan@apple.com>
+
+	- fixed 3158304 -- Assertion failure cancelling "Add Bookmark"
+	or deleting newly-created bookmarks
+
+        Reviewed by Darin
+
+        * Bookmarks.subproj/WebBookmarkGroup.m:
+        (-[WebBookmarkGroup _bookmark:changedUUIDFrom:to:]):
+	new method that notifies group when a bookmark that's already
+	in a group changes its UUID -- the UUID to bookmark dictionary
+	updates for this change.
+
+        * Bookmarks.subproj/WebBookmarkGroupPrivate.h:
+	private declaration for this method
+
+        * Bookmarks.subproj/WebBookmark.m:
+        (-[WebBookmark _setUUID:]):
+	notify group when UUID changes
+        (-[WebBookmark UUID]):
+	ditto
+
 2003-01-28  Darin Adler  <darin@apple.com>
 
         Reviewed by Ken.

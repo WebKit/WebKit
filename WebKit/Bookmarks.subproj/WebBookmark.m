@@ -148,8 +148,11 @@
 {
     ASSERT(_UUID == nil || UUID == nil);
 
-    [_UUID release];
+    NSString *oldUUID = _UUID;
     _UUID = [UUID copy];
+
+    [[self group] _bookmark:self changedUUIDFrom:oldUUID to:_UUID];
+    [oldUUID release];
 }
 
 - (NSString *)UUID
@@ -158,6 +161,7 @@
     if (_UUID == nil) {
         CFUUIDRef UUIDRef = CFUUIDCreate(kCFAllocatorDefault);
         _UUID = (NSString *)CFUUIDCreateString(kCFAllocatorDefault, UUIDRef);
+        [[self group] _bookmark:self changedUUIDFrom:nil to:_UUID];
         CFRelease(UUIDRef);
     }
     

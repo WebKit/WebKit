@@ -92,6 +92,19 @@ NSString *TagKey = @"WebBookmarkGroupTag";
     }
 }
 
+- (void)_bookmark:(WebBookmark *)bookmark changedUUIDFrom:(NSString *)oldUUID to:(NSString *)newUUID
+{
+    ASSERT([bookmark group] == self);
+
+    if (oldUUID != nil) {
+        [_bookmarksByUUID removeObjectForKey:oldUUID];
+    }
+
+    if (newUUID != nil) {
+        [_bookmarksByUUID setObject:bookmark forKey:newUUID];
+    }
+}
+
 - (void)_removeBookmark:(WebBookmark *)bookmark
 {
     ASSERT([bookmark group] == self);

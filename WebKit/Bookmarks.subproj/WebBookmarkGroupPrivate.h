@@ -18,6 +18,7 @@
 
 - (void)_addBookmark:(WebBookmark *)bookmark;
 - (void)_removeBookmark:(WebBookmark *)bookmark;
+- (void)_bookmark:(WebBookmark *)bookmark changedUUIDFrom:(NSString *)oldUUID to:(NSString *)newUUID;
 
 @end
 
