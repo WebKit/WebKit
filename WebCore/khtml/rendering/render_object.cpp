@@ -1201,7 +1201,7 @@ void RenderObject::removeFromObjectLists()
     if (isFloating()) {
         RenderBlock* outermostBlock = containingBlock();
         for (RenderBlock* p = outermostBlock;
-             p && !p->isCanvas() && p->containsFloat(this) && !p->isFloatingOrPositioned();
+             p && !p->isCanvas() && p->containsFloat(this);
              outermostBlock = p, p = p->containingBlock());
         if (outermostBlock)
             outermostBlock->markAllDescendantsWithFloatsForLayout(this);

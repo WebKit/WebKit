@@ -1,3 +1,16 @@
+2003-08-06  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin and Dave.
+
+	- fixed 3364433 - repro crash in khtml::RenderBlock::nodeAtPoint
+	
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::removeFromObjectLists): When finding the right
+	parent block to remove a float from, don't stop at floating or
+	positioned elements. They could well have floats in their
+	m_floatingObjects list due to overhang, and failing to remove them
+	leads to crashes.
+
 2003-08-05  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by John.
