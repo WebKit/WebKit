@@ -1,3 +1,21 @@
+2003-11-19  John Sullivan  <sullivan@apple.com>
+
+        - WebKit part of fix for:
+        <rdar://problem/3305671>: Web pages print with 1.25" border without regard to Page 
+        Setup margin settings
+
+        Reviewed by Dave.
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView beginDocument]):
+        Lay out the page into a width 25% wider than there's room for on the printed page.
+        This will make pages that can fit into a thin area be scaled down a little when printed,
+        which lets them fit on fewer pages. This closely matches what IE and Camino (at least)
+        do; I used Google as my test page, and the Google logo is now precisely the same size
+        when printed from Safari as when printed from IE. Pages that don't fit into a thin
+        area are already causing the printed page to be scaled horizontally to fit, and this
+        won't affect them.
+
 2003-11-19  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3489935>: Mentioning "to Disk" in context menus such as "Download Linked File To Disk..." is redundant

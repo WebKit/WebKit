@@ -49,6 +49,14 @@
 #define TextDragHysteresis  		3.0
 #define TextDragDelay			0.15
 
+// By imaging to a width a little wider than the available pixels,
+// thin pages will be scaled down a little, matching the way they
+// print in IE and Camino. This lets them use fewer sheets than they
+// would otherwise, which is presumably why other browsers do this.
+// Wide pages will be scaled down as necessary to fit their content, 
+// so this factor only affects thin pages.
+#define PrintingExtraWidthFactor        1.25
+
 #define AUTOSCROLL_INTERVAL             0.1
 
 #define DRAG_LABEL_BORDER_X		4.0
@@ -1675,7 +1683,7 @@ static WebHTMLView *lastHitView = nil;
     float pageWidth = 0.0;
     if (![[self _bridge] isFrameSet]) {
         NSPrintInfo *printInfo = [[NSPrintOperation currentOperation] printInfo];
-        pageWidth = [printInfo paperSize].width - [printInfo leftMargin] - [printInfo rightMargin];
+        pageWidth = ([printInfo paperSize].width - [printInfo leftMargin] - [printInfo rightMargin])*PrintingExtraWidthFactor;
     }
     [self _setPrinting:YES pageWidth:pageWidth adjustViewSize:YES];	// will relayout
 
