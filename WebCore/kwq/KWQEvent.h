@@ -187,21 +187,7 @@ public:
 
 // protected -------------------------------------------------------------------
 // private ---------------------------------------------------------------------
-
-private:
-
-// add copy constructor
-// this private declaration prevents copying
-#ifdef _KWQ_PEDANTIC_
-    QTimerEvent(const QTimerEvent &);
-#endif
-
-// add assignment operator 
-// this private declaration prevents assignment
-#ifdef _KWQ_PEDANTIC_
-    QTimerEvent &operator=(const QTimerEvent &);
-#endif
-
+	int _timerId;
 }; // class QTimerEvent ========================================================
 
 

@@ -33,6 +33,8 @@
     _private->needsLayout = YES;
 
     [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(windowResized:) name: NSWindowDidResizeNotification object: nil];
+    [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(windowDidBecomeMain:) name: NSWindowDidBecomeMainNotification object: nil];
+    [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector(windowDidBecomeKey:) name: NSWindowDidBecomeKeyNotification object: nil];
         
     return self;
 }
@@ -51,6 +53,13 @@
 {
     return YES;
 }
+
+
+- (BOOL)acceptsFirstMouse:(NSEvent *)theEvent
+{
+    return YES;
+}
+
 
 // Note that the controller is not retained.
 - (id <IFWebController>)controller
@@ -377,11 +386,22 @@
 }
 
 
-
 - (void)windowResized: (NSNotification *)notification
 {
     if ([notification object] == [self window])
         [self setNeedsLayout: YES];
+}
+
+
+- (void)windowDidBecomeMain: (NSNotification *)notification
+{
+    [[self window] makeFirstResponder: self];
+}
+
+
+- (void)windowDidBecomeKey: (NSNotification *)notification
+{
+    [[self window] makeFirstResponder: self];
 }
 
 

@@ -122,7 +122,8 @@ public:
     int startTimer(int);
     void killTimer(int);
     void killTimers();
-
+	virtual void timerEvent( QTimerEvent * );
+    
     void installEventFilter(const QObject *);
     void removeEventFilter(const QObject *);
     bool eventFilter(QObject *o, QEvent *e);

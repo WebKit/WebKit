@@ -110,23 +110,85 @@ bool QObject::inherits(const char *) const
     return FALSE;
 }
 
-
-int QObject:: startTimer(int)
+@interface KWQTimerCallback : NSObject
 {
-    _logNeverImplemented();
-    return 0;    
+    QObject *target;
+    int timerId;
+}
+- initWithQObject: (QObject *)object timerId: (int)timerId;
+- (void)timerFired: (id)context;
+@end
+
+@implementation KWQTimerCallback
+- initWithQObject: (QObject *)qo timerId: (int)t
+{
+    [super init];
+    timerId = t;
+    target = qo;
+    return self;
+}
+
+- (void)timerFired: (id)context
+{
+    QTimerEvent te(timerId);
+    target->timerEvent (&te);
+}
+@end
+
+int timerCount = 1;
+
+NSMutableDictionary *timers;
+
+void QObject::timerEvent (QTimerEvent *te)
+{
+}
+
+int QObject:: startTimer(int milliseconds)
+{
+    NSNumber *timerId = [NSNumber numberWithInt: timerCount];
+    
+    if (timers == nil){
+        // The timers dictionary itself leaks, but the contents are removed
+        // when a timer expires or is killed.
+        timers = [[NSMutableDictionary alloc] init];
+    }
+    NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval: ((NSTimeInterval)milliseconds)/1000
+                target: [[[KWQTimerCallback alloc] initWithQObject: this timerId: timerCount] autorelease]
+                selector: @selector(timerFired:)
+                userInfo: timerId
+                repeats: NO];
+    [timers setObject: timer forKey: timerId];
+        
+    return timerCount++;    
 }
 
 
-void QObject::killTimer(int)
+void QObject::killTimer(int _timerId)
 {
-    _logNeverImplemented();
+    NSNumber *timerId = [NSNumber numberWithInt: _timerId];
+    NSTimer *timer;
+    
+    timer = (NSTimer *)[timers objectForKey: timerId];
+    [timer invalidate];
+    [timers removeObjectForKey: timerId];
 }
 
 
 void QObject::killTimers()
 {
-    _logNeverImplemented();
+    NSArray *contexts;
+    NSNumber *key;
+    NSTimer *timer;
+    int i, count;
+    
+    contexts = [timers allKeys];
+    count = [contexts count];
+    for (i = 0; i < count; i++){
+        key = (NSNumber *)[contexts objectAtIndex: i];
+        timer = (NSTimer *)[timers objectForKey: key];
+        [timer invalidate];
+        [timers removeObjectForKey: key];
+    }
 }
 
 

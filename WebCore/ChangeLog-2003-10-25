@@ -1,3 +1,17 @@
+2002-05-06  Richard J. Williamson  <rjw@apple.com>
+        
+        Changes to support dhmtl.
+        Changes to support targeting (regression after 3.0 merge).
+
+	* khtml/khtmlview.cpp:
+	* kwq/KWQEvent.mm:
+	* kwq/KWQKHTMLPart.mm:
+	* kwq/KWQObject.mm:
+	* kwq/KWQWidget.mm:
+	* kwq/qt/qevent.h:
+	* kwq/qt/qobject.h:
+	* kwq/qt/qwidget.h:
+
 2002-05-03  Darin Adler  <darin@apple.com>
 
 	* khtml/css/cssstyleselector.cpp:

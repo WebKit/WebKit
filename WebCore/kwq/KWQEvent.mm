@@ -105,22 +105,20 @@ Qt::ButtonState QMouseEvent::stateAfter()
 
 // class QTimerEvent ===========================================================
 
-QTimerEvent::QTimerEvent(int timerId)
+QTimerEvent::QTimerEvent(int t)
 {
-    _logNotYetImplemented();
+	_timerId = t;
 }
 
 
 QTimerEvent::~QTimerEvent()
 {
-    _logNotYetImplemented();
 }
 
 
 int QTimerEvent::timerId() const
 {
-    _logNotYetImplemented();
-    return 0;
+    return _timerId;
 }
 
 

@@ -147,6 +147,7 @@ public:
     int m_runningScripts;
 
     QString m_strSelectedURL;
+    QString m_strSelectedURLTarget;
     QString m_referrer;
     QString m_documentSource;
 
@@ -215,6 +216,7 @@ public:
 
 };
 
+#if 0
 static QString splitUrlTarget(const QString &url, QString *target=0)
 {
     QString result = url;
@@ -242,6 +244,7 @@ static QString splitUrlTarget(const QString &url, QString *target=0)
     }
     return result;
 }
+#endif
 
 KHTMLPart::KHTMLPart( QWidget *, const char *, QObject *, const char *, GUIProfile )
 {
@@ -656,6 +659,9 @@ void KHTMLPart::end()
 
     d->m_doc->close();
     KURL::clearCaches();
+    
+    d->m_doc->setParsing(false);
+    d->m_view->complete();
 }
 
 bool KHTMLPart::gotoBaseAnchor()
@@ -1128,59 +1134,61 @@ bool KHTMLPart::event( QEvent *event )
 
 void KHTMLPart::khtmlMousePressEvent( khtml::MousePressEvent *event )
 {
-  DOM::DOMString url = event->url();
-  QMouseEvent *_mouse = event->qmouseEvent();
-  DOM::Node innerNode = event->innerNode();
-  d->m_mousePressNode = innerNode;
-
-   d->m_dragStartPos = _mouse->pos();
-
-  if ( !event->url().isNull() )
-    d->m_strSelectedURL = event->url().string();
-  else
-    d->m_strSelectedURL = QString::null;
-
-  if ( _mouse->button() == LeftButton ||
-       _mouse->button() == MidButton )
-  {
-    d->m_bMousePressed = true;
-
-#ifndef KHTML_NO_SELECTION
-    if ( _mouse->button() == LeftButton )
-    {
-      if ( !innerNode.isNull()  && innerNode.handle()->renderer()) {
-          int offset = 0;
-          DOM::NodeImpl* node = 0;
-          innerNode.handle()->renderer()->checkSelectionPoint( event->x(), event->y(),
-                                                               event->absX()-innerNode.handle()->renderer()->xPos(),
-                                                               event->absY()-innerNode.handle()->renderer()->yPos(), node, offset);
-
-          d->m_selectionStart = node;
-          d->m_startOffset = offset;
-//           kdDebug(6005) << "KHTMLPart::khtmlMousePressEvent selectionStart=" << d->m_selectionStart.handle()->renderer()
-//                         << " offset=" << d->m_startOffset << endl;
-          d->m_selectionEnd = d->m_selectionStart;
-          d->m_endOffset = d->m_startOffset;
-          d->m_doc->clearSelection();
-      }
-      else
-      {
-        d->m_selectionStart = DOM::Node();
-        d->m_selectionEnd = DOM::Node();
-      }
-      //emitSelectionChanged();
-      //startAutoScroll();
+    DOM::DOMString url = event->url();
+    QMouseEvent *_mouse = event->qmouseEvent();
+    DOM::Node innerNode = event->innerNode();
+    d->m_mousePressNode = innerNode;
+    
+    d->m_dragStartPos = _mouse->pos();
+    
+    if ( !event->url().isNull() ){
+        d->m_strSelectedURL = event->url().string();
+        d->m_strSelectedURLTarget = event->target().string();
     }
+    else
+        d->m_strSelectedURL = d->m_strSelectedURLTarget = QString::null;
+    
+    if ( _mouse->button() == LeftButton ||
+        _mouse->button() == MidButton )
+    {
+        d->m_bMousePressed = true;
+        
+#ifndef KHTML_NO_SELECTION
+        if ( _mouse->button() == LeftButton )
+        {
+            if ( !innerNode.isNull()  && innerNode.handle()->renderer()) {
+                int offset = 0;
+                DOM::NodeImpl* node = 0;
+                innerNode.handle()->renderer()->checkSelectionPoint( event->x(), event->y(),
+                                                                    event->absX()-innerNode.handle()->renderer()->xPos(),
+                                                                    event->absY()-innerNode.handle()->renderer()->yPos(), node, offset);
+        
+                d->m_selectionStart = node;
+                d->m_startOffset = offset;
+        //           kdDebug(6005) << "KHTMLPart::khtmlMousePressEvent selectionStart=" << d->m_selectionStart.handle()->renderer()
+        //                         << " offset=" << d->m_startOffset << endl;
+                d->m_selectionEnd = d->m_selectionStart;
+                d->m_endOffset = d->m_startOffset;
+                d->m_doc->clearSelection();
+            }
+            else
+            {
+            d->m_selectionStart = DOM::Node();
+            d->m_selectionEnd = DOM::Node();
+            }
+            //emitSelectionChanged();
+            //startAutoScroll();
+        }
 #else
-    d->m_dragLastPos = _mouse->globalPos();
+        d->m_dragLastPos = _mouse->globalPos();
 #endif
-  }
-
-  if ( _mouse->button() == RightButton )
-  {
-    //popupMenu( splitUrlTarget(d->m_strSelectedURL) );
-    d->m_strSelectedURL = QString::null;
-  }
+    }
+    
+    if ( _mouse->button() == RightButton )
+    {
+        //popupMenu( d->m_strSelectedURL );
+        d->m_strSelectedURL = d->m_strSelectedURLTarget = QString::null;
+    }
 }
 
 void KHTMLPart::khtmlMouseDoubleClickEvent( khtml::MouseDoubleClickEvent * )
@@ -1234,13 +1242,12 @@ void KHTMLPart::khtmlMouseMoveEvent( khtml::MouseMoveEvent *event )
 
     // when we finish our drag, we need to undo our mouse press
     d->m_bMousePressed = false;
-    d->m_strSelectedURL = "";
+    d->m_strSelectedURL = d->m_strSelectedURLTarget = QString::null;
     return;
   }
 #endif
-
-  QString target;
-  QString surl = splitUrlTarget(url.string(), &target);
+  DOM::DOMString url = event->url();
+  DOM::DOMString target = event->target();
 
   // Not clicked -> mouse over stuff
   if ( !d->m_bMousePressed )
@@ -1248,8 +1255,7 @@ void KHTMLPart::khtmlMouseMoveEvent( khtml::MouseMoveEvent *event )
     // The mouse is over something
     if ( url.length() )
     {
-      // FIXME: this is unused
-      //bool shiftPressed = ( _mouse->state() & ShiftButton );
+      bool shiftPressed = ( _mouse->state() & ShiftButton );
 
       // Image map
       if ( !innerNode.isNull() && innerNode.elementId() == ID_IMG )
@@ -1261,37 +1267,35 @@ void KHTMLPart::khtmlMouseMoveEvent( khtml::MouseMoveEvent *event )
           if(r)
           {
             int absx, absy, vx, vy;
-            // FIXME: when compiling with -02, compilation breaks with a 
-	    // complaint that vx and vy might be uninitialized before use
             r->absolutePosition(absx, absy);
-            //view()->contentsToViewport( absx, absy, vx, vy );
+            view()->contentsToViewport( absx, absy, vx, vy );
 
             int x(_mouse->x() - vx), y(_mouse->y() - vy);
 
-            d->m_overURL = surl + QString("?%1,%2").arg(x).arg(y);
-            //overURL( d->m_overURL, target, shiftPressed );
+            d->m_overURL = url.string() + QString("?%1,%2").arg(x).arg(y);
+            d->m_overURLTarget = target.string();
+            overURL( d->m_overURL, target.string(), shiftPressed );
             return;
           }
         }
       }
 
       // normal link
-      QString target;
-      QString surl = splitUrlTarget(url.string(), &target);
-      if ( d->m_overURL.isEmpty() || d->m_overURL != surl )
+      if ( d->m_overURL.isEmpty() || d->m_overURL != url || d->m_overURLTarget != target )
       {
-        d->m_overURL = surl;
-        //overURL( d->m_overURL, target, shiftPressed );
+        d->m_overURL = url.string();
+        d->m_overURLTarget = target.string();
+        overURL( d->m_overURL, target.string(), shiftPressed );
       }
     }
     else  // Not over a link...
     {
       if( !d->m_overURL.isEmpty() ) // and we were over a link  -> reset to "default statusbar text"
       {
-        d->m_overURL = QString::null;
-        //emit onURL( QString::null );
+        d->m_overURL = d->m_overURLTarget = QString::null;
+        emit onURL( QString::null );
         // Default statusbar text can be set from javascript. Otherwise it's empty.
-        //emit setStatusBarText( d->m_kjsDefaultStatusBarText );
+        emit setStatusBarText( d->m_kjsDefaultStatusBarText );
       }
     }
   }
@@ -1347,7 +1351,6 @@ void KHTMLPart::khtmlMouseMoveEvent( khtml::MouseMoveEvent *event )
             ->setSelection(d->m_selectionEnd.handle(),d->m_endOffset,
                            d->m_selectionStart.handle(),d->m_startOffset);
       }
-    }
 #else
       if ( d->m_doc && d->m_view ) {
         QPoint diff( _mouse->globalPos() - d->m_dragLastPos );
@@ -1356,8 +1359,8 @@ void KHTMLPart::khtmlMouseMoveEvent( khtml::MouseMoveEvent *event )
           d->m_view->scrollBy( -diff.x(), -diff.y() );
           d->m_dragLastPos = _mouse->globalPos();
         }
-      }
 #endif
+    }
   }
 #endif
 }
@@ -1377,8 +1380,8 @@ void KHTMLPart::khtmlMouseReleaseEvent( khtml::MouseReleaseEvent *event )
     // HACK!  FIXME!
     if (d->m_strSelectedURL != QString::null) {
         IFWebDataSource *oldDataSource, *newDataSource;
-        QString target;
-        KURL clickedURL(completeURL( splitUrlTarget(d->m_strSelectedURL, &target)));
+        QString target = event->target().string();
+        KURL clickedURL(completeURL( d->m_strSelectedURL));
         IFWebFrame *frame;
         KURL refLess(clickedURL);
         

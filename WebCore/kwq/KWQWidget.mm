@@ -66,6 +66,7 @@ private:
     QCursor	cursor;
     QPalette    pal;
     NSView	*view;
+    int lockCount;
 };
 
 QWidget::QWidget(QWidget *parent=0, const char *name=0, WFlags f=0) 
@@ -73,6 +74,7 @@ QWidget::QWidget(QWidget *parent=0, const char *name=0, WFlags f=0)
     static QStyle *defaultStyle = new QStyle;
     
     data = new QWidgetPrivate;
+    data->lockCount = 0;
     data->view = [[KWQView alloc] initWithFrame: NSMakeRect (0,0,0,0) widget: this];
     data->style = defaultStyle;
 }
@@ -504,3 +506,35 @@ void QWidget::endEditing()
     if ([firstResponder isKindOfClass: NSClassFromString(@"NSText")])
         [window makeFirstResponder: nil];
 }
+
+
+bool QWidget::_lockFocus()
+{
+    if ([getView() canDraw]){
+        [getView() lockFocus];
+        data->lockCount++;
+        return 1;
+    }
+    return 0;
+}
+
+void QWidget::_unlockFocus()
+{
+    if (data->lockCount){
+        [getView() unlockFocus];
+        data->lockCount--;
+    }
+}
+
+
+void QWidget::_flushWindow()
+{
+    [[getView() window] flushWindow];
+}
+
+
+void QWidget::_displayRect (QRect rect)
+{
+    [getView() displayRect: NSMakeRect (rect.x(), rect.y(), rect.width(), rect.height())];
+}
+
