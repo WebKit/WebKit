@@ -1,3 +1,22 @@
+2003-10-28  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	- fixed 3163842 - Citibank cardmember central DHTML menus not working right in Safari
+	
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::HTMLElement::getValueProperty): update layout before fetching image properties
+	that need it.
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::DocumentImpl): Initialize m_ignorePendingStylesheets to false.
+        (DocumentImpl::updateLayout): Ignore pending stylesheets - when JS demands a
+	layout, it wants a real one now.
+        (DocumentImpl::updateStyleSelector): Go ahead with the update if we're ignoring
+	pending stylesheets.
+        * khtml/xml/dom_docimpl.h:
+        (DOM::DocumentImpl::haveStylesheetsLoaded): Pretend stylesheets have loaded if
+	we're temporarily ignoring pending stylesheets.
+
 2003-10-29  David Hyatt  <hyatt@apple.com>
 
 	Implement support for <marquee>.  This includes support for the CSS3 specification (although modified a fair

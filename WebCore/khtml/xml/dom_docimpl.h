@@ -184,7 +184,7 @@ public:
      * This method returns true if all top-level stylesheets have loaded (including
      * any @imports that they may be loading).
      */
-    bool haveStylesheetsLoaded() { return m_pendingStylesheets <= 0; }
+    bool haveStylesheetsLoaded() { return m_pendingStylesheets <= 0 || m_ignorePendingStylesheets; }
 
     /**
      * Increments the number of pending sheets.  The <link> elements
@@ -487,6 +487,10 @@ protected:
     // We use this count of pending sheets to detect when we can begin attaching
     // elements.
     int m_pendingStylesheets;
+
+    // But sometimes you need to ignore pending stylesheet count to
+    // force an immediate layout when requested by JS.
+    bool m_ignorePendingStylesheets;
 
     CSSStyleSheetImpl *m_elemSheet;
 

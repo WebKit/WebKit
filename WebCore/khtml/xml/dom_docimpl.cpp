@@ -307,6 +307,7 @@ DocumentImpl::DocumentImpl(DOMImplementationImpl *_implementation, KHTMLView *v)
                                             !inCompatMode() );
     m_windowEventListeners.setAutoDelete(true);
     m_pendingStylesheets = 0;
+    m_ignorePendingStylesheets = false;
 
     m_cssTarget = 0;
 }
@@ -1038,11 +1039,21 @@ void DocumentImpl::updateDocumentsRendering()
 
 void DocumentImpl::updateLayout()
 {
+    bool oldIgnore = m_ignorePendingStylesheets;
+
+    m_ignorePendingStylesheets = true;
+    
+    if (!oldIgnore) {
+	updateStyleSelector();    
+    }
+
     updateRendering();
 
     // Only do a layout if changes have occurred that make it necessary.      
     if (m_view && renderer() && renderer()->needsLayout())
 	m_view->layout();
+
+    m_ignorePendingStylesheets = oldIgnore;
 }
 
 void DocumentImpl::attach()
@@ -1916,7 +1927,7 @@ void DocumentImpl::stylesheetLoaded()
 void DocumentImpl::updateStyleSelector()
 {
     // Don't bother updating, since we haven't loaded all our style info yet.
-    if (m_pendingStylesheets > 0)
+    if (!haveStylesheetsLoaded())
         return;
 
     recalcStyleSelector();
