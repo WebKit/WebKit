@@ -1,3 +1,21 @@
+2004-10-09  Darin Adler  <darin@apple.com>
+
+        Reviewed by Kevin.
+
+        - fixed <rdar://problem/3804665> REGRESSION: WebCore framework now has many init routines
+
+        * khtml/xml/dom_nodeimpl.h: Changed anyQName declaration to not use the inline function
+        makeId. Surprisingly, the inline function was not "constant-folded" and we ended up with
+        a copy of the function in each file as an init routine for the framework.
+
+        * khtml/ecma/kjs_html.cpp: (Gradient::colorStops): Get rid of initialized ColorStop
+        globals; their constructors were showing up as init routines for the framework.
+
+        * khtml/rendering/render_style.h: Got rid of inline initialDashboardRegions function.
+        * khtml/rendering/render_style.cpp: (RenderStyle::initialDashboardRegions): Made this
+        a normal function. When it was an inline function, the constructors for the per-file
+        copies of the globals were showing up as init routines for the framework.
+
 2004-10-09  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: 

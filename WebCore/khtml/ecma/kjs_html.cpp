@@ -4867,11 +4867,6 @@ static int sortStops(const ColorStop *a, const ColorStop *b)
     return 0;
 }
 
-// If not specified use default start (stop 0) and end (stop 1)
-// colors.  This color will be transparent black.
-static ColorStop defaultStartStop = ColorStop(0.f, 0.f, 0.f, 0.f, 1.f);
-static ColorStop defaultEndStop = ColorStop(1.f, 0.f, 0.f, 0.f, 1.f);
-
 // Return a sorted array of stops guaranteed to contain a 0 and 1 stop.
 const ColorStop *Gradient::colorStops(int *count) const
 {
@@ -4900,11 +4895,14 @@ const ColorStop *Gradient::colorStops(int *count) const
             adjustedStops = (ColorStop *)malloc(adjustedStopCount * sizeof(ColorStop));
             memcpy (haveZeroStop ? adjustedStops : adjustedStops+1,
                 stops, stopCount*sizeof(ColorStop));
+
+            // If not specified use default start (stop 0) and end (stop 1) colors.
+            // This color will be transparent black.
             if (!haveZeroStop) {
-                adjustedStops[0] = defaultStartStop;
+                adjustedStops[0] = ColorStop(0.f, 0.f, 0.f, 0.f, 1.f);
             }
             if (!haveOneStop) {
-                adjustedStops[adjustedStopCount-1] = defaultEndStop;
+                adjustedStops[adjustedStopCount-1] = ColorStop(1.f, 0.f, 0.f, 0.f, 1.f);
             }
         }
         

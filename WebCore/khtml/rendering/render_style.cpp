@@ -928,3 +928,9 @@ bool ShadowData::operator==(const ShadowData& o) const
     
     return x == o.x && y == o.y && blur == o.blur && color == o.color;
 }
+
+const QValueList<StyleDashboardRegion>& RenderStyle::initialDashboardRegions()
+{ 
+    static QValueList<StyleDashboardRegion> emptyList;
+    return emptyList;
+}

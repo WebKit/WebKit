@@ -1484,10 +1484,7 @@ public:
     // Keep these at the end.
     static int initialLineClamp() { return -1; }
     static bool initialTextSizeAdjust() { return true; }
-    static const QValueList<StyleDashboardRegion>& initialDashboardRegions() { 
-        static QValueList<StyleDashboardRegion> emptyList;
-        return emptyList;
-    }
+    static const QValueList<StyleDashboardRegion>& initialDashboardRegions();
 #endif
 };
 
