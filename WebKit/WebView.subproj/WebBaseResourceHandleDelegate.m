@@ -89,6 +89,11 @@
     [handle _setDefersCallbacks:defers];
 }
 
+- (BOOL)defersCallbacks
+{
+    return defersCallbacks;
+}
+
 - (void)setDataSource:(WebDataSource *)d
 {
     ASSERT(d);

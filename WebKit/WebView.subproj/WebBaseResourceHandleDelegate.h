@@ -49,6 +49,7 @@
 - (void)cancelWithError:(WebError *)error;
 
 - (void)setDefersCallbacks:(BOOL)defers;
+- (BOOL)defersCallbacks;
 
 - (WebError *)cancelledError;
 

@@ -10,6 +10,7 @@
 #import <WebFoundation/WebFileTypeMappings.h>
 #import <WebFoundation/WebNSURLExtras.h>
 #import <WebFoundation/WebResourceHandle.h>
+#import <WebFoundation/WebResourceHandlePrivate.h>
 #import <WebFoundation/WebResourceRequest.h>
 #import <WebFoundation/WebHTTPResourceRequest.h>
 #import <WebFoundation/WebResourceResponse.h>
@@ -132,10 +133,7 @@
 
 -(void)continueAfterNavigationPolicy:(BOOL)shouldContinue request:(WebResourceRequest *)request
 {
-    if (!defersBeforeCheckingPolicy) {
-	[[dataSource controller] _setDefersCallbacks:NO];
-    }
-
+    [[dataSource controller] _setDefersCallbacks:NO];
     if (!shouldContinue) {
 	[self stopLoadingForPolicyChange];
     }
@@ -143,6 +141,10 @@
 
 -(WebResourceRequest *)handle:(WebResourceHandle *)h willSendRequest:(WebResourceRequest *)newRequest
 {
+    // Note that there are no asserts here as there are for the other callbacks. This is due to the
+    // fact that this "callback" is sent when starting every load, and the state of callback
+    // deferrals plays less of a part in this function in preventing the bad behavior deferring 
+    // callbacks is meant to prevent.
     ASSERT(newRequest != nil);
 
     NSURL *URL = [newRequest URL];
@@ -161,12 +163,6 @@
     // Don't set this on the first request.  It is set
     // when the main load was started.
     [dataSource _setRequest:newRequest];
-
-    defersBeforeCheckingPolicy = [[dataSource controller] _defersCallbacks];
-    if (!defersBeforeCheckingPolicy) {
-	[[dataSource controller] _setDefersCallbacks:YES];
-    }
-
     [[dataSource webFrame] _checkNavigationPolicyForRequest:newRequest dataSource:dataSource andCall:self withSelector:@selector(continueAfterNavigationPolicy:request:)];
 
     return newRequest;
@@ -174,10 +170,7 @@
 
 -(void)continueAfterContentPolicy:(WebPolicyAction)contentPolicy response:(WebResourceResponse *)r
 {
-    if (!defersBeforeCheckingPolicy) {
-	[[dataSource controller] _setDefersCallbacks:NO];
-    }
-
+    [[dataSource controller] _setDefersCallbacks:NO];
     WebResourceRequest *req = [dataSource request];
 
     switch (contentPolicy) {
@@ -272,14 +265,14 @@
 
 -(void)handle:(WebResourceHandle *)h didReceiveResponse:(WebResourceResponse *)r
 {
+    ASSERT(![h _defersCallbacks]);
+    ASSERT(![self defersCallbacks]);
+    ASSERT(![[dataSource controller] _defersCallbacks]);
     [dataSource _setResponse:r];
 
     LOG(Download, "main content type: %@", [r contentType]);
 
-    defersBeforeCheckingPolicy = [[dataSource controller] _defersCallbacks];
-    if (!defersBeforeCheckingPolicy) {
-	[[dataSource controller] _setDefersCallbacks:YES];
-    }
+    [[dataSource controller] _setDefersCallbacks:YES];
 
     // Figure out the content policy.
     if (![dataSource isDownloading]) {
@@ -295,7 +288,10 @@
 {
     ASSERT(data);
     ASSERT([data length] != 0);
-
+    ASSERT(![h _defersCallbacks]);
+    ASSERT(![self defersCallbacks]);
+    ASSERT(![[dataSource controller] _defersCallbacks]);
+ 
     LOG(Loading, "URL = %@, data = %p, length %d", [dataSource URL], data, [data length]);
 
     WebError *downloadError= nil;
@@ -323,6 +319,9 @@
 
 - (void)handleDidFinishLoading:(WebResourceHandle *)h
 {
+    ASSERT(![h _defersCallbacks]);
+    ASSERT(![self defersCallbacks]);
+    ASSERT(![[dataSource controller] _defersCallbacks]);
     LOG(Loading, "URL = %@", [dataSource URL]);
         
     // Calls in this method will most likely result in a call to release, so we must retain.
@@ -355,6 +354,9 @@
 
 - (void)handle:(WebResourceHandle *)h didFailLoadingWithError:(WebError *)error
 {
+    ASSERT(![h _defersCallbacks]);
+    ASSERT(![self defersCallbacks]);
+    ASSERT(![[dataSource controller] _defersCallbacks]);
     LOG(Loading, "URL = %@, error = %@", [error failingURL], [error errorDescription]);
 
     // Calling receivedError will likely result in a call to release, so we must retain.

@@ -1,3 +1,38 @@
+2003-01-29  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin.
+
+	Fix for this bug:
+
+	Radar 3142818 (Downloading many items quickly can cause future page loads to fail)
+
+	The issue was with a mismatch between different object's idea about
+	whether callbacks were being deferred. I have simplified the code in this
+	area somewhat, and I have added some asserts to make sure that callbacks
+	are not sent when deferalls are on. 
+
+	More work will need to be done in callback deferral-land, however. This change
+	fixes the bug, but it may not be a good long-term fix.  I will file a bug on 
+	the need for this additonal work.
+
+        * WebView.subproj/WebBaseResourceHandleDelegate.h:
+        * WebView.subproj/WebBaseResourceHandleDelegate.m:
+        (-[WebBaseResourceHandleDelegate defersCallbacks]): Added method.
+        * WebView.subproj/WebMainResourceClient.h: Removed unneeded defersBeforeCheckingPolicy flag.
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient continueAfterNavigationPolicy:request:]): Unconditionally set 
+	callback deferrals to NO.
+        (-[WebMainResourceClient handle:willSendRequest:]): Remove all callback deferral code here.
+        (-[WebMainResourceClient continueAfterContentPolicy:response:]): Unconditionally set 
+        callback deferrals to NO.
+        (-[WebMainResourceClient handle:didReceiveResponse:]): Assert that the handle argument
+	to this method, the client (self), and the data source's controller all are not
+	deferring callbacks.
+	Unconditionally set callback deferrals to YES.
+        (-[WebMainResourceClient handle:didReceiveData:]): Ditto
+        (-[WebMainResourceClient handleDidFinishLoading:]): Ditto
+        (-[WebMainResourceClient handle:didFailLoadingWithError:]): Ditto
+
 2003-01-29  John Sullivan  <sullivan@apple.com>
 
 	- fixed 3160116 -- REGRESSION:leak in WebBookmarkLeaf at startup

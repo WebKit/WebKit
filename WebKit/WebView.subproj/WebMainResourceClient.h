@@ -26,7 +26,6 @@
     NSMutableData *resourceData;
     int _contentLength; // for logging only
     int _bytesReceived; // for logging only
-    BOOL defersBeforeCheckingPolicy;
 }
 
 - initWithDataSource:(WebDataSource *)dataSource;
