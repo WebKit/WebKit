@@ -40,6 +40,7 @@
 
 #undef _KWQ_TIMING
 
+using khtml::Cache;
 using khtml::ChildFrame;
 using khtml::Decoder;
 using khtml::RenderObject;
@@ -93,6 +94,7 @@ KWQKHTMLPart::KWQKHTMLPart(KHTMLPart *p)
     , _completedWithBool(p, SIGNAL(completed(bool)))
     , _needsToSetWidgetsAside(false)
 {
+    Cache::init();
     mutableInstances().prepend(this);
     d->m_redirectionTimer.setMonitor(redirectionTimerMonitor, this);
 }

@@ -66,6 +66,10 @@ namespace DOM
     class DocumentImpl;
 };
 
+#if APPLE_CHANGES
+class KWQLoader;
+#endif
+
 namespace khtml
 {
     class CachedObject;
@@ -410,6 +414,10 @@ namespace khtml
 
         // may return 0L
         KIO::Job *jobForRequest( const DOM::DOMString &url ) const;
+
+#if APPLE_CHANGES
+        KWQLoader *kwq;
+#endif
 
     signals:
         void requestStarted( khtml::DocLoader* dl, khtml::CachedObject* obj );

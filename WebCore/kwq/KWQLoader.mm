@@ -167,4 +167,9 @@ void KWQReleaseResponse(void *response)
     [(id)response release];
 }
 
-
+KWQLoader::KWQLoader(Loader *loader)
+    : _requestStarted(loader, SIGNAL(requestStarted(khtml::DocLoader *, khtml::CachedObject *)))
+    , _requestDone(loader, SIGNAL(requestDone(khtml::DocLoader *, khtml::CachedObject *)))
+    , _requestFailed(loader, SIGNAL(requestFailed(khtml::DocLoader *, khtml::CachedObject *)))
+{
+}

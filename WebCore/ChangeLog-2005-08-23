@@ -1,5 +1,48 @@
 2002-10-28  Darin Adler  <darin@apple.com>
 
+	- fixed 3070484 -- icon rollovers are very slow on Mac OS X website
+
+	The problem was simply that the part didn't know it was complete.
+	To let it know, I hooked up some loader signals, and now it works.
+
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::init): Create the KWQKHTMLPart a little earlier so we have
+	a chance to initialize the cache before it's used.
+        (KHTMLPart::slotLoaderRequestStarted): Take this out of ifdefs.
+        (KHTMLPart::slotLoaderRequestDone): Ditto.
+
+        * khtml/misc/loader.h: Add a KWQLoader pointer to the loader.
+        * khtml/misc/loader.cpp:
+        (Loader::Loader): Create a KWQLoader;
+        (Loader::~Loader): Destroy the KWQLoader.
+        (Loader::load): Take out ifdefs around code that emits requestStarted.
+
+        * kwq/KWQKHTMLPart.mm: (KWQKHTMLPart::KWQKHTMLPart): Call Cache::init().
+
+        * kwq/KWQLoader.h: Add a class KWQLoader, with three signals in it.
+        * kwq/KWQLoader.mm: (KWQLoader::KWQLoader): Initialize the three signals.
+
+        * kwq/KWQSignalStubs.mm:
+        (Loader::requestDone): Emit the signal using KWQLoader.
+        (Loader::requestFailed): Ditto.
+        (Loader::requestStarted): Ditto.
+
+        * kwq/KWQSlot.h: Add an overload for slots with loader and cached object
+	parameters so we can handle the new slots.
+        * kwq/KWQSlot.mm:
+        (KWQSlot::KWQSlot): Added slotLoaderRequestDone and slotLoaderRequestStarted.
+        (KWQSlot::call): Added the new overload to handle those two signals.
+
+        * kwq/KWQSignal.h: Add an overload for signals with loader and cached object
+	parameters so we can handle the new signals.
+        * kwq/KWQSignal.mm: (KWQSignal::call): Ditto.
+
+        * kwq/KWQObject.mm: (QObject::connect): Remove the special casing that
+	prevents complaints about slotLoaderRequestDone and slotLoaderRequestStarted,
+	since we support those now.
+
+2002-10-28  Darin Adler  <darin@apple.com>
+
 	- fixed storage leak of items in QListBox
 
         * kwq/KWQListBox.h: Added private deleteItems method.

@@ -23,6 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include "KWQSignal.h"
+
 namespace khtml {
     class CachedObject;
     class DocLoader;
@@ -39,3 +41,12 @@ void KWQCheckCacheObjectStatus(khtml::DocLoader *, khtml::CachedObject *);
 bool KWQCheckIfReloading(khtml::DocLoader *loader);
 void KWQRetainResponse(void *response);
 void KWQReleaseResponse(void *response);
+
+class KWQLoader
+{
+public:
+    KWQLoader(khtml::Loader *);
+    KWQSignal _requestStarted;
+    KWQSignal _requestDone;
+    KWQSignal _requestFailed;
+};

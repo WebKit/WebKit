@@ -70,8 +70,6 @@ void QObject::connect(const QObject *sender, const char *signalName, const QObje
             && !KWQNamesMatch(member, SLOT(slotHistoryChanged()))
             && !KWQNamesMatch(member, SLOT(slotJobPercent(KIO::Job *, unsigned long)))
             && !KWQNamesMatch(member, SLOT(slotJobSpeed(KIO::Job *, unsigned long)))
-            && !KWQNamesMatch(member, SLOT(slotLoaderRequestDone(khtml::DocLoader *, khtml::CachedObject *)))
-            && !KWQNamesMatch(member, SLOT(slotLoaderRequestStarted(khtml::DocLoader *, khtml::CachedObject *)))
             && !KWQNamesMatch(member, SLOT(slotRedirection(KIO::Job *, const KURL &))) // FIXME: Should implement this one?
             && !KWQNamesMatch(member, SLOT(slotScrollBarMoved()))
             && !KWQNamesMatch(member, SLOT(slotShowDocument(const QString &, const QString &)))

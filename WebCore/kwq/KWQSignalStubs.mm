@@ -27,10 +27,30 @@
 #import "loader.h"
 #import "xml_tokenizer.h"
 
-void KHTMLView::cleared() { }
+#import "KWQLoader.h"
 
-void khtml::Loader::requestDone(khtml::DocLoader *, khtml::CachedObject *) { }
-void khtml::Loader::requestFailed(khtml::DocLoader *, khtml::CachedObject *) { }
+using khtml::CachedObject;
+using khtml::DocLoader;
+using khtml::Loader;
+
+void KHTMLView::cleared()
+{
+}
+
+void Loader::requestDone(DocLoader *l, CachedObject *o)
+{
+    kwq->_requestDone.call(l, o);
+}
+
+void Loader::requestFailed(DocLoader *l, CachedObject *o)
+{
+    kwq->_requestFailed.call(l, o);
+}
+
+void Loader::requestStarted(DocLoader *l, CachedObject *o)
+{
+    kwq->_requestStarted.call(l, o);
+}
 
 Tokenizer::Tokenizer()
     : m_finishedParsing(this, SIGNAL(finishedParsing()))

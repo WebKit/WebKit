@@ -30,6 +30,9 @@
 
 using KIO::Job;
 
+using khtml::CachedObject;
+using khtml::DocLoader;
+
 KWQSignal::KWQSignal(QObject *object, const char *name)
     : _object(object), _next(object->_signalListHead), _name(name)
 {
@@ -125,6 +128,18 @@ void KWQSignal::call(Job *j) const
         QValueListConstIterator<KWQSlot> end = copiedSlots.end();
         for (QValueListConstIterator<KWQSlot> it = copiedSlots.begin(); it != end; ++it) {
             (*it).call(j);
+        }
+    }
+}
+
+void KWQSignal::call(DocLoader *l, CachedObject *o) const
+{
+    if (!_object->_signalsBlocked) {
+        KWQObjectSenderScope senderScope(_object);
+        QValueList<KWQSlot> copiedSlots(_slots);
+        QValueListConstIterator<KWQSlot> end = copiedSlots.end();
+        for (QValueListConstIterator<KWQSlot> it = copiedSlots.begin(); it != end; ++it) {
+            (*it).call(l, o);
         }
     }
 }

@@ -1130,10 +1130,16 @@ Loader::Loader() : QObject()
 {
     m_requestsPending.setAutoDelete( true );
     m_requestsLoading.setAutoDelete( true );
+#if APPLE_CHANGES
+    kwq = new KWQLoader(this);
+#endif
 }
 
 Loader::~Loader()
 {
+#if APPLE_CHANGES
+    delete kwq;
+#endif
 }
 
 void Loader::load(DocLoader* dl, CachedObject *object, bool incremental)
@@ -1141,9 +1147,7 @@ void Loader::load(DocLoader* dl, CachedObject *object, bool incremental)
     Request *req = new Request(dl, object, incremental);
     m_requestsPending.append(req);
 
-#if !APPLE_CHANGES
     emit requestStarted( req->m_docLoader, req->object );
-#endif
 
     servePendingRequests();
 }
