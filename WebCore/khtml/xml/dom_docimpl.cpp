@@ -262,6 +262,7 @@ QPtrList<DocumentImpl> * DocumentImpl::changedDocuments = 0;
 // KHTMLView might be 0
 DocumentImpl::DocumentImpl(DOMImplementationImpl *_implementation, KHTMLView *v)
     : NodeBaseImpl( new DocumentPtr() )
+      , m_domtree_version(0)
       , m_imageLoadEventTimer(0)
 #ifndef KHTML_NO_XBL
       , m_bindingManager(new XBLBindingManager(this))

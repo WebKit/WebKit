@@ -50,7 +50,7 @@ class HTMLCollectionImpl : public khtml::Shared<HTMLCollectionImpl>
 public:
     enum Type {
         // from HTMLDocument
-        DOC_IMAGES,    // all IMG elements in the document
+        DOC_IMAGES = 0, // all IMG elements in the document
         DOC_APPLETS,   // all OBJECT and APPLET elements
         DOC_EMBEDS,   // all EMBED elements
         DOC_FORMS,     // all FORMS
@@ -66,7 +66,8 @@ public:
         // from HTMLMap
         MAP_AREAS,
         DOC_ALL,        // "all" elements (IE)
-        NODE_CHILDREN   // first-level children (IE)
+        NODE_CHILDREN,   // first-level children (IE)
+        LAST_TYPE
     };
 
     HTMLCollectionImpl(NodeImpl *_base, int _tagId);
@@ -82,24 +83,27 @@ public:
     // In case of multiple items named the same way
     NodeImpl *nextNamedItem( const DOMString &name ) const;
 
+    struct CollectionInfo {
+        CollectionInfo() : version(0), current(0), position(0), length(0), hasLength(false) {}
+        unsigned int version;
+        NodeImpl *current;
+        unsigned int position;
+        unsigned int length;
+        bool haslength;
+     };
+
 protected:
     virtual unsigned long calcLength(NodeImpl *current) const;
     virtual NodeImpl *getItem(NodeImpl *current, int index, int &pos) const;
     virtual NodeImpl *getNamedItem(NodeImpl *current, int attr_id, const DOMString &name, bool caseSensitive = true) const;
     virtual NodeImpl *nextNamedItemInternal( const DOMString &name ) const;
+    void resetCollectionInfo() const;
     // the base node, the collection refers to
     NodeImpl *base;
     // The collection list the following elements
     int type;
+    mutable CollectionInfo *info;
 
-    // ### add optimization, so that a linear loop through the
-    // Collection [using item(i)] is O(n) and not O(n^2)!
-    // But for that we need to get notified in case of changes in the dom structure...
-    //NodeImpl *current;
-    //int currentPos;
-
-    // For firstItem()/nextItem()
-    mutable NodeImpl *currentItem;
     // For nextNamedItem()
     mutable bool idsDone;
 };
@@ -125,7 +129,6 @@ protected:
     virtual NodeImpl *nextNamedItemInternal( const DOMString &name ) const;
 private:
     NodeImpl* getNamedFormItem(int attr_id, const DOMString& name, int duplicateNumber, bool caseSensitive) const;
-    NodeImpl* getNamedImgItem(NodeImpl* current, int attr_id, const DOMString& name, int& duplicateNumber, bool caseSensitive) const;
     mutable int currentPos;
 };
 

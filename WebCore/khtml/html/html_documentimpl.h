@@ -27,6 +27,7 @@
 
 #include "xml/dom_docimpl.h"
 #include "misc/loader_client.h"
+#include "html/html_miscimpl.h"
 
 class KHTMLView;
 class QString;
@@ -64,6 +65,8 @@ public:
     void removeNamedImageOrForm(const QString &name);
     bool haveNamedImageOrForm(const QString &name);
 
+    HTMLCollectionImpl::CollectionInfo *collectionInfo(int type) { return m_collection_info+type; }
+
 protected:
     HTMLElementImpl *bodyElement;
     HTMLElementImpl *htmlElement;
@@ -74,7 +77,8 @@ protected slots:
      */
     void slotHistoryChanged();
 private:
-     // we actually store ints inside the pointer value itself; would use void *
+    HTMLCollectionImpl::CollectionInfo m_collection_info[HTMLCollectionImpl::LAST_TYPE];
+    // we actually store ints inside the pointer value itself; would use void *
     // but that makes the template unhappy.
     QDict<char> namedImageAndFormCounts;
 };

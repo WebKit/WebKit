@@ -1,3 +1,52 @@
+2004-11-18  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Ken.
+
+	- merged and cleaned up HTMLCollection and HTMLFormCollection speedups from konqueror
+
+	<rdar://problem/3822992> VIP: Program listings pages at directv.com take a really long time to load [HTMLCollection]
+	<rdar://problem/3701991> Safari unresponsive loading (www.maxim-ic.com) (HTMLCollection)
+
+	This is also a start on fixing 5 other bugs, but those need additional work to make
+	HTMLFormCollection fast.
+
+        * khtml/html/html_documentimpl.h:
+        (DOM::HTMLDocumentImpl::collectionInfo):
+        * khtml/html/html_formimpl.cpp:
+        (DOM::HTMLFormElementImpl::~HTMLFormElementImpl):
+        (DOM::HTMLFormElementImpl::isURLAttribute):
+        (DOM::HTMLFormElementImpl::registerImgElement):
+        (DOM::HTMLFormElementImpl::removeImgElement):
+        * khtml/html/html_formimpl.h:
+        * khtml/html/html_imageimpl.cpp:
+        (HTMLImageElementImpl::HTMLImageElementImpl):
+        (HTMLImageElementImpl::~HTMLImageElementImpl):
+        * khtml/html/html_imageimpl.h:
+        * khtml/html/html_miscimpl.cpp:
+        (HTMLCollectionImpl::HTMLCollectionImpl):
+        (HTMLCollectionImpl::~HTMLCollectionImpl):
+        (HTMLCollectionImpl::updateCollectionInfo):
+        (HTMLCollectionImpl::length):
+        (HTMLCollectionImpl::item):
+        (HTMLCollectionImpl::firstItem):
+        (HTMLCollectionImpl::nextItem):
+        (HTMLCollectionImpl::namedItem):
+        (HTMLCollectionImpl::nextNamedItemInternal):
+        (HTMLFormCollectionImpl::getNamedFormItem):
+        * khtml/html/html_miscimpl.h:
+        (DOM::HTMLCollectionImpl::):
+        (DOM::HTMLCollectionImpl::CollectionInfo::CollectionInfo):
+        * khtml/html/htmlparser.cpp:
+        (KHTMLParser::getElement):
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::DocumentImpl):
+        * khtml/xml/dom_docimpl.h:
+        (DOM::DocumentImpl::incDOMTreeVersion):
+        (DOM::DocumentImpl::domTreeVersion):
+        * khtml/xml/dom_nodeimpl.cpp:
+        (NodeImpl::attach):
+        (NodeImpl::detach):
+
 2004-11-18  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by Chris.

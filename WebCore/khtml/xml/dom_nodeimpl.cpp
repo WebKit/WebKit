@@ -1168,6 +1168,7 @@ void NodeImpl::attach()
 {
     assert(!attached());
     assert(!m_render || (m_render->style() && m_render->parent()));
+    getDocument()->incDOMTreeVersion();
     m_attached = true;
 }
 
@@ -1179,6 +1180,7 @@ void NodeImpl::detach()
         m_render->detach();
 
     m_render = 0;
+    getDocument()->incDOMTreeVersion();
     m_attached = false;
 }
 
