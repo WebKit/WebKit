@@ -1,3 +1,28 @@
+2002-11-24  Maciej Stachowiak  <mjs@apple.com>
+
+	Fixed support for onLoad handlers on images - this is in
+	APPLE_CHANGES because khtml used a different mechanism. Also
+	implemented onError on images. As a result:
+
+	- fixed 3084916 - blank page at aol
+	- fixed 3093162 - golfswitch doesn't work
+	
+        * khtml/html/html_imageimpl.cpp:
+        (HTMLImageElementImpl::parseAttribute): Remove "implement this"
+	comment from onError attribute.
+        * khtml/misc/loader.h:
+        * khtml/misc/loader.cpp:
+        (CachedImage::CachedImage): Initialize m_loading to true.
+	(CachedImage::ref): Send notifyFinished to the new client if the
+	image is not loading.
+        (CachedImage::data): If at eof, set m_loading to false and notify.
+        (CachedImage::error): Set m_loading to false and notify.
+	(CachedImage::checkNotify): New method to notify all clients of
+	changes.
+        * khtml/rendering/render_image.cpp:
+        (RenderImage::notifyFinished): Deliver the appropriate choice of
+	LOAD_EVENT or ERROR_EVENT.
+
 2002-11-24  David Hyatt  <hyatt@apple.com>
 
 	This landing adds support for blocks inside inlines.  It

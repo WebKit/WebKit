@@ -294,6 +294,8 @@ namespace khtml
 
         virtual bool schedule() const { return true; }
 
+	void checkNotify();
+
     protected:
 	void clear();
 

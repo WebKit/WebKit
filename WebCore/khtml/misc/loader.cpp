@@ -508,6 +508,7 @@ CachedImage::CachedImage(DocLoader* dl, const DOMString &url, KIO::CacheControl 
     formatType = 0;
     m_status = Unknown;
     imgSource = 0;
+    m_loading = true;
 #if !APPLE_CHANGES
     setAccept( acceptHeader );
 #endif
@@ -536,6 +537,8 @@ void CachedImage::ref( CachedObjectClient *c )
     // for mouseovers, dynamic changes
     if ( m_status >= Persistent && !valid_rect().isNull() )
         c->setPixmap( pixmap(), valid_rect(), this);
+
+    if(!m_loading) c->notifyFinished(this);
 }
 
 void CachedImage::deref( CachedObjectClient *c )
@@ -923,6 +926,10 @@ void CachedImage::data ( QBuffer &_buffer, bool eof )
         QSize s = pixmap_size();
         setSize(s.width() * s.height() * 2);
     }
+    if (eof) {
+	m_loading = false;
+	checkNotify();
+    }
 #endif // APPLE_CHANGES
 }
 
@@ -938,7 +945,22 @@ void CachedImage::error( int /*err*/, const char */*text*/ )
 #endif
     errorOccured = true;
     do_notify(pixmap(), QRect(0, 0, 16, 16));
+#if APPLE_CHANGES
+    m_loading = false;
+    checkNotify();
+#endif
 }
+
+void CachedImage::checkNotify()
+{
+    if(m_loading) return;
+
+    QPtrList<CachedObjectClient> clients(m_clients);
+    CachedObjectClient *c;
+    for ( c = clients.first(); c != 0; c = clients.next() )
+        c->notifyFinished(this);
+}
+
 
 // ------------------------------------------------------------------------------------------
 
