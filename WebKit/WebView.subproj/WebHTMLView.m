@@ -3960,11 +3960,13 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
             case WebSelectForward:
             case WebSelectRight:
                 [self _handleKillRing:killRing prepend:NO];
+                [bridge setSelectedDOMRange:range affinity:NSSelectionAffinityUpstream];
                 [bridge forwardDeleteKeyPressedWithSmartDelete:NO];
                 break;
             case WebSelectBackward:
             case WebSelectLeft:
                 [self _handleKillRing:killRing prepend:YES];
+                [bridge setSelectedDOMRange:range affinity:NSSelectionAffinityUpstream];
                 [bridge deleteKeyPressedWithSmartDelete:NO];
                 break;
         }
