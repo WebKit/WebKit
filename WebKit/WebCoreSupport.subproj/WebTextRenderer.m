@@ -171,16 +171,16 @@ static inline BOOL isSpace(UniChar c)
     return c == SPACE || c == '\n' || c == NO_BREAK_SPACE;
 }
 
-static char isRoundingHackCharacterTable[0x100];
-
-static void setupRoundingHackCharacterTable(void)
-{
-    isRoundingHackCharacterTable[NO_BREAK_SPACE] = 1;
-    isRoundingHackCharacterTable['\n'] = 1;
-    isRoundingHackCharacterTable[SPACE] = 1;
-    isRoundingHackCharacterTable['-'] = 1;
-    isRoundingHackCharacterTable['?'] = 1;
-}
+static const uint8_t isRoundingHackCharacterTable[0x100] = {
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 /*\n*/, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    1 /*space*/, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 /*-*/, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 /*?*/,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    1 /*no-break space*/, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+};
 
 static inline BOOL isRoundingHackCharacter(UniChar c)
 {
@@ -278,7 +278,6 @@ static BOOL alwaysUseATSU = NO;
 {
     nonBaseChars = CFCharacterSetGetPredefined(kCFCharacterSetNonBase);
     bufferTextDrawing = [[[NSUserDefaults standardUserDefaults] stringForKey:@"BufferTextDrawing"] isEqual: @"YES"];
-    setupRoundingHackCharacterTable();
 }
 
 - initWithFont:(NSFont *)f usingPrinterFont:(BOOL)p

@@ -1,5 +1,13 @@
 2004-10-19  Darin Adler  <darin@apple.com>
 
+        Change suggested by Maciej during code review.
+
+        * WebCoreSupport.subproj/WebTextRenderer.m: Changed rounding hack table to be const so it can be in shared instead
+        of private memory, and doesn't require an initialization function.
+        (+[WebTextRenderer initialize]): Removed initialization.
+
+2004-10-19  Darin Adler  <darin@apple.com>
+
         Reviewed by Maciej.
 
         - fixed <rdar://problem/3838934> Safari stops loading pages after rangeOfCharacterFromSet nil argument exception
