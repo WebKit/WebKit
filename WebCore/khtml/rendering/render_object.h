@@ -145,9 +145,8 @@ public:
     virtual QRect getClipRect(int tx, int ty) { return QRect(0,0,0,0); }
     bool hasClip() { return isPositioned() &&  style()->hasClip(); }
     
-    virtual int getBaselineOfFirstLineBox() { return -1; } // Tables and blocks implement this.
-    virtual InlineFlowBox* getFirstLineBox() { return 0; } // Tables and blocks implement this.
-
+    virtual int getBaselineOfFirstLineBox() const { return -1; } 
+    
     // Obtains the nearest enclosing block (including this block) that contributes a first-line style to our inline
     // children.
     virtual RenderBlock* firstLineBlock() const;
@@ -506,6 +505,12 @@ public:
     // intrinsic extend of replaced elements. undefined otherwise
     virtual int intrinsicWidth() const { return 0; }
     virtual int intrinsicHeight() const { return 0; }
+
+    // used by flexible boxes to impose a flexed width/height override
+    virtual int overrideSize() const { return 0; }
+    virtual int overrideWidth() const { return 0; }
+    virtual int overrideHeight() const { return 0; }
+    virtual void setOverrideSize(int s) {}
 
     // relative to parent node
     virtual void setPos( int /*xPos*/, int /*yPos*/ ) { }

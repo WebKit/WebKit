@@ -58,6 +58,11 @@ public:
     virtual int contentWidth() const;
     virtual int contentHeight() const;
 
+    virtual int overrideSize() const { return m_overrideSize; }
+    virtual int overrideWidth() const;
+    virtual int overrideHeight() const;
+    virtual void setOverrideSize(int s) { m_overrideSize = s; }
+    
     virtual bool absolutePosition(int &xPos, int &yPos, bool f = false);
 
     virtual void setPos( int xPos, int yPos );
@@ -173,6 +178,9 @@ protected:
      * ( = the width of the element with line breaking disabled)
      */
     int m_maxWidth;
+
+    // Used by flexible boxes when flexing this element.
+    int m_overrideSize;
 
     // Cached normal flow values for absolute positioned elements with static left/top values.
     int m_staticX;

@@ -2490,7 +2490,17 @@ void CSSStyleSelector::applyProperty( int id, DOM::CSSValueImpl *value )
     case CSS_PROP_MARGIN_BOTTOM:
     case CSS_PROP_MARGIN_LEFT:
         // +inherit +auto
-        if(id != CSS_PROP_MAX_WIDTH && primitiveValue &&
+        if (id == CSS_PROP_WIDTH || id == CSS_PROP_MIN_WIDTH || id == CSS_PROP_MAX_WIDTH) {
+            if (primitiveValue && primitiveValue->getIdent() == CSS_VAL_INTRINSIC) {
+                l = Length(Intrinsic);
+                apply = true;
+            }
+            else if (primitiveValue && primitiveValue->getIdent() == CSS_VAL_MIN_INTRINSIC) {
+                l = Length(MinIntrinsic);
+                apply = true;
+            }
+        }
+        else if (id != CSS_PROP_MAX_WIDTH && primitiveValue &&
            primitiveValue->getIdent() == CSS_VAL_AUTO)
         {
             //kdDebug( 6080 ) << "found value=auto" << endl;
@@ -2606,6 +2616,14 @@ void CSSStyleSelector::applyProperty( int id, DOM::CSSValueImpl *value )
             apply = true;
     case CSS_PROP_HEIGHT:
     case CSS_PROP_MIN_HEIGHT:
+        if (primitiveValue && primitiveValue->getIdent() == CSS_VAL_INTRINSIC) {
+            l = Length(Intrinsic);
+            apply = true;
+        }
+        else if (primitiveValue && primitiveValue->getIdent() == CSS_VAL_MIN_INTRINSIC) {
+            l = Length(MinIntrinsic);
+            apply = true;
+        }
         if(id != CSS_PROP_MAX_HEIGHT && primitiveValue &&
            primitiveValue->getIdent() == CSS_VAL_AUTO)
             apply = true;
@@ -3421,39 +3439,6 @@ void CSSStyleSelector::applyProperty( int id, DOM::CSSValueImpl *value )
             return; // Error case.
         style->setBoxOrdinalGroup((unsigned int)(primitiveValue->getFloatValue(CSSPrimitiveValue::CSS_NUMBER)));
         return;
-    case CSS_PROP__KHTML_BOX_FLEX_GROUP_TRANSITION: {
-        if (isInherit) {
-            style->setBoxFlexGroupTransition(parentStyle->boxFlexGroupTransition() ? 
-                                             new FlexGroupTransitionData(*parentStyle->boxFlexGroupTransition()) : 0);
-            return;
-        }
-        else if (isInitial) {
-            style->setBoxFlexGroupTransition(0);
-            return;
-        }
-
-        if (!value->isValueList()) return;
-        CSSValueListImpl *list = static_cast<CSSValueListImpl *>(value);
-        int len = list->length();
-        for (int i = 0; i < len; i++) {
-            FlexGroupTransitionValueImpl *item = static_cast<FlexGroupTransitionValueImpl*>(list->item(i));
-            FlexGroupTransitionData* transitionData;
-            if (item->isAuto())
-                transitionData = new FlexGroupTransitionData();
-            else {
-                int type = item->length->primitiveType();
-                Length l;
-                if (type > CSSPrimitiveValue::CSS_PERCENTAGE && type < CSSPrimitiveValue::CSS_DEG)
-                    l = Length(primitiveValue->computeLength(style, paintDeviceMetrics), Fixed, false);
-                else if(type == CSSPrimitiveValue::CSS_PERCENTAGE)
-                    l = Length((int)primitiveValue->getFloatValue(CSSPrimitiveValue::CSS_PERCENTAGE), Percent);
-                transitionData = new FlexGroupTransitionData(item->group1, item->group2, l);
-            }
-            style->setBoxFlexGroupTransition(transitionData, i != 0);
-        }
-            
-        return;
-    }
     case CSS_PROP__KHTML_MARQUEE:
         if (value->cssValueType() != CSSValue::CSS_INHERIT || !parentNode) return;
         style->setMarqueeDirection(parentStyle->marqueeDirection());

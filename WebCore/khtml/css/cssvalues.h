@@ -267,7 +267,9 @@ DOM::DOMString getValueName(unsigned short id);
 #define CSS_VAL_READ_ONLY 256
 #define CSS_VAL_READ_WRITE 257
 #define CSS_VAL_ELEMENT 258
+#define CSS_VAL_INTRINSIC 259
+#define CSS_VAL_MIN_INTRINSIC 260
 
-#define CSS_VAL_TOTAL 259
+#define CSS_VAL_TOTAL 261
 #endif
 

@@ -156,8 +156,6 @@ StyleFlexibleBoxData::StyleFlexibleBoxData()
     pack = RenderStyle::initialBoxPack();
     orient = RenderStyle::initialBoxOrient();
     lines = RenderStyle::initialBoxLines();
-    flexed_height = -1;
-    transitions = 0;
 }
 
 StyleFlexibleBoxData::StyleFlexibleBoxData(const StyleFlexibleBoxData& o)
@@ -170,26 +168,13 @@ StyleFlexibleBoxData::StyleFlexibleBoxData(const StyleFlexibleBoxData& o)
     pack = o.pack;
     orient = o.orient;
     lines = o.lines;
-    flexed_height = o.flexed_height;
-    transitions = o.transitions ? new FlexGroupTransitionData(*o.transitions) : 0;
 }
 
 bool StyleFlexibleBoxData::operator==(const StyleFlexibleBoxData& o) const
 {
     return flex == o.flex && flex_group == o.flex_group &&
            ordinal_group == o.ordinal_group && align == o.align &&
-           pack == o.pack && orient == o.orient && lines == o.lines &&
-           flexed_height == o.flexed_height &&
-           transitionDataEquivalent(o);
-}
-
-bool StyleFlexibleBoxData::transitionDataEquivalent(const StyleFlexibleBoxData& o) const
-{
-    if (!transitions && o.transitions || transitions && !o.transitions)
-        return false;
-    if (transitions && o.transitions && (*transitions != *o.transitions))
-        return false;
-    return true;
+           pack == o.pack && orient == o.orient && lines == o.lines;
 }
 
 StyleCSS3NonInheritedData::StyleCSS3NonInheritedData()
@@ -896,33 +881,4 @@ bool ShadowData::operator==(const ShadowData& o) const
         return false;
     
     return x == o.x && y == o.y && blur == o.blur && color == o.color;
-}
-
-void RenderStyle::setBoxFlexGroupTransition(FlexGroupTransitionData* val, bool add)
-{
-    StyleFlexibleBoxData* boxData = css3NonInheritedData.access()->flexibleBox.access(); 
-    if (!add) {
-        delete boxData->transitions;
-        boxData->transitions = val;
-        return;
-    }
-    
-    FlexGroupTransitionData* last = boxData->transitions;
-    while (last->next) last = last->next;
-    last->next = val;
-}
-
-FlexGroupTransitionData::FlexGroupTransitionData(const FlexGroupTransitionData& o)
-:group1(o.group1), group2(o.group2), length(o.length)
-{
-    next = o.next ? new FlexGroupTransitionData(*o.next) : 0;
-}
-
-bool FlexGroupTransitionData::operator==(const FlexGroupTransitionData& o) const
-{
-    if ((next && !o.next) || (!next && o.next) ||
-        (next && o.next && *next != *o.next))
-        return false;
-    
-    return autoValue == o.autoValue && group1 == o.group1 && group2 == o.group2 && length == o.length;
 }

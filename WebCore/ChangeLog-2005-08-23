@@ -1,3 +1,69 @@
+2004-06-09  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3678031, implement better flexing for Emerson headers.  This involved adding support for max-width: intrinsic,
+	fixing the box layout algorithm to properly deal with max-widths, and implementing support for baseline alignment
+	so that boxes can be aligned vertically along their interior baselines.
+	
+        Reviewed by kocienda
+
+        * khtml/css/cssparser.cpp:
+        (CSSParser::parseValue):
+        (CSSParser::parseShadow):
+        * khtml/css/cssparser.h:
+        * khtml/css/cssproperties.c:
+        (hash_prop):
+        (findProp):
+        * khtml/css/cssproperties.h:
+        * khtml/css/cssproperties.in:
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::applyProperty):
+        * khtml/css/cssvalues.c:
+        (hash_val):
+        (findValue):
+        * khtml/css/cssvalues.h:
+        * khtml/css/cssvalues.in:
+        * khtml/misc/khtmllayout.h:
+        (khtml::):
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::baselinePosition):
+        (khtml::RenderBlock::getBaselineOfFirstLineBox):
+        * khtml/rendering/render_block.h:
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::RenderBox):
+        (RenderBox::overrideWidth):
+        (RenderBox::overrideHeight):
+        (RenderBox::calcWidth):
+        (RenderBox::calcHeight):
+        * khtml/rendering/render_box.h:
+        (khtml::RenderBox::overrideSize):
+        (khtml::RenderBox::setOverrideSize):
+        * khtml/rendering/render_flexbox.cpp:
+        (khtml::RenderFlexibleBox::calcMinMaxWidth):
+        (khtml::RenderFlexibleBox::layoutBlock):
+        (khtml::RenderFlexibleBox::layoutHorizontalBox):
+        (khtml::RenderFlexibleBox::layoutVerticalBox):
+        (khtml::RenderFlexibleBox::placeChild):
+        (khtml::RenderFlexibleBox::allowedChildFlex):
+        * khtml/rendering/render_flexbox.h:
+        * khtml/rendering/render_image.cpp:
+        (RenderImage::isWidthSpecified):
+        (RenderImage::isHeightSpecified):
+        * khtml/rendering/render_object.h:
+        (khtml::RenderObject::getBaselineOfFirstLineBox):
+        (khtml::RenderObject::overrideSize):
+        (khtml::RenderObject::overrideWidth):
+        (khtml::RenderObject::overrideHeight):
+        (khtml::RenderObject::setOverrideSize):
+        * khtml/rendering/render_style.cpp:
+        (StyleFlexibleBoxData::StyleFlexibleBoxData):
+        (StyleFlexibleBoxData::operator==):
+        (ShadowData::operator==):
+        * khtml/rendering/render_style.h:
+        (khtml::RenderStyle::boxPack):
+        (khtml::RenderStyle::setBoxPack):
+        * khtml/rendering/table_layout.cpp:
+        (AutoTableLayout::layout):
+
 2004-06-09  Richard Williamson   <rjw@apple.com>
 
 	Added support for drawing un-rasterized transformed PDFs.

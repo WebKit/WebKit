@@ -381,3 +381,9 @@ read-write
 # CSS_PROP__KHTML_USER_DRAG
 #
 element
+
+#
+# CSS_PROP_WIDTH/MIN_WIDTH/MAX_WIDTH
+#
+intrinsic
+min-intrinsic

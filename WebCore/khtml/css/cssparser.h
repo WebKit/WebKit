@@ -136,7 +136,6 @@ namespace DOM {
 
         // CSS3 Parsing Routines (for properties specific to CSS3)
         bool parseShadow(int propId, bool important);
-        bool parseFlexGroupTransition(int propId, bool important);
         
 	int yyparse( void );
     public:

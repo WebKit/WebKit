@@ -31,6 +31,7 @@
 #include "rendering/render_replaced.h"
 #include "rendering/render_canvas.h"
 #include "rendering/render_table.h"
+#include "render_flexbox.h"
 #include "render_arena.h"
 
 #include "misc/htmlhashes.h"
@@ -53,6 +54,7 @@ RenderBox::RenderBox(DOM::NodeImpl* node)
 {
     m_minWidth = -1;
     m_maxWidth = -1;
+    m_overrideSize = -1;
     m_width = m_height = 0;
     m_x = 0;
     m_y = 0;
@@ -165,6 +167,16 @@ int RenderBox::contentHeight() const
         h -= m_layer->horizontalScrollbarHeight();
 
     return h;
+}
+
+int RenderBox::overrideWidth() const
+{
+    return m_overrideSize == -1 ? m_width : m_overrideSize;
+}
+
+int RenderBox::overrideHeight() const
+{
+    return m_overrideSize == -1 ? m_height : m_overrideSize;
 }
 
 void RenderBox::setPos( int xPos, int yPos )
@@ -712,11 +724,13 @@ void RenderBox::calcWidth()
     }
     else
     {
-        // The parent box is flexing us, so it has increased or decreased our width.  We just bail
-        // and leave our width unchanged in this case.
-        if (parent()->isFlexibleBox() && parent()->style()->boxOrient() == HORIZONTAL
-            && parent()->isFlexingChildren())
+        // The parent box is flexing us, so it has increased or decreased our width.  Use the width
+        // from the style context.
+        if (m_overrideSize != -1 && parent()->isFlexibleBox() && parent()->style()->boxOrient() == HORIZONTAL
+            && parent()->isFlexingChildren()) {
+            m_width = m_overrideSize;
             return;
+        }
 
         bool inVerticalBox = parent()->isFlexibleBox() && parent()->style()->boxOrient() == VERTICAL;
         bool stretching = parent()->style()->boxAlign() == BSTRETCH;
@@ -905,10 +919,9 @@ void RenderBox::calcHeight()
         
         // The parent box is flexing us, so it has increased or decreased our height.  We have to
         // grab our cached flexible height.
-        if (parent()->isFlexibleBox() && parent()->style()->boxOrient() == VERTICAL
-            && parent()->isFlexingChildren() && style()->boxFlexedHeight() != -1)
-            h = Length(style()->boxFlexedHeight() - borderTop() - borderBottom() -
-                       paddingTop() - paddingBottom(), Fixed);
+        if (m_overrideSize != -1 && parent()->isFlexibleBox() && parent()->style()->boxOrient() == VERTICAL
+            && parent()->isFlexingChildren())
+            h = Length(m_overrideSize - borderTop() - borderBottom() - paddingTop() - paddingBottom(), Fixed);
         else if (treatAsReplaced)
             h = Length(calcReplacedHeight(), Fixed);
         else {

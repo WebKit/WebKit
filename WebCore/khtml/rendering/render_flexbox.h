@@ -49,8 +49,10 @@ public:
     virtual const char *renderName() const;
 
     void placeChild(RenderObject* child, int x, int y);
-    
+
 protected:
+    int allowedChildFlex(RenderObject* child, bool expanding, unsigned int group);
+
     bool hasMultipleLines() { return style()->boxLines() == MULTIPLE; }
     bool isVertical() { return style()->boxOrient() == VERTICAL; }
     bool isHorizontal() { return style()->boxOrient() == HORIZONTAL; }

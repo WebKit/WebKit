@@ -919,6 +919,8 @@ void AutoTableLayout::layout()
             numVariable++;
             totalVariable += layoutStruct[i].effMaxWidth;
             allocVariable += w;
+        default:
+            break;
         }
     }
 

@@ -2661,42 +2661,32 @@ short RenderBlock::baselinePosition(bool b, bool isRootLineBox) const
     // box, then the fact that we're an inline-block is irrelevant, and we behave
     // just like a block.
     if (isReplaced() && !isRootLineBox)
-        return height()+marginTop()+marginBottom();
+        return height() + marginTop() + marginBottom();
     return RenderFlow::baselinePosition(b, isRootLineBox);
 }
 
-int RenderBlock::getBaselineOfFirstLineBox()
+int RenderBlock::getBaselineOfFirstLineBox() const
 {
-    if (m_firstLineBox)
-        return m_firstLineBox->yPos() + m_firstLineBox->baseline();
+    if (!isBlockFlow())
+        return RenderFlow::getBaselineOfFirstLineBox();
 
-    if (isInline())
-        return -1; // We're inline and had no line box, so we have no baseline we can return.
-
-    for (RenderObject* curr = firstChild(); curr; curr = curr->nextSibling()) {
-        int result = curr->getBaselineOfFirstLineBox();
-        if (result != -1)
-            return curr->yPos() + result; // Translate to our coordinate space.
+    if (childrenInline()) {
+        if (m_firstLineBox)
+            return m_firstLineBox->yPos() + m_firstLineBox->baseline();
+        else
+            return -1;
+    }
+    else {
+        for (RenderObject* curr = firstChild(); curr; curr = curr->nextSibling()) {
+            if (!curr->isFloatingOrPositioned()) {
+                int result = curr->getBaselineOfFirstLineBox();
+                if (result != -1)
+                    return curr->yPos() + result; // Translate to our coordinate space.
+            }
+        }
     }
 
     return -1;
-}
-
-InlineFlowBox* RenderBlock::getFirstLineBox()
-{
-    if (m_firstLineBox)
-        return m_firstLineBox;
-
-    if (isInline())
-        return 0; // We're inline and had no line box, so we have no baseline we can return.
-
-    for (RenderObject* curr = firstChild(); curr; curr = curr->nextSibling()) {
-        InlineFlowBox* result = curr->getFirstLineBox();
-        if (result)
-            return result;
-    }
-
-    return 0;    
 }
 
 RenderBlock* RenderBlock::firstLineBlock() const
