@@ -31,10 +31,25 @@
 
 typedef void *Item;
 
-template<class T> class QVector : public QCollection {
+class QGVector : public QCollection {
+public:
+    virtual int compareItems(Item, Item);
+};
+
+template<class T> class QVector : public QGVector  {
 public:
     QVector();
     QVector(uint);
+
+    bool isEmpty() const;
+    uint count() const;
+    uint size() const;
+    bool remove(uint);
+    bool resize(uint);
+    bool insert(uint, const T *);
+    T *at(int) const;
+
+    T *operator[](int) const;
 };
 
 #endif

@@ -27,6 +27,7 @@
 #define QSCROLLVIEW_H_
 
 #include "qframe.h"
+#include "qwidget.h"
 #include "qscrollbar.h"
 
 class QScrollView : public QFrame {
@@ -46,6 +47,11 @@ public:
     QScrollBar *verticalScrollBar() const;
     virtual void setVScrollBarMode(ScrollBarMode);
     virtual void setHScrollBarMode(ScrollBarMode);
+    virtual void addChild(QWidget* child, int x=0, int y=0);
+    void removeChild(QWidget* child);
+    virtual void resizeContents(int w, int h);
+    void updateContents(int x, int y, int w, int h);
+    void repaintContents(int x, int y, int w, int h, bool erase=TRUE);
 };
 
 #endif

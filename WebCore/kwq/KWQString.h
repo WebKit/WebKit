@@ -60,6 +60,8 @@ public:
     uchar cell() const;
     uchar row() const;
     Direction direction() const;
+    bool mirrored() const;
+    QChar mirroredChar() const;
 
     friend inline int operator==(char, QChar);
     friend inline int operator==(QChar, char);

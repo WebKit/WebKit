@@ -58,6 +58,7 @@ public:
     void killTimer(int);
     void killTimers();
     void installEventFilter(const QObject *);
+    void removeEventFilter(const QObject *);
     void blockSignals(bool);
 };
 

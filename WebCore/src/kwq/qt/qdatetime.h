@@ -32,8 +32,10 @@ public:
     QTime(int h, int m);
     QTime(const QTime &other);
 
+    bool isNull() const;
     void start();
     int msec() const;
+    int elapsed() const;
 };
 
 class QDate {

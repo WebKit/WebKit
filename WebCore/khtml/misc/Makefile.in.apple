@@ -53,6 +53,7 @@ CXXFLAGS = $(BASECXXFLAGS) \
 	-I$(TOPSRCDIR)/src/kwq \
 	-I$(TOPSRCDIR)/src/kwq/qt \
 	-I$(TOPSRCDIR)/src/kwq/kdecore \
+	-I$(TOPSRCDIR)/src/kwq/kdeui \
 	-I$(TOPSRCDIR)/src/kwq/kio \
 	-I$(TOPSRCDIR)/src/kwq/dcop \
 	-I../dom \

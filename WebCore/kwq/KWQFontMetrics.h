@@ -39,12 +39,15 @@ public:
 
     int ascent() const;
     int height() const;
-    int width() const;
+    int width(QChar) const;
     int width(char) const;
-    int width(QString) const;
+    int width(const QString &, int len = -1) const;
     int descent() const;
+    QRect boundingRect( const QString &, int len = -1 ) const;
     QRect boundingRect(QChar) const;
     QSize size(int flags, const QString& str, int len=-1, int tabstops=0, int *tabarray=0, char **intern=0 ) const;
+    int rightBearing(QChar) const;
+    int leftBearing(QChar) const;
 };
 
 #endif

@@ -37,6 +37,8 @@ public:
     int y() const;
     int left() const;
     int top() const;
+    int right() const;
+    int bottom() const;
     int width() const;
     int height() const;
     bool isNull() const;
@@ -46,6 +48,7 @@ public:
     void setWidth(int);
     void setHeight(int);
     QRect intersect(const QRect &) const;
+    bool intersects(const QRect &) const;
 };
 
 #endif

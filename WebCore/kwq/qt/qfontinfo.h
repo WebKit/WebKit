@@ -26,4 +26,12 @@
 #ifndef QFONTINFO_H_
 #define QFONTINFO_H_
 
+class QFontInfo {
+public:
+    QFontInfo(const QFont &);
+    QFontInfo( const QFontInfo & );
+
+    bool fixedPitch() const;
+};
+
 #endif

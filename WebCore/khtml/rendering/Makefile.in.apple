@@ -3,9 +3,6 @@
 # Makefile
 #
 # $RCSfile$
-# $Revision$
-# $Author$
-# $Date$
 #
 #======================================================================
 # set top source dir relative to this directory
@@ -22,32 +19,39 @@ SOURCES = $(wildcard *.cpp)
 HEADERS = $(wildcard *.h)
 CXXOBJECTS = $(patsubst %.cpp,%.o,$(wildcard *.cpp))
 
-OBJECTS = $(CXXOBJECTS) 
+OBJECTS = $(CXXOBJECTS)
 
-LIBRARY = libkhtmldom.a
+LIBRARY = libkhtmlrendering.a
 
 CLEAN_FILES = $(OBJECTS) \
 	$(LIBRARY) \
+	*.moc \
 	$(NULL)
 
 #----------------------------------------------------------------------
 # Set flags for this directory
 
 CXXFLAGS = $(BASECXXFLAGS) \
-	-I$(TOPSRCDIR) \
+        -DNEED_BOGUS_X_DEFINES \
 	-I$(TOPSRCDIR)/src/kwq \
 	-I$(TOPSRCDIR)/src/kwq/qt \
 	-I$(TOPSRCDIR)/src/kwq/dcop \
 	-I$(TOPSRCDIR)/src/kwq/kdecore \
-	-I$(TOPSRCDIR)/src/kwq/kdeui \
+	-I$(TOPSRCDIR)/src/kwq/kfile \
 	-I$(TOPSRCDIR)/src/kwq/kio \
+	-I$(TOPSRCDIR)/src/kwq/kdeui \
 	-I$(TOPSRCDIR)/src/kwq/kparts \
-	-I../css \
+	-I../../kdecore \
+	-I../../kjs \
 	-I../html \
+	-I../java \
 	-I../misc \
+	-I../css \
+	-I../dom \
 	-I../xml \
-	-I.. \
 	-I. \
+	-I.. \
+	-I$(TOPSRCDIR) \
 	$(NULL)
 
 #----------------------------------------------------------------------
@@ -55,7 +59,7 @@ CXXFLAGS = $(BASECXXFLAGS) \
 
 all: Makefile.dep $(OBJECTS) $(LIBRARY)
 
-$(LIBRARY): $(CXXOBJECTS)
+$(LIBRARY): $(OBJECTS)
 	$(AR) $(ARFLAGS) $(LIBRARY) $(CXXOBJECTS)
 	$(RANLIB) $(LIBRARY)
 
@@ -63,6 +67,18 @@ depend: Makefile.dep
 
 Makefile.dep: $(SOURCES) $(HEADERS)
 	$(CC) -MM $(CXXFLAGS) $(SOURCES) > Makefile.dep
+
+render_form.cpp: render_form.moc
+render_form.moc:
+	touch $@
+
+render_frames.cpp: render_frames.moc
+render_frames.moc:
+	touch $@
+
+render_replaced.cpp: render_replaced.moc
+render_replaced.moc:
+	touch $@
 
 #----------------------------------------------------------------------
 # include make dependency rules

@@ -31,6 +31,7 @@ class QString;
 class QColor {
 public:
     QColor();
+    QColor(int,int,int);
     QColor(const char *);
 
     QString name() const;

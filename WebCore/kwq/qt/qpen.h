@@ -27,11 +27,14 @@
 #define QPEN_H_
 
 #include "qnamespace.h"
+#include "qcolor.h"
 
 class QPen : public Qt {
 public:
     QPen();
     QPen(const QColor &color, uint width=0, PenStyle style=SolidLine);
+
+    const QColor &color() const;
 };
 
 #endif

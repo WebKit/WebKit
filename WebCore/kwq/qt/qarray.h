@@ -39,6 +39,7 @@ public:
     uint count() const;
     bool resize(uint size);
     QArray<T>& duplicate(const T*, int);
+    bool fill(const T &d, int size = -1);
     
     T &operator[](int) const;
 };

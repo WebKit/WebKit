@@ -33,6 +33,7 @@
 #include "qpen.h"
 #include "qregion.h"
 #include "qpoint.h"
+#include "qstring.h"
 #include "qfontmetrics.h"
 
 class QFont;
@@ -48,6 +49,7 @@ public:
     QPainter();
     QPainter(const QPaintDevice *);
     
+    const QFont &font() const;
     void setFont(const QFont &);
     QFontMetrics fontMetrics() const;
     const QPen &pen() const;
@@ -58,6 +60,9 @@ public:
 
     QRect xForm(const QRect &) const;
 
+    void save();
+    void restore();
+    
     void drawRect(int, int, int, int);
     void fillRect(int, int, int, int, const QBrush &);
     void drawLine(int, int, int, int);
@@ -69,7 +74,10 @@ public:
     void drawPixmap(const QPoint &, const QPixmap &);
     void drawPixmap(const QPoint &, const QPixmap &, const QRect &);
     void drawTiledPixmap(int, int, int, int, const QPixmap &, int sx = 0, int sy = 0);
+    void drawText(int x, int y, const QString &, int len = -1);
     void drawText(int, int, int, int, AlignmentFlags, const QString &);
+    void drawText(int, int, int, int, int flags, const QString&, int len = -1, QRect *br=0, char **internal=0);
+
     void setClipping(bool);
     void setClipRegion(const QRegion &);
     const QRegion &clipRegion() const;

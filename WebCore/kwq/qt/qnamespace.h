@@ -41,9 +41,12 @@ public:
     };
 
     enum AlignmentFlags {
+        AlignLeft,
         AlignCenter,
+        AlignRight,
         WordBreak,
         ShowPrefix,
+        DontClip,
     };
 
     enum PenStyle {
