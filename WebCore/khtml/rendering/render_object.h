@@ -184,20 +184,8 @@ public:
       close();
     }
 
-    void setLayouted(bool b=true) {
-        m_layouted = b;
-        if(!b) {
-            RenderObject *o = m_parent;
-            RenderObject *root = this;
-            while( o ) {
-                o->m_layouted = false;
-                root = o;
-                o = o->m_parent;
-            }
-            root->scheduleRelayout();
-        }
-    }
-    
+    void setLayouted(bool b=true);
+        
     // hack to block inline layouts during parsing
     // evil, evil. I didn't do it. <tm>
     virtual void setBlockBidi() {}

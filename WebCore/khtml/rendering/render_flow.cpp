@@ -299,13 +299,6 @@ void RenderFlow::layout()
 
     //kdDebug() << renderName() << " layout width=" << m_width << " height=" << m_height << endl;
 
-    RenderLayer* l = layer();
-    if (l) {
-        l->setWidth(m_width);
-        l->setHeight(m_height);
-        l->updateLayerPosition();
-    }
-      
     setLayouted();
 }
 

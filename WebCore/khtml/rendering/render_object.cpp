@@ -150,6 +150,30 @@ void RenderObject::insertChildNode(RenderObject*, RenderObject*)
     KHTMLAssert(0);
 }
 
+
+void RenderObject::setLayouted(bool b) 
+{
+    m_layouted = b;
+    if (b) {
+        RenderLayer* l = layer();
+        if (l) {
+            l->setWidth(width());
+            l->setHeight(height());
+            l->updateLayerPosition();
+        }
+    }
+    else {
+        RenderObject *o = m_parent;
+        RenderObject *root = this;
+        while( o ) {
+            o->m_layouted = false;
+            root = o;
+            o = o->m_parent;
+        }
+        root->scheduleRelayout();
+    }
+}
+    
 RenderObject *RenderObject::containingBlock() const
 {
     if(isTableCell()) {

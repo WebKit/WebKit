@@ -251,8 +251,11 @@ RenderLayer::constructZTree(const QRect& damageRect,
     }
 
     // Now add a leaf node for ourselves, but only if we intersect the damage
-    // rect.
-    if (!m_parent ||
+    // rect.  This intersection test is valid only for replaced elements or
+    // block elements, since inline non-replaced elements have a width of 0 (and
+    // thus the layer does too).  We also exclude the root from this test, since
+    // the HTML can be much taller than the root (because of scrolling).
+    if (!m_parent || (renderer()->isInline() && !renderer()->isReplaced()) ||
         (eventProcessing && layerBounds.contains(x,y)) ||
         (!eventProcessing && layerBounds.intersects(damageRect))) {
         RenderLayerElement* layerElt = new RenderLayerElement(this, layerBounds, x, y);
