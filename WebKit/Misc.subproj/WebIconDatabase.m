@@ -34,6 +34,7 @@ NSSize WebIconMediumSize = {32, 32};
 - (void)_updateFileDatabase;
 - (NSMutableArray *)_iconsForIconURL:(NSURL *)iconURL;
 - (NSImage *)_iconForFileURL:(NSURL *)fileURL withSize:(NSSize)size;
+- (NSMutableArray *)_builtItIconsForHost:(NSString *)host;
 - (void)_retainIconForIconURL:(NSURL *)iconURL;
 - (void)_releaseIconForIconURL:(NSURL *)iconURL;
 - (void)_retainFutureIconForSiteURL:(NSURL *)siteURL;
@@ -44,7 +45,7 @@ NSSize WebIconMediumSize = {32, 32};
 - (void)_addObject:(id)object toSetForKey:(id)key inDictionary:(NSMutableDictionary *)dictionary;
 - (NSURL *)_uniqueIconURL;
 - (NSImage *)_cachedIconFromArray:(NSMutableArray *)icons withSize:(NSSize)size;
-- (void)_scaleIcon:(NSImage *)icon toSize:(NSSize)size;
+- (NSImage *)_iconByScalingIcon:(NSImage *)icon toSize:(NSSize)size;
 
 @end
 
@@ -101,9 +102,9 @@ NSSize WebIconMediumSize = {32, 32};
     if([siteURL isFileURL]){
         return [self _iconForFileURL:siteURL withSize:size];
     }
-    
-    NSMutableArray *icons = [_private->hostToBuiltItIcons objectForKey:[siteURL host]];
 
+    NSMutableArray *icons = [self _builtItIconsForHost:[siteURL host]];
+    
     if(!icons){
         NSURL *iconURL = [_private->siteURLToIconURL objectForKey:siteURL];
         
@@ -325,7 +326,7 @@ NSSize WebIconMediumSize = {32, 32};
 {
     if([siteURL isFileURL]){
         return YES;
-    }else if([_private->hostToBuiltItIcons objectForKey:[siteURL host]]){
+    }else if([self _builtItIconsForHost:[siteURL host]]){
         return YES;
     }else if([_private->siteURLToIconURL objectForKey:siteURL]){
         return YES;
@@ -389,9 +390,33 @@ NSSize WebIconMediumSize = {32, 32};
         return [self _cachedIconFromArray:_private->htmlIcons withSize:size];
     }else{
         icon = [workspace iconForFile:[fileURL path]];
-        [self _scaleIcon:icon toSize:size];
-        return icon;
+        return [self _iconByScalingIcon:icon toSize:size];
     }
+}
+
+- (NSMutableArray *)_builtItIconsForHost:(NSString *)host
+{
+    NSArray *hostParts = [host componentsSeparatedByString:@"."];
+    NSMutableString *truncatedHost = [NSMutableString string];
+    NSMutableArray *icons;
+    BOOL firstPart = YES;
+    NSString *hostPart;
+    
+    NSEnumerator *enumerator = [hostParts reverseObjectEnumerator];
+    while ((hostPart = [enumerator nextObject]) != nil) {
+        if(firstPart){
+            [truncatedHost insertString:hostPart atIndex:0];
+            firstPart = NO;
+        }else{
+            [truncatedHost insertString:[NSString stringWithFormat:@"%@.", hostPart] atIndex:0];
+            icons = [_private->hostToBuiltItIcons objectForKey:truncatedHost];
+            if(icons){
+                return icons;
+            }
+        }
+    }
+    
+    return nil;
 }
 
 - (void)_setIcon:(NSImage *)icon forIconURL:(NSURL *)iconURL
@@ -648,7 +673,7 @@ NSSize WebIconMediumSize = {32, 32};
     // Assume that it's best to resize the original
     NSImage *originalIcon = [icons objectAtIndex:0];
     icon = [originalIcon copy];
-    [self _scaleIcon:icon toSize:size];
+    icon = [self _iconByScalingIcon:icon toSize:size];
 
     // Cache it
     [icons addObject:icon];
@@ -656,10 +681,34 @@ NSSize WebIconMediumSize = {32, 32};
     return [icon autorelease];
 }
 
-- (void)_scaleIcon:(NSImage *)icon toSize:(NSSize)size
+- (NSImage *)_iconByScalingIcon:(NSImage *)icon toSize:(NSSize)size
 {
+    double start, duration;
+    NSImage *scaledIcon;
+        
+    start = CFAbsoluteTimeGetCurrent();
+
+#ifdef WIZZY_SCALING
+    NSSize originalSize = [icon size];
+    scaledIcon = [[NSImage alloc] initWithSize:size];
+    [scaledIcon lockFocus];
+    NSGraphicsContext *currentContent = [NSGraphicsContext currentContext];
+    [currentContent setImageInterpolation:NSImageInterpolationHigh];
+    [icon drawInRect:NSMakeRect(0, 0, size.width, size.height)
+            fromRect:NSMakeRect(0, 0, originalSize.width, originalSize.height)
+           operation:NSCompositeSourceOver	// Renders transparency correctly
+            fraction:1.0];
+    [scaledIcon unlockFocus];
+#else
     [icon setScalesWhenResized:YES];
     [icon setSize:size];
+    scaledIcon = icon;
+#endif
+    
+    duration = CFAbsoluteTimeGetCurrent() - start;
+    WEBKITDEBUGLEVEL (WEBKIT_LOG_TIMING, "scaling icon took %f seconds.\n", duration);
+
+    return scaledIcon;
 }
 
 @end

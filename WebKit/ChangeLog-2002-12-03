@@ -1,3 +1,16 @@
+2002-09-04  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: 3043024 - Built-in icons should match on *whatever.com or *whatever.whatever
+	implemented wizzy scaling, but ifdef'd it out
+
+        * Misc.subproj/WebIconDatabase.m:
+        (-[WebIconDatabase iconForSiteURL:withSize:]): call _builtItIconsForHost
+        (-[WebIconDatabase _hasIconForSiteURL:]): call _builtItIconsForHost
+        (-[WebIconDatabase _iconForFileURL:withSize:]): call _iconByScalingIcon:toSize:
+        (-[WebIconDatabase _builtItIconsForHost:]): use better host matching
+        (-[WebIconDatabase _cachedIconFromArray:withSize:]): call _iconByScalingIcon:toSize:
+        (-[WebIconDatabase _iconByScalingIcon:toSize:]): renamed, ifdef'd out wizzy scaling
+
 2002-09-04  Ken Kocienda  <kocienda@apple.com>
 
 	Changed WebKit so that it no longer relies on WebResourceHandle to buffer
