@@ -491,6 +491,14 @@
 
 - (time_t)expiresTimeForResponse:(NSURLResponse *)response
 {
+    // This check can be removed when the new Foundation method
+    // has been around long enough for everyone to have it.
+    if ([response respondsToSelector:@selector(_calculatedExpiration)]) {
+        NSTimeInterval expiration = [response _calculatedExpiration];
+        return expiration > MAX_TIME_T ? MAX_TIME_T : expiration;
+    }
+
+    // Fall back to the older calculation
     time_t now = time(NULL);
     NSTimeInterval lifetime = [response _freshnessLifetime];
     if (lifetime < 0)

@@ -1,3 +1,16 @@
+2003-12-16  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin
+
+	Fix for this bug:
+
+	<rdar://problem/3512199>: WebBridge expiresTimeForResponse can be 
+	improved to use better expiration calculations
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge expiresTimeForResponse:]): Switch to use new 
+	_calculatedExpiration SPI method on NSURLResponse.
+
 2003-12-15  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3505546>: always get keychain prompt when sending mail using cert downloaded with Safari
