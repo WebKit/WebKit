@@ -2086,14 +2086,35 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     if (_private->children == nil)
         _private->children = [[NSMutableArray alloc] init];
     [_private->children addObject:child];
-
+	
     child->_private->parent = self;
     [[child _bridge] setParent:_private->bridge];
-    [[child dataSource] _setOverrideEncoding:[[self dataSource] _overrideEncoding]];   
+    [[child dataSource] _setOverrideEncoding:[[self dataSource] _overrideEncoding]];  
+	 
+    unsigned currentIndex = [_private->children count] - 1;
+    // we keep track of sibling pointers to avoid the overhead of a lookup in the children array
+    
+    if (currentIndex > 0) {
+        WebFrame *previousFrame = [[self childFrames] objectAtIndex: currentIndex - 1];
+        previousFrame->_nextSibling = child;
+        child->_previousSibling = previousFrame;
+        ASSERT(child->_nextSibling == nil);
+    }
+    
 }
 
 - (void)_removeChild:(WebFrame *)child
 {
+	// move corresponding previous and next WebFrame sibling pointers to their new positions
+	// when we remove a child we may have to reattach the previous frame's next frame and visa versa
+	if (child->_previousSibling) {
+            child->_previousSibling->_nextSibling = child->_nextSibling;
+	}
+	
+	if (child->_nextSibling) { 
+            child->_nextSibling->_previousSibling = child->_previousSibling; 
+	}
+	
     [_private->children removeObject:child];
     child->_private->parent = nil;
 }
@@ -2336,32 +2357,16 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     [self _checkNewWindowPolicyForRequest:request action:(NSDictionary *)action frameName:frameName formState:nil andCall:self withSelector:@selector(_continueLoadRequestAfterNewWindowPolicy:frameName:formState:)];
 }
 
-// Returns the next frame in our parent's children array, or nil
+// Returns the next frame in our parent's children array
 - (WebFrame *)_nextSibling
 {
-    if (_private->parent) {
-        NSArray *parentsKids = _private->parent->_private->children;
-        unsigned selfIndex = [parentsKids indexOfObjectIdenticalTo:self];
-        ASSERT(selfIndex != NSNotFound);
-        if (selfIndex < [parentsKids count]-1) {
-            return [parentsKids objectAtIndex:selfIndex+1];
-        }
-    }
-    return nil;                // no parent, or no more later siblings
+    return _nextSibling;
 }
 
 // Returns the previous frame in our parent's children array, or nil
 - (WebFrame *)_previousSibling
 {
-    if (_private->parent) {
-        NSArray *parentsKids = _private->parent->_private->children;
-        unsigned selfIndex = [parentsKids indexOfObjectIdenticalTo:self];
-        ASSERT(selfIndex != NSNotFound);
-        if (selfIndex > 0) {
-            return [parentsKids objectAtIndex:selfIndex-1];
-        }
-    }
-    return nil;                // no parent, or no more earlier siblings
+    return _previousSibling;
 }
 
 // Returns the last child of us and any children, or nil

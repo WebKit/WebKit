@@ -25,6 +25,8 @@
 {
 @private
     WebFramePrivate *_private;
+    WebFrame *_nextSibling;
+    WebFrame *_previousSibling;
 }
 
 /*!

@@ -1,3 +1,18 @@
+2004-12-01  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by Harrison.
+
+	Fixed: <rdar://problem/3228878> potential performance problem in finding in large framesets
+
+	Got rid of O(N^2) conditions in _nextSibling and _previousSibling of where we were looking up self in the parent array of frames.
+
+        * WebView.subproj/WebFrame.h: Added two new pointers, one for the previous kid and one for the next kid
+        * WebView.subproj/WebFrame.m: 
+        (-[WebFrame _addChild:]): Updates the previous frame and the next frame after this child
+        (-[WebFrame _removeChild:]): ditto
+        (-[WebFrame _nextSibling]): just return the pointer now
+        (-[WebFrame _previousSibling]): ditto
+
 2004-11-30  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed:
