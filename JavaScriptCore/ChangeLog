@@ -1,3 +1,20 @@
+2004-07-16  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Maciej.
+        
+        - fixed <rdar://problem/3714644> REGRESSION (125.8-146): bugzilla submit link 
+        hangs browser with javascript
+
+        * kjs/array_object.cpp:
+        (ArrayProtoFuncImp::call):
+        Check for undefined type for args[0] the same way we were already checking
+        for args[1]. In this case, args was zero-length, but we were treating
+        args[0] like an integer anyway. Resulted in some code looping from a NAN
+        value to 4, taking approximately forever.
+
+        * JavaScriptCore.pbproj/project.pbxproj:
+        version wars
+        
 === Safari-152 ===
 
 2004-07-14  Maciej Stachowiak  <mjs@apple.com>

@@ -580,14 +580,17 @@ Value ArrayProtoFuncImp::call(ExecState *exec, Object &thisObj, const List &args
     // We return a new array
     Object resObj = Object::dynamicCast(exec->lexicalInterpreter()->builtinArray().construct(exec,List::empty()));
     result = resObj;
-    double begin = args[0].toInteger(exec);
-    if (begin < 0) {
-      begin += length;
-      if (begin < 0)
-        begin = 0;
-    } else {
-      if (begin > length)
-        begin = length;
+    double begin = 0;
+    if (args[0].type() != UndefinedType) {
+        begin = args[0].toInteger(exec);
+        if (begin < 0) {
+            begin += length;
+            if (begin < 0)
+                begin = 0;
+        } else {
+            if (begin > length)
+                begin = length;
+        }
     }
     double end = length;
     if (args[1].type() != UndefinedType) {
