@@ -1,3 +1,13 @@
+2003-04-15  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin
+
+        Name change from WebCacheObject to NSCachedURLResponse.    
+        No functional changes.
+
+        * WebView.subproj/WebDataProtocol.m:
+        (-[WebDataProtocol startLoadingWithCacheObject:]):
+
 2003-04-15  Trey Matteson  <trey@apple.com>
 
 	3227514 Open window in "Same Page" should copy entire back/forward list

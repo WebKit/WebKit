@@ -142,7 +142,7 @@ NSString *WebDataProtocolScheme = @"applewebdata";
     return URL;
 }
 
-- (void)startLoadingWithCacheObject:(WebCacheObject *)cacheObject
+- (void)startLoadingWithCacheObject:(NSCachedURLResponse *)cacheObject
 {
     NSObject<NSURLProtocolClient> *client = [self client];
     NSURLRequest *request = [self request];
