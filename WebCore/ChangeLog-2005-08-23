@@ -1,3 +1,13 @@
+2003-12-11  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Chris.
+
+	<rdar://problem/3507859>: Status text should only include "OK", not full "HTTP/1.0 200 OK" status line
+	
+        * khtml/ecma/xmlhttprequest.cpp:
+        (KJS::XMLHttpRequest::getStatusText): Include only the status
+	text, not the full status line.
+
 === Safari-117 ===
 
 2003-12-11  David Hyatt  <hyatt@apple.com>
