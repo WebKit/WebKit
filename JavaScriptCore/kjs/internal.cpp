@@ -667,7 +667,6 @@ void InterpreterImp::mark()
     BooleanImp::staticTrue->mark();
   if (BooleanImp::staticFalse && !BooleanImp::staticFalse->marked())
     BooleanImp::staticFalse->mark();
-  List::markEmptyList();
   //fprintf( stderr, "InterpreterImp::mark this=%p global.imp()=%p\n", this, global.imp() );
   if (global.imp())
     global.imp()->mark();

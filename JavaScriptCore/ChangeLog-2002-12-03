@@ -1,5 +1,46 @@
 2002-11-18  Maciej Stachowiak  <mjs@apple.com>
 
+	Change List to completely avoid going through the GC
+	allocator. 3.6% performance improvement on JavaScript iBench.
+	
+        * kjs/internal.cpp:
+        (InterpreterImp::mark): Don't mark the empty list.
+
+	For all the methods below I basically lifted the ListImp version
+	up to the List method with minor tweaks.
+	
+        * kjs/types.cpp:
+        (ListIterator::ListIterator):
+        (List::List):
+        (List::operator=):
+        (List::~List):
+        (List::mark):
+        (List::append):
+        (List::prepend):
+        (List::appendList):
+        (List::prependList):
+        (List::removeFirst):
+        (List::removeLast):
+        (List::remove):
+        (List::clear):
+        (List::clearInternal):
+        (List::copy):
+        (List::begin):
+        (List::end):
+        (List::isEmpty):
+        (List::size):
+        (List::at):
+        (List::operator[]):
+        (List::empty):
+        (List::erase):
+        (List::refAll):
+        (List::derefAll):
+        (List::swap):
+        (List::globalClear):
+        * kjs/types.h:
+
+2002-11-18  Maciej Stachowiak  <mjs@apple.com>
+
 	Fixed a horrible leak introduced with my last change that
 	somehow did not show up on my machine.
 
