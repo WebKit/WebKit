@@ -167,12 +167,12 @@ void NP_ReleaseObject (NP_Object *obj);
 /*
     Built-in data types.  These classes can be passed to NP_IsKindOfClass().
 */
-NP_Class *NP_BooleanClass;
-NP_Class *NP_NullClass;
-NP_Class *NP_UndefinedClass;
-NP_Class *NP_ArrayClass;
-NP_Class *NP_NumberClass;
-NP_Class *NP_StringClass;
+extern NP_Class *NP_BooleanClass;
+extern NP_Class *NP_NullClass;
+extern NP_Class *NP_UndefinedClass;
+extern NP_Class *NP_ArrayClass;
+extern NP_Class *NP_NumberClass;
+extern NP_Class *NP_StringClass;
 NP_Class *NP_JavaScriptObjectClass;
 
 typedef NP_Object NP_Boolean;
@@ -233,10 +233,19 @@ NP_Undefined *NP_GetUndefined();
     arrays of properties.  NP_Array is represented in JavaScript
     by a restricted Array.  The Array in JavaScript is read-only,
     only has index accessors, and may not be resized.
+    
+    Objects added to arrays are retained by the array.
 */
-NP_Array *NP_CreateArray (const NP_Object **, unsigned count);
-NP_Array *NP_CreateArrayV (unsigned count, ...);
-NP_Object *NP_ObjectAtIndex (NP_Array *array, unsigned index);
+NP_Array *NP_CreateArray (NP_Object **, int32_t count);
+NP_Array *NP_CreateArrayV (int32_t count, ...);
+
+/*
+
+    Objects returned by NP_ObjectAtIndex do not have an implicit
+    reference count.  Callers must retain if they wish to keep
+    a reference.
+*/
+NP_Object *NP_ObjectAtIndex (NP_Array *array, int32_t index);
 
 /*
     Returns true if the object is a kind of class as specified by

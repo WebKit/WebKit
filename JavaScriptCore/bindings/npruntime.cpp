@@ -235,6 +235,7 @@ static NP_Class _numberClass = {
 };
 
 static NP_Class *numberClass = &_numberClass;
+NP_Class *NP_NumberClass = numberClass;
 
 NP_Number *NP_CreateNumberWithInt (int i)
 {
@@ -312,6 +313,7 @@ static NP_Class _stringClass = {
 };
 
 static NP_Class *stringClass = &_stringClass;
+NP_Class *NP_StringClass = stringClass;
 
 #define LOCAL_CONVERSION_BUFFER_SIZE    4096
 
@@ -406,7 +408,6 @@ int32_t NP_StringLength (NP_String *obj)
 typedef struct
 {
     NP_Object object;
-    bool value;
 } BooleanObject;
 
 static NP_Object *booleanAllocate()
@@ -435,13 +436,13 @@ static BooleanObject *theTrueObject = 0;
 static BooleanObject *theFalseObject = 0;
 
 static NP_Class *booleanClass = &_booleanClass;
+NP_Class *NP_BooleanClass = booleanClass;
 
 NP_Boolean *NP_CreateBoolean (bool f)
 {
     if (f) {
         if (!theTrueObject) {
             theTrueObject = (BooleanObject *)NP_CreateObject (booleanClass);
-            theTrueObject->value = f;
         }
         return (NP_Boolean *)theTrueObject;
     }
@@ -449,17 +450,19 @@ NP_Boolean *NP_CreateBoolean (bool f)
     // False
     if (!theFalseObject) {
         theFalseObject = (BooleanObject *)NP_CreateObject (booleanClass);
-        theFalseObject->value = f;
     }
     return (NP_Boolean *)theFalseObject;
 }
 
 bool NP_BoolFromBoolean (NP_Boolean *obj)
 {
-    assert (NP_IsKindOfClass (obj, booleanClass));
+    assert (NP_IsKindOfClass (obj, booleanClass) 
+            && ((BooleanObject *)obj == theTrueObject || (BooleanObject *)obj == theFalseObject));
 
     BooleanObject *booleanObj = (BooleanObject *)obj;
-    return booleanObj->value;
+    if (booleanObj == theTrueObject)
+        return true;
+    return false;
 }
 
 // ---------------------------------- NP_Null ----------------------------------
@@ -495,6 +498,7 @@ static NP_Class _nullClass = {
 };
 
 static NP_Class *nullClass = &_nullClass;
+NP_Class *NP_NullClass = nullClass;
 
 NP_Null *NP_GetNull()
 {
@@ -537,6 +541,7 @@ static NP_Class _undefinedClass = {
 };
 
 static NP_Class *undefinedClass = &_undefinedClass;
+NP_Class *NP_UndefinedClass = undefinedClass;
 
 NP_Undefined *NP_GetUndefined()
 {
@@ -547,18 +552,88 @@ NP_Undefined *NP_GetUndefined()
 
 // ---------------------------------- NP_Array ----------------------------------
 
-NP_Array *NP_CreateArray (const NP_Object **, unsigned count)
+typedef struct
 {
-    return NULL;
+    NP_Object object;
+    NP_Object **objects;
+    int32_t count;
+} ArrayObject;
+
+static NP_Object *arrayAllocate()
+{
+    return (NP_Object *)malloc(sizeof(ArrayObject));
 }
 
-NP_Array *NP_CreateArrayV (unsigned count, ...)
+static void arrayDeallocate (ArrayObject *array)
 {
-    return NULL;
+    int32_t i;
+    
+    for (i = 0; i < array->count; i++) {
+        NP_ReleaseObject(array->objects[i]);
+    }
+    free (array->objects);
+    free (array);
 }
 
-NP_Object *NP_ObjectAtIndex (NP_Array *array, unsigned index)
+
+static NP_Class _arrayClass = { 
+    1,
+    arrayAllocate, 
+    (NP_DeallocateInterface)arrayDeallocate, 
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+};
+
+static NP_Class *arrayClass = &_arrayClass;
+NP_Class *NP_ArrayClass = arrayClass;
+
+NP_Array *NP_CreateArray (NP_Object **objects, int32_t count)
 {
-    return NULL;
+    int32_t i;
+
+    assert (count >= 0);
+    
+    ArrayObject *array = (ArrayObject *)NP_CreateObject(arrayClass);
+    array->objects = (NP_Object **)malloc (sizeof(NP_Object *)*count);
+    for (i = 0; i < count; i++) {
+        array->objects[i] = NP_RetainObject (objects[i]);
+    }
+    
+    return (NP_Array *)array;
+}
+
+NP_Array *NP_CreateArrayV (int32_t count, ...)
+{
+    va_list args;
+
+    assert (count >= 0);
+
+    ArrayObject *array = (ArrayObject *)NP_CreateObject(arrayClass);
+    array->objects = (NP_Object **)malloc (sizeof(NP_Object *)*count);
+
+    va_start (args, count);
+    
+    int32_t i;
+    for (i = 0; i < count; i++) {
+        NP_Object *obj = va_arg (args, NP_Object *);
+        array->objects[i] = NP_RetainObject (obj);
+    }
+        
+    va_end (args);
+
+    return (NP_Array *)array;
+}
+
+NP_Object *NP_ObjectAtIndex (NP_Array *obj, int32_t index)
+{
+    ArrayObject *array = (ArrayObject *)obj;
+
+    assert (index < array->count && array > 0);
+
+    return array->objects[index];
 }
 

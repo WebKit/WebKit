@@ -1,3 +1,22 @@
+2004-03-04  Richard Williamson   <rjw@apple.com>
+
+	Added NP_Array implementation.  
+
+	Changed NP_Boolean to just depend on two static instances, no
+	space is required for values.
+
+        Reviewed by Chris.
+
+        * bindings/NP_runtime.cpp:
+        (NP_CreateBoolean):
+        (NP_BoolFromBoolean):
+        (arrayAllocate):
+        (arrayDeallocate):
+        (NP_CreateArray):
+        (NP_CreateArrayV):
+        (NP_ObjectAtIndex):
+        * bindings/NP_runtime.h:
+
 2004-03-03  Darin Adler  <darin@apple.com>
 
         Reviewed by Vicki.
