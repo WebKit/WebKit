@@ -1,3 +1,8 @@
+2002-06-12  Darin Adler  <darin@apple.com>
+
+	* kjs/nodes.cpp: (Node::finalCheck): A bit of APPLE_CHANGES so we
+	can compile with KJS_DEBUG_MEM defined if we want to.
+
 2002-06-10  Darin Adler  <darin@apple.com>
 
 	Merged in changes from KDE 3.0.1.

@@ -96,7 +96,11 @@ Node::~Node()
 #ifdef KJS_DEBUG_MEM
 void Node::finalCheck()
 {
+#ifdef APPLE_CHANGES
+  fprintf( stderr, "Node::finalCheck(): list count       : %d\n", (int)s_nodes.size() );
+#else
   fprintf( stderr, "Node::finalCheck(): list count       : %d\n", s_nodes.size() );
+#endif
   std::list<Node *>::iterator it = s_nodes.begin();
   for ( uint i = 0; it != s_nodes.end() ; ++it, ++i )
     fprintf( stderr, "[%d] Still having node %p (%s) (refcount %d)\n", i, (void*)*it, typeid( **it ).name(), (*it)->refcount );
