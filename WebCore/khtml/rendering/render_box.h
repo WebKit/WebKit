@@ -49,6 +49,8 @@ public:
 
     virtual void close();
 
+    virtual void detach(RenderArena* renderArena);
+    
     virtual short minWidth() const { return m_minWidth; }
     virtual short maxWidth() const { return m_maxWidth; }
 

@@ -1274,7 +1274,7 @@ void HTMLTokenizer::addPending()
             assert(0);
         }
     }
-    else if ( pre )
+    else
     {
         int p;
 
@@ -1308,11 +1308,7 @@ void HTMLTokenizer::addPending()
             break;
         }
     }
-    else
-    {
-        *dest++ = ' ';
-    }
-
+    
     pending = NonePending;
 }
 
@@ -1434,20 +1430,19 @@ void HTMLTokenizer::write( const QString &str, bool appendData )
 
             if ( pending ) {
                 // pre context always gets its spaces/linefeeds
-                if ( pre )
+                if ( pre || (!parser->selectMode() &&
+                             (!parser->noSpaces() || dest > buffer ))) {
                     addPending();
-                // only add in existing inline context or if
-                // we just started one, i.e. we're about to insert real text
-                else if ( !parser->selectMode() &&
-                          ( !parser->noSpaces() || dest > buffer )) {
-                    addPending();
-                    discard = AllDiscard;
+                    discard = AllDiscard; // So we discard the first LF after the open tag.
                 }
                 // just forget it
                 else
                     pending = NonePending;
             }
 
+            if (cc == '/' && discard == AllDiscard)
+                discard = NoneDiscard; // A close tag. No need to discard LF.
+                    
             processToken();
 
             cBufferPos = 0;
@@ -1469,8 +1464,24 @@ void HTMLTokenizer::write( const QString &str, bool appendData )
         }
         else if (( cc == '\n' ) || ( cc == '\r' ))
         {
-            if ( pre || textarea)
+	    if (select)
             {
+                if (discard == LFDiscard)
+                {
+                    // Ignore this LF
+                    discard = NoneDiscard; // We have discarded 1 LF
+                }
+                else if(discard == AllDiscard)
+                {
+                }
+                else
+                 {
+                     // Process this LF
+                    if (pending == NonePending)
+                         pending = LFPending;
+                }
+            }
+            else {
                 if (discard == LFDiscard || discard == AllDiscard)
                 {
                     // Ignore this LF
@@ -1484,23 +1495,7 @@ void HTMLTokenizer::write( const QString &str, bool appendData )
                     pending = LFPending;
                 }
             }
-            else
-            {
-                if (discard == LFDiscard)
-                {
-                    // Ignore this LF
-                    discard = NoneDiscard; // We have discarded 1 LF
-                }
-                else if(discard == AllDiscard)
-                {
-                }
-                else
-                {
-                    // Process this LF
-                    if (pending == NonePending)
-                        pending = LFPending;
-                }
-            }
+            
             /* Check for MS-DOS CRLF sequence */
             if (cc == '\r')
             {
@@ -1510,8 +1505,19 @@ void HTMLTokenizer::write( const QString &str, bool appendData )
         }
         else if (( cc == ' ' ) || ( cc == '\t' ))
         {
-            if ( pre || textarea)
-            {
+	    if (select) {
+                if(discard == SpaceDiscard)
+                    discard = NoneDiscard;
+                 else if(discard == AllDiscard)
+                 { }
+                 else
+                     pending = SpacePending;
+            
+            }
+            else {
+                if (discard == AllDiscard)
+                    discard = NoneDiscard;
+            
                 if (pending)
                     addPending();
                 if (cc == ' ')
@@ -1519,15 +1525,7 @@ void HTMLTokenizer::write( const QString &str, bool appendData )
                 else
                     pending = TabPending;
             }
-            else
-            {
-                if(discard == SpaceDiscard)
-                    discard = NoneDiscard;
-                else if(discard == AllDiscard)
-                { }
-                else
-                    pending = SpacePending;
-            }
+            
             ++src;
         }
         else

@@ -52,6 +52,8 @@ public:
     virtual void deleteData ( const unsigned long offset, const unsigned long count, int &exceptioncode );
     virtual void replaceData ( const unsigned long offset, const unsigned long count, const DOMString &arg, int &exceptioncode );
 
+    virtual bool containsOnlyWhitespace() const;
+    
     // DOM methods overridden from  parent classes
 
     virtual DOMString nodeValue() const;

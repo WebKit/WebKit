@@ -22,6 +22,7 @@
 #include "rendering/render_html.h"
 #include "rendering/render_root.h"
 #include "html/html_elementimpl.h"
+#include "xml/dom_docimpl.h"
 
 #include "khtmlview.h"
 
@@ -32,7 +33,7 @@ using namespace khtml;
 RenderHtml::RenderHtml(DOM::HTMLElementImpl* node)
     : RenderFlow(node)
 {
-    m_layer = new RenderLayer(this);
+    m_layer = new (node->getDocument()->renderArena()) RenderLayer(this);
 }
 
 RenderHtml::~RenderHtml()

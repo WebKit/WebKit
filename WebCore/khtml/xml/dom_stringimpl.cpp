@@ -128,6 +128,21 @@ DOMStringImpl *DOMStringImpl::split(uint pos)
   return str;
 }
 
+bool DOMStringImpl::containsOnlyWhitespace() const
+{
+  if (!s)
+    return true;
+    
+  unsigned int i;
+  QChar tab('\t');
+  QChar ret('\r');
+  QChar lf('\n');
+  for (i = 0; i < l; i++)
+    if (s[i].direction() != QChar::DirWS && s[i] != tab && s[i] != ret && s[i] != lf)
+	    return false;
+  return true;
+}
+    
 DOMStringImpl *DOMStringImpl::substring(uint pos, uint len)
 {
   if( pos >=l ) return new DOMStringImpl();

@@ -1,3 +1,163 @@
+2002-11-12  David Hyatt  <hyatt@apple.com>
+
+	This patch lands a rewrite of whitespace-handling in the
+	layout engine and adds support for the CSS2 white-space
+	property.  
+
+	It also includes a rewrite of inlines' min/max width 
+	calculations (for both flow inlines and raw text).
+
+	A problem with <form> margins has been fixed (this is a
+	regression I caused with my collapsing margin checkin).
+
+        * WebCore.pbproj/project.pbxproj:
+        * khtml/css/html4.css:
+        * khtml/html/dtd.cpp:
+        (DOM::checkChild):
+        * khtml/html/html_baseimpl.cpp:
+        (HTMLBodyElementImpl::attach):
+        (HTMLFrameElementImpl::attach):
+        (HTMLFrameSetElementImpl::attach):
+        (HTMLHtmlElementImpl::attach):
+        (HTMLIFrameElementImpl::attach):
+        * khtml/html/html_formimpl.cpp:
+        (HTMLFormElementImpl::HTMLFormElementImpl):
+        (HTMLInputElementImpl::attach):
+        (HTMLSelectElementImpl::attach):
+        (HTMLTextAreaElementImpl::attach):
+        * khtml/html/html_formimpl.h:
+        * khtml/html/html_imageimpl.cpp:
+        (HTMLImageElementImpl::attach):
+        * khtml/html/html_inlineimpl.cpp:
+        (HTMLBRElementImpl::attach):
+        * khtml/html/html_objectimpl.cpp:
+        (HTMLAppletElementImpl::attach):
+        (HTMLEmbedElementImpl::attach):
+        (HTMLObjectElementImpl::attach):
+        * khtml/html/htmlparser.cpp:
+        (KHTMLParser::reset):
+        (KHTMLParser::parseToken):
+        (KHTMLParser::insertNode):
+        (KHTMLParser::popBlock):
+        (KHTMLParser::popOneBlock):
+        * khtml/html/htmlparser.h:
+        * khtml/html/htmltokenizer.cpp:
+        (HTMLTokenizer::addPending):
+        (HTMLTokenizer::write):
+        * khtml/misc/arena.cpp: Added.
+        (CeilingLog2):
+        (InitArenaPool):
+        (ArenaAllocate):
+        (ArenaGrow):
+        (FreeArenaList):
+        (ArenaRelease):
+        (FreeArenaPool):
+        (FinishArenaPool):
+        (ArenaFinish):
+        * khtml/misc/arena.h: Added.
+        * khtml/rendering/bidi.cpp:
+        (BidiIterator::detach):
+        (throw):
+        (BidiIterator::operator delete):
+        (appendRunsForObject):
+        (appendRun):
+        (RenderFlow::bidiReorderLine):
+        (deleteMidpoints):
+        (RenderFlow::layoutInlineChildren):
+        (RenderFlow::findNextLineBreak):
+        * khtml/rendering/bidi.h:
+        * khtml/rendering/render_arena.cpp: Added.
+        (RenderArena::RenderArena):
+        (RenderArena::~RenderArena):
+        (RenderArena::allocate):
+        (RenderArena::free):
+        * khtml/rendering/render_arena.h: Added.
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::setStyle):
+        (RenderBox::~RenderBox):
+        (RenderBox::detach):
+        * khtml/rendering/render_box.h:
+        * khtml/rendering/render_br.cpp:
+        (RenderBR::RenderBR):
+        * khtml/rendering/render_container.cpp:
+        (RenderContainer::~RenderContainer):
+        (RenderContainer::detach):
+        * khtml/rendering/render_container.h:
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::setStyle):
+        (RenderFlow::layout):
+        (RenderFlow::calcInlineMinMaxWidth):
+        (RenderFlow::calcBlockMinMaxWidth):
+        (RenderFlow::calcMinMaxWidth):
+        (RenderFlow::addChild):
+        (RenderFlow::makeChildrenNonInline):
+        * khtml/rendering/render_flow.h:
+        * khtml/rendering/render_html.cpp:
+        (RenderHtml::RenderHtml):
+        * khtml/rendering/render_layer.cpp:
+        (RenderLayer::~RenderLayer):
+        (throw):
+        (RenderLayer::operator delete):
+        (RenderLayer::detach):
+        (RenderLayer::paint):
+        (RenderLayer::nodeAtPoint):
+        (RenderLayer::constructZTree):
+        (RenderLayer::RenderLayerElement::operator delete):
+        (RenderLayer::RenderLayerElement::detach):
+        (RenderLayer::RenderZTreeNode::operator delete):
+        (RenderLayer::RenderZTreeNode::detach):
+        * khtml/rendering/render_layer.h:
+        * khtml/rendering/render_list.cpp:
+        (RenderListItem::setStyle):
+        * khtml/rendering/render_object.cpp:
+        (throw):
+        (RenderObject::operator delete):
+        (RenderObject::createObject):
+        (RenderObject::renderArena):
+        (RenderObject::detach):
+        * khtml/rendering/render_object.h:
+        * khtml/rendering/render_replaced.cpp:
+        (RenderWidget::detach):
+        * khtml/rendering/render_replaced.h:
+        * khtml/rendering/render_root.cpp:
+        (RenderRoot::RenderRoot):
+        * khtml/rendering/render_table.cpp:
+        (RenderTable::addChild):
+        (RenderTable::calcWidth):
+        (RenderTable::setCellWidths):
+        (RenderTableSection::addChild):
+        (RenderTableRow::addChild):
+        * khtml/rendering/render_text.cpp:
+        (TextSlave::detach):
+        (throw):
+        (TextSlave::operator delete):
+        (TextSlaveArray::TextSlaveArray):
+        (RenderText::RenderText):
+        (RenderText::~RenderText):
+        (RenderText::detach):
+        (RenderText::deleteSlaves):
+        (RenderText::trimmedMinMaxWidth):
+        (RenderText::calcMinMaxWidth):
+        (RenderText::position):
+        * khtml/rendering/render_text.h:
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::DocumentImpl):
+        (DocumentImpl::~DocumentImpl):
+        (DocumentImpl::attach):
+        (DocumentImpl::detach):
+        * khtml/xml/dom_docimpl.h:
+        * khtml/xml/dom_nodeimpl.cpp:
+        (NodeImpl::detach):
+        (NodeImpl::isReadOnly):
+        (NodeImpl::previousRenderer):
+        * khtml/xml/dom_nodeimpl.h:
+        * khtml/xml/dom_stringimpl.cpp:
+        * khtml/xml/dom_stringimpl.h:
+        * khtml/xml/dom_textimpl.cpp:
+        (CharacterDataImpl::containsOnlyWhitespace):
+        (TextImpl::attach):
+        * khtml/xml/dom_textimpl.h:
+
 2002-11-12  Darin Adler  <darin@apple.com>
 
 	- fixed 3094819 -- Crash in -[KWQObjectTimerTarget timerFired]

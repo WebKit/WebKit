@@ -30,9 +30,11 @@
 #include "rendering/render_replaced.h"
 #include "rendering/render_root.h"
 #include "rendering/render_table.h"
+#include "render_arena.h"
 
 #include "misc/htmlhashes.h"
 #include "xml/dom_nodeimpl.h"
+#include "xml/dom_docimpl.h"
 
 #include <khtmlview.h>
 #include <kdebug.h>
@@ -83,13 +85,22 @@ void RenderBox::setStyle(RenderStyle *_style)
     }
     
     if ((isPositioned() || isRelPositioned() || (isFloating() && !isListMarker())) && !m_layer)
-        m_layer = new RenderLayer(this);
+        m_layer = new (element()->getDocument()->renderArena()) RenderLayer(this);
 }
 
 RenderBox::~RenderBox()
 {
     //kdDebug( 6040 ) << "Element destructor: this=" << nodeName().string() << endl;
-    delete m_layer;
+}
+
+void RenderBox::detach(RenderArena* renderArena)
+{
+    RenderLayer* layer = m_layer;
+    
+    RenderContainer::detach(renderArena);
+    
+    if (layer)
+        layer->detach(renderArena);
 }
 
 short RenderBox::contentWidth() const

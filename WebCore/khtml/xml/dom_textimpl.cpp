@@ -184,6 +184,13 @@ DOMString CharacterDataImpl::nodeValue() const
     return str;
 }
 
+bool CharacterDataImpl::containsOnlyWhitespace() const
+{
+    if (str)
+        return str->containsOnlyWhitespace();
+    return true;
+}
+
 void CharacterDataImpl::setNodeValue( const DOMString &_nodeValue, int &exceptioncode )
 {
     // NO_MODIFICATION_ALLOWED_ERR: taken care of by setData()
@@ -357,8 +364,29 @@ void TextImpl::attach()
 
     ElementImpl* element = static_cast<ElementImpl*>(parentNode());
     if (!m_render && element->renderer()) {
-        khtml::RenderStyle* _style = element->renderer()->style();
-        m_render = new RenderText(this, str);
+        RenderObject* par = element->renderer();
+        khtml::RenderStyle* _style = par->style();
+        bool onlyWS = containsOnlyWhitespace();
+        if (onlyWS) {
+            if (par->isTable() || par->isTableRow() || par->isTableSection())
+                return CharacterDataImpl::attach();
+        
+            if (!par->isInline() && _style->whiteSpace() != PRE) {
+                RenderObject* prevRender = previousRenderer();
+                if (par->isFlow() && !par->childrenInline() && 
+                    (!prevRender || !prevRender->isInline()))
+                    return CharacterDataImpl::attach();
+                
+                RenderObject* nextRender = nextRenderer();
+                if ((!par->firstChild() || 
+                    nextRender == par->firstChild()))
+                    // Whitespace at the start of a block just goes away.  Don't even
+                    // make a render object for this text.
+                    return CharacterDataImpl::attach();
+            }
+        }
+
+        m_render = new (getDocument()->renderArena()) RenderText(this, str);
         m_render->setStyle(_style);
         parentNode()->renderer()->addChild(m_render, nextRenderer());
     }

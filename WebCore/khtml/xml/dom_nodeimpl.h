@@ -104,7 +104,10 @@ public:
     virtual bool isTextNode() const { return false; }
     virtual bool isDocumentNode() const { return false; }
     virtual bool isXMLElementNode() const { return false; }
-
+    
+    virtual bool isMalformed() { return false; }
+    virtual bool containsOnlyWhitespace() const { return false; }
+    
     // helper functions not being part of the DOM
     // Attention: they assume that the caller did the consistency checking!
     void setPreviousSibling(NodeImpl *previous) { m_previous = previous; }
@@ -262,6 +265,7 @@ public:
 
     khtml::RenderObject *renderer() const { return m_render; }
     khtml::RenderObject *nextRenderer();
+    khtml::RenderObject *previousRenderer();
 
     void checkSetPrefix(const DOMString &_prefix, int &exceptioncode);
     void checkAddChild(NodeImpl *newChild, int &exceptioncode);

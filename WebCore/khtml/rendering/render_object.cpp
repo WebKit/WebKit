@@ -32,14 +32,26 @@
 #include <kdebug.h>
 #include <qpainter.h>
 #include "khtmlview.h"
+#include "render_arena.h"
 
 #include <assert.h>
 using namespace DOM;
 using namespace khtml;
 
+void* RenderObject::operator new(size_t sz, RenderArena* renderArena) throw()
+{
+    return renderArena->allocate(sz);
+}
+
+void RenderObject::operator delete(void* ptr, size_t sz) {
+    size_t* szPtr = (size_t*)ptr;
+    *szPtr = sz;
+}
+
 RenderObject *RenderObject::createObject(DOM::NodeImpl* node,  RenderStyle* style)
 {
     RenderObject *o = 0;
+    RenderArena* arena = node->getDocument()->renderArena();
     switch(style->display())
     {
     case NONE:
@@ -52,12 +64,12 @@ RenderObject *RenderObject::createObject(DOM::NodeImpl* node,  RenderStyle* styl
         // to suffice. -dwh
         if (style->display() == BLOCK && node->id() == ID_TD &&
             node->getDocument()->parseMode() != DocumentImpl::Strict)
-            o = new RenderTableCell(node);
+            o = new (arena) RenderTableCell(node);
         else
-            o = new RenderFlow(node);
+            o = new (arena) RenderFlow(node);
         break;
     case LIST_ITEM:
-        o = new RenderListItem(node);
+        o = new (arena) RenderListItem(node);
         break;
     case RUN_IN:
     case COMPACT:
@@ -67,31 +79,30 @@ RenderObject *RenderObject::createObject(DOM::NodeImpl* node,  RenderStyle* styl
     case INLINE_TABLE:
         // ### set inline/block right
         //kdDebug( 6040 ) << "creating RenderTable" << endl;
-        o = new RenderTable(node);
+        o = new (arena) RenderTable(node);
         break;
     case TABLE_ROW_GROUP:
     case TABLE_HEADER_GROUP:
     case TABLE_FOOTER_GROUP:
-        o = new RenderTableSection(node);
+        o = new (arena) RenderTableSection(node);
         break;
     case TABLE_ROW:
-        o = new RenderTableRow(node);
+        o = new (arena) RenderTableRow(node);
         break;
     case TABLE_COLUMN_GROUP:
     case TABLE_COLUMN:
-        o = new RenderTableCol(node);
+        o = new (arena) RenderTableCol(node);
         break;
     case TABLE_CELL:
-        o = new RenderTableCell(node);
+        o = new (arena) RenderTableCell(node);
         break;
     case TABLE_CAPTION:
-        o = new RenderTableCaption(node);
+        o = new (arena) RenderTableCaption(node);
         break;
     }
     if(o) o->setStyle(style);
     return o;
 }
-
 
 RenderObject::RenderObject(DOM::NodeImpl* node)
     : CachedObjectClient(),
@@ -864,11 +875,31 @@ void RenderObject::removeFromSpecialObjects()
     }
 }
 
-void RenderObject::detach()
+RenderArena* RenderObject::renderArena() {
+    DOM::NodeImpl* elt = element();
+    RenderObject* current = parent();
+    while (!elt && current) {
+        elt = current->element();
+        current = current->parent();
+    }
+    if (!elt)
+        return 0;
+    return elt->getDocument()->renderArena();
+}
+
+
+void RenderObject::detach(RenderArena* renderArena)
 {
     remove();
+    
+    m_next = m_previous = 0;
+    
     // by default no refcounting
     delete this;
+    
+    // Now perform the destroy.
+    size_t* sz = (size_t*)this;
+    renderArena->free(*sz, (void*)this);
 }
 
 FindSelectionResult RenderObject::checkSelectionPoint( int _x, int _y, int _tx, int _ty, DOM::NodeImpl*& node, int & offset )

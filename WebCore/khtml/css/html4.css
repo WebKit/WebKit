@@ -54,7 +54,7 @@ script {
 @media screen {
 	body {
 		display: block;
-		margin: 10px;
+		margin: 8px;
 	}
 }
 
@@ -353,16 +353,6 @@ OL OL {
 	margin-bottom: auto; 
 }
 
-LI > P { 
-	margin-top: auto; 
-	margin-bottom: auto;
-}
-      
-LI > DIV { 
-	margin-top: auto; 
-	margin-bottom: auto;
-}
-
 /*
  * form elements
  */
@@ -395,6 +385,10 @@ BUTTON:active {
 INPUT, TEXTAREA {
 	font: 11px 'Lucida Grande';
 	margin: 3px;
+}
+
+input[type="image"] {
+    margin: 0px;
 }
 
 INPUT[type="hidden"] {

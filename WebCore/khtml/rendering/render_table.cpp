@@ -31,6 +31,7 @@
 #include "rendering/render_table.h"
 #include "html/html_tableimpl.h"
 #include "misc/htmltags.h"
+#include "xml/dom_docimpl.h"
 
 #include <kglobal.h>
 
@@ -211,7 +212,7 @@ void RenderTable::addChild(RenderObject *child, RenderObject *beforeChild)
 		return;
 	    } else {
 //          kdDebug( 6040 ) << "creating anonymous table section" << endl;
-		o = new RenderTableSection(0 /* anonymous */);
+		o = new (renderArena()) RenderTableSection(0 /* anonymous */);
 		RenderStyle *newStyle = new RenderStyle();
 		newStyle->inheritFrom(style());
 		newStyle->setDisplay(TABLE_ROW_GROUP);
@@ -1010,17 +1011,15 @@ void RenderTable::calcWidth()
         calcAbsoluteHorizontal();
     }
 
-    int borderWidth = borderLeft() + borderRight();
     RenderObject *cb = containingBlock();
-    int availableWidth = cb->contentWidth() - borderWidth;
-
+    int availableWidth = cb->contentWidth();
 
     LengthType widthType = style()->width().type;
     if(widthType > Relative) {
-	// Percent or fixed table
+        // Percent or fixed table
         m_width = style()->width().minWidth( availableWidth );
         if(m_minWidth > m_width) m_width = m_minWidth;
-	//kdDebug( 6040 ) << "1 width=" << m_width << " minWidth=" << m_minWidth << " availableWidth=" << availableWidth << " " << endl;
+        //kdDebug( 6040 ) << "1 width=" << m_width << " minWidth=" << m_minWidth << " availableWidth=" << availableWidth << " " << endl;
     } else if (hasPercent) {
         m_width = KMIN(short( availableWidth ),m_maxWidth);
 //        kdDebug( 6040 ) << "width=" << m_width << " maxPercent=" << maxPercent << " maxVar=" << maxVar << " " << endl;
@@ -1030,7 +1029,7 @@ void RenderTable::calcWidth()
 
     // restrict width to what we really have in case we flow around floats
     if ( style()->flowAroundFloats() && cb->isFlow() )
-	m_width = QMIN( static_cast<RenderFlow *>(cb)->lineWidth( m_y ) - borderWidth, m_width );
+	m_width = QMIN( static_cast<RenderFlow *>(cb)->lineWidth( m_y ), m_width );
 
     m_width = KMAX (m_width, m_minWidth);
 
@@ -1056,8 +1055,6 @@ void RenderTable::calcWidth()
             calcFinalColMax(c, col);
         }
     }
-
-    m_width += borderWidth;
 }
 
 void RenderTable::calcColWidth(void)
@@ -1601,7 +1598,7 @@ void RenderTable::setCellWidths()
         {
             if ( ( indx = c-cell->colSpan()+1) < 0 )
                 indx = 0;
-            int w = columnPos[c+1] - columnPos[ indx ] - spacing ; //- padding*2;
+            int w = columnPos[c+1] - columnPos[ indx ] - spacing; //- padding*2;
 
 #ifdef TABLE_DEBUG
             kdDebug( 6040 ) << "0x" << this << ": setting width " << r << "/" << indx << "-" << c << " (0x" << cell << "): " << w << " " << endl;
@@ -1895,7 +1892,7 @@ void RenderTableSection::addChild(RenderObject *child, RenderObject *beforeChild
 		return;
 	    } else {
 		kdDebug( 6040 ) << "creating anonymous table row" << endl;
-		row = new RenderTableRow(0 /* anonymous table */);
+		row = new (renderArena()) RenderTableRow(0 /* anonymous table */);
 		RenderStyle *newStyle = new RenderStyle();
 		newStyle->inheritFrom(style());
 		newStyle->setDisplay(TABLE_ROW);
@@ -1986,7 +1983,7 @@ void RenderTableRow::addChild(RenderObject *child, RenderObject *beforeChild)
 		return;
 	    } else {
 //          kdDebug( 6040 ) << "creating anonymous table cell" << endl;
-		cell = new RenderTableCell(0 /* anonymous object */);
+		cell = new (renderArena()) RenderTableCell(0 /* anonymous object */);
 		RenderStyle *newStyle = new RenderStyle();
 		newStyle->inheritFrom(style());
 		newStyle->setDisplay(TABLE_CELL);

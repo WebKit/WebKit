@@ -473,6 +473,8 @@
 				93386B92037045B3008635CE,
 				517FA6B30370BD6100CA2D3A,
 				931C8A180380288B008635CE,
+				BC7294FA03804B3C00A80166,
+				BC7294FE03804B5600A80166,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -705,6 +707,8 @@
 				93386B93037045B3008635CE,
 				517FA6B70370C7ED00CA2D3A,
 				931C8A190380288B008635CE,
+				BC7294F903804B3C00A80166,
+				BC7294FD03804B5600A80166,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -981,6 +985,64 @@
 //932
 //933
 //934
+//BC0
+//BC1
+//BC2
+//BC3
+//BC4
+		BC7294F703804B3C00A80166 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = arena.cpp;
+			refType = 4;
+		};
+		BC7294F803804B3C00A80166 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = arena.h;
+			refType = 4;
+		};
+		BC7294F903804B3C00A80166 = {
+			fileRef = BC7294F703804B3C00A80166;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		BC7294FA03804B3C00A80166 = {
+			fileRef = BC7294F803804B3C00A80166;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		BC7294FB03804B5600A80166 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = render_arena.cpp;
+			refType = 4;
+		};
+		BC7294FC03804B5600A80166 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = render_arena.h;
+			refType = 4;
+		};
+		BC7294FD03804B5600A80166 = {
+			fileRef = BC7294FB03804B5600A80166;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		BC7294FE03804B5600A80166 = {
+			fileRef = BC7294FC03804B5600A80166;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+//BC0
+//BC1
+//BC2
+//BC3
+//BC4
 //F50
 //F51
 //F52
@@ -3149,6 +3211,8 @@
 				F523D28702DE43D7018635CA,
 				F523D28802DE43D7018635CA,
 				F523D28902DE43D7018635CA,
+				BC7294F703804B3C00A80166,
+				BC7294F803804B3C00A80166,
 			);
 			isa = PBXGroup;
 			path = misc;
@@ -3699,6 +3763,8 @@
 				F523D2C402DE4438018635CA,
 				F523D2C702DE4438018635CA,
 				F523D2C602DE4438018635CA,
+				BC7294FB03804B5600A80166,
+				BC7294FC03804B5600A80166,
 			);
 			isa = PBXGroup;
 			path = rendering;

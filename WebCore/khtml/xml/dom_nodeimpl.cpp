@@ -949,7 +949,7 @@ void NodeImpl::detach()
 //    assert(m_attached);
 
     if ( m_render )
-        m_render->detach();
+        m_render->detach(getDocument()->renderArena());
 
     m_render = 0;
     m_attached = false;
@@ -994,6 +994,15 @@ bool NodeImpl::isReadOnly()
 	n = n->parentNode();
     }
     return false;
+}
+
+RenderObject * NodeImpl::previousRenderer()
+{
+    for (NodeImpl *n = previousSibling(); n; n = n->previousSibling()) {
+        if (n->renderer())
+            return n->renderer();
+    }
+    return 0;
 }
 
 RenderObject * NodeImpl::nextRenderer()

@@ -193,7 +193,7 @@ void HTMLBodyElementImpl::attach()
     RenderStyle* style = getDocument()->styleSelector()->styleForElement(this);
     style->ref();
     if (style->display() != NONE) {
-        m_render = new RenderBody(this);
+        m_render = new (getDocument()->renderArena()) RenderBody(this);
         m_render->setStyle(style);
         parentNode()->renderer()->addChild(m_render, nextRenderer());
     }
@@ -311,7 +311,7 @@ void HTMLFrameElementImpl::attach()
         }
 
     if (!selfreference)  {
-        m_render = new RenderFrame(this);
+        m_render = new (getDocument()->renderArena()) RenderFrame(this);
         m_render->setStyle(getDocument()->styleSelector()->styleForElement(this));
         parentNode()->renderer()->addChild(m_render, nextRenderer());
     }
@@ -477,7 +477,7 @@ void HTMLFrameSetElementImpl::attach()
     assert(parentNode()->renderer());
 
     // ignore display: none
-    m_render = new RenderFrameSet(this);
+    m_render = new (getDocument()->renderArena()) RenderFrameSet(this);
     m_render->setStyle(getDocument()->styleSelector()->styleForElement(this));
     parentNode()->renderer()->addChild(m_render, nextRenderer());
 
@@ -535,7 +535,7 @@ void HTMLHtmlElementImpl::attach()
     assert(parentNode());
     assert(parentNode()->renderer());
 
-    m_render = new RenderHtml(this);
+    m_render = new (getDocument()->renderArena()) RenderHtml(this);
     m_render->setStyle(getDocument()->styleSelector()->styleForElement(this));
     parentNode()->renderer()->addChild(m_render, nextRenderer());
 
@@ -623,7 +623,7 @@ void HTMLIFrameElementImpl::attach()
     _style->ref();
     if (!selfreference && !(w->part()->onlyLocalReferences() && u.protocol() != "file") &&
         parentNode()->renderer() && _style->display() != NONE) {
-        m_render = new RenderPartObject(this);
+        m_render = new (getDocument()->renderArena()) RenderPartObject(this);
         m_render->setStyle(_style);
         parentNode()->renderer()->addChild(m_render, nextRenderer());
     }

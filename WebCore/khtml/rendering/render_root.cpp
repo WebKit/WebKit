@@ -20,6 +20,7 @@
  */
 #include "rendering/render_root.h"
 #include "render_layer.h"
+#include "xml/dom_docimpl.h"
 
 #include "khtmlview.h"
 #include <kdebug.h>
@@ -62,7 +63,7 @@ RenderRoot::RenderRoot(DOM::NodeImpl* node, KHTMLView *view)
     m_selectionEndPos = -1;
 
     // Create a new root layer for our layer hierarchy.
-    m_layer = new RenderLayer(this);
+    m_layer = new (node->getDocument()->renderArena()) RenderLayer(this);
 }
 
 RenderRoot::~RenderRoot()

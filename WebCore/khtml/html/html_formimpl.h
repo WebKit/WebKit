@@ -90,6 +90,9 @@ public:
     void submit();
     void reset();
 
+    void setMalformed(bool malformed) { m_malformed = malformed; }
+    virtual bool isMalformed() { return m_malformed; }
+    
     static void i18nData();
 
     friend class HTMLFormElement;
@@ -108,6 +111,7 @@ public:
     bool m_insubmit : 1;
     bool m_doingsubmit : 1;
     bool m_inreset : 1;
+    bool m_malformed : 1;
 };
 
 // -------------------------------------------------------------------------

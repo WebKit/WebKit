@@ -98,6 +98,19 @@ public:
     void paint(QPainter *p, int x, int y, int w, int h);
     bool nodeAtPoint(RenderObject::NodeInfo& info, int x, int y);
     
+    void detach(RenderArena* renderArena);
+    
+     // Overloaded new operator.  Derived classes must override operator new
+    // in order to allocate out of the RenderArena.
+    void* operator new(size_t sz, RenderArena* renderArena) throw();    
+
+    // Overridden to prevent the normal delete from being called.
+    void operator delete(void* ptr, size_t sz);
+        
+private:
+    // The normal operator new is disallowed on all render objects.
+    void* operator new(size_t sz) throw() { assert(false); return 0; };
+
 public:
     // Z-Index Implementation Notes
     //
@@ -133,6 +146,18 @@ public:
       RenderLayerElement(RenderLayer* l, const QRect& rect, const QRect& clip, int xpos, int ypos)
           :layer(l), absBounds(rect), clipRect(clip), zindex(l->zIndex()), zauto(l->hasAutoZIndex()),
           x(xpos), y(ypos) {}
+          
+      void detach(RenderArena* renderArena);
+    
+      // Overloaded new operator.  Derived classes must override operator new
+      // in order to allocate out of the RenderArena.
+      void* operator new(size_t sz, RenderArena* renderArena) throw();    
+
+      // Overridden to prevent the normal delete from being called.
+      void operator delete(void* ptr, size_t sz);
+        
+      // The normal operator new is disallowed.
+      void* operator new(size_t sz) throw() { assert(false); return 0; };
     };
 
     // The list of layer elements is built through a recursive examination
@@ -165,11 +190,22 @@ public:
       RenderZTreeNode(RenderLayerElement* layerElt)
           :layer(layerElt->layer), next(0), child(0), layerElement(layerElt) {}
       
-      ~RenderZTreeNode() { delete next; delete child; delete layerElement; }
+      ~RenderZTreeNode() {}
 
       void constructLayerList(QPtrVector<RenderLayerElement>* mergeTmpBuffer,
                               QPtrVector<RenderLayerElement>* finalBuffer);
       
+      void detach(RenderArena* renderArena);
+          
+      // Overloaded new operator.  Derived classes must override operator new
+      // in order to allocate out of the RenderArena.
+      void* operator new(size_t sz, RenderArena* renderArena) throw();    
+
+      // Overridden to prevent the normal delete from being called.
+      void operator delete(void* ptr, size_t sz);
+        
+      // The normal operator new is disallowed.
+      void* operator new(size_t sz) throw() { assert(false); return 0; };
     };
       
 private:

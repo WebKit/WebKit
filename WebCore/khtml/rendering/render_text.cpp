@@ -28,6 +28,8 @@
 #include "rendering/render_root.h"
 #include "rendering/break_lines.h"
 #include "xml/dom_nodeimpl.h"
+#include "xml/dom_docimpl.h"
+#include "render_arena.h"
 
 #include "misc/loader.h"
 
@@ -37,6 +39,25 @@
 
 using namespace khtml;
 using namespace DOM;
+
+void TextSlave::detach(RenderArena* renderArena)
+{
+    delete this;
+    
+    // Now perform the destroy.
+    size_t* sz = (size_t*)this;
+    renderArena->free(*sz, (void*)this);
+}
+
+void* TextSlave::operator new(size_t sz, RenderArena* renderArena) throw()
+{
+    return renderArena->allocate(sz);
+}
+
+void TextSlave::operator delete(void* ptr, size_t sz) {
+    size_t* szPtr = (size_t*)ptr;
+    *szPtr = sz;
+}
 
 void TextSlave::printSelection(const Font *f, RenderText *text, QPainter *p, RenderStyle* style, int tx, int ty, int startPos, int endPos)
 {
@@ -226,7 +247,7 @@ FindSelectionResult TextSlave::checkSelectionPoint(int _x, int _y, int _tx, int 
 
 TextSlaveArray::TextSlaveArray()
 {
-    setAutoDelete(true);
+    setAutoDelete(false);
 }
 
 int TextSlaveArray::compareItems( Item d1, Item d2 )
@@ -289,7 +310,6 @@ RenderText::RenderText(DOM::NodeImpl* node, DOMStringImpl *_str)
     KHTMLAssert(!str || !str->l || str->s);
 
     m_selectionState = SelectionNone;
-    m_hasReturn = true;
 
 #ifdef DEBUG_LAYOUT
     QConstString cstr(str->s, str->l);
@@ -315,8 +335,13 @@ void RenderText::setStyle(RenderStyle *_style)
 
 RenderText::~RenderText()
 {
-    deleteSlaves();
     if(str) str->deref();
+}
+
+void RenderText::detach(RenderArena* renderArena)
+{
+    deleteSlaves();
+    RenderObject::detach(renderArena);
 }
 
 void RenderText::deleteSlaves()
@@ -325,10 +350,15 @@ void RenderText::deleteSlaves()
     // We don't delete the array itself here because its
     // likely to be used in the same size later again, saves
     // us resize() calls
+    RenderArena* arena = element()->getDocument()->renderArena();
     unsigned int len = m_lines.size();
-    for(unsigned int i=0; i < len; i++)
+    for(unsigned int i=0; i < len; i++) {
+        TextSlave* s = m_lines.at(i);
+        if (s)
+            s->detach(arena);
         m_lines.remove(i);
-
+    }
+    
     KHTMLAssert(m_lines.count() == 0);
 }
 
@@ -704,62 +734,145 @@ void RenderText::print( QPainter *p, int x, int y, int w, int h,
     printObject(p, x, y, w, h, tx, ty);
 }
 
+void RenderText::trimmedMinMaxWidth(short& beginMinW, bool& beginWS, 
+                                    short& endMinW, bool& endWS,
+                                    bool& hasBreakableChar, bool& hasBreak,
+                                    short& beginMaxW, short& endMaxW,
+                                    short& minW, short& maxW, bool& stripFrontSpaces)
+{
+    int len = str->l;
+    bool isPre = style()->whiteSpace() == PRE;
+    if (isPre)
+        stripFrontSpaces = false;
+    
+    minW = m_minWidth;
+    maxW = m_maxWidth;
+    beginWS = stripFrontSpaces ? false : m_hasBeginWS;
+    // Handle the case where all space got stripped.
+    endWS = stripFrontSpaces && len > 0 && str->containsOnlyWhitespace() ? false : m_hasEndWS;
+    
+    beginMinW = m_beginMinWidth;
+    endMinW = m_endMinWidth;
+    
+    hasBreakableChar = m_hasBreakableChar;
+    hasBreak = false; // XXXdwh will need to make this work eventually.
+                      // m_hasBreak;
+    
+    if (len == 0)
+        return;
+        
+    if (stripFrontSpaces && str->s[0].direction() == QChar::DirWS) {
+        const Font *f = htmlFont( false );
+        QChar space[1]; space[0] = ' ';
+        int spaceWidth = f->width(space, 1, 0);
+        maxW -= spaceWidth;
+    }
+    
+    stripFrontSpaces = !isPre && endWS;
+    
+    if (style()->whiteSpace() == NOWRAP)
+        minW = maxW;
+    else if (minW > maxW)
+        minW = maxW;
+
+    // Compute our max widths by scanning the string for newlines.
+    if (hasBreak) {
+        // XXXdwh this will only be an issue for white-space: pre inlines and
+        // not for the <pre> element itself.
+    }
+}
+
 void RenderText::calcMinMaxWidth()
 {
     KHTMLAssert( !minMaxKnown() );
 
     // ### calc Min and Max width...
-    m_minWidth = 0;
+    m_minWidth = m_beginMinWidth = m_endMinWidth = 0;
     m_maxWidth = 0;
 
+    if (isBR())
+        return;
+        
     int currMinWidth = 0;
     int currMaxWidth = 0;
-    m_hasReturn = false;
-    m_hasBreakableChar = false;
-
+    m_hasBreakableChar = m_hasBreak = m_hasBeginWS = m_hasEndWS = false;
+    
     // ### not 100% correct for first-line
     const Font *f = htmlFont( false );
     int len = str->l;
-    if ( len == 1 && str->s->latin1() == '\n' )
-	m_hasReturn = true;
+    bool ignoringSpaces = false;
+    bool isSpace = false;
+    bool isPre = style()->whiteSpace() == PRE;
+    bool firstWord = true;
     for(int i = 0; i < len; i++)
     {
+        // XXXdwh Wrong in the first stage.  Will stop mutating newlines
+        // in a second stage.
+        if (str->s[i] == '\n') {
+            if (isPre)
+                m_hasBreak = true;
+            else
+                str->s[i] = ' ';
+        }
+        
+        bool oldSpace = isSpace;
+        isSpace = str->s[i].direction() == QChar::DirWS;
+        
+        if (isSpace && i == 0)
+            m_hasBeginWS = true;
+        if (isSpace && i == len-1)
+            m_hasEndWS = true;
+            
+        if (!ignoringSpaces && !isPre && oldSpace && isSpace)
+            ignoringSpaces = true;
+        
+        if (ignoringSpaces && !isSpace)
+            ignoringSpaces = false;
+            
+        if (ignoringSpaces)
+            continue;
+        
         int wordlen = 0;
         while( i+wordlen < len && !(isBreakable( str->s, i+wordlen, str->l )) )
             wordlen++;
+            
         if (wordlen)
         {
             int w = f->width(str->s, str->l, i, wordlen);
             currMinWidth += w;
             currMaxWidth += w;
+            if (firstWord) {
+                firstWord = false;
+                m_beginMinWidth = w;
+            }
+            m_endMinWidth = w;
+            
+            if(currMinWidth > m_minWidth) m_minWidth = currMinWidth;
+            currMinWidth = 0;
+                
+            i += wordlen-1;
         }
-        if(i+wordlen < len)
-        {
-	    m_hasBreakableChar = true;
-            if ( (*(str->s+i+wordlen)).latin1() == '\n' )
+        else {
+            // Nowrap can never be broken, so don't bother setting the
+            // breakable character boolean.
+            if (style()->whiteSpace() != NOWRAP)
+                m_hasBreakableChar = true;
+
+            if(currMinWidth > m_minWidth) m_minWidth = currMinWidth;
+            currMinWidth = 0;
+                
+            if (str->s[i] == '\n')
             {
-		m_hasReturn = true;
-                if(currMinWidth > m_minWidth) m_minWidth = currMinWidth;
-                currMinWidth = 0;
                 if(currMaxWidth > m_maxWidth) m_maxWidth = currMaxWidth;
                 currMaxWidth = 0;
             }
             else
             {
-                if(currMinWidth > m_minWidth) m_minWidth = currMinWidth;
-                currMinWidth = 0;
                 currMaxWidth += f->width( str->s, str->l, i + wordlen );
             }
-            /* else if( c == '-')
-            {
-                currMinWidth += minus_width;
-                if(currMinWidth > m_minWidth) m_minWidth = currMinWidth;
-                currMinWidth = 0;
-                currMaxWidth += minus_width;
-            }*/
         }
-        i += wordlen;
     }
+    
     if(currMinWidth > m_minWidth) m_minWidth = currMinWidth;
     if(currMaxWidth > m_maxWidth) m_maxWidth = currMaxWidth;
 
@@ -870,7 +983,8 @@ short RenderText::baselinePosition( bool firstLine ) const
 void RenderText::position(int x, int y, int from, int len, int width, bool reverse, bool firstLine, int spaceAdd)
 {
     // ### should not be needed!!!
-    assert(!(len == 0 || (str->l && len == 1 && *(str->s+from) == '\n') ));
+    if (len == 0 || (str->l && len == 1 && *(str->s+from) == '\n'))
+        return;
 
     reverse = reverse && !style()->visuallyOrdered();
 
@@ -890,7 +1004,7 @@ void RenderText::position(int x, int y, int from, int len, int width, bool rever
     qDebug("setting slave text to *%s*, len=%d, w)=%d" , cstr.string().latin1(), len, width );//" << y << ")" << " height=" << lineHeight(false) << " fontHeight=" << metrics(false).height() << " ascent =" << metrics(false).ascent() << endl;
 #endif
 
-    TextSlave *s = new TextSlave(x, y, from, len,
+    TextSlave *s = new (element()->getDocument()->renderArena()) TextSlave(x, y, from, len,
                                  baselinePosition( firstLine ),
                                  width+spaceAdd, reverse, spaceAdd, firstLine);
 

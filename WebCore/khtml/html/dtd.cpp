@@ -308,6 +308,7 @@ static const ushort tag_list_0[] = {
 };
 
 static const ushort tag_list_1[] = {
+    ID_TEXT,
     ID_P,
     ID_H1,
     ID_H2,
@@ -334,7 +335,6 @@ static const ushort tag_list_1[] = {
     ID_TABLE,
     ID_FIELDSET,
     ID_ADDRESS,
-    ID_TEXT,
     ID_TT,
     ID_I,
     ID_B,
@@ -393,6 +393,7 @@ static const ushort tag_list_2[] = {
 };
 
 static const ushort tag_list_3[] = {
+    ID_TEXT,
     ID_P,
     ID_H1,
     ID_H2,
@@ -428,6 +429,7 @@ static const ushort tag_list_3[] = {
 };
 
 static const ushort tag_list_4[] = {
+    ID_TEXT,
     ID_PARAM,
     ID_P,
     ID_H1,
@@ -503,6 +505,7 @@ static const ushort tag_list_4[] = {
 };
 
 static const ushort tag_list_6[] = {
+    ID_TEXT,
     ID_DT,
     ID_DD,
     ID_COMMENT,
@@ -510,6 +513,7 @@ static const ushort tag_list_6[] = {
 };
 
 static const ushort tag_list_7[] = {
+    ID_TEXT,
     ID_OPTGROUP,
     ID_OPTION,
     ID_COMMENT,
@@ -532,6 +536,7 @@ static const ushort tag_list_10[] = {
 };
 
 static const ushort tag_list_11[] = {
+    ID_TEXT,
     ID_SCRIPT,
     ID_STYLE,
     ID_META,
@@ -726,6 +731,8 @@ bool DOM::checkChild(ushort tagID, ushort childID)
         case ID_THEAD:
         case ID_TFOOT:
         case ID_TBODY:
+        case ID_TEXT:
+        case ID_COMMENT:
             return true;
         default:
             return false;
@@ -734,11 +741,11 @@ bool DOM::checkChild(ushort tagID, ushort childID)
     case ID_TFOOT:
     case ID_TBODY:
         // THEAD: TR +
-        if(childID == ID_TR) return true;
+        if(childID == ID_TR || childID == ID_TEXT || childID == ID_COMMENT) return true;
         return false;
     case ID_COLGROUP:
         // COLGROUP: COL *
-        if(childID == ID_COL) return true;
+        if(childID == ID_COL || childID == ID_TEXT || childID == ID_COMMENT) return true;
         return false;
     case ID_TR:
         // TR: _9 +

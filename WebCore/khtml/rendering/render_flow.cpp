@@ -36,6 +36,8 @@
 #include "rendering/render_root.h"
 #include "xml/dom_nodeimpl.h"
 #include "xml/dom_docimpl.h"
+#include "html/html_formimpl.h"
+
 #include "khtmlview.h"
 #include "htmltags.h"
 
@@ -68,7 +70,7 @@ void RenderFlow::setStyle(RenderStyle *_style)
         setInline(false);
     
     if ((isPositioned() || isRelPositioned() || style()->overflow()==OHIDDEN) && !m_layer)
-        m_layer = new RenderLayer(this);
+        m_layer = new (renderArena()) RenderLayer(this);
     
     if(isFloating() || !style()->display() == INLINE)
         setInline(false);
@@ -245,6 +247,11 @@ void RenderFlow::layout()
             
         m_topMarginQuirk = style()->marginTop().quirk;
         m_bottomMarginQuirk = style()->marginBottom().quirk;
+        
+        if (element() && element()->id() == ID_FORM && element()->isMalformed())
+            // See if this form is malformed (i.e., unclosed). If so, don't give the form
+            // a bottom margin.
+            m_maxBottomPosMargin = m_maxBottomNegMargin = 0;
     }
     
     // A quirk that has become an unfortunate standard.  Positioned elements, floating elements
@@ -1223,6 +1230,262 @@ static inline RenderObject *next(RenderObject *par, RenderObject *current)
     return next;
 }
 
+void RenderFlow::calcInlineMinMaxWidth()
+{
+    int inlineMax=0;
+    int inlineMin=0;
+    
+    int cw = containingBlock()->contentWidth();
+
+    RenderObject *child = firstChild();
+    RenderObject *prevchild = 0;
+    
+    // If we are at the start of a line, we want to ignore all white-space.
+    // Also strip spaces if we previously had text that ended in a trailing space.
+    bool stripFrontSpaces = true;
+    RenderObject* trailingSpaceChild = 0;
+    
+    while(child != 0)
+    {
+        // positioned children don't affect the minmaxwidth
+        if (child->isPositioned())
+        {
+            child = next(this, child);
+            continue;
+        }
+
+        if( !child->isBR() )
+        {
+            // Step One: determine whether or not we need to go ahead and
+            // terminate our current line.  Each discrete chunk can become
+            // the new min-width, if it is the widest chunk seen so far, and
+            // it can also become the max-width.  
+            
+            // Children fall into three categories:
+            // (1) An inline flow object.  These objects always have a min/max of 0,
+            // and are included in the iteration solely so that their margins can
+            // be added in.  XXXdwh Just adding in the margins is totally bogus, since
+            // a <span> could wrap to multiple lines.  Technically the left margin should
+            // be considered part of the first descendant's start, and the right margin
+            // should be considered part of the last descendant's end.  Leave this alone
+            // for now, but fix later.
+            //
+            // (2) An inline non-text non-flow object, e.g., an inline replaced element.
+            // These objects can always be on a line by themselves, so in this situation
+            // we need to go ahead and break the current line, and then add in our own
+            // margins and min/max width on its own line, and then terminate the line.
+            //
+            // (3) A text object.  Text runs can have breakable characters at the start,
+            // the middle or the end.  They may also lose whitespace off the front if
+            // we're already ignoring whitespace.  In order to compute accurate min-width
+            // information, we need three pieces of information.  
+            // (a) the min-width of the first non-breakable run.  Should be 0 if the text string
+            // starts with whitespace.
+            // (b) the min-width of the last non-breakable run. Should be 0 if the text string
+            // ends with whitespace.
+            // (c) the min/max width of the string (trimmed for whitespace).
+            //
+            // If the text string starts with whitespace, then we need to go ahead and 
+            // terminate our current line (unless we're already in a whitespace stripping
+            // mode.
+            //
+            // If the text string has a breakable character in the middle, but didn't start
+            // with whitespace, then we add the width of the first non-breakable run and
+            // then end the current line.  We then need to use the intermediate min/max width
+            // values (if any of them are larger than our current min/max).  We then look at
+            // the width of the last non-breakable run and use that to start a new line
+            // (unless we end in whitespace).
+            RenderStyle* cstyle = child->style();
+            short childMin = 0;
+            short childMax = 0;
+            
+            if (!child->isText()) {
+                // Case (1) and (2).  Inline replaced and inline flow elements.  Both
+                // add in their margins to their min/max values.
+                int margins = 0;
+                LengthType type = cstyle->marginLeft().type;
+                if ( type != Variable )
+                    margins += (type == Fixed ? cstyle->marginLeft().value : child->marginLeft());
+                type = cstyle->marginRight().type;
+                if ( type != Variable )
+                    margins += (type == Fixed ? cstyle->marginRight().value : child->marginRight());
+                childMin += margins;
+                childMax += margins;
+            }
+            
+            if (!(child->isInline() && child->isFlow()) && !child->isText()) {
+                // Case (2). Inline replaced elements.
+                // Go ahead and terminate the current line as far as
+                // minwidth is concerned.
+                childMin += child->minWidth();
+                childMax += child->maxWidth();
+                
+                if(m_minWidth < inlineMin) m_minWidth = inlineMin;
+                inlineMin = 0;
+                
+                // Add our width to the max.
+                inlineMax += childMax;
+                
+                // Now check our line.
+                inlineMin = childMin;
+                if(m_minWidth < inlineMin) m_minWidth = inlineMin;
+                
+                // Now start a new line.
+                inlineMin = 0;
+                
+                // We are no longer stripping whitespace at the start of
+                // a line.
+                if (!child->isFloating())
+                    stripFrontSpaces = false;
+                trailingSpaceChild = 0;
+            }
+            else if (child->isText())
+            {
+                // Case (3). Text. 
+                RenderText* t = static_cast<RenderText *>(child);
+                
+                // Determine if we have a breakable character.  Pass in
+                // whether or not we should ignore any spaces at the front
+                // of the string.  If those are going to be stripped out,
+                // then they shouldn't be considered in the breakable char
+                // check.
+                bool hasBreakableChar, hasBreak;
+                short beginMin, endMin;
+                bool beginWS, endWS;
+                short beginMax, endMax;
+                t->trimmedMinMaxWidth(beginMin, beginWS, endMin, endWS, hasBreakableChar,
+                                      hasBreak, beginMax, endMax,
+                                      childMin, childMax, stripFrontSpaces);
+                if (stripFrontSpaces)
+                    trailingSpaceChild = child;
+                else
+                    trailingSpaceChild = 0;
+
+                // Add in text-indent.
+                int ti = cstyle->textIndent().minWidth(cw);
+                childMin+=ti; beginMin += ti;
+                childMax+=ti; beginMax += ti;
+
+                // If we have no breakable characters at all,
+                // then this is the easy case. We add ourselves to the current
+                // min and max and continue.
+                if (!hasBreakableChar) {
+                    inlineMin += childMin;
+                    inlineMax += childMax;
+                }
+                else {
+                    // We have a breakable character.  Now we need to know if
+                    // we start and end with whitespace.
+                    if (beginWS) {
+                        // Go ahead and end the current line.
+                        if(m_minWidth < inlineMin) m_minWidth = inlineMin;
+                    }
+                    else {
+                        inlineMin += beginMin;
+                        if(m_minWidth < inlineMin) m_minWidth = inlineMin;
+                        childMin -= ti;
+                    }
+                    
+                    inlineMin = childMin;
+                    
+                    if (endWS) {
+                        // We end in whitespace, which means we can go ahead
+                        // and end our current line.
+                        if(m_minWidth < inlineMin) m_minWidth = inlineMin;
+                        inlineMin = 0;
+                    }
+                    else {
+                        if(m_minWidth < inlineMin) m_minWidth = inlineMin;
+                        inlineMin = endMin;
+                    }
+                        
+                    inlineMax += childMax;
+                }
+            }
+        }
+        else
+        {             
+            if(m_minWidth < inlineMin) m_minWidth = inlineMin;
+            if(m_maxWidth < inlineMax) m_maxWidth = inlineMax;
+            inlineMin = inlineMax = 0;
+            stripFrontSpaces = true;
+            trailingSpaceChild = 0;
+        }
+        
+        prevchild = child;
+        child = next(this, child);
+    }
+    
+    if (trailingSpaceChild && trailingSpaceChild->isText() && !m_pre) {
+        // Collapse away the trailing space at the end of a block. 
+        RenderText* t = static_cast<RenderText *>(trailingSpaceChild);
+        const Font *f = t->htmlFont( false );
+        QChar space[1]; space[0] = ' ';
+        int spaceWidth = f->width(space, 1, 0);
+        inlineMax -= spaceWidth;
+        if (inlineMin > inlineMax)
+            inlineMin = inlineMax;
+    }
+
+    if(m_minWidth < inlineMin) m_minWidth = inlineMin;
+    if(m_maxWidth < inlineMax) m_maxWidth = inlineMax;
+//         kdDebug( 6040 ) << "m_minWidth=" << m_minWidth
+// 			<< " m_maxWidth=" << m_maxWidth << endl;
+}
+
+void RenderFlow::calcBlockMinMaxWidth()
+{
+    RenderObject *child = firstChild();
+    while(child != 0)
+    {
+        // positioned children don't affect the minmaxwidth
+        if (child->isPositioned())
+        {
+            child = child->nextSibling();
+            continue;
+        }
+
+        int margin=0;
+        //  auto margins don't affect minwidth
+
+        Length ml = child->style()->marginLeft();
+        Length mr = child->style()->marginRight();
+
+        if (style()->textAlign() == KONQ_CENTER)
+        {
+            if (ml.type==Fixed) margin+=ml.value;
+            if (mr.type==Fixed) margin+=mr.value;
+        }
+        else
+        {
+            if (!(ml.type==Variable) && !(mr.type==Variable))
+            {
+                if (!(child->style()->width().type==Variable))
+                {
+                    if (child->style()->direction()==LTR)
+                        margin = child->marginLeft();
+                    else
+                        margin = child->marginRight();
+                }
+                else
+                    margin = child->marginLeft()+child->marginRight();
+
+            }
+            else if (!(ml.type == Variable))
+                margin = child->marginLeft();
+            else if (!(mr.type == Variable))
+                margin = child->marginRight();
+        }
+
+        if (margin<0) margin=0;
+
+        int w = child->minWidth() + margin;
+        if(m_minWidth < w) m_minWidth = w;
+        w = child->maxWidth() + margin;
+        if(m_maxWidth < w) m_maxWidth = w;
+        child = child->nextSibling();
+    }
+}
 
 void RenderFlow::calcMinMaxWidth()
 {
@@ -1236,168 +1499,16 @@ void RenderFlow::calcMinMaxWidth()
     m_maxWidth = 0;
 
     if (isInline()) {
-	setMinMaxKnown();
+        // Irrelevant, since some enclosing block will actually flow our children.
+        setMinMaxKnown();
         return;
     }
 
-    int cw = containingBlock()->contentWidth();
-
-    // non breaking space
-    const QChar nbsp = 0xa0;
-
-    RenderObject *child = firstChild();
-    RenderObject *prevchild = 0;
-    if(childrenInline())
-    {
-        int inlineMax=0;
-        int currentMin=0;
-        int inlineMin=0;
-        bool noBreak=false;
-	bool prevWasText = false;
-
-        while(child != 0)
-        {
-            // positioned children don't affect the minmaxwidth
-            if (child->isPositioned())
-            {
-                child = next(this, child);
-                continue;
-            }
-
-            if( !child->isBR() )
-            {
-                RenderStyle* cstyle = child->style();
-                int margins = 0;
-		LengthType type = cstyle->marginLeft().type;
-                if ( type != Variable )
-                    margins += (type == Fixed ? cstyle->marginLeft().value : child->marginLeft());
-		type = cstyle->marginRight().type;
-                if ( type != Variable )
-                    margins += (type == Fixed ? cstyle->marginRight().value : child->marginRight());
-                int childMin = child->minWidth() + margins;
-                int childMax = child->maxWidth() + margins;
-                if (child->isText() && static_cast<RenderText *>(child)->length() > 0)
-                {
-
-                    int ti = cstyle->textIndent().minWidth(cw);
-                    childMin+=ti;
-                    childMax+=ti;
-
-                    bool hasNbsp=false;
-                    RenderText* t = static_cast<RenderText *>(child);
-                    if (t->data()[0] == nbsp) //inline starts with nbsp
-                    {
-                        currentMin += childMin;
-                        inlineMax += childMax;
-                        hasNbsp = true;
-                    }
-                    if (hasNbsp && t->data()[t->length()-1]==nbsp )
-                    {                           //inline starts and ends with nbsp
-                        noBreak=true;
-                    }
-                    else if (t->data()[t->length()-1] == nbsp && t->data()[0] != ' ')
-                    {                           //inline only ends with nbsp
-                        if(currentMin < childMin) currentMin = childMin;
-                        inlineMax += childMax;
-                        noBreak = true;
-                        hasNbsp = true;
-                    }
-                    if ( t->hasBreakableChar() )
-                        noBreak = false;
-                    prevWasText = true;
-                    if (hasNbsp)
-                    {
-                        if(inlineMin < currentMin) inlineMin = currentMin;
-                        prevchild = child;
-                        child = next(this, child);
-                        hasNbsp = false;
-                        continue;
-                    }
-                }
-		prevWasText = false;
-                if (noBreak ||
-                        (prevchild && prevchild->isFloating() && child->isFloating()))
-                {
-                    currentMin += childMin;
-                    if(inlineMin < currentMin) inlineMin = currentMin;
-                    inlineMax += childMax;
-                    noBreak = false;
-                }
-                else
-                {
-                    currentMin = childMin;
-                    if(inlineMin < currentMin) inlineMin = currentMin;
-                    inlineMax += childMax;
-                }
-
-            }
-            else
-            {
-                if(m_minWidth < inlineMin) m_minWidth = inlineMin;
-                if(m_maxWidth < inlineMax) m_maxWidth = inlineMax;
-                inlineMin = currentMin = inlineMax = 0;
-            }
-	    prevWasText = false;
-            prevchild = child;
-            child = next(this, child);
-        }
-        if(m_minWidth < inlineMin) m_minWidth = inlineMin;
-        if(m_maxWidth < inlineMax) m_maxWidth = inlineMax;
-//         kdDebug( 6040 ) << "m_minWidth=" << m_minWidth
-// 			<< " m_maxWidth=" << m_maxWidth << endl;
-    }
+    if (childrenInline())
+        calcInlineMinMaxWidth();
     else
-    {
-        while(child != 0)
-        {
-            // positioned children don't affect the minmaxwidth
-            if (child->isPositioned())
-            {
-                child = child->nextSibling();
-                continue;
-            }
-
-            int margin=0;
-            //  auto margins don't affect minwidth
-
-            Length ml = child->style()->marginLeft();
-            Length mr = child->style()->marginRight();
-
-            if (style()->textAlign() == KONQ_CENTER)
-            {
-                if (ml.type==Fixed) margin+=ml.value;
-                if (mr.type==Fixed) margin+=mr.value;
-            }
-            else
-            {
-                if (!(ml.type==Variable) && !(mr.type==Variable))
-                {
-                    if (!(child->style()->width().type==Variable))
-                    {
-                        if (child->style()->direction()==LTR)
-                            margin = child->marginLeft();
-                        else
-                            margin = child->marginRight();
-                    }
-                    else
-                        margin = child->marginLeft()+child->marginRight();
-
-                }
-                else if (!(ml.type == Variable))
-                    margin = child->marginLeft();
-                else if (!(mr.type == Variable))
-                    margin = child->marginRight();
-            }
-
-            if (margin<0) margin=0;
-
-            int w = child->minWidth() + margin;
-            if(m_minWidth < w) m_minWidth = w;
-            w = child->maxWidth() + margin;
-            if(m_maxWidth < w) m_maxWidth = w;
-            child = child->nextSibling();
-        }
-    }
+        calcBlockMinMaxWidth();
+        
     if(m_maxWidth < m_minWidth) m_maxWidth = m_minWidth;
 
     if (style()->width().isFixed())
@@ -1494,15 +1605,13 @@ void RenderFlow::addChild(RenderObject *newChild, RenderObject *beforeChild)
 	    newChild->setBlockBidi();
 
     RenderStyle* pseudoStyle=0;
-    if ( !isInline() && ( !firstChild() || firstChild() == beforeChild )
-        && ( pseudoStyle=style()->getPseudoStyle(RenderStyle::FIRST_LETTER) ) )
+    if (!isInline() && (!firstChild() || firstChild() == beforeChild) && newChild->isText())
     {
-        if (newChild->isText()) {
-            RenderText* newTextChild = static_cast<RenderText*>(newChild);
+        RenderText* newTextChild = static_cast<RenderText*>(newChild);
+        //kdDebug( 6040 ) << "first letter" << endl;
 
-            //kdDebug( 6040 ) << "first letter" << endl;
-    
-            RenderFlow* firstLetter = new RenderFlow(0 /* anonymous box */);
+        if ( (pseudoStyle=style()->getPseudoStyle(RenderStyle::FIRST_LETTER)) ) {
+            RenderFlow* firstLetter = new (renderArena()) RenderFlow(0 /* anonymous box */);
             pseudoStyle->setDisplay( INLINE );
             firstLetter->setStyle(pseudoStyle);
     
@@ -1519,7 +1628,7 @@ void RenderFlow::addChild(RenderObject *newChild, RenderObject *beforeChild)
                 //kdDebug( 6040 ) << "letter= '" << DOMString(oldText->substring(0,length)).string() << "'" << endl;
                 newTextChild->setText(oldText->substring(length,oldText->l-length));
     
-                RenderText* letter = new RenderText(0 /* anonymous object */, oldText->substring(0,length));
+                RenderText* letter = new (renderArena()) RenderText(0 /* anonymous object */, oldText->substring(0,length));
                 RenderStyle* newStyle = new RenderStyle();
                 newStyle->inheritFrom(pseudoStyle);
                 letter->setStyle(newStyle);
@@ -1568,7 +1677,7 @@ void RenderFlow::addChild(RenderObject *newChild, RenderObject *beforeChild)
             }
 
             removeChildNode(anonBox);
-            anonBox->detach(); // does necessary cleanup & deletes anonBox
+            anonBox->detach(renderArena()); // does necessary cleanup & deletes anonBox
 
             KHTMLAssert(beforeChild->parent() == this);
         }
@@ -1631,7 +1740,7 @@ void RenderFlow::addChild(RenderObject *newChild, RenderObject *beforeChild)
             newStyle->inheritFrom(style());
             newStyle->setDisplay(BLOCK);
 
-            RenderFlow *newBox = new RenderFlow(0 /* anonymous box */);
+            RenderFlow *newBox = new (element()->getDocument()->renderArena()) RenderFlow(0 /* anonymous box */);
             newBox->setStyle(newStyle);
             newBox->setIsAnonymousBox(true);
 
@@ -1710,7 +1819,7 @@ void RenderFlow::makeChildrenNonInline(RenderObject *box2Start)
             newStyle->inheritFrom(style());
             newStyle->setDisplay(BLOCK);
 
-            RenderFlow *box = new RenderFlow(0 /* anonymous box */);
+            RenderFlow *box = new (renderArena()) RenderFlow(0 /* anonymous box */);
             box->setStyle(newStyle);
             box->setIsAnonymousBox(true);
             // ### the children have a wrong style!!!

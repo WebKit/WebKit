@@ -116,12 +116,12 @@ void HTMLAppletElementImpl::attach()
 	    args.insert( "archive", archive.string() );
 
 	args.insert( "baseURL", getDocument()->baseURL() );
-        m_render = new RenderApplet(this, args);
+        m_render = new (getDocument()->renderArena()) RenderApplet(this, args);
     }
     else
         // ### remove me. we should never show an empty applet, instead
         // render the alternative content given by the webpage
-        m_render = new RenderEmptyApplet(this);
+        m_render = new (getDocument()->renderArena()) RenderEmptyApplet(this);
 #endif
 
     if (m_render) {
@@ -246,7 +246,7 @@ void HTMLEmbedElementImpl::attach()
         KHTMLView* w = getDocument()->view();
         if (w->part()->pluginsEnabled()) {
             if (parentNode()->id() != ID_OBJECT)
-                m_render = new RenderPartObject(this);
+                m_render = new (getDocument()->renderArena()) RenderPartObject(this);
         }
 
         if (m_render) {
@@ -355,7 +355,7 @@ void HTMLObjectElementImpl::attach()
     // render tree construction caused by stylesheet loads. -dwh
     if (loadplugin && parentNode()->renderer()) {
         needWidgetUpdate = false;
-        m_render = new RenderPartObject(this);
+        m_render = new (getDocument()->renderArena()) RenderPartObject(this);
         m_render->setStyle(getDocument()->styleSelector()->styleForElement(this));
         parentNode()->renderer()->addChild(m_render, nextRenderer());
     }

@@ -74,6 +74,7 @@ HTMLFormElementImpl::HTMLFormElementImpl(DocumentPtr *doc)
     m_enctype = "application/x-www-form-urlencoded";
     m_boundary = "----------0xKhTmLbOuNdArY";
     m_acceptcharset = "UNKNOWN";
+    m_malformed = false;
 }
 
 HTMLFormElementImpl::~HTMLFormElementImpl()
@@ -1076,18 +1077,19 @@ void HTMLInputElementImpl::attach()
     RenderStyle* _style = getDocument()->styleSelector()->styleForElement(this);
     _style->ref();
     if (parentNode()->renderer() && _style->display() != NONE) {
+        RenderArena* arena = getDocument()->renderArena();
         switch(m_type)
         {
         case TEXT:
         case PASSWORD:
-        case ISINDEX:      m_render = new RenderLineEdit(this);   break;
-        case CHECKBOX:  m_render = new RenderCheckBox(this); break;
-        case RADIO:        m_render = new RenderRadioButton(this); break;
-        case SUBMIT:      m_render = new RenderSubmitButton(this); break;
-        case IMAGE:       m_render =  new RenderImageButton(this); break;
-        case RESET:      m_render = new RenderResetButton(this);   break;
-        case FILE:         m_render =  new RenderFileButton(this);    break;
-        case BUTTON:  m_render = new RenderPushButton(this);
+        case ISINDEX:      m_render = new (arena) RenderLineEdit(this);   break;
+        case CHECKBOX:  m_render = new (arena) RenderCheckBox(this); break;
+        case RADIO:        m_render = new (arena) RenderRadioButton(this); break;
+        case SUBMIT:      m_render = new (arena) RenderSubmitButton(this); break;
+        case IMAGE:       m_render =  new (arena) RenderImageButton(this); break;
+        case RESET:      m_render = new (arena) RenderResetButton(this);   break;
+        case FILE:         m_render =  new (arena) RenderFileButton(this);    break;
+        case BUTTON:  m_render = new (arena) RenderPushButton(this);
         case HIDDEN:   break;
         }
     }
@@ -1697,7 +1699,7 @@ void HTMLSelectElementImpl::attach()
     RenderStyle* _style = getDocument()->styleSelector()->styleForElement(this);
     _style->ref();
     if (parentNode()->renderer() && _style->display() != NONE) {
-        m_render = new RenderSelect(this);
+        m_render = new (getDocument()->renderArena()) RenderSelect(this);
         m_render->setStyle(_style);
     }
 
@@ -2188,7 +2190,7 @@ void HTMLTextAreaElementImpl::attach()
     RenderStyle* _style = getDocument()->styleSelector()->styleForElement(this);
     _style->ref();
     if (parentNode()->renderer() && _style->display() != NONE) {
-        m_render = new RenderTextArea(this);
+        m_render = new (getDocument()->renderArena()) RenderTextArea(this);
         m_render->setStyle(_style);
     }
 
