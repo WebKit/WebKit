@@ -316,10 +316,11 @@ typedef struct _NPPluginFuncs {
 extern "C" {
 #endif
 
-typedef NPError (* mainFuncPtr)(NPNetscapeFuncs*, NPPluginFuncs*, NPP_ShutdownProcPtr*);
+typedef NPError (* MainFuncPtr)(NPNetscapeFuncs*, NPPluginFuncs*, NPP_ShutdownProcPtr*);
 
-typedef NPError (* initializeFuncPtr)(NPNetscapeFuncs*);
-typedef NPError (* getEntryPointsFuncPtr)(NPPluginFuncs*);
+typedef NPError (* NP_InitializeFuncPtr)(NPNetscapeFuncs*);
+typedef NPError (* NP_GetEntryPointsFuncPtr)(NPPluginFuncs*);
+typedef void 	(* BP_CreatePluginMIMETypesPreferencesFuncPtr)(void);
 
 /*
  * NPN_* functions are provided by the navigator and called by the plugin.

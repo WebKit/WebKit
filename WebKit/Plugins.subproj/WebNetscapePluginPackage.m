@@ -7,6 +7,8 @@
 
 #import <WebKit/WebKitLogging.h>
 
+#import <CoreFoundation/CFBundlePriv.h>
+
 typedef void (* FunctionPointer) (void);
 typedef void (* TransitionVector) (void);
 static FunctionPointer functionPointerForTVector(TransitionVector);
@@ -30,16 +32,28 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
     }
 }
 
++ (NSString *)preferredLocalizationName
+{
+    SInt32 languageCode;
+    SInt32 regionCode;
+    SInt32 scriptCode;
+    CFStringEncoding stringEncoding;
+
+    CFBundleGetLocalizationInfoForLocalization(NULL, &languageCode, &regionCode, &scriptCode, &stringEncoding);
+    NSString *localizationName = (NSString *)CFBundleCopyLocalizationForLocalizationInfo(languageCode, regionCode, scriptCode, stringEncoding);
+    return [localizationName autorelease];
+}
+
 - (SInt16)openResourceFile
 {
     FSRef fref;
     OSErr err;
     
-    if(isBundle){
-        return CFBundleOpenBundleResourceMap(bundle);
-    }else{
+    if (isBundle) {
+        return CFBundleOpenBundleResourceMap(cfBundle);
+    } else {
         err = FSPathMakeRef((const UInt8 *)[path fileSystemRepresentation], &fref, NULL);
-        if(err != noErr){
+        if (err != noErr) {
             return -1;
         }
         
@@ -49,9 +63,9 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
 
 - (void)closeResourceFile:(SInt16)resRef
 {
-    if(isBundle){
-        CFBundleCloseBundleResourceMap(bundle, resRef);
-    }else{
+    if (isBundle) {
+        CFBundleCloseBundleResourceMap(cfBundle, resRef);
+    } else {
         CloseResFile(resRef);
     }
 }
@@ -62,7 +76,7 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
     char cString[256];
         
     GetIndString(pString, stringListID, index);
-    if (pString[0] == 0){
+    if (pString[0] == 0) {
         return nil;
     }
 
@@ -71,15 +85,15 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
     return [NSString stringWithCString:cString];
 }
 
-- (BOOL)getMIMEInformation
+- (BOOL)getPluginInfoFromResources
 {
     SInt16 resRef = [self openResourceFile];
-    if(resRef == -1){
+    if (resRef == -1) {
         return NO;
     }
     
     UseResFile(resRef);
-    if(ResError() != noErr){
+    if (ResError() != noErr) {
         return NO;
     }
 
@@ -91,31 +105,31 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
     NSMutableDictionary *MIMEToExtensionsDictionary = [NSMutableDictionary dictionary];
     NSMutableDictionary *MIMEToDescriptionDictionary = [NSMutableDictionary dictionary];
 
-    for(i=1; 1; i+=2){
+    for (i=1; 1; i+=2) {
         MIME = [self stringForStringListID:128 andIndex:i];
-        if(!MIME){
+        if (!MIME) {
             break;
         }
 
         // FIXME: Avoid mime types with semi-colons because KJS can't properly parse them using KWQKConfigBase
         r = [MIME rangeOfString:@";"];
-        if(r.length > 0){
+        if (r.length > 0) {
             continue;
         }
 
         extensionsList = [self stringForStringListID:128 andIndex:i+1];
-        if(extensionsList){
+        if (extensionsList) {
             extensions = [extensionsList componentsSeparatedByString:@","];
             [MIMEToExtensionsDictionary setObject:extensions forKey:MIME];
-        }else{
+        } else {
             // DRM and WMP claim MIMEs without extensions. Use a @"" extension in this case.
             [MIMEToExtensionsDictionary setObject:[NSArray arrayWithObject:@""] forKey:MIME];
         }
         
         description = [self stringForStringListID:127 andIndex:[MIMEToExtensionsDictionary count]];
-        if(description){
+        if (description) {
             [MIMEToDescriptionDictionary setObject:description forKey:MIME];
-        }else{
+        } else {
             [MIMEToDescriptionDictionary setObject:@"" forKey:MIME];
         }
     }
@@ -140,14 +154,14 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
     NSString *filename = [self filename];
     
     description = [self stringForStringListID:126 andIndex:1];
-    if(!description){
+    if (!description) {
         description = filename;
     }
     [self setPluginDescription:description];
     
     
     NSString *theName = [self stringForStringListID:126 andIndex:2];
-    if(!theName){
+    if (!theName) {
         theName = filename;
     }
     [self setName:theName];
@@ -157,56 +171,72 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
     return YES;
 }
 
-- (NSString *)pathByResolvingSymlinksAndAliasesInPath:(NSString *)thePath
+- (NSDictionary *)pListForPath:(NSString *)pListPath createFile:(BOOL)createFile
 {
-    NSString *newPath = [thePath stringByResolvingSymlinksInPath];
-
-    FSRef fref;
-    OSErr err;
-
-    err = FSPathMakeRef((const UInt8 *)[thePath fileSystemRepresentation], &fref, NULL);
-    if(err != noErr){
-        return newPath;
+    if (createFile && [self load] && BP_CreatePluginMIMETypesPreferences) {
+        BP_CreatePluginMIMETypesPreferences();
     }
 
-    Boolean targetIsFolder;
-    Boolean wasAliased;
-    err = FSResolveAliasFile (&fref, TRUE, &targetIsFolder, &wasAliased);
-    if(err != noErr){
-        return newPath;
-    }
-    
-    if(wasAliased){
-        NSURL *URL = (NSURL *)CFURLCreateFromFSRef(kCFAllocatorDefault, &fref);
-        newPath = [URL path];
-        [URL release];
+    NSDictionary *pList = nil;
+    NSData *data = [NSData dataWithContentsOfFile:pListPath];
+    if (data) {
+        pList = [NSPropertyListSerialization propertyListFromData:data
+                                                 mutabilityOption:NSPropertyListImmutable
+                                                           format:nil
+                                                 errorDescription:nil];
     }
 
-    return newPath;
+    return pList;
+}
+
+- (BOOL)getPluginInfoFromPLists
+{
+    if (!nsBundle) {
+        return NO;
+    }
+
+    NSDictionary *MIMETypes = nil;
+    NSString *pListFilename = [nsBundle objectForInfoDictionaryKey:WebPluginMIMETypesFilenameKey];
+
+    // Check if the MIME types are claimed in a plist in the user's preferences directory.
+    if (pListFilename) {
+        NSString *pListPath = [NSString stringWithFormat:@"%@/Library/Preferences/%@", NSHomeDirectory(), pListFilename];
+        NSDictionary *pList = [self pListForPath:pListPath createFile:NO];
+        if (pList) {
+            // If the plist isn't localized, have the plug-in recreate it in the preferred language.
+            NSString *localizationName = [pList objectForKey:WebPluginLocalizationNameKey];
+            if (![localizationName isEqualToString:[[self class] preferredLocalizationName]]) {
+                pList = [self pListForPath:pListPath createFile:YES];
+            }
+            MIMETypes = [pList objectForKey:WebPluginMIMETypesKey];
+        } else {
+            // Plist doesn't exist, ask the plug-in to create it.
+            MIMETypes = [[self pListForPath:pListPath createFile:YES] objectForKey:WebPluginMIMETypesKey];
+        }
+    }
+
+    // Pass the MIME dictionary to the superclass to parse it.
+    return [self getPluginInfoFromBundleAndMIMEDictionary:MIMETypes];
 }
 
 - initWithPath:(NSString *)pluginPath
 {
     [super initWithPath:pluginPath];
     
-    NSString *thePath = [self pathByResolvingSymlinksAndAliasesInPath:pluginPath];
-    
-    [self setPath:thePath];
-    
-    NSDictionary *fileInfo = [[NSFileManager defaultManager] fileAttributesAtPath:thePath traverseLink:YES];
+    NSDictionary *fileInfo = [[NSFileManager defaultManager] fileAttributesAtPath:path traverseLink:YES];
     OSType type = 0;
 
-    // bundle
+    // Bundle
     if ([[fileInfo objectForKey:NSFileType] isEqualToString:NSFileTypeDirectory]) {
-        bundle = CFBundleCreate(NULL, (CFURLRef)[NSURL fileURLWithPath:thePath]);
-        if (bundle) {
+        cfBundle = CFBundleCreate(NULL, (CFURLRef)[NSURL fileURLWithPath:path]);
+        if (cfBundle) {
             isBundle = YES;
-            CFBundleGetPackageInfo(bundle, &type, NULL);
+            CFBundleGetPackageInfo(cfBundle, &type, NULL);
         }
     }
     
 #ifdef __ppc__
-    // single-file plug-in with resource fork
+    // Single-file plug-in with resource fork
     if ([[fileInfo objectForKey:NSFileType] isEqualToString:NSFileTypeRegular]) {
         type = [fileInfo fileHFSTypeCode];
         isBundle = NO;
@@ -219,8 +249,8 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
     }
 
     // Check if the executable is Mach-O or CFM.
-    if (bundle) {
-        NSURL *executableURL = (NSURL *)CFBundleCopyExecutableURL(bundle);
+    if (cfBundle) {
+        NSURL *executableURL = (NSURL *)CFBundleCopyExecutableURL(cfBundle);
         NSFileHandle *executableFile = [NSFileHandle fileHandleForReadingAtPath:[executableURL path]];
         [executableURL release];
         NSData *data = [executableFile readDataOfLength:8];
@@ -239,9 +269,11 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
 #endif
     }
 
-    if (![self getMIMEInformation]) {
-        [self release];
-        return nil;
+    if (![self getPluginInfoFromPLists]) {
+        if (![self getPluginInfoFromResources]) {
+            [self release];
+            return nil;
+        }
     }
 
     return self;
@@ -249,9 +281,9 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
 
 - (WebExecutableType)executableType
 {
-    if(isCFM){
+    if (isCFM) {
         return WebCFMExecutableType;
-    }else{
+    } else {
         return WebMachOExecutableType;
     }
 }
@@ -263,55 +295,55 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
 
 - (BOOL)load
 {    
-    getEntryPointsFuncPtr NP_GetEntryPoints = NULL;
-    initializeFuncPtr NP_Initialize = NULL;
-    mainFuncPtr pluginMainFunc;
+    NP_GetEntryPointsFuncPtr NP_GetEntryPoints = NULL;
+    NP_InitializeFuncPtr NP_Initialize = NULL;
+    MainFuncPtr pluginMainFunc;
     NPError npErr;
     OSErr err;
 
 
-    if(isLoaded){
+    if (isLoaded) {
         return YES;
     }
     
-    if(isBundle){
-        if (!CFBundleLoadExecutable(bundle)){
+    if (isBundle) {
+        if (!CFBundleLoadExecutable(cfBundle)) {
             return NO;
         }
-
-        if(isCFM){
-            pluginMainFunc = (mainFuncPtr)CFBundleGetFunctionPointerForName(bundle, CFSTR("main") );
+        if (isCFM) {
+            pluginMainFunc = (MainFuncPtr)CFBundleGetFunctionPointerForName(cfBundle, CFSTR("main") );
             if(!pluginMainFunc)
                 return NO;
-        }else{
-            NP_Initialize = (initializeFuncPtr)CFBundleGetFunctionPointerForName(bundle, CFSTR("NP_Initialize") );
-            NP_GetEntryPoints = (getEntryPointsFuncPtr)CFBundleGetFunctionPointerForName(bundle, CFSTR("NP_GetEntryPoints") );
-            NPP_Shutdown = (NPP_ShutdownProcPtr)CFBundleGetFunctionPointerForName(bundle, CFSTR("NP_Shutdown") );
-            if(!NP_Initialize || !NP_GetEntryPoints || !NPP_Shutdown){
+        } else {
+            NP_Initialize = (NP_InitializeFuncPtr)CFBundleGetFunctionPointerForName(cfBundle, CFSTR("NP_Initialize"));
+            NP_GetEntryPoints = (NP_GetEntryPointsFuncPtr)CFBundleGetFunctionPointerForName(cfBundle, CFSTR("NP_GetEntryPoints"));
+            NPP_Shutdown = (NPP_ShutdownProcPtr)CFBundleGetFunctionPointerForName(cfBundle, CFSTR("NP_Shutdown"));
+            if (!NP_Initialize || !NP_GetEntryPoints || !NPP_Shutdown) {
                 return NO;
             }
         }
-    }else{ // single CFM file
+        BP_CreatePluginMIMETypesPreferences = (BP_CreatePluginMIMETypesPreferencesFuncPtr)CFBundleGetFunctionPointerForName(cfBundle, CFSTR("BP_CreatePluginMIMETypesPreferences"));
+    } else { // single CFM file
         FSSpec spec;
         FSRef fref;
         
         err = FSPathMakeRef((UInt8 *)[path fileSystemRepresentation], &fref, NULL);
-        if(err != noErr){
+        if (err != noErr) {
             ERROR("FSPathMakeRef failed. Error=%d", err);
             return NO;
         }
         err = FSGetCatalogInfo(&fref, kFSCatInfoNone, NULL, NULL, &spec, NULL);
-        if(err != noErr){
+        if (err != noErr) {
             ERROR("FSGetCatalogInfo failed. Error=%d", err);
             return NO;
         }
         err = GetDiskFragment(&spec, 0, kCFragGoesToEOF, nil, kPrivateCFragCopy, &connID, (Ptr *)&pluginMainFunc, nil);
-        if(err != noErr){
+        if (err != noErr) {
             ERROR("GetDiskFragment failed. Error=%d", err);
             return NO;
         }
-        pluginMainFunc = (mainFuncPtr)functionPointerForTVector((TransitionVector)pluginMainFunc);
-        if(!pluginMainFunc){
+        pluginMainFunc = (MainFuncPtr)functionPointerForTVector((TransitionVector)pluginMainFunc);
+        if (!pluginMainFunc) {
             return NO;
         }
             
@@ -319,15 +351,15 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
     }
     
     // Plugins (at least QT) require that you call UseResFile on the resource file before loading it.
-    
     resourceRef = [self openResourceFile];
-    if(resourceRef == -1)
+    if (resourceRef == -1) {
         return NO;
+    }
     
     UseResFile(resourceRef);
     
     // swap function tables
-    if(isCFM){
+    if (isCFM) {
         browserFuncs.version = 11;
         browserFuncs.size = sizeof(NPNetscapeFuncs);
         browserFuncs.geturl = (NPN_GetURLProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_GetURL);
@@ -371,7 +403,8 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
         NPP_URLNotify = (NPP_URLNotifyProcPtr)functionPointerForTVector((TransitionVector)pluginFuncs.urlnotify);
         NPP_GetValue = (NPP_GetValueProcPtr)functionPointerForTVector((TransitionVector)pluginFuncs.getvalue);
         NPP_SetValue = (NPP_SetValueProcPtr)functionPointerForTVector((TransitionVector)pluginFuncs.setvalue);
-    }else{ // no function pointer conversion necessary for mach-o
+    } else {
+        // no function pointer conversion necessary for mach-o
         browserFuncs.version = 11;
         browserFuncs.size = sizeof(NPNetscapeFuncs);
         browserFuncs.geturl = NPN_GetURL;
@@ -427,11 +460,11 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
     
     [self closeResourceFile:resourceRef];
     
-    if(isBundle){
-        CFBundleUnloadExecutable(bundle);
-        CFRelease(bundle);
-        bundle = 0;
-    }else{
+    if (isBundle) {
+        CFBundleUnloadExecutable(cfBundle);
+        CFRelease(cfBundle);
+        cfBundle = NULL;
+    } else {
         CloseConnection(&connID);
     }
     LOG(Plugins, "Plugin Unloaded");
@@ -440,8 +473,8 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
 
 - (void)dealloc
 {
-    if (bundle) {
-        CFRelease(bundle);
+    if (cfBundle) {
+        CFRelease(cfBundle);
     }
     [super dealloc];
 }

@@ -13,7 +13,7 @@
 typedef enum {
     WebCFMExecutableType,
     WebMachOExecutableType
-}WebExecutableType;
+} WebExecutableType;
 
 @interface WebNetscapePluginPackage : WebBasePluginPackage
 {
@@ -27,7 +27,7 @@ typedef enum {
     uint16 pluginSize;
     uint16 pluginVersion;
     
-    CFBundleRef bundle;
+    CFBundleRef cfBundle;
     
     CFragConnectionID connID;
     
@@ -47,6 +47,8 @@ typedef enum {
     NPP_GetValueProcPtr NPP_GetValue;
     NPP_SetValueProcPtr NPP_SetValue;
     NPP_ShutdownProcPtr NPP_Shutdown;
+
+    BP_CreatePluginMIMETypesPreferencesFuncPtr BP_CreatePluginMIMETypesPreferences;
 }
 
 - (WebExecutableType)executableType;

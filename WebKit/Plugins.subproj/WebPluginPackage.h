@@ -14,7 +14,6 @@
 
 @interface WebPluginPackage : WebBasePluginPackage
 {
-    NSBundle *bundle;
 }
 
 - (Class)viewFactory;

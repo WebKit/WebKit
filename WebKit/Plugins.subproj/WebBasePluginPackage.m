@@ -11,24 +11,119 @@
 #import <WebKit/WebNetscapePluginPackage.h>
 #import <WebKit/WebPluginPackage.h>
 
+
 @implementation WebBasePluginPackage
 
 + (WebBasePluginPackage *)pluginWithPath:(NSString *)pluginPath
 {
     WebBasePluginPackage *pluginPackage = [[WebPluginPackage alloc] initWithPath:pluginPath];
 
-    if(!pluginPackage){
+    if (!pluginPackage) {
         pluginPackage = [[WebNetscapePluginPackage alloc] initWithPath:pluginPath];
     }
 
     return [pluginPackage autorelease];
 }
 
+- (NSString *)pathByResolvingSymlinksAndAliasesInPath:(NSString *)thePath
+{
+    NSString *newPath = [thePath stringByResolvingSymlinksInPath];
+
+    FSRef fref;
+    OSErr err;
+
+    err = FSPathMakeRef((const UInt8 *)[thePath fileSystemRepresentation], &fref, NULL);
+    if (err != noErr) {
+        return newPath;
+    }
+
+    Boolean targetIsFolder;
+    Boolean wasAliased;
+    err = FSResolveAliasFile (&fref, TRUE, &targetIsFolder, &wasAliased);
+    if (err != noErr) {
+        return newPath;
+    }
+
+    if (wasAliased) {
+        NSURL *URL = (NSURL *)CFURLCreateFromFSRef(kCFAllocatorDefault, &fref);
+        newPath = [URL path];
+        [URL release];
+    }
+
+    return newPath;
+}
+
 - initWithPath:(NSString *)pluginPath
 {
     [super init];
     extensionToMIME = [[NSMutableDictionary dictionary] retain];
+    path = [[self pathByResolvingSymlinksAndAliasesInPath:pluginPath] retain];
+    nsBundle = [[NSBundle alloc] initWithPath:path];
     return self;
+}
+
+- (BOOL)getPluginInfoFromBundleAndMIMEDictionary:(NSDictionary *)MIMETypes
+{
+    if (!nsBundle) {
+        return NO;
+    }
+    
+    if (!MIMETypes) {
+        MIMETypes = [nsBundle objectForInfoDictionaryKey:WebPluginMIMETypesKey];
+        if (!MIMETypes) {
+            return NO;
+        }
+    }
+
+    NSMutableDictionary *MIMEToExtensionsDictionary = [NSMutableDictionary dictionary];
+    NSMutableDictionary *MIMEToDescriptionDictionary = [NSMutableDictionary dictionary];
+    NSEnumerator *keyEnumerator = [MIMETypes keyEnumerator];
+    NSDictionary *MIMEDictionary;
+    NSString *MIME, *description;
+    NSArray *extensions;
+
+    while ((MIME = [keyEnumerator nextObject]) != nil) {
+        MIMEDictionary = [MIMETypes objectForKey:MIME];
+
+        // FIXME: Consider storing disabled MIME types.
+        NSNumber *isEnabled = [MIMEDictionary objectForKey:WebPluginTypeEnabledKey];
+        if (isEnabled && [isEnabled boolValue] == NO) {
+            continue;
+        }
+
+        extensions = [MIMEDictionary objectForKey:WebPluginExtensionsKey];
+        if (!extensions) {
+            extensions = [NSArray arrayWithObject:@""];
+        }
+
+        [MIMEToExtensionsDictionary setObject:extensions forKey:MIME];
+
+        description = [MIMEDictionary objectForKey:WebPluginTypeDescriptionKey];
+        if (!description) {
+            description = @"";
+        }
+
+        [MIMEToDescriptionDictionary setObject:description forKey:MIME];
+    }
+
+    [self setMIMEToExtensionsDictionary:MIMEToExtensionsDictionary];
+    [self setMIMEToDescriptionDictionary:MIMEToDescriptionDictionary];
+
+    NSString *filename = [self filename];
+
+    NSString *theName = [nsBundle objectForInfoDictionaryKey:WebPluginNameKey];
+    if (!theName) {
+        theName = filename;
+    }
+    [self setName:theName];
+
+    description = [nsBundle objectForInfoDictionaryKey:WebPluginDescriptionKey];
+    if (!description) {
+        description = filename;
+    }
+    [self setPluginDescription:description];
+
+    return YES;
 }
 
 - (BOOL)isLoaded
@@ -54,6 +149,9 @@
     [MIMEToDescription release];
     [MIMEToExtensions release];
     [extensionToMIME release];
+
+    [nsBundle release];
+    
     [super dealloc];
 }
 
@@ -143,7 +241,7 @@
         extensionEnumerator = [extensions objectEnumerator];
 
         while ((extension = [extensionEnumerator nextObject]) != nil) {
-            if(![extension isEqualToString:@""]){
+            if (![extension isEqualToString:@""]) {
                 [extensionToMIME setObject:MIME forKey:extension];
             }
         }

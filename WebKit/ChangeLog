@@ -1,3 +1,39 @@
+2003-03-25  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: 3135385 - many file types don't work with the QuickTime plugin in Safari
+
+        Reviewed by trey.
+
+        * Plugins.subproj/WebBasePluginPackage.h:
+        * Plugins.subproj/WebBasePluginPackage.m:
+        (+[WebBasePluginPackage pluginWithPath:]): tweak
+        (-[WebBasePluginPackage pathByResolvingSymlinksAndAliasesInPath:]): moved up from WebNetscapePluginPackage
+        (-[WebBasePluginPackage initWithPath:]): retain path, create bundle so subclasses don't have to do this work
+        (-[WebBasePluginPackage getPluginInfoFromBundleAndMIMEDictionary:]): was getMIMEInformation from WebPluginPackage
+        (-[WebBasePluginPackage dealloc]): release the bundle
+        (-[WebBasePluginPackage setMIMEToExtensionsDictionary:]): tweak
+        * Plugins.subproj/WebNetscapePluginPackage.h:
+        * Plugins.subproj/WebNetscapePluginPackage.m:
+        (+[WebNetscapePluginPackage preferredLocalizationName]): new
+        (-[WebNetscapePluginPackage openResourceFile]): tweak
+        (-[WebNetscapePluginPackage closeResourceFile:]): tweak
+        (-[WebNetscapePluginPackage stringForStringListID:andIndex:]): tweak
+        (-[WebNetscapePluginPackage getPluginInfoFromResources]): was getMIMEInformation
+        (-[WebNetscapePluginPackage pListForPath:createFile:]): new, calls BP_CreatePluginMIMETypesPreferences if createFile==YES
+        (-[WebNetscapePluginPackage getPluginInfoFromPLists]): calls getPluginInfoFromBundleAndMIMEDictionary with the MIME dictionary from the user's home dir.
+        (-[WebNetscapePluginPackage initWithPath:]): have the superclass do some initialization, call getPluginInfoFromPLists and/or getPluginInfoFromResources
+        (-[WebNetscapePluginPackage executableType]): tweak
+        (-[WebNetscapePluginPackage load]): get the BP_CreatePluginMIMETypesPreferences symbol
+        (-[WebNetscapePluginPackage unload]): tweak
+        (-[WebNetscapePluginPackage dealloc]): tweak
+        * Plugins.subproj/WebPluginPackage.h:
+        * Plugins.subproj/WebPluginPackage.m:
+        (-[WebPluginPackage initWithPath:]): have the superclass do some initialization, call getPluginInfoFromBundleAndMIMEDictionary
+        (-[WebPluginPackage viewFactory]): tweak
+        (-[WebPluginPackage load]): call principalClass
+        (-[WebPluginPackage isLoaded]): tweak
+        * Plugins.subproj/npapi.h: added declaration for the BP_CreatePluginMIMETypesPreferences function pointer. 
+
 2003-03-25  John Sullivan  <sullivan@apple.com>
 
 	- WebKit part of fix for 3141794 -- No scroll bar for the 
