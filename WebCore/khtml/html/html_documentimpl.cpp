@@ -383,7 +383,7 @@ static int parseDocTypePart(const QString& buffer, int index)
         if (ch == ' ' || ch == '\t' || ch == '\n' || ch == '\r')
             ++index;
         else if (ch == '-') {
-            int tmpIndex;
+            int tmpIndex=index;
             if (buffer[index+1] == '-' &&
                 ((tmpIndex=buffer.find("--", index+2)) != -1))
                 index = tmpIndex+2;
