@@ -1447,7 +1447,7 @@ QRect RenderBlock::layoutInlineChildren(bool relayoutChildren)
 
             betweenMidpoints = false;
             isLineEmpty = true;
-            if (m_firstLine && firstChild() && firstChild()->isCompact()) {
+            if (m_firstLine && firstChild() && firstChild()->isCompact() && firstChild()->isRenderBlock()) {
                 buildCompactRuns(firstChild(), bidi);
                 start.obj = firstChild()->nextSibling();
                 end = start;
