@@ -305,10 +305,12 @@ void QScrollView::addChild(QWidget* child, int x, int y)
     if (thisDocView)
         thisView = thisDocView;
 
+#ifndef NDEBUG
     NSView *subview = child->getOuterView();
 
     LOG(Frames, "Adding %p %@ at (%d,%d) w %d h %d\n", subview,
         [(id)[subview class] className], x, y, (int)[subview frame].size.width, (int)[subview frame].size.height);
+#endif
     child->addToSuperview(thisView);
 }
 
