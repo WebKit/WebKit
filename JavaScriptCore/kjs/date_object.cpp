@@ -126,12 +126,10 @@ time_t mktimeUsingCF(struct tm *tm)
 
     CFAbsoluteTime absoluteTime = CFGregorianDateGetAbsoluteTime(date, timeZone);
 
-    time_t result = (time_t) (absoluteTime + kCFAbsoluteTimeIntervalSince1970);
+    CFRelease(timeZone);
 
-    return result;
+    return (time_t)(absoluteTime + kCFAbsoluteTimeIntervalSince1970);
 }
-
-
 
 #endif // APPLE_CHANGES
 
