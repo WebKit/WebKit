@@ -1,5 +1,12 @@
 2002-10-21  Darin Adler  <darin@apple.com>
 
+	- fixed 3075041 -- text larger/smaller increment too large when font-size specified as %
+
+        * khtml/css/cssstyleselector.cpp: Don't apply the zoom factor to a font size that
+	already has the zoom factor applied.
+
+2002-10-21  Darin Adler  <darin@apple.com>
+
         * khtml/khtmlview.cpp: (KHTMLView::clear): Default to fast scrolling.
 	I'm pretty sure this was just backwards here.
 

@@ -2285,16 +2285,15 @@ void CSSStyleSelector::applyRule( DOM::CSSProperty *prop )
 
         } else {
             int type = primitiveValue->primitiveType();
-            if(type > CSSPrimitiveValue::CSS_PERCENTAGE && type < CSSPrimitiveValue::CSS_DEG)
+            if(type > CSSPrimitiveValue::CSS_PERCENTAGE && type < CSSPrimitiveValue::CSS_DEG) {
                 size = primitiveValue->computeLengthFloat(parentStyle, paintDeviceMetrics);
-            else if(type == CSSPrimitiveValue::CSS_PERCENTAGE)
+                if (!khtml::printpainter && element && element->getDocument()->view())
+                    size *= element->getDocument()->view()->part()->zoomFactor() / 100.0;
+            } else if(type == CSSPrimitiveValue::CSS_PERCENTAGE)
                 size = (primitiveValue->getFloatValue(CSSPrimitiveValue::CSS_PERCENTAGE)
                         * parentStyle->font().pixelSize()) / 100;
             else
                 return;
-
-            if (!khtml::printpainter && element && element->getDocument()->view())
-                size *= element->getDocument()->view()->part()->zoomFactor() / 100.0;
         }
 
         if(size <= 0) return;
