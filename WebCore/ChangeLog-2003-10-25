@@ -1,3 +1,13 @@
+2003-01-04  Richard Williamson   <rjw@apple.com>
+
+        I checked in kjs_window.cpp by accident.  The only change
+        was a logging printf.  Back out that change.
+        
+        Reviewed by me.
+
+        * khtml/ecma/kjs_window.cpp:
+        (WindowFunc::tryCall):
+
 2003-01-03  Richard Williamson   <rjw@apple.com>
 
         Fix for 3138425. Don't open a new window when document.open() is called
