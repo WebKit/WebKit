@@ -806,7 +806,8 @@ bool HTMLElementImpl::setInnerHTML( const DOMString &html )
     removeChildren();
     int ec = 0;
     appendChild( fragment, ec );
-    delete fragment;
+    fragment->ref();
+    fragment->deref();
     return !ec;
 }
 
@@ -819,6 +820,8 @@ bool HTMLElementImpl::setOuterHTML( const DOMString &html )
     
     int ec = 0;
     parentNode()->replaceChild(fragment, this, ec);
+    fragment->ref();
+    fragment->deref();
     return !ec;
 }
 

@@ -1,3 +1,13 @@
+2004-11-14  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by mjs.
+
+	fixed: <rdar://problem/3823038> LEAK: huge leak in DOM::HTMLElementImpl::createContextualFragment(DOM::DOMString const&, bool)
+
+        * khtml/html/html_elementimpl.cpp:
+        (HTMLElementImpl::setInnerHTML): uses the ref counting system to deallocate fragments instead of explicitly invoking a destructor.
+        (HTMLElementImpl::setOuterHTML): function is responsible for derefing the fragment prior to returning. Now it does.
+
 2004-11-13  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Kevin.
