@@ -26,4 +26,6 @@
 #ifndef QTEXTCODEC_H_
 #define QTEXTCODEC_H_
 
+class QTextCodec;
+
 #endif

@@ -26,4 +26,11 @@
 #ifndef QCOLOR_H_
 #define QCOLOR_H_
 
+class QColor {
+public:
+    int red() const;
+    int green() const;
+    int blue() const;
+};
+
 #endif

@@ -26,4 +26,15 @@
 #ifndef QOBJECT_H_
 #define QOBJECT_H_
 
+// FIXME: should these macros be in "kwq.h" or other header file?
+#define slots
+#define SLOT(x) x
+#define signals protected
+#define SIGNAL(x) x
+#define emit
+#define Q_OBJECT
+
+class QObject {
+};
+
 #endif

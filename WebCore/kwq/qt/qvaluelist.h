@@ -26,4 +26,7 @@
 #ifndef QVALUELIST_H_
 #define QVALUELIST_H_
 
+template <class T> class QValueList {
+};
+
 #endif

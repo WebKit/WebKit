@@ -26,4 +26,7 @@
 #ifndef QDATETIME_H_
 #define QDATETIME_H_
 
+class QTime {
+};
+
 #endif

@@ -26,4 +26,7 @@
 #ifndef QSTRINGLIST_H_
 #define QSTRINGLIST_H_
 
+class QStringList {
+};
+
 #endif
