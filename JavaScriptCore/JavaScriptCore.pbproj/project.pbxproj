@@ -538,6 +538,8 @@
 			fileRef = 517D5348056BFB5D003851BD;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+				);
 			};
 		};
 		51856D8F0562EE95008B9D83 = {

@@ -50,3 +50,19 @@ Class *JavaInstance::getClass() const
 {
     return JavaClass::classForInstance (_instance->_instance);
 }
+
+
+JObjectWrapper::JObjectWrapper(jobject instance)
+{
+    _ref = 1;
+    // Cache the JNIEnv used to get the global ref for this java instanace.
+    // It'll be used to delete the reference.
+    _env = getJNIEnv();
+    
+    _instance = _env->NewGlobalRef (instance);
+    _env->DeleteLocalRef (instance);
+    
+    if  (_instance == NULL) {
+        fprintf (stderr, "%s:  could not get GlobalRef for %p\n", __PRETTY_FUNCTION__, instance);
+    }
+}

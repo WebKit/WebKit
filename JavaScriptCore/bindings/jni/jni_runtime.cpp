@@ -27,7 +27,9 @@
 
 #include <jni_utility.h>
 #include <jni_runtime.h>
- 
+
+#include <runtime_object.h>
+
 using namespace KJS;
 using namespace Bindings;
 
@@ -55,8 +57,8 @@ KJS::Value JavaField::valueFromInstance(const Instance *i) const
 
     switch (_primitiveType) {
         case object_type: {
-            //jobject value = callJNIObjectMethod(_field->javaInstance(), "get", "(Ljava/lang/Object;)Ljava/lang/Object;", jinstace);
-            return KJS::Value(0);
+            jobject anObject = callJNIObjectMethod(_field->javaInstance(), "get", "(Ljava/lang/Object;)Ljava/lang/Object;", jinstance);
+            return KJS::Object(new RuntimeObjectImp(new JavaInstance ((jobject)anObject)));
         }
         break;
             
@@ -69,7 +71,12 @@ KJS::Value JavaField::valueFromInstance(const Instance *i) const
         case byte_type:
         case char_type:
         case short_type:
+        
         case int_type:
+            jint value;
+            value = callJNIIntMethod(fieldJInstance, "getInt", "(Ljava/lang/Object;)D", jinstance);
+            return Number((int)value);
+
         case long_type:
         case float_type:
         case double_type: {

@@ -1,3 +1,25 @@
+2003-12-01  Richard Williamson   <rjw@apple.com>
+
+Fixed parameter passing to applet.  Child elements are NOT valid in setStyle().  So we now either create the widget before needed with createWidgetIfNecessary.  This either happens when doing the first layout, or when JavaScript first references the applet element.
+
+Fixed early delete of the the main applet instance.  When the JS collector cleaned up the last JS object referring to the applet instance we were deleting the java instance.  This caused the applet instance cached on the applet element to be invalid.  The applet instance is the only Java object not to be cleaned up by the JS collector.
+
+Added support for getting at Java object fields.
+
+        Reviewed by Chris.
+
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::HTMLElement::tryGet):
+        * khtml/html/html_objectimpl.cpp:
+        (HTMLAppletElementImpl::createRenderer):
+        (HTMLAppletElementImpl::getAppletInstance):
+        * khtml/html/html_objectimpl.h:
+        * khtml/rendering/render_applet.cpp:
+        (RenderApplet::createWidgetIfNecessary):
+        (RenderApplet::layout):
+        * khtml/rendering/render_applet.h:
+        (khtml::RenderApplet::renderName):
+
 2003-12-01  Darin Adler  <darin@apple.com>
 
         Reviewed by Dave.

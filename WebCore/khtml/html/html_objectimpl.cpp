@@ -124,16 +124,9 @@ RenderObject *HTMLAppletElementImpl::createRenderer(RenderArena *arena, RenderSt
 	    args.insert( "archive", archive.string() );
 
 	args.insert( "baseURL", getDocument()->baseURL() );
-#if APPLE_CHANGES
-        NodeImpl *child = firstChild();
-        while (child) {
-            if (child->id() == ID_PARAM) {
-                HTMLParamElementImpl *p = static_cast<HTMLParamElementImpl *>(child);
-                args.insert(p->name(), p->value());
-            }
-            child = child->nextSibling();
-        }
-#endif
+
+        // Other arguments (from <PARAM> tags are added later.
+        
         return new (getDocument()->renderArena()) RenderApplet(this, args);
     }
 
@@ -182,6 +175,7 @@ Bindings::Instance *HTMLAppletElementImpl::getAppletInstance() const
         return appletInstance;
     
     RenderApplet *r = static_cast<RenderApplet*>(m_render);
+    r->createWidgetIfNecessary();
     if (r && r->widget()){
         // Call into the part (and over the bridge) to pull the Bindings::Instance
         // from the guts of the Java VM.

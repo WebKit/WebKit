@@ -65,11 +65,9 @@ public:
 
 protected:
     khtml::VAlign valign;
-    
+
 private:
-#if APPLE_CHANGES
     mutable Bindings::Instance *appletInstance;
-#endif
 };
 
 // -------------------------------------------------------------------------

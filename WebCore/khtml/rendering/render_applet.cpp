@@ -71,15 +71,6 @@ RenderApplet::~RenderApplet()
 {
 }
 
-void RenderApplet::setStyle(RenderStyle *_style)
-{   
-    RenderWidget::setStyle(_style);
-    // FIXME?  What about percent and variable widths/heights?
-    // FIXME?  What about padding and margins?
-    QSize size = QSize(style()->width().value, style()->height().value);        
-    setQWidget(new KJavaAppletWidget(size, m_context, m_args));
-}
-
 short RenderApplet::intrinsicWidth() const
 {
     int rval = 150;
@@ -100,6 +91,24 @@ int RenderApplet::intrinsicHeight() const
     return rval > 10 ? rval : 50;
 }
 
+void RenderApplet::createWidgetIfNecessary()
+{
+    if (!m_widget) {
+        QSize size = QSize(style()->width().value, style()->height().value);        
+    
+        NodeImpl *child = element()->firstChild();
+        while (child) {
+            if (child->id() == ID_PARAM) {
+                HTMLParamElementImpl *p = static_cast<HTMLParamElementImpl *>(child);
+                m_args.insert(p->name(), p->value());
+            }
+            child = child->nextSibling();
+        }
+    
+        setQWidget(new KJavaAppletWidget(size, m_context, m_args));
+    }
+}
+
 void RenderApplet::layout()
 {
     //kdDebug(6100) << "RenderApplet::layout" << endl;
@@ -111,12 +120,18 @@ void RenderApplet::layout()
     calcHeight();
 
     KJavaAppletWidget *tmp = static_cast<KJavaAppletWidget*>(m_widget);
-    if ( tmp ) {
 #if APPLE_CHANGES
+    // Applet QWidget get creates lazily upon first layout.
+    if (!tmp) {
+        createWidgetIfNecessary();
+    }
+    else {
         m_widget->setFrameGeometry(QRect(xPos(), yPos(),
                                    m_width-marginLeft()-marginRight()-paddingLeft()-paddingRight(),
                                    m_height-marginTop()-marginBottom()-paddingTop()-paddingBottom()));
+    }
 #else 
+    if ( tmp ) {
         NodeImpl *child = element()->firstChild();
 
         while(child) {
@@ -132,8 +147,8 @@ void RenderApplet::layout()
         m_widget->resize(m_width-marginLeft()-marginRight()-paddingLeft()-paddingRight(),
                          m_height-marginTop()-marginBottom()-paddingTop()-paddingBottom());
         tmp->showApplet();
-#endif
     }
+#endif
     setNeedsLayout(false);
 }
 

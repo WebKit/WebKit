@@ -41,10 +41,12 @@ class RenderApplet : public RenderWidget
 public:
     RenderApplet(DOM::HTMLElementImpl* node, const QMap<QString, QString> &args);
     virtual ~RenderApplet();
-#if APPLE_CHANGES
-    virtual void setStyle(RenderStyle *style);
-#endif
+
     virtual const char *renderName() const { return "RenderApplet"; }
+
+#if APPLE_CHANGES
+    void createWidgetIfNecessary();
+#endif
 
     virtual void layout();
     virtual short intrinsicWidth() const;

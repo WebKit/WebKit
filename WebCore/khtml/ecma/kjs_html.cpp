@@ -1116,8 +1116,8 @@ Value KJS::HTMLElement::tryGet(ExecState *exec, const Identifier &propertyName) 
         DOM::HTMLAppletElementImpl *appletElement = static_cast<DOM::HTMLAppletElementImpl *>(element.handle());
         
         if (appletElement->getAppletInstance()) {
-            RuntimeObjectImp valueForApplet(appletElement->getAppletInstance());
-            printf ("%s:  ID_APPLET %p, propertyName %s\n", __PRETTY_FUNCTION__, appletElement->getAppletInstance(), propertyName.ascii());
+            // The instance is owned by the applet element.
+            RuntimeObjectImp valueForApplet(appletElement->getAppletInstance(), false);
             return valueForApplet.get(exec,propertyName);
         }
     }

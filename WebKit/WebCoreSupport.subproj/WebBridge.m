@@ -66,9 +66,7 @@
 @end
 
 @interface NSView (JavaPluginSecrets)
-- (void *)getApplet;
-- (BOOL)mayActivate;
-- (void)activateApplet:(id)unused;
+- (jobject)pollForAppletInWindow: (NSWindow *)window;
 @end
 
 
@@ -1073,33 +1071,21 @@ static id <WebFormDelegate> formDelegate(WebBridge *self)
     }
 }
 
-#define MAX_GET_APPLET_POLL_TIME 20
-#define GET_APPLET_POLL_INTERVAL    1
-
-// pollGetApplet: will poll until getApplet on the plugin view returns non-nil,
-// or MAX_GET_APPLET_POLL_TIME is exceeded.
+// NOTE: pollForAppletInView: will block until the block is ready to use, or
+// until a timeout is exceeded.  It will return nil if the timeour is
+// exceeded.
 - (jobject)pollForAppletInView: (NSView *)view
 {
     jobject applet = 0;
     
-    if ([view respondsToSelector: @selector(getApplet)]) {
-        NSTimeInterval timeUsed = 0;
-
-        while (!applet && timeUsed  < MAX_GET_APPLET_POLL_TIME) {
-            applet = [view getApplet];
-            [NSThread sleepUntilDate:[NSDate dateWithTimeIntervalSinceNow:GET_APPLET_POLL_INTERVAL]];
-            timeUsed += GET_APPLET_POLL_INTERVAL;
-            NSLog (@"%s:  applet = %p", __PRETTY_FUNCTION__, applet);
-            
-            if ([view mayActivate]){
-                [view activateApplet:nil];
-            }
-            
-            // Give the run loop a spin.  This will cause any delayed or performOnMainThread:
-            // methods to fire.  The plugin does this during initialization.
-            [[NSApplication sharedApplication] nextEventMatchingMask:NSAnyEventMask untilDate:nil inMode:NSDefaultRunLoopMode dequeue:NO];
-        }
+    if ([view respondsToSelector: @selector(pollForAppletInWindow:)]) {
+        // The Java VM needs the containing window of the view to
+        // initialize.  The view may not yet be in the window's view 
+        // hierarchy, so we have to pass the window when requesting
+        // the applet.
+        applet = [view pollForAppletInWindow:[[_frame webView] window]];
     }
+    
     return applet;
 }
 

@@ -54,11 +54,13 @@ RuntimeObjectImp::RuntimeObjectImp(ObjectImp *proto)
 
 RuntimeObjectImp::~RuntimeObjectImp()
 {
-    delete instance;
+    if (ownsInstance)
+        delete instance;
 }
 
-RuntimeObjectImp::RuntimeObjectImp(Bindings::Instance *i) : ObjectImp ((ObjectImp *)0)
+RuntimeObjectImp::RuntimeObjectImp(Bindings::Instance *i, bool oi) : ObjectImp ((ObjectImp *)0)
 {
+    ownsInstance = oi;
     instance = i;
     _initializeClassInfoFromInstance();
 }
@@ -70,9 +72,12 @@ Value RuntimeObjectImp::get(ExecState *exec, const Identifier &propertyName) con
     
     Field *aField = instance->getClass()->fieldNamed(propertyName.ascii());
     if (aField){
-        printf ("%s: found field = %p, type = %s\n", __PRETTY_FUNCTION__, aField, aField->type());
+        printf ("%s: found %s(%p), type = %s\n", __PRETTY_FUNCTION__, propertyName.ascii(), aField, aField->type());
         return instance->getValueOfField (aField); 
     }
+    
+    // Now check if a method with specified name exists, if so return a function object for
+    // that method.
     
     return Undefined();
 }
@@ -103,8 +108,7 @@ bool RuntimeObjectImp::hasProperty(ExecState *exec,
 bool RuntimeObjectImp::deleteProperty(ExecState *exec,
                             const Identifier &propertyName)
 {
-    printf ("%s: NOT YET IMPLEMENTED %p: propertyName %s\n", __PRETTY_FUNCTION__, instance, propertyName.ascii());
-    // Can never remove a propert of a RuntimeObject.
+    // Can never remove a property of a RuntimeObject.
     return false;
 }
 
