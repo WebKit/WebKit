@@ -172,6 +172,8 @@ public:
 
     static const QList<KHTMLView> *viewList() { return lstViews; }
 
+    virtual void drawContents ( QPainter * p, int clipx, int clipy, int clipw, int cliph );
+
 signals:
     void cleared();
 
@@ -182,7 +184,6 @@ protected:
     virtual void showEvent ( QShowEvent * );
     virtual void hideEvent ( QHideEvent *);
     virtual bool focusNextPrevChild( bool next );
-    virtual void drawContents ( QPainter * p, int clipx, int clipy, int clipw, int cliph );
 
     virtual void viewportMousePressEvent( QMouseEvent * );
     virtual void focusOutEvent( QFocusEvent * );
