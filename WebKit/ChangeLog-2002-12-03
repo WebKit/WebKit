@@ -1,3 +1,7 @@
+2002-09-19  Maciej Stachowiak  <mjs@apple.com>
+
+        * Makefile.am: Added `make doc' target.
+
 2002-09-19  John Sullivan  <sullivan@apple.com>
 
 	- cleaned up some SPI for handling URLs on pasteboard
