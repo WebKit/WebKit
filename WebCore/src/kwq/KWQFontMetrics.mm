@@ -255,7 +255,8 @@ int QFontMetrics::ascent() const
     // Qt seems to use [font defaultLineHeightForFont] + [font descender] instead
     // of what seems more natural [font ascender].
     // Remember that descender is negative. 
-    return ROUND_TO_INT([data->font defaultLineHeightForFont] + [data->font descender]);
+    //return ROUND_TO_INT([data->font defaultLineHeightForFont] + [data->font descender]);
+    return ROUND_TO_INT([data->font ascender]);
 }
 
 
@@ -264,7 +265,8 @@ int QFontMetrics::height() const
     // According to Qt documentation: 
     // "This is always equal to ascent()+descent()+1 (the 1 is for the base line)."
     // However, the [font defaultLineHeightForFont] seems more appropriate.
-    return ROUND_TO_INT([data->font defaultLineHeightForFont]);
+    //return ROUND_TO_INT([data->font defaultLineHeightForFont]);
+    return ROUND_TO_INT([data->font ascender] - [data->font descender] + 1);
 }
 
 
