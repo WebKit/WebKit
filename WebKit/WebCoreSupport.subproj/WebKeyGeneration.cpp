@@ -19,6 +19,12 @@
 #include <Security/Security.h>
 #include <Security/SecKeyPriv.h>                /* Security.framework SPI */
 
+#include <Security/KeyItem.h>
+#include <Security/SecBridge.h>
+#include <Security/wrapkey.h>
+#include <Security/cfutilities.h>
+
+
 /* hard coded params, some of which may come from the user in real life */
 #define GNR_KEY_ALG			CSSM_ALGID_RSA
 #define GNR_SIG_ALG			CSSM_ALGID_MD5WithRSA
@@ -245,6 +251,209 @@ static void gnrFreeCssmData(
     return;
 }
 
+
+
+
+/* copied code */
+
+// @@@ This needs to be shared.
+static CSSM_DB_NAME_ATTR(kSecKeyPrintName, 1, (char *)"PrintName", 0, NULL, BLOB);
+static CSSM_DB_NAME_ATTR(kSecKeyLabel, 6, (char *)"Label", 0, NULL, BLOB);
+
+static void 
+createPair(
+	Keychain keychain,
+	CSSM_ALGORITHMS algorithm,
+	uint32 keySizeInBits,
+	CSSM_CC_HANDLE contextHandle,
+	CSSM_KEYUSE publicKeyUsage,
+	uint32 publicKeyAttr,
+	CSSM_KEYUSE privateKeyUsage,
+	uint32 privateKeyAttr,
+	CFStringRef description,
+	SecPointer<KeyItem> &outPublicKey, 
+	SecPointer<KeyItem> &outPrivateKey)
+{
+	bool freeKeys = false;
+	bool deleteContext = false;
+
+	if (!keychain->database()->dl()->subserviceMask() & CSSM_SERVICE_CSP)
+		MacOSError::throwMe(errSecInvalidKeychain);
+
+	SSDb ssDb(safe_cast<SSDbImpl *>(&(*keychain->database())));
+	CssmClient::CSP csp(keychain->csp());
+	CssmClient::CSP appleCsp(gGuidAppleCSP);
+
+	// Generate a random label to use initially
+	CssmClient::Random random(appleCsp, CSSM_ALGID_APPLE_YARROW);
+	uint8 labelBytes[20];
+	CssmData label(labelBytes, sizeof(labelBytes));
+	random.generate(label, label.Length);
+
+	CSSM_KEY publicCssmKey, privateCssmKey;
+	memset(&publicCssmKey, 0, sizeof(publicCssmKey));
+	memset(&privateCssmKey, 0, sizeof(privateCssmKey));
+
+	CSSM_CC_HANDLE ccHandle = 0;
+
+	try
+	{
+		CSSM_RETURN status;
+		if (contextHandle)
+				ccHandle = contextHandle;
+		else
+		{
+			status = CSSM_CSP_CreateKeyGenContext(csp->handle(), algorithm, keySizeInBits, NULL, NULL, NULL, NULL, NULL, &ccHandle);
+			if (status)
+				CssmError::throwMe(status);
+			deleteContext = true;
+		}
+	
+		CSSM_DL_DB_HANDLE dldbHandle = ssDb->handle();
+		CSSM_DL_DB_HANDLE_PTR dldbHandlePtr = &dldbHandle;
+		CSSM_CONTEXT_ATTRIBUTE contextAttributes = { CSSM_ATTRIBUTE_DL_DB_HANDLE, sizeof(dldbHandle), { (char *)dldbHandlePtr } };
+		status = CSSM_UpdateContextAttributes(ccHandle, 1, &contextAttributes);
+		if (status)
+			CssmError::throwMe(status);
+	
+		// Generate the keypair
+		status = CSSM_GenerateKeyPair(ccHandle, publicKeyUsage, publicKeyAttr, &label, &publicCssmKey, privateKeyUsage, privateKeyAttr, &label, NULL, &privateCssmKey);
+		if (status)
+			CssmError::throwMe(status);
+		freeKeys = true;
+
+		// Find the keys we just generated in the DL to get SecKeyRef's to them
+		// so we can change the label to be the hash of the public key, and
+		// fix up other attributes.
+
+		// Look up public key in the DLDB.
+		DbAttributes pubDbAttributes;
+		DbUniqueRecord pubUniqueId;
+		SSDbCursor dbPubCursor(ssDb, 1);
+		dbPubCursor->recordType(CSSM_DL_DB_RECORD_PUBLIC_KEY);
+		dbPubCursor->add(CSSM_DB_EQUAL, kSecKeyLabel, label);
+		CssmClient::Key publicKey;
+		if (!dbPubCursor->nextKey(&pubDbAttributes, publicKey, pubUniqueId))
+			MacOSError::throwMe(errSecItemNotFound);
+
+		// Look up private key in the DLDB.
+		DbAttributes privDbAttributes;
+		DbUniqueRecord privUniqueId;
+		SSDbCursor dbPrivCursor(ssDb, 1);
+		dbPrivCursor->recordType(CSSM_DL_DB_RECORD_PRIVATE_KEY);
+		dbPrivCursor->add(CSSM_DB_EQUAL, kSecKeyLabel, label);
+		CssmClient::Key privateKey;
+		if (!dbPrivCursor->nextKey(&privDbAttributes, privateKey, privUniqueId))
+			MacOSError::throwMe(errSecItemNotFound);
+
+		// Convert reference public key to a raw key so we can use it
+		// in the appleCsp.
+		CssmClient::WrapKey wrap(csp, CSSM_ALGID_NONE);
+		CssmClient::Key rawPubKey = wrap(publicKey);
+
+		// Calculate the hash of the public key using the appleCSP.
+		CssmClient::PassThrough passThrough(appleCsp);
+		void *outData;
+		CssmData *cssmData;
+
+		/* Given a CSSM_KEY_PTR in any format, obtain the SHA-1 hash of the 
+		* associated key blob. 
+		* Key is specified in CSSM_CSP_CreatePassThroughContext.
+		* Hash is allocated bythe CSP, in the App's memory, and returned
+		* in *outData. */
+		passThrough.key(rawPubKey);
+		passThrough(CSSM_APPLECSP_KEYDIGEST, NULL, &outData);
+		cssmData = reinterpret_cast<CssmData *>(outData);
+		CssmData &pubKeyHash = *cssmData;
+
+		std::string desc = cfString(description);
+		// Set the label of the public key to the public key hash.
+		// Set the PrintName of the public key to the description in the acl.
+		pubDbAttributes.add(kSecKeyLabel, pubKeyHash);
+		pubDbAttributes.add(kSecKeyPrintName, desc);
+		pubUniqueId->modify(CSSM_DL_DB_RECORD_PUBLIC_KEY, &pubDbAttributes, NULL, CSSM_DB_MODIFY_ATTRIBUTE_REPLACE);
+
+		// Set the label of the private key to the public key hash.
+		// Set the PrintName of the private key to the description in the acl.
+		privDbAttributes.add(kSecKeyLabel, pubKeyHash);
+		privDbAttributes.add(kSecKeyPrintName, desc);
+		privUniqueId->modify(CSSM_DL_DB_RECORD_PRIVATE_KEY, &privDbAttributes, NULL, CSSM_DB_MODIFY_ATTRIBUTE_REPLACE);
+
+		// @@@ Not exception safe!
+		csp.allocator().free(cssmData->Data);
+		csp.allocator().free(cssmData);
+
+		// Create keychain items which will represent the keys.
+		outPublicKey = safe_cast<KeyItem*>(&(*keychain->item(CSSM_DL_DB_RECORD_PUBLIC_KEY, pubUniqueId)));
+		outPrivateKey = safe_cast<KeyItem*>(&(*keychain->item(CSSM_DL_DB_RECORD_PRIVATE_KEY, privUniqueId)));
+	}
+	catch (...)
+	{
+		if (freeKeys)
+		{
+			// Delete the keys if something goes wrong so we don't end up with inaccesable keys in the database.
+			CSSM_FreeKey(csp->handle(), NULL, &publicCssmKey, TRUE);
+			CSSM_FreeKey(csp->handle(), NULL, &privateCssmKey, TRUE);
+		}
+		
+		if (deleteContext)
+			CSSM_DeleteContext(ccHandle);
+
+		throw;
+	}
+
+	if (freeKeys)
+	{
+		CSSM_FreeKey(csp->handle(), NULL, &publicCssmKey, FALSE);
+		CSSM_FreeKey(csp->handle(), NULL, &privateCssmKey, FALSE);
+	}
+
+	if (deleteContext)
+		CSSM_DeleteContext(ccHandle);
+}
+
+
+static OSStatus
+Safari_SecKeyCreatePair(
+	SecKeychainRef keychainRef,
+	CSSM_ALGORITHMS algorithm,
+	uint32 keySizeInBits,
+	CSSM_CC_HANDLE contextHandle,
+	CSSM_KEYUSE publicKeyUsage,
+	uint32 publicKeyAttr,
+	CSSM_KEYUSE privateKeyUsage,
+	uint32 privateKeyAttr,
+	CFStringRef description,
+	SecKeyRef* publicKeyRef, 
+	SecKeyRef* privateKeyRef)
+{
+	BEGIN_SECAPI
+
+	Keychain keychain = Keychain::optional(keychainRef);
+	SecPointer<KeyItem> pubItem, privItem;
+
+	createPair(keychain,
+        algorithm,
+        keySizeInBits,
+        contextHandle,
+        publicKeyUsage,
+        publicKeyAttr,
+        privateKeyUsage,
+        privateKeyAttr,
+	description,
+        pubItem,
+        privItem);
+
+	// Return the generated keys.
+	if (publicKeyRef)
+		*publicKeyRef = pubItem->handle();
+	if (privateKeyRef)
+		*privateKeyRef = privItem->handle();
+
+	END_SECAPI
+}
+
+
 CFStringRef signedPublicKeyAndChallengeString(unsigned keySize, CFStringRef challenge, CFStringRef keyDescription)
 {
     OSStatus 		ortn;
@@ -264,31 +473,10 @@ CFStringRef signedPublicKeyAndChallengeString(unsigned keySize, CFStringRef chal
     PRErrorCode		perr;
     unsigned char	*spkcB64 = NULL;		// base64 encoded encodedSpkc
     unsigned		spkcB64Len;
-    SecAccessRef        accessRef;
-    CFArrayRef          acls;
-    SecACLRef           acl;
     CFStringRef         result = NULL;
-    
-    ortn = SecAccessCreate(keyDescription, NULL, &accessRef);
-    if (ortn) {
-        ERROR("***SecAccessCreate %d", ortn);
-        goto errOut;
-    }
-    ortn = SecAccessCopySelectedACLList(accessRef, CSSM_ACL_AUTHORIZATION_DECRYPT, &acls);
-    if (ortn) {
-        ERROR("***SecAccessCopySelectedACLList %d", ortn);
-        goto errOut;
-    }
-    acl = (SecACLRef)CFArrayGetValueAtIndex(acls, 0);
-    CFRelease(acls);
-    ortn = SecACLSetSimpleContents(acl, NULL, keyDescription, NULL);
-    if (ortn) {
-        ERROR("***SecACLSetSimpleContents %d", ortn);
-        goto errOut;
-    }
-    
+
     // Cook up a key pair, just use any old params for now
-    ortn = SecKeyCreatePair(nil,                                        // in default KC
+    ortn = Safari_SecKeyCreatePair(nil,                                        // in default KC
                             GNR_KEY_ALG,                                // normally spec'd by user
                             keySize,                                    // key size, ditto
                             0,                                          // ContextHandle
@@ -298,7 +486,7 @@ CFStringRef signedPublicKeyAndChallengeString(unsigned keySize, CFStringRef chal
                             CSSM_KEYUSE_ANY,				// might want to restrict this
                             CSSM_KEYATTR_SENSITIVE | CSSM_KEYATTR_RETURN_REF |
                             CSSM_KEYATTR_PERMANENT | CSSM_KEYATTR_EXTRACTABLE,
-                            accessRef,
+			    keyDescription,
                             &pubKey,
                             &privKey);
     if (ortn) {
@@ -401,9 +589,6 @@ errOut:
     }
     if (privKey) {
         CFRelease(privKey);
-    }
-    if (accessRef) {
-        CFRelease(accessRef);
     }
     if (pkc->challenge.Data) {
         free(pkc->challenge.Data);
