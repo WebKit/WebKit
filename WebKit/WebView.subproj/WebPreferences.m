@@ -3,7 +3,7 @@
         Copyright 2001, 2002, Apple Computer, Inc. All rights reserved.
 */
 
-#import "WebPreferences.h"
+#import <WebKit/WebPreferencesPrivate.h>
 
 #import <Foundation/NSDictionary_NSURLExtras.h>
 
@@ -40,27 +40,104 @@
 
 NSString *WebPreferencesChangedNotification = @"WebPreferencesChangedNotification";
 
+#define KEY(x) [(_private->identifier?_private->identifier:@"") stringByAppendingString:x]
+
+enum { WebPreferencesVersion = 1 };
+
+@interface WebPreferencesPrivate : NSObject
+{
+@public
+    NSMutableDictionary *values;
+    NSString *identifier;
+    BOOL autosaves;
+}
+@end
+
+@implementation WebPreferencesPrivate
+- (void)dealloc
+{
+    [values release];
+    [identifier release];
+    [super dealloc];
+}
+@end
+
 @implementation WebPreferences
-
-- (void)_postPreferencesChangesNotification
-{
-    [[NSNotificationCenter defaultCenter]
-        postNotificationName:WebPreferencesChangedNotification object:self
-                    userInfo:nil];
-}
-
-// Only used tp initialize the shared instance.
-- _init
-{
-    [super init];
-    return self;
-}
 
 - init
 {
+    return [self initWithIdentifier:nil];
+}
+
+- (id)initWithIdentifier:(NSString *)anIdentifier
+{
     [super init];
-    values = [[NSMutableDictionary alloc] init];
+    
+    if (anIdentifier == nil)
+        anIdentifier = @"";
+        
+    _private = [[WebPreferencesPrivate alloc] init];
+    
+    WebPreferences *instance = [[self class] _getInstanceForIdentifier:anIdentifier];
+    if (instance){
+        [self release];
+        return instance;
+    }
+
+    _private->values = [[NSMutableDictionary alloc] init];
+    _private->identifier = [anIdentifier copy];
+    
+    [[self class] _setInstance:self forIdentifier:_private->identifier];
+
+    [[NSNotificationCenter defaultCenter]
+       postNotificationName:WebPreferencesChangedNotification object:self userInfo:nil];
+
     return self;
+}
+
+- (id)initWithCoder:(NSCoder *)decoder
+{
+    int version;
+    id result = nil;
+
+NS_DURING
+
+    _private = [[WebPreferencesPrivate alloc] init];
+    [decoder decodeValueOfObjCType:@encode(int) at:&version];
+    if (version == 1){
+        _private->identifier = [decoder decodeObject];
+
+        // If we load a nib multiple times, or have instances in multiple
+        // nibs with the same name, the first guy up wins.
+        WebPreferences *instance = [[self class] _getInstanceForIdentifier:_private->identifier];
+        if (instance){
+            [self release];
+            result = instance;
+        }
+        else {
+            _private->values = [decoder decodeObject];
+            result = self;
+        }
+    }
+    
+NS_HANDLER
+
+    result = nil;
+
+NS_ENDHANDLER
+
+    if (result == nil)
+        [self release];
+
+    return result;
+}
+
+- (void)encodeWithCoder:(NSCoder *)encoder
+{
+    int version = WebPreferencesVersion;
+    [encoder encodeValueOfObjCType:@encode(int) at:&version];
+    [encoder encodeObject:_private->identifier];
+    [encoder encodeObject:_private->values];
 }
 
 + (WebPreferences *)standardPreferences
@@ -68,7 +145,8 @@ NSString *WebPreferencesChangedNotification = @"WebPreferencesChangedNotificatio
     static WebPreferences *_standardPreferences = nil;
 
     if (_standardPreferences == nil) {
-        _standardPreferences = [[WebPreferences alloc] _init];
+        _standardPreferences = [[WebPreferences alloc] init];
+        [_standardPreferences setAutosaves:YES];
         [_standardPreferences _postPreferencesChangesNotification];
     }
 
@@ -113,61 +191,72 @@ NSString *WebPreferencesChangedNotification = @"WebPreferencesChangedNotificatio
 
 - (void)dealloc
 {
-    [values release];
+    [_private release];
     [super dealloc];
+}
+
+- (NSString *)identifier
+{
+    return _private->identifier;
 }
 
 - (NSString *)_stringValueForKey: (NSString *)key
 {
-    NSString *s = [values objectForKey:key];
+    NSString *_key = KEY(key);
+    NSString *s = [_private->values objectForKey:_key];
     if (s)
         return s;
-    return [[NSUserDefaults standardUserDefaults] stringForKey:key];
+    return [[NSUserDefaults standardUserDefaults] stringForKey:_key];
 }
 
 - (void)_setStringValue: (NSString *)value forKey: (NSString *)key
 {
-    if (self == [WebPreferences standardPreferences])
-        [[NSUserDefaults standardUserDefaults] setObject:value forKey:key];
-    else {
-        [values setObject: value forKey: key];
-    }
+    NSString *_key = KEY(key);
+    if (_private->autosaves)
+        [[NSUserDefaults standardUserDefaults] setObject:value forKey:_key];
+
+    [_private->values setObject: value forKey:_key];
+
     [self _postPreferencesChangesNotification];
 }
 
 - (int)_integerValueForKey: (NSString *)key
 {
-    NSNumber *n = [values objectForKey:key];
+    NSString *_key = KEY(key);
+    NSNumber *n = [_private->values objectForKey:_key];
     if (n)
         return [n intValue];
-    return [[NSUserDefaults standardUserDefaults] integerForKey:key];
+    return [[NSUserDefaults standardUserDefaults] integerForKey:_key];
 }
 
 - (void)_setIntegerValue: (int)value forKey: (NSString *)key
 {
-    if (self == [WebPreferences standardPreferences])
-        [[NSUserDefaults standardUserDefaults] setInteger:value forKey:key];
-    else{
-        [values _web_setInt: value forKey: key];
-    }
+    NSString *_key = KEY(key);
+    if (_private->autosaves)
+        [[NSUserDefaults standardUserDefaults] setInteger:value forKey:_key];
+
+    [_private->values _web_setInt: value forKey: _key];
+
     [self _postPreferencesChangesNotification];
 }
 
 - (int)_boolValueForKey: (NSString *)key
 {
-    NSNumber *n = [values objectForKey:key];
+    NSString *_key = KEY(key);
+    NSNumber *n = [_private->values objectForKey:_key];
     if (n)
         return [n boolValue];
-    return [[NSUserDefaults standardUserDefaults] integerForKey:key];
+    return [[NSUserDefaults standardUserDefaults] integerForKey:_key];
 }
 
 - (void)_setBoolValue: (BOOL)value forKey: (NSString *)key
 {
-    if (self == [WebPreferences standardPreferences])
-        [[NSUserDefaults standardUserDefaults] setBool:value forKey:key];
-    else{
-        [values _web_setBool: value forKey: key];
-    }
+    NSString *_key = KEY(key);
+    if (_private->autosaves)
+        [[NSUserDefaults standardUserDefaults] setBool:value forKey:_key];
+
+    [_private->values _web_setBool: value forKey: _key];
+
     [self _postPreferencesChangesNotification];
 }
 
@@ -361,6 +450,16 @@ NSString *WebPreferencesChangedNotification = @"WebPreferencesChangedNotificatio
     return [self _boolValueForKey: WebKitDisplayImagesKey];
 }
 
+- (void)setAutosaves:(BOOL)flag;
+{
+    _private->autosaves = flag;
+}
+
+- (BOOL)autosaves
+{
+    return _private->autosaves;
+}
+
 @end
 
 @implementation WebPreferences (WebPrivate)
@@ -400,4 +499,42 @@ NSString *WebPreferencesChangedNotification = @"WebPreferencesChangedNotificatio
     return [[NSUserDefaults standardUserDefaults] boolForKey:WebKitResourceTimedLayoutEnabledPreferenceKey];
 }
 
+static NSMutableDictionary *webPreferencesInstances = nil;
+
++ (WebPreferences *)_getInstanceForIdentifier:(NSString *)ident
+{
+    WebPreferences *instance = [webPreferencesInstances objectForKey:ident];
+    return instance;
+}
+
++ (void)_setInstance:(WebPreferences *)instance forIdentifier:(NSString *)ident
+{
+    if (!webPreferencesInstances)
+        webPreferencesInstances = [[NSMutableDictionary alloc] init];
+    [webPreferencesInstances setObject:instance forKey:ident];
+}
+
++ (void)_removeReferenceForIdentifier:(NSString *)ident
+{
+    [webPreferencesInstances performSelector:@selector(_checkLastReferenceForIdentifier) withObject:ident afterDelay:.1];
+}
+
+- (void)_postPreferencesChangesNotification
+{
+    [[NSNotificationCenter defaultCenter]
+        postNotificationName:WebPreferencesChangedNotification object:self
+                    userInfo:nil];
+}
+
+
 @end
+
+@implementation NSMutableDictionary (WebPrivate)
+- (void)_checkLastReferenceForIdentifier:(NSString *)identifier
+{
+    WebPreferences *instance = [webPreferencesInstances objectForKey:identifier];
+    if ([instance retainCount] == 1)
+        [webPreferencesInstances removeObjectForKey:identifier];
+}
+@end
+

@@ -22,7 +22,7 @@
 #import <WebKit/WebNSViewExtras.h>
 #import <WebKit/WebPluginDatabase.h>
 #import <WebKit/WebPolicyDelegate.h>
-#import <WebKit/WebPreferences.h>
+#import <WebKit/WebPreferencesPrivate.h>
 #import <WebKit/WebResourceLoadDelegate.h>
 #import <WebKit/WebTextView.h>
 #import <WebKit/WebTextRepresentation.h>
@@ -53,6 +53,7 @@ NSString *WebElementLinkLabelKey = 		@"WebElementLinkLabel";
 NSString *WebElementLinkTitleKey = 		@"WebElementLinkTitle";
 
 
+enum { WebViewVersion = 1 };
 
 
 @implementation WebView
@@ -86,8 +87,14 @@ NSString *WebElementLinkTitleKey = 		@"WebElementLinkTitle";
     return [WebFrameView _canShowMIMETypeAsHTML:MIMEType];
 }
 
-- (void)_commonInitialization: (WebFrameView *)wv frameName:(NSString *)frameName groupName:(NSString *)groupName
+- (void)_commonInitializationFrameName:(NSString *)frameName groupName:(NSString *)groupName
 {
+    NSRect f = [self frame];
+    WebFrameView *wv = [[WebFrameView alloc] initWithFrame: NSMakeRect(0,0,f.size.width,f.size.height)];
+    [wv setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
+    [self addSubview: wv];
+    [wv release];
+
     _private = [[WebViewPrivate alloc] init];
     _private->mainFrame = [[WebFrame alloc] initWithName: frameName webFrameView: wv  webView: self];
     [self setGroupName:groupName];
@@ -100,6 +107,8 @@ NSString *WebElementLinkTitleKey = 		@"WebElementLinkTitle";
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_preferencesChangedNotification:)
                                                  name:WebPreferencesChangedNotification object:[self preferences]];
+
+    [self _registerDraggedTypes];
 }
 
 - init
@@ -116,13 +125,50 @@ NSString *WebElementLinkTitleKey = 		@"WebElementLinkTitle";
 - initWithFrame: (NSRect)f frameName: (NSString *)frameName groupName: (NSString *)groupName;
 {
     [super initWithFrame: f];
-    WebFrameView *wv = [[WebFrameView alloc] initWithFrame: NSMakeRect(0,0,f.size.width,f.size.height)];
-    [wv setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
-    [self addSubview: wv];
-    [self _commonInitialization: wv frameName:frameName groupName:groupName];
-    [wv release];
-    [self _registerDraggedTypes];
+    [self _commonInitializationFrameName:frameName groupName:groupName];
     return self;
+}
+
+- (id)initWithCoder:(NSCoder *)decoder
+{
+    id result = nil;
+    int version;
+
+NS_DURING
+    self = [super initWithCoder:decoder];
+
+    [decoder decodeValueOfObjCType:@encode(int) at:&version];
+    if (version == 1){
+        NSString *frameName = [decoder decodeObject];
+        NSString *groupName = [decoder decodeObject];
+        [self _commonInitializationFrameName:frameName groupName:groupName];
+        
+        [self setPreferences: [decoder decodeObject]];
+        
+        result = self;
+    }
+
+NS_HANDLER
+
+    result = nil;
+
+NS_ENDHANDLER
+
+    if (result == nil)
+        [self release];
+        
+    return result;
+}
+
+- (void)encodeWithCoder:(NSCoder *)encoder
+{
+    [super encodeWithCoder:encoder];
+
+    int version = WebViewVersion;
+    [encoder encodeValueOfObjCType:@encode(int) at:&version];
+    [encoder encodeObject:[[self mainFrame] name]];
+    [encoder encodeObject:[self groupName]];
+    [encoder encodeObject:[self preferences]];
 }
 
 - (void)dealloc
@@ -132,6 +178,8 @@ NSString *WebElementLinkTitleKey = 		@"WebElementLinkTitle";
     --WebViewCount;
     
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+    
+    [WebPreferences _removeReferenceForIdentifier: [self preferencesIdentifier]];
     
     [_private release];
     [super dealloc];
@@ -152,6 +200,19 @@ NSString *WebElementLinkTitleKey = 		@"WebElementLinkTitle";
 {
     return _private->preferences ? _private->preferences : [WebPreferences standardPreferences];
 }
+
+- (void)setPreferencesIdentifier:(NSString *)anIdentifier
+{
+    if (![anIdentifier isEqual: [[self preferences] identifier]]){
+        [self setPreferences: [[WebPreferences alloc] initWithIdentifier:anIdentifier]];
+    }
+}
+
+- (NSString *)preferencesIdentifier
+{
+    return [[self preferences] identifier];
+}
+
 
 - (void)setUIDelegate:delegate
 {

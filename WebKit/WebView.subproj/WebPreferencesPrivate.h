@@ -15,5 +15,8 @@
 - (int)_pageCacheSize;
 - (int)_objectCacheSize;
 - (void)_postPreferencesChangesNotification;
++ (WebPreferences *)_getInstanceForIdentifier:(NSString *)identifier;
++ (void)_setInstance:(WebPreferences *)instance forIdentifier:(NSString *)identifier;
++ (void)_removeReferenceForIdentifier:(NSString *)identifier;
 
 @end

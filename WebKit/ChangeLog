@@ -1,6 +1,51 @@
+2003-05-21  Richard Williamson   <rjw@apple.com>
+
+        *** Public API Change ***
+        The fix for 3265442 requires new API.  This API is an addition
+        that is 100% compatible with the existing API.
+        
+        Provide support for IB to palettize WebView.
+        
+        Fixed 3265442.
+        Fixed 3263106.
+        
+        Reviewed by Chris.
+
+        * WebView.subproj/WebPreferences.h:
+        * WebView.subproj/WebPreferences.m:
+        (-[WebPreferencesPrivate dealloc]):
+        (-[WebPreferences init]):
+        (-[WebPreferences initWithIdentifier:]):
+        (-[WebPreferences initWithCoder:]):
+        (-[WebPreferences encodeWithCoder:]):
+        (+[WebPreferences standardPreferences]):
+        (-[WebPreferences dealloc]):
+        (-[WebPreferences identifier]):
+        (-[WebPreferences _stringValueForKey:]):
+        (-[WebPreferences _setStringValue:forKey:]):
+        (-[WebPreferences _integerValueForKey:]):
+        (-[WebPreferences _setIntegerValue:forKey:]):
+        (-[WebPreferences _boolValueForKey:]):
+        (-[WebPreferences _setBoolValue:forKey:]):
+        (-[WebPreferences autosaves]):
+        (+[WebPreferences _getInstanceForIdentifier:]):
+        (+[WebPreferences _setInstance:forIdentifier:]):
+        (+[WebPreferences _removeReferenceForIdentifier:]):
+        (-[WebPreferences _postPreferencesChangesNotification]):
+        (-[NSMutableDictionary _checkLastReferenceForIdentifier:]):
+        * WebView.subproj/WebPreferencesPrivate.h:
+        * WebView.subproj/WebView.h:
+        * WebView.subproj/WebView.m:
+        (-[WebView _commonInitializationFrameName:groupName:]):
+        (-[WebView initWithCoder:]):
+        (-[WebView encodeWithCoder:]):
+        (-[WebView dealloc]):
+        (-[WebView setPreferencesIdentifier:]):
+        (-[WebView preferencesIdentifier]):
+
 2003-05-21  Chris Blumenberg  <cblu@apple.com>
 
-		Fixed data source leak when viewing standalone plug-in content.
+        Fixed data source leak when viewing standalone plug-in content.
 
         Reviewed by rjw.
 

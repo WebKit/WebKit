@@ -317,6 +317,22 @@ extern NSString *WebElementLinkLabelKey;	// NSString of the text within the anch
 - (WebPreferences *)preferences;
 
 /*!
+    @method setPreferencesIdentifier:
+    @param anIdentifier The string to use a prefix for storing values for this WebView in the user
+    defaults database.
+    @discussion If the WebPreferences for this WebView are stored in the user defaults database, the
+    string set in this method will be used a key prefix.
+*/
+- (void)setPreferencesIdentifier:(NSString *)anIdentifier;
+
+/*!
+    @method preferencesIdentifier
+    @result Returns the WebPreferences key prefix.
+*/
+- (NSString *)preferencesIdentifier;
+
+
+/*!
     @method setHostWindow:
     @param hostWindow The host window for the web view.
     @discussion Parts of WebKit (such as plug-ins and JavaScript) depend on a window to function
