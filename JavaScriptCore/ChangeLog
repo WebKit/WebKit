@@ -1,3 +1,17 @@
+2004-07-22  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by Darin
+	
+	Fixed <rdar://problem/3682340> (error console does not include source urls or line numbers of event exceptions). 
+
+        * kjs/function_object.cpp:
+        (FunctionObjectImp::construct):
+        * kjs/function_object.h:
+        * kjs/object.cpp:
+        (KJS::ObjectImp::construct):
+        * kjs/object.h:
+        (KJS::Object::construct):
+
 2004-07-21  Darin Adler  <darin@apple.com>
 
         * bindings/npruntime.h: Fixed typo.

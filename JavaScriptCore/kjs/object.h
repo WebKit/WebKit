@@ -244,6 +244,7 @@ namespace KJS {
      * @return The newly created &amp; initialized object
      */
     Object construct(ExecState *exec, const List &args);
+    Object construct(ExecState *exec, const List &args, const UString &sourceURL, int lineNumber);
 
     /**
      * Whether or not the object implements the call() method. If this returns
@@ -547,6 +548,7 @@ namespace KJS {
      * @see Object::construct()
      */
     virtual Object construct(ExecState *exec, const List &args);
+    virtual Object construct(ExecState *exec, const List &args, const UString &sourceURL, int lineNumber);
 
     virtual bool implementsCall() const;
     /**
@@ -694,6 +696,9 @@ namespace KJS {
 
   inline Object Object::construct(ExecState *exec, const List &args)
     { return imp()->construct(exec,args); }
+  
+  inline Object Object::construct(ExecState *exec, const List &args, const UString &sourceURL, int lineNumber)
+  { return imp()->construct(exec,args,sourceURL,lineNumber); }
 
   inline bool Object::implementsCall() const
     { return imp()->implementsCall(); }

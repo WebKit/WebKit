@@ -191,7 +191,7 @@ bool FunctionObjectImp::implementsConstruct() const
 }
 
 // ECMA 15.3.2 The Function Constructor
-Object FunctionObjectImp::construct(ExecState *exec, const List &args)
+Object FunctionObjectImp::construct(ExecState *exec, const List &args, const UString &sourceURL, int lineNumber)
 {
   UString p("");
   UString body;
@@ -211,7 +211,7 @@ Object FunctionObjectImp::construct(ExecState *exec, const List &args)
   int sid;
   int errLine;
   UString errMsg;
-  ProgramNode *progNode = Parser::parse(UString(), 0, body.data(),body.size(),&sid,&errLine,&errMsg);
+  ProgramNode *progNode = Parser::parse(sourceURL, lineNumber, body.data(),body.size(),&sid,&errLine,&errMsg);
 
   // notify debugger that source has been parsed
   Debugger *dbg = exec->dynamicInterpreter()->imp()->debugger();
@@ -284,6 +284,13 @@ Object FunctionObjectImp::construct(ExecState *exec, const List &args)
   fimp->put(exec, prototypePropertyName, prototype, DontEnum|DontDelete|ReadOnly);
   return ret;
 }
+
+// ECMA 15.3.2 The Function Constructor
+Object FunctionObjectImp::construct(ExecState *exec, const List &args)
+{
+  return FunctionObjectImp::construct(exec, args, UString(), 0);
+}
+
 
 bool FunctionObjectImp::implementsCall() const
 {

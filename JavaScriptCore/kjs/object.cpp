@@ -368,6 +368,11 @@ Object ObjectImp::construct(ExecState */*exec*/, const List &/*args*/)
   return Object(0);
 }
 
+Object ObjectImp::construct(ExecState *exec, const List &args, const UString &/*sourceURL*/, int /*lineNumber*/)
+{
+  return construct(exec, args);
+}
+
 bool ObjectImp::implementsCall() const
 {
   return false;
