@@ -762,7 +762,8 @@ static int copyPathRemovingDots(char *dst, const char *src, int srcStart, int sr
                 }
                 // Note that these two while blocks differ subtly.
                 // The first helps to remove multiple adjoining slashes as we rewind.
-                while (dst > bufferPathStart && dst[-1] == '/') {
+                // The +1 to bufferPathStart in the first while block prevents eating a leading slash
+                while (dst > bufferPathStart + 1 && dst[-1] == '/') {
                     dst--;
                 }
                 while (dst > bufferPathStart && dst[-1] != '/') {

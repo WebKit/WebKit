@@ -1,3 +1,19 @@
+2002-12-30  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin and Gramps
+
+	Fix for this bug:
+
+	Radar 3136795 (type URL with ../ in it, get assertion)
+
+	The code to remove relative portions from URLs was eating leading slashes on
+	URL paths. This caused absolute paths with relative portions to get mangled,
+	resulting in a URL that the engine could not use. Now, leading slashes are no
+	longer removed from URL paths, resulting in usuable URLs.
+
+        * kwq/KWQKURL.mm:
+        (copyPathRemovingDots)
+
 2002-12-29  Darin Adler  <darin@apple.com>
 
         Reviewed by Don.
