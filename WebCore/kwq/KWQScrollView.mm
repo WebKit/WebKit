@@ -108,26 +108,34 @@ int QScrollView::visibleHeight() const
 int QScrollView::contentsWidth() const
 {
     NSScrollView *view = (NSScrollView *)getView();
-    return (int)[[view documentView] bounds].size.width;
+    if ([view respondsToSelector: @selector(documentView)])
+        return (int)[[view documentView] bounds].size.width;
+    return (int)[view bounds].size.width;
 }
 
 
 int QScrollView::contentsHeight() const
 {
     NSScrollView *view = (NSScrollView *)getView();
-    return (int)[[view documentView] bounds].size.height;
+    if ([view respondsToSelector: @selector(documentView)])
+        return (int)[[view documentView] bounds].size.height;
+    return (int)[view bounds].size.height;
 }
 
 int QScrollView::contentsX() const
 {
     NSScrollView *view = (NSScrollView *)getView();
-    return (int)[[view documentView] bounds].origin.x;
+    if ([view respondsToSelector: @selector(documentView)])
+        return (int)[[view documentView] bounds].origin.x;
+    return 0;
 }
 
 int QScrollView::contentsY() const
 {
     NSScrollView *view = (NSScrollView *)getView();
-    return (int)[[view documentView] bounds].origin.y;
+    if ([view respondsToSelector: @selector(documentView)])
+        return (int)[[view documentView] bounds].origin.y;
+    return 0;
 }
 
 int QScrollView::childX(QWidget *)

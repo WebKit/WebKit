@@ -1,5 +1,16 @@
 2002-06-13  Richard Williamson  <rjw@apple.com>
 
+    More cleanup to deal with special case of provisional view
+    not being in a scrollview.
+    
+	* kwq/KWQScrollView.mm:
+	(QScrollView::contentsWidth):
+	(QScrollView::contentsHeight):
+	(QScrollView::contentsX):
+	(QScrollView::contentsY):
+
+2002-06-13  Richard Williamson  <rjw@apple.com>
+
     
 	* kwq/KWQWidget.mm: (QWidget::setCursor):  restored code
 	* kwq/external.h:   removed definitions no longer needed
