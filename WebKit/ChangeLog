@@ -1,3 +1,9 @@
+2002-10-22  Maciej Stachowiak  <mjs@apple.com>
+
+        * WebKit.pbproj/project.pbxproj: Made WebControllerSets.h
+	private. Also alphabetized headers in target pane and subproject
+	folders.
+
 2002-10-22  Chris Blumenberg  <cblu@apple.com>
 
 	load and unload is only a WebNetscapePluginPackage thing since you can't unload an NSBundle.
