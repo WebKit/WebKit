@@ -1,5 +1,10 @@
 2002-10-28  Darin Adler  <darin@apple.com>
 
+        * khtml/khtml_part.cpp: (KHTMLPart::checkCompleted):
+	Update so it handles nil for the view.
+
+2002-10-28  Darin Adler  <darin@apple.com>
+
 	- fixed 3070484 -- icon rollovers are very slow on Mac OS X website
 
 	The problem was simply that the part didn't know it was complete.
