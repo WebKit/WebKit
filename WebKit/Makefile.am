@@ -1,5 +1,5 @@
 
-all: 
+all-am: 
 	pbxbuild -buildstyle $(BUILDSTYLE)
 
 FRAMEWORK_NAME = WebKit
@@ -28,6 +28,6 @@ embed:
 		exit 1; \
         fi
 
-clean:
+clean-am:
 	pbxbuild clean
 

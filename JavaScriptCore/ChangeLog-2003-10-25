@@ -1,3 +1,9 @@
+2002-05-15  Darin Adler  <darin@apple.com>
+
+	* Makefile.am:
+	Use all-am and clean-am instead of all and clean because it's better and
+	to make "make check" at the top level work right.
+
 2002-05-13  Darin Adler  <darin@apple.com>
 
 	* kjs/value.h: Fix comment typos.

@@ -42,6 +42,6 @@ embed:
 		exit 1; \
         fi
 
-clean:
+clean-am:
 	pbxbuild clean
 
