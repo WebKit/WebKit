@@ -14,6 +14,7 @@
 
 #import <WebFoundation/WebNSDictionaryExtras.h>
 #import <WebFoundation/NSURLResponse.h>
+#import <WebFoundation/WebAssertions.h>
 
 @implementation WebFrameViewPrivate
 
@@ -268,9 +269,13 @@ static NSMutableDictionary *viewTypes;
 
     if (!addedImageTypes && !allowImageTypeOmission) {
         NSEnumerator *enumerator = [[WebImageView supportedImageMIMETypes] objectEnumerator];
+        ASSERT(enumerator != nil);
         NSString *mime;
         while ((mime = [enumerator nextObject]) != nil) {
-            [viewTypes setObject:[WebImageView class] forKey:mime];
+            // Don't clobber previously-registered user image types
+            if ([viewTypes objectForKey:mime] == nil) {
+                [viewTypes setObject:[WebImageView class] forKey:mime];
+            }
         }
         addedImageTypes = YES;
     }
@@ -284,17 +289,12 @@ static NSMutableDictionary *viewTypes;
 }
 
 
-+ (NSMutableDictionary *)_viewTypes
-{
-    return [self _viewTypesAllowImageTypeOmission:NO];
-}
-
 + (Class)_viewClassForMIMEType:(NSString *)MIMEType
 {
     // Getting the image types is slow, so don't do it until we have to.
     Class c = [[self _viewTypesAllowImageTypeOmission:YES] _web_objectForMIMEType:MIMEType];
     if (c == nil) {
-        c = [[self _viewTypes] _web_objectForMIMEType:MIMEType];
+        c = [[self _viewTypesAllowImageTypeOmission:NO] _web_objectForMIMEType:MIMEType];
     }
     return c;
 }

@@ -467,17 +467,12 @@
     return repTypes;
 }
 
-+ (NSMutableDictionary *)_repTypes
-{
-    return [self _repTypesAllowImageTypeOmission:NO];
-}
-
 + (Class)_representationClassForMIMEType:(NSString *)MIMEType
 {
     // Getting the image types is slow, so don't do it until we have to.
     Class c = [[self _repTypesAllowImageTypeOmission:YES] _web_objectForMIMEType:MIMEType];
     if (c == nil) {
-        c = [[self _repTypes] _web_objectForMIMEType:MIMEType];
+        c = [[self _repTypesAllowImageTypeOmission:NO] _web_objectForMIMEType:MIMEType];
     }
     return c;
 }

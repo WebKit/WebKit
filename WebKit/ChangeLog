@@ -1,3 +1,43 @@
+2003-05-08  John Sullivan  <sullivan@apple.com>
+
+	- fixed 3252632 -- Registering a WebDocumentView too 
+	early breaks built-in image viewing
+
+	A startup-performance optimization was breaking the case
+	where clients registered WebDocumentView types before the
+	first WebFrameView had been created. The fix is to allow
+	registering WebDocumentView types without retrieving the
+	built-in image types.
+
+        Reviewed by Darin
+
+        * WebView.subproj/WebFrameViewPrivate.h:
+	remove _viewTypes; expose _viewTypesAllowImageTypeOmission.
+	All callers have to specify the boolean now.
+
+        * WebView.subproj/WebFrameViewPrivate.m:
+        (+[WebFrameView _viewTypesAllowImageTypeOmission:]):
+	assert that the list of image types isn't nil before inserting
+	them; insert each image type only if not already present.
+        (+[WebFrameView _viewClassForMIMEType:]):
+	replace _viewTypes with _viewTypesAllowImageTypeOmission
+
+        * Plugins.subproj/WebPluginDatabase.m:
+        (-[WebPluginDatabase init]):
+	replace _viewTypes with _viewTypesAllowImageTypeOmission
+
+        * WebView.subproj/WebDataSourcePrivate.h:
+	remove _repTypes; expose _repTypesAllowImageTypeOmission.
+	All callers have to specify the boolean now.
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (+[WebDataSource _representationClassForMIMEType:]):
+	replace _repTypes with _repTypesAllowImageTypeOmission
+
+        * WebView.subproj/WebView.m:
+        (+[WebView registerViewClass:representationClass:forMIMEType:]):
+	replace _viewTypes with _viewTypesAllowImageTypeOmission, and
+	replace _repTypes with _repTypesAllowImageTypeOmission
+
 2003-05-08  Darin Adler  <darin@apple.com>
 
         Reviewed by Richard.

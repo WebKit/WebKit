@@ -136,7 +136,7 @@
 - (void)_layoutChildren;
 - (void)_clearErrors;
 - (void)_setMainDocumentError:(NSError *)error;
-+ (NSMutableDictionary *)_repTypes;
++ (NSMutableDictionary *)_repTypesAllowImageTypeOmission:(BOOL)allowImageTypeOmission;
 + (Class)_representationClassForMIMEType:(NSString *)MIMEType;
 - (void)_loadIcon;
 - (void)_setIconURL:(NSURL *)URL;
