@@ -2,6 +2,7 @@ Makefile
 Makefile.in
 *.kde
 *.moc
+*.dep
 khtmldata.h
 htmltags.c
 htmltags.h
