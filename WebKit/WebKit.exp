@@ -14,6 +14,7 @@
 .objc_class_name_WebHistory
 .objc_class_name_WebHistoryItem
 .objc_class_name_WebIconLoader
+.objc_class_name_WebIconDatabase
 .objc_class_name_WebKitStatistics
 .objc_class_name_WebLoadProgress
 .objc_class_name_WebPreferences
@@ -29,3 +30,7 @@ _WebContextMenuElementStringKey
 _WebContextMenuElementImageKey
 _WebContextMenuElementFrameKey
 _WebHistoryEntriesChangedNotification
+_WebIconDidChangeNotification
+_WebIconSmallSize
+_WebIconMediumSize
+

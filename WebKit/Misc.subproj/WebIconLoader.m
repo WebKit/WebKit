@@ -6,6 +6,9 @@
 //  Copyright (c) 2002 Apple Computer, Inc. All rights reserved.
 //
 
+#import <WebKit/WebKitDebug.h>
+#import <WebKit/WebIconDatabase.h>
+#import <WebKit/WebIconDatabasePrivate.h>
 #import <WebKit/WebIconLoader.h>
 
 #import <WebFoundation/WebFoundation.h>
@@ -68,7 +71,7 @@
 
     if([[path pathExtension] rangeOfString:@"htm"].length != 0){
         if(!htmlIcon){
-            htmlIcon = [[[NSWorkspace sharedWorkspace] iconForFile:path] retain];
+            htmlIcon = [[[NSWorkspace sharedWorkspace] iconForFileType:@"html"] retain];
             [[self class] _resizeImage:htmlIcon];
         }
         icon = htmlIcon;
@@ -104,16 +107,6 @@
     return _private->URL;
 }
 
-- (NSMutableDictionary *)_icons{
-    static NSMutableDictionary *icons = nil;
-
-    if(!icons){
-        icons = [[NSMutableDictionary dictionary] retain];
-    }
-    
-    return icons;
-}
-
 - (id)delegate
 {
     return _private->delegate;
@@ -124,45 +117,13 @@
     _private->delegate = delegate;
 }
 
-- (NSImage *)iconFromCache
-{
-    NSImage *icon = [[self _icons] objectForKey:_private->URL];
-    
-    if (icon) {
-        return icon;
-    }
-
-    NSDictionary *attributes, *headers;
-    
-    headers = [NSDictionary dictionaryWithObject:@"only-if-cached" forKey:@"Cache-Control"];
-    attributes = [NSDictionary dictionaryWithObject:headers forKey:WebHTTPResourceHandleRequestHeaders];
-    
-    WebResourceHandle *handle = [[WebResourceHandle alloc] initWithURL:_private->URL
-                                                             userAgent:nil
-                                                            attributes:attributes
-                                                                 flags:WebResourceHandleFlagNone];
-    if (handle) {        
-        NSData *data = [handle loadInForeground];
-        if (data) {
-            icon = [[[NSImage alloc] initWithData:data] autorelease];
-            if (icon) {
-                [[self class] _resizeImage:icon];
-                [[self _icons] setObject:icon forKey:_private->URL];
-            }
-        }
-        [handle release];
-    }
-    
-    return icon;
-}
-
 - (void)startLoading
 {
     if (_private->handle != nil) {
         return;
     }
-    
-    NSImage *icon = [[self _icons] objectForKey:_private->URL];
+
+    NSImage *icon = [[WebIconDatabase sharedIconDatabase] _iconForIconURL:_private->URL];
     if (icon) {
         [_private->delegate iconLoader:self receivedPageIcon:icon];
         return;
@@ -198,8 +159,7 @@
 {
     NSImage *icon = [[NSImage alloc] initWithData:data];
     if (icon) {
-        [[self class] _resizeImage:icon];
-        [[self _icons] setObject:icon forKey:_private->URL];
+        [[WebIconDatabase sharedIconDatabase] _setIcon:icon forIconURL:_private->URL];
         [_private->delegate iconLoader:self receivedPageIcon:icon];
         [icon release];
     }

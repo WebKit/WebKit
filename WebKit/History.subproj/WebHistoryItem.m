@@ -4,12 +4,26 @@
 */
 
 #import <WebKit/WebHistoryItem.h>
+#import <WebKit/WebIconDatabase.h>
 #import <WebKit/WebIconLoader.h>
 #import <WebKit/WebKitReallyPrivate.h>
 
 #import <WebFoundation/WebNSURLExtras.h>
 
 @implementation WebHistoryItem
+
+- (void)_retainIconInDatabase:(BOOL)retain
+{
+    if(_URL){
+        WebIconDatabase *iconDB = [WebIconDatabase sharedIconDatabase];
+
+        if(retain){
+            [iconDB retainIconForSiteURL:_URL];
+        }else{
+            [iconDB releaseIconForSiteURL:_URL];
+        }
+    }
+}
 
 +(WebHistoryItem *)entryWithURL:(NSURL *)URL
 {
@@ -38,12 +52,16 @@
     _parent = [parent retain];
     _title = [title retain];
     _lastVisitedDate = [[NSCalendarDate alloc] init];
+
+    [self _retainIconInDatabase:YES];
     
     return self;
 }
 
 - (void)dealloc
 {
+    [self _retainIconInDatabase:NO];
+    
     [_URL release];
     [_target release];
     [_parent release];
@@ -98,11 +116,9 @@
     if (!_loadedIcon) {
         NSImage *newIcon;
         
-        if (_iconURL != nil) {
-            newIcon = [[WebIconLoader iconLoaderWithURL:_iconURL] iconFromCache];
-        } else if ([_URL isFileURL]) {
-            newIcon = [WebIconLoader iconForFileAtPath:[_URL path]];
-        } else {
+        if (_URL != nil) {
+            newIcon = [[WebIconDatabase sharedIconDatabase] iconForSiteURL:_URL withSize:WebIconSmallSize];
+        }else{
             newIcon = nil;
         }
         [self _setIcon:newIcon];
@@ -121,8 +137,10 @@
 -(void)setURL:(NSURL *)URL
 {
     if (URL != _URL) {
+        [self _retainIconInDatabase:NO];
         [_URL release];
         _URL = [URL retain];
+        [self _retainIconInDatabase:YES];
     }
 }
 
@@ -256,6 +274,7 @@
     storedURLString = [dict objectForKey: @""];
     if (storedURLString != nil) {
         _URL = [[NSURL _web_URLWithString:storedURLString] retain];
+        [self _retainIconInDatabase:YES];
     }
     
     iconURLString = [dict objectForKey:@"iconURL"];

@@ -269,6 +269,8 @@
 				F5E7B24703025CE801A80180,
 				F501251D0302EA04018635CE,
 				F560BEBE030DAF4401C1A526,
+				F528E3EC031E91AD01CA2ACA,
+				F528E3EE031E91AD01CA2ACA,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -356,6 +358,7 @@
 				F5E7B24803025CE801A80180,
 				F501251E0302EA04018635CE,
 				F560BEBF030DAF4401C1A526,
+				F528E3ED031E91AD01CA2ACA,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -423,6 +426,9 @@
 				F5FBAB9002B88CBF01FF6074,
 				3944607A020F50ED0ECA1767,
 				3944607B020F50ED0ECA1767,
+				F528E3E9031E91AD01CA2ACA,
+				F528E3EB031E91AD01CA2ACA,
+				F528E3EA031E91AD01CA2ACA,
 				F5934C8802E894F50197FBCF,
 				F5934C8902E894F50197FBCF,
 				2568C72C0174912D0ECA149E,
@@ -1553,6 +1559,45 @@
 			fileRef = F520FB1A0221DEFD01C1A525;
 			isa = PBXBuildFile;
 			settings = {
+			};
+		};
+		F528E3E9031E91AD01CA2ACA = {
+			isa = PBXFileReference;
+			path = WebIconDatabase.h;
+			refType = 4;
+		};
+		F528E3EA031E91AD01CA2ACA = {
+			isa = PBXFileReference;
+			path = WebIconDatabase.m;
+			refType = 4;
+		};
+		F528E3EB031E91AD01CA2ACA = {
+			isa = PBXFileReference;
+			path = WebIconDatabasePrivate.h;
+			refType = 4;
+		};
+		F528E3EC031E91AD01CA2ACA = {
+			fileRef = F528E3E9031E91AD01CA2ACA;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+			};
+		};
+		F528E3ED031E91AD01CA2ACA = {
+			fileRef = F528E3EA031E91AD01CA2ACA;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F528E3EE031E91AD01CA2ACA = {
+			fileRef = F528E3EB031E91AD01CA2ACA;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Private,
+				);
 			};
 		};
 		F52BD8BA02DF4FBD018635CA = {

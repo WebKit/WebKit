@@ -14,6 +14,8 @@
 #import <WebKit/WebHTMLRepresentation.h>
 #import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebPreferences.h>
+#import <WebKit/WebIconDatabase.h>
+#import <WebKit/WebIconDatabasePrivate.h>
 #import <WebKit/WebIconLoader.h>
 #import <WebKit/WebImageRepresentation.h>
 #import <WebKit/WebLocationChangeHandler.h>
@@ -444,9 +446,10 @@
     [[[[self webFrame] webView] documentView] dataSourceUpdated:self];
 }
 
-- (void)iconLoader:(WebIconLoader *)iconLoader receivedPageIcon:(NSImage *)image;
+- (void)iconLoader:(WebIconLoader *)iconLoader receivedPageIcon:(NSImage *)icon;
 {
-    [[_private->controller locationChangeHandler] receivedPageIcon:image fromURL:[iconLoader URL] forDataSource:self];
+    [[WebIconDatabase sharedIconDatabase] _setIconURL:[iconLoader URL] forSiteURL:[self URL]];
+    [[_private->controller locationChangeHandler] receivedPageIcon:icon fromURL:[iconLoader URL] forDataSource:self];
 }
 
 - (void)_loadIcon
@@ -455,23 +458,26 @@
 
     if([self isMainDocument] && !_private->mainDocumentError){
         
-        // If no icon URL has been set using the LINK tag, use the icon at the server's root directory
-        // If it is file URL, return its icon provided by NSWorkspace.
-        if(_private->iconURL == nil){
-            NSURL *dataSourceURL = [self URL];
-    
-            if([dataSourceURL isFileURL]){
-                NSImage *icon = [WebIconLoader iconForFileAtPath:[dataSourceURL path]];
-                [[_private->controller locationChangeHandler] receivedPageIcon:icon fromURL:nil forDataSource:self];
-            } else {
+        NSURL *dataSourceURL = [self URL];
+
+        NSImage *icon = [[WebIconDatabase sharedIconDatabase] iconForSiteURL:dataSourceURL withSize:NSMakeSize(0,0)];
+
+        if(icon){
+            // Return the icon immediately if the db already has it
+            [[_private->controller locationChangeHandler] receivedPageIcon:icon fromURL:nil forDataSource:self];
+        }else{
+            
+            if(!_private->iconURL){
+                // No icon URL from the LINK tag so try the server's root
                 _private->iconURL = [[NSURL _web_URLWithString:@"/favicon.ico" relativeToURL:dataSourceURL] retain];
             }
-        }
 
-        if(_private->iconURL != nil){
-            _private->iconLoader = [[WebIconLoader alloc] initWithURL:_private->iconURL];
-            [_private->iconLoader setDelegate:self];
-            [_private->iconLoader startLoading];
+            if(_private->iconURL != nil){
+                // Load it
+                _private->iconLoader = [[WebIconLoader alloc] initWithURL:_private->iconURL];
+                [_private->iconLoader setDelegate:self];
+                [_private->iconLoader startLoading];
+            }
         }
     }
 }

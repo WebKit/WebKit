@@ -1,3 +1,57 @@
+2002-09-02  Chris Blumenberg  <cblu@apple.com>
+
+	Icon DB.
+
+        * History.subproj/WebHistoryItem.m:
+        (-[WebHistoryItem _retainIconInDatabase:]): calls retainIconForSiteURL: or releaseIconForSiteURL:
+        (-[WebHistoryItem initWithURL:target:parent:title:]): call _retainIconInDatabase:
+        (-[WebHistoryItem dealloc]): call _retainIconInDatabase:
+        (-[WebHistoryItem icon]): call iconForSiteURL:withSize:
+        (-[WebHistoryItem setURL:]): call _retainIconInDatabase:
+        (-[WebHistoryItem initFromDictionaryRepresentation:]): call _retainIconInDatabase:
+        * Misc.subproj/WebIconDatabase.h: Added.
+        * Misc.subproj/WebIconDatabase.m: Added.
+        (+[WebIconDatabase sharedIconDatabase]):
+        (-[WebIconDatabase init]):
+        (-[WebIconDatabase iconForSiteURL:withSize:]):
+        (-[WebIconDatabase setIcon:forSiteURL:]):
+        (-[WebIconDatabase setIcon:forHost:]):
+        (-[WebIconDatabase retainIconForSiteURL:]):
+        (-[WebIconDatabase releaseIconForSiteURL:]):
+        (-[WebIconDatabase delayDatabaseCleanup]):
+        (-[WebIconDatabase allowDatabaseCleanup]):
+        (-[WebIconDatabase applicationWillTerminate:]):
+        (-[WebIconDatabase _createFileDatabase]):
+        (-[WebIconDatabase _loadIconDictionaries]):
+        (-[WebIconDatabase _updateFileDatabase]):
+        (-[WebIconDatabase _iconForIconURL:]):
+        (-[WebIconDatabase _iconsForIconURL:]):
+        (-[WebIconDatabase _iconForFileURL:withSize:]):
+        (-[WebIconDatabase _setIcon:forIconURL:]):
+        (-[WebIconDatabase _setIconURL:forSiteURL:]):
+        (-[WebIconDatabase _setBuiltInIcon:forHost:]):
+        (-[WebIconDatabase _retainIconForIconURL:]):
+        (-[WebIconDatabase _releaseIconForIconURL:]):
+        (-[WebIconDatabase _retainFutureIconForSiteURL:]):
+        (-[WebIconDatabase _releaseFutureIconForSiteURL:]):
+        (-[WebIconDatabase _retainOriginalIconsOnDisk]):
+        (-[WebIconDatabase _releaseOriginalIconsOnDisk]):
+        (-[WebIconDatabase _sendNotificationForSiteURL:]):
+        (-[WebIconDatabase _addObject:toSetForKey:inDictionary:]):
+        (-[WebIconDatabase _uniqueIconURL]):
+        (-[WebIconDatabase _cachedIconFromArray:withSize:]):
+        (-[WebIconDatabase _scaleIcon:toSize:]):
+        * Misc.subproj/WebIconDatabasePrivate.h: Added.
+        * Misc.subproj/WebIconLoader.h:
+        * Misc.subproj/WebIconLoader.m:
+        (+[WebIconLoader iconForFileAtPath:]):
+        (-[WebIconLoader startLoading]):
+        (-[WebIconLoader handleDidFinishLoading:data:]):
+        * WebKit.exp:
+        * WebKit.pbproj/project.pbxproj:
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _loadIcon]):
+
 2002-08-30  Ken Kocienda  <kocienda@apple.com>
 
 	Removed one last reference to the now-removed WebDefaultMIMEType symbol.

@@ -29,7 +29,6 @@
 - (NSURL *)URL;
 - (id)delegate;
 - (void)setDelegate:(id)delegate;
-- (NSImage *)iconFromCache;
 - (void)startLoading;
 - (void)stopLoading;
 @end
