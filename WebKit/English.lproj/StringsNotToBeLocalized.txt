@@ -94,6 +94,7 @@
 "WebBackForwardList:\n"
 "WebBookmarkChildrenKey"
 "WebBookmarkDidChangeNotification"
+"WebBookmarkGroupTag"
 "WebBookmarkIdentifier"
 "WebBookmarkType"
 "WebBookmarkTypeLeaf"

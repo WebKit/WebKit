@@ -1,3 +1,25 @@
+2002-12-19  John Sullivan  <sullivan@apple.com>
+
+	- WebKit part of fix for 3124949 -- Alexander recreates the 
+	default set of bookmarks every time a separate app copy is launched
+
+        Reviewed by Darin
+
+        * Bookmarks.subproj/WebBookmarkGroup.h:
+	new _tag ivar and -tag method.
+
+        * Bookmarks.subproj/WebBookmarkGroup.m:
+        (-[WebBookmarkGroup dealloc]):
+	release _tag
+        (-[WebBookmarkGroup tag]):
+	return _tag
+        (-[WebBookmarkGroup _loadBookmarkGroupGuts]):
+	read _tag from the dictionary in the file (or leave it at
+	nil if there's no value in the file).
+
+        * English.lproj/StringsNotToBeLocalized.txt:
+	kept this file up to date
+
 2002-12-19  Darin Adler  <darin@apple.com>
 
         Reviewed by John.

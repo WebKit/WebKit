@@ -25,6 +25,7 @@ extern NSString *WebBookmarkChildrenKey;
 
 @interface WebBookmarkGroup : NSObject
 {
+    NSString *_tag;
     NSString *_file;
     WebBookmark *_topBookmark;
     BOOL _loading;
@@ -54,6 +55,11 @@ extern NSString *WebBookmarkChildrenKey;
 
 // Load bookmark group from file. This happens automatically at init time, and need not normally be called.
 - (BOOL)loadBookmarkGroup;
+
+// Marker for bookmark group, read from file. This cannot be changed in the current implementation.
+// It can be used to see whether one file represents the same WebBookmarkGroup as another. If no
+// tag is stored in the file, returns nil.
+- (NSString *)tag;
 
 // Save bookmark group to file. It is the client's responsibility to call this at appropriate times.
 - (BOOL)saveBookmarkGroup;

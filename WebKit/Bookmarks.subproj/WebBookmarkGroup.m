@@ -20,6 +20,7 @@ NSString *WebBookmarkDidChangeNotification = @"WebBookmarkDidChangeNotification"
 NSString *WebBookmarkWillChangeNotification = @"WebBookmarkWillChangeNotification";
 NSString *WebModifiedBookmarkKey = @"WebModifiedBookmarkKey";
 NSString *WebBookmarkChildrenKey = @"WebBookmarkChildrenKey";
+NSString *TagKey = @"WebBookmarkGroupTag";
 
 @interface WebBookmarkGroup (WebForwardDeclarations)
 - (void)_setTopBookmark:(WebBookmark *)newTopBookmark;
@@ -50,8 +51,14 @@ NSString *WebBookmarkChildrenKey = @"WebBookmarkChildrenKey";
 - (void)dealloc
 {
     [_file release];
+    [_tag release];
     [_topBookmark release];
     [super dealloc];
+}
+
+- (NSString *)tag
+{
+    return _tag;
 }
 
 - (WebBookmark *)topBookmark
@@ -184,6 +191,13 @@ NSString *WebBookmarkChildrenKey = @"WebBookmarkChildrenKey";
         }
         // else file doesn't exist, which is normal the first time
         return NO;
+    }
+
+    // If the bookmark group has a tag, it's in the root-level dictionary.
+    NSString *tagFromFile = [dictionary objectForKey:TagKey];
+    // we don't trust data read from disk, so double-check
+    if ([tagFromFile isKindOfClass:[NSString class]]) {
+        _tag = [tagFromFile retain];
     }
 
     _loading = YES;
