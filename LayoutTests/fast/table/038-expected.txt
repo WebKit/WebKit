@@ -1,0 +1,26 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x102
+  RenderBlock {HTML} at (0,0) size 800x102
+    RenderBody {BODY} at (8,8) size 784x86
+      RenderBlock (anonymous) at (0,0) size 784x34
+        RenderText {TEXT} at (0,0) size 760x34
+          text run at (0,0) width 292: "The two rows below should look identical. "
+          text run at (292,0) width 468: "In both, the spanning cells in columns 2-3 should consume as much"
+          text run at (0,17) width 337: "width as possible, while column 1 should be tiny."
+      RenderTable {TABLE} at (0,34) size 784x52
+        RenderTableSection {TBODY} at (2,2) size 0x48
+          RenderTableRow {TR} at (0,0) size 0x0
+            RenderTableCell {TD} at (2,2) size 13x21 [r=0 c=0 rs=1 cs=1]
+              RenderText {TEXT} at (2,2) size 9x17
+                text run at (2,2) width 9: "1"
+            RenderTableCell {TD} at (17,2) size 761x21 [r=0 c=1 rs=1 cs=2]
+              RenderText {TEXT} at (2,2) size 26x17
+                text run at (2,2) width 26: "2-3"
+          RenderTableRow {TR} at (0,0) size 0x0
+            RenderTableCell {TD} at (2,25) size 13x21 [r=1 c=0 rs=1 cs=1]
+              RenderText {TEXT} at (2,2) size 9x17
+                text run at (2,2) width 9: "1"
+            RenderTableCell {TD} at (17,25) size 761x21 [r=1 c=1 rs=1 cs=2]
+              RenderText {TEXT} at (2,2) size 26x17
+                text run at (2,2) width 26: "2-3"
