@@ -662,16 +662,13 @@ void RenderBlock::layoutBlockChildren( bool relayoutChildren )
                 child->style()->setDisplay(COMPACT);
                 int childMargins = child->marginLeft() + child->marginRight();
                 int margin = style()->direction() == LTR ? curr->marginLeft() : curr->marginRight();
-                if (margin < (childMargins + child->minWidth())) {
+                if (margin < (childMargins + child->maxWidth())) {
                     // It won't fit. Kill the "compact" boolean and just treat
                     // the child like a normal block. This is only temporary.
                     child->style()->setDisplay(BLOCK);
                     treatCompactAsBlock = true;
                 }
                 else {
-                    // Cap our maxwidth at the margin's value.
-                    if (child->maxWidth() + childMargins > margin)
-                        child->setMaxWidth(margin - childMargins);
                     blockForCompactChild = curr;
                     compactChild = child;
                     child = child->nextSibling();
@@ -1753,29 +1750,73 @@ void RenderBlock::calcMinMaxWidth()
     // ### compare with min/max width set in style sheet...
 }
 
-static inline RenderObject *next(RenderObject *par, RenderObject *current)
+struct InlineMinMaxIterator
 {
-    RenderObject *next = 0;
-    while(current != 0)
+/* InlineMinMaxIterator is a class that will iterate over all render objects that contribute to
+   inline min/max width calculations.  Note the following about the way it walks:
+   (1) Positioned content is skipped (since it does not contribute to min/max width of a block)
+   (2) We do not drill into the children of floats or replaced elements, since you can't break
+       in the middle of such an element.
+   (3) Inline flows (e.g., <a>, <span>, <i>) are walked twice, since each side can have
+       distinct borders/margin/padding that contribute to the min/max width.
+*/
+    RenderObject* parent;
+    RenderObject* current;
+    bool endOfInline;
+
+    InlineMinMaxIterator(RenderObject* p, RenderObject* o, bool end = false)
+        :parent(p), current(o), endOfInline(end) {}
+
+    RenderObject* next();
+};
+
+RenderObject* InlineMinMaxIterator::next()
+{
+    RenderObject* result = 0;
+    bool oldEndOfInline = endOfInline;
+    endOfInline = false;
+    while (current != 0 || (current == parent))
     {
         //kdDebug( 6040 ) << "current = " << current << endl;
-        if(!current->isFloating() && !current->isReplaced() && !current->isPositioned())
-            next = current->firstChild();
-        if(!next) {
-            while(current && current != par) {
-                next = current->nextSibling();
-                if(next) break;
+        if (!oldEndOfInline &&
+            (current == parent ||
+             (!current->isFloating() && !current->isReplaced() && !current->isPositioned())))
+            result = current->firstChild();
+        if (!result) {
+            // We hit the end of our inline. (It was empty, e.g., <span></span>.)
+            if (!oldEndOfInline && (current->isRenderInline() || current->isRunIn())) {
+                result = current;
+                endOfInline = true;
+                break;
+            }
+
+            while (current && current != parent) {
+                result = current->nextSibling();
+                if (result) break;
                 current = current->parent();
+                if (current && current != parent &&
+                    (current->isRenderInline() || current->isRunIn())) {
+                    result = current;
+                    endOfInline = true;
+                    break;
+                }
             }
         }
 
-        if(!next) break;
+        if (!result) break;
 
-        if(next->isText() || next->isBR() || next->isFloating() || next->isReplaced() || next->isPositioned())
+        if (result->isText() || result->isBR() ||
+            result->isFloating() || result->isReplaced() ||
+            result->isRenderInline() || result->isRunIn())
             break;
-        current = next;
+        
+        current = result;
+        result = 0;
     }
-    return next;
+
+    // Update our position.
+    current = result;
+    return current;
 }
 
 void RenderBlock::calcInlineMinMaxWidth()
@@ -1785,26 +1826,18 @@ void RenderBlock::calcInlineMinMaxWidth()
 
     int cw = containingBlock()->contentWidth();
 
-    RenderObject *child = firstChild();
-
     // If we are at the start of a line, we want to ignore all white-space.
     // Also strip spaces if we previously had text that ended in a trailing space.
     bool stripFrontSpaces = true;
     RenderObject* trailingSpaceChild = 0;
 
-    bool nowrap, oldnowrap;
-    nowrap = oldnowrap = style()->whiteSpace() == NOWRAP;
+    bool normal, oldnormal;
+    normal = oldnormal = style()->whiteSpace() == NORMAL;
 
-    while(child != 0)
+    InlineMinMaxIterator childIterator(this, this);
+    while (RenderObject* child = childIterator.next())
     {
-        // positioned children don't affect the minmaxwidth
-        if (child->isPositioned())
-        {
-            child = next(this, child);
-            continue;
-        }
-
-        nowrap = child->style()->whiteSpace() == NOWRAP;
+        normal = child->style()->whiteSpace() == NORMAL;
 
         if( !child->isBR() )
         {
@@ -1851,7 +1884,7 @@ void RenderBlock::calcInlineMinMaxWidth()
             short childMin = 0;
             short childMax = 0;
 
-            if (!child->isText()) {
+            if (!child->isText() && !childIterator.endOfInline) {
                 // Case (1) and (2).  Inline replaced and inline flow elements.  Both
                 // add in their margins to their min/max values.
                 int margins = 0;
@@ -1864,7 +1897,7 @@ void RenderBlock::calcInlineMinMaxWidth()
                 childMin += margins;
                 childMax += margins;
 
-                if (child->isRenderInline()) {
+                if (child->isRenderInline() || child->isRunIn()) {
                     // Add in padding for inline flow elements.  This is wrong in the
                     // same way the margin addition is wrong. XXXdwh fixme.
                     int padding = 0;
@@ -1889,7 +1922,7 @@ void RenderBlock::calcInlineMinMaxWidth()
                 childMin += child->minWidth();
                 childMax += child->maxWidth();
 
-                if (!nowrap || !oldnowrap) {
+                if (normal || oldnormal) {
                     if(m_minWidth < inlineMin) m_minWidth = inlineMin;
                     inlineMin = 0;
                 }
@@ -1897,7 +1930,7 @@ void RenderBlock::calcInlineMinMaxWidth()
                 // Add our width to the max.
                 inlineMax += childMax;
 
-                if (nowrap)
+                if (!normal)
                     inlineMin += childMin;
                 else {
                     // Now check our line.
@@ -1993,9 +2026,7 @@ void RenderBlock::calcInlineMinMaxWidth()
             trailingSpaceChild = 0;
         }
 
-        oldnowrap = nowrap;
-
-        child = next(this, child);
+        oldnormal = normal;
     }
 
     if (trailingSpaceChild && trailingSpaceChild->isText() && !m_pre) {

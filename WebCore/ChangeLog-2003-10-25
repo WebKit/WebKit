@@ -1,3 +1,27 @@
+2003-02-04  David Hyatt  <hyatt@apple.com>
+
+	Patch #1: Compacts are supposed to use their maximum intrinsic width
+	when determining if they will fit.  I was wrongly using the
+	minwidth (i.e., being too aggressive about trying to squeeze
+	the compact in there).
+
+	Also yanking the setMaxWidth/MinWidth setters, since I'm not
+	using them any more.
+	
+        Reviewed by kocienda
+
+	Patch #2: Implement an iterator for min/max width calculations
+	of blocks with inline children.  This iterator will include
+	inline flows twice (with a bool flag indicating whether you're at the
+	start or end of the flow).
+
+	Reviewed by darin
+	
+        * khtml/rendering/render_block.cpp:
+        (RenderBlock::layoutBlockChildren):
+        * khtml/rendering/render_box.h:
+        * khtml/rendering/render_object.h:
+
 2003-02-04  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
