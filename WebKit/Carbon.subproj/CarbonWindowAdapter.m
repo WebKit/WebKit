@@ -106,6 +106,7 @@ extern const OSType NSCarbonWindowPropertyTag;
 - (NSGraphicsContext *)_threadContext;
 - (void)_setFrame:(NSRect)newWindowFrameRect;
 - (void)_setVisible:(BOOL)flag;
+- (NSRect)_growBoxRect;
 @end
 
 @interface NSApplication(HIWebFrameView)
@@ -978,6 +979,32 @@ static OSStatus NSCarbonWindowHandleEvent(EventHandlerCallRef inEventHandlerCall
 // [3364117] We need to make sure this does not fall through to the AppKit implementation! bad things happen.
 - (void)_reallyDoOrderWindow:(NSWindowOrderingMode)place relativeTo:(int)otherWin findKey:(BOOL)doKeyCalc forCounter:(BOOL)isACounter force:(BOOL)doForce isModal:(BOOL)isModal {
 }
+
+- (NSRect) _growBoxRect
+{
+      WindowAttributes                attrs;
+      NSRect                                  retRect = NSZeroRect;
+
+      GetWindowAttributes( _windowRef, &attrs );
+
+      if ( attrs & kWindowResizableAttribute )
+      {
+              HIRect          bounds, rect;
+              HIViewRef   view;
+
+              HIViewGetBounds( HIViewGetRoot( _windowRef ), &bounds );
+              HIViewFindByID( HIViewGetRoot( _windowRef ), kHIViewWindowGrowBoxID, &view );
+              HIViewGetFrame( view, &rect );
+
+              rect.origin.y = bounds.size.height - CGRectGetMaxY( rect ) - 1;
+              rect.origin.x++;
+
+              retRect = *(NSRect*)&rect;
+      }
+
+      return retRect;
+}
+
 
 /*
 void _NSSetModalWindowClassLevel(int level) {

@@ -1,6 +1,13 @@
-2003-12-12  Ken Kocienda  <kocienda@apple.com>
+2003-12-13  Darin Adler  <darin@apple.com>
 
-        Reviewed by me
+        Fixed by Ed Voas, reviewed by me.
+
+        - fixed 3278443: CARBON: grow box obscures scroll bar knob
+
+        * Carbon.subproj/CarbonWindowAdapter.m: (-[CarbonWindowAdapter _growBoxRect]):
+        Return the grow box so AppKit's scroll bar code will know where it is.
+
+2003-12-12  Ken Kocienda  <kocienda@apple.com>
 
         * WebCoreSupport.subproj/WebKeyGeneration.cpp:
         (signedPublicKeyAndChallengeString): Fix build-bustin' typo.
@@ -226,7 +233,7 @@
 
         Reviewed by John.
 
-        - fixed  regression in small caps with substituted fonts my patch from yesterday caused
+        - fixed regression in small caps with substituted fonts my patch from yesterday caused
         - fixed 3463599: if Lucida font is installed, you see bad glyphs on pages that use it (advogato.org)
         - fixed storage leak if a renderer is ever deallocated (I don't think we ever do that)
         - fixed some small leaks in various error cases by adding appropriate free and dispose calls
@@ -452,8 +459,6 @@
         (-[WebBridge pollForAppletInView:]):
 
 2003-11-20  Ken Kocienda  <kocienda@apple.com>
-
-        Reviewed by me
 
 	John and I decided to apply the _web_ prefix to the tab key 
 	event method in the extras file, but I neglected to do this
@@ -4290,8 +4295,6 @@
 
 2003-07-21  Ken Kocienda  <kocienda@apple.com>
 
-        Reviewed by me.
-
 	Fixed build breaker.
 
 	Removed glyphCountFromFont function. It was used only in an
@@ -4372,8 +4375,6 @@
         (-[WebFrame _loadURL:referrer:loadType:target:triggeringEvent:form:formValues:]): Ditto
 
 2003-07-17  Ken Kocienda  <kocienda@apple.com>
-
-        Reviewed by me
 
         * Misc.subproj/WebNSURLExtras.m:
         (-[NSURL _web_URLStringLength]): Fix premature use of new CFURL API.
