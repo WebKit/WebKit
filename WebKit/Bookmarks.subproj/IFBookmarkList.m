@@ -72,6 +72,19 @@
     return [NSArray arrayWithArray:_list];
 }
 
+- (unsigned)numberOfChildren
+{
+    return [_list count];
+}
+
+- (void)_removeChild:(IFBookmark *)bookmark
+{
+    WEBKIT_ASSERT_VALID_ARG (bookmark, [bookmark parent] == self);
+    [_list removeObject:bookmark];
+    [bookmark _setParent:nil];
+}
+
+
 - (void)_insertChild:(IFBookmark *)bookmark atIndex:(unsigned)index
 {
     [_list insertObject:bookmark atIndex:index];

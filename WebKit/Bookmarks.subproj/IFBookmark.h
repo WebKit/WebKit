@@ -28,6 +28,9 @@
 // Array of child IFBookmarks. This is nil if isLeaf returns YES.
 - (NSArray *)children;
 
+// Number of children. This is 0 if isLeaf returns YES.
+- (unsigned)numberOfChildren;
+
 // The list of bookmarks containing this one.
 - (IFBookmark *)parent;
 

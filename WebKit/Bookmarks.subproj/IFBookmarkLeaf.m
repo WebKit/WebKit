@@ -14,7 +14,10 @@
 
 @implementation IFBookmarkLeaf
 
-- (id)initWithURLString:(NSString *)URLString title:(NSString *)title group:(IFBookmarkGroup *)group;
+- (id)initWithURLString:(NSString *)URLString
+                  title:(NSString *)title
+                  image:(NSImage *)image
+                  group:(IFBookmarkGroup *)group;
 {
     WEBKIT_ASSERT_VALID_ARG (group, group != nil);
     
@@ -23,7 +26,7 @@
     // Since our URLString may not be valid for creating an NSURL object,
     // just hang onto the string separately and don't bother creating
     // an NSURL object for the IFURIEntry.
-    _entry = [[IFURIEntry alloc] initWithURL:nil title:title];
+    _entry = [[IFURIEntry alloc] initWithURL:nil title:title image:image];
     _URLString = [URLString retain];
     [self _setGroup:group];
 

@@ -70,7 +70,22 @@
     return nil;
 }
 
+- (unsigned)numberOfChildren
+{
+    if (![self isLeaf]) {
+        NSRequestConcreteImplementation(self, _cmd, [self class]);
+    }
+    return 0;
+}
+
 - (void)_insertChild:(IFBookmark *)bookmark atIndex:(unsigned)index
+{
+    if (![self isLeaf]) {
+        NSRequestConcreteImplementation(self, _cmd, [self class]);
+    }
+}
+
+- (void)_removeChild:(IFBookmark *)bookmark
 {
     if (![self isLeaf]) {
         NSRequestConcreteImplementation(self, _cmd, [self class]);

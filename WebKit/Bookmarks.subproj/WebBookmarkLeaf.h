@@ -15,6 +15,9 @@
     NSString *_URLString;
 }
 
-- (id)initWithURLString:(NSString *)URLString title:(NSString *)title group:(IFBookmarkGroup *)group;
+- (id)initWithURLString:(NSString *)URLString
+                  title:(NSString *)title
+                  image:(NSImage *)image
+                  group:(IFBookmarkGroup *)group;
 
 @end

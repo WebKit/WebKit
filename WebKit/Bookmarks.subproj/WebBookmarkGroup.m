@@ -7,7 +7,7 @@
 //
 
 #import <WebKit/IFBookmarkGroup.h>
-#import <WebKit/IFBookmark.h>
+#import <WebKit/IFBookmark_Private.h>
 #import <WebKit/IFBookmarkList.h>
 #import <WebKit/IFBookmarkLeaf.h>
 #import <WebKit/WebKitDebug.h>
@@ -46,6 +46,13 @@
     return _topBookmark;
 }
 
+- (void)_sendBookmarkGroupChangedNotification
+{
+    [[NSNotificationCenter defaultCenter]
+        postNotificationName: IFBookmarkGroupChangedNotification
+                      object: self];
+}
+
 - (void)insertBookmark:(IFBookmark *)bookmark
                atIndex:(unsigned)index
             ofBookmark:(IFBookmark *)parent
@@ -55,23 +62,61 @@
 
 - (void)removeBookmark:(IFBookmark *)bookmark
 {
-    _logNotYetImplemented();
+    WEBKIT_ASSERT_VALID_ARG (bookmark, [bookmark group] == self);
+    WEBKIT_ASSERT_VALID_ARG (bookmark, [bookmark parent] != nil);
+
+    [[bookmark parent] _removeChild:bookmark];
+    [bookmark _setGroup:nil];
+    
+    [self _sendBookmarkGroupChangedNotification];
+}
+
+- (void)addNewBookmarkToBookmark:(IFBookmark *)parent
+                       withTitle:(NSString *)newTitle
+                           image:(NSImage *)newImage
+                       URLString:(NSString *)newURLString
+                          isLeaf:(BOOL)flag
+{
+    [self insertNewBookmarkAtIndex:[parent numberOfChildren]
+                        ofBookmark:parent
+                         withTitle:newTitle
+                             image:newImage
+                         URLString:newURLString
+                            isLeaf:flag];
 }
 
 - (void)insertNewBookmarkAtIndex:(unsigned)index
                       ofBookmark:(IFBookmark *)parent
-                           title:(NSString *)newTitle
-                           image:(NSString *)newImage
-                             URL:(NSString *)newURLString
+                       withTitle:(NSString *)newTitle
+                           image:(NSImage *)newImage
+                       URLString:(NSString *)newURLString
                           isLeaf:(BOOL)flag
 {
-    _logNotYetImplemented();
+    IFBookmark *bookmark;
+
+    WEBKIT_ASSERT_VALID_ARG (parent, [parent group] == self);
+    WEBKIT_ASSERT_VALID_ARG (parent, ![parent isLeaf]);
+    WEBKIT_ASSERT_VALID_ARG (newURLString, flag ? (newURLString != nil) : (newURLString == nil));
+
+    if (flag) {
+        bookmark = [[[IFBookmarkLeaf alloc] initWithURLString:newURLString
+                                                        title:newTitle
+                                                        image:newImage
+                                                        group:self] autorelease];
+    } else {
+        bookmark = [[[IFBookmarkList alloc] initWithTitle:newTitle
+                                                    image:newImage
+                                                    group:self] autorelease];
+    }
+
+    [parent _insertChild:bookmark atIndex:index];
+    [self _sendBookmarkGroupChangedNotification];
 }
 
 - (void)updateBookmark:(IFBookmark *)bookmark
                  title:(NSString *)newTitle
                  image:(NSString *)newImage
-                   URL:(NSString *)newURLString
+             URLString:(NSString *)newURLString
 {
     _logNotYetImplemented();
 }

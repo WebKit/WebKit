@@ -6,9 +6,12 @@
 //  Copyright (c) 2002 Apple Computer, Inc. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+#import <Cocoa/Cocoa.h>
+#import <WebKit/IFBookmark.h>
 
-@class IFBookmark;
+// notification sent when bookmarks are added/removed from group, or when bookmarks in group are modified
+#define IFBookmarkGroupChangedNotification		@"IFBookmarkGroupChangedNotification"
+
 
 @interface IFBookmarkGroup : NSObject
 {
@@ -30,14 +33,19 @@
 
 - (void)insertNewBookmarkAtIndex:(unsigned)index
                       ofBookmark:(IFBookmark *)parent
-                           title:(NSString *)newTitle
-                           image:(NSString *)newImage
-                             URL:(NSString *)newURLString
+                       withTitle:(NSString *)newTitle
+                           image:(NSImage *)newImage
+                       URLString:(NSString *)newURLString
+                          isLeaf:(BOOL)flag;
+- (void)addNewBookmarkToBookmark:(IFBookmark *)parent
+                       withTitle:(NSString *)newTitle
+                           image:(NSImage *)newImage
+                       URLString:(NSString *)newURLString
                           isLeaf:(BOOL)flag;
 - (void)updateBookmark:(IFBookmark *)bookmark
                  title:(NSString *)newTitle
                  image:(NSString *)newImage
-                   URL:(NSString *)newURLString;
+             URLString:(NSString *)newURLString;
 
 // storing contents on disk
 

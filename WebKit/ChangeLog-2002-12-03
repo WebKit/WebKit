@@ -1,3 +1,35 @@
+2002-05-02  John Sullivan  <sullivan@apple.com>
+
+	Some more implementation of bookmarks code, enough to support
+	adding bookmarks to the Bookmarks menu (but not yet enough to
+	support persistent bookmarks).
+
+	* Bookmarks.subproj/IFBookmark_Private.h:
+	* Bookmarks.subproj/IFBookmark.h:
+	* Bookmarks.subproj/IFBookmark.m:
+	(-[IFBookmark numberOfChildren]): New public method, stub implementation.
+	(-[IFBookmark _removeChild:]): New private method, stub implementation.
+
+	* Bookmarks.subproj/IFBookmarkGroup.h:
+	* Bookmarks.subproj/IFBookmarkGroup.m:
+	(-[IFBookmarkGroup _sendBookmarkGroupChangedNotification]):
+	(-[IFBookmarkGroup removeBookmark:]):
+	(-[IFBookmarkGroup addNewBookmarkToBookmark:withTitle:image:URLString:isLeaf:]):
+	(-[IFBookmarkGroup insertNewBookmarkAtIndex:ofBookmark:withTitle:image:URLString:isLeaf:]):
+	(-[IFBookmarkGroup updateBookmark:title:image:URLString:]):
+	Changed "URL" to "URLString" in several places, added a "with"
+	to some parameter names; added addNewBookmarkToBookmark public 
+	method; added notification that's sent when bookmarks are added or removed.
+
+	* Bookmarks.subproj/IFBookmarkLeaf.h:
+	* Bookmarks.subproj/IFBookmarkLeaf.m:
+	(-[IFBookmarkLeaf initWithURLString:title:image:group:]):
+	Added image parameter.
+
+	* Bookmarks.subproj/IFBookmarkList.m:
+	(-[IFBookmarkList numberOfChildren]): New method.
+	(-[IFBookmarkList _removeChild:]): Implemented.
+
 2002-04-30  John Sullivan  <sullivan@apple.com>
 
 	Added initial set of files/API and some of the code for
