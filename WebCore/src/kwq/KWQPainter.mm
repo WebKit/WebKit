@@ -463,7 +463,7 @@ void QPainter::drawText(int x, int y, const QString &qstring, int len)
     _lockFocus();
     
     //font = data->qfont.data->font;    
-    font = data->qfont.font;    
+    font = data->qfont.getFont();    
 
     if (len == -1)
         string = QSTRING_TO_NSSTRING(qstring);
@@ -518,8 +518,7 @@ void QPainter::drawUnderlineForText(int x, int y, const QString &qstring, int le
     
     _lockFocus();
     
-    //font = data->qfont.data->font;    
-    font = data->qfont.font;    
+    font = data->qfont.getFont();    
 
     if (len == -1)
         string = QSTRING_TO_NSSTRING(qstring);
@@ -543,7 +542,7 @@ void QPainter::drawText(int x, int y, int w, int h, int flags, const QString&qst
     _lockFocus();
     
     //font = data->qfont.data->font;    
-    font = data->qfont.font;    
+    font = data->qfont.getFont();    
         
     if (len == -1)
         string = QSTRING_TO_NSSTRING(qstring);

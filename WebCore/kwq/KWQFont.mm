@@ -43,26 +43,35 @@ void QFont::_initialize()
     _initializeWithFont (0);
 }
 
+static NSFont *_defaultNSFont = 0;
+
 NSFont *QFont::defaultNSFont()
 {
-    return [NSFont userFontOfSize: (float)12.0];
+    if (_defaultNSFont == 0)
+    	_defaultNSFont = [[NSFont userFontOfSize: (float)12.0] retain];
+    return _defaultNSFont;
 }
 
 void QFont::_initializeWithFont (const QFont *withFont)
 {
-    if (withFont == 0)
-        // Hmm...  What size should we use as a default font?
-        font = [defaultNSFont() retain];
-    else
+    if (withFont){
         font = [withFont->font retain];
+        _family = [withFont->_family retain];
+        _size = withFont->_size;
+        _trait = withFont->_trait;
+    }
+    else {
+        font = [defaultNSFont() retain];
+        _family = [[font familyName] retain];
+        _size = [font pointSize];
+        _trait = [[NSFontManager sharedFontManager] traitsOfFont: font] & (NSBoldFontMask | NSItalicFontMask);
+    }
 }
 
 
 QFont::QFont(const QFont &copyFrom)
 {
     _initializeWithFont(&copyFrom);
-    // FIXME: why were we freeing here?
-    //_free();
 }
 
 
@@ -72,6 +81,7 @@ QFont::~QFont()
 }
 
 void QFont::_free(){
+    [_family release];
     [font autorelease];
     font = 0;
 }
@@ -79,52 +89,67 @@ void QFont::_free(){
 
 // member functions --------------------------------------------------------
 
+NSFont *QFont::getFont()
+{
+    if (font == nil)
+        font = [[[NSFontManager sharedFontManager] fontWithFamily:_family traits:_trait weight:5 size:_size] retain];
+    return font;
+}
+        
+
 int QFont::pixelSize() const
 {
-    return (int)[font pointSize];
+    return (int)_size;
 }
 
 
 QString QFont::family() const
 {
-    return NSSTRING_TO_QSTRING([font familyName]);
+    return NSSTRING_TO_QSTRING(_family);
 }
 
 
 void QFont::setFamily(const QString &qfamilyName)
 {
-    NSString *familyName;
-    NSFont *oldFont = font;
-    
-    familyName = QSTRING_TO_NSSTRING(qfamilyName);
-    font = [[[NSFontManager sharedFontManager] convertFont: oldFont toFamily: familyName] retain];
-
-    [oldFont release];
+    [_family release];
+    _family = [_FAST_QSTRING_TO_NSSTRING(qfamilyName) retain];
+    [font release];
+    font = nil;
 }
 
 
 void QFont::setPixelSizeFloat(float sz)
 {
-    NSFont *oldFont = font;
-
-    font = [[[NSFontManager sharedFontManager] convertFont: oldFont toSize: sz] retain];
-
-    [oldFont release];
+    if (sz != _size){
+        _size = sz;
+        [font release];
+        font = nil;
+    }
 }
 
 
 void QFont::setWeight(int weight)
 {
-    if (weight == Bold)
-        _setTrait (NSBoldFontMask);
-    else if (weight == Normal)
-        _setTrait (NSUnboldFontMask);
+    if (weight == Bold){
+        if (!bold()){
+            [font release];
+            font = nil;
+        }
+        _trait |= NSBoldFontMask;
+    }
+    else if (weight == Normal){
+        if (bold()){
+            [font release];
+            font = nil;
+        }
+        _trait = _trait & (~NSBoldFontMask);
+    }
 }
 
 
 int QFont::weight() const
 {
-    if ([[NSFontManager sharedFontManager] traitsOfFont: font] & NSBoldFontMask)
+    if (_trait == NSBoldFontMask)
         return Bold;
     return Normal;
 }
@@ -132,30 +157,34 @@ int QFont::weight() const
 
 bool QFont::setItalic(bool flag)
 {
-    if (flag) {
-        _setTrait (NSItalicFontMask);
-        return TRUE;
+    if (flag){
+        if (!italic()){
+            [font release];
+            font = nil;
+        }
+        _trait |= NSItalicFontMask;
+        return true;
     }
-    else {
-        _setTrait (NSUnitalicFontMask);
-        return FALSE;        
+    else{
+        if (italic()){
+            [font release];
+            font = nil;
+        }
+        _trait = _trait & (~NSItalicFontMask);
+        return false;
     }
 }
 
 
 bool QFont::italic() const
 {
-    if ([[NSFontManager sharedFontManager] traitsOfFont: font] & NSItalicFontMask)
-        return TRUE;
-    return FALSE;
+    return _trait & NSItalicFontMask ? TRUE : FALSE;
 }
 
 
 bool QFont::bold() const
 {
-    if ([[NSFontManager sharedFontManager] traitsOfFont: font] & NSItalicFontMask)
-        return TRUE;
-    return FALSE;
+    return _trait & NSBoldFontMask ? TRUE : FALSE;
 }
 
 
@@ -178,14 +207,4 @@ bool QFont::operator==(const QFont &compareFont) const
 bool QFont::operator!=(const QFont &compareFont) const
 {
     return !(operator==( compareFont ));
-}
-
-
-void QFont::_setTrait (NSFontTraitMask mask)
-{
-    NSFont *oldFont = font;
-
-    font = [[[NSFontManager sharedFontManager] convertFont: oldFont toHaveTrait: mask] retain];
-
-    [oldFont release];
 }

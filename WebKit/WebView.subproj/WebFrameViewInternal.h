@@ -20,7 +20,7 @@ class KHTMLView;
     id <IFWebController>controller;
     KHTMLView *widget;
     KHTMLView *provisionalWidget;
-    IFDynamicScrollBarsView *frameScrollView;
+    NSScrollView *frameScrollView;
     bool isFlipped;
     bool needsLayout;
 }
@@ -34,6 +34,7 @@ class KHTMLView;
 - (KHTMLView *)_provisionalWidget;
 - (void)_stopPlugins;
 - (void)_removeSubviews;
-- (void)_setFrameScrollView: (IFDynamicScrollBarsView *)sv;
-- (IFDynamicScrollBarsView *)_frameScrollView;
+- (void)_setFrameScrollView: (NSScrollView *)sv;
+- (NSScrollView *)_frameScrollView;
+- (void)_setupScrollers;
 @end

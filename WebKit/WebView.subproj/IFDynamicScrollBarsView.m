@@ -12,31 +12,20 @@
 
 #import <WebKit/WebKitDebug.h>
 
-@interface IFWebView (_IFPrivate)
-- (void *)_provisionalWidget;
-@end
-
 @implementation IFDynamicScrollBarsView
 
 // make the horizontal and vertical scroll bars come and go as needed
 - (void) reflectScrolledClipView: (NSClipView*)clipView
 {
-    id cview = [self documentView];
+    id dview = [self documentView];
         
-    // Do nothing if the web view is in the provisional state.
-    if ([cview isKindOfClass: NSClassFromString (@"IFWebView")]){
-        if ([cview _provisionalWidget] != 0){
-            return;
-        }
-    }
-    
     if( clipView == [self contentView] ) {
         BOOL scrollsVertically;
         BOOL scrollsHorizontally;
-
-        scrollsVertically = [[self documentView] bounds].size.height > [self frame].size.height;
-        scrollsHorizontally = [[self documentView] bounds].size.width > [self frame].size.width;
-
+    
+        scrollsVertically = [dview bounds].size.height > [self frame].size.height;
+        scrollsHorizontally = [dview bounds].size.width > [self frame].size.width;
+    
         [self setHasVerticalScroller: scrollsVertically];
         [self setHasHorizontalScroller: scrollsHorizontally];
     }

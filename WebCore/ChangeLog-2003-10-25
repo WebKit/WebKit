@@ -1,5 +1,21 @@
 2002-03-08  Richard Williamson  <rjw@apple.com>
 
+Re-implemented KWQFont to lazily request font from NSFontManager instead of
+user converFont:.  I did this after sampling loads of http://www.apple.com/retail/theater
+and found that converting fonts was very expensive.
+
+	* src/kwq/KWQFont.mm: (QFont::defaultNSFont), (QFont::_initializeWithFont),
+	(QFont::QFont), (QFont::_free), (QFont::getFont), (QFont::pixelSize),
+	(QFont::family), (QFont::setFamily), (QFont::setPixelSizeFloat),
+	(QFont::setWeight), (QFont::weight), (QFont::setItalic), (QFont::italic),
+	(QFont::bold), (QFont::operator!=):
+	* src/kwq/KWQFontMetrics.mm: (QFontMetrics::QFontMetrics):
+	* src/kwq/KWQKHTMLPart.mm: (KHTMLPart::requestFrame):
+	* src/kwq/KWQPainter.mm: (QPainter::drawText), (QPainter::drawUnderlineForText):
+	* src/kwq/qt/qfont.h:
+
+2002-03-08  Richard Williamson  <rjw@apple.com>
+
         Instrumentation of the text fragment metrics cache.
         Added _FAST_QSTRING_TO_NSSTRING.
         

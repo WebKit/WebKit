@@ -104,7 +104,7 @@
 }
 
 
-- (void)_setFrameScrollView: (IFDynamicScrollBarsView *)sv
+- (void)_setFrameScrollView: (NSScrollView *)sv
 {
     ((IFWebViewPrivate *)_viewPrivate)->frameScrollView = [sv retain];    
     //[sv setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
@@ -114,9 +114,23 @@
     [sv setDocumentView: self];
 }
 
-- (IFDynamicScrollBarsView *)_frameScrollView
+- (NSScrollView *)_frameScrollView
 {
     return ((IFWebViewPrivate *)_viewPrivate)->frameScrollView;    
 }
+
+- (void)_setupScrollers
+{
+    BOOL scrollsVertically;
+    BOOL scrollsHorizontally;
+
+    scrollsVertically = [self bounds].size.height > [[self _frameScrollView] frame].size.height;
+    scrollsHorizontally = [self bounds].size.width > [[self _frameScrollView] frame].size.width;
+
+    [[self _frameScrollView] setHasVerticalScroller: scrollsVertically];
+    [[self _frameScrollView] setHasHorizontalScroller: scrollsHorizontally];
+}
+
+
 
 @end

@@ -1,3 +1,21 @@
+2002-03-08  Richard Williamson  <rjw@apple.com>
+
+        Fixed scroll bar recursion problems.
+Took a long time to find a stupid typo bug in [IFBaseWebController _frameForDataSource:fromFrame:]
+that overwrote an input parameter that should been a local variable.  This caused a crash the
+second time a page that contained an iframe was loaded.
+        
+	* WebView.subproj/IFBaseWebController.mm: (-[IFBaseWebController
+	createFrameNamed:for:inParent:]), (-[IFBaseWebController
+	_frameForDataSource:fromFrame:]):
+	* WebView.subproj/IFDynamicScrollBarsView.m: (-[IFDynamicScrollBarsView
+	reflectScrolledClipView:]):
+	* WebView.subproj/IFWebFramePrivate.mm: (-[IFWebFrame _checkLoadComplete:]):
+	* WebView.subproj/IFWebView.mm: (-[IFWebView layout]):
+	* WebView.subproj/IFWebViewPrivate.h:
+	* WebView.subproj/IFWebViewPrivate.mm: (-[IFWebView _setFrameScrollView:]),
+	(-[IFWebView _frameScrollView]), (-[IFWebView _setupScrollers]):
+
 2002-03-07  John Sullivan  <sullivan@apple.com>
 
 	* Misc.subproj/IFError.m: (-[IFError errorDescription]):

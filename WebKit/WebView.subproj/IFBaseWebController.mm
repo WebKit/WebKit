@@ -134,7 +134,7 @@ static id IFLoadProgressMake()
 {
     IFWebView *childView;
     IFWebFrame *newFrame;
-    IFDynamicScrollBarsView *scrollView;
+    NSScrollView *scrollView;
 
     childView = [[[IFWebView alloc] initWithFrame: NSMakeRect (0,0,0,0)] autorelease];
 
@@ -145,7 +145,7 @@ static id IFLoadProgressMake()
     [childView _setController: self];
     [childDataSource _setController: self];
 
-    scrollView  = [[[IFDynamicScrollBarsView alloc] initWithFrame: NSMakeRect(0,0,0,0)] autorelease];
+    scrollView  = [[[NSScrollView alloc] initWithFrame: NSMakeRect(0,0,0,0)] autorelease];
     [childView _setFrameScrollView: scrollView];
         
     return newFrame;
@@ -244,7 +244,7 @@ static id IFLoadProgressMake()
 {
     NSArray *frames;
     int i, count;
-    IFWebFrame *result;
+    IFWebFrame *result, *aFrame;
     
     if ([frame dataSource] == dataSource)
         return frame;
@@ -255,8 +255,8 @@ static id IFLoadProgressMake()
     frames = [[frame dataSource] children];
     count = [frames count];
     for (i = 0; i < count; i++){
-        frame = [frames objectAtIndex: i];
-        result = [self _frameForDataSource: dataSource fromFrame: frame];
+        aFrame = [frames objectAtIndex: i];
+        result = [self _frameForDataSource: dataSource fromFrame: aFrame];
         if (result)
             return result;
     }
@@ -264,8 +264,8 @@ static id IFLoadProgressMake()
     frames = [[frame provisionalDataSource] children];
     count = [frames count];
     for (i = 0; i < count; i++){
-        frame = [frames objectAtIndex: i];
-        result = [self _frameForDataSource: dataSource fromFrame: frame];
+        aFrame = [frames objectAtIndex: i];
+        result = [self _frameForDataSource: dataSource fromFrame: aFrame];
         if (result)
             return result;
     }

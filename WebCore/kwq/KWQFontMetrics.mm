@@ -306,7 +306,7 @@ QFontMetrics::QFontMetrics()
 
 QFontMetrics::QFontMetrics(const QFont &withFont)
 {
-    _initializeWithFont (withFont.font);
+    _initializeWithFont (((QFont)withFont).getFont());
 }
 
 

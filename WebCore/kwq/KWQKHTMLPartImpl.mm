@@ -1699,11 +1699,13 @@ bool KHTMLPart::requestFrame( khtml::RenderPart *frame, const QString &url, cons
         IFWebFrame *newFrame;
         id <IFWebController> controller;
 
-        fprintf (stdout, "0x%08x requestFrame():  part = 0x%08x creating frame\n", (unsigned int)this, (unsigned int)frame);    
         childURL = [NSURL URLWithString: QSTRING_TO_NSSTRING (completeURL( url ).url() )];
         
         oldDataSource = getDataSource();
         controller = [oldDataSource controller];
+
+        fprintf (stdout, "0x%08x requestFrame():  part = 0x%08x, oldDataSource = 0x%08x, [oldDataSource frame] = 0x%08x\n", (unsigned int)this, (unsigned int)frame, (unsigned int)oldDataSource, (unsigned int)[oldDataSource frame]);    
+
         newFrame = [controller createFrameNamed: nsframeName for: nil inParent: oldDataSource];
         if (newFrame == nil){
             // Controller return NO to location change, now what?
