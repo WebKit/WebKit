@@ -45,6 +45,6 @@
 // Called by WebDataSource to bind a web site URL to a icon URL and icon image.
 - (void)_setIconURL:(NSURL *)iconURL forSiteURL:(NSURL *)siteURL;
 
-- (BOOL)_hasIconForSiteURL:(NSURL *)siteURL;
+- (BOOL)_hasIconForIconURL:(NSURL *)iconURL;
 
 @end
