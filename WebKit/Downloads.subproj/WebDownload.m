@@ -446,7 +446,8 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
             return NO;
         }
     }
-    
+
+    data = [data copy];
     WebFSForkIOParam *block = malloc(sizeof(WebFSForkIOParam));
     block->paramBlock.ioCompletion = WriteCompletionCallback;
     block->paramBlock.forkRefNum = *forkRefNum;
@@ -455,7 +456,7 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
     block->paramBlock.requestCount = [data length];
     block->paramBlock.buffer = (Ptr)[data bytes];
     block->download = [self retain];
-    block->data = [data copy];
+    block->data = data;
     PBWriteForkAsync(&block->paramBlock);
 
     return YES;
