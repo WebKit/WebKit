@@ -1,5 +1,16 @@
 2003-11-18  David Hyatt  <hyatt@apple.com>
 
+	Fix for 3478122, crash using first-letter and zooming, and also the fix for 3478078, generated content
+	does not get removed properly on w3c site.  The root cause of these two bugs was the same, namely my
+	change to meld the concept of generated anonymous content and anonymous blocks created by the layout
+	engine together.  RenderBlock's setStyle method was incorrectly updating before/after/first-letter content
+	and wiping out its style in random (and bad) ways.
+	
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::setStyle):
+
+2003-11-18  David Hyatt  <hyatt@apple.com>
+
 	Fix for 3487424, images not painting because of dropped layouts.  When replaced elements dirtied
 	themselves during line layout, they only needed to do a local dirty and not walk up the parent chain.
 	
