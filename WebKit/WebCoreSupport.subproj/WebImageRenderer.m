@@ -56,7 +56,11 @@ static NSMutableSet *activeImageRenderers;
 
 - (id)initWithData:(NSData *)data MIMEType:(NSString *)MIME
 {
-    self = [super initWithData:data];
+    NS_DURING
+        self = [super initWithData:data];
+    NS_HANDLER
+        self = nil;
+    NS_ENDHANDLER
     if (self != nil) {
         // Work around issue with flipped images and TIFF by never using the image cache.
         // See bug 3344259 and related bugs.
@@ -73,7 +77,11 @@ static NSMutableSet *activeImageRenderers;
 {
     NSBundle *bundle = [NSBundle bundleForClass:[self class]];
     NSString *imagePath = [bundle pathForResource:filename ofType:@"tiff"];
-    self = [super initWithContentsOfFile:imagePath];
+    NS_DURING
+        self = [super initWithContentsOfFile:imagePath];
+    NS_HANDLER
+        self = nil;
+    NS_ENDHANDLER
     if (self != nil) {
         // Work around issue with flipped images and TIFF by never using the image cache.
         // See bug 3344259 and related bugs.
@@ -134,7 +142,11 @@ static NSMutableSet *activeImageRenderers;
     NSBitmapImageRep *imageRep = [[self representations] objectAtIndex:0];
     NSData *data = [[NSData alloc] initWithBytes:bytes length:length];
 
-    loadStatus = [imageRep incrementalLoadFromData:data complete:isComplete];
+    NS_DURING
+        loadStatus = [imageRep incrementalLoadFromData:data complete:isComplete];
+    NS_HANDLER
+        loadStatus = NSImageRepLoadStatusInvalidData; // Arbitrary choice; any error will do.
+    NS_ENDHANDLER
 
     // Hold onto the original data in case we need to copy this image.  (Workaround for appkit NSImage
     // copy flaw).

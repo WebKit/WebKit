@@ -1,3 +1,20 @@
+2003-08-17  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fixed 3376522 -- REGRESSION: uncaught exception from bad .ico causes crash (login window at 34sp.com)
+
+        I added exception handling in all the places we load images with NSImage.
+
+        * Misc.subproj/WebIconDatabase.m:
+        (-[WebIconDatabase _iconsForIconURLString:]): Add exception handler.
+        * Misc.subproj/WebIconLoader.m:
+        (-[WebIconLoader connectionDidFinishLoading:]): Add exception handler.
+        * WebCoreSupport.subproj/WebImageRenderer.m:
+        (-[WebImageRenderer initWithData:MIMEType:]): Add exception handler.
+        (-[WebImageRenderer initWithContentsOfFile:]): Add exception handler.
+        (-[WebImageRenderer incrementalLoadWithBytes:length:complete:]): Add exception handler.
+
 2003-08-15  Richard Williamson  <rjw@apple.com>
 
 	Fixed 3378530.  Ensure that line is always drawn within bounds

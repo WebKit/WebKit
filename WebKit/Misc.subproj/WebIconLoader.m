@@ -97,7 +97,12 @@
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection
 {
-    NSImage *icon = [[NSImage alloc] initWithData:_private->resourceData];
+    NSImage *icon;
+    NS_DURING
+        icon = [[NSImage alloc] initWithData:_private->resourceData];
+    NS_HANDLER
+        icon = nil;
+    NS_ENDHANDLER
     if (icon && [[icon representations] count]) {
         [[WebIconDatabase sharedIconDatabase] _setIcon:icon forIconURL:[[self URL] _web_originalDataAsString]];
     } else {

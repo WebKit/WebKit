@@ -405,16 +405,19 @@ NSSize WebIconLargeSize = {128, 128};
     }
     
     if (iconData) {
-	NSImage *icon = [[NSImage alloc] initWithData:iconData];
-	icons = [self _iconsBySplittingRepresentationsOfIcon:icon];
-	
-	if(icons){
+        NS_DURING
+            NSImage *icon = [[NSImage alloc] initWithData:iconData];
+            icons = [self _iconsBySplittingRepresentationsOfIcon:icon];
+            if (icons) {
 #if !LOG_DISABLED 
-	    double duration = CFAbsoluteTimeGetCurrent() - start;
-	    LOG(Timing, "loading and creating icon %@ took %f seconds", iconURLString, duration);
+                double duration = CFAbsoluteTimeGetCurrent() - start;
+                LOG(Timing, "loading and creating icon %@ took %f seconds", iconURLString, duration);
 #endif
-	    [_private->iconURLToIcons setObject:icons forKey:iconURLString];
-	}
+                [_private->iconURLToIcons setObject:icons forKey:iconURLString];
+            }
+        NS_HANDLER
+            icons = nil;
+        NS_ENDHANDLER
     }
     
     return icons;
