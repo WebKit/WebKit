@@ -98,6 +98,7 @@
 				9C7CABBB0190A37C0ECA16EA,
 				0867D69AFE84028FC02AAC07,
 				034768DFFF38A50411DB9C8B,
+				2D386AD203F822B500A80166,
 			);
 			isa = PBXGroup;
 			name = WebKit;
@@ -301,6 +302,7 @@
 				8466AEDE03F1F82100CA2ACA,
 				8324709A03F32305003026AC,
 				2D36FD5F03F78F9E00A80166,
+				2D386AD303F822B500A80166,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -587,6 +589,19 @@
 		};
 		2D36FD5F03F78F9E00A80166 = {
 			fileRef = 2D36FD5E03F78F9E00A80166;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2D386AD203F822B500A80166 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			name = WebDefaultPolicyDelegatePrivate.h;
+			path = WebView.subproj/WebDefaultPolicyDelegatePrivate.h;
+			refType = 4;
+		};
+		2D386AD303F822B500A80166 = {
+			fileRef = 2D386AD203F822B500A80166;
 			isa = PBXBuildFile;
 			settings = {
 			};

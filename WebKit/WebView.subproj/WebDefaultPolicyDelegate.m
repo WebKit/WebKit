@@ -3,7 +3,7 @@
 	Copyright 2002, Apple Computer, Inc.
 */
 #import <WebKit/WebController.h>
-#import <WebKit/WebControllerPolicyDelegate.h>
+#import <WebKit/WebControllerPolicyDelegatePrivate.h>
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebDefaultPolicyDelegate.h>
 #import <WebKit/WebFrame.h>
@@ -14,11 +14,16 @@
 
 @implementation WebDefaultPolicyDelegate
 
-- initWithWebController: (WebController *)wc
+static WebDefaultPolicyDelegate *sharedDelegate = nil;
+
+// Return a object with vanilla implementations of the protocol's methods
+// Note this feature relies on our default delegate being stateless
++ (WebDefaultPolicyDelegate *)_sharedWebPolicyDelegate
 {
-    [super init];
-    webController = wc;  // Non-retained, like a delegate.
-    return self;
+    if (!sharedDelegate) {
+        sharedDelegate = [[WebDefaultPolicyDelegate alloc] init];
+    }
+    return sharedDelegate;
 }
 
 - (void)unableToImplementPolicy:(WebPolicyAction)policy error:(WebError *)error forURL:(NSURL *)URL inFrame:(WebFrame *)frame

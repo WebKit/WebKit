@@ -13,7 +13,7 @@
 #import <WebKit/WebControllerPolicyDelegate.h>
 #import <WebKit/WebControllerPrivate.h>
 #import <WebKit/WebDataSourcePrivate.h>
-#import <WebKit/WebDefaultPolicyDelegate.h>
+#import <WebKit/WebDefaultPolicyDelegatePrivate.h>
 #import <WebKit/WebDocument.h>
 #import <WebKit/WebDynamicScrollBarsView.h>
 #import <WebKit/WebException.h>
@@ -161,9 +161,8 @@ NSString *WebElementLinkTitleKey = 		@"WebElementLinkTitle";
 
 - (id<WebControllerPolicyDelegate>)policyDelegate
 {
-    // FIXME: This leaks!
     if (!_private->policyDelegate)
-        _private->policyDelegate = [[WebDefaultPolicyDelegate alloc] initWithWebController: self];
+        _private->policyDelegate = [WebDefaultPolicyDelegate _sharedWebPolicyDelegate];
     return _private->policyDelegate;
 }
 

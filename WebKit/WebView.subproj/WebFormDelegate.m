@@ -7,16 +7,16 @@
 
 @implementation WebFormDelegate
 
-static WebFormDelegate *SharedDelegate = nil;
+static WebFormDelegate *sharedDelegate = nil;
 
 // Return a object with NOP implementations of the protocol's methods
 // Note this feature relies on our default delegate being stateless
 + (WebFormDelegate *)_sharedWebFormDelegate
 {
-    if (!SharedDelegate) {
-        SharedDelegate = [[WebFormDelegate alloc] init];
+    if (!sharedDelegate) {
+        sharedDelegate = [[WebFormDelegate alloc] init];
     }
-    return SharedDelegate;
+    return sharedDelegate;
 }
     
 - (void)controlTextDidBeginEditing:(NSNotification *)obj inFrame:(WebFrame *)frame { }

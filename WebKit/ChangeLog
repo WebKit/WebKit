@@ -1,3 +1,24 @@
+2003-02-10  Trey Matteson  <trey@apple.com>
+
+	Following the recent fix for ensuring that we always have a FormDelegate,
+	when we need a default policy delegate we use a shared one instead of allocing
+	a new one each time, which then would leak.
+
+	This included getting rid of the initWithWebController: method in the 
+	WebDefaultPolicyDelegate API.  The arg was not used.
+
+        Reviewed by Richard
+
+        * WebKit.pbproj/project.pbxproj:  new private header
+        * WebView.subproj/WebController.m:
+        (-[WebController policyDelegate]):  use shared delegate if none set
+        * WebView.subproj/WebDefaultPolicyDelegate.h:
+        * WebView.subproj/WebDefaultPolicyDelegate.m:
+        (+[WebDefaultPolicyDelegate _sharedWebPolicyDelegate]):  return shared instance
+        * WebView.subproj/WebDefaultPolicyDelegatePrivate.h: Added.
+        * WebView.subproj/WebFormDelegate.m:
+        (+[WebFormDelegate _sharedWebFormDelegate]):  Trivial renaming of static.
+
 2003-02-10  Richard Williamson   <rjw@apple.com>
 
         Update API issues document.
