@@ -1,3 +1,11 @@
+2002-06-05  Darin Adler  <darin@apple.com>
+
+	Fix problem seen as build failure on Jersey.
+
+	* Makefile.am: JavaScriptCore-stamp needs to be a dependency, not a
+	source file, because it doesn't have a corresponding object file.
+	Making it a dependency causes things to compile in the right order.
+
 2002-06-04  Darin Adler  <darin@apple.com>
 
 	Improve the speed of the JavaScript string append operation by growing

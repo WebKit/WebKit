@@ -6,7 +6,8 @@ INCLUDES = -I $(top_srcdir)/JavaScriptCore/kjs
 
 # FIXME: need to build kjs test program
 noinst_PROGRAMS = kjs/testkjs
-kjs_testkjs_SOURCES = kjs/testkjs.cpp JavaScriptCore-stamp
+kjs_testkjs_SOURCES = kjs/testkjs.cpp
+kjs_testkjs_DEPENDENCIES = JavaScriptCore-stamp
 kjs_testkjs_LDFLAGS = -F$(SYMROOTS) -framework JavaScriptCore
 
 FRAMEWORK_NAME = JavaScriptCore
