@@ -1,5 +1,33 @@
 2004-09-21  John Sullivan  <sullivan@apple.com>
 
+        Reviewed by Darin.
+        
+        - WebCore part of fix for <rdar://problem/3618274> REGRESSION (125-135): 
+        Option-tab doesn't always work as expected
+
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::tabsToAllControls):
+        reworked logic to match what we promise in the UI; this worked correctly
+        before for regular tabbing, but not for option-tabbing.
+
+        * kwq/KWQButton.mm:
+        (QButton::focusPolicy):
+        check tabsToAllControls() rather than just WebCoreKeyboardAccessFull
+        
+        * kwq/KWQComboBox.mm:
+        (QComboBox::focusPolicy):
+        ditto
+        
+        * kwq/KWQFileButton.mm:
+        (KWQFileButton::focusPolicy):
+        ditto
+        
+        * kwq/KWQListBox.mm:
+        (QListBox::focusPolicy):
+        ditto
+
+2004-09-21  John Sullivan  <sullivan@apple.com>
+
         * khtml/xml/dom_selection.cpp:
         (DOM::Selection::modify):
         initialize xPos to make compiler happy in deployment builds

@@ -1255,10 +1255,25 @@ bool KWQKHTMLPart::tabsToLinks() const
 
 bool KWQKHTMLPart::tabsToAllControls() const
 {
-    if ([_bridge keyboardUIMode] & WebCoreKeyboardAccessFull)
-        return !KWQKHTMLPart::currentEventIsKeyboardOptionTab();
-    else
-        return KWQKHTMLPart::currentEventIsKeyboardOptionTab();
+    WebCoreKeyboardUIMode keyboardUIMode = [_bridge keyboardUIMode];
+    BOOL handlingOptionTab = KWQKHTMLPart::currentEventIsKeyboardOptionTab();
+
+    // If tab-to-links is off, option-tab always highlights all controls
+    if ((keyboardUIMode & WebCoreKeyboardAccessTabsToLinks) == 0 && handlingOptionTab) {
+        return YES;
+    }
+    
+    // If system preferences say to include all controls, we always include all controls
+    if (keyboardUIMode & WebCoreKeyboardAccessFull) {
+        return YES;
+    }
+    
+    // Otherwise tab-to-links includes all controls, unless the sense is flipped via option-tab.
+    if (keyboardUIMode & WebCoreKeyboardAccessTabsToLinks) {
+        return !handlingOptionTab;
+    }
+    
+    return handlingOptionTab;
 }
 
 KJS::Bindings::RootObject *KWQKHTMLPart::bindingRootObject()

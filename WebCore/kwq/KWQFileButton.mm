@@ -133,12 +133,10 @@ QWidget::FocusPolicy KWQFileButton::focusPolicy() const
 {
     KWQ_BLOCK_EXCEPTIONS;
     
-    // Add an additional check here.
-    // For now, file buttons are only focused when full
-    // keyboard access is turned on.
-    unsigned keyboardUIMode = [KWQKHTMLPart::bridgeForWidget(this) keyboardUIMode];
-    if ((keyboardUIMode & WebCoreKeyboardAccessFull) == 0)
+    WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(this);
+    if (!bridge || ![bridge part] || ![bridge part]->tabsToAllControls()) {
         return NoFocus;
+    }
     
     KWQ_UNBLOCK_EXCEPTIONS;
     

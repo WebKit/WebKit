@@ -1,5 +1,18 @@
 2004-09-21  John Sullivan  <sullivan@apple.com>
 
+        Reviewed by Darin.
+
+        - WebKit part of fix for <rdar://problem/3618274> REGRESSION (125-135): 
+        Option-tab doesn't always work as expected
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge _retrieveKeyboardUIModeFromPreferences:]):
+        Don't set WebCoreKeyboardAccessFull when setting WebCoreKeyboardAccessTabsToLinks
+        after all; these need to be tested independently to get the option-tab behavior
+        correct.
+
+2004-09-21  John Sullivan  <sullivan@apple.com>
+
         * WebView.subproj/WebHTMLView.m:
         (-[WebHTMLView doCommandBySelector:]):
         Commented out part of previous change; it breaks Mail editing until Mail
