@@ -1,5 +1,13 @@
 2002-03-28  Darin Adler  <darin@apple.com>
 
+        New private interface for getting at the cache.
+
+	* Misc.subproj/IFCache.h: New.
+	* Misc.subproj/IFCache.mm: New.
+	* WebKit.pbproj/project.pbxproj: Added IFCache files.
+
+2002-03-28  Darin Adler  <darin@apple.com>
+
 	* WebView.subproj/IFBaseWebController.mm:
         (-[IFBaseWebController locationChangeDone:forFrame:]): Remove log of errors
         loading now that we have the activity viewer.

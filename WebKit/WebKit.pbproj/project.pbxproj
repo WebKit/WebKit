@@ -205,6 +205,7 @@
 				F5F084BF024BDCA701CA1520,
 				F58BAB3B025036CA01C1A526,
 				9CAE9D080252A4130ECA16EA,
+				F59EAE400253C7EE018635CA,
 			);
 			isa = PBXHeadersBuildPhase;
 		};
@@ -245,6 +246,7 @@
 				F5F084BC024BDC8E01CA1520,
 				F5F084C0024BDCA701CA1520,
 				F58BAB390250363E01C1A526,
+				F59EAE420253C8DE018635CA,
 			);
 			isa = PBXSourcesBuildPhase;
 		};
@@ -367,6 +369,8 @@
 				F5DE3CB2023575AA01A80181,
 				F5DE3CB3023575AA01A80181,
 				F515C2B70238249C01C1A525,
+				F59EAE410253C8DE018635CA,
+				F59EAE3E0253C7EE018635CA,
 			);
 			isa = PBXGroup;
 			name = Misc;
@@ -1114,6 +1118,33 @@
 				ATTRIBUTES = (
 					Public,
 				);
+			};
+		};
+		F59EAE3E0253C7EE018635CA = {
+			isa = PBXFileReference;
+			name = IFCache.h;
+			path = Misc.subproj/IFCache.h;
+			refType = 4;
+		};
+		F59EAE400253C7EE018635CA = {
+			fileRef = F59EAE3E0253C7EE018635CA;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Private,
+				);
+			};
+		};
+		F59EAE410253C8DE018635CA = {
+			isa = PBXFileReference;
+			name = IFCache.mm;
+			path = Misc.subproj/IFCache.mm;
+			refType = 4;
+		};
+		F59EAE420253C8DE018635CA = {
+			fileRef = F59EAE410253C8DE018635CA;
+			isa = PBXBuildFile;
+			settings = {
 			};
 		};
 		F5AEBB3D024A527601C1A526 = {
