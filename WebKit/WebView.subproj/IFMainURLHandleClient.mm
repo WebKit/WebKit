@@ -175,6 +175,12 @@
         
         [dataSource _setContentType:contentType];
         [dataSource _setEncoding:[sender characterSet]];
+        
+        // retain the downloadProgressHandler just in case this is a download.
+        // Alexander releases the WebController if no window is created for it.
+        // This happens in the cases mentioned in 2981866 and 2965312.
+        downloadProgressHandler = [[[dataSource controller] downloadProgressHandler] retain];
+        
         [[controller policyHandler] requestContentPolicyForMIMEType:contentType dataSource:dataSource];
         
         WEBKITDEBUGLEVEL(WEBKIT_LOG_DOWNLOAD, "main content type: %s", DEBUG_OBJECT(contentType));
@@ -203,7 +209,6 @@
     }
     else if(contentPolicy == IFContentPolicySave || contentPolicy == IFContentPolicySaveAndOpenExternally){
         if(!downloadHandler){
-            downloadProgressHandler = [[[dataSource controller] downloadProgressHandler] retain];
             [frame->_private setProvisionalDataSource:nil];
             [[dataSource _locationChangeHandler] locationChangeDone:nil forDataSource:dataSource];
             downloadHandler = [[IFDownloadHandler alloc] initWithDataSource:dataSource];

@@ -1,5 +1,16 @@
 2002-07-10  Chris Blumenberg  <cblu@apple.com>
 
+	Fixes for:
+	2981866 - Download doesn't appear in Downloads window if link was command-clicked
+	2965312 - Download progress not shown when clicking on download link with Alex not running
+
+        * WebView.subproj/IFMainURLHandleClient.mm:
+        (-[IFMainURLHandleClient IFURLHandle:resourceDataDidBecomeAvailable:]): retain
+	the downloadProgressHandler before calling requestContentPolicy as the web controller may be released
+	in requestContentPolicy
+
+2002-07-10  Chris Blumenberg  <cblu@apple.com>
+
         Fix for:
         2976311 - Download fails if you close the window that started the download
         2976308 - Can't navigate in window while download started in that window is in progress
