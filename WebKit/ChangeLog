@@ -1,3 +1,15 @@
+2003-10-24  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed:
+	<rdar://problem/3462977>: ER: Nice if images dragged from web pages didn't redownload
+	<rdar://problem/3031582>: Dragging an image to the desktop doesn't leave the file where I dropped it
+	<rdar://problem/3061371>: "CFURLGetFSRef failed" log when dragging image to Finder
+
+        Reviewed by john.
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView namesOfPromisedFilesDroppedAtDestination:]): attempt to fetch the image data from the cache, if that works, write out the file
+
 2003-10-26  Darin Adler  <darin@apple.com>
 
         * WebKitPrefix.h: Add a definition of NULL here so we get the stricter type checking

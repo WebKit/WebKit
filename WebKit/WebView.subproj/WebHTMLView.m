@@ -38,6 +38,9 @@
 #import <WebKit/WebPreferences.h>
 #import <WebKit/WebStringTruncator.h>
 
+#import <Foundation/NSFileManager_NSURLExtras.h>
+#import <Foundation/NSURL_NSURLExtras.h>
+#import <Foundation/NSURLRequestPrivate.h>
 
 // These are a little larger than typical because dragging links is a fairly
 // advanced feature that can confuse non-power-users
@@ -1481,19 +1484,34 @@ static WebHTMLView *lastHitView = nil;
 
 - (NSArray *)namesOfPromisedFilesDroppedAtDestination:(NSURL *)dropDestination
 {
-    if (!_private->draggingImageURL) {
-        return nil;
+    ASSERT(_private->draggingImageURL);
+    
+    WebView *webView = [self _webView];
+    NSString *filename;
+    
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:_private->draggingImageURL];
+    [request setHTTPUserAgent:[webView userAgentForURL:_private->draggingImageURL]];
+    NSCachedURLResponse *cachedResponse = [[NSURLCache sharedURLCache] cachedResponseForRequest:request];
+    [request release];
+    
+    NSData *data = [cachedResponse data];
+    if (data) {
+        // FIXME: Report an error if we fail to create a file.
+        NSString *path = [[dropDestination path] stringByAppendingPathComponent:[[cachedResponse response] suggestedFilename]];
+        path = [[NSFileManager defaultManager] _web_pathWithUniqueFilenameForPath:path];
+        if (![data writeToFile:path atomically:NO]) {
+            ERROR("Failed to create image file via [NSData writeToFile:atomically:]");
+        }
+        filename = [path lastPathComponent];
+    } else {
+        // FIXME: The file is supposed to be created at this point so the Finder places the file
+        // where the drag ended. Since we can't create the file until the download starts,
+        // this fails.
+        [webView _downloadURL:_private->draggingImageURL toDirectory:[dropDestination path]];
+        filename = [_private->draggingImageURL _web_suggestedFilenameWithMIMEType:nil];
     }
-
-    [[self _webView] _downloadURL:_private->draggingImageURL toDirectory:[dropDestination path]];
-
-    // FIXME: The file is supposed to be created at this point so the Finder places the file
-    // where the drag ended. Since we can't create the file until the download starts,
-    // this fails. Even if we did create the file at this point, the Finder doesn't
-    // place the file in the right place anyway (2825055).
-    // FIXME: We may return a different filename than the file that we will create.
-    // Since the file isn't created at this point anwyway, it doesn't matter what we return.
-    return [NSArray arrayWithObject:[[_private->draggingImageURL path] lastPathComponent]];
+    
+    return [NSArray arrayWithObject:filename];
 }
 
 - (void)mouseUp:(NSEvent *)event
