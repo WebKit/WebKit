@@ -1,3 +1,5 @@
+=== Safari-129 ===
+
 2004-02-19  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3563402>: when copying HTML, relative URLs should be made absolute
