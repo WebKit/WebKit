@@ -1,3 +1,14 @@
+2004-04-06  David Hyatt  <hyatt@apple.com>
+
+	After columns have been expanded to their preferred sizes, if space is left over in the table, then
+	fixed columns should expand to fill space before percentage width columns do.  The old code had it
+	backwards.
+	
+        Reviewed by john
+
+        * khtml/rendering/table_layout.cpp:
+        (AutoTableLayout::layout):
+
 2004-04-06  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Dave
