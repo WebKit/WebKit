@@ -1,3 +1,10 @@
+2002-05-20  Kenneth Kocienda  <kocienda@apple.com>
+
+        Changed assertion failure code to send a SIGQUIT instead
+        of raising an NSException.
+
+	* kwq/kwqdebug.h
+
 2002-05-19  Darin Adler  <darin@apple.com>
 
 	* khtml/rendering/render_object.cpp: (RenderObject::drawBorder):

@@ -84,27 +84,35 @@ void KWQLog(unsigned int level, const char *file, int line, const char *function
  * Assertion macros
  */
 
+#import <signal.h>
+#import <sys/types.h>
+#import <sys/resource.h>
+
+#define KWQ_ASSERTION_FAILURE \
+    do { \
+        struct rlimit _rlimit = {RLIM_INFINITY, RLIM_INFINITY}; \
+        setrlimit(RLIMIT_CORE, &_rlimit); \
+        raise(SIGQUIT); \
+    } while (0)
+
 #define KWQ_ASSERT(expr) \
     do { \
         if (!(expr)) { \
-            NSString *reason = [NSString stringWithFormat:@"assertion failed: '%s'", #expr]; \
-            [[NSException exceptionWithName:NSGenericException reason:reason userInfo: nil] raise]; \
+            KWQ_ASSERTION_FAILURE; \
         } \
     } while (0)
 
 #define KWQ_ASSERT_VALID_ARG(arg,expr) \
     do { \
         if (!(expr)) { \
-            NSString *reason = [NSString stringWithFormat:@"'%s' fails check: '%s'", #arg, #expr]; \
-            [[NSException exceptionWithName:NSInvalidArgumentException reason:reason userInfo: nil] raise]; \
+            KWQ_ASSERTION_FAILURE; \
         } \
     } while (0)
 
 #define KWQ_ASSERT_NOT_NIL(arg) \
     do { \
         if ((arg) == nil) { \
-            NSString *reason = [NSString stringWithFormat:@"'%s' is nil", #arg]; \
-            [[NSException exceptionWithName:NSInvalidArgumentException reason:reason userInfo: nil] raise]; \
+            KWQ_ASSERTION_FAILURE; \
         } \
     } while (0)
 
