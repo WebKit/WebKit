@@ -1,3 +1,15 @@
+2003-04-08  Trey Matteson  <trey@apple.com>
+
+	3221355 document is numb to clicks after going back
+
+	The layoutTimer now does a layout if the doc is in state Completed,
+	in addition to LayoutAcceptable.
+
+        Reviewed by Richard.
+
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _timedLayout:]):
+
 2003-04-08  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: 3221128 - Double grey lines on macromedia.com home page

@@ -471,7 +471,7 @@ Repeat load of the same URL (by any other means of navigation other than the rel
     [_private->scheduledLayoutTimer release];
     _private->scheduledLayoutTimer = nil;
     
-    if (_private->state == WebFrameStateLayoutAcceptable) {
+    if (_private->state >= WebFrameStateLayoutAcceptable) {
         NSView <WebDocumentView> *documentView = [[self frameView] documentView];
         
         if ([self webView])
