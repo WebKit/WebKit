@@ -20,16 +20,6 @@ NSString * const WebKitErrorMIMETypeKey = 		@"WebKitErrorMIMETypeKey";
 NSString * const WebKitErrorPlugInNameKey = 		@"WebKitErrorPlugInNameKey";
 NSString * const WebKitErrorPlugInPageURLStringKey = 	@"WebKitErrorPlugInPageURLStringKey";
 
-// Download and file I/O errors
-#define WebKitErrorDescriptionCannotCreateFile UI_STRING("Cannot create file", "WebKitErrorCannotCreateFile description")
-#define WebKitErrorDescriptionCannotOpenFile UI_STRING("Cannot open file", "WebKitErrorCannotOpenFile description")
-#define WebKitErrorDescriptionCannotCloseFile UI_STRING("Failure occurred while closing file", "WebKitErrorCannotCloseFile description")
-#define WebKitErrorDescriptionCannotWriteToFile UI_STRING("Cannot write file", "WebKitErrorCannotWriteToFile description")
-#define WebKitErrorDescriptionCannotRemoveFile UI_STRING("Cannot remove file", "WebKitErrorCannotRemoveFile description")
-#define WebKitErrorDescriptionCannotMoveFile UI_STRING("Cannot move file", "WebKitErrorCannotMoveFile description")
-#define WebKitErrorDescriptionDownloadDecodingFailedToComplete UI_STRING_KEY("Download decoding failed", "Download decoding failed (at end)", "WebKitErrorDownloadDecodingFailedToComplete description")
-#define WebKitErrorDescriptionDownloadDecodingFailedMidStream UI_STRING_KEY("Download decoding failed", "Download decoding failed (midstream)", "WebKitErrorDownloadDecodingFailedMidStream description")
-
 // Policy errors
 #define WebKitErrorDescriptionCannotShowMIMEType UI_STRING("Cannot show content with specified mime type", "WebKitErrorCannotShowMIMEType description")
 #define WebKitErrorDescriptionCannotShowURL UI_STRING("Cannot show URL", "WebKitErrorCannotShowURL description")
@@ -64,6 +54,8 @@ static void registerErrors(void);
                     pluginName:(NSString *)pluginName
                       MIMEType:(NSString *)MIMEType
 {
+    [[self class] _registerWebKitErrors];
+    
     NSMutableDictionary *userInfo = [[NSMutableDictionary alloc] init];
     if (contentURLString) {
         [userInfo setObject:contentURLString forKey:NSErrorFailingURLKey];
@@ -96,16 +88,6 @@ static void registerErrors()
     pool = [[NSAutoreleasePool alloc] init];
 
     NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
-        // Download and file I/O errors
-        WebKitErrorDescriptionCannotCreateFile, 		[NSNumber numberWithInt: WebKitErrorCannotCreateFile],
-        WebKitErrorDescriptionCannotOpenFile, 			[NSNumber numberWithInt: WebKitErrorCannotOpenFile],
-        WebKitErrorDescriptionCannotCloseFile, 			[NSNumber numberWithInt: WebKitErrorCannotCloseFile],
-        WebKitErrorDescriptionCannotWriteToFile, 		[NSNumber numberWithInt: WebKitErrorCannotWriteToFile],
-        WebKitErrorDescriptionCannotRemoveFile, 		[NSNumber numberWithInt: WebKitErrorCannotRemoveFile],
-        WebKitErrorDescriptionCannotMoveFile, 			[NSNumber numberWithInt: WebKitErrorCannotMoveFile],
-        WebKitErrorDescriptionDownloadDecodingFailedToComplete,	[NSNumber numberWithInt: WebKitErrorDownloadDecodingFailedToComplete],
-        WebKitErrorDescriptionDownloadDecodingFailedMidStream, 	[NSNumber numberWithInt: WebKitErrorDownloadDecodingFailedMidStream],
-
         // Policy errors
         WebKitErrorDescriptionCannotShowMIMEType, 		[NSNumber numberWithInt: WebKitErrorCannotShowMIMEType],
         WebKitErrorDescriptionCannotShowURL, 			[NSNumber numberWithInt: WebKitErrorCannotShowURL],

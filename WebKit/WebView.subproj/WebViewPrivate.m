@@ -10,7 +10,6 @@
 #import <WebKit/WebDefaultPolicyDelegate.h>
 #import <WebKit/WebDefaultResourceLoadDelegate.h>
 #import <WebKit/WebDefaultUIDelegate.h>
-#import <WebKit/WebDownloadPrivate.h>
 #import <WebKit/WebFormDelegatePrivate.h>
 #import <WebKit/WebFrameLoadDelegate.h>
 #import <WebKit/WebFramePrivate.h>
@@ -29,6 +28,7 @@
 #import <WebFoundation/WebNSDataExtras.h>
 #import <WebFoundation/WebNSStringExtras.h>
 #import <WebFoundation/NSURLConnection.h>
+#import <WebFoundation/NSURLDownloadPrivate.h>
 #import <WebFoundation/NSURLRequest.h>
 
 #import <WebCore/WebCoreSettings.h>
@@ -229,7 +229,7 @@
     ASSERT(URL);
 
     NSURLRequest *request = [[NSURLRequest alloc] initWithURL:URL];
-    WebDownload *download = [[WebDownload alloc] initWithRequest:request];
+    NSURLDownload *download = [[NSURLDownload alloc] initWithRequest:request];
     [request release];
     
     if (directory != nil && [directory isAbsolutePath]) {

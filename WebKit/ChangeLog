@@ -1,3 +1,42 @@
+2003-04-25  Chris Blumenberg  <cblu@apple.com>
+
+        Renamed WebDownload to NSURLDownload and moved it to WebFoundation.
+
+        Reviewed by rjw.
+
+        * Downloads.subproj/WebBinHexDecoder.h: Removed.
+        * Downloads.subproj/WebBinHexDecoder.m: Removed.
+        * Downloads.subproj/WebDownload.h: Removed.
+        * Downloads.subproj/WebDownload.m: Removed.
+        * Downloads.subproj/WebDownloadDecoder.h: Removed.
+        * Downloads.subproj/WebDownloadPrivate.h: Removed.
+        * Downloads.subproj/WebGZipDecoder.h: Removed.
+        * Downloads.subproj/WebGZipDecoder.m: Removed.
+        * Downloads.subproj/WebMacBinaryDecoder.h: Removed.
+        * Downloads.subproj/WebMacBinaryDecoder.m: Removed.
+        * Downloads.subproj/crc16.h: Removed.
+        * Downloads.subproj/crc16.m: Removed.
+        * English.lproj/Localizable.strings:
+        * English.lproj/StringsNotToBeLocalized.txt:
+        * Misc.subproj/WebKit.h:
+        * Misc.subproj/WebKitErrors.h:
+        * Misc.subproj/WebKitErrors.m:
+        (-[NSError _initWithPluginErrorCode:contentURLString:pluginPageURLString:pluginName:MIMEType:]):
+        (registerErrors):
+        * Misc.subproj/WebNSWorkspaceExtras.h: Removed.
+        * Misc.subproj/WebNSWorkspaceExtras.m: Removed.
+        * WebKit.exp:
+        * WebKit.pbproj/project.pbxproj:
+        * WebView.subproj/WebDataSource.m:
+        * WebView.subproj/WebDataSourcePrivate.m:
+        * WebView.subproj/WebMainResourceClient.h:
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient initWithDataSource:]):
+        (-[WebMainResourceClient continueAfterContentPolicy:response:]):
+        * WebView.subproj/WebView.h:
+        * WebView.subproj/WebViewPrivate.m:
+        (-[WebView _downloadURL:toDirectory:]):
+
 2003-04-25  Richard Williamson   <rjw@apple.com>
 
         Final API review changes.

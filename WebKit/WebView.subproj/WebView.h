@@ -11,9 +11,9 @@
 @class WebHistoryItem;
 @class WebViewPrivate;
 @class WebDataSource;
-@class WebDownload;
 @class WebFrame;
 @class NSURLConnection;
+@class NSURLDownload;
 @class WebPreferences;
 @class WebFrameView;
 
@@ -123,16 +123,16 @@ extern NSString *WebElementLinkLabelKey;	// NSString of the text within the anch
 
 /*!
     @method setDownloadDelegate:
-    @abstract Set the WebView's WebDownloadDelegate.
-    @discussion The download delegate is retained by WebDownload when any downloads are in progress.
-    @param delegate The WebDownloadDelegate to set as the download delegate.
+    @abstract Set the WebView's NSURLDownloadDelegate.
+    @discussion The download delegate is retained by NSURLDownload when any downloads are in progress.
+    @param delegate The NSURLDownloadDelegate to set as the download delegate.
 */    
 - (void)setDownloadDelegate: (id)delegate;
 
 /*!
     @method downloadDelegate
-    @abstract Return the WebView's WebDownloadDelegate.
-    @result The WebView's WebDownloadDelegate.
+    @abstract Return the WebView's NSURLDownloadDelegate.
+    @result The WebView's NSURLDownloadDelegate.
 */    
 - (id)downloadDelegate;
 

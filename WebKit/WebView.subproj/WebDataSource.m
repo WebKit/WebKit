@@ -7,7 +7,6 @@
 #import <WebKit/WebDataProtocol.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDocument.h>
-#import <WebKit/WebDownload.h>
 #import <WebKit/WebException.h>
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebHTMLRepresentation.h>

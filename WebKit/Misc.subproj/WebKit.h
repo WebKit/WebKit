@@ -6,7 +6,6 @@
 #import <WebKit/WebBackForwardList.h>
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebDocument.h>
-#import <WebKit/WebDownload.h>
 #import <WebKit/WebFrame.h>
 #import <WebKit/WebFrameLoadDelegate.h>
 #import <WebKit/WebFrameView.h>

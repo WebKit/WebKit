@@ -12,16 +12,15 @@
 #import <WebFoundation/WebNSURLExtras.h>
 #import <WebFoundation/NSURLConnection.h>
 #import <WebFoundation/NSURLConnectionPrivate.h>
+#import <WebFoundation/NSURLDownloadPrivate.h>
 #import <WebFoundation/NSURLRequest.h>
 #import <WebFoundation/NSURLRequestPrivate.h>
 #import <WebFoundation/NSURLResponse.h>
 #import <WebFoundation/NSURLResponsePrivate.h>
 
-
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDefaultPolicyDelegate.h>
 #import <WebKit/WebDocument.h>
-#import <WebKit/WebDownloadPrivate.h>
 #import <WebKit/WebFrameLoadDelegate.h>
 #import <WebKit/WebFrameView.h>
 #import <WebKit/WebFramePrivate.h>
@@ -42,7 +41,7 @@
     
     if (self) {
         [self setDataSource:ds];
-        proxy = [[WebResourceDelegateProxy alloc] init];
+        proxy = [[NSURLConnectionDelegateProxy alloc] init];
         [proxy setDelegate:self];
     }
 
@@ -171,11 +170,11 @@
 
     case WebPolicyDownload:
         [proxy setDelegate:nil];
-        [WebDownload _downloadWithLoadingResource:connection
-                                          request:request
-                                         response:r
-                                         delegate:[self downloadDelegate]
-                                            proxy:proxy];
+        [NSURLDownload _downloadWithLoadingResource:connection
+                                            request:request
+                                           response:r
+                                           delegate:[self downloadDelegate]
+                                              proxy:proxy];
         [proxy release];
         proxy = nil;
         [self receivedError:[self interruptForPolicyChangeError]];
@@ -325,41 +324,3 @@
 
 @end
 
-@implementation WebResourceDelegateProxy
-
-- (void)setDelegate:(id)theDelegate
-{
-    delegate = theDelegate;
-}
-
-- (NSURLRequest *)connection:(NSURLConnection *)connection willSendRequest:(NSURLRequest *)request redirectResponse:(NSURLResponse *)redirectResponse
-{
-    ASSERT(delegate);
-    return [delegate connection:connection willSendRequest:request redirectResponse:redirectResponse];
-}
-
-- (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response
-{
-    ASSERT(delegate);
-    [delegate connection:connection didReceiveResponse:response];
-}
-
-- (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data
-{
-    ASSERT(delegate);
-    [delegate connection:connection didReceiveData:data];
-}
-
-- (void)connectionDidFinishLoading:(NSURLConnection *)connection
-{
-    ASSERT(delegate);
-    [delegate connectionDidFinishLoading:connection];
-}
-
-- (void)connection:(NSURLConnection *)connection didFailLoadingWithError:(NSError *)error
-{
-    ASSERT(delegate);
-    [delegate connection:connection didFailLoadingWithError:error];
-}
-
-@end
