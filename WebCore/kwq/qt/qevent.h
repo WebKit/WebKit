@@ -66,6 +66,7 @@ class QKeyEvent : public QEvent {
 public:
     int key() const;
     ButtonState state() const;
+    void accept();
 };
 
 

@@ -26,4 +26,15 @@
 #ifndef QCOMBOBOX_H_
 #define QCOMBOBOX_H_
 
+#include "qwidget.h"
+#include "qlistbox.h"
+
+class QComboBox : public QWidget {
+public:
+    QComboBox(QWidget *parent=0, const char *name=0);
+    QComboBox(bool rw, QWidget *parent=0, const char *name=0);
+
+    QListBox *listBox() const;
+};
+
 #endif

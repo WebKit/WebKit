@@ -26,4 +26,15 @@
 #ifndef QHBOX_H_
 #define QHBOX_H_
 
+#include "qwidget.h"
+#include "qframe.h"
+
+class QHBox : public QFrame {
+public:
+    QHBox();
+    QHBox(QWidget *);
+
+    bool setStretchFactor(QWidget*, int stretch);
+};
+
 #endif

@@ -37,6 +37,15 @@
 
 class QWidget : public QObject, public QPaintDevice {
 public:
+
+    enum FocusPolicy {
+        NoFocus = 0,
+        TabFocus = 0x1,
+        ClickFocus = 0x2,
+        StrongFocus = 0x3,
+        WheelFocus = 0x7
+    };
+    
     // FIXME: do any of these methods need to be virtual?
     int winId() const;
     int x() const;
@@ -55,6 +64,9 @@ public:
     QPoint mapToGlobal(const QPoint &) const;
     void setFocus();
     void clearFocus();
+    FocusPolicy focusPolicy() const;
+    virtual void setFocusPolicy(FocusPolicy);
+    virtual void setFocusProxy( QWidget * );
     virtual void setActiveWindow();
     virtual void setEnabled(bool);
     const QPalette& palette() const;
@@ -68,6 +80,7 @@ public:
     virtual void setFont(const QFont &);
     void constPolish() const;
     virtual QSize minimumSizeHint() const;
+    bool isVisible() const;
     virtual void setCursor(const QCursor &);
 };
 

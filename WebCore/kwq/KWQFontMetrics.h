@@ -37,8 +37,10 @@ public:
     QFontMetrics();
     QFontMetrics(const QFont&);
 
+    int height() const;
     int width() const;
     int width(char) const;
+    int width(QString) const;
     int descent() const;
     QRect boundingRect(QChar) const;
     QSize size(int flags, const QString& str, int len=-1, int tabstops=0, int *tabarray=0, char **intern=0 ) const;

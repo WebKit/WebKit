@@ -27,12 +27,26 @@
 #define QLINEEDIT_H_
 
 #include "qwidget.h"
+#include "qevent.h"
+#include "qstring.h"
 
 class QLineEdit : public QWidget {
 public:
+    enum EchoMode { Normal, NoEcho, Password };
+    
     QLineEdit(QWidget *parent=0, const char *name=0 );
 
+    virtual void setEchoMode(EchoMode);
     bool isReadOnly() const;
+    bool event(QEvent *);
+    bool frame() const;
+    virtual void setCursorPosition(int);
+    int cursorPosition() const;
+    virtual void setText(const QString &);
+    int maxLength() const;
+    virtual void setMaxLength(int);
+    void setReadOnly(bool);
+    void selectAll();
 };
 
 #endif

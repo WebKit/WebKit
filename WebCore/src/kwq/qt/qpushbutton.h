@@ -28,11 +28,13 @@
 
 #include "qwidget.h"
 #include "qbutton.h"
+#include "qstring.h"
 
 class QPushButton : public QButton {
 public:
     QPushButton();
     QPushButton(QWidget *);
+    QPushButton(const QString &text, QWidget *parent, const char* name=0);
 };
 
 #endif

@@ -36,6 +36,7 @@ public:
     QButton(QWidget *);
     
     virtual void setText(const QString &);
+    QString text() const;
 };
 
 #endif

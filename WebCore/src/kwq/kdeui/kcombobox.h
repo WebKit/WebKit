@@ -26,7 +26,13 @@
 #ifndef KCOMBOBOX_H_
 #define KCOMBOBOX_H_
 
-class KComboBox {
+#include <qcombobox.h>
+#include <kcompletion.h>
+
+class KComboBox : public QComboBox, public KCompletionBase {
+public:
+    KComboBox(QWidget *parent=0, const char *name=0);
+    KComboBox(bool rw, QWidget *parent=0, const char *name=0);
 };
 
 #endif

@@ -23,42 +23,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef QOBJECT_H_
-#define QOBJECT_H_
+#ifndef KCOMPLETION_H_
+#define KCOMPLETION_H_
 
-#include <kwqdef.h>
+#include <qobject.h>
+#include <qstringlist.h>
 
-#include "qobjectdefs.h"
-#include "qnamespace.h"
-#include "qstring.h"
-#include "qevent.h"
-#include "qstringlist.h"
-
-// FIXME: should these macros be in "kwq.h" or other header file?
-#define slots
-#define SLOT(x) "x"
-#define signals protected
-#define SIGNAL(x) "x"
-#define emit
-#define Q_OBJECT
-
-class QVariant;
-
-class QObject : public Qt {
+class KCompletion : public QObject {
 public:
-    QObject(QObject *parent=0, const char *name=0);
-    const char *name() const;
-    virtual void setName(const char *);
-    QVariant property(const char *name) const;
-    bool inherits(const char *) const;
-    static bool connect(const QObject *, const char *, const QObject *, const char *);
-    bool connect(const QObject *, const char *, const char *) const;
-    static bool disconnect( const QObject *, const char *, const QObject *, const char *);
-    int startTimer(int);
-    void killTimer(int);
-    void killTimers();
-    void installEventFilter(const QObject *);
-    void blockSignals(bool);
+    KCompletion();
+    void setItems(const QStringList&);
+};
+
+class KCompletionBase {
+public:
+     KCompletionBase();
+     KCompletion *completionObject(bool hsig = true);
 };
 
 #endif

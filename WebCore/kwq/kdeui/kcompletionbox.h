@@ -26,4 +26,9 @@
 #ifndef KCOMPLETIONBOX_H_
 #define KCOMPLETIONBOX_H_
 
+#include "klistbox.h"
+
+class KCompletionBox : public KListBox {
+};
+
 #endif
