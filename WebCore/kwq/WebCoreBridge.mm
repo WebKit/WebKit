@@ -760,4 +760,9 @@ static NSAttributedString *attributedString(DOM::NodeImpl *_startNode, int start
     return part->name().getNSString();
 }
 
+- (NSURL *)URL
+{
+    return part->url().getNSURL();
+}
+
 @end

@@ -47,9 +47,7 @@
     
     [resourceData release];
     [representation release];
-    [inputURL release];
     [request release];
-    [finalURL release];
     [mainClient release];
     [mainHandle release];
     [subresourceClients release];
@@ -263,26 +261,25 @@
 
 - (void)_setURL:(NSURL *)URL
 {
-    // We should never be getting a redirect callback after the data
-    // source is committed. It would be a WebFoundation bug if it sent
-    // a redirect callback after commit.
-    ASSERT(!_private->committed);
-
-    [URL retain];
-    [_private->finalURL release];
-    _private->finalURL = URL;
-
-    [[_private->controller locationChangeDelegate] serverRedirectTo:URL forDataSource:self];
+    WebResourceRequest *newRequest = [_private->request copy];
+    [_private->request release];
+    [newRequest setURL:URL];
+    _private->request = newRequest;
 }
 
 - (void)_setRequest:(WebResourceRequest *)request
 {
-    if (_private->request != request) {
-        [request retain];
-        [_private->request release];
-        _private->request = request;
-        [self _setURL:[request URL]];
-    }
+    // We should never be getting a redirect callback after the data
+    // source is committed. It would be a WebFoundation bug if it sent
+    // a redirect callback after commit.
+    ASSERT(!_private->committed);
+    ASSERT(_private->request != request);
+    
+    [request retain];
+    [_private->request release];
+    _private->request = request;
+
+    [[_private->controller locationChangeDelegate] serverRedirectTo:[request URL] forDataSource:self];
 }
 
 - (void)_setResponse:(WebResourceResponse *)response

@@ -24,6 +24,7 @@
 #import <WebFoundation/WebError.h>
 #import <WebFoundation/WebHTTPResourceRequest.h>
 #import <WebFoundation/WebNSStringExtras.h>
+#import <WebFoundation/WebNSURLExtras.h>
 #import <WebFoundation/WebResourceHandle.h>
 #import <WebFoundation/WebResourceResponse.h>
 
@@ -266,6 +267,25 @@
 
 - (void)loadURL:(NSURL *)URL referrer:(NSString *)referrer
 {
+    // FIXME: This logic doesn't exactly match what KHTML does in openURL, so it's possible
+    // this will screw up in some cases involving framesets.
+    if ([[URL _web_URLByRemovingFragment] isEqual:[[self URL] _web_URLByRemovingFragment]]) {
+        [self openURL:URL];
+
+        WebHistoryItem *backForwardItem = [[WebHistoryItem alloc] initWithURL:URL
+            target:[frame name] parent:[[frame parent] name] title:[[frame dataSource] pageTitle]];
+        [backForwardItem setAnchor:[URL fragment]];
+        [[[frame controller] backForwardList] addEntry:backForwardItem];
+        [backForwardItem release];
+
+        //id <WebLocationChangeDelegate> delegate = [[frame controller] locationChangeDelegate];
+        WebDataSource *dataSource = [frame dataSource];
+        [dataSource _setURL:URL];
+        
+        // FIXME: Call some method here.
+        return;
+    }
+    
     WebResourceRequest *request = [[WebResourceRequest alloc] initWithURL:URL];
     [request setReferrer:referrer];
     [self loadRequest:request];
@@ -342,15 +362,6 @@
     currentItem = [[[frame controller] backForwardList] currentEntry];
     
     return [currentItem documentState];
-}
-
-- (void)addBackForwardItemWithURL:(NSURL *)URL anchor:(NSString *)anchor;
-{
-    WebHistoryItem *backForwardItem = [[WebHistoryItem alloc] initWithURL:URL
-        target:[frame name] parent:[[frame parent] name] title:[[frame dataSource] pageTitle]];
-    [backForwardItem setAnchor:anchor];
-    [[[frame controller] backForwardList] addEntry:backForwardItem];
-    [backForwardItem release];
 }
 
 - (NSString *)userAgentForURL:(NSURL *)URL

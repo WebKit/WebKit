@@ -1,5 +1,19 @@
 2002-10-15  Darin Adler  <darin@apple.com>
 
+        * kwq/KWQKHTMLPartImpl.mm: (KWQKHTMLPartImpl::urlSelected):
+	Move the special case of a different anchor within the same
+	page into WebKit from here.
+
+        * kwq/kdecore/kurl.h: Mark urlcmp as a friend.
+        * kwq/KWQKURL.mm: (urlcmp): Implement the ignoreRef feature, which
+	is needed to make the KHTMLPart::openURL function work right.
+
+        * kwq/WebCoreBridge.h: Removed addBackForwardItemWithURL:anchor:
+	and added URL method.
+        * kwq/WebCoreBridge.mm: (-[WebCoreBridge URL]): Added.
+
+2002-10-15  Darin Adler  <darin@apple.com>
+
 	- fixed 3074558 -- frames multiply at: http://www.iarsn.com/
 
 	The key was to make the name attribute work properly.

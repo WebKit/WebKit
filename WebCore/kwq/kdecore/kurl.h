@@ -99,9 +99,9 @@ private:
     int pathEndPos;
     int queryEndPos;
     int fragmentEndPos;
+    
+    // True if both URLs are the same.
+    friend bool urlcmp(const QString &URLA, const QString &URLB, bool ignoreTrailingSlash, bool ignoreRef);
 };
-
-// True if both URLs are the same.
-bool urlcmp(const QString &URLA, const QString &URLB, bool ignoreTrailingSlash, bool ignoreRef);
 
 #endif

@@ -1,5 +1,24 @@
 2002-10-15  Darin Adler  <darin@apple.com>
 
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge loadURL:referrer:]): Add a special case for when the URL is the
+	same as the previous URL for the same frame. This relies on some logic in
+	KHTML's openURL method that handles this case too.
+
+        * WebView.subproj/WebDataSource.m:
+        (-[WebDataSource initWithRequest:]): Don't bother keeping an inputURL.
+        (-[WebDataSource URL]): Just return [[self request] URL]. Maybe we can
+	remove this altogether.
+        * WebView.subproj/WebDataSourcePrivate.h: Remove inputURL, finalURL.
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSourcePrivate dealloc]): No need to release inputURL, finalURL.
+        (-[WebDataSource _setURL:]): Used only by the new code above. Makes a copy
+	of the request, changes the URL, and then drops the old request.
+        (-[WebDataSource _setRequest:]): Changed to no longer call _setURL. Now
+	does much of the work that _setURL used to do.
+
+2002-10-15  Darin Adler  <darin@apple.com>
+
 	WebKit part of improved frame name support.
 
         * WebView.subproj/WebFrame.m:
