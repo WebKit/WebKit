@@ -721,7 +721,8 @@ void NodeImpl::handleLocalEvents(EventImpl *evt, bool useCapture)
     if (!m_regdListeners)
         return;
 
-    QPtrListIterator<RegisteredEventListener> it(*m_regdListeners);
+    QPtrList<RegisteredEventListener> listenersCopy = *m_regdListeners;
+    QPtrListIterator<RegisteredEventListener> it(listenersCopy);
     Event ev = evt;
     for (; it.current(); ++it) {
         if (it.current()->id == evt->id() && it.current()->useCapture == useCapture)

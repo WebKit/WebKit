@@ -1,3 +1,14 @@
+2003-03-16  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Trey.
+
+	- fixed 3196050 - Hang in www.janegoodall.org dynamic menus
+	
+        * khtml/xml/dom_nodeimpl.cpp:
+        (NodeImpl::handleLocalEvents): Copy handlers before processing
+	them, so we don't go into an infinite loop if a handler adds or
+	removes handlers.
+
 2003-03-16  Trey Matteson  <trey@apple.com>
 
 	3198135 - need to fix our projects so SYMROOT is not stripped
