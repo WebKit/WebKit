@@ -1,5 +1,20 @@
 2004-11-17  Richard Williamson   <rjw@apple.com>
 
+	Fixed <rdar://problem/3863601> Legacy font cache code in [WebTextRendererFactory createSharedFactory] may be unnecesary
+
+	and added call to SPI for
+
+	<rdar://problem/3884448> WebKit should turn on CG local font cache
+
+	currently disabled until a Tiger build shows up with the SPI.
+
+        Reviewed by David Harrison.
+
+        * WebCoreSupport.subproj/WebTextRendererFactory.m:
+        (+[WebTextRendererFactory createSharedFactory]):
+
+2004-11-17  Richard Williamson   <rjw@apple.com>
+
         Fixed <rdar://problem/3882212> REGRESSION: Images clipped instead of scaled
         Fixed <rdar://problem/3884088> Crash terminating image load
 

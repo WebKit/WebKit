@@ -215,8 +215,12 @@ fontsChanged( ATSFontNotificationInfoRef info, void *_factory)
     if (![self sharedFactory]) {
         [[[self alloc] init] release];
 
+	// Turn on local font cache, in addition to the system cache.
+	// See 3835148
+	//CGFontSetShouldUseMulticache(true);
+	
         CGFontCache *fontCache;
-        fontCache = CGFontCacheCreate();
+        fontCache = CGFontCacheGetLocalCache();
         CGFontCacheSetShouldAutoExpire (fontCache, false);
 
         size_t s;
@@ -228,7 +232,6 @@ fontsChanged( ATSFontNotificationInfoRef info, void *_factory)
         LOG (CacheSizes, "Glyph cache size set to %d bytes.", s);
 #endif
         CGFontCacheSetMaxSize (fontCache, s);
-        CGFontCacheRelease(fontCache);
 
         // Ignore errors returned from ATSFontNotificationSubscribe.  If we can't subscribe then we
         // won't be told about changes to fonts.
