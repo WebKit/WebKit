@@ -37,6 +37,8 @@
         (QFontMetrics::checkSelectionPoint):
         * kwq/WebCoreTextRenderer.h:
 
+=== WebCore-145.1 ===
+
 2004-06-16  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by John.
