@@ -15,6 +15,6 @@ clean-am:
 	pbxbuild clean OBJROOT=$(SYMROOTS) SYMROOT=$(SYMROOTS) DSTROOT=$(SYMROOTS)
 	rm -rf $(SYMROOTS)/JavaScriptCore.build
 	rm -rf $(SYMROOTS)/JavaScriptCore.framework
-	rm -rf $(SYMROOTS)/Alexander.app/Frameworks/JavaScriptCore.framework
+	rm -rf $(SYMROOTS)/Safari.app/Frameworks/JavaScriptCore.framework
 
 CLEANFILES = JavaScriptCore-stamp

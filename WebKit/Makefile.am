@@ -4,7 +4,7 @@ clean-am:
 	pbxbuild clean OBJROOT=$(SYMROOTS) SYMROOT=$(SYMROOTS) DSTROOT=$(SYMROOTS) 
 	rm -rf $(SYMROOTS)/WebKit.build
 	rm -rf $(SYMROOTS)/WebKit.framework
-	rm -rf $(SYMROOTS)/Alexander.app/Frameworks/WebKit.framework
+	rm -rf $(SYMROOTS)/Safari.app/Frameworks/WebKit.framework
 
 previous-clean-timestamp: force-clean-timestamp
 	make clean && touch $@

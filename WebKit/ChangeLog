@@ -1,3 +1,13 @@
+2002-12-10  John Sullivan  <sullivan@apple.com>
+
+	Fixed more "Alexander"s that were lurking in places I forgot 
+	to look before.
+
+        Reviewed by Darin
+
+        * Makefile.am:
+	"rm -rf $(SYMROOTS)/Safari.app/Frameworks/WebKit.framework"
+
 2002-12-10  Darin Adler  <darin@apple.com>
 
 	- fixed 3124081 -- REGRESSION: partial progress is left in address field after download

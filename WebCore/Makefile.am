@@ -6,7 +6,7 @@ clean-am:
 	pbxbuild clean OBJROOT=$(SYMROOTS) SYMROOT=$(SYMROOTS) DSTROOT=$(SYMROOTS) 
 	rm -rf $(SYMROOTS)/WebCore.build
 	rm -rf $(SYMROOTS)/WebCore.framework
-	rm -rf $(SYMROOTS)/Alexander.app/Frameworks/WebCore.framework
+	rm -rf $(SYMROOTS)/Safari.app/Frameworks/WebCore.framework
 
 WebCore-combined.exp: WebCore.exp WebCore-tests.exp
 	cat $^ > $@
