@@ -1,3 +1,13 @@
+2003-05-28  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	- fixed 3263157 - REGRESSION: tabbing into a secure password field shows contents
+
+        * kwq/KWQTextField.mm:
+        (-[KWQSecureTextField textDidEndEditing:]): Make sure to restore bullet mode if we
+	accidentally lose it.
+
 2003-05-27  Maciej Stachowiak  <mjs@apple.com>
 
         Rolled in fix from Safari-80~1-branch

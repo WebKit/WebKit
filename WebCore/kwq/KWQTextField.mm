@@ -612,6 +612,27 @@
     [[self delegate] fieldEditorDidMouseDown:event];
 }
 
+- (void)textDidEndEditing:(NSNotification *)notification
+{
+    [super textDidEndEditing:notification];
+
+    // When tabbing from one secure text field to another, the super
+    // call above will change the focus, and then turn off bullet mode
+    // for the secure field, leaving the plain text showing. As a
+    // workaround for this AppKit bug, we detect this circumstance
+    // (changing from one secure field to another) and set selectable
+    // to YES, and then back to whatever it was - this has the side
+    // effect of turning on bullet mode.
+
+    NSTextView *textObject = [notification object];
+    id delegate = [textObject delegate];
+    if (delegate != self && [delegate isKindOfClass:[NSSecureTextField class]]) {
+	BOOL oldSelectable = [textObject isSelectable];
+	[textObject setSelectable:YES];
+	[textObject setSelectable:oldSelectable];
+    }
+}
+
 @end
 
 @implementation KWQSecureTextFieldCell
