@@ -1,3 +1,12 @@
+2002-08-13  Maciej Stachowiak  <mjs@apple.com>
+
+	Add the ability to determine the classes of live JavaScript
+	objects, to help with leak fixing.
+
+        * kwq/WebCoreJavaScript.h:
+        * kwq/WebCoreJavaScript.mm:
+        (+[WebCoreJavaScript liveObjectClasses]):
+
 2002-08-13  David Hyatt  <hyatt@apple.com>
 
 	An initial implementation of percentage height table cells.

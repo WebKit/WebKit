@@ -20,6 +20,7 @@
 + (int)javaScriptInterpretersCount;
 + (int)javaScriptNoGCAllowedObjectsCount;
 + (int)javaScriptReferencedObjectsCount;
++ (NSSet *)javaScriptLiveObjectClasses;
 + (void)garbageCollectJavaScriptObjects;
 
 @end

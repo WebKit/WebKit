@@ -20,6 +20,12 @@
  *
  */
 
+#if APPLE_CHANGES
+#define _COLLECTOR
+#include <CoreFoundation/CoreFoundation.h>
+#include <cxxabi.h>
+#endif
+
 #include "collector.h"
 #include "internal.h"
 
@@ -325,6 +331,33 @@ int Collector::numReferencedObjects()
     block = block->next;
   }
   return count;
+}
+
+CFSetRef Collector::liveObjectClasses()
+{
+  CFMutableSetRef classes = CFSetCreateMutable(NULL, 0, &kCFTypeSetCallBacks);
+
+  CollectorBlock *block = root;
+  while (block) {
+    ValueImp **r = (ValueImp**)block->mem;
+    assert(r);
+    for (int i = 0; i < block->size; i++, r++)
+   {
+      ValueImp *imp = *r;
+      if (imp != NULL) {
+	const char *mangled_name = typeid(*imp).name();
+	int status;
+	char *demangled_name = __cxxabiv1::__cxa_demangle (mangled_name, NULL, NULL, &status);
+
+        CFStringRef className = CFStringCreateWithCString(NULL, demangled_name, kCFStringEncodingASCII);
+	free(demangled_name);
+	CFSetAddValue(classes, className);
+	CFRelease(className);
+      }
+    }
+    block = block->next;
+  }
+  return classes;
 }
 
 #endif

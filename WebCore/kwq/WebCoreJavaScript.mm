@@ -51,6 +51,11 @@ using KJS::Collector;
     return Collector::numReferencedObjects();
 }
 
++ (NSSet *)liveObjectClasses
+{
+    return [(NSSet *)Collector::liveObjectClasses() autorelease];
+}
+
 + (void)garbageCollect
 {
     while (Collector::collect()) { }

@@ -1,5 +1,13 @@
 2002-08-13  Maciej Stachowiak  <mjs@apple.com>
 
+	Add the ability to determine the classes of live JavaScript
+	objects, to help with leak fixing.
+
+        * kjs/collector.h, kjs/collector.cpp:
+        (Collector::liveObjectClasses):
+
+2002-08-13  Maciej Stachowiak  <mjs@apple.com>
+
 	Small speed improvement. 3% faster on cvs-js-performance, no
 	measurable change on cvs-static-urls.
 	
