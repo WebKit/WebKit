@@ -116,9 +116,9 @@ void RenderBlock::addChildToFlow(RenderObject* newChild, RenderObject* beforeChi
             RenderText* newTextChild = static_cast<RenderText*>(textChild);
         //kdDebug( 6040 ) << "first letter" << endl;
 
-            pseudoStyle->setDisplay( INLINE );
+            // Force inline display (except for floating first-letters)
+            pseudoStyle->setDisplay( pseudoStyle->isFloating() ? BLOCK : INLINE);
             pseudoStyle->setPosition( STATIC ); // CSS2 says first-letter can't be positioned.
-            pseudoStyle->setFloating( FNONE ); // CSS2 says first-letter can't be floated.
             
             RenderObject* firstLetter = RenderFlow::createFlow(0, pseudoStyle, renderArena()); // anonymous box
             firstLetterContainer->addChild(firstLetter, firstLetterContainer->firstChild());

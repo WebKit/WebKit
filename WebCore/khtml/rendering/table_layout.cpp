@@ -555,7 +555,7 @@ void AutoTableLayout::calcMinMaxWidth()
         totalpct = 99;
     
     maxNonPercent = (maxNonPercent * 100 + 50) / (100-totalpct);
-	maxWidth = kMax( maxNonPercent,  maxWidth );
+    maxWidth = kMax( maxNonPercent,  maxWidth );
    
     maxWidth = kMax( maxWidth, maxPercent );
     maxWidth = kMax( maxWidth, spanMaxWidth );
