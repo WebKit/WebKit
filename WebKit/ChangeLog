@@ -1,5 +1,10 @@
 2003-09-04  Chris Blumenberg  <cblu@apple.com>
 
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView postURL:target:len:buf:file:]): Fixed typo in newly added comment.
+
+2003-09-04  Chris Blumenberg  <cblu@apple.com>
+
 	Fixed: <rdar://problem/3407328>: request headers at the start of the file passed to NPN_PostURL don't work for Acrobat plug-in?
 
         Reviewed by john.

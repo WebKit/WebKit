@@ -1442,7 +1442,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
              file:(NPBool)file
 {
     LOG(Plugins, "NPN_PostURL: %s", URLCString);        
-    // As documented, only allow headers to be specified view NPP_PostURL when using a file.
+    // As documented, only allow headers to be specified via NPP_PostURL when using a file.
     return [self _postURLNotify:URLCString target:target len:len buf:buf file:file notifyData:NULL allowHeaders:file];
 }
 
