@@ -15,8 +15,8 @@
 #import "WebFoundationLogging.h"
 #import "WebSystemBits.h"
 
-#define SIZE_FILE_NAME @".size"
-#define SIZE_FILE_NAME_CSTRING ".size"
+#define SIZE_FILE_NAME @"size"
+#define SIZE_FILE_NAME_CSTRING "size"
 
 #if ERROR_DISABLED
 #define BEGIN_EXCEPTION_HANDLER
