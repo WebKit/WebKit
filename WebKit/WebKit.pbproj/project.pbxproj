@@ -268,6 +268,7 @@
 				3519E9EF02F0DF570ACA2ACA,
 				F5E7B24703025CE801A80180,
 				F501251D0302EA04018635CE,
+				F560BEBE030DAF4401C1A526,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -354,6 +355,7 @@
 				F5F732D302FF4D4F01A80180,
 				F5E7B24803025CE801A80180,
 				F501251E0302EA04018635CE,
+				F560BEBF030DAF4401C1A526,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -431,6 +433,8 @@
 				25C29825016E29620ECA149E,
 				F508946902B71D59018A9CD4,
 				F508946A02B71D59018A9CD4,
+				F560BEBC030DAF4401C1A526,
+				F560BEBD030DAF4401C1A526,
 				F59668C802AD2923018635CA,
 				F59668C902AD2923018635CA,
 			);
@@ -1604,6 +1608,31 @@
 		};
 		F5488CF702CB04EE01FF6274 = {
 			fileRef = F5488CF502CB04EE01FF6274;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F560BEBC030DAF4401C1A526 = {
+			isa = PBXFileReference;
+			path = WebSearchableTextView.h;
+			refType = 4;
+		};
+		F560BEBD030DAF4401C1A526 = {
+			isa = PBXFileReference;
+			path = WebSearchableTextView.m;
+			refType = 4;
+		};
+		F560BEBE030DAF4401C1A526 = {
+			fileRef = F560BEBC030DAF4401C1A526;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Private,
+				);
+			};
+		};
+		F560BEBF030DAF4401C1A526 = {
+			fileRef = F560BEBD030DAF4401C1A526;
 			isa = PBXBuildFile;
 			settings = {
 			};
