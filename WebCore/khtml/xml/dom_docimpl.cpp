@@ -1338,19 +1338,39 @@ void DocumentImpl::close()
     bool wasLocationChangePending = part() && part()->isScheduledLocationChangePending();
     bool doload = !parsing() && m_tokenizer && !m_processingLoadEvent && !wasLocationChangePending;
     
-    if (body() && doload) {
+    if (doload) {
         m_processingLoadEvent = true;
+
         // We have to clear the tokenizer, in case someone document.write()s from the
         // onLoad event handler, as in Radar 3206524
         delete m_tokenizer;
         m_tokenizer = 0;
-        dispatchImageLoadEventsNow();
-        body()->dispatchWindowEvent(EventImpl::LOAD_EVENT, false, false);
+
+        // Create a body element if we don't already have one.
+        // In the case of Radar 3758785, the window.onload was set in some javascript, but never fired because there was no body.  
+        // This behavior now matches Firefox and IE.
+        HTMLElementImpl *body = this->body();
+        if (!body) {
+            NodeImpl *de = documentElement();
+            if (de) {
+                body = new HTMLBodyElementImpl(docPtr());
+                int exceptionCode = 0;
+                de->appendChild(body, exceptionCode);
+                if (exceptionCode != 0)
+                    body = 0;
+            }
+        }
+
+        if (body) {
+            dispatchImageLoadEventsNow();
+            body->dispatchWindowEvent(EventImpl::LOAD_EVENT, false, false);
+        }
 
 #ifdef INSTRUMENT_LAYOUT_SCHEDULING
         if (!ownerElement())
             printf("onload fired at %d\n", elapsedTime());
 #endif
+
         m_processingLoadEvent = false;
     }
     

@@ -1,3 +1,15 @@
+2005-02-04  Adele Amchan  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        Fix for <rdar://problem/3758785> Safari no longer works at BankOfAmerica online banking for military users
+  
+        When closing the document, if a body doesn't exist we now create one.  This bug was preventing the onload handler from
+        firing in cases where there wasn't a body.  In the BankOfAmerica case, the page was just a bit of script where the onload
+        handler redirected to the correct page.
+
+        * khtml/xml/dom_docimpl.cpp: (DocumentImpl::close):
+
 2005-02-03  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Chris
