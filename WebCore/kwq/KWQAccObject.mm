@@ -82,6 +82,7 @@ using DOM::Range;
 using DOM::DOMString;
 
 using khtml::plainText;
+using khtml::EVerticalAlign;
 using khtml::RenderObject;
 using khtml::RenderWidget;
 using khtml::RenderCanvas;
@@ -293,6 +294,29 @@ extern "C" void NSAccessibilityUnregisterUniqueIdForUIElement(id element);
     }
 }
 
+-(BOOL)isAttachment
+{
+    // widgets are the replaced elements that we represent to AX as attachments
+    BOOL result = m_renderer->isWidget();
+    
+    // assert that a widget is a replaced element that is not an image
+    ASSERT(!result || (m_renderer->isReplaced() && !m_renderer->isImage()));
+    
+    return result;
+}
+
+-(NSView*)attachmentView
+{
+    ASSERT(m_renderer->isReplaced() && m_renderer->isWidget() && !m_renderer->isImage());
+
+    RenderWidget* renderWidget = static_cast<RenderWidget*>(m_renderer);
+    QWidget* widget = renderWidget->widget();
+    if (widget)
+         return widget->getView();
+    
+    return nil;
+}
+
 -(NSString*)role
 {
     if (!m_renderer)
@@ -318,8 +342,18 @@ extern "C" void NSAccessibilityUnregisterUniqueIdForUIElement(id element);
         return @"AXWebArea";
     if (m_renderer->isBlockFlow())
         return NSAccessibilityGroupRole;
+    if ([self isAttachment])
+        return [[self attachmentView] accessibilityAttributeValue:NSAccessibilityRoleAttribute];
 
     return NSAccessibilityUnknownRole;
+}
+
+-(NSString*)subrole
+{
+    if ([self isAttachment])
+        return [[self attachmentView] accessibilityAttributeValue:NSAccessibilitySubroleAttribute];
+    
+    return nil;
 }
 
 -(NSString*)roleDescription
@@ -332,6 +366,10 @@ extern "C" void NSAccessibilityUnregisterUniqueIdForUIElement(id element);
 #else
     if (!m_renderer)
         return nil;
+
+    // attachments have the AXImage role, but a different subrole
+    if ([self isAttachment])
+        return [[self attachmentView] accessibilityAttributeValue:NSAccessibilityRoleDescriptionAttribute];
     
     // FIXME 3517227: These need to be localized (UI_STRING here is a dummy macro)
     // FIXME 3447564: It would be better to call some AppKit API to get these strings
@@ -448,6 +486,9 @@ extern "C" void NSAccessibilityUnregisterUniqueIdForUIElement(id element);
         // transform it to a CFString and return that
         return (id)qString.getCFString();
     }
+    
+    if ([self isAttachment])
+        return [[self attachmentView] accessibilityAttributeValue:NSAccessibilityValueAttribute];
         
     // FIXME: We might need to implement a value here for more types
     // FIXME: It would be better not to advertise a value at all for the types for which we don't implement one;
@@ -458,14 +499,15 @@ extern "C" void NSAccessibilityUnregisterUniqueIdForUIElement(id element);
 
 -(NSString*)title
 {
-    if (!m_renderer || m_areaElement)
+    if (!m_renderer || m_areaElement || !m_renderer->element())
         return nil;
     
-    if (m_renderer->element() && m_renderer->element()->isHTMLElement() &&
-             Node(m_renderer->element()).elementId() == ID_BUTTON)
+    if (m_renderer->element()->isHTMLElement() && Node(m_renderer->element()).elementId() == ID_BUTTON)
         return [self textUnderElement];
-    else if (m_renderer->element() && m_renderer->element()->hasAnchor())
+    if (m_renderer->element()->hasAnchor())
         return [self textUnderElement];
+    if ([self isAttachment])
+        return [[self attachmentView] accessibilityAttributeValue:NSAccessibilityTitleAttribute];
     
     return nil;
 }
@@ -480,7 +522,8 @@ extern "C" void NSAccessibilityUnregisterUniqueIdForUIElement(id element);
             QString alt = static_cast<ElementImpl*>(m_renderer->element())->getAttribute(ATTR_ALT).string();
             return !alt.isEmpty() ? alt.getNSString() : nil;
         }
-    }
+    } else if ([self isAttachment])
+        return [[self attachmentView] accessibilityAttributeValue:NSAccessibilityTitleAttribute];
     
     return nil;
 }
@@ -532,9 +575,14 @@ static QRect boundingBoxRect(RenderObject* obj)
     if (!m_renderer || m_renderer->style()->visibility() != khtml::VISIBLE)
         return YES;
 
+    // NOTE: BRs always have text boxes now, so the text box check here can be removed
     if (m_renderer->isText())
         return m_renderer->isBR() || !static_cast<RenderText*>(m_renderer)->firstTextBox();
     
+    // delegate to the attachment
+    if ([self isAttachment])
+        return [[self attachmentView] accessibilityIsIgnored];
+        
     if (m_areaElement || (m_renderer->element() && m_renderer->element()->hasAnchor()))
         return NO;
 
@@ -554,6 +602,7 @@ static QRect boundingBoxRect(RenderObject* obj)
     static NSArray* webAreaAttrs = nil;
     if (attributes == nil) {
         attributes = [[NSArray alloc] initWithObjects: NSAccessibilityRoleAttribute,
+            NSAccessibilitySubroleAttribute,
             NSAccessibilityRoleDescriptionAttribute,
             NSAccessibilityChildrenAttribute,
             NSAccessibilityHelpAttribute,
@@ -795,6 +844,9 @@ static QRect boundingBoxRect(RenderObject* obj)
 
     if ([attributeName isEqualToString: NSAccessibilityRoleAttribute])
         return [self role];
+
+    if ([attributeName isEqualToString: NSAccessibilitySubroleAttribute])
+        return [self subrole];
 
     if ([attributeName isEqualToString: NSAccessibilityRoleDescriptionAttribute])
         return [self roleDescription];
@@ -1083,33 +1135,141 @@ static QRect boundingBoxRect(RenderObject* obj)
     return [NSValue valueWithRect:rect];
 }
 
-static void AXAttributeStringAddFont(NSMutableAttributedString *attrStr, NSString *attribute, NSFont* font, NSRange range)
+static CGColorRef CreateCGColorIfDifferent(NSColor *nsColor, CGColorRef existingColor)
 {
-    NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
-        [font fontName]                             , NSAccessibilityFontNameKey,
-        [font familyName]                           , NSAccessibilityFontFamilyKey,
-        [font displayName]                          , NSAccessibilityVisibleNameKey,
-        [NSNumber numberWithFloat:[font pointSize]] , NSAccessibilityFontSizeKey,
-    nil];
+    // get color information assuming NSDeviceRGBColorSpace 
+    NSColor *rgbColor = [nsColor colorUsingColorSpaceName:NSDeviceRGBColorSpace];
+    if (rgbColor == nil) {
+	rgbColor = [NSColor blackColor];
+    }
+    float components[4];
+    [rgbColor getRed:&components[0] green:&components[1] blue:&components[2] alpha:&components[3]];
+    
+    // create a new CGColorRef to return
+    CGColorSpaceRef cgColorSpace = CGColorSpaceCreateWithName(kCGColorSpaceGenericRGB);
+    CGColorRef cgColor = CGColorCreate(cgColorSpace, components);
+    CGColorSpaceRelease(cgColorSpace);
+    CFMakeCollectable(cgColor);
+    
+    // check for match with existing color
+    if (existingColor && CGColorEqualToColor(cgColor, existingColor))
+        cgColor = nil;
         
-    [attrStr addAttribute:attribute value:dict range:range];
+    return cgColor;
 }
 
-static void AXAttributeStringAddElement(NSMutableAttributedString *attrStr, NSString *attribute, id element, NSRange range)
+static void AXAttributeStringSetColor(NSMutableAttributedString *attrString, NSString *attribute, NSColor* color, NSRange range)
+{
+    if (color != nil) {
+        CGColorRef existingColor = (CGColorRef) [attrString attribute:attribute atIndex:range.location effectiveRange:nil];
+        CGColorRef cgColor = CreateCGColorIfDifferent(color, existingColor);
+        if (cgColor != NULL) {
+            [attrString addAttribute:attribute value:(id)cgColor range:range];
+            CGColorRelease(cgColor);
+        }
+    } else
+        [attrString removeAttribute:attribute range:range];
+}
+
+static void AXAttributeStringSetNumber(NSMutableAttributedString *attrString, NSString *attribute, NSNumber* number, NSRange range)
+{
+    if (number != nil) {
+	[attrString addAttribute:attribute value:number range:range];
+    } else
+        [attrString removeAttribute:attribute range:range];
+}
+
+static void AXAttributeStringSetFont(NSMutableAttributedString *attrString, NSString *attribute, NSFont* font, NSRange range)
+{
+    NSDictionary *dict;
+    
+    if (font != nil) {
+        dict = [NSDictionary dictionaryWithObjectsAndKeys:
+            [font fontName]                             , NSAccessibilityFontNameKey,
+            [font familyName]                           , NSAccessibilityFontFamilyKey,
+            [font displayName]                          , NSAccessibilityVisibleNameKey,
+            [NSNumber numberWithFloat:[font pointSize]] , NSAccessibilityFontSizeKey,
+        nil];
+
+        [attrString addAttribute:attribute value:dict range:range];
+    } else
+        [attrString removeAttribute:attribute range:range];
+    
+}
+
+static void AXAttributeStringSetStyle(NSMutableAttributedString *attrString, RenderObject *renderer, NSRange range)
+{
+    RenderStyle *style = renderer->style();
+
+    // set basic font info
+    AXAttributeStringSetFont(attrString, NSAccessibilityFontTextAttribute, style->font().getNSFont(), range);
+
+    // set basic colors
+    AXAttributeStringSetColor(attrString, NSAccessibilityForegoundColorTextAttribute, style->color().getNSColor(), range);
+    AXAttributeStringSetColor(attrString, NSAccessibilityBackgroundColorTextAttribute, style->backgroundColor().getNSColor(), range);
+
+    // set super/sub scripting
+    EVerticalAlign alignment = style->verticalAlign();
+    if (alignment == khtml::SUB)
+        AXAttributeStringSetNumber(attrString, NSAccessibilitySuperscriptTextAttribute, [NSNumber numberWithInt:(-1)], range);
+    else if (alignment == khtml::SUPER)
+        AXAttributeStringSetNumber(attrString, NSAccessibilitySuperscriptTextAttribute, [NSNumber numberWithInt:1], range);
+    else
+        [attrString removeAttribute:NSAccessibilitySuperscriptTextAttribute range:range];
+    
+    // set shadow
+    if (style->textShadow() != nil)
+        AXAttributeStringSetNumber(attrString, NSAccessibilityShadowTextAttribute, [NSNumber numberWithBool:YES], range);
+    else
+        [attrString removeAttribute:NSAccessibilityShadowTextAttribute range:range];
+    
+    // set underline and strikethrough
+    int decor = style->textDecorationsInEffect();
+    if ((decor & khtml::UNDERLINE) == 0) {
+        [attrString removeAttribute:NSAccessibilityUnderlineTextAttribute range:range];
+        [attrString removeAttribute:NSAccessibilityUnderlineColorTextAttribute range:range];
+    }
+    
+    if ((decor & khtml::LINE_THROUGH) == 0) {
+        [attrString removeAttribute:NSAccessibilityStrikethroughTextAttribute range:range];
+        [attrString removeAttribute:NSAccessibilityStrikethroughColorTextAttribute range:range];
+    }
+
+    if ((decor & (khtml::UNDERLINE | khtml::LINE_THROUGH)) != 0) {
+        // find colors using quirk mode approach (strict mode would use current
+        // color for all but the root line box, which would use getTextDecorationColors)
+        QColor underline, overline, linethrough;
+        renderer->getTextDecorationColors(decor, underline, overline, linethrough);
+        
+        if ((decor & khtml::UNDERLINE) != 0) {
+            AXAttributeStringSetNumber(attrString, NSAccessibilityUnderlineTextAttribute, [NSNumber numberWithBool:YES], range);
+            AXAttributeStringSetColor(attrString, NSAccessibilityUnderlineColorTextAttribute, underline.getNSColor(), range);
+        }
+
+        if ((decor & khtml::LINE_THROUGH) != 0) {
+            AXAttributeStringSetNumber(attrString, NSAccessibilityStrikethroughTextAttribute, [NSNumber numberWithBool:YES], range);
+            AXAttributeStringSetColor(attrString, NSAccessibilityStrikethroughColorTextAttribute, linethrough.getNSColor(), range);
+        }
+    }
+}
+
+static void AXAttributeStringSetElement(NSMutableAttributedString *attrString, NSString *attribute, id element, NSRange range)
 {
     if (element != nil) {
         // make a serialiazable AX object
         AXUIElementRef axElement = NSAccessibilityCreateAXUIElementRef(element);
         if (axElement != NULL) {
-            [attrStr addAttribute:attribute value:(id)axElement range:range];
+            [attrString addAttribute:attribute value:(id)axElement range:range];
             CFRelease(axElement);
         }
+    } else {
+        [attrString removeAttribute:attribute range:range];
     }
 }
 
-- (KWQAccObject*)linkUIElementForNode: (Node)node
+static KWQAccObject *AXLinkElementForNode (NodeImpl *node)
 {
-    RenderObject *obj = node.handle()->renderer();
+    RenderObject *obj = node->renderer();
     if (!obj)
         return nil;
 
@@ -1121,106 +1281,64 @@ static void AXAttributeStringAddElement(NSMutableAttributedString *attrStr, NSSt
     return anchor->renderer()->document()->getAccObjectCache()->accObject(anchor->renderer());
 }
 
-#if 0
--- model code from AppKits DOM attr string builder
-- (BOOL)_addAttachmentForElement:(DOMElement *)element URL:(NSURL *)url needsParagraph:(BOOL)needsParagraph usePlaceholder:(BOOL)flag {
-    BOOL retval = NO;
-    NSFileWrapper *fileWrapper = nil;
-    static NSImage *missingImage = nil;
-
-    if (_flags.isIndexing) return NO;
-    if ([url isFileURL]) {
-        NSString *path = [[url path] stringByStandardizingPath];
-        if (path) fileWrapper = [[NSFileWrapper alloc] initWithPath:path];
-    }
-    if (!fileWrapper) {
-        WebResource *resource = [_dataSource subresourceForURL:url];
-        if (resource) {
-            fileWrapper = [[[NSFileWrapper alloc] initRegularFileWithContents:[resource data]] autorelease];
-            [fileWrapper setPreferredFilename:[url _web_suggestedFilenameWithMIMEType:[resource MIMEType]]];
-        }
-    }
-    if (!fileWrapper) fileWrapper = [_dataSource _fileWrapperForURL:url];
-    if (fileWrapper || flag) {
-        unsigned textLength = [_attrStr length];
-        NSTextAttachment *attachment = [[NSTextAttachment alloc] initWithFileWrapper:fileWrapper];
-        NSTextAttachmentCell *cell;
-        NSString *string = [[NSString alloc] initWithFormat:(needsParagraph ? @"%C\n" : @"%C"), NSAttachmentCharacter];
-        NSRange rangeToReplace = NSMakeRange(textLength, 0);
-        NSDictionary *attrs;
-        if (!fileWrapper) {
-            if (!missingImage) {
-                NSString *missingImagePath = [[self _webKitBundle] pathForResource:@"missing_image" ofType:@"tiff"];
-                if (missingImagePath) missingImage = [[NSImage allocWithZone:_NXAppZone()] initByReferencingFile:missingImagePath];
-                if (!missingImage) {
-                    missingImage = [[NSImage allocWithZone:_NXAppZone()] initByReferencingFile:[_NSKitBundle() pathForResource:@"NSMysteryDocument" ofType:@"tiff"]];
-                    [missingImage setScalesWhenResized:YES];
-                    [missingImage setSize:NSMakeSize(32.0, 32.0)];
-                }
-                cell = [[NSTextAttachmentCell alloc] initImageCell:missingImage];
-                [attachment setAttachmentCell:cell];
-                [cell release];
-            }
-        }
-        [_attrStr replaceCharactersInRange:rangeToReplace withString:string];
-        rangeToReplace.length = [string length];
-        attrs = [self _attributesForElement:element];
-        if (!_flags.isTesting && rangeToReplace.length > 0) {
-            [_attrStr setAttributes:attrs range:rangeToReplace];
-            rangeToReplace.length = 1;
-            [_attrStr addAttribute:NSAttachmentAttributeName value:attachment range:rangeToReplace];
-        }
-        [string release];
-        [attachment release];
-        _flags.isSoft = NO;
-        retval = YES;
-    }
-    return retval;
-}
-#endif
-
-- (NSAttributedString *) accessibilityAttributedStringForRange: (Range)range
+static void AXAttributedStringAppendText (NSMutableAttributedString *attrString, NodeImpl *nodeImpl, const QChar *chars, int length)
 {
-    NSRange attrStringRange = NSMakeRange(0, 0);
-    TextIterator    it(range);
+    // easier to calculate the range before appending the string
+    NSRange attrStringRange = NSMakeRange([attrString length], length);
     
-    NSMutableAttributedString *attrString = [[NSMutableAttributedString alloc] init];
-    CFMutableStringRef textString = (CFMutableStringRef)[attrString mutableString];
-    
-    while (!it.atEnd()) {
-        NSMutableDictionary *attrs = [[NSMutableDictionary alloc] initWithCapacity:4];
+    // append the string from this node
+    [[attrString mutableString] appendString:[NSString stringWithCharacters:(const UniChar*)chars length:length]];
 
-        if (it.length() != 0) {
-            // append the text for this run
-            CFStringAppendCharacters(textString, (const UniChar *)it.characters(), it.length());
-            
-            // prepare to add the attributes for this run
-            attrStringRange.location += attrStringRange.length;
-            attrStringRange.length = it.length();
-            Node node = it.range().startContainer();
-            ASSERT(node == it.range().endContainer());
-            RenderStyle *style = node.handle()->renderer()->style();
-            
-            // add the attributes
-            AXAttributeStringAddFont(attrString, NSAccessibilityFontTextAttribute, style->font().getNSFont(), attrStringRange);
-            AXAttributeStringAddElement(attrString, NSAccessibilityLinkTextAttribute, [self linkUIElementForNode:node], attrStringRange);
-        } else {
-            // handle replaced element, e.g attachments
-        }
-        
-        [attrs release];
-        it.advance();
+    // add new attributes and remove irrelevant inherited ones
+    // NOTE: color attributes are handled specially because -[NSMutableAttributedString addAttribute: value: range:] does not merge
+    // identical colors.  Workaround is to not replace an existing color attribute if it matches what we are adding.  This also means
+    // we can not just pre-remove all inherited attributes on the appended string, so we have to remove the irrelevant ones individually.
+
+    // remove inherited attachment from prior AXAttributedStringAppendReplaced
+    [attrString removeAttribute:NSAccessibilityAttachmentTextAttribute range:attrStringRange];
+    
+    // set new attributes
+    AXAttributeStringSetStyle(attrString, nodeImpl->renderer(), attrStringRange);
+    AXAttributeStringSetElement(attrString, NSAccessibilityLinkTextAttribute, AXLinkElementForNode(nodeImpl), attrStringRange);
+}
+
+static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrString, NodeImpl *replacedNode)
+{
+    static const UniChar attachmentChar = NSAttachmentCharacter;
+
+    // we should always be given a rendered node, but be safe
+    if (!replacedNode || !replacedNode->renderer()) {
+        ASSERT_NOT_REACHED();
+        return;
     }
+    
+    // we should always be given a replaced node, but be safe
+    // replaced nodes are either attachments (widgets) or images
+    if (!replacedNode->renderer()->isReplaced()) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+        
+    // create an AX object, but skip it if it is not supposed to be seen
+    KWQAccObject *obj = replacedNode->renderer()->document()->getAccObjectCache()->accObject(replacedNode->renderer());
+    if ([obj accessibilityIsIgnored])
+        return;
+    
+    // easier to calculate the range before appending the string
+    NSRange attrStringRange = NSMakeRange([attrString length], 1);
+    
+    // append the placeholder string
+    [[attrString mutableString] appendString:[NSString stringWithCharacters:&attachmentChar length:1]];
+    
+    // remove all inherited attributes
+    [attrString setAttributes:nil range:attrStringRange];
 
-    return [attrString autorelease];
+    // add the attachment attribute
+    AXAttributeStringSetElement(attrString, NSAccessibilityAttachmentTextAttribute, obj, attrStringRange);
 }
 
 - (id)doAXAttributedStringForTextMarkerRange: (AXTextMarkerRangeRef) textMarkerRange
 {
-    // NOTE: <rdar://problem/3942606>. Needs to make AX attributed string instead
-    // Patti: Get the basic done first.  Add various text attribute support incrementally,
-    // starting with attachment and hyperlink.  The rest of the attributes can be FO2/3.
-
     // extract the start and end VisiblePosition
     VisiblePosition startVisiblePosition = [self visiblePositionForStartOfTextMarkerRange: textMarkerRange];
     if (startVisiblePosition.isNull())
@@ -1230,7 +1348,26 @@ static void AXAttributeStringAddElement(NSMutableAttributedString *attrStr, NSSt
     if (endVisiblePosition.isNull())
         return nil;
     
-    return [self accessibilityAttributedStringForRange: makeRange(startVisiblePosition, endVisiblePosition)];
+    // iterate over the range to build the AX attributed string
+    NSMutableAttributedString *attrString = [[NSMutableAttributedString alloc] init];
+    TextIterator it(makeRange(startVisiblePosition, endVisiblePosition));
+    while (!it.atEnd()) {
+        // locate the node for this range
+        Node node = it.range().startContainer();
+        ASSERT(node == it.range().endContainer());
+        NodeImpl *nodeImpl = node.handle();
+        
+        // non-zero length means textual node, zero length means replaced node (AKA "attachments" in AX)
+        if (it.length() != 0) {
+            AXAttributedStringAppendText (attrString, nodeImpl, it.characters(), it.length());
+        } else {
+            AXAttributedStringAppendReplaced (attrString, nodeImpl->childNode(it.range().startOffset()));
+        }
+        
+        it.advance();
+    }
+
+    return [attrString autorelease];
 }
 
 - (id)doAXTextMarkerRangeForUnorderedTextMarkers: (NSArray *) markers

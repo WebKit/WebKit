@@ -1,3 +1,35 @@
+2005-01-27  David Harrison  <harrison@apple.com>
+
+        Reviewed by Darin, Ken.
+
+        <rdar://problem/3964470> AX: Include attachments in AXAttributedStringForTextMarkerRange
+
+        * kwq/KWQAccObject.mm:
+        (-[KWQAccObject isAttachment]):
+        (-[KWQAccObject attachmentView]):
+        (-[KWQAccObject role]):
+        (-[KWQAccObject subrole]):
+        (-[KWQAccObject roleDescription]):
+        (-[KWQAccObject value]):
+        (-[KWQAccObject title]):
+        (-[KWQAccObject accessibilityDescription]):
+        (-[KWQAccObject accessibilityIsIgnored]):
+        (-[KWQAccObject accessibilityAttributeNames]):
+        (-[KWQAccObject accessibilityAttributeValue:]):
+        Make attachments accessible.
+        
+        (CreateCGColorIfDifferent):
+        (AXAttributeStringSetColor):
+        (AXAttributeStringSetNumber):
+        (AXAttributeStringSetFont):
+        (AXAttributeStringSetStyle):
+        (AXAttributeStringSetElement):
+        (AXLinkElementForNode):
+        (AXAttributedStringAppendText):
+        (AXAttributedStringAppendReplaced):
+        (-[KWQAccObject doAXAttributedStringForTextMarkerRange:]):
+        Add attachments and more text attributes to AXAttributedStringForTextMarkerRange.
+
 2005-01-27  Darin Adler  <darin@apple.com>
 
         Reviewed by John.
