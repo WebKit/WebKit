@@ -154,7 +154,7 @@ CSSValueImpl* CSSComputedStyleDeclarationImpl::getPositionOffsetValue(int proper
     if (m_renderer->isRelPositioned())
         // FIXME: It's not enough to simply return "auto" values for one offset if the other side is defined.
         // In other words if left is auto and right is not auto, then left's computed value is negative right.
-        // So we get the opposite length unit and see if it is auto.
+        // So we should get the opposite length unit and see if it is auto.
         return valueForLength(l);
     
     return new CSSPrimitiveValueImpl("auto", CSSPrimitiveValue::CSS_STRING);
