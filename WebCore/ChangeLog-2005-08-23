@@ -1,5 +1,19 @@
 2004-11-22  David Hyatt  <hyatt@apple.com>
 
+	Improve the WebCore cache so that the maximum cacheable object size is scaled based off the total cache
+	size.
+	
+        Reviewed by mjs
+
+        * khtml/misc/loader.cpp:
+        (CachedObject::finish):
+        (Cache::flush):
+        (Cache::setSize):
+        * khtml/misc/loader.h:
+        (khtml::Cache::maxCacheableObjectSize):
+
+2004-11-22  David Hyatt  <hyatt@apple.com>
+
 	Fix for 3673381, huge directory listing so slow it seems like a hang.  Rework painting and hit testing so that
 	it crawls the line box tree instead of the render tree.  This allows more precise intersection/containment testing
 	that lets us short circuit earlier when painting and hit testing.
