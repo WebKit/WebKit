@@ -484,6 +484,10 @@ void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFrameworkName,
 {
     if (range == nil || [range collapsed])
         return NO;
+    
+    if (![[self _bridge] canDeleteRange:range])
+        return NO;
+        
     WebView *webView = [self _webView];
     return [[webView _editingDelegateForwarder] webView:webView shouldDeleteDOMRange:range];
 }
