@@ -195,11 +195,15 @@ public:
     virtual void printTree(int indent=0) const;
     virtual void dump(QTextStream *stream, QString ind = "") const;
 #endif
+
+    // Helper methods for computing line counts and heights for line counts.
+    int lineCount();
+    int heightForLineCount(int l, bool includeBottom = true);
     
 protected:
     void newLine();
     void removeChildrenFromLineBoxes();
-    
+
 protected:
     struct FloatingObject {
         enum Type {

@@ -358,7 +358,7 @@ void RenderFlexibleBox::layoutHorizontalBox(bool relayoutChildren)
             // We always have to lay out flexible objects again, since the flex distribution
             // may have changed, and we need to reallocate space.
             if (!relayoutChildren)
-                child->setNeedsLayout(true);
+                child->setChildNeedsLayout(true);
             haveFlex = true;
             unsigned int flexGroup = child->style()->boxFlexGroup();
             if (lowestFlexGroup == 0)
@@ -671,6 +671,49 @@ void RenderFlexibleBox::layoutVerticalBox(bool relayoutChildren)
         continue;
     }
 
+#if APPLE_CHANGES
+    // We confine the line clamp ugliness to vertical flexible boxes (thus keeping it out of
+    // mainstream block layout) and put it all inside APPLE_CHANGES to denote that this is not
+    // really part of the XUL box model.
+    bool haveLineClamp = style()->lineClamp() >= 0 && style()->lineClamp() <= 100;
+    if (haveLineClamp) {
+        int maxLineCount = 1;
+        child = iterator.first();
+        while (child) {
+            if (!child->isPositioned()) {
+                if (relayoutChildren || (child->isReplaced() && (child->style()->width().isPercent() || child->style()->height().isPercent())) ||
+                    (child->style()->height().isVariable() && child->isBlockFlow() && !child->needsLayout()))
+                    child->setChildNeedsLayout(true);
+                child->layoutIfNeeded();
+                if (child->style()->height().isVariable() && child->isBlockFlow())
+                    maxLineCount = kMax(maxLineCount, static_cast<RenderBlock*>(child)->lineCount());
+            }
+            child = iterator.next();
+        }
+        
+        // Get the # of lines and then alter all block flow children with auto height to use the
+        // specified height.
+        int numLines = kMax(1, int(maxLineCount*style()->lineClamp()/100.0));
+        if (numLines < maxLineCount) {
+            child = iterator.first();
+            while (child) {
+                if (!child->isPositioned() && child->style()->height().isVariable() && child->isBlockFlow() &&
+                    static_cast<RenderBlock*>(child)->lineCount() > numLines) {
+                    int newHeight = static_cast<RenderBlock*>(child)->heightForLineCount(numLines);
+                    if (newHeight != child->height()) {
+                        child->setChildNeedsLayout(true);
+                        child->style()->setBoxFlexedHeight(newHeight);
+                        m_flexingChildren = true;
+                        child->layoutIfNeeded();
+                        m_flexingChildren = false;
+                    }
+                }
+                child = iterator.next();
+            }
+        }
+    }
+#endif
+
     // We do 2 passes.  The first pass is simply to lay everyone out at
     // their preferred widths.  The second pass handles flexing the children.
     // Our first pass is done without flexing.  We simply lay the children
@@ -681,11 +724,10 @@ void RenderFlexibleBox::layoutVerticalBox(bool relayoutChildren)
         m_overflowHeight = m_height;
 
         child = iterator.first();
-        while (child)
-        {
+        while (child) {
             // make sure we relayout children if we need it.
-            if ( relayoutChildren || (child->isReplaced() && (child->style()->width().isPercent() || child->style()->height().isPercent())))
-                child->setNeedsLayout(true);
+            if (!haveLineClamp && (relayoutChildren || (child->isReplaced() && (child->style()->width().isPercent() || child->style()->height().isPercent()))))
+                child->setChildNeedsLayout(true);
     
             if (child->isPositioned())
             {

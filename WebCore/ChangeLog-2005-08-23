@@ -1,3 +1,36 @@
+2004-04-15  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3603455, block truncation support.
+	
+        Reviewed by kocienda
+
+        * khtml/css/cssparser.cpp:
+        (CSSParser::parseValue):
+        * khtml/css/cssproperties.c:
+        (hash_prop):
+        (findProp):
+        * khtml/css/cssproperties.h:
+        * khtml/css/cssproperties.in:
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::applyProperty):
+        * khtml/ecma/kjs_css.cpp:
+        (cssPropertyName):
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::lineCount):
+        (khtml::RenderBlock::heightForLineCount):
+        * khtml/rendering/render_block.h:
+        * khtml/rendering/render_flexbox.cpp:
+        (khtml::RenderFlexibleBox::layoutHorizontalBox):
+        (khtml::RenderFlexibleBox::layoutVerticalBox):
+        * khtml/rendering/render_style.cpp:
+        (marquee):
+        (StyleCSS3NonInheritedData::operator==):
+        (RenderStyle::diff):
+        * khtml/rendering/render_style.h:
+        (khtml::RenderStyle::lineClamp):
+        (khtml::RenderStyle::setLineClamp):
+        (khtml::RenderStyle::initialLineClamp):
+
 2004-04-13  Chris Blumenberg  <cblu@apple.com>
 
 	- Removed WebCoreElementIsEditableKey. This functionality is available via [DOMNode isContentEditable].

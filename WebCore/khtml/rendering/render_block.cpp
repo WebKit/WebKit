@@ -2664,6 +2664,47 @@ bool RenderBlock::inRootBlockContext() const
     return containingBlock()->inRootBlockContext();
 }
 
+// Helper methods for computing line counts and heights for line counts.
+int RenderBlock::lineCount()
+{
+    int count = 0;
+    if (style()->visibility() == VISIBLE) {
+        if (childrenInline())
+            for (RootInlineBox* box = firstRootBox(); box; box = box->nextRootBox())
+                count++;
+        else
+            for (RenderObject* obj = firstChild(); obj; obj = obj->nextSibling())
+                if (!obj->isFloatingOrPositioned() && !obj->isCompact() && !obj->isRunIn() &&
+                    obj->isBlockFlow() && obj->style()->height().isVariable())
+                    count += static_cast<RenderBlock*>(obj)->lineCount();
+    }
+    return count;
+}
+
+int RenderBlock::heightForLineCount(int l, bool includeBottom)
+{
+    if (style()->visibility() == VISIBLE) {
+        int c = 0;
+        if (childrenInline())
+            for (RootInlineBox* box = firstRootBox(); c < l && box; box = box->nextRootBox()) {
+                if (++c == l)
+                    return box->bottomOverflow() + (includeBottom ? (borderBottom() + paddingBottom()) : 0);
+            }
+        else
+            for (RenderObject* obj = firstChild(); obj; obj = obj->nextSibling())
+                if (!obj->isFloatingOrPositioned() && !obj->isCompact() && !obj->isRunIn() &&
+                    obj->isBlockFlow() && obj->style()->height().isVariable()) {
+                    int childCount = static_cast<RenderBlock*>(obj)->lineCount();
+                    if (c + childCount >= l)
+                        return obj->yPos() + static_cast<RenderBlock*>(obj)->heightForLineCount(l - c, false) +
+                               (includeBottom ? (borderBottom() + paddingBottom()) : 0);
+                    else
+                        c += childCount;
+                }
+    }
+    return m_height;
+}
+
 const char *RenderBlock::renderName() const
 {
     if (isBody())

@@ -67,6 +67,7 @@ font-weight
 height
 left
 letter-spacing
+-apple-line-clamp
 line-height
 list-style-image
 list-style-position

@@ -1095,7 +1095,15 @@ bool CSSParser::parseValue( int propId, bool important )
             valid_primitive = true;
             break;
     // End of CSS3 properties
-        
+
+#if APPLE_CHANGES
+    // Apple specific properties.  These will never be standardized and are purely to
+    // support custom WebKit-based Apple applications.
+    case CSS_PROP__APPLE_LINE_CLAMP:
+        valid_primitive = (!id && validUnit(value, FPercent, false));
+        break;
+#endif
+
 	/* shorthand properties */
     case CSS_PROP_BACKGROUND:
     	// ['background-color' || 'background-image' ||'background-repeat' ||

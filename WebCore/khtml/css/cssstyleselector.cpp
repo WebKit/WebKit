@@ -3412,6 +3412,17 @@ void CSSStyleSelector::applyProperty( int id, DOM::CSSValueImpl *value )
         style->setUserModify(EUserModify(primitiveValue->getIdent() - CSS_VAL_READ_ONLY));
         break;
     }
+        
+#if APPLE_CHANGES
+    // Apple-specific changes.  Do not merge these properties into KHTML.
+    case CSS_PROP__APPLE_LINE_CLAMP: {
+        HANDLE_INHERIT_AND_INITIAL(lineClamp, LineClamp)
+        if (!primitiveValue) return;
+        style->setLineClamp((int)primitiveValue->getFloatValue(CSSPrimitiveValue::CSS_PERCENTAGE));
+        break;
+    }
+#endif
+
     default:
         return;
     }

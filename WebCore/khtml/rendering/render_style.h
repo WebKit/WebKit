@@ -545,6 +545,9 @@ public:
         return !(*this == o);
     }
     
+#if APPLE_CHANGES
+    int lineClamp;         // An Apple extension.  Not really CSS3 but not worth making a new struct over.
+#endif
     float opacity;         // Whether or not we're transparent.
     DataRef<StyleFlexibleBoxData> flexibleBox; // Flexible box properties 
     DataRef<StyleMarqueeData> marquee; // Marquee properties
@@ -1079,6 +1082,11 @@ public:
     EUserModify userModify() const { return css3InheritedData->userModify; }
     // End CSS3 Getters
 
+#if APPLE_CHANGES
+    // Apple-specific property getter methods
+    int lineClamp() { return css3NonInheritedData->lineClamp; }
+#endif
+
 // attribute setter methods
 
     void setDisplay(EDisplay v) {  noninherited_flags._effectiveDisplay = v; }
@@ -1250,7 +1258,12 @@ public:
     void setMarqueeLoopCount(int i) { SET_VAR(css3NonInheritedData.access()->marquee, loops, i); }
     void setUserModify(EUserModify u) { SET_VAR(css3InheritedData, userModify, u); }
     // End CSS3 Setters
-    
+   
+#if APPLE_CHANGES
+    // Apple-specific property setters
+    void setLineClamp(int c) { SET_VAR(css3NonInheritedData, lineClamp, c); }
+#endif
+
     QPalette palette() const { return visual->palette; }
     void setPaletteColor(QPalette::ColorGroup g, QColorGroup::ColorRole r, const QColor& c);
     void resetPalette() // Called when the desktop color scheme changes.
@@ -1339,6 +1352,10 @@ public:
     static EMarqueeBehavior initialMarqueeBehavior() { return MSCROLL; }
     static EMarqueeDirection initialMarqueeDirection() { return MAUTO; }
     static EUserModify initialUserModify() { return READ_ONLY; }
+#if APPLE_CHANGES
+    // Keep these at the end.
+    static int initialLineClamp() { return -1; }
+#endif
 };
 
 
