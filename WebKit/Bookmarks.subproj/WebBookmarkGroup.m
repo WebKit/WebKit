@@ -11,6 +11,7 @@
 #import <WebKit/IFBookmark_Private.h>
 #import <WebKit/IFBookmarkList.h>
 #import <WebKit/IFBookmarkLeaf.h>
+#import <WebKit/IFBookmarkSeparator.h>
 #import <WebKit/WebKitDebug.h>
 
 @interface IFBookmarkGroup (IFForwardDeclarations)
@@ -77,7 +78,8 @@
 {
     BOOL hadChildren, hasChildrenNow;
 
-    WEBKIT_ASSERT_VALID_ARG (newTopBookmark, newTopBookmark == nil || ![newTopBookmark isLeaf]);
+    WEBKIT_ASSERT_VALID_ARG (newTopBookmark, newTopBookmark == nil ||
+                             [newTopBookmark bookmarkType] == IFBookmarkTypeList);
 
     hadChildren = [_topBookmark numberOfChildren] > 0;
     hasChildrenNow = newTopBookmark != nil && [newTopBookmark numberOfChildren] > 0;
@@ -108,7 +110,7 @@
 
 - (void)_bookmarkChildrenDidChange:(IFBookmark *)bookmark
 {
-    WEBKIT_ASSERT_VALID_ARG (bookmark, ![bookmark isLeaf]);
+    WEBKIT_ASSERT_VALID_ARG (bookmark, [bookmark bookmarkType] == IFBookmarkTypeList);
     
     [self _sendChangeNotificationForBookmark:bookmark childrenChanged:YES];
 }
@@ -130,14 +132,14 @@
                                withTitle:(NSString *)newTitle
                                    image:(NSImage *)newImage
                                URLString:(NSString *)newURLString
-                                  isLeaf:(BOOL)flag
+                                    type:(IFBookmarkType)bookmarkType
 {
     return [self insertNewBookmarkAtIndex:[parent numberOfChildren]
                                ofBookmark:parent
                                 withTitle:newTitle
                                     image:newImage
                                 URLString:newURLString
-                                   isLeaf:flag];
+                                     type:bookmarkType];
 }
 
 - (IFBookmark *)insertNewBookmarkAtIndex:(unsigned)index
@@ -145,20 +147,23 @@
                                withTitle:(NSString *)newTitle
                                    image:(NSImage *)newImage
                                URLString:(NSString *)newURLString
-                                  isLeaf:(BOOL)flag
+                                    type:(IFBookmarkType)bookmarkType
 {
     IFBookmark *bookmark;
 
     WEBKIT_ASSERT_VALID_ARG (parent, [parent _group] == self);
-    WEBKIT_ASSERT_VALID_ARG (parent, ![parent isLeaf]);
-    WEBKIT_ASSERT_VALID_ARG (newURLString, flag ? (newURLString != nil) : (newURLString == nil));
-
-    if (flag) {
+    WEBKIT_ASSERT_VALID_ARG (parent, [parent bookmarkType] == IFBookmarkTypeList);
+    WEBKIT_ASSERT_VALID_ARG (newURLString, bookmarkType == IFBookmarkTypeLeaf || (newURLString == nil));
+    
+    if (bookmarkType == IFBookmarkTypeLeaf) {
         bookmark = [[[IFBookmarkLeaf alloc] initWithURLString:newURLString
                                                         title:newTitle
                                                         image:newImage
                                                         group:self] autorelease];
+    } else if (bookmarkType == IFBookmarkTypeSeparator) {
+        bookmark = [[[IFBookmarkSeparator alloc] initWithGroup:self] autorelease];
     } else {
+        WEBKIT_ASSERT (bookmarkType == IFBookmarkTypeList);
         bookmark = [[[IFBookmarkList alloc] initWithTitle:newTitle
                                                     image:newImage
                                                     group:self] autorelease];

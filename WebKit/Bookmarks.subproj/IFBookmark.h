@@ -10,6 +10,12 @@
 
 @class IFBookmarkGroup;
 
+typedef enum {
+    IFBookmarkTypeLeaf,
+    IFBookmarkTypeList,
+    IFBookmarkTypeSeparator,
+} IFBookmarkType;
+
 @interface IFBookmark : NSObject <NSCopying> {
     IFBookmark *_parent;
     IFBookmarkGroup *_group;
@@ -21,27 +27,27 @@
 - (NSImage *)image;
 - (void)setImage:(NSImage *)image;
 
-// Distinguishes a single bookmark from a list 
-- (BOOL)isLeaf;
+// The type of bookmark
+- (IFBookmarkType)bookmarkType;
 
 // String intended to represent URL for leaf bookmarks. May not be a valid URL string.
-// This is nil if isLeaf returns NO.
+// This is nil if bookmarkType is not IFBookmarkTypeLeaf.
 - (NSString *)URLString;
 
 // Sets the string intended to represent URL for leaf bookmarks. URLString need not be
-// a valid URL string. Does nothing if isLeaf returns NO.
+// a valid URL string. Does nothing if bookmarkType is not IFBookmarkTypeLeaf.
 - (void)setURLString:(NSString *)URLString;
 
-// Array of child IFBookmarks. Returns nil if isLeaf returns YES.
+// Array of child IFBookmarks. Returns nil if bookmarkType is not IFBookmarkTypeList.
 - (NSArray *)children;
 
-// Number of children. Returns 0 if isLeaf returns YES.
+// Number of children. Returns 0 if bookmarkType is not IFBookmarkTypeList.
 - (unsigned)numberOfChildren;
 
-// Insert a bookmark into the list. Does nothing if isLeaf returns YES.
+// Insert a bookmark into the list. Does nothing if bookmarkType is not IFBookmarkTypeList.
 - (void)insertChild:(IFBookmark *)bookmark atIndex:(unsigned)index;
 
-// Remove a bookmark from the list. Does nothing if isLeaf returns YES.
+// Remove a bookmark from the list. Does nothing if bookmarkType is not IFBookmarkTypeList.
 - (void)removeChild:(IFBookmark *)bookmark;
 
 @end

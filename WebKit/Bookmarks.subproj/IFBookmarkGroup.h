@@ -42,12 +42,12 @@
                                withTitle:(NSString *)newTitle
                                    image:(NSImage *)newImage
                                URLString:(NSString *)newURLString
-                                  isLeaf:(BOOL)flag;
+                                    type:(IFBookmarkType)bookmarkType;
 - (IFBookmark *)addNewBookmarkToBookmark:(IFBookmark *)parent
                                withTitle:(NSString *)newTitle
                                    image:(NSImage *)newImage
                                URLString:(NSString *)newURLString
-                                  isLeaf:(BOOL)flag;
+                                    type:(IFBookmarkType)bookmarkType;
 
 // storing contents on disk
 

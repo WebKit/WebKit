@@ -30,30 +30,38 @@
 
 - (NSString *)title
 {
-    NSRequestConcreteImplementation(self, _cmd, [self class]);
+    if ([self bookmarkType] != IFBookmarkTypeSeparator) {
+        NSRequestConcreteImplementation(self, _cmd, [self class]);
+    }
     return nil;
 }
 
 - (void)setTitle:(NSString *)title
 {
-    NSRequestConcreteImplementation(self, _cmd, [self class]);
+    if ([self bookmarkType] != IFBookmarkTypeSeparator) {
+        NSRequestConcreteImplementation(self, _cmd, [self class]);
+    }
 }
 
 - (NSImage *)image
 {
-    NSRequestConcreteImplementation(self, _cmd, [self class]);
+    if ([self bookmarkType] != IFBookmarkTypeSeparator) {
+        NSRequestConcreteImplementation(self, _cmd, [self class]);
+    }
     return nil;
 }
 
 - (void)setImage:(NSImage *)image
 {
-    NSRequestConcreteImplementation(self, _cmd, [self class]);
+    if ([self bookmarkType] != IFBookmarkTypeSeparator) {
+        NSRequestConcreteImplementation(self, _cmd, [self class]);
+    }
 }
 
-- (BOOL)isLeaf
+- (IFBookmarkType)bookmarkType
 {
     NSRequestConcreteImplementation(self, _cmd, [self class]);
-    return YES;
+    return IFBookmarkTypeLeaf;
 }
 
 - (NSString *)URLString
@@ -63,14 +71,14 @@
 
 - (void)setURLString:(NSString *)URLString
 {
-    if ([self isLeaf]) {
+    if ([self bookmarkType] == IFBookmarkTypeLeaf) {
         NSRequestConcreteImplementation(self, _cmd, [self class]);
     }
 }
 
 - (NSArray *)children
 {
-    if (![self isLeaf]) {
+    if ([self bookmarkType] == IFBookmarkTypeList) {
         NSRequestConcreteImplementation(self, _cmd, [self class]);
     }
     return nil;
@@ -78,7 +86,7 @@
 
 - (unsigned)numberOfChildren
 {
-    if (![self isLeaf]) {
+    if ([self bookmarkType] == IFBookmarkTypeList) {
         NSRequestConcreteImplementation(self, _cmd, [self class]);
     }
     return 0;
@@ -86,7 +94,7 @@
 
 - (unsigned)_numberOfDescendants
 {
-    if (![self isLeaf]) {
+    if ([self bookmarkType] == IFBookmarkTypeList) {
         NSRequestConcreteImplementation(self, _cmd, [self class]);
     }
     return 0;
@@ -94,14 +102,14 @@
 
 - (void)insertChild:(IFBookmark *)bookmark atIndex:(unsigned)index
 {
-    if (![self isLeaf]) {
+    if ([self bookmarkType] == IFBookmarkTypeList) {
         NSRequestConcreteImplementation(self, _cmd, [self class]);
     }
 }
 
 - (void)removeChild:(IFBookmark *)bookmark
 {
-    if (![self isLeaf]) {
+    if ([self bookmarkType] == IFBookmarkTypeList) {
         NSRequestConcreteImplementation(self, _cmd, [self class]);
     }
 }

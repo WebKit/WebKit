@@ -56,10 +56,13 @@
 {
     NSMutableDictionary *dict;
 
-    dict = [NSMutableDictionary dictionaryWithCapacity: 2];
+    dict = [NSMutableDictionary dictionaryWithCapacity: 3];
 
+    [dict setObject:IFBookmarkTypeLeafValue forKey:IFBookmarkTypeKey];
     [dict setObject:[_entry dictionaryRepresentation] forKey:URIDictionaryKey];
-    [dict setObject:_URLString forKey:URLStringKey];
+    if (_URLString != nil) {
+        [dict setObject:_URLString forKey:URLStringKey];
+    }
 
     return dict;
 }
@@ -107,9 +110,9 @@
     [[self _group] _bookmarkDidChange:self];    
 }
 
-- (BOOL)isLeaf
+- (IFBookmarkType)bookmarkType
 {
-    return YES;
+    return IFBookmarkTypeLeaf;
 }
 
 - (NSString *)URLString

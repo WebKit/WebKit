@@ -9,6 +9,11 @@
 
 #import <WebKit/IFBookmark.h>
 
+#define IFBookmarkTypeKey		@"IFBookmarkType"
+#define IFBookmarkTypeLeafValue		@"IFBookmarkTypeLeaf"
+#define IFBookmarkTypeListValue		@"IFBookmarkTypeList"
+#define IFBookmarkTypeSeparatorValue	@"IFBookmarkTypeSeparator"
+
 @interface IFBookmark(IFPrivate)
 
 - (id)_initFromDictionaryRepresentation:(NSDictionary *)dict withGroup:(IFBookmarkGroup *)group;

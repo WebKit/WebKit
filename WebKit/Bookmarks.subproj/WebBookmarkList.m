@@ -8,12 +8,12 @@
 
 #import <WebKit/IFBookmarkList.h>
 #import <WebKit/IFBookmarkLeaf.h>
+#import <WebKit/IFBookmarkSeparator.h>
 #import <WebKit/IFBookmark_Private.h>
 #import <WebKit/IFBookmarkGroup_Private.h>
 #import <WebKit/WebKitDebug.h>
 
 #define TitleKey		@"Title"
-#define ListIdentifierKey	@"ListIdentifier"
 #define ChildrenKey		@"Children"
 
 @implementation IFBookmarkList
@@ -39,6 +39,7 @@
     NSArray *storedChildren;
     NSDictionary *childAsDictionary;
     IFBookmark *child;
+    NSString *typeString;
     unsigned index, count;
     
     WEBKIT_ASSERT_VALID_ARG (dict, dict != nil);
@@ -56,18 +57,23 @@
         count = [storedChildren count];
         for (index = 0; index < count; ++index) {
             childAsDictionary = [storedChildren objectAtIndex:index];
+            child = nil;
             
-            // determine whether child is a leaf or a list by looking for the
-            // token that this list class inserts.
-            if ([childAsDictionary objectForKey:ListIdentifierKey] != nil) {
+            typeString = [childAsDictionary objectForKey:IFBookmarkTypeKey];
+            if ([typeString isEqualToString:IFBookmarkTypeListValue]) {
                 child = [[IFBookmarkList alloc] _initFromDictionaryRepresentation:childAsDictionary
                                                                         withGroup:group];
-            } else {
+            } else if ([typeString isEqualToString:IFBookmarkTypeLeafValue]) {
                 child = [[IFBookmarkLeaf alloc] _initFromDictionaryRepresentation:childAsDictionary
                                                                         withGroup:group];
+            } else if ([typeString isEqualToString:IFBookmarkTypeSeparatorValue]) {
+                child = [[IFBookmarkSeparator alloc] _initFromDictionaryRepresentation:childAsDictionary
+                                                                             withGroup:group];
             }
 
-            [self insertChild:child atIndex:index];
+            if (child != nil) {
+                [self insertChild:child atIndex:index];
+            }
         }
     }
 
@@ -87,8 +93,7 @@
         [dict setObject:_title forKey:TitleKey];
     }
 
-    // mark this as a list-type bookmark; used in _initFromDictionaryRepresentation
-    [dict setObject:@"YES" forKey:ListIdentifierKey];
+    [dict setObject:IFBookmarkTypeListValue forKey:IFBookmarkTypeKey];
 
     childCount = [self numberOfChildren];
     if (childCount > 0) {
@@ -188,9 +193,9 @@
     [[self _group] _bookmarkDidChange:self]; 
 }
 
-- (BOOL)isLeaf
+- (IFBookmarkType)bookmarkType
 {
-    return NO;
+    return IFBookmarkTypeList;
 }
 
 - (NSArray *)children

@@ -1,3 +1,59 @@
+2002-05-20  John Sullivan  <sullivan@apple.com>
+
+	Support for bookmark separators
+
+	* Bookmarks.subproj/IFBookmark.h: Update comments and replace
+	isLeaf with bookmarkType.
+
+	* Bookmarks.subproj/IFBookmark.m:
+	(-[IFBookmark bookmarkType]): New method, replaces isLeaf.
+	(-[IFBookmark title]):
+	(-[IFBookmark setTitle:]):
+	(-[IFBookmark image]):
+	(-[IFBookmark setImage:]):
+	(-[IFBookmark setURLString:]):
+	(-[IFBookmark children]):
+	(-[IFBookmark numberOfChildren]):
+	(-[IFBookmark _numberOfDescendants]):
+	(-[IFBookmark insertChild:atIndex:]):
+	(-[IFBookmark removeChild:]):
+	Update callers of isLeaf, and don't require concrete implementations
+	of some methods for some types.
+
+	* Bookmarks.subproj/IFBookmarkLeaf.m:
+	(-[IFBookmarkLeaf bookmarkType]): return IFBookmarkTypeLeaf
+	(-[IFBookmarkLeaf _dictionaryRepresentation]): set value for bookmark type.
+
+	* Bookmarks.subproj/IFBookmarkList.m:
+	(-[IFBookmarkList _initFromDictionaryRepresentation:withGroup:]):
+	Handle separator case.
+	(-[IFBookmarkList _dictionaryRepresentation]): set value for bookmark type
+	(-[IFBookmarkList bookmarkType]): return IFBookmarkTypeList
+
+	* Bookmarks.subproj/IFBookmarkSeparator.h: Added.
+	* Bookmarks.subproj/IFBookmarkSeparator.m: Added.
+	(-[IFBookmarkSeparator initWithGroup:]): Simple init method.
+	(-[IFBookmarkSeparator _initFromDictionaryRepresentation:withGroup:]): Just calls
+	initWithGroup.
+	(-[IFBookmarkSeparator _dictionaryRepresentation]): set value for bookmark type
+	(-[IFBookmarkSeparator bookmarkType]): return IFBookmarkTypeSeparator
+	(-[IFBookmarkSeparator copyWithZone:]): calls initWithGroup
+
+	* Bookmarks.subproj/IFBookmark_Private.h: Added key/value #defines for dictionary
+	representation.
+
+	* Bookmarks.subproj/IFBookmarkGroup.h:
+	* Bookmarks.subproj/IFBookmarkGroup.m:
+	(-[IFBookmarkGroup _setTopBookmark:]):
+	(-[IFBookmarkGroup _bookmarkChildrenDidChange:]):
+	(-[IFBookmarkGroup addNewBookmarkToBookmark:withTitle:image:URLString:type:]):
+	Update callers of isLeaf to use bookmarkType instead.
+
+	(-[IFBookmarkGroup insertNewBookmarkAtIndex:ofBookmark:withTitle:image:URLString:type:]):
+	if type is IFBookmarkTypeSeparator, instantiate an IFBookmarkSeparator
+
+	* WebKit.pbproj/project.pbxproj: Updated for new files.
+
 2002-05-17  Chris Blumenberg  <cblu@apple.com>
 
 	- Made IFPluginStream the URL handle client instead of IFPluginView.

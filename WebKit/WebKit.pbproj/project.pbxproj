@@ -233,6 +233,7 @@
 				F5F717280288493C018635CA,
 				F5F71748028855C5018635CA,
 				F5F7174E02885C5B018635CA,
+				F5C81E4302994EA401C1A525,
 			);
 			isa = PBXHeadersBuildPhase;
 		};
@@ -292,6 +293,7 @@
 				F5F717270288493C018635CA,
 				F5F717290288493C018635CA,
 				F5F7174F02885C5B018635CA,
+				F5C81E4402994EA401C1A525,
 			);
 			isa = PBXSourcesBuildPhase;
 		};
@@ -1048,6 +1050,8 @@
 				F506521E027F557E01C1A526,
 				F506521F027F557E01C1A526,
 				F5065220027F557E01C1A526,
+				F5C81E4102994EA401C1A525,
+				F5C81E4202994EA401C1A525,
 			);
 			isa = PBXGroup;
 			name = Bookmarks;
@@ -1594,6 +1598,30 @@
 		};
 		F5C287BD02846DCD018635CA = {
 			fileRef = F5C2869502846DCD018635CA;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5C81E4102994EA401C1A525 = {
+			isa = PBXFileReference;
+			name = IFBookmarkSeparator.h;
+			path = Bookmarks.subproj/IFBookmarkSeparator.h;
+			refType = 2;
+		};
+		F5C81E4202994EA401C1A525 = {
+			isa = PBXFileReference;
+			name = IFBookmarkSeparator.m;
+			path = Bookmarks.subproj/IFBookmarkSeparator.m;
+			refType = 2;
+		};
+		F5C81E4302994EA401C1A525 = {
+			fileRef = F5C81E4102994EA401C1A525;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5C81E4402994EA401C1A525 = {
+			fileRef = F5C81E4202994EA401C1A525;
 			isa = PBXBuildFile;
 			settings = {
 			};
