@@ -2020,7 +2020,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 */
 @implementation WebView (WebEditingExtras)
 
-- (void)keyDown:(NSEvent *)event
+- (void)editingKeyDown:(NSEvent *)event
 {
     [self interpretKeyEvents:[NSArray arrayWithObject:event]];
 }

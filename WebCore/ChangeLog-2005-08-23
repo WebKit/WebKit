@@ -1,3 +1,24 @@
+2004-03-15  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+        Fix for this bug:
+        
+        <rdar://problem/3588717>: REGRESSION (125-131u): Tabbing to links and tabbing in bookmarks view no longer works
+
+        Change some support methods which feed editing key events to 
+        WebKit. The real fix is on the WebKit side.
+
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::editingKeyEvent): Call new -editingKeyDown:
+        on WebCoreBridge, as described below.
+        * kwq/WebCoreBridge.h: Changed -keyDown: to -editingKeyDown:
+        since we want to tell WebView about editing key events
+        in a way that does not interfere with other key down
+        events the WebView processes. This is not necessary in the
+        strictest sense, but it seems reasonable to keep the
+        terminology clear.
+
 === Safari-132 ===
 
 2004-03-12  Chris Blumenberg  <cblu@apple.com>

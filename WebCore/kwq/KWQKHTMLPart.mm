@@ -2873,6 +2873,6 @@ void KWQKHTMLPart::clearUndoRedoOperations()
 
 void KWQKHTMLPart::editingKeyEvent()
 {
-    [_bridge keyDown:_currentEvent];
+    [_bridge editingKeyDown:_currentEvent];
 }
 

@@ -420,7 +420,7 @@ typedef enum {
 - (void)registerCommandForRedo:(id)arg;
 - (void)clearUndoRedoOperations;
 
-- (void)keyDown:(NSEvent *)event;
+- (void)editingKeyDown:(NSEvent *)event;
 
 @end
 

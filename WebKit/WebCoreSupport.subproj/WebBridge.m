@@ -1179,9 +1179,9 @@ static id <WebFormDelegate> formDelegate(WebBridge *self)
     [undoManager removeAllActionsWithTarget:self];
 }
 
-- (void)keyDown:(NSEvent *)event
+- (void)editingKeyDown:(NSEvent *)event
 {
-    [[_frame webView] keyDown:event];
+    [[_frame webView] editingKeyDown:event];
 }
 
 @end
