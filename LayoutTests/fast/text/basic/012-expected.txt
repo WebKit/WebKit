@@ -1,0 +1,38 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x221
+  RenderBlock {HTML} at (0,0) size 800x221
+    RenderBody {BODY} at (8,8) size 784x205 [bgcolor=#FFFFFF]
+      RenderBlock {H2} at (0,0) size 784x24 [bgcolor=#000000]
+        RenderText {TEXT} at (0,0) size 365x24
+          text run at (0,0) width 365: "Safari Whitespace/Non-ASCII Bug"
+      RenderBlock {P} at (0,41) size 784x34 [bgcolor=#000000]
+        RenderText {TEXT} at (0,0) size 749x34
+          text run at (0,0) width 686: "Apart from whitespace (tab and linefeed characters), the two lists below (in red) use identical HTML. "
+          text run at (686,0) width 63: "Both lists"
+          text run at (0,17) width 707: "should be rendered on a single line. In Safari, however, the first list shows each item on a separate line."
+      RenderBlock {P} at (0,89) size 784x34 [bgcolor=#000000]
+        RenderText {TEXT} at (0,0) size 708x34
+          text run at (0,0) width 708: "This bug only seems to occur if the bullet character is non-ASCII (has a Unicode value higher than 127)."
+          text run at (0,17) width 404: "Non-breaking spaces (&#160;), however, are an exception."
+      RenderBlock (anonymous) at (0,137) size 784x68 [bgcolor=#000000]
+        RenderBR {BR} at (0,0) size 0x0
+        RenderText {TEXT} at (0,0) size 0x0 [bgcolor=#FFFFFF]
+        RenderInline {FONT} at (0,0) size 346x51 [color=#CC0000]
+          RenderText {TEXT} at (0,17) size 346x17
+            text run at (0,17) width 71: "\x{BB} England "
+            text run at (71,17) width 63: "\x{BB} Ireland "
+            text run at (134,17) width 74: "\x{BB} Scotland "
+            text run at (208,17) width 77: "\x{BB} Germany "
+            text run at (285,17) width 61: "\x{BB} France "
+          RenderBR {BR} at (0,0) size 0x0
+          RenderText {TEXT} at (0,0) size 0x0
+          RenderBR {BR} at (0,0) size 0x0
+          RenderText {TEXT} at (0,51) size 346x17
+            text run at (0,51) width 71: "\x{BB} England "
+            text run at (71,51) width 63: "\x{BB} Ireland "
+            text run at (134,51) width 74: "\x{BB} Scotland "
+            text run at (208,51) width 77: "\x{BB} Germany "
+            text run at (285,51) width 61: "\x{BB} France "
+        RenderText {TEXT} at (0,0) size 0x0 [bgcolor=#FFFFFF]
+        RenderBR {BR} at (0,0) size 0x0
