@@ -1,3 +1,12 @@
+2002-11-08  Maciej Stachowiak  <mjs@apple.com>
+
+	- fixed 3096451 - REGRESSION: clicking on link to open window only
+	works when pop-up suppression is off
+	
+        * khtml/ecma/kjs_binding.cpp:
+        (ScriptInterpreter::ScriptInterpreter): Initialize m_timerCallback
+	to false.
+
 b2002-11-08  Darin Adler  <darin@apple.com>
 
         * kwq/KWQComboBox.mm: Bump fudge factor up one pixel. You could see

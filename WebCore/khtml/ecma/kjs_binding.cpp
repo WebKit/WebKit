@@ -136,7 +136,7 @@ Value DOMFunction::call(ExecState *exec, Object &thisObj, const List &args)
 
 ScriptInterpreter::ScriptInterpreter( const Object &global, KHTMLPart* part )
   : Interpreter( global ), m_part( part ), m_domObjects(1021),
-    m_evt( 0L ), m_inlineCode(false)
+    m_evt( 0L ), m_inlineCode(false), m_timerCallback(false)
 {
 #ifdef KJS_VERBOSE
   kdDebug(6070) << "ScriptInterpreter::ScriptInterpreter " << this << " for part=" << m_part << endl;
