@@ -1,3 +1,15 @@
+2005-02-22  Chris Blumenberg  <cblu@apple.com>
+
+	WebCore fix for: <rdar://problem/3918056> Mail not line breaking my <pre> formatted emails on replies
+	
+	Mail must 4018993 to fully address the problem.
+
+        Reviewed by kocienda.
+
+        * khtml/editing/markup.cpp:
+        (khtml::startMarkup): don't compute style for text in PRE tags
+        (khtml::createMarkup): include PRE if it is an ancestor of the nodes in the range
+
 2005-02-21  Richard Williamson   <rjw@apple.com>
 
 	Fixed <rdar://problem/4008338> REGRESSION (125-178): opacity style not working, breaks fading images on okcupid.com

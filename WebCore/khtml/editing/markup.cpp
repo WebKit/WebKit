@@ -176,6 +176,7 @@ static QString startMarkup(const NodeImpl *node, const RangeImpl *range, EAnnota
         case Node::TEXT_NODE: {
             if (node->parentNode()) {
                 switch (node->parentNode()->id()) {
+                    case ID_PRE:
                     case ID_SCRIPT:
                     case ID_STYLE:
                     case ID_TEXTAREA:
@@ -395,8 +396,8 @@ QString createMarkup(const RangeImpl *range, QPtrList<NodeImpl> *nodes, EAnnotat
             bool breakAtEnd = false;
             if (commonAncestorBlock == ancestor) {
                 NodeImpl::Id id = ancestor->id();
-                // Tables and lists must be part of the markup to avoid broken structures. 
-                if (id == ID_TABLE || id == ID_OL || id == ID_UL) {
+                // Include ancestors that are required to retain the appearance of the copied markup.
+                if (id == ID_PRE || id == ID_TABLE || id == ID_OL || id == ID_UL) {
                     breakAtEnd = true;
                 } else {
                     break;
