@@ -99,7 +99,7 @@
     _private->handle = nil;
 }
 
-- (void)resourceDidFinishLoading:(NSURLConnection *)sender
+- (void)connectionDidFinishLoading:(NSURLConnection *)connection
 {
     NSImage *icon = [[NSImage alloc] initWithData:_private->resourceData];
     if (icon) {
@@ -109,23 +109,26 @@
     }
 }
 
--(NSURLRequest *)resource:(NSURLConnection *)resource willSendRequest:(NSURLRequest *)request
+- (NSURLRequest *)connection:(NSURLConnection *)connection willSendRequest:(NSURLRequest *)request redirectResponse:(NSURLResponse *)redirectResponse
 {
     return request;
 }
 
--(void)resource:(NSURLConnection *)resource didReceiveResponse:(NSURLResponse *)theResponse
+- (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)theResponse
 {
+    // no-op
+
     // no-op
 }
 
-- (void)resource:(NSURLConnection *)sender didReceiveData:(NSData *)data
+- (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data
 {
     [_private->resourceData appendData:data];
 }
 
-- (void)resource:(NSURLConnection *)sender didFailLoadingWithError:(WebError *)result
+- (void)connection:(NSURLConnection *)connection didFailLoadingWithError:(WebError *)result
 {
+
 }
 
 @end

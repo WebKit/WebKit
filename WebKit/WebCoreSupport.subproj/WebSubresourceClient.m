@@ -78,7 +78,7 @@
     [[dataSource _controller] _receivedError:error fromDataSource:dataSource];
 }
 
--(NSURLRequest *)resource:(NSURLConnection *)h willSendRequest:(NSURLRequest *)newRequest
+- (NSURLRequest *)connection:(NSURLConnection *)connection willSendRequest:(NSURLRequest *)newRequest redirectResponse:(NSURLResponse *)redirectResponse
 {
     // FIXME: We do want to tell the client about redirects for subresources.
     // But the current API doesn't give any way to tell redirects on
@@ -88,23 +88,23 @@
     // properly on redirect when we have the new redirect
     // request-adjusting API
 
-    return [super resource: h willSendRequest: newRequest];
+    return [super connection:connection willSendRequest:newRequest redirectResponse:redirectResponse];
 }
 
--(void)resource:(NSURLConnection *)h didReceiveResponse:(NSURLResponse *)r
+- (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)r
 {
     ASSERT(r);
     [loader receivedResponse:r];
-    [super resource:h didReceiveResponse:r];
+    [super connection:connection didReceiveResponse:r];
 }
 
-- (void)resource:(NSURLConnection *)h didReceiveData:(NSData *)data
+- (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data
 {
     [loader addData:data];
-    [super resource:h didReceiveData:data];
+    [super connection:connection didReceiveData:data];
 }
 
-- (void)resourceDidFinishLoading:(NSURLConnection *)h
+- (void)connectionDidFinishLoading:(NSURLConnection *)connection
 {
     // Calling _removeSubresourceClient will likely result in a call to release, so we must retain.
     [self retain];
@@ -117,10 +117,10 @@
     
     [self release];
     
-    [super resourceDidFinishLoading:h];
+    [super connectionDidFinishLoading:connection];
 }
 
-- (void)resource:(NSURLConnection *)h didFailLoadingWithError:(WebError *)error
+- (void)connection:(NSURLConnection *)connection didFailLoadingWithError:(WebError *)error
 {
     // Calling _removeSubresourceClient will likely result in a call to release, so we must retain.
     [self retain];
@@ -128,7 +128,7 @@
     [loader reportError];
     [dataSource _removeSubresourceClient:self];
     [self receivedError:error];
-    [super resource:h didFailLoadingWithError:error];
+    [super connection:connection didFailLoadingWithError:error];
 
     [self release];
 }

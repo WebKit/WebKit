@@ -346,7 +346,7 @@
     id _delegate = [c _resourceLoadDelegateForwarder];
     id identifier;
     
-    // No chance for delegate to modify request, so we don't send a willSendRequest: message.
+    // No chance for delegate to modify request, so we don't send a willSendRequest:redirectResponse: message.
     if ([delegate respondsToSelector:@selector(webView:identifierForInitialRequest:fromDataSource:)])
         identifier = [delegate webView:c identifierForInitialRequest: request fromDataSource: [self dataSource]];
     else

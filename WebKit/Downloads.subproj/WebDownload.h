@@ -63,7 +63,7 @@
 - (void)download:(WebDownload *)download didStartFromRequest:(NSURLRequest *)request;
 
 /*!
-    @method download:willSendRequest:
+    @method download:willSendRequest:redirectResponse:
     @abstract This method is called whenever the download is about to load a request or if the download
     must load another request because the previous request was redirected.
     @discussion This method is called with a copy of the request that was passed with
@@ -74,7 +74,7 @@
     @result The request to be used; either the request parameter or a replacement. If nil is returned,
     the download is cancelled.
 */
-- (NSURLRequest *)download:(WebDownload *)download willSendRequest:(NSURLRequest *)request;
+- (NSURLRequest *)download:(WebDownload *)download willSendRequest:(NSURLRequest *)request redirectResponse:(NSURLResponse *)redirectResponse;
 
 /*!
     @method download:didReceiveResponse:

@@ -1,3 +1,61 @@
+2003-03-28  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin
+
+        Changed names for URL connection callback methods to       
+        use the API-approved names. No functional changes.
+
+        * Downloads.subproj/WebDownload.h:
+        * Downloads.subproj/WebDownload.m:
+        (-[WebDownload _initWithLoadingResource:request:response:delegate:proxy:]):
+        (-[WebDownload connection:willSendRequest:redirectResponse:]):
+        (-[WebDownload connection:didReceiveResponse:]):
+        (-[WebDownload connection:didReceiveData:]):
+        (-[WebDownload connectionDidFinishLoading:]):
+        (-[WebDownload connection:didFailLoadingWithError:]):
+        * Misc.subproj/WebIconLoader.m:
+        (-[WebIconLoader connectionDidFinishLoading:]):
+        (-[WebIconLoader connection:willSendRequest:redirectResponse:]):
+        (-[WebIconLoader connection:didReceiveResponse:]):
+        (-[WebIconLoader connection:didReceiveData:]):
+        (-[WebIconLoader connection:didFailLoadingWithError:]):
+        * Plugins.subproj/WebNetscapePluginStream.m:
+        (-[WebNetscapePluginStream connection:didReceiveResponse:]):
+        (-[WebNetscapePluginStream connection:didReceiveData:]):
+        (-[WebNetscapePluginStream connectionDidFinishLoading:]):
+        (-[WebNetscapePluginStream connection:didFailLoadingWithError:]):
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge objectLoadedFromCacheWithURL:response:size:]):
+        * WebCoreSupport.subproj/WebSubresourceClient.m:
+        (-[WebSubresourceClient connection:willSendRequest:redirectResponse:]):
+        (-[WebSubresourceClient connection:didReceiveResponse:]):
+        (-[WebSubresourceClient connection:didReceiveData:]):
+        (-[WebSubresourceClient connectionDidFinishLoading:]):
+        (-[WebSubresourceClient connection:didFailLoadingWithError:]):
+        * WebView.subproj/WebBaseResourceHandleDelegate.m:
+        (-[WebBaseResourceHandleDelegate connection:willSendRequest:redirectResponse:]):
+        (-[WebBaseResourceHandleDelegate connection:didReceiveResponse:]):
+        (-[WebBaseResourceHandleDelegate connection:didReceiveData:]):
+        (-[WebBaseResourceHandleDelegate connectionDidFinishLoading:]):
+        (-[WebBaseResourceHandleDelegate connection:didFailLoadingWithError:]):
+        * WebView.subproj/WebDefaultResourceLoadDelegate.m:
+        (-[WebDefaultResourceLoadDelegate webView:resource:willSendRequest:redirectResponse:fromDataSource:]):
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient receivedError:]):
+        (-[WebMainResourceClient connection:willSendRequest:redirectResponse:]):
+        (-[WebMainResourceClient continueAfterContentPolicy:response:]):
+        (-[WebMainResourceClient connection:didReceiveResponse:]):
+        (-[WebMainResourceClient connection:didReceiveData:]):
+        (-[WebMainResourceClient connectionDidFinishLoading:]):
+        (-[WebMainResourceClient connection:didFailLoadingWithError:]):
+        (-[WebMainResourceClient startLoading:]):
+        (-[WebResourceDelegateProxy connection:willSendRequest:redirectResponse:]):
+        (-[WebResourceDelegateProxy connection:didReceiveResponse:]):
+        (-[WebResourceDelegateProxy connection:didReceiveData:]):
+        (-[WebResourceDelegateProxy connectionDidFinishLoading:]):
+        (-[WebResourceDelegateProxy connection:didFailLoadingWithError:]):
+        * WebView.subproj/WebResourceLoadDelegate.h:
+
 2003-03-27  Chris Blumenberg  <cblu@apple.com>
 
         Left out a "!" in my last check-in.

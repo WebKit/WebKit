@@ -61,7 +61,7 @@
     // Calling _receivedError will likely result in a call to release, so we must retain.
     [self retain];
     [dataSource _receivedError:error complete:YES];
-    [super resource:resource didFailLoadingWithError:error];
+    [super connection:resource didFailLoadingWithError:error];
     [self release];
 }
 
@@ -101,7 +101,7 @@
     }
 }
 
--(NSURLRequest *)resource:(NSURLConnection *)h willSendRequest:(NSURLRequest *)newRequest
+- (NSURLRequest *)connection:(NSURLConnection *)connection willSendRequest:(NSURLRequest *)newRequest redirectResponse:(NSURLResponse *)redirectResponse
 {
     // Note that there are no asserts here as there are for the other callbacks. This is due to the
     // fact that this "callback" is sent when starting every load, and the state of callback
@@ -122,7 +122,7 @@
     }
 
     // note super will make a copy for us, so reassigning newRequest is important
-    newRequest = [super resource:h willSendRequest:newRequest];
+    newRequest = [super connection:connection willSendRequest:newRequest redirectResponse:redirectResponse];
 
     // Don't set this on the first request.  It is set
     // when the main load was started.
@@ -172,10 +172,10 @@
 	ASSERT_NOT_REACHED();
     }
 
-    [super resource:resource didReceiveResponse:r];
+    [super connection:resource didReceiveResponse:r];
 
     if ([[req URL] _web_shouldLoadAsEmptyDocument]) {
-	[self resourceDidFinishLoading:resource];
+	[self connectionDidFinishLoading:resource];
     }
 }
 
@@ -202,9 +202,9 @@
 }
 
 
--(void)resource:(NSURLConnection *)h didReceiveResponse:(NSURLResponse *)r
+- (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)r
 {
-    ASSERT(![h defersCallbacks]);
+    ASSERT(![connection defersCallbacks]);
     ASSERT(![self defersCallbacks]);
     ASSERT(![[dataSource _controller] defersCallbacks]);
 
@@ -217,11 +217,11 @@
     [self checkContentPolicyForResponse:r];
 }
 
-- (void)resource:(NSURLConnection *)h didReceiveData:(NSData *)data
+- (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data
 {
     ASSERT(data);
     ASSERT([data length] != 0);
-    ASSERT(![h defersCallbacks]);
+    ASSERT(![connection defersCallbacks]);
     ASSERT(![self defersCallbacks]);
     ASSERT(![[dataSource _controller] defersCallbacks]);
  
@@ -232,15 +232,15 @@
                                        fromDataSource:dataSource
                                              complete:NO];
 
-    [super resource:h didReceiveData:data];
+    [super connection:connection didReceiveData:data];
     _bytesReceived += [data length];
 
     LOG(Loading, "%d of %d", _bytesReceived, _contentLength);
 }
 
-- (void)resourceDidFinishLoading:(NSURLConnection *)h
+- (void)connectionDidFinishLoading:(NSURLConnection *)connection
 {
-    ASSERT(![h defersCallbacks]);
+    ASSERT(![connection defersCallbacks]);
     ASSERT(![self defersCallbacks]);
     ASSERT(![[dataSource _controller] defersCallbacks]);
 
@@ -253,14 +253,14 @@
     [[dataSource _controller] _mainReceivedBytesSoFar:[[dataSource data] length]
                                        fromDataSource:dataSource
                                              complete:YES];
-    [super resourceDidFinishLoading:h];
+    [super connectionDidFinishLoading:connection];
     
     [self release];
 }
 
-- (void)resource:(NSURLConnection *)h didFailLoadingWithError:(WebError *)error
+- (void)connection:(NSURLConnection *)connection didFailLoadingWithError:(WebError *)error
 {
-    ASSERT(![h defersCallbacks]);
+    ASSERT(![connection defersCallbacks]);
     ASSERT(![self defersCallbacks]);
     ASSERT(![[dataSource _controller] defersCallbacks]);
 
@@ -272,13 +272,13 @@
 - (void)startLoading:(NSURLRequest *)r
 {
     if ([[r URL] _web_shouldLoadAsEmptyDocument]) {
-	[self resource:resource willSendRequest:r];
+	[self connection:resource willSendRequest:r redirectResponse:nil];
 
 	NSURLResponse *rsp = [[NSURLResponse alloc] init];
 	[rsp setURL:[[[self dataSource] request] URL]];
 	[rsp setMIMEType:@"text/html"];
 	[rsp setExpectedContentLength:0];
-	[self resource:resource didReceiveResponse:rsp];
+	[self connection:resource didReceiveResponse:rsp];
 	[rsp release];
     } else {
 	[resource loadWithDelegate:proxy];
@@ -302,34 +302,34 @@
     delegate = theDelegate;
 }
 
-- (NSURLRequest *)resource:(NSURLConnection *)resource willSendRequest:(NSURLRequest *)request
+- (NSURLRequest *)connection:(NSURLConnection *)connection willSendRequest:(NSURLRequest *)request redirectResponse:(NSURLResponse *)redirectResponse
 {
     ASSERT(delegate);
-    return [delegate resource:resource willSendRequest:request];
+    return [delegate connection:connection willSendRequest:request redirectResponse:redirectResponse];
 }
 
--(void)resource:(NSURLConnection *)resource didReceiveResponse:(NSURLResponse *)response
+- (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response
 {
     ASSERT(delegate);
-    [delegate resource:resource didReceiveResponse:response];
+    [delegate connection:connection didReceiveResponse:response];
 }
 
--(void)resource:(NSURLConnection *)resource didReceiveData:(NSData *)data
+- (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data
 {
     ASSERT(delegate);
-    [delegate resource:resource didReceiveData:data];
+    [delegate connection:connection didReceiveData:data];
 }
 
--(void)resourceDidFinishLoading:(NSURLConnection *)resource
+- (void)connectionDidFinishLoading:(NSURLConnection *)connection
 {
     ASSERT(delegate);
-    [delegate resourceDidFinishLoading:resource];
+    [delegate connectionDidFinishLoading:connection];
 }
 
--(void)resource:(NSURLConnection *)resource didFailLoadingWithError:(WebError *)error
+- (void)connection:(NSURLConnection *)connection didFailLoadingWithError:(WebError *)error
 {
     ASSERT(delegate);
-    [delegate resource:resource didFailLoadingWithError:error];
+    [delegate connection:connection didFailLoadingWithError:error];
 }
 
 @end

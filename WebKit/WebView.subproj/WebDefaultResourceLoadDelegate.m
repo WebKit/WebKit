@@ -33,7 +33,7 @@ static WebDefaultResourceLoadDelegate *sharedDelegate = nil;
     return [[[NSObject alloc] init] autorelease];
 }
 
--(NSURLRequest *)webView: (WebView *)wv resource:identifier willSendRequest: (NSURLRequest *)newRequest fromDataSource:(WebDataSource *)dataSource
+-(NSURLRequest *)webView: (WebView *)wv resource:identifier willSendRequest: (NSURLRequest *)newRequest redirectResponse:(NSURLResponse *)redirectResponse fromDataSource:(WebDataSource *)dataSource
 {
     return newRequest;
 }
