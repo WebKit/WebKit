@@ -1,3 +1,12 @@
+2004-03-24  Ken Kocienda <kocienda@apple.com>
+
+        Implemented the remainder of the HTML DOM API.
+    
+        Reviewed by Chris.
+    
+        * kwq/DOMHTML.h
+        * kwq/HTMLDOM.mm
+
 2004-03-23  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3487207, implement onscroll DOM event for elements with overflow:auto/scroll/hidden.  This does
