@@ -1,3 +1,27 @@
+2003-10-29  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3438716>: jpg and gif images copied from Safari and placed in mail are sent as tiff
+
+        Reviewed by john.
+
+        * Misc.subproj/WebNSPasteboardExtras.h:
+        * Misc.subproj/WebNSPasteboardExtras.m:
+        (-[NSPasteboard _web_writeFileContents:withFilename:]): new
+        * Misc.subproj/WebNSViewExtras.h:
+        * Misc.subproj/WebNSViewExtras.m:
+        (-[NSView _web_dragImage:originalData:rect:URL:title:event:]): now takes originalData and calls _web_fileContents:withFilename:
+        * WebView.subproj/WebDefaultContextMenuDelegate.m:
+        (-[WebDefaultUIDelegate copyImageToClipboard:]): call _web_writeFileContents:withFilename:
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _handleMouseDragged:]): call renamed _web_dragImage and [WebView _cachedResponseForURL:]
+        (-[WebHTMLView namesOfPromisedFilesDroppedAtDestination:]): call [WebView _cachedResponseForURL:]
+        * WebView.subproj/WebImageView.m:
+        (-[WebImageView writeImageToPasteboard:]): call _web_writeFileContents:withFilename:
+        (-[WebImageView mouseDragged:]): call renamed _web_dragImage
+        * WebView.subproj/WebView.m:
+        (-[WebView _cachedResponseForURL:]): new
+        * WebView.subproj/WebViewPrivate.h:
+
 2003-10-28  John Sullivan  <sullivan@apple.com>
 
         - fixed <rdar://problem/3466082>: 7B85/111: Crash viewing web page ([WebView setNextKeyView:])

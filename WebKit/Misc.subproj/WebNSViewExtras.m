@@ -11,7 +11,7 @@
 #import <WebKit/WebNSViewExtras.h>
 
 #import <Foundation/NSString_NSURLExtras.h>
-#import <Foundation/NSURLFileTypeMappings.h>
+#import <Foundation/NSURL_NSURLExtras.h>
 
 #define WebDragStartHysteresisX			5.0
 #define WebDragStartHysteresisY			5.0
@@ -177,22 +177,20 @@
 }
 #endif
 
-- (void)_web_dragPromisedImage:(WebImageRenderer *)image
-                          rect:(NSRect)rect
-                           URL:(NSURL *)URL
-                         title:(NSString *)title
-                         event:(NSEvent *)event
+- (void)_web_dragImage:(WebImageRenderer *)image
+          originalData:(NSData *)originalData
+                  rect:(NSRect)rect
+                   URL:(NSURL *)URL
+                 title:(NSString *)title
+                 event:(NSEvent *)event
 {
     NSPoint mouseDownPoint = [self convertPoint:[event locationInWindow] fromView:nil];
     NSImage *dragImage;
     NSPoint origin;
     NSSize offset;
 
-    NSString *MIMEType = [image MIMEType];
-    NSString *fileType = nil;
-    if (MIMEType && ![MIMEType isEqualToString:@"application/octet-stream"]) {
-        fileType = [[NSURLFileTypeMappings sharedMappings] preferredExtensionForMIMEType:MIMEType];
-    }
+    NSString *filename = [URL _web_suggestedFilenameWithMIMEType:[image MIMEType]];
+    NSString *fileType = [filename pathExtension];
     if (!fileType) {
         fileType = @"";
     }
@@ -229,7 +227,13 @@
     NSPasteboard *pboard = [NSPasteboard pasteboardWithName:NSDragPboard];
     NSMutableArray *types = [NSMutableArray arrayWithObjects:NSFilesPromisePboardType, NSTIFFPboardType, nil];
     [types addObjectsFromArray:[NSPasteboard _web_writableDragTypesForURL]];
+    if (originalData) {
+        [types insertObject:NSFileContentsPboardType atIndex:0];
+    }
     [pboard _web_writeURL:URL andTitle:title withOwner:self types:types];
+    if (originalData) {
+        [pboard _web_writeFileContents:originalData withFilename:filename];
+    }
     [pboard setPropertyList:filesTypes forType:NSFilesPromisePboardType];
     [pboard setData:[image TIFFRepresentation] forType:NSTIFFPboardType];
     

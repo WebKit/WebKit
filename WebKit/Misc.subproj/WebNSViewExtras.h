@@ -40,9 +40,10 @@
 - (NSDragOperation)_web_dragOperationForDraggingInfo:(id <NSDraggingInfo>)sender;
 
 // Resizes and applies alpha to image, extends pboard and sets drag origins for dragging promised image files.
-- (void)_web_dragPromisedImage:(WebImageRenderer *)image
-                          rect:(NSRect)rect
-                           URL:(NSURL *)URL
-                         title:(NSString *)title
-                         event:(NSEvent *)event;
+- (void)_web_dragImage:(WebImageRenderer *)image
+          originalData:(NSData *)originalData
+                  rect:(NSRect)rect
+                   URL:(NSURL *)URL
+                 title:(NSString *)title
+                 event:(NSEvent *)event;
 @end

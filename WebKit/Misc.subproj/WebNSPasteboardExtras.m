@@ -133,5 +133,12 @@ NSString *WebURLNamePboardType = nil;
     return [findPasteboard changeCount];
 }
 
+- (void)_web_writeFileContents:(NSData *)data withFilename:(NSString *)filename
+{
+    NSFileWrapper *wrapper = [[NSFileWrapper alloc] initRegularFileWithContents:data];
+    [wrapper setPreferredFilename:filename];
+    [self writeFileWrapper:wrapper];
+    [wrapper release];
+}
 
 @end

@@ -2,19 +2,26 @@
     WebView.m
     Copyright 2001, 2002 Apple, Inc. All rights reserved.
 */
+
+#import <WebKit/WebViewPrivate.h>
+
+#import <WebKit/WebAssertions.h>
 #import <WebKit/WebBackForwardList.h>
 #import <WebKit/WebBridge.h>
 #import <WebKit/WebControllerSets.h>
 #import <WebKit/WebDataSourcePrivate.h>
+#import <WebKit/WebDefaultFrameLoadDelegate.h>
 #import <WebKit/WebDefaultPolicyDelegate.h>
+#import <WebKit/WebDefaultResourceLoadDelegate.h>
+#import <WebKit/WebDefaultUIDelegate.h>
 #import <WebKit/WebDocument.h>
 #import <WebKit/WebDocumentInternal.h>
 #import <WebKit/WebDynamicScrollBarsView.h>
+#import <WebKit/WebDownload.h>
 #import <WebKit/WebException.h>
-#import <WebKit/WebFrame.h>
+#import <WebKit/WebFormDelegatePrivate.h>
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebFrameViewPrivate.h>
-#import <WebKit/WebHistoryItem.h>
 #import <WebKit/WebHistoryItemPrivate.h>
 #import <WebKit/WebHTMLView.h>
 #import <WebKit/WebIconDatabase.h>
@@ -31,10 +38,11 @@
 #import <WebKit/WebTextView.h>
 #import <WebKit/WebTextRepresentation.h>
 #import <WebKit/WebTextRenderer.h>
-#import <WebKit/WebViewPrivate.h>
 #import <WebKit/WebUIDelegate.h>
 
-#import <WebKit/WebAssertions.h>
+#import <WebCore/WebCoreEncodings.h>
+#import <WebCore/WebCoreSettings.h>
+
 #import <Foundation/NSUserDefaults_NSURLExtras.h>
 #import <Foundation/NSURLConnection.h>
 
@@ -42,14 +50,7 @@
 #import <Foundation/NSDictionary_NSURLExtras.h>
 #import <Foundation/NSURLDownloadPrivate.h>
 #import <Foundation/NSURLFileTypeMappings.h>
-#import <WebCore/WebCoreEncodings.h>
-#import <WebCore/WebCoreSettings.h>
-#import <WebKit/WebDefaultFrameLoadDelegate.h>
-#import <WebKit/WebDefaultPolicyDelegate.h>
-#import <WebKit/WebDefaultResourceLoadDelegate.h>
-#import <WebKit/WebDefaultUIDelegate.h>
-#import <WebKit/WebDownload.h>
-#import <WebKit/WebFormDelegatePrivate.h>
+#import <Foundation/NSURLRequestPrivate.h>
 
 static const struct UserAgentSpoofTableEntry *_web_findSpoofTableEntry(const char *, unsigned);
 
@@ -70,22 +71,22 @@ NSString *WebElementLinkTargetFrameKey =	@"WebElementTargetFrame";
 NSString *WebElementLinkLabelKey = 		@"WebElementLinkLabel";
 NSString *WebElementLinkTitleKey = 		@"WebElementLinkTitle";
 
-NSString *WebViewProgressStartedNotification = @"WebProgressStartedNotification";
-NSString *WebViewProgressEstimateChangedNotification = @"WebProgressEstimateChangedNotification";
-NSString *WebViewProgressFinishedNotification = @"WebProgressFinishedNotification";
+NSString *WebViewProgressStartedNotification =          @"WebProgressStartedNotification";
+NSString *WebViewProgressEstimateChangedNotification =  @"WebProgressEstimateChangedNotification";
+NSString *WebViewProgressFinishedNotification =         @"WebProgressFinishedNotification";
 
 enum { WebViewVersion = 2 };
 
 
 static NSMutableSet *schemesWithRepresentationsSet;
 
-NSString *_WebCanGoBackKey = @"canGoBack";
-NSString *_WebCanGoForwardKey = @"canGoForward";
-NSString *_WebEstimatedProgressKey = @"estimatedProgress";
-NSString *_WebIsLoadingKey = @"isLoading";
-NSString *_WebMainFrameIconKey = @"mainFrameIcon";
-NSString *_WebMainFrameTitleKey = @"mainFrameTitle";
-NSString *_WebMainFrameURLKey = @"mainFrameURL";
+NSString *_WebCanGoBackKey =            @"canGoBack";
+NSString *_WebCanGoForwardKey =         @"canGoForward";
+NSString *_WebEstimatedProgressKey =    @"estimatedProgress";
+NSString *_WebIsLoadingKey =            @"isLoading";
+NSString *_WebMainFrameIconKey =        @"mainFrameIcon";
+NSString *_WebMainFrameTitleKey =       @"mainFrameTitle";
+NSString *_WebMainFrameURLKey =         @"mainFrameURL";
 
 @interface WebProgressItem : NSObject
 {
@@ -1022,6 +1023,15 @@ NSString *_WebMainFrameURLKey = @"mainFrameURL";
 - (void)_reloadForPluginChanges
 {
     [[self mainFrame] _reloadForPluginChanges];
+}
+
+- (NSCachedURLResponse *)_cachedResponseForURL:(NSURL *)URL
+{
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:URL];
+    [request setHTTPUserAgent:[self userAgentForURL:URL]];
+    NSCachedURLResponse *cachedResponse = [[NSURLCache sharedURLCache] cachedResponseForRequest:request];
+    [request release];
+    return cachedResponse;
 }
 
 @end

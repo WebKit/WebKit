@@ -12,6 +12,7 @@
 #import <WebKit/WebImageRenderer.h>
 #import <WebKit/WebImageRendererFactory.h>
 #import <WebKit/WebImageRepresentation.h>
+#import <WebKit/WebNSPasteboardExtras.h>
 #import <WebKit/WebNSViewExtras.h>
 #import <WebKit/WebViewPrivate.h>
 
@@ -185,12 +186,11 @@
 }
 
 - (BOOL)writeImageToPasteboard:(NSPasteboard *)pasteboard
-{
-    NSData *TIFFData = [self haveCompleteImage] ? [[rep image] TIFFRepresentation] : nil;
-    
-    if (TIFFData) {
-        [pasteboard declareTypes:[NSArray arrayWithObject:NSTIFFPboardType] owner:nil];
-        [pasteboard setData:TIFFData forType:NSTIFFPboardType];
+{    
+    if ([self haveCompleteImage]) {
+        [pasteboard declareTypes:[NSArray arrayWithObjects:NSFileContentsPboardType, NSTIFFPboardType, nil] owner:nil];
+        [pasteboard _web_writeFileContents:[rep data] withFilename:[rep filename]];
+        [pasteboard setData:[[rep image] TIFFRepresentation] forType:NSTIFFPboardType];
         return YES;
     }
     
@@ -238,11 +238,12 @@
     // Retain this view during the drag because it may be released before the drag ends.
     [self retain];
 
-    [self _web_dragPromisedImage:[rep image]
-                            rect:[self drawingRect]
-                             URL:[rep URL]
-                           title:nil
-                           event:event];
+    [self _web_dragImage:[rep image]
+            originalData:[rep data]
+                    rect:[self drawingRect]
+                     URL:[rep URL]
+                   title:nil
+                   event:event];
 }
 
 - (NSArray *)namesOfPromisedFilesDroppedAtDestination:(NSURL *)dropDestination

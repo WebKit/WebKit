@@ -40,7 +40,6 @@
 
 #import <Foundation/NSFileManager_NSURLExtras.h>
 #import <Foundation/NSURL_NSURLExtras.h>
-#import <Foundation/NSURLRequestPrivate.h>
 
 // The link drag hysteresis is much larger than the others because there
 // needs to be enough space to cancel the link press without starting a link drag,
@@ -639,11 +638,12 @@ static WebHTMLView *lastHitView = nil;
 	_private->draggingImageURL = [imageURL retain];
         WebImageRenderer *image = [element objectForKey:WebElementImageKey];
         ASSERT([image isKindOfClass:[WebImageRenderer class]]);
-        [self _web_dragPromisedImage:image
-                                rect:[[element objectForKey:WebElementImageRectKey] rectValue]
-                                 URL:linkURL ? linkURL : imageURL
-                               title:[element objectForKey:WebElementImageAltStringKey]
-                               event:_private->mouseDownEvent];
+        [self _web_dragImage:image
+                originalData:[[[self _webView] _cachedResponseForURL:imageURL] data]
+                        rect:[[element objectForKey:WebElementImageRectKey] rectValue]
+                         URL:linkURL ? linkURL : imageURL
+                       title:[element objectForKey:WebElementImageAltStringKey]
+                       event:_private->mouseDownEvent];
         
     } else if (linkURL) {
         NSPasteboard *pasteboard = [NSPasteboard pasteboardWithName:NSDragPboard];
@@ -1490,14 +1490,10 @@ static WebHTMLView *lastHitView = nil;
     ASSERT(_private->draggingImageURL);
     
     WebView *webView = [self _webView];
+    NSCachedURLResponse *cachedResponse = [webView _cachedResponseForURL:_private->draggingImageURL];
+    NSData *data = [cachedResponse data];
     NSString *filename;
     
-    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:_private->draggingImageURL];
-    [request setHTTPUserAgent:[webView userAgentForURL:_private->draggingImageURL]];
-    NSCachedURLResponse *cachedResponse = [[NSURLCache sharedURLCache] cachedResponseForRequest:request];
-    [request release];
-    
-    NSData *data = [cachedResponse data];
     if (data) {
         // FIXME: Report an error if we fail to create a file.
         NSString *path = [[dropDestination path] stringByAppendingPathComponent:[[cachedResponse response] suggestedFilename]];

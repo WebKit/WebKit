@@ -173,12 +173,20 @@
 
 - (void)copyImageToClipboard:(id)sender
 {
-    NSDictionary *element = [sender representedObject];
-    NSData *tiff = [[element objectForKey:WebElementImageKey] TIFFRepresentation];
-    
+    NSDictionary *element = [sender representedObject];    
     NSPasteboard *pasteboard = [NSPasteboard generalPasteboard];
-    [pasteboard declareTypes:[NSArray arrayWithObject:NSTIFFPboardType] owner:nil];
-    [pasteboard setData:tiff forType:NSTIFFPboardType];
+    NSMutableArray *types = [NSMutableArray arrayWithObject:NSTIFFPboardType];
+    WebView *webView = [[element objectForKey:WebElementFrameKey] webView];
+    NSCachedURLResponse *cachedResponse = [webView _cachedResponseForURL:[element objectForKey:WebElementImageURLKey]];
+    NSData *data = [cachedResponse data];
+    if (data) {
+        [types insertObject:NSFileContentsPboardType atIndex:0];
+    }
+    [pasteboard declareTypes:types owner:nil];
+    if (data) {
+        [pasteboard _web_writeFileContents:data withFilename:[[cachedResponse response] suggestedFilename]];
+    }
+    [pasteboard setData:[[element objectForKey:WebElementImageKey] TIFFRepresentation] forType:NSTIFFPboardType];
 }
 
 - (void)openFrameInNewWindow:(id)sender
@@ -187,6 +195,5 @@
     WebFrame *webFrame = [element objectForKey:WebElementFrameKey];
     [self openNewWindowWithURL:[[webFrame dataSource] _URL] element:element];
 }
-
 
 @end
