@@ -1,6 +1,13 @@
 2004-08-25  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by me
+
+        * layout-tests/editing/deleting/delete-3775172-fix.html: Wrong version of test checked in
+        a moment ago.
+
+2004-08-25  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by me
         
         Added test case for <rdar://problem/3775172> Blot crashes after typing one character then deleting it
 
