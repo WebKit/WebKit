@@ -1,3 +1,12 @@
+2004-08-19  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3566336> CrashTracer: .2403 crashes at com.apple.WebKit: -[WebFileDatabase performSetObject:forKey:] + 0x94
+
+        Reviewed by trey.
+
+        * Misc.subproj/WebIconDatabase.m:
+        (-[WebIconDatabase _updateFileDatabase]): pass WebFileDatabase copies of the mutable dictionaries or else they may be accessed on a separate thread as the main thread is modifying them
+
 2004-08-18  Richard Williamson   <rjw@apple.com>
 
         Replace horrible pollForAppletInView: with new
