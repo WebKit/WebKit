@@ -1,19 +1,36 @@
 2003-10-10  David Hyatt  <hyatt@apple.com>
 
+	Beginning of work on border collapsing.  This patch makes sure that cell spacing between cells is
+	ignored and that padding on tables is ignored.  This ensures that there is no space between cells
+	or between the edges of cells and the border of the table itself.  
+
+        Reviewed by john
+
+        * khtml/rendering/render_style.h:
+        (khtml::RenderStyle::setBitDefaults):
+        * khtml/rendering/render_table.cpp:
+        (RenderTable::setStyle):
+        (RenderTable::layout):
+        * khtml/rendering/render_table.h:
+        (khtml::RenderTable::collapseBorders):
+        (khtml::RenderTable::bordersPaddingAndSpacing):
+
+2003-10-10  David Hyatt  <hyatt@apple.com>
+
 	Fix for table regression 3449444, as well as a patch to support padding on tables and to stop
 	honoring borders on row groups (both of which are correct for the "separate" border model).
 	
 	* khtml/rendering/render_table.cpp:
-	        (RenderTable::layout):
-	        (RenderTableSection::calcRowHeight):
-	        (RenderTableSection::layoutRows):
-	        * khtml/rendering/render_table.h:
-	        (khtml::RenderTable::bordersPaddingAndSpacing):
-	        * khtml/rendering/table_layout.cpp:
-	        (FixedTableLayout::calcMinMaxWidth):
-	        (FixedTableLayout::layout):
-	        (AutoTableLayout::calcMinMaxWidth):
-	        (AutoTableLayout::layout):
+        (RenderTable::layout):
+        (RenderTableSection::calcRowHeight):
+        (RenderTableSection::layoutRows):
+        * khtml/rendering/render_table.h:
+        (khtml::RenderTable::bordersPaddingAndSpacing):
+        * khtml/rendering/table_layout.cpp:
+        (FixedTableLayout::calcMinMaxWidth):
+        (FixedTableLayout::layout):
+        (AutoTableLayout::calcMinMaxWidth):
+        (AutoTableLayout::layout):
 
 	Reviewed by darin
 

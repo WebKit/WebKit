@@ -720,7 +720,7 @@ protected:
 	inherited_flags._text_decorations = TDNONE;
 	inherited_flags._cursor_style = CURSOR_AUTO;
 	inherited_flags._direction = LTR;
-	inherited_flags._border_collapse = true;
+	inherited_flags._border_collapse = false;
 	inherited_flags._white_space = NORMAL;
 	inherited_flags._font_variant = FVNORMAL;
 	inherited_flags._visuallyOrdered = false;

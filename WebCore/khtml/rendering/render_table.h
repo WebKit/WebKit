@@ -85,7 +85,9 @@ public:
         { return columnPos[col]; }
 
     int cellSpacing() const { return spacing; }
-
+    
+    bool collapseBorders() const { return style()->borderCollapse(); }
+        
     Rules getRules() const { return rules; }
 
     const QColor &bgColor() const { return style()->backgroundColor(); }
@@ -149,7 +151,8 @@ public:
     }
 
     int bordersPaddingAndSpacing() const {
-	return borderLeft() + borderRight() + paddingLeft() + paddingRight() + (numEffCols()+1) * cellSpacing();
+	return borderLeft() + borderRight() + 
+               (collapseBorders() ? 0 : (paddingLeft() + paddingRight() + (numEffCols()+1) * cellSpacing()));
     }
 
     RenderTableCol *colElement( int col );
