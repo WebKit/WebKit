@@ -32,13 +32,16 @@
     pluginPointer:(NPP)thePluginPointer
        notifyData:(void *)theNotifyData 
  sendNotification:(BOOL)flag
-{    
+{   
     if ([self initWithRequestURL:[theRequest URL]
                     pluginPointer:thePluginPointer
                        notifyData:theNotifyData
                  sendNotification:flag] == nil) {
         return nil;
     }
+    
+    // Temporarily set isTerminated to YES to avoid assertion failure in dealloc in case were are released in this method.
+    isTerminated = YES;
     
     if (![WebView _canHandleRequest:theRequest]) {
         [self release];
@@ -50,6 +53,8 @@
     WebBaseNetscapePluginView *view = (WebBaseNetscapePluginView *)instance->ndata;
     _loader = [[WebNetscapePluginConnectionDelegate alloc] initWithStream:self view:view]; 
     [_loader setDataSource:[view dataSource]];
+    
+    isTerminated = NO;
 
     return self;
 }

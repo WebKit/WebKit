@@ -1,3 +1,14 @@
+2004-10-05  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3827002> assertion failure in WebBaseNetscapePluginStream on abc.go.com
+
+        Reviewed by rjw.
+
+        * Plugins.subproj/WebBaseNetscapePluginStream.m:
+        (-[WebBaseNetscapePluginStream initWithRequestURL:pluginPointer:notifyData:sendNotification:]): avoid assertion failure in dealloc by temporarily setting isTerminated to YES in case we are released in this method
+        * Plugins.subproj/WebNetscapePluginStream.m:
+        (-[WebNetscapePluginStream initWithRequest:pluginPointer:notifyData:sendNotification:]): ditto
+
 2004-10-05  John Sullivan  <sullivan@apple.com>
 
         * WebCoreSupport.subproj/WebBridge.m:

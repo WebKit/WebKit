@@ -34,7 +34,10 @@ static const char *CarbonPathFromPOSIXPath(const char *posixPath);
         sendNotification:(BOOL)flag
 {
     [super init];
-    
+ 
+    // Temporarily set isTerminated to YES to avoid assertion failure in dealloc in case were are released in this method.
+    isTerminated = YES;
+
     if (theRequestURL == nil || thePluginPointer == NULL) {
         [self release];
         return nil;
@@ -44,6 +47,8 @@ static const char *CarbonPathFromPOSIXPath(const char *posixPath);
     [self setPluginPointer:thePluginPointer];
     notifyData = theNotifyData;
     sendNotification = flag;
+    
+    isTerminated = NO;
     
     return self;
 }
