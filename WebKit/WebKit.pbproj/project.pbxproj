@@ -83,6 +83,7 @@
 			children = (
 				9C7CABBB0190A37C0ECA16EA,
 				254DC334016E1D3F0ECA149E,
+				25A8176801B5474B0ECA149E,
 				2568C71E017490290ECA149E,
 				089C1665FE841158C02AAC07,
 				0867D69AFE84028FC02AAC07,
@@ -121,9 +122,8 @@
 				FRAMEWORK_SEARCH_PATHS = "";
 				FRAMEWORK_VERSION = A;
 				HEADER_SEARCH_PATHS = ../WebCore/include;
-				INSTALL_PATH = "$(HOME)/Library/Frameworks";
+				INSTALL_PATH = "@executable_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = "";
-				OTHER_CFLAGS = "";
 				PRODUCT_NAME = WebKit;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
@@ -153,11 +153,13 @@
 	<key>CFBundlePackageType</key>
 	<string>FMWK</string>
 	<key>CFBundleSignature</key>
-	<string>????</string>
+	<string>webk</string>
 	<key>CFBundleVersion</key>
 	<string>0.0.1d1</string>
 	<key>NSPrincipalClass</key>
 	<string></string>
+	<key>SKIP_INSTALL</key>
+	<string>YES</string>
 </dict>
 </plist>
 ";
@@ -179,6 +181,9 @@
 				9C93A48A01920D3D0ECA16EA,
 				251E877A01A1EE570ECA149E,
 				25A5593301A5996D0ECA149E,
+				25A8176F01B5B9180ECA149E,
+				25A8177301B698760ECA149E,
+				25A8177701B6A5240ECA149E,
 			);
 			isa = PBXHeadersBuildPhase;
 			name = Headers;
@@ -204,6 +209,9 @@
 				9C93A48B01920D3D0ECA16EA,
 				251E877B01A1EE570ECA149E,
 				25A5593401A5996D0ECA149E,
+				25A8177001B5B9180ECA149E,
+				25A8177401B698760ECA149E,
+				25A8177801B6A5240ECA149E,
 			);
 			isa = PBXSourcesBuildPhase;
 			name = Sources;
@@ -453,10 +461,93 @@
 			fileRef = 25A5593101A5996D0ECA149E;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Private,
+				);
 			};
 		};
 		25A5593401A5996D0ECA149E = {
 			fileRef = 25A5593201A5996D0ECA149E;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		25A8176801B5474B0ECA149E = {
+			children = (
+				25A8176D01B5B9180ECA149E,
+				25A8176E01B5B9180ECA149E,
+				25A8177101B698760ECA149E,
+				25A8177201B698760ECA149E,
+				25A8177501B6A5240ECA149E,
+				25A8177601B6A5240ECA149E,
+			);
+			isa = PBXGroup;
+			name = History;
+			path = History.subproj;
+			refType = 4;
+		};
+		25A8176D01B5B9180ECA149E = {
+			isa = PBXFileReference;
+			path = WKURIList.h;
+			refType = 4;
+		};
+		25A8176E01B5B9180ECA149E = {
+			isa = PBXFileReference;
+			path = WKURIList.m;
+			refType = 4;
+		};
+		25A8176F01B5B9180ECA149E = {
+			fileRef = 25A8176D01B5B9180ECA149E;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		25A8177001B5B9180ECA149E = {
+			fileRef = 25A8176E01B5B9180ECA149E;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		25A8177101B698760ECA149E = {
+			isa = PBXFileReference;
+			path = WKURIEntry.h;
+			refType = 4;
+		};
+		25A8177201B698760ECA149E = {
+			isa = PBXFileReference;
+			path = WKURIEntry.m;
+			refType = 4;
+		};
+		25A8177301B698760ECA149E = {
+			fileRef = 25A8177101B698760ECA149E;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		25A8177401B698760ECA149E = {
+			fileRef = 25A8177201B698760ECA149E;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		25A8177501B6A5240ECA149E = {
+			isa = PBXFileReference;
+			path = WKBackForwardList.h;
+			refType = 4;
+		};
+		25A8177601B6A5240ECA149E = {
+			isa = PBXFileReference;
+			path = WKBackForwardList.m;
+			refType = 4;
+		};
+		25A8177701B6A5240ECA149E = {
+			fileRef = 25A8177501B6A5240ECA149E;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		25A8177801B6A5240ECA149E = {
+			fileRef = 25A8177601B6A5240ECA149E;
 			isa = PBXBuildFile;
 			settings = {
 			};
