@@ -1,3 +1,13 @@
+2003-11-03  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	- fixed 3472023 - REGRESSION: assertion on layout tests
+	
+        * kwq/KWQTextCodec.mm:
+        (KWQTextDecoder::convertUTF16): Remove assert that length is not
+	0, since we can get zero length now when flushing.
+
 2003-11-03  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by John

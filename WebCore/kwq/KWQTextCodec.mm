@@ -238,9 +238,8 @@ KWQTextDecoder::~KWQTextDecoder()
 
 QString KWQTextDecoder::convertUTF16(const unsigned char *s, int length)
 {
-    ASSERT(length > 0);
     ASSERT(_numBufferedBytes == 0 || _numBufferedBytes == 1);
-    
+
     const unsigned char *p = s;
     unsigned len = length;
     
