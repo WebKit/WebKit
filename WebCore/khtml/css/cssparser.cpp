@@ -685,7 +685,7 @@ bool CSSParser::parseValue( int propId, bool important )
 
     case CSS_PROP_BACKGROUND_POSITION_X:
     case CSS_PROP_BACKGROUND_POSITION_Y:
-	valid_primitive = validUnit( value, FPercent|FNumber|FLength, strict&(!nonCSSHint) );
+	valid_primitive = validUnit( value, FPercent|FLength, strict&(!nonCSSHint) );
 	break;
 
     case CSS_PROP_BORDER_SPACING:

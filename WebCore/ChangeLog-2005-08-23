@@ -1,3 +1,15 @@
+2003-05-08  David Hyatt  <hyatt@apple.com>
+
+	Background-position-x and y should be length|percentage.  Number
+	is not a valid option.  Need to remove this so that the quirk will
+	kick in that translates numbers to pixels.  Fixes an issue on
+	diveintomark's list.
+	
+        Reviewed by darin
+
+        * khtml/css/cssparser.cpp:
+        (CSSParser::parseValue):
+
 2003-05-08  Darin Adler  <darin@apple.com>
 
         Reviewed by Dave.
