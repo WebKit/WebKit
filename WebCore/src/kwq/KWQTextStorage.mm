@@ -28,6 +28,7 @@
 #include <kwqdebug.h>
 
 #import <KWQTextStorage.h>
+#import <KWQTextContainer.h>
 
 /*
     This class is a dumb text storage implementation.  It is optimized for speed,
@@ -40,31 +41,59 @@
 
 @implementation KWQTextStorage
 
-static KWQTextStorage *sharedInstance = nil;
-
-+ (KWQTextStorage *)sharedInstance
+- (KWQLayoutFragment *)getFragmentForString: (NSString *)fragString
 {
-    if (sharedInstance == nil)
-        sharedInstance = [[KWQTextStorage alloc] init];
-    return sharedInstance;
+    return [fragmentCache objectForKey: fragString];
 }
 
-+ (void)setString:(NSString *)str attributes:(NSDictionary *)attrs 
+- (KWQLayoutFragment *)addFragmentForString: (NSString *)fragString
 {
-    [[KWQTextStorage sharedInstance] setString: str attributes: attrs];
+    KWQLayoutFragment *fragment;
+    
+    if (fragmentCache == nil)
+        fragmentCache = [[NSMutableDictionary alloc] init];
+
+    int fragStringLength = [fragString length];
+
+    fragment = [[KWQLayoutFragment alloc] init];
+
+    [fragmentCache setObject: fragment forKey: fragString];
+    
+    [self setString: fragString];
+
+    NSRange range = NSMakeRange (0, fragStringLength);
+    NSRange glyphRange = [_layoutManager glyphRangeForCharacterRange:range actualCharacterRange:nil];
+    
+    if (glyphRange.location != 0){
+        [NSException raise:@"OPTIMIZATION ASSUMPTION VIOLATED" format:@"glyphRange.location != 0"];
+    }
+
+    [fragment setGlyphRangeLength: glyphRange.length];
+    
+    NSRect boundingRect = [_layoutManager boundingRectForGlyphRange: glyphRange inTextContainer: [KWQTextContainer sharedInstance]];
+    
+    if (boundingRect.origin.x != 0 || boundingRect.origin.y != 0){
+        [NSException raise:@"OPTIMIZATION ASSUMPTION VIOLATED" format:@"bounding rect origin not 0,0"];
+    }
+    
+    [fragment setBoundingRectSize: boundingRect.size];
+
+    [fragment release];
+    
+    return fragment;
 }
 
-- (id)initWithString:(NSString *)str attributes:(NSDictionary *)attrs 
+- (id)initWithFontAttribute:(NSDictionary *)attrs 
 {
-    attrString = [str retain];
     attributes = [attrs retain];
     return self;
 }
 
 - (void)dealloc 
 {
+    [string release];
+    [fragmentCache release];
     [attributes release];
-    [attrString release];
     [super dealloc];
 }
 
@@ -101,26 +130,36 @@ static KWQTextStorage *sharedInstance = nil;
 
 - (unsigned)length 
 {
-    return [attrString length];
+    return [string length];
 }
 
-- (void)setString: (NSString *)aString attributes: (NSDictionary *)at
+- (void)setAttributes: (NSDictionary *)at
 {
-    if (aString != attrString){
-        [attrString release];
-        attrString = [aString retain];
-    }
-
     if (at != attributes){
         [attributes release];
         attributes = [at retain];
     }
 }
 
+- (void)setString: (NSString *)newString
+{
+    if (newString != string){
+        int oldLength = [self length];
+        int newLength = [newString length];
+        
+        [string release];
+        string = [newString retain];
+        [_layoutManager textStorage: self 
+                edited: NSTextStorageEditedCharacters
+                range: NSMakeRange (0, newLength)
+                changeInLength: newLength - oldLength
+                invalidatedRange:NSMakeRange (0, newLength)];
+    }
+}
 
 - (NSString *)string 
 {
-    return attrString;
+    return string;
 }
 
 

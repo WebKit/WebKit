@@ -1,3 +1,22 @@
+2002-03-13  Richard Williamson  <rjw@apple.com>
+
+        Re-worked fragment cache to minimize memory usage.
+        
+	* src/kwq/KWQFontMetrics.mm: (-[KWQLayoutFragment glyphRange]),
+	(-[KWQLayoutFragment setGlyphRangeLength:]), (-[KWQLayoutFragment
+	setBoundingRectSize:]), (-[KWQLayoutFragment boundingRect]), (+[KWQLayoutInfo
+	drawString:atPoint:withFont:color:]), (+[KWQLayoutInfo
+	drawUnderlineForString:atPoint:withFont:color:]), (-[KWQLayoutInfo
+	initWithFont:]), (-[KWQLayoutInfo layoutManager]), (-[KWQLayoutInfo
+	textStorage]), (-[KWQLayoutInfo rectForString:]):
+	* src/kwq/KWQMetrics.h:
+	* src/kwq/KWQTextStorage.h:
+	* src/kwq/KWQTextStorage.mm: (-[KWQTextStorage getFragmentForString:]),
+	(-[KWQTextStorage addFragmentForString:]), (-[KWQTextStorage
+	initWithFontAttribute:]), (-[KWQTextStorage dealloc]), (-[KWQTextStorage
+	length]), (-[KWQTextStorage setAttributes:]), (-[KWQTextStorage setString:]),
+	(-[KWQTextStorage string]):
+
 2002-03-13  Kenneth Kocienda  <kocienda@apple.com>
 
 	Updated for new didRedirectToURL callback. This is a partial fix for this bug:

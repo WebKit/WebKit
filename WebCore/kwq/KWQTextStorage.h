@@ -22,18 +22,27 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+#import <Cocoa/Cocoa.h> 
 
 #include <kwqdebug.h>
 
+#import <KWQMetrics.h>
 
 @interface KWQTextStorage : NSTextStorage
 {
-    NSString *attrString;
     NSDictionary *attributes;
+    NSString *string;
+    int stringCapacity;
+    NSMutableDictionary *fragmentCache;
     NSLayoutManager *_layoutManager;
 }
 
-+ (void)setString:(NSString *)str attributes:(NSDictionary *)attrs;
-- (void)setString: (NSString *)aString attributes: (NSDictionary *)at;
+- (id)initWithFontAttribute:(NSDictionary *)attrs;
+- (void)setAttributes: (NSDictionary *)at;
+
+- (KWQLayoutFragment *)getFragmentForString: (NSString *)string;
+- (KWQLayoutFragment *)addFragmentForString: (NSString *)string;
+
+- (void)setString: (NSString *)dString;
 
 @end

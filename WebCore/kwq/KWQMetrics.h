@@ -27,12 +27,13 @@
 
 #import <Cocoa/Cocoa.h>
 
-#define _DEBUG_LAYOUT_FRAGMENT
+@class KWQTextStorage;
 
 @interface KWQLayoutInfo : NSObject
 {
     NSMutableDictionary *attributes;
-    NSMutableDictionary *fragmentCache;
+    NSLayoutManager *layoutManager;
+    KWQTextStorage *textStorage;
 }
 
 + (void)drawString: (NSString *)string atPoint: (NSPoint)p withFont: (NSFont *)font color: (NSColor *)color;
@@ -41,34 +42,24 @@
 + (void)setMetric: (KWQLayoutInfo *)info forFont: (NSFont *)aFont;
 - initWithFont: (NSFont *)aFont;
 - (NSRect)rectForString:(NSString *)string;
-- (NSLayoutManager *)layoutManagerForString: (NSString *)string;
+- (NSLayoutManager *)layoutManager;
+- (KWQTextStorage *)textStorage;
 - (void)setColor: (NSColor *)color;
 - (void)setFont: (NSFont *)aFont;
 - (NSDictionary *)attributes;
-#ifdef _DEBUG_LAYOUT_FRAGMENT
-- (NSDictionary *)_fragmentCache;
-#endif
 @end
 
 @interface KWQLayoutFragment : NSObject
 {
-    NSTextStorage *textStorage;
-    NSTextContainer *textContainer;
-    NSLayoutManager *layoutManager;
-    NSRect boundingRect;
-#ifdef _DEBUG_LAYOUT_FRAGMENT
-    int _accessCount;
-#endif
-    BOOL cachedRect;
+    NSSize boundingRectSize;  // Is origin always zero?  Only need size.
+    unsigned int glyphRangeLength;  // Is location always zero?  Only need length.
 }
 
-- initWithString: (NSString *)storage attributes: (NSDictionary *)attrs;
-- (NSRect)boundingRect;
-- (void)dealloc;
 
-#ifdef _DEBUG_LAYOUT_FRAGMENT
-- (int)_accessCount;
-#endif
+- (void)setGlyphRangeLength: (unsigned int)l;
+- (NSRange)glyphRange;
+- (void)setBoundingRectSize: (NSSize)s;
+- (NSRect)boundingRect;
 
 @end
 

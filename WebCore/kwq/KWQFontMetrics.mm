@@ -39,44 +39,38 @@ const float LargeNumberForText = 1.0e7;
 
 
 @implementation KWQLayoutFragment
-- initWithString: (NSString *)str attributes: (NSDictionary *)attrs
+- (NSRange)glyphRange
 {
-    [super init];
+    NSRange glyphRange;
+    
+    glyphRange.location = 0;
+    glyphRange.length = glyphRangeLength;
+    
+    return glyphRange;
+}
 
-    textStorage = [[KWQTextStorage alloc] initWithString:str attributes: attrs];
-    //textContainer = [[KWQTextContainer alloc] initWithContainerSize:NSMakeSize(LargeNumberForText, LargeNumberForText)];
-    layoutManager = [[NSLayoutManager alloc] init];
+- (void)setGlyphRangeLength: (unsigned int)l
+{
+    glyphRangeLength = l;
+}
 
-    [layoutManager addTextContainer: [KWQTextContainer sharedInstance]];
-    [textStorage addLayoutManager: layoutManager];    
-
-    //[textContainer setLineFragmentPadding:0.0f];
-
-    cachedRect = NO;
-
-#ifdef _DEBUG_LAYOUT_FRAGMENT
-    _accessCount = 0;
-#endif
-
-    return self;
+- (void)setBoundingRectSize: (NSSize)s
+{
+    boundingRectSize = s;
 }
 
 - (NSRect)boundingRect
 {
-    if (!cachedRect){
-        unsigned numberOfGlyphs = [layoutManager numberOfGlyphs];
-        boundingRect = [layoutManager boundingRectForGlyphRange: NSMakeRange (0, numberOfGlyphs) inTextContainer: [KWQTextContainer sharedInstance]];
-        cachedRect = YES;
-    }
-#ifdef _DEBUG_LAYOUT_FRAGMENT
-    _accessCount++;
-#endif
+    NSRect boundingRect;
+    
+    boundingRect.origin.x = 0;
+    boundingRect.origin.y = 0;
+    boundingRect.size = boundingRectSize;
+    
     return boundingRect;
 }
 
 #ifdef _DEBUG_LAYOUT_FRAGMENT
-- (int)_accessCount { return _accessCount; }
-
 - (NSComparisonResult)compare: (id)val
 {
     if ([val _accessCount] > _accessCount)
@@ -88,13 +82,6 @@ const float LargeNumberForText = 1.0e7;
 
 #endif
 
-- (void)dealloc
-{
-    [textStorage release];
-    //[textContainer release];
-    [layoutManager release];
-    [super dealloc];
-}
 @end
 
 
@@ -107,28 +94,36 @@ static NSMutableDictionary *metricsCache = nil;
 
 + (void)drawString: (NSString *)string atPoint: (NSPoint)p withFont: (NSFont *)font color: (NSColor *)color
 {
-    KWQLayoutInfo *metricsCache = [KWQLayoutInfo getMetricsForFont: font];
-    NSLayoutManager *layoutManager = [metricsCache layoutManagerForString: string];
-    if (layoutManager != nil){
-        unsigned numberOfGlyphs = [layoutManager numberOfGlyphs];
-        [metricsCache setColor: color];
-        [metricsCache setFont: font];
-        [KWQTextStorage setString: string attributes: [metricsCache attributes]];
-        [layoutManager drawGlyphsForGlyphRange:NSMakeRange (0, numberOfGlyphs) atPoint:p];
+    KWQLayoutInfo *layoutInfo = [KWQLayoutInfo getMetricsForFont: font];
+    NSLayoutManager *manager = [layoutInfo layoutManager];
+    KWQTextStorage *storage = [layoutInfo textStorage];
+
+    if (manager != nil){
+        KWQLayoutFragment *frag = [storage getFragmentForString: (NSString *)string];
+
+        [layoutInfo setColor: color];
+        [layoutInfo setFont: font];
+        [[layoutInfo textStorage] setAttributes: [layoutInfo attributes]];
+        [[layoutInfo textStorage] setString: string];
+        [manager drawGlyphsForGlyphRange:[frag glyphRange] atPoint:p];
     }
 }
 
 + (void)drawUnderlineForString: (NSString *)string atPoint: (NSPoint)p withFont: (NSFont *)font color: (NSColor *)color
 {
-    KWQLayoutInfo *metricsCache = [KWQLayoutInfo getMetricsForFont: font];
-    NSLayoutManager *layoutManager = [metricsCache layoutManagerForString: string];
-    if (layoutManager != nil){
-        unsigned numberOfGlyphs = [layoutManager numberOfGlyphs];
-        [metricsCache setColor: color];
-        [metricsCache setFont: font];
-        [KWQTextStorage setString: string attributes: [metricsCache attributes]];
-        NSRect lineRect = [layoutManager lineFragmentRectForGlyphAtIndex: 0 effectiveRange: 0];
-        [layoutManager underlineGlyphRange:NSMakeRange (0, numberOfGlyphs) underlineType:NSSingleUnderlineStyle lineFragmentRect:lineRect lineFragmentGlyphRange:NSMakeRange (0, numberOfGlyphs) containerOrigin:p];
+    KWQLayoutInfo *layoutInfo = [KWQLayoutInfo getMetricsForFont: font];
+    NSLayoutManager *manager = [layoutInfo layoutManager];
+    KWQTextStorage *storage = [layoutInfo textStorage];
+
+    if (manager != nil){
+        KWQLayoutFragment *frag = [storage getFragmentForString: (NSString *)string];
+
+        [layoutInfo setColor: color];
+        [layoutInfo setFont: font];
+        [[layoutInfo textStorage] setAttributes: [layoutInfo attributes]];
+        [[layoutInfo textStorage] setString: string];
+        NSRect lineRect = [manager lineFragmentRectForGlyphAtIndex: 0 effectiveRange: 0];
+        [manager underlineGlyphRange:[frag glyphRange] underlineType:NSSingleUnderlineStyle lineFragmentRect:lineRect lineFragmentGlyphRange:[frag glyphRange] containerOrigin:p];
     }
 }
 
@@ -205,48 +200,44 @@ static NSMutableDictionary *metricsCache = nil;
 {
     [super init];
     attributes = [[NSMutableDictionary dictionaryWithObjectsAndKeys:aFont, NSFontAttributeName, nil] retain];
+
+    textStorage = [[KWQTextStorage alloc] initWithFontAttribute: attributes];
+    layoutManager = [[NSLayoutManager alloc] init];
+
+    [layoutManager addTextContainer: [KWQTextContainer sharedInstance]];
+    [textStorage addLayoutManager: layoutManager];    
+
     return self;
 }
 
 
-- (NSLayoutManager *)layoutManagerForString: (NSString *)string
+- (NSLayoutManager *)layoutManager
 {
-    KWQLayoutFragment *cachedValue;
-
-    if (fragmentCache == nil){
-        fragmentCache = [[NSMutableDictionary alloc] init];
-    }
-
-    cachedValue = [fragmentCache objectForKey: string];
-    if (cachedValue == nil){
-        return nil;
-    }
-
-    return cachedValue->layoutManager;
+    return layoutManager;
 }
+
+
+- (KWQTextStorage *)textStorage
+{
+    return textStorage;
+}
+
 
 - (NSRect)rectForString:(NSString *)string
  {
     KWQLayoutFragment *cachedFragment, *fragment;
 
-    if (fragmentCache == nil){
-        fragmentCache = [[NSMutableDictionary alloc] init];
-    }
-
-    cachedFragment = [fragmentCache objectForKey: string];
+    cachedFragment = [textStorage getFragmentForString: string];
     if (cachedFragment != nil){
-#ifdef _DEBUG_LAYOUT_FRAGMENT
-        cachedFragment->_accessCount++;
-#endif
-        return cachedFragment->boundingRect;
+        return [cachedFragment boundingRect];
     }
 
-    fragment = [[KWQLayoutFragment alloc] initWithString: string attributes: attributes];
-    [fragmentCache setObject: fragment forKey: string];        
-
+    fragment = [textStorage addFragmentForString: string];
+    
     return [fragment boundingRect];
 }
- 
+
+
 - (void)setColor: (NSColor *)color
 {
     [attributes setObject: color forKey: NSForegroundColorAttributeName];
