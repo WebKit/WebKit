@@ -3162,7 +3162,10 @@ static WebHTMLView *lastHitView = nil;
     
     // Pass command-key combos through WebCore if there is a key binding available for
     // this event. This lets web pages have a crack at intercepting command-modified keypresses.
-    if ([self _web_firstResponderIsSelfOrDescendantView] && [[self _bridge] interceptKeyEvent:event toView:self]) {
+    // But don't do it if we have already handled the event.
+    if (event != _private->keyDownEvent
+            && [self _web_firstResponderIsSelfOrDescendantView]
+            && [[self _bridge] interceptKeyEvent:event toView:self]) {
         return YES;
     }
     return [super performKeyEquivalent:event];
