@@ -1,3 +1,18 @@
+2003-07-28  Richard Williamson   <rjw@apple.com>
+
+	Fixed 3341859. 
+    	Check that the WebHTMLView is initialized in viewWillMoveToWindow: and
+	viewDidMoveToWindow.  Don't do anything if we aren't initialized.  This
+	happens when decoding a WebView.  When WebViews are decoded their subviews
+    	are created by initWithCoder: and so won't be normally initialized.  The 
+	stub views are discarded by WebView.
+
+        Reviewed by John.
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView viewWillMoveToWindow:]):
+        (-[WebHTMLView viewDidMoveToWindow]):
+
 2003-07-28  Darin Adler  <darin@apple.com>
 
         Reviewed by John.

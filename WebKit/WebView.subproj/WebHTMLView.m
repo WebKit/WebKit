@@ -239,34 +239,46 @@
 
 - (void)viewWillMoveToWindow:(NSWindow *)window
 {
-    // FIXME: Some of these calls may not work because this view may be already removed from it's superview.
-    [self removeMouseMovedObserver];
-    [self removeWindowObservers];
-    [self removeSuperviewObservers];
-    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(_updateMouseoverWithFakeEvent) object:nil];
-
-    [[self _pluginController] stopAllPlugins];
+    // Don't do anything if we aren't initialized.  This happens
+    // when decoding a WebView.  When WebViews are decoded their subviews
+    // are created by initWithCoder: and so won't be normally
+    // initialized.  The stub views are discarded by WebView.
+    if (_private){
+        // FIXME: Some of these calls may not work because this view may be already removed from it's superview.
+        [self removeMouseMovedObserver];
+        [self removeWindowObservers];
+        [self removeSuperviewObservers];
+        [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(_updateMouseoverWithFakeEvent) object:nil];
+    
+        [[self _pluginController] stopAllPlugins];
+    }
 }
 
 - (void)viewDidMoveToWindow
 {
-    if ([self window]) {
-        [self addWindowObservers];
-        [self addSuperviewObservers];
-        [self addMouseMovedObserver];
-        [self updateTextBackgroundColor];
-
-        [[self _pluginController] startAllPlugins];
-
-        _private->inWindow = YES;
-    } else {
-        // Reset when we are moved out of a window after being moved into one.
-        // Without this check, we reset ourselves before we even start.
-        // This is only needed because viewDidMoveToWindow is called even when
-        // the window is not changing (bug in AppKit).
-        if (_private->inWindow) {
-            [self _reset];
-            _private->inWindow = NO;
+    // Don't do anything if we aren't initialized.  This happens
+    // when decoding a WebView.  When WebViews are decoded their subviews
+    // are created by initWithCoder: and so won't be normally
+    // initialized.  The stub views are discarded by WebView.
+    if (_private){
+        if ([self window]) {
+            [self addWindowObservers];
+            [self addSuperviewObservers];
+            [self addMouseMovedObserver];
+            [self updateTextBackgroundColor];
+    
+            [[self _pluginController] startAllPlugins];
+    
+            _private->inWindow = YES;
+        } else {
+            // Reset when we are moved out of a window after being moved into one.
+            // Without this check, we reset ourselves before we even start.
+            // This is only needed because viewDidMoveToWindow is called even when
+            // the window is not changing (bug in AppKit).
+            if (_private->inWindow) {
+                [self _reset];
+                _private->inWindow = NO;
+            }
         }
     }
 }

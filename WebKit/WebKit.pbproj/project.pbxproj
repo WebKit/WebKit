@@ -75,8 +75,6 @@
 //083
 //084
 		0867D690FE84028FC02AAC07 = {
-			buildSettings = {
-			};
 			buildStyles = (
 				014CEA440018CDF011CA2923,
 				014CEA450018CDF011CA2923,
