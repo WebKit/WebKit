@@ -52,6 +52,4 @@ class QMovie;
 class QTimer;
 class QImage;
 
-typedef int QCOORD;
-
 #endif
