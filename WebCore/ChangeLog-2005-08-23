@@ -1,5 +1,10 @@
 2003-11-06  Chris Blumenberg  <cblu@apple.com>
 
+        * khtml/rendering/render_image.h:
+        (khtml::RenderImage::isDisplayingError): forgot to remove the "virtual" part of the declaration
+
+2003-11-06  Chris Blumenberg  <cblu@apple.com>
+
 	Fixed:
 	<rdar://problem/3275118>: Dragging from missing-image link stretches missing-image icon to size of missing image
 	<rdar://problem/3476225>: assert dragging non-existant images

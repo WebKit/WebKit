@@ -75,7 +75,7 @@ public:
     // Called to set generated content images (e.g., :before/:after generated images).
     void setContentObject(CachedObject* co);
     
-    virtual bool isDisplayingError() const { return berrorPic; }
+    bool isDisplayingError() const { return berrorPic; }
     
 private:
     bool isWidthSpecified() const;
