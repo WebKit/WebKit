@@ -91,6 +91,7 @@
 - (BOOL)_isLoading;
 
 - (WebFrameView *)_frameViewAtWindowPoint:(NSPoint)point;
+- (WebBridge *)_bridgeAtPoint:(NSPoint)point;
 @end;
 
 @interface WebView (WebViewEditingExtras)

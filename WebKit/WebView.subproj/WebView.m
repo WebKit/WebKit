@@ -1689,16 +1689,9 @@ NS_ENDHANDLER
     }
 }
 
-// New pending API:
 - (NSDictionary *)elementAtPoint:(NSPoint)point
 {
     return [self _elementAtWindowPoint:[self convertPoint:point toView:nil]];
-}
-
-// FIXME: Remove this new API
-- (NSDragOperation)dragOperationForDraggingInfo:(id <NSDraggingInfo>)draggingInfo
-{    
-    return NSDragOperationNone;
 }
 
 - (void)_setDraggingDocumentView:(NSView <WebDocumentDragging> *)newDraggingView
@@ -1972,6 +1965,23 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     }
 }
 
+- (void)moveDragCaretToPoint:(NSPoint)point
+{
+    WebBridge *bridge = [self _bridgeAtPoint:point];
+    if (bridge != _private->dragCaretBridge) {
+        [_private->dragCaretBridge removeDragCaret];
+        _private->dragCaretBridge = [bridge retain];
+    }
+    [_private->dragCaretBridge moveDragCaretToPoint:[self convertPoint:point toView:[[[_private->dragCaretBridge webFrame] frameView] documentView]]];
+}
+
+- (void)removeDragCaret
+{
+    [_private->dragCaretBridge removeDragCaret];
+    [_private->dragCaretBridge release];
+    _private->dragCaretBridge = nil;
+}
+
 @end
 
 @implementation WebView (WebIBActions)
@@ -2170,33 +2180,6 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     }
 }
 
-- (WebBridge *)_bridgeAtPoint:(NSPoint)point
-{
-    return [[[self _frameViewAtWindowPoint:[self convertPoint:point toView:nil]] webFrame] _bridge];
-}
-
-- (DOMRange *)editableDOMRangeForPoint:(NSPoint)point
-{
-    return [[self _bridgeAtPoint:point] editableDOMRangeForPoint:point];
-}
-
-- (void)moveDragCaretToPoint:(NSPoint)point
-{
-    WebBridge *bridge = [self _bridgeAtPoint:point];
-    if (bridge != _private->dragCaretBridge) {
-        [_private->dragCaretBridge removeDragCaret];
-        _private->dragCaretBridge = [bridge retain];
-    }
-    [_private->dragCaretBridge moveDragCaretToPoint:[self convertPoint:point toView:[[[_private->dragCaretBridge webFrame] frameView] documentView]]];
-}
-
-- (void)removeDragCaret
-{
-    [_private->dragCaretBridge removeDragCaret];
-    [_private->dragCaretBridge release];
-    _private->dragCaretBridge = nil;
-}
-
 @end
 
 @implementation WebView (WebViewPrintingPrivate)
@@ -2359,9 +2342,19 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     return (WebFrameView *)[view _web_superviewOfClass:[WebFrameView class] stoppingAtClass:[self class]];
 }
 
+- (WebBridge *)_bridgeAtPoint:(NSPoint)point
+{
+    return [[[self _frameViewAtWindowPoint:[self convertPoint:point toView:nil]] webFrame] _bridge];
+}
+
 @end
 
 @implementation WebView (WebViewEditing)
+
+- (DOMRange *)editableDOMRangeForPoint:(NSPoint)point
+{
+    return [[self _bridgeAtPoint:point] editableDOMRangeForPoint:point];
+}
 
 - (BOOL)_interceptEditingKeyEvent:(NSEvent *)event
 {   

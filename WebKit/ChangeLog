@@ -1,3 +1,22 @@
+2004-06-14  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3674456> make new drag & drop API compatible with DHTML dragging
+
+        Reviewed by trey.
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView concludeDragForDraggingInfo:actionMask:]): tweak
+        * WebView.subproj/WebUIDelegate.h: removed old, added new methods
+        * WebView.subproj/WebUIDelegatePrivate.h: moved new methods to public header
+        * WebView.subproj/WebView.h: removed old, added new methods
+        * WebView.subproj/WebView.m: moved methods around
+        (-[WebView moveDragCaretToPoint:]): moved
+        (-[WebView removeDragCaret]): moved
+        (-[WebView _bridgeAtPoint:]): moved
+        (-[WebView editableDOMRangeForPoint:]): moved
+        * WebView.subproj/WebViewInternal.h: add new internal method
+        * WebView.subproj/WebViewPrivate.h: moved new methods to public header
+
 2004-06-14  Trey Matteson  <trey@apple.com>
 
 	Use a different hack, as recommended by Kristin, to force the drag

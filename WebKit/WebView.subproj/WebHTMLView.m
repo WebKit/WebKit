@@ -1906,7 +1906,7 @@ static WebHTMLView *lastHitView = nil;
     if (_private->webCoreHandlingDrag) {
         ASSERT(actionMask & WebDragDestinationActionDHTML);
         [[webView _UIDelegateForwarder] webView:webView willPerformDragDestinationAction:WebDragDestinationActionDHTML forDraggingInfo:draggingInfo];
-        [[self _bridge] concludeDragForDraggingInfo:draggingInfo];
+        [bridge concludeDragForDraggingInfo:draggingInfo];
         return YES;
     } else if (actionMask & WebDragDestinationActionEdit) {
         BOOL didInsert = NO;

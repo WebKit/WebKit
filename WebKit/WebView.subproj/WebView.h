@@ -478,12 +478,11 @@ extern NSString *WebViewProgressFinishedNotification;
 - (double)estimatedProgress;
 
 /*!
-    @method dragOperationForDraggingInfo:
-    @abstract Returns a drag operation for a dragging info
-    @param draggingInfo The dragging info
-    @result The drag operation
+    @method elementAtPoint:
+    @param point A point in the coordinates of the WebView
+    @result An element dictionary describing the point
 */
-- (NSDragOperation)dragOperationForDraggingInfo:(id <NSDraggingInfo>)draggingInfo;
+- (NSDictionary *)elementAtPoint:(NSPoint)point;
 
 /*!
     @method pasteboardTypesForSelection
@@ -514,6 +513,20 @@ extern NSString *WebViewProgressFinishedNotification;
     @param pasteboard The pasteboard to write to
 */
 - (void)writeElement:(NSDictionary *)element withPasteboardTypes:(NSArray *)types toPasteboard:(NSPasteboard *)pasteboard;
+
+/*!
+    @method moveDragCaretToPoint:
+    @param point A point in the coordinates of the WebView
+    @discussion This method moves the caret that shows where something being dragged will be dropped. It may cause the WebView to scroll
+    to make the new position of the drag caret visible.
+*/
+- (void)moveDragCaretToPoint:(NSPoint)point;
+
+/*!
+    @method removeDragCaret
+    @abstract Removes the drag caret from the WebView
+*/
+- (void)removeDragCaret;
 
 @end
 
@@ -546,6 +559,7 @@ extern NSString * const WebViewDidChangeSelectionNotification;
 @end
 
 @interface WebView (WebViewEditing)
+- (DOMRange *)editableDOMRangeForPoint:(NSPoint)point;
 - (void)setSelectedDOMRange:(DOMRange *)range affinity:(NSSelectionAffinity)selectionAffinity;
 - (DOMRange *)selectedDOMRange;
 - (NSSelectionAffinity)selectionAffinity;
