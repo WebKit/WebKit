@@ -1,3 +1,15 @@
+2003-12-10  Richard Williamson   <rjw@apple.com>
+
+	Added method to get to the bridge from a view.  This is
+	used to ultimately get the part and KJS::Window for a
+	particular applet.
+
+        Reviewed by Hyatt.
+
+        * WebCoreSupport.subproj/WebViewFactory.m:
+        (-[WebViewFactory refreshPlugins:]):
+        (-[WebViewFactory bridgeForView:]):
+
 2003-12-10  John Sullivan  <sullivan@apple.com>
 
         - WebKit part of fix for:

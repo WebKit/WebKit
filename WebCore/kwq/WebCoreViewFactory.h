@@ -27,6 +27,7 @@
 @class NSDictionary;
 @class NSString;
 @class NSView;
+@class WebCoreBridge;
 
 @protocol WebCoreViewFactory
 
@@ -39,6 +40,8 @@
 - (NSString *)submitButtonDefaultLabel;
 
 - (NSString *)defaultLanguageCode;
+
+- (WebCoreBridge *)bridgeForView:(NSView *)aView;
 
 @end
 

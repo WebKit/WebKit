@@ -1,3 +1,24 @@
+2003-12-10  Richard Williamson   <rjw@apple.com>
+
+	Added code to manage reference counting of JavaScript
+	objects passed to Java.   Also added implementation of
+	KJS_JSCreateNativeJSObject.  This is the function that
+	provides the root object to Java (KJS::Window).
+
+        Reviewed by Hyatt.
+
+        * JavaScriptCore.pbproj/project.pbxproj:
+        * bindings/jni_jsobject.cpp:
+        (KJS_setFindObjectForNativeHandleFunction):
+        (KJS_findObjectForNativeHandleFunction):
+        (getReferencesByOwnerDictionary):
+        (getReferencesDictionary):
+        (findReferenceDictionary):
+        (addJavaReference):
+        (removeJavaReference):
+        (removeAllJavaReferencesForOwner):
+        * bindings/jni_jsobject.h:
+
 2003-12-09  Richard Williamson   <rjw@apple.com>
 
 	LiveConnect stubs that correspond to the native methods

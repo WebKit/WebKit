@@ -40,6 +40,10 @@ namespace khtml {
     class RenderObject;
 }
 
+namespace KJS {
+    class Window;
+}
+
 typedef khtml::RenderPart KHTMLRenderPart;
 
 #else
@@ -48,6 +52,7 @@ typedef khtml::RenderPart KHTMLRenderPart;
 @class KHTMLView;
 @class KHTMLRenderPart;
 @class RenderArena;
+@class Window;
 
 #endif
 
@@ -233,7 +238,7 @@ typedef enum {
 
 + (void)updateAllViews;
 
--(id)accessibilityTree;
+- (id)accessibilityTree;
 
 @end
 
@@ -366,7 +371,7 @@ typedef enum {
 
 - (void)print;
 
-- (jobject)pollForAppletInView: (NSView *)view;
+- (jobject)pollForAppletInView:(NSView *)view;
 
 @end
 

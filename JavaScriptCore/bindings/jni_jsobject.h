@@ -25,12 +25,23 @@
 #ifndef _JNI_JS_H_
 #define _JNI_JS_H_
 
+#include <JavaScriptCore/object.h>
+
 #include <JavaVM/jni.h>
 
-#define POINTER_JNI_JLONG(ptr) ((jlong)ptr)
+#define jlong_to_ptr(a) ((void*)(uintptr_t)(a))
+#define jlong_to_impptr(a) (static_cast<KJS::ValueImp*>(((void*)(uintptr_t)(a))))
+#define ptr_to_jlong(a) ((jlong)(uintptr_t)(a))
+
+typedef KJS::ObjectImp *(*KJSFindObjectForNativeHandleFunctionPtr)(void *);
+
+void KJS_setFindObjectForNativeHandleFunction(KJSFindObjectForNativeHandleFunctionPtr aFunc);
+KJSFindObjectForNativeHandleFunctionPtr KJS_findObjectForNativeHandleFunction();
+
+extern "C" {
 
 // Functions called from the Java VM when making class to the JSObject class.
-jlong KJS_JSCreateNativeJSObject (JNIEnv *env, jclass clazz, jstring jurl, jboolean ctx);
+jlong KJS_JSCreateNativeJSObject (JNIEnv *env, jclass clazz, jstring jurl, jlong nativeHandle, jboolean ctx);
 void KJS_JSObject_JSFinalize (JNIEnv *env, jclass jsClass, jlong nativeJSObject);
 jobject KJS_JSObject_JSObjectCall (JNIEnv *env, jclass jsClass, jlong nativeJSObject, jstring jurl, jstring methodName, jobjectArray args, jboolean ctx);
 jobject KJS_JSObject_JSObjectEval (JNIEnv *env, jclass jsClass, jlong nativeJSObject, jstring jurl, jstring jscript, jboolean ctx);
@@ -40,5 +51,7 @@ void KJS_JSObject_JSObjectRemoveMember (JNIEnv *env, jclass jsClass, jlong nativ
 jobject KJS_JSObject_JSObjectGetSlot (JNIEnv *env, jclass jsClass, jlong nativeJSObject, jstring jurl, jint jindex, jboolean ctx);
 void KJS_JSObject_JSObjectSetSlot (JNIEnv *env, jclass jsClass, jlong nativeJSObject, jstring jurl, jint jindex, jobject value, jboolean ctx);
 jstring KJS_JSObject_JSObjectToString (JNIEnv *env, jclass clazz, jlong nativeJSObject);
+
+}
 
 #endif

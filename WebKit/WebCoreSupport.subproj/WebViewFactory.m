@@ -9,7 +9,10 @@
 #import <WebKit/WebViewFactory.h>
 
 #import <WebKit/WebAssertions.h>
+#import <WebKit/WebBridge.h>
 #import <WebKit/WebControllerSets.h>
+#import <WebKit/WebFrameView.h>
+#import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebLocalizableStrings.h>
 
 #import <WebKit/WebPluginDatabase.h>
@@ -35,6 +38,19 @@
     if (reloadPages) {
         [WebViewSets makeWebViewsPerformSelector:@selector(_reloadForPluginChanges)];
     }
+}
+
+- (WebCoreBridge *)bridgeForView:(NSView *)v
+{
+    NSView *aView = [v superview];
+    
+    while (aView) {
+        if ([aView isKindOfClass:[WebHTMLView class]]) {
+            return [(WebHTMLView *)aView _bridge];
+        }
+        aView = [aView superview];
+    }
+    return nil;
 }
 
 - (NSString *)inputElementAltText

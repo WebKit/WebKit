@@ -36,6 +36,7 @@
 #import "htmltags.h"
 #import "khtml_part.h"
 #import "khtmlview.h"
+#import "kjs_window.h"
 #import "loader.h"
 #import "render_frames.h"
 #import "render_image.h"
@@ -44,6 +45,8 @@
 #import "render_style.h"
 #import "render_replaced.h"
 
+#import <JavaScriptCore/jni_jsobject.h>
+#import <JavaScriptCore/object.h>
 #import <JavaScriptCore/property_map.h>
 
 #import "KWQAssertions.h"
@@ -61,6 +64,7 @@
 #import "WebCoreDOMPrivate.h"
 #import "WebCoreImageRenderer.h"
 #import "WebCoreTextRendererFactory.h"
+#import "WebCoreViewFactory.h"
 #import "WebCoreSettings.h"
 
 #import <AppKit/NSView.h>
@@ -98,9 +102,19 @@ NSString *WebCoreElementTitleKey = 		@"WebCoreElementTitle"; // not in WebKit AP
 
 NSString *WebCorePageCacheStateKey =            @"WebCorePageCacheState";
 
+static KJS::ObjectImp *rootForView(void *v)
+{
+    NSView *aView = (NSView *)v;
+    
+    WebCoreBridge *aBridge = [[WebCoreViewFactory sharedFactory] bridgeForView:aView];
+
+    return static_cast<KJS::ObjectImp *>(KJS::Window::retrieveWindow([aBridge part]));
+}
+
 @implementation WebCoreBridge
 
 static bool initializedObjectCacheSize = FALSE;
+static bool initializedKJS = FALSE;
 
 - init
 {
@@ -112,6 +126,11 @@ static bool initializedObjectCacheSize = FALSE;
     if (!initializedObjectCacheSize){
         khtml::Cache::setSize([self getObjectCacheSize]);
         initializedObjectCacheSize = TRUE;
+    }
+    
+    if (!initializedKJS) {
+        KJS_setFindObjectForNativeHandleFunction (rootForView);
+        initializedKJS = TRUE;
     }
     
     _shouldCreateRenderers = YES;
@@ -1083,4 +1102,5 @@ static HTMLFormElementImpl *formElementFromDOMElement(id <WebDOMElement>element)
     if (!root) return nil;
     return _part->xmlDocImpl()->getOrCreateAccObjectCache()->accObject(root);
 }
+
 @end
