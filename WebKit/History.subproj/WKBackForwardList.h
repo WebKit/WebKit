@@ -16,8 +16,11 @@
 -(id)init;
 
 -(void)addEntry:(WKURIEntry *)entry;
+
 -(WKURIEntry *)back;
 -(WKURIEntry *)forward;
+
+-(WKURIEntry *)currentEntry;
 
 -(NSArray *)backList;
 -(NSArray *)forwardList;

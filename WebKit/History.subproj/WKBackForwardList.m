@@ -56,6 +56,11 @@
     return result;
 }
 
+-(WKURIEntry *)currentEntry
+{
+    return [uriList entryAtIndex:index];
+}
+
 -(WKURIEntry *)forward
 {
     WKURIEntry *result;
