@@ -107,7 +107,11 @@ namespace KJS {
   class List : private Value {
     friend class ListIterator;
   public:
-    List();
+    List(bool needsMarking = false);
+    List(const List& l);
+    List &operator=(const List& l);
+      
+    ~List();
 
     /**
      * Append an object to the end of the list.
@@ -189,11 +193,12 @@ namespace KJS {
 #ifdef KJS_DEBUG_MEM
     static void globalClear();
 #endif
-
+    void mark();
+    static void markEmptyList();
   private:
     List(ListImp *);
     ListImp *imp() const { return (ListImp *)Value::imp(); }
-    friend class ObjectImp;
+    bool m_needsMarking;
   };
 
 }; // namespace

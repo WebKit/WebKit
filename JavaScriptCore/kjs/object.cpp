@@ -61,22 +61,19 @@ Object Object::dynamicCast(const Value &v)
 // ------------------------------ ObjectImp ------------------------------------
 
 ObjectImp::ObjectImp(const Object &proto)
-  : _prop(0), _proto(static_cast<ObjectImp*>(proto.imp())), _internalValue(0L), _scope(0)
+  : _prop(0), _proto(static_cast<ObjectImp*>(proto.imp())), _internalValue(0L), _scope(true)
 {
   //fprintf(stderr,"ObjectImp::ObjectImp %p\n",(void*)this);
-  _scope = ListImp::empty();
-  _scope->setGcAllowed();
   _prop = new PropertyMap();
 }
 
-ObjectImp::ObjectImp()
+ObjectImp::ObjectImp() :
+  _scope(true)
 {
   //fprintf(stderr,"ObjectImp::ObjectImp %p\n",(void*)this);
   _prop = 0;
   _proto = NullImp::staticNull;
   _internalValue = 0L;
-  _scope = ListImp::empty();
-  _scope->setGcAllowed();
   _prop = new PropertyMap();
 }
 
@@ -98,8 +95,8 @@ void ObjectImp::mark()
 
   if (_internalValue && !_internalValue->marked())
     _internalValue->mark();
-  if (_scope && !_scope->marked())
-    _scope->mark();
+
+  _scope.mark();
 }
 
 const ClassInfo *ObjectImp::classInfo() const
@@ -390,8 +387,7 @@ const List ObjectImp::scope() const
 
 void ObjectImp::setScope(const List &s)
 {
-  if (_scope) _scope->setGcAllowed();
-  _scope = static_cast<ListImp*>(s.imp());
+  _scope = s;
 }
 
 ReferenceList ObjectImp::propList(ExecState *exec, bool recursive)

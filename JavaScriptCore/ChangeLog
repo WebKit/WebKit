@@ -1,3 +1,24 @@
+2002-11-18  Maciej Stachowiak  <mjs@apple.com>
+
+	Partway to removing Value from List. Created a marking List
+	variant, used it in place of ListImp.
+	
+        * kjs/internal.h: Removed List stuff.
+        * kjs/internal.cpp:
+        (InterpreterImp::mark): Call appropriate List method to do marking of
+	empty ListImp.
+        * kjs/object.h:
+        * kjs/object.cpp: Use marking List instead of ListImp *.
+        * kjs/types.h:
+        * kjs/types.cpp:
+        (List::List): New boolean needsMarking parameter. 
+        (List::operator=): Perform trickery related to needsMarking.
+        (List::~List): Likewise.
+        (List::mark): Mark the ListImp.
+        (List::markEmptyList):
+	(ListImp::*): Moved here fron internal.cpp, they will be
+	integrated into the relevant List methods soon.
+
 2002-11-18  Darin Adler  <darin@apple.com>
 
 	- another string constant discovered that can be optimized

@@ -1,3 +1,7 @@
+2002-11-18  Maciej Stachowiak  <mjs@apple.com>
+
+        * force-js-clean-timestamp: Rebuild for JSC changes.
+
 2002-11-18  Darin Adler  <darin@apple.com>
 
         * force-js-clean-timestamp: Touch files to make the build work.

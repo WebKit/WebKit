@@ -38,6 +38,73 @@
 
 using namespace KJS;
 
+namespace KJS {
+  // ---------------------------------------------------------------------------
+  //                            Internal type impls
+  // ---------------------------------------------------------------------------
+
+  /**
+   * @internal
+   */
+  class ListNode {
+    friend class List;
+    friend class ListImp;
+    friend class ListIterator;
+    ListNode(Value val, ListNode *p, ListNode *n)
+      : member(val.imp()), prev(p), next(n) {};
+    ValueImp *member;
+    ListNode *prev, *next;
+  };
+
+  class ListImp : public ValueImp {
+    friend class ListIterator;
+    friend class List;
+    friend class InterpreterImp;
+    friend class ObjectImp;
+  private:
+    ListImp();
+    ~ListImp();
+
+    Type type() const { return ListType; }
+
+    virtual void mark();
+
+    Value toPrimitive(ExecState *exec, Type preferred = UnspecifiedType) const;
+    bool toBoolean(ExecState *exec) const;
+    double toNumber(ExecState *exec) const;
+    UString toString(ExecState *exec) const;
+    Object toObject(ExecState *exec) const;
+
+    void append(const Value& val);
+    void prepend(const Value& val);
+    void appendList(const List& lst);
+    void prependList(const List& lst);
+    void removeFirst();
+    void removeLast();
+    void remove(const Value &val);
+    void clear();
+    ListImp *copy() const;
+    ListIterator begin() const { return ListIterator(hook->next); }
+    ListIterator end() const { return ListIterator(hook); }
+    //    bool isEmpty() const { return (hook->prev == hook); }
+    bool isEmpty() const;
+    int size() const;
+    Value at(int i) const;
+    Value operator[](int i) const { return at(i); }
+    static ListImp* empty();
+
+#ifdef KJS_DEBUG_MEM
+    static int count;
+#endif
+  private:
+    void erase(ListNode *n);
+    ListNode *hook;
+    static ListImp *emptyList;
+  };
+  
+}
+
+
 // ------------------------------ ListIterator ---------------------------------
 
 //d  dont add   ListIterator();
@@ -56,13 +123,13 @@ ValueImp* ListIterator::operator->() const
   return node->member;
 }
 
-    //    operator Value* () const { return node->member; }
+//    operator Value* () const { return node->member; }
 Value ListIterator::operator*() const
 {
   return Value(node->member);
 }
 
-    //    operator Value*() const { return node->member; }
+//    operator Value*() const { return node->member; }
 Value ListIterator::operator++()
 {
   node = node->next;
@@ -101,10 +168,56 @@ bool ListIterator::operator!=(const ListIterator &it) const
 
 // ------------------------------ List -----------------------------------------
 
-List::List()
-  : Value(new ListImp())
+List::List(bool needsMarking)
+  : Value(needsMarking ? ListImp::empty() : new ListImp()),
+    m_needsMarking(needsMarking)
 {
-  //fprintf(stderr,"List::List() this=%p imp=%p refcount=%d\n",this,rep,rep->refcount);
+  if (m_needsMarking) {
+    imp()->deref();
+  }
+}
+
+
+List::List(const List& l)
+  : Value(l),
+    m_needsMarking(false)
+{  
+}
+
+List::List(ListImp *imp) 
+  : Value(imp),
+    m_needsMarking(false)
+{
+}
+
+
+List& List::operator=(const List& l)
+{
+  if (m_needsMarking) {
+    imp()->ref();
+  }
+
+  Value::operator=(l);
+
+  if (m_needsMarking) {
+    imp()->deref();
+  }
+
+  return *this;
+}
+      
+List::~List()
+{
+  if (m_needsMarking) {
+    imp()->ref();
+  }
+}
+
+void List::mark()
+{
+  if (!imp()->marked()) {
+    imp()->mark();
+  }
 }
 
 void List::append(const Value& val)
@@ -194,4 +307,221 @@ void List::globalClear()
   ListImp::emptyList = 0L;
 }
 #endif
+
+void List::markEmptyList()
+{
+  if (ListImp::emptyList && !ListImp::emptyList->marked())
+    ListImp::emptyList->mark();
+}
+
+
+// ------------------------------ ListImp --------------------------------------
+
+#ifdef KJS_DEBUG_MEM
+int ListImp::count = 0;
+#endif
+
+Value ListImp::toPrimitive(ExecState */*exec*/, Type /*preferredType*/) const
+{
+  // invalid for List
+  assert(false);
+  return Value();
+}
+
+bool ListImp::toBoolean(ExecState */*exec*/) const
+{
+  // invalid for List
+  assert(false);
+  return false;
+}
+
+double ListImp::toNumber(ExecState */*exec*/) const
+{
+  // invalid for List
+  assert(false);
+  return 0;
+}
+
+UString ListImp::toString(ExecState */*exec*/) const
+{
+  // invalid for List
+  assert(false);
+  return UString::null;
+}
+
+Object ListImp::toObject(ExecState */*exec*/) const
+{
+  // invalid for List
+  assert(false);
+  return Object();
+}
+
+ListImp::ListImp()
+{
+#ifdef KJS_DEBUG_MEM
+  count++;
+#endif
+
+  hook = new ListNode(Null(), 0L, 0L);
+  hook->next = hook;
+  hook->prev = hook;
+  //fprintf(stderr,"ListImp::ListImp %p hook=%p\n",this,hook);
+}
+
+ListImp::~ListImp()
+{
+  //fprintf(stderr,"ListImp::~ListImp %p\n",this);
+#ifdef KJS_DEBUG_MEM
+  count--;
+#endif
+
+  clear();
+  delete hook;
+
+  if ( emptyList == this )
+    emptyList = 0L;
+}
+
+void ListImp::mark()
+{
+  ListNode *n = hook->next;
+  while (n != hook) {
+    if (!n->member->marked())
+      n->member->mark();
+    n = n->next;
+  }
+  ValueImp::mark();
+}
+
+void ListImp::append(const Value& obj)
+{
+  ListNode *n = new ListNode(obj, hook->prev, hook);
+  hook->prev->next = n;
+  hook->prev = n;
+}
+
+void ListImp::prepend(const Value& obj)
+{
+  ListNode *n = new ListNode(obj, hook, hook->next);
+  hook->next->prev = n;
+  hook->next = n;
+}
+
+void ListImp::appendList(const List& lst)
+{
+  ListIterator it = lst.begin();
+  ListIterator e = lst.end();
+  while(it != e) {
+    append(*it);
+    ++it;
+  }
+}
+
+void ListImp::prependList(const List& lst)
+{
+  ListIterator it = lst.end();
+  ListIterator e = lst.begin();
+  while(it != e) {
+    --it;
+    prepend(*it);
+  }
+}
+
+void ListImp::removeFirst()
+{
+  erase(hook->next);
+}
+
+void ListImp::removeLast()
+{
+  erase(hook->prev);
+}
+
+void ListImp::remove(const Value &obj)
+{
+  if (obj.isNull())
+    return;
+  ListNode *n = hook->next;
+  while (n != hook) {
+    if (n->member == obj.imp()) {
+      erase(n);
+      return;
+    }
+    n = n->next;
+  }
+}
+
+void ListImp::clear()
+{
+  ListNode *n = hook->next;
+  while (n != hook) {
+    n = n->next;
+    delete n->prev;
+  }
+
+  hook->next = hook;
+  hook->prev = hook;
+}
+
+ListImp *ListImp::copy() const
+{
+  ListImp* newList = new ListImp;
+
+  ListIterator e = end();
+  ListIterator it = begin();
+
+  while(it != e) {
+    newList->append(*it);
+    ++it;
+  }
+
+  //fprintf( stderr, "ListImp::copy returning newList=%p\n", newList );
+  return newList;
+}
+
+void ListImp::erase(ListNode *n)
+{
+  if (n != hook) {
+    n->next->prev = n->prev;
+    n->prev->next = n->next;
+    delete n;
+  }
+}
+
+bool ListImp::isEmpty() const
+{
+  return (hook->prev == hook);
+}
+
+int ListImp::size() const
+{
+  int s = 0;
+  ListNode *node = hook;
+  while ((node = node->next) != hook)
+    s++;
+
+  return s;
+}
+
+Value ListImp::at(int i) const
+{
+  if (i < 0 || i >= size())
+    return Undefined();
+
+  ListIterator it = begin();
+  int j = 0;
+  while ((j++ < i))
+    it++;
+
+  return *it;
+}
+
+ListImp *ListImp::emptyList = 0L;
+
+ListImp *ListImp::empty()
+{
+  if (!emptyList)
+    emptyList = new ListImp();
+  return emptyList;
+}
 

@@ -587,7 +587,7 @@ namespace KJS {
     PropertyMap *_prop;
     ValueImp *_proto;
     ValueImp *_internalValue;
-    ListImp *_scope;
+    List _scope;
   };
 
   /**
