@@ -167,6 +167,7 @@ void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFrameworkName,
        isTypingAction:(BOOL)isTypingAction;
 - (void)_deleteSelection;
 - (BOOL)_canSmartReplaceWithPasteboard:(NSPasteboard *)pasteboard;
+- (NSView *)_hitViewForEvent:(NSEvent *)event;
 @end
 
 @interface WebHTMLView (WebForwardDeclaration) // FIXME: Put this in a normal category and stop doing the forward declaration trick.
@@ -511,6 +512,16 @@ void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFrameworkName,
     return [[self _webView] smartInsertDeleteEnabled] && [[pasteboard types] containsObject:WebSmartPastePboardType];
 }
 
+- (NSView *)_hitViewForEvent:(NSEvent *)event
+{
+    // Usually, we hack AK's hitTest method to catch all events at the topmost WebHTMLView.  
+    // Callers of this method, however, want to query the deepest view instead.
+    forceRealHitTest = YES;
+    NSView *hitView = [[[self window] contentView] hitTest:[event locationInWindow]];
+    forceRealHitTest = NO;    
+    return hitView;
+}
+
 @end
 
 @implementation WebHTMLView (WebPrivate)
@@ -843,9 +854,7 @@ static WebHTMLView *lastHitView = nil;
 {
     WebHTMLView *view = nil;
     if ([event window] == [self window]) {
-        forceRealHitTest = YES;
-        NSView *hitView = [[[self window] contentView] hitTest:[event locationInWindow]];
-        forceRealHitTest = NO;
+        NSView *hitView = [self _hitViewForEvent:event];
         while (hitView) {
             if ([hitView isKindOfClass:[WebHTMLView class]]) {
                 view = (WebHTMLView *)hitView;
@@ -2360,21 +2369,16 @@ static WebHTMLView *lastHitView = nil;
 
 - (BOOL)acceptsFirstMouse:(NSEvent *)event
 {
-    [self _setMouseDownEvent:event];
+    NSView *hitView = [self _hitViewForEvent:event];
+    WebHTMLView *hitHTMLView = [hitView isKindOfClass:[self class]] ? (WebHTMLView *)hitView : nil;
+    [hitHTMLView _setMouseDownEvent:event];
     
     if ([[self _webView] _dashboardBehavior:WebDashboardBehaviorAlwaysAcceptsFirstMouse])
         return YES;
-        
-    // We hack AK's hitTest method to catch all events at the topmost WebHTMLView.  However, for
-    // the purposes of this method we want to really query the deepest view, so we forward to it.
-    forceRealHitTest = YES;
-    NSView *hitView = [[[self window] contentView] hitTest:[event locationInWindow]];
-    forceRealHitTest = NO;
     
-    if ([hitView isKindOfClass:[self class]]) {
-        WebHTMLView *hitHTMLView = (WebHTMLView *)hitView;
+    if (hitHTMLView != nil) {
         [[hitHTMLView _bridge] setActivationEventNumber:[event eventNumber]];
-        return [self _isSelectionEvent:event] ? [[hitHTMLView _bridge] eventMayStartDrag:event] : NO;
+        return [hitHTMLView _isSelectionEvent:event] ? [[hitHTMLView _bridge] eventMayStartDrag:event] : NO;
     } else {
         return [hitView acceptsFirstMouse:event];
     }
@@ -2382,17 +2386,11 @@ static WebHTMLView *lastHitView = nil;
 
 - (BOOL)shouldDelayWindowOrderingForEvent:(NSEvent *)event
 {
-    [self _setMouseDownEvent:event];
-
-    // We hack AK's hitTest method to catch all events at the topmost WebHTMLView.  However, for
-    // the purposes of this method we want to really query the deepest view, so we forward to it.
-    forceRealHitTest = YES;
-    NSView *hitView = [[[self window] contentView] hitTest:[event locationInWindow]];
-    forceRealHitTest = NO;
-    
-    if ([hitView isKindOfClass:[self class]]) {
-        WebHTMLView *hitHTMLView = (WebHTMLView *)hitView;
-        return [self _isSelectionEvent:event] ? [[hitHTMLView _bridge] eventMayStartDrag:event] : NO;
+    NSView *hitView = [self _hitViewForEvent:event];
+    WebHTMLView *hitHTMLView = [hitView isKindOfClass:[self class]] ? (WebHTMLView *)hitView : nil;
+    if (hitHTMLView != nil) {
+        [hitHTMLView _setMouseDownEvent:event];
+        return [hitHTMLView _isSelectionEvent:event] ? [[hitHTMLView _bridge] eventMayStartDrag:event] : NO;
     } else {
         return [hitView shouldDelayWindowOrderingForEvent:event];
     }
