@@ -1,3 +1,13 @@
+2003-10-31  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3470489, I just forgot to commit a piece of my patch.  This has actually even
+	been reviewed by ken already.
+
+	Reviewed by kocienda
+	
+        * khtml/rendering/render_replaced.cpp:
+        (RenderWidget::eventFilter):
+
 2003-10-31  Darin Adler  <darin@apple.com>
 
         Reviewed by John.

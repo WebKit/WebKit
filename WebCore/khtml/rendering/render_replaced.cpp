@@ -347,7 +347,8 @@ bool RenderWidget::eventFilter(QObject* /*o*/, QEvent* e)
         if ( QFocusEvent::reason() != QFocusEvent::Popup )
        {
            //kdDebug(6000) << "RenderWidget::eventFilter captures FocusOut" << endl;
-            elem->getDocument()->setFocusNode(0);
+            if (elem->getDocument()->focusNode() == elem)
+                elem->getDocument()->setFocusNode(0);
 //             if (  elem->isEditable() ) {
 //                 KHTMLPartBrowserExtension *ext = static_cast<KHTMLPartBrowserExtension *>( elem->view->part()->browserExtension() );
 //                 if ( ext )  ext->editableWidgetBlurred( m_widget );
