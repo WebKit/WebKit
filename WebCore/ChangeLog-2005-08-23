@@ -1,3 +1,12 @@
+2004-08-10  Trey Matteson  <trey@apple.com>
+
+	3757094 - crash spell checking after a paste
+
+        Reviewed by Ken
+
+        * khtml/rendering/render_text.cpp:
+        (InlineTextBox::paintSelection):  Add nil check.
+
 2004-08-09  Trey Matteson  <trey@apple.com>
 
 	3756195 - spell checking leaves misspelling marker behind after bad word is deleted

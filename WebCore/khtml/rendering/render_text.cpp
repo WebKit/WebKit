@@ -193,8 +193,10 @@ void InlineTextBox::paintSelection(const Font *f, RenderText *text, QPainter *p,
     // 3. There is a another line before this one (first lines have special behavior;
     //    the selection never extends on the first line); and 
     // 4. The last leaf renderer on the previous line is selected.
-    RenderObject *prevLineLastLeaf = root()->prevRootBox() ? root()->prevRootBox()->lastLeafChild()->object() : 0;
-    if (startPos <= m_start && root()->firstLeafChild() == this && root()->prevRootBox() && prevLineLastLeaf && 
+    RenderObject *prevLineLastLeaf = 0;
+    if (root()->prevRootBox() && root()->prevRootBox()->lastLeafChild())
+        prevLineLastLeaf = root()->prevRootBox()->lastLeafChild()->object();
+    if (startPos <= m_start && root()->firstLeafChild() == this && prevLineLastLeaf && 
         prevLineLastLeaf->selectionState() != RenderObject::SelectionNone)
         minX = kMax(cb->leftOffset(y), cb->leftOffset(root()->blockHeight()));
         
