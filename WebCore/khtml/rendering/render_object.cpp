@@ -385,7 +385,7 @@ RenderObject::clientWidth() const
         (layer() ? layer()->verticalScrollbarWidth() : 0);
 }
 
-short
+int
 RenderObject::clientHeight() const
 {
     return height() - borderTop() - borderBottom() -
@@ -397,13 +397,13 @@ RenderObject::clientHeight() const
 short
 RenderObject::scrollWidth() const
 {
-    return (style()->hidesOverflow() && layer()) ? layer()->scrollWidth() : clientWidth();
+    return (style()->hidesOverflow() && layer()) ? layer()->scrollWidth() : overflowWidth();
 }
 
-short
+int
 RenderObject::scrollHeight() const
 {
-    return (style()->hidesOverflow() && layer()) ? layer()->scrollHeight() : clientHeight();
+    return (style()->hidesOverflow() && layer()) ? layer()->scrollHeight() : overflowHeight();
 }
 
 bool

@@ -120,9 +120,9 @@ public:
 
     void setWidth(short w) { m_width = w; }
     void setHeight(int h) { m_height = h; }
-    
-    short scrollWidth() const { return m_scrollWidth; }
-    int scrollHeight() const { return m_scrollHeight; }
+
+    short scrollWidth();
+    int scrollHeight();
     
     void setPos( int xPos, int yPos ) {
         m_x = xPos;
@@ -148,7 +148,7 @@ public:
 #ifdef APPLE_CHANGES
     void paintScrollbars(QPainter* p, const QRect& damageRect);
 #endif
-    void checkScrollbarsAfterLayout();
+    void updateScrollInfoAfterLayout();
     void slotValueChanged(int);
     void updateScrollPositionFromScrollbars();
 
@@ -228,6 +228,8 @@ private:
     RenderLayer* nodeAtPointForLayer(RenderLayer* rootLayer, RenderObject::NodeInfo& info,
                                      int x, int y, const QRect& hitTestRect);
 
+    void computeScrollDimensions(bool* needHBar = 0, bool* needVBar = 0);
+    
 protected:   
     RenderObject* m_object;
     
@@ -262,6 +264,7 @@ protected:
     // The width/height of our scrolled area.
     short m_scrollWidth;
     int m_scrollHeight;
+    bool m_scrollDimensionsDirty;
     
     // For layers with overflow, we have a pair of scrollbars.
     QScrollBar* m_hBar;

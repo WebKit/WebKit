@@ -88,6 +88,7 @@ m_scrollX( 0 ),
 m_scrollY( 0 ),
 m_scrollWidth( 0 ),
 m_scrollHeight( 0 ),
+m_scrollDimensionsDirty( true ),
 m_hBar( 0 ),
 m_vBar( 0 ),
 m_scrollMediator( 0 ),
@@ -424,8 +425,12 @@ RenderLayer::scrollToOffset(int x, int y, bool updateScrollbars)
 {
     if (x < 0) x = 0;
     if (y < 0) y = 0;
-    int maxX = m_scrollWidth - m_object->clientWidth();
-    int maxY = m_scrollHeight - m_object->clientHeight();
+
+    // Call the scrollWidth/Height functions so that the dimensions will be computed if they need
+    // to be (for overflow:hidden blocks).
+    int maxX = scrollWidth() - m_object->clientWidth();
+    int maxY = scrollHeight() - m_object->clientHeight();
+    
     if (x > maxX) x = maxX;
     if (y > maxY) y = maxY;
 
@@ -561,9 +566,23 @@ RenderLayer::positionScrollbars(const QRect& absBounds)
 #define LINE_STEP   10
 #define PAGE_KEEP   40
 
-void
-RenderLayer::checkScrollbarsAfterLayout()
+short RenderLayer::scrollWidth()
 {
+    if (m_scrollDimensionsDirty)
+        computeScrollDimensions();
+    return m_scrollWidth;
+}
+
+int RenderLayer::scrollHeight()
+{
+    if (m_scrollDimensionsDirty)
+        computeScrollDimensions();
+    return m_scrollHeight;
+}
+
+void RenderLayer::computeScrollDimensions(bool* needHBar, bool* needVBar)
+{
+    m_scrollDimensionsDirty = false;
     int rightPos = m_object->rightmostPosition();
     int bottomPos = m_object->lowestPosition();
 
@@ -571,15 +590,28 @@ RenderLayer::checkScrollbarsAfterLayout()
     int clientHeight = m_object->clientHeight();
     m_scrollWidth = clientWidth;
     m_scrollHeight = clientHeight;
-    
+
     if (rightPos - m_object->borderLeft() > m_scrollWidth)
         m_scrollWidth = rightPos - m_object->borderLeft();
     if (bottomPos - m_object->borderTop() > m_scrollHeight)
         m_scrollHeight = bottomPos - m_object->borderTop();
-    
-    bool needHorizontalBar = rightPos > m_object->overflowWidth(false);
-    bool needVerticalBar = bottomPos > m_object->overflowHeight(false);
 
+    if (needHBar)
+        *needHBar = rightPos > m_object->overflowWidth(false);
+    if (needVBar)
+        *needVBar = bottomPos > m_object->overflowHeight(false);
+}
+
+void
+RenderLayer::updateScrollInfoAfterLayout()
+{
+    m_scrollDimensionsDirty = true;
+    if (m_object->style()->overflow() == OHIDDEN)
+        return; // All we had to do was dirty.
+
+    bool needHorizontalBar, needVerticalBar;
+    computeScrollDimensions(&needHorizontalBar, &needVerticalBar);
+    
     bool haveHorizontalBar = m_hBar;
     bool haveVerticalBar = m_vBar;
 
@@ -606,6 +638,7 @@ RenderLayer::checkScrollbarsAfterLayout()
 
     // Set up the range (and page step/line step).
     if (m_hBar) {
+        int clientWidth = m_object->clientWidth();
         int pageStep = (clientWidth-PAGE_KEEP);
         if (pageStep < 0) pageStep = clientWidth;
         m_hBar->setSteps(LINE_STEP, pageStep);
@@ -616,6 +649,7 @@ RenderLayer::checkScrollbarsAfterLayout()
 #endif
     }
     if (m_vBar) {
+        int clientHeight = m_object->clientHeight();
         int pageStep = (clientHeight-PAGE_KEEP);
         if (pageStep < 0) pageStep = clientHeight;
         m_vBar->setSteps(LINE_STEP, pageStep);
@@ -931,7 +965,7 @@ void RenderLayer::calculateRects(const RenderLayer* rootLayer, const QRect& pain
 bool RenderLayer::intersectsDamageRect(const QRect& layerBounds, const QRect& damageRect) const
 {
     return (renderer()->isCanvas() || renderer()->isRoot() || renderer()->isBody() ||
-            renderer()->hasOverhangingFloats() ||
+            (renderer()->hasOverhangingFloats() && !renderer()->style()->hidesOverflow()) ||
             (renderer()->isInline() && !renderer()->isReplaced()) ||
             layerBounds.intersects(damageRect));
 }
@@ -939,7 +973,7 @@ bool RenderLayer::intersectsDamageRect(const QRect& layerBounds, const QRect& da
 bool RenderLayer::containsPoint(int x, int y, const QRect& damageRect) const
 {
     return (renderer()->isCanvas() || renderer()->isRoot() || renderer()->isBody() ||
-            renderer()->hasOverhangingFloats() ||
+            (renderer()->hasOverhangingFloats() && !renderer()->style()->hidesOverflow()) ||
             (renderer()->isInline() && !renderer()->isReplaced()) ||
             damageRect.contains(x, y));
 }

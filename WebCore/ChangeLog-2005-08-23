@@ -1,3 +1,44 @@
+2003-10-07  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3363421, event handlers could be triggered for content outside an overflow:hidden
+	area.  The layer checks that test for intersection/point containment need to only include
+	layers with overhanging floats if the element is overflow:visible.
+
+	Fix for 3366801, assignment to scrollLeft/Top of an overflow:hidden layer makes the layer
+	disappear.  overflow:hidden blocks actually were never computing their scroll dimensions,
+	and so had bogus answers for those values.
+
+	Fix for 3366686, no reliable scrollHeight/Width reporting for overflow:hidden or
+	overflow:visible elements.  The former was caused by the same bug as 3366801.  The
+	latter was just me using the wrong method (clientWidth/Height instead of
+	overflowWidth/Height).
+
+	This patch also tightens the assignment to scrollLeft/Top to not do anything if you don't 
+	have an overflow value other than visible.
+	
+        Reviewed by darin
+
+        * khtml/ecma/kjs_dom.cpp:
+        (DOMNode::putValue):
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::layoutBlock):
+        * khtml/rendering/render_flexbox.cpp:
+        (khtml::RenderFlexibleBox::layoutBlock):
+        * khtml/rendering/render_layer.cpp:
+        (RenderLayer::RenderLayer):
+        (RenderLayer::scrollToOffset):
+        (RenderLayer::scrollWidth):
+        (RenderLayer::scrollHeight):
+        (RenderLayer::computeScrollDimensions):
+        (RenderLayer::updateScrollInfoAfterLayout):
+        (RenderLayer::intersectsDamageRect):
+        (RenderLayer::containsPoint):
+        * khtml/rendering/render_layer.h:
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::scrollWidth):
+        (RenderObject::scrollHeight):
+        * khtml/rendering/render_object.h:
+
 2003-10-07  Darin Adler  <darin@apple.com>
 
         Reviewed by Chris.

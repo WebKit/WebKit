@@ -530,10 +530,10 @@ void RenderBlock::layoutBlock(bool relayoutChildren)
     if (m_overflowHeight < m_height)
         m_overflowHeight = m_height;
     
-    // Update our scrollbars if we're overflow:auto/scroll now that we know if
+    // Update our scroll information if we're overflow:auto/scroll/hidden now that we know if
     // we overflow or not.
-    if (style()->scrollsOverflow() && m_layer)
-        m_layer->checkScrollbarsAfterLayout();
+    if (style()->hidesOverflow() && m_layer)
+        m_layer->updateScrollInfoAfterLayout();
 
 #ifdef INCREMENTAL_REPAINTING
     // Repaint with our new bounds if they are different from our old bounds.
