@@ -136,7 +136,7 @@ static NSString *getCarbonPath(NSString *posixPath);
     }
      
     [[view webController] _receivedProgress:[IFLoadProgress progressWithURLHandle:sender]
-        forResourceHandle: sender fromDataSource: [view webDataSource]];
+        forResourceHandle: sender fromDataSource: [view webDataSource] complete: NO];
 }
 
 - (void)IFURLHandleResourceDidFinishLoading:(IFURLHandle *)sender data: (NSData *)data
@@ -167,7 +167,7 @@ static NSString *getCarbonPath(NSString *posixPath);
     }
     
     [[view webController] _receivedProgress:[IFLoadProgress progressWithURLHandle:sender]
-        forResourceHandle: sender fromDataSource: [view webDataSource]];
+        forResourceHandle: sender fromDataSource: [view webDataSource] complete: YES];
     
     [self stop];
     [[view webController] _didStopLoading:URL];
@@ -176,7 +176,7 @@ static NSString *getCarbonPath(NSString *posixPath);
 - (void)IFURLHandleResourceDidCancelLoading:(IFURLHandle *)sender
 {
     [[view webController] _receivedProgress:[IFLoadProgress progress]
-        forResourceHandle: sender fromDataSource: [view webDataSource]];
+        forResourceHandle: sender fromDataSource: [view webDataSource] complete: YES];
     
     [self stop];
     [[view webController] _didStopLoading:URL];

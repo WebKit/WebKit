@@ -1,3 +1,9 @@
+2002-06-17  Richard Williamson  <rjw@apple.com>
+
+    Fixed call to renamed progress method.
+    
+	* Plugins.subproj/IFPluginStream.mm:
+    
 2002-06-17  Chris Blumenberg  <cblu@apple.com>
 
 	* WebView.subproj/IFWebDataSource.h:
@@ -5,10 +11,8 @@
 	(-[IFWebDataSource contentType]): no changes
 	(-[IFWebDataSource fileType]): added. Returns extension based on MIME.
 
+>>>>>>> 1.387
 2002-06-17  Richard Williamson  <rjw@apple.com>
-
-    Fixed www.2cpu.com regression.  QWidget::_displayRect was displaying the wrong view.
-    This was a regression that would impact all DHTML.
 
     Added explicit complete check for resources, rather
     than depend on bytesSoFar == totalToLoad.
