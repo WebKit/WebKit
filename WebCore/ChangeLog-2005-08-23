@@ -1,3 +1,18 @@
+2004-05-20  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3629816, caret in wrong position when deleting <br>s on lines by themselves or when moving <br>s
+	on lines by themselves.
+	
+        Reviewed by kocienda
+
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::detach):
+        * khtml/rendering/render_br.cpp:
+        (RenderBR::setPos):
+        * khtml/rendering/render_br.h:
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::dirtyLinesFromChangedChild):
+
 2004-05-20  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Hyatt

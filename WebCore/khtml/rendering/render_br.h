@@ -60,7 +60,8 @@ public:
     virtual int xPos() const { return m_x; }
     virtual int yPos() const { return m_y; }
     virtual int height() const { return m_height; }
-
+    virtual void setPos(int xPos, int yPos);
+    
     virtual bool isBR() const { return true; }
 
     virtual long caretMinOffset() const;

@@ -211,7 +211,7 @@ void RenderFlow::dirtyLinesFromChangedChild(RenderObject* child)
     // line box by examining our siblings.  If we didn't find a line box, then use our 
     // parent's first line box.
     RootInlineBox* box = 0;
-    for (RenderObject* curr = child->previousSibling(); curr; curr = curr->previousSibling()) {
+    for (RenderObject* curr = child; curr; curr = curr->previousSibling()) {
         if (curr->isFloatingOrPositioned())
             continue;
         

@@ -35,6 +35,12 @@ RenderBR::~RenderBR()
 {
 }
 
+void RenderBR::setPos(int xPos, int yPos)
+{
+    m_x = xPos;
+    m_y = yPos;
+}
+
 InlineBox* RenderBR::createInlineBox(bool makePlaceholder, bool isRootLineBox, bool isOnlyRun)
 {
     // We only make a box for a <br> if we are on a line by ourself or in strict mode
