@@ -155,7 +155,6 @@ sub execute_tests {
     @test_list = grep (!/shell\.js$/, @test_list);
     
     &status ("Executing " . ($#test_list + 1) . " test(s).");
-    
     foreach $test (@test_list) {
         my ($suite, $test_dir, $test_file) = split($path_sep, $test);
 # *-n.js is a negative test, expect exit code 3 (runtime error)
@@ -192,7 +191,7 @@ sub execute_tests {
         }
         
         $path = &xp_path($opt_suite_path . $test);
-# &status ("executing: " . $shell_command . $file_param . $path);
+        &status ("executing: " . $shell_command . $file_param . $path);
         &dd ("executing: " . $shell_command . $file_param . $path);
         
         open (OUTPUT, $shell_command . $file_param . $path .
