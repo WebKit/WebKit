@@ -1,5 +1,5 @@
 /*	
-        WebControllerPolicyHandler.h
+        WebControllerPolicyDelegate.h
 	Copyright 2002, Apple, Inc. All rights reserved.
 
         Public header file.
@@ -171,7 +171,7 @@ typedef enum {
 /*!
     @protocol WebControllerPolicyHandler
 */
-@protocol WebControllerPolicyHandler <NSObject>
+@protocol WebControllerPolicyDelegate <NSObject>
 
 /*!
     @method URLPolicyForURL:inFrame:
