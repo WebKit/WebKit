@@ -25,37 +25,34 @@
 
 #import "WebCoreBridge.h"
 
+#import "csshelper.h"
 #import "dom_node.h"
 #import "dom_docimpl.h"
 #import "dom_nodeimpl.h"
+#import "html_documentimpl.h"
+#import "htmlattrs.h"
+#import "htmltags.h"
 #import "khtml_part.h"
 #import "khtmlview.h"
+#import "loader.h"
 #import "render_frames.h"
 #import "render_image.h"
 #import "render_object.h"
 #import "render_root.h"
 #import "render_style.h"
 
-#import "KWQFont.h"
-
-#import "KWQAssertions.h"
-#import "html_documentimpl.h"
-#import "dom_nodeimpl.h"
-#import "htmlattrs.h"
-#import "htmltags.h"
-#import "csshelper.h"
-#import "KWQDOMNode.h"
-#import "WebCoreImageRenderer.h"
-#import "WebCoreTextRendererFactory.h"
-#import "KWQCharsets.h"
-#import "KWQFrame.h"
-#import "loader.h"
-
-#import "WebCoreDOMPrivate.h"
-
 #import <JavaScriptCore/property_map.h>
 
-using KParts::URLArgs;
+#import "KWQAssertions.h"
+#import "KWQCharsets.h"
+#import "KWQFont.h"
+#import "KWQDOMNode.h"
+#import "KWQFrame.h"
+#import "KWQPageState.h"
+
+#import "WebCoreDOMPrivate.h"
+#import "WebCoreImageRenderer.h"
+#import "WebCoreTextRendererFactory.h"
 
 using DOM::DocumentImpl;
 using DOM::Node;
@@ -69,6 +66,8 @@ using khtml::RenderStyle;
 
 using KJS::SavedProperties;
 
+using KParts::URLArgs;
+
 NSString *WebCoreElementFrameKey = 		@"WebElementFrame";
 NSString *WebCoreElementImageAltStringKey = 	@"WebElementImageAltString";
 NSString *WebCoreElementImageKey = 		@"WebElementImage";
@@ -80,23 +79,6 @@ NSString *WebCoreElementLinkLabelKey = 		@"WebElementLinkLabel";
 NSString *WebCoreElementLinkTitleKey = 		@"WebElementLinkTitle";
 NSString *WebCoreElementNameKey = 		@"WebElementName";
 NSString *WebCoreElementStringKey = 		@"WebElementString";
-
-@interface KWQPageState : NSObject
-{
-    DocumentImpl *document;
-    KURL *URL;
-    SavedProperties *windowProperties;
-    SavedProperties *locationProperties;
-    RenderObject *docRenderer; 
-}
-- initWithDocument:(DocumentImpl *)doc URL:(const KURL &)u windowProperties:(SavedProperties *)wp locationProperties:(SavedProperties *)lp;
-- (DocumentImpl *)document;
-- (KURL *)URL;
-- (SavedProperties *)windowProperties;
-- (SavedProperties *)locationProperties;
-- (RenderObject *)renderer;
-- (void)invalidate;
-@end
 
 @implementation WebCoreBridge
 
@@ -678,90 +660,6 @@ static bool initializedObjectCacheSize = FALSE;
 - (BOOL)interceptKeyEvent:(NSEvent *)event toView:(NSView *)view
 {
     return _part->keyEvent(event);
-}
-
-@end
-
-@implementation KWQPageState
-
-- initWithDocument:(DocumentImpl *)doc URL:(const KURL &)u windowProperties:(SavedProperties *)wp locationProperties:(SavedProperties *)lp
-{
-    [super init];
-    doc->ref();
-    document = doc;
-    docRenderer = doc->renderer();
-    document->setInPageCache(YES);
-    URL = new KURL(u);
-    windowProperties = wp;
-    locationProperties = lp;
-    return self;
-}
-
-// Called when the KWQPageState is restored.  It should relinquish ownership
-// of objects to core.
-- (void)invalidate
-{
-    // Should only ever invalidate once.
-    ASSERT(document);
-    
-    document->setInPageCache(NO);
-    document->deref();
-    document = 0;
-
-    delete URL;
-    URL = 0;
-    
-    delete windowProperties;
-    windowProperties = 0;
-    delete locationProperties;
-    locationProperties = 0;
-}
-
-- (void)dealloc
-{
-    if (document) {
-        KHTMLView *view = document->view();
-
-        KWQKHTMLPart::clearTimers(view);
-
-        document->setInPageCache(NO);
-        document->detach();
-        document->deref();
-        
-        view->clearPart();
-        delete view;
-    }
-    
-    delete URL;
-    delete windowProperties;
-    delete locationProperties;
-
-    [super dealloc];
-}
-
-- (DocumentImpl *)document
-{
-    return document;
-}
-
-- (KURL *)URL
-{
-    return URL;
-}
-
-- (SavedProperties *)windowProperties
-{
-    return windowProperties;
-}
-
-- (SavedProperties *)locationProperties
-{
-    return locationProperties;
-}
-
-- (RenderObject *)renderer
-{
-    return docRenderer;
 }
 
 @end

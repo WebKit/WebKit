@@ -1,3 +1,19 @@
+2002-12-13  Darin Adler  <darin@apple.com>
+
+        Reviewed by Trey.
+
+	- moved KWQFontFamily and KWQPageState to new homes
+
+        * kwq/KWQFontFamily.h: Added.
+        * kwq/KWQFontFamily.mm: Added.
+        * kwq/KWQPageState.h: Added.
+        * kwq/KWQPageState.mm: Added.
+        * WebCore.pbproj/project.pbxproj: Added new source files.
+
+        * kwq/KWQFont.h: Removed KWQFontFamily.
+        * kwq/KWQFont.mm:  Removed KWQFontFamily.
+        * kwq/WebCoreBridge.mm: Removed KWQPageState.
+
 2002-12-13  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Ken.

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,72 +27,6 @@
 
 #import "KWQString.h"
 #import "WebCoreTextRendererFactory.h"
-
-KWQFontFamily::KWQFontFamily()
-    : _next(0)
-    , _refCnt(0)
-    , _NSFamily(0)
-{
-}
-
-KWQFontFamily::KWQFontFamily(const KWQFontFamily& other)
-    : _family(other._family)
-    , _next(other._next)
-    , _refCnt(0)
-    , _NSFamily(other._NSFamily)
-{
-    if (_next)
-        _next->ref();
-}
-
-KWQFontFamily& KWQFontFamily::operator=(const KWQFontFamily& other)
-{
-    if (other._next)
-        other._next->ref();
-    if (_next)
-        _next->deref();
-    _family = other._family;
-    _next = other._next;
-    _NSFamily = other._NSFamily;
-    return *this;
-}
-
-NSString *KWQFontFamily::getNSFamily() const
-{
-    if (!_NSFamily) {
-        // Use an immutable copy of the name, but keep a set of
-        // all family names so we don't end up with too many objects.
-        static CFMutableDictionaryRef families;
-        if (families == NULL) {
-            families = CFDictionaryCreateMutable(NULL, 0, &CFDictionaryQStringKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
-        }
-        _NSFamily = (NSString *)CFDictionaryGetValue(families, &_family);
-        if (!_NSFamily) {
-            _NSFamily = _family.getNSString();
-            CFDictionarySetValue(families, &_family, _NSFamily);
-        }
-    }
-    return _NSFamily;
-}
-
-void KWQFontFamily::setFamily(const QString &family)
-{
-    if (family == _family) {
-        return;
-    }
-    _family = family;
-    _NSFamily = nil;
-}
-
-bool KWQFontFamily::operator==(const KWQFontFamily &compareFontFamily) const
-{
-    if ((!_next && compareFontFamily._next) || 
-        (_next && !compareFontFamily._next) ||
-        ((_next && compareFontFamily._next) && (*_next != *(compareFontFamily._next))))
-        return false;
-    
-    return getNSFamily() == compareFontFamily.getNSFamily();
-}
 
 QFont::QFont()
     : _trait(0)

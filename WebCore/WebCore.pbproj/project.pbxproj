@@ -470,6 +470,8 @@
 				931C8A180380288B008635CE,
 				BC7294FA03804B3C00A80166,
 				BC7294FE03804B5600A80166,
+				9394E0A603AA5BBE008635CE,
+				9394E0AB03AA60FB008635CE,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -704,6 +706,8 @@
 				931C8A190380288B008635CE,
 				BC7294F903804B3C00A80166,
 				BC7294FD03804B5600A80166,
+				9394E0A703AA5BBE008635CE,
+				9394E0AC03AA60FB008635CE,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -974,6 +978,54 @@
 			settings = {
 			};
 		};
+		9394E0A403AA5BBE008635CE = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			path = KWQPageState.h;
+			refType = 4;
+		};
+		9394E0A503AA5BBE008635CE = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			path = KWQPageState.mm;
+			refType = 4;
+		};
+		9394E0A603AA5BBE008635CE = {
+			fileRef = 9394E0A403AA5BBE008635CE;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		9394E0A703AA5BBE008635CE = {
+			fileRef = 9394E0A503AA5BBE008635CE;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		9394E0A903AA60FB008635CE = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			path = KWQFontFamily.h;
+			refType = 4;
+		};
+		9394E0AA03AA60FB008635CE = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			path = KWQFontFamily.mm;
+			refType = 4;
+		};
+		9394E0AB03AA60FB008635CE = {
+			fileRef = 9394E0A903AA60FB008635CE;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		9394E0AC03AA60FB008635CE = {
+			fileRef = 9394E0AA03AA60FB008635CE;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		93CCF7D4033BD43C008635CE = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
@@ -1137,6 +1189,8 @@
 				931C8A170380288B008635CE,
 				93CCF7D4033BD43C008635CE,
 				93CCF7D5033BD43C008635CE,
+				9394E0A903AA60FB008635CE,
+				9394E0AA03AA60FB008635CE,
 				F58784EE02DE375901EA4122,
 				F58784EF02DE375901EA4122,
 				F58784FA02DE375901EA4122,
@@ -1147,6 +1201,8 @@
 				F587850302DE375901EA4122,
 				93861DDF032C2E52008635CE,
 				93861DE0032C2E52008635CE,
+				9394E0A403AA5BBE008635CE,
+				9394E0A503AA5BBE008635CE,
 				93386B90037045B3008635CE,
 				93386B91037045B3008635CE,
 				F587851B02DE375901EA4122,

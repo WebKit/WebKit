@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,55 +23,39 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef QFONT_H_
-#define QFONT_H_
+#import <Foundation/Foundation.h>
 
-#include "KWQFontFamily.h"
+class KURL;
 
-#ifdef __OBJC__
-@class NSFont;
-#else
-class NSFont;
-#endif
+namespace DOM {
+    class DocumentImpl;
+}
 
-class QFont {
-public:
-    enum Weight { Normal = 50, Bold = 63 };
+namespace khtml {
+    class RenderObject;
+}
 
-    QFont();
-    ~QFont();
-    
-    void setFamily(const QString &);
-    QString family() const;
+namespace KJS {
+    class SavedProperties;
+}
 
-    const KWQFontFamily *firstFamily() const { return &_family; }
-    KWQFontFamily *firstFamily() { return &_family; }
-    void setFirstFamily(const KWQFontFamily &family);
-    
-    void setWeight(int);
-    int weight() const;
-    bool bold() const;
+@interface KWQPageState : NSObject
+{
+    DOM::DocumentImpl *document;
+    KURL *URL;
+    KJS::SavedProperties *windowProperties;
+    KJS::SavedProperties *locationProperties;
+    khtml::RenderObject *docRenderer; 
+}
 
-    void setItalic(bool);
-    bool italic() const;
+- initWithDocument:(DOM::DocumentImpl *)doc URL:(const KURL &)u windowProperties:(KJS::SavedProperties *)wp locationProperties:(KJS::SavedProperties *)lp;
 
-    void setPixelSize(float s);
-    int pixelSize() const { return (int)_size; }
+- (DOM::DocumentImpl *)document;
+- (KURL *)URL;
+- (KJS::SavedProperties *)windowProperties;
+- (KJS::SavedProperties *)locationProperties;
+- (khtml::RenderObject *)renderer;
 
-    bool operator==(const QFont &x) const;
-    bool operator!=(const QFont &x) const { return !(*this == x); }
-    
-    NSString *getNSFamily() const { return _family.getNSFamily(); }
-    int getNSTraits() const { return _trait; }
-    float getNSSize() const { return _size; }
-    
-    NSFont *getNSFont() const;
+- (void)invalidate;
 
-private:
-    KWQFontFamily _family;
-    int _trait;
-    float _size;
-    mutable NSFont *_nsfont;
-};
-
-#endif
+@end
