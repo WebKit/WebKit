@@ -803,7 +803,8 @@ static BOOL loggedObjectCacheSize = NO;
 {
     ASSERT(path);
     NSString *extension = [path pathExtension];
-    return [[NSURLFileTypeMappings sharedMappings] MIMETypeForExtension:extension];
+    NSString *type = [[NSURLFileTypeMappings sharedMappings] MIMETypeForExtension:extension];
+    return [type length] == 0 ? @"application/octet-stream" : type;
 }
 
 - (void)handleMouseDragged:(NSEvent *)event

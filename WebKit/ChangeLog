@@ -1,3 +1,12 @@
+2003-09-25  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed 3176853 -- can't attach files that have no extensions with Yahoo mail (bad Content-Type headers)
+
+        * WebCoreSupport.subproj/WebBridge.m: (-[WebBridge MIMETypeForPath:]):
+        Return @"application/octet-stream" rather than nil or empty string when the type is not known.
+
 2003-09-24  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
