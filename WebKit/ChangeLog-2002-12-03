@@ -1,3 +1,14 @@
+2002-12-03  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by: Darin
+
+	- REALLY changed the default state for block pop-ups to be off.
+
+        * WebView.subproj/WebPreferences.m:
+        (+[WebPreferences load]):
+	change default for letting JavaScript open windows automatically
+	to YES
+
 2002-12-03  Darin Adler  <darin@apple.com>
 
 	- fixed 3117135 -- world leak: drag any image, get a leak of 1 WebFrame
