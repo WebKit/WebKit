@@ -3,12 +3,13 @@
     Copyright (c) 2002, Apple Computer, Inc. All rights reserved.
 */
 
+#import <WebKit/WebSubresourceClient.h>
+
 #import <WebKit/WebBridge.h>
 #import <WebKit/WebControllerPrivate.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebFrame.h>
 #import <WebKit/WebResourceLoadDelegate.h>
-#import <WebKit/WebSubresourceClient.h>
 
 #import <WebFoundation/WebAssertions.h>
 #import <WebFoundation/WebError.h>
@@ -18,7 +19,6 @@
 #import <WebFoundation/WebResourceResponse.h>
 
 #import <WebCore/WebCoreResourceLoader.h>
-
 
 @implementation WebSubresourceClient
 
@@ -52,7 +52,7 @@
     
     if (![WebResourceHandle canInitWithRequest:newRequest]) {
         [newRequest release];
-        [rLoader cancel];
+        [rLoader reportError];
 
         WebError *badURLError = [[WebError alloc] initWithErrorCode:WebErrorCodeBadURLError
                                                            inDomain:WebErrorDomainWebFoundation
@@ -136,7 +136,7 @@
     // Calling _removeSubresourceClient will likely result in a call to release, so we must retain.
     [self retain];
     
-    [loader cancel];
+    [loader reportError];
     
     [dataSource _removeSubresourceClient:self];
     

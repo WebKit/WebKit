@@ -1,3 +1,14 @@
+2002-11-03  Darin Adler  <darin@apple.com>
+
+	- fixed 3091300 -- "prelighting" on local page is still slow, despite recent bug fix
+
+	Turns out all updating would be slow if any resources on the page failed to load.
+
+        * WebCoreSupport.subproj/WebSubresourceClient.m:
+        (+[WebSubresourceClient startLoadingResource:withURL:referrer:forDataSource:]):
+	Call the new reportError instead of cancel.
+        (-[WebSubresourceClient handle:didFailLoadingWithError:]): Ditto.
+
 2002-11-02  Darin Adler  <darin@apple.com>
 
         * Panels.subproj/WebAuthenticationPanel.m: (-[WebAuthenticationPanel setUpForRequest:]):

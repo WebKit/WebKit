@@ -31,9 +31,11 @@
 
 - (void)addData:(NSData *)data;
 
-// Either cancel or finish will be called before the loader is released, but never both.
-- (void)cancel;
+// Either finish, reportError, or cancel must be called before the
+// loader is released, but never more than one.
 - (void)finish;
+- (void)reportError;
+- (void)cancel;
 
 @end
 

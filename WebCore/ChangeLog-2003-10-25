@@ -1,5 +1,16 @@
 2002-11-03  Darin Adler  <darin@apple.com>
 
+	- fixed 3091300 -- "prelighting" on local page is still slow, despite recent bug fix
+
+	Turns out all updating would be slow if any resources on the page failed to load.
+
+        * kwq/WebCoreResourceLoader.h: Add reportError, distinct from
+	cancel and finish.
+        * kwq/KWQResourceLoader.mm: (-[KWQResourceLoader reportError]):
+	Set the error boolean on the job and then call through to [finish].
+
+2002-11-03  Darin Adler  <darin@apple.com>
+
 	- fixed 3091275 -- can't type into Answer field in RealOne Player order form
 
         * khtml/rendering/render_form.cpp:

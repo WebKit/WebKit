@@ -92,6 +92,12 @@ using KIO::TransferJob;
     [handle release];
 }
 
+- (void)reportError
+{
+    _job->setError(1);
+    [self finish];
+}
+
 - (void)finish
 {
     ASSERT(_job);
