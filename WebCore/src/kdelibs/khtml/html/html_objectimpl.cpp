@@ -188,7 +188,13 @@ void HTMLEmbedElementImpl::parseAttribute(AttrImpl *attr)
   QString val = QConstString( stringImpl->s, stringImpl->l ).string();
 
   // export parameter
+#ifdef _KWQ_
+    // Need to make a deep copy here or "+" operator will attempt to modify
+    // QConstString attribute name
+  QString attrStr = attr->name().string().copy() + "=\"" + val + "\"";
+#else
   QString attrStr = attr->name().string() + "=\"" + val + "\"";
+#endif
   param.append( attrStr );
   int pos;
   switch ( attr->attrId )
