@@ -1242,51 +1242,61 @@ void Loader::load(DocLoader* dl, CachedObject *object, bool incremental = true)
 
 void Loader::servePendingRequests()
 {
-  if ( m_requestsPending.count() == 0 )
+    if ( m_requestsPending.count() == 0 )
       return;
-
-  // get the first pending request
-  Request *req = m_requestsPending.take(0);
-
-#ifdef CACHE_DEBUG
-  kdDebug( 6060 ) << "starting Loader url=" << req->object->url().string() << endl;
-#endif
-
-  KIO::TransferJob* job = KIO::get( req->object->url().string(), req->object->reload(), false /*no GUI*/);
-
+    
+    // get the first pending request
+    Request *req = m_requestsPending.take(0);
+    
+    #ifdef CACHE_DEBUG
+    kdDebug( 6060 ) << "starting Loader url=" << req->object->url().string() << endl;
+    #endif
+    
+    KIO::TransferJob* job = KIO::get( req->object->url().string(), req->object->reload(), false /*no GUI*/);
+    
 #ifdef APPLE_CHANGES
-  KWQDEBUGLEVEL (KWQ_LOG_LOADING, "Serving request for base %s, url %s\n", 
-		  req->m_docLoader->part()->baseURL().url().latin1(), req->object->url().string().latin1());
-  //job->begin(d->m_recv, job);
-  job->begin((URLLoadClient *)req->client, job);
-  [((URLLoadClient *)req->client)->m_dataSource _addURLHandle: job->handle()];
+    KWQDEBUGLEVEL (KWQ_LOG_LOADING, "Serving request for base %s, url %s\n", 
+          req->m_docLoader->part()->baseURL().url().latin1(), req->object->url().string().latin1());
+    //job->begin(d->m_recv, job);
+    job->begin((URLLoadClient *)req->client, job);
+    if (job->handle() == nil){
+        // Must be a malformed URL.
+        NSString *urlString = QSTRING_TO_NSSTRING(req->object->url().string());
+        IFError *error = [IFError errorWithCode:IFURLHandleResultBadURLError inDomain:IFErrorCodeDomainWebFoundation isTerminal:YES];
+
+        id <IFLoadHandler> controller = [((URLLoadClient *)req->client)->m_dataSource controller];
+        [(IFBaseWebController *)controller _receivedError: error forResource: urlString partialProgress: nil fromDataSource: ((URLLoadClient *)req->client)->m_dataSource];
+    }
+    else {
+        [((URLLoadClient *)req->client)->m_dataSource _addURLHandle: job->handle()];
 #else
-  if (!req->object->accept().isEmpty())
+    if (!req->object->accept().isEmpty())
       job->addMetaData("accept", req->object->accept());
-  if ( req->m_docLoader )  {
+    if ( req->m_docLoader )  {
       KURL r = req->m_docLoader->doc()->URL();
       if ( r.protocol().startsWith( "http" ) && r.path().isEmpty() )
           r.setPath( "/" );
- 
+    
       job->addMetaData("referrer", r.url());
-
+    
       if (req->m_docLoader->part()->restored())
       {
-//          kdDebug() << "USING NON-VALIDATING CACHE!"<< endl;
+    //          kdDebug() << "USING NON-VALIDATING CACHE!"<< endl;
           job->addMetaData("cache","Cache");
       }
-
-  }
-
-  connect( job, SIGNAL( result( KIO::Job * ) ), this, SLOT( slotFinished( KIO::Job * ) ) );
-  connect( job, SIGNAL( data( KIO::Job*, const QByteArray &)),
+    
+    }
+    
+    connect( job, SIGNAL( result( KIO::Job * ) ), this, SLOT( slotFinished( KIO::Job * ) ) );
+    connect( job, SIGNAL( data( KIO::Job*, const QByteArray &)),
            SLOT( slotData( KIO::Job*, const QByteArray &)));
-
-  if ( req->object->schedule() )
+    
+    if ( req->object->schedule() )
       KIO::Scheduler::scheduleJob( job );
 #endif
-
-  m_requestsLoading.insert(job, req);
+    
+        m_requestsLoading.insert(job, req);
+    }
 }
 
 void Loader::slotFinished( KIO::Job* job )

@@ -1,3 +1,13 @@
+2002-05-28  Richard Williamson  <rjw@apple.com>
+
+    Fixed reporting of malformed resources URLs.  This fixed
+    exceptions that were being thrown because nil handles were
+    being added to datasource handle array.
+
+	* kwq/KWQKjobclasses.mm:
+	* kwq/KWQKloader.mm:
+	(Loader::servePendingRequests):
+
 2002-05-28  Chris Blumenberg  <cblu@apple.com>
 
 	Added framework-header-stamp
