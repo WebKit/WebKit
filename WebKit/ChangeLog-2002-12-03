@@ -1,5 +1,13 @@
 2002-03-16  Richard Williamson  <rjw@apple.com>
 
+        Fixed scroll bar flash.  Add provisional view to go along with
+        provisional widget.
+        
+	* WebView.subproj/IFWebView.mm: (-[IFWebView provisionalDataSourceChanged:]),
+	(-[IFWebView dataSourceChanged:]):
+
+2002-03-16  Richard Williamson  <rjw@apple.com>
+
         Fixed error handling.  Fixed most frame loading problems.
         Cleaned up frame state machine.
         Moved IFMainURLHandleClient from WebCore.

@@ -80,18 +80,22 @@
     data->provisionalWidget = new KHTMLView (part, 0);
     part->setView (data->provisionalWidget);
 
-    // Check to see if we're a frame.
-    if ([self _frameScrollView])
-        data->provisionalWidget->setView ([self _frameScrollView]);
-    else
-        data->provisionalWidget->setView (self);
-    
+    // Create a temporary provisional view.  It will be replaced with
+    // the actual view once the datasource has been committed.
+    data->provisionalWidget->setView ([[IFWebView alloc] initWithFrame: NSMakeRect (0,0,0,0)]);
+
     data->provisionalWidget->resize (r.size.width,r.size.height);
 }
 
 - (void)dataSourceChanged: (IFWebDataSource *)dataSource 
 {
     IFWebViewPrivate *data = ((IFWebViewPrivate *)_viewPrivate);
+
+    // Setup the real view.
+    if ([self _frameScrollView])
+        data->provisionalWidget->setView ([self _frameScrollView]);
+    else
+        data->provisionalWidget->setView (self);
 
     // Only delete the widget if we're the top level widget.  In other
     // cases the widget is associated with a RenderFrame which will
