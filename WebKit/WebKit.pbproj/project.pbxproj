@@ -358,6 +358,7 @@
 				51E94C6A06C0347500A9B09E,
 				83634A7406DA5ECD0026E290,
 				93B641FC06E292BC0055F610,
+				EDE850CE06ECC79E005FAB05,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3186,6 +3187,7 @@
 //9C4
 		9C7CABBB0190A37C0ECA16EA = {
 			children = (
+				EDE850CD06ECC79E005FAB05,
 				F52CA6BD02DF9D0F018635CA,
 				F52CA6BE02DF9D49018635CA,
 				51E94C0706C02CA300A9B09E,
@@ -3839,6 +3841,23 @@
 			fileRef = EDD1A5C705C83987008E3150;
 			isa = PBXBuildFile;
 			settings = {
+			};
+		};
+		EDE850CD06ECC79E005FAB05 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = WebPreferenceKeysPrivate.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		EDE850CE06ECC79E005FAB05 = {
+			fileRef = EDE850CD06ECC79E005FAB05;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Private,
+				);
 			};
 		};
 //ED0

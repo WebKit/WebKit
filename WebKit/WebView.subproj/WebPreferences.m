@@ -4,6 +4,7 @@
 */
 
 #import <WebKit/WebPreferencesPrivate.h>
+#import <WebKit/WebPreferenceKeysPrivate.h>
 
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebKitNSStringExtras.h>
@@ -13,35 +14,6 @@
 #import <Foundation/NSString_NSURLExtras.h>
 
 #import <WebCore/WebCoreSettings.h>
-
-// These are private because callers should be using the cover methods
-#define WebKitLogLevelPreferenceKey @"WebKitLogLevel"
-#define WebKitStandardFontPreferenceKey @"WebKitStandardFont"
-#define WebKitFixedFontPreferenceKey @"WebKitFixedFont"
-#define WebKitSerifFontPreferenceKey @"WebKitSerifFont"
-#define WebKitSansSerifFontPreferenceKey @"WebKitSansSerifFont"
-#define WebKitCursiveFontPreferenceKey @"WebKitCursiveFont"
-#define WebKitFantasyFontPreferenceKey @"WebKitFantasyFont"
-#define WebKitMinimumFontSizePreferenceKey @"WebKitMinimumFontSize"
-#define WebKitMinimumLogicalFontSizePreferenceKey @"WebKitMinimumLogicalFontSize"
-#define WebKitDefaultFontSizePreferenceKey @"WebKitDefaultFontSize"
-#define WebKitDefaultFixedFontSizePreferenceKey @"WebKitDefaultFixedFontSize"
-#define WebKitDefaultTextEncodingNamePreferenceKey @"WebKitDefaultTextEncodingName"
-#define WebKitUserStyleSheetEnabledPreferenceKey @"WebKitUserStyleSheetEnabledPreferenceKey"
-#define WebKitUserStyleSheetLocationPreferenceKey @"WebKitUserStyleSheetLocationPreferenceKey"
-#define WebKitShouldPrintBackgroundsPreferenceKey @"WebKitShouldPrintBackgroundsPreferenceKey"
-#define WebKitJavaEnabledPreferenceKey @"WebKitJavaEnabled"
-#define WebKitJavaScriptEnabledPreferenceKey @"WebKitJavaScriptEnabled"
-#define WebKitJavaScriptCanOpenWindowsAutomaticallyPreferenceKey @"WebKitJavaScriptCanOpenWindowsAutomatically"
-#define WebKitPluginsEnabledPreferenceKey @"WebKitPluginsEnabled"
-#define WebKitAllowAnimatedImagesPreferenceKey @"WebKitAllowAnimatedImagesPreferenceKey"
-#define WebKitAllowAnimatedImageLoopingPreferenceKey @"WebKitAllowAnimatedImageLoopingPreferenceKey"
-#define WebKitDisplayImagesKey @"WebKitDisplayImagesKey"
-#define WebKitPageCacheSizePreferenceKey @"WebKitPageCacheSizePreferenceKey"
-#define WebKitObjectCacheSizePreferenceKey @"WebKitObjectCacheSizePreferenceKey"
-#define WebKitBackForwardCacheExpirationIntervalKey @"WebKitBackForwardCacheExpirationIntervalKey"
-#define WebKitTabToLinksPreferenceKey @"WebKitTabToLinksPreferenceKey"
-#define WebKitPrivateBrowsingEnabledPreferenceKey @"WebKitPrivateBrowsingEnabled"
 
 NSString *WebPreferencesChangedNotification = @"WebPreferencesChangedNotification";
 

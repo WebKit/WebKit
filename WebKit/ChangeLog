@@ -1,3 +1,18 @@
+2004-09-06  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Darin.
+        
+        - put preference keys in a private header file so Safari can use them for Managed Preferences
+
+        * WebView.subproj/WebPreferenceKeysPrivate.h:
+        new Private header file, includes the #defines for NSUserDefaults preference keys
+        
+        * WebView.subproj/WebPreferences.m:
+        moved the preference key #defines out of here; now imports WebPreferenceKeysPrivate.h
+
+        * WebKit.pbproj/project.pbxproj:
+        updated for new file
+
 2004-09-03  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3782543> CrashTracer: ...87 crashes at com.apple.WebKit: -[WebNetscapePluginPackage initWithPath:] + 0x18c
