@@ -223,10 +223,13 @@ extern "C" {
     NSFileManager *fileManager;
     
     [self stop];
+    
+    // remove downloaded files
     fileManager = [NSFileManager defaultManager];
-    for(i=0; i<[filesToErase count]; i++){  // remove downloaded files
+    for(i=0; i<[filesToErase count]; i++){  
         [fileManager removeFileAtPath:[filesToErase objectAtIndex:i] handler:nil]; 
     }
+    
     [filesToErase release];
     [activeURLHandles release];
     [mime release];
