@@ -1,4 +1,12 @@
 2002-03-19  Richard Williamson  <rjw@apple.com>
+    
+        Changed float width cache to use shorts.
+
+	* src/kwq/KWQFontMetrics.mm: (-[KWQLayoutInfo _initializeCaches]),
+	(_rectForString):
+	* src/kwq/KWQMetrics.h:
+
+2002-03-19  Richard Williamson  <rjw@apple.com>
 
         Improved cache-miss case for non-latin1 characters.
         

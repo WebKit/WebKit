@@ -37,7 +37,7 @@
 #define INITIAL_GLYPH_CACHE_MAX 512
 #define INCREMENTAL_GLYPH_CACHE_BLOCK 512
 
-#define UNITIALIZED_GLYPH_WIDTH FLT_MAX
+#define UNITIALIZED_GLYPH_WIDTH 65535
 
 // These definitions are used to bound the character-to-glyph mapping cache.  The
 // range is limited to LATIN1.  When accessing the cache a check must be made to
@@ -72,7 +72,7 @@ CG_EXTERN size_t CGFontGetNumberOfGlyphs(CGFontRef font);
 
 }
 
-typedef float _IFGlyphWidth;
+typedef unsigned short _IFGlyphWidth;
 
 #endif
 
