@@ -40,7 +40,7 @@ public:
     virtual bool isBody() const { return true; }
 
     virtual const char *renderName() const { return "RenderBody"; }
-    virtual void repaint();
+    virtual void repaint(bool immediate=false);
 
 
     virtual void layout();

@@ -1,3 +1,11 @@
+2002-11-18  David Hyatt  <hyatt@apple.com>
+
+	Fix render_body's repaint method.
+	
+        * khtml/rendering/render_body.cpp:
+        (RenderBody::repaint):
+        * khtml/rendering/render_body.h:
+
 2002-11-18  Maciej Stachowiak  <mjs@apple.com>
 
 	- fixed 3103711 - Alexander does not complete JavaScript iBench

@@ -78,11 +78,11 @@ void RenderBody::printBoxDecorations(QPainter *p,int, int _y,
         printBorder(p, _tx, _ty, w, h, style());
 }
 
-void RenderBody::repaint()
+void RenderBody::repaint(bool immediate)
 {
     RenderObject *cb = containingBlock();
     if(cb != this)
-	cb->repaint();
+        cb->repaint(immediate);
 }
 
 void RenderBody::layout()
