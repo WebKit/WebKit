@@ -69,8 +69,18 @@
 - initWithFrame: (NSRect) r widget: (QWidget *)w 
 {
     [super initWithFrame: r];
+    [self setBordered:YES];
+    [self setBezelStyle:NSRoundedBezelStyle];
     widget = w;
+    
+    [self setTarget: self];
+    [self setAction: @selector(action:)];
     return self;
+}
+
+- action: sender
+{
+    widget->emitAction(QObject::ACTION_BUTTON_CLICKED);
 }
 
 @end

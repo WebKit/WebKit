@@ -9,10 +9,11 @@
 
     NSAutoreleasePool *localPool;
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    NSArray *fontSizeArray = [NSArray arrayWithObjects:@"6", @"7", @"8", @"9", @"10", @"12", @"14", @"16", nil];
+    NSArray *fontSizeArray = [NSArray arrayWithObjects:@"7", @"8", @"9", @"10", @"12", @"13", @"14", @"16", nil];
     
     NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
-        @"0xffffffff", 		@"WebKitLogLevel",
+//        @"0xffffffff", 		@"WebKitLogLevel",
+        @"0x0", 		@"WebKitLogLevel",
         @"Arial", 		@"WebKitStandardFont",
         @"Courier",  		@"WebKitFixedFont",
         @"Times-Roman", 	@"WebKitSerifFont",

@@ -39,9 +39,9 @@
 
 // FIXME: should these macros be in "kwq.h" or other header file?
 #define slots
-#define SLOT(x) "x"
+#define SLOT(x) """## x ##"""
 #define signals protected
-#define SIGNAL(x) "x"
+#define SIGNAL(x) """## x ##"""
 #define emit
 #define Q_OBJECT
 #define Q_PROPERTY(text)
@@ -71,6 +71,9 @@ class QVariant;
 
 class QObject : public Qt {
 public:
+    enum Actions {
+        ACTION_BUTTON_CLICKED = 1
+    };
 
     // typedefs ----------------------------------------------------------------
     // enums -------------------------------------------------------------------
@@ -96,7 +99,7 @@ public:
 
     QVariant property(const char *name) const;
     bool inherits(const char *) const;
-    bool connect(const QObject *, const char *, const char *) const;
+    bool connect(const QObject *src, const char *signal, const char *slot) const;
 
     int startTimer(int);
     void killTimer(int);
@@ -107,6 +110,12 @@ public:
 
     void blockSignals(bool);
 
+#ifdef _KWQ_
+    virtual void performAction(QObject::Actions action);
+    void emitAction(QObject::Actions action);
+    void setTarget (QObject *obj);
+#endif    
+    
     // operators ---------------------------------------------------------------
 
 // protected -------------------------------------------------------------------
@@ -118,6 +127,7 @@ private:
     QObject(const QObject &);
     QObject &operator=(const QObject &);
 
+    QObject *target;
 }; // class QObject ============================================================
 
 #endif

@@ -1051,7 +1051,11 @@ void KHTMLPart::khtmlMouseReleaseEvent( khtml::MouseReleaseEvent *event )
   // the mouse is pressed again.
   d->m_bMousePressed = false;
 
-    openURL (KURL(completeURL( splitUrlTarget(d->m_strSelectedURL))));
+    // HACK!  FIXME!
+    if (d->m_strSelectedURL != QString::null) {
+        [((QWidget *)view())->getView() resetView];
+        openURL (KURL(completeURL( splitUrlTarget(d->m_strSelectedURL))));
+    }
     
 #define QT_NO_CLIPBOARD 1
 #ifndef QT_NO_CLIPBOARD
@@ -1141,7 +1145,7 @@ KJSProxy *KHTMLPart::jScript()
 }
 
 
-KURL KHTMLPart::completeURL(const QString &url, const QString &target = QString::null)
+KURL KHTMLPart::completeURL(const QString &url, const QString &target)
 {
     if (d->m_baseURL.isEmpty()) {
         return KURL(d->m_workingURL);

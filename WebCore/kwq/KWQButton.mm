@@ -50,4 +50,3 @@ QString QButton::text() const
     KWQNSButton *button = (KWQNSButton *)getView();
     return NSSTRING_TO_QSTRING([button title]);
 }
-

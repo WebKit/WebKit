@@ -52,7 +52,7 @@ public:
 
     virtual void setText(const QString &);
     QString text() const;
-
+    
     // operators ---------------------------------------------------------------
 
 // protected -------------------------------------------------------------------

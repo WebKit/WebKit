@@ -154,7 +154,7 @@ public:
 #ifdef _KWQ_
 
     virtual void paint (void *);
-    
+            
 #if (defined(__APPLE__) && defined(__OBJC__) && defined(__cplusplus))
     NSView 	*getView() const;
     void 	setView(NSView *aView);

@@ -46,8 +46,8 @@ void QComboBox::init(bool isEditable)
     KWQNSComboBox *comboBox;
     
     comboBox = [[[KWQNSComboBox alloc] initWithFrame: NSMakeRect (0,0,0,0) widget: this] autorelease];
-    if (isEditable == FALSE)
-        [comboBox setEditable: NO];
+    //if (isEditable == FALSE)
+    //    [comboBox setEditable: NO];
     setView (comboBox);
 }
 
@@ -91,7 +91,9 @@ void QComboBox::insertItem(const QString &text, int index)
     
     if (index < 0)
         index = count();
-    [comboBox insertItemWithObjectValue: QSTRING_TO_NSSTRING (text) atIndex: index]; 
+    // Hack to allow multiple items with same name.   Ugh.
+    [comboBox insertItemWithTitle: [NSString stringWithFormat: @"%d", index, nil] atIndex: index]; 
+    [[comboBox itemAtIndex: index] setTitle: QSTRING_TO_NSSTRING (text)];
 }
 
 

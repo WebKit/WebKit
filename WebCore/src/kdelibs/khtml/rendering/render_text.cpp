@@ -118,7 +118,12 @@ void TextSlave::printDecoration( QPainter *pt, RenderText* p, int _tx, int _ty, 
     // FIXME: [kocienda]
     // This hack gets the underline in a better place but we should be
     // doing something better.
-    underlineOffset+=2;
+    // FIXED: [rjw]  Don't need this.
+    if (pt->fontMetrics().descent() > 2)
+        underlineOffset = underlineOffset - pt->fontMetrics().descent() + 4;
+    else if (pt->fontMetrics().descent() == 2)
+        underlineOffset +=  2;
+    
 
     if(deco & UNDERLINE){
         //fprintf (stderr, "UNDERLINE (%d, %d) to (%d, %d)\n", _tx, _ty + underlineOffset, _tx + width, _ty + underlineOffset );

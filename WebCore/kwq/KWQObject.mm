@@ -28,10 +28,34 @@
 
 #include <kwqdebug.h>
 
-bool QObject::connect(const QObject *src, const char *signal, const QObject *dest, 
+bool QObject::connect(const QObject *sender, const char *signal, const QObject *dest, 
     const char *slot)
 {
+    if (sender)
+        ((QObject *)sender)->setTarget ((QObject *)dest);
+    KWQDEBUG4 ("src = 0x%08x, signal = %s, dest = 0x%08x, slot = %s\n", sender, signal, dest, slot);
     return FALSE;
+}
+
+
+
+bool QObject::connect(const QObject *sender, const char *signal, const char *slot) const
+{
+    if (sender)
+        ((QObject *)sender)->setTarget ((QObject *)sender);
+    KWQDEBUG3 ("src = 0x%08x, signal = %s, slot = %s\n", sender, signal, slot);
+    return FALSE;    
+}
+
+
+void QObject::emitAction(QObject::Actions action)
+{
+    target->performAction (action);
+}
+
+
+void QObject::performAction(QObject::Actions action)
+{
 }
 
 
@@ -40,6 +64,12 @@ bool QObject::disconnect( const QObject *, const char *, const QObject *,
 {
     return FALSE;
 }
+
+void QObject::setTarget (QObject *t)
+{
+    target = t;
+}
+
 
 
 QObject::QObject(QObject *parent=0, const char *name=0)
@@ -76,13 +106,6 @@ bool QObject::inherits(const char *) const
 {
     _logNeverImplemented();
     return FALSE;
-}
-
-
-bool QObject::connect(const QObject *, const char *, const char *) const
-{
-    _logNeverImplemented();
-    return FALSE;    
 }
 
 

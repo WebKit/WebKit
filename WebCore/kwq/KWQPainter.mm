@@ -485,6 +485,7 @@ void QPainter::drawText(int x, int y, const QString &qstring, int len)
     // This will draw the text from the top of the bounding box down.
     // Qt expects to draw from the baseline.
     y = y - (int)([font defaultLineHeightForFont] + [font descender]);
+    //y = y - (int)([font defaultLineHeightForFont]);
 
 #ifdef SLOW_SAFE_DRAWING
 

@@ -51,8 +51,8 @@ public:
     // member functions --------------------------------------------------------
 
     GUIStyle guiStyle() const;
-    virtual QSize indicatorSize() { return QSize(0,0); };
-    virtual QSize exclusiveIndicatorSize() { return QSize(0,0); };
+    virtual QSize indicatorSize() { return QSize(22,22); };	// FIXME!  Shouldn't be hardcoded.
+    virtual QSize exclusiveIndicatorSize() { return QSize(22,22); };// FIXME!  Shouldn't be hardcoded.
 
     // operators ---------------------------------------------------------------
 

@@ -73,7 +73,7 @@ RenderFormElement::~RenderFormElement()
 
 short RenderFormElement::baselinePosition( bool f ) const
 {
-    return RenderWidget::baselinePosition( f ) - 2 - QFontMetrics( style()->font() ).descent();
+    return RenderWidget::baselinePosition( f ) - 6 - QFontMetrics( style()->font() ).descent();
 }
 
 short RenderFormElement::calcReplacedWidth(bool*) const
@@ -258,6 +258,13 @@ bool RenderFormElement::eventFilter(QObject* /*o*/, QEvent* e)
     return deleted;
 }
 
+void RenderFormElement::performAction(QObject::Actions action)
+{
+    fprintf (stdout, "RenderFormElement::performAction():  %d\n", action);
+    if (action == QObject::ACTION_BUTTON_CLICKED)
+        slotClicked();
+}
+
 void RenderFormElement::slotClicked()
 {
     if(isRenderButton()) {
@@ -310,8 +317,9 @@ RenderCheckBox::RenderCheckBox(QScrollView *view,
     b->setMouseTracking(true);
     setQWidget(b);
     b->installEventFilter(this);
-    connect(b,SIGNAL(stateChanged(int)),this,SLOT(slotStateChanged(int)));
-    connect(b, SIGNAL(clicked()), this, SLOT(slotClicked()));
+
+    connect(b, "SIGNAL(stateChanged(int))", this, "SLOT(slotStateChanged(int))");
+    connect(b, "SIGNAL(clicked())", this, "SLOT(slotClicked())");
 }
 
 
@@ -352,7 +360,7 @@ RenderRadioButton::RenderRadioButton(QScrollView *view,
     b->setMouseTracking(true);
     setQWidget(b);
     b->installEventFilter(this);
-    connect(b, SIGNAL(clicked()), this, SLOT(slotClicked()));
+    connect(b, "SIGNAL(clicked())", this, "SLOT(slotClicked())");
 }
 
 void RenderRadioButton::setChecked(bool checked)
@@ -399,7 +407,12 @@ RenderSubmitButton::RenderSubmitButton(QScrollView *view, HTMLInputElementImpl *
     setQWidget(p);
     p->setMouseTracking(true);
     p->installEventFilter(this);
-    connect(p, SIGNAL(clicked()), this, SLOT(slotClicked()));
+    connect(p, "SIGNAL(clicked())", this, "SLOT(slotClicked())");
+    
+    // Need to store a reference to this object and then invoke slotClicked on it.
+    //p->setAction (&RenderFormElement::slotClicked);
+    //p->setRenderObject (this);
+    p->setTarget (this);
 }
 
 void RenderSubmitButton::calcMinMaxWidth()
@@ -442,7 +455,10 @@ QString RenderSubmitButton::defaultLabel() {
 
 short RenderSubmitButton::baselinePosition( bool f ) const
 {
-    return RenderFormElement::baselinePosition( f );
+    //return RenderFormElement::baselinePosition( f );
+    // FIXED: [rjw] Where does this magic number '8' come from.  It's also used above in
+    // RenderSubmitButton::calcMinMaxWidth().
+    return RenderWidget::baselinePosition( f ) - 8 - QFontMetrics( style()->font() ).descent();
 }
 
 // -------------------------------------------------------------------------------
@@ -515,8 +531,8 @@ RenderLineEdit::RenderLineEdit(QScrollView *view, HTMLInputElementImpl *element)
 {
     LineEditWidget *edit = new LineEditWidget(view->viewport());
     edit->installEventFilter(this);
-    connect(edit,SIGNAL(returnPressed()), this, SLOT(slotReturnPressed()));
-    connect(edit,SIGNAL(textChanged(const QString &)),this,SLOT(slotTextChanged(const QString &)));
+    connect(edit,"SIGNAL(returnPressed())", this, "SLOT(slotReturnPressed())");
+    connect(edit,"SIGNAL(textChanged(const QString &))", this, "SLOT(slotTextChanged(const QString &))");
 
     if(element->inputType() == HTMLInputElementImpl::PASSWORD)
         edit->setEchoMode( QLineEdit::Password );
@@ -572,7 +588,7 @@ void RenderLineEdit::calcMinMaxWidth()
             h = 22;
         s = QSize( w + 8, h ).expandedTo( QApplication::globalStrut() );
     } else
-	s = QSize( w + 4, h + 4 ).expandedTo( QApplication::globalStrut() );
+	s = QSize( w + 6, h + 6 ).expandedTo( QApplication::globalStrut() );
 
     setIntrinsicWidth( s.width() );
     setIntrinsicHeight( s.height() );
@@ -632,12 +648,12 @@ RenderFileButton::RenderFileButton(QScrollView *view, HTMLInputElementImpl *elem
 
     m_edit->installEventFilter(this);
 
-    connect(m_edit, SIGNAL(returnPressed()), this, SLOT(slotReturnPressed()));
-    connect(m_edit, SIGNAL(textChanged(const QString &)),this,SLOT(slotTextChanged(const QString &)));
+    connect(m_edit, "SIGNAL(returnPressed())", this, "SLOT(slotReturnPressed())");
+    connect(m_edit, "SIGNAL(textChanged(const QString &))", this, "SLOT(slotTextChanged(const QString &))");
 
     m_button = new QPushButton(i18n("Browse..."), w);
     m_button->setFocusPolicy(QWidget::ClickFocus);
-    connect(m_button,SIGNAL(clicked()), this, SLOT(slotClicked()));
+    connect(m_button, "SIGNAL(clicked())", this, "SLOT(slotClicked())");
 
     w->setStretchFactor(m_edit, 2);
     w->setFocusProxy(m_edit);
@@ -1045,7 +1061,7 @@ KListBox* RenderSelect::createListBox()
     lb->setSelectionMode(m_multiple ? QListBox::Extended : QListBox::Single);
     // ### looks broken
     //lb->setAutoMask(true);
-    connect( lb, SIGNAL( selectionChanged() ), this, SLOT( slotSelectionChanged() ) );
+    connect( lb, "SIGNAL(selectionChanged())", this, "SLOT(slotSelectionChanged())" );
     m_ignoreSelectEvents = false;
     lb->setMouseTracking(true);
 
@@ -1056,7 +1072,7 @@ ComboBoxWidget *RenderSelect::createComboBox()
 {
     ComboBoxWidget *cb = new ComboBoxWidget(m_view->viewport());
     cb->installEventFilter(this);
-    connect(cb, SIGNAL(activated(int)), this, SLOT(slotSelected(int)));
+    connect(cb, "SIGNAL(activated(int))", this, "SLOT(slotSelected(int))");
     return cb;
 }
 
@@ -1136,7 +1152,7 @@ RenderTextArea::RenderTextArea(QScrollView *view, HTMLTextAreaElementImpl *eleme
     setQWidget(edit);
     edit->installEventFilter(this);
 
-    connect(edit,SIGNAL(textChanged()),this,SLOT(slotTextChanged()));
+    connect(edit, "SIGNAL(textChanged())", this, "SLOT(slotTextChanged())");
 }
 
 RenderTextArea::~RenderTextArea()

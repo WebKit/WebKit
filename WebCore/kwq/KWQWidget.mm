@@ -79,6 +79,7 @@ private:
 #else
     void 	*view;
 #endif
+    void	*action();
 };
 
 QWidget::QWidget(QWidget *parent=0, const char *name=0, WFlags f=0) 
@@ -328,10 +329,14 @@ void QWidget::constPolish() const
 
 QSize QWidget::minimumSizeHint() const
 {
-    // Used by embedded java (KJavaEmbed::sizeHint().  Will be replaced.
-    // Used by RenderSubmitButton::calcMinMaxWidth(), where it is called
-    // on a button widget.  Will be replaced.
-    _logNeverImplemented();
+    NSView *view = getView();
+    
+    if ([view isKindOfClass: [NSControl class]]){
+        [(NSControl *)getView() sizeToFit];
+        NSRect frame = [getView() frame];
+        return QSize ((int)frame.size.width, (int)frame.size.height);
+    }
+
     return QSize (0,0);
 }
 
