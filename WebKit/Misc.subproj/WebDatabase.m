@@ -30,12 +30,6 @@
     return nil;
 }
 
--(NSEnumerator *)keys
-{
-    NSRequestConcreteImplementation(self, _cmd, [WebDatabase class]);
-    return nil;
-}
-
 -(unsigned)count
 {
     return count;

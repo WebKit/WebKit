@@ -664,13 +664,6 @@ static void databaseInit()
     return result;
 }
 
--(NSEnumerator *)keys
-{
-    // FIXME: [kocienda] Radar 2859370 (WebFileDatabase needs to implement keys method)
-    return nil;
-}
-
-
 -(void)performSetObject:(id)object forKey:(id)key
 {
     NSString *filePath;
