@@ -94,7 +94,6 @@ enum { WebViewVersion = 1 };
 {
     NSRect f = [self frame];
     WebFrameView *wv = [[WebFrameView alloc] initWithFrame: NSMakeRect(0,0,f.size.width,f.size.height)];
-    [wv setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
     [self addSubview: wv];
     [wv release];
 
@@ -129,6 +128,7 @@ enum { WebViewVersion = 1 };
 {
     [super initWithFrame: f];
     [self _commonInitializationFrameName:frameName groupName:groupName];
+    [self setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
     return self;
 }
 

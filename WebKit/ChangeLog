@@ -1,3 +1,13 @@
+2003-06-10  Richard Williams   <rjw@apple.com>
+
+	Fixed 3287862.  Don't override resize flags
+	when decoding WebView.
+
+        Reviewed by Chris.
+
+        * WebView.subproj/WebView.m:
+        (-[WebView _commonInitializationFrameName:groupName:]):
+
 2003-06-10  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3286006>: Carbon Java plug-in problems may require workaround in WebKit
