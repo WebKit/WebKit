@@ -6,8 +6,8 @@
 */
 
 /*!
-    @protocol WebContextMenuHandler
-    @discussion WebContextMenuHandler determine what context menu items are visible over
+    @protocol WebContextMenuDelegate
+    @discussion WebContextMenuDelegate determine what context menu items are visible over
     a clicked element.
 */
 

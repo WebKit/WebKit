@@ -8,7 +8,7 @@
 @class WebResourceHandle;
 
 /*!
-    @protocol  WebResourceProgressHandler
+    @protocol  WebResourceProgressDelegate
     @discussion Implementors of this protocol will receive messages indicating
     data has been received for resources loaded by a data source.
 */

@@ -184,8 +184,8 @@ typedef enum {
 
 
 /*!
-    @protocol WebControllerPolicyHandler
-    @discussion While loading a URL, WebKit asks the WebControllerPolicyHandler for
+    @protocol WebControllerPolicyDelegate
+    @discussion While loading a URL, WebKit asks the WebControllerPolicyDelegate for
     policies that determine the action of what to do with the URL or the data that
     the URL represents. Typically, the policy handler methods are called in this order:
 

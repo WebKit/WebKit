@@ -1,3 +1,14 @@
+2002-09-24  Richard Williamson   <rjw@apple.com>
+
+        More documentation tweaks.
+        
+        * History.subproj/WebHistory.h:
+        * History.subproj/WebHistoryItem.h:
+        * WebView.subproj/WebContextMenuDelegate.h:
+        * WebView.subproj/WebControllerPolicyDelegate.h:
+        * WebView.subproj/WebLocationChangeDelegate.h:
+        * WebView.subproj/WebResourceProgressDelegate.h:
+
 2002-09-24  Darin Adler  <darin@apple.com>
 
 	- fixed 3059513 -- REGRESSION: Scrolling to fragment doesn't work
@@ -32,7 +43,7 @@
 
 2002-09-24  Richard Williamson   <rjw@apple.com>
 
-        Added FIXME not about unresolved issue with CFStringEncoding/NSStringEncoding.
+        Added FIXME note about unresolved issue with CFStringEncoding/NSStringEncoding.
         
         * WebView.subproj/WebController.h:
 

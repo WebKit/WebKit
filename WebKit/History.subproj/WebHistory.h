@@ -1,13 +1,14 @@
-//
-//  WebHistory.h
-//  WebKit
-//
-//  Created by John Sullivan on Mon Feb 18 2002.
-//  Copyright (c) 2002 Apple Computer, Inc. All rights reserved.
-//
+/*	
+        WebHistory.h
+	Copyright 2001, 2002, Apple Computer, Inc.
 
+        Public header file.
+        
+        FIXME  Strip down this API.
+*/
 #import <Foundation/Foundation.h>
 
+// FIXME  Cannot inherit from WebCoreHistory
 #import <WebCore/WebCoreHistory.h>
 
 @class WebHistoryItem;
@@ -16,52 +17,123 @@
 // notification sent when history is modified
 extern NSString *WebHistoryEntriesChangedNotification;
 
+/*!
+    @class WebHistory
+    @discussion WebHistory is used to track pages that have been loaded
+    by WebKit.
+*/
 @interface WebHistory : WebCoreHistory {
 @private
     WebHistoryPrivate *_historyPrivate;
 }
 
+/*!
+    @method webHistoryWithFile:
+    @param file The file to use to initialize the WebHistory.
+    @result Returns a WebHistory initialized with the contents of file.
+*/
 + (WebHistory *)webHistoryWithFile: (NSString *)file;
-- (id)initWithFile: (NSString *)file;
 
-// modifying contents
+/*!
+    @method initWithFile:
+    @abstract The designated initializer for WebHistory.
+    @result Returns an initialized WebHistory.
+*/
+- initWithFile: (NSString *)file;
+
+/*!
+    @method addEntry:
+    @param entry
+*/
 - (void)addEntry: (WebHistoryItem *)entry;
+
+/*!
+    @method addEntries:
+    @param newEntries
+*/
 - (void)addEntries:(NSArray *)newEntries;
+
+/*!
+    @method removeEntry:
+    @param entry
+*/
 - (void)removeEntry: (WebHistoryItem *)entry;
+
+/*!
+    @method removeEntries:
+    @param entries
+*/
 - (void)removeEntries: (NSArray *)entries;
+
+/*!
+    @method removeAllEntries
+*/
 - (void)removeAllEntries;
 
-// Update an entry in place. Any nil "new" parameters aren't updated.
+/*!
+    @method updateURL:title:displayTitle:forURL:
+    @discussion Update an entry in place. Any nil "new" parameters aren't updated.
+    @param newURLString
+    @param newTitle
+    @param newDisplayTitle
+    @param oldURLString
+*/
 - (void)updateURL:(NSString *)newURLString
             title:(NSString *)newTitle
      displayTitle:(NSString *)newDisplayTitle
            forURL:(NSString *)oldURLString;
 
-// retrieving contents for date-based presentation
-
-// get an array of NSCalendarDate, each one representing a unique day that contains one
-// or more history entries, ordered from most recent to oldest.
+/*!
+    @method orderedLastVisitedDays
+    @discussion Get an array of NSCalendarDate, each one representing a unique day that contains one
+    or more history entries, ordered from most recent to oldest.
+    @result Returns an array of WebHistoryItems
+*/
 - (NSArray *)orderedLastVisitedDays;
 
-// get an array of WebHistoryItem that were last visited on the day represented by the
-// specified NSCalendarDate, ordered from most recent to oldest.
+/*!
+    @method orderedEntriesLastVisitedOnDay:
+    @discussion Get an array of WebHistoryItem that were last visited on the day represented by the
+    specified NSCalendarDate, ordered from most recent to oldest.
+    @param calendarDate
+    @result Returns an array of WebHistoryItems
+*/
 - (NSArray *)orderedEntriesLastVisitedOnDay: (NSCalendarDate *)calendarDate;
 
-// testing contents for visited-link mechanism
+/*!
+    @method containsURL:
+    @param URL
+    @discussion testing contents for visited-link mechanism
+*/
 - (BOOL)containsURL: (NSURL *)URL;
 
-// retreiving information for a specific URL
+/*!
+    @method entryForURL:
+    @discussion Get an item for a specific URL
+    @param URL
+    @result Returns an item matching the URL
+*/
 - (WebHistoryItem *)entryForURL:(NSURL *)URL;
 
-// storing contents on disk
-
-// The file path used for storing history, specified in -[WebHistory initWithFile:] or +[WebHistory webHistoryWithFile:]
+/*!
+    @method file
+    @discussion The file path used for storing history, specified in -[WebHistory initWithFile:] or +[WebHistory webHistoryWithFile:]
+    @result Returns the file path used to store the history.
+*/
 - (NSString *)file;
 
-// Load history from file. This happens automatically at init time, and need not normally be called.
+/*!
+    @method loadHistory
+    @discussion Load history from file. This happens automatically at init time, and need not normally be called.
+    @result Returns YES if successful, not otherwise.
+*/
 - (BOOL)loadHistory;
 
-// Save history to file. It is the client's responsibility to call this at appropriate times.
+/*!
+    @method saveHistory
+    @discussion Save history to file. It is the client's responsibility to call this at appropriate times.
+    @result Returns YES if successful, not otherwise.
+*/
 - (BOOL)saveHistory;
 
 @end

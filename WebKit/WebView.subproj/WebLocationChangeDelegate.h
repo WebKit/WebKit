@@ -53,7 +53,7 @@
     @abstract Notify that the page title has been determined or has changed
     @param title The new page title
     @param dataSource The data source for which the title changed
-    @disucssion The title may update during loading; clients should be prepared for this.
+    @discussion The title may update during loading; clients should be prepared for this.
 */
 - (void)receivedPageTitle:(NSString *)title forDataSource:(WebDataSource *)dataSource;
 

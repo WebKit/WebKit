@@ -1,10 +1,15 @@
 /*	
     WebHistoryItem.h
     Copyright 2001, 2002, Apple, Inc. All rights reserved.
+
+    FIXME  Strip down this API.
 */
 
 #import <Cocoa/Cocoa.h>
 
+/*!
+    @class WebHistoryItem
+*/
 @interface WebHistoryItem : NSObject
 {
     NSURL *_URL;
