@@ -1,3 +1,20 @@
+2004-08-30  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+        Fix for this bug:
+
+        <rdar://problem/3762231> REGRESSION (Mail): tab key inserts a single space
+
+        * khtml/editing/htmlediting_impl.cpp:
+        (khtml::isTab): New helper. Checks a DOMString to see if it is one character and
+        that character is a tab.
+        (khtml::InputTextCommandImpl::execute): Trap tabs before handling insertion of
+        other kinds of whitespace. Treat a tab like four spaces. Rearrange the code to
+        update the ending position after the text insertion to cover the new tab case
+        where the amount of advance is not the same as the number of character in the
+        passed-in DOMString (i.e. tabs expand to four characters).
+        
 2004-08-27  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Chris

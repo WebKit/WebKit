@@ -127,6 +127,17 @@ static inline bool isWS(const Position &pos)
     return isWS(string[pos.offset()]);
 }
 
+static const int spacesPerTab = 4;
+
+static inline bool isTab(const DOMString &text)
+{
+    static QChar tabCharacter = QChar(0x9);
+    if (text.length() != 1)
+        return false;
+    
+    return text[0] == tabCharacter;
+}
+
 static DOMString &nonBreakingSpaceString()
 {
     static DOMString nonBreakingSpaceString = QString(QChar(0xa0));
@@ -1550,11 +1561,26 @@ void InputTextCommandImpl::execute(const DOMString &text)
     TextImpl *textNode = static_cast<TextImpl *>(pos.node());
     long offset = pos.offset();
     
-    // This is a temporary implementation for inserting adjoining spaces
+    // These are temporary implementations for inserting adjoining spaces
     // into a document. We are working on a CSS-related whitespace solution
-    // that will replace this some day.
-    if (isWS(text))
+    // that will replace this some day. We hope.
+    if (isTab(text)) {
+        // Treat a tab like a number of spaces. This seems to be the HTML editing convention,
+        // although the number of spaces varies (we choose four spaces). 
+        // Note that there is no attempt to make this work like a real tab stop, it is merely 
+        // a set number of spaces. This also seems to be the HTML editing convention.
+        for (int i = 0; i < spacesPerTab; i++) {
+            insertSpace(textNode, offset);
+            document()->updateLayout();
+        }
+        setEndingSelection(Position(textNode, offset + spacesPerTab));
+        m_charactersAdded += spacesPerTab;
+    }
+    else if (isWS(text)) {
         insertSpace(textNode, offset);
+        setEndingSelection(Position(textNode, offset + 1));
+        m_charactersAdded++;
+    }
     else {
         const DOMString &existingText = textNode->data();
         if (textNode->length() >= 2 && offset >= 2 && isNBSP(existingText[offset - 1]) && !isWS(existingText[offset - 2])) {
@@ -1567,9 +1593,9 @@ void InputTextCommandImpl::execute(const DOMString &text)
             replaceText(textNode, offset - 1, 1, " ");
         }
         insertText(textNode, offset, text);
+        setEndingSelection(Position(textNode, offset + text.length()));
+        m_charactersAdded += text.length();
     }
-    setEndingSelection(Position(textNode, offset + text.length()));
-    m_charactersAdded += text.length();
 }
 
 void InputTextCommandImpl::insertSpace(TextImpl *textNode, unsigned long offset)
