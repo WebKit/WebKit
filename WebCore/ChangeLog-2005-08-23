@@ -1,3 +1,14 @@
+2005-02-18  Richard Williamson   <rjw@apple.com>
+
+	Fixed <rdar://problem/4006161> Tiger8A380: Widgets leak dashboard regions
+	
+	We were leaking the DashboardRegionImpls.
+
+        Reviewed by Kevin.
+
+        * khtml/css/css_valueimpl.cpp:
+        (DOM::CSSPrimitiveValueImpl::cleanup):
+
 2005-02-18  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3945271> REGRESSION (Mail): pasted plain text should pick up typing style instead of being unstyled

@@ -645,13 +645,18 @@ void CSSPrimitiveValueImpl::cleanup()
     case CSSPrimitiveValue::CSS_STRING:
     case CSSPrimitiveValue::CSS_URI:
     case CSSPrimitiveValue::CSS_ATTR:
-	if(m_value.string) m_value.string->deref();
+        if(m_value.string) m_value.string->deref();
         break;
     case CSSPrimitiveValue::CSS_COUNTER:
-	m_value.counter->deref();
+        m_value.counter->deref();
         break;
     case CSSPrimitiveValue::CSS_RECT:
-	m_value.rect->deref();
+        m_value.rect->deref();
+        break;
+    case CSSPrimitiveValue::CSS_DASHBOARD_REGION:
+        if (m_value.region)
+            m_value.region->deref();
+        break;
     default:
         break;
     }
